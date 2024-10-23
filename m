@@ -1,232 +1,667 @@
-Return-Path: <linux-kernel+bounces-377568-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377569-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A07A79AC0A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:48:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7F3169AC0A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:51:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C156C1C233F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:48:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A049A1C23703
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:51:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BA9C155385;
-	Wed, 23 Oct 2024 07:48:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1AC156220;
+	Wed, 23 Oct 2024 07:51:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SpE4ds9v"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="uMZ9Zw+R"
+Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DA3154BEC
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:48:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729669696; cv=fail; b=QCbR7YAfGf2FhvT5lF1IMbB7kFSSRWtfz4Z4Tl8VYFhwDaM2U5Tsyuv0G1GCYQqx79WiLPiv0fgpJMhLMunyVsUoZbxduNQ1BOBXB+vacyXa7ad0lqzlWn94XaLtq/H3/Pfo2KoVlnBBcYg6NvSkMadQ8z403KrRJrRviOtnGlM=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729669696; c=relaxed/simple;
-	bh=RT6AS06EoOjI5QlRFXE+Ykz0GLbSMnNMZ6FBV0C33pM=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=FcI+j+p4spAXsNWrkWPsvBOcsnDfv+lPNFb733FC/F2cajmD7JbeF+OHDqoNgRn0jgr4fn08vi2+ZJcaPE7HmS+Arboht4gmVdub52HciTiXnf8RfURBUl6a0HxBT0+FTQh8+djZwRPyY+0kti3bPlulh/N5xSrjnd2jMCSdTE0=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SpE4ds9v; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729669695; x=1761205695;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=RT6AS06EoOjI5QlRFXE+Ykz0GLbSMnNMZ6FBV0C33pM=;
-  b=SpE4ds9v0G3UsbdVMqeZAgVmZpDM1lwqe8LIJgSKt58HF6aMjHIV3WbT
-   nPvWipX6w0wAcyEsnKo/iUnlGMtr1j9TuabSZGvDKM7fYn2056gVzR4Rr
-   T3H6ap1eNL0pTaxiQNxxQSBmL4WtLneM65XZUDUl4ITF6kb6QPtzm0E2D
-   gNOt2hPtnyGxIWgaut3HFMmU1FobdoAHckUQlocbSAFpGkRo15m0/mIQ/
-   8yXmBajsU8atJZLfM+BOzPZfo0WjUB8bAmu3H7FLt/svgv/FW/F7Ii0ub
-   iqpSwyHt+W8Vkp91x/o/PFRw8wRKcNZRCv/JKW3mbDFwbDg39n55WHL5l
-   Q==;
-X-CSE-ConnectionGUID: Sxj9JKG8Qyq9AvtxNvAhWg==
-X-CSE-MsgGUID: hJo4lR+YRVey3p0415aevA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29117137"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29117137"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 00:48:15 -0700
-X-CSE-ConnectionGUID: V5t6CKa3R7eAmd0pN0LOpQ==
-X-CSE-MsgGUID: xicMAtTiTriiAmeDpxzetg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="80124709"
-Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 00:48:14 -0700
-Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 23 Oct 2024 00:48:13 -0700
-Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 00:48:13 -0700
-Received: from NAM02-DM3-obe.outbound.protection.outlook.com (104.47.56.46) by
- edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 23 Oct 2024 00:48:12 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KDbKD9oTgc8jhwgd6UG+8iPyGPksnzSePdEaaGJEKXf0F4hwacRfIkujeTRjgeIesLAhhrrPkeUIBLnc55gZAR0X9BhsKrhGU43xOtn3Rk9sMr6TP0K1MdILC1CwRjsiSmGY2mrjrHlkAqKR9LBfBwPp2XMMGQAUgmbz/6wtuf7l78t+1lA96G+CHu/euL78h8ck/FRX/BK6UcSIrPpbLbRoYBF0/uRtkHGifGDT/cZ/tGTqSMUZgZzi13F9YXKA4GFUtlE7S/lKD/MPlbSWSmx31LmylQKEgIC0mtbdNjzATWmTKWyXukr4rmVE3Hpi8fKcBDg2HPPMzxxnOe2Plw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=RT6AS06EoOjI5QlRFXE+Ykz0GLbSMnNMZ6FBV0C33pM=;
- b=hDKiQ9LXV8v9+QRrNYOKpK+jmjSajLYcN36LUVvUPKkLTmKPwgo3V38TSWMAybap8z4NkIr6NBdd7Xs5lJoN3RxBnFywBOx0GUcHBusXGfFuq8ix9C00OLKK2/iVbREClRJ2feM5KDLlMWGtp8cLcuBImq4hqiqZV21jsM8C/h29oZSW+HEEYYZZhnzJ6pr+DN5aC9jqJbn67fFDbu8rzeJt5Odj1Bbe1pYB4UJczup4OBgU/dO22TeI3t61gS1gAeYWYamQQYWUnaJA6PbF8A+61F3rWdBtoRjOYWKNjlV7XavT4EHqV0xISrdZ808Lnl1IPy2o1ahUcWCrgUQ98A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from SJ0PR11MB6744.namprd11.prod.outlook.com (2603:10b6:a03:47d::10)
- by PH7PR11MB6056.namprd11.prod.outlook.com (2603:10b6:510:1d4::20) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
- 2024 07:48:10 +0000
-Received: from SJ0PR11MB6744.namprd11.prod.outlook.com
- ([fe80::fe49:d628:48b1:6091]) by SJ0PR11MB6744.namprd11.prod.outlook.com
- ([fe80::fe49:d628:48b1:6091%5]) with mapi id 15.20.8069.027; Wed, 23 Oct 2024
- 07:48:10 +0000
-From: "Duan, Zhenzhong" <zhenzhong.duan@intel.com>
-To: Baolu Lu <baolu.lu@linux.intel.com>, "iommu@lists.linux.dev"
-	<iommu@lists.linux.dev>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-CC: "dwmw2@infradead.org" <dwmw2@infradead.org>, "joro@8bytes.org"
-	<joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
-	"robin.murphy@arm.com" <robin.murphy@arm.com>, "Peng, Chao P"
-	<chao.p.peng@intel.com>, Kyung Min Park <kyung.min.park@intel.com>
-Subject: RE: [PATCH 2/2] iommu/vt-d: Fix checks in pgtable_walk()
-Thread-Topic: [PATCH 2/2] iommu/vt-d: Fix checks in pgtable_walk()
-Thread-Index: AQHbJGhDqRDkRT5yak+iRoHXqTbTzbKTxSQAgAAFi0CAACp7gIAAAbkw
-Date: Wed, 23 Oct 2024 07:48:10 +0000
-Message-ID: <SJ0PR11MB67447D03F5E78EFDB570C60F924D2@SJ0PR11MB6744.namprd11.prod.outlook.com>
-References: <20241022095017.479081-1-zhenzhong.duan@intel.com>
- <20241022095017.479081-3-zhenzhong.duan@intel.com>
- <813d32e8-e84c-4744-bc2c-b76adc10d00f@linux.intel.com>
- <SJ0PR11MB6744EC9F9B202E1BBE7DC4B1924D2@SJ0PR11MB6744.namprd11.prod.outlook.com>
- <f6d109cd-9a7e-416f-87d7-429e584e3b3e@linux.intel.com>
-In-Reply-To: <f6d109cd-9a7e-416f-87d7-429e584e3b3e@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR11MB6744:EE_|PH7PR11MB6056:EE_
-x-ms-office365-filtering-correlation-id: d4690dce-196a-4aee-9005-08dcf3370ab5
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|1800799024|376014|366016|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?Yzc5U1RiRTZ5TFAwYUdGNlFlMnRPTkJJUUk4ejdvaHVRYitQZzlKb2c4Y05Y?=
- =?utf-8?B?S2RPRVNmL2RZRXNWbHFVN3N6L2ZsckdaQnh5YUFuMnVtODFFWkdJV215NnY4?=
- =?utf-8?B?M3JIVms1YkdFcG82SDZhRGl3WGludnBPWFMrTHEvdUo3TXdkZ21jSyswaFVr?=
- =?utf-8?B?TzJaN2lVMXJENjE2TnpMRm1UL3NvamloZTdKOG0rVlA4c25jK0Q3ckUva0th?=
- =?utf-8?B?VUJyNjNSUG1DV3Fpa0ZvVHhyL3hBVGdWb25raFh4SDIrNE1LV2xlNDcrekxv?=
- =?utf-8?B?dmtXVVBleldHSHlxWlgvcjdwMFdoZWIrTlQxanl5dU4yb0I4RU9aam5scHN4?=
- =?utf-8?B?Mlp0V1dqTzQ0UmFnNFdMUGEwUzRpa1EzVDgrajFleWpIKzFjdWhBRFl1dUlM?=
- =?utf-8?B?eEF5WUtkS2cyc094WDZMdnE5ZmxrbkxTeUVpSlNFTUt6WUFPVVk5NEFjZ2tQ?=
- =?utf-8?B?aEY3RHg3VWFGaSsrREduUFRydHNTMVRMYUMwYW0rV1dEVVIzOUJMSWFETFhi?=
- =?utf-8?B?S2NZWDg5M1FzM2x4Mmsrc2tmazlwaWtMdHVSanpDaDRTNzYySXRhUjdvZ1h2?=
- =?utf-8?B?V2huWWRKRXREeEdONEwyV0Z6TDhJN2I3TjF3TU1keng0THhGNnpnRWJpUE5R?=
- =?utf-8?B?VHA4dTBYdDRFUlZNalRhUnZwZTZSSndZb1J6N3g0VnlPNlAvbTU1QU80bFor?=
- =?utf-8?B?ODkwZW5yNzRGcGtVS1JQSGJ2Z0tOeTVIbWF5QXQvdTBrWS8rM3IvbEtkeno4?=
- =?utf-8?B?S0ZPaVFVUGxLOXlZaEY5QjZCRmVuMStrTTR0Qzlob0NFZENkUkNNcmpQU3Bn?=
- =?utf-8?B?Y1d0VzhFcG1tczJUcHE1eTJvT0ZyWmlPQitjV2FyRjRBMkN1TFE4VnY0Y2Yy?=
- =?utf-8?B?KzA4a29CcVRHSHZaSVIyc2R2VnpwMzZyb0FWL3F3cS9VUTJ2cGVNVlBVUy8x?=
- =?utf-8?B?Tm5pdHJodjNST1Fja21UUHRLMEoyTU9MMXhUd0I1azh3eVlCdU9lK25vYW9H?=
- =?utf-8?B?WmhwQ0ZHZGRrVmJ2U082VDZUd1ZhWVhtNXRJZWdnajN5U1p2cW41Wm4yVDJI?=
- =?utf-8?B?eDJEbDVYaXJNZ2tQNk5wVDVtTnJ5NzZ1NTZ5M3VBUk1CRXR1eVhxbFRaOVkr?=
- =?utf-8?B?VlZTL3YyblAzQ05KWEoxTTljNzk3ZjBKeUJoS1R0Uy9DT2lqazM4aWtBTTFa?=
- =?utf-8?B?eDFnd0dJSkY5OFQ3YktSVC9jVjcrUDlDNkJQYi9WQVA0WkZYZnkwUVRNZkJZ?=
- =?utf-8?B?b1VVVzFxMVRIYzFuRHhKSEJiNzVDN2tIVVFDd2YxdkVCRmNWSU5sNnJLejVQ?=
- =?utf-8?B?SG5NZ1RZcmdGcTFHakQzUkQ3Zm14dHBCRm1HRVRpQ1FBS0Q5ZmRtcVhZQkx6?=
- =?utf-8?B?bkNjSkxaM21sUFR5OVFRQnZjNDNrOUlla1ZiWTR4azlwTHpQQXJHUS83cyt2?=
- =?utf-8?B?ZG1xQ0VLTW10ZnFYV3RpNFAxcUwzaVlnZmdxa0RNdWRMQ1Zhcy9FdjNTbU5y?=
- =?utf-8?B?Z2xvaFFqMjJxQVZhYkJEbklpU2dFYWtmQys1UUw2eHFKOE5BMDJ2aUIwamR0?=
- =?utf-8?B?WlY4U2hWazlnZE96WERJcnA0YXhaTGlQZFRBdHdjd3J6d1ZrZEVtd0F1Njlr?=
- =?utf-8?B?MkxZWm9PMDVRR01ORE1IcHkrUVF1NFlZZktBdnhBTjhIM2l4Nk9KRjB2VVox?=
- =?utf-8?B?RVRveG9SMTBtbUQxZXRQTVU3NkdHTUo0LzNPOVhFTHJNcDN1eVZ6cE9uSEdp?=
- =?utf-8?B?Q1luUTlXUmN2MWw1dk96SWpSTVM3UExKb0ZkYmREeDU4dmdPUzZyMHdkL2Rm?=
- =?utf-8?Q?LpjpSJXY6iKq1jbF82JHksUFLw3OY7veAShVc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR11MB6744.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?Wjk4TjlUTUJ1U1dwOWdJKzdhMHUraEdrcXU0QjFWWUhXN0djU1hPUEVYa2t4?=
- =?utf-8?B?ZjR6WVBhdm1KZ1hmd2lsRkZPVzl2U1JWRFYwdFdjY1VmUklmRGloS2c2bEFx?=
- =?utf-8?B?TGZHMXc0YVg4REpORWNoZU1KV3Z1ZW51MWg2MkxJaW12dXdHcVhuQ21SMWk3?=
- =?utf-8?B?aHIvOHVSVlZtT3RCSjg4anF3YmNhOFhjQ3BMMWE3Wmw3alJpMWVtYUgzOHZ4?=
- =?utf-8?B?RCtGTlcxQnZMVVhUV1A4ZkZqT203U3N5aEk5eTIrRk5uc2MwMG9iMHBPYWZt?=
- =?utf-8?B?QWR5Q3dtTE5UWnY0M244ZVh6d0UzelFNc2F3R3R4cEFOaTh5cUlJQzlwelhI?=
- =?utf-8?B?b2pyY1poV0N2V3V4MGV1KzFVWmxsUU9uQVMrQjVZUThvRktpeTRsdnBZa2RG?=
- =?utf-8?B?ZUhBY2trYVpGN0twVll5TFpqNTc4VjdRbTh2dWFEZDNlWUhOd1d5TnFwVGJ6?=
- =?utf-8?B?WlQ4aUtTT01GRk5IOTNSbXdzOGNoaTZ3bmZBRkw3Y20zcTBQOWdlUytxMXd2?=
- =?utf-8?B?K3hHcHMvQ0tEV3NwZjN6NUVldVFXSDVVMTZSTzZ3aTNZcmRsd0hRQ29rdmIy?=
- =?utf-8?B?Z0xvazZRUG5IMy9Pb1J6b0RERFYzR1pyYUJWUWNsWDliRWk2aG1Cb3kwOVo2?=
- =?utf-8?B?V3U4dWVOcXkyWjVrbXAvWUZqOTkvMmVuajF0emd4aHBSbmpvZXo0VjBDQm5h?=
- =?utf-8?B?N08rRTdneXdpWkZxaVdFV3BhaXFsOE15dEtUM0ZGempkclJocnF1OEJQNEhZ?=
- =?utf-8?B?RUxGQTljL1hDT3hneGNOdURyMmJDcC9KUkZydUhIdzk1aHZqVy9jWnpXcXRx?=
- =?utf-8?B?aVE4Nm1ZQjY2UzJVbkw2M2hyTkN4VHEyai85anROOGxVVnZNOHhDZjAxa1Ro?=
- =?utf-8?B?SlNvYmpTTmROMUZXbkFuTWoyb3o3WWZjdk5yN01xNXAxRk45UGZuN1N6blFo?=
- =?utf-8?B?aU1aWG9HZ3kwZndXV2xKQlM0MnllNkNpWDVsVkNvMHVGajllenhDRnJ6UEx0?=
- =?utf-8?B?MXNuK3ZMTmQvaDcxeUp3eStCRW9WK3JHUnJ0M2hXQWt6SjhjZXdHVXhMd0ND?=
- =?utf-8?B?a21aRmZmMmlrdUk3YlR4WGY5dk5Qdld1ZGR2UXBkWVNoTXhvSTY0KzRwNUJJ?=
- =?utf-8?B?ZVdEZVh6RnRhd1d5aTUrblA3RmlJUVF2TjlmRUVmTjZsQlNLWUFRLzhBNmdX?=
- =?utf-8?B?MW8reVZRL0xsa1ZuUkFJaHhXNjhRUDdRanlhQUoxaHZQaW43eXV2SGtKUXow?=
- =?utf-8?B?azVDWk9HcVA3am1kdmY4eldMbUVDKy9UV0huYWJZVDlCUWE5MHk3MFdzNkU2?=
- =?utf-8?B?b25XMWVqS25XOW81c05LTFhhcWlkcFVNUW4yOTR2bHlrTE5ENU9xWGlqZmhx?=
- =?utf-8?B?ZEVaK1NCS1BFT1JTWEVuNDVmZkZIMmY2bGhhaUZJUU1xYjRUdHRPRDR2V0d1?=
- =?utf-8?B?NUxabzVQMHUrNWFySm84cjA4MFI2NGtNZHNSd3FKVVpJcUJJZVRVNHJNY3Rw?=
- =?utf-8?B?Mk96TGFzalFqRjlOUE5aQ2VTM0duSE0zS0dMR1E1UTkwNHNUOGhoajdOZHQ3?=
- =?utf-8?B?Qm5CUlNXVFpoQVRjTTlFRWd2K3lpZ0RtcVc4RFVUYUVUZHlvNTZNSDlYMXF0?=
- =?utf-8?B?eDVOcE9BSjZSYXByanlKR002SGlBWVNycy9FSGpSeTdmTGxTUy9idWhxdncz?=
- =?utf-8?B?dDUzOW5xeFJWMmpoNkFiQk5kSXJZemJpNzFJbDQzWU9WSTNxY0c5dHRRTHNZ?=
- =?utf-8?B?R2lIWG16V2lBYXJxd1FBTWFncWt4QS9YUFBzN1FuTzNrYnVhcC9UU1pOS2hE?=
- =?utf-8?B?WVlWQ1JGTEFYeDgzMjBmWG0reUlpM0tPRGJCdzc2UExMZjRSVXFCelBOS1hO?=
- =?utf-8?B?UWZNTEE0cGN5eFZjNDFoOEFpQitNc1h2UFFuSk51a1dQYnFNVmNkVjZWWGwx?=
- =?utf-8?B?U2E0c0V3anhncUsvTUlIRmk5N01UblpPcFFUU1FBZzYzNXV3Qk0wanF4NURD?=
- =?utf-8?B?Yk1uSEp0a2ZwOU1DRjB0cVA4a1E2YkVRL3MvdTJzR2ZWZ05GY01icFRCeXFM?=
- =?utf-8?B?YVRUNnE0NHNjMkxpWGNOSGk3bW5ySnNPcUtWNXYxaENnWGtkYm5TOHM5d282?=
- =?utf-8?Q?hviKvE3z2QCUoyjpiqhXs6XV3?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C898015443C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:51:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729669869; cv=none; b=laPo4++5D+8On5Ih6QWgXCqHjpiSj3kMiCoD73o2/WphxR60PBqT5inQtEf052GuY0GPUPFbPJPAK2OZtTjKVf+oUIlpyDUZunrmPzexzB1kpu2fdX7bLh6lqemsCoYBDbCtPni47N8aRM6lGwI7+gZs3XTeZS6LxZJzRAxJBQ0=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729669869; c=relaxed/simple;
+	bh=jKHdoIjtRqxfJ55vBGRP5JlLPI3n6f4w6R9TxFgyG/o=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Y95/SEQTo0v1x02yY+7D+YF2oN1a8k5rhcJXiOT/U/A+RkR9/8ddZoxvUCCIpM559zL0bdAVQkVdaEUjZZmiPTS0/m+GVQ2Ypc5doKKnS03TUnc8z+2ZxX5f0W6PITu1KTJGZXvr0+ZvHd2xbbxgnwQqluAOQl3I3BfLCJF/kKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=uMZ9Zw+R; arc=none smtp.client-ip=209.85.221.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d495d217bso6224893f8f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:51:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729669866; x=1730274666; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=6+XapBmDR0uZhfjYOvNMk0XBmZdhBIAkvxBqQIPfMd0=;
+        b=uMZ9Zw+RgcFIwGNEtBLAOvBghOsCasyV84AXKJ8zv0tnJGbgWumBlVpJ3f8MrSbUjW
+         OCz6Magyq4q8GTSRA13V0MmUhuXvKRDlqE0ygG+ks3umdnmjN0uHpKB22/akVmVecMBM
+         yeUG3XToTyLjs0xYlK7VVVrYDMxIYkk/OweAqlt1UjsY8BnBFrTOA0na0U8GG2wAkLXi
+         aV8kUBl0KGOL/CeWqny0Mg5fRvHP5rDixyD8mIwcR8KJ6lOzvqHZ2krBM+Yoa1/4jwXK
+         EqChsJIMWfsd6a+55hZVJsqttIWQAZu7fSa+JIvTpNIxix3POahYqOF+s4fricpVS6S/
+         5KOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729669866; x=1730274666;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=6+XapBmDR0uZhfjYOvNMk0XBmZdhBIAkvxBqQIPfMd0=;
+        b=rp6yRgMPjAQmWUKc6QL0qXBNZ6Af87RGw2U+xPDvrDnXaxPSx/Fs1szw9YS078C9+1
+         tQ6iWB3wy6SZocyO1XoVUJEcaw2kMOKTrAxmxy7pxRJqpqsMRxfJJpEBPo+XO4n0TcpV
+         A873wjYnJ8STifNhmV7/2yZejvvrPnRtXw5rIhRcj3O8KDZoB1o/B4EOug/12k7rSNdg
+         6N6A38ajxPKpHcGx9N3LZffPHT5QWfbOXbohOMchSKHtonEERQppE8JuH/iXUMN5i/t6
+         6PpJDAQK8pJbUj3f9N1iBMZr51G0GSEOAxLuGfFaKcrpXPNKvNnvPShv3MeUSy5YPcpN
+         Y9fg==
+X-Forwarded-Encrypted: i=1; AJvYcCVZ8o+nsCr+KOcx+o6H0kKosJCuycyDS1qba7YNqwuAA19TT4GR9KSIXuKDZZIESwkl29MhIK2g0ujfK+8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx9mVltD3YzAn7blYnbvo8tiGLYgMXWNMlPO0/OmiRZN0WZEo35
+	lpwdKAifXFhfrsjSGxHIbZd4a5QwM0wNeS6swswMqPrWPNzOAMxNhocH0DyRv9c=
+X-Google-Smtp-Source: AGHT+IHBf6IWOPS3k5EcHah0IeyN3Y8A0cACYMmuxzbj+ATa0KKIwoEZpzZPpqAIeGB3YhP8+s4gwg==
+X-Received: by 2002:adf:fe50:0:b0:37c:cc4b:d1d6 with SMTP id ffacd0b85a97d-37efcf15f35mr1264266f8f.27.1729669866070;
+        Wed, 23 Oct 2024 00:51:06 -0700 (PDT)
+Received: from linaro.org ([82.76.168.176])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a48564sm8313364f8f.29.2024.10.23.00.51.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 00:51:05 -0700 (PDT)
+Date: Wed, 23 Oct 2024 10:51:04 +0300
+From: Abel Vesa <abel.vesa@linaro.org>
+To: Bjorn Andersson <andersson@kernel.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Johan Hovold <johan@kernel.org>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 3/4] arm64: dts: qcom: x1e80100-crd: Add Parade PS8830
+ related nodes
+Message-ID: <Zxiq6Dx4eU1PNvzY@linaro.org>
+References: <20241022-x1e80100-ps8830-v3-0-68a95f351e99@linaro.org>
+ <20241022-x1e80100-ps8830-v3-3-68a95f351e99@linaro.org>
+ <3i36qmnyzyonbzbsxgcdjwbshcl45vq75ocpth4redwrnqjkm5@wjev5ul7rs75>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR11MB6744.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: d4690dce-196a-4aee-9005-08dcf3370ab5
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 07:48:10.7866
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 5xcn5OHtZw2iSU8ZYWWMclrTwno0JD6wBWG6LuDagzdYKpYwHHM2Fuol5PeBJO0tNi56PX3XYZCVpBbjpIhmDl2ZmHCpDUZZkpWAQuULsqg=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB6056
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <3i36qmnyzyonbzbsxgcdjwbshcl45vq75ocpth4redwrnqjkm5@wjev5ul7rs75>
 
-DQoNCj4tLS0tLU9yaWdpbmFsIE1lc3NhZ2UtLS0tLQ0KPkZyb206IEJhb2x1IEx1IDxiYW9sdS5s
-dUBsaW51eC5pbnRlbC5jb20+DQo+U3ViamVjdDogUmU6IFtQQVRDSCAyLzJdIGlvbW11L3Z0LWQ6
-IEZpeCBjaGVja3MgaW4gcGd0YWJsZV93YWxrKCkNCj4NCj5PbiAyMDI0LzEwLzIzIDEzOjE2LCBE
-dWFuLCBaaGVuemhvbmcgd3JvdGU6DQo+Pj4gLS0tLS1PcmlnaW5hbCBNZXNzYWdlLS0tLS0NCj4+
-PiBGcm9tOiBCYW9sdSBMdTxiYW9sdS5sdUBsaW51eC5pbnRlbC5jb20+DQo+Pj4gU2VudDogV2Vk
-bmVzZGF5LCBPY3RvYmVyIDIzLCAyMDI0IDEyOjUwIFBNDQo+Pj4gU3ViamVjdDogUmU6IFtQQVRD
-SCAyLzJdIGlvbW11L3Z0LWQ6IEZpeCBjaGVja3MgaW4gcGd0YWJsZV93YWxrKCkNCj4+Pg0KPj4+
-IE9uIDIwMjQvMTAvMjIgMTc6NTAsIFpoZW56aG9uZyBEdWFuIHdyb3RlOg0KPj4+PiBJdCdzIG5v
-dCBhY2N1cmF0ZSB0byBkdW1wIHN1cGVyIHBhZ2UgYXMgbm9uLXByZXNlbnQgcGFnZSwNCj4+Pj4g
-bWVhbndoaWxlIGJpdDcgaW4gZmlyc3QgbGV2ZWwgcGFnZSB0YWJsZSBlbnRyeSBpcyBQQVQgYml0
-LA0KPj4+IENhbiB5b3UgcGxlYXNlIGV4cGxhaW4gaG93IHRoZSAnYml0NyBpbiBmaXJzdCBsZXZl
-bCBwYWdlIHRhYmxlIGVudHJ5JyBpcw0KPj4+IHJlbGV2YW50IHRvIHRoZSBjaGFuZ2VzIG1hZGUg
-aW4gdGhpcyBwYXRjaD8NCj4+IFdoZW4gaXRlcmF0ZSB0byBsZXZlbCAxLCBpdCBpcyBsZWFmIHBh
-Z2UgdGFibGUgZW50cnksIGJpdCA3IGlzIFBBVCBiaXQgaW5zdGVhZCBvZiBQUw0KPmJpdC4NCj4+
-IGRtYV9wdGVfc3VwZXJwYWdlKHB0ZSkgbWF5IHJldHVybiB0cnVlLCB0aGVuICIgUFRFIG5vdCBw
-cmVzZW50IGF0IGxldmVsIDEiDQo+bWF5DQo+PiBiZSBwcmludGVkIG91dC4NCj4NCj5JIHNlZS4g
-VGhhbmsgeW91IQ0KPg0KPklmIHlvdSBoYXZlIGEgbmV3IHZlcnNpb24sIGNhbiB5b3UgcGxlYXNl
-IG1ha2UgaXQgYSBiaXQgY2xlYXJlcj8gTXkNCj51bmRlcnN0YW5kaW5nIGlzIHRoYXQgZG1hX3B0
-ZV9zdXBlcnBhZ2UocHRlKSBzaG91bGQgbm90IGNoZWNrIGFnYWluc3QNCj50aGUgbGVhZiBwYWdl
-IHRhYmxlIGVudHJpZXMsIHJpZ2h0Pw0KDQpSaWdodCwgd2lsbCBkby4NCg0KVGhhbmtzDQpaaGVu
-emhvbmcNCg==
+On 24-10-22 19:24:19, Bjorn Andersson wrote:
+> On Tue, Oct 22, 2024 at 01:26:56PM GMT, Abel Vesa wrote:
+> > Add nodes for all 3 Parade PS8830 Type-C retimers found on Qualcomm
+> > X Elite CRD board, along with all of their voltage regulators. These
+> > retimers sit between the Type-C connectors and the PHYs, so describe the
+> > pmic glink graph accordingly. On this board, these retimers might be left
+>                                ^ Here would be a good point to split this hunk into two paragraphs.
+
+Will do.
+
+> 
+> > enabled and configured by the bootloader, so make sure the retimers don't
+> > reset their configuration on driver probe.
+> 
+> It would be nice if there was a hint here about how this statement
+> manifest itself in the patch.
+
+I'll add the property in the phrasing.
+
+> 
+> 
+> Hint:
+> https://docs.kernel.org/process/submitting-patches.html#describe-your-changes
+> is a good read for how to structure ones commit message - with a problem
+> description, then a technical description of the change (i.e. probably
+> not something starting with the word "Add"...)
+
+Sure, will reword with "Describe all 3 Parade ...".
+
+> 
+> Regards,
+> Bjorn
+
+Thanks for reviewing.
+
+Abel
+
+> 
+> > 
+> > Signed-off-by: Abel Vesa <abel.vesa@linaro.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100-crd.dts | 448 +++++++++++++++++++++++++++++-
+> >  1 file changed, 442 insertions(+), 6 deletions(-)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> > index f5f2659690915f9ba50d15a27c54e3c0f504a14b..7cc45a5cd7eb7e70915d04ea7e181b56f693f768 100644
+> > --- a/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> > +++ b/arch/arm64/boot/dts/qcom/x1e80100-crd.dts
+> > @@ -99,7 +99,15 @@ port@1 {
+> >  					reg = <1>;
+> >  
+> >  					pmic_glink_ss0_ss_in: endpoint {
+> > -						remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+> > +						remote-endpoint = <&retimer_ss0_ss_out>;
+> > +					};
+> > +				};
+> > +
+> > +				port@2 {
+> > +					reg = <2>;
+> > +
+> > +					pmic_glink_ss0_con_sbu_in: endpoint {
+> > +						remote-endpoint = <&retimer_ss0_con_sbu_out>;
+> >  					};
+> >  				};
+> >  			};
+> > @@ -128,7 +136,15 @@ port@1 {
+> >  					reg = <1>;
+> >  
+> >  					pmic_glink_ss1_ss_in: endpoint {
+> > -						remote-endpoint = <&usb_1_ss1_qmpphy_out>;
+> > +						remote-endpoint = <&retimer_ss1_ss_out>;
+> > +					};
+> > +				};
+> > +
+> > +				port@2 {
+> > +					reg = <2>;
+> > +
+> > +					pmic_glink_ss1_con_sbu_in: endpoint {
+> > +						remote-endpoint = <&retimer_ss1_con_sbu_out>;
+> >  					};
+> >  				};
+> >  			};
+> > @@ -157,7 +173,15 @@ port@1 {
+> >  					reg = <1>;
+> >  
+> >  					pmic_glink_ss2_ss_in: endpoint {
+> > -						remote-endpoint = <&usb_1_ss2_qmpphy_out>;
+> > +						remote-endpoint = <&retimer_ss2_ss_out>;
+> > +					};
+> > +				};
+> > +
+> > +				port@2 {
+> > +					reg = <2>;
+> > +
+> > +					pmic_glink_ss2_con_sbu_in: endpoint {
+> > +						remote-endpoint = <&retimer_ss2_con_sbu_out>;
+> >  					};
+> >  				};
+> >  			};
+> > @@ -291,6 +315,150 @@ vreg_nvme: regulator-nvme {
+> >  		pinctrl-0 = <&nvme_reg_en>;
+> >  	};
+> >  
+> > +	vreg_rtmr0_1p15: regulator-rtmr0-1p15 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR0_1P15";
+> > +		regulator-min-microvolt = <1150000>;
+> > +		regulator-max-microvolt = <1150000>;
+> > +
+> > +		gpio = <&pmc8380_5_gpios 8 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr0_1p15_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr0_1p8: regulator-rtmr0-1p8 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR0_1P8";
+> > +		regulator-min-microvolt = <1800000>;
+> > +		regulator-max-microvolt = <1800000>;
+> > +
+> > +		gpio = <&pm8550ve_9_gpios 8 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr0_1p8_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr0_3p3: regulator-rtmr0-3p3 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR0_3P3";
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +
+> > +		gpio = <&pm8550_gpios 11 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr0_3p3_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr1_1p15: regulator-rtmr1-1p15 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR1_1P15";
+> > +		regulator-min-microvolt = <1150000>;
+> > +		regulator-max-microvolt = <1150000>;
+> > +
+> > +		gpio = <&tlmm 188 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr1_1p15_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr1_1p8: regulator-rtmr1-1p8 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR1_1P8";
+> > +		regulator-min-microvolt = <1800000>;
+> > +		regulator-max-microvolt = <1800000>;
+> > +
+> > +		gpio = <&tlmm 175 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr1_1p8_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr1_3p3: regulator-rtmr1-3p3 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR1_3P3";
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +
+> > +		gpio = <&tlmm 186 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr1_3p3_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr2_1p15: regulator-rtmr2-1p15 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR2_1P15";
+> > +		regulator-min-microvolt = <1150000>;
+> > +		regulator-max-microvolt = <1150000>;
+> > +
+> > +		gpio = <&tlmm 189 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr2_1p15_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr2_1p8: regulator-rtmr2-1p8 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR2_1P8";
+> > +		regulator-min-microvolt = <1800000>;
+> > +		regulator-max-microvolt = <1800000>;
+> > +
+> > +		gpio = <&tlmm 126 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr2_1p8_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> > +	vreg_rtmr2_3p3: regulator-rtmr2-3p3 {
+> > +		compatible = "regulator-fixed";
+> > +
+> > +		regulator-name = "VREG_RTMR2_3P3";
+> > +		regulator-min-microvolt = <3300000>;
+> > +		regulator-max-microvolt = <3300000>;
+> > +
+> > +		gpio = <&tlmm 187 GPIO_ACTIVE_HIGH>;
+> > +		enable-active-high;
+> > +
+> > +		pinctrl-0 = <&rtmr2_3p3_reg_en>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		regulator-boot-on;
+> > +	};
+> > +
+> >  	vph_pwr: regulator-vph-pwr {
+> >  		compatible = "regulator-fixed";
+> >  
+> > @@ -709,6 +877,187 @@ keyboard@3a {
+> >  	};
+> >  };
+> >  
+> > +&i2c1 {
+> > +	clock-frequency = <400000>;
+> > +
+> > +	status = "okay";
+> > +
+> > +	typec-mux@8 {
+> > +		compatible = "parade,ps8830";
+> > +		reg = <0x08>;
+> > +
+> > +		clocks = <&rpmhcc RPMH_RF_CLK5>;
+> > +		clock-names = "xo";
+> > +
+> > +		vdd-supply = <&vreg_rtmr2_1p15>;
+> > +		vdd33-supply = <&vreg_rtmr2_3p3>;
+> > +		vdd33-cap-supply = <&vreg_rtmr2_3p3>;
+> > +		vddar-supply = <&vreg_rtmr2_1p15>;
+> > +		vddat-supply = <&vreg_rtmr2_1p15>;
+> > +		vddio-supply = <&vreg_rtmr2_1p8>;
+> > +
+> > +		reset-gpios = <&tlmm 185 GPIO_ACTIVE_LOW>;
+> > +
+> > +		pinctrl-0 = <&rtmr2_default>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		orientation-switch;
+> > +		retimer-switch;
+> > +
+> > +		ps8830,boot-on;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +
+> > +				retimer_ss2_ss_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss2_ss_in>;
+> > +				};
+> > +			};
+> > +
+> > +			port@1 {
+> > +				reg = <1>;
+> > +
+> > +				retimer_ss2_ss_in: endpoint {
+> > +					remote-endpoint = <&usb_1_ss2_qmpphy_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@2 {
+> > +				reg = <2>;
+> > +
+> > +				retimer_ss2_con_sbu_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss2_con_sbu_in>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&i2c3 {
+> > +	clock-frequency = <400000>;
+> > +
+> > +	status = "okay";
+> > +
+> > +	typec-mux@8 {
+> > +		compatible = "parade,ps8830";
+> > +		reg = <0x08>;
+> > +
+> > +		clocks = <&rpmhcc RPMH_RF_CLK3>;
+> > +		clock-names = "xo";
+> > +
+> > +		vdd-supply = <&vreg_rtmr0_1p15>;
+> > +		vdd33-supply = <&vreg_rtmr0_3p3>;
+> > +		vdd33-cap-supply = <&vreg_rtmr0_3p3>;
+> > +		vddar-supply = <&vreg_rtmr0_1p15>;
+> > +		vddat-supply = <&vreg_rtmr0_1p15>;
+> > +		vddio-supply = <&vreg_rtmr0_1p8>;
+> > +
+> > +		reset-gpios = <&pm8550_gpios 10 GPIO_ACTIVE_LOW>;
+> > +
+> > +		pinctrl-0 = <&rtmr0_default>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		retimer-switch;
+> > +		orientation-switch;
+> > +
+> > +		ps8830,boot-on;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +
+> > +				retimer_ss0_ss_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss0_ss_in>;
+> > +				};
+> > +			};
+> > +
+> > +			port@1 {
+> > +				reg = <1>;
+> > +
+> > +				retimer_ss0_ss_in: endpoint {
+> > +					remote-endpoint = <&usb_1_ss0_qmpphy_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@2 {
+> > +				reg = <2>;
+> > +
+> > +				retimer_ss0_con_sbu_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss0_con_sbu_in>;
+> > +				};
+> > +			};
+> > +		};
+> > +	};
+> > +};
+> > +
+> > +&i2c7 {
+> > +	clock-frequency = <400000>;
+> > +
+> > +	status = "okay";
+> > +
+> > +	typec-mux@8 {
+> > +		compatible = "parade,ps8830";
+> > +		reg = <0x8>;
+> > +
+> > +		clocks = <&rpmhcc RPMH_RF_CLK4>;
+> > +		clock-names = "xo";
+> > +
+> > +		vdd-supply = <&vreg_rtmr1_1p15>;
+> > +		vdd33-supply = <&vreg_rtmr1_3p3>;
+> > +		vdd33-cap-supply = <&vreg_rtmr1_3p3>;
+> > +		vddar-supply = <&vreg_rtmr1_1p15>;
+> > +		vddat-supply = <&vreg_rtmr1_1p15>;
+> > +		vddio-supply = <&vreg_rtmr1_1p8>;
+> > +
+> > +		reset-gpios = <&tlmm 176 GPIO_ACTIVE_LOW>;
+> > +
+> > +		pinctrl-0 = <&rtmr1_default>;
+> > +		pinctrl-names = "default";
+> > +
+> > +		retimer-switch;
+> > +		orientation-switch;
+> > +
+> > +		ps8830,boot-on;
+> > +
+> > +		ports {
+> > +			#address-cells = <1>;
+> > +			#size-cells = <0>;
+> > +
+> > +			port@0 {
+> > +				reg = <0>;
+> > +
+> > +				retimer_ss1_ss_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss1_ss_in>;
+> > +				};
+> > +			};
+> > +
+> > +			port@1 {
+> > +				reg = <1>;
+> > +
+> > +				retimer_ss1_ss_in: endpoint {
+> > +					remote-endpoint = <&usb_1_ss1_qmpphy_out>;
+> > +				};
+> > +			};
+> > +
+> > +			port@2 {
+> > +				reg = <2>;
+> > +
+> > +				retimer_ss1_con_sbu_out: endpoint {
+> > +					remote-endpoint = <&pmic_glink_ss1_con_sbu_in>;
+> > +				};
+> > +			};
+> > +
+> > +		};
+> > +	};
+> > +};
+> > +
+> >  &i2c8 {
+> >  	clock-frequency = <400000>;
+> >  
+> > @@ -854,6 +1203,37 @@ &pcie6a_phy {
+> >  	status = "okay";
+> >  };
+> >  
+> > +&pm8550_gpios {
+> > +	rtmr0_default: rtmr0-reset-n-active-state {
+> > +		pins = "gpio10";
+> > +		function = "normal";
+> > +		power-source = <1>; /* 1.8V */
+> > +	};
+> > +
+> > +	rtmr0_3p3_reg_en: rtmr0-3p3-reg-en-state {
+> > +		pins = "gpio11";
+> > +		function = "normal";
+> > +		power-source = <1>; /* 1.8V */
+> > +	};
+> > +};
+> > +
+> > +&pmc8380_5_gpios {
+> > +	rtmr0_1p15_reg_en: rtmr0-1p15-reg-en-state {
+> > +		pins = "gpio8";
+> > +		function = "normal";
+> > +		power-source = <1>; /* 1.8V */
+> > +		bias-disable;
+> > +	};
+> > +};
+> > +
+> > +&pm8550ve_9_gpios {
+> > +	rtmr0_1p8_reg_en: rtmr0-1p8-reg-en-state {
+> > +		pins = "gpio8";
+> > +		function = "normal";
+> > +		power-source = <1>; /* 1.8V */
+> > +	};
+> > +};
+> > +
+> >  &pmc8380_3_gpios {
+> >  	edp_bl_en: edp-bl-en-state {
+> >  		pins = "gpio4";
+> > @@ -1093,6 +1473,62 @@ wake-n-pins {
+> >  		};
+> >  	};
+> >  
+> > +	rtmr1_1p15_reg_en: rtmr1-1p15-reg-en-state {
+> > +		pins = "gpio188";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr1_1p8_reg_en: rtmr1-1p8-reg-en-state {
+> > +		pins = "gpio175";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr1_3p3_reg_en: rtmr1-3p3-reg-en-state {
+> > +		pins = "gpio186";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr1_default: rtmr1-reset-n-active-state {
+> > +		pins = "gpio176";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr2_1p15_reg_en: rtmr2-1p15-reg-en-state {
+> > +		pins = "gpio189";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr2_1p8_reg_en: rtmr2-1p8-reg-en-state {
+> > +		pins = "gpio126";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr2_3p3_reg_en: rtmr2-3p3-reg-en-state {
+> > +		pins = "gpio187";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> > +	rtmr2_default: rtmr2-reset-n-active-state {
+> > +		pins = "gpio185";
+> > +		function = "gpio";
+> > +		drive-strength = <2>;
+> > +		bias-disable;
+> > +	};
+> > +
+> >  	tpad_default: tpad-default-state {
+> >  		pins = "gpio3";
+> >  		function = "gpio";
+> > @@ -1160,7 +1596,7 @@ &usb_1_ss0_dwc3_hs {
+> >  };
+> >  
+> >  &usb_1_ss0_qmpphy_out {
+> > -	remote-endpoint = <&pmic_glink_ss0_ss_in>;
+> > +	remote-endpoint = <&retimer_ss0_ss_in>;
+> >  };
+> >  
+> >  &usb_1_ss1_hsphy {
+> > @@ -1188,7 +1624,7 @@ &usb_1_ss1_dwc3_hs {
+> >  };
+> >  
+> >  &usb_1_ss1_qmpphy_out {
+> > -	remote-endpoint = <&pmic_glink_ss1_ss_in>;
+> > +	remote-endpoint = <&retimer_ss1_ss_in>;
+> >  };
+> >  
+> >  &usb_1_ss2_hsphy {
+> > @@ -1216,5 +1652,5 @@ &usb_1_ss2_dwc3_hs {
+> >  };
+> >  
+> >  &usb_1_ss2_qmpphy_out {
+> > -	remote-endpoint = <&pmic_glink_ss2_ss_in>;
+> > +	remote-endpoint = <&retimer_ss2_ss_in>;
+> >  };
+> > 
+> > -- 
+> > 2.34.1
+> > 
 
