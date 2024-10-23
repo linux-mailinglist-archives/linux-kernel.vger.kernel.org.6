@@ -1,380 +1,233 @@
-Return-Path: <linux-kernel+bounces-378161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1CE9B9ACC34
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:24:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 47CBA9ACC35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:24:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F2828437D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:24:21 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76F5AB235DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:24:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2640C1C1ACF;
-	Wed, 23 Oct 2024 14:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD59F1C1AD8;
+	Wed, 23 Oct 2024 14:24:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+PoQIej"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="IrbZQf0D"
+Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338A2E56A;
-	Wed, 23 Oct 2024 14:23:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D9581BD039
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:24:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693437; cv=none; b=JzN5edASNXQWhWPqTa/UVPlP39E1z5uKO8eBUOwzxHxgGDGcOxPtAMAEuRU87oyw6OLGDI3lr7NATEMrRsqTFSCy9Hppom9iUIvUsJ2vQe8HU9f0uf+3rW0j3XDuY/zVuCqesoUNliyJntxIo1eNthoI4p0jyFFQV+1bQIfVs1E=
+	t=1729693453; cv=none; b=sLUma9EZdArYllLJQ9dg9/xhju2b/iBfITELU7JquktpvCksli9bbxvBUn6pZxKTQUUN2uFOikj48pR0iw+DERMLoyXuRV1UzBSByrLzpQRsniRK7Nd3Nzj/f4TMM8AP9DNpH6Fg4gnjdVxyAFX5QYCGDhEKzigzoVZs3w8AtqA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693437; c=relaxed/simple;
-	bh=GSKWRm7+KiJmw4ntv/ripLnaQt+ggFemxRWiNQsqGxE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ow0sscsGboOaTybcLhDdolgjAT9QTi3h43EdssV8TijEks0P1HOdH6lnVs/QntkcMgutVFK0A0FfiwFCPgr2gPJpRAuL57K8GsemQ+rMjuiHnIFkRFSWSuF2Etf6ECfHkp/i4ELzD7Vu/Dd4iC82UNhILZZg3CMX0Obmq9nxkDI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+PoQIej; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55A9C4CEC6;
-	Wed, 23 Oct 2024 14:23:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729693436;
-	bh=GSKWRm7+KiJmw4ntv/ripLnaQt+ggFemxRWiNQsqGxE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=K+PoQIejVNC+d9UpeYu7lvUT1gGdGf7SMf24VgTMpN7DTaZQtFFjOK6K5xBp7Qv8T
-	 NnMtirHIDUQKrSGNtQcnmtXv1u2sve41YM4ABKHqUdz4N9GCgDK3a++h4gpdoB/v/g
-	 hRPc9dE6yE0aBVtH+utpIv4XZlufsTUnCytk6fj3HThNpjYtrJL7fiuiubn0FUEI/9
-	 rRcBS0tr23alae5QSUI4Mc5SoDuY7Lp6ZEsghKg9OMMMcfFW5RMYZ6arNxlUbLmmS7
-	 dLCuJtC5f0IxqZ+PM/Kyh2ECUDMEYEna9EBx4vXzoCjGP8bR3eQVhnQkqpvhyQxEtM
-	 gwBipMQxMzFfg==
-Date: Wed, 23 Oct 2024 09:23:55 -0500
-From: Rob Herring <robh@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
- driver abstractions
-Message-ID: <20241023142355.GA623906-robh@kernel.org>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-16-dakr@kernel.org>
- <20241022234712.GB1848992-robh@kernel.org>
- <ZxibWpcswZxz5A07@pollux>
+	s=arc-20240116; t=1729693453; c=relaxed/simple;
+	bh=1v7sVqBzrNoj9xYwEa6etrISNUcXjjJZhJ8KkWCVaqQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=KaD6otVRM49nrblto6Iv/wXVW2eHiziVjMgWJPjs4zQJlIaywsrdFcJMGlompVLg1xB+BCNM6yFP9iL/rMaq518d6Hxmlbj/gkbNv6QVg18wuQ0JGWu2UYYTEbIfxliEhXghnHbiZ99OCbdQBTNQe53LLUJBt0T6Ioyb46Je7fo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=IrbZQf0D; arc=none smtp.client-ip=217.70.183.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D5273240008;
+	Wed, 23 Oct 2024 14:24:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1729693444;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=pobBfVHQuhQp9iPhrHMIYtYyXnZXUXpAqAVOpIsuqJQ=;
+	b=IrbZQf0D2KTNV4ONn6ymWvmtty1k18XkkFKdYDBtEx+MPDmckHHQNGvVGmoCsPx+SVFkuz
+	Ub2cw0tzOdJMA+c+iho+Ix583FbabJG4fZC+hQpB3rKX3sFnG4kZFC4Txm/WuPKxM8BCpe
+	UnZtvOKFrw3iNM7KfufT7IuHVGyjfhML2vb8MMDfu0w6JaxA9iMuzhxGDomNZy0lseec9d
+	TD9OkuKq2bGoHkBF6/7ow6bR4zEBPPvuEtIYUqVEqvZpezOqRVZXmXuFcKv6FHB9x3qSYC
+	1TJzeFB/JkurcJwfgPmsBEUoKO+OaqdUPqnMEHi4IPiBCX310SeMBs/MPIkWAQ==
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Date: Wed, 23 Oct 2024 16:24:02 +0200
+Subject: [PATCH] m68k: coldfire: Enable DMA timer 0 support for M5441x
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxibWpcswZxz5A07@pollux>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241023-m5441x-dma-hrtimer-v1-1-d476ecb0f027@yoseli.org>
+X-B4-Tracking: v=1; b=H4sIAAEHGWcC/x3MQQqAIBBA0avErBtQ04quEi2kxpyFFWNEEN09a
+ fkW/z+QSZgyDNUDQhdn3rcCXVcwR7+thLwUg1HGamUaTM5afeOSPEY5OZFgCCb0zqq+az2U8BA
+ KfP/TcXrfD2RQtJ9kAAAA
+X-Change-ID: 20241023-m5441x-dma-hrtimer-ff2f8540876a
+To: Greg Ungerer <gerg@linux-m68k.org>, 
+ Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org, 
+ Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729693443; l=5682;
+ i=jeanmichel.hautbois@yoseli.org; s=20240925; h=from:subject:message-id;
+ bh=1v7sVqBzrNoj9xYwEa6etrISNUcXjjJZhJ8KkWCVaqQ=;
+ b=4j2shDuTo1LFJRVAH7sUGG0oL2lnvD+bA+jt9n6lHsp4g8LhSdiahHAloOkaJ+iWDI6nLjHZW
+ 3T/2T4Z1l4lDBFvSWvtSs26XgwTQrqE0PXxsbVyF8uUxr8D9uIG5P+5
+X-Developer-Key: i=jeanmichel.hautbois@yoseli.org; a=ed25519;
+ pk=MsMTVmoV69wLIlSkHlFoACIMVNQFyvJzvsJSQsn/kq4=
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-On Wed, Oct 23, 2024 at 08:44:42AM +0200, Danilo Krummrich wrote:
-> On Tue, Oct 22, 2024 at 06:47:12PM -0500, Rob Herring wrote:
-> > On Tue, Oct 22, 2024 at 11:31:52PM +0200, Danilo Krummrich wrote:
-> > > Implement the basic platform bus abstractions required to write a basic
-> > > platform driver. This includes the following data structures:
-> > > 
-> > > The `platform::Driver` trait represents the interface to the driver and
-> > > provides `pci::Driver::probe` for the driver to implement.
-> > > 
-> > > The `platform::Device` abstraction represents a `struct platform_device`.
-> > > 
-> > > In order to provide the platform bus specific parts to a generic
-> > > `driver::Registration` the `driver::RegistrationOps` trait is implemented
-> > > by `platform::Adapter`.
-> > > 
-> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > > ---
-> > >  MAINTAINERS                     |   1 +
-> > >  rust/bindings/bindings_helper.h |   1 +
-> > >  rust/helpers/helpers.c          |   1 +
-> > >  rust/helpers/platform.c         |  13 ++
-> > >  rust/kernel/lib.rs              |   1 +
-> > >  rust/kernel/platform.rs         | 217 ++++++++++++++++++++++++++++++++
-> > >  6 files changed, 234 insertions(+)
-> > >  create mode 100644 rust/helpers/platform.c
-> > >  create mode 100644 rust/kernel/platform.rs
-> > > 
-> > > diff --git a/MAINTAINERS b/MAINTAINERS
-> > > index 87eb9a7869eb..173540375863 100644
-> > > --- a/MAINTAINERS
-> > > +++ b/MAINTAINERS
-> > > @@ -6985,6 +6985,7 @@ F:	rust/kernel/device.rs
-> > >  F:	rust/kernel/device_id.rs
-> > >  F:	rust/kernel/devres.rs
-> > >  F:	rust/kernel/driver.rs
-> > > +F:	rust/kernel/platform.rs
-> > >  
-> > >  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
-> > >  M:	Nishanth Menon <nm@ti.com>
-> > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> > > index 312f03cbdce9..217c776615b9 100644
-> > > --- a/rust/bindings/bindings_helper.h
-> > > +++ b/rust/bindings/bindings_helper.h
-> > > @@ -18,6 +18,7 @@
-> > >  #include <linux/of_device.h>
-> > >  #include <linux/pci.h>
-> > >  #include <linux/phy.h>
-> > > +#include <linux/platform_device.h>
-> > >  #include <linux/refcount.h>
-> > >  #include <linux/sched.h>
-> > >  #include <linux/slab.h>
-> > > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
-> > > index 8bc6e9735589..663cdc2a45e0 100644
-> > > --- a/rust/helpers/helpers.c
-> > > +++ b/rust/helpers/helpers.c
-> > > @@ -17,6 +17,7 @@
-> > >  #include "kunit.c"
-> > >  #include "mutex.c"
-> > >  #include "page.c"
-> > > +#include "platform.c"
-> > >  #include "pci.c"
-> > >  #include "rbtree.c"
-> > >  #include "rcu.c"
-> > > diff --git a/rust/helpers/platform.c b/rust/helpers/platform.c
-> > > new file mode 100644
-> > > index 000000000000..ab9b9f317301
-> > > --- /dev/null
-> > > +++ b/rust/helpers/platform.c
-> > > @@ -0,0 +1,13 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +#include <linux/platform_device.h>
-> > > +
-> > > +void *rust_helper_platform_get_drvdata(const struct platform_device *pdev)
-> > > +{
-> > > +	return platform_get_drvdata(pdev);
-> > > +}
-> > > +
-> > > +void rust_helper_platform_set_drvdata(struct platform_device *pdev, void *data)
-> > > +{
-> > > +	platform_set_drvdata(pdev, data);
-> > > +}
-> > > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > > index 5946f59f1688..9e8dcd6d7c01 100644
-> > > --- a/rust/kernel/lib.rs
-> > > +++ b/rust/kernel/lib.rs
-> > > @@ -53,6 +53,7 @@
-> > >  pub mod net;
-> > >  pub mod of;
-> > >  pub mod page;
-> > > +pub mod platform;
-> > >  pub mod prelude;
-> > >  pub mod print;
-> > >  pub mod rbtree;
-> > > diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
-> > > new file mode 100644
-> > > index 000000000000..addf5356f44f
-> > > --- /dev/null
-> > > +++ b/rust/kernel/platform.rs
-> > > @@ -0,0 +1,217 @@
-> > > +// SPDX-License-Identifier: GPL-2.0
-> > > +
-> > > +//! Abstractions for the platform bus.
-> > > +//!
-> > > +//! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
-> > > +
-> > > +use crate::{
-> > > +    bindings, container_of, device,
-> > > +    device_id::RawDeviceId,
-> > > +    driver,
-> > > +    error::{to_result, Result},
-> > > +    of,
-> > > +    prelude::*,
-> > > +    str::CStr,
-> > > +    types::{ARef, ForeignOwnable},
-> > > +    ThisModule,
-> > > +};
-> > > +
-> > > +/// An adapter for the registration of platform drivers.
-> > > +pub struct Adapter<T: Driver>(T);
-> > > +
-> > > +impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
-> > > +    type RegType = bindings::platform_driver;
-> > > +
-> > > +    fn register(
-> > > +        pdrv: &mut Self::RegType,
-> > > +        name: &'static CStr,
-> > > +        module: &'static ThisModule,
-> > > +    ) -> Result {
-> > > +        pdrv.driver.name = name.as_char_ptr();
-> > > +        pdrv.probe = Some(Self::probe_callback);
-> > > +
-> > > +        // Both members of this union are identical in data layout and semantics.
-> > > +        pdrv.__bindgen_anon_1.remove = Some(Self::remove_callback);
-> > > +        pdrv.driver.of_match_table = T::ID_TABLE.as_ptr();
-> > > +
-> > > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-> > > +        to_result(unsafe { bindings::__platform_driver_register(pdrv, module.0) })
-> > > +    }
-> > > +
-> > > +    fn unregister(pdrv: &mut Self::RegType) {
-> > > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
-> > > +        unsafe { bindings::platform_driver_unregister(pdrv) };
-> > > +    }
-> > > +}
-> > > +
-> > > +impl<T: Driver + 'static> Adapter<T> {
-> > > +    fn id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
-> > > +        let table = T::ID_TABLE;
-> > > +        let id = T::of_match_device(pdev)?;
-> > > +
-> > > +        Some(table.info(id.index()))
-> > > +    }
-> > > +
-> > > +    extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> core::ffi::c_int {
-> > > +        // SAFETY: The platform bus only ever calls the probe callback with a valid `pdev`.
-> > > +        let dev = unsafe { device::Device::from_raw(&mut (*pdev).dev) };
-> > > +        // SAFETY: `dev` is guaranteed to be embedded in a valid `struct platform_device` by the
-> > > +        // call above.
-> > > +        let mut pdev = unsafe { Device::from_dev(dev) };
-> > > +
-> > > +        let info = Self::id_info(&pdev);
-> > > +        match T::probe(&mut pdev, info) {
-> > > +            Ok(data) => {
-> > > +                // Let the `struct platform_device` own a reference of the driver's private data.
-> > > +                // SAFETY: By the type invariant `pdev.as_raw` returns a valid pointer to a
-> > > +                // `struct platform_device`.
-> > > +                unsafe { bindings::platform_set_drvdata(pdev.as_raw(), data.into_foreign() as _) };
-> > > +            }
-> > > +            Err(err) => return Error::to_errno(err),
-> > > +        }
-> > > +
-> > > +        0
-> > > +    }
-> > > +
-> > > +    extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
-> > > +        // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
-> > > +        let ptr = unsafe { bindings::platform_get_drvdata(pdev) };
-> > > +
-> > > +        // SAFETY: `remove_callback` is only ever called after a successful call to
-> > > +        // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
-> > > +        // `KBox<T>` pointer created through `KBox::into_foreign`.
-> > > +        let _ = unsafe { KBox::<T>::from_foreign(ptr) };
-> > > +    }
-> > > +}
-> > > +
-> > > +/// Declares a kernel module that exposes a single platform driver.
-> > > +///
-> > > +/// # Examples
-> > > +///
-> > > +/// ```ignore
-> > > +/// kernel::module_platform_driver! {
-> > > +///     type: MyDriver,
-> > > +///     name: "Module name",
-> > > +///     author: "Author name",
-> > > +///     description: "Description",
-> > > +///     license: "GPL v2",
-> > > +/// }
-> > > +/// ```
-> > > +#[macro_export]
-> > > +macro_rules! module_platform_driver {
-> > > +    ($($f:tt)*) => {
-> > > +        $crate::module_driver!(<T>, $crate::platform::Adapter<T>, { $($f)* });
-> > > +    };
-> > > +}
-> > > +
-> > > +/// IdTable type for platform drivers.
-> > > +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<of::DeviceId, T>;
-> > > +
-> > > +/// The platform driver trait.
-> > > +///
-> > > +/// # Example
-> > > +///
-> > > +///```
-> > > +/// # use kernel::{bindings, c_str, of, platform};
-> > > +///
-> > > +/// struct MyDriver;
-> > > +///
-> > > +/// kernel::of_device_table!(
-> > > +///     OF_TABLE,
-> > > +///     MODULE_OF_TABLE,
-> > > +///     <MyDriver as platform::Driver>::IdInfo,
-> > > +///     [
-> > > +///         (of::DeviceId::new(c_str!("redhat,my-device")), ())
-> > 
-> > All compatible strings have to be documented as do vendor prefixes and 
-> > I don't think "redhat" is one. An exception is you can use 
-> > "test,<whatever>" and not document it.
-> 
-> Yeah, I copied that from the sample driver, where it's probably wrong too.
-> 
-> I guess "vendor,device" would be illegal as well?
+In order to use high resolution timers, the M5441x can use the DMA
+timers. It has four of it, but let's use the first one only, as it is
+based on the existing driver for the MCF523x.
 
-Yes.
+While enabling the clock, fix a small typo in the comments too (timers
+where starting at 1 and not 0).
 
-> > There's a check for undocumented compatibles. I guess I'll have to add 
-> > rust parsing to it...
-> > 
-> > BTW, how do you compile this code in the kernel? 
-> 
-> You mean this example? It gets compiled as a KUnit doctest, but it obvously
-> doesn't execute anything, so it's a compile only test.
+With this commit, it is now possible to use high resolution timers, and
+have sub-ms resolution in the kernel timestamps.
 
-Yes. That's a question for my own education.
+Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+---
+ arch/m68k/coldfire/Makefile       |  2 +-
+ arch/m68k/coldfire/dma_timer.c    | 34 ++++++++++++++++++++++------------
+ arch/m68k/coldfire/m5441x.c       |  4 ++--
+ arch/m68k/include/asm/m5441xsim.h |  8 ++++++++
+ 4 files changed, 33 insertions(+), 15 deletions(-)
 
-> > 
-> > > +///     ]
-> > > +/// );
-> > > +///
-> > > +/// impl platform::Driver for MyDriver {
-> > > +///     type IdInfo = ();
-> > > +///     const ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
-> > > +///
-> > > +///     fn probe(
-> > > +///         _pdev: &mut platform::Device,
-> > > +///         _id_info: Option<&Self::IdInfo>,
-> > > +///     ) -> Result<Pin<KBox<Self>>> {
-> > > +///         Err(ENODEV)
-> > > +///     }
-> > > +/// }
-> > > +///```
-> > > +/// Drivers must implement this trait in order to get a platform driver registered. Please refer to
-> > > +/// the `Adapter` documentation for an example.
-> > > +pub trait Driver {
-> > > +    /// The type holding information about each device id supported by the driver.
-> > > +    ///
-> > > +    /// TODO: Use associated_type_defaults once stabilized:
-> > > +    ///
-> > > +    /// type IdInfo: 'static = ();
-> > > +    type IdInfo: 'static;
-> > > +
-> > > +    /// The table of device ids supported by the driver.
-> > > +    const ID_TABLE: IdTable<Self::IdInfo>;
+diff --git a/arch/m68k/coldfire/Makefile b/arch/m68k/coldfire/Makefile
+index c56bc0dc7f2e338c8275cfd15656f80e78825254..e6bd32a489155a567d63468ff9eff8a344fd7764 100644
+--- a/arch/m68k/coldfire/Makefile
++++ b/arch/m68k/coldfire/Makefile
+@@ -29,7 +29,7 @@ obj-$(CONFIG_M5307)	+= m5307.o intc.o reset.o
+ obj-$(CONFIG_M53xx)	+= m53xx.o intc-simr.o reset.o
+ obj-$(CONFIG_M5407)	+= m5407.o intc.o reset.o
+ obj-$(CONFIG_M54xx)	+= m54xx.o intc-2.o
+-obj-$(CONFIG_M5441x)	+= m5441x.o intc-simr.o reset.o
++obj-$(CONFIG_M5441x)	+= m5441x.o intc-simr.o reset.o dma_timer.o
+ 
+ obj-$(CONFIG_COLDFIRE_PIT_TIMER) += pit.o
+ obj-$(CONFIG_COLDFIRE_TIMERS)	 += timers.o
+diff --git a/arch/m68k/coldfire/dma_timer.c b/arch/m68k/coldfire/dma_timer.c
+index 91e6728f51ed650f24c6ad4dd7d4d7d7bc6e5adc..184075c5164db84dde985420600649bc1d72b8e8 100644
+--- a/arch/m68k/coldfire/dma_timer.c
++++ b/arch/m68k/coldfire/dma_timer.c
+@@ -9,23 +9,33 @@
+ 
+ #include <linux/clocksource.h>
+ #include <linux/io.h>
++#include <linux/sched/clock.h>
+ 
+ #include <asm/machdep.h>
+ #include <asm/coldfire.h>
+ #include <asm/mcfpit.h>
+ #include <asm/mcfsim.h>
+ 
++#ifndef CONFIG_M5441x
+ #define DMA_TIMER_0	(0x00)
+ #define DMA_TIMER_1	(0x40)
+ #define DMA_TIMER_2	(0x80)
+ #define DMA_TIMER_3	(0xc0)
+ 
+-#define DTMR0	(MCF_IPSBAR + DMA_TIMER_0 + 0x400)
+-#define DTXMR0	(MCF_IPSBAR + DMA_TIMER_0 + 0x402)
+-#define DTER0	(MCF_IPSBAR + DMA_TIMER_0 + 0x403)
+-#define DTRR0	(MCF_IPSBAR + DMA_TIMER_0 + 0x404)
+-#define DTCR0	(MCF_IPSBAR + DMA_TIMER_0 + 0x408)
+-#define DTCN0	(MCF_IPSBAR + DMA_TIMER_0 + 0x40c)
++#define DTMR	(MCF_IPSBAR + DMA_TIMER_0 + 0x400)
++#define DTXMR	(MCF_IPSBAR + DMA_TIMER_0 + 0x402)
++#define DTER	(MCF_IPSBAR + DMA_TIMER_0 + 0x403)
++#define DTRR	(MCF_IPSBAR + DMA_TIMER_0 + 0x404)
++#define DTCR	(MCF_IPSBAR + DMA_TIMER_0 + 0x408)
++#define DTCN	(MCF_IPSBAR + DMA_TIMER_0 + 0x40c)
++#else
++#define DTMR	(MCFDMATIMER_BASE0 + 0x0)
++#define DTXMR	(MCFDMATIMER_BASE0 + 0x2)
++#define DTER	(MCFDMATIMER_BASE0 + 0x3)
++#define DTRR	(MCFDMATIMER_BASE0 + 0x4)
++#define DTCR	(MCFDMATIMER_BASE0 + 0x8)
++#define DTCN	(MCFDMATIMER_BASE0 + 0xc)
++#endif
+ 
+ #define DMA_FREQ    ((MCF_CLK / 2) / 16)
+ 
+@@ -37,7 +47,7 @@
+ 
+ static u64 cf_dt_get_cycles(struct clocksource *cs)
+ {
+-	return __raw_readl(DTCN0);
++	return __raw_readl(DTCN);
+ }
+ 
+ static struct clocksource clocksource_cf_dt = {
+@@ -56,10 +66,10 @@ static int __init init_cf_dt_clocksource(void)
+ 	 * get a ~213 ns resolution and the 32bit register will overflow almost
+ 	 * every 15 minutes.
+ 	 */
+-	__raw_writeb(0x00, DTXMR0);
+-	__raw_writeb(0x00, DTER0);
+-	__raw_writel(0x00000000, DTRR0);
+-	__raw_writew(DMA_DTMR_CLK_DIV_16 | DMA_DTMR_ENABLE, DTMR0);
++	__raw_writeb(0x00, DTXMR);
++	__raw_writeb(0x00, DTER);
++	__raw_writel(0x00000000, DTRR);
++	__raw_writew(DMA_DTMR_CLK_DIV_16 | DMA_DTMR_ENABLE, DTMR);
+ 	return clocksource_register_hz(&clocksource_cf_dt, DMA_FREQ);
+ }
+ 
+@@ -76,7 +86,7 @@ static unsigned long long cycles2ns(unsigned long cycl)
+ 
+ unsigned long long sched_clock(void)
+ {
+-	unsigned long cycl = __raw_readl(DTCN0);
++	unsigned long cycl = __raw_readl(DTCN);
+ 
+ 	return cycles2ns(cycl);
+ }
+diff --git a/arch/m68k/coldfire/m5441x.c b/arch/m68k/coldfire/m5441x.c
+index 405e9d5c832c0d41978615a646de21f2fce61afb..feba222b99a813999b087501c3ff677f38366657 100644
+--- a/arch/m68k/coldfire/m5441x.c
++++ b/arch/m68k/coldfire/m5441x.c
+@@ -154,6 +154,7 @@ static struct clk * const enable_clks[] __initconst = {
+ 	&__clk_0_25, /* uart1 */
+ 	&__clk_0_26, /* uart2 */
+ 	&__clk_0_27, /* uart3 */
++	&__clk_0_28, /* tmr.0 */
+ 
+ 	&__clk_0_33, /* pit.1 */
+ 	&__clk_0_37, /* eport */
+@@ -167,8 +168,7 @@ static struct clk * const disable_clks[] __initconst = {
+ 	&__clk_0_14, /* i2c.1 */
+ 	&__clk_0_22, /* i2c.0 */
+ 	&__clk_0_23, /* dspi.0 */
+-	&__clk_0_28, /* tmr.1 */
+-	&__clk_0_29, /* tmr.2 */
++	&__clk_0_29, /* tmr.1 */
+ 	&__clk_0_30, /* tmr.2 */
+ 	&__clk_0_31, /* tmr.3 */
+ 	&__clk_0_32, /* pit.0 */
+diff --git a/arch/m68k/include/asm/m5441xsim.h b/arch/m68k/include/asm/m5441xsim.h
+index f48cf63bd7822fd53c33788128f984585c0c421a..e49f1d83a787f51c3666d595a7b753b2a93f64c9 100644
+--- a/arch/m68k/include/asm/m5441xsim.h
++++ b/arch/m68k/include/asm/m5441xsim.h
+@@ -101,6 +101,14 @@
+ #define MCFINT2_PIT3		16
+ #define MCFINT2_RTC		26
+ 
++/*
++ * DMA timer module.
++ */
++#define MCFDMATIMER_BASE0	0xFC070000	/* Base address of DMA timer 0 */
++#define MCFDMATIMER_BASE1	0xFC074000	/* Base address of DMA timer 1 */
++#define MCFDMATIMER_BASE2	0xFC078000	/* Base address of DMA timer 2 */
++#define MCFDMATIMER_BASE3	0xFC07C000	/* Base address of DMA timer 3 */
++
+ /*
+  *  PIT timer module.
+  */
 
-Another thing. I don't think this is quite right. Well, this part is 
-fine, but assigning the DT table to it is not. The underlying C code has 
-2 id tables in struct device_driver (DT and ACPI) and then the bus 
-specific one in the struct ${bus}_driver.
+---
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+change-id: 20241023-m5441x-dma-hrtimer-ff2f8540876a
 
-> > > +
-> > > +    /// Platform driver probe.
-> > > +    ///
-> > > +    /// Called when a new platform device is added or discovered.
-> > > +    /// Implementers should attempt to initialize the device here.
-> > > +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>>;
-> > > +
-> > > +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`] matching the given [`Device`], if any.
-> > > +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceId> {
-> > 
-> > Is this visible to drivers? It shouldn't be.
-> 
-> Yeah, I think we should just remove it. Looking at struct of_device_id, it
-> doesn't contain any useful information for a driver. I think when I added this I
-> was a bit in "autopilot" mode from the PCI stuff, where struct pci_device_id is
-> useful to drivers.
+Best regards,
+-- 
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
 
-TBC, you mean other than *data, right? If so, I agree. 
-
-The DT type and name fields are pretty much legacy, so I don't think the 
-rust bindings need to worry about them until someone converts Sparc and 
-PowerMac drivers to rust (i.e. never).
-
-I would guess the PCI cases might be questionable, too. Like DT, drivers 
-may be accessing the table fields, but that's not best practice. All the 
-match fields are stored in pci_dev, so why get them from the match 
-table? 
-
-Rob
 
