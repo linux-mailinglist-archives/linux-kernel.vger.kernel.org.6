@@ -1,140 +1,102 @@
-Return-Path: <linux-kernel+bounces-378945-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378946-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 380FC9AD78B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:26:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8FDE69AD78D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:27:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65FAD1C23A5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:26:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B6EA51C225E4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:27:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628931FEFB3;
-	Wed, 23 Oct 2024 22:26:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00E2E1FE0FD;
+	Wed, 23 Oct 2024 22:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LD6svwZs"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Tjh7S/vM"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62431EF08A;
-	Wed, 23 Oct 2024 22:26:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EDAA13B7BE;
+	Wed, 23 Oct 2024 22:26:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729722385; cv=none; b=n4DirU8mJsDwevopvyNNdWxRmoKHQQezxm9neazdzTTysnlQ7OnQb7vlwrRzX3YcZRlaVL90qBVMVJCZB6vomg4X4PPBvRAzoJp1UlmcN5bdaS+9/hkMICU7kCCpawP0EPVRYv36WCkoGJSzvHiwj1wexfNSj+djy+cXn76ZpN0=
+	t=1729722418; cv=none; b=u748G7/fS6K5U7MDpUIVmt9ED0rqA4svMzr3IPpHkUiietkZUKMe2NNu/N83H9p8mdDCDipOB0s2g+CoA24nT1NdP4LyjPcAYTF91yFC4piTFDrshjcUT76Rh9KME/fizIZQp7Sp/Z7tZJkaC1t62JC72veRa53rP1+dEz0f30c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729722385; c=relaxed/simple;
-	bh=+rYygrhoSOc3Knp2xYlAxLQmiQ25V2jPf8SKuiMUiz8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=dxmkOxWvgn6KSLj7tM+OMUY/xumknFhfwgHGjMNo5XSLFmg9NV48eE/liOyF17Gz4EViP6GmtQtbQzUKKSJiBhxe7XI8iUqlT4St1WGggte/DVHs78tsvdJmg1A988F3HfRLO2RfSDidoynfuqoOCSmXU3HPiHf6te2epXk0h2w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LD6svwZs; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NKTYZX023371;
-	Wed, 23 Oct 2024 22:26:20 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DkNeeUY6AJ1V+YP4DeUtDk6d5YyyilBFns8lgByPOiA=; b=LD6svwZsmaOfGLe2
-	thlyVlCHTSxkyXUqvZkEgLvBmHg85JSMLU50qmM14YJKOupmlGfGpQuXchkG/Ns2
-	rrsy4trRI85DTsMS0fE7H2y6YqhSD7eAgb7Tc0oi+CtTVx2DE16MQ+32ux/xH+rb
-	qMIYw43KmR1lZYwNU52M6omuVpNCLrD/6rFxLNhc9lGZSjYNp2hMyLScXyOE0JMo
-	q8lq2nxlqaO/7IYIv12+z5jKLqXBCtbux6T5TyJRa33ayynwcScTOl5vBYWwdes1
-	W8rKF7fJqP/xmg/3/7h/3f69F3yBKAJ33kd2KOOITNVtnk0MGCRST7iK3gpju0qr
-	tbCHEQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3ukq51-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 22:26:20 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NMQJsW007728
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 22:26:19 GMT
-Received: from [10.110.103.186] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 15:26:18 -0700
-Message-ID: <58b74ec6-8185-42d2-ae64-c5c40c303364@quicinc.com>
-Date: Wed, 23 Oct 2024 15:26:18 -0700
+	s=arc-20240116; t=1729722418; c=relaxed/simple;
+	bh=75AQuif6v24gKO2OFzIH3h1naj1feXYU9tz9GwCI0zQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=e9OsODS8VSP4H1OXu0jnTsP4+HpymuEfWkjZ52Rdk//7mfQWat+tsiYonDcqutP2EV12kg5arLoVtDdY38t4PtWpAfMEcrfUGEW9JCSj94hsSWNcUwFkiD8/5SYllZPAsWvXvU5JIIzVEI0xHhV0ODXPiByNpfzW/7b2Gx13N08=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Tjh7S/vM; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BE150C4CEC6;
+	Wed, 23 Oct 2024 22:26:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729722417;
+	bh=75AQuif6v24gKO2OFzIH3h1naj1feXYU9tz9GwCI0zQ=;
+	h=Date:From:To:Cc:Subject:Reply-To:From;
+	b=Tjh7S/vMlMjBNTdSzZ8uhsfwnZ3cwAVu4JtGuMfEmK3PUlVLYoW+Yi7CW1EmqI1fC
+	 xW1kexffrxX0kA03Bnvv2rS5YzOXPbGTJj0a14GFdE6Yhbt2gE/piX7T+fd8j+0KH8
+	 /no9ZGkFONNZpIBKvuZEIwLbxl2POgiltVT51LgkDBYoAGMR5TaxxCRAPwtpqtV0dE
+	 ZiIqd0CitAota9JpJQsfBZRYE8uBHHwS4nYt61JfMYVQUefVwGz0wuFUyTfVLkmQH2
+	 7Ynj0wRyLtiredHawX1n2okodSvwXiy+9CIj4j882FYg3r/ZD342/TvU2cdIuMAA4A
+	 nYxJyj1Ky2O4g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id 681E6CE10F5; Wed, 23 Oct 2024 15:26:57 -0700 (PDT)
+Date: Wed, 23 Oct 2024 15:26:57 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: kobak@nvidia.com
+Cc: mochs@nvidia.com, rui.zhang@intel.com, ardb@kernel.org,
+	rafael.j.wysocki@intel.com, sfr@canb.auug.org.au,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	linux-toolchains@vger.kernel.org
+Subject: [BUG] Argument-alignment build error with clang
+Message-ID: <38508cf1-7d44-4656-8060-973e820b2957@paulmck-laptop>
+Reply-To: paulmck@kernel.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] soc: qcom: pmic_glink: Handle GLINK intent
- allocation rejections
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Johan Hovold <johan@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson
-	<quic_bjorande@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, Johan Hovold
-	<johan+linaro@kernel.org>
-References: <20241023-pmic-glink-ecancelled-v2-0-ebc268129407@oss.qualcomm.com>
- <20241023-pmic-glink-ecancelled-v2-2-ebc268129407@oss.qualcomm.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20241023-pmic-glink-ecancelled-v2-2-ebc268129407@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: 4STLd7XG6AQjIag_FPjJMqLZ624narOp
-X-Proofpoint-ORIG-GUID: 4STLd7XG6AQjIag_FPjJMqLZ624narOp
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- impostorscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
- suspectscore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=815
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230146
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
+Hello!
 
+Running rcutorture on next-20241023 got me lots of these:
 
-On 10/23/2024 10:24 AM, Bjorn Andersson wrote:
-> Some versions of the pmic_glink firmware does not allow dynamic GLINK
-> intent allocations, attempting to send a message before the firmware has
-> allocated its receive buffers and announced these intent allocations
-> will fail. When this happens something like this showns up in the log:
-> 
->      pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
->      pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
->      ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
->      qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
-> 
-> GLINK has been updated to distinguish between the cases where the remote
-> is going down (-ECANCELED) and the intent allocation being rejected
-> (-EAGAIN).
-> 
-> Retry the send until intent buffers becomes available, or an actual
-> error occur.
-> 
-> To avoid infinitely waiting for the firmware in the event that this
-> misbehaves and no intents arrive, an arbitrary 5 second timeout is
-> used.
-> 
-> This patch was developed with input from Chris Lew.
-> 
-> Reported-by: Johan Hovold <johan@kernel.org>
-> Closes: https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/#t
-> Cc: stable@vger.kernel.org # rpmsg: glink: Handle rejected intent request better
-> Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
+drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an unaligned pointer access [-Werror,-Walign-mismatch]
+          156 |                         (void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+This is built with CC=clang.  I don't see this diagnostic with GCC.
+But we are supposed to be able to build with clang, so...
+
+The first argument is the address of one of these:
+
+typedef struct {
+	__u8 b[UUID_SIZE];
+} guid_t;
+
+Where UUID_SIZE is as follows:
+
+#define UUID_SIZE 16
+
+But this guid_t is a member of one of these:
+
+struct prm_handler_info {
+	guid_t guid;
+	efi_status_t (__efiapi *handler_addr)(u64, void *);
+	u64 static_data_buffer_addr;
+	u64 acpi_param_buffer_addr;
+
+	struct list_head handler_list;
+};
+
+One can argue that this structure must be 16-bit aligned on a
+64-bit build.  So maybe this is a bug in clang's diagnostics, hence
+linux-toolchains on CC.
+
+Thoughts?
+
+						Thanx, Paul
 
