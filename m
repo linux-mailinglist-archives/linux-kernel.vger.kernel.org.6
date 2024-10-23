@@ -1,73 +1,81 @@
-Return-Path: <linux-kernel+bounces-377830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377804-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41EA39AC760
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:07:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833339AC718
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:54:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 02CC0283353
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:07:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A6621F229E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:54:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33ED119EEA1;
-	Wed, 23 Oct 2024 10:06:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0A1219E7F9;
+	Wed, 23 Oct 2024 09:54:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="OklcM7G/"
-Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="n4+vgz6b"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5C4119F11F;
-	Wed, 23 Oct 2024 10:06:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C33FF136357;
+	Wed, 23 Oct 2024 09:54:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729678016; cv=none; b=ar2tlpG0TxnIaLxG3BiJLD+N/1LGGkk941ZamYSUzlOMiXZEp2hUiHj9BU7oNfAelglKYEWuDjeDtSIS1f+vR+fFr3tWoxbiQvA1h8I7dPJ8szLTYuy0s5D+MKcWgN7mR3WRdm/3YpXk170xejofD8u1wANOmJmGX/rIY66I4Mc=
+	t=1729677273; cv=none; b=iH9SroO2q6f3qs19WNd2I6X0ROK077STKQ/hJCjlIGyg8h+s0m0HsHwASovd5Ywkp5RoQEdzSykMiOOfhEpk4EsKXcJVLvcYy1DLFqIktLDHSKxTaHwucI2YFk7/pEjOOY++Y+Afowd23cWDDirXwwPWADQk69R1c5EQdFRbL74=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729678016; c=relaxed/simple;
-	bh=fXyGjhAm0JIkMbjnAel3FGNCVvKR94WIGzZRwngByII=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=PKgbzc6J1TyUexjse6zp2WH/6kaFPnO1nJKiWwimdKQIpQsiBvVWzETKstyWzEfOdHfhE17ZLy2vghtL7eagDHrlJfigMpquoqH6BMuAkY9NwhUkvYkPDhpRAWlBlN9ArS5o8CkXdcLBGt6a1fCDqPke3N/NeLKVRBwPKqWfNEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=OklcM7G/; arc=none smtp.client-ip=67.231.152.168
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
-Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
-	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N3SS3V032296;
-	Wed, 23 Oct 2024 05:06:40 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=
-	PODMain02222019; bh=jz5Rie3do+TgO9XWh4Mv9YDCnGPamrE2rEo8a/X/MDM=; b=
-	OklcM7G/Tg1F58fkwdMlUohZeC3+s+vZbdUf53EbK48L9s6jtFV2nHjV72GT+CA0
-	aQy628WX1AgTuEowNNcmB0e6TJplAlSaDA8I+KTnCzFGsOG93VawhIVKoRioIDAH
-	ZC6PueibgDYBaEF2+zRVon6cbVCwjRbX37ePEhgvPF1kueuGivAdR1lK/LiVM6IC
-	vgkAqo8arjYh0/da3vtTrv4g3HFWsHPAKNmC7TFS9zxIpRr9br+BTl4D+dyohdfF
-	gj3ydkIMdgW/5G1VQfHvZLlKzdpw4MwJ0blcmGJ9QZyrc80S60H5MDT4qWPJe6Nq
-	hiMLCGtre2gaNxkJriCCCA==
-Received: from ediex01.ad.cirrus.com ([84.19.233.68])
-	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 42c96jcnpr-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 05:06:39 -0500 (CDT)
-Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex01.ad.cirrus.com
- (198.61.84.80) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 11:06:38 +0100
-Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
- anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
- 15.2.1544.9 via Frontend Transport; Wed, 23 Oct 2024 11:06:38 +0100
-Received: from upx-tgl-008-ubuntu.ad.cirrus.com (upx-tgl-008-ubuntu.ad.cirrus.com [198.90.251.167])
-	by ediswmail9.ad.cirrus.com (Postfix) with ESMTP id 34539822563;
-	Wed, 23 Oct 2024 10:06:38 +0000 (UTC)
-From: Maciej Strozek <mstrozek@opensource.cirrus.com>
-To: Lee Jones <lee@kernel.org>, <patches@opensource.cirrus.com>
-CC: <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        "Maciej
- Strozek" <mstrozek@opensource.cirrus.com>
-Subject: [PATCH v2] spi: cs42l43: Correct name of ACPI property
-Date: Wed, 23 Oct 2024 11:06:35 +0100
-Message-ID: <20241023100636.28511-2-mstrozek@opensource.cirrus.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241023100636.28511-1-mstrozek@opensource.cirrus.com>
-References: <20241023100636.28511-1-mstrozek@opensource.cirrus.com>
+	s=arc-20240116; t=1729677273; c=relaxed/simple;
+	bh=nu9GAOSS/x9sYmn0ZM2+b58Z0TGVtwLfkOauMH3gYrI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=HAyAq4oUzjPMR3wDSs3d61NyWOREwmqe7dF2vDG1H2d2iJoNm1x9MbEc+VPVKC0+ZVXPY8JDfmTCCrV691zSI32Xqg2W0PIKegarn+t82sxwS1k0P7WmNxwwMAkqHFhlmReTxdGB+Xf17EiC1KKCm/B1FZ0ofGlhoVCxlNEgg1E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=n4+vgz6b; arc=none smtp.client-ip=192.198.163.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729677272; x=1761213272;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=nu9GAOSS/x9sYmn0ZM2+b58Z0TGVtwLfkOauMH3gYrI=;
+  b=n4+vgz6bhyXXStEutAqUCFhaYmg/wGVslKECStM7kzgxBPdLxZPOLtkO
+   pBIg0sdtJ5udOEcRYnesRWsrSn5E6i6F/vXwckf/VStOGfI8Ye+hs3oDq
+   3nwxb8uy4MqcYKKYt3TMmhkxRF/OojjWSoGB/rK36RbqF9441WCFZX+Vc
+   +mLLf7lpSbXAovWQW+bcArR2yeifZ+f/xb/rmKYcpFyofWQeQ0HAw1/4e
+   xLnGyj/jxkVAMugA4Yt/JHDw2vBSldrM3g412WbaE2jPsMrGAeLDmO+KD
+   roBLfGZnh9NZeh//n+D1qJ+/dVleU1MJwa5xFShCLYCaiPVA5MEX7t3lc
+   A==;
+X-CSE-ConnectionGUID: u16ACxOgTYGqeK3xR+9vrA==
+X-CSE-MsgGUID: YPGUnjW1Slm2d2O3zB8cPA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="54658332"
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="54658332"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 02:54:30 -0700
+X-CSE-ConnectionGUID: YrjIHI14TiqqUnxNvuOkSw==
+X-CSE-MsgGUID: nz862BU8S+qyczgxZaIMgA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="84771104"
+Received: from irvmail002.ir.intel.com ([10.43.11.120])
+  by fmviesa004.fm.intel.com with ESMTP; 23 Oct 2024 02:54:27 -0700
+Received: from kord.igk.intel.com (kord.igk.intel.com [10.123.220.9])
+	by irvmail002.ir.intel.com (Postfix) with ESMTP id 3B8EB27BD9;
+	Wed, 23 Oct 2024 10:54:26 +0100 (IST)
+From: Konrad Knitter <konrad.knitter@intel.com>
+To: intel-wired-lan@lists.osuosl.org
+Cc: jacob.e.keller@intel.com,
+	netdev@vger.kernel.org,
+	jiri@resnulli.us,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	anthony.l.nguyen@intel.com,
+	przemyslaw.kitszel@intel.com,
+	Konrad Knitter <konrad.knitter@intel.com>
+Subject: [PATCH iwl-next v1 0/3] support FW Recovery Mode
+Date: Wed, 23 Oct 2024 12:07:00 +0200
+Message-Id: <20241023100702.12606-1-konrad.knitter@intel.com>
+X-Mailer: git-send-email 2.38.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,34 +83,26 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-Proofpoint-GUID: OtGcL9mumtpo6hSYsDoZSUdx9ayuGTNy
-X-Proofpoint-ORIG-GUID: OtGcL9mumtpo6hSYsDoZSUdx9ayuGTNy
-X-Proofpoint-Spam-Reason: safe
 
-Fixes: 439fbc97502a ("spi: cs42l43: Add bridged cs35l56 amplifiers")
+Enable update of card in FW Recovery Mode
 
-Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
----
-v2: Corrected the Fixes tag to point to right commit
+Konrad Knitter (3):
+  pldmfw: selected component update
+  devlink: add devl guard
+  ice: support FW Recovery Mode
 
- drivers/spi/spi-cs42l43.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+ .../net/ethernet/intel/ice/devlink/devlink.c  |  8 ++-
+ .../net/ethernet/intel/ice/ice_adminq_cmd.h   |  1 +
+ .../net/ethernet/intel/ice/ice_fw_update.c    | 14 ++++-
+ drivers/net/ethernet/intel/ice/ice_lib.c      |  6 +++
+ drivers/net/ethernet/intel/ice/ice_lib.h      |  1 +
+ drivers/net/ethernet/intel/ice/ice_main.c     | 53 +++++++++++++++++++
+ include/linux/pldmfw.h                        |  8 +++
+ include/net/devlink.h                         |  1 +
+ lib/pldmfw/pldmfw.c                           |  8 +++
+ 9 files changed, 97 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/spi/spi-cs42l43.c b/drivers/spi/spi-cs42l43.c
-index cdc61cd089ad..9d747ea69926 100644
---- a/drivers/spi/spi-cs42l43.c
-+++ b/drivers/spi/spi-cs42l43.c
-@@ -267,7 +267,7 @@ static bool cs42l43_has_sidecar(struct fwnode_handle *fwnode)
- 			continue;
-
- 		ret = fwnode_property_read_u32(ext_fwnode,
--					       "01fa-cirrus-sidecar-instances",
-+					       "01fa-sidecar-instances",
- 					       &val);
-
- 		fwnode_handle_put(ext_fwnode);
---
-2.34.1
+-- 
+2.38.1
 
 
