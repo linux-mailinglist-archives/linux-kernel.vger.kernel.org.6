@@ -1,202 +1,131 @@
-Return-Path: <linux-kernel+bounces-377733-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377734-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C755B9AC336
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:13:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 133B19AC337
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8DF21C2295B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:13:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BDF71C23A3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:13:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1262197A68;
-	Wed, 23 Oct 2024 09:13:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=direct2internet-com.20230601.gappssmtp.com header.i=@direct2internet-com.20230601.gappssmtp.com header.b="Wzrabw00"
-Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33E7C19ABD8;
+	Wed, 23 Oct 2024 09:13:36 +0000 (UTC)
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A0198A1B
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:13:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD283199256;
+	Wed, 23 Oct 2024 09:13:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674810; cv=none; b=eyht3FVFS7Kx4Ng2jm9atXUXUmgMKKWvnNPBFTWu2MzdChg5ECrowZLt1hpmmHVRfrGQH1EG5kk9XN7afC/iDibtJb8SI9D0kqlVy0c+9mS41uUSOVMB2/edL+AGl+s8x0qIfaB9qshF2f+ljLe2ZH1wcLi2gRAAl1U0GRCHHyI=
+	t=1729674815; cv=none; b=DWzgbTPKe4sDwZQaDlnXz6qWdUIxXKOdwZaFCCX3e9eLeTcikNaxeJw+M6ZBsGWEr3j+VQLs7GZNJEcszbbm940Qmn0ARoCZ+b2oab+h8HZbALTpEoGvoSObelXc3e4qKLBJthuBc6XZLkDaqluEF76RAs4ca7Z+O/nv/iMtzkc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674810; c=relaxed/simple;
-	bh=l83gk1Q2NObWtSC/fBNnsEHlEY5tkWPemo7kLVuqOmI=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=s8hOqBJklNnnI5jejDEIvk1COicFkYr8bq2ccbaw7pzE9OHg6wF8UsgU3sH7DH3LGXoT+K/YKBopAjn5OuoIzYld7ALIEGc1R1rvhcbb1ORMdmUxtcWDnKiIJHjD9awRxLw5AY+H/fZdl3z5NeMr01tJ8Itt9yyGNza5lwBC/6M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=direct2internet.com; spf=fail smtp.mailfrom=direct2internet.com; dkim=pass (2048-bit key) header.d=direct2internet-com.20230601.gappssmtp.com header.i=@direct2internet-com.20230601.gappssmtp.com header.b=Wzrabw00; arc=none smtp.client-ip=209.85.160.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=direct2internet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=direct2internet.com
-Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460b2e4c50fso32260411cf.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:13:27 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=direct2internet-com.20230601.gappssmtp.com; s=20230601; t=1729674806; x=1730279606; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Lti3qy1E85rECkSb/d1EV+A5C9qwd/3M4OdA3YrbzYM=;
-        b=Wzrabw00a+tZhVnMlqAiikBgpXu+xusFB3kbrAbGBfhMy0gVqjRX4BTCjjDO8V9u11
-         TOs68wAsq8xh0DSXfJU9t4ON9NuO1xHrTe4/8I7L4x9pXSGRyY2Ybz3dWApE19jQyCAG
-         AT0d0ye/EPYi6M5tYwjV97QqShKsIblB+/QS3uLXAzInRJzvzZ7fPBO/R15C6iF1pnxv
-         xTXpd2tUaJqR5OQwZhJnKqUx1QaXpsA1eXmsnkTyUVbWGLVV8sg1/u9ymJlrUeIuBEf1
-         dm5YL08hdwVgMdH20vt1/UWEJ33JqDwfVHiGzGcTDjMeD/kkUQaZGjdKeczoMoBUrkWj
-         qsgg==
+	s=arc-20240116; t=1729674815; c=relaxed/simple;
+	bh=imUayfZ6FdcexhoYxLlSs1KViSlJqRC9UqM6NkcTej8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Wo1oOnj2AAxP8mygn+8wFeonEklP7LCYFIlLA+hro/DfjAQ0934svCMhHk9tSnmoZf6raapNA2E5k4nM6AhLGnFd5KzBfp6XBJe18IoPLJm1lIduAZc+HttQtG1D4FXa2RwAe5xYkAFzQ0PqzybRvgCBsIbC8glB9l15/6UY6X0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e290d48d3f7so5966937276.3;
+        Wed, 23 Oct 2024 02:13:33 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729674806; x=1730279606;
-        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Lti3qy1E85rECkSb/d1EV+A5C9qwd/3M4OdA3YrbzYM=;
-        b=Pa2CDYgNpjWZmuINlJgKPfqTRPweTT9cQx8snrx3fcTLnFW6cbsali/urhLzokAo8J
-         BiyYtg9rky49Ljre7MFq7hGK0YVD0Hc7Evjz4HoOIFtZkwF1iu9lFWf4Tyf6gEfxCVZE
-         otNNJR9Oaj0jGpbifOtzPo6hMv0D6oTNMSUt3qeHJGcepWkKW3F3YI7XRRVQler8nGZW
-         m9ShMGnJY6E4a44HWNVzeD/ESE9Km9U2YtDWGXhYIxqhSWCQKNKS+6iSV+/tH0goiFFL
-         HW48RkfXSdJ0kc4B/KAWySWuspLLG53KgFFYyvt9Vs3o2hyswCmwTvMxtUbA65tt/je1
-         CsLg==
-X-Gm-Message-State: AOJu0Yz+y/eYK6NEqX2/xbxHdMCK+UGLH0rqfni/t/Ph3YYPLkkX36Zh
-	G/Dtp7yUtQf8s8gYM4x1eQKOs3vbbhBeB+sjEpCrrKxIFOYarzzolHyqdtExifbuhkDiuooV/LU
-	fiu1KZGcs3abS5KKZtpKW6FDdJFRJXP8uRQw1JvkT0krfLv9R5Oc=
-X-Google-Smtp-Source: AGHT+IEZIQu0pE7nzpeTrcgZhP+3n8Kj0BAurwvs/FD9thN1cZ/cPWiUtGZhyNKtguMUK4qWwiW80HmX5siAyoMmtNM=
-X-Received: by 2002:a05:622a:15c9:b0:460:b93f:e2d9 with SMTP id
- d75a77b69052e-461147270dbmr22113561cf.52.1729674806340; Wed, 23 Oct 2024
- 02:13:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729674812; x=1730279612;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=L+oDcqb1QYvL5id/iCpKgV/nPQYafdkBvaUvh/k83pY=;
+        b=ZxFkankLiQoFAABfo369fJzq1iOdWnJtFLIbfjYFkPD5d2+eJ7WRuFpQK4glV3o0iY
+         FLzUgLbGO9HGCUCHq6dE5Nn9PYCUHNTR13bee+kfr+x52IXGXuDguD3SdTvvZj6i4K82
+         YMj9OsaC3jshTF6U8cb+Li+89eNkl0noC8EUJEq9k2co5Ov2y75Cuhvm09W77bMRcad2
+         2xJ4uGsJSo5EHhwjBE/F1y1CQLfYISWaUZZh5SlRnpZL4Rs43DH3LZG/gHAUI0qoS+QE
+         Tj/vIBJDM11Y92LxpS7TW2JjPlMIyW7vQ8BF/QHUX8DxjznXoSG3lEj6b99jfxXUoBH+
+         Atkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWk0XOlL0BZxsLGLG8HSrLeZp8SWn/f2vnGzLgTMWZGIO8prYZnYnHwNWlRXbUgJ36JD3K4nThpmhvdLcqPyBKJc1qP@vger.kernel.org, AJvYcCXc8LNFY8TntlxVKPbcuVgqYNbx7/GGYVi8XOouI7OQ4RpL4XDb8PT7rMX9YeZGmxTJu/x10cNyMbozoCE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaudJ7x2nDIkKrl2A4RA1ZsSXFJKGXKQUanpWBLYmcZQtcG6j4
+	PQdzZ4mkqY9R2Sd8kEHg0dSZ083HAMNyA14omXQrGuPi/DFvNeHERbW1HSj9
+X-Google-Smtp-Source: AGHT+IEsNwcalMQATo4MSt55vZY21sRCz6h2iM41AreAqqckBUDClOGkbN4nmAKeolxg7heT/hDheQ==
+X-Received: by 2002:a05:690c:668a:b0:6db:de34:8049 with SMTP id 00721157ae682-6e7f0e40050mr21056927b3.16.1729674812351;
+        Wed, 23 Oct 2024 02:13:32 -0700 (PDT)
+Received: from mail-yb1-f179.google.com (mail-yb1-f179.google.com. [209.85.219.179])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f59f5939sm14531967b3.6.2024.10.23.02.13.31
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 02:13:31 -0700 (PDT)
+Received: by mail-yb1-f179.google.com with SMTP id 3f1490d57ef6-e290d48d3f7so5966916276.3;
+        Wed, 23 Oct 2024 02:13:31 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU54WYoroji8/PHEVCHie3PKoPsEoLRWShe6evK3lELqQjkqTDXvLXYhulnx2IiaIzV7w52ZY3IrAge6X7KcP+kHVyC@vger.kernel.org, AJvYcCXRqwU9cmKg6zvlGeolKrPBMiWsQqgb63X9laKpw/GMkqECSCS++xGlHvIn0gXQNFFoiKRnBbO2RN3Grnk=@vger.kernel.org
+X-Received: by 2002:a05:690c:fd5:b0:6e3:4436:56ba with SMTP id
+ 00721157ae682-6e7f0df6312mr22676227b3.8.1729674811120; Wed, 23 Oct 2024
+ 02:13:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Rolf Stenholm <rolf.stenholm@direct2internet.com>
-Date: Wed, 23 Oct 2024 11:13:15 +0200
-Message-ID: <CAMdjFop0uzmi__Jx979sQEVviPNSZBpKUBdcQYnVgycsuwYL+g@mail.gmail.com>
-Subject: Issue: measure /proc/loadavg is inaccurate and missing proper documentation
-To: linux-kernel@vger.kernel.org
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
+ <20241022012809.1ef083cd@rorschach.local.home> <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
+ <20241022043037.13efb239@rorschach.local.home> <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
+ <20241023044711.3eb838fe@rorschach.local.home> <262d7758-c752-49f6-87ef-4f75d681a919@yoseli.org>
+In-Reply-To: <262d7758-c752-49f6-87ef-4f75d681a919@yoseli.org>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Wed, 23 Oct 2024 11:13:19 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdXKCWnFuyOzQyAWdEV4EhqXYXJFn4vCw5ptZ5=sbOCbxg@mail.gmail.com>
+Message-ID: <CAMuHMdXKCWnFuyOzQyAWdEV4EhqXYXJFn4vCw5ptZ5=sbOCbxg@mail.gmail.com>
+Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-m68k@lists.linux-m68k.org, 
+	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Issue        : critical measure /proc/loadavg is inaccurate and
-missing proper documentation
-Kernel Files : kernel/sched/loadavg.c, include/linux/sched/loadavg.h
-Version      : Any kernal before 2024 october, from
-https://github.com/torvalds/linux 6.12-rc4 the issue is exist
-               since the first linux kernels from the 90s.
-Reproduce    : sample from /proc/loadavg while creating load on the machine
-               (type "openssl speed -multi $(grep -ci processor
-/proc/cpuinfo)" for creating 100% load and
-                 "watch -n 1 'cat /proc/loadavg >> /tmp/loadavg.txt' "
-to create a 'CSV' file to get statistics )
-               or use a math package to examine the quality of the
-algorithm (or lack thereof)
-Desciption   : Measure /proc/loadavg is critical for administrators
-everywhere. The measure has inaccurate
-               documentation and output is inaccurate. This is a bug
-report to try to at least improve documentation
-               and in the future improve the accuracy of /proc/loadavg
-values. You cannot understand the measure
-               unless you actually read the kernel source code and
-then only if you know similar of types of
-               methods used for similar problems. Comments like 'Its a
-silly number but people think its important.'
-               are not helpful as loadavg is important for admins
-everywhere to understand if the system is
-               overloaded.
+Hi Jean-Michel,
 
+On Wed, Oct 23, 2024 at 11:07=E2=80=AFAM Jean-Michel Hautbois
+<jeanmichel.hautbois@yoseli.org> wrote:
+> On 23/10/2024 10:47, Steven Rostedt wrote:
+> > On Tue, 22 Oct 2024 11:21:34 +0200
+> > Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+> >> I was not really expecting you to review the m68k one no :-).
+> >> I think I have other issues which might have impact on ftrace too.
+> >> For instance, when I launch cyclictest I have a warning about HRTIMERS=
+:
+> >> # cyclictest -p 99
+> >> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
+> >> WARN: High resolution timers not available
+> >> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
+> >>
+> >> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 Max=
+:
+> >>     3516
+> >>
+> >> The latencies are quite high...
+> >
+> > Yes, if you don't have high resolution timers, the latency will be high=
+.
+>
+> According to my config, I should have those:
+> CONFIG_HIGH_RES_TIMERS=3Dy
 
-Load avg in /proc/loadavg is thouroughly discussed online but often
-wihtout undestanding the measure ,for instance
-a good article about loadavg is (which includes history and background)
-https://www.brendangregg.com/blog/2017-08-08/linux-load-averages.html
-The article misses some critical ideas behind the calculation but
-shows accuracy issues with current loadavg and
-that the documentation of loadavg is lacking. The kernel code shows no
-understanding of the original reason
-for the measurment, therefore the following text can fill the gap one
-the measure and why it was created.
+Does your hardware have a high resolution timer, and do you have
+a driver for it?
 
-The purpose of the calculation loadavg that dates back to the 70s can
-be summed up in the following sentence
-(Linux loadavg includes some idle processes in loadavg that are not
-CPU related).
-     Approximate the average cpu load over 1 min, 5 min, 15 min.
-     (for linux this is approximate average load over 1 min, 5 min, 15 min).
+$ git grep hrtimer -- arch/m68k/
+$
 
-Old 70s TENEX system (see link above) needed a cheap way to calculate
-a loadavg without a large computation
-footprint and memory footprint. The solutions was to approximate
-normal average load (T1 + T2 .. TN)/N with the
-differential equation
+Gr{oetje,eeting}s,
 
-     ApproxAvg[N+1] = ApproxAvg[N] * C1 + Load[N] * C2
+                        Geert
 
-The idea is that it will roughly replicate the load average over time
-with correct constants C1 and C2,
-however it should be noted that when a system goes from no load to
-full load the 1 minute measure is at 0.62
-at 60 seconds and above 0.9 after 150 seconds making the measure quite
-inaccurate.
-There is a dangerous belief that the measure is exponential and indeed
-there is an exponential constant in the
-code, this does not make the actual diff equation exponential. The
-TENEX code used C1 = EXP(-T/C), C2 = 1 -C1
-where T is 5 seconds and C is 60, 300, 900 which are stored as
-constants in the original code.
-Why C1 = (C-T) / C was not used is not documented from the 70s TENEX
-code but the taylor polynomial for the
-C1 TENEX constant is E = 1-T/C+T^2/(C^2*2)... which is roughly the
-same as C1 = (C-T)/C.
-Because loadavg is an approximation of actual mean it is possibly to
-create an easy least square error measure of
-loadavg to quickly evalute other loadavg alternatives methods, the
-equation is simply
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
 
-  Square( (ApproxAvg[N+1]-Avg[N+1])*(ApproxAvg[N+1]-Avg[N+1]) + ...
-(ApproxAvg[1]-Avg[1])*(ApproxAvg[1]-Avg[1]) )
-
-With this measure we can get some alt calulations using 100 measuring
-points where load goes from
-0 to 1 instantly and we only include points where the actual average
-goes from 0 to 100.
-
-Examples:
-C1=99/100, C2=1/100                        , E = 12.4
-C1=69/70 ,  C2=1/70                        , E =  6.98
-C1=exp(-1/100), C2=1-exp(-1/100)           , E = 12.57
-C1=69/70 , C2=1/70 avg over last 10 values , E =  5.23
-
-Which shows that current constants used in the calculation are not
-optimal and can be improved. Using additional
-datapoints will improve the measure but only slowly. If there is no
-memory considerations for storing
-all load samples for a given timeframe an integer queue with a stored
-sum could be used, where sum is updated on
-dequeue and enqueue of the queue allowing constant time calulation of
-the actual average.
-
-It can be noted that in the current code loadavg.c that:
-
-- Function fixed_power_int calculates exponential despite the metric
-not benefiting from this
-- There is a distributed summation over CPU which generally isn't
-required in a differential equation
-- The code comments are "funny" but not very helpful to understand the
-metric and this metric is important
-
-And that in loadavg.h that:
-
--- The EXP_1, EXP_5, EXP_15 all look like copies of the 70s TENEX
-system, the values could be improved
-
-Because loadavg is critical measure for many admins and not understood
-it would be good to document what loadavg
-is trying to calculate and how it can be improved in later kernel
-versions. Improvement of loadavg could save quite
-a bit of resources for certain admins and data centers.
-The exact solution may depend on how easy alternatives are to
-implement but allowing loadavg to be sample from
-another loaded kernel module or read from a user space application to
-replace current values could help admins
-everywhere to get a better customized measurement point with the aim
-to improve the measurement loadavg. For
-instance the kernal could read from a mounted device file like
-/dev/myloadavg and use that as loadavg measure
-based on hardware measure or clever algorithms.
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
