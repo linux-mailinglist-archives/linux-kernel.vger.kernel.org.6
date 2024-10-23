@@ -1,695 +1,292 @@
-Return-Path: <linux-kernel+bounces-378039-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378040-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E50629ACA86
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:47:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268049ACA8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:50:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A177A283CBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C5EB5283B7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 28AE81C9B71;
-	Wed, 23 Oct 2024 12:45:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B60911AC444;
+	Wed, 23 Oct 2024 12:50:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="fKrSRKGH"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="mOzvynGB"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2074.outbound.protection.outlook.com [40.107.94.74])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E0DF1C75F3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:45:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729687538; cv=none; b=dWbnGLknxLBXkqp3fZfDpEz3Hc6CV4u1XL20WzJ3BCyGI+I8bFSP2cXt7ve5NnBmZYxjLRv5se84JvNXWxW48Apdixv4w/Y2a9YvJkBxL0BCDosN41GGrD6JNx0m+7U4llSg0r3Lv3CAe4FB2CqArkiFjAqRVoDLv3Q++oQw3C8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729687538; c=relaxed/simple;
-	bh=K/Y7csYRI3/oxlx7xO3kDMrHXFp/AihAgtRQUEmCWm0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=ot3DljZ9L8SN3RRO3ei9xl96Ef0OiPeYAwujddrsc0S+V5821g85BpR4ft9xpA13JdL0oNuyISgDYnIUd3ADEZQmquoBjCbl2tF7asLF82neHR1we8k5bRjYN4Gtt8bl8upkakgUwc7GTIqZ1w1MRPjUs+sbB12k/k+6TljNqnA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=fKrSRKGH; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729687534;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=SPxR7C/HaEIovhverKHKQ0rL+reVbPsHUmzV/lR/YoM=;
-	b=fKrSRKGH34Pl1JXMSTl4kBklEvyobdyPETWAIi7Oy/GjxI1i+Xi4CtIMz9YK6A37iOOl13
-	tDILEW0yAUNZ6a4cOnynSdtgOIABqJDyRj+iH1t3DZk/nUBj5SkwZdn5L7mz8cgq1t1qat
-	n9xHKV22Kry9JouQPzy1tZO6dyOQ4P4=
-Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
- [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-632-m4rOiSuSMRavyfBPO-D5jg-1; Wed, 23 Oct 2024 08:45:33 -0400
-X-MC-Unique: m4rOiSuSMRavyfBPO-D5jg-1
-Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4316138aff6so44437305e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:45:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729687531; x=1730292331;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SPxR7C/HaEIovhverKHKQ0rL+reVbPsHUmzV/lR/YoM=;
-        b=PBthAn6xmq9h6Nzf7OsDBiPpKiht7E5ks6O7y8S7iYcx2jJNl1ZwvLUCucBxUtEuqL
-         1MMeUPDQTATw0JkZcggiNfDGiALE1+04yZ1JnpkI75AWaoURS0/yDYTY7UrSE0Ujfg76
-         iL0Z4MGwG/2jTNffriWTdFN5VrPHnAnoYOqlJgrZ8dAA/1imFRV6vzLRGvFmzmhgP9LI
-         aZlpsxLUQCD6YPjm/b9iFWhkbDEKgwUxjjA50UUDM4zTfQLkafMjTKvadFGkzOYL4+aG
-         /vEOuniEKB0mPOesQzdqYVI8BEz0poJY0pjOUGknsOju0VJkwwvVzatW4YVGNJAHBR50
-         ED9w==
-X-Gm-Message-State: AOJu0YzQKgUIusLIpQSy3OlGPEHcdyQ8fwU4aLceMTb323b9n+WRnUt7
-	ToUz1cWrZHQxLHydCnpcAzFUf/vHNxbz7Ns/cdPvDszNz28OArhIin7JLE+8HLsq/N1sbt0/lTu
-	BBIfTzJMhM9OhESQRC3EdlhGDYv9EU3YdwyK1SkDxenGoatNKnda1rXBWGJS+3bqYk3oqDSoFLG
-	8UvbFJaiZjdwSJMfTWIEekT9hmFvLdxrGSoi4gNLP2dKV8d3pu
-X-Received: by 2002:a05:600c:3d1b:b0:431:40ca:ce6e with SMTP id 5b1f17b1804b1-431841a2f84mr20455535e9.31.1729687530629;
-        Wed, 23 Oct 2024 05:45:30 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHTYFIm67sbi244UmXzIKKh5+7jpM4o3zWGaat+q+NnaNS4JnfgCwvMl4jpJLGZUJPet19/yQ==
-X-Received: by 2002:a05:600c:3d1b:b0:431:40ca:ce6e with SMTP id 5b1f17b1804b1-431841a2f84mr20455035e9.31.1729687529884;
-        Wed, 23 Oct 2024 05:45:29 -0700 (PDT)
-Received: from avogadro.local ([151.95.144.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd693fsm15619655e9.2.2024.10.23.05.45.28
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 05:45:29 -0700 (PDT)
-From: Paolo Bonzini <pbonzini@redhat.com>
-To: linux-kernel@vger.kernel.org,
-	kvm@vger.kernel.org
-Cc: roy.hopkins@suse.com,
-	seanjc@google.com,
-	michael.roth@amd.com,
-	ashish.kalra@amd.com,
-	jroedel@suse.de,
-	thomas.lendacky@amd.com,
-	nsaenz@amazon.com,
-	anelkz@amazon.de,
-	oliver.upton@linux.dev,
-	isaku.yamahata@intel.com,
-	maz@kernel.org,
-	steven.price@arm.com,
-	kai.huang@intel.com,
-	rick.p.edgecombe@intel.com,
-	James.Bottomley@HansenPartnership.com
-Subject: [PATCH 5/5] Documentation: kvm: introduce "VM plane" concept
-Date: Wed, 23 Oct 2024 14:45:07 +0200
-Message-ID: <20241023124507.280382-6-pbonzini@redhat.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241023124507.280382-1-pbonzini@redhat.com>
-References: <20241023124507.280382-1-pbonzini@redhat.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42716130AF6;
+	Wed, 23 Oct 2024 12:50:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.74
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729687841; cv=fail; b=ENewKu6E4miQLnnT5cilL7kW5nu5aJBBJVTafv09MWn8TxRcXXiyiMEHxpWQDPzD/Vy2o/52EmhJ1EtlGp0s8B93rrEDIjLQlMwnlyqpd5m/F5F+E2VRb667nZK3r5n5DJ+bzkCkbFLiT/MT4nyv6s6HJr7IPmB5PzyuylxtJqQ=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729687841; c=relaxed/simple;
+	bh=vCRe4xo+h9wEkqYD6QPJ1466cl1exLe+qQ919fS+kkM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=FhjHkzO8iHSv/D7ME2upmiWral527aetXkZRfebr2CDaSy+yxsk6k1e1lbeHkTWXYY7Ghjd0XvDoau3ACOBmXAHHSCoYC6NwNUj1isa63vXbc3gOSavA+V9TzLA9jFxuzkaEMdeUPxzYJf1NrrJDU4vraLS2n3zFOLG4bi+TP7E=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=mOzvynGB; arc=fail smtp.client-ip=40.107.94.74
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=acjCpcY5V1dMrztEwoqKbQhrngtkkQw7TV/SwDiambBHDbspBFtK0kHztAeTvciusLwkDEfiLJ+nIOFpOd6ooEPWFHJs4ThlWBspdB3nHSPn05xiWNhO2fzz0I4j7oIx3z45HxNTDuFptm2HCHDLVmB0XS3+WunVhV5Idl0LAqqTJD+RyFA7+GVbM+VGNHwwv4tsdYhf6LahPbcIJbvd44BTVPJUpmieMLFJMvy7xOisCsXBlvf96Md/yUFSra4V8GjW3pWJPo6Bre0AXpk+N85CZNujUluQ5zuH8rmAThXfeaFEOjnhDLFs21iUwQTrf2pgMS7EswXD/M9IZXJMhg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=p+h0hHzNR5jn8jjKGnXTgh87um3+JK4hADNO/mSEv0Q=;
+ b=bZ5Wjo1XgoArNIeDg4IHQzxIutxeVndAYyQC2n3lal1J9DTsixRXEwFihozlheLwyitF3UVy0sQcBDclFFVjTyET+13DCcwtdR77mLvuRPTHHR23M2sXMOQTTa86QlyDfcTnwfZd3TNNFQ8TCWTaS1x6+AiZ0KpE0jPMEs2VfoGLKxXl4MzZGaFE216C0p1GpyQ4jT8iOD/X7Lxi6v4gvdcj47emgpZNB9Xc53U1Te6cMC3/t42kO2SnXZ+Zd3RVo2RqIl2et3UigmvwD8y8a6H3o0TItzawRHB3vpJHx37N7WlFSxiF0UJ9OxSc7OD8VZj6SUNMR/Tns64l9fasAQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=p+h0hHzNR5jn8jjKGnXTgh87um3+JK4hADNO/mSEv0Q=;
+ b=mOzvynGBzauBY3uc1uos2JOvrywQj0EfziTAlu54k6a8ZqdtmjXwrxOKY0RyRHPUqksc29odb2wrrM4/Bjd13g8GmYsnujj/WbybNgYhz08mjCgYj+VVBW1+kjnvQyhc88FgwRwS1n0p3S1OLo3SijArPo6y7ZrWrxhfAIzFAh4=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com (2603:10b6:a03:4f5::8)
+ by SA1PR12MB8597.namprd12.prod.outlook.com (2603:10b6:806:251::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Wed, 23 Oct
+ 2024 12:50:36 +0000
+Received: from SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30]) by SJ2PR12MB8109.namprd12.prod.outlook.com
+ ([fe80::7f35:efe7:5e82:5e30%6]) with mapi id 15.20.8069.027; Wed, 23 Oct 2024
+ 12:50:36 +0000
+Message-ID: <c1d30ad1-868a-480a-9601-32106e8d2baf@amd.com>
+Date: Wed, 23 Oct 2024 14:50:15 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 2/3] arm64: dts: zynqmp: Add DMA for DP audio
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, Jaroslav Kysela <perex@perex.cz>,
+ Takashi Iwai <tiwai@suse.com>, Liam Girdwood <lgirdwood@gmail.com>,
+ Mark Brown <broonie@kernel.org>,
+ Laurent Pinchart <laurent.pinchart@ideasonboard.com>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>,
+ Rob Herring <robh+dt@kernel.org>,
+ Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+ Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>
+Cc: linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, Vishal Sagar <vishal.sagar@amd.com>,
+ Anatoliy Klymenko <anatoliy.klymenko@amd.com>,
+ =?UTF-8?Q?P=C3=A9ter_Ujfalusi?= <peter.ujfalusi@gmail.com>
+References: <20240910-xilinx-dp-audio-v3-0-75560793f4d0@ideasonboard.com>
+ <20240910-xilinx-dp-audio-v3-2-75560793f4d0@ideasonboard.com>
+ <123f770f-ceb6-4c8c-a065-ace2e02dc65f@amd.com>
+ <9f7f0fd7-bca9-4c92-9590-ce621dce7f5f@ideasonboard.com>
+Content-Language: en-US
+From: Michal Simek <michal.simek@amd.com>
+Autocrypt: addr=michal.simek@amd.com; keydata=
+ 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
+ 3i3l5DA=
+In-Reply-To: <9f7f0fd7-bca9-4c92-9590-ce621dce7f5f@ideasonboard.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: VI1P189CA0017.EURP189.PROD.OUTLOOK.COM
+ (2603:10a6:802:2a::30) To SJ2PR12MB8109.namprd12.prod.outlook.com
+ (2603:10b6:a03:4f5::8)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR12MB8109:EE_|SA1PR12MB8597:EE_
+X-MS-Office365-Filtering-Correlation-Id: 2bf9c49a-bfe8-4fbd-d0ff-08dcf3614a0c
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|1800799024|7416014|376014|366016|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?L0pjZDNVMVJ3bWhSNFdTVmxYaHpRQ3dRaEdZVllPTFJiRS9uU0dkaUIxb09w?=
+ =?utf-8?B?bGlQNCtDaE9IeUR4OTBtOGJBTzNWVzYwUHdjNFNGVFRoOVc4Wk9Sd2pHcSsw?=
+ =?utf-8?B?Z1F5S1U4bG1TUVRFZ1ZlL2xrUEtOekhCdkQ5dXBIOFlHQUgrWVU3bEhhQks1?=
+ =?utf-8?B?OFp5Wm5mOHVjRGJna2VqZ1FWb2JNLzFCbTdzQjg4VWp0TzRJY3RjN2w5M2Vn?=
+ =?utf-8?B?U3RYNmZLQzIwTkg1c1lFYVJ2SjVMeVJMczZzNCsvVTcxNkRLOXZEZUZwVWJk?=
+ =?utf-8?B?NndCOTY4c1pwYVVvd3Q4NUc2RVRJT2hxT2I5bnlWWHp4eTAzQS9Mek84a2pM?=
+ =?utf-8?B?MkpJNnp5ZGpZMWd1dGdJNk9CQzBscmw4QVR4WVZSZjhWSlhWRlB3QkRBTHZJ?=
+ =?utf-8?B?cVJLZ3VVWkRjbERxS1JSYjhWTlpYSjJxdFIzZ0s1RUovaTRGZ3FzQVEyUGdy?=
+ =?utf-8?B?cjJmeEw3Ui9FanFqVEc0Y3dqUXdTOFJTSmVpN2c4ZjFoU1QrZzBjZnhHdWpt?=
+ =?utf-8?B?YWIxU09JSTlKVGNicnhRN0dCZnh5Rmd1RThsU291TGxmZ1JCV1JUQU9teXVx?=
+ =?utf-8?B?dldqS2dzQnkwa1RGbEpGcG9QYWhXOHlCNmRnRzV6cVRlUU5Td1pJelpKYnoy?=
+ =?utf-8?B?S1FqWUlKRzFVS3RVbG1mbTErTGgwdnpXay9WRlF5RlJRVDI1TE5EQjVER1NO?=
+ =?utf-8?B?QTRkMk9nanYwdW1nL0tyNWxzQ3BvaFdyUm52SHA0SE9LL1kzVVVjeGoyZEVl?=
+ =?utf-8?B?L1ZxcHNCbnlENXBQS0cvTGdHRC9LdnNPMElvV0R2ckdQZUtMZVlvRzdiWmw3?=
+ =?utf-8?B?QTFYOHJuNjMwdUcyOU9ZdzUrWnN2U0psajRhSEJOc0d2emZFemlKdnNjbE84?=
+ =?utf-8?B?OSt2MXhaN29DS2VOYjU4bXY1V1VuemNnTTBNK3hZMS92ZENJSGFOa3ZNRXhF?=
+ =?utf-8?B?U0tod3BKY3gzU01vVmJSYUxPRm50anlRdlhyUkdwZksrM09XVk9Ga3ZoQ051?=
+ =?utf-8?B?VjZld2oydXJlMERqUUs4WFViU0lkRnJJejVDSzlNbXJqaUEvbG1zMTJoeUlF?=
+ =?utf-8?B?cndUZENncHk3cGFIWVVwUytaaXk2WjAyR1RXV2ZwZDNRbDRuZWE5RVYrTXNz?=
+ =?utf-8?B?TGNWTndPdVo2eEhvNFJiSWZqRWp2eWhpVWRSczFDUUprK3ZTNTg3OWg3Y0lO?=
+ =?utf-8?B?MXo2bFAxZkpmaCtNWENYRlZ0MDRhWTc0cVJZZmszaDRuT2F2YzFCR2FzZkF2?=
+ =?utf-8?B?TWVycnpSSjg1SzlVY29lbTZ1LzBQWk1hUzlWclhKKzlUV3dzOTJEOHJ1UkV5?=
+ =?utf-8?B?eGFCakM1TURYYUJ3QmkyNUR2WlhHN2gxUGFuSDBuNFVMZkluTGJMMVpWdEhq?=
+ =?utf-8?B?QlNEay9GNGZVUlprWmJ1aGRsTVB4bkJsU1hWTzZPN09MVThieUxQNk5sWEVK?=
+ =?utf-8?B?U0NZMUZ2WTZraGdReTFaTjF3bWp4MWhwZUI2ZmZVZlN3VUdxcHlNZEVZa1ZQ?=
+ =?utf-8?B?OFNOeTJiekNEelpvZWZvbFEvTUd5UmI3NUZualhuRnRuWkhmR1UxUkIwTjJr?=
+ =?utf-8?B?SEl0NExveU1KOFFrMWcwL0lKSEhpSGdURUxEd3grL3JZemtmOS83bHc5YkJZ?=
+ =?utf-8?B?SFIvM3FpYVlZdXViK3pGUzh0RktRZHdhT1RMdksxMUxTb1MzWkNyY3F0RDh3?=
+ =?utf-8?B?ZTRmNU1BakhVbjk2SEdFeUZoUENqVmlZVXFVOUtWTEVkQnhMUTdTUnNPMGhO?=
+ =?utf-8?B?enRyaHY4T3NERHd3ZGJxSG9OM25NNDZjR0pWWGx0RFZHY3NqYUkxa2dCOFpT?=
+ =?utf-8?Q?iEM1rHnPJwu/PTqwBai1XjBE5qwqt/ejsAzXQ=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR12MB8109.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(7416014)(376014)(366016)(921020);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?UEtaRjVQT1hkcVhkZzhzUjVzeG1Fa2I1UTl0Q1F4TjlvVjY0Z1FYd25IcDZZ?=
+ =?utf-8?B?ZjlLRkFWSHEwV3drK2hxTDc5STZXYkVFSFRKaUJwdHd4aHpzQi9acHN6eFQ1?=
+ =?utf-8?B?K1ZZOHRrNWFuQTF2aU1lbE9jVmpwdEtPZVh0Zyt5NUxZa1JCdnVTQzFiWThH?=
+ =?utf-8?B?MXA5N25hWjV3L05sa09pQTJ2T01abUhVWFNuaUR0dll3YWFGQlNGYk0wenNo?=
+ =?utf-8?B?S2NMMkpTUkNsS0Y0bU9IczRyR2FaejVaRW0wdlMyRkIxd2FWNHpLV1JUS1VH?=
+ =?utf-8?B?enBrckVHdkNvTzZmSHJMZ1hwZmhBU2lmcGtyZVhIWTRRMkNaaWVYdWh6eVdH?=
+ =?utf-8?B?SGludkMwYlRQUUdsZXN5VmdBMXczWHJ0OXlHcW9tMDBBTUp2TmxBdU1UdjJL?=
+ =?utf-8?B?ZXo0WXdZMVU4R3dQWjFyU0Y0TmtseW9JNFMwcHZyVW01ZEhvWXdic0FwTmJB?=
+ =?utf-8?B?eTIvZUFqOWZnQXM4bXpoWTJqQWFnWVZ2bnhtN3paWFA5eGkrT2RUYldwSDFL?=
+ =?utf-8?B?d25DV0d4aEJQcGh2RG44ZTI4REhJc2lkTWJhNXlWbGQrRVV2c1VYNVREdk83?=
+ =?utf-8?B?NEQwcVJRNThTNFpKNk9CR0EvMDB5K1pudlh1Nys4NFpGMkh0ODROakVpT1Zr?=
+ =?utf-8?B?b21kR0FDcUlnL3UvZlV4VXA2dTR5aFBmcjR6dE9GaHJ4c3JDSmRINi80cXlu?=
+ =?utf-8?B?dk9aSlJUZWVvWHgrRnZjQjdISVdsRE9JMlNIRXFaMjRKZmcvTE9Cajl0a2p0?=
+ =?utf-8?B?Y0taU21xN1VQUzRub0pQL210bzNodGNkVFdiaXYrSjlPRkdCNzZnVTlsN0hU?=
+ =?utf-8?B?bWUzdWx4S25HY0lBanErelBuLzZ2MjdzelNFN2U4MnFrNUVwNTVDOUFUbFFt?=
+ =?utf-8?B?RCtCU2hCK0JLcTZleUlxbXB5K3hVSUlwS3JUZmx0NSt2Lzd1bUhNdTE5Q0dm?=
+ =?utf-8?B?Z3hheFpLK3ZXTm5NOHBOL3JQakFqUjVqQTFnNkpmbmsvMXZKL2gzNUUxWE1a?=
+ =?utf-8?B?SlVPdktPbElHTjRaQzVLdjRlTlFMRlA3UEI4bng2NVM0aUlHUDFvQ2pRZnBB?=
+ =?utf-8?B?M25DK1VtcmxVYXdOaEhDNWVaT3FNT2FhbldSVlpZdEhucHZsbUJvSmFsdkta?=
+ =?utf-8?B?OFAzR1UvSEEwVmhucS9zV3ZZVU5nMHkwMzVDczFTTWRTSHk3eHk1MmJSRk4z?=
+ =?utf-8?B?V3hscU9ad0tpdTd6RWRtaFpacFV5SmRFaHJ1TFFEZFN5VTM1VVRiaVZPd0ho?=
+ =?utf-8?B?bko2RnV4dWVsSkR5bURLWDdHM2F4ZUZDOEFKQnlpRnVZb3N5Q1FkVzdQWVA3?=
+ =?utf-8?B?ekJTSzdZem9tc1Y4a2thbTZTanYrbnh2MytVUTUxZys4WGJSRE42WDlqdnpK?=
+ =?utf-8?B?TkcvdjdlUUVHeWwwek5GWENscm15TDZEa3lzY3FIM0hZNWYwUmNvaVJaVHRi?=
+ =?utf-8?B?S0x2Qzg2aVE0a0xjOXppbCtDM2w5b1czNW4rbm43VjI3bFAxNGxPdjc4djJv?=
+ =?utf-8?B?TCtSdUJyMDFQZlNtV2JyVUtjNjlBMlZ2SGt0VHZqNU9ZMlNNTkk1UWZxWnR5?=
+ =?utf-8?B?YUVkSjdtOEg0UmQ4VzNLbDhlWXpVSmsvVktrZS9XUk5IN0ZoN3pRWUVDR01h?=
+ =?utf-8?B?VStvcHg4VmhtbmhYRHR0eXdMZFI2UHFsUXQ5UmphazFycXBRZnhMNzdwK0Jz?=
+ =?utf-8?B?V0xBS0RBeU5aaGtQTG10YUNBQThGOWZNeUVSMjRYTlZYUWFlYXhzUGtWcU9l?=
+ =?utf-8?B?MU52TVhqc2hNZnBZSWV0TmpUUFVwWFdJNkZwQ1JvM0MyeC9jZnQ4aWxxY0pn?=
+ =?utf-8?B?aE5zUzhKNENVYStDK3VjTXJsc2NvbE9mWjJ2UWhNWXJWa3VaUnhNS3NyYVlC?=
+ =?utf-8?B?Wk1PTm0vTURLTDM2LzBUVUc1SkZOVVMrc28zMm9ueXpXK2ZPejdxeXZuQmJF?=
+ =?utf-8?B?VElML1lDTDVEWXNDQU9hUGdFOGRIcEpmQWFMeTBtc1VKdWx3c2NnbGJNSUZ1?=
+ =?utf-8?B?QVg4R1BXdklqc2JNcEUzcytrYkxvODN2aDdoa0hXVUFkMXNZdWpZNkxkb1Y5?=
+ =?utf-8?B?UWdENWpUQTRkd2dFWnYrelpydmM0Y0IvMHNod2VrbWpIUzBpZTBKRkhRUVhn?=
+ =?utf-8?Q?HMJPJGBKVCigvsrkiq7t+9tZW?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 2bf9c49a-bfe8-4fbd-d0ff-08dcf3614a0c
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR12MB8109.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 12:50:36.2372
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: sfo7EvvNJAHyh663D4vSz+BAObJTjcyMO9uAPb8fgjlr2ywgmgj087kMc0AQ0xf4
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8597
 
-There have been multiple occurrences of processors introducing a virtual
-privilege level concept for guests, where the hypervisor hosts multiple
-copies of a vCPU's register state (or at least of most of it) and provides
-hypercalls or instructions to switch between them.  These include AMD
-VMPLs, Intel TDX partitions, Microsoft Hyper-V VTLs, and ARM CCA planes.
-Include documentation on how the feature will be exposed to userspace,
-based on a draft made between Plumbers and KVM Forum.
+Hi Tomi,
 
-In the past, two main solutions that were attempted, mostly in the context
-of Hyper-V VTLs and SEV-SNP VMPLs:
+On 10/23/24 14:00, Tomi Valkeinen wrote:
+> Hi Michal,
+> 
+> On 08/10/2024 11:22, Michal Simek wrote:
+>>
+>>
+>> On 9/10/24 13:19, Tomi Valkeinen wrote:
+>>> Add the two DMA channels used for the DisplayPort audio to the
+>>> zynqmp_dpsub node.
+>>>
+>>> Signed-off-by: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+>>> ---
+>>>   arch/arm64/boot/dts/xilinx/zynqmp.dtsi | 7 +++++--
+>>>   1 file changed, 5 insertions(+), 2 deletions(-)
+>>>
+>>> diff --git a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi b/arch/arm64/boot/ dts/ 
+>>> xilinx/zynqmp.dtsi
+>>> index b1b31dcf6291..673ca8422e6b 100644
+>>> --- a/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+>>> +++ b/arch/arm64/boot/dts/xilinx/zynqmp.dtsi
+>>> @@ -1207,11 +1207,14 @@ zynqmp_dpsub: display@fd4a0000 {
+>>>                         "dp_vtc_pixel_clk_in";
+>>>               power-domains = <&zynqmp_firmware PD_DP>;
+>>>               resets = <&zynqmp_reset ZYNQMP_RESET_DP>;
+>>> -            dma-names = "vid0", "vid1", "vid2", "gfx0";
+>>> +            dma-names = "vid0", "vid1", "vid2", "gfx0",
+>>> +                    "aud0", "aud1";
+>>>               dmas = <&zynqmp_dpdma ZYNQMP_DPDMA_VIDEO0>,
+>>>                      <&zynqmp_dpdma ZYNQMP_DPDMA_VIDEO1>,
+>>>                      <&zynqmp_dpdma ZYNQMP_DPDMA_VIDEO2>,
+>>> -                   <&zynqmp_dpdma ZYNQMP_DPDMA_GRAPHICS>;
+>>> +                   <&zynqmp_dpdma ZYNQMP_DPDMA_GRAPHICS>,
+>>> +                   <&zynqmp_dpdma ZYNQMP_DPDMA_AUDIO0>,
+>>> +                   <&zynqmp_dpdma ZYNQMP_DPDMA_AUDIO1>;
+>>>               ports {
+>>>                   #address-cells = <1>;
+>>>
+>>
+>> Acked-by: Michal Simek <michal.simek@amd.com>
+>>
+>> If you want me to take this patch via my tree please let me know.
+> 
+> Thanks. I've sent a v4, but no changes to this patch.
+> 
+> I'm not sure what is the custom with xilinx dts changes. With the other 
+> platforms dts changes have always gone through a single tree, not via driver trees.
+> 
+> I don't have a preference either way, so if there's no clear rule here, I can 
+> take this one with the other patches.
 
-- use a single vCPU file descriptor, and store multiple copies of the state
-  in a single struct kvm_vcpu.  This requires a lot of changes to
-  provide multiple copies of affected fields, especially MMUs and APICs;
-  and complex uAPI extensions to direct existing ioctls to a specific
-  privilege level.  This solution looked marginally okay for SEV-SNP
-  VMPLs, but only because the copies of the register state were hidden
-  in the VMSA (KVM does not manage it); it showed all its problems when
-  applied to Hyper-V VTLs.
+I have seen it both ways. If this is done with patches it is easier because I 
+can't really send it before dt binding patch reaches upstream. It means there is 
+going to be delay.
+Normally it should be enough that I gave you my tag that you can also change the 
+DT files too.
 
-- use multiple VM and vCPU file descriptors, and handle the switch entirely
-  in userspace.  This got gnarly pretty fast for even more reasons than
-  the previous case, for example because VMs could not share anymore
-  memslots, including dirty bitmaps and private/shared attributes (a
-  substantial problem for SEV-SNP since VMPLs share their ASID).  Another
-  problem was the need to share _some_ register state across VTLs and
-  to control that vCPUs did not run in parallel; there needed to be a
-  lot of logic to be added in userspace to ensure that higher-privileged
-  VTL properly interrupted a lower-privileged one.
-
-  This solution also complicates in-kernel implementation of privilege
-  level switch, or even makes it impossible, because there is no kernel
-  knowledge of the relationship between vCPUs that have the same id but
-  belong to different privilege levels.
-
-Especially given the need to accelerate switches in kernel, it is clear
-that KVM needs some level of knowledge of the relationship between vCPUs
-that have the same id but belong to different privilege levels.  For this
-reason, I proposed a design that only gives the initial set of VM and vCPU file
-descriptors the full set of ioctls + struct kvm_run; other privilege
-levels instead only support a small part of the KVM API.  In fact for
-the vm file descriptor it is only three ioctls: KVM_CHECK_EXTENSION,
-KVM_SIGNAL_MSI, KVM_SET_MEMORY_ATTRIBUTES.  For vCPUs it is basically
-KVM_GET/SET_*.
-
-This solves a lot of the problems in the multiple-file-descriptors solution,
-namely it gets for free the ability to avoid parallel execution of the
-same vCPUs in different privilege levels.  Changes to the userspace API
-of course exist, but they are relatively small and more easily backwards
-compatible, because they boil down to the introduction of new file
-descriptor kinds instead of having to change the inputs to all affected
-ioctls.
-
-It does share some of the code churn issues in the single-file-descriptor
-solution; on the other hand a prototype multi-fd VMPL implementation[1]
-also needed large scale changes which therefore seem unavoidable when
-privilege levels are provided by hardware, and not a software concept
-only as is the case for VTLs.
-hardware 
-
-   [1] https://lore.kernel.org/lkml/cover.1726506534.git.roy.hopkins@suse.com/
-
-Acknowledgements: thanks to everyone who participated in the discussions,
-you are too many to mention in a small margin.  Thanks to Roy Hopkins,
-Tom Lendacky, Anel Orazgaliyeva, Nicolas Saenz-Julienne for experimenting
-with implementations of VTLs and VMPLs.
-
-Ah, and because x86 has three names for it and Arm has one, choose the
-Arm name for all architectures to avoid bikeshedding and to displease
-everyone---including the KVM/arm64 folks, probably.
-
-Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
----
- Documentation/virt/kvm/api.rst           | 224 ++++++++++++++++++++---
- Documentation/virt/kvm/vcpu-requests.rst |   7 +
- 2 files changed, 205 insertions(+), 26 deletions(-)
-
-diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 6619098a8054..6777c24dedde 100644
---- a/Documentation/virt/kvm/api.rst
-+++ b/Documentation/virt/kvm/api.rst
-@@ -56,6 +56,18 @@ be checked with :ref:`KVM_CHECK_EXTENSION <KVM_CHECK_EXTENSION>`.  Some
- capabilities also need to be enabled for VMs or VCPUs where their
- functionality is desired (see :ref:`cap_enable` and :ref:`cap_enable_vm`).
- 
-+On some architectures, a "virtual privilege level" concept may be present
-+apart from the usual separation between user and supervisor mode, or
-+between hypervisor and guest mode.  When this is the case, a single vCPU
-+can have multiple copies of its register state (or at least most of it),
-+and will switch between them through a special processor instruction,
-+or through some kind of hypercall.
-+
-+KVM calls these privilege levels "planes".  Planes other than the
-+initially-created one (called "plane 0") have a file descriptor each,
-+and so do the planes of each vCPU.  Ioctls for vCPU planes should also
-+be issued from a single thread, unless specially marked as asynchronous
-+in the documentation.
- 
- 2. Restrictions
- ===============
-@@ -119,6 +131,11 @@ description:
-   Type:
-       system, vm, or vcpu.
- 
-+      File descriptors for planes other than plane 0 provide a subset
-+      of vm and vcpu ioctls.  Those that *are* supported in extra
-+      planes are marked specially in the documentation (for example,
-+      `vcpu (all planes)`).
-+
-   Parameters:
-       what parameters are accepted by the ioctl.
- 
-@@ -281,7 +281,7 @@ otherwise.
- 
- :Capability: basic, KVM_CAP_CHECK_EXTENSION_VM for vm ioctl
- :Architectures: all
--:Type: system ioctl, vm ioctl
-+:Type: system ioctl, vm ioctl (all planes)
- :Parameters: extension identifier (KVM_CAP_*)
- :Returns: 0 if unsupported; 1 (or some other positive integer) if supported
- 
-@@ -421,7 +438,7 @@ kvm_run' (see below).
- 
- :Capability: basic
- :Architectures: all except arm64
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_regs (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -461,7 +478,7 @@ Reads the general purpose registers from the vcpu.
- 
- :Capability: basic
- :Architectures: all except arm64
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_regs (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -475,7 +492,7 @@ See KVM_GET_REGS for the data structure.
- 
- :Capability: basic
- :Architectures: x86, ppc
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_sregs (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -506,7 +523,7 @@ but not yet injected into the cpu core.
- 
- :Capability: basic
- :Architectures: x86, ppc
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_sregs (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -519,7 +536,7 @@ data structures.
- 
- :Capability: basic
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_translation (in/out)
- :Returns: 0 on success, -1 on error
- 
-@@ -645,7 +662,7 @@ This is an asynchronous vcpu ioctl and can be invoked from any thread.
- 
- :Capability: basic (vcpu), KVM_CAP_GET_MSR_FEATURES (system)
- :Architectures: x86
--:Type: system ioctl, vcpu ioctl
-+:Type: system ioctl, vcpu ioctl (all planes)
- :Parameters: struct kvm_msrs (in/out)
- :Returns: number of msrs successfully returned;
-           -1 on error
-@@ -685,7 +702,7 @@ kvm will fill in the 'data' member.
- 
- :Capability: basic
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_msrs (in)
- :Returns: number of msrs successfully set (see below), -1 on error
- 
-@@ -773,7 +790,7 @@ signal mask.
- 
- :Capability: basic
- :Architectures: x86, loongarch
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_fpu (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -811,7 +828,7 @@ Reads the floating point state from the vcpu.
- 
- :Capability: basic
- :Architectures: x86, loongarch
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_fpu (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -1122,7 +1139,7 @@ Other flags returned by ``KVM_GET_CLOCK`` are accepted but ignored.
- :Capability: KVM_CAP_VCPU_EVENTS
- :Extended by: KVM_CAP_INTR_SHADOW
- :Architectures: x86, arm64
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_vcpu_events (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -1245,7 +1262,7 @@ directly to the virtual CPU).
- :Capability: KVM_CAP_VCPU_EVENTS
- :Extended by: KVM_CAP_INTR_SHADOW
- :Architectures: x86, arm64
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_vcpu_events (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -1311,7 +1328,7 @@ See KVM_GET_VCPU_EVENTS for the data structure.
- 
- :Capability: KVM_CAP_DEBUGREGS
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_debugregs (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -1333,7 +1350,7 @@ Reads debug registers from the vcpu.
- 
- :Capability: KVM_CAP_DEBUGREGS
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_debugregs (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -1649,7 +1666,7 @@ otherwise it will return EBUSY error.
- 
- :Capability: KVM_CAP_XSAVE
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_xsave (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -1669,7 +1686,7 @@ This ioctl would copy current vcpu's xsave struct to the userspace.
- 
- :Capability: KVM_CAP_XSAVE and KVM_CAP_XSAVE2
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_xsave (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -1697,7 +1714,7 @@ contents of CPUID leaf 0xD on the host.
- 
- :Capability: KVM_CAP_XCRS
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_xcrs (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -1724,7 +1741,7 @@ This ioctl would copy current vcpu's xcrs to the userspace.
- 
- :Capability: KVM_CAP_XCRS
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_xcrs (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -2014,7 +2031,7 @@ error.
- 
- :Capability: KVM_CAP_IRQCHIP
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_lapic_state (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -2045,7 +2062,7 @@ always uses xAPIC format.
- 
- :Capability: KVM_CAP_IRQCHIP
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_lapic_state (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -2296,7 +2296,7 @@ prior to calling the KVM_RUN ioctl.
- 
- :Capability: KVM_CAP_ONE_REG
- :Architectures: all
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_one_reg (in)
- :Returns: 0 on success, negative value on failure
- 
-@@ -2908,7 +2908,7 @@ such as set vcpu counter or reset vcpu, and they have the following id bit patte
- 
- :Capability: KVM_CAP_ONE_REG
- :Architectures: all
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_one_reg (in and out)
- :Returns: 0 on success, negative value on failure
- 
-@@ -2962,7 +2962,7 @@ after pausing the vcpu, but before it is resumed.
- 
- :Capability: KVM_CAP_SIGNAL_MSI
- :Architectures: x86 arm64
--:Type: vm ioctl
-+:Type: vm ioctl (all planes)
- :Parameters: struct kvm_msi (in)
- :Returns: >0 on delivery, 0 if guest blocked the MSI, and -1 on error
- 
-@@ -3565,7 +3565,7 @@ VCPU matching underlying host.
- 
- :Capability: basic
- :Architectures: arm64, mips, riscv
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_reg_list (in/out)
- :Returns: 0 on success; -1 on error
- 
-@@ -4807,7 +4824,7 @@ The acceptable values for the flags field are::
- 
- :Capability: KVM_CAP_NESTED_STATE
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_nested_state (in/out)
- :Returns: 0 on success, -1 on error
- 
-@@ -4881,7 +4898,7 @@ to the KVM_CHECK_EXTENSION ioctl().
- 
- :Capability: KVM_CAP_NESTED_STATE
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_nested_state (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -5762,7 +5779,7 @@ then ``length`` is returned.
- 
- :Capability: KVM_CAP_SREGS2
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_sregs2 (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -5795,7 +5812,7 @@ flags values for ``kvm_sregs2``:
- 
- :Capability: KVM_CAP_SREGS2
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_sregs2 (in)
- :Returns: 0 on success, -1 on error
- 
-@@ -6011,7 +6028,7 @@ as the descriptors in Descriptors block.
- 
- :Capability: KVM_CAP_XSAVE2
- :Architectures: x86
--:Type: vcpu ioctl
-+:Type: vcpu ioctl (all planes)
- :Parameters: struct kvm_xsave (out)
- :Returns: 0 on success, -1 on error
- 
-@@ -6269,7 +6286,7 @@ Returns -EINVAL if called on a protected VM.
- 
- :Capability: KVM_CAP_MEMORY_ATTRIBUTES
- :Architectures: x86
--:Type: vm ioctl
-+:Type: vm ioctl (all planes)
- :Parameters: struct kvm_memory_attributes (in)
- :Returns: 0 on success, <0 on error
- 
-@@ -6398,6 +6415,46 @@ the capability to be present.
- `flags` must currently be zero.
- 
- 
-+.. _KVM_CREATE_PLANE:
-+
-+4.144 KVM_CREATE_PLANE
-+----------------------
-+
-+:Capability: KVM_CAP_PLANE
-+:Architectures: none
-+:Type: vm ioctl
-+:Parameters: plane id
-+:Returns: a VM fd that can be used to control the new plane.
-+
-+Creates a new *plane*, i.e. a separate privilege level for the
-+virtual machine.  Each plane has its own memory attributes,
-+which can be used to enable more restricted permissions than
-+what is allowed with ``KVM_SET_USER_MEMORY_REGION``.
-+
-+Each plane has a numeric id that is used when communicating
-+with KVM through the :ref:`kvm_run <kvm_run>` struct.  While
-+KVM is currently agnostic to whether low ids are more or less
-+privileged, it is expected that this will not always be the
-+case in the future.  For example KVM in the future may use
-+the plane id when planes are supported by hardware (as is the
-+case for VMPLs in AMD), or if KVM supports accelerated plane
-+switch operations (as might be the case for Hyper-V VTLs).
-+
-+4.145 KVM_CREATE_VCPU_PLANE
-+---------------------------
-+
-+:Capability: KVM_CAP_PLANE
-+:Architectures: none
-+:Type: vm ioctl (non default plane)
-+:Parameters: vcpu file descriptor for the default plane
-+:Returns: a vCPU fd that can be used to control the new plane
-+          for the vCPU.
-+
-+Adds a vCPU to a plane; the new vCPU's id comes from the vCPU
-+file descriptor that is passed in the argument.  Note that
-+ because of how the API is defined, planes other than plane 0
-+can only have a subset of the ids that are available in plane 0.
-+
- .. _kvm_run:
- 
- 5. The kvm_run structure
-@@ -6433,7 +6490,50 @@ This field is ignored if KVM_CAP_IMMEDIATE_EXIT is not available.
- 
- ::
- 
--	__u8 padding1[6];
-+	/* in/out */
-+	__u8 plane;
-+
-+The plane that will be run (usually 0).
-+
-+While this is not yet supported, in the future KVM may handle plane
-+switch in the kernel.  In this case, the output value of this field
-+may differ from the input value.  However, automatic switch will
-+have to be :ref:`explicitly enabled <KVM_ENABLE_CAP>`.
-+
-+For backwards compatibility, this field is ignored unless a plane
-+other than plane 0 has been created.
-+
-+::
-+
-+        /* in/out */
-+        __u16 suspended_planes;
-+
-+A bitmap of planes whose execution was suspended to run a
-+higher-privileged plane, usually via a hypercall or due to
-+an interrupt in the higher-privileged plane.
-+
-+KVM right now does not use this field; it may be used in the future
-+once KVM implements in-kernel plane switch mechanisms.  Until that
-+is the case, userspace can leave this to zero.
-+
-+::
-+
-+	/* in */
-+	__u16 req_exit_planes;
-+
-+A bitmap of planes for which KVM should exit when they have a pending
-+interrupt.  In general, userspace should set bits corresponding to
-+planes that are more privileged than ``plane``; because KVM is agnostic
-+to whether low ids are more or less privileged, these could be the bits
-+*above* or *below* ``plane``.  In some cases it may make sense to request
-+an exit for all planes---for example, if the higher-priority plane
-+wants to be informed about interrupts pending in lower-priority planes,
-+userspace may need to learn about those as well.
-+
-+The bit at position ``plane`` is ignored; interrupts for the current
-+plane are never delivered to userspace.
-+
-+::
- 
- 	/* out */
- 	__u32 exit_reason;
-@@ -7086,6 +7186,44 @@ The valid value for 'flags' is:
-   - KVM_NOTIFY_CONTEXT_INVALID -- the VM context is corrupted and not valid
-     in VMCS. It would run into unknown result if resume the target VM.
- 
-+::
-+
-+    /* KVM_EXIT_PLANE_EVENT */
-+    struct {
-+  #define KVM_PLANE_EVENT_INTERRUPT	0
-+      __u16 pending_event_planes;
-+      __u8 cause;
-+      __u8 target;
-+      __u32 flags;
-+      __u64 extra;
-+    } plane;
-+
-+Inform userspace of an event that affects a different plane than the
-+currently executing one.
-+
-+On a ``KVM_EXIT_PLANE_EVENT`` exit, ``pending_event_planes`` is always
-+set to the set of planes that have a pending interrupt.
-+
-+``cause`` provides the event that caused the exit, and the meaning of
-+``target`` depends on the cause of the exit too.
-+
-+Right now the only defined cause is ``KVM_PLANE_EVENT_INTERRUPT``, i.e.
-+an interrupt was received by a plane whose id is set in the
-+``req_exit_planes`` bitmap.  In this case, ``target`` is the id of the
-+plane that received an interrupt, and its bit is always set in both
-+``req_exit_planes`` and ``pending_event_planes``.
-+
-+``flags`` and ``extra`` are currently always 0.
-+
-+If userspace wants to switch to the target plane, it should move any
-+shared state from the current plane to ``target``, and then invoke
-+``KVM_RUN`` with ``kvm_run->plane`` set to ``target`` (and
-+``req_exit_planes`` initialized accordingly).  Note that it's also
-+valid to switch planes in response to other userspace exit codes, for
-+example ``KVM_EXIT_X86_WRMSR`` or ``KVM_EXIT_HYPERCALL``.  Immediately
-+after ``KVM_RUN`` is entered, KVM will check ``req_exit_planes`` and
-+trigger a ``KVM_EXIT_PLANE_EVENT`` userspace exit if needed.
-+
- ::
- 
- 		/* Fix the size of the union. */
-@@ -8930,6 +9068,40 @@ Do not use KVM_X86_SW_PROTECTED_VM for "real" VMs, and especially not in
- production.  The behavior and effective ABI for software-protected VMs is
- unstable.
- 
-+8.42 KVM_CAP_PLANE
-+------------------
-+
-+:Capability: KVM_CAP_PLANE
-+:Architectures: x86
-+:Type: system, vm
-+
-+The capability returns the maximum plane id that can be passed to
-+:ref:`KVM_CREATE_PLANE <KVM_CREATE_PLANE>`.  Because the maximum
-+id can vary according to the machine type, it is recommended to
-+check for this capability on the VM file descriptor.
-+
-+When called on the system file descriptor, KVM returns the highest
-+value supported on any machine type.
-+
-+
-+8.42 KVM_CAP_PLANE_FPU
-+----------------------
-+
-+:Capability: KVM_CAP_PLANE_FPU
-+:Architectures: x86
-+:Type: system, vm
-+
-+The capability returns 1 if the FPU is split for each vCPU plane.
-+If the capability is absent, the FPU is shared by all vCPU planes.
-+
-+Note that ioctls such as KVM_SET_XSAVE or KVM_SET_FPU *are* available
-+even if this capability is absent.  However, they will overwrite the
-+registers presented to other planes.
-+
-+Also note that KVM_GET/SET_XSAVE also allows access to some registers
-+that are *not* part of FPU state, notably PKRU.  Those are never shared.
-+
-+
- 9. Known KVM API problems
- =========================
- 
-diff --git a/Documentation/virt/kvm/vcpu-requests.rst b/Documentation/virt/kvm/vcpu-requests.rst
-index 06718b9bc959..86ac67b98a74 100644
---- a/Documentation/virt/kvm/vcpu-requests.rst
-+++ b/Documentation/virt/kvm/vcpu-requests.rst
-@@ -286,6 +286,13 @@ architecture dependent.  kvm_vcpu_block() calls kvm_arch_vcpu_runnable()
- to check if it should awaken.  One reason to do so is to provide
- architectures a function where requests may be checked if necessary.
- 
-+VM planes
-+---------
-+
-+Each plane has its own set of requests.  Processing requests from
-+another plane needs to go through a plane switch, for example via a
-+`KVM_EXIT_PLANE_EVENT` userspace exit.
-+
- References
- ==========
- 
--- 
-2.46.2
+Thanks,
+Michal
 
 
