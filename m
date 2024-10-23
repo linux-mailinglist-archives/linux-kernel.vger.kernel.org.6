@@ -1,117 +1,112 @@
-Return-Path: <linux-kernel+bounces-378750-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378751-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D60E49AD4ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:37:56 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id D274A9AD4F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:39:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 112EB1C21DE7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:37:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAEF283BF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:39:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFDCE1D47CB;
-	Wed, 23 Oct 2024 19:37:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BDE1DDA30;
+	Wed, 23 Oct 2024 19:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ghIGXDhN"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="Rd6smkGo"
+Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25EBA1A0AF0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:37:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4FE83CDA;
+	Wed, 23 Oct 2024 19:38:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729712270; cv=none; b=fUZfaxzjheUgxAVcIIvgogW9tCJBq4mEOGU7L6axWtyjq6iJ3yr68Qv6v+HvJQoExGNzrYvAXkgD9jd3vnz0NAZrvZ+2CmGS9dpC/YnVd1bEfpg4ECh3dgtIw5T5/a9mZfw04Axw5q4Z2Lket4bNbwVFT2yVEv7qucImLhGGVm8=
+	t=1729712333; cv=none; b=aDyZmNlFtsv7QoRydby5bjuOw0/zadpE7NJecI2kHw+sOqZ3AzmgLQDpSq4HvQQhzjaIvd1O+oFpLjFiuCuLCxviW8lt2UHapSn1lO2gAwt89eD30JpcxDmLWziRaqVJXOaLtKS6Z4Ol1x8HXo3X3vMHM7Lna5Nt48d+uU69K0M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729712270; c=relaxed/simple;
-	bh=vk/FW0uRyjtg6oxehehOKzEOIARdwQsuFnOoLse/8iQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=f9Px4MptLBC79aoyTdT4lJrROgaIiQ7DjKjegq5Eko9brinIpL1CH2U36JyHisuYoVsAEKkSiVHMxDJMwYmJdnaCqCfEPjjq58AwdCeNuyvs0FGr2uy0sF83xngRx2b2HP3MDg+8mBNcSGI1bedtoiz3k1j25qduKGwIcLQ2Q+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ghIGXDhN; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C73EAC4CEC6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:37:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729712269;
-	bh=vk/FW0uRyjtg6oxehehOKzEOIARdwQsuFnOoLse/8iQ=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=ghIGXDhNVew32ZD2gMYlCt9/Pt1neNoOGigXStw4tc/98IiT0GqedekdnXm9UH+WM
-	 cUATonbfsih9F6Snpj/d7OSeX4g23jygN8E08c1v7mVHOQNIIIFmqzrisbLpGn1cHj
-	 dppdmDZ1GfzUizbjehCAmcCDXrpUysl9vglyIwIk8tDEnENo9+9QB8zc7o9WCm7uMg
-	 Dz642l3sOhAFmALPJr17iNQX8NdEPgMAhdGgvqUce6ss30duPqF9HPsLbqxL4PrAEQ
-	 dP1cjlyuWZgOSoufbw7EFP86+JlqwGAMdWoyUguIdsQ0vf98lg785QExfeWMUwJysD
-	 jYxI/D2Tp9kYQ==
-Received: by mail-lf1-f43.google.com with SMTP id 2adb3069b0e04-539f6e1f756so172273e87.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:37:49 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUwLTnX+mETWQo2l99MbUPtJbSuJvPXG7VF4kbmXsvUiZUJVz6eRlbab6F17Y3FhL+lqUmekggTBOSY+qQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YycTBNDpsrUd6u+Q+qQFBpfNXw6vTlC1OzN/uHVmuAIPGU/Od8u
-	91C1Mm0aX5q2nZg3hXZ/TCTJ1TZemyjVW7vOfXQF3fjF3F4GTiHFWh3BIJ91yOKKypnsjgdwFIY
-	n7u1tNbd5eUPK807UyxaUNXox1LU=
-X-Google-Smtp-Source: AGHT+IFQGuMX2jeh0Jz5r6yINKID7eudPZRo77vcpztx/Pw+oCsd+qyagqPgVWuX6sGYES1W9s3KudctWdki1aWxFYg=
-X-Received: by 2002:a05:6512:280b:b0:539:f51e:17d3 with SMTP id
- 2adb3069b0e04-53b1a303093mr2066930e87.14.1729712268212; Wed, 23 Oct 2024
- 12:37:48 -0700 (PDT)
+	s=arc-20240116; t=1729712333; c=relaxed/simple;
+	bh=pZd83N5LKORVi3t9LWs6w8gSvKkToNeI2Gv/S936pGc=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q368jhiCy7jNhroKbwZT1yQUZi2cCoREZRmw4mG8LXSI7FiNceo8jtXKumDesfFKqMgASp6Li6QWlC9ftv10dB9pdLE+S7nmKjqHIWQIggvWT9Hes4tQZ1vtL0oK+6HNa4A3LyVae/WAgnmshMLxXxa9unaYKo5Cez6SOgfgeqs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=Rd6smkGo; arc=none smtp.client-ip=62.96.220.36
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
+Received: from localhost (localhost [127.0.0.1])
+	by a.mx.secunet.com (Postfix) with ESMTP id 814BE20842;
+	Wed, 23 Oct 2024 21:38:48 +0200 (CEST)
+X-Virus-Scanned: by secunet
+Received: from a.mx.secunet.com ([127.0.0.1])
+	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
+	with ESMTP id 2XZ8ubZrULdx; Wed, 23 Oct 2024 21:38:47 +0200 (CEST)
+Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by a.mx.secunet.com (Postfix) with ESMTPS id D98D32074A;
+	Wed, 23 Oct 2024 21:38:47 +0200 (CEST)
+DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com D98D32074A
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
+	s=202301; t=1729712327;
+	bh=uwlhbuYxhgG8sftTwRRQlyfVeglWzt2ynojBOuu12rQ=;
+	h=Date:From:To:CC:Subject:Reply-To:References:In-Reply-To:From;
+	b=Rd6smkGo3UJQ1pLzL7bTloWJLbLDhbEfx/WQXzI3icKQNFW1qs2iqBJuHs2YWiA/E
+	 3qSyIIR+EQiq8B2VkKciYQuOps51ndNIJ91ukr8QzA69cBmX/V22UzM4ompznfFJBy
+	 0IvDk62uc3VPTB4Bglg4NIIWHIQN2kVtuLw4KEk4CFUYtOuS1WZ3lb+qBlsW+8FhPh
+	 UHnYhNjwSqcWO06JicLtFIxRXUls7q0pqvkhpme4Fbnd88cOdqcDVXmzaya2xqXRAC
+	 cYk5+KcBKjfcAA/oemL1TqA2CuiNkx1PoeQA+BRRymXlJsKp6asyi20pW5wEZpyT2h
+	 /Lws9D62X6SMA==
+Received: from mbx-essen-01.secunet.de (10.53.40.197) by
+ cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 23 Oct 2024 21:38:47 +0200
+Received: from moon.secunet.de (172.18.149.1) by mbx-essen-01.secunet.de
+ (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Oct
+ 2024 21:38:46 +0200
+Date: Wed, 23 Oct 2024 21:38:39 +0200
+From: Antony Antony <antony.antony@secunet.com>
+To: David Howells <dhowells@redhat.com>
+CC: Antony Antony <antony@phenome.org>, Christian Brauner
+	<brauner@kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, "Latchesar
+ Ionkov" <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>, Sedat Dilek
+	<sedat.dilek@gmail.com>, Maximilian Bosch <maximilian@mbosch.me>,
+	<regressions@lists.linux.dev>, <v9fs@lists.linux.dev>,
+	<netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, Antony Antony <antony.antony@secunet.com>
+Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
+Message-ID: <ZxlQv5OXjJUbkLah@moon.secunet.de>
+Reply-To: <antony.antony@secunet.com>
+References: <ZxFQw4OI9rrc7UYc@Antony2201.local>
+ <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
+ <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
+ <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
+ <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
+ <3327438.1729678025@warthog.procyon.org.uk>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+G9fYuVefYJx9JsVx1Wz5pV1jKCp9eCPtwZD+FVhdk841q1Zw@mail.gmail.com>
- <b153383c-797c-42f6-801d-a6dcc7bfc4f7@stanley.mountain>
-In-Reply-To: <b153383c-797c-42f6-801d-a6dcc7bfc4f7@stanley.mountain>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Wed, 23 Oct 2024 21:37:36 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFXimHaGdeDBH3fOzuBiVcATA+JNpGqDs+m5h=8M_g+yA@mail.gmail.com>
-Message-ID: <CAMj1kXFXimHaGdeDBH3fOzuBiVcATA+JNpGqDs+m5h=8M_g+yA@mail.gmail.com>
-Subject: Re: drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned
- argument to 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an
- unaligned pointer access [-Werror,-Walign-mismatch]
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Naresh Kamboju <naresh.kamboju@linaro.org>, clang-built-linux <llvm@lists.linux.dev>, 
-	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
-	Linux Regressions <regressions@lists.linux.dev>, Anders Roxell <anders.roxell@linaro.org>, kobak@nvidia.com, 
-	"rafael.j.wysocki" <rafael.j.wysocki@intel.com>, rui.zhang@intel.com, mochs@nvidia.com, 
-	Nathan Chancellor <nathan@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <3327438.1729678025@warthog.procyon.org.uk>
+Precedence: first-class
+Priority: normal
+Organization: secunet
+X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
+ mbx-essen-01.secunet.de (10.53.40.197)
+X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
 
-On Wed, 23 Oct 2024 at 21:06, Dan Carpenter <dan.carpenter@linaro.org> wrote:
->
-> > Config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2npIm4ZOkWenPJ71UOZG57R0jXE/config
->
-> > drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to
-> > 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an
-> > unaligned pointer access [-Werror,-Walign-mismatch]
-> >   156 |                         (void *)efi_pa_va_lookup(&th->guid,
-> > handler_info->handler_address);
-> >       |                                                  ^
->
-> The problem is that efi_guid_t is alighned but guid_t is not.  I would have
-> thought that Clang would say that even though the alignment in for &th->guid
-> isn't spelled out explicitly, it would still end up being aligned at 8 bytes.
->
+On Wed, Oct 23, 2024 at 11:07:05 +0100, David Howells wrote:
+> Hi Antony,
+> 
+> I think the attached should fix it properly rather than working around it as
+> the previous patch did.  If you could give it a whirl?
 
-Yeah this is bizarre tbh. The alignment of the type should be irrelevant here.
+Yes this also fix the crash.
 
-> typedef guid_t efi_guid_t __aligned(__alignof__(u32));
->
-> The relevant code looks like this:
->
-> include/linux/uuid.h
->     13  #define UUID_SIZE 16
->     14
->     15  typedef struct {
->     16          __u8 b[UUID_SIZE];
->     17  } guid_t;
->
-> drivers/acpi/prmt.c
->     54  struct prm_handler_info {
->     55          guid_t guid;
+Tested-by: Antony Antony <antony.antony@secunet.com>
 
-So this should be changed to efi_guid_t.
-
-Doing so makes the following pass:
-
-static_assert(__alignof__(((struct prm_handler_info*)0)->guid) > 1);
-
-(it fails with the original guid_t type)
+thanks,
+-antony
 
