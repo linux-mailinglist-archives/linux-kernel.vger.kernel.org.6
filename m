@@ -1,186 +1,139 @@
-Return-Path: <linux-kernel+bounces-377672-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377674-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BE3B69AC221
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:49:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FE679AC226
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:49:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7639E283663
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:49:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5528283B2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:49:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39B3D15E5BB;
-	Wed, 23 Oct 2024 08:49:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F0515C15F;
+	Wed, 23 Oct 2024 08:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ObHgILwX"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZMmn3+n"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C78861FF2
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:49:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B33417F7;
+	Wed, 23 Oct 2024 08:49:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673355; cv=none; b=EaF0/OqhjoRRgDPLpI7tuNZd+UdLJ+bcUxDuFnDu9VvykanlMa1gvAyAF22EF1hYQQYQXBT5flX3VyIzbX/y0+E6tCVCKoBbXbnRENc1dwsu9N6kuMCOUpexL0BONntKwW/16teZuuvD640CFS/av5ifL5kTGS+Ta8ukUphHT7M=
+	t=1729673388; cv=none; b=eK27yOM37hhgEqGbHXATSc+VKMKquVxTa/qiiKHXXH53Oyc5X7nXelsM6QeFi5EB3PzVRmOhpf1+t3Gd2qcSUR12FmQ9y5R6EA55gEKFShoyAu9R7dB2SsUuoa7AIV8dv5E328hZJekqat3yKh9ykhfsxRd8VoQD6Uz/cEYOO3s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673355; c=relaxed/simple;
-	bh=aR0cBNJNvx0pC7rUSs2+VJJ+53XLheSlUDQRnOTIgzk=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=n0ZzeLfN0YhgpbtQZheDkJ1wAqSA8TfXKgZEiQkufl9v9efsM9swrrslzs9tlP0p8Lz6M34giSwEZLT8b2rKeh6CC9V7nZT2PzMoALpAqSPy4t6nULsY7FDn2qIAebK9Y1CPUbbLHKPITA7/hQg0GId+a3gb8alygU7bezkQu1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ObHgILwX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30902C4CEC7;
-	Wed, 23 Oct 2024 08:49:15 +0000 (UTC)
+	s=arc-20240116; t=1729673388; c=relaxed/simple;
+	bh=LbO3NbepQkvZk7yCTg035pexaVjgPBDZmBLuQhHYH40=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=fOv+V7TcZ5S1n0U5e/oqNVM9YtXHbUXLVgc4irevDWiN45DhFR4OISiPD8/ZRAUZgVlWpWjNr4ndSHGqXoCdurRhaFxJuUQz6p3RfFOPfVLSIYaOLryXVnnULerSH/w8O+ZajSSbHtSQurhOBtqOXbM4EXlNNb1kvVuq/7Wkqn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZMmn3+n; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB44C4CEC6;
+	Wed, 23 Oct 2024 08:49:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673355;
-	bh=aR0cBNJNvx0pC7rUSs2+VJJ+53XLheSlUDQRnOTIgzk=;
+	s=k20201202; t=1729673387;
+	bh=LbO3NbepQkvZk7yCTg035pexaVjgPBDZmBLuQhHYH40=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ObHgILwXNR82AnJ4xg1/nF6/fZ6ryTPGPghZMb3V3D3ksSOm8f1OAgnTWy4MJP8oF
-	 nFKKhaRKXCDTsQMGYkkC0ee0tHoKHj+Xnsa43lxJaAD2Hv4eAatfZ3Oe49qKFhySAU
-	 ENMcHIxQRvP+KEBY41KUAMlMWyyIxEBU49yX52E5sfxb+C3vy/w3+/Ak8i7b85UWFU
-	 1wT1FX5TovDn+aBfBQnAkacfyMgKvkG0uP60t8TDqKnW2FVbYcb74iWj20AcYtimfM
-	 4z9WYNjyzjxZaOf3svI5iNdxyKru//+ZxQwDvAGGSTpmbvRhYgEF4pgVqAUv+oaqtc
-	 2V5sqbYD7mmZw==
-Received: from [104.132.45.109] (helo=wait-a-minute.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t3X3I-0062U1-Rh;
-	Wed, 23 Oct 2024 09:49:12 +0100
-Date: Wed, 23 Oct 2024 09:49:12 +0100
-Message-ID: <87wmhztd9z.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zenghui Yu <yuzenghui@huawei.com>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-In-Reply-To: <aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
-References: <20241002204959.2051709-1-maz@kernel.org>
-	<aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (x86_64-pc-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	b=iZMmn3+n4j1CNsLy1QLuB05dT9u9rS+PPdrTPy8VVpXISB0padJvdTeXoB9x6Hwv4
+	 AU974L3tZ5PkctyWTs2fGgDWjUzBztuMVWlKVgyjaM+oiJI5vk9KGE4k+LgpTBUqOd
+	 7DAXg1wn24wiDVAV1BdtTK5MLPSX9rWOM+l9KlKW6rWcSwhOk8uV4K1CJRCPTSiYvo
+	 s8qRiGPN+f1tA/EL/hG8deU+Ri5WOykQYD+c+nJfDb5FSaOtUo9CLg4u+zpkQnFdKF
+	 2Ny1VDz/5znszIyT57l2Io5RTq/pGdTyhVxcu81EG2leknegld/uVC+Kf+MuuTtmD2
+	 bC2DA3rme0YGg==
+Date: Wed, 23 Oct 2024 17:49:44 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Nir Lichtman <nir@lichtman.org>
+Cc: kgdb-bugreport@lists.sourceforge.net,
+ linux-trace-kernel@vger.kernel.org, yuran.pereira@hotmail.com,
+ jason.wessel@windriver.com, daniel.thompson@linaro.org,
+ dianders@chromium.org, rostedt@goodmis.org, mhiramat@kernel.org,
+ linux-kernel@vger.kernel.org,
+ linux-kernel-mentees@lists.linuxfoundation.org
+Subject: Re: [PATCH v2 2/2] trace: kdb: Replace simple_strtoul with kstrtoul
+ in kdb_ftdump
+Message-Id: <20241023174944.e85832349ef91ebff9cab31e@kernel.org>
+In-Reply-To: <20241021211724.GC835676@lichtman.org>
+References: <20241021211724.GC835676@lichtman.org>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 104.132.45.109
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, jiangkunkun@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+Content-Transfer-Encoding: 7bit
 
-Hi Zenghui,
+On Mon, 21 Oct 2024 21:17:24 +0000
+Nir Lichtman <nir@lichtman.org> wrote:
 
-On Tue, 22 Oct 2024 08:45:17 +0100,
-Zenghui Yu <yuzenghui@huawei.com> wrote:
+> The function simple_strtoul performs no error checking in scenarios
+> where the input value overflows the intended output variable.
+> This results in this function successfully returning, even when the
+> output does not match the input string (aka the function returns
+> successfully even when the result is wrong).
 > 
-> Hi Marc,
+> Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
+> simple_strtoul(), and simple_strtoull() functions explicitly ignore
+> overflows, which may lead to unexpected results in callers."
+> Hence, the use of those functions is discouraged.
 > 
-> On 2024/10/3 4:49, Marc Zyngier wrote:
-> > Kunkun Jiang reports that there is a small window of opportunity for
-> > userspace to force a change of affinity for a VPE while the VPE has
-> > already been unmapped, but the corresponding doorbell interrupt still
-> > visible in /proc/irq/.
-> > 
-> > Plug the race by checking the value of vmapp_count, which tracks whether
-> > the VPE is mapped ot not, and returning an error in this case.
-> > 
-> > This involves making vmapp_count common to both GICv4.1 and its v4.0
-> > ancestor.
-> > 
-> > Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
-> > ---
-> >  drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++------
-> >  include/linux/irqchip/arm-gic-v4.h |  4 +++-
-> >  2 files changed, 15 insertions(+), 7 deletions(-)
-> > 
-> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> > index fdec478ba5e7..ab597e74ba08 100644
-> > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > @@ -797,8 +797,8 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
-> >  	its_encode_valid(cmd, desc->its_vmapp_cmd.valid);
-> >  
-> >  	if (!desc->its_vmapp_cmd.valid) {
-> > +		alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> >  		if (is_v4_1(its)) {
-> > -			alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> >  			its_encode_alloc(cmd, alloc);
-> >  			/*
-> >  			 * Unmapping a VPE is self-synchronizing on GICv4.1,
-> > @@ -817,13 +817,13 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
-> >  	its_encode_vpt_addr(cmd, vpt_addr);
-> >  	its_encode_vpt_size(cmd, LPI_NRBITS - 1);
-> >  
-> > +	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > +
-> >  	if (!is_v4_1(its))
-> >  		goto out;
-> >  
-> >  	vconf_addr = virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->its_vm->vprop_page));
-> >  
-> > -	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > -
-> >  	its_encode_alloc(cmd, alloc);
-> >  
-> >  	/*
-> > @@ -3806,6 +3806,13 @@ static int its_vpe_set_affinity(struct irq_data *d,
-> >  	struct cpumask *table_mask;
-> >  	unsigned long flags;
-> >  
-> > +	/*
-> > +	 * Check if we're racing against a VPE being destroyed, for
-> > +	 * which we don't want to allow a VMOVP.
-> > +	 */
-> > +	if (!atomic_read(&vpe->vmapp_count))
-> > +		return -EINVAL;
+> This patch replaces all uses of the simple_strtoul with the safer
+> alternatives kstrtoint and kstrtol.
 > 
-> We lazily map the vPE so that vmapp_count is likely to be 0 on GICv4.0
-> implementations with the ITSList feature. Seems that that implementation
-> is not affected by the reported race and we don't need to check
-> vmapp_count for that.
+> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
+> 
 
-Indeed, the ITSList guards the sending of VMOVP in that case, and we
-avoid the original issue in that case. However, this still translates
-in the doorbell being moved for no reason (see its_vpe_db_proxy_move).
+Looks good to me.
 
-How about something like this?
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
-Thanks,
+Thank you,
 
-	M.
+> Signed-off-by: Yuran Pereira <yuran.pereira@hotmail.com>
+> Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> ---
+>  kernel/trace/trace_kdb.c | 15 ++++++---------
+>  1 file changed, 6 insertions(+), 9 deletions(-)
+> 
+> diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
+> index 59857a1ee44c..eadda6e05526 100644
+> --- a/kernel/trace/trace_kdb.c
+> +++ b/kernel/trace/trace_kdb.c
+> @@ -96,23 +96,20 @@ static int kdb_ftdump(int argc, const char **argv)
+>  {
+>  	int skip_entries = 0;
+>  	long cpu_file;
+> -	char *cp;
+> +	int err;
+>  	int cnt;
+>  	int cpu;
+>  
+>  	if (argc > 2)
+>  		return KDB_ARGCOUNT;
+>  
+> -	if (argc) {
+> -		skip_entries = simple_strtol(argv[1], &cp, 0);
+> -		if (*cp)
+> -			skip_entries = 0;
+> -	}
+> +	if (argc && kstrtoint(argv[1], 0, &skip_entries))
+> +		return KDB_BADINT;
+>  
+>  	if (argc == 2) {
+> -		cpu_file = simple_strtol(argv[2], &cp, 0);
+> -		if (*cp || cpu_file >= NR_CPUS || cpu_file < 0 ||
+> -		    !cpu_online(cpu_file))
+> +		err = kstrtol(argv[2], 0, &cpu_file);
+> +		if (err || cpu_file >= NR_CPUS || cpu_file < 0 ||
+> +			!cpu_online(cpu_file))
+>  			return KDB_BADINT;
+>  	} else {
+>  		cpu_file = RING_BUFFER_ALL_CPUS;
+> -- 
+> 2.39.2
 
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index ab597e74ba08..ac8ed56f1e48 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3810,8 +3810,17 @@ static int its_vpe_set_affinity(struct irq_data *d,
- 	 * Check if we're racing against a VPE being destroyed, for
- 	 * which we don't want to allow a VMOVP.
- 	 */
--	if (!atomic_read(&vpe->vmapp_count))
--		return -EINVAL;
-+	if (!atomic_read(&vpe->vmapp_count)) {
-+		if (gic_requires_eager_mapping())
-+			return -EINVAL;
-+
-+		/*
-+		 * If we lazily map the VPEs, this isn't an error, and
-+		 * we exit cleanly.
-+		 */
-+		irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+		return IRQ_SET_MASK_OK_DONE;
-+	}
- 
- 	/*
- 	 * Changing affinity is mega expensive, so let's be as lazy as
 
 -- 
-Without deviation from the norm, progress is not possible.
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
