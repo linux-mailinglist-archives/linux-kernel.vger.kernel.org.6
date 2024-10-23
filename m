@@ -1,135 +1,140 @@
-Return-Path: <linux-kernel+bounces-377679-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377680-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 08C209AC23F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:52:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 745A69AC243
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:52:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43D26B2498F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:52:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BDF09B24D2F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:52:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC4F16190B;
-	Wed, 23 Oct 2024 08:52:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EC1173328;
+	Wed, 23 Oct 2024 08:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPZU7jIP"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j76WjmM5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC59148FF3;
-	Wed, 23 Oct 2024 08:52:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC53B157E78;
+	Wed, 23 Oct 2024 08:52:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673556; cv=none; b=fO8r4Wz+x59NY2aC9QRGfjdnmJlQlWw1BqNdrGcCBYQJKkpHgY0lkLJdbvjur4hkl7qYerZe4nRsOi+/D3pbse6OvYwNonAtgCsc+iew1ij2klX+uvhe0mrxqXxk6Sq3uvktgE+obf08QHuU/vzx/+CAw3T/wzvafs1GR+KtYoI=
+	t=1729673562; cv=none; b=EVe+AFt64QK53+8Wyyw5JoanT8uwKowIebyk7BUw3ZlF7aJZrVn/q6+/XLCW9P+eaUizyjxI1feugbrQ3oVxLcq2PBPEJGqlPgZQ0oB4/4PWGyVk3Z3RjCFTW09+R7Nb9UpBay+I0vDG4FHb6i7HSm7SxHbIMYKmv4QMZ8d6g/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673556; c=relaxed/simple;
-	bh=Q5ucK7d7uRJd+cvR1lR4/2r90nHVsOJOCPAxYH7QWpM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=IvtqLe0t8aKspJouAsTKrJUnWfXe0VDFQCYu4I01y/2BoSxAOeNxkxVAvjbtlAB56ZMebCc7qj1R1yrsKdBQsJNfr6Gz1z91w0knVaIyezMS8QeeX1RoDZ85W+McYIwJADiEpoFyAIKFECEriyRVpInyhWP5etDO3xQJEBrUc8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CPZU7jIP; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729673555; x=1761209555;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=Q5ucK7d7uRJd+cvR1lR4/2r90nHVsOJOCPAxYH7QWpM=;
-  b=CPZU7jIPlvZOyxXa9SHDDHms3Xs7ynSgrwi2/BjqWVqN3z+/OcWvvd6b
-   V7knGh6vvUQfF6kLU9kHDhFhEL2mJKo6Dm8mi3LOSf1VUR4lUYKH+REKs
-   VlUTE3ALyWfcFoU5LFdCO6tsYpJAe56M9+Sc1f50EVkek+k7yEPXLNgLm
-   RUTu35olRWgF6/3v7PkoyeQbL1pUf5NlGvMrqpFsyqVx5fSPfwLmxQltL
-   42Qg2JTrBxrJa5ylBYGY6iYrYdeiPzmeEk3gdBSWI1q1CiavP2sdqMmAy
-   Fh8NWhL57NSqf1BESrNjsXA+i+7HhIywcLrLwvL/qjjcxEvqNiMPBxlqY
-   A==;
-X-CSE-ConnectionGUID: UZGhIBulRPac0n1QqOyCAA==
-X-CSE-MsgGUID: +erpfj5wRiagXnf5DDfWHw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51792573"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="51792573"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:52:33 -0700
-X-CSE-ConnectionGUID: h73qZ12oSHigC3GIMnT0gA==
-X-CSE-MsgGUID: ZVHijG1OSPSJdXDXnmMvjA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="80207426"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.84])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:52:29 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
- dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li
- <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, Andrew
- Morton <akpm@linux-foundation.org>
-Cc: Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
- linux-mm@kvack.org, Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH 6/7] [HACK] drm/xe: Hack to test with mapped pages
- instead of vram.
-In-Reply-To: <20241023075302.27194-7-maarten.lankhorst@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
- <20241023075302.27194-7-maarten.lankhorst@linux.intel.com>
-Date: Wed, 23 Oct 2024 11:52:26 +0300
-Message-ID: <875xpjurp1.fsf@intel.com>
+	s=arc-20240116; t=1729673562; c=relaxed/simple;
+	bh=WnfYBElZhFPsUfnPReJbIGFw2pzjY2EYwEjtUOWvtZg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aYL67sH7ccnP6hz4V59AdYpvxn5liADH9B1AK9lo4T8zvPlyecSVvMueW/KbrWZubVfHiGBWshawfHcm55eJxgfyZmdUkqkZ2k5W7mcCU0CsAX0LJraoAiLRFvH1UTX92JDXz8gPkCNQfg2EeMrXeBVicA7ncXfDSsq2zvCDOnI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j76WjmM5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60B35C4CEEF;
+	Wed, 23 Oct 2024 08:52:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729673561;
+	bh=WnfYBElZhFPsUfnPReJbIGFw2pzjY2EYwEjtUOWvtZg=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=j76WjmM5QwEtR5s7l0RoOA1ITPVoEne0UtGwppQpwLL1s11g98e6gcM+noXm68mg6
+	 HsM5ExEXOlDfSB+hBSmu6GZJsm8X4Gj/3IhODxlX+BUH1O0ncrE+7HWTdUPz97vwQN
+	 j8n9Cy4pNEFp3Y2zm7/zZ6tpkrjiZmCNPh9e2np1uBTF+9voG7xltauTZAeTOitu9+
+	 ljZSUvmzKH0Uglq9c9kHwzAzpFKgGc6IjzFqyz6WrjlX4IOhoOb7qi/HxOiQf9NFxz
+	 ZmJ4XNsNiHtlBGzQ7f77MGPq3tSXQc5+KSdlyy2ALsPGZnqOtpc41VZQQ8h3NqWNet
+	 TdInvoGTqzoEg==
+Received: by mail-oa1-f44.google.com with SMTP id 586e51a60fabf-28896d9d9deso2775474fac.2;
+        Wed, 23 Oct 2024 01:52:41 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCUgXLUnmxsNomXAYmRLScFllQJwY3b+D6/0LgRjDqAEWjKiZJdQpZduwxLn9GqAg1b7JybpImH0G+Q=@vger.kernel.org, AJvYcCVoq/wXNBliPjNXGFb41PZM2WQlx0O5mcMuRq0YkVsTFKzIQ3p5HrzJkx06trr8zTSFfR5TnVkyhJVLfl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzlwW7mxafoE1AuXneMkxCRg24gNOhoacZqnQMV4VEU14c9U8qg
+	sQhY92VJObrB97LgKPtxnQeGU5KtXvLbI28DgiiXaHKDB8/ymmAeUwAi7T1Ez0WTBOGtz3cuQ4J
+	jaKT7UGRfuZ9uLJ5GUXd0DvsUOPg=
+X-Google-Smtp-Source: AGHT+IG8OuIQ3b48YFEsiLqVhLSUSOvbQjl4yeSLQwHN+5en9ACp62QdVH6sib/oYU8DQIIE8sPt+1gDw6JW1nhxrFs=
+X-Received: by 2002:a05:6870:1d2:b0:25e:1711:90e3 with SMTP id
+ 586e51a60fabf-28ccb44c99amr2046492fac.2.1729673560629; Wed, 23 Oct 2024
+ 01:52:40 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <4985597.31r3eYUQgx@rjwysocki.net> <2655659.Lt9SDvczpP@rjwysocki.net>
+ <CAJZ5v0h_tsCKpvZuHejCF4qnvJt7+=GqMGc7YgiM=Eu55bKBCg@mail.gmail.com> <fd8729ab-85ba-4cbb-80f2-c5e188987d62@arm.com>
+In-Reply-To: <fd8729ab-85ba-4cbb-80f2-c5e188987d62@arm.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Wed, 23 Oct 2024 10:52:27 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0iBL8bT1SHu4KKh7qgzq0nLAjrc6QY4oBEM-unhVFfs9w@mail.gmail.com>
+Message-ID: <CAJZ5v0iBL8bT1SHu4KKh7qgzq0nLAjrc6QY4oBEM-unhVFfs9w@mail.gmail.com>
+Subject: Re: [PATCH v2 09/11] thermal: core: Add and use cooling device guard
+To: Lukasz Luba <lukasz.luba@arm.com>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, "Rafael J. Wysocki" <rjw@rjwysocki.net>, 
+	Linux PM <linux-pm@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Oct 2024, Maarten Lankhorst <maarten.lankhorst@linux.intel.com> wrote:
-> We will probably want to make this a proper region in TTM for
-> everything, so that we can charge VRAM twice, once for mapped
-> in sysmem, once for mapped in vram. That way we don't need to
-> deal with evict failing from lack of available memory in mapped.
+On Wed, Oct 23, 2024 at 12:24=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
+wrote:
 >
-> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-> Signed-off-by: Maxime Ripard <mripard@kernel.org>
-> ---
->  drivers/gpu/drm/xe/xe_ttm_sys_mgr.c | 14 ++++++++++++++
->  1 file changed, 14 insertions(+)
 >
-> diff --git a/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c b/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c
-> index 9844a8edbfe19..20fa8ec8925ef 100644
-> --- a/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c
-> +++ b/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c
-> @@ -101,6 +101,18 @@ static void ttm_sys_mgr_fini(struct drm_device *drm, void *arg)
->  	ttm_set_driver_manager(&xe->ttm, XE_PL_TT, NULL);
->  }
->  
-> +static inline void apply_cg(struct xe_device *xe,
-> +			    struct ttm_resource_manager *man,
-> +			    u64 gtt_size)
+>
+> On 10/14/24 13:26, Rafael J. Wysocki wrote:
+> > On Fri, Oct 11, 2024 at 12:22=E2=80=AFAM Rafael J. Wysocki <rjw@rjwysoc=
+ki.net> wrote:
+> >>
+> >> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >>
+> >> Add and use a special guard for cooling devices.
+> >>
+> >> This allows quite a few error code paths to be simplified among
+> >> other things and brings in code size reduction for a good measure.
+> >>
+> >> No intentional functional impact.
+> >>
+> >> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> >> ---
+> >>
+> >> This is a new iteration of
+> >>
+> >> https://lore.kernel.org/linux-pm/1890654.atdPhlSkOF@rjwysocki.net/
+> >>
+> >> v1 -> v2: Rearrange cur_state_store()
+> >>
+> >> ---
+> >>   drivers/thermal/gov_power_allocator.c |   21 +++++++--------
+> >>   drivers/thermal/gov_step_wise.c       |    6 ++--
+> >>   drivers/thermal/thermal_core.c        |   17 +++---------
+> >>   drivers/thermal/thermal_debugfs.c     |   25 +++++++++++-------
+> >>   drivers/thermal/thermal_helpers.c     |   19 +++-----------
+> >>   drivers/thermal/thermal_sysfs.c       |   45 ++++++++++++-----------=
+-----------
+> >>   include/linux/thermal.h               |    3 ++
+> >>   7 files changed, 57 insertions(+), 79 deletions(-)
+> >>
+>
+> [snip]
+>
+> >>
+> >>          stats =3D cdev->stats;
+> >> -       if (!stats) {
+> >> -               len =3D -ENODATA;
+> >> -               goto unlock;
+> >> -       }
+> >> +       if (!stats)
+> >> +               return -ENODATA;
+> >>
+> >>          len +=3D snprintf(buf + len, PAGE_SIZE - len, " From  :    To=
+\n");
+> >>          len +=3D snprintf(buf + len, PAGE_SIZE - len, "       : ");
+> >
+> > There is one more "goto unlock" statement in this function that needs
+> > to be replaced with "return".
+> >
+> > I'll send an update of it shortly.
+> >
+>
+> OK, I will review that when it's ready.
 
-Ditto here about static inline in .c.
+It's been sent already:
 
-> +{
-> +	int cgregion = xe->cg.num_regions++;
-> +
-> +	xe->cg.regions[cgregion].size = gtt_size;
-> +	xe->cg.regions[cgregion].name = "mapped";
-> +	man->cgdev = &xe->cg;
-> +	man->cgidx = cgregion;
-> +
-> +}
->  int xe_ttm_sys_mgr_init(struct xe_device *xe)
->  {
->  	struct ttm_resource_manager *man = &xe->mem.sys_mgr;
-> @@ -116,6 +128,8 @@ int xe_ttm_sys_mgr_init(struct xe_device *xe)
->  	man->func = &xe_ttm_sys_mgr_func;
->  	ttm_resource_manager_init(man, &xe->ttm, gtt_size >> PAGE_SHIFT);
->  	ttm_set_driver_manager(&xe->ttm, XE_PL_TT, man);
-> +	apply_cg(xe, man, gtt_size);
-> +
->  	ttm_resource_manager_set_used(man, true);
->  	return drmm_add_action_or_reset(&xe->drm, ttm_sys_mgr_fini, xe);
->  }
-
--- 
-Jani Nikula, Intel
+https://lore.kernel.org/linux-pm/5837621.DvuYhMxLoT@rjwysocki.net/
 
