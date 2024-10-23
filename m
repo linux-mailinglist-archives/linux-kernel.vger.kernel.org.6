@@ -1,117 +1,128 @@
-Return-Path: <linux-kernel+bounces-377423-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D0389ABEA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:24:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929BC9ABEB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:26:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0E1CC284465
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:24:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B61481C21039
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:26:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EA687149013;
-	Wed, 23 Oct 2024 06:24:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFFFB14885B;
+	Wed, 23 Oct 2024 06:26:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="PrwYraWd"
-Received: from mail-ed1-f73.google.com (mail-ed1-f73.google.com [209.85.208.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LX2niEFl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC2F9145B2E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:24:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44EA7136345;
+	Wed, 23 Oct 2024 06:26:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729664665; cv=none; b=Jt159t/hnQQSGusKxW1zdJhfe7h3C2JX1EuigbrCXwsUOF9ZEcezteayvHOJur67jOaVWVqWKD2Y//+ycFpu4aaZD1QZOuBAwT+TjRFXYGIGZgJ5ZIJPmiJkA5PPlR0fM1Lxq4gLUEU0RX1Wh6ppCWK/uNQrCKBysE5dbJta9hM=
+	t=1729664805; cv=none; b=n4yxiJ4zQZU+sx1Mue6CkGdInzuhkTm/o0YWwpSftm2qBJgb51/mdElp0gv6/9fdFtFsxAlAOkwPnaEAgHEw8L1OvB1g2YaktD9A+mAm/6AG9+Wl/mSjv+8jHxLEcOHIXaFfc2QS1fKDNJsSa2hMob4W/p/rGni5AkkDExnRH2o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729664665; c=relaxed/simple;
-	bh=Kmf/1xEzbwqpAKJt9go6uvl87csSe+TqzWzUtyTAm8I=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=ecHvWh8PiUuYwC/I58JXdK1dJHksfrdEeGLm6ij33tgbKnRvf7K/7yB7M2GzKwzA9xHGcf/tlRZ8ZFuc8IRU7sKu44D6P8IPh3wq6tGEkDx9ROhL1AuMdnh3+/4kSLZemsm/HbCXuoFYO0v8ZSW4v9MteSzW6JHerxWfxQCvhUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=PrwYraWd; arc=none smtp.client-ip=209.85.208.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--dvyukov.bounces.google.com
-Received: by mail-ed1-f73.google.com with SMTP id 4fb4d7f45d1cf-5c9362c26a9so3849872a12.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:24:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729664662; x=1730269462; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kmf/1xEzbwqpAKJt9go6uvl87csSe+TqzWzUtyTAm8I=;
-        b=PrwYraWdobug2t+uC6Vp7EV4xdzZoVwTNHirr73b2IFqvth+F4o5VWgdzH0i/gmNvh
-         ZHKJqzhqNtxP4SqT2eY+kDTQkKUIEiSTrPi2nYwkJPIR9tvneugekSRGtKKYanGleFub
-         MiPMP10l4ktHx4DwnjU+siCw1amlk+KOzUAMa8+2a55LPcNcIS61hYzNq+ny/WCJkCw4
-         BkyTRidsui8NTTW/yt3kJxhZHry4mZHojJevjbmbTv15Y1da8qnnzb/yZeO/MRvUl2mq
-         AENdyKhdfRgcLxVfG99qakdKL1WOe/Ui47pY20zETidEzKKkp81ECCFRYvnJmA1SptM/
-         Q2TA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729664662; x=1730269462;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Kmf/1xEzbwqpAKJt9go6uvl87csSe+TqzWzUtyTAm8I=;
-        b=bC/s5T2dpN0H90M0GCajC8EOzWrXbNg5F440OBhqE4m7vN/EIZa6xD77oxkcqaygpE
-         vc7wutExJryIzrVhuNGJE+0q+C4HiZP340UD+Rk4dhYDz5hxladq+ygg0ArJlski7Fba
-         c3Ft3dh0jLskC5SL4Sd2Pyz0rEAt3hQUN9+afW9jwglviPKkUFodBe5lvC6hhdyzoZfj
-         wLvBAfGsJBdHKogLd6/zpgThBVKMphKNqd9tLjoVF7yknkbN+/bY0Ef+Mpl47jMfVqVy
-         5u7meYS3LnNr8gVoBB7bk7sx3Kdy40MSN2+bnaJb87EZlfduzRcddi7CWJqajljjGNPH
-         JGrg==
-X-Forwarded-Encrypted: i=1; AJvYcCWbg9LiOQmjQxy7A3QeCMh8Bp59rS6WZXMcrZUTJk/SqaVTeA058oFWJtpPsWQY9a+fw7nNRpitDnluhkc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxI42Uaj7NRc1F7wMceIuKBfLsvDTFZJ97mH1ZgSU58k4r76Jxq
-	Vq0wEbr6TE4G7YnHmTL5i9kFFrI9PvzF221UVAxAH7CtBKgePxUohYmDBCENJzaoQ+69vdSW4gw
-	W0zEMQA==
-X-Google-Smtp-Source: AGHT+IH2bi6zc9dFjuEaAFUh7qdl0Clkcf7sHX1Yomy2F23FgFUOKN443WAQT8QytBDy9+TF/aj9qhft85qo
-X-Received: from dvyukov9.muc.corp.google.com ([2a00:79e0:9c:201:6e9d:53fb:bcc1:7c2d])
- (user=dvyukov job=sendgmr) by 2002:a05:6402:3482:b0:5c9:5cbf:e5b9 with SMTP
- id 4fb4d7f45d1cf-5cb8b20d251mr583a12.8.1729664661613; Tue, 22 Oct 2024
- 23:24:21 -0700 (PDT)
-Date: Wed, 23 Oct 2024 08:24:17 +0200
-In-Reply-To: <87a5eysmj1.fsf@mid.deneb.enyo.de>
+	s=arc-20240116; t=1729664805; c=relaxed/simple;
+	bh=Tvcc9nAcNuH2vSym1/qQK+f+V02u0w5qsalKwW3f04U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=tybj7UNDU2nVZoTRFNRzxqjaYVtgenMZgWe/5fVbbawkpo7jhXd6rUNqMT+ZolM1CPMBDRXvee5kXd9SNbxUFJbnbEhJJkYuXCSxyxG+q16JLeJX7sd0WJ5z76ImWbmD6wU2Dx/2BkIdKHuYxKz8zVXMPz67Ww9uA5+A7EZzp9E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LX2niEFl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A4ECC4CEC6;
+	Wed, 23 Oct 2024 06:26:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729664804;
+	bh=Tvcc9nAcNuH2vSym1/qQK+f+V02u0w5qsalKwW3f04U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=LX2niEFllulF+ndNIujH6M3xZiSCUS2x67t+9huHJV1LHxCw4ED/c9CI/zzVmQRx/
+	 JtfySEL4gVTGIvsH5TGTw3vdTDPnfZbiCr5Fr1CXIdr7oeQcNSByytljoVgNi0lpcg
+	 wExPXGuQu/1M9F0YAlaDxlZY+Pvmgnj+M85YfjRyoEe7Wir5fLimZp/ySV0h80k/ny
+	 zNeqboYMOj+Yg9etsicU0bSP3kO2Uzhgj4AatRgwWGZHf7d3YZEeDdZQ9IWGEuqSO9
+	 CN1nuNIIsxOHWMKqffPo+UzGc1OGupPlOployvK0jPbUBCn25qvYTAbg7xhSomM53A
+	 SkMIZArJj+rpQ==
+Message-ID: <0e9d0183-e262-4184-a7b0-9ab16e736b91@kernel.org>
+Date: Wed, 23 Oct 2024 08:26:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <87a5eysmj1.fsf@mid.deneb.enyo.de>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241023062417.3862170-1-dvyukov@google.com>
-Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
-From: Dmitry Vyukov <dvyukov@google.com>
-To: fw@deneb.enyo.de
-Cc: James.Bottomley@HansenPartnership.com, Liam.Howlett@oracle.com, 
-	akpm@linux-foundation.org, arnd@arndb.de, brauner@kernel.org, 
-	chris@zankel.net, david@redhat.com, deller@gmx.de, hch@infradead.org, 
-	ink@jurassic.park.msu.ru, jannh@google.com, jcmvbkbc@gmail.com, 
-	jeffxu@chromium.org, jhubbard@nvidia.com, linux-alpha@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-arch@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org, 
-	linux-mips@vger.kernel.org, linux-mm@kvack.org, linux-parisc@vger.kernel.org, 
-	lorenzo.stoakes@oracle.com, mattst88@gmail.com, muchun.song@linux.dev, 
-	paulmck@kernel.org, richard.henderson@linaro.org, shuah@kernel.org, 
-	sidhartha.kumar@oracle.com, surenb@google.com, tsbogend@alpha.franken.de, 
-	vbabka@suse.cz, willy@infradead.org, elver@google.com
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4] usb: core: adds support for PM control of specific USB
+ dev skip suspend.
+To: huanglei814 <huanglei814@163.com>, gregkh@linuxfoundation.org,
+ mathias.nyman@intel.com
+Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ huanglei <huanglei@kylinos.cn>
+References: <20241023034457.13241-1-huanglei814@163.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241023034457.13241-1-huanglei814@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-Hi Florian, Lorenzo,
+On 23/10/2024 05:44, huanglei814 wrote:
+> From: huanglei <huanglei@kylinos.cn>
+> 
+> All USB devices are brought into suspend power state after system suspend.
+> It is desirable for some specific manufacturers buses to keep their devices
+> in normal state even after system suspend.
+> 
+> Signed-off-by: huanglei <huanglei@kylinos.cn>
+> ---
+> v3->v4:
+> - Cancel SUSPENDED state judgment when enter suspend，because udev will not enter.
+> - Change "usb-skip-suspend" to "usb-never-suspend"
 
-This looks great!
+Nothing improved in respect of bindings.
 
-What I am VERY interested in is if poisoned pages cause SIGSEGV even when
-the access happens in the kernel. Namely, the syscall still returns EFAULT,
-but also SIGSEGV is queued on return to user-space.
+Still NAK.
 
-Catching bad accesses in system calls is currently the weak spot for
-all user-space bug detection tools (GWP-ASan, libefence, libefency, etc).
-It's almost possible with userfaultfd, but catching faults in the kernel
-requires admin capability, so not really an option for generic bug
-detection tools (+inconvinience of userfaultfd setup/handler).
-Intercepting all EFAULT from syscalls is not generally possible
-(w/o ptrace, usually not an option as well), and EFAULT does not always
-mean a bug.
-
-Triggering SIGSEGV even in syscalls would be not just a performance
-optimization, but a new useful capability that would allow it to catch
-more bugs.
-
-Thanks
+Best regards,
+Krzysztof
 
 
