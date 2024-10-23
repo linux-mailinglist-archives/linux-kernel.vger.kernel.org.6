@@ -1,160 +1,210 @@
-Return-Path: <linux-kernel+bounces-378320-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378322-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A14DD9ACE6D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:16:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A98199ACE70
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:17:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 30A931F230C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:16:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6541F282BD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:17:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F41331BFE0D;
-	Wed, 23 Oct 2024 15:16:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C171BE23F;
+	Wed, 23 Oct 2024 15:17:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EY690EMn"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z9IZWNHO"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B251E75809;
-	Wed, 23 Oct 2024 15:16:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E171A08C2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:17:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729696608; cv=none; b=Ox9sc4qYYt40AYK0KyzdYV2lXAHdStw22kYTTCUiduPrZyXKfQbttCuprY1rOltaixdgMe1/KlGGCIkmUOKc/DgO1k5DgfDmLy5FzY4lKudOrgmPp/Mkjox+HOdV0O9sdMt5iE9JJQ2t1IMVyFOykACoNPH5APXQ2610jQspc5g=
+	t=1729696641; cv=none; b=UBCSWPIKpcXGjMl+Dg5QCOxdR8QYsQ8mZuQ9nM5UVCGQakYuJuCO0cYidinbGDx+WW3DtRIuqcV7Sj3imkHYz/tnxteGXurGBeIbX2YE9EU0UWPLRJXaL4tws8FsssKeWyCNS94KHAOB8NOhhl56cN3Zvsx4Ipyue0Y5rWE5+bQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729696608; c=relaxed/simple;
-	bh=FZaeFxwTakHihLrqx989jDhtPM0HQAzJj+unQOQ1nZY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=jivu+B4MvsZu+/jPLZSwWS0POuQuGK9NrBtBOFKOF7UYSeJX/O91Pfb3WQdnCMXIkaIZ653sIVYszvFnmj0Mf6IkcOZXuvxTTPb0Ol2vxcguK4s7zitvC3vSi2VnBYXKwULcM3+aWU7qawwMN5Egs2viXKHB87pD27sFZb30Bsg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EY690EMn; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c9634c9160so7507922a12.2;
-        Wed, 23 Oct 2024 08:16:46 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729696605; x=1730301405; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=phceHAwg+WXY0lkOFYuZkDTZVc3u9dtw1vIObZgqv+A=;
-        b=EY690EMnNfOkjEh3yjwqGJgF1B3zyFPefeC4LrZiT0+8vAi0+6fNHH696ESTyy/7YS
-         mJcU5HxONknPnUkw21OzIZsm057xP0/ubv96iNNhCy6gqMVUpVWrsTmc0v1nnmAHaD59
-         BYLiAs2hu2h7JSEoApFcWX+akrQISVFe9kwEN9mIrOTTjmObLPPBfDQbOH1s9HpkI9Hf
-         zHjfJKhpPoXhXOXWvDgW+2g3ebpDNfOG6yC9Dywqt46dwAr5Qg6H/Rh9KD+ZYxoYW8a8
-         RNJXBXbu+8NQp0kNWoL4BszJVnLz284HWjmYb8MWZFrMfsJWcDPz4128Wotn+Ka1Lpnu
-         4toQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729696605; x=1730301405;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=phceHAwg+WXY0lkOFYuZkDTZVc3u9dtw1vIObZgqv+A=;
-        b=u2rsm1QUo2+pUU5JV+AxhSjHC0aOy49TJoYkmawrBo2FI65dT/ia0/c8taU328k1cf
-         hN+xLm7gNyjGTKte6wLuEbJi8ukQmG9lOXclR0nIRcKSFY42BJHgUD/HBblAw3/jgY1s
-         6Rx6LC2bDFA23E4LjElAdvuZOpPiyQbCs3GwtCxQULC6GNT1XTOt7WQ2eN5vk7BIKtn+
-         N9iMddlyrMuHxVv1kGsgznZrGbhpW/1p6fgDLfjeYQrVz+F5gN0T5I5t0WmI4RIC5X+3
-         bspmPB9hvmRBNMO/dbTQ25aJRP72IqMmt3lUoVdKLlhuVmBpSczdmFPZ219DQ1xdfNA7
-         yskA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHmiPSsN02s/Ji0dUx1/FwIap8e04TiEvN8NBIgyiMyDJq1EXOySHp8l2LzMi/qpa3T3mdGEYchCFLJCr+@vger.kernel.org, AJvYcCWVlv99TQE3BfGa/QmePRHA+U0lyaJLOrh4Fs9hD9W0L0AAZXLQgZdvN4fkLCl19OxlHU4XBUUSrqeQL++uDyuMKuqy@vger.kernel.org, AJvYcCWd9Ou/nINyy+cIDY4iL7GyVwPmTf9L4EXh/2rlauxyJFbjUTOpZfupqq9G/aCgJi+KtbzVQNRPa+U=@vger.kernel.org, AJvYcCXEbZkTE6V/7+B2BQTBhq9V+aw52/L6y8peeDWs9dzaXJLRkWKOIQFf+6370/gQm4+vY5JA8zcz7uw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy8MA86pupxMpgnIiav1i9dayRZW36WuZp7Ku2b8DD0BKcQqGNS
-	YxaNuQ+flrflw7RP/rDfZVGe/BUTBco474T5GZ1tZAgYFPQJsv7LuLIu9WMRTjnVM6lwHTTy40g
-	EHkn7VFEH4v0NeTJMQ7fnUGvvuqk=
-X-Google-Smtp-Source: AGHT+IGoe9wcQG7zaMf2n0bH4O9DhUNomfztRdDZyWgHh9DssAx3EIjRggFtWPZ2Zdqal/AXcNMgxtzRrpvIThvqlJc=
-X-Received: by 2002:a05:6402:42ca:b0:5c9:6f8f:d7c6 with SMTP id
- 4fb4d7f45d1cf-5cb8ace953fmr2572362a12.13.1729696604707; Wed, 23 Oct 2024
- 08:16:44 -0700 (PDT)
+	s=arc-20240116; t=1729696641; c=relaxed/simple;
+	bh=7QXtgMik+x9PyMt0aIrb9yDcVGFj/6gmQhdTCVIJNmo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Uofb4+zPuCx/AuO1z5YVC6YD8uP6mqWSqAox4VjiC/P8nN5PPlTOHk1y+o0TjYgZGtIUNTmncHA00HOSZkm2UssiHNDaBe8TIr4XWPtPHDFiQH9AbNfbo1Gcd2wliAeFG69kwFsAgb3UhH6+3Qb36bP73n6Pvb44v23SSulZceA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z9IZWNHO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NDAbpx027450;
+	Wed, 23 Oct 2024 15:17:01 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=9c5VXu
+	XWYBCUIxxlDDct7TgskUlWq5rnL3yH2zaR94k=; b=Z9IZWNHOeVtYBQeJresU4i
+	UQdsjzX3EGsYy3l9IhYyh8dgLOZD3w/Qd1N8DRPxRuy/XQPIOLrhkDdG9PgzlRpN
+	esRZHDK67eC1gMy7DPQUZP75P3n2v9M0l7GcMNQsB8Tf/jy0RXXcjjAz+Gf734YT
+	GM3hTocX9FHCWeJzV+omz3P0Osdyi6B79PhN72Ql3MioFTby7+OBXW4OuhAjaT1j
+	w+EH0s5/1qSmOTmLCft7p6YS0U/iRHCyIfPtK1E1iAs7qZXDH+S6Py+DW/HTF3T6
+	zS1ks83wCMl1rbXjQM6W8uDE2LY9ZH23wcPZIR8ZxNu6kX7YPwspSgo9DKS1D3BQ
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafkr4m-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 15:17:00 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NFH0Yj000818;
+	Wed, 23 Oct 2024 15:17:00 GMT
+Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafkr4f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 15:17:00 +0000 (GMT)
+Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBefop001542;
+	Wed, 23 Oct 2024 15:16:59 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emk9beff-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 15:16:59 +0000
+Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NFGvcN29229756
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 15:16:57 GMT
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id AACC920043;
+	Wed, 23 Oct 2024 15:16:57 +0000 (GMT)
+Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id DBEE620040;
+	Wed, 23 Oct 2024 15:16:54 +0000 (GMT)
+Received: from [9.39.29.91] (unknown [9.39.29.91])
+	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 23 Oct 2024 15:16:54 +0000 (GMT)
+Message-ID: <32e0b995-eb81-42bf-904b-225a3b7c0e87@linux.ibm.com>
+Date: Wed, 23 Oct 2024 20:46:53 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240922132636.34413-1-0xff07@gmail.com> <20240926005952.5ba2fda4@rorschach.local.home>
-In-Reply-To: <20240926005952.5ba2fda4@rorschach.local.home>
-From: Yo-Jung Lin <0xff07@gmail.com>
-Date: Wed, 23 Oct 2024 23:16:32 +0800
-Message-ID: <CAHhBtNomV6bCcau7sVU9G=pPWtX3XTvr4_pEkjqLGzs=-OZLUA@mail.gmail.com>
-Subject: Re: [PATCH] trace doc: document the device_pm_callback events
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: linux-kernel-mentees@lists.linuxfoundation.org, ricardo@marliere.net, 
-	skhan@linuxfoundation.org, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, Jonathan Corbet <corbet@lwn.net>, 
-	linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, "Rafael J. Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
+To: Steve Wahl <steve.wahl@hpe.com>, Valentin Schneider <vschneid@redhat.com>
+Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
+        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
+        Juri Lelli <juri.lelli@redhat.com>,
+        Vincent Guittot <vincent.guittot@linaro.org>,
+        Dietmar Eggemann <dietmar.eggemann@arm.com>,
+        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
+        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
+References: <20241010155111.230674-1-steve.wahl@hpe.com>
+From: Shrikanth Hegde <sshegde@linux.ibm.com>
+Content-Language: en-US
+In-Reply-To: <20241010155111.230674-1-steve.wahl@hpe.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: m6t6agrCRGBMrlzv9TUxoUfkeHVzGCi0
+X-Proofpoint-GUID: 04CJ3LKgx1Aakwg1INhWC4fajtf1uP8A
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
+ mlxscore=0 mlxlogscore=910 adultscore=0 lowpriorityscore=0 malwarescore=0
+ spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410230091
 
-Hi Rafael and the PM maintainers,
 
-On Thu, Sep 26, 2024 at 12:59=E2=80=AFPM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
->
->
-> This needs an ack from one of the power management maintainers.
->
-> -- Steve
->
->
-> On Sun, 22 Sep 2024 21:26:28 +0800
-> "Yo-Jung (Leo) Lin" <0xff07@gmail.com> wrote:
->
-> > Add documentation for the device_pm_callback_{start, end} events
-> > under the "Subsystem Trace Points: power" section.
-> >
-> > Signed-off-by: Yo-Jung (Leo) Lin <0xff07@gmail.com>
-> > ---
-> >  Documentation/trace/events-power.rst | 27 +++++++++++++++++++++++++++
-> >  1 file changed, 27 insertions(+)
-> >
-> > diff --git a/Documentation/trace/events-power.rst b/Documentation/trace=
-/events-power.rst
-> > index f45bf11fa88d..7031954f7ed3 100644
-> > --- a/Documentation/trace/events-power.rst
-> > +++ b/Documentation/trace/events-power.rst
-> > @@ -102,3 +102,30 @@ And, there are events used for CPU latency QoS add=
-/update/remove request.
-> >    pm_qos_remove_request     "value=3D%d"
-> >
-> >  The parameter is the value to be added/updated/removed.
-> > +
-> > +5. Device PM callback events
-> > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
-> > +The device PM callback events are placed right before and after an inv=
-ocation of
-> > +a device PM callback during a system-wide suspend/resume attempt.
-> > +::
-> > +
-> > +  device_pm_callback_start     "%s %s, parent: %s, %s[%s]"
-> > +  device_pm_callback_end       "%s %s, err=3D%d"
-> > +
-> > +The first two parameters in both events are the same. They are:
-> > +
-> > +  - The name of the driver.
-> > +  - The device whose PM callbacks get called.
-> > +
-> > +For device_pm_callback_start, the rest of the parameters are:
-> > +
-> > +  - The parent device of the device (if any).
-> > +  - Level in the power management hierarchy the callback belongs to (e=
-.g. power
-> > +    domain, type, class, bus, driver). Some stages (e.g. early, late, =
-noirq)
-> > +    will also be explicitly mentioned in this string.
-> > +  - The ongoing PM event. You may find definitions of those events in =
-the
-> > +    PM_EVENT_* macros in include/linux/pm.h
-> > +
-> > +For device_pm_callback_end, the only remaining parameter is:
-> > +
-> > +  - The return value of the PM callback.
->
 
-I think it'll be helpful to have your feedback on this documentation
-proposal. Would you kindly help take a look? I believe that any
-feedback would be really helpful. Thank you!
+On 10/10/24 21:21, Steve Wahl wrote:
+> Use a different approach to topology_span_sane(), that checks for the
+> same constraint of no partial overlaps for any two CPU sets for
+> non-NUMA topology levels, but does so in a way that is O(N) rather
+> than O(N^2).
+> 
+> Instead of comparing with all other masks to detect collisions, keep
+> one mask that includes all CPUs seen so far and detect collisions with
+> a single cpumask_intersects test.
+> 
+> If the current mask has no collisions with previously seen masks, it
+> should be a new mask, which can be uniquely identified by the lowest
+> bit set in this mask.  Keep a pointer to this mask for future
+> reference (in an array indexed by the lowest bit set), and add the
+> CPUs in this mask to the list of those seen.
+> 
+> If the current mask does collide with previously seen masks, it should
+> be exactly equal to a mask seen before, looked up in the same array
+> indexed by the lowest bit set in the mask, a single comparison.
+> 
+> Move the topology_span_sane() check out of the existing topology level
+> loop, let it use its own loop so that the array allocation can be done
+> only once, shared across levels.
+> 
+> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
+> the average time to take one processor offline is reduced from 2.18
+> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
+> 34m49.765s without this change, 16m10.038s with this change in place.)
+> 
+> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
 
-Best,
-Leo
+I was trying to go through this issue and observed below.
+Looks like the computations are repeated in below manner.
+
+Assume SMT4 system.
+
+[[0 2 4 6]   [1 3 5 7] ]   [ [8 10 12 14]  [9 11 13 15] ]
+  <--SMT-->   <--SMT-->       <---SMT---->  <----SMT--->
+<---------PKG---------->   <------------PKG------------->
+
+
+Lets say it happening for CPU0, at SMT level, then it will do, masking 
+in below manner.
+
+2: [0 2 4 6] & [0 2 4 6]
+4: [0 2 4 6] & [0 2 4 6]
+6: [0 2 4 6] & [0 2 4 6]
+
+1: [0 2 4 6] & [1 3 5 7]
+3: [0 2 4 6] & [1 3 5 7]
+5: [0 2 4 6] & [1 3 5 7]
+7: [0 2 4 6] & [1 3 5 7]
+
+8: [0 2 4 6] & [8 10 12 14]
+10:[0 2 4 6] & [8 10 12 14]
+12:[0 2 4 6] & [8 10 12 14]
+14:[0 2 4 6] & [8 10 12 14]
+
+9: [0 2 4 6] & [9 11 13 15]
+11:[0 2 4 6] & [9 11 13 15]
+13:[0 2 4 6] & [9 11 13 15]
+15:[0 2 4 6] & [9 11 13 15]
+
+
+And when it happens for CPU2, it will do the exact same computation. 
+Maybe that can be avoided with something like below. Do the computation
+if it is the first cpu in that topology level mask.
+
+Not sure if it works in all scenarios. Tested very very lightly on 
+power10 system with SMT=4.
+
+Please correct me if i got it all wrong.
+
+------------------------------------------------------------------------
+
+diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
+index 9748a4c8d668..541631ca32bd 100644
+--- a/kernel/sched/topology.c
++++ b/kernel/sched/topology.c
+@@ -2367,6 +2367,13 @@ static bool topology_span_sane(struct 
+sched_domain_topology_level *tl,
+         if (tl->flags & SDTL_OVERLAP)
+                 return true;
+
++       /* Do the computation only if this cpu is first CPU
++        * in the topology level mask. Same computation is kind of
++        * Repetitions on other CPUS */
++       if (!(cpu == cpumask_first(tl->mask(cpu)))) {
++               return true;
++       }
++
+         /*
+          * Non-NUMA levels cannot partially overlap - they must be either
+          * completely equal or completely disjoint. Otherwise we can end up
+
 
