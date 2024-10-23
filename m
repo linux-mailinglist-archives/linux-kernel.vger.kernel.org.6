@@ -1,91 +1,76 @@
-Return-Path: <linux-kernel+bounces-377150-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377151-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 802E39ABA78
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:20:27 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9188A9ABA7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:20:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEAAB1C22C65
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:20:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09A2FB235D5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:20:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4664D17BD5;
-	Wed, 23 Oct 2024 00:20:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="u1yRxgri"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDC0917BCE;
+	Wed, 23 Oct 2024 00:20:40 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99D1529CA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7C27817753;
+	Wed, 23 Oct 2024 00:20:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729642817; cv=none; b=uURvQU04yigVNQw/0qHgIhZPe8j789CqvRDLbZ09bJ9pB1pk0NPm6MHbaWZ1TwmtAyw19JyqFbxxlabAd0EMD1im5Jpg5yRN/K4wIuY4vmjbY3w7P1G36YA06QeiypxLIzFyTfMsq684+4F2BNf608bOx1vKIbkRHrE3pzQNk7c=
+	t=1729642840; cv=none; b=QC57w0M+ymCwuo18UI9BiFSfod3jP5exRZ8saGy3ZzBENCJLASBguJCNW42pMjQkfLR4BGdG2a9iGFo1iCeOaNy9iG6TcCS8WyDClXmdbgK1ZBuH+JiZ1jIQGq57r2rTXxp8g8+z6mYCk9JDr0CJCb/RnRjnzkkn1UodIKT/LKQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729642817; c=relaxed/simple;
-	bh=1kLBdFE+anbsM2Mi24KQGhJ/hy8EXtp5WfgCyCsjvVs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=buZFKsWV1dZPKi7KMPvbf+oHezKVkWO0fAjjEirhf7IV3MUsXmQaVDBOwfT54wC38zhUhXNrsMvWiA4MeyykHdGmhr8UmB6CgoFRBgPVU9WBHpAxyxp0Qhvjlv7J1PjtDXHzK0hX7e6tdjZ5GVl9Pa/S1OQtih7INXutMqUw4xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=u1yRxgri; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Oct 2024 17:20:07 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729642813;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Z15RmE1aCX+3NKMPTr3rVyCAh7IDX7aly0QhzhKsF5w=;
-	b=u1yRxgriHqCN56anBMBUPKzkxEOyKHZ5NvPRH/5iwxiEhTLfXkbqCDSfH3mkjPDisedQVT
-	rdhSxs1VD/+HtNoN50VVmePoWHVd+9I1TnFs6gBtpS4WWtgzurycAokRmSQG9kI0N6CftM
-	oN7GbRS74vEbNxIk045YhYXWowvWO1I=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, 
-	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Sang <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v4 1/4] pidfd: extend pidfd_get_pid() and de-duplicate
- pid lookup
-Message-ID: <qruy775a4vayqstswwaqxpqtp7mcckqa3tme64buzjts4zrmm7@la47lojzelhj>
-References: <cover.1729198898.git.lorenzo.stoakes@oracle.com>
- <94a3210afe96c9d1d6f9460d7d37a43e5bc5f550.1729198898.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1729642840; c=relaxed/simple;
+	bh=0kSOg9f5wbUj4S89ebjgTp0df7YqMPgK9WjQwW7IRKM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=Xl8UisqSPGAPrQYkcPXrBAW2MFne2jh1icx5Jdw6fz7tOkg+ucbMMlzWWl7SGeToMK3eysHyyOli8hsFhNURXXPf9bjayawXyU3L0WE+yyC3uDJtimlWCYO2+b+c/1DtXpiHgKnhps6psWe+K0oV031gGdvhcp4cvYjzbpAaDf8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3488C4CEC3;
+	Wed, 23 Oct 2024 00:20:37 +0000 (UTC)
+Date: Tue, 22 Oct 2024 20:20:34 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Andrii Nakryiko <andrii.nakryiko@gmail.com>, Jordan Rife
+ <jrife@google.com>, linux-kernel@vger.kernel.org,
+ syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, Michael Jeanson
+ <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, Peter
+ Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>,
+ Yonghong Song <yhs@fb.com>, "Paul E . McKenney" <paulmck@kernel.org>, Ingo
+ Molnar <mingo@redhat.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Mark
+ Rutland <mark.rutland@arm.com>, Alexander Shishkin
+ <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>,
+ bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+Message-ID: <20241022202034.2f0b5d76@rorschach.local.home>
+In-Reply-To: <1ab8fe0d-de92-49be-b10b-ebb5c7f5573a@efficios.com>
+References: <20241022151804.284424-1-mathieu.desnoyers@efficios.com>
+	<CADKFtnSGoSXm-r0cykucj4RyO5U7-HHBPx7LFkC6QDHtyPbMfQ@mail.gmail.com>
+	<3362d414-4d6f-43a7-80af-1c72c5e66d70@efficios.com>
+	<CAEf4BzYBR95uBY58Wk2R-h__m5-gV0FmbrxtDgfgxbA1=+u0BQ@mail.gmail.com>
+	<1ab8fe0d-de92-49be-b10b-ebb5c7f5573a@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <94a3210afe96c9d1d6f9460d7d37a43e5bc5f550.1729198898.git.lorenzo.stoakes@oracle.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 17, 2024 at 10:05:49PM GMT, Lorenzo Stoakes wrote:
-> The means by which a pid is determined from a pidfd is duplicated, with
-> some callers holding a reference to the (pid)fd, and others explicitly
-> pinning the pid.
-> 
-> Introduce __pidfd_get_pid() which narrows this to one approach of pinning
-> the pid, with an optional output parameters for file->f_flags to avoid the
-> need to hold onto a file to retrieve this.
-> 
-> Additionally, allow the ability to open a pidfd by opening a /proc/<pid>
-> directory, utilised by the pidfd_send_signal() system call, providing a
-> pidfd_get_pid_proc() helper function to do so.
-> 
-> Doing this allows us to eliminate open-coded pidfd pid lookup and to
-> consistently handle this in one place.
-> 
-> This lays the groundwork for a subsequent patch which adds a new sentinel
-> pidfd to explicitly reference the current process (i.e. thread group
-> leader) without the need for a pidfd.
-> 
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On Tue, 22 Oct 2024 16:04:49 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
 
-Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > 
+> > That's just to say that I don't think that we need any BPF-specific
+> > fix beyond what Mathieu is doing in this patch, so:
+> > 
+> > Acked-by: Andrii Nakryiko <andrii@kernel.org>  
+> 
+> Thanks!
+
+Does this mean I can pull this patch as is? I don't usually take RFCs.
+
+-- Steve
 
