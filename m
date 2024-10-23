@@ -1,118 +1,149 @@
-Return-Path: <linux-kernel+bounces-377689-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2BBA9AC25B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:56:33 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21969AC14C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:17:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28BAE1F2582C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:56:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E338F2854BB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0811662F1;
-	Wed, 23 Oct 2024 08:56:13 +0000 (UTC)
-Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B15158A04;
+	Wed, 23 Oct 2024 08:17:08 +0000 (UTC)
+Received: from muminek.juszkiewicz.com.pl (muminek.juszkiewicz.com.pl [213.251.184.221])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212CA165F0C;
-	Wed, 23 Oct 2024 08:56:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C91B414B953;
+	Wed, 23 Oct 2024 08:17:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.251.184.221
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673772; cv=none; b=FcaS9J5xQJl9g8bUb2eYMmtnFbLB0QSh7TX2Von1TTiZKxNf61KYVGji/4B+Uz+sKZ23rUaFhIEl81cw1s9Dj0p8iS5B1HTSd/MrpxTpHP3VWa+ezNOPiiXbtr6qOC7f5D9EJEwQTjA0P8XY1h41FAbMFkTUBARH5meWamXYyG0=
+	t=1729671427; cv=none; b=UUlq+CWBR0GsbUzLzSUKpDQr1K5fhPtuVMh1ShWg0PVDECT7doYLosE8PxWW0AougkNbs7yeLgwk06kBeItHS7PYFokqXC/w+DqUaPHPfb8Rn4P1rrKoYPakNSRVH19BraZflbih1sngp5kpsYIGpMBrTM4ESqN/qdsm32Nd4HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673772; c=relaxed/simple;
-	bh=LtUuF4KAjrjmqUd8QvWj0hAG1Z8HkwAdOYmGjMckmC0=;
-	h=From:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:To; b=hGCUBAgoXivhcn80rXcOjmPBGT411/4ElsIGRClZX1pHAkCAm9wMa98HTsFIQpM6mN/SoDWlQRROctoMXbh1vBoOBpqs5PRRGD6A0VoDNwIIebFST2PlpD2Nxqm6U/NMyxO+Cfdq/HATunzDHT9uAh+Z7eUz3D9qlL4IU1Wo8f4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
-Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.emlix.com (Postfix) with ESMTPS id E18F45F8A7;
-	Wed, 23 Oct 2024 10:56:07 +0200 (CEST)
-From: Rolf Eike Beer <eb@emlix.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] improve qconfig C++ code
-Date: Wed, 23 Oct 2024 08:26:51 +0200
-Message-ID: <4960180.31r3eYUQgx@devpool47.emlix.com>
-Organization: emlix GmbH
+	s=arc-20240116; t=1729671427; c=relaxed/simple;
+	bh=TJf3b8eqVwOuOIsErBaIed229CKsRWSMPf3lEQFcUfA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pfRwmuF/gSCjDe6c+FTa9kb648i0R5hmVp8VW3p/j0qsMdk0TSC59mukjsQD2PC77DFGIhJUgCnJCUeXxPjccbYaibB1ZNbVXCDXyOj8WOxUaFapM+wafN3U6nZdMq+XCPiPbVK5YP2SQpCAnIQYwZG00zcbWrijlQu3OzOOraA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org; spf=fail smtp.mailfrom=linaro.org; arc=none smtp.client-ip=213.251.184.221
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=linaro.org
+Received: from localhost (localhost [127.0.0.1])
+	by muminek.juszkiewicz.com.pl (Postfix) with ESMTP id 6D5AD261A20;
+	Wed, 23 Oct 2024 10:06:14 +0200 (CEST)
+X-Virus-Scanned: Debian amavis at juszkiewicz.com.pl
+Received: from muminek.juszkiewicz.com.pl ([127.0.0.1])
+ by localhost (muminek.juszkiewicz.com.pl [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id DkM8llJTJZMF; Wed, 23 Oct 2024 10:06:12 +0200 (CEST)
+Received: from puchatek.lan (83.11.13.124.ipv4.supernova.orange.pl [83.11.13.124])
+	by muminek.juszkiewicz.com.pl (Postfix) with ESMTPSA id 117CF26059E;
+	Wed, 23 Oct 2024 10:06:10 +0200 (CEST)
+From: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+To: Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiko Stuebner <heiko@sntech.de>
+Cc: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] arm64: dts: rockchip: Enable HDMI0 on rk3588-nanopc-t6
+Date: Wed, 23 Oct 2024 10:06:04 +0200
+Message-ID: <20241023080605.623125-1-marcin.juszkiewicz@linaro.org>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="nextPart4604293.LvFx2qVVIh";
- micalg="pgp-sha256"; protocol="application/pgp-signature"
-Resent-Message-ID: <202410231056.07265.>
-Resent-Date: Wed, 23 Oct 2024 10:56:07 +0200
-Resent-From: Rolf Eike Beer <eb@emlix.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Resent-To: Masahiro Yamada <masahiroy@kernel.org>
-Resent-Cc: 	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 8bit
 
---nextPart4604293.LvFx2qVVIh
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
-From: Rolf Eike Beer <eb@emlix.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 0/7] improve qconfig C++ code
-Date: Wed, 23 Oct 2024 08:26:51 +0200
-Message-ID: <4960180.31r3eYUQgx@devpool47.emlix.com>
-Organization: emlix GmbH
-MIME-Version: 1.0
+Add the necessary DT changes to enable HDMI0 on FriendlyELEC NanoPC-T6.
+Tested on LTS variant of the board but this part is the same on both.
 
-While playing around with qconfig I made some cleanups that I seemed to for=
-got=20
-to send out. This uses more of the Qt API that is already present to make t=
-he=20
-code a bit nicer (YMMV). Especially it adds some keyboard shortcuts for the=
-=20
-default actions (Save, Save as and the like).
+Signed-off-by: Marcin Juszkiewicz <marcin.juszkiewicz@linaro.org>
+---
+ .../boot/dts/rockchip/rk3588-nanopc-t6.dtsi   | 47 +++++++++++++++++++
+ 1 file changed, 47 insertions(+)
 
-Rolf Eike Beer (7):
-  kconfig: qconf: simplify character replacement
-  kconfig: qconf: use default platform shortcuts
-  kconfig: qconf: use nullptr in C++11 code
-  kconfig: qconf: use QCommandLineParser
-  kconfig: qconf: use preferred form of QString API
-  kconfig: qconf: use QString to store path to configuration file
-  kconfig: qconf: use QByteArray API instead of manually constructing a str=
-ing
-
-=2D-=20
-Rolf Eike Beer
-
-emlix GmbH
-Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
-Phone +49 (0)551 30664-0, e-mail info@emlix.com
-District Court of G=C3=B6ttingen, Registry Number HR B 3160
-Managing Directors: Heike Jordan, Dr. Uwe Kracke
-VAT ID No. DE 205 198 055
-Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
-Office Bonn: Bachstr. 6, 53115 Bonn, Germany
-http://www.emlix.com
-
-emlix - your embedded Linux partner
---nextPart4604293.LvFx2qVVIh
-Content-Type: application/pgp-signature; name="signature.asc"
-Content-Description: This is a digitally signed message part.
-Content-Transfer-Encoding: 7Bit
-
------BEGIN PGP SIGNATURE-----
-
-iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCZxiXKwAKCRCr5FH7Xu2t
-/N5cBACtC1Fc2SR1w0/aM4UeW7CwXWsoWaVa12qUSipP/vNA4bb8uDkgdQooJIu0
-X6qm2oWfdakgkq4iqxWOezhKVG+9PRd4Wr86C8UO3psHC0x9wVRZB2HI/OT1LHmu
-kp//+al3k0lr7kECHDD432nmJ7Ry9OkVhPYmba64EDjwcH37Xw==
-=+d6X
------END PGP SIGNATURE-----
-
---nextPart4604293.LvFx2qVVIh--
-
-
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+index fc131789b4c3..35d5d9f0c477 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
++++ b/arch/arm64/boot/dts/rockchip/rk3588-nanopc-t6.dtsi
+@@ -10,6 +10,7 @@
+ #include <dt-bindings/gpio/gpio.h>
+ #include <dt-bindings/input/input.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
++#include <dt-bindings/soc/rockchip,vop2.h>
+ #include <dt-bindings/usb/pd.h>
+ #include "rk3588.dtsi"
+ 
+@@ -40,6 +41,17 @@ chosen {
+ 		stdout-path = "serial2:1500000n8";
+ 	};
+ 
++	hdmi0-con {
++		compatible = "hdmi-connector";
++		type = "a";
++
++		port {
++			hdmi0_con_in: endpoint {
++				remote-endpoint = <&hdmi0_out_con>;
++			};
++		};
++	};
++
+ 	ir-receiver {
+ 		compatible = "gpio-ir-receiver";
+ 		gpios = <&gpio0 RK_PD4 GPIO_ACTIVE_LOW>;
+@@ -318,6 +330,26 @@ &gpu {
+ 	status = "okay";
+ };
+ 
++&hdmi0 {
++	status = "okay";
++};
++
++&hdmi0_in {
++	hdmi0_in_vp0: endpoint {
++		remote-endpoint = <&vp0_out_hdmi0>;
++	};
++};
++
++&hdmi0_out {
++	hdmi0_out_con: endpoint {
++		remote-endpoint = <&hdmi0_con_in>;
++	};
++};
++
++&hdptxphy_hdmi0 {
++	status = "okay";
++};
++
+ &i2c0 {
+ 	pinctrl-names = "default";
+ 	pinctrl-0 = <&i2c0m2_xfer>;
+@@ -1039,3 +1071,18 @@ &usb_host1_ehci {
+ &usb_host1_ohci {
+ 	status = "okay";
+ };
++
++&vop_mmu {
++	status = "okay";
++};
++
++&vop {
++	status = "okay";
++};
++
++&vp0 {
++	vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
++		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
++		remote-endpoint = <&hdmi0_in_vp0>;
++	};
++};
+-- 
+2.47.0
 
 
