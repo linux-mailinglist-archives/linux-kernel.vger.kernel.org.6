@@ -1,233 +1,380 @@
-Return-Path: <linux-kernel+bounces-378160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6889ACC31
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:24:05 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1CE9B9ACC34
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DE4B5282D0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:24:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D4F2828437D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:24:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 683541BD4E1;
-	Wed, 23 Oct 2024 14:23:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2640C1C1ACF;
+	Wed, 23 Oct 2024 14:23:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j8M+OpB0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="K+PoQIej"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B13691BBBC0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:23:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 338A2E56A;
+	Wed, 23 Oct 2024 14:23:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693422; cv=none; b=AAeueIM+oiZJvHu7mUlD31SodbuopB8y3aQNP9DtpnLy5nOJCMyyICYRfJ1V2LI0WaRa0NnaVZOdlb9RZ+4xfvR1943B3VWI/TzbMKnXTrNq6x7KonvqaYBsYkLwsQXFU7TuaV/GX9F2lEyJc4x7UWjruHdd+MZKHdo/eZ/17ww=
+	t=1729693437; cv=none; b=JzN5edASNXQWhWPqTa/UVPlP39E1z5uKO8eBUOwzxHxgGDGcOxPtAMAEuRU87oyw6OLGDI3lr7NATEMrRsqTFSCy9Hppom9iUIvUsJ2vQe8HU9f0uf+3rW0j3XDuY/zVuCqesoUNliyJntxIo1eNthoI4p0jyFFQV+1bQIfVs1E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693422; c=relaxed/simple;
-	bh=UZalNqqn9cg9w1aVQzG5s81lrOQsERIxz1Yb5xKvGk0=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GIi6PjgwOWBrpwN1hQLEUwvjvapI0ocJ5rLzZQMtrEVZtEn1vc6XBnxrHmmYELOgnmELxF+XDdCBMoNkLIlabtpXTM/5kjSzhFZPF6bA0KaCd6JH3ROaQ+LDDWclFsMcmLpL/KWC/MqOTG5qIz+Nr8yAqD0fp6aD5vdQrs+5Y5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j8M+OpB0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 49496C4CEC6;
-	Wed, 23 Oct 2024 14:23:42 +0000 (UTC)
+	s=arc-20240116; t=1729693437; c=relaxed/simple;
+	bh=GSKWRm7+KiJmw4ntv/ripLnaQt+ggFemxRWiNQsqGxE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ow0sscsGboOaTybcLhDdolgjAT9QTi3h43EdssV8TijEks0P1HOdH6lnVs/QntkcMgutVFK0A0FfiwFCPgr2gPJpRAuL57K8GsemQ+rMjuiHnIFkRFSWSuF2Etf6ECfHkp/i4ELzD7Vu/Dd4iC82UNhILZZg3CMX0Obmq9nxkDI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=K+PoQIej; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A55A9C4CEC6;
+	Wed, 23 Oct 2024 14:23:56 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729693422;
-	bh=UZalNqqn9cg9w1aVQzG5s81lrOQsERIxz1Yb5xKvGk0=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=j8M+OpB0N9oMssWJR0CxC8YsgqeWBiwoYuhckZGh0U5d3g9UwO4ZsqksS2fkWt0ol
-	 2lBZpH1QWw1Yb+mtJscZ4KGsDKKjNu3ZVicnykzTsGgE6jhXLCGhRzSAZV/QE94xHx
-	 4twGxTV+GEF6s8IiW/gMstmhhYXLSJuJOeU+vpoMDzyDsLV5uPMFU9WTSXTQOHNAbc
-	 sqUZNvGcxA/wnYshf+8dqxnEaw+3WPOL/kDR+TdHAcRvOL40NAhvV7Vu4xxAQ5aBdR
-	 Wdm3m4ZQ91KMgGFRM0VJOhusMWnnifIhXmDEugyLLZoUHraz6fUexZa2Lr8Yk9klmf
-	 vOET/7dCYOOEQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t3cGy-00689F-1x;
-	Wed, 23 Oct 2024 15:23:40 +0100
-Date: Wed, 23 Oct 2024 15:23:39 +0100
-Message-ID: <8634km5250.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Zenghui Yu <yuzenghui@huawei.com>
-Cc: <linux-kernel@vger.kernel.org>,
-	<linux-arm-kernel@lists.infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Kunkun Jiang <jiangkunkun@huawei.com>
-Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-In-Reply-To: <bb3a38d9-4eb8-83ff-8b94-dd1bc80d005f@huawei.com>
-References: <20241002204959.2051709-1-maz@kernel.org>
-	<aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
-	<87wmhztd9z.wl-maz@kernel.org>
-	<bb3a38d9-4eb8-83ff-8b94-dd1bc80d005f@huawei.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1729693436;
+	bh=GSKWRm7+KiJmw4ntv/ripLnaQt+ggFemxRWiNQsqGxE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=K+PoQIejVNC+d9UpeYu7lvUT1gGdGf7SMf24VgTMpN7DTaZQtFFjOK6K5xBp7Qv8T
+	 NnMtirHIDUQKrSGNtQcnmtXv1u2sve41YM4ABKHqUdz4N9GCgDK3a++h4gpdoB/v/g
+	 hRPc9dE6yE0aBVtH+utpIv4XZlufsTUnCytk6fj3HThNpjYtrJL7fiuiubn0FUEI/9
+	 rRcBS0tr23alae5QSUI4Mc5SoDuY7Lp6ZEsghKg9OMMMcfFW5RMYZ6arNxlUbLmmS7
+	 dLCuJtC5f0IxqZ+PM/Kyh2ECUDMEYEna9EBx4vXzoCjGP8bR3eQVhnQkqpvhyQxEtM
+	 gwBipMQxMzFfg==
+Date: Wed, 23 Oct 2024 09:23:55 -0500
+From: Rob Herring <robh@kernel.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
+	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
+	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
+	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
+	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
+	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 15/16] rust: platform: add basic platform device /
+ driver abstractions
+Message-ID: <20241023142355.GA623906-robh@kernel.org>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <20241022213221.2383-16-dakr@kernel.org>
+ <20241022234712.GB1848992-robh@kernel.org>
+ <ZxibWpcswZxz5A07@pollux>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: yuzenghui@huawei.com, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, tglx@linutronix.de, jiangkunkun@huawei.com
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxibWpcswZxz5A07@pollux>
 
-On Wed, 23 Oct 2024 14:51:40 +0100,
-Zenghui Yu <yuzenghui@huawei.com> wrote:
-> 
-> On 2024/10/23 16:49, Marc Zyngier wrote:
-> > Hi Zenghui,
+On Wed, Oct 23, 2024 at 08:44:42AM +0200, Danilo Krummrich wrote:
+> On Tue, Oct 22, 2024 at 06:47:12PM -0500, Rob Herring wrote:
+> > On Tue, Oct 22, 2024 at 11:31:52PM +0200, Danilo Krummrich wrote:
+> > > Implement the basic platform bus abstractions required to write a basic
+> > > platform driver. This includes the following data structures:
+> > > 
+> > > The `platform::Driver` trait represents the interface to the driver and
+> > > provides `pci::Driver::probe` for the driver to implement.
+> > > 
+> > > The `platform::Device` abstraction represents a `struct platform_device`.
+> > > 
+> > > In order to provide the platform bus specific parts to a generic
+> > > `driver::Registration` the `driver::RegistrationOps` trait is implemented
+> > > by `platform::Adapter`.
+> > > 
+> > > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+> > > ---
+> > >  MAINTAINERS                     |   1 +
+> > >  rust/bindings/bindings_helper.h |   1 +
+> > >  rust/helpers/helpers.c          |   1 +
+> > >  rust/helpers/platform.c         |  13 ++
+> > >  rust/kernel/lib.rs              |   1 +
+> > >  rust/kernel/platform.rs         | 217 ++++++++++++++++++++++++++++++++
+> > >  6 files changed, 234 insertions(+)
+> > >  create mode 100644 rust/helpers/platform.c
+> > >  create mode 100644 rust/kernel/platform.rs
+> > > 
+> > > diff --git a/MAINTAINERS b/MAINTAINERS
+> > > index 87eb9a7869eb..173540375863 100644
+> > > --- a/MAINTAINERS
+> > > +++ b/MAINTAINERS
+> > > @@ -6985,6 +6985,7 @@ F:	rust/kernel/device.rs
+> > >  F:	rust/kernel/device_id.rs
+> > >  F:	rust/kernel/devres.rs
+> > >  F:	rust/kernel/driver.rs
+> > > +F:	rust/kernel/platform.rs
+> > >  
+> > >  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
+> > >  M:	Nishanth Menon <nm@ti.com>
+> > > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
+> > > index 312f03cbdce9..217c776615b9 100644
+> > > --- a/rust/bindings/bindings_helper.h
+> > > +++ b/rust/bindings/bindings_helper.h
+> > > @@ -18,6 +18,7 @@
+> > >  #include <linux/of_device.h>
+> > >  #include <linux/pci.h>
+> > >  #include <linux/phy.h>
+> > > +#include <linux/platform_device.h>
+> > >  #include <linux/refcount.h>
+> > >  #include <linux/sched.h>
+> > >  #include <linux/slab.h>
+> > > diff --git a/rust/helpers/helpers.c b/rust/helpers/helpers.c
+> > > index 8bc6e9735589..663cdc2a45e0 100644
+> > > --- a/rust/helpers/helpers.c
+> > > +++ b/rust/helpers/helpers.c
+> > > @@ -17,6 +17,7 @@
+> > >  #include "kunit.c"
+> > >  #include "mutex.c"
+> > >  #include "page.c"
+> > > +#include "platform.c"
+> > >  #include "pci.c"
+> > >  #include "rbtree.c"
+> > >  #include "rcu.c"
+> > > diff --git a/rust/helpers/platform.c b/rust/helpers/platform.c
+> > > new file mode 100644
+> > > index 000000000000..ab9b9f317301
+> > > --- /dev/null
+> > > +++ b/rust/helpers/platform.c
+> > > @@ -0,0 +1,13 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +#include <linux/platform_device.h>
+> > > +
+> > > +void *rust_helper_platform_get_drvdata(const struct platform_device *pdev)
+> > > +{
+> > > +	return platform_get_drvdata(pdev);
+> > > +}
+> > > +
+> > > +void rust_helper_platform_set_drvdata(struct platform_device *pdev, void *data)
+> > > +{
+> > > +	platform_set_drvdata(pdev, data);
+> > > +}
+> > > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+> > > index 5946f59f1688..9e8dcd6d7c01 100644
+> > > --- a/rust/kernel/lib.rs
+> > > +++ b/rust/kernel/lib.rs
+> > > @@ -53,6 +53,7 @@
+> > >  pub mod net;
+> > >  pub mod of;
+> > >  pub mod page;
+> > > +pub mod platform;
+> > >  pub mod prelude;
+> > >  pub mod print;
+> > >  pub mod rbtree;
+> > > diff --git a/rust/kernel/platform.rs b/rust/kernel/platform.rs
+> > > new file mode 100644
+> > > index 000000000000..addf5356f44f
+> > > --- /dev/null
+> > > +++ b/rust/kernel/platform.rs
+> > > @@ -0,0 +1,217 @@
+> > > +// SPDX-License-Identifier: GPL-2.0
+> > > +
+> > > +//! Abstractions for the platform bus.
+> > > +//!
+> > > +//! C header: [`include/linux/platform_device.h`](srctree/include/linux/platform_device.h)
+> > > +
+> > > +use crate::{
+> > > +    bindings, container_of, device,
+> > > +    device_id::RawDeviceId,
+> > > +    driver,
+> > > +    error::{to_result, Result},
+> > > +    of,
+> > > +    prelude::*,
+> > > +    str::CStr,
+> > > +    types::{ARef, ForeignOwnable},
+> > > +    ThisModule,
+> > > +};
+> > > +
+> > > +/// An adapter for the registration of platform drivers.
+> > > +pub struct Adapter<T: Driver>(T);
+> > > +
+> > > +impl<T: Driver + 'static> driver::RegistrationOps for Adapter<T> {
+> > > +    type RegType = bindings::platform_driver;
+> > > +
+> > > +    fn register(
+> > > +        pdrv: &mut Self::RegType,
+> > > +        name: &'static CStr,
+> > > +        module: &'static ThisModule,
+> > > +    ) -> Result {
+> > > +        pdrv.driver.name = name.as_char_ptr();
+> > > +        pdrv.probe = Some(Self::probe_callback);
+> > > +
+> > > +        // Both members of this union are identical in data layout and semantics.
+> > > +        pdrv.__bindgen_anon_1.remove = Some(Self::remove_callback);
+> > > +        pdrv.driver.of_match_table = T::ID_TABLE.as_ptr();
+> > > +
+> > > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> > > +        to_result(unsafe { bindings::__platform_driver_register(pdrv, module.0) })
+> > > +    }
+> > > +
+> > > +    fn unregister(pdrv: &mut Self::RegType) {
+> > > +        // SAFETY: `pdrv` is guaranteed to be a valid `RegType`.
+> > > +        unsafe { bindings::platform_driver_unregister(pdrv) };
+> > > +    }
+> > > +}
+> > > +
+> > > +impl<T: Driver + 'static> Adapter<T> {
+> > > +    fn id_info(pdev: &Device) -> Option<&'static T::IdInfo> {
+> > > +        let table = T::ID_TABLE;
+> > > +        let id = T::of_match_device(pdev)?;
+> > > +
+> > > +        Some(table.info(id.index()))
+> > > +    }
+> > > +
+> > > +    extern "C" fn probe_callback(pdev: *mut bindings::platform_device) -> core::ffi::c_int {
+> > > +        // SAFETY: The platform bus only ever calls the probe callback with a valid `pdev`.
+> > > +        let dev = unsafe { device::Device::from_raw(&mut (*pdev).dev) };
+> > > +        // SAFETY: `dev` is guaranteed to be embedded in a valid `struct platform_device` by the
+> > > +        // call above.
+> > > +        let mut pdev = unsafe { Device::from_dev(dev) };
+> > > +
+> > > +        let info = Self::id_info(&pdev);
+> > > +        match T::probe(&mut pdev, info) {
+> > > +            Ok(data) => {
+> > > +                // Let the `struct platform_device` own a reference of the driver's private data.
+> > > +                // SAFETY: By the type invariant `pdev.as_raw` returns a valid pointer to a
+> > > +                // `struct platform_device`.
+> > > +                unsafe { bindings::platform_set_drvdata(pdev.as_raw(), data.into_foreign() as _) };
+> > > +            }
+> > > +            Err(err) => return Error::to_errno(err),
+> > > +        }
+> > > +
+> > > +        0
+> > > +    }
+> > > +
+> > > +    extern "C" fn remove_callback(pdev: *mut bindings::platform_device) {
+> > > +        // SAFETY: `pdev` is a valid pointer to a `struct platform_device`.
+> > > +        let ptr = unsafe { bindings::platform_get_drvdata(pdev) };
+> > > +
+> > > +        // SAFETY: `remove_callback` is only ever called after a successful call to
+> > > +        // `probe_callback`, hence it's guaranteed that `ptr` points to a valid and initialized
+> > > +        // `KBox<T>` pointer created through `KBox::into_foreign`.
+> > > +        let _ = unsafe { KBox::<T>::from_foreign(ptr) };
+> > > +    }
+> > > +}
+> > > +
+> > > +/// Declares a kernel module that exposes a single platform driver.
+> > > +///
+> > > +/// # Examples
+> > > +///
+> > > +/// ```ignore
+> > > +/// kernel::module_platform_driver! {
+> > > +///     type: MyDriver,
+> > > +///     name: "Module name",
+> > > +///     author: "Author name",
+> > > +///     description: "Description",
+> > > +///     license: "GPL v2",
+> > > +/// }
+> > > +/// ```
+> > > +#[macro_export]
+> > > +macro_rules! module_platform_driver {
+> > > +    ($($f:tt)*) => {
+> > > +        $crate::module_driver!(<T>, $crate::platform::Adapter<T>, { $($f)* });
+> > > +    };
+> > > +}
+> > > +
+> > > +/// IdTable type for platform drivers.
+> > > +pub type IdTable<T> = &'static dyn kernel::device_id::IdTable<of::DeviceId, T>;
+> > > +
+> > > +/// The platform driver trait.
+> > > +///
+> > > +/// # Example
+> > > +///
+> > > +///```
+> > > +/// # use kernel::{bindings, c_str, of, platform};
+> > > +///
+> > > +/// struct MyDriver;
+> > > +///
+> > > +/// kernel::of_device_table!(
+> > > +///     OF_TABLE,
+> > > +///     MODULE_OF_TABLE,
+> > > +///     <MyDriver as platform::Driver>::IdInfo,
+> > > +///     [
+> > > +///         (of::DeviceId::new(c_str!("redhat,my-device")), ())
 > > 
-> > On Tue, 22 Oct 2024 08:45:17 +0100,
-> > Zenghui Yu <yuzenghui@huawei.com> wrote:
-> > >
-> > > Hi Marc,
-> > >
-> > > On 2024/10/3 4:49, Marc Zyngier wrote:
-> > > > Kunkun Jiang reports that there is a small window of opportunity for
-> > > > userspace to force a change of affinity for a VPE while the VPE has
-> > > > already been unmapped, but the corresponding doorbell interrupt still
-> > > > visible in /proc/irq/.
-> > > >
-> > > > Plug the race by checking the value of vmapp_count, which tracks whether
-> > > > the VPE is mapped ot not, and returning an error in this case.
-> > > >
-> > > > This involves making vmapp_count common to both GICv4.1 and its v4.0
-> > > > ancestor.
-> > > >
-> > > > Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-> > > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > > Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
-> > > > ---
-> > > >  drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++------
-> > > >  include/linux/irqchip/arm-gic-v4.h |  4 +++-
-> > > >  2 files changed, 15 insertions(+), 7 deletions(-)
-> > > >
-> > > > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> > > > index fdec478ba5e7..ab597e74ba08 100644
-> > > > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > > > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > > > @@ -797,8 +797,8 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
-> > > >  	its_encode_valid(cmd, desc->its_vmapp_cmd.valid);
-> > > >  
-> > > >  	if (!desc->its_vmapp_cmd.valid) {
-> > > > +		alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > > >  		if (is_v4_1(its)) {
-> > > > -			alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > > >  			its_encode_alloc(cmd, alloc);
-> > > >  			/*
-> > > >  			 * Unmapping a VPE is self-synchronizing on GICv4.1,
-> > > > @@ -817,13 +817,13 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
-> > > >  	its_encode_vpt_addr(cmd, vpt_addr);
-> > > >  	its_encode_vpt_size(cmd, LPI_NRBITS - 1);
-> > > >  
-> > > > +	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > > > +
-> > > >  	if (!is_v4_1(its))
-> > > >  		goto out;
-> > > >  
-> > > >  	vconf_addr = virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->its_vm->vprop_page));
-> > > >  
-> > > > -	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > > > -
-> > > >  	its_encode_alloc(cmd, alloc);
-> > > >  
-> > > >  	/*
-> > > > @@ -3806,6 +3806,13 @@ static int its_vpe_set_affinity(struct irq_data *d,
-> > > >  	struct cpumask *table_mask;
-> > > >  	unsigned long flags;
-> > > >  
-> > > > +	/*
-> > > > +	 * Check if we're racing against a VPE being destroyed, for
-> > > > +	 * which we don't want to allow a VMOVP.
-> > > > +	 */
-> > > > +	if (!atomic_read(&vpe->vmapp_count))
-> > > > +		return -EINVAL;
-> > >
-> > > We lazily map the vPE so that vmapp_count is likely to be 0 on GICv4.0
-> > > implementations with the ITSList feature. Seems that that implementation
-> > > is not affected by the reported race and we don't need to check
-> > > vmapp_count for that.
+> > All compatible strings have to be documented as do vendor prefixes and 
+> > I don't think "redhat" is one. An exception is you can use 
+> > "test,<whatever>" and not document it.
+> 
+> Yeah, I copied that from the sample driver, where it's probably wrong too.
+> 
+> I guess "vendor,device" would be illegal as well?
+
+Yes.
+
+> > There's a check for undocumented compatibles. I guess I'll have to add 
+> > rust parsing to it...
 > > 
-> > Indeed, the ITSList guards the sending of VMOVP in that case, and we
-> > avoid the original issue in that case. However, this still translates
-> > in the doorbell being moved for no reason (see its_vpe_db_proxy_move).
+> > BTW, how do you compile this code in the kernel? 
 > 
-> Yup.
+> You mean this example? It gets compiled as a KUnit doctest, but it obvously
+> doesn't execute anything, so it's a compile only test.
+
+Yes. That's a question for my own education.
+
+> > 
+> > > +///     ]
+> > > +/// );
+> > > +///
+> > > +/// impl platform::Driver for MyDriver {
+> > > +///     type IdInfo = ();
+> > > +///     const ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
+> > > +///
+> > > +///     fn probe(
+> > > +///         _pdev: &mut platform::Device,
+> > > +///         _id_info: Option<&Self::IdInfo>,
+> > > +///     ) -> Result<Pin<KBox<Self>>> {
+> > > +///         Err(ENODEV)
+> > > +///     }
+> > > +/// }
+> > > +///```
+> > > +/// Drivers must implement this trait in order to get a platform driver registered. Please refer to
+> > > +/// the `Adapter` documentation for an example.
+> > > +pub trait Driver {
+> > > +    /// The type holding information about each device id supported by the driver.
+> > > +    ///
+> > > +    /// TODO: Use associated_type_defaults once stabilized:
+> > > +    ///
+> > > +    /// type IdInfo: 'static = ();
+> > > +    type IdInfo: 'static;
+> > > +
+> > > +    /// The table of device ids supported by the driver.
+> > > +    const ID_TABLE: IdTable<Self::IdInfo>;
+
+Another thing. I don't think this is quite right. Well, this part is 
+fine, but assigning the DT table to it is not. The underlying C code has 
+2 id tables in struct device_driver (DT and ACPI) and then the bus 
+specific one in the struct ${bus}_driver.
+
+> > > +
+> > > +    /// Platform driver probe.
+> > > +    ///
+> > > +    /// Called when a new platform device is added or discovered.
+> > > +    /// Implementers should attempt to initialize the device here.
+> > > +    fn probe(dev: &mut Device, id_info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>>;
+> > > +
+> > > +    /// Find the [`of::DeviceId`] within [`Driver::ID_TABLE`] matching the given [`Device`], if any.
+> > > +    fn of_match_device(pdev: &Device) -> Option<&of::DeviceId> {
+> > 
+> > Is this visible to drivers? It shouldn't be.
 > 
-> > How about something like this?
-> 
-> I'm pretty sure that the splat will disappear with that.
-> 
-> > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> > index ab597e74ba08..ac8ed56f1e48 100644
-> > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > @@ -3810,8 +3810,17 @@ static int its_vpe_set_affinity(struct irq_data *d,
-> >  	 * Check if we're racing against a VPE being destroyed, for
-> >  	 * which we don't want to allow a VMOVP.
-> >  	 */
-> > -	if (!atomic_read(&vpe->vmapp_count))
-> > -		return -EINVAL;
-> > +	if (!atomic_read(&vpe->vmapp_count)) {
-> > +		if (gic_requires_eager_mapping())
-> > +			return -EINVAL;
-> 
-> Nitpick: why do we treat this as an error?
+> Yeah, I think we should just remove it. Looking at struct of_device_id, it
+> doesn't contain any useful information for a driver. I think when I added this I
+> was a bit in "autopilot" mode from the PCI stuff, where struct pci_device_id is
+> useful to drivers.
 
-Because at this stage we can't update the affinity anymore, and I see
-it as basic courtesy to let the caller know.
+TBC, you mean other than *data, right? If so, I agree. 
 
-> 
-> > +
-> > +		/*
-> > +		 * If we lazily map the VPEs, this isn't an error, and
-> > +		 * we exit cleanly.
-> > +		 */
-> > +		irq_data_update_effective_affinity(d, cpumask_of(cpu));
-> 
-> @cpu is uninitialized to a sensible value at this point?
+The DT type and name fields are pretty much legacy, so I don't think the 
+rust bindings need to worry about them until someone converts Sparc and 
+PowerMac drivers to rust (i.e. never).
 
-Ah! As usual, I wrote this on the train this morning, before having
-had much coffee, and didn't even compile-test it. Here's an amended
-patch, similarly untested.
+I would guess the PCI cases might be questionable, too. Like DT, drivers 
+may be accessing the table fields, but that's not best practice. All the 
+match fields are stored in pci_dev, so why get them from the match 
+table? 
 
-If that works for you, I'll put that in a proper patch for Thomas to
-merge.
-
-Thanks,
-
-	M.
-
-diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-index ab597e74ba08e..52f625e07658c 100644
---- a/drivers/irqchip/irq-gic-v3-its.c
-+++ b/drivers/irqchip/irq-gic-v3-its.c
-@@ -3810,8 +3810,18 @@ static int its_vpe_set_affinity(struct irq_data *d,
- 	 * Check if we're racing against a VPE being destroyed, for
- 	 * which we don't want to allow a VMOVP.
- 	 */
--	if (!atomic_read(&vpe->vmapp_count))
--		return -EINVAL;
-+	if (!atomic_read(&vpe->vmapp_count)) {
-+		if (gic_requires_eager_mapping())
-+			return -EINVAL;
-+
-+		/*
-+		 * If we lazily map the VPEs, this isn't an error and
-+		 * we can exit cleanly.
-+		 */
-+		cpu = cpumask_first(mask_val);
-+		irq_data_update_effective_affinity(d, cpumask_of(cpu));
-+		return IRQ_SET_MASK_OK_DONE;
-+	}
- 
- 	/*
- 	 * Changing affinity is mega expensive, so let's be as lazy as
-
--- 
-Without deviation from the norm, progress is not possible.
+Rob
 
