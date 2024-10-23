@@ -1,98 +1,124 @@
-Return-Path: <linux-kernel+bounces-378232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378245-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6F0C9ACCFF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:44:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 227DE9ACD21
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:47:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61711C20D61
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:44:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CE0AC1F21628
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:47:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF20F20ADE4;
-	Wed, 23 Oct 2024 14:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2D961CEAAC;
+	Wed, 23 Oct 2024 14:32:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J/W2RePC"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="T3tma4Lv"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF9F20A5D9;
-	Wed, 23 Oct 2024 14:32:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52A061CCB21;
+	Wed, 23 Oct 2024 14:32:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693931; cv=none; b=g/yLeKAEtgLxsFiiQ3DESlaJ7Vc7vOntlBpsh556m4Ue4Uv0h7HPelg8KxVe3myuQMnOeyNgdIDyUmuGXDxel3TXA6neRB+iQFaNRTwCJaD25WHY8obhgYDa/RqihWseQGsQ4y+QfAdHtAFdng1SmXzDQmMZeMvgObW7USbA5X8=
+	t=1729693958; cv=none; b=g+m1zspOapd7/lL2WGi3GcwMXbnvvqH7lqMFgJFJM6X4lYnM3N/Ts7idl+05pK2RpgltUJe+EzQkwHJ0WLyvqSmK5lH2xPdemp6p2Qp3VNqnYTpcElEeiOxALDdnTvD+LOJCNrmegVXy7lguhcf62qJ78DcG1ZiHkOFt9r/X95Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693931; c=relaxed/simple;
-	bh=1Aw1YYPKTor8fa/AfSMAmhwcPTIkzDMwkYyZMzB41TI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aokVn7TqOTSRJCAaDr5KZQEM5jxqkbANV6+zAvuxfsqj+rUYjSh53stYAXNZuSt3dge595chtTMnAljfH82+hwcJQJAWRLU88gM/fPmmxKsSl9jEOg+pynMU+3qvt4ufEClK8+0Fn8C1aE+szrpclbYEffHAg035EGatM7qgFQc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J/W2RePC; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=st7qu5UokEHEesgocAQ0zrKfe0DY+ZCXHcQUXHppVyc=; b=J/W2RePCyEXPdnI/0AJZRR5WiN
-	r0oBCbMIAklsx4C5xn11SRlOSe97Oujl40j1YK5m3iJd5SNq4RcQqa4fdunqSptv72FLIF5uLHa0m
-	dIXiAPWJ0OEm0bgPTJDGnn3Z+6X2ZSRto5PARw0XboxrNK8aFglYeJePhs/W+oyaN6+Uwj2gloDfL
-	C6HrBWDYhMP52Q4gnajdRHQW9SF/Ot3Umhhk91i/owUIRjeCXwXJgQUpKlUf60M9u5B82U1Hr1sCA
-	+skwx1OUVBZKhOSCKrYr9wJ71tSEa0DMOJFHI4LcdTh61e42X5/+6OAjacUjCqpeMGIL83Tp5gHvV
-	cIQ0lM7A==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3cP7-00000008QA7-1az4;
-	Wed, 23 Oct 2024 14:32:05 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7CD6330073F; Wed, 23 Oct 2024 16:32:04 +0200 (CEST)
-Date: Wed, 23 Oct 2024 16:32:04 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	oe-kbuild-all@lists.linux.dev, amadeuszx.slawinski@linux.intel.com,
-	Tony Nguyen <anthony.l.nguyen@intel.com>,
-	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
-	Markus Elfring <Markus.Elfring@web.de>,
-	Kees Cook <keescook@chromium.org>,
-	David Lechner <dlechner@baylibre.com>,
-	Dan Carpenter <error27@gmail.com>,
-	Andy Shevchenko <andriy.shevchenko@intel.com>,
-	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
-	kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH v3] cleanup: adjust scoped_guard() macros to avoid
- potential warning
-Message-ID: <20241023143204.GB9767@noisy.programming.kicks-ass.net>
-References: <20241011121535.28049-1-przemyslaw.kitszel@intel.com>
- <202410131151.SBnGQot0-lkp@intel.com>
- <20241018105054.GB36494@noisy.programming.kicks-ass.net>
- <a7eec76f-1fbc-4fef-9b6d-15b588eacecb@intel.com>
+	s=arc-20240116; t=1729693958; c=relaxed/simple;
+	bh=uwNLXZ/zAK/Sj8Jz0Vf9ZAnMhKukm/ZqYC9tygGgxT8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=ovGFhBmQU+4noKd9858mH/uLpYBZAaB1jrTDvnSLoTJjzSMJMu4G9tUPZkZ4sLXTrgBCkA37sbpqD/z/yVGG3D6O+vzPHkjGSLCRCvdezpDHhOQUEeeiHFN+C2YjnhiUEOFm9SvMRU9ZflFTcSBbeZ0n6owbRGUi8DgB+scw/as=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=T3tma4Lv; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29954C4CEC6;
+	Wed, 23 Oct 2024 14:32:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729693958;
+	bh=uwNLXZ/zAK/Sj8Jz0Vf9ZAnMhKukm/ZqYC9tygGgxT8=;
+	h=From:To:Cc:Subject:Date:From;
+	b=T3tma4LvZcqwHf0U1uLhSO6wThMkGF8TuKBzXJc2pL/3K6znLsGyRNixbFXe/enJd
+	 vQdw2cjI5Xo0uXiEc5VHXT9Q0mApbLZw2fiADaNS7MrU330V7iMw1AZJmyZKmVJwUP
+	 Zj5RsuIUab5ZYRcXYJh6hLmvPr4fT9xfDMOEdq3ZO24cGTRWVv3s7MAPRgm0j+4UZv
+	 HbWXP11Neu0zi9Pju/5LzRwDNljshOI94ex4BpCQfSjKsPmCvRqlY/40MeRjpL7ebN
+	 QNLOZpTs/6Zq0C5NqoZ08oj58PfTqQ6nfVkvEgajna+1ECV25PLjtx/7pqY1woi9Dd
+	 83DEzVAyBfRnQ==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Pedro Falcato <pedro.falcato@gmail.com>,
+	syzbot+3c5d43e97993e1fa612b@syzkaller.appspotmail.com,
+	Dominique Martinet <asmadeus@codewreck.org>,
+	Sasha Levin <sashal@kernel.org>,
+	ericvh@kernel.org,
+	lucho@ionkov.net,
+	v9fs@lists.linux.dev
+Subject: [PATCH AUTOSEL 5.15 01/10] 9p: Avoid creating multiple slab caches with the same name
+Date: Wed, 23 Oct 2024 10:32:22 -0400
+Message-ID: <20241023143235.2982363-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <a7eec76f-1fbc-4fef-9b6d-15b588eacecb@intel.com>
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 5.15.169
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 03:43:22PM +0200, Przemek Kitszel wrote:
-> On 10/18/24 12:50, Peter Zijlstra wrote:
-> > On Sun, Oct 13, 2024 at 12:01:24PM +0800, kernel test robot wrote:
+From: Pedro Falcato <pedro.falcato@gmail.com>
 
-> > --- a/include/linux/cleanup.h
-> > +++ b/include/linux/cleanup.h
-> > @@ -323,7 +323,7 @@ static __maybe_unused const bool class_#
-> >    */
-> >   #define __scoped_guard(_name, _fail, _label, args...)				\
-> >   	for (CLASS(_name, scope)(args);	true; ({ goto _label; }))		\
-> > -		if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {	\
-> > +		if (__is_cond_ptr(_name) && !__guard_ptr(_name)(&scope)) {	\
-> 
-> but this will purge the attempt to call __guard_ptr(), and thus newer
-> lock ;) good that there is at least some comment above
+[ Upstream commit 79efebae4afc2221fa814c3cae001bede66ab259 ]
 
-No, __guard_ptr() will only return a pointer, it has no action. The lock
-callback is in CLASS(_name, scope)(args).
+In the spirit of [1], avoid creating multiple slab caches with the same
+name. Instead, add the dev_name into the mix.
+
+[1]: https://lore.kernel.org/all/20240807090746.2146479-1-pedro.falcato@gmail.com/
+
+Signed-off-by: Pedro Falcato <pedro.falcato@gmail.com>
+Reported-by: syzbot+3c5d43e97993e1fa612b@syzkaller.appspotmail.com
+Message-ID: <20240807094725.2193423-1-pedro.falcato@gmail.com>
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ net/9p/client.c | 10 +++++++++-
+ 1 file changed, 9 insertions(+), 1 deletion(-)
+
+diff --git a/net/9p/client.c b/net/9p/client.c
+index bf29462c919bb..03fb36d938c70 100644
+--- a/net/9p/client.c
++++ b/net/9p/client.c
+@@ -1005,6 +1005,7 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 	int err;
+ 	struct p9_client *clnt;
+ 	char *client_id;
++	char *cache_name;
+ 
+ 	err = 0;
+ 	clnt = kmalloc(sizeof(*clnt), GFP_KERNEL);
+@@ -1057,15 +1058,22 @@ struct p9_client *p9_client_create(const char *dev_name, char *options)
+ 	if (err)
+ 		goto close_trans;
+ 
++	cache_name = kasprintf(GFP_KERNEL, "9p-fcall-cache-%s", dev_name);
++	if (!cache_name) {
++		err = -ENOMEM;
++		goto close_trans;
++	}
++
+ 	/* P9_HDRSZ + 4 is the smallest packet header we can have that is
+ 	 * followed by data accessed from userspace by read
+ 	 */
+ 	clnt->fcall_cache =
+-		kmem_cache_create_usercopy("9p-fcall-cache", clnt->msize,
++		kmem_cache_create_usercopy(cache_name, clnt->msize,
+ 					   0, 0, P9_HDRSZ + 4,
+ 					   clnt->msize - (P9_HDRSZ + 4),
+ 					   NULL);
+ 
++	kfree(cache_name);
+ 	return clnt;
+ 
+ close_trans:
+-- 
+2.43.0
+
 
