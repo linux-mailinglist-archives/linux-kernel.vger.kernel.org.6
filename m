@@ -1,92 +1,103 @@
-Return-Path: <linux-kernel+bounces-377757-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377758-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CBA79AC64E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:26:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38EEA9AC650
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:26:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0DCE2B22AA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:26:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83F71F21E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:26:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B66C19924A;
-	Wed, 23 Oct 2024 09:25:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFD415B547;
+	Wed, 23 Oct 2024 09:25:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="sYjj+EVj"
-Received: from out30-119.freemail.mail.aliyun.com (out30-119.freemail.mail.aliyun.com [115.124.30.119])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Hs5xtLZQ"
+Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2019C15B547
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.119
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B9B199E8D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729675555; cv=none; b=oKlI8LYdmids7lLfZ9NYuJ/7F5KMNHMpolIfTYtEQxzGKV3AYWjor/OlbGz4F5qNdeW8PiHAgYf9wMUFTi3Eq7CFTGDojtoajtiSer7QursOc2rkp5URsujDirpgYRxuomXPgYd2UByobtsw1WIFjFAjIkI6L3ut2c3nwje/o9o=
+	t=1729675558; cv=none; b=d9pfpfU7pe6LDmx0VWISd9oc2uLcT4eQB5XklgPaoyoN21+/xXXkmthifoxcPEAdulA0J0dtmAPrQS9py8NO6sPjfcC1VZCVpgbA35ZS3cnt3l/CyTHezq/eWmm8PguKIbiCjmSzV7nvQPv7S2X6hVynrSVh4O8o+PA/PgprLIs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729675555; c=relaxed/simple;
-	bh=X+9a52f/mW4zljBMMz452fVO7AQnEac/mWJQIutNCBw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=tKFP2MS2AYBvKDsi/GcEfrwNORslTybt2P7up7hoR1ULuGTGmB5wW55JL77PlR3kGoPgoWWTw/b4waPaKZK3qrndQmZ3Be8N/shI8P5MlXrhWF//sLx+LlxcSNBok0pkFPXlE7+ZSlNDS3oZz8Nr3dzjVsYN45uptRD5ekMu0o4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=sYjj+EVj; arc=none smtp.client-ip=115.124.30.119
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
-DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=linux.alibaba.com; s=default;
-	t=1729675545; h=Message-ID:Date:MIME-Version:Subject:To:From:Content-Type;
-	bh=yxXS3+bQyqBkscqfDOpVpVT+Gz8HUJErpJMhoB5zdsY=;
-	b=sYjj+EVjNs3/2VL6JbuzZnuEB+P6JDViSuPqqOrNFm93F8ArqWObhGJ85E1RcC88DqmOlgySEkVD31Pl8K5ex7JVbMic3w9aFQAR2etYV9Iy/rjg2jR1cLv6wwkO62i8mGPQTLS28TQqQB+lhYtY6r8GOpohwHb0VoCNT1niLr0=
-Received: from 30.74.144.118(mailfrom:baolin.wang@linux.alibaba.com fp:SMTPD_---0WHkxOvT_1729675543 cluster:ay36)
-          by smtp.aliyun-inc.com;
-          Wed, 23 Oct 2024 17:25:43 +0800
-Message-ID: <f1aa025b-b3f2-4667-b628-3f0f17f5fe76@linux.alibaba.com>
-Date: Wed, 23 Oct 2024 17:25:42 +0800
+	s=arc-20240116; t=1729675558; c=relaxed/simple;
+	bh=5aBva71oJY4WP2gL+8hvcwG0M75spH9bjubh8VmG3c4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ch6xir4GP3wCK6nzhKr1IfLI6YA3SNw8h8ID8UJWZBQ6ZMxC+Ywqmz33TUBn+u72SRKvjW3ZKfgyoba/4svbVnOBE6VGguNdHcE0B1m6c46NZBCum/rcC5sbkZM4wNsYRC52RLhvHew5dAowqcAaW/v8b2RuvICQYF79vvVrcl4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Hs5xtLZQ; arc=none smtp.client-ip=209.85.208.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
+Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so8343784a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:25:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=cloudflare.com; s=google09082023; t=1729675555; x=1730280355; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5aBva71oJY4WP2gL+8hvcwG0M75spH9bjubh8VmG3c4=;
+        b=Hs5xtLZQQhGDExGThscHhkyPDl7Q8tsahmUM9Z4ipkiwpuT1VF/Ym9beaM2D/4+0JD
+         1PDmRzTpVedJliEn1EbGcljLiJWobLN4vzDtyDoOYFXTnGPtleYr6Yla1FMRFFijCDDN
+         Oxm2VI98/WJoOUJiRV2lsSp0QvzdTuG4vHKunc5X0jNI/gwYBjowitaUY5lWvq3mCWwd
+         P+ew+EsJ5jCDBfWqXtABR2ZnBwJmyJmhkGIxBOr8dD49ahIpa3dBAhPZ/uMS6ebsMDQH
+         LGVMvO5ogVTPwNHjriDx7scJOTaHnM4wR2BnDc5tkHA3T28EA6dXleXgFGIcr4W7QfFv
+         eO/w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729675555; x=1730280355;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5aBva71oJY4WP2gL+8hvcwG0M75spH9bjubh8VmG3c4=;
+        b=hQ1LSx3MpB/0glQ6Wzb/UnEn8j0iaI4e1zZWM+I2RUhkZsHrfnvBkm5qAOYb9diRdu
+         MI7YZNT+w22aouYW/umH9ry2QSUYWjt2IgzJvVpRpqWUddqsiuWhm2BSmoZG/7hUMWyE
+         2+hy6/egQsiYwmUcsyzPHiQH2lnLUXJJCrOOWSYImAEHhuUxE06kIVq65JcwUVA/wgJz
+         /XR1/zKchJIhGfrWnwt4jDNe2KHlphcMbylsnSivthIeCxDB7Pyn8DQiEpZUhDYkBS8h
+         YS3PwdEptp0C/H//9Tx2j7RYlwQROXEpsndyCpSB5uEZJezUWHQJ+NBTlg1faAywJxxp
+         5O2w==
+X-Forwarded-Encrypted: i=1; AJvYcCUX99XZb4HP9UQG2sjPX6Z41FM+KlHe/6U7zX/ASPu6ahk3vHqbtzReiHabbMw1hvNwoioaOUdybonyb0M=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw30X3o4jUI0JvgBcmuOS0fxaoYbwV/+dgE4mD8Qn/doQkrq4ld
+	oK7qKqyEB3fRZbKu3nlz4toc2nboxPP2WHHFyFXWm/4ief9uVbWVitBP6eTWv96Kp0isZNtBD23
+	taz37Li9XM1QQlJqGnNuTbIHDjiRvjwx8CUZNxw==
+X-Google-Smtp-Source: AGHT+IEpffBs9Fl27XgLD9bGDxRxP6NYVE4mf17lV6l+PcB9+2lyHK8Tl1N5ohZwG3uhDUsekG0wliB5I3PyiWpjlKg=
+X-Received: by 2002:a17:907:720f:b0:a9a:3da9:6a02 with SMTP id
+ a640c23a62f3a-a9abf96f0dfmr184213266b.60.1729675555052; Wed, 23 Oct 2024
+ 02:25:55 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
-To: "Kirill A. Shutemov" <kirill@shutemov.name>
-Cc: Matthew Wilcox <willy@infradead.org>, akpm@linux-foundation.org,
- hughd@google.com, david@redhat.com, wangkefeng.wang@huawei.com,
- 21cnbao@gmail.com, ryan.roberts@arm.com, ioworker0@gmail.com,
- da.gomez@samsung.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org,
- "Kirill A . Shutemov" <kirill.shutemov@linux.intel.com>
-References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
- <Zw_IT136rxW_KuhU@casper.infradead.org>
- <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
- <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
- <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
- <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx>
- <2c6b7456-8846-44b0-8e58-158c480aaead@linux.alibaba.com>
- <5p22lehyjjzxvohppdmt2vkkplrrd6ss6tev2px6troxyii4ab@eaphjvxiwrfc>
-From: Baolin Wang <baolin.wang@linux.alibaba.com>
-In-Reply-To: <5p22lehyjjzxvohppdmt2vkkplrrd6ss6tev2px6troxyii4ab@eaphjvxiwrfc>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20241020051315.356103-1-yuzhao@google.com> <ZxYNLb0CiZyw31_q@tiehlicka>
+ <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
+ <ZxaOo59ZwXoCduhG@tiehlicka> <82e6d623-bbf3-4dd8-af32-fdfc120fc759@suse.cz>
+ <CAOUHufanF3VaLzq6o_V+-+iPvB4Oj-xHwD+Rm-gmKS02h8Dw=g@mail.gmail.com> <97ccf48e-f30c-4abd-b8ff-2b5310a8b60f@suse.cz>
+In-Reply-To: <97ccf48e-f30c-4abd-b8ff-2b5310a8b60f@suse.cz>
+From: Matt Fleming <mfleming@cloudflare.com>
+Date: Wed, 23 Oct 2024 10:25:43 +0100
+Message-ID: <CAGis_TUHyH8mM4q+pWJH+LfYchQkjL6Pap4sNfLA=HRqg50KAQ@mail.gmail.com>
+Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
+ free highatomic
+To: Vlastimil Babka <vbabka@suse.cz>
+Cc: Yu Zhao <yuzhao@google.com>, Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, linux-mm@kvack.org, 
+	linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>, 
+	Mel Gorman <mgorman@techsingularity.net>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 23, 2024 at 8:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
+ote:
+>
+> I thought the alloc demand is only blocked on the pessimistic watermark
+> calculation. Usable free pages exist, but the allocation is not allowed t=
+o
+> use them.
 
-
-On 2024/10/22 18:06, Kirill A. Shutemov wrote:
-> On Tue, Oct 22, 2024 at 11:34:14AM +0800, Baolin Wang wrote:
->> IIUC, most file systems use method similar to iomap buffered IO (see
->> iomap_get_folio()) to allocate huge pages. What I mean is that, it would be
->> better to have a real use case to add a hint for allocating THP (other than
->> tmpfs).
-> 
-> I would be nice to hear from folks who works with production what the
-> actual needs are.
-> 
-> But I find asymmetry between MADV_ hints and FADV_ hints wrt huge pages
-> not justified. I think it would be easy to find use-cases for
-> FADV_HUGEPAGE/FADV_NOHUGEPAGE.
-> 
-> Furthermore I think it would be useful to have some kind of mechanism to
-> make these hints persistent: any open of a file would have these hints set
-> by default based on inode metadata on backing storage. Although, I am not
-> sure what the right way to archive that. xattrs?
-
-May be can re-use mapping_set_folio_order_range()?
+I'm confused -- I thought the problem was the inverse of your
+statement: the allocation is attempted because
+__zone_watermark_unusable_free() claims the highatomic pages are free
+but they're not?
 
