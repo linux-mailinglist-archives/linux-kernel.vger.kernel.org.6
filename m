@@ -1,204 +1,150 @@
-Return-Path: <linux-kernel+bounces-377720-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377721-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C5CA9AC2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:07:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09FB49AC2F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:08:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3AE1C20D4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:07:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9341F23B17
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:08:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D878D184556;
-	Wed, 23 Oct 2024 09:07:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB7C176AA5;
+	Wed, 23 Oct 2024 09:08:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V9jkVcgE"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="BqAUoxVE"
+Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDC918660C
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:07:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7981662FA;
+	Wed, 23 Oct 2024 09:07:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674424; cv=none; b=TW7WygPAi7dcwsLa1MCjQMGoxvOBkYRdg9FfscHlvBWWS3muu2w2kB8uatdlvPjSVnDuly91AAmpApMnKgHFxdf/BwimzAJ1Pb3POZIdCF3U0XHJwkAqHXOPdl0UHjLyeBbMLu3fbkDnjUsDyfCkdxtfM0QwuXHyLry5TcsT+9E=
+	t=1729674482; cv=none; b=Qm6sNhAO0AjuJgvUvzYZW42kSxttPTsx3XVPpyIucUUW2k/tQZUjQSVlphRFhyRGVXh3QhHryQS8VjnGNk9X1dK5Ko758fmVoQSUzab5bg+2mTM0kbNtQOfE4S1B9L5vtU3EB2knTNXxjChzfxCMF6KLWJOrzitk4cs2JT8XA24=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674424; c=relaxed/simple;
-	bh=bjOJOfZfY/iX44yodp3Y3Csyso/TAeICAqN1lJoie78=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gYwWpffr2s1hjKFfTmaReyC5kVjQCrUB1VhXIWI3Gsg5SOdBtiywKVSVQAq3RBxo9KzokwHXp7SYt6vj4vbgrH/ral2+DLl2cHrB4UQyMIXEMNW1RDtpkbRZu0qf+OAZcqNCoX9O4r+fgFgdRtCI3u1ZA9gPQExITjudVJ7GGwg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V9jkVcgE; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729674421;
+	s=arc-20240116; t=1729674482; c=relaxed/simple;
+	bh=tbDydY/g0gP9i/qHvzsa6DB2Vdww1QZr+ZuT0zDljw4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=I4tjvjk1u64Gmekg1/sgPqlrgU6b1IfYGSFZIl/eI/bbzVnM4Bd7WTZzH4JYIurbs0X7EU3cf8GOc3IoS0SfhjW5rOI6TEK9j4mne1NG87WYL9GGl4b+icE9UlCiNZ/oRjnp+xm4dmT/ISCwxH0PYcgSwjK14pIjvMvuqSaifKE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=BqAUoxVE; arc=none smtp.client-ip=217.70.183.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id 0D120FF805;
+	Wed, 23 Oct 2024 09:07:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1729674478;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=rmnd9v0LSmhXFonF77TwYci6uZaGz+E2notKw0mY5v0=;
-	b=V9jkVcgENVs3Y3SaO5/c7V59rbPE18rhZATlsowgH4GKUwcXgadUWO6NNTW1YBXuVn511I
-	YgT2rG8rI+thHvG5VkVRnDNf0wF1kLXnGnzKE8YrEDYRi3ZeQrWUQBgstCCHyk23/6ARUm
-	dBSXv4Fct55g63QbPax+v+EVxQkvgZw=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-ej37Uap8NNKLQcT2wViX7g-1; Wed,
- 23 Oct 2024 05:06:58 -0400
-X-MC-Unique: ej37Uap8NNKLQcT2wViX7g-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 782CA1955D4E;
-	Wed, 23 Oct 2024 09:06:56 +0000 (UTC)
-Received: from t14s.fritz.box (unknown [10.22.88.10])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EEA221956089;
-	Wed, 23 Oct 2024 09:06:52 +0000 (UTC)
-From: David Hildenbrand <david@redhat.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-s390@vger.kernel.org,
-	David Hildenbrand <david@redhat.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>
-Subject: [PATCH v3] s390/kdump: make is_kdump_kernel() consistently return "true" in kdump environments only
-Date: Wed, 23 Oct 2024 11:06:51 +0200
-Message-ID: <20241023090651.1115507-1-david@redhat.com>
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=duGBblZySXHjNbKpCsyaY0S9onpbOMK+ADpEkjW/JZM=;
+	b=BqAUoxVED0LIxgKeWcHgf7n1XLzvkg1oy+PjoAWgpY2rUUMVm8TE/CzS4r0mPiR48HoHxl
+	QuOdhKl4+36K0eMHOGa+HJMIqMRrtTbRf4OirwQbNDWllU43pr6bht0HzvoAE2w4CTL5/q
+	1AZ7nEBA2My9w8GFKlwYzA/sI6u9lh3ttN/Jd6WnsoJkOyFPuVDkdNxSy2ZstpKI5ZzgEz
+	wP2Oc2xgXuPfbCf76TzH34cLIU8OZOfDofRpHCaZUdRPwSA+P8xXzMhHc2R51PR0AhnEao
+	Jc61cHneZzrUrz20Ar4fzzhicKfpmO/RA/UT9kIKYzFeYHmbic67H+RwDHH4Pw==
+Message-ID: <262d7758-c752-49f6-87ef-4f75d681a919@yoseli.org>
+Date: Wed, 23 Oct 2024 11:07:57 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
+ <20241022012809.1ef083cd@rorschach.local.home>
+ <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
+ <20241022043037.13efb239@rorschach.local.home>
+ <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
+ <20241023044711.3eb838fe@rorschach.local.home>
+Content-Language: en-US
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+In-Reply-To: <20241023044711.3eb838fe@rorschach.local.home>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-s390 sets "elfcorehdr_addr = ELFCORE_ADDR_MAX;" early during
-setup_arch() to deactivate the "elfcorehdr= kernel" parameter, resulting in
-is_kdump_kernel() returning "false".
+Hi Steve,
 
-During vmcore_init()->elfcorehdr_alloc(), if on a dump kernel and
-allocation succeeded, elfcorehdr_addr will be set to a valid address and
-is_kdump_kernel() will consequently return "true".
+On 23/10/2024 10:47, Steven Rostedt wrote:
+> On Tue, 22 Oct 2024 11:21:34 +0200
+> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+> 
+>>
+>> I was not really expecting you to review the m68k one no :-).
+>> I think I have other issues which might have impact on ftrace too.
+>> For instance, when I launch cyclictest I have a warning about HRTIMERS:
+>> # cyclictest -p 99
+>> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
+>> WARN: High resolution timers not available
+>> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
+>>
+>> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 Max:
+>>     3516
+>>
+>> The latencies are quite high...
+> 
+> Yes, if you don't have high resolution timers, the latency will be high.
+> 
 
-We want to make is_kdump_kernel() return a consistent result during
-all boot stages, and properly return "true" if we are actually in a kdump
-environment -- just like we already do on powerpc where we indicate "false"
-in fadump environments, as added in commit b098f1c32365 ("powerpc/fadump:
-make is_kdump_kernel() return false when fadump is active").
+According to my config, I should have those:
+CONFIG_HIGH_RES_TIMERS=y
 
-Similarly provide a custom is_kdump_kernel() implementation that will only
-return "true" in kdump environments, and will do so consistently during
-boot.
+>>
+>> But regarding ftrace it seems that the trace is not able to give me more
+>> than a microsecond precision. I addded a few trace_printk() in a driver
+>> of mine and I get:
+>>    irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt:
+>> Received 2 bytes
+>>    irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt:
+>> Received 2 bytes
+>>    irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt:
+>> dspi_interrupt
+>>    irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: TX
+>> FIFO overflow
+>>    irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt:
+>> Restart FIFO
+>>
+>> Do you have any clue ?
+> 
+> Yes. The ring buffer clock is dependent on the architecture's clock. By
+> default, it uses whatever the scheduler clock uses. If the scheduler
+> clock is 1ms resolution, so will the tracing data be.
 
-Update the documentation of is_dump_available().
+By default. So, I could change it to mono_raw for instance :-). It seems 
+that timerlat is ok with it !
 
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Signed-off-by: David Hildenbrand <david@redhat.com>
----
+     irq/178-UART-99      [000] D.h1.    95.766649: #27138 context 
+irq timer_latency    525376 ns
+       timerlat/0-235     [000] .....    95.766826: #27138 context 
+thread timer_latency    697920 ns
+           <idle>-0       [000] dnh1.    95.767682: #27139 context 
+irq timer_latency    559616 ns
+       timerlat/0-235     [000] .....    95.767839: #27139 context 
+thread timer_latency    713216 ns
+           <idle>-0       [000] dnh1.    95.768701: #27140 context 
+irq timer_latency    577984 ns
+       timerlat/0-235     [000] .....    95.768861: #27140 context 
+thread timer_latency    734656 ns
+     irq/178-UART-99      [000] d.h1.    95.769671: #27141 context 
+irq timer_latency    548736 ns
+       timerlat/0-235     [000] .....    95.769838: #27141 context 
+thread timer_latency    711552 ns
+     irq/178-UART-99      [000] D.h1.    95.770664: #27142 context 
+irq timer_latency    540992 ns
+       timerlat/0-235     [000] .....    95.770841: #27142 context 
+thread timer_latency    713024 ns
 
-This is v3 of [1], split out from the virtio-mem stuff.
-
-I played more with having virtio-mem built in as a module on current
-upstream and at least for virtio-mem this change *might* currently not be
-required (built-in virtio-mem driver seems to get probed after fs_init();
-I recall this behavior was different 4 years ago with my RFCs where I
-first decided to craft this patch).
-
-But this change sounds like a reasonable cleanup to me in any case.
-
-v1 -> v2:
-* Use "oldmem_data.start" and add a comment to is_kdump_kernel()
-* Update dump_available() documentation
-* Rewrote patch subject/description
-
-[1] https://lore.kernel.org/all/20241014144622.876731-2-david@redhat.com/
-
----
- arch/s390/include/asm/kexec.h |  3 +++
- arch/s390/kernel/crash_dump.c | 11 +++++++++++
- arch/s390/kernel/smp.c        | 16 ++++++++--------
- 3 files changed, 22 insertions(+), 8 deletions(-)
-
-diff --git a/arch/s390/include/asm/kexec.h b/arch/s390/include/asm/kexec.h
-index 1bd08eb56d5f..9084b750350d 100644
---- a/arch/s390/include/asm/kexec.h
-+++ b/arch/s390/include/asm/kexec.h
-@@ -94,6 +94,9 @@ void arch_kexec_protect_crashkres(void);
- 
- void arch_kexec_unprotect_crashkres(void);
- #define arch_kexec_unprotect_crashkres arch_kexec_unprotect_crashkres
-+
-+bool is_kdump_kernel(void);
-+#define is_kdump_kernel is_kdump_kernel
- #endif
- 
- #ifdef CONFIG_KEXEC_FILE
-diff --git a/arch/s390/kernel/crash_dump.c b/arch/s390/kernel/crash_dump.c
-index edae13416196..d9301c00852e 100644
---- a/arch/s390/kernel/crash_dump.c
-+++ b/arch/s390/kernel/crash_dump.c
-@@ -237,6 +237,17 @@ int remap_oldmem_pfn_range(struct vm_area_struct *vma, unsigned long from,
- 						       prot);
- }
- 
-+/*
-+ * Return true only when we are in a kdump or stand-alone kdump environment.
-+ * Note that /proc/vmcore might also be available in "standard zfcp/nvme dump"
-+ * environments, where this function returns false; see dump_available().
-+ */
-+bool is_kdump_kernel(void)
-+{
-+	return oldmem_data.start;
-+}
-+EXPORT_SYMBOL_GPL(is_kdump_kernel);
-+
- static const char *nt_name(Elf64_Word type)
- {
- 	const char *name = "LINUX";
-diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
-index 4df56fdb2488..455400bdafe8 100644
---- a/arch/s390/kernel/smp.c
-+++ b/arch/s390/kernel/smp.c
-@@ -574,7 +574,7 @@ int smp_store_status(int cpu)
- 
- /*
-  * Collect CPU state of the previous, crashed system.
-- * There are four cases:
-+ * There are three cases:
-  * 1) standard zfcp/nvme dump
-  *    condition: OLDMEM_BASE == NULL && is_ipl_type_dump() == true
-  *    The state for all CPUs except the boot CPU needs to be collected
-@@ -587,16 +587,16 @@ int smp_store_status(int cpu)
-  *    with sigp stop-and-store-status. The firmware or the boot-loader
-  *    stored the registers of the boot CPU in the absolute lowcore in the
-  *    memory of the old system.
-- * 3) kdump and the old kernel did not store the CPU state,
-- *    or stand-alone kdump for DASD
-- *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
-+ * 3) kdump or stand-alone kdump for DASD
-+ *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
-  *    The state for all CPUs except the boot CPU needs to be collected
-  *    with sigp stop-and-store-status. The kexec code or the boot-loader
-  *    stored the registers of the boot CPU in the memory of the old system.
-- * 4) kdump and the old kernel stored the CPU state
-- *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
-- *    This case does not exist for s390 anymore, setup_arch explicitly
-- *    deactivates the elfcorehdr= kernel parameter
-+ *
-+ * Note that the legacy kdump mode where the old kernel stored the CPU states
-+ * does no longer exist: setup_arch() explicitly deactivates the elfcorehdr=
-+ * kernel parameter. The is_kdump_kernel() implementation on s390 is independent
-+ * of the elfcorehdr= parameter.
-  */
- static bool dump_available(void)
- {
--- 
-2.46.1
+> 
+> -- Steve
+> 
 
 
