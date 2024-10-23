@@ -1,98 +1,403 @@
-Return-Path: <linux-kernel+bounces-377671-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377682-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B33BD9AC21D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:47:35 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5D1539AC247
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:53:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F76F28536E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:47:34 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 77B251C2422B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:53:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DBA15E5D4;
-	Wed, 23 Oct 2024 08:47:16 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 949FA16130B;
+	Wed, 23 Oct 2024 08:53:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ahXEHfTm"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2A158A33;
-	Wed, 23 Oct 2024 08:47:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8DE2015C15F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:53:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673236; cv=none; b=g/VA1Ouafjq/JcP1Y6ku7sO2PPsy6DPqaJ6qFgp24ckCUXpyRBUSZ17+rpNqLloZjqa6dx0wfdaZwF+ksb7tKpgObacLMVDmQUTB1W4xupzmD21771is+QO5uz/7ft9cRk2BronqKNBxpgxJXlQiActivumJDeFkSmqirKYfAfU=
+	t=1729673585; cv=none; b=qSv7he9SPSrvsnzs24TtHT7Cxzsw73kzGm8Tc64jp/aMx64JPwCZN5oSgCmqhMHPd4i/nYIeYPOah/liEcyZBLv9ka68sSV7MQzrSWrU0i9Xvnq7elZ7fmx0RoJKD+8yks6kYtZRbNhzSPq0YC1b+MmPXI/1C1RX6GrYunnVT68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673236; c=relaxed/simple;
-	bh=jE+psI9L5oywH/YvfvyfipOHf6eGhY0aBTmDvQ6Tfrc=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MzZje9anW7O/yuA1fSGo2qBzcE0dTxUVBmPCsRT3KyuWcn840CB6xGwoZPu53ZSRig7DT0DLLcBeukjhLY6tPTN0imDo5/mna+PwmbCpQR9yks4QOt8biNJIFcfJsA7IhZlumVoSdgC/qS0yR8yBlW8SAMslFto6tcFNG5/v2ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FAA2C4CEC6;
-	Wed, 23 Oct 2024 08:47:14 +0000 (UTC)
-Date: Wed, 23 Oct 2024 04:47:11 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-Message-ID: <20241023044711.3eb838fe@rorschach.local.home>
-In-Reply-To: <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
-	<20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
-	<20241022012809.1ef083cd@rorschach.local.home>
-	<075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
-	<20241022043037.13efb239@rorschach.local.home>
-	<2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729673585; c=relaxed/simple;
+	bh=802g1h4r/ff4whcawzRjqzDjQ672DUINQlcqcuTqXw4=;
+	h=From:To:Subject:Date:Message-ID:MIME-Version; b=Z6oxIz+GaqLNRmCUhqoaP97K0MMEdiPVJdEhtgxLEuNBpRNLH7jt1oi2lt73IIRZjEYTz19eYW8ODRLCWgUvBJWfhbeqO32sA29rS5tvpVH56MADuomzx4b7jMbNERxwAytAb7lqTTDjScgqfCyuK82NAVhKDWVcefdqjlIVOj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ahXEHfTm; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729673582;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=ozMWCQ/Dg+iN+ZjZ0nwJppDwUchQ354tkp3R0a2EIWE=;
+	b=ahXEHfTmNHpJ1H0soFJ/iAdSHDN+lMf2ODCqsgvVrkwn2HZxQnj3RN6J2InSgf9CKKjSuh
+	C5Pd44CpPnFKdeLydqrPc6mhZn65fL7mOmD0z4g2RScZfrw5BonWZ56YLsGzmX+hVG1W8+
+	WnpcQY7t4kF8H761vnT9soo2CdarfEI=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-625-gPsboIxNPHO-K3slQa4CvA-1; Wed,
+ 23 Oct 2024 04:52:59 -0400
+X-MC-Unique: gPsboIxNPHO-K3slQa4CvA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D6F2419560BA;
+	Wed, 23 Oct 2024 08:52:55 +0000 (UTC)
+Received: from hydra.redhat.com (unknown [10.39.193.145])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id F130830001A5;
+	Wed, 23 Oct 2024 08:52:48 +0000 (UTC)
+From: Jocelyn Falempe <jfalempe@redhat.com>
+To: Harry Wentland <harry.wentland@amd.com>,
+	Leo Li <sunpeng.li@amd.com>,
+	Rodrigo Siqueira <Rodrigo.Siqueira@amd.com>,
+	Alex Deucher <alexander.deucher@amd.com>,
+	=?UTF-8?q?Christian=20K=C3=B6nig?= <christian.koenig@amd.com>,
+	Xinhui Pan <Xinhui.Pan@amd.com>,
+	David Airlie <airlied@gmail.com>,
+	Simona Vetter <simona@ffwll.ch>,
+	Aurabindo Pillai <aurabindo.pillai@amd.com>,
+	Melissa Wen <mwen@igalia.com>,
+	Joshua Ashton <joshua@froggi.es>,
+	=?UTF-8?q?Marek=20Ol=C5=A1=C3=A1k?= <marek.olsak@amd.com>,
+	Jocelyn Falempe <jfalempe@redhat.com>,
+	Tom Chung <chiahsuan.chung@amd.com>,
+	Roman Li <roman.li@amd.com>,
+	Bhuvana Chandra Pinninti <bhuvanachandra.pinninti@amd.com>,
+	Alvin Lee <alvin.lee2@amd.com>,
+	Sung Joon Kim <sungkim@amd.com>,
+	Duncan Ma <duncan.ma@amd.com>,
+	Hamza Mahfooz <hamza.mahfooz@amd.com>,
+	Lu Yao <yaolu@kylinos.cn>,
+	amd-gfx@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] drm/amdgpu: Add dcn30 drm_panic support
+Date: Wed, 23 Oct 2024 10:47:54 +0200
+Message-ID: <20241023085227.1165451-1-jfalempe@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On Tue, 22 Oct 2024 11:21:34 +0200
-Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+Add support for the drm_panic module, which displays a pretty user
+friendly message on the screen when a Linux kernel panic occurs.
 
-> 
-> I was not really expecting you to review the m68k one no :-).
-> I think I have other issues which might have impact on ftrace too.
-> For instance, when I launch cyclictest I have a warning about HRTIMERS:
-> # cyclictest -p 99
-> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
-> WARN: High resolution timers not available
-> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
-> 
-> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 Max: 
->    3516
-> 
-> The latencies are quite high...
+It should work on all radeon using amdgpu_dm_plane.c, when the
+framebuffer is linear (like when in a VT). For tiled framebuffer, it
+will only work on radeon with dcn3x. It should be easy to add support
+for dcn20, but I can't test it.
+I've tested it on a Radeon W6400 pro, Radeon 7900XTX and
+Radeon RX 5700.
+Also it doesn't work yet on laptop's panel, maybe due to PSR.
 
-Yes, if you don't have high resolution timers, the latency will be high.
+Signed-off-by: Jocelyn Falempe <jfalempe@redhat.com>
+---
 
-> 
-> But regarding ftrace it seems that the trace is not able to give me more 
-> than a microsecond precision. I addded a few trace_printk() in a driver 
-> of mine and I get:
->   irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt: 
-> Received 2 bytes
->   irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt: 
-> Received 2 bytes
->   irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: 
-> dspi_interrupt
->   irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: TX 
-> FIFO overflow
->   irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: 
-> Restart FIFO
-> 
-> Do you have any clue ?
+v2:
+ - Disable tiling, and force page flip in the panic_flush() callback.
+ - Enable tiling support for dcn31.
+ - Force immediate page flip.
 
-Yes. The ring buffer clock is dependent on the architecture's clock. By
-default, it uses whatever the scheduler clock uses. If the scheduler
-clock is 1ms resolution, so will the tracing data be.
+v3:
+ * Add hubp_clear_tiling hook to dcn32 and dcn35
 
--- Steve
+ .../amd/display/amdgpu_dm/amdgpu_dm_plane.c   | 136 +++++++++++++++++-
+ .../amd/display/dc/hubp/dcn30/dcn30_hubp.c    |  17 +++
+ .../amd/display/dc/hubp/dcn30/dcn30_hubp.h    |   2 +
+ .../amd/display/dc/hubp/dcn31/dcn31_hubp.c    |   1 +
+ .../amd/display/dc/hubp/dcn32/dcn32_hubp.c    |   3 +-
+ .../amd/display/dc/hubp/dcn35/dcn35_hubp.c    |   1 +
+ drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h  |   1 +
+ 7 files changed, 159 insertions(+), 2 deletions(-)
+
+diff --git a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+index 495e3cd70426d..60606b36f07bd 100644
+--- a/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
++++ b/drivers/gpu/drm/amd/display/amdgpu_dm/amdgpu_dm_plane.c
+@@ -26,7 +26,9 @@
+ 
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_blend.h>
++#include "drm/drm_framebuffer.h"
+ #include <drm/drm_gem_atomic_helper.h>
++#include <drm/drm_panic.h>
+ #include <drm/drm_plane_helper.h>
+ #include <drm/drm_gem_framebuffer_helper.h>
+ #include <drm/drm_fourcc.h>
+@@ -36,6 +38,7 @@
+ #include "amdgpu_display.h"
+ #include "amdgpu_dm_trace.h"
+ #include "amdgpu_dm_plane.h"
++#include "bif/bif_4_1_d.h"
+ #include "gc/gc_11_0_0_offset.h"
+ #include "gc/gc_11_0_0_sh_mask.h"
+ 
+@@ -1421,6 +1424,124 @@ static void amdgpu_dm_plane_atomic_async_update(struct drm_plane *plane,
+ 	amdgpu_dm_plane_handle_cursor_update(plane, old_state);
+ }
+ 
++/* panic_bo is set in amdgpu_dm_plane_get_scanout_buffer() and only used in amdgpu_dm_set_pixel()
++ * they are called from the panic handler, and protected by the drm_panic spinlock.
++ */
++static struct amdgpu_bo *panic_abo;
++
++/* Use the indirect MMIO to write each pixel to the GPU VRAM,
++ * This is a simplified version of amdgpu_device_mm_access()
++ */
++static void amdgpu_dm_set_pixel(struct drm_scanout_buffer *sb,
++				unsigned int x,
++				unsigned int y,
++				u32 color)
++{
++	struct amdgpu_res_cursor cursor;
++	unsigned long offset;
++	struct amdgpu_bo *abo = panic_abo;
++	struct amdgpu_device *adev = amdgpu_ttm_adev(abo->tbo.bdev);
++	uint32_t tmp;
++
++	offset = x * 4 + y * sb->pitch[0];
++	amdgpu_res_first(abo->tbo.resource, offset, 4, &cursor);
++
++	tmp = cursor.start >> 31;
++	WREG32_NO_KIQ(mmMM_INDEX, ((uint32_t) cursor.start) | 0x80000000);
++	if (tmp != 0xffffffff)
++		WREG32_NO_KIQ(mmMM_INDEX_HI, tmp);
++	WREG32_NO_KIQ(mmMM_DATA, color);
++}
++
++static int amdgpu_dm_plane_get_scanout_buffer(struct drm_plane *plane,
++					      struct drm_scanout_buffer *sb)
++{
++	struct amdgpu_bo *abo;
++	struct drm_framebuffer *fb = plane->state->fb;
++
++	if (!fb)
++		return -EINVAL;
++
++	DRM_DEBUG_KMS("Framebuffer %dx%d %p4cc\n", fb->width, fb->height, &fb->format->format);
++
++	abo = gem_to_amdgpu_bo(fb->obj[0]);
++	if (!abo)
++		return -EINVAL;
++
++	sb->width = fb->width;
++	sb->height = fb->height;
++	/* Use the generic linear format, because tiling will be disabled in panic_flush() */
++	sb->format = drm_format_info(fb->format->format);
++	if (!sb->format)
++		return -EINVAL;
++
++	sb->pitch[0] = fb->pitches[0];
++
++	if (abo->flags & AMDGPU_GEM_CREATE_NO_CPU_ACCESS) {
++		if (abo->tbo.resource->mem_type != TTM_PL_VRAM) {
++			drm_warn(plane->dev, "amdgpu panic, framebuffer not in VRAM\n");
++			return -EINVAL;
++		}
++		/* Only handle 32bits format, to simplify mmio access */
++		if (fb->format->cpp[0] != 4) {
++			drm_warn(plane->dev, "amdgpu panic, pixel format is not 32bits\n");
++			return -EINVAL;
++		}
++		sb->set_pixel = amdgpu_dm_set_pixel;
++		panic_abo = abo;
++		return 0;
++	}
++	if (!abo->kmap.virtual &&
++	    ttm_bo_kmap(&abo->tbo, 0, PFN_UP(abo->tbo.base.size), &abo->kmap)) {
++		drm_warn(plane->dev, "amdgpu bo map failed, panic won't be displayed\n");
++		return -ENOMEM;
++	}
++	if (abo->kmap.bo_kmap_type & TTM_BO_MAP_IOMEM_MASK)
++		iosys_map_set_vaddr_iomem(&sb->map[0], abo->kmap.virtual);
++	else
++		iosys_map_set_vaddr(&sb->map[0], abo->kmap.virtual);
++
++	return 0;
++}
++
++static void amdgpu_dm_plane_panic_flush(struct drm_plane *plane)
++{
++	struct dm_plane_state *dm_plane_state = to_dm_plane_state(plane->state);
++	struct drm_framebuffer *fb = plane->state->fb;
++	struct dc_plane_state *dc_plane_state;
++	struct dc *dc;
++	int i;
++
++	if (!dm_plane_state || !dm_plane_state->dc_state)
++		return;
++
++	dc_plane_state = dm_plane_state->dc_state;
++	dc = dc_plane_state->ctx->dc;
++	if (!dc || !dc->current_state)
++		return;
++
++	for (i = 0; i < dc->res_pool->pipe_count; i++) {
++		struct pipe_ctx *pipe_ctx = &dc->current_state->res_ctx.pipe_ctx[i];
++		struct hubp *hubp;
++
++		if (!pipe_ctx)
++			continue;
++
++		hubp = pipe_ctx->plane_res.hubp;
++		if (!hubp)
++			continue;
++
++		/* if framebuffer is tiled, disable tiling */
++		if (fb->modifier && hubp->funcs->hubp_clear_tiling)
++			hubp->funcs->hubp_clear_tiling(hubp);
++
++		/* force page flip to see the new content of the framebuffer */
++		hubp->funcs->hubp_program_surface_flip_and_addr(hubp,
++								&dc_plane_state->address,
++								true);
++	}
++}
++
+ static const struct drm_plane_helper_funcs dm_plane_helper_funcs = {
+ 	.prepare_fb = amdgpu_dm_plane_helper_prepare_fb,
+ 	.cleanup_fb = amdgpu_dm_plane_helper_cleanup_fb,
+@@ -1429,6 +1550,16 @@ static const struct drm_plane_helper_funcs dm_plane_helper_funcs = {
+ 	.atomic_async_update = amdgpu_dm_plane_atomic_async_update
+ };
+ 
++static const struct drm_plane_helper_funcs dm_primary_plane_helper_funcs = {
++	.prepare_fb = amdgpu_dm_plane_helper_prepare_fb,
++	.cleanup_fb = amdgpu_dm_plane_helper_cleanup_fb,
++	.atomic_check = amdgpu_dm_plane_atomic_check,
++	.atomic_async_check = amdgpu_dm_plane_atomic_async_check,
++	.atomic_async_update = amdgpu_dm_plane_atomic_async_update,
++	.get_scanout_buffer = amdgpu_dm_plane_get_scanout_buffer,
++	.panic_flush = amdgpu_dm_plane_panic_flush,
++};
++
+ static void amdgpu_dm_plane_drm_plane_reset(struct drm_plane *plane)
+ {
+ 	struct dm_plane_state *amdgpu_state = NULL;
+@@ -1855,7 +1986,10 @@ int amdgpu_dm_plane_init(struct amdgpu_display_manager *dm,
+ 	    plane->type != DRM_PLANE_TYPE_CURSOR)
+ 		drm_plane_enable_fb_damage_clips(plane);
+ 
+-	drm_plane_helper_add(plane, &dm_plane_helper_funcs);
++	if (plane->type == DRM_PLANE_TYPE_PRIMARY)
++		drm_plane_helper_add(plane, &dm_primary_plane_helper_funcs);
++	else
++		drm_plane_helper_add(plane, &dm_plane_helper_funcs);
+ 
+ #ifdef AMD_PRIVATE_COLOR
+ 	dm_atomic_plane_attach_color_mgmt_properties(dm, plane);
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c
+index 60a64d2903527..3b16c3cda2c3e 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.c
+@@ -334,6 +334,22 @@ void hubp3_program_tiling(
+ 
+ }
+ 
++void hubp3_clear_tiling(struct hubp *hubp)
++{
++	struct dcn20_hubp *hubp2 = TO_DCN20_HUBP(hubp);
++
++	REG_UPDATE(DCHUBP_REQ_SIZE_CONFIG, SWATH_HEIGHT, 0);
++	REG_UPDATE(DCSURF_TILING_CONFIG, SW_MODE, DC_SW_LINEAR);
++
++	REG_UPDATE_6(DCSURF_SURFACE_CONTROL,
++		PRIMARY_SURFACE_DCC_EN, 0,
++		PRIMARY_SURFACE_DCC_IND_BLK, 0,
++		PRIMARY_SURFACE_DCC_IND_BLK_C, 0,
++		SECONDARY_SURFACE_DCC_EN, 0,
++		SECONDARY_SURFACE_DCC_IND_BLK, 0,
++		SECONDARY_SURFACE_DCC_IND_BLK_C, 0);
++}
++
+ void hubp3_dcc_control(struct hubp *hubp, bool enable,
+ 		enum hubp_ind_block_size blk_size)
+ {
+@@ -512,6 +528,7 @@ static struct hubp_funcs dcn30_hubp_funcs = {
+ 	.hubp_in_blank = hubp1_in_blank,
+ 	.hubp_soft_reset = hubp1_soft_reset,
+ 	.hubp_set_flip_int = hubp1_set_flip_int,
++	.hubp_clear_tiling = hubp3_clear_tiling,
+ };
+ 
+ bool hubp3_construct(
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h
+index b010531a7fe88..cfb01bf340a1a 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn30/dcn30_hubp.h
+@@ -297,6 +297,8 @@ void hubp3_read_state(struct hubp *hubp);
+ 
+ void hubp3_init(struct hubp *hubp);
+ 
++void hubp3_clear_tiling(struct hubp *hubp);
++
+ #endif /* __DC_HUBP_DCN30_H__ */
+ 
+ 
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn31/dcn31_hubp.c b/drivers/gpu/drm/amd/display/dc/hubp/dcn31/dcn31_hubp.c
+index 8394e8c069199..46b804ed05fba 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn31/dcn31_hubp.c
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn31/dcn31_hubp.c
+@@ -96,6 +96,7 @@ static struct hubp_funcs dcn31_hubp_funcs = {
+ 	.hubp_set_flip_int = hubp1_set_flip_int,
+ 	.hubp_in_blank = hubp1_in_blank,
+ 	.program_extended_blank = hubp31_program_extended_blank,
++	.hubp_clear_tiling = hubp3_clear_tiling,
+ };
+ 
+ bool hubp31_construct(
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn32/dcn32_hubp.c b/drivers/gpu/drm/amd/display/dc/hubp/dcn32/dcn32_hubp.c
+index ca5b4b28a6644..8b5bd73b8094a 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn32/dcn32_hubp.c
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn32/dcn32_hubp.c
+@@ -201,7 +201,8 @@ static struct hubp_funcs dcn32_hubp_funcs = {
+ 	.hubp_update_force_cursor_pstate_disallow = hubp32_update_force_cursor_pstate_disallow,
+ 	.phantom_hubp_post_enable = hubp32_phantom_hubp_post_enable,
+ 	.hubp_update_mall_sel = hubp32_update_mall_sel,
+-	.hubp_prepare_subvp_buffering = hubp32_prepare_subvp_buffering
++	.hubp_prepare_subvp_buffering = hubp32_prepare_subvp_buffering,
++	.hubp_clear_tiling = hubp3_clear_tiling,
+ };
+ 
+ bool hubp32_construct(
+diff --git a/drivers/gpu/drm/amd/display/dc/hubp/dcn35/dcn35_hubp.c b/drivers/gpu/drm/amd/display/dc/hubp/dcn35/dcn35_hubp.c
+index d1f05b82b3dd5..eb62042dfafc2 100644
+--- a/drivers/gpu/drm/amd/display/dc/hubp/dcn35/dcn35_hubp.c
++++ b/drivers/gpu/drm/amd/display/dc/hubp/dcn35/dcn35_hubp.c
+@@ -216,6 +216,7 @@ static struct hubp_funcs dcn35_hubp_funcs = {
+ 	.hubp_set_flip_int = hubp1_set_flip_int,
+ 	.hubp_in_blank = hubp1_in_blank,
+ 	.program_extended_blank = hubp31_program_extended_blank_value,
++	.hubp_clear_tiling = hubp3_clear_tiling,
+ };
+ 
+ bool hubp35_construct(
+diff --git a/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h b/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h
+index 16580d6242789..d0878fc0cc948 100644
+--- a/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h
++++ b/drivers/gpu/drm/amd/display/dc/inc/hw/hubp.h
+@@ -275,6 +275,7 @@ struct hubp_funcs {
+ 			enum hubp_3dlut_fl_crossbar_bit_slice bit_slice_cb_b,
+ 			enum hubp_3dlut_fl_crossbar_bit_slice bit_slice_cr_r);
+ 	int (*hubp_get_3dlut_fl_done)(struct hubp *hubp);
++	void (*hubp_clear_tiling)(struct hubp *hubp);
+ };
+ 
+ #endif
+
+base-commit: 91e21479c81dd4e9e22a78d7446f92f6b96a7284
+-- 
+2.47.0
 
 
