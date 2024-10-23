@@ -1,175 +1,125 @@
-Return-Path: <linux-kernel+bounces-378404-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378405-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92DA29ACF7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:54:16 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0994F9ACF98
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:00:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1710D1F2172D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:54:16 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9C903B23CD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:56:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFFA1CACFE;
-	Wed, 23 Oct 2024 15:53:28 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0045E1C304B;
+	Wed, 23 Oct 2024 15:56:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AS9kKj7C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E6F1C9B71;
-	Wed, 23 Oct 2024 15:53:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AA7A79C4;
+	Wed, 23 Oct 2024 15:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729698808; cv=none; b=VBBLpSn3Y3wiNHMxH1z4FyMWe/hoZ2i7kGLjxJu4DFmCVp9GaX6RLoC9tZJoXKgjf2wR2SocGaC6M7WYJabaEDdvIN+4lTFi+lxAo6hLh37ZYAy67UWWRiavXGSXg6/yz8CnUjhHEgIFwVSte24CpxbPAKbKQbtMJ18ftQ5BKwk=
+	t=1729699001; cv=none; b=f6u1E3lP7RAIyJ4QIp6Ro/mTgnrVKzAECWqVrMoNvqTO7gc/zqWHliXqai0jdAUHTBEd9ouSh2i9HBAG7i6FfPqIzW190EZc9d3xAdM6u6YCR5wikXoGLMoiUxlkg67DFILnw9+nKEFN/IQKQcUZy5ICyat5kHGb+3Z24cGrAys=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729698808; c=relaxed/simple;
-	bh=rO2U11NWPhUPpnei0pqwHKQcMXDbJIeioZkSkDk4nDY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=N9Tint3aNjrwCEdMcPQ9zQJLNX+egtwFzyKRny8T0JwuhJsEaLgdHFVphWKQj17ADk1eXi2bmLKJtVT7/nzi/VXiGjBKm1AbtieOXGN8xop93uS6wA7wiMYAdDP43WKAbPmVYJTyralzuPF23V0TmWyKGxizUJWmNkjZwpNhhLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XYYPS3N8jz1HKHQ;
-	Wed, 23 Oct 2024 23:49:00 +0800 (CST)
-Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
-	by mail.maildlp.com (Postfix) with ESMTPS id 9E2A01402C7;
-	Wed, 23 Oct 2024 23:53:21 +0800 (CST)
-Received: from [10.67.120.168] (10.67.120.168) by
- kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.11; Wed, 23 Oct 2024 23:53:20 +0800
-Message-ID: <0f4b96a2-faad-4876-a53b-102d1d39549c@hisilicon.com>
-Date: Wed, 23 Oct 2024 23:53:20 +0800
+	s=arc-20240116; t=1729699001; c=relaxed/simple;
+	bh=1Ba0sZeAnvUhCaXJ8dnugwhq/HEb2znLVY+FK/Szapo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iNk3w8iMVs6NxOkE9bMS4o7KJ7VBd2lKcIdSR2QgkmwNWViQjyNmhQtkUiwLvOMcmOsUfdxmuKOmwsf7pQTz+f1IwdrLm0xikZfsl6jP2a8mue1PBIh4nO9T1nxq292RWSoIAGGEErvyM0dVNre8Auq8J9u3MfH0sTtDDFA32wY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AS9kKj7C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 50DA4C4CEC6;
+	Wed, 23 Oct 2024 15:56:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729699000;
+	bh=1Ba0sZeAnvUhCaXJ8dnugwhq/HEb2znLVY+FK/Szapo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AS9kKj7CP27g2voHKdUDfoV+MZSlhJHkdyomNvWnaMBrG+15ruArCggOZKq/BmBlz
+	 wVKLZVzBxo9hWEUavQnHGG3EeFzQ0EArzF07yz1hOAGzccDtO3JkVl7f0eZVtBFg99
+	 Sk/TvlBoqqRjCESsm2d1VD0ybGtEeLJlyhOnU4FSgi2flupInIoyR6P56NZkC39dTq
+	 o6VyRGlvccdUjYU9eIRuju84YcRThsnjwdfz2R+Rg5pefOuJvHWUXY89KHguVnIa77
+	 FckEKp8aivLhCbQrOb+LLZz+WVSAVYbeuXMe+mefNx342rXdNUjCf0qtaU5Xh6iCzs
+	 oAtjwOfgreh4Q==
+Date: Wed, 23 Oct 2024 17:56:37 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: "Uladzislau Rezki (Sony)" <urezki@gmail.com>
+Cc: "Paul E . McKenney" <paulmck@kernel.org>, RCU <rcu@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>,
+	Neeraj upadhyay <Neeraj.Upadhyay@amd.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Joel Fernandes <joel@joelfernandes.org>,
+	Oleksiy Avramchenko <oleksiy.avramchenko@sony.com>,
+	syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com
+Subject: Re: [PATCH] rcu/kvfree: Fix data-race in __mod_timer /
+ kvfree_call_rcu
+Message-ID: <ZxkctYE8sktPV9-b@localhost.localdomain>
+References: <20241022105307.2857-1-urezki@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.1.0
-Subject: Re: [PATCH for-rc 2/5] RDMA/hns: Fix flush cqe error when racing with
- destroy qp
-Content-Language: en-US
-To: Zhu Yanjun <yanjun.zhu@linux.dev>, <jgg@ziepe.ca>, <leon@kernel.org>
-CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
-	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>
-References: <20241022111017.946170-1-huangjunxian6@hisilicon.com>
- <20241022111017.946170-3-huangjunxian6@hisilicon.com>
- <e8ab33e8-cba8-48f9-b438-7e6f09f3b068@linux.dev>
-From: Junxian Huang <huangjunxian6@hisilicon.com>
-In-Reply-To: <e8ab33e8-cba8-48f9-b438-7e6f09f3b068@linux.dev>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemf100018.china.huawei.com (7.202.181.17)
+In-Reply-To: <20241022105307.2857-1-urezki@gmail.com>
 
-
-
-On 2024/10/23 23:13, Zhu Yanjun wrote:
-> 在 2024/10/22 13:10, Junxian Huang 写道:
->> From: wenglianfa <wenglianfa@huawei.com>
->>
->> QP needs to be modified to IB_QPS_ERROR to trigger HW flush cqe. But
->> when this process races with destroy qp, the destroy-qp process may
->> modify the QP to IB_QPS_RESET first. In this case flush cqe will fail
->> since it is invalid to modify qp from IB_QPS_RESET to IB_QPS_ERROR.
->>
->> Add lock and bit flag to make sure pending flush cqe work is completed
->> first and no more new works will be added.
->>
->> Fixes: ffd541d45726 ("RDMA/hns: Add the workqueue framework for flush cqe handler")
->> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
->> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
->> ---
->>   drivers/infiniband/hw/hns/hns_roce_device.h |  2 ++
->>   drivers/infiniband/hw/hns/hns_roce_hw_v2.c  |  7 +++++++
->>   drivers/infiniband/hw/hns/hns_roce_qp.c     | 14 ++++++++++++--
->>   3 files changed, 21 insertions(+), 2 deletions(-)
->>
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
->> index 73c78005901e..9b51d5a1533f 100644
->> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
->> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
->> @@ -593,6 +593,7 @@ struct hns_roce_dev;
->>     enum {
->>       HNS_ROCE_FLUSH_FLAG = 0,
->> +    HNS_ROCE_STOP_FLUSH_FLAG = 1,
->>   };
->>     struct hns_roce_work {
->> @@ -656,6 +657,7 @@ struct hns_roce_qp {
->>       enum hns_roce_cong_type    cong_type;
->>       u8            tc_mode;
->>       u8            priority;
->> +    spinlock_t flush_lock;
-> spin_lock_init is missing?
+Le Tue, Oct 22, 2024 at 12:53:07PM +0200, Uladzislau Rezki (Sony) a �crit :
+> KCSAN reports a data race when access the krcp->monitor_work.timer.expires
+> variable in the schedule_delayed_monitor_work() function:
 > 
-> The spin lock flush_lock should be initialized before used.
+> <snip>
+> BUG: KCSAN: data-race in __mod_timer / kvfree_call_rcu
 > 
-
-Will fix it. Thanks.
-
-Junxian
-
-> Zhu Yanjun
->>   };
->>     struct hns_roce_ib_iboe {
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> index e85c450e1809..aa42c5a9b254 100644
->> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
->> @@ -5598,8 +5598,15 @@ int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
->>   {
->>       struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
->>       struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
->> +    unsigned long flags;
->>       int ret;
->>   +    /* Make sure flush_cqe() is completed */
->> +    spin_lock_irqsave(&hr_qp->flush_lock, flags);
->> +    set_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag);
->> +    spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
->> +    flush_work(&hr_qp->flush_work.work);
->> +
->>       ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
->>       if (ret)
->>           ibdev_err(&hr_dev->ib_dev,
->> diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
->> index dcaa370d4a26..3439312b0138 100644
->> --- a/drivers/infiniband/hw/hns/hns_roce_qp.c
->> +++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
->> @@ -90,11 +90,18 @@ static void flush_work_handle(struct work_struct *work)
->>   void init_flush_work(struct hns_roce_dev *hr_dev, struct hns_roce_qp *hr_qp)
->>   {
->>       struct hns_roce_work *flush_work = &hr_qp->flush_work;
->> +    unsigned long flags;
->> +
->> +    spin_lock_irqsave(&hr_qp->flush_lock, flags);
->> +    /* Exit directly after destroy_qp() */
->> +    if (test_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag)) {
->> +        spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
->> +        return;
->> +    }
->>   -    flush_work->hr_dev = hr_dev;
->> -    INIT_WORK(&flush_work->work, flush_work_handle);
->>       refcount_inc(&hr_qp->refcount);
->>       queue_work(hr_dev->irq_workq, &flush_work->work);
->> +    spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
->>   }
->>     void flush_cqe(struct hns_roce_dev *dev, struct hns_roce_qp *qp)
->> @@ -1140,6 +1147,7 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
->>                        struct ib_udata *udata,
->>                        struct hns_roce_qp *hr_qp)
->>   {
->> +    struct hns_roce_work *flush_work = &hr_qp->flush_work;
->>       struct hns_roce_ib_create_qp_resp resp = {};
->>       struct ib_device *ibdev = &hr_dev->ib_dev;
->>       struct hns_roce_ib_create_qp ucmd = {};
->> @@ -1151,6 +1159,8 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
->>         hr_qp->state = IB_QPS_RESET;
->>       hr_qp->flush_flag = 0;
->> +    flush_work->hr_dev = hr_dev;
->> +    INIT_WORK(&flush_work->work, flush_work_handle);
->>         if (init_attr->create_flags)
->>           return -EOPNOTSUPP;
+> read to 0xffff888237d1cce8 of 8 bytes by task 10149 on cpu 1:
+>  schedule_delayed_monitor_work kernel/rcu/tree.c:3520 [inline]
+>  kvfree_call_rcu+0x3b8/0x510 kernel/rcu/tree.c:3839
+>  trie_update_elem+0x47c/0x620 kernel/bpf/lpm_trie.c:441
+>  bpf_map_update_value+0x324/0x350 kernel/bpf/syscall.c:203
+>  generic_map_update_batch+0x401/0x520 kernel/bpf/syscall.c:1849
+>  bpf_map_do_batch+0x28c/0x3f0 kernel/bpf/syscall.c:5143
+>  __sys_bpf+0x2e5/0x7a0
+>  __do_sys_bpf kernel/bpf/syscall.c:5741 [inline]
+>  __se_sys_bpf kernel/bpf/syscall.c:5739 [inline]
+>  __x64_sys_bpf+0x43/0x50 kernel/bpf/syscall.c:5739
+>  x64_sys_call+0x2625/0x2d60 arch/x86/include/generated/asm/syscalls_64.h:322
+>  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+>  do_syscall_64+0xc9/0x1c0 arch/x86/entry/common.c:83
+>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
 > 
+> write to 0xffff888237d1cce8 of 8 bytes by task 56 on cpu 0:
+>  __mod_timer+0x578/0x7f0 kernel/time/timer.c:1173
+>  add_timer_global+0x51/0x70 kernel/time/timer.c:1330
+>  __queue_delayed_work+0x127/0x1a0 kernel/workqueue.c:2523
+>  queue_delayed_work_on+0xdf/0x190 kernel/workqueue.c:2552
+>  queue_delayed_work include/linux/workqueue.h:677 [inline]
+>  schedule_delayed_monitor_work kernel/rcu/tree.c:3525 [inline]
+>  kfree_rcu_monitor+0x5e8/0x660 kernel/rcu/tree.c:3643
+>  process_one_work kernel/workqueue.c:3229 [inline]
+>  process_scheduled_works+0x483/0x9a0 kernel/workqueue.c:3310
+>  worker_thread+0x51d/0x6f0 kernel/workqueue.c:3391
+>  kthread+0x1d1/0x210 kernel/kthread.c:389
+>  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
+>  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+> 
+> Reported by Kernel Concurrency Sanitizer on:
+> CPU: 0 UID: 0 PID: 56 Comm: kworker/u8:4 Not tainted 6.12.0-rc2-syzkaller-00050-g5b7c893ed5ed #0
+> Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+> Workqueue: events_unbound kfree_rcu_monitor
+> <snip>
+> 
+> kfree_rcu_monitor() rearms the work if a "krcp" has to be still
+> offloaded and this is done without holding krcp->lock, whereas
+> the kvfree_call_rcu() holds it.
+> 
+> Fix it by acquiring the "krcp->lock" for kfree_rcu_monitor() so
+> both functions do not race anymore.
+> 
+> Reported-by: syzbot+061d370693bdd99f9d34@syzkaller.appspotmail.com
+> Link: https://lore.kernel.org/lkml/ZxZ68KmHDQYU0yfD@pc636/T/
+> Fixes: 8fc5494ad5fa ("rcu/kvfree: Move need_offload_krc() out of krcp->lock")
+> Signed-off-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+
+Applied, thanks!
 
