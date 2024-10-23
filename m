@@ -1,235 +1,763 @@
-Return-Path: <linux-kernel+bounces-377560-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377561-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD679AC089
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:43:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C3D819AC08C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:44:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2BE1D1C23887
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:43:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDAFBB24E9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:44:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D3AB31553B7;
-	Wed, 23 Oct 2024 07:43:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9583B1553AF;
+	Wed, 23 Oct 2024 07:44:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bXgB9wVw"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="eHZgmDdO"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60BEF433B3;
-	Wed, 23 Oct 2024 07:43:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729669391; cv=fail; b=Ge8IS0sInqOl3QnNW9jx7NuL8E6EIjM1i6x2TcC72bCRqpjB43vAcq4Dfi5c91fYAdWGq3TMPOYcqccZTRDvBebL6eO1QAAFa1ISqAy0uwYKEZksGV9kQM9WAdIGaBGzHWRdKj9FW6cZgqoGLpSUQhk6X53+3HGp1d3/FdzgRz4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729669391; c=relaxed/simple;
-	bh=9J/S5dRxXZUecyArUysRmPgZU4GshaceIKcm3o1Cj1Y=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=bAm+RTGBfJ//vCIV4lZYIflPLjWoxVUDML0rjTABL7Wv2lJWcyMUmaJSibsVnZ5jy2dg7FFtfzwdJ6vf4XSIFK+3keLIYAw0i1g+pOzaaw11Hfr8rpB8lQm6bS5RI305dKJDUH+7NIf7NX+7GbErjjqukPYaF8Z5RMZxesEa9y4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bXgB9wVw; arc=fail smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729669389; x=1761205389;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=9J/S5dRxXZUecyArUysRmPgZU4GshaceIKcm3o1Cj1Y=;
-  b=bXgB9wVwVEbf+t5bgkgwdE1hpjAtBJc9zJQs0bhVVTBX6ImtqhlnobgJ
-   oiYjIoVfOS5F3Cqdbd2aS4Z5UXzZUGQu0Qyg9MZIXtvbDceF8RKYjkvMe
-   gaRhMP2AP0eHibL6Sf+kXHkJN94w9vRWzRyQHMlMcmfvy+v6KlE7pzkRY
-   IHzaLpkn9mO95pM9/+uUdgWdyc0j7hjOPvTnuKeE5g5dbKy7oiMefiYPR
-   IV2bodtwm4CDNlO6soSsGFsCdwYe1c2BUbPOeti4yxbXljMfEjt/b3BP6
-   /a5P95eSBIjoyv9YkostJy9MmH6a58fZw1gqqI6HAQYf4ODvmBwsYbUOU
-   g==;
-X-CSE-ConnectionGUID: cXs0y9F0RiyHUVv/zYo4bg==
-X-CSE-MsgGUID: vnYjmbRPTiCDlFWFpzpDdg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29116404"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29116404"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 00:43:09 -0700
-X-CSE-ConnectionGUID: sxARINg4STu+7OnuPbhCmw==
-X-CSE-MsgGUID: d4jlof0LScqsUBQoPHyUFA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="80123708"
-Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
-  by fmviesa009.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 00:43:09 -0700
-Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
- fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 23 Oct 2024 00:43:08 -0700
-Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
- fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 00:43:08 -0700
-Received: from NAM02-BN1-obe.outbound.protection.outlook.com (104.47.51.46) by
- edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 23 Oct 2024 00:43:08 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=P9Q7OG1lewLvdcoGdP8ArV8biJdpOBcRcJ3VkP3B8chAFi4yaigWcQyGBYGq5RanmstZTFQdPu0h7SQfva3z0X8qLVYiZsHNOB0iMG1O+iaBYhh9pPlfwBwwLVMrJM1rLZmbzUmN1+8iboOc5BXqv27P2tidY3SBTlMcCeVi56h6WxPm1Rkl5o4q/WyuC8C7WZXTM2SpHyjModmPHCMKokDTwqvDrT25R7innTnfeiBy6mJ6+esmMW/7AqPLHVQ5f4IWmMNDU2m+G30XrJaE1IsKY1NxxvJglxwjAnH+AlLphtq6khyfJ83ayO73Jhy8GkloDK776NAHVqto/j90HA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=9J/S5dRxXZUecyArUysRmPgZU4GshaceIKcm3o1Cj1Y=;
- b=yTHyZJdMmQj9VEGZAjCQjGgWIRSpdxm78cVh0tlslnBD9RM3zqoA534uPQUH1XTqE67WyfLlX1RfJnIdD5ON8QvIRxVaxNz4TqO+1x/prhAbK73gAGg/MgAEH3z9vX8+0fdF4jbvrskJqQJ7plzsFrazODG5KlVgKlhVfuKe0LRsmrjDkkkOkiF0N88J34aFDVFXZ0urfcNBVSFDTTXvBpt+/QZnHlTe3TXQuznLZxq9MClsGDave70mF/yb1XbOL31MI62yXrbqGsQHzHxX3hXEEultVYY11Rb7FKHICamEjLjiHRG5W1E/0XHkXzPBbc3UQwnqVERsbLNVywO6NQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
- by SA2PR11MB5212.namprd11.prod.outlook.com (2603:10b6:806:114::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
- 2024 07:43:05 +0000
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d%7]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
- 07:43:05 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: "Mehta, Sohil" <sohil.mehta@intel.com>, "Luck, Tony" <tony.luck@intel.com>
-CC: "bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
-	"x86@kernel.org" <x86@kernel.org>, "linux-edac@vger.kernel.org"
-	<linux-edac@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>
-Subject: RE: [PATCH v2 06/10] x86/mce: Convert multiple if () statements into
- a switch() statement
-Thread-Topic: [PATCH v2 06/10] x86/mce: Convert multiple if () statements into
- a switch() statement
-Thread-Index: AQHbH8qMGT1zWO0jCkCWfyye27yAq7KM7JIAgAAIpQCAAEAyAIAAVvpwgAZi84CAAAvg4A==
-Date: Wed, 23 Oct 2024 07:43:05 +0000
-Message-ID: <CY8PR11MB713409872B826AF7A527CB97894D2@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-7-qiuxu.zhuo@intel.com>
- <c928d9aa-1609-4f5f-943c-fec72091e989@intel.com>
- <ZxLBwO4HkkJG4WYn@agluck-desk3.sc.intel.com>
- <2d011a77-a46e-4589-ae91-80d8d29e4124@intel.com>
- <CY8PR11MB71348AA655274E611CFFFE6C89412@CY8PR11MB7134.namprd11.prod.outlook.com>
- <c3bb0055-49c5-4e0f-a9bb-8f56e862e11c@intel.com>
-In-Reply-To: <c3bb0055-49c5-4e0f-a9bb-8f56e862e11c@intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|SA2PR11MB5212:EE_
-x-ms-office365-filtering-correlation-id: 3ff5a121-ad03-4f13-97ac-08dcf33654b0
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info: =?utf-8?B?UzdnR29SU3dpNlFtY0NBVS9jSnFTUDUxWjBCeWEwQnRYRTFTamUrR0c4Sk1T?=
- =?utf-8?B?WVpFMC9CNWRpVDBmbHc4ak1wU2J5U04vYmIvKzR1WXFNdnBaTlVUWFhoaTlm?=
- =?utf-8?B?dCs2Qk0wcTkyUllqU3NWeHIrdSthOWczQ0tGRWVtNk1KWWQrWmhxTFl0VTdN?=
- =?utf-8?B?OXFWWEQzY0UyYWNZODEycDdFY3kycG1WQW94dE5ybWUvcGV0S21LZlFIYnJK?=
- =?utf-8?B?eWw5eEhiZUl3dDRUQlBJZmxNb056TFJSRENQSTltOWFPZUZXb2cvVGdFT2lG?=
- =?utf-8?B?ZW54cVBoTUFNUU1hbkxyenpyYU1BYmdCWDN2ZzdMNzBQdFlPcGg5NTJsNFlQ?=
- =?utf-8?B?T0xmcHJwT1FtTEdtWGhMcklvTDBlZ3NobkduNmQ4ZnhnVElRVEE4TkV1UUF1?=
- =?utf-8?B?RHBZZzR0MThRQndwcHU3K0djcXRja2VtR2ZhL2RaMk5JVFlYTGpPd0daelNZ?=
- =?utf-8?B?Q2tpRW54S1VXSG1sSkJjU3UwTUZGcjJhejJTYktmK3dtS0xOTjdKd0wyemlR?=
- =?utf-8?B?ajR5aFhCWnprMSs5ek1MMGxzK2xNTGNNR1VBakV1WmxPS0ZBZUdnTkdTc3pn?=
- =?utf-8?B?UEdZMWVtQXhYOHNqMDhLK21YVkwzVU9yN0xhNlpPd1JuU0NveHFaUmExTHB4?=
- =?utf-8?B?eGREbk41S2JnV2RjU1hmRnRETXp4bFU5bVZ0ZzA0SDN6T2RKSWNVRmFYa2VM?=
- =?utf-8?B?ZG93ZVVjK2FhSzBYUnQ3NCtNVjVlKzRZY3YzZ0o3OGhXcVliZHBaN2U3R1Iw?=
- =?utf-8?B?b2U5ZFBtM3d4V1hlV0NISXBaVVNVdUlDZEgwdGhSVEhLeFE5U3FHd2dueTJh?=
- =?utf-8?B?NTU2aTVmNHZKNlUrejU1Q2h1ZzBtRGloVnVKcVZibjdYcUlNM0VVUUttdnlH?=
- =?utf-8?B?N0NodUlueGR0M2k4cDRzWDlwWjEwWW5zWCtURU1iTDJUejJUdm1GWjBFbzda?=
- =?utf-8?B?cnRTWXJEWm54ZTg1UXZYTndldlRxMXhVQ0syN3h3Rm5nTjRkOXk1Ykl3cXk1?=
- =?utf-8?B?ek9VNlEwc3N6TXlLZzc1Z1RaK0tnU3cyWmwzeUZmYXhQaG9xdnRrOUlqUXRJ?=
- =?utf-8?B?YWVuYmVMVVNEb0x4bzNJZmYzQ1BybVJsZEkrNHR6d2Y5UnNYbkJ4S0labGtR?=
- =?utf-8?B?V3l2cHpTbS9qelpmNVJZV0hndjZiUUFlaWFMUkZWL0NwZEFWc0F0cUh6dVFv?=
- =?utf-8?B?NHMxU0lBRGI5blF0QUZCcmZYOXgrUmdtbkFvUlZ1UDVBNkJMaWh2dHZ5cGdi?=
- =?utf-8?B?Y0l5N3lXdzlXZy9LN1IyUE5mcDJrSmRYaWM2UGowK2hXN2JHN1ZkRWtkTTEr?=
- =?utf-8?B?b0xsektkUHJiSm5HZlZiNkFrZTcxSGlYbCtCaXUrUjBXUXh6UkQxYXlONWdU?=
- =?utf-8?B?dXdON29lenkzckdyQ05SSFo3K3o2dHBIU1NPOWs0MDV6bjE1WGVVeTEreXRI?=
- =?utf-8?B?Zko1SGIwODhSTnNJRDNMSjFiY2FVUGYvaS9uNCt0NTluUXA5RTVlQjdoTmdt?=
- =?utf-8?B?bk0xaDhuQm1MMnRKMmJIN3VaS0ROSlJaZnJvQUF2VnVwdlhmRGNzR3c4VTht?=
- =?utf-8?B?cHUza0ZYZjBkS3N4WllHZTFkQ3VXZ2hMZFVlclJmOGZBdkR1V1MrRm4xa2ZW?=
- =?utf-8?B?c0o0RjlQUmVhV2NvakY5TjVaQ1FjQXRaYmhIL3NvbnJ5bHZ0Nzg3Sk1pTFBN?=
- =?utf-8?B?alc4QjlUZXhBTDhYN1ZUMjA0WW91TUVmYmxxQjdad3N4aDdwVHdZS0FIV1Zx?=
- =?utf-8?B?bFVlcUFpNmtoa0FQWEtHWXg2QmNqb0pxSkNZOWlGcE9xMU9rTy9JdkZTWWR1?=
- =?utf-8?Q?SVLNp199BBZFfhwx6Pauy75hFPrivs/LcVQBc=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?utf-8?B?QU9QUEk0QmV0R2pvVTl0eGFmeTh6bmRPdlo5ZkIxczJ6eTRBdkNpU0xuZ1FQ?=
- =?utf-8?B?dXZwY3EyU2xBUDB1RmFnbHh0ZWlRQ2tubEpNN1V2eURQNkQyeXduSTJvanpI?=
- =?utf-8?B?YmJQN0RDSUJQRzZkZEZDYTFoR2xkQVFEc2E1M2FlZTFjWHptTjUvc01GSVpE?=
- =?utf-8?B?QWpzYmxwczgvSzdUUUxrVW9yWVFjcFhBM3FPODFzeFZ0SFFVSEUzYTA3Ry9K?=
- =?utf-8?B?UnFqdjFWVitQWVN5TDF3cHhLQUR6Q3pZSnByeE9HNnpHRWFSOUg3a1FLQVVD?=
- =?utf-8?B?VjI1NHZwbS9XSTBNTmM4bTdocDRoSGI0cFBCVmlhUlJNb0p0aGd0MDhLSFpJ?=
- =?utf-8?B?Zi8rempINGVCaldvbFRPOERIUkFLTVZFMmM4YXlyb1V2dVFUSE56RXRraXRW?=
- =?utf-8?B?YWVqMjlNdFlDWEU3TzB4N2V1czA3NzBpckZUTGRRL2IzZWJHRm5XVzkyK0dh?=
- =?utf-8?B?Uk4vV3dJZG5zMlZyTUFMUGNRYUMzSnkzamRFQUprKzdrZ0RXa0w5Yk95TFIv?=
- =?utf-8?B?eWpwclBpMkpCZkJ4R3g0WE1XbEZoRWs2Ynk0UTFyc25sSkFaRHZSRU0wVkdB?=
- =?utf-8?B?QjNNdnFieVVPaExuc2NTb0xqQWVReWFBSmx1cWt6Vi9vUEpOaFNTV0hwN3lT?=
- =?utf-8?B?MWFMRWMyRVBtc3ZjbGxGOEordGh0UFNUVkNRYzhmVUozSTIveElneGpKSkVl?=
- =?utf-8?B?LytEWFlSd0RydEU2VXdzRk9waXlsNjRjNzBaTWVwRjRFRXlEZFVXRmdXdk96?=
- =?utf-8?B?blNJWVdqNFVWaWV4YlowYUs1NU82TXZyUWswM1VGWWZpaUxRMlkvWnVXT1Fz?=
- =?utf-8?B?WFpTTDlIcWZOaDFxcTAwcGFLRDNWYVNjc1REVFp6cG1RdFRGZzk3SGV1VVBQ?=
- =?utf-8?B?c253RTRWempuVTBsVVNpOXBIV0Qza2paZDNvQ2FpYnVCZmJDYkErcEhaaG9k?=
- =?utf-8?B?VjhwMm1Ic3BsUjFjZzVFU3FDV0pqeDRWZ2dkN0J3SGJ1K3RjMkZLdkJNY29s?=
- =?utf-8?B?dk1YeVZXKyt6T1Jkc2xpNll2RXd6MlJZYVpmWDJVZmFRcUw0TE1wVkFFRHVi?=
- =?utf-8?B?V0FtT0dKSjlDSWQ1VHVJZGhvTEFQYzNHcmU1YUQwWXRCRDZxYmF5MTdyWjhu?=
- =?utf-8?B?SnlSZHlvWW9yMUcvdFFTNXNIcWtSYnhNZUprN2ovRXppMHVyNkF5bXFsemli?=
- =?utf-8?B?eWR0aE81Y3FXcEdvNzBhcjAyNmxHNC9PYnI0UEcvaWdnUW5qbnYvMHFUR1BU?=
- =?utf-8?B?QnZnUnkyQkVhbVpxQVlPbnZxcldOcmFoS1Z0NTlUUVg5UkY5Y2tTN1RrcjA3?=
- =?utf-8?B?ajFWWkJCekhJelM5Vnppd2lqOVZ1bG83akZYbmFIVHlrSkYwMktFaFdZRnVr?=
- =?utf-8?B?MCtZb2ovZVNtRlZCQTh3M2Z3NGNtMFloRXhZMkthZlZXVGJjK3EwM0VoWGgv?=
- =?utf-8?B?aFB3Y3NPZ1ViRGhDRWFPWWZKV2ZLblYxdVJIOTRtR1FKT0dVa2ZaSSt2c2ZY?=
- =?utf-8?B?N2VyOC9OZ0FuMjZzTDI3Mnp6TFJwaUc1MDRhR09rVEU4OUdjczlpZ2h0ZzFi?=
- =?utf-8?B?eUdCMWI1YXZ3WFV4Q1FpZkNZdzlmWDZtQlNGZ1dnNDZpL1ltdHNNajN4VFJn?=
- =?utf-8?B?MnBHUjlkNGRlUWdUVXdybnpDeExUMlBMUGVKVGljakFLSm1hK1lpaGNyMzVO?=
- =?utf-8?B?MU8wV0RSY0dqV2Z4ZG1xTDRKQkU1eUhjQklubG1ybTF1ZDJTdHpDcXhnSXpi?=
- =?utf-8?B?NmpJYjh6ZFNKeTBtakZMSUdzSzdMM1VRT01JU0Y5cTQ2OVJNUXh1cGFnZkRL?=
- =?utf-8?B?RzhPbGZzR1dGMk1TbUN2b1NCb2pLbkIrN3dLb0ZEUHFlb2ZOUjZ6RU9MSzFV?=
- =?utf-8?B?SHFtcnl0UUZnZjZ1NGdvSWQxeDVoWE1QMjRDMzBsVUNtcnpZd0FEbW8yVG5p?=
- =?utf-8?B?ZnJZM1B5OW02cSsyYVdRbjJ5aHIrUW8weUUya1NxM0VCeWhRaUdnTWptMXJx?=
- =?utf-8?B?TEFlcjRzOGk0RTkxWFExdjhnZkhFY04wcXFEVTJZOC91d0h5RnIrSkpDRkZY?=
- =?utf-8?B?VUlwUS96eVZ2VGNnVzliS1V1U3hFZFBNR0ZKZWQ0OFFuTmtzY0JGbFI0ejBT?=
- =?utf-8?Q?3YQDdSyC+zuzR3mSDlVfmy2/D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 568841CA84
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:44:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729669464; cv=none; b=UFnpoS/Q32b7XNBe2SU5j6T5OkKSO1jWL6D5wCWNqWRKHhqIzsKzfhlDauzZq7bwTeanp3xEzFqzUbSMH08CzdO0YzXWSxTHZU9flwL0AlmFutUD7sZr4EvFZoaRly6Huaq5Uu4Y4eT2/lKlNXDgKOgWvD+/h4yqBIjxdFhzqWc=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729669464; c=relaxed/simple;
+	bh=v+fKBGYRX5OotFj5g3MVXZRBTHkIVqvP4v2xkt4juAk=;
+	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
+	 In-Reply-To:Content-Type; b=Bn3ftYSrOijn0gLUz2mELIhHOphk8ANfn7B3mGl98cBu/T6HrlASjJzy21yqQMB21KUhXlCU8+QkrSRyHUG/SznPwpdKsWtRMssOQUdxPzg2rnQGO4F6Pae7SEduiZyPfj5vWTW9jDxdWI5PGwrPLixs9lbNiDnF7sDtDH+QFWs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=eHZgmDdO; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so66600535e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:44:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729669460; x=1730274260; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=RUl/XJwQsd6n8AW1odDGSN2xFYXcA5BHmvH7fWuUvVo=;
+        b=eHZgmDdO/JLxyMYMtsNjm35eXzlySTxJjuXVmXOYNlyPmAwcKvXyCZYkL93QFovh0G
+         UPVUWRFkaLakNbfLzLIgL34fBBMAy8WK2M7WbnhXG86+AIrvIMSxRenTRNfpaOR/ngpi
+         sWIqiHwu4lBgkcjj5NUD8RlgBaE7vc8S1vIGHk2Uy1y4Ugqq6/ALdaXdO9l/uzt0hGoZ
+         LFtF4VpVuN6miLBSV2oA8/8N7EQumqiNvH30MSeTNS7Cxy8q7pgeqbYuce95PbTgMOVW
+         fgVxXzvkxC+PsrbwhxYY6SfgPSK9rIEdfuogD8dcC8UpZf6th8P6G57HXcMflLWjk4RT
+         /m7Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729669460; x=1730274260;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:references:cc:to:subject:reply-to:from:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=RUl/XJwQsd6n8AW1odDGSN2xFYXcA5BHmvH7fWuUvVo=;
+        b=BoisLzmtwGVy9UnLCYRDozu+eOlKRfBV21qsGdU4u/IL+211G9vk/y9KPkFO4t8grz
+         bXoEIN5nepiKKC953srOy14KGiR0yGVjE9J8ehbqTsHyZdIe4GpU44NKowM32Rq9v0g0
+         Q1wtmynXT7GDnTDnOin6HOxHn2ecy5bDxnwUasZaeR7zNrye2lqJe+VuoRc2rNKz1K7p
+         tafB7+CB4tZvUs+sBc9ojxnO39y1/Wep7mPt0wP4dR1JmKL8sdqFqz+c2DC+VrxX8+Yb
+         EV1eIyZBzfoCrSMsTqSBd2cLe4eMKHaMJmnV+Eivbk3ViDsddKdyAu2cJMWE0j82Io6N
+         sfNQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXEyfkTW7EvRzd9K4WicnnYsRNSckQeOLRxTxNRJt6x0ffEYK5wB1OWU25WWKp93sB7ah3H7oGYjFketoE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFpxws0gJ/QoeRajDZIBLJGNa4HUyZmLWq55nvmmV/u2yVeBIC
+	doNSnkIj0lRVhmvt/KYceLtiJwz/Wb9RnRb8j0sHiuscTq86tEtO22BkbKIaS5w=
+X-Google-Smtp-Source: AGHT+IFXq54ejLSBeOV4whEQttwjO1Oogs+8k5+cts7q9zSdHrlo5dYG2UX5TtI78jt49QhhJYo0Yw==
+X-Received: by 2002:a05:600c:6b65:b0:431:6153:a258 with SMTP id 5b1f17b1804b1-4318413f09amr14691195e9.13.1729669459426;
+        Wed, 23 Oct 2024 00:44:19 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:cad:2140:f9e2:19d:5b22:8044? ([2a01:e0a:cad:2140:f9e2:19d:5b22:8044])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186c50a98sm8440675e9.41.2024.10.23.00.44.15
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 00:44:18 -0700 (PDT)
+Message-ID: <923a4ecb-1640-42f4-8ec3-93c031df720b@linaro.org>
+Date: Wed, 23 Oct 2024 09:44:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3ff5a121-ad03-4f13-97ac-08dcf33654b0
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 07:43:05.3988
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: SPhjbFrDNtRaxfNotInkbvbcOG5rr20QNjDMMz+4Vj+QY5iP/h+eQfDazd8fMpjOpbUCdZWaqmfOcCuu8VQKcQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR11MB5212
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla Thunderbird
+From: Neil Armstrong <neil.armstrong@linaro.org>
+Reply-To: neil.armstrong@linaro.org
+Subject: Re: [PATCH v2 4/5] drm/panel: samsung-s6e88a0-ams427ap24: Add
+ brightness control
+To: Jakob Hauser <jahau@rocketmail.com>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <cover.1729630039.git.jahau@rocketmail.com>
+ <c21891ad66ef253b8854b221967c65134350f329.1729630039.git.jahau@rocketmail.com>
+Content-Language: en-US, fr
+Autocrypt: addr=neil.armstrong@linaro.org; keydata=
+ xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
+ GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
+ BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
+ qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
+ 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
+ AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
+ OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
+ Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
+ YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
+ GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
+ UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
+ GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
+ yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
+ QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
+ SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
+ 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
+ Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
+ oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
+ M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
+ 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
+ KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
+ 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
+ QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
+Organization: Linaro
+In-Reply-To: <c21891ad66ef253b8854b221967c65134350f329.1729630039.git.jahau@rocketmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-PiBGcm9tOiBNZWh0YSwgU29oaWwgPHNvaGlsLm1laHRhQGludGVsLmNvbT4NCj4gWy4uLl0NCj4g
-QXMgRGF2ZSBtZW50aW9uZWQsIGNoYW5nZSB0aGlzIHRvIG1ha2UgdGhlIHVzZSBvZiB2Zm0gY29u
-c2lzdGVudCBpbiB0aGUNCj4gZW50aXJlIGZ1bmN0aW9uIGFuZCBwcm9iYWJseSB1cGRhdGUgdGhl
-IGNvbW1lbnQgYXMgd2VsbCB0byBtYWtlIGl0IGV4cGxpY2l0Og0KPiANCj4gCS8qIE9sZGVyIENQ
-VXMgKHByaW9yIHRvIGZhbWlseSA2KSBkb24ndCBuZWVkIHF1aXJrcyAqLw0KDQpZZXMsIHRoZSBp
-bXByb3ZlZCBjb21tZW50IGlzIGJldHRlci4NCg0KPiAJaWYgKGMtPng4Nl92Zm0gPCBJTlRFTF9Q
-RU5USVVNX1BSTykNCj4gCQlyZXR1cm47DQo+IA0KPiBbLi4uXQ0KPiA+IC0gICAgICAgaWYgKChj
-LT54ODYgPiA2IHx8IChjLT54ODYgPT0gNiAmJiBjLT54ODZfbW9kZWwgPj0gMHhlKSkgJiYNCj4g
-PiAtICAgICAgICAgICBjZmctPm1vbmFyY2hfdGltZW91dCA8IDApDQo+ID4gKyAgICAgICBpZiAo
-Yy0+eDg2X3ZmbSA+PSBJTlRFTF9DT1JFX1lPTkFIICYmIGNmZy0+bW9uYXJjaF90aW1lb3V0IDwN
-Cj4gPiArIDApDQo+ID4gICAgICAgICAgICAgICAgIGNmZy0+bW9uYXJjaF90aW1lb3V0ID0gVVNF
-Q19QRVJfU0VDOw0KPiA+DQo+IA0KPiBJbnN0ZWFkIG9mIGtlZXBpbmcgdGhpcyBvcGVuLWVuZGVk
-IHdlIGNvdWxkIHR3ZWFrIHRoaXMgYSBiaXQgYXMgZm9sbG93czoNCj4gDQo+IGlmICghKGMtPng4
-Nl92Zm0gPCBJTlRFTF9DT1JFX1lPTkFIKSkgJiYgY2ZnLT5tb25hcmNoX3RpbWVvdXQgPCAwKQ0K
-PiAJY2ZnLT5tb25hcmNoX3RpbWVvdXQgPSBVU0VDX1BFUl9TRUM7DQo+IA0KPiBFc3NlbnRpYWxs
-eSB0aGUgc2FtZTogaWYgKG5ld19jcHUpIHZzIGlmICghb2xkX2NwdSkgRG9uJ3QgaGF2ZSBhIHN0
-cm9uZw0KPiBwcmVmZXJlbmNlLiBXaWxsIGxlYXZlIGl0IHRvIHlvdSBhbmQgVG9ueS4NCj4NCg0K
-SSBwcmVmZXIgdGhlIHNpbmdsZSwgc3RyYWlnaHRmb3J3YXJkICc+PScgb3BlcmF0aW9uIG92ZXIg
-dGhlICc8JyBhbmQgdGhlbiAnIScgdHdvIG9wZXJhdGlvbnMuDQogDQotIFFpdXh1DQo=
+On 22/10/2024 23:33, Jakob Hauser wrote:
+> The tables for brightness to candela, aid and elvss were taken from downstream
+> kernel file "dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi" [1][2][3].
+> 
+> The gamma table gets generated in "ss_dsi_smart_dimming_S6E88A0_AMS427AP24.c" [4]
+> with hard-coded starting values. The function smart_dimming_init() [5] goes
+> through the v{*}_adjustments, generate_gray_scale and gamma_init procedure.
+> Instead of calculating it manually, it's easier to compile a custom downstream
+> kernel with SMART_DIMMING_DEBUG enabled and read out dmesg early at boot.
+> 
+> Selection of the values for aid and elvss are again according to downstream
+> file "dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi" [6][7].
+> 
+> The set of write commands is guided by downstream file "ss_dsi_panel_common.c" [8]
+> followed by "ss_dsi_panel_S6E88A0_AMS427AP24.c" [9].
+> 
+> The dsi mode flag MIPI_DSI_MODE_VIDEO_NO_HFP prevents screen flickering while
+> changing the brightness.
+> 
+> [1] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi#L341-L397
+> [2] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi#L214-L254
+> [3] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi#L301-L320
+> [4] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/ss_dsi_smart_dimming_S6E88A0_AMS427AP24.c
+> [5] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/ss_dsi_smart_dimming_S6E88A0_AMS427AP24.c#L1816-L1900
+> [6] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi#L256-L268
+> [7] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi#L322-L334
+> [8] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/ss_dsi_panel_common.c#L1389-L1517
+> [9] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/ss_dsi_panel_S6E88A0_AMS427AP24.c#L666-L678
+> 
+> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
+> ---
+> Changes in v2:
+>   - In the table "s6e88a0_ams427ap24_aid" in comment of the second-last line
+>     changed the format of "40,00 %" to "40.0%" like all others.
+> ---
+>   drivers/gpu/drm/panel/Kconfig                 |   1 +
+>   .../panel/panel-samsung-s6e88a0-ams427ap24.c  | 519 +++++++++++++++++-
+>   2 files changed, 508 insertions(+), 12 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+> index f8adc38447fb..d7469c565d1d 100644
+> --- a/drivers/gpu/drm/panel/Kconfig
+> +++ b/drivers/gpu/drm/panel/Kconfig
+> @@ -636,6 +636,7 @@ config DRM_PANEL_SAMSUNG_S6E88A0_AMS427AP24
+>   	tristate "Samsung AMS427AP24 panel with S6E88A0 controller"
+>   	depends on GPIOLIB && OF && REGULATOR
+>   	depends on DRM_MIPI_DSI
+> +	depends on BACKLIGHT_CLASS_DEVICE
+>   	help
+>   	  Say Y here if you want to enable support for Samsung AMS427AP24 panel
+>   	  with S6E88A0 controller (found in Samsung Galaxy S4 Mini Value Edition
+> diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c b/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+> index 0ab2768e0e2b..6e02b881434d 100644
+> --- a/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+> +++ b/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+> @@ -4,6 +4,7 @@
+>    * Copyright (c) 2024 Jakob Hauser <jahau@rocketmail.com>
+>    */
+>   
+> +#include <linux/backlight.h>
+>   #include <linux/delay.h>
+>   #include <linux/gpio/consumer.h>
+>   #include <linux/module.h>
+> @@ -17,8 +18,17 @@
+>   #include <drm/drm_panel.h>
+>   #include <drm/drm_probe_helper.h>
+>   
+> +#define NUM_STEPS_CANDELA	54
+> +#define NUM_STEPS_AID		39
+> +#define NUM_STEPS_ELVSS		17
+> +
+> +#define SEQ_LENGTH_AID		5
+> +#define SEQ_LENGTH_ELVSS	2
+> +#define SEQ_LENGTH_GAMMA	33
+> +
+>   struct s6e88a0_ams427ap24 {
+>   	struct drm_panel panel;
+> +	struct backlight_device *bl_dev;
+>   	struct mipi_dsi_device *dsi;
+>   	struct regulator_bulk_data *supplies;
+>   	struct gpio_desc *reset_gpio;
+> @@ -35,6 +45,464 @@ struct s6e88a0_ams427ap24 *to_s6e88a0_ams427ap24(struct drm_panel *panel)
+>   	return container_of(panel, struct s6e88a0_ams427ap24, panel);
+>   }
+>   
+> +enum candela {
+> +	CANDELA_10CD, /* 0 */
+> +	CANDELA_11CD,
+> +	CANDELA_12CD,
+> +	CANDELA_13CD,
+> +	CANDELA_14CD,
+> +	CANDELA_15CD,
+> +	CANDELA_16CD,
+> +	CANDELA_17CD,
+> +	CANDELA_19CD,
+> +	CANDELA_20CD,
+> +	CANDELA_21CD,
+> +	CANDELA_22CD,
+> +	CANDELA_24CD,
+> +	CANDELA_25CD,
+> +	CANDELA_27CD,
+> +	CANDELA_29CD,
+> +	CANDELA_30CD,
+> +	CANDELA_32CD,
+> +	CANDELA_34CD,
+> +	CANDELA_37CD,
+> +	CANDELA_39CD,
+> +	CANDELA_41CD,
+> +	CANDELA_44CD,
+> +	CANDELA_47CD,
+> +	CANDELA_50CD,
+> +	CANDELA_53CD,
+> +	CANDELA_56CD,
+> +	CANDELA_60CD,
+> +	CANDELA_64CD,
+> +	CANDELA_68CD,
+> +	CANDELA_72CD,
+> +	CANDELA_77CD,
+> +	CANDELA_82CD,
+> +	CANDELA_87CD,
+> +	CANDELA_93CD,
+> +	CANDELA_98CD,
+> +	CANDELA_105CD,
+> +	CANDELA_111CD,
+> +	CANDELA_119CD,
+> +	CANDELA_126CD,
+> +	CANDELA_134CD,
+> +	CANDELA_143CD,
+> +	CANDELA_152CD,
+> +	CANDELA_162CD,
+> +	CANDELA_172CD,
+> +	CANDELA_183CD,
+> +	CANDELA_195CD,
+> +	CANDELA_207CD,
+> +	CANDELA_220CD,
+> +	CANDELA_234CD,
+> +	CANDELA_249CD,
+> +	CANDELA_265CD,
+> +	CANDELA_282CD,
+> +	CANDELA_300CD, /* 53 */
+> +};
+> +
+> +static const int s6e88a0_ams427ap24_br_to_cd[NUM_STEPS_CANDELA] = {
+> +	/* brightness till, candela */
+> +	10, /* 10CD */
+> +	11, /* 11CD */
+> +	12, /* 12CD */
+> +	13, /* 13CD */
+> +	14, /* 14CD */
+> +	15, /* 15CD */
+> +	16, /* 16CD */
+> +	17, /* 17CD */
+> +	18, /* 19CD */
+> +	19, /* 20CD */
+> +	20, /* 21CD */
+> +	21, /* 22CD */
+> +	22, /* 24CD */
+> +	23, /* 25CD */
+> +	24, /* 27CD */
+> +	25, /* 29CD */
+> +	26, /* 30CD */
+> +	27, /* 32CD */
+> +	28, /* 34CD */
+> +	29, /* 37CD */
+> +	30, /* 39CD */
+> +	32, /* 41CD */
+> +	34, /* 44CD */
+> +	36, /* 47CD */
+> +	38, /* 50CD */
+> +	40, /* 53CD */
+> +	43, /* 56CD */
+> +	46, /* 60CD */
+> +	49, /* 64CD */
+> +	52, /* 68CD */
+> +	56, /* 72CD */
+> +	59, /* 77CD */
+> +	63, /* 82CD */
+> +	67, /* 87CD */
+> +	71, /* 93CD */
+> +	76, /* 98CD */
+> +	80, /* 105CD */
+> +	86, /* 111CD */
+> +	91, /* 119CD */
+> +	97, /* 126CD */
+> +	104, /* 134CD */
+> +	110, /* 143CD */
+> +	118, /* 152CD */
+> +	125, /* 162CD */
+> +	133, /* 172CD */
+> +	142, /* 183CD */
+> +	150, /* 195CD */
+> +	160, /* 207CD */
+> +	170, /* 220CD */
+> +	181, /* 234CD */
+> +	205, /* 249CD */
+> +	234, /* 265CD */
+> +	254, /* 282CD */
+> +	255, /* 300CD */
+> +};
+> +
+> +static const u8 s6e88a0_ams427ap24_aid[NUM_STEPS_AID][SEQ_LENGTH_AID] = {
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x77 }, /* AOR 90.9%, 10CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x73 }, /* AOR 90.5%, 11CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x69 }, /* AOR 89.4%, 12CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x65 }, /* AOR 89.0%, 13CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x61 }, /* AOR 88.6%, 14CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x55 }, /* AOR 87.4%, 15CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x50 }, /* AOR 86.9%, 16CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x45 }, /* AOR 85.8%, 17CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x35 }, /* AOR 84.1%, 19CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x27 }, /* AOR 82.7%, 20CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x23 }, /* AOR 82.3%, 21CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x17 }, /* AOR 81.0%, 22CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x11 }, /* AOR 80.4%, 24CD */
+> +	{ 0x40, 0x08, 0x20, 0x03, 0x04 }, /* AOR 79.1%, 25CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0xf4 }, /* AOR 77.5%, 27CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0xe3 }, /* AOR 75.7%, 29CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0xd7 }, /* AOR 74.5%, 30CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0xc6 }, /* AOR 72.7%, 32CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0xb7 }, /* AOR 71.2%, 34CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0xa1 }, /* AOR 69.0%, 37CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0x91 }, /* AOR 67.3%, 39CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0x78 }, /* AOR 64.8%, 41CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0x62 }, /* AOR 62.5%, 44CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0x45 }, /* AOR 59.5%, 47CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0x30 }, /* AOR 57.4%, 50CD */
+> +	{ 0x40, 0x08, 0x20, 0x02, 0x13 }, /* AOR 54.4%, 53CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0xf5 }, /* AOR 51.3%, 56CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0xd3 }, /* AOR 47.8%, 60CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0xb1 }, /* AOR 44.4%, 64CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0x87 }, /* AOR 40.1%, 68CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0x63 }, /* AOR 36.6%, 72CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0x35 }, /* AOR 31.7%, 77CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0x05 }, /* AOR 26.9%, 82CD */
+> +	{ 0x40, 0x08, 0x20, 0x00, 0xd5 }, /* AOR 21.8%, 87CD */
+> +	{ 0x40, 0x08, 0x20, 0x00, 0xa1 }, /* AOR 16.5%, 93CD */
+> +	{ 0x40, 0x08, 0x20, 0x00, 0x6f }, /* AOR 11.4%, 98CD */
+> +	{ 0x40, 0x08, 0x20, 0x00, 0x31 }, /* AOR 5.0%, 105CD */
+> +	{ 0x40, 0x08, 0x20, 0x01, 0x86 }, /* AOR 40.0%, 111CD ~ 172CD */
+> +	{ 0x40, 0x08, 0x20, 0x00, 0x08 }, /* AOR 0.6%, 183CD ~ 300CD */
+> +};
+> +
+> +static const u8 s6e88a0_ams427ap24_elvss[NUM_STEPS_ELVSS][SEQ_LENGTH_ELVSS] = {
+> +	{ 0x28, 0x14 }, /* 10CD ~ 111CD */
+> +	{ 0x28, 0x13 }, /* 119CD */
+> +	{ 0x28, 0x12 }, /* 126CD */
+> +	{ 0x28, 0x12 }, /* 134CD */
+> +	{ 0x28, 0x11 }, /* 143CD */
+> +	{ 0x28, 0x10 }, /* 152CD */
+> +	{ 0x28, 0x0f }, /* 162CD */
+> +	{ 0x28, 0x0e }, /* 172CD */
+> +	{ 0x28, 0x11 }, /* 183CD */
+> +	{ 0x28, 0x11 }, /* 195CD */
+> +	{ 0x28, 0x10 }, /* 207CD */
+> +	{ 0x28, 0x0f }, /* 220CD */
+> +	{ 0x28, 0x0f }, /* 234CD */
+> +	{ 0x28, 0x0e }, /* 249CD */
+> +	{ 0x28, 0x0d }, /* 265CD */
+> +	{ 0x28, 0x0c }, /* 282CD */
+> +	{ 0x28, 0x0b }, /* 300CD */
+> +};
+> +
+> +static const u8 s6e88a0_ams427ap24_gamma[NUM_STEPS_CANDELA][SEQ_LENGTH_GAMMA] = {
+> +	/* 10CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x8a, 0x8c, 0x8b,
+> +	  0x8c, 0x87, 0x89, 0x89, 0x88, 0x87, 0x8c, 0x80, 0x82, 0x88, 0x7b,
+> +	  0x72, 0x8c, 0x60, 0x68, 0x8c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 11CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x8a, 0x8c, 0x8b,
+> +	  0x8c, 0x87, 0x89, 0x89, 0x88, 0x87, 0x8c, 0x80, 0x82, 0x88, 0x7b,
+> +	  0x72, 0x8c, 0x60, 0x68, 0x8c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 12CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x8a, 0x8b, 0x8b,
+> +	  0x8c, 0x88, 0x89, 0x8a, 0x88, 0x87, 0x8c, 0x81, 0x82, 0x87, 0x7a,
+> +	  0x72, 0x8b, 0x60, 0x68, 0x8c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 13CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x8a, 0x8b, 0x8b,
+> +	  0x8c, 0x88, 0x89, 0x8a, 0x88, 0x87, 0x8c, 0x81, 0x82, 0x87, 0x7a,
+> +	  0x72, 0x8b, 0x61, 0x69, 0x8c, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 14CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8c, 0x8b,
+> +	  0x8c, 0x88, 0x89, 0x8a, 0x87, 0x86, 0x8a, 0x82, 0x82, 0x87, 0x79,
+> +	  0x71, 0x89, 0x63, 0x6c, 0x8e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 15CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x8a, 0x8c, 0x8c,
+> +	  0x8c, 0x86, 0x87, 0x88, 0x85, 0x85, 0x8a, 0x83, 0x83, 0x88, 0x78,
+> +	  0x72, 0x89, 0x64, 0x6c, 0x8e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 16CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8c, 0x8b,
+> +	  0x8c, 0x86, 0x88, 0x88, 0x86, 0x86, 0x8a, 0x84, 0x84, 0x88, 0x78,
+> +	  0x72, 0x89, 0x5d, 0x67, 0x8b, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 17CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x87, 0x89, 0x89, 0x86, 0x86, 0x8a, 0x84, 0x83, 0x87, 0x78,
+> +	  0x73, 0x89, 0x64, 0x6e, 0x8e, 0x38, 0x32, 0x24, 0x00, 0x00, 0x00 },
+> +	/* 19CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x87, 0x89, 0x89, 0x86, 0x86, 0x89, 0x84, 0x84, 0x87, 0x77,
+> +	  0x72, 0x88, 0x65, 0x6f, 0x8e, 0x38, 0x32, 0x24, 0x00, 0x00, 0x00 },
+> +	/* 20CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x88, 0x89, 0x89, 0x85, 0x85, 0x88, 0x82, 0x83, 0x85, 0x79,
+> +	  0x73, 0x88, 0x65, 0x6f, 0x8e, 0x38, 0x32, 0x24, 0x00, 0x00, 0x00 },
+> +	/* 21CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x88, 0x89, 0x89, 0x85, 0x85, 0x88, 0x82, 0x83, 0x85, 0x79,
+> +	  0x74, 0x88, 0x65, 0x6f, 0x8e, 0x38, 0x32, 0x24, 0x00, 0x00, 0x00 },
+> +	/* 22CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8c, 0x8b,
+> +	  0x8c, 0x86, 0x88, 0x87, 0x86, 0x86, 0x89, 0x82, 0x83, 0x85, 0x7c,
+> +	  0x75, 0x87, 0x65, 0x6f, 0x8e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 24CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8c, 0x8b,
+> +	  0x8c, 0x86, 0x88, 0x87, 0x86, 0x86, 0x89, 0x82, 0x83, 0x85, 0x7c,
+> +	  0x76, 0x86, 0x66, 0x6f, 0x8e, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 },
+> +	/* 25CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x89, 0x88, 0x87, 0x87, 0x89, 0x82, 0x82, 0x84, 0x7f,
+> +	  0x7a, 0x89, 0x6b, 0x73, 0x8f, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 27CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x89, 0x88, 0x87, 0x87, 0x89, 0x82, 0x82, 0x84, 0x7f,
+> +	  0x7a, 0x89, 0x6b, 0x73, 0x8f, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 29CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x89, 0x88, 0x85, 0x84, 0x87, 0x84, 0x85, 0x86, 0x80,
+> +	  0x7b, 0x88, 0x6a, 0x73, 0x8f, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 30CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x89, 0x88, 0x85, 0x84, 0x87, 0x84, 0x85, 0x86, 0x80,
+> +	  0x7b, 0x88, 0x6a, 0x73, 0x8f, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 32CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x89, 0x88, 0x85, 0x84, 0x87, 0x84, 0x85, 0x86, 0x80,
+> +	  0x7b, 0x88, 0x6a, 0x73, 0x8f, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 34CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8c, 0x8a, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x89, 0x88, 0x85, 0x84, 0x87, 0x83, 0x84, 0x84, 0x7f,
+> +	  0x79, 0x86, 0x6c, 0x76, 0x91, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 37CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x88, 0x87, 0x86, 0x87, 0x83, 0x84, 0x84, 0x7f,
+> +	  0x79, 0x86, 0x6c, 0x76, 0x90, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 39CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x87, 0x84, 0x84, 0x86, 0x83, 0x85, 0x85, 0x80,
+> +	  0x79, 0x85, 0x6c, 0x76, 0x90, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 41CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x87, 0x84, 0x84, 0x86, 0x81, 0x84, 0x83, 0x7f,
+> +	  0x79, 0x84, 0x6e, 0x79, 0x93, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 44CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x87, 0x84, 0x84, 0x86, 0x81, 0x84, 0x83, 0x7f,
+> +	  0x79, 0x84, 0x6e, 0x79, 0x92, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 47CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x87, 0x84, 0x85, 0x86, 0x81, 0x84, 0x83, 0x7f,
+> +	  0x79, 0x83, 0x6f, 0x79, 0x91, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 50CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x87, 0x84, 0x85, 0x86, 0x82, 0x84, 0x83, 0x7f,
+> +	  0x79, 0x83, 0x6f, 0x79, 0x90, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 53CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8b,
+> +	  0x8b, 0x86, 0x88, 0x87, 0x83, 0x83, 0x85, 0x84, 0x85, 0x85, 0x7f,
+> +	  0x79, 0x83, 0x70, 0x79, 0x8f, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 56CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8a,
+> +	  0x8a, 0x87, 0x89, 0x87, 0x83, 0x83, 0x85, 0x84, 0x85, 0x84, 0x7f,
+> +	  0x79, 0x82, 0x70, 0x7a, 0x8e, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 60CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8a,
+> +	  0x8a, 0x87, 0x89, 0x87, 0x83, 0x83, 0x85, 0x84, 0x85, 0x84, 0x7e,
+> +	  0x79, 0x82, 0x71, 0x7a, 0x8d, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 64CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8b, 0x89, 0x89, 0x8b, 0x8a,
+> +	  0x8a, 0x86, 0x88, 0x86, 0x84, 0x84, 0x86, 0x82, 0x83, 0x82, 0x80,
+> +	  0x7a, 0x84, 0x71, 0x7a, 0x8c, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 68CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8c, 0x8a,
+> +	  0x8a, 0x86, 0x88, 0x86, 0x84, 0x84, 0x86, 0x82, 0x84, 0x82, 0x81,
+> +	  0x7b, 0x83, 0x72, 0x7b, 0x8b, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 72CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8c, 0x8a,
+> +	  0x8a, 0x86, 0x88, 0x86, 0x85, 0x85, 0x86, 0x82, 0x84, 0x82, 0x81,
+> +	  0x7b, 0x83, 0x72, 0x7c, 0x8a, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 77CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8c, 0x8a,
+> +	  0x8a, 0x85, 0x87, 0x85, 0x85, 0x87, 0x87, 0x82, 0x84, 0x82, 0x81,
+> +	  0x7c, 0x82, 0x72, 0x7c, 0x89, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 82CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8c, 0x8a,
+> +	  0x8a, 0x85, 0x87, 0x85, 0x85, 0x87, 0x87, 0x82, 0x84, 0x82, 0x81,
+> +	  0x7c, 0x82, 0x73, 0x7c, 0x88, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 87CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8c, 0x8a,
+> +	  0x8a, 0x85, 0x87, 0x85, 0x84, 0x84, 0x86, 0x80, 0x84, 0x81, 0x80,
+> +	  0x7a, 0x82, 0x76, 0x7f, 0x89, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 93CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8b, 0x8a,
+> +	  0x8a, 0x86, 0x87, 0x85, 0x84, 0x85, 0x86, 0x80, 0x84, 0x80, 0x80,
+> +	  0x7a, 0x82, 0x76, 0x80, 0x88, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 98CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x8a, 0x89, 0x89, 0x8b, 0x8a,
+> +	  0x8a, 0x86, 0x87, 0x85, 0x85, 0x85, 0x86, 0x80, 0x84, 0x80, 0x80,
+> +	  0x7a, 0x82, 0x76, 0x80, 0x88, 0x33, 0x2f, 0x22, 0x00, 0x00, 0x00 },
+> +	/* 105CD */
+> +	{ 0x00, 0xc8, 0x00, 0xc4, 0x00, 0xc5, 0x89, 0x88, 0x88, 0x8b, 0x8a,
+> +	  0x8a, 0x84, 0x87, 0x85, 0x85, 0x85, 0x85, 0x80, 0x84, 0x80, 0x7f,
+> +	  0x79, 0x81, 0x71, 0x7d, 0x87, 0x38, 0x32, 0x24, 0x00, 0x00, 0x00 },
+> +	/* 111CD */
+> +	{ 0x00, 0xdf, 0x00, 0xde, 0x00, 0xde, 0x85, 0x85, 0x84, 0x87, 0x86,
+> +	  0x87, 0x85, 0x86, 0x85, 0x83, 0x83, 0x83, 0x81, 0x82, 0x82, 0x80,
+> +	  0x7d, 0x82, 0x75, 0x7f, 0x86, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 119CD */
+> +	{ 0x00, 0xe3, 0x00, 0xe1, 0x00, 0xe2, 0x85, 0x85, 0x84, 0x86, 0x85,
+> +	  0x85, 0x84, 0x85, 0x84, 0x83, 0x83, 0x83, 0x82, 0x82, 0x82, 0x7e,
+> +	  0x7b, 0x81, 0x75, 0x7f, 0x86, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 126CD */
+> +	{ 0x00, 0xe6, 0x00, 0xe5, 0x00, 0xe5, 0x85, 0x84, 0x84, 0x85, 0x85,
+> +	  0x85, 0x84, 0x84, 0x84, 0x82, 0x83, 0x83, 0x80, 0x81, 0x81, 0x80,
+> +	  0x7f, 0x83, 0x73, 0x7c, 0x84, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 134CD */
+> +	{ 0x00, 0xe9, 0x00, 0xe8, 0x00, 0xe8, 0x84, 0x84, 0x83, 0x85, 0x85,
+> +	  0x85, 0x84, 0x84, 0x83, 0x81, 0x82, 0x82, 0x81, 0x81, 0x81, 0x7f,
+> +	  0x7d, 0x81, 0x73, 0x7c, 0x83, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 143CD */
+> +	{ 0x00, 0xed, 0x00, 0xec, 0x00, 0xec, 0x84, 0x83, 0x83, 0x84, 0x84,
+> +	  0x84, 0x84, 0x84, 0x83, 0x82, 0x83, 0x83, 0x81, 0x80, 0x81, 0x7f,
+> +	  0x7e, 0x81, 0x70, 0x79, 0x81, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 152CD */
+> +	{ 0x00, 0xf0, 0x00, 0xf0, 0x00, 0xf0, 0x83, 0x83, 0x83, 0x83, 0x83,
+> +	  0x83, 0x84, 0x84, 0x83, 0x81, 0x81, 0x81, 0x80, 0x80, 0x81, 0x80,
+> +	  0x80, 0x82, 0x6f, 0x78, 0x7f, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 162CD */
+> +	{ 0x00, 0xf4, 0x00, 0xf3, 0x00, 0xf4, 0x83, 0x83, 0x83, 0x83, 0x83,
+> +	  0x83, 0x82, 0x81, 0x81, 0x81, 0x81, 0x81, 0x80, 0x80, 0x81, 0x80,
+> +	  0x7f, 0x82, 0x6f, 0x78, 0x7f, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 172CD */
+> +	{ 0x00, 0xf8, 0x00, 0xf8, 0x00, 0xf8, 0x82, 0x82, 0x82, 0x82, 0x82,
+> +	  0x82, 0x82, 0x81, 0x81, 0x80, 0x81, 0x80, 0x80, 0x80, 0x81, 0x81,
+> +	  0x80, 0x83, 0x6d, 0x76, 0x7d, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 183CD */
+> +	{ 0x00, 0xe0, 0x00, 0xdf, 0x00, 0xdf, 0x84, 0x84, 0x83, 0x86, 0x86,
+> +	  0x86, 0x83, 0x84, 0x83, 0x82, 0x82, 0x82, 0x81, 0x83, 0x81, 0x81,
+> +	  0x7e, 0x81, 0x80, 0x82, 0x84, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 195CD */
+> +	{ 0x00, 0xe4, 0x00, 0xe3, 0x00, 0xe3, 0x84, 0x83, 0x83, 0x85, 0x85,
+> +	  0x85, 0x83, 0x84, 0x83, 0x81, 0x82, 0x82, 0x82, 0x83, 0x81, 0x81,
+> +	  0x80, 0x82, 0x7d, 0x7f, 0x81, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 207CD */
+> +	{ 0x00, 0xe7, 0x00, 0xe6, 0x00, 0xe6, 0x83, 0x82, 0x82, 0x85, 0x85,
+> +	  0x85, 0x82, 0x83, 0x83, 0x82, 0x82, 0x82, 0x80, 0x81, 0x80, 0x81,
+> +	  0x80, 0x82, 0x7d, 0x7f, 0x81, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 220CD */
+> +	{ 0x00, 0xeb, 0x00, 0xea, 0x00, 0xea, 0x83, 0x83, 0x82, 0x84, 0x84,
+> +	  0x84, 0x82, 0x83, 0x82, 0x81, 0x81, 0x82, 0x81, 0x82, 0x81, 0x80,
+> +	  0x7e, 0x80, 0x7d, 0x7f, 0x81, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 234CD */
+> +	{ 0x00, 0xef, 0x00, 0xee, 0x00, 0xee, 0x83, 0x82, 0x82, 0x83, 0x83,
+> +	  0x83, 0x82, 0x82, 0x82, 0x81, 0x81, 0x81, 0x80, 0x80, 0x80, 0x80,
+> +	  0x80, 0x81, 0x7b, 0x7c, 0x7f, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 249CD */
+> +	{ 0x00, 0xf3, 0x00, 0xf2, 0x00, 0xf2, 0x82, 0x81, 0x81, 0x83, 0x83,
+> +	  0x83, 0x82, 0x82, 0x82, 0x81, 0x81, 0x81, 0x80, 0x81, 0x80, 0x7f,
+> +	  0x7e, 0x7f, 0x7b, 0x7c, 0x7f, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 265CD */
+> +	{ 0x00, 0xf7, 0x00, 0xf7, 0x00, 0xf7, 0x81, 0x81, 0x80, 0x82, 0x82,
+> +	  0x82, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x81, 0x80, 0x7f,
+> +	  0x7e, 0x7f, 0x7b, 0x7c, 0x7f, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 282CD */
+> +	{ 0x00, 0xfb, 0x00, 0xfb, 0x00, 0xfb, 0x80, 0x80, 0x80, 0x81, 0x81,
+> +	  0x81, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x7f, 0x7f, 0x7f, 0x7f,
+> +	  0x7f, 0x7f, 0x78, 0x79, 0x7d, 0x85, 0x85, 0x82, 0x00, 0x00, 0x00 },
+> +	/* 300CD */
+> +	{ 0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +	  0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> +	  0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x00, 0x00, 0x00 },
+> +};
+> +
+> +static int s6e88a0_ams427ap24_set_brightness(struct backlight_device *bd)
+> +{
+> +	struct s6e88a0_ams427ap24 *ctx = bl_get_data(bd);
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+> +	struct device *dev = &dsi->dev;
+> +	int brightness = bd->props.brightness;
+> +	int candela_enum;
+> +	u8 b2[SEQ_LENGTH_AID + 1];
+> +	u8 b6[SEQ_LENGTH_ELVSS + 1];
+> +	u8 ca[SEQ_LENGTH_GAMMA + 1];
+> +
+> +	/* get candela enum from brightness */
+> +	for (candela_enum = 0; candela_enum < NUM_STEPS_CANDELA; candela_enum++)
+> +		if (brightness <= s6e88a0_ams427ap24_br_to_cd[candela_enum])
+> +			break;
+> +
+> +	/* get aid */
+> +	b2[0] = 0xb2;
+> +	switch (candela_enum) {
+> +	case CANDELA_10CD ... CANDELA_105CD:
+> +		memcpy(&b2[1], s6e88a0_ams427ap24_aid[candela_enum],
+> +		       SEQ_LENGTH_AID);
+> +		break;
+> +	case CANDELA_111CD ... CANDELA_172CD:
+> +		memcpy(&b2[1], s6e88a0_ams427ap24_aid[CANDELA_111CD],
+> +		       SEQ_LENGTH_AID);
+> +		break;
+> +	case CANDELA_183CD ... CANDELA_300CD:
+> +		memcpy(&b2[1], s6e88a0_ams427ap24_aid[CANDELA_111CD + 1],
+> +		       SEQ_LENGTH_AID);
+> +		break;
+> +	default:
+> +		dev_err(dev, "Failed to get aid data\n");
+> +		return -EINVAL;
+> +	}
+> +
+> +	/* get elvss */
+> +	b6[0] = 0xb6;
+> +	if (candela_enum <= CANDELA_111CD) {
+> +		memcpy(&b6[1], s6e88a0_ams427ap24_elvss[0], SEQ_LENGTH_ELVSS);
+> +	} else {
+> +		memcpy(&b6[1], s6e88a0_ams427ap24_elvss[candela_enum - CANDELA_111CD],
+> +		       SEQ_LENGTH_ELVSS);
+> +	}
+> +
+> +	/* get gamma */
+> +	ca[0] = 0xca;
+> +	memcpy(&ca[1], s6e88a0_ams427ap24_gamma[candela_enum], SEQ_LENGTH_GAMMA);
+> +
+> +	/* write: key on, aid, acl off, elvss, gamma, gamma update, key off */
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x5a, 0x5a);
+> +	mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, b2, ARRAY_SIZE(b2));
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x00);
+> +	mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, b6, ARRAY_SIZE(b6));
+> +	mipi_dsi_dcs_write_buffer_multi(&dsi_ctx, ca, ARRAY_SIZE(ca));
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf7, 0x03);
+> +	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0xa5, 0xa5);
+> +
+> +	return dsi_ctx.accum_err;
+> +}
+> +
+>   static void s6e88a0_ams427ap24_reset(struct s6e88a0_ams427ap24 *ctx)
+>   {
+>   	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
+> @@ -49,6 +517,8 @@ static int s6e88a0_ams427ap24_on(struct s6e88a0_ams427ap24 *ctx)
+>   {
+>   	struct mipi_dsi_device *dsi = ctx->dsi;
+>   	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
+> +	struct device *dev = &dsi->dev;
+> +	int ret;
+>   
+>   	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
+>   
+> @@ -68,20 +538,15 @@ static int s6e88a0_ams427ap24_on(struct s6e88a0_ams427ap24 *ctx)
+>   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcc, 0x4c);
+>   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf2, 0x03, 0x0d);
+>   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf1, 0xa5, 0xa5);
+> -	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca,
+> -				     0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x80,
+> -				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> -				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> -				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
+> -				     0x80, 0x80, 0x00, 0x00, 0x00);
+> -	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2,
+> -				     0x40, 0x08, 0x20, 0x00, 0x08);
+> -	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0x28, 0x0b);
+> -	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf7, 0x03);
+> -	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x00);
+>   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0xa5, 0xa5);
+>   	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfc, 0xa5, 0xa5);
+>   
+> +	ret = s6e88a0_ams427ap24_set_brightness(ctx->bl_dev);
+> +	if (ret < 0) {
+> +		dev_err(dev, "Failed to set brightness: %d\n", ret);
+> +		return ret;
+> +	}
+> +
+>   	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
+>   
+>   	return dsi_ctx.accum_err;
+> @@ -181,6 +646,32 @@ static const struct drm_panel_funcs s6e88a0_ams427ap24_panel_funcs = {
+>   	.get_modes = s6e88a0_ams427ap24_get_modes,
+>   };
+>   
+> +static const struct backlight_ops s6e88a0_ams427ap24_bl_ops = {
+> +	.update_status	= s6e88a0_ams427ap24_set_brightness,
+> +};
+> +
+> +static int s6e88a0_ams427ap24_register_backlight(struct s6e88a0_ams427ap24 *ctx)
+> +{
+> +	struct backlight_properties props = {
+> +		.type		= BACKLIGHT_RAW,
+> +		.brightness	= 180,
+> +		.max_brightness = 255,
+> +	};
+> +	struct mipi_dsi_device *dsi = ctx->dsi;
+> +	struct device *dev = &dsi->dev;
+> +	int ret = 0;
+> +
+> +	ctx->bl_dev = devm_backlight_device_register(dev, dev_name(dev), dev, ctx,
+> +						     &s6e88a0_ams427ap24_bl_ops,
+> +						     &props);
+> +	if (IS_ERR(ctx->bl_dev)) {
+> +		ret = PTR_ERR(ctx->bl_dev);
+> +		dev_err(dev, "error registering backlight device (%d)\n", ret);
+> +	}
+> +
+> +	return ret;
+> +}
+> +
+>   static int s6e88a0_ams427ap24_probe(struct mipi_dsi_device *dsi)
+>   {
+>   	struct device *dev = &dsi->dev;
+> @@ -209,12 +700,16 @@ static int s6e88a0_ams427ap24_probe(struct mipi_dsi_device *dsi)
+>   	dsi->lanes = 2;
+>   	dsi->format = MIPI_DSI_FMT_RGB888;
+>   	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
+> -			  MIPI_DSI_MODE_NO_EOT_PACKET;
+> +			  MIPI_DSI_MODE_NO_EOT_PACKET | MIPI_DSI_MODE_VIDEO_NO_HFP;
+>   
+>   	drm_panel_init(&ctx->panel, dev, &s6e88a0_ams427ap24_panel_funcs,
+>   		       DRM_MODE_CONNECTOR_DSI);
+>   	ctx->panel.prepare_prev_first = true;
+>   
+> +	ret = s6e88a0_ams427ap24_register_backlight(ctx);
+> +	if (ret < 0)
+> +		return ret;
+> +
+>   	drm_panel_add(&ctx->panel);
+>   
+>   	ret = mipi_dsi_attach(dsi);
+
+
+Wow this looks complex, anything this looks good overall, good work making it clean.
+
+Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+
 
