@@ -1,96 +1,106 @@
-Return-Path: <linux-kernel+bounces-378130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E41BE9ACBBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:54:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5133A9ACBC0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:55:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 78B222820A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:54:49 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 809071C22694
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:55:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6C61C9ED1;
-	Wed, 23 Oct 2024 13:53:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86B7C1B4F31;
+	Wed, 23 Oct 2024 13:55:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b="CPGla9du"
-Received: from ms.lwn.net (ms.lwn.net [45.79.88.28])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KyX2Cz0Z"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87A621C75E4;
-	Wed, 23 Oct 2024 13:53:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.79.88.28
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A90831A7264;
+	Wed, 23 Oct 2024 13:55:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729691603; cv=none; b=hu3cY7u6BnckpUi0dTB0HJ8a6P2qmJcws5a4ph+gtF58cT6zPIHENqwDsAVpczHr8aYM6D2dDnUMxwNg12/blZhGfDuW9qwj9g4J4saDlF6n6/yGWxL4ulAo7qS9TxmHVNOucJPT6B5X87n8DLYDJLD0cv5SHpIApDZDDkvVkQw=
+	t=1729691744; cv=none; b=ONYlJWPCSz5A0Kgs0kOV+vrJEb0HZ8q1eSn70xYhxKStxxz6+YYrd5K8+BuxZHVxCyLW2siwjoqvSd5BxibZESmAwtHSFJCD1YDTNwJBF19VPEGlHwQnKztnCu8DETLwko37m1NUyE1REf03JQBOGthDxELAb4pg4Stkigc+yiU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729691603; c=relaxed/simple;
-	bh=f0gGzmnuIaZms4baJfOT16Kn8TdIyl4HOd9QzbCFNoU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=NxHmQmddZrLnqMo4xO93jQdPVkO9IxZVtaKRVAlxHwCOlQcKGhFDLgVWZgHzTZy9S9mhCOIV1HfMUl4U/tlbIKLkmkxE5d9YW5ZAHSFHnHiz4u45ANozLr6GKo3MmXsMH/ks77vB9UFg+bgpjbZ/wC3bx2ZWqCmqYOPniB45XuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net; spf=pass smtp.mailfrom=lwn.net; dkim=pass (2048-bit key) header.d=lwn.net header.i=@lwn.net header.b=CPGla9du; arc=none smtp.client-ip=45.79.88.28
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lwn.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lwn.net
-DKIM-Filter: OpenDKIM Filter v2.11.0 ms.lwn.net A2BC742B33
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=lwn.net; s=20201203;
-	t=1729691597; bh=hLYowu+Yu+XQFT9UuFcNrt/sUr3gogTUccwJDmEre2A=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=CPGla9duVBmm9b6ehofp5ZvCEmYRi6BheC2jspDhPDuP2o8WowPf+2CbN6zxFbRC6
-	 z1h7XYLquGMZK6UPY+MyHANeL1tGocvVRIFZzN9fMYCUp84kcPe+waB7ae/PFmW1ac
-	 av0jnudHlyisDmFva1yg/iL45VG0fZl+KEbKsdSDyWqX2HuR2H0UFww2wCzv44XFLC
-	 +ckOjMBLr13dMx+MXtLo9pNaJpG1FyGgonEukEbpqbP8R/u5vxVuKFiL3kdtKbvoxo
-	 BhddjAb8U/yuB7Pk2ZEo+37NYvMEFyH1AUEfz/WYH7OF83O6l6Lrqwt7GDy5+dZNfn
-	 Dew3PHxhlp1eg==
-Received: from localhost (unknown [IPv6:2601:280:5e00:625::1fe])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by ms.lwn.net (Postfix) with ESMTPSA id A2BC742B33;
-	Wed, 23 Oct 2024 13:53:17 +0000 (UTC)
-From: Jonathan Corbet <corbet@lwn.net>
-To: anish kumar <yesanishhere@gmail.com>, ohad@wizery.com,
- bjorn.andersson@linaro.org, mathieu.poirier@linaro.org
-Cc: linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-Subject: Re: [PATCH 0/1] remoteproc documentation changes
-In-Reply-To: <20241023053357.5261-1-yesanishhere@gmail.com>
-References: <20241023053357.5261-1-yesanishhere@gmail.com>
-Date: Wed, 23 Oct 2024 07:53:16 -0600
-Message-ID: <87a5evncxf.fsf@trenco.lwn.net>
+	s=arc-20240116; t=1729691744; c=relaxed/simple;
+	bh=DaS/TnXxKUc6HjMCIGd2U5rLKVmcwNq2jWsJ5Z7TkVc=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=p6M3Xrpv5XagBlGedOFWyg0idI3SltG/mxyoyTjQoWR9WEbyLEE7L5fw3BMAg61MX0C2iltzKrkor7L/SL5noptkmXnNC8vxu2FD2iiJsDz0XS3shd5Z957qtbuAacPZbLI/jy/1aSipPaEvQWd/pOvwJi3Q53FMCi3n+IGpPOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KyX2Cz0Z; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e34a089cd3so5558136a91.3;
+        Wed, 23 Oct 2024 06:55:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729691742; x=1730296542; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Q/1eAoSFUi88G9yBoAUjeJHtlikszBn/3aVYB3y+C8I=;
+        b=KyX2Cz0Z7eXdadm1JOiqyLhuR3ZgJfurQCn/VsaNUjJGRXp/8ajhN5cql+nVNrjdsI
+         JxNRGxylL5s3zgzj0fsW+vaAlPX9OWKB3Ov+LLF2EonvPHhcT1GmzyTev8c0Rd6EpZB5
+         YRGc2CLBPDB2GFbD0Q4BIEeUvKTxBp4vcUUioewnA+rT48rPx7YxRFaJASsbOW4lih48
+         i897Ur2PffiwwOH+AP+JFuzH6DIdZXoHR7FsainprcEyeLuh5zJjydn7S3FJj5Z0xGb7
+         0yhdp1FTfdEWQk5AhtqjbNSNcxZ7DOW8wsJVseUu7fMi538Zwx9GzDDpZ4thnYMoHajW
+         HiEQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729691742; x=1730296542;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Q/1eAoSFUi88G9yBoAUjeJHtlikszBn/3aVYB3y+C8I=;
+        b=vImQ7CV2XNxCcUjCXhiR1SUYNDVhjDkqVupkSdD3ZMP8mfvzYP3F47TcDGiCI8FOHY
+         1B0Wj72jOYebIMXh1cEGYKW0Rcjy5Dwo9DfFshEQPA3p+/SBnvayL7w7Ey3LKdT9IbyH
+         141shYQ4Jb0/A4B8oAmzdn4DBHmeHkKoD4gHOWb4iY3117/fmiWAy5jRoMQw6w6Pg0lm
+         xwgRcH3S5eqJTq+5Rf1V/xWp/xK3niODFqmGJGB5UJ6O9l4+uBXDlgASu5HyGL0LHKx/
+         OQ7dlanlYRAWshZdhFf16uYuypNvmNUkjR/d8tS2bDOyWlbYXpImxfBiVnFF/dNuTvBn
+         eQoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXMbimQc7VpBvy9sPA8DYkZEy6a/ytF7AxjcmeKbW9aXD+Fl13EQEH+5uJ8e3C2fTZ1R4lRRSDOvKF7bZY=@vger.kernel.org, AJvYcCXQXDM2v694gEqO1ENQjg2lNv8/txv3tyNpdpel1mK8vlthcdBATqnBdGg1yzhI79q/wrCWOnJ1P1b/M1RQVg==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxZM478tOeL3Iliok/1hqhfQJlC2wGegp7XwhmE04EU051QoXWo
+	C5p945Xg+EDOacDU18vRKPBGip0VEhqVMSkSj6qdoenGmQIhCBoT
+X-Google-Smtp-Source: AGHT+IGVvk5WyzHaifpVdeL22petjloJfnRcC8R+gbZ6y/Oqp5dvrRVC2JduDmXr0yv0cJ9BVoEbmg==
+X-Received: by 2002:a17:90a:e396:b0:2e2:f04d:9f0c with SMTP id 98e67ed59e1d1-2e76b5dbc24mr2976601a91.13.1729691742066;
+        Wed, 23 Oct 2024 06:55:42 -0700 (PDT)
+Received: from smtpclient.apple ([47.89.225.180])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76df50b04sm1428055a91.17.2024.10.23.06.55.39
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Oct 2024 06:55:41 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3774.500.171.1.1\))
+Subject: Re: [PATCH] selftests: livepatch: add test cases of stack_order sysfs
+ interface
+From: zhang warden <zhangwarden@gmail.com>
+In-Reply-To: <ZxjuNBidriSwWw8L@pathway.suse.cz>
+Date: Wed, 23 Oct 2024 21:55:27 +0800
+Cc: Josh Poimboeuf <jpoimboe@kernel.org>,
+ Miroslav Benes <mbenes@suse.cz>,
+ Jiri Kosina <jikos@kernel.org>,
+ Joe Lawrence <joe.lawrence@redhat.com>,
+ live-patching@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Content-Transfer-Encoding: 7bit
+Message-Id: <41DE05F9-9944-4BB0-8C17-5FE8939F9511@gmail.com>
+References: <20241011151151.67869-1-zhangwarden@gmail.com>
+ <20241011151151.67869-2-zhangwarden@gmail.com>
+ <ZxjuNBidriSwWw8L@pathway.suse.cz>
+To: Petr Mladek <pmladek@suse.com>
+X-Mailer: Apple Mail (2.3774.500.171.1.1)
 
-anish kumar <yesanishhere@gmail.com> writes:
 
-> This patch series transitions the documentation
-> for remoteproc from the staging directory to the
-> mainline kernel. It introduces both kernel and
-> user-space APIs, enhancing the overall documentation
-> quality.
->
-> V4:
-> Fixed compilation errors and moved documentation to
-> driver-api directory.
->
-> V3:
-> Seperated out the patches further to make the intention
-> clear for each patch.
->
-> V2:
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes: https://lore.kernel.org/oe-kbuild-all/202410161444.jOKMsoGS-lkp@intel.com/
+What's more, I have open a pull request of the user space tool kpatch[1] 
+to use this new kernel sysfs attribute 'stack_order'.
 
-So I think you could make better use of kerneldoc comments for a number
-of your APIs and structures - a project for the future.  I can't judge
-the remoteproc aspects of this, but from a documentation mechanics point
-of view, this looks about ready to me.  In the absence of objections
-I'll apply it in the near future.
+Maintainers who feel interesting in this function can come for a look.
 
-Thanks,
+Best Regards.
+Wardenjohn.
 
-jon
+[1]: https://github.com/dynup/kpatch/pull/1419
 
