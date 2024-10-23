@@ -1,123 +1,141 @@
-Return-Path: <linux-kernel+bounces-377344-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377345-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E60619ABD93
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:56:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41E8D9ABD9A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:03:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9644B284CA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:56:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C8AC91F23070
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:03:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47B913D2B8;
-	Wed, 23 Oct 2024 04:56:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D39113BC18;
+	Wed, 23 Oct 2024 05:03:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/wLRcYq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="j6goqNoE"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027124C7C;
-	Wed, 23 Oct 2024 04:56:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4AB939ACC
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:03:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729659373; cv=none; b=tX76QJdTkEVZd7EhRQFqMQ8/ye1Btac1GYtobAKT6wZTM0tUptmauB55nDVza9+VTnDxUJAUHakIBMHy3BClaLcj+I8OjJIz0VAvAs5/9H1Izbzh+lc3+Z4PqoZ4DC/qQ8ghgHAsg07m1UwWRSAm69Udl3DKKDnSa42Wgl4LrkQ=
+	t=1729659810; cv=none; b=ggH7VTllfHkI9fAZbOyGCavq03nJIqi6nPPBd69w/Mk1fwEwc3kJ6ayaunkjigxfw1Uy2B+l9qd3vfP6WK9Vuj8CfVPP6tpkqtLNluL3fl8ktF5xCtcJ/ms23BZs9Q1Z0dvLLDVdASbo/HTJ6upcLtZ57CcKRdDrjNRFYGdBccg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729659373; c=relaxed/simple;
-	bh=AY8Zp2haauObwpX/UvHbw6SC+bgAY17isTJb8nygQ7o=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cxbo4xUkuVFie93RzUBvY2pdBaQQA7eoKMRB65QdVaZOuJE+tZ7+FRcVQIXDs3o0S8AviwrstqzBT0Xh06P7YtG+MAWBzsR9YpMeRKY0ppA63A2nHl81mc8Z2H6eeSGGQFidZDD4l+aYP1Wx4Y7/KD9awwrrQBiakoFRR2DQUxM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/wLRcYq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA15C4CEE5;
-	Wed, 23 Oct 2024 04:56:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729659372;
-	bh=AY8Zp2haauObwpX/UvHbw6SC+bgAY17isTJb8nygQ7o=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=B/wLRcYqNvmH9rKOUlk+DslyRamaqLgwQTL6/KJVgEcnszZzVyKKfCyI2AHRJgTp5
-	 dOYApRfE9wZH8Kmf+E/2e8ZicbHgYn8OCU3muwWu2w7D6lCaGXSnbiCoYotqdeyirU
-	 XbsYTsyJPNNuVpoqs97dqeLr4aTc4CrWHGcMurBP/jtQ67bkS+Dy3jIP7OSC5mCV9z
-	 96PAv81sfiwa71YOqspUtVJdezDakaEiM2nAdb/Imas2QlcZwD//sSvlikHLQfAbMd
-	 dgD99JcV0OmbXLw2c7yHTyze3fmAJmfrDONepeEouQPw5GCexbS5BMkz4dg/M2Hqyn
-	 ajAa+5UHitSMw==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e3f35268so4916653e87.3;
-        Tue, 22 Oct 2024 21:56:12 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWMLAIFAHs8cWQCbZdOs4uGTQN35Fg6SBHlEgkAGp56yu4T0YetGdhcfgrBbhk5TNDpePsdDV7lvdOC@vger.kernel.org, AJvYcCWehxvkJMgwDe9Sr+vs0fg7Iq0uMnarCFfVu6aK8EZ3Ja9dKEqW4pzceUhCjj9ZMy6NuSadw8BRuApnpN/Grg==@vger.kernel.org, AJvYcCX/f+tkdKB9oxFisSDdYnBC8Lu558K6ybiDV+i6yL0Pt8MwGKi2o/JebeTVrzboEvsDss+21O4Rf16B484I@vger.kernel.org
-X-Gm-Message-State: AOJu0YxcLKPRHqSl/hWolUR0lJaGp3YoyRjco5g67qZGGNVlgKTDYAHI
-	3cjs2ftBkniO5gZs4b0EP1oh0vFK/NjL4Mgr26WjvMUOv2xBXmxX6TM29gEPrOKZFBtM/8xohTg
-	KuIaokcGP7mVXDZ371Sjv28mkHiU=
-X-Google-Smtp-Source: AGHT+IH2WKaFs7NPh26+cmobMHBnnTIDPrdXMLtM0gbtf4eQ0HRop6c5o0FiEKJcPuU668AFQL/9XuP68s+wZZoy4VA=
-X-Received: by 2002:a05:6512:238f:b0:539:9594:b226 with SMTP id
- 2adb3069b0e04-53b1a31f6a1mr440383e87.34.1729659371194; Tue, 22 Oct 2024
- 21:56:11 -0700 (PDT)
+	s=arc-20240116; t=1729659810; c=relaxed/simple;
+	bh=vHP/V7Zso/PyRpoNmgHnXDd/1O+3+cEyBKOoHeeGSdI=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=BWpiLXSY+XkPvThzhB09RXxYiS1+nl7c+wHD4qvnL1191lZRah6LgLqIV8PalZK3+/v39U6CPg3gA9qFoEWqaFIwXIYgJ1XT2b1afYszz2zxsQGWUW+SSFK6+g+cmO4Aadw1QOXOlgeEFGtWlfyc/zZh46hz22Ox0AWT86G19h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=j6goqNoE; arc=none smtp.client-ip=192.198.163.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729659809; x=1761195809;
+  h=date:from:to:cc:subject:message-id;
+  bh=vHP/V7Zso/PyRpoNmgHnXDd/1O+3+cEyBKOoHeeGSdI=;
+  b=j6goqNoE+Z5Nctb4ZzGqVevZOLKP1mG2clERKW7COsgOaug1TOUF23JI
+   SJ71PVNVDIG8mristtPGUTpsT3qhiZHpzm4kpxIQL3FCeMZEeuVaICtga
+   ZnVXG9vXaSg7+8Tq81fYGPhWHaF+HFsWQ4UXDNrroIbwksWkrurLAsxz+
+   UYsHY0OR4PLUYX4Hr1jaEwWrZjlQrM83BgHtHK/S2Coon7sjV7WotJqaB
+   hdN0M+FVLk2P7i5XPTv+jSiAWsSOQjbLOYjXZAtuh+/p9M6ko/8LXrZ7x
+   8hx1FwbDLhQtnjEXTdkYI5oCNPV0nvXGaDdcj8/z5v/Ew99Qub5q5LdQY
+   Q==;
+X-CSE-ConnectionGUID: rySkwxy6S8mvCazNxAzGFQ==
+X-CSE-MsgGUID: D30dDz/WSZGW0KeAWKhvHQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="39846270"
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="39846270"
+Received: from fmviesa005.fm.intel.com ([10.60.135.145])
+  by fmvoesa103.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 22:03:26 -0700
+X-CSE-ConnectionGUID: fhSQ49RvRUOtjCsz+M/WtQ==
+X-CSE-MsgGUID: N0GwRNJvQQqCN52XebEJAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="84669461"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa005.fm.intel.com with ESMTP; 22 Oct 2024 22:03:25 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3TWl-000USU-1U;
+	Wed, 23 Oct 2024 05:03:23 +0000
+Date: Wed, 23 Oct 2024 13:02:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 1d81d85d1a19e50d5237dc67d6b825c34ae13de8
+Message-ID: <202410231320.99vbP0zm-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20240129192644.3359978-1-mcgrof@kernel.org> <ZbrFoKUJQ8MIdzXD@bombadil.infradead.org>
- <ZbvdbdxOKZ9FUQuC@bombadil.infradead.org> <CAK7LNATjKzUVR7DbJqb=yAinJ1YZo8tzwiXA79E9-VrDn11wwg@mail.gmail.com>
- <Zb0zGZrotuWyhsFd@bombadil.infradead.org> <Zxap5hbcXw36rRWW@bombadil.infradead.org>
- <7d0ce4fc-c9ab-4c67-8666-d5bd56dc970d@gmx.de>
-In-Reply-To: <7d0ce4fc-c9ab-4c67-8666-d5bd56dc970d@gmx.de>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 23 Oct 2024 13:55:33 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASPm8zo2y2vZfeX+LC=xuF+s_bAjkmzTSaT-nmcYoSkKw@mail.gmail.com>
-Message-ID: <CAK7LNASPm8zo2y2vZfeX+LC=xuF+s_bAjkmzTSaT-nmcYoSkKw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/3] modules: few of alignment fixes
-To: Helge Deller <deller@gmx.de>
-Cc: Luis Chamberlain <mcgrof@kernel.org>, arnd@arndb.de, linux-arch@vger.kernel.org, 
-	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 5:07=E2=80=AFAM Helge Deller <deller@gmx.de> wrote:
->
-> On 10/21/24 21:22, Luis Chamberlain wrote:
-> > On Fri, Feb 02, 2024 at 10:23:21AM -0800, Luis Chamberlain wrote:
-> >> On Sat, Feb 03, 2024 at 12:20:38AM +0900, Masahiro Yamada wrote:
-> >>> On Fri, Feb 2, 2024 at 3:05=E2=80=AFAM Luis Chamberlain <mcgrof@kerne=
-l.org> wrote:
-> >>>>
-> >>>> On Wed, Jan 31, 2024 at 02:11:44PM -0800, Luis Chamberlain wrote:
-> >>>>> On Mon, Jan 29, 2024 at 11:26:39AM -0800, Luis Chamberlain wrote:
-> >>>>>> Masahiro, if there no issues feel free to take this or I can take =
-them in
-> >>>>>> too via the modules-next tree. Lemme know!
-> >>>>>
-> >>>>> I've queued this onto modules-testing to get winder testing [0]
-> >>>>
-> >>>> I've moved it to modules-next as I've found no issues.
-> >>>>
-> >>>>    Luis
-> >>>
-> >>>
-> >>> I believe this patch series is wrong.
-> >>>
-> >>> I thought we agreed that the alignment must be added to
-> >>> individual asm code, not to the linker script.
-> >>>
-> >>> I am surprised that you came back to this.
-> >>
-> >> I misseed the dialog on the old cover letter, sorry. I've yanked these=
- patches
-> >> out. I'd expect a respin from Helge.
-> >
-> > Just goind down memory lane -- Helge, the work here pending was to move
-> > this to the linker script. Were you going to follow up on this?
->
-> Masahiro mentions above, that the alignment should be added
-> to the individual asm code. This happened in the meantime for parisc, but
-> I'm not sure if all platforms get this right.
-> So in addition, I still believe that adding the alignment to the linker
-> script too is another right thing to do.
->
-> Helge
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 1d81d85d1a19e50d5237dc67d6b825c34ae13de8  x86/microcode/AMD: Split load_microcode_amd()
 
-Yes, I believe the proper alignment should be specified in asm code.
+elapsed time: 731m
 
---=20
-Best Regards
-Masahiro Yamada
+configs tested: 49
+configs skipped: 133
+
+The following configs have been built successfully.
+More configs may be tested in the coming days.
+
+tested configs:
+arc                 alldefconfig    clang-20
+arm         footbridge_defconfig    clang-20
+arm         jornada720_defconfig    clang-20
+arm          multi_v4t_defconfig    clang-20
+arm            mv78xx0_defconfig    clang-20
+arm              sunxi_defconfig    clang-20
+i386                allmodconfig    clang-18
+i386                 allnoconfig    clang-18
+i386                allyesconfig    clang-18
+i386                   defconfig    clang-18
+loongarch           allmodconfig    gcc-14.1.0
+m68k                allmodconfig    gcc-14.1.0
+m68k                allyesconfig    gcc-14.1.0
+microblaze          allmodconfig    gcc-14.1.0
+microblaze          allyesconfig    gcc-14.1.0
+mips              ip30_defconfig    clang-20
+mips              jazz_defconfig    clang-20
+nios2            3c120_defconfig    clang-20
+openrisc             allnoconfig    clang-20
+openrisc               defconfig    gcc-12
+parisc               allnoconfig    clang-20
+parisc                 defconfig    gcc-12
+powerpc              allnoconfig    clang-20
+powerpc       gamecube_defconfig    clang-20
+powerpc         ppc44x_defconfig    clang-20
+powerpc        redwood_defconfig    clang-20
+riscv                allnoconfig    clang-20
+riscv                  defconfig    gcc-12
+s390                allmodconfig    gcc-14.1.0
+s390                 allnoconfig    clang-20
+s390                allyesconfig    gcc-14.1.0
+s390                   defconfig    gcc-12
+sh                  allmodconfig    gcc-14.1.0
+sh                  allyesconfig    gcc-14.1.0
+sh                     defconfig    gcc-12
+sh              se7722_defconfig    clang-20
+sh              se7724_defconfig    clang-20
+sh           sh7785lcr_defconfig    clang-20
+sparc               allmodconfig    gcc-14.1.0
+sparc64                defconfig    gcc-12
+um                   allnoconfig    clang-20
+um                     defconfig    gcc-12
+um                i386_defconfig    gcc-12
+um              x86_64_defconfig    gcc-12
+x86_64               allnoconfig    clang-18
+x86_64              allyesconfig    clang-18
+x86_64                 defconfig    clang-18
+x86_64                     kexec    clang-18
+x86_64                  rhel-8.3    gcc-12
+
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
