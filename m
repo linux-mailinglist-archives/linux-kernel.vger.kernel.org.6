@@ -1,148 +1,131 @@
-Return-Path: <linux-kernel+bounces-378278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378281-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 474D39ACD80
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:55:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFE7A9ACD87
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:55:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0361B1F21E09
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:55:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EAC9D1C24F6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:55:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE0981D0F77;
-	Wed, 23 Oct 2024 14:38:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B0631CBE8C;
+	Wed, 23 Oct 2024 14:39:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y7jGJCf5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lYnoa+u5"
+Received: from mail-vk1-f176.google.com (mail-vk1-f176.google.com [209.85.221.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1320B1CB51D;
-	Wed, 23 Oct 2024 14:38:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 361151CB53D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729694322; cv=none; b=pRzpRM1j5PO0Ctx09Zb7Hmf7jo8Eo38fJJVYgqxX9MTTwlDd0Zm8uaYtrtclBibRVgPprjP68dwojvvXc0lgms/nj/MgXSO2dz/SvLbaSSX0qls46PkN+cqNFeNXa9O6sebMB60jhAFYyx/Obd2nEOX8i5ICNlEGiQMCUZNgc5g=
+	t=1729694365; cv=none; b=gEdE7Nh/R49gkWXesrz2XUKVKX9A4qtAzyDGqF77/hs8PjPXNSgBtA1yH6XFdfPZDm383FCWR+AOQw5YMig0wHf2/1sgvs44S290y2x2/ExbxjpKPiZrc2xCxMTywLDp/GA4/nE+VjvQVS4GsYSRUcXxdZHH9bmEhw3f4A66nmc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729694322; c=relaxed/simple;
-	bh=0JqvrPoAl0IeTaLk4IwiVcZMi7aNs5KY80Y/mwm0Ihs=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=iJ5IcCN7nPsQKWtOI6gnuJrs064+KH6AQTHAHJakFmIA0ZBZ4trVngA9awmyfRuwB7QUcUxdXi3f517ZL1ouuVtgmLRk0a4gbQ3pd0aMJTcqlmw0H1Jk421/wrRKQ1UUMfCaXx3399VsbkwLUk6+szJ93wEA0FhGBECnjXmxiGE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y7jGJCf5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A14F4C4CEE5;
-	Wed, 23 Oct 2024 14:38:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729694321;
-	bh=0JqvrPoAl0IeTaLk4IwiVcZMi7aNs5KY80Y/mwm0Ihs=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=Y7jGJCf5XPlg6FhMcZZxHnU43XGMqCWy0zgJZiTZw3LmL9uIaoEggURVp2ODsOpdo
-	 +300kakIpAx0/GKN3TnxZyh5oEhjHgtwTuMtIqsGukcF6Zndd49LtkNXg1gbGYx0vj
-	 5DGX4Dh1AZTC26GNlCEWSzsgFWMxRuV8kJFELNuCzSUcnWlNL2t+ac8d7WNbUeknf6
-	 gRz6eUNoXkcuOIN6xMWt4etfHrdyk/bG4MaA6a0DtuyUQ6tseUKopwP3cPdIzako4Y
-	 CN/903JmCJLvpQokdP3vjoykoEMq9kWDubY2Kpn9uW1DKHPuc++54KNYjkTH1GY53F
-	 +2S2JKwAzjB/g==
-Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-71e74900866so4661757b3a.1;
-        Wed, 23 Oct 2024 07:38:41 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUtUflVdBbYdHSear5cTOyLuDfiaE4OJlQEVsp/tpBM0z4n1ksLqQUIiTj3L6MkW5U/Rt68yFntUBAJ@vger.kernel.org, AJvYcCVtdL+PwCS7UnMzgeWI537R+HiJaftoNciRyGzhEsqu0C5JoF9y2L6tvc/j7tnQrghA8haTYlS55FAhKJDs@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEb0r2rD34aiP7owUhkDIrVSaAl6SbB8jPKH3KTMXMeMjdisBx
-	bUq58nUmrp5q7TNVofAdAJ6TYW/Qyivt/3ehvjzuFZBYy8xRLVvBZjeYtRAIsQ5kqgrxBbN3qa3
-	WDe0A3C/waLjnM3SwFQtM+7MH/w==
-X-Google-Smtp-Source: AGHT+IG/RdVxY7RG85NyF0P3I6XAtxRrRLMBLPXslpGReJZYhGUeFy1bxVKhKy/eGSVOAqET/hE7xY0gvgcONdeUlT4=
-X-Received: by 2002:a05:6a00:ccf:b0:71e:795f:92e4 with SMTP id
- d2e1a72fcca58-72030a61bccmr4130356b3a.2.1729694321137; Wed, 23 Oct 2024
- 07:38:41 -0700 (PDT)
+	s=arc-20240116; t=1729694365; c=relaxed/simple;
+	bh=odby0jjqoFFOhNqsHsqZcbKiEYm2n7Gl+WYrvBNHbTA=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=AZ+1tPIoFk5mLpR2o8LmnmodiFZHh5DYe1tlHcn9RjxwPPvL2ZerXr9k4VhJBsZCfWIk3OayFlpGf0OymaOwM9Zpl63h5ieHvt+TUqoAmR1Wgz4XMZAd0oqCsSoi8umkpDdCoUk87XbtQlKh/xqDyUp35N1698xAwoS7fBuj45Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lYnoa+u5; arc=none smtp.client-ip=209.85.221.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-vk1-f176.google.com with SMTP id 71dfb90a1353d-50d55d86f95so2113951e0c.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:39:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729694363; x=1730299163; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=WhPKDbFTUZYFFVIAP/OH1JPHMZdUigC397OHZv1u/EA=;
+        b=lYnoa+u5Lmqi5lsIbXLnM5yL6d+4Sm+jl8VQ/2a6esAdI8uIOw+cjvGUJfEkehwWY5
+         2Z4qgPxJ1lGd+TKg4LLPnO6s1ycNlRgiExjJXuN1oYs/oTZ9y3huX22LqQKBHd1fRYkt
+         udrS1dpnPzpvn+kqjlsRYyh+2hTH/+8KzVvOxFrP8ORAsRGG2kgBW64re++8EKNYhn2a
+         bMxpxizFQ9VXKwZyVtDELYNGqKMOp5KqIAGeshmWrMt4OMc+KrriLpF4pyVd5RitLvc4
+         vcleEk3o0D3Esmc654hNRlo0YE/vzqitCOa11inE6YG09v+LcywAe/uLN5H3WGIcQMyo
+         aUnQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729694363; x=1730299163;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=WhPKDbFTUZYFFVIAP/OH1JPHMZdUigC397OHZv1u/EA=;
+        b=wwRHP2Rk0rn7yHOVJCMm3PJBHWopygaNOiw1Y7QYL/6OjjziizF/rryWaZVlFWUCvU
+         ltP/GRTbqc0dQO4Psi3uW+vDNGP0b3wgqS4HrsfhJI5Aevk0hrSWTh+/9L6q0tbwCSoW
+         YEztvQj+9m7VDsTSaskpwhnfWPoPhpqMXXmYjSN1CW07WpG0fe14rKxgCYGCdY4d0wEP
+         Cb4Mbn7FjJbqe3CUVyo+bhaHfNFunZvl6Gen+O9Am66jKj7xW3Fu4jPn/rzgFUzyKIUE
+         L2gTH5i22FvEjkRPHmEWdPXhgXirujDik5Qij34ojIIF8fuKIRA8sZuSxVpJq7kzWGqR
+         hHzw==
+X-Forwarded-Encrypted: i=1; AJvYcCU6ffL84ElU8YKaeNzaiECjlSoIJwLavfZjBPsxn1UKpzR0VgiO+k11iYlJRoWJW1Q/syVivWoWBBE6FO8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzj7iACRvyEBTMyniGP3b6tSJCyRG7/o4o+oXEBVKkPVgfVchqX
+	F2+YQKBS00aQUJFAoaXEakdVyUcc5H0RFujVYiS7mQCfJ8qy6+2/GMP3/KFWCqmzHLJMfYY4jWC
+	EruSqzKZC20hjEqMf+Psn6V4lpi8/LErF6FB35w==
+X-Google-Smtp-Source: AGHT+IEGxTvgFJQKGjPndiT4g1UmrIbaruLgKpKg20RzOuGPbLbHepYglwQf3SmW4/COXfCydu/3Ww6v3WefxwQ10jU=
+X-Received: by 2002:a05:6122:2a53:b0:50d:60fa:183e with SMTP id
+ 71dfb90a1353d-50fd037aecemr2859533e0c.11.1729694363103; Wed, 23 Oct 2024
+ 07:39:23 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241019052935.553886-1-fshao@chromium.org>
-In-Reply-To: <20241019052935.553886-1-fshao@chromium.org>
-From: Chun-Kuang Hu <chunkuang.hu@kernel.org>
-Date: Wed, 23 Oct 2024 22:39:02 +0800
-X-Gmail-Original-Message-ID: <CAAOTY_9qjcZoQS3KqEqbhKNw9nza+1ggXN44snwThzjLLJ2KNw@mail.gmail.com>
-Message-ID: <CAAOTY_9qjcZoQS3KqEqbhKNw9nza+1ggXN44snwThzjLLJ2KNw@mail.gmail.com>
-Subject: Re: [PATCH] dt-bindings: display: mediatek: dpi: Update device list
- with power-domains
-To: Fei Shao <fshao@chromium.org>
-Cc: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
-	Chun-Kuang Hu <chunkuang.hu@kernel.org>, CK Hu <ck.hu@mediatek.com>, 
-	Conor Dooley <conor+dt@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Rob Herring <robh@kernel.org>, devicetree@vger.kernel.org, 
-	dri-devel@lists.freedesktop.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org, linux-mediatek@lists.infradead.org
+From: Naresh Kamboju <naresh.kamboju@linaro.org>
+Date: Wed, 23 Oct 2024 20:09:11 +0530
+Message-ID: <CA+G9fYt19NZ=8wY9aQRdYjtsPgiaywUQ2ff+TGkX-6zLBUGsNA@mail.gmail.com>
+Subject: axm55xx_defconfig: ld.lld: error: undefined symbol: lockdown_reasons
+To: Linux ARM <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>, lkft-triage@lists.linaro.org, 
+	Linux Regressions <regressions@lists.linux.dev>, linux-security-module@vger.kernel.org
+Cc: Russell King - ARM Linux <linux@armlinux.org.uk>, Arnd Bergmann <arnd@arndb.de>, 
+	Dan Carpenter <dan.carpenter@linaro.org>, Paul Moore <paul@paul-moore.com>, 
+	=?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
+	"Serge E. Hallyn" <serge@hallyn.com>, James Morris <jmorris@namei.org>, 
+	Casey Schaufler <casey@schaufler-ca.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi, Fei:
+The following build regressions are noticed on arm due to following
+Warnings and errors with gcc-13, clang-19 and clang-nightly with
+axm55xx_defconfig.
 
-Fei Shao <fshao@chromium.org> =E6=96=BC 2024=E5=B9=B410=E6=9C=8819=E6=97=A5=
- =E9=80=B1=E5=85=AD =E4=B8=8B=E5=8D=881:30=E5=AF=AB=E9=81=93=EF=BC=9A
->
-> There are two kinds of MediaTek DPI devices in the tree: the ones with a
-> power domain and those without (or missing). The former are the majority
-> and are more common in newer DTs. Only three older DTs fall into the
-> latter category: MT2701, MT7623 and MT8192.
->
-> However, the current binding only allows particular DPI devices to have
-> power domains, which results in spurious binding check errors against
-> existing and new DTs.
->
-> Instead of diligently maintaining the allowed list, let's do it the
-> other way around - create an exception list for devices that are fine
-> not specifying a power domain. This list is expected to be fixed, and it
-> encourages new MTK DPI devices to describe their power domain whenever
-> possible; if not, those should be listed with proper rationale.
+Started happening on next-20241023.
+Good:  next-20241022
+Bad:   next-20241023
 
-I've applied patch [1]. I think that patch fix the same problem with this p=
-atch.
+Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
 
-[1] https://git.kernel.org/pub/scm/linux/kernel/git/chunkuang.hu/linux.git/=
-commit/?h=3Dmediatek-drm-fixes&id=3Daf6ab107ce2c338790c6629fe0edc0333e708be=
-8
+Build log:
+=E2=80=94-------
+ld.lld: error: undefined symbol: lockdown_reasons
+>>> referenced by lsm_audit.c:417 (security/lsm_audit.c:417)
+>>>               security/lsm_audit.o:(audit_log_lsm_data) in archive vmli=
+nux.a
+>>> referenced by lsm_audit.c:417 (security/lsm_audit.c:417)
+>>>               security/lsm_audit.o:(audit_log_lsm_data) in archive vmli=
+nux.a
 
-Regards,
-Chun-Kuang.
+Links:
+=E2=80=94---
+Download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2npIko0KV1uYFA7CZM7n=
+R9jHBBO/
 
->
-> Signed-off-by: Fei Shao <fshao@chromium.org>
-> ---
->
->  .../bindings/display/mediatek/mediatek,dpi.yaml   | 15 +++++++--------
->  1 file changed, 7 insertions(+), 8 deletions(-)
->
-> diff --git a/Documentation/devicetree/bindings/display/mediatek/mediatek,=
-dpi.yaml b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.=
-yaml
-> index 3a82aec9021c..c464642bbfb6 100644
-> --- a/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
-l
-> +++ b/Documentation/devicetree/bindings/display/mediatek/mediatek,dpi.yam=
-l
-> @@ -81,14 +81,13 @@ required:
->
->  allOf:
->    - if:
-> -      not:
-> -        properties:
-> -          compatible:
-> -            contains:
-> -              enum:
-> -                - mediatek,mt6795-dpi
-> -                - mediatek,mt8173-dpi
-> -                - mediatek,mt8186-dpi
-> +      properties:
-> +        compatible:
-> +          contains:
-> +            enum:
-> +              - mediatek,mt2701-dpi
-> +              - mediatek,mt7623-dpi
-> +              - mediatek,mt8192-dpi
->      then:
->        properties:
->          power-domains: false
-> --
-> 2.47.0.rc1.288.g06298d1525-goog
->
+Metadata:
+=E2=80=94----
+Git_describe: next-20241023
+Git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.g=
+it
+Git_sha: ceab669fdf7b7510b4e4997b33d6f66e433a96db
+Build_name: clang-19
+Compiler: clang-19 and gcc-13
+Config: https://storage.tuxsuite.com/public/linaro/lkft/builds/2npIko0KV1uY=
+FA7CZM7nR9jHBBO/config
+Download_url:
+https://storage.tuxsuite.com/public/linaro/lkft/builds/2npIko0KV1uYFA7CZM7n=
+R9jHBBO/
+arch: arm
+config: axm55xx_defconfig
+
+--
+Linaro LKFT
+https://lkft.linaro.org
 
