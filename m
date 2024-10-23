@@ -1,166 +1,93 @@
-Return-Path: <linux-kernel+bounces-378490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2EFD19AD14B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:48:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E4F769AD14E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:49:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD881C213CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:48:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A661A2844A6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:49:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069E31CDFAF;
-	Wed, 23 Oct 2024 16:47:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794351CCEC4;
+	Wed, 23 Oct 2024 16:48:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d7vl8CU2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q6IV6K8Y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B163C1AB6F8;
-	Wed, 23 Oct 2024 16:47:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D64461E51D;
+	Wed, 23 Oct 2024 16:48:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702077; cv=none; b=PooeEEkFhJDoq4ZnSedZ7AqnbNDL79uw3rVgPlMIVTr9CtYpoYMODiKm3GICb3txaC6TrYk4/IWuN7ZdNBmQM7TzI30KVhMPXNGT1rGbQi+8moY4jVhRBPU0TjLhIk68JVqG3BgnmzqToH0UiVZx5bZmsqw/R11eOwIk6b+IF1I=
+	t=1729702137; cv=none; b=GLnSV4nBPjpE6TNyWi1ywgrHMrNMenmHIhixIe1A1aX6pOKIBVZVSND7kzE4eMD1HMcBngaS2xP3S9sJwcXV2cu3DYMvTM34UWQw7j81NTgS8bU0JBN/rmnQJSFjrMKNyi93EkTVCfz6wB1R/vkKvlcNftI/Hc1W/JZdcUpJ1q8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702077; c=relaxed/simple;
-	bh=mmiQZ3L89WBQ/VbA5HZ+3oDu2nJREkMgINMncEfWUwI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bo6qPn+vhPX5poMdzkb5xsvnrKDDTlz3KGY+UENABnJriDazxpEpvVqGhmSZy+yYK9FDa1mqfs2ltoClZwX9dhQ304rppaOJXqDCEHj/GOKFCsnA349W8z4U6sX5i5Ybf7QmZsqLAsIbpBZLoZ6SCEcvz3Gz6f0Ehbw+RrJtlPM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d7vl8CU2; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729702076; x=1761238076;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=mmiQZ3L89WBQ/VbA5HZ+3oDu2nJREkMgINMncEfWUwI=;
-  b=d7vl8CU2lxyNcszfW2A5Kv/KumPpwxZ9W2Nkxu2dqHKcR2E2mc5Ilyi/
-   ugnoD5oUmcjivW3HUNCHknyBv/pNOGnrXpU58/9f6rbYY4LJRDmoKZfes
-   MQZ6lydews5dhSPqBhx6ZXnRofk4aiQZheXk2TnY2wapRz60m/Jhsp15Z
-   vCohZDIgUuHF2WcWUSEIaahCHiYblFv5dWr+USYdvn8Hv6K3mxvJOsZVq
-   fRKWgzYx2kaGJ1JooX6f+mX5kpQT+ewmpoyUR7sERnoXQFeZdWO4p7GDs
-   UBve65DcFH/RWDAIjmX39sp3qBRLT//02GSNKqMDt/v9pKclM1iUZGC7I
-   Q==;
-X-CSE-ConnectionGUID: 0G9vVKDTRKSOUoFeeH/srQ==
-X-CSE-MsgGUID: x9oU5cPPRi2WHCmZuC667A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="29410284"
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="29410284"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 09:47:55 -0700
-X-CSE-ConnectionGUID: Swm1w9nFSIG9FP4egznOew==
-X-CSE-MsgGUID: M+UL1oY2S8GCFS+3nYGsIg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="84270827"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa003.fm.intel.com with ESMTP; 23 Oct 2024 09:47:49 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3eWR-000VB2-26;
-	Wed, 23 Oct 2024 16:47:47 +0000
-Date: Thu, 24 Oct 2024 00:47:07 +0800
-From: kernel test robot <lkp@intel.com>
-To: Li Li <dualli@chromium.org>, dualli@google.com, corbet@lwn.net,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, donald.hunter@gmail.com,
-	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
-	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
-	cmllamas@google.com, surenb@google.com, arnd@arndb.de,
-	masahiroy@kernel.org, linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
-	hridya@google.com, smoreland@google.com
-Cc: oe-kbuild-all@lists.linux.dev, kernel-team@android.com
-Subject: Re: [PATCH v3 1/1] binder: report txn errors via generic netlink
-Message-ID: <202410240012.MJJTBFCx-lkp@intel.com>
-References: <20241021182821.1259487-2-dualli@chromium.org>
+	s=arc-20240116; t=1729702137; c=relaxed/simple;
+	bh=jk5gnOltUG5k9FUWIy7ZyHs1nJtl4UkmbzMQ0rcKYVk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Q/uwZ5g53CjbiOgfggR1YMQLp0TEBdZ3s4iosu9ZijXzb9nDIbuuZ8OndAutLS+tHYogI/bbfnbRysOPy0QBfoBwGTrocRjzIbeASbm00Pql3JbSXTnm8H/g3yz+HWayqZx8S53cwmu7L6frAvsR/d3v2MSN+ZfwxLgclQaXnRc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q6IV6K8Y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 72F9FC4CEC6;
+	Wed, 23 Oct 2024 16:48:57 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729702137;
+	bh=jk5gnOltUG5k9FUWIy7ZyHs1nJtl4UkmbzMQ0rcKYVk=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=q6IV6K8Yn4yLfCmVLhv6ZQQmpD0zetNro7tqdkl1q9HJqKiuWT5AN6JzUj/X/AHR2
+	 4h0McHqrZYQf/45fDcohQwrVkBlR+qufbx8n2ablaiITdlupA/4iOXGpJnh8l4/BRR
+	 YPPWzeTDAZYbHyFTGnh5QM8yZxzZG2LsqSB4qlBWsCkxdrtN36xTgrd1/kNq4Tsf/V
+	 30C8slKJoWGwtgIPmTAW7O5MSUWFDumxGwqKtc8or40TE/VF60CSrjE5sy7yvfv/wy
+	 e9xUBL3KdeosrPYXcgXpdE27GTctsbK8gwE2VvZg2nCsf/OTDWT5bRCvTE5oLsz0ey
+	 K45QNSYDM8qTw==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f72c8fc1so8243205e87.1;
+        Wed, 23 Oct 2024 09:48:57 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVGvjl9YODYjB3UNAl7umhCGWs+2zl+0i9DWAYOYccJF/v6puSg4GKisf/zv0VoxOpNr0AUWNVPbAN+ats=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyPg00B5xt7jpVYbjqSvFtak1BMZZ5C/DAQGWUwWSXRzluQrXZw
+	yRPp0n00nRlZ4AdgjGylnKc0li6fIiJ3QwxyEs/C0L9BWBNTyGFwcWX4AUXest7bUHfCouXwQvY
+	46E/wWVTEDhnywtvS3CU96Mt+BzE=
+X-Google-Smtp-Source: AGHT+IHeShVqL6klxnFkLKEIG5eyeLd7RSjj8g30kEWNkqm32h6CTQ1ylCF38rTGwFc/IryiNGwJvkaTsJN5FmL+dWw=
+X-Received: by 2002:a05:6512:33c8:b0:539:f961:f485 with SMTP id
+ 2adb3069b0e04-53b1a3303damr1964447e87.29.1729702136201; Wed, 23 Oct 2024
+ 09:48:56 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021182821.1259487-2-dualli@chromium.org>
+References: <4960180.31r3eYUQgx@devpool47.emlix.com> <22467307.EfDdHjke4D@devpool47.emlix.com>
+In-Reply-To: <22467307.EfDdHjke4D@devpool47.emlix.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 24 Oct 2024 01:48:20 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQG3FyZfRMVhQ8v0W+xD1fW65A=h2aFJMWwJb9T8vPBXg@mail.gmail.com>
+Message-ID: <CAK7LNAQG3FyZfRMVhQ8v0W+xD1fW65A=h2aFJMWwJb9T8vPBXg@mail.gmail.com>
+Subject: Re: [PATCH 6/7] kconfig: qconf: use default platform shortcuts
+To: Rolf Eike Beer <eb@emlix.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Li,
+On Wed, Oct 23, 2024 at 3:36=E2=80=AFPM Rolf Eike Beer <eb@emlix.com> wrote=
+:
+>
+> This renames "Load" to "Open" and switches Ctrl-L to Ctrl-O for the defau=
+lt
+> platforms. This may break the workflow for those used to it, but will mak=
+e it
+> actually work for everyone else like me who would just expect the default
+> behavior. Add some more standard shortcuts where available. If they repla=
+ce
+> the existing shortcuts they would have the same value in my case.
+>
+> Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+> ---
 
-kernel test robot noticed the following build warnings:
-
-[auto build test WARNING on staging/staging-testing]
-[also build test WARNING on staging/staging-next staging/staging-linus linus/master v6.12-rc4 next-20241023]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
-
-url:    https://github.com/intel-lab-lkp/linux/commits/Li-Li/binder-report-txn-errors-via-generic-netlink/20241022-022923
-base:   staging/staging-testing
-patch link:    https://lore.kernel.org/r/20241021182821.1259487-2-dualli%40chromium.org
-patch subject: [PATCH v3 1/1] binder: report txn errors via generic netlink
-config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20241024/202410240012.MJJTBFCx-lkp@intel.com/config)
-compiler: arceb-elf-gcc (GCC) 13.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410240012.MJJTBFCx-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410240012.MJJTBFCx-lkp@intel.com/
-
-All warnings (new ones prefixed by >>):
-
->> drivers/android/binder_genl.c:160: warning: Function parameter or struct member 'context' not described in 'binder_genl_set_report'
->> drivers/android/binder_genl.c:160: warning: Excess function parameter 'proc' description in 'binder_genl_set_report'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [m]:
-   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
+Applied to linux-kbuild. Thanks!
 
 
-vim +160 drivers/android/binder_genl.c
 
-   149	
-   150	/**
-   151	 * binder_genl_set_report() - set binder report flags
-   152	 * @proc:	the binder_proc calling the ioctl
-   153	 * @pid:	the target process
-   154	 * @flags:	the flags to set
-   155	 *
-   156	 * If pid is 0, the flags are applied to the whole binder context.
-   157	 * Otherwise, the flags are applied to the specific process only.
-   158	 */
-   159	int binder_genl_set_report(struct binder_context *context, u32 pid, u32 flags)
- > 160	{
-   161		struct binder_proc *proc;
-   162	
-   163		if (flags != (flags & (BINDER_REPORT_ALL | BINDER_REPORT_OVERRIDE))) {
-   164			pr_err("Invalid binder report flags: %u\n", flags);
-   165			return -EINVAL;
-   166		}
-   167	
-   168		if (!pid) {
-   169			/* Set the global flags for the whole binder context */
-   170			context->report_flags = flags;
-   171		} else {
-   172			/* Set the per-process flags */
-   173			proc = binder_find_proc(pid);
-   174			if (!proc) {
-   175				pr_err("Invalid binder report pid %u\n", pid);
-   176				return -EINVAL;
-   177			}
-   178	
-   179			proc->report_flags = flags;
-   180		}
-   181	
-   182		return 0;
-   183	}
-   184	
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+--=20
+Best Regards
+Masahiro Yamada
 
