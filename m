@@ -1,348 +1,151 @@
-Return-Path: <linux-kernel+bounces-377885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C6B29AC814
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:40:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DADCF9AC817
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:40:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0D33C1F22DCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:40:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8240DB22507
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:40:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C60751A08D7;
-	Wed, 23 Oct 2024 10:40:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 421BE1A08D7;
+	Wed, 23 Oct 2024 10:40:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="H22WL2Vb"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="A4NdIEmR"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17D06136331
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:40:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98A5619CD08
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:40:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729680020; cv=none; b=Aop99pbaIkB+9N68FgenqMXCqA1+IhJuY6F89MgaZPz3c6UjhF0QQL4cSrMOM6MAwKuRE7nEbM+LK24PDDw0LqNYzWHVCAr/Q9KN+hcENEgJ4Rx6fRPrnaXPwSghHtm6mJaz0sab4ckWsOjcbvviMrNgMwD/2TRzTNqFHLSs9qM=
+	t=1729680042; cv=none; b=jsJpgH3AGTsaf+Up6Tf3I6FjEFUt76yl16uMqlPL0loMmtBzk+gTXPgyhesZdrP+M0AVeKVtzn2EC9AicUG0jW1xspiRQnSpNn26p3PTgxbtt7taATpA5t4uAz4xFmlcyly2ptNzt5oZaZSA/qqTYLFe2a1p/buDTxB7uYDwgug=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729680020; c=relaxed/simple;
-	bh=ibcMqYntbxBW8l8pzNlZek9na1BdV0viskcfDf1u53U=;
-	h=From:To:cc:Subject:MIME-Version:Content-Type:Date:Message-ID; b=oWQ017iMQQT8/h3fd2qvw8Osul/5GWKq3COTPVWhhS4/kPz22BSHATbAcTk2E4vZjZur/DVDDFS+mtVwS1z/k5wInoY4bv+otKWFafejYkeaW1y+ay6M7NM0F6sVPkEcOJ2rfePgP0eabYxiMPDa2XxcecYNNpru6sEdPKupa0E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=H22WL2Vb; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729680016;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=7NsCNuVkdUPhJRL8ZQj+L9UyuxE+nUqgXfeM9z04tmo=;
-	b=H22WL2Vb4L+oPzfAIE6KAm00+YthPrulx7ouhZkHxKxJY5QDvim6pvhfChjP6o3pDKe3rc
-	BrjM5WXOBbuq+d2wAXkbwG/U/U5wMxMNpSnM4oOZgPMOqrJH+axUnCYA6RkLCcC/nl8JBn
-	RObwYi8UhiqAHERAxitBRL7wrZljqEc=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-475-OJ_5-ZcrOdeB42L6YRIYDA-1; Wed,
- 23 Oct 2024 06:40:14 -0400
-X-MC-Unique: OJ_5-ZcrOdeB42L6YRIYDA-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	s=arc-20240116; t=1729680042; c=relaxed/simple;
+	bh=o50zMYvyJy94Jo4WMf29VGc2u3pKkDKne85GzsktI+Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=VRtNAu9tglYXlNdBCbi+oZftz7EEVpEQWE2P+Wbs5pBvM25CpysreQxKDuV4LejzRXUW4fzm6m1WmMzU5AT1BwVIMVZ/loCMnwgfjOrFrtvg1Q8CB68Cazf8w9UtpeskkpVX/0gAuy4qlzZqCf0tKmGYBIIbxWp6lG0WDBrXipo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=A4NdIEmR; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729680033;
+	bh=o50zMYvyJy94Jo4WMf29VGc2u3pKkDKne85GzsktI+Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=A4NdIEmREsvf6ijIpkWkHLbM0fdtVXxn1xmR1Lw51BoK2AgDxfEzUJu7H7bEHDO5T
+	 XYEr7dRd8WIXjEdZ5UnB8yHS4oxXfK6/+ZhzoD8dOwpESty9yE9Y1sYoN6Adn6NpZm
+	 vfhxKOVo83mtTCtPV6nBpYGFnrRgVOUB7FsJ9wjT05E1hOEwVMIvVVBvzxSzXcu/u2
+	 xeKP7aYBqSecehjt234ecBWnKqwjmnj9iWNH/NtyB21Z1gEu+EhAc2YDXwUrY2lVlp
+	 18qUM82u30evUOV1AoYDBcCKUSEAQApxJNjDLlU4IFc9jQPneo/ucXZkNiQhfZvVL0
+	 u0RxpQVHb7uvg==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 8F1711955DAC;
-	Wed, 23 Oct 2024 10:40:13 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EC128300018D;
-	Wed, 23 Oct 2024 10:40:11 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-To: Marc Dionne <marc.dionne@auristor.com>
-cc: dhowells@redhat.com, linux-afs@lists.infradead.org,
-    linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v2] afs: Fix missing subdir edit when renamed between parent dirs
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 11C2917E14EA;
+	Wed, 23 Oct 2024 12:40:33 +0200 (CEST)
+Message-ID: <9b12aaec-504c-4e3a-a606-240341d8e0d3@collabora.com>
+Date: Wed, 23 Oct 2024 12:40:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3340430.1729680010.1@warthog.procyon.org.uk>
-Content-Transfer-Encoding: quoted-printable
-Date: Wed, 23 Oct 2024 11:40:10 +0100
-Message-ID: <3340431.1729680010@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] soc: mediatek: mediatek-regulator-coupler: Fix comment
+To: Fei Shao <fshao@chromium.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-mediatek@lists.infradead.org
+References: <20241023102059.512352-1-fshao@chromium.org>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241023102059.512352-1-fshao@chromium.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-When rename moves an AFS subdirectory between parent directories, the
-subdir also needs a bit of editing: the ".." entry needs updating to point
-to the new parent (though I don't make use of the info) and the DV needs
-incrementing by 1 to reflect the change of content.  The server also sends
-a callback break notification on the subdirectory if we have one, but we
-can take care of recovering the promise next time we access the subdir.
+Il 23/10/24 12:19, Fei Shao ha scritto:
+> Fix two minor issues in the comments.
+> 
+> 1. We balance VSRAM voltage based on the target VGPU voltage, so the
+>     comment likely refers to VGPU.
 
-This can be triggered by something like:
+Function `mediatek_regulator_balance_voltage()` refers, as stated in the comment
+located at the top of its signature, to "GPU<->SRAM" voltages relationships.
 
-    mount -t afs %example.com:xfstest.test20 /xfstest.test/
-    mkdir /xfstest.test/{aaa,bbb,aaa/ccc}
-    touch /xfstest.test/bbb/ccc/d
-    mv /xfstest.test/{aaa/ccc,bbb/ccc}
-    touch /xfstest.test/bbb/ccc/e
+So, we're taking into consideration only two regulators:
+                   VGPU and VSRAM
 
-When the pathwalk for the second touch hits "ccc", kafs spots that the DV
-is incorrect and downloads it again (so the fix is not critical).
+The first comment says:
+"If we're asked to set a voltage (implicit: to VGPU) less than VSRAM min_uV[...]"
 
-Fix this, if the rename target is a directory and the old and new
-parents are different, by:
+...so, I think that you've misunderstood what the comment says :-)
 
- (1) Incrementing the DV number of the target locally.
+> 2. .attach_regulator() returns 0 on success and 1 if the regulator is
+>     not suitable. The context suggests a successful return value (0).
 
- (2) Editing the ".." entry in the target to refer to its new parent's
-     vnode ID and uniquifier.
+The comment is on top of a "refuse" or "error" case - one that wants to return 1
+and not zero.
 
-Fixes: 63a4681ff39c ("afs: Locally edit directory data for mkdir/create/un=
-link/...")
-cc: David Howells <dhowells@redhat.com>
-cc: Marc Dionne <marc.dionne@auristor.com>
-cc: linux-afs@lists.infradead.org
----
- Changes
- =3D=3D=3D=3D=3D=3D=3D
- ver #2)
-  - Improved the example test in the description.
-  - Removed some extraneous whitespace.
+Besides, it clearly states:
+"The regulator core will keep walking through the list of couplers when any
+  .attach_regulator() callback returns 1"
 
- fs/afs/dir.c               |   25 ++++++++++++
- fs/afs/dir_edit.c          |   91 +++++++++++++++++++++++++++++++++++++++=
-+++++-
- fs/afs/internal.h          |    2 =
+...which is definitely true.
 
- include/trace/events/afs.h |    7 ++-
- 4 files changed, 122 insertions(+), 3 deletions(-)
+drivers/regulator/core.c
+function `regulator_find_coupler()`:
 
-diff --git a/fs/afs/dir.c b/fs/afs/dir.c
-index f8622ed72e08..ada363af5aab 100644
---- a/fs/afs/dir.c
-+++ b/fs/afs/dir.c
-@@ -12,6 +12,7 @@
- #include <linux/swap.h>
- #include <linux/ctype.h>
- #include <linux/sched.h>
-+#include <linux/iversion.h>
- #include <linux/task_io_accounting_ops.h>
- #include "internal.h"
- #include "afs_fs.h"
-@@ -1823,6 +1824,8 @@ static int afs_symlink(struct mnt_idmap *idmap, stru=
-ct inode *dir,
- =
+	list_for_each_entry_reverse(coupler, &regulator_coupler_list, list) {
+		err = coupler->attach_regulator(coupler, rdev);
+		[.....]
+		if (err < 0)
+			return ERR_PTR(err);
 
- static void afs_rename_success(struct afs_operation *op)
- {
-+	struct afs_vnode *vnode =3D AFS_FS_I(d_inode(op->dentry));
-+
- 	_enter("op=3D%08x", op->debug_id);
- =
+		if (err == 1)
+			continue;
 
- 	op->ctime =3D op->file[0].scb.status.mtime_client;
-@@ -1832,6 +1835,22 @@ static void afs_rename_success(struct afs_operation=
- *op)
- 		op->ctime =3D op->file[1].scb.status.mtime_client;
- 		afs_vnode_commit_status(op, &op->file[1]);
- 	}
-+
-+	/* If we're moving a subdir between dirs, we need to update
-+	 * its DV counter too as the ".." will be altered.
-+	 */
-+	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
-+	    op->file[0].vnode !=3D op->file[1].vnode) {
-+		u64 new_dv;
-+
-+		write_seqlock(&vnode->cb_lock);
-+
-+		new_dv =3D vnode->status.data_version + 1;
-+		vnode->status.data_version =3D new_dv;
-+		inode_set_iversion_raw(&vnode->netfs.inode, new_dv);
-+
-+		write_sequnlock(&vnode->cb_lock);
-+	}
- }
- =
+		break;
+	}
 
- static void afs_rename_edit_dir(struct afs_operation *op)
-@@ -1873,6 +1892,12 @@ static void afs_rename_edit_dir(struct afs_operatio=
-n *op)
- 				 &vnode->fid, afs_edit_dir_for_rename_2);
- 	}
- =
+Is that clear now?
 
-+	if (S_ISDIR(vnode->netfs.inode.i_mode) &&
-+	    new_dvnode !=3D orig_dvnode &&
-+	    test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+		afs_edit_dir_update_dotdot(vnode, new_dvnode,
-+					   afs_edit_dir_for_rename_sub);
-+
- 	new_inode =3D d_inode(new_dentry);
- 	if (new_inode) {
- 		spin_lock(&new_inode->i_lock);
-diff --git a/fs/afs/dir_edit.c b/fs/afs/dir_edit.c
-index a71bff10496b..fe223fb78111 100644
---- a/fs/afs/dir_edit.c
-+++ b/fs/afs/dir_edit.c
-@@ -127,10 +127,10 @@ static struct folio *afs_dir_get_folio(struct afs_vn=
-ode *vnode, pgoff_t index)
- /*
-  * Scan a directory block looking for a dirent of the right name.
-  */
--static int afs_dir_scan_block(union afs_xdr_dir_block *block, struct qstr=
- *name,
-+static int afs_dir_scan_block(const union afs_xdr_dir_block *block, const=
- struct qstr *name,
- 			      unsigned int blocknum)
- {
--	union afs_xdr_dirent *de;
-+	const union afs_xdr_dirent *de;
- 	u64 bitmap;
- 	int d, len, n;
- =
+Cheers,
+Angelo
 
-@@ -492,3 +492,90 @@ void afs_edit_dir_remove(struct afs_vnode *vnode,
- 	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
- 	goto out_unmap;
- }
-+
-+/*
-+ * Edit a subdirectory that has been moved between directories to update =
-the
-+ * ".." entry.
-+ */
-+void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
-+				enum afs_edit_dir_reason why)
-+{
-+	union afs_xdr_dir_block *block;
-+	union afs_xdr_dirent *de;
-+	struct folio *folio;
-+	unsigned int nr_blocks, b;
-+	pgoff_t index;
-+	loff_t i_size;
-+	int slot;
-+
-+	_enter("");
-+
-+	i_size =3D i_size_read(&vnode->netfs.inode);
-+	if (i_size < AFS_DIR_BLOCK_SIZE) {
-+		clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+		return;
-+	}
-+	nr_blocks =3D i_size / AFS_DIR_BLOCK_SIZE;
-+
-+	/* Find a block that has sufficient slots available.  Each folio
-+	 * contains two or more directory blocks.
-+	 */
-+	for (b =3D 0; b < nr_blocks; b++) {
-+		index =3D b / AFS_DIR_BLOCKS_PER_PAGE;
-+		folio =3D afs_dir_get_folio(vnode, index);
-+		if (!folio)
-+			goto error;
-+
-+		block =3D kmap_local_folio(folio, b * AFS_DIR_BLOCK_SIZE - folio_pos(fo=
-lio));
-+
-+		/* Abandon the edit if we got a callback break. */
-+		if (!test_bit(AFS_VNODE_DIR_VALID, &vnode->flags))
-+			goto invalidated;
-+
-+		slot =3D afs_dir_scan_block(block, &dotdot_name, b);
-+		if (slot >=3D 0)
-+			goto found_dirent;
-+
-+		kunmap_local(block);
-+		folio_unlock(folio);
-+		folio_put(folio);
-+	}
-+
-+	/* Didn't find the dirent to clobber.  Download the directory again. */
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_nodd,
-+			   0, 0, 0, 0, "..");
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out;
-+
-+found_dirent:
-+	de =3D &block->dirents[slot];
-+	de->u.vnode  =3D htonl(new_dvnode->fid.vnode);
-+	de->u.unique =3D htonl(new_dvnode->fid.unique);
-+
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_dd, b, slot,
-+			   ntohl(de->u.vnode), ntohl(de->u.unique), "..");
-+
-+	kunmap_local(block);
-+	folio_unlock(folio);
-+	folio_put(folio);
-+	inode_set_iversion_raw(&vnode->netfs.inode, vnode->status.data_version);
-+
-+out:
-+	_leave("");
-+	return;
-+
-+invalidated:
-+	kunmap_local(block);
-+	folio_unlock(folio);
-+	folio_put(folio);
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_inval,
-+			   0, 0, 0, 0, "..");
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out;
-+
-+error:
-+	trace_afs_edit_dir(vnode, why, afs_edit_dir_update_error,
-+			   0, 0, 0, 0, "..");
-+	clear_bit(AFS_VNODE_DIR_VALID, &vnode->flags);
-+	goto out;
-+}
-diff --git a/fs/afs/internal.h b/fs/afs/internal.h
-index 52aab09a32a9..c9d620175e80 100644
---- a/fs/afs/internal.h
-+++ b/fs/afs/internal.h
-@@ -1073,6 +1073,8 @@ extern void afs_check_for_remote_deletion(struct afs=
-_operation *);
- extern void afs_edit_dir_add(struct afs_vnode *, struct qstr *, struct af=
-s_fid *,
- 			     enum afs_edit_dir_reason);
- extern void afs_edit_dir_remove(struct afs_vnode *, struct qstr *, enum a=
-fs_edit_dir_reason);
-+void afs_edit_dir_update_dotdot(struct afs_vnode *vnode, struct afs_vnode=
- *new_dvnode,
-+				enum afs_edit_dir_reason why);
- =
+> 
+> Fixes: c200774a6df4 ("soc: mediatek: Introduce mediatek-regulator-coupler driver")
+> Signed-off-by: Fei Shao <fshao@chromium.org>
+> ---
+> 
+>   drivers/soc/mediatek/mtk-regulator-coupler.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/soc/mediatek/mtk-regulator-coupler.c b/drivers/soc/mediatek/mtk-regulator-coupler.c
+> index 0b6a2884145e..16df12d1c2e0 100644
+> --- a/drivers/soc/mediatek/mtk-regulator-coupler.c
+> +++ b/drivers/soc/mediatek/mtk-regulator-coupler.c
+> @@ -74,7 +74,7 @@ static int mediatek_regulator_balance_voltage(struct regulator_coupler *coupler,
+>   		return ret;
+>   
+>   	/*
+> -	 * If we're asked to set a voltage less than VSRAM min_uV, set
+> +	 * If we're asked to set a voltage less than VGPU min_uV, set
+>   	 * the minimum allowed voltage on VSRAM, as in this case it is
+>   	 * safe to ignore the max_spread parameter.
+>   	 */
+> @@ -108,7 +108,7 @@ static int mediatek_regulator_attach(struct regulator_coupler *coupler,
+>   	 * this means that this is surely not a GPU<->SRAM couple: in that
+>   	 * case, we may want to use another coupler implementation, if any,
+>   	 * or the generic one: the regulator core will keep walking through
+> -	 * the list of couplers when any .attach_regulator() cb returns 1.
+> +	 * the list of couplers when any .attach_regulator() cb returns 0.
+>   	 */
+>   	if (rdev->coupling_desc.n_coupled > 2)
+>   		return 1;
 
- /*
-  * dir_silly.c
-diff --git a/include/trace/events/afs.h b/include/trace/events/afs.h
-index 450c44c83a5d..a0aed1a428a1 100644
---- a/include/trace/events/afs.h
-+++ b/include/trace/events/afs.h
-@@ -331,7 +331,11 @@ enum yfs_cm_operation {
- 	EM(afs_edit_dir_delete,			"delete") \
- 	EM(afs_edit_dir_delete_error,		"d_err ") \
- 	EM(afs_edit_dir_delete_inval,		"d_invl") \
--	E_(afs_edit_dir_delete_noent,		"d_nent")
-+	EM(afs_edit_dir_delete_noent,		"d_nent") \
-+	EM(afs_edit_dir_update_dd,		"u_ddot") \
-+	EM(afs_edit_dir_update_error,		"u_fail") \
-+	EM(afs_edit_dir_update_inval,		"u_invl") \
-+	E_(afs_edit_dir_update_nodd,		"u_nodd")
- =
-
- #define afs_edit_dir_reasons				  \
- 	EM(afs_edit_dir_for_create,		"Create") \
-@@ -340,6 +344,7 @@ enum yfs_cm_operation {
- 	EM(afs_edit_dir_for_rename_0,		"Renam0") \
- 	EM(afs_edit_dir_for_rename_1,		"Renam1") \
- 	EM(afs_edit_dir_for_rename_2,		"Renam2") \
-+	EM(afs_edit_dir_for_rename_sub,		"RnmSub") \
- 	EM(afs_edit_dir_for_rmdir,		"RmDir ") \
- 	EM(afs_edit_dir_for_silly_0,		"S_Ren0") \
- 	EM(afs_edit_dir_for_silly_1,		"S_Ren1") \
 
 
