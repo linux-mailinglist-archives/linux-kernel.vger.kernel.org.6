@@ -1,186 +1,105 @@
-Return-Path: <linux-kernel+bounces-378444-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AE8279AD041
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:26:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 078F99AD058
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:26:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E073284E03
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5312812E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:26:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC9791CDA31;
-	Wed, 23 Oct 2024 16:25:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141691CF5CF;
+	Wed, 23 Oct 2024 16:25:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b="UeHl3464";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="UDSRgzmP"
-Received: from fout-a3-smtp.messagingengine.com (fout-a3-smtp.messagingengine.com [103.168.172.146])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bEIR1wcS"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 189441CB530
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:25:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.146
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4FC1CBEBA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:25:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700719; cv=none; b=UqQLZZbKJBeG/LiXM7LsIqkdA5GqwrLl7l+R/Kc3TnDVdYn/zscwl0dzLF5ZbPV9JspiqWO4cIIMlKr0lNVkFhNmF+eh4myxWg3Dw7pL+McyioD793dzA1LW4f2/OQFr+E03ZG8cPEL18kvFSILsjbroVTsZwTEjHTHGpWbKwDA=
+	t=1729700737; cv=none; b=O2Jbygpu/nkvqt2zZ2CjWcaBpfWzPPcDxZayMydH2isLR8ZDaWbGnEF4PlNmrN9kVux1WfJPDENlVaw2ClMxtZz8l/TabXTxAgE3ju1ROmY1uKwgScsQ+3UCP2r8RWb563RCR3+idJngDO2d3V8fdLU9PZbXkKTSh1CTukWPAzg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700719; c=relaxed/simple;
-	bh=TPEkFtK0CFaFnwhxDZso+FHpRSBe8QIgtFvTQ/jnoDE=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=ovHWKfF5+2aWWykdXKVngKsZD6zgEtItFwR2MwYNyVtN6F2zlh7M+lYGmPIaggbSSW1Iij0TiqIzd8ZgcLDfmTnb3yNPRLJJwe+ib4HXYz+yB+4jYP2OXtfp4Akj4qSQMCX3yPbp6FBH4sN1ibJocxD0CbYbOqm4NImjaWVhp7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de; spf=pass smtp.mailfrom=arndb.de; dkim=pass (2048-bit key) header.d=arndb.de header.i=@arndb.de header.b=UeHl3464; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=UDSRgzmP; arc=none smtp.client-ip=103.168.172.146
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arndb.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arndb.de
-Received: from phl-compute-10.internal (phl-compute-10.phl.internal [10.202.2.50])
-	by mailfout.phl.internal (Postfix) with ESMTP id 397861380258;
-	Wed, 23 Oct 2024 12:25:17 -0400 (EDT)
-Received: from phl-imap-11 ([10.202.2.101])
-  by phl-compute-10.internal (MEProxy); Wed, 23 Oct 2024 12:25:17 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arndb.de; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm2; t=1729700717;
-	 x=1729787117; bh=ezYfh8vGbBGoL35ugyvD9i4flPvQdh7bUpgBPSQRYk4=; b=
-	UeHl3464JEn+yoSzXIvaxeQh6e0hcSBe5ww0Ds4gygXos/Ojhd05WqBiyYSXNIdg
-	XGu5wEktHYRy5weGkqVd1IeDtTFwKXtDDtgAPLDtMq9xCJdW8skfzQSW2fZCWzkX
-	uwBurbAo1qfO/hpPWUVzwutGqon5+6knnv0imhktmq7qmBuVP5q0RhLLIqY8ZwFX
-	Mgdaat5xTd/umnkoJdg/p9qsYUFcuSTcL9TUXHB56/2FfwbqE5lqIHMbIdXACGrc
-	v1o3lq3sJ9ivreuS4c5T37FnYcaFXit+Dm1K8EcfmLsyDkqlkeDToh8RQlMjrMm/
-	fxkW6G7+sX3o/VqoQ2sZxA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729700717; x=
-	1729787117; bh=ezYfh8vGbBGoL35ugyvD9i4flPvQdh7bUpgBPSQRYk4=; b=U
-	DSRgzmPXC0B22rx5tQfEA4tfrW3UPXPh07ArM8jXCUiEXFaQ4KBDMpA2l7or30Z6
-	z1SQK0RGWUN6SWPhM2auj7xvPr/+FpwG1urmkZETRx56g4jWaG9lr3+S74yZYGb/
-	wGnsMO8qwA6/UC4aqd+rRavmk86V2sW2VZcaqUEOmKbeArUKcEQWQoZVr+U/Q0q6
-	TDGq2LdauNNmSRUAnSvWbgF1CbGsK/2nd0T0HL9eIWv1tooJpgKgXuhxv11W+yV3
-	jXLXeNJ2FBnKg9PSZMGtEzYTMO6+wSO6LTqmKxL7o/ka1pitetlyDtGnf0n1gBVk
-	e4we+9lB0lV//8284X2ZQ==
-X-ME-Sender: <xms:bCMZZ6cgN86NZjlQ77gb_-7EQEj3WV3bermbUqFqBsR16TaydfTDgg>
-    <xme:bCMZZ0MNuYjpr2z43CfpbdMNe8-EgoUTHaEotzF_-D5CmZdsEtfQ0E1pYbej7qWV2
-    RjrBupl19GXR4MaRjg>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeijedgleelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtjeertdertddt
-    necuhfhrohhmpedftehrnhguuceuvghrghhmrghnnhdfuceorghrnhgusegrrhhnuggsrd
-    guvgeqnecuggftrfgrthhtvghrnhephfdthfdvtdefhedukeetgefggffhjeeggeetfefg
-    gfevudegudevledvkefhvdeinecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpe
-    hmrghilhhfrhhomheprghrnhgusegrrhhnuggsrdguvgdpnhgspghrtghpthhtohepudeh
-    pdhmohguvgepshhmthhpohhuthdprhgtphhtthhopegrihhshhifrghrhigrrdhttghvse
-    grrhhmrdgtohhmpdhrtghpthhtoheptggrthgrlhhinhdrmhgrrhhinhgrshesrghrmhdr
-    tghomhdprhgtphhtthhopehvihhntggvnhiiohdrfhhrrghstghinhhosegrrhhmrdgtoh
-    hmpdhrtghpthhtohepsghrohhonhhivgeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohep
-    rghlvgigrdgsvghnnhgvvgeslhhinhgrrhhordhorhhgpdhrtghpthhtoheprghnuggvrh
-    hsrdhrohigvghllheslhhinhgrrhhordhorhhgpdhrtghpthhtohepnhgrrhgvshhhrdhk
-    rghmsghojhhusehlihhnrghrohdrohhrghdprhgtphhtthhopehpvghtvghrrdhmrgihug
-    gvlhhlsehlihhnrghrohdrohhrghdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhn
-    ihigrdguvg
-X-ME-Proxy: <xmx:bCMZZ7gv2cOAzGtQ6izYwfARe9dQFEgcHUsD9NZzPHJ3PkK404tgAQ>
-    <xmx:bCMZZ38N3FZ4uEiq60yrwuxzICelSSESBSVHgH7gMObr6zjJ96fdQA>
-    <xmx:bCMZZ2udKX8GScfWKbHpPMRjTXUwjEReO1paH-uLugCkgT7vO5Rx2A>
-    <xmx:bCMZZ-HEsPGfk_cPUCvItTIBB2VdGuF8SQ6CnOQMI6fsGw-fW72mPg>
-    <xmx:bSMZZ2HyXyBrpdGtVf8NbxzkdUkyA2fOSW33YlwBMcMSwqQau3-neLsV>
-Feedback-ID: i56a14606:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id 4FF162220072; Wed, 23 Oct 2024 12:25:16 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729700737; c=relaxed/simple;
+	bh=77LpD4OV4E+Ga3+0yNWBek1q4fGhav7xENGbU0b1A14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Content-Type; b=uqWOmSfrlBE3jcXJAgjjd8bDVL6Ac5GT1VirdsEgYpRbIIQsXCqLVlM6gLDKyZ2ZkYcQh2V99JmbzFp7LPdf0P73Wr8TzxM96LSfXOrc3Avt6j0eebEQMyHQ+kxRm2/JCj4z/6lTXK4DyyORFqw8EIPkDq2Ry0YNZiBlOIf6+l0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bEIR1wcS; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso108538671fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:34 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linux-foundation.org; s=google; t=1729700733; x=1730305533; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0vyRJzq9SE6S3u0SzDMtXCUEzA5YutsiEsRxl1MT3JE=;
+        b=bEIR1wcSTquQKISZIiaEpXkOPzBGlf6sDXaMYI3VAgnQHO9HZqHUyMc7RVdMkL5ivn
+         PjC9iDOVlxRqSfk12Wj8MB60PNdLGB2UNEXkOWdIHPwaSzBA86rR5J3/EpBlFwnHUboS
+         vG/Y3R2s1iPxLkSihWSJdXncHfKTBoV5SBXEc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729700733; x=1730305533;
+        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0vyRJzq9SE6S3u0SzDMtXCUEzA5YutsiEsRxl1MT3JE=;
+        b=WylvqfXa9O2EsUNKBh4Kk3VNWOf9dicACeaslS2UwvFMa8GHF1Z3AsWQ53Rdi0G7gV
+         sxuYS+ZW3baehLMyXhWU+c4OI9usOI5GJQwYqq6YPwn5maWfM5AattK9wHFQZF7lsiTi
+         j9rx7cy70ImHz8HtDemar+sC30S0hHMTpz8wi8mZZpSdN1tvBAjb9qadfNTMMOcykstD
+         N1+5KN1lqVCJi+CuIbv4CD6yn4mNYmsS1GrF8dGiJ8u10fEW2qdELdzuFQhtZrpw/2Un
+         oCGXMiXCmsP6TYKriwRpnGl7DEIvmLnR32wG3U1xOVxPPzSg83L9w/Bq32IohyDbfunq
+         whoA==
+X-Forwarded-Encrypted: i=1; AJvYcCXTvK64kxfQkZqqQCS6vXFfUVnl3SC/3DQiiT1x5IlGoRWjtjHZtpCiYgw06ug1VVZm/Rzk3oPVuwXEdkg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxl8WaEsxtEXKcPGFr5+09T1HWcIUqAoewoH59c8+EO9TjdJbtP
+	8Ad9DkzULm/uGt4J5EbAZqXGoDpyivos3wGtpHCYNEbGkUIci2XUS8Na2G1QnjGHOB7R5m2jEoN
+	P
+X-Google-Smtp-Source: AGHT+IHicLYUw1CBDi+H2Yp3I3lJc61FHK0RMHus8PZ3gmblPVuiT/5MuWKe9rmoQmlO4UuaEqoKwQ==
+X-Received: by 2002:a05:6512:12d6:b0:52c:deb9:904b with SMTP id 2adb3069b0e04-53b1a39bbfamr3242764e87.38.1729700732794;
+        Wed, 23 Oct 2024 09:25:32 -0700 (PDT)
+Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b13cf24a0sm544204e87.273.2024.10.23.09.25.32
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 09:25:32 -0700 (PDT)
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso108538231fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXaeMbfOBhOoi25EC/CGgrUpFMNea3LP9GYf91OcNYHxd/rUcBg0ekfq4w0OUFwtx5Oa1+WMouLYOGbLLY=@vger.kernel.org
+X-Received: by 2002:a05:651c:221b:b0:2fb:3881:35d5 with SMTP id
+ 38308e7fff4ca-2fc9d38ab4dmr26516541fa.35.1729700731684; Wed, 23 Oct 2024
+ 09:25:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 23 Oct 2024 16:24:43 +0000
-From: "Arnd Bergmann" <arnd@arndb.de>
-To: "Naresh Kamboju" <naresh.kamboju@linaro.org>,
- "open list" <linux-kernel@vger.kernel.org>,
- "Linux ARM" <linux-arm-kernel@lists.infradead.org>,
- lkft-triage@lists.linaro.org,
- "Linux Regressions" <regressions@lists.linux.dev>, qemu-devel@nongnu.org
-Cc: "Mark Brown" <broonie@kernel.org>,
- "Catalin Marinas" <catalin.marinas@arm.com>,
- "Aishwarya TCV" <Aishwarya.TCV@arm.com>,
- "Peter Maydell" <peter.maydell@linaro.org>,
- =?UTF-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>,
- "Anders Roxell" <anders.roxell@linaro.org>,
- "Vincenzo Frascino" <vincenzo.frascino@arm.com>,
- "Thomas Gleixner" <tglx@linutronix.de>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>
-Message-Id: <4730e562-7d14-4f12-897a-e23783d094af@app.fastmail.com>
-In-Reply-To: 
- <CA+G9fYsMg0fA-jraEvC==0a-22J97o-uBmbLJt16_ZKBpOT8EQ@mail.gmail.com>
-References: 
- <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
- <CA+G9fYsMg0fA-jraEvC==0a-22J97o-uBmbLJt16_ZKBpOT8EQ@mail.gmail.com>
-Subject: Re: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
-Content-Type: text/plain
-Content-Transfer-Encoding: 7bit
+References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
+ <e67b7f6c682bddbea2fe8b2d87b8441e4d2ea6e6.1729628198.git.lorenzo.stoakes@oracle.com>
+ <3de53e7fmsql2t7byzoqonyt7e22bztucjcypykvqiystbalw3@2vwnvh7jcfed>
+In-Reply-To: <3de53e7fmsql2t7byzoqonyt7e22bztucjcypykvqiystbalw3@2vwnvh7jcfed>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Wed, 23 Oct 2024 09:25:13 -0700
+X-Gmail-Original-Message-ID: <CAHk-=whzj34fgGwK2+G3NkW7nNOkgiC28952Q+Yt+EVWEKaB3w@mail.gmail.com>
+Message-ID: <CAHk-=whzj34fgGwK2+G3NkW7nNOkgiC28952Q+Yt+EVWEKaB3w@mail.gmail.com>
+Subject: Re: [PATCH hotfix 6.12 3/8] mm: refactor map_deny_write_exec()
+To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
 
-On Sun, Oct 20, 2024, at 17:39, Naresh Kamboju wrote:
-> On Fri, 18 Oct 2024 at 12:35, Naresh Kamboju <naresh.kamboju@linaro.org> wrote:
->>
->> The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
->> The boot log is incomplete, and no kernel crash was detected.
->> However, the system did not proceed far enough to reach the login prompt.
->>
-
-> Anders bisected this boot regressions and found,
-> # first bad commit:
->   [efe8419ae78d65e83edc31aad74b605c12e7d60c]
->     vdso: Introduce vdso/page.h
+On Wed, 23 Oct 2024 at 07:30, Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
 >
-> We are investigating the reason for boot failure due to this commit.
+> Nit: somehow "new" is special in my editor.  Also, I'm too lazy to fix
+> my editor so I'll live with it.
 
-Anders and I did the analysis on this, the problem turned out
-to be the early_init_dt_add_memory_arch() function in
-drivers/of/fdt.c, which does bitwise operations on PAGE_MASK
-with a 'u64' instead of phys_addr_t:
+I think your editor might be in some "edit C++" mode, where "new" is a keyword.
 
-void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
-{
-        const u64 phys_offset = MIN_MEMBLOCK_ADDR;
- 
-        if (size < PAGE_SIZE - (base & ~PAGE_MASK)) {
-                pr_warn("Ignoring memory block 0x%llx - 0x%llx\n",
-                        base, base + size);
-                return;
-        }
+So it might be as simple as telling your editor that it's just C.
 
-        if (!PAGE_ALIGNED(base)) {
-                size -= PAGE_SIZE - (base & ~PAGE_MASK);
-                base = PAGE_ALIGN(base);
-        }
+Or your editor just doesn't know or care about the difference.
 
-On non-LPAE arm32, this broke the existing behavior for
-large 32-bit memory sizes. The obvious fix is to change
-back the PAGE_MASK definition for 32-bit arm to a signed
-number.
-
-mips32, ppc32 and hexagon had the same definition as
-well, so I think we should change at least those in order
-to restore the previous behavior in case they are affected
-by the same bug (or a different one).
-
-x86-32 and arc git flipped the other way by the patch,
-from unsigned to signed, when CONFIG_ARC_HAS_PAE40
-or CONFIG_X86_PAE are set. I think we should keep
-the 'signed' behavior as this was a bugfix by itself,
-but we may want to change arc and x86-32 with short
-phys_addr_t the same way for consistency.
-
-On csky, m68k, microblaze, nios2, openrisc, parisc32,
-riscv32, sh, sparc32, um and xtensa, we've always used
-the 'unsigned' PAGE_MASK, and there is no 64-bit
-phys_addr_t, so I would lean towards staying with
-'unsigned' in order to not introduce a regression.
-Alternatively we could choose to go with the 'signed'
-version on all 32-bit architectures unconditionally
-for consistency. Any preferences?
-
-      Arnd
+               Linus
 
