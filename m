@@ -1,210 +1,187 @@
-Return-Path: <linux-kernel+bounces-378296-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D81309ACDD1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:01:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27B1C9ACE0F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:06:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751C51F22637
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:01:02 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4420FB22618
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:06:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778941C689D;
-	Wed, 23 Oct 2024 14:52:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B41181C726D;
+	Wed, 23 Oct 2024 14:56:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIAPVZaB"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dNbHzR+D"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17041C5792;
-	Wed, 23 Oct 2024 14:52:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A50146018
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:56:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695145; cv=none; b=OJOxNnw74qgSFD4WjvHBFaj5LkW+Mnxlhm0SGLELWPmbmqKIQeOolgJ77z981JgQ3wkiRQC3wZ94aHSvJO7D87Sj0HP5CghQtCniwGWvNgEENvDr7ooHEH7vjJlLKoXXO/aTjdyHXYMczYSFwqLIsufIVHVtetpfGM1T+pR7ya0=
+	t=1729695410; cv=none; b=NSal0D66IVClPhC5UBKYeyFY23vcbvioaTk7lfXcgMPQRpyb+FxaZ+IOgh3EjZrdfyUed9so9ySLZYAeHZOOgCDXQInMI9ceXR6RlO6js1mUxHorwyAQx/V0TUF/XrhpqSyC9WgVLZugvD/f7vGFQNXs8r3YA9W6pg/AJC32DEI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695145; c=relaxed/simple;
-	bh=LUa/WnRwLe0ezlLUw6bOjDBGNmC3QbLtYUV/mVRUxTs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=KoSAlpVcwjVJFfDhlZP7QjXZQ/K/6mNjZgYFtjCgvOKZF5jesEYw25no2vfMsimipnn8WwrZz1OY03RDroCQ1/HjN3cWsw/uqDKbna/UY7lXClJG+5XzecboAGobYENlCKUQAi6TAJVPmbGHueJWmYJZ3K5kEEn4pM9e/4heYp8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIAPVZaB; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso61184875e9.1;
-        Wed, 23 Oct 2024 07:52:23 -0700 (PDT)
+	s=arc-20240116; t=1729695410; c=relaxed/simple;
+	bh=ptmZDvkwk1dlZZHF3sSEJb23B+Vm+jVnM2oEGeFa8n8=;
+	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
+	 To:Cc:Content-Type; b=thb8VXTrTzrWbGhnKkU5ytduZFuOiphkLbcSOs7zEN6eWxaEDyyVwVLnqEZhRbMp7XdnQ9CsFvBpTE5g4fgbyi0/ekNo1eMzBeN2IvLgqorlDKhQfVeDYee/kcJ6RkNAzv172B9bw+BZ+ftKRvRC7AJvXzc4Oib3UudcL/EWs8o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--jrife.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dNbHzR+D; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--jrife.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e315a5b199so118888137b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:56:48 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729695142; x=1730299942; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=fGAGjdzZ/U198pz7p43PfUzhBwFlaYTWYMQjDyByFEQ=;
-        b=CIAPVZaB4MBghj0NOhWFrEtHuu6gMe/K+9aOCwRvK/hiaCIIYvEhOwkWTeLvDOPMnT
-         2h90JgiOU0ZK+Id0pf+yoMoWyHw6U7KqcwAXbfUbPBf9Wow9kVFT9uHWABlqSQjPHG4r
-         UujhjpXDMEKIe8v8bhF2kyFpyDFj+vTm13JvORGqeoBGs+D2/V9uhludDQeNMCJagJas
-         y5kPSVK0d2vbTGWNd85+hIArnP24nzdoxpF8MhQ7hg7+I/fQpOO0zjvMned0B8pE3QK0
-         PA3d+nKtfJGey5ooYgwsKHUs76hwf8OfMDsKYVkfnjV5Vvr2XvjUp3hAXGG5/AmGM3hy
-         kMyg==
+        d=google.com; s=20230601; t=1729695407; x=1730300207; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=IgaswDr9377UgJkF9RUwn/JbwOmuFoGsuXW/UAuTh4A=;
+        b=dNbHzR+DngKSNyMpj7YNlmhXoNiSfUeDYL6aDh/ih94KOrAqoI79HRtofcBE4d5x2m
+         VzdOpUc4dlFvn6O0oefegeJ+QHp1VCevxjpqb8/b1cnjnTKN5dYYeljRh2JSro0tdhsx
+         t6lyfIfxp16izAoY3h62rFLC5App08y3zSYRl513JU4FKXa9/Hy6Pv03fHM6PBbkDwTN
+         eny1Vfv+lqNJ764x0a/yw+nbcfecRYgr3u5CyDJgxCZ0YuDgcH4tMIZjijALfOfm0uzL
+         W6j0lYbyOGQjvpZgp4Vr1ahl0Au8+IFT0SlKUqz17+PCXLuT59+H0PE8TRLWjd7pn2BC
+         qY2g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729695142; x=1730299942;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=fGAGjdzZ/U198pz7p43PfUzhBwFlaYTWYMQjDyByFEQ=;
-        b=AR6A3MoRHGoNXJyyiSUdy36qUzArFrDsL5FLPkyYxBbz92BSE8wrgz59D/Wm7CcUQe
-         uXuGBrgaWunwyeK0KHOaJ7bFKuKn6UVbjbTdzmcdsuqttsCm/P5cpd6L+BPhHDTpq46J
-         Jp09ZcGPrl2JKL6yIKNVJ85Z9cf2wWcaFByIYVwkFm7Wy7zGOZ9XvE0eQ3SdYtnXt2+p
-         quz42q7MAQSgOTQQNNCWhKdEbnWtVOWr1/gMSSOcXn815NZ7WTGoGZzWKx8U4cMWDRzq
-         BDoZTgb0AQyhelwFbR5Q6mbMK+NJjAswLFt9ZrNy+hhqgjoJSvGP6R6w/aj+fv9nRHYK
-         oKuQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWIjCgdEcjTS1HMirExy+RSBws5Z3p2uvOonR6Q3nw4gNsM81B71yaiSndTkdWUC4sScJkTdFez1KGD7zaB@vger.kernel.org, AJvYcCXQqrvM8fBeAcfPEPpQ6JPJD+Odfl9fp+JM1va1EFghUHQSfY/q4fJb10OzVcEdOp7PhS50Pd6wd1Gt@vger.kernel.org, AJvYcCXfeJtVfVvc+w8zFtlrINp7w++L6blDk6SWM1sKbGN9DzFf7JZbkmuhFgFf7wJZwRdh1IyJxG9cjyhH@vger.kernel.org
-X-Gm-Message-State: AOJu0YwvmcnMjqeG0vD9kWR3yiMm8Y9DCJHZUGPNufwATvDDahtsoKGi
-	VmYNs4Jlq3bPBnEZRB8cCM2B8EbV95PhCC3GiV9kQlBSv1h4pOEK
-X-Google-Smtp-Source: AGHT+IF10CszRtIgcGNvdMQcPgv3q4B9GxJoMvj0JW3NenFCOAFbXNLRguOJAe8omCZXeBYFl+hzGw==
-X-Received: by 2002:a05:600c:1d9b:b0:426:5e91:3920 with SMTP id 5b1f17b1804b1-4318419d392mr26014755e9.29.1729695141813;
-        Wed, 23 Oct 2024 07:52:21 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a614d0sm9097434f8f.63.2024.10.23.07.52.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 07:52:21 -0700 (PDT)
-Message-ID: <7a4f8c718029c8c57596d950495fcf28562c6e78.camel@gmail.com>
-Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: Conor Dooley <conor@kernel.org>
-Cc: Angelo Dureghello <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
-	 <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
- Hennerich	 <Michael.Hennerich@analog.com>, Jonathan Cameron
- <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Olivier Moysan
- <olivier.moysan@foss.st.com>, 	linux-iio@vger.kernel.org,
- devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
- dlechner@baylibre.com, Mark Brown	 <broonie@kernel.org>
-Date: Wed, 23 Oct 2024 16:56:39 +0200
-In-Reply-To: <20241022-napped-labored-6956ce18d986@spud>
-References: 
-	<20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
-	 <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
-	 <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
-	 <20241022-napped-labored-6956ce18d986@spud>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+        d=1e100.net; s=20230601; t=1729695407; x=1730300207;
+        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IgaswDr9377UgJkF9RUwn/JbwOmuFoGsuXW/UAuTh4A=;
+        b=IiKsg1HLUoAt7seBu5krg4ReYvQavH4jfNE0K0hkcimeEAJ4VKCCRBaOOvaVbqWf8B
+         LKAw/j+Poonj2Xun+S4aYtSxFKZnwYRGxk4UEKnvZLl4naBy8AGMv+zMIXGHnLGXKA56
+         4fRHMGaHD21E8Azk6Fhob4/558diUAK06RiG3z5XOnkQn4F6llN4u4VcWBi0wmvfePbu
+         Ru2gNUXePyYolc6dgwhZa1nZQjLZOjDXcqRa+6ZJs/KaOzI9j3cRHXriI9hbNWHKrgQQ
+         z0AzK9tjaTyK485+HAgfg0vtUxOXkjvmM00D9ufm8QKnbg2rEgUMRQ3AhsEd6qqjBqDr
+         J9KA==
+X-Forwarded-Encrypted: i=1; AJvYcCXMTYqmQtiJ5rG3XLfgoDKvm9aLmtxthgCrCk9/0MBWM7pw7Tj+Q5QEB+iCaVuqPBrs+5DYBc2ki2B9XHs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIYblslLyFE5MLLFsrGlFo5+BaduJdPwFMAKnXskIj1GNX0kBq
+	NXAI1OT7FM+gPECWWG7U4uccShkO9l6YG6mRJ9qqJKSosWtgseUeg7cKgk4FJeK4evRa/3LGnQ=
+	=
+X-Google-Smtp-Source: AGHT+IG2dlK1Ev/Vsqg0a9+y2Ar7sngcF/YsF2Rx55eSC0VVg/FSve6nPnKDv6D/OGPYOVXh0bDBCSBe6g==
+X-Received: from jrife-kvm.c.googlers.com ([fda3:e722:ac3:cc00:7f:e700:c0a8:63c1])
+ (user=jrife job=sendgmr) by 2002:a05:690c:4b90:b0:6e3:2693:ca6b with SMTP id
+ 00721157ae682-6e7f0db7b71mr1156627b3.2.1729695407531; Wed, 23 Oct 2024
+ 07:56:47 -0700 (PDT)
+Date: Wed, 23 Oct 2024 14:56:40 +0000
+In-Reply-To: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
+Mime-Version: 1.0
+References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241023145640.1499722-1-jrife@google.com>
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+From: Jordan Rife <jrife@google.com>
+To: jrife@google.com
+Cc: acme@kernel.org, alexander.shishkin@linux.intel.com, 
+	andrii.nakryiko@gmail.com, ast@kernel.org, bpf@vger.kernel.org, 
+	joel@joelfernandes.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com, 
+	mathieu.desnoyers@efficios.com, mhiramat@kernel.org, mingo@redhat.com, 
+	mjeanson@efficios.com, namhyung@kernel.org, paulmck@kernel.org, 
+	peterz@infradead.org, rostedt@goodmis.org, 
+	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, yhs@fb.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-10-22 at 18:21 +0100, Conor Dooley wrote:
-> On Tue, Oct 22, 2024 at 02:36:44PM +0200, Nuno S=C3=A1 wrote:
-> > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
-> > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > >=20
-> > > Extend AXI-DAC backend with new features required to interface
-> > > to the ad3552r DAC. Mainly, a new compatible string is added to
-> > > support the ad3552r-axi DAC IP, very similar to the generic DAC
-> > > IP but with some customizations to work with the ad3552r.
-> > >=20
-> > > Then, a series of generic functions has been added to match with
-> > > ad3552r needs. Function names has been kept generic as much as
-> > > possible, to allow re-utilization from other frontend drivers.
-> > >=20
-> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > ---
-> >=20
-> > Looks mostly good,
-> >=20
-> > one minor thing that (I think) could be improved
-> > > =C2=A0drivers/iio/dac/adi-axi-dac.c | 269
-> > > +++++++++++++++++++++++++++++++++++++++--
-> > > -
-> > > =C2=A01 file changed, 255 insertions(+), 14 deletions(-)
-> > >=20
-> > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-=
-dac.c
-> > > index 04193a98616e..9d6809fe7a67 100644
-> > > --- a/drivers/iio/dac/adi-axi-dac.c
-> > > +++ b/drivers/iio/dac/adi-axi-dac.c
-> > > @@ -46,9 +46,28 @@
-> > > =C2=A0#define AXI_DAC_CNTRL_1_REG			0x0044
-> > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_CNTRL_1_SYNC			BIT(0)
-> > > =C2=A0#define AXI_DAC_CNTRL_2_REG			0x0048
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
-> > > =C2=A0#define=C2=A0=C2=A0 ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
-> > > +#define AXI_DAC_STATUS_1_REG			0x0054
-> > > +#define AXI_DAC_STATUS_2_REG			0x0058
-> > > =C2=A0#define AXI_DAC_DRP_STATUS_REG			0x0074
-> > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
-> > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
-> > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
-> > > +#define AXI_DAC_UI_STATUS_REG			0x0088
-> > > +#define=C2=A0=C2=A0 AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
-> > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
-> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
-> >=20
-> > ...
-> > =C2=A0
-> > > =C2=A0static int axi_dac_probe(struct platform_device *pdev)
-> > > =C2=A0{
-> > > -	const unsigned int *expected_ver;
-> > > =C2=A0	struct axi_dac_state *st;
-> > > =C2=A0	void __iomem *base;
-> > > =C2=A0	unsigned int ver;
-> > > @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_device
-> > > *pdev)
-> > > =C2=A0	if (!st)
-> > > =C2=A0		return -ENOMEM;
-> > > =C2=A0
-> > > -	expected_ver =3D device_get_match_data(&pdev->dev);
-> > > -	if (!expected_ver)
-> > > +	st->info =3D device_get_match_data(&pdev->dev);
-> > > +	if (!st->info)
-> > > =C2=A0		return -ENODEV;
-> > > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
-> > > +	if (IS_ERR(clk)) {
-> >=20
-> > If clock-names is not given, then we'll get -EINVAL. Hence we could ass=
-ume
-> > that:
-> >=20
-> > 		if (PTR_ERR(clk) !=3D -EINVAL)
-> > 			return dev_err_probe();
->=20
-> clock-names isn't a required property, but the driver code effectively
-> makes it one. Doesn't this lookup need to be by index, unless
-> clock-names is made required for this variant?
+Mathieu's patch alone does not seem to be enough to prevent the
+use-after-free issue reported by syzbot.
 
-Likely I'm missing something but the driver is not making clock-names manda=
-tory,
-is it?
+Link: https://lore.kernel.org/bpf/67121037.050a0220.10f4f4.000f.GAE@google.com/T/#u
 
-At least for the s_axi_aclk, we first try to get it using clock-names and i=
-f
-that fails we backup to what we're doing which is passing NULL (which
-effectively get's the first clock in the array).
+I reran the repro script with his patch applied to my tree and was
+still able to get the same KASAN crash to occur.
 
-The reasoning is that on the generic variant we only need the AXI clk and w=
-e
-can't now enforce clock-names on it. But to keep things flexible, this was
-purposed.
+In this case, when bpf_link_free is invoked it kicks off three instances
+of call_rcu*.
 
-Another alternative that might have more lines of code (but simpler to
-understand the intent) is to have (for example) a callback get_clocks funct=
-ion
-that we set depending on the variant. And this also makes me realize that w=
-e
-could improve the bindings. I mean, for the generic dac variant we do not n=
-eed
-clock-names but for this new variant, clock-names is mandatory and I'm fair=
-ly
-sure we can express that in the bindings.
+bpf_link_free()
+  ops->release()
+     bpf_raw_tp_link_release()
+       bpf_probe_unregister()
+         tracepoint_probe_unregister()
+           tracepoint_remove_func()
+             release_probes()
+               call_rcu()               [1]
+  bpf_prog_put()
+    __bpf_prog_put()
+      bpf_prog_put_deferred()
+        __bpf_prog_put_noref()
+           call_rcu()                   [2]
+  call_rcu()                            [3]
 
-- Nuno S=C3=A1
+With Mathieu's patch, [1] is chained with call_rcu_tasks_trace()
+making the grace period suffiently long to safely free the probe itself.
+The callback for [2] and [3] may be invoked before the
+call_rcu_tasks_trace() grace period has elapsed leading to the link or
+program itself being freed while still in use. I was able to prevent
+any crashes with the patch below which also chains
+call_rcu_tasks_trace() and call_rcu() at [2] and [3].
+
+---
+ kernel/bpf/syscall.c | 24 ++++++++++--------------
+ 1 file changed, 10 insertions(+), 14 deletions(-)
+
+diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+index 59de664e580d..5290eccb465e 100644
+--- a/kernel/bpf/syscall.c
++++ b/kernel/bpf/syscall.c
+@@ -2200,6 +2200,14 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
+ 	bpf_prog_free(aux->prog);
+ }
+ 
++static void __bpf_prog_put_tasks_trace_rcu(struct rcu_head *rcu)
++{
++	if (rcu_trace_implies_rcu_gp())
++		__bpf_prog_put_rcu(rcu);
++	else
++		call_rcu(rcu, __bpf_prog_put_rcu);
++}
++
+ static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
+ {
+ 	bpf_prog_kallsyms_del_all(prog);
+@@ -2212,10 +2220,7 @@ static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
+ 		btf_put(prog->aux->attach_btf);
+ 
+ 	if (deferred) {
+-		if (prog->sleepable)
+-			call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_rcu);
+-		else
+-			call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
++		call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_tasks_trace_rcu);
+ 	} else {
+ 		__bpf_prog_put_rcu(&prog->aux->rcu);
+ 	}
+@@ -2996,24 +3001,15 @@ static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)
+ static void bpf_link_free(struct bpf_link *link)
+ {
+ 	const struct bpf_link_ops *ops = link->ops;
+-	bool sleepable = false;
+ 
+ 	bpf_link_free_id(link->id);
+ 	if (link->prog) {
+-		sleepable = link->prog->sleepable;
+ 		/* detach BPF program, clean up used resources */
+ 		ops->release(link);
+ 		bpf_prog_put(link->prog);
+ 	}
+ 	if (ops->dealloc_deferred) {
+-		/* schedule BPF link deallocation; if underlying BPF program
+-		 * is sleepable, we need to first wait for RCU tasks trace
+-		 * sync, then go through "classic" RCU grace period
+-		 */
+-		if (sleepable)
+-			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+-		else
+-			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
++		call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+ 	} else if (ops->dealloc)
+ 		ops->dealloc(link);
+ }
+-- 
+2.47.0.105.g07ac214952-goog
+
 
