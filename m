@@ -1,165 +1,154 @@
-Return-Path: <linux-kernel+bounces-377465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D3669ABF35
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:49:06 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ECBB39ABF39
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:49:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 84E971F24BA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:49:05 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 990241F23609
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:49:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C530614E2E6;
-	Wed, 23 Oct 2024 06:48:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB15114B956;
+	Wed, 23 Oct 2024 06:48:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uJtx+TAe"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="sD5AhOPT"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1493014659D;
-	Wed, 23 Oct 2024 06:48:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E54D014A62A;
+	Wed, 23 Oct 2024 06:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666095; cv=none; b=fR/oKQnPzJDUwmYf2o3ZrGt6dmW8mH8UhXwFyfVQdoa4FDpgly71DmFLtTd93h16+ClUrZvEyfPv3JS2HkQS5PhDz0C54wwbq0BEZRf84Mu5fOcqKEBiT3u5AQnMW8o1WYrvk17BHyX/3pHbDrN4i2+tgXGXDqandhhQVPFYobA=
+	t=1729666128; cv=none; b=me5I1nXSkzGwyvRThipiNgNpL46Nrbw3DuOjFthM+qHhWBvTAGsNr5RLjpJV6SU5hbXPLu5YkdCVVtcjK8V8k4Z71vZx33pNyfZLrLiMFJzfJvuErRw0cM5VNEyH3oibYiuXLR2OSa8h9DjZCkhQcVPzT2cSxmPxvPLu5G/rS7Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666095; c=relaxed/simple;
-	bh=WpTnFxz1chkAQNFeW1luDVAAg4aD5B5WCT5CGZNetPY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=D8jrF6gAh393m5n6jnIXGu1Hzggh0JX4wNlu7I5ZCZmPvON0HeZKhmLTN9c7W3PwYNHt24z7ny7wgsy6yyjxFwjcGKuRSrga8u09BGjTBCHA0af9Zt8g7Yw/w28mcD6btBepoe0QK2bdzEbwV+zutHuZxL8Wdd3Yy9FawcgkpgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uJtx+TAe; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3B33C4CEC6;
-	Wed, 23 Oct 2024 06:48:09 +0000 (UTC)
+	s=arc-20240116; t=1729666128; c=relaxed/simple;
+	bh=kYoU1eS7DH5zpPgw6YnpnIh/xXKRa9ty0/rXTdqSfR4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CagcJAdxEwSmF+xJPBj9QyCvdo1ysO+nk/q9Ec4flhlod9hstWIHJmsV749IuSkoyaxDzNh6O/lPTlpXiRSb9OPAVL/mN+A5L5bV1cOUTvzvyea/eHt9KQ4Tc5YV2rRmwkLOinrYC9nREqaLpJ8feQ9w1DriAEh0Ck+KyfDuDOI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=sD5AhOPT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C5178C4CEF0;
+	Wed, 23 Oct 2024 06:48:47 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729666094;
-	bh=WpTnFxz1chkAQNFeW1luDVAAg4aD5B5WCT5CGZNetPY=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=uJtx+TAej8qLG0kTz//Xf3wrppf92/UOauayg55vRlVOKuAVIazebHTCBMjkIGuwK
-	 lHjm7kK7vzu/1Pn/MNMshIooc2V/HmQjiiLtlt0+cF2t8PIUx/zhKzMkyMR4MBwUtX
-	 CB/MklEFeOEt2x55FrcCQbneDTuV7/aF/eZSShmWrmX4cwwnLZ6xtvvkOY8q9imKnA
-	 H62LO1twXIrTsMI2CeA0c+wpwTBtUWC3f0Pjse9FbO7MsRTPQ9wStVyl2tTYd2iXYQ
-	 we6NtA3fUalFm6GZ1uu2LoM4uPU2ZfAP62H5y32p0U5bF8UGOFFZ4XC2ssPPq6DCm9
-	 r/fAn5TbKZfsw==
-Message-ID: <83c91325-9044-484c-8efa-819746c6ae03@kernel.org>
-Date: Wed, 23 Oct 2024 08:48:07 +0200
+	s=k20201202; t=1729666127;
+	bh=kYoU1eS7DH5zpPgw6YnpnIh/xXKRa9ty0/rXTdqSfR4=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=sD5AhOPTNRwGoWZCK7a3K6NZlg7XmKTizThfvUnZkotQpjpP15ICyzwQjkK55+ejD
+	 P23o6ZX7S3AQFbndAu5P3lDmxBgNx2y7MoZ9BtN42f+1+KwOJc4oV7HBc+2VfYFfPX
+	 UxWNHWNF/6CinCOGke7UzAEkG1eaFHv78o1MgOIlKJZdBVwy6GYK+FleyPageTITM0
+	 Zw/yNAdjXvbdcAA+WtED6nQz/QLG7/l2p3WRnvNgUEl/4IiArqprJRbdg+NcCNYlqs
+	 LaZY7Ie5PqnqoOYzZgu+/J00/WMVY6Yya9uiJc8EFK5p6zsuCXUaqjgqdHBtCxR+sW
+	 ns8cp48MuUKLw==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so6951864e87.0;
+        Tue, 22 Oct 2024 23:48:47 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWQ5ZLwGU+ieUhUda9/mbtVD4UlYOWy/KR+rm8Nao6N8waFudQrdfvfVnvo7ELg21r+naxa6XavRlmooZE1@vger.kernel.org, AJvYcCWrQw0jrryizk2kwtIGfbNpRORgsZsTb+uhDcSIrnpgzuMjmtXCFj+zEiBZbh79Vi1zpJ7cOMC0Co2p@vger.kernel.org, AJvYcCX8uLUSfIrvYd9NrL+hpYwAdQPm2Ke0boVcLTlBWQCuVSOFzqhb4bJFdk2t856km+fU79D0V9/iOfL3@vger.kernel.org, AJvYcCXWYdnll3li8q76K/IFKk5m7Z3niFf7iQjz59cl9a3BBpWjSFSgdsXTGI2MH1CPBp8NnLCTALywk+cwd8MY@vger.kernel.org, AJvYcCXuQ0gczLmEl85qbTRumKegPYNsaT/IioIJC9F4EX14ANcFoE+SWd1GSYQYA0BXVffB0/29SaivLTa1@vger.kernel.org
+X-Gm-Message-State: AOJu0YwmTPrX71K7abpdXR9+yh3reS3G9Tolp51yMQ0GgCoKRHLLKXTx
+	EW1A2ECCbmQKkBa8Zu+Z0wTskVbFT1cxXjTA3HfPJnQHR5wChLdpEo2+2lW6WpPMpg9DfiR0CX3
+	gVvu0yGxLnLkgkJBN5YqPK8dIhfc=
+X-Google-Smtp-Source: AGHT+IHdLm9VEq1+63pkrH8mvjYT/uIVSs925aHw/8k3D4K+tqs7TqGU6Kx3vXCa/TmQKTFwzjFzUPMcGvaKqm9PY2w=
+X-Received: by 2002:a05:6512:239d:b0:539:e873:6d7 with SMTP id
+ 2adb3069b0e04-53b1a30c2ecmr674708e87.1.1729666126389; Tue, 22 Oct 2024
+ 23:48:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
- property for QCN9274
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
- <b42da7f0-2034-467b-ab17-fb13ef7800c4@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <b42da7f0-2034-467b-ab17-fb13ef7800c4@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-4-xur@google.com>
+ <CAK7LNARqnhZuDf75_juBtdK0GV8jL_aDjnuyU=-8zjdCZetF1g@mail.gmail.com> <CAF1bQ=S1Hv=fJxk38dYkRTAXWQO_4W8QLTfbNRbihg8UvUKvGQ@mail.gmail.com>
+In-Reply-To: <CAF1bQ=S1Hv=fJxk38dYkRTAXWQO_4W8QLTfbNRbihg8UvUKvGQ@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 23 Oct 2024 15:48:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAS9HtgL=sDn25BeCxSTz6Hg1x+cYbCe54oxy74S4y2Ogw@mail.gmail.com>
+Message-ID: <CAK7LNAS9HtgL=sDn25BeCxSTz6Hg1x+cYbCe54oxy74S4y2Ogw@mail.gmail.com>
+Subject: Re: [PATCH v4 3/6] Change the symbols order when --ffuntion-sections
+ is enabled
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/10/2024 08:38, Krzysztof Kozlowski wrote:
-> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
->> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
->> It is used for the exchange of specific control information across
->> radios based on the doorbell mechanism. This WSI connection is
->> essential to exchange control information among these devices
->>
->> Hence, describe WSI interface supported in QCN9274 with the following
->> properties:
->>
->>  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
->>    connection. All the ath12k devices connected to same WSI connection
->>    have the same wsi-group-id.
->>
->>  - qcom,wsi-index: It represents the identifier assigned to ath12k
->>    device in the order of the WSI connection.
->>
->>  - qcom,wsi-num-devices: Number of devices connected through WSI in
->>    the same group ID.
-> 
-> You should have separate binding.
-> 
->>
->> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
->> ---
->>  .../bindings/net/wireless/qcom,ath12k.yaml    | 61 +++++++++++++++++++
->>  1 file changed, 61 insertions(+)
->>
->> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
->> index ecf38af747f7..6c8f97865075 100644
->> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
->> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
->> @@ -19,6 +19,7 @@ properties:
->>    compatible:
->>      enum:
->>        - pci17cb,1107  # WCN7850
->> +      - pci17cb,1109  # QCN9274
->>  
->>    reg:
->>      maxItems: 1
->> @@ -50,6 +51,41 @@ properties:
->>    vddpcie1p8-supply:
->>      description: VDD_PCIE_1P8 supply regulator handle
->>  
->> +  wsi:
->> +    type: object
+On Tue, Oct 22, 2024 at 8:43=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+>
+> On Sun, Oct 20, 2024 at 7:15=E2=80=AFPM Masahiro Yamada <masahiroy@kernel=
+.org> wrote:
+> >
+> > On Tue, Oct 15, 2024 at 6:33=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+> > >
+> > > When the -ffunction-sections compiler option is enabled, each functio=
+n
+> > > is placed in a separate section named .text.function_name rather than
+> > > putting all functions in a single .text section.
+> > >
+> > > However, using -function-sections can cause problems with the
+> > > linker script. The comments included in include/asm-generic/vmlinux.l=
+ds.h
+> > > note these issues.:
+> > >   =E2=80=9CTEXT_MAIN here will match .text.fixup and .text.unlikely i=
+f dead
+> > >    code elimination is enabled, so these sections should be converted
+> > >    to use ".." first.=E2=80=9D
+> > >
+> > > It is unclear whether there is a straightforward method for convertin=
+g
+> > > a suffix to "..".
+> >
+> >
+> >
+> > Why not for ".text.fixup"?
+> >
+> > $ git grep --name-only '\.text\.fixup' | xargs sed -i
+> > 's/\.text\.fixup/.text..fixup/g'
+> >
+>
+> I did not move .text.fixup because it currently groups together with TEXT=
+_MAIN.
 
-Plus this entire wsi has to be dropped - it's useless. No bus here.
+OK. Then, .text.fixup is not a problem.
 
-Best regards,
-Krzysztof
 
+
+> >
+> > Why did you do this conditionally?
+> >
+> > You are making this even more unmaintainable.
+>
+> Again, we don't want to change the default build.
+>
+> If you think the change can apply to the default build, we would be
+> happy to remove the condition.
+
+
+I believe this should be done unconditionally.
+
+If you are concerned about changing the default,
+I am concerned about changing it under any condition.
+
+We should avoid maintaining two section layouts.
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
