@@ -1,104 +1,129 @@
-Return-Path: <linux-kernel+bounces-378767-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378768-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 851D19AD541
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:56:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 052199AD543
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:59:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40E89282CB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:56:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08421C20F26
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:59:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 202701E0B6F;
-	Wed, 23 Oct 2024 19:56:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88571E0DFC;
+	Wed, 23 Oct 2024 19:59:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="gA2paiJC"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGKLw5Mi"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980D91DB344
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16A81DB344;
+	Wed, 23 Oct 2024 19:59:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729713365; cv=none; b=fgYwwvGbgkmfCWG74VjjbaOfzUoCT6TJ24crb84wF8uRsls+6C0j1AXlrlJfTHk0OLNW5nruZ9BPplq0pvlAd8t2DrQ4/Jt2K96TT27ddB2d5AfQlz6XT2JMpCF5YSh4D3RE5olRhIHKDltFfN3p7GLHEP20QVEqFiXqyUIjCF8=
+	t=1729713561; cv=none; b=pwfRX/XjuXvEm4yM5cpr1ZClstc2ImsNIVaxypG7Ws1+jr74VdFMTVxn/4jWU/XSFfeEnx/fPxZKR+vOl8P3kpued7KvNhqPQBb7iu4y4IKELSDMbmH9yqOzfa5N52ENOSpYf4mpOUjQW0gje/geMGT8/f0phJmrg/5R9OMpgKs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729713365; c=relaxed/simple;
-	bh=2eGHmJWpTtKq2UCn19+DLfNCWbbeEMvh4tEJO3QfZAo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cTRc+xqQR/XguFfGkgnb6vwYUg6ehueAMqRtBoqBgP4vQdGe2RyQxP0RBgaZP6K7g2YMrRnCgCY5lsR/hdkWvVm6wwONwte3hpeL4c+xNfyoLEpSXVm15R5J4jbviJHHbieQYV8WOhbA2snANvqO/gYor9DZxrCtsPDE9cO3/7Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=gA2paiJC; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729713361;
-	bh=2eGHmJWpTtKq2UCn19+DLfNCWbbeEMvh4tEJO3QfZAo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gA2paiJC92mudSnR8YyTFNbcubgzip/VTq5MZfltH90ocje1KVVd4HME7Gttk1UXh
-	 N5s16qKAPZ9RHODI6CIaLeAb6E4p39arDDQDiT0bJdmxj+Jyej9lVp7pkikAli5BlQ
-	 OTUoCivLOmkKHc5MhJ7t0Zid4KeFP3QAvJ7CESHate0iHwdW/QCDkg20+V2B+897Tp
-	 VtqsTwBcer2k+qyrGl5UH4zAm3Z95QAMII86lxVWfuKtF8lbZzqJevUS4YB/HKspuC
-	 jwBFnSVjFdf5aD/yUO8DiYrsWyM84v8HEhSZoB3KFBTI8a0NR0zntmITfRMh5UEmBE
-	 9x/5laTCVAmlA==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 26AFC17E3703;
-	Wed, 23 Oct 2024 21:55:58 +0200 (CEST)
-Date: Wed, 23 Oct 2024 15:55:56 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: Saravana Kannan <saravanak@google.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
-	Jon Hunter <jonathanh@nvidia.com>, kernel-team@android.com,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	linux-mediatek@lists.infradead.org
-Subject: Re: [PATCH] drm: display: Set fwnode for aux bus devices
-Message-ID: <7a8dede1-ef29-4553-9412-de8e2f45b860@notapiano>
-References: <20241023191339.1491282-1-saravanak@google.com>
+	s=arc-20240116; t=1729713561; c=relaxed/simple;
+	bh=+I4mSgQGwe3ATxt7P/1IrYf44EOzS5wwDRtQixzVzns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CWPhfrEEUhoq3nfEgxHt7tGWrc6BTHrGKoeOnOfqiPcmmKn8kFy0JzKI/clFSX/vSpLDqciM7ozZC9DCca22Ta2q8KiKcsxxS/eFr8axlOi8+BKJtRS9aGBj7FmAkRXGGRgyWDlmFZI69ncK51UqN9+V6JUwMC/lKoXX0NKkIUs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGKLw5Mi; arc=none smtp.client-ip=209.85.221.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so64901f8f.3;
+        Wed, 23 Oct 2024 12:59:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729713558; x=1730318358; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2Prb/5U/d1UncvwAF9dWqt2zvDqK9JgjuoQ+MlopXH8=;
+        b=jGKLw5Mi041iMg88fpKpOw4SxhSBQVJ3NXpQRKY/Ec76qJkOA7pPwva/Jtvg06eobh
+         I9vliuUDZfcJ6vcGC/+DQYZ/N4Eoz4Se3mjl3D6BAcrKXOFHUF5cUngdqZFOk6FeAeAy
+         jATf+cZg+qRdN8nega2LdlA94mJnQ0tCdAqSTtyTP5JA2xzdn87IQNS/WM6Ei5/UUa5W
+         PjP94ElNmFldDAeGBIYmJ/ys62RRzO9cVM+Yb2bTa1filhOAX3OSwFk6BGemiYQ09dKo
+         yhNYJ+wCuo0pvRGl0IFD8UVwsJjvoQeh+GwSBjXd5wBZ/R89IY/AOyFzjE6z5QOb4Wk0
+         JhjA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729713558; x=1730318358;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2Prb/5U/d1UncvwAF9dWqt2zvDqK9JgjuoQ+MlopXH8=;
+        b=PvIguXZYztclgNhEYRv/LruY/6Mry72ncr2Qcx/TgaXQGpusEc4Vw7Fwdirk5IJ3md
+         gBofsX2nWhq4FNBpd4sg9jOsOsJPirJ2cQqJcNRNWPQIRHN6vJFTSMqiMl4VmX7YQHKU
+         a7WfTrQkOYIZmibnmXKWcnaMZzm4PmvcE5cCfYOw9VqZl1W+W0u4/d+CWwqNKtSTqpbZ
+         La9zbd4m93VaF0dcx0TLc0j9gP40/OgQMJFTvPB3hpWZJ6mRoI7lEJutnc/F1vgih/4+
+         I0D/W46xy5dDCYzqWL0YLOVNofFg1j8TYb981RGLoSRxK/q1+i8iGq5AA4PAR1P8c9Ah
+         /hgg==
+X-Forwarded-Encrypted: i=1; AJvYcCVC4r1rhQf+/jbcHPo2GgxxbSPMRl0cSNX93A6c2OGNfKEQJmmcsy/EmlVsm5HveW1kV78B3Q3ABCQ=@vger.kernel.org, AJvYcCWixtemE1rFyK9YkDXnXEfGfKEXX1bycXP6dFkE8rsxpGsHltGwcMgIgtDxD6SeAPGenMCpe6Dc1jJaqh5G@vger.kernel.org
+X-Gm-Message-State: AOJu0YzVi++27UwEEvY/mUB+xO4YJ/Q00TD2q9vGywOV/WSmXfEwKzah
+	H1FS1+y7voU2D9Rj5BhYvAG5oenDwlRgvmUw4CfPRaCBITgB1Sy8
+X-Google-Smtp-Source: AGHT+IEB5S3o5SgNjIEFoWd9QQ1pAsLV3sBqn3y25leZXJvbeZg5idbz4Svpm4ePBGHIc+ywtbIx0g==
+X-Received: by 2002:a5d:6acf:0:b0:37d:4517:acdb with SMTP id ffacd0b85a97d-37efcf06b85mr2192664f8f.20.1729713557762;
+        Wed, 23 Oct 2024 12:59:17 -0700 (PDT)
+Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b98asm9646228f8f.61.2024.10.23.12.59.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 12:59:17 -0700 (PDT)
+Message-ID: <71c0c05b-d731-48c2-8023-5c7cda3518a1@gmail.com>
+Date: Wed, 23 Oct 2024 20:59:16 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241023191339.1491282-1-saravanak@google.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mm: avoid VM_BUG_ON when try to map an anon large folio
+ to zero page.
+To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: baohua@kernel.org, cerasuolodomenico@gmail.com, corbet@lwn.net,
+ david@redhat.com, hannes@cmpxchg.org, kernel-team@meta.com,
+ linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, npache@redhat.com,
+ riel@surriel.com, roman.gushchin@linux.dev, rppt@kernel.org,
+ ryan.roberts@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
+ willy@infradead.org, yuzhao@google.com
+References: <20241023171236.1122535-1-ziy@nvidia.com>
+Content-Language: en-US
+From: Usama Arif <usamaarif642@gmail.com>
+In-Reply-To: <20241023171236.1122535-1-ziy@nvidia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 12:13:36PM -0700, Saravana Kannan wrote:
-> fwnode needs to be set for a device for fw_devlink to be able to
-> track/enforce its dependencies correctly. Without this, you'll see error
-> messages like this when the supplier has probed and tries to make sure
-> all its fwnode consumers are linked to it using device links:
+
+
+On 23/10/2024 18:12, Zi Yan wrote:
+> An anonymous large folio can be split into non order-0 folios,
+> try_to_map_unused_to_zeropage() should not VM_BUG_ON compound pages but
+> just return false. This fixes the crash when splitting anonymous large
+> folios to non order-0 folios.
 > 
-> mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) with backlight-lcd0
-> tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180) with 1-0008
+> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
+> Signed-off-by: Zi Yan <ziy@nvidia.com>
+> ---
+>  mm/migrate.c | 3 ++-
+>  1 file changed, 2 insertions(+), 1 deletion(-)
 > 
-> Reported-by: "Nícolas F. R. A. Prado" <nfraprado@collabora.com>
-> Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@notapiano/
-> Tested-by: "Nícolas F. R. A. Prado" <nfraprado@collabora.com>
-> Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> Closes: https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nvidia.com/
+> diff --git a/mm/migrate.c b/mm/migrate.c
+> index e950fd62607f..7ffdbe078aa7 100644
+> --- a/mm/migrate.c
+> +++ b/mm/migrate.c
+> @@ -206,7 +206,8 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
+>  	pte_t newpte;
+>  	void *addr;
+>  
+> -	VM_BUG_ON_PAGE(PageCompound(page), page);
+> +	if (PageCompound(page))
+> +		return false;
+>  	VM_BUG_ON_PAGE(!PageAnon(page), page);
+>  	VM_BUG_ON_PAGE(!PageLocked(page), page);
+>  	VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
 
-Hi Saravana,
+Thanks for fixing it!
 
-the issue faced by Jon needs the exact same change but in a different place,
-drivers/phy/tegra/xusb.c, which I posted at:
-https://lore.kernel.org/all/f979aff2-34f4-4f6d-bb9a-03a02afc4635@notapiano/
+Acked-by: Usama Arif <usamaarif642@gmail.com>
 
-So we need two separate patches, one for each issue. Feel free to add that to
-this series. (I could send it myself, but I think it makes more sense to keep
-them together)
 
-Thanks,
-Nícolas
 
