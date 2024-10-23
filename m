@@ -1,104 +1,251 @@
-Return-Path: <linux-kernel+bounces-378653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378656-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C19889AD3BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:14:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EDF639AD3C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:16:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D616E1C203A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:14:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7236D1F22CFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:16:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62141D0943;
-	Wed, 23 Oct 2024 18:14:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670801D220E;
+	Wed, 23 Oct 2024 18:16:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="eMujR2cv"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JZrZdHGQ"
+Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CB4E1CBE9A;
-	Wed, 23 Oct 2024 18:14:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CFB1D151F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:16:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729707265; cv=none; b=mBdJFcU8u12i1sI5Edie3JLO/vnvmKAOEOBQmTbTHKoqN3IhGhI73kH/VK9WzghILeqTbp4mdKZMEwAxajsjiEBZsNXSNykBPC8gv5Ta7xRnTuIDkPszpDz4QGWGOh0B0ODsJ8jxq/xHQvSDsL+wkGfbL/x6tzYH7VJ73DiuOYo=
+	t=1729707390; cv=none; b=bQi/zVGZVw+wTtg+60Wq8Z5i2I9Kr5EFoYrLxwn+udpkp6RLbO9/qo48chdWmBIw41Vw0NONPyufGEeM9dGSCb9bSkdFp0MT+F/LmTMLqHZ3QJMBTnh8QB9GlGpTWrZ0PvhJMyXRne120fzR//xw779EiRRJ6b0NKthc/8hKUjc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729707265; c=relaxed/simple;
-	bh=NkQ9rSmHASrg89hsQ5w9r7/BET67ZjInamDtzc0DG28=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FT75K1HvJnGeFCCTHGC9wQYF873adw2rsASVt5CKV7/k0AX9vsUdcWBH1ghwItxiVoiejqRs5k5ar4FHaIVZj+iS/NIr/IGsxxmiWSOY+QCmfyOqCkddD5omHGTiL0v3B6gE65/+FHC+uS4w8n2bBfwziS1ceBBjC3JzlVffztc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=eMujR2cv; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE848C4CEC6;
-	Wed, 23 Oct 2024 18:14:23 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729707264;
-	bh=NkQ9rSmHASrg89hsQ5w9r7/BET67ZjInamDtzc0DG28=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=eMujR2cvFI3sKuezOIzEMkmtbvxIUq6UuSbeV/rF+8sYtXdeszsbl/H5PeZY3cAOT
-	 KrigchGMsOsWfx8IYTvqg+RIg1jNfvlIPn0elj5RMPpl+EFDTOwy6t1NoPJou4yjJx
-	 3n1te5kDwlaYtoUGBNyX8wMbJ6Cyp/E/b1z6El/ijNXl0mhsLYu8jENCmoNZ/w/+p6
-	 sBwT36s1c496RAVICejT/ISCVI+zvou/wM/Tz68V2AT1Pcr4uOed3+1PGNMbjfMTPo
-	 qjV4fCQr00lU3YCgEx/ZQi7Yx8I4Q/uw7OA3UeWj4UKESC/qjjmpP/ae52jdpdjhOu
-	 nWlw1e6J2McMg==
-Date: Wed, 23 Oct 2024 19:14:20 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Thorsten Leemhuis <linux@leemhuis.info>
-Cc: Jonathan Corbet <corbet@lwn.net>, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] docs: bug-bisect: Add a note about bisecting -next
-Message-ID: <c58a5505-927d-4eba-8107-0e6ef18a2ca5@sirena.org.uk>
-References: <20241022-doc-bisect-next-v1-1-196c0a60d554@kernel.org>
- <7cca53ec-1893-45dd-832b-dc845d08474e@leemhuis.info>
+	s=arc-20240116; t=1729707390; c=relaxed/simple;
+	bh=6yO2piS0HmIIYQIVHC9faKpYYJZLj3Onaqd5+osUSpk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LS1ZrEyNuwmlidDnyEW6BDdOEma8X6w8/zeRkV3DkUcEZHBcjeROo5YyhKFIZTdEjs9A9Sb6DZ3R5Qr66+md2XvPLwHzPV3Zw4iKNvG2oOWVI6vw8pj6aU1BaxZ/O8uaB5Oi6AQSnfB9M/WdQLA6/rw50zSKZiq2drpwMtOHszI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JZrZdHGQ; arc=none smtp.client-ip=209.85.218.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0cee600aso2766b.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:16:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729707387; x=1730312187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SwCuA4yImROJvhJywn+YK8+uWaKia67TwRqA6S/vp1A=;
+        b=JZrZdHGQfONu9ylh5XqcctOHUnNzy+S5RFzMyvDWv7rVFuq++dA6jkTjiEwQbQLScH
+         w4lCx01YIEtpta+xm0qAEPwAiOaCJygzb+fny9Aiqp0RlLJeArGx9WbGQYms1KfqGGtE
+         n3IyNJxP7e1RzLKuTtFiL3i1/2oXoTnlq+G0pmQ52e5osw0CJU7osepXSK4tYFOoebJ7
+         NvUn0EMfLp7Rxxcrez6tLLwNQVxvVuvLEse3X6cmWY66zYP9NOUPwrefZVy5K3q/QXgU
+         okHJ7rxoZdQlUdGnPsL7t45Ci9r8+JUQI3YM9SQ7gl3O0VGk+rAuzBsn9O9DwxWSKfox
+         WXKg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729707387; x=1730312187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SwCuA4yImROJvhJywn+YK8+uWaKia67TwRqA6S/vp1A=;
+        b=XZeh6Bo73GLoRYFxSKgwgQ8+uBmMcrOG4MS9hJHOY3wKtsIkmdXB2fxCpbxCGDt95O
+         TAUeVcBjvYHnl0DBwGnhGLOs7Jo9SGGRb0d/F/WzGv8qYyLLYrcgeZbJ/iTsAMbtqcOK
+         2U4KUA2ClWUulDwyhKoZOHPbEACjbhePIf3A7nX9bxJK+Le+LRIAgY6sVhP1h/ptHkPc
+         VAt8ah3xYNJy+QSUjQgkbd/XynoD9o20vzY3NyZ9JShZH69A2XCP+0HGZJv6z5ieP0AZ
+         wP/FmNZtuRwttgMCmTcbeyW+f3HOe8z28jGczXkoCWPnfbN9uHVdCXq1F0Mi6x9VHJge
+         InVQ==
+X-Gm-Message-State: AOJu0Yy1+t2TgFaQFEOKDi3HvmpZcmrs91AesQfZ76B1ovDI+bNR1yaI
+	ReVaZbvuk1rUibBTql5ndr3ohgTcU4A9TwNYa5p6DeYbQv7M2MZH5SokFBOBZ8zXJZlqjb5WllH
+	mSgSSfuezZgXcEiVxFVIVK1McLFTk2QAlRbr+
+X-Google-Smtp-Source: AGHT+IEt31RESgiqF7AyjCPe7bxP29/f2XcyC3yNA9DrNXUcssSqGbRlVaHXeYozRvGDtobwboAYgwdDefa4Xch1ZNQ=
+X-Received: by 2002:a17:907:3e0a:b0:a9a:6ab:c93b with SMTP id
+ a640c23a62f3a-a9abf9b5984mr302142766b.62.1729707386560; Wed, 23 Oct 2024
+ 11:16:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="bWybS9e7LBuKh7iW"
-Content-Disposition: inline
-In-Reply-To: <7cca53ec-1893-45dd-832b-dc845d08474e@leemhuis.info>
-X-Cookie: A bachelor is an unaltared male.
-
-
---bWybS9e7LBuKh7iW
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
+ <CAJD7tkamDPn8LKTd-0praj+MMJ3cNVuF3R0ivqHCW=2vWBQ_Yw@mail.gmail.com> <SJ0PR11MB56784C5C542E84014525BA8CC94D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+In-Reply-To: <SJ0PR11MB56784C5C542E84014525BA8CC94D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Wed, 23 Oct 2024 11:15:50 -0700
+Message-ID: <CAJD7tkZ9VLNrwyeRQf0AXdQAG8vW_ZL_y0rfU77p5HMZnch=mw@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 00/13] zswap IAA compress batching
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
+	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
+	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
+	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "zanussi@kernel.org" <zanussi@kernel.org>, 
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
+	"jack@suse.cz" <jack@suse.cz>, "mcgrof@kernel.org" <mcgrof@kernel.org>, "kees@kernel.org" <kees@kernel.org>, 
+	"joel.granados@kernel.org" <joel.granados@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
+	"willy@infradead.org" <willy@infradead.org>, 
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 08:05:33PM +0200, Thorsten Leemhuis wrote:
+On Tue, Oct 22, 2024 at 7:53=E2=80=AFPM Sridhar, Kanchana P
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> Hi Yosry,
+>
+> > -----Original Message-----
+> > From: Yosry Ahmed <yosryahmed@google.com>
+> > Sent: Tuesday, October 22, 2024 5:57 PM
+> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
+> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
+> > hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
+> > usamaarif642@gmail.com; ryan.roberts@arm.com; Huang, Ying
+> > <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-foundation.org;
+> > linux-crypto@vger.kernel.org; herbert@gondor.apana.org.au;
+> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
+> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
+> > <kristen.c.accardi@intel.com>; zanussi@kernel.org; viro@zeniv.linux.org=
+.uk;
+> > brauner@kernel.org; jack@suse.cz; mcgrof@kernel.org; kees@kernel.org;
+> > joel.granados@kernel.org; bfoster@redhat.com; willy@infradead.org; linu=
+x-
+> > fsdevel@vger.kernel.org; Feghali, Wajdi K <wajdi.k.feghali@intel.com>; =
+Gopal,
+> > Vinodh <vinodh.gopal@intel.com>
+> > Subject: Re: [RFC PATCH v1 00/13] zswap IAA compress batching
+> >
+> > On Thu, Oct 17, 2024 at 11:41=E2=80=AFPM Kanchana P Sridhar
+> > <kanchana.p.sridhar@intel.com> wrote:
+> > >
+> > >
+> > > IAA Compression Batching:
+> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D
+> > >
+> > > This RFC patch-series introduces the use of the Intel Analytics Accel=
+erator
+> > > (IAA) for parallel compression of pages in a folio, and for batched r=
+eclaim
+> > > of hybrid any-order batches of folios in shrink_folio_list().
+> > >
+> > > The patch-series is organized as follows:
+> > >
+> > >  1) iaa_crypto driver enablers for batching: Relevant patches are tag=
+ged
+> > >     with "crypto:" in the subject:
+> > >
+> > >     a) async poll crypto_acomp interface without interrupts.
+> > >     b) crypto testmgr acomp poll support.
+> > >     c) Modifying the default sync_mode to "async" and disabling
+> > >        verify_compress by default, to facilitate users to run IAA eas=
+ily for
+> > >        comparison with software compressors.
+> > >     d) Changing the cpu-to-iaa mappings to more evenly balance cores =
+to IAA
+> > >        devices.
+> > >     e) Addition of a "global_wq" per IAA, which can be used as a glob=
+al
+> > >        resource for the socket. If the user configures 2WQs per IAA d=
+evice,
+> > >        the driver will distribute compress jobs from all cores on the
+> > >        socket to the "global_wqs" of all the IAA devices on that sock=
+et, in
+> > >        a round-robin manner. This can be used to improve compression
+> > >        throughput for workloads that see a lot of swapout activity.
+> > >
+> > >  2) Migrating zswap to use async poll in zswap_compress()/decompress(=
+).
+> > >  3) A centralized batch compression API that can be used by swap modu=
+les.
+> > >  4) IAA compress batching within large folio zswap stores.
+> > >  5) IAA compress batching of any-order hybrid folios in
+> > >     shrink_folio_list(). The newly added "sysctl vm.compress-batchsiz=
+e"
+> > >     parameter can be used to configure the number of folios in [1, 32=
+] to
+> > >     be reclaimed using compress batching.
+> >
+> > I am still digesting this series but I have some high level questions
+> > that I left on some patches. My intuition though is that we should
+> > drop (5) from the initial proposal as it's most controversial.
+> > Batching reclaim of unrelated folios through zswap *might* make sense,
+> > but it needs a broader conversation and it needs justification on its
+> > own merit, without the rest of the series.
+>
+> Thanks for these suggestions!  Sure, I can drop (5) from the initial patc=
+h-set.
+> Agree also, this needs a broader discussion.
+>
+> I believe the 4K folios usemem30 data in this patchset does bring across
+> the batching reclaim benefits to provide justification on its own merit. =
+I added
+> the data on batching reclaim with kernel compilation as part of the 4K fo=
+lios
+> experiments in the IAA decompression batching patch-series [1].
+> Listing it here as well. I will make sure to add this data in subsequent =
+revs.
+>
+> -------------------------------------------------------------------------=
+-
+>  Kernel compilation in tmpfs/allmodconfig, 2G max memory:
+>
+>  No large folios          mm-unstable-10-16-2024       shrink_folio_list(=
+)
+>                                                        batching of folios
+>  ------------------------------------------------------------------------=
+--
+>  zswap compressor         zstd       deflate-iaa       deflate-iaa
+>  vm.compress-batchsize     n/a               n/a                32
+>  vm.page-cluster             3                 3                 3
+>  ------------------------------------------------------------------------=
+--
+>  real_sec               783.87            761.69            747.32
+>  user_sec            15,750.07         15,716.69         15,728.39
+>  sys_sec              6,522.32          5,725.28          5,399.44
+>  Max_RSS_KB          1,872,640         1,870,848         1,874,432
+>
+>  zswpout            82,364,991        97,739,600       102,780,612
+>  zswpin             21,303,393        27,684,166        29,016,252
+>  pswpout                    13               222               213
+>  pswpin                     12               209               202
+>  pgmajfault         17,114,339        22,421,211        23,378,161
+>  swap_ra             4,596,035         5,840,082         6,231,646
+>  swap_ra_hit         2,903,249         3,682,444         3,940,420
+>  ------------------------------------------------------------------------=
+--
+>
+> The performance improvements seen does depend on compression batching in
+> the swap modules (zswap). The implementation in patch 12 in the compress
+> batching series sets up this zswap compression pipeline, that takes an ar=
+ray of
+> folios and processes them in batches of 8 pages compressed in parallel in=
+ hardware.
+> That being said, we do see latency improvements even with reclaim batchin=
+g
+> combined with zswap compress batching with zstd/lzo-rle/etc. I haven't do=
+ne a
+> lot of analysis of this, but I am guessing fewer calls from the swap laye=
+r
+> (swap_writepage()) into zswap could have something to do with this. If we=
+ believe
+> that batching can be the right thing to do even for the software compress=
+ors,
+> I can gather batching data with zstd for v2.
 
-> How about something like this instead:
->=20
-> ---
->=20
-> Bisecting linux-next
-> --------------------
->=20
-> If you face a problem that only happens in linux-next, bisect between
-> the linux-next branches "stable" and "master". Use these commands to
-> start the bisection for a linux-next tree you added as a remote called
-> "next"::
+Thanks for sharing the data. What I meant is, I think we should focus
+on supporting large folio compression batching for this series, and
+only present figures for this support to avoid confusion.
 
-This looks good to me.
-
-Reviewed-by: Mark Brown <broonie@kernel.org>
-
---bWybS9e7LBuKh7iW
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcZPPwACgkQJNaLcl1U
-h9DAlgf/XZQT958MZMZ+PCFVjdH59D7nnZS+Z+rECH8/24i3eJPCQ437PV+4/ron
-wDZGkcvUV0gau2BQx9hvlDW+NKBGRDW4XtooziE08MPcMbdM5bxRof8zhTkvqYBi
-Ce0p/FOtB9G8hIbdl5wAXVp//t47vT9RjIKXm/hqQX575fx2w6u32TVihONiOBJ9
-b6moCQwRPzggMSFQdkLoxq6jOw0JSnc68Wa/gii0/Yqaxk5CEoRiEqhP7lPxmC/+
-LmliTIhwPCyWq8SSgcuZTph62QCIBBT48TXHEq7bj+IOT3+M2YsVM9kogGWcBsQS
-+Er1EdMhESHPteiKusrKhWgo31P55Q==
-=CWrT
------END PGP SIGNATURE-----
-
---bWybS9e7LBuKh7iW--
+Once this lands, we can discuss support for batching the compression
+of different unrelated folios separately, as it spans areas beyond
+just zswap and will need broader discussion.
 
