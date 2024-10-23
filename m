@@ -1,285 +1,156 @@
-Return-Path: <linux-kernel+bounces-378441-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378442-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F309AD037
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:25:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1E929AD03B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:25:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 352D21F220C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:25:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id ADB65284E28
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:25:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2D61D9A58;
-	Wed, 23 Oct 2024 16:22:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC6D31CB321;
+	Wed, 23 Oct 2024 16:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="AhvSmuq7"
-Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FKtQ4dhe"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2AA41D90CC;
-	Wed, 23 Oct 2024 16:22:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 314091CB326
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:23:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700556; cv=none; b=rgjQPFWZDARvCfhD0vfr1GWYz9t0wuZqSc+4Pf3LPWD3XPQ4xqgx1D6y8YeVVZFt+u/E6mdHnp68cH7pE7PRc9DkberwHOzIH+F9XiohqTIJMv0+8SdRRfRatGh3dzBMIoh1F+Lr+9geI/0enp6cS9UNPXa8/bVFTXt+CKnz4HM=
+	t=1729700612; cv=none; b=Jw/xSrioU3DqKE4zKa/BycttwlrNixwBIl/eF99ehzu/9d8ekpSwsJHDE9gX5UAQ3z3aX63+ki/lzdRbTJ7Ym3Q3QQNoIA3oH3yX3dkrSMm95MC7PwpLfDl8YkceMMXXWMb9WtPU65xwQY/prIKm3YZe1qD+NJsMVXesswL7maU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700556; c=relaxed/simple;
-	bh=Te4yg3ZV4lTT9cs9cWvaKQczqtGU31G/DRDdwd/1In4=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
-	 In-Reply-To:Content-Type; b=NQG+tcotsAqxplQmgjGrxJ4A6CR3gPOuDQTBrlbY+QX8kYA41LHhnuEoz8VbT0bVap3Px+iK5XsKp262NYLvr67aThnEPCBakZN+9vN4gsfwpr0B3SFPS7Ddu/9STcWKjj1IPULzc+ZXGf89gNSLbTzPi8ZF+22oiMsdlz/K894=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=AhvSmuq7; arc=none smtp.client-ip=198.47.23.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from fllv0034.itg.ti.com ([10.64.40.246])
-	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49NGMNP1054578;
-	Wed, 23 Oct 2024 11:22:23 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729700543;
-	bh=ojY7KyNpFc3u3WTz5twB310lIHdojYzDPYGpuaiAcDM=;
-	h=Date:Subject:From:To:CC:References:In-Reply-To;
-	b=AhvSmuq7NfCgJ+5v+SJQNg8XACZ+8BG/hzzQBrecQuFLJWp4quGGpI11FjRz18g5P
-	 Ln6THL76YS8kODjkYcIjQUBJm0xiOYPy0YhwT9TPI8OZ+aCthlq/W5lwYlb16AOprS
-	 xwiVlUjhhDoCorhuJkEtBg8qzfge/n4rvQnlhY4o=
-Received: from DLEE105.ent.ti.com (dlee105.ent.ti.com [157.170.170.35])
-	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49NGMN65026010
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 23 Oct 2024 11:22:23 -0500
-Received: from DLEE102.ent.ti.com (157.170.170.32) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
- Oct 2024 11:22:22 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 23 Oct 2024 11:22:22 -0500
-Received: from [172.24.227.91] (psdkl-workstation0.dhcp.ti.com [172.24.227.91])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49NGMIPe027896;
-	Wed, 23 Oct 2024 11:22:19 -0500
-Message-ID: <fa368457-418d-40dd-b977-86fc42cad374@ti.com>
-Date: Wed, 23 Oct 2024 21:52:17 +0530
+	s=arc-20240116; t=1729700612; c=relaxed/simple;
+	bh=+F9vNJ1/djrWjsipasBD8bhmQbboSFemBhQbuVC0gTg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=I9XEKUfYOd8bOso9mgk3wpcOXdWVnH5SAcCHvzsVk01gWutpsK6lHMi6+MXN8rlySKBTj41PcRyOogK1ZSB5++jfbpZ3m79Tdxks5oz+fOdUi4WJGgpn6/7s4NFdznj0AMSjgwUQvQsfJxywpp2dtm4rY7T/QClHBtjtVxi0ePU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FKtQ4dhe; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-460969c49f2so378921cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:23:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729700609; x=1730305409; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=o9BznJlsEbHz6OZfmqFHe4r9gEp0tOVcj12rfA//KDE=;
+        b=FKtQ4dheu9v73f/dgGQZvoEqZdIsRfdeC+1RPyNegiA88oR3l8LZdegLlKC5MaE7xg
+         8a7VsjyzPwAyr/sjEVWRwQn8XblEHSBagI7Kr2Q0cmv8wKGOKdlQQsMeNAiv1ejI6vIV
+         sU6nNUDiSWbT8NrXkoPCzD72A/cbJMY6MtEnObQOzC72ftkviUMVFjscqHEsUlQWHL/n
+         X0p428EAnK5e8StpDo/Q4Nqa2KerCqH0O3rUDnuwbncolgIVEqarhyZP0bMqVNiMdpcO
+         BUMaPOUQdyXLfF9PPAomzPpj2Yw0YWMRunfHUJpwaPjVmuEk2FAsDQ1f2RGj92ag+QJX
+         9gpQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729700609; x=1730305409;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=o9BznJlsEbHz6OZfmqFHe4r9gEp0tOVcj12rfA//KDE=;
+        b=xF8QEDsQrIihIT0KXbboacGUUa3+6MWZahzr9STfROgn1OsGtHtBR+NvdUKl6gyRBs
+         Uy7PjRkiMKgwpFjfVKuUgrsW8eFB/o2qdT4E4AR79mFsWrPtTNE3YapaW04w55zn/6lI
+         0BToJOAZvPZjYva2zukVG9piE75YoqTC693j3tZLIpEjbm052FLkhF+Hf3idVePkGqAf
+         Y39Djq/kgnMmjYQnFxqOMbCtaITqS+WjuJwj+cmuaIiblk14YHAvICyZ094k8zF6SUJf
+         eEvALXMrEzdEc3NNuDsxOsSa09NUr3xQVPRzHCuhodDJJTwOnd19DhpKD1JmVQ8eW2Vc
+         PDkg==
+X-Forwarded-Encrypted: i=1; AJvYcCXjS/iEvhdnTzEB4XcVHMbD3WG1joU0jhBKdHYkfHzt1wcgFbbn8+4rpR9dhSU66itxxqv9cbUx9GsWIfc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxmbk/NDnJMx6/rjRhQ6BOefb4GSGjAGgxeT8FFCK9y9olp863J
+	XMnuwlQBctc9aGxzGgOdTYiDJ1UgTcX65iHYZlj2kxGHmhU9XWxKOmy42/37EM/rNOwgkMJJx01
+	B/3GNPs7U2S36ebRiVxqtfk5lYG7+KUTHVue9
+X-Google-Smtp-Source: AGHT+IG1FMKW9jEoP384sXUW7ke85OPpn1MSvATc3a4GObiTP9bSiG7WRlmZKZlcz1ig7syTvhf9DR79c1H5TXpjIHs=
+X-Received: by 2002:a05:622a:1347:b0:460:46a8:9e67 with SMTP id
+ d75a77b69052e-46113afc61emr4399981cf.10.1729700608716; Wed, 23 Oct 2024
+ 09:23:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 12/12] arm64: dts: ti: k3-j7200-evm*: Add bootph-*
- properties
-From: Aniket Limaye <a-limaye@ti.com>
-To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
-        Vignesh
- Raghavendra <vigneshr@ti.com>,
-        Tero Kristo <kristo@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
-        Udit
- Kumar <u-kumar1@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
-        Siddharth Vadapalli
-	<s-vadapalli@ti.com>, Andrew Davis <afd@ti.com>
-References: <20241023-b4-upstream-bootph-all-v5-0-a974d06370ab@ti.com>
- <20241023-b4-upstream-bootph-all-v5-12-a974d06370ab@ti.com>
- <577721f5-659e-4a75-bd41-a633c7f67017@ti.com>
-Content-Language: en-US
-In-Reply-To: <577721f5-659e-4a75-bd41-a633c7f67017@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-7-xur@google.com>
+ <CAK7LNARfm7HBx-wLCak1w0sfH7LML1ErWO=2sLj4ovR38RsnTA@mail.gmail.com>
+ <CAF1bQ=Qi9hyKbc5H3N36W=MukT3321rZMCas0ndpRf0YszAfOA@mail.gmail.com>
+ <CAK7LNAQr_EusZyy-dPcV=5o9UckStaUfXLSCQh7APbYh15NC3w@mail.gmail.com>
+ <a38a883e-d887-4d79-bb52-f28f5efc99a8@app.fastmail.com> <CAK7LNATfdxBvFxhAQhAuWhVfqfFptCXvjRS2xcWmFFqYo8Qp-w@mail.gmail.com>
+In-Reply-To: <CAK7LNATfdxBvFxhAQhAuWhVfqfFptCXvjRS2xcWmFFqYo8Qp-w@mail.gmail.com>
+From: Rong Xu <xur@google.com>
+Date: Wed, 23 Oct 2024 09:23:14 -0700
+Message-ID: <CAF1bQ=Rc_0xwq+7njaTf1EdsO0fyyKhcvMkC9AqcMf0mFsOt8Q@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] Add Propeller configuration for kernel build.
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: Arnd Bergmann <arnd@arndb.de>, Alice Ryhl <aliceryhl@google.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Bill Wendling <morbo@google.com>, 
+	Borislav Petkov <bp@alien8.de>, Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	Mike Rapoport <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
+	Linux-Arch <linux-arch@vger.kernel.org>, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+While Propeller often works best with AutoFDO (or the instrumentation
+based FDO), it's not required. One can use Propeller (or similar
+post-link-optimizer, like Bolt) on plain kernel builds.
 
+So I will remove "depends on AUTOFDO_CLANG". I will not use "imply" --
+simpler is better here.
 
-On 23/10/24 20:35, Aniket Limaye wrote:
-> 
-> 
-> On 23/10/24 12:27, Manorit Chawdhry wrote:
->> Adds bootph-* properties to the leaf nodes to enable bootloaders to
->> utilise them.
->>
->> Following adds bootph-* to:
->> - pmic regulator for enabling AVS Support
->> - main_uart0, mcu_uart0(DM), wkup_uart0(TIFS) for Traces
->> - mmc0, mmc1, usb0, ospi0, ospi1, hbmc for enabling various bootmodes.
->>
->> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+-Rong
 
-Just realized:
-
-Needs update to commit msg: No ospi1 for j7200
-You can keep R-by with above change^
-
-Thanks,
-Aniket
-
-> 
-> Reviewed-by: Aniket Limaye <a-limaye@ti.com>
-> 
->> ---
->>   arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts | 13 
->> +++++++++++++
->>   arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi           |  6 ++++++
->>   2 files changed, 19 insertions(+)
->>
->> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts 
->> b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
->> index 6593c5da82c0..d03690b8d652 100644
->> --- a/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
->> +++ b/arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts
->> @@ -129,6 +129,7 @@ J721E_WKUP_IOPAD(0x94, PIN_OUTPUT, 0) /* (E21) 
->> MCU_UART0_RTSn */
->>               J721E_WKUP_IOPAD(0x8c, PIN_INPUT, 0) /* (D20) 
->> MCU_UART0_RXD */
->>               J721E_WKUP_IOPAD(0x88, PIN_OUTPUT, 0) /* (D19) 
->> MCU_UART0_TXD */
->>           >;
->> +        bootph-all;
->>       };
->>       wkup_uart0_pins_default: wkup-uart0-default-pins {
->> @@ -136,6 +137,7 @@ wkup_uart0_pins_default: wkup-uart0-default-pins {
->>               J721E_WKUP_IOPAD(0x48, PIN_INPUT, 0) /* (B14) 
->> WKUP_UART0_RXD */
->>               J721E_WKUP_IOPAD(0x4c, PIN_OUTPUT, 0) /* (A14) 
->> WKUP_UART0_TXD */
->>           >;
->> +        bootph-all;
->>       };
->>       mcu_cpsw_pins_default: mcu-cpsw-default-pins {
->> @@ -204,6 +206,7 @@ J721E_IOPAD(0xb4, PIN_OUTPUT, 0) /* (T17) 
->> UART0_TXD */
->>               J721E_IOPAD(0xc0, PIN_INPUT, 2) /* (W3) 
->> SPI0_CS0.UART0_CTSn */
->>               J721E_IOPAD(0xc4, PIN_OUTPUT, 2) /* (U5) 
->> SPI0_CS1.UART0_RTSn */
->>           >;
->> +        bootph-all;
->>       };
->>       main_uart1_pins_default: main-uart1-default-pins {
->> @@ -238,6 +241,7 @@ J721E_IOPAD(0xf0, PIN_INPUT, 0) /* (N20) MMC1_DAT2 */
->>               J721E_IOPAD(0xec, PIN_INPUT, 0) /* (N19) MMC1_DAT3 */
->>               J721E_IOPAD(0xe4, PIN_INPUT, 8) /* (V1) 
->> TIMER_IO0.MMC1_SDCD */
->>           >;
->> +        bootph-all;
->>       };
->>       vdd_sd_dv_pins_default: vdd-sd-dv-default-pins {
->> @@ -259,6 +263,7 @@ main_usbss0_pins_default: main-usbss0-default-pins {
->>           pinctrl-single,pins = <
->>               J721E_IOPAD(0x04, PIN_OUTPUT, 0) /* (T4) USB0_DRVVBUS */
->>           >;
->> +        bootph-all;
->>       };
->>   };
->> @@ -267,12 +272,14 @@ &wkup_uart0 {
->>       status = "reserved";
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&wkup_uart0_pins_default>;
->> +    bootph-all;
->>   };
->>   &mcu_uart0 {
->>       status = "okay";
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&mcu_uart0_pins_default>;
->> +    bootph-all;
->>   };
->>   &main_uart0 {
->> @@ -281,6 +288,7 @@ &main_uart0 {
->>       power-domains = <&k3_pds 146 TI_SCI_PD_SHARED>;
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&main_uart0_pins_default>;
->> +    bootph-all;
->>   };
->>   &main_uart1 {
->> @@ -379,6 +387,7 @@ &main_sdhci0 {
->>       /* eMMC */
->>       status = "okay";
->>       non-removable;
->> +    bootph-all;
->>       ti,driver-strength-ohm = <50>;
->>       disable-wp;
->>   };
->> @@ -390,6 +399,7 @@ &main_sdhci1 {
->>       pinctrl-names = "default";
->>       vmmc-supply = <&vdd_mmc1>;
->>       vqmmc-supply = <&vdd_sd_dv>;
->> +    bootph-all;
->>       ti,driver-strength-ohm = <50>;
->>       disable-wp;
->>   };
->> @@ -401,11 +411,13 @@ &serdes_ln_ctrl {
->>   &usb_serdes_mux {
->>       idle-states = <1>; /* USB0 to SERDES lane 3 */
->> +    bootph-all;
->>   };
->>   &usbss0 {
->>       pinctrl-names = "default";
->>       pinctrl-0 = <&main_usbss0_pins_default>;
->> +    bootph-all;
->>       ti,vbus-divider;
->>       ti,usb2-only;
->>   };
->> @@ -413,6 +425,7 @@ &usbss0 {
->>   &usb0 {
->>       dr_mode = "otg";
->>       maximum-speed = "high-speed";
->> +    bootph-all;
->>   };
->>   &tscadc0 {
->> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi 
->> b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
->> index e78b4622a7d1..291ab9bb414d 100644
->> --- a/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
->> +++ b/arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi
->> @@ -121,6 +121,7 @@ J721E_WKUP_IOPAD(0x20, PIN_INPUT, 1) /* (B8) 
->> MCU_OSPI0_D5.MCU_HYPERBUS0_DQ5 */
->>               J721E_WKUP_IOPAD(0x24, PIN_INPUT, 1) /* (A8) 
->> MCU_OSPI0_D6.MCU_HYPERBUS0_DQ6 */
->>               J721E_WKUP_IOPAD(0x28, PIN_INPUT, 1) /* (A7) 
->> MCU_OSPI0_D7.MCU_HYPERBUS0_DQ7 */
->>           >;
->> +        bootph-all;
->>       };
->>       mcu_fss0_ospi0_pins_default: mcu-fss0-ospi0-default-pins {
->> @@ -137,6 +138,7 @@ J721E_WKUP_IOPAD(0x0024, PIN_INPUT, 0)  /* 
->> MCU_OSPI0_D6 */
->>               J721E_WKUP_IOPAD(0x0028, PIN_INPUT, 0)  /* MCU_OSPI0_D7 */
->>               J721E_WKUP_IOPAD(0x0008, PIN_INPUT, 0)  /* MCU_OSPI0_DQS */
->>           >;
->> +        bootph-all;
->>       };
->>   };
->> @@ -146,6 +148,7 @@ wkup_i2c0_pins_default: wkup-i2c0-default-pins {
->>               J721E_WKUP_IOPAD(0x98, PIN_INPUT_PULLUP, 0) /* (F20) 
->> WKUP_I2C0_SCL */
->>               J721E_WKUP_IOPAD(0x9c, PIN_INPUT_PULLUP, 0) /* (H21) 
->> WKUP_I2C0_SDA */
->>           >;
->> +        bootph-all;
->>       };
->>   };
->> @@ -186,6 +189,7 @@ &hbmc {
->>       flash@0,0 {
->>           compatible = "cypress,hyperflash", "cfi-flash";
->>           reg = <0x00 0x00 0x4000000>;
->> +        bootph-all;
->>           partitions {
->>               compatible = "fixed-partitions";
->> @@ -347,6 +351,7 @@ bucka1: buck1 {
->>                   regulator-max-microvolt = <1800000>;
->>                   regulator-boot-on;
->>                   regulator-always-on;
->> +                bootph-all;
->>               };
->>               bucka2: buck2 {
->> @@ -520,6 +525,7 @@ partition@800000 {
->>               partition@3fc0000 {
->>                   label = "ospi.phypattern";
->>                   reg = <0x3fc0000 0x40000>;
->> +                bootph-all;
->>               };
->>           };
->>       };
->>
+On Wed, Oct 23, 2024 at 12:29=E2=80=AFAM Masahiro Yamada <masahiroy@kernel.=
+org> wrote:
+>
+> On Wed, Oct 23, 2024 at 4:25=E2=80=AFPM Arnd Bergmann <arnd@arndb.de> wro=
+te:
+> >
+> > On Wed, Oct 23, 2024, at 07:06, Masahiro Yamada wrote:
+> > > On Tue, Oct 22, 2024 at 9:00=E2=80=AFAM Rong Xu <xur@google.com> wrot=
+e:
+> > >
+> > >> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > >> > > +
+> > >> > > +Configure the kernel with::
+> > >> > > +
+> > >> > > +   CONFIG_AUTOFDO_CLANG=3Dy
+> > >> >
+> > >> >
+> > >> > This is automatically met due to "depends on AUTOFDO_CLANG".
+> > >>
+> > >> Agreed. But we will remove the dependency from PROPELlER_CLANG to AU=
+TOFDO_CLANG.
+> > >> So we will keep the part.
+> > >
+> > >
+> > > You can replace "depends on AUTOFDO_CLANG" with
+> > > "imply AUTOFDO_CLANG" if it is sensible.
+> > >
+> > > Up to you.
+> >
+> > I don't think we should ever encourage the use of 'imply'
+> > because it is almost always used incorrectly.
+>
+> If we are able to delete the 'imply' keyword, Kconfig would be a bit clea=
+ner.
+>
+> In most cases, it can be replaced with 'default'.
+>
+>
+>
+> --
+> Best Regards
+> Masahiro Yamada
 
