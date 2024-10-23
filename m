@@ -1,143 +1,136 @@
-Return-Path: <linux-kernel+bounces-377549-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377550-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B82C69AC05F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:33:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 49BB09AC063
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:34:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60ADD283693
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:33:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 686D61C223ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:34:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381F41553B7;
-	Wed, 23 Oct 2024 07:33:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA56F154BEC;
+	Wed, 23 Oct 2024 07:34:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/PdG6ci"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="paIbIMYT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3388A73451;
-	Wed, 23 Oct 2024 07:33:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D13873451;
+	Wed, 23 Oct 2024 07:34:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668820; cv=none; b=j2cUZzgwJtk1EeJcSxNmza/2Ogt0mknchwMZEZPQa2aNotgSW4aDFbGFoRFb7QULPXMWZUVUC71ed0tk7+/DKiLLkTmgIQH2IQOc2ThaqBb8YQaH0CInOTsaXNBNXue/6q3rLR4KoHnL/sr2JTvJXo3e1ou3kZHch31ESqgeako=
+	t=1729668884; cv=none; b=V/86QVl2eBRoVF009NfiMSlSroO9WY+XQneGs3m8QiYxP0SY0egfSe+3twyjSSVNcVSNKoidgIBneeH2vCCEaui7UHxFa1X2uqxpIIlZVUIl36i6HsnWMAktFW7oe8fPOd12gpPfloEIvelIbgBx/P4a+nrFdIHnYmPVZx4IvdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729668820; c=relaxed/simple;
-	bh=7/XKigXuC97EO4hBvGCC9fyMB0r05484l5DDM24QqE0=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=PhIsJIqDR2FVFigd/4gKa/PgE7RoPQKQVSc3k7JhHMg7tsLlRXLeX0NED5z8EDF62XQ4PssMcBTyBV5pwNd+9f/pDtbIlJ2BKJSWqe0QXmagdzZjZ4b9uF8ovWrQ+1LgpRgkgj5lnb/LPH6vKCxMQzKkoUELpOTkH11Mf5i0hKc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/PdG6ci; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-718065d6364so3050588a34.3;
-        Wed, 23 Oct 2024 00:33:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729668817; x=1730273617; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ZAjqjr6bU9AHssEjGBws6avXM1iyDJeINARZbx3wDCo=;
-        b=I/PdG6ciimqmN47yBEzqSpe7sY9iQXuBBScKKjUe6ZN5j303GRn1zo1mtttAR00v+w
-         ieVI2W68E0U60R0r1vv9/ptoCOE4DiPP0nE4nIlOUDVX3DwNPjq9w/VCkjC1nIIKVuEB
-         tl4/xqGtVJ3lIaIIYh0ACK4zGnj4O82wf7tsve4YRg/Mb9CxAC2wJQ6gs//kQUofxEDS
-         4Kxys7opoIaF/GkNxH6Te7yGQQm9OHuXT1c5YEXUv2A+LQh+UCANEJK7Hjd5vjdW343X
-         dVIXmRF2MciJfxA5ed5p4ozAW3cBt8NPzHyLHXXMiRI+xOg0HTo0+2pQesFisJwQ047N
-         GDwg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729668817; x=1730273617;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ZAjqjr6bU9AHssEjGBws6avXM1iyDJeINARZbx3wDCo=;
-        b=R2WuPPZmm90nVWH5i9qIgSziDb6FpmAi1NFz2Ma72JzmUGrcWRTXxQ2BOMrSy5Mzsu
-         CRzrqyc36G1FT/ItMvfUXaFpGrkOdjBQUGn/BYudMRjLRwN4AHxTToeGifhwnLmBy5Wr
-         IMvc1TaNscN838ymJXYki9iRCO/fuTgo2KdmgnLchfphuE2mnhjMzekgytsKqV4qxcfQ
-         hW264PC4swT3TEvqF8Svg6rwMUcssSiENP3mFD6CXckZ/WqkXCwLFcFygN2uQ5JPpuzi
-         dOYwESnVvRgO7n6jv4bwayDJqcxcfkZVn4f6+/eAyERT6eja3ahf9P87qjTIzuAd/A15
-         w6KQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVAlh/2yu8c7V1a6IwqcDJwLvwnePPiGOIArulgSgB93uZa1+R9fyJ39c45f+x893uobXzkgN1ZRN+YirXY@vger.kernel.org, AJvYcCXHS6dqXdPYSjQP+P1AIRkSQcIR7p07vaD8y6w0GbWnhbzk4ri7NwWCNo0I8+iuTkBHQdEhZiG5BhBkwYhg+w==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy3MIhCfAtMmJfbeOIW4EV+U/NqpO4axlcHdLyCl6aQlGvyq91m
-	9WaTiORv0mdVVxEuer84fuzTdmFEioQEBf26pW5xcjPBpBhEjDHG
-X-Google-Smtp-Source: AGHT+IHGxoTpmD1Fn7QShAC5ShitKn/rp54NuZPzOSOHSvD6BGqTyHGxlj2B9f8Elw4flKB3CQ6bVw==
-X-Received: by 2002:a05:6830:6489:b0:710:f223:3e32 with SMTP id 46e09a7af769-7184b3771aemr1585741a34.10.1729668817120;
-        Wed, 23 Oct 2024 00:33:37 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabde7d5sm6128596a12.93.2024.10.23.00.33.34
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Oct 2024 00:33:36 -0700 (PDT)
-Content-Type: text/plain;
-	charset=us-ascii
+	s=arc-20240116; t=1729668884; c=relaxed/simple;
+	bh=7xzrCzy5VH6U2nqMwVSZyjhTzhLPOBIuhFoZjodwtaI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bR4qx7Ds+0k4DQfBElmr6QYe4qyONSOgXqanB4LOs2JZtnhPqXTfnzeozS49ISaIc3XVH7L4vgxkVp6GIBbOiPkQsp6PfNnhpe4jAmisT4Ca5dIiykMNPrIo4CuU5YL6tKTWTCiAzlNg0l4FdGHEVNMp5Oj/+VouiZpXKKotMuA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=paIbIMYT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B85B6C4AF09;
+	Wed, 23 Oct 2024 07:34:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729668883;
+	bh=7xzrCzy5VH6U2nqMwVSZyjhTzhLPOBIuhFoZjodwtaI=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=paIbIMYTL0rVNiQGT3AaTp6qxXGnlx6DweNhG8z75bvAdbKahVTj42xs7+1LyLXnx
+	 Bh+pT8vnBV+4o7ojNWwRZFLesOJ3hal4Y6e3G+ihMZsDpQGkiBX/XjEwYdk5C3p7qI
+	 vc3M9UL1Xz8mIG/GiKRLFbwB4KkG54sY5MuiLBBJTBFIjQExyVak63gKvHSOLRU6WA
+	 kDHsKpRsm7FNA3P8ah7onY/YshxI+mmbeB9nytJ6j6zusqxdA4XUsFwH8lVO6AH3UF
+	 +BXU+QkXz35w3oTU5RfwL19/ktzV4I++zAdCnO0R3ikll+PE9drmYop5Sks7jpNWXD
+	 BXFVFm4KnY1dA==
+Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb518014b9so56278021fa.3;
+        Wed, 23 Oct 2024 00:34:43 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVBZDicdWXTQqA/9x4XjJX4JO9pInVmFBtujKuuitKCG7Y+1zAOs0qkvn2gHN8w+Zkam++DyD+eZWKoSROZ@vger.kernel.org, AJvYcCWLyIwmTHKq0km04J0pftmZp1DNWXc2L58Y95xNiELwfddc6hke/39WC0VBUgy5LNGqKEkjKZpIzytIXdo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4dV/pq8YKpMMd7+MO//5sjvSn+HmlRs4zFExW9kr6Y0OtHI/9
+	iQWTksKSNZvzd06DzL0eUfPNAaAHbJMVdXmovLqFEaKfYHf0DFPqqBl/vsx+/rDw+P1o9U2mGWh
+	t0HF3UGCfcx+7/s/sAbuI3Q2lPsE=
+X-Google-Smtp-Source: AGHT+IFF7PvSyTP8FhnlHp9myDpY8Mnfimp4y1zewVjI7zJpKsYL4RHA5VOJlIWki0Z2tIaMczXJqmrdYSkfQAoU29I=
+X-Received: by 2002:a05:6512:15a3:b0:52f:d0f0:e37e with SMTP id
+ 2adb3069b0e04-53b1a354f04mr656850e87.42.1729668882243; Wed, 23 Oct 2024
+ 00:34:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH] bcachefs: Fix NULL ptr dereference in
- btree_node_iter_and_journal_peek
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <20241023072024.98915-3-pZ010001011111@proton.me>
-Date: Wed, 23 Oct 2024 15:33:22 +0800
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
- linux-bcachefs@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>,
- skhan@linuxfoundation.org,
- syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+MIME-Version: 1.0
+References: <20241022213708.2116-1-esalomatkina@ispras.ru>
+In-Reply-To: <20241022213708.2116-1-esalomatkina@ispras.ru>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 23 Oct 2024 16:34:06 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQt1AKiRxNCaDKNrGNHjQQFtZyZej082d8aRKT4e8_H8w@mail.gmail.com>
+Message-ID: <CAK7LNAQt1AKiRxNCaDKNrGNHjQQFtZyZej082d8aRKT4e8_H8w@mail.gmail.com>
+Subject: Re: [PATCH v3] sumversion: Fix a memory leak in get_src_version()
+To: Elena Salomatkina <esalomatkina@ispras.ru>
+Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
+	Nicolas Schier <nicolas@fjasle.eu>, linux-kbuild@vger.kernel.org, 
+	lvc-project@linuxtesting.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-Message-Id: <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
-References: <20241023072024.98915-3-pZ010001011111@proton.me>
-To: Piotr Zalewski <pZ010001011111@proton.me>
-X-Mailer: Apple Mail (2.3776.700.51)
 
-On Oct 23, 2024, at 15:21, Piotr Zalewski <pZ010001011111@proton.me> =
-wrote:
->=20
-> Add NULL check for key returned from bch2_btree_and_journal_iter_peek =
-in
-> btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-> bch2_bkey_buf_reassemble.
+On Wed, Oct 23, 2024 at 6:38=E2=80=AFAM Elena Salomatkina
+<esalomatkina@ispras.ru> wrote:
+>
+> strsep() modifies its first argument - buf.
+> If an error occurs in the parsing loop, an invalid pointer
 
-It would be helpful if the commit message explained why k.k is null in =
-this case
+I deleted "If an error occurs in the parsing loop," because
+this is _always_ a memory leak.
 
->=20
-> Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-> Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
-> Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
+Applied to linux-kbuild/fixes. Thanks.
+
+> will be passed to the free() function.
+> Make the pointer passed to free() match the return value of
+> read_text_file().
+>
+> Found by Linux Verification Center (linuxtesting.org) with SVACE.
+>
+> Fixes: 9413e7640564 ("kbuild: split the second line of *.mod into *.usyms=
+")
+> Signed-off-by: Elena Salomatkina <esalomatkina@ispras.ru>
 > ---
-> fs/bcachefs/btree_iter.c | 3 +++
-> 1 file changed, 3 insertions(+)
->=20
-> diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-> index 0883cf6e1a3e..625167ce191f 100644
-> --- a/fs/bcachefs/btree_iter.c
-> +++ b/fs/bcachefs/btree_iter.c
-> @@ -882,6 +882,8 @@ static noinline int =
-btree_node_iter_and_journal_peek(struct btree_trans *trans,
-> __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, =
-l->iter, path->pos);
->=20
-> k =3D bch2_btree_and_journal_iter_peek(&jiter);
-> + if (!k.k)
-> + goto err;
->=20
-> bch2_bkey_buf_reassemble(out, c, k);
->=20
-> @@ -889,6 +891,7 @@ static noinline int =
-btree_node_iter_and_journal_peek(struct btree_trans *trans,
->    c->opts.btree_node_prefetch)
-> ret =3D btree_path_prefetch_j(trans, path, &jiter);
->=20
-> +err:
-> bch2_btree_and_journal_iter_exit(&jiter);
-> return ret;
-> }
-> --=20
-> 2.47.0
->=20
->=20
->=20
+> v3: Use 'pos' as the moving pointer
+> v2: Rename 'orig' to 'pos'
+>
+>  scripts/mod/sumversion.c | 7 ++++---
+>  1 file changed, 4 insertions(+), 3 deletions(-)
+>
+> diff --git a/scripts/mod/sumversion.c b/scripts/mod/sumversion.c
+> index 6bf9caca0968..9b552c6efb40 100644
+> --- a/scripts/mod/sumversion.c
+> +++ b/scripts/mod/sumversion.c
+> @@ -385,7 +385,7 @@ static int parse_source_files(const char *objfile, st=
+ruct md4_ctx *md)
+>  /* Calc and record src checksum. */
+>  void get_src_version(const char *modname, char sum[], unsigned sumlen)
+>  {
+> -       char *buf;
+> +       char *buf, *pos;
+>         struct md4_ctx md;
+>         char *fname;
+>         char filelist[PATH_MAX + 1];
+> @@ -394,9 +394,10 @@ void get_src_version(const char *modname, char sum[]=
+, unsigned sumlen)
+>         snprintf(filelist, sizeof(filelist), "%s.mod", modname);
+>
+>         buf =3D read_text_file(filelist);
+> -
+> +       pos =3D buf;
+> +
+>         md4_init(&md);
+> -       while ((fname =3D strsep(&buf, "\n"))) {
+> +       while ((fname =3D strsep(&pos, "\n"))) {
+>                 if (!*fname)
+>                         continue;
+>                 if (!(is_static_library(fname)) &&
+> --
+> 2.33.0
+>
 
+
+--=20
+Best Regards
+Masahiro Yamada
 
