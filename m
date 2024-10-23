@@ -1,123 +1,113 @@
-Return-Path: <linux-kernel+bounces-377775-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377776-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38A1B9AC6A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:32:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A0829AC6A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:33:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A25A8B20CCB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:31:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B88241C22D0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:32:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CFB2519CCEC;
-	Wed, 23 Oct 2024 09:31:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="Y9hCF4NF"
-Received: from relay1-d.mail.gandi.net (relay1-d.mail.gandi.net [217.70.183.193])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 851C818E34A;
+	Wed, 23 Oct 2024 09:32:51 +0000 (UTC)
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C543199934;
-	Wed, 23 Oct 2024 09:31:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81B817482;
+	Wed, 23 Oct 2024 09:32:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729675905; cv=none; b=n/I77ofjyPkRyJitWiJBfYFsuVBUyjRJ0iZyAuLGUdpi4zrPSGv70NBbKTgY8KZkuAyzWkxs4bNJTz3YDpPI1U90otUJJNlaypEZfgsuWyPt0hyC9xob6w4b+SxJFoBoRK5qO5FPWagDxugbqb4mLddO0eLbkxmdXNwDuKffOpc=
+	t=1729675971; cv=none; b=vGOc8O0KiKSXiJynNtSD/79nQbb3IUaUkMXKEqEXrlevzDPre+3eIXDBFPWUAIPuKVSO43crqnEB0cAcVQayvbFzMcE3hDIrEWQIoBPCTfJQOadTrPP5NNqo/ghGsBIB/9U4roCbErW6gDOByogk+MKaB2NBl/A7dp8D8iJbB/s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729675905; c=relaxed/simple;
-	bh=qFxknWteh7THbDKN6AwkAtb5Of8AmQTACmf1bSoCwlk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lK0cLHIbPFEaOLGy0l2o7w117oXKCUv4nIPXb+wpwxw5woYit57rMDHqeF9otMkgIDVxESznDQ1gjTmSh31TsF+yoGg5lEcrRq2YPcNMm4PNBdx12rX/LnfSdKrpcipkGVodajO/Fb50zfKFKsjRZDUcS++S9syJ6kjVfb7o/4U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=Y9hCF4NF; arc=none smtp.client-ip=217.70.183.193
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id DAF4D240005;
-	Wed, 23 Oct 2024 09:31:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1729675901;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=kGsZBUC5Q1TR6BORMjGHARVC2ruLW+vf2yXzVOKUo2c=;
-	b=Y9hCF4NFASVI7MuEkaOlQf1KiE9g10dVdQHNrbqE80Eq74trMxpjmLjXAk/iLwhwRzCEE4
-	IvqdeLbe/+Nt2HBKWCmWfhj3yAei5Z1OlGHjNvYir7Ti3kU6GyI63hT0IIDnDTyYJFSOof
-	+FFwjMNTPv1Fm/N4iz0j78plpNN77Zc8oBCdSXFVdF+bonQDhw2u7zbTuYvtdqPtAXMxqs
-	9e08/LFSLh8KvC86qvbtQlD/z+Tgo3aZaaV/xkxNuJY+ehlE66JqjqYh1iwbdf6KZUDp7A
-	2agRZ0IlIejcA3fUwcls4X4heIEhq7IJzKRbZgwvNeO1KGqFgrSquKFiNaMWOw==
-Message-ID: <ec30a0d3-6d53-4350-a26b-c4d8b41057ec@yoseli.org>
-Date: Wed, 23 Oct 2024 11:31:40 +0200
+	s=arc-20240116; t=1729675971; c=relaxed/simple;
+	bh=RDKp+cC6f0vBPc9Rs4zB1BXnjm0QsbXQpdHi78lhOeM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HXLzZselvziEjqIl4iO88j97yzdQIpCPY/laEyz3E92asLKhF0ICUycKpvDhk8UADa052YjRXZmjyWUGfK09A7TMgrGe1okGJUYyiRt9tbzenJii883d4+3fUzCewxuWKEuNy5RyG4xxtlqgK721FSSX4tIRvejtbNgrx8HHZMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a1b71d7ffso1028637766b.1;
+        Wed, 23 Oct 2024 02:32:49 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729675968; x=1730280768;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iA1aNRKIv9LKRf5h3iTBzQVuBp6KyD5eyeAtjUFN4yk=;
+        b=s+TIsprNZ+HO49moQtojbwjpd/Kw7DhJBWE12mdvhA94xiGon23Okv0pkwGlpA/t1q
+         dH2KaoC7rdR6vgZQHT9LvIu4AlbGuv3/Ug/FmITvVxnkBGZCeoj/OMnMCWrKLEb04K2V
+         Ikcegf0dawjcvhkaxpTu8OhH6950gXhmm0QKqFd+/lCFmOS7tSak+YKT4qTCn66OjHVg
+         TBN4zsFXJ7xGcEnL2iuDE/XG8rI+xhKd3fu2IRc/zdCE5u/G5zgCiKUhUsrAdoZILOa7
+         JOgwx7aaeIWifmuLUB0vXc7Dn5n02VTBM0eLqoVorjNUNzrqPw0s0sNt5Xd0ymgrxSyU
+         hTOw==
+X-Forwarded-Encrypted: i=1; AJvYcCUsb9QhrytKXFH0XyfxspNNMWqsra5szjqvcT7xybVP+NYie0Cgq+csB1S/v1ay44mPgau8hVn5r50=@vger.kernel.org, AJvYcCWfO10creutSoyZwbcKyT/4pNflr+66+HLcZbQlwUH/1LBqhS7o4I4KCneAyB03CBS7i2TBvc/D@vger.kernel.org, AJvYcCXEonkWRqwBG/qdAL/4hGdb8UYT5rKh2JIrCf7nRcXKFZL6B2lpS4DWy3nU+FHofxER0zSLkTw4dvKamL/B@vger.kernel.org
+X-Gm-Message-State: AOJu0YyhlNN/7dQ8ITl3jyQZQfTzgIt0aIgBANCWe++uK3Xv2w0iw/Kf
+	pcooBSORWKnTW+tggbvH6VKQgwtp3OSITz2i772NxRuJjyQvBApY
+X-Google-Smtp-Source: AGHT+IE89Zd5uGE+DTW0CJ/Bm77xvlUsGAIrwG9wSA/yHi3JOelxCxGWF4hcaNLRvpcdXmWWlcpC+Q==
+X-Received: by 2002:a17:907:ea0:b0:a99:4162:4e42 with SMTP id a640c23a62f3a-a9abf8ac2acmr145284466b.37.1729675967704;
+        Wed, 23 Oct 2024 02:32:47 -0700 (PDT)
+Received: from gmail.com (fwdproxy-lla-001.fbsv.net. [2a03:2880:30ff:1::face:b00c])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d893csm454660066b.16.2024.10.23.02.32.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 02:32:47 -0700 (PDT)
+Date: Wed, 23 Oct 2024 02:32:42 -0700
+From: Breno Leitao <leitao@debian.org>
+To: Bagas Sanjaya <bagasdotme@gmail.com>
+Cc: Akinobu Mita <akinobu.mita@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, kernel-team@meta.com,
+	Pavel Begunkov <asml.silence@gmail.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Linux Documentation <linux-doc@vger.kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Networking <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v3] net: Implement fault injection forcing skb
+ reallocation
+Message-ID: <20241023-refined-precious-seahorse-52e0d9@leitao>
+References: <20241014135015.3506392-1-leitao@debian.org>
+ <ZxZKkY8U4jndx8no@archie.me>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Steven Rostedt <rostedt@goodmis.org>, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
- <20241022012809.1ef083cd@rorschach.local.home>
- <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
- <20241022043037.13efb239@rorschach.local.home>
- <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
- <20241023044711.3eb838fe@rorschach.local.home>
- <262d7758-c752-49f6-87ef-4f75d681a919@yoseli.org>
- <CAMuHMdXKCWnFuyOzQyAWdEV4EhqXYXJFn4vCw5ptZ5=sbOCbxg@mail.gmail.com>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <CAMuHMdXKCWnFuyOzQyAWdEV4EhqXYXJFn4vCw5ptZ5=sbOCbxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxZKkY8U4jndx8no@archie.me>
 
-Hi Geert,
+Hello Bagas,
 
-On 23/10/2024 11:13, Geert Uytterhoeven wrote:
-> Hi Jean-Michel,
+On Mon, Oct 21, 2024 at 07:35:29PM +0700, Bagas Sanjaya wrote:
+> On Mon, Oct 14, 2024 at 06:50:00AM -0700, Breno Leitao wrote:
+> > +  To select the interface to act on, write the network name to the following file:
+> > +  `/sys/kernel/debug/fail_net_force_skb_realloc/devname`
+> "... write the network name to /sys/kernel/debug/fail_net_force_skb_realloc/devname."
+> > +  If this field is left empty (which is the default value), skb reallocation
+> > +  will be forced on all network interfaces.
+> > +
+> > <snipped>...
+> > +- /sys/kernel/debug/fail_net_force_skb_realloc/devname:
+> > +
+> > +        Specifies the network interface on which to force SKB reallocation.  If
+> > +        left empty, SKB reallocation will be applied to all network interfaces.
+> > +
+> > +        Example usage:
+> > +        # Force skb reallocation on eth0
+> > +        echo "eth0" > /sys/kernel/debug/fail_net_force_skb_realloc/devname
+> > +
+> > +        # Clear the selection and force skb reallocation on all interfaces
+> > +        echo "" > /sys/kernel/debug/fail_net_force_skb_realloc/devname
 > 
-> On Wed, Oct 23, 2024 at 11:07 AM Jean-Michel Hautbois
-> <jeanmichel.hautbois@yoseli.org> wrote:
->> On 23/10/2024 10:47, Steven Rostedt wrote:
->>> On Tue, 22 Oct 2024 11:21:34 +0200
->>> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
->>>> I was not really expecting you to review the m68k one no :-).
->>>> I think I have other issues which might have impact on ftrace too.
->>>> For instance, when I launch cyclictest I have a warning about HRTIMERS:
->>>> # cyclictest -p 99
->>>> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
->>>> WARN: High resolution timers not available
->>>> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
->>>>
->>>> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 Max:
->>>>      3516
->>>>
->>>> The latencies are quite high...
->>>
->>> Yes, if you don't have high resolution timers, the latency will be high.
->>
->> According to my config, I should have those:
->> CONFIG_HIGH_RES_TIMERS=y
-> 
-> Does your hardware have a high resolution timer, and do you have
-> a driver for it?
-> 
-> $ git grep hrtimer -- arch/m68k/
-> $
->
+> The examples rendered as normal paragraph instead (and look like long-running
+> sentences) so I wrap them in literal code blocks:
 
-No, there is nothing with hrtimer. But, the architecture has four dma 
-timers, with a 8ns resolution at 125MHz says the documentation. I will 
-try to find a way to implement the missing part.
-
-Thanks,
-JM
-
-> Gr{oetje,eeting}s,
-> 
->                          Geert
-> 
-
+Thanks. I will update it, and send a new version.
 
