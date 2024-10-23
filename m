@@ -1,114 +1,384 @@
-Return-Path: <linux-kernel+bounces-377168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 613B19ABABE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:53:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65DE19ABAC2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:54:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22F8B284E76
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:53:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF584B2187A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:54:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 234C21DFE1;
-	Wed, 23 Oct 2024 00:53:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9876B1D555;
+	Wed, 23 Oct 2024 00:53:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="PQFr+82T"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="U1z/jJ5q"
+Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C10EA2F34
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:53:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA0AA20323
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:53:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729644795; cv=none; b=detYfJnmCHbhC+9yNqe7U7R+LRKG002qE3XdzNNmaurcbp813AxWVa6ZK+NvEQOx1DXE6b1OLAn9CTJQeEeDQkiiF+w3arHSrn1/ltvL7KVrbAg/aXRWIclBYPhX98ZnVi4pr+WoE/BPgAMxzx+1x+EaYrsBmVPL49VzFa6eL30=
+	t=1729644830; cv=none; b=BGLAkrHPzk6SUuhURxUC/OYybG4BFrwEiEuQgw3Elsdo2qq2eJxCAvFFhz+nbzZz/Wh6dJmIGItiR+Lh+W9CBqxmZ6rxWeQh2dW97OEePxht7X2wL0QgNR05qNWFNcpAqW2MoYBUpDNKU8XAC32PjTa4yzfTQmJm5Ay/P+SFKfI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729644795; c=relaxed/simple;
-	bh=lIxKrnVZi4OzdtnAM6X5raOD38x0R+vhcvjiqMDjT78=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TEpzz4CArbGoKNnbr5OS+deqOZpy/2gQXSxu4fZQ4F1Sgq4LTdLaIkjv++aNEZmwmI2/FqrneTOT+gcVXCVN4YnZBlYWbmY2xZnO1+n1cQf1rju52o5DVWgEmQxAwtVGZWvbeOcA7cfqxcK3z2GGvnOuSxe3gRjyDGOgS4bBfNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=PQFr+82T; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Tue, 22 Oct 2024 17:53:00 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729644789;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6kCNsEXTfjhm2VD7RcuSJFj1WDFRY4+e/zOdiNTxOWg=;
-	b=PQFr+82TnUdLaIYZFFzshQFVmAmk1Yd7+0V/csbKw1Q5g5ouUoT7Egf2+eOTF9SVzA6x3K
-	XlThe6JZGnxty58saIYF+G6jJ8wg1xPOeZdmiXyXDSIfO6cjO9eniEPWJTBAIqbRCz/E+W
-	cQWGDsXIMg4UcpTrpNJLEGFUKjgsf2U=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Shakeel Butt <shakeel.butt@linux.dev>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Christian Brauner <christian@brauner.io>, 
-	Shuah Khan <shuah@kernel.org>, "Liam R . Howlett" <Liam.Howlett@oracle.com>, 
-	Suren Baghdasaryan <surenb@google.com>, Vlastimil Babka <vbabka@suse.cz>, pedro.falcato@gmail.com, 
-	linux-kselftest@vger.kernel.org, linux-mm@kvack.org, linux-fsdevel@vger.kernel.org, 
-	linux-api@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Oliver Sang <oliver.sang@intel.com>, John Hubbard <jhubbard@nvidia.com>
-Subject: Re: [PATCH v4 2/4] pidfd: add PIDFD_SELF_* sentinels to refer to own
- thread/process
-Message-ID: <fhy36lhgeedrdwoubuuxarownhji2k4avcherjnedtid35yael@jokjnyb6i66b>
-References: <cover.1729198898.git.lorenzo.stoakes@oracle.com>
- <3bf7f2d8efc768007b5de8122275405afc9942d4.1729198898.git.lorenzo.stoakes@oracle.com>
+	s=arc-20240116; t=1729644830; c=relaxed/simple;
+	bh=58G2ffkSWBtuGCrPtZed+KWSwSI10CYKhO2VL0MVVxg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aIIVFJruEfEhYBQG7lvteNZ9mQlNGUn7n4keAoUKk7oAyTFxK+x62i07Jmj7lM/aTMo8ZvdnyzBmKJVlPns0FC9vuygG3lHIESfdFpYNHnEisMa/yqxwpi8lBMFydecI/sWfN5m+MUkO/X4Zl68voOtP1ohrS2JGkxrbQXODDk0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=U1z/jJ5q; arc=none smtp.client-ip=209.85.218.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so720165766b.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:53:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729644827; x=1730249627; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=elKEUgYOBb9hlnUkKA6N1hOgZ0Y3H2ei9uKOJEOK+EY=;
+        b=U1z/jJ5q2zmUM6X9uFO23lJiy78lUCia61l9JRZitEbRvCtZX8nxyd1/d1qW48JuW7
+         AYZNtcRVPe8veUFIFkw42pH8bngQhXuHfrPb9yaVKTJ7+DBno68dtB6cOSoG6POAXwbV
+         Nd7qpc3E/J/3j6b2WPYNekLbHNvfzeAb7Nya58zyml3aDsejPIDx7DmkgsnQ+Q5HI6or
+         6Mhs5R961dLhHkvG18uSYKElMrNbCAwqEZQOxV8F9UHPvcF4hL8tNWQttLsnM8A3RT/6
+         8x1+DuKX4hgcrgXpHuNKvTHWVDUDc0pLihsZwEKgLM+lTOcHZj3ykmyMsRd8NeIyXi1Y
+         ka+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729644827; x=1730249627;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=elKEUgYOBb9hlnUkKA6N1hOgZ0Y3H2ei9uKOJEOK+EY=;
+        b=JalNlenSCZAiFAD1YdibhO3jcc2Meaa/xF7D8aH6+F2UxZyHTG57gHs2EMK2MxBaza
+         txhq1vsHWAEaPCkJ0jfbHqQEESvITbgULWoRTDaxVVLqIR+HzXKQt1BubIOsZHYdEYvW
+         XiFlBgIMudyD4Kh7enOmcJ2P5nQBAK8c38UvXnA0473h8STZUi0GMz7wJ1l+Jp8qedWv
+         9c0EN7ga2F/QBmHLJmOHw9T4cr8D4YBOLnvUdQ7cGqI4ISNoqh88H/cpGzIz46hz6uBq
+         AE6wwzJ3FdWGSh/jIw96siZMwnIMsqOj7DPv552j7oanrQKpwKJxb9RlG56A2sz8GMEP
+         sKLA==
+X-Gm-Message-State: AOJu0YxTLuNG7rS28kJxcS6mxgm5RbEszp/v2lfPAoOSZrIE0aSyiSs4
+	YhhKvmETs9r7myUl/yT/uza84y8U0P7MnwqosA5nI3GCAF7o03ldfVDjBYpyUhONVCDXd0fuhgX
+	8sjQdRGx3Lzh+yH4MFRfxT03fMoCR1AjJhtxIbnLVX/uSoIbIGg==
+X-Google-Smtp-Source: AGHT+IFvb4nuTDqZSgOQT/PkUifYMSJP87uSJMegevloYuQ+XMxD6rU7IQjfW1EjkbdiLAZ2EDHqJEJt3TT9St/pBug=
+X-Received: by 2002:a17:907:86a1:b0:a9a:5b8d:68ad with SMTP id
+ a640c23a62f3a-a9abf94da9emr60511966b.48.1729644826990; Tue, 22 Oct 2024
+ 17:53:46 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <3bf7f2d8efc768007b5de8122275405afc9942d4.1729198898.git.lorenzo.stoakes@oracle.com>
-X-Migadu-Flow: FLOW_OUT
+References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com> <20241018064101.336232-12-kanchana.p.sridhar@intel.com>
+In-Reply-To: <20241018064101.336232-12-kanchana.p.sridhar@intel.com>
+From: Yosry Ahmed <yosryahmed@google.com>
+Date: Tue, 22 Oct 2024 17:53:11 -0700
+Message-ID: <CAJD7tkZnEp98A+bP4N8GvFn=vT5Ck4NgrqsFQn+V8gpSbyAzkg@mail.gmail.com>
+Subject: Re: [RFC PATCH v1 11/13] mm: swap: Add IAA batch compression API swap_crypto_acomp_compress_batch().
+To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
+	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
+	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
+	akpm@linux-foundation.org, linux-crypto@vger.kernel.org, 
+	herbert@gondor.apana.org.au, davem@davemloft.net, clabbe@baylibre.com, 
+	ardb@kernel.org, ebiggers@google.com, surenb@google.com, 
+	kristen.c.accardi@intel.com, zanussi@kernel.org, viro@zeniv.linux.org.uk, 
+	brauner@kernel.org, jack@suse.cz, mcgrof@kernel.org, kees@kernel.org, 
+	joel.granados@kernel.org, bfoster@redhat.com, willy@infradead.org, 
+	linux-fsdevel@vger.kernel.org, wajdi.k.feghali@intel.com, 
+	vinodh.gopal@intel.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 10:05:50PM GMT, Lorenzo Stoakes wrote:
-> It is useful to be able to utilise the pidfd mechanism to reference the
-> current thread or process (from a userland point of view - thread group
-> leader from the kernel's point of view).
-> 
-> Therefore introduce PIDFD_SELF_THREAD to refer to the current thread, and
-> PIDFD_SELF_THREAD_GROUP to refer to the current thread group leader.
-> 
-> For convenience and to avoid confusion from userland's perspective we alias
-> these:
-> 
-> * PIDFD_SELF is an alias for PIDFD_SELF_THREAD - This is nearly always what
->   the user will want to use, as they would find it surprising if for
->   instance fd's were unshared()'d and they wanted to invoke pidfd_getfd()
->   and that failed.
-> 
-> * PIDFD_SELF_PROCESS is an alias for PIDFD_SELF_THREAD_GROUP - Most users
->   have no concept of thread groups or what a thread group leader is, and
->   from userland's perspective and nomenclature this is what userland
->   considers to be a process.
+On Thu, Oct 17, 2024 at 11:41=E2=80=AFPM Kanchana P Sridhar
+<kanchana.p.sridhar@intel.com> wrote:
+>
+> Added a new API swap_crypto_acomp_compress_batch() that does batch
+> compression. A system that has Intel IAA can avail of this API to submit =
+a
+> batch of compress jobs for parallel compression in the hardware, to impro=
+ve
+> performance. On a system without IAA, this API will process each compress
+> job sequentially.
+>
+> The purpose of this API is to be invocable from any swap module that need=
+s
+> to compress large folios, or a batch of pages in the general case. For
+> instance, zswap would batch compress up to SWAP_CRYPTO_SUB_BATCH_SIZE
+> (i.e. 8 if the system has IAA) pages in the large folio in parallel to
+> improve zswap_store() performance.
+>
+> Towards this eventual goal:
+>
+> 1) The definition of "struct crypto_acomp_ctx" is moved to mm/swap.h
+>    so that mm modules like swap_state.c and zswap.c can reference it.
+> 2) The swap_crypto_acomp_compress_batch() interface is implemented in
+>    swap_state.c.
+>
+> It would be preferable for "struct crypto_acomp_ctx" to be defined in,
+> and for swap_crypto_acomp_compress_batch() to be exported via
+> include/linux/swap.h so that modules outside mm (for e.g. zram) can
+> potentially use the API for batch compressions with IAA. I would
+> appreciate RFC comments on this.
 
-Should users use PIDFD_SELF_PROCESS in process_madvise() for self
-madvise() (once the support is added)?
+Same question as the last patch, why does this need to be in the swap
+code? Why can't zswap just submit a single request to compress a large
+folio or a range of contiguous subpages at once?
 
-> 
-[...]
->  
-> +static struct pid *pidfd_get_pid_self(unsigned int pidfd, unsigned int *flags)
-> +{
-> +	bool is_thread = pidfd == PIDFD_SELF_THREAD;
-> +	enum pid_type type = is_thread ? PIDTYPE_PID : PIDTYPE_TGID;
-> +	struct pid *pid = *task_pid_ptr(current, type);
+>
+> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
+> ---
+>  mm/swap.h       |  45 +++++++++++++++++++
+>  mm/swap_state.c | 115 ++++++++++++++++++++++++++++++++++++++++++++++++
+>  mm/zswap.c      |   9 ----
+>  3 files changed, 160 insertions(+), 9 deletions(-)
+>
+> diff --git a/mm/swap.h b/mm/swap.h
+> index 566616c971d4..4dcb67e2cc33 100644
+> --- a/mm/swap.h
+> +++ b/mm/swap.h
+> @@ -7,6 +7,7 @@ struct mempolicy;
+>  #ifdef CONFIG_SWAP
+>  #include <linux/swapops.h> /* for swp_offset */
+>  #include <linux/blk_types.h> /* for bio_end_io_t */
+> +#include <linux/crypto.h>
+>
+>  /*
+>   * For IAA compression batching:
+> @@ -19,6 +20,39 @@ struct mempolicy;
+>  #define SWAP_CRYPTO_SUB_BATCH_SIZE 1UL
+>  #endif
+>
+> +/* linux/mm/swap_state.c, zswap.c */
+> +struct crypto_acomp_ctx {
+> +       struct crypto_acomp *acomp;
+> +       struct acomp_req *req[SWAP_CRYPTO_SUB_BATCH_SIZE];
+> +       u8 *buffer[SWAP_CRYPTO_SUB_BATCH_SIZE];
+> +       struct crypto_wait wait;
+> +       struct mutex mutex;
+> +       bool is_sleepable;
+> +};
 > +
-> +	/* The caller expects an elevated reference count. */
-> +	get_pid(pid);
-
-Do you want this helper to work for scenarios where pid is used across
-context? Otherwise can't we get rid of this get and later put for self?
-
-> +	return pid;
+> +/**
+> + * This API provides IAA compress batching functionality for use by swap
+> + * modules.
+> + * The acomp_ctx mutex should be locked/unlocked before/after calling th=
+is
+> + * procedure.
+> + *
+> + * @pages: Pages to be compressed.
+> + * @dsts: Pre-allocated destination buffers to store results of IAA comp=
+ression.
+> + * @dlens: Will contain the compressed lengths.
+> + * @errors: Will contain a 0 if the page was successfully compressed, or=
+ a
+> + *          non-0 error value to be processed by the calling function.
+> + * @nr_pages: The number of pages, up to SWAP_CRYPTO_SUB_BATCH_SIZE,
+> + *            to be compressed.
+> + * @acomp_ctx: The acomp context for iaa_crypto/other compressor.
+> + */
+> +void swap_crypto_acomp_compress_batch(
+> +       struct page *pages[],
+> +       u8 *dsts[],
+> +       unsigned int dlens[],
+> +       int errors[],
+> +       int nr_pages,
+> +       struct crypto_acomp_ctx *acomp_ctx);
+> +
+>  /* linux/mm/page_io.c */
+>  int sio_pool_init(void);
+>  struct swap_iocb;
+> @@ -119,6 +153,17 @@ static inline int swap_zeromap_batch(swp_entry_t ent=
+ry, int max_nr,
+>
+>  #else /* CONFIG_SWAP */
+>  struct swap_iocb;
+> +struct crypto_acomp_ctx {};
+> +static inline void swap_crypto_acomp_compress_batch(
+> +       struct page *pages[],
+> +       u8 *dsts[],
+> +       unsigned int dlens[],
+> +       int errors[],
+> +       int nr_pages,
+> +       struct crypto_acomp_ctx *acomp_ctx)
+> +{
 > +}
 > +
-
-Overall looks good to me.
-
-Reviewed-by: Shakeel Butt <shakeel.butt@linux.dev>
+>  static inline void swap_read_folio(struct folio *folio, struct swap_iocb=
+ **plug)
+>  {
+>  }
+> diff --git a/mm/swap_state.c b/mm/swap_state.c
+> index 4669f29cf555..117c3caa5679 100644
+> --- a/mm/swap_state.c
+> +++ b/mm/swap_state.c
+> @@ -23,6 +23,8 @@
+>  #include <linux/swap_slots.h>
+>  #include <linux/huge_mm.h>
+>  #include <linux/shmem_fs.h>
+> +#include <linux/scatterlist.h>
+> +#include <crypto/acompress.h>
+>  #include "internal.h"
+>  #include "swap.h"
+>
+> @@ -742,6 +744,119 @@ void exit_swap_address_space(unsigned int type)
+>         swapper_spaces[type] =3D NULL;
+>  }
+>
+> +#ifdef CONFIG_SWAP
+> +
+> +/**
+> + * This API provides IAA compress batching functionality for use by swap
+> + * modules.
+> + * The acomp_ctx mutex should be locked/unlocked before/after calling th=
+is
+> + * procedure.
+> + *
+> + * @pages: Pages to be compressed.
+> + * @dsts: Pre-allocated destination buffers to store results of IAA comp=
+ression.
+> + * @dlens: Will contain the compressed lengths.
+> + * @errors: Will contain a 0 if the page was successfully compressed, or=
+ a
+> + *          non-0 error value to be processed by the calling function.
+> + * @nr_pages: The number of pages, up to SWAP_CRYPTO_SUB_BATCH_SIZE,
+> + *            to be compressed.
+> + * @acomp_ctx: The acomp context for iaa_crypto/other compressor.
+> + */
+> +void swap_crypto_acomp_compress_batch(
+> +       struct page *pages[],
+> +       u8 *dsts[],
+> +       unsigned int dlens[],
+> +       int errors[],
+> +       int nr_pages,
+> +       struct crypto_acomp_ctx *acomp_ctx)
+> +{
+> +       struct scatterlist inputs[SWAP_CRYPTO_SUB_BATCH_SIZE];
+> +       struct scatterlist outputs[SWAP_CRYPTO_SUB_BATCH_SIZE];
+> +       bool compressions_done =3D false;
+> +       int i, j;
+> +
+> +       BUG_ON(nr_pages > SWAP_CRYPTO_SUB_BATCH_SIZE);
+> +
+> +       /*
+> +        * Prepare and submit acomp_reqs to IAA.
+> +        * IAA will process these compress jobs in parallel in async mode=
+.
+> +        * If the compressor does not support a poll() method, or if IAA =
+is
+> +        * used in sync mode, the jobs will be processed sequentially usi=
+ng
+> +        * acomp_ctx->req[0] and acomp_ctx->wait.
+> +        */
+> +       for (i =3D 0; i < nr_pages; ++i) {
+> +               j =3D acomp_ctx->acomp->poll ? i : 0;
+> +               sg_init_table(&inputs[i], 1);
+> +               sg_set_page(&inputs[i], pages[i], PAGE_SIZE, 0);
+> +
+> +               /*
+> +                * Each acomp_ctx->buffer[] is of size (PAGE_SIZE * 2).
+> +                * Reflect same in sg_list.
+> +                */
+> +               sg_init_one(&outputs[i], dsts[i], PAGE_SIZE * 2);
+> +               acomp_request_set_params(acomp_ctx->req[j], &inputs[i],
+> +                                        &outputs[i], PAGE_SIZE, dlens[i]=
+);
+> +
+> +               /*
+> +                * If the crypto_acomp provides an asynchronous poll()
+> +                * interface, submit the request to the driver now, and p=
+oll for
+> +                * a completion status later, after all descriptors have =
+been
+> +                * submitted. If the crypto_acomp does not provide a poll=
+()
+> +                * interface, submit the request and wait for it to compl=
+ete,
+> +                * i.e., synchronously, before moving on to the next requ=
+est.
+> +                */
+> +               if (acomp_ctx->acomp->poll) {
+> +                       errors[i] =3D crypto_acomp_compress(acomp_ctx->re=
+q[j]);
+> +
+> +                       if (errors[i] !=3D -EINPROGRESS)
+> +                               errors[i] =3D -EINVAL;
+> +                       else
+> +                               errors[i] =3D -EAGAIN;
+> +               } else {
+> +                       errors[i] =3D crypto_wait_req(
+> +                                             crypto_acomp_compress(acomp=
+_ctx->req[j]),
+> +                                             &acomp_ctx->wait);
+> +                       if (!errors[i])
+> +                               dlens[i] =3D acomp_ctx->req[j]->dlen;
+> +               }
+> +       }
+> +
+> +       /*
+> +        * If not doing async compressions, the batch has been processed =
+at
+> +        * this point and we can return.
+> +        */
+> +       if (!acomp_ctx->acomp->poll)
+> +               return;
+> +
+> +       /*
+> +        * Poll for and process IAA compress job completions
+> +        * in out-of-order manner.
+> +        */
+> +       while (!compressions_done) {
+> +               compressions_done =3D true;
+> +
+> +               for (i =3D 0; i < nr_pages; ++i) {
+> +                       /*
+> +                        * Skip, if the compression has already completed
+> +                        * successfully or with an error.
+> +                        */
+> +                       if (errors[i] !=3D -EAGAIN)
+> +                               continue;
+> +
+> +                       errors[i] =3D crypto_acomp_poll(acomp_ctx->req[i]=
+);
+> +
+> +                       if (errors[i]) {
+> +                               if (errors[i] =3D=3D -EAGAIN)
+> +                                       compressions_done =3D false;
+> +                       } else {
+> +                               dlens[i] =3D acomp_ctx->req[i]->dlen;
+> +                       }
+> +               }
+> +       }
+> +}
+> +EXPORT_SYMBOL_GPL(swap_crypto_acomp_compress_batch);
+> +
+> +#endif /* CONFIG_SWAP */
+> +
+>  static int swap_vma_ra_win(struct vm_fault *vmf, unsigned long *start,
+>                            unsigned long *end)
+>  {
+> diff --git a/mm/zswap.c b/mm/zswap.c
+> index 579869d1bdf6..cab3114321f9 100644
+> --- a/mm/zswap.c
+> +++ b/mm/zswap.c
+> @@ -150,15 +150,6 @@ bool zswap_never_enabled(void)
+>  * data structures
+>  **********************************/
+>
+> -struct crypto_acomp_ctx {
+> -       struct crypto_acomp *acomp;
+> -       struct acomp_req *req[SWAP_CRYPTO_SUB_BATCH_SIZE];
+> -       u8 *buffer[SWAP_CRYPTO_SUB_BATCH_SIZE];
+> -       struct crypto_wait wait;
+> -       struct mutex mutex;
+> -       bool is_sleepable;
+> -};
+> -
+>  /*
+>   * The lock ordering is zswap_tree.lock -> zswap_pool.lru_lock.
+>   * The only case where lru_lock is not acquired while holding tree.lock =
+is
+> --
+> 2.27.0
+>
 
