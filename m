@@ -1,109 +1,200 @@
-Return-Path: <linux-kernel+bounces-377588-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5445C9AC0F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:03:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EA4269AC0FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8241E1C21114
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:03:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2317AB25872
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:04:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244BA15820C;
-	Wed, 23 Oct 2024 08:03:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D954156641;
+	Wed, 23 Oct 2024 08:04:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="s1VZmLGA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="cm8QoREx"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9D915746F;
-	Wed, 23 Oct 2024 08:03:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEEC5156883
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:04:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729670612; cv=none; b=dk+855uc0EG4X/KK8bre+lH/rk9S8vRnu0MPnrnkwliIN1WqKEH8p2uDKlmYCkCAQCvZJdIxxwKjwU7WPV01Rwm0yFtS0tw0eIiiaJOziSsWKrS95qHLXet9AZH8ELVUTMk5pbchkqAw7Qb36QkKxYAj8RdIhb+TZGcUr7SWkOQ=
+	t=1729670650; cv=none; b=iGQF4Ek6469czBQMH1PWZdxATyyS2e3gH+T/tk88MUnqEWg5+V/JaCKaNRtUxO7jPDobDh8PSOPLemVM1Lom2skYfGgkYay4lUT17nwP14Wob8H684/AQRxiI3VFkX34Mgn7wVHrDw9BwnkKoKd7bDL7JTa8j4+XU4ye2YPw2tE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729670612; c=relaxed/simple;
-	bh=qPebdNS2aZYLxjo58zmxZfxOdumUpjrXTsuehOimBRs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=P/lS4PKJH9XcS+tDaAqI9WSLjz8bSxkbHYKwZ0+fHtYZDZ+FwUR4jgCzrHZTkWuyZQXO6UuqKT39eRW7XKmBgFWjEcjG8bOJYiJTsZM56cc040IlbtTnDLz9Arzyd98QYXMlmcH52OUKfMVz8xf5OmLFCp0Yoj2yETsYM/qx2u4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=s1VZmLGA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80078C4CEE5;
-	Wed, 23 Oct 2024 08:03:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729670612;
-	bh=qPebdNS2aZYLxjo58zmxZfxOdumUpjrXTsuehOimBRs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=s1VZmLGAPQf3BbaiH4BF1pdl5mZjnC7vZgcQdbMibFnskAF+suTYPsI3Tv5OQ6yZ8
-	 VqSqwj20SjVTSNOxyiRiXSPMD9K2gxAHbxHvabOfMyObvLUEXQx+19SwjscyenwyNu
-	 Z15/Q+BEs1ZKDW/ppPdbiI3zmkqCabfhfmBJ+NKzedKapk0MWzJpgkVLzvRpYkT0U0
-	 h6eirFHPMz3Fr58iOi/0TvZ6h8zSMX/15gPTwISjXFaEW3s/y8zF4YicxvaDJdorr8
-	 7pb/go92J4BoxNMCpXPf+aisiqJ1ZtruQ1/Tt6tYuFQHbvwhI2OMwNqSPvOl7v2Nin
-	 GcPZr65Ao1O3Q==
-Date: Wed, 23 Oct 2024 10:03:27 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, aliceryhl@google.com, dakr@redhat.com,
-	linux-kernel@vger.kernel.org, airlied@redhat.com,
-	miguel.ojeda.sandonis@gmail.com, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 0/5] Introduce Owned type and Ownable trait (was:
- "rust: page: Add support for vmalloc_to_page")
-Message-ID: <Zxitz41uPPeloK0o@pollux>
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
+	s=arc-20240116; t=1729670650; c=relaxed/simple;
+	bh=IF6aXsLxdWji6MMeujcJjCJobRyU7+rf13KAi63l6G4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SL6gyug+of4W4WxCdHuq6fPS3/SjNe7YpjtMQcSBMhoeNQOGvVr10GFrHogw3cINiHpMhG6IRJ8NGzProoQALLh4O1lklpZNNZBHnFM6XX0a1JNeAv9VAGC12/S7vWY5MIR8rKx4csqF5oJlQiPc/dFqOPMb13qRdrlAXnXYd+A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=cm8QoREx; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729670647;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1HJeCjnMIw12TEWY04xj2y1qbuaADV67keXH+V6fBEY=;
+	b=cm8QoRExGv68lufHktfTBQiVtmI9vSlm8309GBPQKfYJGoIWoTgaYtaUyncn8z2fsGK4Rp
+	JmjIRf0Wj02EMqGpljCx96n5cShuct4E52G4WWj8BrqVPbjuHOsGgRIA+/OLyclBcpj2PG
+	cvbspreX3ovOfWY7KZbeioD/uQ41gOQ=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-617-6u5vn4wgPD2HkKapZoHdhg-1; Wed, 23 Oct 2024 04:04:06 -0400
+X-MC-Unique: 6u5vn4wgPD2HkKapZoHdhg-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43163a40ee0so39943335e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:04:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729670645; x=1730275445;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1HJeCjnMIw12TEWY04xj2y1qbuaADV67keXH+V6fBEY=;
+        b=QBZUOcX32bZsXEcAq+YE++WsMRup5KPJXifxQB8814OV4KCy2iBq5U24Sfd3wv3LgK
+         2zduD9IjMKY5aPeDJEbAj+vrtNtW1R9pNe6vFJwPLhBF4TLLCVssTVW1QyBHuKm3jk/N
+         2EddfV7yMyBr5eTNVK4oAqxEy/hewgJqh/f91sbg2IO9bdqeTTFLgWbzpklzrs1ztDSA
+         4lquueuDmuNq3qVWRgNhHsMjxGP2VvbZpp/riERO+Pq3I0MnbwwX5UnLjXV5a956v0PW
+         Y/Q9us4DUxuwA6zoY6pobQ1ieS0IjdwAhsdlEaqFxVWLR6w2JVmnu6K3qTnZoUWCGWob
+         MnkQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUp4QPw8CffrVqNDRfuzkMqFFcl/9mVvzEo3BOCvh3DZq3z98MRK6jx1UT6H2DhzNT0VlMrbMf3nWrMbKw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1+hfU/AJue4zTzFTGAodiE9vUe8S8KF248a8aR++mBouoxSqI
+	XrkaMzIE85VQYyCs2/2HNOOTesOrDurtr/ED1Eg5RKZmIRvQVvdKykZV8Pk7er9dFVV8/Qw7iqa
+	XQMXs2EKlmJDvinNzv+YcV6X4V0IHEADny0uFPlwm7ac7kJqkcNSxWmAor2xEHA==
+X-Received: by 2002:a05:600c:1e28:b0:426:627e:37af with SMTP id 5b1f17b1804b1-4318412fd23mr15814785e9.3.1729670644880;
+        Wed, 23 Oct 2024 01:04:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFxvfVsE8Z/Bj4nM5IJVIdgM3fqMDZ+BQkr47XiNieWjM3E3mpsBv2Zmc+c3HsbEOTIR8ZDBA==
+X-Received: by 2002:a05:600c:1e28:b0:426:627e:37af with SMTP id 5b1f17b1804b1-4318412fd23mr15814545e9.3.1729670644357;
+        Wed, 23 Oct 2024 01:04:04 -0700 (PDT)
+Received: from ?IPV6:2a01:e0a:c:37e0:ced3:55bd:f454:e722? ([2a01:e0a:c:37e0:ced3:55bd:f454:e722])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a365e5sm8357499f8f.21.2024.10.23.01.04.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 01:04:03 -0700 (PDT)
+Message-ID: <44141638-4d8f-4e11-9ede-51cdb51d3a28@redhat.com>
+Date: Wed, 23 Oct 2024 10:04:02 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 4/5] drm/client: Remove unused
+ drm_client_framebuffer_flush
+To: Thomas Zimmermann <tzimmermann@suse.de>, linux@treblig.org,
+ maarten.lankhorst@linux.intel.com, mripard@kernel.org, airlied@gmail.com,
+ simona@ffwll.ch
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
+References: <20241022232934.238124-1-linux@treblig.org>
+ <20241022232934.238124-5-linux@treblig.org>
+ <a56b486c-9341-41aa-a3ab-090f7ffd56d6@suse.de>
+Content-Language: en-US, fr
+From: Jocelyn Falempe <jfalempe@redhat.com>
+In-Reply-To: <a56b486c-9341-41aa-a3ab-090f7ffd56d6@suse.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 01:44:44AM +0300, Abdiel Janulgue wrote:
-> Hi all,
+On 23/10/2024 08:46, Thomas Zimmermann wrote:
+> Hi
 > 
-> This series introduces the Owned type and Ownable trait which is the v2 of
-> "rust: page: Add support for vmalloc_to_page" [0]. This series includes changes
-> for firmware as well to make use of the new wrapper.
+> Am 23.10.24 um 01:29 schrieb linux@treblig.org:
+>> From: "Dr. David Alan Gilbert" <linux@treblig.org>
+>>
+>> drm_client_framebuffer_flush() was explicitly added in 2020
+>> by
+>> commit c9c03e3cf072 ("drm/client: Add drm_client_framebuffer_flush()")
+>> but has never been used.
+>>
+>> Remove it.
+> 
+> I had a patchset to use this helper for fbdev emulation. It just needs 
+> preparation in a number of drivers.
 
-Please make sure to add all relevant maintainers. Since this includes a firmware
-patch, you should make sure to add all firmware maintainers. Remember to use
-scripts/get_maintainer.pl.
+It is used by drm_log, which is under review.
+Please don't remove it.
 
-Also there are a few minor checkpatch warnings. Please also make sure to run
-scripts/checkpatch.pl.
+https://patchwork.freedesktop.org/series/136789/
 
-Please also make sure to compile the code with `CLIPPY=1` (there are a bunch of
-warnings) and make sure to also run the `rustfmt` target (there are some
-formatting issues).
+-- 
 
-I wonder if it would make sense to make `CLIPPY=1` the default and only disable
-it by explicitly passing `CLIPPY=0`.
+Jocelyn
+
 
 > 
-> Changes since v2:
-> - Use Owned and Ownable types for constructing Page as suggested in [1]
->   instad of using ptr::read().
+> Best regards
+> Thomas
 > 
-> [0] https://lore.kernel.org/rust-for-linux/20241007202752.3096472-1-abdiel.janulgue@gmail.com/
-> [1] https://lore.kernel.org/rust-for-linux/ZwUYmunVpzpexGV8@boqun-archlinux/
+>>
+>> Signed-off-by: Dr. David Alan Gilbert <linux@treblig.org>
+>> ---
+>>   drivers/gpu/drm/drm_client.c | 33 ---------------------------------
+>>   include/drm/drm_client.h     |  1 -
+>>   2 files changed, 34 deletions(-)
+>>
+>> diff --git a/drivers/gpu/drm/drm_client.c b/drivers/gpu/drm/drm_client.c
+>> index bfedcbf516db..5d10ad3c2ca5 100644
+>> --- a/drivers/gpu/drm/drm_client.c
+>> +++ b/drivers/gpu/drm/drm_client.c
+>> @@ -552,39 +552,6 @@ void drm_client_framebuffer_delete(struct 
+>> drm_client_buffer *buffer)
+>>   }
+>>   EXPORT_SYMBOL(drm_client_framebuffer_delete);
+>> -/**
+>> - * drm_client_framebuffer_flush - Manually flush client framebuffer
+>> - * @buffer: DRM client buffer (can be NULL)
+>> - * @rect: Damage rectangle (if NULL flushes all)
+>> - *
+>> - * This calls &drm_framebuffer_funcs->dirty (if present) to flush 
+>> buffer changes
+>> - * for drivers that need it.
+>> - *
+>> - * Returns:
+>> - * Zero on success or negative error code on failure.
+>> - */
+>> -int drm_client_framebuffer_flush(struct drm_client_buffer *buffer, 
+>> struct drm_rect *rect)
+>> -{
+>> -    if (!buffer || !buffer->fb || !buffer->fb->funcs->dirty)
+>> -        return 0;
+>> -
+>> -    if (rect) {
+>> -        struct drm_clip_rect clip = {
+>> -            .x1 = rect->x1,
+>> -            .y1 = rect->y1,
+>> -            .x2 = rect->x2,
+>> -            .y2 = rect->y2,
+>> -        };
+>> -
+>> -        return buffer->fb->funcs->dirty(buffer->fb, buffer->client- 
+>> >file,
+>> -                        0, 0, &clip, 1);
+>> -    }
+>> -
+>> -    return buffer->fb->funcs->dirty(buffer->fb, buffer->client->file,
+>> -                    0, 0, NULL, 0);
+>> -}
+>> -EXPORT_SYMBOL(drm_client_framebuffer_flush);
+>> -
+>>   #ifdef CONFIG_DEBUG_FS
+>>   static int drm_client_debugfs_internal_clients(struct seq_file *m, 
+>> void *data)
+>>   {
+>> diff --git a/include/drm/drm_client.h b/include/drm/drm_client.h
+>> index bc0e66f9c425..560aae47e06d 100644
+>> --- a/include/drm/drm_client.h
+>> +++ b/include/drm/drm_client.h
+>> @@ -165,7 +165,6 @@ struct drm_client_buffer {
+>>   struct drm_client_buffer *
+>>   drm_client_framebuffer_create(struct drm_client_dev *client, u32 
+>> width, u32 height, u32 format);
+>>   void drm_client_framebuffer_delete(struct drm_client_buffer *buffer);
+>> -int drm_client_framebuffer_flush(struct drm_client_buffer *buffer, 
+>> struct drm_rect *rect);
+>>   int drm_client_buffer_vmap_local(struct drm_client_buffer *buffer,
+>>                    struct iosys_map *map_copy);
+>>   void drm_client_buffer_vunmap_local(struct drm_client_buffer *buffer);
 > 
-> Abdiel Janulgue (5):
->   rust: types: add `Owned` type and `Ownable` trait
->   rust: page: Make ownership of the page pointer explicit.
->   rust: page: Extend support to vmalloc_to_page
->   rust: page: Add page_slice_to_page
->   rust: firmware: implement `Ownable` for Firmware
-> 
->  rust/kernel/firmware.rs |  31 ++++++-----
->  rust/kernel/page.rs     | 116 +++++++++++++++++++++++++++++++++++-----
->  rust/kernel/types.rs    |  62 +++++++++++++++++++++
->  3 files changed, 184 insertions(+), 25 deletions(-)
-> 
-> 
-> base-commit: 15541c9263ce34ff95a06bc68f45d9bc5c990bcd
-> -- 
-> 2.43.0
-> 
+
 
