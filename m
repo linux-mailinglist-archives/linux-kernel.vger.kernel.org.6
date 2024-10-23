@@ -1,97 +1,130 @@
-Return-Path: <linux-kernel+bounces-377440-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377441-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 890079ABEE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:36:03 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BF0A89ABEE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:36:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14826B21D13
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:36:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5164EB22311
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973B214A4E9;
-	Wed, 23 Oct 2024 06:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OREKlhcj"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29BC514A4C7;
+	Wed, 23 Oct 2024 06:36:16 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CB5142623;
-	Wed, 23 Oct 2024 06:35:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F3DFC1482FE;
+	Wed, 23 Oct 2024 06:36:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665354; cv=none; b=ZOfZQcfWI7/O3JpbXPcsDATFieDrNR8Oz/IOJnoGkdWtE42KS4WuuAmTLbN43SSYGAQQnEei4EVZsBEc8PllShtVFoY5msNp5AJVqBJsGthxpg1K/Rpx84mWypu+JNjDOL/PviXhl4Duxg+xNLOMgkc0UUOihYPiFXPoGYqmCiQ=
+	t=1729665375; cv=none; b=gsTORWcL3xjRsEUMNRgi7Cb6DwKr3okpImypN5P/Vwt1INHT6sVRqIzXx7JQxE6zIpnmmWuQt5Y1MCt1EF64QerjXFuDqbPcBPRBi7mZmOAT2eT79N8gLdYPLUr1kf7RLahfxehZQiNCcXzyYwyX1i+p72DsA9EscHLsM5qUr6U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665354; c=relaxed/simple;
-	bh=poSlN6DJGglCCcJDmjcfT8MMgqSm8TLgA7WgiDlN0zk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qSNlqtp/G6aiI4m+KesQTAiKG8fXCdHdh5nxhYiWyKi1h5JGPZdjgCqHZMcGAINp1KUtpVYPClJ/NOnlelZoQVIJgV2pRW29xsf27tHuhtGtewXJQFOmMYvLaiCVqWqDUZ8OUqGSX9y7p8auo8E0bCGrVarDi/yhX7VLetv1bwI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OREKlhcj; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729665348;
-	bh=25KfOGp5+n5dro5P1MU8b4qoNMvgeEla3yLU3SfMA1U=;
-	h=Date:From:To:Cc:Subject:From;
-	b=OREKlhcjEYE9PP/kBVF7VZqDOBQxcrsB8r4WsNke/Md2lmGsUompYzKSxetbT7Q0a
-	 MIzerue+cXI/5fNlMQXxUxNRpD5lSRGr5dqwQ8siUyqF2g5xezQob5fp6QBBalikd7
-	 Oyr7flsCf0AbqO1XTirJylnVEeHHp5RrF2TVsKd914TfHh7YCBx1134GnJgU8LGxLn
-	 r8gZvGsUfBQJbM4h4uM+XqFEJ9c7SZ72rHHjmNbodddmRjFgJt9oe3gYmSeAdUMb2S
-	 uvOFXvBBYg7RvvRsXI3XqeZflmNX8tAjBOXYNal+0T3bDMPFnJagk/MylzU3CWRMML
-	 CWYgenHGDroEA==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYK782X94z4wnr;
-	Wed, 23 Oct 2024 17:35:48 +1100 (AEDT)
-Date: Wed, 23 Oct 2024 17:35:49 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>
-Subject: linux-next: Signed-off-by missing for commit in the cifs tree
-Message-ID: <20241023173549.043d4ce6@canb.auug.org.au>
+	s=arc-20240116; t=1729665375; c=relaxed/simple;
+	bh=Hrtbj5gzhkwWoK1Nu8Kf80sdOybfLxs8lrIUMePveHg=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=rSHgiDq0RcYxA0+WMrj7R00B/HIfUhNQKykWtAdr8kQcIpRUggiqx5Qtq3uzoV6kD6nsSsNVb0grvC53SDA8ccUeYltIOk+U7fuW6d2kHW2Cce/uZeuRTzfoL/USAkc79LxZbouoLbqdRat7+oj/SgSZgT+WWSx7z3hpOeeorCw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id 24EE65F976;
+	Wed, 23 Oct 2024 08:36:11 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 6/7] kconfig: qconf: use default platform shortcuts
+Date: Wed, 23 Oct 2024 08:36:10 +0200
+Message-ID: <22467307.EfDdHjke4D@devpool47.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <4960180.31r3eYUQgx@devpool47.emlix.com>
+References: <4960180.31r3eYUQgx@devpool47.emlix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/OlPpRRhWGuaZ0e0MqDUkNSN";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/OlPpRRhWGuaZ0e0MqDUkNSN
-Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-Hi all,
+This renames "Load" to "Open" and switches Ctrl-L to Ctrl-O for the default
+platforms. This may break the workflow for those used to it, but will make =
+it
+actually work for everyone else like me who would just expect the default
+behavior. Add some more standard shortcuts where available. If they replace
+the existing shortcuts they would have the same value in my case.
 
-Commit
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+=2D--
+ scripts/kconfig/qconf.cc | 12 +++++++-----
+ 1 file changed, 7 insertions(+), 5 deletions(-)
 
-  0c0a5a79a9cc ("smb: client: Handle kstrdup failures for passwords")
+diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+index 563ef8543d7c..4b2f707c9203 100644
+=2D-- a/scripts/kconfig/qconf.cc
++++ b/scripts/kconfig/qconf.cc
+@@ -1361,21 +1361,22 @@ ConfigMainWindow::ConfigMainWindow(void)
+ 	configList->setFocus();
+=20
+ 	backAction =3D new QAction(QPixmap(xpm_back), "Back", this);
++	backAction->setShortcut(QKeySequence::Back);
+ 	connect(backAction, &QAction::triggered,
+ 		this, &ConfigMainWindow::goBack);
+=20
+ 	QAction *quitAction =3D new QAction("&Quit", this);
+=2D	quitAction->setShortcut(Qt::CTRL | Qt::Key_Q);
++	quitAction->setShortcut(QKeySequence::Quit);
+ 	connect(quitAction, &QAction::triggered,
+ 		this, &ConfigMainWindow::close);
+=20
+=2D	QAction *loadAction =3D new QAction(QPixmap(xpm_load), "&Load", this);
+=2D	loadAction->setShortcut(Qt::CTRL | Qt::Key_L);
++	QAction *loadAction =3D new QAction(QPixmap(xpm_load), "&Open", this);
++	loadAction->setShortcut(QKeySequence::Open);
+ 	connect(loadAction, &QAction::triggered,
+ 		this, &ConfigMainWindow::loadConfig);
+=20
+ 	saveAction =3D new QAction(QPixmap(xpm_save), "&Save", this);
+=2D	saveAction->setShortcut(Qt::CTRL | Qt::Key_S);
++	saveAction->setShortcut(QKeySequence::Save);
+ 	connect(saveAction, &QAction::triggered,
+ 		this, &ConfigMainWindow::saveConfig);
+=20
+@@ -1384,10 +1385,11 @@ ConfigMainWindow::ConfigMainWindow(void)
+ 	configname =3D conf_get_configname();
+=20
+ 	QAction *saveAsAction =3D new QAction("Save &As...", this);
++	saveAsAction->setShortcut(QKeySequence::SaveAs);
+ 	connect(saveAsAction, &QAction::triggered,
+ 		this, &ConfigMainWindow::saveConfigAs);
+ 	QAction *searchAction =3D new QAction("&Find", this);
+=2D	searchAction->setShortcut(Qt::CTRL | Qt::Key_F);
++	searchAction->setShortcut(QKeySequence::Find);
+ 	connect(searchAction, &QAction::triggered,
+ 		this, &ConfigMainWindow::searchConfig);
+ 	singleViewAction =3D new QAction(QPixmap(xpm_single_view), "Single View",=
+ this);
+=2D-=20
+2.47.0
 
-is missing a Signed-off-by from its committer.
+=2D-=20
+Rolf Eike Beer
 
---=20
-Cheers,
-Stephen Rothwell
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
 
---Sig_/OlPpRRhWGuaZ0e0MqDUkNSN
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+emlix - your embedded Linux partner
 
------BEGIN PGP SIGNATURE-----
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYmUUACgkQAVBC80lX
-0GzZYgf8DyYIdRcYQekhc+U/cPL4b9A5xmY9I8Z6EwfNBlCXuI4+cBpOHCOX1LWz
-/p1BmPLGqoaRafgInY2AVTY38I/X6OydQNAyWE/kU2T8b6cvaF8LKxzpEP0E6Z+J
-PgnXbP9zPOBgNL20WGktITORi7SRcuo152XsS2B44bDB31s3qLM9koz+RvfrglE/
-JWTwWfJ5sLcwx6rjuu/kiOUyb1/XdvP+2tjFChOSpow5b5Y2rmATi93i253uGylG
-b0fzL1e+cWvugHazB9kzgQZI7ZFe8n6klYIydNJF9AJqmUr4S+G2QVIoyLVHQBml
-Hz6PQ+eyaZLr2+ZwU9pn3RyYjkXMtg==
-=QiAO
------END PGP SIGNATURE-----
-
---Sig_/OlPpRRhWGuaZ0e0MqDUkNSN--
 
