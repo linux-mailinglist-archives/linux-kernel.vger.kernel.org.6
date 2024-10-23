@@ -1,318 +1,142 @@
-Return-Path: <linux-kernel+bounces-377698-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377699-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A8109AC27C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:00:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 451BB9AC27F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:00:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAD6C28093C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:59:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6FFA71C20403
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:00:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11D10174EFC;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B2C9176AAD;
 	Wed, 23 Oct 2024 08:59:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="ZALe26Ak"
-Received: from relay4-d.mail.gandi.net (relay4-d.mail.gandi.net [217.70.183.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="bD42hZsk"
+Received: from mail-wr1-f47.google.com (mail-wr1-f47.google.com [209.85.221.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 954F11607B7;
-	Wed, 23 Oct 2024 08:59:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 173A915B551;
+	Wed, 23 Oct 2024 08:59:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673989; cv=none; b=CTOZoOUIZORbB0+qTjP198abiH53q4FfhYaXif+Jokp9V5WFpB1Bk7Hh4LDZfuWuxq7w473cLeeGXbntdxU1Eu9iuStKcz1iwkwVN74n/G1RyOarkxNjiZqO7tSX11uF2KrkPj/REfpbDX7W3tt+OHxn+wh4C2w5lo5JaKvMC0w=
+	t=1729673989; cv=none; b=eeoxObP0Dkj234ylhKtdSCdMReoJAbsYjDMtwIsdF0EtQ2IvxLpYUotQlUWT2rUgYCoHaBiFFD37AUGT/U3Ejjzm75QEqJEOLPIvefdoglwlBGANJWv6anFHQ6zcCEHi9gRHLpVCbUfHvvFBIybpW2OCYuqDfSxg1TCU2oR00RM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729673989; c=relaxed/simple;
-	bh=avuoVgBcfmbIHNCiyU8RvOrOZgQENWOaajoEHgAXT0s=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=F2NWvqkY6CQhCYBX/hKkKnBu+RJxFOXm9dFkgACD1PnPYSVLsq9t5JwP7Acb+42BndVeDicpJpPjLGTQz4ftuCftbXrBHz7ITpFfw3NT91xb5Ak2KhHFjABddC3o98u4QfXIB8wofwKm65E9jmI1klsHdz1sBVdWh7T9ICW9uZ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=ZALe26Ak; arc=none smtp.client-ip=217.70.183.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 09746E0002;
-	Wed, 23 Oct 2024 08:59:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1729673983;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=UJaVg05TpGxgcHK8z5rCBAN6qZL6H8ZEmcOQbT18p8A=;
-	b=ZALe26AkgEWhPT8/8dfrIYN7ce8anVtSIARs6nAv0Ns+pqRwG1Ovg68on5CORrSp0cyY2k
-	2tIacCaxKNaGB0PQnCqgm418EFGeL8Vb3ZFtUFjo134F3AwZ17mDytRHd0ZR2vDY5Uyzv9
-	x7h1Vx8skbmW9EePI4cDWoL0Py9Oq+DpIgS3jBmZOtQ/vNjTXoF0wOKG2leEc1KOPm+rbF
-	z3kA/noNZT6hrlN0ptCmcoawqUrPqvd21wZUYaWIDmiSgAP0AFiH+qPFDeNdDDguSxbhzr
-	IhK5Bi9nK4vbUThXqX1UhAZqJl1P9VnJIf5hNDGJNYsdDuxi+C40Ks3MciSz4Q==
-Message-ID: <57719b35-5e7a-4c9e-b9a3-5017dec73803@yoseli.org>
-Date: Wed, 23 Oct 2024 10:59:42 +0200
+	bh=z/UnCm00sQYYejFTd7Li58E5oX/YxjQixYcLoNcfaDQ=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=tjFHeiMYN97Ceoj7FCK9VW2AGbYpQVo3XvzXa4kJZYWjv3Ib5DEKtQRyQlrnJHRHG/cpvZp++yj1ND3sQvIY5NURyK1qE7oiADh54WAyoAiH+Dt+uoE7OnG04tJ4NaU8UlsnTlkZvWMqjhghCQwpKsZRFijD/7pi2PODm+bQhtI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=bD42hZsk; arc=none smtp.client-ip=209.85.221.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f47.google.com with SMTP id ffacd0b85a97d-37d4821e6b4so4475496f8f.3;
+        Wed, 23 Oct 2024 01:59:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729673986; x=1730278786; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Fz6ovL9+aadxdXmjVdlymUjj7eBeEayfscSFgOS2SI0=;
+        b=bD42hZskpxUT36IEy5BtMqiPSoRpiRRRKlsRFy6K5y8g6In8yCTNkBOclcHwT0E4IV
+         rVAURmAmwI+pUUpnS/H2/xhTkzFyBTG9bpgF+sJbsPL/NI/nuthO6vPU0FTxzPVnfChk
+         foeSfhkxYILjNF2gC3xWgDR6UmW7dr8xPfAIhVPchzlCKadkn4h3wTdbmpgEThlLfylA
+         I1XlOtIBNxVm9OSeEROTtCkbSVx6AinrBoPpciEVI5I+LGf263sa3Y7jp99w8rinZxA3
+         YtQt9pwpnfPFiw9I5/s9MON+paqvw9HIYn2Iyrgoba1BWeLVgmr403OM32zLqRWL7GPs
+         b8zA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729673986; x=1730278786;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Fz6ovL9+aadxdXmjVdlymUjj7eBeEayfscSFgOS2SI0=;
+        b=ivxvEEYg6ff6kkAhAXGQAEYLtWFCjXreHtuRg/TtlZniowF7bc3t7j4NBUIQVc0s1p
+         TERGZ0ZVR+TsBQMe5TvFemaw6VrDCpKHXI59St2VwJMDOzPIUstX4W/Se81PD9Cc0yi8
+         KHJshVBOhu/BCJ7T3Tf/KAzViziQvYzjxWBBrrslsIQ3SW1IINWMz6vO0AuDYSHVQLcW
+         uN340L6afSrTKoQLozOJyyfpbTO0R4zclfJiGXMu8sguNh+/ua70PxxdCz7yn8zMGwQd
+         WrBqHfSHZdzvE24hSCUbu5pc7z1V3maZ9eaVaRwIZXHwS1JuSslS7scKxyHLHnWaIRN7
+         2fJA==
+X-Forwarded-Encrypted: i=1; AJvYcCUbV4KlTd4KP+lTdfMWMJpuW8il93pA7Ayl/7h2HFjmFwY1WULaBBSnrDNooqJSDIyJSG7feFdx8Zoe@vger.kernel.org, AJvYcCWLlRwIy8Ww79fvXR85ngj2s+8THlvRsn16nI1AE+h8PN9qiPllfo+JSOWqGcETyGrTDNWx1t07kU5VmOVN@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhoCMjouBxkz60JWjn/Buw0ovE8iYYr+BJYxbyqjcMakLatwB5
+	VMVU653IfjSbqWrAf3ocN8fKfQerhcjCuGD+btkVItbu1xYY26WF
+X-Google-Smtp-Source: AGHT+IHRfBDFt7Qayq7axijtnZYferW2DmTAPbqrRlGXGjubJy6WUUwjyf3bsP2HOLIw1QfYRVkYnA==
+X-Received: by 2002:adf:e2cd:0:b0:37d:633a:b361 with SMTP id ffacd0b85a97d-37efcf92befmr1326458f8f.51.1729673985977;
+        Wed, 23 Oct 2024 01:59:45 -0700 (PDT)
+Received: from localhost ([194.120.133.34])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a584f7sm8412521f8f.53.2024.10.23.01.59.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 01:59:45 -0700 (PDT)
+From: Colin Ian King <colin.i.king@gmail.com>
+To: Shravan Kumar Ramani <shravankr@nvidia.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Tony Luck <tony.luck@intel.com>,
+	James Morse <james.morse@arm.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Robert Richter <rric@kernel.org>,
+	linux-edac@vger.kernel.org
+Cc: kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH][next] EDAC/bluefield: Fix spelling mistake "syndrom" -> "syndrome"
+Date: Wed, 23 Oct 2024 09:59:45 +0100
+Message-Id: <20241023085945.1391366-1-colin.i.king@gmail.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-To: Michael Schmitz <schmitzmic@gmail.com>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
- <4ab85330-5a50-bde1-f014-99a8e7cb28cc@gmail.com>
- <86eea4de-2696-4485-9c16-cd3fbbd1aae6@yoseli.org>
- <4e93964e-bafb-0474-743f-8280c46898f4@gmail.com>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <4e93964e-bafb-0474-743f-8280c46898f4@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-Hi Michael,
+There are a couple of variables and a edac_mc_handle_error message
+that contain spelling mistakes. Fix them.
 
-On 23/10/2024 09:30, Michael Schmitz wrote:
-> Hi Jean-Michel,
-> 
-> Am 23.10.2024 um 18:53 schrieb Jean-Michel Hautbois:
->> Hi Michael,
->>
->> On 23/10/2024 05:53, Michael Schmitz wrote:
->>> Jean-Michel,
->>>
->>> thanks for your patches!
->>>
->>> Am 21.10.2024 um 22:44 schrieb Jean-Michel Hautbois:
->>>> The TRACE_IRQFLAGS_SUPPORT requires the architecture to call
->>>> trace_hardirqs_off() when interrupts are disabled and
->>>> trace_hardirqs_on() when they are enabled.
->>>> Add those calls to do_IRQ function.
->>>
->>> You will also have to add these calls to the three sites in arch/m68k/
->>> coldfire/head.S where interrupts are enabled or disabled.
->>
->> Thanks for this ! I prepared a v2 with those calls added. I am wondering
-> 
-> Good -
-> 
->> if my second patch is ok, I think it is not, could you please review it
-> 
-> I'll have to read up on how arch_stack_walk is supposed to work - have 
-> never seen that code before.
-> 
->> ? There may already be something related to the stack in the assembly
->> part useful to implement arch_stack_walk() in a different way ?
-> 
-> I doubt it
-> 
->>>
->>> Here:
->>>> ENTRY(system_call)
->>>>         SAVE_ALL_SYS
->>>>         move    #0x2000,%sr             /* enable intrs again */
->>>>         GET_CURRENT(%d2)
->>>
->>> and here:
->>>> ret_from_exception:
->>>>         move    #0x2700,%sr             /* disable intrs */
->>>>         btst    #5,%sp@(PT_OFF_SR)      /* check if returning to
->>>> kernel */
->>>>         jeq     Luser_return            /* if so, skip resched,
->>>> signals */
->>>
->>> and here:
->>>> Lwork_to_do:
->>>>         movel   %a0@(TINFO_FLAGS),%d1   /* get thread_info->flags */
->>>>         move    #0x2000,%sr             /* enable intrs again */
->>>>         btst    #TIF_NEED_RESCHED,%d1
->>>>         jne     reschedule
->>>
->>> There's one similar site in arch/m68k/kernel/head.S
->>> (ret_from_exception) where interrupts are enabled that would need a
->>> similar change, if you want to enable this for all m68k.
->>
->> I won't be able to test it though ;-).
->> I see there are a few interrupts disabling in
->> arch/m68k/include/asm/entry.h too ?
-> 
-> Right - that's different in the coldfire stack save/restore macros. I 
-> missed that before.
-> 
-> Looks like wherever SAVE_ALL_SYS, SAVE_ALL_INT and RESTORE_USER are 
-> used, calls to trace_irqs_on/off() are required as well.
-> 
-> RESTORE_USER only restores the IPL in the CONFIG_COLDFIRE_SW_A7, which 
-> makes this a little tricky ... you might have to add these calls to the 
-> macros to get the correct behaviour.
-> 
+Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+---
+ drivers/edac/bluefield_edac.c | 14 +++++++-------
+ 1 file changed, 7 insertions(+), 7 deletions(-)
 
-Sadly, not that straightforward.
-I have this patch right now:
-diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-index b2a3093af677..fc4a2d124514 100644
---- a/arch/m68k/Kconfig
-+++ b/arch/m68k/Kconfig
-@@ -41,6 +41,7 @@ config M68K
-         select ZONE_DMA
-         select ARCH_SUPPORTS_RT
-         select IRQ_FORCED_THREADING
-+       select TRACE_IRQFLAGS_SUPPORT
-
-  config CPU_BIG_ENDIAN
-         def_bool y
-diff --git a/arch/m68k/coldfire/entry.S b/arch/m68k/coldfire/entry.S
-index 4ea08336e2fb..fbdc4404f29e 100644
---- a/arch/m68k/coldfire/entry.S
-+++ b/arch/m68k/coldfire/entry.S
-@@ -57,6 +57,9 @@ enosys:
-  ENTRY(system_call)
-         SAVE_ALL_SYS
-         move    #0x2000,%sr             /* enable intrs again */
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+       jbsr    trace_hardirqs_on
-+#endif
-         GET_CURRENT(%d2)
-
-         cmpl    #NR_syscalls,%d0
-@@ -99,6 +102,9 @@ ENTRY(system_call)
-         addql   #4,%sp
-
-  ret_from_exception:
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+       jbsr    trace_hardirqs_off
-+#endif
-         move    #0x2700,%sr             /* disable intrs */
-         btst    #5,%sp@(PT_OFF_SR)      /* check if returning to kernel */
-         jeq     Luser_return            /* if so, skip resched, signals */
-@@ -140,6 +146,9 @@ Lreturn:
-  Lwork_to_do:
-         movel   %a0@(TINFO_FLAGS),%d1   /* get thread_info->flags */
-         move    #0x2000,%sr             /* enable intrs again */
-+#ifdef CONFIG_TRACE_IRQFLAGS
-+       jbsr    trace_hardirqs_on
-+#endif
-         btst    #TIF_NEED_RESCHED,%d1
-         jne     reschedule
-
-But it fails when init is called:
-[    5.313000] Run /bin/bash as init process
-[    5.314000]   with arguments:
-[    5.315000]     /bin/bash
-[    5.316000]   with environment:
-[    5.317000]     HOME=/
-[    5.318000]     TERM=linux
-[    5.684000] Kernel panic - not syncing: Attempted to kill init! 
-exitcode=0x0000000b
-[    5.684000] CPU: 0 UID: 0 PID: 1 Comm: bash Not tainted 
-6.12.0-rc4-00049-g4393ca34ead3 #364
-[    5.684000] Stack from 41a03e18:
-[    5.684000]         41a03e18 41540187 41540187 0000000a ffffffff 
-415a8fb4 4140dd90 41416588
-[    5.684000]         41540187 4140d5de 4102ba84 4100b19c 4100b1a8 
-00000000 41a38000 4102ba3a
-[    5.684000]         41a03ea0 4100c34a 4150e87e 0000000b 0000000b 
-41a03f80 0000000a 41a3c0d4
-[    5.684000]         41a02000 400004d8 41a08000 4102ba3a 4102ba84 
-00000000 00000000 000000ff
-[    5.684000]         00000000 00000000 41a03ef4 4100cb82 0000000b 
-0000000b 41a03f80 41a03f6c
-[    5.684000]         41016cd2 0000000b 41a03f6c 0000001d 00000026 
-0000048c ffffffff 00000006
-[    5.684000] Call Trace: [<4140dd90>] _printk+0x0/0x18
-[    5.684000]  [<41416588>] dump_stack+0xc/0x10
-[    5.684000]  [<4140d5de>] panic+0xf2/0x2d4
-[    5.684000]  [<4102ba84>] preempt_count_sub+0x0/0x2e
-[    5.684000]  [<4100b19c>] arch_local_irq_enable+0x0/0xc
-[    5.684000]  [<4100b1a8>] arch_irqs_disabled+0x0/0x10
-[    5.684000]  [<4102ba3a>] preempt_count_add+0x0/0x1e
-[    5.684000]  [<4100c34a>] do_exit+0x266/0x930
-[    5.684000]  [<4102ba3a>] preempt_count_add+0x0/0x1e
-[    5.684000]  [<4102ba84>] preempt_count_sub+0x0/0x2e
-[    5.684000]  [<4100cb82>] do_group_exit+0x26/0xba
-[    5.684000]  [<41016cd2>] get_signal+0x60e/0x76c
-[    5.684000]  [<410044e8>] test_ti_thread_flag+0x0/0x14
-[    5.684000]  [<4102ba94>] preempt_count_sub+0x10/0x2e
-[    5.684000]  [<41004b68>] do_notify_resume+0x3a/0x4c6
-[    5.684000]  [<41015d52>] force_sig_fault_to_task+0x32/0x3e
-[    5.684000]  [<41015d72>] force_sig_fault+0x14/0x1a
-[    5.684000]  [<41005606>] buserr_c+0x9a/0x188
-[    5.684000]  [<410065fc>] Lsignal_return+0x14/0x24
-[    5.684000]  [<410065de>] Lwork_to_do+0xe/0x18
-[    5.684000]
-[    5.684000] ---[ end Kernel panic - not syncing: Attempted to kill 
-init! exitcode=0x0000000b ]---
-
-
-JM
-
->>
->>>
->>> Registers %d0-%d5 and %a0-%a2 are saved on the stack at this point and
->>> can be clobbered if need be.
->>
->> I don't know if they need to be clobbered...
-> 
-> I meant to say that if you need registers to prepare function arguments 
-> for trace_irqs_on/off() on the stack, these can be used. But that may 
-> not be necessary in this case.
-> 
-> Cheers,
-> 
->      Michael
-> 
-> 
->>
->> Thanks,
->> JM
->>
->>>
->>> Cheers,
->>>
->>>      Michael
->>>
->>>
->>>>
->>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
->>>> ---
->>>>  arch/m68k/Kconfig      | 1 +
->>>>  arch/m68k/kernel/irq.c | 2 ++
->>>>  2 files changed, 3 insertions(+)
->>>>
->>>> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
->>>> index
->>>> cc26df907bfe3c8143a931d259eceabb16af7411..ab3375475721fa63418c40d4ba6ac76679ebc77d
->>>> 100644
->>>> --- a/arch/m68k/Kconfig
->>>> +++ b/arch/m68k/Kconfig
->>>> @@ -39,6 +39,7 @@ config M68K
->>>>      select OLD_SIGSUSPEND3
->>>>      select UACCESS_MEMCPY if !MMU
->>>>      select ZONE_DMA
->>>> +    select TRACE_IRQFLAGS_SUPPORT
->>>>
->>>>  config CPU_BIG_ENDIAN
->>>>      def_bool y
->>>> diff --git a/arch/m68k/kernel/irq.c b/arch/m68k/kernel/irq.c
->>>> index
->>>> 9ab4f550342e5de11c528f55781432675ffd66bf..74cf60ebbc4bca51f3caa4046dbd2bdb02355711
->>>> 100644
->>>> --- a/arch/m68k/kernel/irq.c
->>>> +++ b/arch/m68k/kernel/irq.c
->>>> @@ -21,9 +21,11 @@ asmlinkage void do_IRQ(int irq, struct pt_regs 
->>>> *regs)
->>>>  {
->>>>      struct pt_regs *oldregs = set_irq_regs(regs);
->>>>
->>>> +    trace_hardirqs_off();
->>>>      irq_enter();
->>>>      generic_handle_irq(irq);
->>>>      irq_exit();
->>>> +    trace_hardirqs_on();
->>>>
->>>>      set_irq_regs(oldregs);
->>>>  }
->>>>
->>
+diff --git a/drivers/edac/bluefield_edac.c b/drivers/edac/bluefield_edac.c
+index 739132e5ed8a..82586e90cacf 100644
+--- a/drivers/edac/bluefield_edac.c
++++ b/drivers/edac/bluefield_edac.c
+@@ -176,7 +176,7 @@ static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
+ {
+ 	struct bluefield_edac_priv *priv = mci->pvt_info;
+ 	u32 dram_additional_info, err_prank, edea0, edea1;
+-	u32 ecc_latch_select, dram_syndrom, serr, derr, syndrom;
++	u32 ecc_latch_select, dram_syndrome, serr, derr, syndrome;
+ 	enum hw_event_mc_err_type ecc_type;
+ 	u64 ecc_dimm_addr;
+ 	int ecc_dimm, err;
+@@ -198,13 +198,13 @@ static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
+ 	 * same type as the one asked to report. If not, just report the
+ 	 * error without the detailed information.
+ 	 */
+-	err = bluefield_edac_readl(priv, MLXBF_SYNDROM, &dram_syndrom);
++	err = bluefield_edac_readl(priv, MLXBF_SYNDROM, &dram_syndrome);
+ 	if (err)
+-		dev_err(priv->dev, "DRAM syndrom read failed.\n");
++		dev_err(priv->dev, "DRAM syndrome read failed.\n");
+ 
+-	serr = FIELD_GET(MLXBF_SYNDROM__SERR, dram_syndrom);
+-	derr = FIELD_GET(MLXBF_SYNDROM__DERR, dram_syndrom);
+-	syndrom = FIELD_GET(MLXBF_SYNDROM__SYN, dram_syndrom);
++	serr = FIELD_GET(MLXBF_SYNDROM__SERR, dram_syndrome);
++	derr = FIELD_GET(MLXBF_SYNDROM__DERR, dram_syndrome);
++	syndrome = FIELD_GET(MLXBF_SYNDROM__SYN, dram_syndrome);
+ 
+ 	if ((is_single_ecc && !serr) || (!is_single_ecc && !derr)) {
+ 		edac_mc_handle_error(ecc_type, mci, error_cnt, 0, 0, 0,
+@@ -233,7 +233,7 @@ static void bluefield_gather_report_ecc(struct mem_ctl_info *mci,
+ 	edac_mc_handle_error(ecc_type, mci, error_cnt,
+ 			     PFN_DOWN(ecc_dimm_addr),
+ 			     offset_in_page(ecc_dimm_addr),
+-			     syndrom, ecc_dimm, 0, 0, mci->ctl_name, "");
++			     syndrome, ecc_dimm, 0, 0, mci->ctl_name, "");
+ }
+ 
+ static void bluefield_edac_check(struct mem_ctl_info *mci)
+-- 
+2.39.5
 
 
