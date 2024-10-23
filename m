@@ -1,87 +1,59 @@
-Return-Path: <linux-kernel+bounces-377286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 026D39ABC89
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:59:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D83F49ABC8D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:00:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B74AB283D1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:59:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ECD81F229E5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:00:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E79E913AA38;
-	Wed, 23 Oct 2024 03:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C6C51384BF;
+	Wed, 23 Oct 2024 04:00:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MDhCOrFH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ECtWEs8Q"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D913520323;
-	Wed, 23 Oct 2024 03:59:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E1D4611E;
+	Wed, 23 Oct 2024 04:00:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729655951; cv=none; b=TVT5YvRR+Hzm4FHBt67oKRn19yRZf6Vaec0e0+tIerbxe25Czgy46LIyaC84vyMTyYfRx/AEqEWxCM/QSPayBdRRWES+PCxf7WVYOfSm6Z2iTdhwHXQ9SpdUEwzET1/sPsD2KCrTgBM+MHTDtNLCd3xKmAkkVFB2w4vqScuamJk=
+	t=1729656039; cv=none; b=OiAYL8S+5Og38RiDDOdpsqzAch/QLLyTzl/lzBVS1GIj6VCyxCvJmcLejqZW+NtVugBdJr89eI4bGcyy+jWyAzW/WNa1UTdihNlqlQAADHbiuhK7PvKNEul0C1qbQh2yV/8wZElcVPhMniXvMvAG+EhSs2PzfBt2/Eg7GMyahH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729655951; c=relaxed/simple;
-	bh=g5cqLHIhhziHP8DCtHjYhtoc/ooi/oC22aoIYVVEMTQ=;
+	s=arc-20240116; t=1729656039; c=relaxed/simple;
+	bh=9ac7Ropgrarl9obnGtgZWzJzPDF7ciqhTSGa21DcxGU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=lsP0RulvTIyCFye54dk6k0skA9KZ3ydRMtwTf7x9fDR1oZmnaSRabrOZONFDTBUk80n/SeqBAWHHNQq2rWqDgkUPuX0Iu7m7TDNBLZdd5TDAQN64UD067rnnKfQ+3GtA7yqCyNi3+a1ReK8mO9gaD8EgScY2qxh3BoQmMHg1vsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MDhCOrFH; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729655950; x=1761191950;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=g5cqLHIhhziHP8DCtHjYhtoc/ooi/oC22aoIYVVEMTQ=;
-  b=MDhCOrFHtI+AYrRKTlN3E3iRFLty3mMoBiykeEWSM35GZNylI2EDbn78
-   NDSoad0a0LlJ4fKyqbFKV9R2k1TYiQ8hXyWA6/A0Gt2fQodH1bJzLUdod
-   jRpBkWIJOhUVCGu4alk64zyzgmGsvwdGwHlPkNn6RAaZ/VJh4lr4fsW55
-   /tbgbev9NKAqHozFJvxkhXlzuqLIIp/i6GSIpegfdi7LKeJ4cLOBqLPe1
-   bieZPMGdSc7vv/GBQJyp8ag/IWBplz3p38o3LgsJnGlbuYCn/8YPYL0BZ
-   LCfhhFMg9CfqqcWlV9ux+CsN/jbqv2cz8NdVUQClnYosxdlN1zh8BnPik
-   A==;
-X-CSE-ConnectionGUID: YLn1Tfg4QWy5BuZopfGYUA==
-X-CSE-MsgGUID: sR9ZIYJgTUG3/VmVT/Jwjw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="16845939"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="16845939"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 20:59:09 -0700
-X-CSE-ConnectionGUID: RB5AmNbMTyept5cv29GXZA==
-X-CSE-MsgGUID: PQHENjMvR9K6VfaBxfz2Gg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="84050895"
-Received: from jwolwowi-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
-  by fmviesa003-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 20:59:08 -0700
-Date: Tue, 22 Oct 2024 20:58:56 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, Borislav Petkov <bp@alien8.de>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"maintainer:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <x86@kernel.org>,
-	"H . Peter Anvin" <hpa@zytor.com>,
-	"Rafael J . Wysocki" <rafael@kernel.org>,
-	"Gautham R . Shenoy" <gautham.shenoy@amd.com>,
-	Perry Yuan <perry.yuan@amd.com>,
-	Brijesh Singh <brijesh.singh@amd.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Li RongQing <lirongqing@baidu.com>,
-	"open list:X86 ARCHITECTURE (32-BIT AND 64-BIT)" <linux-kernel@vger.kernel.org>,
-	"open list:ACPI" <linux-acpi@vger.kernel.org>,
-	"open list:AMD PSTATE DRIVER" <linux-pm@vger.kernel.org>
-Subject: Re: [PATCH v2 4/5] x86/cpu: Add CPU type to struct cpuinfo_topology
-Message-ID: <20241023035829.pq6uurkajiv3vpfv@desk>
-References: <20241022034608.32396-1-mario.limonciello@amd.com>
- <20241022034608.32396-5-mario.limonciello@amd.com>
- <20241022115720.GGZxeTIEqLBQwHjsiE@fat_crate.local>
- <4476c7a5-bc48-4686-b815-3fae0838b7f9@intel.com>
- <13fd2271-f64e-4573-afdb-9881b8c399fe@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=JJjF+pPLSTIqxHcNOJTD0s+bVAzgbSOSmSrqMNnuQMUDJ/ceXD+9OHgXnagXw6q9QoWaklL5oOgSbGxsSKg7aYjsid98b/S5/MzEIgrbN0Vb/Qc4nsWjSn6LxKTbYJpkn4ZGdBqk1HL9ILbBZbDofm6hsaLaBaHYszPQhVwLCv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ECtWEs8Q; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EF276C4CEC6;
+	Wed, 23 Oct 2024 04:00:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729656039;
+	bh=9ac7Ropgrarl9obnGtgZWzJzPDF7ciqhTSGa21DcxGU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=ECtWEs8QJjxGvJ4rH2KRwXSzyj4c0mBCEEr7T78dp3GP5PT/cKFEbyNZTkfeSJmuc
+	 0UxM4t5cANLihdhyu+b32a/wlTqUfjlnKPdBq9H2+I7elHccnKwOLmVSc3beieUdS2
+	 e3giTjNLE40Wfd7w0S8ram4XaIbv+VvqHtUGA4W+48FdvlmbO1R/WDAj81ICAs8ozp
+	 ivWomWej7D1jz40cXUrQtyY03shNR5nV+jo0IT00X08zW7MEJJVudnptR0pQWcuPRr
+	 yEfRmMgxNVlOi8hFFbhkqChybuGA0NuxMYmNTdMdOLWt/Pkly0ihi5DVXkB0QwPoaU
+	 ikrb8EAVLtcCg==
+Date: Tue, 22 Oct 2024 23:00:36 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Taniya Das <quic_tdas@quicinc.com>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	"Satya Durga Srinivasu Prabhala --cc=linux-arm-msm @ vger . kernel . org" <quic_satyap@quicinc.com>, linux-clk@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 5/7] clk: qcom: Add support for GCC clock controller on
+ SM8750
+Message-ID: <4rp4h2inllsa2zd62yg6giyf45skhe3bzcgkjb5btwn4hhh33b@pdjllzwaqtks>
+References: <20241021230359.2632414-1-quic_molvera@quicinc.com>
+ <20241021230359.2632414-6-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -90,42 +62,158 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <13fd2271-f64e-4573-afdb-9881b8c399fe@amd.com>
+In-Reply-To: <20241021230359.2632414-6-quic_molvera@quicinc.com>
 
-On Tue, Oct 22, 2024 at 11:13:00AM -0500, Mario Limonciello wrote:
-> > This makes me feel a _bit_ uneasy.  0x20 here really does mean "Atom
-> > microarchitecture" and 0x40 means "Core microarchitecture".
-> > 
-> > We want to encourage folks to use this new ABI when they want to find
-> > the fastest core to run on.  But we don't want them to use it to bind to
-> > a CPU and then deploy Atom-specific optimizations.
-> > 
-> > We *also* don't want the in-kernel code to do be doing things like:
-> > 
-> > 	if (get_intel_cpu_type() == TOPO_CPU_TYPE_EFFICIENCY)
-> > 		setup_force_cpu_bug(FOO);
-> > 
-> > That would fall over if Intel ever mixed fast and slow core types with
-> > the same microarchitecture, which is what AMD is doing today.
-> > 
-> > Having:
-> > 
-> > 	TOPO_CPU_TYPE_EFFICIENCY, and
-> > 	TOPO_CPU_TYPE_PERFORMANCE
-> > 
-> > is totally fine in generic code.  But we also need to preserve the:
-> > 
-> > 	TOPO_HW_CPU_TYPE_INTEL_ATOM
-> > 	TOPO_HW_CPU_TYPE_INTEL_CORE
-> > 
-> > values also for use in vendor-specific code.
-> 
-> What you're suggesting is to keep an enum in the intel.c code and any code
-> that needs to match atom vs core can directly use
-> 
-> c->topo.intel_type == TOPO_HW_CPU_TYPE_INTEL_ATOM
+On Mon, Oct 21, 2024 at 04:03:57PM GMT, Melody Olvera wrote:
+[..]
+> diff --git a/drivers/clk/qcom/gcc-sm8750.c b/drivers/clk/qcom/gcc-sm8750.c
+[..]
+> +static struct clk_regmap_mux gcc_pcie_0_pipe_clk_src = {
+> +	.reg = 0x6b080,
+> +	.shift = 0,
+> +	.width = 2,
+> +	.parent_map = gcc_parent_map_7,
+> +	.clkr = {
+> +		.hw.init = &(const struct clk_init_data) {
+> +			.name = "gcc_pcie_0_pipe_clk_src",
+> +			.parent_data = gcc_parent_data_7,
+> +			.num_parents = ARRAY_SIZE(gcc_parent_data_7),
+> +			.ops = &clk_regmap_mux_closest_ops,
 
-To be able to match ATOM and CORE in the affected processor table, the
-enums need to be defined in a way that they can be used in the common code.
-Specially for !CONFIG_CPU_SUP_INTEL case.
+Please confirm that the PCIe pipe clock sources should not be
+&clk_regmap_phy_mux_ops, as on other platforms.
+
+> +		},
+> +	},
+> +};
+> +
+[..]
+> +static const struct freq_tbl ftbl_gcc_sdcc2_apps_clk_src[] = {
+> +	F(400000, P_BI_TCXO, 12, 1, 4),
+> +	F(25000000, P_GCC_GPLL0_OUT_EVEN, 12, 0, 0),
+> +	F(50000000, P_GCC_GPLL0_OUT_EVEN, 6, 0, 0),
+> +	F(100000000, P_GCC_GPLL0_OUT_EVEN, 3, 0, 0),
+> +	F(202000000, P_GCC_GPLL9_OUT_MAIN, 4, 0, 0),
+> +	{ }
+> +};
+> +
+> +static struct clk_rcg2 gcc_sdcc2_apps_clk_src = {
+> +	.cmd_rcgr = 0x1401c,
+> +	.mnd_width = 8,
+> +	.hid_width = 5,
+> +	.parent_map = gcc_parent_map_8,
+> +	.freq_tbl = ftbl_gcc_sdcc2_apps_clk_src,
+> +	.clkr.hw.init = &(const struct clk_init_data) {
+> +		.name = "gcc_sdcc2_apps_clk_src",
+> +		.parent_data = gcc_parent_data_8,
+> +		.num_parents = ARRAY_SIZE(gcc_parent_data_8),
+> +		.flags = CLK_SET_RATE_PARENT,
+> +		.ops = &clk_rcg2_shared_ops,
+
+Please confirm that the sdcc apps_clk_src no longer needs to use
+&clk_rcg2_floor_ops.
+
+> +	},
+> +};
+> +
+[..]
+> +static struct gdsc gcc_pcie_0_gdsc = {
+> +	.gdscr = 0x6b004,
+> +	.en_rest_wait_val = 0x2,
+> +	.en_few_wait_val = 0x2,
+> +	.clk_dis_wait_val = 0xf,
+> +	.collapse_ctrl = 0x5214c,
+> +	.collapse_mask = BIT(0),
+> +	.pd = {
+> +		.name = "gcc_pcie_0_gdsc",
+> +	},
+> +	.pwrsts = PWRSTS_OFF_ON,
+
+Shouldn't the PCIe GDSCs be PWRSTS_RET_ON?
+
+> +	.flags = POLL_CFG_GDSCR | RETAIN_FF_ENABLE | VOTABLE,
+> +};
+> +
+[..]
+> +static int gcc_sm8750_probe(struct platform_device *pdev)
+> +{
+> +	struct regmap *regmap;
+> +	int ret;
+> +
+> +	regmap = qcom_cc_map(pdev, &gcc_sm8750_desc);
+> +	if (IS_ERR(regmap))
+> +		return PTR_ERR(regmap);
+> +
+> +	ret = qcom_cc_register_rcg_dfs(regmap, gcc_dfs_clocks,
+> +				       ARRAY_SIZE(gcc_dfs_clocks));
+> +	if (ret)
+> +		return ret;
+> +
+> +	/*
+> +	 * Keep clocks always enabled:
+> +	 *	gcc_cam_bist_mclk_ahb_clk
+> +	 *	gcc_camera_ahb_clk
+> +	 *	gcc_camera_xo_clk
+> +	 *	gcc_disp_ahb_clk
+> +	 *	gcc_eva_ahb_clk
+> +	 *	gcc_eva_xo_clk
+> +	 *	gcc_gpu_cfg_ahb_clk
+> +	 *	gcc_pcie_rscc_cfg_ahb_clk
+> +	 *	gcc_pcie_rscc_xo_clk
+> +	 *	gcc_video_ahb_clk
+> +	 *	gcc_video_xo_clk
+> +	 */
+> +	regmap_update_bits(regmap, 0xa0004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x26004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x26034, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x27004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x9f004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x9f01c, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x71004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x52010, BIT(20), BIT(20));
+> +	regmap_update_bits(regmap, 0x52010, BIT(21), BIT(21));
+> +	regmap_update_bits(regmap, 0x32004, BIT(0), BIT(0));
+> +	regmap_update_bits(regmap, 0x32038, BIT(0), BIT(0));
+
+Any reason why qcom_branch_set_clk_en() can't be used here?
+
+> +
+> +	/* FORCE_MEM_CORE_ON for ufs phy ice core clocks */
+> +	regmap_update_bits(regmap, gcc_ufs_phy_ice_core_clk.halt_reg,
+> +			   BIT(14), BIT(14));
+
+qcom_branch_set_force_mem_core() ?
+
+Regards,
+Bjorn
+
+> +
+> +	return qcom_cc_really_probe(&pdev->dev, &gcc_sm8750_desc, regmap);
+> +}
+> +
+> +static struct platform_driver gcc_sm8750_driver = {
+> +	.probe = gcc_sm8750_probe,
+> +	.driver = {
+> +		.name = "gcc-sm8750",
+> +		.of_match_table = gcc_sm8750_match_table,
+> +	},
+> +};
+> +
+> +static int __init gcc_sm8750_init(void)
+> +{
+> +	return platform_driver_register(&gcc_sm8750_driver);
+> +}
+> +subsys_initcall(gcc_sm8750_init);
+> +
+> +static void __exit gcc_sm8750_exit(void)
+> +{
+> +	platform_driver_unregister(&gcc_sm8750_driver);
+> +}
+> +module_exit(gcc_sm8750_exit);
+> +
+> +MODULE_DESCRIPTION("QTI GCC SM8750 Driver");
+> +MODULE_LICENSE("GPL");
+> -- 
+> 2.46.1
+> 
 
