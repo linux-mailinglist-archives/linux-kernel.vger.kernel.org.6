@@ -1,76 +1,96 @@
-Return-Path: <linux-kernel+bounces-378745-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378746-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0ADE69AD4DE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:29:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB37C9AD4E0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:31:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A7D91C22258
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:29:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70E831F21BA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:31:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92CE1D9A58;
-	Wed, 23 Oct 2024 19:29:35 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A37661D47CB;
+	Wed, 23 Oct 2024 19:31:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hPd4OOmc"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A23B1AD3F6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:29:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96B5913BC11;
+	Wed, 23 Oct 2024 19:31:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729711775; cv=none; b=kS3sF3YLkBZgOfSlYhN08Jf8r5mWJMqZ3DyWYadbmnyx1Gr6U8EDLxrg1pOQv3jgiv6BYo8Tg0bsaLziH8ZjSgGjXLoBEE6v3cszmPsTm3N1amffG20oTs4qzWDelDcTBcTKp0jLKVGo1/+bTgCuKAAhuAow3y+f+B5DPOlZ8Fs=
+	t=1729711885; cv=none; b=gaEHxIcZt4YPGA6iSien83t8xEqwy8XLKg/PL+p4SL3O4ft0JKwXP3fHbd5/vJ6/dJXPgBb9R9K6+osVUQQ1DY44V4yQuo2oPbhaNUsKpkpBwWUppB3xjsLY4sH9HXvMGMO6SvKbB7+LPaGqtZghCqT/CPHFQFeSI0v7g/ZiGuM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729711775; c=relaxed/simple;
-	bh=hihkxg++1I2d8UXzK2GoaMpbRjnUaSBa72NKtBV9OhE=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=Ez2Pfya/dSgIh4UHKFNt+OWRunQgZ+3pr7R9Cv/BK1S76tSCEbMUIdK7jYF6yNgNp2fYkqk2dJcEbZa64wPJO+C4oDGGrob/bFODqp0qQNQEYs8fQluaPE2/g8MigiweNgo61vLkb6iTrue2Vv/ay6Avl5ZbRUzMRrSQcYjqri8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b4395dedso1769265ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:29:33 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729711773; x=1730316573;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=hihkxg++1I2d8UXzK2GoaMpbRjnUaSBa72NKtBV9OhE=;
-        b=DAvVdX7ibWC0v99BXYXzeiseyIWvr/N50snIIj/gO4E2Wp3ucNd/orovMcwWTk5LZr
-         QCAMtK9EH0v8ZTcfuJK5FIxLpQ99t5B9EeYmkWhU5nBhOc/KEA2rWm6JkbpuRtNUdnDq
-         M5uQZ28M2jdrxVz91IKmHzRnxIkMCtcot/qGCBCFwRaFlnObAYFt52cUGY8lFCW02Hwk
-         +aNNmNvsaxPy15Etm7JUBva/A4wHWgv4tbLU+5m0hhu7szgtw9qNXpiRwjTwNPnhcmuI
-         XmZlrTuQoJ5W6lRn4HWsWa+L6S5TRk+GZs9BdxTA7D8rzqdmEIYByKwqcT2tTBsp0f42
-         sE0g==
-X-Gm-Message-State: AOJu0YxBPzeSWXPmEQVTJnWBfTcj+w5fRyscaoNMOkaMrNwIIJx65wEe
-	d/YZpyLnqD9qcP6nfGsDFn9kk4s8+J9NuNBnRqzJkffCI3OpXVmj6OBV9m5NS7FXvz9SEDuO+jQ
-	dtWbMHWuedMeP7EpmsQHoyTtNTm1QJ55JSPnX+jhGL9W4HLKLYkYf22Y=
-X-Google-Smtp-Source: AGHT+IH6/T8As6yyVxttPo/oT2mtcTFTO+E8AcTH51+0nKlyLcpClSw3dOeDdOFeQQ5EfK8JETivM2FOoaNGXASno0Ohskj6+sUu
+	s=arc-20240116; t=1729711885; c=relaxed/simple;
+	bh=wCuinHOJKoeDpl6zmF5NJc/J5sf8jxJNlVE3plACEhQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=mOg544sgu95DPsDd75dKPCkk4H1MWXgiODeHqoJiqjWgfgF8fYnXZPMU6+aA8sU4khelhoFwCMVBnUvsqmg7iEwxKWRjb/nni1DIByk2fRGLWvy4ooz4/RGTMM+x9Yvc0hpCMbSJOzZ/vKducUWOYGCnu+Ah+pTYr5xzX0gd3Tw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hPd4OOmc; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=6dEyxF6LeX0+K3I9i6BrJiYDooNw1Lk8zkNSyIPlzNQ=; b=hPd4OOmcYml5BUcrOL+c5eIN0s
+	3JVhe2PTEV4W8jdYHJ/6pT31KumbMQyy2nl9AALxbEcO/QTHRAVnQj7Fso3YshpkYNiMZmFaoUfgn
+	4lKMB/b4CXyXL2Q3c6ZM8SpQKTi9KQ22oTw+sU1RWBuMCXuvDp33NfQgS+uCJ62SNAaEEZYIwKXDS
+	65oAAhEgwo1Bx4x2nifAm/dQn4iPus325z1Thzn0Ohh7azPJ22IJApmuDQfLt43FDfocxTtxyoDdI
+	0FV/bYSINwdOebmOwFZ/7hl7HffP5fbEATZMhMFMUtxm4Elwq0VfeqDqfIjW3uXghW4poB02QxZYZ
+	wRI27Ehg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3h4Z-00000008XFB-3X7B;
+	Wed, 23 Oct 2024 19:31:12 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 766BF30073F; Wed, 23 Oct 2024 21:31:11 +0200 (CEST)
+Date: Wed, 23 Oct 2024 21:31:11 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com,
+	mhocko@kernel.org, vbabka@suse.cz, shakeel.butt@linux.dev,
+	hannes@cmpxchg.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com
+Subject: Re: [PATCH v3 tip/perf/core 2/4] mm: switch to 64-bit
+ mm_lock_seq/vm_lock_seq on 64-bit architectures
+Message-ID: <20241023193111.GC11151@noisy.programming.kicks-ass.net>
+References: <20241010205644.3831427-1-andrii@kernel.org>
+ <20241010205644.3831427-3-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a92:194c:0:b0:3a4:d94f:5b52 with SMTP id
- e9e14a558f8ab-3a4d94f66b5mr22144155ab.20.1729711773133; Wed, 23 Oct 2024
- 12:29:33 -0700 (PDT)
-Date: Wed, 23 Oct 2024 12:29:33 -0700
-In-Reply-To: <671907d4.050a0220.1e4b4d.008e.GAE@google.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67194e9d.050a0220.1e4b4d.0094.GAE@google.com>
-Subject: Re: [syzbot] [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in validate_sb_layout
-From: syzbot <syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com>
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010205644.3831427-3-andrii@kernel.org>
 
-For archival purposes, forwarding an incoming command email to
-linux-kernel@vger.kernel.org.
+On Thu, Oct 10, 2024 at 01:56:42PM -0700, Andrii Nakryiko wrote:
+> To increase mm->mm_lock_seq robustness, switch it from int to long, so
+> that it's a 64-bit counter on 64-bit systems and we can stop worrying
+> about it wrapping around in just ~4 billion iterations. Same goes for
+> VMA's matching vm_lock_seq, which is derived from mm_lock_seq.
+> 
+> I didn't use __u64 outright to keep 32-bit architectures unaffected, but
+> if it seems important enough, I have nothing against using __u64.
 
-***
+(__uXX are the uapi types)
 
-Subject: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in validate_sb_layout
-Author: gianf.trad@gmail.com
+> 
+> Suggested-by: Jann Horn <jannh@google.com>
 
-#syz test
+Jann, do you see problems with the normal seqcount being unsigned (int)?
+I suppose especially for preemptible seqcounts it might already be
+entirely feasible to wrap them?
+
+Doing u64 is tricky but not impossible, it would require something like
+we do for GUP_GET_PXX_LOW_HIGH. OTOH, I don't think we really care about
+32bit enough to bother.
 
