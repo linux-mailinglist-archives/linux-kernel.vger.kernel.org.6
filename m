@@ -1,183 +1,226 @@
-Return-Path: <linux-kernel+bounces-378122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B5E89ACBA8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:52:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D14D39ACBAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:53:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497FF1C20AD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:52:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 89BBB1F24975
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:53:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 462121B4F31;
-	Wed, 23 Oct 2024 13:51:47 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92CFC1B5823;
+	Wed, 23 Oct 2024 13:53:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CscA1IPH"
+Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2089.outbound.protection.outlook.com [40.107.22.89])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1250E159583
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:51:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729691506; cv=none; b=drwzrkadXLqDTafaTMh7APk4EgBjh5Gvj4AUKSofeTeCR1OsJZnWUlHQJs23eMf0U2BJBpEOLfv74LTDYryGSljdCOD9JoCih8EQQGgfsowVt50PG4pvlfC+iWrrpUOLIA4uF2sRBpGubx6fWpkS2LUcq+kY4WlCeS0ZQxzbvf8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729691506; c=relaxed/simple;
-	bh=YOtwnsW70pES7KMVuJKypeky+wnAe3/kq7f0tWecmnE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=GM5q2SwfHUUmVKDp/3e4g/a+Aim2hE7hVxq5zrov5z/OKA7d0ihOqm3cRj+8eDYHxgW8tl7mwbLOii/Vy/lBeklwZkt6iqO4xnMlbmnnZUiXdC6JlmeVCG0p9R/0eHeT1yxjtfkUXErHyeVTzD1ylkjy8VebniACkpJ+31MkSbA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.48])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XYVls0Vp0zpX8B;
-	Wed, 23 Oct 2024 21:49:45 +0800 (CST)
-Received: from kwepemm600007.china.huawei.com (unknown [7.193.23.208])
-	by mail.maildlp.com (Postfix) with ESMTPS id 07D92180087;
-	Wed, 23 Oct 2024 21:51:42 +0800 (CST)
-Received: from [10.174.178.219] (10.174.178.219) by
- kwepemm600007.china.huawei.com (7.193.23.208) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 23 Oct 2024 21:51:41 +0800
-Subject: Re: [PATCH] irqchip/gic-v4: Don't allow a VMOVP on a dying VPE
-To: Marc Zyngier <maz@kernel.org>
-CC: <linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	Thomas Gleixner <tglx@linutronix.de>, Kunkun Jiang <jiangkunkun@huawei.com>
-References: <20241002204959.2051709-1-maz@kernel.org>
- <aab45cd3-e5ca-58cf-e081-e32a17f5b4e7@huawei.com>
- <87wmhztd9z.wl-maz@kernel.org>
-From: Zenghui Yu <yuzenghui@huawei.com>
-Message-ID: <bb3a38d9-4eb8-83ff-8b94-dd1bc80d005f@huawei.com>
-Date: Wed, 23 Oct 2024 21:51:40 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:68.0) Gecko/20100101
- Thunderbird/68.12.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 897B21459F6;
+	Wed, 23 Oct 2024 13:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.89
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729691587; cv=fail; b=YV5H/cBQ8yeo97nRxgwqdxXh5v99tWwldwxxrvXq4KEZ5vkSlbTq28C/YF9UF5CTqMb8TBPaaa3SDcViEWnuKdDd4eKe9/fOtwFbmU99rbh0khdO9OagDWw6BKWK5vtGoGJZsfCJ0LFutUncpX2VD357e7NIW8phZ68ts6qsi5A=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729691587; c=relaxed/simple;
+	bh=T72fg7Ne5lix6U3308YwmDg0Ll2VaI1TYQYhdXvPYho=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=dRgOyKL2SPgLJUbwvm8b1G9DZXl3ixVh9R84WRVim5aLlS4WS3LiZA1KL0uGQI9xiS46l4DtEP0GtRsjqFDdtu6CrQclRB2TIb1+4P+D+v5XmIfizN5uj9yUSoL8F5SuuaoLOWxr/NYg7xsuOcxJdGSf+5zx91qwIgy6tdB0l0I=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CscA1IPH; arc=fail smtp.client-ip=40.107.22.89
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=d87MF+RRvVF8nZ88Xjy7B80roMp2ygvH16mznPUIv0jK559md9caxEua2Hi6K/xHUPufM2p34o1qxIzKkf8LvPlxHvnxMu3qb/XzuwT/cMdCmG02wZ48ukKhbtIWDkh/bd2C8azn2sMEq0AWRYMDD456wifGgkmVzzJQD5cgGrDXY6Mm+IQ8PI86OhZd10BnhDWWMvhWcD3WqdDLhueOFydE9mSxt0wDQF+sIY4FPV8l3creB4SVdHhyiPwR7rHFeCiG1X+oCrqiIeNr8fHER5akv7WPtXZC+2kYIxkk6oG+1aaWZ+YolFWJumEOwOSeWfEI9xPV0XFa8GooO0xHsA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=XC9CkkBWy48ZvFpZrYmDlYf7RiN0PSG3KohJ4frxgQs=;
+ b=qJ0k3HILqDTlzi+IoisHol7yj4/WJ0IHFkzexpEZwjZ/J+oRfeE5yw88UWVlmL7u3lZKpz+bNOoFNh7soMKQ2fjtjg70dKSOaaSyhQpqDgwVacRh7RbgEVPxjblzp/PaLzhOiAoQ+/mP4MYzA6Np7dI9McXeuV0XiQgdaP+Ya1F9DW1TDrBvvQlzZ0EHYTefLeAAjXo2IQIoQ/Xdtd4mnaLygSQZA8fSwZ3fvSF8nVg4ThSoPBg2Cv6F7WYLasWnwpJHrncipb94FANGw7UFrRkaAz8i5HQCQ0BvJDLPmwOo0dssFlP4gnVc541m8Ht4SuuTJ74NT8hAKxPXeNZFjA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=XC9CkkBWy48ZvFpZrYmDlYf7RiN0PSG3KohJ4frxgQs=;
+ b=CscA1IPHt8+h02EdASF23BOw0TY6IhOWx6RDqeCMjCpY+84SC+SjRlfGmXEacxM4NtjikTfUz3pNmd0TA1mhD0/nuRUgbQTxPROQYiTbd76y3I+ZEr+q/CKGpDZG7tCU6LM6sJO6eHGPQeZk9SdtoD60khpSlM98vh+hLptUlcbenrIq8kbf8XRZI7ef+A1VK5jMg2EHzit7c3my0Ituez+cwJ964LffH637LfbNQG35XvQH4S6UkbSW21fpuJOrP2Tok6oHZbE0HLj4ubcG28IOl2uE0sXm50Efs3KtJklvMOtZtFKxiCU7AERmua/sRiNDLrtie1KuHmmm+1boSA==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by AS1PR04MB9683.eurprd04.prod.outlook.com (2603:10a6:20b:473::5) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Wed, 23 Oct
+ 2024 13:53:01 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
+ 13:53:01 +0000
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: netdev@vger.kernel.org
+Cc: "David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Florian Fainelli <f.fainelli@gmail.com>,
+	Petr Machata <petrm@nvidia.com>,
+	Ido Schimmel <idosch@nvidia.com>,
+	Claudiu Manoil <claudiu.manoil@nxp.com>,
+	Alexandre Belloni <alexandre.belloni@bootlin.com>,
+	UNGLinuxDriver@microchip.com,
+	Jamal Hadi Salim <jhs@mojatatu.com>,
+	Cong Wang <xiyou.wangcong@gmail.com>,
+	Jiri Pirko <jiri@resnulli.us>,
+	Vlad Buslov <vladbu@nvidia.com>,
+	Simon Horman <horms@kernel.org>,
+	Christian Marangi <ansuelsmth@gmail.com>,
+	Arun Ramadoss <arun.ramadoss@microchip.com>,
+	=?UTF-8?q?Ar=C4=B1n=C3=A7=20=C3=9CNAL?= <arinc.unal@arinc9.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3 net-next 0/6] Mirroring to DSA CPU port
+Date: Wed, 23 Oct 2024 16:52:45 +0300
+Message-ID: <20241023135251.1752488-1-vladimir.oltean@nxp.com>
+X-Mailer: git-send-email 2.43.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: VI1PR10CA0105.EURPRD10.PROD.OUTLOOK.COM
+ (2603:10a6:803:28::34) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <87wmhztd9z.wl-maz@kernel.org>
-Content-Type: text/plain; charset="utf-8"
-Content-Language: en-US
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
- kwepemm600007.china.huawei.com (7.193.23.208)
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|AS1PR04MB9683:EE_
+X-MS-Office365-Filtering-Correlation-Id: a6a536d3-6498-4219-2421-08dcf36a0282
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|7416014|366016|52116014|376014|1800799024|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?gkKYxX8bEml9iBt1p05v/mI4sWl5WVfHVgddSMEGd4SbkNcl671C0hJid0wJ?=
+ =?us-ascii?Q?SFYoin7gZumXuqjdy3GQ6RjB5Kj471YdmUqfmKOwEfwdARzKbgia2VoNRPhH?=
+ =?us-ascii?Q?Y/kRxsxmkwL9x8ss9zTqQrsQnh1PGARU0YJPSq4CyA2gZAnCeguT8e0Sh0UX?=
+ =?us-ascii?Q?PmCpfI+oCNtGbM5zRCuMTPNiDzYB/rfoAehN4w26hdBF9ig+2+oambx0WsPP?=
+ =?us-ascii?Q?EMLyvqRqVA40pevyXANUwGfyj6WR7NUaDGDJzQ+1zabdXetmkfx1HQSOOED2?=
+ =?us-ascii?Q?IfbggQqsXnYNh73Fjg8CBrjXXM2da+Fs/GqgaSrToErFd9A9zHBA2J9CtIyn?=
+ =?us-ascii?Q?sQ6Jt0ByS0UfejjU6KazHJsqaTxxV2vm/0MhzjYBIbFMVR3sAuChmCLVcJP1?=
+ =?us-ascii?Q?KhueWY4QbjxUL51FVUtgtrEyGUia8pVLxftulfK76wtQhO2XH/yjShUuyfFZ?=
+ =?us-ascii?Q?gO5k1bdqH0Zi0DcyH79joLlyjqj8OkI28CUne1YU9c1c325uJOYr86bpolEG?=
+ =?us-ascii?Q?pvlmROhVZOX7PmGmI1Xu5kjzR6TG2X27zPSlVBeZTME0SGSLSnh9lL7DB0sy?=
+ =?us-ascii?Q?fzxEZRm4wYnuPPkTMN4aYgXNhjmYTS71ZirKQbFvanTNx1sOd0bJQgb4WLI/?=
+ =?us-ascii?Q?SpfPAKXsoiGuqmdNT9yl+l/XIyyHeHwkw+iI55iblsuCXzxeyVuGoL4kLujj?=
+ =?us-ascii?Q?ivgWV0/JsyOBW1syCtwR6fB+8yFQJ5rs0z/Atrfx3DZTuHv1LghDz4qLQs8g?=
+ =?us-ascii?Q?fmBQgqJ8YC23/dzSagaGy6r972f5CZmB0RZEPdczqJflK8FVZ2e839db2wW0?=
+ =?us-ascii?Q?CkUR9nklHmyPWtCmXKdOtq9BYkL+RNNG0ZbSCHVRV5fquwM6X8yri4eoNkoP?=
+ =?us-ascii?Q?NTha2BW08ofVzPyZnCrsSjzXc+FDxQql6+Sa5uuLZt/Z4hD2HH2chQmftE21?=
+ =?us-ascii?Q?dm6QgGsU+2A0lknbt3PTINTq8NnhcQfH22uT9aRRn2k7Sk3woPSuol0vn+1q?=
+ =?us-ascii?Q?A3R8q94kMMxgg1XimEgz+P/c8P6e4Uh3LgAiOCaTlsMEuWpN7IyT77piwdMk?=
+ =?us-ascii?Q?UwDSx+Plp4sVObLLWZdcKo/9Dz30nJlkJ6/aT8T7DTTKF/MSMN8QrqoqU4ub?=
+ =?us-ascii?Q?o4y8uOHEJHSRDuAWgbyBH56GIjaV8lphvI2lQGSFKI5IU9qbh7JMIos+w7Ra?=
+ =?us-ascii?Q?lGeM3rLCdyJI7F4Kyvv80Ug60CCgXMSBQ59d7diNddXxwZms9qUnfuQYAuzI?=
+ =?us-ascii?Q?hkh12NOMaX9cJhL8AdFKvRHhtlHyhk/67xOSH4dB5IrCwUaKPn1CQjULpPyT?=
+ =?us-ascii?Q?Io4PX9U8mdov35FgCRkWC8VZTw6uQ9hepPnwEcOrtX/HRx4bKZcTOaCSZiT+?=
+ =?us-ascii?Q?NwnLfKel39C0anboPmMyFtb+7mSQ?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(52116014)(376014)(1800799024)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?uo8Aypmr2au7/7KRUsOmB2QXExcIOG8jLF7F7AbQ3VgGV2Wlc1g79E2jVfbS?=
+ =?us-ascii?Q?ljDuAFVB9pWchOEfZ2MXmBERZw3x0g6Q4JIIXMIHfd9GSPwJzNXzVIa5lwLS?=
+ =?us-ascii?Q?8+cbLflrXRVt50U/TB2We1MctwHgfhU/SCppz1CJyoog9jhBHk6y2mJd6gjO?=
+ =?us-ascii?Q?dxyjxKlKzQzZSWe0pTxdUhxXxn2FU7PwlV90Z80A+HonwqbJ+eR75RMfgSc2?=
+ =?us-ascii?Q?R4L+L7ZJ2eGdHMNxHleLQ1I5Zvhb2UAROcWMLtyd7sO550rqitnrA8BsOXX0?=
+ =?us-ascii?Q?0yRo9m+xg8tNGdSmZxm8S/97vTJfXv7eaqSMUZgTaH6IwzuskY/QVHx3UaI8?=
+ =?us-ascii?Q?KW3L3ZyoRsnIYdcCDC3jVkyMqfNYaq8HEN0NK8JUWVw9Os6Ak5F53k/I5cE0?=
+ =?us-ascii?Q?ZfO4Ti+mcALAuBK2rWQ4IrYAPcFrfiYSHHUWBUSkWuztPWFn2wLucNZ/puwG?=
+ =?us-ascii?Q?EDsX6xmXnrJrthmTRZlVYwGooxsAsYk3sKNHHwsbPt64urYt22FxBjAqGEff?=
+ =?us-ascii?Q?6CqYo/Y8dHl9G+vS0UFlxbz0T8GwjBISZIG3bVTsf56tPNhFHd5IFuHiAuVb?=
+ =?us-ascii?Q?4VcD+P9jxlUBbV4uX3NgDUnV7ANMdl0VbN5pLQuVaxp3cETevgFAPVqsq9XF?=
+ =?us-ascii?Q?oZpJ3cnI85bZEOTwZ25LmgaEH0E+SiZnhh970ioP/Ls33Fe8dBj6LGhkeClq?=
+ =?us-ascii?Q?dwk+EGg7xJUhq+GtxkifMVrJmLBz6Ih4aatnoi7qMY0e22CJgX5hBgBMkaPu?=
+ =?us-ascii?Q?1d5tXZEWPFdhX3hAUdyoisoiyyd+pY0IAhBCp/C8pfr8trtCy6jXquRsxNuF?=
+ =?us-ascii?Q?TMh5AGDjpf9sZoDrnZmtq7uxmLiqLGZzeFom99932m/a88mh++CEZaK2hqom?=
+ =?us-ascii?Q?OQC+TbqtcJemyWXiqG39W3IYNSeD/4fK9EyUtH4V9E2rOttSzB5Q5McXg6Nz?=
+ =?us-ascii?Q?CXzmWwxsarQX3IpZwBWZPBQP2pGGE4qI1PkXrvLpqVTUJUFp/nfIzkEwt518?=
+ =?us-ascii?Q?7gBUdxZuRbP93uoDqx5XufbChPgjdELE6nXiY7hbIfhoi3xCCI6C4Ejjh0px?=
+ =?us-ascii?Q?mISQE0//c/UTjoAHSXOnw8tzMN0V1GO1IuzfsSBbzuJKaKXciVkMml2E0hUa?=
+ =?us-ascii?Q?wxHAAxsJyUFH6kPbDbWtC20koPcYU5N0Mg+g9RB3uETLAB45oSAzVSAZ1ApK?=
+ =?us-ascii?Q?BRUREMOcJHoYEEPcH03ANPY0rJMEdFWEdh9d5hAjKTiY/qzk9SYJTu75DRSD?=
+ =?us-ascii?Q?lfjz9saw7Fog/02vHHg4UdB193G3DPSiQhTblcLPdHr3jTKNCsdxPP+6KbE6?=
+ =?us-ascii?Q?mYdi+7lVmDxNF635zmt9QFL4Bz+nWvREw+3xZUcyFJTzsLChC5KGFU4XOAHB?=
+ =?us-ascii?Q?8xgCZ73TVEZLaVj96nH6AvJFqgH1Dj+5quwhhKIlM6Hsmsx2sIGdqZLu0Uzb?=
+ =?us-ascii?Q?BEo63eOo+hAGIk8yKKCTx34SrcZqCFOQJ+Z88LcXOsvu0SCuNUYG/p0w8ymF?=
+ =?us-ascii?Q?dlDeiIbYjOrbj5fXVZFsuBSwzUaWCKK+xwScdX0NWn0daJjICIZdw3kIgNk/?=
+ =?us-ascii?Q?vUdufx31AnwEuqka6SToT5DIBL7Taw2u94bnQdu30vh9RElyjQFNP+7szH1I?=
+ =?us-ascii?Q?4w=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a6a536d3-6498-4219-2421-08dcf36a0282
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 13:53:01.5634
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: UqL/D8qHVlIzDI00eNhXtamM7wht4laOYPdUtRkiJ+Obar376NMqkECVv+WAG/h7L3ZBl32OYusd2tdCriCxDA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS1PR04MB9683
 
-On 2024/10/23 16:49, Marc Zyngier wrote:
-> Hi Zenghui,
-> 
-> On Tue, 22 Oct 2024 08:45:17 +0100,
-> Zenghui Yu <yuzenghui@huawei.com> wrote:
-> >
-> > Hi Marc,
-> >
-> > On 2024/10/3 4:49, Marc Zyngier wrote:
-> > > Kunkun Jiang reports that there is a small window of opportunity for
-> > > userspace to force a change of affinity for a VPE while the VPE has
-> > > already been unmapped, but the corresponding doorbell interrupt still
-> > > visible in /proc/irq/.
-> > >
-> > > Plug the race by checking the value of vmapp_count, which tracks whether
-> > > the VPE is mapped ot not, and returning an error in this case.
-> > >
-> > > This involves making vmapp_count common to both GICv4.1 and its v4.0
-> > > ancestor.
-> > >
-> > > Reported-by: Kunkun Jiang <jiangkunkun@huawei.com>
-> > > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > > Link: https://lore.kernel.org/r/c182ece6-2ba0-ce4f-3404-dba7a3ab6c52@huawei.com
-> > > ---
-> > >  drivers/irqchip/irq-gic-v3-its.c   | 18 ++++++++++++------
-> > >  include/linux/irqchip/arm-gic-v4.h |  4 +++-
-> > >  2 files changed, 15 insertions(+), 7 deletions(-)
-> > >
-> > > diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> > > index fdec478ba5e7..ab597e74ba08 100644
-> > > --- a/drivers/irqchip/irq-gic-v3-its.c
-> > > +++ b/drivers/irqchip/irq-gic-v3-its.c
-> > > @@ -797,8 +797,8 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
-> > >  	its_encode_valid(cmd, desc->its_vmapp_cmd.valid);
-> > >  
-> > >  	if (!desc->its_vmapp_cmd.valid) {
-> > > +		alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > >  		if (is_v4_1(its)) {
-> > > -			alloc = !atomic_dec_return(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > >  			its_encode_alloc(cmd, alloc);
-> > >  			/*
-> > >  			 * Unmapping a VPE is self-synchronizing on GICv4.1,
-> > > @@ -817,13 +817,13 @@ static struct its_vpe *its_build_vmapp_cmd(struct its_node *its,
-> > >  	its_encode_vpt_addr(cmd, vpt_addr);
-> > >  	its_encode_vpt_size(cmd, LPI_NRBITS - 1);
-> > >  
-> > > +	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > > +
-> > >  	if (!is_v4_1(its))
-> > >  		goto out;
-> > >  
-> > >  	vconf_addr = virt_to_phys(page_address(desc->its_vmapp_cmd.vpe->its_vm->vprop_page));
-> > >  
-> > > -	alloc = !atomic_fetch_inc(&desc->its_vmapp_cmd.vpe->vmapp_count);
-> > > -
-> > >  	its_encode_alloc(cmd, alloc);
-> > >  
-> > >  	/*
-> > > @@ -3806,6 +3806,13 @@ static int its_vpe_set_affinity(struct irq_data *d,
-> > >  	struct cpumask *table_mask;
-> > >  	unsigned long flags;
-> > >  
-> > > +	/*
-> > > +	 * Check if we're racing against a VPE being destroyed, for
-> > > +	 * which we don't want to allow a VMOVP.
-> > > +	 */
-> > > +	if (!atomic_read(&vpe->vmapp_count))
-> > > +		return -EINVAL;
-> >
-> > We lazily map the vPE so that vmapp_count is likely to be 0 on GICv4.0
-> > implementations with the ITSList feature. Seems that that implementation
-> > is not affected by the reported race and we don't need to check
-> > vmapp_count for that.
-> 
-> Indeed, the ITSList guards the sending of VMOVP in that case, and we
-> avoid the original issue in that case. However, this still translates
-> in the doorbell being moved for no reason (see its_vpe_db_proxy_move).
+Users of the NXP LS1028A SoC (drivers/net/dsa/ocelot L2 switch inside)
+have requested to mirror packets from the ingress of a switch port to
+software. Both port-based and flow-based mirroring is required.
 
-Yup.
+The simplest way I could come up with was to set up tc mirred actions
+towards a dummy net_device, and make the offloading of that be accepted
+by the driver. Currently, the pattern in drivers is to reject mirred
+towards ports they don't know about, but I'm now permitting that,
+precisely by mirroring "to the CPU".
 
-> How about something like this?
+For testers, this series depends on commit 34d35b4edbbe ("net/sched:
+act_api: deny mismatched skip_sw/skip_hw flags for actions created by
+classifiers") from net/main, which is absent from net-next as of the
+day of posting (Oct 23). Without the bug fix it is possible to create
+invalid configurations which are not rejected by the kernel.
 
-I'm pretty sure that the splat will disappear with that.
+Changes from v2:
+- Move skip_sw from struct flow_cls_offload and struct
+  tc_cls_matchall_offload to struct flow_cls_common_offload.
 
-> diff --git a/drivers/irqchip/irq-gic-v3-its.c b/drivers/irqchip/irq-gic-v3-its.c
-> index ab597e74ba08..ac8ed56f1e48 100644
-> --- a/drivers/irqchip/irq-gic-v3-its.c
-> +++ b/drivers/irqchip/irq-gic-v3-its.c
-> @@ -3810,8 +3810,17 @@ static int its_vpe_set_affinity(struct irq_data *d,
->  	 * Check if we're racing against a VPE being destroyed, for
->  	 * which we don't want to allow a VMOVP.
->  	 */
-> -	if (!atomic_read(&vpe->vmapp_count))
-> -		return -EINVAL;
-> +	if (!atomic_read(&vpe->vmapp_count)) {
-> +		if (gic_requires_eager_mapping())
-> +			return -EINVAL;
+Changes from RFC:
+- Sent the bug fix separately, now merged as commit 8c924369cb56 ("net:
+  dsa: refuse cross-chip mirroring operations") in the "net" tree
+- Allow mirroring to the ingress of another switch port (using software)
+  both for matchall in DSA and flower offload in ocelot
+- Patch 3/6 is new
 
-Nitpick: why do we treat this as an error?
+Link to v2:
+https://lore.kernel.org/netdev/20241017165215.3709000-1-vladimir.oltean@nxp.com/
 
-> +
-> +		/*
-> +		 * If we lazily map the VPEs, this isn't an error, and
-> +		 * we exit cleanly.
-> +		 */
-> +		irq_data_update_effective_affinity(d, cpumask_of(cpu));
+Link to previous RFC:
+https://lore.kernel.org/netdev/20240913152915.2981126-1-vladimir.oltean@nxp.com/
 
-@cpu is uninitialized to a sensible value at this point?
+For historical purposes, link to a much older (and much different) attempt:
+https://lore.kernel.org/netdev/20191002233750.13566-1-olteanv@gmail.com/
 
-> +		return IRQ_SET_MASK_OK_DONE;
-> +	}
->  
->  	/*
->  	 * Changing affinity is mega expensive, so let's be as lazy as
+Vladimir Oltean (6):
+  net: sched: propagate "skip_sw" flag to struct flow_cls_common_offload
+  net: dsa: clean up dsa_user_add_cls_matchall()
+  net: dsa: use "extack" as argument to
+    flow_action_basic_hw_stats_check()
+  net: dsa: add more extack messages in
+    dsa_user_add_cls_matchall_mirred()
+  net: dsa: allow matchall mirroring rules towards the CPU
+  net: mscc: ocelot: allow tc-flower mirred action towards foreign
+    interfaces
 
-Thanks,
-Zenghui
+ drivers/net/ethernet/mscc/ocelot_flower.c | 54 ++++++++++++----
+ include/net/flow_offload.h                |  1 +
+ include/net/pkt_cls.h                     |  1 +
+ net/dsa/user.c                            | 78 +++++++++++++++++------
+ 4 files changed, 103 insertions(+), 31 deletions(-)
+
+-- 
+2.43.0
+
 
