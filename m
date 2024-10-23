@@ -1,123 +1,111 @@
-Return-Path: <linux-kernel+bounces-378997-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378998-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 409439AD872
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:29:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 929D09AD873
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E0E9E1F22039
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:29:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A2B20CD0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:31:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C15D91FF7B4;
-	Wed, 23 Oct 2024 23:29:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66D61A76C6;
+	Wed, 23 Oct 2024 23:31:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="vZ2feB1/"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1091E4A4
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:29:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8XGC5V0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332C878C9C;
+	Wed, 23 Oct 2024 23:31:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729726183; cv=none; b=P9R9q4l0XTaVxrv+D1Sui/NGphtR0xut3SY0Qbx7CemUHuDW3/e8nXElTmoFeF4EzS2sYGXMtYYrg/zznWnZSEMWcTKSAFGiRoNr/KR9JMgMbUrxEg9CazmPFtudj8WMl47Y0lJvb+bpX5A7jqbiSDK5Z1d/J21kp7WZho6l7Ho=
+	t=1729726269; cv=none; b=Han2aaM0p7fbaJdrmkEwU0jrJFltl9KhZFyluppN6NtVS+IwTMw2PQpzYpjKvu2b0n5ZoqBBSOagf3INS8uFYEiKcMyw62nZl6lO0Lq8KR8Nl55d8gQQHJNNeQT/abE3ZibFIlnRCiBkOmIxtSsl313BMbeOstQgmnVLFnE6w4Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729726183; c=relaxed/simple;
-	bh=C/cHuQE30YbjkwMC1uOTFNa62PXuoR1w3PoqwGmXaKY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ejrsAeaS9Rc4PKWYjH5YIC9ow/qbh+mPJHNDxYs04h9+o9lK0BpYq+03G42vAgMTQmZWDGJ8Q+t5sC5FvCDG0Fo350bCypiwgm8BoQlP7VbzgfENMmD8F9ClktVXEUOA7rTMuasnnjhIfo0l0rppbbBQtnGHcqxN+YnOWKAo+7M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=vZ2feB1/; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 1647214C1E1;
-	Thu, 24 Oct 2024 01:29:37 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1729726180;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=gSnSY+YXxO2YDaxOBzqQQYT/RIahqgxrQ7ekP/A+dfQ=;
-	b=vZ2feB1/YxxaeAOuadedNlGhobgye5qXAZmqlCZgw2B+lNbufJ2WrUuzYyHMvbxRZP4e5f
-	jEL5y6gs5yy60hMuNpMs8K9O4jpcygRY5h53iKEiEGLC8SCiWNmkCPn7U/zklK6rw49gzm
-	uzzOwiUoYEa//4PI79cH+OLauE3KV8kaB2niXTrx3RDkD12IUx0vdbv6cgHw2Yyv27SjgB
-	OY1CueydYkAnnuOnpLLLxM7Ky559HgpwG4mrIGIgib40sHuNVwvHOvq+I5WUdimdcWbtSs
-	vMlMoBaPRNY44iXIy0W7y58Gjzd1vKgPZAUXdNAtQAtw1XWiZ6uYgiTGMEUCjg==
-Received: from [127.0.0.1] (localhost.lan [::1])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 3dcee465;
-	Wed, 23 Oct 2024 23:29:36 +0000 (UTC)
-From: Dominique Martinet <asmadeus@codewreck.org>
-Date: Thu, 24 Oct 2024 08:29:19 +0900
-Subject: [PATCH] Revert "9p: Enable multipage folios"
+	s=arc-20240116; t=1729726269; c=relaxed/simple;
+	bh=4ea7wWTwkRtdh2RaDmD6c/QNHMZBnTfz2285rFbBDno=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ixaDxi9RxgBeiBbKMq3mrrMdvdB6EhZUzmj/Of/igUL7NZkAGq08mzjsSXU6SLal+pdXKfJofdzIl8BQIg6zQdbIv6HRl4fbyoIsA6q+xLevKlJPVdGuebCSaHd4nIpOBQsg9ek84gj0KHhAssBuwTH5sze8vzgPmELJ7FCQB4M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8XGC5V0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42744C4CECD;
+	Wed, 23 Oct 2024 23:31:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729726268;
+	bh=4ea7wWTwkRtdh2RaDmD6c/QNHMZBnTfz2285rFbBDno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=t8XGC5V0XJeXU+g9Xte4WVZl31AH6fklggPwlyyaXOEX3VPAVpxn8mNbNuPJEsRVG
+	 6DHzGrBUCthGxAVmjFZt3BCKswjfKHDwuOWcr60oBl2Xs//BknM09gYuVm56vTvqH3
+	 U40BEDk3tei0TCK6rWCFcnF9nQn/vVdvwwus5p3/tev8rUD0SLTua5qnzZlpDIrqTU
+	 ceW9J1lqIgrGKN8LXxMAf7RGkXqAmy0fwsdJFYPZFJSuIxJgl8axiLe22tYhWPzbwM
+	 Qtp2QUhNZOjHkvEUceMt5AjjBzv2+/EzKxlKRxHASpwdvLo93p7S5znTRnAOEZY4xg
+	 YUkPsmacQccGQ==
+Date: Wed, 23 Oct 2024 16:31:06 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v3 2/2] perf test: Skip annotate test for sanitizer builds
+Message-ID: <ZxmHOkp1USQCujM-@google.com>
+References: <20241022174838.449862-1-irogers@google.com>
+ <20241022174838.449862-2-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241024-revert_multifolio-v1-1-becfa0dd385b@codewreck.org>
-X-B4-Tracking: v=1; b=H4sIAM6GGWcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
- vPSU3UzU4B8JSMDIxNDINYFKkotKonPLc0pyUzLz8nM1zVONTQ0tzS3SDJNNlIC6isoSk3LrAC
- bGR1bWwsAHnXLymMAAAA=
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>, 
- David Howells <dhowells@redhat.com>
-Cc: v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Andrii Nakryiko <andrii@kernel.org>, 
- Dominique Martinet <asmadeus@codewreck.org>
-X-Mailer: b4 0.14-dev-87f09
-X-Developer-Signature: v=1; a=openpgp-sha256; l=1043;
- i=asmadeus@codewreck.org; h=from:subject:message-id;
- bh=C/cHuQE30YbjkwMC1uOTFNa62PXuoR1w3PoqwGmXaKY=;
- b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBnGYbd5YTJuH2ea/xpY5j7iGyixsPyuAOcW0Iw6
- 4v8yuQ5avWJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZxmG3QAKCRCrTpvsapjm
- cJmcD/48cuvEFEicbV6FT1Rx35VbK++pwsdxieRHNCXtdVPOMRbnXPtSfJtC1afcbtFeFFUMc9b
- +zjEyeuqXH4N5z3E07ZPAbluJZDzaqqPA1ZnHbEDgx3BU1aoh1gsCtddYiwx8vefYvifOP+tjpl
- ixWAuCBJR9hhDto6tFSrvAVKJOU0ztTWm526ckvkn5uL7P0tjCJq6yemrI3WatWP9554zlSm7h9
- sumlm4rgOJm+dWmt27ObhckMcs9R7zfC2Jd1f31wJaXZ+KnzKsbzYQTQiptoRKhiEojM3Y2RfW2
- qGMW7oN3JJlm4nj+MQ5KgiIWGgqpZ/ZunsGtaYqCL1Am9sZn7lUujdMgh12D5mhWBWc6trG0NA6
- KnSNQsLJcgaC1Cl8RCYnpgCUbLhMEXbMmfoi2+PGBTdGOTC4tAZR6gjY3Yzmbmjl6riIx2UP5pb
- bC5kHFz/xwZ9zNRsj1paY0dAlwKj/5Wyf1OyZxIaxpmTK1cjNTSGHH+BSBnLgpUsBToB6vKQ+Qi
- QLm4LVg2of9pZM9qAurA0Ss0cZN//qTnwM7YLcRkoBru22sW5+VzVbUy72gjM+wggFWu3wipX24
- iOEj4+bvkSaW1VWASF3qkThr6eLy+JnXPP5/DiHpSedXOMy8LUdlMNg+COpgIx4Mg2cjI/6Ji4o
- t6ItVIT9cr4VB3Q==
-X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
- fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022174838.449862-2-irogers@google.com>
 
-This reverts commit 1325e4a91a405f88f1b18626904d37860a4f9069.
+On Tue, Oct 22, 2024 at 10:48:38AM -0700, Ian Rogers wrote:
+> Symbols vary and the test breaks.
+> 
+> Closes: https://lore.kernel.org/lkml/CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com/
+> Signed-off-by: Ian Rogers <irogers@google.com>
+> ---
+>  tools/perf/tests/shell/annotate.sh | 6 ++++++
+>  1 file changed, 6 insertions(+)
+> 
+> diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
+> index 1590a37363de..199f547e656d 100755
+> --- a/tools/perf/tests/shell/annotate.sh
+> +++ b/tools/perf/tests/shell/annotate.sh
+> @@ -4,6 +4,12 @@
+>  
+>  set -e
+>  
+> +if perf check feature -q sanitizer
+> +then
+> +  echo "Skip test with sanitizers due to differing assembly code"
 
-using multipage folios apparently break some madvise operations like
-MADV_PAGEOUT which do not reliably unload the specified page anymore,
+I don't think it's because of different assembly code.
+It should be the return value from ASAN leak detector.
 
-Revert the patch until that is figured out.
+Maybe we can enable it using "ASAN_OPTIONS=detect_leaks=0"?
+Probably with a comment that mentions we don't call
+perf_session__delete() in perf annotate for a performance reason.
 
-Reported-by: Andrii Nakryiko <andrii@kernel.org>
-Fixes: 1325e4a91a40 ("9p: Enable multipage folios")
-Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
----
- fs/9p/vfs_inode.c | 1 -
- 1 file changed, 1 deletion(-)
+Thanks,
+Namhyung
 
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index effb3aa1f3ed..fd72fc38c8f5 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -295,7 +295,6 @@ int v9fs_init_inode(struct v9fs_session_info *v9ses,
- 			inode->i_op = &v9fs_file_inode_operations;
- 			inode->i_fop = &v9fs_file_operations;
- 		}
--		mapping_set_large_folios(inode->i_mapping);
- 
- 		break;
- 	case S_IFLNK:
 
----
-base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
-change-id: 20241024-revert_multifolio-3e117978b5c2
-
-Best regards,
--- 
-Dominique Martinet | Asmadeus
-
+> +  exit 2
+> +fi
+> +
+>  shelldir=$(dirname "$0")
+>  
+>  # shellcheck source=lib/perf_has_symbol.sh
+> -- 
+> 2.47.0.163.g1226f6d8fa-goog
+> 
 
