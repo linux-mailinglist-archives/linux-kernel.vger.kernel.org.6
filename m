@@ -1,141 +1,144 @@
-Return-Path: <linux-kernel+bounces-377188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377190-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F19969ABB06
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:30:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0946F9ABB0A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:32:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B36B3284F2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:30:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B48721F24500
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:32:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0609329422;
-	Wed, 23 Oct 2024 01:30:37 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9C6535280;
+	Wed, 23 Oct 2024 01:32:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fy2CtgA9"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F38C1804E;
-	Wed, 23 Oct 2024 01:29:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BA26B288B1;
+	Wed, 23 Oct 2024 01:32:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729647036; cv=none; b=jj7GdHzCFPxhSk6GSW1MsPByTCQj/pnMYftodRu68Hiw41Wj7ryTe1dcdIuJZJaRS/SLqCUn5jR47iVkoIJOE/F/MnAbntG8pldT1C9fbyopr+7BrCXEkoYjjcizXTvrJOcDLPT9td2LKMlzFMSyNkGoYDf/2I0LKc4+HYo10Gs=
+	t=1729647133; cv=none; b=S5BwxjzxSJJf42aV9ivjAl3euW6wgX7StX9nDHorP91KR5b3VhV3znn6nVI1YcZpi5SoxiMZ+GRvnFRxsUq38+WiVHNFYC7F18/p2zGlKk7gZLr7aERGPAO2kSJHMAodYU7BskQPivP3baNNuDF6+IRVryApVIYpc3ZWZGMhbZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729647036; c=relaxed/simple;
-	bh=6F0/kW5iDHAABeRS65zbRBcRQo1wnYoeTOx2mCqUwN8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=aoRG+Mldogr1BK4gYH1Fxccs1Rt5pa6uUQkCYq9KYZNuNptI2JZpA06GUvbSRIWIgUC8KnmzJi7S+qdj9Q5neTm0cJbR9T8nPQqYLxtXhrxk3COp5ADoCtJbU9ayeABowNc1WgUefJCLs+EYutX3i1q7fHq0Wqhq1+NO9PRBpO0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 350dba0290de11efa216b1d71e6e1362-20241023
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:ffd64744-868e-4835-adb4-345b044cc37a,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTI
-	ON:release,TS:0
-X-CID-META: VersionHash:82c5f88,CLOUDID:fb4235fc8eb438f3b9e33a35987cca17,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:5,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 350dba0290de11efa216b1d71e6e1362-20241023
-Received: from node2.com.cn [(10.44.16.197)] by mailgw.kylinos.cn
-	(envelope-from <chenzhang@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1341631161; Wed, 23 Oct 2024 09:29:11 +0800
-Received: from node2.com.cn (localhost [127.0.0.1])
-	by node2.com.cn (NSMail) with SMTP id B1C12B801E43;
-	Wed, 23 Oct 2024 09:29:11 +0800 (CST)
-X-ns-mid: postfix-67185167-5818374313
-Received: from localhost.localdomain (unknown [172.25.120.42])
-	by node2.com.cn (NSMail) with ESMTPA id 71C53B801E43;
-	Wed, 23 Oct 2024 01:29:10 +0000 (UTC)
-From: chen zhang <chenzhang@kylinos.cn>
-To: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	corentin.chary@gmail.com,
-	luke@ljones.dev
-Cc: platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	chenzhang_0901@163.com,
-	chen zhang <chenzhang@kylinos.cn>
-Subject: [PATCH v2] platform/x86: eeepc-laptop: use sysfs_emit() instead of sprintf()
-Date: Wed, 23 Oct 2024 09:29:05 +0800
-Message-Id: <20241023012905.15551-1-chenzhang@kylinos.cn>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729647133; c=relaxed/simple;
+	bh=5C53vINuy3FyicC5nga4u/tAcMQz+V9nEUg+wHKFx4I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QA6fkSz9y6jS28ktUVv5AOoqIFiaNeldj3RUMfgmxNvgr7Thl4tYrzOjDPEL8NvMksomywxtww89std7WmWvUb4xnIdqkR2QRx8lAWACkbK0nu1PBYB8V3X6x42Agvc62W4K/iEpc7Ua/FhOWLLe2i4WPhJIBz+We1/UgshS68w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fy2CtgA9; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ea7e250c54so4312660a12.0;
+        Tue, 22 Oct 2024 18:32:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729647131; x=1730251931; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=1a4vwbaJtSd23ba+kdujv/GFWeG37UIlsFbsztV+u2Y=;
+        b=fy2CtgA9xW6Jsopt289Ndn5Z2GN14stzsoGPgILGzNOK/RwxxNldUuDesk/+WJTs1m
+         UlioLBRBvHHxXua1CXy8KgBGykiWQ9+949uHbKOJydEtFwxfOYYcwRaYmb36GWnnmIvS
+         8GVXBkfEYqweTAk+SCdZiP2AF40JtD6ajIMm7oaeJL8SWe5ptGSzib8HrAU3ufNdC8hd
+         9dXBcmx0VqnmLzBU26OOUYUhOX0FFAmhONrDFcpLJApn3BQI5Xj7XtvX6/spq2BDIj/K
+         GMwP6hhzRvHmXdHVS6jCd+ySmrnlUE+iyuSteYY+wLjL2lirDlgN5PLW5TFGU/+spq+4
+         R8FA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729647131; x=1730251931;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=1a4vwbaJtSd23ba+kdujv/GFWeG37UIlsFbsztV+u2Y=;
+        b=iv4SuNHXYblVlhx/bTjw1dvmTjRy/Q80YcJKvSpQi/xCNtdDNdRoyMk6mhRNDVZnPw
+         jaYRUNrX/DHlhUVS1AlVyJa1dP/CSUd/mPOEe+XHsJUAsd3EYA/TnUVF3H29anb6tVZo
+         66UUOwZMLhzjbX8wFFACEJDMaiWMX+kknDnl8OX2AbnkpEvfovwUjiidsvim5oNFXkTj
+         6feXOEy53ayNIJ4A9AnT0iXqeqZzG2L6puIRbHkcxyBTQ8IujuxcIOrXQdK7mW3qxtYI
+         X/jgjI2zP4/cTbEJdlarnlaecfxphAq0puH+8P2VBZ6mdytaSl9zo8CdhRQRP2/1fMwP
+         GjZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUDlPEE+RHN3y0eMhPff/b5vajHbXJ/AT7IExlKh1tkEB23WDs96hvHAFgle5ybsFK1iEw=@vger.kernel.org, AJvYcCUWkrnS0G338SRHSFFxyVANO5LQB6lB1EPmgp66XtppKc+wNqm8qLFHCQWL8C6Q4cKPCdBBFVSOHJs8PGFe@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw1XOhq6Zn52XK20WX3zHfVGpgfROrYzOi4pGOPj2YZfCz1o+Ko
+	3RgmYiH7pntFIZ/0o1tGXZIWfHVUMvMlAqXPCIia6G4Ko5EyVCODLzCGcnY/
+X-Google-Smtp-Source: AGHT+IFdy95yPWrBRopX5YEiZemikX7ErDFeD+UuofU5hJl/6URCZdX+CS6HfaV9/6Wbnc8KkakGbQ==
+X-Received: by 2002:a05:6a20:9f43:b0:1d8:f977:8cda with SMTP id adf61e73a8af0-1d978b2e4fbmr1330572637.27.1729647130827;
+        Tue, 22 Oct 2024 18:32:10 -0700 (PDT)
+Received: from localhost.localdomain ([210.205.14.5])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d7603sm5349852b3a.134.2024.10.22.18.32.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 18:32:10 -0700 (PDT)
+Date: Wed, 23 Oct 2024 10:29:23 +0900
+From: Byeonguk Jeong <jungbu2855@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
+Message-ID: <ZxhOCkxsGbMoiERy@localhost.localdomain>
+References: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
+ <CAADnVQ+Ow2E8qghEZw6x63VS4gM5rDtbM9R-ob00Rha2yBvfgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAADnVQ+Ow2E8qghEZw6x63VS4gM5rDtbM9R-ob00Rha2yBvfgA@mail.gmail.com>
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+On Tue, Oct 22, 2024 at 12:51:05PM -0700, Alexei Starovoitov wrote:
+> On Mon, Oct 21, 2024 at 6:49 PM Byeonguk Jeong <jungbu2855@gmail.com> wrote:
+> >
+> > trie_get_next_key() allocates a node stack with size trie->max_prefixlen,
+> > while it writes (trie->max_prefixlen + 1) nodes to the stack when it has
+> > full paths from the root to leaves. For example, consider a trie with
+> > max_prefixlen is 8, and the nodes with key 0x00/0, 0x00/1, 0x00/2, ...
+> > 0x00/8 inserted. Subsequent calls to trie_get_next_key with _key with
+> > .prefixlen = 8 make 9 nodes be written on the node stack with size 8.
+> 
+> Hmm. It sounds possible, but pls demonstrate it with a selftest.
+> With the amount of fuzzing I'm surprised it was not discovered earlier.
+> 
+> pw-bot: cr
 
-Signed-off-by: chen zhang <chenzhang@kylinos.cn>
----
-v2: add #include <linux/sysfs.h>
----
- drivers/platform/x86/eeepc-laptop.c | 9 +++++----
- 1 file changed, 5 insertions(+), 4 deletions(-)
+With a simple test below, the kernel crashes in a minute or you can easily
+discover the bug on KFENCE-enabled kernels.
 
-diff --git a/drivers/platform/x86/eeepc-laptop.c b/drivers/platform/x86/e=
-eepc-laptop.c
-index 03319a80e114..f52fbc4924d4 100644
---- a/drivers/platform/x86/eeepc-laptop.c
-+++ b/drivers/platform/x86/eeepc-laptop.c
-@@ -25,6 +25,7 @@
- #include <linux/rfkill.h>
- #include <linux/pci.h>
- #include <linux/pci_hotplug.h>
-+#include <linux/sysfs.h>
- #include <linux/leds.h>
- #include <linux/dmi.h>
- #include <acpi/video.h>
-@@ -285,7 +286,7 @@ static ssize_t show_sys_acpi(struct device *dev, int =
-cm, char *buf)
-=20
- 	if (value < 0)
- 		return -EIO;
--	return sprintf(buf, "%d\n", value);
-+	return sysfs_emit(buf, "%d\n", value);
- }
-=20
- #define EEEPC_ACPI_SHOW_FUNC(_name, _cm)				\
-@@ -361,7 +362,7 @@ static ssize_t cpufv_show(struct device *dev,
-=20
- 	if (get_cpufv(eeepc, &c))
- 		return -ENODEV;
--	return sprintf(buf, "%#x\n", (c.num << 8) | c.cur);
-+	return sysfs_emit(buf, "%#x\n", (c.num << 8) | c.cur);
- }
-=20
- static ssize_t cpufv_store(struct device *dev,
-@@ -393,7 +394,7 @@ static ssize_t cpufv_disabled_show(struct device *dev=
-,
- {
- 	struct eeepc_laptop *eeepc =3D dev_get_drvdata(dev);
-=20
--	return sprintf(buf, "%d\n", eeepc->cpufv_disabled);
-+	return sysfs_emit(buf, "%d\n", eeepc->cpufv_disabled);
- }
-=20
- static ssize_t cpufv_disabled_store(struct device *dev,
-@@ -1025,7 +1026,7 @@ static ssize_t store_sys_hwmon(void (*set)(int), co=
-nst char *buf, size_t count)
-=20
- static ssize_t show_sys_hwmon(int (*get)(void), char *buf)
- {
--	return sprintf(buf, "%d\n", get());
-+	return sysfs_emit(buf, "%d\n", get());
- }
-=20
- #define EEEPC_SENSOR_SHOW_FUNC(_name, _get)				\
---=20
-2.25.1
+#!/bin/bash
+bpftool map create /sys/fs/bpf/lpm type lpm_trie key 5 value 1 \
+entries 16 flags 0x1name lpm
 
+for i in {0..8}; do
+	bpftool map update pinned /sys/fs/bpf/lpm \
+	key hex 0$i 00 00 00 00 \
+	value hex 00 any
+done
+
+while true; do
+	bpftool map dump pinned /sys/fs/bpf/lpm
+done
+
+In my environment (6.12-rc4, with CONFIG_KFENCE), dmesg gave me this
+message as expected.
+
+[  463.141394] BUG: KFENCE: out-of-bounds write in trie_get_next_key+0x2f2/0x670
+
+[  463.143422] Out-of-bounds write at 0x0000000095bc45ea (256B right of kfence-#156):
+[  463.144438]  trie_get_next_key+0x2f2/0x670
+[  463.145439]  map_get_next_key+0x261/0x410
+[  463.146444]  __sys_bpf+0xad4/0x1170
+[  463.147438]  __x64_sys_bpf+0x74/0xc0
+[  463.148431]  do_syscall_64+0x79/0x150
+[  463.149425]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
+
+[  463.151436] kfence-#156: 0x00000000279749c1-0x0000000034dc4abb, size=256, cache=kmalloc-256
+
+[  463.153414] allocated by task 2021 on cpu 2 at 463.140440s (0.012974s ago):
+[  463.154413]  trie_get_next_key+0x252/0x670
+[  463.155411]  map_get_next_key+0x261/0x410
+[  463.156402]  __sys_bpf+0xad4/0x1170
+[  463.157390]  __x64_sys_bpf+0x74/0xc0
+[  463.158386]  do_syscall_64+0x79/0x150
+[  463.159372]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
