@@ -1,84 +1,185 @@
-Return-Path: <linux-kernel+bounces-377948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB84F9AC8EC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:30:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C687A9AC8F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:31:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 832601F22FAA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:30:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D67671C21429
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:31:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 635B91AAE06;
-	Wed, 23 Oct 2024 11:30:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 08C6D1AAE3A;
+	Wed, 23 Oct 2024 11:31:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="IHZUcYEq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AAZYn6Cw"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C018E1CA84;
-	Wed, 23 Oct 2024 11:30:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 98F31145B1B;
+	Wed, 23 Oct 2024 11:31:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683049; cv=none; b=pENK+K9ZLYivG0Ljz+LWhGAvOEu0BBNEH8AFx9eGqJnUlHQ7RDZ6l6YUhUrshprkmKVfuX65gO+E/tslCJgxoSPIlzT3JISfpk0G1ADK4ZmVeQtDcY31N+W5UxsuG8HXhMW2HGfpxLz5H8FmOrOLN8z8bf8hcXTwmwQ/nzXfvF4=
+	t=1729683081; cv=none; b=jFJuyz+gpEYT/Ul49xvSH2qXUI7FsgcFCDjxvMU2YzHs1cKBDnwdmRbdzOvOat4R1H8aCkLHLeFLg8wqsPb2gowrahSlcOqvwKw5+0swu+zDHtQUb+X5DZU/CnqF88a/RuEqVG0udM6+5+1QO3B9kSWvGqv+enXHZae2iSClEog=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683049; c=relaxed/simple;
-	bh=oV5yBCvSY/I5nvYmeJJWIoBisEBeBCIXfe1qmu3o4Do=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=g+AX7gG4YKcjxo1gydbwdkDEddc3jAZ2vaJSiIe9kol+PumhYe1HFT9KUWSC9LtJJySTqs8LIIikqpgtGox0CO33JIs+wj1PsRNxr29V9C4YFE/PZGINIqj8c+B7dPbVCFgUw/eJLWKFyk4L48zkkd9WNbZL7FwVRQjWMvNwvzs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=IHZUcYEq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 88803C4CEC6;
-	Wed, 23 Oct 2024 11:30:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729683049;
-	bh=oV5yBCvSY/I5nvYmeJJWIoBisEBeBCIXfe1qmu3o4Do=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=IHZUcYEq7qL91FC+WsF7IOCp7SLTUj5nBcyMpkym6lOX8CAAOCanK5xz8hksYiiyz
-	 UgYavvcpStcvdUnfB20o31CkVkekGSNC5sJ0BxHIoj1kuT+8SF/xOp7NQl49+RL0rb
-	 czrH43eDVGHMqZMXZNd3wG/OEOB3xb9++IqaYdAwZxMyZNMNUVjAN06yb3JnEY5vrx
-	 1B25VctE5GeG0sKC+ynnoeIqbqRzIHSXQUxEig+Kn0vUCiP0nsY525ijYloEwsvO5V
-	 P+P5pi/ebod3wR+2ff05Rhh3OkvQlgmrYc4MfrjKH3nC+V+6BVenQjdhSKSvQURe4B
-	 hmPUb/Lt3pOeA==
-Date: Wed, 23 Oct 2024 13:30:44 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, aliceryhl@google.com, dakr@redhat.com,
-	linux-kernel@vger.kernel.org, airlied@redhat.com,
-	miguel.ojeda.sandonis@gmail.com, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 3/5] rust: page: Extend support to vmalloc_to_page
-Message-ID: <ZxjeZH4fz6ihRRkr@pollux>
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
- <20241022224832.1505432-4-abdiel.janulgue@gmail.com>
- <Zxi287W_MJcMB4YO@pollux>
- <74db5f3b-c329-474e-9a9d-de67d7cb888c@gmail.com>
+	s=arc-20240116; t=1729683081; c=relaxed/simple;
+	bh=ewHoWcFkWh06SU3I3qkb/UiJCEdNK9w+nLRz0rDIEDc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=XlmiUSry2tTYk4JdDHfa4NXiOWl0d8vRvrdDw91+w/bYnXstEAS1hRgs49iQ14Ynl7iTOjjPJOCG3t3xHtJT7/Vc3qjtqujhjRx7Mtc14Q5ydddq6AjeGwYQcNnGwRPEzmNzv6ezt9HppsxqyURzca6zqLQUNVBMCLgWga3GYRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AAZYn6Cw; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9hxoK025444;
+	Wed, 23 Oct 2024 11:31:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	h9cYMmbebG1hDrghxE1wnhoNmTTlTMcqgbTzOfzVsjg=; b=AAZYn6CwcS33u5vI
+	x2VJ45YW23GTFiBqqkO8k1et0kw3AsaedDYfGVSkFbVDcAi/zt0CTOb2z2ZOOlP/
+	5JTn14ITSKoNYix5huV8f4yauEHaZAbIxIKEoKrIlsw74T68SG0G/iU/L++SZ9a2
+	mH+hvvg9ROWejhms0KdUMFUwiPA8NKVKWlLDi7Wc2jkU4yNHsDZKeXoI50aUXdm8
+	riBOHfiWieHSc6YAgfBNgnbS0u5yRfVDPs1hNRn+KpO3Wo2mxs5YznC0XepNi8D4
+	J9yb8LeZTFjhbSsjNqKNTBFZZ+LdXksKGk8W1aHejm8uTN6Km1bG5CaalNBOx0XX
+	AviZGw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41syve-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 11:31:10 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NBV9n1010193
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 11:31:09 GMT
+Received: from [10.216.48.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 04:31:04 -0700
+Message-ID: <c841e94e-0468-5863-9cb1-403b83c3510d@quicinc.com>
+Date: Wed, 23 Oct 2024 17:01:01 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <74db5f3b-c329-474e-9a9d-de67d7cb888c@gmail.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 11/28] media: iris: implement g_selection ioctl
+Content-Language: en-US
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Sebastian Fricke <sebastian.fricke@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vedang Nagar
+	<quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-11-c5eaa4e9ab9e@quicinc.com>
+ <ffbbb1f2-81b0-40f5-806c-4bda3c9a3ce0@xs4all.nl>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <ffbbb1f2-81b0-40f5-806c-4bda3c9a3ce0@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: ybdtXgu1g8Xtr6EhN0C0gfX2qpvTlWN_
+X-Proofpoint-ORIG-GUID: ybdtXgu1g8Xtr6EhN0C0gfX2qpvTlWN_
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 clxscore=1015 mlxscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230068
 
-On Wed, Oct 23, 2024 at 01:26:37PM +0300, Abdiel Janulgue wrote:
-> On 23/10/2024 11:42, Danilo Krummrich wrote:
-> > > +    ) -> Result<&'a Self, AllocError>
-> > 
-> > Please don't use `AllocError`. We're not allocating anything here.
-> > 
-> > Anyway, do we need this as a separate function at all?
-> Thanks. Would it make sense to squash this function into
-> `Page::page_slice_to_page` instead?
 
-Probably, though in the future we might also want to add `virt_to_page()` if
-to `Page::page_slice_to_page` if it's not a Vmalloc address.
 
-But I think it should be fine to handle both cases in `Page::page_slice_to_page`
-directly.
-
+On 10/23/2024 4:15 PM, Hans Verkuil wrote:
+> On 14/10/2024 11:07, Dikshita Agarwal wrote:
+>> From: Vedang Nagar <quic_vnagar@quicinc.com>
+>>
+>> Implement g_selection ioctl in the driver with necessary hooks.
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  drivers/media/platform/qcom/iris/iris_vidc.c | 29 ++++++++++++++++++++++++++++
+>>  1 file changed, 29 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> index 05146970189b..481fa0a7b7f3 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> @@ -256,6 +256,34 @@ static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
+>>  	return ret;
+>>  }
+>>  
+>> +static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *s)
+>> +{
+>> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> +
+>> +	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
 > 
-> /Abdiel
+> For g/s_selection the MPLANE type will always be mapped to the non-mplane type,
+> so you'll never see V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE here.
 > 
+> See v4l_g/s_selection in v4l2-core/v4l2-ioctl.c.
+> 
+> It's a bit of an historical artifact.
+> 
+I see, Will remove the check for MPLANE then and keep only for
+V4L2_BUF_TYPE_VIDEO_CAPTURE.
+
+Thanks,
+Dikshita
+>> +	    s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+>> +		return -EINVAL;
+>> +
+>> +	switch (s->target) {
+>> +	case V4L2_SEL_TGT_CROP_BOUNDS:
+>> +	case V4L2_SEL_TGT_CROP_DEFAULT:
+>> +	case V4L2_SEL_TGT_CROP:
+>> +	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+>> +	case V4L2_SEL_TGT_COMPOSE_PADDED:
+>> +	case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+>> +	case V4L2_SEL_TGT_COMPOSE:
+>> +		s->r.left = inst->crop.left;
+>> +		s->r.top = inst->crop.top;
+>> +		s->r.width = inst->crop.width;
+>> +		s->r.height = inst->crop.height;
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static struct v4l2_file_operations iris_v4l2_file_ops = {
+>>  	.owner                          = THIS_MODULE,
+>>  	.open                           = iris_open,
+>> @@ -277,6 +305,7 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+>>  	.vidioc_g_fmt_vid_cap_mplane    = iris_g_fmt_vid_mplane,
+>>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+>>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>> +	.vidioc_g_selection             = iris_g_selection,
+>>  };
+>>  
+>>  void iris_init_ops(struct iris_core *core)
+>>
+> 
+> Regards,
+> 
+> 	Hans
 
