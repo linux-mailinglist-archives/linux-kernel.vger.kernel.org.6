@@ -1,57 +1,72 @@
-Return-Path: <linux-kernel+bounces-377259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8302F9ABC1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:22:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 808289ABC1D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9C61F245E6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:22:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A5FB71C20BAE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:23:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893021304AB;
-	Wed, 23 Oct 2024 03:22:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB1B213211A;
+	Wed, 23 Oct 2024 03:23:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIJLY5dG"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q+wP1Bon"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E03F9C5;
-	Wed, 23 Oct 2024 03:22:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9761512F59C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:23:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729653733; cv=none; b=EIpGMwv3kXduglO9MYU23uMmSL6E/xXoas5IDw629ko8ojo5BIKbhczj5zR5lw398gxnNRmObUgMl+Ks5hbPQ50spWr8nhiX3quYubpbMFeQQyZILoBjHYwasUNedlDDfTFH4H58p1YiiaGwEf+OxN5Xzx0oea6QvYu50X/DbS0=
+	t=1729653796; cv=none; b=pWmNju1xlK+vtPPtQPE4QB1D5Wp1H3hVJVsYIlvnr4Q59s1Rk8xC6SrgjgFbvTcXOCEpGJF3lDIkbEhfSUDY8hmvqQTsMrTdJZs9l4Ca2nu6z+4TnnbE9IJqgLIkZdt7g60IEjGig9TR9cfRIbfyq5202VNEzRq6iaywU31rN/A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729653733; c=relaxed/simple;
-	bh=GZDpR9wGeUvIuDklehHTqOv1Xk8hOBog4OBM1m7IDak=;
+	s=arc-20240116; t=1729653796; c=relaxed/simple;
+	bh=t9lNahGFV8NdSVZWuVwyMZgm9MDu+bR/QurKTTeg/Fo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=T3gblHh6InEEVR5zJu71oows0Mi81H4OhBV5Iiqv6/nELVv0bXky7+m9V1mlFlonYzCe6f76PXbPS0VD6MDHbqQJumjwSfkHRZOWlFAFLzC1YFkna1EpKUc5j9lzKW3WCvN2gAGTYVWVKX9r7WROE08L9DHNVip0ZQznctvA1IY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIJLY5dG; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C32C4CEC3;
-	Wed, 23 Oct 2024 03:22:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729653732;
-	bh=GZDpR9wGeUvIuDklehHTqOv1Xk8hOBog4OBM1m7IDak=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DIJLY5dGFyPwOwvmdqB5U2WpRuTrY6pRceEYQN46DYbHiTZgpctGQU70mSetzq/Ph
-	 cENkaPRdhfaDEe3MTyUL8/PNuYpptxVWsMDPuIZNmdsMndBlERBfOe2MUnBaBArOi9
-	 u4ht8tHT/05LJ4/z6f3bkMduRPk1QiwAMiTI8UyPBgr1/i/P4DT2xi9tjGpZvJcXP4
-	 P3m0wDhaa66MIYKBsjGrQfxpEdN3kVm90ggyPU97qYT809HHRd+vZobnpdFTrAH+Hy
-	 gS43iA2ls4W/vYEd/bgdndTh8tD1FsnaHvNhZZPBNqC5PDOb+xC7YgqZjTiEouewdd
-	 8PqCizRkCZY/A==
-Date: Tue, 22 Oct 2024 22:22:09 -0500
-From: Bjorn Andersson <andersson@kernel.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
-	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add sm8750 pinctrl
-Message-ID: <5k3kfyx43d6r2hchlbjpplhxkm4xfuu6xefbhydqrhnd3zievw@oftxc2ub5l6m>
-References: <20241021230414.2632428-1-quic_molvera@quicinc.com>
- <20241021230414.2632428-2-quic_molvera@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Z0X0QjFpTjCACpC6JZjRj+W94JzhiQXeUnSAXbfAub4fZzzyQ/+5c50D6y7mEtCdV2ICmv9goHh80FxgvtkgOOWEtXaqW/iY0IBUZwvacyIZeZNmmGGleOOholIcYGggP4fiC846k93sRmfFvXb6O7ZJtjiEmCZ6nyUFBF+f/k4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q+wP1Bon; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729653793;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vJ0RljsDGbBNjTnk6unO9qKRihhjfvUKCsiacIDZhR0=;
+	b=Q+wP1Bon1UVP9jl0X3drLbWv5GtoEUqqvFEqcm/sY962TrmV4M57fYSxqJjjrPAhZ6vy8r
+	RK5P7SKIcCGt9Gb8sQoAPQln6jfQg2Yb5EmvF9jnEvx7lJ4mSA9+J8Gy0Gqxmzn7m43hgW
+	p+o2L6Mmm1XJGM3kZ84CjpW6gnEGJ9E=
+Received: from mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-492-kh2HjzS_OQyQLpWU8h4Muw-1; Tue,
+ 22 Oct 2024 23:23:10 -0400
+X-MC-Unique: kh2HjzS_OQyQLpWU8h4Muw-1
+Received: from mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.40])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id B4E281956096;
+	Wed, 23 Oct 2024 03:23:07 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.47])
+	by mx-prod-int-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1CF0019560AE;
+	Wed, 23 Oct 2024 03:23:00 +0000 (UTC)
+Date: Wed, 23 Oct 2024 11:22:55 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] block: model freeze & enter queue as rwsem for
+ supporting lockdep
+Message-ID: <ZxhsD2zZLnZVaGZf@fedora>
+References: <20241018013542.3013963-1-ming.lei@redhat.com>
+ <20241022061805.GA10573@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -60,52 +75,60 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021230414.2632428-2-quic_molvera@quicinc.com>
+In-Reply-To: <20241022061805.GA10573@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.40
 
-On Mon, Oct 21, 2024 at 04:04:13PM GMT, Melody Olvera wrote:
-> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8750-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8750-tlmm.yaml
-[..]
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    tlmm: pinctrl@f100000 {
-> +        compatible = "qcom,sm8750-tlmm";
-> +        reg = <0x0f100000 0x300000>;
-> +        gpio-controller;
-> +        #gpio-cells = <2>;
-> +        gpio-ranges = <&tlmm 0 0 211>;
-
-I know it's just an example, but I think this number should be 216.
-Please also correct it in the dtsi, where you made it 220.
-
-Regards,
-Bjorn
-
-> +        interrupt-controller;
-> +        #interrupt-cells = <2>;
-> +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
-> +
-> +        gpio-wo-state {
-> +            pins = "gpio1";
-> +            function = "gpio";
-> +        };
-> +
-> +        uart-w-state {
-> +            rx-pins {
-> +                pins = "gpio60";
-> +                function = "qup1_se7";
-> +                bias-pull-up;
-> +            };
-> +
-> +            tx-pins {
-> +                pins = "gpio61";
-> +                function = "qup1_se7";
-> +                bias-disable;
-> +            };
-> +        };
-> +    };
-> +...
-> -- 
-> 2.46.1
+On Tue, Oct 22, 2024 at 08:18:05AM +0200, Christoph Hellwig wrote:
+> On Fri, Oct 18, 2024 at 09:35:42AM +0800, Ming Lei wrote:
+> > Recently we got several deadlock report[1][2][3] caused by blk_mq_freeze_queue
+> > and blk_enter_queue().
+> > 
+> > Turns out the two are just like one rwsem, so model them as rwsem for
+> > supporting lockdep:
+> > 
+> > 1) model blk_mq_freeze_queue() as down_write_trylock()
+> > - it is exclusive lock, so dependency with blk_enter_queue() is covered
+> > - it is trylock because blk_mq_freeze_queue() are allowed to run concurrently
 > 
+> Is this using the right terminology?  down_write and other locking
+> primitives obviously can run concurrently, the whole point is to
+> synchronize the code run inside the criticial section.
+> 
+> I think what you mean here is blk_mq_freeze_queue can be called more
+> than once due to a global recursion counter.
+> 
+> Not sure modelling it as a trylock is the right approach here,
+> I've added the lockdep maintainers if they have an idea.
+
+Yeah, looks we can just call lock_acquire for the outermost
+freeze/unfreeze.
+
+> 
+> > 
+> > 2) model blk_enter_queue() as down_read()
+> > - it is shared lock, so concurrent blk_enter_queue() are allowed
+> > - it is read lock, so dependency with blk_mq_freeze_queue() is modeled
+> > - blk_queue_exit() is often called from other contexts(such as irq), and
+> > it can't be annotated as rwsem_release(), so simply do it in
+> > blk_enter_queue(), this way still covered cases as many as possible
+> > 
+> > NVMe is the only subsystem which may call blk_mq_freeze_queue() and
+> > blk_mq_unfreeze_queue() from different context, so it is the only
+> > exception for the modeling. Add one tagset flag to exclude it from
+> > the lockdep support.
+> 
+> rwsems have a non_owner variant for these kinds of uses cases,
+> we should do the same for blk_mq_freeze_queue to annoate the callsite
+> instead of a global flag.
+ 
+Here it isn't real rwsem, and lockdep doesn't have non_owner variant
+for rwsem_acquire() and rwsem_release().
+
+Another corner case is blk_mark_disk_dead() in which freeze & unfreeze
+may be run from different task contexts too.
+
+
+thanks,
+Ming
+
 
