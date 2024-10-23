@@ -1,164 +1,223 @@
-Return-Path: <linux-kernel+bounces-378939-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378935-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 886589AD774
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:20:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B9FDD9AD76E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:19:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F198283F98
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:20:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4802E1F23D20
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:19:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 576F21FEFB4;
-	Wed, 23 Oct 2024 22:19:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7FEB71FE0FD;
+	Wed, 23 Oct 2024 22:19:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UNw9TPuL"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWSINJG9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A9FC4D599;
-	Wed, 23 Oct 2024 22:19:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF05313B7BE;
+	Wed, 23 Oct 2024 22:19:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729721998; cv=none; b=MyTLVRUXIUKVH7vUmdBSJ90UX71n2yFV+cMWyKQmFyb3GXUdJHlvmp/xvPgc+4LA1F+LM5YAtKf21DBkLayjvzW4HL1HB8uUiZ03QDnYe4Y9fiFOV3wZUsbcFwDPm+/wPalReYdoGtHGzm93ChN/9OramN30ljTWbvP+a6uNdqg=
+	t=1729721946; cv=none; b=uv2SE3k6p6kGAwvO4P4QajjP2wfHLz2SDb9EfnmtRvfQxhRhZ5BXaCc1BZpLqty3fbTHMmAMCxXolGVJKknTa3K8P6iac/9VFpALaOi7dcjGE9hIOen5mmkTq8xI1h+dbXI5xq11LvfRA7Cd2Fg9IbcONz7/GKi/LJq2VXC7X0s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729721998; c=relaxed/simple;
-	bh=mV84I4qZ8tlIw/c+y0ZJiDf0fln/nmcp0z4Cz6gtDFs=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=jl5jjnGh2UAzMU2lP35Nhm49BlORhQShfeRxtzeSPp3s9V8v4vajvW6ZLBXPa4CBA6+ewXJg4OMlyXaJgB+BCR20LDjVl9h+qFD3ctJTCM18MdRTYc9eBXXYLRxP7j5WuboLYvE2QrlmjHPS+COrD3cNqa9RCXRoapK1ijyF/kM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UNw9TPuL; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43162cf1eaaso3563355e9.0;
-        Wed, 23 Oct 2024 15:19:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729721995; x=1730326795; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=C2vqjRtQrTFe1H9KEMD4tub74VI4r1dTRrrAD426lhE=;
-        b=UNw9TPuLMVTHThettXgC00W6XB9wMTDGT5IsdQKxVQStOWEAmzOCUplOm8qMUzc2Ta
-         kOiRLNZJvqRbWSwdkivsXAkkbnMW2hwDhS4N6ZtU9BxWanz5UU5kHruCVRnA9dtv9I6t
-         CcxuunDORIyDcNoIYO87jjVAVDgBIa/HOyw3br9bI+4nLFoX3yB045GmUO/tJcTl2JfN
-         8HNkpxbVi26Jp/zDM3o/nupRKvesEmMEuIlxXZQoXOT9j819Jw7TJqgEbDJ4ARSM3Dcf
-         qQT27kCFd90wBfANRevB8c5GEIEysY1eZhY6qOVXfsdUKB2kxOmiVwh6Btg8dfJ30Pku
-         01bw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729721995; x=1730326795;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=C2vqjRtQrTFe1H9KEMD4tub74VI4r1dTRrrAD426lhE=;
-        b=G3QcxN4vm1d9RbNhwpjWU6Ua0DK/t5+fmOC0ha39OL/VKORSDLVCfHWFELGawQ2S/O
-         o4gGO11nhuxQgyrJ5zwBEkdWyxB3S573ioRLtevCNtyZJUy0q56OBGTj5VYR7ywTc27J
-         uiMPDSUSKUc4SRryE15iR4v7efOpfNYDyZgqrDkED4RHbMJ3EGmxy+2FRRnJi3YBxoVk
-         z0taaA3cnSyuY3nGTNHhsZwqYrND4plrNdKLVTpkMhApYryrzqGdZHGGrTkTHSRrgPDX
-         mYw5EVC0/eBZU/TEW8tGaQDrnBiYn6S6UPKOosmdEPXwG/BJYDsB1+1HBtMb/JU7kXw0
-         8/Pw==
-X-Forwarded-Encrypted: i=1; AJvYcCXirvScL2nunRd1e92uBeV6OcV5Z0TatVzSEOmIEIwH7mALQqB0Kbo1Q1qh+DgEvjA070Ckhd4Qq+gWvi4=@vger.kernel.org, AJvYcCXji76O8XZab8+w+KnuTGfuUyn6uZIh2gmqGt6aeBBNPCmaE4yvQcL9vewIkWhtqFdc5YDTGwRo+prrTg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyxiCuVa2fWd0YDNMlswcJByfSrj/1ZeFJwqGR/BHKxXFMQhBZK
-	T9Ge1YiIPdi6JidHtDnx4wC9pTp5iOxPgeTWXVOP0XgDUk3PPowb
-X-Google-Smtp-Source: AGHT+IHvAj5PNufdD4eKc7jeBApg8U+ynarWqrcHNYd6YMh0MPzUCKX6EDDaL27Wk3l3+MvhXCvUgQ==
-X-Received: by 2002:a05:6000:cc7:b0:37d:5296:4b37 with SMTP id ffacd0b85a97d-37efcf18a93mr3316830f8f.24.1729721994516;
-        Wed, 23 Oct 2024 15:19:54 -0700 (PDT)
-Received: from localhost (dh207-42-182.xnet.hr. [88.207.42.182])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6579sm529392366b.41.2024.10.23.15.19.53
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 15:19:54 -0700 (PDT)
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-To: Mirsad Todorovac <mtodorovac69@gmail.com>,
-	linux-scsi@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Nilesh Javali <njavali@marvell.com>,
-	GR-QLogic-Storage-Upstream@marvell.com,
-	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
-	"Martin K. Petersen" <martin.petersen@oracle.com>,
-	Bart Van Assche <bvanassche@acm.org>
-Subject: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the end of structures
-Date: Thu, 24 Oct 2024 00:17:01 +0200
-Message-ID: <20241023221700.220063-2-mtodorovac69@gmail.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729721946; c=relaxed/simple;
+	bh=I73ivlORiJQNQAjjmtiuUrtSB1iB0qF3Jq3zae69XQQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=TefA5REnRNDT2qtrOOfDVzcxITsQAL669QVKW6oBLCYOHfvW81RbK4QRWCT6HkIUwmvasbzqRSeeEspVC1jmpwYitw+/fwLwZ3tjUDlhirMxrkCSPAtGv3W77uXa2uUJg0qnx6IzLrT4nCvcFX3RU7tGon5/Xp6YWcnIP93/tCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWSINJG9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 17917C4CECC;
+	Wed, 23 Oct 2024 22:19:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729721946;
+	bh=I73ivlORiJQNQAjjmtiuUrtSB1iB0qF3Jq3zae69XQQ=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=AWSINJG9BVL8+198yIJr+h1RVZyNmhXfhauqoN7adhej1AxmIB6WPLj6Gm6Eu5T4w
+	 aw4LziqiTl3zIHZVPtIOzPDUb0SH7npKnjgxmYvmRV5FpX6HXanu20Kf4LxnSFq+p1
+	 GEtzuYLTfzYgnBnR053KVtj3/gliXvNOF4hDaRSjJ+8hMdxwopoQ2uF8s6jLIkfzrR
+	 KpAR2zlGdzhWqhzEivzpaIrQK8NrIReCjCU3ZfotqzReKUuE/AZmlBSJ+kXn704Orh
+	 Wrsv5Qgnw6MdKjeXmRpfuMxQRURyFjkxUycPc15yQR7w7Kqfx4p2OQZ8O9vMssDSVV
+	 hBJDN6ikfVxzg==
+Date: Wed, 23 Oct 2024 17:19:04 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-pci@vger.kernel.org, Bjorn Helgaas <bhelgaas@google.com>,
+	Lorenzo Pieralisi <lorenzo.pieralisi@arm.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	"Maciej W . Rozycki" <macro@orcam.me.uk>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Lukas Wunner <lukas@wunner.de>,
+	Alexandru Gagniuc <mr.nuke.me@gmail.com>,
+	Krishna chaitanya chundru <quic_krichai@quicinc.com>,
+	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-pm@vger.kernel.org,
+	Smita Koralahalli <Smita.KoralahalliChannabasappa@amd.com>,
+	linux-kernel@vger.kernel.org,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Amit Kucheria <amitk@kernel.org>, Zhang Rui <rui.zhang@intel.com>,
+	Christophe JAILLET <christophe.jaillet@wanadoo.fr>
+Subject: Re: [PATCH v9 0/9] PCI: Add PCIe bandwidth controller
+Message-ID: <20241023221904.GA941054@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241018144755.7875-1-ilpo.jarvinen@linux.intel.com>
 
-Coccinelle advised modern C99-style flexible arrays instead of array[1] as the closing
-member of the struct:
+On Fri, Oct 18, 2024 at 05:47:46PM +0300, Ilpo Järvinen wrote:
+> Hi all,
+> 
+> This series adds PCIe bandwidth controller (bwctrl) and associated PCIe
+> cooling driver to the thermal core side for limiting PCIe Link Speed
+> due to thermal reasons. PCIe bandwidth controller is a PCI express bus
+> port service driver. A cooling device is created for each port the
+> service driver finds to support changing speeds.
+> 
+> This series only adds support for controlling PCIe Link Speed.
+> Controlling PCIe Link Width might also be useful but there is no
+> mechanism for that until PCIe 6.0 (L0p) so Link Width throttling is not
+> added by this series.
+> 
+> 
+> v9:
+> - Split RMW ops doc reformat into own patch before adding LNKCTL2.
+> - Comment reserved 0 LSB even better than it already was.
+> - Consider portdrv future plans:
+> 	- Use devm helpers for mem alloc, IRQ, and mutex init.
+> 	- Don't use get/set_service_data().
+> - Split rwsem into two to avoid recursive locking splat through
+>   pcie_retrain_link().
+> - Small wording improvements to commit messages (from Jonathan)
+> 
+> v8:
+> - Removed CONFIG_PCIE_BWCTRL (use CONFIG_PCIEPORTBUS)
+> - Removed locking wrappers that dealt with the CONFIG variations
+> - Protect macro parameter with parenthesis to be on the safe side
+> 
+> v7:
+> - Rebased on top of Maciej's latest Target Speed quirk patches
+> - Target Speed quirk runs very early, w/o ->subordinate existing yet.
+>   This required adapting logic:
+> 	- Move Supported Link Speeds back to pci_dev
+> 	- Check for ->subordinate == NULL where necessary
+> 	- Cannot always take bwctrl's per port mutex (in pcie_bwctrl_data)
+> - Cleaned up locking in pcie_set_target_speed() using wrappers
+> 	- Allowed removing confusing __pcie_set_target_speed()
+> - Fix building with CONFIG_PCI=n
+> - Correct error check in pcie_lbms_seen()
+> - Don't return error for an empty bus that remains at 2.5GT
+> - Use rwsem to protect ->link_bwctrl setup and bwnotif enable
+> - Clear LBMS in remove_board()
+> - Adding export for pcie_get_supported_speeds() was unnecessary
+> - Call bwctrl's init before hotplug.
+> - Added local variable 'bus' into a few functions
+> 
+> v6:
+> - Removed unnecessary PCI_EXP_LNKCAP_SLS mask from PCIE_LNKCAP_SLS2SPEED()
+> - Split error handling in pcie_bwnotif_irq_thread()
+> - pci_info() -> pci_dbg() on bwctrl probe success path
+> - Handle cooling device pointer -Exx codes in bwctrl probe
+> - Reorder port->link_bwctrl setup / bwnotif enable for symmetry
+> - Handle LBMS count == 0 in PCIe quirk by checking LBMS (avoids a race
+>   between quirk and bwctrl)
+> - Use cleanup.h in PCIe cooling device's register
+> 
+> v5:
+> - Removed patches: LNKCTL2 RMW driver patches went in separately
+> - Refactor pcie_update_link_speed() to read LNKSTA + add __ variant
+>   for hotplug that has LNKSTA value at hand
+> - Make series fully compatible with the Target Speed quirk
+> 	- LBMS counter added, quirk falls back to LBMS bit when bwctrl =n
+> 	- Separate LBMS patch from set target speed patches
+> - Always provide pcie_bwctrl_change_speed() even if bwctrl =n so drivers
+>   don't need to come up their own version (also required by the Target
+>   Speed quirk)
+> - Remove devm_* (based on Lukas' comment on some other service
+>   driver patch)
+> - Convert to use cleanup.h
+> - Renamed functions/struct to have shorter names
+> 
+> v4:
+> - Merge Port's and Endpoint's Supported Link Speeds Vectors into
+>   supported_speeds in the struct pci_bus
+> - Reuse pcie_get_speed_cap()'s code for pcie_get_supported_speeds()
+> - Setup supported_speeds with PCI_EXP_LNKCAP2_SLS_2_5GB when no
+>   Endpoint exists
+> - Squash revert + add bwctrl patches into one
+> - Change to use threaded IRQ + IRQF_ONESHOT
+> - Enable also LABIE / LABS
+> - Convert Link Speed selection to use bit logic instead of loop
+> - Allocate before requesting IRQ during probe
+> - Use devm_*()
+> - Use u8 for speed_conv array instead of u16
+> - Removed READ_ONCE()
+> - Improve changelogs, comments, and Kconfig
+> - Name functions slightly more consistently
+> - Use bullet list for RMW protected registers in docs
+> 
+> v3:
+> - Correct hfi1 shortlog prefix
+> - Improve error prints in hfi1
+> - Add L: linux-pci to the MAINTAINERS entry
+> 
+> v2:
+> - Adds LNKCTL2 to RMW safe list in Documentation/PCI/pciebus-howto.rst
+> - Renamed cooling devices from PCIe_Port_* to PCIe_Port_Link_Speed_* in
+>   order to plan for possibility of adding Link Width cooling devices
+>   later on
+> - Moved struct thermal_cooling_device declaration to the correct patch
+> - Small tweaks to Kconfig texts
+> - Series rebased to resolve conflict (in the selftest list)
+> 
+> Ilpo Järvinen (9):
+>   Documentation PCI: Reformat RMW ops documentation
+>   PCI: Protect Link Control 2 Register with RMW locking
+>   PCI: Store all PCIe Supported Link Speeds
+>   PCI: Refactor pcie_update_link_speed()
+>   PCI/quirks: Abstract LBMS seen check into own function
+>   PCI/bwctrl: Re-add BW notification portdrv as PCIe BW controller
+>   PCI/bwctrl: Add API to set PCIe Link Speed
+>   thermal: Add PCIe cooling driver
+>   selftests/pcie_bwctrl: Create selftests
+> 
+>  Documentation/PCI/pciebus-howto.rst           |  14 +-
+>  MAINTAINERS                                   |   9 +
+>  drivers/pci/hotplug/pciehp_ctrl.c             |   5 +
+>  drivers/pci/hotplug/pciehp_hpc.c              |   2 +-
+>  drivers/pci/pci.c                             |  62 ++-
+>  drivers/pci/pci.h                             |  38 +-
+>  drivers/pci/pcie/Makefile                     |   2 +-
+>  drivers/pci/pcie/bwctrl.c                     | 366 ++++++++++++++++++
+>  drivers/pci/pcie/portdrv.c                    |   9 +-
+>  drivers/pci/pcie/portdrv.h                    |   6 +-
+>  drivers/pci/probe.c                           |  15 +-
+>  drivers/pci/quirks.c                          |  32 +-
+>  drivers/thermal/Kconfig                       |   9 +
+>  drivers/thermal/Makefile                      |   2 +
+>  drivers/thermal/pcie_cooling.c                |  80 ++++
+>  include/linux/pci-bwctrl.h                    |  28 ++
+>  include/linux/pci.h                           |  24 +-
+>  include/uapi/linux/pci_regs.h                 |   1 +
+>  tools/testing/selftests/Makefile              |   1 +
+>  tools/testing/selftests/pcie_bwctrl/Makefile  |   2 +
+>  .../pcie_bwctrl/set_pcie_cooling_state.sh     | 122 ++++++
+>  .../selftests/pcie_bwctrl/set_pcie_speed.sh   |  67 ++++
+>  22 files changed, 843 insertions(+), 53 deletions(-)
+>  create mode 100644 drivers/pci/pcie/bwctrl.c
+>  create mode 100644 drivers/thermal/pcie_cooling.c
+>  create mode 100644 include/linux/pci-bwctrl.h
+>  create mode 100644 tools/testing/selftests/pcie_bwctrl/Makefile
+>  create mode 100755 tools/testing/selftests/pcie_bwctrl/set_pcie_cooling_state.sh
+>  create mode 100755 tools/testing/selftests/pcie_bwctrl/set_pcie_speed.sh
 
-./drivers/scsi/qla2xxx/qla_dbg.h:34:8-16: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-./drivers/scsi/qla2xxx/qla_dbg.h:87:8-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-./drivers/scsi/qla2xxx/qla_dbg.h:126:8-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-./drivers/scsi/qla2xxx/qla_dbg.h:165:8-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-./drivers/scsi/qla2xxx/qla_dbg.h:213:8-15: WARNING use flexible-array member instead (https://www.kernel.org/doc/html/latest/process/deprecated.html#zero-length-and-one-element-arrays)
-
-Fixes: 21038b0900d1b ("scsi: qla2xxx: Fix endianness annotations in header files")
-Cc: Bart Van Assche <bvanassche@acm.org>
-Cc: Nilesh Javali <njavali@marvell.com>
-Cc: GR-QLogic-Storage-Upstream@marvell.com
-Cc: "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>
-Cc: "Martin K. Petersen" <martin.petersen@oracle.com>
-Cc: linux-scsi@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org
-Signed-off-by: Mirsad Todorovac <mtodorovac69@gmail.com>
----
- v1: initial patch to conform to C99 standard.
-
- drivers/scsi/qla2xxx/qla_dbg.h | 10 +++++-----
- 1 file changed, 5 insertions(+), 5 deletions(-)
-
-diff --git a/drivers/scsi/qla2xxx/qla_dbg.h b/drivers/scsi/qla2xxx/qla_dbg.h
-index 54f0a412226f..ca9304df484b 100644
---- a/drivers/scsi/qla2xxx/qla_dbg.h
-+++ b/drivers/scsi/qla2xxx/qla_dbg.h
-@@ -31,7 +31,7 @@ struct qla2300_fw_dump {
- 	__be16 fpm_b1_reg[64];
- 	__be16 risc_ram[0xf800];
- 	__be16 stack_ram[0x1000];
--	__be16 data_ram[1];
-+	__be16 data_ram[];
- };
- 
- struct qla2100_fw_dump {
-@@ -84,7 +84,7 @@ struct qla24xx_fw_dump {
- 	__be32	fpm_hdw_reg[192];
- 	__be32	fb_hdw_reg[176];
- 	__be32	code_ram[0x2000];
--	__be32	ext_mem[1];
-+	__be32	ext_mem[];
- };
- 
- struct qla25xx_fw_dump {
-@@ -123,7 +123,7 @@ struct qla25xx_fw_dump {
- 	__be32	fpm_hdw_reg[192];
- 	__be32	fb_hdw_reg[192];
- 	__be32	code_ram[0x2000];
--	__be32	ext_mem[1];
-+	__be32	ext_mem[];
- };
- 
- struct qla81xx_fw_dump {
-@@ -162,7 +162,7 @@ struct qla81xx_fw_dump {
- 	__be32	fpm_hdw_reg[224];
- 	__be32	fb_hdw_reg[208];
- 	__be32	code_ram[0x2000];
--	__be32	ext_mem[1];
-+	__be32	ext_mem[];
- };
- 
- struct qla83xx_fw_dump {
-@@ -210,7 +210,7 @@ struct qla83xx_fw_dump {
- 	__be32	fb_hdw_reg[432];
- 	__be32	at0_array_reg[128];
- 	__be32	code_ram[0x2400];
--	__be32	ext_mem[1];
-+	__be32	ext_mem[];
- };
- 
- #define EFT_NUM_BUFFERS		4
--- 
-2.43.0
-
+Applied to pci/bwctrl for v6.13, thanks Ilpo (and Alexandru, for the
+bandwidth notification interrupt support)!
 
