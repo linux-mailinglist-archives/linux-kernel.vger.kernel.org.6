@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-378830-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378831-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 024339AD5FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:00:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 20B4C9AD603
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:00:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B472A283ECF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:00:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6E7F282920
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:00:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B47181E5731;
-	Wed, 23 Oct 2024 20:59:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A35931F470D;
+	Wed, 23 Oct 2024 20:59:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="nCjgFh8k"
-Received: from mail-oo1-f54.google.com (mail-oo1-f54.google.com [209.85.161.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="mCa42Cax"
+Received: from mail-oo1-f48.google.com (mail-oo1-f48.google.com [209.85.161.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60CE31FDFA3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:59:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8107E1FEFBA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:59:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729717171; cv=none; b=XOs44eJuB8OaYJFH17UNOp8sW/rhJJ5dl71hZCd366eh1j+yxaOnIa6L2V+oDIYubKDlMtUQWfA1X4sHVqNbkodRX2nOj6siLHaV05mn++oJjWDN2qT6XA3DvJ7x018tOQUGnAT5PVXRTT2Y9QirzaVkhrl3+0hzuSkhzI1xPR0=
+	t=1729717173; cv=none; b=VbAO8fyXSjaQeHV5168Pdbkhdudwbo4hneJOnedgnJqjLC0C1Y6XgsIijCAPVMnv6Cx65FL21vyOWJ4RTNXV8rwu16zkwzHqvzxhKPEri9m4VkUgVrzXdO1q5GuOazyu5U2OZ5Jog9qpHIRDCUIc5E/7TXtbo4Vp38JvUr6IJQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729717171; c=relaxed/simple;
-	bh=/mOovntT5Qe8sUMdAxO+EkWWA3dOzhaFJ1YaLc6k+Ak=;
+	s=arc-20240116; t=1729717173; c=relaxed/simple;
+	bh=EhwFAySOu0UzQT81pSGmKbzn70uQw3/Gq0l7793qgAA=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=CkqkieF8xHiC0zL+deXGI/qVsQ1VaBFwZgLJ824KVEPc9b0d5am0JU/ArNB8l510wNU7TXxAx7IQtZkoZAHtoTywBNqI6l8mTrp1ypK7YFwMaAxxX+Y6Aq/SJ5Dzp07EoybVjO0rpw4AvXkgpjgHVHdiShals7zHAZrfz3nAkbI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=nCjgFh8k; arc=none smtp.client-ip=209.85.161.54
+	 In-Reply-To:To:Cc; b=TwdvxDSzdzRcpzrNjn3dHBl37RG5lFvjYyV8C5Tfi2L1SZjL0rTb8eZY/eBWXV12M+3ZxF5R17iYGH7dxo0ucDGwRQt+/gIi/DUu9s5aqTR54MLqEHfZTTvTJxM6VojS8ieJtMtmaKzzJgnmH71Rib8B0lHIJaPsiOQGDciOlqY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=mCa42Cax; arc=none smtp.client-ip=209.85.161.48
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-oo1-f54.google.com with SMTP id 006d021491bc7-5ebc1af9137so106644eaf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:59:28 -0700 (PDT)
+Received: by mail-oo1-f48.google.com with SMTP id 006d021491bc7-5eb70a779baso108269eaf.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:59:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729717167; x=1730321967; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729717170; x=1730321970; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=EyHtfkBXgcKy8Q9+oyQnrUM8I5ww1iitltHtg1jsJVA=;
-        b=nCjgFh8kEL6BDxn42ubkAI+3BVP6ITgTB74JlBrDSsvNIrCLRuXiosxTpPKOYxq3vc
-         lN21UZ6zLO3SPSpTgLTxYtrwxy1Cpv1Ak1sRCjVWTzFDONwB8AkwFcWhWWF6vK+DJZJs
-         YubpURtheHWzm8ah+nekFdi2G3ttHHFYsYjgdeiPSxZ15TeJR8s3fe69bZolj18aRiNY
-         /WPpC+hIYy4ZwSb/4FeKf6tZ+zIDRe71/gBcZiqKpBeRXtkz9pBj7gj/pQHQz7qtWtli
-         JWQp3hNPYl0ZFboW0bf8WtAtuIohe8kNzqo+91wNv63fyH0CzRt9YueRj+Xirp2oT7pL
-         tI4g==
+        bh=qbZ0wRS+DoaTd3bUw74mY2hSGs8UvSjvOOeAQWDWam8=;
+        b=mCa42CaxdB1jAlc44sM720Fjss7NuL1jctnbuU1XENxgsPCRNeP9htWuFtDrgf1sZp
+         ZfVbfMrrcn7g+JBm1kw+hN1e2/jKxCLO7mbe/KcxLtjkS5K+gmS/FkP6iuycQBV/nD6P
+         aYT7ScVPpGxO5OmBuxP8rxJP0QILL7/Stcfc8XhU4oOEEeVtU/2iOWzcBXayX52yykjZ
+         MdMBtK4Rradwl4oaFnNnKCiggZfk2OHW/8rTctM9nfl/HFBESDLaVlkaGjIBlFDrSXe3
+         LlqD8zcnK3ZObwEi+PXzE093SbxJ6+kbz5R+BgWI5ZGoFAnsOhs6dVxtwgnN/QLYV9KW
+         hM6g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729717167; x=1730321967;
+        d=1e100.net; s=20230601; t=1729717170; x=1730321970;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=EyHtfkBXgcKy8Q9+oyQnrUM8I5ww1iitltHtg1jsJVA=;
-        b=wxo6yQldliOoJYOMu0CtspvFELdz4JjBfKP5GddWyN4uL9D+/Z3F0ftil92GtZbgsV
-         3OL1GUbNpIwjmTyVhWymbypU1Le86pIw6AptkX+aUvJuiiigWla0ran+Sn5cdgznkJiP
-         mXbyUE0e2HUwvd4vVBqJ5/9ouo+vqZ6xmbRPUna0TmPHLDJbe6+yt0+KJ803N43IrK24
-         y6Bf033mL4uVELQ2j6YbquzlLDQdoqZ8ecL9mQwuN0ErwJ1kka4ieF/q4bQ9JT42Cjqw
-         Gniynget90f2UFglc/yNJoB46uy51+F8O01MSZXmzeMZsVHHfHoPqumVRZ75b8UQRWQ4
-         uWXg==
-X-Forwarded-Encrypted: i=1; AJvYcCXIQNrGSjjL2Va797NBOYBb+Jh8kej1ZV5lcAVvN7TOOSLr40p74/mYMtL7e202WTPS5YClsNUY3Nzab7M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxi6ga2/s/UvDLcAHTzZt52D3PcE7x+PdvrH8KbgnOI3vqUx6im
-	CL4alh0pOd+zeh7apX59oDYl/vAHWn3Fv8w8R6jB+UuZ51xdYLpITiB1NOROl2w=
-X-Google-Smtp-Source: AGHT+IHv8HCEhfnp0g05EVhJyJSYYG556S9c4IigSs3Y2hbEvK4bBM3BCxpVknjvtRLUcm1QtQH0QA==
-X-Received: by 2002:a05:6820:60e:b0:5e7:caf5:ae1f with SMTP id 006d021491bc7-5ebee532b5emr3206665eaf.2.1729717167480;
-        Wed, 23 Oct 2024 13:59:27 -0700 (PDT)
+        bh=qbZ0wRS+DoaTd3bUw74mY2hSGs8UvSjvOOeAQWDWam8=;
+        b=WAf66ncD3YdAceXdZMX1e7eK3kUNVdIb8kuaDr5QSr69rwWBT0Ybcr/oM7ddqfVA6m
+         ubS2o/EQHydKzX4Im/qWLJOkZ1N7mam85MY2Sw0I6jhXToTVfzHMeuvLbbm5a5EeYd2Q
+         in6voaLeJFKWsYxLOXIrGLCdALeIzquaB7tb42n81Y30bLa58WJL4mzMzmS7SyzvAmwJ
+         rickEwqH65lHTzKeCdg/RyJIJK1As30sR3ANACA1Mh+QUCfxYn2/egdPVvnvNfXr0qE5
+         4B6j6ap4l9J1FiU9YHvMqazaBdNRh1kePbQTbG4ATazFgwUC09KhXh78xnGKMKIXBYM5
+         779g==
+X-Forwarded-Encrypted: i=1; AJvYcCV7zXiQV3y/enQwPUjUmqVcYjr313+xfu6oKMmt9gdqhYg7trFYaDyfsBpyGsNNfpNNGmCRUV3yajW+RKQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHi7QwxlOUhcKkTClSszVkEkbddR4mquMZAJIz49s8WKPV/tHa
+	NK+TYnvEatOg2GXHHw1fdXjVRR4HKbqZxwkzs1XkQdERi4nc6hp7c5Yzw5Ov6Xzz2R5OEZCsR6y
+	q
+X-Google-Smtp-Source: AGHT+IGpSU6q9EbnjtFTPIfmjpti+RDQ5TmJq7nEwzLoenZew8VbFJCDXbbHeqPv7bl5G4IcllcUxQ==
+X-Received: by 2002:a05:6820:229a:b0:5eb:c72e:e29c with SMTP id 006d021491bc7-5ebee94cdd8mr3110098eaf.8.1729717170663;
+        Wed, 23 Oct 2024 13:59:30 -0700 (PDT)
 Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec02c2c157sm52730eaf.44.2024.10.23.13.59.24
+        by smtp.gmail.com with ESMTPSA id 006d021491bc7-5ec02c2c157sm52730eaf.44.2024.10.23.13.59.27
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 13:59:26 -0700 (PDT)
+        Wed, 23 Oct 2024 13:59:29 -0700 (PDT)
 From: David Lechner <dlechner@baylibre.com>
-Date: Wed, 23 Oct 2024 15:59:11 -0500
-Subject: [PATCH RFC v4 04/15] spi: dt-bindings: add trigger-source.yaml
+Date: Wed, 23 Oct 2024 15:59:12 -0500
+Subject: [PATCH RFC v4 05/15] spi: dt-bindings: add PWM SPI offload trigger
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241023-dlech-mainline-spi-engine-offload-2-v4-4-f8125b99f5a1@baylibre.com>
+Message-Id: <20241023-dlech-mainline-spi-engine-offload-2-v4-5-f8125b99f5a1@baylibre.com>
 References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
 In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
 To: Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>, 
@@ -93,52 +94,61 @@ Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
  David Lechner <dlechner@baylibre.com>
 X-Mailer: b4 0.14.1
 
-Add a new binding for SPI offload trigger sources.
+Add a new binding for using a PWM signal as a trigger for SPI offloads.
 
 Signed-off-by: David Lechner <dlechner@baylibre.com>
 ---
 
-v4 changes: new patch in v4.
-
-FWIW, this is essentially identical to the leds trigger-source binding.
+v4 changes: new patch in v4
 ---
- .../devicetree/bindings/spi/trigger-source.yaml    | 28 ++++++++++++++++++++++
- 1 file changed, 28 insertions(+)
+ .../devicetree/bindings/spi/trigger-pwm.yaml       | 39 ++++++++++++++++++++++
+ 1 file changed, 39 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/spi/trigger-source.yaml b/Documentation/devicetree/bindings/spi/trigger-source.yaml
+diff --git a/Documentation/devicetree/bindings/spi/trigger-pwm.yaml b/Documentation/devicetree/bindings/spi/trigger-pwm.yaml
 new file mode 100644
-index 000000000000..d64367726af2
+index 000000000000..987638aa4732
 --- /dev/null
-+++ b/Documentation/devicetree/bindings/spi/trigger-source.yaml
-@@ -0,0 +1,28 @@
++++ b/Documentation/devicetree/bindings/spi/trigger-pwm.yaml
+@@ -0,0 +1,39 @@
 +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
 +%YAML 1.2
 +---
-+$id: http://devicetree.org/schemas/spi/trigger-source.yaml#
++$id: http://devicetree.org/schemas/spi/trigger-pwm.yaml#
 +$schema: http://devicetree.org/meta-schemas/core.yaml#
 +
-+title: Trigger source providers for SPI offloads
++title: Generic SPI offload trigger using PWM
++
++description: Remaps a PWM channel as a trigger source.
 +
 +maintainers:
 +  - David Lechner <dlechner@baylibre.com>
 +
-+description:
-+  Each trigger source provider should be represented by a device tree node. It
-+  may be e.g. a SPI peripheral chip or a clock source.
++$ref: /schemas/spi/trigger-source.yaml#
 +
 +properties:
++  compatible:
++    const: trigger-pwm
++
 +  '#trigger-source-cells':
-+    description:
-+      Number of cells in a source trigger. Typically 0 for nodes of simple
-+      trigger sources. For nodes with more than one output signal, the first
-+      cell be used to specify which output signal to use. If the same signal is
-+      available on more than one pin, the second cell can be used to specify
-+      which pin to use.
-+    enum: [ 0, 1, 2 ]
++    const: 0
 +
-+additionalProperties: true
++  pwms:
++    maxItems: 1
 +
-+...
++required:
++  - compatible
++  - '#trigger-source-cells'
++  - pwms
++
++additionalProperties: false
++
++examples:
++  - |
++    trigger {
++        compatible = "trigger-pwm";
++        #trigger-source-cells = <0>;
++        pwms = <&pwm 0 1000000 0>;
++    };
 
 -- 
 2.43.0
