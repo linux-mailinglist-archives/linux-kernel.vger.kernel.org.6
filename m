@@ -1,39 +1,72 @@
-Return-Path: <linux-kernel+bounces-377177-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377179-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB7519ABADC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:13:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 93F739ABAE2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:14:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C966284DE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:13:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55023284D52
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:14:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7785E208A5;
-	Wed, 23 Oct 2024 01:12:56 +0000 (UTC)
-Received: from freeshell.de (freeshell.de [116.202.128.144])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 549CA29CA;
+	Wed, 23 Oct 2024 01:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="T4d4JAlc"
+Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6211C687;
-	Wed, 23 Oct 2024 01:12:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.202.128.144
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C3831F94C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729645976; cv=none; b=EYFW53dbFTBCRnjM72+f0vzVh+szWbMIPCGfZ0vvfHQwoJKeA36NOuSCGJLiRkBLbLG1hpd3J2wpNHPQL3XT+TLh8cD2pVV2XVyX82TChOoy9dTKNW+7F7t11L/0PdWg8+f4trLuslCRQAqdPAxKyjI1WR84VUEnmxpHJsYI0tA=
+	t=1729646059; cv=none; b=aGH1Chw6LPAld1lEV5sAN+/bzTaR4RpInWQKWJg55VB6gFTNvcJSX0yW8Fbn/iraoMtavf5ac/6/ZJ5It+Pav11iqzYfeg/ccXs+FqTg91ZHu6toToVo987nr9knL9TmWy4rmMrYf4yt30mRW8QjMs8Anzf3n0nwmIwqh34R8i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729645976; c=relaxed/simple;
-	bh=1CRyGpFPXnZ3EeTDtQQ//Q62U5p5ZIRBi44cv20mdJ0=;
+	s=arc-20240116; t=1729646059; c=relaxed/simple;
+	bh=i/fb2TGN/0hbxeCo+vsMA3TOw8xxxeaJTm/6ddVBNT0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZwVE8iInixWyIFUAipKOk9yyu2qs5wdKZ47fYfZV9wy7IkeoRX8+hN2AT+Gp7iJNdvMEuKyLxVTAtE9ObLUrRqZO5+aDnhD92HB2zEextIRaRcW+pTnZj8R9hLEwqju5ZmjgTiVCH+/GVd2FsKRstSPcxQSWhFgruDnYPjDplHo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de; spf=pass smtp.mailfrom=freeshell.de; arc=none smtp.client-ip=116.202.128.144
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=freeshell.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=freeshell.de
-Received: from [IPV6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46] (unknown [IPv6:2605:59c8:31de:bf00:37c2:fe62:c21b:ab46])
-	(Authenticated sender: e)
-	by freeshell.de (Postfix) with ESMTPSA id B9AB0B4B04E6;
-	Wed, 23 Oct 2024 03:12:46 +0200 (CEST)
-Message-ID: <434a7a39-de2d-4053-aed7-df556b5c385d@freeshell.de>
-Date: Tue, 22 Oct 2024 18:12:45 -0700
+	 In-Reply-To:Content-Type; b=ijD+uSuU2a1SQ2xYqBIJS8fRVL/AGSpP5em5zXacRgaPTBxqGOwogz+IscT5IBs1D2K6Os1QbO5HUlH52IqBJatSlQ2Re1qAM1M+lTWX7qT1QTTr1SQ6clydR2w0PFJDSfsHwL4uS7w2GgGcR2jy2JKmcvNxQS8rrQXFRai49GM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=T4d4JAlc; arc=none smtp.client-ip=209.85.210.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-7180f2f5fb0so3184918a34.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 18:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729646057; x=1730250857; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=wBMX9XSvCTqxyEsI8dGZy5i0R+AMQRgfKJfND5aCkw8=;
+        b=T4d4JAlcOsrPhyPyQyRnURh9a619F86BYZHueDmqLBrnyGUCKm+SsJXl/LCA0frI66
+         e5y7n6oCPfXQpFzQ+qubck7TfO89T9VBua5SJK0EJ1HdUBcJwSRFJbBSf/nuPrVSFQAB
+         Ymr602jvbN+0rzaVksnaz2LB+xZ21SN6IPqDdlXfRNhvLqO76bMs9AhUWIiouSWubdAW
+         FdSM257e5YIYf12JJ/4RSVinxElFIerJkNwLrlWWs1mgQFW5fWVyBdbbisES7lMbwy98
+         ZTQptX0H/cTN1lkrrabW1Y+sSukdJ4MbCJIDgAOmOIiPhvRVXChQ+DyXeqz/tA/wucnf
+         ZOpA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729646057; x=1730250857;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=wBMX9XSvCTqxyEsI8dGZy5i0R+AMQRgfKJfND5aCkw8=;
+        b=snDGDXEDQHeZF8uzHIxYEqQ0akpyb4EQrWNLf7btxrDRA6YrnsrdE7Sk7dDkWO71RS
+         a7vS9CmxYVglki/5b0icMprfWg0szg8KXFZ08PmY5bCDge0VtER0pwIQ58QellVzZtJ9
+         CzUTECteTuOM8RJOxmx+hw5+UAkVTvklEQlxCkNBYiMcEGIToXSBlRagfgNObEQIIsry
+         HiufdY+3wTAUEuS+CVfk+Lh6nYVvL9bTYxxnm1AbQnxzwQAtTM2DRjKEIAi3Ax4/AJl2
+         zYhcqPVj3klgbjdXdqqgiVrrUrJZAl7c8Fj2kg+mUy0a+SCY7u43H3kNyw+kT9eV93/S
+         fNGA==
+X-Gm-Message-State: AOJu0YwL6sUE2+sdJhIiBDwxs+sL7cBNURoyHx7Qp7a01xLWQlRI2tCV
+	SrifwfEPRC5g9w8KrB4iF63NOenPKh7fKXlzQ5b8SSED/9Acw127NfM0nn+8Bes=
+X-Google-Smtp-Source: AGHT+IGzehqz1HMkN16yEyr/3tx8KtWHL5vnppeJytoAc9iw8z0cLNNK5rz78JbRhFQy3v4j1i1O4g==
+X-Received: by 2002:a05:6830:3494:b0:718:1957:4b88 with SMTP id 46e09a7af769-7184b2a8017mr1021273a34.2.1729646057222;
+        Tue, 22 Oct 2024 18:14:17 -0700 (PDT)
+Received: from [192.168.1.150] ([198.8.77.157])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab1dc6bsm5693234a12.23.2024.10.22.18.14.16
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 18:14:16 -0700 (PDT)
+Message-ID: <8d057adb-c7e4-4324-a963-7fedc40ceed5@kernel.dk>
+Date: Tue, 22 Oct 2024 19:14:15 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,57 +74,54 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] riscv: dts: starfive: Update ethernet phy0 delay
- parameter values for Star64
-To: Conor Dooley <conor@kernel.org>
-Cc: Henry Bell <dmoo_dv@protonmail.com>,
- Emil Renner Berthing <kernel@esmil.dk>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- devicetree@vger.kernel.org, linux-riscv@lists.infradead.org,
- linux-kernel@vger.kernel.org
-References: <20241022061004.62812-1-e@freeshell.de>
- <20241022-amusement-overreach-c5d1d7fd797b@spud>
+Subject: Re: linux-next: Fixes tag needs some work in the block tree
+To: Bart Van Assche <bvanassche@acm.org>,
+ Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+ Linux Next Mailing List <linux-next@vger.kernel.org>
+References: <20241023095914.61b9eafa@canb.auug.org.au>
+ <7aaf90a8-4734-4819-b29c-42f8f8b857ac@acm.org>
 Content-Language: en-US
-From: E Shattow <e@freeshell.de>
-In-Reply-To: <20241022-amusement-overreach-c5d1d7fd797b@spud>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <7aaf90a8-4734-4819-b29c-42f8f8b857ac@acm.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+On 10/22/24 5:31 PM, Bart Van Assche wrote:
+> On 10/22/24 3:59 PM, Stephen Rothwell wrote:
+>> Hi all,
+>>
+>> In commit
+>>
+>>    6fbd7e0472b7 ("blk-mq: Make blk_mq_quiesce_tagset() hold the tag list mutex less long")
+>>
+>> Fixes tag
+>>
+>>    Fixes: commit 414dd48e882c ("blk-mq: add tagset quiesce interface")
+>>
+>> has these problem(s):
+>>
+>>    - leading word 'commit' unexpected
+> 
+> Jens, please let me know if you want me to post a second version of that
+> patch.
 
-On 10/22/24 09:41, Conor Dooley wrote:
-> On Mon, Oct 21, 2024 at 11:09:51PM -0700, E Shattow wrote:
->> Improve function of Star64 bottom network port phy0 with updated delay values.
->> Initial upstream patches supporting Star64 use the same vendor board support
->> package parameters known to result in an unreliable bottom network port.
-> Should I add:
-> Fixes: 2606bf583b962 ("riscv: dts: starfive: add Star64 board devicetree")
-> CC: stable@vger.kernel.org
-> ?
->
-> "unreliable" sounds to me like something that is worthy of going to
-> fixes/stable
+I fixed it up - for future reference, I recommend adding:
 
-Applying as a fix to stable sounds reasonable, thanks. The bottom 
-network port has always been known by Star64 users in reviews and 
-discussions to be affected by dropped packets and low network 
-throughput. If we want to prove correctness does this require expertise 
-and use of an oscilloscope to characterize the signal timing? Though I 
-am not sure I got it right, it's not worse than previously was on any of 
-these Star64 boards in the wild and probably is better for at least some 
-(if not all).
+[core]
+	abbrev = 12
+[pretty]
+	fixes = Fixes: %h (\"%s\")
 
-Notable aside is to mention the re-worked motorcomm driver of 
-more-recent Linux kernel releases (when compared to the vendor board 
-support package) dropped the Fast Ethernet configuration parameters on 
-the reasoning that Fast Ethernet (as compared to Gigabit Ethernet) is 
-relatively slow enough of a signal that a default delay parameter is 
-good enough for all use cases. The non-default Fast Ethernet delay 
-parameter values missing from the upstream effort are not possible to 
-implement or test for in my effort here, but are no worse or better for 
-having this patch applied.
+to ~/.gitconfig and then you can just do:
 
--E
+axboe@m2max ~/gi/linux (for-next)> git fixes 414dd48e882c5a39e7bd01b096ee6497eb3314b0
+Fixes: 414dd48e882c ("blk-mq: add tagset quiesce interface")
+
+and get the correctly formatted line. Whenever people try and
+make them up, they always get it slightly wrong.
+
+-- 
+Jens Axboe
 
 
