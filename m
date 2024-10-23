@@ -1,98 +1,116 @@
-Return-Path: <linux-kernel+bounces-377251-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377252-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F969ABBFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:09:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81C849ABC01
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:10:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3D56F1F244D6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:09:20 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43192284D0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:10:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C85B84A2F;
-	Wed, 23 Oct 2024 03:09:14 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (unknown [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4E78615A;
+	Wed, 23 Oct 2024 03:10:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rnr25ga3"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B8D3A48
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:09:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B21A48;
+	Wed, 23 Oct 2024 03:10:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729652953; cv=none; b=Ft8/CE8X208jHncd6ZF4WInJi10DlHZnLpnqFZ2iRqdvlDVJdScLAVwYtWIIrgoIJ7QYHo3ArHmI2kwpNJWma77RwJgOyDrDdaqWU/0fuX5lIFqF/sYosxmRYyffMwAiJflHKzjsWIln7L1RcqulEdwYP53nMrBRn8+r4rXrsss=
+	t=1729653024; cv=none; b=ilkoDSa+LhIlNmLd7C11CyiIJutzlwN49ZpAYx5hg769+XEyB0W2bsXvbge9/jIjWUBVqXb5xdF/9TIY1xrWIEto/gNDhYrUrZjegFMmoDM/SNAy9CPk9wKsnICWEZp5iRpNBKVOuQk9kdIKB7Di8iDm+CPwSuf6UCYSBTfOnhQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729652953; c=relaxed/simple;
-	bh=MttCHFFE6PKiNfuw9PNlIS5sWom0wNh9ZRQByuro76g=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L1bBLo5N0YC31xNVwqqm31lZVRxOLQLZ4oBgcGKOSiF2+SNNSZ2C0dovGkpCcf94z8fZCDALHlvqkuuFkggfeeG64aOSLxL1t0Tz1pa9jQVhwQC3AUdeYhKnDxNcIBoFPnHr1804dWCsbZSyPb2SpTlKPrPTM2qFZrGqIJIM1w4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 49N38U6W093116;
-	Wed, 23 Oct 2024 11:08:30 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XYDWW05sxz2SRwhQ;
-	Wed, 23 Oct 2024 11:08:06 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Wed, 23 Oct 2024 11:08:28 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>
-Subject: [PATCH V2] f2fs: fix to avoid use GC_AT when setting gc_mode as GC_URGENT_LOW or GC_URGENT_MID
-Date: Wed, 23 Oct 2024 11:08:03 +0800
-Message-ID: <1729652883-12202-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1729653024; c=relaxed/simple;
+	bh=KVg3DvZVvdJmjXJcg09rINPejUXsUgt0ZOqCjesVDvk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WliCjFQ8oiQM6hBm1TjrrsMCHoUwI2HmHLPydqu9h4vr9mZYmdVWVMQfMh+1jw63RuzsxLTb6YvX9IRng6rKo+W1jv5HaHbZ2vYkfKAH4fq/VBtKCQ2WNAsL5Jl4f0FJpXHkGqol6dMfrTSjlXRDpd2cB2gW/LRt0aabkeek9ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rnr25ga3; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729653016;
+	bh=OR8Mp3OGnYqhRWo+VL88cuEKxDIWnGm5rjZBFU+GYoE=;
+	h=Date:From:To:Cc:Subject:From;
+	b=rnr25ga31rJ8jdeO8Ibm5Rq1Po7R9dJ0wvD4KCcUIKCeIXo/WeaVQYjhLLlvoJNrg
+	 xjJg4eHwdeZKvjUCyYRV63FsWxmo9P2qOnAW8WAHeQZhRltXL4XSEn+xyNs9Tq7fwn
+	 pNw//T+/pnjZKi2PErB8xpcfY9g1izlezDvvU2pg5fQfMEu4DCUKUA7bghwiVso/Qi
+	 5j4MGYLF7xkL76wUTmzWDqcRytn3NaJyeOHkeu0sIJbbmybaYABSQczMHJwv9CI9Dw
+	 2D90WlP2eHUfJVjXIa5IeSDa7wr5RnZHdJrgN8C0qNJvCJn7yVtpjsD57HnRWkDpCj
+	 RJqDmjfL03RfQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYDYz1gtQz4w2K;
+	Wed, 23 Oct 2024 14:10:15 +1100 (AEDT)
+Date: Wed, 23 Oct 2024 14:10:15 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jonathan
+ Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Linux Kernel Mailing
+ List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: manual merge of the char-misc tree with the iio-fixes
+ tree
+Message-ID: <20241023141015.0ec5346d@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 49N38U6W093116
+Content-Type: multipart/signed; boundary="Sig_/Kc7mdashmOysjFUiCGr+PLK";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-If gc_mode is set to GC_URGENT_LOW or GC_URGENT_MID, cost benefit GC
-approach should be used, but if ATGC is enabled at the same time,
-Age-threshold approach will be selected, which can only do amount of
-GC and it is much less than the numbers of CB approach.
+--Sig_/Kc7mdashmOysjFUiCGr+PLK
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-some traces:
-  f2fs_gc-254:48-396     [007] ..... 2311600.684028: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1053, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
-  f2fs_gc-254:48-396     [007] ..... 2311600.684527: f2fs_get_victim: dev = (254,48), type = No TYPE, policy = (Background GC, LFS-mode, Age-threshold), victim = 10, cost = 4294364975, ofs_unit = 1, pre_victim_secno = -1, prefree = 0, free = 44898
-  f2fs_gc-254:48-396     [007] ..... 2311600.714835: f2fs_gc_end: dev = (254,48), ret = 0, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
-  f2fs_gc-254:48-396     [007] ..... 2311600.714843: f2fs_background_gc: dev = (254,48), wait_ms = 50, prefree = 0, free = 44898
-  f2fs_gc-254:48-396     [007] ..... 2311600.771785: f2fs_gc_begin: dev = (254,48), gc_type = Background GC, no_background_GC = 0, nr_free_secs = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:
-  f2fs_gc-254:48-396     [007] ..... 2311600.772275: f2fs_gc_end: dev = (254,48), ret = -61, seg_freed = 0, sec_freed = 0, nodes = 1562, dents = 2, imeta = 18, free_sec:44898, free_seg:44898, rsv_seg:239, prefree_seg:0
+Hi all,
 
-Fixes: 0e5e81114de1 ("f2fs: add GC_URGENT_LOW mode in gc_urgent")
-Fixes: d98af5f45520 ("f2fs: introduce gc_urgent_mid mode")
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
----
-v2: make GC_URGENT_LOW also use CB approach
----
- fs/f2fs/gc.c | 2 ++
- 1 file changed, 2 insertions(+)
+Today's linux-next merge of the char-misc tree got a conflict in:
 
-diff --git a/fs/f2fs/gc.c b/fs/f2fs/gc.c
-index e40bdd1..3e1b6d2 100644
---- a/fs/f2fs/gc.c
-+++ b/fs/f2fs/gc.c
-@@ -257,6 +257,8 @@ static int select_gc_type(struct f2fs_sb_info *sbi, int gc_type)
- 
- 	switch (sbi->gc_mode) {
- 	case GC_IDLE_CB:
-+	case GC_URGENT_LOW:
-+	case GC_URGENT_MID:
- 		gc_mode = GC_CB;
- 		break;
- 	case GC_IDLE_GREEDY:
--- 
-1.9.1
+  drivers/iio/light/veml6030.c
 
+between commit:
+
+  de9981636774 ("iio: light: veml6030: fix microlux value calculation")
+
+from the iio-fixes tree and commit:
+
+  ed59fc90f38a ("iio: light: veml6030: drop processed info for white channe=
+l")
+
+from the char-misc tree.
+
+I fixed it up (the latter removed the line updated by the former) and
+can carry the fix as necessary. This is now fixed as far as linux-next
+is concerned, but any non trivial conflicts should be mentioned to your
+upstream maintainer when your tree is submitted for merging.  You may
+also want to consider cooperating with the maintainer of the conflicting
+tree to minimise any particularly complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/Kc7mdashmOysjFUiCGr+PLK
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYaRcACgkQAVBC80lX
+0GwBHgf/QzWqp9eVdb6k5PIV6gEZUVL7fSBJNtb0USiAsEpWMxaJXcIkEzIklyd/
+Gl2EhKzVPSPmHHQU+APY7B0bjcgTmwXQXzeJs4NrVSkWFbPG/+SNYuFdTg/VZvDm
+E1YwgTfeGLdfzxuULjPVjE7I9/7DISnjwm/aHV4wk7Fd4i9l4zecAmM668hFhMHt
+bj7L5oiGeptgR5Lx6DUurXMX312jW4D/s0y5j3SQpLkdBgPBP/gEZDVrFvas8Mqm
+7GD6FPCCo5AiTMhyqY/1AjPF6LwTx/GS5sfqpg+st7w7nd3kASDptkfSDaPjV61K
+B55rBENdJ+bJ+rXCJmyEXYj92n4Tlg==
+=vy7S
+-----END PGP SIGNATURE-----
+
+--Sig_/Kc7mdashmOysjFUiCGr+PLK--
 
