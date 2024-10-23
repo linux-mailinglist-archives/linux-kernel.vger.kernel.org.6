@@ -1,47 +1,46 @@
-Return-Path: <linux-kernel+bounces-377356-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377357-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 124659ABDBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:19:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3939ABDBE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:24:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A1639B21EAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:19:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 935571C22903
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:24:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5216F1411DE;
-	Wed, 23 Oct 2024 05:19:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8752D1422B8;
+	Wed, 23 Oct 2024 05:24:09 +0000 (UTC)
 Received: from verein.lst.de (verein.lst.de [213.95.11.211])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3CB4A3E;
-	Wed, 23 Oct 2024 05:19:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DDBCD13D897
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:24:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729660762; cv=none; b=HmQAVeSK1O7RyGBCUEkF5qFLO5Xq7EacPpLdT/mDwkYIn3PGiQqMywY9DLEApBTVIlfrEnkqKKJA3xJ/+XDn4Wq4p0GYnQrq5D9fHCikfMaLeW2EdeESHZrcdQieSaMgdomsjHCJ2xfNHJmjJQKhXiO7it6yAWcn7J5bvuYQPo8=
+	t=1729661049; cv=none; b=brgQvuYc8ZS9fTkYCFeAOoZhuWQoD81RgvjqgBCQbghAHVq5c+nIcpojyKU39tz2qpj0L3BSARgIQlcb36q7x5ezqxX4YV0g8W9JJShWvbrxPbPqMCuXLaWba5unfevay65m0XW//Bx4Fq71BKBLc3PSsOMh7IPqAiXEcCBuf4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729660762; c=relaxed/simple;
-	bh=mTbTUpvKrMr5s2D/rIKWym5N1Ya/8Z0hWn58/SGi7XQ=;
+	s=arc-20240116; t=1729661049; c=relaxed/simple;
+	bh=hLgqD44ucz8vy++YxuDO9T2KBLcQHnfjFkNRgJVkLYk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rT6LFJT635ga74Vo52reEwt//HMbcMrz3jlCYt3GMxCYdLDx0lrRxNniFV6dsfc0s5bOE40YatTL3gIKFcHqH+1/MNRHWHuxHjvzwC+/9hEDIacaKcoBV8QatADCXn8cPjiQbOoS+xS2T1/WkA2w3DcKli2PlJmfYIcACYVJOgw=
+	 Content-Type:Content-Disposition:In-Reply-To; b=VNs+KFxO0sGjZHAGRnvZJcAe7+Dc92PpdZ7AO8BThBs5n/MXslTb6ey+btW3sNpXkjJVZW1jf2qTS+8e3dXGscEhwwJymIVGaQjLErbII4dteektfTh+toA97be8pg3KxGf5tgCGrsB31+6lD8PbjZPbLYOJ5XV0ekFVlwBNZJY=
 ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
 Received: by verein.lst.de (Postfix, from userid 2407)
-	id 9AB31227A87; Wed, 23 Oct 2024 07:19:15 +0200 (CEST)
-Date: Wed, 23 Oct 2024 07:19:15 +0200
+	id CFAC8227A87; Wed, 23 Oct 2024 07:24:03 +0200 (CEST)
+Date: Wed, 23 Oct 2024 07:24:03 +0200
 From: Christoph Hellwig <hch@lst.de>
-To: Sagi Grimberg <sagi@grimberg.me>
-Cc: Ming Lei <ming.lei@redhat.com>, zhuxiaohui <zhuxiaohui400@gmail.com>,
-	axboe@kernel.dk, kbusch@kernel.org, hch@lst.de,
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-nvme@lists.infradead.org,
-	Zhu Xiaohui <zhuxiaohui.400@bytedance.com>
-Subject: Re: [PATCH v1] blk-mq: add one blk_mq_req_flags_t type to support
- mq ctx fallback
-Message-ID: <20241023051914.GA1341@lst.de>
-References: <20241020144041.15953-1-zhuxiaohui.400@bytedance.com> <ZxWwvF0Er-Aj-rtX@fedora> <064a6fb0-0cdb-4634-863d-a06574fcc0fa@grimberg.me> <ZxYRXvyxzlFP_NPl@fedora> <ab2ed574-5fb8-49d9-b6f3-5030566fc64a@grimberg.me> <ZxZm5HcsGCYoQ6Mv@fedora> <6edb988e-2ec0-49b4-b859-e8346137ba68@grimberg.me> <Zxb8KaoUVstRCxiP@fedora> <fe49daac-5990-464a-aeeb-c7c5f9d4d156@grimberg.me>
+To: Keith Busch <kbusch@kernel.org>
+Cc: Abhishek Bapat <abhishekbapat@google.com>, Jens Axboe <axboe@kernel.dk>,
+	Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>,
+	Prashant Malani <pmalani@google.com>,
+	linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without
+ requiring namespaces
+Message-ID: <20241023052403.GC1341@lst.de>
+References: <20241016213108.549000-1-abhishekbapat@google.com> <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com> <CAL41Mv4_UjsD1ycpNU1xuQJdGWMf2L-SQYs=LupoM9BKurNXCg@mail.gmail.com> <Zxe8e2zS5dA61Jou@kbusch-mbp>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,21 +49,33 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <fe49daac-5990-464a-aeeb-c7c5f9d4d156@grimberg.me>
+In-Reply-To: <Zxe8e2zS5dA61Jou@kbusch-mbp>
 User-Agent: Mutt/1.5.17 (2007-11-01)
 
-On Tue, Oct 22, 2024 at 04:23:29PM +0300, Sagi Grimberg wrote:
-> I agree. NVMe may have a unique need here, but it needs a tag from a
-> specific hctx while the context requesting it does not map according to
-> the hctx cpumap. It cannot use any other tag from any other hctx.
->
-> The reason is that the connect for a queue must be done from a tag that
-> belongs to the queue because nvme relies on it when it does resolution back 
-> to
-> the request to the completion.
+On Tue, Oct 22, 2024 at 08:53:47AM -0600, Keith Busch wrote:
+> You'd may want to know max_sectors_kb, dma_alignment, nr_requests,
+> virt_boundary_mask. Maybe some others.
+> 
+> The request_queue is owned by the block layer, so that seems like an
+> okay place to export it, but attached to some other device's sysfs
+> directory instead of a gendisk.
+> 
+> I'm just suggesting this because it doesn't sound like this is an nvme
+> specific problem.
 
-I wonder if we should byte the bullet and not use a request for the
-connect commands.  We've already special cased the AEN command because
-it was causing too many problems, and given all the pain so far connect
-might also have hit that treshold.
+Well, it's a problem specific to passthrough without a gendisk, which is
+the NVMe admin queue and the /dev/sg device.  So it's common-ish :)
+
+
+Note that for the programs using passthrough sysfs isn't actually a very
+good interface, as finding the right directory is pain, as is opening,
+reading and parsing one ASCIII file per limit.
+
+One thing I've been wanting to do also for mkfs tools and similar is a
+generic extensible ioctl to dump all the queue limits.  That's a lot
+easier and faster for the tools and would work very well here.
+
+Note that we could still be adding new limits at any point of time
+(although I have a hard time thinking what limit we don't have yet),
+so we still can't guarantee that non-trivial I/O will always work.
 
