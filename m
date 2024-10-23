@@ -1,154 +1,202 @@
-Return-Path: <linux-kernel+bounces-377730-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377733-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E1CF9AC331
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:12:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C755B9AC336
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:13:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F246A283124
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:12:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E8DF21C2295B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8E63A18953D;
-	Wed, 23 Oct 2024 09:12:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1262197A68;
+	Wed, 23 Oct 2024 09:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="P/rkZNKt"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=direct2internet-com.20230601.gappssmtp.com header.i=@direct2internet-com.20230601.gappssmtp.com header.b="Wzrabw00"
+Received: from mail-qt1-f181.google.com (mail-qt1-f181.google.com [209.85.160.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 52DA61714C8;
-	Wed, 23 Oct 2024 09:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A24A0198A1B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:13:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674761; cv=none; b=eQD3t4r24FA0Kd2zdn1gI4+r2SK0XABn6uPrLDptMkvDesuwAtZ8HHpaqrI/H1LLyK/+EiTwjuOXxzrCaPHYsnI1QMuIpGg6qIcCxnbc74CV9u9bAu5SX7fMhZUvy+u7f7pc2aT3UDHHX68zZr3jCdn3BUuG+BK4kJq6iilwuF4=
+	t=1729674810; cv=none; b=eyht3FVFS7Kx4Ng2jm9atXUXUmgMKKWvnNPBFTWu2MzdChg5ECrowZLt1hpmmHVRfrGQH1EG5kk9XN7afC/iDibtJb8SI9D0kqlVy0c+9mS41uUSOVMB2/edL+AGl+s8x0qIfaB9qshF2f+ljLe2ZH1wcLi2gRAAl1U0GRCHHyI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674761; c=relaxed/simple;
-	bh=rtHCU1dRvpAXHwI2rS1X2e8wtl39V1tSgdj+NIIG/J8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=KLXGYtT6u+n4/j7kd6aT/n4pxCgbUwEuJ2jaT1Q02r4aQ5LsFUc1RbdrU8OMDNfrTauIzpyAUk7NNaWnI8SOwNvBCd8aeFrIfob0WW+zVvA8tssGp+ffNiqgX0FwrUAw4xuA73hRPh7cVy86ZYAYQaFVfpCvj9vmoX+yLyiCJaw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=P/rkZNKt; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49N9CL0M097005;
-	Wed, 23 Oct 2024 04:12:21 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729674741;
-	bh=LKQibn8A/Kbr7PK5vWjRMEeinVr3jKgKgEFBSe99U/8=;
-	h=From:To:CC:Subject:Date;
-	b=P/rkZNKtba6Kr6JVbLHB8vubv9MD8ilKaV5PGgeeDo+/hE5qbrXvHFaDobg2d1LaT
-	 ege7xG3O3ILieCIoW90lpvuKTbgBCMlkHfoe16lEN44SCaTFDUJxPJsETe9NDj3+ys
-	 8ENAJjapQ0nil3bvYecPv/zA84q/wrPCuDEBZs2I=
-Received: from DLEE101.ent.ti.com (dlee101.ent.ti.com [157.170.170.31])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49N9CLD8114316;
-	Wed, 23 Oct 2024 04:12:21 -0500
-Received: from DLEE107.ent.ti.com (157.170.170.37) by DLEE101.ent.ti.com
- (157.170.170.31) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
- Oct 2024 04:12:20 -0500
-Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE107.ent.ti.com
- (157.170.170.37) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 23 Oct 2024 04:12:20 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49N9CKJq045456;
-	Wed, 23 Oct 2024 04:12:20 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49N9CJ0d004526;
-	Wed, 23 Oct 2024 04:12:20 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <vigneshr@ti.com>, <horms@kernel.org>, <m-malladi@ti.com>,
-        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net] net: ti: iccsg-prueth: Fix 1 PPS sync
-Date: Wed, 23 Oct 2024 14:42:13 +0530
-Message-ID: <20241023091213.593351-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729674810; c=relaxed/simple;
+	bh=l83gk1Q2NObWtSC/fBNnsEHlEY5tkWPemo7kLVuqOmI=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Content-Type; b=s8hOqBJklNnnI5jejDEIvk1COicFkYr8bq2ccbaw7pzE9OHg6wF8UsgU3sH7DH3LGXoT+K/YKBopAjn5OuoIzYld7ALIEGc1R1rvhcbb1ORMdmUxtcWDnKiIJHjD9awRxLw5AY+H/fZdl3z5NeMr01tJ8Itt9yyGNza5lwBC/6M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=direct2internet.com; spf=fail smtp.mailfrom=direct2internet.com; dkim=pass (2048-bit key) header.d=direct2internet-com.20230601.gappssmtp.com header.i=@direct2internet-com.20230601.gappssmtp.com header.b=Wzrabw00; arc=none smtp.client-ip=209.85.160.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=direct2internet.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=direct2internet.com
+Received: by mail-qt1-f181.google.com with SMTP id d75a77b69052e-460b2e4c50fso32260411cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:13:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=direct2internet-com.20230601.gappssmtp.com; s=20230601; t=1729674806; x=1730279606; darn=vger.kernel.org;
+        h=to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Lti3qy1E85rECkSb/d1EV+A5C9qwd/3M4OdA3YrbzYM=;
+        b=Wzrabw00a+tZhVnMlqAiikBgpXu+xusFB3kbrAbGBfhMy0gVqjRX4BTCjjDO8V9u11
+         TOs68wAsq8xh0DSXfJU9t4ON9NuO1xHrTe4/8I7L4x9pXSGRyY2Ybz3dWApE19jQyCAG
+         AT0d0ye/EPYi6M5tYwjV97QqShKsIblB+/QS3uLXAzInRJzvzZ7fPBO/R15C6iF1pnxv
+         xTXpd2tUaJqR5OQwZhJnKqUx1QaXpsA1eXmsnkTyUVbWGLVV8sg1/u9ymJlrUeIuBEf1
+         dm5YL08hdwVgMdH20vt1/UWEJ33JqDwfVHiGzGcTDjMeD/kkUQaZGjdKeczoMoBUrkWj
+         qsgg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729674806; x=1730279606;
+        h=to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Lti3qy1E85rECkSb/d1EV+A5C9qwd/3M4OdA3YrbzYM=;
+        b=Pa2CDYgNpjWZmuINlJgKPfqTRPweTT9cQx8snrx3fcTLnFW6cbsali/urhLzokAo8J
+         BiyYtg9rky49Ljre7MFq7hGK0YVD0Hc7Evjz4HoOIFtZkwF1iu9lFWf4Tyf6gEfxCVZE
+         otNNJR9Oaj0jGpbifOtzPo6hMv0D6oTNMSUt3qeHJGcepWkKW3F3YI7XRRVQler8nGZW
+         m9ShMGnJY6E4a44HWNVzeD/ESE9Km9U2YtDWGXhYIxqhSWCQKNKS+6iSV+/tH0goiFFL
+         HW48RkfXSdJ0kc4B/KAWySWuspLLG53KgFFYyvt9Vs3o2hyswCmwTvMxtUbA65tt/je1
+         CsLg==
+X-Gm-Message-State: AOJu0Yz+y/eYK6NEqX2/xbxHdMCK+UGLH0rqfni/t/Ph3YYPLkkX36Zh
+	G/Dtp7yUtQf8s8gYM4x1eQKOs3vbbhBeB+sjEpCrrKxIFOYarzzolHyqdtExifbuhkDiuooV/LU
+	fiu1KZGcs3abS5KKZtpKW6FDdJFRJXP8uRQw1JvkT0krfLv9R5Oc=
+X-Google-Smtp-Source: AGHT+IEZIQu0pE7nzpeTrcgZhP+3n8Kj0BAurwvs/FD9thN1cZ/cPWiUtGZhyNKtguMUK4qWwiW80HmX5siAyoMmtNM=
+X-Received: by 2002:a05:622a:15c9:b0:460:b93f:e2d9 with SMTP id
+ d75a77b69052e-461147270dbmr22113561cf.52.1729674806340; Wed, 23 Oct 2024
+ 02:13:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+From: Rolf Stenholm <rolf.stenholm@direct2internet.com>
+Date: Wed, 23 Oct 2024 11:13:15 +0200
+Message-ID: <CAMdjFop0uzmi__Jx979sQEVviPNSZBpKUBdcQYnVgycsuwYL+g@mail.gmail.com>
+Subject: Issue: measure /proc/loadavg is inaccurate and missing proper documentation
+To: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-The first PPS latch time needs to be calculated by the driver
-(in rounded off seconds) and configured as the start time
-offset for the cycle. After synchronizing two PTP clocks
-running as master/slave, missing this would cause master
-and slave to start immediately with some milliseconds
-drift which causes the PPS signal to never synchronize with
-the PTP master.
+Issue        : critical measure /proc/loadavg is inaccurate and
+missing proper documentation
+Kernel Files : kernel/sched/loadavg.c, include/linux/sched/loadavg.h
+Version      : Any kernal before 2024 october, from
+https://github.com/torvalds/linux 6.12-rc4 the issue is exist
+               since the first linux kernels from the 90s.
+Reproduce    : sample from /proc/loadavg while creating load on the machine
+               (type "openssl speed -multi $(grep -ci processor
+/proc/cpuinfo)" for creating 100% load and
+                 "watch -n 1 'cat /proc/loadavg >> /tmp/loadavg.txt' "
+to create a 'CSV' file to get statistics )
+               or use a math package to examine the quality of the
+algorithm (or lack thereof)
+Desciption   : Measure /proc/loadavg is critical for administrators
+everywhere. The measure has inaccurate
+               documentation and output is inaccurate. This is a bug
+report to try to at least improve documentation
+               and in the future improve the accuracy of /proc/loadavg
+values. You cannot understand the measure
+               unless you actually read the kernel source code and
+then only if you know similar of types of
+               methods used for similar problems. Comments like 'Its a
+silly number but people think its important.'
+               are not helpful as loadavg is important for admins
+everywhere to understand if the system is
+               overloaded.
 
-Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 12 ++++++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.h | 11 +++++++++++
- 2 files changed, 21 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 0556910938fa..6b2cd7c898d0 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -411,6 +411,8 @@ static int prueth_perout_enable(void *clockops_data,
- 	struct prueth_emac *emac = clockops_data;
- 	u32 reduction_factor = 0, offset = 0;
- 	struct timespec64 ts;
-+	u64 current_cycle;
-+	u64 start_offset;
- 	u64 ns_period;
- 
- 	if (!on)
-@@ -449,8 +451,14 @@ static int prueth_perout_enable(void *clockops_data,
- 	writel(reduction_factor, emac->prueth->shram.va +
- 		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
- 
--	writel(0, emac->prueth->shram.va +
--		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
-+	current_cycle = icssg_readq(emac->prueth->shram.va +
-+				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
-+
-+	/* Rounding of current_cycle count to next second */
-+	start_offset = ((current_cycle / MSEC_PER_SEC) + 1) * MSEC_PER_SEC;
-+
-+	icssg_writeq(start_offset, emac->prueth->shram.va +
-+		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 8722bb4a268a..a4af2dbcca31 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -330,6 +330,17 @@ static inline int prueth_emac_slice(struct prueth_emac *emac)
- extern const struct ethtool_ops icssg_ethtool_ops;
- extern const struct dev_pm_ops prueth_dev_pm_ops;
- 
-+static inline u64 icssg_readq(const void __iomem *addr)
-+{
-+	return readl(addr) + ((u64)readl(addr + 4) << 32);
-+}
-+
-+static inline void icssg_writeq(u64 val, void __iomem *addr)
-+{
-+	writel(lower_32_bits(val), addr);
-+	writel(upper_32_bits(val), addr + 4);
-+}
-+
- /* Classifier helpers */
- void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac);
- void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac);
+Load avg in /proc/loadavg is thouroughly discussed online but often
+wihtout undestanding the measure ,for instance
+a good article about loadavg is (which includes history and background)
+https://www.brendangregg.com/blog/2017-08-08/linux-load-averages.html
+The article misses some critical ideas behind the calculation but
+shows accuracy issues with current loadavg and
+that the documentation of loadavg is lacking. The kernel code shows no
+understanding of the original reason
+for the measurment, therefore the following text can fill the gap one
+the measure and why it was created.
 
-base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
--- 
-2.25.1
+The purpose of the calculation loadavg that dates back to the 70s can
+be summed up in the following sentence
+(Linux loadavg includes some idle processes in loadavg that are not
+CPU related).
+     Approximate the average cpu load over 1 min, 5 min, 15 min.
+     (for linux this is approximate average load over 1 min, 5 min, 15 min).
 
+Old 70s TENEX system (see link above) needed a cheap way to calculate
+a loadavg without a large computation
+footprint and memory footprint. The solutions was to approximate
+normal average load (T1 + T2 .. TN)/N with the
+differential equation
+
+     ApproxAvg[N+1] = ApproxAvg[N] * C1 + Load[N] * C2
+
+The idea is that it will roughly replicate the load average over time
+with correct constants C1 and C2,
+however it should be noted that when a system goes from no load to
+full load the 1 minute measure is at 0.62
+at 60 seconds and above 0.9 after 150 seconds making the measure quite
+inaccurate.
+There is a dangerous belief that the measure is exponential and indeed
+there is an exponential constant in the
+code, this does not make the actual diff equation exponential. The
+TENEX code used C1 = EXP(-T/C), C2 = 1 -C1
+where T is 5 seconds and C is 60, 300, 900 which are stored as
+constants in the original code.
+Why C1 = (C-T) / C was not used is not documented from the 70s TENEX
+code but the taylor polynomial for the
+C1 TENEX constant is E = 1-T/C+T^2/(C^2*2)... which is roughly the
+same as C1 = (C-T)/C.
+Because loadavg is an approximation of actual mean it is possibly to
+create an easy least square error measure of
+loadavg to quickly evalute other loadavg alternatives methods, the
+equation is simply
+
+  Square( (ApproxAvg[N+1]-Avg[N+1])*(ApproxAvg[N+1]-Avg[N+1]) + ...
+(ApproxAvg[1]-Avg[1])*(ApproxAvg[1]-Avg[1]) )
+
+With this measure we can get some alt calulations using 100 measuring
+points where load goes from
+0 to 1 instantly and we only include points where the actual average
+goes from 0 to 100.
+
+Examples:
+C1=99/100, C2=1/100                        , E = 12.4
+C1=69/70 ,  C2=1/70                        , E =  6.98
+C1=exp(-1/100), C2=1-exp(-1/100)           , E = 12.57
+C1=69/70 , C2=1/70 avg over last 10 values , E =  5.23
+
+Which shows that current constants used in the calculation are not
+optimal and can be improved. Using additional
+datapoints will improve the measure but only slowly. If there is no
+memory considerations for storing
+all load samples for a given timeframe an integer queue with a stored
+sum could be used, where sum is updated on
+dequeue and enqueue of the queue allowing constant time calulation of
+the actual average.
+
+It can be noted that in the current code loadavg.c that:
+
+- Function fixed_power_int calculates exponential despite the metric
+not benefiting from this
+- There is a distributed summation over CPU which generally isn't
+required in a differential equation
+- The code comments are "funny" but not very helpful to understand the
+metric and this metric is important
+
+And that in loadavg.h that:
+
+-- The EXP_1, EXP_5, EXP_15 all look like copies of the 70s TENEX
+system, the values could be improved
+
+Because loadavg is critical measure for many admins and not understood
+it would be good to document what loadavg
+is trying to calculate and how it can be improved in later kernel
+versions. Improvement of loadavg could save quite
+a bit of resources for certain admins and data centers.
+The exact solution may depend on how easy alternatives are to
+implement but allowing loadavg to be sample from
+another loaded kernel module or read from a user space application to
+replace current values could help admins
+everywhere to get a better customized measurement point with the aim
+to improve the measurement loadavg. For
+instance the kernal could read from a mounted device file like
+/dev/myloadavg and use that as loadavg measure
+based on hardware measure or clever algorithms.
 
