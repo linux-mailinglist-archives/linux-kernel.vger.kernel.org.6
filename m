@@ -1,57 +1,80 @@
-Return-Path: <linux-kernel+bounces-377527-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377526-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B60D9AC011
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:19:50 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 34E8F9AC00E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:19:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 31AFA1F260A4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:19:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ACE1D1F26080
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:19:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 78DA7153835;
-	Wed, 23 Oct 2024 07:19:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0A5A15530B;
+	Wed, 23 Oct 2024 07:19:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="bmUd47rk"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="XjwuUp+M"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E43D14F125;
-	Wed, 23 Oct 2024 07:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667971; cv=pass; b=Yf4SoU8p4FAIhTuj9zwjTRQCK8YpMPes+keo5WgldI3zOj5QVmMQG6LlbwmUp+fFBMusmr8pbXegpIkWvBFHw3YJvrjl3LULsSDsyDCnBePFGaMnyuykiANTro6nfWhMUYnqhfhOa3B/cyw1ghAI7TkPxdTcg47pejUvj1pBThY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667971; c=relaxed/simple;
-	bh=/N2Fzbz/4fymORYAkPyELWsr3kLgTYvEzyf/+wkrs/s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=o+AiSzatSCO3TLD7ywS7+HkrnzpJbYCxHkVWIZi/+5AR6O+0/oT4hHxOhbJN2sOeN6tVDYjzM1+/3L3I+HNjKfA5Fy95FkYS1emy7VdSg4s3IWVAnTcr1B6Lg3ePyLDSS2//uXqzGVljw09AhF+4v0RCL76nAKpe48LKQhAhFQI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=bmUd47rk; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729667935; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=gAIeIxrInjrGUQDNUtbQyUUQEfahoXtN/toliEFE6ecyJqEaJSAh+hN9oZC2H9n/2xay8vO1q39njZRr9sQpiyBkQXWDjv2aZy4WqpaYNMW5nOi1sbH2NJ1eWlyVLtGs1MXLSRj1XmswMC6iAxcKPOCIfPMFRyMD+cBAel7+s5o=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729667935; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=EH6d9iHuBY2VrlCbE+H0ehOcvYyTy07DCzmVAqoLHkk=; 
-	b=JO3jaI6UY8ApIWJZGsocN+XFs9ykgjodLqiAjKO+w+mCwLOaftCfQCibS/6WMOL1e3TT67QSwyxina4+XPDX+qWkKbjmUXyY81T39sehuW8LOt5SZFZvvjMrjByNOaSINm6R27Sk27cIcuJnZcyW8anS9vncMAPh6BZAjVx1NDA=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729667935;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=EH6d9iHuBY2VrlCbE+H0ehOcvYyTy07DCzmVAqoLHkk=;
-	b=bmUd47rkKyVZL2N31V5PLw7xw2OugLC2TyCv02S4U2xac0K3EjmqJFe326OXWXNP
-	vOL48z9dZBOcBe2W1Dh7F7o8BlYjWBmI5u/1FKG2ALVUDju05SNZzbXS4JVFpmuODef
-	5Dcbhvqni5eP33NX/aMK5l7myCehGX9SJAmQrOLQ=
-Received: by mx.zohomail.com with SMTPS id 1729667933289466.7284505587613;
-	Wed, 23 Oct 2024 00:18:53 -0700 (PDT)
-Message-ID: <5deecf4c-e178-4663-8766-35447ec7599d@collabora.com>
-Date: Wed, 23 Oct 2024 12:18:44 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 47275153824
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:19:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729667952; cv=none; b=VMs+YbHRpkfURZUMyVng1bzNhGse2i5LggmzudnJPiwZ5oqOPwXI17SObmNLvzRp5AK26QCGzzda8QVaPeT4cvhM4wkV0HXQTdCdYzPQDZ875gewSsHHVXmxrdqGF3hJXig3vqtrBRDq9brqasjVgZbnfZMxTUi/0JOxut0b380=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729667952; c=relaxed/simple;
+	bh=bKrUGf4U7cuFbm/oePLuNwJ0rXtkr0eVGYDs+YteWIY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LK5rHv5veTbYMczIQlTPnzo7CPALVvwHoNZm785pxOYz4U2BPiyA8p7FCELzmqGA83bj3Ym65ANDO6Rq85un1JjW9/r7D4WoXPlnhTqU6OvKcNkfV5uQU9vX049Lm07q3odSlNlc8iTJ9MpSji5Z4yUQaCtBhq87fb2ZKc8p+Lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=XjwuUp+M; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729667949;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=2J8ZqubO+8AlKbFE9Qv2kRLiKggvUmjZRZtAw8rfrEY=;
+	b=XjwuUp+M7Sq75P4Tkp6gUAtALTFniP9d/EDhT8BqCUMGQhTAhXGKiC0YfybY9NTvNxR4vH
+	iyzCRj5cuOoIi/HH9DkI/MNmkq5gMjzfXqOy3ImYvKIZuIGnOazLvsYTT0ykJJWAhMzWXh
+	9tnAEyvWY6yLtNZIMZO/DQllPVa5Q4Q=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-16-qU0ALFgEN8-UcseoXlkbYA-1; Wed, 23 Oct 2024 03:19:08 -0400
+X-MC-Unique: qU0ALFgEN8-UcseoXlkbYA-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4cf04bcfso2996698f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:19:08 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729667947; x=1730272747;
+        h=content-transfer-encoding:in-reply-to:organization:autocrypt
+         :content-language:from:references:cc:to:subject:user-agent
+         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=2J8ZqubO+8AlKbFE9Qv2kRLiKggvUmjZRZtAw8rfrEY=;
+        b=Cz4DN2tjdWhHLmfjyAut2a28riNU3TCUyTpFX9T29lj4NCV6ko/qLZ9icdQ74lIrQd
+         cSOH7XE1KhaCn75ula/HW+0zajsH+0dmTpyE2aVui5H8IQ26CttLfHPYvEzalOCA5RPp
+         D8fMJbA/Q8C85msv5uCovmmU+T7iYrJgTZz938UqxBJLqZOPmtDSrCMgEkxLU04x+093
+         +RzHEXPa4dHSZASdPMUkqsy/m9IzEc/hoUSZCb6R8V4d2AfjRoqQAQ01hjjKOvKukpp+
+         Lj0kK9j2JHyFcTzKhgtz/mMJHaRhQMzZjbX0qa9p1Q1jtK+cvncCZ7EqAdXc16JN7C5H
+         +4wA==
+X-Forwarded-Encrypted: i=1; AJvYcCWaoQ4hezn33DuYINg2RJM7guiAAxmQqBLv3QEEYNwzkBCIi38PeeoAKyiZyk5JDG3BnmmvRk4FUV1EmBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzrOS0usiUnnr7iqw15FlyxShHRwIiab+Rj9ES7s3SoT+VbbIEs
+	dMyQ7rDQb8GhZHIhOjGZ4M6KCB1XF9SzF03IAAkOIPniRBLJxbBmKMfJkHTaRGWnQ27KwE+bGAh
+	k5rc9O7iYG45NcBX8ce509rorU7b3N9+HsWUT5Tsl2j08Bnzw3baUk1fJLfXRMg==
+X-Received: by 2002:a05:6000:d08:b0:37d:446b:7dfa with SMTP id ffacd0b85a97d-37efcf7ebd9mr912432f8f.39.1729667946888;
+        Wed, 23 Oct 2024 00:19:06 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFqzEDQ57fgD1+CK3sngwj8y5ncZ+zhRCIKvEIDF/zJ+B/m+m+ZwPj3lma4Yv4rl/K1V35C/w==
+X-Received: by 2002:a05:6000:d08:b0:37d:446b:7dfa with SMTP id ffacd0b85a97d-37efcf7ebd9mr912404f8f.39.1729667946324;
+        Wed, 23 Oct 2024 00:19:06 -0700 (PDT)
+Received: from ?IPV6:2003:cb:c70c:cd00:c139:924e:3595:3b5? (p200300cbc70ccd00c139924e359503b5.dip0.t-ipconnect.de. [2003:cb:c70c:cd00:c139:924e:3595:3b5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37d25sm8269356f8f.23.2024.10.23.00.19.03
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 00:19:05 -0700 (PDT)
+Message-ID: <8471d7b1-576b-41a6-91fb-1c9baae8c540@redhat.com>
+Date: Wed, 23 Oct 2024 09:19:03 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,78 +82,114 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.6 000/124] 6.6.58-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241021102256.706334758@linuxfoundation.org>
+Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
+To: Dmitry Vyukov <dvyukov@google.com>, fw@deneb.enyo.de
+Cc: James.Bottomley@HansenPartnership.com, Liam.Howlett@oracle.com,
+ akpm@linux-foundation.org, arnd@arndb.de, brauner@kernel.org,
+ chris@zankel.net, deller@gmx.de, hch@infradead.org,
+ ink@jurassic.park.msu.ru, jannh@google.com, jcmvbkbc@gmail.com,
+ jeffxu@chromium.org, jhubbard@nvidia.com, linux-alpha@vger.kernel.org,
+ linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-mips@vger.kernel.org, linux-mm@kvack.org,
+ linux-parisc@vger.kernel.org, lorenzo.stoakes@oracle.com,
+ mattst88@gmail.com, muchun.song@linux.dev, paulmck@kernel.org,
+ richard.henderson@linaro.org, shuah@kernel.org, sidhartha.kumar@oracle.com,
+ surenb@google.com, tsbogend@alpha.franken.de, vbabka@suse.cz,
+ willy@infradead.org, elver@google.com
+References: <87a5eysmj1.fsf@mid.deneb.enyo.de>
+ <20241023062417.3862170-1-dvyukov@google.com>
+From: David Hildenbrand <david@redhat.com>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241021102256.706334758@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
+Autocrypt: addr=david@redhat.com; keydata=
+ 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
+ WNyWQQ==
+Organization: Red Hat
+In-Reply-To: <20241023062417.3862170-1-dvyukov@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
 
-On 10/21/24 3:23 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.6.58 release.
-> There are 124 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On 23.10.24 08:24, Dmitry Vyukov wrote:
+> Hi Florian, Lorenzo,
 > 
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
+> This looks great!
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.6.58-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-> and the diffstat can be found below.
+> What I am VERY interested in is if poisoned pages cause SIGSEGV even when
+> the access happens in the kernel. Namely, the syscall still returns EFAULT,
+> but also SIGSEGV is queued on return to user-space.
 > 
-> thanks,
+> Catching bad accesses in system calls is currently the weak spot for
+> all user-space bug detection tools (GWP-ASan, libefence, libefency, etc).
+> It's almost possible with userfaultfd, but catching faults in the kernel
+> requires admin capability, so not really an option for generic bug
+> detection tools (+inconvinience of userfaultfd setup/handler).
+> Intercepting all EFAULT from syscalls is not generally possible
+> (w/o ptrace, usually not an option as well), and EFAULT does not always
+> mean a bug.
 > 
-> greg k-h
-> 
-> -------------
-Hi,
+> Triggering SIGSEGV even in syscalls would be not just a performance
+> optimization, but a new useful capability that would allow it to catch
+> more bugs.
 
-Please find the KernelCI report below :-
+Right, we discussed that offline also as a possible extension to the 
+userfaultfd SIGBUS mode.
 
+I did not look into that yet, but I was wonder if there could be cases 
+where a different process could trigger that SIGSEGV, and how to (and if 
+to) handle that.
 
-OVERVIEW
+For example, ptrace (access_remote_vm()) -> GUP likely can trigger that. 
+I think with userfaultfd() we will currently return -EFAULT, because we 
+call get_user_page_vma_remote() that is not prepared for dropping the 
+mmap lock. Possibly that is the right thing to do, but not sure :)
 
-    Builds: 25 passed, 0 failed
+These "remote" faults set FOLL_REMOTE -> FAULT_FLAG_REMOTE, so we might 
+be able to distinguish them and perform different handling.
 
-    Boot tests: 62 passed, 0 failed
+-- 
+Cheers,
 
-    CI systems: maestro
+David / dhildenb
 
-REVISION
-
-    Commit
-        name: 
-        hash: 6cb44f821fff24ed5cca1de30a2acc48ec426f1e
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.6.y
-
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=6cb44f821fff24ed5cca1de30a2acc48ec426f1e&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
 
