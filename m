@@ -1,225 +1,127 @@
-Return-Path: <linux-kernel+bounces-377165-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C8C49ABAAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:50:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1260B9ABACC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:00:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 38571285055
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:50:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37CCA1C20E51
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A8E2918E20;
-	Wed, 23 Oct 2024 00:50:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 355BE1C28E;
+	Wed, 23 Oct 2024 01:00:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="r3wFZA/R"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="nwe4WUrR"
+Received: from cyan.elm.relay.mailchannels.net (cyan.elm.relay.mailchannels.net [23.83.212.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4149C1D554
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:50:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729644633; cv=none; b=dxrvudBkywMDp6oRGT+LJ6rG0CXKGMsaC/j2PkXkfpYmP3ik8xnHaJ51DQZlE9xtNFfjanglvjCghZSYHwkelqnEnNcXIp6+6up4Qwg2iPXk8HUWHyCYSKd6E+mhxpRM1/5AnShqGTex3+zz6Vt22DMfhIClpSolLgZ90Y3PEDU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729644633; c=relaxed/simple;
-	bh=85C14LnzHSmDnVC9fmIWJXsHAZ/RskLVIvFJVK0C8MY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=aq54aDM73e0FK+WIJlpnJYwFFA7gstNpjy8DZ9pbZhGJneGvE4Y/M2jdlpk0dUzKMjZc5kFg1t+l/ltS2Sq0UlXVScK3THiFSzPA1Epo1dA2AMpkinZbZrHA5afz4r460hPVqiT8seCEWRdA0/aWMy2Holf+f52dZKD6XHYpZ6I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=r3wFZA/R; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a99e3b3a411so64025366b.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:50:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729644629; x=1730249429; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=T2RVe7tez2PJu7xFZaopsIUK4FQaSBewWT4oCCH7cRo=;
-        b=r3wFZA/R70P/zPEPQ4q4jwebcXVe7G8IvmVkyfg840/H8oFE/SdOIJfcENXb6Ph6Tg
-         ot6No2eCDh1eA3QUHGmH9hgtW9fh0JsXnGQh2etzjMAj12VXom+RVk42xlLaXFpwWO3C
-         Jc6GiU93MyIhUhbKYOQIKa+Z52bsuapfqHdSHEeHMKESvJbOLav3FAbsRzJT4C/OnjMO
-         5yuUKAHEIPf3u76mA/xoywCSBQgbvRI6I/nXn47i2/vwCvAqcVJSgEBN2EjksUuIx3Gh
-         Oy+QWtn61zDfAMis9pK8v6C/csvtHf8OrUGFJ4R0A19o4JAeiFE84Ookw7uv8SUXcbDR
-         EFAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729644629; x=1730249429;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=T2RVe7tez2PJu7xFZaopsIUK4FQaSBewWT4oCCH7cRo=;
-        b=iehPJEIlNOq3t70Z3A3SylA0kFIUakL/m9Qgysrmaqh2U4E0Pv/lWTdoXKqI1wyQxM
-         KDOdAepTh3XFyWApqPnjR3mLfv5NBnkDc+smUALriJ740FFWWdcGeRfbXvuDVSOrZO+6
-         uhUlekvIvFZPy8NdDQxSnx3oSSb3ToX9Vho0Mq21/3gMGiDHZbX08mRJNajJiWWGXK5P
-         +Mq4f86RqBIcHRC/ZhhUoT9N6s9bAofTyOYep2lumompns78TEXExsbctJltsYDN7N8s
-         ILHR9iE7a8DMGsFy5IL56GT2fnnGmPkcdlGN40FW7nTQxlEos3FwKxnhkff6mgZ19KeS
-         twFg==
-X-Gm-Message-State: AOJu0YyPWu0Y8sCYQHq0ulXyWG3qAJWm4/WrCHT2iJg3S1zJP+JQnQW2
-	5wfem/pF57ofJpQTzRDdoDUZg8tmDaZV0hpubZMaLBpT5bTgrL0iK1DpENMZxm5AXnVrP8ZYar0
-	FFA2i94Mzc3+XPpGwYorc8dUiOocymCeyBAuVXJkAxf/CkHvcOw==
-X-Google-Smtp-Source: AGHT+IGEjIYQpmIs+gAoloBjz17prVfsvhxrsDIKUjyX4jbTSir6xX9/MpmDlwfyBofviyxuYwSskWvLQsI1isWTUW4=
-X-Received: by 2002:a17:907:6d0c:b0:a8d:2281:94d9 with SMTP id
- a640c23a62f3a-a9aaa620d72mr577158666b.23.1729644629301; Tue, 22 Oct 2024
- 17:50:29 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41B71A48;
+	Wed, 23 Oct 2024 01:00:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.212.47
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729645210; cv=pass; b=Wrm6kVa0C9cWwSLyg2+3qseko0m2KhWrvjZAM+8rXdDZsBuLiR4tS8ajDLBdxCRdbUtyb84RSZc1YAqauzIEs88sGdTbixuC443HD+zX7Bgh0FALINjM1rD6EZAeJ/10K0apcpTTBRxZXgiHipVPoTrIcS/DkhTYZtfK/BqAeGk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729645210; c=relaxed/simple;
+	bh=iz5FJiRdAaTt6XvCz5hHOw79cCv768zy64sfS+JpJYA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQsriSJvnRamA4flu0yCQdrb58WaqQ1UaP5kjBdoA7QwYKudavmwL7+pERGOAPejafChMFmCmM96jaMqYrxz7WlDksVg7HXnZw6NCFPoBfOigj3o/uZ5K1vX+vTYdrmwGlL15Uor8xldmoW+a6tJcNKp6hMVtmy76O4RGZ/WYjs=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=nwe4WUrR; arc=pass smtp.client-ip=23.83.212.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+Received: from relay.mailchannels.net (localhost [127.0.0.1])
+	by relay.mailchannels.net (Postfix) with ESMTP id 5ADF7943E1E;
+	Wed, 23 Oct 2024 00:53:08 +0000 (UTC)
+Received: from pdx1-sub0-mail-a281.dreamhost.com (trex-13.trex.outbound.svc.cluster.local [100.99.209.159])
+	(Authenticated sender: dreamhost)
+	by relay.mailchannels.net (Postfix) with ESMTPA id DD1D9942133;
+	Wed, 23 Oct 2024 00:53:07 +0000 (UTC)
+ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729644788; a=rsa-sha256;
+	cv=none;
+	b=cZsdaLjEIqurXGOVEYD7qRHdFhxOED1xMurx7ICn0x7MywkvzF5BQVfTKw9z1J76Erz6s6
+	agBk+BnmNk1eLqvEmm7arLRHPoq4NyU5WbS6zKBn2hzgXyX41b0RKWiUProG+aum3gYbCE
+	pS0y/4aSdCg9Gj97kt+JitNg8AeJwlaCJoKNDeS10JpmrAYcAb1pbsRcoKfQDqnTEE8ZMt
+	5PqUcZAzNYZtq315GjFCV5V2tHptwskgcS1Gub8M+p33t23e9ipL3NMsbT1AMiO29A+P+V
+	diobuhI78Hmavbi8+LXZMO+KrMKZMiUVjTgKHcVTJ3hFf3KL6jTXQ6vBBOPDJA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=mailchannels.net;
+	s=arc-2022; t=1729644788;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references:dkim-signature;
+	bh=iz5FJiRdAaTt6XvCz5hHOw79cCv768zy64sfS+JpJYA=;
+	b=Aod4eknf1YuCck+hjaQ9CO5luB3N1+HFISJoSto+grOOQGaAjeE9PcMDAERMyHeanOWYLJ
+	VZvE2fFNU53xcMCU4JiHtU2qG3Imzlp04S+W7zhek2m+LdfVA7cdNHBs8IdLENdyIv7wE4
+	nvjen8wdrL7qZxCCs+HKwtUPDxMQAqwE63h8kaH4qD5C8IIqmzKUZ6Er7fW02zEcEszg4L
+	9SX4eWpSHBf0X/ynHnbN9ea2zzc7mXJnepBpFVdAGoPvR+YzLb4GF84VyCwuhCNEyhpkTk
+	fztg8S8rSDIaYkAMqsnYxpsF0GteBLLSX4eyU3LHYeRGtVLVzvKK+g/QXwfTNQ==
+ARC-Authentication-Results: i=1;
+	rspamd-7d55d965b5-c5dfn;
+	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
+X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
+X-MC-Relay: Neutral
+X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
+X-MailChannels-Auth-Id: dreamhost
+X-Unite-Blushing: 7877a02964464eb9_1729644788208_3160964976
+X-MC-Loop-Signature: 1729644788208:3733274980
+X-MC-Ingress-Time: 1729644788207
+Received: from pdx1-sub0-mail-a281.dreamhost.com (pop.dreamhost.com
+ [64.90.62.162])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
+	by 100.99.209.159 (trex/7.0.2);
+	Wed, 23 Oct 2024 00:53:08 +0000
+Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: dave@stgolabs.net)
+	by pdx1-sub0-mail-a281.dreamhost.com (Postfix) with ESMTPSA id 4XY9Wl0h25z2Z;
+	Tue, 22 Oct 2024 17:53:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
+	s=dreamhost; t=1729644787;
+	bh=iz5FJiRdAaTt6XvCz5hHOw79cCv768zy64sfS+JpJYA=;
+	h=Date:From:To:Cc:Subject:Content-Type;
+	b=nwe4WUrRuJe1mG5li6WACnNEIGv7rKRMEWF7qiHWrDceMz8tfYsg2PpA/MDJEEY4/
+	 dyYir1XFFgchw9lAWV5WBy5MRy6gf2aUfwnBtjSAeONBSIN8eQXEuD90F5MGhnr4BV
+	 sdCCAEnZcw/YHelsysjxm0eask4iZziD8fm8S68CF7NiTrRQdnGUrad+kyIn7oUusa
+	 X6wu0Gr8+YBWzZS3sxZxjg7JIaUcSNShb1HyZKlwVIzD6VpXlHiAuykkriUo33Farr
+	 pFT1Ma3w+CDddCLoTAivCLe0jrJ3e18AqC38CKCt0luyw021heT8sq973LWHUeqj+K
+	 YlLes9ojhKvZw==
+Date: Tue, 22 Oct 2024 17:50:23 -0700
+From: Davidlohr Bueso <dave@stgolabs.net>
+To: shiju.jose@huawei.com
+Cc: dave.jiang@intel.com, dan.j.williams@intel.com, 
+	jonathan.cameron@huawei.com, alison.schofield@intel.com, vishal.l.verma@intel.com, 
+	ira.weiny@intel.com, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linuxarm@huawei.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com
+Subject: Re: [PATCH v2 1/6] cxl/events: Update Common Event Record to CXL
+ spec rev 3.1
+Message-ID: <pfjneiajzokyjhkzdcu74zyhnj2lej2ipvs7ru55ensb2t35zj@4xduj44cuodz>
+References: <20241022105849.1272-1-shiju.jose@huawei.com>
+ <20241022105849.1272-2-shiju.jose@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com> <20241018064101.336232-10-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20241018064101.336232-10-kanchana.p.sridhar@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 22 Oct 2024 17:49:53 -0700
-Message-ID: <CAJD7tkbXTtG1UmQ7oPXoKUjT302a_LL4yhbQsMS6tDRG+vRNBg@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 09/13] mm: zswap: Config variable to enable
- compress batching in zswap_store().
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, clabbe@baylibre.com, 
-	ardb@kernel.org, ebiggers@google.com, surenb@google.com, 
-	kristen.c.accardi@intel.com, zanussi@kernel.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, mcgrof@kernel.org, kees@kernel.org, 
-	joel.granados@kernel.org, bfoster@redhat.com, willy@infradead.org, 
-	linux-fsdevel@vger.kernel.org, wajdi.k.feghali@intel.com, 
-	vinodh.gopal@intel.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241022105849.1272-2-shiju.jose@huawei.com>
+User-Agent: NeoMutt/20240425
 
-On Thu, Oct 17, 2024 at 11:41=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
+On Tue, 22 Oct 2024, shiju.jose@huawei.com wrote:\n
+>From: Shiju Jose <shiju.jose@huawei.com>
 >
-> Add a new zswap config variable that controls whether zswap_store() will
-> compress a batch of pages, for instance, the pages in a large folio:
+>CXL spec 3.1 section 8.2.9.2.1 Table 8-42, Common Event Record format has
+>updated with Maintenance Operation Subclass information.
 >
->   CONFIG_ZSWAP_STORE_BATCHING_ENABLED
->
-> The existing CONFIG_CRYPTO_DEV_IAA_CRYPTO variable added in commit
-> ea7a5cbb4369 ("crypto: iaa - Add Intel IAA Compression Accelerator crypto
-> driver core") is used to detect if the system has the Intel Analytics
-> Accelerator (IAA), and the iaa_crypto module is available. If so, the
-> kernel build will prompt for CONFIG_ZSWAP_STORE_BATCHING_ENABLED. Hence,
-> users have the ability to set CONFIG_ZSWAP_STORE_BATCHING_ENABLED=3D"y" o=
-nly
-> on systems that have Intel IAA.
->
-> If CONFIG_ZSWAP_STORE_BATCHING_ENABLED is enabled, and IAA is configured
-> as the zswap compressor, zswap_store() will process the pages in a large
-> folio in batches, i.e., multiple pages at a time. Pages in a batch will b=
-e
-> compressed in parallel in hardware, then stored. On systems without Intel
-> IAA and/or if zswap uses software compressors, pages in the batch will be
-> compressed sequentially and stored.
->
-> The patch also implements a zswap API that returns the status of this
-> config variable.
+>Add updates for the above spec change in the CXL events record and CXL
+>common trace event implementations.
 
-If we are compressing a large folio and batching is an option, is not
-batching ever the correct thing to do? Why is the config option
-needed?
+Yeah, I had also noticed this while going through Maintenance.
 
->
-> Suggested-by: Ying Huang <ying.huang@intel.com>
-> Signed-off-by: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-> ---
->  include/linux/zswap.h |  6 ++++++
->  mm/Kconfig            | 12 ++++++++++++
->  mm/zswap.c            | 14 ++++++++++++++
->  3 files changed, 32 insertions(+)
->
-> diff --git a/include/linux/zswap.h b/include/linux/zswap.h
-> index d961ead91bf1..74ad2a24b309 100644
-> --- a/include/linux/zswap.h
-> +++ b/include/linux/zswap.h
-> @@ -24,6 +24,7 @@ struct zswap_lruvec_state {
->         atomic_long_t nr_disk_swapins;
->  };
->
-> +bool zswap_store_batching_enabled(void);
->  unsigned long zswap_total_pages(void);
->  bool zswap_store(struct folio *folio);
->  bool zswap_load(struct folio *folio);
-> @@ -39,6 +40,11 @@ bool zswap_never_enabled(void);
->
->  struct zswap_lruvec_state {};
->
-> +static inline bool zswap_store_batching_enabled(void)
-> +{
-> +       return false;
-> +}
-> +
->  static inline bool zswap_store(struct folio *folio)
->  {
->         return false;
-> diff --git a/mm/Kconfig b/mm/Kconfig
-> index 33fa51d608dc..26d1a5cee471 100644
-> --- a/mm/Kconfig
-> +++ b/mm/Kconfig
-> @@ -125,6 +125,18 @@ config ZSWAP_COMPRESSOR_DEFAULT
->         default "zstd" if ZSWAP_COMPRESSOR_DEFAULT_ZSTD
->         default ""
->
-> +config ZSWAP_STORE_BATCHING_ENABLED
-> +       bool "Batching of zswap stores with Intel IAA"
-> +       depends on ZSWAP && CRYPTO_DEV_IAA_CRYPTO
-> +       default n
-> +       help
-> +       Enables zswap_store to swapout large folios in batches of 8 pages=
-,
-> +       rather than a page at a time, if the system has Intel IAA for har=
-dware
-> +       acceleration of compressions. If IAA is configured as the zswap
-> +       compressor, this will parallelize batch compression of upto 8 pag=
-es
-> +       in the folio in hardware, thereby improving large folio compressi=
-on
-> +       throughput and reducing swapout latency.
-> +
->  choice
->         prompt "Default allocator"
->         depends on ZSWAP
-> diff --git a/mm/zswap.c b/mm/zswap.c
-> index 948c9745ee57..4893302d8c34 100644
-> --- a/mm/zswap.c
-> +++ b/mm/zswap.c
-> @@ -127,6 +127,15 @@ static bool zswap_shrinker_enabled =3D IS_ENABLED(
->                 CONFIG_ZSWAP_SHRINKER_DEFAULT_ON);
->  module_param_named(shrinker_enabled, zswap_shrinker_enabled, bool, 0644)=
-;
->
-> +/*
-> + * Enable/disable batching of compressions if zswap_store is called with=
- a
-> + * large folio. If enabled, and if IAA is the zswap compressor, pages ar=
-e
-> + * compressed in parallel in batches of say, 8 pages.
-> + * If not, every page is compressed sequentially.
-> + */
-> +static bool __zswap_store_batching_enabled =3D IS_ENABLED(
-> +       CONFIG_ZSWAP_STORE_BATCHING_ENABLED);
-> +
->  bool zswap_is_enabled(void)
->  {
->         return zswap_enabled;
-> @@ -241,6 +250,11 @@ static inline struct xarray *swap_zswap_tree(swp_ent=
-ry_t swp)
->         pr_debug("%s pool %s/%s\n", msg, (p)->tfm_name,         \
->                  zpool_get_type((p)->zpool))
->
-> +__always_inline bool zswap_store_batching_enabled(void)
-> +{
-> +       return __zswap_store_batching_enabled;
-> +}
-> +
->  /*********************************
->  * pool functions
->  **********************************/
-> --
-> 2.27.0
->
+Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
 
