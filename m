@@ -1,73 +1,94 @@
-Return-Path: <linux-kernel+bounces-378306-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378307-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E890E9ACE1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:07:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 17B5F9ACE1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:08:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 23C411C21836
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:07:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 37A461C21F84
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0D831D151F;
-	Wed, 23 Oct 2024 14:59:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 77C821A725C;
+	Wed, 23 Oct 2024 15:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="VmUSM+Gl"
-Received: from mail-ed1-f46.google.com (mail-ed1-f46.google.com [209.85.208.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="VHKDfyBv";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="A/g596dy";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="gH6DlvQ5";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="M1eNrP0O"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45F1D1CC170
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3E9F19F13C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695546; cv=none; b=otOBTRBT36UcRppuj/NUbvfuR+ryF/3ki1XHm5Kxb5/7pIpJvXpnMvOp8jqt6Tj1rxoyTQGUZUpKx7NCIJuGu9LDyxSFddN4cBwQLIJSJR0mFzeAeGRKjUikyw3OerJqFE7YU6EN4tpQtyy4k4ays2XyFKISBUsXW8pzez0wwL0=
+	t=1729695695; cv=none; b=mAjoPLoLg3oEAxGRvAz0k8+P79dfUC2PLG0HTf6Axd9HVwgNUZAqCO/nRXfvqX40srq82H4oiohJmppkFTIRVgBSBNvmoe2apLHSnoWKV4ipXjv0pyoyKIyARI8aMtVFRMoAhrkmkVOHutu9Z7Fb0YG6BWE51pXFZqyMZsk/Xns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695546; c=relaxed/simple;
-	bh=qVcZMLHwHyQhq7MBDvAiHcGYCqm+ZH0H3VY5fyTsc+Q=;
+	s=arc-20240116; t=1729695695; c=relaxed/simple;
+	bh=hiLtjXeOgOHfSuhkhvmGozk3/Ner78I4QfhLwmPJiAI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oFcqHB5abIthEu0kZF+UZoEnEMs9kdnkmG6rf/LckP7f1u86j0qi2PkD04LBOz3nMNQKZrOkykz8m3bTsTPLV0ci7w9X3KfnCLJAMzaAYx0OtPeaSfu788ZmmECLxZzTcdvT7r2ko0fw1tMbtDpMW74xhE1f8tNXkv7gRt9vleM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=VmUSM+Gl; arc=none smtp.client-ip=209.85.208.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-ed1-f46.google.com with SMTP id 4fb4d7f45d1cf-5c96b2a10e1so8762505a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:59:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729695543; x=1730300343; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=QdfhAg7XOG6KB9fpE58iZth2jLApIcWYhDgoIBS8gtw=;
-        b=VmUSM+Glq3Kxxdi6a1y56SZzilllSkrkoLejXN4qM6jfcpQb5zMe+H64E94jmdAgzJ
-         ga3+5OzUAXYRfoNdBYQMc+swFxzQ5bmUOaWCO8c6bm+K2KWk++09YLAinIddqQZsWjP+
-         ceiyWX5GdoPaKmm9ClMYg3d7tdb05vDXemZ4HAONwj6/45b2uyorou7IGMFZy5VdIjrq
-         qszTITz4lk20YUcXqIarx0ideYOdZnO0lXIPTy9zDrxzNQXxf5psY31akmwl6vbeA8D+
-         +cCkgxnQTHwtIWnmJW3TduycxP/Wt6pSbEEqJ9wTsQE2yGpaIqY0TNHhhbZfpsMYmrva
-         OTyg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729695543; x=1730300343;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=QdfhAg7XOG6KB9fpE58iZth2jLApIcWYhDgoIBS8gtw=;
-        b=gfqXXAytoC0MNQsvUdsjcYadEXkLQ6qJ+7zOVWpqaWEOJ+ojr2TfKwX5o8XWMYaU2E
-         8KecN5IDU9m6EcdcMbQYMdGe0s+Plvy7swNqEhoiazNlV12ydkzw3fcRhKl/Mhr+aLcC
-         ZehhoS0FmGKrpvGWhHjbylZTNU54MNPh/GK64Kn20TH6lLbstbArNSS8sg2nyENcxwNo
-         dTLVKTPY1nJEj+uVmZoc+vIVpqB49qj/rBlGLLmUgXG+7+fDugGqVSeF4B9g8ep67ul6
-         La183SAacVhVhlAPacSmbYy+fg+gmnLGfR5R9TcvKcAtFEKTYh8wYyhLOXFepReGVCo8
-         nqRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUGpLB8otsT6A/2CcFNj9NpZ28ctP0sPiI3dcSFZuEcMHjRoWflfLVBUbvRLFXjgjqekzbjXxKvxj4Wp2c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzLxjz/P0lyrDyguMwogt3dK5tcnLBV6u4dyq2ybXNuxjS35saC
-	/FmhcXPPS7rUCGshFOsPkHLa1bR9O8hNTgdyaxphawckU2UgZMFCn/u+NI6cMyc=
-X-Google-Smtp-Source: AGHT+IFC1aic+ZWmPBAnotFGoZ7s0fl8OisT/L75WyZvmDcXyVbJaWz0S1S/NSTReRarLlppasFQew==
-X-Received: by 2002:a17:906:794c:b0:a9a:4a:284a with SMTP id a640c23a62f3a-a9abf8792bbmr287818566b.26.1729695542525;
-        Wed, 23 Oct 2024 07:59:02 -0700 (PDT)
-Received: from [10.100.51.161] ([193.86.92.181])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6234sm486571666b.24.2024.10.23.07.59.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 07:59:02 -0700 (PDT)
-Message-ID: <8017c328-f039-46c3-b472-f203cd6e2cfe@suse.com>
-Date: Wed, 23 Oct 2024 16:59:00 +0200
+	 In-Reply-To:Content-Type; b=cacaB3WCwKBht7kwWTerPNObr9VsxUXv1qnhd1Q2ArLqTU9+a9ml6/wlff2Un6EAFHJD1KlleWpImq6XGaeQOrIYhOG80rzA5a/G8SG1Xz75KLibvx4mRtSR6iW4vf6ReO6B5aLNcnK6eZ/FS/UOQf+Jk+nVIsCbZsIpwagR1h8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=VHKDfyBv; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=A/g596dy; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=gH6DlvQ5; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=M1eNrP0O; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id CF8B521FFE;
+	Wed, 23 Oct 2024 15:01:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729695691; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4kvKQW7teN3ZH5WGWLxYS6jbROyk39Wk+SZYb41S0EI=;
+	b=VHKDfyBv98fFViUU/cErJrEpOiVmlY27DTIIYKkVnSxSUtSqCHPzWUz2HeihXjrddg/Cfa
+	RZMB/sOl6ro371gClqDaJBtgthFjkNJewj5aPKCWtJ65ln1e/KYB5IgomQEb9j0IIGHlD8
+	BpEs8vkXUA/Vok1QzVrkn5Y4fGN8NlM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729695691;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4kvKQW7teN3ZH5WGWLxYS6jbROyk39Wk+SZYb41S0EI=;
+	b=A/g596dyvSmki7OpcgSNpiwjHPbUq/6+Pl7cu8POjQMdWPcV5/7ODZoCr8+7bHGOcbEQxk
+	I1FLCBKgWsKqaqAw==
+Authentication-Results: smtp-out1.suse.de;
+	none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729695689; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4kvKQW7teN3ZH5WGWLxYS6jbROyk39Wk+SZYb41S0EI=;
+	b=gH6DlvQ5J1UALj0UI08FDhybCEpRwpH4cxMhujTpheJQ2gxCxKo2pVbqGXJZ3AZXTeOAT+
+	SqF7b2UgmVKCVVnf7zpamRy0epKQqVgAjEKW3EnEuRV/MdUpPT8ZJen7Ty/IHLgtShyXIn
+	uF98XmCOBgNlJX8vMapZT9z3oWPBLRw=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729695689;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=4kvKQW7teN3ZH5WGWLxYS6jbROyk39Wk+SZYb41S0EI=;
+	b=M1eNrP0OvkNUOHN6HsMQLB8WXBLPXJHhKXChf4DDZ2GxjB3fxozaOSMgTgt7ywunCrEQiw
+	moZOzFDsHD/VBNCw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AFA8D13A63;
+	Wed, 23 Oct 2024 15:01:29 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id cHh7KskPGWdTIAAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 23 Oct 2024 15:01:29 +0000
+Message-ID: <f5037dbb-7412-4fda-b397-3e5538343686@suse.cz>
+Date: Wed, 23 Oct 2024 17:01:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,125 +96,200 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 18/19] kbuild: Add gendwarfksyms as an alternative to
- genksyms
-To: Sami Tolvanen <samitolvanen@google.com>
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>, Miguel Ojeda <ojeda@kernel.org>,
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
- Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>,
- Gary Guo <gary@garyguo.net>, Petr Pavlu <petr.pavlu@suse.com>,
- Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>,
- Hector Martin <marcan@marcan.st>, Janne Grunau <j@jannau.net>,
- Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>,
- Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org,
- rust-for-linux@vger.kernel.org
-References: <20241008183823.36676-21-samitolvanen@google.com>
- <20241008183823.36676-39-samitolvanen@google.com>
+Subject: Re: [PATCH hotfix 6.12 8/8] mm: do not attempt second merge for
+ file-backed VMAs
 Content-Language: en-US
-From: Petr Pavlu <petr.pavlu@suse.com>
-In-Reply-To: <20241008183823.36676-39-samitolvanen@google.com>
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
+ <jannh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
+References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
+ <7b6bf6165080505feb5e00b313d2c84c25015e45.1729628198.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ xsFNBFZdmxYBEADsw/SiUSjB0dM+vSh95UkgcHjzEVBlby/Fg+g42O7LAEkCYXi/vvq31JTB
+ KxRWDHX0R2tgpFDXHnzZcQywawu8eSq0LxzxFNYMvtB7sV1pxYwej2qx9B75qW2plBs+7+YB
+ 87tMFA+u+L4Z5xAzIimfLD5EKC56kJ1CsXlM8S/LHcmdD9Ctkn3trYDNnat0eoAcfPIP2OZ+
+ 9oe9IF/R28zmh0ifLXyJQQz5ofdj4bPf8ecEW0rhcqHfTD8k4yK0xxt3xW+6Exqp9n9bydiy
+ tcSAw/TahjW6yrA+6JhSBv1v2tIm+itQc073zjSX8OFL51qQVzRFr7H2UQG33lw2QrvHRXqD
+ Ot7ViKam7v0Ho9wEWiQOOZlHItOOXFphWb2yq3nzrKe45oWoSgkxKb97MVsQ+q2SYjJRBBH4
+ 8qKhphADYxkIP6yut/eaj9ImvRUZZRi0DTc8xfnvHGTjKbJzC2xpFcY0DQbZzuwsIZ8OPJCc
+ LM4S7mT25NE5kUTG/TKQCk922vRdGVMoLA7dIQrgXnRXtyT61sg8PG4wcfOnuWf8577aXP1x
+ 6mzw3/jh3F+oSBHb/GcLC7mvWreJifUL2gEdssGfXhGWBo6zLS3qhgtwjay0Jl+kza1lo+Cv
+ BB2T79D4WGdDuVa4eOrQ02TxqGN7G0Biz5ZLRSFzQSQwLn8fbwARAQABzSBWbGFzdGltaWwg
+ QmFia2EgPHZiYWJrYUBzdXNlLmN6PsLBlAQTAQoAPgIbAwULCQgHAwUVCgkICwUWAgMBAAIe
+ AQIXgBYhBKlA1DSZLC6OmRA9UCJPp+fMgqZkBQJkBREIBQkRadznAAoJECJPp+fMgqZkNxIQ
+ ALZRqwdUGzqL2aeSavbum/VF/+td+nZfuH0xeWiO2w8mG0+nPd5j9ujYeHcUP1edE7uQrjOC
+ Gs9sm8+W1xYnbClMJTsXiAV88D2btFUdU1mCXURAL9wWZ8Jsmz5ZH2V6AUszvNezsS/VIT87
+ AmTtj31TLDGwdxaZTSYLwAOOOtyqafOEq+gJB30RxTRE3h3G1zpO7OM9K6ysLdAlwAGYWgJJ
+ V4JqGsQ/lyEtxxFpUCjb5Pztp7cQxhlkil0oBYHkudiG8j1U3DG8iC6rnB4yJaLphKx57NuQ
+ PIY0Bccg+r9gIQ4XeSK2PQhdXdy3UWBr913ZQ9AI2usid3s5vabo4iBvpJNFLgUmxFnr73SJ
+ KsRh/2OBsg1XXF/wRQGBO9vRuJUAbnaIVcmGOUogdBVS9Sun/Sy4GNA++KtFZK95U7J417/J
+ Hub2xV6Ehc7UGW6fIvIQmzJ3zaTEfuriU1P8ayfddrAgZb25JnOW7L1zdYL8rXiezOyYZ8Fm
+ ZyXjzWdO0RpxcUEp6GsJr11Bc4F3aae9OZtwtLL/jxc7y6pUugB00PodgnQ6CMcfR/HjXlae
+ h2VS3zl9+tQWHu6s1R58t5BuMS2FNA58wU/IazImc/ZQA+slDBfhRDGYlExjg19UXWe/gMcl
+ De3P1kxYPgZdGE2eZpRLIbt+rYnqQKy8UxlszsBNBFsZNTUBCACfQfpSsWJZyi+SHoRdVyX5
+ J6rI7okc4+b571a7RXD5UhS9dlVRVVAtrU9ANSLqPTQKGVxHrqD39XSw8hxK61pw8p90pg4G
+ /N3iuWEvyt+t0SxDDkClnGsDyRhlUyEWYFEoBrrCizbmahOUwqkJbNMfzj5Y7n7OIJOxNRkB
+ IBOjPdF26dMP69BwePQao1M8Acrrex9sAHYjQGyVmReRjVEtv9iG4DoTsnIR3amKVk6si4Ea
+ X/mrapJqSCcBUVYUFH8M7bsm4CSxier5ofy8jTEa/CfvkqpKThTMCQPNZKY7hke5qEq1CBk2
+ wxhX48ZrJEFf1v3NuV3OimgsF2odzieNABEBAAHCwXwEGAEKACYCGwwWIQSpQNQ0mSwujpkQ
+ PVAiT6fnzIKmZAUCZAUSmwUJDK5EZgAKCRAiT6fnzIKmZOJGEACOKABgo9wJXsbWhGWYO7mD
+ 8R8mUyJHqbvaz+yTLnvRwfe/VwafFfDMx5GYVYzMY9TWpA8psFTKTUIIQmx2scYsRBUwm5VI
+ EurRWKqENcDRjyo+ol59j0FViYysjQQeobXBDDE31t5SBg++veI6tXfpco/UiKEsDswL1WAr
+ tEAZaruo7254TyH+gydURl2wJuzo/aZ7Y7PpqaODbYv727Dvm5eX64HCyyAH0s6sOCyGF5/p
+ eIhrOn24oBf67KtdAN3H9JoFNUVTYJc1VJU3R1JtVdgwEdr+NEciEfYl0O19VpLE/PZxP4wX
+ PWnhf5WjdoNI1Xec+RcJ5p/pSel0jnvBX8L2cmniYnmI883NhtGZsEWj++wyKiS4NranDFlA
+ HdDM3b4lUth1pTtABKQ1YuTvehj7EfoWD3bv9kuGZGPrAeFNiHPdOT7DaXKeHpW9homgtBxj
+ 8aX/UkSvEGJKUEbFL9cVa5tzyialGkSiZJNkWgeHe+jEcfRT6pJZOJidSCdzvJpbdJmm+eED
+ w9XOLH1IIWh7RURU7G1iOfEfmImFeC3cbbS73LQEFGe1urxvIH5K/7vX+FkNcr9ujwWuPE9b
+ 1C2o4i/yZPLXIVy387EjA6GZMqvQUFuSTs/GeBcv0NjIQi8867H3uLjz+mQy63fAitsDwLmR
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <7b6bf6165080505feb5e00b313d2c84c25015e45.1729628198.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Spam-Score: -4.30
+X-Spamd-Result: default: False [-4.30 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,oracle.com:email,suse.cz:mid]
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On 10/8/24 20:38, Sami Tolvanen wrote:
-> When MODVERSIONS is enabled, allow selecting gendwarfksyms as the
-> implementation, but default to genksyms.
+On 10/22/24 22:40, Lorenzo Stoakes wrote:
+> Previously, we'd always try to merge a file-backed VMA if its flags were
+> changed by the driver.
 > 
-> Signed-off-by: Sami Tolvanen <samitolvanen@google.com>
-> Acked-by: Neal Gompa <neal@gompa.dev>
+> This however is rarely meaningful as typically the flags would be changed
+> to VM_PFNMAP or other VM_SPECIAL flags which are inherently unmergable.
+> 
+> In cases where it is meaningful (for instance DAX) it is doubtful that this
+
+Hm if that's true, I'm imagining many piecemeal mmap()s of DAX that used to
+merge but now will create tons of VMA's, which doesn't sound great. Then it
+has also potentially breaking effects on mremap() which doesn't work accross
+multiple VMA's.
+
+> optimisation is worth the effort and maintenance risk of having to unwind
+> state and perform a merge.
+
+What if we simply created a new vma but only then checked if the flags
+changed and we can merge it with neighbours (i.e. like the mprotect()
+merging case). Less efficient, but less tricky and with the same result
+hopefully?
+
+> Since we've observed bugs and resource leaks due to complexity in this
+> area, it is simply not acceptable to have a 'nice to have' optimisation
+> like this complicating an already very complicated code path, so let's
+> simply eliminate it.
+> 
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 > ---
->  kernel/module/Kconfig  | 25 ++++++++++++++++++++++++-
->  scripts/Makefile       |  2 +-
->  scripts/Makefile.build | 39 +++++++++++++++++++++++++++++++--------
->  3 files changed, 56 insertions(+), 10 deletions(-)
+>  mm/vma.c | 39 ++-------------------------------------
+>  1 file changed, 2 insertions(+), 37 deletions(-)
 > 
-> diff --git a/kernel/module/Kconfig b/kernel/module/Kconfig
-> index f9e5f82fa88b..e6b2427e5c19 100644
-> --- a/kernel/module/Kconfig
-> +++ b/kernel/module/Kconfig
-> @@ -169,13 +169,36 @@ config MODVERSIONS
->  	  make them incompatible with the kernel you are running.  If
->  	  unsure, say N.
->  
-> +choice
-> +	prompt "Module versioning implementation"
-> +	depends on MODVERSIONS
-> +	default GENKSYMS
-> +	help
-> +	  Select the tool used to calculate symbol versions for modules.
-> +
-> +	  If unsure, select GENKSYMS.
-> +
-> +config GENKSYMS
-> +	bool "genksyms (from source code)"
-> +	help
-> +	  Calculate symbol versions from pre-processed source code using
-> +	  genksyms.
-> +
-> +	  If unsure, say Y.
-> +
->  config GENDWARFKSYMS
-> -	bool
-> +	bool "gendwarfksyms (from debugging information)"
->  	depends on DEBUG_INFO
->  	# Requires full debugging information, split DWARF not supported.
->  	depends on !DEBUG_INFO_REDUCED && !DEBUG_INFO_SPLIT
->  	# Requires ELF object files.
->  	depends on !LTO
-> +	help
-> +	  Calculate symbol versions from DWARF debugging information using
-> +	  gendwarfksyms. Requires DEBUG_INFO to be enabled.
-> +
-> +	  If unsure, say N.
-> +endchoice
->  
->  config ASM_MODVERSIONS
->  	bool
-> diff --git a/scripts/Makefile b/scripts/Makefile
-> index d7fec46d38c0..8533f4498885 100644
-> --- a/scripts/Makefile
-> +++ b/scripts/Makefile
-> @@ -53,7 +53,7 @@ hostprogs += unifdef
->  targets += module.lds
->  
->  subdir-$(CONFIG_GCC_PLUGINS) += gcc-plugins
-> -subdir-$(CONFIG_MODVERSIONS) += genksyms
-> +subdir-$(CONFIG_GENKSYMS) += genksyms
->  subdir-$(CONFIG_GENDWARFKSYMS) += gendwarfksyms
->  subdir-$(CONFIG_SECURITY_SELINUX) += selinux
->  subdir-$(CONFIG_SECURITY_IPE) += ipe
-> diff --git a/scripts/Makefile.build b/scripts/Makefile.build
-> index 8f423a1faf50..ae13afb71123 100644
-> --- a/scripts/Makefile.build
-> +++ b/scripts/Makefile.build
-> @@ -107,18 +107,28 @@ cmd_cpp_i_c       = $(CPP) $(c_flags) -o $@ $<
->  $(obj)/%.i: $(obj)/%.c FORCE
->  	$(call if_changed_dep,cpp_i_c)
->  
-> +gendwarfksyms := scripts/gendwarfksyms/gendwarfksyms
-> +getexportsymbols = $(NM) $(1) | sed -n 's/.* __export_symbol_\(.*\)/$(2)/p'
-> +
->  genksyms = scripts/genksyms/genksyms		\
->  	$(if $(1), -T $(2))			\
->  	$(if $(KBUILD_PRESERVE), -p)		\
->  	-r $(or $(wildcard $(2:.symtypes=.symref)), /dev/null)
->  
->  # These mirror gensymtypes_S and co below, keep them in synch.
-> +ifdef CONFIG_GENDWARFKSYMS
-> +symtypes_dep_c = $(obj)/%.o
-> +cmd_gensymtypes_c = $(if $(skip_gendwarfksyms),,			\
-> +	$(call getexportsymbols,$(2:.symtypes=.o),\1) |			\
-> +	$(gendwarfksyms) $(2:.symtypes=.o) $(if $(1), --symtypes $(2)))
+> diff --git a/mm/vma.c b/mm/vma.c
+> index a271e2b406ab..fe1fe5099e78 100644
+> --- a/mm/vma.c
+> +++ b/mm/vma.c
+> @@ -2260,8 +2260,7 @@ static int __mmap_prepare(struct mmap_state *map)
+>  	return 0;
+>  }
+> 
+> -static int __mmap_new_file_vma(struct mmap_state *map, struct vm_area_struct *vma,
+> -			       struct vm_area_struct **mergep)
+> +static int __mmap_new_file_vma(struct mmap_state *map, struct vm_area_struct *vma)
+>  {
+>  	struct vma_iterator *vmi = map->vmi;
+>  	struct vma_merge_struct *vmg = map->vmg;
+> @@ -2291,34 +2290,6 @@ static int __mmap_new_file_vma(struct mmap_state *map, struct vm_area_struct *vm
+>  			(vma->vm_flags & VM_MAYWRITE));
+> 
+>  	vma_iter_config(vmi, vmg->start, vmg->end);
+> -	/*
+> -	 * If flags changed after mmap_file(), we should try merge
+> -	 * vma again as we may succeed this time.
+> -	 */
+> -	if (unlikely(map->flags != vma->vm_flags && vmg->prev)) {
+> -		struct vm_area_struct *merge;
+> -
+> -		vmg->flags = vma->vm_flags;
+> -		/* If this fails, state is reset ready for a reattempt. */
+> -		merge = vma_merge_new_range(vmg);
+> -
+> -		if (merge) {
+> -			/*
+> -			 * ->mmap() can change vma->vm_file and fput
+> -			 * the original file. So fput the vma->vm_file
+> -			 * here or we would add an extra fput for file
+> -			 * and cause general protection fault
+> -			 * ultimately.
+> -			 */
+> -			fput(vma->vm_file);
+> -			vm_area_free(vma);
+> -			vma_iter_free(vmi);
+> -			*mergep = merge;
+> -		} else {
+> -			vma_iter_config(vmi, vmg->start, vmg->end);
+> -		}
+> -	}
+> -
+>  	map->flags = vma->vm_flags;
+>  	return 0;
+>  }
+> @@ -2341,7 +2312,6 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
+>  {
+>  	struct vma_iterator *vmi = map->vmi;
+>  	struct vma_merge_struct *vmg = map->vmg;
+> -	struct vm_area_struct *merge = NULL;
+>  	int error = 0;
+>  	struct vm_area_struct *vma;
+> 
+> @@ -2365,7 +2335,7 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
+>  	}
+> 
+>  	if (vmg->file)
+> -		error = __mmap_new_file_vma(map, vma, &merge);
+> +		error = __mmap_new_file_vma(map, vma);
+>  	else if (map->flags & VM_SHARED)
+>  		error = shmem_zero_setup(vma);
+>  	else
+> @@ -2374,9 +2344,6 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
+>  	if (error)
+>  		goto free_iter_vma;
+> 
+> -	if (merge)
+> -		goto file_expanded;
+> -
+>  #ifdef CONFIG_SPARC64
+>  	/* TODO: Fix SPARC ADI! */
+>  	WARN_ON_ONCE(!arch_validate_flags(map->flags));
+> @@ -2393,8 +2360,6 @@ static int __mmap_new_vma(struct mmap_state *map, struct vm_area_struct **vmap)
+>  	 * call covers the non-merge case.
+>  	 */
+>  	khugepaged_enter_vma(vma, map->flags);
+> -
+> -file_expanded:
+>  	ksm_add_vma(vma);
+> 
+>  	*vmap = vma;
+> --
+> 2.47.0
 
-Is it possible to pass options to gendwarfksyms that apply to the entire
-build, specifically, how can one say to use the --stable option? If not
-then I think it would be good to add something as
-KBUILD_GENDWARFKSYMS_STABLE (similar to KBUILD_PRESERVE), or maybe
-a generic GENDWARFKSYMSFLAGS?
-
--- 
-Thanks,
-Petr
 
