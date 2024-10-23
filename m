@@ -1,165 +1,218 @@
-Return-Path: <linux-kernel+bounces-379004-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379001-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD1A9AD888
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:39:14 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA36A9AD87E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:37:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EC4E1F22F73
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:39:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88391C21E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:37:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5D0A1FF7AE;
-	Wed, 23 Oct 2024 23:38:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8E01FF021;
+	Wed, 23 Oct 2024 23:37:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="ArhqnrBw"
-Received: from cornsilk.maple.relay.mailchannels.net (cornsilk.maple.relay.mailchannels.net [23.83.214.40])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="l80aIdu2"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFCA71FEFA4;
-	Wed, 23 Oct 2024 23:38:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.214.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729726735; cv=pass; b=mxKYk3i9esQIf/Fu3HyZ3NNqu+/Tg+3XoEQNOj4eDQdrB3VeXqjPD0CKczZIzm8ZIs/rQiMeuZbU5PWpIDMQIJEvoAPd9FYwZyQ7PklJbNbllSXGjsykTvRSdApaIeak0q9cstsM0JcZFK6u09t+ExMl4FEKCscce1EIv4U5Dpo=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729726735; c=relaxed/simple;
-	bh=KFOO68DlNvKj5mCTkKTiIn8IF4tVDRLM9Jqu//LVK+4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HyrPmazOoyGxGw6Pwqs7NnJVlOoxyWwLs2yCkd8MsHaoHBm8XJ036h/0fWu5Y4g/wo2OwWsdAeIzM2NToKGPBZBciWN4QE+cQFZZvVKO+AtejvN2aKSuI9tKg7R7Giw06CgdhipXVw33uOeUIV7S3Vxnu97LRQW0Rsb1xmLPWyI=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=ArhqnrBw; arc=pass smtp.client-ip=23.83.214.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id E8D6380A9B;
-	Wed, 23 Oct 2024 23:38:45 +0000 (UTC)
-Received: from pdx1-sub0-mail-a235.dreamhost.com (100-99-209-54.trex-nlb.outbound.svc.cluster.local [100.99.209.54])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 6811580253;
-	Wed, 23 Oct 2024 23:38:45 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729726725; a=rsa-sha256;
-	cv=none;
-	b=WC/bB4t04MYNGHHov9NeZunElGUf6uqElBSt04MAw76sdxE+Jgf/BzIR4WAp9Lc4unwqmN
-	JPY8yzeVKCvHob2IzL4bpOgnXCS0IIcHEnT7X26t1AXopxcM1+iulq/ZQLQtXjW3HH2Ep3
-	DvdNtEsACTfFf+p2v3ZdvGBobMax5LVoSmeC/FN2eb0S9RLtibrocS4gBMTtGQa3K4UHso
-	HZoxDHBUBQw1cNcaWY43JZ/+CDmTwa3/RiglBJdpIfwPVtoqmqw0FECiIfun8MMg0HnkxW
-	lMjZLIpGU3uJn5FHCdPlc3schorfID/iO3g7fAnW/m48q6YLBJo9P07q54+phA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1729726725;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=2nSvvT+ozuQhD9gVxonB1GXT6CzOfiUqScJawcHHKmQ=;
-	b=KkEGXeHnY1QXsvlEWncmhIbS61mKRI40PyvEZ+PMIIvUuHkWPcIQ7hoNeGFoEhOz/pS9zR
-	yjBW3ngdRM95AY2mmyW6wOiwje9Z9/TawMolU/WKx/fQKhOlAM2BQx+vdMoQAiS1yBgzWw
-	t/zIrcQEFBfY1lTZE586jGeCYKxNlLKmchApqIHQup1vvENoPNbpT1UpQAkjg7S93d6+fF
-	JWIzLsYv+8gvsXihNh+9JXkcPM/b9lSO1tw026FunAtmjsdhEpYBo8kHM7yAIiQyGEents
-	GDbNplrBpgepwLjHUNNLHxrH2ZX1VzmLaWdBCAjrBI0SLonPTA7R+CbeVC6t4g==
-ARC-Authentication-Results: i=1;
-	rspamd-7767f6b98-kcp28;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Whimsical-Grain: 4e6f5f2623663543_1729726725804_1213636018
-X-MC-Loop-Signature: 1729726725804:3303723294
-X-MC-Ingress-Time: 1729726725803
-Received: from pdx1-sub0-mail-a235.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.99.209.54 (trex/7.0.2);
-	Wed, 23 Oct 2024 23:38:45 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D380319AA46;
+	Wed, 23 Oct 2024 23:37:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729726641; cv=none; b=f9EUSyOP0nVapCgw7223YpXmdSjb39ryoIhMvJHhYI33rPXrOxaJ3Bfy6P3K2EGimQe/KTa1tRtXqjoeKAAjOZ8RNyqElhdF6m9WYwwXjbImBGDucZhUYg98x+v7WVgYjXs2E2C6PmzYCRv2NBbPGYfsu4Kahzq0z5iXK3DUnos=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729726641; c=relaxed/simple;
+	bh=jvEW7M/2Wy1ouSMENyscr8ajCw0EWEl4qsMq71ObCpg=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M+EVTMi10QLUoLFiuAu0Ja4XZTFZZY5v/LQHmUQ2qIHf1SGjVmrOChYBfVnlI9hIWxC0jE3BUo6GJD8oETwrxR1TfgOWsLT3jTfrSIWza3etHh78ryE8p0Nck/Kiacp+8S+PlS7zH9VCLBbONlbAu/XERfPhZ8gJjHykonM5VT4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=l80aIdu2; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729726629;
+	bh=DVrwPjlSA8slzRRFdNniClCFcvVjFgkVm2FybuI7RJI=;
+	h=Date:From:To:Cc:Subject:From;
+	b=l80aIdu2VtySIwdRf8OAkNzORxGIx3zPAyyAcEtCU/ZeJ4nyHAHQAho0r+cPVxxT0
+	 1+LwDZ4Pa6oZTTbvICylwNijcTLoTfXDGBN/UxO+mId/4u/DQhea+i/RSwBTneYu2i
+	 fRIlIUMrZqRinydpQTkcUCwrqHRyLZ3Sz1uNkPTtq5KmE1zel+MUu9EVq+sVLNaSai
+	 lS81KHCO8ZI5IyjMiwE66JY6ktUZktU3SGuvhAPy7P0PeWvtHPeNMx01LRgaFv1aKQ
+	 eIhWISYq/p2CqpcEgpZjDEiL0eG57aS0XSVK/XauXOqPBELGKdpz4pmYpt6KsnntQ1
+	 6IqJpuXbKYF1Q==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a235.dreamhost.com (Postfix) with ESMTPSA id 4XYlqS2pvMz9v;
-	Wed, 23 Oct 2024 16:38:44 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1729726725;
-	bh=2nSvvT+ozuQhD9gVxonB1GXT6CzOfiUqScJawcHHKmQ=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=ArhqnrBwTF9zg9As/DY7XiMlJeSlk1WWxTYWaku2SOC6nDnFSjOQLnhijp4tICvIB
-	 UkcVQzyhQu0qnl5PRqEEec456VVW7HYVwXoxR0LF2AIklse7Yr8BW3Rk7lglltY9MH
-	 COuegRVurmgLiPYRVHiLMNv4qJbeHq3YfvNic3vpNoVvSGE/fHmEsXEcuCEEQ8BtnL
-	 p026DhCAt5NhmFLkoI8zPfJCjNcMNTTYV9jYefnm/DEVmQtwQz2PZkLORT9rYmxu7M
-	 mtw1HuBAtxtOWO3wjbut5Z5CgSpNXcBn3UqUB469J3MMxLjdvBA2XN4WnvrqVvaKnu
-	 NJwRk0LaEu8tA==
-Date: Wed, 23 Oct 2024 16:35:57 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Ravis OpenSrc <Ravis.OpenSrc@micron.com>
-Cc: "dan.j.williams@intel.com" <dan.j.williams@intel.com>, 
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>, 
-	"alison.schofield@intel.com" <alison.schofield@intel.com>, "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, 
-	"ira.weiny@intel.com" <ira.weiny@intel.com>, "fan.ni@samsung.com" <fan.ni@samsung.com>, 
-	"a.manzanares@samsung.com" <a.manzanares@samsung.com>, Srinivasulu Opensrc <sthanneeru.opensrc@micron.com>, 
-	Eishan Mirakhur <emirakhur@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
-	Srinivasulu Thanneeru <sthanneeru@micron.com>, "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] cxl/mbox: support background operation abort requests
-Message-ID: <vtj5cp6brmyvqut6xaxo3vfgnidvzwxr4kv6ofuiimcga5dyke@ts32khqtmexa>
-References: <20241022031809.242591-1-dave@stgolabs.net>
- <feef15c9fcfd462e9b3cf614a1b4621c@micron.com>
- <zrmn3j2wzzlnzzwunk64xfy4jussoiek5ro73qs3yrjqflemtz@zbn53a27tt6y>
- <d4fb5d07a2994f6b9b36b1ee4c7e6563@micron.com>
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYlnc6LtQz4w2R;
+	Thu, 24 Oct 2024 10:37:08 +1100 (AEDT)
+Date: Thu, 24 Oct 2024 10:37:09 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
+ <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)"
+ <rppt@kernel.org>, Steven Price <steven.price@arm.com>, Suzuki K Poulose
+ <suzuki.poulose@arm.com>
+Subject: linux-next: manual merge of the arm64 tree with the mm tree
+Message-ID: <20241024103709.082a6950@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <d4fb5d07a2994f6b9b36b1ee4c7e6563@micron.com>
-User-Agent: NeoMutt/20240425
+Content-Type: multipart/signed; boundary="Sig_/h6KiDNTddnBx2eAO7DM+cSi";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On Wed, 23 Oct 2024, Ravis OpenSrc wrote:
->The one major functionality in our original proposal apart from implementing abort is
->
->Allowing background commands to be invoked from user space through the primary mailbox
->by ensuring only those background commands are enabled which also support request abort operation
->by checking their individual CEL details.
+--Sig_/h6KiDNTddnBx2eAO7DM+cSi
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Is vendor-specific logs not something that can be done OoB?
+Hi all,
 
-If we are strictly talking about CEL details, yes this series could use that, and was
-planning on adding it for an eventual v2 -- ie: why send the abort cmd at all if we
-know the current one doesn't support it. But that is minutiae, for kernel bg commands.
+Today's linux-next merge of the arm64 tree got a conflict in:
 
-But yeah, for your needs, the enabled cmds would need that filter.
+  arch/arm64/mm/pageattr.c
 
-Then with that, would adding something like the below address your needs and below
-questions? Basically, if userspace is running a command, then the kernel comes in
-and wants to run its own bg command, it will simply abort *anything* ongoing as a
-last resort. And since we have no kernel-context about whatever is running at that
-point, is *think* it is safe to assume it was user-initiated.
+between commit:
 
-diff --git a/drivers/cxl/pci.c b/drivers/cxl/pci.c
-index 7b0fad7f6c4d..bf0742546ea8 100644
---- a/drivers/cxl/pci.c
-+++ b/drivers/cxl/pci.c
-@@ -374,7 +374,7 @@ static bool cxl_try_to_cancel_background(struct cxl_mailbox *cxl_mbox)
-		mds->security.sanitize_active = false;
+  040ee4186d6c ("arch: introduce set_direct_map_valid_noflush()")
 
-		dev_dbg(cxlds->dev, "Sanitization operation aborted\n");
--	} else {
-+	} else if (atomic_read_acquire(&cxl_mbox->poll_bgop)){
-		/*
-		 * Kick the poller and wait for it to be done - no one else
-		 * can touch mbox regs. rcuwait_wake_up() provides full
-@@ -403,7 +403,9 @@ static int cxl_pci_mbox_send(struct cxl_mailbox *cxl_mbox,
-	 */
-	if (cxl_is_background_cmd(cmd->opcode)) {
-		if (mds->security.sanitize_active ||
--		    atomic_read_acquire(&cxl_mbox->poll_bgop)) {
-+		    atomic_read_acquire(&cxl_mbox->poll_bgop) ||
-+		    /* userspace-initiated ? */
-+		    !cxl_mbox_background_done(cxlds)) {
-			if (!cxl_try_to_cancel_background(cxl_mbox)) {
-				mutex_unlock(&cxl_mbox->mbox_mutex);
-				return -EBUSY;
+from the mm-unstable branch of the mm tree and commit:
+
+  42be24a4178f ("arm64: Enable memory encrypt for Realms")
+
+from the arm64 tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc arch/arm64/mm/pageattr.c
+index 01225900293a,6ae6ae806454..000000000000
+--- a/arch/arm64/mm/pageattr.c
++++ b/arch/arm64/mm/pageattr.c
+@@@ -192,16 -202,86 +202,96 @@@ int set_direct_map_default_noflush(stru
+  				   PAGE_SIZE, change_page_range, &data);
+  }
+ =20
+ +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool val=
+id)
+ +{
+ +	unsigned long addr =3D (unsigned long)page_address(page);
+ +
+ +	if (!can_set_direct_map())
+ +		return 0;
+ +
+ +	return set_memory_valid(addr, nr, valid);
+ +}
+ +
++ static int __set_memory_enc_dec(unsigned long addr,
++ 				int numpages,
++ 				bool encrypt)
++ {
++ 	unsigned long set_prot =3D 0, clear_prot =3D 0;
++ 	phys_addr_t start, end;
++ 	int ret;
++=20
++ 	if (!is_realm_world())
++ 		return 0;
++=20
++ 	if (!__is_lm_address(addr))
++ 		return -EINVAL;
++=20
++ 	start =3D __virt_to_phys(addr);
++ 	end =3D start + numpages * PAGE_SIZE;
++=20
++ 	if (encrypt)
++ 		clear_prot =3D PROT_NS_SHARED;
++ 	else
++ 		set_prot =3D PROT_NS_SHARED;
++=20
++ 	/*
++ 	 * Break the mapping before we make any changes to avoid stale TLB
++ 	 * entries or Synchronous External Aborts caused by RIPAS_EMPTY
++ 	 */
++ 	ret =3D __change_memory_common(addr, PAGE_SIZE * numpages,
++ 				     __pgprot(set_prot),
++ 				     __pgprot(clear_prot | PTE_VALID));
++=20
++ 	if (ret)
++ 		return ret;
++=20
++ 	if (encrypt)
++ 		ret =3D rsi_set_memory_range_protected(start, end);
++ 	else
++ 		ret =3D rsi_set_memory_range_shared(start, end);
++=20
++ 	if (ret)
++ 		return ret;
++=20
++ 	return __change_memory_common(addr, PAGE_SIZE * numpages,
++ 				      __pgprot(PTE_VALID),
++ 				      __pgprot(0));
++ }
++=20
++ static int realm_set_memory_encrypted(unsigned long addr, int numpages)
++ {
++ 	int ret =3D __set_memory_enc_dec(addr, numpages, true);
++=20
++ 	/*
++ 	 * If the request to change state fails, then the only sensible cause
++ 	 * of action for the caller is to leak the memory
++ 	 */
++ 	WARN(ret, "Failed to encrypt memory, %d pages will be leaked",
++ 	     numpages);
++=20
++ 	return ret;
++ }
++=20
++ static int realm_set_memory_decrypted(unsigned long addr, int numpages)
++ {
++ 	int ret =3D __set_memory_enc_dec(addr, numpages, false);
++=20
++ 	WARN(ret, "Failed to decrypt memory, %d pages will be leaked",
++ 	     numpages);
++=20
++ 	return ret;
++ }
++=20
++ static const struct arm64_mem_crypt_ops realm_crypt_ops =3D {
++ 	.encrypt =3D realm_set_memory_encrypted,
++ 	.decrypt =3D realm_set_memory_decrypted,
++ };
++=20
++ int realm_register_memory_enc_ops(void)
++ {
++ 	return arm64_mem_crypt_ops_register(&realm_crypt_ops);
++ }
++=20
+  #ifdef CONFIG_DEBUG_PAGEALLOC
+  void __kernel_map_pages(struct page *page, int numpages, int enable)
+  {
+
+--Sig_/h6KiDNTddnBx2eAO7DM+cSi
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcZiKUACgkQAVBC80lX
+0GzXLQgAg+y43CCIGt2sLeBS0FUocmTpxuHfrTFiPdgD856aHp19JoXVFxquXdAg
+oRef0V4j6a1yQi+yCdAVT1X12MQaclOiWYLC2rco95oJn9wpBGyRHDxPo2q2lHcc
+8KaFx4qKNfak7Pe8NKMkNE4HeeneaOXU+N8XtGwzGUalbNwUCuY2N0A4m0vp7Xyk
+iDCa1RjNl+VSVmo2EDR6Kf3T+jqv/0XeHb4EQr2V4XVNFbWzKzwSgiyy3v3gqFPC
+uSIhyPOefH3K6Zp7G04gLafibpGF/i8MgmL5Hx0LXe5YXK+fXIpz9aIuRpDmnYUR
+GwMmks+PaX2tQ3PVRiDSVkTj0wClqg==
+=vK9w
+-----END PGP SIGNATURE-----
+
+--Sig_/h6KiDNTddnBx2eAO7DM+cSi--
 
