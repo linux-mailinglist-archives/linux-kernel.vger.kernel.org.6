@@ -1,211 +1,247 @@
-Return-Path: <linux-kernel+bounces-378773-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378774-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A8A5A9AD555
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:10:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E5E239AD558
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:11:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAA228445E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:10:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8173F284932
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:11:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A6D1E2309;
-	Wed, 23 Oct 2024 20:10:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 47B1F1E2606;
+	Wed, 23 Oct 2024 20:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IegbwoeX"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HgMgLFr1"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A024142623;
-	Wed, 23 Oct 2024 20:10:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729714244; cv=none; b=TqY82+HT91ezdsZDRZ7Ihk4JfJ1Rn40p9JikTaZOvj6O5pSyZ5sTbw/QkpCybzf8WZVmUAAg2pu3yzzXXkewhPB2Zcz8RHK6NxINcBUCgeELtirhMazNy3CH800DZj4w6vUkUjuXxQiNgNoWFwvOvu4lejN0zy1lPvfYGAix0Bk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729714244; c=relaxed/simple;
-	bh=wjzY5hlWokJZJqyCtoM63iivGkyHT750Iiaq8dtTlDI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M0LX+nx2n/Mh59PXcdZX4C7apaJ0it5KzdRPCGVeN9+bTg0VX7FxuElKQI6RTznznPJmlezEDiIcKBkBJvv8F8fmi6sHUrbe6hfsH6Sqa0CMdJt0HWAI+tN4I26JDBK7xWe3cTUU17TkT5jDvlVo6GJFJrZ4MCDUf/5sbGUzjwY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IegbwoeX; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=k0kAR5oFjFmERcfAhxKq77ZBkdV3j2tk6jq69iAXIpk=; b=IegbwoeXWLDI9S3bJ1Edwr1HxX
-	DfFu7/Gy9o9gQOxI+Ks2lINBvVQXlt5al9v8StJjEFc+iSal5hFl98T8J6xYCu308FBuDnHpD9Szg
-	ATQLIROpIUwzU2hYvNGxqy+womlZ8R13BfBHphc5+cZtm8YNQh6o6VK75mqudL3XBoMGXK/8JmIFN
-	YGZUDj7fln1t2Sl23QYY3JER5PpJDjO/1Erk7TWSMDcNeMpLUdrrfeK5G/K05RGASlM4M07R/+f3b
-	yoglMgVd6MsUCSKdxsxqtGfE8u0Wb41puKCDs1avWmNHL+7LBRULgnwFwRM1ormRjBfhohfm4eSed
-	w4uWKSQQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3hgd-00000003JY4-3N8d;
-	Wed, 23 Oct 2024 20:10:32 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 756DE30073F; Wed, 23 Oct 2024 22:10:31 +0200 (CEST)
-Date: Wed, 23 Oct 2024 22:10:31 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Andrii Nakryiko <andrii@kernel.org>
-Cc: linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com,
-	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
-	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
-	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com,
-	mhocko@kernel.org, vbabka@suse.cz, shakeel.butt@linux.dev,
-	hannes@cmpxchg.org, Liam.Howlett@oracle.com,
-	lorenzo.stoakes@oracle.com
-Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce
- mmap_lock_speculation_{start|end}
-Message-ID: <20241023201031.GF11151@noisy.programming.kicks-ass.net>
-References: <20241010205644.3831427-1-andrii@kernel.org>
- <20241010205644.3831427-2-andrii@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 87C68142623;
+	Wed, 23 Oct 2024 20:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729714297; cv=fail; b=Kyerx/4xcCrC+SYJEsSBpYxnXOS6b8SnuriV/UCadMB38XV9T+C7uCWzIgC6MA6nKLJuXrXaL0EdsfiyM6jNqYEZpNZnHF4MFZKuQCef92fnkShgS43fm55saa3i3XLJIGauNehgsmru0/Ok2dR/ZAgr0fYSIfufH8y2D2OA6nc=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729714297; c=relaxed/simple;
+	bh=xD0MOMePHfx2blUxJwxL/6/57jE5FG/B7w5FZb0omAs=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BeKuBNWXUMi4Lv8/D0JP3/zaN1qKpm94OtIEf5LdgRPa9ypM6aGHzd77RoiCaSVhxFgl7fvfcWANqrEoCjXBH2lIgOerYLE1P6udu+CDf345XN75s6OVIpQohnk9GXaJs2ueebAQA1f5h77XgetZDutI9YKMB+TprgmyDBIRBMA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HgMgLFr1; arc=fail smtp.client-ip=198.175.65.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729714296; x=1761250296;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=xD0MOMePHfx2blUxJwxL/6/57jE5FG/B7w5FZb0omAs=;
+  b=HgMgLFr1rUR3DtJDytZ9giE+92F5QDNoJziu/zxZhNzO5KM05GJeGAj7
+   KD+wpU01nYBMiT+flNynOJU+X/p4bNvf5SRtlt8glxbpInCu3cNHz0jxi
+   McexY4DkvAkk+1b4U0Cy9eFP2BbW6IWKairU51T8Fa1RcBGRhpm345uvn
+   HO6khp2Eo2QLXTV8sW4Om8ZV1ODavoAy+a5cPUVxRkFp5FN9ic8B2HkhW
+   /xe7KpzBWJWHM9NPDi4h1kZD5XUiarByv9NSAvMaLuZIqlsziIIafKNpv
+   FIeRkqglVXi9puvcA/kgxAx8xiQxwKf04mr6SXQ3s8lZqvc11guvasnSS
+   Q==;
+X-CSE-ConnectionGUID: 9jTxkP39RraIBZqviN1V5Q==
+X-CSE-MsgGUID: p0GgCoLMRpeE21pTFGIBpg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29486281"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29486281"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 13:11:36 -0700
+X-CSE-ConnectionGUID: zXSAucJeTxqG4IfyPhljcg==
+X-CSE-MsgGUID: E4mxY9XjS96AEL9lCTyJbQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="84961370"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 13:11:34 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 23 Oct 2024 13:11:34 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 13:11:34 -0700
+Received: from NAM12-DM6-obe.outbound.protection.outlook.com (104.47.59.171)
+ by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 23 Oct 2024 13:11:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iaJJjU6wUtOWA8Fr4tLAgW+UAKTQ3wG/9HYllnNqflft/lDn7hEFIZYd78tvMTES2aQ5gYf+gIv8b5UYZULlZSWwzHC4q476dvfI9SwqMxP/ZviXwrg+5mByh1Y9muPLvKYptUKnof1HBaM44Q3GRCb0D3fu4vbsOhgr6nCgmqpmEtVPy/DmRf1SG3GYjFQNhMd29rQMoS7UH4eHf5zFcfVy6AJVBJKPGQAtCrZKIGf1cUSmk8fmuzp/BGhV4Swckmle9puF/n1Uwin4/UIxg+8RLL+DbUhiOi4lAweUOColESUt20QF2Dsj/0VXFKS41/d5FedJr19QQFH1Yna8ew==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=i/Rjg/eu3peaJ3frb/dG4gfc0ZCk6EJIER20m4z4FAI=;
+ b=GG7f1Nc1cboJmQ/PwI/M6Ic9ci6dnBvREgxk+KqUkmbAudB8+Tfb7PY8ZiBn+SZR2fdkJQVV8XDm+9Tz2Po/LKG4jG6PLHDWuSi8qwS0k9x4YNTvClmJPVLztRHMm6aqrNYhshRdnV0ZL7euQJIqL70EjVemXXwVhrwTgvUQURlLzbvk/VmCurzpbDQS20fQIWGx0kP7WRNtfRjCtjeklzAV3yEDkiC1k24Zp7+7pDLpDRbic0KcHFoIdSB29IvT4i9HCVlSQs2b7tcwS9c1LKakk7P3ig463LKnkDko++oK//VaSP7S1qfQBzHwWTxKXZ6oxEQFMFGVeqY18755rA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com (2603:10b6:a02:c9::12)
+ by PH7PR11MB5957.namprd11.prod.outlook.com (2603:10b6:510:1e0::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
+ 2024 20:11:31 +0000
+Received: from BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42]) by BYAPR11MB2854.namprd11.prod.outlook.com
+ ([fe80::8a98:4745:7147:ed42%7]) with mapi id 15.20.8069.020; Wed, 23 Oct 2024
+ 20:11:31 +0000
+Date: Wed, 23 Oct 2024 16:11:25 -0400
+From: Rodrigo Vivi <rodrigo.vivi@intel.com>
+To: Everest K.C. <everestkc@everestkc.com.np>
+CC: <lucas.demarchi@intel.com>, <thomas.hellstrom@linux.intel.com>,
+	<maarten.lankhorst@linux.intel.com>, <mripard@kernel.org>,
+	<tzimmermann@suse.de>, <airlied@gmail.com>, <simona@ffwll.ch>,
+	<skhan@linuxfoundation.org>, <dan.carpenter@linaro.org>,
+	<michal.wajdeczko@intel.com>, <intel-xe@lists.freedesktop.org>,
+	<dri-devel@lists.freedesktop.org>, <kernel-janitors@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH V4] drm/xe/guc: Fix dereference before NULL check
+Message-ID: <ZxlYbVOLPQv-oWrv@intel.com>
+References: <20241010165801.3913-1-everestkc@everestkc.com.np>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241010165801.3913-1-everestkc@everestkc.com.np>
+X-ClientProxiedBy: MW4P223CA0003.NAMP223.PROD.OUTLOOK.COM
+ (2603:10b6:303:80::8) To BYAPR11MB2854.namprd11.prod.outlook.com
+ (2603:10b6:a02:c9::12)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241010205644.3831427-2-andrii@kernel.org>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: BYAPR11MB2854:EE_|PH7PR11MB5957:EE_
+X-MS-Office365-Filtering-Correlation-Id: c4f16b68-7f3b-4b8f-0dfb-08dcf39ee265
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?rcF7fOIUk1YjHD3IY1VAawH6RoL110luDMt3RrUP6JVfmVffEnZHtUKdecaQ?=
+ =?us-ascii?Q?Xb+dSH8SoTTSdEnpSszH9KSVYduh3yfKHngzrvEyQcpAnMWQdewJJHJl0QIp?=
+ =?us-ascii?Q?k8Upa5HYDTQAV9kpocwpELmrl5INzzxaa/D1TvNGDdSRFqqfCIRKhU6ZB2w7?=
+ =?us-ascii?Q?ucc8cJE95tflK1gLFS7vk8aqLWlg/P2LLWM0Ekg/j/CQs95/i9uxfmf5KzDk?=
+ =?us-ascii?Q?jb2gSJ0ejaaIXaNd88lrYT4qJnC9HRdtAR7+OqW5giMEwhC3p7YGhZbUR1dU?=
+ =?us-ascii?Q?UadA7aBO1qY2yM/Rkwo1zDIFfJZY37G5d5jjHAY8nOpj5DNHqQgh/GFhGwBj?=
+ =?us-ascii?Q?ApTJwS9nHWTJ3qZ/CfcH5ESAzLQXne/IzpADW8xV7z3ZRWwDxq5UMrtL4j2f?=
+ =?us-ascii?Q?BC/P5Cles7ZtnqdrKUm/wp9XMXsjP8Pje+rU18ELqbG2CGgJSyd5SvIQUXlJ?=
+ =?us-ascii?Q?ke/DtUz0NIlDe2k8I/0yDPQQ8/JsCpRhSCPJVhIU1HXAIioYhptRRIKpsSvx?=
+ =?us-ascii?Q?+UahM347k1/qsfrktPbRbHZPSh3iQ6Nt15SDvqODzqtvvk/kj9NUHS7vy1my?=
+ =?us-ascii?Q?zL1aViNN+R3grXVL0I6PTWWIJl1irBLVLGMGp/AYAuZyFXAZqNCWw2eHI4ws?=
+ =?us-ascii?Q?aZ1NANBSW6usBlKjZ0QZcfXgugORW9tN+yRFwBUuSYg8JExo+AmHenveCHgv?=
+ =?us-ascii?Q?Z3FufqDj70R8r5s0VNaCVcvqRX3BtNBkItjwYD28qwh3nsZvPHS06TEVUEiT?=
+ =?us-ascii?Q?blsCJlyoNvG7rnWypD78wfH0ygJT0GDPWdjhtpZ9fZ7Gn6wp050Lsrj3YVZY?=
+ =?us-ascii?Q?rzs9oBMzfro7sbbypH5zzrj/SdJiWtmU1LAsvc6kyVEy3OPyze9dSm4auFUh?=
+ =?us-ascii?Q?1X5hLvCn2JDDnA5HDl0r/OtJeD32Xr++mkiYUOiDskirKfo3r5P+K00yQ5l+?=
+ =?us-ascii?Q?l3UjYE7v0FgHf3Nhvwv6dCeP+kvpYRS7Q+rOGRl7r88Y8qeCAnRGQRjFia8r?=
+ =?us-ascii?Q?lG5W5QnAeJj9Ubck5dFi7FVN4nVR3V1YQfFjgK3JzOLMIX9EtvXEk3P5IJVg?=
+ =?us-ascii?Q?g9t8a1Ql0x/nOuttd25XIQitdKfCGG+ZA4SM9wtEuZFQJ78JFALMJ1jEUcpU?=
+ =?us-ascii?Q?LE+AJuLxe9O7ndI1zXBEcZWGNxq8+xB/Ncngfb38ZGs9dJwGhEvnRuOWXYKz?=
+ =?us-ascii?Q?fTIxzQagqbb+qwl5oD/++4LC7lR4qecbcfeemUU0IDPR9VoU+rG8rEUtBuBy?=
+ =?us-ascii?Q?P+JcNGL7h0oOcZkiFuYx?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:BYAPR11MB2854.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?CXetvDhbZbtAaYWKwSNpBGtCmUjaChf4Vg+h2RDFIpL5snrlh5U85bMZsbKw?=
+ =?us-ascii?Q?GJEn01q2FAG5qgCw0JOkQvLVKSf2Mt+bM5lVcYy+UBc47p4h/6lp5zawcKtO?=
+ =?us-ascii?Q?PTnsHDccAHcwCpCdgOXvTpMFOJB/woKc3C7IRkBfxoG0AlEf0hARCLV/p/uE?=
+ =?us-ascii?Q?wFrAGU77olj/lBCgVds9Zu4v1L/FBd/yL7BJdsAyCvmTTKzI5zyaoQxUISmI?=
+ =?us-ascii?Q?DB3fAx+rEXgQ171BtzW8FOEY1/c+ITwJsaIaPGHzgfwU1927Xr1cjM8UrrnO?=
+ =?us-ascii?Q?bSzBdwPrEgFov9XSwufi5PwU9oVYkT4gl35Arjuh4SGX8FHRZkhzVzKK6Z3y?=
+ =?us-ascii?Q?AwEzJASst0bxTlrZAHKiXGPqn89+7emWZ9ZI+nu30UkwbxKOOdNH+uYTxWqb?=
+ =?us-ascii?Q?EQT+z3l5m1rR5YqAKLeNeLEZkClspF/Px9DhTa/HO2e2cZN5tIY8dQFfL8W2?=
+ =?us-ascii?Q?cTJvrEWMAiIqVRyVO7htbFZiZ+bbqx+S04tZBJzaep20n1+HI+y32YoZlcBZ?=
+ =?us-ascii?Q?uNUrDP3PGG6zFcsvEsstYEJjkvfsdCL4fbN46HlrFpT6tcokUa83eW3iG892?=
+ =?us-ascii?Q?EhCR9WO/wKL8eXhoVMClPkKiv9Xy090ZefghrY72ChJwmiJw5xukQc+C43lH?=
+ =?us-ascii?Q?MrUXbRlHPwYWPqP2F3Hj+krA5sF0etEc+7B0cLMOGW0x87Y/NbtjHtWsF1VA?=
+ =?us-ascii?Q?os+0vJEc019V6QfymuVT24B5UbAgGdqAyzGtX76gB6lvKTna6vgZSKS5/JsR?=
+ =?us-ascii?Q?/u3YOthtTaINH8XTRgLclFLD69Nqd2gAYHyE05i9VXp6ZdQMOEbRW+04uv3F?=
+ =?us-ascii?Q?iZqfHT0UtdWM6Vl4SkAnS3dsRbxtMhdLpTw4LgWIldxp1saouXxJIF8xmfky?=
+ =?us-ascii?Q?+y7LS0O0PyR7CkjCZ5lY3WV7F2vMWCCJfZ7HkOuRN33qeQ4HRx4ptTYjk+C+?=
+ =?us-ascii?Q?3+ilCeTxXGO4XDd+cn65U2dkCR9q/HZsBP3KyFJlVk+QlDpVR+TQba32X+Xp?=
+ =?us-ascii?Q?Vc8eb+0T8CO7WXLdKdqyLeT4exGw/7GNQ0BaMjYEkNurA4WUTuZbKjbb/Uxv?=
+ =?us-ascii?Q?AwRfO/fVC+7QCiiiUs0iXaxstzOKLGevSCkCTOhZm6u1kFSBcyqJMMfpQgtM?=
+ =?us-ascii?Q?OoWhqcjZc5iSfLY0d4oxk3SFJS3zYOVWc2PE89qVNXdfVb8isxIZkHcJgQDl?=
+ =?us-ascii?Q?0lgPJo+rI2ModV+9XziamjFeTB1lJNPTLVBAOKv9sIjUprlbBhT9v/8U84ru?=
+ =?us-ascii?Q?YEMTIOElFQy621wwf7BDqRPGdBPjrqp/cTrZ/qg2LT4DFUmy1JkXtVvaAPT2?=
+ =?us-ascii?Q?5f+2QlNZfMSX78hpFmmiXda7YXz1dK8vh6wIXcBiSOmGGVyMw89RebTVL+BF?=
+ =?us-ascii?Q?AFCML7RzJAaAZZ15ql5loLCACKHg1FNzLmHdsOv5EdxJ/levQD2rsGdjbkuv?=
+ =?us-ascii?Q?ovI1bOoeH9mXaPJim0VrbLWMQApOONoEm/SEN1Au6Q6iWXXZCV22ogB9KJlx?=
+ =?us-ascii?Q?XhkGBTXUEBjOtchU3xs6PD4VfOWFE5+JstBcrPx01HBM4wB2Oo2olYf+PEF3?=
+ =?us-ascii?Q?jDwn5rjygKfEUy2IPchUF16xZ0KZtn0N/LMtLSw6yMBs5QtgStUDtD0ZMbma?=
+ =?us-ascii?Q?kQ=3D=3D?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: c4f16b68-7f3b-4b8f-0dfb-08dcf39ee265
+X-MS-Exchange-CrossTenant-AuthSource: BYAPR11MB2854.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 20:11:31.1885
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: ZgrsL888fO3WBr550i7IvTRAzBnaHFpcOcZ6ESHC00zkji1KAjRJ1WKfcSlCOINaKDpm0kPQqdu54l7rgc5SsA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR11MB5957
+X-OriginatorOrg: intel.com
 
-On Thu, Oct 10, 2024 at 01:56:41PM -0700, Andrii Nakryiko wrote:
-> From: Suren Baghdasaryan <surenb@google.com>
+On Thu, Oct 10, 2024 at 10:57:59AM -0600, Everest K.C. wrote:
+> The pointer list->list is dereferenced before the NULL check.
+> Fix this by moving the NULL check outside the for loop, so that
+> the check is performed before the dereferencing.
+> The list->list pointer cannot be NULL so this has no effect on runtime.
+> It's just a correctness issue.
 > 
-> Add helper functions to speculatively perform operations without
-> read-locking mmap_lock, expecting that mmap_lock will not be
-> write-locked and mm is not modified from under us.
+> This issue was reported by Coverity Scan.
+> https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
 > 
-> Suggested-by: Peter Zijlstra <peterz@infradead.org>
-> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
-> Link: https://lore.kernel.org/bpf/20240912210222.186542-1-surenb@google.com
+> Fixes: 0f1fdf559225 ("drm/xe/guc: Save manual engine capture into capture list")
+> Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+> Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
 > ---
->  include/linux/mm_types.h  |  3 ++
->  include/linux/mmap_lock.h | 72 ++++++++++++++++++++++++++++++++-------
->  kernel/fork.c             |  3 --
->  3 files changed, 63 insertions(+), 15 deletions(-)
+> V3 -> V4: - Corrected the Fixes tag
+>           - Added Reviewed-by tag
+
+For some reason it looks like nor CI nor lore has this v4 version.
+
+could you please resubmit it?
+
+> V2 -> V3: - Changed Null to NULL in the changelog
+>           - Corrected typo in the changelong
+>           - Added more description to the changelong
+> 	  - Fixed the link for Coverity Report
+> 	  - Removed the space after the Fixes tag
+> V1 -> V2: - Combined the `!list->list` check in preexisting if statement
+> 	  - Added Fixes tag 
+> 	  - Added the link to the Coverity Scan report 
 > 
-> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
-> index 6e3bdf8e38bc..5d8cdebd42bc 100644
-> --- a/include/linux/mm_types.h
-> +++ b/include/linux/mm_types.h
-> @@ -887,6 +887,9 @@ struct mm_struct {
->  		 * Roughly speaking, incrementing the sequence number is
->  		 * equivalent to releasing locks on VMAs; reading the sequence
->  		 * number can be part of taking a read lock on a VMA.
-> +		 * Incremented every time mmap_lock is write-locked/unlocked.
-> +		 * Initialized to 0, therefore odd values indicate mmap_lock
-> +		 * is write-locked and even values that it's released.
->  		 *
->  		 * Can be modified under write mmap_lock using RELEASE
->  		 * semantics.
-> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
-> index de9dc20b01ba..9d23635bc701 100644
-> --- a/include/linux/mmap_lock.h
-> +++ b/include/linux/mmap_lock.h
-> @@ -71,39 +71,84 @@ static inline void mmap_assert_write_locked(const struct mm_struct *mm)
->  }
->  
->  #ifdef CONFIG_PER_VMA_LOCK
-> +static inline void init_mm_lock_seq(struct mm_struct *mm)
-> +{
-> +	mm->mm_lock_seq = 0;
-> +}
-> +
->  /*
-> - * Drop all currently-held per-VMA locks.
-> - * This is called from the mmap_lock implementation directly before releasing
-> - * a write-locked mmap_lock (or downgrading it to read-locked).
-> - * This should normally NOT be called manually from other places.
-> - * If you want to call this manually anyway, keep in mind that this will release
-> - * *all* VMA write locks, including ones from further up the stack.
-> + * Increment mm->mm_lock_seq when mmap_lock is write-locked (ACQUIRE semantics)
-> + * or write-unlocked (RELEASE semantics).
->   */
-> -static inline void vma_end_write_all(struct mm_struct *mm)
-> +static inline void inc_mm_lock_seq(struct mm_struct *mm, bool acquire)
+>  drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
+>  1 file changed, 1 insertion(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
+> index 41262bda20ed..947c3a6d0e5a 100644
+> --- a/drivers/gpu/drm/xe/xe_guc_capture.c
+> +++ b/drivers/gpu/drm/xe/xe_guc_capture.c
+> @@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
 >  {
->  	mmap_assert_write_locked(mm);
->  	/*
->  	 * Nobody can concurrently modify mm->mm_lock_seq due to exclusive
->  	 * mmap_lock being held.
-> -	 * We need RELEASE semantics here to ensure that preceding stores into
-> -	 * the VMA take effect before we unlock it with this store.
-> -	 * Pairs with ACQUIRE semantics in vma_start_read().
->  	 */
-> -	smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> +
-> +	if (acquire) {
-> +		WRITE_ONCE(mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> +		/*
-> +		 * For ACQUIRE semantics we should ensure no following stores are
-> +		 * reordered to appear before the mm->mm_lock_seq modification.
-> +		 */
-> +		smp_wmb();
-
-Strictly speaking this isn't ACQUIRE, nor do we care about ACQUIRE here.
-This really is about subsequent stores, loads are irrelevant.
-
-> +	} else {
-> +		/*
-> +		 * We need RELEASE semantics here to ensure that preceding stores
-> +		 * into the VMA take effect before we unlock it with this store.
-> +		 * Pairs with ACQUIRE semantics in vma_start_read().
-> +		 */
-
-Again, not strictly true. We don't care about loads. Using RELEASE here
-is fine and probably cheaper on a few platforms, but we don't strictly
-need/care about RELEASE.
-
-> +		smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
-> +	}
-> +}
-
-Also, it might be saner to stick closer to the seqcount naming of
-things and use two different functions for these two different things.
-
-/* straight up copy of do_raw_write_seqcount_begin() */
-static inline void mm_write_seqlock_begin(struct mm_struct *mm)
-{
-	kcsan_nestable_atomic_begin();
-	mm->mm_lock_seq++;
-	smp_wmb();
-}
-
-/* straigjt up copy of do_raw_write_seqcount_end() */
-static inline void mm_write_seqcount_end(struct mm_struct *mm)
-{
-	smp_wmb();
-	mm->mm_lock_seq++;
-	kcsan_nestable_atomic_end();
-}
-
-Or better yet, just use seqcount...
-
-> +
-> +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int *seq)
-> +{
-> +	/* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
-> +	*seq = smp_load_acquire(&mm->mm_lock_seq);
-> +	/* Allow speculation if mmap_lock is not write-locked */
-> +	return (*seq & 1) == 0;
-> +}
-> +
-> +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int seq)
-> +{
-> +	/* Pairs with ACQUIRE semantics in inc_mm_lock_seq(). */
-> +	smp_rmb();
-> +	return seq == READ_ONCE(mm->mm_lock_seq);
->  }
-
-Because there's nothing better than well known functions with a randomly
-different name and interface I suppose...
-
-
-Anyway, all the actual code proposed is not wrong. I'm just a bit
-annoyed its a random NIH of seqcount.
+>  	int i;
+>  
+> -	if (!list || list->num_regs == 0)
+> +	if (!list || !list->list || list->num_regs == 0)
+>  		return;
+>  
+>  	if (!regs)
+> @@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+>  		struct __guc_mmio_reg_descr desc = list->list[i];
+>  		u32 value;
+>  
+> -		if (!list->list)
+> -			return;
+> -
+>  		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
+>  			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
+>  		} else {
+> -- 
+> 2.43.0
+> 
 
