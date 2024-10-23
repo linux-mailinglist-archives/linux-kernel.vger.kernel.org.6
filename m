@@ -1,177 +1,143 @@
-Return-Path: <linux-kernel+bounces-377448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 78B4E9ABF00
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:39:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BCE6C9ABF04
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:40:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28551F220FC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:39:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6FCEB1F211A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:40:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30DB14A0AA;
-	Wed, 23 Oct 2024 06:39:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DF921509A0;
+	Wed, 23 Oct 2024 06:39:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EP4qw4nV";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Sw3Czixc"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UK77Yxgo"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790D113BC11;
-	Wed, 23 Oct 2024 06:39:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF36C14B08A;
+	Wed, 23 Oct 2024 06:39:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665553; cv=none; b=Af0FGdmrymLoPxI06wjyA5av5sM8wi3ObZLc7z2P7y+RzQleczUdL+ZEhKpGEDBClW25XTcWTnRSMX02vIVf78G63MASlRA63GrVc38PRLhTnDwpZYSYavtpQhRtDjBNFcC6Jcs+kaaIlFEXSyoR0Kvvs7A0cIq2RNUwLzc3GRk=
+	t=1729665554; cv=none; b=Mi9go/fh9C7l1TuEUumJsztQSdGISk3P8UCh6KOPge0NWDU+ExozgeeTnI6ZoJWDsF7bKmd1K6wS5A0Cu3JqxV1cHmFryDo4X9NIWtHveXGde1JTgFmlISuD5mUSBmYSR090Uia8YpTNud7XEqlCAYIRcj7S49bxrCBOoXGBQIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665553; c=relaxed/simple;
-	bh=POr1g1VqlX+4xaivNXimN/kFzFTozi2nSedP7QYbjBs=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=gAIouSRHtWhCCTvd2o09S6I40v/aCUTNryPjfIdPSDKu4pN+dAEpdzou+rLBKTV+An+8R5lpdtgm2/+JpDE8TaL+D5DfMKf7+LvsTF3NiJgqGqzoljHNuBkb4DY1G7QYgly1+/sVm9NmCXeFqZYHwvo7ecy/YPNiBU8u7mEarg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EP4qw4nV; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Sw3Czixc reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729665548; x=1761201548;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=kpC1wm6LiYWbeZzmhAhSx38T1JvEqKunCgEsbj3mwVc=;
-  b=EP4qw4nVqL5L1jJfhCoPBDO+C1mMsYjwJzGqm8DXrukqfFd/GHsggi2C
-   b9ZBmcxaP+6IcVVuuDnYvufZVUdmrGyMvntv2r2dT0rXpZwk5viCqALcd
-   EuOrmzGXIs8NiGzvtcD+NkyPwdpPayZevkgOlW1HWK2wX0gM9701WtRfn
-   ZcCHvTef0zvwZKEWwAxldsObTfmxA1XNKXYyY8ium1Zhoj55/+WHTO15Y
-   q8P9Exzf4TZ/QL3za05s2KUz51rSBN5b0PRoQizRWJqgkpJr/O2WbAmve
-   wha82ImUeKKYEb7d+WZaPpmoHqHnnL4sr/j/1S7A8jdahfTchyeA/EsRL
-   w==;
-X-CSE-ConnectionGUID: uMuOCO7jSDq0cTp/f1tiWA==
-X-CSE-MsgGUID: +85O2+aJQIuqXIrYJCKHlw==
-X-IronPort-AV: E=Sophos;i="6.11,225,1725314400"; 
-   d="scan'208";a="39613512"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 23 Oct 2024 08:38:59 +0200
-X-CheckPoint: {67189A03-42-21611FC3-DAD22B0C}
-X-MAIL-CPID: 3DF068884F7016846A61C68DC0685252_4
-X-Control-Analysis: str=0001.0A682F1E.67189A04.0007,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4CBB01633CA;
-	Wed, 23 Oct 2024 08:38:54 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729665535; h=from:subject:date:message-id:to:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=kpC1wm6LiYWbeZzmhAhSx38T1JvEqKunCgEsbj3mwVc=;
-	b=Sw3CzixcaponCg79WEqX0wInmRGaC3pb5U2SC73kcpE2+M+cRWzZMytRtn0jFIPnCphlWR
-	6IIODEdXjD9aFtCAjmf5Nj9lr+MdljkYTEkMaaETspiII3SbKkPbwQtvZLMQGBhRWePhq+
-	Z9+V9MHlsqSbpqoUIci2ISJRTKUZTvaw4PCw1BLA0l3Ah3stRS+L/tIiA4SKL+oy3EpSrX
-	cFJKdshwnqCxuX1P9fadNw09OYqpOCgWNrHh5gvfWlDlOU/BrkmivrD+oX+qNIjcp/WXbL
-	vOzuRV5S565ABxtgVxiBSrbNKg2lBWBZ+ChNOnRV8Z2S7ocb1qGpBDws95SNHQ==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, "open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 1/1] arm64: dts: imx8: move samsung, burst-clock-frequency to imx8mn and imx8mm mba8mx board file
-Date: Wed, 23 Oct 2024 08:38:53 +0200
-Message-ID: <6096263.lOV4Wx5bFT@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20241022220429.1281129-1-Frank.Li@nxp.com>
-References: <20241022220429.1281129-1-Frank.Li@nxp.com>
+	s=arc-20240116; t=1729665554; c=relaxed/simple;
+	bh=YyJ2c+OEV+keQkB9Twu8QLXop4Jf2DCqJOghGxpoQsU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=D78TFeqIC6bGEhPYJ3rDiNOboFNg/xuT9Ncgq2G+E1bkQYOlIigFlaBzru6nOU5hcHcZUiH3vvqT6vYdXt8xydJ/ZxHx7b5jRZ0ohqmh07lMDhlhGiXSTDb49YIZVN2kxEC/UDxNbdQfUVbCxm2erNVK8ystYz+iZbVJkTdxK0A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UK77Yxgo; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6712CC4CEC6;
+	Wed, 23 Oct 2024 06:39:07 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729665553;
+	bh=YyJ2c+OEV+keQkB9Twu8QLXop4Jf2DCqJOghGxpoQsU=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=UK77Yxgo0TIk3gLkWsXyF1hj+xYyFxu1mAQj5GznSlvcaX8VVUW3xAdkUD4Macb7I
+	 swCDbTmd9APjV4p7rF0WUnG6qeJUCFS+3LmVfeb1SLVxiT+k89vUSg0VM3AV08OGeZ
+	 seUWIApdTnujuBam7/B2A2qjwT2IrQ2AuwWjRiA5fJkEACQUN4Z/Mm0bJ+ZLqMzPk5
+	 LjJCrnaXrhpJNCx6Ar8rfLW1LNm8Y0jwav8llr6zFeFrObvT6+1rVnLYcDppcckH8M
+	 KXaXUSZ+z7aLtWGRzlMOMNcNVGpggtePQPc69LQBMLxrBq8UwMThyb1ePMkja1I+2i
+	 tIWqrTpH/EOSA==
+Message-ID: <d2f0ceaf-800c-4e06-83df-a4354abc3c01@kernel.org>
+Date: Wed, 23 Oct 2024 08:39:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 3/6] wifi: ath12k: parse multiple device information
+ from device tree
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+ Harshitha Prem <quic_hprem@quicinc.com>,
+ Aditya Kumar Singh <quic_adisi@quicinc.com>,
+ Kalle Valo <quic_kvalo@quicinc.com>
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-4-quic_rajkbhag@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ xsFNBFVDQq4BEAC6KeLOfFsAvFMBsrCrJ2bCalhPv5+KQF2PS2+iwZI8BpRZoV+Bd5kWvN79
+ cFgcqTTuNHjAvxtUG8pQgGTHAObYs6xeYJtjUH0ZX6ndJ33FJYf5V3yXqqjcZ30FgHzJCFUu
+ JMp7PSyMPzpUXfU12yfcRYVEMQrmplNZssmYhiTeVicuOOypWugZKVLGNm0IweVCaZ/DJDIH
+ gNbpvVwjcKYrx85m9cBVEBUGaQP6AT7qlVCkrf50v8bofSIyVa2xmubbAwwFA1oxoOusjPIE
+ J3iadrwpFvsZjF5uHAKS+7wHLoW9hVzOnLbX6ajk5Hf8Pb1m+VH/E8bPBNNYKkfTtypTDUCj
+ NYcd27tjnXfG+SDs/EXNUAIRefCyvaRG7oRYF3Ec+2RgQDRnmmjCjoQNbFrJvJkFHlPeHaeS
+ BosGY+XWKydnmsfY7SSnjAzLUGAFhLd/XDVpb1Een2XucPpKvt9ORF+48gy12FA5GduRLhQU
+ vK4tU7ojoem/G23PcowM1CwPurC8sAVsQb9KmwTGh7rVz3ks3w/zfGBy3+WmLg++C2Wct6nM
+ Pd8/6CBVjEWqD06/RjI2AnjIq5fSEH/BIfXXfC68nMp9BZoy3So4ZsbOlBmtAPvMYX6U8VwD
+ TNeBxJu5Ex0Izf1NV9CzC3nNaFUYOY8KfN01X5SExAoVTr09ewARAQABzSVLcnp5c3p0b2Yg
+ S296bG93c2tpIDxrcnprQGtlcm5lbC5vcmc+wsGVBBMBCgA/AhsDBgsJCAcDAgYVCAIJCgsE
+ FgIDAQIeAQIXgBYhBJvQfg4MUfjVlne3VBuTQ307QWKbBQJgPO8PBQkUX63hAAoJEBuTQ307
+ QWKbBn8P+QFxwl7pDsAKR1InemMAmuykCHl+XgC0LDqrsWhAH5TYeTVXGSyDsuZjHvj+FRP+
+ gZaEIYSw2Yf0e91U9HXo3RYhEwSmxUQ4Fjhc9qAwGKVPQf6YuQ5yy6pzI8brcKmHHOGrB3tP
+ /MODPt81M1zpograAC2WTDzkICfHKj8LpXp45PylD99J9q0Y+gb04CG5/wXs+1hJy/dz0tYy
+ iua4nCuSRbxnSHKBS5vvjosWWjWQXsRKd+zzXp6kfRHHpzJkhRwF6ArXi4XnQ+REnoTfM5Fk
+ VmVmSQ3yFKKePEzoIriT1b2sXO0g5QXOAvFqB65LZjXG9jGJoVG6ZJrUV1MVK8vamKoVbUEe
+ 0NlLl/tX96HLowHHoKhxEsbFzGzKiFLh7hyboTpy2whdonkDxpnv/H8wE9M3VW/fPgnL2nPe
+ xaBLqyHxy9hA9JrZvxg3IQ61x7rtBWBUQPmEaK0azW+l3ysiNpBhISkZrsW3ZUdknWu87nh6
+ eTB7mR7xBcVxnomxWwJI4B0wuMwCPdgbV6YDUKCuSgRMUEiVry10xd9KLypR9Vfyn1AhROrq
+ AubRPVeJBf9zR5UW1trJNfwVt3XmbHX50HCcHdEdCKiT9O+FiEcahIaWh9lihvO0ci0TtVGZ
+ MCEtaCE80Q3Ma9RdHYB3uVF930jwquplFLNF+IBCn5JRzsFNBFVDXDQBEADNkrQYSREUL4D3
+ Gws46JEoZ9HEQOKtkrwjrzlw/tCmqVzERRPvz2Xg8n7+HRCrgqnodIYoUh5WsU84N03KlLue
+ MNsWLJBvBaubYN4JuJIdRr4dS4oyF1/fQAQPHh8Thpiz0SAZFx6iWKB7Qrz3OrGCjTPcW6ei
+ OMheesVS5hxietSmlin+SilmIAPZHx7n242u6kdHOh+/SyLImKn/dh9RzatVpUKbv34eP1wA
+ GldWsRxbf3WP9pFNObSzI/Bo3kA89Xx2rO2roC+Gq4LeHvo7ptzcLcrqaHUAcZ3CgFG88CnA
+ 6z6lBZn0WyewEcPOPdcUB2Q7D/NiUY+HDiV99rAYPJztjeTrBSTnHeSBPb+qn5ZZGQwIdUW9
+ YegxWKvXXHTwB5eMzo/RB6vffwqcnHDoe0q7VgzRRZJwpi6aMIXLfeWZ5Wrwaw2zldFuO4Dt
+ 91pFzBSOIpeMtfgb/Pfe/a1WJ/GgaIRIBE+NUqckM+3zJHGmVPqJP/h2Iwv6nw8U+7Yyl6gU
+ BLHFTg2hYnLFJI4Xjg+AX1hHFVKmvl3VBHIsBv0oDcsQWXqY+NaFahT0lRPjYtrTa1v3tem/
+ JoFzZ4B0p27K+qQCF2R96hVvuEyjzBmdq2esyE6zIqftdo4MOJho8uctOiWbwNNq2U9pPWmu
+ 4vXVFBYIGmpyNPYzRm0QPwARAQABwsF8BBgBCgAmAhsMFiEEm9B+DgxR+NWWd7dUG5NDfTtB
+ YpsFAmA872oFCRRflLYACgkQG5NDfTtBYpvScw/9GrqBrVLuJoJ52qBBKUBDo4E+5fU1bjt0
+ Gv0nh/hNJuecuRY6aemU6HOPNc2t8QHMSvwbSF+Vp9ZkOvrM36yUOufctoqON+wXrliEY0J4
+ ksR89ZILRRAold9Mh0YDqEJc1HmuxYLJ7lnbLYH1oui8bLbMBM8S2Uo9RKqV2GROLi44enVt
+ vdrDvo+CxKj2K+d4cleCNiz5qbTxPUW/cgkwG0lJc4I4sso7l4XMDKn95c7JtNsuzqKvhEVS
+ oic5by3fbUnuI0cemeizF4QdtX2uQxrP7RwHFBd+YUia7zCcz0//rv6FZmAxWZGy5arNl6Vm
+ lQqNo7/Poh8WWfRS+xegBxc6hBXahpyUKphAKYkah+m+I0QToCfnGKnPqyYIMDEHCS/RfqA5
+ t8F+O56+oyLBAeWX7XcmyM6TGeVfb+OZVMJnZzK0s2VYAuI0Rl87FBFYgULdgqKV7R7WHzwD
+ uZwJCLykjad45hsWcOGk3OcaAGQS6NDlfhM6O9aYNwGL6tGt/6BkRikNOs7VDEa4/HlbaSJo
+ 7FgndGw1kWmkeL6oQh7wBvYll2buKod4qYntmNKEicoHGU+x91Gcan8mCoqhJkbqrL7+nXG2
+ 5Q/GS5M9RFWS+nYyJh+c3OcfKqVcZQNANItt7+ULzdNJuhvTRRdC3g9hmCEuNSr+CLMdnRBY fv0=
+In-Reply-To: <20241023060352.605019-4-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Frank,
+On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+> From: Harshitha Prem <quic_hprem@quicinc.com>
+> 
+> Currently, single device is part of device group abstraction but for multi
+> link operation, multiple devices have to be combined together. Information
+> of how many devices involved in grouping can be parsed from device tree and
+> it would have the valid group id information as well.
+> 
+> Add changes to parse devices involved and group id from device tree file
+> to form device group
+> 
+> Tested-on: QCN9274 hw2.0 PCI WLAN.WBE.1.0.1-00029-QCAHKSWPL_SILICONZ-1
+> 
+> Signed-off-by: Harshitha Prem <quic_hprem@quicinc.com>
+> Co-developed-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
+> Signed-off-by: Aditya Kumar Singh <quic_adisi@quicinc.com>
+> Signed-off-by: Kalle Valo <quic_kvalo@quicinc.com>
 
-thanks for the patch.
+Missing SoB.
 
-Am Mittwoch, 23. Oktober 2024, 00:04:29 CEST schrieb Frank Li:
-> Move 'samsung,burst-clock-frequency' and 'samsung,esc-clock-frequency'
-> properties to i.MX8MN and i.MX8MM mba8mx board file. These properties are
-> not applicable to i.MX8MQ MIPI DSI, which uses the compatible string
-> 'fsl,imx8mq-nwl-dsi'. The properties are only valid for i.MX8MM and i.MX8=
-MN
-> devices with the compatible string 'fsl,imx8mm-mipi-dsim', as described in
-> samsung,mipi-dsim.yaml.
->=20
-> Fix warning:
-> /arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx-lvds-tm070jvhg33.dtb=
-: dsi@30a00000:
->     Unevaluated properties are not allowed ('ports', 'samsung,burst-clock=
-=2Dfrequency', 'samsung,esc-clock-frequency' were unexpected)
->         from schema $id: http://devicetree.org/schemas/display/bridge/nwl=
-=2Ddsi.yaml#
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+What does Kalle SoB do here?
 
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-> ---
->  arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts | 5 +++++
->  arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts | 5 +++++
->  arch/arm64/boot/dts/freescale/mba8mx.dtsi                 | 5 -----
->  3 files changed, 10 insertions(+), 5 deletions(-)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts b/=
-arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
-> index 01b632b220dc7..b941c8c4f7bb4 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
-> @@ -75,6 +75,11 @@ expander2: gpio@27 {
->  	};
->  };
-> =20
-> +&mipi_dsi {
-> +	samsung,burst-clock-frequency =3D <891000000>;
-> +	samsung,esc-clock-frequency =3D <20000000>;
-> +};
-> +
->  &pcie_phy {
->  	fsl,refclk-pad-mode =3D <IMX8_PCIE_REFCLK_PAD_INPUT>;
->  	fsl,clkreq-unsupported;
-> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts b/=
-arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
-> index 433d8bba44255..dc94d73f7106c 100644
-> --- a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
-> +++ b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
-> @@ -64,6 +64,11 @@ expander2: gpio@27 {
->  	};
->  };
-> =20
-> +&mipi_dsi {
-> +	samsung,burst-clock-frequency =3D <891000000>;
-> +	samsung,esc-clock-frequency =3D <20000000>;
-> +};
-> +
->  &sai3 {
->  	assigned-clocks =3D <&clk IMX8MN_CLK_SAI3>;
->  	assigned-clock-parents =3D <&clk IMX8MN_AUDIO_PLL1_OUT>;
-> diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/=
-dts/freescale/mba8mx.dtsi
-> index 3d26b6981c06f..58e3865c28895 100644
-> --- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-> @@ -317,11 +317,6 @@ lvds_bridge_out: endpoint {
->  	};
->  };
-> =20
-> -&mipi_dsi {
-> -	samsung,burst-clock-frequency =3D <891000000>;
-> -	samsung,esc-clock-frequency =3D <20000000>;
-> -};
-> -
->  &mipi_dsi_out {
->  	data-lanes =3D <1 2 3 4>;
->  	remote-endpoint =3D <&lvds_bridge_in>;
->=20
+Please read carefully submitting patches.
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
+Best regards,
+Krzysztof
 
 
