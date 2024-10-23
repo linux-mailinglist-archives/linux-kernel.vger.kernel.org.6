@@ -1,105 +1,169 @@
-Return-Path: <linux-kernel+bounces-378884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC9689AD6B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:28:45 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D5F289AD6BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:30:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7509D1F22633
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:28:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47FB9B234A8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:30:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 524CE1FAC50;
-	Wed, 23 Oct 2024 21:28:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 366271F80B8;
+	Wed, 23 Oct 2024 21:30:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="gIGYwMk0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b="tA0gtF8F"
+Received: from omta040.useast.a.cloudfilter.net (omta040.useast.a.cloudfilter.net [44.202.169.39])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A71561E8825;
-	Wed, 23 Oct 2024 21:28:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AD50146A79
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:30:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.39
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718916; cv=none; b=WMTJgTS8A46a5v7sB6c7yZC7VDK0b3/YL7IcmB3zaA155zPQjYyC6SF9zejOYHGsuIejWQ8aZ0r187+aYOlD+e68KsYQYy0FtWqeWr04S383u3drKObZeHw28r3ipdndx/6sJdlGWJUKNEVfPwYtI61JJlm33grW1audypTgiC8=
+	t=1729719039; cv=none; b=JqJ8l1iK7XbTj5UCxifyxkAfUiQg6Bvf8lquQhfacY77gdkVwCLlO8M0pnWAaek/Ib6A9ZMdyBxS8r9HPYY4tmECzRqgRn71CVjZiA7ZE95Rfi8IaOnpRjZSdfu9OUzqRJ37el4PoRTagzXj1u+20YiTJuPnOko0fLfRO7VKFAo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718916; c=relaxed/simple;
-	bh=EcWqIdiJPQra7zioAKkajsxtpk1Fn0+3s20S/v1xYVw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EFSQN1amHZ7LIplghya3YjLJkFLj1jegDkNz2QEixsxkgUduc/bnI43zqLlQHCfWTTrpvfHWovSsaIhuyCda6k3W/VhIVEk4XhMhB7lTN7mlkW+4uABeAwGuGtATRJ59KEBrHdh8H7p4uK9rBwmG3wkOKbW0/JZtO3faATEfVXU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=gIGYwMk0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 00CDDC4CEC6;
-	Wed, 23 Oct 2024 21:28:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729718916;
-	bh=EcWqIdiJPQra7zioAKkajsxtpk1Fn0+3s20S/v1xYVw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=gIGYwMk02rIYOubkmZm5Z4Acu52Uj/6Nw2ZO7MZDhb3XuYunbbKVop/+H0zAmBgax
-	 2Ml/tWb5MMQNg2TbzpnLqe7CDNNbNgPbF1xtkI7V7x/1KDqT9ciST1/+lfBYSsbXuD
-	 fofSl/GGtEJTqrbugINTTwNNbcxjQSNizz4J3XreYRCGC2qXUNqpqX4ErhrcLwpSAu
-	 px2f7h9lcdRcz8YBOhI26lS1b/Ze75twVXN784RAdRHDb2B8z8U0qXsImyMZbyNobp
-	 qZe43dYB54WpKsI0ZCznKGRU5IkUYK4Jzz8vtfln22itLTXFypiy4lRc+T9jDTpvys
-	 BEL//iHWt1wIQ==
-Date: Wed, 23 Oct 2024 21:28:34 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_rampraka@quicinc.com, quic_nitirawa@quicinc.com,
-	quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com,
-	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
-Subject: Re: [PATCH RFC v3 1/2] mmc: core: Add vendor hook to control
- reprogram keys to Crypto Engine
-Message-ID: <20241023212834.GB3736641@google.com>
-References: <20241006135530.17363-1-quic_spuppala@quicinc.com>
- <20241006135530.17363-2-quic_spuppala@quicinc.com>
+	s=arc-20240116; t=1729719039; c=relaxed/simple;
+	bh=fPqUfh5O1P7kOgNYUDI+Fyksx0nelMxwaPjPhfGk3yo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=WABJN50VUG1cA35iDKDCLHRckIL0j4zPJ86gmlPAL/JEiOTuVYXTaffFmaFt/EvBZH91CGWiFVESRHRW9KAzAtV/yum5Rvtya5WNiUxMU038EtjRuQJQaf+ty2hcvF2V2Zsibjp3BLy8EaM/rfK+kp5GbtvZGkxkGoktVOn/ecY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com; spf=pass smtp.mailfrom=embeddedor.com; dkim=pass (2048-bit key) header.d=embeddedor.com header.i=@embeddedor.com header.b=tA0gtF8F; arc=none smtp.client-ip=44.202.169.39
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=embeddedor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=embeddedor.com
+Received: from eig-obgw-6005a.ext.cloudfilter.net ([10.0.30.201])
+	by cmsmtp with ESMTPS
+	id 3f1OtarWCnNFG3iw2tl72s; Wed, 23 Oct 2024 21:30:30 +0000
+Received: from gator4166.hostgator.com ([108.167.133.22])
+	by cmsmtp with ESMTPS
+	id 3iw1tWdVIxK8v3iw1t6HbJ; Wed, 23 Oct 2024 21:30:29 +0000
+X-Authority-Analysis: v=2.4 cv=T/9HTOKQ c=1 sm=1 tr=0 ts=67196af5
+ a=1YbLdUo/zbTtOZ3uB5T3HA==:117 a=OKg9RQrQ6+Y1xAlsUndU0w==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7T7KSl7uo7wA:10
+ a=8Fy0PtBgQ4eIbHuuQ40A:9 a=QEXdDO2ut3YA:10 a=Xt_RvD8W3m28Mn_h3AK8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=embeddedor.com; s=default; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:
+	List-Unsubscribe:List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=QltWdEL6XPLcPOOTcEu6Kid18we0qiV6s7ZY3NrfNII=; b=tA0gtF8FeXh015sRfJhtppXcJ0
+	Ume2ncHkvHKQYzYPkSaV7zaNJQJutuV+LmS97twE/QxS+NyJN2Bzi8La/Mw/QDKVEe9zDD8Dmr+zw
+	Degt3VmfD9nmLpJ0o1qguLaamjP2mf+7Ub4B6s7dOoQblA/defMf9OydkGj5DaJKJ4UcRjQoT4PtC
+	seZLgcXNJOtF/mULIM+vm0vM/LzF8HfuE4XtoQ2vVVby/js+vfwo+IxGC1vEFY9v7YWT+QIRG2Djp
+	pScvr7acqkenafKLWHKOI7CpY0d19N57soacNsUU6HI17+PwAYAFzjtWMv4/s7ZtqCKNY/7/UqVbO
+	r5RS+diA==;
+Received: from [201.172.173.7] (port=42804 helo=[192.168.15.6])
+	by gator4166.hostgator.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <gustavo@embeddedor.com>)
+	id 1t3ivz-000XxR-13;
+	Wed, 23 Oct 2024 16:30:27 -0500
+Message-ID: <2b7e1535-2d7a-4c7c-9687-9ddd42392802@embeddedor.com>
+Date: Wed, 23 Oct 2024 15:30:25 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006135530.17363-2-quic_spuppala@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/2][next] UAPI: ethtool: Use __struct_group() in struct
+ ethtool_link_settings
+To: Andrew Lunn <andrew@lunn.ch>, "Gustavo A. R. Silva"
+ <gustavoars@kernel.org>
+Cc: Michael Chan <michael.chan@broadcom.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller"
+ <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Potnuri Bharat Teja <bharat@chelsio.com>,
+ Christian Benvenuti <benve@cisco.com>, Satish Kharat <satishkh@cisco.com>,
+ Manish Chopra <manishc@marvell.com>, netdev@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-hardening@vger.kernel.org
+References: <cover.1729536776.git.gustavoars@kernel.org>
+ <e9ccb0cd7e490bfa270a7c20979e16ff84ac91e2.1729536776.git.gustavoars@kernel.org>
+ <53721db6-f4b1-4394-ab2a-045f214bd2fa@lunn.ch>
+Content-Language: en-US
+From: "Gustavo A. R. Silva" <gustavo@embeddedor.com>
+In-Reply-To: <53721db6-f4b1-4394-ab2a-045f214bd2fa@lunn.ch>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - gator4166.hostgator.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - embeddedor.com
+X-BWhitelist: no
+X-Source-IP: 201.172.173.7
+X-Source-L: No
+X-Exim-ID: 1t3ivz-000XxR-13
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: ([192.168.15.6]) [201.172.173.7]:42804
+X-Source-Auth: gustavo@embeddedor.com
+X-Email-Count: 2
+X-Org: HG=hgshared;ORG=hostgator;
+X-Source-Cap: Z3V6aWRpbmU7Z3V6aWRpbmU7Z2F0b3I0MTY2Lmhvc3RnYXRvci5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfCU38bYdlmSX/XkcAUbqJG0DUyZgh2NSmPs29u3DE4QCuOXOq+9Ip4XuNx3wOgWxQ4/Q2q7UerC60i6EpiovcHhhus+k4H35sMgdwNrZ0uPLu0EB+jd/
+ BYQ4aR4JqxZ0eNkLac2CCQUKkzmqvWmpEzbJChLZGCWIuTQMbXbl1w1kUqTDyoo1ld4wcoJdn59fDylJ64qiiQdIdBdMz2/Vf1tUIbhtaNCS2fUZeqXB6rjl
 
-On Sun, Oct 06, 2024 at 07:25:29PM +0530, Seshu Madhavi Puppala wrote:
-> Add mmc_host_ops hook avoid_reprogram_allkeys to control
-> reprogramming keys to Inline Crypto Engine by vendor as some
-> vendors might not require this feature.
+
+
+On 21/10/24 14:11, Andrew Lunn wrote:
+>>   struct ethtool_link_settings {
+>> -	__u32	cmd;
+>> -	__u32	speed;
+>> -	__u8	duplex;
+>> -	__u8	port;
+>> -	__u8	phy_address;
+>> -	__u8	autoneg;
+>> -	__u8	mdio_support;
+>> -	__u8	eth_tp_mdix;
+>> -	__u8	eth_tp_mdix_ctrl;
+>> -	__s8	link_mode_masks_nwords;
+>> -	__u8	transceiver;
+>> -	__u8	master_slave_cfg;
+>> -	__u8	master_slave_state;
+>> -	__u8	rate_matching;
+>> -	__u32	reserved[7];
+>> +	/* New members MUST be added within the __struct_group() macro below. */
+>> +	__struct_group(ethtool_link_settings_hdr, hdr, /* no attrs */,
+>> +		__u32	cmd;
+>> +		__u32	speed;
+>> +		__u8	duplex;
+>> +		__u8	port;
+>> +		__u8	phy_address;
+>> +		__u8	autoneg;
+>> +		__u8	mdio_support;
+>> +		__u8	eth_tp_mdix;
+>> +		__u8	eth_tp_mdix_ctrl;
+>> +		__s8	link_mode_masks_nwords;
+>> +		__u8	transceiver;
+>> +		__u8	master_slave_cfg;
+>> +		__u8	master_slave_state;
+>> +		__u8	rate_matching;
+>> +		__u32	reserved[7];
+>> +	);
+>>   	__u32	link_mode_masks[];
 > 
-> Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-> Co-developed-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
-> ---
->  drivers/mmc/core/crypto.c | 8 +++++---
->  drivers/mmc/host/sdhci.c  | 6 ++++++
->  include/linux/mmc/host.h  | 7 +++++++
->  3 files changed, 18 insertions(+), 3 deletions(-)
+> Dumb C question. What are the padding rules for a union, compared to
+> base types? Do we know for sure the compiler is not going pad this
+> structure differently because of the union?
+
+We've been using the struct_group() family of helpers in Linux for years,
+and we haven't seen any issues with padding an alignment. So, it seems
+to do its job just fine. :)
+
+Thanks
+--
+Gustavo
+
 > 
-> diff --git a/drivers/mmc/core/crypto.c b/drivers/mmc/core/crypto.c
-> index fec4fbf16a5b..4168f7d135ff 100644
-> --- a/drivers/mmc/core/crypto.c
-> +++ b/drivers/mmc/core/crypto.c
-> @@ -14,9 +14,11 @@
->  
->  void mmc_crypto_set_initial_state(struct mmc_host *host)
->  {
-> -	/* Reset might clear all keys, so reprogram all the keys. */
-> -	if (host->caps2 & MMC_CAP2_CRYPTO)
-> -		blk_crypto_reprogram_all_keys(&host->crypto_profile);
-> +	if (host->ops->avoid_reprogram_allkeys && !host->ops->avoid_reprogram_allkeys()) {
-> +		/* Reset might clear all keys, so reprogram all the keys. */
-> +		if (host->caps2 & MMC_CAP2_CRYPTO)
-> +			blk_crypto_reprogram_all_keys(&host->crypto_profile);
-> +	}
-
-This should be a simple flag, not an indirect function call which is
-inefficient.
-
-It could be a bit in mmc_host_ops, though based on the existing code maybe a new
-bit in MMC_CAP2_* would be more appropriate.
-
-- Eric
+> It is however nicely constructed. The 12 __u8 making 3 32bit words, so
+> we have a total of 12 32bit words, or 6 64bit words, before the
+> link_mode_masks[], so i don't think padding is technically an issue,
+> but it would be nice to know the C standard guarantees this.
+> 
+> 	Andrew
 
