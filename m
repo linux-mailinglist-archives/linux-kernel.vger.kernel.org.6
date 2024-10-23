@@ -1,145 +1,156 @@
-Return-Path: <linux-kernel+bounces-377488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1003A9ABF87
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:00:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id CA61F9ABF9B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 307121C2338B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:00:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9F51C231C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FC7715886D;
-	Wed, 23 Oct 2024 06:58:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004D156C6F;
+	Wed, 23 Oct 2024 06:59:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="m92Iue2N";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="WsBqM3Wi"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf+sq6Bq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4FC6152787
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:58:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E9D155CBD;
+	Wed, 23 Oct 2024 06:59:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666694; cv=none; b=Ag/DycwJPyt5H8sZ7kDu9ubHHUE6uda02gmSBd4uBS7+cehWYir3ALVcz6oyEbZKMpr9cM1LFTlodjg8JGIL0SewGPmfIDKzBmv0PJmVTpVJd+Ui3gopFmV9YG4BfP5yw2CBJN9deln99joL+Sub+Md0pA5SbKpQPwlZHTfeJLA=
+	t=1729666759; cv=none; b=NLAP+6gE++3khtzzAbQ/LXttY5vbxGEkNbdTXEB4ddQPHcfbIvgo/LkAxFU0k5PMMiUWeB5iNvzNFjShkZP956tpIgNA7Tlt8BtFSLbup1YWd0wIMN67so41bkTdma/0jyIIVhe5mNDyhuNm+QR/67C1vHFeVBopeyuHRzbZu+M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666694; c=relaxed/simple;
-	bh=wPIB8QSIupSPPZdkspNYel3pUj1/ekFjh30TOXpRp/c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZIOihC0wovPFVvf8RLAT4N4LZLuuPGsB4YTvdWMXQNilxDsnuleTBUpeqzP2E/fiX3SjnTbPwuBxrOSBf//HnQz7pfyvqTDnwXHbzl1iJEgpD6pj/IP9Wf9RQap3dNJB6zVFMnwZ8YBZ2Bn3P5oTsbC3i/q4Q0bSzQU3ElkdnMw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=m92Iue2N; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=WsBqM3Wi; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Wed, 23 Oct 2024 08:58:08 +0200
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729666691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rTDGDImdVKlSypVICOR7k/jZ5sRO6qVnRG82GzSCZP4=;
-	b=m92Iue2NPao7eS3c4a4/LX/0lhBQMwc1TlvDhMbCNIN13+NDJEdfQ9bKLGzDPsZl/R/zDT
-	UQHl3ReRxG6cNy9skjWAt9cB1DRjAOVcllNcC3fO/b+6rY1v2606tnHFqohb+VOxAhShIW
-	WzkufQoBndOo/XwV92Ng6ynYRDhyEMV+QOqj9mt/8FMS6i5dJpda/cWYcujL7/UrDwFXu2
-	96i/imj37j/oYA6IfeQ0IzKTzhak40Dik1VYmuBZPpq+W02+Fry5ZloB5zsZslnXJporn1
-	AK4zpt8jZMOfoavGrN6T/eeM4HKy9v1WWtpOparSQFz/sZazTLP1TB/NkYkMwg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729666691;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=rTDGDImdVKlSypVICOR7k/jZ5sRO6qVnRG82GzSCZP4=;
-	b=WsBqM3Wiu5MM4UsVIco0L1y7/lF66iqpKnmkgsGzCG6mEta2LYzjHV67MLBCG4svae40p2
-	mmd/1xUaBlzz5zCA==
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-To: "Paul E. McKenney" <paulmck@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-	Ankur Arora <ankur.a.arora@oracle.com>,
-	linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@kernel.org,
-	juri.lelli@redhat.com, vincent.guittot@linaro.org,
-	dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
-	mgorman@suse.de, vschneid@redhat.com, frederic@kernel.org,
-	efault@gmx.de
-Subject: Re: [PATCH 2/7] rcu: limit PREEMPT_RCU configurations
-Message-ID: <20241023065808.ck-vPSbO@linutronix.de>
-References: <20241011144341.mQKXkGkm@linutronix.de>
- <dcffa722-986a-437b-abb9-af9f4de852df@paulmck-laptop>
- <20241015112224.KdvzKo80@linutronix.de>
- <2a2a3ae6-ed0b-4afe-b48a-489cf19667a3@paulmck-laptop>
- <20241017070710.U9bTJFMS@linutronix.de>
- <0313c8c5-a6a0-4d09-9f85-ac5afa379041@paulmck-laptop>
- <20241021112755.m7dWNbc0@linutronix.de>
- <a71a7154-7cd4-44da-be41-5f2831fbfbbe@paulmck-laptop>
- <20241022140933.XfxSIpDu@linutronix.de>
- <88b90ca8-9d73-4691-b391-43891a057c77@paulmck-laptop>
+	s=arc-20240116; t=1729666759; c=relaxed/simple;
+	bh=dWYJ5hZw4CRKNMwTRgvaoC3DrogIMgmnJ7kv8WblhHc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=NNNm39dt4quh1iGXGg7ozuxsSMLSQMuRlJ+8AX1yal0ckXFzKYqdP4vzcE4J6/mzl7hVh4/rkxvSOlRhrwMLYT12ts65WDlga4vEW5gvQUYxkQqeA7qCa084Vd9WkSy1Ci61L2PVlgF8S5woT/U5YEIXKQO+Zr9ukHVLy+CiL6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf+sq6Bq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1BB8C4CEC6;
+	Wed, 23 Oct 2024 06:59:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729666756;
+	bh=dWYJ5hZw4CRKNMwTRgvaoC3DrogIMgmnJ7kv8WblhHc=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Zf+sq6BqJ2ZOiwRV6/mGAhj4NsURVkdphEf0bNxR9ZLrs8x/0IdvH2FWRP7Mr1RCN
+	 9oA0PxVKhA0N+xLlC8OfgZynUUIFSE7vzqq+O3v3lsUVav44+Y62ls3lCpK3NNLWfk
+	 a9wLWy23z/lQYn9CgtjDTBMgjK2q1r6t3w2U9QAFyNugf5yXuCTtvPBGFxzc8NZOy5
+	 OHfh0Cwq4PiDnGSAvMoV4EBDD8/HeGmfw3hzR4g4cEoq64yjpG0hM+wpVwDr+cBIEY
+	 XbyrpZZIYFdCREnf9oBgdJEWGEq1feKzk+KprS4TVMrr7HqiVbQx6Vbf82VzGPumFB
+	 JmG3oneCVWukA==
+Message-ID: <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
+Date: Wed, 23 Oct 2024 08:59:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <88b90ca8-9d73-4691-b391-43891a057c77@paulmck-laptop>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
+ properties for ath12k PCI module
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
+ <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
+ <e2c1ce1a-89af-4feb-a21a-9ca2578430e7@quicinc.com>
+ <b97b8350-3925-40b0-8f87-f89df429a52a@kernel.org>
+ <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 2024-10-22 16:54:11 [-0700], Paul E. McKenney wrote:
-> > Yes. I have no idea which of those two (PREEMPT_RCU vs !PREEMPT_RCU) is
-> > to be preferred. Therefore I'm suggesting to make configurable here.
+On 23/10/2024 08:53, Raj Kumar Bhagat wrote:
+> On 10/23/2024 12:17 PM, Krzysztof Kozlowski wrote:
+>> On 23/10/2024 08:45, Raj Kumar Bhagat wrote:
+>>> On 10/23/2024 12:05 PM, Krzysztof Kozlowski wrote:
+>>>> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+>>>>> The current device-tree bindings for the Ath12K module list many
+>>>>> WCN7850-specific properties as required. However, these properties are
+>>>>> not applicable to other Ath12K devices.
+>>>>>
+>>>>> Hence, remove WCN7850-specific properties from the required section,
+>>>>> retaining only generic properties valid across all Ath12K devices.
+>>>>> WCN7850-specific properties will remain required based on the device's
+>>>>> compatible enum.
+>>>> Just not true. These apply to all devices described in this binding.
+>>>>
+>>>> NAK.
+>>>>
+>>>> Don't send patches for your downstream stuff.
+>>> This is not for downstream. This series is the per-requisite for ath12k
+>>> MLO support in upstream.
+>>>
+>>> In the subsequent patch [2/6] we are adding new device (QCN9274) in this
+>>> binding that do not require the WCN7850 specific properties.
+>>>
+>>> This is a refactoring patch for the next patch [2/6].
+>> It's just wrong. Not true. At this point of patch there are no other
+>> devices. Don't refactor uselessly introducing incorrect hardware
 > 
-> As Ankur noted, the original intent was to move people from both
-> PREEMPT_NONE and PREEMPT_VOLUNTARY to lazy preemption.  This strongly
-> suggests setting the value of PREEMPT_RCU to n.  Not just the default,
-> but the value.  We need to have a definite non-speculative case for
-> forcing people to once again worry about RCU preemptibility, and I know
-> of no such case.
+> Ok then, If we squash this patch with the next patch [2/6], that actually adding
+> the new device, then this patch changes are valid right?
 
-okay.
+Yes, except I asked to have separate binding for devices with different
+interface (WSI). You add unrelated devices to same binding, growing it
+into something tricky to manage. Your second patch misses if:then
+disallwing all this WSI stuff for existing device... and then you should
+notice there is absolutely *nothing* in common.
 
-> > If you have a benchmark for memory consumption or anything else of
-> > interest, I could throw it a box or two to get some numbers. I've been
-> > looking at free memory at boot and this was almost the same (+- noise).
-> 
-> Unfortunately, the benchmark is the fleet and all of the various
-> non-public applications that run on it.  :-(
+Best regards,
+Krzysztof
 
-I see.
-
-> > > > Therefore I would suggest to make PREEMPT_RCU 
-> > > > - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> > > > - selected for LAZY && PREEMPT_DYNAMIC
-> > > > - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-> > > >   !PREEMPT_DYNAMIC)
-> > > > 
-> > > > Does this make sense to you?
-> > > 
-> > > Not really.  At the very least, default no.
-> > > 
-> > > Unless LAZIEST makes the most sense for us (which will take time to
-> > > figure out), in which case make PREMPT_RCU:
-> > > 
-> > > - hard-defined =n for LAZIEST.
-> > > - selectable for LAZY && !PREEMPT_DYNAMIC, default yes
-> > > - selected for LAZY && PREEMPT_DYNAMIC
-> > > - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
-> > >   !PREEMPT_DYNAMIC)
-> > > 
-> > > Or am I still missing some aspect of this series?
-> > 
-> > no, that is perfect.
-> 
-> And assuming LAZIEST is not to be with us much longer, this becomes:
-> 
-> - hard-defined to "no" for LAZY && !PREEMPT_DYNAMIC, just like
->   NONE or VOLUNTARY with !PREEMPT_DYNAMIC.
-> - selected for LAZY && PREEMPT_DYNAMIC
-> - the current unchanged state for NONE, VOLUNTARY, PREEMPT (with
->   !PREEMPT_DYNAMIC)
-> 
-> Fair enough?
-
-Guess this hard no and worry later makes sense.
-
-> 							Thanx, Paul
-
-Sebastian
 
