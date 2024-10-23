@@ -1,118 +1,178 @@
-Return-Path: <linux-kernel+bounces-377288-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377289-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 746769ABC8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:02:16 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC77F9ABC90
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:03:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A342A1C22594
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:02:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67DCD284E7A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:03:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDBCE13B5B3;
-	Wed, 23 Oct 2024 04:02:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE5113B7A3;
+	Wed, 23 Oct 2024 04:03:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kQwLnKx8"
-Received: from mail-pl1-f176.google.com (mail-pl1-f176.google.com [209.85.214.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E35sBhFN"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C224CDEC;
-	Wed, 23 Oct 2024 04:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F024594A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 04:03:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729656127; cv=none; b=thrNwzGRAuihTenRTxg4nxgCEjF79e9LXKHOiupEiqvSnOxG2Ao82t8zICNxj+pkJG6bXsbd59YoRpaj6N4C0JhXQw5Atlvv3+0ysaWpk9JQsWn5XlUznnsI9RxVocI7ppWtbW75gApuyBjD4kY+K4dY/qFQuUx4Blo+44NasoY=
+	t=1729656200; cv=none; b=VdXc5MTODlvsQ49wo1cv9BHvd1NhT8BFq3VcvrpodDnVj8imNJ7ndl+dGH2zSkXX7kq4iFiI3iygMxLbqFbj/iDEtVdhKF7aukzzp72dqIb30OkAbmZsX55wneN06MuNs27abqfWBiSeEgXsHudx3NwwW0pm9HpkZVdP7BxJZPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729656127; c=relaxed/simple;
-	bh=qzodVM/fsIWfHIH6QY879X/S4GNE9bYUaL6TGQKEBmA=;
-	h=Date:Message-Id:To:Cc:Subject:From:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=u9itOj/G3dTqVWSyyts/3iMEF0BsAXvV4W1ScRpe2dTC3IH13GgxkGxB2iRPa/mH2rNJhToovTtFKqVtMV10go+gr62grFCCZE7yXQmVzWfyzoGZX9bY9hWtcIMo2ABahoEsPZ1Yo2ByO3eJ+3ATX3XlVBU5SJXBRWveiast/Po=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kQwLnKx8; arc=none smtp.client-ip=209.85.214.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f176.google.com with SMTP id d9443c01a7336-20cbcd71012so57381525ad.3;
-        Tue, 22 Oct 2024 21:02:05 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729656125; x=1730260925; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=eIu4VTe+QT3AZHq1LvTMrjErchdwMO0AUGPJLBr3RTw=;
-        b=kQwLnKx8buFNtTQRxtu5WbcigKf3EJlnJG8vTkWcOhHjlfkJJplKkVUK7LqL2S1ZeA
-         NTcaqn1nMS/QhUM4C2U9E1+fa5pOO4RlCtiNLJLAReeQ58kJastJFOYTL13ZLa0LST1g
-         88ISHRKGcCRz6EJg5d/gbU46wcX8AnXUwv94bLDAEHp6YQ2Y2MbxFaIdeZaLJGdvQzRk
-         hr8cCGQBi9fxVagfRAku8H3y/HrCCMlZJmVuZHdgI9thBDoPbW6zj8WliOI4LwbOInwu
-         KxtFh19YF/OOPZM9HWKsYZVhaFxpg7o9x7ieD+47/jTVFqBbI+kDevlvGs8ERxRoZRvA
-         DFxQ==
+	s=arc-20240116; t=1729656200; c=relaxed/simple;
+	bh=60FYQnwEjbn8ia2ijE+rJft1/gH3fGagogxsbRnBaRg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=fxDYAWIpOq23FolNNC/cYQe1nJexxjFeUbaLRBv6c66LjLtZKIStBdD7Gby13Br+eFYkuTz7Mzeb27v1JfK8A/anIgdVZfm4Tmdy6t8OheHVKzQzPu0GjdUmr9ToJsBxxwAXtcjKdfFA8a9nm50VhrCIvJmTQ/VRdwqxUf9Ucv0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E35sBhFN; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729656196;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fE9bH6h+Dp9Cy+4YV9E9TS1/FxNq1rWMOHkDfIVYSY8=;
+	b=E35sBhFNluHaVqqslSsWGZAelY2X4PvAlSJAL4cobvkWeBfxwQHWEkrucZjlJeLDa7KPuE
+	0g7DnLb5qTn1umLEozDDbXHEkYCjCcu2mAPbtz1vY1Hch+JjjaLFQHnUvwElrYmbmYTWh+
+	h1rhDGqs2En71mSU5c0ePNll0A2f2tU=
+Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
+ [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-163-riQ5KrhtMkW4gx76AreTDA-1; Wed, 23 Oct 2024 00:03:13 -0400
+X-MC-Unique: riQ5KrhtMkW4gx76AreTDA-1
+Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e3b9fc918fso7647564a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:03:13 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729656125; x=1730260925;
-        h=content-transfer-encoding:mime-version:references:in-reply-to:from
-         :subject:cc:to:message-id:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=eIu4VTe+QT3AZHq1LvTMrjErchdwMO0AUGPJLBr3RTw=;
-        b=tM5EsJemc1nw1c9QScjeFqyiMfj6ZXQgQKAwYXofc2PRIVzhPheAAgMVHGKXzEi+jb
-         f3jkM9U3kaciG2gM88oYEPZqDJKIYXWeXZL76ZsbjnyIkHGJh4Tn5qJZ2+czuuBI5FSt
-         6I4z6MFgTj5+WsSqnOr1vHCJXVJZkrnAZlNaT5XZwu5kB0RcKXRNiH0H/ccQI5FI9cMD
-         ywnEcdsnMz3ORt5Aa2QmbAk/+QGij4LPYKFCsryuToG4qiAguHZb0zFoZxyucE2HqxNd
-         M3vlX2vOea9XHNUTFC9tl/IcxMqxfTXoF3k2Fqu9eiUftdGO+qzH2jBzpJ+Ua5k8uvpZ
-         9yEQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVgOMRIYSDGlkSV7oTfMibfeAoVKbgsoe8SJ0WvyAhR1WtKMpVQv5hRbaD3/lC15xw66ife5syr@vger.kernel.org, AJvYcCXKfxZ759HvtZ/MoHUkVLeWTTmbIJDQ8v8hnW3RQGgQWjpNMfQwgx3Ci9/VukOsvQmISVDo2MUuCNGeBI0=@vger.kernel.org, AJvYcCXT0yMGlmDAVwAKsifr5ATTHSH5dD2BipaX/bHOnDR60oTD3iDxlDwm9u1FDvX6W+17eTjoMAfX90wO9SULBgY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw5aHZ1J77tVRhGLvNRLAK5oNYQ7g8ep32Z1o++z+m0PGCqrm/B
-	ehr4a/ji9XtS9UEEKAPc8sLT9JffJiSrSAh4YTZ7t74GjNwkgpSp
-X-Google-Smtp-Source: AGHT+IEA0OaL7TmanWUylnGUWgTWQuYf/CJqzWPqvzO6FA5jN5lErx5NU1zG9Ikfn+WCvjv+it06lg==
-X-Received: by 2002:a17:902:d4cf:b0:20c:8b10:9660 with SMTP id d9443c01a7336-20fa9e9f824mr14785265ad.44.1729656125159;
-        Tue, 22 Oct 2024 21:02:05 -0700 (PDT)
-Received: from localhost (p4007189-ipxg22601hodogaya.kanagawa.ocn.ne.jp. [180.53.81.189])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f65c0sm49255125ad.289.2024.10.22.21.02.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 21:02:04 -0700 (PDT)
-Date: Wed, 23 Oct 2024 13:01:52 +0900 (JST)
-Message-Id: <20241023.130152.200800395770389333.fujita.tomonori@gmail.com>
-To: andrew@lunn.ch, anna-maria@linutronix.de, frederic@kernel.org,
- tglx@linutronix.de, jstultz@google.com, sboyd@kernel.org
-Cc: fujita.tomonori@gmail.com, netdev@vger.kernel.org,
- rust-for-linux@vger.kernel.org, hkallweit1@gmail.com, tmgross@umich.edu,
- ojeda@kernel.org, alex.gaynor@gmail.com, gary@garyguo.net,
- bjorn3_gh@protonmail.com, benno.lossin@proton.me, a.hindborg@samsung.com,
- aliceryhl@google.com, arnd@arndb.de, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next v3 0/8] rust: Add IO polling
-From: FUJITA Tomonori <fujita.tomonori@gmail.com>
-In-Reply-To: <8dfee5f3-98f6-4b84-8da7-0bf4c61bae24@lunn.ch>
-References: <20241016035214.2229-1-fujita.tomonori@gmail.com>
-	<8dfee5f3-98f6-4b84-8da7-0bf4c61bae24@lunn.ch>
+        d=1e100.net; s=20230601; t=1729656193; x=1730260993;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=fE9bH6h+Dp9Cy+4YV9E9TS1/FxNq1rWMOHkDfIVYSY8=;
+        b=G+cwPxdRqazKj1GdxRvG4G36qrPaPYMgoyea7yXN4lKNE9VEJHBU3Hcr0ELr5aqohj
+         ZNyUGpZz6MLpgY3EqDULk/eF340p9FeJBW2wT2+Y0dx0SHOD5hBF67ljq6fj4tY/Q0aU
+         SSYraPmyMNPhQJDsviBY5q4fycE7Drytj0Qoj26b9LdwsLgBHn3GRss9XsQGZAUK4NMQ
+         tCETeO81lK/OJdr1loerlCzaaK4a04OXhTeKWhP3ujcmvukuZ+CCCnyuhdZUgQjGQODD
+         NbiMGILSbeuo4reBU7wGA6KfRGkn7eaIpaL1vaxdc/6Mc6A38V9G0072sriiG2Gn8Dec
+         dSUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVXavQiDquedOgiEFY4fVMstRV+JgVTcZJmHwgXjk6WqgEp3T5DSUPHw1OunJ1xuhBZqK/LLwDbxLRjsvM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxOUvlb55mJIBWVpl+1nx+yJFXTIuunkc4fpiswo9auY/IEeqM4
+	xVemkfmAfsQDl7t5ztVYzFxUueRA5nAcz88fwAqgDfT4AiEyC/wT61EB0tWEPyks7oxu9n79AyN
+	5DgkXd5deIX3NUo+DGOXqrEOqj21RGjPbIXJjfPegcvkpQ3x9v2nrofwLS0hscg==
+X-Received: by 2002:a17:90b:4c4b:b0:2e2:e148:3d30 with SMTP id 98e67ed59e1d1-2e76b60d401mr1665037a91.23.1729656192763;
+        Tue, 22 Oct 2024 21:03:12 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IF7Nzd7b22QkSrSkT2X54oW0FrLiZkrnYmJFDKn3Ga/iSi3gYtHtDYeZYfv+zNxnl5T9y8tvQ==
+X-Received: by 2002:a17:90b:4c4b:b0:2e2:e148:3d30 with SMTP id 98e67ed59e1d1-2e76b60d401mr1664999a91.23.1729656192357;
+        Tue, 22 Oct 2024 21:03:12 -0700 (PDT)
+Received: from [192.168.68.54] ([180.233.125.129])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e088f1fsm273930a91.56.2024.10.22.21.03.05
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Tue, 22 Oct 2024 21:03:11 -0700 (PDT)
+Message-ID: <032d29e7-b6a3-4493-833b-a9b6d9496a75@redhat.com>
+Date: Wed, 23 Oct 2024 14:03:03 +1000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: Text/Plain; charset=us-ascii
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 02/43] kvm: arm64: pgtable: Track the number of pages
+ in the entry level
+To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
+ kvmarm@lists.linux.dev
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
+ Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
+ Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
+ <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
+ Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
+ Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+ Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
+ <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+References: <20241004152804.72508-1-steven.price@arm.com>
+ <20241004152804.72508-3-steven.price@arm.com>
+Content-Language: en-US
+From: Gavin Shan <gshan@redhat.com>
+In-Reply-To: <20241004152804.72508-3-steven.price@arm.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On Fri, 18 Oct 2024 16:26:54 +0200
-Andrew Lunn <andrew@lunn.ch> wrote:
-
-> On Wed, Oct 16, 2024 at 12:52:05PM +0900, FUJITA Tomonori wrote:
->> polls periodically until a condition is met or a timeout is reached.
->> By using the function, the 8th patch fixes QT2025 PHY driver to sleep
->> until the hardware becomes ready.
->> 
->> As a result of the past discussion, this introduces a new type
->> representing a span of time instead of using core::time::Duration or
->> time::Ktime.
->> 
->> Unlike the old rust branch, This adds a wrapper for fsleep() instead
->> of msleep(). fsleep() automatically chooses the best sleep method
->> based on a duration.
+On 10/5/24 1:27 AM, Steven Price wrote:
+> From: Suzuki K Poulose <suzuki.poulose@arm.com>
 > 
-> This patchset is > 95% time handling, and only a small part
-> networking. So i'm not sure netdev is the correct subsystem to merge
-> this.
+> Keep track of the number of pages allocated for the top level PGD,
+> rather than computing it every time (though we need it only twice now).
+> This will be used later by Arm CCA KVM changes.
+> 
+> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
+> Signed-off-by: Steven Price <steven.price@arm.com>
+> ---
+>   arch/arm64/include/asm/kvm_pgtable.h | 2 ++
+>   arch/arm64/kvm/hyp/pgtable.c         | 5 +++--
+>   2 files changed, 5 insertions(+), 2 deletions(-)
+> 
 
-The time handling code became much bigger than I expected.
+If we really want to have the number of pages for the top level PGDs,
+the existing helpers kvm_pgtable_stage2_pgd_size() for the same purpose
+needs to replaced by (struct kvm_pgtable::pgd_pages << PAGE_SHIFT) and
+then removed.
 
-I'll send the next version for the tip tree.
+The alternative would be just to use kvm_pgtable_stage2_pgd_size() instead of
+introducing struct kvm_pgtable::pgd_pages, which will be used in the slow
+paths where realm is created or destroyed.
 
-TIME-KEEPING/TIMERS maintainers, would you prefer this to go through
-the rust tree?
+> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
+> index 03f4c3d7839c..25b512756200 100644
+> --- a/arch/arm64/include/asm/kvm_pgtable.h
+> +++ b/arch/arm64/include/asm/kvm_pgtable.h
+> @@ -404,6 +404,7 @@ static inline bool kvm_pgtable_walk_lock_held(void)
+>    * struct kvm_pgtable - KVM page-table.
+>    * @ia_bits:		Maximum input address size, in bits.
+>    * @start_level:	Level at which the page-table walk starts.
+> + * @pgd_pages:		Number of pages in the entry level of the page-table.
+>    * @pgd:		Pointer to the first top-level entry of the page-table.
+>    * @mm_ops:		Memory management callbacks.
+>    * @mmu:		Stage-2 KVM MMU struct. Unused for stage-1 page-tables.
+> @@ -414,6 +415,7 @@ static inline bool kvm_pgtable_walk_lock_held(void)
+>   struct kvm_pgtable {
+>   	u32					ia_bits;
+>   	s8					start_level;
+> +	u8					pgd_pages;
+>   	kvm_pteref_t				pgd;
+>   	struct kvm_pgtable_mm_ops		*mm_ops;
+>   
+> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
+> index b11bcebac908..9e1be28c3dc9 100644
+> --- a/arch/arm64/kvm/hyp/pgtable.c
+> +++ b/arch/arm64/kvm/hyp/pgtable.c
+> @@ -1534,7 +1534,8 @@ int __kvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
+>   	u32 sl0 = FIELD_GET(VTCR_EL2_SL0_MASK, vtcr);
+>   	s8 start_level = VTCR_EL2_TGRAN_SL0_BASE - sl0;
+>   
+> -	pgd_sz = kvm_pgd_pages(ia_bits, start_level) * PAGE_SIZE;
+> +	pgt->pgd_pages = kvm_pgd_pages(ia_bits, start_level);
+> +	pgd_sz = pgt->pgd_pages * PAGE_SIZE;
+>   	pgt->pgd = (kvm_pteref_t)mm_ops->zalloc_pages_exact(pgd_sz);
+>   	if (!pgt->pgd)
+>   		return -ENOMEM;
+> @@ -1586,7 +1587,7 @@ void kvm_pgtable_stage2_destroy(struct kvm_pgtable *pgt)
+>   	};
+>   
+>   	WARN_ON(kvm_pgtable_walk(pgt, 0, BIT(pgt->ia_bits), &walker));
+> -	pgd_sz = kvm_pgd_pages(pgt->ia_bits, pgt->start_level) * PAGE_SIZE;
+> +	pgd_sz = pgt->pgd_pages * PAGE_SIZE;
+>   	pgt->mm_ops->free_pages_exact(kvm_dereference_pteref(&walker, pgt->pgd), pgd_sz);
+>   	pgt->pgd = NULL;
+>   }
+
+Thanks,
+Gavin
+
 
