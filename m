@@ -1,129 +1,114 @@
-Return-Path: <linux-kernel+bounces-377963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C0F6A9AC937
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:39:55 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 902799AC93A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:40:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 82227283055
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:39:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 51D55282161
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:40:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94AD81AB500;
-	Wed, 23 Oct 2024 11:39:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FAEE1AA7AF;
+	Wed, 23 Oct 2024 11:40:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wx08t3gY"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="2Jhrbdae"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E91021A7270;
-	Wed, 23 Oct 2024 11:39:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F4D91AAE34
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:40:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683572; cv=none; b=f5IC1pCpwnns2TsUZvpjiXJ41PvW37ulPk83XREI5dGLuM0+mj+WPooq1LAfmzG+Yl0SJRI8Jx2Fp1c2AowBm0JmnSqn1+gwwAVgfKai7yTGatFwjXsEnnL3FhlwiLvPpe/KSJJUfpqAc7/8FywmzLJm4lpHfBRwkJCEeZbDaI0=
+	t=1729683612; cv=none; b=gOAd8RO6U/eyUCtgqcyBhCJLYP2sx1oHujVBbi2fSx9xL5tW0CnYD5MyJ2J/x6SON72Hm4vYQj/gag70IHKKj+Ss4WiEIZoqfLMLwq5Kvi0ixkxOwDci//UwGbbY/XIdOqCWRu6CbpLrqGxwPTA8NCGI5/LeH7zrepVjYTSVa6g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683572; c=relaxed/simple;
-	bh=bDL6eDMtiWYBG/PDNAIbF9aHpR0tI4JPCN4Px8SOVdA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2rAxMXvpPwntZ6ABczg4DanKZf+iLyj8Yv58NERzgPHMoPFieu+xTBsX6/THM6DAxcs1YLJ4BKz6l9AEJ3xQBQYq/NAgOYX4cZJzdfCPybYmunhISXeL4NNkJI+vFkhdZsnlPHu/E8NAxiFIAhy4I/OrPvJCcN5jonuFkCe8PQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wx08t3gY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2D446C4CEC6;
-	Wed, 23 Oct 2024 11:39:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729683571;
-	bh=bDL6eDMtiWYBG/PDNAIbF9aHpR0tI4JPCN4Px8SOVdA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wx08t3gYAckdmM5+lTYgtZMCNtrQye91E/DnFFuTPSPBi0IjttE/ZC7GvpXXLoLLU
-	 9ju9+XcjrVYS8wKEKi4efhKl6LYXfSyLX7oiW+9DhUUVLyb7CZW3rMZaO6SXiB6HKE
-	 okKWvIkYxg9NL75ivTNAkz15gwCu70KZyVe15caUTTdtTznx85yCwQnjSSbZIUvQkD
-	 SBWgtzzVmy6FTrDB0qjqGFkrMHSU4eLhaz9NRjuoPVH2ftwjeBU7WXSXRTltiIHixF
-	 XXzoPQXtNDt/GD64bHozkGv05Bk14htDuYW6A6n87ILRlldLbTZcLFZzxQ82cQfebe
-	 VW2E1LseQGJyg==
-Date: Wed, 23 Oct 2024 07:39:29 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Kees Cook <kees@kernel.org>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, hch@infradead.org, broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <ZxjgcQPzpg1AnH6q@sashalap>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
- <Zxf3vp82MfPTWNLx@sashalap>
- <202410221225.32958DF786@keescook>
+	s=arc-20240116; t=1729683612; c=relaxed/simple;
+	bh=xl2DZrBDAwHAwD7yDt+ObJBK8xoU3J7UOJJvL65VD9U=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CgfZsIvNCpON6Giqwi5Oue+6q0CWmB3Vx1d/SM1u52o9+m2CjHt9+NJdp9hDP7Lf1c0r/ySf1HVRLuk6xVEuIQp46hJqnc6ZazrzDLdEkoZ5zEr952ZpvlxfPVjEfMb00sTcmItbL6CkBw6YKQKAtS7tQMKFqUmwx/E7hU7dyJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=2Jhrbdae; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431616c23b5so5577775e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 04:40:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729683609; x=1730288409; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=clO3ASdctIUJD5++Y7CTlIkog8RbQEY5Gg3bJn77ybg=;
+        b=2JhrbdaeNohkzmtJy1hok7Ec3sk9VQ81e46CdVfB2ViC1nSKZjzJItEGCMPhsCM7pH
+         xsRQgd60bYpbz5fOMxsTd2tqVqwh4HjBlNH0OXrLYDR7vq3rRNwgFN5HUjECekJNwJ/+
+         ltuA2jIn/ZbX51yetDX6sfKt7K8u3XgYgjMGGm0Oqb0uA/T1gUurS/xHuv0OMp1krnV5
+         Y451qh6zTQ1glp2xOuOlc10zLH5q2i0S/8fGGr5wbh/6FPOaMQJ6syqcSSqk1f5NT/Vk
+         0o6COy3qazx1rv1q5/NVmI34J8FIH3Bn/osCcafCfMzaLotZHzfIg5iQghn/2Km3d3vb
+         O5EA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729683609; x=1730288409;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=clO3ASdctIUJD5++Y7CTlIkog8RbQEY5Gg3bJn77ybg=;
+        b=J1bUsFlw2PmhE5hy2r8XvGcQLa7+Kydn7Qbjyb4Lb8Bx8z0ZruZqffuznH4pxlVu22
+         JjLzULF+QDwDENVkFgKaCIAHmUEHF4zRcJFOSOIFryxHgwNFc5NDrW0XUSZx2sXnJ7ri
+         zDVW6VoNFyqo/EDXEIpzlJLt9YtVt4aY5RN/+IrS0FLsUPcQsMS3r2lGPW+0CY4/dTiX
+         iFdBAya2j8EgKYe6op2U/Kap0ozq4rLZaFs7WHTTIeCOJfAtcKo9cYCRwFvUunYRlqAp
+         wpj7jl48vTZhVO8QY8ympQ47n6hIw8tmplPxQSedfHAywyT+oGZxNZg94gej+eFsYzmM
+         9QXg==
+X-Forwarded-Encrypted: i=1; AJvYcCVIbFR2vWZLXVNdRoWjfQ7JG1ZX/KJ/mwl55iDDfCHF491P0QVbPtlICq3e6yWcJPsmyTvS6rH/csjc35g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRLfpBHmROEH7O82gbgPgIv9gaW4vlvd3180nl0tdmyiWj3wzW
+	35TkGcZT8LbRS0dV+p6TK42vdzY63vdX8uIO1uXVgwREgns9ywgwN+JctjuDia+Qpmf2/vdo+ij
+	Qy9zthOlfKrOQCkobPLcmejzUl23nTr2T71fy
+X-Google-Smtp-Source: AGHT+IGWgw759kiGD66grzT26Z696gsA71jAmXE/eLn7Ey94LzdBGl3UV7M8+V5TtxEuYd1NAA9FNJeDVteYPGuXGco=
+X-Received: by 2002:a05:600c:354f:b0:431:57cf:f13d with SMTP id
+ 5b1f17b1804b1-43184337402mr14563655e9.3.1729683609114; Wed, 23 Oct 2024
+ 04:40:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <202410221225.32958DF786@keescook>
+References: <20241023113309.1724992-1-abdiel.janulgue@gmail.com> <20241023113309.1724992-2-abdiel.janulgue@gmail.com>
+In-Reply-To: <20241023113309.1724992-2-abdiel.janulgue@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 23 Oct 2024 13:39:55 +0200
+Message-ID: <CAH5fLgj7zYc6jg3vyqKNc85vkAvfgD1yqrUWj2-NcyR3kDPCbQ@mail.gmail.com>
+Subject: Re: [PATCH 1/2] rust: error: Add EOVERFLOW
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, a.hindborg@kernel.org, 
+	linux-kernel@vger.kernel.org, dakr@redhat.com, airlied@redhat.com, 
+	miguel.ojeda.sandonis@gmail.com, wedsonaf@gmail.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 12:30:38PM -0700, Kees Cook wrote:
->On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
->> On Tue, Oct 22, 2024 at 01:39:10PM -0400, Kent Overstreet wrote:
->> >
->> > The following changes since commit 5e3b72324d32629fa013f86657308f3dbc1115e1:
->> >
->> >  bcachefs: Fix sysfs warning in fstests generic/730,731 (2024-10-14 05:43:01 -0400)
->> >
->> > are available in the Git repository at:
->> >
->> >  https://github.com/koverstreet/bcachefs tags/bcachefs-2024-10-22
->>
->> Hi Linus,
->>
->> There was a sub-thread on the linus-next discussion around improving
->> telemetry around -next/lore w.r.t soaking time and mailing list reviews
->> (https://lore.kernel.org/all/792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org/).
->>
->> I've prototyped a set of scripts based on suggestions in the thread, and
->> wanted to see if you'd find it useful. A great way to test it out is with
->> a random pull request you'd review anyway :)
+On Wed, Oct 23, 2024 at 1:34=E2=80=AFPM Abdiel Janulgue
+<abdiel.janulgue@gmail.com> wrote:
 >
->This looks really nice to me! Maybe add top-level grade ("B-") based on
->the stats available. You can call it the Nominal Acceptance Grade bot
->(NAGbot). Can so that everyone will pay attention, declare that it is an
->LLM (Large Linus Model).
-
-This is something we need to figure out. If we do do this, then we need
-to figure out how to score, and scoring should be different between
-merge window and -rc cycles (heck, it should probably be different
-between -rc cycles themselves).
-
->I'd include a count summary "(5 of 26: 19%)"
-
-Ack
-
->> --------------------
->> a069f014797fd bcachefs: Set bch_inode_unpacked.bi_snapshot in old inode path
->> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
->> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
->> 3956ff8bc2f39 bcachefs: Don't use wait_event_interruptible() in recovery
->> eb5db64c45709 bcachefs: Fix __bch2_fsck_err() warning
+> Trivial addition for missing EOVERFLOW error.
 >
->And then maybe limit this to 5 or 10 (imagine a huge PR like netdev or
->drm).
-
-They should never have a huge number of commits here. I think it's
-better to just let it explode.
-
->>
->>
->> Commits that weren't found on lore.kernel.org/all:
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  rust/kernel/error.rs | 1 +
+>  1 file changed, 1 insertion(+)
 >
->"(9 of 26: 35%)"
+> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
+> index 7cd3bbab52f2..92bfdaaedb02 100644
+> --- a/rust/kernel/error.rs
+> +++ b/rust/kernel/error.rs
+> @@ -63,6 +63,7 @@ macro_rules! declare_err {
+>      declare_err!(EPIPE, "Broken pipe.");
+>      declare_err!(EDOM, "Math argument out of domain of func.");
+>      declare_err!(ERANGE, "Math result not representable.");
+> +    declare_err!(EOVERFLOW, "Value too large for defined data type.");
+>      declare_err!(ERESTARTSYS, "Restart the system call.");
+>      declare_err!(ERESTARTNOINTR, "System call was interrupted by a signa=
+l and will be restarted.");
+>      declare_err!(ERESTARTNOHAND, "Restart if no handler.");
 
-Ack.
+The commit message should explain why you're adding it. What will you
+use it for?
 
->Nice work!
-
-Thanks!
-
--- 
-Thanks,
-Sasha
+Alice
 
