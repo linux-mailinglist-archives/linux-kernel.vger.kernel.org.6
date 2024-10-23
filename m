@@ -1,80 +1,115 @@
-Return-Path: <linux-kernel+bounces-377504-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377511-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1669ABFB3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:05:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0A419ABFCC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:07:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 76C1F1F24CCF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:05:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C06CB247C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:07:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 823B014AD3D;
-	Wed, 23 Oct 2024 07:05:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33B214BF87;
+	Wed, 23 Oct 2024 07:06:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="axsJdf++"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6mu6TY+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB34417741
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:05:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F70156257;
+	Wed, 23 Oct 2024 07:06:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667139; cv=none; b=YNqs9pPXU/Y/dpnC7Rs1HLilpVYJIsrZyJI/0HgTULE7yMrw1GaqrVMUKB6A0+f1gsN8NCUu+HYNGc9GjFlHj/+wQg1GZ8/MkgwmMbycfM3pkrMMYj2YOfdarJNIfsX5pmGux827RJC+qH8R7fjB5AhXxJTWeQtDQ0n6sksC+AQ=
+	t=1729667200; cv=none; b=O3ywPD6RBjq7+pdNtMOH0KG5j4EqcE5PJ2bp3bgg1qGjKkc1TtBTqRiwQok3ymsmV67TEKhMtNvXTdrnAbgzlWkEvePsKGQMJopBVx+olicbW6pQri8WIu0pTm8wvk3r+N88ZoqN8tpGjgJ/hj2ANhlXvKi/KhGCIqGxH52DCsA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667139; c=relaxed/simple;
-	bh=OsniFanEL3Dgve+4KzzT7EAoH3kZ5d6NkRqH3plnZ1Q=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ieYJHI9dnQ0zipkQpLIi7gB1JSXmk6CcfJdaYJDuRi1UzVJdm63CTD92Owv0vKaDcV0ap+fyugcBaxC9bic722N9LoDS268q3OOGB76E/xl7sIfU4phHNFab3zkddaSpp7y7zdvifgfGHz64dJ5Bzy57u2HFPCurKRiRUDcLeS8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=axsJdf++; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=OsniFanEL3Dgve+4KzzT7EAoH3kZ5d6NkRqH3plnZ1Q=; b=axsJdf++TYblxJFfvZHsCQtSTp
-	MFJ5Gxp14AVOdhtYdxkRFm8vryrPFsEi3fIjHT96PlIJtkZZioF2nlRsYPK5tVbpctQnbtaOlqZ0n
-	iuBk1H1nBxYpBi8GHn6YHvYiC0ac5s+OeIZFdRkO9q67e2ToXiuIXTjGQQfOpGk/VSJLgMA6aVcjW
-	hippYP3b54zou+kYzX2BvcC6en3rF9Ax2G2GpjLirInZQj2jS9XtoKny7UditWXN6NpYI5h8nEDfA
-	U+9nQ6JI++Ssg8+4agqW7i1VR7UzGbkv9gkpr+Cxrrspa17xCup7qUO1PpgCJZM/Xy8oDDDdFVlS/
-	PRI3LnGg==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3VR2-0000000DJkM-4A3y;
-	Wed, 23 Oct 2024 07:05:36 +0000
-Date: Wed, 23 Oct 2024 00:05:36 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
-	Andrey Konovalov <andreyknvl@gmail.com>,
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
-Message-ID: <ZxigQIF59s3_h5PS@infradead.org>
-References: <20241018151112.3533820-1-arnd@kernel.org>
- <ZxidW3lvA5Pqu71m@infradead.org>
- <CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com>
- <Zxiev9UaoUlI1xs9@infradead.org>
- <CANpmjNPvBnov-EFk1PNO4GEOF7XLG7S1bYYjg9i4Ej=ZzaA6ag@mail.gmail.com>
+	s=arc-20240116; t=1729667200; c=relaxed/simple;
+	bh=cUjvW1wTsKGH7I8VyS4QMqzWOtCeG2GqAEWy+jvkqjY=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BgLSSjrIbdPrjcxIiWKA3FjLR9cQ+YBY0MEkvToHO88kC0njDg9EdvA+FD0FKK/3wIkLuNb+b4RAOIN7kcU9gp9NU9LYBhyYrGz7fqtCNsexK2/SS+iHXPVIl/ZsZXOS4TPf4/ritVcGoWSRzjSGJIe03IUQE11+wr3TloYtLyA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6mu6TY+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD336C4CEEA;
+	Wed, 23 Oct 2024 07:06:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729667199;
+	bh=cUjvW1wTsKGH7I8VyS4QMqzWOtCeG2GqAEWy+jvkqjY=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=r6mu6TY+k/tA38zp47MTMaUVE6oCizdBoZvZEiKtO65vJF+Fe58GmMna6LMXMvWnZ
+	 JLLJel5kp+qxM+/inz3VBb7X4HfItgg3xN3Bfn2APhI1FxzhybFEjZ036jABotn2BS
+	 xnGg3Nvy8b3zRWM2/JqYkHamghNxbldg3EtxGBgiYv4AbY+G6Ln7/wJTZ3B8Po9z6g
+	 Z1i9hYsuxpzFqTOos1rsP/Edvmxbz0Z6/as5e8MmLjUx68R/EP0+oKbmI6z8gCWx16
+	 dnK7YYBy8+KfEihEvLVt4OxOVkD8zblrncWw/SugBJStTVkU0z1FdWjMi8ceSFD5fL
+	 bSrSAoezAATtg==
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f53973fdso493658e87.1;
+        Wed, 23 Oct 2024 00:06:39 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVFpGrrPoWU2xL3ixUed5/c9+M3VixjEIEuL4KIMEaD9yUVRxTqOOSGMFOjbDG0FQJRUuo2uIUf6i4WZKqg@vger.kernel.org, AJvYcCVOCw9rdZRVqk0wXXGExtG5wBWsEm2yEePkg6CGEm4ubIhBLKYq8ymCNwgZzJ5oO6uXiOJcA/2IXHj+@vger.kernel.org, AJvYcCVtpdiZmmM2SGAld1nEsu7+12Q76Gm7gnDU3RJCbbDXJWFZmp/t8G+ux7iNYKHZxOZYJceFC0jsD3O2Dgyl@vger.kernel.org, AJvYcCWZOtmj+AGY5oKroHp0msiRM9h1scBOGqgoxh2ntEerM5LLor0Hg2E+XwgUzD1JGBDMT96HQB+g8j7I@vger.kernel.org, AJvYcCXYwjgqSC2PnnH23vOsB5ItDhU2XSouRuLjOIcTYbP5zIBS7tfOvHjgQlfs1XCohPqKKl/rKiBxts40@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMYoL0WLi+87SW8rJdIoaFm3evY6MXXyydcMR+OIau8v1I+ODT
+	M0o9uqzRkJWGc1MILSkXEUaBt445cMyrgcOJdH/h2CC5Rv4bWTqCS3LCwLTAiXDPMTG0Xq+Ve8b
+	91yK2sJfdytM+uJkpipsIoPiWq2g=
+X-Google-Smtp-Source: AGHT+IHZZgwVgaRO2Hdyj/zbCtAei+RMhbCGrZN9DeetcAzH9eNLU1+5ofJFfDj8eJ/Gl5I1LCwT7/RZ/5W1ROK9gGg=
+X-Received: by 2002:a05:6512:2812:b0:539:f6b1:2d05 with SMTP id
+ 2adb3069b0e04-53b1317f334mr2048779e87.9.1729667198330; Wed, 23 Oct 2024
+ 00:06:38 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNPvBnov-EFk1PNO4GEOF7XLG7S1bYYjg9i4Ej=ZzaA6ag@mail.gmail.com>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-7-xur@google.com>
+ <CAK7LNARfm7HBx-wLCak1w0sfH7LML1ErWO=2sLj4ovR38RsnTA@mail.gmail.com> <CAF1bQ=Qi9hyKbc5H3N36W=MukT3321rZMCas0ndpRf0YszAfOA@mail.gmail.com>
+In-Reply-To: <CAF1bQ=Qi9hyKbc5H3N36W=MukT3321rZMCas0ndpRf0YszAfOA@mail.gmail.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 23 Oct 2024 16:06:02 +0900
+X-Gmail-Original-Message-ID: <CAK7LNAQr_EusZyy-dPcV=5o9UckStaUfXLSCQh7APbYh15NC3w@mail.gmail.com>
+Message-ID: <CAK7LNAQr_EusZyy-dPcV=5o9UckStaUfXLSCQh7APbYh15NC3w@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] Add Propeller configuration for kernel build.
+To: Rong Xu <xur@google.com>
+Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
+	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
+	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
+	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
+	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
+	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
+	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
+	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
+	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
+	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
+	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
+	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
+	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
+	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
+	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 09:02:23AM +0200, Marco Elver wrote:
-> Another alternative is to just #ifndef MODULE the offending test case,
-> so it's only available if built-in. No need to just make the whole
-> test built-in only. I know there are users of this particular test
-> that rely on it being a module.
+On Tue, Oct 22, 2024 at 9:00=E2=80=AFAM Rong Xu <xur@google.com> wrote:
 
-That sounds good to me.
+> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > > +
+> > > +Configure the kernel with::
+> > > +
+> > > +   CONFIG_AUTOFDO_CLANG=3Dy
+> >
+> >
+> > This is automatically met due to "depends on AUTOFDO_CLANG".
+>
+> Agreed. But we will remove the dependency from PROPELlER_CLANG to AUTOFDO=
+_CLANG.
+> So we will keep the part.
+
+
+You can replace "depends on AUTOFDO_CLANG" with
+"imply AUTOFDO_CLANG" if it is sensible.
+
+Up to you.
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
