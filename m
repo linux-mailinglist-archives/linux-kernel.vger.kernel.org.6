@@ -1,115 +1,126 @@
-Return-Path: <linux-kernel+bounces-377410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAAC79ABE73
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:11:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id D399B9ABE76
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:12:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9551B1F214EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:11:39 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6F7E9B2461B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:12:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 841F81474D9;
-	Wed, 23 Oct 2024 06:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ICd5Xtf4"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D1DBEAC5;
-	Wed, 23 Oct 2024 06:11:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14841482E7;
+	Wed, 23 Oct 2024 06:12:44 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0435E1474C5;
+	Wed, 23 Oct 2024 06:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729663892; cv=none; b=L6IZx0e8Fuk3obmSnotuw/hsy+Xqvyl0uD4zljjQoz1cku6BTh83rWoDp6Tom2Ou8DJ2+NM1t8/wM9nV5STCy1KxVZ9N/XAOmKuQ/T11KoKf6AnRi3bk6cvhoBvHvQTh7ELfPxlvWivtFhnW8eGPgWaMGN+ky9WqTaRRyh+Sd7o=
+	t=1729663964; cv=none; b=E5TfmXuGWewA/eyONLxSx1r58zTEuTzf3HVamkR0r9GrgfOu86JbE1fwR2rTkUILyZavmKf5ySO7TVqogZ1ho7JWc0QLbByxglWA5HZe8A0OM5k3ZrOcec0mmA5zCxmovvif9x8M7tw2SRuOqMKFEkIpSRsNCdI2xxRq4ZmRMOM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729663892; c=relaxed/simple;
-	bh=0QCLUlm8v15+aWRNMVm0cX6XDb430gG0r+9EMsreD+U=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=T+tbeEoSmfJAQU6RVSvdc2LE/Xc9HSEYdtW6UOBnwK4GQx9W4bqt+3UE+7XNu4ns52rPMwzFPFNanZjlgjhy6x5/FgQjN+nAYZnZxs1YWMTxB3/cakvdENKTzsCpJmE+9YXlS2fqzCnVpYrP2A++b3yZrrRNhhq9y2hIvpGs0k4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ICd5Xtf4; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20cd76c513cso53817835ad.3;
-        Tue, 22 Oct 2024 23:11:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729663890; x=1730268690; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=N6EFI9tqsrpEEu6NwL7Z+5Ve3RfER5b3SfcI5LbP/Pg=;
-        b=ICd5Xtf44EEViv7HovcCxpj3eNp8oTWm9qBAJGRAsVaryzeQQojmU8fFA3d+2uKxMa
-         9WMOEH6bmxM9DTk3BTHbqdE2Y2QWjhzOPNVkG9mGMOnRYlORfTnvaA1hUX4KawB3+ZX0
-         xQfNrLzsgi+WB9uh3E06dxLvxu3V7If5N6ZWY64j/vLAp/+3lbz47xJSw9dEbXpFGPTJ
-         aIcPF+023TtPSKyGrSi/nRylXqrCJMJ6/haGYW7b4yBh+HKHc8qCRJygqICwsgR0Whgy
-         Rs/EZfi7z8tmG8QCy+wWZjh/g7TdFPiKjTgIJDrKfXSoLYxdG+Gcf1FBcCtg6z0XWdL3
-         V7MQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729663890; x=1730268690;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=N6EFI9tqsrpEEu6NwL7Z+5Ve3RfER5b3SfcI5LbP/Pg=;
-        b=UKXmdjEb4t2OVzTbta03+xwuRwubz2fS5RBgRCYcQuT5tjwa9B3CgkkchM61s36kQj
-         Lpg2IXY3mx0RfCnbokaEpaY6JJPlg6j37dXjHWZQ7hcWyBjodcWH7wbrOpwI25q0wANl
-         jbF3X3fhshxEQ1SVNGESzYv0pW3whlykRQOUh0Kd7PscpRQ+tsPG8BKFwzRdVKGIzK3f
-         SKCxanleLa47bxR8lwz8dKv5gPN1ILR0Jp9AZqtWNkEJJUVEAGyRr4BxB+RT6huUS95t
-         awW79csgmYR5pza0C5439+nEIM6ZxWbHabvQKOpn8vkvULhsimNqP4E4Z4xpbmyg3YEB
-         yZjg==
-X-Forwarded-Encrypted: i=1; AJvYcCUGpQqXq6323hTkK3PIK4v3vWIq2Ryot8dhhsh0sTl+2kRUZ4apzdEr304u/ThFBa2v5c96dxAJYg==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw7MltAlTz7DvNhG8vcRzWpAIHJqHHWScLWvJ60uZ+qp1zbeOko
-	4pQBxoL+uT8FPXivUkENfcCbAWsV5L8EeBG39NI5E9O8Tsm2KAFt
-X-Google-Smtp-Source: AGHT+IFyEDDoFDa/N0jty/nCuSN2nZiQsDh94bhP1FLD4nrvCSFchFWHIh5DcW4EZTByQDm3/A98Lg==
-X-Received: by 2002:a17:903:40d1:b0:20c:b0c7:92c9 with SMTP id d9443c01a7336-20fa9e5fd6dmr19310735ad.34.1729663889806;
-        Tue, 22 Oct 2024 23:11:29 -0700 (PDT)
-Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:f4d0:e3e8:aee:c08a])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee62dcsm50964255ad.27.2024.10.22.23.11.28
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Oct 2024 23:11:29 -0700 (PDT)
-From: anish kumar <yesanishhere@gmail.com>
-To: sre@kernel.org
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH] power: supply: generic-adc-battery: change my gmail
-Date: Tue, 22 Oct 2024 23:11:26 -0700
-Message-Id: <20241023061126.7896-1-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
+	s=arc-20240116; t=1729663964; c=relaxed/simple;
+	bh=twiQzg1Oa5LTaB3x2sQsswtsvf3SR+HF2iDL0w8tdxc=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iBC+wO5k3a8fQ+83jA1Tl2+i59MIF+8mlg5n8IoSkc+zxVZJybOMVl99BT4flnoh+jcWMyA4xyAdWhn2ybSGDVzDiDVaKsbUFT6qX9ISLzHQuz8B2J4utz17YqLtPuLUrCsyFf2ZWSoeorPB7ioXFXnx/ObnyuGUfIfqLolKe0E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 11B83339;
+	Tue, 22 Oct 2024 23:13:12 -0700 (PDT)
+Received: from [10.163.41.228] (unknown [10.163.41.228])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 8ADE93F73B;
+	Tue, 22 Oct 2024 23:12:38 -0700 (PDT)
+Message-ID: <72700154-cbf4-4a0a-b6e2-6f0709dec0ce@arm.com>
+Date: Wed, 23 Oct 2024 11:42:37 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] arm64/boot: Enable EL2 requirements for
+ FEAT_Debugv8p9
+To: Mark Rutland <mark.rutland@arm.com>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+ Oliver Upton <oliver.upton@linux.dev>, James Morse <james.morse@arm.com>,
+ Suzuki K Poulose <suzuki.poulose@arm.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Mark Brown <broonie@kernel.org>, kvmarm@lists.linux.dev,
+ linux-doc@vger.kernel.org
+References: <20241001043602.1116991-1-anshuman.khandual@arm.com>
+ <20241001043602.1116991-3-anshuman.khandual@arm.com>
+ <ZxfOeqyb3RvsdYbU@J2N7QTR9R3>
+Content-Language: en-US
+From: Anshuman Khandual <anshuman.khandual@arm.com>
+In-Reply-To: <ZxfOeqyb3RvsdYbU@J2N7QTR9R3>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-change my contact in this driver.
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
- drivers/power/supply/generic-adc-battery.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/power/supply/generic-adc-battery.c b/drivers/power/supply/generic-adc-battery.c
-index 7bdc6b263609..d5d215f5ad8b 100644
---- a/drivers/power/supply/generic-adc-battery.c
-+++ b/drivers/power/supply/generic-adc-battery.c
-@@ -1,7 +1,7 @@
- // SPDX-License-Identifier: GPL-2.0
- /*
-  * Generic battery driver using IIO
-- * Copyright (C) 2012, Anish Kumar <anish198519851985@gmail.com>
-+ * Copyright (C) 2012, Anish Kumar <yesanishhere@gmail.com>
-  * Copyright (c) 2023, Sebastian Reichel <sre@kernel.org>
-  */
- #include <linux/interrupt.h>
-@@ -295,6 +295,6 @@ static struct platform_driver gab_driver = {
- };
- module_platform_driver(gab_driver);
- 
--MODULE_AUTHOR("anish kumar <anish198519851985@gmail.com>");
-+MODULE_AUTHOR("anish kumar <yesanishhere@gmail.com>");
- MODULE_DESCRIPTION("generic battery driver using IIO");
- MODULE_LICENSE("GPL");
--- 
-2.39.3 (Apple Git-146)
+On 10/22/24 21:40, Mark Rutland wrote:
+> On Tue, Oct 01, 2024 at 10:06:01AM +0530, Anshuman Khandual wrote:
+>> Fine grained trap control for MDSELR_EL1 register needs to be configured in
+>> HDFGRTR2_EL2, and HDFGWTR2_EL2 registers when kernel enters at EL1, but EL2
+>> is also present. This adds a new helper __init_el2_fgt2() initializing this
+>> new FEAT_FGT2 based fine grained registers.
+>>
+>> MDCR_EL2.EBWE needs to be enabled for additional (beyond 16) breakpoint and
+>> watchpoint exceptions when kernel enters at EL1, but EL2 is also present.
+>> This updates __init_el2_debug() as required for FEAT_Debugv8p9.
+>>
+>> While here, also update booting.rst with MDCR_EL3 and SCR_EL3 requirements.
+> 
+> [...]
+> 
+>> +  For CPUs with FEAT_Debugv8p9 extension present:
+>> +
+>> +  - If the kernel is entered at EL1 and EL2 is present:
+>> +
+>> +    - HDFGRTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
+>> +    - HDFGWTR2_EL2.nMDSELR_EL1 (bit 5) must be initialized to 0b1
+>> +    - MDCR_EL2.EBWE (bit 43) must be initialized to 0b1
+>> +
+>> +  - If EL3 is present:
+>> +
+>> +    - MDCR_EL3.TDA (bit 9) must be initialized to 0b0
+> 
+> AFAICT we need TDA==0 this regardless of FEAT_Debugv8p9 (and e.g. we need
 
+That's because MDCR_EL3.TDA=0, enables access to many other debug registers
+beside FEAT_Debugv8p9, which are currently used and hence this MDCR_EL3.TDA
+=0 requirement is a not a new one but rather a missing one instead ?
+
+> MDCR_EL3.TPM==0 where FEAT_PMUv3 is implemented), so we should probably
+> check if there's anything else we haven't yet documented in MDCR_EL3.
+
+Will scan through MDCR_EL3 register and match it with existing documentation
+i.e Documentation/arch/arm64/booting.rst. If there are some missing MDCR_EL3
+fields which should be mentioned, will add them via a separate pre-requisite
+patch ?
+
+> 
+> [...]
+> 
+>>  .Lskip_trace_\@:
+>> +	mrs	x1, id_aa64dfr0_el1
+>> +	ubfx	x1, x1, #ID_AA64DFR0_EL1_DebugVer_SHIFT, #4
+>> +	cmp	x1, #ID_AA64DFR0_EL1_DebugVer_V8P9
+>> +	b.lt	.Lskip_dbg_v8p9_\@
+>> +
+>> +	mov	x0, #MDCR_EL2_EBWE
+>> +	orr	x2, x2, x0
+> 
+> That can be:
+> 
+> 	orr	x2, x2, #MDCR_EL2_EBWE
+
+Right, will change.
+
+> 
+> Mark.
 
