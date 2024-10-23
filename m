@@ -1,51 +1,95 @@
-Return-Path: <linux-kernel+bounces-377727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DCC79AC32A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:11:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 271949AC32B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:11:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 40DFF281088
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:11:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D47D1C20A92
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:11:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40CB21946C4;
-	Wed, 23 Oct 2024 09:11:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E7D8717B51A;
+	Wed, 23 Oct 2024 09:11:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="0VZg0Fvt"
-Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lVcI31Cn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PVc6G93g";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lVcI31Cn";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="PVc6G93g"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C20415F330;
-	Wed, 23 Oct 2024 09:11:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A84B4174A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:11:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674691; cv=none; b=DLds3miTRxq+Z4aOcNj5quDGxfhnyDRFKy1xuJAY5K0aK/Dc+INFzJ5FwSDEaFwnXRIcu6epFc88t2zjnl1UrZKQaFhumFbLT3GM9RuBoiSfwnvCbhKIcHj2xzHm+XBpHxaA302QD+7VeumUDQTFGfwduSTkLp2BgGICpphBsSQ=
+	t=1729674710; cv=none; b=rNu/4RTM6C9XfBnzzQndfw+ThXo85blYCMvBy1o/YWNlyeRxVnolsstlMpK/1g3j9Z22tPVgMbM2ZZGAPV4GiWnA0It9CLDBZhdK0tIoCgGcLni2cFsIyeJnnnIWrhB52CCf/IoMjbzkp2JtmQz0h38WY45hQMnduv3/a0jJrjk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674691; c=relaxed/simple;
-	bh=WGx7Tarp0BmupSMXd5gBDlD6bEjKjOIYqL5ojiHhZoY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=dyYVr5227y0S3OMx4kFq3MY26yMEy+tHwFTkPVP0HPd8uSUeyxas3IARySSq58hDDbqU2hHir+DrHtSGqkr2MESeCrsNLtOCRNJwTLLYrmj7xei0n6nVfcjfkfa2DFKsEgnfK9JoMBYf/oWUMrqCk0Z3D5/l3OVbp0S6RrNhfnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=0VZg0Fvt; arc=none smtp.client-ip=80.237.130.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:
-	In-Reply-To:References:Reply-To:Cc:To:From:Subject:MIME-Version:Date:
-	Message-ID:From:Sender:Reply-To:Subject:Date:Message-ID:To:Cc:MIME-Version:
-	Content-Type:Content-Transfer-Encoding:Content-ID:Content-Description:
-	In-Reply-To:References; bh=yrOFcq3pQeSmFJGAhQX43gag3cRloi4K5j2bHRXHL3Q=;
-	t=1729674689; x=1730106689; b=0VZg0FvtunHC4HYXTtrm2Wpo5OOIfM3hPz4F+jFZOKIZewh
-	tLfLSFR7NoBvRWW53ZUK6Lzfd2zJzmzzKP9ZEEBGBYnzaoxopnxGyAJi4bR4vGh75qY9TR+1tlC6n
-	kzYa90yUxsp5JZzbvZ460n+OO5HCSNE5uLgOoxwRIE/MFtzJP/fjkvPKJHcW5tGExbD4d8KljjyAp
-	N4IRco+yaITAqlMbjS2zK2Ej0mvRotYX5JpfPJ2n4AmOedQ1F9RvebjVHNEv3lMLVJkAgrmVYzKpw
-	OFxrDUyFsSZ10sFpd27Nn2ORXEA+S0PxaTdF+OrekBBBT8U0JKUW4HqHpzzNC6vQ==;
-Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
-	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	id 1t3XOk-0003yd-0l; Wed, 23 Oct 2024 11:11:22 +0200
-Message-ID: <8de3cde0-2f20-4ca5-a70c-deb954f28fce@leemhuis.info>
-Date: Wed, 23 Oct 2024 11:11:21 +0200
+	s=arc-20240116; t=1729674710; c=relaxed/simple;
+	bh=9/cV4Z4GHlatQrwH1l52y0LUjw/sTD6GWrxaa2bNLog=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pVe3v2CPOZs2hYO7ZPK8eNamoJdQrmz6LT+5RUE1IDBr4lRiJ/jhxranDEZ7QmFtIf1DrrNeprFoWIOYzB1HLvLXZ2zsV/3NCxZE9XNBajSn7eXv4NIawJEJSpegGTGi79gXb9l7HOLMR5nBdNZQEegWaKCvTbJEx7FtZYFQ2TE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lVcI31Cn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PVc6G93g; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lVcI31Cn; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=PVc6G93g; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 97A611FD91;
+	Wed, 23 Oct 2024 09:11:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729674706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cVzGJfddetG2OWmpzk6SpET1KPK32seRPwPUmrODCPk=;
+	b=lVcI31Cn//YfzPOXQs53egqFqTEwSMKmKHKBa3krZeyxSgSvhkOMnkFEKZ18CKTgYBU63D
+	7oS5xhGpfN7HbYYf2ST1bZQpIn4+l9VbEVu2f1OImHpAXHAEloDApFjiGut9SOrQuYHtq5
+	Rg3AUtYkQlMKh5ZGoQU0bB0TuCe+fDM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729674706;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cVzGJfddetG2OWmpzk6SpET1KPK32seRPwPUmrODCPk=;
+	b=PVc6G93gJm1JeNbNzrE8NFEGIuKsiqbnvEPymKZ/9EMiE+LGIH/6q5/RClLgC3eFaJzW1W
+	eI6lHVUrWUc0qVBw==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=lVcI31Cn;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=PVc6G93g
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729674706; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cVzGJfddetG2OWmpzk6SpET1KPK32seRPwPUmrODCPk=;
+	b=lVcI31Cn//YfzPOXQs53egqFqTEwSMKmKHKBa3krZeyxSgSvhkOMnkFEKZ18CKTgYBU63D
+	7oS5xhGpfN7HbYYf2ST1bZQpIn4+l9VbEVu2f1OImHpAXHAEloDApFjiGut9SOrQuYHtq5
+	Rg3AUtYkQlMKh5ZGoQU0bB0TuCe+fDM=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729674706;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cVzGJfddetG2OWmpzk6SpET1KPK32seRPwPUmrODCPk=;
+	b=PVc6G93gJm1JeNbNzrE8NFEGIuKsiqbnvEPymKZ/9EMiE+LGIH/6q5/RClLgC3eFaJzW1W
+	eI6lHVUrWUc0qVBw==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 82CCA13A63;
+	Wed, 23 Oct 2024 09:11:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 0J+QH9K9GGf0JgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 23 Oct 2024 09:11:46 +0000
+Message-ID: <f61a98aa-cb06-46c6-ade1-93b1277bd5d3@suse.cz>
+Date: Wed, 23 Oct 2024 11:11:46 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -53,158 +97,127 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [Regression] wifi problems since tg3 started throwing rcu stall
- warnings
-From: "Linux regression tracking (Thorsten Leemhuis)"
- <regressions@leemhuis.info>
-To: Frederic Weisbecker <frederic@kernel.org>
-Cc: Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>, Mingcong Bai <jeffbai@aosc.io>,
- "Paul E. McKenney" <paulmck@kernel.org>, rcu <rcu@vger.kernel.org>,
- Pavan Chebbi <pavan.chebbi@broadcom.com>, Michael Chan <mchan@broadcom.com>,
- netdev <netdev@vger.kernel.org>,
- "linux-wireless@vger.kernel.org" <linux-wireless@vger.kernel.org>
-Reply-To: Linux regressions mailing list <regressions@lists.linux.dev>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-References: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
-Content-Language: en-US, de-DE
-In-Reply-To: <b8da4aec-4cca-4eb0-ba87-5f8641aa2ca9@leemhuis.info>
+Subject: Re: [PATCH hotfix 6.12 1/8] mm: avoid unsafe VMA hook invocation when
+ error arises on mmap hook
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
+ <jannh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
+References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
+ <ddc1e43edbb1e8717c2be7fde96b682d8a898836.1729628198.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <ddc1e43edbb1e8717c2be7fde96b682d8a898836.1729628198.git.lorenzo.stoakes@oracle.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
-X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729674689;383787ce;
-X-HE-SMSGID: 1t3XOk-0003yd-0l
+X-Rspamd-Queue-Id: 97A611FD91
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-0.998];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.cz:mid];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-[reply to self to CC the tg3 maintainers, netdev, and linux-wireless;
-sorry, forgot them earlier, but they should be involved, as I guess this
-is a problem in tg3 interfering with wifi drivers that the rcu change
-just exposed]
+On 10/22/24 22:40, Lorenzo Stoakes wrote:
+> After an attempted mmap() fails, we are no longer in a situation where we
+> can safely interact with VMA hooks. This is currently not enforced, meaning
+> that we need complicated handling to ensure we do not incorrectly call
+> these hooks.
+> 
+> We can avoid the whole issue by treating the VMA as suspect the moment that
+> the file->f_ops->mmap() function reports an error by replacing whatever VMA
+> operations were installed with a dummy empty set of VMA operations.
+> 
+> We do so through a new helper function internal to mm - mmap_file() - which
+> is both more logically named than the existing call_mmap() function and
+> correctly isolates handling of the vm_op reassignment to mm.
+> 
+> All the existing invocations of call_mmap() outside of mm are ultimately
+> nested within the call_mmap() from mm, which we now replace.
+> 
+> It is therefore safe to leave call_mmap() in place as a convenience
+> function (and to avoid churn). The invokers are:
+> 
+>      ovl_file_operations -> mmap -> ovl_mmap() -> backing_file_mmap()
+>     coda_file_operations -> mmap -> coda_file_mmap()
+>      shm_file_operations -> shm_mmap()
+> shm_file_operations_huge -> shm_mmap()
+>             dma_buf_fops -> dma_buf_mmap_internal -> i915_dmabuf_ops
+> 	                    -> i915_gem_dmabuf_mmap()
+> 
+> None of these callers interact with vm_ops or mappings in a problematic way
+> on error, quickly exiting out.
+> 
+> Reported-by: Jann Horn <jannh@google.com>
+> Fixes: deb0f6562884 ("mm/mmap: undo ->mmap() when arch_validate_flags() fails")
+> Cc: stable <stable@kernel.org>
+> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
 
-On 23.10.24 10:27, Linux regression tracking (Thorsten Leemhuis) wrote:
-> Hi, Thorsten here, the Linux kernel's regression tracker.
-> 
-> Frederic, I noticed a report about a regression in bugzilla.kernel.org
-> that appears to be caused by the following change of yours:
-> 
-> 55d4669ef1b768 ("rcu: Fix rcu_barrier() VS post CPUHP_TEARDOWN_CPU
-> invocation")
-> 
-> As many (most?) kernel developers don't keep an eye on the bug tracker,
-> I decided to write this mail. To quote from
-> https://bugzilla.kernel.org/show_bug.cgi?id=219390:
-> 
->>  Mingcong Bai 2024-10-15 13:32:35 UTC
->>
->> Since aa162aa4aa383a0a714b1c36e8fcc77612ddd1a2 between v6.10.4 and
->> v6.10.5, the Broadcom Tigon3 Ethernet interface (tg3) found on Apple
->> MacBook Pro (15'', Mid 2010) would throw many rcu stall errors during
->> boot up, causing peripherals such as the wireless card to misbehave:
->>
->> [   24.153855] rcu: INFO: rcu_preempt detected expedited stalls on CPUs/tasks: { 2-.... } 21 jiffies s: 973 root: 0x4/.
->> [   24.166938] rcu: blocking rcu_node structures (internal RCU debug):
->> [   24.177800] Sending NMI from CPU 3 to CPUs 2:
->> [   24.183113] NMI backtrace for cpu 2
->> [   24.183119] CPU: 2 PID: 1049 Comm: NetworkManager Not tainted 6.10.5-aosc-main #1
->> [   24.183123] Hardware name: Apple Inc. MacBookPro6,2/Mac-F22586C8, BIOS    MBP61.88Z.005D.B00.1804100943 04/10/18
->> [   24.183125] RIP: 0010:__this_module+0x2d3d1/0x4f310 [tg3]
->> [   24.183135] Code: c3 cc cc cc cc 0f 1f 40 00 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 90 f3 0f 1e fa 0f 1f 44 00 00 89 f6 48 03 77 30 8b 06 <31> f6 31 ff c3 cc cc cc cc 66 0f 1f 44 00 00 90 90 90 90 90 90 90
->> [   24.183138] RSP: 0018:ffffbf1a011d75e8 EFLAGS: 00000082
->> [   24.183141] RAX: 0000000000000000 RBX: ffffa04ec78f8a00 RCX: 0000000000000000
->> [   24.183143] RDX: 0000000000000000 RSI: ffffbf1a00fb007c RDI: ffffa04ec78f8a00
->> [   24.183145] RBP: 0000000000000b50 R08: 0000000000000000 R09: 0000000000000000
->> [   24.183147] R10: 0000000000000000 R11: 0000000000000000 R12: 0000000000000216
->> [   24.183148] R13: ffffbf1a011d7624 R14: ffffa04ec78f8a08 R15: ffffa04ec78f8b40
->> [   24.183151] FS:  00007f4c524b2140(0000) GS:ffffa05007d00000(0000) knlGS:0000000000000000
->> [   24.183153] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> [   24.183155] CR2: 00007f7025eae3e8 CR3: 00000001040f8000 CR4: 00000000000006f0
->> [   24.183157] Call Trace:
->> [   24.183162]  <NMI>
->> [   24.183167]  ? nmi_cpu_backtrace+0xbf/0x140
->> [   24.183175]  ? nmi_cpu_backtrace_handler+0x11/0x20
->> [   24.183181]  ? nmi_handle+0x61/0x160
->> [   24.183186]  ? default_do_nmi+0x42/0x110
->> [   24.183191]  ? exc_nmi+0x1bd/0x290
->> [   24.183194]  ? end_repeat_nmi+0xf/0x53
->> [   24.183203]  ? __this_module+0x2d3d1/0x4f310 [tg3]
->> [   24.183207]  ? __this_module+0x2d3d1/0x4f310 [tg3]
->> [   24.183210]  ? __this_module+0x2d3d1/0x4f310 [tg3]
->> [   24.183213]  </NMI>
->> [   24.183214]  <TASK>
->> [   24.183215]  __this_module+0x31828/0x4f310 [tg3]
->> [   24.183218]  ? __this_module+0x2d390/0x4f310 [tg3]
->> [   24.183221]  __this_module+0x398e6/0x4f310 [tg3]
->> [   24.183225]  __this_module+0x3baf8/0x4f310 [tg3]
->> [   24.183229]  __this_module+0x4733f/0x4f310 [tg3]
->> [   24.183233]  ? _raw_spin_unlock_irqrestore+0x25/0x70
->> [   24.183237]  ? __this_module+0x398e6/0x4f310 [tg3]
->> [   24.183241]  __this_module+0x4b943/0x4f310 [tg3]
->> [   24.183244]  ? delay_tsc+0x89/0xf0
->> [   24.183249]  ? preempt_count_sub+0x51/0x60
->> [   24.183254]  __this_module+0x4be4b/0x4f310 [tg3]
->> [   24.183258]  __dev_open+0x103/0x1c0
->> [   24.183265]  __dev_change_flags+0x1bd/0x230
->> [   24.183269]  ? rtnl_getlink+0x362/0x400
->> [   24.183276]  dev_change_flags+0x26/0x70
->> [   24.183280]  do_setlink+0xe16/0x11f0
->> [   24.183286]  ? __nla_validate_parse+0x61/0xd40
->> [   24.183295]  __rtnl_newlink+0x63d/0x9f0
->> [   24.183301]  ? kmem_cache_alloc_node_noprof+0x12b/0x360
->> [   24.183308]  ? kmalloc_trace_noprof+0x11e/0x350
->> [   24.183312]  ? rtnl_newlink+0x2e/0x70
->> [   24.183316]  rtnl_newlink+0x47/0x70
->> [   24.183320]  rtnetlink_rcv_msg+0x152/0x400
->> [   24.183324]  ? __netlink_sendskb+0x68/0x90
->> [   24.183329]  ? netlink_unicast+0x237/0x290
->> [   24.183333]  ? __pfx_rtnetlink_rcv_msg+0x10/0x10
->> [   24.183336]  netlink_rcv_skb+0x5b/0x110
->> [   24.183343]  netlink_unicast+0x1a4/0x290
->> [   24.183347]  netlink_sendmsg+0x222/0x4a0
->> [   24.183350]  ? proc_get_long.constprop.0+0x116/0x210
->> [   24.183358]  ____sys_sendmsg+0x379/0x3b0
->> [   24.183363]  ? copy_msghdr_from_user+0x6d/0xb0
->> [   24.183368]  ___sys_sendmsg+0x86/0xe0
->> [   24.183372]  ? addrconf_sysctl_forward+0xf3/0x270
->> [   24.183378]  ? _copy_from_iter+0x8b/0x570
->> [   24.183384]  ? __pfx_addrconf_sysctl_forward+0x10/0x10
->> [   24.183388]  ? _raw_spin_unlock+0x19/0x50
->> [   24.183392]  ? proc_sys_call_handler+0xf3/0x2f0
->> [   24.183397]  ? trace_hardirqs_on+0x29/0x90
->> [   24.183401]  ? __fdget+0xc2/0xf0
->> [   24.183405]  __sys_sendmsg+0x5b/0xc0
->> [   24.183410]  ? syscall_trace_enter+0x110/0x1b0
->> [   24.183416]  do_syscall_64+0x64/0x150
->> [   24.183423]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
->>
->> I have bisected the error to this commit. Reverting it caused no new or
->> perceivable issues on both the MacBook and a Zen4-based laptop.
-> 
-> [...]
-> 
->>> Ohh, and when you say "causing peripherals such as the wireless card to
->>> misbehave" what exactly do you mean?
->>
->> When the kernel throws rcu stall messages, the wireless card on the
->> MacBook may fail to discover and/or connect to wireless networks - not a
->> consistent behaviour but I suppose that something in the kernel got stuck.
-> 
-> See the ticket for more details and dmesg logs; the problem still
-> happens with 6.12-rc. The reporter is CCed.
-> 
-> Ciao, Thorsten (wearing his 'the Linux kernel's regression tracker' hat)
-> --
-> Everything you wanna know about Linux kernel regression tracking:
-> https://linux-regtracking.leemhuis.info/about/#tldr
-> If I did something stupid, please tell me, as explained on that page.
-> 
-> P.S.: let me use this mail to also add the report to the list of tracked
-> regressions to ensure it's doesn't fall through the cracks:
-> 
-> #regzbot introduced: 55d4669ef1b76823083caecfab12a8bd2ccdcf64
-> #regzbot from: Mingcong Bai <jeffbai@aosc.io>
-> #regzbot duplicate: https://bugzilla.kernel.org/show_bug.cgi?id=219390
-> #regzbot title: rcu: wifi problems since tg3 started throwing rcu stall
-> warnings
-> #regzbot ignore-activity
-> 
-> 
+Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
 
 
