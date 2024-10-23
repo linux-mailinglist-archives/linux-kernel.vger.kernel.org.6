@@ -1,99 +1,214 @@
-Return-Path: <linux-kernel+bounces-378139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378140-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F1209ACBE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:06:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DF6989ACBE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:08:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 15AF41F22271
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:06:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6DD812828E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:08:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3DDE41BBBDD;
-	Wed, 23 Oct 2024 14:05:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A81CB1BBBEB;
+	Wed, 23 Oct 2024 14:07:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="Xse6AwjF"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cUUrsS76"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 01DBB1B4F04;
-	Wed, 23 Oct 2024 14:05:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3A6DC1ADFF1;
+	Wed, 23 Oct 2024 14:07:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729692357; cv=none; b=sLxqvbtdakxuPu8z1Je+/MjeDh+jnAt3CXAFqTo6e8hjgXJqYqSy2JYaDAFtM8yP0X2qhltBJoAyMTEEITPX/joMSFuL3vd8lGmUOZnIshaubTpZbUPRM1F7iNCjSN52KTaDWtUMZUoqa9lT/xu0bjPuB4V233wWU87miwELjec=
+	t=1729692476; cv=none; b=FSiK5+2VEepM2SgkDSYXHqwM+Ie+zC7wORYJSq3uyySjqfnHXeLh0UwtHC4Z/TsMysdmqmTbfdRSX1g858natdgi2d65FW1TtQS4MvgkXv3ay0cB5qkM50iOmsuS7dec+CfEhHR0A/FhPgWV9NKqYEOOQ6blte1qN87ZblKBv4g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729692357; c=relaxed/simple;
-	bh=ItwYa/sk7ZTqoVW10hctqguvGcuXioVmHtdqpQD1agU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IfJxY0ltkEAdRjfIlAb+1KNuL+J4ZQzreTiYazXPBgA2bpg/zNHKZjINw2mlAmsEkxXVy1AGn86I/qXSG4VHCySUAUNRpa7z1+UBFq00l9mscTTYgiQXtYNZZl7q0n5XD+296DGOPHoIolvzasMCZf5JiAM0HwGSK3lzifJfc5U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=Xse6AwjF; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=irRFI8LoZ9N01cAYli3PJPEZn/4WwVQJ5SfldnWyeM8=; b=Xse6AwjFo/QQO8k61zlpZMEBMa
-	Nh42mcixJjQlsRq2lhREyT+4OLx1qWVvzcpXxreBKnsBf8rfGAVWzdDaMu7RJFSrXw39rvPmIrykf
-	WR9+cHf25LLJMtQGonUTPGTccgWzP1r/jms5o/K/02mZhH3teBqlwxfVuy3pGdoKo5Ls=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t3bzf-00AyLy-J1; Wed, 23 Oct 2024 16:05:47 +0200
-Date: Wed, 23 Oct 2024 16:05:47 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Jijie Shao <shaojijie@huawei.com>
-Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	shenjian15@huawei.com, wangpeiyang1@huawei.com,
-	liuyonglong@huawei.com, chenhao418@huawei.com,
-	sudongming1@huawei.com, xujunsheng@huawei.com,
-	shiyongbang@huawei.com, libaihan@huawei.com,
-	jonathan.cameron@huawei.com, shameerali.kolothum.thodi@huawei.com,
-	salil.mehta@huawei.com, netdev@vger.kernel.org,
+	s=arc-20240116; t=1729692476; c=relaxed/simple;
+	bh=BGfya1zO/7KRe/QXpwkCe7fgxTJA3GU1aZOOwokCgRc=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DG3+AfvH9lK0OG5a5fxR+L8XdjPVarZAdCfHmq2q1FKnuUPCbCZ4fHYqziTMeuW8SQLqwgGH1NbLX92lzo7xzD+qyXsN4Z3pfAe8OcVCsBFB+pNvJ7juvLQPWxp/HbNY+ibd9rtyT+jlz1Iqsarehz+aU2RLNlUWEgpRK4FlgQY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cUUrsS76; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729692474; x=1761228474;
+  h=from:to:cc:subject:date:message-id:in-reply-to:
+   references:mime-version:content-transfer-encoding;
+  bh=BGfya1zO/7KRe/QXpwkCe7fgxTJA3GU1aZOOwokCgRc=;
+  b=cUUrsS76qm36n65bfIxauV2RGsnyzNk+89wZckUICacEPjwoPlcB9RoJ
+   bHsovjdPraQfGHQzKTjT4A59+bw8DRHpieOEK3RAsMvTNn+Ev6K6T8Uit
+   SSaJSq4h7jsLkbXx6GpaFdcdODG/mO4TCCnGn7SU0BIn5Ul7dw7PdO0M9
+   Z+p9AlY3oYHiQiCqSoRjqDBA7OkGR/UFiJ3/V8j5PNBGjTYkerj2OVYXN
+   5Mn9dL2ZdrzWhO56Fmm06zcSEM59QnRQ/it3EApn6JHMKzTlG5hrS30e7
+   t0j8hOjgEiLFa/58zmoZnbZWyTcGQKNXGpxKwCH7NcSilPqzqfaacQf88
+   A==;
+X-CSE-ConnectionGUID: jbpmO3mKRAylId/Q7zLlyQ==
+X-CSE-MsgGUID: fDivbJInR3mn8MZ7gh6Hyw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="16903297"
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="16903297"
+Received: from orviesa001.jf.intel.com ([10.64.159.141])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:06:07 -0700
+X-CSE-ConnectionGUID: G3DNUeWGRpmxsUBbkKyi8g==
+X-CSE-MsgGUID: ME0MdL5CQ5G8C9hoXxaMyQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="117692788"
+Received: from lfiedoro-mobl.ger.corp.intel.com (HELO tkristo-desk.intel.com) ([10.245.246.76])
+  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:06:04 -0700
+From: Tero Kristo <tero.kristo@linux.intel.com>
+To: axboe@kernel.dk
+Cc: hch@lst.de,
+	linux-block@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add unicast frame filter
- supported in this module
-Message-ID: <d66c277b-ea1c-4c33-ab2e-8bd1a0400543@lunn.ch>
-References: <20241023134213.3359092-1-shaojijie@huawei.com>
- <20241023134213.3359092-4-shaojijie@huawei.com>
+Subject: [PATCH v3 2/2] blk-mq: add support for CPU latency limits
+Date: Wed, 23 Oct 2024 17:06:00 +0300
+Message-ID: <20241023140601.839546-1-tero.kristo@linux.intel.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241018075416.436916-1-tero.kristo@linux.intel.com>
+References: <20241018075416.436916-1-tero.kristo@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023134213.3359092-4-shaojijie@huawei.com>
+Content-Transfer-Encoding: 8bit
 
-> +static int hbg_add_mac_to_filter(struct hbg_priv *priv, const u8 *addr)
-> +{
-> +	u32 index;
-> +
-> +	/* already exists */
-> +	if (!hbg_get_index_from_mac_table(priv, addr, &index))
-> +		return 0;
-> +
-> +	for (index = 0; index < priv->filter.table_max_len; index++)
-> +		if (is_zero_ether_addr(priv->filter.mac_table[index].addr)) {
-> +			hbg_set_mac_to_mac_table(priv, index, addr);
-> +			return 0;
-> +		}
-> +
-> +	if (!priv->filter.table_overflow) {
-> +		priv->filter.table_overflow = true;
-> +		hbg_update_promisc_mode(priv->netdev);
-> +		dev_info(&priv->pdev->dev, "mac table is overflow\n");
-> +	}
-> +
-> +	return -ENOSPC;
+Add support for setting CPU latency limits when a request is dispatched
+to driver layer, and removing it once the device is idle. A delayed work
+is scheduled from the first block layer activity, and the workqueue ticks
+with the configurable timeout period, checking if there has been any
+activity. After the initial kick of the workqueue, only the last activity
+time is updated with the current jiffies value, minimizing overhead.
+The feature is user configurable via sysfs knobs under each individual
+block device.
 
-I _think_ this is wrong. If you run out of hardware resources, you
-should change the interface to promiscuous mode and let the stack do
-the filtering. Offloading it to hardware is just an acceleration,
-nothing more.
+Signed-off-by: Tero Kristo <tero.kristo@linux.intel.com>
+---
+v2:
+  * moved implementation back to block layer, to the request queue
+    dispatch section
 
-	Andrew
+v3:
+  * further optimization; fast path now only updates the jiffies value,
+    and kicks off the workqueue for handling the PM QoS activities if
+    not already active
+  * moved the fast path handling under individual request handling, to
+    avoid iterating the whole request queue
+
+ block/blk-mq.c         | 51 ++++++++++++++++++++++++++++++++++++++++++
+ include/linux/blk-mq.h | 12 ++++++++++
+ 2 files changed, 63 insertions(+)
+
+diff --git a/block/blk-mq.c b/block/blk-mq.c
+index 4b2c8e940f59..e8d82601471d 100644
+--- a/block/blk-mq.c
++++ b/block/blk-mq.c
+@@ -29,6 +29,7 @@
+ #include <linux/blk-crypto.h>
+ #include <linux/part_stat.h>
+ #include <linux/sched/isolation.h>
++#include <linux/pm_qos.h>
+ 
+ #include <trace/events/block.h>
+ 
+@@ -1303,6 +1304,12 @@ static void blk_add_rq_to_plug(struct blk_plug *plug, struct request *rq)
+ 	rq->rq_next = NULL;
+ 	rq_list_add(&plug->mq_list, rq);
+ 	plug->rq_count++;
++
++	if (rq->q->disk->cpu_lat_limit >= 0) {
++		rq->mq_hctx->last_active = jiffies;
++		if (!delayed_work_pending(&rq->mq_hctx->cpu_latency_work))
++			schedule_delayed_work(&rq->mq_hctx->cpu_latency_work, 0);
++	}
+ }
+ 
+ /**
+@@ -2705,6 +2712,45 @@ static void __blk_mq_flush_plug_list(struct request_queue *q,
+ 	q->mq_ops->queue_rqs(&plug->mq_list);
+ }
+ 
++static void blk_mq_cpu_latency_work(struct work_struct *work)
++{
++	struct blk_mq_hw_ctx *hctx = container_of(work, struct blk_mq_hw_ctx,
++						  cpu_latency_work.work);
++	int cpu;
++	bool add_req = false;
++	bool remove_req = false;
++	unsigned long timeout;
++
++	timeout = msecs_to_jiffies(hctx->queue->disk->cpu_lat_timeout);
++
++	if (time_after(jiffies, hctx->last_active + timeout)) {
++		remove_req = true;
++		hctx->cpu_lat_limit_active = false;
++	} else {
++		if (!hctx->cpu_lat_limit_active) {
++			hctx->cpu_lat_limit_active = true;
++			add_req = true;
++		}
++		schedule_delayed_work(&hctx->cpu_latency_work,
++				      hctx->last_active + timeout - jiffies);
++	}
++
++	if (!add_req && !remove_req)
++		return;
++
++	for_each_cpu(cpu, hctx->cpumask) {
++		struct dev_pm_qos_request *qos;
++
++		qos = per_cpu_ptr(hctx->cpu_lat_qos, cpu);
++		if (add_req)
++			dev_pm_qos_add_request(get_cpu_device(cpu), qos,
++					       DEV_PM_QOS_RESUME_LATENCY,
++					       hctx->queue->disk->cpu_lat_limit);
++		else
++			dev_pm_qos_remove_request(qos);
++	}
++}
++
+ static void blk_mq_dispatch_plug_list(struct blk_plug *plug, bool from_sched)
+ {
+ 	struct blk_mq_hw_ctx *this_hctx = NULL;
+@@ -3729,6 +3775,11 @@ static int blk_mq_init_hctx(struct request_queue *q,
+ 	if (xa_insert(&q->hctx_table, hctx_idx, hctx, GFP_KERNEL))
+ 		goto exit_flush_rq;
+ 
++	hctx->cpu_lat_qos = alloc_percpu(struct dev_pm_qos_request);
++	if (!hctx->cpu_lat_qos)
++		goto exit_flush_rq;
++	INIT_DELAYED_WORK(&hctx->cpu_latency_work, blk_mq_cpu_latency_work);
++
+ 	return 0;
+ 
+  exit_flush_rq:
+diff --git a/include/linux/blk-mq.h b/include/linux/blk-mq.h
+index 4fecf46ef681..4442c18bf3d9 100644
+--- a/include/linux/blk-mq.h
++++ b/include/linux/blk-mq.h
+@@ -435,6 +435,18 @@ struct blk_mq_hw_ctx {
+ 	/** @kobj: Kernel object for sysfs. */
+ 	struct kobject		kobj;
+ 
++	/** @cpu_latency_work: Work to handle CPU latency PM limits. */
++	struct delayed_work	cpu_latency_work;
++
++	/** @cpu_lat_limit_active: If CPU latency limits are active or not. */
++	bool			cpu_lat_limit_active;
++
++	/** @last_active: Jiffies value when the queue was last active. */
++	unsigned long		last_active;
++
++	/** @cpu_lat_qos: PM QoS latency limits for individual CPUs. */
++	struct dev_pm_qos_request __percpu *cpu_lat_qos;
++
+ #ifdef CONFIG_BLK_DEBUG_FS
+ 	/**
+ 	 * @debugfs_dir: debugfs directory for this hardware queue. Named
+-- 
+2.43.1
+
 
