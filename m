@@ -1,85 +1,77 @@
-Return-Path: <linux-kernel+bounces-378728-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378729-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 727339AD472
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:03:40 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942779AD482
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF2B7B22726
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:03:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497E71F2293C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:06:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5711CDFB9;
-	Wed, 23 Oct 2024 19:03:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61ABB1D1756;
+	Wed, 23 Oct 2024 19:06:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFl2bXzY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DLhnYjtp"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270D914658F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:03:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BCC3E14658F;
+	Wed, 23 Oct 2024 19:06:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729710212; cv=none; b=VAJfyDVViE+XMYxeiKhSif9nC3jRIGKAJn0GV5BFNhv6j+eQAK88Osz5HWLfRkUhkxzB3xXaZVVZRvMec3GmHRUwWUJk2xVHkfqE9T0E37JFK8IP8LpGV/Xa0tEfQlStiT7pVU+KtZmB9i4IggsX9hjYzSVswR7vX0ftiHUySeo=
+	t=1729710377; cv=none; b=NS6Lh+KUVl9sP3EpnAa80/xRNd7bbiKx/t1nWROxrjlsCQ6Rw7YBSguOFLg9aPjqn7UhYRSK8REAz35pgy17wYpxr7TaJSUP+ev3j9XpAh61n417LhxJ+kdbWl1MxXadMmYsFM7G5JD55YH5a/dQ7FY2/StdZ6sp4F3IWfqq55c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729710212; c=relaxed/simple;
-	bh=CZH/84Ek9rzDjA6ub4IK/RwfA2npXsLdu4sF0W0en/A=;
+	s=arc-20240116; t=1729710377; c=relaxed/simple;
+	bh=gWp4927ff/vjis/ydgB1oJFJZTwHRsCkZ3et52wPFDM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=BTHjxX4BIkNjkAhIM1uRWKNRu5DccrnqGrwhe0kUgfJyHHmUqcoV9WBvhqgKB68amxoQzLybdpZ8hAl92BGSew1rIhgKX9V6quNj7rekSA+97+d6UVP0td/z0n5xjfzfk7BcZIYWLNSgQprmOC2pc6AGQmQBHGnpLCnb05Wb96c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFl2bXzY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91266C4CEC6;
-	Wed, 23 Oct 2024 19:03:31 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ub/+xV4j2jrL8dJtldy6PgMt/J2jbSxFJ9jgrPurQml6No4e+utlgV0rWbJf7oj7H+zZtwjCtskjt4lWJtsp6mo1cHS5XIE041I/rwV+HY/mLU8mAtROOf4FD5MJ2fUYqOgUvdXTyfHty3bh6jgcXnBdpYDFM1jI05uj7+iJuDs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DLhnYjtp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 35658C4CEC6;
+	Wed, 23 Oct 2024 19:06:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729710211;
-	bh=CZH/84Ek9rzDjA6ub4IK/RwfA2npXsLdu4sF0W0en/A=;
+	s=k20201202; t=1729710377;
+	bh=gWp4927ff/vjis/ydgB1oJFJZTwHRsCkZ3et52wPFDM=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=rFl2bXzYpTQWbD2K4exnxJ6nQrrud0YrDgd/0jr507UQyCD1ZQsT31BAcsuCEkcDa
-	 lF7VRJcQptPGlq85aGXprUmHvAmamkuOeYs4qp+aPj7osBpHfiTZC/ZIHclKCVInVP
-	 5WDt4o1nSbUZyJ5RzDJqJCYD9Wf9A85/PY2IW9H9E8UOYg5AHJmbrMf+Y+AtUMn4Uz
-	 ync2A6PqPb/ui1F2xVCPZ1ynLvUwoYSn/0MPLcoihn8csmPuZNDQhcUtg/c3gXfBel
-	 p5Y4WdvMFfwGm/0MA55t4NCFfXRDwTsm4D863ezylSe+I8s/a51w84nfpmbghm1piY
-	 wAxRLnqcan5cw==
-Date: Wed, 23 Oct 2024 09:03:30 -1000
+	b=DLhnYjtpunpuAe7rDoNgI3v8Urfu6m5R6Bm6RXIQtnwKa7NUx7l1cX13yP1VPIA9p
+	 +TxM+4/yhjT1zHxHeVbYwSQ8r0Zbb67xX6gLD+jZ1hJLm5eHWLtZd7ARbAh2jJdgCz
+	 2Sm/4SLKB93+GZ/svJ+r0o6faeD5u/7VkLAfXN4gDzeGcGH8pLmUjAgVw0iICfNlPu
+	 qsiW/tx2kvfZQjXa104pmCCMiJ7hiUC4wdtT7rXs6DmGwQN/JsDLACMhPXpQODzF5A
+	 wrZL0vPK/sWfKobmwtrGFJ2lOcmBqd+k+m0kNtNZYvN2cRDDLGqm7x5+URxpn3R6L/
+	 rUK2WDuIDyYUQ==
+Date: Wed, 23 Oct 2024 09:06:16 -1000
 From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <andrea.righi@linux.dev>
-Cc: David Vernet <void@manifault.com>,
-	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH for-6.12-fixes] sched_ext: fix fmt__str variables in
- kfuncs
-Message-ID: <ZxlIgnLAiXddfTmT@slm.duckdns.org>
-References: <20241022074035.139897-1-andrea.righi@linux.dev>
+To: Kumar Kartikeya Dwivedi <memxor@gmail.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched-ext: Use correct annotation for strings in kfuncs
+Message-ID: <ZxlJKC16Kp4aX6uL@slm.duckdns.org>
+References: <20241021201143.2010388-1-memxor@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241022074035.139897-1-andrea.righi@linux.dev>
+In-Reply-To: <20241021201143.2010388-1-memxor@gmail.com>
 
-On Tue, Oct 22, 2024 at 09:40:35AM +0200, Andrea Righi wrote:
-> Commit 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in
-> kfuncs") renamed some parameters without updating the body of the
-> functions, triggering build errors like this:
+On Mon, Oct 21, 2024 at 01:11:43PM -0700, Kumar Kartikeya Dwivedi wrote:
+> The sched-ext kfuncs with bstr suffix need to take a string, but that
+> requires annotating the parameters with __str suffix, as right now the
+> verifier will treat this parameter as a one-byte memory region.
 > 
-> kernel/sched/ext.c:6881:45: error: ‘fmt’ undeclared (first use in this function)
-> 6881 |       if (bstr_format(&scx_exit_bstr_buf, fmt, data, data__sz) >= 0)
->      |                                             ^~~
-> 
-> Fix by renaming also the varibles in the affected kfuncs.
-> 
-> Fixes: 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in kfuncs")
-> Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
+> Fixes: f0e1a0643a59 ("sched_ext: Implement BPF extensible scheduler class")
+> Fixes: 07814a9439a3 ("sched_ext: Print debug dump after an error exit")
+> Cc: Tejun Heo <tj@kernel.org>
+> Signed-off-by: Kumar Kartikeya Dwivedi <memxor@gmail.com>
 
-I removed this patch along with 3e99aee7ce48 ("sched-ext: Use correct
-annotation for strings in kfuncs"). This breaks compatibility in a way which
-is difficult to work around. If we want to do this, I think we should do it
-by introducing new set of kfuncs and than phasing out the old ones. Also,
-it's unclear what the practical benefits of the change are anyway.
+I popped this patch from sched_ext/for-6.12-fixes along with the follow-up
+fix. This breaks compatibility in a way which is difficult to work around.
+If we want to do this, I think we should do it by introducing new set of
+kfuncs and than phasing out the old ones. Also, it's unclear what the
+practical benefits of the change are anyway.
 
 Thanks.
 
