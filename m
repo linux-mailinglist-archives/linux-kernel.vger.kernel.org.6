@@ -1,189 +1,98 @@
-Return-Path: <linux-kernel+bounces-378638-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378637-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9AAFB9AD37C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:03:40 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A81129AD37D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:03:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB08B1C220F0
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2BB2DB21F24
 	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:03:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B01D71D0797;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86F5F1D0420;
 	Wed, 23 Oct 2024 18:03:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="M0wzQ8Bm"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UTGilpNa"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 537411C9DF0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:03:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5909611E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:03:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729706610; cv=none; b=JVwTURZiGNmr18Fxdgf3H0K5E6kuQzwh35mDBFvrdgi34vh1L0sXBQ/ZYkqK5lm+6OwV2I9v+KhfftmQuxo/02b6bfdU3S9/hVubomUKJ8kT+BzJedEu5ETiQDn8zovWbXXEC/o4aKkGWs3GyDW/M5o9apYZvSFzB/S5FIOoHI8=
+	t=1729706609; cv=none; b=pVD7BabQe6VBqJGG9grFPC3uP8k3yydgZopGB4fpbT5znza3iTEuOKkf9b86zd2fXKlUlActvCko6qa1gCaamI/xp2o1CCKVJKwo6eqKRg+eLLqxZz0ILJs6UItaSX1CTKqG94immhCYTxmCnJ2hOyUMpo2jeAkXtPHBeyX5X2E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729706610; c=relaxed/simple;
-	bh=hKbw9EhlyCDWsEHg69v1mV9keLiiF9vWAZwIKJxKWTI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=S1JWdPkbkvQ5mVIF3pGazqelLZxsbtUvoudE5uTl3wepWjBiAb8XS9r2vAZfqHjPN1i+s5KeUScw1BzE76+pz3IbGcMfNUTrIYdGGXZTAoY/mDl6gJZHzOwqpgFSx5upgtDfRTtCAjiQOHyDLoY1zx296Swxul5GPKGjj8manfE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=M0wzQ8Bm; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a99eb8b607aso769901366b.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:03:28 -0700 (PDT)
+	s=arc-20240116; t=1729706609; c=relaxed/simple;
+	bh=Lvndw97y3qUSVqR8jukg08C+I7m47Q3noDs1XEfCWSM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GrUvOMWv1ATh5jggUPG0ueMefeJbkbz38Bye77qPP9lv2a7GHiVfnl4TvOIku1va9B+XFmW+0AI9WOTRGQdRSZo/i6XVEewiB5JcuT2le+E4UcmsEiJRZF41MIc3zhEfrH3PfsftLGXXdliE+0MxvIKPpZ6AlJQifJRnOb5/7ns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UTGilpNa; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so440995e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:03:27 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729706607; x=1730311407; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5eFP8vDVd7jdxnDSszVWk36szMtGFtjiKJDaHiyfHos=;
-        b=M0wzQ8Bm8blITpkYtXILLucKi/mj/GULG3O8/Lr3E2EItCheo3f8xYJXYgSyXfrFWc
-         ehcoqVznYnTWokTsZEXfe/kZB8nHmotgZXgUuStmCXU3htNMSRMPnrrPqsM0co+5aV9s
-         ZYf26H5xNkk+eWKRRwNzO2dqeF9mzBOnzo+oeXqNCwWNc0loqQJ02Y7C2pVfo1c9nQQB
-         QLpDjVKcSIT+Mmkw/9bKR07GrbqqrK4zNQTS60wYzYdD0bplJQGQwVKvuYabE4337sbH
-         bN97HJhTwA/7bcusEbIKLS9+16XDtRtX07V8sS/vx7rUX1HpxVUCcVuxlYMNWUT3HVJP
-         irHA==
+        d=suse.com; s=google; t=1729706606; x=1730311406; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=DQ2K5h9sf623nMcnfJkpK8VOcZpKYnq7H0gJWmgP7CY=;
+        b=UTGilpNa/6jC8q2JkwwPtp43fsX2zpjRcio2uq4WkCveyK/PSLdeQ69eqYlZzr0FRP
+         IZetZvKLYiPbPc2AC8fJacmuxU7ZMaDT6G0/lOSSpz1acn8/wC+Cpvz+LF4AifoBAR2s
+         ar60gIauLFn70WUz6D6tCysB2/qt3Q52bhKupvN+mTsVHAwYW0pI82meg2CXiBAourgL
+         dFK5apO5hcO6bZC5mdU/S69Ky2EyqPC9OjwKevBmt4GTOAxQmw9cDiWwQkXCL35wKG2O
+         39b2abDm6jNFChtaTkikFC2RIdiwq6g3D5ZC6pC+mD2AZSLJUpGeNsMYwBSeCisSNpam
+         bfUw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729706607; x=1730311407;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5eFP8vDVd7jdxnDSszVWk36szMtGFtjiKJDaHiyfHos=;
-        b=q2VGlHD7KAcbUQmUXxHLfs+9niPEmFpw+nkvKEQIhUtqNe06w0RdbhcGlQ6zc+zXqO
-         Nt38KRfLdRyDArQ3krdfmiM0ggGWnN2Ue7J2FnU1mEMfpQ9fzJpNZmwN65ZDfzqF2h9B
-         VafowFhpIpdVqQgII4ks6MCFqbTHIXbFYN+3mFV/EbMKMvbl2Ms6FgVFyYS4SWt17NKN
-         wPlRGVALlWP4hL2WcNBT42Jk7FxA7h7XZcMEYj1dveQKZ5kFH+dRXlrnwoLojYiexpAI
-         kpHMqRZnuKOXpDg42b5KB1RSo25KxdU0YMtqU0Vm2hv6qSmUZUfOO0pv3TXZbQzF1v8j
-         0pbA==
-X-Forwarded-Encrypted: i=1; AJvYcCWgy2UmlQ7J/WEBpL1FK4j6iZ3DJhWrSV4siNQUmAKqU1lG7k+xqdH9PWreVICIhDAVJwDINQ6s+5XjVYI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzM0PhvqKts6ltSpG0qjlLeFUgkv8TlZGyjKKMvFEmmB26AgYel
-	g9G9dKtGvnk8As8Zfr0danOm/2fkEW5Ku/fBCVK5Q55RIXGh1TXB0v2kH1xdkgAHVLqXNfmXZYa
-	gv8x68cHx6M1/tGPQ8bYd65peo0iKXwNxsB0a
-X-Google-Smtp-Source: AGHT+IGYGrcE0OeG8Xy8f+rEGoiCHvfXOe43wRySZPTgHVqK6ukFi8XSUN1CiuBKCrdlws12iFH+c5+YobynhJAzRvs=
-X-Received: by 2002:a17:907:3e91:b0:a99:f7df:b20a with SMTP id
- a640c23a62f3a-a9abf964e26mr320337166b.62.1729706606270; Wed, 23 Oct 2024
- 11:03:26 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729706606; x=1730311406;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=DQ2K5h9sf623nMcnfJkpK8VOcZpKYnq7H0gJWmgP7CY=;
+        b=PJDrTDHNsft1DbQ7wIhmGRLSUD1k8EWUhTGTL//8fZaBXowPQ9ky9fRybG49UVPkWt
+         0J2FnJrxh33LXc2x4k9O4rt2ZXav7U4J9SRAWqbKFkYcOXOELafsRpupFbrvjNSNTcpk
+         Esf/lkHnYc4i4p6Zi8jwXPykKpdO6NXNS1O1BQE+TQIIhiE04SUuRgmiqoJrQnhzoyHV
+         R2Q9aC06HCJyUUX8y6juEymChwn499ULITt8MWvB2tTsdwkXQFcSIwW+SDY25T557FUy
+         vUnBOGG+R4Xpbbwsa1OeK2Trnioy3U/R3oRnSC8JOtwY0ssxHSc5KXYCh2+IFTgQyfx/
+         p75g==
+X-Forwarded-Encrypted: i=1; AJvYcCXtvJZ1QDfX3sfjemmDwIgP9nzseKmfibKim4ZxNlj/mLkK/jP73ysgiv4uC5n+bvfBAs90fha25APL0+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx76JAwSiHCOY9UwqXbVI10d4DUTPo5GML0xucbb8x5R4q7qGhk
+	/A2QhjPEVZlmj/emh0u1w+JxTi644Wa2g5FJQ922Bv7EMOisy1hWJ57llXGL0MM=
+X-Google-Smtp-Source: AGHT+IGFh3ZGJm7sWN+e00L/czl0fWnCNypPtMJq2r/wChfK+5fdpkwk9CaOfqtcQP8kGNprEslKMg==
+X-Received: by 2002:a05:6000:502:b0:374:c4c2:fc23 with SMTP id ffacd0b85a97d-37efcf93218mr2252253f8f.56.1729706605889;
+        Wed, 23 Oct 2024 11:03:25 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b630sm9425382f8f.60.2024.10.23.11.03.25
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 11:03:25 -0700 (PDT)
+Date: Wed, 23 Oct 2024 20:03:24 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Dongjoo Seo <dongjoo.linux.dev@gmail.com>
+Cc: akpm@linux-foundation.org, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, dave@stgolabs.net,
+	dan.j.williams@intel.com, nifan@outlook.com,
+	a.manzanares@samsung.com
+Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
+Message-ID: <Zxk6bHlrP5S_0LBK@tiehlicka>
+References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018105026.2521366-1-usamaarif642@gmail.com>
- <CAGsJ_4xweuSwMUBuLSr2eUy69mtQumeDpMZ1g2jFPGq6nFn9fg@mail.gmail.com>
- <5313c721-9cf1-4ecd-ac23-1eeddabd691f@gmail.com> <b1c17b5e-acd9-4bef-820e-699768f1426d@gmail.com>
- <CAGsJ_4wykOyJupLhcqkSPe27rdANd=bOJhqxL74vcdZ+T9f==g@mail.gmail.com>
- <eab11780-e671-4d09-86a6-af4cf3589392@gmail.com> <CAGsJ_4wWf7QnibY_uU8B=efuEACrvFaJJ=bJTD+9KrxFtfoMmQ@mail.gmail.com>
- <CAGsJ_4w5XLMok4F6Xw7aTAdV6rY9OvCVPM3U+hzFnKyTXBUpOA@mail.gmail.com>
- <4c30cc30-0f7c-4ca7-a933-c8edfadaee5c@gmail.com> <7a14c332-3001-4b9a-ada3-f4d6799be555@gmail.com>
-In-Reply-To: <7a14c332-3001-4b9a-ada3-f4d6799be555@gmail.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 23 Oct 2024 11:02:50 -0700
-Message-ID: <CAJD7tkbrjV3Px8h1p950VZFi9FnzxZPn2Kg+vZD69eEcsQvtxg@mail.gmail.com>
-Subject: Re: [RFC 0/4] mm: zswap: add support for zswapin of large folios
-To: Usama Arif <usamaarif642@gmail.com>
-Cc: Barry Song <21cnbao@gmail.com>, senozhatsky@chromium.org, minchan@kernel.org, 
-	hanchuanhua@oppo.com, v-songbaohua@oppo.com, akpm@linux-foundation.org, 
-	linux-mm@kvack.org, hannes@cmpxchg.org, david@redhat.com, willy@infradead.org, 
-	kanchana.p.sridhar@intel.com, nphamcs@gmail.com, chengming.zhou@linux.dev, 
-	ryan.roberts@arm.com, ying.huang@intel.com, riel@surriel.com, 
-	shakeel.butt@linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
 
-[..]
-> >> I suspect the regression occurs because you're running an edge case
-> >> where the memory cgroup stays nearly full most of the time (this isn't
-> >> an inherent issue with large folio swap-in). As a result, swapping in
-> >> mTHP quickly triggers a memcg overflow, causing a swap-out. The
-> >> next swap-in then recreates the overflow, leading to a repeating
-> >> cycle.
-> >>
-> >
-> > Yes, agreed! Looking at the swap counters, I think this is what is going
-> > on as well.
-> >
-> >> We need a way to stop the cup from repeatedly filling to the brim and
-> >> overflowing. While not a definitive fix, the following change might help
-> >> improve the situation:
-> >>
-> >> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> >>
-> >> index 17af08367c68..f2fa0eeb2d9a 100644
-> >> --- a/mm/memcontrol.c
-> >> +++ b/mm/memcontrol.c
-> >>
-> >> @@ -4559,7 +4559,10 @@ int mem_cgroup_swapin_charge_folio(struct folio
-> >> *folio, struct mm_struct *mm,
-> >>                 memcg = get_mem_cgroup_from_mm(mm);
-> >>         rcu_read_unlock();
-> >>
-> >> -       ret = charge_memcg(folio, memcg, gfp);
-> >> +       if (folio_test_large(folio) && mem_cgroup_margin(memcg) <
-> >> MEMCG_CHARGE_BATCH)
-> >> +               ret = -ENOMEM;
-> >> +       else
-> >> +               ret = charge_memcg(folio, memcg, gfp);
-> >>
-> >>         css_put(&memcg->css);
-> >>         return ret;
-> >> }
-> >>
-> >
-> > The diff makes sense to me. Let me test later today and get back to you.
-> >
-> > Thanks!
-> >
-> >> Please confirm if it makes the kernel build with memcg limitation
-> >> faster. If so, let's
-> >> work together to figure out an official patch :-) The above code hasn't consider
-> >> the parent memcg's overflow, so not an ideal fix.
-> >>
->
-> Thanks Barry, I think this fixes the regression, and even gives an improvement!
-> I think the below might be better to do:
->
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> index c098fd7f5c5e..0a1ec55cc079 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> @@ -4550,7 +4550,11 @@ int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
->                 memcg = get_mem_cgroup_from_mm(mm);
->         rcu_read_unlock();
->
-> -       ret = charge_memcg(folio, memcg, gfp);
-> +       if (folio_test_large(folio) &&
-> +           mem_cgroup_margin(memcg) < max(MEMCG_CHARGE_BATCH, folio_nr_pages(folio)))
-> +               ret = -ENOMEM;
-> +       else
-> +               ret = charge_memcg(folio, memcg, gfp);
->
->         css_put(&memcg->css);
->         return ret;
->
->
-> AMD 16K+32K THP=always
-> metric         mm-unstable      mm-unstable + large folio zswapin series    mm-unstable + large folio zswapin + no swap thrashing fix
-> real           1m23.038s        1m23.050s                                   1m22.704s
-> user           53m57.210s       53m53.437s                                  53m52.577s
-> sys            7m24.592s        7m48.843s                                   7m22.519s
-> zswpin         612070           999244                                      815934
-> zswpout        2226403          2347979                                     2054980
-> pgfault        20667366         20481728                                    20478690
-> pgmajfault     385887           269117                                      309702
->
-> AMD 16K+32K+64K THP=always
-> metric         mm-unstable      mm-unstable + large folio zswapin series   mm-unstable + large folio zswapin + no swap thrashing fix
-> real           1m22.975s        1m23.266s                                  1m22.549s
-> user           53m51.302s       53m51.069s                                 53m46.471s
-> sys            7m40.168s        7m57.104s                                  7m25.012s
-> zswpin         676492           1258573                                    1225703
-> zswpout        2449839          2714767                                    2899178
-> pgfault        17540746         17296555                                   17234663
-> pgmajfault     429629           307495                                     287859
->
+On Wed 23-10-24 10:50:37, Dongjoo Seo wrote:
+> This patch corrects this issue by:
 
-Thanks Usama and Barry for looking into this. It seems like this would
-fix a regression with large folio swapin regardless of zswap. Can the
-same result be reproduced on zram without this series?
+What is this issue? Please describe the problem first, ideally describe
+the NUMA topology, workload and what kind of misaccounting happens
+(expected values vs. really reported values).
+
+-- 
+Michal Hocko
+SUSE Labs
 
