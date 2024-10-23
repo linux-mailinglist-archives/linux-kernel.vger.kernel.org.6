@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-378520-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378521-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 312319AD1CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:56:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1687D9AD1CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:56:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4ED7C1C243CE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:56:32 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74498B24BB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:56:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CCB2201116;
-	Wed, 23 Oct 2024 16:50:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21B45200C9D;
+	Wed, 23 Oct 2024 16:50:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="WelteRD1"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="IU3VjKmn"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7E5200CAD
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:50:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0806E200CBD
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:50:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702244; cv=none; b=IvMU2cXKb+LajREg5TQz2UokzTyY8JRo346ncD5Z47t5r08C39sJICcl85wknxRjUkpbkiMEzzIzaZehjvJC07B0aipX5JHZmAYOAJSMhQWdbwohKe2g3X+QBD8plgdm5x6QItlFpdJc5RRzWf+Q9+c+KLPSe1AlEhtChanqCJU=
+	t=1729702246; cv=none; b=GsoEGHRoawC5/Nsiu9qk/0hNQZy1t1P/9ekDdogFnqJVlekht5LWHmPZsH15SpMfkVQhI6fJvNbg5f+lUQcVvg40fiDxIKvFV+HIJicC9iM5cMhCyI7sHnXaBDbHoTcN8/OROLLr5PheVl8RwYVx972Yj0c+DFWUgYZn4fCvIxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702244; c=relaxed/simple;
-	bh=tZOo0Ix9iGrdx8pkIPTQHYKTf0KrfmsFOehv40Q+vb4=;
+	s=arc-20240116; t=1729702246; c=relaxed/simple;
+	bh=+BG0h8wlmH06SZK5YD7t3bFzfMh9GcpVnwWKqZt68qQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=nHM7cc+JUuvnCP6NRxA7gba4fNVCrXu7oczJyyoQ4RzbeQj6L+VNtezUTlsMIY3z6jOGpfSIGHFYD0GFPbZCZqqpwv+GQgtGEWLmNsA3z6xulDhnVXgWgNAH8pCrzOP/d5kUl8KgXGuQZZyeecdlsidqMAXuDfEOeuARsLx/L4g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=WelteRD1; arc=none smtp.client-ip=209.85.128.51
+	 In-Reply-To:To:Cc; b=gqm3m5K8xbPEGXdfT0Ye/dFB8U4kIua0tiD7ZG04ez9/0iPtKXEIk8UONmx2iY1EuA/+Fp7sYOSZoc4yt5GmIDRfpz4dYs38/Fe0qC+z+QwmhD+TMRIvdgf0NMMbmO6xwGMi4LzoFmmAsrZrGjEN3gyTHaFEETWTxqScl/E7UOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=IU3VjKmn; arc=none smtp.client-ip=209.85.128.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43161c0068bso56790605e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:50:42 -0700 (PDT)
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so74192885e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:50:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729702241; x=1730307041; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1729702242; x=1730307042; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=6vaguUe7juL1LVMz08cL6sDxAEiRfNF+JBFP9wF0Q+s=;
-        b=WelteRD1jH/o/pmNMehvDU3poLhCzwThNTXbMOyxlB01zXSDo+h3p18ZeykSLsd2Z6
-         icXhXvjzP2kpTAu2uhACRXytuG40twE4xoIXU1GfxmAuQGe98mi6zIu91wAeDClskQGt
-         N+ax2YzC8epP1AEEjbfFXGsU2Hd84qSMYWWln61MYRz+rdJRNfTw5XJnzK6cVc9KOPhE
-         WAIMh9dpfsOoMH3UH61IOk9jelcPSe9CWu0Qh2oosu1cqaVHknTDjHKhjYswi1ywH0mi
-         qJsBXZGvgAZBfGjHq7zUKUxCA8cgRvTw92SubJIa1gfx14jTXD/M+nETXISCnitlW9k8
-         jmqg==
+        bh=rx+cgECVrwHBqHNuLqK3jB//M+8KGwV7ZzrA+d3SFbk=;
+        b=IU3VjKmn5pm6iLzwXrc3QndM2MrU7GW+vMtOYCSqUu/PqVnJQeXXq5zcNLhUb6rNFG
+         XwPVoYjZI81a3y5AoRn/GJ5sSxQ+Q4xYno7JDpl1bzgu0fjNEl+AmZDa+MER3pApLNEi
+         RKafFQl/hMVoWktFNy+IQrDeabTpbKh7wmm6mjQCFcD1ZR5j6utI9HxCbpGye5MXmPy1
+         TXcLiOsKe1n52F6gUVCQExXJ5tu6yfdvaD9v+uhhg+eIPUOyMjHJwW+8/XYyLlwBhgYc
+         3uONyZkB4vjVEWbZEWdjRpj6M/r/PKtUzCQeLwIDvN84qCVYcqmdKdIHXKUIIxK97dY7
+         HCWA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729702241; x=1730307041;
+        d=1e100.net; s=20230601; t=1729702242; x=1730307042;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=6vaguUe7juL1LVMz08cL6sDxAEiRfNF+JBFP9wF0Q+s=;
-        b=mGMKe4Qwer/fYHHtDweohE2tFCgOCczCXJG0a0OmEpj7qEOh5eqA5lER9ZiiT64G7f
-         bY+xTtkYCr3H9AqlUt4CXZhF1nFIlTBQXSb/yUxtHTL2r0DGABjyLy6FEWb0V1j1lhvF
-         ewz2zxwDpcfiIXQ2a5rw+vMbfXZwJVtIEJbEp53wpvr3tEbnkyAVf56wqQRQ43CBLWmS
-         TtWlvM4PSKxcmXsurJu4xTS5CQEQUb+1eX3tZBDeWsBK2pF/f/p3Wy2BcPRETOR4utxK
-         W7Sxbcjj0foj84cWZd9TNCHeyYAWzJho6u4khx2GLoNdp4HNEtHqgs7xa3ASPS7Xx768
-         1I+A==
-X-Forwarded-Encrypted: i=1; AJvYcCVPjd2STBh/Q0oGL2WFZmlf3lENReKKCkEaxV35sDSdmUHlAxTeJFy9aGMoeO7yRa7PEcAfSqNhm9DphSQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywd81RYV439X09X4hk6sVVRDSAjOgVERrS6FFsIWEi+WvHbe9iC
-	a8WqGaJlEemMCbSGNf7R0s8zVHkj8adj+sUElt4szphmYk/Af2VK7AvIbcftsws=
-X-Google-Smtp-Source: AGHT+IERYOndgW/udDrkKTC0Se/KUmNKFRwzDAk4TOKT6h49ITwfBkIc/0nZV6Akai4GqaHXpM9b4Q==
-X-Received: by 2002:a05:600c:511c:b0:42f:823d:dddd with SMTP id 5b1f17b1804b1-4318423b856mr23693165e9.27.1729702241069;
-        Wed, 23 Oct 2024 09:50:41 -0700 (PDT)
+        bh=rx+cgECVrwHBqHNuLqK3jB//M+8KGwV7ZzrA+d3SFbk=;
+        b=qIuuUJ6oADq1rwfsGGGR7flquR/p2TKz3pxMuugK+0p7+qQyZSymn+oy3snxxNynAU
+         /RyiRmKuKZ3ygCltzg1DkYn6Af6zWqPVPZSCUR6Nu83vHBVo0ZHjII3i1/6gbc25p9J4
+         7psrwrmhGz+7JqpHE+l7pEl3Jkw5bgAaxYQW1PSGjRwwAkFvI7SjtwhPKM2e0w0HZTcV
+         iFycMkIoukmlwqqNzXJn2y82H4N97L4Jr2nZgLdhoK7YgyOI/PYhm71oFVbYQ3Mfqlhc
+         mTmnhJaLB64dfcaMtl8lHWr2CFqrCG7ttUEL9mVyvEQrOL3UBZ6kMAVGmL5QPkUIlQ0m
+         ZiaQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXZa9UsRjv94XDQE7L1k1hi/eIVUttWQ5JBGkbCYtuOwJjPtvHd5MSt5EH7Xdth2Vhzu19OhYSBUmdl+kY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwrEAl9moYyt4zP4WojLHaIKFcYpoDTzLaQf+WzCUtYKfRkCKAx
+	2tSyDwFt9G6qHSFLO2UIP+a+8V7Znufd5AXWboWLNowkA+HotdaHu2L6eeX4rtQ=
+X-Google-Smtp-Source: AGHT+IEGbFSUWklZClQpP0TsDzcUmssP/K7HgzrueQBCh/JZ/3hd+ojpDHVXKKSpg+VGEoE86bXTLg==
+X-Received: by 2002:a05:600c:3b9b:b0:431:58cd:b259 with SMTP id 5b1f17b1804b1-431841b1fdbmr26533865e9.31.1729702242397;
+        Wed, 23 Oct 2024 09:50:42 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.38
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 09:50:40 -0700 (PDT)
+        Wed, 23 Oct 2024 09:50:41 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 23 Oct 2024 17:50:23 +0100
-Subject: [PATCH 26/37] drm/vc4: hdmi: Support 2712 D-step register map
+Date: Wed, 23 Oct 2024 17:50:24 +0100
+Subject: [PATCH 27/37] drm/vc4: Add additional warn_on for incorrect
+ revisions
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241023-drm-vc4-2712-support-v1-26-1cc2d5594907@raspberrypi.com>
+Message-Id: <20241023-drm-vc4-2712-support-v1-27-1cc2d5594907@raspberrypi.com>
 References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
 In-Reply-To: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -101,76 +102,239 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-The D-step has increased FIFO sizes of the MAI_THR blocks,
-resulting in changes to the register masking. Add support for
-it.
+From: Maxime Ripard <mripard@kernel.org>
 
+Some code path in vc4 are conditional to a generation and cannot be
+executed on others. Let's put a WARN_ON if that ever happens.
+
+Signed-off-by: Maxime Ripard <mripard@kernel.org>
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 19 +++++++++++++++++--
- drivers/gpu/drm/vc4/vc4_regs.h |  9 +++++++++
- 2 files changed, 26 insertions(+), 2 deletions(-)
+ drivers/gpu/drm/vc4/vc4_hvs.c   | 30 ++++++++++++++++++++++++++++--
+ drivers/gpu/drm/vc4/vc4_kms.c   |  6 ++++++
+ drivers/gpu/drm/vc4/vc4_plane.c | 17 +++++++++++++++++
+ 3 files changed, 51 insertions(+), 2 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 95ef8bbe6439..6fcdd1c247d2 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -2128,18 +2128,33 @@ static int vc4_hdmi_audio_prepare(struct device *dev, void *data,
- 					     VC4_HDMI_AUDIO_PACKET_CEA_MASK);
+diff --git a/drivers/gpu/drm/vc4/vc4_hvs.c b/drivers/gpu/drm/vc4/vc4_hvs.c
+index e4717ccd0730..f15aba4b81d7 100644
+--- a/drivers/gpu/drm/vc4/vc4_hvs.c
++++ b/drivers/gpu/drm/vc4/vc4_hvs.c
+@@ -419,12 +419,15 @@ static int vc4_hvs_upload_linear_kernel(struct vc4_hvs *hvs,
+ static void vc4_hvs_lut_load(struct vc4_hvs *hvs,
+ 			     struct vc4_crtc *vc4_crtc)
+ {
+-	struct drm_device *drm = &hvs->vc4->base;
++	struct vc4_dev *vc4 = hvs->vc4;
++	struct drm_device *drm = &vc4->base;
+ 	struct drm_crtc *crtc = &vc4_crtc->base;
+ 	struct vc4_crtc_state *vc4_state = to_vc4_crtc_state(crtc->state);
+ 	int idx;
+ 	u32 i;
  
- 	/* Set the MAI threshold */
--	if (vc4->gen >= VC4_GEN_5)
-+	switch (vc4->gen) {
-+	case VC4_GEN_6_D:
-+		HDMI_WRITE(HDMI_MAI_THR,
-+			   VC4_SET_FIELD(0x10, VC6_D_HD_MAI_THR_PANICHIGH) |
-+			   VC4_SET_FIELD(0x10, VC6_D_HD_MAI_THR_PANICLOW) |
-+			   VC4_SET_FIELD(0x1c, VC6_D_HD_MAI_THR_DREQHIGH) |
-+			   VC4_SET_FIELD(0x1c, VC6_D_HD_MAI_THR_DREQLOW));
-+		break;
-+	case VC4_GEN_6_C:
-+	case VC4_GEN_5:
- 		HDMI_WRITE(HDMI_MAI_THR,
- 			   VC4_SET_FIELD(0x10, VC4_HD_MAI_THR_PANICHIGH) |
- 			   VC4_SET_FIELD(0x10, VC4_HD_MAI_THR_PANICLOW) |
- 			   VC4_SET_FIELD(0x1c, VC4_HD_MAI_THR_DREQHIGH) |
- 			   VC4_SET_FIELD(0x1c, VC4_HD_MAI_THR_DREQLOW));
--	else
-+		break;
-+	case VC4_GEN_4:
- 		HDMI_WRITE(HDMI_MAI_THR,
- 			   VC4_SET_FIELD(0x8, VC4_HD_MAI_THR_PANICHIGH) |
- 			   VC4_SET_FIELD(0x8, VC4_HD_MAI_THR_PANICLOW) |
- 			   VC4_SET_FIELD(0x6, VC4_HD_MAI_THR_DREQHIGH) |
- 			   VC4_SET_FIELD(0x8, VC4_HD_MAI_THR_DREQLOW));
-+		break;
-+	default:
-+		drm_err(drm, "Unknown VC4 generation: %d", vc4->gen);
-+		break;
-+	}
- 
- 	HDMI_WRITE(HDMI_MAI_CONFIG,
- 		   VC4_HDMI_MAI_CONFIG_BIT_REVERSE |
-diff --git a/drivers/gpu/drm/vc4/vc4_regs.h b/drivers/gpu/drm/vc4/vc4_regs.h
-index 0046bdb7ca32..27158be19952 100644
---- a/drivers/gpu/drm/vc4/vc4_regs.h
-+++ b/drivers/gpu/drm/vc4/vc4_regs.h
-@@ -987,6 +987,15 @@ enum {
- # define VC4_HD_MAI_THR_DREQLOW_MASK		VC4_MASK(5, 0)
- # define VC4_HD_MAI_THR_DREQLOW_SHIFT		0
- 
-+# define VC6_D_HD_MAI_THR_PANICHIGH_MASK	VC4_MASK(29, 23)
-+# define VC6_D_HD_MAI_THR_PANICHIGH_SHIFT	23
-+# define VC6_D_HD_MAI_THR_PANICLOW_MASK		VC4_MASK(21, 15)
-+# define VC6_D_HD_MAI_THR_PANICLOW_SHIFT	15
-+# define VC6_D_HD_MAI_THR_DREQHIGH_MASK		VC4_MASK(13, 7)
-+# define VC6_D_HD_MAI_THR_DREQHIGH_SHIFT	7
-+# define VC6_D_HD_MAI_THR_DREQLOW_MASK		VC4_MASK(6, 0)
-+# define VC6_D_HD_MAI_THR_DREQLOW_SHIFT		0
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_5);
 +
- /* Divider from HDMI HSM clock to MAI serial clock.  Sampling period
-  * converges to N / (M + 1) cycles.
-  */
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
+@@ -474,6 +477,8 @@ u8 vc4_hvs_get_fifo_frame_count(struct vc4_hvs *hvs, unsigned int fifo)
+ 	u8 field = 0;
+ 	int idx;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_6_D);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return 0;
+ 
+@@ -530,6 +535,8 @@ int vc4_hvs_get_fifo_from_output(struct vc4_hvs *hvs, unsigned int output)
+ 	u32 reg;
+ 	int ret;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_6_D);
++
+ 	switch (vc4->gen) {
+ 	case VC4_GEN_4:
+ 		return output;
+@@ -621,6 +628,8 @@ static int vc4_hvs_init_channel(struct vc4_hvs *hvs, struct drm_crtc *crtc,
+ 	u32 dispctrl;
+ 	int idx;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_5);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return -ENODEV;
+ 
+@@ -682,6 +691,8 @@ static int vc6_hvs_init_channel(struct vc4_hvs *hvs, struct drm_crtc *crtc,
+ 	u32 disp_ctrl1;
+ 	int idx;
+ 
++	WARN_ON_ONCE(vc4->gen < VC4_GEN_6_C);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return -ENODEV;
+ 
+@@ -707,9 +718,12 @@ static int vc6_hvs_init_channel(struct vc4_hvs *hvs, struct drm_crtc *crtc,
+ 
+ static void __vc4_hvs_stop_channel(struct vc4_hvs *hvs, unsigned int chan)
+ {
+-	struct drm_device *drm = &hvs->vc4->base;
++	struct vc4_dev *vc4 = hvs->vc4;
++	struct drm_device *drm = &vc4->base;
+ 	int idx;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_5);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
+@@ -740,6 +754,8 @@ static void __vc6_hvs_stop_channel(struct vc4_hvs *hvs, unsigned int chan)
+ 	struct drm_device *drm = &vc4->base;
+ 	int idx;
+ 
++	WARN_ON_ONCE(vc4->gen < VC4_GEN_6_C);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
+@@ -927,6 +943,8 @@ void vc4_hvs_atomic_flush(struct drm_crtc *crtc,
+ 	bool found = false;
+ 	int idx;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_6_D);
++
+ 	if (!drm_dev_enter(dev, &idx)) {
+ 		vc4_crtc_send_vblank(crtc);
+ 		return;
+@@ -1011,6 +1029,8 @@ void vc4_hvs_atomic_flush(struct drm_crtc *crtc,
+ 	if (crtc->state->color_mgmt_changed) {
+ 		u32 dispbkgndx = HVS_READ(SCALER_DISPBKGNDX(channel));
+ 
++		WARN_ON_ONCE(vc4->gen > VC4_GEN_5);
++
+ 		if (crtc->state->gamma_lut) {
+ 			vc4_hvs_update_gamma_lut(hvs, vc4_crtc);
+ 			dispbkgndx |= SCALER_DISPBKGND_GAMMA;
+@@ -1040,6 +1060,8 @@ void vc4_hvs_mask_underrun(struct vc4_hvs *hvs, int channel)
+ 	u32 dispctrl;
+ 	int idx;
+ 
++	WARN_ON(vc4->gen > VC4_GEN_5);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
+@@ -1060,6 +1082,8 @@ void vc4_hvs_unmask_underrun(struct vc4_hvs *hvs, int channel)
+ 	u32 dispctrl;
+ 	int idx;
+ 
++	WARN_ON(vc4->gen > VC4_GEN_5);
++
+ 	if (!drm_dev_enter(drm, &idx))
+ 		return;
+ 
+@@ -1094,6 +1118,8 @@ static irqreturn_t vc4_hvs_irq_handler(int irq, void *data)
+ 	u32 status;
+ 	u32 dspeislur;
+ 
++	WARN_ON(vc4->gen > VC4_GEN_5);
++
+ 	/*
+ 	 * NOTE: We don't need to protect the register access using
+ 	 * drm_dev_enter() there because the interrupt handler lifetime
+diff --git a/drivers/gpu/drm/vc4/vc4_kms.c b/drivers/gpu/drm/vc4/vc4_kms.c
+index ce1154c463ef..3f241b15e8be 100644
+--- a/drivers/gpu/drm/vc4/vc4_kms.c
++++ b/drivers/gpu/drm/vc4/vc4_kms.c
+@@ -138,6 +138,8 @@ vc4_ctm_commit(struct vc4_dev *vc4, struct drm_atomic_state *state)
+ 	struct vc4_ctm_state *ctm_state = to_vc4_ctm_state(vc4->ctm_manager.state);
+ 	struct drm_color_ctm *ctm = ctm_state->ctm;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_5);
++
+ 	if (ctm_state->fifo) {
+ 		HVS_WRITE(SCALER_OLEDCOEF2,
+ 			  VC4_SET_FIELD(vc4_ctm_s31_32_to_s0_9(ctm->matrix[0]),
+@@ -213,6 +215,8 @@ static void vc4_hvs_pv_muxing_commit(struct vc4_dev *vc4,
+ 	struct drm_crtc *crtc;
+ 	unsigned int i;
+ 
++	WARN_ON_ONCE(vc4->gen != VC4_GEN_4);
++
+ 	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
+ 		struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
+ 		struct vc4_crtc_state *vc4_state = to_vc4_crtc_state(crtc_state);
+@@ -256,6 +260,8 @@ static void vc5_hvs_pv_muxing_commit(struct vc4_dev *vc4,
+ 	unsigned int i;
+ 	u32 reg;
+ 
++	WARN_ON_ONCE(vc4->gen != VC4_GEN_5);
++
+ 	for_each_new_crtc_in_state(state, crtc, crtc_state, i) {
+ 		struct vc4_crtc_state *vc4_state = to_vc4_crtc_state(crtc_state);
+ 		struct vc4_crtc *vc4_crtc = to_vc4_crtc(crtc);
+diff --git a/drivers/gpu/drm/vc4/vc4_plane.c b/drivers/gpu/drm/vc4/vc4_plane.c
+index 205aea3ed419..c084967d3527 100644
+--- a/drivers/gpu/drm/vc4/vc4_plane.c
++++ b/drivers/gpu/drm/vc4/vc4_plane.c
+@@ -566,8 +566,11 @@ static int vc4_plane_setup_clipping_and_scaling(struct drm_plane_state *state)
+ 
+ static void vc4_write_tpz(struct vc4_plane_state *vc4_state, u32 src, u32 dst)
+ {
++	struct vc4_dev *vc4 = to_vc4_dev(vc4_state->base.plane->dev);
+ 	u32 scale, recip;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_6_D);
++
+ 	scale = src / dst;
+ 
+ 	/* The specs note that while the reciprocal would be defined
+@@ -593,10 +596,13 @@ static void vc4_write_tpz(struct vc4_plane_state *vc4_state, u32 src, u32 dst)
+ static void vc4_write_ppf(struct vc4_plane_state *vc4_state, u32 src, u32 dst,
+ 			  u32 xy, int channel)
+ {
++	struct vc4_dev *vc4 = to_vc4_dev(vc4_state->base.plane->dev);
+ 	u32 scale = src / dst;
+ 	s32 offset, offset2;
+ 	s32 phase;
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_6_D);
++
+ 	/*
+ 	 * Start the phase at 1/2 pixel from the 1st pixel at src_x.
+ 	 * 1/4 pixel for YUV.
+@@ -825,8 +831,11 @@ static size_t vc6_upm_size(const struct drm_plane_state *state,
+ static void vc4_write_scaling_parameters(struct drm_plane_state *state,
+ 					 int channel)
+ {
++	struct vc4_dev *vc4 = to_vc4_dev(state->plane->dev);
+ 	struct vc4_plane_state *vc4_state = to_vc4_plane_state(state);
+ 
++	WARN_ON_ONCE(vc4->gen > VC4_GEN_6_D);
++
+ 	/* Ch0 H-PPF Word 0: Scaling Parameters */
+ 	if (vc4_state->x_scaling[channel] == VC4_SCALING_PPF) {
+ 		vc4_write_ppf(vc4_state, vc4_state->src_w[channel],
+@@ -1113,6 +1122,11 @@ static const u32 colorspace_coeffs[2][DRM_COLOR_ENCODING_MAX][3] = {
+ 
+ static u32 vc4_hvs4_get_alpha_blend_mode(struct drm_plane_state *state)
+ {
++	struct drm_device *dev = state->state->dev;
++	struct vc4_dev *vc4 = to_vc4_dev(dev);
++
++	WARN_ON_ONCE(vc4->gen != VC4_GEN_4);
++
+ 	if (!state->fb->format->has_alpha)
+ 		return VC4_SET_FIELD(SCALER_POS2_ALPHA_MODE_FIXED,
+ 				     SCALER_POS2_ALPHA_MODE);
+@@ -1137,6 +1151,9 @@ static u32 vc4_hvs5_get_alpha_blend_mode(struct drm_plane_state *state)
+ 	struct drm_device *dev = state->state->dev;
+ 	struct vc4_dev *vc4 = to_vc4_dev(dev);
+ 
++	WARN_ON_ONCE(vc4->gen != VC4_GEN_5 && vc4->gen != VC4_GEN_6_C &&
++		     vc4->gen != VC4_GEN_6_D);
++
+ 	switch (vc4->gen) {
+ 	default:
+ 	case VC4_GEN_5:
 
 -- 
 2.34.1
