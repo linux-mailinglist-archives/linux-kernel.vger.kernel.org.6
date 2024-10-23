@@ -1,160 +1,221 @@
-Return-Path: <linux-kernel+bounces-377555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377556-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 03D689AC079
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:39:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D1BF9AC07C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:40:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4604AB212FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:39:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B0221C237C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:40:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B186155385;
-	Wed, 23 Oct 2024 07:39:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFDFC155345;
+	Wed, 23 Oct 2024 07:40:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="A4kL/S5T"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.20])
+	dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b="cLTuNL+3"
+Received: from SEYPR02CU001.outbound.protection.outlook.com (mail-koreacentralazon11013022.outbound.protection.outlook.com [40.107.44.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BC46EAC5;
-	Wed, 23 Oct 2024 07:39:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.20
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729669176; cv=none; b=vBtBr58A9ITLLMR2FZU+rDxuejOGrbKz62ZLho6GkFptFP8zLHy8y9qRMimAcRRNXImDafZg67ylskf6AY3cM9DFle46R+tF/ja0/LCBTdyQGC892yjBe6GSTdB+LIAgty1ArdAHAW76bzfRErzAbJmdoBacmE++HxQRfcA2cZw=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729669176; c=relaxed/simple;
-	bh=d/K/oikKHdRYGNSRuNdQtZND2v5wk+xzH8NwdIk4RwM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ci7Kl0jIjkPeeaQkfbU392Frs6Pj/JaiJgjYE6CId2dtVbpY676ARdvtFdx7WL4sksoU9mDuCXJfi5ywNSZVO5aoNEVJxZvnpNJSI8fHOALne5FklKP8W6FZ45LrFy5Oc4EcjZEnQZRNkJejJgDunx/OYX0b7hFBGnF5UyQJpvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=A4kL/S5T; arc=none smtp.client-ip=198.175.65.20
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729669175; x=1761205175;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=d/K/oikKHdRYGNSRuNdQtZND2v5wk+xzH8NwdIk4RwM=;
-  b=A4kL/S5T7s9z2lgdEBDL5YtruZUTYTlscAcL4lR1TJFvk92VxIO0lssK
-   IUO3IO+XMLYYhQjH9sj527SUuGU4lP9yf5b3vhTsLj51IgtFYz0uNipRr
-   Bb6eLPcLKGrmxBeyeR4u2BkEmvPJa1pTJFqHk+xy9D+O20kFWp24L5ok4
-   vnF77zj5p0HTvuoWJ/3Jk+x2u9l0+5HJwESgQTkGJNlRA8BUzxfBagPkH
-   1MDmDlT9+uC9keg/yXUBcjh0F5qUswTgdTbnoJ1qge73CNWMc6ctD79Ul
-   VEx0kK3EvuZS6yjdOfraOUJVf/0HCnB30eWR8eaouogKAJTBa7HnnUcOl
-   Q==;
-X-CSE-ConnectionGUID: 9kHkDUCzRGmjVOCz6CHVGQ==
-X-CSE-MsgGUID: /OmWxgvLSbiSiPG2JvSkDg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29022062"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29022062"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by orvoesa112.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 00:39:34 -0700
-X-CSE-ConnectionGUID: XikBXNJlRtqFBb43X+A4GQ==
-X-CSE-MsgGUID: puU3MuQ3R7eyrNYE0MtkBg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="103402252"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 23 Oct 2024 00:39:32 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1001)
-	id 5E19E301; Wed, 23 Oct 2024 10:39:31 +0300 (EEST)
-Date: Wed, 23 Oct 2024 10:39:31 +0300
-From: Mika Westerberg <mika.westerberg@linux.intel.com>
-To: Aaron Rainbolt <arainbolt@kfocus.org>
-Cc: YehezkelShB@gmail.com, michael.jamet@intel.com,
-	andreas.noever@gmail.com, linux-usb@vger.kernel.org,
-	mmikowski@kfocus.org, linux-kernel@vger.kernel.org,
-	Gil Fine <gil.fine@linux.intel.com>
-Subject: Re: USB-C DisplayPort display failing to stay active with Intel
- Barlow Ridge USB4 controller, power-management related issue?
-Message-ID: <20241023073931.GH275077@black.fi.intel.com>
-References: <20241009220118.70bfedd0@kf-ir16>
- <20241010044919.GD275077@black.fi.intel.com>
- <20241010232656.7fc6359e@kf-ir16>
- <20241011163811.GU275077@black.fi.intel.com>
- <20241011183751.7d27c59c@kf-ir16>
- <20241023062737.GG275077@black.fi.intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB9FEAC5
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:40:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.44.22
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729669248; cv=fail; b=FVGhIICc9X8835nLbBRPqUeZn4ph+XgtSOFJbzU8EtG39RV2fLJItqzehGyBSMq7DzFBYTinuoKUc2NM5gjX3DvB7r/88sFeed0OZybbxpfXdPM7a7rYhv5xd4lfzB/iABYgjDBkN/6ZxTbaMCM0N9Pr1z99t0q9cEWqALc9YLw=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729669248; c=relaxed/simple;
+	bh=28w7dZ7YlzA48TWcVkd+iQE1atax5dCy+vTvZmjwrDo=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=PI1+/lt3cZcrbhvuQMFnhsxxfS35FVZc7LgUxvc+Lo9eyYPOmQKe/wliGd7VGItjrRJPhrqDUHKv0kUNi6SflxUVkcrtU5DDGexdbATR1JZ6mvQDHGFrAMm0S8qvIApii8dmQ4pbioo4YD1a1WSjcFKxm5g+it2VVK6AnOnZFcU=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com; spf=pass smtp.mailfrom=vivo.com; dkim=pass (2048-bit key) header.d=vivo.com header.i=@vivo.com header.b=cLTuNL+3; arc=fail smtp.client-ip=40.107.44.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=vivo.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=vivo.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=AMEphhIK189OEG8EyMFeohxdnlGrgKrDILqEKb4b4ur/H/CJjLd5nExSq4HsD5DgT1LKZcMYkG+Ak5WA97zeEM9gN2+HXJEBiTbl5l5y3oSGidXu1fambh7VEx539fE7aNz/2HNdrNOPNeHQenSo93ARzYdkVNhD/Myitx76fXbKX6QsjP5nMIGsUYYuQ/dwFptIi1weL7Q86/4irXjRgdxPiwZosAMfDlkLMfMjKtbyRw+LuSnUXnCe/7tmBKyrEIjyEfXyNel/bdnDBgKwuh2VFRURCIxsEc/RG2gP3TK7SK9pSZuk8buUMnx1LykBQAZa5MyIrdfzoOiqWIm1Vg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=28w7dZ7YlzA48TWcVkd+iQE1atax5dCy+vTvZmjwrDo=;
+ b=dRvBrHN3vvi7IfBS9Thb9RnEmue60bHX78c0B+tJUGLrdQKtroBSjtxBKktfFrdVQhqb86HKzneBt/N6LzMiM6LE5bGeoHK4tKKw37O26vH46Zhf1UCvZkLmPOiZSz5LWRt82Q6/BtLaf3qhvLkLGAFCxdeBxcOuBu9U4PAIu4zVSzNx/5DYJ/5lDZ/wQaUqw4kBcXbSAO6cmgQvWwq5i5lL0Y6xROD7Bm7KoNFxUvDOcyKwQm99HVYBVSXzs0iHH4tSFiC75OPbiTh9EYXlgOQ78Co3MoKtaJH7swr2N21FII12cwqM8FZNrr3herYQ4JgTPDNcK9Uhvmm8PYt44g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=vivo.com; dmarc=pass action=none header.from=vivo.com;
+ dkim=pass header.d=vivo.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=vivo.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=28w7dZ7YlzA48TWcVkd+iQE1atax5dCy+vTvZmjwrDo=;
+ b=cLTuNL+3uvm+vrRcEx68dhglaPXMds7HWJ6/UEOPCHBL7ctCWc3zzlF7gQnIZkPDl4vtSAAZJFfsESXzBT/yJ2/Qez8fv2pE+cgW0d5O1Sgq+ks09o7yv8X1lFFldAA4mlTS75J1tFi/JWvGiH1xfXH8J4BbcS4q+5qZM2sFKa438UCKoMOXWPQ2axZMygCvukBFO0MGaTjcCqIM0Te1Davk2jOSY1v01CvTWp3bRXCpAXCYErxiFM3swk+4HbeAIBnCXTlNLpXwgoIDmPIhFFPlMWSCdOiUhMdl5a5TbqNQXlRsmqf88jYSjwGI4n887/QLq5Jedozkos2yRkL5HA==
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com (2603:1096:101:228::14)
+ by TYZPR06MB6143.apcprd06.prod.outlook.com (2603:1096:400:340::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.15; Wed, 23 Oct
+ 2024 07:40:44 +0000
+Received: from SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0]) by SEZPR06MB7140.apcprd06.prod.outlook.com
+ ([fe80::9eaf:17a9:78b4:67c0%6]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
+ 07:40:43 +0000
+From: =?utf-8?B?6Z+p5qOL?= <hanqi@vivo.com>
+To: "jaegeuk@kernel.org" <jaegeuk@kernel.org>, "chao@kernel.org"
+	<chao@kernel.org>
+CC: "linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, Zhiguo Niu <niuzhiguo84@gmail.com>
+Subject: Re: [PATCH v3] f2fs: modify f2fs_is_checkpoint_ready logic to allow
+ more data to be written with the CP disable
+Thread-Topic: [PATCH v3] f2fs: modify f2fs_is_checkpoint_ready logic to allow
+ more data to be written with the CP disable
+Thread-Index: AQHbJPVYFuddN7YKoUe4+0WOEGD1a7KT88+A
+Date: Wed, 23 Oct 2024 07:40:43 +0000
+Message-ID: <9825b1c1-9d24-48d1-a807-d1e6e25c4157@vivo.com>
+References: <20241023025945.1817457-1-hanqi@vivo.com>
+In-Reply-To: <20241023025945.1817457-1-hanqi@vivo.com>
+Accept-Language: zh-CN, en-US
+Content-Language: zh-CN
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=vivo.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SEZPR06MB7140:EE_|TYZPR06MB6143:EE_
+x-ms-office365-filtering-correlation-id: 1ce17f44-f4ac-4c41-544f-08dcf3360046
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?utf-8?B?MXgySmN5K1BUOXpGMzdJU2lsRE9pRVExVU44dGZHZ0M4WXJKTUFlNzFWM1RJ?=
+ =?utf-8?B?QVhOOHkvckFrcGVrMWlKUDc3aEY2SkZ2V2Z4NFcwcjJBeVdjR2JpMExSV1Np?=
+ =?utf-8?B?MjVNWGU4b1B0dnlVNGtXc09qUDdhV1RoZEVOcDNPU2RFZktOYyt2TzFLR2Jl?=
+ =?utf-8?B?bVZkUVhneFFqNzlQcnlQN0dkNTc1d3BjeFl2N2Z3VmtiaDVYdWhpYTVwNjJC?=
+ =?utf-8?B?c2M0bEpRTTErSTVZcFNYN2gyV1BvUDlTVjBtRmN4Q2pVUnRMSldhbG4xZ2p0?=
+ =?utf-8?B?enFLU0dkSXdSaFZ1VXpUR2RnSmdPUTcrazB4Q1lZbkdtcWhiQ3RYMTBHWmlM?=
+ =?utf-8?B?MWdCV3htc2xmNWM1RTJDVS84S0N4V0pBVy92VlMwNDBPK1dNTWZxMWRJTG82?=
+ =?utf-8?B?c25MdC93Wk5vUHBwQzdWSDFIaEoyZ1FSTkFjdEg1SU5VTUpDNDJYTkVkZmRk?=
+ =?utf-8?B?bjJEdFhPSUNqMU9Pa0Q4OFpDc1pXenVhaVMvek85RGl0V1BRQ1VpVHJDVUpu?=
+ =?utf-8?B?UC9wUkhuaWhyZ0dXY0ZOaS85bjRLYTNFTnRBVnpva3BSOW92b1hBWjN3T21q?=
+ =?utf-8?B?MyswR2wzSzZPekNlYVBUYWJac2pOQjVGbFNDYUhZSWdzRk9ZcUZmYXhQeWJG?=
+ =?utf-8?B?dTZHZFRLRHJUU0F6ckpJd0NhNzBUWTZvdnRTMCtISGtHOHJpdXdCZlEzS3ZO?=
+ =?utf-8?B?ekNlUDVrcVl4WUFWZG1kd2ZGWXBoeVJFRUVLYUwrSXFvYXE1U2VOeTRPSXRC?=
+ =?utf-8?B?UERnNFloanFTV0Zud2xwYVpoWTRWZjZEZWF3c2o0VnpMSkdNSkMvcTUwdjZL?=
+ =?utf-8?B?M2ZOMlpOT0lTQ2RMYVhmOGZrLzErWVdOZGVSM1dJQmlqZHNFN2ZzcktDOE1Y?=
+ =?utf-8?B?UEk2NEo4emNTWllVMjUzbUhOTnVldVBORkZpMzFEMFR4ajJkSFYvbmdTRUlz?=
+ =?utf-8?B?YVlpQk1pcS94cU5VUVljZnBWYWZ0Wkp2ZUljbTI5K1hIYjFMSlowTFBFRUov?=
+ =?utf-8?B?eDlDQ1ZRN3NxanNMdVIvaUovcmU4aE1ScEJHeDdoT0pUQTJnUzR1dUJ6Vkl1?=
+ =?utf-8?B?U1BKcnloejZ6R3YvcFJ2KzB3UWdDTklzZ01ZWEFjcUVLOWIzdkRWN091RmtO?=
+ =?utf-8?B?TjNDNXJKclV2bHRwQktOcUpDM0JPWUlLenNTUVVOTDlYd0tvU3RrckZLSC8y?=
+ =?utf-8?B?SkV2MTJvbHBDdHR4cHNOSkgxSjJhdnZ2NjFWZ3RiMjVhT05JZnBwS1BZWWR1?=
+ =?utf-8?B?MmJpaDgxdFVsVkI3SlBFNXdHMExlemlKczlxNlNaSVpPQ3ZVTGFuYkV3UkRt?=
+ =?utf-8?B?dkM5TXFTS2ZsNkhIUEc5anI5bXEwVnBVVXNOc0lYMlJBZktPUVJZZWJhcDg1?=
+ =?utf-8?B?T3FWTjE2K09adGNKNk4wM29leUdaeFRBcWtoR1kyNEZCTkZDTHpMNWFkb050?=
+ =?utf-8?B?T1VEY0lweW5vRG1LSENDYnBpSXIrRkQvWENHamJwbVMxdmxjL01tbjh6ejBw?=
+ =?utf-8?B?NFlkNk1TRG85R1czWVZYaDdaa1k5cWtDd2ZIalZCUU9ZdVhvNUZqc1lNWWtr?=
+ =?utf-8?B?TGd6U0Z0VjFKRVpHcmpOSk1UT3poZ1Q1dHgvbCttMkRQaGQ3TUxKSEIwbFRt?=
+ =?utf-8?B?anVUWGY5UklYNVB1UnFwNk80ZjVIRmROVWFVNFBpWlE1SXN0bnlMV0FheXht?=
+ =?utf-8?B?R3FUNjlZcWJSMVV0YUNYMk5SVXl1U3BRYnNEMldxWTVvTkwzZVZZc2VCOEZr?=
+ =?utf-8?B?dzI2R0FrMURrb2ZSYUZPeGtjSzRPeUZ2Um5pSUVQZjV6eXRiRzY3dWVWQU9j?=
+ =?utf-8?Q?Sp4fxEKfXveglG40pR2nTbd8L0NZJH2iK2n88=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:zh-cn;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SEZPR06MB7140.apcprd06.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?utf-8?B?R0JBTGsxWGVZdC9NQzgwS1Q3cEE5OXhlaVFZMXJ2VUdHc0ZWNEJmL1N3SFNP?=
+ =?utf-8?B?c01UVnJGamlZTlRud2ZKSzB0UEJaSXBIejQ5aUZxb2plK2x5VjNBNnhIM1pz?=
+ =?utf-8?B?aVdPNENVSGhsTTg1MDRUbEk3MzlaLzh0dHB5RWJnV3J0SzZtV1ZnZ3ZJM205?=
+ =?utf-8?B?ZVZXYmdqYk8wUlpOM2tOVG9qOUpzb2RwOE5tL1UyU0ZMQ0huWElpVkYvRkJw?=
+ =?utf-8?B?V0xpc09kaktQa3pkeVIvMVNVeFhnNDVCWjgzOERIci9IaWRMaWJGbnVySHhD?=
+ =?utf-8?B?S1BTV0g4bEJwcGZXVkE4aHY0aVZsUjBkR3NNYUhyUTl3bW8xS0lZc3lqUXh6?=
+ =?utf-8?B?SjZoMTB2WGwvQTI0eHE0QmpBWGZwTWVCT0FRWmEzdUh4ZVh2Tis3Z0JCemRS?=
+ =?utf-8?B?WTFkQ1Y2R0hnbGdBSElWNDVZSHFiSkJ2UnVTNzlXdUwreEM0dGZzOEIxZmpu?=
+ =?utf-8?B?WEt3YlQ3R29sS0FDY3hkNHc0Qk1CZmxLTkE2QTF3bFpndDZpaTNjTVU3VXJw?=
+ =?utf-8?B?TmNuQ0FJQTVEcWlYTGk1NFNtd210dk9pSlJNbnhXNHBQOXVvKzhuYUdwenBv?=
+ =?utf-8?B?TFBURm93c2hwS2RjOHc3eG54UVhRcnYvRm1RT0YvWGowQ1FUeWp4L1ViZXdw?=
+ =?utf-8?B?QWRzWlNRdGlDSVM3czRNTkp3ZlpnNi9DMWh2bGRKLytrQitKZkYwaGtOZG92?=
+ =?utf-8?B?NjZwaCt0WWFqT0pCRm10amI3dEdLMmxhQUZSTklwN29Eb2FWS0Z1eTFzdm11?=
+ =?utf-8?B?MmY1TXJhaUlhQUlHWnZBTFNyYU5qRzVqT255WFc1ZGE0aTdNak9Dc0lQYmUw?=
+ =?utf-8?B?WkNnTGhuejJobE1HdDE1M1hqOGdkTEhaK2pLMWUvNnNQYzRURmZMN2VVTUFo?=
+ =?utf-8?B?ZktOakFXZ0hjL2p6akJUaFdhNU5WZkJ2OHhjaktCM0N1c00wVmFLcmVKbklu?=
+ =?utf-8?B?VVZlYWZwUEUyUDlyMW03QjB4cDBBNzBoeHphRVZrbDY3VEFhcXgyM0o5UVdE?=
+ =?utf-8?B?clhkWlpIUFRtbTlycW9yQWx4aTF4WmpZZHlZSFkzZG82S2R6Q3dYWGdDaG5O?=
+ =?utf-8?B?QjQ3bGVCOWd6Tlg3cFY2cVRlMVhHMmJVeldaTXYrUThjeGpKNGVTU2JCU1VV?=
+ =?utf-8?B?VUJHK2MwWHJWUmpFVXhCbkpxc3JkRG91cjFzdkdkQmxNT3djclQ0L0k2Vmtm?=
+ =?utf-8?B?Zy91eDd3d0ZhNitESkx3ZTNSZUVhZFd1aUlrRytoU1FZUUpJQVRkcnc3SE5I?=
+ =?utf-8?B?MFJGNCs1cEpsR3VCdlIzK1pNb2FNN1oxSnlTL2RPQ3ZiZWhXRVJ6UStXQ0Uv?=
+ =?utf-8?B?K0IzOW9jQzBwcUgwclFDc1RUTXBiTWRjRlozUWk0SUVzZnhCemNiMmt1UlA4?=
+ =?utf-8?B?c2dkbHpwUWxWV3FrbUo4N29mS2V6SFk1Y3paRXNrMFUxNjRhcTlqQVVwa2lz?=
+ =?utf-8?B?TGhlR3FTVTBuN3ZBdENIWFAyWDJsMTFQZE1xNWI4aUtMMTJRK0hIY21nb2lZ?=
+ =?utf-8?B?c0NBcThMaFN6QjNVL3hQaHNHTFgwVWR0TjRFb00xUEFKUCtoTDlwYTg1dGRB?=
+ =?utf-8?B?ajdSTWxZbnBqazFVdkU4M0Z5ZHNHSzJjbGRsTFFXVE1MOC9VQlhMd1R2QkRX?=
+ =?utf-8?B?dUFZVWRiWmUyM3J3N1FvL1N4RDBqVGFNOS91Unh4Q3BzS01YcE5TS29sZGU2?=
+ =?utf-8?B?ZHdyU050c2hLUVdwcmRGSFhCOVN5QVpwSnl1Qk1xanFuVVdlNW9jK2N4Sy94?=
+ =?utf-8?B?dTlhZk1xTkR0VFF2VndSd0l4NENKWkZuWVNkVlJLM2FwK0xKTCt1MjBFZ05r?=
+ =?utf-8?B?UHljbFFNb2JkUWdWcjlWUUlCODA3YW11QWlQQXRnVlk0STNNOEdpTmhWSW91?=
+ =?utf-8?B?QWRvaXMxRXdHNzhaWGRMRjU1Z1UrcHRmTm5qbGJyb3Y3R29HUE9XQnAyVzBX?=
+ =?utf-8?B?UXBsbkNtbXpPNWpmRXRqWFlVU2xBYkQvVm12R0UxVFIwcitFZmYwOHVSWmJE?=
+ =?utf-8?B?cG9acDdLMGNRcldkOXVFV25Lc3ZNbzJhNE1NTnNXdUNURS9RV2tJR2xPSWRU?=
+ =?utf-8?B?eUovZ2xUbXh5Zk83Mnk3TkhFNHg0a3Q3ZkJqQTNqZDlHS1lCQ0dGQUdUd1Fh?=
+ =?utf-8?Q?A/Qs=3D?=
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <06264ADC00821244B72AEC38F53DAADD@apcprd06.prod.outlook.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241023062737.GG275077@black.fi.intel.com>
+X-OriginatorOrg: vivo.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SEZPR06MB7140.apcprd06.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 1ce17f44-f4ac-4c41-544f-08dcf3360046
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 07:40:43.7669
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 923e42dc-48d5-4cbe-b582-1a797a6412ed
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: GUhIrvtkIa5Q4ndQaibb2JRazpxmC9RGD5gXU/dltYtowaYHIAYXCcsqYOmdkz2DO69upaykAjivKgEuwdU3HQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: TYZPR06MB6143
 
-On Wed, Oct 23, 2024 at 09:27:37AM +0300, Mika Westerberg wrote:
-> So at this point we are not in "redrive" mode anymore and the domain is
-> allowed to runtime suspend.
-> 
-> > [  353.611933] thunderbolt 0000:06:00.0: looking for DP IN <-> DP OUT pairs:
-> > [  353.612076] thunderbolt 0000:06:00.0: 0:14: DP IN available
-> > [  353.612258] thunderbolt 0000:06:00.0: 0:13: DP IN available
-> > [  353.612264] thunderbolt 0000:06:00.0: no suitable DP OUT adapter available, not tunneling
-> > [  372.362496] thunderbolt 0000:06:00.0: 0: suspending switch
-> > [  372.362506] thunderbolt 0000:06:00.0: 0: enabling wakeup: 0x3f
-> > [  372.363480] thunderbolt 0000:06:00.0: stopping RX ring 0
-> > [  372.363497] thunderbolt 0000:06:00.0: disabling interrupt at register 0x38200 bit 12 (0x1001 -> 0x1)
-> > [  372.363523] thunderbolt 0000:06:00.0: stopping TX ring 0
-> > [  372.363539] thunderbolt 0000:06:00.0: disabling interrupt at register 0x38200 bit 0 (0x1 -> 0x0)
-> > [  372.363558] thunderbolt 0000:06:00.0: control channel stopped
-> 
-> Which is what happens here.
-> 
-> I think the driver does the correct thing but why you don't see anything
-> in the screen is beyond me. Can reproduce just this case with the patch
-> and then run "xrandr" and see if the monitors are visible there?
-
-The other option is that there is no wake when you plugged in the
-monitors and it only wakes up when you did this:
-
-> 8. Open a terminal and run 'lspci -k' 
->     - Both displays are activated and remain active.
->     - There is no timeout.
->     - This is desired behavior.
-
-There is one such wake in the dmesg, this:
-
-[   60.126328] thunderbolt 0000:06:00.0: control channel starting...
-[   60.126332] thunderbolt 0000:06:00.0: starting TX ring 0
-[   60.126337] thunderbolt 0000:06:00.0: enabling interrupt at register 0x38200 bit 0 (0x0 -> 0x1)
-[   60.126339] thunderbolt 0000:06:00.0: starting RX ring 0
-[   60.126344] thunderbolt 0000:06:00.0: enabling interrupt at register 0x38200 bit 12 (0x1 -> 0x1001)
-[   60.126347] thunderbolt 0000:06:00.0: 0: resuming switch
-[   60.126348] thunderbolt 0000:06:00.0: restoring Switch at 0x0 (depth: 0, up port: 15)
-[   60.128535] thunderbolt 0000:06:00.0: 0: disabling wakeup
-[   60.129481] thunderbolt 0000:06:00.0: acking hot plug event on 0:13
-[   60.129601] thunderbolt 0000:06:00.0: acking hot plug event on 0:14
-[   60.129730] thunderbolt 0000:06:00.0: acking hot plug event on 0:16
-
-but here we get plug event for all the DP IN adapters (13, 14, 16) which
-tells me that there is nothing connected to the Type-C ports. Otherwise
-it would not send the plug event. This may be due the older firmware.
-
-[   60.137467] thunderbolt 0000:06:00.0: 0: TMU: supports uni-directional mode
-[   60.137478] thunderbolt 0000:06:00.0: 0: TMU: supports enhanced uni-directional mode
-[   60.137589] thunderbolt 0000:06:00.0: 0: TMU: current mode: off
-[   60.137591] thunderbolt 0000:06:00.0: 0: TMU: mode change off -> bi-directional, HiFi requested
-[   60.138102] thunderbolt 0000:06:00.0: 0: TMU: mode set to: bi-directional, HiFi
-[   60.139778] thunderbolt 0000:06:00.0: 0:13: DP IN resource available after hotplug
-[   60.139783] thunderbolt 0000:06:00.0: looking for DP IN <-> DP OUT pairs:
-[   60.139895] thunderbolt 0000:06:00.0: 0:13: DP IN available
-[   60.139896] thunderbolt 0000:06:00.0: no suitable DP OUT adapter available, not tunneling
-[   60.140018] thunderbolt 0000:06:00.0: 0:14: DP IN resource available after hotplug
-[   60.140021] thunderbolt 0000:06:00.0: looking for DP IN <-> DP OUT pairs:
-[   60.140145] thunderbolt 0000:06:00.0: 0:13: DP IN available
-[   60.140277] thunderbolt 0000:06:00.0: 0:14: DP IN available
-[   60.140278] thunderbolt 0000:06:00.0: no suitable DP OUT adapter available, not tunneling
-[   78.863111] thunderbolt 0000:06:00.0: 0: suspending switch
-[   78.863125] thunderbolt 0000:06:00.0: 0: enabling wakeup: 0x3f
-[   78.864812] thunderbolt 0000:06:00.0: stopping RX ring 0
-[   78.864825] thunderbolt 0000:06:00.0: disabling interrupt at register 0x38200 bit 12 (0x1001 -> 0x1)
-[   78.864849] thunderbolt 0000:06:00.0: stopping TX ring 0
-[   78.864857] thunderbolt 0000:06:00.0: disabling interrupt at register 0x38200 bit 0 (0x1 -> 0x0)
-[   78.864870] thunderbolt 0000:06:00.0: control channel stopped
-
-There is no unplug at all here so the domain can go back to runtime
-suspend.
+5ZyoIDIwMjQvMTAvMjMgMTA6NTksIFFpIEhhbiDlhpnpgZM6DQo+IFdoZW4gdGhlIGZyZWUgc2Vn
+bWVudCBpcyB1c2VkIHVwIGR1cmluZyBDUCBkaXNhYmxlLCBtYW55IHdyaXRlIG9yDQo+IGlvY3Rs
+IG9wZXJhdGlvbnMgd2lsbCBnZXQgRU5PU1BDIGVycm9yIGNvZGVzLCBldmVuIGlmIHRoZXJlIGFy
+ZQ0KPiBzdGlsbCBtYW55IGJsb2NrcyBhdmFpbGFibGUuIFdlIGNhbiByZXByb2R1Y2UgaXQgaW4g
+dGhlIGZvbGxvd2luZw0KPiBzdGVwczoNCj4NCj4gZGQgaWY9L2Rldi96ZXJvIG9mPWYyZnMuaW1n
+IGJzPTFNIGNvdW50PTY1DQo+IG1rZnMuZjJmcyAtZiBmMmZzLmltZw0KPiBtb3VudCBmMmZzLmlt
+ZyBmMmZzX2RpciAtbyBjaGVja3BvaW50PWRpc2FibGU6MTAlDQo+IGNkIGYyZnNfZGlyDQo+IGk9
+MSA7IHdoaWxlIFtbICRpIC1sdCA1MCBdXSA7IGRvIChmaWxlX25hbWU9Li8yTV9maWxlJGkgOyBk
+ZCBcDQo+IGlmPS9kZXYvcmFuZG9tIG9mPSRmaWxlX25hbWUgYnM9MU0gY291bnQ9Mik7IGk9JCgo
+aSsxKSk7IGRvbmUNCj4gc3luYw0KPiBpPTEgOyB3aGlsZSBbWyAkaSAtbHQgNTAgXV0gOyBkbyAo
+ZmlsZV9uYW1lPS4vMk1fZmlsZSRpIDsgdHJ1bmNhdGUgXA0KPiAtcyAxSyAkZmlsZV9uYW1lKTsg
+aT0kKChpKzEpKTsgZG9uZQ0KPiBzeW5jDQo+IGRkIGlmPS9kZXYvemVybyBvZj0uL2ZpbGUgYnM9
+MU0gY291bnQ9MjANCj4NCj4gSW4gZjJmc19uZWVkX1NTUigpIGZ1bmN0aW9uLCBpdCBpcyBhbGxv
+d2VkIHRvIHVzZSBTU1IgdG8gYWxsb2NhdGUNCj4gYmxvY2tzIHdoZW4gQ1AgaXMgZGlzYWJsZWQs
+IHNvIGluIGYyZnNfaXNfY2hlY2twb2ludF9yZWFkeSBmdW5jdGlvbiwNCj4gY2FuIHdlIGp1ZGdl
+IHRoZSBudW1iZXIgb2YgaW52YWxpZCBibG9ja3Mgd2hlbiBmcmVlIHNlZ21lbnQgaXMgbm90DQo+
+IGVub3VnaCwgYW5kIHJldHVybiBFTk9TUEMgb25seSBpZiB0aGUgbnVtYmVyIG9mIGludmFsaWQg
+YmxvY2tzIGlzDQo+IGFsc28gbm90IGVub3VnaD8NCj4NCj4gU2lnbmVkLW9mZi1ieTogUWkgSGFu
+IDxoYW5xaUB2aXZvLmNvbT4NCj4gLS0tDQo+ICAgZnMvZjJmcy9zZWdtZW50LmggfCAxNyArKysr
+KysrKysrKysrKysrKw0KPiAgIDEgZmlsZSBjaGFuZ2VkLCAxNyBpbnNlcnRpb25zKCspDQo+DQo+
+IGRpZmYgLS1naXQgYS9mcy9mMmZzL3NlZ21lbnQuaCBiL2ZzL2YyZnMvc2VnbWVudC5oDQo+IGlu
+ZGV4IDcxYWRiNGE0M2JlYy4uMjBiNTY4ZWFhOTVlIDEwMDY0NA0KPiAtLS0gYS9mcy9mMmZzL3Nl
+Z21lbnQuaA0KPiArKysgYi9mcy9mMmZzL3NlZ21lbnQuaA0KPiBAQCAtNjM3LDEyICs2MzcsMjkg
+QEAgc3RhdGljIGlubGluZSBib29sIGhhc19lbm91Z2hfZnJlZV9zZWNzKHN0cnVjdCBmMmZzX3Ni
+X2luZm8gKnNiaSwNCj4gICAJcmV0dXJuICFoYXNfbm90X2Vub3VnaF9mcmVlX3NlY3Moc2JpLCBm
+cmVlZCwgbmVlZGVkKTsNCj4gICB9DQo+ICAgDQo+ICtzdGF0aWMgaW5saW5lIGJvb2wgaGFzX2Vu
+b3VnaF9mcmVlX2Jsa3Moc3RydWN0IGYyZnNfc2JfaW5mbyAqc2JpKQ0KPiArew0KPiArCXVuc2ln
+bmVkIGludCB0b3RhbF9mcmVlX2Jsb2NrcyA9IDA7DQo+ICsJdW5zaWduZWQgaW50IGF2YWlsX3Vz
+ZXJfYmxvY2tfY291bnQ7DQo+ICsNCj4gKwlzcGluX2xvY2soJnNiaS0+c3RhdF9sb2NrKTsNCj4g
+Kw0KPiArCWF2YWlsX3VzZXJfYmxvY2tfY291bnQgPSBnZXRfYXZhaWxhYmxlX2Jsb2NrX2NvdW50
+KHNiaSwgTlVMTCwgdHJ1ZSk7DQo+ICsJdG90YWxfZnJlZV9ibG9ja3MgPSBhdmFpbF91c2VyX2Js
+b2NrX2NvdW50IC0gKHVuc2lnbmVkIGludCl2YWxpZF91c2VyX2Jsb2NrcyhzYmkpOw0KPiArDQo+
+ICsJc3Bpbl91bmxvY2soJnNiaS0+c3RhdF9sb2NrKTsNCj4gKw0KPiArCXJldHVybiB0b3RhbF9m
+cmVlX2Jsb2NrcyA+IDA7DQo+ICt9DQo+ICsNCj4gICBzdGF0aWMgaW5saW5lIGJvb2wgZjJmc19p
+c19jaGVja3BvaW50X3JlYWR5KHN0cnVjdCBmMmZzX3NiX2luZm8gKnNiaSkNCj4gICB7DQo+ICAg
+CWlmIChsaWtlbHkoIWlzX3NiaV9mbGFnX3NldChzYmksIFNCSV9DUF9ESVNBQkxFRCkpKQ0KPiAg
+IAkJcmV0dXJuIHRydWU7DQo+ICAgCWlmIChsaWtlbHkoaGFzX2Vub3VnaF9mcmVlX3NlY3Moc2Jp
+LCAwLCAwKSkpDQo+ICAgCQlyZXR1cm4gdHJ1ZTsNCg0KSGksIENoYW8sDQoNCkFmdGVyIFpoaWd1
+bydzIHJlbWluZGVyLCBJIGp1c3Qgc2F3IHlvdXIgcHJldmlvdXMgcGF0Y2g6DQpmMmZzOiBmaXgg
+dG8gYWNjb3VudCBkaXJ0eSBkYXRhIGluIF9fZ2V0X3NlY3NfcmVxdWlyZWQoKSwNCnRoZSBjdXJy
+ZW50IG1vZGlmaWNhdGlvbiBtYXkgc3RpbGwgcmV0dXJuIHRydWUgaWYgdGhlIHNlZ21lbnQNCmlz
+IGZvdW5kIHRvIGJlIGluc3VmZmljaWVudCB3aGVuIExGUyBhbmQgQ1AgaXMgY2xvc2VkLCBzaG91
+bGQNCkkgYWRkIHRoZSBMRlMgbW9kZSByZXN0cmljdGlvbiBoZXJlPw0KDQpUaGFua3MuDQoNCj4g
+KwlpZiAobGlrZWx5KGhhc19lbm91Z2hfZnJlZV9ibGtzKHNiaSkpKQ0KPiArCQlyZXR1cm4gdHJ1
+ZTsNCj4gICAJcmV0dXJuIGZhbHNlOw0KPiAgIH0NCj4gICANCg0K
 
