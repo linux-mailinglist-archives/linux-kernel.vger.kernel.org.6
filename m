@@ -1,123 +1,191 @@
-Return-Path: <linux-kernel+bounces-378964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378965-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD3829AD7E1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:40:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3AEC69AD7E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:40:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8FE492834C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:40:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BF47B241FF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:40:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 382171FF7D7;
-	Wed, 23 Oct 2024 22:38:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4D220013C;
+	Wed, 23 Oct 2024 22:38:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="l6YFCWBl"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2LxQ/ap"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89E95146A79;
-	Wed, 23 Oct 2024 22:38:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C81FEFD3;
+	Wed, 23 Oct 2024 22:38:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729723084; cv=none; b=lzE8Cyqzfv0McKKj3CxMhaCWK9KywF9WHALVX8QdWoTx/jFqtXQdc+BZAHgrJ0euGCHbHrUvfvX3kBmqZK28DncatesZ0GpcdrLCUfnyin2v6omUmvNXPKrxyMZZxR8zh/8X3brvZZW2fmvI2hTxDFkuA2brG34DssNPF6Wf/pk=
+	t=1729723133; cv=none; b=k2+jeEc+sbIk/BaoPq3QjhHSp3/PMIpQoHzSEiaCSe5C+gYxgbYVg5n7Fz2i8pX7nzTRzJ8T3qyaDEIRLD2TfDTa+7AI9O0OFb6pBgtHq73cnPP9trlgDxitrwtOrC/exaQ5mbzb3xvcyLgJSGuNSiQ1ddPZrQN8wMP+/FRti6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729723084; c=relaxed/simple;
-	bh=VwEUW5iJSlm9/CNOOGua3OLreSG4GLGoycOCFAen6TA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=D8jwCaeplfjD3o577vmK4aOQTIdD8UUVR+yieXgrUkaiqttKBIbHhqRryFqysqZX49WwOAomYUyD+J8TEngWHuL6bHycYu7lyZR9O9Euk571Rtb8dwSIuAqL5k2TlyC4piyaHrZjglb9n46yWgTVWMoWx5xsST1IFL2viV0YCIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=l6YFCWBl; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BDEEC4CEC6;
-	Wed, 23 Oct 2024 22:38:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729723084;
-	bh=VwEUW5iJSlm9/CNOOGua3OLreSG4GLGoycOCFAen6TA=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=l6YFCWBlx+WocJvqZxGt+InK5bbZNO1eENB38gzsctM28XUMT9FDu/BgdaM9RG2RN
-	 BCrQ/tKpO9lpRVDU//X46kWpV7AreBgSIw6c5vzS0Q+F4y1DAc7p539gKqjZoVtOnU
-	 2oVZP/AS1xjJThFjNJcWQsQYNDND2YFNJ2oMagFMF+SWFcy894NcyvzZM5OcrDmsR1
-	 cfumPN92gazRPcEgkt3txnigPTVenRANDdJbKgp8I9oASzMuhE16avqdsQ8zZEYohh
-	 l5Oy0EtnJ9M8S+GFEvnqb4IfCx5ltnZ1N/H9lpItgqdlEChnM+Znzveqc+iGdw3PmI
-	 0z6/QLNP0HNnw==
-Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so303167e87.0;
-        Wed, 23 Oct 2024 15:38:04 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVV7SvdHPqAyXZgqFAg49E165zqQ17TKyO0XTkODL1nqK/DFl5fS5FINexgrPdJFedkNdsyT5lbbgENMg==@vger.kernel.org, AJvYcCXPljmyDXC8CIObpGolnc/uHezP8M7Z6e2E/0iEOjmRNZ5HAb9yGcnfgzPu+QiWpOloO6ckri2AFbyB61z6Ie+UQA==@vger.kernel.org, AJvYcCXyHpqqzZNYKEEd0Ct4sLyffmNp1Ks5UBfuRNoi8jdraFe2Iv0dW1RPaDkNP0INg+w/11CD/wza3ypxz1o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKVHPcKoKq4COTgCQn0OVc971T51Y/aDgs24TrMyf64YTv+Foz
-	YLwjunBD+S+iaXL4bFIh3ygnmUZ+S1HyYGHiRJAjYbnETSMnvc9Tgwm0z4XtFhW+cDD70cRkelF
-	GAr92af65gJZKICLXfjYr0HwxPJg=
-X-Google-Smtp-Source: AGHT+IHyzRu/ldUleBZN0H1xDjB/FopQEnCZUwTujKPi2G+VLc25xRuTEBUL/G6AcOYTxEAuXp0DVLn7acQsknI4qtU=
-X-Received: by 2002:a05:6512:ad5:b0:539:e2cc:d380 with SMTP id
- 2adb3069b0e04-53b1a341cb6mr2080833e87.27.1729723082566; Wed, 23 Oct 2024
- 15:38:02 -0700 (PDT)
+	s=arc-20240116; t=1729723133; c=relaxed/simple;
+	bh=ES5iYOA95Kt0KDp71z3fgi0EpYKOwnsO4BIWmBh/gpM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XpABzy7gmJFRXmpMw/UAdjT4HYQV69SaLMLp4JN2UjEerpAGbFFLkhG+qzjGHkl5KniiXollOuPtQ8+CEFTKcsWutThEukqVxb6i6fnr5dqUARB0Xt0dOKDtUtClzQAxfOTwzFX9LSLihFVIgaUvYQqB8Zfe/0llPBWtRHi4ehg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2LxQ/ap; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e6d988ecfso240302b3a.0;
+        Wed, 23 Oct 2024 15:38:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729723131; x=1730327931; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=rkwckHmFPJEkM3Wxs1jlPmTkTzgcJwcJLaHVmfmItpM=;
+        b=d2LxQ/apVyAlS1olU1fdMZKiDZjRrbk5T7qyCWqdCPk8ZprLdSID6Ig+ARiK1pINal
+         m/xfluNMNHvfQzV5+8kxznjutp2IXYSeyCpEh2lqIsorvgqA7wkJ/lIIHQ/z/e3QO+/P
+         i3vxrJa12QTr47FbDAYefW8ZwBqtD9UO8K53j2hFmqiCuvK+pQtUhvt+4vBFIHcNvbRu
+         UFpg9Wo1ZLL0sAdk/SP7elW8HnB0lGxy0RWVjNg/oPuvshPfpHZFgAEw9rPZ6YI7Wz/G
+         7KTBkxbzyFgBFh35f+J7wSY7NFzYizTCUvHXz8QA1ztUSNdZBpyi/rsZuQMPRnUIq9gx
+         2O1A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729723131; x=1730327931;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=rkwckHmFPJEkM3Wxs1jlPmTkTzgcJwcJLaHVmfmItpM=;
+        b=s+6htdohf4A8eNjHjAcTB43pkTwxKJoIcpiSOb6+zKEiPr9QT556c5S4lLo6MteWw3
+         6X+C+QRCb4OccNyvhtizNYgPee2BOH7YOm+QvXlXRjQqRraojOV3yyRNaYNI21xHJOXv
+         v0sIV0znef6v+NJX44t9kacnuTWJhpULi+QV45gryGWoq4PtCXU0VyMc4AqKw3Po4IYF
+         op5PWh+CgHLe2CF7w1m/xMgWTOv4Ynyno7yzWpRbXqwXw6YX/egOodK3DHnBLaPYYhty
+         uPQf+l9HSitzRdJfMmW8fwTegCsRxk+QB0Kpkm0ZJGWVT5WOuc5N6BmBoPdAP84oQp7Z
+         J2Ew==
+X-Forwarded-Encrypted: i=1; AJvYcCV4ERdi05OcpiUMtrSoJVgo32Kj6Zo9jW8pJlhwbMA97aOYgzvEVs9vQm1nJZc6VNjh87sbmySysCTy@vger.kernel.org, AJvYcCVs2M6ugftZk8PgPFxB1fCdJzDAFk246uRCu4zGNrnLEzY5D03tnjAFUPoAXYjtjbkuDvb7lC+vmDUxVV7Q@vger.kernel.org, AJvYcCW4DGi+ZHAPF9NKgLd7zliHhVdVL98Gn/b9QcolAs9TDTYiHdqfhYTQVzlrbejakyIY4+ZiDEKB@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy1xNN/uZ4SiIK3/tYDTxoWqKbReX67n0BUC3bGpWf2a65saQQV
+	N7JGG1Xf6EjH/sTk73tsRPIDc+6PMRq6c7MC66+ZanlZlkugvMez
+X-Google-Smtp-Source: AGHT+IGUv5GcBzM76Tis8BZFsna+Tt+yRb2ER6YRERF8hAd8oZIE6Ogk0CalUXCV034zvn8ODhWHxQ==
+X-Received: by 2002:a05:6a00:806:b0:71e:693c:107c with SMTP id d2e1a72fcca58-72030a8b242mr6049959b3a.11.1729723130943;
+        Wed, 23 Oct 2024 15:38:50 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312c8fsm7047579b3a.14.2024.10.23.15.38.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 15:38:50 -0700 (PDT)
+Date: Thu, 24 Oct 2024 06:38:29 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/4] dt-bindings: net: Add support for Sophgo SG2044 dwmac
+Message-ID: <5cv7wcdddxa4ruggrk36cwaquo5srcrjqqwefqzcju2s3yhl73@ekpyw6zrpfug>
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-3-inochiama@gmail.com>
+ <20241022-crisply-brute-45f98632ef78@spud>
+ <yt2idyivivcxctosec3lwkjbmr4tmctbs4viefxsuqlsvihdeh@alya6g27625l>
+ <20241023-paper-crease-befa8239f7f0@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <38508cf1-7d44-4656-8060-973e820b2957@paulmck-laptop>
-In-Reply-To: <38508cf1-7d44-4656-8060-973e820b2957@paulmck-laptop>
-From: Ard Biesheuvel <ardb@kernel.org>
-Date: Thu, 24 Oct 2024 00:37:50 +0200
-X-Gmail-Original-Message-ID: <CAMj1kXFA2_LNpZcrGh0GJyE0_9BaRC_ypnP3eigVG=Vf4B+gqg@mail.gmail.com>
-Message-ID: <CAMj1kXFA2_LNpZcrGh0GJyE0_9BaRC_ypnP3eigVG=Vf4B+gqg@mail.gmail.com>
-Subject: Re: [BUG] Argument-alignment build error with clang
-To: paulmck@kernel.org, Dan Carpenter <dan.carpenter@linaro.org>, 
-	clang-built-linux <llvm@lists.linux.dev>, Nathan Chancellor <nathan@kernel.org>
-Cc: kobak@nvidia.com, mochs@nvidia.com, rui.zhang@intel.com, 
-	rafael.j.wysocki@intel.com, sfr@canb.auug.org.au, 
-	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org, 
-	linux-toolchains@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023-paper-crease-befa8239f7f0@spud>
 
-(cc Dan, Nathan)
+On Wed, Oct 23, 2024 at 09:49:34PM +0100, Conor Dooley wrote:
+> On Wed, Oct 23, 2024 at 08:31:24AM +0800, Inochi Amaoto wrote:
+> > On Tue, Oct 22, 2024 at 06:28:06PM +0100, Conor Dooley wrote:
+> > > On Mon, Oct 21, 2024 at 06:36:15PM +0800, Inochi Amaoto wrote:
+> > > > The GMAC IP on SG2044 is almost a standard Synopsys DesignWare MAC
+> > > > with some extra clock.
+> > > > 
+> > > > Add necessary compatible string for this device.
+> > > > 
+> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > > ---
+> > > >  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+> > > >  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 145 ++++++++++++++++++
+> > > >  2 files changed, 146 insertions(+)
+> > > >  create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > > > 
+> > > > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > > > index 3c4007cb65f8..69f6bb36970b 100644
+> > > > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > > > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > > > @@ -99,6 +99,7 @@ properties:
+> > > >          - snps,dwmac-5.30a
+> > > >          - snps,dwxgmac
+> > > >          - snps,dwxgmac-2.10
+> > > > +        - sophgo,sg2044-dwmac
+> > > >          - starfive,jh7100-dwmac
+> > > >          - starfive,jh7110-dwmac
+> > > >  
+> > > > diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > > > new file mode 100644
+> > > > index 000000000000..93c41550b0b6
+> > > > --- /dev/null
+> > > > +++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > > > @@ -0,0 +1,145 @@
+> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > > > +%YAML 1.2
+> > > > +---
+> > > > +$id: http://devicetree.org/schemas/net/sophgo,sg2044-dwmac.yaml#
+> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > > +
+> > > > +title: StarFive JH7110 DWMAC glue layer
+> > > > +
+> > > > +maintainers:
+> > > > +  - Inochi Amaoto <inochiama@gmail.com>
+> > > > +
+> > > > +select:
+> > > > +  properties:
+> > > > +    compatible:
+> > > > +      contains:
+> > > > +        enum:
+> > > > +          - sophgo,sg2044-dwmac
+> > > > +  required:
+> > > > +    - compatible
+> > > > +
+> > > > +properties:
+> > > > +  compatible:
+> > > > +    items:
+> > > > +      - const: sophgo,sg2044-dwmac
+> > > > +      - const: snps,dwmac-5.30a
+> > > > +
+> > > > +  reg:
+> > > > +    maxItems: 1
+> > > > +
+> > > > +  clocks:
+> > > > +    items:
+> > > > +      - description: GMAC main clock
+> > > > +      - description: PTP clock
+> > > > +      - description: TX clock
+> > > > +
+> > > > +  clock-names:
+> > > > +    items:
+> > > > +      - const: stmmaceth
+> > > > +      - const: ptp_ref
+> > > > +      - const: tx
+> > > > +
+> > > > +  sophgo,syscon:
+> > > 
+> > > How many dwmac instances does the sg2044 have?
+> > > 
+> > 
+> > Only one, there is another 100G dwxgmac instance, but it does not
+> > use this syscon.
+> 
+> That dwxgmac is a different device, with a different compatible etc?
 
-On Thu, 24 Oct 2024 at 00:26, Paul E. McKenney <paulmck@kernel.org> wrote:
->
-> Hello!
->
-> Running rcutorture on next-20241023 got me lots of these:
->
-> drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an unaligned pointer access [-Werror,-Walign-mismatch]
->           156 |                         (void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
->
-> This is built with CC=clang.  I don't see this diagnostic with GCC.
-> But we are supposed to be able to build with clang, so...
->
-> The first argument is the address of one of these:
->
-> typedef struct {
->         __u8 b[UUID_SIZE];
-> } guid_t;
->
-> Where UUID_SIZE is as follows:
->
-> #define UUID_SIZE 16
->
-> But this guid_t is a member of one of these:
->
-> struct prm_handler_info {
->         guid_t guid;
->         efi_status_t (__efiapi *handler_addr)(u64, void *);
->         u64 static_data_buffer_addr;
->         u64 acpi_param_buffer_addr;
->
->         struct list_head handler_list;
-> };
->
-> One can argue that this structure must be 16-bit aligned on a
-> 64-bit build.  So maybe this is a bug in clang's diagnostics, hence
-> linux-toolchains on CC.
->
-> Thoughts?
->
+Yes, it needs a different compatiable, and maybe a new binding is needed
+since the 100G and 1G IP are different.
 
-Also discussed here:
-https://lore.kernel.org/all/CAMj1kXFXimHaGdeDBH3fOzuBiVcATA+JNpGqDs+m5h=8M_g+yA@mail.gmail.com/T/#u
-
-I agree that this looks like a spurious warning. Even if the alignment
-of the type is only 1 byte, the fact that it appears at the start of a
-8-byte aligned non-packed struct guarantees sufficient alignment for
-this particular use of the type.
+Regards,
+Inochi
 
