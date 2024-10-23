@@ -1,124 +1,127 @@
-Return-Path: <linux-kernel+bounces-377837-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377839-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A3379AC77A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:10:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 528199AC781
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:11:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262DF1F23519
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:10:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13978282F22
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:11:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FFA19F11F;
-	Wed, 23 Oct 2024 10:10:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877E319F437;
+	Wed, 23 Oct 2024 10:11:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZFiOSyZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeqQ9+qM"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F0137742;
-	Wed, 23 Oct 2024 10:10:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A54819EEA1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:11:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729678243; cv=none; b=rZQShzpc60LkORvsGpfiT2+H/ffDzb1sVWHuvI2GmRUgLJzpUDJxQYJogrQSUToBgt5JxQ3CwaD23Tgsfq33XF2F1n6UHK1ii8DpOLnc0l++IW1bvR5s9pg1uC7ABk8QSmDBg56SoOyxlFtFWVxBvWAJmqvUtVFDHSPH3kigq8Y=
+	t=1729678271; cv=none; b=o8gXPSerVrJ+OWkTuW9SLV5oukL78WkRDcPoF1BMEG8Fkf2stWnB9KZAae/UX/vWTF6m4SHHOnrQU2J2k3bA7ohUGQNhBQkXjimiKQQ61id0gGcTyIgQYCsS0AkrJX0rPOsAdaiodpGcXJSFOV+srm4B4YxBcmwIlDyJCSjxHwo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729678243; c=relaxed/simple;
-	bh=SofnLQzyMRsaMI4sJhitH1kT4UGZy1mDhHDbaITMm9M=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYZgIQQpc42LXih5CiX0Kywdituz0LTD+g4LjXk26JilGf3puNiuZ9MQnDbcube3/+vqC4B0znxsHhMAjnhOJPKvvQA5eC+MGRsXhRrWcLNahWSbPqwVJVNlzve50bav/jAdHwB2m3ABH/MMd1lmy4rbuuhLhwo3hbzYSyJn/lk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZFiOSyZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C1EC4CEC6;
-	Wed, 23 Oct 2024 10:10:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729678243;
-	bh=SofnLQzyMRsaMI4sJhitH1kT4UGZy1mDhHDbaITMm9M=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=DZFiOSyZUOf57YkKyaT7ZY83SOQ+2X7+dzKbL5X0DI1js0wCT2X3c2HU+ddChPbCg
-	 SAgxUnhzvoTj64HfqWqSEqgROYTn3N8ISNYu0zMHPG19+TlE9F0J/mlhPh8M6LH7Fo
-	 tW20ygtGBYrzT/xjvR6fLDmgn/1w/KfNDXjcVt0NHqW2gXJ1SyubPDZRQzrAtvLrxU
-	 FPCTFOWhxCnTrNo8460u9KeqO0asH7vgJrKJ75p+DkkDKPVuMMuwZ4lKlGZpIudtIe
-	 kr+kRAUkC0lEZIeBk8h23/ImbYqdbSfbkZZ74OjweprFdF7XgXL/Sv8toiTvWsC51H
-	 prQB8pQKDO3lw==
-Date: Wed, 23 Oct 2024 12:10:40 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
-	"Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>
-Subject: Re: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on
- PREEMPT_RT.
-Message-ID: <ZxjLoAINhmGKImHW@pavilion.home>
-References: <20241004103842.131014-1-bigeasy@linutronix.de>
- <20241004103842.131014-2-bigeasy@linutronix.de>
- <ZxeomPnsi6oGHKPT@localhost.localdomain>
- <20241022153421.zLWiABPU@linutronix.de>
- <Zxgm1lOsddTRSToB@pavilion.home>
- <20241023063014.iPbVTkiw@linutronix.de>
+	s=arc-20240116; t=1729678271; c=relaxed/simple;
+	bh=5OOvHNGAVgHImRA4rtLY0Acms6nJmTWGumvJk2gBIAw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=VN0ehYjKgN2uV6pIIUbBo6M6cKBcyddo/k5BjaWrOyIkJNvFF3LLWT+kZg9kelKzaCAWqkNmoTY3GOZOUjxrqYZH79krBZcp7ntOaXjtcOAVmPXcpAVk0xrR9eSxghLnCBopjXdBydp5fN3XTFzCARO99I7ZjPwSRfnrUjV261Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeqQ9+qM; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f1292a9bso8069603e87.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:11:08 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729678266; x=1730283066; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=5OOvHNGAVgHImRA4rtLY0Acms6nJmTWGumvJk2gBIAw=;
+        b=OeqQ9+qMCYtymPuyjpdaeRRMaaY+/apAS5h7MWxznHYIcjoEGqt0KskN2I85Lm6QEA
+         KVse3nAg6vlCHWe52o8IcidcKEOM85yh5WTRYAYTy9MngCZJ8up5wAYpWpklD7GilJ9C
+         qi3tke/qctp+QV71mbLnc+AqR/a3jIsrMGP/5gVqpPQfjptIKzkJ39f1pYiM3zDO8izX
+         aJ5rQg0Gc7LlwN5IMk4+hLcU5QrWtR4vUuhQyUgj0Bsh7LtWVb1JS/SYcQ/rkNQw5TIH
+         +1axe90Mk2ysXnlluHABAe2jwMHfkcYv9/G3aNHlGh7hxVYlcdom/U5KPpvKa1Log8WU
+         /uHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729678266; x=1730283066;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=5OOvHNGAVgHImRA4rtLY0Acms6nJmTWGumvJk2gBIAw=;
+        b=ELwxeBeflP8zad+VP8a/19EAUWV9gBjZtrM/ghCkKCul9g2vJPo2z1022FhKIs5WWx
+         l3dkZEX6Lh+VMwSRDjT6EuJ1fVyj5UcAJ3gMyFkZPLDD0wsWpM+/MIaHACh8FB9jMRsT
+         VTYYfspd0WBid8y3g1uX5lSNLWTlGuVruevMuRse5j3ucjUhjMb0iBWYQstLrV6pm2eU
+         7uzRLKf7B5ycvulCtMkW0sdUotQunKlQXeDi6y9ysdPgoocHSt18p0QNgRPL9+qZ2To6
+         avlIVjcS/b79mOL5eMJEj3UfIsAs8nFIv0JdypdmYhhFzBVDmPO7GAOeQqiDLvQm/eNm
+         Y7Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCVc0K5NFUzJ0NImVJEpuKBN/w9959epoFqet5yphshSFtnsw3tyc5MVkQqRRMLXvGedIHu/jDIgK+vrtYk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwUuc7VPA9fBArOzD4Xko7PN6bZg+2Fqxhr4M0QSgIwhLfko1ZI
+	1pfqlKTRjfNalJSCmdHn6uKbPvQ+UvcneiLOeHduN9A8sCj9y131qz3blDLWakGpuv7nS3wP7wy
+	COt14+BoQcwnYP2tSLxujTMwLdjCsdU83SnFhjw==
+X-Google-Smtp-Source: AGHT+IE089tWVwoXd/8Hysqc4S/uDg7EGVHjVvwgua3xypehCFmJa3XmQQ+EwelSROlylF6cOjc2uO3oYJn05SS9GVs=
+X-Received: by 2002:a05:6512:1114:b0:539:fde9:4bbe with SMTP id
+ 2adb3069b0e04-53b1a30512fmr994214e87.20.1729678266366; Wed, 23 Oct 2024
+ 03:11:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241023063014.iPbVTkiw@linutronix.de>
+References: <20241023044423.18294-1-towinchenmi@gmail.com> <CACRpkdZP9oDd+fRKKagFtGbfLx=Rk5LJ7bvaKimw5-t25XZAfQ@mail.gmail.com>
+ <5e1b807f-82ac-4ab8-867c-32b2bf2a91ce@gmail.com>
+In-Reply-To: <5e1b807f-82ac-4ab8-867c-32b2bf2a91ce@gmail.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 Oct 2024 12:10:55 +0200
+Message-ID: <CACRpkdYjmwHaHPTmjOKR8E9kYQBZAx04Ydby7HKZzE3KhbNh2A@mail.gmail.com>
+Subject: Re: [PATCH v6 RESEND 00/20] Initial device trees for A7-A11 based
+ Apple devices
+To: Nick Chan <towinchenmi@gmail.com>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
+	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Lorenzo Pieralisi <lpieralisi@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Le Wed, Oct 23, 2024 at 08:30:14AM +0200, Sebastian Andrzej Siewior a écrit :
-> On 2024-10-23 00:27:34 [+0200], Frederic Weisbecker wrote:
-> > > Try again without the "ksoftirqd will collect it all" since this won't
-> > > happen since the revert I mentioned.
-> > 
-> > I still don't get it, this makes:
-> > 
-> > """
-> > Once the ksoftirqd is marked as pending (or is running), a softirq which
-> > would have been processed at the end of the threaded interrupt, which runs
-> > at an elevated priority, is now moved to ksoftirqd which runs at SCHED_OTHER
-> > priority and competes with every regular task for CPU resources.
-> > """
-> > 
-> > ksoftirqd raised for timers still doesn't prevent a threaded IRQ from running
-> > softirqs, unless it preempts ksoftirqd and waits with PI. So is it what you're
-> > trying to solve?
-> > 
-> > Or is the problem that timer softirqs are executed with SCHED_NORMAL?
-> 
-> Exactly. It runs at SCHED_NORMAL and competes with everything else. It
-> can delay tasks wakes depending on system load.
+On Wed, Oct 23, 2024 at 11:37=E2=80=AFAM Nick Chan <towinchenmi@gmail.com> =
+wrote:
+> On 23/10/2024 17:05, Linus Walleij wrote:
+> > On Wed, Oct 23, 2024 at 6:44=E2=80=AFAM Nick Chan <towinchenmi@gmail.co=
+m> wrote:
+> >
+> >> This series adds device trees for all A7-A11 SoC based iPhones, iPads,
+> >> iPod touches and Apple TVs.
+> >
+> > This is a good and important series. FWIW:
+> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> >
+> > Are patches not getting applied since you resend them?
+>
+> This series along with the watchdog reset delay series mentioned in the
+> cover letter have not been applied.
 
-Ok so that narrows down the problem and it's much clearer, thanks.
+It seems to me that the watchdog series is only a runtime dependency
+and these binding+DTS patches are well ripe for merge.
 
-> > > > > +void raise_timer_softirq(void)
-> > > > > +{
-> > > > > +	unsigned long flags;
-> > > > > +
-> > > > > +	local_irq_save(flags);
-> > > > > +	raise_ktimers_thread(TIMER_SOFTIRQ);
-> > > > > +	wake_timersd();
-> > > > 
-> > > > This is supposed to be called from hardirq only, right?
-> > > > Can't irq_exit_rcu() take care of it? Why is it different
-> > > > from HRTIMER_SOFTIRQ ?
-> > > 
-> > > Good question. This shouldn't be any different compared to the hrtimer
-> > > case. This is only raised in hardirq, so yes, the irq_save can go away
-> > > and the wake call, too.
-> > 
-> > Cool. You can add lockdep_assert_in_irq() within raise_ktimers_thread() for
-> > some well deserved relief :-)
-> 
-> If you want to, sure. I would add them to both raise functions.
+I suspect the three Asahi-affiliated maintainers are too busy with their
+own stuff (like M3 support...) to respond or queue patches as they haven't
+responded to the patch set for the two months it's been floating. (OK
+Sven Peter did respond to some v1 patches.)
 
-Yeah, just in case. Thanks!
+If nothing happens in a week or so, I suggest you just send a pull request
+to the SoC tree (soc@kernel.org) yourself. Perhaps you should even be added=
+ as
+comaintainer for the ARM/APPLE machine support so things do not
+stack up like this?
 
-> 
-> > Thanks.
-> 
-> Sebastian
+Yours,
+Linus Walleij
 
