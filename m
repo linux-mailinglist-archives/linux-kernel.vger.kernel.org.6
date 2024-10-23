@@ -1,100 +1,110 @@
-Return-Path: <linux-kernel+bounces-379013-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8BBAC9AD8AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:51:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069769AD897
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:45:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8942843D1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:51:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 347AD1C21E42
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:45:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F95200135;
-	Wed, 23 Oct 2024 23:51:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6DE51A2658;
+	Wed, 23 Oct 2024 23:45:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="JNNt4dk8"
-Received: from gentwo.org (gentwo.org [62.72.0.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="h3o2pHVi"
+Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9683C1FF7B9;
-	Wed, 23 Oct 2024 23:51:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D9BB158858;
+	Wed, 23 Oct 2024 23:45:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729727480; cv=none; b=eLWB3JThhmZp+cm0Ug27tSk7GiNVhbNkaF+Ej6EB/2myhkCWTSiP/hR6M03Wfr14ytl3MMApMQMYY7/bkFSnOmaks/xGk1pA4CeQZ8okeuBAhvtfx+C0RGaxGM/DE5vmw+RGUwhm+4IMSqqY/7j1dbJ2vpLfuJFQpUbWRVm34HI=
+	t=1729727113; cv=none; b=utCiDRlz+4gfCP9RixuZ0cTfU4kCdmBesjhsxZIPqJ4rXQLMHPRketReqgHV9+EDlWK0z9a8REuS6Cy8SfLdwY3pRTJjk0nmYvdtizCgWTXymnRwfbm/1/hWWb5ITZZz/EDRKFyw2YUiE4zbdM3UPdSH6agjjQ9NIsIgV+d1UmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729727480; c=relaxed/simple;
-	bh=N5Ha61iGv8UBir+niT+G49NgrMxO0LqYfl/tYGxc/84=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=jq2EZFIk4kbEarx0kq7iA3sx+1KtmyJU2f78hzWlXFHFD4DDS6EPbzB7bbpbuJ42SZRQodPO03J1UXAdWoQKQVNu38Tn/IEL8cCorzpaloCG2ZWblLwkBlOL5/w9fsMhszCAHrDnwt+ozjB4Uzyhh8rwGFxiVlR2TVy+ctaYPeE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=JNNt4dk8; arc=none smtp.client-ip=62.72.0.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
-	s=default; t=1729726956;
-	bh=N5Ha61iGv8UBir+niT+G49NgrMxO0LqYfl/tYGxc/84=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=JNNt4dk8tZM9am9qFrK1MgYcweN8QSIWAAfwNjYrXyAPt1rvn0vd3hl5Se8Kdcu6z
-	 hYNWi54noABInnYI/bkcV8K8IHxlkI1RA9UP/mofSl0tdyJaYV9DHlFv9hwGBZ+jT3
-	 gy6HGfZqRWmvoSzN/namuh8iUPIbDEhCDnh7nz+4=
-Received: by gentwo.org (Postfix, from userid 1003)
-	id 3F74E4027B; Wed, 23 Oct 2024 16:42:36 -0700 (PDT)
-Received: from localhost (localhost [127.0.0.1])
-	by gentwo.org (Postfix) with ESMTP id 3D14040264;
-	Wed, 23 Oct 2024 16:42:36 -0700 (PDT)
-Date: Wed, 23 Oct 2024 16:42:36 -0700 (PDT)
-From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
-To: Peter Zijlstra <peterz@infradead.org>
-cc: Linus Torvalds <torvalds@linux-foundation.org>, 
-    Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
-    Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@redhat.com>, 
-    Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
-    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-    linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
-Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
- acquire
-In-Reply-To: <20241023194543.GD11151@noisy.programming.kicks-ass.net>
-Message-ID: <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org>
-References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org> <20240917071246.GA27290@willie-the-truck> <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org> <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
- <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com> <20241023194543.GD11151@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729727113; c=relaxed/simple;
+	bh=fzf50MUZplBxsUpuKQW50cchRIYkDdV0j2dgIHJIcLE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hRmoWCaTJ2HZ22GuMPW9P9++W1hWuEl6kUk6+r6QgEQ8Q1n16d5m3/OTMINAEDWg+FWqEC8/AWllaabG2ElW5sMqqfdphHoQn8rApzifZGhUJJtvqQ09AyVKYDeD9r9PKDLVw9rgf5QyGydwTEeJMVutFSsCXnG1sSSGbJtLq5g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=h3o2pHVi; arc=none smtp.client-ip=209.85.167.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so267227e87.1;
+        Wed, 23 Oct 2024 16:45:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729727109; x=1730331909; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=FH7t34m9dnmNlx93O1yGS5tEDefFHyWRqMdXdmIkhjw=;
+        b=h3o2pHVihsnldWuvhsYLSfb9/ijTsKqM/KJLbnMG3n3dXKJRKo9F2wM87aC3l+O7kc
+         5fmyPo5n9ixuUsCnOEhX3zEKYfTnz8Puf8h4aatBzLV3jQUHobc6MOo7khHn9qc2WJ9V
+         B8XHH+mXqSvRi60uOrb3u2HmDVFP6CUmgtuDwqnmZFYf1KQsGSIaRKYnrlP8eL0xZ8O7
+         lUO0wP03V91+5cjHxFQ4vRC2FnVsgBmBuVCVA+fb2elJJ7e87/c1wEI6X7d6Dh9rX7c6
+         dPud/YsxMIib9bgN1zxlpOdGht9KaP8DI+6rkC0JV47mxuEPIyJO4Qd6wv3s/GRhQvk/
+         6TRg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729727109; x=1730331909;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=FH7t34m9dnmNlx93O1yGS5tEDefFHyWRqMdXdmIkhjw=;
+        b=BL+g/Q9GwiVBpO9w1/IYfSCjMTGxJrsh0IU46FeshUiMJMJX3conEPlzNO5NEIuAGX
+         kVpSr9FxuBbcNB2CBckXTcdcSHQHTdAdlTaWxO2LtS3udKi1SAH8hH5CVFMKbvgJht3M
+         OeFgGr3UsgQI1U/L+2/tuwuBp62SAsiY2oZ1WvduBMzCuHtOOrrehh9B8Y3fe2ik3FmR
+         FhqMX0fetU5lQyklXFi8L0rdz+6J1ynUPV1h511s+EL+YR1S3EYLaOIodnClj2elgzCk
+         bn+rdkoj+wMtxmTlL6HYggXOOENGXjGDCKJiu8lvzqtMBfo8iXdSyloRcF4DukfhwLhl
+         Wj4Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVUIto/opLkDBZibx0AorTalS6sRV9204AwXsTg5eepMcto0hyctkI7sWbVwwDTrh3mTYN89zNCcIQsTOgt@vger.kernel.org, AJvYcCWiTnNzumEYUEaYbQ+kfxKdRBD3SOXoqsrB3j56wF48yo99OrYjpPd1nuo24ygBrr4Xd/NoO8cGY2Rc@vger.kernel.org
+X-Gm-Message-State: AOJu0YwTRsSgEWQA2EfV3niq7bzxV1qXnYQNipQz96ZPp5EbTbX3lmCY
+	W2vPgRKDzvn1eJe6EGiuQmu0zam+7Os/3MQGtf05AAdXypBsJl7rq6/65GQjYfehXMRTbYJ04iy
+	+LqhCBmdTIBdLqU+27qqmlnJu/is=
+X-Google-Smtp-Source: AGHT+IEASdtebovTt/XdTVLz8Q7Z69ffMVx0+m03VPWdJ2zICo/83A8gUVc3cJP1yjUZ/fTdn/o+yvavDg7XA0S174U=
+X-Received: by 2002:a05:6512:31c3:b0:539:8980:2009 with SMTP id
+ 2adb3069b0e04-53b23e37dfemr7297e87.36.1729727108832; Wed, 23 Oct 2024
+ 16:45:08 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241023221112.1393280-1-Frank.Li@nxp.com>
+In-Reply-To: <20241023221112.1393280-1-Frank.Li@nxp.com>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 23 Oct 2024 20:44:56 -0300
+Message-ID: <CAOMZO5AL9nFHbcLe9HP8Rf99UBX-Pk76xc1zU8TaLgA1tgNH-g@mail.gmail.com>
+Subject: Re: [PATCH 1/1] arm64: dts: imx8mn-bsh-smm-s2pro: remove undocument
+ property 'clocks' for audio-codec@18
+To: Frank Li <Frank.Li@nxp.com>, Michael Trimarchi <michael@amarulasolutions.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, 
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, 
+	"open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, 
+	"moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, 
+	open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Oct 2024, Peter Zijlstra wrote:
+Hi Frank,
 
-> > I doubt anybody will notice, and smp_load_acquire() is the future. Any
-> > architecture that does badly on it just doesn't matter (and, as
-> > mentioned, I don't think they even exist - "smp_rmb()" is generally at
-> > least as expensive).
+On Wed, Oct 23, 2024 at 7:11=E2=80=AFPM Frank Li <Frank.Li@nxp.com> wrote:
 >
-> Do we want to do the complementing patch and make write_seqcount_end()
-> use smp_store_release() ?
+> Remove undocument property 'clocks' for audio-codec@18, which compatible
+> string is 'ti,tlv320dac3101'.
 >
-> I think at least ARM (the 32bit thing) has wmb but uses mb for
-> store_release. But I also think I don't really care about that.
+> Fix below CHECK_DTBS warning:
+>  audio-codec@18: Unevaluated properties are not allowed ('clocks' was une=
+xpected)
+>
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
 
-The proper instruction would be something like
+I have already submitted this change:
 
-atomic_inc_release(&seqcount)
+https://lore.kernel.org/linux-arm-kernel/CAOf5uwmg83-TVQvbNOCnzBh9JdQAC=3D5=
+hpgbCeT-6qJ=3D+YBrssg@mail.gmail.com/
 
-The current atomics do not provide such a macro.
-
-The closest in the current tree is atomic_inc_return_release().
-
-We would prefer atomic_inc_release(&seqcount) because such an
-atomic may be executed as a far atomic in the ARM mesh.
-
-This could be cheaper than a local atomic and could f.e. be executed
-on the memory controller of a remote NUMA node in order to avoid a costly
-transfer of cacheline ownership.
-
-The code generated is a atomic that also does a release. So there would be
-no extra barrier etc needed.
-
-
+I am waiting for Michael to test it.
 
