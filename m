@@ -1,81 +1,82 @@
-Return-Path: <linux-kernel+bounces-377422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B7BA9ABE99
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:21:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B8909ABEA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:24:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 431D61C211FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:21:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 816071C211CB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:24:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 42A72145B2E;
-	Wed, 23 Oct 2024 06:21:39 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B598214A62A;
+	Wed, 23 Oct 2024 06:24:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="o7FglmnM"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 018BF40BF5
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:21:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFC84149C57;
+	Wed, 23 Oct 2024 06:24:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729664498; cv=none; b=jbPlJVTAIUyo690x5KIVQxVnDMdoEqj4ir7E588/X9Eu4/1plPce/ZQD95f50tkylAbcl7buRUjEvUc0ficcn8Xi8d1265/oPgMveK9sKLybDRCREyFK4+FjCT8aQCuywlwUcficji6vK3tUZyalfyFvQvNNx79loN1Bk1Rl2IM=
+	t=1729664668; cv=none; b=Bs5FZFokHCoXgFCySEDcAlrT6UEtB0J+dx94sc4PHpdFQSFjtBk+rRcVeZVCH9hW5KR0AN8BE/1HxOhZs7kHAjt71u3X1IHelm2kHhkqLTWXhVaKhRESsg8w5zvLKjVa6vTTKP0P09s0IEPPA069R7ju+uo2ZP/uvGcPOj5JgGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729664498; c=relaxed/simple;
-	bh=i7HAztIF2lHeNjLEE+b3ZN9i34EOSphbSjCXHsEXAsk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=g5c8JbcpdTv3hWvR0ujoL3hRBu/zjh38jLIUoCo+/QYm+7IylAobEbDX6muqKBbsHiEkRXapOWj3SYI5pPgWv4L0jCabuiXFJ7xaErhi+gtlJYONmaKdDDkdjbtVfNc+Cax1Zo9IERVNBJV1/Ux2idRxzuOqOpx1FAU6cf45Km0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 06cf927c910711efa216b1d71e6e1362-20241023
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NO_NAME, HR_CTE_8B, HR_CTT_MISS
-	HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_DIGIT_LEN, HR_FROM_NAME
-	HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM, HR_SJ_PHRASE
-	HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT, HR_TO_NO_NAME
-	IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_UNTRUSTED, SA_UNFAMILIAR
-	SN_UNTRUSTED, SN_UNFAMILIAR, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS
-	CIE_BAD, CIE_GOOD_SPF, GTI_FG_BS, GTI_RG_INFO, GTI_C_BU
-	AMN_T1, AMN_GOOD, AMN_C_TI, AMN_C_BU
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:a7177d0e-955b-4d31-8c79-b40951c37bf4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION
-	:release,TS:30
-X-CID-INFO: VERSION:1.1.38,REQID:a7177d0e-955b-4d31-8c79-b40951c37bf4,IP:0,URL
-	:0,TC:0,Content:0,EDM:25,RT:0,SF:5,FILE:0,BULK:0,RULE:Release_Ham,ACTION:r
-	elease,TS:30
-X-CID-META: VersionHash:82c5f88,CLOUDID:fb46e68ba4aa035b83d1e11ad33e5b48,BulkI
-	D:241023135508YRKI0UUL,BulkQuantity:2,Recheck:0,SF:841|72|19|66|102,TC:nil
-	,Content:0,EDM:5,IP:nil,URL:0,File:nil,RT:nil,Bulk:40,QS:nil,BEC:nil,COL:0
-	,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FSD
-X-UUID: 06cf927c910711efa216b1d71e6e1362-20241023
-X-User: xiaopei01@kylinos.cn
-Received: from xiaopei-pc.. [(10.44.16.150)] by mailgw.kylinos.cn
-	(envelope-from <xiaopei01@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 219048297; Wed, 23 Oct 2024 14:21:23 +0800
-From: Pei Xiao <xiaopei01@kylinos.cn>
-To: surenb@google.com
-Cc: akpm@linux-foundation.org,
-	gehao@kylinos.cn,
-	hao.ge@linux.dev,
-	linux-kernel@vger.kernel.org,
-	linux-mm@kvack.org,
-	vbabka@suse.cz,
-	xiaopei01@kylinos.cn,
-	xiaopeitux@foxmail.com,
-	xiongxin@kylinos.cn,
-	yuzhao@google.com
-Subject: [PATCH] slub_kunit:fix a WARNING due to __kmalloc_cache_noprof incorretly use
-Date: Wed, 23 Oct 2024 14:21:17 +0800
-Message-Id: <0c215961308b0433cd76389fe53d7f7776a32dcb.1729663738.git.xiaopei01@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <CAJuCfpHxrN_12h3pmK6Z+k7W1_6QWgAym9xgczcKTjYyLQ+S_Q@mail.gmail.com>
-References: <CAJuCfpHxrN_12h3pmK6Z+k7W1_6QWgAym9xgczcKTjYyLQ+S_Q@mail.gmail.com>
+	s=arc-20240116; t=1729664668; c=relaxed/simple;
+	bh=IFeKc89QaO+eYZaE146VWSl3aq9xGMn3iEQrzKkeeHk=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=feuG34ybrEdOtZRWm6lePvaVDEL0hcLf2oto8gfGu8YDs6qSg1IJ0ytEkOnF1d0gdcrEY3K6Kiu+fOE9uHzNDPzAXYJ1qpI/3/i70R4MAzIrUKnhG+Ko1EfPqb+DTVwGC3fAIr2cG8ynI+W9mdkeDIAdONH7IQk8TjJ9D/niyvs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=o7FglmnM; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLa0k1029512;
+	Wed, 23 Oct 2024 06:24:13 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=Kf1w2trACv87w1EUPIPbIo
+	wPpzj3SRDz6K5hqU1ltuY=; b=o7FglmnMzR3b6/w9pV/olcGk8e7u4rLo+X5HyE
+	XXJ7Nb2OrFMIXPCeed2EF2jLDfFi6pSRE0AdD4zTwggIkiQYX/+weESmiDOxYVFZ
+	PjUT4sA7rMwAQH3Xn4tcPpyrC8CYTG46VMvCWaqaTHt2GSazeDYSCv1D/cAQrhpf
+	lwiPV5PqtdGPjRx9UO28c0OSD/AmYyryKdXt9nIxlbjDrMk8JurXRRVTl2HAzAFx
+	sBXALkKe8QLTcx7U8X8tjmVuIAVA3DXnM1up1uiRSNQVbf9uDiwKuI4rY09Wwmh3
+	aSWiCV8YzZNqZWY/W7RO3ZiHi4d3fBd5v8qf9DBmW1fiRzhA==
+Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w142k-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 06:24:13 +0000 (GMT)
+Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
+	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49N6OCfd027312
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 06:24:12 GMT
+Received: from hu-mohs-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Tue, 22 Oct 2024 23:24:04 -0700
+From: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>, Vinod Koul <vkoul@kernel.org>,
+        Bard Liao
+	<yung-chuan.liao@linux.intel.com>,
+        Jaroslav Kysela <perex@perex.cz>, "Takashi
+ Iwai" <tiwai@suse.com>
+CC: Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+        Sanyog Kale
+	<sanyog.r.kale@intel.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-sound@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <quic_rohkumar@quicinc.com>, <kernel@quicinc.com>,
+        Mohammad Rafi Shaik <quic_mohs@quicinc.com>
+Subject: [RESEND v2 0/4] Add static channel mapping between soundwire master and slave
+Date: Wed, 23 Oct 2024 11:53:27 +0530
+Message-ID: <20241023062331.3872883-1-quic_mohs@quicinc.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -83,58 +84,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01c.na.qualcomm.com (10.45.79.139)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: O-yqcPy9LspCTWidAJdrVnrMSVdxw1mL
+X-Proofpoint-GUID: O-yqcPy9LspCTWidAJdrVnrMSVdxw1mL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230037
 
-'modprobe slub_kunit',will have a warning [1].The root cause is that
-__kmalloc_cache_noprof was directly used,which resulted in no alloc_tag
-being allocated.This caused current->alloc_tag to be null,leading to
-a warning in alloc_tag_add_check.
+Add static channel map support between soundwire master and slave.
 
-Let's add an alloc_hook layer to __kmalloc_cache_noprof specifically
-within lib/slub_kunit.c.
+Currently, the channel mask for each soundwire port is hardcoded in the wcd937x-sdw driver,
+and the same channel mask value is configured in the soundwire master.
+The Qualcomm boards like the QCM6490-IDP require different channel mask settings
+for the soundwire master and slave ports.
 
-[1].
-[58162.947016] WARNING: CPU: 2 PID: 6210 at
-./include/linux/alloc_tag.h:125 alloc_tagging_slab_alloc_hook+0x268/0x27c
-[58162.957721] Call trace:
-[58162.957919]  alloc_tagging_slab_alloc_hook+0x268/0x27c
-[58162.958286]  __kmalloc_cache_noprof+0x14c/0x344
-[58162.958615]  test_kmalloc_redzone_access+0x50/0x10c [slub_kunit]
-[58162.959045]  kunit_try_run_case+0x74/0x184 [kunit]
-[58162.959401]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
-[58162.959841]  kthread+0x10c/0x118
-[58162.960093]  ret_from_fork+0x10/0x20
-[58162.960363] ---[ end trace 0000000000000000 ]---
+With the introduction of the following channel mapping properties, it is now possible to
+configure the master channel mask directly from the device tree.
 
-Signed-off-by: Pei Xiao <xiaopei01@kylinos.cn>
-Fixes: a0a44d9175b3 ("mm, slab: don't wrap internal functions with alloc_hooks()")
-Fixes: a286da323418 ("mm/slub, kunit: Add testcase for krealloc redzone and zeroing")
----
- lib/slub_kunit.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Added qcom_swrm_set_channel_map api to set the master channel mask which allows more
+flexible to configure channel mask in runtime for specific active soundwire ports.
 
-diff --git a/lib/slub_kunit.c b/lib/slub_kunit.c
-index 3cd1cc667988..f11691315c2f 100644
---- a/lib/slub_kunit.c
-+++ b/lib/slub_kunit.c
-@@ -141,7 +141,7 @@ static void test_kmalloc_redzone_access(struct kunit *test)
- {
- 	struct kmem_cache *s = test_kmem_cache_create("TestSlub_RZ_kmalloc", 32,
- 				SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
--	u8 *p = __kmalloc_cache_noprof(s, GFP_KERNEL, 18);
-+	u8 *p = alloc_hooks(__kmalloc_cache_noprof(s, GFP_KERNEL, 18));
- 
- 	kasan_disable_current();
- 
-@@ -199,7 +199,7 @@ static void test_krealloc_redzone_zeroing(struct kunit *test)
- 	struct kmem_cache *s = test_kmem_cache_create("TestSlub_krealloc", 64,
- 				SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
- 
--	p = __kmalloc_cache_noprof(s, GFP_KERNEL, 48);
-+	p = alloc_hooks(__kmalloc_cache_noprof(s, GFP_KERNEL, 48));
- 	memset(p, 0xff, 48);
- 
- 	kasan_disable_current();
+Add get and set channel maps support from codec to cpu dais in common
+Qualcomm sdw driver.
+
+Changes since v1:
+ - Modified the design and followed new approach to setting the master channel mask.
+ - Used existing set_channel_map api as suggested by Pierre-Louis
+ - Fixed the typo mistake in v1-0001 dt-bindings patch.
+ - Rephrase the commit description for all v1 patches.
+
+Mohammad Rafi Shaik (4):
+  ASoC: dt-bindings: wcd937x-sdw: Add static channel mapping support
+  ASoC: codecs: wcd937x: Add static channel mapping support in
+    wcd937x-sdw
+  soundwire: qcom: Add set_channel_map api support
+  ASoC: qcom: sdw: Add get and set channel maps support from codec to
+    cpu dais
+
+ .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++
+ drivers/soundwire/qcom.c                      | 26 +++++++++
+ sound/soc/codecs/wcd937x-sdw.c                | 38 +++++++++++--
+ sound/soc/codecs/wcd937x.c                    | 53 ++++++++++++++++++-
+ sound/soc/codecs/wcd937x.h                    |  6 ++-
+ sound/soc/qcom/sdw.c                          | 34 ++++++++++--
+ 6 files changed, 183 insertions(+), 10 deletions(-)
+
+
+base-commit: 7436324ebd147598f940dde1335b7979dbccc339
 -- 
-2.34.1
+2.25.1
 
 
