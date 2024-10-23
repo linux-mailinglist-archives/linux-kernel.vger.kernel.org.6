@@ -1,102 +1,125 @@
-Return-Path: <linux-kernel+bounces-378271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378268-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EBB9ACD6A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:52:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A38AC9ACD62
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:52:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CE9F1F23364
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:52:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1EB35B26097
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:52:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 70FC8218D90;
-	Wed, 23 Oct 2024 14:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9D93F218580;
+	Wed, 23 Oct 2024 14:33:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LRlle1mV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QUtgjPP4";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="QUtgjPP4"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6661218D80;
-	Wed, 23 Oct 2024 14:33:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 99E5421830E;
+	Wed, 23 Oct 2024 14:33:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729694010; cv=none; b=fg4A/a6Ef/Sw8Djh/Q6+zcKlXCsDqiIirZTBGvZnlCxvecVaP2Gx5qsOO5sowDm/blocC119Y0FlDPt81SakDnnx6ab2n+AfTFofKTOT6l/V/eJQxP8ZwN6LDrW9vW87pYFmlovClf6LEgCYFVo15mD3fo+nT8sGCtjcBZkqSEI=
+	t=1729694007; cv=none; b=MtDy4H+YgpuRHwQW1wbaCGYKmImkD3qjnpczxE6TmnlZjO4BoQKz1fCiyfYLzFTWroyirs7+5qTl0txYvtbEXdDK3O03qAHaq+BewKhnSPZIWAEk0B89GaXyFWAY4AKCA++6kRgHZJfGgezgFyZQRhpAa96v6tbsf8CRv7NuxCA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729694010; c=relaxed/simple;
-	bh=7g3Y5eVvBZRCGFtMoOhwes8/UM/FRtXZAYY+ax+pSHQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=dJCbGpjFfbNSNu9lMHbn/IEiQ2ZWjRqJfkHugRvtnMd+Mp1LCBJuNxdHzY/UWr7+6RxsgI8ojlqzp+zPyc3J1idb9BhzsyLZ6V0CrGTOJ14lhSJJEiLpWchcbGxoQVdCiC94nBHZwxDsZ1Cg5RmZOVHNc2wGezMRZVSFgcq0UHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LRlle1mV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0559C4CEC6;
-	Wed, 23 Oct 2024 14:33:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729694010;
-	bh=7g3Y5eVvBZRCGFtMoOhwes8/UM/FRtXZAYY+ax+pSHQ=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=LRlle1mVUBB2eVlk+IR8QQMG2ng0sfg9g0mYVe8KXcMREVrzuhqDBK16OLJQobwOG
-	 Ix6bBbVy3IykboEJDscoHUAQhmpgZI/mP+/ooluqRRReWZh11KerGnfFv0A/uEYZgg
-	 2pTcEAFSD/L+IzFvWJTNo/OfLszDYXtvdQMgZnuaZk6DizSDpQ+oyLSNlcYNCA9Axm
-	 h0noORHHG8eqlLVLAYCP/jmCvUATv4nEdZJDPUtNaPKfOIS0FltkjPkamW8RMT5FRi
-	 sZYUbuXTjfpwPJDMjHAyxJa04KtZ6ypuXjqAX/UCGlxju64IZISNIEpS9mAt9Z/7B6
-	 uYo5MQ3boqK/A==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-	2639161967 <2639161967@qq.com>,
-	Sasha Levin <sashal@kernel.org>,
-	chentao@kylinos.cn,
-	linuxppc-dev@lists.ozlabs.org
-Subject: [PATCH AUTOSEL 4.19 5/5] powerpc/powernv: Free name on error in opal_event_init()
-Date: Wed, 23 Oct 2024 10:33:20 -0400
-Message-ID: <20241023143321.2982841-5-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241023143321.2982841-1-sashal@kernel.org>
-References: <20241023143321.2982841-1-sashal@kernel.org>
+	s=arc-20240116; t=1729694007; c=relaxed/simple;
+	bh=S7Z+vVe4R+0sfq538t4ASPMCuufGmEe03z1ZjfijqSY=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=WkFAFwqA69ENlVy8pVUYtrh3xXC/KmU3/xVIaIaBslv/cFmCJDEuiTeVNYKOEaMrRna1zqSQueGawHdr/cgGwAaxZ7ytCkZ2qQW7bsCxKCEbpf5D4SyVGajCLh/G0WgQvJnm8pl9YiXD9qwe4ZHVUA0ug0zUu1eZ1qQQCaZ63S8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=QUtgjPP4; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=QUtgjPP4; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729694004;
+	bh=S7Z+vVe4R+0sfq538t4ASPMCuufGmEe03z1ZjfijqSY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=QUtgjPP4gL/mKqPoyU7dcPQcu+19EbdaM/Me7wwl14P7Uy8i4mLXeUNL1O5zghzWC
+	 7QSoqF/k0xoZHO/hFunv1Mf/s3rVYcw079SdrrnLz3cqwjxaAtJJ6gaTg2HFxCZzou
+	 n/7CEm7Ox5hD2XpevQFv0XDA4jD+EFD2dYPyfL8U=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 4D90612874E5;
+	Wed, 23 Oct 2024 10:33:24 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id zbiu8HbL15g3; Wed, 23 Oct 2024 10:33:24 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729694004;
+	bh=S7Z+vVe4R+0sfq538t4ASPMCuufGmEe03z1ZjfijqSY=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=QUtgjPP4gL/mKqPoyU7dcPQcu+19EbdaM/Me7wwl14P7Uy8i4mLXeUNL1O5zghzWC
+	 7QSoqF/k0xoZHO/hFunv1Mf/s3rVYcw079SdrrnLz3cqwjxaAtJJ6gaTg2HFxCZzou
+	 n/7CEm7Ox5hD2XpevQFv0XDA4jD+EFD2dYPyfL8U=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id EF36F1287459;
+	Wed, 23 Oct 2024 10:33:22 -0400 (EDT)
+Message-ID: <526445c102e47fbc1179a76a85661c89581c29e5.camel@HansenPartnership.com>
+Subject: Re: [RFC PATCH 0/5] Extend SEV-SNP SVSM support with a kvm_vcpu per
+ VMPL
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Paolo Bonzini <pbonzini@redhat.com>, Sean Christopherson
+ <seanjc@google.com>
+Cc: roy.hopkins@suse.com, ashish.kalra@amd.com, bp@alien8.de, 
+ dave.hansen@linux.intel.com, jroedel@suse.de, kvm@vger.kernel.org, 
+ linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org,
+ michael.roth@amd.com,  mingo@redhat.com, tglx@linutronix.de,
+ thomas.lendacky@amd.com, x86@kernel.org
+Date: Wed, 23 Oct 2024 10:33:21 -0400
+In-Reply-To: <8db215c5-4393-4db1-883c-431fed9dfd59@redhat.com>
+References: <cover.1726506534.git.roy.hopkins@suse.com>
+	 <6028e1a0fad729f28451782754417b0be3aea7ed.camel@HansenPartnership.com>
+	 <ZxawyGnWfo378f3S@google.com>
+	 <8db215c5-4393-4db1-883c-431fed9dfd59@redhat.com>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 4.19.322
 Content-Transfer-Encoding: 8bit
 
-From: Michael Ellerman <mpe@ellerman.id.au>
+On Wed, 2024-10-23 at 13:48 +0200, Paolo Bonzini wrote:
+> On 10/21/24 21:51, Sean Christopherson wrote:
+> > On Fri, Oct 18, 2024, James Bottomley wrote:
+> > > > I've prepared this series as an extension to the RFC patch
+> > > > series: 'SEV-SNP support for running an SVSM' posted by Tom
+> > > > Lendacky [1]. This extends the support for transitioning a vCPU
+> > > > between VM Privilege Levels (VMPLs) by storing the vCPU state
+> > > > for each VMPL in its own `struct kvm_vcpu`. This additionally
+> > > > allows for separate APICs for each VMPL.
+> > > 
+> > > I couldn't attend KVM forum, but I understand based on feedback
+> > > at a session there, Paolo took the lead to provide an
+> > > architecture document for this feature, is that correct?
+> > 
+> > Yep.
+> > 
+> > > Just asking because I haven't noticed anything about this on the
+> > > list.
+> > 
+> > Heh, there's quite a queue of blocked readers (and writers!) at
+> > this point ;-)
+> 
+> Well, at least one person had a writer's block instead.
+> 
+> I had it almost ready but then noticed a few hiccups in the design we
+> came up with, and have been seating on it for a while.  I'm sending
+> it now, finishing the commit messages.
 
-[ Upstream commit cf8989d20d64ad702a6210c11a0347ebf3852aa7 ]
+Thanks for doing that.  For those on linux-coco who don't follow the
+KVM list, the document is here:
 
-In opal_event_init() if request_irq() fails name is not freed, leading
-to a memory leak. The code only runs at boot time, there's no way for a
-user to trigger it, so there's no security impact.
+https://lore.kernel.org/kvm/20241023124507.280382-6-pbonzini@redhat.com/
 
-Fix the leak by freeing name in the error path.
+Regards,
 
-Reported-by: 2639161967 <2639161967@qq.com>
-Closes: https://lore.kernel.org/linuxppc-dev/87wmjp3wig.fsf@mail.lhotse
-Signed-off-by: Michael Ellerman <mpe@ellerman.id.au>
-Link: https://patch.msgid.link/20240920093520.67997-1-mpe@ellerman.id.au
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- arch/powerpc/platforms/powernv/opal-irqchip.c | 1 +
- 1 file changed, 1 insertion(+)
+James
 
-diff --git a/arch/powerpc/platforms/powernv/opal-irqchip.c b/arch/powerpc/platforms/powernv/opal-irqchip.c
-index e71f2111c8c0b..676ec9fdd115d 100644
---- a/arch/powerpc/platforms/powernv/opal-irqchip.c
-+++ b/arch/powerpc/platforms/powernv/opal-irqchip.c
-@@ -289,6 +289,7 @@ int __init opal_event_init(void)
- 				 name, NULL);
- 		if (rc) {
- 			pr_warn("Error %d requesting OPAL irq %d\n", rc, (int)r->start);
-+			kfree(name);
- 			continue;
- 		}
- 	}
--- 
-2.43.0
 
 
