@@ -1,136 +1,152 @@
-Return-Path: <linux-kernel+bounces-378545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378546-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A5D89AD216
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:02:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F519AD21A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:07:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 318CA1F28EE6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:02:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B74F91C219E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:07:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B65831CDFD2;
-	Wed, 23 Oct 2024 17:01:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A88681CB334;
+	Wed, 23 Oct 2024 17:07:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="p5zTzkoN"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V323B4uX"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDE8A1CF5F3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:01:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 89AD35D8F0;
+	Wed, 23 Oct 2024 17:07:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702917; cv=none; b=EtaybJHr3sag/UXhEOAPoiqD7A2W1fQMYeN2S8jf7ZZqgnqWrJWdZDcRODfc7WVzwbjyg6qAS6W0bsn9zzGwrovtCkpk4kSa57dcpBKcj0hiVaiB1S02VAN1lBUbMWN5EzLcwoc2CXAfY9yLskpt87z6nRrSK/6+YYaMmkIBTRI=
+	t=1729703236; cv=none; b=HlHCS+NQWJ9cl9CtSDH5tj17LsWATSvymzClaeVOo4Hn6bWRWUHaCAhRsbWIPf790fGS2lESnTaFB1vejooZxXLxGT38pwVr95QOTZIbohFNKsTdMQpRpGitX2BiPqSzLlUSq70rd3swnJ4yf7U+8oqVrp722Dh8gUk0exvKfNE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702917; c=relaxed/simple;
-	bh=LQ9C43uacwyjeQXzWWnBX4lz6q4UeuejSFIAUR1BRPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=MeBktkvlkt2lW73qsHaaT4MjB5TFitfltJ8gokAqbWxWbOemXXs+xPOVzlfO6v3ftxG1GDpPJBPvlKLFQwJkgSB7/f6ZF/VWqjd0MyqavamoWR0DM+Uz7957rcacQbdNQJpJiDtxx6gD1UFLQZEqrG2nK4Ggnsm1YJ+5xCx6/W8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=p5zTzkoN; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49NH1U9A091926;
-	Wed, 23 Oct 2024 12:01:30 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729702890;
-	bh=hXVh2GtKZd3nt1H1BlLl46ovaaf3eFuwFeLL9I9z0SE=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=p5zTzkoNTy/x699l/cBFe/OcGFKXJO1aDCeIEQJ8LtFOpk0lKYBPkAP4Uu22EIPZ1
-	 DKGQ4tlhwpxb4hr+hI/hKmZn9e6sO9l+tNEm32CJOYitUC1vzWIBxxhqMRZS+/sils
-	 fOkUjkQlPVw9ufHaHAhOv8V3AbHNp7g3rHOA3tTQ=
-Received: from DLEE112.ent.ti.com (dlee112.ent.ti.com [157.170.170.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49NH1UtV013942
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 23 Oct 2024 12:01:30 -0500
-Received: from DLEE106.ent.ti.com (157.170.170.36) by DLEE112.ent.ti.com
- (157.170.170.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
- Oct 2024 12:01:30 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE106.ent.ti.com
- (157.170.170.36) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 23 Oct 2024 12:01:30 -0500
-Received: from [10.249.42.149] ([10.249.42.149])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49NH1UXE072625;
-	Wed, 23 Oct 2024 12:01:30 -0500
-Message-ID: <abc0dce9-b64f-451e-8315-ef9e39d0503b@ti.com>
-Date: Wed, 23 Oct 2024 12:01:30 -0500
+	s=arc-20240116; t=1729703236; c=relaxed/simple;
+	bh=CTlopoKKj6U5/c+ds2UJezYeKZAdgEHqKqEv58+ekrc=;
+	h=Message-ID:Date:From:To:Cc:Subject:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=EeA9ylvC6ariB1pQmbbIXop84NRuMw7iHr9L5QGSgseqzjLRDOUGVDaWefDe9Dm/jdqS7TrQFhclHix3NB+mH37LoSSbvct1mJji3oJf6hJ0DAWaWoFCCutoIhmuzXvKvlG6gAPf7rMeqSFKr79T2vBj4sQJ24o2GXxrrHWrsl0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V323B4uX; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315baec681so73552455e9.2;
+        Wed, 23 Oct 2024 10:07:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729703233; x=1730308033; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=JaWidJfU3IgjixW6d/XGsWauF1pbmfj8wOb/yZzKIoY=;
+        b=V323B4uXVbTgxH4MHfL0L074GzF6vM1IjhslINNo2ckIhHLKGxtPh7l9t7PhY5/ylC
+         ZD0i1puKWzgjO8OMMwmENWjeG8kjN6RPOE4hO9uVxkUS8EMavX6bJMvTgJ+yYSok4SUW
+         OrqxNV5GFBjIapqH4RyS1ljCOO8o/ehu2z5A0VLHMlxwuHQAy1rmYuKbYVpSY4LAdQ77
+         NVgskFyN+dqCx72jS2v+38aXNASrWTutzHPpGCVEcew9/ZfC6MrAaBn7mJX9IJYDgdRn
+         XdgFeNrEQdhbIt+4uX/U7akGnUsEuxoskJJwG6pOyMmwyqdc5ymdl/E9sSw2AN3xE8pr
+         QntA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729703233; x=1730308033;
+        h=in-reply-to:content-disposition:mime-version:references:subject:cc
+         :to:from:date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JaWidJfU3IgjixW6d/XGsWauF1pbmfj8wOb/yZzKIoY=;
+        b=q1lBRjwoGG+wUHiv6iN2j/4ba5DgqD6vn19egKQv+tVvk+AiriDOEECkm5NvhBVx+k
+         B4B6leLM37kVu5Y7D3HN1wj9JSAM6Cpc2BJp4LKFVaFpP52/uZXMjPkTRKVIo6jfjUA/
+         tDdXs0PrKiw8FbJz0V6Z+ZeyG2qjRjtATTW1d5ilEkK6jpmefWGAG93yqSh1KfgNJjrP
+         jQxQVlSif+hHvLi35ZrbuPG2H/7ugTn9ppbjoc1+vwiSCITmwkPLvwnggPTjtTVTazPx
+         sUNt+tHG5PovpTqVa/PLA/15eO/xHnNgaK2kQ6cH1dgSbS3a23zN06aeO9GC4db+YfyO
+         E3dA==
+X-Forwarded-Encrypted: i=1; AJvYcCUdW8rvXqSmfylRuJE2M6Q/OGUyKAX3+S20ArSZBhohs3hqoVj8PViUPxHsf6NwYBGDKZg0HzVz++Ai@vger.kernel.org, AJvYcCUhdYn8bs2hxChgbalHSKv8bGqdn22BZfHPtB2aRLENm/meZ5xky3t/D20YY4tKAqO6FjuMAaiU@vger.kernel.org, AJvYcCV/qI15K1Rr09KNCI2I1AutBD6h42jGW8P7EGXSnLrgFTh8ULUbtj7H43SyJ2vjaX2bVCyWqucAVlMHSovA@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyiom60KCK7sv01eKpVp6zhnaC/sB/D8paZMRxtHtKDNudAOj3n
+	tqsAW9p8ElQ9ht8sva4MIoFtF15PHIotFepRtW+R5uDL3OB7WXAR
+X-Google-Smtp-Source: AGHT+IEZmQMRACMlxf5P/dPNhbQTZyftTXwVXCqJKPwGo13eY5omo7juc5h7J60TFFFp/09QSCJXuQ==
+X-Received: by 2002:a5d:4704:0:b0:37d:5496:290c with SMTP id ffacd0b85a97d-37efcf051afmr2301500f8f.7.1729703232740;
+        Wed, 23 Oct 2024 10:07:12 -0700 (PDT)
+Received: from Ansuel-XPS. (93-34-91-161.ip49.fastwebnet.it. [93.34.91.161])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4aadcsm9357173f8f.40.2024.10.23.10.07.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 10:07:12 -0700 (PDT)
+Message-ID: <67192d40.5d0a0220.33f6c1.23bc@mx.google.com>
+X-Google-Original-Message-ID: <ZxktPEtzI2ItzdXA@Ansuel-XPS.>
+Date: Wed, 23 Oct 2024 19:07:08 +0200
+From: Christian Marangi <ansuelsmth@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 3/3] net: phy: Add Airoha AN8855 Internal
+ Switch Gigabit PHY
+References: <20241023161958.12056-1-ansuelsmth@gmail.com>
+ <20241023161958.12056-4-ansuelsmth@gmail.com>
+ <4ad7b2e9-ddf1-4a82-9d60-7afd1856c770@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kfifo: don't include dma-mapping.h in kfifo.h
-To: Jiri Slaby <jirislaby@kernel.org>, Christoph Hellwig <hch@lst.de>,
-        <jassisinghbrar@gmail.com>
-CC: <stefani@seibold.net>, <gregkh@linuxfoundation.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241023055317.313234-1-hch@lst.de>
- <33b28b0a-b19d-459a-8db4-678df60cd799@kernel.org>
-Content-Language: en-US
-From: Andrew Davis <afd@ti.com>
-In-Reply-To: <33b28b0a-b19d-459a-8db4-678df60cd799@kernel.org>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4ad7b2e9-ddf1-4a82-9d60-7afd1856c770@lunn.ch>
 
-On 10/23/24 1:30 AM, Jiri Slaby wrote:
-> On 23. 10. 24, 7:53, Christoph Hellwig wrote:
->> Nothing in kfifo.h directly needs dma-mapping.h, only two macros
->> use DMA_MAPPING_ERROR when actually instantiated.  Drop the
->> dma-mapping.h include to reduce include bloat.
->>
->> Add an explicity <linux/io.h> include to drivers/mailbox/omap-mailbox.c
->> as that file uses __raw_readl and __raw_writel through a complicated
->> include chain involving <linux/dma-mapping.h>
->>
->> Fixes: d52b761e4b1a ("kfifo: add kfifo_dma_out_prepare_mapped()")
->> Signed-off-by: Christoph Hellwig <hch@lst.de>
->> ---
->>
->> Changes since v1:
->>   - improve the commit log
->>
->>   drivers/mailbox/omap-mailbox.c | 1 +
->>   include/linux/kfifo.h          | 1 -
->>   samples/kfifo/dma-example.c    | 1 +
->>   3 files changed, 2 insertions(+), 1 deletion(-)
->>
->> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
->> index 6797770474a5..680243751d62 100644
->> --- a/drivers/mailbox/omap-mailbox.c
->> +++ b/drivers/mailbox/omap-mailbox.c
->> @@ -15,6 +15,7 @@
->>   #include <linux/slab.h>
->>   #include <linux/kfifo.h>
+On Wed, Oct 23, 2024 at 07:00:22PM +0200, Andrew Lunn wrote:
+> > +static int an8855_config_init(struct phy_device *phydev)
+> > +{
+> > +	struct air_an8855_priv *priv = phydev->priv;
+> > +	int ret;
+> > +
+> > +	/* Enable HW auto downshift */
+> > +	ret = phy_write(phydev, AN8855_PHY_PAGE_CTRL, AN8855_PHY_EXT_PAGE);
+> > +	if (ret)
+> > +		return ret;
+> > +	ret = phy_set_bits(phydev, AN8855_PHY_EXT_REG_14,
+> > +			   AN8855_PHY_EN_DOWN_SHFIT);
+> > +	if (ret)
+> > +		return ret;
+> > +	ret = phy_write(phydev, AN8855_PHY_PAGE_CTRL, AN8855_PHY_NORMAL_PAGE);
+> > +	if (ret)
+> > +		return ret;
 > 
-> Funnily enough, this driver does not use kfifo since:
-> commit 3f58c1f4206f37d0af4595a9046c76016334b301
-> Author: Andrew Davis <afd@ti.com>
-> Date:   Wed Apr 10 08:59:42 2024 -0500
+> There are locking issues here, which is why we have the helpers
+> phy_select_page() and phy_restore_page(). The air_en8811h.c gets this
+> right.
+
+Ugh didn't think about it... The switch address is shared with the PHY
+so yes this is a problem.
+
+Consider that this page thing comes from my speculation... Not really
+use if 1f select page... 
+From what I observed
+0x0 PHY page
+0x1 this strange EXT
+0x4 acess switch register (every PHY can access the switch)
+
 > 
->      mailbox: omap: Remove kernel FIFO message queuing
-> 
->>   #include <linux/err.h>
->> +#include <linux/io.h>
-> 
-> So this should have been revealed at that point (while removing kfifo.h in that commit too).
-> 
-> Perhaps Andrew can remove the include now?
+> Is there anything in common with the en8811h? Does it also support
+> downshift? Can its LED code be used here?
 > 
 
-Yes, I'll send a patch dropping kfifo.h (unless you want to just do it
-as part of this patch).
+For some reason part of the LED are controlled by the switch and some
+are by the PHY. I still have to investigate that (not giving priority to
+it... just on my todo)
 
-The addition of io.h is still correct here as we seem to have been
-including it indirectly before, which is always a bit hacky.
-So for this patch,
+For downshift as you notice it's a single bit with no count...
+From their comments in the original driver it's said "Enable HW
+autodownshift"
 
-Acked-by: Andrew Davis <afd@ti.com>
+Trying to reach them but currently it's all very obscure.
 
-> thanks,
+-- 
+	Ansuel
 
