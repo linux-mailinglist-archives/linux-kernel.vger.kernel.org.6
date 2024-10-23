@@ -1,116 +1,84 @@
-Return-Path: <linux-kernel+bounces-377372-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377373-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FAEA9ABDEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:35:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A6E9ABDEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:36:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4E562845B1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:35:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0045D1C2258B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:36:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F74114F115;
-	Wed, 23 Oct 2024 05:34:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC11459F6;
+	Wed, 23 Oct 2024 05:36:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F1u4qahk"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slJIByWC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A7DC145FEB;
-	Wed, 23 Oct 2024 05:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DB920323;
+	Wed, 23 Oct 2024 05:36:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729661657; cv=none; b=K35RyRdFh1eahei2Cg/RmspSDoYWuUdwKOmjJGrGyxSyDlt7Ni4ce2nFNLfdmj7bVau6QJf81C56LvsNzHSsxA8Y0t7SD9NmUz5gPwQAcX1gN9XO9pHbnY8PnRfUGWYQ83DuW4ih95cNxdyEzzDdJFmXtc+O9xGi2yziQD2QOCs=
+	t=1729661791; cv=none; b=BSi9pSq9EYZyYFwf4ZNA5VwPz7VUkOg/pq2FtKfBtLtFJtIC+SdQixFbzRlkTp/ppUNLVfLDCUU5EHjjk9nlUIUdZP00jGDVKWKgWpgJTOc/k3suYxT3Eo8OaWcOj59XLI78EWHXmB3CkfMX8RAmYCvWxhCqqjo9waozn8mTCyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729661657; c=relaxed/simple;
-	bh=khqAKUaBlTUcj257l5qQoN0wPr87NJmbqzaFVDfK9sQ=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=cfzkUq7CXvcfEKUfGtalRUz+RTFdTn1ECdiZHp7DlgF3UctlYkBynepgHW14Bqzzwo1ohBJq6UHj0irXJYDAPf0co3UpCC1d7/RtRO1RFCUWBCwY+HhDHuRK00l9LCRZFvSA8EDlQ8tatON2bFdYgbS4fQiEiLlv2l6i1YqgP/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F1u4qahk; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2fb304e7dso5227666a91.1;
-        Tue, 22 Oct 2024 22:34:16 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729661656; x=1730266456; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=a5VMbFcY6CEGa8mSQ8SIl+CmW5nmrRXjE9y4EUBsQZI=;
-        b=F1u4qahkl2HjRqj+i6cnU2UXOAR/dSVSEC2b1eAljia3e52JIq5nMqL89o9Mhkuj5o
-         HgSb7r9nXOmEESNzzPg2XqAwmiq5Taz2sDgKURPEvWqv3c3He6b8CcWQPUuj9KwzaAMM
-         VO/vQIlTCyKYTlaUHJV/xK8VpKhS6lTFl2gXnYCIkMIlCV1G4WVrWOC5E8StzTMEDiXv
-         FEcwvFGY5EFu38030o6VdQA4CGFqgwhrOatZf2rc8ppVgpA/+RwjmsiT3o6h6SLwomQD
-         C59ghFI1FFOWVWDSh7esh7F59tBDHQZyqQY7BSsZLgz6DNJoeUm79f+Y3KCUQvOlE3qs
-         YC/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729661656; x=1730266456;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=a5VMbFcY6CEGa8mSQ8SIl+CmW5nmrRXjE9y4EUBsQZI=;
-        b=EEWi56oix+pPE9BUpxr5P2LVG7Sk1lK+H0oNCA7Y5yIiR05Erjs2OdvfenHs1wq189
-         ymJdw+nzvMnVNI949HO+mgRvnw3CTevxr/lE/9OHSMPZ8dcdQQijLF58y038nm70ytVs
-         kCoFHvFn18jpx1QrabUtF2EwJ9v23JEztNjq2DabLsR52nQvPNYUqJ2Uj++Y8exNR22E
-         JbdglpmwUcJq6s/y62ELvuQ4wY2FxtaclosZamAivwbgnIvxG0MUr0BBU2ee8nmSWH1w
-         orNj8Kw/Ne7zllDC/1seMjz6ZnM7ashT8CTybkPRQ4oYPse/8Izl4oP3Ty+lDObzIqFX
-         pxLg==
-X-Forwarded-Encrypted: i=1; AJvYcCU59tGjnJScD4wcEhQGGSgqLcPZM7eUMEjdUTyVzOspBREhyDYu8YSYEz1FjtiNcRhIQdEoGqQL/AuGIWpU@vger.kernel.org, AJvYcCX+o8QbAvEpFcSL6GpTjUo+x+4H5pJ9Y6GY1qRAOXiTBIRWLDBHeKkbRlF+FjcRI84pH9chhC00YsY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTa25GnbMXO6YD9Dzn5yAY0/ASxdfQOMGA+9oGOoUEmfS9LAuP
-	8Tz698fsKqs32xW1JTXIf9F1GmoBT0jqbEaVN++eABzPlyxah04X
-X-Google-Smtp-Source: AGHT+IFmpnftxB6HTXGUZIROek0Di1jrRQY9H0e03R+mkaok0KKf6SbvrWveY4qFXep/gNwiwsZuHA==
-X-Received: by 2002:a17:90a:fa0b:b0:2e0:d693:7884 with SMTP id 98e67ed59e1d1-2e76b5b5900mr1660262a91.5.1729661655717;
-        Tue, 22 Oct 2024 22:34:15 -0700 (PDT)
-Received: from anishs-Air.attlocal.net ([2600:1700:3bdc:8c10:1c93:3e9d:2c84:d5f9])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e0877a6sm428695a91.54.2024.10.22.22.34.14
-        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
-        Tue, 22 Oct 2024 22:34:15 -0700 (PDT)
-From: anish kumar <yesanishhere@gmail.com>
-To: ohad@wizery.com,
-	bjorn.andersson@linaro.org,
-	mathieu.poirier@linaro.org,
-	corbet@lwn.net
-Cc: linux-remoteproc@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	anish kumar <yesanishhere@gmail.com>
-Subject: [PATCH V4 7/7] rpmsg: Documentation: update the path
-Date: Tue, 22 Oct 2024 22:33:57 -0700
-Message-Id: <20241023053357.5261-8-yesanishhere@gmail.com>
-X-Mailer: git-send-email 2.39.3 (Apple Git-146)
-In-Reply-To: <20241023053357.5261-1-yesanishhere@gmail.com>
-References: <20241023053357.5261-1-yesanishhere@gmail.com>
+	s=arc-20240116; t=1729661791; c=relaxed/simple;
+	bh=1iZwpMUcg4IM/XBZxnspxbkbtoVw1OUF9gHEtwXZJmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l2GC8ZQ7UaQFCVx9wh92/6GvUX8NgciNRZvnOGW9kp6kccfjOAq8/OpdECwCC9fb5bez5YO7W510rywRL4SvGDJGVncU4yOUpLOeBzmCipA6oYqYD1hsXBJ+GY4N0n8bZAdgYPyC6VXdLoyvH0b6IoLrrOVfsjKHohr8082WR/E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slJIByWC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C7BC4CEC6;
+	Wed, 23 Oct 2024 05:36:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729661790;
+	bh=1iZwpMUcg4IM/XBZxnspxbkbtoVw1OUF9gHEtwXZJmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=slJIByWC4EjqjzVEvkUJEGfoj/r/QqScijDF41vkFcKRhk5nu+tLcvWjEbtB/Bk6A
+	 3fMT7Qr7lk1cJ/m3nQ+30xE8+E1fQx8DtgVqTkiy5QXQ9IBdaClO6hsTIWEF2EADTx
+	 5+VGheeu8WCArm+FWiThpEoXpMfZDPG4y08m6nvVA0K8757huMEufq0vqgd8fBjVb6
+	 BGERxqEB7tFfcRzNXQXQX0VlS7Rc4YBRYTfE0aLlXUNnAbmMlNW0CCtlv1XivZ9FhR
+	 BBfM57pnHOQvkTNhcSc9zrUgn6VFu8zwHqNgbUYYV8M3lxXNelmrgy798Fm3gQE2xO
+	 YKU3C2qCX7vhQ==
+Date: Wed, 23 Oct 2024 11:06:26 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Rob Herring <robh@kernel.org>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: duplicate patch in the dmaengine tree
+Message-ID: <ZxiLWoL/kkds7PWd@vaman>
+References: <20241023150813.416aafd7@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023150813.416aafd7@canb.auug.org.au>
 
-Remoteproc documentation is moved from
-text file to reStructuredText file.
 
-Signed-off-by: anish kumar <yesanishhere@gmail.com>
----
- Documentation/staging/rpmsg.rst | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Hi Stephen,
 
-diff --git a/Documentation/staging/rpmsg.rst b/Documentation/staging/rpmsg.rst
-index 1ce353cb232a..937cd2574584 100644
---- a/Documentation/staging/rpmsg.rst
-+++ b/Documentation/staging/rpmsg.rst
-@@ -5,7 +5,7 @@ Remote Processor Messaging (rpmsg) Framework
- .. note::
- 
-   This document describes the rpmsg bus and how to write rpmsg drivers.
--  To learn how to add rpmsg support for new platforms, check out remoteproc.txt
-+  To learn how to add rpmsg support for new platforms, check out remoteproc
-   (also a resident of Documentation/).
- 
- Introduction
+On 23-10-24, 15:08, Stephen Rothwell wrote:
+> Hi all,
+> 
+> The following commit is also in the devicetree tree as a different commit
+> (but the same patch):
+> 
+>   72c65390c61f ("dt-bindings: Fix array property constraints")
+> 
+> This is commit
+> 
+>   a6fa1f9e32f5 ("dt-bindings: Fix array property constraints")
+> 
+> in the devicetree tree.
+
+Okay let this go thru dt tree, I have dropped it now
+Thanks for letting me know
+
 -- 
-2.39.3 (Apple Git-146)
-
+~Vinod
 
