@@ -1,106 +1,104 @@
-Return-Path: <linux-kernel+bounces-378762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378763-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C09019AD523
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:45:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAED9AD528
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:46:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDE5A1C21F42
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:45:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6BA3A1C2083F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:46:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB2D1DD0D3;
-	Wed, 23 Oct 2024 19:44:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9609114AD20;
+	Wed, 23 Oct 2024 19:45:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="eptLBLIn"
-Received: from 009.lax.mailroute.net (009.lax.mailroute.net [199.89.1.12])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="h/yD9D/8"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85DB01CDFD1;
-	Wed, 23 Oct 2024 19:44:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E97D1CDFD1;
+	Wed, 23 Oct 2024 19:45:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729712673; cv=none; b=e6na9nCFIjn0rh1jMHSS74rtOi1pcETvh1+HkIE+U7SQvOQs2+Y5nxNFTmFk/Z9XMu4bupPCdPox/6mVWxUgaMG3oo/3eeKEsC7rX0qXNg/tLnK85x8Ab+E377l0FaVAb217I0kP9emQSb8RLdnICn3qUoOapAGp6wsGhNyzWl8=
+	t=1729712757; cv=none; b=EZTj+A03G53R62+xgC64DoEd7MfJvNLf4Rgd5KpgaOvVmeyc1JPonEU4EXF9GNYr6IlQ+8+g9/PeLGdG8nnwjdLWvVeJb32xXsHKwLJMEsJIiFvs7pwmgOtskOSRaG1QfWZE6Ragpraix1ZUVwM1gFaBQW1Xp8gSn6Yv6x4XhDM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729712673; c=relaxed/simple;
-	bh=i0lI73iil8ai/SCafkzDPzPhpUu6N0PKolJNRG/Z0FA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ORveRAgLacy/mI1S8nylL+0xMPZz2H6LmMKYZYZVb4TsEVcJOPgwuP1boL7JQPIlzZu8hZ5E9XdWhZanx88VSozV2SnRQ2qmcuLgnDL02+Qzgq5bjZUzlIj343enjy+R6RDZL1XQ1kWNO+qIX+IPViRmtrqv9hFIx7GBS+zeQeY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=eptLBLIn; arc=none smtp.client-ip=199.89.1.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 009.lax.mailroute.net (Postfix) with ESMTP id 4XYfd519PyzlgMVS;
-	Wed, 23 Oct 2024 19:44:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1729712663; x=1732304664; bh=96ePSPWif+56Vmt2ETfS76GZ
-	7t4oDpkBU2CMla5nUaM=; b=eptLBLIn3cvG7l4UZYDzytI/hw0Ovn2gNGbPSvEC
-	dZDiHH9wcEC+pPM9hgeBW4Xa75aP5pF3iQ/fMxJw90+aOMGpD7Lmiw1HObbGgudZ
-	bor0K3D6lLuzGputK2dtP8C4M0pOY69ZHHk7ERHj+yzbBnsfyiqDvCI4brU1Mq+w
-	oxr0C6PbcDjyKsi+nKwd8AGcrK1vuppbHe7jf4MYoBUaKdlR3z5IdWwb0MId58JJ
-	+xb+fESD5CBw14JGsVPB7qNyBdq4sFFfHMyEGuN6e3ajEQh0JVvKKKGhV5y1qzX+
-	bc2KtmCXqwFxZWuZ0Y9I9pCUGbGSsTrf5FebjejI0ytE5A==
-X-Virus-Scanned: by MailRoute
-Received: from 009.lax.mailroute.net ([127.0.0.1])
- by localhost (009.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id EVPabAS382gS; Wed, 23 Oct 2024 19:44:23 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 009.lax.mailroute.net (Postfix) with ESMTPSA id 4XYfd33DBPzlgT1K;
-	Wed, 23 Oct 2024 19:44:23 +0000 (UTC)
-Message-ID: <b43d5e01-cafe-4133-9873-68897439bf5f@acm.org>
-Date: Wed, 23 Oct 2024 12:44:22 -0700
+	s=arc-20240116; t=1729712757; c=relaxed/simple;
+	bh=Av8oDA592bMyPw+8/tqp5bVgIPkVhDoLsgzw4ibiyfE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=d/tXMH/UsBNea0ctG66ANuFm4xrX6utEXEU65DzDpoppAIfb1k2K14Se0VWeHGk9/z3JZ2Wx3le+BJvTrmytstq2S4l9w0t9X/mdhJSzEgwiV9A2niPmVOihfKt9km5tIFVMSvfz92Rr2btPycSf+17PUQjLHA3PJSrPz6djBJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=h/yD9D/8; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=pnofjtWFRW1a3Ex4iamW6Sy5pqigg3kUWm7+B1kI9+Q=; b=h/yD9D/860kV5yyshWWgMIMGPr
+	5Y/QxMgy8Qx7w2cTYX6kRQhdlB3KqN+MY4cNRvt94WqfJu2NixJ9fxTo1FARn0AAqDH8Vuz6Y9hDy
+	yCCJe/z8FtwFDDV/NMRQtAnkEH9L7b9ZtlOem2aYepMOLYuKN1/PuTkAA4FZsxMpz0mCfVgCAuGbS
+	+/bRgSqshAfX0KzU0kSNf8eN2HeVbC4k3Oic4VlOhr/Lol8SLWQ/Omq7d2xnGf5jC9cbiwoOSffm1
+	MN/J8bsc2HGzEjpkaTJRCjv0ggYmOAfUtDFpWrw7IXY8d755vXZRD4V+VugCbNw/JRk7466sntgBS
+	o71bzRkw==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3hIe-00000008XNO-3Dyc;
+	Wed, 23 Oct 2024 19:45:46 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id D8E61301171; Wed, 23 Oct 2024 21:45:43 +0200 (CEST)
+Date: Wed, 23 Oct 2024 21:45:43 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Linus Torvalds <torvalds@linux-foundation.org>
+Cc: "Christoph Lameter (Ampere)" <cl@gentwo.org>,
+	Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Ingo Molnar <mingo@redhat.com>, Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
+ acquire
+Message-ID: <20241023194543.GD11151@noisy.programming.kicks-ass.net>
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org>
+ <20240917071246.GA27290@willie-the-truck>
+ <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org>
+ <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
+ <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/3] scsi: ufs: core: Remove redundant host_lock calls
- around UTMRLDBR.
-To: Avri Altman <Avri.Altman@wdc.com>,
- "Martin K . Petersen" <martin.petersen@oracle.com>
-Cc: "linux-scsi@vger.kernel.org" <linux-scsi@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241022074319.512127-1-avri.altman@wdc.com>
- <20241022074319.512127-2-avri.altman@wdc.com>
- <8e1ec6a0-38db-414e-90da-4d04ea8d6be2@acm.org>
- <DM6PR04MB65750DBFE520C0DDE075146EFC4D2@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <DM6PR04MB65750DBFE520C0DDE075146EFC4D2@DM6PR04MB6575.namprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com>
 
-On 10/22/24 11:47 PM, Avri Altman wrote:
->> On 10/22/24 12:43 AM, Avri Altman wrote:
->>>        for_each_set_bit(tag, &issued, hba->nutmrs) {
->>>                struct request *req = hba->tmf_rqs[tag];
->>>                struct completion *c = req->end_io_data;
->>
->> Would it be sufficient to hold the SCSI host lock around the
->> hba->outstanding_tasks read only? I don't think that the
->> for_each_set_bit() loop needs to be protected with the SCSI host lock.
- >
-> That may cause concurrent access to tmf_rqs?
+On Mon, Sep 23, 2024 at 09:28:31AM -0700, Linus Torvalds wrote:
+> On Wed, 18 Sept 2024 at 08:22, Linus Torvalds
+> <torvalds@linux-foundation.org> wrote:
+> >
+> > On Wed, 18 Sept 2024 at 13:15, Christoph Lameter (Ampere) <cl@gentwo.org> wrote:
+> > >
+> > > Other arches do not have acquire / release and will create additional
+> > > barriers in the fallback implementation of smp_load_acquire. So it needs
+> > > to be an arch config option.
+> >
+> > Actually, I looked at a few cases, and it doesn't really seem to be true.
+> 
+> Bah. I ended up just committing the minimal version of this all. I
+> gave Christoph credit for the commit, because I stole his commit
+> message, and he did most of the work, I just ended up going "simplify,
+> simplify, simplify".
+> 
+> I doubt anybody will notice, and smp_load_acquire() is the future. Any
+> architecture that does badly on it just doesn't matter (and, as
+> mentioned, I don't think they even exist - "smp_rmb()" is generally at
+> least as expensive).
 
-Right, the host_lock serializes hba->tmf_rqs[] accesses. Without having
-analyzed whether or not removing locking from around the hba->tmf_rqs[]
-accesses, let's keep this locking.
+Do we want to do the complementing patch and make write_seqcount_end()
+use smp_store_release() ?
 
-> So better withdraw from changing ufshcd_tmc_handler() and just leave
-> the whole function as it is?
-That sounds good to me.
-
-Thanks,
-
-Bart.
+I think at least ARM (the 32bit thing) has wmb but uses mb for
+store_release. But I also think I don't really care about that.
 
