@@ -1,188 +1,152 @@
-Return-Path: <linux-kernel+bounces-378784-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378787-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 74E969AD572
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:24:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C6A829AD577
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 059B6281BAB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:24:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7E6CC1F246E3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:29:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCC991D279D;
-	Wed, 23 Oct 2024 20:24:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y/EyUbTZ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 858391E766A;
+	Wed, 23 Oct 2024 20:29:16 +0000 (UTC)
+Received: from finn.localdomain (finn.gateworks.com [108.161.129.64])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 262CC14EC62;
-	Wed, 23 Oct 2024 20:24:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFB561D14EE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:29:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=108.161.129.64
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729715055; cv=none; b=lsxtezJ2HkaR8XEjL98gOmRUfPHFiqUyFOp//bVxBgEQMPt4J0vfG2/o8ffL1nRJDgoQQR4d0cWSMQ62w83RvpKGfo50eRnomZowvu2eCwAhZf61y0F6QV25udIGz1t+tc91JR1QZfCvqGZC3o62awi9bCFlb6pbl2j9epJh57Y=
+	t=1729715356; cv=none; b=kK51obUN6jXNQ+rllREnq0suseJqgF4ETRC+eFuvKgqVBZ12tog4Iu5p1rF5821P0vjL6xQIwya8AsoLbYQIvt7L8VXb08e0/y5vd4SfGKa2TTIJT6t0Pb9qvdsUcMnA0RsqCIG7NCeUtfa5hyFyNexUmYrYKJL05nG6QKo+WXo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729715055; c=relaxed/simple;
-	bh=BlgLFVi9BOXbusOcDAl1qyQmxS9LNlPv5ENh5+eQVhQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=IwmewI/dinH9eHI+CTOD1IMCEA/rnnyZ3uR/a/BRl0/psvz08WXuuA8xAFn8gKLkJubvYAHUDCFSB9mfjfQw/O4saza8ygKL9qF0qAXzxZqfWBaJAB7fzjrCXG7bR1fG9VBI5X45YCzOvrUH9MR2f38xyzUAYaHaxw4Sfp5s9aI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y/EyUbTZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 09E4CC4CEC6;
-	Wed, 23 Oct 2024 20:24:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729715053;
-	bh=BlgLFVi9BOXbusOcDAl1qyQmxS9LNlPv5ENh5+eQVhQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y/EyUbTZtQRKhmaIicmx1lg30QFPzaQEl3Xghdj2drn+cdpGQ3/zLxGca8yCrWk9y
-	 kkruTIGhwwrX2Wpwa7K/ERPKR7zzZoR4J1b7eSgTvl5wx3T0hJOUZ93SOYIyG8pyIQ
-	 Bvt8PZGtJwKBqURhRPY7Z8zeZqFwQYIOoDY96xXBbDTCNDuJdiR9sXh5gtEawx1TRg
-	 oOMB7bQ8rrVabnDQxxAjewzrbOAvQ9EMhyp9j07bOOud5hEz5xjYGUne8jwNhWyWB/
-	 rQcB8543fEsLC+Pg2Mb7h6S6T80FzwvnYq5+s88hnOv7iM9fr9bkYpXO1ShJUBh7K1
-	 YbwU7OgeAg6FA==
-Date: Wed, 23 Oct 2024 17:24:10 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: vmolnaro@redhat.com
-Cc: linux-perf-users@vger.kernel.org, acme@redhat.com, mpetlan@redhat.com,
-	peterz@infradead.org, mingo@redhat.com, namhyung@kernel.org,
-	mark.rutland@arm.com, alexander.shishkin@linux.intel.com,
-	jolsa@kernel.org, irogers@google.com, adrian.hunter@intel.com,
-	kan.liang@linux.intel.com, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] perf test: Handle perftool-testsuite_probe failure
- due to broken DWARF
-Message-ID: <ZxlbakzNhwDTTlWf@x1>
-References: <Zw_mutl867MINXPi@x1>
- <20241017161555.236769-1-vmolnaro@redhat.com>
+	s=arc-20240116; t=1729715356; c=relaxed/simple;
+	bh=KSaY0QCwr6D3pXil6nVNSc22A5Xg+dgLmp2XaeOGJFs=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Ca8VMgzsGRVrZikDdxuFn7TP2My8LVTCt4eShv3eqsNBCZtJ5Eh1MREcwoAuu4lwmIQz8KVbo5biyZAJCX0hmRFpGkgs7IIpzayRMTFuPiCnDjegf3eYmETy4AYaSwu3QVZ0PvbH7djXgqtlIlaaa3TBfiLd+F1FTOT/1kwPAL4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com; spf=pass smtp.mailfrom=gateworks.com; arc=none smtp.client-ip=108.161.129.64
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gateworks.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gateworks.com
+Received: from syn-068-189-091-139.biz.spectrum.com ([68.189.91.139] helo=tharvey.pdc.gateworks.com)
+	by finn.localdomain with esmtp (Exim 4.95)
+	(envelope-from <tharvey@gateworks.com>)
+	id 1t3hyZ-001CNZ-CM;
+	Wed, 23 Oct 2024 20:29:03 +0000
+From: Tim Harvey <tharvey@gateworks.com>
+To: Heiko Schocher <hs@denx.de>,
+	Tom Rini <trini@konsulko.com>,
+	Peng Fan <peng.fan@nxp.com>,
+	Jaehoon Chung <jh80.chung@samsung.com>,
+	u-boot@lists.denx.de
+Cc: linux-kernel@vger.kernel.org,
+	Tim Harvey <tharvey@gateworks.com>
+Subject: [PATCH 1/4] pinctrl: imx: Convert to use livetree API for fdt access
+Date: Wed, 23 Oct 2024 13:28:52 -0700
+Message-Id: <20241023202855.1571188-1-tharvey@gateworks.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017161555.236769-1-vmolnaro@redhat.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 06:15:55PM +0200, vmolnaro@redhat.com wrote:
-> From: Veronika Molnarova <vmolnaro@redhat.com>
-> 
-> Test case test_adding_blacklisted ends in failure if the blacklisted
-> probe is of an assembler function with no DWARF available. At the same
-> time, probing the blacklisted function with ASM DWARF doesn't test the
-> blacklist itself as the failure is a result of the broken DWARF.
-> 
-> When the broken DWARF output is encountered, check if the probed
-> function was compiled by the assembler. If so, the broken DWARF message
-> is expected and does not report a perf issue, else report a failure.
-> If the ASM DWARF affected the probe, try the next probe on the blacklist.
-> If the first 5 probes are defective due to broken DWARF, skip the test
-> case.
+Convert to using livetree API functions.
 
-Tested and applied to perf-tools.
+Without this if livetree is enabled (OF_LIVE) the imx8mq-pinctrl
+driver will (silently) fail to probe causing issues with multiple
+devices.
 
-- Arnaldo
+Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+---
+ drivers/pinctrl/nxp/pinctrl-imx.c | 25 ++++++++++++-------------
+ 1 file changed, 12 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/pinctrl/nxp/pinctrl-imx.c b/drivers/pinctrl/nxp/pinctrl-imx.c
+index ff466c491041..b1960c56b512 100644
+--- a/drivers/pinctrl/nxp/pinctrl-imx.c
++++ b/drivers/pinctrl/nxp/pinctrl-imx.c
+@@ -22,7 +22,7 @@ static int imx_pinctrl_set_state(struct udevice *dev, struct udevice *config)
+ {
+ 	struct imx_pinctrl_priv *priv = dev_get_priv(dev);
+ 	struct imx_pinctrl_soc_info *info = priv->info;
+-	int node = dev_of_offset(config);
++	ofnode node = dev_ofnode(config);
+ 	const struct fdt_property *prop;
+ 	u32 *pin_data;
+ 	int npins, size, pin_size;
+@@ -40,7 +40,7 @@ static int imx_pinctrl_set_state(struct udevice *dev, struct udevice *config)
+ 	else
+ 		pin_size = FSL_PIN_SIZE;
  
-> Fixes: def5480d63c1e847 ("perf testsuite probe: Add test for blacklisted kprobes handling")
-> Signed-off-by: Veronika Molnarova <vmolnaro@redhat.com>
-> ---
->  .../base_probe/test_adding_blacklisted.sh     | 69 +++++++++++++++----
->  1 file changed, 54 insertions(+), 15 deletions(-)
-> 
-> diff --git a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-> index b5dc10b2a73810b3..bead723e34af3f0e 100755
-> --- a/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-> +++ b/tools/perf/tests/shell/base_probe/test_adding_blacklisted.sh
-> @@ -19,35 +19,74 @@
->  TEST_RESULT=0
->  
->  # skip if not supported
-> -BLACKFUNC=`head -n 1 /sys/kernel/debug/kprobes/blacklist 2> /dev/null | cut -f2`
-> -if [ -z "$BLACKFUNC" ]; then
-> +BLACKFUNC_LIST=`head -n 5 /sys/kernel/debug/kprobes/blacklist 2> /dev/null | cut -f2`
-> +if [ -z "$BLACKFUNC_LIST" ]; then
->  	print_overall_skipped
->  	exit 0
->  fi
->  
-> +# try to find vmlinux with DWARF debug info
-> +VMLINUX_FILE=$(perf probe -v random_probe |& grep "Using.*for symbols" | sed -r 's/^Using (.*) for symbols$/\1/')
-> +
->  # remove all previously added probes
->  clear_all_probes
->  
->  
->  ### adding blacklisted function
-> -
-> -# functions from blacklist should be skipped by perf probe
-> -! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS_DIR/adding_blacklisted.err
-> -PERF_EXIT_CODE=$?
-> -
->  REGEX_SCOPE_FAIL="Failed to find scope of probe point"
->  REGEX_SKIP_MESSAGE=" is blacklisted function, skip it\."
-> -REGEX_NOT_FOUND_MESSAGE="Probe point \'$BLACKFUNC\' not found."
-> +REGEX_NOT_FOUND_MESSAGE="Probe point \'$RE_EVENT\' not found."
->  REGEX_ERROR_MESSAGE="Error: Failed to add events."
->  REGEX_INVALID_ARGUMENT="Failed to write event: Invalid argument"
->  REGEX_SYMBOL_FAIL="Failed to find symbol at $RE_ADDRESS"
-> -REGEX_OUT_SECTION="$BLACKFUNC is out of \.\w+, skip it"
-> -../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
-> -CHECK_EXIT_CODE=$?
-> -
-> -print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
-> -(( TEST_RESULT += $? ))
-> -
-> +REGEX_OUT_SECTION="$RE_EVENT is out of \.\w+, skip it"
-> +REGEX_MISSING_DECL_LINE="A function DIE doesn't have decl_line. Maybe broken DWARF?"
-> +
-> +BLACKFUNC=""
-> +SKIP_DWARF=0
-> +
-> +for BLACKFUNC in $BLACKFUNC_LIST; do
-> +	echo "Probing $BLACKFUNC"
-> +
-> +	# functions from blacklist should be skipped by perf probe
-> +	! $CMD_PERF probe $BLACKFUNC > $LOGS_DIR/adding_blacklisted.log 2> $LOGS_DIR/adding_blacklisted.err
-> +	PERF_EXIT_CODE=$?
-> +
-> +	# check for bad DWARF polluting the result
-> +	../common/check_all_patterns_found.pl "$REGEX_MISSING_DECL_LINE" >/dev/null < $LOGS_DIR/adding_blacklisted.err
-> +
-> +	if [ $? -eq 0 ]; then
-> +		SKIP_DWARF=1
-> +		echo "Result polluted by broken DWARF, trying another probe"
-> +
-> +		# confirm that the broken DWARF comes from assembler
-> +		if [ -n "$VMLINUX_FILE" ]; then
-> +			readelf -wi "$VMLINUX_FILE" |
-> +			awk -v probe="$BLACKFUNC" '/DW_AT_language/ { comp_lang = $0 }
-> +						   $0 ~ probe { if (comp_lang) { print comp_lang }; exit }' |
-> +			grep -q "MIPS assembler"
-> +
-> +			CHECK_EXIT_CODE=$?
-> +			if [ $CHECK_EXIT_CODE -ne 0 ]; then
-> +				SKIP_DWARF=0 # broken DWARF while available
-> +				break
-> +			fi
-> +		fi
-> +	else
-> +		../common/check_all_lines_matched.pl "$REGEX_SKIP_MESSAGE" "$REGEX_NOT_FOUND_MESSAGE" "$REGEX_ERROR_MESSAGE" "$REGEX_SCOPE_FAIL" "$REGEX_INVALID_ARGUMENT" "$REGEX_SYMBOL_FAIL" "$REGEX_OUT_SECTION" < $LOGS_DIR/adding_blacklisted.err
-> +		CHECK_EXIT_CODE=$?
-> +
-> +		SKIP_DWARF=0
-> +		break
-> +	fi
-> +done
-> +
-> +if [ $SKIP_DWARF -eq 1 ]; then
-> +	print_testcase_skipped "adding blacklisted function $BLACKFUNC"
-> +else
-> +	print_results $PERF_EXIT_CODE $CHECK_EXIT_CODE "adding blacklisted function $BLACKFUNC"
-> +	(( TEST_RESULT += $? ))
-> +fi
->  
->  ### listing not-added probe
->  
-> -- 
-> 2.43.0
-> 
+-	prop = fdt_getprop(gd->fdt_blob, node, "fsl,pins", &size);
++	prop = ofnode_get_property(node, "fsl,pins", &size);
+ 	if (!prop) {
+ 		dev_err(dev, "No fsl,pins property in node %s\n", config->name);
+ 		return -EINVAL;
+@@ -56,8 +56,8 @@ static int imx_pinctrl_set_state(struct udevice *dev, struct udevice *config)
+ 	if (!pin_data)
+ 		return -ENOMEM;
+ 
+-	if (fdtdec_get_int_array(gd->fdt_blob, node, "fsl,pins",
+-				 pin_data, size >> 2)) {
++	if (ofnode_read_u32_array(node, "fsl,pins",
++				  pin_data, size >> 2)) {
+ 		dev_err(dev, "Error reading pin data.\n");
+ 		devm_kfree(dev, pin_data);
+ 		return -EINVAL;
+@@ -202,10 +202,11 @@ int imx_pinctrl_probe(struct udevice *dev,
+ 		      struct imx_pinctrl_soc_info *info)
+ {
+ 	struct imx_pinctrl_priv *priv = dev_get_priv(dev);
+-	int node = dev_of_offset(dev), ret;
+-	struct fdtdec_phandle_args arg;
++	struct ofnode_phandle_args arg;
++	ofnode node = dev_ofnode(dev);
+ 	fdt_addr_t addr;
+ 	fdt_size_t size;
++	int ret;
+ 
+ 	if (!info) {
+ 		dev_err(dev, "wrong pinctrl info\n");
+@@ -218,7 +219,7 @@ int imx_pinctrl_probe(struct udevice *dev,
+ 	if (info->flags & IMX8_USE_SCU)
+ 		return 0;
+ 
+-	addr = devfdt_get_addr_size_index(dev, 0, &size);
++	addr = ofnode_get_addr_size_index(dev_ofnode(dev), 0, &size);
+ 	if (addr == FDT_ADDR_T_NONE)
+ 		return -EINVAL;
+ 
+@@ -227,22 +228,20 @@ int imx_pinctrl_probe(struct udevice *dev,
+ 		return -ENOMEM;
+ 	priv->info = info;
+ 
+-	info->mux_mask = fdtdec_get_int(gd->fdt_blob, node, "fsl,mux_mask", 0);
++	info->mux_mask = ofnode_read_u32(node, "fsl,mux_mask", 0);
+ 	/*
+ 	 * Refer to linux documentation for details:
+ 	 * Documentation/devicetree/bindings/pinctrl/fsl,imx7d-pinctrl.txt
+ 	 */
+-	if (fdtdec_get_bool(gd->fdt_blob, node, "fsl,input-sel")) {
+-		ret = fdtdec_parse_phandle_with_args(gd->fdt_blob,
+-						     node, "fsl,input-sel",
++	if (ofnode_read_bool(node, "fsl,input-sel")) {
++		ret = ofnode_parse_phandle_with_args(node, "fsl,input-sel",
+ 						     NULL, 0, 0, &arg);
+ 		if (ret) {
+ 			dev_err(dev, "iomuxc fsl,input-sel property not found\n");
+ 			return -EINVAL;
+ 		}
+ 
+-		addr = fdtdec_get_addr_size(gd->fdt_blob, arg.node, "reg",
+-					    &size);
++		addr = ofnode_get_addr_size(arg.node, "reg", &size);
+ 		if (addr == FDT_ADDR_T_NONE)
+ 			return -EINVAL;
+ 
+-- 
+2.25.1
+
 
