@@ -1,192 +1,500 @@
-Return-Path: <linux-kernel+bounces-378080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378078-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB86F9ACB1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:24:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 370199ACB1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:23:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 880C4281203
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:24:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6DD401F21C40
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:23:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CE3F1AE001;
-	Wed, 23 Oct 2024 13:23:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8FF931ADFF9;
+	Wed, 23 Oct 2024 13:23:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="IV+bwe7V"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="3XZEqQQu"
+Received: from mail-yb1-f202.google.com (mail-yb1-f202.google.com [209.85.219.202])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17E5D159583;
-	Wed, 23 Oct 2024 13:23:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10C2E1AB521
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:23:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729689837; cv=none; b=ULw1tVQj4xHOW3vqnpvI7nuchWuNjSYnC7dNiINFHZTomKBXKWbeTC/dItxNDVW51vyBrFBtkTWFsF0+rfPFxTg8F+bYRDROFfpWEewfIrHbQHgoJKN2pe0ZrDQr0aXCpMYjrTw+3gMIiSjVtRze+scrnuYKJzErbc0/t0KNIaU=
+	t=1729689806; cv=none; b=F03+hzzykZJsUUFLLqh0jiaXfUruAmkjz4g/RWnY+5ix0kotzKSU0I1xUIkSPvoFtST0WhtMsxT6oZZQVzSDpBZ1iRVpvL0ecSFz7GgeKBc2UER0qtgjXTIfunI6FUT9Y4sRehGIVJqpWgwMRqpy67O6VfE/QkpUFOTWpdY8vhM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729689837; c=relaxed/simple;
-	bh=I0Hyu34jyHeLojhuCy3w9k6U0crQK/lJ5oAZeTWQCWg=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jYKnZZnk51TJ8s8m6DQ0BjaDM2leakI4kGU6CumKhEwVzWRQw/JnqB13Etey5X9Q/2fbxImok4//7rAlTxqyLsi2pX1rz73RqmnQJgAs50wQaabkrpwOiMZ6a5NV7m/UfT8PWkTSzdmqE5MMpSCvh6GruXyYVs6kgxE3JL8lYqk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=IV+bwe7V; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0Nh6I026402;
-	Wed, 23 Oct 2024 13:22:42 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=vJg1bk
-	avrTLKEXxCZ9zowc0UhQBaAQn+MJDsKXfxz88=; b=IV+bwe7VYnAmv5eW+0rOi6
-	/uRl9uuA9SDiXQDF1t0mwGjHNVnKdHfSyd0wIwrzP6dI2vtzwoIbjgPqI2xXG64O
-	cTtH7u7RbUFtpi+swi2EzTOb2/HAB5X9XXpuot0btiyz4sEXS+IzIpPD7FkFqlyI
-	DhnI9gL8QVIAC/WaKcUihYDjo7Qh9tlzLRln96U7Xfm8XMdS9p2m9u/a1nMhlteo
-	IRywupcSB5efuWwRToIlfG5kcxpEve29rWoET8zVS+OtWwO2xkDmnzgwuePvWKr5
-	/uDTfDYIV6oeCVvfjLo2XfQZejKVmngOKv/t+nJfECOQ7x73fi91/pLZGaLl+1oQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaeu56y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:22:42 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NDMf5Y023055;
-	Wed, 23 Oct 2024 13:22:41 GMT
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaeu56r-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:22:41 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBd1OM006876;
-	Wed, 23 Oct 2024 13:22:40 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emjcu05p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:22:40 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NDMa9w12517846
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 13:22:36 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B2A9F20043;
-	Wed, 23 Oct 2024 13:22:36 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 6AB9B20040;
-	Wed, 23 Oct 2024 13:22:36 +0000 (GMT)
-Received: from [9.152.222.93] (unknown [9.152.222.93])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 13:22:36 +0000 (GMT)
-Message-ID: <a5c67047-94d9-482b-892b-ef1662d2fe65@linux.ibm.com>
-Date: Wed, 23 Oct 2024 15:22:35 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 00/11] unwind, perf: sframe user space unwinding,
- deferred perf callchains
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Peter Zijlstra <peterz@infradead.org>,
-        Steven Rostedt <rostedt@goodmis.org>, Ingo Molnar <mingo@kernel.org>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        linux-kernel@vger.kernel.org, Indu Bhagat <indu.bhagat@oracle.com>,
-        Mark Rutland <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Jiri Olsa <jolsa@kernel.org>, Namhyung Kim <namhyung@kernel.org>,
-        Ian Rogers <irogers@google.com>,
-        Adrian Hunter <adrian.hunter@intel.com>,
-        linux-perf-users@vger.kernel.org, Mark Brown <broonie@kernel.org>,
-        linux-toolchains@vger.kernel.org, Jordan Rome <jordalgo@meta.com>,
-        Sam James <sam@gentoo.org>, x86@kernel.org,
-        Heiko Carstens <hca@linux.ibm.com>,
-        Ilya Leoshkevich <iii@linux.ibm.com>,
-        Vasily Gorbik <gor@linux.ibm.com>
-References: <cover.1726268190.git.jpoimboe@kernel.org>
-From: Jens Remus <jremus@linux.ibm.com>
-Content-Language: en-US
-Organization: IBM Deutschland Research & Development GmbH
-In-Reply-To: <cover.1726268190.git.jpoimboe@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: CbKkWjQt_IG-VjY2iv7kvICH6O_fLFr4
-X-Proofpoint-ORIG-GUID: xF3R5-d-c-t6j991y49RVnVzG6pCV48Z
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729689806; c=relaxed/simple;
+	bh=V77N/KjCHvplCxE6p5eOodDYgWxglGMXRbAasY3H9Ug=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=h4qNlJrvV3tUZIIj1TjUj088biNLHPWuutohQWUncAAOXrvfJyhyo3xrbGz962VcmMsjvxh9DKcYc2y3uj5hGtOQK+BWgVvdBQLS1NY1NHUsmlR1qn4U269xyzd1336kzkJ2qmI/D8oquboKhqRG/TGGPg5QvOuXVoYakaXA8zk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=3XZEqQQu; arc=none smtp.client-ip=209.85.219.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--aliceryhl.bounces.google.com
+Received: by mail-yb1-f202.google.com with SMTP id 3f1490d57ef6-e0b8fa94718so11008214276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:23:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729689803; x=1730294603; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=1seQ6EY+xI8yfrWsfUIYeFki/FB4sSFbC8R3vkQdgmo=;
+        b=3XZEqQQuoaKhvkpYC/ut8K0MHT8z62C54wx7VFQqHBSMRcDynbLqpUdV+tkj5jkpci
+         YBT3fgP9nXFnsHGafCHbg6fckLLh7CSXqsVjik3JOJk06/TO7C12uDfFX8YPiVJy6z8K
+         pRLdWuoRrgM85l91hJJioMXWKqM5b0364N5OUP4IVyxX6GYGsVoWwAkkOJYe5Frd9zSp
+         g2C7GHezgzxgmZ5W27DMrhKqC/qkvbbHoTI1er2KV9ZErW7tjKksevzi64MB4f4CAQQ9
+         Mt3NYDas298ZKriA52V7L7jEmU+NGk9cOwuGxBMwS3VvWoCjINeA3EwINXqrQD5Cz00E
+         pfwA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729689803; x=1730294603;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=1seQ6EY+xI8yfrWsfUIYeFki/FB4sSFbC8R3vkQdgmo=;
+        b=ButHN8uqNMe/A5ZZVPjws3Ld7hTRcLhl3F+bcJbuOrbpTXrJ5r0p6A9PiQHe6fKKs+
+         wqzGaAaNJpCav0u6Px96YZD7/N0QV4z4F2mJlG5v1QKpiMawb4GeKV55bSPdOXJwwDxC
+         8Wl4EjiqVHLHNPtj9FdkS0KTRb0Vx/jbmoFwwGp249FDklfoLJHhaDRkO2+6iTuQglyg
+         QHGSP+LC++1NSWPDHDm4ON0smDY9wrK8TndiFhrImbXNU4XeddGBiK9Nr4A3nZoz4ZQq
+         /jqpriTbuTNtGRAob1eGTucyq0Fzyhf9u/CPyKyXvTVR89Mc3pR7KkHefB/zo5AqY/+l
+         dEmg==
+X-Forwarded-Encrypted: i=1; AJvYcCXAKD5kQyr1KwSLP5l7+oWzhebiCN7GF0qGmICLtskJqXXxVTB48aaZZSjBVh5T4/qf6uiCJaiVLdoMoD8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDESKWbrKzWJvqNmmCVZ5RIClI1XQnmjfxgTd+8zCPthkFeqIk
+	oVfgQnsX9rzDzBGzbDb7N8FjUE7Uc+BLaxWrR6fCBImoGibLZin8wSoObggYgUYwioSRqPNo/Je
+	GSmR7FTlrLOA8IA==
+X-Google-Smtp-Source: AGHT+IGlNWDXPiSI/iL6EVIsGnNXyCmuJc7I+4D5/F5vC8SUDONqTqfuypRtR4cKAZwDnw3skyEN5duQJAZnnso=
+X-Received: from aliceryhl.c.googlers.com ([fda3:e722:ac3:cc00:28:9cb1:c0a8:35bd])
+ (user=aliceryhl job=sendgmr) by 2002:a05:6902:4d3:b0:e2e:4391:67cc with SMTP
+ id 3f1490d57ef6-e2e439168abmr4709276.4.1729689802269; Wed, 23 Oct 2024
+ 06:23:22 -0700 (PDT)
+Date: Wed, 23 Oct 2024 13:23:18 +0000
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 clxscore=1011 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230079
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAMX4GGcC/3XNQW7CMBCF4asgr2vkmbGdhBX3qFjYziRYKhjFa
+ QRCuXsNi0ITdflG+v65i8xD5Cx2m7sYeIo5pnMZ9mMjwtGde5axLVugQq1qtDKPboxBnr5Hvkq
+ nPWLNiq1zopDLwF28PnOfh7KPMY9puD3rEzyu/4QmkCAdaOYKjIWO9n1K/RdvQzqJR2nCd10tN
+ BYNVRcIPSoiXGl66QbUQlPRxrNvAXzbkV9p/aZpqXXRwTTGGA0EWK20+dWgkBbaFF2Xx7Wzrmn 8Xz3P8w93v5k+oQEAAA==
+X-Developer-Key: i=aliceryhl@google.com; a=openpgp; fpr=49F6C1FAA74960F43A5B86A1EE7A392FDE96209F
+X-Developer-Signature: v=1; a=openpgp-sha256; l=13028; i=aliceryhl@google.com;
+ h=from:subject:message-id; bh=V77N/KjCHvplCxE6p5eOodDYgWxglGMXRbAasY3H9Ug=;
+ b=owEBbQKS/ZANAwAKAQRYvu5YxjlGAcsmYgBnGPjHl2T3Wl3SkSuRvmVelt0JmH54rbJh3I7hv
+ QVFp12IQEeJAjMEAAEKAB0WIQSDkqKUTWQHCvFIvbIEWL7uWMY5RgUCZxj4xwAKCRAEWL7uWMY5
+ RnUfD/9rqW+3yz0AkZOErCQPXCX8pgYCKM5iV/UvgARyiZKMOgrUuRXYuQij1FQTEjN/JtH8d+r
+ EeQp7BoFgPSqzr0Cb1YWFqBLsYpT9Cy84PjHzF/tZ3hsyMDBZonB0oOLzL5rlfkKWXiyftrQDln
+ RcVrr/j0mQeX78JLjnQGfYCRbHOV146duQKI2sXFyaugezKEC2pMPkOoSIX4vktd0mbTxCXbqWQ
+ UwzYHy2X9VuFbC837twmbj5U72m9n2+0l468GBqAzEx85YkxVwRNsU6zk8TsIlle6DxqKqW22ha
+ 5z2+f2Wx/7VE8fz+uIlhqS45SJ3Qphx52zNDNONGtai1UQAT96DA4MoI4MaqHdyIE4D1P3Xy7RU
+ Br1MvD+A3sKUAGOI8X0KltNOX6kXoPcpuHD8Kz8CTXZjmnZSI2xacAabz8qictnrnMrAkIxfZnI
+ VhUVfFNEEu3An7gchAVeBp/bAnSAVgiiSDLUqRebJ0pXGQoXPyEIYawWQBTYUU2dW246EVJTXab
+ n9vfO/dRyveGikeotSpB6zlQTqTUFlhT576qHakuDD0NiC1cd94+M6Hohz0LLmsfVnKwxhZc6aI
+ dS5n1GLYOw7c4vny+rUdfUeX8cXkUQ1Gn4dN44yyti89bnGqT+0p4RokSq81DqSB683RanM73dB Tm4rhyQv1FnOVQA==
+X-Mailer: b4 0.13.0
+Message-ID: <20241023-static-mutex-v6-1-d7efdadcc84f@google.com>
+Subject: [PATCH v6] rust: add global lock support
+From: Alice Ryhl <aliceryhl@google.com>
+To: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, 
+	"=?utf-8?q?Bj=C3=B6rn_Roy_Baron?=" <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>, 
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Hello Josh!
+Add support for creating global variables that are wrapped in a mutex or
+spinlock.
 
-On 14.09.2024 01:02, Josh Poimboeuf wrote:
-> This is a new version of sframe user space unwinding + perf deferred
-> callchains.  Better late than never.
+The implementation here is intended to replace the global mutex
+workaround found in the Rust Binder RFC [1]. In both cases, the global
+lock must be initialized before first use. The macro is unsafe to use
+for the same reason.
 
-...
+The separate initialization step is required because it is tricky to
+access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
+require changes to the C side. That change will happen as a follow-up to
+this patch.
 
-> These patches add support for unwinding user space from the kernel using
-> SFrame with perf.  It should be easy to add user unwinding support for
-> other components like ftrace.
+Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08ba9197f637@google.com/#Z31drivers:android:context.rs [1]
+Signed-off-by: Alice Ryhl <aliceryhl@google.com>
+---
+This patch is based on top of rust-next as it depends on:
+https://lore.kernel.org/r/BL0PR02MB4914579914884B5D7473B3D6E96A2@BL0PR02MB4914.namprd02.prod.outlook.com
+---
+Changes in v6:
+- Completely rewrote the implementation to move almost everything
+  outside the macro.
+- Link to v5: https://lore.kernel.org/r/20241021-static-mutex-v5-1-8d118a6a99b7@google.com
 
-...
+Changes in v5:
+- Adjust syntax as discussed in the last meeting.
+- Fix various warnings.
+- Link to v4: https://lore.kernel.org/r/20240930-static-mutex-v4-1-c59555413127@google.com
 
-We are looking forward to implement support for unwinding of user space
-using SFrame in kernel/perf on s390. One major concern is that your x86
-implementation currently relies on a fallback to unwinding using frame
-pointer. On s390 unwinding using frame pointer is unsupported, because
-of lack of proper s390x ABI [1] specification and compiler support. In
-theory there would be a s390-specific alternative of unwinding using
-backchain (compiler option -mbackchain), but this has limitations and
-there is currently no distribution where user space is built with
-backchain.
+Changes in v4:
+- Evaluate `$value` in the surrounding scope.
+- Make types `pub(crate)` to avoid "private type in public interface"
+  errors when using the macro.
+- Add trylock method.
+  - using https://lore.kernel.org/r/BL0PR02MB4914579914884B5D7473B3D6E96A2@BL0PR02MB4914.namprd02.prod.outlook.com
+- Add Send/Sync implementations of LockedBy.
+- Fix examples so they compile.
+- Link to v3: https://lore.kernel.org/r/20240910-static-mutex-v3-1-5bebd11bdf3b@google.com
 
-How much of an issue would it be if s390 could not provide an unwinding
-fallback implementation? Do you see the possibility to get away without?
+Changes in v3:
+- Rewrite to provide a macro instead.
+- Link to v2: https://lore.kernel.org/r/20240827-static-mutex-v2-1-17fc32b20332@google.com
 
-For s390 support of unwinding using SFrame we would need to make a few
-changes to your generic unwinding framework in the kernel:
+Changes in v2:
+- Require `self: Pin<&Self>` and recommend `Pin::static_ref`.
+- Other doc improvements including new example.
+- Link to v1: https://lore.kernel.org/r/20240826-static-mutex-v1-1-a14ee71561f3@google.com
+---
+ rust/kernel/sync.rs             |   1 +
+ rust/kernel/sync/lock.rs        |   3 +
+ rust/kernel/sync/lock/global.rs | 303 ++++++++++++++++++++++++++++++++++++++++
+ 3 files changed, 307 insertions(+)
 
-- Support for architectures that do not define CFA == SP at callsite:
-   On s390 the CFA is defined as SP at callsite +160. The stack pointer
-   (SP) therefore unwinds as SP = CFA - 160. For that we would introduce
-   e.g. a sp_val_off field (SP value offset from CFA) in struct
-   user_unwind_frame that would default to 0 on all architectures except
-   s390.
+diff --git a/rust/kernel/sync.rs b/rust/kernel/sync.rs
+index 0ab20975a3b5..2bdd1cffcdab 100644
+--- a/rust/kernel/sync.rs
++++ b/rust/kernel/sync.rs
+@@ -14,6 +14,7 @@
+ 
+ pub use arc::{Arc, ArcBorrow, UniqueArc};
+ pub use condvar::{new_condvar, CondVar, CondVarTimeoutResult};
++pub use lock::global::{global_lock, GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
+ pub use lock::mutex::{new_mutex, Mutex};
+ pub use lock::spinlock::{new_spinlock, SpinLock};
+ pub use locked_by::LockedBy;
+diff --git a/rust/kernel/sync/lock.rs b/rust/kernel/sync/lock.rs
+index 90cc5416529b..a5d89cebf106 100644
+--- a/rust/kernel/sync/lock.rs
++++ b/rust/kernel/sync/lock.rs
+@@ -13,6 +13,9 @@
+ pub mod mutex;
+ pub mod spinlock;
+ 
++pub(super) mod global;
++pub use global::{GlobalGuard, GlobalLock, GlobalLockBackend, GlobalLockedBy};
++
+ /// The "backend" of a lock.
+ ///
+ /// It is the actual implementation of the lock, without the need to repeat patterns used in all
+diff --git a/rust/kernel/sync/lock/global.rs b/rust/kernel/sync/lock/global.rs
+new file mode 100644
+index 000000000000..5ba90b7f4074
+--- /dev/null
++++ b/rust/kernel/sync/lock/global.rs
+@@ -0,0 +1,303 @@
++// SPDX-License-Identifier: GPL-2.0
++
++// Copyright (C) 2024 Google LLC.
++
++//! Support for defining statics containing locks.
++
++use crate::{
++    str::CStr,
++    sync::lock::{Backend, Guard, Lock},
++    sync::{LockClassKey, LockedBy},
++    types::Opaque,
++};
++use core::{
++    cell::UnsafeCell,
++    marker::{PhantomData, PhantomPinned},
++};
++
++/// Trait implemented for marker types for global locks.
++///
++/// See [`global_lock!`](crate::sync::global_lock) for examples.
++pub trait GlobalLockBackend {
++    /// The name for this global lock.
++    const NAME: &'static CStr;
++    /// Item type stored in this global lock.
++    type Item: 'static;
++    /// The backend used for this global lock.
++    type Backend: Backend + 'static;
++    /// The class for this global lock.
++    fn get_lock_class() -> &'static LockClassKey;
++}
++
++/// Type used for global locks.
++///
++/// See [`global_lock!`](crate::sync::global_lock) for examples.
++pub struct GlobalLock<B: GlobalLockBackend> {
++    inner: Lock<B::Item, B::Backend>,
++}
++
++impl<B: GlobalLockBackend> GlobalLock<B> {
++    /// Creates a global lock.
++    ///
++    /// # Safety
++    ///
++    /// * Before any other method on this lock is called, [`init`] must be called.
++    /// * The type `B` must not be used with any other lock.
++    ///
++    /// [`init`]: Self::init
++    pub const unsafe fn new(data: B::Item) -> Self {
++        Self {
++            inner: Lock {
++                state: Opaque::uninit(),
++                data: UnsafeCell::new(data),
++                _pin: PhantomPinned,
++            },
++        }
++    }
++
++    /// Initializes a global lock.
++    ///
++    /// # Safety
++    ///
++    /// Must not be called more than once on a given lock.
++    pub unsafe fn init(&'static self) {
++        // SAFETY: The pointer to `state` is valid for the duration of this call, and both `name`
++        // and `key` are valid indefinitely. The `state` is pinned since we have a `'static`
++        // reference to `self`.
++        //
++        // We have exclusive access to the `state` since the caller of `new` promised to call
++        // `init` before using any other methods. As `init` can only be called once, all other
++        // uses of this lock must happen after this call.
++        unsafe {
++            B::Backend::init(
++                self.inner.state.get(),
++                B::NAME.as_char_ptr(),
++                B::get_lock_class().as_ptr(),
++            )
++        }
++    }
++
++    /// Lock this global lock.
++    pub fn lock(&'static self) -> GlobalGuard<B> {
++        GlobalGuard {
++            inner: self.inner.lock(),
++        }
++    }
++
++    /// Try to lock this global lock.
++    pub fn try_lock(&'static self) -> Option<GlobalGuard<B>> {
++        Some(GlobalGuard {
++            inner: self.inner.try_lock()?,
++        })
++    }
++}
++
++/// A guard for a [`GlobalLock`].
++///
++/// See [`global_lock!`](crate::sync::global_lock) for examples.
++pub struct GlobalGuard<B: GlobalLockBackend> {
++    inner: Guard<'static, B::Item, B::Backend>,
++}
++
++impl<B: GlobalLockBackend> core::ops::Deref for GlobalGuard<B> {
++    type Target = B::Item;
++
++    fn deref(&self) -> &Self::Target {
++        &self.inner
++    }
++}
++
++impl<B: GlobalLockBackend> core::ops::DerefMut for GlobalGuard<B> {
++    fn deref_mut(&mut self) -> &mut Self::Target {
++        &mut self.inner
++    }
++}
++
++/// A version of [`LockedBy`] for a [`GlobalLock`].
++///
++/// See [`global_lock!`](crate::sync::global_lock) for examples.
++pub struct GlobalLockedBy<T: ?Sized, B: GlobalLockBackend> {
++    _backend: PhantomData<B>,
++    value: UnsafeCell<T>,
++}
++
++// SAFETY: The same thread-safety rules as `LockedBy` apply to `GlobalLockedBy`.
++unsafe impl<T, B> Send for GlobalLockedBy<T, B>
++where
++    T: ?Sized,
++    B: GlobalLockBackend,
++    LockedBy<T, B::Item>: Send,
++{
++}
++
++// SAFETY: The same thread-safety rules as `LockedBy` apply to `GlobalLockedBy`.
++unsafe impl<T, B> Sync for GlobalLockedBy<T, B>
++where
++    T: ?Sized,
++    B: GlobalLockBackend,
++    LockedBy<T, B::Item>: Sync,
++{
++}
++
++impl<T, B: GlobalLockBackend> GlobalLockedBy<T, B> {
++    /// Create a new [`GlobalLockedBy`].
++    ///
++    /// The provided value will be protected by the global lock indicated by `B`.
++    pub fn new(val: T) -> Self {
++        Self {
++            value: UnsafeCell::new(val),
++            _backend: PhantomData,
++        }
++    }
++}
++
++impl<T: ?Sized, B: GlobalLockBackend> GlobalLockedBy<T, B> {
++    /// Access the value immutably.
++    ///
++    /// The caller must prove shared access to the lock.
++    pub fn as_ref<'a>(&'a self, _guard: &'a GlobalGuard<B>) -> &'a T {
++        // SAFETY: The lock is globally unique, so there can only be one guard.
++        unsafe { &*self.value.get() }
++    }
++
++    /// Access the value mutably.
++    ///
++    /// The caller must prove shared exclusive to the lock.
++    pub fn as_mut<'a>(&'a self, _guard: &'a mut GlobalGuard<B>) -> &'a mut T {
++        // SAFETY: The lock is globally unique, so there can only be one guard.
++        unsafe { &mut *self.value.get() }
++    }
++
++    /// Access the value mutably directly.
++    ///
++    /// The caller has exclusive access to this `GlobalLockedBy`, so they do not need to hold the
++    /// lock.
++    pub fn get_mut(&mut self) -> &mut T {
++        self.value.get_mut()
++    }
++}
++
++/// Defines a global lock.
++///
++/// The global mutex must be initialized before first use. Usually this is done by calling
++/// [`init`](GlobalLock::init) in the module initializer.
++///
++/// # Examples
++///
++/// A global counter.
++///
++/// ```
++/// # mod ex {
++/// # use kernel::prelude::*;
++/// kernel::sync::global_lock! {
++///     // SAFETY: Initialized in module initializer before first use.
++///     unsafe(uninit) static MY_COUNTER: Mutex<u32> = 0;
++/// }
++///
++/// fn increment_counter() -> u32 {
++///     let mut guard = MY_COUNTER.lock();
++///     *guard += 1;
++///     *guard
++/// }
++///
++/// impl kernel::Module for MyModule {
++///     fn init(_module: &'static ThisModule) -> Result<Self> {
++///         // SAFETY: called exactly once
++///         unsafe { MY_COUNTER.init() };
++///
++///         Ok(MyModule {})
++///     }
++/// }
++/// # struct MyModule {}
++/// # }
++/// ```
++///
++/// A global mutex used to protect all instances of a given struct.
++///
++/// ```
++/// # mod ex {
++/// # use kernel::prelude::*;
++/// use kernel::sync::{GlobalGuard, GlobalLockedBy};
++///
++/// kernel::sync::global_lock! {
++///     // SAFETY: Initialized in module initializer before first use.
++///     unsafe(uninit) static MY_MUTEX: Mutex<()> = ();
++/// }
++///
++/// /// All instances of this struct are protected by `MY_MUTEX`.
++/// struct MyStruct {
++///     my_counter: GlobalLockedBy<u32, MY_MUTEX>,
++/// }
++///
++/// impl MyStruct {
++///     /// Increment the counter in this instance.
++///     ///
++///     /// The caller must hold the `MY_MUTEX` mutex.
++///     fn increment(&self, guard: &mut GlobalGuard<MY_MUTEX>) -> u32 {
++///         let my_counter = self.my_counter.as_mut(guard);
++///         *my_counter += 1;
++///         *my_counter
++///     }
++/// }
++///
++/// impl kernel::Module for MyModule {
++///     fn init(_module: &'static ThisModule) -> Result<Self> {
++///         // SAFETY: called exactly once
++///         unsafe { MY_MUTEX.init() };
++///
++///         Ok(MyModule {})
++///     }
++/// }
++/// # struct MyModule {}
++/// # }
++/// ```
++#[macro_export]
++macro_rules! global_lock {
++    {
++        $(#[$meta:meta])* $pub:vis
++        unsafe(uninit) static $name:ident: $kind:ident<$valuety:ty> = $value:expr;
++    } => {
++        #[doc = ::core::concat!(
++            "Backend type used by [`",
++            ::core::stringify!($name),
++            "`](static@",
++            ::core::stringify!($name),
++            ")."
++        )]
++        #[allow(non_camel_case_types, unreachable_pub)]
++        $pub enum $name {}
++
++        impl $crate::sync::lock::GlobalLockBackend for $name {
++            const NAME: &'static $crate::str::CStr = $crate::c_str!(::core::stringify!($name));
++            type Item = $valuety;
++            type Backend = $crate::global_lock_inner!(backend $kind);
++
++            fn get_lock_class() -> &'static $crate::sync::LockClassKey {
++                $crate::static_lock_class!()
++            }
++        }
++
++        $(#[$meta])*
++        $pub static $name: $crate::sync::lock::GlobalLock<$name> = {
++            // Defined here to be outside the unsafe scope.
++            let init: $valuety = $value;
++
++            // SAFETY:
++            // * The user of this macro promises to initialize the macro before use.
++            // * We are only generating one static with this backend type.
++            unsafe { $crate::sync::lock::GlobalLock::new(init) }
++        };
++    };
++}
++pub use global_lock;
++
++#[doc(hidden)]
++#[macro_export]
++macro_rules! global_lock_inner {
++    (backend Mutex) => {
++        $crate::sync::lock::mutex::MutexBackend
++    };
++    (backend SpinLock) => {
++        $crate::sync::lock::spinlock::SpinLockBackend
++    };
++}
 
-- Support for architectures where RA is not necessarily saved on stack:
-   On s390 the return address (RA) is not saved (on stack) at function
-   entry. In leaf functions it is not necessarily saved at all.
+---
+base-commit: 6ce162a002657910104c7a07fb50017681bc476c
+change-id: 20240826-static-mutex-a4b228e0e6aa
 
-- Support for architectures were RA/FP are saved in registers in leaf
-   functions:
-   On s390 the frame pointer (FP) and return address (RA) registers can
-   be saved in other registers when in leaf functions. In the SFrame
-   format we would encode the DWARF register number as offset using the
-   least-significant bit as indication: offset = (regnum << 1) | 1.
-   Therefore we would need to extend your generic unwinding framework to
-   support FP and RA to be restored from registers.
-
-[1]: s390x ELF ABI supplement,
-      https://github.com/IBM/s390x-abi/releases
-
-Thanks and regards,
-Jens
+Best regards,
 -- 
-Jens Remus
-Linux on Z Development (D3303) and z/VSE Support
-+49-7031-16-1128 Office
-jremus@de.ibm.com
-
-IBM
-
-IBM Deutschland Research & Development GmbH; Vorsitzender des 
-Aufsichtsrats: Wolfgang Wendt; Geschäftsführung: David Faller; Sitz der 
-Gesellschaft: Böblingen; Registergericht: Amtsgericht Stuttgart, HRB 243294
-IBM Data Privacy Statement: https://www.ibm.com/privacy/
+Alice Ryhl <aliceryhl@google.com>
 
 
