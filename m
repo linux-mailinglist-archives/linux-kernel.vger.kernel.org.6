@@ -1,57 +1,55 @@
-Return-Path: <linux-kernel+bounces-377503-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912E19ABFB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:04:24 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 006DA9ABFAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:03:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49945285D88
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:04:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E3283F35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:03:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6699A14B06E;
-	Wed, 23 Oct 2024 07:04:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BA714B08A;
+	Wed, 23 Oct 2024 07:03:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="ZIptjTDa"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="T4GWh7sj"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AADE1448C1;
-	Wed, 23 Oct 2024 07:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667059; cv=pass; b=FdMzf39sXRpOLfuKZBtY5Z9PZa/fjbouMcXyYcFQRHgGuiKVSp2/ulaDgcnWksvwg0QYoZ2MGb19LcDpz/rt0CFQx1MYlRdy6/toZ5H/VO0CtjtQUTnnmmrAEVymOJaoibljQrZRptQQwepGcT9kJCdAsJfWXxzW5ZcxYrXMaEA=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667059; c=relaxed/simple;
-	bh=xpckz667ECUV5SqYy6i40SypV2TRZYJrg8Ltbh0tDbo=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PI6R6ZB0L5TCZODt+JG0MwB4l5+R+ewleCi0h/JiXp2bGTMc2jLMI4/TZ0H8uBO2bH54jgSMRS8/7eq8hf5pJr7dAx515IdVUOjTGopJojUQQHpOxsAdCcEmTJLGbI62NZOzOQd7dS3gLqWTQTrFSbFTdR0/YzCv+8IdzxoBhVY=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=ZIptjTDa; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729667011; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=i2dBqxVEL25f57hIMwkSAqcEQ0YCse9Gmbsa7u5TdnZNVx+CLKTGXVh8c3b0SWbOIbEvpzoDZyZezVlhJ64KCD3MDkwZ/Vpd8Pp3qewW/UkueeLZr6qU8XNVwMiCwQuTI0D2Eim24nRPJleGYPtD0Mn9MGzkguofjiBp8UDxHh8=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729667011; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=fc8IEdKD9REzwJIzIqKTlg94QTjRn2ZW2QNsLPievH0=; 
-	b=ItFMlo0EKrMERUpSyFbJ1eL1DEwCWJqk8kbuQj8qjWIZl8aN09Vk5+RfWNTEDhwWRdyJo1m53QDre6r5i5VyJLaVyuBm7qhg9NA5k/BFSY2afVFYtsZXnJbsQCua1K3Kmw9fHHwOSPB4AtYbBPbPa236Wj6iA7T432CZmMfQmBU=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729667011;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=fc8IEdKD9REzwJIzIqKTlg94QTjRn2ZW2QNsLPievH0=;
-	b=ZIptjTDaA7YlF2NPRyAy9rzKa2uPNkMPaWrQAvT4I7TIc6WyotM4zNtWNxvYWeoR
-	0AaqOr6Lfc88WOCpK7sL+CoHfCZ6m2ZHSwsz471iLpqTHd24xhJLm2wNvWABa8Cq8lD
-	xpM0Lr16YZV1fqKhds2kV07cETIsddBNkWJ5iJV0=
-Received: by mx.zohomail.com with SMTPS id 1729667009606741.3329161747271;
-	Wed, 23 Oct 2024 00:03:29 -0700 (PDT)
-Message-ID: <24a31123-2c84-4dc7-87e0-c6f960a31e5d@collabora.com>
-Date: Wed, 23 Oct 2024 12:03:18 +0500
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F983A8D0;
+	Wed, 23 Oct 2024 07:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729667032; cv=none; b=dq/ZB/5nWsVQwVNGZeJncwFMN8QBE3BYqCqit4kuk3m4lUI7oWxRowHZ777tP3XwW4OXkIIMmUpOQ4vkiRVITHUUz3p9n7Adja2f8GXqYFg4x6EMUbo0g/Uid6NJ9L4wNspVd/7Z4dz3SULKbOJx8/h62aSSuTg5JSa4NQdQLCY=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729667032; c=relaxed/simple;
+	bh=kXnezDBNSe442Wp0C9s+qIN4YJtpiOtN2RsiZGhRlms=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=j92oDKACPynwClZSf5JYthyYDlLBSqqyCn6ktQglLp/T6e/KEwXO8dM1Pl2pB5b2bfzwdVthXNI1pb0580GIjLa2PcYHoIZdZDsxewaCRyS14MLoS926epgFgDw12q8dqGGJyLkxjh67efkTwl2RE4G8qJYY/99bwMBbQXvajrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=T4GWh7sj; arc=none smtp.client-ip=212.227.17.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
+	s=s31663417; t=1729667008; x=1730271808; i=w_armin@gmx.de;
+	bh=lITTQi1+xpDe/eRs5y9aBbZ20hdHWc0TWoYNWU0Bu/k=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=T4GWh7sj0kt2R+sHcQgs/R5eo+U2lAtSWTdSHhXN7lg8aUmRCtJ3Vi3Zf0cslCh8
+	 gir/069k0TZTC9YoXPbKdLw6RZ/+ef+c7mO1FH3lzytJQS7Dsexq+xo4S1v2UQ9Zf
+	 MLrWKAa875uMO75y5ppO7/inH5SAmh5yyYnF0BD9T6OrjmeG5QOouxx/bYR9YEgxF
+	 lZQ23hhM2aqb9X/cdi8E32lyls0Rt29+xbT7F3DV7FEUotQfkeiZy5XMga0kO2jKL
+	 fh8FGLygIDzvD/0rzWCu2CnDtYTtPWsj1vFZl/Pzb4R7408kkvmvDwbtSdgJmVO6P
+	 gk7hJcGyA4G+r05g6Q==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
+ [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVvLB-1tVNOX2WnN-00RqJg; Wed, 23
+ Oct 2024 09:03:28 +0200
+Message-ID: <e029404c-88f7-4e8a-affa-40d589412e61@gmx.de>
+Date: Wed, 23 Oct 2024 09:03:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -59,78 +57,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241021102259.324175287@linuxfoundation.org>
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Pavel Machek <pavel@ucw.cz>
+Cc: Hans de Goede <hdegoede@redhat.com>,
+ Werner Sembach <wse@tuxedocomputers.com>,
+ Benjamin Tissoires <bentiss@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+ lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
+ <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+ <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+ <Zxd0ou7GpCRu0K5a@duo.ucw.cz> <35a98b67-d1eb-4aa9-9d3f-025c94cd6b0f@gmx.de>
+ <Zxf5u9jgmt9vpz2u@duo.ucw.cz>
 Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
+From: Armin Wolf <W_Armin@gmx.de>
+In-Reply-To: <Zxf5u9jgmt9vpz2u@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+X-Provags-ID: V03:K1:cuXi8m4Br6nrlYzivR7wZJwXSlMK5QyjD1PQlgXa70bII4xYI1U
+ kJda8SCxdeZiizmfIeODCMFWO/j6fI0IVQkYygtQ8SjLfdkbXvvkPWwkEOnuJBwSmi0tnFo
+ kw0TqdoX7Q5sxqq3XY65CHUnLle9h+2hGP6AKyILbxYu41yYOr2wmPaa8Ukx4sPokK13SCH
+ 7MAiATwmgVrq1uqCTqLtA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:jTr3/4093ac=;w0fY4nHWFtbC/hjK2YYpqhZXS+3
+ ZRWHmBZQwTsgcwbKsgeZSaq6I3MKbSTJMNkr4v+fdzZOPGHlZZ/BdfCJe19zxp9/tRyoXG2e6
+ syfVfCQJwOdnhWUhzQ9t+Omgjr0k7qG/b/vj82iiDiV9Fo1qdKuVLFpigjdTJKwsvmYTksJp1
+ x7d4QaphkRTL5Nj30Y3zNyECkrbVisLdEyJHop5D1Tue2qNx3D/5Qie2PQXeivDobZAEXqU6o
+ R+wPWDtoU2df2ulGBTFFDYCdSSOVAnUIuQnv1y2K/vDqnaRN5AjUOXRgvUkaGhRnCjkRaLmYe
+ hWZs/UZ/WhCu1n4+w9r7mJfXXimp1X73ALsp1YdN8HNmrQkO4jEaP2uZviFSIFJmbpOjTX4Gg
+ JjOgLAtxRmUgX6Nw5XUT/fhS0eyizJg0K53ishDAESdizDXKaUes2by97id917zGXK4ArdzkZ
+ n49fzkAsh4nhZEOmdKbY3a1uXPast54gfYTygBTe4FiCVlV8U3IYiHDPkC6cGD4C7nfw+TrBN
+ 4wbIV8bkoUwYbqlcrE8hQxQBqTO8e9fHyYgSI19pYcW2NWn9BWEQcIP0C0CRjx3bygPUJ64nM
+ prt+bV6A4VLcsmh79kyN+NiQLOYTAYJnOIQOqpV5QtyNNHOn1yWL3hjPnoAzA2eHIfAz9IWWM
+ qvc+C8JiHFKQbLMtXXcwpd3pgf39vdoFR1fuf5o3hWgj2RjRLO5jbsv18mh8MfKSugRwhUecY
+ lkKfxnBtrBOG/T8Jg9RRRzGEUdzB7Wf51DQA+SxJJ5CizIvkuR/58txj83Caw6+ZOtFYfy2fo
+ CnRKDGt+XBgGU8crz5B9OL/FHAa1ygdXRKj8Gl0tGkR7Y=
 
-On 10/21/24 3:22 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 6.11.5 release.
-> There are 135 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
-> 
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
-> 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.5-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-> and the diffstat can be found below.
-> 
-> thanks,
-> 
-> greg k-h
-> 
-> -------------
-Hi,
+Am 22.10.24 um 21:15 schrieb Pavel Machek:
 
-Please find the KernelCI report below :-
+> Hi!
+>
+>>>>> - interface for setting multiple LEDs at once
+>>>>> - interface for setting a range of LEDs at once
+>>> How are LEDs ordered? I don't believe range makes much sense.
+>> Range would allow for efficiently changing the color of all LEDs. But i agree
+>> that this can be considered optional and can be added later.
+> Yep, setting all of them makes sense. We should probably provide
+> backward-compatible interface for keyboards with single backlight, so
+> this would likely be LED class.
+>
+Good idea, the LED device could also be provided by the illumination subsystem code.
 
+>>>> Personally I really like the idea to just emulate a HID LampArray device
+>>>> for this instead or rolling our own API.  I believe there need to be
+>>>> strong arguments to go with some alternative NIH API and I have not
+>>>> heard such arguments yet.
+>>> If you don't want "some alternative API", we already have perfectly
+>>> working API for 2D arrays of LEDs. I believe I mentioned it before
+>>> :-). Senzrohssre.
+>> We may have to support 3D arrays of LEDs, so using a simple framebuffer
+>> would likely cause trouble.
+> Do you have pointer for device that is 3D?
 
-OVERVIEW
+Maybe a PC case with LEDs on each corner.
 
-    Builds: 25 passed, 0 failed
+>
+> OpenRGB manages to map keyboard into plane... so what I'd propose is
+> this:
+>
+> Framebuffer
+> Information for each pixel:
+> 	    present ? (displays with missing pixels are pretty common)
+> 	    list of keys related to this pixel
+> 	    width, height, length (if we know them)
+>
+> Pixels map to keys M:N.
+>
+> Yes, we'll have some number of non-present pixels, but again, I
+> believe that's not uncommon due to round screens, etc.
+>
+> (But I'm fine with other interfaces, as long as they are "normal")
+>
+> Best regards,
+> 								Pavel
 
-    Boot tests: 76 passed, 0 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash: 96563e3507d7fd82e448c6803ed8e07bc6e5ec86
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
-
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-    No new boot failures found
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=96563e3507d7fd82e448c6803ed8e07bc6e5ec86&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
+Using an ID-based interface would allow for more flexibility and allow
+us to support 3D-arrays.
 
 Thanks,
-KernelCI team
+Armin Wolf
+
 
