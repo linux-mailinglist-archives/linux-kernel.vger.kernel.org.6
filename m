@@ -1,224 +1,204 @@
-Return-Path: <linux-kernel+bounces-377718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377720-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93A689AC2E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:06:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5C5CA9AC2EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:07:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4FBBC2845F4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:06:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7D3AE1C20D4B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:07:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B27F175D2D;
-	Wed, 23 Oct 2024 09:06:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D878D184556;
+	Wed, 23 Oct 2024 09:07:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="djyr7m6+";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="TliXn90L";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="fEvg9e+p";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="BwlGEJB9"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="V9jkVcgE"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B71B0381BA;
-	Wed, 23 Oct 2024 09:06:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5BDC918660C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:07:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674397; cv=none; b=fTUSxnzhV4h+f6xTitdwCeGlmeQ+F+9Fc2fbjMOv1kDdsKs3UQA1W6p20LpJ+jApOazUQfnBBBAVfikp7G5IU2+qgcp1KGYV0+Sk3Kv7o9l2kjpEevlP8j5S8jSjmMXqwpKf+HW6f+BiUCcrxHmLvmwuBuOEMXJftkrORn4bDZA=
+	t=1729674424; cv=none; b=TW7WygPAi7dcwsLa1MCjQMGoxvOBkYRdg9FfscHlvBWWS3muu2w2kB8uatdlvPjSVnDuly91AAmpApMnKgHFxdf/BwimzAJ1Pb3POZIdCF3U0XHJwkAqHXOPdl0UHjLyeBbMLu3fbkDnjUsDyfCkdxtfM0QwuXHyLry5TcsT+9E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674397; c=relaxed/simple;
-	bh=QJut336e0+U746jbeaWQuLxGqczRgtu9chjbuHg7ECM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=l0Zr4uCqXTgpxKsG0MgnjED+5vZbKQkrFEjIPN0ao4oqkni0ounqWQhFAaGzKF1kPWZ3mmcVATXKFqMTGo6ZVc9J2tgF9Q68FCKmTsd4YKYajWi48liSRDDzAiuySg7gAHBAdNg28Und/k+HmP5xZMY4uVcoFttPFrjT1M+zLqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=djyr7m6+; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=TliXn90L; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=fEvg9e+p; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=BwlGEJB9; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	s=arc-20240116; t=1729674424; c=relaxed/simple;
+	bh=bjOJOfZfY/iX44yodp3Y3Csyso/TAeICAqN1lJoie78=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=gYwWpffr2s1hjKFfTmaReyC5kVjQCrUB1VhXIWI3Gsg5SOdBtiywKVSVQAq3RBxo9KzokwHXp7SYt6vj4vbgrH/ral2+DLl2cHrB4UQyMIXEMNW1RDtpkbRZu0qf+OAZcqNCoX9O4r+fgFgdRtCI3u1ZA9gPQExITjudVJ7GGwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=V9jkVcgE; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729674421;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=rmnd9v0LSmhXFonF77TwYci6uZaGz+E2notKw0mY5v0=;
+	b=V9jkVcgENVs3Y3SaO5/c7V59rbPE18rhZATlsowgH4GKUwcXgadUWO6NNTW1YBXuVn511I
+	YgT2rG8rI+thHvG5VkVRnDNf0wF1kLXnGnzKE8YrEDYRi3ZeQrWUQBgstCCHyk23/6ARUm
+	dBSXv4Fct55g63QbPax+v+EVxQkvgZw=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-306-ej37Uap8NNKLQcT2wViX7g-1; Wed,
+ 23 Oct 2024 05:06:58 -0400
+X-MC-Unique: ej37Uap8NNKLQcT2wViX7g-1
+Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id CDDBE1F8B5;
-	Wed, 23 Oct 2024 09:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729674393; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGIm/dX57sFo3NMmIvic4IKu0V6L4O2B9C4lg9R0CME=;
-	b=djyr7m6+4hfrTMd+U7XDbo3KB5cyX/VngrZYLwJ9TxpfFdm5tDVElcbXMXh/SaR4n9nq0v
-	iV7T85aDOsfhnv++136ows4AWqO/bFYmVmN12os+/J2/G1JUvPVMp7mK2mTzDbUgeN/m7W
-	wxrppQ8bbL3+90lcBAUrWqs0LEJ9QcM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729674393;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGIm/dX57sFo3NMmIvic4IKu0V6L4O2B9C4lg9R0CME=;
-	b=TliXn90LXlNabCdAQqQn4P4iumowMlwKb70eCEfn7fUw+9QUAsmebQlK6KWoN7j98ais5W
-	hlbbFCzFKU+7HMDQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=fEvg9e+p;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=BwlGEJB9
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729674392; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGIm/dX57sFo3NMmIvic4IKu0V6L4O2B9C4lg9R0CME=;
-	b=fEvg9e+pziYlcJvktedRboES7/Oks5kymMyS0eRUmdlruqkrRoH38fdfZOcnY1n7yCRo3j
-	mAM7Dapj3OrLKWgFFKs9XcmhoEprk6we29PykxO77dp6OXFRnmfYXcFrALuBGy9qwgF2MO
-	q5paVgY477106RYKNUch5NWQ7f4/CDk=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729674392;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=HGIm/dX57sFo3NMmIvic4IKu0V6L4O2B9C4lg9R0CME=;
-	b=BwlGEJB95C90rXLnhTJ6xU/DZZeYCbvC5ApR0XMwIi2z6l6UF0tqPJ5ZIjpbM+vxQSzPoq
-	aWeUgfuqjqmkAvCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 86F1013A63;
-	Wed, 23 Oct 2024 09:06:32 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id m0t+IJi8GGcIJQAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Oct 2024 09:06:32 +0000
-Message-ID: <b1df934e-7012-4523-a513-d3d1536b7f72@suse.cz>
-Date: Wed, 23 Oct 2024 11:06:32 +0200
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 782CA1955D4E;
+	Wed, 23 Oct 2024 09:06:56 +0000 (UTC)
+Received: from t14s.fritz.box (unknown [10.22.88.10])
+	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id EEA221956089;
+	Wed, 23 Oct 2024 09:06:52 +0000 (UTC)
+From: David Hildenbrand <david@redhat.com>
+To: linux-kernel@vger.kernel.org
+Cc: linux-s390@vger.kernel.org,
+	David Hildenbrand <david@redhat.com>,
+	Heiko Carstens <hca@linux.ibm.com>,
+	Vasily Gorbik <gor@linux.ibm.com>,
+	Alexander Gordeev <agordeev@linux.ibm.com>,
+	Christian Borntraeger <borntraeger@linux.ibm.com>,
+	Sven Schnelle <svens@linux.ibm.com>
+Subject: [PATCH v3] s390/kdump: make is_kdump_kernel() consistently return "true" in kdump environments only
+Date: Wed, 23 Oct 2024 11:06:51 +0200
+Message-ID: <20241023090651.1115507-1-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
-Content-Language: en-US
-To: Dmitry Vyukov <dvyukov@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: David Hildenbrand <david@redhat.com>, fw@deneb.enyo.de,
- James.Bottomley@hansenpartnership.com, Liam.Howlett@oracle.com,
- akpm@linux-foundation.org, arnd@arndb.de, brauner@kernel.org,
- chris@zankel.net, deller@gmx.de, hch@infradead.org,
- ink@jurassic.park.msu.ru, jannh@google.com, jcmvbkbc@gmail.com,
- jeffxu@chromium.org, jhubbard@nvidia.com, linux-alpha@vger.kernel.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-parisc@vger.kernel.org, mattst88@gmail.com, muchun.song@linux.dev,
- paulmck@kernel.org, richard.henderson@linaro.org, shuah@kernel.org,
- sidhartha.kumar@oracle.com, surenb@google.com, tsbogend@alpha.franken.de,
- willy@infradead.org, elver@google.com,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <87a5eysmj1.fsf@mid.deneb.enyo.de>
- <20241023062417.3862170-1-dvyukov@google.com>
- <8471d7b1-576b-41a6-91fb-1c9baae8c540@redhat.com>
- <5a3d3bc8-60db-46d0-b689-9aeabcdb8eab@lucifer.local>
- <CACT4Y+ZE9Zco7KaQoT50aooXCHxhz2N_psTAFtT+ZrH14Si7aw@mail.gmail.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CACT4Y+ZE9Zco7KaQoT50aooXCHxhz2N_psTAFtT+ZrH14Si7aw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: CDDBE1F8B5
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[99.99%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[36];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FREEMAIL_ENVRCPT(0.00)[gmail.com,gmx.de];
-	FREEMAIL_CC(0.00)[redhat.com,deneb.enyo.de,hansenpartnership.com,oracle.com,linux-foundation.org,arndb.de,kernel.org,zankel.net,gmx.de,infradead.org,jurassic.park.msu.ru,google.com,gmail.com,chromium.org,nvidia.com,vger.kernel.org,kvack.org,linux.dev,linaro.org,alpha.franken.de];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	R_RATELIMIT(0.00)[to_ip_from(RLz1534diqmneu69wx1fp4cing)];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:dkim,suse.cz:mid,imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
 
-On 10/23/24 10:56, Dmitry Vyukov wrote:
->>
->> Overall while I sympathise with this, it feels dangerous and a pretty major
->> change, because there'll be something somewhere that will break because it
->> expects faults to be swallowed that we no longer do swallow.
->>
->> So I'd say it'd be something we should defer, but of course it's a highly
->> user-facing change so how easy that would be I don't know.
->>
->> But I definitely don't think a 'introduce the ability to do cheap PROT_NONE
->> guards' series is the place to also fundmentally change how user access
->> page faults are handled within the kernel :)
-> 
-> Will delivering signals on kernel access be a backwards compatible
-> change? Or will we need a different API? MADV_GUARD_POISON_KERNEL?
-> It's just somewhat painful to detect/update all userspace if we add
-> this feature in future. Can we say signal delivery on kernel accesses
-> is unspecified?
+s390 sets "elfcorehdr_addr = ELFCORE_ADDR_MAX;" early during
+setup_arch() to deactivate the "elfcorehdr= kernel" parameter, resulting in
+is_kdump_kernel() returning "false".
 
-Would adding signal delivery to guard PTEs only help enough the ASAN etc
-usecase? Wouldn't it be instead possible to add some prctl to opt-in the
-whole ASANized process to deliver all existing segfaults as signals instead
-of -EFAULT ?
+During vmcore_init()->elfcorehdr_alloc(), if on a dump kernel and
+allocation succeeded, elfcorehdr_addr will be set to a valid address and
+is_kdump_kernel() will consequently return "true".
+
+We want to make is_kdump_kernel() return a consistent result during
+all boot stages, and properly return "true" if we are actually in a kdump
+environment -- just like we already do on powerpc where we indicate "false"
+in fadump environments, as added in commit b098f1c32365 ("powerpc/fadump:
+make is_kdump_kernel() return false when fadump is active").
+
+Similarly provide a custom is_kdump_kernel() implementation that will only
+return "true" in kdump environments, and will do so consistently during
+boot.
+
+Update the documentation of is_dump_available().
+
+Cc: Heiko Carstens <hca@linux.ibm.com>
+Cc: Vasily Gorbik <gor@linux.ibm.com>
+Cc: Alexander Gordeev <agordeev@linux.ibm.com>
+Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
+Cc: Sven Schnelle <svens@linux.ibm.com>
+Signed-off-by: David Hildenbrand <david@redhat.com>
+---
+
+This is v3 of [1], split out from the virtio-mem stuff.
+
+I played more with having virtio-mem built in as a module on current
+upstream and at least for virtio-mem this change *might* currently not be
+required (built-in virtio-mem driver seems to get probed after fs_init();
+I recall this behavior was different 4 years ago with my RFCs where I
+first decided to craft this patch).
+
+But this change sounds like a reasonable cleanup to me in any case.
+
+v1 -> v2:
+* Use "oldmem_data.start" and add a comment to is_kdump_kernel()
+* Update dump_available() documentation
+* Rewrote patch subject/description
+
+[1] https://lore.kernel.org/all/20241014144622.876731-2-david@redhat.com/
+
+---
+ arch/s390/include/asm/kexec.h |  3 +++
+ arch/s390/kernel/crash_dump.c | 11 +++++++++++
+ arch/s390/kernel/smp.c        | 16 ++++++++--------
+ 3 files changed, 22 insertions(+), 8 deletions(-)
+
+diff --git a/arch/s390/include/asm/kexec.h b/arch/s390/include/asm/kexec.h
+index 1bd08eb56d5f..9084b750350d 100644
+--- a/arch/s390/include/asm/kexec.h
++++ b/arch/s390/include/asm/kexec.h
+@@ -94,6 +94,9 @@ void arch_kexec_protect_crashkres(void);
+ 
+ void arch_kexec_unprotect_crashkres(void);
+ #define arch_kexec_unprotect_crashkres arch_kexec_unprotect_crashkres
++
++bool is_kdump_kernel(void);
++#define is_kdump_kernel is_kdump_kernel
+ #endif
+ 
+ #ifdef CONFIG_KEXEC_FILE
+diff --git a/arch/s390/kernel/crash_dump.c b/arch/s390/kernel/crash_dump.c
+index edae13416196..d9301c00852e 100644
+--- a/arch/s390/kernel/crash_dump.c
++++ b/arch/s390/kernel/crash_dump.c
+@@ -237,6 +237,17 @@ int remap_oldmem_pfn_range(struct vm_area_struct *vma, unsigned long from,
+ 						       prot);
+ }
+ 
++/*
++ * Return true only when we are in a kdump or stand-alone kdump environment.
++ * Note that /proc/vmcore might also be available in "standard zfcp/nvme dump"
++ * environments, where this function returns false; see dump_available().
++ */
++bool is_kdump_kernel(void)
++{
++	return oldmem_data.start;
++}
++EXPORT_SYMBOL_GPL(is_kdump_kernel);
++
+ static const char *nt_name(Elf64_Word type)
+ {
+ 	const char *name = "LINUX";
+diff --git a/arch/s390/kernel/smp.c b/arch/s390/kernel/smp.c
+index 4df56fdb2488..455400bdafe8 100644
+--- a/arch/s390/kernel/smp.c
++++ b/arch/s390/kernel/smp.c
+@@ -574,7 +574,7 @@ int smp_store_status(int cpu)
+ 
+ /*
+  * Collect CPU state of the previous, crashed system.
+- * There are four cases:
++ * There are three cases:
+  * 1) standard zfcp/nvme dump
+  *    condition: OLDMEM_BASE == NULL && is_ipl_type_dump() == true
+  *    The state for all CPUs except the boot CPU needs to be collected
+@@ -587,16 +587,16 @@ int smp_store_status(int cpu)
+  *    with sigp stop-and-store-status. The firmware or the boot-loader
+  *    stored the registers of the boot CPU in the absolute lowcore in the
+  *    memory of the old system.
+- * 3) kdump and the old kernel did not store the CPU state,
+- *    or stand-alone kdump for DASD
+- *    condition: OLDMEM_BASE != NULL && !is_kdump_kernel()
++ * 3) kdump or stand-alone kdump for DASD
++ *    condition: OLDMEM_BASE != NULL && !is_ipl_type_dump() == false
+  *    The state for all CPUs except the boot CPU needs to be collected
+  *    with sigp stop-and-store-status. The kexec code or the boot-loader
+  *    stored the registers of the boot CPU in the memory of the old system.
+- * 4) kdump and the old kernel stored the CPU state
+- *    condition: OLDMEM_BASE != NULL && is_kdump_kernel()
+- *    This case does not exist for s390 anymore, setup_arch explicitly
+- *    deactivates the elfcorehdr= kernel parameter
++ *
++ * Note that the legacy kdump mode where the old kernel stored the CPU states
++ * does no longer exist: setup_arch() explicitly deactivates the elfcorehdr=
++ * kernel parameter. The is_kdump_kernel() implementation on s390 is independent
++ * of the elfcorehdr= parameter.
+  */
+ static bool dump_available(void)
+ {
+-- 
+2.46.1
+
 
