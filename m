@@ -1,133 +1,107 @@
-Return-Path: <linux-kernel+bounces-377567-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C8E9AC0A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:48:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3320F9AC09F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:47:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C322D1C23652
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:48:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DEA9C1F2519C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:47:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29B2D155C98;
-	Wed, 23 Oct 2024 07:47:50 +0000 (UTC)
-Received: from mail-yw1-f171.google.com (mail-yw1-f171.google.com [209.85.128.171])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB50315622E;
+	Wed, 23 Oct 2024 07:47:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lNRV55Cy"
+Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DE28C154C04;
-	Wed, 23 Oct 2024 07:47:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5066154BE2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:47:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729669669; cv=none; b=PJvSGT5AKGF4RHSUxODfnAr1/mVdm6y6w/aCsMMS+cgNScOl7iglrczNIrmVybnYcsJWURa+wKn6jhjG+zlskIucuyFidsJMZwhn09J5EjfRwoAUTtIldrmyh0TcavPVScMU1WtCjUjhZzPNHsEjHCM9aWRXp8dy0t6UgAtvYDs=
+	t=1729669657; cv=none; b=WwM7FY55VrelxaJ5nsGaG5c4vwWgYCUaxK0W2R78UE3cR4NDK3jQ//mXT6M4RgkYLtS51O8agrk+00jKBw0+bJuBM3HRwqRNzXkZUdj/YwTryWU6infUrSzAhM/SP3lvVOOQVJ6UfPeJlANT14nRt1B9An2mkGMzEqyM+biV+Yg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729669669; c=relaxed/simple;
-	bh=hje37w5GlG4zb995G+tSIlCuLyDpD9klUquLHKvOjAI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MJJmbwfLW/Z+n6aOX6JP//e+8MeZ4YY/ljwytgXK0yh1fGALmmwaUjAncYX7L5+fyGeGVefX7rPtBXnm1QQZ5qoWl0tXV7UMX4z3fFu265jPdxeGbNpiBzpZ+GaE51e0Y1yHYoE5lJq6RxMIxPXHD4iUBprhgv5G/+iZXGMlaBg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f171.google.com with SMTP id 00721157ae682-6e5ef7527deso38412227b3.0;
-        Wed, 23 Oct 2024 00:47:47 -0700 (PDT)
+	s=arc-20240116; t=1729669657; c=relaxed/simple;
+	bh=cPaa1vSKpyjDsq7qESpXZ8U2q/Y/Qq/8A0fFNXrB7Sk=;
+	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
+	 MIME-Version:Content-Type; b=TQ8znamRI7ux3a0Bh998adD9mCTuiBOBPZXDMAS5Hg6NZFvfuDSC3zpNS/3QQMEH/YspaUr8g+rELK7Zm/0E/k50ksaX6MIkKyt/G61R8gLqmtqdDuFKjlG+wsCsnR1d0Bck/mpebSxMfRJOhRp+fGM2A2OOY309AF38vUX3j18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lNRV55Cy; arc=none smtp.client-ip=209.85.221.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d533b5412so4468237f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:47:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729669654; x=1730274454; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sQWqOpYZeng+MXOLp1GWIruzuK+nBAFMns++2n6ESZE=;
+        b=lNRV55CyQB4hQq4h2JA4oU+ZzB3F2pMTfrt3EyMas6EjM95xvnbMmcc7Q41BXoY8g1
+         Jh3/hejXR0JcnmVdFSUYanhEOcTkuf8PIa7i+MaSirL9/rXbbL4tref4doVB63tkK2Ya
+         cjHQ/aIH280eUZeXLAcOGZN8ilm26R5xp+D+c67lcX8KiDFA7yjb66TC/kUvz2Jqqtno
+         f/rfzhWEyrUTLwUwWUopaUS9f/lDCDkabHA3dFysHukDEKECTsToaIuCKcEBdJ+clXpV
+         4rJUXwCLzd9VXnlCWhQXpkBCBBpiSh85kSjwsnTOl5a3UJeHM6zukMzXaewEw4rECjhH
+         780Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729669665; x=1730274465;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729669654; x=1730274454;
+        h=content-transfer-encoding:mime-version:date:message-id:subject
+         :references:in-reply-to:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=bFGmSYy1t5GtQ3H3kIdCv+hqQA3VsubJAy/VDAQgpnI=;
-        b=AVHFZvKzyuacO/1ACyK1eJAl0zwfEZei4xMaKxfIAzWcObR7dvjRdbFtz417BqroWY
-         sWJ0TIwxocg3tU4iK3qYWImD+nN7tuOUFPC+hYfsVxxXKm2bMoclisi8eAmH0VQrOMCj
-         zuCAs4li+UcY4iZJe79FYQDG1smCPbrfxDuyjfJ8pGEpjs8SGjOLxpmqpmGFyfEDOKP4
-         38AOYz6BkmZME6dcGApe80klUUAH4WKIzy17yMvwcMJ1A9CP5o6jof11b9VDQbHj7MY5
-         7sn0Sc3AEbRSlTtM5gRSweanVjP4hqHhwglkErYaaLl+/QGdx+8hh2IpHvHI7P65xm0w
-         0+Tw==
-X-Forwarded-Encrypted: i=1; AJvYcCVban7mgLUoB3CE/bBsQznSpfE0cDZmBC+leD/DR0s/blzUP6oPD/TGpvqeshtZIGRtyJiNUaeijnsUubE=@vger.kernel.org, AJvYcCX1DVG+8l3HP4Xq8HUr6VeCYK4JMKH+eH+iXUMQpza9lKt2+qVW0akVhzYURjqp/Sf4heWrkzv0dB0d8yOqlEZ5HN8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzuu5RKZ8m4P0JkvFq7oe0iE3mD+/hrx/36HI2+y3cRnsWttv46
-	k6wVQujBqGYaxhKPI4nidoOFOv5stWKkEYSM4EGpmOKlg2IsvPAi95TYX1Qr
-X-Google-Smtp-Source: AGHT+IEwja2ail0XCsqXKKUoJvvIAc+pMZhHFtx5RHpZzGZBPxK6MegIfU3veZpg+S4Xgc5RAEyMbQ==
-X-Received: by 2002:a05:690c:2c0e:b0:6e3:252c:408 with SMTP id 00721157ae682-6e7f0e41616mr11828657b3.20.1729669665364;
-        Wed, 23 Oct 2024 00:47:45 -0700 (PDT)
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com. [209.85.128.182])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f59fc68asm14155577b3.21.2024.10.23.00.47.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 00:47:44 -0700 (PDT)
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e5e5c43497so30320977b3.3;
-        Wed, 23 Oct 2024 00:47:44 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWmfZvRtcTVCGx7sqd1TUPdKU/BgGI5Va6uFzj2Z3lxB81363C+9M5GLhZHjmUdfWJ5lxMgNmGWeXztehw=@vger.kernel.org, AJvYcCXokzTf9hPON0RvQIWfXntHayLW4gCyoEMblqu9MDYWicBejnAZ2I/m3apzPDlq57ahmGrG9RMsXwq5EJ60qP41gbo=@vger.kernel.org
-X-Received: by 2002:a05:690c:60c6:b0:6e7:d974:8cee with SMTP id
- 00721157ae682-6e7f0dbbfa5mr20504037b3.7.1729669663771; Wed, 23 Oct 2024
- 00:47:43 -0700 (PDT)
+        bh=sQWqOpYZeng+MXOLp1GWIruzuK+nBAFMns++2n6ESZE=;
+        b=arc+cyrwrfupjC5Z64NgNxvQVolIKi3XisnKAsegn8VJQHHA68pX9+8k2XrvqSYN68
+         y6vnRfUG1D0V9s5d/PP4phswBv9ZHfuw2/m4+8/GW3vZ/2EESHOOUQrYi2dPZNrCWGa6
+         vTVZBKnz3gcVr9fGEXGZShhyDO/3yzK5YoAFWtLZmYYNiXlHTT4XxPBC+PX1f69TrOqX
+         kVENzUuYvLDKAusyx9dGGegKNJ1tyzprDEbHNxhCeuHZLy9nToDvQSZjtsK4xPJ49KA7
+         NZTOIG5RfXxh03OIWVzF0wL8lukVc6Vhd6mAMgJ36tzATSI2InA0hSoQATzjL5cNOGPV
+         GicA==
+X-Forwarded-Encrypted: i=1; AJvYcCViqnS98v1XUKgT7DZs2xi8tl1rQye+n1VUgzhTHzxSf+PtUIss3X0fzgRvcBwJgXJ6uGE0nWSELFtnjw0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyk5s6blJDE1Y/ufJyzSOWcUf3/G4/3Ss93x4uqMSJQ6yF3C3sl
+	l8Nl5/mH9iCQlyRLpI8yfIvXLHBUVT7ByjNDEYbEQib5aN3iTi8/1GRlZHQjJ2o=
+X-Google-Smtp-Source: AGHT+IE7RVJxodr7X7GjUERSD075yzeX0Y1QzksGM4UPShCGHK/b6rXF19hQOYmqYhFnjt7jAjhz3w==
+X-Received: by 2002:a5d:4e83:0:b0:37d:481e:fca with SMTP id ffacd0b85a97d-37efcf18bfdmr1090320f8f.27.1729669654049;
+        Wed, 23 Oct 2024 00:47:34 -0700 (PDT)
+Received: from arrakeen.starnux.net ([2a01:e0a:982:cbb0:52eb:f6ff:feb3:451a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bb66sm8244622f8f.95.2024.10.23.00.47.33
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 00:47:33 -0700 (PDT)
+From: Neil Armstrong <neil.armstrong@linaro.org>
+To: Jessica Zhang <quic_jesszhan@quicinc.com>, 
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, 
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+ Dzmitry Sankouski <dsankouski@gmail.com>
+Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
+ kernel test robot <lkp@intel.com>
+In-Reply-To: <20241021-starqltechn_upstream_integration_panel_fix-v1-1-81776e89052a@gmail.com>
+References: <20241021-starqltechn_upstream_integration_panel_fix-v1-1-81776e89052a@gmail.com>
+Subject: Re: [PATCH] drm/panel: s6e3ha8: add static modifier to supply list
+Message-Id: <172966965335.2449641.10563615972532677611.b4-ty@linaro.org>
+Date: Wed, 23 Oct 2024 09:47:33 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022201629.139244-1-rosenp@gmail.com>
-In-Reply-To: <20241022201629.139244-1-rosenp@gmail.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Oct 2024 09:47:32 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdU7_6oDv1DKMAeCMoGWkakBn_vHpHsyvpjzUF3iaoJ=+g@mail.gmail.com>
-Message-ID: <CAMuHMdU7_6oDv1DKMAeCMoGWkakBn_vHpHsyvpjzUF3iaoJ=+g@mail.gmail.com>
-Subject: Re: [PATCHv2 net-next] net: dsa: use ethtool string helpers
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Andrew Lunn <andrew@lunn.ch>, Vladimir Oltean <olteanv@gmail.com>, 
-	"David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
-	Kurt Kanzenbach <kurt@linutronix.de>, Woojung Huh <woojung.huh@microchip.com>, 
-	"maintainer:MICROCHIP KSZ SERIES ETHERNET SWITCH DRIVER" <UNGLinuxDriver@microchip.com>, 
-	=?UTF-8?B?Q2zDqW1lbnQgTMOpZ2Vy?= <clement.leger@bootlin.com>, 
-	George McCollister <george.mccollister@gmail.com>, Simon Horman <horms@kernel.org>, 
-	open list <linux-kernel@vger.kernel.org>, 
-	"open list:RENESAS RZ/N1 A5PSW SWITCH DRIVER" <linux-renesas-soc@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-Mailer: b4 0.14.2
 
-Hi Rosen,
+Hi,
 
-On Tue, Oct 22, 2024 at 10:16=E2=80=AFPM Rosen Penev <rosenp@gmail.com> wro=
-te:
-> These are the prefered way to copy ethtool strings.
->
-> Avoids incrementing pointers all over the place.
->
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> Reviewed-by: Kurt Kanzenbach <kurt@linutronix.de>
-> ---
->  v2: remove curly braces from rzn1_a5psw.c
+On Mon, 21 Oct 2024 16:52:36 +0300, Dzmitry Sankouski wrote:
+> Add 'static' modifier to panel supply list.
+> 
+> 
 
-Thanks for the update!
+Thanks, Applied to https://gitlab.freedesktop.org/drm/misc/kernel.git (drm-misc-next)
 
-> --- a/drivers/net/dsa/microchip/ksz_common.c
-> +++ b/drivers/net/dsa/microchip/ksz_common.c
-> @@ -2113,8 +2113,7 @@ static void ksz_get_strings(struct dsa_switch *ds, =
-int port,
->                 return;
->
->         for (i =3D 0; i < dev->info->mib_cnt; i++) {
-> -               memcpy(buf + i * ETH_GSTRING_LEN,
-> -                      dev->info->mib_names[i].string, ETH_GSTRING_LEN);
-> +               ethtool_puts(&buf, dev->info->mib_names[i].string);
->         }
+[1/1] drm/panel: s6e3ha8: add static modifier to supply list
+      https://gitlab.freedesktop.org/drm/misc/kernel/-/commit/91e21479c81dd4e9e22a78d7446f92f6b96a7284
 
-This location could benefit from a similar change.
+-- 
+Neil
 
->  }
->
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
