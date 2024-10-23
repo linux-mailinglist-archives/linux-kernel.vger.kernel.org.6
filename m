@@ -1,64 +1,47 @@
-Return-Path: <linux-kernel+bounces-377198-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377199-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 611009ABB23
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:48:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 141119ABB24
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:50:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9041B1C224FB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:48:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 42A711C2263E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:50:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E49C39FCE;
-	Wed, 23 Oct 2024 01:48:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84DDD335D3;
+	Wed, 23 Oct 2024 01:50:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GT4qmZ7S"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KicYyBG9"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4330AD2FA;
-	Wed, 23 Oct 2024 01:48:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD8E112B73
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:50:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729648126; cv=none; b=RF1DHSJ8xLUY0gT3FSN42c8ldUYxBg1/eB3EcJBXkWw6vQR7b38kltowo+Eg+dDA7snGrAVFhNbPCuFVPNS03rj4gfD97xR7XtQn/CZWfdc92mm3ovGjTzIdak1K+78vDxont1vzSepcnCkmuIlsyHOCqM/HC3EPtzSWo24MlMc=
+	t=1729648217; cv=none; b=C30AChIhPIPN7MK/HbfWt9Oy56CCBbsZTlg/jkez6cTKiUHQ97t7q9O22GG89kAMYl1E4JZT8Js4AsILXtzezu/jF9UD1Nt7quxcoPHb+1ns1AukBS0dKsel4URdch1WSLwZFcJihyGjzVymVmhHnava/NRHFHjAyv5Wv1b4GS4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729648126; c=relaxed/simple;
-	bh=OPsf2f9vTyNmn26NM00dQj65lrjywxxlSAM0Y4JmhPE=;
+	s=arc-20240116; t=1729648217; c=relaxed/simple;
+	bh=fuIHtiUsA+MbgN9XYHvhFtdP/SML3ljCvOyUzUZ4WFg=;
 	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=czJalUAqfkC2yx9g2BQ4WCRb4SUKoXHgnBgp/i20dINM6TaCU43mTGU+D6vwAH16M2CC/l3UmspkQwZaG+FvDGqpQYqvBnBAdfJ0yfkTjOWCVvhQzcDKaeXYVODb06uMJVy7tC78dUSfMCRiRE9zuLzxP4XfUBYH5CSLz3NRJlw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GT4qmZ7S; arc=none smtp.client-ip=192.198.163.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729648124; x=1761184124;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=OPsf2f9vTyNmn26NM00dQj65lrjywxxlSAM0Y4JmhPE=;
-  b=GT4qmZ7SKrr1CMvIqSigH+kPrjAGjdXwZXVbjztckaBRhf4Z32a+Nwum
-   XXSUMZyfV+/ufwU10xVxWVWvsHpByrodTi06s48j18x/7hIujyimsAZ2m
-   ZLwk5wBxmzNo/G0FN9a3vRv5wUe24w8AseKdNqwb3JyOAULx8evdG/ZEL
-   D+zCOd21iyqPPJbp6PJOTvalsaog6OylnMMM8bFBKVUtIhPXpEUvknNZ+
-   qOb3MklZbsXPMeIMLTXGujzBFUoMqZ43M7AVmiRLcJ5JJWd/HA6URhIFx
-   UFP+xHC88bMcQHKcofUKQjYLNppu3epBBgu3DGtc+IkhMsUb0tBk3LPn2
-   A==;
-X-CSE-ConnectionGUID: l2H1Bl95TbyHzFWcRO25PQ==
-X-CSE-MsgGUID: 5t7s10VlS9KIYdRSIE0MrA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="16838940"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="16838940"
-Received: from fmviesa010.fm.intel.com ([10.60.135.150])
-  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 18:48:43 -0700
-X-CSE-ConnectionGUID: ja4EwEbFS4SiZHofiWkthg==
-X-CSE-MsgGUID: FrkOTik4RQeF2TiG3rO6mA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="80386440"
-Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
-  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 18:48:38 -0700
-Message-ID: <0db7401c-ca89-49a7-a9cc-502a581af66d@linux.intel.com>
-Date: Wed, 23 Oct 2024 09:48:36 +0800
+	 In-Reply-To:Content-Type; b=KGXj/zLZWhKjEFnStPmSUcw1D4MzpjFMvt4uPzyFX+kDnpTKDu+e4BcvNAxHpICwo3/hKzDENtqp8uQfCIU9djMmlJEaQ+w0Z3NR+Pg6N8cBXmmLopbiY8J0A6CGqnCHgjxG9vdU4sYosWvuILzbN4+N0qy8fHDzPzgd6sNnSww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KicYyBG9; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2EB6BC4CEC3;
+	Wed, 23 Oct 2024 01:50:15 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729648217;
+	bh=fuIHtiUsA+MbgN9XYHvhFtdP/SML3ljCvOyUzUZ4WFg=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=KicYyBG9ekvv+qo87BnfJFJOQio1HD0iqzYU4dDgc2+In5PaQDsiHnB4hfXAH44h/
+	 dUWDLrLiQFErw+ufvqQMDTweJ6Eb7sXGFN2kT3MPd/Bj0FJF/SaBlAVe7rMJjfS5+s
+	 jC5DnQX4xLIVuAqi8IDUWRq6oV72Dzxu1LQ2uyIhjov3+Z0iczSBJEzn1DvLYv9yJn
+	 uIN0kz5sU/UHw9yW8Dq1gU8WX3GDdkahUAYiRXNNHyvRsP93+sn9Hgnx4dXmAP382v
+	 /c/WYuxSW99RFKxpGBX3KCbwU0qYNtTBTrp2MwK32qGw3uiiKw2p1bEK/sUkd50SUo
+	 mHfQskTq4rSkw==
+Message-ID: <88cc50d5-b793-4faa-b29e-b9cf291dadde@kernel.org>
+Date: Wed, 23 Oct 2024 09:50:13 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -66,60 +49,101 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, Nicolin Chen <nicolinc@nvidia.com>,
- kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
- suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org,
- shuah@kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
- mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
- smostafa@google.com, yi.l.liu@intel.com, aik@amd.com,
- zhangfei.gao@linaro.org, patches@lists.linux.dev
-Subject: Re: [PATCH v4 02/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
- related struct
-To: Jason Gunthorpe <jgg@nvidia.com>
-References: <cover.1729553811.git.nicolinc@nvidia.com>
- <74fec8c38a7d568bd88beba9082b4a5a4bc2046f.1729553811.git.nicolinc@nvidia.com>
- <b2c75705-2998-4e51-90f4-00b8bab785f5@linux.intel.com>
- <ZxcspVGPBmABjUPu@nvidia.com>
- <dd7eb37f-13c6-4c6e-8adc-954ad9974b93@linux.intel.com>
- <20241022131554.GF13034@nvidia.com>
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] f2fs: modify f2fs_is_checkpoint_ready logic to allow
+ more data to be written with the CP disable
+To: Qi Han <hanqi@vivo.com>, jaegeuk@kernel.org
+References: <20241022091525.1808542-1-hanqi@vivo.com>
 Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <20241022131554.GF13034@nvidia.com>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <20241022091525.1808542-1-hanqi@vivo.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 2024/10/22 21:15, Jason Gunthorpe wrote:
-> On Tue, Oct 22, 2024 at 04:59:07PM +0800, Baolu Lu wrote:
+On 2024/10/22 17:15, Qi Han wrote:
+> When the free segment is used up during CP disable, many write or
+> ioctl operations will get ENOSPC error codes, even if there are
+> still many blocks available. We can reproduce it in the following
+> steps:
 > 
->> Is it feasible to make vIOMMU object more generic, rather than strictly
->> tying it to nested translation? For example, a normal paging domain that
->> translates gPAs to hPAs could also have a vIOMMU object associated with
->> it.
->>
->> While we can only support vIOMMU object allocation uAPI for S2 paging
->> domains in the context of this series, we could consider leaving the
->> option open to associate a vIOMMU object with other normal paging
->> domains that are not a nested parent?
-> Why? The nested parent flavour of the domain is basically free to
-> create, what reason would be to not do that?
+> dd if=/dev/zero of=f2fs.img bs=1M count=65
+> mkfs.f2fs -f f2fs.img
+> mount f2fs.img f2fs_dir -o checkpoint=disable:10%
+> cd f2fs_dir
+> i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; dd \
+> if=/dev/random of=$file_name bs=1M count=2); i=$((i+1)); done
+> sync
+> i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; truncate \
+> -s 1K $file_name); i=$((i+1)); done
+> sync
+> i=1; while [[ $i -lt 10000000 ]]; do (file_name=./file$i; dd \
+> if=/dev/random of=$file_name bs=1M count=0); i=$((i+1)); done
 
-Above addressed my question. The software using vIOMMU should allocate a
-domain of nested parent type.
+'dd if=/dev/zero of=./file bs=1M count=20' will be more quick to
+trigger SSR allocation.
 
 > 
-> If the HW doesn't support it, then does the HW really need/support a
-> VIOMMU?
+> In f2fs_need_SSR() function, it is allowed to use SSR to allocate
+> blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
+> can we judge the number of invalid blocks when free segment is not
+> enough, and return ENOSPC only if the number of invalid blocks is
+> also not enough?
 > 
-> I suppose it could be made up to the driver, but for now I think we
-> should leave it as is in the core code requiring it until we have a
-> reason to relax it.
+> Signed-off-by: Qi Han <hanqi@vivo.com>
+> ---
+>   fs/f2fs/segment.h | 19 +++++++++++++++++++
+>   1 file changed, 19 insertions(+)
+> 
+> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
+> index 71adb4a43bec..b7af84a07435 100644
+> --- a/fs/f2fs/segment.h
+> +++ b/fs/f2fs/segment.h
+> @@ -637,12 +637,31 @@ static inline bool has_enough_free_secs(struct f2fs_sb_info *sbi,
+>   	return !has_not_enough_free_secs(sbi, freed, needed);
+>   }
+>   
+> +static inline bool has_enough_free_blks(struct f2fs_sb_info *sbi)
+> +{
+> +	long long total_free_blocks = 0;
+> +	block_t avail_user_block_count;
 
-Yes. In such cases, the iommu driver could always allow nested parent
-domain allocation, but fails to allocate a nested domain if the hardware
-is not capable of nesting translation.
+long long avail_user_block_count;
+
+> +	block_t valid_block_count;
+> +
+> +	spin_lock(&sbi->stat_lock);
+> +
+> +	avail_user_block_count = get_available_block_count(sbi, NULL, true);
+> +	valid_block_count = valid_user_blocks(sbi);
+> +	total_free_blocks = avail_user_block_count - valid_block_count;
+
+total_free_blocks =
+	avail_user_block_count - (long long)valid_user_blocks(sbi);
+
+Then, we can avoid allocating & assigning valid_block_count variable.
+
+> +
+> +	spin_unlock(&sbi->stat_lock);
+> +
+> +	return (total_free_blocks > 0) ? true : false;
+
+return total_free_blocks > 0;
 
 Thanks,
-baolu
+
+> +}
+> +
+>   static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
+>   {
+>   	if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
+>   		return true;
+>   	if (likely(has_enough_free_secs(sbi, 0, 0)))
+>   		return true;
+> +	if (likely(has_enough_free_blks(sbi)))
+> +		return true;
+>   	return false;
+>   }
+>   
+
 
