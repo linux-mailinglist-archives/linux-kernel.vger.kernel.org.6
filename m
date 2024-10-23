@@ -1,190 +1,148 @@
-Return-Path: <linux-kernel+bounces-378625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD4639AD35D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:54:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 030549AD364
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:57:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 691482841C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:54:51 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F5251C21D8B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:57:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4EF1D016F;
-	Wed, 23 Oct 2024 17:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE7AF1CFEC8;
+	Wed, 23 Oct 2024 17:57:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="L57meQvR"
-Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eQ0IKM1w"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DA2D15EFA0;
-	Wed, 23 Oct 2024 17:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 94D5A15EFA0
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:57:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729706085; cv=none; b=BWQwLBN6aqaDhdgS5z89TawdUwF30h6uvnX7JMn2IR2O+JVP3Xh0tDtgPlrgytaUi9jRcJ4jiGctoWrzkw+JiHtBGrSVkg73GD1lUY6wMjdvvniKDqM3hyR8BBhIrqd6nO+BEjs3GFJY8lR4xE1tdZ71tEwgVYwMBmTDjirZFWM=
+	t=1729706223; cv=none; b=jLnexYEczTMn6AVvMUFtzLraYi55eklPc0/Lbm8Bz+14CrmMgn06+cDouEfdyHBcK9238swIPTOB931j1mfpqOs5D9pF/5P4+OtdvVfcZ0n7pHEAFWzQH9Qi0AzPYbB5ioXD1Df+qGZbcz+2OOkdpRO4BQkQ8JU7fTjfJL33jHw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729706085; c=relaxed/simple;
-	bh=FeQrnl/Qbqd5tte+UM4+fj/8ecOkjXc/c7EqWD06SD0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pZ7EVxe7Zk/FqTi6athZOOHY2FVE4L1eWrsDY7Xk2GiE4pO78x3GSOajNvHbQtGbrEpvwNM8dMGNaDcptMMKoD28VVDsy1Ske/7cmsjKNA8En4qwIAwND4JBOaWkIecjg+NvL+oayvOVOkrEuxDFuvSepQcgLu/ggYSMe0li3NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=L57meQvR; arc=none smtp.client-ip=157.90.84.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
-Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
-	(Authenticated sender: wse@tuxedocomputers.com)
-	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 4C25D2FC004A;
-	Wed, 23 Oct 2024 19:54:39 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
-	s=default; t=1729706080;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qg6J2ZKjKuT4NxpJxzY+/4uhSMmE1FV8vXNLyqWjSwU=;
-	b=L57meQvRSn7NFM0dls4nqJzDyda9eeYwdS3HS23gutt88rjXInhg+hgsce9YkuDFNsHZhM
-	r+VvwxPvLdEBP/gpHU0noFZrQ5PyiwOtT3+B0tu1NpWPHygJXhTwahz2jKOLzxmFnLeny+
-	t5DMP+scGYbBMOV+Gxm8nW85au0Es48=
-Authentication-Results: mail.tuxedocomputers.com;
-	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
-Message-ID: <73c36418-34d6-46cf-9f10-6ca5e569274f@tuxedocomputers.com>
-Date: Wed, 23 Oct 2024 19:54:39 +0200
+	s=arc-20240116; t=1729706223; c=relaxed/simple;
+	bh=rMoGG26xBMc27A53/w+5mvILHWaZsBRQZNCrqqn42xA=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Ba/S1N+55eYrTFvjC9GTSO3x4i4xNV3qLw8kmz6KHMdwtOV//71ixTTaXIQyBMe8ccqCg/HSyTq0MEhkOXOnjfm9sdn+EouNf4mFxBmpXvyKlZP41XnPH4MuNN3uf8D0zv0T48qfNTEHXeOWECOXw4+Ys2y+jRgGC3U7AFrf02o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eQ0IKM1w; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so69401fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:57:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729706220; x=1730311020; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hvB5xKaiaZK0YemghYyGAcxFhcYXko09rPH6v+w5h1s=;
+        b=eQ0IKM1wgvMQa/z1+6mmnrbKgjiqHtkN3Fvto9JqbNzeG5IaREuhl5epw8y4PMmw5t
+         XyZbCkxiM32aeNvHaIdmQsac02rW2i6a1A64hDKv9H4vSX8ng6TdHJKAAADM6foUPvhF
+         3iXf+HYPjpBsq262Rasv9XIIssS/4lrauGXhpE+ozq/wcpoukwCF3H+sfi7R4pjbIn6/
+         cWQ8GBv6a8NFR6yq2rQkCQjtEnxSmD4VZQOtihmyfOn/Yh4GMJH7rtCbeU52O1Z43B96
+         HEX98GDjLF3/ZFJxGptGw05R7M4bY35fwobtnb3TXrPfNgOpPC30vBzYF+/+uo3Mcnt8
+         N/+w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729706220; x=1730311020;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=hvB5xKaiaZK0YemghYyGAcxFhcYXko09rPH6v+w5h1s=;
+        b=p7ikmy6WqluxInS+lf+N8558dPmF5QlRyMdFmQZ8y7J/fkU2PFHRYaVXvuSZ/uxPSi
+         T0nNh3wNU3rLIReeprzBonMXE/v130othVjZyKmyHchyvzkiUJMz8VkySFF4wNmGaFZq
+         zoElw4FFsm/ElBZcXstAvlyK3u/PY2/3Zj4t4v39CgrgdiXZn3Q4Xw58NFKgTFNTxfvR
+         6xh4ZgSStdTBm94Pg6qX9lqav8J3BTXF3ZO7zUWph7DOrZ2FrciEaF9LY+JTjEYmUMhh
+         wcMELWoM47/+Nq71OPt5XDTxCZDQKVXAXkk3EqDbVeuY7k8eMLdQLWYgYzZN9j2IMUqt
+         rOjA==
+X-Forwarded-Encrypted: i=1; AJvYcCX2qlgA7dZJoGrHsNSZtp4VCtjgWwRAZY9bb4iSevKosegobc9zhCyIXWzjxLzhLkx+zR06wtGPqwPM5zk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwnGMbLgmpHx2KX5L83xzJiLHc/D4jFmwMWfmePnnPWVRjlC2nw
+	K3EiUka/oJFsuVWatOYasmVh7jzVVORl3d4Jay5J5uUZvn0Zn6mMIM+yB/p6A4j+gDmFVzk46Vb
+	MO3824GpOGxa/+qVUb34OcBownKk=
+X-Google-Smtp-Source: AGHT+IEPIQrS+O8DzEln/5FzOgknpG2IVQ+T0FgY4EWyYaDTb7RwkuQQyvMOpcl3Gd3x0//o3WDcADUY3sx5M/NYENg=
+X-Received: by 2002:a2e:5119:0:b0:2fb:5014:f093 with SMTP id
+ 38308e7fff4ca-2fc9d5f8580mr16440661fa.44.1729706219460; Wed, 23 Oct 2024
+ 10:56:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Armin Wolf <W_Armin@gmx.de>, Pavel Machek <pavel@ucw.cz>,
- Benjamin Tissoires <bentiss@kernel.org>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
- <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
- <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
- <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
- <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
- <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
- <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
- <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
- <kywhqw5ef6hioemoydwub57dcmfuu3bwqpz3vjur4pkabboydo@2hrqj3zy4txv>
- <ZxdyQFMRIRusMD6S@duo.ucw.cz> <eb829c6c-cee0-4d65-b9d6-3df7fd1096a7@gmx.de>
-Content-Language: en-US
-From: Werner Sembach <wse@tuxedocomputers.com>
-In-Reply-To: <eb829c6c-cee0-4d65-b9d6-3df7fd1096a7@gmx.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+References: <20241022192451.38138-1-ryncsn@gmail.com> <20241023032744.84a6a9f6f5f1e3aa1fe5f0d9@linux-foundation.org>
+In-Reply-To: <20241023032744.84a6a9f6f5f1e3aa1fe5f0d9@linux-foundation.org>
+From: Kairui Song <ryncsn@gmail.com>
+Date: Thu, 24 Oct 2024 01:56:43 +0800
+Message-ID: <CAMgjq7CNm1iFvzmbjMy+J7aruVMhsMW=fdSFgCHCT3MuspsUNw@mail.gmail.com>
+Subject: Re: [PATCH 00/13] mm, swap: rework of swap allocator locks
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, Chris Li <chrisl@kernel.org>, 
+	Barry Song <v-songbaohua@oppo.com>, Ryan Roberts <ryan.roberts@arm.com>, 
+	Hugh Dickins <hughd@google.com>, Yosry Ahmed <yosryahmed@google.com>, 
+	"Huang, Ying" <ying.huang@intel.com>, Tim Chen <tim.c.chen@linux.intel.com>, 
+	Nhat Pham <nphamcs@gmail.com>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi,
+On Wed, Oct 23, 2024 at 6:27=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Wed, 23 Oct 2024 03:24:38 +0800 Kairui Song <ryncsn@gmail.com> wrote:
+>
+> > After this series, lock contention on si->lock is nearly unobservable
+> > with `perf lock` with the same test above :
+> >
+> >   contended   total wait     max wait     avg wait         type   calle=
+r
+> >   ... snip ...
+> >          91    204.62 us      4.51 us      2.25 us     spinlock   clust=
+er_move+0x2e
+> >   ... snip ...
+> >          47    125.62 us      4.47 us      2.67 us     spinlock   clust=
+er_move+0x2e
+> >   ... snip ...
+> >          23     63.15 us      3.95 us      2.74 us     spinlock   clust=
+er_move+0x2e
+> >   ... snip ...
+> >          17     41.26 us      4.58 us      2.43 us     spinlock   clust=
+er_isolate_lock+0x1d
+> >   ... snip ...
+>
+> Were any overall runtime benefits observed?
 
-Am 22.10.24 um 17:02 schrieb Armin Wolf:
-> Am 22.10.24 um 11:37 schrieb Pavel Machek:
->
->> Hi!
->>
->>>> Personally I really like the idea to just emulate a HID LampArray device
->>>> for this instead or rolling our own API.  I believe there need to be
->>>> strong arguments to go with some alternative NIH API and I have not
->>>> heard such arguments yet.
->
-> Using a virtual HID LampArray already creates two issues:
->
-> 1. We have to supply device size data (length, width, height), but the driver
-> cannot know this.
->
-> 2. It is very difficult to extend the HID LampArray interface, for example
-> there is no way to read the current LED color from the hardware or switch
-> between different modes.
->
-> A sysfs- and/or ioctl-based interface would allow us to:
->
-> 1. Threat some data as optional.
->
-> 2. Extend the interface later should the need arise.
->
-> Looking at the tuxedo-drivers code, it seems that the WMI interface also reports:
->
-> - preset color
-> - device type (touchpad, keyboard, ...)
-> - keyboard type (US/UK)
->
-> Making this information available through the HID LampArray protocol would be
-> difficult (except for the device type information).
->
->>> Agreed on everything Hans said.
->>>
->>> I'll personnaly fight against any new "illumination" API as long as we
->>> don't have committed users. This is the same policy the DRM folks
->>>> are
->> Well, and I'll personally fight against user<->kernel protocol as
->> crazy as HID LampArray is.
->>
->> OpenRGB is not suitable hardware driver.
->>                                 Pavel
->
-> I agree.
->
-> The point is that we need to design a userspace API since we cannot just allow
-> userspace to access the raw device like with HID devices.
->
-> And since we are already forced to come up with a userspace API, then maybe it 
-> would
-> make sense to build a extendable userspace API or else we might end up in the 
-> exact
-> same situation later should another similar driver appear.
->
-> Since the HID LampArray is a hardware interface standard, we AFAIK cannot 
-> easily extend it.
->
-> Also i like to point out that OpenRGB seems to be willing to use this new 
-> "illumination" API
-> as long as the underlying hardware interface is properly documented so that 
-> they can implement
-> support for it under Windows.
->
-> I would even volunteer to write the necessary OpenRGB backend since i already 
-> contributed to
-> the project in the past.
+Yes, see the "Tests" results in the cover letter (summary: up to 50%
+build time saved for build linux kernel test when under pressure, with
+either mTHP or 4K pages):
 
-Just wanting to leave my 2 cents here: I'm in theory fine with both approaches 
-(hidraw LampArray or wrapping it in some kind of new UAPI which at least has the 
-LampArray feature set).
+time make -j96 / 768M memcg, 4K pages, 10G ZRAM, on Intel 8255C * 2 in VM:
+(avg of 4 test run)
+Before:
+Sys time: 73578.30, Real time: 864.05
+After: (-54.7% sys time, -49.3% real time)
+Sys time: 33314.76, Real time: 437.67
 
-I also don't think that OpenRGB has a problem with a new Linux exclusive API as 
-long as someone is doing the implementation work. After all the reason why 
-OpenRGB was started is to unify all the different vendor APIs under one UI. So 
-one more or less doesn't matter.
+time make -j96 / 1152M memcg, 64K mTHP, 10G ZRAM, on Intel 8255C * 2 in VM:
+(avg of 4 test run)
+Before:
+Sys time: 74044.85, Real time: 846.51
+After: (-51.4% sys time, -47.7% real time, -63.2% mTHP failure)
+Sys time: 35958.87, Real time: 442.69
 
-BUT: I already did work for the hidraw LampArray approach and OpenRGB already 
-did work for that as well (albeit I didn't yet managed to get the draft running) 
-and we already had a lengthy discussion about this in the last thread. (This one 
-https://lore.kernel.org/all/20231011190017.1230898-1-wse@tuxedocomputers.com/) 
-with all the same arguments.
+Tests on the host bare metal showed similar results.
 
-e.g. Expansion of the API: How should that look like? It would have to be 
-basically an own extension for every keyboard manufacturer because every one 
-supports different built in modes with different values to tweak.
+There are some other test results I didn't include in the cover letter
+for V1 yet and I'm still testing more scenarios, eg. mysql test in 1G
+memcg and with 96 workers and ZRAM swap:
+before:
+    transactions:                        755630 (6292.11 per sec.)
+    queries:                             12090080 (100673.69 per sec.)
+after:
+    transactions:                        1077156 (8972.73 per sec.)
+    queries:                             17234496 (143563.65 per sec.)
 
-So I'm siding with Hans and Benjamin on this one.
+~30% faster.
 
-My only plan for the current patch besides some more code beautification: Move 
-the device-sku specific values (key map, and key positions) to a bpf driver.
-
-The question in my mind currently is: Is the patch merge ready with just that? 
-Or must the OpenRGB implemenation also be finished before the merge?
-
-Best regards,
-
-Werner
-
->
-> Thanks,
-> Armin Wolf
->
+Also the mTHP swap allocation success rate is higher, I can highlight
+these changes in V2.
 
