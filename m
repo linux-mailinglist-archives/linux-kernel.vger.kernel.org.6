@@ -1,132 +1,97 @@
-Return-Path: <linux-kernel+bounces-377439-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377440-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C423F9ABEE2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:35:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 890079ABEE5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:36:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5511BB2349C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:35:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 14826B21D13
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:36:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33A8814A605;
-	Wed, 23 Oct 2024 06:35:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973B214A4E9;
+	Wed, 23 Oct 2024 06:35:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="R+Z/yfVX"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="OREKlhcj"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F0C142623;
-	Wed, 23 Oct 2024 06:35:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6CB5142623;
+	Wed, 23 Oct 2024 06:35:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665330; cv=none; b=dnJKxc8ZhD3gbgg1OOQ/5ErLJkcSc3PgPVlQxzLYOE5IJkwtTUgCCio011F/e1PVohPnVAPoYIYN9ufRUkCB3zKp2LEvuMd26LYZeGNiXksFhoUGJNVpDZXXBOrWm6KCuvA+6e2T6FKvevc7Q849r+Q9yd9Q6mpPUF5KWPDhYEY=
+	t=1729665354; cv=none; b=ZOfZQcfWI7/O3JpbXPcsDATFieDrNR8Oz/IOJnoGkdWtE42KS4WuuAmTLbN43SSYGAQQnEei4EVZsBEc8PllShtVFoY5msNp5AJVqBJsGthxpg1K/Rpx84mWypu+JNjDOL/PviXhl4Duxg+xNLOMgkc0UUOihYPiFXPoGYqmCiQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665330; c=relaxed/simple;
-	bh=BQfP7i6Lx9bwFL8ZcsmpT4lmJtnZUA6PN/5RMl7Qox0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jP1G9gM8QnAKdMolMXdS8hN2y3UTuhCANr9rbQ7WZn808rI9PKWOXMQ5dHe+R3TpOD1iIW7hnLk18u6BbIn+n9SZ1Sb0kGCbeRkb+KKwEa0jOX0Hh0EpisSJTK+ZdzFaIlrlslKsp6HW9n66g69B3kT6BnKOVbqYxoArvwZhoTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=R+Z/yfVX; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EB54C4CEC6;
-	Wed, 23 Oct 2024 06:35:25 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729665330;
-	bh=BQfP7i6Lx9bwFL8ZcsmpT4lmJtnZUA6PN/5RMl7Qox0=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=R+Z/yfVXauNOCpwAeIZUDb1A3OjoMHuqPjqz3fsy3X4pD6aLfWk5HdHi836hNyABs
-	 pZFHw+rs+Oz/C43Na9SomEAviyFPOuzzBbo802nhjUVYQ38SkukBQb1baY20ItyQKp
-	 dBTMo+sLxZ6dC8+wGoRPwBttl5pl99SRWl92UAwsBL2qcQsRgZZErWH9wlkM2V5h7I
-	 ZHy4vUooxrVyxoXfOKmiDx0bTKzjrBFpIp57IGjmkN/ZPapDStWHzUYMILNYpEAIt5
-	 DZgrcyNkObQG8Uqwh3mT4of0yCaxqgiHUz+GQOEjyTpceF4NxjQMygLDnk98/c4L7V
-	 JoDxPsgCad96g==
-Message-ID: <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
-Date: Wed, 23 Oct 2024 08:35:22 +0200
+	s=arc-20240116; t=1729665354; c=relaxed/simple;
+	bh=poSlN6DJGglCCcJDmjcfT8MMgqSm8TLgA7WgiDlN0zk=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=qSNlqtp/G6aiI4m+KesQTAiKG8fXCdHdh5nxhYiWyKi1h5JGPZdjgCqHZMcGAINp1KUtpVYPClJ/NOnlelZoQVIJgV2pRW29xsf27tHuhtGtewXJQFOmMYvLaiCVqWqDUZ8OUqGSX9y7p8auo8E0bCGrVarDi/yhX7VLetv1bwI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=OREKlhcj; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729665348;
+	bh=25KfOGp5+n5dro5P1MU8b4qoNMvgeEla3yLU3SfMA1U=;
+	h=Date:From:To:Cc:Subject:From;
+	b=OREKlhcjEYE9PP/kBVF7VZqDOBQxcrsB8r4WsNke/Md2lmGsUompYzKSxetbT7Q0a
+	 MIzerue+cXI/5fNlMQXxUxNRpD5lSRGr5dqwQ8siUyqF2g5xezQob5fp6QBBalikd7
+	 Oyr7flsCf0AbqO1XTirJylnVEeHHp5RrF2TVsKd914TfHh7YCBx1134GnJgU8LGxLn
+	 r8gZvGsUfBQJbM4h4uM+XqFEJ9c7SZ72rHHjmNbodddmRjFgJt9oe3gYmSeAdUMb2S
+	 uvOFXvBBYg7RvvRsXI3XqeZflmNX8tAjBOXYNal+0T3bDMPFnJagk/MylzU3CWRMML
+	 CWYgenHGDroEA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYK782X94z4wnr;
+	Wed, 23 Oct 2024 17:35:48 +1100 (AEDT)
+Date: Wed, 23 Oct 2024 17:35:49 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Steve French <smfrench@gmail.com>, CIFS <linux-cifs@vger.kernel.org>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>
+Subject: linux-next: Signed-off-by missing for commit in the cifs tree
+Message-ID: <20241023173549.043d4ce6@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
- properties for ath12k PCI module
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/OlPpRRhWGuaZ0e0MqDUkNSN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
-> The current device-tree bindings for the Ath12K module list many
-> WCN7850-specific properties as required. However, these properties are
-> not applicable to other Ath12K devices.
-> 
-> Hence, remove WCN7850-specific properties from the required section,
-> retaining only generic properties valid across all Ath12K devices.
-> WCN7850-specific properties will remain required based on the device's
-> compatible enum.
+--Sig_/OlPpRRhWGuaZ0e0MqDUkNSN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Just not true. These apply to all devices described in this binding.
+Hi all,
 
-NAK.
+Commit
 
-Don't send patches for your downstream stuff.
+  0c0a5a79a9cc ("smb: client: Handle kstrdup failures for passwords")
 
+is missing a Signed-off-by from its committer.
 
-Best regards,
-Krzysztof
+--=20
+Cheers,
+Stephen Rothwell
 
+--Sig_/OlPpRRhWGuaZ0e0MqDUkNSN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYmUUACgkQAVBC80lX
+0GzZYgf8DyYIdRcYQekhc+U/cPL4b9A5xmY9I8Z6EwfNBlCXuI4+cBpOHCOX1LWz
+/p1BmPLGqoaRafgInY2AVTY38I/X6OydQNAyWE/kU2T8b6cvaF8LKxzpEP0E6Z+J
+PgnXbP9zPOBgNL20WGktITORi7SRcuo152XsS2B44bDB31s3qLM9koz+RvfrglE/
+JWTwWfJ5sLcwx6rjuu/kiOUyb1/XdvP+2tjFChOSpow5b5Y2rmATi93i253uGylG
+b0fzL1e+cWvugHazB9kzgQZI7ZFe8n6klYIydNJF9AJqmUr4S+G2QVIoyLVHQBml
+Hz6PQ+eyaZLr2+ZwU9pn3RyYjkXMtg==
+=QiAO
+-----END PGP SIGNATURE-----
+
+--Sig_/OlPpRRhWGuaZ0e0MqDUkNSN--
 
