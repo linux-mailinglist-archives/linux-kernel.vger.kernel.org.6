@@ -1,237 +1,177 @@
-Return-Path: <linux-kernel+bounces-377446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377448-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B9C69ABEFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:39:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 78B4E9ABF00
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:39:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEA52B22CBB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:39:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F28551F220FC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:39:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CCE14AD0E;
-	Wed, 23 Oct 2024 06:38:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C30DB14A0AA;
+	Wed, 23 Oct 2024 06:39:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+5xXC0D"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="EP4qw4nV";
+	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="Sw3Czixc"
+Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A0114A4E9;
-	Wed, 23 Oct 2024 06:38:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 790D113BC11;
+	Wed, 23 Oct 2024 06:39:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665513; cv=none; b=rm64pT5KLwWfmp8QYo0+/tf9Jwst6gIxwDU3CucXage6YSb9uf0E4Cz11DugC4yq/6gZlAyA/84734WIoYfFOPj0O0ejQqNs11VgLpk5jWfju6NxJV847It4sD5CF1Lf1VTXPRlXaSlhjTgFzE6gN+4dmotJyaT3++v5hji4vro=
+	t=1729665553; cv=none; b=Af0FGdmrymLoPxI06wjyA5av5sM8wi3ObZLc7z2P7y+RzQleczUdL+ZEhKpGEDBClW25XTcWTnRSMX02vIVf78G63MASlRA63GrVc38PRLhTnDwpZYSYavtpQhRtDjBNFcC6Jcs+kaaIlFEXSyoR0Kvvs7A0cIq2RNUwLzc3GRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665513; c=relaxed/simple;
-	bh=GcLjJLl4bdrbNEueEEx5BAkDjYYGI3kimT6+iC9naD8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GSFw297csPaDYOx7XpXyL5ucWKRTCOJJOY0QlbnBZChvfoeAcbGsomC7ya4o3c26+Wt2qwOASHWWiHqNgQSv9Rmr4B4Tx5PzeibTGM7HCl/AF/SJxZKjB3euFizbQnHdKlsLKnuBWK9NklaX/IBj6JccZtZM5sb3AR3+13JQk1g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+5xXC0D; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F10C4CEC6;
-	Wed, 23 Oct 2024 06:38:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729665512;
-	bh=GcLjJLl4bdrbNEueEEx5BAkDjYYGI3kimT6+iC9naD8=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=F+5xXC0DTsSiKe5Qyyvp+1SHkcKEUk837rs9yH5REGtFZlLj0CtWrcVXXPD/QPxZZ
-	 tb3Vogy29cEh82hPzaFouH+eUxzFn34avQkqIKf5bAnQi9JGSqt1PFTNFZ55QoCWmt
-	 x49ELNvGETUxpKxO9ZXZ4IbIn8GsO+REVVDwbf5GYAytQdvIR7uU8POfaqSUsZfM1C
-	 NH8QUr3XmU4ODcBQtax3eSWVrrF4DEF/ZFgRFb57i1zOzxoTPxzasic7BSj2smWGkF
-	 kFFqgmMNooGALHHUuMjed4mJvWE0alZ9xAmWuG6MWGhSERlQnuZInbYNNbt0NHFXSx
-	 miFuetex0tGLQ==
-Message-ID: <b42da7f0-2034-467b-ab17-fb13ef7800c4@kernel.org>
-Date: Wed, 23 Oct 2024 08:38:25 +0200
+	s=arc-20240116; t=1729665553; c=relaxed/simple;
+	bh=POr1g1VqlX+4xaivNXimN/kFzFTozi2nSedP7QYbjBs=;
+	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gAIouSRHtWhCCTvd2o09S6I40v/aCUTNryPjfIdPSDKu4pN+dAEpdzou+rLBKTV+An+8R5lpdtgm2/+JpDE8TaL+D5DfMKf7+LvsTF3NiJgqGqzoljHNuBkb4DY1G7QYgly1+/sVm9NmCXeFqZYHwvo7ecy/YPNiBU8u7mEarg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=EP4qw4nV; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=Sw3Czixc reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
+  t=1729665548; x=1761201548;
+  h=from:to:subject:date:message-id:in-reply-to:references:
+   mime-version:content-transfer-encoding;
+  bh=kpC1wm6LiYWbeZzmhAhSx38T1JvEqKunCgEsbj3mwVc=;
+  b=EP4qw4nVqL5L1jJfhCoPBDO+C1mMsYjwJzGqm8DXrukqfFd/GHsggi2C
+   b9ZBmcxaP+6IcVVuuDnYvufZVUdmrGyMvntv2r2dT0rXpZwk5viCqALcd
+   EuOrmzGXIs8NiGzvtcD+NkyPwdpPayZevkgOlW1HWK2wX0gM9701WtRfn
+   ZcCHvTef0zvwZKEWwAxldsObTfmxA1XNKXYyY8ium1Zhoj55/+WHTO15Y
+   q8P9Exzf4TZ/QL3za05s2KUz51rSBN5b0PRoQizRWJqgkpJr/O2WbAmve
+   wha82ImUeKKYEb7d+WZaPpmoHqHnnL4sr/j/1S7A8jdahfTchyeA/EsRL
+   w==;
+X-CSE-ConnectionGUID: uMuOCO7jSDq0cTp/f1tiWA==
+X-CSE-MsgGUID: +85O2+aJQIuqXIrYJCKHlw==
+X-IronPort-AV: E=Sophos;i="6.11,225,1725314400"; 
+   d="scan'208";a="39613512"
+Received: from vmailcow01.tq-net.de ([10.150.86.48])
+  by mx1.tq-group.com with ESMTP; 23 Oct 2024 08:38:59 +0200
+X-CheckPoint: {67189A03-42-21611FC3-DAD22B0C}
+X-MAIL-CPID: 3DF068884F7016846A61C68DC0685252_4
+X-Control-Analysis: str=0001.0A682F1E.67189A04.0007,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 4CBB01633CA;
+	Wed, 23 Oct 2024 08:38:54 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
+	s=dkim; t=1729665535; h=from:subject:date:message-id:to:mime-version:content-type:
+	 content-transfer-encoding:in-reply-to:references;
+	bh=kpC1wm6LiYWbeZzmhAhSx38T1JvEqKunCgEsbj3mwVc=;
+	b=Sw3CzixcaponCg79WEqX0wInmRGaC3pb5U2SC73kcpE2+M+cRWzZMytRtn0jFIPnCphlWR
+	6IIODEdXjD9aFtCAjmf5Nj9lr+MdljkYTEkMaaETspiII3SbKkPbwQtvZLMQGBhRWePhq+
+	Z9+V9MHlsqSbpqoUIci2ISJRTKUZTvaw4PCw1BLA0l3Ah3stRS+L/tIiA4SKL+oy3EpSrX
+	cFJKdshwnqCxuX1P9fadNw09OYqpOCgWNrHh5gvfWlDlOU/BrkmivrD+oX+qNIjcp/WXbL
+	vOzuRV5S565ABxtgVxiBSrbNKg2lBWBZ+ChNOnRV8Z2S7ocb1qGpBDws95SNHQ==
+From: Alexander Stein <alexander.stein@ew.tq-group.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, "open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, open list <linux-kernel@vger.kernel.org>, Frank Li <Frank.Li@nxp.com>
+Subject: Re: [PATCH 1/1] arm64: dts: imx8: move samsung, burst-clock-frequency to imx8mn and imx8mm mba8mx board file
+Date: Wed, 23 Oct 2024 08:38:53 +0200
+Message-ID: <6096263.lOV4Wx5bFT@steina-w>
+Organization: TQ-Systems GmbH
+In-Reply-To: <20241022220429.1281129-1-Frank.Li@nxp.com>
+References: <20241022220429.1281129-1-Frank.Li@nxp.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
- property for QCN9274
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="iso-8859-1"
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
-> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
-> It is used for the exchange of specific control information across
-> radios based on the doorbell mechanism. This WSI connection is
-> essential to exchange control information among these devices
-> 
-> Hence, describe WSI interface supported in QCN9274 with the following
-> properties:
-> 
->  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
->    connection. All the ath12k devices connected to same WSI connection
->    have the same wsi-group-id.
-> 
->  - qcom,wsi-index: It represents the identifier assigned to ath12k
->    device in the order of the WSI connection.
-> 
->  - qcom,wsi-num-devices: Number of devices connected through WSI in
->    the same group ID.
+Hi Frank,
 
-You should have separate binding.
+thanks for the patch.
 
-> 
-> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+Am Mittwoch, 23. Oktober 2024, 00:04:29 CEST schrieb Frank Li:
+> Move 'samsung,burst-clock-frequency' and 'samsung,esc-clock-frequency'
+> properties to i.MX8MN and i.MX8MM mba8mx board file. These properties are
+> not applicable to i.MX8MQ MIPI DSI, which uses the compatible string
+> 'fsl,imx8mq-nwl-dsi'. The properties are only valid for i.MX8MM and i.MX8=
+MN
+> devices with the compatible string 'fsl,imx8mm-mipi-dsim', as described in
+> samsung,mipi-dsim.yaml.
+>=20
+> Fix warning:
+> /arch/arm64/boot/dts/freescale/imx8mq-tqma8mq-mba8mx-lvds-tm070jvhg33.dtb=
+: dsi@30a00000:
+>     Unevaluated properties are not allowed ('ports', 'samsung,burst-clock=
+=2Dfrequency', 'samsung,esc-clock-frequency' were unexpected)
+>         from schema $id: http://devicetree.org/schemas/display/bridge/nwl=
+=2Ddsi.yaml#
+>=20
+> Signed-off-by: Frank Li <Frank.Li@nxp.com>
+
+Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
+
 > ---
->  .../bindings/net/wireless/qcom,ath12k.yaml    | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> index ecf38af747f7..6c8f97865075 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> @@ -19,6 +19,7 @@ properties:
->    compatible:
->      enum:
->        - pci17cb,1107  # WCN7850
-> +      - pci17cb,1109  # QCN9274
->  
->    reg:
->      maxItems: 1
-> @@ -50,6 +51,41 @@ properties:
->    vddpcie1p8-supply:
->      description: VDD_PCIE_1P8 supply regulator handle
->  
-> +  wsi:
-> +    type: object
-> +    description:
-> +      The ath12k devices (QCN9274) feature WSI support. WSI stands for
-> +      WLAN Serial Interface. It is used for the exchange of specific
-> +      control information across radios based on the doorbell mechanism.
-> +      This WSI connection is essential to exchange control information
-> +      among these devices.
+>  arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts | 5 +++++
+>  arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts | 5 +++++
+>  arch/arm64/boot/dts/freescale/mba8mx.dtsi                 | 5 -----
+>  3 files changed, 10 insertions(+), 5 deletions(-)
+>=20
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts b/=
+arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
+> index 01b632b220dc7..b941c8c4f7bb4 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx.dts
+> @@ -75,6 +75,11 @@ expander2: gpio@27 {
+>  	};
+>  };
+> =20
+> +&mipi_dsi {
+> +	samsung,burst-clock-frequency =3D <891000000>;
+> +	samsung,esc-clock-frequency =3D <20000000>;
+> +};
 > +
-> +    properties:
-> +      qcom,wsi-group-id:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          It represents the identifier assigned to the WSI connection. All
-> +          the ath12k devices connected to same WSI connection have the
-> +          same wsi-group-id.
-
-Why it cannot be implied by compatible?
-
+>  &pcie_phy {
+>  	fsl,refclk-pad-mode =3D <IMX8_PCIE_REFCLK_PAD_INPUT>;
+>  	fsl,clkreq-unsupported;
+> diff --git a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts b/=
+arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
+> index 433d8bba44255..dc94d73f7106c 100644
+> --- a/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
+> +++ b/arch/arm64/boot/dts/freescale/imx8mn-tqma8mqnl-mba8mx.dts
+> @@ -64,6 +64,11 @@ expander2: gpio@27 {
+>  	};
+>  };
+> =20
+> +&mipi_dsi {
+> +	samsung,burst-clock-frequency =3D <891000000>;
+> +	samsung,esc-clock-frequency =3D <20000000>;
+> +};
 > +
-> +      qcom,wsi-index:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          It represents the identifier assigned to ath12k device in the
-> +          order of the WSI connection.
+>  &sai3 {
+>  	assigned-clocks =3D <&clk IMX8MN_CLK_SAI3>;
+>  	assigned-clock-parents =3D <&clk IMX8MN_AUDIO_PLL1_OUT>;
+> diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/=
+dts/freescale/mba8mx.dtsi
+> index 3d26b6981c06f..58e3865c28895 100644
+> --- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+> +++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
+> @@ -317,11 +317,6 @@ lvds_bridge_out: endpoint {
+>  	};
+>  };
+> =20
+> -&mipi_dsi {
+> -	samsung,burst-clock-frequency =3D <891000000>;
+> -	samsung,esc-clock-frequency =3D <20000000>;
+> -};
+> -
+>  &mipi_dsi_out {
+>  	data-lanes =3D <1 2 3 4>;
+>  	remote-endpoint =3D <&lvds_bridge_in>;
+>=20
 
-No, we do not have indices in DTS.
 
-> +
-> +      qcom,wsi-num-devices:
-> +        $ref: /schemas/types.yaml#/definitions/uint32
-> +        description:
-> +          Number of devices connected through WSI in the same group ID.
+=2D-=20
+TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
+Amtsgericht M=FCnchen, HRB 105018
+Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
+http://www.tq-group.com/
 
-Wait, why? Number of devices is visible from DTS. You are missing some
-diagram showing this but it looks like you stuff multiple nodes into one
-node.
-
-
-
-> +
-> +    required:
-> +      - qcom,wsi-group-id
-> +      - qcom,wsi-index
-> +      - qcom,wsi-num-devices
-> +
-> +    additionalProperties: false
-> +
->  required:
->    - compatible
->    - reg
-> @@ -108,3 +144,28 @@ examples:
->              };
->          };
->      };
-> +
-> +  - |
-> +    pcie {
-> +        #address-cells = <3>;
-> +        #size-cells = <2>;
-> +
-> +        pcie@0 {
-> +            device_type = "pci";
-> +            reg = <0x0 0x0 0x0 0x0 0x0>;
-> +            #address-cells = <3>;
-> +            #size-cells = <2>;
-> +            ranges;
-> +
-> +            wifi@0 {
-> +                compatible = "pci17cb,1109";
-> +                reg = <0x0 0x0 0x0 0x0 0x0>;
-> +
-> +                wsi {
-> +                    qcom,wsi-group-id = <0>;
-> +                    qcom,wsi-index = <0>;
-> +                    qcom,wsi-num-devices = <3>;
-
-So what are the other 2 devices? Where are they documented?
-
-Best regards,
-Krzysztof
 
 
