@@ -1,186 +1,163 @@
-Return-Path: <linux-kernel+bounces-377793-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB6109AC6E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:45:34 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 532269AC6E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:45:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3E34AB20E72
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:45:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823961C22A2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:45:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2D45319D8BD;
-	Wed, 23 Oct 2024 09:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dW4XRr1+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 80CA8156F3F;
-	Wed, 23 Oct 2024 09:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD5419CC27;
+	Wed, 23 Oct 2024 09:45:34 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62167156F3F;
+	Wed, 23 Oct 2024 09:45:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729676722; cv=none; b=gXYevBUWhQZlAIRc7uFBqXYS9j8qZ4YNJVE8OX+EukzwQim1Op7e89ALg2mzgYnI9a0vRPTR13jJ94LEVKSHcyHkYhNTfmkUMOuR7vKzmHQsQjMCoJW1CxKO5UGkjLiYXhcKX2FGO9rojOLlSlApKJBB7dEKjKHpRdyfztzBrPY=
+	t=1729676734; cv=none; b=B8BBN80FhsBY8gOSAfrePR/pAQdDPsDMCcb9euyd1eYnV1tkEdln01/6tVwCLkl+RJkCR77kCBnqkR+QSuMP/js5PhdVjJuTW8wt46jrYUVhe0uCvC5uzFvsz33ohTBBCMdcHhE1hLDCH8pAndnKcfZC2ou09JZ7hylgin7yoMk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729676722; c=relaxed/simple;
-	bh=ixHXVNpt6gqmo6X2Ag6xammcBB050Tnx5d2c+pVm2ss=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=WDBpGkOJRiNPJuMwlO+cPzNIXB4jVYa14tKW9oZ+xShk2320KCSLHQvqDW28Zc99vnvasiuKkO6hMgb9sN8w9vfJH5q3befAqyhh60DavQ1bMrcB4Oepv7YQqpARIMOvhSC7YGIsj3YIr+sUzg8vd7UM9IO64YdNqAEs2HqfMt0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dW4XRr1+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4B8DAC4CEC7;
-	Wed, 23 Oct 2024 09:45:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729676722;
-	bh=ixHXVNpt6gqmo6X2Ag6xammcBB050Tnx5d2c+pVm2ss=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=dW4XRr1+PhX+c3R6w5K2rllKEyJlCwVmxHP4L9xpB2Ovy2r56ChLX7c+Ol4fQgKK3
-	 h/2xzq/sssVOZbzvEdMjD4Qew8UDA90vcHBCfDhW0b1ZxFmtCSFi10/Xywzqie3KcF
-	 h1ijXPqGEOtIzK/XXqX5+xJFF9+Hnof3EI1Ijh1uZltggMDqSONQbKZL7+hnx/ggft
-	 naBqjUek3w97SxmxJ6G0nvIZoX5/Mdt6/w+dgMqgJlwtl2Q+rmxJ3BMfkeLKW70yfo
-	 FgzTn9FsWHUWO+wcBRyAsxmbv+08/S1QgWngsoLZrIvHh6Hh7CM12IimfngvQUsEYo
-	 pDCckCFnF7SEQ==
-Date: Wed, 23 Oct 2024 11:45:17 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, aliceryhl@google.com, dakr@redhat.com,
-	linux-kernel@vger.kernel.org, airlied@redhat.com,
-	miguel.ojeda.sandonis@gmail.com, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 5/5] rust: firmware: implement `Ownable` for Firmware
-Message-ID: <ZxjFrUDfOGvhk1sr@pollux>
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
- <20241022224832.1505432-6-abdiel.janulgue@gmail.com>
- <ZxjDUxUiKfE_7tvq@pollux>
+	s=arc-20240116; t=1729676734; c=relaxed/simple;
+	bh=6bdiM1C9x9DzXpyduWBjkQ6YQKqrdVrwqalYTJ3PLcw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Mb6lUphDRp5wh8itiL1cYVAOICpmxBQvJkFS3GxDBZpHj9iizAxj09oLXur3Vjz0FoaftDIb3wZ++UaNK9+OfmdzfrV28QFt/0sYSO7xEFF1IBv/Yddl9vrNQNUuE3B1nWEEIObpsgr01Wg8zfWOtvT6qEyGqAOdD47A1AP7Emw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A0BB339;
+	Wed, 23 Oct 2024 02:46:01 -0700 (PDT)
+Received: from [10.57.66.28] (unknown [10.57.66.28])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7C6DE3F71E;
+	Wed, 23 Oct 2024 02:45:30 -0700 (PDT)
+Message-ID: <98173130-bb52-4378-aa54-119b5c3ab131@arm.com>
+Date: Wed, 23 Oct 2024 10:45:29 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxjDUxUiKfE_7tvq@pollux>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 RESEND 3/3] coresight-tpdm: Add support to enable the
+ lane for MCMB TPDM
+Content-Language: en-GB
+To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
+ <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: Tao Zhang <quic_taozha@quicinc.com>, coresight@lists.linaro.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20241011064732.8480-1-quic_jinlmao@quicinc.com>
+ <20241011064732.8480-4-quic_jinlmao@quicinc.com>
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+In-Reply-To: <20241011064732.8480-4-quic_jinlmao@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 11:35:20AM +0200, Danilo Krummrich wrote:
-> On Wed, Oct 23, 2024 at 01:44:49AM +0300, Abdiel Janulgue wrote:
-> > For consistency, wrap the firmware as an `Owned` smart pointer in the
-> > constructor.
-> > 
-> > Cc: Danilo Krummrich <dakr@redhat.com>
-> > Suggested-by: Boqun Feng <boqun.feng@gmail.com>
-> > Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> > ---
-> >  rust/kernel/firmware.rs | 31 ++++++++++++++++++-------------
-> >  1 file changed, 18 insertions(+), 13 deletions(-)
-> > 
-> > diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> > index dee5b4b18aec..6da834b37455 100644
-> > --- a/rust/kernel/firmware.rs
-> > +++ b/rust/kernel/firmware.rs
-> > @@ -4,8 +4,8 @@
-> >  //!
-> >  //! C header: [`include/linux/firmware.h`](srctree/include/linux/firmware.h)
-> >  
-> > -use crate::{bindings, device::Device, error::Error, error::Result, str::CStr};
-> > -use core::ptr::NonNull;
-> > +use crate::{bindings, device::Device, error::Error, error::Result, str::CStr,
-> > +            types::{Opaque, Owned, Ownable}};
-> >  
-> >  /// # Invariants
-> >  ///
-> > @@ -52,10 +52,11 @@ fn request_nowarn() -> Self {
-> >  /// # Ok(())
-> >  /// # }
-> >  /// ```
-> > -pub struct Firmware(NonNull<bindings::firmware>);
-> > + #[repr(transparent)]
-> > +pub struct Firmware(Opaque<bindings::firmware>);
-> >  
-> >  impl Firmware {
-> > -    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> > +    fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Owned<Self>> {
+On 11/10/2024 07:47, Mao Jinlong wrote:
+> From: Tao Zhang <quic_taozha@quicinc.com>
 > 
-> I think it's fine to implement this for consistency, but I'm not sure I like
-> that drivers have to refer to it as `Owned<Firmware>`.
+> Add the sysfs file to set/get the enablement of the lane. For MCMB
+> configurations, the field "E_LN" in CMB_CR register is the
+> individual lane enables. MCMB lane N is enabled for trace
+> generation when M_CMB_CR.E=1 and M_CMB_CR.E_LN[N]=1. For lanes
+> that are not implemented on a given MCMB configuration, the
+> corresponding bits of this field read as 0 and ignore writes.
 > 
-> Anyway, if we keep it this way the patch also needs the following change.
+> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+> ---
+>   .../testing/sysfs-bus-coresight-devices-tpdm  |  7 +++++
+>   drivers/hwtracing/coresight/coresight-tpdm.c  | 29 +++++++++++++++++++
+>   drivers/hwtracing/coresight/coresight-tpdm.h  |  3 ++
+>   3 files changed, 39 insertions(+)
 > 
-> diff --git a/rust/kernel/firmware.rs b/rust/kernel/firmware.rs
-> index 6da834b37455..1db854eb2422 100644
-> --- a/rust/kernel/firmware.rs
-> +++ b/rust/kernel/firmware.rs
-> @@ -115,8 +115,8 @@ unsafe fn ptr_drop(ptr: *mut Self) {
-> 
->  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, which is safe to be used from
->  // any thread.
-> -unsafe impl Send for Firmware {}
-> +unsafe impl Send for Owned<Firmware> {}
-> 
->  // SAFETY: `Firmware` only holds a pointer to a C `struct firmware`, references to which are safe to
->  // be used from any thread.
-> -unsafe impl Sync for Firmware {}
-> +unsafe impl Sync for Owned<Firmware> {}
+> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
+> index b3292fa2a022..214f681a68ec 100644
+> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
+> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
+> @@ -265,3 +265,10 @@ Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
+>   Description:
+>   		(RW) Set/Get which lane participates in the output pattern
+>   		match cross trigger mechanism for the MCMB subunit TPDM.
+> +
+> +What:		/sys/bus/coresight/devices/<tpdm-name>/mcmb_lanes_select
+> +Date:		June 2024
+> +KernelVersion	6.9
+> +Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
+> +Description:
+> +		(RW) Set/Get the enablement of the individual lane.
+> \ No newline at end of file
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
+> index f32c119e1b67..f8e22f4c3b52 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
+> @@ -1055,6 +1055,34 @@ static ssize_t mcmb_trig_lane_store(struct device *dev,
+>   }
+>   static DEVICE_ATTR_RW(mcmb_trig_lane);
+>   
+> +static ssize_t mcmb_lanes_select_show(struct device *dev,
+> +				      struct device_attribute *attr,
+> +				      char *buf)
+> +{
+> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +
+> +	return sysfs_emit(buf, "%u\n",
+> +			  (unsigned int)drvdata->cmb->mcmb->mcmb_lane_select);
+> +}
+> +
+> +static ssize_t mcmb_lanes_select_store(struct device *dev,
+> +				       struct device_attribute *attr,
+> +				       const char *buf,
+> +				       size_t size)
+> +{
+> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
+> +	unsigned long val;
+> +
+> +	if (kstrtoul(buf, 0, &val))
 
-Actually, I think `Owned` should implement `Send` and `Sync` like this instead.
+	if (kstrstoul(buf, 0, &val) || (val & ~TPDM_MCMB_E_LN_MASK)) ?
 
-   unsafe impl<T> Sync for Owned<T> where T: Sync + Ownable {}
-   unsafe impl<T> Send for Owned<T> where T: Send + Ownable {}
+> +		return -EINVAL;
+> +
+> +	guard(spinlock)(&drvdata->spinlock);
+> +	drvdata->cmb->mcmb->mcmb_lane_select = val & TPDM_MCMB_E_LN_MASK;
+> +
+> +	return size;
+> +}
+> +static DEVICE_ATTR_RW(mcmb_lanes_select);
+> +
+>   static struct attribute *tpdm_dsb_edge_attrs[] = {
+>   	&dev_attr_ctrl_idx.attr,
+>   	&dev_attr_ctrl_val.attr,
+> @@ -1219,6 +1247,7 @@ static struct attribute *tpdm_cmb_msr_attrs[] = {
+>   
+>   static struct attribute *tpdm_mcmb_attrs[] = {
+>   	&dev_attr_mcmb_trig_lane.attr,
+> +	&dev_attr_mcmb_lanes_select.attr,
+>   	NULL,
+>   };
+>   
+> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
+> index e72dc19da310..e740039cd650 100644
+> --- a/drivers/hwtracing/coresight/coresight-tpdm.h
+> +++ b/drivers/hwtracing/coresight/coresight-tpdm.h
+> @@ -48,6 +48,9 @@
+>   /* MAX lanes in the output pattern for MCMB configurations*/
+>   #define TPDM_MCMB_MAX_LANES 8
+>   
+> +/* High performance mode */
 
-> 
-> >          let mut fw: *mut bindings::firmware = core::ptr::null_mut();
-> >          let pfw: *mut *mut bindings::firmware = &mut fw;
-> >  
-> > @@ -65,25 +66,26 @@ fn request_internal(name: &CStr, dev: &Device, func: FwFunc) -> Result<Self> {
-> >          if ret != 0 {
-> >              return Err(Error::from_errno(ret));
-> >          }
-> > -
-> > +        // CAST: Self` is a `repr(transparent)` wrapper around `bindings::firmware`.
-> > +        let ptr = fw.cast::<Self>();
-> >          // SAFETY: `func` not bailing out with a non-zero error code, guarantees that `fw` is a
-> >          // valid pointer to `bindings::firmware`.
-> > -        Ok(Firmware(unsafe { NonNull::new_unchecked(fw) }))
-> > +        Ok(unsafe { Owned::to_owned(ptr) })
-> >      }
-> >  
-> >      /// Send a firmware request and wait for it. See also `bindings::request_firmware`.
-> > -    pub fn request(name: &CStr, dev: &Device) -> Result<Self> {
-> > +    pub fn request(name: &CStr, dev: &Device) -> Result<Owned<Self>> {
-> >          Self::request_internal(name, dev, FwFunc::request())
-> >      }
-> >  
-> >      /// Send a request for an optional firmware module. See also
-> >      /// `bindings::firmware_request_nowarn`.
-> > -    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Self> {
-> > +    pub fn request_nowarn(name: &CStr, dev: &Device) -> Result<Owned<Self>> {
-> >          Self::request_internal(name, dev, FwFunc::request_nowarn())
-> >      }
-> >  
-> >      fn as_raw(&self) -> *mut bindings::firmware {
-> > -        self.0.as_ptr()
-> > +        self.0.get()
-> >      }
-> >  
-> >      /// Returns the size of the requested firmware in bytes.
-> > @@ -101,10 +103,13 @@ pub fn data(&self) -> &[u8] {
-> >      }
-> >  }
-> >  
-> > -impl Drop for Firmware {
-> > -    fn drop(&mut self) {
-> > -        // SAFETY: `self.as_raw()` is valid by the type invariant.
-> > -        unsafe { bindings::release_firmware(self.as_raw()) };
-> > +unsafe impl Ownable for Firmware {
-> > +    unsafe fn ptr_drop(ptr: *mut Self) {
-> > +        // SAFETY:
-> > +        // - By the type invariants, we have ownership of the ptr and can free it.
-> > +        // - Per function safety, this is called in Owned::drop(), so `ptr` is a
-> > +        //   unique pointer to object, it's safe to release the firmware.
-> > +        unsafe { bindings::release_firmware(ptr.cast()) };
-> >      }
-> >  }
-> >  
-> > -- 
-> > 2.43.0
-> > 
+This doesn't match the descriptions ?
+
+Suzuki
+
+> +#define TPDM_MCMB_E_LN_MASK		GENMASK(7, 0)
+> +
+>   /* DSB Subunit Registers */
+>   #define TPDM_DSB_CR		(0x780)
+>   #define TPDM_DSB_TIER		(0x784)
+
 
