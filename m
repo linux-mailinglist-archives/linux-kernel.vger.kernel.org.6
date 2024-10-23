@@ -1,102 +1,123 @@
-Return-Path: <linux-kernel+bounces-377343-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 93DA39ABD7E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:53:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E60619ABD93
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:56:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 55D8D28523D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:53:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9644B284CA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:56:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0853013C8F6;
-	Wed, 23 Oct 2024 04:53:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A47B913D2B8;
+	Wed, 23 Oct 2024 04:56:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="Dq44Hd/c"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/wLRcYq"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 674A34C7C;
-	Wed, 23 Oct 2024 04:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 027124C7C;
+	Wed, 23 Oct 2024 04:56:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729659182; cv=none; b=cTUkBb8hszKjxdPgzr9VmJynMc1rNYQI4vIV1G4HX6NlYRM6ZgMWSXKeuGpQ6ppB5ZSQdVHUwsSsZMHbVXn7qBr2ia991C9cgQhVLXl4WlltSId4mCT9uAoJfaNBYBKzSH3oB0kapjBF9Efv0IXI9RygAo+rF2dtKcPuByXe4Vo=
+	t=1729659373; cv=none; b=tX76QJdTkEVZd7EhRQFqMQ8/ye1Btac1GYtobAKT6wZTM0tUptmauB55nDVza9+VTnDxUJAUHakIBMHy3BClaLcj+I8OjJIz0VAvAs5/9H1Izbzh+lc3+Z4PqoZ4DC/qQ8ghgHAsg07m1UwWRSAm69Udl3DKKDnSa42Wgl4LrkQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729659182; c=relaxed/simple;
-	bh=yIX9KS2IiNT/8/OY3l6c9quUtzFboJKHHehFA6+igys=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EGRtsYz1abCVLIwJqtnkkU1Rb/JfBW6eoeF8UkWtMJAWSEBb2XyGeN/NH7+3Spu9d3r3gIJ94jfqxuvTuxfEVazxOz47iCtE/gs/SJ/NVo9cdWcPYR7cVshU38us7ghXfSFSSlADeEFXRUnw9GaXShmm0FVBWboGLiPekrEqEUk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=Dq44Hd/c; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729659177;
-	bh=eJHwr1TfvpbT3+PVArNkrlZc5SvhRuQfLzbcGtnOsjI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Dq44Hd/c0+6khJfJhgOxAYC+P3DD8q9go19OZf4VP4q5e4citDldDrGkjZ2kq8WT9
-	 iL/aXJkH7TjtgJydf12jbH34NU2YB/1mKGhlnjMZw+QTiy9ELgQ3VAryJ8cH8mv4XX
-	 X3/EGADNDf0LqiQX6VoQ9GYi5KQZ5jf1SFZC15n2sX5IdV7FESvcajqmDm23wAi9qI
-	 ngRmZCZ/ImkOpKyn0yhasb4JdX4VPThbnZ4Z8T1Uf9KUyfWWdYxYlpDM69hxWAb7YO
-	 YSmtHdSbjCIdoL8qn312QS6gwJlo3gj2uke3s/aWlVAr/EZfSmW0yV0JiVtRtGbmSk
-	 JC3xhxdA3jqIg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYGrT1QB2z4w2R;
-	Wed, 23 Oct 2024 15:52:57 +1100 (AEDT)
-Date: Wed, 23 Oct 2024 15:52:57 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Mark Brown <broonie@kernel.org>, Liam Girdwood <lgirdwood@gmail.com>
-Cc: Jerome Brunet <jbrunet@baylibre.com>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: build warning after merge of the regulator tree
-Message-ID: <20241023155257.0fa7211d@canb.auug.org.au>
+	s=arc-20240116; t=1729659373; c=relaxed/simple;
+	bh=AY8Zp2haauObwpX/UvHbw6SC+bgAY17isTJb8nygQ7o=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cxbo4xUkuVFie93RzUBvY2pdBaQQA7eoKMRB65QdVaZOuJE+tZ7+FRcVQIXDs3o0S8AviwrstqzBT0Xh06P7YtG+MAWBzsR9YpMeRKY0ppA63A2nHl81mc8Z2H6eeSGGQFidZDD4l+aYP1Wx4Y7/KD9awwrrQBiakoFRR2DQUxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/wLRcYq; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7EA15C4CEE5;
+	Wed, 23 Oct 2024 04:56:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729659372;
+	bh=AY8Zp2haauObwpX/UvHbw6SC+bgAY17isTJb8nygQ7o=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=B/wLRcYqNvmH9rKOUlk+DslyRamaqLgwQTL6/KJVgEcnszZzVyKKfCyI2AHRJgTp5
+	 dOYApRfE9wZH8Kmf+E/2e8ZicbHgYn8OCU3muwWu2w7D6lCaGXSnbiCoYotqdeyirU
+	 XbsYTsyJPNNuVpoqs97dqeLr4aTc4CrWHGcMurBP/jtQ67bkS+Dy3jIP7OSC5mCV9z
+	 96PAv81sfiwa71YOqspUtVJdezDakaEiM2nAdb/Imas2QlcZwD//sSvlikHLQfAbMd
+	 dgD99JcV0OmbXLw2c7yHTyze3fmAJmfrDONepeEouQPw5GCexbS5BMkz4dg/M2Hqyn
+	 ajAa+5UHitSMw==
+Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e3f35268so4916653e87.3;
+        Tue, 22 Oct 2024 21:56:12 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWMLAIFAHs8cWQCbZdOs4uGTQN35Fg6SBHlEgkAGp56yu4T0YetGdhcfgrBbhk5TNDpePsdDV7lvdOC@vger.kernel.org, AJvYcCWehxvkJMgwDe9Sr+vs0fg7Iq0uMnarCFfVu6aK8EZ3Ja9dKEqW4pzceUhCjj9ZMy6NuSadw8BRuApnpN/Grg==@vger.kernel.org, AJvYcCX/f+tkdKB9oxFisSDdYnBC8Lu558K6ybiDV+i6yL0Pt8MwGKi2o/JebeTVrzboEvsDss+21O4Rf16B484I@vger.kernel.org
+X-Gm-Message-State: AOJu0YxcLKPRHqSl/hWolUR0lJaGp3YoyRjco5g67qZGGNVlgKTDYAHI
+	3cjs2ftBkniO5gZs4b0EP1oh0vFK/NjL4Mgr26WjvMUOv2xBXmxX6TM29gEPrOKZFBtM/8xohTg
+	KuIaokcGP7mVXDZ371Sjv28mkHiU=
+X-Google-Smtp-Source: AGHT+IH2WKaFs7NPh26+cmobMHBnnTIDPrdXMLtM0gbtf4eQ0HRop6c5o0FiEKJcPuU668AFQL/9XuP68s+wZZoy4VA=
+X-Received: by 2002:a05:6512:238f:b0:539:9594:b226 with SMTP id
+ 2adb3069b0e04-53b1a31f6a1mr440383e87.34.1729659371194; Tue, 22 Oct 2024
+ 21:56:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/ndcAZAt57SoF2IWKkSMR=8_";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/ndcAZAt57SoF2IWKkSMR=8_
-Content-Type: text/plain; charset=US-ASCII
+References: <20240129192644.3359978-1-mcgrof@kernel.org> <ZbrFoKUJQ8MIdzXD@bombadil.infradead.org>
+ <ZbvdbdxOKZ9FUQuC@bombadil.infradead.org> <CAK7LNATjKzUVR7DbJqb=yAinJ1YZo8tzwiXA79E9-VrDn11wwg@mail.gmail.com>
+ <Zb0zGZrotuWyhsFd@bombadil.infradead.org> <Zxap5hbcXw36rRWW@bombadil.infradead.org>
+ <7d0ce4fc-c9ab-4c67-8666-d5bd56dc970d@gmx.de>
+In-Reply-To: <7d0ce4fc-c9ab-4c67-8666-d5bd56dc970d@gmx.de>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Wed, 23 Oct 2024 13:55:33 +0900
+X-Gmail-Original-Message-ID: <CAK7LNASPm8zo2y2vZfeX+LC=xuF+s_bAjkmzTSaT-nmcYoSkKw@mail.gmail.com>
+Message-ID: <CAK7LNASPm8zo2y2vZfeX+LC=xuF+s_bAjkmzTSaT-nmcYoSkKw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/3] modules: few of alignment fixes
+To: Helge Deller <deller@gmx.de>
+Cc: Luis Chamberlain <mcgrof@kernel.org>, arnd@arndb.de, linux-arch@vger.kernel.org, 
+	linux-modules@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Tue, Oct 22, 2024 at 5:07=E2=80=AFAM Helge Deller <deller@gmx.de> wrote:
+>
+> On 10/21/24 21:22, Luis Chamberlain wrote:
+> > On Fri, Feb 02, 2024 at 10:23:21AM -0800, Luis Chamberlain wrote:
+> >> On Sat, Feb 03, 2024 at 12:20:38AM +0900, Masahiro Yamada wrote:
+> >>> On Fri, Feb 2, 2024 at 3:05=E2=80=AFAM Luis Chamberlain <mcgrof@kerne=
+l.org> wrote:
+> >>>>
+> >>>> On Wed, Jan 31, 2024 at 02:11:44PM -0800, Luis Chamberlain wrote:
+> >>>>> On Mon, Jan 29, 2024 at 11:26:39AM -0800, Luis Chamberlain wrote:
+> >>>>>> Masahiro, if there no issues feel free to take this or I can take =
+them in
+> >>>>>> too via the modules-next tree. Lemme know!
+> >>>>>
+> >>>>> I've queued this onto modules-testing to get winder testing [0]
+> >>>>
+> >>>> I've moved it to modules-next as I've found no issues.
+> >>>>
+> >>>>    Luis
+> >>>
+> >>>
+> >>> I believe this patch series is wrong.
+> >>>
+> >>> I thought we agreed that the alignment must be added to
+> >>> individual asm code, not to the linker script.
+> >>>
+> >>> I am surprised that you came back to this.
+> >>
+> >> I misseed the dialog on the old cover letter, sorry. I've yanked these=
+ patches
+> >> out. I'd expect a respin from Helge.
+> >
+> > Just goind down memory lane -- Helge, the work here pending was to move
+> > this to the linker script. Were you going to follow up on this?
+>
+> Masahiro mentions above, that the alignment should be added
+> to the individual asm code. This happened in the meantime for parisc, but
+> I'm not sure if all platforms get this right.
+> So in addition, I still believe that adding the alignment to the linker
+> script too is another right thing to do.
+>
+> Helge
 
-After merging the regulator tree, today's linux-next build (htmldocs)
-produced this warning:
-
-include/linux/regulator/machine.h:290: warning: Excess struct member 'regul=
-ator_init' description in 'regulator_init_data'
-
-Introduced by commit
-
-  602ff58ae4fe ("regulator: core: remove machine init callback from config")
+Yes, I believe the proper alignment should be specified in asm code.
 
 --=20
-Cheers,
-Stephen Rothwell
-
---Sig_/ndcAZAt57SoF2IWKkSMR=8_
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYgSkACgkQAVBC80lX
-0GybpQf/TaeTWCei4LkDzZfw46PchYHyXYjfjvctazsdp0sJrAHQhmd3dln1tlgP
-t0qN1ghNbv8R/SloJI9o4duZYk7Vn6vvUCK+iEcTrPsx03d+gKJY1V1BMD8Idga3
-i9K6+m4EJNaGvqvQzCPJ/Sdf3cnsuVIklsy8dimCGUCaubUYL5bPlAsm5aNPI6hW
-GxKgJw9yZK3qbZidOoUlhqkX3jO8tx5yYyj5CiGxst5nG/TxMjF/xOXMfh8ITjWK
-AX+bO0r2rUHYU5VdxaiAv8mXTBtkvtqpvEsRM/zp+JZQexaFtet75aFPnEXpZ5Y7
-6Bz3XcwGVxmcXkNnGC67G2nh6kHHqw==
-=2+EI
------END PGP SIGNATURE-----
-
---Sig_/ndcAZAt57SoF2IWKkSMR=8_--
+Best Regards
+Masahiro Yamada
 
