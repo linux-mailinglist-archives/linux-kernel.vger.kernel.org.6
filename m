@@ -1,77 +1,77 @@
-Return-Path: <linux-kernel+bounces-378037-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378038-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 22D2C9ACA80
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:47:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 392269ACA82
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:47:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D392F282A54
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 748DFB2312C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:47:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39821AD9C3;
-	Wed, 23 Oct 2024 12:45:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62CA71C6F6C;
+	Wed, 23 Oct 2024 12:45:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="VxWYcrVc"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="dkKiP0kF"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E63D1ADFE6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:45:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11A361C2DC8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729687530; cv=none; b=HCJXcF7mVVsFqj+jBL2EeRWVpi1HTsABcoVH8G1WMxyo+8afYlWWh077oY556n4APi9x9yDlePHmGeLVu9PW7Y6/3AeFmtFtMc+hj/sMlCKyNN+O5dQ7KcN7rsJsabFanIjEBt+M0Es5odiVFsGmFffAuMxhcxXXTkiGPowj+9E=
+	t=1729687533; cv=none; b=OkVW3ZwUhaq+pECVpW4eOWi1ykIp7yyqrWLftGBjiRZcxFPtChc88dLNfiWL5YSMaIf5EuT2K1tJZ9T94sUoq9E8GR8PRPaOr267BPcxaR9Gyo59UUn2ESCIeg5RJi56bsRuykVlI0ExjMMoQeYAmw2JY9lXaaK0SKHv37f8SFo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729687530; c=relaxed/simple;
-	bh=hotHQZVnoFMtyRZ6tdX6vYrrQPC51HzlczEpuc7WVAw=;
+	s=arc-20240116; t=1729687533; c=relaxed/simple;
+	bh=OHUadfAY5idEC7TSz4LDwKkmn9fkkEigYvmfBwhKTe4=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nSTj9RJaRYsyDrk9tZJ4Hr4r1JvXUChHhuQ2VfIktbdCduiiaeXRVyZq8pL8yO0+v93yHZfXYm2zOfTjeyVIVDrKPURXi9ouRYKwvn7Z3MTrr12rdaclft7AJ+Oia9dAwUg4fLMz5jfdkKGzsjuPStUHjriAx0uBwTzaocfnmUU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=VxWYcrVc; arc=none smtp.client-ip=170.10.129.124
+	 MIME-Version; b=TzMvAsGZ2EldFpSP0BqBbiLhanR5iUMLNcciipwLnM4Omfu6v5hjO8TgdEusb/bgMvPn1zhLYh6b6pRO4bYLxAYZqqTae2lGzH+KvemiFCxQS7MEV5NYhs3VYTtn7L7QGiFx03PP6AgTNqDGEg+2nhOAxSvR/BN/OKrg9rlDlcA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=dkKiP0kF; arc=none smtp.client-ip=170.10.133.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729687526;
+	s=mimecast20190719; t=1729687531;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=9iFQ2SoxTB2E7EgmYJpFoUM8SnPrGQqTL5Y/dS2nnkc=;
-	b=VxWYcrVc7iYJYAohH8QgGskUUH/DItnS67Sjm1ESWlAW13DsIX97uvBIGtMgKzxIm+f1Vo
-	n++4a7y/lxS6gu3+LtTC0hD9H5lfNOHqAltC6FL15ta+oZ4mR/TVo2NGJNRkXoHg50kP1X
-	jo/oQQSvyJ2g6cyWl4qzH3ZmCLDqRJA=
-Received: from mail-wr1-f72.google.com (mail-wr1-f72.google.com
- [209.85.221.72]) by relay.mimecast.com with ESMTP with STARTTLS
+	bh=D6Ldk9ZxsBI9HLbbe29Tg2hsE9raC94mk4mfGYYnShE=;
+	b=dkKiP0kF5i/mCo6hnhATkbyz3oEWH7ESTummg9ZNlhLl3gjkjVa2g64DFWvdQRfnZEJSiX
+	U4sTJrxuFM0Vjr61oOg7pH/sbpf2oEDdycgbmC0sqoCES4kLPnWcRDqkm5tseHh7qzy1ik
+	QEiS9BzPQOrioOvnLywh6bGcpHr6sHI=
+Received: from mail-wm1-f71.google.com (mail-wm1-f71.google.com
+ [209.85.128.71]) by relay.mimecast.com with ESMTP with STARTTLS
  (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-31--Seipkk8OkmubWYqyHRY4Q-1; Wed, 23 Oct 2024 08:45:24 -0400
-X-MC-Unique: -Seipkk8OkmubWYqyHRY4Q-1
-Received: by mail-wr1-f72.google.com with SMTP id ffacd0b85a97d-37d5606250aso3082547f8f.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:45:24 -0700 (PDT)
+ us-mta-386-TxqnHhLbPCOq8Oz3xtccPw-1; Wed, 23 Oct 2024 08:45:29 -0400
+X-MC-Unique: TxqnHhLbPCOq8Oz3xtccPw-1
+Received: by mail-wm1-f71.google.com with SMTP id 5b1f17b1804b1-4316655b2f1so35601825e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:45:28 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729687522; x=1730292322;
+        d=1e100.net; s=20230601; t=1729687527; x=1730292327;
         h=content-transfer-encoding:mime-version:references:in-reply-to
          :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=9iFQ2SoxTB2E7EgmYJpFoUM8SnPrGQqTL5Y/dS2nnkc=;
-        b=ex4K7CohkX4Hrysp6b64EXLUPg3hGwWrsFl3W+sGJIIqbDp7O0v0R70cE9o9Z+mweL
-         YpSHuDEnsmZxJZLXx4lzEG3lxZJRVn6LvQYAtZvkuH6ybGTe5R3nHHt3nxaJ398nr09P
-         bNyRb6RQpUQn1H/9t0g5tN5zIAh+VUEQ7Z9lRTLIrz3fAbTVCVF0FUmdAdE770UK6jr9
-         qWztzhsBff3T55XipJBC/gUe1Q+jOOInillaEs49P+iNMSIWhoDqtchj7GyaaE2Xo3PN
-         J8KOO9TjzjSzu0RqcMzZ9I+JBGKxPiqr0NfNYj7My52rSs5FGbJ57cGPBBgn5IEOa3fP
-         oQmQ==
-X-Gm-Message-State: AOJu0YzCkvPL7c2VQfj4frhUh4FbGyTzHvvUX3RJuJlxjrnrpbr1OI6N
-	2FRjTvIXgmHrNBTrFEeX9pOyoTLcvFCIUxeRLOQf1zatC5jP/9aO+xbsi5yOo8Es0/bvrjHifAS
-	aMFN3bL3I3+PGONBYTGQaycRaDiEh8izSmNnaPeRyf0YijdR7oHQkhm+fJ0qoFWIfRKccVrv6e8
-	U8Ftyr3XfpctODbIRZOzp7IZ4qdO2GNueMkk9w7E7hKQeXnhay
-X-Received: by 2002:adf:f781:0:b0:37d:4ba1:dcff with SMTP id ffacd0b85a97d-37efcf7b9d2mr1841039f8f.42.1729687522166;
-        Wed, 23 Oct 2024 05:45:22 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEFIyABl/bqJdhPDpe+7L8YUu7GDBTYFDZy4WfrGhSIwctTeKRQGKwcmhFolqtMC+Mn/LIrUw==
-X-Received: by 2002:adf:f781:0:b0:37d:4ba1:dcff with SMTP id ffacd0b85a97d-37efcf7b9d2mr1841004f8f.42.1729687521616;
-        Wed, 23 Oct 2024 05:45:21 -0700 (PDT)
+        bh=D6Ldk9ZxsBI9HLbbe29Tg2hsE9raC94mk4mfGYYnShE=;
+        b=siq6M/ssjNa66pyxK6GQEKZwjBgOahW/DumxTsUjtgtz2WnsC+hppSG9Of13LxSOS9
+         YCxTRdp9Iub11GETmYF8LD4v7SBuw2dk0E0CYGgn4qa144nRnzKjn47GiB9D7qvHRRdS
+         cLq9uBL0iYynpeRtadREgDfzDk4d7a21i18vyWHzwI7bZlkih7UhNSjd+SyEEOveqLry
+         lOBrvT8NUxATQ763dx+V/oEnWfPBfSujLoh3ye7m2BWoMsmUVOQeYrK9pCOZ74rlApPE
+         XyKtBFyOcAv6lXHJacKKs2K+kxhRTZx83uYjduprXUzC51mTDEKMGXTn9aqHe/6d+dox
+         17nA==
+X-Gm-Message-State: AOJu0YyKZycd0f+c3kRV/9259dL+KJPf0xpH8kxvkWSNJjyipFdWiitA
+	TzpGvJaolmrGluQ0GrSrb+mZLOg1/j3sSdzyhK4cMYIoI3qTYbo5xfsdO9uAMJLtUcuOWZZqZEn
+	8YEiDujRzLEPaNvZcnj8T/OpcCa6ZsN3kG1JmJn31Rq61VcbnCbN9i3Fnu8I+/M5J+pO3YAlkct
+	O+qxxfqo2PgziUuI4tyaig7KPiiZodk7++ApShC9SrmXfFBObU
+X-Received: by 2002:a05:600c:1c03:b0:431:40ca:ce5d with SMTP id 5b1f17b1804b1-43184189a08mr19760865e9.23.1729687526879;
+        Wed, 23 Oct 2024 05:45:26 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHymfJH/eWTCYBn2bbQIPQsPXJ5396Qyx8zrR6Gy/0RMkieb8Q1R//90hWs2ZzLK0kBKhgm6w==
+X-Received: by 2002:a05:600c:1c03:b0:431:40ca:ce5d with SMTP id 5b1f17b1804b1-43184189a08mr19760485e9.23.1729687526292;
+        Wed, 23 Oct 2024 05:45:26 -0700 (PDT)
 Received: from avogadro.local ([151.95.144.54])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bdeb4asm15319465e9.15.2024.10.23.05.45.20
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4864csm8847991f8f.35.2024.10.23.05.45.25
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 05:45:21 -0700 (PDT)
+        Wed, 23 Oct 2024 05:45:25 -0700 (PDT)
 From: Paolo Bonzini <pbonzini@redhat.com>
 To: linux-kernel@vger.kernel.org,
 	kvm@vger.kernel.org
@@ -90,9 +90,9 @@ Cc: roy.hopkins@suse.com,
 	kai.huang@intel.com,
 	rick.p.edgecombe@intel.com,
 	James.Bottomley@HansenPartnership.com
-Subject: [RFC PATCH 3/5] Documentation: kvm: replace section numbers with links
-Date: Wed, 23 Oct 2024 14:45:05 +0200
-Message-ID: <20241023124507.280382-4-pbonzini@redhat.com>
+Subject: [RFC PATCH 4/5] Documentation: kvm: reorganize introduction
+Date: Wed, 23 Oct 2024 14:45:06 +0200
+Message-ID: <20241023124507.280382-5-pbonzini@redhat.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241023124507.280382-1-pbonzini@redhat.com>
 References: <20241023124507.280382-1-pbonzini@redhat.com>
@@ -104,152 +104,72 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-In order to simplify further introduction of hyperlinks, replace explicit
-section numbers with rST hyperlinks.  The section numbers could actually
-be removed now, but I'm not going to do a huge change throughout the file
-for an RFC...
+Reorganize the text to mention file descriptors as early as possible.
+Also mention capabilities early as they are a central part of KVM's
+API.
 
 Signed-off-by: Paolo Bonzini <pbonzini@redhat.com>
 ---
- Documentation/virt/kvm/api.rst | 40 ++++++++++++++++++++++++----------
- 1 file changed, 28 insertions(+), 12 deletions(-)
+ Documentation/virt/kvm/api.rst | 38 ++++++++++++++++++++++------------
+ 1 file changed, 25 insertions(+), 13 deletions(-)
 
 diff --git a/Documentation/virt/kvm/api.rst b/Documentation/virt/kvm/api.rst
-index 480ab8174e56..42030227dedd 100644
+index 42030227dedd..6619098a8054 100644
 --- a/Documentation/virt/kvm/api.rst
 +++ b/Documentation/virt/kvm/api.rst
-@@ -96,9 +96,9 @@ description:
-   Capability:
-       which KVM extension provides this ioctl.  Can be 'basic',
-       which means that is will be provided by any kernel that supports
--      API version 12 (see section 4.1), or a KVM_CAP_xyz constant, which
--      means availability needs to be checked with KVM_CHECK_EXTENSION
--      (see section 4.4).
-+      API version 12 (see :ref:`KVM_GET_API_VERSION <KVM_GET_API_VERSION>`),
-+      or a KVM_CAP_xyz constant that can be checked with
-+      :ref:`KVM_CHECK_EXTENSION <KVM_CHECK_EXTENSION>`.
+@@ -7,8 +7,19 @@ The Definitive KVM (Kernel-based Virtual Machine) API Documentation
+ 1. General description
+ ======================
  
-   Architectures:
-       which instruction set architectures provide this ioctl.
-@@ -115,6 +115,8 @@ description:
-       are not detailed, but errors with specific meanings are.
- 
- 
-+.. _KVM_GET_API_VERSION:
+-The kvm API is a set of ioctls that are issued to control various aspects
+-of a virtual machine.  The ioctls belong to the following classes:
++The kvm API is centered around different kinds of file descriptors
++and ioctls that can be issued to these file descriptors.  An initial
++open("/dev/kvm") obtains a handle to the kvm subsystem; this handle
++can be used to issue system ioctls.  A KVM_CREATE_VM ioctl on this
++handle will create a VM file descriptor which can be used to issue VM
++ioctls.  A KVM_CREATE_VCPU or KVM_CREATE_DEVICE ioctl on a VM fd will
++create a virtual cpu or device and return a file descriptor pointing to
++the new resource.
 +
- 4.1 KVM_GET_API_VERSION
- -----------------------
++In other words, the kvm API is a set of ioctls that are issued to
++different kinds of file descriptor in order to control various aspects of
++a virtual machine.  Depending on the file descriptor that accepts them,
++ioctls belong to the following classes:
  
-@@ -243,6 +245,8 @@ This list also varies by kvm version and host processor, but does not change
- otherwise.
+  - System ioctls: These query and set global attributes which affect the
+    whole kvm subsystem.  In addition a system ioctl is used to create
+@@ -35,18 +46,19 @@ of a virtual machine.  The ioctls belong to the following classes:
+    device ioctls must be issued from the same process (address space) that
+    was used to create the VM.
  
+-2. File descriptors
+-===================
++While most ioctls are specific to one kind of file descriptor, in some
++cases the same ioctl can belong to more than one class.
  
-+.. _KVM_CHECK_EXTENSION:
+-The kvm API is centered around file descriptors.  An initial
+-open("/dev/kvm") obtains a handle to the kvm subsystem; this handle
+-can be used to issue system ioctls.  A KVM_CREATE_VM ioctl on this
+-handle will create a VM file descriptor which can be used to issue VM
+-ioctls.  A KVM_CREATE_VCPU or KVM_CREATE_DEVICE ioctl on a VM fd will
+-create a virtual cpu or device and return a file descriptor pointing to
+-the new resource.  Finally, ioctls on a vcpu or device fd can be used
+-to control the vcpu or device.  For vcpus, this includes the important
+-task of actually running guest code.
++The KVM API grew over time.  For this reason, KVM defines many constants
++ of the form ``KVM_CAP_*``, each corresponding to a set of functionality
++provided by one or more ioctls.  Availability of these "capabilities" can
++be checked with :ref:`KVM_CHECK_EXTENSION <KVM_CHECK_EXTENSION>`.  Some
++capabilities also need to be enabled for VMs or VCPUs where their
++functionality is desired (see :ref:`cap_enable` and :ref:`cap_enable_vm`).
 +
- 4.4 KVM_CHECK_EXTENSION
- -----------------------
- 
-@@ -285,7 +289,7 @@ the VCPU file descriptor can be mmap-ed, including:
- 
- - if KVM_CAP_DIRTY_LOG_RING is available, a number of pages at
-   KVM_DIRTY_LOG_PAGE_OFFSET * PAGE_SIZE.  For more information on
--  KVM_CAP_DIRTY_LOG_RING, see section 8.3.
-+  KVM_CAP_DIRTY_LOG_RING, see :ref:`KVM_CAP_DIRTY_LOG_RING`.
- 
- 
- 4.7 KVM_CREATE_VCPU
-@@ -1426,6 +1430,8 @@ because of a quirk in the virtualization implementation (see the internals
- documentation when it pops into existence).
- 
- 
-+.. _KVM_ENABLE_CAP:
 +
- 4.37 KVM_ENABLE_CAP
- -------------------
++2. Restrictions
++===============
  
-@@ -2560,7 +2566,7 @@ Specifically:
- ======================= ========= ===== =======================================
- 
- .. [1] These encodings are not accepted for SVE-enabled vcpus.  See
--       KVM_ARM_VCPU_INIT.
-+       :ref:`KVM_ARM_VCPU_INIT`.
- 
-        The equivalent register content can be accessed via bits [127:0] of
-        the corresponding SVE Zn registers instead for vcpus that have SVE
-@@ -5036,8 +5042,8 @@ Recognised values for feature:
- Finalizes the configuration of the specified vcpu feature.
- 
- The vcpu must already have been initialised, enabling the affected feature, by
--means of a successful KVM_ARM_VCPU_INIT call with the appropriate flag set in
--features[].
-+means of a successful :ref:`KVM_ARM_VCPU_INIT <KVM_ARM_VCPU_INIT>` call with the
-+appropriate flag set in features[].
- 
- For affected vcpu features, this is a mandatory step that must be performed
- before the vcpu is fully usable.
-@@ -6380,6 +6386,8 @@ the capability to be present.
- `flags` must currently be zero.
- 
- 
-+.. _kvm_run:
-+
- 5. The kvm_run structure
- ========================
- 
-@@ -7099,11 +7107,15 @@ primary storage for certain register types. Therefore, the kernel may use the
- values in kvm_run even if the corresponding bit in kvm_dirty_regs is not set.
- 
- 
-+.. _cap_enable:
-+
- 6. Capabilities that can be enabled on vCPUs
- ============================================
- 
- There are certain capabilities that change the behavior of the virtual CPU or
--the virtual machine when enabled. To enable them, please see section 4.37.
-+the virtual machine when enabled. To enable them, please see
-+:ref:`KVM_ENABLE_CAP`.
-+
- Below you can find a list of capabilities and what their effect on the vCPU or
- the virtual machine is when enabling them.
- 
-@@ -7312,7 +7324,7 @@ KVM API and also from the guest.
-           sets are supported
-           (bitfields defined in arch/x86/include/uapi/asm/kvm.h).
- 
--As described above in the kvm_sync_regs struct info in section 5 (kvm_run):
-+As described above in the kvm_sync_regs struct info in section :ref:`kvm_run`,
- KVM_CAP_SYNC_REGS "allow[s] userspace to access certain guest registers
- without having to call SET/GET_*REGS". This reduces overhead by eliminating
- repeated ioctl calls for setting and/or getting register values. This is
-@@ -7358,13 +7370,15 @@ Unused bitfields in the bitarrays must be set to zero.
- 
- This capability connects the vcpu to an in-kernel XIVE device.
- 
-+.. _cap_enable_vm:
-+
- 7. Capabilities that can be enabled on VMs
- ==========================================
- 
- There are certain capabilities that change the behavior of the virtual
--machine when enabled. To enable them, please see section 4.37. Below
--you can find a list of capabilities and what their effect on the VM
--is when enabling them.
-+machine when enabled. To enable them, please see section
-+:ref:`KVM_ENABLE_CAP`. Below you can find a list of capabilities and
-+what their effect on the VM is when enabling them.
- 
- The following information is provided along with the description:
- 
-@@ -8515,6 +8529,8 @@ guest according to the bits in the KVM_CPUID_FEATURES CPUID leaf
- (0x40000001). Otherwise, a guest may use the paravirtual features
- regardless of what has actually been exposed through the CPUID leaf.
- 
-+.. _KVM_CAP_DIRTY_LOG_RING:
-+
- 8.29 KVM_CAP_DIRTY_LOG_RING/KVM_CAP_DIRTY_LOG_RING_ACQ_REL
- ----------------------------------------------------------
- 
+ In general file descriptors can be migrated among processes by means
+ of fork() and the SCM_RIGHTS facility of unix domain socket.  These
 -- 
 2.46.2
 
