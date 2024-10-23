@@ -1,77 +1,121 @@
-Return-Path: <linux-kernel+bounces-378889-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378890-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1A4BB9AD6C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:31:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87F2F9AD6C6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:32:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4A9D31C22E0F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:31:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 143A0B230C5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A3441F5848;
-	Wed, 23 Oct 2024 21:31:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D6131CC144;
+	Wed, 23 Oct 2024 21:32:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e+6Jgn7i"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="j14LfudI"
+Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B8EF817108A;
-	Wed, 23 Oct 2024 21:31:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6EFC4481B1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:32:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729719096; cv=none; b=SQm9TMOppMU31xOeo3x0jirqdJxGKXB5nq2+frOG6HdZ3wJAK0iER27SemgrYOKfxUUay5N2Ft6w7CIWu6PnILj/d6HcwpnsyUpcEdHEE+zB8TejJucZRrRXM6uyjqQ7jewaQI6j9fHcl3H35oMvvC1SqpGjOotwFs3cJ/yxOOY=
+	t=1729719136; cv=none; b=eV3lLLtmJRMN3OFna++xER2+LxUwbsluN9Z6a5bmIAwBbONZOaIXfLvHy4AU7q2M7hIIdzQQurydZeJCecp5KKBCtqQTa1oGr8LlwXdRshl8QPBWO4z6G5jBMQea8dWLDrVt8mO722KS1uWvFxMx2Cl/gVVvVDOdppaGnQbIfWs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729719096; c=relaxed/simple;
-	bh=LbCI2PN/0jC6zPzrg6dmuj7Dinb1Q8hOBK3BrrW9mQE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=NVaLaVYx22mhOrHV5QRbIbf+6V2EEY6a/7cQpyimpPVC0YRIdtM39NIWA6RhvBCcI7GN+h2H9N9GP1hQ2p6voXK1FeJGTMfA4IYENZ+BSfvJ6Vu1WUXPLWA4oCPn4F9ObA0ZAjAJ/7XwoicqV57pbe0NodcGx3S7GAN5NxLNCL4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e+6Jgn7i; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2083CC4CEC6;
-	Wed, 23 Oct 2024 21:31:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729719096;
-	bh=LbCI2PN/0jC6zPzrg6dmuj7Dinb1Q8hOBK3BrrW9mQE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e+6Jgn7i0D5IThPc/OZrx3PuvEpFuJ5sG+L4iZnDPq3ofNXt2KC7XEwBtz8xFBDVn
-	 iiFiRAy04+3cR00TSiNRdCI1B9zrcs/zh0Rdh3gEcRDWvNUL/y0BQB2NRRGIxDzR8R
-	 stu4PO65rbUg90c12IbkGBvU2TIfNA4Hl3ZFFM3+EH8pRLmCZKhnPar8zm0tYs/lTe
-	 fATWWF7FCfkef3wf0hXARcFod1Aj3aEQQ9k6RUxx0y8aevZ0zRzqPt8x5LZCOYkr17
-	 G3MwGKR+1OMCQDsigbFDA2+/KAfKte6qZJpf8x6hNGD2kGJLmIrewAhZGHG8bw32sF
-	 j8x4eFe4O1zFg==
-Date: Wed, 23 Oct 2024 21:31:34 +0000
-From: Eric Biggers <ebiggers@kernel.org>
-To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
-Cc: Ulf Hansson <ulf.hansson@linaro.org>,
-	Adrian Hunter <adrian.hunter@intel.com>, linux-mmc@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
-	quic_rampraka@quicinc.com, quic_nitirawa@quicinc.com,
-	quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com,
-	quic_neersoni@quicinc.com, quic_gaurkash@quicinc.com
-Subject: Re: [PATCH RFC 0/2] Avoid reprogram all keys to Inline Crypto Engine
- for MMC runtime suspend resume
-Message-ID: <20241023213134.GC3736641@google.com>
-References: <20241006135530.17363-1-quic_spuppala@quicinc.com>
+	s=arc-20240116; t=1729719136; c=relaxed/simple;
+	bh=kJBMUngqTwc/6QW7XYSPiHU9s03YZIKPBYasnxp6tgo=;
+	h=Message-ID:Date:MIME-Version:To:Cc:From:Subject:Content-Type; b=UfsNzNXF3FoAJJ2fpAncTt6klmSDM4YxBEf8PMzFaR7nMvFEWVGzrQJF2XhAhUUwlrmHYJ7s0x4ol1AeVBleZWlEmEyh7rt+uFdpAmE/uPZpj30ESUA3okIF1foO296JOzFd7TRoiBAWuwqFH4ep3qcTO3YgCb3HQaBKpB0swGY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=j14LfudI; arc=none smtp.client-ip=198.137.202.136
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
+Received: from [172.27.3.244] ([76.133.66.138])
+	(authenticated bits=0)
+	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49NLVp4Y1410192
+	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
+	Wed, 23 Oct 2024 14:31:51 -0700
+DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49NLVp4Y1410192
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
+	s=2024101701; t=1729719112;
+	bh=8tEFyHawjdZYoHhrKgxfixSEdW8mWDvC1bwQ29nPWGo=;
+	h=Date:To:Cc:From:Subject:From;
+	b=j14LfudIur4YPCqfGGEkfvQ4jB/tGkBNhbUWI2Qnd/q3gbmjdD5sTI5kGjvRZf+mA
+	 bNcKr/u6rgUtKm4A9bv0fkUMG9wRLct/YOP3rXwUQ/05zW+d6GnK/CAhCwbgcdR/iy
+	 BTlEV3lpo/+75JwbkAxlYLMK5uPTzC0u4mlmUe1fEK8F4tq6Tm2EmJz/g+Vb6sNfxv
+	 azriVz0g9imGObwjZ9pVPwbFCD55FgwfU0ew26wrD0fPTKN3rBZZD7jeHvZOkMfYwZ
+	 ivA1bNXF3XhePdSoL6jKebg2BgmsQ8EVvULS2wPAUghYB/ArCezsbdE375+KjESkfo
+	 xkUzIeYqPuSUQ==
+Message-ID: <7a4de623-ecda-4369-a7ae-0c43ef328177@zytor.com>
+Date: Wed, 23 Oct 2024 14:31:51 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241006135530.17363-1-quic_spuppala@quicinc.com>
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: Xin Li <xin3.li@intel.com>, Xin Li <xin@zytor.com>,
+        Andrew Cooper <andrew.cooper3@citrix.com>
+Cc: "x86@kernel.org" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
+        Peter Zijlstra <peterz@infradead.org>
+From: "H. Peter Anvin" <hpa@zytor.com>
+Subject: RFC, untested: handing of MSR immediates and MSRs on Xen
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Sun, Oct 06, 2024 at 07:25:28PM +0530, Seshu Madhavi Puppala wrote:
-> Crypto reprogram all keys is called for each MMC runtime
-> suspend/resume in current upstream design.
+So the coming of WRMSRNS immediate and RDMSR immediate forms is now 
+official in the latest edition (Oct 2024) of the Intel ISE document, see:
 
-Is that correct?  I thought that similar to what is done for UFS, the key
-reprogramming happens only after the MMC controller is reset.  I thought that is
-different from a runtime suspend.
+https://www.intel.com/content/www/us/en/developer/articles/technical/intel-sdm.html
 
-If it's in fact triggering more often, maybe that is what needs to be fixed?
+I have been thinking about how to (a) leverage these instructions to the 
+best effect and (b) get rid of the code overhead associated with Xen 
+paravirtualization of a handful of MSRs. As it turns out, the vast 
+majority of MSRs under Xen are simply passed through anyway; a handful 
+(perf related) are handled differently, and a small number are ignored.
 
-- Eric
+The immediate form of these instructions are primarily motivated by 
+performance, not code size: by having the MSR number in an immediate, it 
+is available *much* earlier in the pipeline, which allows the hardware 
+much more leeway about how a particular MSR is handled.
+
+Furthermore, we want to continue to minimize the overhead caused by the 
+remaining users of paravirtualization. The only PV platform left that 
+intercepts MSRs is Xen.
+
+So, as per previous discussions what we want to do is:
+
+- Have Xen handled by the normal alternatives patching;
+- Use an assembly wrapper around the Xen-specific code;
+- Allow Xen to invoke the standard error handler by adding a new
+   exception intercept type: EX_TYPE_INDIRECT. This exception type
+   takes a register (i.e. _ASM_EXTABLE_TYPE_REG) and then looks up
+   the exception handler at the address pointed to by that register.
+   This lets the Xen assembly wrapper deal with error by:
+
+     /* let CF be set on error here (any flag condition works) */
+     jc .L_error
+     ret
+   .L_error:
+     pop %rdx	  /* Drop return address */
+     sub $5,%rdx	  /* Rewind to the beginning of CALL instruction */
+     1: ud2        /* Any unconditionally trapping instruction */
+     _ASM_EXTABLE_TYPE_REG(1b, 1b /* unused */, EX_TYPE_INDIRECT, %rdx)
+
+Rather than trying to explain the whole mechanism, I'm including a 
+crude-and-totally-untested concept implementation for comments and 
+hopefully, eventually, productization.
+
+Note: I haven't added tracepoint handling yet. *Ideally* tracepoints 
+would be patched over the main callsite instead of using a separate 
+static_key() -- which also messes up register allocation due to the 
+subsequent call. This is a general problem with tracepoints which 
+perhaps is better handled separately.
+
+	-hpa
+
+
+	-hpa
+
 
