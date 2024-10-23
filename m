@@ -1,137 +1,148 @@
-Return-Path: <linux-kernel+bounces-378203-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 76C849ACCAF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:36:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7A39ACCDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:41:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 37FDA2816FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:36:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 821541F25C8F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:41:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48AAA1EF0A3;
-	Wed, 23 Oct 2024 14:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BDBA2038D3;
+	Wed, 23 Oct 2024 14:31:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="O5Rx0Hw2"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMOjG9LG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 31A631E766A;
-	Wed, 23 Oct 2024 14:31:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22291C304F;
+	Wed, 23 Oct 2024 14:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693868; cv=none; b=Wy7Tgeg1ywvhUnaI81syYf3HTntb17kBD7P4OLQ2rMhBmJq5owCQq2xWV/raPSYxPoSVHE6ue0FUWP8PhVjkCQ1jkCMoWQ8h+GSYxq42G5YKdGMBQb/Ac78al6dP1fRSQkhV3ncyA8YqjP/90DUbjewerwmO7o9Riu2n9ZH/eTE=
+	t=1729693905; cv=none; b=Nrt7E9CltxSJdMrZHHm0hYYvlhvP/HN2y/Ij/UvwOzaYpsuKCLTd5SGjTRUE1bh91r1RVSa7q+do1kcUrRWmDmrmOXkd584ZeCZMnlPwviqo2SPtz94NtNY+l+O0gCYGOQh4aKu4YPO8QmGT5cKJA24AbsaTIbwjodBL4p4eGKA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693868; c=relaxed/simple;
-	bh=4Drijy20k/9A6/MKaRR8MShJ4jkd5wL+ON+4OtSKiUc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h2kDXIFCYNgtjw8Z+rkLLOk3ndioc++7k+lDGjbbphtQjLCF1/tQP1nTiasXrCgdpO6kGEmIJCGVEF/dFVmGg5GdRXGGZelGah7AAMK5n766xkX9h9bSGpWWMNtRfU5kBwfMWGuQZFr88D92A+MV7kYOnt5gBkT336yxOx/nr10=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=O5Rx0Hw2; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729693867; x=1761229867;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=4Drijy20k/9A6/MKaRR8MShJ4jkd5wL+ON+4OtSKiUc=;
-  b=O5Rx0Hw2XkZ/xaQO+LKIxLRzip9r200Xxyv0IrXGR/9a9MNP9tLbHY4b
-   U82JdIlR4i+XRIQzAY0u1ETU3M6bFoarz6rzNKP2UB+IEvKUy+uPuC1SA
-   5TThpYqmxTB01mXiR8fbOtayZu165jeeUSmCXFOnDtwk5QtR2ByNVxQpA
-   5lSJncje0rDoyLXbvK2UDFlev9m1gzLpn3OLCP97P/iNTJeItswgx0Zka
-   vJOj95AQJrQjMNlvOoxLk0ROjEFbpidRIme5Oq8aHtH6SA/JtW4PkTL5i
-   pznlx7y5oRbymf/J046mIaCvdbZbHNeG7mvEZrTJ7lCQlJs+SYZ+XI/JM
-   w==;
-X-CSE-ConnectionGUID: +xjS5Yh5TYS/+Dp5h0lufA==
-X-CSE-MsgGUID: YHbuaM5eTjm2jtuxT5sSEQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="29393012"
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="29393012"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:31:06 -0700
-X-CSE-ConnectionGUID: 4FS3pg/7R0+xLLBK3TdUng==
-X-CSE-MsgGUID: xWm3ogunRkGxMk/7eMHcpA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="81050067"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa008.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:31:05 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t3cO5-00000006EkQ-2yCZ;
-	Wed, 23 Oct 2024 17:31:01 +0300
-Date: Wed, 23 Oct 2024 17:31:01 +0300
-From: 'Andy Shevchenko' <andriy.shevchenko@linux.intel.com>
-To: "Yoshihiro Furudera (Fujitsu)" <fj5100bi@fujitsu.com>
-Cc: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>, Andi Shyti <andi.shyti@kernel.org>,
-	"linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] i2c: designware: Add ACPI HID for DWAPB I2C controller
- on Fujitsu MONAKA
-Message-ID: <ZxkIpSlgDcltPK2X@smile.fi.intel.com>
-References: <20241018015826.2925075-1-fj5100bi@fujitsu.com>
- <ZxJXj3holsMIdnC2@smile.fi.intel.com>
- <OS3PR01MB6903FEFE0404D809D62D4628D4432@OS3PR01MB6903.jpnprd01.prod.outlook.com>
- <ZxYQDSCpo8n4g3jM@smile.fi.intel.com>
- <OS3PR01MB6903405361060650429FAC2AD44C2@OS3PR01MB6903.jpnprd01.prod.outlook.com>
- <Zxek2SsrFg-XnHWP@smile.fi.intel.com>
- <OS3PR01MB69031E111FDC5B5D302E61A9D44D2@OS3PR01MB6903.jpnprd01.prod.outlook.com>
+	s=arc-20240116; t=1729693905; c=relaxed/simple;
+	bh=R8ZD+IoFOM74LGHQ2waIN2l14/3ax35Bn4Pnovvn4Sw=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=sGBFXyt1hbG4EUYbOKeWzLeONgmJ2AQhrs3woc3cAjteiQJPUwE8gNjhAMLM/9CmFxHkQqWqXesUrWLa/ang+6ym6zDBTIb7IHT18FtDsK2vP2vIBpmqH/Cctz8IFkq+DhAQSKaQ7GMil4pmDpsUe1SSJ9lXivlBu7fKuRGQAPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMOjG9LG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5904BC4CEC6;
+	Wed, 23 Oct 2024 14:31:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729693904;
+	bh=R8ZD+IoFOM74LGHQ2waIN2l14/3ax35Bn4Pnovvn4Sw=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=nMOjG9LG46RecECg8HYq5FMpTHC7GXPeourC8i43jOJqttRL5rmCIUNr1/mkHUqSo
+	 6uE1h2jO96iAMw6E5Jhi8q9x35C84r+alaXz1/Fo9BIlU3VavzqnE4coD3n0WFcg3D
+	 Gou4tQRbWqoVTzYfYhGYPGqOXNWQRldfOShiubHFnopke3tUP9xYxXAdQxLOT73PPq
+	 VuZM0Qa1LVy79QZmIh+21BWljRi9VD5Xyt5zLXxZouMiuG95kKCBcJwMBBMXVzbuCI
+	 GxUEYrpYLvu0STjfRvVy5ajmdFMZRSmL0W9bg3M+vKScEllcgOzlkyOY3MrPUzCNHa
+	 2Cgwb91Aj3vlA==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Will Deacon <will@kernel.org>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	syzbot+908886656a02769af987@syzkaller.appspotmail.com,
+	Sasha Levin <sashal@kernel.org>,
+	ryabinin.a.a@gmail.com,
+	nathan@kernel.org,
+	kasan-dev@googlegroups.com,
+	llvm@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.6 17/23] kasan: Disable Software Tag-Based KASAN with GCC
+Date: Wed, 23 Oct 2024 10:31:01 -0400
+Message-ID: <20241023143116.2981369-17-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241023143116.2981369-1-sashal@kernel.org>
+References: <20241023143116.2981369-1-sashal@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <OS3PR01MB69031E111FDC5B5D302E61A9D44D2@OS3PR01MB6903.jpnprd01.prod.outlook.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.6.58
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 04:40:06AM +0000, Yoshihiro Furudera (Fujitsu) wrote:
-> > On Tue, Oct 22, 2024 at 01:14:18AM +0000, Yoshihiro Furudera (Fujitsu) wrote:
-> > > > On Mon, Oct 21, 2024 at 07:22:55AM +0000, Yoshihiro Furudera (Fujitsu)
-> > wrote:
-> > > > > > On Fri, Oct 18, 2024 at 01:58:26AM +0000, Yoshihiro Furudera wrote:
+From: Will Deacon <will@kernel.org>
 
-...
+[ Upstream commit 7aed6a2c51ffc97a126e0ea0c270fab7af97ae18 ]
 
-> > > >      Device (SMB0)
-> > > >      {
-> > > >          ...
-> > > >      }
-> > 
-> > > > Hmm... Why Device object is called SMB0, are you sure it's the correct one?
-> > >
-> > > We considered the string to be the most concise representation of
-> > > SMBus HC#0, given the general constraint that object names should
-> > > ideally be four characters or less. We understood that, unlike HID,
-> > > SMBus object names are vendor-specific.
-> > 
-> > But this all about UART! How is it related to SMBus?
-> 
-> We created the SMB0 object according to the following specifications:
->  
-> ACPI Specification
-> 13.2. Accessing the SMBus from ASL Code
-> https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/13_ACPI_System_Mgmt_Bus_Interface_Spec/accessing-the-smbus-from-asl-code.html
->  
-> IPMI Specification
-> Example 4: SSIF Interface(P574)
-> https://www.intel.co.jp/content/www/jp/ja/products/docs/servers/ipmi/ipmi-second-gen-interface-spec-v2-rev1-1.html
->  
-> Therefore, SMB0 does not deviate from the SMBus related specifications.
+Syzbot reports a KASAN failure early during boot on arm64 when building
+with GCC 12.2.0 and using the Software Tag-Based KASAN mode:
 
-Ah, I see now, sorry I missed that. Thank you for your patience and
-elaboration. Please, update the commit message as discussed, send a new version
-and I review it.
+  | BUG: KASAN: invalid-access in smp_build_mpidr_hash arch/arm64/kernel/setup.c:133 [inline]
+  | BUG: KASAN: invalid-access in setup_arch+0x984/0xd60 arch/arm64/kernel/setup.c:356
+  | Write of size 4 at addr 03ff800086867e00 by task swapper/0
+  | Pointer tag: [03], memory tag: [fe]
 
+Initial triage indicates that the report is a false positive and a
+thorough investigation of the crash by Mark Rutland revealed the root
+cause to be a bug in GCC:
 
+  > When GCC is passed `-fsanitize=hwaddress` or
+  > `-fsanitize=kernel-hwaddress` it ignores
+  > `__attribute__((no_sanitize_address))`, and instruments functions
+  > we require are not instrumented.
+  >
+  > [...]
+  >
+  > All versions [of GCC] I tried were broken, from 11.3.0 to 14.2.0
+  > inclusive.
+  >
+  > I think we have to disable KASAN_SW_TAGS with GCC until this is
+  > fixed
+
+Disable Software Tag-Based KASAN when building with GCC by making
+CC_HAS_KASAN_SW_TAGS depend on !CC_IS_GCC.
+
+Cc: Andrey Konovalov <andreyknvl@gmail.com>
+Suggested-by: Mark Rutland <mark.rutland@arm.com>
+Reported-by: syzbot+908886656a02769af987@syzkaller.appspotmail.com
+Link: https://lore.kernel.org/r/000000000000f362e80620e27859@google.com
+Link: https://lore.kernel.org/r/ZvFGwKfoC4yVjN_X@J2N7QTR9R3
+Link: https://bugzilla.kernel.org/show_bug.cgi?id=218854
+Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+Acked-by: Mark Rutland <mark.rutland@arm.com>
+Link: https://lore.kernel.org/r/20241014161100.18034-1-will@kernel.org
+Signed-off-by: Will Deacon <will@kernel.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ lib/Kconfig.kasan | 7 +++++--
+ 1 file changed, 5 insertions(+), 2 deletions(-)
+
+diff --git a/lib/Kconfig.kasan b/lib/Kconfig.kasan
+index fdca89c057452..275e6295fcd78 100644
+--- a/lib/Kconfig.kasan
++++ b/lib/Kconfig.kasan
+@@ -22,8 +22,11 @@ config ARCH_DISABLE_KASAN_INLINE
+ config CC_HAS_KASAN_GENERIC
+ 	def_bool $(cc-option, -fsanitize=kernel-address)
+ 
++# GCC appears to ignore no_sanitize_address when -fsanitize=kernel-hwaddress
++# is passed. See https://bugzilla.kernel.org/show_bug.cgi?id=218854 (and
++# the linked LKML thread) for more details.
+ config CC_HAS_KASAN_SW_TAGS
+-	def_bool $(cc-option, -fsanitize=kernel-hwaddress)
++	def_bool !CC_IS_GCC && $(cc-option, -fsanitize=kernel-hwaddress)
+ 
+ # This option is only required for software KASAN modes.
+ # Old GCC versions do not have proper support for no_sanitize_address.
+@@ -100,7 +103,7 @@ config KASAN_SW_TAGS
+ 	help
+ 	  Enables Software Tag-Based KASAN.
+ 
+-	  Requires GCC 11+ or Clang.
++	  Requires Clang.
+ 
+ 	  Supported only on arm64 CPUs and relies on Top Byte Ignore.
+ 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.43.0
 
 
