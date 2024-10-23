@@ -1,220 +1,257 @@
-Return-Path: <linux-kernel+bounces-378690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 25AF99AD41F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:39:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BF8F39AD428
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:43:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D6226285786
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:39:36 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08749B217B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:42:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E5E131D1F46;
-	Wed, 23 Oct 2024 18:39:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 133FA1D1756;
+	Wed, 23 Oct 2024 18:42:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="UC/AqlvN"
-Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazolkn19013074.outbound.protection.outlook.com [52.103.20.74])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="kYZBePyC"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2057.outbound.protection.outlook.com [40.107.223.57])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B36312DD88;
-	Wed, 23 Oct 2024 18:39:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.74
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E9B01D14E8
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:42:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.57
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729708760; cv=fail; b=OQ8TVanCZMvSdJGHxdSRr/iadZPqwrtgg8ab3dd5uaFG4BBke3+/g4ie4XYNxvZnrUHAMF06OruvOi6FfdKXYVamS5jvEUqSPGr+8rwa6xtiojpGdoE+3g6mf/MvYYjT1I7o/brvCrFU60zcNzGKNSxQwQjTkp3kbfRGqtog3wk=
+	t=1729708944; cv=fail; b=UjW1Ic4ugyJlVPf4QBH3KYlZqC9pvkLpGqOUROvfN91zA7iCXWSZbFccS5X6BXMVx6DBly4Y0h9nsiwFRtMAp+j6msbFHKnpKb++xOBDPNntFKwrEp/druZNtvBx1oICUan4a1KYX1Y+fScLsLr4uFU2xlKLyOSaQzmuua9mn7w=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729708760; c=relaxed/simple;
-	bh=zSJ/MiGL2LTRqkWoVEQ4MA3l+eu9gbvymeuh3JeHZQ8=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=EeGsm6y8Ph1x4REkLM12PGjYHnJ0P/L4hg8U44m9i/9FdWLO/380Vv2EtUahyOf8PuU68XdIoT26smxIrzwT6kE6jc+y3ezRkLWHaLeZ1WyuoN6fbBLerks8z+ykN1NS/r5MzsMJ54458ID0zQ00nAaT/atwTiv9ve82iceis30=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=UC/AqlvN; arc=fail smtp.client-ip=52.103.20.74
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+	s=arc-20240116; t=1729708944; c=relaxed/simple;
+	bh=1J+frWh1UQh10GRk9nR8A2BSREn+0LGdvSrbnayJrnw=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qxTKmMJnAi6hJawZqJxcd4bIwoDnRnoJC/P2BGeQiGLCkfVGe7r3WprMKpAjWaHPHZnlalmMSfRGNjqkhCoO+egpPzI+nPrP5qrRdnFn6JC2zUQYIg/57pZk2fFVC8uSN55RJ1z04GTMARlU8OF1m07mBB9YH+Bm49MZHfORkHw=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=kYZBePyC; arc=fail smtp.client-ip=40.107.223.57
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=O61qVqwjqYc9IMbqQbGlN3DxfSMzKoGFQs+KKkQAl4L7lrAJEqrwxQvovSEI5djewDgkGefax2HrlrsyU+wEswlu6YvmURkaiiz7pYJ3k4bLmYvGO6jFfQBbIYWwiNR+A9LppkPyCqtN1zpCda8w6GtZCreDhyOq3w3S1hAElUpQFb9EN4KVaRlPRM4v4gCaAqPRbxX68/+ZgCPBaXln3XVoNsKECgQo2fS2URy40k0rFVHmCa3gOqW9CtY+Eu6augykAESJLjk8DbiOXx9dKrgqI0LhbbBhz82MAX9LkvykpnHkOKYWCehPU8cBk9Ui0mZZnX37MdDTTjrCL11hQQ==
+ b=so8sCHAY5E8yGa3BwnhQAh0sTk2y8WSDRZtzqNy5emCvoVpz7ywUu8XBHFG9141XXBO+NgTkMCLGWHAye6tBto2R/TGOPwXtQVV4XRUWjkjbbF6Oz+ILA1MI43pt53MrNR71aWCsjPkWNtYXhEQl6JKvML7OOUfE+bhBHYBfYCatN64K8jVVAFKKa2TYydom+7RkazQyu8QPwMu+oL6rj4CTCPW36XF5O0+Jei5c836sxP3q7n/UrbYSbMc/j0FH+sro2WO+jcWkVoynhkT8Vw1OsNuzlaRiWNVibse7UmefnLN57E4p+FvkEdhtUoKpwrlcFvuWDCXgdS9Py/w/vw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=zSJ/MiGL2LTRqkWoVEQ4MA3l+eu9gbvymeuh3JeHZQ8=;
- b=V/oN4BeZj6rjLouptOidQLU0vBGfkewhRqc9awSUv8+hBwUyBfZBfxTXMq7IoD7BzQarGVlu+J/lpgzNgeuBPqsDbjzLn4oNsT0c77FLk1BkgMKicYsFXJGi4Y7I/7l4hdkE+NElNLY8D5AI3ViojbtmG/DvfcUQticMPZg/FjczO8c78O6bo15xKh/cTrAWsk0wOP8c98YFZwRBV5CE9S5sC6Od2nrfCghB8H+xetDkc/9DS4VBNGUHlfKM/cMPW6EtiuIU6YKeN1SXHgK0kQwgSSNkkrNpvEvrhT+5N9SPNevexIRKfKZSnp+22pap+QvFPUtVwjV932tgvPg4Bw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
- dkim=none; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
- s=selector1;
+ bh=VbCeXKQxWYFmyg6aOoepbpvyAxc0DMOTGxk0CxncIPU=;
+ b=cAhnQz7rG6kyGs9QZuYRnZLUf5XpeJlNW1IzdslOyyybmm75nVJiYjJCus6WQH2FilhTHKTwxVBEgsgFMD2FbAbNdapg98ft4HxVrJvc/MXlxaYBiUToS0NyOoed6jPF34a4kaBKJ4k4BI2Z7fyD20YWnMVrNndSuOL8Fm9/pSZZLlgE8X5Eq00j6I+wtjduJENMhi5E4opmaNWKlIpPYMl5/y08teHz2YkVmTxmBZ8nqkyWBmfGBpO8FyaC43gNCbR2yGqFN9E4T8SVaNBie564McRgbWS9O8rjDSly2dmJTwaJrZZIM/kAmm2QnqlMHvsVZK/EPruHVhHBxZbgFw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
+ dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
+ header.from=amd.com; dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=zSJ/MiGL2LTRqkWoVEQ4MA3l+eu9gbvymeuh3JeHZQ8=;
- b=UC/AqlvNllUJ/yHVzjFOr0RltXGb/9OBIFVT3rZPlqBlFyonGmxYD1xuZfZJ1ER4BtAfTPHKTPcs40ELJLCgQclofJGy21M77jwxE49OSBQNkNMkS/R5vR7fl/u52+QfQjU+n4jRhQiKbFQ8Dg3beFP0gxU37K8Ol3SIFCVZVZTirCY3h5uxEm5/3pr3px7bbH1/BslByMsS8Qo0cvFBHbaUESQlcTGUmxqi8rclZfyiAmWRW2lj0Od6kj5TXyZ4FzDgrvDpOFkT7I69KDQPz90hltBaX9jYfj33s1fWD4FVGKFcfC5q56TPcqXoWzxpaHCUGkUrJTz+sA/C0hGiIg==
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
- by SA2PR02MB7818.namprd02.prod.outlook.com (2603:10b6:806:135::18) with
+ bh=VbCeXKQxWYFmyg6aOoepbpvyAxc0DMOTGxk0CxncIPU=;
+ b=kYZBePyCZKYLaHHBHFlI56U/XhspAEv0MW7YV5vvX7qD3QmObjs6H1o7d8+ALsqcYIrDyKMDglR5KLF6dlGsSKrpSfssR9WlblQKdFzDbhxA2W9kkBnaOcEztBwV1qD8N5jTjZ8iZ6JedeCZst4b0HDDEadwY7S4yxNV41w4BSs=
+Received: from PH0P220CA0005.NAMP220.PROD.OUTLOOK.COM (2603:10b6:510:d3::25)
+ by PH7PR12MB7234.namprd12.prod.outlook.com (2603:10b6:510:205::16) with
  Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Wed, 23 Oct
- 2024 18:39:14 +0000
-Received: from SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
- ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8069.016; Wed, 23 Oct 2024
- 18:39:14 +0000
-From: Michael Kelley <mhklinux@outlook.com>
-To: Nuno Das Neves <nunodasneves@linux.microsoft.com>, MUKESH RATHOR
-	<mukeshrathor@microsoft.com>, "linux-hyperv@vger.kernel.org"
-	<linux-hyperv@vger.kernel.org>, "linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "linux-arch@vger.kernel.org"
-	<linux-arch@vger.kernel.org>, "virtualization@lists.linux.dev"
-	<virtualization@lists.linux.dev>
-CC: KY Srinivasan <kys@microsoft.com>, Haiyang Zhang <haiyangz@microsoft.com>,
-	"wei.liu@kernel.org" <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	"catalin.marinas@arm.com" <catalin.marinas@arm.com>, "will@kernel.org"
-	<will@kernel.org>, "luto@kernel.org" <luto@kernel.org>, "tglx@linutronix.de"
-	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
-	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
-	"seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
-	<pbonzini@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
-	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "joro@8bytes.org"
-	<joro@8bytes.org>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
-	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
-	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
-	"pabeni@redhat.com" <pabeni@redhat.com>, "lpieralisi@kernel.org"
-	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
-	<robh@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"arnd@arndb.de" <arnd@arndb.de>, "sgarzare@redhat.com" <sgarzare@redhat.com>,
-	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
-	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
-	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>
-Subject: RE: [EXTERNAL] RE: [PATCH 0/5] Add new headers for Hyper-V Dom0
-Thread-Topic: [EXTERNAL] RE: [PATCH 0/5] Add new headers for Hyper-V Dom0
-Thread-Index: AQHbFc3gheIHrTrmm0yVUene//yVY7J/bLBwgAFjPQCAEsKYgIABNfFw
-Date: Wed, 23 Oct 2024 18:39:14 +0000
-Message-ID:
- <SN6PR02MB415712BA42A894116CA095B8D44D2@SN6PR02MB4157.namprd02.prod.outlook.com>
-References:
- <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
- <SN6PR02MB4157F6EA7B2454D2F6CBF2ECD4782@SN6PR02MB4157.namprd02.prod.outlook.com>
- <d70bbad7-bcad-2031-a4e1-755b502422a4@microsoft.com>
- <c426d122-4ba3-4193-80d5-a40d7554d324@linux.microsoft.com>
-In-Reply-To: <c426d122-4ba3-4193-80d5-a40d7554d324@linux.microsoft.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA2PR02MB7818:EE_
-x-ms-office365-filtering-correlation-id: 70a49709-1227-420f-f560-08dcf391fe6b
-x-microsoft-antispam:
- BCL:0;ARA:14566002|461199028|19110799003|8062599003|8060799006|15080799006|440099028|3412199025|102099032|56899033;
-x-microsoft-antispam-message-info:
- GjOFciutwFIaGu0z9Z2kDU+bWijCHNTO6jOGtJcGYxPELgddV6SErE+UH7yocfJLsZEjVcc0FPjZ3cJD6ck0+GQK36X3L3t2YxYrdO2znyPhknpLMWvxu6wC5iDOT9oSA+N+D36Kcg/9s/szpuN5u4MhVjsgU4GcJ/oIFJiqu2qDS7/VF+cvenM1qyGzy0utl6Z58GjmDNOHHg45xGe/MMJbLhM4rDlUwSBOx/1wID9UR7QtQIChg/MnCuXnzqFr4i4mOu+9OsSeL/606rBlvOsPfY5csrnFQT3/gfBDI+wKz2XmDPr+hxoq+sQ8h7Kp3WNri0jUFdhbdDY7d2WK0sbjdWqw3IpeqNqEhTxVLYVKUrLYAmJqYu2o7Mh1mvjrHqN4xv+Xw9LSgIjh5QDkaQ9WiQLGBA7mRrDwrWOAEoc9rCWc1BNkkHzttEMOflrHf682wsZL34GIhFOUOLkCtwQJilOxtBjgXpPukP2zHotU+uFoMEnWKmpoViHA7TYNNmQ4Y/A9BEV2w0GIxFGuc2/Nnu753cOWJMCE8D5HN/bjwjeWB3UM+926BODytsz7EtsGhB1tBtNm7A4pUjQzv8XpVohNyNzOqZ2fg4XrMFCjegzQ67j9geyKu+eQCqxfwfy0BzC+XL1mj+IncPAsUpkT+NRtnqpAWD3bEXfUGzW6sC4GclNxG80oLb3r7npgUrQTjc0VFCYp6SohjH1pZA==
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?VmVjNGkxTEd1NHJuaS93YTZnMzdJMFR5S3o1WkhMZ3BrNm5xaTRoSzdzL0V2?=
- =?utf-8?B?alQwVzV0S0F5ZVZ5VHhNUStRYUhuQzZlK3FSOTQ5UWZUanEva2RBQk9qQTFh?=
- =?utf-8?B?c21YS3RwS3VjWndWRFJ4SkY1dUxXZVQwdkY4c2VSMWdtV0xtYzhHQnhxT1Jl?=
- =?utf-8?B?RXlmRVBrQ2lZKzIrOGgvUjdUUUd6ZDZSZlF1enFNYkplNVRicHpXVDR4Sm5a?=
- =?utf-8?B?azdXK05CVDNBZmZOOXVHSFhNVWJPSDFRaTVyUkhYVGtxcWwrcDJMVkRZRitz?=
- =?utf-8?B?OU01N2dWQUx3VE4wYlFFTW81b3Q2TEZhbnl6THlvZUc2WjJHTE5TdE5xdFVw?=
- =?utf-8?B?d1cxUGIwaUJwcEVhUjAxN2svMUh6di9rUmlacHdUUUovdGx4Wi9XSTJWS2Zt?=
- =?utf-8?B?MUxSaFU0MDhGWFNKRXZzRmZoYjA4L3BwZ1lYNWFQdkxRU3dsYXFrR1NsbXJP?=
- =?utf-8?B?VU51Mis1c2kzV01WN2cxY1lQZFNzMENHd1VJNC9Yc29CVnpGaFBtUmc5Qlgy?=
- =?utf-8?B?MElmUU9NejlyOXJRb3BTUUhwNStjK1Bobkl1R0plZU1zVWVtN0RsYXZxNGJN?=
- =?utf-8?B?OEJ0M3hnZ2JQTGxsVm1yQ0VWVGcrRWJqZzVLclZub21TWFBVSTZwUzBzWmFm?=
- =?utf-8?B?NkQzTHZHWFFPQklXMUxmNlNyR0cyK1BoZE9MaGQxMWhYUnJxdDFncWRBUkdz?=
- =?utf-8?B?SkJMQ1BTQlkyZTBqMmhOL3lSQTVxOW5ocGQzbUp3RlBNUlpkbXJlN2I3VkZH?=
- =?utf-8?B?VUdOVGY0bVFrMDlhd2dUU1RCcGV2bjBENVR1aUNkRnNLNkhsVGpzRzBibUh5?=
- =?utf-8?B?VHhOWCtkN3JSQmtkMW1LL2RsSnJyMmx2Qm5hTE91VjRiMXVPaU5ZTVNEQ0Ny?=
- =?utf-8?B?QnVGRktESE9FT1A4TmYyZ3NtTFM2KytJWU4xa3d5dDEwT2FqM0NhV2p4cUQv?=
- =?utf-8?B?RzhETWt0NkhlMlltSzZhanlaNEpTR3ZpdlNvZkxJVkZGbERvbi93WUlxeVg4?=
- =?utf-8?B?Y0ZQdStCUDZITmsxN25UNnRISG9BRzN0TkZmRDE0Y3BTYzJvTjVRcm5pQmdT?=
- =?utf-8?B?QW9nVnFvUUJ5ZU10TVBXZmZyTXNlRm5nbjJpeEx5NHczYzhrNjNyN0xmSTVh?=
- =?utf-8?B?TjJEdC9DbTY0K2cydWg3KzhzcnNqdTBuNWlSMzBsNjhMMEcxS0UyUFBXblNW?=
- =?utf-8?B?Tk83cGtCODRCM3pxQUpIaHFKRm1GUHQvbDlweDZ1SE56dFhUYjA5dzVZMzRo?=
- =?utf-8?B?aEYwYnVYZitZRFY4Tk9aTE1saWRZUkVMVVMwbGFvZ0pVdTZQN1dQaGl3RDdM?=
- =?utf-8?B?Ly9NTEEveUlIWXp5bTFweUJZZVM2L2pkaTMrVVJ3SHMrOVFBVWxseENUVnNv?=
- =?utf-8?B?aDhINHJwSTdOQ2ZwSjBCM2FNNkdVQXVnME9WNGh3ckpwOWxrNHpNY2poVmxn?=
- =?utf-8?B?Nnd6cGNPTTRNVkxZSk9oVTVSeWVPeEQ0NWw0UHVHTUxRZ1RKSWZFeUd1MW5a?=
- =?utf-8?B?YnJ2VjJPMkFqd0J2akRmZW0rSU1PRlJTeWdMRUdIQVVDaEpXZElCZVR0b21l?=
- =?utf-8?B?VUVZVW4yckdyYkZLeUM4NWdZTVNZckRVVGFFNlYrRWtWalFaYWphMHlCOE85?=
- =?utf-8?Q?RwR8q2YpMgQp02Cn4H6H5bI3XISGGZZMf9zXbB4T4sEg=3D?=
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: base64
+ 2024 18:42:15 +0000
+Received: from CY4PEPF0000EE35.namprd05.prod.outlook.com
+ (2603:10b6:510:d3:cafe::70) by PH0P220CA0005.outlook.office365.com
+ (2603:10b6:510:d3::25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16 via Frontend
+ Transport; Wed, 23 Oct 2024 18:42:15 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ CY4PEPF0000EE35.mail.protection.outlook.com (10.167.242.41) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.14 via Frontend Transport; Wed, 23 Oct 2024 18:42:14 +0000
+Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Oct
+ 2024 13:42:13 -0500
+From: Tom Lendacky <thomas.lendacky@amd.com>
+To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
+CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
+	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
+	Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Subject: [PATCH v4 0/8] Provide support for RMPREAD and a segmented RMP
+Date: Wed, 23 Oct 2024 13:41:54 -0500
+Message-ID: <cover.1729708922.git.thomas.lendacky@amd.com>
+X-Mailer: git-send-email 2.46.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
-X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-Network-Message-Id: 70a49709-1227-420f-f560-08dcf391fe6b
-X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 18:39:14.3516
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE35:EE_|PH7PR12MB7234:EE_
+X-MS-Office365-Filtering-Correlation-Id: bc43243d-13c7-4317-9c13-08dcf39269fe
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?vcbULiOx8cfy5py4Pt+lpgCKpsU7TBN1cC2jEZ2uiPakc+XJIWcj1IKTSF3j?=
+ =?us-ascii?Q?tg4jFzhsFkyCsMepJuWonO6HrrGxodruTqLyNb8ypMpNxtTHCXyPcdZOUYjN?=
+ =?us-ascii?Q?R9f3mpnDUmPQ8O9FCoGMJgLr3++OCWQw7iMze/vPRIF93kgsmal/hPjK5rsP?=
+ =?us-ascii?Q?0WbZR1n+XAOqvVMcyjjXWzjifk6QYmpVLR0DE53iUo7xty+aGjmjgfCInfrK?=
+ =?us-ascii?Q?K2TP93qGI+A+cZqM6g2X56Wq0ipnjOl1UlIrCVbL/n/ItCNkfQPW+OvH+goz?=
+ =?us-ascii?Q?GdykQ9O0vfDhdFmiaIBEzJlQiy/OEuBXszYloOxS0kMN+Il/Epj8HgZVLBnS?=
+ =?us-ascii?Q?6X7WAvUiKTTyqJEfeQDeus1ynzEnX1trVEX5P/qN0v5A/mJsY91OgnknoHxr?=
+ =?us-ascii?Q?/S5wlWmJEj7CvFkk5UMnZyNNFuJa2IeyOSNumNcc2QjK/GgN6zmRYhIv3i6l?=
+ =?us-ascii?Q?hbU7pKX6uA4VOTDP0H4oPxeecYkSImZRmCZSeilvWZy6xP8j8Zf8whbtraOh?=
+ =?us-ascii?Q?pq35m7dZXT92goyPFtum5wwsCXf5MkYx2n1ZkiKaB5PfPFrSDGLN496EYI5g?=
+ =?us-ascii?Q?+XYavYgSDVddgjcgWHkie99BeBILMZOyGPX7dV1qqHyl8dpxxiLyTU9WKEPJ?=
+ =?us-ascii?Q?14BO4d5o0vosi0wYoURskAQ2+lb/la8tMcHfuxbKXy4PW2s3c5FGsGg9G2Wx?=
+ =?us-ascii?Q?02TnFxUPYc3zcLEVkx77UdAP0/wo+RU/N7TjUoqY04edjhEvM8ms1a3yYPgv?=
+ =?us-ascii?Q?ZWnMhcA4Out5VsrbFoI0ah08trNpqMAdmYJyyfHJ32/muz002Tcv9eYdT6tm?=
+ =?us-ascii?Q?cMDwtRqNT1FxpVr8EHmDIXm5kXhaKPiA10Yx0SsAHCfm0jP4XkzjutjhGbgY?=
+ =?us-ascii?Q?v6Mb4aGYbGCvQl94fzaAf5qmoir2xPqMtgsbu9eKpgTgsHsTCY6mGSbYASpd?=
+ =?us-ascii?Q?WunJGbScZ1nowVBqOUOiZ7UQya2CYyuQrDbkSvyC/YfJllKulUfjWQBR0rZi?=
+ =?us-ascii?Q?Oeq1uHXP7gcfWoMaQ6pDIJGBFXYV0CIixhZ6pHp0OaUHLmtZAwE6NMph4oj3?=
+ =?us-ascii?Q?lt9nDhdXhe2r5C07qfdpXoTAd5sGBFSeaogD8j2SgHfYdwCPyVi30bQlevPX?=
+ =?us-ascii?Q?6Drr5yRoE8oMj2h5KAbGyCMkend9r8jtlMTAs79ITh3PQcOIFGGcSKr3w/5i?=
+ =?us-ascii?Q?wVaDJQnXsyNnjKcc+0eENdoj3lTuysVpq4fBqXvLYLQhuIwsUPxBskVyN9nz?=
+ =?us-ascii?Q?VC24Fi5JxJP1HHlxcTbh5F0+L8mTroII8Svccf51fHIp8FWpASTG1+3x3lu9?=
+ =?us-ascii?Q?/XOzMn/cyrq7dLz6cv2ZcgYNYqZX4w80bi2aU1/wOYQhqeS59WBgEuEp9EFH?=
+ =?us-ascii?Q?+B6R1SI9hDM3n+0Nea+VqnCkp9o/yHJVydVYV7rVaJn62eE29A=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 18:42:14.6961
  (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR02MB7818
+X-MS-Exchange-CrossTenant-Network-Message-Id: bc43243d-13c7-4317-9c13-08dcf39269fe
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	CY4PEPF0000EE35.namprd05.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH7PR12MB7234
 
-RnJvbTogTnVubyBEYXMgTmV2ZXMgPG51bm9kYXNuZXZlc0BsaW51eC5taWNyb3NvZnQuY29tPiBT
-ZW50OiBUdWVzZGF5LCBPY3RvYmVyIDIyLCAyMDI0IDU6MDQgUE0NCj4gDQo+IE1pY2hhZWwgLSBz
-b3JyeSBmb3IgdGhlIGRlbGF5LCBJIGp1c3QgZ290IGJhY2sgZnJvbSB2YWNhdGlvbi4NCj4gDQo+
-IE9uIDEwLzEwLzIwMjQgNjozNCBQTSwgTVVLRVNIIFJBVEhPUiB3cm90ZToNCj4gPg0KPiA+DQo+
-ID4gT24gMTAvMTAvMjQgMTE6MjEsIE1pY2hhZWwgS2VsbGV5IHdyb3RlOg0KPiA+ICA+IEZyb206
-IE51bm8gRGFzIE5ldmVzIDxudW5vZGFzbmV2ZXNAbGludXgubWljcm9zb2Z0LmNvbT4gU2VudDoN
-Cj4gPiBUaHVyc2RheSwgT2N0b2JlciAzLCAyMDI0IDEyOjUxIFBNDQo+ID4gID4+DQo+ID4gID4+
-IFRvIHN1cHBvcnQgSHlwZXItViBEb20wIChha2EgTGludXggYXMgcm9vdCBwYXJ0aXRpb24pLCBt
-YW55IG5ldw0KPiA+ICA+PiBkZWZpbml0aW9ucyBhcmUgcmVxdWlyZWQuDQo+ID4gID4+DQo+ID4g
-ID4+IFRoZSBwbGFuIGdvaW5nIGZvcndhcmQgaXMgdG8gZGlyZWN0bHkgaW1wb3J0IGhlYWRlcnMg
-ZnJvbQ0KPiA+ICA+PiBIeXBlci1WLiBUaGlzIGlzIGEgbW9yZSBtYWludGFpbmFibGUgd2F5IHRv
-IGltcG9ydCBkZWZpbml0aW9ucw0KPiA+ICA+PiByYXRoZXIgdGhhbiB2aWEgdGhlIFRMRlMgZG9j
-LiBUaGlzIHBhdGNoIHNlcmllcyBpbnRyb2R1Y2VzDQo+ID4gID4+IG5ldyBoZWFkZXJzIChodmhk
-ay5oLCBodmdkay5oLCBldGMsIHNlZSBwYXRjaCAjMykgZGlyZWN0bHkNCj4gPiAgPj4gZGVyaXZl
-ZCBmcm9tIEh5cGVyLVYgY29kZS4NCj4gPiAgPj4NCj4gPiAgPj4gVGhpcyBwYXRjaCBzZXJpZXMg
-cmVwbGFjZXMgaHlwZXJ2LXRsZnMuaCB3aXRoIGh2aGRrLmgsIGJ1dCBvbmx5DQo+ID4gID4+IGlu
-IE1pY3Jvc29mdC1tYWludGFpbmVkIEh5cGVyLVYgY29kZSB3aGVyZSB0aGV5IGFyZSBuZWVkZWQu
-IFRoaXMNCj4gPiAgPj4gbGVhdmVzIHRoZSBleGlzdGluZyBoeXBlcnYtdGxmcy5oIGluIHVzZSBl
-bHNld2hlcmUgLSBub3RhYmx5IGZvcg0KPiA+ICA+PiBIeXBlci1WIGVubGlnaHRlbm1lbnRzIG9u
-IEtWTSBndWVzdHMuDQo+ID4gID4NCj4gPiAgPiBDb3VsZCB5b3UgZWxhYm9yYXRlIG9uIHdoeSB0
-aGUgYmlmdXJjYXRpb24gaXMgbmVjZXNzYXJ5PyBJcyBpdCBhbg0KPiA+ICA+IGludGVyaW0gc3Rl
-cCB1bnRpbCB0aGUgS1ZNIGNvZGUgY2FuIHVzZSB0aGUgbmV3IHNjaGVtZSBhcyB3ZWxsPw0KPiAN
-Cj4gSXQncyBub3Qgc3RyaWN0bHkgbmVjZXNzYXJ5LiBXZSBjaG9zZSB0aGlzIGFwcHJvYWNoIGlu
-IG9yZGVyIHRvDQo+IG1pbmltaXplIGFueSBwb3RlbnRpYWwgaW1wYWN0IG9uIEtWTSBhbmQgb3Ro
-ZXIgbm9uLU1pY3Jvc29mdC0NCj4gbWFpbnRhaW5lZCBjb2RlIHRoYXQgdXNlcyBoeXBlcnYtdGxm
-cy5oLiBBcyBNdWtlc2ggbWVudGlvbmVkIGJlbG93LA0KPiBldmVudHVhbGx5IGl0IHdpbGwgYmUg
-YmV0dGVyIGlmIGV2ZXJ5b25lIHVzZXMgdGhlIG5ldyBoZWFkZXJzLg0KDQpEb2luZyBiaWcgY2hh
-bmdlcyBpbmNyZW1lbnRhbGx5IGlzIGNlcnRhaW5seSB1c2VmdWwgYW5kIGNvbW1vbiBlbm91Z2gN
-CmluIGtlcm5lbCBkZXZlbG9wbWVudC4gQnV0IGhhdmluZyB0d28gc2V0cyBvZiBoZWFkZXIgZmls
-ZXMgdGhhdCBkZWZpbmUNCnRoZSBzYW1lIHRoaW5nLCBmb3IgdXNlIGluIHR3byBkaWZmZXJlbnQg
-cGFydHMgb2YgdGhlIGNvZGUgdHJlZSwgc2VlbXMNCmEgYml0IG9mZiB0aGUgYmVhdGVuIHBhdGgu
-IEkgZG9u4oCZdCBzZWUgdGhhdCB0aGVyZSB3b3VsZCBiZSBzaWduaWZpY2FudA0KcmlzayBpbiBk
-b2luZyBLVk0gYXQgdGhlIHNhbWUgdGltZS4gQnV0IHRoZSBLVk0gZm9sa3Mgc2hvdWxkIHdlaWdo
-DQppbiBvbiB0aGlzLg0KDQpKdXN0IG15ICQuMDIgd29ydGgsIGFuZCBJIHdvbid0IG9iamVjdCB3
-aGljaGV2ZXIgd2F5IHlvdSBnby4NCg0KTWljaGFlbA0KDQo+IA0KPiA+ICA+IEFsc28sIGRvZXMg
-Ikh5cGVyLVYgZW5saWdodGVubWVudHMgb24gS1ZNIGd1ZXN0cyIgcmVmZXIgdG8NCj4gPiAgPiBu
-ZXN0ZWQgS1ZNIHJ1bm5pbmcgYXQgTDEgb24gYW4gTDAgSHlwZXItViwgYW5kIHN1cHBvcnRpbmcg
-TDIgZ3Vlc3RzPw0KPiA+ICA+IE9yIGlzIGl0IHRoZSBtb3JlIGdlbmVyYWwgS1ZNIHN1cHBvcnQg
-Zm9yIG1pbWlja2luZyBIeXBlci1WIGZvcg0KPiA+ICA+IHRoZSBwdXJwb3NlcyBvZiBydW5uaW5n
-IFdpbmRvd3MgZ3Vlc3RzPyBGcm9tIHRoZXNlIHBhdGNoZXMsIGl0DQo+ID4gID4gbG9va3MgbGlr
-ZSB5b3VyIGludGVudGlvbiBpcyBmb3IgYWxsIEtWTSBzdXBwb3J0IGZvciBIeXBlci1WDQo+ID4g
-ID4gZnVuY3Rpb25hbGl0eSB0byBjb250aW51ZSB0byB1c2UgdGhlIGV4aXN0aW5nIGh5cGVydi10
-bGZzLmggZmlsZS4NCj4gDQo+IFlvdSdyZSBjb3JyZWN0IC0gImFsbCBLVk0gc3VwcG9ydCBmb3Ig
-SHlwZXItViIgaXMgcmVhbGx5IHdoYXQgSSBtZWFudC4NCj4gPg0KPiA+IExpa2UgaXQgc2F5cyBh
-Ym92ZSwgd2UgYXJlIGNyZWF0aW5nIG5ldyBkb20wIChyb290L2hvc3QpIHN1cHBvcnQNCj4gPiB0
-aGF0IHJlcXVpcmVzIG1hbnkgbmV3IGRlZnMgb25seSBhdmFpbGFibGUgdG8gZG9tMCBhbmQgbm90
-IGFueQ0KPiA+IGd1ZXN0LiBIeXBlcnZpc29yIG1ha2VzIHRoZW0gcHVibGljbHkgYXZhaWxhYmxl
-IHZpYSBodipkayBmaWxlcy4NCj4gPg0KPiA+IElkZWFsbHksIHNvbWVkYXkgZXZlcnlib2R5IHdp
-bGwgdXNlIHRob3NlLCBJIGhvcGUgd2UgY2FuIG1vdmUgaW4NCj4gPiB0aGF0IGRpcmVjdGlvbiwg
-YnV0IEkgZ3Vlc3Mgb25lIHN0ZXAgYXQgYSB0aW1lLiBGb3Igbm93LCBLVk0gY2FuDQo+ID4gY29u
-dGludWUgdG8gdXNlIHRoZSB0bGZzIGZpbGUsIGFuZCBpZiB0aGVyZSBpcyBubyByZXNpc3RhbmNl
-LCB3ZQ0KPiA+IGNhbiBtb3ZlIHRoZW0gdG8gaHYqZGsgZmlsZXMgYWxzbyBhcyBuZXh0IHN0ZXAg
-YW5kIG9ic29sZXRlIHRoZQ0KPiA+IHNpbmdsZSB0bGZzIGZpbGUuDQo+ID4NCj4gPiBTaW5jZSBo
-ZWFkZXJzIGFyZSB0aGUgdWx0aW1hdGUgc291cmNlIG9mIHRydXRoLCB0aGlzIHdpbGwgYWxsb3cN
-Cj4gPiBiZXR0ZXIgbWFpbnRlbmFuY2UsIGJldHRlciBkZWJ1Zy9zdXBwb3J0IGV4cGVyaWVuY2Us
-IGFuZCBhIG1vcmUNCj4gPiBzdGFibGUgc3RhY2suIEl0IGFsc28gZW5mb3JjZXMgbm9uLWxlYWtp
-bmcgb2YgZGF0YSBzdHJ1Y3RzIGZyb20NCj4gPiBwcml2YXRlIGhlYWRlciBmaWxlcyAodW5mb3J0
-dW5hdGVseSBoYXMgaGFwcGVuZWQpLg0KPiA+DQo+ID4gVGhhbmtzDQo+ID4gLU11a2VzaA0KPiA+
-DQo+IA0KPiBUaGFua3MgZm9yIHByb3ZpZGluZyB0aGUgYWRkaXRpb25hbCBjb250ZXh0LCBNdWtl
-c2guDQo+IA0KPiBOdW5vDQoNCg==
+This series adds SEV-SNP support for a new instruction to read an RMP
+entry and for a segmented RMP table.
+
+The RMPREAD instruction is used to return information related to an RMP
+entry in an architecturally defined format.
+
+RMPREAD support is detected via CPUID 0x8000001f_EAX[21].
+
+Segmented RMP support is a new way of representing the layout of an RMP
+table. Initial RMP table support required the RMP table to be contiguous
+in memory. RMP accesses from a NUMA node on which the RMP doesn't reside
+can take longer than accesses from a NUMA node on which the RMP resides.
+Segmented RMP support allows the RMP entries to be located on the same
+node as the memory the RMP is covering, potentially reducing latency
+associated with accessing an RMP entry associated with the memory. Each
+RMP segment covers a specific range of system physical addresses.
+
+Segmented RMP support is detected and established via CPUID and MSRs.
+
+CPUID:
+  - 0x8000001f_EAX[23]
+    - Indicates support for segmented RMP
+
+  - 0x80000025_EAX
+    - [5:0]   : Minimum supported RMP segment size
+    - [11:6]  : Maximum supported RMP segment size
+
+  - 0x80000025_EBX
+    - [9:0]   : Number of cacheable RMP segment definitions
+    - [10]    : Indicates if the number of cacheable RMP segments is
+                a hard limit
+
+MSR:
+  - 0xc0010132 (RMP_BASE)
+    - Is identical to current RMP support
+
+  - 0xc0010133 (RMP_END)
+    - Should be in reset state if segmented RMP support is active
+
+      For kernels that do not support segmented RMP, being in reset
+      state allows the kernel to disable SNP support if the non-segmented
+      RMP has not been allocated.
+
+  - 0xc0010136 (RMP_CFG)
+    - [0]    : Indicates if segmented RMP is enabled
+    - [13:8] : Contains the size of memory covered by an RMP segment
+               (expressed as a power of 2)
+
+The RMP segment size defined in the RMP_CFG MSR applies to all segments
+of the RMP. Therefore each RMP segment covers a specific range of system
+physical addresses. For example, if the RMP_CFG MSR value is 0x2401, then
+the RMP segment coverage value is 0x24 => 36, meaning the size of memory
+covered by an RMP segment is 64GB (1 << 36). So the first RMP segment
+covers physical addresses from 0 to 0xF_FFFF_FFFF, the second RMP segment
+covers physical addresses from 0x10_0000_0000 to 0x1F_FFFF_FFFF, etc.
+
+When a segmented RMP is enabled, RMP_BASE points to the RMP bookkeeping
+area as it does today (16K in size). However, instead of RMP entries
+beginning immediately after the bookkeeping area, there is a 4K RMP
+segment table. Each entry in the table is 8-bytes in size:
+
+  - [19:0]  : Mapped size (in GB)
+              The mapped size can be less than the defined segment size.
+              A value of zero, indicates that no RMP exists for the range
+              of system physical addresses associated with this segment.
+    [51:20] : Segment physical address
+              This address is left shift 20-bits (or just masked when
+              read) to form the physical address of the segment (1MB
+              alignment).
+
+The series is based off of and tested against the tip tree:
+  https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git master
+
+  94559bac4d40 ("Merge branch into tip/master: 'x86/sev'")
+
+---
+
+Changes in v4:
+- Change the structure name of the newly introduced RMPREAD state data
+  to rmpread, to avoid churn around the renaming of the old rmpentry
+  structure.
+- Change the fam19h check to be explicit ZEN3/ZEN4 checks
+- Unify the use of u64 for RMP-related values instead of using a mix of
+  u64 and unsigned long.
+- Fix the RMP segment end calculation in __snp_fixup_e820_tables().
+- Minor message cleanups and code simplifications.
+
+Changes in v3:
+- Added RMP documentation
+
+Changes in v2:
+- Remove the self-describing check. The SEV firmware will ensure that
+  all RMP segments are covered by RMP entries.
+- Do not include RMP segments above maximum detected RAM address (64-bit
+  MMIO) in the system RAM coverage check.
+- Adjust new CPUID feature entries to match the change to how they are
+  or are not presented to userspace.
+
+
+Tom Lendacky (8):
+  x86/sev: Prepare for using the RMPREAD instruction to access the RMP
+  x86/sev: Add support for the RMPREAD instruction
+  x86/sev: Require the RMPREAD instruction after Zen4
+  x86/sev: Move the SNP probe routine out of the way
+  x86/sev: Map only the RMP table entries instead of the full RMP range
+  x86/sev: Treat the contiguous RMP table as a single RMP segment
+  x86/sev: Add full support for a segmented RMP table
+  x86/sev/docs: Document the SNP Reverse Map Table (RMP)
+
+ .../arch/x86/amd-memory-encryption.rst        | 118 ++++
+ arch/x86/include/asm/cpufeatures.h            |   2 +
+ arch/x86/include/asm/msr-index.h              |   8 +-
+ arch/x86/kernel/cpu/amd.c                     |   9 +-
+ arch/x86/virt/svm/sev.c                       | 632 +++++++++++++++---
+ 5 files changed, 675 insertions(+), 94 deletions(-)
+
+-- 
+2.46.2
+
 
