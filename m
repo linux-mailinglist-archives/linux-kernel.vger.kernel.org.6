@@ -1,102 +1,183 @@
-Return-Path: <linux-kernel+bounces-378547-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378548-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B02FC9AD21C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:07:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id A07969AD21F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E024B246C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:07:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3006D1F26D6F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:08:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA60F1CBE8C;
-	Wed, 23 Oct 2024 17:07:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6BEC71BF81B;
+	Wed, 23 Oct 2024 17:08:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AsEi+qTJ"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aBk6JgKB"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 29EBD5D8F0;
-	Wed, 23 Oct 2024 17:07:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 026411ADFF7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:08:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729703258; cv=none; b=IXmxV34D4FgmGdxDaICFKmR0pKsvlFdnsAUps+/BkQl1D8sU7jhqIxNFf4UzK5E0e5CookvlHjFcI5QOg/3KELYmDb9xfUx7s0HgZmdClx7lxonKLBEGpBVzoJCbXNDzMWcLdoGcAOXyoWsxVRbZSB450Zn7EAZxW05vaUBmLVE=
+	t=1729703284; cv=none; b=HbkbP72WLxp2AuPRzzJyzF6tXNH3z1xm5uwODdosZgFoS9s8iV+0qkDJpjq1UdbnM//91qIUc7Ojs2t23QWl1CjZL8tK8nMnxizQBC5dmUH7RfLK1ZsDMTTjPdF2IM9HpRnDKqJzuu0cMyQrXfFqiFuocmxJE/vfabVeoi0Qawc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729703258; c=relaxed/simple;
-	bh=pCakaD5ysHmugViv0AHD1Y1Y2ECUCJOpD8zllBC8d2U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Message-Id:Date:
-	 MIME-Version:Content-Type; b=j87IAFUDck6eeWGk7d06qOnQ9ccbxYA4UKjLA/uZ67Z77SHZh6QCgeb5dzaqm77mWdy1+YsQyuDjWyiriyhowDM29ulsfSbF5I0p6x8/B5FJnD7VTR0BMACwPoGtrYVFhaV/v/T4oYuYG/ZrmsRD2B/WZxqCInukxsw2e6GQS70=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AsEi+qTJ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5BD51C4CEC7;
-	Wed, 23 Oct 2024 17:07:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729703257;
-	bh=pCakaD5ysHmugViv0AHD1Y1Y2ECUCJOpD8zllBC8d2U=;
-	h=From:To:Cc:In-Reply-To:References:Subject:Date:From;
-	b=AsEi+qTJUGYvwjstEZlIsgu/9Q51yaNf3BEZDqgye4Ey0SQjG7Cjnz0WzMjyrGplA
-	 yI0TI7wtzhqnBfQJ8tu3X3BkopiRr9pbN4SuqioPjrqcEg189kug95mv9qMz2LQlqQ
-	 hHYpClt0w0JmRQ0kc5avRliXQ3qnFomXqPeO1HvBwKw227/fHadP2tz3U+6LnVIO0A
-	 eJ4/YEFqN6rXyo5RCWWba1rQmsbeu6zQsIYvXeORuwJboJjNqrrkEcHXd1FtQPpcUV
-	 E79XQVftmYie/Vk+E0EsIw3uI1Q8XDFBziullbrnITKMLvzCIJugW7+LpWD66XR3qY
-	 LBdmBHXDSgccQ==
-From: Mark Brown <broonie@kernel.org>
-To: Liam Girdwood <lgirdwood@gmail.com>, Jaroslav Kysela <perex@perex.cz>, 
- Takashi Iwai <tiwai@suse.com>, Philipp Zabel <p.zabel@pengutronix.de>, 
- Igor Prusov <ivprusov@salutedevices.com>, linux-sound@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Cc: dan.carpenter@linaro.org, kernel-janitors@vger.kernel.org, 
- error27@gmail.com, kernel test robot <lkp@intel.com>
-In-Reply-To: <20241023144421.1720234-1-harshit.m.mogalapalli@oracle.com>
-References: <20241023144421.1720234-1-harshit.m.mogalapalli@oracle.com>
-Subject: Re: [PATCH next] ASoC: codecs: fix error code in
- ntp8835_i2c_probe()
-Message-Id: <172970325510.86642.1481020060843547661.b4-ty@kernel.org>
-Date: Wed, 23 Oct 2024 18:07:35 +0100
+	s=arc-20240116; t=1729703284; c=relaxed/simple;
+	bh=bwji3KM0kI7ZVL1Hq5Xm6xTu/GMixHRkt08MlaQijgk=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=gGFQJINDEpHpdtmPWPMIXUES7lxWyZYWsHXk6aep1Wtc/IS2G4ENabtMRW4M0+v941MVydaT6o/ulAuIGaos/KUAJrceYRHAez6pL4+AC0/p4pPEzeKAfVuHnbZVubmwmWlwzhQU8A2tXswMqef9sUnj6GarJi7yi11L2LkldrQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aBk6JgKB; arc=none smtp.client-ip=209.85.219.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e292d801e59so59063276.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:08:02 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729703282; x=1730308082; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=p/SgywtZx7rb7/mEn3XyHfH3Cb2SyryihrWMC3ba6F8=;
+        b=aBk6JgKBLRIbloH5t8udpkgM8XsADpg/M/lM//rLpP7vydui9YMr2ThLHOsxkhKSPu
+         FKUDRjmACnDVOhDb4tThKoCW31YIlLJUNSNHdYKwWSfBMd+rtj2QBP+DIQdwLgN2ULZC
+         etZcvBR0DjIDi5GAj/E5WOPTkz2F/z2b/RWoqzOo+gY2RdwT8/vEUoh5SAYcoh91TNse
+         BzBPhFQvn7BMkIeLRBRslz6pXrnsVxM+m/r2g9SrrIgjN8yvgcMgk4ArtuTn1332L2FR
+         tXgOOfksdAI9QuUmEOSCGZT4phb7bKx6MOLDOjyB65kqboAx1QMPnVp+t/9O+AO6H188
+         zXHQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729703282; x=1730308082;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=p/SgywtZx7rb7/mEn3XyHfH3Cb2SyryihrWMC3ba6F8=;
+        b=JIJIiD6V38PIgYtd9CIT8UMGUQo5ST7p8NGKB1X9g6nsfHOryEr4XP5HrUPkNBQziJ
+         2PTpnatmUeq1m+/PDQeAwH1M6Ke14TBH0OUxe186XGUfyF1Vcl0uGjUo9YGtIODMxdgH
+         GydujqNeI3U7qdeW2TRSAPu3v8uOexGRh5/fXEp6QMDXqXDV9WfJGlNpwcsTyR61neNg
+         UnXbb3DXNNDvd3FGRRMUPYQlNCoZHipZGqUhZQS64uEPJxBU9TUnrMWbmq235qG+YPZV
+         I1Km1Is2XZff7uo5ASe43iEpmWR4Ge3OyVFybvDwgsPDx4dHfvBHhj49QURDtQkrbI3B
+         S19A==
+X-Forwarded-Encrypted: i=1; AJvYcCXKlyi7QMG/x4rNqRLwTSNXq8Y9WG/MBKqzye3y8e1etxTEUvn9eeDbh2Mf/mYXlCm8rMJUU7oxPH7b7rg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO+o/llx4yAtBbvol6dUx709QdPpO1Pd2Rj/KX+MaF6kNZi51M
+	CcMscUAdK53mNI5h+RdXRMUhOmNBAY9atPlDG6HshpBk6StOU0M4Bvj+DTWGFNiGYqcRCMIo6rc
+	o1A==
+X-Google-Smtp-Source: AGHT+IEsK5kZcuCRBJ2lcZigYshTAvQXhOVGbGNjlRgIh/suKcwgOyvPk5eRcakI/OtXpbirCYYTcQ44vPI=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:a087:59b9:198a:c44c])
+ (user=surenb job=sendgmr) by 2002:a05:6902:50d:b0:e2e:44ae:111a with SMTP id
+ 3f1490d57ef6-e2e44ae12f1mr899276.8.1729703281826; Wed, 23 Oct 2024 10:08:01
+ -0700 (PDT)
+Date: Wed, 23 Oct 2024 10:07:53 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-X-Mailer: b4 0.15-dev-9b746
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241023170759.999909-1-surenb@google.com>
+Subject: [PATCH v4 0/6] page allocation tag compression
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, urezki@gmail.com, hch@infradead.org, petr.pavlu@suse.com, 
+	samitolvanen@google.com, da.gomez@samsung.com, yuzhao@google.com, 
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, linux-modules@vger.kernel.org, 
+	kernel-team@android.com, surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Wed, 23 Oct 2024 07:44:11 -0700, Harshit Mogalapalli wrote:
-> When reset_control_deassert() fails it returns valid error codes stored
-> in return, pass that to dev_err_probe() instead of
-> PTR_ERR(ntp8835->reset).
-> 
-> 
+This patchset implements several improvements:
+1. Gracefully handles module unloading while there are used allocations
+allocated from that module;
+2. Provides an option to store page allocation tag references in the
+page flags, removing dependency on page extensions and eliminating the
+memory overhead from storing page allocation references (~0.2% of total
+system memory). This also improves page allocation performance when
+CONFIG_MEM_ALLOC_PROFILING is enabled by eliminating page extension
+lookup. Page allocation performance overhead is reduced from 41% to 5.5%.
 
-Applied to
+Patch #1 introduces mas_for_each_rev() helper function.
 
-   https://git.kernel.org/pub/scm/linux/kernel/git/broonie/sound.git for-next
+Patch #2 introduces shutdown_mem_profiling() helper function to be used
+when disabling memory allocation profiling.
 
-Thanks!
+Patch #3 copies module tags into virtually contiguous memory which
+serves two purposes:
+- Lets us deal with the situation when module is unloaded while there
+are still live allocations from that module. Since we are using a copy
+version of the tags we can safely unload the module. Space and gaps in
+this contiguous memory are managed using a maple tree.
+- Enables simple indexing of the tags in the later patches.
 
-[1/1] ASoC: codecs: fix error code in ntp8835_i2c_probe()
-      commit: 9c2e48ee9aa64f609709eeb120cf728d66d4a145
+Patch #4 changes the way we allocate virtually contiguous memory for
+module tags to reserve only vitrual area and populate physical pages
+only as needed at module load time.
 
-All being well this means that it will be integrated into the linux-next
-tree (usually sometime in the next 24 hours) and sent to Linus during
-the next merge window (or sooner if it is a bug fix), however if
-problems are discovered then the patch may be dropped or reverted.
+Patch #5 abstracts page allocation tag reference to simplify later
+changes.
 
-You may get further e-mails resulting from automated or manual testing
-and review of the tree, please engage with people reporting problems and
-send followup patches addressing any issues that are reported if needed.
+Patch #6 adds compression option to the sysctl.vm.mem_profiling boot
+parameter for storing page allocation tag references inside page flags
+if they fit. If the number of available page flag bits is insufficient
+to address all kernel allocations, memory allocation profiling gets
+disabled with an appropriate warning.
 
-If any updates are required or you are submitting further changes they
-should be sent as incremental updates against current git, existing
-patches will not be replaced.
+Patchset applies to mm-unstable.
 
-Please add any relevant lists and maintainers to the CCs when replying
-to this mail.
+Changes since v3 [1]:
+- rebased over Mike's patchset in mm-unstable
+- added Reviewed-by, per Liam Howlett
+- limited execmem_vmap to work with EXECMEM_MODULE_DATA only,
+per Mike Rapoport
+- moved __get_vm_area_node() declaration into mm/internal.h,
+per Mike Rapoport
+- split parts of reserve_module_tags() into helper functions to make it
+more readable, per Mike Rapoport
+- introduced shutdown_mem_profiling() to be used when disabling memory
+allocation profiling
+- replaced CONFIG_PGALLOC_TAG_USE_PAGEFLAGS with a new boot parameter
+option, per Michal Hocko
+- minor code cleanups and refactoring to make the code more readable
+- added VMALLOC and MODULE SUPPORT reviewers I missed before
 
-Thanks,
-Mark
+[1] https://lore.kernel.org/all/20241014203646.1952505-1-surenb@google.com/
+
+Suren Baghdasaryan (6):
+  maple_tree: add mas_for_each_rev() helper
+  alloc_tag: introduce shutdown_mem_profiling helper function
+  alloc_tag: load module tags into separate contiguous memory
+  alloc_tag: populate memory for module tags as needed
+  alloc_tag: introduce pgtag_ref_handle to abstract page tag references
+  alloc_tag: support for page allocation tag compression
+
+ Documentation/mm/allocation-profiling.rst |   7 +-
+ include/asm-generic/codetag.lds.h         |  19 +
+ include/linux/alloc_tag.h                 |  21 +-
+ include/linux/codetag.h                   |  40 +-
+ include/linux/execmem.h                   |  10 +
+ include/linux/maple_tree.h                |  14 +
+ include/linux/mm.h                        |  25 +-
+ include/linux/page-flags-layout.h         |   7 +
+ include/linux/pgalloc_tag.h               | 197 +++++++--
+ include/linux/vmalloc.h                   |   3 +
+ kernel/module/main.c                      |  80 ++--
+ lib/alloc_tag.c                           | 467 ++++++++++++++++++++--
+ lib/codetag.c                             | 104 ++++-
+ mm/execmem.c                              |  16 +
+ mm/internal.h                             |   6 +
+ mm/mm_init.c                              |   5 +-
+ mm/vmalloc.c                              |   4 +-
+ scripts/module.lds.S                      |   5 +-
+ 18 files changed, 903 insertions(+), 127 deletions(-)
+
+
+base-commit: b5d43fad926a3f542cd06f3c9d286f6f489f7129
+-- 
+2.47.0.105.g07ac214952-goog
 
 
