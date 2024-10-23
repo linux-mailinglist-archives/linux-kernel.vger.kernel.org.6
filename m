@@ -1,157 +1,137 @@
-Return-Path: <linux-kernel+bounces-377220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13CAA9ABB77
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:26:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDA029ABB7B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:28:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CA0EB22CDD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13AE71C21084
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DEF52F88;
-	Wed, 23 Oct 2024 02:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C14A49659;
+	Wed, 23 Oct 2024 02:28:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OV52kJ4F"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="mBI0CMSz"
+Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
+	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855FB1CA81;
-	Wed, 23 Oct 2024 02:26:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8562C51C5A;
+	Wed, 23 Oct 2024 02:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729650364; cv=none; b=C4LTdGIcwl02HZYq9X5NZA0fQ5lWUZlZE32NLzoeM71xs8BAYdUz82fOJNZsGo7HbkM7e/uaKjpOjcBpj+ykhVTK9y6UcS8ly0X6rHqxmOiTPUU/QmNskNFoPBsNU30dZPe7w72AbjQwk+uDU1mkf/R/N7z7rwiFpwqC4cnkyUM=
+	t=1729650492; cv=none; b=HhFTkGDJDL4FTiKLx4k0iOIm/3zrlvALKLPjxcAvA4qzbinjTkYmlwYHYdi2VTju3UoCZdD/2ESyJXStkxFOKj9iBPrmd6JkMVCkE8Tuuum+RsuU3yKoYcDezqmMepsPkEvXBk2VQ89YrutNDcOPqJGxdrO4aJat0Xp9cFnWQPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729650364; c=relaxed/simple;
-	bh=aJii0wlPQcMK44UHYw5Iz7PQVdWdQ12Cr0ITPClYgIo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=CNoM0RU9LwBOP+C5VU0Tybt8+B3A7kQ7SZ0IGOAC5xp41/2Pv3MYR1VuSwdOmJcbweV3xxjOpzJ7tuu9TfFuneMOfMgW6uJI0D3quoppjPjH9LAglXMNpt2VUDtKLAiuoSCTt2hIGGc/IrmbApBoXEaXEFGRJ2obcod5B4WklDc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OV52kJ4F; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6AFC4CEC3;
-	Wed, 23 Oct 2024 02:25:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729650364;
-	bh=aJii0wlPQcMK44UHYw5Iz7PQVdWdQ12Cr0ITPClYgIo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=OV52kJ4FsxxzSBeENS9k+vcJvi+ee8AteRf6pAEJ5C898hJZHVv+c0qxAgvxKg+V4
-	 mGC+m2E3vfYYx8dMPANNIqOhoGMCgcnW7DAfZ+XtUfqiLOu08IK6bfR31xshoSbmY2
-	 h5fP3+I30WpQLxqAQTceTfQQuI/SEtDmM6butPlopBcZEETjp9eUc5AVIFyYzT28Ht
-	 yfsDUqcCIb5v9akypZpj01PblzSAsayHU/u+ulfJluHM9lL1tqI/VrXBirbpluj3+F
-	 Nc2MmWc1DafcpuJfabZIYqZIsUYAuxC9h5/NKMv9XKanH7yKlGJCIkKr7HJV2P5fCQ
-	 JxEv+74sIAqKg==
-Date: Wed, 23 Oct 2024 02:25:56 +0000
-From: sergeh@kernel.org
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
-	dwmw2@infradead.org, herbert@gondor.apana.org.au,
-	davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
-	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
-	zohar@linux.ibm.com, roberto.sassu@huawei.com,
-	dmitry.kasatkin@gmail.com, mic@digikod.net, casey@schaufler-ca.com,
-	stefanb@linux.ibm.com, ebiggers@kernel.org, rdunlap@infradead.org,
-	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
-	linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
-	linux-integrity@vger.kernel.org
-Subject: Re: [RFC PATCH v3 08/13] clavis: Introduce new LSM called clavis
-Message-ID: <ZxhetCy5RE1k4_Jk@lei>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <20241017155516.2582369-9-eric.snowberg@oracle.com>
+	s=arc-20240116; t=1729650492; c=relaxed/simple;
+	bh=5YgZWN0FSnvAUUOW8PG/vGbazwm/77Rke6f+PmF5WrU=;
+	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
+	 Message-ID:Content-Type; b=bVSh2vKDbDKtZGe+gSOQlwXjEKpMOeNqeHOU+N1jQGX8rHLLZYizX8gcWawRu2pqM2paBOsg7AkFgyTN0UDUhCjHBuMlGncUtqGiEmPJwDEOzqQMgjv8AeSJPiaZwaTJ3KozQUbf3FZDYtrO4CS32ZJNVncbh35avLk6s1hXZ3M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=fail smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=mBI0CMSz; arc=none smtp.client-ip=116.203.91.91
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=manjaro.org
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241017155516.2582369-9-eric.snowberg@oracle.com>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
+	t=1729650488;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=YPF02x/3XuMAe6LpdRIXWrJKdwRi5Z9k99f3PM62XZ8=;
+	b=mBI0CMSzZLumzLD2ffsd8EXjlhn40IUot7xmrlISwW2Udl1PSSI44IWK1dNvEkkZqKf9bJ
+	RFPN1og6gAtOjg0q/awkPY+iAvij7vB/dnaonF1RBDX6QuMex/haAcTsmbGbBWF6BL2F1C
+	qCWxRANtQ55qY0j/73Ylm58ltYygPpopHerSJUij8cQd0JYKK/7eMBxqY2C7taMDU7D4xM
+	PhEJPGnoRdNfFsxY0etVGiDpWu6XP0Jwjhk92WiGic/A4gpF8QiCHpO9L7dtIeSKocRfUo
+	Lyc2LWwxEn/vp95lWyO2Lp/sFJiKSxK7u7kuU3hu/n8iDJaMXJI5DO+yE3KzFA==
+Date: Wed, 23 Oct 2024 04:28:06 +0200
+From: Dragan Simic <dsimic@manjaro.org>
+To: Diederik de Haas <didi.debian@cknow.org>
+Cc: Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-rockchip@lists.infradead.org, Samuel Holland
+ <samuel@sholland.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH v2] arm64: dts: rockchip: Correct GPIO polarity on brcm BT
+ nodes
+In-Reply-To: <20241018145053.11928-2-didi.debian@cknow.org>
+References: <20241018145053.11928-2-didi.debian@cknow.org>
+Message-ID: <32d1b0cd30e5464e6744f7f1d87d745d@manjaro.org>
+X-Sender: dsimic@manjaro.org
+Content-Type: text/plain; charset=US-ASCII;
+ format=flowed
+Content-Transfer-Encoding: 7bit
+Authentication-Results: ORIGINATING;
+	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
 
-On Thu, Oct 17, 2024 at 09:55:11AM -0600, Eric Snowberg wrote:
-> Introduce a new LSM called clavis.  The motivation behind this LSM is to
-> provide access control for system keys.  The access control list is
-> contained within a keyring call .clavis.  During boot if the clavis= boot
-> arg is supplied with a key id contained within any of the current system
-> keyrings (builtin, secondary, machine, or platform) it shall be used as
-> the root of trust for validating anything that is added to the ACL list.
+Hello Diederik,
+
+On 2024-10-18 16:45, Diederik de Haas wrote:
+> Paragraph "3.4 Power up Timing Sequence" of the AzureWave-CM256SM
+> datasheet mentions the following about the BT_REG_ON pin, which is
+> connected to GPIO0_C4_d:
 > 
-> The first restriction introduced with this LSM is the ability to enforce
-> key usage.  The kernel already has a notion of tracking key usage.  This
-> LSM adds the ability to enforce this usage based on the system owners
-> configuration.
+>   When this pin is low and WL_REG_ON is high,
+>   the BT section is in reset.
 > 
-> Each system key may have one or more uses defined within the ACL list.
-> Until an entry is added to the .clavis keyring, no other system key may
-> be used for any other purpose.
+> Therefor set that pin to GPIO_ACTIVE_HIGH so that it can be pulled low
+> for a reset.
+> If set to GPIO_ACTIVE_LOW, the following errors are observed:
 > 
-> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+>   Bluetooth: hci0: command 0x0c03 tx timeout
+>   Bluetooth: hci0: BCM: Reset failed (-110)
+> 
+> So fix the GPIO polarity by setting it to ACTIVE_HIGH.
+> This also matches what other devices with the same BT device have.
+> 
+> Fixes: a3a625086192 ("arm64: dts: rockchip: Fix reset-gpios property
+> on brcm BT nodes")
+> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+
+I'm a bit late to the party, :) but just wanted to confirm that
+the information provided in the patch description is correct.
+
 > ---
->  Documentation/admin-guide/LSM/clavis.rst      | 191 ++++++++++++++++++
->  MAINTAINERS                                   |   7 +
->  crypto/asymmetric_keys/signature.c            |   4 +
->  include/linux/lsm_count.h                     |   8 +-
->  include/linux/lsm_hook_defs.h                 |   2 +
->  include/linux/security.h                      |   7 +
->  include/uapi/linux/lsm.h                      |   1 +
->  security/Kconfig                              |  10 +-
->  security/clavis/Makefile                      |   1 +
->  security/clavis/clavis.c                      |  26 +++
->  security/clavis/clavis.h                      |   4 +
->  security/clavis/clavis_keyring.c              |  78 ++++++-
->  security/security.c                           |  13 ++
->  .../selftests/lsm/lsm_list_modules_test.c     |   3 +
->  14 files changed, 346 insertions(+), 9 deletions(-)
->  create mode 100644 Documentation/admin-guide/LSM/clavis.rst
->  create mode 100644 security/clavis/clavis.c
+> Changes in v2:
+> - Better commit description with references to the datasheet
+> - Dropped the (self-)blame as it's not useful to evaluate the 
+> usefulness
+>   of this patch
 > 
-> diff --git a/Documentation/admin-guide/LSM/clavis.rst b/Documentation/admin-guide/LSM/clavis.rst
-> new file mode 100644
-> index 000000000000..0e924f638a86
-> --- /dev/null
-> +++ b/Documentation/admin-guide/LSM/clavis.rst
-> @@ -0,0 +1,191 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +======
-> +Clavis
-> +======
-> +
-> +Clavis is a Linux Security Module that provides mandatory access control to
-> +system kernel keys (i.e. builtin, secondary, machine and platform). These
-> +restrictions will prohibit keys from being used for validation. Upon boot, the
-> +Clavis LSM is provided a key id as a boot parameter.  This single key is then
-> +used as the root of trust for any access control modifications made going
-> +forward. Access control updates must be signed and validated by this key.
-> +
-> +Clavis has its own keyring.  All ACL updates are applied through this keyring.
-> +The update must be signed by the single root of trust key.
-> +
-> +When enabled, all system keys are prohibited from being used until an ACL is
-> +added for them.
-> +
-> +On UEFI platforms, the root of trust key shall survive a kexec. Trying to
-> +defeat or change it from the command line is not allowed.  The original boot
-> +parameter is stored in UEFI and will always be referenced following a kexec.
-
-Does this mean someone can reboot the host, boot another OS, store a key
-id in UEFI, and force the root of trust key to be one other than what
-the user lists in clavis= boot argument?
-
-Never mind!  Saw the answer in patches 10 and 11, thanks.
-
-> +The Clavis LSM contains a system keyring call .clavis.  It contains a single
-
-s/call/called/
-
-> +asymmetric key that is used to validate anything added to it.  This key can
-> +be added during boot and must be a preexisting system kernel key.  If the
-> +``clavis=`` boot parameter is not used, any asymmetric key the user owns
-
-Who is "the user", and precisely what does "owns' mean here?  Is it just
-restating that it must be a key already in one of the builtin or secondary
-or platform keyrings?
-
-And this is done by simply loading it into the clavis keyring, right?
-
--serge
+>  arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi  | 2 +-
+>  arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi | 2 +-
+>  2 files changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> index a477bd992b40..0131f2cdd312 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
+> @@ -688,7 +688,7 @@ bluetooth {
+>  		host-wakeup-gpios = <&gpio0 RK_PC3 GPIO_ACTIVE_HIGH>;
+>  		pinctrl-0 = <&bt_enable_h>, <&bt_host_wake_l>, <&bt_wake_h>;
+>  		pinctrl-names = "default";
+> -		shutdown-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
+> +		shutdown-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
+>  		vbat-supply = <&vcc_wl>;
+>  		vddio-supply = <&vcca_1v8_pmu>;
+>  	};
+> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
+> b/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
+> index e9fa9bee995a..1e36f73840da 100644
+> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
+> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
+> @@ -404,7 +404,7 @@ bluetooth {
+>  		host-wakeup-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_HIGH>;
+>  		pinctrl-names = "default";
+>  		pinctrl-0 = <&bt_host_wake_h &bt_reg_on_h &bt_wake_host_h>;
+> -		shutdown-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
+> +		shutdown-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
+>  		vbat-supply = <&vcc_3v3>;
+>  		vddio-supply = <&vcc_1v8>;
+>  	};
 
