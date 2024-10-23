@@ -1,119 +1,118 @@
-Return-Path: <linux-kernel+bounces-378104-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C91A9ACB69
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:39:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E56F9ACB6A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:40:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79E8F1C216ED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:39:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 765C51C214EC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B467B1B4F25;
-	Wed, 23 Oct 2024 13:39:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 264831B6556;
+	Wed, 23 Oct 2024 13:39:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="0u3e/vJC"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="Bi1jmQbS"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C3E51AC8AE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:39:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850A51459F6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:39:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729690790; cv=none; b=YfcuptcY6WkodO+DZUHigG03Uzi+ycuMRQ3Q7xfhxAsDEeeQ4WCJSCRH2JmWRUfp0skU3hBk7IKVugfJYJMZMjVP2yRB1xXfpC0Ev+P3CLXNcnWlAmrMbp6p5mNsW9bu5iEUjjJGOWLOVczQTcN9m9frlwNt5sGrDMfHvW6d160=
+	t=1729690790; cv=none; b=GVIMxgFw4VYry5yWVNndQBPoKyfwdUmbPQa7Zp4764p3zUexAwI/1Ww0wRR2ZBPziDjfj+4r2YQ0xwmdZgFgWduOPQQcJtxE13G/ZSCkhR+jULwXFMriFMZpWJH4+0Yx7aI+gxMnaACPp4a/RxcXBSZ5opaccWzLFQDVUYkTL/U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729690790; c=relaxed/simple;
-	bh=fww7zGlOWrl/yEtr8dz2hpsxY3Qtu4KDv6285xEAWQ8=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=N/Ohjl6LlUDw+xE8/qyusKruRciUCmCUGuoJtokMCmgBQ6x2ymqkZPWVVtoJS+7bRjeljpjycRq40EF3W0t6NXAySAJYN98A+EQcErmtifJ3qXyoraahEkpQKEQX4tHw+3vKZl8kqGcI7r3RXgFbHk+XrOgQXS1HQX7P2pj8UlE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=0u3e/vJC; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d49a7207cso4974438f8f.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:39:48 -0700 (PDT)
+	bh=utKFdkdjq0xMRyp+lW25/4LBehAW3zy6wl4Q0VbobbQ=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ZGBSpmzpWZf2E/vscjZlcO9RSLZeX2n5VspzHqRhgzy6BSzFjLlRJKsagMd5mrtrrb5/tMpB8oZ6VL0nO1KRkQpQtzvlY+25ijcZKFAxQDwcWU6oM5+TXKAsQvqoq6hhArfv6GfbJ3IZkPWCE00l6UvJ5vXiYxFbawotnqscdPw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=Bi1jmQbS; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-4314b316495so66360715e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:39:47 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729690787; x=1730295587; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=fww7zGlOWrl/yEtr8dz2hpsxY3Qtu4KDv6285xEAWQ8=;
-        b=0u3e/vJC0XslKXq6vkdd3s2YL4nXm43WAh2o2UISYk/UUZ2QMtdaBzqP1qGDP1UfBy
-         JNKbWzJONpCvpJe4QTbdUD9ft/rGZi5hZ9P/WdMlET1YOdhNDzxqLhqxEj7aO3dugtF0
-         q5x9yJr+C/3zESBJmeL1Bbx2B3EQxdhM4/kFA1yMEC2ExS7gsfcNuqp8RIJDWD+Wrazm
-         IW3DYgvVUPhsNvHMHUbHkJzqQbtGoI84WEmHcdrjifWTxOMiXEyb2R60SCB5EgGhUIex
-         9/LLPfJk1z8Cx35OtrHQOWxeO7k2VYZAUrEKRIWN+dWBpT4QDA1VRORVgqNZWiI+nkoR
-         EnHg==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729690786; x=1730295586; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HUlJoqDYE70A1gpRbWu72Eu6LvCFd2GVUQe1MqOiVh4=;
+        b=Bi1jmQbSl5+PJZ4eCKiV87PNu5xGFJWRuk5qiJOe7PazwttXnmT7KWAyNIEcp07ZQa
+         F5mzbf7w7GDAZHbQoBdxQhrpP2ajrLPJkHDw4dtIL8D9/CSxMaT/c/7MxkA7itkUxzXU
+         Na7XArHh6XLpDCo/JcYxy4lyH9xB7Swlo8t0dAw6al/2Cb4Rpre/t9O0BqjbWeCQuJ9p
+         Y9saUOLeolwfLW7moCCoipNG6hw2bd/5sxHHX48fyOAcngyqWsCMqXI5zOHgUhc2q1k7
+         OTzDErlXf6YG8Ty/LdXS5/01FKL3wkVDFa5auBGoGbSmbatHdiyKcX7eej+nqSc20u4n
+         vXKA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729690787; x=1730295587;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=fww7zGlOWrl/yEtr8dz2hpsxY3Qtu4KDv6285xEAWQ8=;
-        b=ilYImIyP0jSQrUqHVgSzAdr4s212fuJwFQcQiF7qw2AcYhPkF44/fDtT7FDLrL1Nwa
-         X7ooLCi6H15WvaWUHt/kwySUZvC5Bq/Zmx2xT/Ze/RWYqYDn7z2TN3kKbsxIGvkK76sC
-         AgWJUn1ywMDJC4de4D4v0ql1WQRCbF3bmVGGYi85Ios0u3PWWW9ye93f+ZY+8LBlbJhe
-         7gk7AvWtjKxGUNRR1UZnIZKUgyiG73YxaqJ7Xtu5QvGr3v7RDgvt1SM/l4DAkRDb+13h
-         smy1VN1v2fdteJ9juPU4peHZUzsccsGdX9qeocx+Cq/p5w9jilKEnMYMeSsDcKj8F6ia
-         8IUA==
-X-Forwarded-Encrypted: i=1; AJvYcCVzkH0aMZV+h2VxbbppV9tKrBmNY8ssD1crs/IuJtAm/4f4B6hmC0ap8AvIvcu5bI9VCdNGaR/7da++hSI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1llxWD62Ocr6U/8Tof9S6YOIx2lFKOsSfCtCX6u/PRvzsvrtT
-	Sidq73GpPI/vU1aMZfQQfy1lIU61voEfQx6NvPN8/GgxFNNzhgySEYdkIhwXsVV8h5OD7JQMTfx
-	A0TzZOwC1HKukbTFd3L69iPEQ6qvHHMPbVG7C
-X-Google-Smtp-Source: AGHT+IFShRBq552oUY4eUcelrXqUkBVVSMabJL3W1OrWwQN0r374hQr0VJ1S2nafrc9Qz652fXB6W0lDm/i8uYQMOBg=
-X-Received: by 2002:adf:fe86:0:b0:37d:39c8:ecca with SMTP id
- ffacd0b85a97d-37efcf91ec4mr1467018f8f.55.1729690786711; Wed, 23 Oct 2024
- 06:39:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729690786; x=1730295586;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=HUlJoqDYE70A1gpRbWu72Eu6LvCFd2GVUQe1MqOiVh4=;
+        b=OIVyEFh70GwvaTFRjjRsfjF5SeWhz6o6VW/SxtMhJeLbHHDubjZe+oxS+Ay74OLvWs
+         Lr8BWFjFaDaQbMw8CePN56iD0zKfNhdO/wjmU8CXWjmpKpbztnbC45bhLPDmb/JzRLHb
+         ywwVgc8ov85qPuJIZwpC1wRIiJLfIgC8SiQweLvcpMEqJT+uIv5QH5CoJTxhL+ik1GWU
+         kHzYXUYerBm5OADBftav4PiF6GOa5JwvKf63rMbB01+/Rdx01+MfwMaZAIgq/3W2a0d6
+         zw8KrAIZ4xL8JqaCV1tX16/OzuzxTFqSjYYm0IS9EVMjHq7bd+E9srbuoUyKrMKgBXxi
+         XilQ==
+X-Forwarded-Encrypted: i=1; AJvYcCViLYc6LWysUfapUxgD0qLBSX0p+DReuEq6iqmTyYIzE0S+3MyHid7xsFWeM1FXpdQ8zut22Ep0wroCEnE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YycTTV9p4eNh0Zf+5XWh0aDwT6S80z1iwPNEeCZP+a0yoPZIxgN
+	lJf0Wz74kaGbYV/es7f3jC//xWOF2PwdwsTBVY+CsV8W7JRR/Kz77BiNcN0mISU=
+X-Google-Smtp-Source: AGHT+IExswePHkNE0dR4iXJ9chlIEUNAaME1pWtSUYeDKO2T2oUNoJmlM9/XGeRksrNxlUpMxXvZzw==
+X-Received: by 2002:a05:600c:1d27:b0:431:57d2:d7b4 with SMTP id 5b1f17b1804b1-43184189bf9mr22925705e9.26.1729690785563;
+        Wed, 23 Oct 2024 06:39:45 -0700 (PDT)
+Received: from [192.168.1.62] (2a02-842a-d52e-6101-6f8f-5617-c4b6-8627.rev.sfr.net. [2a02:842a:d52e:6101:6f8f:5617:c4b6:8627])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4ae36sm8949860f8f.43.2024.10.23.06.39.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 06:39:45 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Wed, 23 Oct 2024 15:39:40 +0200
+Subject: [PATCH] iio: gyro: bmg160_core: remove trailing tab
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021-static-mutex-v5-1-8d118a6a99b7@google.com>
- <ZxZxzjEaSZ8e_6mn@boqun-archlinux> <CAH5fLgg=Hb5NDaQQJW4SVh+hCj51bp+BzCMQs=Pg_L+_MMiZgA@mail.gmail.com>
- <ZxfWglfYr52xTIO4@Boquns-Mac-mini.local> <CAH5fLggv98iPAPm=PPa686osmfjqcdH9D3wD47ytCqkqbgwx7w@mail.gmail.com>
-In-Reply-To: <CAH5fLggv98iPAPm=PPa686osmfjqcdH9D3wD47ytCqkqbgwx7w@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Wed, 23 Oct 2024 15:39:32 +0200
-Message-ID: <CAH5fLgjNMNX+BGEecy9paDfvB6etvBuvPSDTgcLtuy0CwnDafw@mail.gmail.com>
-Subject: Re: [PATCH v5] rust: add global lock support
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
-	Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241023-iio-gyro-bmg160_core-remove-trailing-tab-v1-1-9343c7dc4110@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIAJv8GGcC/x3NQQrCMBBG4auUWTuQxCLEq4hI0vzGAZvIpJRK6
+ d0NLr/Nezs1qKDRddhJsUqTWjrsaaDpFUoGS+omZ9xojTuzSOX81cpxzvZiHlNVsGKuK3jRIG8
+ pmZcQ2XpvxgTE5EE991E8Zfuvbvfj+AFbEbIXegAAAA==
+X-Change-ID: 20241023-iio-gyro-bmg160_core-remove-trailing-tab-19904deebd9e
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.14.2
 
-On Tue, Oct 22, 2024 at 7:24=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Tue, Oct 22, 2024 at 6:44=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com>=
- wrote:
-> >
-> > On Tue, Oct 22, 2024 at 02:46:19PM +0200, Alice Ryhl wrote:
-> > > no contents, but implements an unsafe trait saying that there's only
-> > > one static using it.
-> > >
-> > > This way we also do not need the helper module, as we no longer need
-> > > to generate a struct with private fields.
-> > >
-> >
-> > Sounds good to me. Do you plan to let the user name the token type? It'=
-s
-> > fine to me, or do you want to name the token based on the static lock
-> > name?
->
-> The name of the lock has the wrong case, so we can't really reuse it.
+Remove trailing tab
 
-It turns out that we can have a type and a static of the same name, so
-I went ahead and reused the static's name. I think it turned out
-pretty nicely!
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+ drivers/iio/gyro/bmg160_core.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-PTAL: https://lore.kernel.org/all/20241023-static-mutex-v6-1-d7efdadcc84f@g=
-oogle.com/
+diff --git a/drivers/iio/gyro/bmg160_core.c b/drivers/iio/gyro/bmg160_core.c
+index 10728d5ccae398d15c1d51e0380306042675d5c0..9ae03631090a4ac68ffab92726ee8b8e9c1bb401 100644
+--- a/drivers/iio/gyro/bmg160_core.c
++++ b/drivers/iio/gyro/bmg160_core.c
+@@ -444,7 +444,7 @@ static int bmg160_setup_new_data_interrupt(struct bmg160_data *data,
+ 
+ static int bmg160_get_bw(struct bmg160_data *data, int *val)
+ {
+-	struct device *dev = regmap_get_device(data->regmap);	
++	struct device *dev = regmap_get_device(data->regmap);
+ 	int i;
+ 	unsigned int bw_bits;
+ 	int ret;
 
-Alice
+---
+base-commit: 9090ececac9ff1e22fb7e042f3c886990a8fb090
+change-id: 20241023-iio-gyro-bmg160_core-remove-trailing-tab-19904deebd9e
+
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
+
 
