@@ -1,196 +1,371 @@
-Return-Path: <linux-kernel+bounces-377415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377421-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F2E369ABE82
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:15:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95C649ABE97
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:18:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE9D02822E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:15:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8408C1C21082
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BAE61487D6;
-	Wed, 23 Oct 2024 06:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7F371474C5;
+	Wed, 23 Oct 2024 06:18:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="PMqNxbcu"
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com (mail-am7eur03on2066.outbound.protection.outlook.com [40.107.105.66])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="lgArwoFP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD1071494A5;
-	Wed, 23 Oct 2024 06:15:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.105.66
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729664110; cv=fail; b=LtLhPr2l3fnashK4b6g51DY15ePaSSVJzFRPuwb3ckzIFDJEukUQncbM13sbt/2g0m8ZWig6Tff305gvS12C1BL09RsXbgis9ieTq4SVPgOWQHhR4aoGox368o9SH1s5hPEkzZ3tQoLb4NymFEW0Y/f110G+l4lVw8Lza6Sxjw0=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729664110; c=relaxed/simple;
-	bh=ltQ2jgZxPmiCXUSSi5yTWy73QJhGS9yPMVe6tbQp2mc=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=F5XqOpHjz7or35EAnzBsWlyp6+90+Gwv3+XaexkEd3fFsZrRZVxSNFPeajbJ7JSgNRNWDElITfQI66HFC3R3U2Iezq6V9SyyEt/QFheYIOHwqfRnBtKQYIVOcViSl15U2NqeBa7jxEWnpqKRDfmatHraBCVUaKSjZXUJwQ4/i3M=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=PMqNxbcu; arc=fail smtp.client-ip=40.107.105.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=MehQ9il21rhuyvoTBOt+MxOUqgVd01Vrf3buKBzNzXs7pvmo/TQGOOifPJP1Nkm/n94Jfj472TGOSaaAdVE49CjVI3vS2fqGFM7kkRMuy8vGihzf2jmjSVNumD/n2FUCi9nCa5c/R9tXRTimzzvV6nEacDgAs6VZSpxxpSFGrNkS9ll3NwDbAoIpGqOPPlIZgAc3ddLQTI7Cqv0XRjqNB0fQFWWJREgAfcPW2pWFiMGfuwCt4fiwGnJxXu87lXuleri6s5tDFY8Tewrxc7eqhb7oNfhhjQWuGtLalF6eAWCDkjty7KJVN/vvlHUmfmTg9oNYj9lL7I5cG0XuxA8dHQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ltQ2jgZxPmiCXUSSi5yTWy73QJhGS9yPMVe6tbQp2mc=;
- b=x9/VacP47ClgIzM+jcZ8r+MpgtmShEFfdJCkaC0kj5SmlzKeZC+auz7VebK5+gIIvRzSzj3oYb3+cRbeYR28uQx7Vc+MbDvIi6GKdVj3Pylx6/hhmG8kzvEzFbWsJdhLBmS1Rlwqz5wlOOXTTi9zObR5dcqLnchBD3s7SYztFr/0kDXzoVs1ZJ2IZ8TpsGf13860SV4u4p3Q89dBnukjd4UGWl47Syb1i9h+UnWIdwRv42JmrIDGPitfPGZu9oNydr4zBiFGbnD2GjosCVREbazuJ94OKQJApfwRh3IeaaWW63y7s17x8eGITA0qgPw7Cho2dRyVfG/Eul6OosL4YQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ltQ2jgZxPmiCXUSSi5yTWy73QJhGS9yPMVe6tbQp2mc=;
- b=PMqNxbcucUisj5eRSb1zcQSAVufWk62YfGGQswWQr73TuitcGXgKKoVgbLTP7dEZnAineQgtJ/XA1jFVcuP4fvf3iAv3SGjUxT+hqk+s82pNP6hmidLPkmP53//p98TMm6Jb8VeAKu1F+3bO0mZjxZn/Q7BUI9PD2JZ0k2msMdUq/ev3HZFXu/l9WszonJxDXUC3P1jjYtzxftwKqBWlZqAWYJUBbAkWIYoTlkDlzM/12BF5X87hBvYVPIIsqrtQG+QHiwIhQUvMWYU76qOoE5r+w85sw+IV0mqn/6GYSFgEKhm0BCYmpPLVXIsGOz7oraTf1r4ohJaoGmozo5zyug==
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com (2603:10a6:20b:42c::17)
- by GVXPR04MB10588.eurprd04.prod.outlook.com (2603:10a6:150:21a::17) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Wed, 23 Oct
- 2024 06:15:02 +0000
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684]) by AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684%7]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
- 06:15:02 +0000
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Frank Li
-	<frank.li@nxp.com>, "christophe.leroy@csgroup.eu"
-	<christophe.leroy@csgroup.eu>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"horms@kernel.org" <horms@kernel.org>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "alexander.stein@ew.tq-group.com"
-	<alexander.stein@ew.tq-group.com>
-Subject: RE: [PATCH v4 net-next 12/13] net: enetc: add preliminary support for
- i.MX95 ENETC PF
-Thread-Topic: [PATCH v4 net-next 12/13] net: enetc: add preliminary support
- for i.MX95 ENETC PF
-Thread-Index: AQHbJEjZiJnCgXZfMUm6a4pEg4y/p7KT3N1g
-Date: Wed, 23 Oct 2024 06:15:01 +0000
-Message-ID:
- <AS8PR04MB8849916BA8D8F951305B2466964D2@AS8PR04MB8849.eurprd04.prod.outlook.com>
-References: <20241022055223.382277-1-wei.fang@nxp.com>
- <20241022055223.382277-13-wei.fang@nxp.com>
-In-Reply-To: <20241022055223.382277-13-wei.fang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8849:EE_|GVXPR04MB10588:EE_
-x-ms-office365-filtering-correlation-id: cb6e34a8-6aaa-4646-394f-08dcf32a0781
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|376014|366016|7416014|1800799024|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?+/y5pDkok0Baz1DsgR8ghF8oscfb5KOZvDWTtVvGlkMwPfNUjW674YLNPUAz?=
- =?us-ascii?Q?wpVho1G1lVg5DSwtHDAOD54tkn0OG3FbBxxVKldLjrmCcRiB9vPu3mFuZjEA?=
- =?us-ascii?Q?RIPFWx3N2qEhUEF+wmncEHv5LXFOj3qi6sk1Rps8W3CtvoCIno76YuhzUc6d?=
- =?us-ascii?Q?ITl9wMMYevwKpXX9zNtt4jFzKluGuiIZ7VebD2smgyvdVhtGYTT9y2Nfm7bT?=
- =?us-ascii?Q?5eVzsD1TOLkASn3Hyy6cL9neT6NOuTpHgT7EFun77DznZM1/CynPQQGUzDSM?=
- =?us-ascii?Q?R72xA0cCvhZJYHjD5xMzPS+JlTb6Bi4G6MnjPIjo3qIDUQMfz77dOkD62F78?=
- =?us-ascii?Q?/x7djASk1q0pNZIy8Ls+8ZL4JJVTkyYcv/XY20AYUFQ+x5hWWNGJE5kBBOFo?=
- =?us-ascii?Q?o/hd3RhSoVLfKNaCbgLGmEvJEEAxbIXPG1SfEpg46vtGkiODVCFpbr3l2L1k?=
- =?us-ascii?Q?4pQE9AyUcpkjsHcz8k3drJteo+8+7u7kJRiihRU0fGZGzt7AWMcedUo+f/9H?=
- =?us-ascii?Q?wiEoye2fwwh16k1mDKGkZ9/h7IMq08ZdEoebesy8vg0OV7IxbaTVrU/M3BUV?=
- =?us-ascii?Q?8CdkFeAgB8PDw7tuJ7gEbujNPy/4vY1nEoNx0ynaoZ5qE3gwZ1RE5h9RkWU2?=
- =?us-ascii?Q?CI4NQMAdjj5Usoj5vyGy8rDlE5lfNjc1NGdq6WGrWBSM0yE/oPquM5dcAq+g?=
- =?us-ascii?Q?q6wd71e0OO2elW3xdBJXUYwqK1G7Is7PlQZhET/ADeHHVq6WfxVfURD6jZcr?=
- =?us-ascii?Q?qYtr0lzSOrav7MCnnRq2T42ywCNDj0Mjgfjtg41gYQeucsKdDVNZzTbRRQPN?=
- =?us-ascii?Q?h3O4bOCZm838ZFVj0agVFFtWNyIIhLMbnaBSp7j6kDmBXv8zKluRwo52fhcn?=
- =?us-ascii?Q?O31NM7UOpQj9TxSg1aWNjfafVvvLjj1QGU537XYe8uOwuT0DjmpFZr8Nmeaq?=
- =?us-ascii?Q?J1ycG4CSj0meEW27+fUUUdyyzuFf53oGmo+HerCj3e+Pccl18a4oEea8ayiv?=
- =?us-ascii?Q?gJysxMpqySNkPC8St6aHNdVZrAKdFX5Z8X/YFZpjam1V42zq5gmPqjArHeDe?=
- =?us-ascii?Q?j80z18JByCpRmFaMNnS0eQq/0Ss9oM6JevGQNUQCIcDbFGEAq+vAx9jbebNl?=
- =?us-ascii?Q?GipS8xGeUTv0/FaiMAPtY7J9slvwF/+IN2ijkbaBibosjGT2pZ9+Ida1emhx?=
- =?us-ascii?Q?S3osHCtRKFc5MEzBV+1IUiVGCPZFxfFnssG9oxzcukuXENkdkI2nZ+H3kOTY?=
- =?us-ascii?Q?OBSKjrww3jwiWRsjsCNx/h5qn3+vpOrbF98Oc9djeAItjIFdAwCXiY64CSOu?=
- =?us-ascii?Q?SWT/0OXBNlE/5Cvsp+V+9vd6FAcEPtbfbuiTQEffI9Bpgftg/CiOtgbwfYTw?=
- =?us-ascii?Q?rlKB9RvYM70GRBgB9dhB9/eBUwms?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8849.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?+ceZuCGUVY7IL+AARqUh6OioqNZDiG2xRY+WpfcnThagQsng6KGcen63KA/d?=
- =?us-ascii?Q?uRCg7w0yi9cDhIZYPqMkar2tBhqdA7kOAP1AvzphqQeWH9lFR1eLlZzN8GYf?=
- =?us-ascii?Q?XomLUDFZkse99OAmkS++F2G4Fn3qsmr95vjQR11m9IblMemTySv9CPgmC8T9?=
- =?us-ascii?Q?13XcDjl1RImi49eOA+HEY4kblWZrbXwXVMORa9e/0fTdrTrlTRxNBt3Ab7ay?=
- =?us-ascii?Q?Az62zytTzry1iEokLeWhyt7r8V8FWbLNd72OWa4yJyHAL2IXy5b8OV7fZhJ+?=
- =?us-ascii?Q?7Ckfh48dfT3XOR6HmTEu0zcRjk92VdO94RyExLrY1BgApCTOa/QtS56rYCY2?=
- =?us-ascii?Q?EOtR6I7zRYPVCK6w1KthK4wxW27L8z+0oJ6b62VfD2hiUPByV6hPcoCZp6fZ?=
- =?us-ascii?Q?Z2iB9QrnJgaeZ8H7Dn5RSUQISEU0o9IaK0IGZem8wWFhpOXmRVUa5a/27UIg?=
- =?us-ascii?Q?uQccT8HPbb8/Iuy3mjWBsV+csS5CAmEpfpGcGf1DekIMbcbCdnz8cwO87OJt?=
- =?us-ascii?Q?IBQ3HWAemxTFqKnKuQLmjmywtlFD5N35w29FvFyrjrsFEt/W+HIHll7cpoCy?=
- =?us-ascii?Q?JSFXhRArzdrwQw9FK9w3IhtXwnyT7ws0nZkiHq37EUXDT2KLvOSPLVs5nrMv?=
- =?us-ascii?Q?q6yBm2V110khG8oUHJq92UE/bdpLL6C3OBG8li2evtSXBJhujrFN569ZZZAQ?=
- =?us-ascii?Q?Ez4TUKlYrKKTUqVKzvY9PwVCiTHimqG9PbQyCOYfJwMi4qCl0xqkl2KKz+V7?=
- =?us-ascii?Q?D2Y8wCDOMEMdUuplBEvkRh+B1JjLpzLcjMFcElaAXOjF5l7QUOkuFjFp7eXl?=
- =?us-ascii?Q?em5UPdz/eXV7yfbCnnUbwd+LWZCy2adgaYGs9a8LqLAHdRHqBK40f/NgzIwa?=
- =?us-ascii?Q?MyxREwUoox+fBYIXTEvMvS3McO73RPHY7761FavKtaww0O5rgkVgGCj5re3/?=
- =?us-ascii?Q?oPkLhGG9iw0TvH0sTDPGOoI+yp5WZgo6W0wf75UEdjqDE0KONdobqW1z3azj?=
- =?us-ascii?Q?3ScGqhn34DDuJPnzegigbH8E6r8PTEVg0zjdCrLcA99Ozd0WEuhbawVtvAK9?=
- =?us-ascii?Q?pDz4xB70ZeFGm/Rc2yQSRAILBv6g4RbfasMq8oIVnus5aEamkhjGUxYYA/04?=
- =?us-ascii?Q?+O4JfXJQ2HEpqouz7ZLmTwnUdxrvXUfuZo8RW93dV+IBMnQkpAIiGLFYLv9I?=
- =?us-ascii?Q?NMBsFgRcnUrIE2Dl523Vd9sFFOkfE3E1/b9kKuOJypuGYc2Qm2XrEAIJxHc7?=
- =?us-ascii?Q?rLtKC9hjF7LRS7WTVBJvgUeJRL/k7B+mwTOMMKSiaFQIFOxUcG2boqPR76p4?=
- =?us-ascii?Q?X7DEossbHj7BJ/BidE1SWrT7Z7x6lOVnyiGh3yjtZ1U4+rMw1/hFhPrxDEGa?=
- =?us-ascii?Q?6HuSDwIVNIyut94uXOAxFDZMGzHREJLvpGG7PLu6k5a2obkMtsappNeZwnlM?=
- =?us-ascii?Q?mXpi36imNEw+eeyH30wVl3jAcdp6un99v6cSEPOdfNjWC8PpK1Trkmkgjec2?=
- =?us-ascii?Q?azilzYtjc/hOmAlJ1aGegrV4FUZJbAc8t21SDtgpGaknplf/DaCyvfeA98v7?=
- =?us-ascii?Q?8Nj6RMmmdBqqX5ZckdlyIow7MuRflftUdbMHG4Fx?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E1E66136345;
+	Wed, 23 Oct 2024 06:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729664301; cv=none; b=shbykP86KwvOm1W6t8UIK3+oq83aMOa63CylR0UJUgQmyOspcd1L0EP1KmkSkL2+FOhWvIppAJwcm5PEIojn/dpVf7XKgClYfNAinuzzTOFXuF5fdtSdc/KI7gdJhEXZ3Dbq2hGNNhKBlyo7HoF+W6ZXyzsDV8o8UVLEwvyDrfM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729664301; c=relaxed/simple;
+	bh=2+ICs3kC/mbX717im6qBHiQDQAQPoiDdqrEcVdvVOq0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uWWCBNij6FvZXfoQIAunWOJ0C2fxU6gR6BN/zwNRf1/Xl/DSeSecCFcezWlBxa4Yl7xgL07+Ty98vhhAPAN3OOmiYmmpyas6X0oWIHis/dpAeL653VhdbWj3s2zIhE6zym/kCX5TWluzYPCGU4A/AtrWRxXqY1Hu1Y2hLYgmQss=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=lgArwoFP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E544BC4CEC6;
+	Wed, 23 Oct 2024 06:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729664300;
+	bh=2+ICs3kC/mbX717im6qBHiQDQAQPoiDdqrEcVdvVOq0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=lgArwoFPknhcMuq415v5U60qBlz+fUZlVxfMTw37SlArNjqMijyHRYYa7KsnAFM3i
+	 EWOLq6cJLkqrwfC6IYi2GuP4mdWUkWprfikXmtGYcZyVUvbWtUaxFcGaKYSsIzpr/q
+	 W8rPuYuzF6zH8MIybnMgkwRdmsSrL3CGRzx30bdywa5766TObdBMZfwvpKCRc75Wzr
+	 9z1yw56sflxQ6rsTAMzjQsadIHtjy4DTuzGtUdfLhyUgaB+6qAeKeJhk9kSbvXgURN
+	 3vSMRmL1VqqxFPrFG0WOfhhyodu6eNYgn9UBGxOCnFAmoeNtKsmSv/7n4bgTRLczgY
+	 YGMLmP9wCXoPQ==
+Date: Tue, 22 Oct 2024 23:18:18 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Ian Rogers <irogers@google.com>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	Kan Liang <kan.liang@linux.intel.com>,
+	Thomas Richter <tmricht@linux.ibm.com>,
+	James Clark <james.clark@linaro.org>,
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] perf check: Add sanitizer feature and use to avoid
+ test failure
+Message-ID: <ZxiVKvmzjeHd4xBQ@google.com>
+References: <20241018055627.1005723-1-irogers@google.com>
+ <Zxc6_jZdDcWgtEom@google.com>
+ <CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8849.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: cb6e34a8-6aaa-4646-394f-08dcf32a0781
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 06:15:01.9420
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PxCZTNCMDH3VipOZNoCL0eDyp+8MM3D/yjNEmzh/YV52WchwQstIovx2yKHACL76RsOsmkgbQzJ5E1hdxt4Xhg==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: GVXPR04MB10588
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com>
 
-> -----Original Message-----
-> From: Wei Fang <wei.fang@nxp.com>
-> Sent: Tuesday, October 22, 2024 8:52 AM
-[...]
-> Subject: [PATCH v4 net-next 12/13] net: enetc: add preliminary support fo=
-r
-> i.MX95 ENETC PF
->=20
-> The i.MX95 ENETC has been upgraded to revision 4.1, which is different
-> from the LS1028A ENETC (revision 1.0) except for the SI part. Therefore,
-> the fsl-enetc driver is incompatible with i.MX95 ENETC PF. So add new
-> nxp-enetc4 driver to support i.MX95 ENETC PF, and this driver will be
-> used to support the ENETC PF with major revision 4 for other SoCs in the
-> future.
->=20
-> Currently, the nxp-enetc4 driver only supports basic transmission feature
-> for i.MX95 ENETC PF, the more basic and advanced features will be added
-> in the subsequent patches.
->=20
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
-> ---
+On Tue, Oct 22, 2024 at 10:39:36AM -0700, Ian Rogers wrote:
+> On Mon, Oct 21, 2024 at 10:41 PM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > On Thu, Oct 17, 2024 at 10:56:27PM -0700, Ian Rogers wrote:
+> > > Sanitizer builds can break expectations for test disassembly,
+> > > particularly in the annotate test. Add features for the different
+> > > sanitizer options seen in the source tree. Use the added sanitizer
+> > > feature to skip the annotate test when sanitizers are in use.
+> >
+> > Can you please split the perf check changes from the test change?
+> > It's good to add an example output (of perf version --build-options)
+> > with new sanitizer features.
+> 
+> Okay, will split/add in v3.
 
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+Thanks!
+
+> 
+> > Also it might be helpful if you share how the test fails.  I don't
+> > think the disasm format is changed.  Then it probably missed to find
+> > the target symbol in the first 250 lines for some reason.
+> 
+> Sure, the reproduction is trivial, just add -fsanitize=address, so I'm
+> surprised you're not already seeing it:
+> ```
+> $ perf test annotate -v
+> --- start ---
+> test child forked, pid 444258
+>  68e8a0-68e96b l noploop
+> perf does have symbol 'noploop'
+> Basic perf annotate test
+>          : 0      0x68e8a0 <noploop>:
+>     0.00 :   68e8a0:       pushq   %rbp
+>     0.00 :   68e8a1:       movq    %rsp, %rbp
+>     0.00 :   68e8a4:       subq    $0x30, %rsp
+>     0.00 :   68e8a8:       movq    %fs:0x28, %rax
+>     0.00 :   68e8b1:       movq    %rax, -8(%rbp)
+>     0.00 :   68e8b5:       movl    %edi, -0xc(%rbp)
+>     0.00 :   68e8b8:       movq    %rsi, -0x18(%rbp)
+>     0.00 :   68e8bc:       movl    $1, -0x1c(%rbp)
+>     0.00 :   68e8c3:       cmpl    $0, -0xc(%rbp)
+>     0.00 :   68e8c7:       jle     0x68e8fe
+>     0.00 :   68e8cd:       movq    -0x18(%rbp), %rax
+>     0.00 :   68e8d1:       movq    %rax, -0x28(%rbp)
+>     0.00 :   68e8d5:       shrq    $3, %rax
+>     0.00 :   68e8d9:       cmpb    $0, 0x7fff8000(%rax)
+>     0.00 :   68e8e0:       je      0x68e8ef
+>     0.00 :   68e8e6:       movq    -0x28(%rbp), %rdi
+>     0.00 :   68e8ea:       callq   0x2adea0
+>     0.00 :   68e8ef:       movq    -0x28(%rbp), %rax
+>     0.00 :   68e8f3:       movq    (%rax), %rdi
+>     0.00 :   68e8f6:       callq   0x28fac0
+>     0.00 :   68e8fb:       movl    %eax, -0x1c(%rbp)
+>     0.00 :   68e8fe:       movl    $2, %edi
+>     0.00 :   68e903:       leaq    0x66(%rip), %rsi     # 68e970 <sighandler>
+>     0.00 :   68e90a:       callq   0x27e650
+>     0.00 :   68e90f:       movl    $0xe, %edi
+>     0.00 :   68e914:       leaq    0x55(%rip), %rsi     # 68e970 <sighandler>
+>     0.00 :   68e91b:       callq   0x27e650
+>     0.00 :   68e920:       movl    -0x1c(%rbp), %edi
+>     0.00 :   68e923:       callq   0x2086e0
+>     0.03 :   68e928:       movl    0x18aca72(%rip), %eax        #
+> 1f3b3a0 <buildid_dir+0xa0>
+>     0.00 :   68e92e:       cmpl    $0, %eax
+>     0.00 :   68e931:       setne   %al
+>    50.02 :   68e934:       xorb    $0xff, %al
+>     0.00 :   68e936:       testb   $1, %al
+>    41.28 :   68e938:       jne     0x68e943
+>     0.00 :   68e93e:       jmp     0x68e948
+>     8.67 :   68e943:       jmp     0x68e928
+>     0.00 :   68e948:       movq    %fs:0x28, %rax
+>     0.00 :   68e951:       movq    -8(%rbp), %rcx
+>     0.00 :   68e955:       cmpq    %rcx, %rax
+>     0.00 :   68e958:       jne     0x68e966
+>     0.00 :   68e95e:       xorl    %eax, %eax
+>     0.00 :   68e960:       addq    $0x30, %rsp
+>     0.00 :   68e964:       popq    %rbp
+>     0.00 :   68e965:       retq
+>     0.00 :   68e966:       callq   0x2086f0
+>     0.00 :   2d6910:       endbr64
+>     0.00 :   2d6914:       pushq   %rbp
+>     0.00 :   2d6915:       pushq   %r15
+>     0.00 :   2d6917:       pushq   %r14
+>     0.00 :   2d6919:       pushq   %r13
+>     0.00 :   2d691b:       pushq   %r12
+>     0.00 :   2d691d:       pushq   %rbx
+>     0.00 :   2d691e:       subq    $0x48, %rsp
+>     0.00 :   2d6922:       movq    %rdx, 0x20(%rsp)
+>     0.00 :   2d6927:       movq    %r8, 0x30(%rsp)
+>     0.00 :   2d692c:       leal    -1(%r8), %eax
+>     0.00 :   2d6930:       cmpl    $2, %eax
+>     0.00 :   2d6933:       jae     0x2d6b2c
+>     0.00 :   2d6939:       movq    %rsi, %r9
+>     0.00 :   2d693c:       movq    %rdi, %r12
+>     0.00 :   2d693f:       cmpb    $0, 0x1c5f99c(%rip)  # 1f362e2
+> <cpu_bitmap+0x122>
+>     0.00 :   2d6946:       movl    $8, %eax
+>     0.00 :   2d694b:       movl    $1, %ebx
+>     0.00 :   2d6950:       cmoveq  %rax, %rbx
+>     0.00 :   2d6954:       cmpb    $0, 0x1c5f989(%rip)  # 1f362e4
+> <cpu_bitmap+0x124>
+>     0.00 :   2d695b:       movq    %rsi, 0x28(%rsp)
+>     0.00 :   2d6960:       je      0x2d697e
+>     0.00 :   2d6962:       leaq    0x8e9708(%rip), %rdi
+>     0.00 :   2d6969:       movq    %rcx, %rsi
+>     0.00 :   2d696c:       movq    %r12, %rdx
+>     0.00 :   2d696f:       movq    %r9, %rcx
+>     0.00 :   2d6972:       xorl    %eax, %eax
+>     0.00 :   2d6974:       callq   0x2c18c0
+>     0.00 :   2d6979:       movq    0x28(%rsp), %r9
+>     0.00 :   2d697e:       leaq    -1(%rbx), %rax
+>     0.00 :   2d6982:       andq    %r12, %rax
+>     0.00 :   2d6985:       leaq    (%rbx, %r12), %r13
+>     0.00 :   2d6989:       subq    %rax, %r13
+>     0.00 :   2d698c:       testq   %rax, %rax
+>     0.00 :   2d698f:       cmoveq  %r12, %r13
+>     0.00 :   2d6993:       leaq    8(%r13), %rax
+>     0.00 :   2d6997:       cmpq    %r9, %rax
+>     0.00 :   2d699a:       jbe     0x2d69ab
+>     0.00 :   2d699c:       addq    $0x48, %rsp
+>     0.00 :   2d69a0:       popq    %rbx
+>     0.00 :   2d69a1:       popq    %r12
+>     0.00 :   2d69a3:       popq    %r13
+>     0.00 :   2d69a5:       popq    %r14
+>     0.00 :   2d69a7:       popq    %r15
+>     0.00 :   2d69a9:       popq    %rbp
+>     0.00 :   2d69aa:       retq
+>     0.00 :   2d69ab:       movabsq $0x7fffffffbfff, %r15
+>     0.00 :   2d69b5:       leaq    0x40(%rsp), %rbp
+>     0.00 :   2d69ba:       movq    %r12, 0x38(%rsp)
+>     0.00 :   2d69bf:       jmp     0x2d69ea
+>     0.00 :   2d69c1:       nopw    %cs:(%rax, %rax)
+>     0.00 :   2d69d0:       movq    0x38(%rsp), %r12
+>     0.00 :   2d69d5:       movq    0x28(%rsp), %r9
+>     0.00 :   2d69da:       leaq    (%rbx, %r13), %rax
+>     0.00 :   2d69de:       addq    $8, %rax
+>     0.00 :   2d69e2:       addq    %rbx, %r13
+>     0.00 :   2d69e5:       cmpq    %r9, %rax
+>     0.00 :   2d69e8:       ja      0x2d699c
+>     0.00 :   2d69ea:       movq    (%r13), %r14
+>     0.00 :   2d69ee:       leaq    -0x4000(%r14), %rax
+>     0.00 :   2d69f5:       cmpq    %r15, %rax
+>    55.45 :   2d69f8:       ja      0x2d69da
+>     0.00 :   2d69fa:       movq    %r14, %rdi
+>    44.55 :   2d69fd:       callq   0x20df90
+>     0.00 :   2d6a02:       movq    %rax, 0x18(%rsp)
+>     0.00 :   2d6a07:       testq   %rax, %rax
+>     0.00 :   2d6a0a:       je      0x2d69d5
+>     0.00 :   2d6a0c:       cmpq    %r12, %rax
+>     0.00 :   2d6a0f:       je      0x2d69d5
+>     0.00 :   2d6a11:       movq    %rbp, %r12
+>     0.00 :   2d6a14:       movq    %rbp, %rdi
+>     0.00 :   2d6a17:       movq    %rax, %rsi
+>     0.00 :   2d6a1a:       callq   0x20e190
+>     0.00 :   2d6a1f:       movq    %rbp, %rdi
+>     0.00 :   2d6a22:       callq   0x20e1d0
+>     0.00 :   2d6a27:       cmpl    $2, %eax
+>     0.00 :   2d6a2a:       je      0x2d69d0
+>     0.00 :   2d6a2c:       movq    %rbp, %rdi
+>     0.00 :   2d6a2f:       callq   0x20e1d0
+>     0.00 :   2d6a34:       cmpl    $3, %eax
+>     0.00 :   2d6a37:       je      0x2d69d0
+>     0.00 :   2d6a39:       cmpb    $0, 0x1c5f8a3(%rip)  # 1f362e3
+> <cpu_bitmap+0x123>
+>     0.00 :   2d6a40:       jne     0x2d6aab
+>     0.00 :   2d6a42:       movq    %r13, %rdi
+>     0.00 :   2d6a45:       callq   0x2a9030
+>     0.00 :   2d6a4a:       testb   %al, %al
+>     0.00 :   2d6a4c:       je      0x2d6aab
+>     0.00 :   2d6a4e:       cmpb    $0, 0x1c5f88f(%rip)  # 1f362e4
+> <cpu_bitmap+0x124>
+>     0.00 :   2d6a55:       je      0x2d69d0
+>     0.00 :   2d6a5b:       movq    0x18(%rsp), %rax
+>     0.00 :   2d6a60:       movq    %rax, 8(%rsp)
+>     0.00 :   2d6a65:       movq    %rbp, %r12
+>     0.00 :   2d6a68:       movq    %rbp, %rdi
+>     0.00 :   2d6a6b:       callq   0x20e210
+>     0.00 :   2d6a70:       movq    8(%rsp), %rcx
+>     0.00 :   2d6a75:       addq    %rcx, %rax
+>     0.00 :   2d6a78:       movq    %rax, 0x10(%rsp)
+>     0.00 :   2d6a7d:       movq    %rbp, %rdi
+>     0.00 :   2d6a80:       callq   0x20e210
+>     0.00 :   2d6a85:       leaq    0x8e95ff(%rip), %rdi
+>     0.00 :   2d6a8c:       movq    %r13, %rsi
+>     0.00 :   2d6a8f:       movq    %r14, %rdx
+>     0.00 :   2d6a92:       movq    8(%rsp), %rcx
+>     0.00 :   2d6a97:       movq    0x10(%rsp), %r8
+>     0.00 :   2d6a9c:       movq    %rax, %r9
+>     0.00 :   2d6a9f:       xorl    %eax, %eax
+>     0.00 :   2d6aa1:       callq   0x2c18c0
+>     0.00 :   2d6aa6:       jmp     0x2d69d0
+>     0.00 :   2d6aab:       movq    %rbp, %r12
+>     0.00 :   2d6aae:       movq    %rbp, %rdi
+>     0.00 :   2d6ab1:       movq    0x30(%rsp), %rsi
+>     0.00 :   2d6ab6:       callq   0x20e1f0
+>     0.00 :   2d6abb:       cmpb    $0, 0x1c5f822(%rip)  # 1f362e4
+> <cpu_bitmap+0x124>
+>     0.00 :   2d6ac2:       je      0x2d6b0c
+>     0.00 :   2d6ac4:       movq    0x18(%rsp), %rax
+>     0.00 :   2d6ac9:       movq    %rax, 8(%rsp)
+>     0.00 :   2d6ace:       movq    %r12, %rdi
+>     0.00 :   2d6ad1:       callq   0x20e210
+>     0.00 :   2d6ad6:       movq    8(%rsp), %rcx
+>     0.00 :   2d6adb:       addq    %rcx, %rax
+>     0.00 :   2d6ade:       movq    %rax, 0x10(%rsp)
+>     0.00 :   2d6ae3:       movq    %r12, %rdi
+>     0.00 :   2d6ae6:       callq   0x20e210
+>     0.00 :   2d6aeb:       leaq    0x8e95dd(%rip), %rdi
+>     0.00 :   2d6af2:       movq    %r13, %rsi
+>     0.00 :   2d6af5:       movq    %r14, %rdx
+>     0.00 :   2d6af8:       movq    8(%rsp), %rcx
+>     0.00 :   2d6afd:       movq    0x10(%rsp), %r8
+>     0.00 :   2d6b02:       movq    %rax, %r9
+>     0.00 :   2d6b05:       xorl    %eax, %eax
+>     0.00 :   2d6b07:       callq   0x2c18c0
+>     0.00 :   2d6b0c:       cmpq    $0, 0x20(%rsp)
+>     0.00 :   2d6b12:       je      0x2d69d0
+>     0.00 :   2d6b18:       movq    0x20(%rsp), %rdi
+>     0.00 :   2d6b1d:       leaq    0x18(%rsp), %rsi
+>     0.00 :   2d6b22:       callq   0x2b45a0
+>     0.00 :   2d6b27:       jmp     0x2d69d0
+>     0.00 :   2d6b2c:       leaq    0x8e94cf(%rip), %rdi
+>     0.00 :   2d6b33:       leaq    0x8e94fe(%rip), %rdx
+>     0.00 :   2d6b3a:       movl    $0x128, %esi
+>     0.00 :   2d6b3f:       xorl    %ecx, %ecx
+>     0.00 :   2d6b41:       xorl    %r8d, %r8d
+>     0.00 :   2d6b44:       callq   0x2c77f0
+>     0.00 :   9200:       pushq   %r15
+>     0.00 :   9202:       pushq   %r14
+>     0.00 :   9204:       pushq   %r13
+>     0.00 :   9206:       pushq   %r12
+>     0.00 :   9208:       pushq   %rbp
+>     0.00 :   9209:       pushq   %rbx
+>     0.00 :   920a:       subq    $0x88, %rsp
+>     0.00 :   9211:       movq    %rdi, 8(%rsp)
+>     0.00 :   9216:       movl    8(%r9), %edi
+>     0.00 :   921a:       movq    %r8, 0x20(%rsp)
+>     0.00 :   921f:       movq    0xc0(%rsp), %rbp
+>     0.00 :   9227:       movq    %rdx, 0x28(%rsp)
+>     0.00 :   922c:       movq    0xd8(%rsp), %r8
+>     0.00 :   9234:       movq    %rdi, %r10
+>     0.00 :   9237:       movq    %rcx, 0x10(%rsp)
+>     0.00 :   923c:       movq    0xe8(%rsp), %r11
+>     0.00 :   9244:       movq    (%r9), %r13
+>     0.00 :   9247:       movl    %esi, %eax
+>     0.00 :   9249:       movl    0xe0(%rsp), %r9d
+>     0.00 :   9251:       movl    %esi, %r15d
+>     0.00 :   9254:       shrl    $6, %eax
+>     0.00 :   9257:       movq    %r8, %r12
+>     0.00 :   925a:       movl    %eax, 0x18(%rsp)
+>     0.00 :   925e:       andl    $2, %r9d
+>     0.00 :   9262:       jmp     0x92ff
+>     0.00 :   9267:       nopw    (%rax, %rax)
+>     0.00 :   9270:       movl    0x30c(%rbx), %edi
+>     0.00 :   9276:       testl   %edi, %edi
+>     0.00 :   9278:       je      0x92f2
+>     0.00 :   927a:       movq    0x70(%rbx), %rax
+>     0.00 :   927e:       movl    $0, 0x74(%rsp)
+>     0.00 :   9286:       movq    $0, 0x78(%rsp)
+>     0.00 :   928f:       movq    8(%rax), %rsi
+>     0.00 :   9293:       xorl    %eax, %eax
+>     0.00 :   9295:       testb   $0x20, 0x336(%rbx)
+>     0.00 :   929c:       je      0x92a4
+>     0.00 :   929e:       movq    (%rbx), %rax
+>     0.00 :   92a1:       addq    %rax, %rsi
+>     0.00 :   92a4:       movq    0x68(%rbx), %rdx
+>     0.00 :   92a8:       addq    8(%rdx), %rax
+>     0.00 :   92ac:       movq    0x318(%rbx), %rdx
+>     0.00 :   92b3:       movq    %rax, %r8
+>     0.00 :   92b6:       testq   %rdx, %rdx
+>     0.00 :   92b9:       je      0x93b0
+>     0.00 :   92bf:       movl    0x314(%rbx), %ecx
+>     0.00 :   92c5:       movl    0x18(%rsp), %eax
+>    13.66 :   92c9:       andl    0x310(%rbx), %eax
+>    16.28 :   92cf:       movq    (%rdx, %rax, 8), %rax
+>     0.00 :   92d3:       movl    %r15d, %edx
+>     0.00 :   92d6:       shrl    %cl, %edx
+>     0.00 :   92d8:       movl    %edx, %ecx
+>     0.00 :   92da:       movq    %rax, %rdx
+> Basic annotate [Failed: missing disasm output when specifying the target symbol]
+
+Hmm.. this is strange.  The error message says it failed when it
+specified the target symbol (noploop) for perf annotate.
+
+As it's the dominant symbol, it should have the same output for the
+first function (noploop) whether it has target symbol or not and it
+should match the disasm_regex.  I'm curious how it can fail here.
+
+Thanks,
+Namhyung
+
+
+> ---- end(-1) ----
+>  77: perf annotate basic tests                                       : FAILED!
+> ```
+> 
+> Thanks,
+> Ian
 
