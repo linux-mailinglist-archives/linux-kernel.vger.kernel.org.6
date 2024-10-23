@@ -1,126 +1,119 @@
-Return-Path: <linux-kernel+bounces-378045-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378046-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A9E5D9ACA9C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:53:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BFB39ACA9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C02921C20F2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:53:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E6E28611F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:54:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA6861AC43A;
-	Wed, 23 Oct 2024 12:53:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73951AC458;
+	Wed, 23 Oct 2024 12:54:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="f5SWrEH2"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r4sJ60jG"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0FE1ABEC2
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:53:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E8E130AF6;
+	Wed, 23 Oct 2024 12:54:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729688034; cv=none; b=O69a+/l7qbgyezryDTt5VZ6pP1HYEgAsYXnXagigj2h7F+yLeB1lUU82ZOSEvZmu4YUoZlE9RoDzywPhYMUU//rZfkJB/6DQVzY8KnsuH3f/xzAbbaXe9UcfmR8mqOcP1BEVz6Peekhj41jTZDvxOb1VVo9cx9SmpqDg2cLOHp8=
+	t=1729688042; cv=none; b=lw9SdgXUa1RUeeXPi447mc0JW//W9p6yYzs/nSVBG+2mUBMMa01eAdm7BlhqX2TiW9xOxN4I6amINVn3s+q6wy3vycOcuI5Hx/aMz2BVZVBUWBzSKomFwYB0m+3hJ75eEcDz3KOrN9O0l+nBmDlv1GlJWP7pJSjBy3Ss4DY48VQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729688034; c=relaxed/simple;
-	bh=s/ijLkvgmNSIDW3lP3xx7kywtJiOOd1nWwIXo6qDPpU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=kXWo1udymkMb/wD/+S16ahP3qtoQAqdSQDnCfA2VP/Wq1P99DZSP+KWhM3DDH2dnAWUK5gFogN9jl1w8E2tfIiDUnf5sWoqfeBgW69exPD5umYBKDgVhhrdUctOUVELom+XgX1fM2e+RULPidwVABtZXm467+sD3ZOl9PcAANeg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=f5SWrEH2; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729688032; x=1761224032;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=s/ijLkvgmNSIDW3lP3xx7kywtJiOOd1nWwIXo6qDPpU=;
-  b=f5SWrEH2Y1Y3XwqBtWiKZSo9ksjH17JI0pYI+uHHmDXzbAyWhUpDX69P
-   JyIIHvuOC/Ov+N6P/h/FvroRcUGupCre4qNmhBcmJOcdG1XFoSAPcD+fO
-   Iy/tOmnDTlxmiyOSCW0p307xJMG7ZFC2UqfD0Y5UR7W7b2SNW7gfXFMh1
-   Ndi6KIRSp6xGkMk0vDC94ULfu+LXVkecjWsKwvTmpQ3K3SHE6TCafOl4k
-   2mbGyFIMRrE6XZLu5XomGdT/U/vf42BAgibqoI7yviLdtQeMgM7WGaw2S
-   RyOhEwtOqkP08Ldd5XOn01vHt7aysEas/Lay0UNbMs45U7IdYwbvqqBjk
-   g==;
-X-CSE-ConnectionGUID: yX8ogtc4SQaRkp1NdHIfWw==
-X-CSE-MsgGUID: VIguMflaSZyVEuYIBeyYWg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39820799"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39820799"
-Received: from fmviesa007.fm.intel.com ([10.60.135.147])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 05:53:52 -0700
-X-CSE-ConnectionGUID: FTXxJjn7SVSm7c7cxdb7qg==
-X-CSE-MsgGUID: 3LglOoHNTba2rgHa1ro+ZA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="79859858"
-Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.84])
-  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 05:53:48 -0700
-From: Jani Nikula <jani.nikula@linux.intel.com>
-To: Uros Bizjak <ubizjak@gmail.com>, intel-gfx@lists.freedesktop.org,
- dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>, Joonas Lahtinen
- <joonas.lahtinen@linux.intel.com>, Rodrigo Vivi <rodrigo.vivi@intel.com>,
- Tvrtko Ursulin <tursulin@ursulin.net>, David Airlie <airlied@gmail.com>,
- Simona Vetter <simona@ffwll.ch>
-Subject: Re: [PATCH] drm/i915/active: Use try_cmpxchg() in active_fence_cb()
-In-Reply-To: <20241003084533.871524-1-ubizjak@gmail.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
-References: <20241003084533.871524-1-ubizjak@gmail.com>
-Date: Wed, 23 Oct 2024 15:53:46 +0300
-Message-ID: <87ttd3t1yd.fsf@intel.com>
+	s=arc-20240116; t=1729688042; c=relaxed/simple;
+	bh=tXaxKqHuCg1Tvq9+YFI+ZgXBgan+kLSt1m1umb+dr9c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rqH3P6bK4o7ROVZnD1hGAACO18MAsUYqAu3N8MkYmBc8mYitwTdSRd/553zMl5D+UOzjK0bXjsEbVrMzfL0y7kXxWM81vMfW50bjDynARL9ITlNEZORAGFWjY+2CUIv/pnHHQZdSTh/AX2ThIz9ikOrgm4xdC6p3koT2OagC7RE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r4sJ60jG; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N2HC002916;
+	Wed, 23 Oct 2024 12:53:58 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=gJjkoWx0v7EJieqmAwvTwDuoLvPP07
+	4KFvWCYB8i+LU=; b=r4sJ60jGae15GMN6FQ6YWJJs2rKKoF279cH9jmuu5RwR5l
+	y117AQ1ebruk1EUorF/4xKQ6sv4vM7uz2PBvP+NdjumT+kfuRqneV5yvFJlQqdD/
+	ZveTO/XxD/mybfM07bHOcrbairbzzIy2ZLk775qqu47WzH7VBFIA/ZBWpklnjxxR
+	C8Q4W3wwtJM4I2RByN3a2PkRxsXWl2HyWqNbzezKb8O8Lc6E7mk/IsXR8QaT6Aiz
+	yE8wg4xQHMBaj+oE7lzavJ98rehlL2HvvKg7r1I2O/xVg8YZjTNJNs7WfEGMCoBI
+	9wKHU2XNVktwVoPsPa+302x0PaKtePADjQUCBNiw==
+Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafu13j-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 12:53:58 +0000 (GMT)
+Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBRcPn014308;
+	Wed, 23 Oct 2024 12:53:57 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emhfjvtc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 12:53:57 +0000
+Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NCrrOi57344388
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 12:53:53 GMT
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 9D27820043;
+	Wed, 23 Oct 2024 12:53:53 +0000 (GMT)
+Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3A5AE20040;
+	Wed, 23 Oct 2024 12:53:53 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 23 Oct 2024 12:53:53 +0000 (GMT)
+Date: Wed, 23 Oct 2024 14:53:51 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Alexander Egorenkov <egorenar@linux.ibm.com>, linux-kernel@vger.kernel.org,
+        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
+        Alexander Gordeev <agordeev@linux.ibm.com>,
+        Christian Borntraeger <borntraeger@linux.ibm.com>,
+        Sven Schnelle <svens@linux.ibm.com>
+Subject: Re: [PATCH v3] s390/kdump: make is_kdump_kernel() consistently
+ return "true" in kdump environments only
+Message-ID: <20241023125351.8013-I-hca@linux.ibm.com>
+References: <20241023090651.1115507-1-david@redhat.com>
+ <87ttd3t3v7.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+ <7da9f43f-e2a8-4079-8b1d-d7b16d8f388e@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7da9f43f-e2a8-4079-8b1d-d7b16d8f388e@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: AjL6nn8VDTpxcV38jjRBC9177R16lS95
+X-Proofpoint-ORIG-GUID: AjL6nn8VDTpxcV38jjRBC9177R16lS95
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 mlxlogscore=924 phishscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230076
 
-On Thu, 03 Oct 2024, Uros Bizjak <ubizjak@gmail.com> wrote:
-> Replace this pattern in active_fence_cb():
->
->     cmpxchg(*ptr, old, new) == old
->
-> ... with the simpler and faster:
->
->     try_cmpxchg(*ptr, &old, new)
->
-> The x86 CMPXCHG instruction returns success in the ZF flag,
-> so this change saves a compare after the CMPXCHG.
->
-> Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-> Cc: Jani Nikula <jani.nikula@linux.intel.com>
-> Cc: Joonas Lahtinen <joonas.lahtinen@linux.intel.com>
-> Cc: Rodrigo Vivi <rodrigo.vivi@intel.com>
-> Cc: Tvrtko Ursulin <tursulin@ursulin.net>
-> Cc: David Airlie <airlied@gmail.com>
-> Cc: Simona Vetter <simona@ffwll.ch>
+On Wed, Oct 23, 2024 at 02:22:18PM +0200, David Hildenbrand wrote:
+> On 23.10.24 14:12, Alexander Egorenkov wrote:
+> > Here is a typo in the condition, a redundant '!' before is_ipl_type_dump().
+> > 
+> 
+> Thanks for catching these! Too much going back and forth ... :)
+> 
+> > Otherwise, looks very good to me.
+> 
+> Thanks for the fast review. I assume these can be fixed up when applying.
+> But please let me know if a v3 is preferred, and I can send one after
+> waiting a couple of days.
 
-Pushed to drm-intel-next, thanks for the patch.
-
-BR,
-Jani.
-
-> ---
->  drivers/gpu/drm/i915/i915_active.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/drivers/gpu/drm/i915/i915_active.c b/drivers/gpu/drm/i915/i915_active.c
-> index 5ec293011d99..35319228bc51 100644
-> --- a/drivers/gpu/drm/i915/i915_active.c
-> +++ b/drivers/gpu/drm/i915/i915_active.c
-> @@ -212,7 +212,7 @@ active_fence_cb(struct dma_fence *fence, struct dma_fence_cb *cb)
->  	struct i915_active_fence *active =
->  		container_of(cb, typeof(*active), cb);
->  
-> -	return cmpxchg(__active_fence_slot(active), fence, NULL) == fence;
-> +	return try_cmpxchg(__active_fence_slot(active), &fence, NULL);
->  }
->  
->  static void
-
--- 
-Jani Nikula, Intel
+Fixed typos, slightly reworded subject and commit message, and applied.
+Thanks a lot!
 
