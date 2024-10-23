@@ -1,189 +1,121 @@
-Return-Path: <linux-kernel+bounces-377571-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377585-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7DF969AC0B2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:52:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 79A039AC0EE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:01:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 298FBB233D9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:52:49 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 248E11F21926
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:01:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 457DD156220;
-	Wed, 23 Oct 2024 07:52:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZnDdFELj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 484A115887C;
+	Wed, 23 Oct 2024 08:00:56 +0000 (UTC)
+Received: from mblankhorst.nl (lankhorst.se [141.105.120.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86EC715533F;
-	Wed, 23 Oct 2024 07:52:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D220515252D;
+	Wed, 23 Oct 2024 08:00:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.105.120.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729669961; cv=none; b=MYW640wNQFPEB3bS8qDN3m/wC2W0/ULZs1MilIle9rx8qszSiEEDmLam256FvTCASbzapdQFN3k871CjK4Yt9wp4fLOu/0R5p9o0OJLXoSXhTJCXphY9A4N5/9BJ2j5MXVVAwqMmJEd6jZV8J51mmjrGoQFuZdw1XLLohmKUVf0=
+	t=1729670455; cv=none; b=bF9z/GLRJGi+gd3Bhi/nAAl4i0rvPMYFZFp20XIbMcw+h8Ob9y7K+dBNHnN4cdOaK3goePMJ+gI0y23mGuEAO2DCAKuvAP0PqEaKh/49Tyzj0YnELxNaK8XTp5x69M+3q8qooNGFtFlQY6ANf17BWkZ2SrCcoyiHRBT97NbZo0E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729669961; c=relaxed/simple;
-	bh=oPyusmD/QDz2SE57yTcbShgT07gzSQ7MB1ODrO5VT4U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rxQsToaIvKlcCDRs5g7CnkS0uM0hpiUl/9LyGLCt440TSInLWTXUcW7zxhZPMZHIavpgK4gkqAwXke457XuEPXSgaJYysy6cKQYZrIqQxRA/e+TU/rr+8oa36kYw6UW4iNbBuW7Mwo4Tynywtx8PpfWmiHd0Ln7U453O0cnLTto=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZnDdFELj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 11374C4CEC6;
-	Wed, 23 Oct 2024 07:52:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729669960;
-	bh=oPyusmD/QDz2SE57yTcbShgT07gzSQ7MB1ODrO5VT4U=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZnDdFELjvmb61zfdpNbp3drujU039YFwkNlsBk7nLq4w9elAYJHmwflFvNhcpi+sS
-	 IyLQrAmSb4psaUAJFds2Tys/eoaWd/pUWuf/uAYWHyNH/Jxv+ywoB3sgimvX2xy8eu
-	 lGi57EAo3lEVXsN/R5wjJX6hPgzJM59KxDCEhdgAT51mgNghuqfcvVC27eukzYdbNx
-	 RRZnwgD0sgYiFoFcY5zt0NTzRxf7oYSqK7K2101AQi7/GFNAPr1O9F5G1omzl7GFYU
-	 62aslh+vVJNtzuhYdL+u+Q7SZI/6XuqqwaLN/fwOd4tZUGn3+IFWtU2LhWgg/bNtK7
-	 jn1ajlXxDn1Tg==
-Date: Wed, 23 Oct 2024 09:52:36 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Liam Girdwood <lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Vinod Koul <vkoul@kernel.org>, Bard Liao <yung-chuan.liao@linux.intel.com>, 
-	Jaroslav Kysela <perex@perex.cz>, Takashi Iwai <tiwai@suse.com>, 
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>, Sanyog Kale <sanyog.r.kale@intel.com>, 
-	linux-arm-msm@vger.kernel.org, linux-sound@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, quic_rohkumar@quicinc.com, kernel@quicinc.com
-Subject: Re: [PATCH v2 1/4] ASoC: dt-bindings: wcd937x-sdw: Add static
- channel mapping support
-Message-ID: <qzjbiby7w6a7m4e324hdatgklmejlcxfwv7tszzfmdqahgrbu2@bcwsdlrpncxq>
-References: <20241023061326.3871877-1-quic_mohs@quicinc.com>
- <20241023061326.3871877-2-quic_mohs@quicinc.com>
+	s=arc-20240116; t=1729670455; c=relaxed/simple;
+	bh=+I1MpiSIGPrZm4UzkZXzNpXx59jNZA5bBmVOMC9xRvA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rVbnWKnnqPnbNJHEzQuP/m/Ixvb+yrv5OD9gTp3DEdOG8cppGPrCxwMNsa8j0ALH8/Y0BcMppJ/Muv88UdhlqeH0drqTru5UaO5q+ydCHs8/+7XfI7nJ9tVdIKNXtZKWQwZ+kdomKZNMmNXqabV8iR7XKnNF/zhIVZOedNK5oRk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=mblankhorst.nl; arc=none smtp.client-ip=141.105.120.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=mblankhorst.nl
+From: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+To: intel-xe@lists.freedesktop.org,
+	linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org,
+	Tejun Heo <tj@kernel.org>,
+	Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: Friedrich Vock <friedrich.vock@gmx.de>,
+	cgroups@vger.kernel.org,
+	linux-mm@kvack.org,
+	Maxime Ripard <mripard@kernel.org>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Subject: [PATCH 0/7] kernel/cgroups: Add "dev" memory accounting cgroup.
+Date: Wed, 23 Oct 2024 09:52:53 +0200
+Message-ID: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241023061326.3871877-2-quic_mohs@quicinc.com>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 11:43:23AM +0530, Mohammad Rafi Shaik wrote:
-> Add static channel mapping between master and slave rx/tx ports for
-> Qualcomm wcd937x soundwire codec.
-> 
-> Currently, the channel mask for each soundwire port is hardcoded in the
-> wcd937x-sdw driver, and the same channel mask value is configured in the
-> soundwire master.
-> 
-> The Qualcomm boards like the QCM6490-IDP require different channel mask settings
-> for the soundwire master and slave ports.
+New submission!
+I've added documentation for each call, and integrated the renaming from
+drm cgroup to dev cgroup, based on maxime ripard's work.
 
-Different than what? Other wcd937x? Which are these?
+Maxime has been testing this with dma-buf heaps and v4l2 too, and it seems to work.
+In the initial submission, I've decided to only add the smallest enablement possible,
+to have less chance of breaking things.
 
-> 
-> With the introduction of the following channel mapping properties, it is now possible
-> to configure the master channel mask directly from the device tree.
-> 
-> The qcom,tx-channel-mapping property specifies the static channel mapping between the slave
-> and master tx ports in the order of slave port channels which is adc1, adc2, adc3, adc4,
-> dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
+The API has been changed slightly, from "$name region.$regionname=$limit" in a file called
+dev.min/low/max to "$subsystem/$name $regionname=$limit" in a file called dev.region.min/low/max.
 
-I still don't get what is the channel here.
+This hopefully allows us to perhaps extend the API later on with the possibility to
+set scheduler weights on the device, like in
 
-> 
-> The qcom,rx-channel-mapping property specifies static channel mapping between the slave
-> and master rx ports in the order of slave port channels which is hph_l, hph_r, clsh,
-> comp_l, comp_r, lo, dsd_r, dsd_l.
+https://blogs.igalia.com/tursulin/drm-scheduling-cgroup-controller/
 
-And this description copies binding :/.
+Maarten Lankhorst (5):
+  kernel/cgroup: Add "dev" memory accounting cgroup
+  drm/ttm: Handle cgroup based eviction in TTM
+  drm/xe: Implement cgroup for vram
+  drm/amdgpu: Add cgroups implementation
+  [HACK] drm/xe: Hack to test with mapped pages instead of vram.
 
-Please wrap commit message according to Linux coding style / submission
-process (neither too early nor over the limit):
-https://elixir.bootlin.com/linux/v6.4-rc1/source/Documentation/process/submitting-patches.rst#L597
+Maxime Ripard (2):
+  drm/drv: Add drmm cgroup registration for dev cgroups.
+  [DISCUSSION] drm/gem: Add cgroup memory accounting
 
-> 
-> Signed-off-by: Mohammad Rafi Shaik <quic_mohs@quicinc.com>
-> ---
->  .../bindings/sound/qcom,wcd937x-sdw.yaml      | 36 +++++++++++++++++++
->  1 file changed, 36 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> index d3cf8f59cb23..a6bc9b391db0 100644
-> --- a/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> +++ b/Documentation/devicetree/bindings/sound/qcom,wcd937x-sdw.yaml
-> @@ -58,6 +58,38 @@ properties:
->      items:
->        enum: [1, 2, 3, 4, 5]
->  
-> +  qcom,tx-channel-mapping:
-> +    description: |
-> +      Specifies static channel mapping between slave and master tx port
-> +      channels.
-> +      In the order of slave port channels which is adc1, adc2, adc3, adc4,
-> +      dmic0, dmic1, mbhc, dmic2, dmic3, dmci4, dmic5, dmic6, dmic7.
-> +      ch_mask1 ==> bit mask value 1
-> +      ch_mask2 ==> bit mask value 2
-> +      ch_mask3 ==> bit mask value 4
-> +      ch_mask4 ==> bit mask value 8
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    minItems: 8
-> +    maxItems: 13
+ Documentation/admin-guide/cgroup-v2.rst       |  51 +
+ Documentation/core-api/cgroup.rst             |   9 +
+ Documentation/core-api/index.rst              |   1 +
+ Documentation/gpu/drm-compute.rst             |  54 ++
+ drivers/gpu/drm/amd/amdgpu/amdgpu.h           |   2 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_ttm.c       |   6 +
+ drivers/gpu/drm/amd/amdgpu/amdgpu_vram_mgr.c  |   6 +
+ drivers/gpu/drm/drm_drv.c                     |  32 +-
+ drivers/gpu/drm/drm_gem.c                     |   4 +
+ drivers/gpu/drm/drm_gem_dma_helper.c          |   4 +
+ drivers/gpu/drm/ttm/tests/ttm_bo_test.c       |  18 +-
+ .../gpu/drm/ttm/tests/ttm_bo_validate_test.c  |   4 +-
+ drivers/gpu/drm/ttm/tests/ttm_resource_test.c |   2 +-
+ drivers/gpu/drm/ttm/ttm_bo.c                  |  57 +-
+ drivers/gpu/drm/ttm/ttm_resource.c            |  24 +-
+ drivers/gpu/drm/xe/xe_device.c                |   4 +
+ drivers/gpu/drm/xe/xe_device_types.h          |   4 +
+ drivers/gpu/drm/xe/xe_ttm_sys_mgr.c           |  14 +
+ drivers/gpu/drm/xe/xe_ttm_vram_mgr.c          |  10 +
+ include/drm/drm_device.h                      |   4 +
+ include/drm/drm_drv.h                         |   4 +
+ include/drm/drm_gem.h                         |   2 +
+ include/drm/ttm/ttm_resource.h                |  16 +-
+ include/linux/cgroup_dev.h                    |  91 ++
+ include/linux/cgroup_subsys.h                 |   4 +
+ include/linux/page_counter.h                  |   2 +-
+ init/Kconfig                                  |   7 +
+ kernel/cgroup/Makefile                        |   1 +
+ kernel/cgroup/dev.c                           | 893 ++++++++++++++++++
+ mm/page_counter.c                             |   4 +-
+ 30 files changed, 1307 insertions(+), 27 deletions(-)
+ create mode 100644 Documentation/core-api/cgroup.rst
+ create mode 100644 Documentation/gpu/drm-compute.rst
+ create mode 100644 include/linux/cgroup_dev.h
+ create mode 100644 kernel/cgroup/dev.c
 
-Why size is variable? This device has fixed amount of slave ports, I
-think.
+-- 
+2.45.2
 
-> +    items:
-> +      enum: [1, 2, 4, 8]
-
-What is the point of using bits if you cannot actually create a bit mask
-out of it? Why this cannot be 7?
-
-> +
-> +  qcom,rx-channel-mapping:
-> +    description: |
-> +      Specifies static channels mapping between slave and master rx port
-> +      channels.
-> +      In the order of slave port channels, which is
-> +      hph_l, hph_r, clsh, comp_l, comp_r, lo, dsd_r, dsd_l.
-> +      ch_mask1 ==> bit mask value 1
-> +      ch_mask2 ==> bit mask value 2
-> +      ch_mask3 ==> bit mask value 4
-> +      ch_mask4 ==> bit mask value 8
-
-and the value is what exactly? Index is channel, but what does "ch_mask4 ==> bit
-mask value 8" mean? I don't understand this at all.
-
-> +    $ref: /schemas/types.yaml#/definitions/uint8-array
-> +    minItems: 8
-> +    maxItems: 8
-> +    items:
-> +      enum: [1, 2, 4, 8]
-> +
->  required:
->    - compatible
->    - reg
-> @@ -74,6 +106,8 @@ examples:
->              compatible = "sdw20217010a00";
->              reg = <0 4>;
->              qcom,rx-port-mapping = <1 2 3 4 5>;
-> +            qcom,rx-channel-mapping =  /bits/ 8 <0x01 0x02 0x01 0x01 0x02
-> +                                                 0x01 0x01 0x02>;
->          };
->      };
->  
-> @@ -85,6 +119,8 @@ examples:
->              compatible = "sdw20217010a00";
->              reg = <0 3>;
->              qcom,tx-port-mapping = <2 2 3 4>;
-> +            qcom,tx-channel-mapping = /bits/ 8 <0x01 0x02 0x01 0x01 0x02 0x04
-> +                                                0x04 0x08 0x01 0x02 0x04 0x8>;
-
-Keep it consistent, e.g. everywhere without leading 0... actually not
-sure why this is hex, either.
-
->          };
->      };
->  
-> -- 
-> 2.25.1
-> 
 
