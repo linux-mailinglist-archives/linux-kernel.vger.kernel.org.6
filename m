@@ -1,153 +1,121 @@
-Return-Path: <linux-kernel+bounces-378857-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378858-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C93EC9AD65F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:09:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C48A29AD664
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874EC283020
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:09:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F423F1C21693
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F5A1E5731;
-	Wed, 23 Oct 2024 21:09:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71101EBFE0;
+	Wed, 23 Oct 2024 21:11:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xsp8L6Yz"
-Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOrnarJa"
+Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A5B1E1C0E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261A155757;
+	Wed, 23 Oct 2024 21:11:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729717772; cv=none; b=Jw+bGy6mNr84QGPWP0A26/Wmr6mmAgLSs4UEFmwz4D9Mq7M/VyV0T92okN8ahvT1TGbAO75ZRhn2AEdam0FzPiY1fg+0CSwmwgavSK2CXiHqDtEhWTZjPRUrt932yOXC8d0QeM+6Wlp/bPI9IniS6IWZSDVh99eoixo08svuHO4=
+	t=1729717881; cv=none; b=dIZFfYqYLjHgaQ5tOvHnZSz9QaX9DknUFZZ4YOEeq5HAoAh71wue3nFVgrQVRs5sCbaM8KZKmNgSXhgMg5iundngqPgglL/EYyHr8QYhOpZyoOXQi8MD73AUA8YYMsJae97jR7hjfJ3D8ZNVrrSKrvtpTcw3szFBarAxRt2KwC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729717772; c=relaxed/simple;
-	bh=XonaIiFrBJ4wGnJLEIHPTYo5mO+JgjFRx+Tk2sZ7yvM=;
+	s=arc-20240116; t=1729717881; c=relaxed/simple;
+	bh=jKAyw/EopyQhKfZWtFJ71aOI/ZTyS19O39wXWbS1TjI=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Nkl7dqRsXSITFnM7NAPmv386Al6/8hzeal/1OGwQcfZ1l5t+5WAZdUJYpj9mgXEb3Hg7JkmFOtcMjPhN7D2QU+0QoPZQM/m04hRy95vmNKV78m45/gaitIpgm5aNFdS7UhE/tWVL+dNqRYKBj1TPC3IDVGQ8A9sjWihqIKZHL2U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xsp8L6Yz; arc=none smtp.client-ip=209.85.128.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43153c6f70aso16175e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:09:29 -0700 (PDT)
+	 To:Cc:Content-Type; b=ky5YGDkQEZIwCSldpA3I+5LKadSfDg7KvnIyPCwBgKRRuDehupRd3LzshsfNBQ7J9iFsKWv4Nexpak97EemufTuZ+x287EUN81dWmz5Z5u5iW94NFmk91BjQqnY/MRy35uKqmoqQWHNgDqr5joG6QGmi1A3iViRgz+1GlwOpQVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOrnarJa; arc=none smtp.client-ip=209.85.208.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c96936065dso208824a12.3;
+        Wed, 23 Oct 2024 14:11:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729717768; x=1730322568; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729717877; x=1730322677; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=D1Hc6TqTcrhd8OnsnaGs3m8D6+LMkz7l3Gr9ozPNQss=;
-        b=Xsp8L6Yz321nUWxg7ZCjxmGGXzkIIgVdqRqBKSGsvxqERJLvMhmAHzGRmSriXRgHBi
-         kaC8brKh+4hWu9e65NIvSrSjBlQtxyrb3n94aKWyU4Pisizh8E6WlJ7QyXyfSgp4g667
-         fQS6BoXn+ol9CqgkKIzg9d67h87Joh+5bhND6JRCo3KrbBf7I2ejAydN3i3+N1QNOCsG
-         M0bYgZXAn5/2E1JLf+S4Av67EhRY69y5kpWB4sCH/rkPQh96bW5YGVpcVVbbYqVtjVJ0
-         XalGjcgg2jrztH5YSaokIb6sOVEh+NAZtC3E/4XAtYHmeWV2ehrC81b3o4NHmbRJ+NCE
-         MUrQ==
+        bh=jKAyw/EopyQhKfZWtFJ71aOI/ZTyS19O39wXWbS1TjI=;
+        b=TOrnarJatshEFKHqo6VKxiSctB452ndjbbdUwzwdqMeBItQpnd62cjZ3MWvc0seIXX
+         6gj0F7MMOC6tb6DMb5XDQ3TAG0Luhrjn9Eq+0AH73EdTswN1ejRHpLIUUOZHtcIEO3TC
+         kW/nIedJUXtkKHhi9c1e1urm170RC5q1yebMSsR49txllHdqzrG4tlDdgp5C2HTc+aaW
+         uHNLnjyTM1gzYiuwetvz3cNw59/KcgoFowcZxD+5RcUg1TcDSDIY1a4q+j4AltgEq7SH
+         Nl8sP4pbNvlzJDnldtQAYkRKzsioj34FB61WfuPiUoi363i7K7lXjiD95U3GmM5h/iw+
+         q5Qw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729717768; x=1730322568;
+        d=1e100.net; s=20230601; t=1729717877; x=1730322677;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=D1Hc6TqTcrhd8OnsnaGs3m8D6+LMkz7l3Gr9ozPNQss=;
-        b=eRNPPB6H81wIADxmljm4g1V+LfYiXUnh46FG57SAkqo+An3xHpJ+E97bSeNyLRyHh7
-         TI9i/OhGRcg2TLtA7iuWHzJZEltBJOZPpH7vG5nBJZdhwAAA7MtBlRflyck/UyBB1QyP
-         ywe4kLCtKlQY3oMYcWA1/o5cwiDi+7R5ElIOjmhktLHvM9iRNO4IKEaR7WIThGvg8D4l
-         /BTv+sX6dVbem6s/z76oxGsuRVKgw9AM1b77FdqV1LHL/SWMvCxyiORCTdkR4zIS5A+r
-         ziMXSUk5v6VY3POP49XygxxoPq7eFmZu9123qhAEIIC87J6lb2i56CYrJeuKn4zsuXLI
-         2PJg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8tixUbNbQEM3tdpZ1NBkZc+vv1rU6T72K8lJQUyAdSl1aTbmDErZX0FsHuX4cd64gLIjZ+/DeDjwT0As=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw8Wp0ie1b0DiDFqPnuJ9Y9fpj5gcaHH4MHuKGk3da83MRBUy6b
-	+ehGZiZadbhsABdxayQuerN3A0QBRKhwn4ClM1wLUjc+bBZ1V80ZtzbcGqWpenTJB04TZSDzp9X
-	YH+Bt13MVbaa7T6IWjikLJ6LRzQNkoDwhv3cB
-X-Google-Smtp-Source: AGHT+IG7lHrCmkHrUK87/No/R3m5mQ51hRtR/sVg3+psInFw5wdf+0mCw9HD7V91WPK90Gie/P5wYbHJdFXnglBqC8A=
-X-Received: by 2002:a05:600c:b8d:b0:42b:a961:e51 with SMTP id
- 5b1f17b1804b1-4318a4ace7bmr1380915e9.0.1729717768323; Wed, 23 Oct 2024
- 14:09:28 -0700 (PDT)
+        bh=jKAyw/EopyQhKfZWtFJ71aOI/ZTyS19O39wXWbS1TjI=;
+        b=EI9ekZFnQ6OuUR0jtKEbxoX3FwdnnLbWHp7huoRBQmTFoti04oVpdhQ7e9SstDM0I7
+         BhuMhr3srRfm2OKe+AmIQWuVqpeZwD/oe6qcOpiIvNVwTzkJwzZFFbzaQY7eXMP+IXer
+         C2zfps12rgGbRkLXgA5MlKNhAPQ5bo35ljNzLFCybIAfgswdcrwsYNZzJ7boPyLhv1L2
+         n4K67SbqdPHKGCkQRPdTes0czagpDG0E6jx7GoKk6vYUPvQ8dT5ekQz4ZNTgdPg1kdQU
+         VyWXkGVtJBt8Ta3qJbJg77Ua54T/A73aq81ob3qFGty0G3eO+JCRb3ncsXgWbNzDSpg2
+         x6lA==
+X-Forwarded-Encrypted: i=1; AJvYcCUMwtCYDF88gJ5EQj7duhOlF9tvHzMcJQkT2CPn/RjpWfac6E7A9D7Oi/0gr7qjB8wmLWZL4MT/8CgwZYzsqw==@vger.kernel.org, AJvYcCUT6IHJOYBym4N6kh3ny74w8J7AU3YfZr8WHRrzA/9nYf+1T+qHOUil4uGmfuJpGWaZRS8csvh84x7v@vger.kernel.org, AJvYcCXC0R8ju2bNolFXcZ8fpqwvKa462s9u8ehQXp+l1QogL5os9o0bJB2PRjibZOXt8f3k0o0RACaDHzZprO3r@vger.kernel.org, AJvYcCXNwaeVRV5/CPNnf1UvQ0XMQrYpTi71VSM2VZzyYu9EpfVyiyhdfIYSBp0/VAGq7z29SLucOH7BlLauSjMapP2P/voGIw==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw30mHhfizor9xPxNoYioQlOmIu9qWWyrbbtf0hcoZCsbwEqb6v
+	R549cqsgK+ZjoZS+L4+g1elQyt9dOniFvcOWYe/1USq169LAPzHkqblnW0HLZPT3YWm5Ntjs8eh
+	6XEVa0baF8gljgZyx1IsCVw8QcQ==
+X-Google-Smtp-Source: AGHT+IGjp5BWHI7BjiYEHOH7h326K2upWWA5FR/BygFMnRkS/IYWnITIfOZ2A1SOsXlzq+/uRMmOdvSxYlQdyW9kq1c=
+X-Received: by 2002:a17:906:c10f:b0:a99:f0f4:463d with SMTP id
+ a640c23a62f3a-a9abf875c8amr385483366b.26.1729717876612; Wed, 23 Oct 2024
+ 14:11:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023170759.999909-1-surenb@google.com> <20241023170759.999909-6-surenb@google.com>
- <20241023140017.e165544bf20bcb0c79bfee57@linux-foundation.org>
-In-Reply-To: <20241023140017.e165544bf20bcb0c79bfee57@linux-foundation.org>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Wed, 23 Oct 2024 14:09:12 -0700
-Message-ID: <CAJuCfpH9yc2kYGZqYjYPWbApy05yqiONqziBQ+qF+R3nZRL56w@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] alloc_tag: introduce pgtag_ref_handle to abstract
- page tag references
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
-	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
-	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	jhubbard@nvidia.com, urezki@gmail.com, hch@infradead.org, petr.pavlu@suse.com, 
-	samitolvanen@google.com, da.gomez@samsung.com, yuzhao@google.com, 
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	maple-tree@lists.infradead.org, linux-modules@vger.kernel.org, 
-	kernel-team@android.com
+References: <20240908223505.21011-1-jerome.debretagne@gmail.com>
+ <20240908223505.21011-4-jerome.debretagne@gmail.com> <f9cbd1c3-eb05-4262-bdc6-6d37e83179e5@gmail.com>
+ <CA+kEDGEdd_s+DGKsVNY6Jy870B72eHuaj2EgEnwP8J46ZGbxpQ@mail.gmail.com>
+ <8370d062-b3d2-46f5-9e7b-8e16edde8480@redhat.com> <555f8a3a-ae5e-57e7-f176-96c52e1a5d45@linux.intel.com>
+ <ad9fa9f2-7f97-401a-8e8f-ae633ab1932b@gmail.com>
+In-Reply-To: <ad9fa9f2-7f97-401a-8e8f-ae633ab1932b@gmail.com>
+From: =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>
+Date: Wed, 23 Oct 2024 23:10:40 +0200
+Message-ID: <CA+kEDGE+fv3FJYGi=xR-agFiM-rGhDKAqhgL8dJN8GeJkw415w@mail.gmail.com>
+Subject: Re: [PATCH v2 3/5] platform/surface: aggregator_registry: Add Surface
+ Pro 9 5G
+To: Maximilian Luz <luzmaximilian@gmail.com>
+Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
+	Hans de Goede <hdegoede@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
+	platform-driver-x86@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 2:00=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
-n.org> wrote:
+On 10/23/24 7:25 PM, Maximilian Luz wrote:
 >
-> On Wed, 23 Oct 2024 10:07:58 -0700 Suren Baghdasaryan <surenb@google.com>=
- wrote:
+> On 10/22/24 10:56 AM, Ilpo J=C3=A4rvinen wrote:
 >
-> > To simplify later changes to page tag references, introduce new
-> > pgtag_ref_handle type. This allows easy replacement of page_ext
-> > as a storage of page allocation tags.
-> >
-> > ...
-> >
-> >  static inline void pgalloc_tag_copy(struct folio *new, struct folio *o=
-ld)
-> >  {
-> > +     union pgtag_ref_handle handle;
-> > +     union codetag_ref ref;
-> >       struct alloc_tag *tag;
-> > -     union codetag_ref *ref;
-> >
-> >       tag =3D pgalloc_tag_get(&old->page);
-> >       if (!tag)
-> >               return;
-> >
-> > -     ref =3D get_page_tag_ref(&new->page);
-> > -     if (!ref)
-> > +     if (!get_page_tag_ref(&new->page, &ref, &handle))
-> >               return;
-> >
-> >       /* Clear the old ref to the original allocation tag. */
-> >       clear_page_tag_ref(&old->page);
-> >       /* Decrement the counters of the tag on get_new_folio. */
-> > -     alloc_tag_sub(ref, folio_nr_pages(new));
-> > -
-> > -     __alloc_tag_ref_set(ref, tag);
-> > -
-> > -     put_page_tag_ref(ref);
-> > +     alloc_tag_sub(&ref, folio_nr_pages(new));
+> [...]
 >
-> mm-stable has folio_size(new) here, fixed up.
+> > Hi all,
+> >
+> > I've now applied patch 3 to review-ilpo branch in pdx86 repo.
+> >
+> > I'd appreciate if somebody confirms I got those comment edits right.
+> >
+>
+> Hi Ilpo,
+>
+> looks good to me. Thanks for fixing this up!
+>
+> Best regards,
+> Max
 
-Oh, right. You merged that patch tonight and I formatted my patchset
-yesterday :)
-Thanks for the fixup.
+Hi Ilpo, hi Max,
 
->
-> I think we aleady discussed this, but there's a crazy amount of
-> inlining here.  pgalloc_tag_split() is huge, and has four callsites.
+It looks good to me too.
 
-I must have missed that discussion but I am happy to unline this
-function. I think splitting is heavy enough operation that this
-uninlining would not have be noticeable.
-Thanks!
+Thank you both,
+J=C3=A9r=C3=B4me
 
