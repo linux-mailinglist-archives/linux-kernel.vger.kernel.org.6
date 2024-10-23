@@ -1,255 +1,123 @@
-Return-Path: <linux-kernel+bounces-377713-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377712-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6AB149AC2C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:04:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 766BA9AC2C4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:04:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09D01F24226
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:04:25 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2D0381F21D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:04:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 171C119597F;
-	Wed, 23 Oct 2024 09:03:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE15D158533;
+	Wed, 23 Oct 2024 09:03:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wNsBrfwp"
-Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="e9nHDv9z"
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com [209.85.167.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6C3211925A9
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:03:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 95AEC1581F2
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:03:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674232; cv=none; b=ekQiPewnUiTSaJNIc3C7eO4z1gxWbxq8jAAh0wuR0cmyCA3ph6Kq7qqnuh+gzlGC+uDorOjfjwVo2WHTyFoqzNKHXhoBbdRIcnGsPRL1w/MkPO50ig0BXT8QRpRFce/EpC2gZWmdIENr/Xo9/M/2li01ZnZcIaDIt+T1C7YbZHg=
+	t=1729674217; cv=none; b=C1B3pvYPLoudRZqLYKq0Ms/RDNAAN+eOH4fP0mIM2JXVI/GMLfe97qOqFIHvXWhtkyrk5jZTPZYv7WaxsZ1oy6y8iIxlEm6ZwijC7fJKG+SHAMpQj7cpL1+5iZ7AjdBH0Upt7zbHeh0YkttTR2xLFbiEs2nvyGM2JtfKQxGDilg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674232; c=relaxed/simple;
-	bh=cqXN/j1tXOMZQw8m3mf2lulC9bbI0kwSJGcMfhQS1Ks=;
+	s=arc-20240116; t=1729674217; c=relaxed/simple;
+	bh=QvFXcl2GGa+veoOPQlIdxPmI+G4TCcpYQrnSdGupX2U=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=vFWWDPSOjKK87K8oM4y29YDopzfNvccWfQsdAGpRMByuCFMVpzuViqltIUPoa+xeTGGe6gjDvJHDoD4jPOgRHmq/srvLxEyeps7y9jyvPJLTf7iU6HfaasinVK+H7jQt6Gi0KN73mgMgCyFzIDESr5UYGsZWu0QDtDWXvQAIazQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wNsBrfwp; arc=none smtp.client-ip=209.85.216.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e34a089cd3so5338459a91.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:03:50 -0700 (PDT)
+	 To:Cc:Content-Type; b=sn9rVZ76JCbGzVNH6fWdUFVzxPirjfOTdBgdQhHNRqqnQMbCYE4vBJu6ioEQDs3W9j6HIBC8noRMTpFUZ1h6YwrSBWzC1xCUs/25jUfmM9FUGsN14D3o6G94NC1t1pKqdaTyJ4miTGb1JJm3IPAx8kwXn736Y9kIjMiBrik3Kgs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=e9nHDv9z; arc=none smtp.client-ip=209.85.167.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539e690479cso7016277e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:03:35 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729674230; x=1730279030; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=UJmqQs0FjnBrdQ1Cmlx63HRTmkxMuBEsox/EMsevowo=;
-        b=wNsBrfwp/go7qIgtW6vlixoGb6SgpMSlZ3vrexYo3KUHb6MtdFNv/htZgGS9ySEu8d
-         B8nf4QjQjdBRdxhzo9nVA5qrYKuC2q0vv2FMusKohUA+gOJxrH51MN3EFcKEqdSIUEUy
-         BRpgkwkAqo1rmZPQu//uedCEbwO/dqngs6z3AseAeBbH3r0gwxCSGH756PNkg41U1Eqj
-         JaDi4xayQJ1aodkHYvPbkPmESktEYz87V04bIyfc1Jkt58+lLBHIbhzRvnbNO6Vr2WBm
-         iWnYj3SX4Sz5McTWRdSiLKef96yfSBaG/E4CUh2CzVhJ2CiWXj1WAoeSvy5XrVFl8qo9
-         mwSw==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729674214; x=1730279014; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=QvFXcl2GGa+veoOPQlIdxPmI+G4TCcpYQrnSdGupX2U=;
+        b=e9nHDv9zoPvfe7r5HKpLYAhdye/lqmWAeGaER9an309NB3qeXcEHl6t1S/je3f+LKB
+         OLZwPEHNOBoPLWxgVfugnmvRui/k849A3cCUHgItRMxTbhnyirnI/13OCyshL0+D2X8P
+         kGW37dzkW1rTVvyozH+FxndejR8W1dMXCkfmGq19sRsR33YDhje9ZDK+EXXhK87i3MWG
+         GlS1AnGvjFND2V9TQIG4KxnUIb/SHjNy12pwHh2A37MXHxq1UBcnJ3vlt2+Tr0e3FOM/
+         Z1bwuO15/wloxBV2XGB+1ViALZeITOqcWgLop8UfCDhb+cYQwJIubBc40x4GgjXORpGW
+         M3nA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729674230; x=1730279030;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UJmqQs0FjnBrdQ1Cmlx63HRTmkxMuBEsox/EMsevowo=;
-        b=gxxcWcvqlUAQBBA63Db+O5VaaBYtWMD+2BVaKCKKKChflXzMdJnweW2zB4QT7he9dt
-         jD+raw9jmx3Y2AykJh+YzvwlW6ok6ZKquVDj5M0KfwQcnYHlMHZBL7rF1hzsZKmdL4YB
-         oA/u6M9c0uD8b0il6p84rViIwnoHpbva7XcBAR0hFywfCLMYbVm1CrZAS70toCEmoAej
-         4J5wYQ0Ou/cYmTGFfW35/pOaiCKpvexQuUoX6dd5bVRLGtn/vCURitQmT57aaDNGIhWz
-         9ZM4qdXC2w5oPrk+TcPtSBIKge+shDZpBtPRPeEXARsNLOgyoRfNlLz2O/XW3S6PQ8w1
-         AWFQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWgMRPc3lb9o5ZOtQoGOj5ctesJvmsR3NeYi09AD0UNdytr+J9fPH4iVsh5oQGwz/Ewj8X8C5DUSwwHjqI=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywy2JcYO8ITktLPHMy/JoKgyNwLSkt8OQPPdpHWk0rGIGj6ygou
-	fRgjObhAU/pmAtWZ4Ezb79iHNwpHuJO4H9a96BXJAKh10hpHJj0ig+trDF84svpqJs+Yod4S5AR
-	6y4viSFDJymowQZo49cCIkn+EbEQgP8nnW347
-X-Google-Smtp-Source: AGHT+IFnIO6bEN8uBM1C5+lQf2teHOCIl6pa0p8ErToQx9LXpnmWTlDCV83XB5OXsYn3/NWx3P5kanRmGkpTN8qTQcE=
-X-Received: by 2002:a17:90b:4b47:b0:2e2:a828:2982 with SMTP id
- 98e67ed59e1d1-2e76b70e8b1mr1918853a91.38.1729674229353; Wed, 23 Oct 2024
- 02:03:49 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729674214; x=1730279014;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=QvFXcl2GGa+veoOPQlIdxPmI+G4TCcpYQrnSdGupX2U=;
+        b=AflT8kIYyTEC45WWbkPxt6IxfDUQHwVhvE4twaXQpN9QIxGp97QuwcOmuby37ApjTB
+         n5hCyYw1LK1lZXngz9BFJK9IqxrD1iqZ949zbo7Z/MtcralICo9P+p8mjeSzD0Qv8Vt3
+         F6TV5rWSpWhhh3YUHUV6N9tANljIXRymampaL+hfw/yDCilkEiFNmnEXM1iFYZ4dfr6K
+         gqS1VHNpJyzWfwr6P0kpicc1uMbqPBgL9ZCVAsESzYRQvjQ+k2A2JGynyxzrlrHsxdGk
+         eImsmZ4sZi1Id9pg2DvB26htgbz1V3Y5bh70HkiB5VTlgRVz9EAUqNxucL+CI+uAq2va
+         EfrQ==
+X-Forwarded-Encrypted: i=1; AJvYcCW/ua1j9Ysf3QV6UXqHTA9JDevjF0HcZriqDInlwsjJaW4tuAgYU17jvX64V0skZeat/YkYhsm9L4FCSrk=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyr+gW3Cx6ro3RRGaRyKUToGaUa7GkYlaW2+x+7jkw9KwraoIup
+	QgQ/olhe0Eo69r6Avd6tk2l31ZWXLB5NYY0SdsxnWXJQPSNwXJu7ChWUFBP5272/MVxytyYLIkq
+	2OguUNtD353Li6BgkjhbEhzQvXPGH805Cn4Fpqw==
+X-Google-Smtp-Source: AGHT+IFD5laevTuDyUBfuQbJDuOlYCbjcvR7CBksOf9DPv2HcOtedvdJuBMvxu2Mj8O9hcpNQb3nRu5g/5EpQQgJQAc=
+X-Received: by 2002:a05:6512:3b8f:b0:53a:1a:cb58 with SMTP id
+ 2adb3069b0e04-53b1a36b850mr858329e87.44.1729674213517; Wed, 23 Oct 2024
+ 02:03:33 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <66f6c7d4.050a0220.38ace9.0026.GAE@google.com> <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
- <20241022113131.GD16066@noisy.programming.kicks-ass.net> <ZxerZIxg8kAMCvYc@elver.google.com>
- <20241022191244.GB9657@noisy.programming.kicks-ass.net> <CANpmjNMgjUi28BLk-uQQpqZ_RnB9sRtHpvymCPjpqrG=sQqGRA@mail.gmail.com>
- <Zxi5tbLnhoG4pEcm@elver.google.com>
-In-Reply-To: <Zxi5tbLnhoG4pEcm@elver.google.com>
-From: Marco Elver <elver@google.com>
-Date: Wed, 23 Oct 2024 11:03:11 +0200
-Message-ID: <CANpmjNNx6QM67jSaAtkYdxA+A5_FGPLBkBxdVXQ_XOLB8pgzNw@mail.gmail.com>
-Subject: Re: [syzbot] [kernel?] KCSAN: assert: race in dequeue_entities
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: paulmck@kernel.org, Alexander Potapenko <glider@google.com>, 
-	syzbot <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com>, 
-	audit@vger.kernel.org, eparis@redhat.com, linux-kernel@vger.kernel.org, 
-	paul@paul-moore.com, syzkaller-bugs@googlegroups.com
+References: <20241007092447.18616-1-brgl@bgdev.pl>
+In-Reply-To: <20241007092447.18616-1-brgl@bgdev.pl>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Wed, 23 Oct 2024 11:03:22 +0200
+Message-ID: <CAMRc=MdWNTkLbRJ9YTi2T4B=2FRCrn2M2TZs+DxqQKxrqjpJ7A@mail.gmail.com>
+Subject: Re: [PATCH v2] PCI/pwrctl: pwrseq: abandon QCom WCN probe on
+ pre-pwrseq device-trees
+To: Bartosz Golaszewski <brgl@bgdev.pl>, Bjorn Helgaas <bhelgaas@google.com>, 
+	Bjorn Andersson <andersson@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>
+Cc: linux-pci@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>, Johan Hovold <johan@kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Oct 2024 at 10:54, Marco Elver <elver@google.com> wrote:
+On Mon, Oct 7, 2024 at 11:24=E2=80=AFAM Bartosz Golaszewski <brgl@bgdev.pl>=
+ wrote:
 >
-> On Tue, Oct 22, 2024 at 09:57PM +0200, Marco Elver wrote:
-> > On Tue, 22 Oct 2024 at 21:12, Peter Zijlstra <peterz@infradead.org> wrote:
-> [...]
-> > > So KCSAn is trying to tell me these two paths run concurrently on the
-> > > same 'p' ?!? That would be a horrible bug -- both these call chains
-> > > should be holding rq->__lock (for task_rq(p)).
-> >
-> > Yes correct.
-> >
-> > And just to confirm this is no false positive, the way KCSAN works
-> > _requires_ the race to actually happen before it reports anything;
-> > this can also be seen in Alexander's report with just 1 stack trace
-> > where it saw the value transition from 0 to 1 (TASK_ON_RQ_QUEUED) but
-> > didn't know who did the write because kernel/sched was uninstrumented.
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 >
-> Got another version of the splat with CONFIG_KCSAN_VERBOSE=y. Lockdep seems to
-> think that both threads here are holding rq->__lock.
+> Old device trees for some platforms already define wifi nodes for the WCN
+> family of chips since before power sequencing was added upstream.
+>
+> These nodes don't consume the regulator outputs from the PMU and if we
+> allow this driver to bind to one of such "incomplete" nodes, we'll see
+> a kernel log error about the infinite probe deferral.
+>
+> Let's extend the driver by adding a platform data struct matched against
+> the compatible. This struct will now contain the pwrseq target string as
+> well as a validation function called right after entering probe(). For
+> Qualcomm WCN models, we'll check the existence of the regulator supply
+> property that indicates the DT is already using power sequencing and
+> return -ENODEV if it's not there, indicating to the driver model that
+> the device should not be bound to the pwrctl driver.
+>
+> Fixes: 6140d185a43d ("PCI/pwrctl: Add a PCI power control driver for powe=
+r sequenced devices")
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Closes: https://lore.kernel.org/all/Zv565olMDDGHyYVt@hovoldconsulting.com=
+/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
 
-Gotta read more carefully, one instance is ffffa2e57dc2f398 another is
-ffffa2e57dd2f398. If I read it right, then they're not actually the
-same lock.
+Hi Bjorn (Helgaas),
 
-> | ==================================================================
-> | BUG: KCSAN: assert: race in activate_task / dequeue_entities
-> |
-> | write (marked) to 0xffffa2e506240068 of 4 bytes by interrupt on cpu 0:
-> |  activate_task+0xfb/0x130 kernel/sched/core.c:2064
-> |  ttwu_do_activate+0xee/0x2b0 kernel/sched/core.c:3671
-> |  ttwu_queue kernel/sched/core.c:3944 [inline]
-> |  try_to_wake_up+0x509/0x930 kernel/sched/core.c:4270
-> |  default_wake_function+0x25/0x30 kernel/sched/core.c:7009
-> |  __pollwake fs/select.c:205 [inline]
-> |  pollwake+0xc0/0x100 fs/select.c:215
-> |  __wake_up_common kernel/sched/wait.c:89 [inline]
-> |  __wake_up_common_lock+0xc0/0x110 kernel/sched/wait.c:106
-> |  __wake_up_sync_key+0x1b/0x30 kernel/sched/wait.c:173
-> |  sock_def_readable+0x19a/0x460 net/core/sock.c:3442
-> |  tcp_data_ready+0x194/0x230 net/ipv4/tcp_input.c:5193
-> |  tcp_data_queue+0xfd8/0x26b0 net/ipv4/tcp_input.c:5283
-> |  tcp_rcv_established+0x8e5/0xeb0 net/ipv4/tcp_input.c:6237
-> |  tcp_v4_do_rcv+0x606/0x620 net/ipv4/tcp_ipv4.c:1915
-> |  tcp_v4_rcv+0x16e9/0x1890 net/ipv4/tcp_ipv4.c:2350
-> |  ip_protocol_deliver_rcu+0x382/0x6a0 net/ipv4/ip_input.c:205
-> |  ip_local_deliver_finish+0x1bf/0x290 net/ipv4/ip_input.c:233
-> |  NF_HOOK+0x274/0x2f0 include/linux/netfilter.h:314
-> |  ip_local_deliver net/ipv4/ip_input.c:254 [inline]
-> |  dst_input include/net/dst.h:460 [inline]
-> |  ip_sublist_rcv_finish+0x22a/0x2c0 net/ipv4/ip_input.c:580
-> |  ip_list_rcv_finish net/ipv4/ip_input.c:630 [inline]
-> |  ip_sublist_rcv+0x2e3/0x560 net/ipv4/ip_input.c:638
-> |  ip_list_rcv+0x275/0x2b0 net/ipv4/ip_input.c:672
-> |  __netif_receive_skb_list_ptype net/core/dev.c:5709 [inline]
-> |  __netif_receive_skb_list_core+0x4fc/0x520 net/core/dev.c:5756
-> |  __netif_receive_skb_list net/core/dev.c:5808 [inline]
-> |  netif_receive_skb_list_internal+0x516/0x720 net/core/dev.c:5899
-> |  gro_normal_list include/net/gro.h:515 [inline]
-> |  napi_complete_done+0x161/0x3c0 net/core/dev.c:6250
-> |  e1000_clean+0x7c7/0x1a70 drivers/net/ethernet/intel/e1000/e1000_main.c:3808
-> |  __napi_poll+0x6c/0x2c0 net/core/dev.c:6775
-> |  napi_poll net/core/dev.c:6844 [inline]
-> |  net_rx_action+0x433/0x8e0 net/core/dev.c:6966
-> |  handle_softirqs+0x15c/0x450 kernel/softirq.c:554
-> |  __do_softirq kernel/softirq.c:588 [inline]
-> |  invoke_softirq kernel/softirq.c:428 [inline]
-> |  __irq_exit_rcu+0x72/0x110 kernel/softirq.c:637
-> |  irq_exit_rcu+0x9/0x30 kernel/softirq.c:649
-> |  common_interrupt+0xa7/0xc0 arch/x86/kernel/irq.c:278
-> |  asm_common_interrupt+0x26/0x40 arch/x86/include/asm/idtentry.h:693
-> |  finish_task_switch+0x11c/0x3e0 kernel/sched/core.c:5189
-> |  context_switch kernel/sched/core.c:5318 [inline]
-> |  __schedule+0xf23/0x14a0 kernel/sched/core.c:6675
-> |  preempt_schedule_irq+0x9a/0xf0 kernel/sched/core.c:6997
-> |  raw_irqentry_exit_cond_resched+0x52/0x60 kernel/entry/common.c:311
-> |  irqentry_exit+0x6a/0xa0 kernel/entry/common.c:354
-> |  sysvec_apic_timer_interrupt+0x50/0xb0 arch/x86/kernel/apic/apic.c:1037
-> |  asm_sysvec_apic_timer_interrupt+0x1a/0x20 arch/x86/include/asm/idtentry.h:702
-> |  __seqprop_sequence include/linux/seqlock.h:211 [inline]
-> |  get_counters net/ipv6/netfilter/ip6_tables.c:774 [inline]
-> |  alloc_counters net/ipv6/netfilter/ip6_tables.c:820 [inline]
-> |  copy_entries_to_user net/ipv6/netfilter/ip6_tables.c:837 [inline]
-> |  get_entries net/ipv6/netfilter/ip6_tables.c:1039 [inline]
-> |  do_ip6t_get_ctl+0x665/0x9d0 net/ipv6/netfilter/ip6_tables.c:1677
-> |  nf_getsockopt+0x14e/0x170 net/netfilter/nf_sockopt.c:116
-> |  ipv6_getsockopt+0x13c/0x1b0 net/ipv6/ipv6_sockglue.c:1493
-> |  tcp_getsockopt+0x9e/0xd0 net/ipv4/tcp.c:4670
-> |  sock_common_getsockopt+0x5d/0x70 net/core/sock.c:3776
-> |  do_sock_getsockopt+0x18f/0x220 net/socket.c:2391
-> |  __sys_getsockopt+0xf1/0x170 net/socket.c:2420
-> |  __do_sys_getsockopt net/socket.c:2430 [inline]
-> |  __se_sys_getsockopt net/socket.c:2427 [inline]
-> |  __x64_sys_getsockopt+0x64/0x80 net/socket.c:2427
-> |  x64_sys_call+0x120e/0x2f00 arch/x86/include/generated/asm/syscalls_64.h:56
-> |  do_syscall_x64 arch/x86/entry/common.c:52 [inline]
-> |  do_syscall_64+0xec/0x1d0 arch/x86/entry/common.c:83
-> |  entry_SYSCALL_64_after_hwframe+0x77/0x7f
-> |
-> | 8 locks held by syz-executor/24825:
-> |  #0: ffffa2e5031a2f48 (&xt[i].mutex){+.+.}-{3:3}, at: xt_find_table_lock+0x5e/0x230 net/netfilter/x_tables.c:1243
-> |  #1: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
-> |  #1: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
-> |  #1: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: netif_receive_skb_list_internal+0x24e/0x720 net/core/dev.c:5884
-> |  #2: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
-> |  #2: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
-> |  #2: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: ip_local_deliver_finish+0xe1/0x290 net/ipv4/ip_input.c:232
-> |  #3: ffffa2e5072201d8 (slock-AF_INET/1){+.-.}-{2:2}, at: tcp_v4_rcv+0x1677/0x1890 net/ipv4/tcp_ipv4.c:2346
-> |  #4: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: rcu_lock_acquire include/linux/rcupdate.h:337 [inline]
-> |  #4: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: rcu_read_lock include/linux/rcupdate.h:849 [inline]
-> |  #4: ffffffff9a357d18 (rcu_read_lock){....}-{1:2}, at: sock_def_readable+0x91/0x460 net/core/sock.c:3439
-> |  #5: ffffa2e503a65858 (&ei->socket.wq.wait){..-.}-{2:2}, at: __wake_up_common_lock+0x26/0x110 kernel/sched/wait.c:105
-> |  #6: ffffa2e506240930 (&p->pi_lock){-.-.}-{2:2}, at: class_raw_spinlock_irqsave_constructor include/linux/spinlock.h:551 [inline]
-> |  #6: ffffa2e506240930 (&p->pi_lock){-.-.}-{2:2}, at: try_to_wake_up+0x50/0x930 kernel/sched/core.c:4154
-> |  #7: ffffa2e57dc2f398 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:593 [inline]
-> |  #7: ffffa2e57dc2f398 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1505 [inline]
-> |  #7: ffffa2e57dc2f398 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1804 [inline]
-> |  #7: ffffa2e57dc2f398 (&rq->__lock){-.-.}-{2:2}, at: ttwu_queue kernel/sched/core.c:3942 [inline]
-> |  #7: ffffa2e57dc2f398 (&rq->__lock){-.-.}-{2:2}, at: try_to_wake_up+0x4ce/0x930 kernel/sched/core.c:4270
-> | irq event stamp: 89470
-> | hardirqs last  enabled at (89469): [<ffffffff978623b3>] seqcount_lockdep_reader_access include/linux/seqlock.h:74 [inline]
-> | hardirqs last  enabled at (89469): [<ffffffff978623b3>] ktime_get+0xf3/0x2c0 kernel/time/timekeeping.c:848
-> | hardirqs last disabled at (89470): [<ffffffff9971605e>] __raw_spin_lock_irqsave include/linux/spinlock_api_smp.h:108 [inline]
-> | hardirqs last disabled at (89470): [<ffffffff9971605e>] _raw_spin_lock_irqsave+0x4e/0xb0 kernel/locking/spinlock.c:162
-> | softirqs last  enabled at (89413): [<ffffffff98f80605>] spin_unlock_bh include/linux/spinlock.h:396 [inline]
-> | softirqs last  enabled at (89413): [<ffffffff98f80605>] release_sock+0x105/0x130 net/core/sock.c:3635
-> | softirqs last disabled at (89462): [<ffffffff976fb3f2>] __do_softirq kernel/softirq.c:588 [inline]
-> | softirqs last disabled at (89462): [<ffffffff976fb3f2>] invoke_softirq kernel/softirq.c:428 [inline]
-> | softirqs last disabled at (89462): [<ffffffff976fb3f2>] __irq_exit_rcu+0x72/0x110 kernel/softirq.c:637
-> |
-> | assert no writes to 0xffffa2e506240068 of 4 bytes by task 16 on cpu 2:
-> |  __block_task kernel/sched/sched.h:2770 [inline]
-> |  dequeue_entities+0xde4/0xed0 kernel/sched/fair.c:7177
-> |  pick_next_entity kernel/sched/fair.c:5627 [inline]
-> |  pick_task_fair kernel/sched/fair.c:8856 [inline]
-> |  pick_next_task_fair+0xaf/0x820 kernel/sched/fair.c:8876
-> |  __pick_next_task kernel/sched/core.c:5955 [inline]
-> |  pick_next_task kernel/sched/core.c:6477 [inline]
-> |  __schedule+0x5e0/0x14a0 kernel/sched/core.c:6629
-> |  __schedule_loop kernel/sched/core.c:6752 [inline]
-> |  schedule+0xe7/0x1a0 kernel/sched/core.c:6767
-> |  schedule_timeout+0xaf/0x160 kernel/time/timer.c:2615
-> |  rcu_gp_fqs_loop+0x2d8/0xd40 kernel/rcu/tree.c:2045
-> |  rcu_gp_kthread+0x28/0x2f0 kernel/rcu/tree.c:2247
-> |  kthread+0x1dd/0x220 kernel/kthread.c:389
-> |  ret_from_fork+0x4b/0x60 arch/x86/kernel/process.c:147
-> |  ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-> |
-> | 1 lock held by rcu_preempt/16:
-> |  #0: ffffa2e57dd2f398 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock_nested kernel/sched/core.c:593 [inline]
-> |  #0: ffffa2e57dd2f398 (&rq->__lock){-.-.}-{2:2}, at: raw_spin_rq_lock kernel/sched/sched.h:1505 [inline]
-> |  #0: ffffa2e57dd2f398 (&rq->__lock){-.-.}-{2:2}, at: rq_lock kernel/sched/sched.h:1804 [inline]
-> |  #0: ffffa2e57dd2f398 (&rq->__lock){-.-.}-{2:2}, at: __schedule+0x1f9/0x14a0 kernel/sched/core.c:6575
-> | irq event stamp: 791056
-> | hardirqs last  enabled at (791055): [<ffffffff99716270>] __raw_spin_unlock_irqrestore include/linux/spinlock_api_smp.h:151 [inline]
-> | hardirqs last  enabled at (791055): [<ffffffff99716270>] _raw_spin_unlock_irqrestore+0x30/0x60 kernel/locking/spinlock.c:194
-> | hardirqs last disabled at (791056): [<ffffffff99706ad7>] __schedule+0x1d7/0x14a0 kernel/sched/core.c:6555
-> | softirqs last  enabled at (788540): [<ffffffff976fb3f2>] __do_softirq kernel/softirq.c:588 [inline]
-> | softirqs last  enabled at (788540): [<ffffffff976fb3f2>] invoke_softirq kernel/softirq.c:428 [inline]
-> | softirqs last  enabled at (788540): [<ffffffff976fb3f2>] __irq_exit_rcu+0x72/0x110 kernel/softirq.c:637
-> | softirqs last disabled at (788529): [<ffffffff976fb3f2>] __do_softirq kernel/softirq.c:588 [inline]
-> | softirqs last disabled at (788529): [<ffffffff976fb3f2>] invoke_softirq kernel/softirq.c:428 [inline]
-> | softirqs last disabled at (788529): [<ffffffff976fb3f2>] __irq_exit_rcu+0x72/0x110 kernel/softirq.c:637
-> |
-> | Reported by Kernel Concurrency Sanitizer on:
-> | CPU: 2 UID: 0 PID: 16 Comm: rcu_preempt Not tainted 6.12.0-rc2-00003-g44423ac48780-dirty #8
-> | Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-> | ==================================================================
+It's been over two weeks with no feedback but this patch fixes a
+regression on at least two ARM64 platforms. Could you also pick it up
+into v6.12?
+
+Thanks!
+Bartosz
 
