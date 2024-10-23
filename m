@@ -1,146 +1,141 @@
-Return-Path: <linux-kernel+bounces-378480-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378479-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69F6A9AD12C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:39:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0616F9AD12A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:39:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2AE80282744
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:39:27 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BEF9B21D2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:39:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F53E1CB535;
-	Wed, 23 Oct 2024 16:39:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0ADF31CC154;
+	Wed, 23 Oct 2024 16:39:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CBiir+8s"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b="bXOrI+Gp"
+Received: from mail.tuxedocomputers.com (mail.tuxedocomputers.com [157.90.84.7])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9918B13B792;
-	Wed, 23 Oct 2024 16:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB2D1CB334;
+	Wed, 23 Oct 2024 16:38:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=157.90.84.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729701561; cv=none; b=Jqa8SHeOma2/bxpF7pM4M8RH/SWO7IU97jRJy3PbDW1iDB/waxPTrB9EekLR1B6MRqzuZiXqqMYVELociIPPn4a/O6MT1OjwwxNqYrMIJ8QZIsYVDrwwGBAQ75jjCgGQ3mZ4OeasPzODFYRZdHrMUvWgwFDCKt5g56wtWQw+WNs=
+	t=1729701543; cv=none; b=N/v+T6uKAP6QvBqHnuikV/nFyTXbFKtXNfX6zsbnHTataHKBuV6Zcztl5M/8NVBGogOvKUZ7R68dCGkrQPK9ggfYR2rhtDc6j785CIVKqjCrSkbewTeJZHyI2jD/KCY16rmErYcTVKAi7/pQhEEYL8+ESQ9/TCGCcOjC5kKC33c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729701561; c=relaxed/simple;
-	bh=1vm/vJPnqZ3Y9PyWxRqcHnRIdzQtOedtRdfemnaD3QE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=g+7KHWODpSn8rioxtLRmXfQ86LHetwk11uDrk0MZgouIyoDsg+w06O+l+OPh0GwBoz/gKv/c7tioWBwVfSCJVi99kUqUoHLihxlgYY7I7BF1QS+/FqsPnW+KouovvsIhG9XnSqm4/8qkrZQNOkdHVmtqjx9pT0TP/gJ4K0rmQYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CBiir+8s; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3B795C4CEE4;
-	Wed, 23 Oct 2024 16:39:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729701561;
-	bh=1vm/vJPnqZ3Y9PyWxRqcHnRIdzQtOedtRdfemnaD3QE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CBiir+8sW2Wc7eHa1uMwUGpzfbwW9kAfV5RwtHy2DYXcore6939aUBELdcXcPe5Ih
-	 9I8YmV93tHpm0rngfnWt0HxF7zpwLDBIIcoUakOkXzDMf1FTJ65N5h4hWRJKSGn7Mc
-	 oeJktdmUprgoZWOQDzGQDQ86NuxRANuFbBMbUl6OLYsO7RHdctoeeI7eZWg2zy9zM6
-	 n9umXvKcs0/6YmDsJI9FMd9QS/ih7SLtqYAGOEA+AAIxyQgExqFG1KB0/Zxj0hfPjT
-	 xjBtjnoPNoXpC3/qto1Oc8iS/1STzW7BO5TKOU2HoxhPTxRhcJTI7cKlNphiMgThL+
-	 3w3EQhSq9SGIg==
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539e8607c2aso7868755e87.3;
-        Wed, 23 Oct 2024 09:39:21 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVmNofANNRu0Pi5Ee2g9NwgzK7JwcObRWYaM2uClle1lPEf40nOIJctUSuFaf1p1A1Hqc/KKln1352RFRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTIGF84s/exdjCQrx/dSkec5aI18Nwhv8F0RkWF2ACt/VH7GSv
-	VBtE5ZjRw24VyohvthrYG1WB+lFfHKYMz9wIV8i0N6xsLDMqPT8B4IHcoNvy/SXxmJUT2TMxdP2
-	oEFelOHy7cKJxf2pUHJ4RHeWR6Eg=
-X-Google-Smtp-Source: AGHT+IHLKJvA//TAI5BgwAAr8gldy9PaVgrUn9ArNQNzmLuqUcffvcz9gjICZFaypUCE4lp5MWP07pGPJp6pWam2/ZQ=
-X-Received: by 2002:a05:6512:3a95:b0:539:edf4:68b4 with SMTP id
- 2adb3069b0e04-53b1a37f186mr1578413e87.57.1729701559938; Wed, 23 Oct 2024
- 09:39:19 -0700 (PDT)
+	s=arc-20240116; t=1729701543; c=relaxed/simple;
+	bh=+ST3KTcIniVHqkkNviVk+Y9y6iICjWEfZxLErDAg0hE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=qRsSGuEOeyWYAbdsfeFa8z25S2ZI/TCE7LAUwd8TOeN3c0WxGrSYl7hLfFo9IMm+jFfvBr9/I1vT0mUjMoYhnszzfqQvwwgZW8aM52RfAINKvn8ZfUC1iB/qVIWDBQQCGVwXZCTF0OgJEFEienBYj1bw8qCHr7a40A/g2NkmXtA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com; spf=pass smtp.mailfrom=tuxedocomputers.com; dkim=pass (1024-bit key) header.d=tuxedocomputers.com header.i=@tuxedocomputers.com header.b=bXOrI+Gp; arc=none smtp.client-ip=157.90.84.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=tuxedocomputers.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=tuxedocomputers.com
+Received: from [192.168.42.96] (p5de457db.dip0.t-ipconnect.de [93.228.87.219])
+	(Authenticated sender: wse@tuxedocomputers.com)
+	by mail.tuxedocomputers.com (Postfix) with ESMTPSA id 8E2802FC0059;
+	Wed, 23 Oct 2024 18:38:49 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=tuxedocomputers.com;
+	s=default; t=1729701530;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=qiQI9gPCZD8o3BwnJMzsmwHDB3fnS00qb76DJ3bQLGY=;
+	b=bXOrI+GpHBr4zEnl09G31WUIukro7azzzzx5JD4Nb7nnGE8oNQjBFwGKUJ5f6tAM/DD//m
+	Q+MnyJ1V5ZLNSAkVRKLE7e4+dqs56dQ7Vj3iHzkCK2eEKoTACh6NQCF0rAX7FunR0yDLRq
+	Os43wW3qIK1ykuE906hADe6q2q9J3d4=
+Authentication-Results: mail.tuxedocomputers.com;
+	auth=pass smtp.auth=wse@tuxedocomputers.com smtp.mailfrom=wse@tuxedocomputers.com
+Message-ID: <b849b2af-1778-4da0-90ea-198a6da89166@tuxedocomputers.com>
+Date: Wed, 23 Oct 2024 18:38:49 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4960180.31r3eYUQgx@devpool47.emlix.com> <3317655.aeNJFYEL58@devpool47.emlix.com>
-In-Reply-To: <3317655.aeNJFYEL58@devpool47.emlix.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 24 Oct 2024 01:38:43 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAS8=Jy5t6JsP0mNw2XD7=gyD=Ny9uBw=Wq+CzX7-pmjdw@mail.gmail.com>
-Message-ID: <CAK7LNAS8=Jy5t6JsP0mNw2XD7=gyD=Ny9uBw=Wq+CzX7-pmjdw@mail.gmail.com>
-Subject: Re: [PATCH 3/7] kconfig: qconf: use preferred form of QString API
-To: Rolf Eike Beer <eb@emlix.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
+ NB04 devices
+To: Pavel Machek <pavel@ucw.cz>, Hans de Goede <hdegoede@redhat.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Benjamin Tissoires <bentiss@kernel.org>,
+ =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+ dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+ lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
+ ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
+References: <sih5i2ausorlpiosifvj2vvlut4ok6bbgt6cympuxhdbjljjiw@gg2r5al552az>
+ <82a6eca1-728c-436f-8c4d-073d8a43ee27@tuxedocomputers.com>
+ <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
+ <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
+ <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
+ <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+ <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+ <Zxd0ou7GpCRu0K5a@duo.ucw.cz>
+Content-Language: en-US
+From: Werner Sembach <wse@tuxedocomputers.com>
+In-Reply-To: <Zxd0ou7GpCRu0K5a@duo.ucw.cz>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-The code looks good to me, but please describe something
-in the commit message body.
+Hi
 
-For example, you can quote:
-"We recommend that you always use the isEmpty() function and avoid isNull()=
-"
-from the QString documentation. [1]
-
-[1] https://doc.qt.io/qt-6/qstring.html#distinction-between-null-and-empty-=
-strings
-
-
-
-
-On Wed, Oct 23, 2024 at 3:32=E2=80=AFPM Rolf Eike Beer <eb@emlix.com> wrote=
-:
+Am 22.10.24 um 11:47 schrieb Pavel Machek:
+> Hi!
 >
-> Signed-off-by: Rolf Eike Beer <eb@emlix.com>
-> ---
->  scripts/kconfig/qconf.cc | 8 ++++----
->  1 file changed, 4 insertions(+), 4 deletions(-)
+>>> Sorry for taking a bit long to respond.
+>>>
+>>> This "illumination" subsystem would (from my perspective) act like some sort of LED subsystem
+>>> for devices with a high count of LEDs, like some RGB keyboards.
+>>>
+>>> This would allow us too:
+>>> - provide an abstract interface for userspace applications like OpenRGB
+>>> - provide an generic LED subsystem emulation on top of the illumination device (optional)
+>>> - support future RGB controllers in a generic way
+>>>
+>>> Advanced features like RGB effects, etc can be added later should the need arise.
+>>>
+>>> I would suggest that we model it after the HID LampArray interface:
+>>>
+>>> - interface for querying:
+>>>   - number of LEDs
+>>>   - supported colors, etc of those LEDs
+>>>   - position of those LEDs if available
+>>>   - kind (keyboard, ...)
+>>>   - latency, etc
+>>> - interface for setting multiple LEDs at once
+>>> - interface for setting a range of LEDs at once
+> How are LEDs ordered? I don't believe range makes much sense.
+For LampArray the spec suggests (but not requires) "row wise" starting in the 
+upper left, however the spec does not specify how to handle with double row keys 
+like iso-enter or half-key-downward offset arrow keys like they exist on some 
+notebooks.
 >
-> diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-> index 54640f6b29e2..6a653ebe9df3 100644
-> --- a/scripts/kconfig/qconf.cc
-> +++ b/scripts/kconfig/qconf.cc
-> @@ -1520,8 +1520,8 @@ void ConfigMainWindow::loadConfig(void)
->  {
->         QString str;
+>>> I do not know if mixing sysfs (for controller attributes like number of LEDs, etc) and IOCTL
+>>> (for setting/getting LED colors) is a good idea, any thoughts?
+>> I wonder what the advantage of this approach is over simply using HID LampArray
+>> (emulation), openRGB is already going to support HID LampArray and since Microsoft
+>> is pushing this we will likely see it getting used more and more.
+> There's nothing simple about "HID LampArray". Specification is long
+> ang ugly... and we don't want to be stuck with with OpenRGB (links to QT!).
+It is the only vendor agnostic approach to complex userspace lighting control 
+atm. And what's the problem with QT?
 >
-> -       str =3D QFileDialog::getOpenFileName(this, "", configname);
-> -       if (str.isNull())
-> +       str =3D QFileDialog::getOpenFileName(this, QString(), configname)=
-;
-> +       if (str.isEmpty())
->                 return;
+>> Using HID LampArray also has the advantage that work has landed and is landing
+>> to allow safely handing over raw HID access to userspace programs or even
+>> individual graphical apps with the option to revoke that access when it is
+>> no longer desired for the app to have access.
+> HID raw is not suitable kernel interface.
 >
->         if (conf_read(str.toLocal8Bit().constData()))
-> @@ -1547,8 +1547,8 @@ void ConfigMainWindow::saveConfigAs(void)
->  {
->         QString str;
+>> Personally I really like the idea to just emulate a HID LampArray device
+>> for this instead or rolling our own API.  I believe there need to be
+>> strong arguments to go with some alternative NIH API and I have not
+>> heard such arguments yet.
+> If you don't want "some alternative API", we already have perfectly
+> working API for 2D arrays of LEDs. I believe I mentioned it before
+> :-). Senzrohssre.
 >
-> -       str =3D QFileDialog::getSaveFileName(this, "", configname);
-> -       if (str.isNull())
-> +       str =3D QFileDialog::getSaveFileName(this, QString(), configname)=
-;
-> +       if (str.isEmpty())
->                 return;
->
->         if (conf_write(str.toLocal8Bit().constData())) {
-> --
-> 2.47.0
->
->
-> --
-> Rolf Eike Beer
->
-> emlix GmbH
-> Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
-> Phone +49 (0)551 30664-0, e-mail info@emlix.com
-> District Court of G=C3=B6ttingen, Registry Number HR B 3160
-> Managing Directors: Heike Jordan, Dr. Uwe Kracke
-> VAT ID No. DE 205 198 055
-> Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
-> Office Bonn: Bachstr. 6, 53115 Bonn, Germany
-> http://www.emlix.com
->
-> emlix - your embedded Linux partner
->
->
-
-
---
-Best Regards
-Masahiro Yamada
+> 								Pavel
 
