@@ -1,179 +1,230 @@
-Return-Path: <linux-kernel+bounces-377271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377273-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1D4939ABC55
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:39:45 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CF799ABC5B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:42:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3EF481C224B5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:39:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 973711C212B1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:42:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66C1B132139;
-	Wed, 23 Oct 2024 03:39:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NMbGgl1r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 333ED13698E;
+	Wed, 23 Oct 2024 03:42:39 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4021139E;
-	Wed, 23 Oct 2024 03:39:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B15C139E;
+	Wed, 23 Oct 2024 03:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729654777; cv=none; b=HvYySJ+miV9LipBvsD0ezLMu53qQKFjKqWHSt/V9oJegpK0jpgCxFch/XRTvJDIdsx/U6ow4rnusbQnybIfyqW8eqhY+BUyd+cIR+0GfJj/KgO8jKyR2iVu8DqlbBdzr57o1Zgjm7vLTKcb6+ypqOoEQ3Gni6SRP6Tc/6CrT4eQ=
+	t=1729654958; cv=none; b=dwgRm/TDXKA05GTbXhwqehJ8Ey37sZHjCSX9wMaCXMI2pslKCgBNAksJhZ51xcimpIWjKHw6xX8MhGXj28JjqcqrvG01PF2S1tul59qo3JYYV4yWaw8U6QuBIinCKgapfDf3SzLVgTk2+3Dr2gXLnokfh+UTR19mOKLnkpW9GyY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729654777; c=relaxed/simple;
-	bh=bWPXaO4wbrblRneGFGhxY6y52ljzyNu1a9lMENWtzF4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=adn2jb1Dp+Q5zqdg30Q20+mMSFq+aPgUsnD+9Eck9MyIXHP7W8Sr3Sa3/o/IIzRE3QXjYBI7yPcPTs4Vbr51DsNlkiYoFax0YhERjQIOzHJbwnHwTmZulHkYLNB4fyfWKqrgGN9CBWMEAxVWI/6kbYcqCdzeogkF3oAdbynuIsQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NMbGgl1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6D3BCC4CEEA;
-	Wed, 23 Oct 2024 03:39:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729654777;
-	bh=bWPXaO4wbrblRneGFGhxY6y52ljzyNu1a9lMENWtzF4=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NMbGgl1rC4inH6PxlOEXvcJmBAxCl6uUSUt3u440jrxNzRbIvipfTburDVG36qWIz
-	 dOH5tCe0jeeQu2qUtiucym/nNrH3mfKIRGqeBuHG03gWzecaumFM8VdW7iN1EjvHQB
-	 Zl0tJP3xE4E+zvJ9Ks/Hj5osIqFBP1XQqbc01oSOim7Ewx6SR3ss2WxOWBpjsXUDKV
-	 aUol+ev7DeDfi/8WnNC50TdnM8pinD7lvK1acWwLmTStFSsSpbXudvyo8wBkwRAPly
-	 eXdd21EgRGXmZ48oAJhS6x02md1QbRmGSPjPogPFdHsjc8FQ+ATnJOn+HijVBb0duA
-	 dvfEhR4RymRlg==
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb56cb61baso49900621fa.1;
-        Tue, 22 Oct 2024 20:39:37 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCULVt8CZF9wuq7zeYLg+Ezce7DQ4k5G6x8lyqK3yfVCowH70E4YbE+1M1AAv1OijaYRU89B+MKDTAGUkA==@vger.kernel.org, AJvYcCUsMOtCrxmeN4Q7pGrotUWa3U3alWojAnx0Qb06UqVjiOb0L3i2Z6cYtMGSDuQjO7EWhJru3v74le8r5yBq@vger.kernel.org, AJvYcCXp6O+5nAPJHUDAj+ws+qcscnh+lj4Nk8sdWcNuXZwxOcNGdQe8OuTMCkpTNrWjRsTjgdJE9ZTMwEk4bdA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyd8aXVzxh/4bK7+SWXL6ONDGNw4hHDEIwsHPnXbBK1gdjMHAbB
-	9V9kOEuctyseJ60mhnAglmxe0M6o7vxF/a8WBmrzgYJldwAZ6rAxveEpA5CGxT28+jP0p6U0SKw
-	dvr9UuqpTcTlQbPOnnf5GRRGZRy0=
-X-Google-Smtp-Source: AGHT+IG1m1c8WF9Ifm54MlXWxXbh0iMTPKQYEttQXsWIzvLY4nWYZZl7/oT+dYwJAZTktYREhgohpTAT6LM7SU3MG0Q=
-X-Received: by 2002:a05:6512:2304:b0:536:54db:ddd0 with SMTP id
- 2adb3069b0e04-53b1a2405f9mr421331e87.0.1729654776050; Tue, 22 Oct 2024
- 20:39:36 -0700 (PDT)
+	s=arc-20240116; t=1729654958; c=relaxed/simple;
+	bh=28Cy+6s/ss0dY2uMRJvrIed0vyGPiWbChvb7TVYNKYM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=G/TCODbZwVW2qT4BnZ0sKwY4p/Iu5oNSgv63VuikYqKxZPBwUkNpRJUep+wbPQKTjgu1mqf/Vt0VRxtliMtnEkzI6AzqUNJJOGQUoWpr+pftEb1v40LFLp7UObzrQiWJIVNmpw/sES9IpJ6Ns0VfdiwdLQvEIgZ2EbpuG5Wtpi4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.216])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XYFGs032sz4f3jcs;
+	Wed, 23 Oct 2024 11:42:13 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 6974D1A018C;
+	Wed, 23 Oct 2024 11:42:30 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCHusaicBhnUCB2Ew--.20884S4;
+	Wed, 23 Oct 2024 11:42:28 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: stable@vger.kernel.org,
+	gregkh@linuxfoundation.org,
+	axboe@kernel.dk,
+	yukuai3@huawei.com
+Cc: linux-block@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH 6.1] block, bfq: fix procress reference leakage for bfqq in merge chain
+Date: Wed, 23 Oct 2024 11:39:50 +0800
+Message-Id: <20241023033950.3950039-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com>
- <20241021201657.GA898643@thelio-3990X> <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com>
- <20241022200732.GA487584@thelio-3990X> <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com>
-In-Reply-To: <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 23 Oct 2024 12:38:59 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASbFeJc9Y=BFY85SwESUKNNDTRDunyLGveDusC--NVkCw@mail.gmail.com>
-Message-ID: <CAK7LNASbFeJc9Y=BFY85SwESUKNNDTRDunyLGveDusC--NVkCw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
-To: Koakuma <koachan@protonmail.com>
-Cc: Nathan Chancellor <nathan@kernel.org>, Andreas Larsson <andreas@gaisler.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, 
-	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, 
-	Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev, 
-	linux-kbuild@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCHusaicBhnUCB2Ew--.20884S4
+X-Coremail-Antispam: 1UD129KBjvJXoWxZw4xtr4UAw4rWF45ZFyrJFb_yoWruFWrpa
+	13ta13Ar1xXr45Wry7Jr4UZ3WFkr1fA39rtF9aq34kJr1DArnrtF1vvw18ZFyIqrZ5uwsx
+	Xr10qr97Jr17JFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUkG14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26F4j
+	6r4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	tVW8ZwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-On Wed, Oct 23, 2024 at 9:44=E2=80=AFAM Koakuma <koachan@protonmail.com> wr=
-ote:
->
-> Nathan Chancellor <nathan@kernel.org> wrote:
-> > Koakuma might know more than I do but I did not test either the
-> > integrated assembler or the rest of the LLVM tools; I only tested clang
-> > for CC. As far as I am aware, that has been where most of the effort in
-> > llvm-project has been going and I think there are probably other fixes
-> > that will be needed for the other tools. The command I tested was:
-> >
-> > $ make -skj"$(nproc)" \
-> > ARCH=3Dsparc64 \
-> > CC=3Dclang \
-> > CROSS_COMPILE=3Dsparc64-linux-gnu- \
-> > LLVM_IAS=3D0 \
-> > mrproper defconfig all
-> >
-> > I see this as more of a stepping stone series to make testing those
-> > other components easier as time goes on, hence why I did not really
-> > consider user facing documentation either like you brought up in the
-> > other thread.
-> >
-> > Cheers,
-> > Nathan
->
-> Ah, pardon me for forgetting to say it in the cover letter.
-> But yeah. At the moment only clang as CC works, all other LLVM tools are =
-still
-> incomplete and need some work to be able to build the kernel, so these pa=
-tches
-> indeed are intended as stepping stones to make it easier to work on
-> the rest of the tools.
->
-> I'm not sure if I should update the documentation now given that LLVM sup=
-port
-> is nowhere near as complete as other architectures, but I'll do it if nee=
-ded...
+From: Yu Kuai <yukuai3@huawei.com>
 
-Nathan said he was able to build the kernel.
+[ Upstream commit 73aeab373557fa6ee4ae0b742c6211ccd9859280 ]
 
+Original state:
 
-If so, I think this should be documented (required LLVM version and
-the supported build command),
-otherwise people cannot test this patch.
+        Process 1       Process 2       Process 3       Process 4
+         (BIC1)          (BIC2)          (BIC3)          (BIC4)
+          Λ                |               |               |
+           \--------------\ \-------------\ \-------------\|
+                           V               V               V
+          bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
+    ref    0               1               2               4
 
+After commit 0e456dba86c7 ("block, bfq: choose the last bfqq from merge
+chain in bfq_setup_cooperator()"), if P1 issues a new IO:
 
+Without the patch:
 
+        Process 1       Process 2       Process 3       Process 4
+         (BIC1)          (BIC2)          (BIC3)          (BIC4)
+          Λ                |               |               |
+           \------------------------------\ \-------------\|
+                                           V               V
+          bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
+    ref    0               0               2               4
 
-Anyway, the sparc subsystem is maintained.
-I hope Andreas can take a look.
+bfqq3 will be used to handle IO from P1, this is not expected, IO
+should be redirected to bfqq4;
 
+With the patch:
 
+          -------------------------------------------
+          |                                         |
+        Process 1       Process 2       Process 3   |   Process 4
+         (BIC1)          (BIC2)          (BIC3)     |    (BIC4)
+                           |               |        |      |
+                            \-------------\ \-------------\|
+                                           V               V
+          bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
+    ref    0               0               2               4
 
-commit eb5b0f9812fff72f82e6ecc9ad4dafaf4971a16a
-Merge: 4ffc45808373 d21dffe51baa
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Wed Sep 25 11:21:06 2024 -0700
+IO is redirected to bfqq4, however, procress reference of bfqq3 is still
+2, while there is only P2 using it.
 
-    Merge tag 'sparc-for-6.12-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc
+Fix the problem by calling bfq_merge_bfqqs() for each bfqq in the merge
+chain. Also change bfqq_merge_bfqqs() to return new_bfqq to simplify
+code.
 
-    Pull sparc32 update from Andreas Larsson:
+Fixes: 0e456dba86c7 ("block, bfq: choose the last bfqq from merge chain in bfq_setup_cooperator()")
+Signed-off-by: Yu Kuai <yukuai3@huawei.com>
+Link: https://lore.kernel.org/r/20240909134154.954924-3-yukuai1@huaweicloud.com
+Signed-off-by: Jens Axboe <axboe@kernel.dk>
+---
+ block/bfq-iosched.c | 37 +++++++++++++++++--------------------
+ 1 file changed, 17 insertions(+), 20 deletions(-)
 
-     - Remove an unused variable for sparc32
+diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
+index bfce6343a577..8e797782cfe3 100644
+--- a/block/bfq-iosched.c
++++ b/block/bfq-iosched.c
+@@ -3117,10 +3117,12 @@ void bfq_release_process_ref(struct bfq_data *bfqd, struct bfq_queue *bfqq)
+ 	bfq_put_queue(bfqq);
+ }
+ 
+-static void
+-bfq_merge_bfqqs(struct bfq_data *bfqd, struct bfq_io_cq *bic,
+-		struct bfq_queue *bfqq, struct bfq_queue *new_bfqq)
++static struct bfq_queue *bfq_merge_bfqqs(struct bfq_data *bfqd,
++					 struct bfq_io_cq *bic,
++					 struct bfq_queue *bfqq)
+ {
++	struct bfq_queue *new_bfqq = bfqq->new_bfqq;
++
+ 	bfq_log_bfqq(bfqd, bfqq, "merging with queue %lu",
+ 		(unsigned long)new_bfqq->pid);
+ 	/* Save weight raising and idle window of the merged queues */
+@@ -3214,6 +3216,8 @@ bfq_merge_bfqqs(struct bfq_data *bfqd, struct bfq_io_cq *bic,
+ 	bfq_reassign_last_bfqq(bfqq, new_bfqq);
+ 
+ 	bfq_release_process_ref(bfqd, bfqq);
++
++	return new_bfqq;
+ }
+ 
+ static bool bfq_allow_bio_merge(struct request_queue *q, struct request *rq,
+@@ -3249,14 +3253,8 @@ static bool bfq_allow_bio_merge(struct request_queue *q, struct request *rq,
+ 		 * fulfilled, i.e., bic can be redirected to new_bfqq
+ 		 * and bfqq can be put.
+ 		 */
+-		bfq_merge_bfqqs(bfqd, bfqd->bio_bic, bfqq,
+-				new_bfqq);
+-		/*
+-		 * If we get here, bio will be queued into new_queue,
+-		 * so use new_bfqq to decide whether bio and rq can be
+-		 * merged.
+-		 */
+-		bfqq = new_bfqq;
++		while (bfqq != new_bfqq)
++			bfqq = bfq_merge_bfqqs(bfqd, bfqd->bio_bic, bfqq);
+ 
+ 		/*
+ 		 * Change also bqfd->bio_bfqq, as
+@@ -5616,9 +5614,7 @@ bfq_do_early_stable_merge(struct bfq_data *bfqd, struct bfq_queue *bfqq,
+ 	 * state before killing it.
+ 	 */
+ 	bfqq->bic = bic;
+-	bfq_merge_bfqqs(bfqd, bic, bfqq, new_bfqq);
+-
+-	return new_bfqq;
++	return bfq_merge_bfqqs(bfqd, bic, bfqq);
+ }
+ 
+ /*
+@@ -6066,6 +6062,7 @@ static bool __bfq_insert_request(struct bfq_data *bfqd, struct request *rq)
+ 	bool waiting, idle_timer_disabled = false;
+ 
+ 	if (new_bfqq) {
++		struct bfq_queue *old_bfqq = bfqq;
+ 		/*
+ 		 * Release the request's reference to the old bfqq
+ 		 * and make sure one is taken to the shared queue.
+@@ -6081,18 +6078,18 @@ static bool __bfq_insert_request(struct bfq_data *bfqd, struct request *rq)
+ 		 * then complete the merge and redirect it to
+ 		 * new_bfqq.
+ 		 */
+-		if (bic_to_bfqq(RQ_BIC(rq), 1) == bfqq)
+-			bfq_merge_bfqqs(bfqd, RQ_BIC(rq),
+-					bfqq, new_bfqq);
++		if (bic_to_bfqq(RQ_BIC(rq), 1) == bfqq) {
++			while (bfqq != new_bfqq)
++				bfqq = bfq_merge_bfqqs(bfqd, RQ_BIC(rq), bfqq);
++		}
+ 
+-		bfq_clear_bfqq_just_created(bfqq);
++		bfq_clear_bfqq_just_created(old_bfqq);
+ 		/*
+ 		 * rq is about to be enqueued into new_bfqq,
+ 		 * release rq reference on bfqq
+ 		 */
+-		bfq_put_queue(bfqq);
++		bfq_put_queue(old_bfqq);
+ 		rq->elv.priv[1] = new_bfqq;
+-		bfqq = new_bfqq;
+ 	}
+ 
+ 	bfq_update_io_thinktime(bfqd, bfqq);
+-- 
+2.39.2
 
-    * tag 'sparc-for-6.12-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc:
-      arch/sparc: remove unused varible paddrbase in function leon_swprobe(=
-)
-
-commit 7dd894c1bf65a9591ba27f6175cf3238748deb47
-Merge: 1c7d0c3af5cc a3da15389112
-Author: Linus Torvalds <torvalds@linux-foundation.org>
-Date:   Thu Jul 18 15:48:41 2024 -0700
-
-    Merge tag 'sparc-for-6.11-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc
-
-    Pull sparc updates from Andreas Larsson:
-
-     - Add MODULE_DESCRIPTION for a number of sbus drivers
-
-     - Fix linking error for large sparc32 kernels
-
-     - Fix incorrect functions signature and prototype warnings for sparc64
-
-    * tag 'sparc-for-6.11-tag1' of
-git://git.kernel.org/pub/scm/linux/kernel/git/alarsson/linux-sparc:
-      sparc64: Fix prototype warnings in hibernate.c
-      sparc64: Fix prototype warning for prom_get_mmu_ihandle
-      sparc64: Fix incorrect function signature and add prototype for
-prom_cif_init
-      sparc64: Fix prototype warnings for floppy_64.h
-      sparc32: Fix truncated relocation errors when linking large kernels
-      sbus: add missing MODULE_DESCRIPTION() macros
-
-
---=20
-Best Regards
-Masahiro Yamada
 
