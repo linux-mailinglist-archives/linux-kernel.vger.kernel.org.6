@@ -1,101 +1,112 @@
-Return-Path: <linux-kernel+bounces-378948-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378949-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7FCC49AD794
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:29:58 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E7E9AD7A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:35:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 07A01B21161
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:29:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2126BB21AB3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:35:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 580D51FEFB6;
-	Wed, 23 Oct 2024 22:29:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EC1E1FCF7E;
+	Wed, 23 Oct 2024 22:35:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="faOPjrA+"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Gl5R3jrH"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B531914EC55;
-	Wed, 23 Oct 2024 22:29:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A09A0146A79;
+	Wed, 23 Oct 2024 22:35:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729722587; cv=none; b=JtdXJ/wFJkstmxi6Xl5cUfM+b1IEcVASYU1dmNfCyu5jqAGApCbiYSCazTjrZ6snC7urdFLg4RTKPHnxOeQMePEHA+9fYNUjMeJaquZk+E54xb94Wt60/ZQr7wHrXq451B6a2DHcOM5MLDd8Iq5/5SSEB4Ba+jNNrXi9tdGgmqQ=
+	t=1729722919; cv=none; b=DUFxvKw2EaQ1dBrqqn2ekJSrADpIFf98fDHjqOFgLu6CVqYExLrxvqhkyRWthwuEG5kvYHpmrecLXsITXN2iNuGfyEPGw0MY7xQt1eFzCTu55Cm9LnBCgR4tpSgLBnBUB7mTo904pb8uMg0Yq4hW7IYuZecoIsnXZFITZ8iqCzE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729722587; c=relaxed/simple;
-	bh=pEgmy51T1zra7F98d2fnat675DwGcf+TUWjeAVRKf3Y=;
+	s=arc-20240116; t=1729722919; c=relaxed/simple;
+	bh=kFUZRApfRhwRNnH2g/MMFbF11hdyniiAYG2bhWxegh8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gtbkiLbBkz5vWXKtFhoAhzQ0NKgYg+em8/LveGAb7L5hj4/f5cq+M4wD3aBrt/uyH5M3dGeGCfFINlvnZAohjzRMzuepZ2Yq2Orqkedx1jXA4+Kw5qvDZBOV2iVDO1hsuvto6WJevMlKxR9/N4yZ/P5KWef9Ql86mDGystjLrcc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=faOPjrA+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B625FC4CECD;
-	Wed, 23 Oct 2024 22:29:45 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=KPM/+EHiYyhfivWTpNhi9u03Vo02490pVhPhduCVqJ8CHVi6E4QruHlHOnDb8ODM9oaftcnkV9HkHtXlDZ2ToptHFteZoEoqWaexej67a4ycGd+rJNle2ULIragvOBU8CG2ln3P7EDIEpKuLbBwOOjK6SYMUDTlVTxjGaYOSk9A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Gl5R3jrH; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3D840C4CEC6;
+	Wed, 23 Oct 2024 22:35:17 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729722587;
-	bh=pEgmy51T1zra7F98d2fnat675DwGcf+TUWjeAVRKf3Y=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=faOPjrA+uZ/bKz8Vq7YdjddG+baOPmxeG7wohD9pDpyFi2HoLQmS85nw9ods7tPq4
-	 O3mjOMa1O+82b/ICdBv4TPxfRAKRibCZCpJ8gOg1gBkrkji5q3PIEUt+tPOv1crq2r
-	 R3qffVDUxZ+eJm5pdJjgk6xdlEo7OaDVGowWFavJW2g0+wtEkLDczwbGzo8N8OWVbw
-	 ZMaF2trhvo16SxR/JbEw7Dskx3b5o3Ywb1+FFn2O34tflL/C83MioQJKQXqYSINdoe
-	 w+5gjgG2/5RFX7NBak7qquJvLyX45p/ZddXu4UpAC6xkYB1t7YdOV6nO2TlWHCi8Jo
-	 xEbg3XRovQrUg==
-Date: Wed, 23 Oct 2024 19:29:42 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: Re: [PATCH 1/1 perf-tools] perf python: Fix up the build on
- architectures without HAVE_KVM_STAT_SUPPORT
-Message-ID: <Zxl41sigv9Fw7Vqv@x1>
-References: <ZxllAtpmEw5fg9oy@x1>
- <CAP-5=fUF1kfioGSgnXzPmadwKrd65mUpHPamPNt29ra9qZAzJw@mail.gmail.com>
- <ZxluzQ3wN1aTcEXt@x1>
- <CAP-5=fVMwVigWsi7-QgBGZ1QbUuPjAxnr5gaLybHtynG7rHU6w@mail.gmail.com>
+	s=k20201202; t=1729722917;
+	bh=kFUZRApfRhwRNnH2g/MMFbF11hdyniiAYG2bhWxegh8=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=Gl5R3jrH8abq0r2FvhAcKDmZSRzQx1/+b2YfZ4Vb7yFs81qBjYwndpR3PFg7WZT2Q
+	 opW4Y3GC/MbsvA/LkMej+Ac8/JL/HdoayvshLSY9XKui0W79ijAHSV/dphTPMEMQc7
+	 jmIFwo2KTOIYf85LUZDZP4PvomwRXnPlSecPPl4kRmOBhT8l1+LonY2HKL20KBha6C
+	 iguhpHVt5pkCLIUO2nYjrsY+zrGiUaji6d1pXjtLTV39gpth5tOUw8m6sd6COqm6SE
+	 +HQ9EynhxHis8K6CWHc6+NZe8NoXBAjPDzvscjFVfBC0ZG6xolWZn2j+SYChKs7ipq
+	 PY0nyjKpqXM8Q==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id D1CE4CE10F5; Wed, 23 Oct 2024 15:35:16 -0700 (PDT)
+Date: Wed, 23 Oct 2024 15:35:16 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: kobak@nvidia.com
+Cc: mochs@nvidia.com, rui.zhang@intel.com, ardb@kernel.org,
+	rafael.j.wysocki@intel.com, sfr@canb.auug.org.au,
+	linux-kernel@vger.kernel.org, linux-next@vger.kernel.org,
+	linux-toolchains@vger.kernel.org
+Subject: Re: [BUG] Argument-alignment build error with clang
+Message-ID: <0936dba4-4de5-49ff-b90c-1263e25920d2@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <38508cf1-7d44-4656-8060-973e820b2957@paulmck-laptop>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAP-5=fVMwVigWsi7-QgBGZ1QbUuPjAxnr5gaLybHtynG7rHU6w@mail.gmail.com>
+In-Reply-To: <38508cf1-7d44-4656-8060-973e820b2957@paulmck-laptop>
 
-On Wed, Oct 23, 2024 at 02:48:04PM -0700, Ian Rogers wrote:
-> On Wed, Oct 23, 2024 at 2:46 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > On Wed, Oct 23, 2024 at 02:40:45PM -0700, Ian Rogers wrote:
-> > > On Wed, Oct 23, 2024 at 2:05 PM Arnaldo Carvalho de Melo <acme@kernel.org> wrote:
-> > > > Noticed while building on a raspbian arm 32-bit system.
-<SNIP>
-> > > > Fixes: 9dabf4003423c8d3 ("perf python: Switch module to linking libraries from building source")
-> > > > Cc: Adrian Hunter <adrian.hunter@intel.com>
-> > > > Cc: Ian Rogers <irogers@google.com>
-> > > > Cc: Jiri Olsa <jolsa@kernel.org>
-> > > > Cc: Kan Liang <kan.liang@linux.intel.com>
-> > > > Cc: Namhyung Kim <namhyung@kernel.org>
-> > > > Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+On Wed, Oct 23, 2024 at 03:26:57PM -0700, Paul E. McKenney wrote:
+> Hello!
+> 
+> Running rcutorture on next-20241023 got me lots of these:
+> 
+> drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an unaligned pointer access [-Werror,-Walign-mismatch]
+>           156 |                         (void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
+> 
+> This is built with CC=clang.  I don't see this diagnostic with GCC.
+> But we are supposed to be able to build with clang, so...
 
-> > > So this will at least conflict with:
-> > > https://lore.kernel.org/lkml/20241022173015.437550-6-irogers@google.com/
-> > > where the #ifdef-ed out functions are removed. Does that series fix
-> > > the ARM32 issue? Could we land that?
+Ah, and this might help:
 
-> > I'd prefer to have what I posted for perf-tools, as it is smaller, and
-> > to land the patch removing those functions on perf-tools-next.
- 
-> Makes sense to me. Have a
-> Reviewed-by: Ian Rogers <irogers@google.com>
-> should you need it.
+clang version 18.1.8 (CentOS 18.1.8-3.el9)
 
-Always appreciated, thanks, applying it to the patch,
+							Thanx, Paul
 
-- Arnaldo
- 
-> > I'll try to switch testing to a librecomputer board, the rpi3 is super
-> > slow :-)
+> The first argument is the address of one of these:
+> 
+> typedef struct {
+> 	__u8 b[UUID_SIZE];
+> } guid_t;
+> 
+> Where UUID_SIZE is as follows:
+> 
+> #define UUID_SIZE 16
+> 
+> But this guid_t is a member of one of these:
+> 
+> struct prm_handler_info {
+> 	guid_t guid;
+> 	efi_status_t (__efiapi *handler_addr)(u64, void *);
+> 	u64 static_data_buffer_addr;
+> 	u64 acpi_param_buffer_addr;
+> 
+> 	struct list_head handler_list;
+> };
+> 
+> One can argue that this structure must be 16-bit aligned on a
+> 64-bit build.  So maybe this is a bug in clang's diagnostics, hence
+> linux-toolchains on CC.
+> 
+> Thoughts?
+> 
+> 						Thanx, Paul
+> 
 
