@@ -1,338 +1,175 @@
-Return-Path: <linux-kernel+bounces-378403-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378404-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD649ACF94
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:59:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92DA29ACF7E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:54:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EA545B2B237
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:53:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1710D1F2172D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:54:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BD591D0957;
-	Wed, 23 Oct 2024 15:49:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="hDxh8RIm"
-Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8AFFA1CACFE;
+	Wed, 23 Oct 2024 15:53:28 +0000 (UTC)
+Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DACC31D0411;
-	Wed, 23 Oct 2024 15:49:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96E6F1C9B71;
+	Wed, 23 Oct 2024 15:53:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729698597; cv=none; b=LwTE0yc8MCum04ReACssJC195xL4j7MGXMJjYIytrpDzdEicxAfK8f82+kIwPx4zvgNOzbxhaOXduqsiwaFCgiZ6xfkeeQqe3lrQHUSeiQwoZGXP085IDDsoRi8JtvxJkpMYE3te1/0DnTvSdQq1RqzYPdh/hf2iPh55GB0bhIY=
+	t=1729698808; cv=none; b=VBBLpSn3Y3wiNHMxH1z4FyMWe/hoZ2i7kGLjxJu4DFmCVp9GaX6RLoC9tZJoXKgjf2wR2SocGaC6M7WYJabaEDdvIN+4lTFi+lxAo6hLh37ZYAy67UWWRiavXGSXg6/yz8CnUjhHEgIFwVSte24CpxbPAKbKQbtMJ18ftQ5BKwk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729698597; c=relaxed/simple;
-	bh=LrsGh3qmzchnmqG2MM3YOk05oabiM6pDWIcBkA50Nxc=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=RoMrdTcwmEedXejcv8Sj7tEWFTeT0fnzF9lfC6YPLsS/VOmcSK71G1qirpm5Gt8Ii7/QaqsgP4+Ea7QnJwQN0Sp2kIs0aCCUBaHY0ca/sVSF1WF0KcDRijyxcXXVyJG6XEPs0ygiE4SNauVrKMs+W6lYz7zqCOl259AM/jbfOa4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=hDxh8RIm; arc=none smtp.client-ip=217.70.183.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 7FA0C60009;
-	Wed, 23 Oct 2024 15:49:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729698593;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=U981dne136mJZRxylVkDHEeRlMRiiF/+nXZbj0TIeeA=;
-	b=hDxh8RImEVnV3cQWPJGzq0FhOiwarKGOfSybqucEUAJ8FfcAWWvB0n7kBTNT7iSrtY/bsi
-	6VwB/f1IkYX2RGqUPrllSxS8MdJBR+HT3B+2Qu50zpSIWmrCthhleZQVMl3SfNrPtTpQmR
-	lnUD57UQZQvmjoupYqvYVvytCQtpp0YWlLcrSwQbWtxn+tBzO8FYEwHcEvKTOzQ9jEIagC
-	veLxceP0IxYtnRKCW66rg9BTlvedUbtCQhpAKIB/FVPfATcp0lcoEMdKDQlD3VVqiMRlre
-	kJX9jDdBFg8ibXI2632rpM7IcJPg4asmyD+IwI3k9fdenwpCj+saeQLxZd6pCg==
-From: Kory Maincent <kory.maincent@bootlin.com>
-Date: Wed, 23 Oct 2024 17:49:20 +0200
-Subject: [PATCH net-next v18 10/10] netlink: specs: Enhance tsinfo netlink
- attributes and add a tsconfig set command
+	s=arc-20240116; t=1729698808; c=relaxed/simple;
+	bh=rO2U11NWPhUPpnei0pqwHKQcMXDbJIeioZkSkDk4nDY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=N9Tint3aNjrwCEdMcPQ9zQJLNX+egtwFzyKRny8T0JwuhJsEaLgdHFVphWKQj17ADk1eXi2bmLKJtVT7/nzi/VXiGjBKm1AbtieOXGN8xop93uS6wA7wiMYAdDP43WKAbPmVYJTyralzuPF23V0TmWyKGxizUJWmNkjZwpNhhLM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com; spf=pass smtp.mailfrom=hisilicon.com; arc=none smtp.client-ip=45.249.212.191
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=hisilicon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hisilicon.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XYYPS3N8jz1HKHQ;
+	Wed, 23 Oct 2024 23:49:00 +0800 (CST)
+Received: from kwepemf100018.china.huawei.com (unknown [7.202.181.17])
+	by mail.maildlp.com (Postfix) with ESMTPS id 9E2A01402C7;
+	Wed, 23 Oct 2024 23:53:21 +0800 (CST)
+Received: from [10.67.120.168] (10.67.120.168) by
+ kwepemf100018.china.huawei.com (7.202.181.17) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 23 Oct 2024 23:53:20 +0800
+Message-ID: <0f4b96a2-faad-4876-a53b-102d1d39549c@hisilicon.com>
+Date: Wed, 23 Oct 2024 23:53:20 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241023-feature_ptp_netnext-v18-10-ed948f3b6887@bootlin.com>
-References: <20241023-feature_ptp_netnext-v18-0-ed948f3b6887@bootlin.com>
-In-Reply-To: <20241023-feature_ptp_netnext-v18-0-ed948f3b6887@bootlin.com>
-To: Florian Fainelli <florian.fainelli@broadcom.com>, 
- Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, 
- Andrew Lunn <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, 
- Russell King <linux@armlinux.org.uk>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Richard Cochran <richardcochran@gmail.com>, 
- Radu Pirea <radu-nicolae.pirea@oss.nxp.com>, 
- Jay Vosburgh <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, 
- Nicolas Ferre <nicolas.ferre@microchip.com>, 
- Claudiu Beznea <claudiu.beznea@tuxon.dev>, 
- Willem de Bruijn <willemdebruijn.kernel@gmail.com>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Horatiu Vultur <horatiu.vultur@microchip.com>, UNGLinuxDriver@microchip.com, 
- Simon Horman <horms@kernel.org>, Vladimir Oltean <vladimir.oltean@nxp.com>, 
- donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com, 
- Andrew Lunn <andrew+netdev@lunn.ch>
-Cc: Thomas Petazzoni <thomas.petazzoni@bootlin.com>, 
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
- linux-doc@vger.kernel.org, 
- Maxime Chevallier <maxime.chevallier@bootlin.com>, 
- Rahul Rameshbabu <rrameshbabu@nvidia.com>, 
- Willem de Bruijn <willemb@google.com>, 
- Shannon Nelson <shannon.nelson@amd.com>, 
- Alexandra Winter <wintera@linux.ibm.com>, 
- Kory Maincent <kory.maincent@bootlin.com>, 
- Jacob Keller <jacob.e.keller@intel.com>
-X-Mailer: b4 0.14.1
-X-GND-Sasl: kory.maincent@bootlin.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.1.0
+Subject: Re: [PATCH for-rc 2/5] RDMA/hns: Fix flush cqe error when racing with
+ destroy qp
+Content-Language: en-US
+To: Zhu Yanjun <yanjun.zhu@linux.dev>, <jgg@ziepe.ca>, <leon@kernel.org>
+CC: <linux-rdma@vger.kernel.org>, <linuxarm@huawei.com>,
+	<linux-kernel@vger.kernel.org>, <tangchengchang@huawei.com>
+References: <20241022111017.946170-1-huangjunxian6@hisilicon.com>
+ <20241022111017.946170-3-huangjunxian6@hisilicon.com>
+ <e8ab33e8-cba8-48f9-b438-7e6f09f3b068@linux.dev>
+From: Junxian Huang <huangjunxian6@hisilicon.com>
+In-Reply-To: <e8ab33e8-cba8-48f9-b438-7e6f09f3b068@linux.dev>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ kwepemf100018.china.huawei.com (7.202.181.17)
 
-Add new attributed to tsinfo allowing to get the tsinfo from a phc provider
-(composed by a phc index and a phc qualifier) on a netdevice's link.
-Add simultaneously a tsconfig command to be able to get and set hwtstamp
-configuration for a specified phc provider.
 
-Here is few examples:
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema
-             --dump tsinfo-get
-             --json '{"header":{"dev-name":"eth0"}}'
-[{'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 0, 'qualifier': 0},
-  'phc-index': 0,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 2, 'name': 'some'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'}]},
-               'nomask': True,
-               'size': 4}},
- {'header': {'dev-index': 3, 'dev-name': 'eth0'},
-  'hwtst-provider': {'index': 2, 'qualifier': 0},
-  'phc-index': 2,
-  'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                  {'index': 1, 'name': 'all'}]},
-                 'nomask': True,
-                 'size': 16},
-  'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                    {'index': 1, 'name': 'software-transmit'},
-                                    {'index': 2, 'name': 'hardware-receive'},
-                                    {'index': 3, 'name': 'software-receive'},
-                                    {'index': 4,
-                                     'name': 'software-system-clock'},
-                                    {'index': 6,
-                                     'name': 'hardware-raw-clock'}]},
-                   'nomask': True,
-                   'size': 17},
-  'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                                {'index': 1, 'name': 'on'},
-                                {'index': 2, 'name': 'onestep-sync'}]},
-               'nomask': True,
-               'size': 4}}]
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-get
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":0, "qualifier":0 }
-}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtst-provider': {'index': 0, 'qualifier': 0},
- 'phc-index': 0,
- 'rx-filters': {'bits': {'bit': [{'index': 0, 'name': 'none'},
-                                 {'index': 2, 'name': 'some'}]},
-                'nomask': True,
-                'size': 16},
- 'timestamping': {'bits': {'bit': [{'index': 0, 'name': 'hardware-transmit'},
-                                   {'index': 2, 'name': 'hardware-receive'},
-                                   {'index': 6, 'name': 'hardware-raw-clock'}]},
-                  'nomask': True,
-                  'size': 17},
- 'tx-types': {'bits': {'bit': [{'index': 0, 'name': 'off'},
-                               {'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+On 2024/10/23 23:13, Zhu Yanjun wrote:
+> 在 2024/10/22 13:10, Junxian Huang 写道:
+>> From: wenglianfa <wenglianfa@huawei.com>
+>>
+>> QP needs to be modified to IB_QPS_ERROR to trigger HW flush cqe. But
+>> when this process races with destroy qp, the destroy-qp process may
+>> modify the QP to IB_QPS_RESET first. In this case flush cqe will fail
+>> since it is invalid to modify qp from IB_QPS_RESET to IB_QPS_ERROR.
+>>
+>> Add lock and bit flag to make sure pending flush cqe work is completed
+>> first and no more new works will be added.
+>>
+>> Fixes: ffd541d45726 ("RDMA/hns: Add the workqueue framework for flush cqe handler")
+>> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
+>> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+>> ---
+>>   drivers/infiniband/hw/hns/hns_roce_device.h |  2 ++
+>>   drivers/infiniband/hw/hns/hns_roce_hw_v2.c  |  7 +++++++
+>>   drivers/infiniband/hw/hns/hns_roce_qp.c     | 14 ++++++++++++--
+>>   3 files changed, 21 insertions(+), 2 deletions(-)
+>>
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
+>> index 73c78005901e..9b51d5a1533f 100644
+>> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
+>> @@ -593,6 +593,7 @@ struct hns_roce_dev;
+>>     enum {
+>>       HNS_ROCE_FLUSH_FLAG = 0,
+>> +    HNS_ROCE_STOP_FLUSH_FLAG = 1,
+>>   };
+>>     struct hns_roce_work {
+>> @@ -656,6 +657,7 @@ struct hns_roce_qp {
+>>       enum hns_roce_cong_type    cong_type;
+>>       u8            tc_mode;
+>>       u8            priority;
+>> +    spinlock_t flush_lock;
+> spin_lock_init is missing?
+> 
+> The spin lock flush_lock should be initialized before used.
+> 
 
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsinfo-set
-             --json '{"header":{"dev-name":"eth0"},
-                      "hwtst-provider":{"index":2, "qualifier":0}}'
-None
-./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-get
-	     --json '{"header":{"dev-name":"eth0"}}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtstamp-flags': 1,
- 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
- 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+Will fix it. Thanks.
 
- ./ynl/cli.py --spec netlink/specs/ethtool.yaml --no-schema --do tsconfig-set
-	      --json '{"header":{"dev-name":"eth0"},
-		       "hwtstamp-provider":{"index":1, "qualifier":0 },
-		       "rx-filters":{"bits": {"bit": {"name":"ptpv2-l4-event"}},
-				     "nomask": 1},
-		       "tx-types":{"bits": {"bit": {"name":"on"}},
-				   "nomask": 1}}'
-{'header': {'dev-index': 3, 'dev-name': 'eth0'},
- 'hwtstamp-flags': 1,
- 'hwtstamp-provider': {'index': 1, 'qualifier': 0},
- 'rx-filters': {'bits': {'bit': [{'index': 12, 'name': 'ptpv2-event'}]},
-                'nomask': True,
-                'size': 16},
- 'tx-types': {'bits': {'bit': [{'index': 1, 'name': 'on'}]},
-              'nomask': True,
-              'size': 4}}
+Junxian
 
-Reviewed-by: Jacob Keller <jacob.e.keller@intel.com>
-Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
----
-Changes in v8:
-- New patch
-
-Changes in v10:
-- Add ghwtstamp attributes
-- Add tsinfo ntf command
-
-Changes in v11:
-- Add examples in the commit message.
-
-Changes in v13:
-- Replace shorter name by real name.
-- Fix an issue reported by "make -C tools/net/ynl" on the namings.
-
-Changes in v16:
-- Move to tsconfig command to get and set hwtstamp configuration.
-
-Changes in v18:
-- Add a tsconfig-set reply command description
----
- Documentation/netlink/specs/ethtool.yaml | 70 ++++++++++++++++++++++++++++++++
- 1 file changed, 70 insertions(+)
-
-diff --git a/Documentation/netlink/specs/ethtool.yaml b/Documentation/netlink/specs/ethtool.yaml
-index 93369f0eb816..8bd04ff89122 100644
---- a/Documentation/netlink/specs/ethtool.yaml
-+++ b/Documentation/netlink/specs/ethtool.yaml
-@@ -637,6 +637,15 @@ attribute-sets:
-       -
-         name: tx-err
-         type: uint
-+  -
-+    name: ts-hwtstamp-provider
-+    attributes:
-+      -
-+        name: index
-+        type: u32
-+      -
-+        name: qualifier
-+        type: u32
-   -
-     name: tsinfo
-     attributes:
-@@ -663,6 +672,10 @@ attribute-sets:
-         name: stats
-         type: nest
-         nested-attributes: ts-stat
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-   -
-     name: cable-result
-     attributes:
-@@ -1137,6 +1150,28 @@ attribute-sets:
-       -
-         name: downstream-sfp-name
-         type: string
-+  -
-+    name: tsconfig
-+    attributes:
-+      -
-+        name: header
-+        type: nest
-+        nested-attributes: header
-+      -
-+        name: hwtstamp-provider
-+        type: nest
-+        nested-attributes: ts-hwtstamp-provider
-+      -
-+        name: tx-types
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: rx-filters
-+        type: nest
-+        nested-attributes: bitset
-+      -
-+        name: hwtstamp-flags
-+        type: u32
- 
- operations:
-   enum-model: directional
-@@ -1578,6 +1613,7 @@ operations:
-         request:
-           attributes:
-             - header
-+            - hwtstamp-provider
-         reply:
-           attributes:
-             - header
-@@ -1586,6 +1622,7 @@ operations:
-             - rx-filters
-             - phc-index
-             - stats
-+            - hwtstamp-provider
-       dump: *tsinfo-get-op
-     -
-       name: cable-test-act
-@@ -1960,3 +1997,36 @@ operations:
-       name: phy-ntf
-       doc: Notification for change in PHY devices.
-       notify: phy-get
-+    -
-+      name: tsconfig-get
-+      doc: Get hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do: &tsconfig-get-op
-+        request:
-+          attributes:
-+            - header
-+        reply:
-+          attributes: &tsconfig
-+            - header
-+            - hwtstamp-provider
-+            - tx-types
-+            - rx-filters
-+            - hwtstamp-flags
-+      dump: *tsconfig-get-op
-+    -
-+      name: tsconfig-set
-+      doc: Set hwtstamp config.
-+
-+      attribute-set: tsconfig
-+
-+      do:
-+        request:
-+          attributes: *tsconfig
-+        reply:
-+          attributes: *tsconfig
-+    -
-+      name: tsconfig-ntf
-+      doc: Notification for change in tsconfig configuration.
-+      notify: tsconfig-get
-
--- 
-2.34.1
-
+> Zhu Yanjun
+>>   };
+>>     struct hns_roce_ib_iboe {
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> index e85c450e1809..aa42c5a9b254 100644
+>> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
+>> @@ -5598,8 +5598,15 @@ int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
+>>   {
+>>       struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
+>>       struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
+>> +    unsigned long flags;
+>>       int ret;
+>>   +    /* Make sure flush_cqe() is completed */
+>> +    spin_lock_irqsave(&hr_qp->flush_lock, flags);
+>> +    set_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag);
+>> +    spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
+>> +    flush_work(&hr_qp->flush_work.work);
+>> +
+>>       ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
+>>       if (ret)
+>>           ibdev_err(&hr_dev->ib_dev,
+>> diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
+>> index dcaa370d4a26..3439312b0138 100644
+>> --- a/drivers/infiniband/hw/hns/hns_roce_qp.c
+>> +++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
+>> @@ -90,11 +90,18 @@ static void flush_work_handle(struct work_struct *work)
+>>   void init_flush_work(struct hns_roce_dev *hr_dev, struct hns_roce_qp *hr_qp)
+>>   {
+>>       struct hns_roce_work *flush_work = &hr_qp->flush_work;
+>> +    unsigned long flags;
+>> +
+>> +    spin_lock_irqsave(&hr_qp->flush_lock, flags);
+>> +    /* Exit directly after destroy_qp() */
+>> +    if (test_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag)) {
+>> +        spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
+>> +        return;
+>> +    }
+>>   -    flush_work->hr_dev = hr_dev;
+>> -    INIT_WORK(&flush_work->work, flush_work_handle);
+>>       refcount_inc(&hr_qp->refcount);
+>>       queue_work(hr_dev->irq_workq, &flush_work->work);
+>> +    spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
+>>   }
+>>     void flush_cqe(struct hns_roce_dev *dev, struct hns_roce_qp *qp)
+>> @@ -1140,6 +1147,7 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
+>>                        struct ib_udata *udata,
+>>                        struct hns_roce_qp *hr_qp)
+>>   {
+>> +    struct hns_roce_work *flush_work = &hr_qp->flush_work;
+>>       struct hns_roce_ib_create_qp_resp resp = {};
+>>       struct ib_device *ibdev = &hr_dev->ib_dev;
+>>       struct hns_roce_ib_create_qp ucmd = {};
+>> @@ -1151,6 +1159,8 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
+>>         hr_qp->state = IB_QPS_RESET;
+>>       hr_qp->flush_flag = 0;
+>> +    flush_work->hr_dev = hr_dev;
+>> +    INIT_WORK(&flush_work->work, flush_work_handle);
+>>         if (init_attr->create_flags)
+>>           return -EOPNOTSUPP;
+> 
 
