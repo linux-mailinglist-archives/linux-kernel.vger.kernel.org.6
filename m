@@ -1,93 +1,87 @@
-Return-Path: <linux-kernel+bounces-378879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9299AD6A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:24:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E9209AD6A7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:24:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 39D17B213CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:24:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F71F285795
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:24:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CDF51FDF83;
-	Wed, 23 Oct 2024 21:23:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654E51EF925;
+	Wed, 23 Oct 2024 21:24:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="fr7uK6et"
-Received: from sonic314-22.consmr.mail.bf2.yahoo.com (sonic314-22.consmr.mail.bf2.yahoo.com [74.6.132.196])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MHNiOOwR"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9BCF1FCC51
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:23:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.132.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EF4E56A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:24:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718634; cv=none; b=alFfPlPn3twSHjSpQiz6Mq3lQJfu7ePFMkVbLyX2/jnarBO9Appc385k4WZ9wURtPMv0/zYyfoVpQKaFktF+5Meaww5ca98F+32zd0fynAEoyjraGUEdtvb3u05Vye/YAP6AvHcWX78dIAMAT0DiiXB1CfiOvsHgvQqvvykOniQ=
+	t=1729718652; cv=none; b=QPPWSQytc7L2c3CqmUUxBTQOJ/c+QAklo75X2TpJ8oDXpXMNdWimFkHAoEu3xzKgQl8FO+lO8cJgKnqwsnWqfZ7t3hIbCQPc1DPck+oOdLuQ8ARBUhtGu+38U+/dFmtxSrxiskRH7/BCh8DXDQ6osJCZxDKzDNNS8YKymO34E30=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718634; c=relaxed/simple;
-	bh=xI5Udp7+iPy8mZha0q7CIj13Ny/nmKfB0rckcmSATx4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=d+EC0BBMVzFla3wBrmv52oooYbc2P006gKU5vp4pSMwpWJ/UEDk901lxn/SqM2IvGa3J/vygFBW5Eb4+8duztzggC/FunQDHTixZITHZdwPxJdzNuwAXWJt3x1Ky+Sb7n7znJNcJ5zO1jFZnCGgpo68caltZUzNpVbUotaWjapw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=fr7uK6et; arc=none smtp.client-ip=74.6.132.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718632; bh=UnQ0rI2w33MXrRKYOUPZC8/87Ao4K9IiWmtcpAV7+bI=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=fr7uK6et/YAx+qyUKA6eygkZedeebOOL6bKeY2Sndbhjumpk95padF92MsLEvYfv+nczDAThs9IgoCyts0C/lItVJdCsbgh0ZbWjm1EfxUqANMtLtSgZQ7bqaH5+qCw3CR4/Z1yDXpdL2oqJxVMKGYdjBA1U0lyapksb4gmyLquy0SLXNez5aLue1+ymRq2/WJnr5gtKAdMkgB8D2pGREqaant+MBP1BBiSwwuYuzH4eFakhIZQ/SDYL3FbTuGtCYd7K1cG8G4OuOOhm6aM0frYO9OVPD8k+o0As3wD5rVI2mKCPExhmjQ7ln6nRu2f1bn6smUQ2VmNzib9KqpZ9eA==
-X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718632; bh=BtzF3sJGDcYWa7OTjtwH1ZCDRrlzg+6XoLpnavP8yrW=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=qqHEoFeRaQO+PRJ6aEUO/jCkTdizp4xQEI4RwOQdCl3oSoPEiiyjC8Edx2xmY+jFz+duZtL/2CtbvsWZq6lbvQgk7cadQdWzlaMMW4HA3T9VPZi4Y84hxKhiC/y9e5JUexpIQa719PjYg3kdblSr1VFHHlg0sPKowy1wdVKdJS+0xC/gzi7P/DWUL8eYvBB7zpwtOfS74BQS3L3YgHx5qeu1oXwBwtYcKBNCymJ1QwBhbrAckrgbOAUpG5TKFj5FRh3roH54QM2Eio/oVyjufg/0pwevatHW0vcWadSdGdyuALJ1eSImYeHs0maf4Q0dN2uWzREj3pHXRRC2FVUzFw==
-X-YMail-OSG: DYTnJWUVM1nuMpFoEsfs9VW7mCAzIzNOUfaT6wet0nBcvqIzpI6zQpBsEkyLSHS
- LBSZkPUVNZQwH4PCdqwqey6eZ5Ha6btUjGs9CRUMj4e_ii3qur.dcLLuC_h9L0B6VFUUUR42OdY5
- J4aUpkOL_2J9mb6oQxEgFyGXoXNd5LOFdDQj3arTOxWoczEq0TZWX2CmU9UewVLYr2ep1mxsdCi2
- Q8kd_7d507eAd3UgzH.2d7vuijBjvX9E098.4IpGhCxlHIO5jVe9.0LZeJ2tOFqRo9_UqR.ncj58
- he0bIhV6QnBLv5RKxYWhrtT98ECFCG0zkovfxpNBPRYBNBW2UCefRKNKyuzrxVPsWejYckzv_FeG
- Z8oX53z7lqdXomVUMNOtnYI.njw_WIdSb5UIzuFnV9zGba9iSzZ5E97RvdmykNbYeBkaH8P.O8wI
- pM0QPQ8IOq_YfboQqohCNBB1Q_W9sxChWMSOavo_UGBf4VeuO8jFAgN5pCKL0bdVmOJL7q5BNYjf
- XzENkJj9BOvF9bsd6Lb0AKbu3rwdKwC58Cn6ZUzxGpIoYbwrSSmpFafaFzDZHdV2tofohqaAfEaj
- N8NzaQoHo_2YYvcJ6mpVN5VKpCm7LBN72Ypq65tCm_vTC_DvFfnQpFew32XpcKGSptiFRIPSXlKA
- MiQfNU8N43SVvgd7U8UVoZsuVDRMRUqtko10f6PdP_LfrQJEYbpLPL012YqJM45ZJmNmyrLDyseO
- OspWQcvxDsAPMwsM1o85WKzAREPUolCEILYJy279n7u0xy5Xo6DwE3UVRnkrC2Rz8RHQ9H4zQ0er
- enJ5xXKWW2I1qhJN2rY7WNKJGeHti04gFKta7D2fqLwhqxbdlLSBMt.RqVRaNNLznJ6j8XzAPxDo
- S1GUGdFe58E4NjsdtyX_cDx0qIgsBcl29FZ0U_yTvWDAH0FM.fmjA4CdiLTrSejFAERe7ftTRl5I
- 3hZIh46uURW1Uvde99rgjzQl2WRInYZELT1lZVZQTvsxHSesHTsUSLm6KLCgvocbRJ1T8.0CzVO6
- A1_pSod3p3w2DJF.ag_RObL3Qt4RnK_.WZdZhoB3m2TZ3PX_vL4cTISPuRKotVZJgFA5vrjAOXsc
- ERIcvkxBTp7ZxgGICdyUDigX4RlbtThOKztYEKJY.TsnJEe5at4HNqGDWtoMIBQfqZ.WRzK55Yk0
- YeWXAktwTg63mO5vZyIrEQjyZPQLM18wkxJVsDsh7NBbooUirke6H45PYFed9LtYwcWD6txMbEGd
- IK8BUDtNjDFRHwusbq78INyOQaceCguh_OX7V5AnRzR.Dg0B6EhX.xOo2E1RNHjqkhm0r556HE52
- 5B1R.og1bGGbYkhtXznVrloql.qL5aZyUYdCUNzMqXXTiu9qDBIX5hss9de4wXULR9lGfUZ.CAJV
- hBi6TedEiaC2zEHw4HhBjCerAntGTANOxuIdLOOCJV89MlvbUq1kYzTAsuUm4XlShB.h0yWcXbCa
- IsMnFeIm._9wS7h32vzdpPbuIOrQjQdquYfGyD6K_tZ4Wj0UGsvA9sirU8ZX1cwWQuTqPThxpkp1
- eKKvs5nyRlVf2CVy5fELFd5LHlBxfb8WzlUPlkvg.vLUuUmw1b92teD649Gvrpd5XVD61mjBAyIl
- LHyZzqU2Jz2fJvpo.VndfSwbTrR44bRcMBJRm9WSwwJyGi9i2LBRaDiVha0q1xp5Z_pSBAR7VLC.
- spG8YU2uj2wzXa97AeZ7T5SGHI2CAblS8zhwie3cSngh1gLr7hJ.ulnZEmLlr_fCy0u2f_6BcjmM
- bQw00GFMwBqpq_QJA_Y7Wzc_Kccku9fIYeCIkchxWvRkkRNG_YQVVst9u6qQdzAEuNlgKqq0gpYA
- x2VTVFg_MQkbUSvTFPRJtVAx.bbQZAraCwdTue3Nbhx0q0HjlCwXR._edJ75RNojyJx_Kz9bT.Uv
- rEZbPRBwssicwFQHxg2IIuQiR80wEQapNiXbslI9ylCtAZ9CI9Yf3pRLmfMjqNiTfqFQDgYkphBt
- iOOWRegwp5RvJYdQdwNE.Wzm9vV3i8FPJMAYE3bsJCOYIOVhpFyDmkNyfh1JtOFAed9S_xM9xNGB
- rqN99HBamaTkHjyD5RDRreqoQUumCKLOo9ZN31pJ1gbqZmZni0Rm0loLHfKAjsVM8TmxR_bmfrBj
- j2lcliA4ECttSVgnVFsiWuKCsf9v23Xmd9fLocOxrDaZfv0hox0inNmtrwxhcZ0KWWxnxkXh4x14
- bqRDOEcd4ujewUfd1G9qMixyGYYHohAl1onzTTIA6Pjm2_cjU0VXkZqZQtv9.j5myKezWRzOJGkf
- lXKH8pJX5ziTsN.V.Zkv4gScJdQ4-
-X-Sonic-MF: <casey@schaufler-ca.com>
-X-Sonic-ID: 0349e8d1-6b76-498c-9fd1-a59c85c93dce
-Received: from sonic.gate.mail.ne1.yahoo.com by sonic314.consmr.mail.bf2.yahoo.com with HTTP; Wed, 23 Oct 2024 21:23:52 +0000
-Received: by hermes--production-gq1-5dd4b47f46-pfhh2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID d261940d1cdfc655543cc442dda3a810;
-          Wed, 23 Oct 2024 21:23:44 +0000 (UTC)
-From: Casey Schaufler <casey@schaufler-ca.com>
-To: casey@schaufler-ca.com,
-	paul@paul-moore.com,
-	linux-security-module@vger.kernel.org
-Cc: jmorris@namei.org,
-	serge@hallyn.com,
-	keescook@chromium.org,
-	john.johansen@canonical.com,
-	penguin-kernel@i-love.sakura.ne.jp,
-	stephen.smalley.work@gmail.com,
-	linux-kernel@vger.kernel.org,
-	selinux@vger.kernel.org,
-	mic@digikod.net
-Subject: [PATCH v3 5/5] LSM: secctx provider check on release
-Date: Wed, 23 Oct 2024 14:21:58 -0700
-Message-ID: <20241023212158.18718-6-casey@schaufler-ca.com>
-X-Mailer: git-send-email 2.46.0
-In-Reply-To: <20241023212158.18718-1-casey@schaufler-ca.com>
-References: <20241023212158.18718-1-casey@schaufler-ca.com>
+	s=arc-20240116; t=1729718652; c=relaxed/simple;
+	bh=Q5kNViwwQxoEPKN17gUKEtAhO5AOuMh/3+Jxh51MQ0o=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qY8Dpo98bgOUKHemsY76fYO7OK6MMJuSDqkUWgyAgRfgDZuY4NtdDBk7lg+E+7dxrBitkM/agnKqXnzWRZNNKZwF4gxANmaLh8msAVzAsNtKmT23GysVytVm+r3hsgBgoewsvGpeyYjgC2jOlWNEuDhlyuH36RdOVq0+ZVPWNLk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MHNiOOwR; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NF6Nkm018844;
+	Wed, 23 Oct 2024 21:23:48 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=pp1; bh=w6/XyakDp8eyHd3VBcLyqRn+Elmw9FFQMqdtyMVrS
+	+A=; b=MHNiOOwRTXTNLIcJ8qovp1ULJCHb/32/cnJjAepOj8LMwy7K9z/QjAEYe
+	1TpNsqKOsXqp2gi19UEPNJvbSyFq2QGXJdhNefm1dnEdrM7ovrTrEjDbvGyK+tIq
+	H0jVLxYp1oubr/qevzqLK2pn34NuS0rw4V0BAlz/FG3JVQ6XGHvW8/a5LOsVS76j
+	UH1fZzd+TgX5Aiz95c1n9nKdVzAhfY8YaiZAXcw7CocMUqYmUNkNnDDS8M9ofPxv
+	e/fhf51qkAo44Vc/JMrfFf/YApR+GtXxShLAe8Ji6503tlvcTfgXdA2SAXkRJ8Pv
+	QpH1wUOq0Nqw3tQl/NDbr4uO9YavQ==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajn693-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 21:23:48 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NLNlB2005536;
+	Wed, 23 Oct 2024 21:23:47 GMT
+Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajn68y-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 21:23:47 +0000 (GMT)
+Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NIuGR8008807;
+	Wed, 23 Oct 2024 21:23:46 GMT
+Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
+	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkan1q6-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 21:23:46 +0000
+Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
+	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NLNhRo37159224
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 21:23:43 GMT
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id F08E620043;
+	Wed, 23 Oct 2024 21:23:42 +0000 (GMT)
+Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id C512F20040;
+	Wed, 23 Oct 2024 21:23:40 +0000 (GMT)
+Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com.com (unknown [9.43.16.156])
+	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 23 Oct 2024 21:23:40 +0000 (GMT)
+From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
+To: mpe@ellerman.id.au
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+        maddy@linux.ibm.com, peterx@redhat.com, groug@kaod.org,
+        sshegde@linux.ibm.com, mchauras@linux.ibm.com,
+        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
+Subject: [PATCH] powerpc/xmon: symbol lookup length fixed
+Date: Thu, 24 Oct 2024 02:52:26 +0530
+Message-ID: <20241023212225.1306609-2-mchauras@linux.ibm.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -95,66 +89,59 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: ZIc45Zu_WHg3HGSQcqhevGIeHX6PQS-x
+X-Proofpoint-GUID: _Cme4AwGfZ0ENcCz5ImKYShPdhRxUccL
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
+ mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=785 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410230136
 
-Verify that the LSM releasing the secctx is the LSM that
-allocated it. This was not necessary when only one LSM could
-create a secctx, but once there can be more than one it is.
+Currently xmon cannot lookup symbol beyond 64 characters in some cases.
 
-Signed-off-by: Casey Schaufler <casey@schaufler-ca.com>
+Fix this by using KSYM_NAME_LEN instead of fixed 64 characters.
+
+Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
 ---
- security/apparmor/secid.c | 13 +++++--------
- security/selinux/hooks.c  | 13 +++++--------
- 2 files changed, 10 insertions(+), 16 deletions(-)
+ arch/powerpc/xmon/xmon.c | 6 +++---
+ 1 file changed, 3 insertions(+), 3 deletions(-)
 
-diff --git a/security/apparmor/secid.c b/security/apparmor/secid.c
-index 5d92fc3ab8b4..854613e58e34 100644
---- a/security/apparmor/secid.c
-+++ b/security/apparmor/secid.c
-@@ -122,14 +122,11 @@ int apparmor_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
+diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
+index e6cddbb2305f..22b8b5cc4df0 100644
+--- a/arch/powerpc/xmon/xmon.c
++++ b/arch/powerpc/xmon/xmon.c
+@@ -3662,7 +3662,7 @@ symbol_lookup(void)
+ 	int type = inchar();
+ 	unsigned long addr, cpu;
+ 	void __percpu *ptr = NULL;
+-	static char tmp[64];
++	static char tmp[KSYM_NAME_LEN];
  
- void apparmor_release_secctx(struct lsm_context *cp)
- {
--	/*
--	 * stacking scaffolding:
--	 * When it is possible for more than one LSM to provide a
--	 * release hook, do this check:
--	 * if (cp->id == LSM_ID_APPARMOR || cp->id == LSM_ID_UNDEF)
--	 */
--
--	kfree(cp->context);
-+	if (cp->id == LSM_ID_APPARMOR) {
-+		kfree(cp->context);
-+		cp->context = NULL;
-+		cp->id = LSM_ID_UNDEF;
-+	}
- }
- 
- /**
-diff --git a/security/selinux/hooks.c b/security/selinux/hooks.c
-index 79776a5e651d..996e765b6823 100644
---- a/security/selinux/hooks.c
-+++ b/security/selinux/hooks.c
-@@ -6640,14 +6640,11 @@ static int selinux_secctx_to_secid(const char *secdata, u32 seclen, u32 *secid)
- 
- static void selinux_release_secctx(struct lsm_context *cp)
- {
--	/*
--	 * stacking scaffolding:
--	 * When it is possible for more than one LSM to provide a
--	 * release hook, do this check:
--	 * if (cp->id == LSM_ID_SELINUX || cp->id == LSM_ID_UNDEF)
--	 */
--
--	kfree(cp->context);
-+	if (cp->id == LSM_ID_SELINUX) {
-+		kfree(cp->context);
-+		cp->context = NULL;
-+		cp->id = LSM_ID_UNDEF;
-+	}
- }
- 
- static void selinux_inode_invalidate_secctx(struct inode *inode)
+ 	switch (type) {
+ 	case 'a':
+@@ -3671,7 +3671,7 @@ symbol_lookup(void)
+ 		termch = 0;
+ 		break;
+ 	case 's':
+-		getstring(tmp, 64);
++		getstring(tmp, KSYM_NAME_LEN);
+ 		if (setjmp(bus_error_jmp) == 0) {
+ 			catch_memory_errors = 1;
+ 			sync();
+@@ -3686,7 +3686,7 @@ symbol_lookup(void)
+ 		termch = 0;
+ 		break;
+ 	case 'p':
+-		getstring(tmp, 64);
++		getstring(tmp, KSYM_NAME_LEN);
+ 		if (setjmp(bus_error_jmp) == 0) {
+ 			catch_memory_errors = 1;
+ 			sync();
 -- 
-2.46.0
+2.47.0
 
 
