@@ -1,146 +1,107 @@
-Return-Path: <linux-kernel+bounces-377808-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377809-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 67FF59AC720
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:56:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E2DF9AC722
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:56:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2291F281490
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:56:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AC8CA1C2415D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:56:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E244D19E804;
-	Wed, 23 Oct 2024 09:54:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 606C319F12A;
+	Wed, 23 Oct 2024 09:55:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="a2RnBw6h"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="ModVRk1z"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9691607AC;
-	Wed, 23 Oct 2024 09:54:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FEFF19E997
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:55:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677289; cv=none; b=L6hINLHhwZE/11exo0IaVzk1bWTr36m7+yV6pFk+qf0oxl49YigksUxrFJdcQ1ce/H0sV1kP9+YgXp0IxYrUWxqUeU6RThprCB3HTAXMb0PkTJApVLJAdstiyj6KfwvNn7dTkARqXWegBhL4i7tViAGsN0wJGSORvpKa6HgWY2M=
+	t=1729677304; cv=none; b=PeGkvjwu+tOunjDKkc9Sh7WQ0fKp9139ASLPhQ3kv9rj7WzeWWKZRW5eAAEAMKMFiw5oPERMh0Wa71Ea4cn7kpVl75cIRueucRCYmaj6+2XCHkqn1a8lX9fXNqwSO5YlSThuSJKUsilRIFrvvkp+HqvmdZMHt4OLt33BqtpmRts=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729677289; c=relaxed/simple;
-	bh=BjC+k6iTn5usSFpLFhhvu/hqaIKcJm8OUNVxfEvCE44=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=itiFSI/IL29+HL9wAmuXygq1UyebHySI/KuZ+K1MIfT6kGlPJ95sPAXtO8N1aEnYJ0wnNBIZp+O3WXoPY8FpHoZ2kS4tAmDH8Mnks2FLJe/0fGHGd90TvWxlFAkoepsPozOYNLeDkYLRGepyasAzDsmKkNQOpRV0MaZWoVmx2ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=a2RnBw6h; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N335025218;
-	Wed, 23 Oct 2024 09:54:38 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=gQifT507hGC5nwbUYcGEqzKhA6120I
-	xsn4+skQxx+OU=; b=a2RnBw6h9+15VkDkqIC8GisuUZxPTk4r1V3gXC182OWy7R
-	8f8exNIOsvl5JgVzrT1+Tv3rpyTWameOCUylspEhlfHgTPUljRGQHBWriy7INVH1
-	Plwzg1aNdlx+AUM7q4F44n4EzoCWwqw+GuHEJsBp7YAbbScatozycroruipO7H0s
-	JyHjLr8MKo59ZiWMYANTEGDZX2HnKlV0mPUk7VNWs3JJKpKceE4L42GXUcCRjpgH
-	aI1tmy35ZSITbGmXFkj+gkYQEeiiZV4DxkCwHb0WQ2ScdEgX6K7B5aAPov+ydTeM
-	+odfQLu5O3hOY77IpMe/GUOvrbFvkXnNlU66f8zw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaetb8v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 09:54:37 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49N9sbAM009209;
-	Wed, 23 Oct 2024 09:54:37 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaetb8u-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 09:54:37 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7KXvd008851;
-	Wed, 23 Oct 2024 09:54:36 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkaj91q-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 09:54:36 +0000
-Received: from smtpav02.fra02v.mail.ibm.com (smtpav02.fra02v.mail.ibm.com [10.20.54.101])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49N9sYwH52887810
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 09:54:34 GMT
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AB081202F6;
-	Wed, 23 Oct 2024 09:54:34 +0000 (GMT)
-Received: from smtpav02.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 24326202D7;
-	Wed, 23 Oct 2024 09:54:17 +0000 (GMT)
-Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.39.27.247])
-	by smtpav02.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Oct 2024 09:53:46 +0000 (GMT)
-Date: Wed, 23 Oct 2024 15:23:44 +0530
-From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-To: linux-xfs@vger.kernel.org
-Cc: Ritesh Harjani <ritesh.list@gmail.com>, linux-kernel@vger.kernel.org,
-        "Darrick J . Wong" <djwong@kernel.org>, dchinner@redhat.com,
-        Christoph Hellwig <hch@lst.de>, nirjhar@linux.ibm.com,
-        John Garry <john.g.garry@oracle.com>
-Subject: Re: [PATCH v4] xfs: Check for delayed allocations before setting
- extsize
-Message-ID: <ZxjHdDbAkiHpbTC8@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
-References: <20241015094509.678082-1-ojaswin@linux.ibm.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241015094509.678082-1-ojaswin@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: voi4MFaHMY_m5_sLlquGv1u7fu2mhyA2
-X-Proofpoint-ORIG-GUID: RyOuei7EeJi2YfvfOFYXoVzks0Qtorzg
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729677304; c=relaxed/simple;
+	bh=ilyyfFvTwu8vOIQRUOMZatULsC3+sIzA+zAFb1KPYaw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hXw++X9iNv/IaPyqkyPqhd1Nm6KSMO8X1NgN3MlnWkhDQseiPYF44QqQUaVDub5dbpdcZTdeCF0WanBV8iMrfkVETFWyhz21g9ohu5GhICkxA5UY+GpyhFRbL3gHWLCdf81ildKI7AUAtMPzE+0nt8LuneFzlNgZxXpB0Lqk3mI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=ModVRk1z; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729677301;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=6vwE1/iGfj50Q+b/VNNSTomLnHqoxJY9qASWv2lAwZc=;
+	b=ModVRk1z0BNss2cNA+kfgnJK+lQB/RlW6kcuMpohMiuy5Sa38hwCVrU7X/GUShrUuSCW10
+	BLcQuEAgaJ30CAxPPzLZDAhqTLzjeNNdYnokm8Cfv/UvItdrYF/WLmCYLBgXGF7OPtZ1gr
+	sBy1EfZcXFodKue/jJIcUGmS82hwYKg=
+Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-52-_HRqKl-rM1mNYw0EKn7-6w-1; Wed,
+ 23 Oct 2024 05:54:56 -0400
+X-MC-Unique: _HRqKl-rM1mNYw0EKn7-6w-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 3A4B519560BD;
+	Wed, 23 Oct 2024 09:54:54 +0000 (UTC)
+Received: from localhost (unknown [10.72.116.171])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id B8A011956056;
+	Wed, 23 Oct 2024 09:54:52 +0000 (UTC)
+From: Ming Lei <ming.lei@redhat.com>
+To: Jens Axboe <axboe@kernel.dk>,
+	linux-block@vger.kernel.org
+Cc: Christoph Hellwig <hch@lst.de>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>,
+	Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	Bart Van Assche <bvanassche@acm.org>,
+	Ming Lei <ming.lei@redhat.com>
+Subject: [PATCH 0/3] block: model freeze/enter queue as lock for lockdep
+Date: Wed, 23 Oct 2024 17:54:32 +0800
+Message-ID: <20241023095438.3451156-1-ming.lei@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=773
- priorityscore=1501 suspectscore=0 clxscore=1015 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230059
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-On Tue, Oct 15, 2024 at 03:15:09PM +0530, Ojaswin Mujoo wrote:
-> Extsize should only be allowed to be set on files with no data in it.
-> For this, we check if the files have extents but miss to check if
-> delayed extents are present. This patch adds that check.
-> 
-> While we are at it, also refactor this check into a helper since
-> it's used in some other places as well like xfs_inactive() or
-> xfs_ioctl_setattr_xflags()
-> 
-> **Without the patch (SUCCEEDS)**
-> 
-> $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> 
-> **With the patch (FAILS as expected)**
-> 
-> $ xfs_io -c 'open -f testfile' -c 'pwrite 0 1024' -c 'extsize 65536'
-> 
-> wrote 1024/1024 bytes at offset 0
-> 1 KiB, 1 ops; 0.0002 sec (4.628 MiB/sec and 4739.3365 ops/sec)
-> xfs_io: FS_IOC_FSSETXATTR testfile: Invalid argument
-> 
-> Fixes: e94af02a9cd7 ("[XFS] fix old xfs_setattr mis-merge from irix; mostly harmless esp if not using xfs rt")
-> Reviewed-by: Christoph Hellwig <hch@lst.de>
-> Reviewed-by: Darrick J. Wong <djwong@kernel.org>
-> Reviewed-by: John Garry <john.g.garry@oracle.com>
-> Signed-off-by: Ojaswin Mujoo <ojaswin@linux.ibm.com>
-> ---
-> 
+Hello,
 
-The initial set of tests have been posted by Nirjhar here:
-https://lore.kernel.org/fstests/cover.1729624806.git.nirjhar@linux.ibm.com/T/#t
+The 1st patch adds non_owner variants of start_freeze/unfreeze queue
+API.
 
-Regards,
-ojaswin
+The 2nd patch applies the non_owner variants on nvme_freeze() & nvme_unfreeze(). 
+
+The 3rd patch models freeze/enter queue as lock for lockdep support.
+
+
+Ming Lei (3):
+  blk-mq: add non_owner variant of start_freeze/unfreeze queue APIs
+  nvme: core: switch to non_owner variant of start_freeze/unfreeze queue
+  block: model freeze & enter queue as lock for supporting lockdep
+
+ block/blk-core.c         | 18 +++++++++++++++--
+ block/blk-mq.c           | 43 +++++++++++++++++++++++++++++++++++++---
+ block/blk.h              | 29 ++++++++++++++++++++++++---
+ block/genhd.c            | 15 ++++++++++----
+ drivers/nvme/host/core.c |  4 ++--
+ include/linux/blk-mq.h   |  2 ++
+ include/linux/blkdev.h   |  6 ++++++
+ 7 files changed, 103 insertions(+), 14 deletions(-)
+
+-- 
+2.46.0
+
 
