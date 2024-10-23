@@ -1,112 +1,106 @@
-Return-Path: <linux-kernel+bounces-378751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D274A9AD4F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:39:02 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A3429AD4F3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:40:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DAEF283BF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:39:01 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79EE31C21E1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:40:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56BDE1DDA30;
-	Wed, 23 Oct 2024 19:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C284B1D9A68;
+	Wed, 23 Oct 2024 19:40:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b="Rd6smkGo"
-Received: from a.mx.secunet.com (a.mx.secunet.com [62.96.220.36])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CbCPwqep"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D4FE83CDA;
-	Wed, 23 Oct 2024 19:38:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.96.220.36
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2948213BC11;
+	Wed, 23 Oct 2024 19:40:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729712333; cv=none; b=aDyZmNlFtsv7QoRydby5bjuOw0/zadpE7NJecI2kHw+sOqZ3AzmgLQDpSq4HvQQhzjaIvd1O+oFpLjFiuCuLCxviW8lt2UHapSn1lO2gAwt89eD30JpcxDmLWziRaqVJXOaLtKS6Z4Ol1x8HXo3X3vMHM7Lna5Nt48d+uU69K0M=
+	t=1729712430; cv=none; b=f0LRVDevEEUO7e+Teilb0zFfITRvlEPvqrU0dX2Q/Gc55jXgZ4DEgjMm/g+ehP1UwMn8o3wtZyF8/SGyyX1O69OK/634gN9o9S5DRtxPmNnlchbV42KNQ1TH4tNhDy73/nI80kjBK6CbqRfoSsSQSizLshNt0tSGVrVwN7vJif0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729712333; c=relaxed/simple;
-	bh=pZd83N5LKORVi3t9LWs6w8gSvKkToNeI2Gv/S936pGc=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q368jhiCy7jNhroKbwZT1yQUZi2cCoREZRmw4mG8LXSI7FiNceo8jtXKumDesfFKqMgASp6Li6QWlC9ftv10dB9pdLE+S7nmKjqHIWQIggvWT9Hes4tQZ1vtL0oK+6HNa4A3LyVae/WAgnmshMLxXxa9unaYKo5Cez6SOgfgeqs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com; spf=pass smtp.mailfrom=secunet.com; dkim=pass (2048-bit key) header.d=secunet.com header.i=@secunet.com header.b=Rd6smkGo; arc=none smtp.client-ip=62.96.220.36
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=secunet.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=secunet.com
-Received: from localhost (localhost [127.0.0.1])
-	by a.mx.secunet.com (Postfix) with ESMTP id 814BE20842;
-	Wed, 23 Oct 2024 21:38:48 +0200 (CEST)
-X-Virus-Scanned: by secunet
-Received: from a.mx.secunet.com ([127.0.0.1])
-	by localhost (a.mx.secunet.com [127.0.0.1]) (amavisd-new, port 10024)
-	with ESMTP id 2XZ8ubZrULdx; Wed, 23 Oct 2024 21:38:47 +0200 (CEST)
-Received: from cas-essen-01.secunet.de (rl1.secunet.de [10.53.40.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by a.mx.secunet.com (Postfix) with ESMTPS id D98D32074A;
-	Wed, 23 Oct 2024 21:38:47 +0200 (CEST)
-DKIM-Filter: OpenDKIM Filter v2.11.0 a.mx.secunet.com D98D32074A
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=secunet.com;
-	s=202301; t=1729712327;
-	bh=uwlhbuYxhgG8sftTwRRQlyfVeglWzt2ynojBOuu12rQ=;
-	h=Date:From:To:CC:Subject:Reply-To:References:In-Reply-To:From;
-	b=Rd6smkGo3UJQ1pLzL7bTloWJLbLDhbEfx/WQXzI3icKQNFW1qs2iqBJuHs2YWiA/E
-	 3qSyIIR+EQiq8B2VkKciYQuOps51ndNIJ91ukr8QzA69cBmX/V22UzM4ompznfFJBy
-	 0IvDk62uc3VPTB4Bglg4NIIWHIQN2kVtuLw4KEk4CFUYtOuS1WZ3lb+qBlsW+8FhPh
-	 UHnYhNjwSqcWO06JicLtFIxRXUls7q0pqvkhpme4Fbnd88cOdqcDVXmzaya2xqXRAC
-	 cYk5+KcBKjfcAA/oemL1TqA2CuiNkx1PoeQA+BRRymXlJsKp6asyi20pW5wEZpyT2h
-	 /Lws9D62X6SMA==
-Received: from mbx-essen-01.secunet.de (10.53.40.197) by
- cas-essen-01.secunet.de (10.53.40.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 23 Oct 2024 21:38:47 +0200
-Received: from moon.secunet.de (172.18.149.1) by mbx-essen-01.secunet.de
- (10.53.40.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Oct
- 2024 21:38:46 +0200
-Date: Wed, 23 Oct 2024 21:38:39 +0200
-From: Antony Antony <antony.antony@secunet.com>
-To: David Howells <dhowells@redhat.com>
-CC: Antony Antony <antony@phenome.org>, Christian Brauner
-	<brauner@kernel.org>, Eric Van Hensbergen <ericvh@kernel.org>, "Latchesar
- Ionkov" <lucho@ionkov.net>, Dominique Martinet <asmadeus@codewreck.org>,
-	Christian Schoenebeck <linux_oss@crudebyte.com>, Sedat Dilek
-	<sedat.dilek@gmail.com>, Maximilian Bosch <maximilian@mbosch.me>,
-	<regressions@lists.linux.dev>, <v9fs@lists.linux.dev>,
-	<netfs@lists.linux.dev>, <linux-fsdevel@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, Antony Antony <antony.antony@secunet.com>
-Subject: Re: [REGRESSION] 9pfs issues on 6.12-rc1
-Message-ID: <ZxlQv5OXjJUbkLah@moon.secunet.de>
-Reply-To: <antony.antony@secunet.com>
-References: <ZxFQw4OI9rrc7UYc@Antony2201.local>
- <D4LHHUNLG79Y.12PI0X6BEHRHW@mbosch.me>
- <c3eff232-7db4-4e89-af2c-f992f00cd043@leemhuis.info>
- <D4LNG4ZHZM5X.1STBTSTM9LN6E@mbosch.me>
- <CA+icZUVkVcKw+wN1p10zLHpO5gqkpzDU6nH46Nna4qaws_Q5iA@mail.gmail.com>
- <3327438.1729678025@warthog.procyon.org.uk>
+	s=arc-20240116; t=1729712430; c=relaxed/simple;
+	bh=EzbjkPV90UV6QSJhV+s0C5L6lHibDPt+fsO73VymlbQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jE8WLtrjwD0dWV5m0joak7tG1FmWdgFtoQrwM7WK6QzdcS8vRrx2ZuI3Npx9ZpbUq7f/yuoU4pX9sdJpxFl8X/RV6z9AUS9l6IN9GFTm3FDnad7wWAAsjRjaEg67nl6Og8RX6pOW7XBlOtuZ4rCbgM1WbHv5oPknP0BiWlugq8A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CbCPwqep; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1CEBC4CEC6;
+	Wed, 23 Oct 2024 19:40:29 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729712430;
+	bh=EzbjkPV90UV6QSJhV+s0C5L6lHibDPt+fsO73VymlbQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=CbCPwqepSOehGxvj4gxImQczmfNz6ssonAwXnbbgdnyvPL/xrQiub53FEqxdCV80o
+	 DkG/ZkcumVc7HGvXQg1oCnjbO0fWI1cd9oekU3fUc8kUzkzALUdJzLJ1xSKOLAx5Uy
+	 SWOtIgR5BVQfUCpaOvtXh1InOxF1+VyPK6f/2jal2UlIWa6sq9RBOIChEiAQRs+NDb
+	 0rA3fu8lV6jjh/VEGsfd1lOoV3ucJvs4gS7seWhJ8SfPlRpA3LfeFhT8KchgCW/aOC
+	 NwZPM5I45elC7TC3Wy8ZnOueGG9M7xLkcJJc3flG57bViAFasvRZfxtIS1+cqq3BHO
+	 /S6imokpMEAkQ==
+Date: Wed, 23 Oct 2024 09:40:28 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+Cc: intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org, Maxime Ripard <mripard@kernel.org>
+Subject: Re: [PATCH 0/7] kernel/cgroups: Add "dev" memory accounting cgroup.
+Message-ID: <ZxlRLMwkabTaOrjc@slm.duckdns.org>
+References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <3327438.1729678025@warthog.procyon.org.uk>
-Precedence: first-class
-Priority: normal
-Organization: secunet
-X-ClientProxiedBy: cas-essen-02.secunet.de (10.53.40.202) To
- mbx-essen-01.secunet.de (10.53.40.197)
-X-EXCLAIMER-MD-CONFIG: 2c86f778-e09b-4440-8b15-867914633a10
+In-Reply-To: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
 
-On Wed, Oct 23, 2024 at 11:07:05 +0100, David Howells wrote:
-> Hi Antony,
+Hello,
+
+On Wed, Oct 23, 2024 at 09:52:53AM +0200, Maarten Lankhorst wrote:
+> New submission!
+> I've added documentation for each call, and integrated the renaming from
+> drm cgroup to dev cgroup, based on maxime ripard's work.
 > 
-> I think the attached should fix it properly rather than working around it as
-> the previous patch did.  If you could give it a whirl?
+> Maxime has been testing this with dma-buf heaps and v4l2 too, and it seems to work.
+> In the initial submission, I've decided to only add the smallest enablement possible,
+> to have less chance of breaking things.
+> 
+> The API has been changed slightly, from "$name region.$regionname=$limit" in a file called
+> dev.min/low/max to "$subsystem/$name $regionname=$limit" in a file called dev.region.min/low/max.
+> 
+> This hopefully allows us to perhaps extend the API later on with the possibility to
+> set scheduler weights on the device, like in
+> 
+> https://blogs.igalia.com/tursulin/drm-scheduling-cgroup-controller/
+> 
+> Maarten Lankhorst (5):
+>   kernel/cgroup: Add "dev" memory accounting cgroup
 
-Yes this also fix the crash.
+Yeah, let's not use "dev" name for this. As Waiman pointed out, it conflicts
+with the devices controller from cgroup1. While cgroup1 is mostly
+deprecated, the same features are provided through BPF in systemd using the
+same terminologies, so this is going to be really confusing.
 
-Tested-by: Antony Antony <antony.antony@secunet.com>
+What happened with Tvrtko's weighted implementation? I've seen many proposed
+patchsets in this area but as far as I could see none could establish
+consensus among GPU crowd and that's one of the reasons why nothing ever
+landed. Is the aim of this patchset establishing such consensus?
 
-thanks,
--antony
+If reaching consensus doesn't seem feasible in a predictable timeframe, my
+suggesstion is just extending the misc controller. If the only way forward
+here is fragmented vendor(s)-specific implementations, let's throw them into
+the misc controller.
+
+Thanks.
+
+-- 
+tejun
 
