@@ -1,116 +1,317 @@
-Return-Path: <linux-kernel+bounces-377252-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377253-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C849ABC01
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:10:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CEB89ABC05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:12:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43192284D0E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:10:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A5ABAB22D85
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:12:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4E78615A;
-	Wed, 23 Oct 2024 03:10:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 571B312F59C;
+	Wed, 23 Oct 2024 03:12:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="rnr25ga3"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tAReNJPI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26B21A48;
-	Wed, 23 Oct 2024 03:10:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7FA26A48;
+	Wed, 23 Oct 2024 03:12:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729653024; cv=none; b=ilkoDSa+LhIlNmLd7C11CyiIJutzlwN49ZpAYx5hg769+XEyB0W2bsXvbge9/jIjWUBVqXb5xdF/9TIY1xrWIEto/gNDhYrUrZjegFMmoDM/SNAy9CPk9wKsnICWEZp5iRpNBKVOuQk9kdIKB7Di8iDm+CPwSuf6UCYSBTfOnhQ=
+	t=1729653148; cv=none; b=jThRCFdZmEVuwWqqsa4kiLMTtQKOAnHjEx8FW3pah/h+UlcGjGx2E+tj+l8rJA42p5uuYgzxVP88BVr3hjmONVfXADFCnGYPGXbCKAQngbi6R0na7S1cTT+PWAGKIV+WJUE3ZuA8E1+L9Pu5EMoAekbMWGRP9LYdsmthHrYFv6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729653024; c=relaxed/simple;
-	bh=KVg3DvZVvdJmjXJcg09rINPejUXsUgt0ZOqCjesVDvk=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=WliCjFQ8oiQM6hBm1TjrrsMCHoUwI2HmHLPydqu9h4vr9mZYmdVWVMQfMh+1jw63RuzsxLTb6YvX9IRng6rKo+W1jv5HaHbZ2vYkfKAH4fq/VBtKCQ2WNAsL5Jl4f0FJpXHkGqol6dMfrTSjlXRDpd2cB2gW/LRt0aabkeek9ww=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=rnr25ga3; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729653016;
-	bh=OR8Mp3OGnYqhRWo+VL88cuEKxDIWnGm5rjZBFU+GYoE=;
-	h=Date:From:To:Cc:Subject:From;
-	b=rnr25ga31rJ8jdeO8Ibm5Rq1Po7R9dJ0wvD4KCcUIKCeIXo/WeaVQYjhLLlvoJNrg
-	 xjJg4eHwdeZKvjUCyYRV63FsWxmo9P2qOnAW8WAHeQZhRltXL4XSEn+xyNs9Tq7fwn
-	 pNw//T+/pnjZKi2PErB8xpcfY9g1izlezDvvU2pg5fQfMEu4DCUKUA7bghwiVso/Qi
-	 5j4MGYLF7xkL76wUTmzWDqcRytn3NaJyeOHkeu0sIJbbmybaYABSQczMHJwv9CI9Dw
-	 2D90WlP2eHUfJVjXIa5IeSDa7wr5RnZHdJrgN8C0qNJvCJn7yVtpjsD57HnRWkDpCj
-	 RJqDmjfL03RfQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYDYz1gtQz4w2K;
-	Wed, 23 Oct 2024 14:10:15 +1100 (AEDT)
-Date: Wed, 23 Oct 2024 14:10:15 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Greg KH <greg@kroah.com>, Arnd Bergmann <arnd@arndb.de>, Jonathan
- Cameron <Jonathan.Cameron@Huawei.com>
-Cc: Javier Carrasco <javier.carrasco.cruz@gmail.com>, Linux Kernel Mailing
- List <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: manual merge of the char-misc tree with the iio-fixes
- tree
-Message-ID: <20241023141015.0ec5346d@canb.auug.org.au>
+	s=arc-20240116; t=1729653148; c=relaxed/simple;
+	bh=/cRm+yhf9/g6LLOJDGAu3Sj+nmlDEdcWa7TkjJMKzGc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OPTkyO4xDlEZl034Zd8zXZxd1DdFH0okdSDd2vGo+OqTbGjalpQFANXiaJH0sseuve4MeNuGNe2bQHHlA9doW4eRttjTYb1ZRQC+lPODfr9d5Yi5MgP8PnniAL6tZgtw1VO/Cl70fzDLnUDF4jI28B/+gPptd/k8q5RO62pVaQE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tAReNJPI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5EAD0C4CEC3;
+	Wed, 23 Oct 2024 03:12:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729653148;
+	bh=/cRm+yhf9/g6LLOJDGAu3Sj+nmlDEdcWa7TkjJMKzGc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tAReNJPI6WLIonXKW9zcLjyRjuGeuGFCmtav5L88BvCeScXSkfF+qovo6+Wx7TrVn
+	 HEdFiuVqOOmPDor1gjJ8TjuisgaAmStYenEuagRa4OqymP85uHVznVpX4DLfj0rnCm
+	 KRGg0I34y3hmZIR5M8ndXtCVj0AQjBpGk8HT5r00UIVwuCMFZXR2KM/gG5epuBQHh+
+	 r4Uaki55xuHdfSBImpP8VoZL2c5TI0FjKsJnYRSfhqZRFIsPbfI/sjd1kEksi3mB2J
+	 s86Be++Xn3bMSRQ7x2o+6/VkyfuNwOQ733y0voga/WhQ7OsMt+xLwemeYLgR6PQoGN
+	 bJNbymxtlrQqA==
+Date: Tue, 22 Oct 2024 22:12:24 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, 
+	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, Taniya Das <quic_tdas@quicinc.com>, 
+	Jishnu Prakash <quic_jprakash@quicinc.com>, Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+Subject: Re: [PATCH 4/5] arm64: dts: qcom: Add base sm8750 dtsi and mtp and
+ qrd dts
+Message-ID: <qqdtpvx6dnot2ncmj7khzpyaftnfjyrxmg5bz6t6id7uwutcyc@qvrybabbxxlp>
+References: <20241021232114.2636083-1-quic_molvera@quicinc.com>
+ <20241021232114.2636083-5-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/Kc7mdashmOysjFUiCGr+PLK";
- protocol="application/pgp-signature"; micalg=pgp-sha256
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021232114.2636083-5-quic_molvera@quicinc.com>
 
---Sig_/Kc7mdashmOysjFUiCGr+PLK
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+On Mon, Oct 21, 2024 at 04:21:13PM GMT, Melody Olvera wrote:
 
-Hi all,
+2 "and", 2 "dts" and a "dtsi" in the subject. I'd prefer a more
+succinct:
 
-Today's linux-next merge of the char-misc tree got a conflict in:
+"arm64: dts: qcom: Add SM8750 platform, mtp and qrd"
 
-  drivers/iio/light/veml6030.c
+> Add base dtsi for the sm8750 SoC describing the CPUs, GCC and
+> RPMHCC clock controllers, geni UART, interrupt controller, TLMM,
+> reserved memory, interconnects, regulator, and SMMU nodes. Also add
+> MTP and QRD board dts files for sm8750.
+> 
 
-between commit:
+Nice.
 
-  de9981636774 ("iio: light: veml6030: fix microlux value calculation")
+> Co-developed-by: Taniya Das <quic_tdas@quicinc.com>
+> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+> Co-developed-by: Jishnu Prakash <quic_jprakash@quicinc.com>
+> Signed-off-by: Jishnu Prakash <quic_jprakash@quicinc.com>
+> Co-developed-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  arch/arm64/boot/dts/qcom/Makefile       |    2 +
+>  arch/arm64/boot/dts/qcom/sm8750-mtp.dts |  968 ++++++++
+>  arch/arm64/boot/dts/qcom/sm8750-qrd.dts |  965 ++++++++
+>  arch/arm64/boot/dts/qcom/sm8750.dtsi    | 2903 +++++++++++++++++++++++
+>  4 files changed, 4838 insertions(+)
 
-from the iio-fixes tree and commit:
+Most reviewers will prefer the platform and individual devices to be
+added in separate patches, to not hit 5kloc. I don't mind it...
 
-  ed59fc90f38a ("iio: light: veml6030: drop processed info for white channe=
-l")
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+>  create mode 100644 arch/arm64/boot/dts/qcom/sm8750.dtsi
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/Makefile b/arch/arm64/boot/dts/qcom/Makefile
+> index 065bb19481c1..3bedfa6b37f2 100644
+> --- a/arch/arm64/boot/dts/qcom/Makefile
+> +++ b/arch/arm64/boot/dts/qcom/Makefile
+> @@ -269,6 +269,8 @@ dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk-display-card.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-hdk.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-mtp.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= sm8650-qrd.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-mtp.dtb
+> +dtb-$(CONFIG_ARCH_QCOM)	+= sm8750-qrd.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e78100-lenovo-thinkpad-t14s.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-asus-vivobook-s15.dtb
+>  dtb-$(CONFIG_ARCH_QCOM)	+= x1e80100-crd.dtb
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750-mtp.dts b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> new file mode 100644
+> index 000000000000..e1a94dc76e2f
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sm8750-mtp.dts
+> @@ -0,0 +1,968 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +#include "sm8750.dtsi"
+> +#include "pm8010.dtsi"
+> +#include "pm8550.dtsi"
+> +#define PMK8550VE_SID 8
+> +#include "pm8550ve.dtsi"
+> +#include "pmd8028.dtsi"
+> +#include "pmih0108.dtsi"
+> +#include "pmk8550.dtsi"
+> +#include "pmr735d_a.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. SM8750 MTP";
+> +	compatible = "qcom,sm8750-mtp", "qcom,sm8750";
 
-from the char-misc tree.
+Can we please here have a:
 
-I fixed it up (the latter removed the line updated by the former) and
-can carry the fix as necessary. This is now fixed as far as linux-next
-is concerned, but any non trivial conflicts should be mentioned to your
-upstream maintainer when your tree is submitted for merging.  You may
-also want to consider cooperating with the maintainer of the conflicting
-tree to minimise any particularly complex conflicts.
+	chassis-type = "handset";
 
---=20
-Cheers,
-Stephen Rothwell
+> +
+[..]
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750-qrd.dts b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+> new file mode 100644
+> index 000000000000..af0174d95e3a
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sm8750-qrd.dts
+> @@ -0,0 +1,965 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +/dts-v1/;
+> +
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/leds/common.h>
+> +#include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+> +#include "sm8750.dtsi"
+> +#include "pm8010.dtsi"
+> +#include "pm8550.dtsi"
+> +#define PMK8550VE_SID 8
+> +#include "pm8550ve.dtsi"
+> +#include "pmd8028.dtsi"
+> +#include "pmih0108.dtsi"
+> +#include "pmk8550.dtsi"
+> +#include "pmr735d_a.dtsi"
+> +
+> +/ {
+> +	model = "Qualcomm Technologies, Inc. SM8750 QRD";
+> +	compatible = "qcom,sm8750-qrd", "qcom,sm8750";
 
---Sig_/Kc7mdashmOysjFUiCGr+PLK
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
+chassis-type please.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +	aliases {
+> +		serial0 = &uart7;
+> +	};
+[..]
+> diff --git a/arch/arm64/boot/dts/qcom/sm8750.dtsi b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> new file mode 100644
+> index 000000000000..98ab82caa007
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/qcom/sm8750.dtsi
+> @@ -0,0 +1,2903 @@
+> +// SPDX-License-Identifier: BSD-3-Clause
+> +/*
+> + * Copyright (c) 2024 Qualcomm Innovation Center, Inc. All rights reserved.
+> + */
+> +
+> +#include <dt-bindings/clock/qcom,rpmh.h>
+> +#include <dt-bindings/clock/qcom,sm8750-gcc.h>
+> +#include <dt-bindings/clock/qcom,sm8750-tcsr.h>
+> +#include <dt-bindings/dma/qcom-gpi.h>
+> +#include <dt-bindings/interconnect/qcom,icc.h>
+> +#include <dt-bindings/interconnect/qcom,sm8750-rpmh.h>
+> +#include <dt-bindings/interrupt-controller/arm-gic.h>
+> +#include <dt-bindings/power/qcom,rpmhpd.h>
+> +#include <dt-bindings/power/qcom-rpmpd.h>
+> +#include <dt-bindings/soc/qcom,rpmh-rsc.h>
+> +
+> +/ {
+> +	interrupt-parent = <&intc>;
+> +
+> +	#address-cells = <2>;
+> +	#size-cells = <2>;
+> +
+> +	chosen { };
 
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcYaRcACgkQAVBC80lX
-0GwBHgf/QzWqp9eVdb6k5PIV6gEZUVL7fSBJNtb0USiAsEpWMxaJXcIkEzIklyd/
-Gl2EhKzVPSPmHHQU+APY7B0bjcgTmwXQXzeJs4NrVSkWFbPG/+SNYuFdTg/VZvDm
-E1YwgTfeGLdfzxuULjPVjE7I9/7DISnjwm/aHV4wk7Fd4i9l4zecAmM668hFhMHt
-bj7L5oiGeptgR5Lx6DUurXMX312jW4D/s0y5j3SQpLkdBgPBP/gEZDVrFvas8Mqm
-7GD6FPCCo5AiTMhyqY/1AjPF6LwTx/GS5sfqpg+st7w7nd3kASDptkfSDaPjV61K
-B55rBENdJ+bJ+rXCJmyEXYj92n4Tlg==
-=vy7S
------END PGP SIGNATURE-----
+You should be able to omit this...
 
---Sig_/Kc7mdashmOysjFUiCGr+PLK--
+> +
+> +	cpus {
+> +		#address-cells = <2>;
+> +		#size-cells = <0>;
+> +
+> +		CPU0: cpu@0 {
+
+I just merged a cleanup series from Krzysztof, making all labels lower
+case. So, I'd unfortunately like you to do the same...
+
+> +			device_type = "cpu";
+> +			compatible = "qcom,oryon";
+> +			reg = <0x0 0x0>;
+> +			enable-method = "psci";
+> +			next-level-cache = <&L2_0>;
+> +			power-domains = <&CPU_PD0>;
+> +			power-domain-names = "psci";
+> +			cpu-idle-states = <&CLUSTER0_C4>;
+> +
+> +			L2_0: l2-cache {
+> +				compatible = "cache";
+> +				cache-level = <2>;
+> +				cache-unified;
+> +			};
+> +		};
+[..]
+> +	memory@a0000000 {
+> +		device_type = "memory";
+> +		/* We expect the bootloader to fill in the size */
+> +		reg = <0x0 0xa0000000 0x0 0x0>;
+
+gunyah_hyp_mem below is at 0x80000000, so I presume it's not just size
+that's being updated?
+
+> +	};
+> +
+[..]
+> +	soc: soc@0 {
+[..]
+> +		};
+> +
+> +
+
+Extra newline, didn't checkpatch --strict complain about that/
+
+> +		cnoc_main: interconnect@1500000 {
+> +			compatible = "qcom,sm8750-cnoc-main";
+> +			reg = <0x0 0x1500000 0x0 0x16080>;
+
+Until here you padded the base address to 8 digits, making it easy for
+humans to keep nodes sorted (by address). Please correct the remaining
+7-digit nodes as well, to make it easier for future contributors to get
+their ordering right.
+
+> +			qcom,bcm-voters = <&apps_bcm_voter>;
+> +			#interconnect-cells = <2>;
+> +		};
+> +
+> +		config_noc: interconnect@1600000 {
+> +			compatible = "qcom,sm8750-cnoc-cfg";
+> +			reg = <0x0 0x1600000 0x0 0x6200>;
+> +			qcom,bcm-voters = <&apps_bcm_voter>;
+> +			#interconnect-cells = <2>;
+> +		};
+[..]
+> +		apps_rsc: rsc@16500000 {
+> +			compatible = "qcom,rpmh-rsc";
+> +			reg = <0x0 0x16500000 0x0 0x10000>,
+> +			      <0x0 0x16510000 0x0 0x10000>,
+> +			      <0x0 0x16520000 0x0 0x10000>;
+> +			reg-names = "drv-0",
+> +				    "drv-1",
+> +				    "drv-2";
+> +			qcom,drv-count = <3>;
+> +
+> +			interrupts = <GIC_SPI 3 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 4 IRQ_TYPE_LEVEL_HIGH>,
+> +				     <GIC_SPI 5 IRQ_TYPE_LEVEL_HIGH>;
+> +			qcom,tcs-offset = <0xd00>;
+> +			qcom,drv-id = <2>;
+> +			qcom,tcs-config = <ACTIVE_TCS    3>, <SLEEP_TCS     2>,
+> +					  <WAKE_TCS      2>, <CONTROL_TCS   0>;
+
+Is 0 CONTROL_TCSs correct?
+
+> +
+> +			label = "apps_rsc";
+> +
+
+Regards,
+Bjorn
 
