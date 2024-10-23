@@ -1,191 +1,278 @@
-Return-Path: <linux-kernel+bounces-378965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3AEC69AD7E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:40:50 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70A109AD7E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:42:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9BF47B241FF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:40:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A3E061C217C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:42:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C4D220013C;
-	Wed, 23 Oct 2024 22:38:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8477C1FE0F1;
+	Wed, 23 Oct 2024 22:42:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="d2LxQ/ap"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ME9mH9eU"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.10])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CD0C81FEFD3;
-	Wed, 23 Oct 2024 22:38:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729723133; cv=none; b=k2+jeEc+sbIk/BaoPq3QjhHSp3/PMIpQoHzSEiaCSe5C+gYxgbYVg5n7Fz2i8pX7nzTRzJ8T3qyaDEIRLD2TfDTa+7AI9O0OFb6pBgtHq73cnPP9trlgDxitrwtOrC/exaQ5mbzb3xvcyLgJSGuNSiQ1ddPZrQN8wMP+/FRti6w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729723133; c=relaxed/simple;
-	bh=ES5iYOA95Kt0KDp71z3fgi0EpYKOwnsO4BIWmBh/gpM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XpABzy7gmJFRXmpMw/UAdjT4HYQV69SaLMLp4JN2UjEerpAGbFFLkhG+qzjGHkl5KniiXollOuPtQ8+CEFTKcsWutThEukqVxb6i6fnr5dqUARB0Xt0dOKDtUtClzQAxfOTwzFX9LSLihFVIgaUvYQqB8Zfe/0llPBWtRHi4ehg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=d2LxQ/ap; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e6d988ecfso240302b3a.0;
-        Wed, 23 Oct 2024 15:38:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729723131; x=1730327931; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=rkwckHmFPJEkM3Wxs1jlPmTkTzgcJwcJLaHVmfmItpM=;
-        b=d2LxQ/apVyAlS1olU1fdMZKiDZjRrbk5T7qyCWqdCPk8ZprLdSID6Ig+ARiK1pINal
-         m/xfluNMNHvfQzV5+8kxznjutp2IXYSeyCpEh2lqIsorvgqA7wkJ/lIIHQ/z/e3QO+/P
-         i3vxrJa12QTr47FbDAYefW8ZwBqtD9UO8K53j2hFmqiCuvK+pQtUhvt+4vBFIHcNvbRu
-         UFpg9Wo1ZLL0sAdk/SP7elW8HnB0lGxy0RWVjNg/oPuvshPfpHZFgAEw9rPZ6YI7Wz/G
-         7KTBkxbzyFgBFh35f+J7wSY7NFzYizTCUvHXz8QA1ztUSNdZBpyi/rsZuQMPRnUIq9gx
-         2O1A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729723131; x=1730327931;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=rkwckHmFPJEkM3Wxs1jlPmTkTzgcJwcJLaHVmfmItpM=;
-        b=s+6htdohf4A8eNjHjAcTB43pkTwxKJoIcpiSOb6+zKEiPr9QT556c5S4lLo6MteWw3
-         6X+C+QRCb4OccNyvhtizNYgPee2BOH7YOm+QvXlXRjQqRraojOV3yyRNaYNI21xHJOXv
-         v0sIV0znef6v+NJX44t9kacnuTWJhpULi+QV45gryGWoq4PtCXU0VyMc4AqKw3Po4IYF
-         op5PWh+CgHLe2CF7w1m/xMgWTOv4Ynyno7yzWpRbXqwXw6YX/egOodK3DHnBLaPYYhty
-         uPQf+l9HSitzRdJfMmW8fwTegCsRxk+QB0Kpkm0ZJGWVT5WOuc5N6BmBoPdAP84oQp7Z
-         J2Ew==
-X-Forwarded-Encrypted: i=1; AJvYcCV4ERdi05OcpiUMtrSoJVgo32Kj6Zo9jW8pJlhwbMA97aOYgzvEVs9vQm1nJZc6VNjh87sbmySysCTy@vger.kernel.org, AJvYcCVs2M6ugftZk8PgPFxB1fCdJzDAFk246uRCu4zGNrnLEzY5D03tnjAFUPoAXYjtjbkuDvb7lC+vmDUxVV7Q@vger.kernel.org, AJvYcCW4DGi+ZHAPF9NKgLd7zliHhVdVL98Gn/b9QcolAs9TDTYiHdqfhYTQVzlrbejakyIY4+ZiDEKB@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy1xNN/uZ4SiIK3/tYDTxoWqKbReX67n0BUC3bGpWf2a65saQQV
-	N7JGG1Xf6EjH/sTk73tsRPIDc+6PMRq6c7MC66+ZanlZlkugvMez
-X-Google-Smtp-Source: AGHT+IGUv5GcBzM76Tis8BZFsna+Tt+yRb2ER6YRERF8hAd8oZIE6Ogk0CalUXCV034zvn8ODhWHxQ==
-X-Received: by 2002:a05:6a00:806:b0:71e:693c:107c with SMTP id d2e1a72fcca58-72030a8b242mr6049959b3a.11.1729723130943;
-        Wed, 23 Oct 2024 15:38:50 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312c8fsm7047579b3a.14.2024.10.23.15.38.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 15:38:50 -0700 (PDT)
-Date: Thu, 24 Oct 2024 06:38:29 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/4] dt-bindings: net: Add support for Sophgo SG2044 dwmac
-Message-ID: <5cv7wcdddxa4ruggrk36cwaquo5srcrjqqwefqzcju2s3yhl73@ekpyw6zrpfug>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-3-inochiama@gmail.com>
- <20241022-crisply-brute-45f98632ef78@spud>
- <yt2idyivivcxctosec3lwkjbmr4tmctbs4viefxsuqlsvihdeh@alya6g27625l>
- <20241023-paper-crease-befa8239f7f0@spud>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1414D4D599
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 22:42:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.10
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729723335; cv=fail; b=Tb93S80qQH0bLgadKivjh+BjZhOjELOla3x7rr/J9+Vhs01/kc1LSlP4xs+TUvu8lmkzHHpnofmprMQlwG2qQlwCa0lWrAkoAhP8Y1ib31KuB/xzjfiekvPVqBdYSzhWUuiMaltvx9m7kRj87jl1R2KJsC0Ik/B+/EzfDvx3GX0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729723335; c=relaxed/simple;
+	bh=qM3En673oQ55G5QZh/Ve7fS/fYyXguIndtiEheN0mJk=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=kf5kjfrFUVaSi9mRmp/5GB2/AbCXciSKZMTBNHHbQLsBuEbraR0Prtu+r0SSYiinpCiRapENd89UfUalZgC3yGHc4sg1kjf/+O0axj5O3mHhFJVjrEFM8+vBG0iWe3rRXUoTNYNAtNxLwZGkUWEjLvVjJCRSJXsrfekjipZPMA0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ME9mH9eU; arc=fail smtp.client-ip=198.175.65.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729723333; x=1761259333;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=qM3En673oQ55G5QZh/Ve7fS/fYyXguIndtiEheN0mJk=;
+  b=ME9mH9eUKgUWkTYa02szmfZwEiIkPcjWMXWQmGLDGkIdASAKVn04sfd3
+   0hecNKREFaFld08enKJEPX85r2Tz+LF1Ys1VGA2umL01+WYRczQkm+h3h
+   0bnFjjRMZkOsAcN8VuxzS13+i33CUaxK4senQkP/LnatkBaK0jkTo+eZt
+   qV/dqE7/nRMiQlp3/Z+1Rv5wj75zcoQrpePJfdd1hiZ73yIh0HP6MkdPW
+   0lgD2hc5vYBdxUY9XMmI/Byqw8nWN0hRkdz5dONhj30STQGxkSzOm6jao
+   0lcwdbLPS3720Og1jQow4dfJlWvRecQRfirmtE45WVViY+p14N3NDXhc2
+   A==;
+X-CSE-ConnectionGUID: 2pwITPMFROivKJHccFvexg==
+X-CSE-MsgGUID: 0nxXwDWLSC6HXoiDXgyWGA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="46801139"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="46801139"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa102.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 15:42:12 -0700
+X-CSE-ConnectionGUID: YiJEUgFESSyCrZKVrli+rg==
+X-CSE-MsgGUID: GdPWdP87QOWC88YM0XDRLQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="79975525"
+Received: from fmsmsx603.amr.corp.intel.com ([10.18.126.83])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 15:42:12 -0700
+Received: from fmsmsx601.amr.corp.intel.com (10.18.126.81) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 23 Oct 2024 15:42:11 -0700
+Received: from FMSEDG603.ED.cps.intel.com (10.1.192.133) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 15:42:11 -0700
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.177)
+ by edgegateway.intel.com (192.55.55.68) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 23 Oct 2024 15:42:11 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=bEr3w4BwIh3AVFAsy43Aj81xbhuXwXPrFtMNUV4U7UiqUae1kHVM+h2WAn6yjBQCmB6NcxZrBl8QMH2+y8VNcMEoCQ5j5juoxAUUsrnxbQzGcT+rr78IqPY34VE7R/f69U1NOWtBPW30LjEA0Y26NsAr9SgL6m5HjOeEJIqnmvmTZ20SRSMnjmnXDZix/ssNXMUenxg5qVe1DrPh/zKfjRA4tFeeXh/W9cypWjCvV2ZkCQF0i1D8d6ScCpI4d1c7JAUphTPuSZhh6R1OpDwu5wh0KdjDwz7ssuTBwnh4aSBtTW0D/0n8UFfLZqO9W9Nlqcvi2iwyA7clFkXn3skAgg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=jA8JO/v8q1zYCRxjc1bF0q15A8X5DBUP9x6SkRzRlyE=;
+ b=s0buUa3Gw/xnmhRQl3n03KqY2+lrLspXXT1zRU3uTRPF2xlasFhUuiD0lUaUlzro53nEGuqpUxgeUiT5hbXIUff6plfJoUbYxEUjNUNBAmFet2oA6zzwKSrQNPbhXW+7mta7f+8gEbx6P73JFgKe7zGmfQT4H/BNQvlWHQo2/QFhOYSmHa2pstfqhf5zTKLqUJP/BjO3pR985u24kypLQlKOmgN0mzfyB5vQCk5o8brR0sMYjHSXslIqCJO6yClnh1O2tbd2ybz8ND+V/b8UoIvY+dSEiCGRswOZV372vd3NYLvaLn3uPJzFwtZUA/SzuQ9bs3LrUfTJ1wIXttsibQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com (2603:10b6:a03:4d2::10)
+ by DS7PR11MB6016.namprd11.prod.outlook.com (2603:10b6:8:75::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Wed, 23 Oct
+ 2024 22:42:08 +0000
+Received: from SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf]) by SJ2PR11MB7573.namprd11.prod.outlook.com
+ ([fe80::61a:aa57:1d81:a9cf%7]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
+ 22:42:08 +0000
+Message-ID: <adbe208d-7a16-46c1-88ec-ceb99122f84c@intel.com>
+Date: Wed, 23 Oct 2024 15:42:05 -0700
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 22/40] x86/resctrl: Move mbm_cfg_mask to struct
+ rdt_resource
+To: James Morse <james.morse@arm.com>, <x86@kernel.org>,
+	<linux-kernel@vger.kernel.org>
+CC: Fenghua Yu <fenghua.yu@intel.com>, Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, H Peter Anvin
+	<hpa@zytor.com>, Babu Moger <Babu.Moger@amd.com>,
+	<shameerali.kolothum.thodi@huawei.com>, D Scott Phillips OS
+	<scott@os.amperecomputing.com>, <carl@os.amperecomputing.com>,
+	<lcherian@marvell.com>, <bobo.shaobowang@huawei.com>,
+	<tan.shaopeng@fujitsu.com>, <baolin.wang@linux.alibaba.com>, Jamie Iles
+	<quic_jiles@quicinc.com>, Xin Hao <xhao@linux.alibaba.com>,
+	<peternewman@google.com>, <dfustini@baylibre.com>, <amitsinght@marvell.com>,
+	David Hildenbrand <david@redhat.com>, Rex Nie <rex.nie@jaguarmicro.com>,
+	"Dave Martin" <dave.martin@arm.com>, Shaopeng Tan
+	<tan.shaopeng@jp.fujitsu.com>
+References: <20241004180347.19985-1-james.morse@arm.com>
+ <20241004180347.19985-23-james.morse@arm.com>
+Content-Language: en-US
+From: Reinette Chatre <reinette.chatre@intel.com>
+In-Reply-To: <20241004180347.19985-23-james.morse@arm.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MW4PR04CA0179.namprd04.prod.outlook.com
+ (2603:10b6:303:85::34) To SJ2PR11MB7573.namprd11.prod.outlook.com
+ (2603:10b6:a03:4d2::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023-paper-crease-befa8239f7f0@spud>
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SJ2PR11MB7573:EE_|DS7PR11MB6016:EE_
+X-MS-Office365-Filtering-Correlation-Id: 96401885-fdcc-48b0-3dd4-08dcf3b3ed4e
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|7416014|376014;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?QzZCc2RJTFFWeFlpcnN3RmRrdzV2V0R2aHE3cmdHWWFhQlhiRk9FeHRwLzd1?=
+ =?utf-8?B?aTBNK3FIM3hBWHZzOVY3VzVhR1JJK1ZjeFExQ3cvK1FvNmduNUdZN2g5T1pR?=
+ =?utf-8?B?ZDE2T05LdEFhQ2xlSFFWRlREa1VENVk5WnM5V1lHb252S3lwWm1vWklyQnRy?=
+ =?utf-8?B?NUk0Q0VEa3V1elNFMis3emhVWjhISVFGYk9ZMjYzMnlWTmFHZVorbSthZjdm?=
+ =?utf-8?B?K1FZWGJHRmJGT3JpOHVuSGt0VmM0L0JVejFDcDVuTnVjTHlRMTY0NW16VEFx?=
+ =?utf-8?B?T1BOWThTc3dNN3MrdUZTSmc1L051ZFhFMm45NER2NTgwbVZGNlJCcVg2dXly?=
+ =?utf-8?B?a1ZTdmszOUhlaDFoT1RiaDgzcnRma3pjRG85cTdzcjdYMldrUWFkNnpxQzlr?=
+ =?utf-8?B?NmZibnVRQlB1ZTZ4MWx2RUp2clJ1RVd2Q2ZvOTgyYzJyMFQyVTlTZWd3Vkl4?=
+ =?utf-8?B?KzFZUlJxeUlCSExWS2MxOGlycnUwOGFaTWc3NDBkUnVNZWdmcG5icnRaZDVM?=
+ =?utf-8?B?aEhISW5Kejh0UEhTUzdYdVNpUDVKaHZYNFE2UzZ2emw4QUE3UDFpZmV0bGdu?=
+ =?utf-8?B?cWdjeS9NRkJ1blFNNXZQSS85b3lWS2YwM1NGUDdRdXhmVTRPRmVZM1dWZlpW?=
+ =?utf-8?B?YkZPSWdwWHViNjJWdXhUNVFFUGxqTWg5OVk3RkZwL3E0YVgvRHlod1Q1Rkgr?=
+ =?utf-8?B?a0ZGVUxiRmNNRWkycjl6SVBUYWVLN3k2UmFqR001ei8rZFgvYjMvM1hRaTRT?=
+ =?utf-8?B?QnhBdUdCYjlYQzhEemo2MnBwRDlBdzhMdHZDTFY0REc2am5TMndpQ3lxRWxD?=
+ =?utf-8?B?R1lMeHJTdUM1c1Vmd2F3QVRUNFVsYjM5dDBBY3FTeVpUZFlaVXpROWFlUjdu?=
+ =?utf-8?B?TVR6QzBBWlVrTEJJL2cwNDBVRWM2L0NsR0VobkIwUHA0MHZDTXpRdVNJUThs?=
+ =?utf-8?B?bHlKelo2Y2Jib0JpY2RaTm1vTWF1eEFSWEYzeE1BMWs3NG9sTDg4VGVIUXhE?=
+ =?utf-8?B?NWRJRWpVbk1DeW5zdVN4QXBiM1Q0aHJMN0p2ekQ3RUM5Sk1oSkVyNHFYU0M3?=
+ =?utf-8?B?WVczaTc1L0t0a1lIOTFWSXpFNzBvQ3U4K2d2dTQ5eXMxVGpHbXVEYzljaUl4?=
+ =?utf-8?B?QUxZMkZ2alpxL2NvanAzZ3RKTXEreW9oUnloNTJEcU5Cb3FMdTM3YVZnbkdS?=
+ =?utf-8?B?L01VMU8vd2lPd2xjUEg2SUx3QTNhVXd5RnBDRm02czJIRFlXbmw0RFZCV2Zw?=
+ =?utf-8?B?TGJ1cHB0V1c3VHFIcUc2d2szQUt3YXd4dFIzSVFmcFpqeWZ2UytiQkJLdDZZ?=
+ =?utf-8?B?UXNvbnlrWng3bnp5cldNVlh4LzJmbzdvZmJia1VDQ0xxYnNWTWxGRmgrdEZp?=
+ =?utf-8?B?c2NBWDFQZ2JXWmhucUtTL0tqTnFieTFkVmZ5VkpyUzR4bmxIandrNTFCaWJJ?=
+ =?utf-8?B?TW9kbk5sZUxtWlE2OUFxRUsxcjg3dHNrN2dLTGttdzBJazlSajRFa3pITTBI?=
+ =?utf-8?B?dGVoTEszRmhmRWl5RHUzR25qdm5ZM1FoNFNuNVFQczNIQ3JJNmR4T2lHckVQ?=
+ =?utf-8?B?Mk1YMk5FTkNxT2R4TUFyLzhLc05Qb1QxQWRaSVRwMHppN1Q3cXFqS0VHN01V?=
+ =?utf-8?B?T2E1cHRvZ2xBVXl0WTFmZUpwYTNhaHF4bUI4VGhqMXA0R0tESDdYMnE5eVc5?=
+ =?utf-8?B?MFpIZjVwMm12ZklHRXhpL0dOS04rWXk4RWRzazF1bkx6Q1A5VEhWN3JRWVFW?=
+ =?utf-8?Q?FU4vY1gBH7ct5faERqWa7CELU8etGLFUm5F1X8r?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ2PR11MB7573.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(7416014)(376014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?dWV3YkxUWXVFdkhmTFRuS295VEJpc3MzV1ord2pnMlR1djhmTU5Sam5yRkh2?=
+ =?utf-8?B?Y2dWTUdKRGx4SHNVR1Z3cmxhSUVZM3ZieXNxcVQ2V2FzWkJhTXV2dkxDUzQw?=
+ =?utf-8?B?b3NKUE9OSVJnTjVZTkxrNWhvQyt5WVhTMlJ1UkpmWG1qcHB0VkFXUWw2Rkc3?=
+ =?utf-8?B?dDNpUW1XditqaHUyTVRUZ0g2YXBDNm1qYTZVQ3FOQWIwaUxVVDNobmdUa3Jx?=
+ =?utf-8?B?K3VXQUVYWXpReWt1ZG5OV2YrS0NwUWdSZjF5TGd2dlZ0Y2ZWZ1N0bW1ad0tK?=
+ =?utf-8?B?eVBYOTJSdmNaeGtOZHlHTXNDcmx2ZGsxcThIZVFWUjkyQnVSclhvR1l3NWhh?=
+ =?utf-8?B?VHNhTzFia2VRRUpKZjNWdDFVNTQrWUQ2M0tiYVY4N1Qxb214Znl0Qm1WWlJ2?=
+ =?utf-8?B?UUkzbU9ORjZ6NzFwYksxNDljNEpyb0k0eVRjTDdOdmRTb1hseEZ3UlhJS21L?=
+ =?utf-8?B?WkRTZ0hOV3d6MW9Sb2FKRXdwblFKRkgzYklUK1hWa3ZOUnlkbUxHR3JzTks4?=
+ =?utf-8?B?OXdKTkZtWExoaFdJOVpwNk5tWFdUMjZRTFZHNDlmRFUrMDhtVUhoa080dVY3?=
+ =?utf-8?B?Kzd3ajF3T2V4VytkS1pta3hoSlh0R3dTcEp6bFRQQkhRdCtJM0VsSmJ0QVJZ?=
+ =?utf-8?B?Njl5M3RYY3I5OUlCNkZLeWJEYnFjZ0dZQkVQcDRhZ2tPbUNhQ0gwd3Y3U2pj?=
+ =?utf-8?B?WS8vbzNzK0FQTlVtSklqM21JSHZTNnFQZVM4cEE0UmVJUVdHcVFsY3MzNzRI?=
+ =?utf-8?B?anR6YjNRczFRZCt2dTlEU1dES0xlSS9wU1cvQjVMY1hDU0RUMllnRUtMY0VZ?=
+ =?utf-8?B?WGJzbkxBTzh1L1JTTEExMFp1OENjb2tEZlZZandFUzA4MjBZVWsvZDhRODhm?=
+ =?utf-8?B?L0ZnWGhEZVNWUTVueUxJNFF6MHdTN1g2Z1UvOWtkSFRiSDB2TFhKQ0FaZG5M?=
+ =?utf-8?B?cHhzTkZSbERJZ01XQmpxYXIrbi9CMnlqaE5oSnNDNUFGWHUvU2MxWEdYQnFM?=
+ =?utf-8?B?SjBoZ1FzZDg5SkFXUXhPTDhXWkx5WEFTeVI2RFQ2VXEwSWJXUmVYcWw1Vkpp?=
+ =?utf-8?B?aVdLamZUUEhPd3o4WjlobWtITG85UERMbWJDYktVd2FBWXRhcUVWbStxajBk?=
+ =?utf-8?B?U1VpQXBVenJnZ2JtSGlYbkdaVHhoNUluMEFOanh5cm11cTAyS2hqTTJ2S3FP?=
+ =?utf-8?B?b2h3eE1aMitYV1FTWXlORUg2cE5vR3R4VkYwQTlCTElFVUpsTW9GcDVVS3Qx?=
+ =?utf-8?B?LzJUZ2o4b01pSUo0OFlibHRaQlkxc1JjSHZ1dHBRK1NwWE5RbGFpSlJvdzRQ?=
+ =?utf-8?B?STloOGJ2S1U5ZVk4bU9tL212OWV0TkJDemxMRWdUSXR3VmxPa0lMWTh0cm9K?=
+ =?utf-8?B?SWp6NlhoVE9LejJmVHRzRDYxWEI2bWllbExvMjFjWUZlZEowdHpyaUd0V3N2?=
+ =?utf-8?B?RUtBK1V0UzZFWjFEUkJkMHRzNjc0cDJrZ0dZM09hcXZ6c1dMeEJTV3NGbXVE?=
+ =?utf-8?B?RUZIV0IrN3VLMU1Hd1FtclNMdzZLWkJ1b3AwTm5pMStxdXhDalNqa20rdGtS?=
+ =?utf-8?B?ZWgrZmxTRThXaksxY2dEYUd3eXVzYzVoSXhZaVROR0FkVUpjcDIvOFEzMC8r?=
+ =?utf-8?B?d1A4UGgycy9SU0hJRUpyNjhGbDBHcFZjQXZXUnhtc0o0blpKQWlaSVlkMWxw?=
+ =?utf-8?B?Zm1BWU8vOWlkSit6UlczVFh1azgzeGN0THZNdmRqV3Y5RUZOcWJRK3VjRXIv?=
+ =?utf-8?B?U2ZwOXhIYU1pc0trNUpLMVlPazVDUHVwcnI5OEdIVTNtcElITkhUc2hPc0ZU?=
+ =?utf-8?B?REZRSmY2WmVpUXBZYWNuOVNhckVKNHlUTUdXU1dYb1NsdFVEanJvVDROYmNk?=
+ =?utf-8?B?NFRDck9OeGNhcVcrMWkycjJzTWVYS3Q5dDRsckRxQzExTmFlVXN6RXM0UUxW?=
+ =?utf-8?B?NEI0WnhnVU5sdEdWNU9FajZpZ3FpNWQzUndnT0I0YkRic2F2Qmh4YmRVMldK?=
+ =?utf-8?B?UHJUMWRWbXBqUGs0T1FLUUIzOWk4cHV5eU5vaURZMVhXNTI1SlhhMSt5RTgy?=
+ =?utf-8?B?eVpWek54WUZUYXdmQTdaeE5TOUc5OGZkS0RFVWtqK0hnUXJPM0dVTWtWTjJQ?=
+ =?utf-8?B?OS9TYjJ2MG1objU3OElUd29OeUFCK1NPSUJ1aDBCd3lDL0ZTeTJBcXd3M1pW?=
+ =?utf-8?B?d2c9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 96401885-fdcc-48b0-3dd4-08dcf3b3ed4e
+X-MS-Exchange-CrossTenant-AuthSource: SJ2PR11MB7573.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 22:42:08.7277
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d8mSLpByxVOUZISgQN0/5gYW4oemokNd1mnXHh/QFNXvBXDRQT40jUkZduWcUWxKNuczFv+2NPYUH8lvc085r7vnj1Vr7i2p6gwUJiJbYMI=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR11MB6016
+X-OriginatorOrg: intel.com
 
-On Wed, Oct 23, 2024 at 09:49:34PM +0100, Conor Dooley wrote:
-> On Wed, Oct 23, 2024 at 08:31:24AM +0800, Inochi Amaoto wrote:
-> > On Tue, Oct 22, 2024 at 06:28:06PM +0100, Conor Dooley wrote:
-> > > On Mon, Oct 21, 2024 at 06:36:15PM +0800, Inochi Amaoto wrote:
-> > > > The GMAC IP on SG2044 is almost a standard Synopsys DesignWare MAC
-> > > > with some extra clock.
-> > > > 
-> > > > Add necessary compatible string for this device.
-> > > > 
-> > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > ---
-> > > >  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
-> > > >  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 145 ++++++++++++++++++
-> > > >  2 files changed, 146 insertions(+)
-> > > >  create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > > 
-> > > > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > > > index 3c4007cb65f8..69f6bb36970b 100644
-> > > > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > > > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > > > @@ -99,6 +99,7 @@ properties:
-> > > >          - snps,dwmac-5.30a
-> > > >          - snps,dwxgmac
-> > > >          - snps,dwxgmac-2.10
-> > > > +        - sophgo,sg2044-dwmac
-> > > >          - starfive,jh7100-dwmac
-> > > >          - starfive,jh7110-dwmac
-> > > >  
-> > > > diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > > new file mode 100644
-> > > > index 000000000000..93c41550b0b6
-> > > > --- /dev/null
-> > > > +++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > > @@ -0,0 +1,145 @@
-> > > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > > +%YAML 1.2
-> > > > +---
-> > > > +$id: http://devicetree.org/schemas/net/sophgo,sg2044-dwmac.yaml#
-> > > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > > +
-> > > > +title: StarFive JH7110 DWMAC glue layer
-> > > > +
-> > > > +maintainers:
-> > > > +  - Inochi Amaoto <inochiama@gmail.com>
-> > > > +
-> > > > +select:
-> > > > +  properties:
-> > > > +    compatible:
-> > > > +      contains:
-> > > > +        enum:
-> > > > +          - sophgo,sg2044-dwmac
-> > > > +  required:
-> > > > +    - compatible
-> > > > +
-> > > > +properties:
-> > > > +  compatible:
-> > > > +    items:
-> > > > +      - const: sophgo,sg2044-dwmac
-> > > > +      - const: snps,dwmac-5.30a
-> > > > +
-> > > > +  reg:
-> > > > +    maxItems: 1
-> > > > +
-> > > > +  clocks:
-> > > > +    items:
-> > > > +      - description: GMAC main clock
-> > > > +      - description: PTP clock
-> > > > +      - description: TX clock
-> > > > +
-> > > > +  clock-names:
-> > > > +    items:
-> > > > +      - const: stmmaceth
-> > > > +      - const: ptp_ref
-> > > > +      - const: tx
-> > > > +
-> > > > +  sophgo,syscon:
-> > > 
-> > > How many dwmac instances does the sg2044 have?
-> > > 
-> > 
-> > Only one, there is another 100G dwxgmac instance, but it does not
-> > use this syscon.
+Hi James,
+
+On 10/4/24 11:03 AM, James Morse wrote:
+> The mbm_cfg_mask field lists the bits that user-space can set when
+> configuring an event. This value is output via the last_cmd_status
+> file.
 > 
-> That dwxgmac is a different device, with a different compatible etc?
+> Once the filesystem parts of resctrl are moved to live in /fs/, the
+> struct rdt_hw_resource is inaccessible to the filesystem code. Because
+> this value is output to user-space, it has to be accessible to the
+> filesystem code.
+> 
+> Move it to struct rdt_resource.
+> 
 
-Yes, it needs a different compatiable, and maybe a new binding is needed
-since the 100G and 1G IP are different.
+fyi:
+https://lore.kernel.org/all/fc424d4bee8ac9887703fecbaad26dba3c633f72.1728495588.git.babu.moger@amd.com/
 
-Regards,
-Inochi
+> diff --git a/arch/x86/kernel/cpu/resctrl/internal.h b/arch/x86/kernel/cpu/resctrl/internal.h
+> index 6b076216911c..92a94939cf93 100644
+> --- a/arch/x86/kernel/cpu/resctrl/internal.h
+> +++ b/arch/x86/kernel/cpu/resctrl/internal.h
+> @@ -415,8 +415,6 @@ struct msr_param {
+>   * @msr_update:		Function pointer to update QOS MSRs
+>   * @mon_scale:		cqm counter * mon_scale = occupancy in bytes
+>   * @mbm_width:		Monitor width, to detect and correct for overflow.
+> - * @mbm_cfg_mask:	Bandwidth sources that can be tracked when Bandwidth
+> - *			Monitoring Event Configuration (BMEC) is supported.
+>   * @cdp_enabled:	CDP state of this resource
+>   *
+>   * Members of this structure are either private to the architecture
+> @@ -430,7 +428,6 @@ struct rdt_hw_resource {
+>  	void			(*msr_update)(struct msr_param *m);
+>  	unsigned int		mon_scale;
+>  	unsigned int		mbm_width;
+> -	unsigned int		mbm_cfg_mask;
+>  	bool			cdp_enabled;
+>  };
+>  
+
+...
+
+> diff --git a/include/linux/resctrl.h b/include/linux/resctrl.h
+> index 0072c2e5947f..84588ab1994d 100644
+> --- a/include/linux/resctrl.h
+> +++ b/include/linux/resctrl.h
+> @@ -218,6 +218,8 @@ enum resctrl_schema_fmt {
+>   * @name:		Name to use in "schemata" file.
+>   * @schema_fmt:	Which format string and parser is used for this schema.
+>   * @evt_list:		List of monitoring events
+> + * @mbm_cfg_mask:	Bandwidth sources that can be tracked when Bandwidth
+> + *			Monitoring Event Configuration (BMEC) is supported.
+
+Making this arch specific feature something all arch can support is probably the
+right time to remove the AMD marketing name. Maybe just:
+
+			Bandwidth sources that can be tracked when memory bandwidth
+			monitoring events can be configured.
+
+Please feel free to improve.
+	
+Reinette
+
 
