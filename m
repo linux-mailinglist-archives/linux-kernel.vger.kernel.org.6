@@ -1,160 +1,104 @@
-Return-Path: <linux-kernel+bounces-377878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2D5A39AC7FA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:28:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C41F9AC801
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:30:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDFF289B41
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:28:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BC41F2481C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:30:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0095E1A38E3;
-	Wed, 23 Oct 2024 10:28:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07C61A0B08;
+	Wed, 23 Oct 2024 10:30:19 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HrfzTN9S"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEzpmZy1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF39714F108;
-	Wed, 23 Oct 2024 10:28:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432E71662F6;
+	Wed, 23 Oct 2024 10:30:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729679297; cv=none; b=IHaGXEbERVgdQbMpYWhbyDMt5L4EcFDTQBUWyg2CikD2Kb8viVJOqFenuvrGVbMFWq5Qr86SgFkGfQJLXoH+6CficlSjVKL81nKLGv5T8QKUtwE27cFe+6ttSvqLP5OSCZjEiySzwk9RsUnWfrYlx3Os77E0QSEuusjCQzIVfHE=
+	t=1729679419; cv=none; b=RXFBui1dJXG5wJNhYdyx/2cNY8IYn26r72tTkPr2IZ8E+MjaFjOHYaaMD+vxPO+VVTXpSS/pkSHzz71rGlRazMLPBoh5uwVIzJag+6cpDhsPcaNN2lSZ5wJKjZ5mvVHSlzxWUqJ+rhF/RHRtv+XQwx+MsBBvs+JE0BUwLsQ7jE0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729679297; c=relaxed/simple;
-	bh=iHOp32SFkBd7m82e8yskiq+ewhqH5uFRQqMZdB2NOvo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=ibcC1y8Fn6sVHP5yPjM8K4aWRU2Gw65X7I3eOuSIuIwxiuJzCgZVFIleQ0RfBbD+zpvUjDaLNfKJxD9KlNgCYWHNRfzO8oDk4dnRVIsXPveVOid5MiTHrF4VOZKajhF8NEjLH8t5XT4Ar9FCExbGrFt4UTE28EuzFuLBorvrFUA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HrfzTN9S; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9v1hK025427;
-	Wed, 23 Oct 2024 10:28:10 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	/1RhKFk91LwuJ9KLrEjUapOT6KTyBjv1q2UPl2OI9ss=; b=HrfzTN9SIVYgQddQ
-	0/QZ6JuHxOPEaVDaikTe7Z7MQXhpuTRaWdKFYnKB0fPbmrhVYc/yocx2gHmTNsrR
-	Qnzuoliysc8w+/D2CvTb3uhThBDm0qmpgcDGh5xNnHbbET5kUwsURoYFIPVFzfBe
-	1u+Qv2RNFCtnaDW13iNlntO2e36kjg4/C+RWBJlTs2MXS7agetDwRlVKqkio1Xly
-	zVdLXkFdWicXprdDIgbBrJHxXmC87TejTm2sN6Yp2NS65cWZ6rHwb+aePq5ezkK1
-	g1YIVTQg843QAcJUveCC4vVLdZZONZzEwDivW/iLg54oHn/qOfPvq7lAkhksjPQg
-	kC24gA==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em409uq4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 10:28:10 +0000 (GMT)
-Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NAS9aK007187
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 10:28:09 GMT
-Received: from [10.151.40.160] (10.80.80.8) by nalasex01b.na.qualcomm.com
- (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 03:28:05 -0700
-Message-ID: <94defe49-c87a-44f6-8768-03f3d6687ac3@quicinc.com>
-Date: Wed, 23 Oct 2024 15:58:02 +0530
+	s=arc-20240116; t=1729679419; c=relaxed/simple;
+	bh=1yMvsbqKKxCmPBDkUMt3vUIL8R4RjnBl2vB8/PDwUCk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=X+fXSVTfADxfYHL/eE7KsUeEQrbbf9XbP9Y4ud7R+w6HBoxmLIH9RuPePty6S7n8Eyh6vzqfqvuUpeGQJAyImZBJHOrjWXW4n1kqXFNDEkHIt4Gl3CDXb65tNUrNqol3rEE6jX7eZeVVtq6E7qOS7MCTPIuCSugLZPXnKdE1miM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEzpmZy1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33056C4CEC6;
+	Wed, 23 Oct 2024 10:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729679416;
+	bh=1yMvsbqKKxCmPBDkUMt3vUIL8R4RjnBl2vB8/PDwUCk=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=pEzpmZy1WbauAFljLYu5X2oUuavpPzogfbG3dvJHq0uRYEpUy5HPRo4Vyr3ZZVT59
+	 Dpmgxb0X8TpTPJcxQqbmpChIdwace8Zxaqe9T/5BocCVCz6EbbRFgyTpQ6eNb7sQPV
+	 UJhZoOOW/eNy0BB31qEtbSJ/kzdyUMNhHwF3Iqb24Xu0gdyc4Sx0TjWQH7yFtNYanC
+	 Km8POoGWxxaFPqQM342sVLn5reVMpoowxkv2VJK/vSQa6jyvCYmVJZ+gvXXA4WoeWG
+	 TfpbrlahDd5K1bxKh8K9fSYwMO8H9z+9tEzBBINPqs75DhUHUpvneD/2H4GGur096c
+	 7tMHv33au6qxQ==
+From: Conor Dooley <conor@kernel.org>
+To: Henry Bell <dmoo_dv@protonmail.com>,
+	E Shattow <e@freeshell.de>
+Cc: conor@kernel.org,
+	Conor Dooley <conor.dooley@microchip.com>,
+	Emil Renner Berthing <kernel@esmil.dk>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	devicetree@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] riscv: dts: starfive: Update ethernet phy0 delay parameter values for Star64
+Date: Wed, 23 Oct 2024 11:30:03 +0100
+Message-ID: <20241023-guts-versus-1a2bcfdfbec2@spud>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241022061004.62812-1-e@freeshell.de>
+References: <20241022061004.62812-1-e@freeshell.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
- properties for ath12k PCI module
-To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
-CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
-        Rob
- Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor
- Dooley <conor+dt@kernel.org>,
-        Jeff Johnson <jjohnson@kernel.org>,
-        Bjorn
- Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
- <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
- <e2c1ce1a-89af-4feb-a21a-9ca2578430e7@quicinc.com>
- <b97b8350-3925-40b0-8f87-f89df429a52a@kernel.org>
- <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
- <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
-Content-Language: en-US
-From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-In-Reply-To: <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
+X-Developer-Signature: v=1; a=openpgp-sha256; l=965; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=+Ekbc+eRHl5mRs0Lm29hCW/ghDBTMs/HMot0ehs2yl0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOkSF7QL0ree2ZbMXZQlMCXr76OrQdvPHms5pi8w05kn1 rn2Y9iyjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAExkRw8jwzHbSR0bzPOnlKkv OVUq98LQgVHDZdnJL+fNwyYnhosaZDD8M3rfJsfbvHmzt57gc/bPn0I4xWaW3Diw78tsza7aDKl SPgA=
+X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
 Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01b.na.qualcomm.com (10.47.209.197)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 7nlqLKTs3YYANTZf9zjWISYTedC-DO5Y
-X-Proofpoint-GUID: 7nlqLKTs3YYANTZf9zjWISYTedC-DO5Y
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=598
- lowpriorityscore=0 clxscore=1015 malwarescore=0 bulkscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230064
 
-On 10/23/2024 12:29 PM, Krzysztof Kozlowski wrote:
-> On 23/10/2024 08:53, Raj Kumar Bhagat wrote:
->> On 10/23/2024 12:17 PM, Krzysztof Kozlowski wrote:
->>> On 23/10/2024 08:45, Raj Kumar Bhagat wrote:
->>>> On 10/23/2024 12:05 PM, Krzysztof Kozlowski wrote:
->>>>> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
->>>>>> The current device-tree bindings for the Ath12K module list many
->>>>>> WCN7850-specific properties as required. However, these properties are
->>>>>> not applicable to other Ath12K devices.
->>>>>>
->>>>>> Hence, remove WCN7850-specific properties from the required section,
->>>>>> retaining only generic properties valid across all Ath12K devices.
->>>>>> WCN7850-specific properties will remain required based on the device's
->>>>>> compatible enum.
->>>>> Just not true. These apply to all devices described in this binding.
->>>>>
->>>>> NAK.
->>>>>
->>>>> Don't send patches for your downstream stuff.
->>>> This is not for downstream. This series is the per-requisite for ath12k
->>>> MLO support in upstream.
->>>>
->>>> In the subsequent patch [2/6] we are adding new device (QCN9274) in this
->>>> binding that do not require the WCN7850 specific properties.
->>>>
->>>> This is a refactoring patch for the next patch [2/6].
->>> It's just wrong. Not true. At this point of patch there are no other
->>> devices. Don't refactor uselessly introducing incorrect hardware
->> Ok then, If we squash this patch with the next patch [2/6], that actually adding
->> the new device, then this patch changes are valid right?
-> Yes, except I asked to have separate binding for devices with different
-> interface (WSI). You add unrelated devices to same binding, growing it
-> into something tricky to manage. Your second patch misses if:then
-> disallwing all this WSI stuff for existing device... and then you should
-> notice there is absolutely *nothing* in common.
+From: Conor Dooley <conor.dooley@microchip.com>
+
+On Mon, 21 Oct 2024 23:09:51 -0700, E Shattow wrote:
+> Improve function of Star64 bottom network port phy0 with updated delay values.
+> Initial upstream patches supporting Star64 use the same vendor board support
+> package parameters known to result in an unreliable bottom network port.
 > 
+> Success acquiring DHCP lease and no dropped packets to ping LAN address:
+> rx  900: tx 1500 1650 1800 1950
+> rx  750: tx      1650 1800 1950
+> rx  600: tx           1800 1950
+> rx 1050: tx      1650 1800 1950
+> rx 1200: tx 1500 1650 1800 1950
+> rx 1350: tx 1500 1650 1800 1950
+> rx 1500: tx 1500 1650 1800 1950
+> rx 1650: tx 1500 1650 1800 1950
+> rx 1800: tx 1500 1650 1800 1950
+> rx 1900: tx                1950
+> rx 1950: tx                1950
+> 
+> [...]
 
-I understand your point about having separate bindings if there are no common
-properties. However, the title and description of this binding indicate that it
-is intended for Qualcomm ath12k wireless devices with a PCI bus. Given this, the
-QCN9274 seems to fit within the same binding.
+Applied to riscv-soc-fixes, thanks!
 
-Additionally, there will likely be more properties added in the future that could
-be common. For example, the “qcom,ath12k-calibration-variant” property (which the
-ath12k host currently doesn’t support reading and using, hence we are not adding it
-now) could be a common property.
+[1/1] riscv: dts: starfive: Update ethernet phy0 delay parameter values for Star64
+      https://git.kernel.org/conor/c/825bb69228c8
 
-If you still recommend creating a separate binding for the QCN9274, we are open to
-working on that.
-
-Thank you for your guidance.
-
+Thanks,
+Conor.
 
