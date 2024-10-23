@@ -1,62 +1,64 @@
-Return-Path: <linux-kernel+bounces-378452-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378454-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A5DD9AD070
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:27:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 035599AD078
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:28:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA15B1F232C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:27:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A3A651F235DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:28:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DA31CDFA9;
-	Wed, 23 Oct 2024 16:26:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407B41CC158;
+	Wed, 23 Oct 2024 16:26:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkVjSHUY"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iS8SwAce"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C91D0797;
-	Wed, 23 Oct 2024 16:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9123E1C3030;
+	Wed, 23 Oct 2024 16:26:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700764; cv=none; b=mSk498X5nVivEpKco3tsvwKANCP44B0v0t8GVLNprZO12ElnMFPAHwpTWqw7612fl+8Qb8VJSxMD8OAucXE2r0cvbLHvRoTlgVfgh6vmbfwn08T8QldKWmeolRZnLaN7cKRpm+3x262yq1iBPIZ39ZjvVFZAhva7x0XePeztqhw=
+	t=1729700803; cv=none; b=C0DC4NO7jC9BPx5XM83+a6Ur+KUgoRL+1Is7K4LQleZJXbou/i5quP7cHsEDHRMg9XhjXWbsVHP5AJVSNPKKPJYAbSRZHx2XBIjtyInAxk00l/9QvLS95cQugc9oNWAYh6IyBvleu4P7dTuj8CpTJfZEgoe2tIRRe5SyAqplGck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700764; c=relaxed/simple;
-	bh=ZnAYm2TJOCxsEMUg1iKlsmwaRxpZn2CUIxr94dEYTEo=;
+	s=arc-20240116; t=1729700803; c=relaxed/simple;
+	bh=n1frDIgSsJcb/DRHKoimwPh5ZqPXxcX87y/aHbisXI8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tLRbfEkygVZ7mwEX986mSabH+55DBTemnBCU+Da+CxKe40SUv3o4dxfNMfutpEHT5KuYjMgFQ2qGg14lr1JDF6dZZnBs/GFOTdFqfevZ9BNRhAoWQJ9P+MMKAS+m+grXjWAsj6GYq+pCkBuupLcdKI19OPgAcy9z6JtKgYGm2Zg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkVjSHUY; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6636C4CEC6;
-	Wed, 23 Oct 2024 16:26:03 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=TvU5xM9TeSMF+1Iy0rgRcufT3lQ0udDGCqrCOkLRxpqgbDOHid2XNnheslzIWGetXE8kY5208V3QnQpm8eHlfI1UnHqx0/s8DsUbcjPuQeo+FAyrHeC35Yb9un6ngpngVYOEzrAwZbpoE14G9NOZcNka++tYDTlM4XVx+3lKmeY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iS8SwAce; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DC4D9C4CEE4;
+	Wed, 23 Oct 2024 16:26:40 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729700763;
-	bh=ZnAYm2TJOCxsEMUg1iKlsmwaRxpZn2CUIxr94dEYTEo=;
+	s=k20201202; t=1729700803;
+	bh=n1frDIgSsJcb/DRHKoimwPh5ZqPXxcX87y/aHbisXI8=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=tkVjSHUYFWclSNvqyA9MWWrL9LSNsnCLeltO+unH9duOufiWkrRs4PiDsrAaXaykm
-	 n6sFngrTGkv0VSIcWz9qJgUQeOaHczqi124qBatb0MnCB1w866W18RW4bjAdqBiDlw
-	 ev6K7gnRgeTa98D9PFAWmxVOV8Own4ZKSs+DumtO1m1uuKzulus/X7B07rQAGjDQn+
-	 ggIRAH7kNzXeDtPhEq+dycS9rLeuaZ3GFG0uaVkcuJNCC47vVE0yy5Yfq487Vix6oO
-	 R1GRk3FVuSzKo4wc26oGSqhh2OocxfAVAJo5LbMz5XI1iL8bTEGcV6/i1/IKoPJD+v
-	 dwXe2TIhSw2zA==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t3eBc-000000006FX-37sy;
-	Wed, 23 Oct 2024 18:26:16 +0200
-Date: Wed, 23 Oct 2024 18:26:16 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org,
-	jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
-	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
-	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
-Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
-Message-ID: <ZxkjqEmkBAsC6UkL@hovoldconsulting.com>
-References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
- <ZwfsmqInJlqkQD_3@hovoldconsulting.com>
- <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
+	b=iS8SwAceI/y883d1QM0e5+48FVIPf3L+8Mz/GjEfuZrGWWXDcAJ2RrTwYmSaIWBeg
+	 rNTIQwAqsfAISoCmTnPYwQnKlV6q29x2KBLrnzsj31GYFIRbFA7IEWWrV6EcTdFjSe
+	 EwtB4/Y0QeYqmZdHIdOW0G1stht+nm7AeyNiY1LSQ6EosDB8k9q4CCx943B+Q4pOjt
+	 ovvKb8HeaPJtjJC8NZVUk1UNcjv9f0dIuJ34bA7ODa39zdsCkojr21gc0uN2gGmUOT
+	 zGBYd4k/cNja/uE57SUKTSgib3LaYLlytnKIS3jdNSZ/fukgaahZYCJ7AlJhdhecCr
+	 G/NVNHotylvUw==
+Date: Wed, 23 Oct 2024 17:26:37 +0100
+From: Will Deacon <will@kernel.org>
+To: Besar Wicaksono <bwicaksono@nvidia.com>
+Cc: "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>,
+	"robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"catalin.marinas@arm.com" <catalin.marinas@arm.com>,
+	"mark.rutland@arm.com" <mark.rutland@arm.com>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-tegra@vger.kernel.org" <linux-tegra@vger.kernel.org>,
+	Thierry Reding <treding@nvidia.com>,
+	Jon Hunter <jonathanh@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>,
+	Rich Wiley <rwiley@nvidia.com>, Bob Knight <rknight@nvidia.com>
+Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
+Message-ID: <20241023162636.GA29251@willie-the-truck>
+References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
+ <20240918215846.1424282-3-bwicaksono@nvidia.com>
+ <20241014131903.GB17353@willie-the-truck>
+ <SJ0PR12MB5676697B93C267CE87C5A474A0452@SJ0PR12MB5676.namprd12.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -65,42 +67,89 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
+In-Reply-To: <SJ0PR12MB5676697B93C267CE87C5A474A0452@SJ0PR12MB5676.namprd12.prod.outlook.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Oct 23, 2024 at 01:16:47PM +0530, Sibi Sankar wrote:
-> On 10/10/24 20:32, Johan Hovold wrote:
-> > On Mon, Oct 07, 2024 at 11:36:38AM +0530, Sibi Sankar wrote:
-> >> The series addresses the kernel warnings reported by Johan at [1] and are
-> >> are required to X1E cpufreq device tree changes [2] to land.
-> >>
-> >> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
-> >> [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
-> >>
-> >> The following warnings remain unadressed:
-> >> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-> >> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+On Tue, Oct 15, 2024 at 05:21:06PM +0000, Besar Wicaksono wrote:
+> 
+> 
+> > -----Original Message-----
+> > From: Will Deacon <will@kernel.org>
+> > Sent: Monday, October 14, 2024 8:19 AM
+> > To: Besar Wicaksono <bwicaksono@nvidia.com>
+> > Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
+> > catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
+> > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
+> > tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>; Jon Hunter
+> > <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Rich Wiley
+> > <rwiley@nvidia.com>; Bob Knight <rknight@nvidia.com>
+> > Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU
+> > events
 > > 
-> > Are there any plans for how to address these?
+> > External email: Use caution opening links or attachments
+> > 
+> > 
+> > On Wed, Sep 18, 2024 at 09:58:45PM +0000, Besar Wicaksono wrote:
+> > > Rename loc* and rem* events in CNVLINK PMU to cmem* and gmem*
+> > events.
+> > >
+> > > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
+> > > ---
+> > >  drivers/perf/arm_cspmu/nvidia_cspmu.c | 21 ++++++++++++++++++++-
+> > >  1 file changed, 20 insertions(+), 1 deletion(-)
+> > >
+> > > diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> > b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> > > index ea2d44adfa7c..d1cd9975e71a 100644
+> > > --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> > > +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
+> > > @@ -112,6 +112,25 @@ static struct attribute *mcf_pmu_event_attrs[] = {
+> > >       NULL,
+> > >  };
+> > >
+> > > +static struct attribute *mcf_cnvlink_pmu_event_attrs[] = {
+> > > +     ARM_CSPMU_EVENT_ATTR(rd_bytes_cmem,                     0x0),
+> > > +     ARM_CSPMU_EVENT_ATTR(rd_bytes_gmem,                     0x1),
+> > > +     ARM_CSPMU_EVENT_ATTR(wr_bytes_cmem,                     0x2),
+> > > +     ARM_CSPMU_EVENT_ATTR(wr_bytes_gmem,                     0x3),
+> > > +     ARM_CSPMU_EVENT_ATTR(total_bytes_cmem,                  0x4),
+> > > +     ARM_CSPMU_EVENT_ATTR(total_bytes_gmem,                  0x5),
+> > > +     ARM_CSPMU_EVENT_ATTR(rd_req_cmem,                       0x6),
+> > > +     ARM_CSPMU_EVENT_ATTR(rd_req_gmem,                       0x7),
+> > > +     ARM_CSPMU_EVENT_ATTR(wr_req_cmem,                       0x8),
+> > > +     ARM_CSPMU_EVENT_ATTR(wr_req_gmem,                       0x9),
+> > > +     ARM_CSPMU_EVENT_ATTR(total_req_cmem,                    0xa),
+> > > +     ARM_CSPMU_EVENT_ATTR(total_req_gmem,                    0xb),
+> > > +     ARM_CSPMU_EVENT_ATTR(rd_cum_outs_cmem,                  0xc),
+> > > +     ARM_CSPMU_EVENT_ATTR(rd_cum_outs_gmem,                  0xd),
+> > > +     ARM_CSPMU_EVENT_ATTR(cycles,
+> > ARM_CSPMU_EVT_CYCLES_DEFAULT),
+> > > +     NULL,
+> > > +};
+> > > +
+> > >  static struct attribute *generic_pmu_event_attrs[] = {
+> > >       ARM_CSPMU_EVENT_ATTR(cycles,
+> > ARM_CSPMU_EVT_CYCLES_DEFAULT),
+> > >       NULL,
+> > > @@ -234,7 +253,7 @@ static const struct nv_cspmu_match
+> > nv_cspmu_match[] = {
+> > >         .filter_default_val = NV_CNVL_FILTER_ID_MASK,
+> > >         .name_pattern = "nvidia_cnvlink_pmu_%u",
+> > >         .name_fmt = NAME_FMT_SOCKET,
+> > > -       .event_attr = mcf_pmu_event_attrs,
+> > > +       .event_attr = mcf_cnvlink_pmu_event_attrs,
+> > >         .format_attr = cnvlink_pmu_format_attrs
+> > >       },
+> > 
+> > Hmm. Isn't this a user-visible change? For example, will scripts driving
+> > 'perf' with the old event names continue to work after this patch?
+> > 
+> 
+> Yes this is user visible. I am expecting user script to be updated accordingly.
+> Would this be reasonable?
 
-> Sorry missed replying to this. The error implies that duplicate
-> opps are reported by the SCP firmware and appear once during probe.
+I don't think so, no. We don't tend to require userspace changes as a
+result of upgrading the kernel.
 
-I only see it at boot, but it shows up four times here with the CRD:
-
-[    8.098452] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    8.109647] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    8.128970] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-[    8.142455] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
-
-> This particular error can be fixed only by a firmware update and you
-> should be able to test it out soon on the CRD first.
-
-Can you explain why this can only be fixed by a firmware update? Why
-can't we suppress these warnings as well, like we did for the other
-warnings related to the duplicate entries?
-
-IIUC the firmware is not really broken, but rather describes a feature
-that Linux does not (yet) support, right?
-
-Johan
+Will
 
