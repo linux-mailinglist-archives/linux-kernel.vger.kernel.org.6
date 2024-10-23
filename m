@@ -1,87 +1,201 @@
-Return-Path: <linux-kernel+bounces-378769-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 294899AD546
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:00:10 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9E69AD548
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:03:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2ED31F23B1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:00:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B3CD1C2112A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:03:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4361E1E2611;
-	Wed, 23 Oct 2024 20:00:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5517E1D174A;
+	Wed, 23 Oct 2024 20:03:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="P1zNNvqw"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686181E2606
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:00:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45CE01E51D;
+	Wed, 23 Oct 2024 20:03:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729713604; cv=none; b=txqdKnZBZAjgyiGxRMcm6IaaLZ5/7lLPWSC4Jgon60iWr1/QVGZggAupKKYmD47yP2oJpvXojkKOY3RPDCCTnr8sf0NrNDD15RDaQOreruTBF5HA6BW8Ztj96rjzntmaE87P7nOT8IxCYPeoFoUFtOe3Az47FY5ywMDEScg09SY=
+	t=1729713788; cv=none; b=c4qx1f3POeShVOKRQ7S5C0D52ECOMceh11yrXeY4Z9i1w9N7ut5jj96TDa+MgeA6m/hnx+6YZ0q3Bv5GT2o1AqQ3w8seFbRQ8fQOXTR4ZXPhTZVU9Ah8zYmW+KOyA6bxnIxfqfKkbV0ufz32u3AiRXstTWugjIynTtK+DVywqoE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729713604; c=relaxed/simple;
-	bh=3i2TTTMVvE63P7ks4HWcxgSaVPyPz2Ix62EMTgjJpIA=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=ZonY5MDIbJpUBB73fMDYIzbriFyQhlgZB9heTEFWTXjC54wNtmgLbzRE3Qpz1txM7ZUC4FvobzvA0NlkvCPrUt4Mg+J65ApL8+VCLnA7gK+f8DxjeZsi4GIScvKEbrFCeofnOhHqOu+YQV/Ko5eFx+QtDmoSfLpycQWJkRXFzdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so1804515ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:00:03 -0700 (PDT)
+	s=arc-20240116; t=1729713788; c=relaxed/simple;
+	bh=+n3/X2amTerW3fqY2GcOe7zHBtBJhaA4xOYypQ1YvLg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i9ujsf7QuBaxf3yB4Q5xOALAO/DniGz3w7sQpfTCUkP8dKm8kdvDMEQ5p3HP1K7zV3guWe9Bti580cDtk2bO1w+rRdZS05CbvwXNpWgpisBwpsd8I/IwlgIz+JqKVFGy+rYpgmqmxFeqqRX9u+0gZPk+3oWFDBuXX4hz8B5b4Go=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=P1zNNvqw; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ed9f1bcb6bso108333a12.1;
+        Wed, 23 Oct 2024 13:03:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729713786; x=1730318586; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jP73v8SKOj9OMtC9FJHv9JWI9rQlYgH+l/YZtxHOFuU=;
+        b=P1zNNvqwlL2reiHM3TGFgb32dMje3Z1e8JP0cXbi7kP6g/F7WVikajkRMDOxrBABk4
+         ZOk7QLTR75hJPlRuCP/DKZTfNn4OYPjbZwlpkuB9f9vvq0MHeXfHE8OaZPuS3kkQPq4i
+         hMUnC8ZDBDUJbBDqUIb5UAKFrG1NQ2h4UbwPTXLdhDcHCFv6adshoufp47L8NzTxT108
+         GFFscbuHw0HmOLxUwQezcOQJ1nVMDpwEGN6fWt6yF35rNhMJ2lvVqzthi62Y/Am1PIL6
+         NK9WbCZJnuXYt1Gj+IhR6ARxrACm9gz0c5raR6WLOHzUd9bzHC8KXSugTcpd3O0i/lQN
+         hiJw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729713602; x=1730318402;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=/vfwbD9UsVroydM+rVo46zEDwjw3+kWz3iRXXjs701U=;
-        b=hj2SVwZGRrc4tRw7sSiAPlMXwoi9YYAZEMMUp+7teqYmTgBaZAKBctt1U9RWuv3puc
-         adMPwLyxxTQi/EmdetHH6KZRFFA7OHRrw0dbj5b8z922mzFYE7bV3Hmo4HXA+V+v4CGf
-         BPQC6ljV7HT6VKg9TivHyE9jRQpz9sGpLkVM4eXSTqVNhzvU0h65OWDGNUCbbC69+hQy
-         ptvaiOj/fGgOWb5Q78lig0HkxkH/vTN5n5Fn6W/7V92n1RbcZtU+FA45toKKtpxkcxI3
-         ggahSd+5Br+dxHHsS8BXs2j9PhtfCqgcG2MVI+b9XmmvuXDezu75JxxEfFEiPbQM+RzI
-         dhVg==
-X-Forwarded-Encrypted: i=1; AJvYcCVBoE8x50Qkl6nkgXYy06S7ayTP6ujRP+BWQ69HlSMZpasUYSejTtIh6dbBMduzQI28QCC8QwO9HvFDWE0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+YE56cyWYG+slfLDdkIzoEOK5UTyknqfZI8qD/YTx708DUS0D
-	VKVlU2n2uEXwAPr3styZxnmIB6ySN/Sfff18YJUlwCPLVUprJCD3/nd7RZvXZD91CYV0V8ht4en
-	qWglQYJxIWIwtPAURrJ1/9JoWYkoCRnRaIdVxke2YEIuFuzP8gFgNvlY=
-X-Google-Smtp-Source: AGHT+IFL9IQlsMFSEKF5gHxMAvhcGBDk6YzU3Ult9E2CV41ChmG1Ky7bdyxnJIXhj3a4zccaN/Q10MFwGFGWBPXuCCcZy+UCinwS
+        d=1e100.net; s=20230601; t=1729713786; x=1730318586;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=jP73v8SKOj9OMtC9FJHv9JWI9rQlYgH+l/YZtxHOFuU=;
+        b=Ug7oyWoPmr0duzjfYlExA6BshG3qdg6q8gcS72eorw3BZC7c+weLOEhEHNicDMv0Zc
+         eMBqb6uqyUh7eaW+ZpI8CukS2YURJDLtPMproW9A2INT0/vwkXKq7qp0U7Yr0Zgzd1vP
+         l4hLVvEYaM0UBl/frBy6AdZPYZOSO1eubjd7Ol7yTmq/TzMuHsgASgIZmns0MClq3M+n
+         ANwpfejxDbVHpHYubd0bPV1P7TxnLAmzuBE4rvLbNTsCTZn41ZZzqs8stRiqva6qbM12
+         q4wVfaFIe4+C+4cXJv8qBON9F4tchjggth2Hh7qljlo8sXXTI8g9qhLtFp8BaynGdfRE
+         NTkg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Pjds1AkRIwOu2KmOsCreUzYVIRiuaLoQF5NnO3Aj3hHv/Z6K6ZFXHC8i0REMblgEJmZ53DJQExy8sFqB@vger.kernel.org, AJvYcCX5dKb+Wi9FEcVAoAmzbYic+tc1mIE53UBI3TyDiciMCBKznz8JMdrjFO8fijrrtSt0Dik=@vger.kernel.org, AJvYcCXF9vMeflityulKMrhqklPFe8t73i0k1WQBmdIczoPYxuVPTZrP7fKjpvjGp/GZTU+s7+SN5lBxF64d5VqQ311z7W9n@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS+wcuX9d1oCzMAKSmy/cZXdYosuxSEiB39TdT29CHlmhXQpuH
+	Zo6ES71szQ9NBl8kv6FrwGudoUYDUcBMg2erZsm7WWa6jBEt/hZFTz+E+u7vaMBRuGAyOUdw2DS
+	I0c1HPQ6KH4iROEtSBzEu4rO9kWY=
+X-Google-Smtp-Source: AGHT+IHwR2GYCMNX76w7QATFiO6JTAScsQkOxdJ6G3+ZLHIRRdkUSVzlfRDByZGqrvy1PYzkVT4QRkJbMz+6KJX32Cc=
+X-Received: by 2002:a05:6a21:1646:b0:1d7:2249:689 with SMTP id
+ adf61e73a8af0-1d978b990ecmr4164984637.33.1729713786360; Wed, 23 Oct 2024
+ 13:03:06 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:16ca:b0:3a2:74f8:675d with SMTP id
- e9e14a558f8ab-3a4d59d808emr39692435ab.20.1729713602537; Wed, 23 Oct 2024
- 13:00:02 -0700 (PDT)
-Date: Wed, 23 Oct 2024 13:00:02 -0700
-In-Reply-To: <32ac6a1f-4427-4ffc-8b18-d4942be5b751@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671955c2.050a0220.1e4b4d.0095.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in validate_sb_layout
-From: syzbot <syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com>
-To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
+References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-5-andrii@kernel.org>
+ <20241023192236.GB11151@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241023192236.GB11151@noisy.programming.kicks-ass.net>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 23 Oct 2024 13:02:53 -0700
+Message-ID: <CAEf4Bza7+DraKrNoG3ebUaZUvmk3HN+cT8TgtnThkp_XGPf6AA@mail.gmail.com>
+Subject: Re: [PATCH v3 tip/perf/core 4/4] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org, willy@infradead.org, surenb@google.com, 
+	akpm@linux-foundation.org, mjguzik@gmail.com, brauner@kernel.org, 
+	jannh@google.com, mhocko@kernel.org, vbabka@suse.cz, shakeel.butt@linux.dev, 
+	hannes@cmpxchg.org, Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 23, 2024 at 12:22=E2=80=AFPM Peter Zijlstra <peterz@infradead.o=
+rg> wrote:
+>
+> On Thu, Oct 10, 2024 at 01:56:44PM -0700, Andrii Nakryiko wrote:
+>
+> > Suggested-by: Matthew Wilcox <willy@infradead.org>
+>
+> I'm fairly sure I've suggested much the same :-)
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+I'll add another Suggested-by, didn't mean to rob anyone of credits :)
 
-Reported-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
-Tested-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+>
+> > Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> > ---
+> >  kernel/events/uprobes.c | 50 +++++++++++++++++++++++++++++++++++++++++
+> >  1 file changed, 50 insertions(+)
+> >
+> > diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> > index fa1024aad6c4..9dc6e78975c9 100644
+> > --- a/kernel/events/uprobes.c
+> > +++ b/kernel/events/uprobes.c
+> > @@ -2047,6 +2047,52 @@ static int is_trap_at_addr(struct mm_struct *mm,=
+ unsigned long vaddr)
+> >       return is_trap_insn(&opcode);
+> >  }
+> >
+> > +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_=
+vaddr)
+> > +{
+> > +     struct mm_struct *mm =3D current->mm;
+> > +     struct uprobe *uprobe =3D NULL;
+> > +     struct vm_area_struct *vma;
+> > +     struct file *vm_file;
+> > +     struct inode *vm_inode;
+> > +     unsigned long vm_pgoff, vm_start;
+> > +     loff_t offset;
+> > +     long seq;
+> > +
+> > +     guard(rcu)();
+> > +
+> > +     if (!mmap_lock_speculation_start(mm, &seq))
+> > +             return NULL;
+>
+> So traditional seqcount assumed non-preemptible lock sides and would
+> spin-wait for the LSB to clear, but for PREEMPT_RT we added preemptible
+> seqcount support and that takes the lock to wait, which in this case is
+> exactly the same as returning NULL and doing the lookup holding
+> mmap_lock, so yeah.
+>
 
-Tested on:
+yep, and on configurations with CONFIG_PER_VMA_LOCK=3Dn this will always
+return false
 
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=135b3640580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
-dashboard link: https://syzkaller.appspot.com/bug?extid=089fad5a3a5e77825426
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=1691265f980000
 
-Note: testing is done by a robot and is best-effort only.
+> > +
+> > +     vma =3D vma_lookup(mm, bp_vaddr);
+> > +     if (!vma)
+> > +             return NULL;
+> > +
+> > +     /* vm_file memory can be reused for another instance of struct fi=
+le,
+>
+> Comment style nit.
+
+mechanical memory, sorry, missed this one
+
+>
+> > +      * but can't be freed from under us, so it's safe to read fields =
+from
+> > +      * it, even if the values are some garbage values; ultimately
+> > +      * find_uprobe_rcu() + mmap_lock_speculation_end() check will ens=
+ure
+> > +      * that whatever we speculatively found is correct
+> > +      */
+> > +     vm_file =3D READ_ONCE(vma->vm_file);
+> > +     if (!vm_file)
+> > +             return NULL;
+> > +
+> > +     vm_pgoff =3D data_race(vma->vm_pgoff);
+> > +     vm_start =3D data_race(vma->vm_start);
+> > +     vm_inode =3D data_race(vm_file->f_inode);
+>
+> So... seqcount has kcsan annotations other than data_race(). I suppose
+> this works, but it all feels like a bad copy with random changes.
+
+I'm not sure what this means... Do I need to change anything? Drop
+data_race()? Use READ_ONCE()? Do nothing?
+
+>
+> > +
+> > +     offset =3D (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_star=
+t);
+> > +     uprobe =3D find_uprobe_rcu(vm_inode, offset);
+> > +     if (!uprobe)
+> > +             return NULL;
+> > +
+> > +     /* now double check that nothing about MM changed */
+> > +     if (!mmap_lock_speculation_end(mm, seq))
+> > +             return NULL;
+>
+> Typically seqcount does a re-try here.
+
+I'd like to keep it simple, we have fallback to locked version in case of a=
+ race
+
+>
+> > +
+> > +     return uprobe;
+> > +}
 
