@@ -1,138 +1,106 @@
-Return-Path: <linux-kernel+bounces-378293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378172-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70CCA9ACDBA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:59:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5E16C9ACC4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:30:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2DFFC2836CF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:59:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 14B701F250F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 277891CC179;
-	Wed, 23 Oct 2024 14:47:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C4D61C3043;
+	Wed, 23 Oct 2024 14:30:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="j4p+/Eyi"
-Received: from tiger.tulip.relay.mailchannels.net (tiger.tulip.relay.mailchannels.net [23.83.218.248])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cDafyW0W"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E59819AA46;
-	Wed, 23 Oct 2024 14:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.218.248
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729694861; cv=pass; b=XWpe9Oa2S1j2iUJnOVV2FKecJkJVBziSRm6giFOPL8vg6pug95QRj27nGW2D5bMWspXpS4YeWfB/MK57dpa54dDYLhalwzxzrZuXfO51AuMuziPh4Z8hC5MtdPI1O1KQnHlR02AQlLi5J6MTcxcgJ1XU/aIVoGpkCAcNTVLdVG8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729694861; c=relaxed/simple;
-	bh=Wq0dA0YgYkx6oieUjtNf5P+KES/bvf0EHBmJ8a3q9KE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iRvTagVGScL/783eXwC0Rl6E3v4NJjajxXmMiNGyqUnKrjXioALTPrFNd0ibxY+BF+kjeUyO60/2sWH9t3LLMkvBYm0e9fZEJ5ntG8RjnDx+I6wJ0sWEh3OTTpd+re6wUXHHwoFLY6sgx0FR7wjhm7GvYqfcxOX43tDRqq2Ct24=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=j4p+/Eyi; arc=pass smtp.client-ip=23.83.218.248
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 14F01824CA2;
-	Wed, 23 Oct 2024 14:31:58 +0000 (UTC)
-Received: from pdx1-sub0-mail-a203.dreamhost.com (100-99-180-172.trex-nlb.outbound.svc.cluster.local [100.99.180.172])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id 7440C823778;
-	Wed, 23 Oct 2024 14:31:57 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729693917; a=rsa-sha256;
-	cv=none;
-	b=igBP2dws7Oo+iAR/mnIwjeFVi9BCqevwLWywHGzF+xd4fH+bt9l4tvw6F7Y++V8uxudTZY
-	UfAf2ExE9W40QfLdbgl4zzIGOCvTbE/mNWxnw/WpAwq8vhskq7I/rAtxOifhU0Tbv3l7DZ
-	sUnrtrug5+X2YukKtP8cfr83A4dnJiiLAyAG+eDfFlI6jBkmv0f0YR3XK1Yd7/izA1+cDt
-	ykztHXxiWH9rTzvcWT9dJvmdWVtzF1ij+Db96rU1y5dDNKcwwFRyuXmbLDIFf5mxco/Mzf
-	O5qp9oeXTUGZeJ67BD/iZ9OELqYY2jfNNjNZugcBBYxIZCztvqgJt0vplE+JeA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1729693917;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=cuwb0qfrZ+dwEeP5isad8UT75Hf/mN+0+CRZKGSnS24=;
-	b=2/Y/i2roAhsQzFRKOOwzSTsguj8IyK7EUpsDiwGS1bk1C9MUwGX7dXY67OvzOv2aSwwkeR
-	U0ZEfJ8mej57wtFm23RKhTd8l4Rzfm6VrnkImNP3+RLtiIHUpmRkOSoxSky2KMsLnXxeQR
-	EIkqoHeMNb4sf5yi1+pzwhA94VuI+cJS2VHt11gPJTyu+gLp/PYrp72im5nWG3IyLhI1P/
-	24vzjyjmk9nxqghkPyRTVIstsW6AWvBao/vpB7ybAyDzw0vYplmqDyShkbCMaBUzDJ2Gyv
-	qFvKOdtyBbsyTkHxSwqCaI8wSJafOvAjlu6K9byihk6/Dcz/28SITJL92uh66Q==
-ARC-Authentication-Results: i=1;
-	rspamd-7d55d965b5-wpbvg;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Keen-Squirrel: 7debb4446993431a_1729693917865_2424783291
-X-MC-Loop-Signature: 1729693917864:4003134109
-X-MC-Ingress-Time: 1729693917864
-Received: from pdx1-sub0-mail-a203.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.99.180.172 (trex/7.0.2);
-	Wed, 23 Oct 2024 14:31:57 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a203.dreamhost.com (Postfix) with ESMTPSA id 4XYWhX3HzKzFr;
-	Wed, 23 Oct 2024 07:31:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1729693917;
-	bh=cuwb0qfrZ+dwEeP5isad8UT75Hf/mN+0+CRZKGSnS24=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=j4p+/Eyi7pp1WH0N3r5BeUOKrp/MIP7URV/b6xx0g5YK9s65jheAPyOz12ZzPIn+X
-	 Cj0PTRalDXCi7tIOpBifq4928lft9PAkJxsnr/6MXaNHmMKG8fT16FuhvNS/Mug5St
-	 luxK2Z2KzxppFAJXyQaYHxQA8b5agNfwJvkYyXXCJKBCFYLlRMeGtLTL9Wd9Cr+nxD
-	 XBsHNW2vePvV6f8P/BtruzoEHgaIaBFS5x0oCWuB3VnkdgFLNqJZOufrLpZprgFrOw
-	 29BtO9mhVZsREwmn3yPTd1dOYCu7plr6husd91bZb+Idnria6WK8Wwa78/Xl8xWI4w
-	 zCcKl+XK6k+ww==
-Date: Wed, 23 Oct 2024 07:29:10 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: Ravis OpenSrc <Ravis.OpenSrc@micron.com>
-Cc: "dan.j.williams@intel.com" <dan.j.williams@intel.com>, 
-	"dave.jiang@intel.com" <dave.jiang@intel.com>, "jonathan.cameron@huawei.com" <jonathan.cameron@huawei.com>, 
-	"alison.schofield@intel.com" <alison.schofield@intel.com>, "vishal.l.verma@intel.com" <vishal.l.verma@intel.com>, 
-	"ira.weiny@intel.com" <ira.weiny@intel.com>, "fan.ni@samsung.com" <fan.ni@samsung.com>, 
-	"a.manzanares@samsung.com" <a.manzanares@samsung.com>, Srinivasulu Opensrc <sthanneeru.opensrc@micron.com>, 
-	Eishan Mirakhur <emirakhur@micron.com>, Ajay Joshi <ajayjoshi@micron.com>, 
-	Srinivasulu Thanneeru <sthanneeru@micron.com>, "linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH 0/3] cxl/mbox: support background operation abort requests
-Message-ID: <zrmn3j2wzzlnzzwunk64xfy4jussoiek5ro73qs3yrjqflemtz@zbn53a27tt6y>
-References: <20241022031809.242591-1-dave@stgolabs.net>
- <feef15c9fcfd462e9b3cf614a1b4621c@micron.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4A6B1B6556;
+	Wed, 23 Oct 2024 14:30:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729693815; cv=none; b=bV1xPqtR5qIwM/J9hsz0hdX4xvpBpyMqmt2DtjGjmqt8QonENdSdWjcTTtd0iP7v2ewU/CuABc6FqR7RJrHRx5dyEMe3ajHnPv8B+fEHDua/dScs7ujDjBF9sFhM8LhgvTW9Ommtxf99cO7FVv2dndimB+asdCIhplme2BJbTe4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729693815; c=relaxed/simple;
+	bh=gGjoSKuMzN38pKeOo57846/tebNCe1RbKVVaSV4fnHc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=JVuT6zh8ra7YChfdcoZbhe+IWFL/BoW7tXUg5c3j+X9Tm2Ml/PvuYJGNFF0Sb4s7iZq8LEhfNaAULhiyi9ka4gNITmExPRuHSp0YZwNxplADduo6RZV+pWy8o8cCrgZNTNpzsL833KqOahGd7viy34CkCLwRoAkNu/QjpXgdJnE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cDafyW0W; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5357BC4CEC6;
+	Wed, 23 Oct 2024 14:30:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729693815;
+	bh=gGjoSKuMzN38pKeOo57846/tebNCe1RbKVVaSV4fnHc=;
+	h=From:To:Cc:Subject:Date:From;
+	b=cDafyW0WXk6+PyCR3XViCtQ/xe9/ywTUSPstmYeRVhZJpgNt0A5ptnfnErJORf3mN
+	 wSdifE8yC2u72WugeHEL90LDUUjw1kWsnvDD2Vlzx3MQPiJP4ZSWum5HMqf9ScdT4O
+	 ELS11uQ/BU6CFBUPOhJhPbUDQItezKWRNeARREdK/oCrhaH0mBmXDfb6qatjfJgAMT
+	 gupU4q71InIfUkebBTbFMgCr0/DGoHp2F3IOP6Qu5n940Jl3L8OHQLh0svb7EP3dgi
+	 ZfZWPQZOukzAI47dwP1WVVug9a25gwVg/AFRBazy7Zoyqr+5aFsE8IQga3hL/PxUSF
+	 LpuQosYemXOkg==
+From: Sasha Levin <sashal@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Cc: Dominique Martinet <asmadeus@codewreck.org>,
+	Christian Schoenebeck <linux_oss@crudebyte.com>,
+	Sasha Levin <sashal@kernel.org>,
+	ericvh@kernel.org,
+	lucho@ionkov.net,
+	v9fs@lists.linux.dev
+Subject: [PATCH AUTOSEL 6.11 01/30] 9p: v9fs_fid_find: also lookup by inode if not found dentry
+Date: Wed, 23 Oct 2024 10:29:26 -0400
+Message-ID: <20241023143012.2980728-1-sashal@kernel.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <feef15c9fcfd462e9b3cf614a1b4621c@micron.com>
-User-Agent: NeoMutt/20240425
+X-stable: review
+X-Patchwork-Hint: Ignore
+X-stable-base: Linux 6.11.5
+Content-Transfer-Encoding: 8bit
 
-On Wed, 23 Oct 2024, Ravis OpenSrc wrote:\n
->Hi Davidlohr,
->
->   We have recently submitted an RFC to implement Request Background Abort
->in case a timeout is encountered while executing a background command.
->The patch series disables those background commands which do not support abort
->based on their individual CEL properties.
->
->https://lore.kernel.org/linux-cxl/20241017163215.00000547@Huawei.com/T/#ma6710971908b85a5f8c5da2e23b8102b5a6e277c
+From: Dominique Martinet <asmadeus@codewreck.org>
 
-*sigh* it would have been nice to be Cc'ed.
+[ Upstream commit 38d222b3163f7b7d737e5d999ffc890a12870e36 ]
 
->
->This implementation is based on Dan's suggestion in a previous thread.
->https://lore.kernel.org/linux-cxl/66035c2e8ba17_770232948b@dwillia2-xfh.jf.intel.com.notmuch/
->
->We can discuss more on how we can potentially merge and arrive at a common ground.
+It's possible for v9fs_fid_find "find by dentry" branch to not turn up
+anything despite having an entry set (because e.g. uid doesn't match),
+in which case the calling code will generally make an extra lookup
+to the server.
 
-I think that my approach is way more robust then defining a timeout as in that series.
-It also aligns more with Jonathan's comments about the abort being on demand.
+In this case we might have had better luck looking by inode, so fall
+back to look up by inode if we have one and the lookup by dentry failed.
+
+Message-Id: <20240523210024.1214386-1-asmadeus@codewreck.org>
+Reviewed-by: Christian Schoenebeck <linux_oss@crudebyte.com>
+Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
+Signed-off-by: Sasha Levin <sashal@kernel.org>
+---
+ fs/9p/fid.c | 5 ++---
+ 1 file changed, 2 insertions(+), 3 deletions(-)
+
+diff --git a/fs/9p/fid.c b/fs/9p/fid.c
+index de009a33e0e26..f84412290a30c 100644
+--- a/fs/9p/fid.c
++++ b/fs/9p/fid.c
+@@ -131,10 +131,9 @@ static struct p9_fid *v9fs_fid_find(struct dentry *dentry, kuid_t uid, int any)
+ 			}
+ 		}
+ 		spin_unlock(&dentry->d_lock);
+-	} else {
+-		if (dentry->d_inode)
+-			ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
+ 	}
++	if (!ret && dentry->d_inode)
++		ret = v9fs_fid_find_inode(dentry->d_inode, false, uid, any);
+ 
+ 	return ret;
+ }
+-- 
+2.43.0
+
 
