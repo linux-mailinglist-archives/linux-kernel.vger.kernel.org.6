@@ -1,164 +1,121 @@
-Return-Path: <linux-kernel+bounces-378453-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8CB69AD075
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:27:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08BD49ACFF1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:19:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3F4201F23723
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:27:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B99B2283DA2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:19:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AB4B91D14E9;
-	Wed, 23 Oct 2024 16:26:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D03041CB321;
+	Wed, 23 Oct 2024 16:19:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="W19lpIFu"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b="Lq3oufyg"
+Received: from mx0b-0016f401.pphosted.com (mx0a-0016f401.pphosted.com [67.231.148.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A25D81D0DE9;
-	Wed, 23 Oct 2024 16:26:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF4804436E;
+	Wed, 23 Oct 2024 16:18:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.148.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700768; cv=none; b=UoC1307rKtTBEyFga7N/OEjx312uRX8G+Bil154SwriTf8lctpjp+rPiff/MqPmQEmj+QreIkPgFyX2alrHnAOzUQePaW7TcJwTxgWCr7fmBqhG+f9oEWHvv+Ky+iw18c6wo5vsIBQTdEU0BQ8WhfFAcetYNuoJnGduFeSeuDMw=
+	t=1729700340; cv=none; b=fLNuRCGgZYgBMNa3YkaO3nwj1aSF2D7drqfWLbfa2qgY0VKoL4xel15ug2bIlTxM0Pr8wHU8pzh1RaQ94E+ZpOvszR4Eu7Wr1TtQE0gdBjmzgnZjNK8SMHrgedFj2RWlF/+KlZeqQhRdXIbxEi+p+z8yN5VA+AnrhcD7DOz1Uz4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700768; c=relaxed/simple;
-	bh=Ar2lgOyGoBsh/6u/TKy+hMR18rggVWMi7Zf6eguVel8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=QxYJdkgCpVXVdokinB0DWnazL9O7yLOx4mlXVem2J7FZR+gnB2ZtFbwVOqnkmIb+kBJ7WTG5ASeSGUXmCd6KNLCgmLCV+2T3znTicRuwWaNBP7+plwD/T8XZTRwqPN/NvCkaedlIb9Nn0Ovz029gxrak2dEhe+1KZboB/YXRvmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=W19lpIFu; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id D903640E015F;
-	Wed, 23 Oct 2024 16:16:57 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 3knQLSADIqtL; Wed, 23 Oct 2024 16:16:53 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729700213; bh=ZbVpk0hvfbmUrgI0RQm7j5r7sUgbzT1X7sZYFMHu3WU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=W19lpIFuP87d30ErCdAXO0V9Rn6i6qLqfUYpO4RRk5GxzsNsqOhxQ+xQwBya28t4R
-	 OrLqbJTtWO1fexV7FatqKICpG0ipaX3nOTvP34+G8Br0prc8d5IFMdxZAZmQxqEK3/
-	 Zbxz4TMQq8M2T3FskB15ySaBiPV9usbYQh0D8m+L2a/4xQ7hK2J2kvi4os0+BfXJpH
-	 VH3zCNNbljgQq0cu9fbj975x7vdcO67KUTvjFNEkocvOBI4Vf8jc4krVVl5HvnSKXV
-	 z4csYqEoJl2MC0kqspB8Q8d7q19lpfq9H+qBWh1HkLcsFEXu7e3+Rrp1OATrC9BXMT
-	 pT7eWmucA+TubejM3+KxPfFd7RE3ho1rU2OrdiUtoQ9kFGVeHLFPF/TFuX6MzSQigL
-	 +ne6pxY+ikLclA4FjHSgPPfKUg+gO9koPu1yAH932CEXFSN633PLyBXrHA9yih25Za
-	 tU5v31PNj9URR0bcNUg+w9Xoq/WB4ErufIMS3oIEq7lOkJE3I2D//PUxJYwG4A940Y
-	 /vGEAlZVh/wuUZFjJ4cohxNPahwaPx5zGzcuGvABKysCXmVNAbO6xsqF9Lze9XY0p0
-	 N8SW/+J76pBEv+8h1NumlE0x60VJD7I3eVmX2Idr+J/jawe5JnxeGyPDx7jJZxPdAW
-	 Z3cagfchrgrnaLxbiZ7azmg0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id D827040E0191;
-	Wed, 23 Oct 2024 16:16:09 +0000 (UTC)
-Date: Wed, 23 Oct 2024 18:16:03 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Shiju Jose <shiju.jose@huawei.com>
-Cc: "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-cxl@vger.kernel.org" <linux-cxl@vger.kernel.org>,
-	"linux-acpi@vger.kernel.org" <linux-acpi@vger.kernel.org>,
-	"linux-mm@kvack.org" <linux-mm@kvack.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"tony.luck@intel.com" <tony.luck@intel.com>,
-	"rafael@kernel.org" <rafael@kernel.org>,
-	"lenb@kernel.org" <lenb@kernel.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>,
-	"dan.j.williams@intel.com" <dan.j.williams@intel.com>,
-	"dave@stgolabs.net" <dave@stgolabs.net>,
-	Jonathan Cameron <jonathan.cameron@huawei.com>,
-	"dave.jiang@intel.com" <dave.jiang@intel.com>,
-	"alison.schofield@intel.com" <alison.schofield@intel.com>,
-	"vishal.l.verma@intel.com" <vishal.l.verma@intel.com>,
-	"ira.weiny@intel.com" <ira.weiny@intel.com>,
-	"david@redhat.com" <david@redhat.com>,
-	"Vilas.Sridharan@amd.com" <Vilas.Sridharan@amd.com>,
-	"leo.duran@amd.com" <leo.duran@amd.com>,
-	"Yazen.Ghannam@amd.com" <Yazen.Ghannam@amd.com>,
-	"rientjes@google.com" <rientjes@google.com>,
-	"jiaqiyan@google.com" <jiaqiyan@google.com>,
-	"Jon.Grimm@amd.com" <Jon.Grimm@amd.com>,
-	"dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
-	"naoya.horiguchi@nec.com" <naoya.horiguchi@nec.com>,
-	"james.morse@arm.com" <james.morse@arm.com>,
-	"jthoughton@google.com" <jthoughton@google.com>,
-	"somasundaram.a@hpe.com" <somasundaram.a@hpe.com>,
-	"erdemaktas@google.com" <erdemaktas@google.com>,
-	"pgonda@google.com" <pgonda@google.com>,
-	"duenwen@google.com" <duenwen@google.com>,
-	"gthelen@google.com" <gthelen@google.com>,
-	"wschwartz@amperecomputing.com" <wschwartz@amperecomputing.com>,
-	"dferguson@amperecomputing.com" <dferguson@amperecomputing.com>,
-	"wbs@os.amperecomputing.com" <wbs@os.amperecomputing.com>,
-	"nifan.cxl@gmail.com" <nifan.cxl@gmail.com>,
-	tanxiaofei <tanxiaofei@huawei.com>,
-	"Zengtao (B)" <prime.zeng@hisilicon.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	"kangkang.shen@futurewei.com" <kangkang.shen@futurewei.com>,
-	wanghuiqiang <wanghuiqiang@huawei.com>,
-	Linuxarm <linuxarm@huawei.com>
-Subject: Re: [PATCH v13 02/18] EDAC: Add scrub control feature
-Message-ID: <20241023161603.GDZxkhQ65XCa-6S7RU@fat_crate.local>
-References: <20241009124120.1124-1-shiju.jose@huawei.com>
- <20241009124120.1124-3-shiju.jose@huawei.com>
- <20241022190454.GIZxf3VkmLVR-JLeUc@fat_crate.local>
- <4ee36d03a2894606a571b37f440da36f@huawei.com>
+	s=arc-20240116; t=1729700340; c=relaxed/simple;
+	bh=uLEJ/y2RkqKdBijf3EFGvkFx4SQNLQYjt9ZQDP8PI2Y=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=V++gkfgXg4QVLoTHy+TUpbE4oFGVrxIApqNuVh3Tbwjf1ISTPzuxdVC7In9VlbnNyhxa7H9bA4Pli4hME9pSuO61mmWVrEazdCkU6+rZddwdCUfPWvylE/KnYIb1emm9jTHWA1BhVWxcdZLWJjJRpV4tySRXPeO62mZS8L0Jd/0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com; spf=pass smtp.mailfrom=marvell.com; dkim=pass (2048-bit key) header.d=marvell.com header.i=@marvell.com header.b=Lq3oufyg; arc=none smtp.client-ip=67.231.148.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=marvell.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=marvell.com
+Received: from pps.filterd (m0045849.ppops.net [127.0.0.1])
+	by mx0a-0016f401.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NDGie6027863;
+	Wed, 23 Oct 2024 09:18:50 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=marvell.com; h=
+	cc:content-type:date:from:message-id:mime-version:subject:to; s=
+	pfpt0220; bh=Mcgiw8VCbgyPtoTIeelgP+CvEhuYaan+gfQOgnSitog=; b=Lq3
+	oufyg/o4ms/zsm803Bka/SYJDyglPmNzzkTrf5PT0uRPIYXHD7D2LYYTSlbeLiTK
+	VFfNMA0qrVMcE76K7dyXDWBsVQaEOthotAoWEFWK6spNeQBJWQ9c648yXVv0IZNQ
+	wkduszXJc82amsh0RFtfUmsGk3Jl9j8QhtqyPdL4SjlNVC7RBV4gj1+DeRlZjYrh
+	Kkd9xUIhIL5L7gBpggoyy1+hFLYF9mkWZ97RbQxg7R4Eli56nLr879o5D0iG4I6T
+	0IJHJmpREANnmMHk/m8VIsBpb3h+4/gskhd3z/9eHQXwVW5QlpfegaK0QE4C5bBx
+	6cfkIgt1imduIv9NpjQ==
+Received: from dc6wp-exch02.marvell.com ([4.21.29.225])
+	by mx0a-0016f401.pphosted.com (PPS) with ESMTPS id 42f1vsges5-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 09:18:49 -0700 (PDT)
+Received: from DC6WP-EXCH02.marvell.com (10.76.176.209) by
+ DC6WP-EXCH02.marvell.com (10.76.176.209) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.4; Wed, 23 Oct 2024 09:18:48 -0700
+Received: from maili.marvell.com (10.69.176.80) by DC6WP-EXCH02.marvell.com
+ (10.76.176.209) with Microsoft SMTP Server id 15.2.1544.4 via Frontend
+ Transport; Wed, 23 Oct 2024 09:18:48 -0700
+Received: from hyd1soter3.marvell.com (unknown [10.29.37.12])
+	by maili.marvell.com (Postfix) with ESMTP id 1BC403F706B;
+	Wed, 23 Oct 2024 09:18:44 -0700 (PDT)
+From: Geetha sowjanya <gakula@marvell.com>
+To: <netdev@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <kuba@kernel.org>, <davem@davemloft.net>, <pabeni@redhat.com>,
+        <jiri@resnulli.us>, <edumazet@google.com>, <sgoutham@marvell.com>,
+        <gakula@marvell.com>, <sbhatta@marvell.com>, <hkelam@marvell.com>
+Subject: [net-next PATCH v4 0/4] Refactoring RVU NIC driver
+Date: Wed, 23 Oct 2024 21:48:39 +0530
+Message-ID: <20241023161843.15543-1-gakula@marvell.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <4ee36d03a2894606a571b37f440da36f@huawei.com>
+Content-Type: text/plain
+X-Proofpoint-ORIG-GUID: _mdtAgJ-dKeQva2bgQwxI8bki_vE3M6O
+X-Proofpoint-GUID: _mdtAgJ-dKeQva2bgQwxI8bki_vE3M6O
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
 
-On Wed, Oct 23, 2024 at 04:04:05PM +0000, Shiju Jose wrote:
-> >Why do you need a separate "enable" flag?
-> >
-> >Why can't it be: "writing into "addr" starts the on-demand scrubbing"?
-> If  'enable' attribute is removed , then there is an ordering with setting address + size.
+This is a preparation pathset for follow-up "Introducing RVU representors driver"
+patches. The RVU representor driver creates representor netdev of each rvu device
+when switch dev mode is enabled.
+ 
+RVU representor and NIC have a similar set of HW resources(NIX_LF,RQ/SQ/CQ)
+and implements a subset of NIC functionality.
+This patch set groups hw resources and queue configuration code into single API 
+and export the existing functions so, that code can be shared between NIC and
+representor drivers.
 
-No, there won't be. You clarify the ordering and if someone doesn't adhere to
-it, you check for 0 values and return.
+These patches are part of "Introduce RVU representors" patchset. 
+https://lore.kernel.org/all/ZsdJ-w00yCI4NQ8T@nanopsycho.orion/T/
+As suggested by "Jiri Pirko", submitting as separate patchset.
 
-> Also user space can't check whether scrubbing is enabled or not.
+v3-v4:
+ - Removed Export symbols as there is no in-tree caller.
+   (Suggested by "Jakub Kicinski").
+ - Fixed patch4 commit message.
 
-That one is semi-valid. You can set addr to 0 when scrubbing is done but then
-userspace might wanna know which address it scrubbed.
+v2-v3:
+ - Added review tags.
 
-> >What are those three good for and why are they exposed?
-> Scrub has an overhead when running and that may want to be reduced by
-> just taking longer to do it. 
-> Min and max scrub cycle duration returns the range of scrub rate
-> supported by the device.
+v1-v2:
+- Removed unwanted variable.
+- Dropped unrelated changes from patch4.
 
-This *definitely* needs to be part of the documentation explaining the API.
+Geetha sowjanya (4):
+  octeontx2-pf: Define common API for HW resources configuration
+  octeontx2-pf: Add new APIs for queue memory alloc/free.
+  octeontx2-pf: Reuse PF max mtu value.
+  octeontx2-pf: Move shared APIs to header file.
 
-> >I think fail. What is a scrub feature good for if it doesn't have ops?
-> Here continue to check any other feature (for eg. ECS, memory repair or another scrub instance) listed
-> by the parent device in the ras_features[].   
-
-Why would you tolerate a semi-broken feature?
-
-This is all open source code. People will fix it when they test their feature
-which is missing ops. There's no point in allowing any of that.
-
-Btw, do me a favor, pls, and trim your mails when you reply just like I do.
-You don't want to leave text quoted to which you are not replying to.
-
-Thx.
+ .../marvell/octeontx2/nic/otx2_common.c       |   6 +-
+ .../marvell/octeontx2/nic/otx2_common.h       |  15 ++
+ .../ethernet/marvell/octeontx2/nic/otx2_pf.c  | 239 +++++++++++-------
+ .../ethernet/marvell/octeontx2/nic/otx2_vf.c  |   5 +-
+ 4 files changed, 170 insertions(+), 95 deletions(-)
 
 -- 
-Regards/Gruss,
-    Boris.
+2.25.1
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
