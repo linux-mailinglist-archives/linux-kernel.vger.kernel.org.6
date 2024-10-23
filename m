@@ -1,153 +1,130 @@
-Return-Path: <linux-kernel+bounces-377969-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 60EC99AC94E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:42:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7CEAF9AC943
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:41:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0DAF31F21790
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:42:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2371C21252
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:41:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32B351AB6C1;
-	Wed, 23 Oct 2024 11:42:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0457B1AB50C;
+	Wed, 23 Oct 2024 11:41:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="MRWJpznj"
-Received: from mail-ot1-f49.google.com (mail-ot1-f49.google.com [209.85.210.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5x+071z"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 238D61AB500;
-	Wed, 23 Oct 2024 11:42:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576A3134BD;
+	Wed, 23 Oct 2024 11:41:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683728; cv=none; b=jnV2m0hxrK+CJybBfgq5QocruGltEaoRgYpU0tw2Ohv0WbKojfUSqtIShqB/0Og53ZxVGqQ6tg15oISbOQQ2u17KJKzJfdwyn5tRLtfp0QixAlBgT/y/C/6Unxo3JQ84145Byu57T/52up900OoDEIWX908KW+knUDXpfhWI6tk=
+	t=1729683695; cv=none; b=c8O2XVKN8M5MrYjBnWzx3YFuTkUsBkMS6wMEMvdenAftDmfF3RK30Nk6/wb7h4N4P5bMQFJlw779QRvYqJ9hG2SGQSjJqt9u6vR4xzEH3AMYaq+3HIGUDqICTJoZ0idZRTF/ST040+rrZc55mieAd/8fxJ/TM0/uf0Yv+tStE2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683728; c=relaxed/simple;
-	bh=Kl/727hkIBAfNUIf6aKw4VSF2L+SHsLM5p/SxuGaXFE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=mpqEFL/nkqvkFVpeC5gs5HbZUgETKrXCp2nsoosk7KY7Xbj8faRmkeFfqMdqhD4UsqgbQDUQd1SxbFQWfTezc1RGiMHa3K7XTYzskcE/iRyuPaLeJuK5acm/0yvyyEQnrnAzc19YCX2fYzE+CIv5weGbIv2fYlWFtoDUUs646pM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=MRWJpznj; arc=none smtp.client-ip=209.85.210.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ot1-f49.google.com with SMTP id 46e09a7af769-71809fe188cso3208642a34.0;
-        Wed, 23 Oct 2024 04:42:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729683726; x=1730288526; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=810jMYZ38CorSXHU8xsHT8NByFpeWcHAd148xEtzxXs=;
-        b=MRWJpznjCAObIYY4JoAFBnSU85phvo4og9dzPTfJfjtee/2tOE4Iim8+c1vYjzDfyr
-         rnV8KopsABgJgU7UsloBPXbtIGCRPZ7CqkEEfAVRj0jNkeZg5Us/vJ6IxntQehFQJuqr
-         IgfSEINuUxSth6Yn7Bg96RbxEI5n1rOnjaR1GrKcNTlqN7AcLvNwF6mphQFeqz/O7+kj
-         V1a+LbjyZeAi1YmpthnS7hxKRGokJl5oUG5ICizXaHuFyyZmB6iaue3G4RPhqSWVoZsb
-         ewvhjcaGodPWaJs/2AnLDATAtyAwCNlazbUUYf8PMCIYfqXLbywnnNTZuWCVWz/A67+M
-         8Dxw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729683726; x=1730288526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=810jMYZ38CorSXHU8xsHT8NByFpeWcHAd148xEtzxXs=;
-        b=lrMH4RFqktWuJC8Xjzyl0a+4mZ0PoQHIv8WE4KuFjKA/Ns4FmSq6c0cmOTX+aV4Boo
-         2FJ6HHRdwhSHEmGiA9QYisnhB/ZoNpBFydPa2vpklaeFxKMt/2n1HOmMbo3ejFPAPp6A
-         py+BOV6ltNmw0T8W9TNRI0KKovnlKNxG87nioiPRViuEVxouLogn/iQAQ0QtP9OHv6Nm
-         Fa/AyPGFxRa3NV1Qx60tjNLixRfEb8VlzJOyLs6BC7c/tLuU3dsXZ2cs9/gSft8eQTQh
-         u3o5i3hfeSrrhqI0kRbQvptIWEwpcClWItFIUT9yVKkBnSksLsU3TvEYm761NBOh0TG6
-         /bzw==
-X-Forwarded-Encrypted: i=1; AJvYcCWEYPCNm29nV1jEoF3CBJsRr8/iSldFODLbHFTGU1B3e1kYuljv4PFITfboiJtZD5Pj6w20wLweKgWXnZA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyikuN25BKCGQL/1XxwvigP6byL0moyCGufcva2W0hpLp8c//Z3
-	SnqNOjrxHo5RdWenl+2iwzUO4B07TqHK2oaN82c4ofKHfJisqNYwgNyWWuoSTz7AAF3561y1pdi
-	lgQn3C1iAAL1hmnt0WUnxWryy9Lk=
-X-Google-Smtp-Source: AGHT+IEketPSFTluFAD7YIo9JaQFBf8ItBBRxUt7lrpg7fw172rV9WYDVnqddy5fh2nd+JhwAN/6xHKV+ew7RyH86/g=
-X-Received: by 2002:a05:6830:658d:b0:718:1a11:79e2 with SMTP id
- 46e09a7af769-7184b2b51eemr2848546a34.13.1729683726160; Wed, 23 Oct 2024
- 04:42:06 -0700 (PDT)
+	s=arc-20240116; t=1729683695; c=relaxed/simple;
+	bh=OKXQS4ygVGvLAMLaf78m5yuEb8FH+2TrRxZhgrF97N0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Gmb4kB5Ek40n9/OPizoQ8SXeZtUp6Muq2tcbNTqMOqVS/P14Auud/8ut6yGfmukRwFmWF936918gWp7XhF/Gsl5CnkrX19w1DbPbBOXpTFeSWJEB7Pwf/hg5wLgVNPkwH4P8CL3MdzC9dL6ktW0xrW7k/ayBJd5u2utS0EhFYTc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5x+071z; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E98C4CECD;
+	Wed, 23 Oct 2024 11:41:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729683693;
+	bh=OKXQS4ygVGvLAMLaf78m5yuEb8FH+2TrRxZhgrF97N0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N5x+071zTbgZ87ZJfrp/30BhU6bb5X1XlWPOMy81sus4RTlOV/p1V9aC4t8jNOS/0
+	 SiThhFPhwDhhjtBiforR5cw6CjmjX3SX0EBebLwj4fD2C2qUP9j8Xpt1chOqYY/APg
+	 MzUuDiSwSCySfmTJWjxBiyQdGpBnzQoS+khc7xPb5MlkK0Q4BckoPv2BI8Vpmpcpz/
+	 wd2kTxFZ9+DqZTIIVkzlCQNNe8rF3yI/jzX2+gEoV7z7+jTj0mFZP9eHLU9v8GSjNy
+	 BwuhzayzsAyfVBuvhi6Ym8uNRDjvi+80EIn7D+9eBUuBNJ8FY5xmIhvOKdBVDYj1sV
+	 vP5+YwrukH15A==
+Date: Wed, 23 Oct 2024 07:41:32 -0400
+From: Sasha Levin <sashal@kernel.org>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: "Darrick J. Wong" <djwong@kernel.org>,
+	Kent Overstreet <kent.overstreet@linux.dev>,
+	Linus Torvalds <torvalds@linux-foundation.org>,
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org,
+	broonie@kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
+Message-ID: <Zxjg7Cvw0qIzl0v6@sashalap>
+References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+ <Zxf3vp82MfPTWNLx@sashalap>
+ <20241022204931.GL21836@frogsfrogsfrogs>
+ <ZxgXO_uhxhZYtuRZ@sashalap>
+ <87iktj2j7w.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014031057.8199-1-laoar.shao@gmail.com>
-In-Reply-To: <20241014031057.8199-1-laoar.shao@gmail.com>
-From: Yafang Shao <laoar.shao@gmail.com>
-Date: Wed, 23 Oct 2024 19:41:30 +0800
-Message-ID: <CALOAHbCoAMofLm6NV_7mT6XPZbck8Y11BveWrLV-t242Z4pbOw@mail.gmail.com>
-Subject: Re: [PATCH v3 bpf-next 0/4] sched: Fix irq accounting for CONFIG_IRQ_TIME_ACCOUNTING
-To: mingo@redhat.com, peterz@infradead.org, juri.lelli@redhat.com, 
-	vincent.guittot@linaro.org, dietmar.eggemann@arm.com, rostedt@goodmis.org, 
-	bsegall@google.com, mgorman@suse.de, vschneid@redhat.com, hannes@cmpxchg.org, 
-	surenb@google.com
-Cc: cgroups@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <87iktj2j7w.fsf@mail.lhotse>
 
-On Mon, Oct 14, 2024 at 11:11=E2=80=AFAM Yafang Shao <laoar.shao@gmail.com>=
- wrote:
+On Wed, Oct 23, 2024 at 09:42:59PM +1100, Michael Ellerman wrote:
+>Hi Sasha,
 >
-> After enabling CONFIG_IRQ_TIME_ACCOUNTING to track IRQ pressure in our
-> container environment, we encountered several user-visible behavioral
-> changes:
+>This is awesome.
 >
-> - Interrupted IRQ/softirq time is not accounted for in the cpuacct cgroup
+>Sasha Levin <sashal@kernel.org> writes:
+>> On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
+>>>On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
+>>>> other information that would be useful?
+>>>
+>>>As a maintainer I probably would've found this to be annoying, but with
+>>>all my other outside observer / participant hats on, I think it's very
+>>>good to have a bot to expose maintainers not following the process.
+>>
+>> This was my thinking too. Maybe it makes sense for the bot to shut up if
+>> things look good (i.e. >N days in stable, everything on the mailing
+>> list). Or maybe just a simple "LGTM" or a "Reviewed-by:..."?
 >
->   This breaks userspace applications that rely on CPU usage data from
->   cgroups to monitor CPU pressure. This patchset resolves the issue by
->   ensuring that IRQ/softirq time is accounted for in the cgroup of the
->   interrupted tasks.
+>I think it has to reply with something, otherwise folks will wonder if
+>the bot has broken or missed their pull request.
 >
-> - getrusage(2) does not include time interrupted by IRQ/softirq
+>But if all commits were in in linux-next and posted to a list, then the
+>only content is the "Days in linux-next" histogram, which is not that long
+>and is useful information IMHO.
 >
->   Some services use getrusage(2) to check if workloads are experiencing C=
-PU
->   pressure. Since IRQ/softirq time is no longer charged to task runtime,
->   getrusage(2) can no longer reflect the CPU pressure caused by heavy
->   interrupts.
->
-> This patchset addresses the first issue, which is relatively
-> straightforward. However, the second issue remains unresolved, as there
-> might be debate over whether interrupted time should be considered part o=
-f
-> a task=E2=80=99s usage. Nonetheless, it is important to report interrupte=
-d time to
-> the user via some metric, though that is a separate discussion.
->
-> Changes:
-> v2->v3:
-> - Add a helper account_irqtime() to avoid redundant code (Johannes)
->
-> v1->v2: https://lore.kernel.org/cgroups/20241008061951.3980-1-laoar.shao@=
-gmail.com/
-> - Fix lockdep issues reported by kernel test robot <oliver.sang@intel.com=
->
->
-> v1: https://lore.kernel.org/all/20240923090028.16368-1-laoar.shao@gmail.c=
-om/
->
-> Yafang Shao (4):
->   sched: Define sched_clock_irqtime as static key
->   sched: Don't account irq time if sched_clock_irqtime is disabled
->   sched, psi: Don't account irq time if sched_clock_irqtime is disabled
->   sched: Fix cgroup irq accounting for CONFIG_IRQ_TIME_ACCOUNTING
->
->  kernel/sched/core.c    | 78 +++++++++++++++++++++++++++++-------------
->  kernel/sched/cputime.c | 16 ++++-----
->  kernel/sched/psi.c     | 12 ++-----
->  kernel/sched/sched.h   |  1 +
->  kernel/sched/stats.h   |  7 ++--
->  5 files changed, 69 insertions(+), 45 deletions(-)
->
-> --
-> 2.43.5
->
+>It would be nice if you could trim the tail of the histogram below the
+>last populated row, that would make it more concise.
 
-Hello Peter, Hello Ingo,
+Makes sense, I'll do that.
 
-Do you have comments or any suggestions on this fix?
+>For fixes pulls it is sometimes legitimate for commits not to have been
+>in linux-next. But I think it's still good for the bot to highlight
+>those, ideally fixes that miss linux-next are either very urgent or
+>minor.
 
---=20
-Regards
-Yafang
+Right, and Linus said he's okay with those. This is not a "shame" list
+but rather "look a little closer" list.
+
+>>>> Commits that weren't found on lore.kernel.org/all:
+>>>> --------------------
+>>>> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
+>>>> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
+>>>> bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
+>>>> dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
+>>>> 15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
+>>>> d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
+>>>> 78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
+>>>> b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
+>>>> 4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
+>
+>Are you searching by message id, or subject? I sometimes edit subjects
+>when applying patches, so a subject search could miss some.
+
+Both, and also by patch id, so if you just change the subject it should
+still be okay.
+
+We'll see when you send your next PR :)
+
+-- 
+Thanks,
+Sasha
 
