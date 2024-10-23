@@ -1,129 +1,87 @@
-Return-Path: <linux-kernel+bounces-378768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 052199AD543
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:59:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294899AD546
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F08421C20F26
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:59:26 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D2ED31F23B1F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C88571E0DFC;
-	Wed, 23 Oct 2024 19:59:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jGKLw5Mi"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4361E1E2611;
+	Wed, 23 Oct 2024 20:00:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A16A81DB344;
-	Wed, 23 Oct 2024 19:59:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 686181E2606
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:00:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729713561; cv=none; b=pwfRX/XjuXvEm4yM5cpr1ZClstc2ImsNIVaxypG7Ws1+jr74VdFMTVxn/4jWU/XSFfeEnx/fPxZKR+vOl8P3kpued7KvNhqPQBb7iu4y4IKELSDMbmH9yqOzfa5N52ENOSpYf4mpOUjQW0gje/geMGT8/f0phJmrg/5R9OMpgKs=
+	t=1729713604; cv=none; b=txqdKnZBZAjgyiGxRMcm6IaaLZ5/7lLPWSC4Jgon60iWr1/QVGZggAupKKYmD47yP2oJpvXojkKOY3RPDCCTnr8sf0NrNDD15RDaQOreruTBF5HA6BW8Ztj96rjzntmaE87P7nOT8IxCYPeoFoUFtOe3Az47FY5ywMDEScg09SY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729713561; c=relaxed/simple;
-	bh=+I4mSgQGwe3ATxt7P/1IrYf44EOzS5wwDRtQixzVzns=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CWPhfrEEUhoq3nfEgxHt7tGWrc6BTHrGKoeOnOfqiPcmmKn8kFy0JzKI/clFSX/vSpLDqciM7ozZC9DCca22Ta2q8KiKcsxxS/eFr8axlOi8+BKJtRS9aGBj7FmAkRXGGRgyWDlmFZI69ncK51UqN9+V6JUwMC/lKoXX0NKkIUs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jGKLw5Mi; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so64901f8f.3;
-        Wed, 23 Oct 2024 12:59:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729713558; x=1730318358; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2Prb/5U/d1UncvwAF9dWqt2zvDqK9JgjuoQ+MlopXH8=;
-        b=jGKLw5Mi041iMg88fpKpOw4SxhSBQVJ3NXpQRKY/Ec76qJkOA7pPwva/Jtvg06eobh
-         I9vliuUDZfcJ6vcGC/+DQYZ/N4Eoz4Se3mjl3D6BAcrKXOFHUF5cUngdqZFOk6FeAeAy
-         jATf+cZg+qRdN8nega2LdlA94mJnQ0tCdAqSTtyTP5JA2xzdn87IQNS/WM6Ei5/UUa5W
-         PjP94ElNmFldDAeGBIYmJ/ys62RRzO9cVM+Yb2bTa1filhOAX3OSwFk6BGemiYQ09dKo
-         yhNYJ+wCuo0pvRGl0IFD8UVwsJjvoQeh+GwSBjXd5wBZ/R89IY/AOyFzjE6z5QOb4Wk0
-         JhjA==
+	s=arc-20240116; t=1729713604; c=relaxed/simple;
+	bh=3i2TTTMVvE63P7ks4HWcxgSaVPyPz2Ix62EMTgjJpIA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=ZonY5MDIbJpUBB73fMDYIzbriFyQhlgZB9heTEFWTXjC54wNtmgLbzRE3Qpz1txM7ZUC4FvobzvA0NlkvCPrUt4Mg+J65ApL8+VCLnA7gK+f8DxjeZsi4GIScvKEbrFCeofnOhHqOu+YQV/Ko5eFx+QtDmoSfLpycQWJkRXFzdM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so1804515ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:00:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729713558; x=1730318358;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729713602; x=1730318402;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2Prb/5U/d1UncvwAF9dWqt2zvDqK9JgjuoQ+MlopXH8=;
-        b=PvIguXZYztclgNhEYRv/LruY/6Mry72ncr2Qcx/TgaXQGpusEc4Vw7Fwdirk5IJ3md
-         gBofsX2nWhq4FNBpd4sg9jOsOsJPirJ2cQqJcNRNWPQIRHN6vJFTSMqiMl4VmX7YQHKU
-         a7WfTrQkOYIZmibnmXKWcnaMZzm4PmvcE5cCfYOw9VqZl1W+W0u4/d+CWwqNKtSTqpbZ
-         La9zbd4m93VaF0dcx0TLc0j9gP40/OgQMJFTvPB3hpWZJ6mRoI7lEJutnc/F1vgih/4+
-         I0D/W46xy5dDCYzqWL0YLOVNofFg1j8TYb981RGLoSRxK/q1+i8iGq5AA4PAR1P8c9Ah
-         /hgg==
-X-Forwarded-Encrypted: i=1; AJvYcCVC4r1rhQf+/jbcHPo2GgxxbSPMRl0cSNX93A6c2OGNfKEQJmmcsy/EmlVsm5HveW1kV78B3Q3ABCQ=@vger.kernel.org, AJvYcCWixtemE1rFyK9YkDXnXEfGfKEXX1bycXP6dFkE8rsxpGsHltGwcMgIgtDxD6SeAPGenMCpe6Dc1jJaqh5G@vger.kernel.org
-X-Gm-Message-State: AOJu0YzVi++27UwEEvY/mUB+xO4YJ/Q00TD2q9vGywOV/WSmXfEwKzah
-	H1FS1+y7voU2D9Rj5BhYvAG5oenDwlRgvmUw4CfPRaCBITgB1Sy8
-X-Google-Smtp-Source: AGHT+IEB5S3o5SgNjIEFoWd9QQ1pAsLV3sBqn3y25leZXJvbeZg5idbz4Svpm4ePBGHIc+ywtbIx0g==
-X-Received: by 2002:a5d:6acf:0:b0:37d:4517:acdb with SMTP id ffacd0b85a97d-37efcf06b85mr2192664f8f.20.1729713557762;
-        Wed, 23 Oct 2024 12:59:17 -0700 (PDT)
-Received: from ?IPV6:2a02:6b67:d751:7400:c2b:f323:d172:e42a? ([2a02:6b67:d751:7400:c2b:f323:d172:e42a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b98asm9646228f8f.61.2024.10.23.12.59.16
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 12:59:17 -0700 (PDT)
-Message-ID: <71c0c05b-d731-48c2-8023-5c7cda3518a1@gmail.com>
-Date: Wed, 23 Oct 2024 20:59:16 +0100
+        bh=/vfwbD9UsVroydM+rVo46zEDwjw3+kWz3iRXXjs701U=;
+        b=hj2SVwZGRrc4tRw7sSiAPlMXwoi9YYAZEMMUp+7teqYmTgBaZAKBctt1U9RWuv3puc
+         adMPwLyxxTQi/EmdetHH6KZRFFA7OHRrw0dbj5b8z922mzFYE7bV3Hmo4HXA+V+v4CGf
+         BPQC6ljV7HT6VKg9TivHyE9jRQpz9sGpLkVM4eXSTqVNhzvU0h65OWDGNUCbbC69+hQy
+         ptvaiOj/fGgOWb5Q78lig0HkxkH/vTN5n5Fn6W/7V92n1RbcZtU+FA45toKKtpxkcxI3
+         ggahSd+5Br+dxHHsS8BXs2j9PhtfCqgcG2MVI+b9XmmvuXDezu75JxxEfFEiPbQM+RzI
+         dhVg==
+X-Forwarded-Encrypted: i=1; AJvYcCVBoE8x50Qkl6nkgXYy06S7ayTP6ujRP+BWQ69HlSMZpasUYSejTtIh6dbBMduzQI28QCC8QwO9HvFDWE0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz+YE56cyWYG+slfLDdkIzoEOK5UTyknqfZI8qD/YTx708DUS0D
+	VKVlU2n2uEXwAPr3styZxnmIB6ySN/Sfff18YJUlwCPLVUprJCD3/nd7RZvXZD91CYV0V8ht4en
+	qWglQYJxIWIwtPAURrJ1/9JoWYkoCRnRaIdVxke2YEIuFuzP8gFgNvlY=
+X-Google-Smtp-Source: AGHT+IFL9IQlsMFSEKF5gHxMAvhcGBDk6YzU3Ult9E2CV41ChmG1Ky7bdyxnJIXhj3a4zccaN/Q10MFwGFGWBPXuCCcZy+UCinwS
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mm: avoid VM_BUG_ON when try to map an anon large folio
- to zero page.
-To: Zi Yan <ziy@nvidia.com>, linux-mm@kvack.org,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: baohua@kernel.org, cerasuolodomenico@gmail.com, corbet@lwn.net,
- david@redhat.com, hannes@cmpxchg.org, kernel-team@meta.com,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, npache@redhat.com,
- riel@surriel.com, roman.gushchin@linux.dev, rppt@kernel.org,
- ryan.roberts@arm.com, ryncsn@gmail.com, shakeel.butt@linux.dev,
- willy@infradead.org, yuzhao@google.com
-References: <20241023171236.1122535-1-ziy@nvidia.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <20241023171236.1122535-1-ziy@nvidia.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Received: by 2002:a05:6e02:16ca:b0:3a2:74f8:675d with SMTP id
+ e9e14a558f8ab-3a4d59d808emr39692435ab.20.1729713602537; Wed, 23 Oct 2024
+ 13:00:02 -0700 (PDT)
+Date: Wed, 23 Oct 2024 13:00:02 -0700
+In-Reply-To: <32ac6a1f-4427-4ffc-8b18-d4942be5b751@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671955c2.050a0220.1e4b4d.0095.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in validate_sb_layout
+From: syzbot <syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
+Hello,
 
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-On 23/10/2024 18:12, Zi Yan wrote:
-> An anonymous large folio can be split into non order-0 folios,
-> try_to_map_unused_to_zeropage() should not VM_BUG_ON compound pages but
-> just return false. This fixes the crash when splitting anonymous large
-> folios to non order-0 folios.
-> 
-> Fixes: b1f202060afe ("mm: remap unused subpages to shared zeropage when splitting isolated thp")
-> Signed-off-by: Zi Yan <ziy@nvidia.com>
-> ---
->  mm/migrate.c | 3 ++-
->  1 file changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/mm/migrate.c b/mm/migrate.c
-> index e950fd62607f..7ffdbe078aa7 100644
-> --- a/mm/migrate.c
-> +++ b/mm/migrate.c
-> @@ -206,7 +206,8 @@ static bool try_to_map_unused_to_zeropage(struct page_vma_mapped_walk *pvmw,
->  	pte_t newpte;
->  	void *addr;
->  
-> -	VM_BUG_ON_PAGE(PageCompound(page), page);
-> +	if (PageCompound(page))
-> +		return false;
->  	VM_BUG_ON_PAGE(!PageAnon(page), page);
->  	VM_BUG_ON_PAGE(!PageLocked(page), page);
->  	VM_BUG_ON_PAGE(pte_present(*pvmw->pte), page);
+Reported-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+Tested-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
 
-Thanks for fixing it!
+Tested on:
 
-Acked-by: Usama Arif <usamaarif642@gmail.com>
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=135b3640580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
+dashboard link: https://syzkaller.appspot.com/bug?extid=089fad5a3a5e77825426
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1691265f980000
 
-
+Note: testing is done by a robot and is best-effort only.
 
