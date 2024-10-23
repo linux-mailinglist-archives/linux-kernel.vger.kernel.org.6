@@ -1,258 +1,606 @@
-Return-Path: <linux-kernel+bounces-378054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0487A9ACAB8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:06:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7FC4E9ACABB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:08:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B191B23C39
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:06:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 28B202838AC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:08:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75D51AD9EE;
-	Wed, 23 Oct 2024 13:06:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 755BC1ADFEA;
+	Wed, 23 Oct 2024 13:08:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="LPNjDJDy"
-Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NBciK6s4"
+Received: from mail-ej1-f46.google.com (mail-ej1-f46.google.com [209.85.218.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCAE1AB6FB
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:06:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41E9156C72;
+	Wed, 23 Oct 2024 13:08:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729688776; cv=none; b=A90pkX2ZKJcg2otUVmN8nSQvj1SOiBcPMULtRR2qPKZX2Hhetm1SU+1W9LZme0fX2bFpQr392uuz5aknuKA+Hiaw7805bgAF61WdKGlM6Ha+wPDHBHyfke4eJatojAZQkFwXKIB3DFgzauacJCOJbSh1VQHKYltpl5RfGy0Nrjg=
+	t=1729688905; cv=none; b=W/+X6unRU0jKl1DTUEOerrfltNHIaYWMOX2/DgmbbbQAqN7My+aAfyjsk3xZWneIIfK2uDYMTH5Onm3TnLbJrgjDnNbqyE69ZaWWQ9D5/JGAxlbiny+f0rit71JBfE/S5sO+6kYwsrT9Gf6FshZF+Hz19vuQfYNyRMcbJYHYUgE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729688776; c=relaxed/simple;
-	bh=flfO60TWeuxQF01508WOwBdKE/thtg0nWRNabeZ0mGY=;
-	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
-	 MIME-Version:Content-Type; b=OtXSkpKbOpqCRGde/HI09vV29rwVJik6MwVQRLp/sEmIqxJfub0SrFq40Bx6KDPe4QJ9IteVqKTqlVdyRQyOihfuuH8UVaJTR7mfRVK3yCc2Fw6VFa/PC/xswwSkq/4mEReGnwOrolN2/4k3C6EtFo9sSLXyQBlvFE8ms+4AwMk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=LPNjDJDy; arc=none smtp.client-ip=44.202.169.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
-Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
-	by cmsmtp with ESMTPS
-	id 3aoNtonyciA193b40tUJiS; Wed, 23 Oct 2024 13:06:12 +0000
-Received: from box5620.bluehost.com ([162.241.219.59])
-	by cmsmtp with ESMTPS
-	id 3b3zt36VQib8Q3b3zt6lD3; Wed, 23 Oct 2024 13:06:11 +0000
-X-Authority-Analysis: v=2.4 cv=T4qKTeKQ c=1 sm=1 tr=0 ts=6718f4c3
- a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
- a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=HaFmDPmJAAAA:8
- a=VwQbUJbxAAAA:8 a=fxJcL_dCAAAA:8 a=NEAV23lmAAAA:8 a=G7piZchHOouoqsGl2bUA:9
- a=QEXdDO2ut3YA:10 a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
-	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
-	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
-	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=WLBEG65iDfq4Oq3j0KXR8fkux6/NdKD8wZ6AX1HNr8k=; b=LPNjDJDyN1Va9HjdzSdw2kagT0
-	CRMzFAVwRROtcB8GcyKv047bGMCYHqedVdAv5spxHwHxh4toBVhAMM+06KaF6t9qalwgwzp6hnVFO
-	vpT0W9zFnzJtD4E3YdAPBcaqTxTVsaD3orLiAzBq7zCliR9oezMeiYFJ8ZVLkwUnb4SrhySfi/tWQ
-	XE6tuyLhzJtyVByPjOTdI3OlCHdBsnwdT3/JkawoKGJDnKGroqsHz2gdp0F0do72tHpBLvMASFOjl
-	JQONTDKFGFpQdqW/PrxryCuKrhVD88FyHEovlqBXKbcxLMGHb2l7gm0rrK6DfMXTWSS9KbSmbY4GY
-	yAXDJjBg==;
-Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:49836 helo=[10.0.1.47])
-	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
-	(Exim 4.96.2)
-	(envelope-from <re@w6rz.net>)
-	id 1t3b3y-003lNZ-1z;
-	Wed, 23 Oct 2024 07:06:10 -0600
-Subject: Re: [PATCH 2/3] kbuild: deb-pkg: add
- pkg.linux-upstream.nokernelheaders build profile
-To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
-Cc: Ben Hutchings <benh@debian.org>, Bill Wendling <morbo@google.com>,
- Justin Stitt <justinstitt@google.com>, Nathan Chancellor
- <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
- Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20241022181703.1710116-1-masahiroy@kernel.org>
- <20241022181703.1710116-2-masahiroy@kernel.org>
-In-Reply-To: <20241022181703.1710116-2-masahiroy@kernel.org>
-From: Ron Economos <re@w6rz.net>
-Message-ID: <6fca7450-95e0-1bc0-7556-8889a398d0b6@w6rz.net>
-Date: Wed, 23 Oct 2024 06:06:08 -0700
-User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
- Thunderbird/78.14.0
+	s=arc-20240116; t=1729688905; c=relaxed/simple;
+	bh=n/EBS1cwBQphsvbvOxbtuvBZFCMQgGmDglbL/aimjik=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=b+7X5+OGzb4oSODPYTtaHOJk6fk+xpPZ+gQq8zjwUouiT7RG6bNrtj5DPHT6tjpaXrlZGh51YeSV+vkrU5yRUPLV425OQGXWsJQ1Vm70BiW2/zKF4jsXdm2QvDU3TOyOPpZYsy14dWPffGaJbk5P3Gkz5UMosVTUImMVr5OLKWE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NBciK6s4; arc=none smtp.client-ip=209.85.218.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f46.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso983529466b.1;
+        Wed, 23 Oct 2024 06:08:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729688901; x=1730293701; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=6g/kN3aYrPUUweeIdLICpwUC9hysX6yVasIgSzv6wYA=;
+        b=NBciK6s4FquY0OTCSOrGtUkoqlPNe14b2ucoY8YSfGus2GGXDyAQo3GhMVB/lvhLGY
+         teF9VdZEG/J/trqGrle+qeF90ewv6Rmpn0sH5RWmBe3lmooc4tL8cfmzwrJ4hwpyOl7h
+         A3DOdOzOZvEGGX17aAUSaPZe3j13hDwe03oA5RUVQKTqVuKp0bwKr67ggbBDy0sd9pMo
+         x4x/9t5Adksb9r4Cb+NgEfg/fzCIZz+5O/mmm4hJ46WYKL7fVXVDalHPq+Jkar3c/4Wq
+         PiKmFUk6ugBQZOFtFwsZMqNyp6Ou4n1DQUCzwVxV6/ElyHRhVwyrFEa+tT083ZyYKNZK
+         xNVg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729688901; x=1730293701;
+        h=content-transfer-encoding:in-reply-to:content-language:references
+         :cc:to:from:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=6g/kN3aYrPUUweeIdLICpwUC9hysX6yVasIgSzv6wYA=;
+        b=Ks1mlCXwQrsArlKGAaxiGjBP5DX4Q48VNc21Wi4EW3t7JacanFkrTXHOlF9GoTbUp0
+         AsfUKpJoCOOHn2pSdwGLgLA2RlBD7C4UeA3ST+Ipx3KvKxhvdGEm6HZuNw45ZeJk1K4J
+         KtKxiSx8jDu5RjLzFLUkeEbv8Tfc4INLTn3mJgnAB7iALbpcj+l+LjFKUxzXICr3veoG
+         CPomMMbWdLW0YYxMW/tX/C14F6le/hZpC5ahXtbSm08NsOwrJO3eBTQ0o/wr7MhtND//
+         gx/JA0jeysZ+FOnlKk3vNHTcxZGVyQvqpPLteAo3pvOx0P1YA1z+iQgiBE+UwIDrucuX
+         WwsA==
+X-Forwarded-Encrypted: i=1; AJvYcCXLmHHCcJhaXbrxwGarZLuub0r3kJ8/VX85t9nveLq9Qgslvqd7Hucr/ocbBxo0h1sdyPVs1pnrKrU=@vger.kernel.org, AJvYcCXqrc4pzDmyUPiNCamaR7VVuFBZHlyNIPTF4KO2iEepbz3Us0SMZ1EaHpHbUa9kPnbobYTt87mo164/6GBY@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/502t9VE3ZthLEuU5KoySI7jIAmnCi+yo0WjbeiKk4o9mS2L1
+	84TGRD16fdHpTWtw4XLoNUYbkQFpUTVeHC+w2+TbdqCfgJ+G7O1Z
+X-Google-Smtp-Source: AGHT+IFb41T8ZR9P2tMkI3jtoD2dTOZAmZnkF6HO/XCXQyGLtbTQ7TAqICB5zCVsGDKDUw1V8nl62Q==
+X-Received: by 2002:a17:907:a08:b0:a9a:17f5:79a8 with SMTP id a640c23a62f3a-a9abf84a887mr229560466b.13.1729688900691;
+        Wed, 23 Oct 2024 06:08:20 -0700 (PDT)
+Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:ca73])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d63bcsm483257566b.12.2024.10.23.06.08.19
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 06:08:20 -0700 (PDT)
+Message-ID: <7a14c332-3001-4b9a-ada3-f4d6799be555@gmail.com>
+Date: Wed, 23 Oct 2024 14:08:19 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 0/4] mm: zswap: add support for zswapin of large folios
+From: Usama Arif <usamaarif642@gmail.com>
+To: Barry Song <21cnbao@gmail.com>
+Cc: senozhatsky@chromium.org, minchan@kernel.org, hanchuanhua@oppo.com,
+ v-songbaohua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org,
+ hannes@cmpxchg.org, david@redhat.com, willy@infradead.org,
+ kanchana.p.sridhar@intel.com, yosryahmed@google.com, nphamcs@gmail.com,
+ chengming.zhou@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
+ riel@surriel.com, shakeel.butt@linux.dev, kernel-team@meta.com,
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+References: <20241018105026.2521366-1-usamaarif642@gmail.com>
+ <CAGsJ_4xweuSwMUBuLSr2eUy69mtQumeDpMZ1g2jFPGq6nFn9fg@mail.gmail.com>
+ <5313c721-9cf1-4ecd-ac23-1eeddabd691f@gmail.com>
+ <b1c17b5e-acd9-4bef-820e-699768f1426d@gmail.com>
+ <CAGsJ_4wykOyJupLhcqkSPe27rdANd=bOJhqxL74vcdZ+T9f==g@mail.gmail.com>
+ <eab11780-e671-4d09-86a6-af4cf3589392@gmail.com>
+ <CAGsJ_4wWf7QnibY_uU8B=efuEACrvFaJJ=bJTD+9KrxFtfoMmQ@mail.gmail.com>
+ <CAGsJ_4w5XLMok4F6Xw7aTAdV6rY9OvCVPM3U+hzFnKyTXBUpOA@mail.gmail.com>
+ <4c30cc30-0f7c-4ca7-a933-c8edfadaee5c@gmail.com>
 Content-Language: en-US
-X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
-X-AntiAbuse: Primary Hostname - box5620.bluehost.com
-X-AntiAbuse: Original Domain - vger.kernel.org
-X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
-X-AntiAbuse: Sender Address Domain - w6rz.net
-X-BWhitelist: no
-X-Source-IP: 73.223.253.157
-X-Source-L: No
-X-Exim-ID: 1t3b3y-003lNZ-1z
-X-Source: 
-X-Source-Args: 
-X-Source-Dir: 
-X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:49836
-X-Source-Auth: re@w6rz.net
-X-Email-Count: 9
-X-Org: HG=bhshared;ORG=bluehost;
-X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
-X-Local-Domain: yes
-X-CMAE-Envelope: MS4xfGEGbDecpRlWDH4uMrACDttkXaq6sUKY0Ef0eg6GMxJffHskhwY0efpzhbUm4b7yuIaVW23uvZ8unuVtrgsqFC21YEhCPhlew8464/CwJl+atSHhr8qo
- O4nWtbSMbmDTeoZu+3WMALRxgujeN3n263J/5fPWDOfdSO5NgjpIKv4/HuENCYzO4RedVKxGnVH3F4cdFoJEi5gC1u9UInErjRw=
+In-Reply-To: <4c30cc30-0f7c-4ca7-a933-c8edfadaee5c@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On 10/22/24 11:16 AM, Masahiro Yamada wrote:
-> Since commit f1d87664b82a ("kbuild: cross-compile linux-headers package
-> when possible"), 'make bindeb-pkg' may attempt to cross-compile the
-> linux-headers package, but it fails under certain circumstances.
->
-> For example, when CONFIG_MODULE_SIG_FORMAT is enabled on Debian, the
-> following command fails:
->
->    $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
->        [ snip ]
->    Rebuilding host programs with aarch64-linux-gnu-gcc...
->      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/kallsyms
->      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/sorttable
->      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/asn1_compiler
->      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/sign-file
->    In file included from /usr/include/openssl/opensslv.h:109,
->                     from debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/sign-file.c:25:
->    /usr/include/openssl/macros.h:14:10: fatal error: openssl/opensslconf.h: No such file or directory
->       14 | #include <openssl/opensslconf.h>
->          |          ^~~~~~~~~~~~~~~~~~~~~~~
->    compilation terminated.
->
-> This commit adds a new profile, pkg.linux-upstream.nokernelheaders, to
-> guard the linux-headers package.
->
-> There are two options to fix the above issue.
->
-> [option 1] Set the pkg.linux-upstream.nokernelheaders build profile
->
->    $ DEB_BUILD_PROFILES=pkg.linux-upstream.nokernelheaders \
->      make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
->
-> This skips the building of the linux-headers package.
->
-> [option 2] Install the necessary build dependencies
->
-> If you want to cross-compile the linux-headers package, you need to
-> install additional packages. This is a one-time installation step.
->
-> For example, on Debian, the packages necessary for cross-compiling it
-> to arm64 can be installed with the following commands:
->
->    # dpkg --add-architecture arm64
->    # apt update
->    # apt install gcc-aarch64-linux-gnu libssl-dev:arm64
->
-> Fixes: f1d87664b82a ("kbuild: cross-compile linux-headers package when possible")
-> Reported-by: Ron Economos <re@w6rz.net>
-> Closes: https://lore.kernel.org/all/b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net/
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
->
->   scripts/package/builddeb             | 2 +-
->   scripts/package/install-extmod-build | 6 ++----
->   scripts/package/mkdebian             | 9 ++++++++-
->   3 files changed, 11 insertions(+), 6 deletions(-)
->
-> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
-> index 404587fc71fe..441b0bb66e0d 100755
-> --- a/scripts/package/builddeb
-> +++ b/scripts/package/builddeb
-> @@ -123,7 +123,7 @@ install_kernel_headers () {
->   	pdir=debian/$1
->   	version=${1#linux-headers-}
->   
-> -	"${srctree}/scripts/package/install-extmod-build" "${pdir}/usr/src/linux-headers-${version}"
-> +	CC="${DEB_HOST_GNU_TYPE}-gcc" "${srctree}/scripts/package/install-extmod-build" "${pdir}/usr/src/linux-headers-${version}"
->   
->   	mkdir -p $pdir/lib/modules/$version/
->   	ln -s /usr/src/linux-headers-$version $pdir/lib/modules/$version/build
-> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
-> index d2c9cacecc0c..7ec1f061a519 100755
-> --- a/scripts/package/install-extmod-build
-> +++ b/scripts/package/install-extmod-build
-> @@ -44,13 +44,11 @@ mkdir -p "${destdir}"
->   	fi
->   } | tar -c -f - -T - | tar -xf - -C "${destdir}"
->   
-> -# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
-> -# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
-> -# the case for package building. It does not cross-compile when CC=clang.
-> +# When ${CC} and ${HOSTCC} differ, rebuild host programs using ${CC}.
->   #
->   # This caters to host programs that participate in Kbuild. objtool and
->   # resolve_btfids are out of scope.
-> -if [ "${CC}" != "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
-> +if [ "${CC}" != "${HOSTCC}" ]; then
->   	echo "Rebuilding host programs with ${CC}..."
->   
->   	cat <<-'EOF' >  "${destdir}/Kbuild"
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 10637d403777..93eb50356ddb 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -179,6 +179,8 @@ fi
->   
->   echo $debarch > debian/arch
->   
-> +host_gnu=$(dpkg-architecture -a "${debarch}" -q DEB_HOST_GNU_TYPE | sed 's/_/-/g')
-> +
->   # Generate a simple changelog template
->   cat <<EOF > debian/changelog
->   $sourcename ($packageversion) $distribution; urgency=low
-> @@ -196,7 +198,11 @@ Priority: optional
->   Maintainer: $maintainer
->   Rules-Requires-Root: no
->   Build-Depends: debhelper-compat (= 12)
-> -Build-Depends-Arch: bc, bison, cpio, flex, kmod, libelf-dev:native, libssl-dev:native, rsync
-> +Build-Depends-Arch: bc, bison, cpio, flex,
-> + gcc-${host_gnu} <!pkg.${sourcename}.nokernelheaders>,
-> + kmod, libelf-dev:native,
-> + libssl-dev:native, libssl-dev <!pkg.${sourcename}.nokernelheaders>,
-> + rsync
->   Homepage: https://www.kernel.org/
->   
->   Package: $packagename-$version
-> @@ -224,6 +230,7 @@ cat <<EOF >> debian/control
->   
->   Package: linux-headers-$version
->   Architecture: $debarch
-> +Build-Profiles: <!pkg.${sourcename}.nokernelheaders>
->   Description: Linux kernel headers for $version on $debarch
->    This package provides kernel header files for $version on $debarch
->    .
 
-Tested with option 2 for RISC-V. On Ubuntu 24.04, the following must be 
-added to the file /etc/apt/sources.list.d/ubuntu.sources for apt update 
-to fetch the correct repositories:
 
-Types: deb
-URIs: http://ports.ubuntu.com/ubuntu-ports
-Suites: noble noble-updates noble-backports
-Components: main universe restricted multiverse
-Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
-Architectures: riscv64
+On 23/10/2024 11:48, Usama Arif wrote:
+> 
+> 
+> On 23/10/2024 11:26, Barry Song wrote:
+>> On Wed, Oct 23, 2024 at 11:07 AM Barry Song <21cnbao@gmail.com> wrote:
+>>>
+>>> On Wed, Oct 23, 2024 at 10:17 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>
+>>>>
+>>>>
+>>>> On 22/10/2024 21:46, Barry Song wrote:
+>>>>> On Wed, Oct 23, 2024 at 4:26 AM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>
+>>>>>>
+>>>>>>
+>>>>>> On 21/10/2024 11:40, Usama Arif wrote:
+>>>>>>>
+>>>>>>>
+>>>>>>> On 21/10/2024 06:09, Barry Song wrote:
+>>>>>>>> On Fri, Oct 18, 2024 at 11:50 PM Usama Arif <usamaarif642@gmail.com> wrote:
+>>>>>>>>>
+>>>>>>>>> After large folio zswapout support added in [1], this patch adds
+>>>>>>>>> support for zswapin of large folios to bring it on par with zram.
+>>>>>>>>> This series makes sure that the benefits of large folios (fewer
+>>>>>>>>> page faults, batched PTE and rmap manipulation, reduced lru list,
+>>>>>>>>> TLB coalescing (for arm64 and amd)) are not lost at swap out when
+>>>>>>>>> using zswap.
+>>>>>>>>>
+>>>>>>>>> It builds on top of [2] which added large folio swapin support for
+>>>>>>>>> zram and provides the same level of large folio swapin support as
+>>>>>>>>> zram, i.e. only supporting swap count == 1.
+>>>>>>>>>
+>>>>>>>>> Patch 1 skips swapcache for swapping in zswap pages, this should improve
+>>>>>>>>> no readahead swapin performance [3], and also allows us to build on large
+>>>>>>>>> folio swapin support added in [2], hence is a prerequisite for patch 3.
+>>>>>>>>>
+>>>>>>>>> Patch 3 adds support for large folio zswapin. This patch does not add
+>>>>>>>>> support for hybrid backends (i.e. folios partly present swap and zswap).
+>>>>>>>>>
+>>>>>>>>> The main performance benefit comes from maintaining large folios *after*
+>>>>>>>>> swapin, large folio performance improvements have been mentioned in previous
+>>>>>>>>> series posted on it [2],[4], so have not added those. Below is a simple
+>>>>>>>>> microbenchmark to measure the time needed *for* zswpin of 1G memory (along
+>>>>>>>>> with memory integrity check).
+>>>>>>>>>
+>>>>>>>>>                                 |  no mTHP (ms) | 1M mTHP enabled (ms)
+>>>>>>>>> Base kernel                     |   1165        |    1163
+>>>>>>>>> Kernel with mTHP zswpin series  |   1203        |     738
+>>>>>>>>
+>>>>>>>> Hi Usama,
+>>>>>>>> Do you know where this minor regression for non-mTHP comes from?
+>>>>>>>> As you even have skipped swapcache for small folios in zswap in patch1,
+>>>>>>>> that part should have some gain? is it because of zswap_present_test()?
+>>>>>>>>
+>>>>>>>
+>>>>>>> Hi Barry,
+>>>>>>>
+>>>>>>> The microbenchmark does a sequential read of 1G of memory, so it probably
+>>>>>>> isnt very representative of real world usecases. This also means that
+>>>>>>> swap_vma_readahead is able to readahead accurately all pages in its window.
+>>>>>>> With this patch series, if doing 4K swapin, you get 1G/4K calls of fast
+>>>>>>> do_swap_page. Without this patch, you get 1G/(4K*readahead window) of slow
+>>>>>>> do_swap_page calls. I had added some prints and I was seeing 8 pages being
+>>>>>>> readahead in 1 do_swap_page. The larger number of calls causes the slight
+>>>>>>> regression (eventhough they are quite fast). I think in a realistic scenario,
+>>>>>>> where readahead window wont be as large, there wont be a regression.
+>>>>>>> The cost of zswap_present_test in the whole call stack of swapping page is
+>>>>>>> very low and I think can be ignored.
+>>>>>>>
+>>>>>>> I think the more interesting thing is what Kanchana pointed out in
+>>>>>>> https://lore.kernel.org/all/f2f2053f-ec5f-46a4-800d-50a3d2e61bff@gmail.com/
+>>>>>>> I am curious, did you see this when testing large folio swapin and compression
+>>>>>>> at 4K granuality? Its looks like swap thrashing so I think it would be common
+>>>>>>> between zswap and zram. I dont have larger granuality zswap compression done,
+>>>>>>> which is why I think there is a regression in time taken. (It could be because
+>>>>>>> its tested on intel as well).
+>>>>>>>
+>>>>>>> Thanks,
+>>>>>>> Usama
+>>>>>>>
+>>>>>>
+>>>>>> Hi,
+>>>>>>
+>>>>>> So I have been doing some benchmarking after Kanchana pointed out a performance
+>>>>>> regression in [1] of swapping in large folio. I would love to get thoughts from
+>>>>>> zram folks on this, as thats where large folio swapin was first added [2].
+>>>>>> As far as I can see, the current support in zram is doing large folio swapin
+>>>>>> at 4K granuality. The large granuality compression in [3] which was posted
+>>>>>> in March is not merged, so I am currently comparing upstream zram with this series.
+>>>>>>
+>>>>>> With the microbenchmark below of timing 1G swapin, there was a very large improvement
+>>>>>> in performance by using this series. I think similar numbers would be seen in zram.
+>>>>>
+>>>>> Imagine running several apps on a phone and switching
+>>>>> between them: A → B → C → D → E … → A → B … The app
+>>>>> currently on the screen retains its memory, while the ones
+>>>>> sent to the background are swapped out. When we bring
+>>>>> those apps back to the foreground, their memory is restored.
+>>>>> This behavior is quite similar to what you're seeing with
+>>>>> your microbenchmark.
+>>>>>
+>>>>
+>>>> Hi Barry,
+>>>>
+>>>> Thanks for explaining this! Do you know if there is some open source benchmark
+>>>> we could use to show an improvement in app switching with large folios?
+>>>>
+>>>
+>>> I’m fairly certain the Android team has this benchmark, but it’s not
+>>> open source.
+>>>
+>>> A straightforward way to simulate this is to use a script that
+>>> cyclically launches multiple applications, such as Chrome, Firefox,
+>>> Office, PDF, and others.
+>>>
+>>> for example:
+>>>
+>>> launch chrome;
+>>> launch firefox;
+>>> launch youtube;
+>>> ....
+>>> launch chrome;
+>>> launch firefox;
+>>> ....
+>>>
+>>> On Android, we have "Android activity manager 'am' command" to do that.
+>>> https://gist.github.com/tsohr/5711945
+>>>
+>>> Not quite sure if other windows managers have similar tools.
+>>>
+>>>> Also I guess swap thrashing can happen when apps are brought back to foreground?
+>>>>
+>>>
+>>> Typically, the foreground app doesn't experience much swapping,
+>>> as it is the most recently or frequently used. However, this may
+>>> not hold for very low-end phones, where memory is significantly
+>>> less than the app's working set. For instance, we can't expect a
+>>> good user experience when playing a large game that requires 8GB
+>>> of memory on a 4GB phone! :-)
+>>> And for low-end phones, we never even enable mTHP.
+>>>
+>>>>>>
+>>>>>> But when doing kernel build test, Kanchana saw a regression in [1]. I believe
+>>>>>> its because of swap thrashing (causing large zswap activity), due to larger page swapin.
+>>>>>> The part of the code that decides large folio swapin is the same between zswap and zram,
+>>>>>> so I believe this would be observed in zram as well.
+>>>>>
+>>>>> Is this an extreme case where the workload's working set far
+>>>>> exceeds the available memory by memcg limitation? I doubt mTHP
+>>>>> would provide any real benefit from the start if the workload is bound to
+>>>>> experience swap thrashing. What if we disable mTHP entirely?
+>>>>>
+>>>>
+>>>> I would agree, this is an extreme case. I wanted (z)swap activity to happen so limited
+>>>> memory.max to 4G.
+>>>>
+>>>> mTHP is beneficial in kernel test benchmarking going from no mTHP to 16K:
+>>>>
+>>>> ARM make defconfig; time make -j$(nproc) Image, cgroup memory.max=4G
+>>>> metric         no mTHP         16K mTHP=always
+>>>> real           1m0.613s         0m52.008s
+>>>> user           25m23.028s       25m19.488s
+>>>> sys            25m45.466s       18m11.640s
+>>>> zswpin         1911194          3108438
+>>>> zswpout        6880815          9374628
+>>>> pgfault        120430166        48976658
+>>>> pgmajfault     1580674          2327086
+>>>>
+>>>>
+>>>
+>>> Interesting! We never use a phone to build the Linux kernel, but
+>>> let me see if I can find some other machines to reproduce your data.
+>>
+>> Hi Usama,
+>>
+>> I suspect the regression occurs because you're running an edge case
+>> where the memory cgroup stays nearly full most of the time (this isn't
+>> an inherent issue with large folio swap-in). As a result, swapping in
+>> mTHP quickly triggers a memcg overflow, causing a swap-out. The
+>> next swap-in then recreates the overflow, leading to a repeating
+>> cycle.
+>>
+> 
+> Yes, agreed! Looking at the swap counters, I think this is what is going
+> on as well.
+> 
+>> We need a way to stop the cup from repeatedly filling to the brim and
+>> overflowing. While not a definitive fix, the following change might help
+>> improve the situation:
+>>
+>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+>>
+>> index 17af08367c68..f2fa0eeb2d9a 100644
+>> --- a/mm/memcontrol.c
+>> +++ b/mm/memcontrol.c
+>>
+>> @@ -4559,7 +4559,10 @@ int mem_cgroup_swapin_charge_folio(struct folio
+>> *folio, struct mm_struct *mm,
+>>                 memcg = get_mem_cgroup_from_mm(mm);
+>>         rcu_read_unlock();
+>>
+>> -       ret = charge_memcg(folio, memcg, gfp);
+>> +       if (folio_test_large(folio) && mem_cgroup_margin(memcg) <
+>> MEMCG_CHARGE_BATCH)
+>> +               ret = -ENOMEM;
+>> +       else
+>> +               ret = charge_memcg(folio, memcg, gfp);
+>>
+>>         css_put(&memcg->css);
+>>         return ret;
+>> }
+>>
+> 
+> The diff makes sense to me. Let me test later today and get back to you.
+> 
+> Thanks!
+> 
+>> Please confirm if it makes the kernel build with memcg limitation
+>> faster. If so, let's
+>> work together to figure out an official patch :-) The above code hasn't consider
+>> the parent memcg's overflow, so not an ideal fix.
+>>
 
-Then:
+Thanks Barry, I think this fixes the regression, and even gives an improvement!
+I think the below might be better to do:
 
-sudo dpkg --add-architecture riscv64
-sudo apt-get update
-sudo apt-get install libssl-dev:riscv64
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index c098fd7f5c5e..0a1ec55cc079 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4550,7 +4550,11 @@ int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
+                memcg = get_mem_cgroup_from_mm(mm);
+        rcu_read_unlock();
+ 
+-       ret = charge_memcg(folio, memcg, gfp);
++       if (folio_test_large(folio) &&
++           mem_cgroup_margin(memcg) < max(MEMCG_CHARGE_BATCH, folio_nr_pages(folio)))
++               ret = -ENOMEM;
++       else
++               ret = charge_memcg(folio, memcg, gfp);
+ 
+        css_put(&memcg->css);
+        return ret;
 
-The tool chain at https://github.com/riscv-collab/riscv-gnu-toolchain 
-can also be made to work. See:
 
-https://github.com/riscv-collab/riscv-gnu-toolchain/issues/1590
+AMD 16K+32K THP=always
+metric         mm-unstable      mm-unstable + large folio zswapin series    mm-unstable + large folio zswapin + no swap thrashing fix
+real           1m23.038s        1m23.050s                                   1m22.704s
+user           53m57.210s       53m53.437s                                  53m52.577s
+sys            7m24.592s        7m48.843s                                   7m22.519s
+zswpin         612070           999244                                      815934
+zswpout        2226403          2347979                                     2054980
+pgfault        20667366         20481728                                    20478690
+pgmajfault     385887           269117                                      309702
 
-Tested-by: Ron Economos <re@w6rz.net>
+AMD 16K+32K+64K THP=always
+metric         mm-unstable      mm-unstable + large folio zswapin series   mm-unstable + large folio zswapin + no swap thrashing fix
+real           1m22.975s        1m23.266s                                  1m22.549s
+user           53m51.302s       53m51.069s                                 53m46.471s
+sys            7m40.168s        7m57.104s                                  7m25.012s
+zswpin         676492           1258573                                    1225703
+zswpout        2449839          2714767                                    2899178
+pgfault        17540746         17296555                                   17234663
+pgmajfault     429629           307495                                     287859
 
+>>>
+>>>>
+>>>>
+>>>>>>
+>>>>>> My initial thought was this might be because its intel, where you dont have the advantage
+>>>>>> of TLB coalescing, so tested on AMD and ARM, but the regression is there on AMD
+>>>>>> and ARM as well, though a bit less (have added the numbers below).
+>>>>>>
+>>>>>> The numbers show that the zswap activity increases and page faults decrease.
+>>>>>> Overall this does result in sys time increasing and real time slightly increases,
+>>>>>> likely because the cost of increased zswap activity is more than the benefit of
+>>>>>> lower page faults.
+>>>>>> I can see in [3] that pagefaults reduced in zram as well.
+>>>>>>
+>>>>>> Large folio swapin shows good numbers in microbenchmarks that just target reduce page
+>>>>>> faults and sequential swapin only, but not in kernel build test. Is a similar regression
+>>>>>> observed with zram when enabling large folio swapin on kernel build test? Maybe large
+>>>>>> folio swapin makes more sense on workloads where mappings are kept for a longer time?
+>>>>>>
+>>>>>
+>>>>> I suspect this is because mTHP doesn't always benefit workloads
+>>>>> when available memory is quite limited compared to the working set.
+>>>>> In that case, mTHP swap-in might introduce more features that
+>>>>> exacerbate the problem. We used to have an extra control "swapin_enabled"
+>>>>> for swap-in, but it never gained much traction:
+>>>>> https://lore.kernel.org/linux-mm/20240726094618.401593-5-21cnbao@gmail.com/
+>>>>> We can reconsider whether to include the knob, but if it's better
+>>>>> to disable mTHP entirely for these cases, we can still adhere to
+>>>>> the policy of "enabled".
+>>>>>
+>>>> Yes I think this makes sense to have. The only thing is, its too many knobs!
+>>>> I personally think its already difficult to decide upto which mTHP size we
+>>>> should enable (and I think this changes per workload). But if we add swapin_enabled
+>>>> on top of that it can make things more difficult.
+>>>>
+>>>>> Using large block compression and decompression in zRAM will
+>>>>> significantly reduce CPU usage, likely making the issue unnoticeable.
+>>>>> However, the default minimum size for large block support is currently
+>>>>> set to 64KB(ZSMALLOC_MULTI_PAGES_ORDER = 4).
+>>>>>
+>>>>
+>>>> I saw that the patch was sent in March, and there werent any updates after?
+>>>> Maybe I can try and cherry-pick that and see if we can develop large
+>>>> granularity compression for zswap.
+>>>
+>>> will provide an updated version next week.
+>>>
+>>>>
+>>>>>>
+>>>>>> Kernel build numbers in cgroup with memory.max=4G to trigger zswap
+>>>>>> Command for AMD: make defconfig; time make -j$(nproc) bzImage
+>>>>>> Command for ARM: make defconfig; time make -j$(nproc) Image
+>>>>>>
+>>>>>>
+>>>>>> AMD 16K+32K THP=always
+>>>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
+>>>>>> real           1m23.038s        1m23.050s
+>>>>>> user           53m57.210s       53m53.437s
+>>>>>> sys            7m24.592s        7m48.843s
+>>>>>> zswpin         612070           999244
+>>>>>> zswpout        2226403          2347979
+>>>>>> pgfault        20667366         20481728
+>>>>>> pgmajfault     385887           269117
+>>>>>>
+>>>>>> AMD 16K+32K+64K THP=always
+>>>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
+>>>>>> real           1m22.975s        1m23.266s
+>>>>>> user           53m51.302s       53m51.069s
+>>>>>> sys            7m40.168s        7m57.104s
+>>>>>> zswpin         676492           1258573
+>>>>>> zswpout        2449839          2714767
+>>>>>> pgfault        17540746         17296555
+>>>>>> pgmajfault     429629           307495
+>>>>>> --------------------------
+>>>>>> ARM 16K+32K THP=always
+>>>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
+>>>>>> real           0m51.168s        0m52.086s
+>>>>>> user           25m14.715s       25m15.765s
+>>>>>> sys            17m18.856s       18m8.031s
+>>>>>> zswpin         3904129          7339245
+>>>>>> zswpout        11171295         13473461
+>>>>>> pgfault        37313345         36011338
+>>>>>> pgmajfault     2726253          1932642
+>>>>>>
+>>>>>>
+>>>>>> ARM 16K+32K+64K THP=always
+>>>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
+>>>>>> real           0m52.017s        0m53.828s
+>>>>>> user           25m2.742s        25m0.046s
+>>>>>> sys            18m24.525s       20m26.207s
+>>>>>> zswpin         4853571          8908664
+>>>>>> zswpout        12297199         15768764
+>>>>>> pgfault        32158152         30425519
+>>>>>> pgmajfault     3320717          2237015
+>>>>>>
+>>>>>>
+>>>>>> Thanks!
+>>>>>> Usama
+>>>>>>
+>>>>>>
+>>>>>> [1] https://lore.kernel.org/all/f2f2053f-ec5f-46a4-800d-50a3d2e61bff@gmail.com/
+>>>>>> [2] https://lore.kernel.org/all/20240821074541.516249-3-hanchuanhua@oppo.com/
+>>>>>> [3] https://lore.kernel.org/all/20240327214816.31191-1-21cnbao@gmail.com/
+>>>>>>
+>>>>>>>
+>>>>>>>>>
+>>>>>>>>> The time measured was pretty consistent between runs (~1-2% variation).
+>>>>>>>>> There is 36% improvement in zswapin time with 1M folios. The percentage
+>>>>>>>>> improvement is likely to be more if the memcmp is removed.
+>>>>>>>>>
+>>>>>>>>> diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
+>>>>>>>>> index 40de679248b8..77068c577c86 100644
+>>>>>>>>> --- a/tools/testing/selftests/cgroup/test_zswap.c
+>>>>>>>>> +++ b/tools/testing/selftests/cgroup/test_zswap.c
+>>>>>>>>> @@ -9,6 +9,8 @@
+>>>>>>>>>  #include <string.h>
+>>>>>>>>>  #include <sys/wait.h>
+>>>>>>>>>  #include <sys/mman.h>
+>>>>>>>>> +#include <sys/time.h>
+>>>>>>>>> +#include <malloc.h>
+>>>>>>>>>
+>>>>>>>>>  #include "../kselftest.h"
+>>>>>>>>>  #include "cgroup_util.h"
+>>>>>>>>> @@ -407,6 +409,74 @@ static int test_zswap_writeback_disabled(const char *root)
+>>>>>>>>>         return test_zswap_writeback(root, false);
+>>>>>>>>>  }
+>>>>>>>>>
+>>>>>>>>> +static int zswapin_perf(const char *cgroup, void *arg)
+>>>>>>>>> +{
+>>>>>>>>> +       long pagesize = sysconf(_SC_PAGESIZE);
+>>>>>>>>> +       size_t memsize = MB(1*1024);
+>>>>>>>>> +       char buf[pagesize];
+>>>>>>>>> +       int ret = -1;
+>>>>>>>>> +       char *mem;
+>>>>>>>>> +       struct timeval start, end;
+>>>>>>>>> +
+>>>>>>>>> +       mem = (char *)memalign(2*1024*1024, memsize);
+>>>>>>>>> +       if (!mem)
+>>>>>>>>> +               return ret;
+>>>>>>>>> +
+>>>>>>>>> +       /*
+>>>>>>>>> +        * Fill half of each page with increasing data, and keep other
+>>>>>>>>> +        * half empty, this will result in data that is still compressible
+>>>>>>>>> +        * and ends up in zswap, with material zswap usage.
+>>>>>>>>> +        */
+>>>>>>>>> +       for (int i = 0; i < pagesize; i++)
+>>>>>>>>> +               buf[i] = i < pagesize/2 ? (char) i : 0;
+>>>>>>>>> +
+>>>>>>>>> +       for (int i = 0; i < memsize; i += pagesize)
+>>>>>>>>> +               memcpy(&mem[i], buf, pagesize);
+>>>>>>>>> +
+>>>>>>>>> +       /* Try and reclaim allocated memory */
+>>>>>>>>> +       if (cg_write_numeric(cgroup, "memory.reclaim", memsize)) {
+>>>>>>>>> +               ksft_print_msg("Failed to reclaim all of the requested memory\n");
+>>>>>>>>> +               goto out;
+>>>>>>>>> +       }
+>>>>>>>>> +
+>>>>>>>>> +       gettimeofday(&start, NULL);
+>>>>>>>>> +       /* zswpin */
+>>>>>>>>> +       for (int i = 0; i < memsize; i += pagesize) {
+>>>>>>>>> +               if (memcmp(&mem[i], buf, pagesize)) {
+>>>>>>>>> +                       ksft_print_msg("invalid memory\n");
+>>>>>>>>> +                       goto out;
+>>>>>>>>> +               }
+>>>>>>>>> +       }
+>>>>>>>>> +       gettimeofday(&end, NULL);
+>>>>>>>>> +       printf ("zswapin took %fms to run.\n", (end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec) / 1000);
+>>>>>>>>> +       ret = 0;
+>>>>>>>>> +out:
+>>>>>>>>> +       free(mem);
+>>>>>>>>> +       return ret;
+>>>>>>>>> +}
+>>>>>>>>> +
+>>>>>>>>> +static int test_zswapin_perf(const char *root)
+>>>>>>>>> +{
+>>>>>>>>> +       int ret = KSFT_FAIL;
+>>>>>>>>> +       char *test_group;
+>>>>>>>>> +
+>>>>>>>>> +       test_group = cg_name(root, "zswapin_perf_test");
+>>>>>>>>> +       if (!test_group)
+>>>>>>>>> +               goto out;
+>>>>>>>>> +       if (cg_create(test_group))
+>>>>>>>>> +               goto out;
+>>>>>>>>> +
+>>>>>>>>> +       if (cg_run(test_group, zswapin_perf, NULL))
+>>>>>>>>> +               goto out;
+>>>>>>>>> +
+>>>>>>>>> +       ret = KSFT_PASS;
+>>>>>>>>> +out:
+>>>>>>>>> +       cg_destroy(test_group);
+>>>>>>>>> +       free(test_group);
+>>>>>>>>> +       return ret;
+>>>>>>>>> +}
+>>>>>>>>> +
+>>>>>>>>>  /*
+>>>>>>>>>   * When trying to store a memcg page in zswap, if the memcg hits its memory
+>>>>>>>>>   * limit in zswap, writeback should affect only the zswapped pages of that
+>>>>>>>>> @@ -584,6 +654,7 @@ struct zswap_test {
+>>>>>>>>>         T(test_zswapin),
+>>>>>>>>>         T(test_zswap_writeback_enabled),
+>>>>>>>>>         T(test_zswap_writeback_disabled),
+>>>>>>>>> +       T(test_zswapin_perf),
+>>>>>>>>>         T(test_no_kmem_bypass),
+>>>>>>>>>         T(test_no_invasive_cgroup_shrink),
+>>>>>>>>>  };
+>>>>>>>>>
+>>>>>>>>> [1] https://lore.kernel.org/all/20241001053222.6944-1-kanchana.p.sridhar@intel.com/
+>>>>>>>>> [2] https://lore.kernel.org/all/20240821074541.516249-1-hanchuanhua@oppo.com/
+>>>>>>>>> [3] https://lore.kernel.org/all/1505886205-9671-5-git-send-email-minchan@kernel.org/T/#u
+>>>>>>>>> [4] https://lwn.net/Articles/955575/
+>>>>>>>>>
+>>>>>>>>> Usama Arif (4):
+>>>>>>>>>   mm/zswap: skip swapcache for swapping in zswap pages
+>>>>>>>>>   mm/zswap: modify zswap_decompress to accept page instead of folio
+>>>>>>>>>   mm/zswap: add support for large folio zswapin
+>>>>>>>>>   mm/zswap: count successful large folio zswap loads
+>>>>>>>>>
+>>>>>>>>>  Documentation/admin-guide/mm/transhuge.rst |   3 +
+>>>>>>>>>  include/linux/huge_mm.h                    |   1 +
+>>>>>>>>>  include/linux/zswap.h                      |   6 ++
+>>>>>>>>>  mm/huge_memory.c                           |   3 +
+>>>>>>>>>  mm/memory.c                                |  16 +--
+>>>>>>>>>  mm/page_io.c                               |   2 +-
+>>>>>>>>>  mm/zswap.c                                 | 120 ++++++++++++++-------
+>>>>>>>>>  7 files changed, 99 insertions(+), 52 deletions(-)
+>>>>>>>>>
+>>>>>>>>> --
+>>>>>>>>> 2.43.5
+>>>>>>>>>
+>>>>>>>>
+>>>>>
+>>>
+>>
+>> Thanks
+>> Barry
+> 
 
 
