@@ -1,279 +1,170 @@
-Return-Path: <linux-kernel+bounces-377184-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377185-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D745F9ABAFD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:27:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 557939ABAFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:27:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9010128408F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:27:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 11E56284E35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:27:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F37FA27452;
-	Wed, 23 Oct 2024 01:27:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C72327452;
+	Wed, 23 Oct 2024 01:27:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="kX5JOCLc"
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2089.outbound.protection.outlook.com [40.107.223.89])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="P7izUHEU"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C4161804E;
-	Wed, 23 Oct 2024 01:27:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.89
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729646842; cv=fail; b=NXm2gdD74Q3IqkgNnIuoQM0rOmjtjtXueRyPd6rgSjVOe65Kmvel7wayVkDw4qcuL59M5Oit7+wI3UM7dIT4S3aVoLn1WtDsIzpqYiYvcgd7mSep9i/oZwjJJdcWHqwiebMNTZS1nbhOqQyh8RszhL5kQbTT6YKIZ4Eq2H9YRK8=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729646842; c=relaxed/simple;
-	bh=YagPaxsrWr46Uq4REOGTzfbR7V/wkCnbNz3VYlJDC7U=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=OY44euH+98TMOJ+dAu6IdsL1wymCR5Vzi6Wousb7oPwaRDWKGXEdjY5qxcUA+Gk4vc9o7v/GOIfnhaN6eh6IFx0T3mat5KM3MSxC2yFIRy4A9IGZ/k6Tti72Q/A4TYBKYFpIMP6S8n6c75tRiKz/B/7l+kJceE7mtoJKDl/9AaU=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=kX5JOCLc; arc=fail smtp.client-ip=40.107.223.89
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=udW5altgSX3iyv5WPr+QjQuBlDoPoVYVrQva9UwcSKI587zkTMjGmnYs6nOF8op7zaQwYrg1LhQ7vXjmMcaQpnfbCJ4A31blr+lYtj+2mzjPZGSpF2RMCNCkw3UF4HO+Jdy4PFoRpt/1ii5h7IeHyXDr9HxapX2nmwTgeAEFAl8UIgFJEjvsK4DGtnaizOtEHYD/j3Bt2y3cfNIZ6sbP3v2wwQ5ozqu2Aw9pHylUjyH3YjSEh6jvBqDFCGoBYyC2DCrDlFeSlqM+DTJ3HVL32/u5vIrbogVlQEnhhKvunC9OTGDaA3BKI2h4ySc92UdpMACTSoxWa2vud1XccSQuiA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=sxFaIz2f1CvY3+ShRgywuaxCp2drI642WvTaJ/CXDQU=;
- b=C7IK1bxB8AGolrhtM6Z5BS37B6eiAdVgeIfyX0uPAYyKyUami+u0p/7RSy9mV5GUMvonSNwiu3z56yD6B1fuB5YEb7PqpxP8vq3qXHAns0t7TJWU25+cGJnTZnEIroYUeI6Drhv6Sl4NTnYNQmfNxgsCtYKqlzrcC+cu7QjnJ937LSFenvSO/b3u6dJ0jFxAL5UAn7Zv3RGDCqm7zwXfKuh3pz4u9ATccffwuy2lCo2J13s9YAqnmgKnNiiCpQxT8aC0NqVbXv2h/ERDRfq1QgRWddXVMNgzYKt+Cxp0t6bQlrZUSJcaTpSaHc5Rzo8DTgu0pf53rBWasPU+ip0tyg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=sxFaIz2f1CvY3+ShRgywuaxCp2drI642WvTaJ/CXDQU=;
- b=kX5JOCLcplV9bbZukrhmyzzSd7HAp8dKyVr+7ICG8M7VF+zP5z4gM/xpWXdBbOYPis8B3xYWhWdtesTGqCtipdpk1UK+Hr7cxTCGzsYGChq0gaYVtlwD07hFKsa8gq0FyE2nvG74Krfl1FZzy+wCAyj+QvWY8bCMV6hDJokQQSkK6Der7DSUPj43JwXyiIQ3Q26J3qGRbjQVsT4bR5wLgsh911G7HsOzuPsvrmXJDe1j3KzztKM/PHJjksMmeu9tkxX7E2hIE/G3G/YkMLz9L6xEgJsuxeR7Z7rBM9gF/NuznP5uZ1P88PdVnB3rwJAw/b/ROMgURUg7wHkgnwwAmA==
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-Received: from PH7PR12MB7914.namprd12.prod.outlook.com (2603:10b6:510:27d::13)
- by SA1PR12MB8161.namprd12.prod.outlook.com (2603:10b6:806:330::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Wed, 23 Oct
- 2024 01:27:17 +0000
-Received: from PH7PR12MB7914.namprd12.prod.outlook.com
- ([fe80::8998:fe5c:833c:f378]) by PH7PR12MB7914.namprd12.prod.outlook.com
- ([fe80::8998:fe5c:833c:f378%4]) with mapi id 15.20.8069.027; Wed, 23 Oct 2024
- 01:27:17 +0000
-Message-ID: <fd7cae9a-5ee1-4e18-915d-4115f0a6a156@nvidia.com>
-Date: Wed, 23 Oct 2024 09:27:11 +0800
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
- VGA device
-To: Alex Deucher <alexdeucher@gmail.com>
-Cc: Luke Jones <luke@ljones.dev>, Mario Limonciello <superm1@kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
- Mario Limonciello <mario.limonciello@amd.com>,
- Alex Deucher <alexander.deucher@amd.com>
-References: <20241014152502.1477809-1-superm1@kernel.org>
- <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
- <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
- <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
-Content-Language: en-US
-From: Kai-Heng Feng <kaihengf@nvidia.com>
-In-Reply-To: <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: TPYP295CA0037.TWNP295.PROD.OUTLOOK.COM
- (2603:1096:7d0:7::16) To PH7PR12MB7914.namprd12.prod.outlook.com
- (2603:10b6:510:27d::13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2ACAB3A1DA;
+	Wed, 23 Oct 2024 01:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729646855; cv=none; b=gPfvhYdDnHB59o1qkBXlRC0aE6QjIY+0Lcbwxwvi/g176B4XsSq4Y5ABT1WO6SsZCUi1IUE4pln0kSOwqTnyMR14sU4J7D0ZouTeDvuR4aWswhfxUWtAaH0NLfYzZ8VFfroyYhPOhwLWTpIWwNsCpZf65ldvji6+O3b47OcPdZo=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729646855; c=relaxed/simple;
+	bh=xrcJV1wBdi4PSD5v+nU2WTeYJrdkdt4uIhqdftYfDp8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=fBGlHNt4w+Exc52pxw83keEEDr4LOisb65LnLaK0+WbfjDL2gAlPZpbVIJ078eERK8qXDsFivGPUj0r+WhKuFhVhdPEj6b/mxEC2olFr+xJC1KZ62EatoWToH9QuWO4l6zfQyFB7PPtzCTqkoK/hngobmh022sjXc0hkZI6OiGI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=P7izUHEU; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLZxn2016064;
+	Wed, 23 Oct 2024 01:27:30 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	zJHGPz9I1JQi6q+Es05Nzra/2//ln8aPy686WZGQwDk=; b=P7izUHEULLiRDOLu
+	EdsBZYlPlzvcxEvbOzuEt0ygqwvQqvjML7Sgy8ktFwjIvRCf/ws7v+OxXzWxJ8Jq
+	oWIF+xY3tBq5Xhz6IXeyULVubx1Mtqh7fcCucrOktkcuLjZJQV79e8vn8/qm+/Ug
+	F+sXH3TxZCIBNnB2RLRnbzcA46wUo6OHKhRoRDYUitK+cU96eJdIpkkzm2RviESv
+	NlYtJu/NkVmlq8VszF4T8cyHnItYdxZ29PrNEW5V0oQyl21Z3uSTvu4O+seAzuK2
+	0ASW/lGrdH6ktIOSRilZ41mOg2ec+EshCwJatnftrSgQ+IYTlhbUrmJUITjnBAL6
+	/BW1bA==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3xgdqd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 01:27:29 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49N1RTsM022705
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 01:27:29 GMT
+Received: from [10.47.206.1] (10.49.16.6) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 18:27:28 -0700
+Message-ID: <7c6c6343-a0f7-411f-aea4-c793317c164e@quicinc.com>
+Date: Tue, 22 Oct 2024 18:27:27 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: PH7PR12MB7914:EE_|SA1PR12MB8161:EE_
-X-MS-Office365-Filtering-Correlation-Id: 95789409-8b2d-47b5-a8dc-08dcf301d4cf
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?dFFTMUwwZTVTWldFSnhSTzFUNE5PaXpKUWZZUmUvbVNoYkpJdXVieDBsMEtX?=
- =?utf-8?B?TEM3TFJudHZhSXg0cXVCRVZjRlZnUnNsNy9iTndkYUltVUp6YUdRMmozSlIx?=
- =?utf-8?B?enFna1J5NzcwTGUwOElMVDZueXl6MXJQSFZZbzRxYldKOXVKVEdScTN6b3Ar?=
- =?utf-8?B?RlR1ZWdUVlpLcDlURHYzc0hGS3Yvdi9pSE5IK0ZJZmtGeXVvSlNlZExpQ3JJ?=
- =?utf-8?B?eU9HTWtNQWVHUHRwVGJNSUQ4MjIwTVgrNEloRlFkb0s0S0UwbWM3WHl5L1o2?=
- =?utf-8?B?cmFWckR3VU9WdDVYZEkwMUxMRnFvM0tzVGRrNzRTbS9BL0d3TnNJc01XcE5B?=
- =?utf-8?B?V00wZ2NGUWNwSER4cXh2OXl2c0YwTy9POTNWM2FYUFBPc2pJYndJVE5NNTgz?=
- =?utf-8?B?TG5SNDZCTWtuMmxpK3lnSStHYVZNRFZxdFpoTXBaQ1lkaGE3OEFYL3E0YjFi?=
- =?utf-8?B?VUZWUlhjWlJHa0dRRFRoZ0x1YTFYRkNXTldZVGNOZXNQbTAzYUFlZkFDSkJM?=
- =?utf-8?B?VmhmRjVQU0NMUEI0eFdxa2dyN0RjVnYrckI2cHdObC85bWVSdE5NTFdUV2ww?=
- =?utf-8?B?b1BJMjdhSENMN2VUVC82dXZ1eFBURFV1K2g1aWk5bnNNR3lrby9VVWpXUDhp?=
- =?utf-8?B?MnRjOWk2VFE2bWs4YzJiNmF4UDh3cFpLalpoSHBoQy85cEhTWnBsTEZNVWtJ?=
- =?utf-8?B?dnpNYkdMOFhrT1ZhMzE0aHVGS0xSdVBLN2FaZ1RsNGM1cnNLMnhwK0ZEblVC?=
- =?utf-8?B?Wncyd2NlNy91dU1GaC92b29nTksyeE1maDJoaTBHVkhjY3IvMXlvQmJiaktP?=
- =?utf-8?B?clVpNS9YUzl2aHZYbzBFMzFRM1d4M091N3U0ZzRpYi9QQmZWL3pOZUlZMHlZ?=
- =?utf-8?B?VjRCN1FyNFJKbUhYYW5pc1ZURm5xSFdOWEFrcUo3Wnl2NFVMMUh1NmJWKytZ?=
- =?utf-8?B?U0RsREQ2aFhHeFVDMGQwWlphc1IzOXhIM1NPZWZMTmh1aUFPUXpCamNqTGZs?=
- =?utf-8?B?MlVXcytKK1BrQjJDOXM5cWljZ1VJb20vNkNiQnpNdzR2Y0k5NjRFWVRUTG9S?=
- =?utf-8?B?dnpGbWFHbjBhVldVQ3RTeTA2S2k3VVB3RzVvZXFGbFJFUU9uT0doY0dTTXV5?=
- =?utf-8?B?U3VkL3hlN1dyUFBNVVczZFpGL1FTTnJ5SGxOamg3ZnQreml6TGFYang2b2tw?=
- =?utf-8?B?SC8xc2lBWVhNZkZuNU8rdy96WTV2TnF0Z0tFZVdRRG5ETmtnT1ErNXZPaENt?=
- =?utf-8?B?WXJpUmg2cHVCbGd2Z01UL25NOHVpK3pKc2xUalVUVjNsNlJERGdLek1ZYVNm?=
- =?utf-8?B?NDlacHBWbFd3RXN0MllUT3paR294eXh3bGQ4bXJXc2JtTmZXb1ErNEl0ekYr?=
- =?utf-8?B?ZHNzemFTQjNueUphcTZ3ZER3RVg5eUt3Q1prMW8yWWFVa3RJdlNZTG5ySTZh?=
- =?utf-8?B?WTN6b00zTEtqaStzZDU3aXo1L2lUVlRxeXIyTkpObEo5eDZDLzYrZUVoMDYy?=
- =?utf-8?B?SEViQjlZa1NsVGlTeStXYmExVkI5ZFl3c25POExZaXpiN3NGSVhYZ3RTUGZM?=
- =?utf-8?B?RW5nRFJnQWlXZi91bWx0TTBKbVRKNFVFZzE4WVJFait4dVpEeGVrUlVNWFZy?=
- =?utf-8?B?UGRPMU5CbE5xU2t6Q1M3MXJKY01JeXB4cDlvaURLRDRKV2ZoeFFtQkoxa3hh?=
- =?utf-8?B?YmdGcHM0NFlrVzJSSnM5dTRma3BEcWZ2TjFuaElyYjJEd0lnVVJTSDd3Wk52?=
- =?utf-8?Q?keeJimRzc8mmI7cBNithVo3jgXeOT7xNxiJFKaD?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PH7PR12MB7914.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZXpYVEo4blpTQmwzYmNzUWNFZXpncTI0NUhkQTFraEJ2ck4wbG41VGxhaXlo?=
- =?utf-8?B?SHZYOTdFVi9OUDVMTkhPVTAxdmVGREdqZTRUSGZJdU9HVnA2SFBOdy92ejFo?=
- =?utf-8?B?UjZjRldYd3dleEJtYjRMNU5EMENQZ2lrejdMQ0JNNklGSTVrYkdhUnZJZzVn?=
- =?utf-8?B?Mmc2aytCanNQVjUwVThXcnFOSCs2V3YrSmZHMnN3U3lMSldrRFBleXV4cUg0?=
- =?utf-8?B?SFNobTVsUXBnMHhQNjE4MTNZQ1kxSHZNOERZU0s3WTlJTmYrZHphZjFsSWtj?=
- =?utf-8?B?YkZNRFYzelkxaU9GMEgwT050SWNwNVFobjJENnZIcDRuVDByWTZRcW5ZV2Qx?=
- =?utf-8?B?MGpJYmRDMjR4czAwZWoxcjlqN0pZTU5EWGxyYTVrR2cvRU15ajVBeElyYXFB?=
- =?utf-8?B?clFnRG13S2FocWpES3FubDMzY1NXdllvMVFCeTJ6QjJjVWpsME5tM0I0UG54?=
- =?utf-8?B?L0RNenY4SG9NbzdLaGx4VSt5Z2JzUEhTU2p2Y0pVNkU1V1FCQm5TSGZ6Z1Ix?=
- =?utf-8?B?b2tuV28wbXdKMTY3YXc2aDJpRHVHZ204eXkwcWVPREtCbnM0bFEydTZuWkhM?=
- =?utf-8?B?RDBVdTlnQTk2WnFkN1BYL2NrUUNYZXBHR0RncVJ1cVMxeUVCcjJFOEV2cUJH?=
- =?utf-8?B?VVZka0NwaU5pRDU1RDBKVHN2ZHhQUVBJcE04cGZOZ3JRa0VjRE5Ra0lFV2xL?=
- =?utf-8?B?bG9ncE9KZWJSODBhcGhKYjRmUFN6bjFHWE1jTGRsRWJhNjVvc2hGQWJXaDlH?=
- =?utf-8?B?bFoyTldTV21uZDAybjdzZzcwendEdzQrN2lSRUFXdG51TjNPdUc2Y1VwNndX?=
- =?utf-8?B?ZE9xZDUwY2Q0c3Fibk5CMHZVSS9mYWlSUE9welBicURCbVQwdjZSc0NxZzUx?=
- =?utf-8?B?emlGN3YrR1JHNTNMTzd2U083Z2d2VVRITStsRVNYc0crUzVPRzNUS0xEUTha?=
- =?utf-8?B?NzZxeEJDOEZmOVJhSzZJU2J5WHZkbm1jNHNXd1E4Qkg1MEczbzFxa2M3SmZT?=
- =?utf-8?B?VUMzdUl0Z2pjbnhoTVFmRlJDdmJGZ1A2TjJOR3NlL0NvZVQ5R0NEYmZmTlpi?=
- =?utf-8?B?TmZnaXR4ekpXUVV4ZDRqZkJpNFJNM0Faa1VtU0xlK1ZyemUvT2FKbjBQR0ww?=
- =?utf-8?B?VVhhVXdQWnRVcFZPWER6TlYwTC94SFREdDBuNm91RnVZdEZER1dhRjVMQktH?=
- =?utf-8?B?bGZETGJwejI0aVBzektDSGZoY1BIdGRsVVRuK3RQUDFyLzQrcE9vamJ6cFFa?=
- =?utf-8?B?SnJvRlJrUDNkVndGOWgwQVNtQkorWFFLL2hOOEpBdEZZbG1HMEszcUFWOS85?=
- =?utf-8?B?dDFmL0p6c0dpcStadERReHdSZ0JEaTRVZXRpWkw5b2dyYy9lZ3E0VlNuYzQ4?=
- =?utf-8?B?bjl4QnVab3RUNFJNYTViMXRJVHBiQWlhL2tJWnl6N1VLNXpRRDB4N1ZkenhL?=
- =?utf-8?B?TU00ZnJPMElDUWZhV2FXcTc2dTNmMTZSanZRUHAwaFNOZTBEanQ2MjBJQXVn?=
- =?utf-8?B?UzRTZWk0aDgxZFNUV0o4L2ZWRllMaEZpU0hybjJqZ2pUTVBvOXh3NEhFVUo0?=
- =?utf-8?B?bFZyQTRHQWJ1SXp0cXZlRmJNN2UxdEJUdnpKKzBFQkJUMG1WK2NFSFIvd1ZC?=
- =?utf-8?B?OG5FK2tlejdhVjBwRHpSd0VrUHdGRFdHMkNTeHVFUnJTTURiQW5UZFhid2V4?=
- =?utf-8?B?elhoOUpLZzB1RjNOYVFjd1lBTzRrMExUY2xLWlJNck9paFdGc2huNlZwejcr?=
- =?utf-8?B?YXB2NW1DemI4cjdvaldCY2N4bTM0MW1ZQmh6UXpyTFM1TUQyL2NhNkUxMFJL?=
- =?utf-8?B?NjB4RWt2b2FzZndCbythM1ZaQzZxMVpxVWJrQlhYZlRtNmN2WG9LU0JaK0k0?=
- =?utf-8?B?aytReUFCKytBWDZHQUxCYlVnUk1VdE5YVUcxR3BvZlFuenJZK215aGoxWFA2?=
- =?utf-8?B?M0ZENUhJM0ZzWmc5T1JvUnV5QXdpNXQ2YmxMWU1DRGRjR2lyM2crbTY5RVli?=
- =?utf-8?B?ck9CbWJVVTlXVDVleTBNZmFyME1jSjJjc0JYQ3NIcCtEbUEvdElFR2tsYUNm?=
- =?utf-8?B?UlZXbWQvYmpZVmhxSDNwZVNhSlRmTHdseXIyS05VWEQrSHpDRWx1QkZEc3c0?=
- =?utf-8?Q?V9GWTbWJLQvjciklnDtJS5fj7?=
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 95789409-8b2d-47b5-a8dc-08dcf301d4cf
-X-MS-Exchange-CrossTenant-AuthSource: PH7PR12MB7914.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 01:27:17.1772
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 7tQyJ9fzjbek5Bu/ygyvAEeErsmqfX87qCzHtwwse52ELNfEqGRY5YeSZJJZCsccr2VKwwqRFUxdf45gNv4V6w==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA1PR12MB8161
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] regulator: qcom-rpmh: Update ranges for FTSMPS525
+To: Melody Olvera <quic_molvera@quicinc.com>,
+        Liam Girdwood
+	<lgirdwood@gmail.com>, Mark Brown <broonie@kernel.org>,
+        Trilok Soni
+	<quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>
+CC: <linux-arm-msm@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+References: <20241021230348.2632381-1-quic_molvera@quicinc.com>
+Content-Language: en-US
+From: David Collins <quic_collinsd@quicinc.com>
+In-Reply-To: <20241021230348.2632381-1-quic_molvera@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nalasex01a.na.qualcomm.com (10.47.209.196) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: YGBSTUK04bkYHQovDlrnXgSh87u9G8uf
+X-Proofpoint-ORIG-GUID: YGBSTUK04bkYHQovDlrnXgSh87u9G8uf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
+ impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
+ mlxlogscore=999 malwarescore=0 priorityscore=1501 adultscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230006
 
-
-
-On 2024/10/22 9:04 PM, Alex Deucher wrote:
-> External email: Use caution opening links or attachments
+On 10/21/24 16:03, Melody Olvera wrote:
+> The FTSMPS525 regulator has several potential ranges,
+> so update the ranges accordingly for SM8750.
 > 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  drivers/regulator/qcom-rpmh-regulator.c | 9 ++++++---
+>  1 file changed, 6 insertions(+), 3 deletions(-)
 > 
-> On Tue, Oct 22, 2024 at 2:31 AM Kai-Heng Feng <kaihengf@nvidia.com> wrote:
->>
->> Hi Luke,
->>
->> On 2024/10/15 4:04 PM, Luke Jones wrote:
->>> On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
->>>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>>
->>>> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display device.
->>>>
->>>> ```
->>>> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForce
->>>> RTX 4070 Max-Q / Mobile] (rev a1)
->>>> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
->>>> Strix [Radeon 880M / 890M] (rev c1)
->>>> ```
->>>>
->>>> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as the
->>>> boot VGA device, but really the eDP is connected to the AMD PCI display
->>>> device.
->>>>
->>>> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA device.
->>>>
->>>> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
->>>> Reported-by: Luke D. Jones <luke@ljones.dev>
->>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
->>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>>> ---
->>>>    drivers/pci/vgaarb.c | 7 -------
->>>>    1 file changed, 7 deletions(-)
->>>>
->>>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
->>>> index 78748e8d2dba..05ac2b672d4b 100644
->>>> --- a/drivers/pci/vgaarb.c
->>>> +++ b/drivers/pci/vgaarb.c
->>>> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_device *vgadev)
->>>>               return true;
->>>>       }
->>>>
->>>> -    /*
->>>> -     * Vgadev has neither IO nor MEM enabled.  If we haven't found any
->>>> -     * other VGA devices, it is the best candidate so far.
->>>> -     */
->>>> -    if (!boot_vga)
->>>> -            return true;
->>>> -
->>>>       return false;
->>>>    }
->>>>
->>>> --
->>>> 2.43.0
->>>
->>> Hi Mario,
->>>
->>> I can verify that this does leave the `boot_vga` attribute set as 0 for the NVIDIA device.
->>
->> Does the following diff work for you?
->> This variant should be less risky for most systems.
->>
->> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
->> index 78748e8d2dba..3fb734cb9c1b 100644
->> --- a/drivers/pci/vgaarb.c
->> +++ b/drivers/pci/vgaarb.c
->> @@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device *vgadev)
->>                   return true;
->>           }
->>
->> +       if (vga_arb_integrated_gpu(&pdev->dev))
->> +               return true;
->> +
+> diff --git a/drivers/regulator/qcom-rpmh-regulator.c b/drivers/regulator/qcom-rpmh-regulator.c
+> index 6c343b4b9d15..272de7bc9c88 100644
+> --- a/drivers/regulator/qcom-rpmh-regulator.c
+> +++ b/drivers/regulator/qcom-rpmh-regulator.c
+> @@ -848,9 +848,10 @@ static const struct rpmh_vreg_hw_data pmic5_ftsmps525_lv = {
+>  	.ops = &rpmh_regulator_vrm_ops,
+>  	.voltage_ranges = (struct linear_range[]) {
+>  		REGULATOR_LINEAR_RANGE(300000, 0, 267, 4000),
+> +		REGULATOR_LINEAR_RANGE(1376000, 268, 438, 8000),
+>  	},
+> -	.n_linear_ranges = 1,
+> -	.n_voltages = 268,
+> +	.n_linear_ranges = 2,
+> +	.n_voltages = 439,
+>  	.pmic_mode_map = pmic_mode_map_pmic5_smps,
+>  	.of_map_mode = rpmh_regulator_pmic4_smps_of_map_mode,
+>  };
+
+This configuration which specifies both LV and MV ranges should replace
+the pmic5_ftsmps525_lv and pmic5_ftsmps525_mv configurations.  It should
+then be used in the per-PMIC data tables below.
+
+All FTSMPS525 type regulators physically support both LV and MV ranges.
+However, the per-regulator selection of which range is used can only be
+set by boot loader firmware and the configuration is locked in hardware
+after initialization.  Unfortunately, the qcom-rpmh-regulator driver has
+no mechanism to determine at runtime if LV or MV range has been set for
+a particular regulator.  Additionally, that exact same regulator in the
+same PMIC could be configured for the other range when used on a
+different board (where the power grid has different requirements).
+
+Listing support in a unified configuration for both LV and MV ranges
+fixes the situation as it will work on all boards regardless of firmware
+LV vs MV selection.  This also accurately captures the capability of the
+regulator at a hardware level.
+
+> @@ -1196,6 +1197,8 @@ static const struct rpmh_vreg_init_data pm8550vs_vreg_data[] = {
+>  	RPMH_VREG("smps4",  "smp%s4",  &pmic5_ftsmps525_lv, "vdd-s4"),
+>  	RPMH_VREG("smps5",  "smp%s5",  &pmic5_ftsmps525_lv, "vdd-s5"),
+>  	RPMH_VREG("smps6",  "smp%s6",  &pmic5_ftsmps525_mv, "vdd-s6"),
+> +	RPMH_VREG("smps7",  "smp%s7",  &pmic5_ftsmps525_lv, "vdd-s7"),
+> +	RPMH_VREG("smps8",  "smp%s8",  &pmic5_ftsmps525_lv, "vdd-s8"),
+
+These lines should not be added.  PMIC PM8550VS only has 6 FTSMPS525
+regulators inside.
+
+>  	RPMH_VREG("ldo1",   "ldo%s1",  &pmic5_nldo515,   "vdd-l1"),
+>  	RPMH_VREG("ldo2",   "ldo%s2",  &pmic5_nldo515,   "vdd-l2"),
+>  	RPMH_VREG("ldo3",   "ldo%s3",  &pmic5_nldo515,   "vdd-l3"),
+> @@ -1205,7 +1208,7 @@ static const struct rpmh_vreg_init_data pm8550vs_vreg_data[] = {
+>  static const struct rpmh_vreg_init_data pm8550ve_vreg_data[] = {
+>  	RPMH_VREG("smps1", "smp%s1", &pmic5_ftsmps525_lv, "vdd-s1"),
+>  	RPMH_VREG("smps2", "smp%s2", &pmic5_ftsmps525_lv, "vdd-s2"),
+> -	RPMH_VREG("smps3", "smp%s3", &pmic5_ftsmps525_lv, "vdd-s3"),
+> +	RPMH_VREG("smps3", "smp%s3", &pmic5_ftsmps525_mv, "vdd-s3"),
+>  	RPMH_VREG("smps4", "smp%s4", &pmic5_ftsmps525_mv, "vdd-s4"),
+>  	RPMH_VREG("smps5", "smp%s5", &pmic5_ftsmps525_lv, "vdd-s5"),
+>  	RPMH_VREG("smps6", "smp%s6", &pmic5_ftsmps525_lv, "vdd-s6"),
 > 
-> The problem is that the integrated graphics does not support VGA.
+> base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
 
-Right, so the check has to be used much earlier.
-
-I wonder does the integrated GFX have _DOD/_DOS while the discrete one doesn't? 
-If that's the case, vga_arb_integrated_gpu() can be used to differentiate which 
-one is the boot GFX.
-
-Kai-Heng
-
-> 
-> Alex
-> 
->>           /*
->>            * Vgadev has neither IO nor MEM enabled.  If we haven't found any
->>            * other VGA devices, it is the best candidate so far.
->>
->>
->> Kai-Heng
->>
->>>
->>> Tested-by: Luke D. Jones <luke@ljones.dev>
->>
+Take care,
+David Collins
 
 
