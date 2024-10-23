@@ -1,132 +1,157 @@
-Return-Path: <linux-kernel+bounces-377231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BE839ABB9A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:34:01 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 13CAA9ABB77
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:26:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EFDA8B23CD2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:33:58 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7CA0EB22CDD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:26:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CECE052F88;
-	Wed, 23 Oct 2024 02:33:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48DEF52F88;
+	Wed, 23 Oct 2024 02:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b="gESraCBN"
-Received: from cornsilk.maple.relay.mailchannels.net (cornsilk.maple.relay.mailchannels.net [23.83.214.40])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OV52kJ4F"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A21C3E47B;
-	Wed, 23 Oct 2024 02:33:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=23.83.214.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729650799; cv=pass; b=ScETELDd2H/jRNddrXybFVSHdULlMW4pn+BIHwpZNF3R65qafKxUZ0RF4FYNlPfJDHGjvsEJhcoRXqO4HAa+Vr9Hq6KhtlALVK8VcW+gium2wU7rOFNWHaApyxPrlWktJAmPf2Hjr179HUAM2nYHDgCPelbAclT8F9c4BXXBpyQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729650799; c=relaxed/simple;
-	bh=5fYAjH5FlAHwtaSvvs3W+zv+PNPWwGY2qt5JII6jlUQ=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 855FB1CA81;
+	Wed, 23 Oct 2024 02:26:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729650364; cv=none; b=C4LTdGIcwl02HZYq9X5NZA0fQ5lWUZlZE32NLzoeM71xs8BAYdUz82fOJNZsGo7HbkM7e/uaKjpOjcBpj+ykhVTK9y6UcS8ly0X6rHqxmOiTPUU/QmNskNFoPBsNU30dZPe7w72AbjQwk+uDU1mkf/R/N7z7rwiFpwqC4cnkyUM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729650364; c=relaxed/simple;
+	bh=aJii0wlPQcMK44UHYw5Iz7PQVdWdQ12Cr0ITPClYgIo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=JMlbzRy9fxCO8j1Q7kHAs/Sb15u4Ah/QPGkjlT6uQfg4LERfcUsnovQkaPs3YLxPToVpiiJ8edJzvcnMbblorXDIo90DHK2fJJJ42uyso18xIemUZ/qzmQdjQwYeY13qMyunfiCFbM6oKYlKADvAaW4o0EkOjq2C0tMv91qvHuc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net; spf=pass smtp.mailfrom=stgolabs.net; dkim=pass (2048-bit key) header.d=stgolabs.net header.i=@stgolabs.net header.b=gESraCBN; arc=pass smtp.client-ip=23.83.214.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=stgolabs.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-Received: from relay.mailchannels.net (localhost [127.0.0.1])
-	by relay.mailchannels.net (Postfix) with ESMTP id 282C7A6430;
-	Wed, 23 Oct 2024 02:27:40 +0000 (UTC)
-Received: from pdx1-sub0-mail-a233.dreamhost.com (trex-8.trex.outbound.svc.cluster.local [100.103.220.31])
-	(Authenticated sender: dreamhost)
-	by relay.mailchannels.net (Postfix) with ESMTPA id A3FB6A6482;
-	Wed, 23 Oct 2024 02:27:39 +0000 (UTC)
-ARC-Seal: i=1; s=arc-2022; d=mailchannels.net; t=1729650459; a=rsa-sha256;
-	cv=none;
-	b=kOIQuPZxTZIEvOH6Rm1FGhDXdP2CS3cAdtgGlUmw/riuVaQFlpLxPhyVRWwSBrP0blA+b7
-	VkK8ROr3IAJv5ZvnHwzIs9/8wXwD6YUnsLi2v27v1dZy+DGYp4f1ugvVaNrfdJlkIUK5yR
-	TRWbwiBT0IA4yqBpQ01oxFt9B3rgCe7WSm4jreDFFaZ3oTJLNMVzWdBuHFtd0IY0sEesSu
-	BPV/0qAPdCWK+5vMzngkJTGUEts9byzU8F+e5pZMiTt5QCSGxWhUUvAd0h9tthZc5w4laU
-	hZ3w3A9EhB8qTOlTKQnG8EZNYlxg0+X/JsKRts7FhJXM8N2oRlEc61ZDc4rkoQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
- d=mailchannels.net;
-	s=arc-2022; t=1729650459;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references:dkim-signature;
-	bh=5fYAjH5FlAHwtaSvvs3W+zv+PNPWwGY2qt5JII6jlUQ=;
-	b=8ul1yl4+Ry8IwIINdayHUSvlRP5q+KboDSS8SQ1OWU6/8crGxiXeW7BHsCn59ixBEwg67D
-	hQ3ilEdaLaz6L38nANAcHPVbumn55C6ZUqfKHeELEMsJLMJKWWaqPWv5MgkLLBkty8+qvc
-	ym8jFn5JdEivmMeMv+XqRHzjnICwfTgJU7qS92yJmIF6CWJI7w6VmxO7F+XwFM3FD+hDpx
-	HPiXNqMQeVilqTmYeEXMKFqet3EwKq8/4FIvKgUbv37nmeXZ29j1fljn2u8L3lsGeOiWlx
-	yceMku5MBQH5ATBaCABE+vh4uod69e84msRDH5RQ/gR9YbTrDtcYEnCQaw7VtQ==
-ARC-Authentication-Results: i=1;
-	rspamd-5bbb596db8-j9c44;
-	auth=pass smtp.auth=dreamhost smtp.mailfrom=dave@stgolabs.net
-X-Sender-Id: dreamhost|x-authsender|dave@stgolabs.net
-X-MC-Relay: Neutral
-X-MailChannels-SenderId: dreamhost|x-authsender|dave@stgolabs.net
-X-MailChannels-Auth-Id: dreamhost
-X-Fumbling-Ski: 4606d8de4e8c482b_1729650459965_3770196926
-X-MC-Loop-Signature: 1729650459965:1152177914
-X-MC-Ingress-Time: 1729650459965
-Received: from pdx1-sub0-mail-a233.dreamhost.com (pop.dreamhost.com
- [64.90.62.162])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384)
-	by 100.103.220.31 (trex/7.0.2);
-	Wed, 23 Oct 2024 02:27:39 +0000
-Received: from offworld (ip72-199-50-187.sd.sd.cox.net [72.199.50.187])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: dave@stgolabs.net)
-	by pdx1-sub0-mail-a233.dreamhost.com (Postfix) with ESMTPSA id 4XYCcp5bVDz2K;
-	Tue, 22 Oct 2024 19:27:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=stgolabs.net;
-	s=dreamhost; t=1729650459;
-	bh=5fYAjH5FlAHwtaSvvs3W+zv+PNPWwGY2qt5JII6jlUQ=;
-	h=Date:From:To:Cc:Subject:Content-Type;
-	b=gESraCBNlRRONSC7xQQ+LeQNhY1PHVR4RgR0ynVU1gYq7EZHXwkZG060u7HxWNhgI
-	 71PtPu8PP8oEHMP7m9Oz7tRJpXMD/6B8xRZXqMPQyJyRKSWoiTrUhCkin0s22Hgj1b
-	 tdrN2qS/Tebw9aKPvPUK0U95e2TvkZ8psgBANFJd6XqGgdMwb6qXXgyepPzaq4jyMk
-	 OJSH4NccdRNyrVYxzeDvtmBCeOa7s92Ok1uWuRMoLHhCxh1KxXOYD52RvPvH20VbvJ
-	 Ixm+avGHNOlikfFrLIPYzz1tIjEKJ0RuWmTfwLJ/3LbJT19kJq5GUv3qu7uUJfqHEu
-	 GIQ4Zued201Ew==
-Date: Tue, 22 Oct 2024 19:24:54 -0700
-From: Davidlohr Bueso <dave@stgolabs.net>
-To: shiju.jose@huawei.com
-Cc: dave.jiang@intel.com, dan.j.williams@intel.com, 
-	jonathan.cameron@huawei.com, alison.schofield@intel.com, vishal.l.verma@intel.com, 
-	ira.weiny@intel.com, linux-cxl@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linuxarm@huawei.com, tanxiaofei@huawei.com, prime.zeng@hisilicon.com
-Subject: Re: [PATCH v2 4/6] cxl/events: Update DRAM Event Record to CXL spec
- rev 3.1
-Message-ID: <7btps7egaaxz5wguakki3qs6aorv2ujhjgirrkgmdx42rpjqgc@qzzjb7ijb6bh>
-References: <20241022105849.1272-1-shiju.jose@huawei.com>
- <20241022105849.1272-5-shiju.jose@huawei.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=CNoM0RU9LwBOP+C5VU0Tybt8+B3A7kQ7SZ0IGOAC5xp41/2Pv3MYR1VuSwdOmJcbweV3xxjOpzJ7tuu9TfFuneMOfMgW6uJI0D3quoppjPjH9LAglXMNpt2VUDtKLAiuoSCTt2hIGGc/IrmbApBoXEaXEFGRJ2obcod5B4WklDc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OV52kJ4F; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6E6AFC4CEC3;
+	Wed, 23 Oct 2024 02:25:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729650364;
+	bh=aJii0wlPQcMK44UHYw5Iz7PQVdWdQ12Cr0ITPClYgIo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=OV52kJ4FsxxzSBeENS9k+vcJvi+ee8AteRf6pAEJ5C898hJZHVv+c0qxAgvxKg+V4
+	 mGC+m2E3vfYYx8dMPANNIqOhoGMCgcnW7DAfZ+XtUfqiLOu08IK6bfR31xshoSbmY2
+	 h5fP3+I30WpQLxqAQTceTfQQuI/SEtDmM6butPlopBcZEETjp9eUc5AVIFyYzT28Ht
+	 yfsDUqcCIb5v9akypZpj01PblzSAsayHU/u+ulfJluHM9lL1tqI/VrXBirbpluj3+F
+	 Nc2MmWc1DafcpuJfabZIYqZIsUYAuxC9h5/NKMv9XKanH7yKlGJCIkKr7HJV2P5fCQ
+	 JxEv+74sIAqKg==
+Date: Wed, 23 Oct 2024 02:25:56 +0000
+From: sergeh@kernel.org
+To: Eric Snowberg <eric.snowberg@oracle.com>
+Cc: linux-security-module@vger.kernel.org, dhowells@redhat.com,
+	dwmw2@infradead.org, herbert@gondor.apana.org.au,
+	davem@davemloft.net, ardb@kernel.org, jarkko@kernel.org,
+	paul@paul-moore.com, jmorris@namei.org, serge@hallyn.com,
+	zohar@linux.ibm.com, roberto.sassu@huawei.com,
+	dmitry.kasatkin@gmail.com, mic@digikod.net, casey@schaufler-ca.com,
+	stefanb@linux.ibm.com, ebiggers@kernel.org, rdunlap@infradead.org,
+	linux-kernel@vger.kernel.org, keyrings@vger.kernel.org,
+	linux-crypto@vger.kernel.org, linux-efi@vger.kernel.org,
+	linux-integrity@vger.kernel.org
+Subject: Re: [RFC PATCH v3 08/13] clavis: Introduce new LSM called clavis
+Message-ID: <ZxhetCy5RE1k4_Jk@lei>
+References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
+ <20241017155516.2582369-9-eric.snowberg@oracle.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241022105849.1272-5-shiju.jose@huawei.com>
-User-Agent: NeoMutt/20240425
+In-Reply-To: <20241017155516.2582369-9-eric.snowberg@oracle.com>
 
-On Tue, 22 Oct 2024, shiju.jose@huawei.com wrote:\n
->From: Shiju Jose <shiju.jose@huawei.com>
->
->CXL spec 3.1 section 8.2.9.2.1.2 Table 8-46, DRAM Event Record has updated
->with following new fields and new types for Memory Event Type, Transaction
->Type and Validity Flags fields.
->1. Component Identifier
->2. Sub-channel
->3. Advanced Programmable Corrected Memory Error Threshold Event Flags
->4. Corrected Memory Error Count at Event
->5. Memory Event Sub-Type
->
->Update DRAM events record and DRAM trace event for the above spec
->changes. The new fields are inserted in logical places.
->Includes trivial consistency of white space improvements.
+On Thu, Oct 17, 2024 at 09:55:11AM -0600, Eric Snowberg wrote:
+> Introduce a new LSM called clavis.  The motivation behind this LSM is to
+> provide access control for system keys.  The access control list is
+> contained within a keyring call .clavis.  During boot if the clavis= boot
+> arg is supplied with a key id contained within any of the current system
+> keyrings (builtin, secondary, machine, or platform) it shall be used as
+> the root of trust for validating anything that is added to the ACL list.
+> 
+> The first restriction introduced with this LSM is the ability to enforce
+> key usage.  The kernel already has a notion of tracking key usage.  This
+> LSM adds the ability to enforce this usage based on the system owners
+> configuration.
+> 
+> Each system key may have one or more uses defined within the ACL list.
+> Until an entry is added to the .clavis keyring, no other system key may
+> be used for any other purpose.
+> 
+> Signed-off-by: Eric Snowberg <eric.snowberg@oracle.com>
+> ---
+>  Documentation/admin-guide/LSM/clavis.rst      | 191 ++++++++++++++++++
+>  MAINTAINERS                                   |   7 +
+>  crypto/asymmetric_keys/signature.c            |   4 +
+>  include/linux/lsm_count.h                     |   8 +-
+>  include/linux/lsm_hook_defs.h                 |   2 +
+>  include/linux/security.h                      |   7 +
+>  include/uapi/linux/lsm.h                      |   1 +
+>  security/Kconfig                              |  10 +-
+>  security/clavis/Makefile                      |   1 +
+>  security/clavis/clavis.c                      |  26 +++
+>  security/clavis/clavis.h                      |   4 +
+>  security/clavis/clavis_keyring.c              |  78 ++++++-
+>  security/security.c                           |  13 ++
+>  .../selftests/lsm/lsm_list_modules_test.c     |   3 +
+>  14 files changed, 346 insertions(+), 9 deletions(-)
+>  create mode 100644 Documentation/admin-guide/LSM/clavis.rst
+>  create mode 100644 security/clavis/clavis.c
+> 
+> diff --git a/Documentation/admin-guide/LSM/clavis.rst b/Documentation/admin-guide/LSM/clavis.rst
+> new file mode 100644
+> index 000000000000..0e924f638a86
+> --- /dev/null
+> +++ b/Documentation/admin-guide/LSM/clavis.rst
+> @@ -0,0 +1,191 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +======
+> +Clavis
+> +======
+> +
+> +Clavis is a Linux Security Module that provides mandatory access control to
+> +system kernel keys (i.e. builtin, secondary, machine and platform). These
+> +restrictions will prohibit keys from being used for validation. Upon boot, the
+> +Clavis LSM is provided a key id as a boot parameter.  This single key is then
+> +used as the root of trust for any access control modifications made going
+> +forward. Access control updates must be signed and validated by this key.
+> +
+> +Clavis has its own keyring.  All ACL updates are applied through this keyring.
+> +The update must be signed by the single root of trust key.
+> +
+> +When enabled, all system keys are prohibited from being used until an ACL is
+> +added for them.
+> +
+> +On UEFI platforms, the root of trust key shall survive a kexec. Trying to
+> +defeat or change it from the command line is not allowed.  The original boot
+> +parameter is stored in UEFI and will always be referenced following a kexec.
 
-Reviewed-by: Davidlohr Bueso <dave@stgolabs.net>
+Does this mean someone can reboot the host, boot another OS, store a key
+id in UEFI, and force the root of trust key to be one other than what
+the user lists in clavis= boot argument?
+
+Never mind!  Saw the answer in patches 10 and 11, thanks.
+
+> +The Clavis LSM contains a system keyring call .clavis.  It contains a single
+
+s/call/called/
+
+> +asymmetric key that is used to validate anything added to it.  This key can
+> +be added during boot and must be a preexisting system kernel key.  If the
+> +``clavis=`` boot parameter is not used, any asymmetric key the user owns
+
+Who is "the user", and precisely what does "owns' mean here?  Is it just
+restating that it must be a key already in one of the builtin or secondary
+or platform keyrings?
+
+And this is done by simply loading it into the clavis keyring, right?
+
+-serge
 
