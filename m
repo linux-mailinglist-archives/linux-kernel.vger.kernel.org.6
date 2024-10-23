@@ -1,95 +1,131 @@
-Return-Path: <linux-kernel+bounces-377918-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377919-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC8DB9AC889
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:07:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AE4F59AC88C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:07:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9896F1F20F44
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:07:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F254282853
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:07:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6CA3E1AB513;
-	Wed, 23 Oct 2024 11:05:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBB6D1AB539;
+	Wed, 23 Oct 2024 11:05:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="BnsC4x/9"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="oD8nWIOr"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA71A727F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:05:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF3AA1A76B2;
+	Wed, 23 Oct 2024 11:05:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729681537; cv=none; b=XTWHICS4z1gDBFA3M+AFtaKm/iekFvmcURpUwBy6+GHmxsXX9jy8w7Op/8Dcs4PO5LZmeZHaj1cvi2HlnplJ3mxRW/4P34Uxo0inAQrVBiG0VgCGIHb0WMtlJpeLRRI313HcXgkoImADv2Y5nT8PlJfyct2+Jc/7p/HtOuyJquo=
+	t=1729681547; cv=none; b=OoYpwIDmcmE/cSH0eRD7pjlR7kXVA1pcJFIUNk+EeTbPW1NyBWv3MtclMbtyFk0wWhX9k1FBxDVqw8pV6IYdJ/Vcv3Y54N/p9Fx35fgswUUJjUrJTFHNCk/gdOu1hqVpqzm3C2pZvnTYpCDIwABbz6IE0MaI7fKSev0RAWOKyN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729681537; c=relaxed/simple;
-	bh=sfDYrsc7jL8D8erZXRGgiet+3Cp94nf9m5xDJHz9CRk=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Awz1sAs/CjEzm0fJROgAZIzuyMXm389EALxGtt9GjvydXqnSVMZmREzPyuzH+Bg0nymLfj0WR6y4yMX0BM+Ngj7VQCKI46x1ZpgIKzsOLOQLoZc3KNmlPnd4ynXUYXdlMKr0mKU9//ipOYga3u8qITpX/LBK31p7QpU6pxWNFnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=BnsC4x/9; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
-	s=201909; t=1729681532;
-	bh=k1PQdwWV+FaoZceT3p/cXCl0FzqOvYe8Dz2UCeREsxI=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=BnsC4x/9hKn2WX8a/ynVLHtUy70nHjb2tMwMe/8nPz1URmvtwE8nyKrTjvUr9ERPG
-	 pV8IePcBNuB+PadOvWlF5ji8IWw0tfRmzKY6M6wwZACJoBlRGbwKK66VR3VwislwrG
-	 LUUBCSG1vxZcyq9f7i1NOn6NqYeEv1pLttGAkjrtzmDB4TGFo5wek2wO9L0nYDiwKF
-	 0N4XhiTySswSmxQH6M6zu2M17295HO490mA2s2W2VXWBOlaclwhxqEFNjf2p5v1Rq3
-	 iAFzRj/FmDFxAJUFpOO0uq65rUx4sVSORi67PWHi+2kzl43hBTSFYRHR7yW6MyFU53
-	 qVX9ZYDOwJVcQ==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYR6M2B5xz4wcs;
-	Wed, 23 Oct 2024 22:05:31 +1100 (AEDT)
-From: Michael Ellerman <mpe@ellerman.id.au>
-To: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>, Mark Rutland
- <mark.rutland@arm.com>, Alexander Shishkin
- <alexander.shishkin@linux.intel.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, LKML <linux-kernel@vger.kernel.org>, Stephane Eranian
- <eranian@google.com>, Ravi Bangoria <ravi.bangoria@amd.com>, Sandipan Das
- <sandipan.das@amd.com>
-Subject: Re: [PATCH v4 1/5] perf/core: Add PERF_FORMAT_DROPPED
-In-Reply-To: <20241023000928.957077-2-namhyung@kernel.org>
-References: <20241023000928.957077-1-namhyung@kernel.org>
- <20241023000928.957077-2-namhyung@kernel.org>
-Date: Wed, 23 Oct 2024 22:05:32 +1100
-Message-ID: <87ed472i6b.fsf@mail.lhotse>
+	s=arc-20240116; t=1729681547; c=relaxed/simple;
+	bh=RoJupA/pJTuOcTKNTkoFEuEcqD6COhEJm8+MmObXwFA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rGn6cMusB7ZtKLAPL+GsRjWaXAwSPx6vw2YuuZ3tZzolZ8GebAOORZNLi92uOKKOYO5c7/BjTqkDeB6KId9b6GWHsDDTckzPhmnczMjcz4Dhyq79XxdaRZlSGtN31CapctHsD8vx0P2gj88tSuVLvycKoT+LL/nbRxti7wLLp3s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=oD8nWIOr; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279873.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9w7Jj027468;
+	Wed, 23 Oct 2024 11:05:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	8bl46XToNi5CdCM6CI3wWfowVn/5duNkEX4nzsCSJg0=; b=oD8nWIOrLytAkXvV
+	SpXrcwMFaCHr83YxmKFl36kylNwvzsylLr8+w+RyIdI0xcw93jK4UEPx00Y5jCGJ
+	m7fMNRqfo81w/NL39/YPxDbgEA4RvG3U01zWIO4F4+7v3BbO5/UU+edO842WLmQ7
+	xCQrDLWrVSZ72nPJdu5NP3rRfq8po0CApB74Dxg+nnBaw0Rs8TggK/wWyHVV43WK
+	Uvh+a2GcNHRRrm25h2Kb1+uk5sP3CObR6xgXn6YXhlvKQVinajWx5tjveIGIZNnv
+	+0LLE3JVSiTUGhxi1m2Xw1EJwdR96KyYNTL3AoJRmTeYxrMg4iHvAYa24rbXqZW6
+	ia0kCw==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3whvwd-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 11:05:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NB5e3Q031828
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 11:05:40 GMT
+Received: from [10.131.33.37] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 04:05:37 -0700
+Message-ID: <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
+Date: Wed, 23 Oct 2024 16:35:35 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:102.0) Gecko/20100101
+ Thunderbird/102.11.0
+Subject: Re: [PATCH 0/2] X1E001DE Snapdragon Devkit for Windows
+Content-Language: en-US
+To: <andersson@kernel.org>, <konradybcio@kernel.org>, <krzk+dt@kernel.org>,
+        <robh+dt@kernel.org>
+CC: <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <conor+dt@kernel.org>,
+        <abel.vesa@linaro.org>, <srinivas.kandagatla@linaro.org>
+References: <20240911073337.90577-1-quic_sibis@quicinc.com>
+From: Sibi Sankar <quic_sibis@quicinc.com>
+In-Reply-To: <20240911073337.90577-1-quic_sibis@quicinc.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9ZE_5B1kWbiKYkbDRusaaJx6GMuaxhRZ
+X-Proofpoint-ORIG-GUID: 9ZE_5B1kWbiKYkbDRusaaJx6GMuaxhRZ
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 phishscore=0
+ mlxlogscore=999 lowpriorityscore=0 malwarescore=0 suspectscore=0
+ spamscore=0 mlxscore=0 impostorscore=0 clxscore=1015 priorityscore=1501
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230065
 
-Namhyung Kim <namhyung@kernel.org> writes:
-> When a perf_event is dropped due to some kind of (SW-based) filter, it
-> won't generate sample data.  For example, software events drops samples
-> when it doesn't match to privilege from exclude_{user,kernel}.
->
-> In order to account such dropped samples, add a new counter in the
-> perf_event, and let users can read(2) the number with the new
-> PERF_FORMAT_DROPPED like the lost sample count.
 
-Are we sure there's no scenario where exposing the dropped event count
-gives an unprivileged user a way to probe what's happening in the
-kernel, which is supposed to be prevented by exclude_kernel?
 
-Clearly it provides an attacker with some information, ie. the event
-fired in the kernel and was dropped.
+On 9/11/24 13:03, Sibi Sankar wrote:
+> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001DE
+> is the speed binned variant of X1E80100 that supports turbo boost up to
+> 4.3 Ghz. The initial support includes the following:
+> 
+> -DSPs
+> -Ethernet (RTL8125BG) over the pcie 5 instance.
+> -NVme
+> -Wifi
+> -USB-C ports
+> 
 
-For most events that's not very interesting, but for some maybe it could
-be a useful signal?
+Hi All,
 
-On the other hand most CPU PMUs implement filtering in hardware, which
-this won't affect, so maybe I'm being too paranoid.
+With the X1E Devkit cancelled and with no firmware updates promised for
+it perpetually, please chime in and let me know if you still want to get
+this series and rest (external-dp, usb-A ports, sd card slot and 3.5 mm
+Jack) merged and have it supported upstream for the folks who already
+received it!
 
-cheers
+-Sibi
+
+> Link: https://www.qualcomm.com/news/releases/2024/05/qualcomm-accelerates-development-for-copilot--pcs-with-snapdrago
+> 
+> Sibi Sankar (2):
+>    dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
+>    arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
+> 
+>   .../devicetree/bindings/arm/qcom.yaml         |   6 +
+>   arch/arm64/boot/dts/qcom/Makefile             |   1 +
+>   arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 813 ++++++++++++++++++
+>   3 files changed, 820 insertions(+)
+>   create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+> 
 
