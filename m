@@ -1,228 +1,134 @@
-Return-Path: <linux-kernel+bounces-377140-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377141-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 24E419ABA58
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:04:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 915B49ABA5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:07:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0ADB1F244E0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:04:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A371B21134
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:07:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7145F1A28C;
-	Wed, 23 Oct 2024 00:04:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5C120E6;
+	Wed, 23 Oct 2024 00:07:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jXK3ZBl3"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eRUJwDjH"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B26991798C;
-	Wed, 23 Oct 2024 00:04:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9CB2595
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:07:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729641849; cv=none; b=ncKQxFKshkBjcLimSf9d9/uM2ftjFmJsieEFXEcwk9grsu34KgPropBbhyOXbE7vyeeN5QA29n7z5mclncBBwfab1v/riUSYU0v728QDkgLYPO8cCn0lqwpaaFtb53Dv7SkmYVQMSwmtwRdJ+OYHajNp3ifKBno6+XT2hY9ik3w=
+	t=1729642034; cv=none; b=B8W6zSYMtI8IdqmlgYZ+6EBkBv5RnaY5Ym0b0yrSkE6boeoROVPHI856UdW8SIPEmztVekCD2EkSuTsEWi069mg+DlbGhXOhgB0ax+g64ezdsmt6gsbtOd+Kx4mpzFrvdmWQla0OlXro/LI1ie/EJmpBu8czTQUGa9AaBU0SRNc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729641849; c=relaxed/simple;
-	bh=lp+qOB2AsGXn3zORPru0TEAo87RI1MyOJb9mTrSMdWI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RE3MiBJVfYSBzXzlNo/b3RUbERURrn9A+B+yeznddkb3Hst7azXcf7JTAGOGAEwqjc+K+FV1nWifKCGKpX0e49Yd88xYlFLER4FwU5yQVHnXmlVYzJnAtLhkR36lQRmlnZpBdjuhEgemkUrQAJy0WCx4kxR4FyHDQSRiVXPDNdQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jXK3ZBl3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14756C4CEE7;
-	Wed, 23 Oct 2024 00:04:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729641849;
-	bh=lp+qOB2AsGXn3zORPru0TEAo87RI1MyOJb9mTrSMdWI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jXK3ZBl3KW9rfPcw7U0EoPj5+z8C2qWD5+sQxr2ptHDzUelYirfjUhbN6q5T9hLZd
-	 2r+iV8vy6JlEGdPBZbwMFCCHljH4fSg9rBU/bcSxKEZvyVGBrnGAbMC58rLA5KGU/F
-	 kN6zKxos2jfMzYb4zZDqSl1vh/RXLtKiFNMFp7hZ1/npSfNl/MSRq2iPQK3audE2Bi
-	 GSsC0GLX7qsVCy0bRTqjuzw/fPP1RaBgKMaxGNcIEZknAkvNjOXRvL1r2CdQbdEm47
-	 WJvzNER/IjE+Rr1NS8bGFCqcAKB3j3yEJ55gPNSw4IQkoA+suB2rwOG+yCNK69DAAg
-	 O6K4qc5Ii+b2A==
-Date: Tue, 22 Oct 2024 19:04:08 -0500
-From: Rob Herring <robh@kernel.org>
-To: Danilo Krummrich <dakr@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 16/16] samples: rust: add Rust platform sample driver
-Message-ID: <20241023000408.GC1848992-robh@kernel.org>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-17-dakr@kernel.org>
+	s=arc-20240116; t=1729642034; c=relaxed/simple;
+	bh=jnkmrhzcYEBP1z5umBcm+wct455Zpt09cYoU6UgmM44=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CoPTaAhZzToxkIBiaGr5rT3KEddTc+uMbzHo+Yez0AKNuPPV7Mqp6MT72LU25uZwVNN6oUpuR7NQAgRAH3vkU3O2MqHBD/uxwIUM1BKkdUd/W+wniJ2QZsfAZeXBNKMru2U0nq7daSEV6pFri8xNwHf84GaTIMxI6tnCyY57SDg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eRUJwDjH; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e2e427b07dso52751217b3.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:07:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=paul-moore.com; s=google; t=1729642032; x=1730246832; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=SQ1cEM3+cfdDVolwI+TVxmBRgBuH+HcUtwUKGDw1jOg=;
+        b=eRUJwDjHS+L1w2jAhHi2l3HJk9EkcEPSCmNPnOH5vPZ5UcUqCXPvrCoibUBIaixzKA
+         Cjz7XVOAsiReOXyh0GKicCeDjTAGyuzZ00syFzef9ZZqlhFRb2xKoQXdZ/2jv3HUM7V/
+         Gzy1vV3mTBGZLvAncXl1yr8OF1NV4mIOEO71qMzLI2JwvT1qdnhjiLRxTIsjPkJJUBjP
+         IY2gF18i7wFB2A8BJ8PACuthgYRQMjfwNqpcp5it5iNv5nfIJ6XUFoOrBUbFjGXdNQ0c
+         SmKoWl7LeeLg57q9UrZhlXLWSsRyOsDbmmnKuD9+LaBSnERvfIK3EADUvVmdo+K43NqN
+         QD4Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729642032; x=1730246832;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=SQ1cEM3+cfdDVolwI+TVxmBRgBuH+HcUtwUKGDw1jOg=;
+        b=sX+diwE//yzELFK5Gi3vCVFsz10I5eHmbp2Q5/TKVEmgRiOOiJyTwx8OKN/qyphXLk
+         hfG885tKmIvxTc+0fpJCCKvRlv/VOZPJfm/LrQHXPPCkwuPRzDQBkPQLyHnIRefNS2S9
+         PHQGPgkcPoNVoxRT9TnQiz4o6uggb/dPoGQQGf/peJyc5ZodVth3IS+9LC0fqzvzeEr2
+         LICJcrKudtSrVrVa0r1Ckgz9UVzVdto42e1f8AxRFx9J6ig1ABoUZjC0mgSNy3ufZnVb
+         awCF2qiKZjlqD5mIm32YWLVTKXr/hWBKcbzY0OD4MV4C60m9iMQiAdHWfxFgrVzmh12a
+         8xlg==
+X-Forwarded-Encrypted: i=1; AJvYcCXna/dYYsBcvzYPaHyXpFHPOrEHJFdGvnPX7xQvrzpJmgDtLUrsdTTgyaJEqt9h98y3n/uBdT4xY4D/Y7E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxoKhbkpxGhZmYY7isQdiR/6yJh7Puq/+AM64CrUlTb9nQRKsap
+	mkKpkLNQ3prG2TEzXvHOaZrXCGowFZhKThYaYoZ54Gsm5LLuLwqq/4E3b1x/Ta6VYbNlufZRmCO
+	IlHmtEre/CkEvwOv3bqgOqimyyTZEOc3iFC8f
+X-Google-Smtp-Source: AGHT+IGRQVLuzK/6CI72ZCGfa+itwlB7gy9YsYEKhzbjk3Wk8pfQGvbN/bdOxVk2v0pzUnLnPXZpycf7NH1xudzUmus=
+X-Received: by 2002:a05:690c:6c8b:b0:6d4:4a0c:fcf0 with SMTP id
+ 00721157ae682-6e7f0e30a3fmr9811487b3.20.1729642031640; Tue, 22 Oct 2024
+ 17:07:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022213221.2383-17-dakr@kernel.org>
+References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-2-mic@digikod.net>
+In-Reply-To: <20241022161009.982584-2-mic@digikod.net>
+From: Paul Moore <paul@paul-moore.com>
+Date: Tue, 22 Oct 2024 20:07:00 -0400
+Message-ID: <CAHC9VhShPEpM4_fPoTSqStMnMB0-n1m6scS5b0Syj5V4RvrFOA@mail.gmail.com>
+Subject: Re: [RFC PATCH v2 01/14] lsm: Only build lsm_audit.c if CONFIG_AUDIT
+ is set
+To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
+Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
+	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
+	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
+	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
+	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
+	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
+	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
+	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
+	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
+	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 11:31:53PM +0200, Danilo Krummrich wrote:
-> Add a sample Rust platform driver illustrating the usage of the platform
-> bus abstractions.
-> 
-> This driver probes through either a match of device / driver name or a
-> match within the OF ID table.
-
-I know if rust compiles it works, but how does one actually use/test 
-this? (I know ways, but I might be in the minority. :) )
-
-The DT unittests already define test platform devices. I'd be happy to 
-add a device node there. Then you don't have to muck with the DT on some 
-device and it even works on x86 or UML.
-
-And I've started working on DT (fwnode really) property API bindings as 
-well, and this will be great to test them with.
-
-> Signed-off-by: Danilo Krummrich <dakr@kernel.org>
+On Tue, Oct 22, 2024 at 12:10=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
+kod.net> wrote:
+>
+> When CONFIG_AUDIT is set, its CONFIG_NET dependency is also set, and the
+> dev_get_by_index and init_net symbols (used by dump_common_audit_data)
+> are found by the linker.  dump_common_audit_data() should then failed to
+> build when CONFIG_NET is not set. However, because the compiler is
+> smart, it knows that audit_log_start() always return NULL when
+> !CONFIG_AUDIT, and it doesn't build the body of common_lsm_audit().  As
+> a side effect, dump_common_audit_data() is not built and the linker
+> doesn't error out because of missing symbols.
+>
+> Let's only build lsm_audit.o when CONFIG_AUDIT is set.
+>
+> ipv4_skb_to_auditdata() and ipv6_skb_to_auditdata() are only used by
+> Smack if CONFIG_AUDIT is set, so they don't need fake implementations.
+>
+> Because common_lsm_audit() is used in multiple places without
+> CONFIG_AUDIT checks, add a fake implementation.
+>
+> Cc: Casey Schaufler <casey@schaufler-ca.com>
+> Cc: James Morris <jmorris@namei.org>
+> Cc: Paul Moore <paul@paul-moore.com>
+> Cc: Serge E. Hallyn <serge@hallyn.com>
+> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
+> Link: https://lore.kernel.org/r/20241022161009.982584-2-mic@digikod.net
 > ---
->  MAINTAINERS                          |  1 +
->  samples/rust/Kconfig                 | 10 +++++
->  samples/rust/Makefile                |  1 +
->  samples/rust/rust_driver_platform.rs | 62 ++++++++++++++++++++++++++++
->  4 files changed, 74 insertions(+)
->  create mode 100644 samples/rust/rust_driver_platform.rs
-> 
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 173540375863..583b6588fd1e 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -6986,6 +6986,7 @@ F:	rust/kernel/device_id.rs
->  F:	rust/kernel/devres.rs
->  F:	rust/kernel/driver.rs
->  F:	rust/kernel/platform.rs
-> +F:	samples/rust/rust_driver_platform.rs
->  
->  DRIVERS FOR OMAP ADAPTIVE VOLTAGE SCALING (AVS)
->  M:	Nishanth Menon <nm@ti.com>
-> diff --git a/samples/rust/Kconfig b/samples/rust/Kconfig
-> index 6d468193cdd8..70126b750426 100644
-> --- a/samples/rust/Kconfig
-> +++ b/samples/rust/Kconfig
-> @@ -41,6 +41,16 @@ config SAMPLE_RUST_DRIVER_PCI
->  
->  	  If unsure, say N.
->  
-> +config SAMPLE_RUST_DRIVER_PLATFORM
-> +	tristate "Platform Driver"
-> +	help
-> +	  This option builds the Rust Platform driver sample.
-> +
-> +	  To compile this as a module, choose M here:
-> +	  the module will be called rust_driver_platform.
-> +
-> +	  If unsure, say N.
-> +
->  config SAMPLE_RUST_HOSTPROGS
->  	bool "Host programs"
->  	help
-> diff --git a/samples/rust/Makefile b/samples/rust/Makefile
-> index b66767f4a62a..11fcb312ed36 100644
-> --- a/samples/rust/Makefile
-> +++ b/samples/rust/Makefile
-> @@ -3,5 +3,6 @@
->  obj-$(CONFIG_SAMPLE_RUST_MINIMAL)		+= rust_minimal.o
->  obj-$(CONFIG_SAMPLE_RUST_PRINT)			+= rust_print.o
->  obj-$(CONFIG_SAMPLE_RUST_DRIVER_PCI)		+= rust_driver_pci.o
-> +obj-$(CONFIG_SAMPLE_RUST_DRIVER_PLATFORM)	+= rust_driver_platform.o
->  
->  subdir-$(CONFIG_SAMPLE_RUST_HOSTPROGS)		+= hostprogs
-> diff --git a/samples/rust/rust_driver_platform.rs b/samples/rust/rust_driver_platform.rs
-> new file mode 100644
-> index 000000000000..55caaaa4f216
-> --- /dev/null
-> +++ b/samples/rust/rust_driver_platform.rs
-> @@ -0,0 +1,62 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +
-> +//! Rust Platform driver sample.
-> +
-> +use kernel::{c_str, of, platform, prelude::*};
-> +
-> +struct SampleDriver {
-> +    pdev: platform::Device,
-> +}
-> +
-> +struct Info(u32);
-> +
-> +kernel::of_device_table!(
-> +    OF_TABLE,
-> +    MODULE_OF_TABLE,
-> +    <SampleDriver as platform::Driver>::IdInfo,
-> +    [(
-> +        of::DeviceId::new(c_str!("redhat,rust-sample-platform-driver")),
+>  include/linux/lsm_audit.h | 14 ++++++++++++++
+>  security/Makefile         |  2 +-
+>  2 files changed, 15 insertions(+), 1 deletion(-)
 
-Perhaps use the same compatible as the commented example. Same comments 
-on that apply to this.
+I think this fix is the right thing to do regardless of the rest of
+the patchset so I've merged it into lsm/dev, if anyone objects please
+speak up.
 
-> +        Info(42)
+Thanks!
 
-Most of the time this is a pointer to a struct. It would be better to 
-show how to do that.
-
-> +    )]
-> +);
-> +
-> +impl platform::Driver for SampleDriver {
-> +    type IdInfo = Info;
-> +    const ID_TABLE: platform::IdTable<Self::IdInfo> = &OF_TABLE;
-
-Probably want to name this OF_ID_TABLE for when ACPI_ID_TABLE is added.
-
-> +
-> +    fn probe(pdev: &mut platform::Device, info: Option<&Self::IdInfo>) -> Result<Pin<KBox<Self>>> {
-> +        dev_dbg!(pdev.as_ref(), "Probe Rust Platform driver sample.\n");
-> +
-> +        match (Self::of_match_device(pdev), info) {
-
-That answers my question on being exposed to drivers. This is a big no 
-for me.
-
-> +            (Some(id), Some(info)) => {
-> +                dev_info!(
-> +                    pdev.as_ref(),
-> +                    "Probed by OF compatible match: '{}' with info: '{}'.\n",
-> +                    id.compatible(),
-
-As I mentioned, "real" drivers don't need the compatible string.
-
-> +                    info.0
-> +                );
-> +            }
-> +            _ => {
-> +                dev_info!(pdev.as_ref(), "Probed by name.\n");
-> +            }
-> +        };
-> +
-> +        let drvdata = KBox::new(Self { pdev: pdev.clone() }, GFP_KERNEL)?;
-> +
-> +        Ok(drvdata.into())
-> +    }
-> +}
-> +
-> +impl Drop for SampleDriver {
-> +    fn drop(&mut self) {
-> +        dev_dbg!(self.pdev.as_ref(), "Remove Rust Platform driver sample.\n");
-> +    }
-> +}
-> +
-> +kernel::module_platform_driver! {
-> +    type: SampleDriver,
-> +    name: "rust_driver_platform",
-> +    author: "Danilo Krummrich",
-> +    description: "Rust Platform driver",
-> +    license: "GPL v2",
-> +}
-> -- 
-> 2.46.2
-> 
+--=20
+paul-moore.com
 
