@@ -1,130 +1,128 @@
-Return-Path: <linux-kernel+bounces-377684-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377685-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8AD369AC24F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:54:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 298449AC251
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B7E891C22885
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:54:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8560BB227ED
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:54:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A44BE15C15A;
-	Wed, 23 Oct 2024 08:54:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C18166308;
+	Wed, 23 Oct 2024 08:54:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="NqP+fa3v"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="moF8uOkq"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04E4A15E5C2;
-	Wed, 23 Oct 2024 08:54:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9DCE15C15A;
+	Wed, 23 Oct 2024 08:54:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673643; cv=none; b=Sf5sPSIEiF28juCoX9xZhkAjlKO+mz1+2/Tb9ZuyNq7I/9mUOU+YDGf+G7zaAOY8XXlwQ9I1qzrbkC/TwrQgBW5IuGSJpqPM8uQZkwKNdbUoD8KGn5qG3fPzRdenFFVjOYm7haZVy/uwT2+D7BdO21oPmyYmsZhlF+uXsfJV+Wo=
+	t=1729673656; cv=none; b=ckKPVFXzAkgbzEZo0VP+LMT6wdJHNJYi1JQ1tkXM7ieYdmRPJ1NT+Vqfyq31qUQXe4f937X2B/GG8KyjWI5erE+endU+WiAvfN6CTEZnLSzG5ZvogWhuvC0cP+m5QLkch++2UxPyNQ2pb0JCKzxICadV5Qg5S28rJVHw2Q5ahcU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673643; c=relaxed/simple;
-	bh=ApNScjusw9COW7dg4eABDkYvK2VGujpMdndrtlBkTP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Qjh8RqQcL0kqnwOoP4xgu0UZjgnGHE18c3c97jjMuN9d9nc9KVGr5BIjUjYF0lqQikYYxN++V4hXOtcVS9J96VFkB5fH7xXPmiIDhb/WoRT0cutROknaa88uK4F222ItkP+ZJwWdIRhb5lQOSI0JkIxeHiSoD9huCQlAeMokRH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=NqP+fa3v; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93EACC4CECD;
-	Wed, 23 Oct 2024 08:54:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673642;
-	bh=ApNScjusw9COW7dg4eABDkYvK2VGujpMdndrtlBkTP0=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=NqP+fa3vzwlgtzw8OpNSS5jMGlMjYwI2zYcLPOyppiPGEdy3Z2RZyvEn+eOuSzEmY
-	 s/N2Q9xvtQ6zwUrmyQJmxqIqdaM896V1AM1cEKJJaMaD8WOB37qT9C3Lj8NXITtP0X
-	 NlD9RMtEqKmziGfeTwbZA08qryPZVcfAXeEr72ipW/3VbPnGyyax/jFqYanXytAdJH
-	 Yr0ZOTOaWP+Z/4QMKhdpmBsehuakoSSIQKQQ3tNwA51N4+sfB5gjNjZW7uIRQBB4W7
-	 BF5wqXJe2Md2AOAsC4iCuOwzgfhaynq/AsCZIljYWSRBT4QzunNXM9SbX2Wh45FQhW
-	 WLLLVttZR04GQ==
-Received: by mail-ot1-f50.google.com with SMTP id 46e09a7af769-7181eb9ad46so2776542a34.1;
-        Wed, 23 Oct 2024 01:54:02 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUrDxtoPE4veFP2GOZsi/li0ReJ/GWv3pTrr7ItIoPVKhJqYcYFYxqMIunPd+pYQwvYsjYgii0XVW0=@vger.kernel.org, AJvYcCXhgbiMQCWrUm68CzTlbzXfUgPDY6f4v2+BCNhjLpHC3sToze8YtM5K1tGzy1qVeP5XYeH8JkRi6BSAuE8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOy5BKyizQYx/oGuNPQFFAAFFL1K76Wvu6uFhVVZqBm/Zmq/Rv
-	9eQ+PgrN2/QyuvKH9GSY0rQD2dwGpA9DRyyrM2LdkTe1SN8MC6uQ5q56kR2CUiYdLyJf5qZ27Ic
-	YQOgGOkCgL/940m+/60v/ZjrATO4=
-X-Google-Smtp-Source: AGHT+IE3ntcjwsVArx+GzJHQ3+lVvqmedueqG2j1Du85tZk68RR/9806Xd5Z6vE9VFIrKjpNlJfGfC1H+HXqKHlvjCA=
-X-Received: by 2002:a05:6871:29a:b0:270:25e:b341 with SMTP id
- 586e51a60fabf-28ccb5dd58cmr1688532fac.36.1729673641868; Wed, 23 Oct 2024
- 01:54:01 -0700 (PDT)
+	s=arc-20240116; t=1729673656; c=relaxed/simple;
+	bh=q0eV8PeZCT18pahZgRhtX8A1YE92PGG7fi2vMBGGsSU=;
+	h=From:Date:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=poc0gx2UeS9hywUfntMUHpIO3L/p44Ka9voF9n1Y0lmFqE5kBvDG3HpWNYvdEIXjPEqVrT0UwXjqVZJ29O38UfkhWni/YCXezNpNmAk6Ch04ce4Anfrjr4v7nGt4JWYfeix3pPwtItl/TAyI56KyuEPiuDmGiRxM8aBktn6HHyE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=moF8uOkq; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a156513a1so893373966b.0;
+        Wed, 23 Oct 2024 01:54:14 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729673653; x=1730278453; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=ON6OZuNx4fqchfNgrWP933rjQDfAkzEfshyv8H/ww1I=;
+        b=moF8uOkqjz084fw/zTMLZxO1/odUq4rr7KmTtPjlnvAoowcwphTKR1SNxJp+fgpw5Y
+         SH8E2A8/YR4dHm09y7k+G1iMrAvzJYpxLtujMVa+JHeH8Df6bL99wXPbZFwv/X67ZYqz
+         IWAZD2cDagsvIvUSj15DqIwajxxo3Aq7U9yazsFPB2WTrQD+uAx3uQQUtXPxsS73Wcfn
+         /BYhnm2IrLIQH9g46Nl4vDRn6to9ODvhG6Q0061X7zQBXK2VkPkflXDBgZxHbaV+ddi9
+         ZcrdykXwuVWuhmzxvRaxzTvYPsQnO9/eJujT9FvsrLCiUWNMkt/bBp2B6mrB52j9bKPb
+         +H/g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729673653; x=1730278453;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:date:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ON6OZuNx4fqchfNgrWP933rjQDfAkzEfshyv8H/ww1I=;
+        b=nIeyl4i+VSQR9UrTUespbNQ5dQPkNc8jXFyCWw3aZLIO/JqAnmfPCw3EAr7FHf4Jnb
+         tZ7UsNPUgfcssNGg4KeJZRsQH9fRkysWXQU/drS+IfeWxu6MlKRWdd6QSFT3ysr+26WS
+         T8pxEmx9N9FbFzQDTV78d1BBlk95wNc/dDb+zzSSd40Ind1Mvp0OClaYRMRxrnEUrxFk
+         WTHn0HGQCjKm/Wxb4RD7TwNvuXKlNZW8mcFs2ViPus3e6//NUN9JNTRiSQRb9Oh8hrZv
+         /MdbnppLRgesqrjmP8cFtYsQmepWzYS/qNNU3LsixqRog612V5JlpuqW4vbXKL5Ukh/r
+         gqFg==
+X-Forwarded-Encrypted: i=1; AJvYcCXRBSoz/du1l7sLV1SVWZZEuU9R7noVQt3zpnfdC0oxrh3iEMRXdWTUFc8f8wK/o1IHoc7U5Wr15SBrSa8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy+7ahE8zXyfYMXP5SUlcyzR10WDYZy00PbKvM3DPtpMZOPSyhN
+	hZmAE15MKiQB7F9h6NZzRtWWFlwsvmx+E3vmygW1hD442Vm5GYov
+X-Google-Smtp-Source: AGHT+IEAqhqRya4+mPI2plqO4+HLOhmrmro8SCwkX5agExI4k8rTmopqtTJOZeXe70AAkM0Uj5QAjg==
+X-Received: by 2002:a17:907:7b97:b0:a9a:26a1:1963 with SMTP id a640c23a62f3a-a9abf8491aemr178324166b.7.1729673652994;
+        Wed, 23 Oct 2024 01:54:12 -0700 (PDT)
+Received: from krava (2001-1ae9-1c2-4c00-726e-c10f-8833-ff22.ip6.tmcz.cz. [2001:1ae9:1c2:4c00:726e:c10f:8833:ff22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370e6asm444534766b.126.2024.10.23.01.54.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 01:54:12 -0700 (PDT)
+From: Jiri Olsa <olsajiri@gmail.com>
+X-Google-Original-From: Jiri Olsa <jolsa@kernel.org>
+Date: Wed, 23 Oct 2024 10:54:10 +0200
+To: Eder Zulian <ezulian@redhat.com>
+Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org, ast@kernel.org,
+	daniel@iogearbox.net, andrii@kernel.org, martin.lau@linux.dev,
+	eddyz87@gmail.com, song@kernel.org, yonghong.song@linux.dev,
+	john.fastabend@gmail.com, kpsingh@kernel.org, sdf@fomichev.me,
+	haoluo@google.com, acme@redhat.com, vmalik@redhat.com,
+	williams@redhat.com
+Subject: Re: [PATCH v2 0/3] Fix -Wmaybe-uninitialized warnings/errors
+Message-ID: <Zxi5stO4mWWdKqF9@krava>
+References: <20241022172329.3871958-1-ezulian@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4958885.31r3eYUQgx@rjwysocki.net> <CAJZ5v0g_ALycyT7Y2GwebF_ON-EMP_WGoTn4+1V0ZisK1vwROg@mail.gmail.com>
- <b6b42279-bc08-49aa-ac1e-98fe816bf342@arm.com>
-In-Reply-To: <b6b42279-bc08-49aa-ac1e-98fe816bf342@arm.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 Oct 2024 10:53:49 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0ijx0pNZ66Q+AOxJEnLoLkkvOa1k25jdBr+fV0kTZ0S=g@mail.gmail.com>
-Message-ID: <CAJZ5v0ijx0pNZ66Q+AOxJEnLoLkkvOa1k25jdBr+fV0kTZ0S=g@mail.gmail.com>
-Subject: Re: [PATCH v1 00/10] thermal: core: Use lists of trips for trip
- crossing detection and handling
-To: Lukasz Luba <lukasz.luba@arm.com>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Linux PM <linux-pm@vger.kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, 
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022172329.3871958-1-ezulian@redhat.com>
 
-Hi Lukasz,
+On Tue, Oct 22, 2024 at 07:23:26PM +0200, Eder Zulian wrote:
 
-On Wed, Oct 23, 2024 at 12:51=E2=80=AFAM Lukasz Luba <lukasz.luba@arm.com> =
-wrote:
->
-> Hi Rafael,
->
-> On 10/21/24 12:16, Rafael J. Wysocki wrote:
-> > On Wed, Oct 16, 2024 at 1:37=E2=80=AFPM Rafael J. Wysocki <rjw@rjwysock=
-i.net> wrote:
-> >>
-> >> Hi Everyone,
-> >>
-> >> This is a continuation of
-> >>
-> >> https://lore.kernel.org/linux-pm/4985597.31r3eYUQgx@rjwysocki.net/
-> >>
-> >> derived from patches [3-7/8] in the following patch series:
-> >>
-> >> https://lore.kernel.org/linux-pm/4920970.GXAFRqVoOG@rjwysocki.net/
-> >>
-> >> but mostly rewritten.
-> >>
-> >> It is based on the observation that putting trip points on sorted list=
-s
-> >> allows to reduce overhead related to the handling of them in some case=
-s.
-> >> Namely, it avoids the need to walk all trips in a thermal zone every
-> >> time the zone temperature is updated (including invalid ones) and
-> >> generally leads to cleaner code.
-> >>
-> >> Patches [01-08/10] are preliminary, patch [09/10] makes the key change=
-s,
-> >> and patch [10/10] is a super-cosmetic cleanup on top of the rest.
-> >>
-> >> Please refer to the individual patch changelogs for details.
-> >
-> > This material is on the thermal-core-experimental branch in
-> > linux-pm.git along with
-> >
-> > https://lore.kernel.org/linux-pm/2215082.irdbgypaU6@rjwysocki.net/
-> >
-> > and
-> >
-> > https://lore.kernel.org/linux-pm/4985597.31r3eYUQgx@rjwysocki.net/
-> >
-> > which are also present in the thermal-core-testing branch.
->
->
-> If it's not too late, I can review that stuff tomorrow for you.
+SNIP
 
-No, it is not too late, please review it!
+> The above warnings and/or errors are fixed. However, they are observed with
+> current default compilation options.
+> 
+> Updates since v1:
+> 
+> - Incorporate feedback from reviewers. Add a comment about an alternative
+>   patch for parse-options.c sent before (based on comments from Sam James.)
+>   Split in multiple patches creating this series and a typo was fixed
+>   "Initiazlide" -> "Initialize" (suggested by Viktor Malik). State more
+>   clearly that the -Wmaybe-uninitialized issues only happen when compiling
+>   with non-default compilation options (based on comments from Yonghong
+>   Song.)
+> 
+> Thanks,
+> 
+> Eder Zulian (3):
+>   resolve_btfids: Fix compiler warnings
+>   libbpf: Prevent compiler warnings/errors
+>   libsubcmd: Silence compiler warning
 
-And thanks a lot for all of the reviews so far!
+Acked-by: Jiri Olsa <jolsa@kernel.org>
+
+jirka
+
+> 
+>  tools/bpf/resolve_btfids/main.c  | 4 ++--
+>  tools/lib/bpf/btf_dump.c         | 4 ++--
+>  tools/lib/subcmd/parse-options.c | 2 +-
+>  3 files changed, 5 insertions(+), 5 deletions(-)
+> 
+> -- 
+> 2.46.2
+> 
 
