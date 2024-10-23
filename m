@@ -1,159 +1,101 @@
-Return-Path: <linux-kernel+bounces-378096-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6A59ACB3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:30:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 044679ACB10
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:21:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C2D941F2116F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:30:56 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B9DF32824F6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:21:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3A41F1BD01D;
-	Wed, 23 Oct 2024 13:29:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8872E1ADFF8;
+	Wed, 23 Oct 2024 13:20:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b="BbTwq6/v"
-Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jkf0ULwK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E31EC1C57B2
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:29:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBF8812B71;
+	Wed, 23 Oct 2024 13:20:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729690183; cv=none; b=PC5pz3m61W9+E9FKmM8kqovKGo9SnhGNrtUS4KMUW8ZM/DJIlMQdOKnHbtCmIy2ju7Usd9pBSsgNoxF0QlNEvAiM8m/adQRNsIlXgl0CjzIBbfiXNLWyY/fpMHzSPMx9+w0ODcpjM7BY9VRQkEnkgLTf/0BDTgF/I8eSU1heosY=
+	t=1729689656; cv=none; b=ElrhNMcibyL2+0w4qBg4tM4DnMPvwMDBufSc/TWw3FRp9f16BUUJwicEocQeWqBsiNlDzKnr+4SlR5EpqdunrOfstww/BJ+jaQh7pS9AHl0Cknp96prZSyJ45EYmpye4nllfEYiE7EFuCePXOd5/GY/iZeMvz1hUaLF56RBY7/w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729690183; c=relaxed/simple;
-	bh=ATrdbIDUhnH86m7W+OtdWP4CVjzxrd9JvgnnpcBxdnc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=nnPeFT90QA+X3x1L7pEO3z/GDzFhje425aaUbaq4B+l48W/6jxcrMSsQROf1yB3yzTEVCk5UPPYpOPdNYfYzogAeGm52Jcg41kWmWyE5x/iawCrcVriWrTkwsWZx91+nO81svPjWyHFPKPCd4gc2aweiwDRrP9TyqkLC7gocQHE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com; spf=pass smtp.mailfrom=9elements.com; dkim=pass (2048-bit key) header.d=9elements.com header.i=@9elements.com header.b=BbTwq6/v; arc=none smtp.client-ip=209.85.221.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=9elements.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=9elements.com
-Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d447de11dso5366813f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:29:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=9elements.com; s=google; t=1729690179; x=1730294979; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Jczdy1uYsb+aLC4nuD27CRmDy+gWKtf6hf+GXkt4V8A=;
-        b=BbTwq6/v9hHP5lNKC+gY4nf2KBgY18D1eEWaTLmwY8ZPfDdr/6LXgktcRiM7wNmV67
-         kCb+kbQAG8LMeMYV07fapXnXzzrY52Uv8v7edKMEmENAuaokd0K6DVMYCnEIlCCSZKCN
-         GHed/sZsEytNd5iAHkQ9EAQjKRs1cYTqxh0uJq2ZrBHXPeSpZfl3Rsht38TYckrQHD8n
-         keqlm9T29ioc9vA4KK0xFATTEgKgMGeEXUi/J518VoOVcj9weEIdCh5oussHu2w5QDpU
-         8MXH37H8ECoGNq+HkSFp7RP2B51BOaShLMdegij7rmOL+iIyJSZScMapBgVTWUatiCIk
-         wF+A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729690179; x=1730294979;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Jczdy1uYsb+aLC4nuD27CRmDy+gWKtf6hf+GXkt4V8A=;
-        b=GnkY8UZxRiyIYl2s8QpP9HYEILACl5yB5Giade3Erc7sPIVmCR/XReziX1fxJZEpwJ
-         vJG2R7u9d9L7jjcttfcyq9kNggDV74ne+c6Dk1N/S1dOrkg2NpbtSUSilX5WlcwM4ePG
-         90lfef+B5ONjC9PelcDUXvwdZRS9APk78diSCNS4WVYWPgqPdB4JG3x9TQ42YC8IuECn
-         cCP6BrRBqMcuMwgu+RaBJGca98Sltpl5cR/zKBlzjaZq0KadGmKQZHTuczx9MjkFGx5M
-         PE6VJZgDed9sDu40Zz6zsEpBgJKJtIZXlAPUTddIDmuUD9MwjWQDVyRNemHTm3G+z4Ij
-         vChQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWVnZmkykZ7TbiN3lhA6r4RiPXz6MgONNt1mKQy6qkU5I5mrRFq+1wTDdkqSYZCEnlrMEVEJzYlaiu8dIw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxU3VdxZ6bZXIydNPZxBA4r3wQR2EAhD0B0ILQED47eHsxenP5d
-	jHdlUyiD/RDLJNWTHoyWmCCmJh+1krK47jSfSSHxm8Hlkb/Cr3CM/oX+Ot/4X7c=
-X-Google-Smtp-Source: AGHT+IFUqU/EvSrylcLUMy85TyHY6P+SYtEyI99ANylHUxztqJY+8JJeUGCIdnHZ3eWk6gwTjrEX3w==
-X-Received: by 2002:a05:6000:18a9:b0:374:b5fc:d31a with SMTP id ffacd0b85a97d-37efcf1fc01mr1687911f8f.25.1729690179249;
-        Wed, 23 Oct 2024 06:29:39 -0700 (PDT)
-Received: from fedora.sec.9e.network (ip-037-049-067-221.um09.pools.vodafone-ip.de. [37.49.67.221])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9b186sm8907478f8f.91.2024.10.23.06.29.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 06:29:39 -0700 (PDT)
-From: Patrick Rudolph <patrick.rudolph@9elements.com>
-To: u-boot@lists.denx.de,
-	linux-kernel@vger.kernel.org
-Cc: Patrick Rudolph <patrick.rudolph@9elements.com>,
-	Tom Rini <trini@konsulko.com>
-Subject: [PATCH v10 37/37] CI: Enable qemu_sbsa
-Date: Wed, 23 Oct 2024 15:20:20 +0200
-Message-ID: <20241023132116.970117-38-patrick.rudolph@9elements.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241023132116.970117-1-patrick.rudolph@9elements.com>
-References: <20241023132116.970117-1-patrick.rudolph@9elements.com>
+	s=arc-20240116; t=1729689656; c=relaxed/simple;
+	bh=LVQXYrASjM/VnmqTuSPEIhogLWcRwzbltNRHE+dqq6M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=YndOYQ2ksA25WT+OvUAJvF+5fQwdVcXzhMhISn2399i1/vdaKwisJJTDWwJwaPhrAb83z7d7fPMk1Y9XkM9Vkh0dpMMn/j1sQkKsgZtSt3UYkzpTI3go/8BYh1OYO14laxBirrnV05FVpsHAsN09uvtwNrjsUQf9s7yd3aW8GH4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jkf0ULwK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0DD68C4CEC6;
+	Wed, 23 Oct 2024 13:20:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729689655;
+	bh=LVQXYrASjM/VnmqTuSPEIhogLWcRwzbltNRHE+dqq6M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=jkf0ULwKxVbpGpPOoLIU7ZeX+X3gsPpBPlD+M1OGYex6nVUZ+9zgMNpYSYMMRskf1
+	 1aVOP2nA2aLLGJuBwEE65JpTrPJrel/R3DINt/dOSefdQlvaS2yTfMNuHnGynin1sQ
+	 HoUO8q9FP8ttRel+u/S3lVFLON6Jeh+sk3kZtP1Ye3LtY9mLz8ZCKefMWgm/ToNB6Z
+	 kzXhJ5Xa6VwN0aqExw4LvPXeCpdxihjgP56/BR5soacWlkMdTFtHfukmtpLlXDy1IE
+	 IfYrLSA2M+OtjuCWTrFYW9jHjOosv0yHx/wtyNfgFts0A1ZV6xPccmvbwZc+ePFoun
+	 J23OerzdFxBJA==
+Date: Wed, 23 Oct 2024 15:20:50 +0200
+From: Joel Granados <joel.granados@kernel.org>
+To: Markus Elfring <Markus.Elfring@web.de>
+Cc: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>, 
+	Kees Cook <kees@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Joel Granados <j.granados@samsung.com>, LKML <linux-kernel@vger.kernel.org>, 
+	kernel-janitors@vger.kernel.org
+Subject: Re: Re: sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+Message-ID: <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+ <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+ <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
 
-Add QEMU's SBSA ref board to azure pipelines and gitlab CI to run tests on it.
-TEST: Run on Azure pipelines and confirmed that tests succeed.
+On Wed, Oct 23, 2024 at 02:10:57PM +0200, Markus Elfring wrote:
+> >> A dput(child) call was immediately used after an error pointer check
+> >> for a d_splice_alias() call in this function implementation.
+> >> Thus call such a function instead directly before the check.
+> > This message reads funny, please re-write for your v2. Here is how I would write
+> > it.
+> >
+> > "
+> > Replace two dput(child) calls with one that occurs immediately before the IS_ERR
+> > evaluation. This is ok because dput gets called regardless of the value returned
+> > by IS_ERR(res).
+> > "
+> 
+> Do you prefer the mentioned macro name over the wording “error pointer check”?
+yes.
 
-Signed-off-by: Patrick Rudolph <patrick.rudolph@9elements.com>
-Reviewed-by: Tom Rini <trini@konsulko.com>
----
-Changelog v6:
-- Add gitlab CI support
----
- .azure-pipelines.yml |  8 ++++++++
- .gitlab-ci.yml       | 11 +++++++++++
- 2 files changed, 19 insertions(+)
+> 
+> 
+> >> This issue was transformed by using the Coccinelle software.
+> > How long is the coccinelle script? …
+> 
+> A related script for the semantic patch language was presented already according to
+> the clarification approach “Generalising a transformation with SmPL?”.
+> https://lore.kernel.org/kernel-janitors/300b5d1a-ab88-4548-91d2-0792bc15e15e@web.de/
+> https://lkml.org/lkml/2024/9/14/464
+> https://sympa.inria.fr/sympa/arc/cocci/2024-09/msg00004.html
+There where several scripts in these links but non of them where too
+long. Can you please append the one you used for this patch to the
+commit message.
 
-diff --git a/.azure-pipelines.yml b/.azure-pipelines.yml
-index 93111eb612..2881851ecf 100644
---- a/.azure-pipelines.yml
-+++ b/.azure-pipelines.yml
-@@ -250,6 +250,11 @@ stages:
-               wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
-               export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
-           fi
-+          if [[ "\${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-+              wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-+              wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-+              export BINMAN_INDIRS=/tmp
-+          fi
-           # the below corresponds to .gitlab-ci.yml "script"
-           cd \${WORK_DIR}
-           export UBOOT_TRAVIS_BUILD_DIR=/tmp/\${TEST_PY_BD}
-@@ -415,6 +420,9 @@ stages:
-         qemu_arm64:
-           TEST_PY_BD: "qemu_arm64"
-           TEST_PY_TEST_SPEC: "not sleep"
-+        qemu_arm_sbsa_ref:
-+          TEST_PY_BD: "qemu-arm-sbsa"
-+          TEST_PY_TEST_SPEC: "not sleep"
-         qemu_m68k:
-           TEST_PY_BD: "M5208EVBE"
-           TEST_PY_ID: "--id qemu"
-diff --git a/.gitlab-ci.yml b/.gitlab-ci.yml
-index 7d621031b8..3f02a492d5 100644
---- a/.gitlab-ci.yml
-+++ b/.gitlab-ci.yml
-@@ -39,6 +39,11 @@ stages:
-         wget -O - https://github.com/riscv-software-src/opensbi/releases/download/v1.3.1/opensbi-1.3.1-rv-bin.tar.xz | tar -C /tmp -xJ;
-         export OPENSBI=/tmp/opensbi-1.3.1-rv-bin/share/opensbi/lp64/generic/firmware/fw_dynamic.bin;
-       fi
-+    - if [[ "${TEST_PY_BD}" == "qemu-arm-sbsa" ]]; then
-+        wget -O /tmp/bl1.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/bl1.bin;
-+        wget -O /tmp/fip.bin https://artifacts.codelinaro.org/artifactory/linaro-419-sbsa-ref/latest/tf-a/fip.bin;
-+        export BINMAN_INDIRS=/tmp
-+      fi
- 
-   after_script:
-     - cp -v /tmp/${TEST_PY_BD}/*.{html,css,xml} .
-@@ -344,6 +349,12 @@ qemu_arm64 test.py:
-     TEST_PY_TEST_SPEC: "not sleep"
-   <<: *buildman_and_testpy_dfn
- 
-+qemu_arm_sbsa test.py:
-+  variables:
-+    TEST_PY_BD: "qemu-arm-sbsa"
-+    TEST_PY_TEST_SPEC: "not sleep"
-+  <<: *buildman_and_testpy_dfn
-+
- qemu_m68k test.py:
-   variables:
-     TEST_PY_BD: "M5208EVBE"
+Thx
+
 -- 
-2.46.2
 
+Joel Granados
 
