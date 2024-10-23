@@ -1,123 +1,251 @@
-Return-Path: <linux-kernel+bounces-378136-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5D259ACBD6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:01:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D8399ACBD9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:01:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265DA2820F2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08BB1281F34
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:01:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8048A1BB6BA;
-	Wed, 23 Oct 2024 14:01:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA7E91BD4E1;
+	Wed, 23 Oct 2024 14:01:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WDhj2n+R"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="p6KF6CvB"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F5331B86F7
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DC7DF1AB6CB;
+	Wed, 23 Oct 2024 14:01:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729692081; cv=none; b=hEqdWVFEBX5SnsHAYaAG88h5inRQV/eUt9ihaz8jNw2D0giENMbSGcgY+4KhwfR2zxRqPLYByhpy4BQp15f0EQykHELy2P/dr2PMg/n32hgRCRI9sAn9qXqQuOaWgZytzd5+zq13f3VPuaLiFrr1lO3bFh08eizDIUzQrU8Gg1A=
+	t=1729692096; cv=none; b=edn76Sv/t+PgW3B4qsQI26xPfsv3MdljEWn48VLXjdkyVYGUG5/2d2upjQq8C0qePrnaSbozTWXYrNMRhTWxxR7qiVfkSkHyiqXbgJ11WmPTW7kaE4u2jqNDN/ZmrRzW8FIIP1eHCCu7gTO6a4AQa44xG3dhxM96SX9IO2kepcM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729692081; c=relaxed/simple;
-	bh=HGYucI6JjzhbfppjoegfJ47bgrJ3rnedYlwtPw09Plw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=d87CbgGX2S4T7P5MQxJRb/KTRcZEb42+n9tbws3ardqEnYFi64zhp1gfLSJzUCXnDjnONW9G2660vUSUV6NdfuX4utE9yKmADk7s1kaL8wo6O5fjPWE2E4cPS82NMstMdtIH8EdfFIRZTbaiMSr6rfQ5J6rsmXijhjIgsS0uvHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WDhj2n+R; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43168d9c6c9so49317715e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:01:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729692076; x=1730296876; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=bfi+jVS09oVwJMiUCNMkt7OYW0ltkQ/uQFM4w2BHFdo=;
-        b=WDhj2n+RQytpvoTZdlov00nvsLFGzirL2oYnTUiW0CS+KTqEfCCjWAN7TkCV+Ezls8
-         3Sa5+wf48GeDIWMDrkjPSv7sMWuNUbWWLRJP8H14koCU4/fHp1UgkoMCHZwxcqGlf1HA
-         OrtjYMzJ2dJxn5t0wZAT5Ude+vL7G96uQLcxRgSL40tnqh8+YxM315SF3MExEHdN/8tV
-         fKNKhRizm5fcUo9JtoCpo/9o9oA+tJjUCoazPqiKVIrw255O6K8gx9VeS+qS79EV2Jpx
-         z4jbv+SyK9EEt/6sDdZfwv7HSFenH+oSsg7Tqb8tb3VZLse3z7M43HTvqT2GrROD1Zdj
-         e8Xg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729692076; x=1730296876;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=bfi+jVS09oVwJMiUCNMkt7OYW0ltkQ/uQFM4w2BHFdo=;
-        b=trGz5YsCz2ucqb4WTmJstPRJcsIVfZHKna31DSe22V9RSEz8xUw7Wm9bgPd2H8Pu2w
-         JEEl4KsN7vTC0RbnSFaCFuO7WncSodQt+oJsrtrCYCBmRNkfCMSaM9ru+GERfpZ0boRs
-         pf3T5inkrcqIVTcxRqhfN8Q4p2xCBVldqKLN+Bv1UYoxDXpnZem7Qu5qwta64GSSy4y4
-         7lMOZGoB/dTa93NqL4cuF5YbnJGMr323bKTIh111PFkbYASgOaq8kjaMcDvMsB4uI9NT
-         ovyqPCPE3RT4m5VEGT+gnm6eqdpTtqA68ynxos5TVvluWyKkywiCzPgYduABKrCLrm4k
-         nuYg==
-X-Forwarded-Encrypted: i=1; AJvYcCVpEPxtFJg0E+PHIvVcaNfV/zWFLrIqoylvFacNwKuI4/i6c1RQjgPEFvaWUKvbYPeXV0rJ3sJ3tZ9wwZs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwPyphX2PwSyP8PU8LKD91NruHSmZXhrdty4TcQFNqgcUP7tJHy
-	FgKdFdGFKXWXMg0Nu3sH2t/wb3EPWHDZiq1OUP/a5JftvJ95E3q+qn89xhl01UHs6vitIsCnOF7
-	1/Py9utUyto/H6cHlj54mYSZoYpQ=
-X-Google-Smtp-Source: AGHT+IGYQgFJi88cT+sLLpvBs7Z8AygSXnU/8MiScBFreuDqzB0RPbMIsUiLH8TZL/I5wIkQQotJR7HlUpVQmCiBoqw=
-X-Received: by 2002:a05:600c:468a:b0:428:f0c2:ef4a with SMTP id
- 5b1f17b1804b1-431841440b5mr24527045e9.13.1729692076156; Wed, 23 Oct 2024
- 07:01:16 -0700 (PDT)
+	s=arc-20240116; t=1729692096; c=relaxed/simple;
+	bh=5b50b5GFMBss2urlySnrHy9PIeMWVclc5a4cudcsbwo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:References:Cc:From:
+	 In-Reply-To:Content-Type; b=Z9Bn5uVti8w+0TpY4a8MvgHKvM1ID69uf4E/LnKlN2XIrsf7xhxTeH6DhjV40aoMJ+1WVnqZuqX+/kHLGyz7lncq/oN2dYHl1KUlrkxDp86dX95C/1F0t6Mbe2bkwtNXUqow90iWnJ45PgjpTT9ACt6r/l8jEtgJCZMajHNdnzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=p6KF6CvB; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A2141C4CEC6;
+	Wed, 23 Oct 2024 14:01:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729692094;
+	bh=5b50b5GFMBss2urlySnrHy9PIeMWVclc5a4cudcsbwo=;
+	h=Date:Subject:To:References:Cc:From:In-Reply-To:From;
+	b=p6KF6CvBE3E/fJ3TK2PrSOwru6E2p2b8S1Y4XOGav2E7CgcKWybrcI/w6kKeTGSCW
+	 fwBeGYWSpl67AY4mPAkklRTSe54DSiuxzJc1qavnk+Rzmn89Q0+5w3PrJZQmQlHyQJ
+	 acU/ZGOZrtaMXpuS6ptiHkGQfpAidyoWe86e+oeKmaROf38y4D3gmgNwjTMl7oOL4g
+	 4bACxpd4WnswgJNaFl7yDuCM9uTpw64GQ3e/kR3GNRnAmai4hjzU6BWSiHLfdeUHGV
+	 LYpYRSKS/+xGBh9znOcOwKN7n+Da/eHZAjSZPDm6+pa5g9/Cf5HQDJNu/n9h5qsOi/
+	 GnBGjPq4Tc7hQ==
+Message-ID: <efbf5943-f136-4330-b896-d6b7a2d02796@kernel.org>
+Date: Wed, 23 Oct 2024 16:01:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023132734.62385-1-dominik.karol.piatkowski@protonmail.com>
-In-Reply-To: <20241023132734.62385-1-dominik.karol.piatkowski@protonmail.com>
-From: Andrey Konovalov <andreyknvl@gmail.com>
-Date: Wed, 23 Oct 2024 16:01:04 +0200
-Message-ID: <CA+fCnZfW_7aFR+q-0=umaP8wYEqDU4im0vE5vkqu74fBbgVvVA@mail.gmail.com>
-Subject: Re: [PATCH] kasan: Fix typo in kasan_poison_new_object documentation
-To: =?UTF-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: ryabinin.a.a@gmail.com, glider@google.com, dvyukov@google.com, 
-	vincenzo.frascino@arm.com, kasan-dev@googlegroups.com, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] netfliter: xtables: fix typo causing some targets to not
+ load on IPv6
+Content-Language: en-GB
+To: Ilya Katsnelson <me@0upti.me>, Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Florian Westphal <fw@strlen.de>, Sasha Levin <sashal@kernel.org>
+References: <20241018-xtables-typos-v1-1-02a51789c0ec@0upti.me>
+ <fde8d1b6-9812-418c-8ba4-ae2384251ee7@kernel.org>
+ <83f8ef32-9060-4fde-b947-926ec1d830c8@0upti.me>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <83f8ef32-9060-4fde-b947-926ec1d830c8@0upti.me>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 3:28=E2=80=AFPM Dominik Karol Pi=C4=85tkowski
-<dominik.karol.piatkowski@protonmail.com> wrote:
->
-> Fix presumed copy-paste typo of kasan_poison_new_object documentation
-> referring to kasan_unpoison_new_object.
->
-> No functional changes.
->
-> Fixes: 1ce9a0523938 ("kasan: rename and document kasan_(un)poison_object_=
-data")
-> Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@pr=
-otonmail.com>
-> ---
->  include/linux/kasan.h | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-> index 6bbfc8aa42e8..56465af31044 100644
-> --- a/include/linux/kasan.h
-> +++ b/include/linux/kasan.h
-> @@ -153,7 +153,7 @@ static __always_inline void kasan_unpoison_new_object=
-(struct kmem_cache *cache,
->
->  void __kasan_poison_new_object(struct kmem_cache *cache, void *object);
->  /**
-> - * kasan_unpoison_new_object - Repoison a new slab object.
-> + * kasan_poison_new_object - Repoison a new slab object.
->   * @cache: Cache the object belong to.
->   * @object: Pointer to the object.
->   *
-> --
-> 2.34.1
->
+Hi Ilya,
 
-Reviewed-by: Andrey Konovalov <andreyknvl@gmail.com>
+(+ add people/ML back in cc)
 
-Thank you!
+On 23/10/2024 14:11, Ilya K wrote:
+>> Hi Ilya,
+>>
+>> On 18/10/2024 17:45, Ilya Katsnelson wrote:
+>>> These were added with the wrong family in 4cdc55e, which seems
+>>> to just have been a typo, but now ip6tables rules with --set-mark
+>>> don't work anymore, which is pretty bad.
+>>
+>> Funny, with this patch, now the v4 version doesn't work any more, which
+>> is pretty bad as well ;-)
+>>
+>> More seriously, it looks like your patch broke MPTCP selftests:
+>>
+>>
+>> https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/826643/1-mptcp-join-sh/stdout
+>>
+>> Two tests are now failing, because they can no longer add a mark:
+>>
+>>> # iptables -t mangle -A OUTPUT -j MARK --set-mark 1
+>>> Warning: Extension MARK revision 0 not supported, missing kernel module?
+>>> iptables v1.8.10 (nf_tables):  RULE_APPEND failed (No such file or directory): rule in chain OUTPUT
+>>
+>> Please see below:
+>>
+>>> diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
+>>> index d80abd6ccaf8f71fa70605fef7edada827a19ceb..6dcf4bc7e30b2ae364a1cd9ac8df954a90905c52 100644
+>>> --- a/net/netfilter/xt_NFLOG.c
+>>> +++ b/net/netfilter/xt_NFLOG.c
+>>> @@ -79,7 +79,7 @@ static struct xt_target nflog_tg_reg[] __read_mostly = {
+>>>  	{
+>>>  		.name       = "NFLOG",
+>>>  		.revision   = 0,
+>>> -		.family     = NFPROTO_IPV4,
+>>> +		.family     = NFPROTO_IPV6,
+>>
+>> Here, by setting the family to v6 instead of v4, we now have two targets
+>> that are exactly the same, both for v6:
+>>
+>>>   67   │ static struct xt_target nflog_tg_reg[] __read_mostly = {
+>>>   68   │     {
+>>>   69   │         .name       = "NFLOG",
+>>>   70   │         .revision   = 0,
+>>>   71   │         .family     = NFPROTO_IPV6,  /* <== The line you modified */
+>>>   72   │         .checkentry = nflog_tg_check,
+>>>   73   │         .destroy    = nflog_tg_destroy,
+>>>   74   │         .target     = nflog_tg,
+>>>   75   │         .targetsize = sizeof(struct xt_nflog_info),
+>>>   76   │         .me         = THIS_MODULE,
+>>>   77   │     },
+>>>   78   │ #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+>>>   79   │     {
+>>>   80   │         .name       = "NFLOG",
+>>>   81   │         .revision   = 0,
+>>>   82   │         .family     = NFPROTO_IPV6,  /* <== v6 was already there */
+>>>   83   │         .checkentry = nflog_tg_check,
+>>>   84   │         .destroy    = nflog_tg_destroy,
+>>>   85   │         .target     = nflog_tg,
+>>>   86   │         .targetsize = sizeof(struct xt_nflog_info),
+>>>   87   │         .me         = THIS_MODULE,
+>>>   88   │     },
+>>>   89   │ #endif
+>>>   90   │ };
+>>
+>> Are you sure you didn't have the bug you mentioned because your kernel
+>> config doesn't have CONFIG_IP6_NF_IPTABLES?
+>>
+>>>  		.checkentry = nflog_tg_check,
+>>>  		.destroy    = nflog_tg_destroy,
+>>>  		.target     = nflog_tg,
+>>> diff --git a/net/netfilter/xt_mark.c b/net/netfilter/xt_mark.c
+>>> index f76fe04fc9a4e19f18ac323349ba6f22a00eafd7..65b965ca40ea7ea5d9feff381b433bf267a424c4 100644
+>>> --- a/net/netfilter/xt_mark.c
+>>> +++ b/net/netfilter/xt_mark.c
+>>> @@ -62,7 +62,7 @@ static struct xt_target mark_tg_reg[] __read_mostly = {
+>>>  	{
+>>>  		.name           = "MARK",
+>>>  		.revision       = 2,
+>>> -		.family         = NFPROTO_IPV4,
+>>> +		.family         = NFPROTO_IPV6,
+>>
+>> Same here.
+>>
+>> So I think this patch is not needed, right?
+>>
+>>>  		.target         = mark_tg,
+>>>  		.targetsize     = sizeof(struct xt_mark_tginfo2),
+>>>  		.me             = THIS_MODULE,
+>>>
+>>> ---
+>>> base-commit: 75aa74d52f43e75d0beb20572f98529071b700e5
+>>> change-id: 20241018-xtables-typos-dfeadb8b122d
+>>>
+>>> Best regards,
+>>
+>> Cheers,
+>> Matt
+> 
+> The patch never got merged, but Pablo's very similar patch did. Are you
+> by any chance applying my changes on top of a tree that also contains
+> his?
+
+Thank you for this reply!
+
+Oh, sorry, I see the issue now, just an unlucky situation:
+
+- On one hand, and probably because the issue was visible on stable too,
+Pablo sent a new version changing the author and the title ("not to
+load" vs "to not load") [1]. Because of that, the bot didn't mark the
+previous version as superseded.
+
+- On the other hand, the CI tried to apply all the pending patches,
+including this patch here: when git tried to apply this patch, it
+managed to find the exact same context a bit before, and then modified
+the wrong line [2].
+
+The two combined resulted in the CI trying to validate a buggy patch not
+doing what it was intended to do.
+
+From what I understood, Paolo is changing the status of [1] and even [3]
+on Patchwork, and soon the CI will stop using the wrong patch.
+
+[1]
+https://patchwork.kernel.org/project/netdevbpf/patch/20241021094536.81487-3-pablo@netfilter.org/
+[2]
+https://github.com/linux-netdev/testing/commit/096e5d7e7d38271b6353ecd197e8ec00a01dbfd3
+[3]
+https://patchwork.kernel.org/project/netdevbpf/patch/20241018162517.39154-1-ignat@cloudflare.com/
+
+Cheers,
+Matt
+-- 
+Sponsored by the NGI0 Core fund.
+
 
