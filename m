@@ -1,115 +1,107 @@
-Return-Path: <linux-kernel+bounces-377511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377507-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0A419ABFCC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:07:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3572D9ABFC3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:06:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0C06CB247C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:07:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F3295281821
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:06:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D33B214BF87;
-	Wed, 23 Oct 2024 07:06:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CB77153BD7;
+	Wed, 23 Oct 2024 07:06:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r6mu6TY+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I0UvUMkb"
+Received: from mail-wr1-f45.google.com (mail-wr1-f45.google.com [209.85.221.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16F70156257;
-	Wed, 23 Oct 2024 07:06:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B71414F10E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667200; cv=none; b=O3ywPD6RBjq7+pdNtMOH0KG5j4EqcE5PJ2bp3bgg1qGjKkc1TtBTqRiwQok3ymsmV67TEKhMtNvXTdrnAbgzlWkEvePsKGQMJopBVx+olicbW6pQri8WIu0pTm8wvk3r+N88ZoqN8tpGjgJ/hj2ANhlXvKi/KhGCIqGxH52DCsA=
+	t=1729667186; cv=none; b=bc3z519M1BzoVsB91LbGu/Vqqn9zACCSSExHfhZ3dXGPuWMLEaQX7T5ZMaj5CWCPjpSTZxLqKySfuFfFMFyGzqik9LnvlIVCvfeFYKqlJe1gVtVUi+QC95KsidHYRYys3hbFJiKWtFkXGLIIiX26nPs4Cp0ZwUBQf5XeR3XbOEQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667200; c=relaxed/simple;
-	bh=cUjvW1wTsKGH7I8VyS4QMqzWOtCeG2GqAEWy+jvkqjY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=BgLSSjrIbdPrjcxIiWKA3FjLR9cQ+YBY0MEkvToHO88kC0njDg9EdvA+FD0FKK/3wIkLuNb+b4RAOIN7kcU9gp9NU9LYBhyYrGz7fqtCNsexK2/SS+iHXPVIl/ZsZXOS4TPf4/ritVcGoWSRzjSGJIe03IUQE11+wr3TloYtLyA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r6mu6TY+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id BD336C4CEEA;
-	Wed, 23 Oct 2024 07:06:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729667199;
-	bh=cUjvW1wTsKGH7I8VyS4QMqzWOtCeG2GqAEWy+jvkqjY=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r6mu6TY+k/tA38zp47MTMaUVE6oCizdBoZvZEiKtO65vJF+Fe58GmMna6LMXMvWnZ
-	 JLLJel5kp+qxM+/inz3VBb7X4HfItgg3xN3Bfn2APhI1FxzhybFEjZ036jABotn2BS
-	 xnGg3Nvy8b3zRWM2/JqYkHamghNxbldg3EtxGBgiYv4AbY+G6Ln7/wJTZ3B8Po9z6g
-	 Z1i9hYsuxpzFqTOos1rsP/Edvmxbz0Z6/as5e8MmLjUx68R/EP0+oKbmI6z8gCWx16
-	 dnK7YYBy8+KfEihEvLVt4OxOVkD8zblrncWw/SugBJStTVkU0z1FdWjMi8ceSFD5fL
-	 bSrSAoezAATtg==
-Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f53973fdso493658e87.1;
-        Wed, 23 Oct 2024 00:06:39 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCVFpGrrPoWU2xL3ixUed5/c9+M3VixjEIEuL4KIMEaD9yUVRxTqOOSGMFOjbDG0FQJRUuo2uIUf6i4WZKqg@vger.kernel.org, AJvYcCVOCw9rdZRVqk0wXXGExtG5wBWsEm2yEePkg6CGEm4ubIhBLKYq8ymCNwgZzJ5oO6uXiOJcA/2IXHj+@vger.kernel.org, AJvYcCVtpdiZmmM2SGAld1nEsu7+12Q76Gm7gnDU3RJCbbDXJWFZmp/t8G+ux7iNYKHZxOZYJceFC0jsD3O2Dgyl@vger.kernel.org, AJvYcCWZOtmj+AGY5oKroHp0msiRM9h1scBOGqgoxh2ntEerM5LLor0Hg2E+XwgUzD1JGBDMT96HQB+g8j7I@vger.kernel.org, AJvYcCXYwjgqSC2PnnH23vOsB5ItDhU2XSouRuLjOIcTYbP5zIBS7tfOvHjgQlfs1XCohPqKKl/rKiBxts40@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMYoL0WLi+87SW8rJdIoaFm3evY6MXXyydcMR+OIau8v1I+ODT
-	M0o9uqzRkJWGc1MILSkXEUaBt445cMyrgcOJdH/h2CC5Rv4bWTqCS3LCwLTAiXDPMTG0Xq+Ve8b
-	91yK2sJfdytM+uJkpipsIoPiWq2g=
-X-Google-Smtp-Source: AGHT+IHZZgwVgaRO2Hdyj/zbCtAei+RMhbCGrZN9DeetcAzH9eNLU1+5ofJFfDj8eJ/Gl5I1LCwT7/RZ/5W1ROK9gGg=
-X-Received: by 2002:a05:6512:2812:b0:539:f6b1:2d05 with SMTP id
- 2adb3069b0e04-53b1317f334mr2048779e87.9.1729667198330; Wed, 23 Oct 2024
- 00:06:38 -0700 (PDT)
+	s=arc-20240116; t=1729667186; c=relaxed/simple;
+	bh=XoHUoJsrswRGxjRl6sDRxsflPiQBKRUxRfRYpDwBas0=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=bN9Q8S7t5eU/0bVWsh3pLYn/Zbx2ObbMU4PxImzaoH5kkYJ++XG+erJbn1pSdCanVNHPVuQP9lV9DQo3FSa67sBhmpEDiEgUoTHibyx0eVRaDHcDxw1z4j5iqBmhlCMBWOMljhUQ3qR/Fszia+9yy94Yo2XDdZnx0B5Zkm+G/fg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I0UvUMkb; arc=none smtp.client-ip=209.85.221.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f45.google.com with SMTP id ffacd0b85a97d-37d473c4bb6so5784359f8f.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:06:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729667183; x=1730271983; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yfTTWreZVW5LY5QClNfyq728uUh/+v+MiaH1C99PVt4=;
+        b=I0UvUMkbo3XC3NNI85tUE6yT8/EQn8zmZ0aREoe/LdUV/J3H8/d2TvhMp+PoJNAjOp
+         6qSA0uDZQ2YyWPM6BifuOR9SsfKrhgzRWmisM6Hvz2IOMLBkr0EN+OlvjemwAnO0O/fL
+         PNbzlnIgSnOphUoY3BvZ6k6+QmFW2zaSE//WCuN47mhGtEK6A9p7vFk8QvYR6UAT65f9
+         7Y0/+jjstg0cIxNECQjPPF6Rl3rjgO2nsA6RFsfPCscIPMoKCuzry2+YAJezUm8BCdB5
+         uGgauJzDY9vvu8DKdrH9t6a60k4v4T70fEWwnRHmwEwrSyU29swB0k+pW+OGXOBPM7Q2
+         mvMQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729667183; x=1730271983;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yfTTWreZVW5LY5QClNfyq728uUh/+v+MiaH1C99PVt4=;
+        b=dbRVw7+M+PCbUnT1+MpXFwvSvNQoGnkNO+Fikzsx269fwTuCorp7bnsBru6F9RZRJV
+         QW0LkxHy52w7Kewt2QeAYaXFVaBfA8GVPHkH5IhXeFDl7rOlyYZtNDe8f494Fb58oauE
+         2erszIaNC7C5sJArf+FQcIC8bq8GEJ0w6cRXt2/GFgv1tRjBTZEJp6fJRYH7UMxZZSy2
+         qpOq9r+xxJpk2qqE+zgJpq+TULGaTzhEy0VnMX89oVTVd7TpLO7uJRAfR8+LTvYFzaGS
+         Qm3o5n6JJWUJt8Q0dy65gQjw7p+Xk+5tItGCoEVIyglU8Cr7rNQ0Q4ZlaiTux1D4k2m8
+         Zv4w==
+X-Gm-Message-State: AOJu0YxlEWIdnkuY0+t05lyq9XfVWpPryV67PRjDrXC6We6MpMb/ZnOS
+	YoxuNQHu9Ty07Xl5XKGuTgAwib4KhOHeD5E1Z5/lO9su0HC42hpBqnfN9K/hTSs=
+X-Google-Smtp-Source: AGHT+IGx77prV81rpRKWF2iShgmXw9axXlF4bLHAfsjP2F6ZI7ageC/XK84UTh1SQNx50KiALKTSNg==
+X-Received: by 2002:adf:e386:0:b0:37d:53d1:84f2 with SMTP id ffacd0b85a97d-37efceeddfdmr1248569f8f.11.1729667182969;
+        Wed, 23 Oct 2024 00:06:22 -0700 (PDT)
+Received: from localhost.localdomain ([5.28.129.234])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9410dsm8212285f8f.79.2024.10.23.00.06.21
+        (version=TLS1_3 cipher=TLS_CHACHA20_POLY1305_SHA256 bits=256/256);
+        Wed, 23 Oct 2024 00:06:22 -0700 (PDT)
+From: Liad Peretz <liad.per@gmail.com>
+To: linux-kernel@vger.kernel.org
+Cc: akpm@linux-foundation.org,
+	bhe@redhat.com,
+	hbathini@linux.ibm.com,
+	yang.lee@linux.alibaba.com,
+	david@redhat.com,
+	liad.per@gmail.com
+Subject: [PATCH] Makefile: Remove unused filechk_cat
+Date: Wed, 23 Oct 2024 10:06:11 +0300
+Message-Id: <20241023070611.67449-1-liad.per@gmail.com>
+X-Mailer: git-send-email 2.39.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014213342.1480681-1-xur@google.com> <20241014213342.1480681-7-xur@google.com>
- <CAK7LNARfm7HBx-wLCak1w0sfH7LML1ErWO=2sLj4ovR38RsnTA@mail.gmail.com> <CAF1bQ=Qi9hyKbc5H3N36W=MukT3321rZMCas0ndpRf0YszAfOA@mail.gmail.com>
-In-Reply-To: <CAF1bQ=Qi9hyKbc5H3N36W=MukT3321rZMCas0ndpRf0YszAfOA@mail.gmail.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Wed, 23 Oct 2024 16:06:02 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQr_EusZyy-dPcV=5o9UckStaUfXLSCQh7APbYh15NC3w@mail.gmail.com>
-Message-ID: <CAK7LNAQr_EusZyy-dPcV=5o9UckStaUfXLSCQh7APbYh15NC3w@mail.gmail.com>
-Subject: Re: [PATCH v4 6/6] Add Propeller configuration for kernel build.
-To: Rong Xu <xur@google.com>
-Cc: Alice Ryhl <aliceryhl@google.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Arnd Bergmann <arnd@arndb.de>, Bill Wendling <morbo@google.com>, Borislav Petkov <bp@alien8.de>, 
-	Breno Leitao <leitao@debian.org>, Brian Gerst <brgerst@gmail.com>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, David Li <davidxl@google.com>, 
-	Han Shen <shenhan@google.com>, Heiko Carstens <hca@linux.ibm.com>, "H. Peter Anvin" <hpa@zytor.com>, 
-	Ingo Molnar <mingo@redhat.com>, Jann Horn <jannh@google.com>, Jonathan Corbet <corbet@lwn.net>, 
-	Josh Poimboeuf <jpoimboe@kernel.org>, Juergen Gross <jgross@suse.com>, 
-	Justin Stitt <justinstitt@google.com>, Kees Cook <kees@kernel.org>, 
-	"Mike Rapoport (IBM)" <rppt@kernel.org>, Nathan Chancellor <nathan@kernel.org>, 
-	Nick Desaulniers <ndesaulniers@google.com>, Nicolas Schier <nicolas@fjasle.eu>, 
-	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
-	Sami Tolvanen <samitolvanen@google.com>, Thomas Gleixner <tglx@linutronix.de>, 
-	Wei Yang <richard.weiyang@gmail.com>, workflows@vger.kernel.org, 
-	Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>, Maksim Panchenko <max4bolt@gmail.com>, x86@kernel.org, 
-	linux-arch@vger.kernel.org, linux-doc@vger.kernel.org, 
-	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	llvm@lists.linux.dev, Sriraman Tallam <tmsriram@google.com>, 
-	Krzysztof Pszeniczny <kpszeniczny@google.com>, Stephane Eranian <eranian@google.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 9:00=E2=80=AFAM Rong Xu <xur@google.com> wrote:
+Signed-off-by: Liad Peretz <liad.per@gmail.com>
+---
+ kernel/Makefile | 2 --
+ 1 file changed, 2 deletions(-)
 
-> > > +=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
-> > > +
-> > > +Configure the kernel with::
-> > > +
-> > > +   CONFIG_AUTOFDO_CLANG=3Dy
-> >
-> >
-> > This is automatically met due to "depends on AUTOFDO_CLANG".
->
-> Agreed. But we will remove the dependency from PROPELlER_CLANG to AUTOFDO=
-_CLANG.
-> So we will keep the part.
+diff --git a/kernel/Makefile b/kernel/Makefile
+index 87866b037fbe..ca2dfa4343f0 100644
+--- a/kernel/Makefile
++++ b/kernel/Makefile
+@@ -146,8 +146,6 @@ targets += config_data config_data.gz
+ $(obj)/config_data.gz: $(obj)/config_data FORCE
+ 	$(call if_changed,gzip)
+ 
+-filechk_cat = cat $<
+-
+ $(obj)/config_data: $(KCONFIG_CONFIG) FORCE
+ 	$(call filechk,cat)
+ 
+-- 
+2.39.0
 
-
-You can replace "depends on AUTOFDO_CLANG" with
-"imply AUTOFDO_CLANG" if it is sensible.
-
-Up to you.
-
-
-
---
-Best Regards
-Masahiro Yamada
 
