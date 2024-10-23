@@ -1,52 +1,67 @@
-Return-Path: <linux-kernel+bounces-378737-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378738-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5EE979AD4A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:20:40 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45B899AD4A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:23:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CDBD5B21E1B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:20:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F2415283801
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:23:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE1F81D0E18;
-	Wed, 23 Oct 2024 19:20:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B7551D5CFD;
+	Wed, 23 Oct 2024 19:22:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Cq7p6ehF"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="O3c+kedm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 209F71CF5C4
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 043961CF5C4;
+	Wed, 23 Oct 2024 19:22:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729711233; cv=none; b=OXxaWGZHujWlpbMyAtqFM41Qla8ZtuEr7keEvcudOY0yifUFv9GK4TjKldlX6G1kgxUqZg+1TohzeNoQlknoG9WTaHyoavu1Y+7AN9VU6WwUT4EZB3eQ9n9+owlopb+csVTKsYnwuCKKsyvZ6jU/nUAv14xcceJnC9yqWn2Pb5c=
+	t=1729711377; cv=none; b=q57vHUwegqYwGSuFOZqNZficSJpiWPBQUB418sg3LIY7wxTToeC6LWrY4WELx/USG52Dat+xvlHKToWNtSnJBtSEi4YbL1xSitpXIHLYRzJWX5OkXOnCJyOkKtBvoncjYlTfRLgooEZT5j6vzZ+M4urKD5fI3KInG1tW4pH5rM8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729711233; c=relaxed/simple;
-	bh=PY+OPSnE8upfsVI93jDUXeqT9p7dWGq2UprYSqma0Ps=;
+	s=arc-20240116; t=1729711377; c=relaxed/simple;
+	bh=dPf+AQ3s92xAb2BgedYsfVpbwXVL7KotyN+oowhouFs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=uRjizJRNNRLwxZSS+iGCme0uJOhbd81KFZLo0ww+SqCN44HD7Oavki6dD5kIBQ10xFlwGVTg+Zo1OiW6iaxXAAWKr3hQ5EzIfRa9cY5M2sLmx1nc7omVahi/Uck0JbkUohdyGoBtJlUEH1GEbTq0PiqpcmZZ65YUuH1j/Rg6efU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Cq7p6ehF; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7159EC4CEC6;
-	Wed, 23 Oct 2024 19:20:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729711232;
-	bh=PY+OPSnE8upfsVI93jDUXeqT9p7dWGq2UprYSqma0Ps=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Cq7p6ehFAtUikdnvEZ1FsAXzDAUaIirBUQLsYnvAe63uxQvzcDSo6bAb+OyUNZ+mV
-	 QGmR+qjdcrPXYqOwnMdHR49ZNwVCSbtL2oWtJ3wzos5XZNsryBCKyFltJ1wiqJ3eym
-	 t+d487tMq2WIPjNOemR4QddNWBjtaKCk633o5lvBAnFkhMeI8QR+SHcUw99sj6ngkk
-	 /0g9t4Du+dq6v0XcXggGZosz4PBpmgCK1c7EyV8nWQ93aeHshWqpLt/7q0FYNrGT+9
-	 n1w3FXXKHVzs3UDD3LOZRLBuz32bJvKteNNnikcx76DE4eToy1fex/2RHwyiWoJpkt
-	 Xj6yESqAj1A2A==
-Date: Wed, 23 Oct 2024 09:20:31 -1000
-From: Tejun Heo <tj@kernel.org>
-To: Andrea Righi <arighi@nvidia.com>
-Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] sched_ext: Clarify ops.select_cpu() for single-CPU tasks
-Message-ID: <ZxlMf94wpHuAsPQm@slm.duckdns.org>
-References: <20241023111907.36172-1-arighi@nvidia.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=EaC0cjoxCNw0tC+c9L+UnSb4GFAaMllFut14EPfIJC4rX23zZF23iBIq9V13coaAeaL6FxmTX1+OrYqb53aYd36wLWtamb8fB4vIzzwRrjAUZjYMufyebshwEtueO71LpuDjh0ui8m2hhsHGBRUzQM63bljeTamXSwvYMmHcQkE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=O3c+kedm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=bjpn07mKWG+e5cbzYSiLKd9EMhYvYVJFmfG6/l792so=; b=O3c+kedmaSZ7Rp4kq5v5gUlLVp
+	zKtp6aac143tFKnwtEa9TBUsucVA8PowqlTmJQMkKtZSJdCKWEs9DH6QNb9ZPqTuIWVsikoEwTVXG
+	bGgnmDeh8PvEjVo/uh/U2k4WHQOC70FwvRuDimBiOWbyc9+UcaCCVu4JsGYQ7xZ2Rx5dIRTyZNQHr
+	GeejDHk10mDt4XqUbN+DkiY5IbisPuldQrkbJN/Gcr2T3H0bYjr0lKTApfRgCvRhX7o/Je/o2FHlG
+	4/BUN0+tqSTUBb0rpvImyV0EaRW3P9N4HaLFvRJmqXI976b+rhZkxHMthXQYZoSwi1TgEba0vGc4X
+	yHwLAp1A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3gwH-00000008X5h-3iez;
+	Wed, 23 Oct 2024 19:22:38 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id E3B6A30073F; Wed, 23 Oct 2024 21:22:36 +0200 (CEST)
+Date: Wed, 23 Oct 2024 21:22:36 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com,
+	mhocko@kernel.org, vbabka@suse.cz, shakeel.butt@linux.dev,
+	hannes@cmpxchg.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com
+Subject: Re: [PATCH v3 tip/perf/core 4/4] uprobes: add speculative lockless
+ VMA-to-inode-to-uprobe resolution
+Message-ID: <20241023192236.GB11151@noisy.programming.kicks-ass.net>
+References: <20241010205644.3831427-1-andrii@kernel.org>
+ <20241010205644.3831427-5-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -55,19 +70,87 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023111907.36172-1-arighi@nvidia.com>
+In-Reply-To: <20241010205644.3831427-5-andrii@kernel.org>
 
-On Wed, Oct 23, 2024 at 01:19:07PM +0200, Andrea Righi wrote:
-> Update ops.select_cpu() documentation to clarify that this method is not
-> called for tasks that are restricted to run on a single CPU, as these
-> tasks do not have the option to select a different CPU.
+On Thu, Oct 10, 2024 at 01:56:44PM -0700, Andrii Nakryiko wrote:
+
+> Suggested-by: Matthew Wilcox <willy@infradead.org>
+
+I'm fairly sure I've suggested much the same :-)
+
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> ---
+>  kernel/events/uprobes.c | 50 +++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 50 insertions(+)
 > 
-> Signed-off-by: Andrea Righi <arighi@nvidia.com>
+> diff --git a/kernel/events/uprobes.c b/kernel/events/uprobes.c
+> index fa1024aad6c4..9dc6e78975c9 100644
+> --- a/kernel/events/uprobes.c
+> +++ b/kernel/events/uprobes.c
+> @@ -2047,6 +2047,52 @@ static int is_trap_at_addr(struct mm_struct *mm, unsigned long vaddr)
+>  	return is_trap_insn(&opcode);
+>  }
+>  
+> +static struct uprobe *find_active_uprobe_speculative(unsigned long bp_vaddr)
+> +{
+> +	struct mm_struct *mm = current->mm;
+> +	struct uprobe *uprobe = NULL;
+> +	struct vm_area_struct *vma;
+> +	struct file *vm_file;
+> +	struct inode *vm_inode;
+> +	unsigned long vm_pgoff, vm_start;
+> +	loff_t offset;
+> +	long seq;
+> +
+> +	guard(rcu)();
+> +
+> +	if (!mmap_lock_speculation_start(mm, &seq))
+> +		return NULL;
 
-Applied to sched_ext/for-6.13.
+So traditional seqcount assumed non-preemptible lock sides and would
+spin-wait for the LSB to clear, but for PREEMPT_RT we added preemptible
+seqcount support and that takes the lock to wait, which in this case is
+exactly the same as returning NULL and doing the lookup holding
+mmap_lock, so yeah.
 
-Thanks.
+> +
+> +	vma = vma_lookup(mm, bp_vaddr);
+> +	if (!vma)
+> +		return NULL;
+> +
+> +	/* vm_file memory can be reused for another instance of struct file,
 
--- 
-tejun
+Comment style nit.
+
+> +	 * but can't be freed from under us, so it's safe to read fields from
+> +	 * it, even if the values are some garbage values; ultimately
+> +	 * find_uprobe_rcu() + mmap_lock_speculation_end() check will ensure
+> +	 * that whatever we speculatively found is correct
+> +	 */
+> +	vm_file = READ_ONCE(vma->vm_file);
+> +	if (!vm_file)
+> +		return NULL;
+> +
+> +	vm_pgoff = data_race(vma->vm_pgoff);
+> +	vm_start = data_race(vma->vm_start);
+> +	vm_inode = data_race(vm_file->f_inode);
+
+So... seqcount has kcsan annotations other than data_race(). I suppose
+this works, but it all feels like a bad copy with random changes.
+
+> +
+> +	offset = (loff_t)(vm_pgoff << PAGE_SHIFT) + (bp_vaddr - vm_start);
+> +	uprobe = find_uprobe_rcu(vm_inode, offset);
+> +	if (!uprobe)
+> +		return NULL;
+> +
+> +	/* now double check that nothing about MM changed */
+> +	if (!mmap_lock_speculation_end(mm, seq))
+> +		return NULL;
+
+Typically seqcount does a re-try here.
+
+> +
+> +	return uprobe;
+> +}
 
