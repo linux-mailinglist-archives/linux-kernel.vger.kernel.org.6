@@ -1,178 +1,134 @@
-Return-Path: <linux-kernel+bounces-378389-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378390-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217969ACF46
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:48:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2B8BF9ACF48
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:48:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A6D031F25530
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:48:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8F6CE2829E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:48:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29C571D220E;
-	Wed, 23 Oct 2024 15:44:20 +0000 (UTC)
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A716A1CACE7;
+	Wed, 23 Oct 2024 15:44:44 +0000 (UTC)
+Received: from out01.mta.xmission.com (out01.mta.xmission.com [166.70.13.231])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4599F1CF29B;
-	Wed, 23 Oct 2024 15:44:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F3AB1C6F43;
+	Wed, 23 Oct 2024 15:44:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=166.70.13.231
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729698259; cv=none; b=m2XQldZQcbgUR89mMX6CuBh1/82OczMMqJjCANgP0n+6m3GMZQrhZjhFn3EFNVopJfBW2Xce8KjGkTICojurndMfrd5Th9739PSpRXAh3ntBz6imlP3vGaMSTtvnxIgpQSm5cRgcdJByeOXqr5bs6ND1RQ/vx1v7MA0RqKM3P9s=
+	t=1729698284; cv=none; b=V32FY3cvKTLO/PwvNcnD1hyWuLOuCbltWS1bptFtfxnixkTlX3/+9soF/xBPsCiw3wzIV4JgmOOMIckl/0/JjskDQXJ72T5/mh92jUOYSnwfCEPzkpt3VvgFuWGlBO4Fyhwsh64C7rPH78dlX39pDYHnFQxnbmtYiAeDjVZrUBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729698259; c=relaxed/simple;
-	bh=k3NksgKMGGwSiQjqqQDiIoWxu2o4MtjaGnPwO3kHGQE=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=R3r2u7aeQf61NhFf3dRv537Uj4Cq0oCcN7OgMswKvpIu4DfoXqVb0FjTX1ehPIv7MmJzgZsQTcrCg/LPiJONNuHlBm5JCBPBC4rcsBe5vxKqryalZtiZ0vshneaNACPN3MeVWDgRQCQFnidXYkiLaZdvjuuRT56nkfO1igZai9k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-20c6f492d2dso81004595ad.0;
-        Wed, 23 Oct 2024 08:44:18 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729698257; x=1730303057;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=X3YqyV0YwGuilWF+8lpqEcTlB/FpyMoTdw0SNw6nZVo=;
-        b=NDX9XE9CFSH16J/AwLJa6RmvNVaM3WuWVNaOYcO4t6n1rCioKBQin5NZwkNRmq3QUp
-         5Uhtns9r9HZJc+6l+Vte9dNjEgxn9tYqfQrGOKwgFZ5tePvL1Ff2l9Pe1VAdbJncvIIg
-         XmcNjmMaH2ElqjIWM1Ma8iK8175xAtB93D/Xd2AJgaUASldymPLNyQhOcxR+Oe0J6jN8
-         YsY8B8RRpXhjvaxQDqrUc0ks+usdmhEpi6HRpmYrZjT4x4ZOZmEzAG8gVZEu0XAhSXdb
-         EkIFdnDsi5dZiGOImRLHAQpIsEGeisp1P+56j0d6kfVPFbzgD0YRWBbgZ3/39JnS6NHH
-         1GbA==
-X-Forwarded-Encrypted: i=1; AJvYcCUm4S9CGv4fzPM/yCUF4FxO2xItvuaWOXNoQ+qUUcYOiKtDGUgCroIiL2LgSAh3nWOyG2mhs+Mmqq4JgELGHOGW@vger.kernel.org, AJvYcCVbOe21gStxYkEXzezx/NsCRRiN5oSJMZGB8nWscKJZmsy+vB6Gt/rPu0NPDsw2hIQ3xbrDhpfcGA014hs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyWXzXex5UBDx6b75IUHhwJhY5vyNPGMEOXgNmEMN8C/tlyZNKv
-	nzgSoe3MvfkrE7wQ6MvHmgX7QUL0F1Ct/3j6N4Z8gseKoSPHPVIhP1KVsT0=
-X-Google-Smtp-Source: AGHT+IG5tIKpYeuEz6ZLsiWpOGSrUCthd3VQ2flnhUoELbeYmk26pijtnqS/JXJt/3edd7064c+NAA==
-X-Received: by 2002:a17:902:ce86:b0:20b:58f2:e1a0 with SMTP id d9443c01a7336-20fa9e246e0mr30293045ad.18.1729698257223;
-        Wed, 23 Oct 2024 08:44:17 -0700 (PDT)
-Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0bcb75sm59576405ad.176.2024.10.23.08.44.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 08:44:16 -0700 (PDT)
-From: Stanislav Fomichev <sdf@fomichev.me>
-To: netdev@vger.kernel.org
-Cc: davem@davemloft.net,
-	edumazet@google.com,
-	kuba@kernel.org,
-	pabeni@redhat.com,
-	linux-kernel@vger.kernel.org,
-	linux-kselftest@vger.kernel.org,
-	andrew+netdev@lunn.ch,
-	shuah@kernel.org,
-	almasrymina@google.com,
-	sdf@fomichev.me,
-	willemb@google.com,
-	petrm@nvidia.com
-Subject: [PATCH net-next v5 12/12] selftests: ncdevmem: Add automated test
-Date: Wed, 23 Oct 2024 08:44:02 -0700
-Message-ID: <20241023154402.441510-13-sdf@fomichev.me>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241023154402.441510-1-sdf@fomichev.me>
-References: <20241023154402.441510-1-sdf@fomichev.me>
+	s=arc-20240116; t=1729698284; c=relaxed/simple;
+	bh=BJsQa4UwFXYxZ2llPGv6z6ugbvbu+ADQbnfLdebuFZg=;
+	h=From:To:Cc:References:Date:In-Reply-To:Message-ID:MIME-Version:
+	 Content-Type:Subject; b=iHj9ZrsjnyuS3EI967L+m7WEFVN2UJaanTrmuT3hMOw24Yi9d8NKNVbV5XQoqJGhubkzNseOhjmJQqC3BIJWLh31axNLSKmzs/mmGaDcObRfwJqZayBsVzdAD7MvgdAOi9VOJz9If+ltF5WGEIFYLS8U7+Qo4FTF3vpz3oNCLLU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com; spf=pass smtp.mailfrom=xmission.com; arc=none smtp.client-ip=166.70.13.231
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=xmission.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xmission.com
+Received: from in02.mta.xmission.com ([166.70.13.52]:37192)
+	by out01.mta.xmission.com with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1t3dXF-00Gq8R-Vr; Wed, 23 Oct 2024 09:44:34 -0600
+Received: from ip72-198-198-28.om.om.cox.net ([72.198.198.28]:48910 helo=email.froward.int.ebiederm.org.xmission.com)
+	by in02.mta.xmission.com with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.93)
+	(envelope-from <ebiederm@xmission.com>)
+	id 1t3dXE-00Ce3Q-Ub; Wed, 23 Oct 2024 09:44:33 -0600
+From: "Eric W. Biederman" <ebiederm@xmission.com>
+To: "Kirill A. Shutemov" <kirill@shutemov.name>
+Cc: Yan Zhao <yan.y.zhao@intel.com>,  kexec@lists.infradead.org,
+  linux-kernel@vger.kernel.org,  linux-coco@lists.linux.dev,
+  x86@kernel.org,  rick.p.edgecombe@intel.com,
+  kirill.shutemov@linux.intel.com
+References: <20241021034553.18824-1-yan.y.zhao@intel.com>
+	<87frop8r0y.fsf@email.froward.int.ebiederm.org>
+	<tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+Date: Wed, 23 Oct 2024 10:44:11 -0500
+In-Reply-To: <tpbcun3d4wrnbtsvx3b3hjpdl47f2zuxvx6zqsjoelazdt3eyv@kgqnedtcejta>
+	(Kirill A. Shutemov's message of "Tue, 22 Oct 2024 15:06:15 +0300")
+Message-ID: <87cyjq7rjo.fsf@email.froward.int.ebiederm.org>
+User-Agent: Gnus/5.13 (Gnus v5.13) Emacs/28.2 (gnu/linux)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-XM-SPF: eid=1t3dXE-00Ce3Q-Ub;;;mid=<87cyjq7rjo.fsf@email.froward.int.ebiederm.org>;;;hst=in02.mta.xmission.com;;;ip=72.198.198.28;;;frm=ebiederm@xmission.com;;;spf=pass
+X-XM-AID: U2FsdGVkX1899tWOjUmFXe4DAmPwzY/yTaOmZMJ+rQQ=
+X-Spam-Level: 
+X-Spam-Report: 
+	* -1.0 ALL_TRUSTED Passed through trusted hosts only via SMTP
+	*  0.8 BAYES_50 BODY: Bayes spam probability is 40 to 60%
+	*      [score: 0.4764]
+	*  0.7 XMSubLong Long Subject
+	*  0.0 T_TM2_M_HEADER_IN_MSG BODY: No description available.
+	* -0.0 DCC_CHECK_NEGATIVE Not listed in DCC
+	*      [sa06 1397; Body=1 Fuz1=1 Fuz2=1]
+	*  0.0 XM_B_AI_SPAM_COMBINATION Email matches multiple AI-related
+	*      patterns
+	*  0.2 XM_B_SpammyWords One or more commonly used spammy words
+X-Spam-DCC: XMission; sa06 1397; Body=1 Fuz1=1 Fuz2=1 
+X-Spam-Combo: ;"Kirill A. Shutemov" <kirill@shutemov.name>
+X-Spam-Relay-Country: 
+X-Spam-Timing: total 475 ms - load_scoreonly_sql: 0.08 (0.0%),
+	signal_user_changed: 11 (2.3%), b_tie_ro: 10 (2.0%), parse: 1.67
+	(0.4%), extract_message_metadata: 18 (3.8%), get_uri_detail_list: 1.66
+	(0.3%), tests_pri_-2000: 6 (1.3%), tests_pri_-1000: 3.6 (0.8%),
+	tests_pri_-950: 1.69 (0.4%), tests_pri_-900: 1.36 (0.3%),
+	tests_pri_-90: 164 (34.5%), check_bayes: 147 (30.9%), b_tokenize: 7
+	(1.4%), b_tok_get_all: 6 (1.3%), b_comp_prob: 3.1 (0.7%),
+	b_tok_touch_all: 127 (26.7%), b_finish: 0.96 (0.2%), tests_pri_0: 251
+	(52.9%), check_dkim_signature: 0.86 (0.2%), check_dkim_adsp: 3.1
+	(0.7%), poll_dns_idle: 0.73 (0.2%), tests_pri_10: 1.92 (0.4%),
+	tests_pri_500: 8 (1.8%), rewrite_mail: 0.00 (0.0%)
+Subject: Re: [PATCH] kexec_core: Accept unaccepted kexec destination addresses
+X-SA-Exim-Connect-IP: 166.70.13.52
+X-SA-Exim-Rcpt-To: kirill.shutemov@linux.intel.com, rick.p.edgecombe@intel.com, x86@kernel.org, linux-coco@lists.linux.dev, linux-kernel@vger.kernel.org, kexec@lists.infradead.org, yan.y.zhao@intel.com, kirill@shutemov.name
+X-SA-Exim-Mail-From: ebiederm@xmission.com
+X-SA-Exim-Scanned: No (on out01.mta.xmission.com); SAEximRunCond expanded to false
 
-Only RX side for now and small message to test the setup.
-In the future, we can extend it to TX side and to testing
-both sides with a couple of megs of data.
+"Kirill A. Shutemov" <kirill@shutemov.name> writes:
 
-  make \
-  	-C tools/testing/selftests \
-  	TARGETS="drivers/hw/net" \
-  	install INSTALL_PATH=~/tmp/ksft
+> Waiting minutes to get VM booted to shell is not feasible for most
+> deployments. Lazy is sane default to me.
 
-  scp ~/tmp/ksft ${HOST}:
-  scp ~/tmp/ksft ${PEER}:
+Huh?
 
-  cfg+="NETIF=${DEV}\n"
-  cfg+="LOCAL_V6=${HOST_IP}\n"
-  cfg+="REMOTE_V6=${PEER_IP}\n"
-  cfg+="REMOTE_TYPE=ssh\n"
-  cfg+="REMOTE_ARGS=root@${PEER}\n"
+Unless my guesses about what is happening are wrong lazy is hiding
+a serious implementation deficiency.  From all hardware I have seen
+taking minutes is absolutely ridiculous.
 
-  echo -e "$cfg" | ssh root@${HOST} "cat > ksft/drivers/net/net.config"
-  ssh root@${HOST} "cd ksft && ./run_kselftest.sh -t drivers/net:devmem.py"
+Does writing to all of memory at full speed take minutes?  How can such
+a system be functional?
 
-Reviewed-by: Mina Almasry <almasrymina@google.com>
-Signed-off-by: Stanislav Fomichev <sdf@fomichev.me>
----
- .../testing/selftests/drivers/net/hw/Makefile |  1 +
- .../selftests/drivers/net/hw/devmem.py        | 45 +++++++++++++++++++
- 2 files changed, 46 insertions(+)
- create mode 100755 tools/testing/selftests/drivers/net/hw/devmem.py
+If you don't actually have to write to the pages and it is just some
+accounting function it is even more ridiculous.
 
-diff --git a/tools/testing/selftests/drivers/net/hw/Makefile b/tools/testing/selftests/drivers/net/hw/Makefile
-index 182348f4bd40..1c6a77480923 100644
---- a/tools/testing/selftests/drivers/net/hw/Makefile
-+++ b/tools/testing/selftests/drivers/net/hw/Makefile
-@@ -3,6 +3,7 @@
- TEST_PROGS = \
- 	csum.py \
- 	devlink_port_split.py \
-+	devmem.py \
- 	ethtool.sh \
- 	ethtool_extended_state.sh \
- 	ethtool_mm.sh \
-diff --git a/tools/testing/selftests/drivers/net/hw/devmem.py b/tools/testing/selftests/drivers/net/hw/devmem.py
-new file mode 100755
-index 000000000000..1416c31ff81e
---- /dev/null
-+++ b/tools/testing/selftests/drivers/net/hw/devmem.py
-@@ -0,0 +1,45 @@
-+#!/usr/bin/env python3
-+# SPDX-License-Identifier: GPL-2.0
-+
-+from lib.py import ksft_run, ksft_exit
-+from lib.py import ksft_eq, KsftSkipEx
-+from lib.py import NetDrvEpEnv
-+from lib.py import bkg, cmd, rand_port, wait_port_listen
-+from lib.py import ksft_disruptive
-+
-+
-+def require_devmem(cfg):
-+    if not hasattr(cfg, "_devmem_probed"):
-+        port = rand_port()
-+        probe_command = f"./ncdevmem -f {cfg.ifname}"
-+        cfg._devmem_supported = cmd(probe_command, fail=False, shell=True).ret == 0
-+        cfg._devmem_probed = True
-+
-+    if not cfg._devmem_supported:
-+        raise KsftSkipEx("Test requires devmem support")
-+
-+
-+@ksft_disruptive
-+def check_rx(cfg) -> None:
-+    cfg.require_v6()
-+    require_devmem(cfg)
-+
-+    port = rand_port()
-+    listen_cmd = f"./ncdevmem -l -f {cfg.ifname} -s {cfg.v6} -p {port}"
-+
-+    with bkg(listen_cmd) as nc:
-+        wait_port_listen(port)
-+        cmd(f"echo -e \"hello\\nworld\"| nc {cfg.v6} {port}", host=cfg.remote, shell=True)
-+
-+    ksft_eq(nc.stdout.strip(), "hello\nworld")
-+
-+
-+def main() -> None:
-+    with NetDrvEpEnv(__file__) as cfg:
-+        ksft_run([check_rx],
-+                 args=(cfg, ))
-+    ksft_exit()
-+
-+
-+if __name__ == "__main__":
-+    main()
--- 
-2.47.0
 
+I had previously thought that accept_memory was the firmware call.
+Now that I see that it is just a wrapper for some hardware specific
+calls I am even more perplexed.
+
+
+Quite honestly what this looks like to me is that someone failed to
+enable write-combining or write-back caching when writing to memory
+when initializing the protected memory.  With the result that everything
+is moving dog slow, and people are introducing complexity left and write
+to avoid that bad implementation.
+
+
+Can someone please explain to me why this accept_memory stuff has to be
+slow, why it has to take minutes to do it's job.
+
+I would much rather spend my time figuring out how to make accept_memory
+run at a reasonable speed than to litter the kernel with more of this
+nonsense.
+
+Eric
 
