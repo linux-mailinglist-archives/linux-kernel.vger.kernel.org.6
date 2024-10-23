@@ -1,145 +1,112 @@
-Return-Path: <linux-kernel+bounces-377821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 813189AC743
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:02:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CCBE09AC744
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:02:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8B88C1C20E17
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:02:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5C94B1F21C35
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0091E19D081;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5163B19EEBF;
 	Wed, 23 Oct 2024 10:02:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="NgyH7iPQ"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B22BC1990C4
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:02:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D9EE519B5A7;
+	Wed, 23 Oct 2024 10:02:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677732; cv=none; b=hS1FS10E65XSox/pCBJAHRtO9URsl8A7XC11iw0GG7PLNRLym81MnAgBrlgXxkylFstL+oPisECCSGPXQf3F7NsyYmKmQt8ILLEJb+9P1bahqQ25Ec/ka+urNG8tlYo3liggE1nbTq5ycLo8ftmCKiWM5O8+XifLZBQtWvy704s=
+	t=1729677732; cv=none; b=EebaFK9sUAEZeRLjbp4LNoiJ21HCvdLKIYQv6+aSWufD92Gv99TE5H8Pzii8rdZFfLTZa5T65+RIbaSfxDcJXcOAeVykkZ702O0kK69udgvT3FcatnHZSCSKdiZvGpOKIRa/TnbMAEYbXfAEPVnEbJVOj1DIGpLAPB6bD6Mfhgg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729677732; c=relaxed/simple;
-	bh=GJv7WXVNTlF7T7Vqd2XWKZkii/4y8dxQZ3yFBu5kxCY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Qyxs5pBML2X7Y3HoceyMSifgqfFFMLMyW4X2AaN+lWfmtminqMTQlLyQanz3igz5Fd64F8qcTyby5zIcyBW8WfCAzkcr8gTaioltn/dBco4GnWZs+D/Njkj9VNov6Er0+9esc7foM0Kks/9uSUh0mVvw2Dwvgf0fWGPabRlZAkE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=NgyH7iPQ; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99e3b3a411so125383066b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:02:10 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729677729; x=1730282529; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KUsyYzcBLI65EkyMKt9ic0GWqH2UepiiFrnn5rm1t2E=;
-        b=NgyH7iPQQufmkJnV5dgoRETikrITJzBfQI2Gf6wmGjJRt7kUJlomsC3Ab3pcwawnrF
-         AOavjwBDSCKBK3JOaPb2GuX5DBWYOSwTbAikbw65WjIiHq3uKTQnufe6x8qjqv3tNteR
-         7jwhvBuOcKOVpDFtbppwm0t/p1YdwRAAxw6WmRIXxD6ECrB2eD0IDGZXZecp+4NgPypX
-         qiUERg3G1A9lvFKzYfC+Lzma2uJb38d1ahzkDvazkJ6fM+Ng6Va0hqSLhM2v2mdI2ScQ
-         4EngihUlKXPM234l58/fAN+akDlJrXJyknYafrKcZCgYoH1v4u8OeONl4pJZ+IR4Iilq
-         wTIQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729677729; x=1730282529;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:from:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KUsyYzcBLI65EkyMKt9ic0GWqH2UepiiFrnn5rm1t2E=;
-        b=gd4U5IxBFv5sIIRQObSiZ2GyePHgUOfTMu5xpigbXIeCCd8hKqkS3SA9t52hu/XKMC
-         WhsCr0KoJpaOiOrJkJ31dZo3lzKuzcNbKkAs3Un5PNhBbhcomcAsMb7SsFTwTLJRiL/+
-         hZwD5dECU2AMydIUu0yQKwDn9NMAwQeNJDS1vFoH1Xyjkl1/wzyoG/OC3vs8Pl7FBAED
-         NIK8oFuB7cboFe7y5Ff+bTbDCmQ978agNg58ctX86Lmz+JIDiVRNc/fnbTjCEsYGWil/
-         5+jiyv6NbCkeIUfDzwbzdl1RcIhW6JOjuox4U/zJKOKbxifN4aE6Io6cg8ib8C3cpl9E
-         1IOQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVWo4NWrgpQozR8v2TH1ouPouVR7zpQ9Vvfzp+y1ag06TYcuSE9bRMMtp35NZr0zxTISkqVmgRBPPfBCfk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxirxZTgEAbaHib2VEH20aWJZTV44RIYEu1sBDm9lqUL2+V4YDt
-	8A4OAqIO5YQZY686kbIyoMGVSbStMkdan1VbFW3HV8VP6lICbZtm31O/AtiqT7k=
-X-Google-Smtp-Source: AGHT+IHC7zvwcyw194w8/6HD0iv1EPVzoje3wxQbXrndfVcLbOpXDwLNKGHuDv5F5S+9VIQBGvRm4Q==
-X-Received: by 2002:a17:907:a09:b0:a99:fcbe:c96b with SMTP id a640c23a62f3a-a9aaa62250amr622623466b.25.1729677728513;
-        Wed, 23 Oct 2024 03:02:08 -0700 (PDT)
-Received: from [192.168.0.157] ([82.76.204.4])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91559951sm450387266b.106.2024.10.23.03.02.06
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 03:02:08 -0700 (PDT)
-Message-ID: <9f15fa0d-9445-49f0-8ea4-889e5f51f3ab@linaro.org>
-Date: Wed, 23 Oct 2024 11:02:05 +0100
+	bh=VF72SbQafd1brM4nP5NE7TVxgFoirD5rMKb7ZQh2UMg=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=ng71s0hBbQqrfkdT0olbSiQogpApppyJwUQOK5G2Wb4dQh7TSI6qeEvPw001by4xj80LJ52ZW7sPLjckuF87mrXwLnTzOSKPHyLBtKZMNOp4cb1YXlpGiHJfi7Yw7V0ofaAZ+enbqcsX3hUPVVRQn5eSrsgGdxBfPbM6+CnSazE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9AC1BC4CEC6;
+	Wed, 23 Oct 2024 10:02:08 +0000 (UTC)
+From: Catalin Marinas <catalin.marinas@arm.com>
+To: kvm@vger.kernel.org,
+	kvmarm@lists.linux.dev,
+	Steven Price <steven.price@arm.com>
+Cc: Will Deacon <will@kernel.org>,
+	Marc Zyngier <maz@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Oliver Upton <oliver.upton@linux.dev>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Joey Gouly <joey.gouly@arm.com>,
+	Alexandru Elisei <alexandru.elisei@arm.com>,
+	Christoffer Dall <christoffer.dall@arm.com>,
+	Fuad Tabba <tabba@google.com>,
+	linux-coco@lists.linux.dev,
+	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
+	Gavin Shan <gshan@redhat.com>,
+	Shanker Donthineni <sdonthineni@nvidia.com>,
+	Alper Gun <alpergun@google.com>,
+	Dan Williams <dan.j.williams@intel.com>,
+	"Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
+Subject: Re: [PATCH v7 00/11] arm64: Support for running as a guest in Arm CCA
+Date: Wed, 23 Oct 2024 11:02:06 +0100
+Message-Id: <172967739783.1412028.8494484908145931121.b4-ty@arm.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <20241017131434.40935-1-steven.price@arm.com>
+References: <20241017131434.40935-1-steven.price@arm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 2/2] firmware: add exynos acpm driver
-From: Tudor Ambarus <tudor.ambarus@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>, jassisinghbrar@gmail.com
-Cc: alim.akhtar@samsung.com, mst@redhat.com, javierm@redhat.com,
- tzimmermann@suse.de, bartosz.golaszewski@linaro.org,
- luzmaximilian@gmail.com, sudeep.holla@arm.com, conor.dooley@microchip.com,
- bjorn@rivosinc.com, ulf.hansson@linaro.org,
- linux-samsung-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, marcan@marcan.st, neal@gompa.dev,
- alyssa@rosenzweig.io, broonie@kernel.org, andre.draszik@linaro.org,
- willmcvicker@google.com, peter.griffin@linaro.org, kernel-team@android.com,
- vincent.guittot@linaro.org, daniel.lezcano@linaro.org
-References: <20241017163649.3007062-1-tudor.ambarus@linaro.org>
- <20241017163649.3007062-3-tudor.ambarus@linaro.org>
- <955530a5-ef88-4ed1-94cf-fcd48fd248b2@kernel.org>
- <d41ee8f6-9a2c-4e33-844a-e71224692133@linaro.org>
- <1ece02e6-bf78-443a-8143-a54e94dd744c@kernel.org>
- <d91109a1-532a-4b95-ad4c-3b9cf8e3dbbb@linaro.org>
- <1e76bc70-21a6-4ac7-99ea-30a7ccf387bb@kernel.org>
- <2941d65e-8fb4-4d5a-be4b-283de2cb3274@linaro.org>
-Content-Language: en-US
-In-Reply-To: <2941d65e-8fb4-4d5a-be4b-283de2cb3274@linaro.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
+On Thu, 17 Oct 2024 14:14:23 +0100, Steven Price wrote:
+> This series adds support for running Linux in a protected VM under the
+> Arm Confidential Compute Architecture (CCA). This is a minor update
+> following the feedback from the v6 posting[1]. Thanks for the feedback!
+> 
+> Individual patches have a change log. The biggest changes are in patch
+> 10 where Gavin gave some great feedback to tidy things up a bit.
+> 
+> [...]
 
+Applied to arm64 (for-next/guest-cca), thanks!
 
-On 10/23/24 10:53 AM, Tudor Ambarus wrote:
-> 
-> 
-> On 10/23/24 10:00 AM, Krzysztof Kozlowski wrote:
->>>>>> I also cannot find any piece of code setting several of above, e.g. tx_base
->>>>> I'm not writing any SRAM configuration fields, these fields are used to
->>>>> read/retrive the channel parameters from SRAM.
->>>> I meany tx_base is always 0. Where is this property set? Ever?
->>> It's not zero. My assumption is it is set in the acpm firmware, but I
->> Where is any assignment to this member?
-> 
-> In probe() you'll see that exynos_acpm->shmem is a pointer in SRAM to a
-> struct exynos_acpm_shmem __iomem *shmem;
-> 
-> Then in:
-> 
-> static int exynos_acpm_chans_init()
-> {
-> 	struct exynos_acpm_shmem_chan __iomem *shmem_chans, *shmem_chan;
-> 	struct exynos_acpm_shmem __iomem *shmem = exynos_acpm->shmem;
-> 	...
-> 
-> 	shmem_chans = exynos_acpm_get_iomem_addr(exynos_acpm->sram_base,
-> 						 &shmem->chans);
-> 	...
-> }
-> 
-> shmem->chans is not initialized (or tx_base). I'm using its address in
-> SRAM (&shmem->chans) which I then read it with readl_relaxed().
-> 
-> I guess one can do the same using offsetof:
-> shmem_chans = readl_realaxed(shmem + offsetof(struct exynos_acpm_shmem,
-> 					      chans));
-> 
+Note that this branch cannot be tested in isolation as it doesn't have
+the irqchip CCA changes. I pulled tip irq/core into the arm64
+for-kernelci. Please give the latter branch a go (or linux-next when the
+patches turn up).
 
-I forgot to add the sram_base, the counter example should have been:
+[01/11] arm64: rsi: Add RSI definitions
+        https://git.kernel.org/arm64/c/b880a80011f5
+[02/11] arm64: Detect if in a realm and set RIPAS RAM
+        https://git.kernel.org/arm64/c/c077711f718b
+[03/11] arm64: realm: Query IPA size from the RMM
+        https://git.kernel.org/arm64/c/399306954996
+[04/11] arm64: rsi: Add support for checking whether an MMIO is protected
+        https://git.kernel.org/arm64/c/371589437616
+[05/11] arm64: rsi: Map unprotected MMIO as decrypted
+        https://git.kernel.org/arm64/c/3c6c70613956
+[06/11] efi: arm64: Map Device with Prot Shared
+        https://git.kernel.org/arm64/c/491db21d8256
+[07/11] arm64: Enforce bounce buffers for realm DMA
+        https://git.kernel.org/arm64/c/fbf979a01375
+[08/11] arm64: mm: Avoid TLBI when marking pages as valid
+        https://git.kernel.org/arm64/c/0e9cb5995b25
+[09/11] arm64: Enable memory encrypt for Realms
+        https://git.kernel.org/arm64/c/42be24a4178f
+[10/11] virt: arm-cca-guest: TSM_REPORT support for realms
+        https://git.kernel.org/arm64/c/7999edc484ca
+[11/11] arm64: Document Arm Confidential Compute
+        https://git.kernel.org/arm64/c/972d755f0195
 
-shmem_chans = exynos_acpm->sram_base +
-	      readl_realaxed(shmem + offsetof(struct exynos_acpm_shmem,
-					      chans));
+-- 
+Catalin
+
 
