@@ -1,339 +1,202 @@
-Return-Path: <linux-kernel+bounces-377171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B96FF9ABAC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:58:28 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 850E89ABACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:01:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7528E285017
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:58:27 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 156A81F242EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:01:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2DF1AAC4;
-	Wed, 23 Oct 2024 00:58:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B45F1C28E;
+	Wed, 23 Oct 2024 01:01:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRGD0L/D"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="UY/T0/fS"
+Received: from mail-pj1-f45.google.com (mail-pj1-f45.google.com [209.85.216.45])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D50329CA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:58:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F32FD36B
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:01:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729645100; cv=none; b=YBzdxMYkVwK39WIpEXnvh9nduVei+16qerfviZDmf/xfIeiL6DSOEgUd3nOQiRYC64UXrleF3BrFfcns60X+bVbr1J/fug/xkyG/CXvO1A//3hsEYO4iz1qTuMrhNu5NSss65Gr77+hnW8esq9g2zU9eHrEhQaVvPZ42wJseSg8=
+	t=1729645284; cv=none; b=B5iSW6ENW+WdRuc/JmBvtManQFxQYbVuMhBFN2ZoVAgX7LuJreNXswN9aoqMORzHzDN4bS61HsCWvaGOL/nlwXNt4n8ddBc1DGXDeZ/2X5PDvGK3WYgNQtoQywH3yKYB5uAKNCHyszj42F0sRX/OlC4+HRDy/3Zz01SQDnZ6RJA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729645100; c=relaxed/simple;
-	bh=SqSf5pGZ8Xm3VI+2adFpBL/dJUNIOYyz90exxJJcMfk=;
+	s=arc-20240116; t=1729645284; c=relaxed/simple;
+	bh=HFdUON0V2GphcU9k9fNd96djFn4cjLgGiTx0TKpGRsA=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=A49HfmRUneIAgL0DEn5z9GGs0F/zP+t+EDD7KjpGOPovlJsiOimhw0sJbg0aRjJnTv3krzxpwW3oK5kPDxgVrobN0fvBfbqd42i3a+CD6arc90tc5dHwBcoMq902iAotY/jEajOv3Udxotu5qXsCP1NNtijAdoXodQLjizqkf/A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CRGD0L/D; arc=none smtp.client-ip=209.85.210.179
+	 To:Cc:Content-Type; b=HbzEbwWKn4CZhiC4X0u3FP8CF4CnEL90QzGD4/952JnaSWKvn7rRV0xTfK66HKbyovG/vGhj+aF674CB83EpGsqGImURt5rcBwR0+/bjDyHQhh9ilvJPQ+wf5ZZjUQhceMpZj+QWOcMepqVxxu+9MyyKJ0BmIKLGGSQjFtobJwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=UY/T0/fS; arc=none smtp.client-ip=209.85.216.45
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e7086c231so4743171b3a.0
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:58:18 -0700 (PDT)
+Received: by mail-pj1-f45.google.com with SMTP id 98e67ed59e1d1-2e2e6a1042dso4947466a91.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 18:01:21 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729645098; x=1730249898; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729645281; x=1730250081; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=B1X+k4ALoGij2h8EJoArvR6OhIJFBlu5UZi57RZJEgs=;
-        b=CRGD0L/DzHn/lVRL+beWiwtMIbyGR9WaXX9kYaIDfPd4HlxZGukZUuP3dRAu8xQWbR
-         5j+DzSdMcoM+2Xfy854G2JfsGsFdsWiv6LlJ6JEpyE7v2vcjQkvQF1r4qbLnb5CwB7RC
-         DhiTdFW5ePugjhu5tsq202V73J+KdIZBnToPKT7HUIfLhhUAVFOVOc0LOcYGucPrybu5
-         G6vOKSOkqrmLPKyY9feoxvJfF0BGsoVFcf5rhq0Mil6eMYCDzGjyG+mSKmtTqjnqg2gb
-         oOZiCe2L1+3DbJNLFJd7i6gdrLSX/6Dx3FRrOvyvyb66EG3XdczEzFf8w8QgNE+Hz1Uj
-         gE0w==
+        bh=7w3BU2HjAXl1RWxHwiHpmCiEMdPfDx7ASOCiiQowi7g=;
+        b=UY/T0/fS+nCIevwkXIU2jK5lV2npbUjntSrOruHsApW1E7ISK83P9f6EAwbpkrslM8
+         s5SAO+rgYakUaWKF+BEedH5c88/hWqiyshZO4IJF0IgBC3+ANnM+luFHHTi1pzwszohb
+         5ZGl1htR2ATgSPoqW+Z3kUOjtcXzNgU44iBvgviUAenk0YAk7K4nU+ZiYaDS5W4v+ew7
+         9NF6KnabRbrrzHEiK9BM9RtojfP4XMyT/NcVEDZriFKDDvd+mFYhsCdconOn4msVG1kd
+         nfjkR5HtTM7M3tl9+RbRzNoSbD3pzbkBletbbmqdSIPUkLtUi4fBZdoa311beaLM7GFZ
+         0wKg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729645098; x=1730249898;
+        d=1e100.net; s=20230601; t=1729645281; x=1730250081;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=B1X+k4ALoGij2h8EJoArvR6OhIJFBlu5UZi57RZJEgs=;
-        b=qksGqwcCtgggID/5PTLTPSzvO+CDMkq49/ODt66JqC2jKiGhF4pQLeQvXTMSfYuiSz
-         az5UFGRbjQ5h5c6liPjoteefRXBBDVIJuWFZTFT7QkRTdPCYWWiampURQejvdLZw3wdr
-         vbFuLOtXR8i9YTj1a63cLDC8p/uZiVzukvc8veLM4Q8ebiXxz0kUKudJM1RNTdFRvUk4
-         0wj0GnRGVNsO4DquT92EobKX51xZJfNtryKSxqLUT6TgI2Y87rAuc2GAxM7/bdwIXOXi
-         DtH38fg8a80MlZFkXjPzgixrP14SnSK8rv/vsyu5tCkg9JFOvb9dc5l0QCmJQ9fERZKq
-         R7Kg==
-X-Forwarded-Encrypted: i=1; AJvYcCUtlCWUQqD81Bx3PDPj9hxHWgrKagfbiVrbXHk/GBu/VGlnSn3VfEatjbWMDGT1QSd8VKeqghBGnW0VROo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwwyN08NG9mXnkArKQhwzcof03/xp8lah1EMWITGjnLlAveQWbm
-	6JP+yNWNNieiwmwBDMjv5JeJPUQG9iHMHAmKbD152PltEZ1aREfRN/ZV0qUhHIHVdYB4BxhwAGL
-	79009pfjvhvLWxce3wDqns5nHJw4SkHkMiFDu
-X-Google-Smtp-Source: AGHT+IEbEqhIXl1K1tfHoQmQ1uIOs+Y6i7tWxL4ASffCS7bsrtHTPoy6lbz+wkFAomlLun3HDdM08BoqoUxom18Txfw=
-X-Received: by 2002:aa7:8896:0:b0:71e:79a9:ec55 with SMTP id
- d2e1a72fcca58-72030a895a4mr1688550b3a.7.1729645097384; Tue, 22 Oct 2024
- 17:58:17 -0700 (PDT)
+        bh=7w3BU2HjAXl1RWxHwiHpmCiEMdPfDx7ASOCiiQowi7g=;
+        b=qwlbV3rJTd5OpcUcCNXncgskrno1HrdL+H/UPUiKJ0flnqw+Qrf8SE5tm6vhAuem2n
+         090tOW5CDHPQbPEDhZlWPkA5f17W5RbYPPkV3laKFxjnS4u8LNIdh/rQXLspDRc4uIKO
+         bCHZmWra4qVwyTcX/1CRV5YxxZSaaMedU9ZwR3GhSnD8vaQmKjFZLUgKHCsnzM3aPqgT
+         lRaNwE53ZUzl2CumJClMpMv7Nkn+YJX7HOUX2H0Lp+MS1EndpNX+yUFVx2Zm0XkiR6yE
+         IuvJRh1oHntwL6jINbLkx+GdjbLQi0+TyfLHmHIsYu9/xsjeEF4gUf5NIwj1FcTFSZa4
+         rL7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXWEo0wXMAKP1VaakkGqQDBBqGOuHOXwjh3i28NIwFsPvpwHn6eUzEnxNVfetb4jKnygIahqmU8HQQmwQY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyaauwzNJaW0uf7H4CNZ+tjqjycfpwmLCWSK/Ny8du1Lodmpyy9
+	JXM9Dx0cZWnA4yj3b13/lT2Kpo5GagyAgqw05isv9O0FS5DD7zgHz70o0h+5X3HuChQYUl4psaH
+	rBaE6SxrnXZXh/crggi/sX2CrAQqIfBVJbKxz
+X-Google-Smtp-Source: AGHT+IFeEoPGIw3p3ijQLJLpEmpS31c9Z2j74F0oEOYPG4hKYfTCoF6Xbw1z+XYwmGwY03CFsDkNifA2pnMGypOacEc=
+X-Received: by 2002:a17:90b:1c8d:b0:2e2:af6c:79b2 with SMTP id
+ 98e67ed59e1d1-2e76b6cda3amr966161a91.29.1729645280874; Tue, 22 Oct 2024
+ 18:01:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240624-fwdevlink-probed-no-err-v1-1-d1213cd354e2@collabora.com>
- <CAGETcx-sAu-wMDKT9zCeCzLzZ=ZdvK+CSoX34YxMLd5z0YeVZQ@mail.gmail.com>
- <7b995947-4540-4b17-872e-e107adca4598@notapiano> <575b02aa-6496-492b-b37d-d0612165eda3@notapiano>
- <CAGETcx9e4mpcMY+pqMYXsVWGcjgkctCqgO665KgqUH4JvYbUAQ@mail.gmail.com>
- <c622df86-0372-450e-b3dd-ab93cd051d6f@notapiano> <da4e5807-712d-4d08-a780-f363cee823b9@notapiano>
- <ce40a778-ea62-455b-9c05-aa4ff35b49b5@nvidia.com> <fecb4264-217b-464b-9b1c-226898abff7b@notapiano>
-In-Reply-To: <fecb4264-217b-464b-9b1c-226898abff7b@notapiano>
+References: <20240910130019.35081-1-jonathanh@nvidia.com> <2024091152-impound-salt-c748@gregkh>
+ <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com> <2024091627-online-favored-7a9f@gregkh>
+ <b1b67db0-3b9c-4d96-a119-fe3fcf51b6e3@nvidia.com> <CAGETcx8E9FddpwMO4+oqeEc0RVMLbUOs2m+=B900xzrLvEkSXw@mail.gmail.com>
+ <2c42677c-5e8e-4805-b6a5-0a5baa3e55b5@nvidia.com> <d9aadede-dfac-410a-b65b-e295c9a64951@notapiano>
+In-Reply-To: <d9aadede-dfac-410a-b65b-e295c9a64951@notapiano>
 From: Saravana Kannan <saravanak@google.com>
-Date: Tue, 22 Oct 2024 17:57:37 -0700
-Message-ID: <CAGETcx95hf+xBCXvczq=Qx1n1QgdqSM-ezBDNj4ys=gwWm6gyQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Don't log intentional skip of device link
- creation as error
+Date: Tue, 22 Oct 2024 18:00:42 -0700
+Message-ID: <CAGETcx-_z4hxyNSwT-D1MKNzAjOGSX+o7x5G8J0KkiUyy+RkDQ@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Don't try to create links if they are not needed
 To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
 Cc: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	"Rafael J. Wysocki" <rafael@kernel.org>, kernel@collabora.com, linux-kernel@vger.kernel.org
+	"Rafael J . Wysocki" <rafael@kernel.org>, linux-kernel@vger.kernel.org, 
+	linux-tegra@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 15, 2024 at 2:32=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
+On Thu, Oct 3, 2024 at 7:59=E2=80=AFAM N=C3=ADcolas F. R. A. Prado
 <nfraprado@collabora.com> wrote:
 >
-> On Mon, Oct 14, 2024 at 01:49:56PM +0100, Jon Hunter wrote:
-> > Hi Nicolas, Saravanna,
+> On Thu, Oct 03, 2024 at 11:25:22AM +0100, Jon Hunter wrote:
 > >
-> > On 02/10/2024 21:57, N=C3=ADcolas F. R. A. Prado wrote:
-> > > On Fri, Aug 09, 2024 at 12:13:25PM -0400, N=C3=ADcolas F. R. A. Prado=
- wrote:
-> > > > On Mon, Jul 29, 2024 at 05:08:48PM -0700, Saravana Kannan wrote:
-> > > > > On Mon, Jul 29, 2024 at 2:25=E2=80=AFPM N=C3=ADcolas F. R. A. Pra=
-do
-> > > > > <nfraprado@collabora.com> wrote:
+> > On 02/10/2024 21:38, Saravana Kannan wrote:
+> > > On Wed, Oct 2, 2024 at 11:30=E2=80=AFAM Jon Hunter <jonathanh@nvidia.=
+com> wrote:
+> > > >
+> > > > Hi Greg,
+> > > >
+> > > > On 16/09/2024 18:49, Greg Kroah-Hartman wrote:
+> > > > > On Mon, Sep 16, 2024 at 03:50:34PM +0100, Jon Hunter wrote:
 > > > > > >
-> > > > > > On Tue, Jun 25, 2024 at 09:56:07AM -0400, N=C3=ADcolas F. R. A.=
- Prado wrote:
-> > > > > > > On Mon, Jun 24, 2024 at 04:53:30PM -0700, Saravana Kannan wro=
-te:
-> > > > > > > > On Mon, Jun 24, 2024 at 8:21=E2=80=AFAM N=C3=ADcolas F. R. =
-A. Prado
-> > > > > > > > <nfraprado@collabora.com> wrote:
-> > > > > > > > >
-> > > > > > > > > Commit ac66c5bbb437 ("driver core: Allow only unprobed co=
-nsumers for
-> > > > > > > > > SYNC_STATE_ONLY device links") introduced an early return=
- in
-> > > > > > > > > device_link_add() to prevent useless links from being cre=
-ated. However
-> > > > > > > > > the calling function fw_devlink_create_devlink() uncondit=
-ionally prints
-> > > > > > > > > an error if device_link_add() didn't create a link, even =
-in this case
-> > > > > > > > > where it is intentionally skipping the link creation.
-> > > > > > > > >
-> > > > > > > > > Add a check to detect if the link wasn't created intentio=
-nally and in
-> > > > > > > > > that case don't log an error.
+> > > > > > On 11/09/2024 15:32, Greg Kroah-Hartman wrote:
+> > > > > > > On Tue, Sep 10, 2024 at 02:00:19PM +0100, Jon Hunter wrote:
+> > > > > > > > The following error messages are observed on boot with the =
+Tegra234
+> > > > > > > > Jetson AGX Orin board ...
 > > > > > > > >
-> > > > > > > > Your point is somewhat valid, and I might Ack this. But thi=
-s really
-> > > > > > > > shouldn't be happening a lot. Can you give more context on =
-how you are
-> > > > > > > > hitting this?
+> > > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create devi=
+ce link (0x180)
+> > > > > > > >       with 1-0008
+> > > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create devi=
+ce link (0x180)
+> > > > > > > >       with 1-0008
+> > > > > > > >     tegra-xusb-padctl 3520000.padctl: Failed to create devi=
+ce link (0x180)
+> > > > > > > >       with 1-0008
+> > > > > > > >
+> > > > > > > > In the above case, device_link_add() intentionally returns =
+NULL because
+> > > > > > > > these are SYNC_STATE_ONLY links and the device is already p=
+robed.
+> > > > > > > > Therefore, the above messages are not actually errors. Fix =
+this by
+> > > > > > > > replicating the test from device_link_add() in the function
+> > > > > > > > fw_devlink_create_devlink() and don't call device_link_add(=
+) if there
+> > > > > > > > are no links to create.
+> > > > > > > >
+> > > > > > > > Signed-off-by: Jon Hunter <jonathanh@nvidia.com>
 > > > > > > >
-> > > > > > > Of course. I'm seeing this on the mt8195-cherry-tomato-r2 pla=
-tform.
-> > > > > > >
-> > > > > > > The following error is printed during boot:
-> > > > > > >
-> > > > > > >    mediatek-drm-dp 1c500000.edp-tx: Failed to create device l=
-ink (0x180) with backlight-lcd0
-> > > > > > >
-> > > > > > > It doesn't happen with the upstream defconfig, but with the f=
-ollowing config
-> > > > > > > change it does:
-> > > > > > >
-> > > > > > >    -CONFIG_PWM_MTK_DISP=3Dm
-> > > > > > >    +CONFIG_PWM_MTK_DISP=3Dy
-> > > > > > >
-> > > > > > > That probably changes the order in which the MTK DP and the b=
-acklight drivers
-> > > > > > > probe, resulting in the error.
-> > > > > > >
-> > > > > > > One peculiarity that comes to mind is that the DP driver call=
-s
-> > > > > > > devm_of_dp_aux_populate_bus() to run a callback once the pane=
-l has finished
-> > > > > > > probing. I'm not sure if this could have something to do with=
- the error.
-> > > > > > >
-> > > > > > > Full log at https://lava.collabora.dev/scheduler/job/14573149
+> > > > > > > What commit id does this fix?
 > > > > > >
-> > > > > > Hi Saravana,
 > > > > > >
-> > > > > > With the given context for where this issue is happening, what =
-do you think
-> > > > > > about this patch?
+> > > > > > Hard to say exactly. The above error message was first added wi=
+th commit
+> > > > > > 3fb16866b51d ("driver core: fw_devlink: Make cycle detection mo=
+re robust")
+> > > > > > but at this time we did not have the support in place for Tegra=
+234 USB. I am
+> > > > > > guessing we first started seeing this when I enabled support fo=
+r the type-c
+> > > > > > controller in commit 16744314ee57 ("arm64: tegra: Populate USB =
+Type-C
+> > > > > > Controller for Jetson AGX Orin"). I can confirm if that is help=
+ful?
+> > > > > >
 > > > > >
-> > > > > Ah sorry, missed your earlier email.
-> > > > >
-> > > > > Couple of points:
-> > > > > 1. It looks like the link in question is "SYNC_STATE_ONLY" becaus=
-e
-> > > > > it's part of a cycle. Correct me if I'm wrong. You might want to =
-use
-> > > > > the new "post-init-providers" property to help fw_devlink break t=
-he
-> > > > > cycle and enforce the right dependency between the edp-tx and you=
-r
-> > > > > backlight. And then this error should go away and your device ord=
-ering
-> > > > > is enforced a bit better.
+> > > > > That helps, I'll look at this after -rc1 is out, thanks!
 > > > >
-> > > > I don't see any cycle there. edp-tx points to backlight, but backli=
-ght doesn't
-> > > > point back (from mt8195-cherry.dtsi):
 > > > >
-> > > >    &edp_tx {
-> > > >           ...
-> > > >           aux-bus {
-> > > >                   panel {
-> > > >                           compatible =3D "edp-panel";
-> > > >                           power-supply =3D <&pp3300_disp_x>;
-> > > >                           backlight =3D <&backlight_lcd0>;
-> > > >
-> > > >    backlight_lcd0: backlight-lcd0 {
-> > > >           compatible =3D "pwm-backlight";
-> > > >           brightness-levels =3D <0 1023>;
-> > > >           default-brightness-level =3D <576>;
-> > > >           enable-gpios =3D <&pio 82 GPIO_ACTIVE_HIGH>;
-> > > >           num-interpolated-steps =3D <1023>;
-> > > >           pwms =3D <&disp_pwm0 0 500000>;
-> > > >           power-supply =3D <&ppvar_sys>;
-> > > >    };
-> > > >
-> > > > And DL_FLAG_CYCLE is not set in the flags in the error log: 0x180. =
-(Let me know
-> > > > if there's something else that I should be looking at to detect a c=
-ycle)
+> > > > Let me know if there is anything else I can answer on this one.
 > > >
-> > > Hi Saravana,
+> > > Hi Jon,
 > > >
-> > > Here are some debug logs to help contextualize the issue:
+> > > See this.
+> > > https://lore.kernel.org/all/c622df86-0372-450e-b3dd-ab93cd051d6f@nota=
+piano/
 > > >
-> > >    [    0.198518] device: 'backlight-lcd0': device_add
-> > >    [    0.198655] platform 1c500000.edp-tx: Linked as a sync state on=
-ly consumer to backlight-lcd0
-> > >    [   34.971653] platform backlight-lcd0: error -EPROBE_DEFER: suppl=
-ier 1100e000.pwm not ready
-> > >    [   35.115480] mediatek-drm-dp 1c500000.edp-tx: driver: 'mediatek-=
-drm-dp': driver_bound: bound to device
-> > >    [   35.160115] mediatek-drm-dp 1c500000.edp-tx: Dropping the link =
-to backlight-lcd0
-> > >    [   53.910433] pwm-backlight backlight-lcd0: driver: 'pwm-backligh=
-t': driver_bound: bound to device
-> > >    [   53.919213] mediatek-drm-dp 1c500000.edp-tx: Failed to create d=
-evice link (0x180) with backlight-lcd0
+> > > Ignore my point 1. My point 2 still stands. I got busy and forgot to
+> > > reply to N=C3=ADcolas.
 > > >
-> > > So a SYNC_STATE_ONLY device link is created from backlight-lcd0 to ed=
-p-tx. When
-> > > the edp-tx probes, the link is dropped, since it is SYNC_STATE_ONLY. =
-When the
-> > > backlight-lcd0 probes a new devlink is attempted to the consumer edp-=
-tx and
-> > > fails, since it is useless, printing the warning.
-> > >
-> > > You mentioned a cycle before. The only cycle I see is between the edp=
--tx and the
-> > > panel, but doesn't involve the backlight:
-> > >
-> > >    [    0.198104] ----- cycle: start -----
-> > >    [    0.198105] /soc/edp-tx@1c500000/aux-bus/panel: cycle: depends =
-on /soc/edp-tx@1c500000
-> > >    [    0.198112] ----- cycle: start -----
-> > >    [    0.198113] /soc/edp-tx@1c500000/aux-bus/panel: cycle: child of=
- /soc/edp-tx@1c500000
-> > >    [    0.198119] /soc/edp-tx@1c500000: cycle: depends on /soc/edp-tx=
-@1c500000/aux-bus/panel
-> > >    [    0.198125] ----- cycle: end -----
-> > >    [    0.198126] platform 1c500000.edp-tx: Fixed dependency cycle(s)=
- with /soc/edp-tx@1c500000/aux-bus/panel
-> > >
-> > > Just in case I tried using post-init-providers:
-> > >
-> > >    diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arc=
-h/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> > >    index 75d56b2d5a3d..19df138ef043 100644
-> > >    --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> > >    +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
-> > >    @@ -322,6 +322,7 @@ &edp_tx {
-> > >            pinctrl-names =3D "default";
-> > >            pinctrl-0 =3D <&edptx_pins_default>;
-> > >    +       post-init-providers =3D <&panel>;
-> > >            ports {
-> > >                    #address-cells =3D <1>;
-> > >    @@ -344,7 +345,7 @@ edp_out: endpoint {
-> > >            };
-> > >            aux-bus {
-> > >    -               panel {
-> > >    +               panel: panel {
-> > >                            compatible =3D "edp-panel";
-> > >                            power-supply =3D <&pp3300_disp_x>;
-> > >                            backlight =3D <&backlight_lcd0>;
-> > >
-> > > It broke the cycle, as I no longer see it in the logs, but the failed=
- device
-> > > link warning is still there as expected.
-> > >
-> > > It seems to me that the issue comes form the device link being SYNC_S=
-TATE_ONLY
-> > > in the first place. I see that comes from the 'else' path in
-> > >
-> > >     if (con->fwnode =3D=3D link->consumer)
-> > >             flags =3D fw_devlink_get_flags(link->flags);
-> > >     else
-> > >             flags =3D FW_DEVLINK_FLAGS_PERMISSIVE;
-> > >
-> > > and the value on each side of the comparison is:
-> > >
-> > > con->fwnode: /soc/edp-tx@1c500000
-> > > link->consumer: /soc/edp-tx@1c500000/aux-bus/panel
-> > >
-> > > Could you help me understand what (if anything) is wrong here?
-> > >
-> > > (I also noticed that as per the DT the consumer for backlight-lcd0 sh=
-ould be the
-> > > panel, but the devlink has it instead as the edp-tx, I'm guessing tha=
-t's another
-> > > symptom of the same issue)
+> > > I'm fine with either one of your patches as long as we define a
+> > > "useless link" function and use it in all the places.
 > >
 > >
-> > I did not seen any update on this. It would be great to get this fixed.
+> > Thanks! Yes I am also fine with Nicolas' fix too. I quite like the dev_=
+dbg()
+> > in Nicolas' version. I was wondering if we should define a function for=
+ this
+> > check too.
+> >
+> > Nicolas do you want to update your patch with a 'useless link' function=
+? I
+> > will be happy to test on my side. Looks like you identified the exact p=
+atch
+> > that introduced this and have the appropriate fixes tag too.
 >
-> Since there hasn't been a reply on this, let's postpone this investigatio=
-n and
-> move forward in fixing the error log. I've sent v2 of the patch:
-> https://lore.kernel.org/all/20240624-fwdevlink-probed-no-err-45d21feb05fd=
--v2@collabora.com
+> Hi Jon,
 >
+> I just sent a reply to that thread yesterday going a bit further down the=
+ rabbit
+> hole to try and answer if there's an underlying issue there that the log
+> messages are just exposing, but I still don't understand all the devlink =
+details
+> involved so was hoping for some feedback from Saravana.
+>
+> But if there's no feedback I can surely update the patch with the commoni=
+zed
+> function to fix the immediate problem. I'll wait a couple days to give Sa=
+ravana
+> (and others) some time to respond.
 
-Sorry for the really long delay Nicolas. All the logs you provides and
-all the analysis you did so far definitely helped me narrow this down.
+Finally managed to squeeze in some time for Nicolas's issue. It was a
+real issue. Replied to the original thread from Nicolas.
 
-Your instinct about devm_of_dp_aux_populate_bus() was right.
-
-Can you try this fix please? I'm 99% sure this will fix the issue.
-This has been a theme... the log message you saw mostly indicates that
-the device didn't have its fwnode set.
+Jon, can you do an analysis similar to Nicolas? What consumer node did
+fw_devlink try to create a link for and what consumer device did it
+end up creating a device link with instead?
 
 -Saravana
-
-diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c
-b/drivers/gpu/drm/display/drm_dp_aux_bus.c
-index d810529ebfb6..ec7eac6b595f 100644
---- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
-+++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
-@@ -292,7 +292,7 @@ int of_dp_aux_populate_bus(struct drm_dp_aux *aux,
-        aux_ep->dev.parent =3D aux->dev;
-        aux_ep->dev.bus =3D &dp_aux_bus_type;
-        aux_ep->dev.type =3D &dp_aux_device_type_type;
--       aux_ep->dev.of_node =3D of_node_get(np);
-+       device_set_node(&aux_ep->dev, of_fwnode_handle(of_node_get(np)));
-        dev_set_name(&aux_ep->dev, "aux-%s", dev_name(aux->dev));
-
-        ret =3D device_register(&aux_ep->dev);
-
-Thanks,
-Saravana
 
