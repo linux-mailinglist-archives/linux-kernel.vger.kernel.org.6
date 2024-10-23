@@ -1,140 +1,141 @@
-Return-Path: <linux-kernel+bounces-377534-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 308D29AC02A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:27:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 350A39AC02F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:28:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 062D9B24609
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:27:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD82E1F23830
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:28:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDCC61547D5;
-	Wed, 23 Oct 2024 07:27:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255AD154BE2;
+	Wed, 23 Oct 2024 07:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="qHDwvzxU";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="HjRos3+J"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="S1xjOfxW"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C0A9EAC5;
-	Wed, 23 Oct 2024 07:27:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668455; cv=none; b=FD/pTByrNKZt/rxOBkPtRIgvZ0bnpexDkUnJouxv+wjmSH3w34RE1wE3z8c1Pq6JFr7/u38LwEycfGhWlSZN/a+aMk+iKMGAgNJU6D9iyn5ccVQIGmnTgPqAwPjIshVC72OMIITDrfVyg1vBP6+97B4omT/K+BEFW8V3J1DVzRU=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729668455; c=relaxed/simple;
-	bh=UOdGmteuDF17WaDKUsAm9bMSO1DRsXO+5b96m5laO4g=;
-	h=From:To:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=MaUWlHO8JDgVhE27QiXwKGWD3Nj7U4p7817W846r1RAdObc7DUvNS8o9IQSk93em/R+Qt1Uomet6aIJojWgdLmHcsoJTvVlFILEbSixyrtO3MBhaO/8i9eAskyrPV2uc753JVoQTQ4jHO1yQk39JfvtEX80zmojVNIfa2AjRyrE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=qHDwvzxU; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=HjRos3+J reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729668451; x=1761204451;
-  h=from:to:subject:date:message-id:in-reply-to:references:
-   mime-version:content-transfer-encoding;
-  bh=8QvoeAYq84HcWFFGcAF42FU7PXi0chXEy68ubmj3kl8=;
-  b=qHDwvzxURovGLoPvWg+1nfZx6SLzICxvmuamhWBip2VLlsihVOr31LvT
-   CJ3+gdf5m/xTcOEV5sv201bJrFyqMatGev0ZXCW45ivj8D4afa+wfKEVi
-   nvDY41OB+rfuT6ZLpYJrVb/UvoVUPRCTr4YploRp04Nu6Kvv5Bu84cH0A
-   +bpXmEN2YeH2lv+qfuzIN1CzcHI9hGJu8Kum2Cer+yR61DVCAs0t1/kMn
-   0RDNY4e0WjuAa9pWnLL2WdcOHCqtJWot36f69D2xQKUe3CNbq2imN9Kz0
-   peuc+pKPSspAitZBDd3WE0hqwXuhEd2V+R10YLhiIRysdcGPkOY8ncCcY
-   A==;
-X-CSE-ConnectionGUID: rDH59LECStGuVPIcPtvpUw==
-X-CSE-MsgGUID: glc2ETSXSCusCZzvvITlUw==
-X-IronPort-AV: E=Sophos;i="6.11,225,1725314400"; 
-   d="scan'208";a="39615366"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 23 Oct 2024 09:27:28 +0200
-X-CheckPoint: {6718A560-36-8E59014-E6F31237}
-X-MAIL-CPID: 69246EAEBA9715DF528DC60B9732E311_1
-X-Control-Analysis: str=0001.0A682F28.6718A561.000F,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 96700161479;
-	Wed, 23 Oct 2024 09:27:23 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729668444; h=from:subject:date:message-id:to:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=8QvoeAYq84HcWFFGcAF42FU7PXi0chXEy68ubmj3kl8=;
-	b=HjRos3+JIqRURrrlHtwap8O7c9iftlfAa/6SI48kI10SmsVrpT8gJh3SBk2i6pZD69s0cW
-	NClUuq19LuLN0LSPXLMmnM5nT/Uhr9gGPs9S9zPNpON1WuyuDClgAe/frWL3htYHSlzFsq
-	ijX2FkP8Y1/3LLubC7SLR+5ad7ph74BJJ1tX3KF6iq8WSfeDues3BEfQByxiKeaPg8HNQm
-	YdHaHXcSMj5WTV+oZKFnxgZWe3w8XcSbwkNc0trkUpDhba1sgylqsVH5LKS3XT3NL1zSGE
-	UWaR5FPGItWmquCWPNWhOuj0/jIfbxFO+2sSte0In712T1bAg0iGtHUrTm9XmA==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: Shawn Guo <shawnguo@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>, Pengutronix Kernel Team <kernel@pengutronix.de>, Fabio Estevam <festevam@gmail.com>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "open list:TQ SYSTEMS BOARD & DRIVER SUPPORT" <linux@ew.tq-group.com>, "open list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <imx@lists.linux.dev>, "moderated list:ARM/FREESCALE IMX / MXC ARM ARCHITECTURE" <linux-arm-kernel@lists.infradead.org>, "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>, Frank Li <Frank.Li@nxp.com>
-Subject: Re: [PATCH 1/1] arm64: dts: freescale: mba8mx: remove undocument 'data-lanes' at panel
-Date: Wed, 23 Oct 2024 09:27:23 +0200
-Message-ID: <4606074.LvFx2qVVIh@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20241022202342.1263766-1-Frank.Li@nxp.com>
-References: <20241022202342.1263766-1-Frank.Li@nxp.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D94153835;
+	Wed, 23 Oct 2024 07:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729668499; cv=pass; b=TqtCPMD4J/B3Q3wmPnLrXmkFSfZ+EZojQkwb7odTJkOLSKcbOeDs6h5dw4YZnGjAGnyBxa0J9zs4YyvPOOrns/mxeZOm8gDjtpJbH2ImImjQlR3862g6gDodxY2172ZV1FkGYdTVy6DlA+wz2Ie5WoBOHA2x2c59Up+ceBVK0ts=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729668499; c=relaxed/simple;
+	bh=vk1Ixavo5AIW3EHKpG4os4kWFE7xCuW2TWUN3o/6NvA=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=CZNao8eWoLykcEu1mP8fOlkMGgUzkWE1wBt2qDi4mT4qbC4UAQQlgXAgcI21zLUp380XSICMCUuf9dIEMFQHIMR+tbI3AclMUd1lIHq3uduge67wUmrViykM+y0CBE4HiamfwBWb8Z6lOkdhZxdyzXb3ZfTSsAASgAWwAm2Y+gA=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=S1xjOfxW; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729668465; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=C/2EwbLhmz6G2Ou2KtzULuW8/gnWJbsO62/+cEywrlquHLq3WIvkxLwDyJzcHnyOLAZHTh84sVlLx0z2Cr03Ef9eDgmvIqNEPozhU/6TAsRuSfwh1P3f1Z2ClA+FlaoERKyTa4uueSDnS/b3a0dXhfbO7+x8X25nsGcn6NV39vk=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729668465; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=xYPqH8i/jPZ3SVIk0j6dfaZf9c/dkI1qA0EU0u/Upf4=; 
+	b=FnHuzK+l4ovOuJbO5+x5hUSRqh6IQcp2JhW9Vsx64ASTThb+PeUm5jtgENQe661CyMSPikBjcl6Z7JiejZtI0LvWdkjYLmYHNF3wfy+nSYoqiR0t98OrhWobX9xUcMlaNliwGIxuR6U/tIvp8q+lRCkVz5BnRh54n+78vFNeTKQ=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729668465;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=xYPqH8i/jPZ3SVIk0j6dfaZf9c/dkI1qA0EU0u/Upf4=;
+	b=S1xjOfxWAnL9DpOcyskOZHCbQab8h3MWLghpDTRE+BpvA1c2kpc8snxRKyUKkhIA
+	X4pjkHatf5nsW2aa9zCn4n9RUPF221coAd0M9RVFPcdsUv7XlGZTBiwP9r3BHAnlery
+	2sSiV3FcUCTS5tKB325o1etJ5ew64DnvwKgJ/xIs=
+Received: by mx.zohomail.com with SMTPS id 172966846416624.627621061485456;
+	Wed, 23 Oct 2024 00:27:44 -0700 (PDT)
+Message-ID: <b111d58b-8701-46a3-a82d-d4180b7a56b9@collabora.com>
+Date: Wed, 23 Oct 2024 12:27:34 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 5.10 00/52] 5.10.228-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241021102241.624153108@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241021102241.624153108@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-Hi Frank,
+On 10/21/24 3:25 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 5.10.228 release.
+> There are 52 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.228-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+Hi,
 
-thanks for your patch.
-
-Am Dienstag, 22. Oktober 2024, 22:23:41 CEST schrieb Frank Li:
-> 'data-lanes' is port0 of lvds bridge. Needn't set it for simple panel. Fix
-> below CHECK_DTBS warning:
->=20
-> arm64/boot/dts/freescale/imx8mm-tqma8mqml-mba8mx-lvds-tm070jvhg33.dtb:
->    panel-lvds: port:endpoint: Unevaluated properties are not allowed ('da=
-ta-lanes' was unexpected)
->        from schema $id: http://devicetree.org/schemas/display/panel/panel=
-=2Dsimple.yaml#
->=20
-> Signed-off-by: Frank Li <Frank.Li@nxp.com>
-
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
-> ---
-> I have not such hardware to test.
-> Alexander Stein:
-> 	Can you help check it?
-
-I noticed myself already. This patch fixes the warning.
-
-Best regards,
-Alexander
-
-> ---
->  arch/arm64/boot/dts/freescale/mba8mx.dtsi | 1 -
->  1 file changed, 1 deletion(-)
->=20
-> diff --git a/arch/arm64/boot/dts/freescale/mba8mx.dtsi b/arch/arm64/boot/=
-dts/freescale/mba8mx.dtsi
-> index c60c7a9e54aff..3d26b6981c06f 100644
-> --- a/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-> +++ b/arch/arm64/boot/dts/freescale/mba8mx.dtsi
-> @@ -100,7 +100,6 @@ panel: panel-lvds {
-> =20
->  		port {
->  			panel_in_lvds: endpoint {
-> -				data-lanes =3D <1 2 3 4>;
->  				remote-endpoint =3D <&lvds_bridge_out>;
->  			};
->  		};
->=20
+Please find the KernelCI report below :-
 
 
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
+OVERVIEW
 
+    Builds: 24 passed, 0 failed
+
+    Boot tests: 53 passed, 1 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: 
+        hash: 11656f6fe2df8ad7262fe635fd9a53f66bb23102
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
+
+
+BUILDS
+
+    No new build failures found
+
+BOOT TESTS
+
+      Failures
+      - i386 (defconfig)
+      Error detail: UBSAN: shift-out-of-bounds in ./include/linux/log2.h:57:13
+                    BUG: kernel NULL pointer dereference, address: 00000000
+      Build error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:671648503eaa4b46ca68a35c&orgId=1
+
+See complete and up-to-date report at:
+ https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=11656f6fe2df8ad7262fe635fd9a53f66bb23102&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
 
