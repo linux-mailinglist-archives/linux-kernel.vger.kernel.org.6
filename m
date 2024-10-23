@@ -1,252 +1,194 @@
-Return-Path: <linux-kernel+bounces-378061-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378071-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F3CCF9ACAD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:12:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F8F49ACAE9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:16:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4428EB20B38
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:12:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFF1A282878
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:16:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75A411AE001;
-	Wed, 23 Oct 2024 13:12:02 +0000 (UTC)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A8AC1AE01C;
+	Wed, 23 Oct 2024 13:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="a2lV5Q4p"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2055.outbound.protection.outlook.com [40.107.96.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D00A814B94F;
-	Wed, 23 Oct 2024 13:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729689121; cv=none; b=nSZbeVe5b8gWcrTnOh9MlFnXDvBugxLAT7KI/qM6ke8z0SPQwQD59Yyy38K/7AhaQanb1lRNiCWZU9LTexJRtKJDYLF8nev2OvOz22sFQ853GO6sBhpA3o82JYSC0HWdyNErewl8LuFKK1j2AN+ggbofBnfx3jZxcgN8gZGMtb8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729689121; c=relaxed/simple;
-	bh=RLCB/wwIYzb81sPD0IBhIVmVkhUuXCigyqhYKPobdzU=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tC9XMoQswfRsEry+yadlTHeHND7+AP4bEXg5lf2KFGqRQFg+ra673LtcpTLRLcT94RcBZbi/2hzPANGXxgSAbqAQ+XROXim7we0YsPgkrgOFX8Y2zrwGAidAwr61I4ohxZc1fmytJA67idEEL9V8D9HNB3fDrpP197c91btlCOA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e5e5c43497so32654137b3.3;
-        Wed, 23 Oct 2024 06:11:59 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729689118; x=1730293918;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xwPQwQiFd2RLAnGRyTPZliatFsw4n+Tc684clixLYHI=;
-        b=C6lIrIU1yiNnG0+jqy4r6Xkp8uExNcvQ/p5RkIJ5lfIwx2iM05oqSKTo/c4B38A5Gd
-         U6NPNrNQPMSfPNxgU9Gna10RCAnfRiOMkvywbGaWPSueeZV1AXCPoPDXHvuHTY5E1pR8
-         MUZt9KWLPlYdJgTGOpkYaic24n4rTAsyrof5RHU73hb1mOQRzQAmWU6kw3wH1FjI5rpw
-         S0X8ct9acb8iTCiPOwAdMAL254EHJ29BCDQx7IuBgNbHHUHy5aACsJJGAIR2xOY10Lx+
-         kGToc3lDaJ8tjcQNSqTmcrj1SFGRef8ygQHfz1aDDp8pBfbkZp8Y4qlCB3Coy7svhBrq
-         TymA==
-X-Forwarded-Encrypted: i=1; AJvYcCV72bykF2+MQ1yIZG3NetNHgRdK7SRTmV7o33qlMhW1204MxO7FFuUgLe2Wq8hUbPxbcrtApVIfyVll@vger.kernel.org, AJvYcCVhsJrvLYjTsc1+WrswqMgY+g2rL/8LCOdps/+rfPyE1ldTzY5oZ11o+WHaq/YATDJCxnma9gKNLFH9LQJt@vger.kernel.org, AJvYcCWEfe9Smes3GPwUPUy/CT9cXv+W2qYxf678gcdX/1eFWE7Y/GG9ALO9Na7ZOUtvkwNviZMeKC+suTPupaNFO1v+BTc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg3bGgbxUPO1IzxfZhdnYf86ghqnFoIAfLgmKYHuNXMzmT0Ldb
-	LRsENu07jF+8gdBmiaRmUI0v0yIWBj3e36sQNl5inIH/D7peJ6qgYJH2Gr2H
-X-Google-Smtp-Source: AGHT+IE208VBVJpVa79gKkF9A1p8KE9d9jsSWhPXL4FzGDkzZeDYbGs1okTzJiHkRKkkefvMZTq/Mw==
-X-Received: by 2002:a05:690c:3145:b0:6e2:985:f4df with SMTP id 00721157ae682-6e7f0ffc91cmr21558297b3.44.1729689118503;
-        Wed, 23 Oct 2024 06:11:58 -0700 (PDT)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com. [209.85.128.180])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5a502d9sm15089327b3.47.2024.10.23.06.11.58
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 06:11:58 -0700 (PDT)
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e3d97b8274so56709647b3.1;
-        Wed, 23 Oct 2024 06:11:58 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCW6Wbq+leWdBQQnBdcjAMyHVgJU8AsHkR2Ud1uk8fH3eoXvX4g5I3gEUQ1qIyfDUwMMxfTFdOH+LUMuMCWF@vger.kernel.org, AJvYcCW7+EhEWTGQXeM8VpdxfmwUmw1zE8+NMbRbFIC5F2V+GHxfGFPKDOWWXjyfKNuzz7biXoVy3jUQ0MMp@vger.kernel.org, AJvYcCWBnOy9IItjYZ61bYDa8fo8JhJTyNnCfSacAla9jIAT26iLThcJVa8EVBVtUvUsB5HQwNszhGlr4hGkosvOPYHkaRc=@vger.kernel.org
-X-Received: by 2002:a05:690c:f93:b0:6e2:1090:af31 with SMTP id
- 00721157ae682-6e7f0dbbacfmr25008687b3.3.1729689117825; Wed, 23 Oct 2024
- 06:11:57 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5AB61AB51B;
+	Wed, 23 Oct 2024 13:15:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.55
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729689333; cv=fail; b=p4wvNdSo1hMCeSPI6hoY8S6QFWipZe+4WpHuAsaMlBO0fcSdxNFBwiKUOVJnB8K2kcR1aqAyxZ47cL8NfClJjgqK1YhcOlPO9Qcsl9Ry0Z9YcH6khWUNbzCpvH9kVwaZes+g0AgSC0FlXzrC9i97s2NMMCaBrMmb5bHKFk3yu34=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729689333; c=relaxed/simple;
+	bh=WmKcuXVJD3KnasYrLdS5Jj6QcZlv7tlQUXTpIcAytIY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=lBDHKPDaUtTWskIItU4YApAXyVyAxD+CXI8DS5UcU5RL68EkcXSuBalxY4XATodblwgbXCIejmySh7d1cC8G2ZCsgb9i7SlrjiYKTmo/+GDyZJ4iF3tTcXcAkhcGufZzxv5MgedWE4ky9KImZfgSqd9O/gYK/a0xCqQxBPLmK3s=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=a2lV5Q4p; arc=fail smtp.client-ip=40.107.96.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=a8RwhrTmVc5ALG25Irl0o5ZVBJNYZZesIfdzhxj+KrSRb2oU3SY+YqegFAEr26mbfvuZzZSwyW6dlsxlvC3RJpWG5J+m5GnhnIXY2Psrp4aRPSiz8sI5oABOSxPS3jCG5YwT6XkWi/U5JfYHflgeHaK+dIw8EJPjUka1YUQug9QNps1cXP/+g05921+WX87FZ04yz6J9PA2zcGfJmdiXgJsCQdr7kBG6TWLdM/+lw6/Ok3c1Hhx0GEfn6IUDFxBmAWQ5sOv8mf1UoF5c93A8PN+1+mVEJb53qzpw/6OKsKWsytTsxVbFerC3qI27wRA1j2usSgLWIT3fYJB3K0OnJg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=fuxnnmbHqBPZi2dsj1PH7iNqaalYbSwhJVY3gXyWwiw=;
+ b=yENChzXOQOJfv61JggJjE07+xyKLmJrVRZa5uhX/ziy8SBFcPgqBx1CxwJy7jysSaZYr1+Ji+p6vV2MI0LWmNOp/6Ve0Bps8WvgeC+7l7rX5ZkYTHXfU7XpSYPakKlSZISWQGkDtmGoE9uJYz4adcfv3PHIUvXxXgNFJoQ+Xn0CTRCsKcAdcqElmvgPqy3av/qUQkZivPQ0/ZSibEv7gWkqA+/f2uqqq7j3KySJ1ysE00S/wuygNHGjCpjQp5mw58eByURimYa+CjQt20dJQymYEK9TT03if6uYFU9ZSvh2Rl3cTLzhd1EHw4e5zW//hVjaboU+4pgjhv716q4vNpw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=fuxnnmbHqBPZi2dsj1PH7iNqaalYbSwhJVY3gXyWwiw=;
+ b=a2lV5Q4piPlqdcbmo9ysM4/OB75Yrh39XEDBRAt9gffPGonkeh1Ne8dkriydkukzEl3v1ftLU/Z830BWTyKrvlDqiwsdB8NAnraiO1WJbRha3GNz8vaEL+u9GU5dNeqGgHy3qwLNb17OoKLFYFV4ikpTG9j9JUffYp9uCIwCRUM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
+ by MN0PR12MB6269.namprd12.prod.outlook.com (2603:10b6:208:3c3::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Wed, 23 Oct
+ 2024 13:15:28 +0000
+Received: from MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
+ ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.8093.018; Wed, 23 Oct 2024
+ 13:15:28 +0000
+Message-ID: <1f98dce5-acff-4c3b-8190-8230070fbe7f@amd.com>
+Date: Wed, 23 Oct 2024 08:15:26 -0500
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/4] cpufreq/amd-pstate:Cleanups
+To: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
+ gautham.shenoy@amd.com, perry.yuan@amd.com, rafael@kernel.org,
+ viresh.kumar@linaro.org
+References: <20241023102108.5980-1-Dhananjay.Ugwekar@amd.com>
+Content-Language: en-US
+From: Mario Limonciello <mario.limonciello@amd.com>
+In-Reply-To: <20241023102108.5980-1-Dhananjay.Ugwekar@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: SA9PR11CA0018.namprd11.prod.outlook.com
+ (2603:10b6:806:6e::23) To MN0PR12MB6101.namprd12.prod.outlook.com
+ (2603:10b6:208:3cb::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241008164935.335043-1-prabhakar.mahadev-lad.rj@bp.renesas.com>
- <TY3PR01MB11346A1726BCE1687C6AFF519867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB113469ABB6393E0A6451034A4867E2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CA+V-a8vWpUmq9esgcnjWVcPb-jUaLuKvhJF2VwiWrCx5_nOtww@mail.gmail.com>
- <CAMuHMdULuCWd1V0Az=NWHhSb7voDKbTo9rp3Excntp7qvTbbuQ@mail.gmail.com>
- <TY3PR01MB113460ED98BB6EE2575D0CBC7867F2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdX8rCM+yG4cwtG9yogwz0xWqD3O0aiXNMwE9Vkcpyhrkw@mail.gmail.com>
- <TY3PR01MB1134648DE5396A9ED9227BEB186792@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <CAMuHMdWa0=pKfY=RL1NYXP+EBz6AK-6Br4wy4d_g4XwoCyW9og@mail.gmail.com>
- <TY3PR01MB1134642E82FBCF217DFD8A75386792@TY3PR01MB11346.jpnprd01.prod.outlook.com>
- <TY3PR01MB11346FA2A49CEF90C98EF9335864D2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-In-Reply-To: <TY3PR01MB11346FA2A49CEF90C98EF9335864D2@TY3PR01MB11346.jpnprd01.prod.outlook.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Oct 2024 15:11:45 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdW19r6BHhxoK73fz79VfszpBteYAPQqTRhYzmkOuk4hVw@mail.gmail.com>
-Message-ID: <CAMuHMdW19r6BHhxoK73fz79VfszpBteYAPQqTRhYzmkOuk4hVw@mail.gmail.com>
-Subject: Re: [PATCH v2] arm64: dts: renesas: r9a09g057: Add OPP table
-To: Biju Das <biju.das.jz@bp.renesas.com>
-Cc: "Lad, Prabhakar" <prabhakar.csengg@gmail.com>, Magnus Damm <magnus.damm@gmail.com>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	"devicetree@vger.kernel.org" <devicetree@vger.kernel.org>, 
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, 
-	"linux-renesas-soc@vger.kernel.org" <linux-renesas-soc@vger.kernel.org>, 
-	Fabrizio Castro <fabrizio.castro.jz@renesas.com>, 
-	Prabhakar Mahadev Lad <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|MN0PR12MB6269:EE_
+X-MS-Office365-Filtering-Correlation-Id: b3f10489-5ea0-4803-1215-08dcf364c3a3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TXNlQ3pxUTMvelZkVjdOaVcwN1FNbUt1WG1uWUEvd1hTMU4yN2RnYU8zRkdH?=
+ =?utf-8?B?dFhjeVdTSkZrdFJISFpkRmNrY1lyclVHa3Zra0xnc2dTVkhoMkl5cW5aOTdR?=
+ =?utf-8?B?WWhyZmwzQ3UxaEFWSlFmTmU3QURnMFp5b1VFVHR2SWhQdERFL1pVM3NUUE42?=
+ =?utf-8?B?K2RJYkFDdzJJeUhIbnlGNlo3SkNXUDduck5MaG1hTVltZ0ZWNHpyOC9Hb2E3?=
+ =?utf-8?B?TjQ3T0RzTVFuWWVTZk9sb1NvWWdtL0QxaHc3a2xXa0o5NFIvYU4rbm9lcDVO?=
+ =?utf-8?B?T3Y5YUdCaXVMVVp3aGFXWUQ4bDkrRkovSFFKaVpNbnUwWERjZjkwWHFEOWFs?=
+ =?utf-8?B?MVRCL0lzbmYyUnMwN0YvWUt3bzBvaDZweGUxUW1OdHI2Rnl1NUFtcXdEbTdj?=
+ =?utf-8?B?cjF3Wm9scUxPazBJeS9WZTdYTUlLSGhRVFFjTSt5NDZMdElzNWFuaU01QTNV?=
+ =?utf-8?B?UmRJemJuUVV4RWJURTM4aXlDV2JiNzF0Q2cvMXBYaXhNK00yMWJUWlp2cFZR?=
+ =?utf-8?B?bzZIRkVXYmVzdStzL1VRS29QbWhkVEowbmlIT3owMDJEdVdNZWFRT2FCbHJZ?=
+ =?utf-8?B?bDBVanRJQ0tFR1pCK0ZNZU11c1FsWGpuSmJHUXJqV2FYOXI1SjFkbXV0NHly?=
+ =?utf-8?B?UjFSQnRtYU5uZ1VMNzNiT2JIbmZGVmlGQ3dZSDRubHFRNnhyTG5OKzhYdHBW?=
+ =?utf-8?B?N3FJYUZnZXg1b01HWEdVZHlha01kMUxzdVdTa0xTUzVwdFRmY25OcXo1K2g2?=
+ =?utf-8?B?K2Rxa0c5eXpZclRFNVpSb3dvUWJDd0kxZWtKTkxwbUx1UVp4Ny9QeG9FUThD?=
+ =?utf-8?B?dE5JSGlPV2Z1ZUpDenpVM24zU2cxMEgwcVFLNHpSYTRxWHpjcnNWek9FajdH?=
+ =?utf-8?B?dUNsUC9QV21yVVROaFJhUHBKTStCL2JrQkloVEdoU1pKRmIxOUw2enpSMlp2?=
+ =?utf-8?B?WmE0bHltcVgwa1FVYTZZejhIK0I5ZGRzMVIvVEtxRHBLTGl3eWJGeDNjRG9l?=
+ =?utf-8?B?T2UyaG9lK1dIbHg1ZWFDamhJYm9hTmhacjRVemQ1aVVLaTZMTWkwaWNJcm1u?=
+ =?utf-8?B?elFQNCtUMUNVTVVkaDRtam8yOTB5eHZZN1NWYmlIeFJTK0lYSEhlZDJSOWlh?=
+ =?utf-8?B?OVZNWGdSVFJoVWJUV2Urc1RySzJBRXN3bGhyWjdjREpkTk9rdG13M1JSV0hR?=
+ =?utf-8?B?SFF5ZE9ZTXFMalhCZmQ4SHV6NDRWMVdDSmJGRnZvVjh1Vm00VXN2NWYyVlJI?=
+ =?utf-8?B?M3ZveFJhOWQ2ajRmMjMzSnhlVHR4ditnb29sOGQwdjcwREdmWVZ6S1lEb2Vo?=
+ =?utf-8?B?Ym1WTnVFd2htTzdEaEcySVNjUnUzSi9RMUxUdVRwN1RJREc3V1MrTGtlbHRL?=
+ =?utf-8?B?czR0dUNkR00wMnN5anhwdktrZnBheWVDUnNhczlZMDBsSjRDNGtsTXg5N0Zj?=
+ =?utf-8?B?QXFRRzI5NXRpWkhyRkoxNTFiQUovcG03b3hCdFE1MlpITDhTU2h5M0VTaHBo?=
+ =?utf-8?B?TjN6L3F3RDdOKytXSEFXOE1UU0pKMWpLQkNCcUtGci93SUFMYTE5SjNTQ1RW?=
+ =?utf-8?B?VXhVUFF3ODV3eEw1L0hNRG5mMjkyMndodUpMS2I0bTBMNWt3QzN6U3d4OEg5?=
+ =?utf-8?B?NHdzVTVvbHNBWDNUMzVLT1pjOTBJcVMycEc3K1ZsUmFTa0RBMDF2aFdnZWs2?=
+ =?utf-8?B?cjlkem1uS2FxdG1TakQwU0N0UjVVL2t4VUpkeUFoTFk1czVYQnNEaiszblJM?=
+ =?utf-8?Q?KbGbuO73isBuPAIogA=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?Wk02aTAyRVhvcjk5Y2srK3NOVFlyalBTVXQ5Yi9ad0pVdGNMWWxKK3ROZDRj?=
+ =?utf-8?B?NkVnaG9mMlpWcWZSRzlRVlNWcW5GVGxuZGRxVzNsL3N1U09YaGsrcmN3STBY?=
+ =?utf-8?B?bC9nSEx5V1JPbStpalNzSmhUUmNEdVozNHRHM0t3RyszNzlDNkE0QTlzZnR1?=
+ =?utf-8?B?enlOMXJWWnRONWNER0txcEJxTDh0N1NGaUwyM3Z0TGMwRTZ5YUQyMWxzdXln?=
+ =?utf-8?B?MDVlWDdsdVRMT2dkNG1GRmJnSElnMTRqOTFpckZxTmc5NTl3YjEyZzhmVkZD?=
+ =?utf-8?B?TnF5NTNqTUJFY08vcEUzZmFtbnk0djhPbnArNnVTMHFvMWVaSUIrSTdEQ0RP?=
+ =?utf-8?B?RVhWT3ptZmZJS0cvZ2JUcGdseXR0Tzd5Q1lFZ001eDcwVU0vZ3V0bUFlc3JE?=
+ =?utf-8?B?MGFFR0lCQ2hsRWQwZEhuNHJEQk8veEwzOElOSjk4RXBYY1hXOWI5Szc0d3NL?=
+ =?utf-8?B?c2xxTGhsOVRxUHZ5U3Bmcks4dHZNWDlndlk5ZnJEdTgvQTJOVUUxNmhwVXVE?=
+ =?utf-8?B?d05ubmZRanNKQzg2Uks2YXVDZGhEdm5XT21jekJaMjJkcTFKWXMxRWZyZ0xI?=
+ =?utf-8?B?SlNpQzg4Vkp2QnBJa3NGTVBQdThyL1I3U1U1WUdjdmtMbW1KQTZOOERRZVFn?=
+ =?utf-8?B?ekwyU1lpTGxydURsSEllRVJzQm5PUm1xYUQ1dXVqSUczQU9nd1ZhTUNmdkRx?=
+ =?utf-8?B?dmJvcklQc3AwV2RKcHhOYy9IbTQ4bzg2UXdFYVlCYkRCRTZaSWZrUW40b3hN?=
+ =?utf-8?B?VENZUms3WEdkMitDb2g2SDAvVk5UUzR5ZU4zNGtwTm51T2p2WWJKbi83Rm5z?=
+ =?utf-8?B?Z0J6RkUrdFB4TGxNODJINW82bFlXc01DUWdCUFpCWmIwYmV4MVFQbW92M3Bj?=
+ =?utf-8?B?UHVoNk9LTitZUTJOTGJEYXJOazZVekwzVjdXS3ZWcFFFVmJSdm4wcWoyOHp0?=
+ =?utf-8?B?N2FFeERoZnQzeVprZ1hIYTlUbnk1aHgxR3g0SExCQWVoYjJ6SFJLaEY1dHp4?=
+ =?utf-8?B?RlY0K0lhTHZISlMvOE1ZWktSQ0xHU2ZJLzN4RFBqcWdFMmRsVGFZU0R1MGVU?=
+ =?utf-8?B?Ung0eVMwNTFqSk5PVGpxN3NXbUtoUm52L3NoWlJtZjI1dytUcjNIY3Zmd2ww?=
+ =?utf-8?B?UEZ2czd0ekE3ZURMTGdadExzbksxWXZEYTNLMUZ2cWhQbHpSTkRKamRwTHFZ?=
+ =?utf-8?B?eXF4Ukpxa242ZFgwR0w5MlNUWUdvRUY1bkpOVjNvY3ozcXV0cFhLRk1JR2Zj?=
+ =?utf-8?B?eHk2cTVWRWdsV21xbXJlRzVrdWJVb2V5MTllNC9HdWFnNUVka1BjZ0M2L2hM?=
+ =?utf-8?B?WmlQRDBKQm9JeW5tN0RIYzBDOXFZR0JucEU0Nk9nZWxjVTE0NXY0NnpxYnlq?=
+ =?utf-8?B?SVRwSGZxeTNKR1E2emVqUzRKSHRBU1VrbG9NQUM3QkFaS09LekIzMUFPN2dR?=
+ =?utf-8?B?d0tiYllaVDVDVmdlNjR6VCtJRVNoRVNpUHJ4RmhyRnZ1My9iM0htTFZHVi9p?=
+ =?utf-8?B?T0R2bTdZdmFueTBtcjBucXY0aWgvK0ozK05RU2F6aFcxS1UwNVdxOCtDMndF?=
+ =?utf-8?B?SElZUUJzRlRocTYvT3dLOGhhYkJWZ2ZjdG9od1VXZ090VEltK05QT3R2NTRn?=
+ =?utf-8?B?V25od2VNdFlReVp2SjdxUm9CN0V3MS9Za2ViaDhCWHZiN1EzcHBxS1I4RkE0?=
+ =?utf-8?B?Qkh3dngra2tDMmxGVGFNTGkwdXlCSGplek0wZkxRcHdQL3RiZ214MUczdUc0?=
+ =?utf-8?B?ZXVJQWdzeS9UUkJ4anJpbldrL0JZT1UxMm1YcllBazhFWFU0VlpnY1VFemhY?=
+ =?utf-8?B?ajNubXVCNnhoOHlVTUF3RzZYSmZjeWJJc1NaMVNhWDk2dmtOOGRlV21lTko2?=
+ =?utf-8?B?RkdVVGZXQzdsSE5LTExEcjBCSzNrOXlDVHZUaE5JZW5KNUZoRnFKenNzbXFV?=
+ =?utf-8?B?QlBvL1VONlI4eHIxenZqMmFNYnlpMGo3QkFMTVdvaVRQeVBlZk9Oa1MxUGFp?=
+ =?utf-8?B?T1BoenNYZC9QcGFCcTgrTUZyRzNWa05zNDlSMTJveHZTRGtJamljNkxrOGpa?=
+ =?utf-8?B?Q3NBVTBubHdmenlHZ0hEZk9JNnZEcjk3Q0IzSXBseVl4SHluT3JnOEZzMzMw?=
+ =?utf-8?Q?7HWXhlJkvWmNAIavOAeg33TOp?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: b3f10489-5ea0-4803-1215-08dcf364c3a3
+X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 13:15:28.5776
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: NTJYp2LSz7HWWt3viCEl+po427aobyvsNOfsLRS82LVbNwKaSJElY5TlPu9abe1j+vZkVGsD4Iq0ZIV9AgyfpQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MN0PR12MB6269
 
-Hi Biju,
+On 10/23/2024 05:21, Dhananjay Ugwekar wrote:
+> Explicitly rename functions that enable CPPC as *_cppc_*.
+> 
+> Do not clear MSR_AMD_CPPC_ENABLE as it is a set-once register, i.e. it
+> cannot be cleared.
+> 
+> Propagate the epp value to shared mem in the reenable function.
+> 
+> Replicate the offline flow of MSR based systems in shared mem systems.
+> 
+> Dhananjay Ugwekar (4):
+>    cpufreq/amd-pstate: Rename functions that enable CPPC
+>    cpufreq/amd-pstate: Do not attempt to clear MSR_AMD_CPPC_ENABLE
+>    cpufreq/amd-pstate: Call cppc_set_epp_perf in the reenable function
+>    cpufreq/amd-pstate: Align offline flow of shared memory and MSR based
+>      systems
+> 
+>   drivers/cpufreq/amd-pstate.c | 39 ++++++++++++++++++++++--------------
+>   1 file changed, 24 insertions(+), 15 deletions(-)
+> 
 
-On Wed, Oct 23, 2024 at 3:04=E2=80=AFPM Biju Das <biju.das.jz@bp.renesas.co=
-m> wrote:
-> > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > > From: Geert Uytterhoeven <geert@linux-m68k.org>
-> > > On Fri, Oct 11, 2024 at 9:43=E2=80=AFAM Biju Das <biju.das.jz@bp.rene=
-sas.com> wrote:
-> > > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Wed, Oct 9,
-> > > > > 2024 at 11:41=E2=80=AFAM Biju Das <biju.das.jz@bp.renesas.com> wr=
-ote:
-> > > > > > > From: Geert Uytterhoeven <geert@linux-m68k.org> On Tue, Oct 8=
-,
-> > > > > > > 2024 at 10:10=E2=80=AFPM Lad, Prabhakar <prabhakar.csengg@gma=
-il.com> wrote:
-> > > > > > > > On Tue, Oct 8, 2024 at 6:33=E2=80=AFPM Biju Das <biju.das.j=
-z@bp.renesas.com> wrote:
-> > > > > > > > > > From: Biju Das <biju.das.jz@bp.renesas.com>
-> > > > > > > > > > > From: Prabhakar <prabhakar.csengg@gmail.com>
-> > > > > > > > > > > From: Lad Prabhakar
-> > > > > > > > > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > > > > > > >
-> > > > > > > > > > > Add OPP table for RZ/V2H(P) SoC.
-> > > > > > > > > > >
-> > > > > > > > > > > Signed-off-by: Lad Prabhakar
-> > > > > > > > > > > <prabhakar.mahadev-lad.rj@bp.renesas.com>
-> > > > > > > > > > > ---
-> > > > > > > > > > > v1->v2
-> > > > > > > > > > > - Set opp-microvolt to 800000 for frequencies below
-> > > > > > > > > > > 1.1GHz
-> > > > > > > > > > > ---
-> > > > > > > > > > >  arch/arm64/boot/dts/renesas/r9a09g057.dtsi | 41
-> > > > > > > > > > > ++++++++++++++++++++++
-> > > > > > > > > > >  1 file changed, 41 insertions(+)
-> > > > > > > > > > >
-> > > > > > > > > > > diff --git
-> > > > > > > > > > > a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > > > > > > > > > b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > > > > > > > > > index 1ad5a1b6917f..4bbe75b81f54 100644
-> > > > > > > > > > > --- a/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > > > > > > > > > +++ b/arch/arm64/boot/dts/renesas/r9a09g057.dtsi
-> > > > > > > > > > > @@ -20,6 +20,39 @@ audio_extal_clk: audio-clk {
-> > > > > > > > > > >             clock-frequency =3D <0>;
-> > > > > > > > > > >     };
-> > > > > > > > > > >
-> > > > > > > > > > > +   /*
-> > > > > > > > > > > +    * The default cluster table is based on the assu=
-mption that the PLLCA55 clock
-> > > > > > > > > > > +    * frequency is set to 1.7GHz. The PLLCA55 clock =
-frequency can be set to
-> > > > > > > > > > > +    * 1.7/1.6/1.5/1.1 GHz based on the BOOTPLLCA_0/1=
- pins (and additionally can be
-> > > > > > > > > > > +    * clocked to 1.8GHz as well). The table below sh=
-ould be overridden in the board
-> > > > > > > > > > > +    * DTS based on the PLLCA55 clock frequency.
-> > > > > > > > > > > +    */
-> > > > > > > > > > > +   cluster0_opp: opp-table-0 {
-> > > > > > > > > > > +           compatible =3D "operating-points-v2";
-> > > > > > > > > > > +
-> > > > > > > > > > > +           opp-1700000000 {
-> > > > > > > > > > > +                   opp-hz =3D /bits/ 64 <1700000000>=
-;
-> > > > > > > > > > > +                   opp-microvolt =3D <900000>;
-> > > > > > > > > >
-> > > > > > > > > > Not sure CA-55 can change voltage from 800mV to 900mV??
-> > > > > > > > > > Based on Power Domain Control, it needs to be in AWO
-> > > > > > > > > > mode for changing the PD_CA55
-> > > voltage.
-> > > > > > > > > >
-> > > > > > > > > > The manual says OD voltage is 0.9V and ND voltage is 0.=
-8V.
-> > > > > > > > > >
-> > > > > > > > > > Is 1.7GHZ is ND or OD?
-> > > > > > > > >
-> > > > > > > > > {1.7,1.6,1.5 GHz} is enabled when VDD09_CA55 is at 0.9 V
-> > > > > > > > > and for
-> > > > > > > > > 1.1 GHz it is 0.8V.
-> > > > > > > > >
-> > > > > > > > > Maybe when you do /2, /4, /8 using dividers, the voltage
-> > > > > > > > > may be still the same??
-> > > > > > > > >
-> > > > > > > > I think you are right when BOOTPLLCA[1:0] pins are set to
-> > > > > > > > 1.7GHz the
-> > > > > > > > VDD09_CA55 is at 0.9 V, further dividing the clock shouldnt
-> > > > > > > > affect the voltage levels at the PMIC output.
-> > > > > > > >
-> > > > > > > > Geert, please let me know if my understanding is incorrect.
-> > > > > > >
-> > > > > > > The actual VDD09_CA55 voltage is controlled by the external
-> > > > > > > PMIC (RAA215300).  It is the responsibility of the system
-> > > > > > > designer to make sure VDD09_CA55 is at 0.9V when
-> > > > > > > BOOTPLLCA[1:0] is strapped for OD, as CPU core clock rates
-> > > > > higher than 1.1 GHz need a higher core voltage.
-> > > > > > > I don't think it hurts to supply the higher core voltage whil=
-e
-> > > > > > > running the CPU core at low core frequencies, except for extr=
-a power consumption.
-> > > > > > >
-> > > > > > > To control VDD09_CA55 dynamically, the CPU cores should have
-> > > > > > > cpu-supply properties pointing to the regulator controlling i=
-t (raa215300).
-> > > > > >
-> > > > > > This needs a big work(see: 4.5.3.1.3 PD_CA55 area voltage chang=
-e).
-> > > > > > CA-55 needs to signal CM-33 so that it switches to AWO mode(Onl=
-y
-> > > > > > CM-33 is active) and In AWO mode, CM33 is in charge of changing
-> > > > > > CA55 voltage and then switches to ALL-ON mode
-> > > > >
-> > > > > Ugh, this is indeed much more complicated than on other SoCs.
-> > > > > So basically you are stuck with the initial voltage settings.
-> > > >
-> > > > FYI, I got confirmation that 1.7GHz,0.9V is Normal drive and It is
-> > > > the default for RZ/V2H and upcoming RZ/G3E SoCs.
-> > >
-> > > OK, so no "turbo-mode" property is needed.
-> >
-> > "turbo-mode" is 1.8GHz
-> >
-> > "1.8GHz cannot be supported by CA55 only (CM33 is required) so upstream=
- target is 1.7GHz."
-> >
-> > So, without CM-33, turbo-mode is not possible?? We are rechecking this =
-and will provide feedback once
-> > we get info from HW people.
->
-> Got update from HW team.
->
-> From HW point of view, 1.8GHz, 0.9V is over drive and 1.1GHz, 0.8V is nor=
-mal drive.
-> but for achieving 1.8GHz, CM33 is required. So no "turbo-mode" property i=
-s needed.
->
-> But viewpoint from Linux, 1.7GHz, 0.9V is over drive and 1.1GHz, 0.8V is =
-normal drive
-> and 1.7GHz should be the upstream target.
+Thanks!
 
-Thanks for the follow-up!
-
-> As you said, looks like the current patch is good enough.
-
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-i.e. will queue in renesas-devel for v6.13.
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Reviewed-by: Mario Limonciello <mario.limonciello@amd.com>
 
