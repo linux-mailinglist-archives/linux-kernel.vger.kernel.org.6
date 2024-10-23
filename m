@@ -1,146 +1,99 @@
-Return-Path: <linux-kernel+bounces-377262-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377263-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 825A29ABC1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:26:15 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 063C49ABC25
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:27:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E9B2283D07
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:26:14 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB383283E80
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:27:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE68213665A;
-	Wed, 23 Oct 2024 03:26:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9ED55136337;
+	Wed, 23 Oct 2024 03:27:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EiVFtzfz"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Obe4JKN/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51DFF84A2F;
-	Wed, 23 Oct 2024 03:26:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F03371C2BD;
+	Wed, 23 Oct 2024 03:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729653963; cv=none; b=QV+7i/dcfv8R3SKPfEJEDi8hAIACHhDWnIYZ/gRZhcO3BFVpnGtdPxz6lnzviUkTZu3QYhlOJguWvnJ8Wl4dmcXHahGDOvksj1MwfKKd3V11GH6lArN4Br4Aar3iP4mZEazde163LR2OmNasKUVeAwgkoZsmIUfP638cWs+wGMI=
+	t=1729654067; cv=none; b=LuD62tboT/OGtdQp8P5Rxap0N4vO8Z4pgKxf3tn2c8/cmuaBLlQauXbncwyEj3Cm4tWMHibJ/rLMBoGFPrfrunRqjPbsUhKmQCaab7lqvz9GLLrycmJPgKy8aohkYEWHtFxmkPdb26NaVCeQZPEFiB1wO+J7KQ4hXFDN5Y172OM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729653963; c=relaxed/simple;
-	bh=UawuPvVNweLt+f+x3Fgtz3lImYTI7h9j5JT2/8MpuPY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ttc/lmmjO05gA/gsnmKLC490FYOXqjepO4o4UH6UXWMeAyXmAqkVcfIKdNruSG4lnSgKMPfWJarSvoFuDo/bZmSO+4MT99+UzhErwcbtqCe3l08/MhHj5j9xIxUaA7DIo2JgK7kbzxkH+edzNB7vx0W67WGvpl8kfASCATTtQ30=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EiVFtzfz; arc=none smtp.client-ip=192.198.163.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729653962; x=1761189962;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=UawuPvVNweLt+f+x3Fgtz3lImYTI7h9j5JT2/8MpuPY=;
-  b=EiVFtzfzh/IuqzdLwl8lHJdwt8hEO1Zshv/tJseU5piY4AZlTTCHX9/p
-   WffxName5w61GcEbUXQv+iTMrTgXI1LmEUen5P9OBzGRNq7Fk1UBWsAFh
-   fGyzMMLo8H1VkTLJ1/kUH8AyLL4MYvXxg8rH1fZzpQC6PKLDQ4ELuQcax
-   WWOTBk5XNRvEsjXoj2G04GV1/CKXuR85LL7HvIbpyVGw9mQhxEhMSzKY+
-   hThT33yLZxkIr/UoCffoUSFo5/h2KHKtdeVLx75cIoqDK+qw6dwO9cGWD
-   HrhrZ1OYtAVbP6ZYEPSsx0VLVZmnH0AnbOIFV83RD/5GvdNjHeB5zGxJM
-   Q==;
-X-CSE-ConnectionGUID: l4M+jAc2RF2ZjqdMFMJ4dA==
-X-CSE-MsgGUID: mXf3CmRRQ8iIa3w3IWGqTQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="28667927"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="28667927"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 20:26:01 -0700
-X-CSE-ConnectionGUID: +w79cpkpQXyKxS0RZnURrw==
-X-CSE-MsgGUID: q4RXTF7YQtGpAcwsikNzwA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="117535126"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 20:25:57 -0700
-Message-ID: <c0596432-a20c-4cb7-8eb4-f8f23a1ec24b@intel.com>
-Date: Wed, 23 Oct 2024 11:25:54 +0800
+	s=arc-20240116; t=1729654067; c=relaxed/simple;
+	bh=vREOTp2pNJdkhnYRG+P0U+85DeEdwOHsWcBdcX2lhds=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FfLiVgGTeANl67FXhX/thSpceC254J4ehMMwmI6V2QOFrX9IhyDz01hCeVax9DI3PwmetQ05Awu2StZLip0WugpNBH+FfKWfAQuzjMfAHKStsQcZ40eOQeTP0hpE2ZsAL4Qh3VaHpX1H+LSmUScopk1aF/5a6EHgIHEGyk4AHFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Obe4JKN/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A7D85C4CEC3;
+	Wed, 23 Oct 2024 03:27:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729654066;
+	bh=vREOTp2pNJdkhnYRG+P0U+85DeEdwOHsWcBdcX2lhds=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Obe4JKN/B7ikiuqZEDgD735kiqPxv4I6fvQ/Hm3jIh6AUMPr19CEbC6gpiDrfA7IE
+	 B5JG1+EsdemFZ17Qv/K/vZuA09A1X+RngMaW/86/RacHSahexY5VpNk25ULHnQgNNg
+	 r6u3lWNE/qo16oLRjA5mNdB2QpG+HHf4UkEgyn/MOTjsojDN1VI80LgFRtqnXPfhbR
+	 26wIbvdHTJ+zlXg3h+HmnSxPYXgPPMI8PgN0/HUxVBKp/rXIjevuz4OeL85DvoEm18
+	 hKFHK4yXdmo5Qm2ZRxOK7BOJOn+DwFsb0+9Pf3DANmoO3Q4UAZdYlH9hbYz4lq3RLA
+	 h8DPygfwsRRQQ==
+Date: Tue, 22 Oct 2024 22:27:43 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] pinctrl: qcom: Add sm8750 pinctrl driver
+Message-ID: <dnri3nqq2una3atjwl437ujzrl2txl2zdyb2ima5qeeudqotxn@5zdxizip6mhb>
+References: <20241021230414.2632428-1-quic_molvera@quicinc.com>
+ <20241021230414.2632428-3-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 04/13] x86/sev: Change TSC MSR behavior for Secure TSC
- enabled guests
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-5-nikunj@amd.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20241021055156.2342564-5-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021230414.2632428-3-quic_molvera@quicinc.com>
 
-On 10/21/2024 1:51 PM, Nikunj A Dadhania wrote:
-> Secure TSC enabled guests should not write to MSR_IA32_TSC(10H) register as
-> the subsequent TSC value reads are undefined. MSR_IA32_TSC read/write
-> accesses should not exit to the hypervisor for such guests.
+On Mon, Oct 21, 2024 at 04:04:14PM GMT, Melody Olvera wrote:
+> Add initial pinctrl driver to support pin configuration with pinctrl
+
+I think you should drop the word "initial", and perhaps insert "TLMM" in
+its place.
+
+> framework for sm8750 SoC.
 > 
-> Accesses to MSR_IA32_TSC needs special handling in the #VC handler for the
-> guests with Secure TSC enabled. Writes to MSR_IA32_TSC should be ignored,
-> and reads of MSR_IA32_TSC should return the result of the RDTSC
-> instruction.
-> 
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> Tested-by: Peter Gonda <pgonda@google.com>
-> ---
->   arch/x86/coco/sev/core.c | 24 ++++++++++++++++++++++++
->   1 file changed, 24 insertions(+)
-> 
-> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
-> index 965209067f03..2ad7773458c0 100644
-> --- a/arch/x86/coco/sev/core.c
-> +++ b/arch/x86/coco/sev/core.c
-> @@ -1308,6 +1308,30 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
->   		return ES_OK;
->   	}
->   
-> +	/*
-> +	 * TSC related accesses should not exit to the hypervisor when a
-> +	 * guest is executing with SecureTSC enabled, so special handling
-> +	 * is required for accesses of MSR_IA32_TSC:
-> +	 *
-> +	 * Writes: Writing to MSR_IA32_TSC can cause subsequent reads
-> +	 *         of the TSC to return undefined values, so ignore all
-> +	 *         writes.
-> +	 * Reads:  Reads of MSR_IA32_TSC should return the current TSC
-> +	 *         value, use the value returned by RDTSC.
-> +	 */
+[..]
+> diff --git a/drivers/pinctrl/qcom/pinctrl-sm8750.c b/drivers/pinctrl/qcom/pinctrl-sm8750.c
+[..]
+> +static const struct msm_pingroup sm8750_groups[] = {
+[..]
+> +	[215] = UFS_RESET(ufs_reset, 0xE2004, 0xE3000),
 
-Why doesn't handle it by returning ES_VMM_ERROR when hypervisor 
-intercepts RD/WR of MSR_IA32_TSC? With SECURE_TSC enabled, it seems not 
-need to be intercepted.
+It would be nice if these digits where lower case...
 
-I think the reason is that SNP guest relies on interception to do the 
-ignore behavior for WRMSR in #VC handler because the writing leads to 
-undefined result. Then the question is what if the hypervisor doesn't 
-intercept write to MSR_IA32_TSC in the first place?
+> +	[216] = SDC_QDSD_PINGROUP(sdc2_clk, 0xDB000, 14, 6),
+> +	[217] = SDC_QDSD_PINGROUP(sdc2_cmd, 0xDB000, 11, 3),
+> +	[218] = SDC_QDSD_PINGROUP(sdc2_data, 0xDB000, 9, 0),
+> +};
+> +
+[..]
+> +static const int sm8750_reserved_gpios[] = {
+> +	36, 37, 38, 39, 74, -1
 
-> +	if (regs->cx == MSR_IA32_TSC && cc_platform_has(CC_ATTR_GUEST_SNP_SECURE_TSC)) {
-> +		u64 tsc;
-> +
-> +		if (exit_info_1)
-> +			return ES_OK;
-> +
-> +		tsc = rdtsc();
-> +		regs->ax = UINT_MAX & tsc;
-> +		regs->dx = UINT_MAX & (tsc >> 32);
-> +
-> +		return ES_OK;
-> +	}
-> +
->   	ghcb_set_rcx(ghcb, regs->cx);
->   	if (exit_info_1) {
->   		ghcb_set_rax(ghcb, regs->ax);
+Any particular reason why these are not gpio-reserved-ranges in
+DeviceTree?
 
+Regards,
+Bjorn
+
+> +};
+> +
 
