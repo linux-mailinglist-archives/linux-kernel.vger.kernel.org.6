@@ -1,221 +1,119 @@
-Return-Path: <linux-kernel+bounces-377785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C87809AC6BF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:37:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 116809AC6C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:37:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 37E0CB21C52
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:36:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8F2BAB23F70
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:37:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A104F194ACC;
-	Wed, 23 Oct 2024 09:36:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F68F19AD97;
+	Wed, 23 Oct 2024 09:37:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SKj85vqj"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VfciqWTS"
+Received: from mail-pl1-f181.google.com (mail-pl1-f181.google.com [209.85.214.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7868137742;
-	Wed, 23 Oct 2024 09:36:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A8081586FE;
+	Wed, 23 Oct 2024 09:37:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729676212; cv=none; b=sdx2KUOY+v3nfku2kdbTq58zD//KJvuQvZWuQTx3cJQN7yingY5HoRwY49ke2C+K+ZT/YHQwxTvy3X1y2kI1DfkI9+5RvUVj5KKCeBLtOSK8CBPzzePmMXKmtHTWgqvvPaIVzI+4T3ffQRkaxbsQRs7qQCAYrnHMEgx9ruTSz4c=
+	t=1729676268; cv=none; b=MFH+aj8Er4wgGjhWcnuIYpCS+dnMudktKKoxJi6MoqeSZB2yUhI7o2ksVD3hLJzrW/hALjjksn/amIx58ny8Mc9I+NMgrJIZo5VQfR1jAB7iI/kbNHkIdmG5YeEkyKYZeegs7ZoQJyE+eX5EUkH04xmuVWPssHMTQSNjwOJucHM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729676212; c=relaxed/simple;
-	bh=P6uiAhHDu0rXECDnGfYxIZMD7DHw4/fhTlSUQXpBGSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tsEbwjl7+QHLYOe5eVzFWshPQS5C8rXh9L6bSmWUejyuN55Dgi+LwZUTYdLUnjGyfLCL4wv+KOBCHM9MSGlArphxYHC5lgny0bW1rc3gP9U9IfE5nZF0EkvuLLIQulmIumiEWyLKElU6u7xsK9iG0qb+FjalMkdfq5BQuxcK74E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SKj85vqj; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=0QqaVJw955tDo7xTEh8OO1zPRB/LMf4vrfcbek+Xm60=; b=SKj85vqjTxPYvsGhq2TRllbw3N
-	rt6whtd2EoGrhmun05Q6glR4IW6qaF135DRJxT6DBA9f6pKU6bQ0VX3SD40ZIIocwuNc1Dj/16T1m
-	jIjFzaOiQ1Z7OCusiD18jgwP1gkkxtpUHAYp3j3zDzzt6bqzitvD/2//GJAyeRa5sXTjw49wkpsRv
-	ep1PStofJpp5qCswOxfu0CZxs/C0DJe+ioBBBkD1eqkiY2tXrqGMAmuDQ34NQWaoM5V/j78SACY/s
-	faQki0K0RWyOWrEE9CZl/FxG0GUgLTOUZbdptmdkW+zIo0v83w/SkLZ4el0HowR7IO2SSmC+hiIgR
-	xBd+kWmw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3XnF-00000002i1C-0YR4;
-	Wed, 23 Oct 2024 09:36:42 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 5B1C130073F; Wed, 23 Oct 2024 11:36:41 +0200 (CEST)
-Date: Wed, 23 Oct 2024 11:36:41 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Marco Elver <elver@google.com>
-Cc: paulmck@kernel.org, Alexander Potapenko <glider@google.com>,
-	syzbot <syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com>,
-	audit@vger.kernel.org, eparis@redhat.com,
-	linux-kernel@vger.kernel.org, paul@paul-moore.com,
-	syzkaller-bugs@googlegroups.com, kent.overstreet@linux.dev
-Subject: Re: [syzbot] [kernel?] KCSAN: assert: race in dequeue_entities
-Message-ID: <20241023093641.GE16066@noisy.programming.kicks-ass.net>
-References: <66f6c7d4.050a0220.38ace9.0026.GAE@google.com>
- <CAG_fn=XExLPpgq73V-D_NL9Ebp9n965=PeaZPXwfqstN7DRoBQ@mail.gmail.com>
- <20241022113131.GD16066@noisy.programming.kicks-ass.net>
- <ZxerZIxg8kAMCvYc@elver.google.com>
- <20241022191244.GB9657@noisy.programming.kicks-ass.net>
- <CANpmjNMgjUi28BLk-uQQpqZ_RnB9sRtHpvymCPjpqrG=sQqGRA@mail.gmail.com>
- <Zxi5tbLnhoG4pEcm@elver.google.com>
- <CANpmjNNx6QM67jSaAtkYdxA+A5_FGPLBkBxdVXQ_XOLB8pgzNw@mail.gmail.com>
+	s=arc-20240116; t=1729676268; c=relaxed/simple;
+	bh=eKHkaNfVW95RqBjaVbuk+1RTrbIoLjh24DVEysWLzBM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pdr7kTk8rMB8tvvhH2psjoxicb4nP4JiIpV6y7Lc+GxUoQYfwJZQrN4chIUBsi7Fd9r9/5M5AlBXvkvoMF8BcWkKVbDz1gRfKYB+DxfdYZnJKfl6xsaeOSqNhijE2KJSjyWdndgmKLOM/AdreGi13IJWnkDoC1iSOlT9wszQ7cU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VfciqWTS; arc=none smtp.client-ip=209.85.214.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f181.google.com with SMTP id d9443c01a7336-20cf3e36a76so64570705ad.0;
+        Wed, 23 Oct 2024 02:37:47 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729676266; x=1730281066; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ICmxhOxf3rIdsIFy95QRYT4rZHpdER7Q9+r8wV6MVMs=;
+        b=VfciqWTSR19zu/RS6pPWvhWyBNXik7LoOmntk/B9/oZ5fRhZvpVPAhZgj5AzcyS1YV
+         Fkqan92jYPzoAnH2+R6pwrls6cYM6nDgG+SHejthE9vAs8IQdGP++Frh4Ol3sTaQvxqD
+         ylLp5CBG08MAYPJm5K3N3+lbjiiVxQog4xje4WrKGingvqmCRWdw2I4CweEaZZc4P/5a
+         poL10RZA58BRffoEQ/64layOWBnHS81qMcxMSCG4SsGsHI64iVA9OJVphCNuw5DRFTXy
+         4Ca+LvqlOZgSdSFT8gKpTtZHP4GZgR2Bs12RFy5xbZcc2NKyKA6HKAEct3iqruhBCTG0
+         edpw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729676266; x=1730281066;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ICmxhOxf3rIdsIFy95QRYT4rZHpdER7Q9+r8wV6MVMs=;
+        b=kXknRIqckA6A1HHeCgJyEnuQlg6XADn8wZ64gihCam9P2SXXqOuWfhg+wqCcOSCxMV
+         xp60FqIbTGeF6Wp0KNt3HRu4w+7zu65S+03W1J7SHUakop3HGv30Pvh96Im+KTdAu6v4
+         GFZfSZ+w5fDSez39fOtoXItfylnPcjKvLgd10MOZuKO+h7ji+vNPVMTmJY31gIrZjEMx
+         mMASkofYwgMAC1nY0ou7OuqOJOGWeUM+Eb7xssFMfCzOzAv+cdAK4hDZrWUVPmsI0oxv
+         BDpRG2PC6+/vt7BtLr+S+fpvavuWmEL09l5JXY00X8DdRQ8j+yQRnnTZmWjosgCHIuKE
+         AvNw==
+X-Forwarded-Encrypted: i=1; AJvYcCUcfFlRJBLRxsi1Uzv+HmBTOwzuYUBXBZ4lbnm+LDdgZcdBFkbUT9PbrW/Cnekxd/BpPsozU9v/hXKpScovW4o=@vger.kernel.org, AJvYcCUwKFiZdFsja/AWshP9SfTjwvbYt/cJqePXifwLPOWT23FIqGENvk/ocfLomiQBAUEHrAfIydkYrfF1Hw==@vger.kernel.org, AJvYcCVl8y3pjUw3MPaIi9+6xKhycfZrQbXLYPykeLeaSlM0uwc2WG2YrUa/pfep+qh61YrKAymCAW+WeXJi@vger.kernel.org, AJvYcCXGJcr++IprIiwIWmc3iBi6DJFU7n7bBquVb2LYpuuEVGHKDPWlplOJDYytq+79oKXLcPYZJSbuTWMZPudu@vger.kernel.org
+X-Gm-Message-State: AOJu0YycB4RIBkDFUtiO7JZQkvFEYCTY98iw0UixfOIO9XcZOAHMChm3
+	1Ep77OV/32Ko0DaFwaZh6hfuBj+FTfHftUQRDjw9JtnrYUpYzwfq
+X-Google-Smtp-Source: AGHT+IEbaEkENgj6TpE1xbgPBOJYfC4icJXGN8eoL/sRAMsaGVBxN5nGzC43ba8GaiTlcpdMpQDopA==
+X-Received: by 2002:a17:902:d4c6:b0:20b:b079:5b7a with SMTP id d9443c01a7336-20fab2dbb0amr16681175ad.50.1729676266411;
+        Wed, 23 Oct 2024 02:37:46 -0700 (PDT)
+Received: from [172.20.10.6] ([121.202.106.54])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f3302sm54066435ad.250.2024.10.23.02.37.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 02:37:46 -0700 (PDT)
+Message-ID: <5e1b807f-82ac-4ab8-867c-32b2bf2a91ce@gmail.com>
+Date: Wed, 23 Oct 2024 17:37:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CANpmjNNx6QM67jSaAtkYdxA+A5_FGPLBkBxdVXQ_XOLB8pgzNw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v6 RESEND 00/20] Initial device trees for A7-A11 based
+ Apple devices
+To: Linus Walleij <linus.walleij@linaro.org>
+Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>,
+ Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Wim Van Sebroeck <wim@linux-watchdog.org>,
+ Guenter Roeck <linux@roeck-us.net>, Catalin Marinas
+ <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org,
+ linux-watchdog@vger.kernel.org
+References: <20241023044423.18294-1-towinchenmi@gmail.com>
+ <CACRpkdZP9oDd+fRKKagFtGbfLx=Rk5LJ7bvaKimw5-t25XZAfQ@mail.gmail.com>
+Content-Language: en-MW
+From: Nick Chan <towinchenmi@gmail.com>
+In-Reply-To: <CACRpkdZP9oDd+fRKKagFtGbfLx=Rk5LJ7bvaKimw5-t25XZAfQ@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 11:03:11AM +0200, Marco Elver wrote:
-> On Wed, 23 Oct 2024 at 10:54, Marco Elver <elver@google.com> wrote:
-> >
-> > On Tue, Oct 22, 2024 at 09:57PM +0200, Marco Elver wrote:
-> > > On Tue, 22 Oct 2024 at 21:12, Peter Zijlstra <peterz@infradead.org> wrote:
-> > [...]
-> > > > So KCSAn is trying to tell me these two paths run concurrently on the
-> > > > same 'p' ?!? That would be a horrible bug -- both these call chains
-> > > > should be holding rq->__lock (for task_rq(p)).
-> > >
-> > > Yes correct.
-> > >
-> > > And just to confirm this is no false positive, the way KCSAN works
-> > > _requires_ the race to actually happen before it reports anything;
-> > > this can also be seen in Alexander's report with just 1 stack trace
-> > > where it saw the value transition from 0 to 1 (TASK_ON_RQ_QUEUED) but
-> > > didn't know who did the write because kernel/sched was uninstrumented.
-> >
-> > Got another version of the splat with CONFIG_KCSAN_VERBOSE=y. Lockdep seems to
-> > think that both threads here are holding rq->__lock.
+
+On 23/10/2024 17:05, Linus Walleij wrote:
+> On Wed, Oct 23, 2024 at 6:44 AM Nick Chan <towinchenmi@gmail.com> wrote:
 > 
-> Gotta read more carefully, one instance is ffffa2e57dc2f398 another is
-> ffffa2e57dd2f398. If I read it right, then they're not actually the
-> same lock.
+>> This series adds device trees for all A7-A11 SoC based iPhones, iPads,
+>> iPod touches and Apple TVs.
+> 
+> This is a good and important series. FWIW:
+> Acked-by: Linus Walleij <linus.walleij@linaro.org>
+> 
+> Are patches not getting applied since you resend them?
+This series along with the watchdog reset delay series mentioned in the
+cover letter have not been applied.
 
-Yeah, as explained in the diagram below, the moment the ->on_rq = 0
-store goes through, we no longer own the task. And since
-ASSERT_EXCLUSIVE_WRITER is after that, we go splat.
+> 
+> Yours,
+> Linus Walleij
 
-The below patch changes this order and switches to using
-smp_store_release() and ensures to not reference the task after it.
-
-I've boot tested it, but not much else.
-
-Could you please give this a go (on top of -rc3)?
-
-This also explains the SCHED_WARN_ON() Kent saw, that is subject to the
-same race.
-
----
- kernel/sched/fair.c  | 21 ++++++++++++++-------
- kernel/sched/sched.h | 34 ++++++++++++++++++++++++++++++++--
- 2 files changed, 46 insertions(+), 9 deletions(-)
-
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index 6512258dc71f..8edac978edb2 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5625,8 +5625,9 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- 	struct sched_entity *se = pick_eevdf(cfs_rq);
- 	if (se->sched_delayed) {
- 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
--		SCHED_WARN_ON(se->sched_delayed);
--		SCHED_WARN_ON(se->on_rq);
-+		/*
-+		 * Must not reference @se again, see __block_task().
-+		 */
- 		return NULL;
- 	}
- 	return se;
-@@ -7170,7 +7171,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
- 		/* Fix-up what dequeue_task_fair() skipped */
- 		hrtick_update(rq);
- 
--		/* Fix-up what block_task() skipped. */
-+		/*
-+		 * Fix-up what block_task() skipped.
-+		 *
-+		 * Must be last, @p might not be valid after this.
-+		 */
- 		__block_task(rq, p);
- 	}
- 
-@@ -7187,12 +7192,14 @@ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
- 		util_est_dequeue(&rq->cfs, p);
- 
--	if (dequeue_entities(rq, &p->se, flags) < 0) {
--		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
-+	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
-+	if (dequeue_entities(rq, &p->se, flags) < 0)
- 		return false;
--	}
- 
--	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
-+	/*
-+	 * Must not reference @p after dequeue_entities(DEQUEUE_DELAYED).
-+	 */
-+
- 	hrtick_update(rq);
- 	return true;
- }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 7b139016cbd9..32e9c41b7ec0 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2791,8 +2791,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
- 
- static inline void __block_task(struct rq *rq, struct task_struct *p)
- {
--	WRITE_ONCE(p->on_rq, 0);
--	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
- 	if (p->sched_contributes_to_load)
- 		rq->nr_uninterruptible++;
- 
-@@ -2800,6 +2798,38 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
- 		atomic_inc(&rq->nr_iowait);
- 		delayacct_blkio_start();
- 	}
-+
-+	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
-+
-+	/*
-+	 * The moment this write goes through, ttwu() can swoop in and migrate
-+	 * this task, rendering our rq->__lock ineffective.
-+	 *
-+	 * __schedule()				try_to_wake_up()
-+	 *   LOCK rq->__lock		  	  LOCK p->pi_lock
-+	 *   pick_next_task()
-+	 *     pick_next_task_fair()
-+	 *       pick_next_entity()
-+	 *         dequeue_entities()
-+	 *           __block_task()
-+	 *             RELEASE p->on_rq = 0;	  if (p->on_rq && ...)
-+	 *             				     break;
-+	 *
-+	 *             				  ACQUIRE (after ctrl-dep)
-+	 *
-+	 *             				  cpu = select_task_rq();
-+	 *             				  set_task_cpu(p, cpu);
-+	 *             				  ttwu_queue()
-+	 *             				    ttwu_do_activate()
-+	 *             				      LOCK rq->__lock
-+	 *             				      activate_task()
-+	 *             				        STORE p->on_rq = 1
-+	 *   UNLOCK rq->__lock
-+	 *
-+	 * Callers must ensure to not reference @p after this -- we no longer
-+	 * own it.
-+	 */
-+	smp_store_release(&p->on_rq, 0);
- }
- 
- extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
+Nick Chan
 
