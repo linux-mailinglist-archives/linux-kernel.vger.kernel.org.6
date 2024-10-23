@@ -1,70 +1,55 @@
-Return-Path: <linux-kernel+bounces-378727-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378728-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A479AD471
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:03:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 727339AD472
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:03:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 58D2BB21851
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:03:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF2B7B22726
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:03:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A04071D0418;
-	Wed, 23 Oct 2024 19:03:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD5711CDFB9;
+	Wed, 23 Oct 2024 19:03:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="SBMLHsEH"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rFl2bXzY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 104B614AD20;
-	Wed, 23 Oct 2024 19:02:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 270D914658F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:03:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729710181; cv=none; b=oKNk+4YlX2RItimmkLuWLY+sbKF4o7oKh0HLIKaMjV2gOcoodMeWgYTKftMBYH6hSKXXOwN52rOyrxFRXH8oDFPSXdGO46HfmzwXhqaJ8Q5lXfjaeLggWn0vlpbcub8rGvIE+F+2ueIJFw3MHg5y0SzB3cV2Md2ikeZq/DHMA0I=
+	t=1729710212; cv=none; b=VAJfyDVViE+XMYxeiKhSif9nC3jRIGKAJn0GV5BFNhv6j+eQAK88Osz5HWLfRkUhkxzB3xXaZVVZRvMec3GmHRUwWUJk2xVHkfqE9T0E37JFK8IP8LpGV/Xa0tEfQlStiT7pVU+KtZmB9i4IggsX9hjYzSVswR7vX0ftiHUySeo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729710181; c=relaxed/simple;
-	bh=PDoEunpivtmDkHdtof8mc0xQNBak0TRvQREGtJWbwVg=;
+	s=arc-20240116; t=1729710212; c=relaxed/simple;
+	bh=CZH/84Ek9rzDjA6ub4IK/RwfA2npXsLdu4sF0W0en/A=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h9l9n+k9Qjy5renxfUNtgNpxmq3JvsyDW8uX87XaTKWg6+HAc4ZfGZbhOSDHDvWuD8iDN/+VK1SUMt7kmD7VRXWSR+n/WrEERqxrOwxiKtOhlHcdqryenYYoLTl990CZ7NtD/WPdbtSlrdNmBTux71/V4fTd7bblbuuYY0lm2PI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=SBMLHsEH; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Transfer-Encoding:
-	Content-Type:MIME-Version:References:Message-ID:Subject:Cc:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=cy23GZhRUgFLT1RLGlJ+GbqizeM20Ndew3cr/vC2tLs=; b=SBMLHsEHxhhf0ar8KzSMn6aotF
-	r4QPIPmiHes7w7/hUrZYSrcVoZJ2odDy0RxYAsPGPEo05wX7gZo29VEDq9tkfl1gZOOYNrGHIgNvV
-	TtoYU4ozWH3/KNf0Gyjk7mCdfP90veappHaDW5OjdMxE/Z5EIc7w4TYdxQGfQ4BbJUFxJNGpxkhaC
-	auqucZVkU8Jl8WJ/06zfCZd77gylKTqm5oBszE5Pq8mSNbM2kOA97R9kBy8rUkoMd+qhh4uALVLRC
-	IkbHNvKyWYeVc06x8CFJVlgNgHN6ldv1uzpd1EZGq3nUqmJjIxqGv60FSMf7cxU+DDpTdFf+O0tCn
-	XHLEPpHQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3gcz-00000008Wsk-0r4w;
-	Wed, 23 Oct 2024 19:02:41 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 8E96430073F; Wed, 23 Oct 2024 21:02:40 +0200 (CEST)
-Date: Wed, 23 Oct 2024 21:02:40 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org,
-	oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org,
-	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org,
-	paulmck@kernel.org, willy@infradead.org, akpm@linux-foundation.org,
-	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com,
-	mhocko@kernel.org, vbabka@suse.cz, hannes@cmpxchg.org,
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com
-Subject: Re: [PATCH v3 tip/perf/core 2/4] mm: switch to 64-bit
- mm_lock_seq/vm_lock_seq on 64-bit architectures
-Message-ID: <20241023190240.GA11151@noisy.programming.kicks-ass.net>
-References: <20241010205644.3831427-1-andrii@kernel.org>
- <20241010205644.3831427-3-andrii@kernel.org>
- <55hskn2iz5ixsl6wvupnhx7hkzcvx2u4muswvzi4wuqplmu2uo@rj72ypyeksjy>
- <CAJuCfpFpPvBLgZNxwHuT-kLsvBABWyK9H6tFCmsTCtVpOxET6Q@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=BTHjxX4BIkNjkAhIM1uRWKNRu5DccrnqGrwhe0kUgfJyHHmUqcoV9WBvhqgKB68amxoQzLybdpZ8hAl92BGSew1rIhgKX9V6quNj7rekSA+97+d6UVP0td/z0n5xjfzfk7BcZIYWLNSgQprmOC2pc6AGQmQBHGnpLCnb05Wb96c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rFl2bXzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91266C4CEC6;
+	Wed, 23 Oct 2024 19:03:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729710211;
+	bh=CZH/84Ek9rzDjA6ub4IK/RwfA2npXsLdu4sF0W0en/A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rFl2bXzYpTQWbD2K4exnxJ6nQrrud0YrDgd/0jr507UQyCD1ZQsT31BAcsuCEkcDa
+	 lF7VRJcQptPGlq85aGXprUmHvAmamkuOeYs4qp+aPj7osBpHfiTZC/ZIHclKCVInVP
+	 5WDt4o1nSbUZyJ5RzDJqJCYD9Wf9A85/PY2IW9H9E8UOYg5AHJmbrMf+Y+AtUMn4Uz
+	 ync2A6PqPb/ui1F2xVCPZ1ynLvUwoYSn/0MPLcoihn8csmPuZNDQhcUtg/c3gXfBel
+	 p5Y4WdvMFfwGm/0MA55t4NCFfXRDwTsm4D863ezylSe+I8s/a51w84nfpmbghm1piY
+	 wAxRLnqcan5cw==
+Date: Wed, 23 Oct 2024 09:03:30 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <andrea.righi@linux.dev>
+Cc: David Vernet <void@manifault.com>,
+	Kumar Kartikeya Dwivedi <memxor@gmail.com>,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH for-6.12-fixes] sched_ext: fix fmt__str variables in
+ kfuncs
+Message-ID: <ZxlIgnLAiXddfTmT@slm.duckdns.org>
+References: <20241022074035.139897-1-andrea.righi@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,22 +59,30 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAJuCfpFpPvBLgZNxwHuT-kLsvBABWyK9H6tFCmsTCtVpOxET6Q@mail.gmail.com>
+In-Reply-To: <20241022074035.139897-1-andrea.righi@linux.dev>
 
-On Wed, Oct 16, 2024 at 07:01:59PM -0700, Suren Baghdasaryan wrote:
-> On Sun, Oct 13, 2024 at 12:56 AM Shakeel Butt <shakeel.butt@linux.dev> wrote:
-> >
-> > On Thu, Oct 10, 2024 at 01:56:42PM GMT, Andrii Nakryiko wrote:
-> > > To increase mm->mm_lock_seq robustness, switch it from int to long, so
-> > > that it's a 64-bit counter on 64-bit systems and we can stop worrying
-> > > about it wrapping around in just ~4 billion iterations. Same goes for
-> > > VMA's matching vm_lock_seq, which is derived from mm_lock_seq.
+On Tue, Oct 22, 2024 at 09:40:35AM +0200, Andrea Righi wrote:
+> Commit 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in
+> kfuncs") renamed some parameters without updating the body of the
+> functions, triggering build errors like this:
 > 
-> vm_lock_seq does not need to be long but for consistency I guess that
-> makes sense. While at it, can you please change these seq counters to
-> be unsigned?
+> kernel/sched/ext.c:6881:45: error: ‘fmt’ undeclared (first use in this function)
+> 6881 |       if (bstr_format(&scx_exit_bstr_buf, fmt, data, data__sz) >= 0)
+>      |                                             ^~~
+> 
+> Fix by renaming also the varibles in the affected kfuncs.
+> 
+> Fixes: 3e99aee7ce48 ("sched-ext: Use correct annotation for strings in kfuncs")
+> Signed-off-by: Andrea Righi <andrea.righi@linux.dev>
 
-Yeah, that. Kees is waging war on signed types that 'overflow'. These
-sequence counter thingies are designed to wrap and should very much be
-unsigned.
+I removed this patch along with 3e99aee7ce48 ("sched-ext: Use correct
+annotation for strings in kfuncs"). This breaks compatibility in a way which
+is difficult to work around. If we want to do this, I think we should do it
+by introducing new set of kfuncs and than phasing out the old ones. Also,
+it's unclear what the practical benefits of the change are anyway.
+
+Thanks.
+
+-- 
+tejun
 
