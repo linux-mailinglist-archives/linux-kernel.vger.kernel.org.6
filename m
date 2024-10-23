@@ -1,255 +1,98 @@
-Return-Path: <linux-kernel+bounces-377182-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377183-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC1879ABAF5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:23:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B30A9ABAFA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:25:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02DDCB2320F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:23:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1CDB4283B82
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:25:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34F18200CB;
-	Wed, 23 Oct 2024 01:23:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF77327452;
+	Wed, 23 Oct 2024 01:25:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A3cY+EIz"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="P586qSRp"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD3DA48
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:23:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E243D1CA81
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:24:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729646627; cv=none; b=ukscPBPj68i8bvZ/TPp/w+2YNy2mUtmcZEiAmFLxUwyURru8AzQUrLPDeqqSWhjZrPUxfwevGDXwh5CutjHexP2YMKCa2m3NZqw458LQcS00+nLGk7JdqTRpycFcRbrFwJnQL+ZLRBM666f/Nv6BjEQZBVdbrn1f1kX6L8Pjyuc=
+	t=1729646700; cv=none; b=SCwGnwJsRDlVK/06vIgyV/Te1kf9NJ5IKxbjec0Z4qh1vKVgyzyeer9KaZY+k7EDlemKn4iUfYeVLFXqN/HCYCNKI1sUFc4mSkEzcdSD+JjYQAgexrzBQrdzpaOlF1Du6opSI4Kl6ASD4GiTdMbk3L0+icGTS5uhf/h/5E4qDYk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729646627; c=relaxed/simple;
-	bh=uz1jW+5+Ofi9FJaMXj4JSfMBRXP2E1lFAcoWjioSfg8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=YZACSpmkLXGfPMa6MG7iDT9G5Hkn2p5DCXCVaPcecwL0iLJ1R4ADkG7OrcRZUtOMO9UD1v/qHqKKGl5EUTHVjtJ1QwYLhxuBh3XWMRJTzYuVr4E00tsjAqmHxbPlYFgs8W5ddAtqq4cq1/w5OpnAllmOsgp6eZzhy+hmYKG6AmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A3cY+EIz; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6CAC3C4CEC3;
-	Wed, 23 Oct 2024 01:23:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729646627;
-	bh=uz1jW+5+Ofi9FJaMXj4JSfMBRXP2E1lFAcoWjioSfg8=;
-	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
-	b=A3cY+EIz3qSx+Fyzyo0FIaKQYLpmUQZNafKqqLlnAra/uKRudTI+wocv8iWHRb7HN
-	 eSKfproxm/eVjOwAJXtfyxqD70imuoMnD/ZZyrkc93fZWisUJ9O4MxOafzBw9YE2QH
-	 P+QQ1+1uim1Zt3YoBwSmI4jrcChnB54omc/TMSznH+uUlqpTTvWMVdRe/VTif08ilp
-	 DtI5rpaTldK+8okOsy2Q9wzuk+d1m8I7XAXybINzK4Ih31jIVWpCCtaAEaYvrf5aEm
-	 a6mTKp5n29/oi0UHkvy6md4TFkCdpkHmNwG+KUHAYW41rjOs53ZbFrndqAkCX2eYHh
-	 DEVRaFvG4TO8g==
-Date: Tue, 22 Oct 2024 18:23:42 -0700 (PDT)
-From: Stefano Stabellini <sstabellini@kernel.org>
-X-X-Sender: sstabellini@ubuntu-linux-20-04-desktop
-To: Ryan Roberts <ryan.roberts@arm.com>
-cc: Andrew Morton <akpm@linux-foundation.org>, 
-    Anshuman Khandual <anshuman.khandual@arm.com>, 
-    Ard Biesheuvel <ardb@kernel.org>, 
-    Catalin Marinas <catalin.marinas@arm.com>, 
-    David Hildenbrand <david@redhat.com>, 
-    Greg Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>, 
-    Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, 
-    Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>, 
-    Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>, 
-    Juergen Gross <jgross@suse.com>, 
-    Stefano Stabellini <sstabellini@kernel.org>, 
-    linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-    linux-mm@kvack.org, xen-devel@lists.xenproject.org, julien@xen.org
-Subject: Re: [RFC PATCH v1 36/57] xen: Remove PAGE_SIZE compile-time constant
- assumption
-In-Reply-To: <829b5662-13c0-4728-894c-b2d578681b11@arm.com>
-Message-ID: <alpine.DEB.2.22.394.2410221808160.3833@ubuntu-linux-20-04-desktop>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com> <20241014105912.3207374-1-ryan.roberts@arm.com> <20241014105912.3207374-36-ryan.roberts@arm.com> <829b5662-13c0-4728-894c-b2d578681b11@arm.com>
-User-Agent: Alpine 2.22 (DEB 394 2020-01-19)
+	s=arc-20240116; t=1729646700; c=relaxed/simple;
+	bh=hPWs2qQh8r49+Ow5gsWflRrQ0jnnYKu5fAj6FvRi9Cg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=aH2RRfPnGjDIfzNgcmwnVKyppsxr9PRQERwAdDCXnvsMM7EiHK9O1cRbUJaHCICwLb1szY4k/ZGmN3QqMB+W3iGv0XptgbmuiGY3l2GhsW8VWTXclIcw8CU8Wv8JvqwHJsPDiu3FQGEHEC1+RoR+JbgWi0PEwzQ17kY207IWBP0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=P586qSRp; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20ca03687fdso99285ad.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 18:24:58 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729646698; x=1730251498; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hPWs2qQh8r49+Ow5gsWflRrQ0jnnYKu5fAj6FvRi9Cg=;
+        b=P586qSRpw7BnARK5IckGTLrmJ+bDPMBDEKIxwFTqF7gQY9pjkw2GVTloJU1eXFlH2I
+         iihW3jEqBCKYRY8Buc9rrWci/8HKrX1As0AIM9OG/3/mb92DBm32grP2b5LJ+YleHkYg
+         WB/cNxzdPvWIPvCLJ7MM6JUSlF5ny2nJDKtxCHB7ZLmazu75FaTYP90kr0/mPT+iYX+F
+         lFY16Hh65YzDm9+YH5XMmk6t6A4A+84eQ+R4yp11/9JWH7NyGhXHAPzmKyvcTtnq9NF0
+         qnN6j60t9kAM3qWdo2zJA/jvGXvkxKbSXeGFhSFyubMQbwWWC9oUjEsGxnpS2GZz9fA3
+         q3Cw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729646698; x=1730251498;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hPWs2qQh8r49+Ow5gsWflRrQ0jnnYKu5fAj6FvRi9Cg=;
+        b=R+BAMqRQHXvbyH2o2Yfn8ioviUN0SYvp69UelpVmxion+Z3xyXYjy73osByr8PQWOW
+         Qb4SIov9O5IxUtatA5m7lP+OZucPc6C5grcmBIlhx3EKVVGH/otO5T2rpnQLpEDIGjkA
+         OXEy+rGpBEmypFVACeAe5rGZvwbI5jAOzD+YTFwI2OqCsCeDQCRl/QpKOg32Sw8JH0/S
+         7QmLqyAWASG4EfbeJxVYS0s4NyKNg18J+4qNL70pqhMZV2tQ+e9DB9Q7AsVU8du267a7
+         Bz6tcYeS6hP9rz6gR8g/wcklS2UbgugvdP9kXd5vJRMM3Bhv5qAVy3XTX2CYdoht0EIu
+         NwSw==
+X-Forwarded-Encrypted: i=1; AJvYcCWOlb1iR/i5DbtW6s6dnb4ThNFZ0N3nSk+Zr66/twSrD4aHDhfNauLsGi1DvWdMlemL8TtEjICU9gGkhxg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwGUck5QOet285f8piZlOtUPn8+X+stVwCkqQYzxhrIAYvQnrxx
+	8IRnSK59/1NFAv/OG4KxU5CGm+hQyWE/kwsOYj4PpC8qPZs/6xWWHWyWdBAlHzlxcta0AR9hWNH
+	LUKWNd27q4q2I+8f8L5WKHaM0yPiivPLRZbX5
+X-Google-Smtp-Source: AGHT+IHtySnFJ/wtMH4cToWtpISPBhwLBbeMZltDNENstDI3IcoaCBw3MqxqjBlZ4ARzkwwBl3+JFt43iAl+k0Nhiug=
+X-Received: by 2002:a17:902:f54d:b0:20b:13a8:9f86 with SMTP id
+ d9443c01a7336-20f92f581dfmr1420365ad.28.1729646697873; Tue, 22 Oct 2024
+ 18:24:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+References: <20241022151804.284424-1-mathieu.desnoyers@efficios.com>
+ <CADKFtnSGoSXm-r0cykucj4RyO5U7-HHBPx7LFkC6QDHtyPbMfQ@mail.gmail.com>
+ <3362d414-4d6f-43a7-80af-1c72c5e66d70@efficios.com> <CAEf4BzYBR95uBY58Wk2R-h__m5-gV0FmbrxtDgfgxbA1=+u0BQ@mail.gmail.com>
+ <1ab8fe0d-de92-49be-b10b-ebb5c7f5573a@efficios.com> <20241022202034.2f0b5d76@rorschach.local.home>
+ <134aa32a-f498-4111-940a-2f79af70878f@efficios.com>
+In-Reply-To: <134aa32a-f498-4111-940a-2f79af70878f@efficios.com>
+From: Jordan Rife <jrife@google.com>
+Date: Tue, 22 Oct 2024 18:24:45 -0700
+Message-ID: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Steven Rostedt <rostedt@goodmis.org>, Andrii Nakryiko <andrii.nakryiko@gmail.com>, 
+	linux-kernel@vger.kernel.org, 
+	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, 
+	Michael Jeanson <mjeanson@efficios.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
+	Peter Zijlstra <peterz@infradead.org>, Alexei Starovoitov <ast@kernel.org>, Yonghong Song <yhs@fb.com>, 
+	"Paul E . McKenney" <paulmck@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Namhyung Kim <namhyung@kernel.org>, 
+	bpf@vger.kernel.org, Joel Fernandes <joel@joelfernandes.org>
+Content-Type: text/plain; charset="UTF-8"
 
-+Julien
+> so we should at least get a Tested-by
 
-On Wed, 16 Oct 2024, Ryan Roberts wrote:
-> + Juergen Gross, Stefano Stabellini
-> 
-> This was a rather tricky series to get the recipients correct for and my script
-> did not realize that "supporter" was a pseudonym for "maintainer" so you were
-> missed off the original post. Appologies!
-> 
-> More context in cover letter:
-> https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> 
-> 
-> On 14/10/2024 11:58, Ryan Roberts wrote:
-> > To prepare for supporting boot-time page size selection, refactor code
-> > to remove assumptions about PAGE_SIZE being compile-time constant. Code
-> > intended to be equivalent when compile-time page size is active.
-> > 
-> > Allocate enough "frame_list" static storage in the balloon driver for
-> > the maximum supported page size. Although continue to use only the first
-> > PAGE_SIZE of the buffer at run-time to maintain existing behaviour.
-> > 
-> > Refactor xen_biovec_phys_mergeable() to convert ifdeffery to c if/else.
-> > For compile-time page size, the compiler will choose one branch and
-> > strip the dead one. For boot-time, it can be evaluated at run time.
-> > 
-> > Refactor a BUILD_BUG_ON to evaluate the limit (when the minimum
-> > supported page size is selected at boot-time).
-> > 
-> > Reserve enough storage for max page size in "struct remap_data" and
-> > "struct xenbus_map_node".
-> > 
-> > Signed-off-by: Ryan Roberts <ryan.roberts@arm.com>
-> > ---
-> > 
-> > ***NOTE***
-> > Any confused maintainers may want to read the cover note here for context:
-> > https://lore.kernel.org/all/20241014105514.3206191-1-ryan.roberts@arm.com/
-> > 
-> >  drivers/xen/balloon.c              | 11 ++++++-----
-> >  drivers/xen/biomerge.c             | 12 ++++++------
-> >  drivers/xen/privcmd.c              |  2 +-
-> >  drivers/xen/xenbus/xenbus_client.c |  5 +++--
-> >  drivers/xen/xlate_mmu.c            |  6 +++---
-> >  include/xen/page.h                 |  2 ++
-> >  6 files changed, 21 insertions(+), 17 deletions(-)
-> > 
-> > diff --git a/drivers/xen/balloon.c b/drivers/xen/balloon.c
-> > index 528395133b4f8..0ed5f6453af0e 100644
-> > --- a/drivers/xen/balloon.c
-> > +++ b/drivers/xen/balloon.c
-> > @@ -131,7 +131,8 @@ struct balloon_stats balloon_stats;
-> >  EXPORT_SYMBOL_GPL(balloon_stats);
-> >  
-> >  /* We increase/decrease in batches which fit in a page */
-> > -static xen_pfn_t frame_list[PAGE_SIZE / sizeof(xen_pfn_t)];
-> > +static xen_pfn_t frame_list[PAGE_SIZE_MAX / sizeof(xen_pfn_t)];
-> > +#define FRAME_LIST_NR_ENTRIES (PAGE_SIZE / sizeof(xen_pfn_t))
-> >  
-> >  
-> >  /* List of ballooned pages, threaded through the mem_map array. */
-> > @@ -389,8 +390,8 @@ static enum bp_state increase_reservation(unsigned long nr_pages)
-> >  	unsigned long i;
-> >  	struct page   *page;
-> >  
-> > -	if (nr_pages > ARRAY_SIZE(frame_list))
-> > -		nr_pages = ARRAY_SIZE(frame_list);
-> > +	if (nr_pages > FRAME_LIST_NR_ENTRIES)
-> > +		nr_pages = FRAME_LIST_NR_ENTRIES;
-> >  
-> >  	page = list_first_entry_or_null(&ballooned_pages, struct page, lru);
-> >  	for (i = 0; i < nr_pages; i++) {
-> > @@ -434,8 +435,8 @@ static enum bp_state decrease_reservation(unsigned long nr_pages, gfp_t gfp)
-> >  	int ret;
-> >  	LIST_HEAD(pages);
-> >  
-> > -	if (nr_pages > ARRAY_SIZE(frame_list))
-> > -		nr_pages = ARRAY_SIZE(frame_list);
-> > +	if (nr_pages > FRAME_LIST_NR_ENTRIES)
-> > +		nr_pages = FRAME_LIST_NR_ENTRIES;
-> >  
-> >  	for (i = 0; i < nr_pages; i++) {
-> >  		page = alloc_page(gfp);
-> > diff --git a/drivers/xen/biomerge.c b/drivers/xen/biomerge.c
-> > index 05a286d24f148..28f0887e40026 100644
-> > --- a/drivers/xen/biomerge.c
-> > +++ b/drivers/xen/biomerge.c
-> > @@ -8,16 +8,16 @@
-> >  bool xen_biovec_phys_mergeable(const struct bio_vec *vec1,
-> >  			       const struct page *page)
-> >  {
-> > -#if XEN_PAGE_SIZE == PAGE_SIZE
-> > -	unsigned long bfn1 = pfn_to_bfn(page_to_pfn(vec1->bv_page));
-> > -	unsigned long bfn2 = pfn_to_bfn(page_to_pfn(page));
-> > +	if (XEN_PAGE_SIZE == PAGE_SIZE) {
-> > +		unsigned long bfn1 = pfn_to_bfn(page_to_pfn(vec1->bv_page));
-> > +		unsigned long bfn2 = pfn_to_bfn(page_to_pfn(page));
-> > +
-> > +		return bfn1 + PFN_DOWN(vec1->bv_offset + vec1->bv_len) == bfn2;
-> > +	}
-> >  
-> > -	return bfn1 + PFN_DOWN(vec1->bv_offset + vec1->bv_len) == bfn2;
-> > -#else
-> >  	/*
-> >  	 * XXX: Add support for merging bio_vec when using different page
-> >  	 * size in Xen and Linux.
-> >  	 */
-> >  	return false;
-> > -#endif
-> >  }
-> > diff --git a/drivers/xen/privcmd.c b/drivers/xen/privcmd.c
-> > index 9563650dfbafc..847f7b806caf7 100644
-> > --- a/drivers/xen/privcmd.c
-> > +++ b/drivers/xen/privcmd.c
-> > @@ -557,7 +557,7 @@ static long privcmd_ioctl_mmap_batch(
-> >  	state.global_error  = 0;
-> >  	state.version       = version;
-> >  
-> > -	BUILD_BUG_ON(((PAGE_SIZE / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE) != 0);
-> > +	BUILD_BUG_ON(((PAGE_SIZE_MIN / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE_MAX) != 0);
-
-Is there any value in keep this test? And if so, what should it look
-like? I think we should turn it into a WARN_ON:
-
-WARN_ON(((PAGE_SIZE / sizeof(xen_pfn_t)) % XEN_PFN_PER_PAGE) != 0);
-
-It doesn't make much sense having a BUILD_BUG_ON on a variable that can
-change?
-
-
-> >  	/* mmap_batch_fn guarantees ret == 0 */
-> >  	BUG_ON(traverse_pages_block(m.num, sizeof(xen_pfn_t),
-> >  				    &pagelist, mmap_batch_fn, &state));
-> > diff --git a/drivers/xen/xenbus/xenbus_client.c b/drivers/xen/xenbus/xenbus_client.c
-> > index 51b3124b0d56c..99bde836c10c4 100644
-> > --- a/drivers/xen/xenbus/xenbus_client.c
-> > +++ b/drivers/xen/xenbus/xenbus_client.c
-> > @@ -49,9 +49,10 @@
-> >  
-> >  #include "xenbus.h"
-> >  
-> > -#define XENBUS_PAGES(_grants)	(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE))
-> > +#define XENBUS_PAGES(_grants)		(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE))
-> > +#define XENBUS_PAGES_MAX(_grants)	(DIV_ROUND_UP(_grants, XEN_PFN_PER_PAGE_MIN))
-> >  
-> > -#define XENBUS_MAX_RING_PAGES	(XENBUS_PAGES(XENBUS_MAX_RING_GRANTS))
-> > +#define XENBUS_MAX_RING_PAGES		(XENBUS_PAGES_MAX(XENBUS_MAX_RING_GRANTS))
-> >  
-> >  struct xenbus_map_node {
-> >  	struct list_head next;
-> > diff --git a/drivers/xen/xlate_mmu.c b/drivers/xen/xlate_mmu.c
-> > index f17c4c03db30c..a757c801a7542 100644
-> > --- a/drivers/xen/xlate_mmu.c
-> > +++ b/drivers/xen/xlate_mmu.c
-> > @@ -74,9 +74,9 @@ struct remap_data {
-> >  	int mapped;
-> >  
-> >  	/* Hypercall parameters */
-> > -	int h_errs[XEN_PFN_PER_PAGE];
-> > -	xen_ulong_t h_idxs[XEN_PFN_PER_PAGE];
-> > -	xen_pfn_t h_gpfns[XEN_PFN_PER_PAGE];
-> > +	int h_errs[XEN_PFN_PER_PAGE_MAX];
-> > +	xen_ulong_t h_idxs[XEN_PFN_PER_PAGE_MAX];
-> > +	xen_pfn_t h_gpfns[XEN_PFN_PER_PAGE_MAX];
-> >  
-> >  	int h_iter;	/* Iterator */
-> >  };
-> > diff --git a/include/xen/page.h b/include/xen/page.h
-> > index 285677b42943a..86683a30038a3 100644
-> > --- a/include/xen/page.h
-> > +++ b/include/xen/page.h
-> > @@ -21,6 +21,8 @@
-> >  	((page_to_pfn(page)) << (PAGE_SHIFT - XEN_PAGE_SHIFT))
-> >  
-> >  #define XEN_PFN_PER_PAGE	(PAGE_SIZE / XEN_PAGE_SIZE)
-> > +#define XEN_PFN_PER_PAGE_MIN	(PAGE_SIZE_MIN / XEN_PAGE_SIZE)
-> > +#define XEN_PFN_PER_PAGE_MAX	(PAGE_SIZE_MAX / XEN_PAGE_SIZE)
-> >  
-> >  #define XEN_PFN_DOWN(x)	((x) >> XEN_PAGE_SHIFT)
-> >  #define XEN_PFN_UP(x)	(((x) + XEN_PAGE_SIZE-1) >> XEN_PAGE_SHIFT)
-> 
+I could apply this and run the syz repro script on my end if that
+helps, since I already have everything set up.
 
