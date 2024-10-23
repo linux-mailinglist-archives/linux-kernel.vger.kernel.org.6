@@ -1,131 +1,126 @@
-Return-Path: <linux-kernel+bounces-377738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377739-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F04D9AC34E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:17:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 892409AC354
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:18:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF5F41F2477F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:17:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A22328183F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:18:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850974503C;
-	Wed, 23 Oct 2024 09:17:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85F3419645C;
+	Wed, 23 Oct 2024 09:18:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cDl5N70k"
-Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KHj08Mqt"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7B315B122
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:17:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631124503C;
+	Wed, 23 Oct 2024 09:18:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729675039; cv=none; b=vGcP2/b5yNd5RItZMfKG3qM6fxkVWt4b8bwETKQi3AJAzbfFN9q+LVitPIphqQFti0x0poT6J7ztiw541qy5sJyDCMSbncTGyxn6FBBHypvUFrmfoyQHIcSXQdHYonwuyWwDuIBKFOmR1L32yp1X5NFntlhathF4LHLDFmuHGSQ=
+	t=1729675083; cv=none; b=QVQlcenHQM7GgpIH8pRP5/+Mjqy5R8DVlnGTsZXQ2MkLYt61tK2N5Dr5iJciZJCBtZZ5qliyovVHX86utuNOAavvEnsr9GEkKyaziOLGNaAvgBjsE3M6qUUSCmOEiNcKFo+jFyTWftmkIFov/qynbxbsdysObiA/ugQQ1lmS91U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729675039; c=relaxed/simple;
-	bh=wtB++VIztt5HrzVDtGHAG03WXfiePjTR9YlbhZgm7nk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VUQC0bd6MN09jXwQRIplLWo/bXJK6Zb5vB6hUP812ynNxSofwTKT9jzM6PAf3ZjhCliV/88tjQ4cg7nmkySF/Z5GSpbviVNTQ35W/tJf2ZmNwYM2ZVwvNxamsWGOsF1nYaCeDZF84FRoKpdZNyKoDJr88JMuQMLBbXKNj+oMDY8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cDl5N70k; arc=none smtp.client-ip=209.85.208.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb561f273eso65192931fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:17:18 -0700 (PDT)
+	s=arc-20240116; t=1729675083; c=relaxed/simple;
+	bh=suYFZPHJ9gFTwEFo384qz94z1cETlcVAYVuUXBtfHoY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oeYrygWux2R3aRH9DRp6BWmN3d7shRmoTufMmG9Jxmv1mEOICaflBMpmO6jVkUH3j3ZLSdxQrkv5rv55dIIijz2aS+eGybw8HKntTLLKDwIY8IZeuwZgxpsO8oyp2shm8yO9NljuTTt6RnLUHUWHkKv5ja1upWjIJ0FOZDPYUCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KHj08Mqt; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a9a6acac4c3so790549266b.0;
+        Wed, 23 Oct 2024 02:18:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729675036; x=1730279836; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=wtB++VIztt5HrzVDtGHAG03WXfiePjTR9YlbhZgm7nk=;
-        b=cDl5N70kW4qZ92fU3zt9XzrqqbmPXBPAR1397nRyl8QFe2280rQWAEVMnPnOEXfzyr
-         CQpf7IerO4IQRmZyROB25M4v5cD3bVyixJ5PzTMGla2pzMQVv5VW8hzCmXOsF4t6ALCC
-         DEIP6658YoISqPJGBgq3GUyOdtkIAl56f80J0yMCifAAEvXP5xKzmLelybI1sYAr5O7y
-         jU6Qsij7SkfqYVzwMcn1rxlneUor0LXCkfbq8yH1mYfKkHgAwtzAJVjtE/PR9q02FFi4
-         8/JCQU8rMY8y2ILwvD+NB30kGipYxS5zfVYnZCAGbf1HjbASG4cyELEU9wcnJRsI8mU2
-         80/A==
+        d=gmail.com; s=20230601; t=1729675081; x=1730279881; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=HKyFdp80jeQ+jlEhTVnoKBC7uY0HBHNTi/SulDolW28=;
+        b=KHj08MqtCeLhx/26yiZGpJUrLkJ6tYwLCoLINJer8Po8Wn5ilsQJv65pcq/MBvwxBm
+         AvHCAPKLczfwyhQm/+YN2W3/TNVfR+7uI5DL4zrhAnUcPqw2kZePES2tZLEcf/WelCpe
+         oeT/BnyITDEzkuPiAfTIlKXweL22fBByDAiIlRNZBPZc32oIw/rPo+8ZrQM8Aq9Y8dWh
+         b/p7li7EfOzOKiT03yTtD/7wXUVK4popQEEAr2D0W2seeontAqBw2vtEFBAFmwdXPxSS
+         nXkG2H1J2ZM0rFZ1RMPoGPLr4dLTgAos00mhMf1C80FFsCe5WGJw3J6nPZ2aBwAt0pLA
+         tHHQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729675036; x=1730279836;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+        d=1e100.net; s=20230601; t=1729675081; x=1730279881;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=wtB++VIztt5HrzVDtGHAG03WXfiePjTR9YlbhZgm7nk=;
-        b=l/tRUp39UoF5DFik/R8/etXI92TBE/HmgX+7kuQKb8frQEog0XZGoMIAJdI+saiM2k
-         /Qw9CO29TcBWcu9PBYJ5HUjnsn9nLdOjCljhImqIigru68fgPbFsGCuRslJEnWoyiC25
-         01ciXFJ8CXvK3wEI3EOB13uZW4suZzFAeBGGJuM+FiDJ73nTKenp0NLSwy0M0aSzJHnm
-         v11YW43IJmW9ufzQqn6WD9xmdzy3JWKoTtWdvUMhVNTHGg4Ee0malomHYesiy3LWfjIw
-         um6wPg5blzhGisebBfipK6c899W82DEgTO/xbkhE1BRiImSFpt6/HzWKG2kHfMMSVtu4
-         Q60g==
-X-Forwarded-Encrypted: i=1; AJvYcCVZQLDUFWPM9PpaaX6h28eSAu8C5NDoCAR6xHARFmgN90WBbxQeH1+J407yt2MyIYr71gh+xzYgsYskh/0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPRKVlL4p4VcG1r0VUntl87Ep+osVJwsOmewmePfXtZvGz/qFB
-	5DI8z1e7AuL5tf/o7K7X13Fyt+eRl4c6GOAXUgQs0GpIuEkur1Fo+UH5VaIMKpAkn3hGAouINdH
-	9QpgLsj/bmZKToCnANrpt1raLefIiQfrIgEAQ
-X-Google-Smtp-Source: AGHT+IFvkPWDLHQT3Gtx5JJGGOJecwZ7B/rbkd7cgrlXZ9fP+lFzPxCiaYSOPYzYujteUjqgXjdomewJxB+DT79mLAc=
-X-Received: by 2002:a2e:a9a6:0:b0:2fb:565a:d93c with SMTP id
- 38308e7fff4ca-2fc9d33a85emr9429421fa.1.1729675036276; Wed, 23 Oct 2024
- 02:17:16 -0700 (PDT)
+        bh=HKyFdp80jeQ+jlEhTVnoKBC7uY0HBHNTi/SulDolW28=;
+        b=N6lfyJ7ftKexyA140XuqL7DWRtLGELxp6/tsFMFYS98MVC2ZodlTtXEpbwARNWlRmr
+         edAY73sVZi6wzib/TKZo+v+YONHgX4XqkDautpFJqjyRJqQ54hO014V6v58AGamI24Zc
+         /IsJxP50RXlpqjk5ZGhvMa+TQU84HRQldMdrPvXg+3BBWYM3zqCLnez2Rh8w0IpP2mmb
+         8uc3DF7I9p5ietZnqIFIP+hYtmd/7UhvP2rkgHJShEI3704znaB0BuCVaNhk/g4xb+bz
+         5rsyvooWh36BSe5xjR0sYtHX/WfEWFFEs/H8WbljBwH1fgnpimdiUBh9Dh+a+8Qil+Is
+         sNug==
+X-Forwarded-Encrypted: i=1; AJvYcCVFmLvY4wobL/EopHW/kqNLp+Q/8hadUJ2D8BEX7lthN1kXgA2kC3YeUZB6uJc5r+0Qn6eLnZpQKK64@vger.kernel.org, AJvYcCWn0JvA9I6UfxBih8QtgrLqUOhs8sVWLN88clASPyJ9eAldTHnfDTWeTqVrFQLLKqZQAWhtRn6F8zw6XLxC@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw79E/jo4bugCKgYu3xVvfyk1sK1ZWaCFndux/GJCzsGDUbi2og
+	FN63JkHz/HxiC6vevFtyAIjKbfGYQoQ/sUUCSpkvizs75i0Tr3Gm
+X-Google-Smtp-Source: AGHT+IHQDKM1v6j1KpR3PNxXd6NutIZHwOAX8Zrbdb0rubKzMnxJUNay7KnSa3JA8FZk9Ie4OpNsNg==
+X-Received: by 2002:a17:907:980a:b0:a99:ed0c:1d6 with SMTP id a640c23a62f3a-a9abf920abamr159168666b.49.1729675080578;
+        Wed, 23 Oct 2024 02:18:00 -0700 (PDT)
+Received: from ivaylo-T580.. ([77.85.230.22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a913704easm449177466b.107.2024.10.23.02.17.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 02:18:00 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Andi Shyti <andi.shyti@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Daniel Lezcano <daniel.lezcano@linaro.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Cc: linux-samsung-soc@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/5] arm64: dts: exynos8895: Add cmu, mct, serial_0/1 and spi_0/1
+Date: Wed, 23 Oct 2024 12:17:29 +0300
+Message-ID: <20241023091734.538682-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <87a5eysmj1.fsf@mid.deneb.enyo.de> <20241023062417.3862170-1-dvyukov@google.com>
- <8471d7b1-576b-41a6-91fb-1c9baae8c540@redhat.com> <5a3d3bc8-60db-46d0-b689-9aeabcdb8eab@lucifer.local>
- <CACT4Y+ZE9Zco7KaQoT50aooXCHxhz2N_psTAFtT+ZrH14Si7aw@mail.gmail.com> <b1df934e-7012-4523-a513-d3d1536b7f72@suse.cz>
-In-Reply-To: <b1df934e-7012-4523-a513-d3d1536b7f72@suse.cz>
-From: Dmitry Vyukov <dvyukov@google.com>
-Date: Wed, 23 Oct 2024 11:17:05 +0200
-Message-ID: <CACT4Y+Z=fjoOxn8NY8kYJd2CC1SkmjkmAmqSzJbQiU04G=BEvw@mail.gmail.com>
-Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, David Hildenbrand <david@redhat.com>, fw@deneb.enyo.de, 
-	James.Bottomley@hansenpartnership.com, Liam.Howlett@oracle.com, 
-	akpm@linux-foundation.org, arnd@arndb.de, brauner@kernel.org, 
-	chris@zankel.net, deller@gmx.de, hch@infradead.org, ink@jurassic.park.msu.ru, 
-	jannh@google.com, jcmvbkbc@gmail.com, jeffxu@chromium.org, 
-	jhubbard@nvidia.com, linux-alpha@vger.kernel.org, linux-api@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org, 
-	linux-mm@kvack.org, linux-parisc@vger.kernel.org, mattst88@gmail.com, 
-	muchun.song@linux.dev, paulmck@kernel.org, richard.henderson@linaro.org, 
-	shuah@kernel.org, sidhartha.kumar@oracle.com, surenb@google.com, 
-	tsbogend@alpha.franken.de, willy@infradead.org, elver@google.com, 
-	Linus Torvalds <torvalds@linux-foundation.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-On Wed, 23 Oct 2024 at 11:06, Vlastimil Babka <vbabka@suse.cz> wrote:
->
-> On 10/23/24 10:56, Dmitry Vyukov wrote:
-> >>
-> >> Overall while I sympathise with this, it feels dangerous and a pretty major
-> >> change, because there'll be something somewhere that will break because it
-> >> expects faults to be swallowed that we no longer do swallow.
-> >>
-> >> So I'd say it'd be something we should defer, but of course it's a highly
-> >> user-facing change so how easy that would be I don't know.
-> >>
-> >> But I definitely don't think a 'introduce the ability to do cheap PROT_NONE
-> >> guards' series is the place to also fundmentally change how user access
-> >> page faults are handled within the kernel :)
-> >
-> > Will delivering signals on kernel access be a backwards compatible
-> > change? Or will we need a different API? MADV_GUARD_POISON_KERNEL?
-> > It's just somewhat painful to detect/update all userspace if we add
-> > this feature in future. Can we say signal delivery on kernel accesses
-> > is unspecified?
->
-> Would adding signal delivery to guard PTEs only help enough the ASAN etc
-> usecase? Wouldn't it be instead possible to add some prctl to opt-in the
-> whole ASANized process to deliver all existing segfaults as signals instead
-> of -EFAULT ?
+Hey folks,
 
-ASAN per se does not need this (it does not use page protection).
-However, if you mean bug detection tools in general, then, yes, that's
-what I had in mind.
-There are also things like stack guard pages in libc that would
-benefit from that as well.
+This patchset adds device tree nodes for multiple clock management unit
+blocks, MCT, SPI and UART for Exynos8895.
 
-But I observed that some libraries intentionally use EFAULT to probe
-for memory readability, i.e. use some cheap syscall to probe memory
-before reading it. So changing behavior globally may not work.
+Exynos8895 uses USIv1 for most of its serial buses, except a few that
+have been implemented in this series. Support for USIv1 and HSI2C will
+be added in the future.
+
+This patchset is dependent on [1] and [2], which add driver support for
+CMU and UART.
+
+[1] https://lore.kernel.org/all/20241023090136.537395-1-ivo.ivanov.ivanov1@gmail.com/
+[2] https://lore.kernel.org/all/20241023090902.538040-1-ivo.ivanov.ivanov1@gmail.com/
+
+Changes in v2:
+ - Add r-b from Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+ - Change clock-names according to the v2 changes for clk bindings
+
+Ivaylo Ivanov (5):
+  dt-bindings: timer: exynos4210-mct: Add samsung,exynos8895-mct
+    compatible
+  arm64: dts: exynos8895: Add clock management unit nodes
+  arm64: dts: exynos8895: Add Multi Core Timer (MCT) node
+  arm64: dts: exynos8895: Add serial_0/1 nodes
+  arm64: dts: exynos8895: Add spi_0/1 nodes
+
+ .../timer/samsung,exynos4210-mct.yaml         |   2 +
+ arch/arm64/boot/dts/exynos/exynos8895.dtsi    | 161 ++++++++++++++++++
+ 2 files changed, 163 insertions(+)
+
+-- 
+2.43.0
+
 
