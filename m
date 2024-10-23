@@ -1,151 +1,134 @@
-Return-Path: <linux-kernel+bounces-377157-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377158-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C939D9ABA94
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:33:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE7089ABA99
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:36:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7B3EC284A88
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:33:11 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0FD181C228D7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:36:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4F31A270;
-	Wed, 23 Oct 2024 00:33:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 800AE1BC4E;
+	Wed, 23 Oct 2024 00:36:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N9K4/1Ce"
-Received: from mail-pl1-f177.google.com (mail-pl1-f177.google.com [209.85.214.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="gDJH3iYX"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42EB9DDAD;
-	Wed, 23 Oct 2024 00:33:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5EDA64A32;
+	Wed, 23 Oct 2024 00:36:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729643584; cv=none; b=BUG8TBuIkoDT2Pr0DRQwbn/k2ippffgqWFUkaNDEUH9XzpI7lpegsUBEYRTAIHd/tXXBnEdHlt53RCtRAMPZFGEm/UxDQHvIX4cK/tHu8TG3LjFaj7fAeRKnVd4rMaohvL9SRJk5mdBS2WmVNZ5AogxdQeFlKJNt4lQvMbq96iA=
+	t=1729643786; cv=none; b=PvFx5WSBToWkLAOXFGGyEBBZDFAmnANAnnjG5NTRyrV1tLBcaza24/t0qnsENPJ05+XwRjEiTYrXsLTu7txyxdUJ9FUcuhqw4a4mlXYK80ObNUrxVGXtfs8k+I+JaHjV+1KswQLKcaIVZ8rIcOCRv9AGbk1Ubc23eb/uT4UHogE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729643584; c=relaxed/simple;
-	bh=orW1M1HCJnfVDdum5Jk/N9vrFVJJLM+CIBZgcfA68UA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hAxhSqvnW6UUnXYSj1UX/72JlxYEhmrPQ2NAIiXEsCpTKBuBa19+XMxNb3Df9+jslNOctbq5SCGKSwDr6/wLxCbAsKkrpZnlg/lLJg47Kd2luuFchSGVu8F8/mvGTQqh7KZeglWnVaIXbeu+EdGYQkKb/ENK2eyWqHElmooGrAc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N9K4/1Ce; arc=none smtp.client-ip=209.85.214.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f177.google.com with SMTP id d9443c01a7336-20cdda5cfb6so64497605ad.3;
-        Tue, 22 Oct 2024 17:33:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729643582; x=1730248382; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=7GwFa/KXD9udMqNOk/17VTw0JX40rEFnM+9r84c/Z+c=;
-        b=N9K4/1CePPy3rhkt1KEP/D2EbZzyrsuc317GYP4vxgsIzjiiz7UDZjgaPn7KcM7EP1
-         gQm5P3ZnCYLJK6d40rLkeyFNSdoaXyorPiF8ROWrC6GS7QNBMZJcxGkdxEBdQbOYdMC3
-         dbtx8M7Yw0qI7yrLbH1oaJMW/iEtaw8mKG4YU3HjTAb3ElWA9hLocXG+ca6hrBhe1ICr
-         Ac1rnTPABXq/X+6WypAWVqOIPEVyD/T8+hVuL0XcNdARIfAV+Ld0SMxryvhw4i7lZOS9
-         8C/r7TLX+QotHNHh2IK3KKs40q6Zkgqw9Wq8adRGryA4NPFy+8ybMP8hGfYIxH+ke744
-         +EYQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729643582; x=1730248382;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=7GwFa/KXD9udMqNOk/17VTw0JX40rEFnM+9r84c/Z+c=;
-        b=DCPpZKdbHWBfpXhfeLb2FRK4ymIzV5PJ3cYTnyGdJGqfOy7gfYgjqP03GCmcqNqccg
-         L0o6NDHQ9d7oFGyVzo/TMFwuLr7k/Y3GcQqM6v2GrfRuf3LLGFl6fFvf0EMwrHvfC0zj
-         iPDpoPm03d9z9ID0Oz+JEODY7RW53vs2kFIIiP7s67TrvNVO3pnXmvUWDSVRcBdjzwYa
-         Vo9cPBaePEiyx6kQ/WbMoH7/pIfrndR+4hcNgF6HteBQMISo29Yq+aJdxUtRIsuV3LYR
-         OfRfNDf1K8r6x11JgIeRNYrSx1oMFpgtYu6g5T3eO7Y7L29kJRAULbBKiDA19Otthfu8
-         P9Dg==
-X-Forwarded-Encrypted: i=1; AJvYcCUKAX9PsU8a6liCW6WdpH5cL3LYW20X47h6I/cVK1GBVI6WNGz5day8YeD08k0Xst8UTEyUH3e+E2oD@vger.kernel.org, AJvYcCUPzwwTOEYFd1nwjpzEZrJnOfEbDAeqNlfhZ8O4wjW4loPpCkd0Ye/VWv5Xkow/gMnVHa1K5k6Ex1A36Iby@vger.kernel.org, AJvYcCWDSnuVn05wGIxRa4mqwbPCkk0e9UQkb86r1ELtrBAIJAlsaFGcU0YpJpQeUwRByDQZW67zOJgA/u9hMQgy@vger.kernel.org
-X-Gm-Message-State: AOJu0YwB3GLn0QVAyFSgXh/otggYg2Cf1Qgj/kbNwfShaelnpvmOSzQP
-	YLBvs53f9XPXW/xggCEgMCagqJn0DcTmqm5WXZMB4uZMYUqTGjXj
-X-Google-Smtp-Source: AGHT+IHAY4TNmt69KkJHUwnXiPYb1f/Y1IUPucStfdWvNs0yInAp9Vjs+QAiNb2Jmb4WvpYofxCllg==
-X-Received: by 2002:a17:902:fc4f:b0:20c:a7d8:e436 with SMTP id d9443c01a7336-20fa9de929dmr13076305ad.4.1729643582441;
-        Tue, 22 Oct 2024 17:33:02 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee67b7sm48341985ad.41.2024.10.22.17.33.01
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 17:33:01 -0700 (PDT)
-Date: Wed, 23 Oct 2024 08:32:42 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Conor Dooley <conor@kernel.org>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
-	Paul Walmsley <paul.walmsley@sifive.com>, Palmer Dabbelt <palmer@dabbelt.com>, 
-	Albert Ou <aou@eecs.berkeley.edu>, Inochi Amaoto <inochiama@outlook.com>, 
-	Yixun Lan <dlan@gentoo.org>, linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v2 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
- SG2044 uarts
-Message-ID: <e32xi34m4lubrquluk7uu6nvqgarnxtmj57ricxg2gv45xpgcs@x6t7itvwng4h>
-References: <20241021072606.585878-1-inochiama@gmail.com>
- <20241021072606.585878-2-inochiama@gmail.com>
- <20241021-outlying-washday-8f171dedc703@spud>
- <r5ngs2j776jcy6sfirwzmtsoljotatfvgmlmv4sj4xksye2bff@xtn7adafbpfz>
- <20241021-rosy-drove-1ae3c8985405@spud>
- <2zawe64brm3sfuslh443352wfupgnhb4xw7jragkzxu6kgg6t7@b4qiya3jdij4>
- <20241022-washday-glass-3db9f6a2cd27@spud>
+	s=arc-20240116; t=1729643786; c=relaxed/simple;
+	bh=0xlYY4mzmdOoyXk14+fntNyWU4DFoKGqy2TnCpJI3h8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=WDMADIhQ6AnWFKEDg3bAyDVQYWhI7M6qZ6HdnmTyQCax/R8FgHJIFsh5aYS2nDDY8vVizVfiCrRVrAKpYG2oBOzWY1xYiVlmEAJ/PlhoCaqnvI5fMxfNyyv1UrkiiVsG1D2mSfJTniVC1TbIcUpSjf5Gi8xu7qw+SOis8kILzGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=gDJH3iYX; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLaH1x025415;
+	Wed, 23 Oct 2024 00:36:14 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	ZA8izx+dGTgWZcv3L+Ni0DmbX+JyrWlyG8FPshbHAA0=; b=gDJH3iYXf2ph4ycR
+	na8NBkgUKYpLtj89K0Rm4feOb9//8ng5VKeh2SBZvVLL+ou3t7oR2ZogfsYLEikk
+	D5HjFEOs06Zu4ylwuP08WNxoYqHEZaRxqgRHdfjlsDXlPdCEwbIwP7D6yK4aEnEV
+	rdzT8FFtBTGuW12hTm77ooRf6bBkTJMVElg/tVgIGiIA4XnuOOuSgKsmaayiOQU7
+	f84RBc4LHa/g6YQvGlzi+3rUcNvNPE7Q9yFUUW8Qt9sKZR5LLyywwCBtAA7nEvB3
+	dWE7W8/QkeGxpC5lBYxmyamCQknJMtMd3zYo9bzQzHYVBR3VzNVhCT44hLf2YFSR
+	NzyGbQ==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41rat7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 00:36:13 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49N0aCDK005538
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 00:36:12 GMT
+Received: from [10.110.103.186] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 17:36:11 -0700
+Message-ID: <2582b8af-e18d-4103-a703-4dbf7464746d@quicinc.com>
+Date: Tue, 22 Oct 2024 17:36:11 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022-washday-glass-3db9f6a2cd27@spud>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 08/10] net: qrtr: Drop remote {NEW|DEL}_LOOKUP
+ messages
+To: Denis Kenzior <denkenz@gmail.com>, <netdev@vger.kernel.org>
+CC: Marcel Holtmann <marcel@holtmann.org>, Andy Gross <agross@kernel.org>,
+        Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, <linux-arm-msm@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241018181842.1368394-1-denkenz@gmail.com>
+ <20241018181842.1368394-9-denkenz@gmail.com>
+Content-Language: en-US
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20241018181842.1368394-9-denkenz@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: dFFZQ7QSX9ttRaRtFhYcyL3hBhNKOHsW
+X-Proofpoint-ORIG-GUID: dFFZQ7QSX9ttRaRtFhYcyL3hBhNKOHsW
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
+ malwarescore=0 clxscore=1015 mlxscore=0 suspectscore=0 phishscore=0
+ mlxlogscore=999 bulkscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
+ priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230001
 
-On Tue, Oct 22, 2024 at 06:25:00PM +0100, Conor Dooley wrote:
-> On Mon, Oct 21, 2024 at 08:23:30PM +0800, Inochi Amaoto wrote:
-> > On Mon, Oct 21, 2024 at 01:21:58PM +0100, Conor Dooley wrote:
-> > > On Mon, Oct 21, 2024 at 08:18:58PM +0800, Inochi Amaoto wrote:
-> > > > On Mon, Oct 21, 2024 at 01:10:52PM +0100, Conor Dooley wrote:
-> > > > > On Mon, Oct 21, 2024 at 03:26:05PM +0800, Inochi Amaoto wrote:
-> > > > > > The UART of SG2044 is modified version of the standard Synopsys
-> > > > > > DesignWare UART. The UART on SG2044 relys on the internal divisor
-> > > > > > and can not set right clock rate for the common bitrates.
-> > > > > > 
-> > > > > > Add compatibles string for the Sophgo SG2044 uarts.
-> > > > > > 
-> > > > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > > > > ---
-> > > > > >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml          | 4 ++++
-> > > > > >  1 file changed, 4 insertions(+)
-> > > > > > 
-> > > > > > diff --git a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > > > index 4cdb0dcaccf3..6963f89a1848 100644
-> > > > > > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > > > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.yaml
-> > > > > > @@ -58,6 +58,10 @@ properties:
-> > > > > >                - brcm,bcm11351-dw-apb-uart
-> > > > > >                - brcm,bcm21664-dw-apb-uart
-> > > > > >            - const: snps,dw-apb-uart
-> > > > > > +      - items:
-> > > > > > +          - enum:
-> > > > > > +              - sophgo,sg2044-uart
-> > > > > > +          - const: snps,dw-apb-uart
-> > > > > 
-> > > > > Why does each vendor have an items entry of its own? Seems like needless
-> > > > > clutter of the file IMO, except for the renesas bit.
-> > > > 
-> > > > I just follow others when writing this binding. I think it may need
-> > > > another patch to fix this problem, right?
-> > > 
-> > > Yeah. But I'd hold off to see if someone gives a rationale for it being
-> > > done this way before sending that. I've not deleted this thread, and
-> > > will send an ack if someone justifies why the binding is written like
-> > > this.
+
+
+On 10/18/2024 11:18 AM, Denis Kenzior wrote:
+> These messages are explicitly filtered out by the in-kernel name
+> service (ns.c).  Filter them out even earlier to save some CPU cycles.
 > 
-> Well, Rob doesn't think they should be separate so please add that
-> additional patch in your next version.
+> Signed-off-by: Denis Kenzior <denkenz@gmail.com>
+> Reviewed-by: Marcel Holtmann <marcel@holtmann.org>
+> Reviewed-by: Andy Gross <agross@kernel.org>
+> ---
+>   net/qrtr/af_qrtr.c | 5 +++++
+>   1 file changed, 5 insertions(+)
 > 
-> Thanks,
-> Conor.
+> diff --git a/net/qrtr/af_qrtr.c b/net/qrtr/af_qrtr.c
+> index b2f9c25ba8f8..95c9679725ee 100644
+> --- a/net/qrtr/af_qrtr.c
+> +++ b/net/qrtr/af_qrtr.c
+> @@ -560,6 +560,11 @@ int qrtr_endpoint_post(struct qrtr_endpoint *ep, const void *data, size_t len)
+>   	if (!size || len != ALIGN(size, 4) + hdrlen)
+>   		goto err;
+>   
+> +	/* Don't allow remote lookups */
+> +	if (cb->type == QRTR_TYPE_NEW_LOOKUP ||
+> +	    cb->type == QRTR_TYPE_DEL_LOOKUP)
+> +		goto err;
+> +
 
-It is OK for me. I will add a fix patch in the next version. Can
-I add you with suggested-by tag in this fix patch?
+Just curious, was this case observed? I thought we blocked clients from 
+sending this control message to remotes and I didnt think the ns 
+broadcasts it either.
 
-Regards,
-Inochi
+>   	if ((cb->type == QRTR_TYPE_NEW_SERVER ||
+>   	     cb->type == QRTR_TYPE_RESUME_TX) &&
+>   	    size < sizeof(struct qrtr_ctrl_pkt))
 
