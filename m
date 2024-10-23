@@ -1,207 +1,142 @@
-Return-Path: <linux-kernel+bounces-378893-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378894-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 12CC09AD6CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:34:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEC69AD6D0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:38:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 33D9A1C21C21
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:34:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EC42B221D8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:38:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E121D2B11;
-	Wed, 23 Oct 2024 21:34:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21771E2304;
+	Wed, 23 Oct 2024 21:38:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b="VJ637oPz"
-Received: from mail.zytor.com (terminus.zytor.com [198.137.202.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="goinhEN3"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 053AA481B1
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:34:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823C4481B1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:38:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729719251; cv=none; b=H95mIJ3PHtrsygivi67rSN4exsSMwWO2YNn4LGN9giR6Ca7acsxH7Dday3bV+2xHwP4ltj8vTLOc+naTRg0+NZQ+h+Xk1gJO/DsQjMUZ9zsrD9CRzpjg5SWFISOVa+XKSjKe969B4pIZDZBtsSKgZsfgF2k4bIKj+pY1VtP9VS4=
+	t=1729719526; cv=none; b=st2TJDcEQj4D6ZTNWWImkOYLx5SEikzjwEbunnWZ2ofxHSBLcdHbfNwhpdIh0h5J89Mb86sevl/WtXYfd2HmqjPyUtr+SoTcddEbly7C/48Rn1MJoT6zVdwTvwyPMiZaAbs0oXH4zN7w+z+Jq5qhPKwzvN/VUP8s07MvL21Exr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729719251; c=relaxed/simple;
-	bh=pmV3aJCWcXRTCmGnfneSC/AYxbmrVRkVXudCvMmG/oI=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:From:To:Cc:
-	 References:In-Reply-To; b=VgkfmmjX6dzEwblIpdxOhXfVA234ve++Uw/gw7eXyVMHNoU0mDjnLDkcaus09tFP4J8VpTk0EcraO2jIHROmHZhKUb3JNXIdA/+hNyC9PZ9cqqvxJH6FtXhjKxF5sxCjdGraLJWkgeZ7YmJCIrzIAx3y9AjzHDA8cX0J0zTNzoQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com; spf=pass smtp.mailfrom=zytor.com; dkim=pass (2048-bit key) header.d=zytor.com header.i=@zytor.com header.b=VJ637oPz; arc=none smtp.client-ip=198.137.202.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zytor.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zytor.com
-Received: from [172.27.3.244] ([76.133.66.138])
-	(authenticated bits=0)
-	by mail.zytor.com (8.18.1/8.17.1) with ESMTPSA id 49NLY12t1410837
-	(version=TLSv1.3 cipher=TLS_AES_128_GCM_SHA256 bits=128 verify=NO);
-	Wed, 23 Oct 2024 14:34:02 -0700
-DKIM-Filter: OpenDKIM Filter v2.11.0 mail.zytor.com 49NLY12t1410837
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=zytor.com;
-	s=2024101701; t=1729719242;
-	bh=pmV3aJCWcXRTCmGnfneSC/AYxbmrVRkVXudCvMmG/oI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=VJ637oPzE2yfwqFHbyaHIURFpBFAi2cHZARqpn70CiqV9r7ff0y3epb3H7a88hJqu
-	 7piNbfFA5C/bNq88Ii3xAQOiJH4raRjVYzb3dDc0xF+8u625qQgjrrOrgb4PF0cebT
-	 3Ba5JVDibB7ZCPE8b0CLApZ/cAkIp/rHo7v6NEHX1Bp+p0uaEy+RGU9+ismIrfpS7t
-	 r9kOBC+G2eExLEl6J4yC0czgTs5iiJekOoQr/qC+Cxke16R68c8YXZ1nymjlKm1EI3
-	 Filhwzzsb7Eh7DylAjG2IuL/bPzd7alJ+vycF6tuZF/5IpAMxCn8ZD4HhK6Tfa+AID
-	 CiO3VKMgI/RtQ==
-Content-Type: multipart/mixed; boundary="------------pKPYmbymNtzhoU9ecG2YTcef"
-Message-ID: <83b67fa6-fbe0-4a38-891c-b0b49d5cc5f9@zytor.com>
-Date: Wed, 23 Oct 2024 14:34:01 -0700
+	s=arc-20240116; t=1729719526; c=relaxed/simple;
+	bh=hsySq/lFsh/WAJFgsffH3RwpObfPP97z54BUgccrJpQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rVBb5AO6ssUGu2ZBQ1GNAgy9Gmw8nXhYS/6SSmh1mS+JaU4HSQbH8bEjfvM2203ra2S+gd7XwjLh5f5i6wmWpJVHjpX/+/aAxIabitxtrj7omdI9U8P9hPmKV2xxifOvHvZQJCv7aB4ASC3tLCpAQrzE1UXDwzA9CV0fWjn+c7U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=goinhEN3; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so2213555e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:38:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729719522; x=1730324322; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3L+Mi6DCqfrLQhTJ9/me+xzacY5Zdwe6SV+TH0hXgAM=;
+        b=goinhEN3fsQ+VbpraZ2Kn5x7k7xL2PceWikCLrQUTl/chZqigntX+J8eJrWp9seMik
+         fIR0Qu1SjXtHKk5cH1O+WDqeXg7qcNIDNMLe/tGbNLjPvkBmuzj3HVlv4LM2fS3/qIBV
+         cQGV79h4S2aU4EHVWnx1Xizqzsz3RaZKmZIpdG6pY/sFulC4QzGjBeAngBWujl3sygYx
+         WSnPdT4l3VxD+1DspTUTtXvZqBz54Vc5oez58Vk0F72ol85vYa3L20O4Q0R8PumVga15
+         mQtrxfBKJqsYwu9RliFoKKiPJtiS1eDyZUeQ0UCCDn4WqgrRuVfWyIpkPyVaS4pKPHsW
+         xi/Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729719522; x=1730324322;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3L+Mi6DCqfrLQhTJ9/me+xzacY5Zdwe6SV+TH0hXgAM=;
+        b=InxMUdz3pEkj8UMpM3xo3cnmr6G04caqupb27EfWnumXDoIn54SCf9kug6YXFD9Vyu
+         /mlmxBh5Hw8Brz5M4navvEuBnASR8NpDgPT38wyLRNbuZwaan1vsBJdaZWvgdx1Tr2un
+         69IHeY1HtgEFXr0LY745BK0lu+6UYjfqUlv+1XoZLGTudH5PkfzJ6S3ALjMPaWs0WRGq
+         XGri0YUPiAoHpOl9ZgBesmrPAQdzhSw/Av1l2vkdIKafy4Hl/Zu1sDDZbqr1RMh1vVD7
+         ESoz3OEHOrj9LJFL90j+n8TVVvGlkk1AJmxB0/xl6NCIHhxyFvG4vxRQplB2lgswqL7i
+         rllA==
+X-Forwarded-Encrypted: i=1; AJvYcCUA2hFvvq1rt4tHOC8kUJZ/FJO4kCS+Jw7Hw5MVvTPlfFCRpy5GFkS/1E3mzUFmgsIavbRm38jg9eUHLcI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwYwYZ9mTmEtQWiPkx8x0DpkJJ6BWT3y/wp5ET11STtnTdoBoMO
+	om7alG/DJHKj76A2zso9tv+/POXK8kf4oddht9P+j5hqC9f3tprgXzRWst7XbCs=
+X-Google-Smtp-Source: AGHT+IFQIpR/FPx7yYotfITiaiDTqf+2At9gJKCIzm55AVfINq+xpgx0h7c8KFDVMRBdtt22f36MYQ==
+X-Received: by 2002:a5d:61d2:0:b0:37c:d2f3:b3af with SMTP id ffacd0b85a97d-37efcef116cmr2589164f8f.5.1729719521780;
+        Wed, 23 Oct 2024 14:38:41 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a477d9sm9809215f8f.26.2024.10.23.14.38.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 14:38:41 -0700 (PDT)
+Date: Wed, 23 Oct 2024 23:38:40 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: Dongjoo Seo <dongjoo.linux.dev@gmail.com>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, dave@stgolabs.net,
+	dan.j.williams@intel.com, nifan@outlook.com,
+	a.manzanares@samsung.com
+Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
+Message-ID: <Zxls4HqdkV_yBYxZ@tiehlicka>
+References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
+ <Zxk6bHlrP5S_0LBK@tiehlicka>
+ <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: RFC, untested: handing of MSR immediates and MSRs on Xen
-From: "H. Peter Anvin" <hpa@zytor.com>
-To: Xin Li <xin3.li@intel.com>, Xin Li <xin@zytor.com>,
-        Andrew Cooper <andrew.cooper3@citrix.com>
-Cc: "x86@kernel.org" <x86@kernel.org>, LKML <linux-kernel@vger.kernel.org>,
-        Peter Zijlstra <peterz@infradead.org>
-References: <7a4de623-ecda-4369-a7ae-0c43ef328177@zytor.com>
-Content-Language: en-US
-In-Reply-To: <7a4de623-ecda-4369-a7ae-0c43ef328177@zytor.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
 
-This is a multi-part message in MIME format.
---------------pKPYmbymNtzhoU9ecG2YTcef
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Wed 23-10-24 13:41:21, Andrew Morton wrote:
+> On Wed, 23 Oct 2024 20:03:24 +0200 Michal Hocko <mhocko@suse.com> wrote:
+> 
+> > On Wed 23-10-24 10:50:37, Dongjoo Seo wrote:
+> > > This patch corrects this issue by:
+> > 
+> > What is this issue? Please describe the problem first,
+> 
+> Actually, relocating the author's second-last paragraph to
+> top-of-changelog produced a decent result ;)
+> 
+> > ideally describe
+> > the NUMA topology, workload and what kind of misaccounting happens
+> > (expected values vs. really reported values).
+> 
+> I think the changelog covered this adequately?
+> 
+> So with these changelog alterations I've queued this for 6.12-rcX with
+> a cc:stable.  As far as I can tell this has been there since 2018.
+> 
+> : In the case of memoryless node, when a process prefers a node with no
+> : memory(e.g., because it is running on a CPU local to that node), the
+> : kernel treats a nearby node with memory as the preferred node.  As a
+> : result, such allocations do not increment the numa_foreign counter on the
+> : memoryless node, leading to skewed NUMA_HIT, NUMA_MISS, and NUMA_FOREIGN
+> : stats for the nearest node.
 
-And I of course forgot the include the actual code.
+I am sorry but I still do not underastand that. Especially when I do
+look at the patch which would like to treat cpuless nodes specially.
+Let me be more specific. Why ...
 
---------------pKPYmbymNtzhoU9ecG2YTcef
-Content-Type: text/x-csrc; charset=UTF-8; name="wrmsrns.c"
-Content-Disposition: attachment; filename="wrmsrns.c"
-Content-Transfer-Encoding: base64
+> -     if (zone_to_nid(z) != numa_node_id())
+> +     if (zone_to_nid(z) != numa_node_id() || z_is_cpuless)
+>               local_stat = NUMA_OTHER;
+>
+> -     if (zone_to_nid(z) == zone_to_nid(preferred_zone))
+> +     if (zone_to_nid(z) == zone_to_nid(preferred_zone) && !z_is_cpuless)
+>               __count_numa_events(z, NUMA_HIT, nr_account);
+>       else {
+>               __count_numa_events(z, NUMA_MISS, nr_account);
+> -             __count_numa_events(preferred_zone, NUMA_FOREIGN, nr_account);
+> +             if (!pref_is_cpuless)
+> +                     __count_numa_events(preferred_zone, NUMA_FOREIGN, nr_account);
 
-dHlwZWRlZiB2b2lkICgqeGVuX21zcl9hY3Rpb25fdCkodm9pZCk7CiNkZWZpbmUgeGVuX21z
-cl9uYXRpdmUgKCh4ZW5fbXNyX2FjdGlvbl90KU5VTEwpCiNkZWZpbmUgeGVuX21zcl9pZ25v
-cmUgKCh4ZW5fbXNyX2FjdGlvbl90KSgxVUwpKQoKI2lmZGVmIENPTkZJR19YRU4KCi8qKiog
-VGhpcyBzaG91bGQgZ28gaW50byBhIFhlbi1zcGVjaWZpYyBoZWFkZXIgZmlsZSAqKiovCgov
-KgogKiBUaGUgYWN0dWFsIGNhbGxpbmcgY29udmVudGlvbiBmb3IgdGhlIGFzbV94ZW5fIGZ1
-bmN0aW9uIGlzOgogKiBJbnB1dDoKICogICAgICVyYXggLSB2YWx1ZSAoZnVsbCA2NC1iaXQg
-dmFsdWUsIGRvIG5vdCByZWFkIGZyb20gJWVkeCkKICogICAgICVlY3ggLSBNU1IgbnVtYmVy
-CiAqIE91dHB1dDoKICogICAgICVlZHggLSBvcHRpb25hbGx5IGNsb2JiZXJlZAogKiAgICAg
-YWxsIG90aGVyIHJlZ2lzdGVycyBwcmVzZXJ2ZWQKICogICAgIE9uIGVycm9yLCBpbnZva2Ug
-dGhlIHRyYXAgaGFuZGxlciBhdCB0aGUgc3RhY2sgcG9pbnRlciB1c2luZwogKiAgICAgaW5k
-aXJlY3QgdHJhcHBpbmcuCiAqLwoKdm9pZCBhc21feGVuX3dybXNybnNfZ2VuZXJhbCh2b2lk
-KTsKdm9pZCBhc21feGVuX3dybXNybnNfcGVyZih2b2lkKTsKCnN0YXRpYyBfX211c3RfaW5s
-aW5lIHhlbl9tc3JfYWN0aW9uX3QgeGVuX3dybXNybnNfYWN0aW9uKHVpbnQzMl90IG1zcikK
-ewoJaWYgKCFfX2J1aWx0aW5fY29uc3RhbnRfcChtc3IpKQoJCXJldHVybiBhc21feGVuX3dy
-bXNybnNfZ2VuZXJhbDsKCglzd2l0Y2ggKG1zcikgewoJY2FzZSAweDEyMzQ6CgljYXNlIDB4
-NTY3ODoKCQlyZXR1cm4gYXNtX3hlbl93cm1zcm5zX3BlcmY7CgljYXNlIDB4Nzg6CgljYXNl
-IDB4ODk6CgkJcmV0dXJuIHhlbl9tc3JfaWdub3JlOwoJZGVmYXVsdDoKCQlyZXR1cm4geGVu
-X21zcl9uYXRpdmU7Cgl9Cn0KI2Vsc2UKc3RhdGljIF9fbXVzdF9pbmxpbmUgeGVuX21zcl9h
-Y3Rpb25fdCB4ZW5fbXNyX2FjdGlvbih1aW50MzJfdCBtc3IpCnsKCXJldHVybiB4ZW5fbXNy
-X25hdGl2ZTsKfQojZW5kaWYKCiNkZWZpbmUgRVhfV1JNU1IoZnJvbSx0bykgXAoJX0FTTV9F
-WFRBQkxFX1RZUEUoZnJvbSwgdG8sIEVYX1RZUEVfV1JNU1IsIDApCiNkZWZpbmUgRVhfV1JN
-U1JfU0FGRShmcm9tLHRvKSBcCglfQVNNX0VYVEFCTEVfVFlQRV9SRUcoZnJvbSwgdG8sIEVY
-X1RZUEVfV1JNU1JfU0FGRSwgJVtyZWddKQoKc3RhdGljIF9fbXVzdF9pbmxpbmUgdm9pZCB3
-cm1zcm5zX3ZhcmlhYmxlKHVpbnQzMl90IG1zciwgdWludDY0X3QgdmFsKQp7Cgljb25zdCB4
-ZW5fbXNyX2FjdGlvbl90IHhlbl93aGF0ID0geGVuX21zcl9hY3Rpb24obXNyKTsKCXVpbnQz
-Ml90IGhpID0gdmFsID4+IDMyOwoKCWlmICh4ZW5fd2hhdCA9PSB4ZW5fbXNyX25hdGl2ZSkg
-ewoJCWFzbV9pbmxpbmUgdm9sYXRpbGUoCgkJCSIxOlxuIgoJCQlBTFRFUk5BVElWRSgiZHMg
-d3Jtc3IiLAoJCQkJICAgICJ3cm1zcm5zIiwKCQkJCSAgICBYODZfRkVBVFVSRV9XUk1TUk5T
-KQoJCQkiMjpcbiIKCQkJRVhfV1JNU1IoMWIsMmIpCgkJCTogOiAiYSIgKHZhbCksICJkIiAo
-aGkpLCAiYyIgKG1zciksCgkJCTogIm1lbW9yeSIpOwoJfSBlbHNlIHsKCQlhc21faW5saW5l
-IHZvbGF0aWxlKAoJCQkiMTpcbiIKCQkJQUxURVJOQVRJVkVfMigiZHMgd3Jtc3IiLAoJCQkJ
-ICAgICAgIndybXNybnMiLAoJCQkJICAgICAgWDg2X0ZFQVRVUkVfV1JNU1JOUywKCQkJCSAg
-ICAgICJjYWxsICVQW3hlbl0iLAoJCQkJICAgICAgWDg2X0ZFQVRVUkVfWEVOUFYpCgkJCSIy
-OlxuIgoJCQlFWF9XUk1TUigxYiwyYikKCQkJOiBbdmFsXSAiYSIgKHZhbCksICJkIiAoaGkp
-LCBBU01fQ0FMTF9DT05TVFJBSU5UCgkJCTogImMiIChtc3IpLCBbeGVuXSAiaSIgKHhlbl93
-aGF0KQoJCQk6ICJtZW1vcnkiKTsKCX0KfQoKc3RhdGljIF9fbXVzdF9pbmxpbmUgaW50IHdy
-bXNybnNfdmFyaWFibGVfc2FmZSh1aW50MzJfdCBtc3IsIHVpbnQ2NF90IHZhbCkKewoJY29u
-c3QgeGVuX21zcl9hY3Rpb25fdCB4ZW5fd2hhdCA9IHhlbl9tc3JfYWN0aW9uKG1zcik7Cgl1
-aW50MzJfdCBoaSA9IHZhbCA+PiAzMjsKCWludCBlcnIgPSAwOwoKCWlmICh4ZW5fd2hhdCA9
-PSB4ZW5fbXNyX25hdGl2ZSkgewoJCWFzbV9pbmxpbmUgdm9sYXRpbGUoCgkJCSIxOlxuIgoJ
-CQlBTFRFUk5BVElWRSgiZHMgd3Jtc3I7IHhvciAlW2Vycl0sJVtlcnJdIiwKCQkJCSAgICAi
-d3Jtc3JuczsgeG9yICVbZXJyXSwlW2Vycl0iLAoJCQkJICAgIFg4Nl9GRUFUVVJFX1dSTVNS
-TlMpCgkJCSIyOlxuIgoJCQlFWF9XUk1TUl9TQUZFKDFiLDJiKQoJCQk6IFtlcnJdICI9ciIg
-KGVycikKCQkJOiBbdmFsXSAiYSIgKHZhbCksICJkIiAoaGkpLCBbbXNyXSAiYyIgKG1zciks
-CgkJCTogIm1lbW9yeSIpOwoJfSBlbHNlIHsKCQlhc21faW5saW5lIHZvbGF0aWxlKAoJCQki
-MTpcbiIKCQkJQUxURVJOQVRJVkVfMigiZHMgd3Jtc3I7IHhvciAlW2Vycl0sJVtlcnJdIgoJ
-CQkJICAgICAgIndybXNybnM7IHhvciAlW2Vycl0sJVtlcnJdIgoJCQkJICAgICAgWDg2X0ZF
-QVRVUkVfV1JNU1JOUywKCQkJCSAgICAgICJjYWxsICVQW3hlbl0iLAoJCQkJICAgICAgWDg2
-X0ZFQVRVUkVfWEVOUFYpCgkJCSIyOlxuIgoJCQlFWF9XUk1TUl9TQUZFKDFiLDJiKQoJCQk6
-IFtlcnJdICI9ciIgKGVyciksICIrZCIgKGhpKSwgQVNNX0NBTExfQ09OU1RSQUlOVAoJCQk6
-IFt2YWxdICJhIiAodmFsKSwgW21zcl0gImMiIChtc3IpLCBbeGVuXSAiaSIgKHhlbl93aGF0
-KQoJCQk6ICJtZW1vcnkiKTsKCX0KCXJldHVybiBlcnI7Cn0KCiNkZWZpbmUgV1JNU1JOU19J
-TU0gIiAuaW5zbiBWRVguMTI4LkYzLk03LlcwIDB4ZjYgLzAsICVbdmFsXSwgJVttc3JdIHs6
-dTMyfVxuIgoKc3RhdGljIF9fbXVzdF9pbmxpbmUgdm9pZCB3cm1zcm5zX2NvbnN0YW50KHVp
-bnQzMl90IG1zciwgdWludDY0X3QgdmFsKQp7Cgljb25zdCB4ZW5fbXNyX2FjdGlvbl90IHhl
-bl93aGF0ID0geGVuX21zcl9hY3Rpb24obXNyLCBzYWZlKTsKCglpZiAoeGVuX3doYXQgPT0g
-eGVuX21zcl9uYXRpdmUpIHsKCQlhc21faW5saW5lIHZvbGF0aWxlKAoJCQkiMTpcbiIKCQkJ
-QUxURVJOQVRJVkVfMigibW92ICUlcmF4LCUlcmR4OyAiCgkJCQkgICAgICAic2hyICQzMiwl
-JXJkeDsgIgoJCQkJICAgICAgIjE6IGRzIHdybXNyIiwKCQkJCSAgICAgICJtb3YgJSVyYXgs
-JSVyZHg7ICIKCQkJCSAgICAgICJzaHIgJDMyLCUlcmR4OyAiCgkJCQkgICAgICAid3Jtc3Ju
-cyIsIFg4Nl9GRUFUVVJFX1dSTVNSTlMsCgkJCQkgICAgICBXUk1TUk5TX0lNTSwgWDg2X0ZF
-QVRVUkVfTVNSX0lNTSkKCQkJIjM6XG4iCgkJCUVYX1dSTVNSKDFiLDNiKSAvKiBGb3IgV1JN
-U1JOUyBpbW1lZGlhdGUgKi8KCQkJRVhfV1JNU1IoMmIsM2IpIC8qIEZvciBXUk1TUk5TIGFu
-ZCBXUk1TUiAqLwoJCQk6IDogW3ZhbF0gImEiICh2YWwpLCAiYyIgKG1zciksIFttc3JdICJp
-IiAobXNyKQoJCQk6ICJtZW1vcnkiLCAiZWR4Iik7Cgl9IGVsc2UgaWYgKHhlbl93aGF0ID09
-IHhlbl9tc3JfaWdub3JlKSB7CgkJYXNtX2lubGluZSB2b2xhdGlsZSgKCQkJIjE6XG4iCgkJ
-CUFMVEVSTkFUSVZFXzMoIm1vdiAlJXJheCwlJXJkeDsgIgoJCQkJICAgICAgInNociAkMzIs
-JSVyZHg7ICIKCQkJCSAgICAgICIxOiBkcyB3cm1zciIsCgkJCQkgICAgICAibW92ICUlcmF4
-LCUlcmR4OyAiCgkJCQkgICAgICAic2hyICQzMiwlJXJkeDsgIgoJCQkJICAgICAgIndybXNy
-bnMiLCBYODZfRkVBVFVSRV9XUk1TUk5TLAoJCQkJICAgICAgV1JNU1JOU19JTU0sIFg4Nl9G
-RUFUVVJFX01TUl9JTU0sCgkJCQkgICAgICAiIiwgWDg2X0ZFQVRVUkVfWEVOUFYpCgkJCSIz
-OlxuIgoJCQlFWF9XUk1TUigxYiwzYikgLyogRm9yIFdSTVNSTlMgaW1tZWRpYXRlICovCgkJ
-CUVYX1dSTVNSKDJiLDNiKSAvKiBGb3IgV1JNU1JOUyBhbmQgV1JNU1IgKi8KCQkJOiA6IFt2
-YWxdICJhIiAodmFsKSwgImMiIChtc3IpLCBbbXNyXSAiaSIgKG1zcikKCQkJOiAibWVtb3J5
-IiwgImVkeCIpOwoJfSBlbHNlIHsKCQlhc21faW5saW5lIHZvbGF0aWxlKAoJCQlBTFRFUk5B
-VElWRV8yKCIxOiBtb3YgJSVyYXgsJSVyZHg7ICIKCQkJCSAgICAgICJzaHIgJDMyLCUlcmR4
-OyAiCgkJCQkgICAgICAiMjogZHMgd3Jtc3IiLAoJCQkJICAgICAgIm1vdiAlJXJheCwlJXJk
-eDsgIgoJCQkJICAgICAgInNociAkMzIsJSVyZHg7ICIKCQkJCSAgICAgICJ3cm1zcm5zIiwg
-WDg2X0ZFQVRVUkVfV1JNU1JOUywKCQkJCSAgICAgIFdSTVNSTlNfSU1NLCBYODZfRkVBVFVS
-RV9NU1JfSU1NKTsKCQkJIjM6XG4iCgkJCUVYX1dSTVNSKDFiLDNiKSAvKiBGb3IgWGVuIGFu
-ZCBXUk1TUk5TIGltbWVkaWF0ZSAqLwoJCQlFWF9XUk1TUigyYiwzYikgLyogRm9yIFdSTVNS
-TlMgYW5kIFdSTVNSICovCgkJCTogQVNNX0NBTExfQ09OU1RSQUlOVAoJCQk6IFt2YWxdICJh
-IiAodmFsKSwgImMiIChtc3IpLCBbbXNyXSAiaSIgKG1zciksCgkJCSAgW3hlbl0gImkiICh4
-ZW5fd2hhdCkKCQkJOiAibWVtb3J5IiwgImVkeCIpOwoJfQoJcmV0dXJuIGVycjsKfQoKc3Rh
-dGljIF9fbXVzdF9pbmxpbmUgaW50IHdybXNybnNfY29uc3RhbnRfc2FmZSh1aW50MzJfdCBt
-c3IsIHVpbnQ2NF90IHZhbCkKewoJY29uc3QgeGVuX21zcl9hY3Rpb25fdCB4ZW5fd2hhdCA9
-IHhlbl9tc3JfYWN0aW9uKG1zciwgc2FmZSk7CglpbnQgZXJyID0gMDsKCglpZiAoeGVuX3do
-YXQgPT0geGVuX21zcl9uYXRpdmUpIHsKCQlhc21faW5saW5lIHZvbGF0aWxlKAoJCQkiMTpc
-biIKCQkJQUxURVJOQVRJVkVfMigiMTogbW92ICUlcmF4LCUlcmR4OyAiCgkJCQkgICAgICAi
-c2hyICQzMiwlJXJkeDsgIgoJCQkJICAgICAgIjI6IGRzIHdybXNyIiwKCQkJCSAgICAgICJt
-b3YgJSVyYXgsJSVyZHg7ICIKCQkJCSAgICAgICJzaHIgJDMyLCUlcmR4OyAiCgkJCQkgICAg
-ICAid3Jtc3JucyIsIFg4Nl9GRUFUVVJFX1dSTVNSTlMsCgkJCQkgICAgICBXUk1TUk5TX0lN
-TSwgWDg2X0ZFQVRVUkVfTVNSX0lNTSkKCQkJIjM6XG4iCgkJCUVYX1dSTVNSX1NBRkUoMWIs
-M2IpIC8qIEZvciBXUk1TUk5TIGltbWVkaWF0ZSAqLwoJCQlFWF9XUk1TUl9TQUZFKDJiLDNi
-KSAvKiBGb3IgV1JNU1JOUyBhbmQgV1JNU1IgKi8KCQkJOiAiK3IiIChlcnIpCgkJCTogW3Zh
-bF0gImEiICh2YWwpLCAiYyIgKG1zciksIFttc3JdICJpIiAobXNyKQoJCQk6ICJtZW1vcnki
-LCAiZWR4Iik7Cgl9IGVsc2UgaWYgKHhlbl93aGF0ID09IHhlbl9tc3JfaWdub3JlKSB7CgkJ
-YXNtX2lubGluZSB2b2xhdGlsZSgKCQkJIjE6XG4iCgkJCUFMVEVSTkFUSVZFXzMoIjE6IG1v
-diAlJXJheCwlJXJkeDsgIgoJCQkJICAgICAgInNociAkMzIsJSVyZHg7ICIKCQkJCSAgICAg
-ICIyOiBkcyB3cm1zciIsCgkJCQkgICAgICAibW92ICUlcmF4LCUlcmR4OyAiCgkJCQkgICAg
-ICAic2hyICQzMiwlJXJkeDsgIgoJCQkJICAgICAgIndybXNybnMiLCBYODZfRkVBVFVSRV9X
-Uk1TUk5TLAoJCQkJICAgICAgV1JNU1JOU19JTU0sIFg4Nl9GRUFUVVJFX01TUl9JTU0sCgkJ
-CQkgICAgICAiIiwgWDg2X0ZFQVRVUkVfWEVOUFYpCgkJCSIzOlxuIgoJCQlFWF9XUk1TUl9T
-QUZFKDFiLDNiKSAvKiBGb3IgV1JNU1JOUyBpbW1lZGlhdGUgKi8KCQkJRVhfV1JNU1JfU0FG
-RSgyYiwzYikgLyogRm9yIFdSTVNSTlMgYW5kIFdSTVNSICovCgkJCTogIityIiAoZXJyKQoJ
-CQk6IDogW3ZhbF0gImEiICh2YWwpLCAiYyIgKG1zciksIFttc3JdICJpIiAobXNyKQoJCQk6
-ICJtZW1vcnkiLCAiZWR4Iik7Cgl9IGVsc2UgewoJCWFzbV9pbmxpbmUgdm9sYXRpbGUoCgkJ
-CUFMVEVSTkFUSVZFXzMoIjE6IG1vdiAlJXJheCwlJXJkeDsgIgoJCQkJICAgICAgInNociAk
-MzIsJSVyZHg7ICIKCQkJCSAgICAgICIyOiBkcyB3cm1zciIsCgkJCQkgICAgICAibW92ICUl
-cmF4LCUlcmR4OyAiCgkJCQkgICAgICAic2hyICQzMiwlJXJkeDsgIgoJCQkJICAgICAgIndy
-bXNybnMiLCBYODZfRkVBVFVSRV9XUk1TUk5TLAoJCQkJICAgICAgV1JNU1JOU19JTU0sIFg4
-Nl9GRUFUVVJFX01TUl9JTU0sCgkJCQkgICAgICAiY2FsbCAlUFt4ZW5dIiwgWDg2X0ZFQVRV
-UkVfWEVOUFYpCgkJCSIzOlxuIgoJCQlFWF9XUk1TUl9TQUZFKDFiLDNiKSAvKiBGb3IgWGVu
-IGFuZCBXUk1TUk5TIGltbWVkaWF0ZSAqLwoJCQlFWF9XUk1TUl9TQUZFKDJiLDNiKSAvKiBG
-b3IgV1JNU1JOUyBhbmQgV1JNU1IgKi8KCQkJOiAiK3IiIChlcnIpLCBBU01fQ0FMTF9DT05T
-VFJBSU5UCgkJCTogW3ZhbF0gImEiICh2YWwpLCAiYyIgKG1zciksIFttc3JdICJpIiAobXNy
-KSwKCQkJICBbeGVuXSAiaSIgKHhlbl93aGF0KQoJCQk6ICJtZW1vcnkiLCAiZWR4Iik7Cgl9
-CglyZXR1cm4gZXJyOwp9CgpzdGF0aWMgaW5saW5lIHZvaWQgd3Jtc3Jucyh1aW50MzJfdCBt
-c3IsIHVpbnQ2NF90IHZhbCkKewoJaWYgKF9fYnVpbHRpbl9jb25zdGFudF9wKG1zcikpCgkJ
-d3Jtc3Juc19jb25zdGFudChtc3IsIHZhbCk7CgllbHNlCgkJd3Jtc3Juc192YXJpYWJsZSht
-c3IsIHZhbCk7Cn0KCnN0YXRpYyBpbmxpbmUgaW50IHdybXNybnNfc2FmZSh1aW50MzJfdCBt
-c3IsIHVpbnQ2NF90IHZhbCkKewoJaWYgKF9fYnVpbHRpbl9jb25zdGFudF9wKG1zcikpCgkJ
-cmV0dXJuIHdybXNybnNfY29uc3RhbnRfc2FmZShtc3IsIHZhbCk7CgllbHNlCgkJcmV0dXJu
-IHdybXNybnNfdmFyaWFibGVfc2FmZShtc3IsIHZhbCk7Cn0K
+... a (well?) established meaning of local needs to be changed? Why
+prefrerred policy should have a different meaning for cpuless policies?
+Those are memory specific rather than cpu specific right?
 
---------------pKPYmbymNtzhoU9ecG2YTcef--
+Quite some quiestions to have it in linux-next IMHO....
+-- 
+Michal Hocko
+SUSE Labs
 
