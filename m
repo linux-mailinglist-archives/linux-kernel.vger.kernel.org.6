@@ -1,148 +1,128 @@
-Return-Path: <linux-kernel+bounces-377819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D76319AC73E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:00:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C1749AC740
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:01:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 95F532825A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:00:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5C265283552
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:01:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B27FF19AD97;
-	Wed, 23 Oct 2024 10:00:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 012D01990D2;
+	Wed, 23 Oct 2024 10:01:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZEh/vWY3"
-Received: from mail-pf1-f196.google.com (mail-pf1-f196.google.com [209.85.210.196])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CrWmZRGm"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC86A1487D6;
-	Wed, 23 Oct 2024 10:00:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.196
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A5141158D94
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:01:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677641; cv=none; b=j9tZKX8Qie/pi8eas5Z3KbYmsDyjsiPHmeGaX5pr9X0lgMCUV8CE3KZZ+e5YW8AW9uSubp+5wJUYv/5sH6zIzjeF9tkhrm5fSvfcBSkezP5C4xF80XCezedKB/j6r5mB0zox3wwMLHMkBGcM/KZYKLdqpK/JCNxL7+MPXaBT72I=
+	t=1729677663; cv=none; b=s7K0QBhW6V7WK4ksrBC/p8x4fXftem6jf4Eh+JrD55qlWQ9lcTvZa/VFmCGruLeKR4YzZSEGQ8EA6A85SxxAPeysT7Rmgv9QU+Ozym5kpkZQ8Jf9g7z7DDdgOsa7teYcBs2tdoIAQ09pkZFnZHTPidlr4SUTx5jkU8otKdcGvTs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729677641; c=relaxed/simple;
-	bh=EWIifRhFr+QZl2BXrNNgIcv45sargA9oNnK7MjVJf/Y=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=orWCetW0kLhWNw++9KwmpuSvbzC7cdteH0Qdj8LXmAOxPQEgXmzzlCo+sgCBl+0D1adCxo0M657bglVnAnQW5xfrJUUJSMriMhsOYV9e16uvhVNx+JevbK4xgbPUrz1T+LxHRxei/6y8VSZxSqFsEf8qH7CjaZO7AzPP56c/kT0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZEh/vWY3; arc=none smtp.client-ip=209.85.210.196
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f196.google.com with SMTP id d2e1a72fcca58-71e983487a1so4760294b3a.2;
-        Wed, 23 Oct 2024 03:00:39 -0700 (PDT)
+	s=arc-20240116; t=1729677663; c=relaxed/simple;
+	bh=ZUGc29XkalHds14dCBS9QzTZFbVomRvEcXD27v6fsGM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=S/W3DqqpGLHFYGRtqJhC0+KZL2NcrHtHjL1vvAyZGz6L+muJqezZuziH0Ymb64ATMEqWwxR2ZfNszleYZ87V4McecQH+SN19U2TY2xs9aTA+H9YXxyG+ivVRRXtPj9yvqb1IE0oaAjQfF0A77v/NYEAbQHQ3MdoZ+bwmerPcE7c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CrWmZRGm; arc=none smtp.client-ip=209.85.208.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso101168941fa.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:01:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729677639; x=1730282439; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=KSQE6SQbrKXZnPv2r6mQCXvpZn+sFkfLG+STLAgtJ1s=;
-        b=ZEh/vWY3eOXQGsVOYIlCetKmsVJYgPC9eimrcLT4Z1me1fdBHz7FQdrPWppgWJL+zA
-         e/yuSC738K0FEA1LyYwSBKCO4zJ25S1tp9P8zZWOY1b3cY54YV3RWktqXZtdko9YOTI2
-         Li4ovNhT6srRJYd/jz7WqW54mSYiWVkCeVgOqJqlufjxbAEZYoS7XuUuHXIkI5OsNu2p
-         gL/9pZYVP0oquHRhcHmy0/JnpOvPPluZcovbyfUUZqmAS3dRp3cuHW4BV8FD/UhFiAwU
-         SnjOg7TB4Ghz8AH/40GFlmlBdcad+GZZVUydpWJCaBFRy96B8/GU1WTQeA1c7okFuXJU
-         z9Lg==
+        d=linaro.org; s=google; t=1729677660; x=1730282460; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1AVT/oXvnz327r71R8h8SLtTXDuNUikJe/baXxzlt7M=;
+        b=CrWmZRGmVyhljKolnf1UewFXPdO4kYq6II1J4PCFj1zk2WPmxDIqhJD1XnAExw27sB
+         uB/o5hwtonzx0/wRijgWwGcgCpenXIQO2AD/i93m+qJ/jIWYuIYPYjphC2TCRbQKONGW
+         8TyT/uYR2KovKhIjaBQYB+qfqpotOz+38kMAhYmnDH0Kqv49RDVQvOu1OXkrIuVNu1Gw
+         5shpJos4LxmNP0mkuZU2sXd+pHVqcFcBBBiQIRjHw6TwtMkMCYyTOnY54ElY/p7qPuHK
+         7dnJJ36xubGyB3NDDy3b/Fi0hC2r9jx+Mq3PjmLe3Szg9hZB2eon7P/VgOLfY75XW9Tf
+         zsnA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729677639; x=1730282439;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=KSQE6SQbrKXZnPv2r6mQCXvpZn+sFkfLG+STLAgtJ1s=;
-        b=DlejbB46pz3SplbyMlG6kHO16L/8U7lC92WkTVa+myMY6dyrsMINjK4tYfQYZGVSLL
-         TX4YTFJEfN+BdPDqwzlAZWWjZuMW9KDxci0ZZ1vqQDEZn+4dVOALayEcl5yehmGZWOLG
-         5Y7SQdJLupditQ9OXubJZ1kKbVMni3OfKIgbQnzxiaZ8tPomp8gjLCE8iYtN4lY8NSTM
-         WAR6ZcZ1prgZlJslfY2bNP+bia2Ze/bqhqw5pXOMFKKU/jS3GO+KQy5TEu6YAVXvivfb
-         Pya+5jn06+lYIMyyzRIXdKuhpmLJnx1Te5EKIP7+QMF2ohrI464CVsE+WAZnJX89RUuf
-         DU9A==
-X-Forwarded-Encrypted: i=1; AJvYcCXiv09hfgjgIUnEGl2chirNOwE/jsjrzyQoj2IawK262CMfupS+x/ZAtFJXqRycPZpc1xmbl1aZ0w9zhHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAMQU9PSVwFLmHugL2Qw8WD1jrBgOBTrGZ/VRtJFRdqJGCqWZg
-	kRobJDOP+0H9lEUysBXAIFMLi6yBjWi7jl4Bjgi/mC0zZkNVZEV0
-X-Google-Smtp-Source: AGHT+IFPcgWD0iVBg1dYapMOvCPbQ1/TT72U4Wjg4YR+NdcpBagP3VTSghprJ92B59k4x8IJ9+x8gA==
-X-Received: by 2002:a05:6a00:1390:b0:71e:6f4d:1fa4 with SMTP id d2e1a72fcca58-72030a4b659mr3027019b3a.10.1729677638895;
-        Wed, 23 Oct 2024 03:00:38 -0700 (PDT)
-Received: from localhost.localdomain ([43.154.34.99])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d74cbsm6033316b3a.138.2024.10.23.03.00.37
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 03:00:38 -0700 (PDT)
-From: Jim Zhao <jimzhao.ai@gmail.com>
-To: willy@infradead.org,
-	akpm@linux-foundation.org
-Cc: linux-fsdevel@vger.kernel.org,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Jim Zhao <jimzhao.ai@gmail.com>
-Subject: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write blocking with strictlimit
-Date: Wed, 23 Oct 2024 18:00:32 +0800
-Message-Id: <20241023100032.62952-1-jimzhao.ai@gmail.com>
-X-Mailer: git-send-email 2.25.1
+        d=1e100.net; s=20230601; t=1729677660; x=1730282460;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1AVT/oXvnz327r71R8h8SLtTXDuNUikJe/baXxzlt7M=;
+        b=hHAaml0jwJOOSccA+PF7WIIJXGJSpPOigTPGPad0mpHeYZXbT3XVia2YWdILwVJc8W
+         54GM4IGJjKzgEfqrcFZjTE9ChaYZR1y4ca4Jt5j0Zj7CgvyAlOvij7HLxY5KBdh5bfw+
+         YtQwYXRrumjtGliF6wDdiTgA5SQxZlerazY50qh6aZZtMM5qhe2C3n/RC211XW0wLEhw
+         d9Au0zJZqS7OclVuI8s35GIZGxyhAmHL31E/7qSz9MMArt91kzpyzEIQgRCOTCXSaK5J
+         Lz1/EdVeLpFm038Rpxq/8c+zF8QbMwcMGU85s9hwKhI8fWEoYY02TxtmT9ogC0w6MwMC
+         eJwA==
+X-Forwarded-Encrypted: i=1; AJvYcCVE8iwWPOqkQP+4VfOJWwXxM6wItij044rEyMqAGZIV4pADNBz8QJ+hLP6iBuFUmgJRYL1o6sxrCMwm5kE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFJlCLemJJjJ0MrKIDVmW5kchqjuZ1Msdc3HcFBUentOR+uNdo
+	vJynMiwrtvRUDq8WH43W1xn+SVOlj2rr6vKwQpD8ESn+hFdCR9KmQLRhFw6ZMDznUCIxbibXTDI
+	DhH4Z5IWgCgEPeBdSlwCvrpPM+XSUluoBEUlIOA==
+X-Google-Smtp-Source: AGHT+IHE0gsgDLAMHvDGbxM6ahyc/2CXAluj9jyUvAlvq5X0bwerV4oeMKszRONGYK1KtMvqz8Bpm1IOjWxZhoK3CgU=
+X-Received: by 2002:a2e:d12:0:b0:2fb:357a:be4d with SMTP id
+ 38308e7fff4ca-2fc9d588b91mr13043511fa.43.1729677659658; Wed, 23 Oct 2024
+ 03:00:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241014192930.1539673-1-quic_mojha@quicinc.com>
+In-Reply-To: <20241014192930.1539673-1-quic_mojha@quicinc.com>
+From: Linus Walleij <linus.walleij@linaro.org>
+Date: Wed, 23 Oct 2024 12:00:48 +0200
+Message-ID: <CACRpkdaAVE8VMNCFA4jQ1+YLuC9=4mc9Bp2PRxeNFQoHB+NJrA@mail.gmail.com>
+Subject: Re: [PATCH v3] pinmux: Use sequential access to access desc->pinmux data
+To: Mukesh Ojha <quic_mojha@quicinc.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-With the strictlimit flag, wb_thresh acts as a hard limit in
-balance_dirty_pages() and wb_position_ratio(). When device write
-operations are inactive, wb_thresh can drop to 0, causing writes to
-be blocked. The issue occasionally occurs in fuse fs, particularly
-with network backends, the write thread is blocked frequently during
-a period. To address it, this patch raises the minimum wb_thresh to a
-controllable level, similar to the non-strictlimit case.
+Hi Mukesh,
 
-Signed-off-by: Jim Zhao <jimzhao.ai@gmail.com>
----
- mm/page-writeback.c | 25 ++++++++++++++++++++++---
- 1 file changed, 22 insertions(+), 3 deletions(-)
+On Mon, Oct 14, 2024 at 9:29=E2=80=AFPM Mukesh Ojha <quic_mojha@quicinc.com=
+> wrote:
 
-diff --git a/mm/page-writeback.c b/mm/page-writeback.c
-index 72a5d8836425..f21d856c408b 100644
---- a/mm/page-writeback.c
-+++ b/mm/page-writeback.c
-@@ -917,7 +917,9 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
- 				      unsigned long thresh)
- {
- 	struct wb_domain *dom = dtc_dom(dtc);
-+	struct bdi_writeback *wb = dtc->wb;
- 	u64 wb_thresh;
-+	u64 wb_max_thresh;
- 	unsigned long numerator, denominator;
- 	unsigned long wb_min_ratio, wb_max_ratio;
- 
-@@ -931,11 +933,28 @@ static unsigned long __wb_calc_thresh(struct dirty_throttle_control *dtc,
- 	wb_thresh *= numerator;
- 	wb_thresh = div64_ul(wb_thresh, denominator);
- 
--	wb_min_max_ratio(dtc->wb, &wb_min_ratio, &wb_max_ratio);
-+	wb_min_max_ratio(wb, &wb_min_ratio, &wb_max_ratio);
- 
- 	wb_thresh += (thresh * wb_min_ratio) / (100 * BDI_RATIO_SCALE);
--	if (wb_thresh > (thresh * wb_max_ratio) / (100 * BDI_RATIO_SCALE))
--		wb_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-+	wb_max_thresh = thresh * wb_max_ratio / (100 * BDI_RATIO_SCALE);
-+	if (wb_thresh > wb_max_thresh)
-+		wb_thresh = wb_max_thresh;
-+
-+	/*
-+	 * With strictlimit flag, the wb_thresh is treated as
-+	 * a hard limit in balance_dirty_pages() and wb_position_ratio().
-+	 * It's possible that wb_thresh is close to zero, not because
-+	 * the device is slow, but because it has been inactive.
-+	 * To prevent occasional writes from being blocked, we raise wb_thresh.
-+	 */
-+	if (unlikely(wb->bdi->capabilities & BDI_CAP_STRICTLIMIT)) {
-+		unsigned long limit = hard_dirty_limit(dom, dtc->thresh);
-+		u64 wb_scale_thresh = 0;
-+
-+		if (limit > dtc->dirty)
-+			wb_scale_thresh = (limit - dtc->dirty) / 100;
-+		wb_thresh = max(wb_thresh, min(wb_scale_thresh, wb_max_thresh / 4));
-+	}
- 
- 	return wb_thresh;
- }
--- 
-2.34.1
+> When two client of the same gpio call pinctrl_select_state() for the
+> same functionality, we are seeing NULL pointer issue while accessing
+> desc->mux_owner.
+>
+> Let's say two processes A, B executing in pin_request() for the same pin
+> and process A updates the desc->mux_usecount but not yet updated the
+> desc->mux_owner while process B see the desc->mux_usecount which got
+> updated by A path and further executes strcmp and while accessing
+> desc->mux_owner it crashes with NULL pointer.
+>
+> Serialize the access to mux related setting with a mutex lock.
+>
+>         cpu0 (process A)                        cpu1(process B)
+>
+> pinctrl_select_state() {                  pinctrl_select_state() {
+>   pin_request() {                               pin_request() {
+>   ...
+>                                                  ....
+>     } else {
+>          desc->mux_usecount++;
+>                                                 desc->mux_usecount && str=
+cmp(desc->mux_owner, owner)) {
+>
+>          if (desc->mux_usecount > 1)
+>                return 0;
+>          desc->mux_owner =3D owner;
+>
+>   }                                             }
+>
+> Signed-off-by: Mukesh Ojha <quic_mojha@quicinc.com>
 
+Sorry for taking so long!
+
+I was turning the patch over in my head for the fear that something will
+regress but I can only conclude that we need to test this in-tree, so
+patch applied so we can get some rotation and boot tests in linux-next!
+
+Yours,
+Linus Walleij
 
