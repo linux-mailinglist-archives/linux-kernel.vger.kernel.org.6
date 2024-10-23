@@ -1,47 +1,69 @@
-Return-Path: <linux-kernel+bounces-378297-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378299-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4452E9ACDD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:01:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18A659ACE05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E44F8B278B9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:01:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C32FB1F21E10
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:05:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2ACD02003C3;
-	Wed, 23 Oct 2024 14:52:28 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4247F1D043F;
+	Wed, 23 Oct 2024 14:54:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmx.net header.i=alexander.hoelzl@gmx.net header.b="HKbRbG+w"
+Received: from mout.gmx.net (mout.gmx.net [212.227.15.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B731D20011A;
-	Wed, 23 Oct 2024 14:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D6DE1CB529;
+	Wed, 23 Oct 2024 14:54:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.15.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695147; cv=none; b=msaIo2G5FwDduqJkLCEktqYa29D1JoXDqumJi+oJBxyIvgH2Tyr+47nif9KrDe3qMU/pCao1p2DOIRg1F15QcE6nVGbYsXCmbaq2FIA3IIghuuajGiOraUlJ+q/MsKBT735OF2XjrPBYmKUHdxXYl3JtFNhG7zLuw7c1Xpm6SYY=
+	t=1729695250; cv=none; b=ZB96J63UXFOonDbi2a3xIZe/xahmuOSGzGHwCLr9P/VV1Zw7DKht8U6C3bMCrnzDNvWihDhyWJQDgE0Z40d0ExZO5xFgpruQqjjhamqEBs1XK6VHdI6lkaF/1ZUiallH10w/daSf/95O58+jhCVlLw8OjCKAWcvdlZXzTZIEJjA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695147; c=relaxed/simple;
-	bh=d6b2MF8VL+p7bkGL8vqC1T6bqyedUz2TzHjaxlQoFoY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tAXCvdmDwEjclWM4pZHEOUBPhYobfcpMySjDC1xodLXD+fqkafD6d6tsxx/wiUTIlgGgGm0DMT6tfo2+f9v+NVx7PYo3pUKzLQamrsZDjHHxCF3mfb3a0WRoOPIVvdY4TQiLCscc5wWULsFW0ltp2eRxOo3ezrGH5R1Xduu8IZo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DAC17C4CEC6;
-	Wed, 23 Oct 2024 14:52:23 +0000 (UTC)
-From: Huacai Chen <chenhuacai@loongson.cn>
-To: Linus Torvalds <torvalds@linux-foundation.org>,
-	Arnd Bergmann <arnd@arndb.de>,
-	Huacai Chen <chenhuacai@kernel.org>
-Cc: loongarch@lists.linux.dev,
-	linux-arch@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Guo Ren <guoren@kernel.org>,
-	Xuerui Wang <kernel@xen0n.name>,
-	Jiaxun Yang <jiaxun.yang@flygoat.com>,
-	Huacai Chen <chenhuacai@loongson.cn>
-Subject: [GIT PULL] LoongArch fixes for v6.12-rc5
-Date: Wed, 23 Oct 2024 22:52:12 +0800
-Message-ID: <20241023145214.2559236-1-chenhuacai@loongson.cn>
-X-Mailer: git-send-email 2.43.5
+	s=arc-20240116; t=1729695250; c=relaxed/simple;
+	bh=sUTQ89VuWsBilXCnlJLOKScXnZBA5syrdYKolmmZkio=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=FKQwdCO9CIJMbbl3JieTMTWy06o4ClUT7/fU2rKbYoTLpcKgviQ6zJ5xxR9vbeXgD+0SKDV55qpVmVsNICLuq0+09VsYqPL4jW5OBXzeChcHZkQJTeEl4V39/aYUAWUin3LGMJ48Jt+gfngzbwvG2vD9ObP3uqXzc5xsuQ5pY9Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net; spf=pass smtp.mailfrom=gmx.net; dkim=pass (2048-bit key) header.d=gmx.net header.i=alexander.hoelzl@gmx.net header.b=HKbRbG+w; arc=none smtp.client-ip=212.227.15.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.net
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.net;
+	s=s31663417; t=1729695230; x=1730300030;
+	i=alexander.hoelzl@gmx.net;
+	bh=sUTQ89VuWsBilXCnlJLOKScXnZBA5syrdYKolmmZkio=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-Id:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=HKbRbG+wf1O+zAjGu49gSHjrvaTe5Ac1MQ7wX42mwTlVEYogtTmodLk25qQfGa+r
+	 cnTtsZ1mvO1HTt6MVm+vGq0zl03p6QzwiS34bbbCDj37cXw0Ngg71Bq4Fo1fcfuR6
+	 TgGqdZuKbHbwRMqTKSPDlQbnAkLwhVhBM2iucHsqjiYfABK/zjJEK5RgECG3clEj0
+	 DIB8RS9VjEuDEgAGZdVLsnKM2KvvfiYu3D8uEiXnU2BsF88WiWA8ON2DdlOfHSZo0
+	 jrK3UY8b74N5ED39VVGqKMOj0zL0uKy68avnuD+/WCT5Ha2kgXCe77uikb9hBFNxc
+	 29N+dSa25YNZP1nv+g==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from localhost.localdomain ([213.30.210.165]) by mail.gmx.net
+ (mrgmx004 [212.227.17.190]) with ESMTPSA (Nemesis) id
+ 1MvsIv-1tvzuj0Jxn-00vtFR; Wed, 23 Oct 2024 16:53:50 +0200
+From: =?UTF-8?q?Alexander=20H=C3=B6lzl?= <alexander.hoelzl@gmx.net>
+To: robin@protonic.nl,
+	socketcan@hartkopp.net,
+	mkl@pengutronix.de,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	corbet@lwn.net
+Cc: =?UTF-8?q?Alexander=20H=C3=B6lzl?= <alexander.hoelzl@gmx.net>,
+	kernel@pengutronix.de,
+	linux-can@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] Fix error in J1939 documentation.
+Date: Wed, 23 Oct 2024 16:52:57 +0200
+Message-Id: <20241023145257.82709-1-alexander.hoelzl@gmx.net>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,58 +71,52 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:fz15U7KeG+KVT4HSSSV/nF9ie7V0iXvroEQUuHh3eFKBXWo2VYX
+ TbHRTiag//raFjwYWWSJGQ3Ys7N3ybczMcxyUbkqX9zkcA+mVmvad0iA4cfKfU/C6tIFacF
+ UiiHa7CCCkogWGgVjxQyIsLVYEwHxeGviglmrPGdgOtLIvaQ7Im5oCngxmBcxZVsnM04rX5
+ M0XEY9Z9Ty7p5kspJVRsA==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:UcqbzR29RSE=;I0wa9TS6hlJ6OukFRgyDN4FuYd1
+ lnLCsuKsDLFAo9D325bsXiqAA8+yXe2JntzRgI76R5Nzi66NJ9wQpfk2LLV1hGGKWUTrpDGC4
+ yh2nrBB75AFjNrSxayqMRx/zmPBIjT61RQc5PnYsnu1kIBbWl5JRpAB9c8Ya2eYaddfW4FTdU
+ Kzsr2j83Tnhw/uYtAFudeNuUkDQhk40P0BzMNqm5ZuVI/4fHf3WlFndreVrwi7V+xWfabj5S1
+ t1bPiCQ28NdfdGiCHZRDH6+iDb/7sOkPKAXCMLghlbguzMf8UXQvXEf2Nn3prvUbWHhP97Gjp
+ /bkam0ZY+H4xkErhha5+2FF/Sbjr+BoOFwd2VvCMENP69qig58oNJb2RN/SGaQCn2EGNaej9k
+ H+eXvyBT3qaBmjkl6K3TakhrpRGSCVMNCmc6ai2QwpJe/Oh28RN4CurnqZXoPGgrcWzuFvYN3
+ bZHzSgzmteWNyZoC7XebTMH8ahUahXpBXL8TZWnhOUmoqpl24fzDdIG6JKoBCkoIXJC4XeaNS
+ w+7AQwSIzivIsF9zr5iI0QcQDwJQs0OEZ+QArr8kWRMaQvyI+SCURD2Q/WiFm62ukE+bQSKFE
+ 3d+L9DKQ7XJax/2kLnua6Ug4lu+V98ik7szpQPqVZ6Y84ZR9fgBYbH54PQT6gSqja/fgvkPIy
+ M1vgx7Y4S+qZFjwX2kBdgTkeCmQX3kXtiAwvL2N93tgwmASCGgz66tf7nDSGRQ6s2IynGMLbn
+ z1/fd0nBKu9wrAQg7DQW4iF78jpzavPWkUJvWdDYLsi2iyR/dkSZWxz1KwCpr8JPhmcJoLlGD
+ ThBBjIwSHlrxII1R0e/c6Qww==
 
-The following changes since commit 42f7652d3eb527d03665b09edac47f85fb600924:
+The description of PDU1 format usage mistakenly referred to PDU2 format.
 
-  Linux 6.12-rc4 (2024-10-20 15:19:38 -0700)
+Signed-off-by: Alexander H=C3=B6lzl <alexander.hoelzl@gmx.net>
+=2D--
+ Documentation/networking/j1939.rst | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-are available in the Git repository at:
+diff --git a/Documentation/networking/j1939.rst b/Documentation/networking=
+/j1939.rst
+index e4bd7aa1f5aa..544bad175aae 100644
+=2D-- a/Documentation/networking/j1939.rst
++++ b/Documentation/networking/j1939.rst
+@@ -121,7 +121,7 @@ format, the Group Extension is set in the PS-field.
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/chenhuacai/linux-loongson.git tags/loongarch-fixes-6.12-1
+ On the other hand, when using PDU1 format, the PS-field contains a so-cal=
+led
+ Destination Address, which is _not_ part of the PGN. When communicating a=
+ PGN
+-from user space to kernel (or vice versa) and PDU2 format is used, the PS=
+-field
++from user space to kernel (or vice versa) and PDU1 format is used, the PS=
+-field
+ of the PGN shall be set to zero. The Destination Address shall be set
+ elsewhere.
 
-for you to fetch changes up to 73adbd92f3223dc0c3506822b71c6b259d5d537b:
+=2D-
+2.34.1
 
-  LoongArch: KVM: Mark hrtimer to expire in hard interrupt context (2024-10-23 22:15:44 +0800)
-
-----------------------------------------------------------------
-LoongArch fixes for v6.12-rc5
-
-Get correct cores_per_package for SMT systems, enable IRQ if do_ale()
-triggered in irq-enabled context, and fix some bugs about vDSO, memory
-managenent, hrtimer in KVM, etc. 
-----------------------------------------------------------------
-Bibo Mao (1):
-      LoongArch: Set initial pte entry with PAGE_GLOBAL for kernel space
-
-Huacai Chen (5):
-      LoongArch: Get correct cores_per_package for SMT systems
-      LoongArch: Enable IRQ if do_ale() triggered in irq-enabled context
-      LoongArch: Set correct size for vDSO code mapping
-      LoongArch: Make KASAN usable for variable cpu_vabits
-      LoongArch: KVM: Mark hrtimer to expire in hard interrupt context
-
-Thomas Weißschuh (1):
-      LoongArch: Don't crash in stack_top() for tasks without vDSO
-
-Yanteng Si (1):
-      LoongArch: Use "Exception return address" to comment ERA
-
- arch/loongarch/include/asm/bootinfo.h  |  4 ++++
- arch/loongarch/include/asm/kasan.h     |  2 +-
- arch/loongarch/include/asm/loongarch.h |  2 +-
- arch/loongarch/include/asm/pgalloc.h   | 11 +++++++++++
- arch/loongarch/include/asm/pgtable.h   | 35 +++++++---------------------------
- arch/loongarch/kernel/process.c        | 16 +++++++++-------
- arch/loongarch/kernel/setup.c          |  3 ++-
- arch/loongarch/kernel/traps.c          |  5 +++++
- arch/loongarch/kernel/vdso.c           |  8 ++++----
- arch/loongarch/kvm/timer.c             |  7 ++++---
- arch/loongarch/kvm/vcpu.c              |  2 +-
- arch/loongarch/mm/init.c               |  2 ++
- arch/loongarch/mm/pgtable.c            | 20 +++++++++++++++++++
- include/linux/mm.h                     |  3 ++-
- mm/kasan/init.c                        |  8 +++++++-
- mm/sparse-vmemmap.c                    |  5 +++++
- 16 files changed, 85 insertions(+), 48 deletions(-)
 
