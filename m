@@ -1,89 +1,95 @@
-Return-Path: <linux-kernel+bounces-378533-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378534-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 557DE9AD1F1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:59:52 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DE26D9AD202
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:00:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C30C11F25379
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:59:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 94F7C1F28E5D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:00:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FAF91D049A;
-	Wed, 23 Oct 2024 16:51:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 27F341D0DD5;
+	Wed, 23 Oct 2024 16:53:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dM7O36Pt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="d+un5T1M"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B967D1CF5C9;
-	Wed, 23 Oct 2024 16:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD201CEE97;
+	Wed, 23 Oct 2024 16:53:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702312; cv=none; b=CFulgkmViC8E/HuxB5uvGcg9I+t9oVpacrcTkyqR0xkpxU1THLNygFltbyEedKuZ6XD2gSD5JByN2TFYXxqlgHcnQu4VkU263PtosNMDAUJvRoL9d648qtPDoPIqNnizJgeVowRwWA+q3Z0+HgZ5p520dHvOL6QhqfBDFsPhY8E=
+	t=1729702417; cv=none; b=Qinx7CJVxuwt7oaVSpxVvu8Td6XZis9CcqnkrOtPqX2HrEv7caEmKFWCtyLxOZAgPrp2Tjavc7e9zHgFi5asBJ7gqSYxgDb2TdA7irOoxfzEn9699HqcTF2/aZ3XrRJsLKZEkMrfeEmzfCpWxthAmvX6DkPK90Qh+mHV12GLqAM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702312; c=relaxed/simple;
-	bh=esYxzWHZfczmmBYy5i8nzTkBzAx/4wwloNxA4P7+EXM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=E5D0AEts5JcZbBgHIdI+d3/bj5ryTy7xSDR5G10tAisE6G0DjRxPVu/RaRWXm/Gouyh/HZKoUazetW9LYSGE47HIB7wIuw9SLntLylZIZGyQ+/tWw1wYIR5nmQCtCjTt/vSJmy9CqXAAdir0qz9I4euNEiq6d69hfjTyQBEBZn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dM7O36Pt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42C0EC4CEC6;
-	Wed, 23 Oct 2024 16:51:52 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729702312;
-	bh=esYxzWHZfczmmBYy5i8nzTkBzAx/4wwloNxA4P7+EXM=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=dM7O36PtRo09sWkvc2ow6OuLnIaTJkCdTCDXsqmpG6ZLkMxpDFNugKGSRklfWfLmT
-	 XJCtAvmJDGSJq/Tft190tSWT+odHU89RIcT1vCbaEkopGhuldwVYjYF51SWMTsvNXt
-	 vlR/KFDAT+8qK0puqMkjIf5G3JdR/zHLSPCMmsB8rf1cPO1rQpYS5WRpIRrHo3ifJC
-	 VwovfcsKMOj8Gvei51sC6/Bd2XKHj0OTGlLhPVFgiotnYlVMUCKWpu05AeFGoYbUFQ
-	 6Q+/srqxp0ocNYKfDeRMWboGzd2T7LeYQEukSLcHR2ZCxlp2/wsBN+aLQkpKx/zo5P
-	 0ZUaz5N3aH01g==
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539fe76e802so8149737e87.1;
-        Wed, 23 Oct 2024 09:51:52 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU07g0q62nzBJlDbEBSkRoY6bxWmDfgrdeJsGBFzHY0vjQgZz8JVY2lpgvWTa+Q6SeonLyF/26xYb0Cc2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxpHMC0F6ATwAendh3d1NQgjv7xj7iPCA3VyuLN4P78MoCiEV2k
-	sXXmwo6rlnXrisN6AimtyZ/Hwh2UOy+KCqCspvProKTSB5EcyFmoN7h8gDpLJiZMpGSBJ4ZqqGj
-	1LZ3/3xOfVvEe5gfLFd85DxX/vSY=
-X-Google-Smtp-Source: AGHT+IExaEg1MkxfPeCVBCY3VFdkujiXY7FIOzJD78B79Nwzh3cKlreBu/qzTE3sBGQzbw/Uo4CRstQges9g6E/oLG0=
-X-Received: by 2002:a05:6512:334e:b0:536:a695:9429 with SMTP id
- 2adb3069b0e04-53b1a2f4ec8mr1484438e87.10.1729702310984; Wed, 23 Oct 2024
- 09:51:50 -0700 (PDT)
+	s=arc-20240116; t=1729702417; c=relaxed/simple;
+	bh=1qcv0aErvLx2qKUOxUQo8pZ6y6kXqoM8WD0SFo5sEHg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qE++oEPnNN+BHtJZOtCP1wRvLryOhpLTiRH8lQMvt7Q7dbW0HXtao/enj6kto4SUlbPh2LEZZEYJ2FXLakBMfF1Ow9vCWDVmZ0A9kp6Z4ZdBHqEdWtWLgHyFo4kwNES2YaZEtRKoslBEDg342H1rSlzNcpZIgNhpD4i0x5NJSog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=d+un5T1M; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=iAxKTtO4kugd7yM0ZwL4yTamECyLObrP7YDrcb1pBYU=; b=d+un5T1MRvoFgGi2vvDYjQNQGu
+	cG9TbCVi3QEkrBQ20xMjkz3Dr9do61nv/DV6xicVCFGjY/1BlYjm2UZW5kGBNqY9SbKKX/f8cxkQz
+	JQVXS2Vk5bE5vAkVFiyG/PACeHqWSXjYdkhMQnqtiOc6AlAIl+k8bsClGn3T2DjMp4jU=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t3ebi-00Azfr-AO; Wed, 23 Oct 2024 18:53:14 +0200
+Date: Wed, 23 Oct 2024 18:53:14 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Christian Marangi <ansuelsmth@gmail.com>
+Cc: Florian Fainelli <f.fainelli@gmail.com>,
+	Vladimir Oltean <olteanv@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Heiner Kallweit <hkallweit1@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+	linux-arm-kernel@lists.infradead.org,
+	linux-mediatek@lists.infradead.org, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [net-next RFC PATCH v2 3/3] net: phy: Add Airoha AN8855 Internal
+ Switch Gigabit PHY
+Message-ID: <87aad5ff-4876-4611-8cf8-5c20df3559b3@lunn.ch>
+References: <20241023161958.12056-1-ansuelsmth@gmail.com>
+ <20241023161958.12056-4-ansuelsmth@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4960180.31r3eYUQgx@devpool47.emlix.com> <3592638.iIbC2pHGDl@devpool47.emlix.com>
-In-Reply-To: <3592638.iIbC2pHGDl@devpool47.emlix.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 24 Oct 2024 01:51:14 +0900
-X-Gmail-Original-Message-ID: <CAK7LNAQMLZK5jG8zKty17AFJWSDwq-ihEVBYVRpnXN0X_MFUbw@mail.gmail.com>
-Message-ID: <CAK7LNAQMLZK5jG8zKty17AFJWSDwq-ihEVBYVRpnXN0X_MFUbw@mail.gmail.com>
-Subject: Re: [PATCH 7/7] kconfig: qconf: simplify character replacement
-To: Rolf Eike Beer <eb@emlix.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023161958.12056-4-ansuelsmth@gmail.com>
 
-On Wed, Oct 23, 2024 at 3:39=E2=80=AFPM Rolf Eike Beer <eb@emlix.com> wrote=
-:
->
-> Replace the hand crafted lookup table with a QHash. This has the nice ben=
-efit
-> that the added offsets can not get out of sync with the length of the
-> replacement strings.
->
-> Signed-off-by: Rolf Eike Beer <eb@emlix.com>
-> ---
+> +	/* Enable Asymmetric Pause Capability */
+> +	ret = phy_set_bits(phydev, MII_ADVERTISE, ADVERTISE_PAUSE_ASYM);
+> +	if (ret)
+> +		return ret;
 
-Applied to linux-kbuild. Thanks!
+The PHY driver alone does not decide this. The MAC driver needs to
+indicate it supports asym pause by calling phy_supports_asym_pause().
 
+> +
+> +	/* Disable EEE */
+> +	ret = phy_write_mmd(phydev, MDIO_MMD_AN, MDIO_AN_EEE_ADV, 0);
+> +	if (ret)
+> +		return ret;
 
+Again, the core code should handle this, unless EEE is broken and you
+need to force it off.
 
---=20
-Best Regards
-Masahiro Yamada
+	Andrew
 
