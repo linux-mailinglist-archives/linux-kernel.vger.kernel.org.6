@@ -1,134 +1,153 @@
-Return-Path: <linux-kernel+bounces-378856-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378857-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 012909AD65B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:08:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C93EC9AD65F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:09:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 22F4D1C20BFC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:08:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 874EC283020
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:09:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07A61E7C2C;
-	Wed, 23 Oct 2024 21:08:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F5A1E5731;
+	Wed, 23 Oct 2024 21:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IVeWapD6"
-Received: from mail-lj1-f177.google.com (mail-lj1-f177.google.com [209.85.208.177])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Xsp8L6Yz"
+Received: from mail-wm1-f48.google.com (mail-wm1-f48.google.com [209.85.128.48])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F91E1E5735
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:08:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A5B1E1C0E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:09:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.48
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729717717; cv=none; b=A6A/3ySEjm0pshrrVnH6RNIPoktdOb/Wc0s1bCsS7Ll92e8NE6wpJTLjd20bHbkqUZjbUdCBCw0KlaECIdnBOj6S4WhA5TkdAAZ/hdjZHRZ6bIPBBMQpEGdO2I1LFbwTuk8AWFNe5cBQ8P35mX/IjeNrcAjL/K4RPm/0hEvumYc=
+	t=1729717772; cv=none; b=Jw+bGy6mNr84QGPWP0A26/Wmr6mmAgLSs4UEFmwz4D9Mq7M/VyV0T92okN8ahvT1TGbAO75ZRhn2AEdam0FzPiY1fg+0CSwmwgavSK2CXiHqDtEhWTZjPRUrt932yOXC8d0QeM+6Wlp/bPI9IniS6IWZSDVh99eoixo08svuHO4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729717717; c=relaxed/simple;
-	bh=b3nK3xL8CHApXqs5rULzMwhBft2HaDSioPCi+nr2eB4=;
-	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:References:
-	 From:In-Reply-To; b=UXi5bJKPtDnH5zOv9lzOQkitdUin/Ds7w2r8qIsmHruxsCB7QV8sKqaNQWeIZV4oQv78qKC+oax1eiO2TVOWA6g79WNo/pX7k7/K5ZBQ3K9fXovWlCwbCPmpy+QBcOwrX8Yf9VueBkQE6DPxxa3zzTPbBZArjsH1g8N4EBD9olQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IVeWapD6; arc=none smtp.client-ip=209.85.208.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f177.google.com with SMTP id 38308e7fff4ca-2fb58980711so1726441fa.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:08:35 -0700 (PDT)
+	s=arc-20240116; t=1729717772; c=relaxed/simple;
+	bh=XonaIiFrBJ4wGnJLEIHPTYo5mO+JgjFRx+Tk2sZ7yvM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Nkl7dqRsXSITFnM7NAPmv386Al6/8hzeal/1OGwQcfZ1l5t+5WAZdUJYpj9mgXEb3Hg7JkmFOtcMjPhN7D2QU+0QoPZQM/m04hRy95vmNKV78m45/gaitIpgm5aNFdS7UhE/tWVL+dNqRYKBj1TPC3IDVGQ8A9sjWihqIKZHL2U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Xsp8L6Yz; arc=none smtp.client-ip=209.85.128.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f48.google.com with SMTP id 5b1f17b1804b1-43153c6f70aso16175e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:09:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729717714; x=1730322514; darn=vger.kernel.org;
-        h=in-reply-to:content-language:from:references:to:subject:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=b3nK3xL8CHApXqs5rULzMwhBft2HaDSioPCi+nr2eB4=;
-        b=IVeWapD6dWLupvQWHZkb6ykob5EpSxORHg1q4VqPBfY5P2X/ah8mNQV1AcQM4YzPbR
-         2xyi9+W8ZFsMTQVNj7i6QajJGx3Dg2aNiBI6RJnqwWxhZDEe1CCmDI7mKpxvFN9uyiou
-         JqwIyAVWYq/fN9eSScGiNHSbiv5PBWbu4DEzvcVOGUkNV5j+c2zdIWkh5GShU9hVwfOO
-         skyucXdViSKwzhY6iflYHlfULPF/KPjHsnDbu1l7Iqb19Tw01QNZ4LHqsuO9K09gAadT
-         bG508nlWItsDCcs1rkONBmuIFB0X30dYWms0quYSQteLTZBs5rYV+wBu1ql/zhls0BNF
-         zKKA==
+        d=google.com; s=20230601; t=1729717768; x=1730322568; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=D1Hc6TqTcrhd8OnsnaGs3m8D6+LMkz7l3Gr9ozPNQss=;
+        b=Xsp8L6Yz321nUWxg7ZCjxmGGXzkIIgVdqRqBKSGsvxqERJLvMhmAHzGRmSriXRgHBi
+         kaC8brKh+4hWu9e65NIvSrSjBlQtxyrb3n94aKWyU4Pisizh8E6WlJ7QyXyfSgp4g667
+         fQS6BoXn+ol9CqgkKIzg9d67h87Joh+5bhND6JRCo3KrbBf7I2ejAydN3i3+N1QNOCsG
+         M0bYgZXAn5/2E1JLf+S4Av67EhRY69y5kpWB4sCH/rkPQh96bW5YGVpcVVbbYqVtjVJ0
+         XalGjcgg2jrztH5YSaokIb6sOVEh+NAZtC3E/4XAtYHmeWV2ehrC81b3o4NHmbRJ+NCE
+         MUrQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729717714; x=1730322514;
-        h=in-reply-to:content-language:from:references:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=b3nK3xL8CHApXqs5rULzMwhBft2HaDSioPCi+nr2eB4=;
-        b=HlwFKSR5g0sPwFof2PrvUDrajObeOB0P/YPV9LEv6cHwmuBJ+sprqw/MvwVL0cR2dY
-         DNfiJsFoYYiE1Jn4WwYUcPeiBtyGX8QHp+ubZW3Se+NkqVfEKfHEWLdZ0QVEaRdV9ctt
-         PmhbqtqYRY3Lp+zzDcRSWHCQYtSyH4tE3k1BFhoMnLLjKVyWOgh4HUmecDzTUmDti00J
-         j4/bGFWpBdL66SuiqpnZTaZd1KK95v70yjcX6vZZVT3NJRWeL8aancTqxGOdT2xj5Ukf
-         aetGAPaCn9rzd5B6WLYkI0n9HqpFabGIyCpyOV5I2jH/wuisinAy4TntJS4Zb1FEvkI0
-         V8mQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUwgVLFHWa7pMGSirQxP3HN9kg/YMLCE+FqDXzd9ThzUPctL6ic8qOHVeObFCWzx2OPRvMTCnAYadoQKI0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwufqMsSXhF5n8yLX9pMTVgibn9jeEvl2eKVnfURDVMT25PN2Cw
-	RC+843nskDaWLliSQbNNwTwWolhk7h77L8wCvjJuscsO9cTzuE/M
-X-Google-Smtp-Source: AGHT+IEvIK/lvfUAdzaNIBSHssBvKA9Niqjkq+4ARgeBI9d7WVUJIyH6n5q0va+eImXlpbcKzDnxKg==
-X-Received: by 2002:a2e:bc23:0:b0:2f3:f358:8657 with SMTP id 38308e7fff4ca-2fc9d5f6245mr22097731fa.44.1729717713308;
-        Wed, 23 Oct 2024 14:08:33 -0700 (PDT)
-Received: from ?IPV6:2a01:e11:5400:7400:ce29:8129:5435:b143? ([2a01:e11:5400:7400:ce29:8129:5435:b143])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c737c4sm4818879a12.96.2024.10.23.14.08.31
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 14:08:32 -0700 (PDT)
-Content-Type: multipart/mixed; boundary="------------ETU8XyqWyoGmYdMfTxyYuL9T"
-Message-ID: <f605e8cd-2229-45d0-88c7-3dcae7eaa9e1@gmail.com>
-Date: Wed, 23 Oct 2024 23:08:30 +0200
+        d=1e100.net; s=20230601; t=1729717768; x=1730322568;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=D1Hc6TqTcrhd8OnsnaGs3m8D6+LMkz7l3Gr9ozPNQss=;
+        b=eRNPPB6H81wIADxmljm4g1V+LfYiXUnh46FG57SAkqo+An3xHpJ+E97bSeNyLRyHh7
+         TI9i/OhGRcg2TLtA7iuWHzJZEltBJOZPpH7vG5nBJZdhwAAA7MtBlRflyck/UyBB1QyP
+         ywe4kLCtKlQY3oMYcWA1/o5cwiDi+7R5ElIOjmhktLHvM9iRNO4IKEaR7WIThGvg8D4l
+         /BTv+sX6dVbem6s/z76oxGsuRVKgw9AM1b77FdqV1LHL/SWMvCxyiORCTdkR4zIS5A+r
+         ziMXSUk5v6VY3POP49XygxxoPq7eFmZu9123qhAEIIC87J6lb2i56CYrJeuKn4zsuXLI
+         2PJg==
+X-Forwarded-Encrypted: i=1; AJvYcCV8tixUbNbQEM3tdpZ1NBkZc+vv1rU6T72K8lJQUyAdSl1aTbmDErZX0FsHuX4cd64gLIjZ+/DeDjwT0As=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8Wp0ie1b0DiDFqPnuJ9Y9fpj5gcaHH4MHuKGk3da83MRBUy6b
+	+ehGZiZadbhsABdxayQuerN3A0QBRKhwn4ClM1wLUjc+bBZ1V80ZtzbcGqWpenTJB04TZSDzp9X
+	YH+Bt13MVbaa7T6IWjikLJ6LRzQNkoDwhv3cB
+X-Google-Smtp-Source: AGHT+IG7lHrCmkHrUK87/No/R3m5mQ51hRtR/sVg3+psInFw5wdf+0mCw9HD7V91WPK90Gie/P5wYbHJdFXnglBqC8A=
+X-Received: by 2002:a05:600c:b8d:b0:42b:a961:e51 with SMTP id
+ 5b1f17b1804b1-4318a4ace7bmr1380915e9.0.1729717768323; Wed, 23 Oct 2024
+ 14:09:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in
- validate_sb_layout
-To: syzbot <syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com>,
- linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-References: <671955c2.050a0220.1e4b4d.0095.GAE@google.com>
-From: Gianfranco Trad <gianf.trad@gmail.com>
-Content-Language: en-US, it
-In-Reply-To: <671955c2.050a0220.1e4b4d.0095.GAE@google.com>
+References: <20241023170759.999909-1-surenb@google.com> <20241023170759.999909-6-surenb@google.com>
+ <20241023140017.e165544bf20bcb0c79bfee57@linux-foundation.org>
+In-Reply-To: <20241023140017.e165544bf20bcb0c79bfee57@linux-foundation.org>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 23 Oct 2024 14:09:12 -0700
+Message-ID: <CAJuCfpH9yc2kYGZqYjYPWbApy05yqiONqziBQ+qF+R3nZRL56w@mail.gmail.com>
+Subject: Re: [PATCH v4 5/6] alloc_tag: introduce pgtag_ref_handle to abstract
+ page tag references
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
+	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
+	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
+	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
+	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
+	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, urezki@gmail.com, hch@infradead.org, petr.pavlu@suse.com, 
+	samitolvanen@google.com, da.gomez@samsung.com, yuzhao@google.com, 
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, linux-modules@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This is a multi-part message in MIME format.
---------------ETU8XyqWyoGmYdMfTxyYuL9T
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+On Wed, Oct 23, 2024 at 2:00=E2=80=AFPM Andrew Morton <akpm@linux-foundatio=
+n.org> wrote:
+>
+> On Wed, 23 Oct 2024 10:07:58 -0700 Suren Baghdasaryan <surenb@google.com>=
+ wrote:
+>
+> > To simplify later changes to page tag references, introduce new
+> > pgtag_ref_handle type. This allows easy replacement of page_ext
+> > as a storage of page allocation tags.
+> >
+> > ...
+> >
+> >  static inline void pgalloc_tag_copy(struct folio *new, struct folio *o=
+ld)
+> >  {
+> > +     union pgtag_ref_handle handle;
+> > +     union codetag_ref ref;
+> >       struct alloc_tag *tag;
+> > -     union codetag_ref *ref;
+> >
+> >       tag =3D pgalloc_tag_get(&old->page);
+> >       if (!tag)
+> >               return;
+> >
+> > -     ref =3D get_page_tag_ref(&new->page);
+> > -     if (!ref)
+> > +     if (!get_page_tag_ref(&new->page, &ref, &handle))
+> >               return;
+> >
+> >       /* Clear the old ref to the original allocation tag. */
+> >       clear_page_tag_ref(&old->page);
+> >       /* Decrement the counters of the tag on get_new_folio. */
+> > -     alloc_tag_sub(ref, folio_nr_pages(new));
+> > -
+> > -     __alloc_tag_ref_set(ref, tag);
+> > -
+> > -     put_page_tag_ref(ref);
+> > +     alloc_tag_sub(&ref, folio_nr_pages(new));
+>
+> mm-stable has folio_size(new) here, fixed up.
 
-#syz test
---------------ETU8XyqWyoGmYdMfTxyYuL9T
-Content-Type: text/x-patch; charset=UTF-8;
- name="0001-bcachefs-Fix-invalid-shift-in-validate_sb_layout.patch"
-Content-Disposition: attachment;
- filename*0="0001-bcachefs-Fix-invalid-shift-in-validate_sb_layout.patch"
-Content-Transfer-Encoding: base64
+Oh, right. You merged that patch tonight and I formatted my patchset
+yesterday :)
+Thanks for the fixup.
 
-RnJvbSBjNmQ2MjE1ZDY2ZTliZDNkMTBhMTFhOGI5NDAyNDZmZGEwNDk0ZjMwIE1vbiBTZXAg
-MTcgMDA6MDA6MDAgMjAwMQpGcm9tOiBHaWFuZnJhbmNvIFRyYWQgPGdpYW5mLnRyYWRAZ21h
-aWwuY29tPgpEYXRlOiBXZWQsIDIzIE9jdCAyMDI0IDIzOjAxOjExICswMjAwClN1YmplY3Q6
-IFtQQVRDSF0gYmNhY2hlZnM6IEZpeCBpbnZhbGlkIHNoaWZ0IGluIHZhbGlkYXRlX3NiX2xh
-eW91dCgpCgpTaWduZWQtb2ZmLWJ5OiBHaWFuZnJhbmNvIFRyYWQgPGdpYW5mLnRyYWRAZ21h
-aWwuY29tPgotLS0KIGZzL2JjYWNoZWZzL2VycmNvZGUuaCAgfCAxICsKIGZzL2JjYWNoZWZz
-L3N1cGVyLWlvLmMgfCA1ICsrKysrCiAyIGZpbGVzIGNoYW5nZWQsIDYgaW5zZXJ0aW9ucygr
-KQoKZGlmZiAtLWdpdCBhL2ZzL2JjYWNoZWZzL2VycmNvZGUuaCBiL2ZzL2JjYWNoZWZzL2Vy
-cmNvZGUuaAppbmRleCA2NDkyNjM1MTZhYjEuLmI2Y2JkNzE2MDAwYiAxMDA2NDQKLS0tIGEv
-ZnMvYmNhY2hlZnMvZXJyY29kZS5oCisrKyBiL2ZzL2JjYWNoZWZzL2VycmNvZGUuaApAQCAt
-MjIyLDYgKzIyMiw3IEBACiAJeChCQ0hfRVJSX2ludmFsaWRfc2JfbGF5b3V0LAlpbnZhbGlk
-X3NiX2xheW91dF90eXBlKQkJCVwKIAl4KEJDSF9FUlJfaW52YWxpZF9zYl9sYXlvdXQsCWlu
-dmFsaWRfc2JfbGF5b3V0X25yX3N1cGVyYmxvY2tzKQlcCiAJeChCQ0hfRVJSX2ludmFsaWRf
-c2JfbGF5b3V0LAlpbnZhbGlkX3NiX2xheW91dF9zdXBlcmJsb2Nrc19vdmVybGFwKQlcCisJ
-eChCQ0hfRVJSX2ludmFsaWRfc2JfbGF5b3V0LCAgICBpbnZhbGlkX3NiX2xheW91dF9zYl9t
-YXhfc2l6ZV9iaXRzKSAgICAgXAogCXgoQkNIX0VSUl9pbnZhbGlkX3NiLAkJaW52YWxpZF9z
-Yl9tZW1iZXJzX21pc3NpbmcpCQlcCiAJeChCQ0hfRVJSX2ludmFsaWRfc2IsCQlpbnZhbGlk
-X3NiX21lbWJlcnMpCQkJXAogCXgoQkNIX0VSUl9pbnZhbGlkX3NiLAkJaW52YWxpZF9zYl9k
-aXNrX2dyb3VwcykJCQlcCmRpZmYgLS1naXQgYS9mcy9iY2FjaGVmcy9zdXBlci1pby5jIGIv
-ZnMvYmNhY2hlZnMvc3VwZXItaW8uYwppbmRleCBjZTc0MTBkNzIwODkuLjQ0ZDBhYzliMDBk
-ZCAxMDA2NDQKLS0tIGEvZnMvYmNhY2hlZnMvc3VwZXItaW8uYworKysgYi9mcy9iY2FjaGVm
-cy9zdXBlci1pby5jCkBAIC0yODcsNiArMjg3LDExIEBAIHN0YXRpYyBpbnQgdmFsaWRhdGVf
-c2JfbGF5b3V0KHN0cnVjdCBiY2hfc2JfbGF5b3V0ICpsYXlvdXQsIHN0cnVjdCBwcmludGJ1
-ZiAqb3V0CiAJCXJldHVybiAtQkNIX0VSUl9pbnZhbGlkX3NiX2xheW91dF9ucl9zdXBlcmJs
-b2NrczsKIAl9CiAKKwlpZiAobGF5b3V0LT5zYl9tYXhfc2l6ZV9iaXRzID4gQkNIX1NCX0xB
-WU9VVF9TSVpFX0JJVFNfTUFYKSB7CisJCXBydF9wcmludGYob3V0LCAiSW52YWxpZCBzdXBl
-cmJsb2NrIGxheW91dDogbWF4X3NpemVfYml0cyB0b28gaGlnaCIpOworICAgICAgICAgICAg
-ICAgIHJldHVybiAtQkNIX0VSUl9pbnZhbGlkX3NiX2xheW91dF9zYl9tYXhfc2l6ZV9iaXRz
-OworCX0KKwogCW1heF9zZWN0b3JzID0gMSA8PCBsYXlvdXQtPnNiX21heF9zaXplX2JpdHM7
-CiAKIAlwcmV2X29mZnNldCA9IGxlNjRfdG9fY3B1KGxheW91dC0+c2Jfb2Zmc2V0WzBdKTsK
-LS0gCjIuNDMuMAoK
+>
+> I think we aleady discussed this, but there's a crazy amount of
+> inlining here.  pgalloc_tag_split() is huge, and has four callsites.
 
---------------ETU8XyqWyoGmYdMfTxyYuL9T--
+I must have missed that discussion but I am happy to unline this
+function. I think splitting is heavy enough operation that this
+uninlining would not have be noticeable.
+Thanks!
 
