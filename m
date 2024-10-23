@@ -1,225 +1,211 @@
-Return-Path: <linux-kernel+bounces-378682-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378683-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 81C479AD400
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 264329AD405
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3DB85284508
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4780D1C20AB5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:33:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 824581CEADD;
-	Wed, 23 Oct 2024 18:31:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFC681D1726;
+	Wed, 23 Oct 2024 18:33:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NUXya09z"
-Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b="X52IXmuc"
+Received: from CH5PR02CU005.outbound.protection.outlook.com (mail-northcentralusazolkn19012051.outbound.protection.outlook.com [52.103.20.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BD0312DD88;
-	Wed, 23 Oct 2024 18:31:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729708310; cv=none; b=QXqrQyqqH8isYUBC1nnqGlK42mkIgJdRlm8uuepzNIE/4IB3GwagJJOC1V0zRJLVxEsYmaQxdiXR3t8h2HqDAYf/+nH5GhBiR7HSQ0WuocjNOFJUrSb+FcFAceY2YJn31+t1VghH1kF/PVQznLrsg5MVnhSnOIjoXTjc1taFopE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729708310; c=relaxed/simple;
-	bh=LDeRORQDUCNnPctUdVA1pj24Xt5W/uZx7DafSOrlzv8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=owZ13xpDMBXkkaiakjJHUSvGK49bxYwsrDp5FOaIxmjLeD2sNQh5bk5DXEFmbHGz2oRBvd2n70BTWHjw3twl6inmN6oC9qSQRkVstQ7HdbvY7IkYaoYL73Pwag17yMMs4RQebIf/7Md+OljEozgpUUM1BzeUTnWd4bPJGMH3mq0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NUXya09z; arc=none smtp.client-ip=209.85.218.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a99eb8b607aso809466b.2;
-        Wed, 23 Oct 2024 11:31:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729708307; x=1730313107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=EwQqP5AWVTYwFtS7kdVHGRz6sy9Kk9hcy334T4mBOI8=;
-        b=NUXya09z4QUGSWaQwi7k6IFB6bzNYlphLtelcEbQXnnVNeE6Q7MYewlp2U+NbGExCb
-         XlbdMGZrubi0Wkn7gbdZSLN1nLBVIP7WVQQAGumI6kFhg4FyP9qpJsfDOjoNNut3IO/U
-         caEmFSUBpDmTvnYfnZYavLie86DbtCcvK0aZUxnfuwY3XGp1+ds0PYVs2V+JCaLt8zuN
-         PaznQVuj5ZzHz9jkPAEP6UpOg78PbAvA7/WbhBSVSS/kVXrV274rhJBCmokMjeAgCDPO
-         DzR06FesEi38gi2m6SwSMi29/tJk3v+nnuJ6CjYUgveasJ0OF/867HBLl1BXyNUpKQ+C
-         qpZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729708307; x=1730313107;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=EwQqP5AWVTYwFtS7kdVHGRz6sy9Kk9hcy334T4mBOI8=;
-        b=R2PQoFlaA3ylpRgcOVTqfTWXsFOoearyyKpEMPZdfE7+O9M6tVrA/AGXgOWzP542vM
-         8DuCy2CwlohbQIw1Ec4HY04iDR6arofbkamx+JjdXE+qlLKDKMYVzuh8jXb1f+4lRjFn
-         t52VTtRGahiaFBJEP7zKKV3CY24HUx35NrSpM5Sosc4gwYmWBqgfQ3nUeKzy+fxoMkip
-         U/wb+5a0fWxK5EFwZ6QeJHy8Eo4htSs0O+RlPepoYMXrOTfnE8jAgIC3S5UlQx45cT9q
-         jj+IgyXPgLn+cdeEsQZLeU0VbVrE3+CjckDUHBxjtVgLTUEi91ra8PwcEE0WbTPjdWHe
-         Qy6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUCKaKug3T6eqYPc7AxS/kI64Xfnc0loniE0NvO6wtA8yTJQgzSWXNii7Ut8Zrv2slFUILE0jiFFsA=@vger.kernel.org, AJvYcCXqZpkPqK6NIb1RVUIizvM+/+xR8o/QC9cg01kpTvizoi2lPFm4WeZFTUx0euJLJvc1WyEu447t5uFLvgAi@vger.kernel.org
-X-Gm-Message-State: AOJu0Yze5kTXKH6PLYiHn/n4eg0+hbkjTxTmLuuRTSSLq8ZdF9kjy8au
-	c5iBvGrRDBmSvwmDHyZrCK+y8//EnkCPe9kE3u3UAlo2AR3/F/EC
-X-Google-Smtp-Source: AGHT+IG9s4/MZj0zBY44ccwxDxyYhdj18MMmDIcIqy+iQlSVXJUZgc60wgvOe/Bic0z/OFYSruZKqw==
-X-Received: by 2002:a17:907:a08:b0:a9a:17f5:79a8 with SMTP id a640c23a62f3a-a9abf84a887mr322150666b.13.1729708307157;
-        Wed, 23 Oct 2024 11:31:47 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:ca73])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912edff8sm507478666b.59.2024.10.23.11.31.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 11:31:46 -0700 (PDT)
-Message-ID: <3dca2498-363c-4ba5-a7e6-80c5e5532db5@gmail.com>
-Date: Wed, 23 Oct 2024 19:31:46 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 708101474D9;
+	Wed, 23 Oct 2024 18:32:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.103.20.51
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729708381; cv=fail; b=BennqmzSjn+JjAiTIHN9L7wLj1zco7k3bK5Vyb+jjt3ExFkmFn7GZjREzz500FrOCmwNoLHkqg8FrZEpTggUNmwjH+o1+OA8t3P89fdRm+banc/JaUhr/Z2L3TIxl/UI8Z7girTgIsG+Mo0q9ezytu9W0yn1IM5oEDjje1JtumA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729708381; c=relaxed/simple;
+	bh=whA2JyicEbUahsVBR6dZfHqBhbXai16Lju8waqdEdKw=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=GGmjnLQ4oQgh+YG/9M+9zKaea/5gfkll+iMrXCIBm3oaJnw8BG1O282xEORwUxzTZPP+UDigU4FRNUSC2Myy5JVx84QKzs14PySDBl0ykaS4Zp2mQU3oa4jygxA83czWUNBko8BUmhNuw3ux5Vyhh4h2JUKMqqOQRS84nApxYk8=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com; spf=pass smtp.mailfrom=outlook.com; dkim=pass (2048-bit key) header.d=outlook.com header.i=@outlook.com header.b=X52IXmuc; arc=fail smtp.client-ip=52.103.20.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=outlook.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=outlook.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=o52zE4TwkHqKhbdtYSOJ/bh6XHJkfD4t3MfY04K2LLwKDgHOv9A93OFlimRr9Ezus5Q3mlDvrSxcpbqPMQ/X1sT1sEi5nqlb3V6nGuHr5bGBSsoM1ZVG8t6v5HIY/qE3FgLfiQ0M5Sbm2P+/o0yRadPPg8S5iSMQuvknS4S1PvKFtjp7v2zNDjmfwa3OaM0bQpGnD9Lyj8b5bvqXSTkyMASTeDdon5fcmpPMAc33yvD9SqnnlQBIkLWJ/BrAV8/Y+CkhY9gHAo8XbaTYhNImMJDhHNhBAHQpbKYkotUpFMWqNoBXgE5ZrAx98LaZmsDcsKStOiX6c6zhT+J3WqbwBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=zJIGQUcepuYiINMQxiEXnCpZPvyrJxDKc4luqEkf6Q0=;
+ b=oJTburLRFp4HwGQbvNzyOjztYMW9kv1VnsuLtrt4ZgLsSOLyRWIEx5vtcJ7JmOkYzKib4/Fvy3PIhdgehF4i54zl3yFZYneRu5pYmIMp8YL/iS5gaiDVhbnNfcNFkD/QqFR/h7RiYGe4JkIDUbXMA736zVt7GAlstLSSzEIEtL+me28Le1Uz8b5h+N/qnnWFZDSW4Dg0M1s1Vz8NKjGIrHCZ4yDj7FYG3XbXeCOBA9+tAnzy8/CUbhmsfX4SO/Ga7CDVRK10a9E+/GpWXQDK/CfVT696lzWjs5bDU8Heu+mCdZmYm373b3Sy3CxH/1cI3RPQC2zxnMLnn5DY5Ca2iw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=none; dmarc=none;
+ dkim=none; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=outlook.com;
+ s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=zJIGQUcepuYiINMQxiEXnCpZPvyrJxDKc4luqEkf6Q0=;
+ b=X52IXmucWAtdWBNhrzoCbzpZeJWYPCQdTNHxjboZQqYcCMpm7haW+D3Qye351Spbsd1sRzLfP++fxHanoMCEALaYKSmwWBqanuOetcypHy7XfJxZU+5EAjlnJ8y26uopG23Zv/7i3GPCveohbDlmyw4xp6JHAkDRUZYbOPE6e0wLddXDonsb3onC6INcqbV7yhnqUqYTgIdQgqtqDdiGDCJfNs981zglw2CM9mnghyILc4KCEMv3Ffx4mXT+sN9l4WxlzYWedLOa8PkdujGq8Rq3imZ1KATG5I2N3K9OuKMxF0BEwweNfSz5ObQ2IrVscWys3hw0y7vXQKe7gSSNHw==
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com (2603:10b6:805:33::23)
+ by SA2PR02MB7818.namprd02.prod.outlook.com (2603:10b6:806:135::18) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Wed, 23 Oct
+ 2024 18:32:55 +0000
+Received: from SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df]) by SN6PR02MB4157.namprd02.prod.outlook.com
+ ([fe80::cedd:1e64:8f61:b9df%3]) with mapi id 15.20.8069.016; Wed, 23 Oct 2024
+ 18:32:55 +0000
+From: Michael Kelley <mhklinux@outlook.com>
+To: Nuno Das Neves <nunodasneves@linux.microsoft.com>,
+	"linux-hyperv@vger.kernel.org" <linux-hyperv@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org"
+	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"iommu@lists.linux.dev" <iommu@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "linux-arch@vger.kernel.org"
+	<linux-arch@vger.kernel.org>, "virtualization@lists.linux.dev"
+	<virtualization@lists.linux.dev>
+CC: "kys@microsoft.com" <kys@microsoft.com>, "haiyangz@microsoft.com"
+	<haiyangz@microsoft.com>, "wei.liu@kernel.org" <wei.liu@kernel.org>,
+	"decui@microsoft.com" <decui@microsoft.com>, "catalin.marinas@arm.com"
+	<catalin.marinas@arm.com>, "will@kernel.org" <will@kernel.org>,
+	"luto@kernel.org" <luto@kernel.org>, "tglx@linutronix.de"
+	<tglx@linutronix.de>, "mingo@redhat.com" <mingo@redhat.com>, "bp@alien8.de"
+	<bp@alien8.de>, "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
+	"x86@kernel.org" <x86@kernel.org>, "hpa@zytor.com" <hpa@zytor.com>,
+	"seanjc@google.com" <seanjc@google.com>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "peterz@infradead.org" <peterz@infradead.org>,
+	"daniel.lezcano@linaro.org" <daniel.lezcano@linaro.org>, "joro@8bytes.org"
+	<joro@8bytes.org>, "robin.murphy@arm.com" <robin.murphy@arm.com>,
+	"davem@davemloft.net" <davem@davemloft.net>, "edumazet@google.com"
+	<edumazet@google.com>, "kuba@kernel.org" <kuba@kernel.org>,
+	"pabeni@redhat.com" <pabeni@redhat.com>, "lpieralisi@kernel.org"
+	<lpieralisi@kernel.org>, "kw@linux.com" <kw@linux.com>, "robh@kernel.org"
+	<robh@kernel.org>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"arnd@arndb.de" <arnd@arndb.de>, "sgarzare@redhat.com" <sgarzare@redhat.com>,
+	"jinankjain@linux.microsoft.com" <jinankjain@linux.microsoft.com>,
+	"muminulrussell@gmail.com" <muminulrussell@gmail.com>,
+	"skinsburskii@linux.microsoft.com" <skinsburskii@linux.microsoft.com>,
+	"mukeshrathor@microsoft.com" <mukeshrathor@microsoft.com>
+Subject: RE: [PATCH 0/5] Add new headers for Hyper-V Dom0
+Thread-Topic: [PATCH 0/5] Add new headers for Hyper-V Dom0
+Thread-Index: AQHbFc3gheIHrTrmm0yVUene//yVY7J/bLBwgBQy+4CAASapQA==
+Date: Wed, 23 Oct 2024 18:32:55 +0000
+Message-ID:
+ <SN6PR02MB4157A9D52A882A2109590708D44D2@SN6PR02MB4157.namprd02.prod.outlook.com>
+References:
+ <1727985064-18362-1-git-send-email-nunodasneves@linux.microsoft.com>
+ <SN6PR02MB4157F6EA7B2454D2F6CBF2ECD4782@SN6PR02MB4157.namprd02.prod.outlook.com>
+ <725bac7d-5758-44fd-82cc-29fb85d8c53f@linux.microsoft.com>
+In-Reply-To: <725bac7d-5758-44fd-82cc-29fb85d8c53f@linux.microsoft.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: SN6PR02MB4157:EE_|SA2PR02MB7818:EE_
+x-ms-office365-filtering-correlation-id: d106ae6f-fe77-45b0-80a1-08dcf3911cad
+x-microsoft-antispam:
+ BCL:0;ARA:14566002|461199028|19110799003|8062599003|8060799006|15080799006|440099028|3412199025|102099032|56899033;
+x-microsoft-antispam-message-info:
+ VKljilNyhGh7Xncxzl/8iHWUY6fEqaKXLxD4wZfPoMKmG5ya9/Jm9w7Lspvjvd/OA+Zr349iNZ/bSy9xlR65RsfY7gvfdb4KaPWknZ7+96EUyMCJeFHvCK8khlPWzBx5jNluQ2/BWZtjhQHaT/FBMSE4SUXCNhuwEmBks3FBDbfuDoW0PhVydV3W3nySZOqI3CrQC3GaiiMIaDWoAPysHihcDPvkJx8kgyTNVqB5koAmkNrGkisa2HzdJD6h2rJUklCT7DsDtVR/DQVOuMFNlnC4M2mnfX1+msUVU9VmnNq7ih4jMOUdYMmJnadlbK426jwv2xY9Ov03i1cFEWQQjSAX5X4Bc4/pKkyFl9spoQBlGCTA+/N3677rw21LJXhuV7x1h1mxf2X9IYOSJ2Vcn/qgLJdKl6VPebruooYFWCtbWu+YqzBNgtaac6RFLI+XPe15Xxn9PZEGO0kd+F9fvmoe3Q+x0+mqtUSupR0k46W9UPqBo7kl8zWcBejYVVL3ZIQqK0ZQZOKoAgDAe42w87KEf31iURz19yOCPS/xUz8OqcOQbETQ1Wn5HKBGz2isQlmAcPx8OOG4TrP+5wiLX3hYyz6IRLMTgN+lEZkAtWGhQ+0YV2ZIOVef8oUkV8gxx23H+fcldkWkkzJtGNVhTl7py42f9ihN3FjsBRqzWdLzRdOO430iBQLR97xt/W1CX3teV9zUfNgdodwobnFOPQ==
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?AHQFqsehxhiVeP76Z+uAOVsL2Hilkjih1uCzMZ0NbkXN5or8SJ1PedLEyYPN?=
+ =?us-ascii?Q?W/ch4t6JHdqabBk/+awlnSdkPeYx+sE2dPlI/jY/NBwovs01IoJy+idxAjS0?=
+ =?us-ascii?Q?Msly8r/tfIh8zkFSvOIhQcvfzpm+LJABdHK4+pq2gIBV/DTMkiBFpViowM1L?=
+ =?us-ascii?Q?RCPu/m3gLMN9WKjY1NoYwtVSu17IV5Kek/ef4HLn9CRMsOdc/rONLUIETqw2?=
+ =?us-ascii?Q?Cv60Uo72l6YDXUVBXXX4z7Qt57b/m0PpCU9rmULVi1IHdz1dRLXJr5Vj/P24?=
+ =?us-ascii?Q?gW/m15bruXuEK6C7J9c/KTAv6eEjlajWytmgT4g4jyD53fhVpF4RYaIjqG/p?=
+ =?us-ascii?Q?EOF5xM3C5LEfp1m95bjJsGay75C9Zl6+OSOjrHJYcflEWlTO6nTR+6eJs9l8?=
+ =?us-ascii?Q?Y5fmNwlgPTirZNTwOt7fY/+WI8UOGZcLnBxStz/t+lmOQlcMB21lmQ0JteIZ?=
+ =?us-ascii?Q?c51omprzRl1DRLvWS3vsZu0WRBR3Wc9jfnTiXYtTIuMI/FCcMcrjVT18vnqn?=
+ =?us-ascii?Q?nBYsmBlh85c11Rgo6r45acyPpW6EQnSCN3HWaz1kVvXK4fDEbA7Rs0pF7NN2?=
+ =?us-ascii?Q?9jaNWXf9AY1gnLl6vvJSvL2BCQN9aW/OBTg4gpoCqdK+hDj6En4bIXH3I9uU?=
+ =?us-ascii?Q?jkrStxuDINCOfa1Cr6DYDg64tu4pW6saWAphO5LUMioaoa2d3NXX/m9CQZRN?=
+ =?us-ascii?Q?T6qRM1Kd260u6/XMokcnuyV9rPb5w9y0pSJyhFOzluc7InheXiRcTw6GIQy2?=
+ =?us-ascii?Q?xpNA176qa7+7gjM7xpz4wdISxJ+izL0arosO7FC58WNWZJD0rrLKu98SqYnk?=
+ =?us-ascii?Q?Zrzr6lGMU12ic5fIfCWnH01pRq13gyJETFJCDrL9QjcY4raG1AAcGJecCW/l?=
+ =?us-ascii?Q?p5ScZygeajenK+j8J2FFcNO75060qdh2EQKqPFg98IWTCs1c6O7uz+tbEXyj?=
+ =?us-ascii?Q?aD7UIgnA5UR2iUkIKxCCmG7Y+SmrxSww2k3mdwaXfW/VRiAg3y4y1usqQ9lc?=
+ =?us-ascii?Q?saFosb2Spk6OJiU/1sGC5Uj5X5Yb2PR9DlRBxHAkZFYIZiihXbGrbKU7S0cN?=
+ =?us-ascii?Q?1b97FZ8X2i5AKzliTjpyfha/RaHpc2pzCZT+rpRu4kH/l5NSkVqEpFibBaSc?=
+ =?us-ascii?Q?oADidR7G1obKD0hc3gEocLAJneRHdrGflVQDDwvIW6/4p74sHL9Yyhg6m7m6?=
+ =?us-ascii?Q?znekee52zubbjRGfs5p8lPJNiDz0mWR+838XrQnbG6UKBJ6C95dJcmr9P1c?=
+ =?us-ascii?Q?=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/4] mm: zswap: add support for zswapin of large folios
-To: Yosry Ahmed <yosryahmed@google.com>, Barry Song <21cnbao@gmail.com>
-Cc: senozhatsky@chromium.org, minchan@kernel.org, hanchuanhua@oppo.com,
- v-songbaohua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org,
- hannes@cmpxchg.org, david@redhat.com, willy@infradead.org,
- kanchana.p.sridhar@intel.com, nphamcs@gmail.com, chengming.zhou@linux.dev,
- ryan.roberts@arm.com, ying.huang@intel.com, riel@surriel.com,
- shakeel.butt@linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org,
- linux-doc@vger.kernel.org
-References: <20241018105026.2521366-1-usamaarif642@gmail.com>
- <CAGsJ_4xweuSwMUBuLSr2eUy69mtQumeDpMZ1g2jFPGq6nFn9fg@mail.gmail.com>
- <5313c721-9cf1-4ecd-ac23-1eeddabd691f@gmail.com>
- <b1c17b5e-acd9-4bef-820e-699768f1426d@gmail.com>
- <CAGsJ_4wykOyJupLhcqkSPe27rdANd=bOJhqxL74vcdZ+T9f==g@mail.gmail.com>
- <eab11780-e671-4d09-86a6-af4cf3589392@gmail.com>
- <CAGsJ_4wWf7QnibY_uU8B=efuEACrvFaJJ=bJTD+9KrxFtfoMmQ@mail.gmail.com>
- <CAGsJ_4w5XLMok4F6Xw7aTAdV6rY9OvCVPM3U+hzFnKyTXBUpOA@mail.gmail.com>
- <4c30cc30-0f7c-4ca7-a933-c8edfadaee5c@gmail.com>
- <7a14c332-3001-4b9a-ada3-f4d6799be555@gmail.com>
- <CAJD7tkbrjV3Px8h1p950VZFi9FnzxZPn2Kg+vZD69eEcsQvtxg@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAJD7tkbrjV3Px8h1p950VZFi9FnzxZPn2Kg+vZD69eEcsQvtxg@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-OriginatorOrg: outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: SN6PR02MB4157.namprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-RMS-PersistedConsumerOrg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-Network-Message-Id: d106ae6f-fe77-45b0-80a1-08dcf3911cad
+X-MS-Exchange-CrossTenant-rms-persistedconsumerorg: 00000000-0000-0000-0000-000000000000
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 18:32:55.6164
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 84df9e7f-e9f6-40af-b435-aaaaaaaaaaaa
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: SA2PR02MB7818
 
+From: Nuno Das Neves <nunodasneves@linux.microsoft.com> Sent: Tuesday, Octo=
+ber 22, 2024 5:51 PM
+>=20
+> On 10/10/2024 11:21 AM, Michael Kelley wrote:
+> >
 
+[snip]
 
-On 23/10/2024 19:02, Yosry Ahmed wrote:
-> [..]
->>>> I suspect the regression occurs because you're running an edge case
->>>> where the memory cgroup stays nearly full most of the time (this isn't
->>>> an inherent issue with large folio swap-in). As a result, swapping in
->>>> mTHP quickly triggers a memcg overflow, causing a swap-out. The
->>>> next swap-in then recreates the overflow, leading to a repeating
->>>> cycle.
->>>>
->>>
->>> Yes, agreed! Looking at the swap counters, I think this is what is going
->>> on as well.
->>>
->>>> We need a way to stop the cup from repeatedly filling to the brim and
->>>> overflowing. While not a definitive fix, the following change might help
->>>> improve the situation:
->>>>
->>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->>>>
->>>> index 17af08367c68..f2fa0eeb2d9a 100644
->>>> --- a/mm/memcontrol.c
->>>> +++ b/mm/memcontrol.c
->>>>
->>>> @@ -4559,7 +4559,10 @@ int mem_cgroup_swapin_charge_folio(struct folio
->>>> *folio, struct mm_struct *mm,
->>>>                 memcg = get_mem_cgroup_from_mm(mm);
->>>>         rcu_read_unlock();
->>>>
->>>> -       ret = charge_memcg(folio, memcg, gfp);
->>>> +       if (folio_test_large(folio) && mem_cgroup_margin(memcg) <
->>>> MEMCG_CHARGE_BATCH)
->>>> +               ret = -ENOMEM;
->>>> +       else
->>>> +               ret = charge_memcg(folio, memcg, gfp);
->>>>
->>>>         css_put(&memcg->css);
->>>>         return ret;
->>>> }
->>>>
->>>
->>> The diff makes sense to me. Let me test later today and get back to you.
->>>
->>> Thanks!
->>>
->>>> Please confirm if it makes the kernel build with memcg limitation
->>>> faster. If so, let's
->>>> work together to figure out an official patch :-) The above code hasn't consider
->>>> the parent memcg's overflow, so not an ideal fix.
->>>>
->>
->> Thanks Barry, I think this fixes the regression, and even gives an improvement!
->> I think the below might be better to do:
->>
->> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
->> index c098fd7f5c5e..0a1ec55cc079 100644
->> --- a/mm/memcontrol.c
->> +++ b/mm/memcontrol.c
->> @@ -4550,7 +4550,11 @@ int mem_cgroup_swapin_charge_folio(struct folio *folio, struct mm_struct *mm,
->>                 memcg = get_mem_cgroup_from_mm(mm);
->>         rcu_read_unlock();
->>
->> -       ret = charge_memcg(folio, memcg, gfp);
->> +       if (folio_test_large(folio) &&
->> +           mem_cgroup_margin(memcg) < max(MEMCG_CHARGE_BATCH, folio_nr_pages(folio)))
->> +               ret = -ENOMEM;
->> +       else
->> +               ret = charge_memcg(folio, memcg, gfp);
->>
->>         css_put(&memcg->css);
->>         return ret;
->>
->>
->> AMD 16K+32K THP=always
->> metric         mm-unstable      mm-unstable + large folio zswapin series    mm-unstable + large folio zswapin + no swap thrashing fix
->> real           1m23.038s        1m23.050s                                   1m22.704s
->> user           53m57.210s       53m53.437s                                  53m52.577s
->> sys            7m24.592s        7m48.843s                                   7m22.519s
->> zswpin         612070           999244                                      815934
->> zswpout        2226403          2347979                                     2054980
->> pgfault        20667366         20481728                                    20478690
->> pgmajfault     385887           269117                                      309702
->>
->> AMD 16K+32K+64K THP=always
->> metric         mm-unstable      mm-unstable + large folio zswapin series   mm-unstable + large folio zswapin + no swap thrashing fix
->> real           1m22.975s        1m23.266s                                  1m22.549s
->> user           53m51.302s       53m51.069s                                 53m46.471s
->> sys            7m40.168s        7m57.104s                                  7m25.012s
->> zswpin         676492           1258573                                    1225703
->> zswpout        2449839          2714767                                    2899178
->> pgfault        17540746         17296555                                   17234663
->> pgmajfault     429629           307495                                     287859
->>
-> 
-> Thanks Usama and Barry for looking into this. It seems like this would
-> fix a regression with large folio swapin regardless of zswap. Can the
-> same result be reproduced on zram without this series?
+> > Have you considered user space code that uses
+> > include/linux/hyperv.h? Which of the two schemes will it use? That code
+> > needs to compile correctly on x86 and ARM64 after your changes.
+> > User space code includes the separate DPDK project, and some of the
+> > tools in the kernel tree under tools/hv. Anything that uses the
+> > uio_hv_generic.c driver falls into this category.
+> >
+> Unless I misunderstand something, the uapi code isn't affected at all
+> by this patch set. e.g. the code in tools/hv uses include/uapi/linux/hype=
+rv.h,
+> which doesn't include any other Hyper-V headers.
+>=20
+> I'm not aware of how the DPDK project uses the Hyper-V definitions, but i=
+f it
+> is getting headers from uapi it should also be unaffected.
 
+You are right.  My mistake. User space code based on uio_hv_generic.c
+maps the VMBus ring buffers into user space, and I thought that code
+was pulling "struct hv_ring_buffer" from include/linux/hyperv.h file. But
+DPDK and the tools/hv code each have their own completely separate
+header file with the equivalent of "struct hv_ring_buffer". Duplicating
+the ring buffer structure in multiple places probably isn't ideal, but the
+decoupling helps in this case. ;-)
 
-Yes, its a regression in large folio swapin support regardless of zswap/zram.
+>=20
+> > I think there's also user space code that is built for vDSO that might =
+pull
+> > in the .h files you are modifying. There are in-progress patches dealin=
+g
+> > with vDSO include files, such as [1]. My general comment on vDSO
+> > is to be careful in making #include file changes that it uses, but I'm
+> > not knowledgeable enough on how vDSO is built to give specific
+> > guidance. :-(
+> >
+> Hmm, interesting, looks like it does get used by userspace. The tsc page
+> is mapped into userspace in vdso.vma.c, and read in vdso/gettimeofday.h.
+>=20
+> That is unexpected for me, since these things aren't in uapi. However I d=
+on't
+> anticipate a problem. The definitions used haven't changed, just the head=
+ers
+> they are included from.
+>=20
 
-Need to do 3 tests, one with probably the below diff to remove large folio support,
-one with current upstream and one with upstream + swap thrashing fix.
+Fair enough. I don't know enough about vDSO user space to add anything
+helpful.
 
-We only use zswap and dont have a zram setup (and I am a bit lazy to create one :)).
-Any zram volunteers to try this?
-
-diff --git a/mm/memory.c b/mm/memory.c
-index fecdd044bc0b..62f6b087beb3 100644
---- a/mm/memory.c
-+++ b/mm/memory.c
-@@ -4124,6 +4124,8 @@ static struct folio *alloc_swap_folio(struct vm_fault *vmf)
-        gfp_t gfp;
-        int order;
- 
-+       goto fallback;
-+
-        /*
-         * If uffd is active for the vma we need per-page fault fidelity to
-         * maintain the uffd semantics. 
+Michael
 
