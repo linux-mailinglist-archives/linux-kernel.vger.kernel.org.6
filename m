@@ -1,143 +1,80 @@
-Return-Path: <linux-kernel+bounces-377395-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377396-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 430919ABE37
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:59:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 178429ABE3A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:01:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E9898284FE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:59:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 82FE51C22981
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:01:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BCDC11465AC;
-	Wed, 23 Oct 2024 05:59:14 +0000 (UTC)
-Received: from mxhk.zte.com.cn (mxhk.zte.com.cn [63.216.63.35])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF2B113AA31;
+	Wed, 23 Oct 2024 06:01:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="MVG+M7aL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7020B7482;
-	Wed, 23 Oct 2024 05:59:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=63.216.63.35
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 352C61BC4E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:01:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729663154; cv=none; b=a1+JoNsgclmaYv9E/+aQdeucVEYI9B2jR6wAv74CvyHoFJw5polnjNs47+aJIikh51L3VETl/ypWvTXf5Quq39/P9MxTGClrJ/0XTdXQHyxO3volJXuOn9wHQsTKGeJg6hZ6Uo+CQtTYwyQ1x3D8DC5q0z6V6xlHYNBIzfIf3ec=
+	t=1729663268; cv=none; b=qgHW0mzrVi7QztI1fyYJ52dduQDL5VZzk6zuj1e/sK+cMbldSC+BQ3fZ0s62t6r6SIWAo1GoM6ZR/oAJcd6LHX+KXvNniiQrlMYfjRyPucHbwE6eProwb63Q09ZCnsT3hYGL5mfa8XwrNsltPWXM2uOU7whj9uEYEjnVJMkjNHI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729663154; c=relaxed/simple;
-	bh=Xi5BGcHQLbGAp6H9NkT1WNHevJNkx+l8YFWJdHWZLzc=;
-	h=Date:Message-ID:Mime-Version:From:To:Cc:Subject:Content-Type; b=YMRCAg9NGIshblOdQtKoDEZxs3DwOZFd/0Qb7rzCP+wFicbiL6xqG+G6LPELCZm4ZM8jfo6ZlyMDYL6r0e7pBq7f35hi1YgrdPQzKitdFvHCVPrSx1gvCz0Ozdlc1+UTLerSx+pPLwnyGj2PeE0qI+LbWc79fUZrXHkZBovi5+Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn; spf=pass smtp.mailfrom=zte.com.cn; arc=none smtp.client-ip=63.216.63.35
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=zte.com.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=zte.com.cn
-Received: from mxct.zte.com.cn (unknown [192.168.251.13])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxhk.zte.com.cn (FangMail) with ESMTPS id 4XYJJl1K4Kz5B1Jw;
-	Wed, 23 Oct 2024 13:59:03 +0800 (CST)
-Received: from mse-fl2.zte.com.cn (unknown [10.5.228.133])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mxct.zte.com.cn (FangMail) with ESMTPS id 4XYJJX3snzz501bb;
-	Wed, 23 Oct 2024 13:58:52 +0800 (CST)
-Received: from xaxapp02.zte.com.cn ([10.88.97.241])
-	by mse-fl2.zte.com.cn with SMTP id 49N5wm1k079965;
-	Wed, 23 Oct 2024 13:58:48 +0800 (+08)
-	(envelope-from shao.mingyin@zte.com.cn)
-Received: from mapi (xaxapp02[null])
-	by mapi (Zmail) with MAPI id mid32;
-	Wed, 23 Oct 2024 13:58:50 +0800 (CST)
-Date: Wed, 23 Oct 2024 13:58:50 +0800 (CST)
-X-Zmail-TransId: 2afa6718909affffffff87c-afe8a
-X-Mailer: Zmail v1.0
-Message-ID: <20241023135850067m3w2R0UXESiVCYz_wdAoT@zte.com.cn>
+	s=arc-20240116; t=1729663268; c=relaxed/simple;
+	bh=yBIEJDWbUKw3gDsY89eu0RqIzZKwZll+usCO+iQs8BY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dKopjF23mrDnmYGAec0j/nDqdRf5nGa0HqY2Kt+rwq9nulgIzko2N2LGMN1RIrpc/EJRGhHhnM25h3k9wR8TJDGeiw0JTOEZGJCb+LVhjY4bTcXuhWCubLHYF6I/OssA6cNhf/kcwtRS+mS7xki7EcvzHrnYE0R4xgj/66+K0n8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=MVG+M7aL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2770DC4CEC7;
+	Wed, 23 Oct 2024 06:01:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729663267;
+	bh=yBIEJDWbUKw3gDsY89eu0RqIzZKwZll+usCO+iQs8BY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=MVG+M7aLTz1L0kiRIFdp4ZhYjbUJwDrXCD9C9a0z+gG9Ocz9YJFTvXmkj9jFvzzXy
+	 pApoIjJbPP8Winv4t9yfkLGq8O83Y1DT0AClNno6vXnpPAV+iKlh3Ys9DkTt6CYvGG
+	 aDGU1QcHMQXnfi71/L8rFTTs/Jqm803qYNDSxaKo=
+Date: Wed, 23 Oct 2024 08:01:04 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Christoph Hellwig <hch@lst.de>
+Cc: jassisinghbrar@gmail.com, stefani@seibold.net, jirislaby@kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] kfifo: don't include dma-mapping.h in kfifo.h
+Message-ID: <2024102325-gone-reanalyze-f105@gregkh>
+References: <20241023055317.313234-1-hch@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-From: <shao.mingyin@zte.com.cn>
-To: <viro@zeniv.linux.org.uk>, <brauner@kernel.org>, <jack@suse.cz>,
-        <linux-fsdevel@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Cc: <yang.yang29@zte.com.cn>, <yang.tao172@zte.com.cn>, <xu.xin16@zte.com.cn>,
-        <lu.zhongjun@zte.com.cn>, <chen.lin5@zte.com.cn>
-Subject: =?UTF-8?B?W1BBVENIXSBmczogZml4IGJ1ZyB0aGF0IGZwdXQoKSBtYXkgbm90IGhhdmUgZG9uZSB0byBjb21wbGV0ZSBpbgoKIGZsdXNoX2RlbGF5ZWRfZnB1dA==?=
-Content-Type: text/plain;
-	charset="UTF-8"
-X-MAIL:mse-fl2.zte.com.cn 49N5wm1k079965
-X-Fangmail-Anti-Spam-Filtered: true
-X-Fangmail-MID-QID: 671890A7.000/4XYJJl1K4Kz5B1Jw
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023055317.313234-1-hch@lst.de>
 
-From: shao mingyin <shao.mingyin@zte.com.cn>
+On Wed, Oct 23, 2024 at 07:53:04AM +0200, Christoph Hellwig wrote:
+> Nothing in kfifo.h directly needs dma-mapping.h, only two macros
+> use DMA_MAPPING_ERROR when actually instantiated.  Drop the
+> dma-mapping.h include to reduce include bloat.
+> 
+> Add an explicity <linux/io.h> include to drivers/mailbox/omap-mailbox.c
+> as that file uses __raw_readl and __raw_writel through a complicated
+> include chain involving <linux/dma-mapping.h>
+> 
+> Fixes: d52b761e4b1a ("kfifo: add kfifo_dma_out_prepare_mapped()")
+> Signed-off-by: Christoph Hellwig <hch@lst.de>
+> ---
+> 
+> Changes since v1:
+>  - improve the commit log
 
-We find a bug that the rcS file may not be executed, resulting in module 
-and business not being loaded. When trying to execute rcS, the fput() 
-related to rcS has not done to complete, so deny_write_access() returns 
-ETXTBSY.
+As the original commit came in through the tty tree, I'll take this through
+the same tree as well.
 
-rcS is opened in do_populate_rootfs before executed.
-After flush_delayed_fput() has done to complete, do_populate_rootfs 
-assumes that all fput() related to do_populate_rootfs has done to complete.
-However, flush_delayed_fput can only ensure that the fput() on current 
-delayed_fput_list has done to complete, the fput() that has already been 
-removed from delayed_fput_list in advance may not be completed. Attempting
-to execute the file associated with this fput() now will result in ETXTBSY.
-Most of the time, the fput() related to rcS has done to complete in 
-do_populate_rootfs before executing rcS, but sometimes it's not.
+thanks,
 
-do_populate_rootfs	delayed_fput_list	delayed_fput	execve
-fput()			a
-fput()			a->b
-fput()			a->b->rcS
-						__fput(a)
-fput()			c
-fput()			c->d
-						__fput(b)
-flush_delayed_fput
-__fput(c)
-__fput(d)
-						__fput(b)
-						__fput(b)	execve(rcS)
-
-in execve(rcS), deny_write_access(rcS) returns ETXTBSY because __fput(rcS) 
-has not done to complete.
-
-This patch can guarantee all fput() related to do_populate_rootfs has done 
-to complete, and ensure that rcS can be executed successfully.
-
-Signed-off-by: Chen Lin <chen.lin5@zte.com.cn>
-Signed-off-by: Shao Mingyin <shao.mingyin@zte.com.cn>
-Cc: Yang Yang <yang.yang29@zte.com.cn>
-Cc: Yang Tao <yang.tao172@zte.com.cn>
-Cc: Xu Xin <xu.xin16@zte.com.cn>
----
- fs/file_table.c | 5 +++--
- 1 file changed, 3 insertions(+), 2 deletions(-)
-
-diff --git a/fs/file_table.c b/fs/file_table.c
-index eed5ffad9997..345e68caa4d7 100644
---- a/fs/file_table.c
-+++ b/fs/file_table.c
-@@ -462,6 +462,8 @@ static void ____fput(struct callback_head *work)
- 	__fput(container_of(work, struct file, f_task_work));
- }
-
-+static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
-+
- /*
-  * If kernel thread really needs to have the final fput() it has done
-  * to complete, call this.  The only user right now is the boot - we
-@@ -475,11 +477,10 @@ static void ____fput(struct callback_head *work)
- void flush_delayed_fput(void)
- {
- 	delayed_fput(NULL);
-+	flush_delayed_work(&delayed_fput_work);
- }
- EXPORT_SYMBOL_GPL(flush_delayed_fput);
-
--static DECLARE_DELAYED_WORK(delayed_fput_work, delayed_fput);
--
- void fput(struct file *file)
- {
- 	if (file_ref_put(&file->f_ref)) {
--- 
-2.25.1
+greg k-h
 
