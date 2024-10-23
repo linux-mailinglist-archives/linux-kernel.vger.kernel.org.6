@@ -1,218 +1,224 @@
-Return-Path: <linux-kernel+bounces-379001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA36A9AD87E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:37:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C5C59AD880
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:38:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D88391C21E08
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:37:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A460A1C2109F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:38:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A8E01FF021;
-	Wed, 23 Oct 2024 23:37:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C64131FF7B7;
+	Wed, 23 Oct 2024 23:37:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="l80aIdu2"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CWkCAUff"
+Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D380319AA46;
-	Wed, 23 Oct 2024 23:37:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BB811A08DF;
+	Wed, 23 Oct 2024 23:37:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729726641; cv=none; b=f9EUSyOP0nVapCgw7223YpXmdSjb39ryoIhMvJHhYI33rPXrOxaJ3Bfy6P3K2EGimQe/KTa1tRtXqjoeKAAjOZ8RNyqElhdF6m9WYwwXjbImBGDucZhUYg98x+v7WVgYjXs2E2C6PmzYCRv2NBbPGYfsu4Kahzq0z5iXK3DUnos=
+	t=1729726674; cv=none; b=jYtlvJmzJB42gEPw2dsH5nsBZKNj5Bm7WWwz/Hr8VSgAd6EI1xoNdw17eZcLPi6nxJW2Pr9E6u1nooVpsx5Fl/VQDe3NemCdQZI2olDCSMBxG16itwNwc0Ve2VXmdD/Kwk1uaoaTPmtTChlOVwdvj2jTVYJ3q7EvCGqHuUKcTMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729726641; c=relaxed/simple;
-	bh=jvEW7M/2Wy1ouSMENyscr8ajCw0EWEl4qsMq71ObCpg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=M+EVTMi10QLUoLFiuAu0Ja4XZTFZZY5v/LQHmUQ2qIHf1SGjVmrOChYBfVnlI9hIWxC0jE3BUo6GJD8oETwrxR1TfgOWsLT3jTfrSIWza3etHh78ryE8p0Nck/Kiacp+8S+PlS7zH9VCLBbONlbAu/XERfPhZ8gJjHykonM5VT4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=l80aIdu2; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729726629;
-	bh=DVrwPjlSA8slzRRFdNniClCFcvVjFgkVm2FybuI7RJI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=l80aIdu2VtySIwdRf8OAkNzORxGIx3zPAyyAcEtCU/ZeJ4nyHAHQAho0r+cPVxxT0
-	 1+LwDZ4Pa6oZTTbvICylwNijcTLoTfXDGBN/UxO+mId/4u/DQhea+i/RSwBTneYu2i
-	 fRIlIUMrZqRinydpQTkcUCwrqHRyLZ3Sz1uNkPTtq5KmE1zel+MUu9EVq+sVLNaSai
-	 lS81KHCO8ZI5IyjMiwE66JY6ktUZktU3SGuvhAPy7P0PeWvtHPeNMx01LRgaFv1aKQ
-	 eIhWISYq/p2CqpcEgpZjDEiL0eG57aS0XSVK/XauXOqPBELGKdpz4pmYpt6KsnntQ1
-	 6IqJpuXbKYF1Q==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYlnc6LtQz4w2R;
-	Thu, 24 Oct 2024 10:37:08 +1100 (AEDT)
-Date: Thu, 24 Oct 2024 10:37:09 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: Catalin Marinas <catalin.marinas@arm.com>, Will Deacon
- <will@kernel.org>, Andrew Morton <akpm@linux-foundation.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, "Mike Rapoport (Microsoft)"
- <rppt@kernel.org>, Steven Price <steven.price@arm.com>, Suzuki K Poulose
- <suzuki.poulose@arm.com>
-Subject: linux-next: manual merge of the arm64 tree with the mm tree
-Message-ID: <20241024103709.082a6950@canb.auug.org.au>
+	s=arc-20240116; t=1729726674; c=relaxed/simple;
+	bh=yX27D+RCq1M+cKMacOQM9hmWAROWjed9k5qUUw8Ai5c=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sASSDdyWHf2towvXiFWddnAFkEHEGb2ZcGBZ12sU0GSwKZx3p9aTKmtr08iiW3nLdw0oQpwUOn2rUL95K0wl7gMxbAK8bkpbsToPnLioxHLjaWblpFFW939361pt1JhDNkXnqnlAGVWsbsiLQ9oKtlN5jThJY32j1RzhnMdKcqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CWkCAUff; arc=none smtp.client-ip=209.85.210.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71ec997ad06so238859b3a.3;
+        Wed, 23 Oct 2024 16:37:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729726671; x=1730331471; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4tDNHn4szIeDCtAm4h7XgPn2FKXJ/QxOKxP/BtC6+w8=;
+        b=CWkCAUffVNse8/jQf7csKW2igdsf0PD+zQH7N4UzytdC2Q52x+fl7lGu/8GnEVBW76
+         FB1vn39Ow3zG312wOR/ZteIPSKIXrfmB4YTpq61Jwk2DmtFmxzMVd1vqd+4PjR6zWjpE
+         H5pOjX2nBkw7SPTsMTDGaMjf/3hEdjiEXtR2XUNPHWgxSSuY7FOh7h7z9W19+7XkEwUC
+         kSoq7XHuklf4kvBxsjOsgdrWYO4tjXUHnmVSVNmMfmR7DeKxDw+NEm5M5oaQ2OUGmFsV
+         D6hTYhOkcLxkpbimTvB57KQKjEFtxskcG0vExIoXOlfX1by7Ia4k6G2qR7Xr4MudpldM
+         Rpwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729726671; x=1730331471;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4tDNHn4szIeDCtAm4h7XgPn2FKXJ/QxOKxP/BtC6+w8=;
+        b=aeeHUaTwKPKMobXCYONtiXpB/wLUe2rTuHSC0/rDK4GsUTFBpEL5N15zqNRGhnf6rS
+         QaXQ+LCV1f5HWM76e+uKtf1b386vvvy6QGPchrSUQUDFEXu8fwkwuTjiLgR4o7MBKjvh
+         bg4h6alf8/1a+3/rvw7QAIp4AE1iDlcanWOfl40dKY0V7TPPA8F1gSbsY8ku2S70XXvh
+         OHGassUXT4OmEXEMtZoarwCiI6pf3KwuuIIugBgIUawZoSTgmFX4JZwHdqAj8Q585RLk
+         xXw+iL9yLPTiTZ0QlYPZlkyieqBiGW5zcqRo9OMA3zJZ2fInCqaVXwfd9hWAmz+wl04Y
+         O7Aw==
+X-Forwarded-Encrypted: i=1; AJvYcCVG6mvpa9/TVtlgP2kweyK0Dj1IS1ahy7smbeWobytDQ8VuTSIkagsa/0slpLOAGevwXc+phsV4w0ndYXZB@vger.kernel.org, AJvYcCVjyVvJf2MAHks0GMCcTjqVFXsEqjahZmXGY8/cryDiUUE3Xbl48MTrMlm8tgT/br3j3uI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxefmRc77nngVP8DPURr9EQ0G+ZRw2ZnaLip9nf0g1pl2FnXIgC
+	2Ae2uLggWgyzwqSY9nc6fsuVGt16N/wa3aodMfA4Mbf3YISY7BUQUK2UfR4l/s1FcOt2FYa2z1d
+	GsFDkf1x16ODN/PYbwXnDUzZB/RU=
+X-Google-Smtp-Source: AGHT+IGOo1s4ax4V5bQjVC1PnOjuBUQiTW2HspJXMvMXVnhsiHSUOW1x6SDz1F6HKJ2gPPnMjqzQoWY2CiFzsSM1cBs=
+X-Received: by 2002:a05:6a00:ccc:b0:71e:7636:3323 with SMTP id
+ d2e1a72fcca58-72030a505f2mr6731861b3a.7.1729726670316; Wed, 23 Oct 2024
+ 16:37:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/h6KiDNTddnBx2eAO7DM+cSi";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/h6KiDNTddnBx2eAO7DM+cSi
-Content-Type: text/plain; charset=US-ASCII
+References: <ZxL0kMXLDng3Kw_V@codewreck.org> <20241023165606.3051029-1-andrii@kernel.org>
+ <ZxmFhiAL-ImjKe7Y@codewreck.org>
+In-Reply-To: <ZxmFhiAL-ImjKe7Y@codewreck.org>
+From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Date: Wed, 23 Oct 2024 16:37:37 -0700
+Message-ID: <CAEf4BzaAjpcGfFahFcYavBtiKJC6LHf55Q_y6i5MDfCWkU-mZQ@mail.gmail.com>
+Subject: Re: [GIT PULL] 9p fixes for 6.12-rc4
+To: Dominique Martinet <asmadeus@codewreck.org>
+Cc: David Howells <dhowells@redhat.com>, Matthew Wilcox <willy@infradead.org>, 
+	Andrii Nakryiko <andrii@kernel.org>, ericvh@kernel.org, linux-kernel@vger.kernel.org, 
+	linux_oss@crudebyte.com, pedro.falcato@gmail.com, regressions@leemhuis.info, 
+	torvalds@linux-foundation.org, v9fs@lists.linux.dev, bpf@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi all,
+On Wed, Oct 23, 2024 at 4:24=E2=80=AFPM Dominique Martinet
+<asmadeus@codewreck.org> wrote:
+>
+> Adding David/Willy to recpients as I'm not 100% up to date on folios
+>
+> Andrii Nakryiko wrote on Wed, Oct 23, 2024 at 09:56:06AM -0700:
+> > > The following changes since commit 98f7e32f20d28ec452afb208f9cffc0844=
+8a2652:
+> > >
+> > >   Linux 6.11 (2024-09-15 16:57:56 +0200)
+> > >
+> > > are available in the Git repository at:
+> > >
+> > >   https://github.com/martinetd/linux tags/9p-for-6.12-rc4
+> > >
+> > > for you to fetch changes up to 79efebae4afc2221fa814c3cae001bede66ab2=
+59:
+> > >
+> > >   9p: Avoid creating multiple slab caches with the same name (2024-09=
+-23 05:51:27 +0900)
+> > >
+> > > ----------------------------------------------------------------
+> > > Mashed-up update that I sat on too long:
+> > >
+> > > - fix for multiple slabs created with the same name
+> > > - enable multipage folios
+> > > - theorical fix to also look for opened fids by inode if none
+> > > was found by dentry
+> > >
+> > > ----------------------------------------------------------------
+> > > David Howells (1):
+> > >      9p: Enable multipage folios
+> >
+> > Are there any known implications of this change on madvise()'s MADV_PAG=
+EOUT
+> > behavior? After most recent pull from Linus's tree, one of BPF selftest=
+s
+> > started failing. Bisection points to:
+> >
+> >   9197b73fd7bb ("Merge tag '9p-for-6.12-rc4' of https://github.com/mart=
+inetd/linux")
+> >
+> > ... which is just an empty merge commit. So the "9p: Enable multipage f=
+olios"
+> > by itself doesn't cause any regression, but when merged with the rest o=
+f the
+> > code it does. I confirmed by reverting
+> > 1325e4a91a40 ("9p: Enable multipage folios"), after which the test in q=
+uestion
+> > is succeeding again.
+>
+> (looks like 3c217a182018 ("selftests/bpf: add build ID tests") wasn't in
+> yet on the 9p multipage folios commit)
+>
+> > The test in question itself is a bit involved, but what it ultimately t=
+ries to
+> > do is to ensure that part of ELF file containing build ID is paged out =
+to cause
+> > BPF helper to fail to retrieve said build ID (due to non-faulable conte=
+xt).
+> >
+> > For that, we use the following sequence in target binary and process:
+> >
+> > madvise(addr, page_sz, MADV_POPULATE_READ);
+> > madvise(addr, page_sz, MADV_PAGEOUT);
+> >
+> > First making sure page is paged in, then paged out. We make sure that b=
+uild ID
+> > is memory mapped in a separate segment with its own single-page memory =
+mapping.
+> > No changes or regressions there. No huge pages seem to be involved.
+>
+> That's probably obvious but I guess the selftest runs the binary
+> directly from a 9p mount?
 
-Today's linux-next merge of the arm64 tree got a conflict in:
+Yep, should have pointed that out explicitly.
 
-  arch/arm64/mm/pageattr.c
+>
+> > It used to work reliably, now it doesn't work. Any clue why or what sho=
+uld we
+> > do differently to make sure that memory page with build ID information =
+is not
+> > paged in (reliably)?
+>
+> Unless David/Willy has a solution immediately I'd say let's take the time=
+ to
+> sort this out and revert that commit for now -- I'll send a revert patch
+> immediately and submit it to Linus on Saturday.
+>
+> Conceptually I guess something is broken with MADV_PAGEOUT on >1 page
+> folio, perhaps it's only evicting folios if the whole folio is in range
+> but it should evict any folio that touches the range or something?
 
-between commit:
+Could be, yeah. It's not necessarily a bug of 9P itself, but it would
+be nice to have some way to page out memory. Maybe we need some extra
+flags or a new MADV_PAGEOUT_OVERLAPPING command for madvise(), or
+something along those lines?
 
-  040ee4186d6c ("arch: introduce set_direct_map_valid_noflush()")
+>
+> Sorry I don't have time to dig further here, hopefully that's not too
+> difficult to handle and we can try again in rc1 proper of another cycle,
+> I shouldn't have sent that this late.
+>
 
-from the mm-unstable branch of the mm tree and commit:
+No worries, thanks for a quick reply!
 
-  42be24a4178f ("arm64: Enable memory encrypt for Realms")
-
-from the arm64 tree.
-
-I fixed it up (see below) and can carry the fix as necessary. This
-is now fixed as far as linux-next is concerned, but any non trivial
-conflicts should be mentioned to your upstream maintainer when your tree
-is submitted for merging.  You may also want to consider cooperating
-with the maintainer of the conflicting tree to minimise any particularly
-complex conflicts.
-
---=20
-Cheers,
-Stephen Rothwell
-
-diff --cc arch/arm64/mm/pageattr.c
-index 01225900293a,6ae6ae806454..000000000000
---- a/arch/arm64/mm/pageattr.c
-+++ b/arch/arm64/mm/pageattr.c
-@@@ -192,16 -202,86 +202,96 @@@ int set_direct_map_default_noflush(stru
-  				   PAGE_SIZE, change_page_range, &data);
-  }
- =20
- +int set_direct_map_valid_noflush(struct page *page, unsigned nr, bool val=
-id)
- +{
- +	unsigned long addr =3D (unsigned long)page_address(page);
- +
- +	if (!can_set_direct_map())
- +		return 0;
- +
- +	return set_memory_valid(addr, nr, valid);
- +}
- +
-+ static int __set_memory_enc_dec(unsigned long addr,
-+ 				int numpages,
-+ 				bool encrypt)
-+ {
-+ 	unsigned long set_prot =3D 0, clear_prot =3D 0;
-+ 	phys_addr_t start, end;
-+ 	int ret;
-+=20
-+ 	if (!is_realm_world())
-+ 		return 0;
-+=20
-+ 	if (!__is_lm_address(addr))
-+ 		return -EINVAL;
-+=20
-+ 	start =3D __virt_to_phys(addr);
-+ 	end =3D start + numpages * PAGE_SIZE;
-+=20
-+ 	if (encrypt)
-+ 		clear_prot =3D PROT_NS_SHARED;
-+ 	else
-+ 		set_prot =3D PROT_NS_SHARED;
-+=20
-+ 	/*
-+ 	 * Break the mapping before we make any changes to avoid stale TLB
-+ 	 * entries or Synchronous External Aborts caused by RIPAS_EMPTY
-+ 	 */
-+ 	ret =3D __change_memory_common(addr, PAGE_SIZE * numpages,
-+ 				     __pgprot(set_prot),
-+ 				     __pgprot(clear_prot | PTE_VALID));
-+=20
-+ 	if (ret)
-+ 		return ret;
-+=20
-+ 	if (encrypt)
-+ 		ret =3D rsi_set_memory_range_protected(start, end);
-+ 	else
-+ 		ret =3D rsi_set_memory_range_shared(start, end);
-+=20
-+ 	if (ret)
-+ 		return ret;
-+=20
-+ 	return __change_memory_common(addr, PAGE_SIZE * numpages,
-+ 				      __pgprot(PTE_VALID),
-+ 				      __pgprot(0));
-+ }
-+=20
-+ static int realm_set_memory_encrypted(unsigned long addr, int numpages)
-+ {
-+ 	int ret =3D __set_memory_enc_dec(addr, numpages, true);
-+=20
-+ 	/*
-+ 	 * If the request to change state fails, then the only sensible cause
-+ 	 * of action for the caller is to leak the memory
-+ 	 */
-+ 	WARN(ret, "Failed to encrypt memory, %d pages will be leaked",
-+ 	     numpages);
-+=20
-+ 	return ret;
-+ }
-+=20
-+ static int realm_set_memory_decrypted(unsigned long addr, int numpages)
-+ {
-+ 	int ret =3D __set_memory_enc_dec(addr, numpages, false);
-+=20
-+ 	WARN(ret, "Failed to decrypt memory, %d pages will be leaked",
-+ 	     numpages);
-+=20
-+ 	return ret;
-+ }
-+=20
-+ static const struct arm64_mem_crypt_ops realm_crypt_ops =3D {
-+ 	.encrypt =3D realm_set_memory_encrypted,
-+ 	.decrypt =3D realm_set_memory_decrypted,
-+ };
-+=20
-+ int realm_register_memory_enc_ops(void)
-+ {
-+ 	return arm64_mem_crypt_ops_register(&realm_crypt_ops);
-+ }
-+=20
-  #ifdef CONFIG_DEBUG_PAGEALLOC
-  void __kernel_map_pages(struct page *page, int numpages, int enable)
-  {
-
---Sig_/h6KiDNTddnBx2eAO7DM+cSi
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcZiKUACgkQAVBC80lX
-0GzXLQgAg+y43CCIGt2sLeBS0FUocmTpxuHfrTFiPdgD856aHp19JoXVFxquXdAg
-oRef0V4j6a1yQi+yCdAVT1X12MQaclOiWYLC2rco95oJn9wpBGyRHDxPo2q2lHcc
-8KaFx4qKNfak7Pe8NKMkNE4HeeneaOXU+N8XtGwzGUalbNwUCuY2N0A4m0vp7Xyk
-iDCa1RjNl+VSVmo2EDR6Kf3T+jqv/0XeHb4EQr2V4XVNFbWzKzwSgiyy3v3gqFPC
-uSIhyPOefH3K6Zp7G04gLafibpGF/i8MgmL5Hx0LXe5YXK+fXIpz9aIuRpDmnYUR
-GwMmks+PaX2tQ3PVRiDSVkTj0wClqg==
-=vK9w
------END PGP SIGNATURE-----
-
---Sig_/h6KiDNTddnBx2eAO7DM+cSi--
+>
+> (leaving full text below for new recipients)
+> > Thanks!
+> >
+> > P.S. The target binary and madvise() manipulations are at:
+> >
+> >   tools/testing/selftests/bpf/uprobe_multi.c, see trigger_uprobe()
+> > The test itself in BPF selftest is at:
+> >
+> >   tools/testing/selftests/bpf/prog_tests/build_id.c, see subtest_nofaul=
+t(),
+> >   build_id_resident is false in this case.
+> >
+> > >
+> > > Dominique Martinet (1):
+> > >       9p: v9fs_fid_find: also lookup by inode if not found dentry
+> > >
+> > > Pedro Falcato (1):
+> > >       9p: Avoid creating multiple slab caches with the same name
+> > >
+> > >  fs/9p/fid.c       |  5 ++---
+> > >  fs/9p/vfs_inode.c |  1 +
+> > >  net/9p/client.c   | 10 +++++++++-
+> > >  3 files changed, 12 insertions(+), 4 deletions(-)
+> > >
+> >
+>
+> Thanks,
+> --
+> Dominique Martinet | Asmadeus
 
