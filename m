@@ -1,551 +1,168 @@
-Return-Path: <linux-kernel+bounces-379019-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379020-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BD2C9AD8B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:53:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 68FC79AD8BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:53:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C585B1F26140
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:53:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25FCE2843A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:53:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C7BF5200CAD;
-	Wed, 23 Oct 2024 23:52:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56F991553AB;
+	Wed, 23 Oct 2024 23:53:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="yqJicc7f"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5808200B81;
-	Wed, 23 Oct 2024 23:52:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="tMX4Rfvu"
+Received: from sonic312-26.consmr.mail.ir2.yahoo.com (sonic312-26.consmr.mail.ir2.yahoo.com [77.238.178.97])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 571321A7AF7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:53:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.178.97
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729727551; cv=none; b=uB7yM/mW49uHNPJfaWvhGRNSOeLoq7lUHU4OQpnMA6vwS93fbVXTgz4DgGmFk2liLiC540sK3fnRH2w87Wg5rFt4Bzfts8uOn52udV1N00yfLuxWw6IjHLGXy1GhHFDiZDOztuz7s9pFgJyy4G2gLfuWrh2KIcsr/Z7BpUYXg7k=
+	t=1729727587; cv=none; b=crjNt7xm7kdQetdJXPzMlscxArqYNFoZndWDMiCL5u753cGNlKObY3hE2MWUP1mrNNsuOek+XyFYFysB1AqTcJPf3atCe07ZhfyRLMdAHH94zzCOOIhNyQHVWgpmy4GpOPY2g/YjsiPj//GGFaWjuwMe65Tg7JFHJyFscg9dKPk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729727551; c=relaxed/simple;
-	bh=PPkik43Ft+ziz/KL7sgGGZXrZDSANPKFv63JbrbMYKk=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=g+5MTcDWqSnEWiN/tWnPguyWvWreeJnRhweGEsCoW3r+SSDOz/+cwBDJv9YBPu6t3xuAMba5fYgpXsqu6mvkrLgoW1MtYoq7A9LiqSRpTh1LsRVfFDN7CqIxIbYn5bqqIdPHXpL7xOQwpLkF20Q8HgAhdHQVtqkujVP5YQbKdHw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=yqJicc7f; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 856F014C2E0;
-	Thu, 24 Oct 2024 01:52:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1729727547;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YBuilkAE0mEP50w0sfwMqno3aFOex5ZsPzmLQrBt/eU=;
-	b=yqJicc7f4niXza4eh2/DFr/EMwE4QxVsdMY0U2eR0HzhYYlXmdumPxJ1Q1W4D5mUPBeFYW
-	VrF6PbK7z9k2ax6fy84kVaEt85fYWGE19M/T2Q0HqmoY2LCoZa1ArgoC315QFJAd/+HYOL
-	zT6KrK5q9BebNOC2cJMvjVLakTcfwEzmPP0kibs3pXAGHR5S2oshLfYvBM+G6pg35NM5aX
-	ak+1XVNLtj+HOSoyf9dbKB2YXZVKzeK4a5TwrYeGk3GOjx/JG4HOAdwZHQcU3MGS65J1ex
-	P3YQmbPm0d7eeySRC+xO5SKXMiK+JPmJrFO0tPU2KQfuHF287UrqtHYl1x2E2Q==
-Received: from [127.0.0.1] (localhost.lan [::1])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTP id 9385011d;
-	Wed, 23 Oct 2024 23:52:14 +0000 (UTC)
-From: Dominique Martinet <asmadeus@codewreck.org>
-Date: Thu, 24 Oct 2024 08:52:13 +0900
-Subject: [PATCH 4/4] Revert "fs/9p: simplify iget to remove unnecessary
- paths"
+	s=arc-20240116; t=1729727587; c=relaxed/simple;
+	bh=6f9/c1TgAN/6j0KAcaBvQ74WjnSBLTBuNra7X7cQHVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=jo5HVpBoa0GAv7dNkrCOBtmvqkdZpMOx+V1gxL/O3mmc0De/uNcQgXQrFhJRnbJ8n0Dbq0hCIrT4OtyLC7UVqvzNlhs4yO8By3qHH8MfcXC0axtzxdxCGIG37HzsR7hJtlJz0vXm78bB88f/6s6ONk3rHk3CILwgNA2J6tVivWc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=tMX4Rfvu; arc=none smtp.client-ip=77.238.178.97
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1729727577; bh=3M7OH4HoZlKMnnhKf1C/0ZDF12iGNKASzjBaElkoH0k=; h=Date:Subject:To:Cc:References:From:In-Reply-To:From:Subject:Reply-To; b=tMX4Rfvunh7rn7zLZM5NmdH2IFll4muRpXEp7gqF6C62S0p7y4lsLDXX5tPlvedz+GcynUVVW3090IpcxOdRPh5aLBNOTjEQz6PaBtqLiTCdXgjHTPy0iPohjAaVqCoboPAwmMis7Yq0KG8+oa6wml6Tuas2KEfmZEZPgd7ar0cV9dogPBiLwLk3r78yN9CoKkUVU+BO9wF3gdq+jOhim2M9YNLnQWCz6vSPiv9qtKtWrejR3FPyCpEpT/8a1t77xACjYPy34iqd2fFGyPmOQVwMDJqVXXuI8+7kPwkwmLGNHgSTcGhQsS+nbocejOyKn6PWjpzYwEPTZ2SzIaW7ig==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729727577; bh=0CpDsy1M70THEKr4JF38Y15+V8F6T7u2+69FLTRTAmR=; h=X-Sonic-MF:Date:Subject:To:From:From:Subject; b=lc/c9++FikamwJxx1Af8LOgIdIPzBCTBE+I1aIqGo0JGOPTp52bFg/KXvhUwGZQq97i06YGEZyqZe5afQf1AWrVUBaxOr6On8S2aNpI1mFnivnACKAeYpu+aGKGD/cbYoyHFT5XVv2yhtLfrzJuYBFwbmJyfiF0CBCl1F+az9OWVny0W2jhYVmlbJNYfloewbTmDEGlSI2NuQR6I4jC/9zVWxj8TO/yJdDqbSOSw7tJ6WxlNltSKbhmmu6Ozbw7jl6HLgL32jTYNGl2+jxxIx0DB649OqdAbCwRlujvxdNURCs2dSB4VbQrXe2csOaj5qsJrihsT3i/t+KE5CnOYDw==
+X-YMail-OSG: NvFvbF8VM1k0KAKc96_cF5AJ3ActjRy_v8GV.1f.MINJ0qgX3dMKvxUUpT4upUk
+ 05u83Dxm7QYbm_Ua8UhHW0s_YkteVb_QwfuUG67DqEfys_0ahY6rjJs6rJoEA.BbK2nqhpaE8sq3
+ UxuIBdS9oGiBX0jZoQBftpwrvXYYI994KtkNeYzsO3rUNt0.7rK_VHnJ.O8SADGPxOwkbRYn_aF7
+ EWn.XkYakoY8V2gxz4fij2vS.NhXLMwJpIfPQeEgB6cKHfzxWrqsQonCgHA5fCGt7KmvuKDhSEyD
+ QhW_XkSV2zPPyk6u4VOnCdXVBuyHubP2nA4a2mKredEEgayR2Q1AElLmS1D796s_0dQecWBKAX5e
+ 7Fjc0Eefdv1KYVFMwFhObaBBfryghrgDLtpzvkWfmBYKj1c.AFSaEktzCWgahgGTG2mfX8mDOEJ0
+ LgL5kofQdJDnTHyAC5fxpKz8DnM4fgGTGbyVmKezlRQVmp3RTJaTGyfLxdZmMM7w6WQO1Hf.GQDg
+ LJyQEH5SAPXeEAuYIG3C4Cvq0yoNL7pabmOy5eF_fHwQtlr7mWeXN5KPb0pqlbk7FA5XEacg6sUh
+ hcKWe4u_vH0bh3mY_NSvoKTBsMI.6gdbx0CCrktl03fgpTw0uZOOwxDYu3gj0I_At4Ys8hqvD5EB
+ M7ChU8apos8inCvYhQlA8l3k24JRhQFYvhKdmGlPLeC1_a9pdAd.hsyludg3ZtIJpIhaVNOSSb2V
+ Gb6T1lim20aeo8FYtBuneaa6ku6DZbH3XZrxymfDDWKqdascIMl94r8vmqkfPAyO2OJDd4fYrS97
+ 3QWeiLgyTIu2KabInqzEKi7Ai5xujYjxHupBfkqFe_Y7Ke.2J.WSkUy2LhtLvI3FMsQJc5Qkx_3p
+ Cpd3YDl4Qzp_xwBpAxezsZAFI8Td.tvq3QZyeCYMLazLrKTokV9vlgzUe9vTR_n4ylqdR26Fi6tn
+ xf9Q79nmZ8ea1FgHPApIBu1FFpfvs4FRPLQ_rJGipQI5_qRnTGcqLZhmuddMMpUYFQfNCEizpEfW
+ 3lM_4sJspTPY4iZi4jKBfr874V_9LxyqiUaz3jsAgqlDhegYKOOijAHYvKgq2_VIUSWsfl3OKjGX
+ TX5K7V07pBA4Po6TMiEY7lL5xmY6evn3wMMmBEZjxLQSfbxb8ym7o8gFiyTosmZCVs0VUeaYPfYt
+ f6nW3ir8MOAesjVzjdG2vOM51.fCM339wRy6i0BppmlfuhKd2e47JOxDD.IZ2oKvqU8ec41KwsLT
+ zE0b6KDhqhs9WZf1hq60_5WPqEgMiCv6Oulx2nRaUIL9rmkaH3pEI4RJEzMTyUg6zCNZgaeHKIKA
+ bTcYlYSfQcOKlEnuGE0LtKg39uKQLqUZfHVsqKBjd7auq0GZgQeol0vn1GUVI2LcM4_40YfsNpao
+ rnjTdvPgBFh4Tdzr99_xFwcL69A191yM.EVqEg3bFN09hyV8fwnB28O2CCT.XvSzjK8PPSpwL5ik
+ vHEEkljZwS5wL9f4n3gBdnlhz22Mp7SkXpgtmv5_qnvt74FvSp70eR3.eg2BszMwYSj6qpnQkWc6
+ s1BM05nDdEVrQJRwB9nbz..pszUuQEL21n0pAVNR7VF.ubpdfukS4lb1ExqqLO0nK17Ukj9SDZXF
+ a9tsD80NStMDoA3rrZrcvpcpq1J5etK9uvrDgmG8I76.HGPwr.PLCxKCsGKIjKOf_WbsmbPUIYd9
+ XodwxqJYbgepv.Or.0HrJBRCmwn0Q1W8K5NnRwmxZIy7.sZC9lMAYQ80ZmSAlFEXUPh7u3EaEcQk
+ o2c1CoWmXZVdLyxc9aCa_7F4JibkfF.bi.xiEheGRBnIdmlqdT73a0Ah.W6x_1eukPZkPqMVjpsR
+ B9ffoBTnqmKmweU6d8PUf0DC2GY73zD8HXn9fIISUre6wxaiQ4ep.d131XuaLQY3Vpyh9WzdHHDB
+ BkqwT.i_QAeGcR_filMeOSOHV43hfYkODdZ2TJM.u_KpRd1DY8cTaoWckC3rhduZTuYFISnRkr.E
+ XQnXSaEIDS7v5d_StEFwkOtiLxxuuHvcEqCYNV0LPrPKrZ.a.fqVKD1LCjxizLKm1Sv5SOvYhNCp
+ GaFrjkxqtKbjDr_Of30GeeZ_tTOAinXHSOk840aJi7yjJLJ9NrMI_BRS20hKEkFI1rTk2ocKD898
+ 4l3S.al5b6ayqsCr2_33PhpTI7S_AyAs2SwOz3rMxMOjrVThrhgF4RHql4_YalCFYG35xTOX5Sqz
+ _7nEMk72ncQukq_5VlB7xhZ2ufOhGTUGWz6PhS9dVM_8KjEeO_61IGEfidmEDiuTnbip.azbSI6Y
+ rO12u2kmICa2wLLlVK3d82qQpPmo7ZM1MS35CEPRTiROnCw--
+X-Sonic-MF: <jahau@rocketmail.com>
+X-Sonic-ID: 1aa0b617-1d8a-4930-a090-0cab9e1b224f
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic312.consmr.mail.ir2.yahoo.com with HTTP; Wed, 23 Oct 2024 23:52:57 +0000
+Received: by hermes--production-ir2-c694d79d9-d879w (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 2aed7270ea53ee049cc46986fdcd6d7b;
+          Wed, 23 Oct 2024 23:52:57 +0000 (UTC)
+Message-ID: <7025fa62-b178-4ff7-94fd-f7fac0452178@rocketmail.com>
+Date: Thu, 24 Oct 2024 01:52:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/5] dt-bindings: display: panel: Move flip properties
+ to panel-common
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Neil Armstrong <neil.armstrong@linaro.org>,
+ Jessica Zhang <quic_jesszhan@quicinc.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Thierry Reding <thierry.reding@gmail.com>,
+ Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+ Andrzej Hajda <andrzej.hajda@intel.com>, dri-devel@lists.freedesktop.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ ~postmarketos/upstreaming@lists.sr.ht
+References: <cover.1729630039.git.jahau@rocketmail.com>
+ <18a0d8787b5714633a574f2e15f0cec1addddcfc.1729630039.git.jahau@rocketmail.com>
+ <yq7usspbou5lj4zz5giw472icd655als7pdik4ito2ziaidkwv@7yrkrgqs462o>
+Content-Language: en-US
+From: Jakob Hauser <jahau@rocketmail.com>
+In-Reply-To: <yq7usspbou5lj4zz5giw472icd655als7pdik4ito2ziaidkwv@7yrkrgqs462o>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241024-revert_iget-v1-4-4cac63d25f72@codewreck.org>
-References: <20241024-revert_iget-v1-0-4cac63d25f72@codewreck.org>
-In-Reply-To: <20241024-revert_iget-v1-0-4cac63d25f72@codewreck.org>
-To: Eric Van Hensbergen <ericvh@kernel.org>, 
- Latchesar Ionkov <lucho@ionkov.net>, 
- Christian Schoenebeck <linux_oss@crudebyte.com>
-Cc: "Linux regression tracking (Thorsten Leemhuis)" <regressions@leemhuis.info>, 
- v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, 
- Dominique Martinet <asmadeus@codewreck.org>, Will Deacon <will@kernel.org>, 
- stable@vger.kernel.org
-X-Mailer: b4 0.14-dev-87f09
-X-Developer-Signature: v=1; a=openpgp-sha256; l=15014;
- i=asmadeus@codewreck.org; h=from:subject:message-id;
- bh=PPkik43Ft+ziz/KL7sgGGZXrZDSANPKFv63JbrbMYKk=;
- b=owEBbQKS/ZANAwAIAatOm+xqmOZwAcsmYgBnGYwuVSjuK+6OOqZl2inM7epu748jxmsciFjrS
- 6nXenBLrMuJAjMEAAEIAB0WIQT8g9txgG5a3TOhiE6rTpvsapjmcAUCZxmMLgAKCRCrTpvsapjm
- cO8wD/oDyKbCOSsDyzLtQCVDMbSM4krc8ST19/4iAZMoJSs9N8TC5vn4GCRs56BQd/WPXtBWpln
- 8HQvxD5AECP6iG8FNnn99QkWZ3+PWF84qDNtky+2TGUD3u3YsqHC1Pw3jwqWHmdMX6opl1KijZO
- 6Lq3NU+AXLSjfQuBfUgljRsS5+EoD4knE62C9Rr5ttzVi2gsV6BBDJg6w11ofiyB9WHM3VOe3gF
- llJOHe1M1k6pn//HxGPgfaWGZ7p/VAawAQ2+W/la1zcY5NRt9ArhD8c0isBUUTDvaO3ChOWV4xL
- b+44JVdN+DEXXIDsVp27wfcgHmtv0/16S93PfFOY/2T9eJmt+K9MciOozGUho2+25I33Ul/Suw4
- /U5TPOjxiULmH/QziNm7nq0078mwTpYqiFoaS+GjGCIESVnPMv4JUmgHdRDM1YtZj2fWD58Pek9
- L1XbOpMIeWWGZi5/Ra/CLSb306eXkMhrwODrlUx8LJ5vWrzZrdL+wfiW1tkhlQWc+06y2aKmQmX
- Tj8Ky8C2kKoARsPVPjCTvOLiLkKqCqTRDr+0cLIEejXRwiQ6HlAGMBg8MJs1+GIW9cgINB8eani
- 0uflN1hxfDsPLniDRZ7RPsuNm+l8pQSRQ6kJ/bz3chnTLttPXSCX40kTvzkXJ4Imxi6554+D+ub
- ub1B1/L+iXYakAA==
-X-Developer-Key: i=asmadeus@codewreck.org; a=openpgp;
- fpr=B894379F662089525B3FB1B9333F1F391BBBB00A
+X-Mailer: WebService/1.1.22806 mail.backend.jedi.jws.acl:role.jedi.acl.token.atz.jws.hermes.yahoo
 
-This reverts commit 724a08450f74b02bd89078a596fd24857827c012.
+Hi Krzysztof,
 
-This code simplification introduced significant regressions on servers
-that do not remap inode numbers when exporting multiple underlying
-filesystems with colliding inodes, as can be illustrated with simple
-tmpfs exports in qemu with remapping disabled:
----
-# host side
-cd /tmp/linux-test
-mkdir m1 m2
-mount -t tmpfs tmpfs m1
-mount -t tmpfs tmpfs m2
-mkdir m1/dir m2/dir
-echo foo > m1/dir/foo
-echo bar > m2/dir/bar
+On 23.10.24 09:15, Krzysztof Kozlowski wrote:
+> On Tue, Oct 22, 2024 at 11:33:35PM +0200, Jakob Hauser wrote:
+>> The flip properties were used by "samsung,s6e8aa0.yaml" only so far. By
+>> introducing "samsung,s6e88a0-ams427ap24.yaml" they become more common.
+>>
+>> Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
+>> ---
+>> Patch is based on current branch drm-misc-next.
+>> ---
+>>   .../bindings/display/panel/panel-common.yaml           |  8 ++++++++
+>>   .../bindings/display/panel/samsung,s6e8aa0.yaml        | 10 ++--------
+>>   2 files changed, 10 insertions(+), 8 deletions(-)
+>>
+>> diff --git a/Documentation/devicetree/bindings/display/panel/panel-common.yaml b/Documentation/devicetree/bindings/display/panel/panel-common.yaml
+>> index 0a57a31f4f3d..087415753d60 100644
+>> --- a/Documentation/devicetree/bindings/display/panel/panel-common.yaml
+>> +++ b/Documentation/devicetree/bindings/display/panel/panel-common.yaml
+>> @@ -51,6 +51,14 @@ properties:
+>>       $ref: /schemas/types.yaml#/definitions/uint32
+>>       enum: [0, 90, 180, 270]
+>>   
+>> +  flip-horizontal:
+>> +    description: boolean to flip image horizontally
+>> +    type: boolean
+>> +
+>> +  flip-vertical:
+>> +    description: boolean to flip image vertically
+>> +    type: boolean
+>> +
+> 
+> I actually wonder how or why would you need to flip the images. I
+> understand rotation, but this is mirror flip, right? Is it for some
+> transparent displays?
 
-# guest side
-# started with -virtfs local,path=/tmp/linux-test,mount_tag=tmp,security_model=mapped-file
-mount -t 9p -o trans=virtio,debug=1 tmp /mnt/t
+Yes, it's mirror flip. The two cases we have here so far are displays 
+for smartphones.
 
-ls /mnt/t/m1/dir
-# foo
-ls /mnt/t/m2/dir
-# bar (works ok if directry isn't open)
+The panel "samsung-s6e88a0-ams427ap24", which this patchset is for, is 
+used in device "samsung-serranove" (Samsung Galaxy S4 Mini "Value 
+Edition"). By default this panel shows a mirrored picture, it needs flip 
+to fix that. I can't think of any good reason and it seems rather 
+unique. Maybe there was some mistake during fast-paced development and 
+easier to fix that way instead of changing suppliers specification, or 
+some purchase related topic, but that's just wild guessing. I 
+implemented the flip as an option because I don't know if this driver 
+could be extended for similar panels that might not need the flip, e.g. 
+older device "samsung-serranolte" (Samsung Galaxy S4 Mini LTE).
 
-# cd to keep first dir's inode alive
-cd /mnt/t/m1/dir
-ls /mnt/t/m2/dir
-# foo (should be bar)
----
-Other examples can be crafted with regular files with fscache enabled,
-in which case I/Os just happen to the wrong file leading to
-corruptions, or guest failing to boot with:
-  | VFS: Lookup of 'com.android.runtime' in 9p 9p would have caused loop
+For panel "samsung-s6e8aa0" I can't say much because I'm not familiar 
+with that. Within the kernel it is used by devices 
+"exynos4412-galaxy-s3" (Samsung Galaxy S III) and "exynos4210-trats" 
+(don't know what this is). Looking into their devicetree files they 
+apply horizontal and vertical flip at once, actually that's a rotation 
+by 180 degrees. Looking into the panel driver it seems that this is what 
+the hardware interface offers.
 
-In theory, we'd want the servers to be smart enough and ensure they
-never send us two different files with the same 'qid.path', but while
-qemu has an option to remap that is recommended (and qemu prints a
-warning if this case happens), there are many other servers which do
-not (kvmtool, nfs-ganesha, probably diod...), we should at least ensure
-we don't cause regressions on this:
-- assume servers can't be trusted and operations that should get a 'new'
-inode properly do so. commit d05dcfdf5e16 (" fs/9p: mitigate inode
-collisions") attempted to do this, but v9fs_fid_iget_dotl() was not
-called so some higher level of caching got in the way; this needs to be
-fixed properly before we can re-apply the patches.
-- if we ever want to really simplify this code, we will need to add some
-negotiation with the server at mount time where the server could claim
-they handle this properly, at which point we could optimize this out.
-(but that might not be needed at all if we properly handle the 'new'
-check?)
+> The change is fine, I just really wonder about hardware.
+> 
+> Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Fixes: 724a08450f74 ("fs/9p: simplify iget to remove unnecessary paths")
-Reported-by: Will Deacon <will@kernel.org>
-Link: https://lore.kernel.org/all/20240408141436.GA17022@redhat.com/
-Link: https://lkml.kernel.org/r/20240923100508.GA32066@willie-the-truck
-Cc: stable@vger.kernel.org # v6.9+
-Signed-off-by: Dominique Martinet <asmadeus@codewreck.org>
----
- fs/9p/v9fs.h           | 31 +++++++++++++---
- fs/9p/v9fs_vfs.h       |  2 +-
- fs/9p/vfs_inode.c      | 98 +++++++++++++++++++++++++++++++++++++++-----------
- fs/9p/vfs_inode_dotl.c | 92 ++++++++++++++++++++++++++++++++++++++---------
- fs/9p/vfs_super.c      |  2 +-
- 5 files changed, 180 insertions(+), 45 deletions(-)
+...
 
-diff --git a/fs/9p/v9fs.h b/fs/9p/v9fs.h
-index 9defa12208f9..698c43dd5dc8 100644
---- a/fs/9p/v9fs.h
-+++ b/fs/9p/v9fs.h
-@@ -179,13 +179,16 @@ extern int v9fs_vfs_rename(struct mnt_idmap *idmap,
- 			   struct inode *old_dir, struct dentry *old_dentry,
- 			   struct inode *new_dir, struct dentry *new_dentry,
- 			   unsigned int flags);
--extern struct inode *v9fs_fid_iget(struct super_block *sb, struct p9_fid *fid);
-+extern struct inode *v9fs_inode_from_fid(struct v9fs_session_info *v9ses,
-+					 struct p9_fid *fid,
-+					 struct super_block *sb, int new);
- extern const struct inode_operations v9fs_dir_inode_operations_dotl;
- extern const struct inode_operations v9fs_file_inode_operations_dotl;
- extern const struct inode_operations v9fs_symlink_inode_operations_dotl;
- extern const struct netfs_request_ops v9fs_req_ops;
--extern struct inode *v9fs_fid_iget_dotl(struct super_block *sb,
--					struct p9_fid *fid);
-+extern struct inode *v9fs_inode_from_fid_dotl(struct v9fs_session_info *v9ses,
-+					      struct p9_fid *fid,
-+					      struct super_block *sb, int new);
- 
- /* other default globals */
- #define V9FS_PORT	564
-@@ -227,9 +230,27 @@ v9fs_get_inode_from_fid(struct v9fs_session_info *v9ses, struct p9_fid *fid,
- 			struct super_block *sb)
- {
- 	if (v9fs_proto_dotl(v9ses))
--		return v9fs_fid_iget_dotl(sb, fid);
-+		return v9fs_inode_from_fid_dotl(v9ses, fid, sb, 0);
- 	else
--		return v9fs_fid_iget(sb, fid);
-+		return v9fs_inode_from_fid(v9ses, fid, sb, 0);
-+}
-+
-+/**
-+ * v9fs_get_new_inode_from_fid - Helper routine to populate an inode by
-+ * issuing a attribute request
-+ * @v9ses: session information
-+ * @fid: fid to issue attribute request for
-+ * @sb: superblock on which to create inode
-+ *
-+ */
-+static inline struct inode *
-+v9fs_get_new_inode_from_fid(struct v9fs_session_info *v9ses, struct p9_fid *fid,
-+			    struct super_block *sb)
-+{
-+	if (v9fs_proto_dotl(v9ses))
-+		return v9fs_inode_from_fid_dotl(v9ses, fid, sb, 1);
-+	else
-+		return v9fs_inode_from_fid(v9ses, fid, sb, 1);
- }
- 
- #endif
-diff --git a/fs/9p/v9fs_vfs.h b/fs/9p/v9fs_vfs.h
-index 7923c3c347cb..d3aefbec4de6 100644
---- a/fs/9p/v9fs_vfs.h
-+++ b/fs/9p/v9fs_vfs.h
-@@ -42,7 +42,7 @@ struct inode *v9fs_alloc_inode(struct super_block *sb);
- void v9fs_free_inode(struct inode *inode);
- void v9fs_set_netfs_context(struct inode *inode);
- int v9fs_init_inode(struct v9fs_session_info *v9ses,
--		    struct inode *inode, struct p9_qid *qid, umode_t mode, dev_t rdev);
-+		    struct inode *inode, umode_t mode, dev_t rdev);
- void v9fs_evict_inode(struct inode *inode);
- #if (BITS_PER_LONG == 32)
- #define QID2INO(q) ((ino_t) (((q)->path+2) ^ (((q)->path) >> 32)))
-diff --git a/fs/9p/vfs_inode.c b/fs/9p/vfs_inode.c
-index 5e05ec7af42e..e9c052b35dd9 100644
---- a/fs/9p/vfs_inode.c
-+++ b/fs/9p/vfs_inode.c
-@@ -256,12 +256,9 @@ void v9fs_set_netfs_context(struct inode *inode)
- }
- 
- int v9fs_init_inode(struct v9fs_session_info *v9ses,
--		    struct inode *inode, struct p9_qid *qid, umode_t mode, dev_t rdev)
-+		    struct inode *inode, umode_t mode, dev_t rdev)
- {
- 	int err = 0;
--	struct v9fs_inode *v9inode = V9FS_I(inode);
--
--	memcpy(&v9inode->qid, qid, sizeof(struct p9_qid));
- 
- 	inode_init_owner(&nop_mnt_idmap, inode, NULL, mode);
- 	inode->i_blocks = 0;
-@@ -366,40 +363,80 @@ void v9fs_evict_inode(struct inode *inode)
- 		clear_inode(inode);
- }
- 
--struct inode *v9fs_fid_iget(struct super_block *sb, struct p9_fid *fid)
-+static int v9fs_test_inode(struct inode *inode, void *data)
-+{
-+	int umode;
-+	dev_t rdev;
-+	struct v9fs_inode *v9inode = V9FS_I(inode);
-+	struct p9_wstat *st = (struct p9_wstat *)data;
-+	struct v9fs_session_info *v9ses = v9fs_inode2v9ses(inode);
-+
-+	umode = p9mode2unixmode(v9ses, st, &rdev);
-+	/* don't match inode of different type */
-+	if (inode_wrong_type(inode, umode))
-+		return 0;
-+
-+	/* compare qid details */
-+	if (memcmp(&v9inode->qid.version,
-+		   &st->qid.version, sizeof(v9inode->qid.version)))
-+		return 0;
-+
-+	if (v9inode->qid.type != st->qid.type)
-+		return 0;
-+
-+	if (v9inode->qid.path != st->qid.path)
-+		return 0;
-+	return 1;
-+}
-+
-+static int v9fs_test_new_inode(struct inode *inode, void *data)
-+{
-+	return 0;
-+}
-+
-+static int v9fs_set_inode(struct inode *inode,  void *data)
-+{
-+	struct v9fs_inode *v9inode = V9FS_I(inode);
-+	struct p9_wstat *st = (struct p9_wstat *)data;
-+
-+	memcpy(&v9inode->qid, &st->qid, sizeof(st->qid));
-+	return 0;
-+}
-+
-+static struct inode *v9fs_qid_iget(struct super_block *sb,
-+				   struct p9_qid *qid,
-+				   struct p9_wstat *st,
-+				   int new)
- {
- 	dev_t rdev;
- 	int retval;
- 	umode_t umode;
- 	struct inode *inode;
--	struct p9_wstat *st;
- 	struct v9fs_session_info *v9ses = sb->s_fs_info;
-+	int (*test)(struct inode *inode, void *data);
- 
--	inode = iget_locked(sb, QID2INO(&fid->qid));
--	if (unlikely(!inode))
-+	if (new)
-+		test = v9fs_test_new_inode;
-+	else
-+		test = v9fs_test_inode;
-+
-+	inode = iget5_locked(sb, QID2INO(qid), test, v9fs_set_inode, st);
-+	if (!inode)
- 		return ERR_PTR(-ENOMEM);
- 	if (!(inode->i_state & I_NEW))
- 		return inode;
--
- 	/*
- 	 * initialize the inode with the stat info
- 	 * FIXME!! we may need support for stale inodes
- 	 * later.
- 	 */
--	st = p9_client_stat(fid);
--	if (IS_ERR(st)) {
--		retval = PTR_ERR(st);
--		goto error;
--	}
--
-+	inode->i_ino = QID2INO(qid);
- 	umode = p9mode2unixmode(v9ses, st, &rdev);
--	retval = v9fs_init_inode(v9ses, inode, &fid->qid, umode, rdev);
--	v9fs_stat2inode(st, inode, sb, 0);
--	p9stat_free(st);
--	kfree(st);
-+	retval = v9fs_init_inode(v9ses, inode, umode, rdev);
- 	if (retval)
- 		goto error;
- 
-+	v9fs_stat2inode(st, inode, sb, 0);
- 	v9fs_set_netfs_context(inode);
- 	v9fs_cache_inode_get_cookie(inode);
- 	unlock_new_inode(inode);
-@@ -410,6 +447,23 @@ struct inode *v9fs_fid_iget(struct super_block *sb, struct p9_fid *fid)
- 
- }
- 
-+struct inode *
-+v9fs_inode_from_fid(struct v9fs_session_info *v9ses, struct p9_fid *fid,
-+		    struct super_block *sb, int new)
-+{
-+	struct p9_wstat *st;
-+	struct inode *inode = NULL;
-+
-+	st = p9_client_stat(fid);
-+	if (IS_ERR(st))
-+		return ERR_CAST(st);
-+
-+	inode = v9fs_qid_iget(sb, &st->qid, st, new);
-+	p9stat_free(st);
-+	kfree(st);
-+	return inode;
-+}
-+
- /**
-  * v9fs_at_to_dotl_flags- convert Linux specific AT flags to
-  * plan 9 AT flag.
-@@ -556,7 +610,7 @@ v9fs_create(struct v9fs_session_info *v9ses, struct inode *dir,
- 		/*
- 		 * instantiate inode and assign the unopened fid to the dentry
- 		 */
--		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb);
-+		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
- 		if (IS_ERR(inode)) {
- 			err = PTR_ERR(inode);
- 			p9_debug(P9_DEBUG_VFS,
-@@ -684,8 +738,10 @@ struct dentry *v9fs_vfs_lookup(struct inode *dir, struct dentry *dentry,
- 		inode = NULL;
- 	else if (IS_ERR(fid))
- 		inode = ERR_CAST(fid);
--	else
-+	else if (v9ses->cache & (CACHE_META|CACHE_LOOSE))
- 		inode = v9fs_get_inode_from_fid(v9ses, fid, dir->i_sb);
-+	else
-+		inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
- 	/*
- 	 * If we had a rename on the server and a parallel lookup
- 	 * for the new name, then make sure we instantiate with
-diff --git a/fs/9p/vfs_inode_dotl.c b/fs/9p/vfs_inode_dotl.c
-index ef9db3e03506..143ac03b7425 100644
---- a/fs/9p/vfs_inode_dotl.c
-+++ b/fs/9p/vfs_inode_dotl.c
-@@ -52,33 +52,76 @@ static kgid_t v9fs_get_fsgid_for_create(struct inode *dir_inode)
- 	return current_fsgid();
- }
- 
--struct inode *v9fs_fid_iget_dotl(struct super_block *sb, struct p9_fid *fid)
-+static int v9fs_test_inode_dotl(struct inode *inode, void *data)
-+{
-+	struct v9fs_inode *v9inode = V9FS_I(inode);
-+	struct p9_stat_dotl *st = (struct p9_stat_dotl *)data;
-+
-+	/* don't match inode of different type */
-+	if (inode_wrong_type(inode, st->st_mode))
-+		return 0;
-+
-+	if (inode->i_generation != st->st_gen)
-+		return 0;
-+
-+	/* compare qid details */
-+	if (memcmp(&v9inode->qid.version,
-+		   &st->qid.version, sizeof(v9inode->qid.version)))
-+		return 0;
-+
-+	if (v9inode->qid.type != st->qid.type)
-+		return 0;
-+
-+	if (v9inode->qid.path != st->qid.path)
-+		return 0;
-+	return 1;
-+}
-+
-+/* Always get a new inode */
-+static int v9fs_test_new_inode_dotl(struct inode *inode, void *data)
-+{
-+	return 0;
-+}
-+
-+static int v9fs_set_inode_dotl(struct inode *inode,  void *data)
-+{
-+	struct v9fs_inode *v9inode = V9FS_I(inode);
-+	struct p9_stat_dotl *st = (struct p9_stat_dotl *)data;
-+
-+	memcpy(&v9inode->qid, &st->qid, sizeof(st->qid));
-+	inode->i_generation = st->st_gen;
-+	return 0;
-+}
-+
-+static struct inode *v9fs_qid_iget_dotl(struct super_block *sb,
-+					struct p9_qid *qid,
-+					struct p9_fid *fid,
-+					struct p9_stat_dotl *st,
-+					int new)
- {
- 	int retval;
- 	struct inode *inode;
--	struct p9_stat_dotl *st;
- 	struct v9fs_session_info *v9ses = sb->s_fs_info;
-+	int (*test)(struct inode *inode, void *data);
- 
--	inode = iget_locked(sb, QID2INO(&fid->qid));
--	if (unlikely(!inode))
-+	if (new)
-+		test = v9fs_test_new_inode_dotl;
-+	else
-+		test = v9fs_test_inode_dotl;
-+
-+	inode = iget5_locked(sb, QID2INO(qid), test, v9fs_set_inode_dotl, st);
-+	if (!inode)
- 		return ERR_PTR(-ENOMEM);
- 	if (!(inode->i_state & I_NEW))
- 		return inode;
--
- 	/*
- 	 * initialize the inode with the stat info
- 	 * FIXME!! we may need support for stale inodes
- 	 * later.
- 	 */
--	st = p9_client_getattr_dotl(fid, P9_STATS_BASIC | P9_STATS_GEN);
--	if (IS_ERR(st)) {
--		retval = PTR_ERR(st);
--		goto error;
--	}
--
--	retval = v9fs_init_inode(v9ses, inode, &fid->qid,
-+	inode->i_ino = QID2INO(qid);
-+	retval = v9fs_init_inode(v9ses, inode,
- 				 st->st_mode, new_decode_dev(st->st_rdev));
--	kfree(st);
- 	if (retval)
- 		goto error;
- 
-@@ -90,7 +133,6 @@ struct inode *v9fs_fid_iget_dotl(struct super_block *sb, struct p9_fid *fid)
- 		goto error;
- 
- 	unlock_new_inode(inode);
--
- 	return inode;
- error:
- 	iget_failed(inode);
-@@ -98,6 +140,22 @@ struct inode *v9fs_fid_iget_dotl(struct super_block *sb, struct p9_fid *fid)
- 
- }
- 
-+struct inode *
-+v9fs_inode_from_fid_dotl(struct v9fs_session_info *v9ses, struct p9_fid *fid,
-+			 struct super_block *sb, int new)
-+{
-+	struct p9_stat_dotl *st;
-+	struct inode *inode = NULL;
-+
-+	st = p9_client_getattr_dotl(fid, P9_STATS_BASIC | P9_STATS_GEN);
-+	if (IS_ERR(st))
-+		return ERR_CAST(st);
-+
-+	inode = v9fs_qid_iget_dotl(sb, &st->qid, fid, st, new);
-+	kfree(st);
-+	return inode;
-+}
-+
- struct dotl_openflag_map {
- 	int open_flag;
- 	int dotl_flag;
-@@ -247,7 +305,7 @@ v9fs_vfs_atomic_open_dotl(struct inode *dir, struct dentry *dentry,
- 		p9_debug(P9_DEBUG_VFS, "p9_client_walk failed %d\n", err);
- 		goto out;
- 	}
--	inode = v9fs_fid_iget_dotl(dir->i_sb, fid);
-+	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
- 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n", err);
-@@ -342,7 +400,7 @@ static int v9fs_vfs_mkdir_dotl(struct mnt_idmap *idmap,
- 	}
- 
- 	/* instantiate inode and assign the unopened fid to the dentry */
--	inode = v9fs_fid_iget_dotl(dir->i_sb, fid);
-+	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
- 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
-@@ -780,7 +838,7 @@ v9fs_vfs_mknod_dotl(struct mnt_idmap *idmap, struct inode *dir,
- 			 err);
- 		goto error;
- 	}
--	inode = v9fs_fid_iget_dotl(dir->i_sb, fid);
-+	inode = v9fs_get_new_inode_from_fid(v9ses, fid, dir->i_sb);
- 	if (IS_ERR(inode)) {
- 		err = PTR_ERR(inode);
- 		p9_debug(P9_DEBUG_VFS, "inode creation failed %d\n",
-diff --git a/fs/9p/vfs_super.c b/fs/9p/vfs_super.c
-index 55e67e36ae68..489db161abc9 100644
---- a/fs/9p/vfs_super.c
-+++ b/fs/9p/vfs_super.c
-@@ -139,7 +139,7 @@ static struct dentry *v9fs_mount(struct file_system_type *fs_type, int flags,
- 	else
- 		sb->s_d_op = &v9fs_dentry_operations;
- 
--	inode = v9fs_get_inode_from_fid(v9ses, fid, sb);
-+	inode = v9fs_get_new_inode_from_fid(v9ses, fid, sb);
- 	if (IS_ERR(inode)) {
- 		retval = PTR_ERR(inode);
- 		goto release_sb;
-
--- 
-2.46.0
-
+Kind regards,
+Jakob
 
