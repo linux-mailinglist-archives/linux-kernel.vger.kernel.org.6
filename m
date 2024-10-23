@@ -1,71 +1,143 @@
-Return-Path: <linux-kernel+bounces-377858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D06C19AC7BA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:23:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5C6F9AC7BF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:24:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7853F1F26639
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:23:50 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6059BB2312D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:24:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FC2D1AAE1B;
-	Wed, 23 Oct 2024 10:22:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B11E71AB6C4;
+	Wed, 23 Oct 2024 10:22:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="CIuvvN1r"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="POCLNRf+"
+Received: from out-170.mta0.migadu.com (out-170.mta0.migadu.com [91.218.175.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09BAD1A256F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:22:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03F971AB537
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:22:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729678959; cv=none; b=OgNyG8eoejseWcjN38YjO9K3F1k0NVM8PfZwbqNatnaG5xG86yMG/vXcPsUDctbEGQWISobotzga29Y5ieS8VzHIyMiSQ7Yv0PllQqzyCsawJe6gygygbMZXpG6TJ4S8zNkFt94VUqt8OjP6FVjXM+MvUwmxsj2jSSKHzZSt3Lg=
+	t=1729678965; cv=none; b=AY1tIdr2lR1Jg8g5fq+qCqRC3fPWPzADRTJugjc+zTrXsOikFxs5h1Y+37A8rEtkxLHyfSSFcUucTzqDyBQnt1WqWtv+v8zGoJoR00BGgS9CiDwNUzKs6YyAzqvpko1Y2axS8B7PavImppDAfLEAWVZhaR4Yg7Fc9nX6FrSUtfw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729678959; c=relaxed/simple;
-	bh=tpjKaHdslkPtm9FgDU3BjVq0XiBAYIX76eHEAHRlW3I=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=qDuX8te70iy+Noyt/hrlXLuOObz9ryFtRCVYHax2mCqvtOMKf6XHaS14XBY9aL4SoGfJfWnbK5mXxUYlM7/KSpt2kqQg69SjteenjWCR+gzqVmVyZlVvheb6RcO1FU8mDeESpR8gfWX3SYMQ8v09RxHTjYeVZOZMM1cp87xcpsc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=CIuvvN1r; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 584ACC4CEC6;
-	Wed, 23 Oct 2024 10:22:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729678957;
-	bh=tpjKaHdslkPtm9FgDU3BjVq0XiBAYIX76eHEAHRlW3I=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=CIuvvN1rdGu0Qs0L2e3yLCh9A0hMnauAwhQ9PGhGo+/MLat/rFMTsAnEQRLNjYwI7
-	 bD/CTbneFr4Lr7Epl9WM0tfLd9t3tlulXt1TWxxE6GB8x930GPp7tqgv31R1oGgAN0
-	 S6Ws6eOpeH2bWGTg+DbntfbGFPBgvO/6Y6yoz0TQ=
-Date: Wed, 23 Oct 2024 03:22:36 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Vlastimil Babka
- <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org, Linus Torvalds
- <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH hotfix 6.12 0/8] fix error handling in mmap_region() and
- refactor
-Message-Id: <20241023032236.c7a4f842b7a71c0e492bf322@linux-foundation.org>
-In-Reply-To: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
-References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729678965; c=relaxed/simple;
+	bh=2mcs0IKbxNJT5BlNCYB0HknWRyTSmQEZnBQOkwEAxu0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QZFQzIBC3yNZeH4Uno9dtGMbUHuUG+m8bktrEfrTtzo083knzK92BI4eJupPAauLecKLGsBrb8x/+EhwJaiuPWw3+kPpx6GrQoAAY8sU0W+8ufBHfmBW3Li/k/xw6K1lp+aC0Er2TxOwf6k8crj61xYOetOwDSOKUEnXvPZozqA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=POCLNRf+; arc=none smtp.client-ip=91.218.175.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <3fe8183a-08d3-47d3-b1a1-0d84f7bf58b7@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729678960;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=Bn+zF09KPNYa3iXtf4zTqB+9MiKB/XGy0KKTzUMaa8M=;
+	b=POCLNRf+fxsROF6+a4fgY3UQqUVnbn0P73g/39VpVcNVfPXWKpOaFFgJbCJ09td4dWQujb
+	1PdGR2v7QmYvwFOr+jhWtpG/o+n8q38oyakHvAQJUX3J/piYXxeKL2HnIcsVpBCMIzaf53
+	PGo1gPjySqNn8jxyt79IeprT7Vhs5AI=
+Date: Wed, 23 Oct 2024 11:22:36 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+Subject: Re: [PATCH net] net: ti: iccsg-prueth: Fix 1 PPS sync
+To: Meghana Malladi <m-malladi@ti.com>, vigneshr@ti.com, horms@kernel.org,
+ jan.kiszka@siemens.com, diogo.ivo@siemens.com, pabeni@redhat.com,
+ kuba@kernel.org, edumazet@google.com, davem@davemloft.net,
+ andrew+netdev@lunn.ch
+Cc: linux-kernel@vger.kernel.org, netdev@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, srk@ti.com,
+ Roger Quadros <rogerq@kernel.org>, danishanwar@ti.com
+References: <20241023091213.593351-1-m-malladi@ti.com>
+Content-Language: en-US
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241023091213.593351-1-m-malladi@ti.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-On Tue, 22 Oct 2024 21:40:51 +0100 Lorenzo Stoakes <lorenzo.stoakes@oracle.com> wrote:
+On 23/10/2024 10:12, Meghana Malladi wrote:
+> The first PPS latch time needs to be calculated by the driver
+> (in rounded off seconds) and configured as the start time
+> offset for the cycle. After synchronizing two PTP clocks
+> running as master/slave, missing this would cause master
+> and slave to start immediately with some milliseconds
+> drift which causes the PPS signal to never synchronize with
+> the PTP master.
+> 
+> Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
+> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
+> ---
+>   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 12 ++++++++++--
+>   drivers/net/ethernet/ti/icssg/icssg_prueth.h | 11 +++++++++++
+>   2 files changed, 21 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> index 0556910938fa..6b2cd7c898d0 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
+> @@ -411,6 +411,8 @@ static int prueth_perout_enable(void *clockops_data,
+>   	struct prueth_emac *emac = clockops_data;
+>   	u32 reduction_factor = 0, offset = 0;
+>   	struct timespec64 ts;
+> +	u64 current_cycle;
+> +	u64 start_offset;
+>   	u64 ns_period;
+>   
+>   	if (!on)
+> @@ -449,8 +451,14 @@ static int prueth_perout_enable(void *clockops_data,
+>   	writel(reduction_factor, emac->prueth->shram.va +
+>   		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
+>   
+> -	writel(0, emac->prueth->shram.va +
+> -		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
+> +	current_cycle = icssg_readq(emac->prueth->shram.va +
+> +				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
+> +
+> +	/* Rounding of current_cycle count to next second */
+> +	start_offset = ((current_cycle / MSEC_PER_SEC) + 1) * MSEC_PER_SEC;
 
-> After this we go further, refactoring the code, placing it in mm/vma.c in
-> order to make it eventually userland testable, and significantly
-> simplifying the logic to avoid this issue arising in future.
+This looks more like roundup(current_cycle, MSEC_PER_SEC), let's use it
+instead of open coding.
 
-I'm not sure that patches 4-8 are strictly 6.12 material.  What's the
-thinking here?
+> +
+> +	icssg_writeq(start_offset, emac->prueth->shram.va +
+> +		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
+>   
+>   	return 0;
+>   }
+> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> index 8722bb4a268a..a4af2dbcca31 100644
+> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
+> @@ -330,6 +330,17 @@ static inline int prueth_emac_slice(struct prueth_emac *emac)
+>   extern const struct ethtool_ops icssg_ethtool_ops;
+>   extern const struct dev_pm_ops prueth_dev_pm_ops;
+>   
+> +static inline u64 icssg_readq(const void __iomem *addr)
+> +{
+> +	return readl(addr) + ((u64)readl(addr + 4) << 32);
+> +}
+> +
+> +static inline void icssg_writeq(u64 val, void __iomem *addr)
+> +{
+> +	writel(lower_32_bits(val), addr);
+> +	writel(upper_32_bits(val), addr + 4);
+> +}
+> +
+>   /* Classifier helpers */
+>   void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac);
+>   void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac);
+> 
+> base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
 
 
