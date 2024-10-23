@@ -1,130 +1,95 @@
-Return-Path: <linux-kernel+bounces-377450-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 582A89ABF07
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:40:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A9D09ABF08
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:40:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 032541F2270A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:40:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F17E1F246B8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:40:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 762E714B08A;
-	Wed, 23 Oct 2024 06:39:20 +0000 (UTC)
-Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4F7714A4E1;
+	Wed, 23 Oct 2024 06:40:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="mHyu8GHF"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DADA314A4DE;
-	Wed, 23 Oct 2024 06:39:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA658149DF7;
+	Wed, 23 Oct 2024 06:40:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665560; cv=none; b=k+j01SbA4K8Z627xsY2nCEdkWmtPDp4THPxxEh5wnl2DyvBTFSpbLxqwwBBTtr9WWe8KlvBejZUlCBVN/szEm/1BSUfEVvAdsFdFrEGMEnZ5SBgHk9kPYo0JbpoRTPHghSmlza/h2+X7vhUzwZXONKdgeTtsEEe/cn89MbEGL9E=
+	t=1729665651; cv=none; b=Q+NZFRg/Nkz0WJvl98whT4KoBrSFteoz6LOWIG2gjBCzULTOBH58IYGOXm4Mm/pcO1bsSaZeo/SLn+jSlzAEouX8I2WTHhTWHBo63/AIzSeoOAYKZI9QCqoU9uiQgXoYbXSGG7qqKCVNaweT2WyqHtc/QUn11Nn96kvsS5pr6Zw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665560; c=relaxed/simple;
-	bh=XYMrAKGPn3G7hN4PF2Z2mZGMRGRjPfTIzYJUmtHmcjI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Z3Ie80G6QE5/WDk1nAJ7oAwR3vKnnf+FYcJBn8EzBSpagA2mK/63Mk8tjbWuAjf437WCXmx2OErhcqCIx0D0sIXy3dcAUV4Ivrl/Sb0LhEDq6QNPzMC2vggKpbzpg+LUFRfSmRNL2zDCnpean7YTj+e/QFyNFCMFN1IUHHEsAgw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
-Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
-	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by mx1.emlix.com (Postfix) with ESMTPS id 0C2EE5F8A7;
-	Wed, 23 Oct 2024 08:39:16 +0200 (CEST)
-From: Rolf Eike Beer <eb@emlix.com>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH 7/7] kconfig: qconf: simplify character replacement
-Date: Wed, 23 Oct 2024 08:39:15 +0200
-Message-ID: <3592638.iIbC2pHGDl@devpool47.emlix.com>
-Organization: emlix GmbH
-In-Reply-To: <4960180.31r3eYUQgx@devpool47.emlix.com>
-References: <4960180.31r3eYUQgx@devpool47.emlix.com>
+	s=arc-20240116; t=1729665651; c=relaxed/simple;
+	bh=FV0/yuKKno5RIoxHyPoFk6qEGKEbHv9jVq0gHP2II8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZMYs5VdlbO0QppZPUlhW/Zr8HXfLLp8E2V9GTs1uNLufFP9ulj1Qy2pcZ5CMHqGorvQJrOPXFXNEEiX0SuneeiL7j48DupHQbY49voXJvGeFh1emFAO6PU5PV8TvXVptp+B3GzBAkpKGqWA9+KhYB/tLt9gMtWFjaBbQoKMxaOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=mHyu8GHF; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=rIfcwPiPcYCIDObV4K7eoIB0jafSYb0r08EuGx/wWmc=; b=mHyu8GHFXDq17XTqSed8xF9VBd
+	EG2Cd+htJfxT7lba9yJHvLUSyQsyRNdiaQmWBIbkhQIpssMxJywl51LZRAdO3qKh2/LytHg8VmL2i
+	asSVWY5RTMaO321eYZPLwpN2nWFIMDIWuRsRWUc/FloW2ddxnbmMxWO1WuhkyeBcos2d6XtoLQcwm
+	8jL7EWvE9msuy/O9CADmYFZjLCdETft8pWmaSkDsseTDC0rGuALMCNTlvY2te8K25nx67DiMOi4wr
+	a2dmnTLfwpqBYyPH6MFr3oRZXsktpqAXN15Aj3wS3POW9UO5tdAbFsmUR3iyYDKFKPu4WxTO6xBWe
+	Fo/6k37w==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3V32-0000000DDxA-1Qk6;
+	Wed, 23 Oct 2024 06:40:48 +0000
+Date: Tue, 22 Oct 2024 23:40:48 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: paulmck@kernel.org, Christoph Hellwig <hch@infradead.org>,
+	Peter Zijlstra <peterz@infradead.org>, rcu@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-team@meta.com,
+	rostedt@goodmis.org, andrii@kernel.org
+Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
+ srcu_read_lock()
+Message-ID: <ZxiacAA9LIWv70Xp@infradead.org>
+References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
+ <ZxdLfLWWrAEfRiXV@infradead.org>
+ <20241022070635.GY16066@noisy.programming.kicks-ass.net>
+ <ZxdPN6wT1LMyLaNL@infradead.org>
+ <20241022071018.GA16066@noisy.programming.kicks-ass.net>
+ <ZxdQiLhn16FtkOys@infradead.org>
+ <8b2552d8-0453-476a-8606-e8b761934783@paulmck-laptop>
+ <CAEf4BzbyctiXq8L5MQmCtVqGSN8uawUmNXJMm-X8jDcp8QQ86g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAEf4BzbyctiXq8L5MQmCtVqGSN8uawUmNXJMm-X8jDcp8QQ86g@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-Replace the hand crafted lookup table with a QHash. This has the nice benef=
-it
-that the added offsets can not get out of sync with the length of the
-replacement strings.
+On Tue, Oct 22, 2024 at 10:29:13AM -0700, Andrii Nakryiko wrote:
+> >
+> > Would this work?
+> >
+> > #define SRCU_INVALID_INDEX -1
+> >
+> 
+> But why?
 
-Signed-off-by: Rolf Eike Beer <eb@emlix.com>
-=2D--
- scripts/kconfig/qconf.cc | 33 ++++++++++++---------------------
- 1 file changed, 12 insertions(+), 21 deletions(-)
+Becaue it very clearly documents what is going on.
 
-diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
-index 4b2f707c9203..f07a463c5760 100644
-=2D-- a/scripts/kconfig/qconf.cc
-+++ b/scripts/kconfig/qconf.cc
-@@ -1123,28 +1123,19 @@ QString ConfigInfoView::print_filter(const QString =
-&str)
- {
- 	QRegularExpression re("[<>&\"\\n]");
- 	QString res =3D str;
-+
-+	QHash<QChar, QString> patterns;
-+	patterns['<'] =3D "&lt;";
-+	patterns['>'] =3D "&gt;";
-+	patterns['&'] =3D "&amp;";
-+	patterns['"'] =3D "&quot;";
-+	patterns['\n'] =3D "<br>";
-+
- 	for (int i =3D 0; (i =3D res.indexOf(re, i)) >=3D 0;) {
-=2D		switch (res[i].toLatin1()) {
-=2D		case '<':
-=2D			res.replace(i, 1, "&lt;");
-=2D			i +=3D 4;
-=2D			break;
-=2D		case '>':
-=2D			res.replace(i, 1, "&gt;");
-=2D			i +=3D 4;
-=2D			break;
-=2D		case '&':
-=2D			res.replace(i, 1, "&amp;");
-=2D			i +=3D 5;
-=2D			break;
-=2D		case '"':
-=2D			res.replace(i, 1, "&quot;");
-=2D			i +=3D 6;
-=2D			break;
-=2D		case '\n':
-=2D			res.replace(i, 1, "<br>");
-=2D			i +=3D 4;
-=2D			break;
-+		const QString n =3D patterns.value(res[i], QString());
-+		if (!n.isEmpty()) {
-+			res.replace(i, 1, n);
-+			i +=3D n.length();
- 		}
- 	}
- 	return res;
-=2D-=20
-2.47.0
+>It's a nice property to have an int-returning API where valid
+> values are only >= 0, so callers are free to use the entire negative
+> range (not just -1) for whatever they need to store in case there is
+> no srcu_idx value.
 
-
-=2D-=20
-Rolf Eike Beer
-
-emlix GmbH
-Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
-Phone +49 (0)551 30664-0, e-mail info@emlix.com
-District Court of G=C3=B6ttingen, Registry Number HR B 3160
-Managing Directors: Heike Jordan, Dr. Uwe Kracke
-VAT ID No. DE 205 198 055
-Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
-Office Bonn: Bachstr. 6, 53115 Bonn, Germany
-http://www.emlix.com
-
-emlix - your embedded Linux partner
-
+Well, if you have a concrete use case for that we can probably live
+with it, but I'd rather have that use case extremely well documented,
+as it will be very puzzling to the reader.
 
 
