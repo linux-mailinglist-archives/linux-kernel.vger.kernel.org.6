@@ -1,134 +1,177 @@
-Return-Path: <linux-kernel+bounces-377141-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 915B49ABA5C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:07:22 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D8D09ABA5E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:08:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3A371B21134
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:07:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AFFE1F243EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:08:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED5C120E6;
-	Wed, 23 Oct 2024 00:07:14 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BE007482;
+	Wed, 23 Oct 2024 00:08:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="eRUJwDjH"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	dkim=pass (2048-bit key) header.d=nigauri-org.20230601.gappssmtp.com header.i=@nigauri-org.20230601.gappssmtp.com header.b="iUM+Zv40"
+Received: from mail-ej1-f50.google.com (mail-ej1-f50.google.com [209.85.218.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE9CB2595
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:07:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9594F196
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:08:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729642034; cv=none; b=B8W6zSYMtI8IdqmlgYZ+6EBkBv5RnaY5Ym0b0yrSkE6boeoROVPHI856UdW8SIPEmztVekCD2EkSuTsEWi069mg+DlbGhXOhgB0ax+g64ezdsmt6gsbtOd+Kx4mpzFrvdmWQla0OlXro/LI1ie/EJmpBu8czTQUGa9AaBU0SRNc=
+	t=1729642087; cv=none; b=KeF9gkcEE3WJptYZsscjmMEGiALGrm2KoYCMmPb5WHJiLd3wP4W07cEqLc+73C4k7EFlEKqIuHKmQ9A04AW9qrlNWn/6U4SirlTE29Rnklad1aBqastbDoz7zzvlXuoAH58q2QETrvhcTrF3LS6EaY8Q4Fx+UZf8+xEOEEmPnm0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729642034; c=relaxed/simple;
-	bh=jnkmrhzcYEBP1z5umBcm+wct455Zpt09cYoU6UgmM44=;
+	s=arc-20240116; t=1729642087; c=relaxed/simple;
+	bh=UQAbXbkOAhARgZFMBQq796mjQiiEE/8JleG3+DUEYcE=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CoPTaAhZzToxkIBiaGr5rT3KEddTc+uMbzHo+Yez0AKNuPPV7Mqp6MT72LU25uZwVNN6oUpuR7NQAgRAH3vkU3O2MqHBD/uxwIUM1BKkdUd/W+wniJ2QZsfAZeXBNKMru2U0nq7daSEV6pFri8xNwHf84GaTIMxI6tnCyY57SDg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=eRUJwDjH; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e2e427b07dso52751217b3.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:07:12 -0700 (PDT)
+	 To:Cc:Content-Type; b=QNw8y8Hrn1u6yG710R8+MgNwvRVdL/btO8kjUbrrK/4xgBlJq1bgUsv44CColWjVvjoDECifWsic5rzsNDT83ldOiwNVT2QA2C2dSilD69b5TVW7W3+bCMeY6wY17HvoatEibGI3MJ9yuj71kOZmo6FL9SyleTjGutumaoXGX7o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org; spf=none smtp.mailfrom=nigauri.org; dkim=pass (2048-bit key) header.d=nigauri-org.20230601.gappssmtp.com header.i=@nigauri-org.20230601.gappssmtp.com header.b=iUM+Zv40; arc=none smtp.client-ip=209.85.218.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=nigauri.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=nigauri.org
+Received: by mail-ej1-f50.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso886990366b.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:08:05 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729642032; x=1730246832; darn=vger.kernel.org;
+        d=nigauri-org.20230601.gappssmtp.com; s=20230601; t=1729642084; x=1730246884; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=SQ1cEM3+cfdDVolwI+TVxmBRgBuH+HcUtwUKGDw1jOg=;
-        b=eRUJwDjHS+L1w2jAhHi2l3HJk9EkcEPSCmNPnOH5vPZ5UcUqCXPvrCoibUBIaixzKA
-         Cjz7XVOAsiReOXyh0GKicCeDjTAGyuzZ00syFzef9ZZqlhFRb2xKoQXdZ/2jv3HUM7V/
-         Gzy1vV3mTBGZLvAncXl1yr8OF1NV4mIOEO71qMzLI2JwvT1qdnhjiLRxTIsjPkJJUBjP
-         IY2gF18i7wFB2A8BJ8PACuthgYRQMjfwNqpcp5it5iNv5nfIJ6XUFoOrBUbFjGXdNQ0c
-         SmKoWl7LeeLg57q9UrZhlXLWSsRyOsDbmmnKuD9+LaBSnERvfIK3EADUvVmdo+K43NqN
-         QD4Q==
+        bh=zvLG7lWTLy4qhLgf8MKM63Xm05WyCgQZoRXtbsojwUE=;
+        b=iUM+Zv40D3bWH2+jXOy6E3NmL9IfR0zJ3o4QA/fJK40jNDteNuloUFAWYy+OuZDMSP
+         hfpOnHIRjbM7w+0oL2k1HTXIn1FWy8ncZEdEQXTey9uXOjns720UG60yCY7kbpmUqx0C
+         rhLskCxwGGEA/NVuAWQphruLTudspKzwsRKdc47h42kyEV4VHKaCLsPvaqVDRQ3vIXFN
+         o51w2baJI/0sar000Y+u4y2+rKN39QmdgC4zYVluuG8YCQWDFR8A3s6RvLD9PvFnYavE
+         e2gTs+swiFWp/YgXm0YYWGwPRqrc5v1o4wV6egircf3wUoqcGaBFL5mu5DOvQu1woJiU
+         DK3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729642032; x=1730246832;
+        d=1e100.net; s=20230601; t=1729642084; x=1730246884;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=SQ1cEM3+cfdDVolwI+TVxmBRgBuH+HcUtwUKGDw1jOg=;
-        b=sX+diwE//yzELFK5Gi3vCVFsz10I5eHmbp2Q5/TKVEmgRiOOiJyTwx8OKN/qyphXLk
-         hfG885tKmIvxTc+0fpJCCKvRlv/VOZPJfm/LrQHXPPCkwuPRzDQBkPQLyHnIRefNS2S9
-         PHQGPgkcPoNVoxRT9TnQiz4o6uggb/dPoGQQGf/peJyc5ZodVth3IS+9LC0fqzvzeEr2
-         LICJcrKudtSrVrVa0r1Ckgz9UVzVdto42e1f8AxRFx9J6ig1ABoUZjC0mgSNy3ufZnVb
-         awCF2qiKZjlqD5mIm32YWLVTKXr/hWBKcbzY0OD4MV4C60m9iMQiAdHWfxFgrVzmh12a
-         8xlg==
-X-Forwarded-Encrypted: i=1; AJvYcCXna/dYYsBcvzYPaHyXpFHPOrEHJFdGvnPX7xQvrzpJmgDtLUrsdTTgyaJEqt9h98y3n/uBdT4xY4D/Y7E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxoKhbkpxGhZmYY7isQdiR/6yJh7Puq/+AM64CrUlTb9nQRKsap
-	mkKpkLNQ3prG2TEzXvHOaZrXCGowFZhKThYaYoZ54Gsm5LLuLwqq/4E3b1x/Ta6VYbNlufZRmCO
-	IlHmtEre/CkEvwOv3bqgOqimyyTZEOc3iFC8f
-X-Google-Smtp-Source: AGHT+IGRQVLuzK/6CI72ZCGfa+itwlB7gy9YsYEKhzbjk3Wk8pfQGvbN/bdOxVk2v0pzUnLnPXZpycf7NH1xudzUmus=
-X-Received: by 2002:a05:690c:6c8b:b0:6d4:4a0c:fcf0 with SMTP id
- 00721157ae682-6e7f0e30a3fmr9811487b3.20.1729642031640; Tue, 22 Oct 2024
- 17:07:11 -0700 (PDT)
+        bh=zvLG7lWTLy4qhLgf8MKM63Xm05WyCgQZoRXtbsojwUE=;
+        b=m4Yi9wrvxvuafdRiQcKNx17v299rBMmCKF6GEu80mLzIeaIjq4lrdjG/1zdtGZgdMR
+         31RtxM0Y3jt2sE9dEjGXhQcwWawf7F6HdkBAeX/WfMyuuA4onn5fYjR0Yt9gdKzLCcOk
+         pCJ1reG63U+Qr6fCD2dNm0hDMaUceE5HeWhOMEEiZeaqSRryLAEV8Vb0UlIZNYZJ7Xs9
+         STUzsMU/M78CBghXtOAyDf2+1eYwA3+2riTXQR9GSvmxpWbAfIhlU4F4PQr5n2ejrirY
+         3v2RWr8gGDMLbg035cKlNOwyMbfa/+N+AXFEhmUkHt7wbiKh7vvBUdhoqpcLHsjvHTzY
+         +W0w==
+X-Forwarded-Encrypted: i=1; AJvYcCWgAxTIepTzbJJRoPDyF1o1T9h7N8BLCwrypy6Ax5HezNsNCWTB6QV7ACf23tJ4mFcsrb1jYsCbKrsJqvA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQUdOMBOaD4ZMYqIJyNuSI5gV48ANE/pHSErjmqp6FWc2wJUEj
+	zzEJMcyiiZJQMaSmvUsy4wzpsLwPIxFC0y3182SQ87HkkW0/Qm8FFVphweCpXj3lqm+NADDkzTX
+	oTLWshzJeZONXSD3uYBYFFVST/iCKwrcoqXQ=
+X-Google-Smtp-Source: AGHT+IF+4QbJlbfikIMGRQjJfTJNafD6q9VcZNamqjkxqlolhdhjxD9HTiMah4nBFKijj+UgfLPf9UwJGerFp7fgjng=
+X-Received: by 2002:a17:907:3f1d:b0:a99:3c32:b538 with SMTP id
+ a640c23a62f3a-a9abf94e684mr48837966b.42.1729642083589; Tue, 22 Oct 2024
+ 17:08:03 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-2-mic@digikod.net>
-In-Reply-To: <20241022161009.982584-2-mic@digikod.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Tue, 22 Oct 2024 20:07:00 -0400
-Message-ID: <CAHC9VhShPEpM4_fPoTSqStMnMB0-n1m6scS5b0Syj5V4RvrFOA@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 01/14] lsm: Only build lsm_audit.c if CONFIG_AUDIT
- is set
-To: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>
-Cc: Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
+References: <20241022092855.1609427-1-p.rosenberger@kunbus.com> <20241022092855.1609427-3-p.rosenberger@kunbus.com>
+In-Reply-To: <20241022092855.1609427-3-p.rosenberger@kunbus.com>
+From: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+Date: Wed, 23 Oct 2024 09:07:37 +0900
+Message-ID: <CABMQnVLT10=4Y0yKaRj5=wnAr9abTsyPkXmB2XJPfK8CmR368w@mail.gmail.com>
+Subject: Re: [PATCH v2 2/2] rtc: pcf2127: make battery switch-over configurable
+To: Philipp Rosenberger <p.rosenberger@kunbus.com>
+Cc: Alexandre Belloni <alexandre.belloni@bootlin.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, linux-rtc@vger.kernel.org, 
+	devicetree@vger.kernel.org, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Lino Sanfilippo <l.sanfilippo@kunbus.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 12:10=E2=80=AFPM Micka=C3=ABl Sala=C3=BCn <mic@digi=
-kod.net> wrote:
+Hello,
+
+2024=E5=B9=B410=E6=9C=8822=E6=97=A5(=E7=81=AB) 18:29 Philipp Rosenberger <p=
+.rosenberger@kunbus.com>:
 >
-> When CONFIG_AUDIT is set, its CONFIG_NET dependency is also set, and the
-> dev_get_by_index and init_net symbols (used by dump_common_audit_data)
-> are found by the linker.  dump_common_audit_data() should then failed to
-> build when CONFIG_NET is not set. However, because the compiler is
-> smart, it knows that audit_log_start() always return NULL when
-> !CONFIG_AUDIT, and it doesn't build the body of common_lsm_audit().  As
-> a side effect, dump_common_audit_data() is not built and the linker
-> doesn't error out because of missing symbols.
+> The battery switch-over function of the PCF2127, PCA2129 and PCF2129
+> have the opposite default behavior as the PCF2131. If the PCF2131 is
+> used as replacement for one of the others, the battery switch-over will
+> be disabled.
 >
-> Let's only build lsm_audit.o when CONFIG_AUDIT is set.
+> Add nxp,battery-switch-over as an optional devicetree property to configu=
+re
+> the battery switch-over, battery low detection and extra power fail
+> detection functions.
 >
-> ipv4_skb_to_auditdata() and ipv6_skb_to_auditdata() are only used by
-> Smack if CONFIG_AUDIT is set, so they don't need fake implementations.
+> The property reflects the value of the PWRMNG bits of the Control_3
+> register.
 >
-> Because common_lsm_audit() is used in multiple places without
-> CONFIG_AUDIT checks, add a fake implementation.
->
-> Cc: Casey Schaufler <casey@schaufler-ca.com>
-> Cc: James Morris <jmorris@namei.org>
-> Cc: Paul Moore <paul@paul-moore.com>
-> Cc: Serge E. Hallyn <serge@hallyn.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241022161009.982584-2-mic@digikod.net
+> Signed-off-by: Philipp Rosenberger <p.rosenberger@kunbus.com>
 > ---
->  include/linux/lsm_audit.h | 14 ++++++++++++++
->  security/Makefile         |  2 +-
->  2 files changed, 15 insertions(+), 1 deletion(-)
+>  drivers/rtc/rtc-pcf2127.c | 61 +++++++++++++++++++++++++++++----------
+>  1 file changed, 46 insertions(+), 15 deletions(-)
+>
+> diff --git a/drivers/rtc/rtc-pcf2127.c b/drivers/rtc/rtc-pcf2127.c
+> index 9c04c4e1a49c..812764b65b34 100644
+> --- a/drivers/rtc/rtc-pcf2127.c
+> +++ b/drivers/rtc/rtc-pcf2127.c
+> @@ -48,6 +48,7 @@
+>  #define PCF2127_BIT_CTRL3_BLF                  BIT(2)
+>  #define PCF2127_BIT_CTRL3_BF                   BIT(3)
+>  #define PCF2127_BIT_CTRL3_BTSE                 BIT(4)
+> +#define PCF2127_BIT_CTRL3_PWRMNG_MASK          (BIT(5) | BIT(6) | BIT(7)=
+)
+>  /* Time and date registers */
+>  #define PCF2127_REG_TIME_BASE          0x03
+>  #define PCF2127_BIT_SC_OSF                     BIT(7)
+> @@ -529,6 +530,49 @@ static int pcf2127_watchdog_init(struct device *dev,=
+ struct pcf2127 *pcf2127)
+>         return devm_watchdog_register_device(dev, &pcf2127->wdd);
+>  }
+>
+> +static int pcf2127_battery_init(struct device *dev, struct pcf2127 *pcf2=
+127)
+> +{
+> +       u8 val =3D 0xff;
+> +       int ret;
+> +
+> +       /*
+> +        * Disable battery low/switch-over timestamp and interrupts.
+> +        * Clear battery interrupt flags which can block new trigger even=
+ts.
+> +        * Note: This is the default chip behaviour but added to ensure
+> +        * correct tamper timestamp and interrupt function.
+> +        */
+> +       ret =3D regmap_update_bits(pcf2127->regmap, PCF2127_REG_CTRL3,
+> +                                PCF2127_BIT_CTRL3_BTSE |
+> +                                PCF2127_BIT_CTRL3_BIE |
+> +                                PCF2127_BIT_CTRL3_BLIE, 0);
+> +       if (ret) {
+> +               dev_err(dev, "%s: interrupt config (ctrl3) failed\n",
+> +                       __func__);
+> +               return ret;
+> +       }
+> +
+> +       ret =3D device_property_read_u8(dev, "nxp,battery-switch-over", &=
+val);
+> +       if (ret < 0)
+> +               return 0;
+> +
+> +       if (val > 7) {
+> +               dev_warn(dev,
+> +                        "%s: ignoring invalid value for nxp,battery-swit=
+ch-over: %u\n",
+> +                        __func__, val);
+> +               return 0;
+> +       };
 
-I think this fix is the right thing to do regardless of the rest of
-the patchset so I've merged it into lsm/dev, if anyone objects please
-speak up.
+Please remove ';' .
+Otherwise
 
-Thanks!
+Reviewed-by: Nobuhiro Iwamatsu <iwamatsu@nigauri.org>
+
+Best regards,
+  Nobuhiro
+
 
 --=20
-paul-moore.com
+Nobuhiro Iwamatsu
+   iwamatsu at {nigauri.org / debian.org / kernel.org}
+   GPG ID: 32247FBB40AD1FA6
 
