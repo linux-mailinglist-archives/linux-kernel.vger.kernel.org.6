@@ -1,111 +1,184 @@
-Return-Path: <linux-kernel+bounces-378822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D4ECC9AD5CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:50:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B10DA9AD5CD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:51:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4FAB21801
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:50:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 16774B218BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:51:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850341AB6F8;
-	Wed, 23 Oct 2024 20:50:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9F531AB6F8;
+	Wed, 23 Oct 2024 20:51:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QFJFSwq3"
-Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b="Z66+ohz6"
+Received: from mail-pj1-f98.google.com (mail-pj1-f98.google.com [209.85.216.98])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3A31CEE8D
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:50:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D72B1CEE8D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:51:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729716611; cv=none; b=B02BZt+uAOgWDrzDX9guVxDscvXyAzTD+XYm43vsdeix1Q3VockMlOIAptdlQ3uB0sFj+0RrecvrN02XAYLIzp/zYKQamMqp0kjYkCZyQkEOzwAvEPb6byHBLo5VaDUW5+Jg84beNONDXVQQr6HEhUyVXhjEBNnS9ZEKh0Ndt9Q=
+	t=1729716704; cv=none; b=lO52G/535DmIT1oE+WdXDPN0Xh+YspCR8S0QNZ8faL5FgBShQK54E9e2bQgb5mf1sEaQNerdEOiScnRReIkTK9jkGu3kVkGVgJOvvZMQ2CAyfw9QSgh5K0Z+66XWs3M6LSEwTtv3moGvDCD+mQPIZ7uzYzxyuLZWsdZJfSA+JBM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729716611; c=relaxed/simple;
-	bh=pvwcKlWToYR7b5QhxrkFznqG7vI9ECyzu+ZT1VFC1tg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Edx9d9kvDflUnTVISVqZqebdBia3r4oUSsVBqz7sRhLc536GU+w72wNtaAyhxHgJFwxAi1GdLpoYZBHmeo4jyteAboh6QxrHknk7gvTl9pHipU7wFbVphuEKTco7S8XQuBZw2ux2H1wY+bjIoi43Jw3jwUc8qSOiNrJhIfzb+NU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QFJFSwq3; arc=none smtp.client-ip=91.218.175.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Wed, 23 Oct 2024 13:49:54 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729716607;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=1hCMrhfwuTMkqv2o8jrBH2IAf5A8l6moy/IvYT4IwtM=;
-	b=QFJFSwq3mkH0O1xfqXiYVQ+llGFoDemevTmYhM0TGdKFSNHiq20NssA8fFMyuK9vwfr9Wb
-	HNfMz759cK8vjjvR/YgxPN9ulOewqeY0JcjbBuIVxS4boli9PuJZgj5ftIYx7RlstYRQ6Y
-	JtFVvHtiaNwlLVzDT42np3l5BaOvCfs=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Russ Weight <russ.weight@linux.dev>
-To: Gaosheng Cui <cuigaosheng1@huawei.com>
-Cc: mcgrof@kernel.org, dakr@redhat.com, gregkh@linuxfoundation.org,
-	rafael@kernel.org, amadeuszx.slawinski@linux.intel.com,
-	cezary.rojewski@intel.com, wangweiyang2@huawei.com,
+	s=arc-20240116; t=1729716704; c=relaxed/simple;
+	bh=K44ATCiMDHxMTMJcyBAwfGkIfgGnFaUTSMZ5dOBioco=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tSmHk4a9lQnlN5I9T7iLxnnLxn0np5so/pWnRh2X+e1PCBSbBs27JSt55aEngTjZ9SYYv8EIAbrf4hOLxopW8bd9veYCqLe5BolCQojK82WBBt32BZ7idOFGskolOUDt6F23RBJwfH44lNcGm8WXV1qxLTXEt+3Ns2GU15xDruo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com; spf=fail smtp.mailfrom=purestorage.com; dkim=pass (2048-bit key) header.d=purestorage.com header.i=@purestorage.com header.b=Z66+ohz6; arc=none smtp.client-ip=209.85.216.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=purestorage.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=purestorage.com
+Received: by mail-pj1-f98.google.com with SMTP id 98e67ed59e1d1-2e2da8529e1so40003a91.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:51:42 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=purestorage.com; s=google2022; t=1729716702; x=1730321502; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vCyXfoKZLYIrM6bHNOmey4+JbsNLY/BGPRNE02WxQwo=;
+        b=Z66+ohz6/PuKBA4Cw1XCx8sMFctDfz66PzgpeffsEO3CzcUL9ZkvouWpft+AHyiX7F
+         WuLVkaGqWI+opb2qABPmJHWUwqIYam3XtOhZha+E9Bky+c89a+l7+ePXIW0iZx5sJ9hL
+         /LLEDDA5D5td8ppzDr4XLaJJeAq0P67HS/dJazSTASsQH6KN2Dp042ctaXgsHXGN1ioP
+         EMKrsZvzlPLwSmjqNA/aGtTFD0Z5mIfX6N5mmfJiwb9RCZyak4N5teZ5kOI6hj67hCb+
+         /oZEtVUV3kqej9ga7M5jki2LzyaSe1ai22s5PskBd0KmuXEjb8tt5lL+Za5m1eclkT3G
+         oL+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729716702; x=1730321502;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vCyXfoKZLYIrM6bHNOmey4+JbsNLY/BGPRNE02WxQwo=;
+        b=EEWp3KXsjUFJ79jAJFV56nKWvwwnMFkvveeBBkm3fXLkZ5r7tSvMZl/PTM/Qgs4ML5
+         M1KswyoJDegaIta3Qut928plOdWQ+jEI704t05d8aryzuuLP/zxi0VQsFpDtDajEoybj
+         ov7wbhhplkf7ExifAwTQV5lFNtclZE1iwYeF6Vfi8lLVTcchfDFb5eIrtAeX4bo+ojk7
+         yfVJHF739GFUCC6za6x1LNzv+/S65i1nUefGcck7/UoWr9Fz8tAszN7dThS/L9bnEZFc
+         1+42JBS8/aIkeEhUwTviv2f5AI4/Wty4G4Z29++GZpBSW4VsX1aEknJm+X/PRbzRJ4C1
+         GJrg==
+X-Forwarded-Encrypted: i=1; AJvYcCWiI5L79lHtp8zX+dcb7rnDhHHCrliwl65eK2Uvi9Q3xqmbh/iqbqHRRujZqdbtrfck30MU3ZGjsUR41LI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz9uU04i/DsFLimjIX5K4SKZNzvMG8QxIEm6Y5D3QSG2gL2jI0i
+	HbrFjbGfw1Dw91sixhm9Vhtg16hGCjFwzA2duwmR3JKFUSU1yF+stke4jQ3w/JOHQq/16CoxgEk
+	fpdzGDaT0E5qqMhvjSmB30YMP3akTJIwzJ0Sy85zkAxZVOR85
+X-Google-Smtp-Source: AGHT+IG35rzOCpF6xzICIlXnd2xKWIdeRqdxmgfplqytKRI7gARk7EO/TkF1EVCs0mtdYwpJbkfTYQSa4jYI
+X-Received: by 2002:a17:903:32cc:b0:20c:85dc:6630 with SMTP id d9443c01a7336-20fa9deb651mr23890985ad.1.1729716701633;
+        Wed, 23 Oct 2024 13:51:41 -0700 (PDT)
+Received: from c7-smtp-2023.dev.purestorage.com ([2620:125:9017:12:36:3:5:0])
+        by smtp-relay.gmail.com with ESMTPS id d9443c01a7336-20e7f0dd5c7sm2620325ad.54.2024.10.23.13.51.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 13:51:41 -0700 (PDT)
+X-Relaying-Domain: purestorage.com
+Received: from dev-csander.dev.purestorage.com (dev-csander.dev.purestorage.com [10.7.70.37])
+	by c7-smtp-2023.dev.purestorage.com (Postfix) with ESMTP id 3B88D3400B6;
+	Wed, 23 Oct 2024 14:51:40 -0600 (MDT)
+Received: by dev-csander.dev.purestorage.com (Postfix, from userid 1557716354)
+	id 2D9E7E40BE0; Wed, 23 Oct 2024 14:51:40 -0600 (MDT)
+From: Caleb Sander Mateos <csander@purestorage.com>
+To: Saeed Mahameed <saeedm@nvidia.com>,
+	Leon Romanovsky <leon@kernel.org>,
+	Tariq Toukan <tariqt@nvidia.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: Caleb Sander Mateos <csander@purestorage.com>,
+	netdev@vger.kernel.org,
+	linux-rdma@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH -next] firmware_loader: Fix possible resource leak in
- fw_log_firmware_info()
-Message-ID: <20241023204954.d4n5rba6e37cvmpn@4VRSMR2-DT.corp.robot.car>
-References: <20241016110335.3677924-1-cuigaosheng1@huawei.com>
+Subject: [PATCH] mlx5: simplify EQ interrupt polling logic
+Date: Wed, 23 Oct 2024 14:51:12 -0600
+Message-ID: <20241023205113.255866-1-csander@purestorage.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241016110335.3677924-1-cuigaosheng1@huawei.com>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
+Use a while loop in mlx5_eq_comp_int() and mlx5_eq_async_int() to
+clarify the EQE polling logic. This consolidates the next_eqe_sw() calls
+for the first and subequent iterations. It also avoids a goto. Turn the
+num_eqes < MLX5_EQ_POLLING_BUDGET check into a break condition.
 
-On Wed, Oct 16, 2024 at 07:03:35PM +0800, Gaosheng Cui wrote:
-> The alg instance should be released under the exception path, otherwise
-> there may be resource leak here.
-> 
-> To mitigate this, free the alg instance with crypto_free_shash when kmalloc
-> fails.
-> 
-> Fixes: 02fe26f25325 ("firmware_loader: Add debug message with checksum for FW file")
-> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
+Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+---
+ drivers/net/ethernet/mellanox/mlx5/core/eq.c | 22 +++++++-------------
+ 1 file changed, 8 insertions(+), 14 deletions(-)
 
-Reviewed-by: Russ Weight <russ.weight@linux.dev>
+diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+index 68cb86b37e56..859dcf09b770 100644
+--- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
++++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
+@@ -114,15 +114,11 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+ 	struct mlx5_eq *eq = &eq_comp->core;
+ 	struct mlx5_eqe *eqe;
+ 	int num_eqes = 0;
+ 	u32 cqn = -1;
+ 
+-	eqe = next_eqe_sw(eq);
+-	if (!eqe)
+-		goto out;
+-
+-	do {
++	while ((eqe = next_eqe_sw(eq))) {
+ 		struct mlx5_core_cq *cq;
+ 
+ 		/* Make sure we read EQ entry contents after we've
+ 		 * checked the ownership bit.
+ 		 */
+@@ -140,13 +136,14 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
+ 					    "Completion event for bogus CQ 0x%x\n", cqn);
+ 		}
+ 
+ 		++eq->cons_index;
+ 
+-	} while ((++num_eqes < MLX5_EQ_POLLING_BUDGET) && (eqe = next_eqe_sw(eq)));
++		if (++num_eqes >= MLX5_EQ_POLLING_BUDGET)
++			break;
++	}
+ 
+-out:
+ 	eq_update_ci(eq, 1);
+ 
+ 	if (cqn != -1)
+ 		tasklet_schedule(&eq_comp->tasklet_ctx.task);
+ 
+@@ -213,15 +210,11 @@ static int mlx5_eq_async_int(struct notifier_block *nb,
+ 	eqt = dev->priv.eq_table;
+ 
+ 	recovery = action == ASYNC_EQ_RECOVER;
+ 	mlx5_eq_async_int_lock(eq_async, recovery, &flags);
+ 
+-	eqe = next_eqe_sw(eq);
+-	if (!eqe)
+-		goto out;
+-
+-	do {
++	while ((eqe = next_eqe_sw(eq))) {
+ 		/*
+ 		 * Make sure we read EQ entry contents after we've
+ 		 * checked the ownership bit.
+ 		 */
+ 		dma_rmb();
+@@ -229,13 +222,14 @@ static int mlx5_eq_async_int(struct notifier_block *nb,
+ 		atomic_notifier_call_chain(&eqt->nh[eqe->type], eqe->type, eqe);
+ 		atomic_notifier_call_chain(&eqt->nh[MLX5_EVENT_TYPE_NOTIFY_ANY], eqe->type, eqe);
+ 
+ 		++eq->cons_index;
+ 
+-	} while ((++num_eqes < MLX5_EQ_POLLING_BUDGET) && (eqe = next_eqe_sw(eq)));
++		if (++num_eqes >= MLX5_EQ_POLLING_BUDGET)
++			break;
++	}
+ 
+-out:
+ 	eq_update_ci(eq, 1);
+ 	mlx5_eq_async_int_unlock(eq_async, recovery, &flags);
+ 
+ 	return unlikely(recovery) ? num_eqes : 0;
+ }
+-- 
+2.45.2
 
-> ---
->  drivers/base/firmware_loader/main.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
-> index 324a9a3c087a..c6664a787969 100644
-> --- a/drivers/base/firmware_loader/main.c
-> +++ b/drivers/base/firmware_loader/main.c
-> @@ -829,19 +829,18 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name, st
->  	shash->tfm = alg;
->  
->  	if (crypto_shash_digest(shash, fw->data, fw->size, sha256buf) < 0)
-> -		goto out_shash;
-> +		goto out_free;
->  
->  	for (int i = 0; i < SHA256_DIGEST_SIZE; i++)
->  		sprintf(&outbuf[i * 2], "%02x", sha256buf[i]);
->  	outbuf[SHA256_BLOCK_SIZE] = 0;
->  	dev_dbg(device, "Loaded FW: %s, sha256: %s\n", name, outbuf);
->  
-> -out_shash:
-> -	crypto_free_shash(alg);
->  out_free:
->  	kfree(shash);
->  	kfree(outbuf);
->  	kfree(sha256buf);
-> +	crypto_free_shash(alg);
->  }
->  #else
->  static void fw_log_firmware_info(const struct firmware *fw, const char *name,
-> -- 
-> 2.25.1
-> 
 
