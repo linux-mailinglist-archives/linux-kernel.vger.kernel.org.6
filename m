@@ -1,258 +1,105 @@
-Return-Path: <linux-kernel+bounces-378465-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378466-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D17A69AD103
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:31:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15E039AD104
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E4CE281CB9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:31:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C97A5281417
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:31:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 947A91CEAD8;
-	Wed, 23 Oct 2024 16:30:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE3B1CF7B0;
+	Wed, 23 Oct 2024 16:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="VByJhhXc"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="HaRa7LH4"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 53A341CB536;
-	Wed, 23 Oct 2024 16:30:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3FE51CB536;
+	Wed, 23 Oct 2024 16:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729701051; cv=none; b=dtmb6faxfS7vs07qoI+7TfdYcQr5Cqek/Xrrb5pgPXHSMIuITLFjMl2bWfIkCZ4GyHsrGcEYZvxQ7EOV1yB2NpO2VMjDZUHPUiscA7enTl9X0piH14ukwPZQe8EiCORVvZKBMyLI/RytdoHuOYq26N9YjTB+rycVlnXyWUtN4+g=
+	t=1729701062; cv=none; b=t33S4Dj0cblAw4OI3GYDkKKKkSPQODeFfQMJhvXsGZgVk0RXSNiS3QrZHgZe5rqgpXAAT/2Dsm6yoBDRCtHUxjBAXo3RpyaW0fa5IEt7VxTSp00cEp7QwyIpgXYaXbJRlMA5TNXMS06cRctbqYZmpg0uTdoCjlHN5SNPPDEAHN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729701051; c=relaxed/simple;
-	bh=7Qz6f8NzFdutI7Icr0e57OHrZ5+XkkpJ1/tyME4Z5Ao=;
-	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bifJY4sR+4WyhkWiaDCArFDf4kUUi23bO+F+HITlJBLNumE5SLUNKxUqBF+L+giNpkz6I3VJBHtSJpxxxuXS4vl/70vdRw3TBPKa09gz9GNs09f6r+plEHcl4MBPQWTk1liUXNcaiLISpXKc1lrX0TkCkizZD1WIDARJ6GfeDYU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=VByJhhXc; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9HSdU026325;
-	Wed, 23 Oct 2024 16:30:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=qcppdkim1; bh=FclauO0bzswyc+MAq1B6mcZj
-	gSqLwXz40OeffNV4QSo=; b=VByJhhXcpOkf9T39w00mf0miuEAKw/JHHqer7c1L
-	2N5Jk/WOpsUODU618CYflAq4w00gsqbykXoaRga1sXnGsvbmWCeqT1HUcsNXiDfX
-	QI55AM539K+sDmGX62BCXEUjyndoAh7SkD0wqQyiXZYMQXNZsvs182pt7Tn0SwN2
-	F/7S90tXqtyIab5aY7gsj38fCl/GjUjJGtIgcNzXwAbQEdR415YuI3UPcjR5Et+I
-	way3sS2qxUOUTFz0hO2dj+O5MSI4GF2hqiT2p/dsW+3DB1YPZPvA9zv1z9Rd8U+w
-	U8crKjgM7pjv+75xNAPwwsLM7xw7VVdwlX+yEcIMp0SLeg==
-Received: from nasanppmta05.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em40aut2-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 16:30:23 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NGUNw8012804
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 16:30:23 GMT
-Received: from hu-eberman-lv.qualcomm.com (10.49.16.6) by
- nasanex01b.na.qualcomm.com (10.46.141.250) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Wed, 23 Oct 2024 09:30:22 -0700
-Date: Wed, 23 Oct 2024 09:30:21 -0700
-From: Elliot Berman <quic_eberman@quicinc.com>
-To: Stephen Boyd <swboyd@chromium.org>
-CC: Andy Yan <andy.yan@rock-chips.com>, Arnd Bergmann <arnd@arndb.de>,
-        "Bartosz Golaszewski" <bartosz.golaszewski@linaro.org>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        "Conor
- Dooley" <conor+dt@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Krzysztof Kozlowski
-	<krzysztof.kozlowski+dt@linaro.org>,
-        Lorenzo Pieralisi
-	<lpieralisi@kernel.org>,
-        Mark Rutland <mark.rutland@arm.com>, Olof Johansson
-	<olof@lixom.net>,
-        Rob Herring <robh@kernel.org>, Sebastian Reichel
-	<sre@kernel.org>,
-        Vinod Koul <vkoul@kernel.org>, Will Deacon
-	<will@kernel.org>,
-        <cros-qcom-dts-watchers@chromium.org>,
-        "Satya Durga
- Srinivasu Prabhala" <quic_satyap@quicinc.com>,
-        Melody Olvera
-	<quic_molvera@quicinc.com>,
-        Shivendra Pratap <quic_spratap@quicinc.com>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>,
-        Florian Fainelli
-	<florian.fainelli@broadcom.com>,
-        <linux-pm@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
-Subject: Re: [PATCH v6 3/5] firmware: psci: Read and use vendor reset types
-Message-ID: <20241023092251529-0700.eberman@hu-eberman-lv.qualcomm.com>
-References: <20241018-arm-psci-system_reset2-vendor-reboots-v6-0-50cbe88b0a24@quicinc.com>
- <20241018-arm-psci-system_reset2-vendor-reboots-v6-3-50cbe88b0a24@quicinc.com>
- <CAE-0n515sUkmTWptgY8pOaMDBPfDp5pZBy9Nby+4cMdMAnAZfA@mail.gmail.com>
+	s=arc-20240116; t=1729701062; c=relaxed/simple;
+	bh=UixwmJ5szfNuS+Tq0CHtsJBh+pb34QG21arGCFnLLlo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Wq33ooedfpiCPTtlATB8VGW7PBkS4vQBmH1t72zrxjk3JZC0R+2g3/J6QJe8M+E8Fgse4olkZL817uVh3xyy6keKUAE47MKFDPwgn25fF8P+AGx0Y+AR01MGvR/LGtmCnjp4N0MEluzF2NPykTXZDXGCiuIowgvkmjKi6IYAlMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=HaRa7LH4; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 8AA5740E0263;
+	Wed, 23 Oct 2024 16:30:58 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id zruC6gNH1KVS; Wed, 23 Oct 2024 16:30:54 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729701054; bh=9VPKPpHyWW4bo1shlL7/ngzTD+Bi/um84TQvbU+2CK8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HaRa7LH40cDNaaMgNxvTfdTyqZUZlGcsXvMzGxgGDS8voA7zEdT3nguUkvmNe4UtK
+	 bIOhFacT3sXFRh1ckrhZECud01l8owFUDlm9g/nIQFdeiBBgfv4DajuEhddD48RcBB
+	 6a5Lc4y2m81V22W8gmGt8sRQrPqV9hpK7/oyTn9CvK0DYi+DQTFgLx6SE4W0JXuPKa
+	 sa8Pid6rJScFtaX6/uY4lhQ2sFVJcsAgwj1ZUCPLEsgujvBqnsXGgfriEZvt8eGzP/
+	 wuPwfEuXCFgKm+aO+ic6phDiovENS4sC1qIyVIljjlSFVl2nqdmJIP+m2AX+a/wP1j
+	 7eWYk1OfVBqGcCpPIT6GMx6EKPqWbYpOiba2gDGC7vki58rTU8sJlODo8BaVU/sBLE
+	 DI6bXKohYUVifTXbn+AZT8KRpbh9QczKEIJoJWA8ZS8++ErLw7jND3m4Za/ogKj6el
+	 RzXAGplqeB2kGzMVptsWy30214MkmQLac7M9yf6NhzC35QpM00fkBniuuRxvWq3Fwl
+	 V2BCnOqjIBBcvwbbU6h0Azg33jQhRSK9NjFG2w4V4b8PHk3xzzPseWk7iV9z1iRWna
+	 UW4m8VauN94O614GcHkLQLJrVWthqikr6LydFrqkDvqVFNau0m10Y44+S2PH2eQcdJ
+	 lqdGYd9iqd5C0cHwgiJm/c7A=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id E6F2340E0198;
+	Wed, 23 Oct 2024 16:30:35 +0000 (UTC)
+Date: Wed, 23 Oct 2024 18:30:29 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
+	kvm@vger.kernel.org
+Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
+Message-ID: <20241023163029.GEZxkkpdfkxdHWTHAW@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
+ <9b943722-c722-4a38-ab17-f07ef6d5c8c6@intel.com>
+ <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
+ <2436d521-aa4c-45ac-9ccc-be9a4b5cb391@intel.com>
+ <e4568d3d-f115-4931-bbc6-9a32eb04ee1c@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAE-0n515sUkmTWptgY8pOaMDBPfDp5pZBy9Nby+4cMdMAnAZfA@mail.gmail.com>
-X-ClientProxiedBy: nalasex01c.na.qualcomm.com (10.47.97.35) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: RVMuLpnaxcrO0emm38nvEuLCDeeWvOiG
-X-Proofpoint-GUID: RVMuLpnaxcrO0emm38nvEuLCDeeWvOiG
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
- impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=999
- lowpriorityscore=0 clxscore=1015 malwarescore=0 bulkscore=0 suspectscore=0
- adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230102
+In-Reply-To: <e4568d3d-f115-4931-bbc6-9a32eb04ee1c@amd.com>
 
-On Fri, Oct 18, 2024 at 10:42:46PM -0700, Stephen Boyd wrote:
-> Quoting Elliot Berman (2024-10-18 12:39:48)
-> > diff --git a/drivers/firmware/psci/psci.c b/drivers/firmware/psci/psci.c
-> > index 2328ca58bba6..60bc285622ce 100644
-> > --- a/drivers/firmware/psci/psci.c
-> > +++ b/drivers/firmware/psci/psci.c
-> > @@ -29,6 +29,8 @@
-> >  #include <asm/smp_plat.h>
-> >  #include <asm/suspend.h>
-> >
-> > +#define REBOOT_PREFIX "mode-"
-> 
-> Maybe move this near the function that uses it.
-> 
-> > +
-> >  /*
-> >   * While a 64-bit OS can make calls with SMC32 calling conventions, for some
-> >   * calls it is necessary to use SMC64 to pass or return 64-bit values.
-> > @@ -305,9 +315,29 @@ static int get_set_conduit_method(const struct device_node *np)
-> >         return 0;
-> >  }
-> >
-> > +static void psci_vendor_sys_reset2(unsigned long action, void *data)
-> > +{
-> > +       const char *cmd = data;
-> > +       unsigned long ret;
-> > +       size_t i;
-> > +
-> > +       for (i = 0; i < num_psci_reset_params; i++) {
-> > +               if (!strcmp(psci_reset_params[i].mode, cmd)) {
-> > +                       ret = invoke_psci_fn(PSCI_FN_NATIVE(1_1, SYSTEM_RESET2),
-> > +                                            psci_reset_params[i].reset_type,
-> > +                                            psci_reset_params[i].cookie, 0);
-> > +                       pr_err("failed to perform reset \"%s\": %ld\n",
-> > +                               cmd, (long)ret);
-> 
-> Do this intentionally return? Should it be some other function that's
-> __noreturn instead and a while (1) if the firmware returns back to the
-> kernel?
-> 
+On Wed, Oct 09, 2024 at 11:22:58PM +0530, Neeraj Upadhyay wrote:
+> I will start with 4K. For later, I will get the performance numbers to propose
+> a change in allocation scheme  - for ex, allocating a bigger contiguous
+> batch from the total allocation required for backing pages (num_possible_cpus() * 4K)
+> without doing 2M reservation.
 
-Yes, I think it's best to make sure we fall back to the architectural
-reset (whether it's the SYSTEM_RESET or architectural SYSTEM_RESET2)
-since device would reboot then.
+Why does performance matter here if you're going to allocate simply a 4K page
+per vCPU and set them all up in the APIC setup path? And then you can do the
+page conversion to guest-owned as part of the guest vCPU init path?
 
-> > +               }
-> > +       }
-> > +}
-> > +
-> >  static int psci_sys_reset(struct notifier_block *nb, unsigned long action,
-> >                           void *data)
-> >  {
-> > +       if (data && num_psci_reset_params)
-> > +               psci_vendor_sys_reset2(action, data);
-> > +
-> >         if ((reboot_mode == REBOOT_WARM || reboot_mode == REBOOT_SOFT) &&
-> >             psci_system_reset2_supported) {
-> >                 /*
-> > @@ -750,6 +780,68 @@ static const struct of_device_id psci_of_match[] __initconst = {
-> >         {},
-> >  };
-> >
-> > +static int __init psci_init_system_reset2_modes(void)
-> > +{
-> > +       const size_t len = strlen(REBOOT_PREFIX);
-> > +       struct psci_reset_param *param;
-> > +       struct device_node *psci_np __free(device_node) = NULL;
-> > +       struct device_node *np __free(device_node) = NULL;
-> > +       struct property *prop;
-> > +       size_t count = 0;
-> > +       u32 magic[2];
-> > +       int num;
-> > +
-> > +       if (!psci_system_reset2_supported)
-> > +               return 0;
-> > +
-> > +       psci_np = of_find_matching_node(NULL, psci_of_match);
-> > +       if (!psci_np)
-> > +               return 0;
-> > +
-> > +       np = of_find_node_by_name(psci_np, "reset-types");
-> > +       if (!np)
-> > +               return 0;
-> > +
-> > +       for_each_property_of_node(np, prop) {
-> > +               if (strncmp(prop->name, REBOOT_PREFIX, len))
-> > +                       continue;
-> > +               num = of_property_count_elems_of_size(np, prop->name, sizeof(magic[0]));
-> 
-> Use of_property_count_u32_elems()?
-> 
-> > +               if (num != 1 && num != 2)
-> > +                       continue;
-> > +
-> > +               count++;
-> > +       }
-> > +
-> > +       param = psci_reset_params = kcalloc(count, sizeof(*psci_reset_params), GFP_KERNEL);
-> > +       if (!psci_reset_params)
-> > +               return -ENOMEM;
-> > +
-> > +       for_each_property_of_node(np, prop) {
-> > +               if (strncmp(prop->name, REBOOT_PREFIX, len))
-> > +                       continue;
-> > +
-> > +               param->mode = kstrdup_const(prop->name + len, GFP_KERNEL);
-> > +               if (!param->mode)
-> > +                       continue;
-> > +
-> > +               num = of_property_read_variable_u32_array(np, prop->name, magic, 1, 2);
-> 
-> ARRAY_SIZE(magic)?
-> 
-> > +               if (num < 0) {
-> 
-> Should this be less than 1?
-> 
+-- 
+Regards/Gruss,
+    Boris.
 
-of_property_read_variable_u32_array should return -EOVERFLOW (or maybe
--ENODATA) if the array is empty. I don't see it's possible for
-of_property_read_variable_u32_array() to return a non-negative value
-that's not 1 or 2.
-
-> > +                       pr_warn("Failed to parse vendor reboot mode %s\n", param->mode);
-> > +                       kfree_const(param->mode);
-> > +                       continue;
-> > +               }
-> > +
-> > +               /* Force reset type to be in vendor space */
-> > +               param->reset_type = PSCI_1_1_RESET_TYPE_VENDOR_START | magic[0];
-> > +               param->cookie = num == 2 ? magic[1] : 0;
-> 
-> ARRAY_SIZE(magic)?
-> 
-> > +               param++;
-> > +               num_psci_reset_params++;
-> > +       }
-> > +
-> > +       return 0;
+https://people.kernel.org/tglx/notes-about-netiquette
 
