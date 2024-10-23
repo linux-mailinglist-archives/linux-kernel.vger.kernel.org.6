@@ -1,178 +1,153 @@
-Return-Path: <linux-kernel+bounces-377289-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377290-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC77F9ABC90
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:03:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B13D59ABC94
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:07:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 67DCD284E7A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:03:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6347B284E32
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:07:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BE5113B7A3;
-	Wed, 23 Oct 2024 04:03:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02D7613B287;
+	Wed, 23 Oct 2024 04:06:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="E35sBhFN"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="al/7KxfA"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 96F024594A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 04:03:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAC423A1BA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 04:06:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729656200; cv=none; b=VdXc5MTODlvsQ49wo1cv9BHvd1NhT8BFq3VcvrpodDnVj8imNJ7ndl+dGH2zSkXX7kq4iFiI3iygMxLbqFbj/iDEtVdhKF7aukzzp72dqIb30OkAbmZsX55wneN06MuNs27abqfWBiSeEgXsHudx3NwwW0pm9HpkZVdP7BxJZPM=
+	t=1729656415; cv=none; b=KeV0xwDjyTYoj06Obo/+vk2IYZxlD/a417XRp1oF2hT9tpOW7a/kmy/Gc5EvBNDCXIfJI0/VWnzlzmRO4+1HgiNeMEn0w/XnqSliLPSZn5W66uwrqB6pJG/Qq2h3iNRbOhc6Y0M+YEcwINGwOjelMVmCdezkHl+m2T6wfEksquI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729656200; c=relaxed/simple;
-	bh=60FYQnwEjbn8ia2ijE+rJft1/gH3fGagogxsbRnBaRg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=fxDYAWIpOq23FolNNC/cYQe1nJexxjFeUbaLRBv6c66LjLtZKIStBdD7Gby13Br+eFYkuTz7Mzeb27v1JfK8A/anIgdVZfm4Tmdy6t8OheHVKzQzPu0GjdUmr9ToJsBxxwAXtcjKdfFA8a9nm50VhrCIvJmTQ/VRdwqxUf9Ucv0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=E35sBhFN; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729656196;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=fE9bH6h+Dp9Cy+4YV9E9TS1/FxNq1rWMOHkDfIVYSY8=;
-	b=E35sBhFNluHaVqqslSsWGZAelY2X4PvAlSJAL4cobvkWeBfxwQHWEkrucZjlJeLDa7KPuE
-	0g7DnLb5qTn1umLEozDDbXHEkYCjCcu2mAPbtz1vY1Hch+JjjaLFQHnUvwElrYmbmYTWh+
-	h1rhDGqs2En71mSU5c0ePNll0A2f2tU=
-Received: from mail-pj1-f70.google.com (mail-pj1-f70.google.com
- [209.85.216.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-163-riQ5KrhtMkW4gx76AreTDA-1; Wed, 23 Oct 2024 00:03:13 -0400
-X-MC-Unique: riQ5KrhtMkW4gx76AreTDA-1
-Received: by mail-pj1-f70.google.com with SMTP id 98e67ed59e1d1-2e3b9fc918fso7647564a91.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:03:13 -0700 (PDT)
+	s=arc-20240116; t=1729656415; c=relaxed/simple;
+	bh=FrQLENoGP/dCOAZctQLYD3mOzEEySi5JjYNMWjRZHBw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rmTVLdU4L7cmXi276qr1PL4ExouqrfM5jioKkVypW92lgaX/XWwCivI5DrasfqazRWMd+QSSn1d3qJKfy4USwZXf+InIPq+jkZuJDdfK+fbs1mrpfgJnl8hIOX8he1hg0nGM0i3fJ31Tme3f3rA6Ll/OReHmKm5pNbfHccaoE78=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=al/7KxfA; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-4608dddaa35so185691cf.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 21:06:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729656411; x=1730261211; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HitsFUO1EidESPoKRuV/OlPLmnVZu05z2WbOguU93h4=;
+        b=al/7KxfAOsb5fB/0fhN4m+sRBwLHAwkEh3kiUqiRmgJCnr8WZ7yZoizOtT9w7n8L1E
+         Kv30ORazqgyiFMPyy8TQQVNT/f6oagpSBgkIkuM7u2uuZMISmiQKi/LcV79i9gmYmdgu
+         onr+2kdLnDjSPnhlR3r3OHleFSUXMuDZZUqaerODbnv0kPhGajImhDxZE9g2+MU+i9V3
+         h+mwlz3YngF+itGfTKWI3hgEnkBDAxW0IWMJI/LBg+Z34cTq8G/uY2GXydu+h+nMBNht
+         z7f7I4m5rl6zhH01R4wsuA+SsWczwAyYa12E9Mos/UqOsJuYHQTphCaqqJcxjyQMruNT
+         58Ew==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729656193; x=1730260993;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=fE9bH6h+Dp9Cy+4YV9E9TS1/FxNq1rWMOHkDfIVYSY8=;
-        b=G+cwPxdRqazKj1GdxRvG4G36qrPaPYMgoyea7yXN4lKNE9VEJHBU3Hcr0ELr5aqohj
-         ZNyUGpZz6MLpgY3EqDULk/eF340p9FeJBW2wT2+Y0dx0SHOD5hBF67ljq6fj4tY/Q0aU
-         SSYraPmyMNPhQJDsviBY5q4fycE7Drytj0Qoj26b9LdwsLgBHn3GRss9XsQGZAUK4NMQ
-         tCETeO81lK/OJdr1loerlCzaaK4a04OXhTeKWhP3ujcmvukuZ+CCCnyuhdZUgQjGQODD
-         NbiMGILSbeuo4reBU7wGA6KfRGkn7eaIpaL1vaxdc/6Mc6A38V9G0072sriiG2Gn8Dec
-         dSUg==
-X-Forwarded-Encrypted: i=1; AJvYcCVXavQiDquedOgiEFY4fVMstRV+JgVTcZJmHwgXjk6WqgEp3T5DSUPHw1OunJ1xuhBZqK/LLwDbxLRjsvM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOUvlb55mJIBWVpl+1nx+yJFXTIuunkc4fpiswo9auY/IEeqM4
-	xVemkfmAfsQDl7t5ztVYzFxUueRA5nAcz88fwAqgDfT4AiEyC/wT61EB0tWEPyks7oxu9n79AyN
-	5DgkXd5deIX3NUo+DGOXqrEOqj21RGjPbIXJjfPegcvkpQ3x9v2nrofwLS0hscg==
-X-Received: by 2002:a17:90b:4c4b:b0:2e2:e148:3d30 with SMTP id 98e67ed59e1d1-2e76b60d401mr1665037a91.23.1729656192763;
-        Tue, 22 Oct 2024 21:03:12 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF7Nzd7b22QkSrSkT2X54oW0FrLiZkrnYmJFDKn3Ga/iSi3gYtHtDYeZYfv+zNxnl5T9y8tvQ==
-X-Received: by 2002:a17:90b:4c4b:b0:2e2:e148:3d30 with SMTP id 98e67ed59e1d1-2e76b60d401mr1664999a91.23.1729656192357;
-        Tue, 22 Oct 2024 21:03:12 -0700 (PDT)
-Received: from [192.168.68.54] ([180.233.125.129])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e088f1fsm273930a91.56.2024.10.22.21.03.05
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Tue, 22 Oct 2024 21:03:11 -0700 (PDT)
-Message-ID: <032d29e7-b6a3-4493-833b-a9b6d9496a75@redhat.com>
-Date: Wed, 23 Oct 2024 14:03:03 +1000
+        d=1e100.net; s=20230601; t=1729656411; x=1730261211;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=HitsFUO1EidESPoKRuV/OlPLmnVZu05z2WbOguU93h4=;
+        b=E2SNHDLLrMAQUtp1HM78HysZTejqPH7fvZZM1bHLwLCbJ42LGLi9EFSQdYFwLRXQCz
+         ZVVKD6fdNyyFkgZTybLV+Be3gojFHmRC15ArH8K6xVy1IJ4xuY40Cro/QcXgcpKK2BF5
+         1NAgyZ+WmiQsSaz+3HR8hsWKLJgCzrcMk8nbZJ0JLj+aNo31fLcG8sbTvOS8peMevRbT
+         aPaz802Wc+slJTvyUNS6XPJlTqAFXkxT5rXJ8ndKeWLAw/S45PRdLfQtJAyx5mw/tTL9
+         EJjYi6APbyZMt1rExsqyyRrhJD8QOB2H3D+xMj4sSsQi0RHSLI/djMlDBVHBqhC8KJ/I
+         Xntw==
+X-Forwarded-Encrypted: i=1; AJvYcCXU+Gpnqr5aqvDzefpGb4vPGmsc6TRqGhRf0Nem6sQekii/1GGKALcGnL89pHH/NPnnjrrhQwsYnFNGF/c=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1JZLjX06wkjMPr6MwwGNLbEed9+wGo8i1SPzUD04QIlF4KGIV
+	YEaG8a3+ZTjTFow/3/pB4YchtYuzcmDWsAh72OARSVPXWl8c4Nbu3wKWJe0V24F9oUdTZ6ESnVZ
+	QHRcev2LRIzkf07U1JJtJ2/szdFe6qnWbFoxZ
+X-Google-Smtp-Source: AGHT+IEjcmtwfLg+spZLHWFvoEQXhFCmc9lNLMfvrW3qkW/32GsJj6JhV52GinHNNzPhYKR/JM2jrFxzsdoMeNJWl9s=
+X-Received: by 2002:a05:622a:5e8d:b0:460:b5ac:c23f with SMTP id
+ d75a77b69052e-46113d497a8mr2104581cf.7.1729656411326; Tue, 22 Oct 2024
+ 21:06:51 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 02/43] kvm: arm64: pgtable: Track the number of pages
- in the entry level
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
- kvmarm@lists.linux.dev
-Cc: Suzuki K Poulose <suzuki.poulose@arm.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Marc Zyngier <maz@kernel.org>,
- Will Deacon <will@kernel.org>, James Morse <james.morse@arm.com>,
- Oliver Upton <oliver.upton@linux.dev>, Zenghui Yu <yuzenghui@huawei.com>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- Joey Gouly <joey.gouly@arm.com>, Alexandru Elisei
- <alexandru.elisei@arm.com>, Christoffer Dall <christoffer.dall@arm.com>,
- Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
- Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
- Shanker Donthineni <sdonthineni@nvidia.com>, Alper Gun
- <alpergun@google.com>, "Aneesh Kumar K . V" <aneesh.kumar@kernel.org>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-3-steven.price@arm.com>
-Content-Language: en-US
-From: Gavin Shan <gshan@redhat.com>
-In-Reply-To: <20241004152804.72508-3-steven.price@arm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+References: <20240606044959.335715-1-irogers@google.com> <c7d6eedb-7c5e-4411-a83f-4328dc75ec46@linux.intel.com>
+In-Reply-To: <c7d6eedb-7c5e-4411-a83f-4328dc75ec46@linux.intel.com>
+From: Ian Rogers <irogers@google.com>
+Date: Tue, 22 Oct 2024 21:06:36 -0700
+Message-ID: <CAP-5=fXY2Ofr_GRc7Mq7BfoR+2150o8e1JeyGctcGPRG70DqPg@mail.gmail.com>
+Subject: Re: [RFC PATCH v2] perf Documentation: Describe the PMU naming convention
+To: "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>, Tuan Phan <tuanphan@os.amperecomputing.com>, 
+	Robin Murphy <robin.murphy@arm.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Bhaskara Budiredla <bbudiredla@marvell.com>, Bharat Bhushan <bbhushan2@marvell.com>, 
+	Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, James Clark <james.clark@arm.com>, 
+	Ravi Bangoria <ravi.bangoria@amd.com>, linux-perf-users@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>, 
+	Stephane Eranian <eranian@google.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/5/24 1:27 AM, Steven Price wrote:
-> From: Suzuki K Poulose <suzuki.poulose@arm.com>
-> 
-> Keep track of the number of pages allocated for the top level PGD,
-> rather than computing it every time (though we need it only twice now).
-> This will be used later by Arm CCA KVM changes.
-> 
-> Signed-off-by: Suzuki K Poulose <suzuki.poulose@arm.com>
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
->   arch/arm64/include/asm/kvm_pgtable.h | 2 ++
->   arch/arm64/kvm/hyp/pgtable.c         | 5 +++--
->   2 files changed, 5 insertions(+), 2 deletions(-)
-> 
+On Thu, Jun 6, 2024 at 11:15=E2=80=AFAM Liang, Kan <kan.liang@linux.intel.c=
+om> wrote:
+>
+>
+>
+> On 2024-06-06 12:49 a.m., Ian Rogers wrote:
+> > It is an existing convention to use suffixes with PMU names. Try to
+> > capture that convention so that future PMU devices may adhere to it.
+> >
+> > The name of the file and date within the file try to follow existing
+> > conventions, particularly sysfs-bus-event_source-devices-events.
+> >
+> > Signed-off-by: Ian Rogers <irogers@google.com>
+> > Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+> > ---
+> >  .../testing/sysfs-bus-event_source-devices    | 24 +++++++++++++++++++
+> >  1 file changed, 24 insertions(+)
+> >  create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-de=
+vices
+> >
+>
+> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 
-If we really want to have the number of pages for the top level PGDs,
-the existing helpers kvm_pgtable_stage2_pgd_size() for the same purpose
-needs to replaced by (struct kvm_pgtable::pgd_pages << PAGE_SHIFT) and
-then removed.
-
-The alternative would be just to use kvm_pgtable_stage2_pgd_size() instead of
-introducing struct kvm_pgtable::pgd_pages, which will be used in the slow
-paths where realm is created or destroyed.
-
-> diff --git a/arch/arm64/include/asm/kvm_pgtable.h b/arch/arm64/include/asm/kvm_pgtable.h
-> index 03f4c3d7839c..25b512756200 100644
-> --- a/arch/arm64/include/asm/kvm_pgtable.h
-> +++ b/arch/arm64/include/asm/kvm_pgtable.h
-> @@ -404,6 +404,7 @@ static inline bool kvm_pgtable_walk_lock_held(void)
->    * struct kvm_pgtable - KVM page-table.
->    * @ia_bits:		Maximum input address size, in bits.
->    * @start_level:	Level at which the page-table walk starts.
-> + * @pgd_pages:		Number of pages in the entry level of the page-table.
->    * @pgd:		Pointer to the first top-level entry of the page-table.
->    * @mm_ops:		Memory management callbacks.
->    * @mmu:		Stage-2 KVM MMU struct. Unused for stage-1 page-tables.
-> @@ -414,6 +415,7 @@ static inline bool kvm_pgtable_walk_lock_held(void)
->   struct kvm_pgtable {
->   	u32					ia_bits;
->   	s8					start_level;
-> +	u8					pgd_pages;
->   	kvm_pteref_t				pgd;
->   	struct kvm_pgtable_mm_ops		*mm_ops;
->   
-> diff --git a/arch/arm64/kvm/hyp/pgtable.c b/arch/arm64/kvm/hyp/pgtable.c
-> index b11bcebac908..9e1be28c3dc9 100644
-> --- a/arch/arm64/kvm/hyp/pgtable.c
-> +++ b/arch/arm64/kvm/hyp/pgtable.c
-> @@ -1534,7 +1534,8 @@ int __kvm_pgtable_stage2_init(struct kvm_pgtable *pgt, struct kvm_s2_mmu *mmu,
->   	u32 sl0 = FIELD_GET(VTCR_EL2_SL0_MASK, vtcr);
->   	s8 start_level = VTCR_EL2_TGRAN_SL0_BASE - sl0;
->   
-> -	pgd_sz = kvm_pgd_pages(ia_bits, start_level) * PAGE_SIZE;
-> +	pgt->pgd_pages = kvm_pgd_pages(ia_bits, start_level);
-> +	pgd_sz = pgt->pgd_pages * PAGE_SIZE;
->   	pgt->pgd = (kvm_pteref_t)mm_ops->zalloc_pages_exact(pgd_sz);
->   	if (!pgt->pgd)
->   		return -ENOMEM;
-> @@ -1586,7 +1587,7 @@ void kvm_pgtable_stage2_destroy(struct kvm_pgtable *pgt)
->   	};
->   
->   	WARN_ON(kvm_pgtable_walk(pgt, 0, BIT(pgt->ia_bits), &walker));
-> -	pgd_sz = kvm_pgd_pages(pgt->ia_bits, pgt->start_level) * PAGE_SIZE;
-> +	pgd_sz = pgt->pgd_pages * PAGE_SIZE;
->   	pgt->mm_ops->free_pages_exact(kvm_dereference_pteref(&walker, pgt->pgd), pgd_sz);
->   	pgt->pgd = NULL;
->   }
+Thanks for all the reviews. Could we land this?
 
 Thanks,
-Gavin
+Ian
 
+> > diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices b=
+/Documentation/ABI/testing/sysfs-bus-event_source-devices
+> > new file mode 100644
+> > index 000000000000..79b268319df1
+> > --- /dev/null
+> > +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices
+> > @@ -0,0 +1,24 @@
+> > +What: /sys/bus/event_source/devices/<pmu>
+> > +Date: 2014/02/24
+> > +Contact:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+> > +Description: Performance Monitoring Unit (<pmu>)
+> > +
+> > +             Each <pmu> directory, for a PMU device, is a name
+> > +             optionally followed by an underscore and then either a
+> > +             decimal or hexadecimal number. For example, cpu is a
+> > +             PMU name without a suffix as is intel_bts,
+> > +             uncore_imc_0 is a PMU name with a 0 numeric suffix,
+> > +             ddr_pmu_87e1b0000000 is a PMU name with a hex
+> > +             suffix. The hex suffix must be more than two
+> > +             characters long to avoid ambiguity with PMUs like the
+> > +             S390 cpum_cf.
+> > +
+> > +             Tools can treat PMUs with the same name that differ by
+> > +             suffix as instances of the same PMU for the sake of,
+> > +             for example, opening an event. For example, the PMUs
+> > +             uncore_imc_free_running_0 and
+> > +             uncore_imc_free_running_1 have an event data_read;
+> > +             opening the data_read event on a PMU specified as
+> > +             uncore_imc_free_running should be treated as opening
+> > +             the data_read event on PMU uncore_imc_free_running_0
+> > +             and PMU uncore_imc_free_running_1.
 
