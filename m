@@ -1,155 +1,230 @@
-Return-Path: <linux-kernel+bounces-377688-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377690-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9F9649AC25A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:56:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 937979AC263
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:57:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE37283AED
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:56:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AEE881C2112D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:57:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FAE16F288;
-	Wed, 23 Oct 2024 08:56:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C1015B99E;
+	Wed, 23 Oct 2024 08:56:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/qmuNty"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="dDZZebDn"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69542AD2C;
-	Wed, 23 Oct 2024 08:56:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FFDA15B554
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:56:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673765; cv=none; b=iQ5buDhHd1jxtCCT8OvgcDUazyNTWY3KmpIyLb1Mnx9nOD8WoWly9JM0ucyls1GnpTx1sZ14IuPppTdy+g12pr8Id1hfpeI0FxHGc4/u5ENJoSCT8LUv+c2RbvK5m6Bpu6UXX4cx19dDAl2CHK272wiIz1nTClFzfpLuwVS8ZEk=
+	t=1729673812; cv=none; b=SZ8EplVttmxewhvu9BtE92a4RmjDDJimGqMXBm5laPpFcGLeS+Pb0CHgHN24WHx8Cp9+xhFo7NyaEJjid8Hfmevduz0OIlZhdnfn0SF8ul17ZIkjWArIa8xYB0sIJ8DynBwgtNtCnW2U7C6u/rto4gBtywzGDDDa9I48Q9brrP0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673765; c=relaxed/simple;
-	bh=A2Ad8XKRlmcqgJz2XKG/2BRiRGesInQ+3Q287IAxvGA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=pH0FHuThiFt3mPe/oAMZa90bm7fWiHK7TJ5D/nru19yKhj9hHZ+e2YDN0I3J6BmRibjblciVHlueHzxwH4WyhTvFu//Ep0slwOar8EZDvnjnbm9BAEE3uILXPfYnMRBfUprUVhNT2HU7ZPy+Of4mbD8KlYmxRibtHUs13g8Olvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/qmuNty; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0135DC4CEC6;
-	Wed, 23 Oct 2024 08:55:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673764;
-	bh=A2Ad8XKRlmcqgJz2XKG/2BRiRGesInQ+3Q287IAxvGA=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Q/qmuNtyT7LrN6rhQ6PU2ojQHubnc+0bICeEB7M47vopejfLqckMtLsOYuYZ6YzfJ
-	 2vsMyFbSD4GZT400Nj+aNxCvHN6hcR9cZ/vjJXDWxtbh5lhGrppZPitM/0dr1d5AXG
-	 6qLn6+hp6XdQg+a+LAMhfbbAFBX2qNFaexXdWNM/FTZxcS3HNWFjpj6ultp5wKtUDC
-	 IqD8qcsnao8PC7s913E+0uldTw9lELPNyoCR4gafWw4Z2YGYQiI3V4IVT5C5AgWSnd
-	 Ipkkh31lo9jBa+FjoqDo1mVxoSmXfRIQtrVq55/7JX/1bx2WY9nyao62hAP0J6H42n
-	 eCohDE6rZz8sg==
-Message-ID: <f7064783-983a-44bd-a9db-fd20f4e50e33@kernel.org>
-Date: Wed, 23 Oct 2024 10:55:58 +0200
+	s=arc-20240116; t=1729673812; c=relaxed/simple;
+	bh=U1nlvZx2bp3P9lBcv8HcwWjukQvv1dA7SVQ4LPhJu+s=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lXA3R399/4z4TsAyq8t4fB9zWdEZ4kkgQlZtP0OO85gIPOJsG19pmCRkSe98wyPZhY0ve5/9Pvy9bph2loIHbKU6X30f+zSOxpfOlv8IYZLk8k+oJ6GEuuArOZJ6etmiH+87W4YnyRTpBI4L1fMdtECD3CLsH3Ex7PF5lu8/r2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=dDZZebDn; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so5748351fa.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:56:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729673808; x=1730278608; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8CkFURLW567ianwD0kQbNa+S705JCFmVdVbQVhbttk=;
+        b=dDZZebDnUlXT2LbWUgKYLuAAjxXIZWmbfkFxyWMO5VaWKlzGNl3yT+ndt/6yqjxCMn
+         Hw0woKJZK3SWYzG8pL/QPnB/w20f7IjhHgwes63TaG1mpeIRYyT4d14IloowBjWJ7KCa
+         X6yRs99Bjq4aG46Z4fPBUpfkHlt5ChJLAsHdFULu7KetKW+3ePe70cjwXBfUQMvBLnNB
+         O9RYTfGhiRQkapH05PUjTkvBEF6jxtxf4MHXxiAyZzyyVve0dn/kYMVqK2z9/hCR8Q4z
+         KU9ExfVbFvLonesW96oiCAUKYVaaVu/oigkHg2Femz3t+fdbAICPhmazOnc6viskoBR/
+         Vzeg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729673808; x=1730278608;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=B8CkFURLW567ianwD0kQbNa+S705JCFmVdVbQVhbttk=;
+        b=tU9tH7+xmB9UFiCHI6OG8po+opEy+OMIQ2N4n7Ad4P/kkjnBJv6MsSZmhmodyGJmj0
+         BgejkFFct52ES7dspDsXNCaueyFmWLgtE2VfU1B19kNPGEYDbMYYWg4lGeSBnUPUj7jO
+         lGQZNo3mlEqSCHcRTOsf3+WK5MRFvJzQEO8dHBQHDIKNLw79jJ25wbmmEY00j6ZGqW+r
+         jB6/zhOBPxtDouyfEnDiA2nqj0GE3QHmQGzf/+i2apbFM7GdibHNUZCIg7cJkZFFEyjN
+         mH7E2rVcouNus6efbJNTRGNhrP3zz3EQAh1YQilpjLxM1Kd1FhdSxrckNnvUi4MFVBOI
+         85AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXdzWnkEOtUHd0SKI76xVlDtOaUvvT0BZXik1+bhALUibCs9bDnBgRp8eSUFElxrPpLbF7ugJH/6FupHso=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS5Fy3iXEEsOeJWnV1jBlieumdNNdg6/XoEejLFLaYNEaRyT8D
+	kWU3PAIKNDGlyJK1oa0KpZ2jXAidVXBwew+ATCh9C+P4UnmPSEvV7YquWF0F1E1R8PWpcd6+Iqq
+	MgTKpbBceAmtsziLKgGjMYRcVknCipjFRffmv
+X-Google-Smtp-Source: AGHT+IFJyix7nHZqbrcmoYi68VrxcCXIDptIBfA2F8NkNPGJDlP/PrFzgRE1M5nnfjhZx6AKFu2zdsjKTjLbclUMUq8=
+X-Received: by 2002:a2e:b8c1:0:b0:2fb:4a15:6112 with SMTP id
+ 38308e7fff4ca-2fc9cfe7adamr7683491fa.4.1729673808345; Wed, 23 Oct 2024
+ 01:56:48 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 net-next 03/13] dt-bindings: net: add bindings for NETC
- blocks control
-To: Wei Fang <wei.fang@nxp.com>
-Cc: "davem@davemloft.net" <davem@davemloft.net>,
- "edumazet@google.com" <edumazet@google.com>,
- "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
- <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
- "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- Vladimir Oltean <vladimir.oltean@nxp.com>,
- Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
- Frank Li <frank.li@nxp.com>,
- "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
- "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
- "bhelgaas@google.com" <bhelgaas@google.com>,
- "horms@kernel.org" <horms@kernel.org>,
- "imx@lists.linux.dev" <imx@lists.linux.dev>,
- "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
- "alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>
-References: <20241022055223.382277-1-wei.fang@nxp.com>
- <20241022055223.382277-4-wei.fang@nxp.com>
- <xx4l4bs4iqmtgafs63ly2labvqzul2a7wkpyvxkbde257hfgs2@xgfs57rcdsk6>
- <PAXPR04MB851034FDAC4E63F1866356B4884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <PAXPR04MB851034FDAC4E63F1866356B4884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <87a5eysmj1.fsf@mid.deneb.enyo.de> <20241023062417.3862170-1-dvyukov@google.com>
+ <8471d7b1-576b-41a6-91fb-1c9baae8c540@redhat.com> <5a3d3bc8-60db-46d0-b689-9aeabcdb8eab@lucifer.local>
+In-Reply-To: <5a3d3bc8-60db-46d0-b689-9aeabcdb8eab@lucifer.local>
+From: Dmitry Vyukov <dvyukov@google.com>
+Date: Wed, 23 Oct 2024 10:56:33 +0200
+Message-ID: <CACT4Y+ZE9Zco7KaQoT50aooXCHxhz2N_psTAFtT+ZrH14Si7aw@mail.gmail.com>
+Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: David Hildenbrand <david@redhat.com>, fw@deneb.enyo.de, 
+	James.Bottomley@hansenpartnership.com, Liam.Howlett@oracle.com, 
+	akpm@linux-foundation.org, arnd@arndb.de, brauner@kernel.org, 
+	chris@zankel.net, deller@gmx.de, hch@infradead.org, ink@jurassic.park.msu.ru, 
+	jannh@google.com, jcmvbkbc@gmail.com, jeffxu@chromium.org, 
+	jhubbard@nvidia.com, linux-alpha@vger.kernel.org, linux-api@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-kselftest@vger.kernel.org, linux-mips@vger.kernel.org, 
+	linux-mm@kvack.org, linux-parisc@vger.kernel.org, mattst88@gmail.com, 
+	muchun.song@linux.dev, paulmck@kernel.org, richard.henderson@linaro.org, 
+	shuah@kernel.org, sidhartha.kumar@oracle.com, surenb@google.com, 
+	tsbogend@alpha.franken.de, vbabka@suse.cz, willy@infradead.org, 
+	elver@google.com, Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 23/10/2024 10:18, Wei Fang wrote:
->>> +maintainers:
->>> +  - Wei Fang <wei.fang@nxp.com>
->>> +  - Clark Wang <xiaoning.wang@nxp.com>
->>> +
->>> +properties:
->>> +  compatible:
->>> +    enum:
->>> +      - nxp,imx95-netc-blk-ctrl
->>> +
->>> +  reg:
->>> +    minItems: 2
->>> +    maxItems: 3
->>
->> You have one device, why this is flexible? Device either has exactly 2
->> or exactly 3 IO spaces, not both depending on the context.
->>
-> 
-> There are three register blocks, IERB and PRB are inside NETC IP, but NETCMIX
-> is outside NETC. There are dependencies between these three blocks, so it is
-> better to configure them in one driver. But for other platforms like S32, it does
-> not have NETCMIX, so NETCMIX is optional.
+On Wed, 23 Oct 2024 at 10:12, Lorenzo Stoakes
+<lorenzo.stoakes@oracle.com> wrote:
+>
+> +cc Linus as reference a commit of his below...
+>
+> On Wed, Oct 23, 2024 at 09:19:03AM +0200, David Hildenbrand wrote:
+> > On 23.10.24 08:24, Dmitry Vyukov wrote:
+> > > Hi Florian, Lorenzo,
+> > >
+> > > This looks great!
+>
+> Thanks!
+>
+> > >
+> > > What I am VERY interested in is if poisoned pages cause SIGSEGV even when
+> > > the access happens in the kernel. Namely, the syscall still returns EFAULT,
+> > > but also SIGSEGV is queued on return to user-space.
+>
+> Yeah we don't in any way.
+>
+> I think adding something like this would be a bit of its own project.
 
-But how s32 is related here? That's a different device.
+I can totally understand this.
 
-Best regards,
-Krzysztof
+> The fault andler for this is in handle_pte_marker() in mm/memory.c, where
+> we do the following:
+>
+>         /* Hitting a guard page is always a fatal condition. */
+>         if (marker & PTE_MARKER_GUARD)
+>                 return VM_FAULT_SIGSEGV;
+>
+> So basically we pass this back to whoever invoked the fault. For uaccess we
+> end up in arch-specific code that eventually checks exception tables
+> etc. and for x86-64 that's kernelmode_fixup_or_oops().
+>
+> There used to be a sig_on_uaccess_err in the x86-specific thread_struct
+> that let you propagate it but Linus pulled it out in commit 02b670c1f88e
+> ("x86/mm: Remove broken vsyscall emulation code from the page fault code")
+> where it was presumably used for vsyscall.
+>
+> Of course we could just get something much higher up the stack to send the
+> signal, but we'd need to be careful we weren't breaking anything doing
+> it...
 
+Can setting TIF_NOTIFY_RESUME and then doing the rest when returning
+to userspace help here?
+
+> I address GUP below.
+>
+> > >
+> > > Catching bad accesses in system calls is currently the weak spot for
+> > > all user-space bug detection tools (GWP-ASan, libefence, libefency, etc).
+> > > It's almost possible with userfaultfd, but catching faults in the kernel
+> > > requires admin capability, so not really an option for generic bug
+> > > detection tools (+inconvinience of userfaultfd setup/handler).
+> > > Intercepting all EFAULT from syscalls is not generally possible
+> > > (w/o ptrace, usually not an option as well), and EFAULT does not always
+> > > mean a bug.
+> > >
+> > > Triggering SIGSEGV even in syscalls would be not just a performance
+> > > optimization, but a new useful capability that would allow it to catch
+> > > more bugs.
+> >
+> > Right, we discussed that offline also as a possible extension to the
+> > userfaultfd SIGBUS mode.
+> >
+> > I did not look into that yet, but I was wonder if there could be cases where
+> > a different process could trigger that SIGSEGV, and how to (and if to)
+> > handle that.
+> >
+> > For example, ptrace (access_remote_vm()) -> GUP likely can trigger that. I
+> > think with userfaultfd() we will currently return -EFAULT, because we call
+> > get_user_page_vma_remote() that is not prepared for dropping the mmap lock.
+> > Possibly that is the right thing to do, but not sure :)
+
+That's a good corner case.
+I guess also process_vm_readv/writev.
+Not triggering the signal in these cases looks like the right thing to do.
+
+> > These "remote" faults set FOLL_REMOTE -> FAULT_FLAG_REMOTE, so we might be
+> > able to distinguish them and perform different handling.
+>
+> So all GUP will return -EFAULT when hitting guard pages unless we change
+> something.
+>
+> In GUP we handle this in faultin_page():
+>
+>         if (ret & VM_FAULT_ERROR) {
+>                 int err = vm_fault_to_errno(ret, flags);
+>
+>                 if (err)
+>                         return err;
+>                 BUG();
+>         }
+>
+> And vm_fault_to_errno() is:
+>
+> static inline int vm_fault_to_errno(vm_fault_t vm_fault, int foll_flags)
+> {
+>         if (vm_fault & VM_FAULT_OOM)
+>                 return -ENOMEM;
+>         if (vm_fault & (VM_FAULT_HWPOISON | VM_FAULT_HWPOISON_LARGE))
+>                 return (foll_flags & FOLL_HWPOISON) ? -EHWPOISON : -EFAULT;
+>         if (vm_fault & (VM_FAULT_SIGBUS | VM_FAULT_SIGSEGV))
+>                 return -EFAULT;
+>         return 0;
+> }
+>
+> Again, I think if we wanted special handling here we'd need to probably
+> propagate that fault from higher up, but yes we'd need to for one
+> definitely not do so if it's remote but I worry about other cases.
+>
+> >
+> > --
+> > Cheers,
+> >
+> > David / dhildenb
+> >
+>
+> Overall while I sympathise with this, it feels dangerous and a pretty major
+> change, because there'll be something somewhere that will break because it
+> expects faults to be swallowed that we no longer do swallow.
+>
+> So I'd say it'd be something we should defer, but of course it's a highly
+> user-facing change so how easy that would be I don't know.
+>
+> But I definitely don't think a 'introduce the ability to do cheap PROT_NONE
+> guards' series is the place to also fundmentally change how user access
+> page faults are handled within the kernel :)
+
+Will delivering signals on kernel access be a backwards compatible
+change? Or will we need a different API? MADV_GUARD_POISON_KERNEL?
+It's just somewhat painful to detect/update all userspace if we add
+this feature in future. Can we say signal delivery on kernel accesses
+is unspecified?
 
