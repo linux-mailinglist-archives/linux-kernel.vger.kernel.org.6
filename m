@@ -1,117 +1,96 @@
-Return-Path: <linux-kernel+bounces-378484-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378486-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC6599AD138
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:40:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2568E9AD13E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9E175281317
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:40:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0C3A1F22B30
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:41:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FC5D1CBE8F;
-	Wed, 23 Oct 2024 16:40:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F4801CBE9A;
+	Wed, 23 Oct 2024 16:41:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uxRN2HpZ"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="OTTqd34u"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB0961C9DFD;
-	Wed, 23 Oct 2024 16:40:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69EC71C3306;
+	Wed, 23 Oct 2024 16:41:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729701652; cv=none; b=NR7FyF81Mi18lRJSiCbm49o1vAynjV61N2/sPefo645Yu0jMbkEzrmfyX2ABoOEUPEq2iPU6/oHHWoYngrl5MyF4Jhbzwj4aZwJK+8yc2tZChflG+akEWKNVpa7Ny1CBXTtnFHuAhXYIZt5SENANCsJbLaFuOaXB48HznBpyMUU=
+	t=1729701707; cv=none; b=pOqyDGSyNjglo71qycUqDUHaMoi0KuLWaHBArhvdJWdWyXWQRj+F14zNt9GgWG7RdaI9HDCsco41vbBAKdSnsd3dhBrO2IPeDgw188ZEJ6PC7MpJqusRQx5Z2HhvEjkuGLTQZSHnx+gJ0iRFgFJ23KOQ4JfyslakL383hGBjQ8U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729701652; c=relaxed/simple;
-	bh=VpXcdYhspcQug35V2yqd0UWMgk3PGnE3ESouosVt6dg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=h6ANgJMzjNdaKFRw9s8oIXaTLQYniBEOxFRhcKH1eB5evNIbynfgyE4qzBnumCozTB+NVxaXkgv87QCL6L6l8RqZ5rwtlBeTnT0CNzEUL40T0clDfJeaybTh1FDGHAFsFWCZ8XqgrecxUmLObXOW0dbMFz0Ok+Ts5jaCB6cXbWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uxRN2HpZ; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41A29C4CEC6;
-	Wed, 23 Oct 2024 16:40:52 +0000 (UTC)
+	s=arc-20240116; t=1729701707; c=relaxed/simple;
+	bh=n3qCqyTy10lex7laz7NuPmEFiXmD12CtOmobdC5n7e8=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=EdVVOK2xsOVqfzbFe+oHN5uCzsXlBXRnqM0lqh9MuEXPtqToZuQC2sqejifLf5f+d8kaOv7z62eG/7hDp348mriOYgBsTyAxlOFngKZ48geOnjcfExJG9QQoZXuq+FnuhN9C22qFa28m0/Sa55NHqImW+5AfsGIJ9y8+tdXhWdA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=OTTqd34u; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E8B20C4CECD;
+	Wed, 23 Oct 2024 16:41:46 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729701652;
-	bh=VpXcdYhspcQug35V2yqd0UWMgk3PGnE3ESouosVt6dg=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=uxRN2HpZWyMZ+TPIMyOkOslwb30h1/A42B5YB6b+aJq4nCWAxH9HF749hsJ49ko2R
-	 P2oKPhCPKEYjEILuLDxDvmQz9W4Lpp/htuFglHC69IGUivBbn3F5P+9OVMTFlMZhue
-	 oNN1aBp42i+gymkfs3ZR5YF88Cq1fsaEwOEW0NMHLJajMPpD/Tfp1uMoWctoeQGFmN
-	 JykTSwUOIlhjnR5iEHpj/FfB0u7lJuWm1acVbZl2tFnqycLUqAt5EUznGLPj1GELPT
-	 uJGJJGlIbzrqVCZeR34opDgeWcADq/yG0vzIKlB0UZKD9rC31JDrxYJMz1r/x3Nij/
-	 YzHDMCcGfYe4A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id E05A5CE0EE1; Wed, 23 Oct 2024 09:40:51 -0700 (PDT)
-Date: Wed, 23 Oct 2024 09:40:51 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Alan Huang <mmpgouride@gmail.com>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Peter Zijlstra <peterz@infradead.org>, RCU <rcu@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, kernel-team@meta.com,
-	Steven Rostedt <rostedt@goodmis.org>, andrii@kernel.org
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
- srcu_read_lock()
-Message-ID: <e0bc0674-9309-4749-b74d-e0aa6b40a552@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
- <ZxdLfLWWrAEfRiXV@infradead.org>
- <20241022070635.GY16066@noisy.programming.kicks-ass.net>
- <ZxdPN6wT1LMyLaNL@infradead.org>
- <20241022071018.GA16066@noisy.programming.kicks-ass.net>
- <ZxdQiLhn16FtkOys@infradead.org>
- <8b2552d8-0453-476a-8606-e8b761934783@paulmck-laptop>
- <E068D091-F79C-4F56-974D-08ED95AD6F58@gmail.com>
+	s=k20201202; t=1729701706;
+	bh=n3qCqyTy10lex7laz7NuPmEFiXmD12CtOmobdC5n7e8=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=OTTqd34uVSRGvqbo1mQyC4Xt49FbO5U3gytqewaO5cscXOsDmBFOLH0jMEWcynC/f
+	 +t6c4VmBXAmpZWvolZi7wURKdgQHrdD04aMnY+FbvPQV9tmW5GTdTwT3bBlJu9tCYP
+	 3eTFPG4fJIF3RQvZC9cExCohqIO1IJKAgyyxKtvom4Ka/aSvck3LKVhc0XHj88ep1i
+	 vwHpU7+OVtKCmjshk8JxJt9oS9vda2yBZMKtUeOIpVOGn38+NrenYXH6txNBKilC6D
+	 bAQUDgpiZ1KQoA8mnfoVTSqYleoOqoxfiISGdJVyWT04U01Rngbzqc6/6qc4cnBE2h
+	 8RwE33YuE7AnA==
+Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so3716422e87.2;
+        Wed, 23 Oct 2024 09:41:46 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVaaX+ommd0pjTOCGONJ0fLtdMpFhBiT7/m+7NzBMLbLrBla5vJAuvAvkjEsmaWjINRx0jOMjZELtO0j/Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSSEpZjh4zNU5ReEdd8zMVC8f1hiIz42CWlXqAkpaW2dMDrMV1
+	UVenPtXMqqRoVTTSM/4G6VnqhpHt0hH4HVdUOYsPF4cwupVasu83VwcLa8DOQP1m5uY1iFLMamd
+	DLolA05X5AZasvGaaYgXkOxA9SGI=
+X-Google-Smtp-Source: AGHT+IHeVNVyeSqNM9Enb81lKkpNG3MzAyhLkMAss2895o/XFW4MQKZ82Tm+9lv4haZt/XdModeqeMe5dLzgyJ0h5J4=
+X-Received: by 2002:a05:6512:ea4:b0:539:8f68:e036 with SMTP id
+ 2adb3069b0e04-53b1a354088mr2745050e87.34.1729701705628; Wed, 23 Oct 2024
+ 09:41:45 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <E068D091-F79C-4F56-974D-08ED95AD6F58@gmail.com>
+References: <4960180.31r3eYUQgx@devpool47.emlix.com> <2286001.iZASKD2KPV@devpool47.emlix.com>
+In-Reply-To: <2286001.iZASKD2KPV@devpool47.emlix.com>
+From: Masahiro Yamada <masahiroy@kernel.org>
+Date: Thu, 24 Oct 2024 01:41:09 +0900
+X-Gmail-Original-Message-ID: <CAK7LNARSM=EDgHN9=j1-BXoeZ5aq8O+nCZeBUeGrvhq2+1fQvQ@mail.gmail.com>
+Message-ID: <CAK7LNARSM=EDgHN9=j1-BXoeZ5aq8O+nCZeBUeGrvhq2+1fQvQ@mail.gmail.com>
+Subject: Re: [PATCH 5/7] kconfig: qconf: use nullptr in C++11 code
+To: Rolf Eike Beer <eb@emlix.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 02:58:07PM +0800, Alan Huang wrote:
-> On Oct 22, 2024, at 22:26, Paul E. McKenney <paulmck@kernel.org> wrote:
-> > 
-> > On Tue, Oct 22, 2024 at 12:13:12AM -0700, Christoph Hellwig wrote:
-> >> On Tue, Oct 22, 2024 at 09:10:18AM +0200, Peter Zijlstra wrote:
-> >>> Ah, well, the thing that got us here is that we (Andrii and me) wanted
-> >>> to use -1 as an 'invalid' value to indicate SRCU is not currently in
-> >>> use.
-> >>> 
-> >>> So it all being int is really rather convenient :-)
-> >> 
-> >> Then please document that use.  Maybe even with a symolic name for
-> >> -1 that clearly describes these uses.
-> > 
-> > Would this work?
-> > 
-> > #define SRCU_INVALID_INDEX -1
-> 
-> Is there any similar guarantee of the return value of get_state_synchronize_rcu
-> or start_poll_synchronize_rcu, like invalid value?
+On Wed, Oct 23, 2024 at 3:35=E2=80=AFPM Rolf Eike Beer <eb@emlix.com> wrote=
+:
+>
+> This is type safe as it can't be accidentially assigned to something not =
+a
+> pointer.
 
-Yes, there is a get_completed_synchronize_rcu() function that returns a
-value that causes poll_state_synchronize_rcu() to always return true.
-There is also a get_completed_synchronize_rcu_full() function that
-returns a value that causes poll_state_synchronize_rcu_full() to always
-return true.
+This is incomplete because there are more call sites that use
+0 instead of nullptr.
 
-There has been some discussion of another set of values that cause
-poll_state_synchronize_rcu() and poll_state_synchronize_rcu_full() to
-always return false, but there is not yet a use case for this.  Easy to
-provide if required, but why further explode the RCU API unless it really
-is required?
+For example, you can replace nextItem(0) with nextItem(nullptr)
 
-							Thanx, Paul
+Anyway, I do not need this patch for now because qconf is
+under refactoring, and I will remove a lot of code.
 
-> > Whatever the name, maybe Peter and Andrii define this under #ifndef
-> > right now, and we get it into include/linux/srcu.h over time.
-> > 
-> > Or is there a better way?  Or name, for that matter.
-> > 
-> > Thanx, Paul
-> > 
-> 
+Please come back with a more comprehensive patch
+some months later if you are still interested.
+
+
+
+
+
+--
+Best Regards
+Masahiro Yamada
 
