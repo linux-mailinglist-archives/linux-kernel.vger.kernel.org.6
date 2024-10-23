@@ -1,244 +1,85 @@
-Return-Path: <linux-kernel+bounces-377633-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377634-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6ECC59AC195
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:28:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 507199AC19B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:29:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 08C2B282C9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:28:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 075671F22CE4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:29:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 14805158D87;
-	Wed, 23 Oct 2024 08:28:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 181E3158DA3;
+	Wed, 23 Oct 2024 08:29:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b="EnqjKD4/";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="PlEBN4IM"
-Received: from fhigh-a2-smtp.messagingengine.com (fhigh-a2-smtp.messagingengine.com [103.168.172.153])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Qf4xxSiF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A951158527;
-	Wed, 23 Oct 2024 08:28:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.153
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E63D154439;
+	Wed, 23 Oct 2024 08:29:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672094; cv=none; b=dsR6fEn5UpuFQwAzFKDsOgSPUZBLPxzBMgAf067XXSF+8mKlaZgcrmkuRjdEWxTEt5EMLZco0lEK6UZwgCl8tTLOLimp+L1LApwiFRCP8gI5/x8KUEMSTE0e4JXPYpevw3quanBGrtd6RD3BBRrE1rX2Po0TCzoonAmzp0vyFjo=
+	t=1729672182; cv=none; b=eIiSDcqY4BmAf2osAwarZu9sEGQ8/rNWWfavRxHEbyoUTXiDheRgEf221gOpe1hA2GedVprK3ph4IhfApjXgPV8L8omQKeW2PYzhrdgQXe3VYURVbP+9So1v4Uj6k4xsDTSOD2pzl6U0K0LIyZGUW0Nfz6xlAKizqXhlQAQ3M+A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672094; c=relaxed/simple;
-	bh=I5VCK+0CMmT65fmNALPGZg3TUFxmq/Z0Sb4/EwhTjp4=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=PrHfjQwVCc2jRXtRK3mcuUOq2wcKD6liEXhJBFmnJeEJG458y7xKmNsDIBhBDtyBTociNBJQROWibiGW5eZ/zVTJ9glfRDusclpmOKQQ7ceHrFuNRNLvlFPcrk9XJVqA64/bmoNpmRcfXeIbm6ppuVxvRMdguwul4Ypls24tkmc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev; spf=none smtp.mailfrom=ljones.dev; dkim=pass (2048-bit key) header.d=ljones.dev header.i=@ljones.dev header.b=EnqjKD4/; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=PlEBN4IM; arc=none smtp.client-ip=103.168.172.153
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ljones.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=ljones.dev
-Received: from phl-compute-08.internal (phl-compute-08.phl.internal [10.202.2.48])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id 3487B1140135;
-	Wed, 23 Oct 2024 04:28:11 -0400 (EDT)
-Received: from phl-imap-01 ([10.202.2.91])
-  by phl-compute-08.internal (MEProxy); Wed, 23 Oct 2024 04:28:11 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ljones.dev; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729672091;
-	 x=1729758491; bh=Q99IEpRDwsQRu7/QpTx/OJI3t5lg9MCdu26wf4vKknI=; b=
-	EnqjKD4/h8D8/l8WZO46e1ElVhjhcQDKpVSnLJ4BfRgbMrYVais8akyr2U0692ep
-	zMF/JdT+kXwg2fHKWqHW8FYFdEx+3UBA6C31pNk8ff+XCnwGoC1rXiYhSSjUttI8
-	x7MQA5xNwb0snxIJDI5Mx5FzuKsPuLGAtnJnSqs2joKj1g5VBtdr2mxmPgL8wuhP
-	ERJRnec2IKfeQRJslleQavu2h9dr8lzlLXyumZHGSUpXSPyrKvNmHRr0BBqiVhSp
-	xGLFFBHaR0vrTCGcaDArcNpn/c23Fdv0mvtA11MbN8HzZe24XsOejJUjJ4KYyB2W
-	gNC646+qFkp8rWbhehFd1Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729672091; x=
-	1729758491; bh=Q99IEpRDwsQRu7/QpTx/OJI3t5lg9MCdu26wf4vKknI=; b=P
-	lEBN4IM0J23/qTbvz4rnlNKapBm7qpFJCi2v1jIGUeXo8v/Oo502wwWIni7QD8Rc
-	/n7kGuV2lGK4e9K5lhd64jRt00qmuD+RfxwARO971otT/xatnki+H4KLp21Xue2Q
-	EnPbg1WuY74JV5w3zAG9EN9PfuwPS3/dhyzTIkEakF82mfxakotybWQjM2dmSWaL
-	vH8A0J9fGN7Q5vx3y3mn5BJ+6hlw7kHnj/yGbdJTQi5fBFoLOTkwZgFqOeEzuQfS
-	uojC6CFqeWPcqYi6GUag5n26pTY5TEFJEMMGDtmsFQXp1DYRDmr8L2Wj3tT0ubly
-	HQ+GLctbYgPsqI1/vDk/g==
-X-ME-Sender: <xms:mrMYZyKXUiDaKpV8SNe7SHC26_seOY_U8VcRGh8j24R3l-iTLcSJLQ>
-    <xme:mrMYZ6IBQQ7R5vAobb7NNcRMOUEik4QhTS0dL0u-Rv9IS_GDbtiBhyXJICbWRgwGl
-    nKOAOqYuH_Fja-6GWc>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeijedgtdefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedfnfhukhgvucflohhnvghsfdcuoehluhhkvgeslhhjohhnvghsrdguvg
-    hvqeenucggtffrrghtthgvrhhnpeekieeftdeltdevudeukeefleejjeeitedttdfhteek
-    jefhteduhffhjefhfeejjeenucffohhmrghinhepfhhrvggvuggvshhkthhophdrohhrgh
-    dpghhithhlrggsrdgtohhmnecuvehluhhsthgvrhfuihiivgeptdenucfrrghrrghmpehm
-    rghilhhfrhhomheplhhukhgvsehljhhonhgvshdruggvvhdpnhgspghrtghpthhtoheple
-    dpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtoheprghlvgigrghnuggvrhdruggvuhgt
-    hhgvrhesrghmugdrtghomhdprhgtphhtthhopehmrghrihhordhlihhmohhntghivghllh
-    hosegrmhgurdgtohhmpdhrtghpthhtoheprghlvgiguggvuhgthhgvrhesghhmrghilhdr
-    tghomhdprhgtphhtthhopegshhgvlhhgrggrshesghhoohhglhgvrdgtohhmpdhrtghpth
-    htohepshhuphgvrhhmudeskhgvrhhnvghlrdhorhhgpdhrtghpthhtohepughrihdquggv
-    vhgvlheslhhishhtshdrfhhrvggvuggvshhkthhophdrohhrghdprhgtphhtthhopehkrg
-    hihhgvnhhgfhesnhhvihguihgrrdgtohhmpdhrtghpthhtoheplhhinhhugidqkhgvrhhn
-    vghlsehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhrtghpthhtoheplhhinhhugidqphgtih
-    esvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:mrMYZyuW3W0ma7h3VYDAUpt35VMBgnhLeQd_7vLkh_KOfMCG5wanuQ>
-    <xmx:mrMYZ3b-ytoP3tvYoZ9oqvhzjW_h3Itluae8uXJbd_8FZSbB185aYg>
-    <xmx:mrMYZ5YgGK7kE0WuxIaxBWGt_MpPh8oyeEBLWrwrfrKDgs5vOUdezQ>
-    <xmx:mrMYZzBAu2wV-Swtd5bfuvdCmTgiEQIsR6YeSXgp-gynqN2OJSqhWQ>
-    <xmx:m7MYZ144VpCsV5mA50Qdc7OjWgQHdGVdEeDnvFwarLP58Z4SX_FOneCZ>
-Feedback-ID: i5ec1447f:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id C3E47336007C; Wed, 23 Oct 2024 04:28:10 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729672182; c=relaxed/simple;
+	bh=qP2O+eiJB8iJQfwbz4B5eYxZINBTQj25Ci5NIhjnAO4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=I/+QrzQKauB0qNF3/W65JNKAQER5wh9tXSj4zOaIZ2fav/3+mV2n8yDxM6cSdZcA5JS7x4XxBI5GZILsbdF7izaOHMSeYB20V+LrzX+dJJjMlItWfqBlVlay/UQUE3/85+qDoYtsxmiuKCf5SeZPfGJN6Hq3m3vR33/4g/SUjc0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Qf4xxSiF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BF55C4CEC6;
+	Wed, 23 Oct 2024 08:29:40 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729672182;
+	bh=qP2O+eiJB8iJQfwbz4B5eYxZINBTQj25Ci5NIhjnAO4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Qf4xxSiFOIOZzKtqrTLMLMIV3mwwAexv3DBcbYD3oxncB+ex6psESW/4fQq1+WvlM
+	 iNbeUddsoqLJegxZd8lDElmi+NQ6ykFIinHYpYnEpGY1wZ9jT3TQO8Jzx62zU6yd7W
+	 Ec9TucGeCLsuOyzfpVbJwi9jbrbyI6NYawVsU8msP8+RixANZUWZjjEd6hqnkJ2RBH
+	 FqapQZB76CnfzBF/k8sCqWQG19qyZItvy7Ixf4ow2VZu3NzvLi1ahXnyMxHnZPL3M+
+	 7LtW3dTPimBsO1R6J1vTOGP5lP5repUELMHrhQfyG/dy8RkT5SgCkZ6ueWEB4MTISz
+	 WiCVheoVCWvVw==
+Date: Wed, 23 Oct 2024 10:29:38 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, Lee Jones <lee@kernel.org>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
+	Geert Uytterhoeven <geert+renesas@glider.be>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Neil Armstrong <neil.armstrong@linaro.org>, 
+	Arnd Bergmann <arnd@arndb.de>, 
+	=?utf-8?B?TsOtY29sYXMgRiAuIFIgLiBBIC4=?= Prado <nfraprado@collabora.com>, Stephen Boyd <sboyd@kernel.org>, 
+	Trilok Soni <quic_tsoni@quicinc.com>, Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 1/5] dt-bindings: arm: qcom: Document sm8750 SoC and
+ boards
+Message-ID: <q4tdx4tf5vlzky45bmrllxuwivtah43grl4sgcw4op5udoy3ve@baqlgxq7eyn7>
+References: <20241021232114.2636083-1-quic_molvera@quicinc.com>
+ <20241021232114.2636083-2-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Wed, 23 Oct 2024 10:27:49 +0200
-From: "Luke Jones" <luke@ljones.dev>
-To: "Kai-Heng Feng" <kaihengf@nvidia.com>,
- "Alex Deucher" <alexdeucher@gmail.com>
-Cc: "Mario Limonciello" <superm1@kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>,
- "open list" <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org,
- "Mario Limonciello" <mario.limonciello@amd.com>,
- "Alex Deucher" <alexander.deucher@amd.com>
-Message-Id: <eef7035c-2ffc-485f-b123-fffd3719be28@app.fastmail.com>
-In-Reply-To: <fd7cae9a-5ee1-4e18-915d-4115f0a6a156@nvidia.com>
-References: <20241014152502.1477809-1-superm1@kernel.org>
- <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
- <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com>
- <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
- <fd7cae9a-5ee1-4e18-915d-4115f0a6a156@nvidia.com>
-Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot VGA device
 Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Disposition: inline
+In-Reply-To: <20241021232114.2636083-2-quic_molvera@quicinc.com>
 
+On Mon, Oct 21, 2024 at 04:21:10PM -0700, Melody Olvera wrote:
+> Document the SM8750 SoC binding and the boards which use it.
+> 
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+> ---
+>  Documentation/devicetree/bindings/arm/qcom.yaml | 7 +++++++
+>  1 file changed, 7 insertions(+)
 
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-On Wed, 23 Oct 2024, at 3:27 AM, Kai-Heng Feng wrote:
-> On 2024/10/22 9:04 PM, Alex Deucher wrote:
->> External email: Use caution opening links or attachments
->>=20
->>=20
->> On Tue, Oct 22, 2024 at 2:31=E2=80=AFAM Kai-Heng Feng <kaihengf@nvidi=
-a.com> wrote:
->>>
->>> Hi Luke,
->>>
->>> On 2024/10/15 4:04 PM, Luke Jones wrote:
->>>> On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
->>>>> From: Mario Limonciello <mario.limonciello@amd.com>
->>>>>
->>>>> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display=
- device.
->>>>>
->>>>> ```
->>>>> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeFo=
-rce
->>>>> RTX 4070 Max-Q / Mobile] (rev a1)
->>>>> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
->>>>> Strix [Radeon 880M / 890M] (rev c1)
->>>>> ```
->>>>>
->>>>> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU a=
-s the
->>>>> boot VGA device, but really the eDP is connected to the AMD PCI di=
-splay
->>>>> device.
->>>>>
->>>>> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA de=
-vice.
->>>>>
->>>>> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
->>>>> Reported-by: Luke D. Jones <luke@ljones.dev>
->>>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
->>>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
->>>>> ---
->>>>>    drivers/pci/vgaarb.c | 7 -------
->>>>>    1 file changed, 7 deletions(-)
->>>>>
->>>>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
->>>>> index 78748e8d2dba..05ac2b672d4b 100644
->>>>> --- a/drivers/pci/vgaarb.c
->>>>> +++ b/drivers/pci/vgaarb.c
->>>>> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_dev=
-ice *vgadev)
->>>>>               return true;
->>>>>       }
->>>>>
->>>>> -    /*
->>>>> -     * Vgadev has neither IO nor MEM enabled.  If we haven't foun=
-d any
->>>>> -     * other VGA devices, it is the best candidate so far.
->>>>> -     */
->>>>> -    if (!boot_vga)
->>>>> -            return true;
->>>>> -
->>>>>       return false;
->>>>>    }
->>>>>
->>>>> --
->>>>> 2.43.0
->>>>
->>>> Hi Mario,
->>>>
->>>> I can verify that this does leave the `boot_vga` attribute set as 0=
- for the NVIDIA device.
->>>
->>> Does the following diff work for you?
->>> This variant should be less risky for most systems.
->>>
->>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
->>> index 78748e8d2dba..3fb734cb9c1b 100644
->>> --- a/drivers/pci/vgaarb.c
->>> +++ b/drivers/pci/vgaarb.c
->>> @@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device=
- *vgadev)
->>>                   return true;
->>>           }
->>>
->>> +       if (vga_arb_integrated_gpu(&pdev->dev))
->>> +               return true;
->>> +
->>=20
->> The problem is that the integrated graphics does not support VGA.
->
-> Right, so the check has to be used much earlier.
->
-> I wonder does the integrated GFX have _DOD/_DOS while the discrete one=
- doesn't?=20
-> If that's the case, vga_arb_integrated_gpu() can be used to differenti=
-ate which=20
-> one is the boot GFX.
+Best regards,
+Krzysztof
 
-Discrete might be missing the _DOS? I'm not sure how to interpret the gp=
-u related DSL. You can see the dump here https://gitlab.com/asus-linux/r=
-everse-engineering/-/tree/master/uncategorized/GA605WI?ref_type=3Dheads
-
-ssdt1.dsl contains _DOD and looks to be the discrete unit, does not cont=
-ain _DOS. the dsdt contains both under "Device (VGA)"
-
-Regards,
-Luke.
-
-> Kai-Heng
->
->>=20
->> Alex
->>=20
->>>           /*
->>>            * Vgadev has neither IO nor MEM enabled.  If we haven't f=
-ound any
->>>            * other VGA devices, it is the best candidate so far.
->>>
->>>
->>> Kai-Heng
->>>
->>>>
->>>> Tested-by: Luke D. Jones <luke@ljones.dev>
->>>
 
