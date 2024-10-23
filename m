@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-378858-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378859-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C48A29AD664
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:11:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 70AD09AD666
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:13:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F423F1C21693
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:11:29 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 286CB1F220E7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:13:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E71101EBFE0;
-	Wed, 23 Oct 2024 21:11:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="TOrnarJa"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4B3E1E7C2C;
+	Wed, 23 Oct 2024 21:13:07 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7261A155757;
-	Wed, 23 Oct 2024 21:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B3F911494B3
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:13:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729717881; cv=none; b=dIZFfYqYLjHgaQ5tOvHnZSz9QaX9DknUFZZ4YOEeq5HAoAh71wue3nFVgrQVRs5sCbaM8KZKmNgSXhgMg5iundngqPgglL/EYyHr8QYhOpZyoOXQi8MD73AUA8YYMsJae97jR7hjfJ3D8ZNVrrSKrvtpTcw3szFBarAxRt2KwC4=
+	t=1729717987; cv=none; b=uKPfk1tXkZHLGkrHGzWEnOhp/ImajIIqNzj/vNFm2ExV1r0J4k0OpzZNEduGBT+7jsVJE6FcyYyDg/AAI6T2Ln1zeZ7M0YLh2cEFUI4g2S4XgfPrmNGr9nCNnh/zAcR5gtv1r5s3s+8OqibYkAll14Bf88a74JzVpphjlEOZZkA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729717881; c=relaxed/simple;
-	bh=jKAyw/EopyQhKfZWtFJ71aOI/ZTyS19O39wXWbS1TjI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=ky5YGDkQEZIwCSldpA3I+5LKadSfDg7KvnIyPCwBgKRRuDehupRd3LzshsfNBQ7J9iFsKWv4Nexpak97EemufTuZ+x287EUN81dWmz5Z5u5iW94NFmk91BjQqnY/MRy35uKqmoqQWHNgDqr5joG6QGmi1A3iViRgz+1GlwOpQVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=TOrnarJa; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c96936065dso208824a12.3;
-        Wed, 23 Oct 2024 14:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729717877; x=1730322677; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jKAyw/EopyQhKfZWtFJ71aOI/ZTyS19O39wXWbS1TjI=;
-        b=TOrnarJatshEFKHqo6VKxiSctB452ndjbbdUwzwdqMeBItQpnd62cjZ3MWvc0seIXX
-         6gj0F7MMOC6tb6DMb5XDQ3TAG0Luhrjn9Eq+0AH73EdTswN1ejRHpLIUUOZHtcIEO3TC
-         kW/nIedJUXtkKHhi9c1e1urm170RC5q1yebMSsR49txllHdqzrG4tlDdgp5C2HTc+aaW
-         uHNLnjyTM1gzYiuwetvz3cNw59/KcgoFowcZxD+5RcUg1TcDSDIY1a4q+j4AltgEq7SH
-         Nl8sP4pbNvlzJDnldtQAYkRKzsioj34FB61WfuPiUoi363i7K7lXjiD95U3GmM5h/iw+
-         q5Qw==
+	s=arc-20240116; t=1729717987; c=relaxed/simple;
+	bh=cFRPMUWoBRUUg5n/0eqhBH5pFm7+qAhyQs9ifFH1l0s=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=LXZt33hG46TDSaqkhOdAf0xtS0/B5nq9Wwe+mnHlw9zoVob87qBEJbhcynRNNCFwXvekWOcHsY3JGmx2BVVgKwU/ZQ/3KXRFrCElGhG/QBgQC5ZznUVkvNGlXwQk6XkJgrIrI17eOAu4SOytv7dPe7ibYltBEvsTiT7k7cOkdn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b7b13910so2371485ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:13:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729717877; x=1730322677;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=jKAyw/EopyQhKfZWtFJ71aOI/ZTyS19O39wXWbS1TjI=;
-        b=EI9ekZFnQ6OuUR0jtKEbxoX3FwdnnLbWHp7huoRBQmTFoti04oVpdhQ7e9SstDM0I7
-         BhuMhr3srRfm2OKe+AmIQWuVqpeZwD/oe6qcOpiIvNVwTzkJwzZFFbzaQY7eXMP+IXer
-         C2zfps12rgGbRkLXgA5MlKNhAPQ5bo35ljNzLFCybIAfgswdcrwsYNZzJ7boPyLhv1L2
-         n4K67SbqdPHKGCkQRPdTes0czagpDG0E6jx7GoKk6vYUPvQ8dT5ekQz4ZNTgdPg1kdQU
-         VyWXkGVtJBt8Ta3qJbJg77Ua54T/A73aq81ob3qFGty0G3eO+JCRb3ncsXgWbNzDSpg2
-         x6lA==
-X-Forwarded-Encrypted: i=1; AJvYcCUMwtCYDF88gJ5EQj7duhOlF9tvHzMcJQkT2CPn/RjpWfac6E7A9D7Oi/0gr7qjB8wmLWZL4MT/8CgwZYzsqw==@vger.kernel.org, AJvYcCUT6IHJOYBym4N6kh3ny74w8J7AU3YfZr8WHRrzA/9nYf+1T+qHOUil4uGmfuJpGWaZRS8csvh84x7v@vger.kernel.org, AJvYcCXC0R8ju2bNolFXcZ8fpqwvKa462s9u8ehQXp+l1QogL5os9o0bJB2PRjibZOXt8f3k0o0RACaDHzZprO3r@vger.kernel.org, AJvYcCXNwaeVRV5/CPNnf1UvQ0XMQrYpTi71VSM2VZzyYu9EpfVyiyhdfIYSBp0/VAGq7z29SLucOH7BlLauSjMapP2P/voGIw==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw30mHhfizor9xPxNoYioQlOmIu9qWWyrbbtf0hcoZCsbwEqb6v
-	R549cqsgK+ZjoZS+L4+g1elQyt9dOniFvcOWYe/1USq169LAPzHkqblnW0HLZPT3YWm5Ntjs8eh
-	6XEVa0baF8gljgZyx1IsCVw8QcQ==
-X-Google-Smtp-Source: AGHT+IGjp5BWHI7BjiYEHOH7h326K2upWWA5FR/BygFMnRkS/IYWnITIfOZ2A1SOsXlzq+/uRMmOdvSxYlQdyW9kq1c=
-X-Received: by 2002:a17:906:c10f:b0:a99:f0f4:463d with SMTP id
- a640c23a62f3a-a9abf875c8amr385483366b.26.1729717876612; Wed, 23 Oct 2024
- 14:11:16 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729717985; x=1730322785;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=NtdQ6AatqqunbWDIMg/bWDUZALh8TkENlxiTiD9vfYA=;
+        b=xHt3hxKIyfFMyULiC6QZJ5hBp3OQaMpRFe9YTB10yQDoTRAuQHThHRF0Clv06KhS3w
+         6UiMDXqC355BMehOWyxIlmDcVnC2Ie6QcaI+5McoSNT3I6CBwTLmj70N8gtQbn0mbGQ4
+         71p523F1M2yqpDtmiTqUiYX5mLVgMz3ykdmcXHjt7gEHZo0R0FlnBbqoVUMnhu5XDWp9
+         hCwSJT7onEnfOGD5t2IHVLnx8GtMnf5HkX2tzj3TTaMHleVcOrGyAyymrH73Q8TiPY4l
+         ajbg0JagIArIM3kxvarxJZrK72UViJpWYuBPMp+f6rCpdOaDzSN7aI/In3mC5QYrjIAC
+         wXZA==
+X-Forwarded-Encrypted: i=1; AJvYcCVCZI3E83HzYuCryxYvXaWX0LgMG8ss2BW0VNoi5T13Xx0iInSU5GtFD4l+Ogb3c7vbkxa6XXLdGHx2XKo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxw1aiam6+3Ci6OBwpSLRuZhBuP58FK3LYAcni/v1cjpZ0NbJ2x
+	6RPRD3rlt4V7ZlxSqdOZh+ibwA2qAv5jmA+J+mb1NfYDkrGOQN2yuiTVZGD01P1zhCecy3wFPo9
+	oprfnR9y/Zb//JRvSYE1xoh2FYSzevenKPVl6ko7F1u+jLXgLOObeBgg=
+X-Google-Smtp-Source: AGHT+IEYj0JeSMvIeosASfoo3MtqVoSiaYNI6mX/2iXFOysBtzO4mKlKK9FGU9lN032ZJI6twP4BCUQeI7wBzwIQNvUjz9TdXewJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240908223505.21011-1-jerome.debretagne@gmail.com>
- <20240908223505.21011-4-jerome.debretagne@gmail.com> <f9cbd1c3-eb05-4262-bdc6-6d37e83179e5@gmail.com>
- <CA+kEDGEdd_s+DGKsVNY6Jy870B72eHuaj2EgEnwP8J46ZGbxpQ@mail.gmail.com>
- <8370d062-b3d2-46f5-9e7b-8e16edde8480@redhat.com> <555f8a3a-ae5e-57e7-f176-96c52e1a5d45@linux.intel.com>
- <ad9fa9f2-7f97-401a-8e8f-ae633ab1932b@gmail.com>
-In-Reply-To: <ad9fa9f2-7f97-401a-8e8f-ae633ab1932b@gmail.com>
-From: =?UTF-8?B?SsOpcsO0bWUgZGUgQnJldGFnbmU=?= <jerome.debretagne@gmail.com>
-Date: Wed, 23 Oct 2024 23:10:40 +0200
-Message-ID: <CA+kEDGE+fv3FJYGi=xR-agFiM-rGhDKAqhgL8dJN8GeJkw415w@mail.gmail.com>
-Subject: Re: [PATCH v2 3/5] platform/surface: aggregator_registry: Add Surface
- Pro 9 5G
-To: Maximilian Luz <luzmaximilian@gmail.com>
-Cc: =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>, 
-	Hans de Goede <hdegoede@redhat.com>, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Johan Hovold <johan+linaro@kernel.org>, linux-arm-msm@vger.kernel.org, 
-	devicetree@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, 
-	platform-driver-x86@vger.kernel.org
+X-Received: by 2002:a05:6e02:b2b:b0:39b:3894:9298 with SMTP id
+ e9e14a558f8ab-3a4d58262acmr45538495ab.0.1729717984895; Wed, 23 Oct 2024
+ 14:13:04 -0700 (PDT)
+Date: Wed, 23 Oct 2024 14:13:04 -0700
+In-Reply-To: <05c21638-620e-44e6-a08a-c4166304b660@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671966e0.050a0220.10f4f4.01c9.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in validate_sb_layout
+From: syzbot <syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com>
+To: gianf.trad@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On 10/23/24 7:25 PM, Maximilian Luz wrote:
->
-> On 10/22/24 10:56 AM, Ilpo J=C3=A4rvinen wrote:
->
-> [...]
->
-> > Hi all,
-> >
-> > I've now applied patch 3 to review-ilpo branch in pdx86 repo.
-> >
-> > I'd appreciate if somebody confirms I got those comment edits right.
-> >
->
-> Hi Ilpo,
->
-> looks good to me. Thanks for fixing this up!
->
-> Best regards,
-> Max
+Hello,
 
-Hi Ilpo, hi Max,
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-It looks good to me too.
+Reported-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+Tested-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
 
-Thank you both,
-J=C3=A9r=C3=B4me
+Tested on:
+
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1640b640580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=41330fd2db03893d
+dashboard link: https://syzkaller.appspot.com/bug?extid=089fad5a3a5e77825426
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=165c2287980000
+
+Note: testing is done by a robot and is best-effort only.
 
