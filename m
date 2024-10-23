@@ -1,111 +1,96 @@
-Return-Path: <linux-kernel+bounces-378861-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378860-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD039AD66C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:14:34 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 11D699AD66B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:13:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E028AB21BDB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:14:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84C3283CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:13:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83CFB1E8828;
-	Wed, 23 Oct 2024 21:14:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 891D31EF0A3;
+	Wed, 23 Oct 2024 21:13:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="bVElGSCk"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="h/cwhaW7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BAD7A1E5731
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:14:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D68C01494B3;
+	Wed, 23 Oct 2024 21:13:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718063; cv=none; b=UeCRL2clCecWauSyRKEwtkHVJUV7wdAWq/zB34ppcQZHKMQFNZph99x9Z+kJrWMJv9Zk6HjcavEksr5eUiZX/Sjx/ilK+7DrFL/v+sdyQV2gRPs53o8wqcCc4YgetdlW2POOLWlOGvSDpLFs/+Hxr8o3U7iWCS9/jsGwVfR50Q8=
+	t=1729718017; cv=none; b=jkpiIMVw36UDw05jsDNIeuHSuV2VmCKheNBmTz56uv9Hj8hOkV9q9sv2p9HlCUeh3QJDSrSw0dYSgDc/HkQrwwBfNAcLoFCKKWg6OmoxoqO7X5T0fe6myKxm4t5WAhC5SJr3ZcHo+nKo/LUOmRMyKOGOdPgXLWUqKh9wLy18Uw8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718063; c=relaxed/simple;
-	bh=8nQwDzRZMEEccD2/QDJcj2ANlOCR6o7eEanPcy3VeIc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-type; b=GeWt5FIOKdc7KOI5NrXkEiB27MHpQwoeExF+AIDjgM25dmVnkPicpxwH4EaA2Jl2CUjYCFiI5CFmhwaPZGiXfMdZlrvAeiE+Ct33p3bPZxrqTMKCzQ3qWLelPcAlykJWC5cLG6hPN4txyvrbk6HZMlv+eUEWgxPC4Ppe+Tm6B8Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=bVElGSCk; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729718060;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=EhHsFXeHGq8GrsrwQBQKdWbjYOo8uENaYKPAHKoXKFI=;
-	b=bVElGSCkIXX5BguORP/gxvx2pBEPv8k/+wyV7BbEIPg6741OxJ5C2sgh+3EhlxyAwfFSbG
-	THNwsArNqYGu1kGRRTSR7KdVL/Ep2WVRXg1fTLmM44hU5HBwekAJFnUc2yhY1bUtLCx/FI
-	i9dRenoWO7Zd7OZNxWvNgvvHAMwb3dE=
-Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-528-0u1JrsP0MNW569a32udyUw-1; Wed,
- 23 Oct 2024 17:14:19 -0400
-X-MC-Unique: 0u1JrsP0MNW569a32udyUw-1
-Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 5285F195609E;
-	Wed, 23 Oct 2024 21:14:17 +0000 (UTC)
-Received: from madcap2.tricolour.com (unknown [10.22.58.9])
-	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id C3D7E300018D;
-	Wed, 23 Oct 2024 21:14:14 +0000 (UTC)
-From: Richard Guy Briggs <rgb@redhat.com>
-To: Linux-Audit Mailing List <linux-audit@lists.linux-audit.osci.io>,
-	LKML <linux-kernel@vger.kernel.org>,
-	linux-modules@vger.kernel.org,
-	Linux Kernel Audit Mailing List <audit@vger.kernel.org>
-Cc: Paul Moore <paul@paul-moore.com>,
-	Eric Paris <eparis@parisplace.org>,
-	Steve Grubb <sgrubb@redhat.com>,
-	Richard Guy Briggs <rgb@redhat.com>
-Subject: [PATCH v1] audit,module: restore audit logging in load failure case
-Date: Wed, 23 Oct 2024 17:13:20 -0400
-Message-ID: <999cdd694f951acd2f4ad665fe7ab97d0834e162.1729717542.git.rgb@redhat.com>
+	s=arc-20240116; t=1729718017; c=relaxed/simple;
+	bh=zsmVjv21RMn76butEOpsWJcI2TYJWi/sF1DB3MFPv94=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=W2YNWPuSq4zJdaCHMJExiEldAcxkSoaEZ8ai88V8kENlSTqEsG44gVVGFaf+mVWiFb5I+XDzv9uLjEhgaP56H18VP7+yJy9JAGwX6eGisli3lW4xs5dOmrOkKKQdUBC3nRYIldaV1kkmgiiOwkucjdUezAvh6AcGY5c3HMXxlE8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=h/cwhaW7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9EF1C4CEC6;
+	Wed, 23 Oct 2024 21:13:35 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729718016;
+	bh=zsmVjv21RMn76butEOpsWJcI2TYJWi/sF1DB3MFPv94=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=h/cwhaW7N2vBEZ6cVip97rzXSnnEDH7ZonkjY00ZXl2E85bHMVO5atOA+wUTFpVtQ
+	 uyGJpn6B1MxzgpzJYxRRXZe2NtnaRHiUx37ztrmKP942TnMb3lFcAWls1pqAJ3XPgf
+	 41grfYZE1+DDUuIcobV2FFVIeVlAJoBfGpDY+iIkQ7whAZrzsI09GQTJVxClNH/hyf
+	 9H7ipx849WqxWF+21dsSrBc09wnYpP6fIZJkwzYpIri0+hPu7mObvfGSrWXRjxqdRM
+	 7WF9MkEFxVZjsx3+YuoSCtRbpatU9Ujfid+qirGTXcGoQvp1S7wy+9TlWxH/hDQ/PA
+	 lTQkYS9HuXBEA==
+Date: Wed, 23 Oct 2024 16:13:33 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Chris Lew <quic_clew@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org
+Subject: Re: [PATCH 2/2] soc: qcom: pmic_glink: Handle GLINK intent
+ allocation rejections
+Message-ID: <2j4hro2vuu2sprc26v5uh4fqyjtel6m7ko5mkhaf45rmxvhlm4@jjnbe3oqmkpy>
+References: <20241022-pmic-glink-ecancelled-v1-0-9e26fc74e0a3@oss.qualcomm.com>
+ <20241022-pmic-glink-ecancelled-v1-2-9e26fc74e0a3@oss.qualcomm.com>
+ <ZxfFL8eVs5lYCPum@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-type: text/plain
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxfFL8eVs5lYCPum@hovoldconsulting.com>
 
-The move of the module sanity check to earlier skipped the audit logging
-call in the case of failure and to a place where the previously used
-context is unavailable.
+On Tue, Oct 22, 2024 at 05:30:55PM GMT, Johan Hovold wrote:
+> On Tue, Oct 22, 2024 at 04:17:12AM +0000, Bjorn Andersson wrote:
+[..]
+> > Reported-by: Johan Hovold <johan@kernel.org>
+> > Closes: https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/#t
+> 
+> This indeed seems to fix the -ECANCELED related errors I reported above,
+> but the audio probe failure still remains as expected:
+> 
+> 	PDR: avs/audio get domain list txn wait failed: -110
+> 	PDR: service lookup for avs/audio failed: -110
+> 
+> I hit it on the third reboot and then again after another 75 reboots
+> (and have never seen it with the user space pd-mapper over several
+> hundred boots).
+> 
+> Do you guys have any theories as to what is causing the above with the
+> in-kernel pd-mapper (beyond the obvious changes in timing)?
+> 
 
-Add an audit logging call for the module loading failure case and get
-the module name when possible.
+Not yet. This would be a timeout in a completely different codepath.
 
-Link: https://issues.redhat.com/browse/RHEL-52839
-Fixes: 02da2cbab452 ("module: move check_modinfo() early to early_mod_check()")
-Signed-off-by: Richard Guy Briggs <rgb@redhat.com>
----
- kernel/module/main.c | 4 +++-
- 1 file changed, 3 insertions(+), 1 deletion(-)
+I'm trying to figure out a better way to reproduce this, than just
+restarting the whole machine...
 
-diff --git a/kernel/module/main.c b/kernel/module/main.c
-index 49b9bca9de12..1f482532ef66 100644
---- a/kernel/module/main.c
-+++ b/kernel/module/main.c
-@@ -3057,8 +3057,10 @@ static int load_module(struct load_info *info, const char __user *uargs,
- 	 * failures once the proper module was allocated and
- 	 * before that.
- 	 */
--	if (!module_allocated)
-+	if (!module_allocated) {
-+		audit_log_kern_module(info->name ? info->name : "(unavailable)");
- 		mod_stat_bump_becoming(info, flags);
-+	}
- 	free_copy(info, flags);
- 	return err;
- }
--- 
-2.43.5
+Thanks for the review.
 
+Regards,
+Bjorn
 
