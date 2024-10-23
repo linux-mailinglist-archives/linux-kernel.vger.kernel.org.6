@@ -1,236 +1,153 @@
-Return-Path: <linux-kernel+bounces-377436-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377437-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13FCC9ABED2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:33:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4857D9ABEDA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:33:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8BEB61F23BC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:33:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 785D41C20FD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:33:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F07714A4E1;
-	Wed, 23 Oct 2024 06:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="B/1lPFaU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD48514A0B7;
+	Wed, 23 Oct 2024 06:33:31 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8462013D53F;
-	Wed, 23 Oct 2024 06:33:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6AEA149011;
+	Wed, 23 Oct 2024 06:33:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665193; cv=none; b=UxGbCmfSqP/SKc/sEWsBUMGfocJLzBtXDNoSyuHTlxR91uyRtGnlCR0qG5y0QaaQ5wiCrx1hVZqK02y8R4ciOEfSxq9DKih0WnPvBrmlR9eKRZrfj7yGUmNCBjPAXacfNLZlv6fdwBXE5n76p5DbFFYLkytp0rqlLPtpUvdczmQ=
+	t=1729665211; cv=none; b=MTGarDQ5+lk3bOE5UIjsIoJc5cOvbgyfILoLiGI9KCxEewgl6oNGZwZDaSE89Wp25or+jKxQd3qS6h7+bvQ+Y/Ud8tNkg0IdMumQfBFIZeMkwPIskZsYgDMcbXsGttKEser9tRxV9EvzR33pIRt8d4GMlGLZUlzRgICx8aSzax0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665193; c=relaxed/simple;
-	bh=ZYUx7rnK41TpTiB5KIOCiGNaxeb9IcDba9ScKn7b29A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=B+CU+A0PU5owg8SwxRiELPoci92fUjcoeOK7rUlCpCan1zv/KTr2UhA8YRxNcrEKcHZOtkzX54QS2ggLQxBNTH1BPA3kKXcWm067dueU8tptS4paEVGzEw9NyG53IlzQxoQCRsxU72bdm1+QaFSFBR/kmr/iUUVmm6VhR79mQrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=B/1lPFaU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 21DA0C4CEC6;
-	Wed, 23 Oct 2024 06:33:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729665193;
-	bh=ZYUx7rnK41TpTiB5KIOCiGNaxeb9IcDba9ScKn7b29A=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=B/1lPFaUb889m8GvOY+rWzcHGu7nSnW03TO90VNmnkjVahIgHxBGlTTN4vV2lJLJS
-	 2K9iuXgFWggZGNjCXz1xYGukZCOQ2Oyb1rcevAMFdH1MU/BytuU1SwsROyXNPbMWX3
-	 gsMoc7JbQqePChCBw6WKU/+a6GJBwTIW7lmbjZGy7vTjTtSkTCiFH5PIi5uPEfMYpH
-	 g5cjQSKPmLDoIfnL12ZuhGvLn1fmqV6CO7kC+EMF/VAYjHuTeaFlVlIVElrkbTsM2C
-	 IN1bxkF4bsx8JwPhaRmtcGUkJykBLYl1CaLTnIDDEXT9qdAwFwA1bVd6+ECeIvLEVk
-	 SQxKUdml9Gwew==
-Date: Wed, 23 Oct 2024 08:33:04 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Rob Herring <robh@kernel.org>
-Cc: gregkh@linuxfoundation.org, rafael@kernel.org, bhelgaas@google.com,
-	ojeda@kernel.org, alex.gaynor@gmail.com, boqun.feng@gmail.com,
-	gary@garyguo.net, bjorn3_gh@protonmail.com, benno.lossin@proton.me,
-	tmgross@umich.edu, a.hindborg@samsung.com, aliceryhl@google.com,
-	airlied@gmail.com, fujita.tomonori@gmail.com, lina@asahilina.net,
-	pstanner@redhat.com, ajanulgu@redhat.com, lyude@redhat.com,
-	daniel.almeida@collabora.com, saravanak@google.com,
-	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v3 14/16] rust: of: add `of::DeviceId` abstraction
-Message-ID: <ZxiYoNUwAEX8Adh5@pollux>
-References: <20241022213221.2383-1-dakr@kernel.org>
- <20241022213221.2383-15-dakr@kernel.org>
- <20241022230351.GA1848992-robh@kernel.org>
+	s=arc-20240116; t=1729665211; c=relaxed/simple;
+	bh=tL9WB59hfAXSN94hpAXwy9dgVG30yl1q1MSVzRi6vjk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sZ+LAIAxkPO2Ti/kwS35VS1lohCnU0eD2U+OyN8RmjdXNp/2xihfQi/oYh/HtSlc4rwKuAsG0+Vcx48OOFLBmigmjUw/6l+n0VHt5kVXe1gEBCEecWPgdY9MXvg5kmx0t390rRxprxZwQCrVE24U+nvyMqNP0hSMRbCQSdqJY2s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id EE8375F976;
+	Wed, 23 Oct 2024 08:33:26 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 4/7] kconfig: qconf: use QCommandLineParser
+Date: Wed, 23 Oct 2024 08:33:26 +0200
+Message-ID: <8441512.T7Z3S40VBb@devpool47.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <4960180.31r3eYUQgx@devpool47.emlix.com>
+References: <4960180.31r3eYUQgx@devpool47.emlix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022230351.GA1848992-robh@kernel.org>
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On Tue, Oct 22, 2024 at 06:03:51PM -0500, Rob Herring wrote:
-> On Tue, Oct 22, 2024 at 11:31:51PM +0200, Danilo Krummrich wrote:
-> > `of::DeviceId` is an abstraction around `struct of_device_id`.
-> > 
-> > This is used by subsequent patches, in particular the platform bus
-> > abstractions, to create OF device ID tables.
-> > 
-> > Signed-off-by: Danilo Krummrich <dakr@kernel.org>
-> > ---
-> >  MAINTAINERS                     |  1 +
-> >  rust/bindings/bindings_helper.h |  1 +
-> >  rust/kernel/lib.rs              |  1 +
-> >  rust/kernel/of.rs               | 63 +++++++++++++++++++++++++++++++++
-> >  4 files changed, 66 insertions(+)
-> >  create mode 100644 rust/kernel/of.rs
-> > 
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index d9c512a3e72b..87eb9a7869eb 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -17340,6 +17340,7 @@ T:	git git://git.kernel.org/pub/scm/linux/kernel/git/robh/linux.git
-> >  F:	Documentation/ABI/testing/sysfs-firmware-ofw
-> >  F:	drivers/of/
-> >  F:	include/linux/of*.h
-> > +F:	rust/kernel/of.rs
-> >  F:	scripts/dtc/
-> >  F:	tools/testing/selftests/dt/
-> >  K:	of_overlay_notifier_
-> > diff --git a/rust/bindings/bindings_helper.h b/rust/bindings/bindings_helper.h
-> > index cd4edd6496ae..312f03cbdce9 100644
-> > --- a/rust/bindings/bindings_helper.h
-> > +++ b/rust/bindings/bindings_helper.h
-> > @@ -15,6 +15,7 @@
-> >  #include <linux/firmware.h>
-> >  #include <linux/jiffies.h>
-> >  #include <linux/mdio.h>
-> > +#include <linux/of_device.h>
-> 
-> Technically, you don't need this for *this* patch. You need 
-> mod_devicetable.h for of_device_id. Best to not rely on implicit 
-> includes. I've tried removing it and it still built, so I guess there is 
-> another implicit include somewhere...
+This has a much nicer output without manual processing. It also adds window
+management options from Qt for free.
 
-True, however mod_devicetable.h is already needed for a previous patch "rust:
-pci: add basic PCI device / driver abstractions" already. So, I'll add it there
-and remove the of_device.h include here.
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+=2D--
+ scripts/kconfig/qconf.cc | 44 ++++++++++++++++------------------------
+ 1 file changed, 17 insertions(+), 27 deletions(-)
 
-> 
-> >  #include <linux/pci.h>
-> >  #include <linux/phy.h>
-> >  #include <linux/refcount.h>
-> > diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
-> > index 3ec690eb6d43..5946f59f1688 100644
-> > --- a/rust/kernel/lib.rs
-> > +++ b/rust/kernel/lib.rs
-> > @@ -51,6 +51,7 @@
-> >  pub mod list;
-> >  #[cfg(CONFIG_NET)]
-> >  pub mod net;
-> > +pub mod of;
-> >  pub mod page;
-> >  pub mod prelude;
-> >  pub mod print;
-> > diff --git a/rust/kernel/of.rs b/rust/kernel/of.rs
-> > new file mode 100644
-> > index 000000000000..a37629997974
-> > --- /dev/null
-> > +++ b/rust/kernel/of.rs
-> > @@ -0,0 +1,63 @@
-> > +// SPDX-License-Identifier: GPL-2.0
-> > +
-> > +//! Open Firmware abstractions.
-> 
-> s/Open Firmware/Devicetree/
-> 
-> Or keep both that prior versions of this code had. Most of DT/OF today 
-> is not OpenFirmware.
-> 
-> > +//!
-> > +//! C header: [`include/linux/of_*.h`](srctree/include/linux/of_*.h)
-> 
-> I haven't quite figured out how this gets used. I guess just a link in 
-> documentation? I somewhat doubt this file is going to handle all DT
-> abstractions. That might become quite long. Most of of_address.h and 
-> of_irq.h I actively don't want to see Rust bindings for because they 
-> are mainly used by higher level interfaces (e.g. platform dev 
-> resources). There's a slew of "don't add new users" APIs which I need to 
-> document. Also, the main header is of.h which wasn't included here.
+diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+index 6a653ebe9df3..313a51941825 100644
+=2D-- a/scripts/kconfig/qconf.cc
++++ b/scripts/kconfig/qconf.cc
+@@ -8,6 +8,7 @@
+ #include <QActionGroup>
+ #include <QApplication>
+ #include <QCloseEvent>
++#include <QCommandLineParser>
+ #include <QDebug>
+ #include <QFileDialog>
+ #include <QLabel>
+@@ -1844,41 +1845,30 @@ void fixup_rootmenu(struct menu *menu)
+ 	}
+ }
+=20
+=2Dstatic const char *progname;
+=2D
+=2Dstatic void usage(void)
+=2D{
+=2D	printf("%s [-s] <config>\n", progname);
+=2D	exit(0);
+=2D}
+=2D
+ int main(int ac, char** av)
+ {
+ 	ConfigMainWindow* v;
+=2D	const char *name;
++	configApp =3D new QApplication(ac, av);
++	QCommandLineParser cmdline;
++	QCommandLineOption silent("s", "silent");
+=20
+=2D	progname =3D av[0];
+=2D	if (ac > 1 && av[1][0] =3D=3D '-') {
+=2D		switch (av[1][1]) {
+=2D		case 's':
+=2D			conf_set_message_callback(NULL);
+=2D			break;
+=2D		case 'h':
+=2D		case '?':
+=2D			usage();
+=2D		}
+=2D		name =3D av[2];
+=2D	} else
+=2D		name =3D av[1];
+=2D	if (!name)
+=2D		usage();
++	cmdline.addOption(silent);
++	cmdline.addHelpOption();
++	cmdline.addPositionalArgument("file", "config file to open", "Kconfig");
++
++	cmdline.process(*configApp);
++
++	if (cmdline.isSet(silent))
++		conf_set_message_callback(NULL);
+=20
+=2D	conf_parse(name);
++	QStringList args =3D cmdline.positionalArguments();
++	if (args.isEmpty())
++		cmdline.showHelp(1);
++
++	conf_parse(args.first().toLocal8Bit().constData());
+ 	fixup_rootmenu(&rootmenu);
+ 	//zconfdump(stdout);
+=20
+=2D	configApp =3D new QApplication(ac, av);
+=2D
+ 	configSettings =3D new ConfigSettings();
+ 	configSettings->beginGroup("/kconfig/qconf");
+ 	v =3D new ConfigMainWindow();
+=2D-=20
+2.47.0
 
-I think for now it's indeed meaningless and we should just remove it.
 
-If subsequent patches start adding abstractions for things like properties,
-device nodes, etc. they can add it back in.
 
-> 
-> As of now, only the mod_devicetable.h header is used by this file, so I 
-> think you should just put it until that changes. Maybe there would be 
-> some savings if all of mod_devicetable.h was handled by 1 rust file?
+=2D-=20
+Rolf Eike Beer
 
-AFAIK, in C we have all those device ID structs in mod_devicetable.h, such that
-in can easily be included in scripts/mod/file2alias.c. But I think implementing
-all Rust abstractions for those in a single file would be a bit odd. I'd rather
-put them together with the corresponding bus abstractions. OF and ACPI may be a
-bit of an exception.
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
 
-> 
-> > +
-> > +use crate::{bindings, device_id::RawDeviceId, prelude::*};
-> > +
-> > +/// An open firmware device id.
-> > +#[derive(Clone, Copy)]
-> > +pub struct DeviceId(bindings::of_device_id);
-> > +
-> > +// SAFETY:
-> > +// * `DeviceId` is a `#[repr(transparent)` wrapper of `struct of_device_id` and does not add
-> > +//   additional invariants, so it's safe to transmute to `RawType`.
-> > +// * `DRIVER_DATA_OFFSET` is the offset to the `data` field.
-> > +unsafe impl RawDeviceId for DeviceId {
-> > +    type RawType = bindings::of_device_id;
-> > +
-> > +    const DRIVER_DATA_OFFSET: usize = core::mem::offset_of!(bindings::of_device_id, data);
-> > +
-> > +    fn index(&self) -> usize {
-> > +        self.0.data as _
-> > +    }
-> > +}
-> > +
-> > +impl DeviceId {
-> > +    /// Create a new device id from an OF 'compatible' string.
-> > +    pub const fn new(compatible: &'static CStr) -> Self {
-> > +        let src = compatible.as_bytes_with_nul();
-> > +        // Replace with `bindings::of_device_id::default()` once stabilized for `const`.
-> > +        // SAFETY: FFI type is valid to be zero-initialized.
-> > +        let mut of: bindings::of_device_id = unsafe { core::mem::zeroed() };
-> > +
-> > +        let mut i = 0;
-> > +        while i < src.len() {
-> > +            of.compatible[i] = src[i] as _;
-> > +            i += 1;
-> > +        }
-> 
-> AFAICT, this loop will go away when C char maps to u8. Perhaps a note 
-> to that extent or commented code implementing that.
+emlix - your embedded Linux partner
 
-That's true, I'll add a note.
 
-> 
-> > +
-> > +        Self(of)
-> > +    }
-> > +
-> > +    /// The compatible string of the embedded `struct bindings::of_device_id` as `&CStr`.
-> > +    pub fn compatible<'a>(&self) -> &'a CStr {
-> > +        // SAFETY: `self.compatible` is a valid `char` pointer.
-> > +        unsafe { CStr::from_char_ptr(self.0.compatible.as_ptr()) }
-> > +    }
-> 
-> I don't think we need this. The usage model is checking does a node's 
-> compatible string(s) match a compatible in the table. Most of the time 
-> we don't even need that. We just need the match data.
-
-Right, I think I just added it for the sample driver, we can get rid of it.
-
-> 
-> Rob
-> 
 
