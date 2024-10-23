@@ -1,137 +1,144 @@
-Return-Path: <linux-kernel+bounces-377247-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377248-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40D939ABBEF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:56:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDFD99ABBF3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:59:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6F8C11C23285
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:56:18 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0186E1C23700
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:59:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BF2A84E1C;
-	Wed, 23 Oct 2024 02:56:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3610D7C6E6;
+	Wed, 23 Oct 2024 02:59:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="YwN5AnJJ"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b="AqAoz48d"
+Received: from abb.hmeau.com (abb.hmeau.com [144.6.53.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D469F75809
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:56:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09C384087C;
+	Wed, 23 Oct 2024 02:59:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=144.6.53.87
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729652168; cv=none; b=ASAuNct9D5B7HgVsv+UhH+ujD83giOuaF0zV6rF4G1a2ZCx2Xb4SMLCHURM5XWcmO5Vo0KC9pQ37hEoneiB1b+TYoBLSbeu28VcEQB1F+Lgw0rqgppZxQ69rCEvbG5nhVgSLib6wwaa3TDytYuq6VrgZfJQOGMyqhObiNUXpe54=
+	t=1729652370; cv=none; b=u5bQOY5PbOZS71BMuut4TxcjgAoK3YxWQOK/jOLLYKwK9FPqTTsdAihfCmYl6YwXurE+Hwekwln4itQyRIcY5shUaWsupLjQotGY2K1oZZtvcvFPNeqmxudoiB1XpguMzwXhbGVcZYtNQBKKmZhRRUvhNy6692Bvok/UQdTFM70=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729652168; c=relaxed/simple;
-	bh=dF73x0M3UHjm8Rjn3N77JiStFAPmQHilNsJYjLN1iFc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RqAkAGLhgN5Vy+nd1uKPORaZp/d7rvC4xU+04Qtp7mx7wg+M6fQvmh3hi0nJBFAQsBfqghcANo1e23/Y39gfQId2bwdSQJHfKMyJBvJ25jeVWw43byceBGzOAIjGftavBeEWd8vamgd7igqc8vhCKr4y6BEUE4tuVK3m1yV9Bs4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=YwN5AnJJ; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729652164;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=zHdknUCOThS1TrsG2FtImyl6O5CF9UtIeOhoBXg+sdg=;
-	b=YwN5AnJJzh3KrTDJSpFB+h/aR9sRp9sFEMRHKUsaXuf1M6d1Mfka+vvsXRiNQNlxlkEs7I
-	ic8ikWZ1giQDVBTnKJonPQgq/3rN9gzGJ3eehlwVdp5iOqr49i1lDtANYjaIstIidGwiuw
-	7WjfFz5f0DS9CNeUO5jA2p+aJ5CgIw4=
-Received: from mail-pf1-f199.google.com (mail-pf1-f199.google.com
- [209.85.210.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-230-T6EAIYoBM7yY0T_DDyyHOQ-1; Tue, 22 Oct 2024 22:56:01 -0400
-X-MC-Unique: T6EAIYoBM7yY0T_DDyyHOQ-1
-Received: by mail-pf1-f199.google.com with SMTP id d2e1a72fcca58-71e467c39a4so7502811b3a.3
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 19:56:01 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729652160; x=1730256960;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zHdknUCOThS1TrsG2FtImyl6O5CF9UtIeOhoBXg+sdg=;
-        b=P+Da7sg/Epv9y1Ws3U3JqM48GuMDpP+ZBL3uVpDn/URU3LQzSTalcmYV/jrzmM5GTG
-         EhIuMTojyrqF3dC4T5lyU6Ddeg1sHVhBeeDgxRtP/wtcr6GUKisJmjwabrB3f9tpJ89l
-         GISSojBuYfFlKS8XWlfQ2aKuTWlNbUe7f2U9qlX4Y7xh65yHrBYlFWnQwD81WaDAl0wQ
-         kcNrxsGB+u8Ym5dJTj3YXl1SiYpVEvLJh1D/XrcY7ojoPP6AjuNbnfaB084ctqxLN/zb
-         NjQlj8Vqrf49Jjka9cOUtXB0/JJ2SEspSr/cxVqZT1yGGWLi1e0uRjoCaEWEJLXW31q+
-         rZyQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX5cVxyBg+Gay6pj3+0iZn70fucviMa0x/V8aKUCuiZ1cD2k/a0q6vyLh7zRD7dK9YR7UOBDEkXoa2AI2I=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxGY5nIh+HxJjygME7ZNdf9fK7CsLE9Byp4ZRme7zvmHUXngA/N
-	wiuG/9FRumOi3E+rItdt8DHtdooFvvoBJ4ROO657OUg+swtNDX23krMzHnV9WskyFec1Vcg5Xtm
-	J9Duo5gU2qo+UadXSVn0Q6aNsS2Y0lVamoAShj0dK1L3NiRpSUCbM31ZB64P5rfYEsB+N1LTm+I
-	T09rcHFa7FCnYdz56vfah2JKxbvOBQMQ+bkHUh
-X-Received: by 2002:a05:6a00:181d:b0:71e:6a57:7290 with SMTP id d2e1a72fcca58-7203087ab10mr1840289b3a.0.1729652160284;
-        Tue, 22 Oct 2024 19:56:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErwKn9FZkff6V8dcZWG5EY8VQ1YWvgVMHUhTBOzUho24sSekvZoUxoVrEwVIcCjlMhNwi3Q9f/+sZkP1bGws8=
-X-Received: by 2002:a05:6a00:181d:b0:71e:6a57:7290 with SMTP id
- d2e1a72fcca58-7203087ab10mr1840276b3a.0.1729652159867; Tue, 22 Oct 2024
- 19:55:59 -0700 (PDT)
+	s=arc-20240116; t=1729652370; c=relaxed/simple;
+	bh=Hm55JIIafmTzUEO8JWQJfwRvYyt+RY/+hRvVQZJoOJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rtKuibHlP2647hPxlOVWYBOVAGJpzfCGsx97oRGHgdkT9PHCVVJqSdWcwWreQTSIA4/NASYKrPulbCqtPruykDwIySPTPjlMmT56JNRGhIvLmHUEUFsaxPrbLIJ7zdZLw8tCvXglQyORV55sUloWj3yim3ty8sbTuD0cLytIAus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au; spf=pass smtp.mailfrom=gondor.apana.org.au; dkim=pass (2048-bit key) header.d=hmeau.com header.i=@hmeau.com header.b=AqAoz48d; arc=none smtp.client-ip=144.6.53.87
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gondor.apana.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gondor.apana.org.au
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=hmeau.com;
+	s=formenos; h=In-Reply-To:Content-Type:MIME-Version:References:Message-ID:
+	Subject:Cc:To:From:Date:Sender:Reply-To:Content-Transfer-Encoding:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=TTzAK06IbzaCuf3+XhM9A1yRCGYdNF1dw+CfbxtWmj0=; b=AqAoz48dnl4qMLA5c+GW30jmF/
+	y4XwN6rToUpPoOuXrfezhXcBaUp4e8SgEAxdFC//acHZzu9U+CMWwwejKcp5G0SSrqX1eGP3fAKmA
+	JX1oYUYrjJ6of8CsE8yCsS3HSsIcuq9LX1vIHQsj2Lvq1QbuwzGy4uMnhE7Xuxl2J9uVIiZico/dC
+	ISbDAjOFbyowABYQV1jjs2udJg53tIFHbmFqKLqMqexQ0c1bn7NPw9qXUw+35FuVo+YP6JPdKk7Ui
+	xcMvD3516AchJaLeUispoM8VbvqvYKkh4/V3FGel7Uh2pCYQ0p/6in/27NWAxlVShDKevZyphd03+
+	VhbZnvng==;
+Received: from loth.rohan.me.apana.org.au ([192.168.167.2])
+	by formenos.hmeau.com with smtp (Exim 4.96 #2 (Debian))
+	id 1t3RZm-00BPDm-1e;
+	Wed, 23 Oct 2024 10:58:23 +0800
+Received: by loth.rohan.me.apana.org.au (sSMTP sendmail emulation); Wed, 23 Oct 2024 10:58:22 +0800
+Date: Wed, 23 Oct 2024 10:58:22 +0800
+From: Herbert Xu <herbert@gondor.apana.org.au>
+To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-mm@kvack.org" <linux-mm@kvack.org>,
+	"hannes@cmpxchg.org" <hannes@cmpxchg.org>,
+	"nphamcs@gmail.com" <nphamcs@gmail.com>,
+	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>,
+	"usamaarif642@gmail.com" <usamaarif642@gmail.com>,
+	"ryan.roberts@arm.com" <ryan.roberts@arm.com>,
+	"Huang, Ying" <ying.huang@intel.com>,
+	"21cnbao@gmail.com" <21cnbao@gmail.com>,
+	"akpm@linux-foundation.org" <akpm@linux-foundation.org>,
+	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
+	"davem@davemloft.net" <davem@davemloft.net>,
+	"clabbe@baylibre.com" <clabbe@baylibre.com>,
+	"ardb@kernel.org" <ardb@kernel.org>,
+	"ebiggers@google.com" <ebiggers@google.com>,
+	"surenb@google.com" <surenb@google.com>,
+	"Accardi, Kristen C" <kristen.c.accardi@intel.com>,
+	"zanussi@kernel.org" <zanussi@kernel.org>,
+	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>,
+	"brauner@kernel.org" <brauner@kernel.org>,
+	"jack@suse.cz" <jack@suse.cz>,
+	"mcgrof@kernel.org" <mcgrof@kernel.org>,
+	"kees@kernel.org" <kees@kernel.org>,
+	"joel.granados@kernel.org" <joel.granados@kernel.org>,
+	"bfoster@redhat.com" <bfoster@redhat.com>,
+	"willy@infradead.org" <willy@infradead.org>,
+	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>,
+	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>,
+	"Gopal, Vinodh" <vinodh.gopal@intel.com>
+Subject: Re: [RFC PATCH v1 09/13] mm: zswap: Config variable to enable
+ compress batching in zswap_store().
+Message-ID: <ZxhmTmhfeQAEoCwS@gondor.apana.org.au>
+References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
+ <20241018064101.336232-10-kanchana.p.sridhar@intel.com>
+ <CAJD7tkbXTtG1UmQ7oPXoKUjT302a_LL4yhbQsMS6tDRG+vRNBg@mail.gmail.com>
+ <SJ0PR11MB5678D24CDD8E5C8FF081D734C94D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <000000000000ae358c06202ca726@google.com> <6717c537.050a0220.10f4f4.0146.GAE@google.com>
-In-Reply-To: <6717c537.050a0220.10f4f4.0146.GAE@google.com>
-From: Jason Wang <jasowang@redhat.com>
-Date: Wed, 23 Oct 2024 10:55:48 +0800
-Message-ID: <CACGkMEsqhW-pHhx3+t1GKKrn0RoHioUofC-QT+7nCDNASWn-Lw@mail.gmail.com>
-Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_setattr
-To: syzbot <syzbot+d78497256d53041ee229@syzkaller.appspotmail.com>
-Cc: eadavis@qq.com, elic@nvidia.com, jlbec@evilplan.org, 
-	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
-	mst@redhat.com, ocfs2-devel@lists.linux.dev, ocfs2-devel@oss.oracle.com, 
-	parav@nvidia.com, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <SJ0PR11MB5678D24CDD8E5C8FF081D734C94D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
 
-On Tue, Oct 22, 2024 at 11:31=E2=80=AFPM syzbot
-<syzbot+d78497256d53041ee229@syzkaller.appspotmail.com> wrote:
+On Wed, Oct 23, 2024 at 02:17:06AM +0000, Sridhar, Kanchana P wrote:
 >
-> syzbot has bisected this issue to:
->
-> commit a3c06ae158dd6fa8336157c31d9234689d068d02
-> Author: Parav Pandit <parav@nvidia.com>
-> Date:   Tue Jan 5 10:32:03 2021 +0000
->
->     vdpa_sim_net: Add support for user supported devices
+> Thanks Yosry, for the code review comments! This is a good point. The main
+> consideration here was not to impact software compressors run on non-Intel
+> platforms, and only incur the memory footprint cost of multiple
+> acomp_req/buffers in "struct crypto_acomp_ctx" if there is IAA to reduce
+> latency with parallel compressions.
 
-This commit seems to be ir-revelant as the changes are limited to
-vDPA. It only shows the user vDPA mgmt devices which has nothing to do
-with ocfs.
+I'm working on a batching mechanism for crypto_ahash interface,
+where the requests are simply chained together and then submitted.
 
-Thanks
+The same mechanism should work for crypto_acomp as well:
 
->
-> bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=3D17fc264058=
-0000
-> start commit:   d12937763990 Merge tag 'for-linus' of git://git.kernel.or=
-g..
-> git tree:       upstream
-> final oops:     https://syzkaller.appspot.com/x/report.txt?x=3D1402264058=
-0000
-> console output: https://syzkaller.appspot.com/x/log.txt?x=3D1002264058000=
-0
-> kernel config:  https://syzkaller.appspot.com/x/.config?x=3D41330fd2db038=
-93d
-> dashboard link: https://syzkaller.appspot.com/bug?extid=3Dd78497256d53041=
-ee229
-> syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=3D12d0dc87980=
-000
-> C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=3D14e1943058000=
-0
->
-> Reported-by: syzbot+d78497256d53041ee229@syzkaller.appspotmail.com
-> Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported device=
-s")
->
-> For information about bisection process see: https://goo.gl/tpsmEJ#bisect=
-ion
->
++       for (i = 0; i < num_mb; ++i) {
++               if (testmgr_alloc_buf(data[i].xbuf))
++                       goto out;
++
++               crypto_init_wait(&data[i].wait);
++
++               data[i].req = ahash_request_alloc(tfm, GFP_KERNEL);
++               if (!data[i].req) {
++                       pr_err("alg: hash: Failed to allocate request for %s\n",
++                              algo);
++                       goto out;
++               }
++
++               if (i)
++                       ahash_request_chain(data[i].req, data[0].req);
++               else
++                       ahash_reqchain_init(data[i].req, 0, crypto_req_done,
++                                           &data[i].wait);
++
++               sg_init_table(data[i].sg, XBUFSIZE);
++               for (j = 0; j < XBUFSIZE; j++) {
++                       sg_set_buf(data[i].sg + j, data[i].xbuf[j], PAGE_SIZE);
++                       memset(data[i].xbuf[j], 0xff, PAGE_SIZE);
++               }
++       }
 
+Cheers,
+-- 
+Email: Herbert Xu <herbert@gondor.apana.org.au>
+Home Page: http://gondor.apana.org.au/~herbert/
+PGP Key: http://gondor.apana.org.au/~herbert/pubkey.txt
 
