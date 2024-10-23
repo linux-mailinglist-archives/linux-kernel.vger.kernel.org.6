@@ -1,135 +1,269 @@
-Return-Path: <linux-kernel+bounces-378735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B1B19AD491
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:14:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE8F9AD496
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:15:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E23A41C21D45
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:13:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2819B21611
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:15:42 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C38B21D89E3;
-	Wed, 23 Oct 2024 19:13:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4DE51D1756;
+	Wed, 23 Oct 2024 19:15:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="wYVGIOLZ"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Wor5htUV"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A521F1D14EE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:13:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4063F13CABC;
+	Wed, 23 Oct 2024 19:15:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729710827; cv=none; b=GwSssVVMuKuy8ZT1Lx9D3moAdJg+4g8dKXrbNBPKHDBwwojZfXT8IacXE9ftbKF9zLxg9SvPH1MtYJQR8G7z5hTaIAZcS/nl5LOh2dCBlernVYJFHrkA2jWkj59b2XC0DbN7qKMhDY2XHCMJ0hB1iXQ28cRfoYg7Ue9IAJsJOU4=
+	t=1729710935; cv=none; b=YfL8Q3QjwrGxud+wh2pNfYSinLloQSMas2Kt1oQ8U18NFLqZV4iat6JW3pwjfv0oCO0O7VYUsmG3nJU3gRk0xmi7/movrK6nMLofrvCo43KJYFuxGTXI++rzZmvStRywmOOf6459cKDKNjPZzAD87B9T2A8JmLAVkeH7v1jwHRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729710827; c=relaxed/simple;
-	bh=R3dkWwgNHlV+WgRIcHEKQG2yUVmk1xcO4Cpgk1toE2I=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=lzHKsRVvpJ//Zz396FEfwleQFLGQPfuwjw3bONxBB5TJ4v5EEGZxlrm3ZgLJe93kNI+nNcMImHqqqNV19oOb7SUsDpZcFwx2uaA0DJfSGa1jIRo9ioNX9T74XtaQ0GXjAJaw5yNXBPXR4gGptcbE71NkkWSp0vvXF4Wp2dr/1F4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=wYVGIOLZ; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e5bdb9244eso1392077b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:13:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729710824; x=1730315624; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:mime-version
-         :message-id:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=9XbsmUl/ykzeRnfUHw2btfSodiXu3QqAkcfgdiNebV8=;
-        b=wYVGIOLZWlBTd21+jdXgOy8wIk3MH7Nb+/N5VpySiWw0SlauVltkdFBCMIOinCWgeM
-         TwIZ9r6O/CoSYjIrIRBkMLiUY56cdZsPZkH6CZ7lIoNN896rzlII7NocMqGs/NCNH7fN
-         XgYYW2tEVtiYYBhj3WKzcTJpu8/SIOIfdRo8sasyrOky71GTIdPNAeIhXOksiTh0nxBf
-         juECsnihl24Ub6bu8P2+jfc0qp74h0ZynfvM/L4Gn2kfhH0GWXpl4ss6aDAueFVse50s
-         edKFdcPZuOCsUoK6LY/XNWCKBPzenwIHhFqYl07E3JsXAMBsJY4HK6k32y8vr31/1ckZ
-         shUA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729710824; x=1730315624;
-        h=content-transfer-encoding:cc:to:from:subject:mime-version
-         :message-id:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=9XbsmUl/ykzeRnfUHw2btfSodiXu3QqAkcfgdiNebV8=;
-        b=lRtd/7aJnfkQViFHSJvtpxNfSq5sjCysxHFysp/1TmF6v3FdeDVhw64wMCxY0DQsAy
-         mEykmiyJXRcvb6DzOhwURn1/fum69zYrqlmdlfBuWic2ho1dU1IoA13zfes7QH9f9wSw
-         UdjhMNoP9vzaBVSg0/Y4oZdpsG3Fd+fs/kbICW+04FRIa9/F7+BKqWJRb663nnRPtWT7
-         JJGqWgu6+BYAgGsWp6m5w0gur4lmtuY86eP7C016U/VTTtC8sypaQ2IeRVA8HQq8fB/K
-         Epn2YS4CCmL/5sEPq6e1P4sKBAYGfsDJeUq87KjuYM1J53q2+MI3WdtYyVcmrQoUIg6N
-         u2qQ==
-X-Forwarded-Encrypted: i=1; AJvYcCU6pgcEZJUIdQTS1IJiHBwHRS4bTcAdfA0mSCl9sVXmVFS+BUfx+noIGU0es4Muru2ugf+XkSMyYmQ7WW8=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/jR24deiqCNtrtXjiVtbcX1i4+ZzK8z0vFkHzdVR2uQw270Cr
-	ZwDp987eI1Q6Q1c6VzxA6ma/1XsGM8TmsdppGR/WDjxhGjEHKeU2jjfteO7xC+nTiW6RzEF6s9t
-	jG+f5YKx7jKsPrg==
-X-Google-Smtp-Source: AGHT+IGtw++CFsHM6UsXTaa07P8s7oTXdItvei/TRQB3GwOD9DmownHZlFBOwrDDCuKJGIw70cl6vC5daxpXLbk=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:965e:f81d:c9fb:b352])
- (user=saravanak job=sendgmr) by 2002:a5b:602:0:b0:e28:f2a5:f1d with SMTP id
- 3f1490d57ef6-e2e3a632bffmr3981276.4.1729710824576; Wed, 23 Oct 2024 12:13:44
- -0700 (PDT)
-Date: Wed, 23 Oct 2024 12:13:36 -0700
-Message-Id: <20241023191339.1491282-1-saravanak@google.com>
+	s=arc-20240116; t=1729710935; c=relaxed/simple;
+	bh=9thUWIwxm+P1OiXRJtseCipOkL29XQjtB7VWINSaMLU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Z2q5SunnZQkhhVlHnA2+NHbFqRtYH9xCQddq41MxJYoZ4xoX2RD3k/yJrLqPAZtmnHpe1Fkq9iGucdrHm2gzQj98iQI/j84O7c1spkq0e0A3EMD3L57JNotGsyuD/pWlWU3mQz8IQSykniEBxwbNwQWkmj0LlOgozThvp0xcJwQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Wor5htUV; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NDX66q002904;
+	Wed, 23 Oct 2024 19:15:21 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=S+pEOj
+	I3Rou9W85PRHaNhTEFwwqpMX79r7jx/I3Oo88=; b=Wor5htUVoO9q0senq9aGfs
+	o1rjSqKfgLrNhwAUSC2qikaP5I3URYoRPDyruC2OZ5t5fJhB4dJtO2Qt04Bbdsv2
+	h0hfxrj9q8a59tC/5qowgIqq4oQtrjg/lwmHvBCy1Y2bjNj26geHTNEQY0cCLaaD
+	auE60fTepE1Vm5IZu3aDmRsYitD4X0RuEe7lMXzvEll/Nu3v7QvrEumzwW+gZjGX
+	2PfA1izyeqk9+DHQG3o/vpVreYZEDRZwOC8oifnUuuobCAfLKNYD3nrPY5YRg7JH
+	wc0WN5N6nYVemaStPOJ5LFijb+x34kdufjErprBrqgBfSrKXDxDoSg+yI5MgoQxg
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafvp2f-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 19:15:20 +0000 (GMT)
+Received: from m0360072.ppops.net (m0360072.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NJFKDU010619;
+	Wed, 23 Oct 2024 19:15:20 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafvp2e-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 19:15:20 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NIwogc014576;
+	Wed, 23 Oct 2024 19:15:19 GMT
+Received: from smtprelay03.wdc07v.mail.ibm.com ([172.16.1.70])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emk7vfu7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 19:15:19 +0000
+Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
+	by smtprelay03.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NJFJ0s20775574
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 19:15:19 GMT
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id E1E7958064;
+	Wed, 23 Oct 2024 19:15:18 +0000 (GMT)
+Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 42AB058058;
+	Wed, 23 Oct 2024 19:15:18 +0000 (GMT)
+Received: from [9.47.158.152] (unknown [9.47.158.152])
+	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
+	Wed, 23 Oct 2024 19:15:18 +0000 (GMT)
+Message-ID: <588319e8-5983-4f15-abae-b5021f1e4fce@linux.ibm.com>
+Date: Wed, 23 Oct 2024 15:15:17 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH] drm: display: Set fwnode for aux bus devices
-From: Saravana Kannan <saravanak@google.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Saravana Kannan <saravanak@google.com>, 
-	"=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?=" <nfraprado@collabora.com>, Jon Hunter <jonathanh@nvidia.com>, kernel-team@android.com, 
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-
-fwnode needs to be set for a device for fw_devlink to be able to
-track/enforce its dependencies correctly. Without this, you'll see error
-messages like this when the supplier has probed and tries to make sure
-all its fwnode consumers are linked to it using device links:
-
-mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) with =
-backlight-lcd0
-tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180) with=
- 1-0008
-
-Reported-by: "N=C3=ADcolas F. R. A. Prado" <nfraprado@collabora.com>
-Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@no=
-tapiano/
-Tested-by: "N=C3=ADcolas F. R. A. Prado" <nfraprado@collabora.com>
-Reported-by: Jon Hunter <jonathanh@nvidia.com>
-Closes: https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nvidia=
-.com/
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
-
-Don't pull this into stable branches unless its causing a regression in
-older LTS branches. fw_devlink code is complicated and it might end up
-with missing dependencies picking up changes piecemeal.
-
--Saravana
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v7 4/5] tpm: Allocate chip->auth in
+ tpm2_start_auth_session()
+To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
+        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
+        James Bottomley <James.Bottomley@HansenPartnership.com>,
+        Ard Biesheuvel <ardb@kernel.org>
+Cc: David Howells <dhowells@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
+        Roberto Sassu <roberto.sassu@huawei.com>, linux-kernel@vger.kernel.org,
+        stable@vger.kernel.org
+References: <20241021053921.33274-1-jarkko@kernel.org>
+ <20241021053921.33274-5-jarkko@kernel.org>
+Content-Language: en-US
+From: Stefan Berger <stefanb@linux.ibm.com>
+In-Reply-To: <20241021053921.33274-5-jarkko@kernel.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: aRlFpnLTFCWCPlurl78ykkBFmuEsVMay
+X-Proofpoint-ORIG-GUID: b09UmyJZUwo6YhjRN2E51CK7Gh3_Edw9
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
+ priorityscore=1501 bulkscore=0 lowpriorityscore=0 malwarescore=0
+ mlxscore=0 adultscore=0 mlxlogscore=999 phishscore=0 suspectscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230120
 
 
- drivers/gpu/drm/display/drm_dp_aux_bus.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c b/drivers/gpu/drm/dis=
-play/drm_dp_aux_bus.c
-index d810529ebfb6..ec7eac6b595f 100644
---- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
-+++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
-@@ -292,7 +292,7 @@ int of_dp_aux_populate_bus(struct drm_dp_aux *aux,
- 	aux_ep->dev.parent =3D aux->dev;
- 	aux_ep->dev.bus =3D &dp_aux_bus_type;
- 	aux_ep->dev.type =3D &dp_aux_device_type_type;
--	aux_ep->dev.of_node =3D of_node_get(np);
-+	device_set_node(&aux_ep->dev, of_fwnode_handle(of_node_get(np)));
- 	dev_set_name(&aux_ep->dev, "aux-%s", dev_name(aux->dev));
-=20
- 	ret =3D device_register(&aux_ep->dev);
---=20
-2.47.0.105.g07ac214952-goog
+On 10/21/24 1:39 AM, Jarkko Sakkinen wrote:
+> Move allocation of chip->auth to tpm2_start_auth_session() so that the
+> field can be used as flag to tell whether auth session is active or not.
+> 
+> Cc: stable@vger.kernel.org # v6.10+
+> Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
+> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> ---
+> v5:
+> - No changes.
+> v4:
+> - Change to bug.
+> v3:
+> - No changes.
+> v2:
+> - A new patch.
+> ---
+>   drivers/char/tpm/tpm2-sessions.c | 43 +++++++++++++++++++-------------
+>   1 file changed, 25 insertions(+), 18 deletions(-)
+> 
+> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
+> index 78c650ce4c9f..6e52785de9fd 100644
+> --- a/drivers/char/tpm/tpm2-sessions.c
+> +++ b/drivers/char/tpm/tpm2-sessions.c
+> @@ -484,7 +484,8 @@ static void tpm2_KDFe(u8 z[EC_PT_SZ], const char *str, u8 *pt_u, u8 *pt_v,
+>   	sha256_final(&sctx, out);
+>   }
+>   
+> -static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
+> +static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip,
+> +				struct tpm2_auth *auth)
+>   {
+>   	struct crypto_kpp *kpp;
+>   	struct kpp_request *req;
+> @@ -543,7 +544,7 @@ static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
+>   	sg_set_buf(&s[0], chip->null_ec_key_x, EC_PT_SZ);
+>   	sg_set_buf(&s[1], chip->null_ec_key_y, EC_PT_SZ);
+>   	kpp_request_set_input(req, s, EC_PT_SZ*2);
+> -	sg_init_one(d, chip->auth->salt, EC_PT_SZ);
+> +	sg_init_one(d, auth->salt, EC_PT_SZ);
+>   	kpp_request_set_output(req, d, EC_PT_SZ);
+>   	crypto_kpp_compute_shared_secret(req);
+>   	kpp_request_free(req);
+> @@ -554,8 +555,7 @@ static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
+>   	 * This works because KDFe fully consumes the secret before it
+>   	 * writes the salt
+>   	 */
+> -	tpm2_KDFe(chip->auth->salt, "SECRET", x, chip->null_ec_key_x,
+> -		  chip->auth->salt);
+> +	tpm2_KDFe(auth->salt, "SECRET", x, chip->null_ec_key_x, auth->salt);
+>   
+>    out:
+>   	crypto_free_kpp(kpp);
+> @@ -854,6 +854,8 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
+>   			/* manually close the session if it wasn't consumed */
+>   			tpm2_flush_context(chip, auth->handle);
+>   		memzero_explicit(auth, sizeof(*auth));
+> +		kfree(auth);
+> +		chip->auth = NULL;
+>   	} else {
+>   		/* reset for next use  */
+>   		auth->session = TPM_HEADER_SIZE;
+> @@ -882,6 +884,8 @@ void tpm2_end_auth_session(struct tpm_chip *chip)
+>   
+>   	tpm2_flush_context(chip, auth->handle);
+>   	memzero_explicit(auth, sizeof(*auth));
+> +	kfree(auth);
+> +	chip->auth = NULL;
+>   }
+>   EXPORT_SYMBOL(tpm2_end_auth_session);
+>   
+> @@ -970,25 +974,29 @@ static int tpm2_load_null(struct tpm_chip *chip, u32 *null_key)
+>    */
+>   int tpm2_start_auth_session(struct tpm_chip *chip)
+>   {
+> +	struct tpm2_auth *auth;
+>   	struct tpm_buf buf;
+> -	struct tpm2_auth *auth = chip->auth;
+> -	int rc;
+>   	u32 null_key;
+> +	int rc;
+>   
+> -	if (!auth) {
+> -		dev_warn_once(&chip->dev, "auth session is not active\n");
+> +	if (chip->auth) {
+> +		dev_warn_once(&chip->dev, "auth session is active\n");
+>   		return 0;
+>   	}
+>   
+> +	auth = kzalloc(sizeof(*auth), GFP_KERNEL);
+> +	if (!auth)
+> +		return -ENOMEM;
+> +
+>   	rc = tpm2_load_null(chip, &null_key);
+>   	if (rc)
+> -		goto out;
+> +		goto err;
+>   
+>   	auth->session = TPM_HEADER_SIZE;
+>   
+>   	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_START_AUTH_SESS);
+>   	if (rc)
+> -		goto out;
+> +		goto err;
+>   
+>   	/* salt key handle */
+>   	tpm_buf_append_u32(&buf, null_key);
+> @@ -1000,7 +1008,7 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+>   	tpm_buf_append(&buf, auth->our_nonce, sizeof(auth->our_nonce));
+>   
+>   	/* append encrypted salt and squirrel away unencrypted in auth */
+> -	tpm_buf_append_salt(&buf, chip);
+> +	tpm_buf_append_salt(&buf, chip, auth);
+>   	/* session type (HMAC, audit or policy) */
+>   	tpm_buf_append_u8(&buf, TPM2_SE_HMAC);
+>   
+> @@ -1021,10 +1029,13 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
+>   
+>   	tpm_buf_destroy(&buf);
+>   
+> -	if (rc)
+> -		goto out;
+> +	if (rc == TPM2_RC_SUCCESS) {
+> +		chip->auth = auth;
+> +		return 0;
+> +	}
+>   
+> - out:
+> +err:
+
+like in many other cases before kfree(auth):
+memzero_explicit(auth, sizeof(*auth));
+
+With this:
+
+Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
+
+> +	kfree(auth);
+>   	return rc;
+>   }
+>   EXPORT_SYMBOL(tpm2_start_auth_session);
+> @@ -1377,10 +1388,6 @@ int tpm2_sessions_init(struct tpm_chip *chip)
+>   		return rc;
+>   	}
+>   
+> -	chip->auth = kmalloc(sizeof(*chip->auth), GFP_KERNEL);
+> -	if (!chip->auth)
+> -		return -ENOMEM;
+> -
+>   	return rc;
+>   }
+>   #endif /* CONFIG_TCG_TPM2_HMAC */
 
 
