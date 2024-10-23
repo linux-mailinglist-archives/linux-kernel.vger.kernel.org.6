@@ -1,158 +1,138 @@
-Return-Path: <linux-kernel+bounces-377516-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377517-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59BA9ABFDF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:13:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1AA9ABFE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:13:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 215421C212CA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:13:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 63D301F24CC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:13:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9BB49153BEE;
-	Wed, 23 Oct 2024 07:12:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B86114EC77;
+	Wed, 23 Oct 2024 07:12:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="P8mN/KnB"
-Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="W5Ih+t0r"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1357614D430;
-	Wed, 23 Oct 2024 07:12:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5EB4136345;
+	Wed, 23 Oct 2024 07:12:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667565; cv=none; b=MavGrQ3n0OABhUbDAzCAE5otGRa2gqnNipWEy/SWT3Wz5N5nYY+1zogQrq2b7wZ0XLcOil7ih3GhWPI29nQnc9isj4fPxWXekGOXj2UPKYNtxWMl2enz/f1Ckes4v2IZf6gTaG6/Ou+7c/rlSCO/sB1YclYp3ILal05KCCc/KHw=
+	t=1729667577; cv=none; b=QvFHqaw9UvdW8AoYMcOZJ/bbNpr1/eByKX7L734MhTOznAtI1zoHyCZS/8K+6etsisXoI02yrO1HIghV0LwXR+hJi7tQB+3l9fI4zCZQOoXpFfVIUFZUHMROmr1aUN6E5kGtkEXH5Jwg4FD12onSTcHkDzjZKZQoKBboEhD90M4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667565; c=relaxed/simple;
-	bh=aqlKhcczblCkJ2Ir6ENH/zKeUhbm7Ux7gXxHKgQWy2w=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=HRKHHibBD+xysL2q6MvmImB6BY7y7Ab4u5BJ36ai4/aUYMo17aHMHmrKLcTJkndKVdJZq30LbRHNKdNR0A8b929Ec1ksH9nbkU2AoCXUh5xXqkzLi2FBwzPPQDtmzVbocJuneR1BymJ4A7fOY+gkKX4Ewt7ZYH2jnLpzGVP3xf8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=P8mN/KnB; arc=none smtp.client-ip=60.244.123.138
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
-X-UUID: 2ec6a1f6910e11efb88477ffae1fc7a5-20241023
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
-	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=dG13J0Y11zTLAF6mBQ+UKC5Y5vRX6I05iFRrQ0sCp64=;
-	b=P8mN/KnBQtXDsjwd+MKwHGTYsJx/q2GnOLDvMq/7Ud7Io/HFr/Y5zNKOsdnqgSNUojUQpDoRtP7hs+QfFpmb1vTwiMdMNbYYtAmob/a+Mh4Bdo2xwr5bHBlYDuw4NwZ38CIqB3TjiwBV5nWxbZsENky6xVyPNpxS6vZVoVudsko=;
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.42,REQID:d131dfeb-7149-4069-9f7a-ba97f79451a4,IP:0,U
-	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
-	release,TS:0
-X-CID-META: VersionHash:b0fcdc3,CLOUDID:c3a3bacc-110e-4f79-849e-58237df93e70,B
-	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
-	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
-	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 2ec6a1f6910e11efb88477ffae1fc7a5-20241023
-Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw01.mediatek.com
-	(envelope-from <macpaul.lin@mediatek.com>)
-	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
-	with ESMTP id 1590350549; Wed, 23 Oct 2024 15:12:37 +0800
-Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
- mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1118.26; Wed, 23 Oct 2024 15:12:33 +0800
-Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
- mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
- 15.2.1118.26 via Frontend Transport; Wed, 23 Oct 2024 15:12:33 +0800
-From: Macpaul Lin <macpaul.lin@mediatek.com>
-To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
-	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
-	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
-	<amergnat@baylibre.com>
-CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
-	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
-	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
-	<linux-usb@vger.kernel.org>, Chris-qj chen <chris-qj.chen@mediatek.com>,
-	Fabien Parent <fparent@baylibre.com>, Simon Sun <simon.sun@yunjingtech.com>
-Subject: [PATCH v2 2/2] arm64: dts: mediatek: mt8395-genio-1200-evk: add support for MUX IT5205
-Date: Wed, 23 Oct 2024 15:12:26 +0800
-Message-ID: <20241023071226.14090-2-macpaul.lin@mediatek.com>
-X-Mailer: git-send-email 2.18.0
-In-Reply-To: <20241023071226.14090-1-macpaul.lin@mediatek.com>
-References: <20241023071226.14090-1-macpaul.lin@mediatek.com>
+	s=arc-20240116; t=1729667577; c=relaxed/simple;
+	bh=VdAmmR1q9hIZ7QKFYpKw2KgGmh6wOkVGPlNKY/M0BEI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PNjyimZpWuUJknkgQ9BtAZOI992wHTHIlEfbBKTUMcWDzRvgg+tJi9QsjW8wpwpJAsq+d38jcTNyS+IvZ1E3gxSnyGRKN1+IT8BwBn1mxaY4D/E+23pP9xIKGMUTxDbdttsu7PJ7e/hO5vXbkeILGyEvtIl7cU6jZtUpWQ8Yn0U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=W5Ih+t0r; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A0173C4CEC6;
+	Wed, 23 Oct 2024 07:12:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729667577;
+	bh=VdAmmR1q9hIZ7QKFYpKw2KgGmh6wOkVGPlNKY/M0BEI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=W5Ih+t0rgmNOx2rhBBLfMHvYNEH5k5djcyz8/X7AHUpO1pj4l0JPqQZNs955amqck
+	 fY1R+kYyIC4IZTVej4qNoC3oEs9ER6leRHB6ZfoAurHlK4uQNkCASrgUJeY7OQAJzn
+	 aikGTLtUHdZ/1rPYM/ykldv3+u2f3QjxiK1j9sH7WoPDpMoPRHYsUElLKufGfd4aCF
+	 MXGeukBA8Sy3mGaBGI48ncnTubHktBeCZXIPtnX367Qj1qnIrMCznCkFuRkA4axjtC
+	 LJ0UgAUpR4lA7GYYjhB2OxVwfnOaAKkO+W3BFK6iwy7MsOsZDI2HRZmtmeLjtq4Bi6
+	 N6LuBjWen3Mbw==
+Date: Wed, 23 Oct 2024 09:12:53 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Karan Sanghavi <karansanghvi98@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	Shuah Khan <skhan@linuxfoundation.org>, Alexander Aring <alex.aring@gmail.com>, 
+	Eric Anholt <eric@anholt.net>
+Subject: Re: [PATCH v2] dt-bindings: soc: bcm: Convert
+ raspberrypi,bcm2835-power to Dt schema
+Message-ID: <lfzxcilud65ype66frb7eihq2hvranzxp6fomjvjyxvciiixlj@2efv5266wt5r>
+References: <20241022-raspberrypi-bcm2835-power-v2-1-1a4a8a8a5737@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-AS-Result: No-10--1.849300-8.000000
-X-TMASE-MatchedRID: y/MOm6ldwRLwi+JtrEQDF/OS+SRxjgFwO8xCfog1G6TfUZT83lbkECc/
-	xZYu98DIXlLd88CeldeEWLXMLbnj9s9tfSEZlKTR0Xw0ILvo/uV9LQinZ4QefPcjNeVeWlqY+gt
-	Hj7OwNO2i5u/VvsFaHZo/FbJ9dxneJfIFhtB+fg142nvvg/R7I/+H0edVFfSNiWM4GkOCkv6Uc5
-	7FjAsx+8BJfDkpwagKV0vb6dLWo92cVs3n0bcGPqMnTJRI0XInfXwUEm1ouDzLDYxFC1/7rn6Gd
-	Nk4NWmA
-X-TM-AS-User-Approved-Sender: No
-X-TM-AS-User-Blocked-Sender: No
-X-TMASE-Result: 10--1.849300-8.000000
-X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
-X-TM-SNTS-SMTP: 1BDDA5227DA9E30728ABF0AC3DB9070AC31DF6B397CEC1F8E8567801DD19F8AF2000:8
-X-MTK: N
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022-raspberrypi-bcm2835-power-v2-1-1a4a8a8a5737@gmail.com>
 
-Add ITE IT5205FN (TYPEC MUX) under I2C2 bus and configure its properties;
-also add references to it5205fn from MT6360 TYPE-C connector for TYPEC
-configuration.
+On Tue, Oct 22, 2024 at 06:17:03PM +0000, Karan Sanghavi wrote:
+> Convert the raspberrypi,bcm2835-power binding to Dt schema
+> 
+> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
+> ---
+> Changes in v2:
+> - Added original file maintainers
+> - Removed unnecessary headers from example and formating from description 
+> - Link to v1: https://lore.kernel.org/r/20241019-raspberrypi-bcm2835-power-v1-1-75e924dc3745@gmail.com
+> ---
 
-Signed-off-by: Fabien Parent <fparent@baylibre.com>
-Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
-Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
----
- .../dts/mediatek/mt8395-genio-1200-evk.dts    | 22 +++++++++++++++++++
- 1 file changed, 22 insertions(+)
+> @@ -0,0 +1,42 @@
+> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/soc/bcm/raspberrypi,bcm2835-power.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: Broadcom BCM2835 power domain driver
 
-Changes for v2:
- - This is a new patch in the v2 patch.
+Drop "driver"
 
-diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-index 195e486d9101..57c68d033196 100644
---- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-+++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-@@ -229,6 +229,21 @@ &i2c2 {
- 	pinctrl-0 = <&i2c2_pins>;
- 	pinctrl-names = "default";
- 	status = "okay";
-+
-+	it5205fn: typec-mux@48 {
-+		compatible = "ite,it5205";
-+		reg = <0x48>;
-+		vcc-supply = <&mt6359_vibr_ldo_reg>;
-+		mode-switch;
-+		orientation-switch;
-+		status = "okay";
-+
-+		port {
-+			it5205_sbu_ep: endpoint {
-+				remote-endpoint = <&mt6360_ssusb_sbu_ep>;
-+			};
-+		};
-+	};
- };
- 
- &i2c6 {
-@@ -282,6 +297,13 @@ mt6360_ssusb_ep: endpoint {
- 							remote-endpoint = <&ssusb_ep>;
- 						};
- 					};
-+
-+					port@2 {
-+						reg = <2>;
-+						mt6360_ssusb_sbu_ep: endpoint {
-+							remote-endpoint = <&it5205_sbu_ep>;
-+						};
-+					};
- 				};
- 			};
- 		};
--- 
-2.45.2
+> +
+> +maintainers:
+> +  - Alexander Aring <alex.aring@gmail.com>
+> +  - Eric Anholt <eric@anholt.net>
+> +
+> +description:
+> +  The Raspberry Pi power domain driver manages power for various subsystems
+
+Drop "driver"
+
+> +  in the Raspberry Pi BCM2835 SoC.
+> +
+> +properties:
+> +  compatible:
+> +    enum:
+> +      - raspberrypi,bcm2835-power
+> +
+> +  firmware:
+> +    $ref: /schemas/types.yaml#/definitions/phandle
+
+phandle to what? Missing description.
+
+> +
+> +  '#power-domain-cells':
+
+Use consistent quotes, either ' or ".
+
+> +    const: 1
+> +
+> +required:
+> +  - compatible
+> +  - firmware
+> +  - "#power-domain-cells"
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    power: power {
+
+Drop label. Node name: power-controller
+
+I don't think this passes tests because of this. See power-domain.yaml
+schema.
+
+Best regards,
+Krzysztof
 
 
