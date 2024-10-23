@@ -1,45 +1,45 @@
-Return-Path: <linux-kernel+bounces-377146-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1B33D9ABA67
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:09:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8568E9ABA69
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:09:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C6EF8284FCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:09:44 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 26BC0B238BC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:09:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF6BBDDAD;
-	Wed, 23 Oct 2024 00:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 83F6F17C69;
+	Wed, 23 Oct 2024 00:09:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exojCRsB"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rh0fM182"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E8155672;
-	Wed, 23 Oct 2024 00:09:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE65D27E;
+	Wed, 23 Oct 2024 00:09:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729642171; cv=none; b=pccekiRCIsKG0D0bEDqluTuyIoU8EtEPpmZSr5eocKFF9AN2O5E5wm8ew2PK8ra+/cvf+hF+QWdiI3MRGOAf3yHH06kNcDrre0gIxRdiEgv5yPaiOgrrF6Zz+ZA7yGzK90BeG56heNzzUpa+WO9PGwqB176VRigoe1asDJZZlVI=
+	t=1729642172; cv=none; b=DDGoaw05lQ7DonV/v6tdoDVcC5vuEvNfmG8gSScJBXK5u3dml+BlGIG0x4nGqzhl+bzS7o2U/OF3xyGXLwtZbs5vuIBNqL+d7cO0wMWqLN5cdgjme+ZW7v5tGvGvfeZANPMAgSepgF8ZGBIps3k/AGg3GvDqYkrOAzqM20nIeSM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729642171; c=relaxed/simple;
-	bh=A4QwPJQlw9zD0sZg2Q9Dv/Ayd2j8ALkZKSmR7YsG0Hw=;
+	s=arc-20240116; t=1729642172; c=relaxed/simple;
+	bh=PKH4Jgsz//Q/of6iS1YGe153y5OqAJsRm7bX4nqyHko=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=bMdCHckxg2PY41MsA9MXHe/5rMelqZGqsGwP/fw//syMSt6+8WOIZpxAqUv412xNEcnnj/Bv3j/hX36JFFvlTlEO9jajH+5+mPtrUvaFfyMpT+8kWXSGsrl6ZDdn14huaVAMQg2cyF6Y93DlJ8QiHeq9YY4zY2ff/tNphxiLzT8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exojCRsB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 53889C4CEC3;
+	 MIME-Version; b=ucgrau9lyuyPU+eBSPbcI8DP5Op1v1+qZEZEFRTjr75O2B71c2RvtfDGcZJ+VArnHi6uw8WvLLS33fzzZYBTpCAiCEAMbUZNbwKLrZTqx57uW16rXfVFQwQDtaXtT25NehBJCU9s+Njr+yd31zd4RwrvLHP3S3NOe4ouDa4p3XA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rh0fM182; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F349DC4CECD;
 	Wed, 23 Oct 2024 00:09:30 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729642170;
-	bh=A4QwPJQlw9zD0sZg2Q9Dv/Ayd2j8ALkZKSmR7YsG0Hw=;
+	s=k20201202; t=1729642171;
+	bh=PKH4Jgsz//Q/of6iS1YGe153y5OqAJsRm7bX4nqyHko=;
 	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=exojCRsB+rVAk4Fj9T2SZgXmyFivZay4GulED0veFq/Md4DUyyHzd3UTkSZQnuxbX
-	 X4OSqlZ4wglU9AbmYuA2VuDiwihXT+UgjZELujmRtRnpBwTND4zDoXzj/8IRrD2WsZ
-	 wi/9V8X7zOAHZpmVAjIEvs4Qx5mfUXcCcc3Gz1kZWT4iiqNudCwS0w1cPw5ozdF3mW
-	 lHrW+0/RInp+uzMxwCb7zw07C/JfTysoQoIXu//w7os/uCe9BGGAyKxHAGW/kwrbD4
-	 HHOTR6w3Iyg5WGQe3o5+3jk/P78h5ZRQjxmUUFzyPJhs+oo/AbUNGGWiJWkZbZpp8X
-	 cKa0VBnKFBnBw==
+	b=rh0fM182/aJDP8EyWTODmgWd748o++4ysFpRNbTKxu1I70JLyjtyCBbX/jyshjnXm
+	 4fc9mWye5Jn+ADUKcSY9ESrTA+2Nk2wDAwnUaJdOm+3oXOlIWFKColC1hCfmQ2ZICb
+	 Xt0iiHC7Zak2fBw7VfG2zhq2trYS1BR4XI5oVj19XbWhHMhx1McEIRNPCWg/FlGni9
+	 rPAkY24w6kmD2MdFTz+9yn3a/2OT459ORjlu5FORfPEuFaI05GpIah3MfiXodJe54o
+	 qoMqEDkXIi0j9ciIoKgpDkcntwPJV83AcXjrJ2zt+RROsODATUX44G8+MBVZTSSPbM
+	 QnF59rcV2l1Vg==
 From: Namhyung Kim <namhyung@kernel.org>
 To: Peter Zijlstra <peterz@infradead.org>,
 	Ingo Molnar <mingo@kernel.org>
@@ -51,16 +51,14 @@ Cc: Kan Liang <kan.liang@linux.intel.com>,
 	Stephane Eranian <eranian@google.com>,
 	Ravi Bangoria <ravi.bangoria@amd.com>,
 	Sandipan Das <sandipan.das@amd.com>,
-	Heiko Carstens <hca@linux.ibm.com>,
-	Vasily Gorbik <gor@linux.ibm.com>,
-	Alexander Gordeev <agordeev@linux.ibm.com>,
-	Christian Borntraeger <borntraeger@linux.ibm.com>,
-	Sven Schnelle <svens@linux.ibm.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	linux-s390@vger.kernel.org
-Subject: [PATCH v4 2/5] perf/core: Export perf_exclude_event()
-Date: Tue, 22 Oct 2024 17:09:25 -0700
-Message-ID: <20241023000928.957077-3-namhyung@kernel.org>
+	Kyle Huey <me@kylehuey.com>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Song Liu <song@kernel.org>,
+	bpf@vger.kernel.org
+Subject: [PATCH v4 3/5] perf/core: Account dropped samples from BPF
+Date: Tue, 22 Oct 2024 17:09:26 -0700
+Message-ID: <20241023000928.957077-4-namhyung@kernel.org>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
 In-Reply-To: <20241023000928.957077-1-namhyung@kernel.org>
 References: <20241023000928.957077-1-namhyung@kernel.org>
@@ -72,115 +70,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-And increase the dropped_sample count when it returns 1.  Now it can
-track how many samples are dropped due to the privilege filters in
-software events.
+Like in the software events, the BPF overflow handler can drop samples
+by returning 0.  Let's count the dropped samples here too.
 
-While at it, rename the same function in s390 cpum_sf PMU and also count
-the dropped samples.
-
-Cc: Heiko Carstens <hca@linux.ibm.com>
-Cc: Vasily Gorbik <gor@linux.ibm.com>
-Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-Cc: Sven Schnelle <svens@linux.ibm.com>
-Cc: Thomas Richter <tmricht@linux.ibm.com>
-Cc: linux-s390@vger.kernel.org
+Acked-by: Kyle Huey <me@kylehuey.com>
+Cc: Alexei Starovoitov <ast@kernel.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>
+Cc: Song Liu <song@kernel.org>
+Cc: bpf@vger.kernel.org
 Signed-off-by: Namhyung Kim <namhyung@kernel.org>
 ---
- arch/s390/kernel/perf_cpum_sf.c |  8 +++++---
- include/linux/perf_event.h      |  6 ++++++
- kernel/events/core.c            | 11 +++++++----
- 3 files changed, 18 insertions(+), 7 deletions(-)
+ kernel/events/core.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-index 5b765e3ccf0cadc8..ff9e694f2be45c6b 100644
---- a/arch/s390/kernel/perf_cpum_sf.c
-+++ b/arch/s390/kernel/perf_cpum_sf.c
-@@ -996,7 +996,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
- 	cpuhw->flags &= ~PMU_F_ENABLED;
- }
- 
--/* perf_exclude_event() - Filter event
-+/* perf_event_exclude() - Filter event
-  * @event:	The perf event
-  * @regs:	pt_regs structure
-  * @sde_regs:	Sample-data-entry (sde) regs structure
-@@ -1005,7 +1005,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
-  *
-  * Return non-zero if the event shall be excluded.
-  */
--static int perf_exclude_event(struct perf_event *event, struct pt_regs *regs,
-+static int perf_event_exclude(struct perf_event *event, struct pt_regs *regs,
- 			      struct perf_sf_sde_regs *sde_regs)
- {
- 	if (event->attr.exclude_user && user_mode(regs))
-@@ -1088,8 +1088,10 @@ static int perf_push_sample(struct perf_event *event,
- 	data.tid_entry.pid = basic->hpp & LPP_PID_MASK;
- 
- 	overflow = 0;
--	if (perf_exclude_event(event, &regs, sde_regs))
-+	if (perf_event_exclude(event, &regs, sde_regs)) {
-+		atomic64_inc(&event->dropped_samples);
- 		goto out;
-+	}
- 	if (perf_event_overflow(event, &data, &regs)) {
- 		overflow = 1;
- 		event->pmu->stop(event, 0);
-diff --git a/include/linux/perf_event.h b/include/linux/perf_event.h
-index c1e6340e561c400e..6b31958a2b1db8db 100644
---- a/include/linux/perf_event.h
-+++ b/include/linux/perf_event.h
-@@ -1649,6 +1649,8 @@ static inline int perf_allow_tracepoint(struct perf_event_attr *attr)
- 	return security_perf_event_open(attr, PERF_SECURITY_TRACEPOINT);
- }
- 
-+extern int perf_exclude_event(struct perf_event *event, struct pt_regs *regs);
-+
- extern void perf_event_init(void);
- extern void perf_tp_event(u16 event_type, u64 count, void *record,
- 			  int entry_size, struct pt_regs *regs,
-@@ -1832,6 +1834,10 @@ static inline u64 perf_event_pause(struct perf_event *event, bool reset)
- {
- 	return 0;
- }
-+static inline int perf_exclude_event(struct perf_event *event, struct pt_regs *regs)
-+{
-+	return 0;
-+}
- #endif
- 
- #if defined(CONFIG_PERF_EVENTS) && defined(CONFIG_CPU_SUP_INTEL)
 diff --git a/kernel/events/core.c b/kernel/events/core.c
-index 7e15fe0a8dee4ee7..5d24597180dec167 100644
+index 5d24597180dec167..b41c17a0bc19f7c2 100644
 --- a/kernel/events/core.c
 +++ b/kernel/events/core.c
-@@ -10001,18 +10001,21 @@ static void perf_swevent_event(struct perf_event *event, u64 nr,
- 	perf_swevent_overflow(event, 0, data, regs);
- }
+@@ -9831,8 +9831,10 @@ static int __perf_event_overflow(struct perf_event *event,
+ 	ret = __perf_event_account_interrupt(event, throttle);
  
--static int perf_exclude_event(struct perf_event *event,
--			      struct pt_regs *regs)
-+int perf_exclude_event(struct perf_event *event, struct pt_regs *regs)
- {
- 	if (event->hw.state & PERF_HES_STOPPED)
- 		return 1;
+ 	if (event->prog && event->prog->type == BPF_PROG_TYPE_PERF_EVENT &&
+-	    !bpf_overflow_handler(event, data, regs))
++	    !bpf_overflow_handler(event, data, regs)) {
++		atomic64_inc(&event->dropped_samples);
+ 		return ret;
++	}
  
- 	if (regs) {
--		if (event->attr.exclude_user && user_mode(regs))
-+		if (event->attr.exclude_user && user_mode(regs)) {
-+			atomic64_inc(&event->dropped_samples);
- 			return 1;
-+		}
- 
--		if (event->attr.exclude_kernel && !user_mode(regs))
-+		if (event->attr.exclude_kernel && !user_mode(regs)) {
-+			atomic64_inc(&event->dropped_samples);
- 			return 1;
-+		}
- 	}
- 
- 	return 0;
+ 	/*
+ 	 * XXX event_limit might not quite work as expected on inherited
 -- 
 2.47.0.105.g07ac214952-goog
 
