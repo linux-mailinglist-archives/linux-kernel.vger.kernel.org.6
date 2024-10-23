@@ -1,79 +1,57 @@
-Return-Path: <linux-kernel+bounces-377258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377259-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id E2F9F9ABC16
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:21:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8302F9ABC1B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:22:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6821F2465B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:21:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A9C61F245E6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A447F1369BB;
-	Wed, 23 Oct 2024 03:21:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 893021304AB;
+	Wed, 23 Oct 2024 03:22:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs6Oiiu1"
-Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DIJLY5dG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7E1139E;
-	Wed, 23 Oct 2024 03:21:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D23E03F9C5;
+	Wed, 23 Oct 2024 03:22:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729653693; cv=none; b=l0mOmGclbnPN5EdaINw2Eo2BM3eL3DRtaT5vk11F4hud+KHL3jywbKIx8qPjnvSgvsChVDQeD3vRswJue6Kxe5fSh9PIEo94TsgUbEKwIipxqoUMTK79R3QuUnWDkW90Y0A8n6JxKNSsOTwaeX+Pqk/svmzd37CXWZwUg1RYIf4=
+	t=1729653733; cv=none; b=EIpGMwv3kXduglO9MYU23uMmSL6E/xXoas5IDw629ko8ojo5BIKbhczj5zR5lw398gxnNRmObUgMl+Ks5hbPQ50spWr8nhiX3quYubpbMFeQQyZILoBjHYwasUNedlDDfTFH4H58p1YiiaGwEf+OxN5Xzx0oea6QvYu50X/DbS0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729653693; c=relaxed/simple;
-	bh=nt8rJBEuD0Q9sUA//jJUcUThgf2M4Ags7Y9vCxUhnuc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LtTi9Jut89jXigHzPq49WbO/Flq15q6vzGzohi1FSnvfElZKId5TO1IK1AIWJ1OiSG91pjokBiHd0jzA75E4ddSzuU/DBF3K2xMrJogyehpPy/9cMX+gT8xuxffsq5Iwozg0KUc8IviznyoQziG4KLCDzCO2MIIEwmUIKIKT0hU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fs6Oiiu1; arc=none smtp.client-ip=209.85.214.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20e6981ca77so47715595ad.2;
-        Tue, 22 Oct 2024 20:21:31 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729653691; x=1730258491; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=29eHXV9bqIXK5xc3pmwxd96Tf3JMnOuCUVgc44dHjjo=;
-        b=fs6Oiiu1xs9O2PZ3JCO7H9s5/aLKzp1O1vcp0AUaDmAWjiqteq0zOK0fvxbok2Kbut
-         3EptgAtinjWASWbZCTJt6KcSXK3Nka+zsw2WV6kwi2fMIvBzKSoVMGKULtHey4wGANJM
-         8hZ10L+a/qMTNP9e+YkmD98iS1mQMPtVIw7zWVl07WKcDd4uvjMqeV0SeEoSJnSMoIJB
-         SxlZMVXR7IrD/eYlLjR6u8vpHrwdqyeAI9FnjhwQPQ1mnnx5IdyRvjLwE9DXle0M8huw
-         9K9RA1KiO2u3YnBTep+JkcSGAwUlM1UxL68L7EJ/FqQKoEptoLdrXy7o/BTDnhneGYDL
-         Yheg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729653691; x=1730258491;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=29eHXV9bqIXK5xc3pmwxd96Tf3JMnOuCUVgc44dHjjo=;
-        b=mDxHcKoIrMr7wht4bjCUEexyJ7xx6OkFJKvZ0JkjetCu5WgYpgTDwLcp1Sh0c+hk7o
-         aAo849ZcdIDwlFnhe41TWN7b8jilL4VdEkYkwNjEvjjwxDq9F9faPcK3wRBzKAl89p0z
-         avTgo+OCYbiDxKuVnyzUr7nQSw2HKpN9BXOMptJIUrygd3OkZxivPdjXPXGaCy21kbCd
-         KXt4mU9zUeMGR4Niw1W7NcwKPKFAMPr61V/6C6LrEwYGeezx+5dL7HTY7amIULs/b0NC
-         d7WKwzOMgpRE251Jd9Db2zZBK8XqgJbfdx9U6oA8MjRb8BK1wOUlATN1K9ldpv+sLTGT
-         Fu4w==
-X-Forwarded-Encrypted: i=1; AJvYcCULUcnARC2kqf4vm4JGr7NQ4mKfosTMaUNbX6sgIJ6PQ1VLuFUQkuBwctOyVKy+7ZglrqrCcEOi6juRHkPVz+Q=@vger.kernel.org, AJvYcCWQMmHNQKaubeQirxDOYpeXLkDK/gky1UJVbLoyZGkNScSIQ/2bHdTIOhtjp4uGcjmQqQVvp1DY@vger.kernel.org, AJvYcCWgARCkjkEiIgMane1cL09Xj3OO1VE3pgQWVHGlDOb6GRv2PVQQGLMJ1qf2vYiPUfw5GLrI+5HOmmqP2OnN@vger.kernel.org
-X-Gm-Message-State: AOJu0YxTDHtEhsqs4cczQ7FJsSUZjSdKgLopHdxBybTdCcO/iWpKYgly
-	AmxIDFaOndTjUjOCB/WQGzCoQFIAyuxKjMECmB6cOb5P4dz22C+N
-X-Google-Smtp-Source: AGHT+IHzluk/mO7QsiX7WblFK/SH2YN/WhRfpbiFtyyiimjV/181mnxEUMWR1GEWvL8QX5ADLxcu+g==
-X-Received: by 2002:a17:902:f64c:b0:20b:7a46:1071 with SMTP id d9443c01a7336-20fa9deb645mr19087025ad.4.1729653690929;
-        Tue, 22 Oct 2024 20:21:30 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:b2d3:e25a:778e:1172])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f65e1sm48994225ad.285.2024.10.22.20.21.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 20:21:30 -0700 (PDT)
-Date: Tue, 22 Oct 2024 21:21:28 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: horms@kernel.org
-Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew@lunn.ch, intel-wired-lan@lists.osuosl.org,
-	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 1/1] [net-next] igb: Fix spelling in igb_main.c
-Message-ID: <ZxhruNNXvQI-xUwE@Fantasy-Ubuntu>
+	s=arc-20240116; t=1729653733; c=relaxed/simple;
+	bh=GZDpR9wGeUvIuDklehHTqOv1Xk8hOBog4OBM1m7IDak=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=T3gblHh6InEEVR5zJu71oows0Mi81H4OhBV5Iiqv6/nELVv0bXky7+m9V1mlFlonYzCe6f76PXbPS0VD6MDHbqQJumjwSfkHRZOWlFAFLzC1YFkna1EpKUc5j9lzKW3WCvN2gAGTYVWVKX9r7WROE08L9DHNVip0ZQznctvA1IY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DIJLY5dG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 74C32C4CEC3;
+	Wed, 23 Oct 2024 03:22:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729653732;
+	bh=GZDpR9wGeUvIuDklehHTqOv1Xk8hOBog4OBM1m7IDak=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DIJLY5dGFyPwOwvmdqB5U2WpRuTrY6pRceEYQN46DYbHiTZgpctGQU70mSetzq/Ph
+	 cENkaPRdhfaDEe3MTyUL8/PNuYpptxVWsMDPuIZNmdsMndBlERBfOe2MUnBaBArOi9
+	 u4ht8tHT/05LJ4/z6f3bkMduRPk1QiwAMiTI8UyPBgr1/i/P4DT2xi9tjGpZvJcXP4
+	 P3m0wDhaa66MIYKBsjGrQfxpEdN3kVm90ggyPU97qYT809HHRd+vZobnpdFTrAH+Hy
+	 gS43iA2ls4W/vYEd/bgdndTh8tD1FsnaHvNhZZPBNqC5PDOb+xC7YgqZjTiEouewdd
+	 8PqCizRkCZY/A==
+Date: Tue, 22 Oct 2024 22:22:09 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>, 
+	Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, linux-arm-msm@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/2] dt-bindings: pinctrl: qcom: Add sm8750 pinctrl
+Message-ID: <5k3kfyx43d6r2hchlbjpplhxkm4xfuu6xefbhydqrhnd3zievw@oftxc2ub5l6m>
+References: <20241021230414.2632428-1-quic_molvera@quicinc.com>
+ <20241021230414.2632428-2-quic_molvera@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,40 +60,52 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <20241021230414.2632428-2-quic_molvera@quicinc.com>
 
-Simple patch that fix spelling mistakes in igb_main.c
+On Mon, Oct 21, 2024 at 04:04:13PM GMT, Melody Olvera wrote:
+> diff --git a/Documentation/devicetree/bindings/pinctrl/qcom,sm8750-tlmm.yaml b/Documentation/devicetree/bindings/pinctrl/qcom,sm8750-tlmm.yaml
+[..]
+> +examples:
+> +  - |
+> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
+> +    tlmm: pinctrl@f100000 {
+> +        compatible = "qcom,sm8750-tlmm";
+> +        reg = <0x0f100000 0x300000>;
+> +        gpio-controller;
+> +        #gpio-cells = <2>;
+> +        gpio-ranges = <&tlmm 0 0 211>;
 
-Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
----
-Changes in v2:
-  - Fix spelling mor -> more
----
- drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+I know it's just an example, but I think this number should be 216.
+Please also correct it in the dtsi, where you made it 220.
 
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..fc587304b3c0 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
- 	/* initialize pointer to rings */
- 	ring = q_vector->ring;
- 
--	/* intialize ITR */
-+	/* initialize ITR */
- 	if (rxr_count) {
- 		/* rx or rx/tx vector */
- 		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
-@@ -3906,7 +3906,7 @@ static void igb_remove(struct pci_dev *pdev)
-  *
-  *  This function initializes the vf specific data storage and then attempts to
-  *  allocate the VFs.  The reason for ordering it this way is because it is much
-- *  mor expensive time wise to disable SR-IOV than it is to allocate and free
-+ *  more expensive time wise to disable SR-IOV than it is to allocate and free
-  *  the memory for the VFs.
-  **/
- static void igb_probe_vfs(struct igb_adapter *adapter)
--- 
-2.43.0
+Regards,
+Bjorn
 
+> +        interrupt-controller;
+> +        #interrupt-cells = <2>;
+> +        interrupts = <GIC_SPI 208 IRQ_TYPE_LEVEL_HIGH>;
+> +
+> +        gpio-wo-state {
+> +            pins = "gpio1";
+> +            function = "gpio";
+> +        };
+> +
+> +        uart-w-state {
+> +            rx-pins {
+> +                pins = "gpio60";
+> +                function = "qup1_se7";
+> +                bias-pull-up;
+> +            };
+> +
+> +            tx-pins {
+> +                pins = "gpio61";
+> +                function = "qup1_se7";
+> +                bias-disable;
+> +            };
+> +        };
+> +    };
+> +...
+> -- 
+> 2.46.1
+> 
 
