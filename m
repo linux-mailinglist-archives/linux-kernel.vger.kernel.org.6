@@ -1,122 +1,107 @@
-Return-Path: <linux-kernel+bounces-378850-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378852-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4D8839AD64B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:05:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE8D99AD652
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:06:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ED23C1F26203
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:05:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDB281C21A8C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:06:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DF945155741;
-	Wed, 23 Oct 2024 21:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B4EDB1EBFE0;
+	Wed, 23 Oct 2024 21:06:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="leKFgbsh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="X4YNJ68t"
+Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41CAE1D9A68;
-	Wed, 23 Oct 2024 21:05:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B4131E2826
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:06:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729717510; cv=none; b=arwmRELlNqefbLGtA6P0Wad3jfQ5bfK1d0j0sg7s1nFkYVQ0K0bbyiuH40/r/4H3r9E7456AIuLXzQqERWj7wJ2hMhKB4x9dxzvHJ1x1x/rsuVolVyV7KFLyMan0/poHPko6b4yRWezepFQ/ZQNyYZ1mMyZ1l5Sq3rwRmJVZERU=
+	t=1729717566; cv=none; b=Z2rLzp219beLYLXyIFCJm7f9t19GEVxjXi3uKAW/P0O+30BWYF0dOg5Eqmp7Yl8W2AD9gvGrL8vuCFoIlVqkH5DcImgHtuYC3EADKTkomKoOK7LjxMwt71SdgcRhBPEzGQc87r5PY/31lp+2oxq1WTxnO842v44g3/U3UgGhyZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729717510; c=relaxed/simple;
-	bh=YGxT/21cdM6lSvXvWqYvvIrJsI/bS0dImUF6eX1aAgs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BvBPko0qpAwctBdBZ13EZSggxtUgP9i1ZShKZhBRC26qWnpC5Ige69VH9SJEFPU0B/n2XFDcihr5P7vF5fEue9Dpg63Tg3UCYOLJF74cFC0mBXqcEpwDCxSkz90TViehMz2D+ew0BlupH07QugmLWaSZ6X4P2frRH14H63b3PRM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=leKFgbsh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5D0E4C4CEC6;
-	Wed, 23 Oct 2024 21:05:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729717509;
-	bh=YGxT/21cdM6lSvXvWqYvvIrJsI/bS0dImUF6eX1aAgs=;
-	h=Date:From:To:Cc:Subject:From;
-	b=leKFgbshLphDRPiHlYl2kAjVr9MglbBobK+bsjFeiqaFl1NPntM6eoxLzuvfzaoSi
-	 q+K9IVvUF+eLeE9OIt43Ii3o5A41WgRT8xie9oWXsmXStonCcSs703FQ1ovXzRi3ea
-	 HhfBKD0TUm6sR/ERZ4MXJTk9+ibyRDP5cRKu1cCfeJTmali01LHF45tcBXzjKecf3C
-	 5FWdI06Fanjg++xuv9UKaJ75y1YJdPzLzyn7XE5080N8lDJH29OH4z8nPtqO5cmLM1
-	 HO1PjYaAH2cGJOPeh+3eDLuCbNFvekToZ73LJwHUMjlUExtxGVXfbPKugOsBkQvf0k
-	 i2sQbVdbq2sgQ==
-Date: Wed, 23 Oct 2024 18:05:06 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Adrian Hunter <adrian.hunter@intel.com>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	linux-perf-users@vger.kernel.org, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1 perf-tools] perf python: Fix up the build on
- architectures without HAVE_KVM_STAT_SUPPORT
-Message-ID: <ZxllAtpmEw5fg9oy@x1>
+	s=arc-20240116; t=1729717566; c=relaxed/simple;
+	bh=/JEcIBihja6V3LP52eHEY4Q3j5KZkMGS+N+dxgjhsRc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=i/9fkUgE0P1ryiVb6L0apdfzl282kwumgEJWm8WutW4YZYMPlyx7FXQ3jLKJVdHNp+q/9BRjqAR9S/kZ6Me48N2fJJQJ0RHhAOhmkDtPpOP7gG8MhuFqxvUJoqWKbWCNFDaaCuZjeQixJi8NBbMQOn3icnjtsODzdD/Wi9aIK10=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=X4YNJ68t; arc=none smtp.client-ip=209.85.128.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so17895e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:06:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729717563; x=1730322363; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/JEcIBihja6V3LP52eHEY4Q3j5KZkMGS+N+dxgjhsRc=;
+        b=X4YNJ68t0nwRFvxpqTrPL5CBJYmjDBnPdlWa0T0sajxnUKiHqH6PxrgMr7ESOh34Go
+         uRnj9cS2v27XeMen/pbCT4inSZRm02OoqPJbSPT89R4TGKiZ6xBhpx9Ej2/f2UtAGK7F
+         7T8pCdmA8lMC8cFzK8G8Ts2sTNVbIebfcFU6KlDTuHW/oRL8tdEh3U28hbI3LZQkJKzx
+         o6LVG9QUzf7ytipO8RGDhSttTdF/ri4QUukc3vge4W57Mxt0enKDk8lVPvvUNd50/UQe
+         3bgWCpGfzLU0I4dMdOsZbkymfmn/qT1CbmRf/UuhCaphnrWqGkKv8hZ0Ovd3bKxPUdAI
+         txLw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729717563; x=1730322363;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=/JEcIBihja6V3LP52eHEY4Q3j5KZkMGS+N+dxgjhsRc=;
+        b=N5Bzo1dI6yoDWodesk+x8r+q9hZgpx3sEF+XWlMfIPvooCPCBUdrwuBi0go5JlXB1w
+         hOKGyjqzgqae+6+CcQSD1YKOEUoUaGPVMB3jRstn2Uez8NMxhEMozMkWIWOoXsznsY39
+         ZZhJsuhQei1WtI1MXv21vc/4yGxNewmu5MSszUpenUOl3KIUOHHVani4oUx/qVXoh2F7
+         fgIxKmRyft+BWEKO1B9S8+JmX/jRqXxzcCxPZGMoNub+B2eSBhQi+Si7EhfhzCSKk8PX
+         wCJEuqCT07JppGlINcSqtDtPkiyiYgEkPVqCVS1nlQjkaVjbeZ1b9VUTVgESaIYM7rRq
+         l0rw==
+X-Forwarded-Encrypted: i=1; AJvYcCW+kHozQflm8vpoq45ajTiFIC9Ls5mEOjg/z9L6voDbWRCngi5TqpA90JNlrUWA2oePoBwFCiJCRsbWyTc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxaUywBdM3CgEngwiygYKDnlqWioVHJqzXLNFvgdD6IaV2u3F/V
+	vocHjRiTz+7ANmbD+p9/4tz4HTfbdF/OWRjQypFnSLAQgr5dvnEmM3mYYkVDOpR9EFbH+/G5WoN
+	PJAMYrfGPLZLopyjknGm8x8zAzemf81OuNLb4
+X-Google-Smtp-Source: AGHT+IE7E1sQKkdi+IOPziXhygUCQe4DRbGEMh2n+xHqKHoCU4m0rJ13HS4/hKLnTcO13YuD7nqu8DLLl+hDRTXCmBQ=
+X-Received: by 2002:a05:600c:5023:b0:42c:b0b0:513a with SMTP id
+ 5b1f17b1804b1-4318a50525emr1319735e9.2.1729717562737; Wed, 23 Oct 2024
+ 14:06:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
+References: <20241008183823.36676-21-samitolvanen@google.com>
+ <20241008183823.36676-36-samitolvanen@google.com> <55549683-2453-4b67-a380-8ace34b3a06d@suse.com>
+In-Reply-To: <55549683-2453-4b67-a380-8ace34b3a06d@suse.com>
+From: Sami Tolvanen <samitolvanen@google.com>
+Date: Wed, 23 Oct 2024 21:05:24 +0000
+Message-ID: <CABCJKudc-f4OfyfWnDwXGM=ohSin7Z=y7Fk92Du_17LB9ptV+A@mail.gmail.com>
+Subject: Re: [PATCH v4 15/19] gendwarfksyms: Add support for reserved and
+ ignored fields
+To: Petr Pavlu <petr.pavlu@suse.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Luis Chamberlain <mcgrof@kernel.org>, 
+	Miguel Ojeda <ojeda@kernel.org>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Matthew Maurer <mmaurer@google.com>, Alex Gaynor <alex.gaynor@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	Daniel Gomez <da.gomez@samsung.com>, Neal Gompa <neal@gompa.dev>, Hector Martin <marcan@marcan.st>, 
+	Janne Grunau <j@jannau.net>, Miroslav Benes <mbenes@suse.cz>, Asahi Linux <asahi@lists.linux.dev>, 
+	Sedat Dilek <sedat.dilek@gmail.com>, linux-kbuild@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-modules@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Noticed while building on a raspbian arm 32-bit system.
+On Wed, Oct 23, 2024 at 2:53=E2=80=AFPM Petr Pavlu <petr.pavlu@suse.com> wr=
+ote:
+>
+> I've noted some nits above which you might want to trivially address.
 
-There was also this other case, fixed by adding a missing util/stat.h
-with the prototypes:
+These all looked reasonable to me, I'll address them in the next version.
 
-  /tmp/tmp.MbiSHoF3dj/perf-6.12.0-rc3/tools/perf/util/python.c:1396:6: error: no previous prototype for ‘perf_stat__set_no_csv_summary’ [-Werror=missing-prototypes]
-   1396 | void perf_stat__set_no_csv_summary(int set __maybe_unused)
-        |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-  /tmp/tmp.MbiSHoF3dj/perf-6.12.0-rc3/tools/perf/util/python.c:1400:6: error: no previous prototype for ‘perf_stat__set_big_num’ [-Werror=missing-prototypes]
-   1400 | void perf_stat__set_big_num(int set __maybe_unused)
-        |      ^~~~~~~~~~~~~~~~~~~~~~
-  cc1: all warnings being treated as errors
+> Otherwise this looks ok to me, feel free to add:
+>
+> Reviewed-by: Petr Pavlu <petr.pavlu@suse.com>
 
-In other architectures this must be building due to some lucky indirect
-inclusion of that header.
+Thanks!
 
-Fixes: 9dabf4003423c8d3 ("perf python: Switch module to linking libraries from building source")
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
----
- tools/perf/util/python.c | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
-index 31a223eaf8e65fa3..ee3d43a7ba4570f0 100644
---- a/tools/perf/util/python.c
-+++ b/tools/perf/util/python.c
-@@ -19,6 +19,7 @@
- #include "util/bpf-filter.h"
- #include "util/env.h"
- #include "util/kvm-stat.h"
-+#include "util/stat.h"
- #include "util/kwork.h"
- #include "util/sample.h"
- #include "util/lock-contention.h"
-@@ -1355,6 +1356,7 @@ PyMODINIT_FUNC PyInit_perf(void)
- 
- unsigned int scripting_max_stack = PERF_MAX_STACK_DEPTH;
- 
-+#ifdef HAVE_KVM_STAT_SUPPORT
- bool kvm_entry_event(struct evsel *evsel __maybe_unused)
- {
- 	return false;
-@@ -1384,6 +1386,7 @@ void exit_event_decode_key(struct perf_kvm_stat *kvm __maybe_unused,
- 			   char *decode __maybe_unused)
- {
- }
-+#endif // HAVE_KVM_STAT_SUPPORT
- 
- int find_scripts(char **scripts_array  __maybe_unused, char **scripts_path_array  __maybe_unused,
- 		int num  __maybe_unused, int pathlen __maybe_unused)
--- 
-2.46.0
-
+Sami
 
