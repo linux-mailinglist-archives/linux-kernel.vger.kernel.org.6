@@ -1,172 +1,173 @@
-Return-Path: <linux-kernel+bounces-377894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377893-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E61469AC82E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:46:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 696649AC82B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:46:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1A5E11C22A72
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:46:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A3DBAB23529
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:46:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 721CC1AAE1C;
-	Wed, 23 Oct 2024 10:45:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="UDBVanBx"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54E911AAE06;
+	Wed, 23 Oct 2024 10:45:56 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E1881AAE2E;
-	Wed, 23 Oct 2024 10:45:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB4C41AA7A2;
+	Wed, 23 Oct 2024 10:45:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729680358; cv=none; b=aS0qjcUc3dq+G3vJRz7WXE6/j5G9o5ZcLI7NVQTLfPiLm09ru8WdLEH+saGPpJTQ8GLwqsnZQEO4oREHenlPTpPhYz2UJXJmezEh0MkBpG2VXYVgrDBft61AH6lc71f5xiy0jxbbF0F8Imy000l+sb8tAWi9Uu2lC/TGs8CyPxE=
+	t=1729680355; cv=none; b=sV1ttFq9E+L/+v2IVRrekYxszeHGYE7/61azCVWraRqu+w6hzwwnoFrszGZBeJ+Q0XsS09fQxxUnWOntsL6eCvIGZHzCOitvzJclCU/WW4bAesDNnnB5HhEncxuggkEqVbhQSBSqNi+TiGs4BA5hqQIdAjUQXVRTiCaKXmB89jo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729680358; c=relaxed/simple;
-	bh=s2f0NV8Yo+cqVMU0ikMZd2+fXpLvLnRxg4ZQgsJF49U=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XkAxAVg0hsc89x0QREOpKbtVvWov+XuDssyIsZtGST5mQAH5gR9+0W5Y9fd9CnPvMWoJausBnqshYQ+eQ3HdfGKn+6xAXALBLhSAQB/b3oPsRs9FIyumXmX2yPgK+c5IBZWsin/HT/5qqSbROXfzqij4X1L7JNl/ojC3T27NR1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=UDBVanBx; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49NAjpvk090794;
-	Wed, 23 Oct 2024 05:45:51 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729680351;
-	bh=csUKGiVK2HsvgfvRBbrDSKbQ6Dfvy+AyewZWb+pdrcs=;
-	h=From:To:CC:Subject:Date:In-Reply-To:References;
-	b=UDBVanBxW++zMmwZNOnRg09m/rZIJwhtCyoMLvn3F6+ElxBxwydizd40eEFLH2kIT
-	 RAUofV2KvLZ3Uc0gNyZNAYl4aKompXItPpagnAmi1j0ywNxm1psBEGpjDkEjN9Nl6N
-	 MXCpj4WlH+u1bNdz86PpSidE59zGvNYN70Y1peYc=
-Received: from DLEE102.ent.ti.com (dlee102.ent.ti.com [157.170.170.32])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49NAjpNw031274
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 23 Oct 2024 05:45:51 -0500
-Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE102.ent.ti.com
- (157.170.170.32) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
- Oct 2024 05:45:50 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DLEE105.ent.ti.com
- (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 23 Oct 2024 05:45:50 -0500
-Received: from a-dutta.dhcp.ti.com (a-dutta.dhcp.ti.com [10.24.68.112])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49NAjW1v014331;
-	Wed, 23 Oct 2024 05:45:47 -0500
-From: Anurag Dutta <a-dutta@ti.com>
-To: <nm@ti.com>, <vigneshr@ti.com>, <kristo@kernel.org>, <robh@kernel.org>,
-        <krzk+dt@kernel.org>, <conor+dt@kernel.org>, <vaishnav.a@ti.com>,
-        <j-keerthy@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-Subject: [PATCH 4/4] arm64: dts: ti: k3-j784s4: Fix clock IDs for MCSPI instances
-Date: Wed, 23 Oct 2024 16:15:32 +0530
-Message-ID: <20241023104532.3438851-5-a-dutta@ti.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <20241023104532.3438851-1-a-dutta@ti.com>
-References: <20241023104532.3438851-1-a-dutta@ti.com>
+	s=arc-20240116; t=1729680355; c=relaxed/simple;
+	bh=+MxrZR5mvriD1i1yazA9keaFJm97E7fIdVAbknJYafo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mJ2xrkmV/VngP08iDP7kw72uWBWmhIRRvstJXiX9Pserh2fmPho8l6vkcRu/ZU/XryTXHUWvJwgxftPy0BSKmvzKiK6ixDrumB9X8NbvSrBMII/piWeyWTtpjgCF4SWawzN1YDMjQZ0whs6o9sdoKCuLaRE6GiTsKWOBFCMQKn4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 02CA9C4CEC6;
+	Wed, 23 Oct 2024 10:45:52 +0000 (UTC)
+Message-ID: <ffbbb1f2-81b0-40f5-806c-4bda3c9a3ce0@xs4all.nl>
+Date: Wed, 23 Oct 2024 12:45:51 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 11/28] media: iris: implement g_selection ioctl
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-11-c5eaa4e9ab9e@quicinc.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-11-c5eaa4e9ab9e@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-The clock IDs for multiple MCSPI instances across wakeup domain
-in J784s4 are incorrect when compared with documentation [1]. Fix
-the clock IDs to their appropriate values.
+On 14/10/2024 11:07, Dikshita Agarwal wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
+> 
+> Implement g_selection ioctl in the driver with necessary hooks.
+> 
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  drivers/media/platform/qcom/iris/iris_vidc.c | 29 ++++++++++++++++++++++++++++
+>  1 file changed, 29 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index 05146970189b..481fa0a7b7f3 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -256,6 +256,34 @@ static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
+>  	return ret;
+>  }
+>  
+> +static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *s)
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +
+> +	if (s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE &&
 
-[1]https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j784s4/clocks.html
+For g/s_selection the MPLANE type will always be mapped to the non-mplane type,
+so you'll never see V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE here.
 
-Fixes: e23d5a3d116d ("arm64: dts: ti: k3-j784s4: Add MCSPI nodes")
+See v4l_g/s_selection in v4l2-core/v4l2-ioctl.c.
 
-Signed-off-by: Anurag Dutta <a-dutta@ti.com>
----
- arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi | 16 ++++++++--------
- 1 file changed, 8 insertions(+), 8 deletions(-)
+It's a bit of an historical artifact.
 
-diff --git a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-index e73bb750b09a..5c5398990514 100644
---- a/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-+++ b/arch/arm64/boot/dts/ti/k3-j784s4-main.dtsi
-@@ -2141,7 +2141,7 @@ main_spi0: spi@2100000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 376 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 376 1>;
-+		clocks = <&k3_clks 376 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2152,7 +2152,7 @@ main_spi1: spi@2110000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 377 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 377 1>;
-+		clocks = <&k3_clks 377 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2163,7 +2163,7 @@ main_spi2: spi@2120000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 378 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 378 1>;
-+		clocks = <&k3_clks 378 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2174,7 +2174,7 @@ main_spi3: spi@2130000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 379 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 379 1>;
-+		clocks = <&k3_clks 379 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2185,7 +2185,7 @@ main_spi4: spi@2140000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 380 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 380 1>;
-+		clocks = <&k3_clks 380 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2196,7 +2196,7 @@ main_spi5: spi@2150000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 381 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 381 1>;
-+		clocks = <&k3_clks 381 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2207,7 +2207,7 @@ main_spi6: spi@2160000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 382 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 382 1>;
-+		clocks = <&k3_clks 382 0>;
- 		status = "disabled";
- 	};
- 
-@@ -2218,7 +2218,7 @@ main_spi7: spi@2170000 {
- 		#address-cells = <1>;
- 		#size-cells = <0>;
- 		power-domains = <&k3_pds 383 TI_SCI_PD_EXCLUSIVE>;
--		clocks = <&k3_clks 383 1>;
-+		clocks = <&k3_clks 383 0>;
- 		status = "disabled";
- 	};
- 
--- 
-2.34.1
+> +	    s->type != V4L2_BUF_TYPE_VIDEO_CAPTURE)
+> +		return -EINVAL;
+> +
+> +	switch (s->target) {
+> +	case V4L2_SEL_TGT_CROP_BOUNDS:
+> +	case V4L2_SEL_TGT_CROP_DEFAULT:
+> +	case V4L2_SEL_TGT_CROP:
+> +	case V4L2_SEL_TGT_COMPOSE_BOUNDS:
+> +	case V4L2_SEL_TGT_COMPOSE_PADDED:
+> +	case V4L2_SEL_TGT_COMPOSE_DEFAULT:
+> +	case V4L2_SEL_TGT_COMPOSE:
+> +		s->r.left = inst->crop.left;
+> +		s->r.top = inst->crop.top;
+> +		s->r.width = inst->crop.width;
+> +		s->r.height = inst->crop.height;
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	return 0;
+> +}
+> +
+>  static struct v4l2_file_operations iris_v4l2_file_ops = {
+>  	.owner                          = THIS_MODULE,
+>  	.open                           = iris_open,
+> @@ -277,6 +305,7 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+>  	.vidioc_g_fmt_vid_cap_mplane    = iris_g_fmt_vid_mplane,
+>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+> +	.vidioc_g_selection             = iris_g_selection,
+>  };
+>  
+>  void iris_init_ops(struct iris_core *core)
+> 
 
+Regards,
+
+	Hans
 
