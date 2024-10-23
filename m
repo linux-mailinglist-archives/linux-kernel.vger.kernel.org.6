@@ -1,84 +1,119 @@
-Return-Path: <linux-kernel+bounces-377373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377374-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5A6E9ABDEC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:36:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EB249ABDF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:37:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0045D1C2258B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:36:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E31D1C20953
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:37:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99EC11459F6;
-	Wed, 23 Oct 2024 05:36:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3B4F14659D;
+	Wed, 23 Oct 2024 05:36:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="slJIByWC"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="e3yKJui3"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1DB920323;
-	Wed, 23 Oct 2024 05:36:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FD8E20323;
+	Wed, 23 Oct 2024 05:36:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729661791; cv=none; b=BSi9pSq9EYZyYFwf4ZNA5VwPz7VUkOg/pq2FtKfBtLtFJtIC+SdQixFbzRlkTp/ppUNLVfLDCUU5EHjjk9nlUIUdZP00jGDVKWKgWpgJTOc/k3suYxT3Eo8OaWcOj59XLI78EWHXmB3CkfMX8RAmYCvWxhCqqjo9waozn8mTCyk=
+	t=1729661810; cv=none; b=WXm+XzVgq1WHtMhe/z9UCSYR/dOgC64z8kzAVySfy7ANjhfIR7QBibyQ8Q45TFMMNWxNnQpM++e/WPLEYhbYKJ+OlMRDajKWp/sEtVIkvTybbag/tNnaRrCkhgq/mL8RXVsqR+eM21ZZAxUZxmvYDVUkMRqkP/0NZ3wWCoonRJE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729661791; c=relaxed/simple;
-	bh=1iZwpMUcg4IM/XBZxnspxbkbtoVw1OUF9gHEtwXZJmA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l2GC8ZQ7UaQFCVx9wh92/6GvUX8NgciNRZvnOGW9kp6kccfjOAq8/OpdECwCC9fb5bez5YO7W510rywRL4SvGDJGVncU4yOUpLOeBzmCipA6oYqYD1hsXBJ+GY4N0n8bZAdgYPyC6VXdLoyvH0b6IoLrrOVfsjKHohr8082WR/E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=slJIByWC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 14C7BC4CEC6;
-	Wed, 23 Oct 2024 05:36:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729661790;
-	bh=1iZwpMUcg4IM/XBZxnspxbkbtoVw1OUF9gHEtwXZJmA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=slJIByWC4EjqjzVEvkUJEGfoj/r/QqScijDF41vkFcKRhk5nu+tLcvWjEbtB/Bk6A
-	 3fMT7Qr7lk1cJ/m3nQ+30xE8+E1fQx8DtgVqTkiy5QXQ9IBdaClO6hsTIWEF2EADTx
-	 5+VGheeu8WCArm+FWiThpEoXpMfZDPG4y08m6nvVA0K8757huMEufq0vqgd8fBjVb6
-	 BGERxqEB7tFfcRzNXQXQX0VlS7Rc4YBRYTfE0aLlXUNnAbmMlNW0CCtlv1XivZ9FhR
-	 BBfM57pnHOQvkTNhcSc9zrUgn6VFu8zwHqNgbUYYV8M3lxXNelmrgy798Fm3gQE2xO
-	 YKU3C2qCX7vhQ==
-Date: Wed, 23 Oct 2024 11:06:26 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Rob Herring <robh@kernel.org>,
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Subject: Re: linux-next: duplicate patch in the dmaengine tree
-Message-ID: <ZxiLWoL/kkds7PWd@vaman>
-References: <20241023150813.416aafd7@canb.auug.org.au>
+	s=arc-20240116; t=1729661810; c=relaxed/simple;
+	bh=yyqjrNra2qrWk/SlCt8CsJRxIaNpgya75gxtX8qBAdw=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=VqSddQ+vg3a1tbXKgGnJSmYLFQ7MQTkNa6OfDUEeAS9JtH49EQIZXKXAs5FlB9z6zhfp8v6EmpDdWbtq+tIerOcSd/51z6CKa+h4c66E99fDu9Akjb8M1UhrRxw3sp4XctqbwOxUG+BE3hxwLcBaA/6NlYmxV+Y3dJmojq7HkCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=e3yKJui3; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=Content-Transfer-Encoding:
+	MIME-Version:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=fLRpNAyXDIDQIA7HSndcO831t3mGv6BkJWEZG/+8nHM=; b=e3yKJui3E1F31NYxpyaXDU9W7H
+	+UGx5mo0sIV2J4IRe3S0lKmAIwjnMnBQslhfMHmdi/AtNvCPQq8jOwp/ruOtXaFiw4c3pJcP7Slky
+	PbaGDyP3HGNONuiaY/ACmdbI+BgedQmkkMQaSH4AioQhoJ7QRjxFz7MjTi/c01vFbTn9sHdxiMohI
+	6JbxnMeER1pWyG8JXPtFYAEvUzIpMbKe30FHv1KAJDyxneeYpqjBh8LWHkoC5Ijd6IeGCCS15Sz8z
+	Nj2X7+iDJITPMDsaPbrq7AWNeuDcMxHMRhSoEw7840C58hpQ3F3tqw//Ij4z5zduWot2M0oEg5VbW
+	cuU3mdNA==;
+Received: from 2a02-8389-2341-5b80-8c6c-e123-fc47-94a5.cable.dynamic.v6.surfer.at ([2a02:8389:2341:5b80:8c6c:e123:fc47:94a5] helo=localhost)
+	by bombadil.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3U34-0000000D4Ir-2Mk1;
+	Wed, 23 Oct 2024 05:36:47 +0000
+From: Christoph Hellwig <hch@lst.de>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: linux-alpha@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-snps-arc@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-csky@vger.kernel.org,
+	linux-hexagon@vger.kernel.org,
+	loongarch@lists.linux.dev,
+	linux-m68k@lists.linux-m68k.org,
+	linux-mips@vger.kernel.org,
+	linux-openrisc@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linuxppc-dev@lists.ozlabs.org,
+	linux-riscv@lists.infradead.org,
+	linux-s390@vger.kernel.org,
+	linux-sh@vger.kernel.org,
+	sparclinux@vger.kernel.org,
+	linux-um@lists.infradead.org,
+	linux-arch@vger.kernel.org
+Subject: provide generic page_to_phys and phys_to_page implementations v3
+Date: Wed, 23 Oct 2024 07:36:35 +0200
+Message-ID: <20241023053644.311692-1-hch@lst.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023150813.416aafd7@canb.auug.org.au>
+Content-Transfer-Encoding: 8bit
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+page_to_phys is duplicated by all architectures, and from some strange
+reason placed in <asm/io.h> where it doesn't fit at all.  
 
-Hi Stephen,
+phys_to_page is only provided by a few architectures despite having a lot 
+of open coded users.
 
-On 23-10-24, 15:08, Stephen Rothwell wrote:
-> Hi all,
-> 
-> The following commit is also in the devicetree tree as a different commit
-> (but the same patch):
-> 
->   72c65390c61f ("dt-bindings: Fix array property constraints")
-> 
-> This is commit
-> 
->   a6fa1f9e32f5 ("dt-bindings: Fix array property constraints")
-> 
-> in the devicetree tree.
+Provide generic versions in <asm-generic/memory_model.h> to make these
+helpers more easily usable.
 
-Okay let this go thru dt tree, I have dropped it now
-Thanks for letting me know
+Changes since v2:
+ - spelling fixes
 
--- 
-~Vinod
+Changes since v1:
+ - use slightly less nested macros
+ - port a debug check from the old powerpc version to the generic code
+
+Diffstat:
+ arch/alpha/include/asm/io.h         |    1 -
+ arch/arc/include/asm/io.h           |    3 ---
+ arch/arm/include/asm/memory.h       |    6 ------
+ arch/arm64/include/asm/memory.h     |    6 ------
+ arch/csky/include/asm/page.h        |    3 ---
+ arch/hexagon/include/asm/page.h     |    6 ------
+ arch/loongarch/include/asm/page.h   |    3 ---
+ arch/m68k/include/asm/virtconvert.h |    3 ---
+ arch/microblaze/include/asm/page.h  |    1 -
+ arch/mips/include/asm/io.h          |    5 -----
+ arch/nios2/include/asm/io.h         |    3 ---
+ arch/openrisc/include/asm/page.h    |    2 --
+ arch/parisc/include/asm/page.h      |    1 -
+ arch/powerpc/include/asm/io.h       |   12 ------------
+ arch/riscv/include/asm/page.h       |    3 ---
+ arch/s390/include/asm/page.h        |    2 --
+ arch/sh/include/asm/page.h          |    1 -
+ arch/sparc/include/asm/page.h       |    2 --
+ arch/um/include/asm/pgtable.h       |    2 --
+ arch/x86/include/asm/io.h           |    5 -----
+ arch/xtensa/include/asm/page.h      |    1 -
+ include/asm-generic/memory_model.h  |   13 +++++++++++++
+ 22 files changed, 13 insertions(+), 71 deletions(-)
 
