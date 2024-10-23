@@ -1,585 +1,259 @@
-Return-Path: <linux-kernel+bounces-377952-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377956-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 358149AC8FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:33:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B8C99AC918
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:36:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8E258B2119B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:33:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07D29284397
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:36:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2120B1AB50D;
-	Wed, 23 Oct 2024 11:33:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D2C2C1AB539;
+	Wed, 23 Oct 2024 11:35:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="ZtcDrZpp"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="C1MCYWst"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 17389134BD;
-	Wed, 23 Oct 2024 11:33:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E851AAE25;
+	Wed, 23 Oct 2024 11:35:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683210; cv=none; b=P6M5hozqlVT8lhh4QRIkzNbPewzM2HH5hO6bZJ3RDZuE9bWOlSXwh2e5ETQtjbhi9v4NZYc03QAAs27sCqHigaNBiOftAtMDQMuNtSR381ZAI3CiUyB6OWssWvUJl3Y8/HMKssNxQe1e7Q1r+rDxlBC+b/36V7ti74RfcuPr/Pc=
+	t=1729683303; cv=none; b=IGVhJ1l78dEBEJbEOD+LK/d14h0Nf7GhCmja3ceU/qtNf964J18yPgCNnE514/201G7ro2aukMLeYuf+ZcF4PD+ZZW9VJS9m/9XzXZkelYJji/A1W3x8irlUG8Um8lhHRr+3leX3h7hoYUs9VZcRMxkbdKWC0y7fAQLCCtfGtso=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683210; c=relaxed/simple;
-	bh=AR9XGiFjVDLhO2gDokyFKzJo/8787We5zMpV5gisgYk=;
+	s=arc-20240116; t=1729683303; c=relaxed/simple;
+	bh=tysF3pbK3LQTPrnN635PyUIn7KkoweAqLE9SzYC0a8c=;
 	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=L9Cv5H0dMz4JAn9rzm5zenr/LMuGuj20ESGS1XYoTq6w4BO7NgvZt3vJ6kighVm1st+fv5BgbGFdaW4JX1N6cwa/OABP01Oko4Rc07whV4XeSkdQcWzdYnEwVRYj2G5MGiLmZyBEnlB8J35kfnenHwl/srXzVd01dsZvhZE0Px0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=ZtcDrZpp; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9eYPM029341;
-	Wed, 23 Oct 2024 11:33:18 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	JS3M4df5AWBBpDOZv01a/BFqNc1jN452tQdzP1MryYA=; b=ZtcDrZppSna61baD
-	/qInz54JlhxDx+wURn4nuDNiKdv7Th8Mjyuw2u+LsrIUf1+xDx+IFx/iqXlY6/+A
-	IdvDqNp5n2Uai46gLq7dRuhLMJdZSlpKU8oP/h270kuFPlOwhwyKuMGgxEv/3lzz
-	Md2mfnoCt/z1SgDtX5d9NhcdEeV6JblfrNCbgNbWgNRMSwpBHc4FqsmSAsy3+dHY
-	+ktdsKm+UTt6MCMELhOd+pHWtEUxAprLwfbdRCp3nK8XcCPd1qyzrlHU2Uic0j8M
-	zAE2yQuQK9eQ23NqTSGOzvAn10G/CmTh9G9xHbtYdBVf7j1sk7NP69gHRqKbP66l
-	yBLfBQ==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w21ux-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 11:33:17 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NBXHa8027154
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 11:33:17 GMT
-Received: from [10.216.48.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 04:33:13 -0700
-Message-ID: <3854c3f2-6ccd-e425-ab36-3610804356c7@quicinc.com>
-Date: Wed, 23 Oct 2024 17:03:10 +0530
+	 In-Reply-To:Content-Type; b=MCuYE77lqns5CgWNk5LikTHVGnscOZCJY28acWAnra4F4jYNDcZp5vvmCBCQcH5dbU05v6vsukNZb5N21VIbIF5VuCAGR0lYOFiV1xll+XhK4fnIxD6BO0NhFHD23R+n0fuuH5yI9+IJvwwBaCWcP40YOKCI8c1aIr3oID7x8po=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=C1MCYWst; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49NBYtIb110748;
+	Wed, 23 Oct 2024 06:34:55 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729683295;
+	bh=1FiYguMGThHNLA9kFA0q7R/MPGzxBFfJ6/L73aEij8c=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=C1MCYWstdBABU7XcD3rpLdWw36KQE7tpoCrmR1WF7FGNYxexKY40g8XdFwJTLqp2P
+	 9qscd7CnUXPbJx5WB9Eacv/xm3CEC4dBjiOkVeQhdLDwPPfiV3zcTO4smgxo2ivqPV
+	 h3zNK7rkEUrpe74KKHKJ8Iqx1VXMNoq/02nb2p74=
+Received: from DLEE100.ent.ti.com (dlee100.ent.ti.com [157.170.170.30])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49NBYtLQ026165
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 23 Oct 2024 06:34:55 -0500
+Received: from DLEE114.ent.ti.com (157.170.170.25) by DLEE100.ent.ti.com
+ (157.170.170.30) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
+ Oct 2024 06:34:54 -0500
+Received: from lelvsmtp6.itg.ti.com (10.180.75.249) by DLEE114.ent.ti.com
+ (157.170.170.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 23 Oct 2024 06:34:54 -0500
+Received: from [172.24.227.36] (a0497641-hp-z2-tower-g9-workstation-desktop-pc.dhcp.ti.com [172.24.227.36] (may be forged))
+	by lelvsmtp6.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49NBYocq076796;
+	Wed, 23 Oct 2024 06:34:50 -0500
+Message-ID: <674deca5-9697-40e2-abce-0d3a2193771c@ti.com>
+Date: Wed, 23 Oct 2024 17:04:49 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
- Thunderbird/102.13.0
-Subject: Re: [PATCH v4 09/28] media: iris: implement reqbuf ioctl with
- vb2_queue_setup
-Content-Language: en-US
-To: Hans Verkuil <hverkuil@xs4all.nl>,
-        Vikash Garodia
-	<quic_vgarodia@quicinc.com>,
-        Abhinav Kumar <quic_abhinavk@quicinc.com>,
-        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
-        Rob Herring <robh@kernel.org>,
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 11/12] arm64: dts: ti: k3-j721e-sk*: Add bootph-*
+ properties
+To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
         Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Philipp Zabel <p.zabel@pengutronix.de>
-CC: Sebastian Fricke <sebastian.fricke@collabora.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
- <20241014-qcom-video-iris-v4-v4-9-c5eaa4e9ab9e@quicinc.com>
- <72a21b67-2c2e-4106-a13d-690cd8c21156@xs4all.nl>
- <b372c330-e9fb-3b23-d628-cc7add7dc425@quicinc.com>
- <89a3ad18-d62e-40ec-92af-7587f308d0c5@xs4all.nl>
-From: Dikshita Agarwal <quic_dikshita@quicinc.com>
-In-Reply-To: <89a3ad18-d62e-40ec-92af-7587f308d0c5@xs4all.nl>
-Content-Type: text/plain; charset="UTF-8"
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Aniket Limaye <a-limaye@ti.com>,
+        Udit Kumar
+	<u-kumar1@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>, Andrew Davis <afd@ti.com>
+References: <20241023-b4-upstream-bootph-all-v5-0-a974d06370ab@ti.com>
+ <20241023-b4-upstream-bootph-all-v5-11-a974d06370ab@ti.com>
+From: Neha Malcom Francis <n-francis@ti.com>
+Content-Language: en-US
+In-Reply-To: <20241023-b4-upstream-bootph-all-v5-11-a974d06370ab@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: PmQtIRvIh6xnDI6jmFflik2u0cLa-Pmc
-X-Proofpoint-GUID: PmQtIRvIh6xnDI6jmFflik2u0cLa-Pmc
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230067
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+On 23/10/24 12:27, Manorit Chawdhry wrote:
+> Adds bootph-* properties to the leaf nodes to enable bootloaders to
+> utilise them.
+> 
+> Following adds bootph-* to:
+> - main_uart0, mcu_uart0(DM), wkup_uart0(TIFS) for Traces
+> - mmc1, usb0, usb1, ospi0 for enabling various bootmodes.
+> 
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+> ---
+>   arch/arm64/boot/dts/ti/k3-j721e-sk.dts | 18 ++++++++++++++++++
+>   1 file changed, 18 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> index 6285e8d94dde..69b3d1ed8a21 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> +++ b/arch/arm64/boot/dts/ti/k3-j721e-sk.dts
+> @@ -346,6 +346,7 @@ J721E_IOPAD(0x244, PIN_INPUT, 0) /* (R25) MMC1_DAT2 */
+>   			J721E_IOPAD(0x240, PIN_INPUT, 0) /* (R26) MMC1_DAT3 */
+>   			J721E_IOPAD(0x258, PIN_INPUT, 0) /* (P23) MMC1_SDCD */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	main_uart0_pins_default: main-uart0-default-pins {
+> @@ -355,6 +356,7 @@ J721E_IOPAD(0x1f4, PIN_OUTPUT, 0) /* (AB1) UART0_RTSn */
+>   			J721E_IOPAD(0x1e8, PIN_INPUT, 0) /* (AB2) UART0_RXD */
+>   			J721E_IOPAD(0x1ec, PIN_OUTPUT, 0) /* (AB3) UART0_TXD */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	main_uart1_pins_default: main-uart1-default-pins {
+> @@ -390,12 +392,14 @@ main_usbss0_pins_default: main-usbss0-default-pins {
+>   			J721E_IOPAD(0x290, PIN_OUTPUT, 0) /* (U6) USB0_DRVVBUS */
+>   			J721E_IOPAD(0x210, PIN_INPUT, 7) /* (W3) MCAN1_RX.GPIO1_3 */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	main_usbss1_pins_default: main-usbss1-default-pins {
+>   		pinctrl-single,pins = <
+>   			J721E_IOPAD(0x214, PIN_OUTPUT, 4) /* (V4) MCAN1_TX.USB1_DRVVBUS */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	main_csi_mux_sel_pins_default: main-csi-mux-sel-default-pins {
+> @@ -594,6 +598,7 @@ J721E_WKUP_IOPAD(0x24, PIN_INPUT, 0) /* (B22) MCU_OSPI0_D6 */
+>   			J721E_WKUP_IOPAD(0x28, PIN_INPUT, 0) /* (G21) MCU_OSPI0_D7 */
+>   			J721E_WKUP_IOPAD(0x8, PIN_INPUT, 0) /* (D21) MCU_OSPI0_DQS */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	vdd_mmc1_en_pins_default: vdd-mmc1-en-default-pins {
+> @@ -622,6 +627,7 @@ J721E_WKUP_IOPAD(0xf4, PIN_OUTPUT, 2)/* (D25) MCU_I3C0_SDA.MCU_UART0_RTSn */
+>   			J721E_WKUP_IOPAD(0xe4, PIN_INPUT, 0) /* (H28) WKUP_GPIO0_13.MCU_UART0_RXD */
+>   			J721E_WKUP_IOPAD(0xe0, PIN_OUTPUT, 0)/* (G29) WKUP_GPIO0_12.MCU_UART0_TXD */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	wkup_i2c0_pins_default: wkup-i2c0-default-pins {
+> @@ -629,6 +635,7 @@ wkup_i2c0_pins_default: wkup-i2c0-default-pins {
+>   			J721E_WKUP_IOPAD(0xf8, PIN_INPUT_PULLUP, 0) /* (J25) WKUP_I2C0_SCL */
+>   			J721E_WKUP_IOPAD(0xfc, PIN_INPUT_PULLUP, 0) /* (H24) WKUP_I2C0_SDA */
+>   		>;
+> +		bootph-all;
+>   	};
+>   
+>   	mcu_mcan0_pins_default: mcu-mcan0-default-pins {
+> @@ -657,6 +664,7 @@ &wkup_uart0 {
+>   	status = "reserved";
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&wkup_uart0_pins_default>;
+> +	bootph-all;
+>   };
+>   
+>   &wkup_i2c0 {
+> @@ -821,6 +829,7 @@ &mcu_uart0 {
+>   	status = "okay";
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&mcu_uart0_pins_default>;
+> +	bootph-all;
+>   };
+>   
+>   &main_uart0 {
+> @@ -829,6 +838,7 @@ &main_uart0 {
+>   	pinctrl-0 = <&main_uart0_pins_default>;
+>   	/* Shared with ATF on this platform */
+>   	power-domains = <&k3_pds 146 TI_SCI_PD_SHARED>;
+> +	bootph-all;
+>   };
+>   
+>   &main_uart1 {
+> @@ -844,6 +854,7 @@ &main_sdhci1 {
+>   	vqmmc-supply = <&vdd_sd_dv_alt>;
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&main_mmc1_pins_default>;
+> +	bootph-all;
+>   	ti,driver-strength-ohm = <50>;
+>   	disable-wp;
+>   };
+> @@ -908,6 +919,7 @@ partition@800000 {
+>   			partition@3fc0000 {
+>   				label = "ospi.phypattern";
+>   				reg = <0x3fc0000 0x40000>;
+> +				bootph-all;
+>   			};
+>   		};
+>   	};
+> @@ -1003,6 +1015,7 @@ &wkup_gpio0 {
+>   
+>   &usb_serdes_mux {
+>   	idle-states = <1>, <1>; /* USB0 to SERDES3, USB1 to SERDES2 */
+> +	bootph-all;
+>   };
+>   
+>   &serdes_ln_ctrl {
+> @@ -1012,6 +1025,7 @@ &serdes_ln_ctrl {
+>   		      <J721E_SERDES3_LANE0_USB3_0_SWAP>, <J721E_SERDES3_LANE1_USB3_0>,
+>   		      <J721E_SERDES4_LANE0_EDP_LANE0>, <J721E_SERDES4_LANE1_EDP_LANE1>,
+>   		      <J721E_SERDES4_LANE2_EDP_LANE2>, <J721E_SERDES4_LANE3_EDP_LANE3>;
+> +	bootph-all;
+>   };
+>   
+>   &serdes_wiz3 {
+> @@ -1050,6 +1064,7 @@ &mhdp {
+>   &usbss0 {
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&main_usbss0_pins_default>;
+> +	bootph-all;
+>   	ti,vbus-divider;
+>   };
+>   
+> @@ -1058,6 +1073,7 @@ &usb0 {
+>   	maximum-speed = "super-speed";
+>   	phys = <&serdes3_usb_link>;
+>   	phy-names = "cdns3,usb3-phy";
+> +	bootph-all;
+>   };
+>   
+>   &serdes2 {
+> @@ -1073,6 +1089,7 @@ serdes2_usb_link: phy@1 {
+>   &usbss1 {
+>   	pinctrl-names = "default";
+>   	pinctrl-0 = <&main_usbss1_pins_default>;
+> +	bootph-all;
+>   	ti,vbus-divider;
+>   };
+>   
+> @@ -1081,6 +1098,7 @@ &usb1 {
+>   	maximum-speed = "super-speed";
+>   	phys = <&serdes2_usb_link>;
+>   	phy-names = "cdns3,usb3-phy";
+> +	bootph-all;
+>   };
+>   
+>   &mcu_cpsw {
+> 
 
+Reviewed-by: Neha Malcom Francis <n-francis@ti.com>
 
-On 10/23/2024 4:55 PM, Hans Verkuil wrote:
-> On 23/10/2024 12:17, Dikshita Agarwal wrote:
->>
->>
->> On 10/23/2024 3:29 PM, Hans Verkuil wrote:
->>> On 14/10/2024 11:07, Dikshita Agarwal wrote:
->>>> Implement reqbuf IOCTL op and vb2_queue_setup vb2 op
->>>> in the driver with necessary hooks.
->>>>
->>>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
->>>> ---
->>>>  drivers/media/platform/qcom/iris/Makefile          |   7 +-
->>>>  drivers/media/platform/qcom/iris/iris_buffer.c     | 119 +++++++++++++++++++++
->>>>  drivers/media/platform/qcom/iris/iris_buffer.h     | 107 ++++++++++++++++++
->>>>  drivers/media/platform/qcom/iris/iris_core.h       |   6 ++
->>>>  drivers/media/platform/qcom/iris/iris_hfi_common.h |   3 +
->>>>  .../platform/qcom/iris/iris_hfi_gen1_command.c     |  40 +++++++
->>>>  .../platform/qcom/iris/iris_hfi_gen1_defines.h     |  47 +++++++-
->>>>  .../platform/qcom/iris/iris_hfi_gen1_response.c    |  79 +++++++++++++-
->>>>  drivers/media/platform/qcom/iris/iris_hfi_gen2.h   |   5 +
->>>>  .../platform/qcom/iris/iris_hfi_gen2_command.c     | 105 ++++++++++++++++++
->>>>  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |  34 ++++++
->>>>  .../platform/qcom/iris/iris_hfi_gen2_packet.c      |  39 +++++++
->>>>  .../platform/qcom/iris/iris_hfi_gen2_packet.h      |   7 ++
->>>>  .../platform/qcom/iris/iris_hfi_gen2_response.c    | 108 ++++++++++++++++++-
->>>>  drivers/media/platform/qcom/iris/iris_instance.h   |  22 ++++
->>>>  .../platform/qcom/iris/iris_platform_common.h      |   5 +
->>>>  .../platform/qcom/iris/iris_platform_sm8550.c      |   6 ++
->>>>  drivers/media/platform/qcom/iris/iris_probe.c      |   2 +
->>>>  drivers/media/platform/qcom/iris/iris_utils.c      |  51 +++++++++
->>>>  drivers/media/platform/qcom/iris/iris_utils.h      |  38 +++++++
->>>>  drivers/media/platform/qcom/iris/iris_vb2.c        |  77 +++++++++++++
->>>>  drivers/media/platform/qcom/iris/iris_vb2.h        |  12 +++
->>>>  drivers/media/platform/qcom/iris/iris_vdec.c       |  58 ++++++++++
->>>>  drivers/media/platform/qcom/iris/iris_vdec.h       |  14 +++
->>>>  drivers/media/platform/qcom/iris/iris_vidc.c       |  78 ++++++++++++++
->>>>  drivers/media/platform/qcom/iris/iris_vpu_buffer.c |  19 ++++
->>>>  drivers/media/platform/qcom/iris/iris_vpu_buffer.h |  15 +++
->>>>  27 files changed, 1095 insertions(+), 8 deletions(-)
->>>>
->>>
->>> <snip>
->>>
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vb2.c b/drivers/media/platform/qcom/iris/iris_vb2.c
->>>> new file mode 100644
->>>> index 000000000000..f89891e52fde
->>>> --- /dev/null
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vb2.c
->>>> @@ -0,0 +1,77 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#include "iris_buffer.h"
->>>> +#include "iris_instance.h"
->>>> +#include "iris_vb2.h"
->>>> +#include "iris_vpu_buffer.h"
->>>> +
->>>> +int iris_vb2_queue_setup(struct vb2_queue *q,
->>>> +			 unsigned int *num_buffers, unsigned int *num_planes,
->>>> +			 unsigned int sizes[], struct device *alloc_devs[])
->>>> +{
->>>> +	enum iris_buffer_type buffer_type = 0;
->>>> +	struct iris_buffers *buffers;
->>>> +	struct iris_inst *inst;
->>>> +	struct iris_core *core;
->>>> +	struct v4l2_format *f;
->>>> +	int ret = 0;
->>>> +
->>>> +	inst = vb2_get_drv_priv(q);
->>>> +
->>>> +	mutex_lock(&inst->lock);
->>>> +
->>>> +	core = inst->core;
->>>> +	f = V4L2_TYPE_IS_OUTPUT(q->type) ? inst->fmt_src : inst->fmt_dst;
->>>> +
->>>> +	if (*num_planes) {
->>>> +		if (*num_planes != f->fmt.pix_mp.num_planes ||
->>>> +		    sizes[0] < f->fmt.pix_mp.plane_fmt[0].sizeimage) {
->>>> +			ret = -EINVAL;
->>>> +			goto unlock;
->>>> +		}
->>>
->>> If *num_planes is set, then there are already buffers allocated and you are
->>> called from VIDIOC_CREATE_BUFS. That should just do a goto unlock here, since
->>> it is always OK to add more buffers as long as they are sufficiently large.
->>>
->> Got it.
->> But In that case, size check should still be there right? to return error
->> if buffer size if not sufficient.
-> 
-> Definitely, that is required.
-> 
->>>> +	}
->>>> +
->>>> +	buffer_type = iris_v4l2_type_to_driver(q->type);
->>>> +	if (buffer_type == -EINVAL) {
->>>> +		ret = -EINVAL;
->>>> +		goto unlock;
->>>> +	}
->>>> +
->>>> +	if (!inst->once_per_session_set) {
->>>> +		inst->once_per_session_set = true;
->>>> +
->>>> +		ret = core->hfi_ops->session_open(inst);
->>>> +		if (ret) {
->>>> +			ret = -EINVAL;
->>>> +			dev_err(core->dev, "session open failed\n");
->>>> +			goto unlock;
->>>> +		}
->>>> +	}
->>>> +
->>>> +	buffers = &inst->buffers[buffer_type];
->>>> +	if (!buffers) {
->>>> +		ret = -EINVAL;
->>>> +		goto unlock;
->>>> +	}
->>>> +
->>>> +	buffers->min_count = iris_vpu_buf_count(inst, buffer_type);
->>>> +	if (*num_buffers < buffers->min_count)
->>>> +		*num_buffers = buffers->min_count;
->>>
->>> This doesn't look right. Typically you would set the min_reqbufs_allocation
->>> field in vb2_queue before calling vb2_queue_init.
->>>
->> We are not setting this field currently in queue_init, will set this field
->> with minimum buffer requirement and remove this check from here.
->>
->>>> +	buffers->actual_count = *num_buffers;
->>>> +	*num_planes = 1;
->>>> +
->>>> +	buffers->size = iris_get_buffer_size(inst, buffer_type);
->>>> +
->>>> +	if (sizes[0] < buffers->size) {
->>>> +		f->fmt.pix_mp.plane_fmt[0].sizeimage = buffers->size;
->>>> +		sizes[0] = f->fmt.pix_mp.plane_fmt[0].sizeimage;
->>>> +	}
->>>> +
->>>> +unlock:
->>>> +	mutex_unlock(&inst->lock);
->>>> +
->>>> +	return ret;
->>>> +}
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vb2.h b/drivers/media/platform/qcom/iris/iris_vb2.h
->>>> new file mode 100644
->>>> index 000000000000..78157a97b86e
->>>> --- /dev/null
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vb2.h
->>>> @@ -0,0 +1,12 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#ifndef _IRIS_VB2_H_
->>>> +#define _IRIS_VB2_H_
->>>> +
->>>> +int iris_vb2_queue_setup(struct vb2_queue *q,
->>>> +			 unsigned int *num_buffers, unsigned int *num_planes,
->>>> +			 unsigned int sizes[], struct device *alloc_devs[]);
->>>> +#endif
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
->>>> new file mode 100644
->>>> index 000000000000..7d1ef31c7c44
->>>> --- /dev/null
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
->>>> @@ -0,0 +1,58 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#include "iris_buffer.h"
->>>> +#include "iris_instance.h"
->>>> +#include "iris_vdec.h"
->>>> +#include "iris_vpu_buffer.h"
->>>> +
->>>> +#define DEFAULT_WIDTH 320
->>>> +#define DEFAULT_HEIGHT 240
->>>> +
->>>> +void iris_vdec_inst_init(struct iris_inst *inst)
->>>> +{
->>>> +	struct v4l2_format *f;
->>>> +
->>>> +	inst->fmt_src  = kzalloc(sizeof(*inst->fmt_src), GFP_KERNEL);
->>>> +	inst->fmt_dst  = kzalloc(sizeof(*inst->fmt_dst), GFP_KERNEL);
->>>> +
->>>> +	inst->fw_min_count = MIN_BUFFERS;
->>>> +
->>>> +	f = inst->fmt_src;
->>>> +	f->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
->>>> +	f->fmt.pix_mp.width = DEFAULT_WIDTH;
->>>> +	f->fmt.pix_mp.height = DEFAULT_HEIGHT;
->>>> +	f->fmt.pix_mp.pixelformat = V4L2_PIX_FMT_H264;
->>>> +	f->fmt.pix_mp.num_planes = 1;
->>>> +	f->fmt.pix_mp.plane_fmt[0].bytesperline = 0;
->>>> +	f->fmt.pix_mp.plane_fmt[0].sizeimage = iris_get_buffer_size(inst, BUF_INPUT);
->>>> +	f->fmt.pix_mp.field = V4L2_FIELD_NONE;
->>>> +	inst->buffers[BUF_INPUT].min_count = iris_vpu_buf_count(inst, BUF_INPUT);
->>>> +	inst->buffers[BUF_INPUT].actual_count = inst->buffers[BUF_INPUT].min_count;
->>>> +	inst->buffers[BUF_INPUT].size = f->fmt.pix_mp.plane_fmt[0].sizeimage;
->>>> +
->>>> +	f = inst->fmt_dst;
->>>> +	f->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
->>>> +	f->fmt.pix_mp.pixelformat = V4L2_PIX_FMT_NV12;
->>>> +	f->fmt.pix_mp.width = ALIGN(DEFAULT_WIDTH, 128);
->>>> +	f->fmt.pix_mp.height = ALIGN(DEFAULT_HEIGHT, 32);
->>>> +	f->fmt.pix_mp.num_planes = 1;
->>>> +	f->fmt.pix_mp.plane_fmt[0].bytesperline = ALIGN(DEFAULT_WIDTH, 128);
->>>> +	f->fmt.pix_mp.plane_fmt[0].sizeimage = iris_get_buffer_size(inst, BUF_OUTPUT);
->>>> +	f->fmt.pix_mp.field = V4L2_FIELD_NONE;
->>>> +	f->fmt.pix_mp.colorspace = V4L2_COLORSPACE_DEFAULT;
->>>> +	f->fmt.pix_mp.xfer_func = V4L2_XFER_FUNC_DEFAULT;
->>>> +	f->fmt.pix_mp.ycbcr_enc = V4L2_YCBCR_ENC_DEFAULT;
->>>> +	f->fmt.pix_mp.quantization = V4L2_QUANTIZATION_DEFAULT;
->>>> +	inst->buffers[BUF_OUTPUT].min_count = iris_vpu_buf_count(inst, BUF_OUTPUT);
->>>> +	inst->buffers[BUF_OUTPUT].actual_count = inst->buffers[BUF_OUTPUT].min_count;
->>>> +	inst->buffers[BUF_OUTPUT].size = f->fmt.pix_mp.plane_fmt[0].sizeimage;
->>>> +}
->>>> +
->>>> +void iris_vdec_inst_deinit(struct iris_inst *inst)
->>>> +{
->>>> +	kfree(inst->fmt_dst);
->>>> +	kfree(inst->fmt_src);
->>>> +}
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
->>>> new file mode 100644
->>>> index 000000000000..0324d7f796dd
->>>> --- /dev/null
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
->>>> @@ -0,0 +1,14 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#ifndef _IRIS_VDEC_H_
->>>> +#define _IRIS_VDEC_H_
->>>> +
->>>> +struct iris_inst;
->>>> +
->>>> +void iris_vdec_inst_init(struct iris_inst *inst);
->>>> +void iris_vdec_inst_deinit(struct iris_inst *inst);
->>>> +
->>>> +#endif
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
->>>> index b8654e73f516..b1a9f0b5380d 100644
->>>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
->>>> @@ -9,6 +9,8 @@
->>>>  
->>>>  #include "iris_vidc.h"
->>>>  #include "iris_instance.h"
->>>> +#include "iris_vdec.h"
->>>> +#include "iris_vb2.h"
->>>>  #include "iris_platform_common.h"
->>>>  
->>>>  #define IRIS_DRV_NAME "iris_driver"
->>>> @@ -28,6 +30,38 @@ static void iris_v4l2_fh_deinit(struct iris_inst *inst)
->>>>  	v4l2_fh_exit(&inst->fh);
->>>>  }
->>>>  
->>>> +static void iris_add_session(struct iris_inst *inst)
->>>> +{
->>>> +	struct iris_core *core = inst->core;
->>>> +	struct iris_inst *iter;
->>>> +	u32 count = 0;
->>>> +
->>>> +	mutex_lock(&core->lock);
->>>> +
->>>> +	list_for_each_entry(iter, &core->instances, list)
->>>> +		count++;
->>>> +
->>>> +	if (count < core->iris_platform_data->max_session_count)
->>>> +		list_add_tail(&inst->list, &core->instances);
->>>> +
->>>> +	mutex_unlock(&core->lock);
->>>> +}
->>>> +
->>>> +static void iris_remove_session(struct iris_inst *inst)
->>>> +{
->>>> +	struct iris_core *core = inst->core;
->>>> +	struct iris_inst *iter, *temp;
->>>> +
->>>> +	mutex_lock(&core->lock);
->>>> +	list_for_each_entry_safe(iter, temp, &core->instances, list) {
->>>> +		if (iter->session_id == inst->session_id) {
->>>> +			list_del_init(&iter->list);
->>>> +			break;
->>>> +		}
->>>> +	}
->>>> +	mutex_unlock(&core->lock);
->>>> +}
->>>> +
->>>>  static inline struct iris_inst *iris_get_inst(struct file *filp, void *fh)
->>>>  {
->>>>  	return container_of(filp->private_data, struct iris_inst, fh);
->>>> @@ -59,7 +93,9 @@ iris_m2m_queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_
->>>>  	src_vq->type = V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE;
->>>>  	src_vq->io_modes = VB2_MMAP | VB2_DMABUF;
->>>>  	src_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
->>>> +	src_vq->ops = inst->core->iris_vb2_ops;
->>>>  	src_vq->drv_priv = inst;
->>>> +	src_vq->buf_struct_size = sizeof(struct iris_buffer);
->>>>  	src_vq->dev = inst->core->dev;
->>>>  	src_vq->lock = &inst->ctx_q_lock;
->>>>  	ret = vb2_queue_init(src_vq);
->>>> @@ -69,7 +105,9 @@ iris_m2m_queue_init(void *priv, struct vb2_queue *src_vq, struct vb2_queue *dst_
->>>>  	dst_vq->type = V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE;
->>>>  	dst_vq->io_modes = VB2_MMAP | VB2_DMABUF;
->>>>  	dst_vq->timestamp_flags = V4L2_BUF_FLAG_TIMESTAMP_COPY;
->>>> +	dst_vq->ops = inst->core->iris_vb2_ops;
->>>>  	dst_vq->drv_priv = inst;
->>>> +	dst_vq->buf_struct_size = sizeof(struct iris_buffer);
->>>>  	dst_vq->dev = inst->core->dev;
->>>>  	dst_vq->lock = &inst->ctx_q_lock;
->>>>  
->>>> @@ -100,8 +138,11 @@ int iris_open(struct file *filp)
->>>>  		return -ENOMEM;
->>>>  
->>>>  	inst->core = core;
->>>> +	inst->session_id = hash32_ptr(inst);
->>>>  
->>>> +	mutex_init(&inst->lock);
->>>>  	mutex_init(&inst->ctx_q_lock);
->>>> +	init_completion(&inst->completion);
->>>>  
->>>>  	iris_v4l2_fh_init(inst);
->>>>  
->>>> @@ -117,6 +158,10 @@ int iris_open(struct file *filp)
->>>>  		goto fail_m2m_release;
->>>>  	}
->>>>  
->>>> +	iris_vdec_inst_init(inst);
->>>> +
->>>> +	iris_add_session(inst);
->>>> +
->>>>  	inst->fh.m2m_ctx = inst->m2m_ctx;
->>>>  	filp->private_data = &inst->fh;
->>>>  
->>>> @@ -127,19 +172,42 @@ int iris_open(struct file *filp)
->>>>  fail_v4l2_fh_deinit:
->>>>  	iris_v4l2_fh_deinit(inst);
->>>>  	mutex_destroy(&inst->ctx_q_lock);
->>>> +	mutex_destroy(&inst->lock);
->>>>  	kfree(inst);
->>>>  
->>>>  	return ret;
->>>>  }
->>>>  
->>>> +static void iris_session_close(struct iris_inst *inst)
->>>> +{
->>>> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
->>>> +	bool wait_for_response = true;
->>>> +	int ret;
->>>> +
->>>> +	reinit_completion(&inst->completion);
->>>> +
->>>> +	ret = hfi_ops->session_close(inst);
->>>> +	if (ret)
->>>> +		wait_for_response = false;
->>>> +
->>>> +	if (wait_for_response)
->>>> +		iris_wait_for_session_response(inst);
->>>> +}
->>>> +
->>>>  int iris_close(struct file *filp)
->>>>  {
->>>>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
->>>>  
->>>>  	v4l2_m2m_ctx_release(inst->m2m_ctx);
->>>>  	v4l2_m2m_release(inst->m2m_dev);
->>>> +	mutex_lock(&inst->lock);
->>>> +	iris_vdec_inst_deinit(inst);
->>>> +	iris_session_close(inst);
->>>>  	iris_v4l2_fh_deinit(inst);
->>>> +	iris_remove_session(inst);
->>>> +	mutex_unlock(&inst->lock);
->>>>  	mutex_destroy(&inst->ctx_q_lock);
->>>> +	mutex_destroy(&inst->lock);
->>>>  	kfree(inst);
->>>>  	filp->private_data = NULL;
->>>>  
->>>> @@ -155,7 +223,17 @@ static struct v4l2_file_operations iris_v4l2_file_ops = {
->>>>  	.mmap                           = v4l2_m2m_fop_mmap,
->>>>  };
->>>>  
->>>> +static const struct vb2_ops iris_vb2_ops = {
->>>> +	.queue_setup                    = iris_vb2_queue_setup,
->>>> +};
->>>> +
->>>> +static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
->>>> +	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
->>>
->>> Add create_bufs here as well. And you might also consider adding support for remove_bufs.
->>>
->>> (but perhaps this is done in later patches).
->>>
->> Right, we are implementing vidioc_create_bufs in later patches, but do we
->> need remove_bufs as well?
-> 
-> It makes sense for codecs. And you get it for free by just setting:
-> 
-> 	.vidioc_remove_bufs             = v4l2_m2m_ioctl_remove_bufs,
-> 
-> Up to you, though.
-> 
-> Regards,
-> 
-> 	Hans
-> 
-Sure, will check and do the needful.
->>
->>>> +};
->>>> +
->>>>  void iris_init_ops(struct iris_core *core)
->>>>  {
->>>>  	core->iris_v4l2_file_ops = &iris_v4l2_file_ops;
->>>> +	core->iris_vb2_ops = &iris_vb2_ops;
->>>> +	core->iris_v4l2_ioctl_ops = &iris_v4l2_ioctl_ops;
->>>>  }
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.c b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
->>>> new file mode 100644
->>>> index 000000000000..2402a33723ab
->>>> --- /dev/null
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.c
->>>> @@ -0,0 +1,19 @@
->>>> +// SPDX-License-Identifier: GPL-2.0-only
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#include "iris_instance.h"
->>>> +#include "iris_vpu_buffer.h"
->>>> +
->>>> +int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type)
->>>> +{
->>>> +	switch (buffer_type) {
->>>> +	case BUF_INPUT:
->>>> +		return MIN_BUFFERS;
->>>> +	case BUF_OUTPUT:
->>>> +		return inst->fw_min_count;
->>>> +	default:
->>>> +		return 0;
->>>> +	}
->>>> +}
->>>> diff --git a/drivers/media/platform/qcom/iris/iris_vpu_buffer.h b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
->>>> new file mode 100644
->>>> index 000000000000..f0f974cebd8a
->>>> --- /dev/null
->>>> +++ b/drivers/media/platform/qcom/iris/iris_vpu_buffer.h
->>>> @@ -0,0 +1,15 @@
->>>> +/* SPDX-License-Identifier: GPL-2.0-only */
->>>> +/*
->>>> + * Copyright (c) 2022-2024 Qualcomm Innovation Center, Inc. All rights reserved.
->>>> + */
->>>> +
->>>> +#ifndef _IRIS_VPU_BUFFER_H_
->>>> +#define _IRIS_VPU_BUFFER_H_
->>>> +
->>>> +struct iris_inst;
->>>> +
->>>> +#define MIN_BUFFERS			4
->>>> +
->>>> +int iris_vpu_buf_count(struct iris_inst *inst, enum iris_buffer_type buffer_type);
->>>> +
->>>> +#endif
->>>>
->>>
->>> Regards,
->>>
->>> 	Hans
->> Thanks,
->> Dikshita
-> 
+-- 
+Thanking You
+Neha Malcom Francis
 
