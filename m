@@ -1,48 +1,60 @@
-Return-Path: <linux-kernel+bounces-378006-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378005-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 173139AC9E4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:19:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31AA09AC9E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:19:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A7353283084
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:19:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CFDEF1F22A52
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:19:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D10EC1AC447;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 56D421ABEC2;
 	Wed, 23 Oct 2024 12:19:32 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aDCbbNn/"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78B2F19F13C;
-	Wed, 23 Oct 2024 12:19:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A765619E99E;
+	Wed, 23 Oct 2024 12:19:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729685972; cv=none; b=Lqv1AcsYjzp6KC6/rBD7wjzYESbfX8lfUkA6/Jg1ZOt2aKaIFjcvqGvm/M6BepNhMBlCy30y/rDwaTHgoZkQpNPtMxeUKR7lj4NQ19zuNYM2IM+iMNFFJj10oKBgulfGXh/QokxslTnHTl08A5HiigMXZXGSTJhYCxucmme+YZ0=
+	t=1729685971; cv=none; b=V9yIdljXUQMdE30urXapaPZcwHCT99+ZqZ8+18YxyGt1vaAk+ZoL0gwqXv9aQy4RnAgorFhUChuOF7wXDN8NyCKJGZTHduT4nkyJ5+4Hz1+whGA4pbI9MJ6ubiXslJkAm2UAwgiJMwQqE3L7co3NvPswXnrxNe/jwRDourXI/Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729685972; c=relaxed/simple;
-	bh=ZLSUev1bwzmlDdeEv/itjWCo/kEZ5BkvCurPAsz6XOg=;
+	s=arc-20240116; t=1729685971; c=relaxed/simple;
+	bh=Nel0teWPYV2DMRNkXDa1Z7k3Fl+vQmZbSDgEzb3yCgA=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ScZaQnYngUK4Xe4tVCRN90huCVzpmv8+w3NbW87lLgPMS4g1Xvh/71ycz1BB+VWcTzatbnaswBTJkG+yv1LsHwn0FZpfpX6D+F66DHyFSz5eyrbPNbgoPHWUrPyt1CGcIHWRP+QMqDUmfHOiuu9pKfhcyEvZUYBQbZ5bIk5va4k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id 0D20B227A88; Wed, 23 Oct 2024 14:19:25 +0200 (CEST)
-Date: Wed, 23 Oct 2024 14:19:24 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Christoph Hellwig <hch@lst.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 1/3] blk-mq: add non_owner variant of
- start_freeze/unfreeze queue APIs
-Message-ID: <20241023121924.GA28777@lst.de>
-References: <20241023095438.3451156-1-ming.lei@redhat.com> <20241023095438.3451156-2-ming.lei@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=awzo0ygOZ/sU85dmfoZbP+sOoTFDHdRx0ACXl1lunfysdf02picpbnHsDnbxBMd8DN79tRmg7y1LrVtdXUYH8hm2h5ZeAuI+fB4xzVb1EkXtlT9HSQT4obMR0EFAwc6MZzdEGwIabnVbPtFL+wnBIkgPV9pBzCd/DV6atghUw2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aDCbbNn/; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 857D2C4CEC6;
+	Wed, 23 Oct 2024 12:19:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729685971;
+	bh=Nel0teWPYV2DMRNkXDa1Z7k3Fl+vQmZbSDgEzb3yCgA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=aDCbbNn/kjW1k/LhjKlIjA++Na4cYYO4NvKJNHR9kQyafDU00+2yvsKUEsgFpoFFS
+	 E/CFZW5Tsq/ZsfSgWqLYnOcdrF0iMbKvEhbZA1B0hERNF4q46xLkKd4+IUhtCiyQOq
+	 WjRwl2676HBq7eOCgQxVdlWBH1UXObsg1jkAuHt6fHLjPFUMU22DzZtAjR56x+0rmj
+	 QwTnHqSVZhbI86S2NQgBbUZUFL//Ha50SAcCW/y0GCAKExUVbzFIzOWHqYkS941Gp2
+	 DzjP8EwL8eP3eHgDlaj2cfFsVLTx3uLhRDleZ0lzdC1GcpwFmh2CvyoAH0b7rtoB97
+	 h9+3CYG8MwSWA==
+Date: Wed, 23 Oct 2024 13:19:26 +0100
+From: Simon Horman <horms@kernel.org>
+To: "Matthieu Baerts (NGI0)" <matttbe@kernel.org>
+Cc: mptcp@lists.linux.dev, Mat Martineau <martineau@kernel.org>,
+	Geliang Tang <geliang@kernel.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Gregory Detal <gregory.detal@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org
+Subject: Re: [PATCH net 3/3] selftests: mptcp: list sysctl data
+Message-ID: <20241023121926.GR402847@kernel.org>
+References: <20241021-net-mptcp-sched-lock-v1-0-637759cf061c@kernel.org>
+ <20241021-net-mptcp-sched-lock-v1-3-637759cf061c@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -51,23 +63,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023095438.3451156-2-ming.lei@redhat.com>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <20241021-net-mptcp-sched-lock-v1-3-637759cf061c@kernel.org>
 
-> +/*
-> + * non_owner variant of blk_freeze_queue_start
-> + *
-> + * The queue needn't to be unfreeze in current task, and non-owner use is
-> + * fragile and easy to cause race, please try your best to avoid it
+On Mon, Oct 21, 2024 at 12:25:28PM +0200, Matthieu Baerts (NGI0) wrote:
+> Listing all the values linked to the MPTCP sysctl knobs was not
+> exercised in MPTCP test suite.
+> 
+> Let's do that to avoid any regressions, but also to have a kernel with a
+> debug kconfig verifying more assumptions. For the moment, we are not
+> interested by the output, only to avoid crashes and warnings.
+> 
+> Signed-off-by: Matthieu Baerts (NGI0) <matttbe@kernel.org>
 
-Maybe say:
+I am assuming that we are ok with expanding test coverage via net,
+which FWIIW, does seem reasonable to me.
 
- Unlike blk_freeze_queue_start, the queue doesn't need to be unfrozen
- by the same task.  This is fragile and should not be used if at all
- possible.
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Otherwise looks good:
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-
+...
 
