@@ -1,134 +1,168 @@
-Return-Path: <linux-kernel+bounces-378872-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378874-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1ABC9AD686
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:21:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5FD379AD691
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:22:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 124452838D4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:21:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1D783283F61
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:22:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EDCA1E7C10;
-	Wed, 23 Oct 2024 21:21:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B1551FE0EF;
+	Wed, 23 Oct 2024 21:22:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b="Az9ZJHMD"
-Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b="I0UqB5YY"
+Received: from sonic313-22.consmr.mail.bf2.yahoo.com (sonic313-22.consmr.mail.bf2.yahoo.com [74.6.133.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B1711DE2AE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:21:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50D861F76DE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=74.6.133.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718491; cv=none; b=NkYpx3pwzQJSL3Iu/fwfJPlAn/E1d/suY3WjScDx2DQ/71tUWYn4XtWYWv8ICLy1nDlbPHn4hdbjtEg/HSpo8mohlfgjNAtMWwRBmcom96oDHlwjDgfvSv20lekWxw0VXINIEBcQnJIlnhL+R6rUG2Xd9N6y1WUgB+kZ1iWxtdw=
+	t=1729718535; cv=none; b=hXbMUGD1K1bWhQ9MYBlMfWXgtaCD6UEATKNR5DTr185Q9im7MmmdcHl0qlwtKckAaBGkEgkVuJ2OwXpFIgpeNScvPJN5zJEJZMrs7WQ8nUCmPfwWZPO0ZYS6RrGx3nx5IBEaAXLJ8EnYcO2h5aSIChApmVxkc1o4FBA1gWvrtMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718491; c=relaxed/simple;
-	bh=JRcAZKD+I8w8/3Fv7UE0rYpbqBIZNz+DntRIdFr9Uug=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oGzd/a0YK2ub/tjMWsTX7AGasH4gJelBzp8YLZuIyi7UhSTTC64EeGmx6CfdSKFLPtHglTrdgbQxqp3W6ED7myaSrLrWfXyGhM0zH7vHqksmHoSfQwrKDC9MTxM8oRG9Xfx1rYPxEbv5PnKWULqBqfCDh3HedbjBykx5D4IBWIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com; spf=pass smtp.mailfrom=paul-moore.com; dkim=pass (2048-bit key) header.d=paul-moore.com header.i=@paul-moore.com header.b=Az9ZJHMD; arc=none smtp.client-ip=209.85.219.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=paul-moore.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=paul-moore.com
-Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e290d5f83bcso265845276.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:21:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=paul-moore.com; s=google; t=1729718488; x=1730323288; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=72UVV+2r/h+iMp+5rXpOpE6KXuW+xAaVxADIUv6H0bw=;
-        b=Az9ZJHMDjx52BwG8wFgOp/yyL4lASo8V9rnNDxIJVq15kJqQPTkJljszNn6C/iv4C0
-         PGIyNmESB7ck99dQ9UC5/BTHCJIMO1MwqFZ+YaNPGFXdjROSp079kSEp95r9N6bNrHzL
-         dQjgVFPXSJLzuU+EasB57DwkccOkvhDCPCUrLq1iw3RNK1IDC5cp2rnHlJkPYAIMvQ/B
-         YpVjhNinRok7OiHTszM+6KTjRlYm5UsYNVR0w8CxkYkaGqgCXHtZuTaB+CIf7U4EhIzc
-         yjiau7UMt65P+Lor8w00HGraorygK9m63TgbvruT/h3h/GRi/d4LfU8B1TKmpM5uDTxB
-         0lqA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729718488; x=1730323288;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=72UVV+2r/h+iMp+5rXpOpE6KXuW+xAaVxADIUv6H0bw=;
-        b=nYrYzx66zyuGEAJ3cOMfAOxz2ncqwhgAZtLtCJEkrMo/eolYivlFfHuvKUXCt0sYWE
-         gzLiMb4Iq9wZu8slV2rdd6DqmwGrGVqyuF33R8RIoh20p6BTLFOuwAD4euUHe0xC8Pqw
-         pLd38HSQBzLrPkhx2y9HSn2pqxUYcwhEcHxltxJpuoAXlhqLZ/GeBV3+uwdBH4JknLfH
-         JFbh6QrsNO7BO+P/FbojLP+MWGqNl3hGTinjlA7bjsbBpAAu+gn8nVEDWQ9nMizDnqOs
-         bqfrqKoYAOGKFAgwgvl9cE0uP1Fug9XLBmDWEajctRn5MeIcz/gDbB7cGkSuGNJUJrvA
-         9bBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVCdJJYBQITrz29tvbI5U3M7InJEqkFAXxus36/ml8QbJjW3NUjsfE586/h5nMqFzhrn4SUr/MViWheGkQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwQwamfJOpf7hrxu1B5icrDEMUgmiJTvF7SAD96cVxztO9SB6di
-	IO+Kwpsx+jNIzQ/8FlGUu7d5JNVY8gLK/xNByeXJ/hBYbYAeZqYV7w0PTVnRzUKIgpBBr3CREXm
-	HCoDdLHFdkFRz+eigibnfIQHy0oBY5Jx1sGe/
-X-Google-Smtp-Source: AGHT+IFBbjED2EqikbdKhShjtfVb5PRKFRyT8EjmGDbN4ros8SSqreVtmvDbJs34rwQZ69DrleLNnaVEWKWJEe87q7c=
-X-Received: by 2002:a05:6902:98f:b0:e20:2245:6f9c with SMTP id
- 3f1490d57ef6-e2e3a65ebc3mr4443602276.26.1729718488086; Wed, 23 Oct 2024
- 14:21:28 -0700 (PDT)
+	s=arc-20240116; t=1729718535; c=relaxed/simple;
+	bh=6VSn9m0+4gEQ/QemkSdtlH1FACIinNvkgPUOAlJPnQk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:References; b=N4h1ZfYMSzXGJtP+CNPaRTNkMOTZT1eJpnXWJ0f3gCSjbtlEMV69pcVXQ0BA0fUxSlZ0oup1HVuFXjno6ImA9i+YVdH8ldDBxAiRSdFxJVv7bnuPrBz8kHDDcMYUxSYr3TDl+BL+UdRw2EzmHXeRjT3MYB1j/SzNLpMl8FhTPdg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com; spf=none smtp.mailfrom=schaufler-ca.com; dkim=pass (2048-bit key) header.d=yahoo.com header.i=@yahoo.com header.b=I0UqB5YY; arc=none smtp.client-ip=74.6.133.196
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=schaufler-ca.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=schaufler-ca.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718524; bh=3qg/Mtih7gPvp6NyFPLR4Rs2mLIKzdNL25OcNztnx2I=; h=From:To:Cc:Subject:Date:References:From:Subject:Reply-To; b=I0UqB5YYeXK8/lVjDZk69SCVbmlZB5cUQYsfsdK4bXuZiT9vaqC7kxJ/j2GF4YeGwKXjQb7KaD+FlmEZi/TTM5xNkx2kOe5lKCI/EKgeWYgQuJx9a4kG8u13NO6QxVxmtefJ76bLeppDms0Vb/Q66k2rtC5N5XmdV+iVgbbAX8ONYxDJGq02rB6O+Oek6V8iinLqoDIlyz9uIW2I0r4l6GmtgLiP3p0hDUHqsfOxxNFyUhIyHUJb8qoEGfYFrr1q6DElq72vEBWm7LMoFO+atFs6idNKmipsMuaEYjd2jefti3YK/oDXxjI9JFO0mjl4H3nmlW+JcdeDNWdCz2qaeQ==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729718524; bh=DpOqfmqrutMNJNlWP4j9QWtg9YOcj8qMzHXGeJCw7DH=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=PKtT93bjVAeE6Ed/D/RoiGMOhgqeb5feFrQwfbquv+DmAEt2WTyex0QSK7ViAOxSpO+5+xg1FfSuFy7+o0/FARC1uVVcXyIYXmzMlZK0dhBfwN7BNjMq1apaRNf5ow368i4l9kWUlS0OmSVWYQ7XNj9t9Eq6b2RBixuND4et6eoGs+iL4nhX6SUfW7gKBEFMYygoULu0xHSbFr4++aUnntscDy4jDXx+8LYDN+6sxuYCIGC7EsoGAOPq1aCCrkCU998K6fYJ3pm4XoDb/SPruZi+4pQhQAmc4kiHgO4HiLIvCCz7u7256Jn6fzWKsKSc/bPfHAeV+eWHOAbbCp0zDQ==
+X-YMail-OSG: AZNQGCkVM1lC18jb2sMmPVhEat2tyNN8dwKODTN6VzbUXxK0H1V5EYHwQaDZffx
+ EERpTdR0NLzx14quO7sk_os9huiJsr.v90Yo6YiIMRqvWXsnrpeSEtU94PpSvEsA5edvGt7ItpUI
+ Vlk0xqn5Yn.vxO7.5AhJyDTfEtUDPqdH7ZhalcrCUJXh_hkO5hiZ30SMrLAN0oQodS_cSP_Tp42B
+ CpmCvbY6s_GJUMN2NTvE.1dqATikWp6PoX8VYa35Re8tWw0o1z9VoyZk21mdF0ySIYHAOG30.UGW
+ tBkZBuYxZz9OAqJK7OTG2WJd6b5JVZiA9csIh48GV.VGg4_XFvtlDKpPtiZK9BpNko0hw4KXXhtw
+ QOl24rjU6oCo13bGZf.1PrXGYxHkb8E3hlCFiBkrtRO0OZRWuVb0M5yvR4Ev8BKD3cZbEE.2No91
+ ZCRnyU8pQERQLMXRHkq4TI8rusRoFT9Eu2fzjlHlgAA9REaZSCNjb1d5VLuS4Gi8ZqIDbirupNEU
+ nIyPt3Lwvy7LopwUp4DkNCHSsIC8MashS7OVrwMazYY4fVghFGv2m25asb3Vybh86nrEBqBSIdbB
+ H88DTSet4sgVHctMhsjZJhqYNFWWer9GeQLL4RDB3hMxnIyxPNdkHpoxdn_1TvpZdFNZyWGyiU4.
+ 4a5fZHIQqAnuX_jJPIAFKO6nV7xPH1ZM8pzDEiYchiLSmpwXXXVtIxIkvgNU1yaP6IxwzjbPSg_Q
+ .gZEE_0J0lSwB4IrqmzKP264jsClSg7DOHRFqkGxR6enV1FtAdmG36zRKwMiiV50BXMEvARcSGzl
+ Ibaz02Mt1nPixPTd1itNhYXl365ZFX59rUOK7PPlR6Y0yTdItbRh.RB84yV5aOfUWeBpCPvxKcXz
+ 6eed1Z16SKTEkfEhBtgueThlLNBxKB78ldl7ao6L89pqtZ5qHLC_yq686IdlXktb99I9EifN4u2.
+ kztnlkIqxidGlx7cwK_hliW2lEHR8mZEasAmS4qzkIAUT_KxJsNdPJDMjwOdVFqHUVCPKZr7H9U3
+ KwBndkZIBGGuAXWxEeszUIyQ8IctcQzoD586ZIUO0RI_2WMWu_ZQrtHwuRx_bhsNDOM6TBPwwqgH
+ bkDlIea4NC.jQUvUDn7glQHJv4eAWyLuUU.be8JakiYFdqvd8Au6AtC9WpEJtGTPJM4grJfOE2Gn
+ 5nbPA0UUKEe3pJCPWyH5Vm0EC_i65ykn7kR0XqPo8cKH84.NtoqnzYUhHFYJKGCdU.qy.5R5a5XD
+ aVv8Kx4.rDhi1jxOKtfCfnN_VEFU0zGUAPoMM7VvF9I6Y1eC6kK05r.95V_mFpfyTg4LlhHxHVcL
+ NSdWz3GTr4kEPtxlTqROkvcXQScxUj0igHNZ5HyEfDSZXzQ7CMHMnbtEcTUUyObO0VVKHTlw2D98
+ 4LoGkfwo26uvc7iet55s1aPdeoe36uUkQKbjkWi4GDtVh7h.piXf9AC4HYIV4vHzCxIAZAFr8cco
+ fPe_Dw8VFhEz0HiVuxOBIKRlClG89pMQ7z4EkYYkRm98X6E8IWoyqIeIpLeaqRUzY_oT2YhIuR1A
+ rYUqVnLd637GUyodRTToEnKaPvFyF9qNNIp9ImGbfruwG_bufFwtp4cacciR0WAshUvfeaVUoHWS
+ mIO2SRPBGHh5oQPTzfsMPykAOz19xzrYWVi9XacdjDsdYWw36LJcA0XhNtL88KF4yfGu6GfEkxvj
+ NclvCqyLa5MT4Lovis68mbe7Iir.ZfhiDDAAjHRqmWnIQtfKLohDNbvGpgyXTeQVWYyEJFiLb5ZJ
+ k57xNmgkfZ9uM4aCA2WLFKNK2DTB62Q_kz3KY1CzYT1DrVgB9iUQzzsqL.EP7w665IJOYX0pa5xe
+ CTbeitbrCs2nQGmZrWNW.uCNT4iIEYETfWpHGbQE3UPzVe0na4L9MiRC4.uu8_vpj_1kemWiWDi8
+ pezHgV.IKFBCpbm2qytZsJ4utpmE4iHd8iR_1WMQZGduh23kYSWmempzxN4cFQZ5bMm3CM.dWe8z
+ hjhgsEWofciZ5HcQqEclWlXz0c0t3zqEqFZdoojOXJ8ImR57NBYPdmkkAIusnNpnDcYa0aC0SqX6
+ dspLkHMEMQkZi_Fkmu0sBWITF4sc2J6FXoY5JcJqF0JR6MpIWg2CdzBEZBxZcuuSE3nsxkaF_2uE
+ 4P2AW9xFMPaFG.epxYWXUN84QGxgZSVbM2.qmF5xV89YPG7pTtyMHlKb5HjyY5CPoD1.fUrX8ORP
+ IsXHSxAahLctdoWPNwTM7YOTRamYvDwUCZFCii4xVgdFjfSuBBzAPjxd_YKjB5ZLvCi74p0.xsBH
+ mQPi2J6r.fGfV.3DQxOnd1A--
+X-Sonic-MF: <casey@schaufler-ca.com>
+X-Sonic-ID: ef4f947b-0e71-4ba0-a253-5c2b5d6757af
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic313.consmr.mail.bf2.yahoo.com with HTTP; Wed, 23 Oct 2024 21:22:04 +0000
+Received: by hermes--production-gq1-5dd4b47f46-5xsmt (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 8a7972f72a0226c80fd86fd6bd5371c9;
+          Wed, 23 Oct 2024 21:22:01 +0000 (UTC)
+From: Casey Schaufler <casey@schaufler-ca.com>
+To: casey@schaufler-ca.com,
+	paul@paul-moore.com,
+	linux-security-module@vger.kernel.org
+Cc: jmorris@namei.org,
+	serge@hallyn.com,
+	keescook@chromium.org,
+	john.johansen@canonical.com,
+	penguin-kernel@i-love.sakura.ne.jp,
+	stephen.smalley.work@gmail.com,
+	linux-kernel@vger.kernel.org,
+	selinux@vger.kernel.org,
+	mic@digikod.net
+Subject: [PATCH v3 0/5] LSM: Replace secctx/len pairs with lsm_context
+Date: Wed, 23 Oct 2024 14:21:53 -0700
+Message-ID: <20241023212158.18718-1-casey@schaufler-ca.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022161009.982584-1-mic@digikod.net> <20241022161009.982584-2-mic@digikod.net>
- <7751320f-cad0-477a-bed0-923dadfcf1cd@roeck-us.net>
-In-Reply-To: <7751320f-cad0-477a-bed0-923dadfcf1cd@roeck-us.net>
-From: Paul Moore <paul@paul-moore.com>
-Date: Wed, 23 Oct 2024 17:21:16 -0400
-Message-ID: <CAHC9VhTH5FNnkZwOSZzRfE5jJTo=tHqvrcb11MwmJzQvquV8JQ@mail.gmail.com>
-Subject: Re: [RFC PATCH v2 01/14] lsm: Only build lsm_audit.c if CONFIG_AUDIT
- is set
-To: Guenter Roeck <linux@roeck-us.net>
-Cc: =?UTF-8?B?TWlja2HDq2wgU2FsYcO8bg==?= <mic@digikod.net>, 
-	Eric Paris <eparis@redhat.com>, =?UTF-8?Q?G=C3=BCnther_Noack?= <gnoack@google.com>, 
-	"Serge E . Hallyn" <serge@hallyn.com>, Ben Scarlato <akhna@google.com>, 
-	Casey Schaufler <casey@schaufler-ca.com>, Charles Zaffery <czaffery@roblox.com>, 
-	James Morris <jmorris@namei.org>, Jann Horn <jannh@google.com>, Jeff Xu <jeffxu@google.com>, 
-	Jorge Lucangeli Obes <jorgelo@google.com>, Kees Cook <kees@kernel.org>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Matt Bobrowski <mattbobrowski@google.com>, 
-	Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Praveen K Paladugu <prapal@linux.microsoft.com>, Robert Salvet <robert.salvet@roblox.com>, 
-	Shervin Oloumi <enlightened@google.com>, Song Liu <song@kernel.org>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, audit@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+References: <20241023212158.18718-1-casey.ref@schaufler-ca.com>
 
-On Wed, Oct 23, 2024 at 2:51=E2=80=AFPM Guenter Roeck <linux@roeck-us.net> =
-wrote:
->
-> On Tue, Oct 22, 2024 at 06:09:56PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> > When CONFIG_AUDIT is set, its CONFIG_NET dependency is also set, and th=
-e
-> > dev_get_by_index and init_net symbols (used by dump_common_audit_data)
-> > are found by the linker.  dump_common_audit_data() should then failed t=
-o
-> > build when CONFIG_NET is not set. However, because the compiler is
-> > smart, it knows that audit_log_start() always return NULL when
-> > !CONFIG_AUDIT, and it doesn't build the body of common_lsm_audit().  As
-> > a side effect, dump_common_audit_data() is not built and the linker
-> > doesn't error out because of missing symbols.
-> >
-> > Let's only build lsm_audit.o when CONFIG_AUDIT is set.
->
-> CONFIG_AUDIT and CONFIG_SECURITY are independent of each other.
-> With CONFIG_SECURITY=3Dn and CONFIG_AUDIT=3Dy, we now get:
+LSM: Replace secctx/len pairs with lsm_context
 
-Yes, unfortunately the error was seen during linux-next testing too.
-I'm removing patch 1/14 from lsm/dev now.
+Several of the Linux Security Module (LSM) interfaces use a pair of
+pointers for transmitting security context data and data length. The
+data passed is refered to as a security context.  While all existing
+modules provide nul terminated strings, there is no requirement that
+they to so. Hence, the length is necessary.
 
-> Error log:
-> arm-linux-gnueabi-ld: security/lsm_audit.o: in function `audit_log_lsm_da=
-ta':
-> security/lsm_audit.c:417:(.text+0x5e4): undefined reference to `lockdown_=
-reasons'
-> arm-linux-gnueabi-ld: security/lsm_audit.c:417:(.text+0x5e8): undefined r=
-eference to `lockdown_reasons'
-> make[3]: *** [scripts/Makefile.vmlinux:78: vmlinux] Error 1
-> make[2]: *** [Makefile:1178: vmlinux] Error 2
-> make[1]: *** [Makefile:224: __sub-make] Error 2
-> make: *** [Makefile:224: __sub-make] Error 2
+Security contexts are provided by a number of interfaces. The interface
+security_release_secctx() is used when the caller is finished with the
+data. Each of the security modules that provide security contexts manages
+them differently. This was safe in the past, because only one security
+module that provides security contexts is allowed to be active. To allow
+multiple active modules that use security contexts it is necessary to
+identify which security module created a security context. Adding a third
+pointer to the interfaces for the LSM identification is not appealing.
 
---=20
-paul-moore.com
+A new structure, lsm_context, is created for use in these interfaces.
+It includes three members: the data pointer, the data length and
+the LSM ID of its creator. The interfaces that create contexts and
+security_release_secctx() now use a pointer to an lsm_context instead
+of a pointer pair.
+
+The changes are mostly mechanical, and some scaffolding is used within
+the patch set to allow for smaller individual patches.
+
+This patch set depends on the patch set LSM: Move away from secids:
+        https://github.com/cschaufler/lsm-stacking.git#lsmprop-6.12-rc1-v4
+
+https://github.com/cschaufler/lsm-stacking.git#context-6.12-rc1-v3
+
+Revisons:
+	v3: Don't change NFS data storage format
+	    Retain argument alignments
+	    Set released context pointers to NULL
+        v2: Rebase for static calls in LSM infrastructure
+
+Casey Schaufler (5):
+  LSM: Ensure the correct LSM context releaser
+  LSM: Replace context+len with lsm_context
+  LSM: Use lsm_context in security_inode_getsecctx
+  LSM: lsm_context in security_dentry_init_security
+  LSM: secctx provider check on release
+
+ drivers/android/binder.c                | 25 +++++-----
+ fs/ceph/super.h                         |  3 +-
+ fs/ceph/xattr.c                         | 12 ++---
+ fs/fuse/dir.c                           | 35 +++++++-------
+ fs/nfs/nfs4proc.c                       | 22 ++++++---
+ fs/nfsd/nfs4xdr.c                       | 22 ++++-----
+ include/linux/lsm_hook_defs.h           | 13 +++--
+ include/linux/security.h                | 37 ++++++++++-----
+ include/net/scm.h                       | 12 ++---
+ kernel/audit.c                          | 33 +++++++------
+ kernel/auditsc.c                        | 27 +++++------
+ net/ipv4/ip_sockglue.c                  | 12 ++---
+ net/netfilter/nf_conntrack_netlink.c    | 16 +++----
+ net/netfilter/nf_conntrack_standalone.c | 11 ++---
+ net/netfilter/nfnetlink_queue.c         | 22 ++++-----
+ net/netlabel/netlabel_unlabeled.c       | 44 +++++++----------
+ net/netlabel/netlabel_user.c            | 10 ++--
+ security/apparmor/include/secid.h       |  7 ++-
+ security/apparmor/secid.c               | 34 +++++++------
+ security/security.c                     | 63 ++++++++++++-------------
+ security/selinux/hooks.c                | 50 ++++++++++++++------
+ security/smack/smack_lsm.c              | 49 +++++++++++--------
+ 22 files changed, 293 insertions(+), 266 deletions(-)
+
+-- 
+2.46.0
+
 
