@@ -1,186 +1,98 @@
-Return-Path: <linux-kernel+bounces-378244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E27499ACD1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:47:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6F0C9ACCFF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 72CE8B25726
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:46:59 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E61711C20D61
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:44:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97502212651;
-	Wed, 23 Oct 2024 14:32:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF20F20ADE4;
+	Wed, 23 Oct 2024 14:32:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hyTH+7EP"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="J/W2RePC"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E5DA5212643;
-	Wed, 23 Oct 2024 14:32:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ACF9F20A5D9;
+	Wed, 23 Oct 2024 14:32:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693951; cv=none; b=XMM+IUilz50BVieMUfMahrH/Mh4CMLx3bwtpJu4cIZ4x3fDMU4TUCS/zbRm2vC/jzWFZf7EKqz2abn4wMXRHELLB6jjut2m8xVJYtpSwzFaZ36Nt5b/jewckbnnWKBcHGcOgs7Q7xKqqn0WiyfipLyoNZjMvQBoV6Us1a1XV2Fg=
+	t=1729693931; cv=none; b=g/yLeKAEtgLxsFiiQ3DESlaJ7Vc7vOntlBpsh556m4Ue4Uv0h7HPelg8KxVe3myuQMnOeyNgdIDyUmuGXDxel3TXA6neRB+iQFaNRTwCJaD25WHY8obhgYDa/RqihWseQGsQ4y+QfAdHtAFdng1SmXzDQmMZeMvgObW7USbA5X8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693951; c=relaxed/simple;
-	bh=tOOD41nVgXP8XBFfFqbGOJwRj41r+Yqj/FNVwYtzep8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XfGMMzqznUK1TSCbdjz8OZyL1T9ZoL6mtuejGE3IL7Uqc3sgHbcCdE1ss1FM9KEq6iYgPT39iXwpROv9w8XMW4tdNf4TYK47PEnxbG1ESlEh+wDFT2/h7tbuKJ2B8W1amC7f872LbOJ8o2vGihwYtZK4W5+jCnlmxwJA7Tmgz60=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hyTH+7EP; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C779BC4CEE5;
-	Wed, 23 Oct 2024 14:32:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729693950;
-	bh=tOOD41nVgXP8XBFfFqbGOJwRj41r+Yqj/FNVwYtzep8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=hyTH+7EPMeuGrmT6PBQlaUKM6HNMKLVJRYU6SPITqlQalUQPDLj4P2spLJj/+M4bB
-	 bmI8GIeVl7EYkVizpg4hgqE36imeby4BN7y/Nymz0CVKPWNlG9yLq/ytkO0lzQeZkk
-	 lnCs23eTQ5Z5ATXyQxnQpfobB9wMuqVca37ORbtGl4MYmVaKM/ROqkQeqZ/fL96qjy
-	 ikUbxxFHYrId65cGmimmpst5f1QNo6thMyFk88Rf0rpfn6gME526jjWEDxMoTpjoS0
-	 wzN0ZEnZqkXT5lCadsheIiJUA3mex0LvTJF3ervB+lMfSQK3N+JhrOtMZXnrejPmX4
-	 XRMva0iVWgMfA==
-From: Sasha Levin <sashal@kernel.org>
-To: linux-kernel@vger.kernel.org,
-	stable@vger.kernel.org
-Cc: Nilay Shroff <nilay@linux.ibm.com>,
-	Christoph Hellwig <hch@lst.de>,
-	Keith Busch <kbusch@kernel.org>,
-	Sasha Levin <sashal@kernel.org>,
-	sagi@grimberg.me,
-	linux-nvme@lists.infradead.org
-Subject: [PATCH AUTOSEL 6.1 17/17] nvme: make keep-alive synchronous operation
-Date: Wed, 23 Oct 2024 10:31:56 -0400
-Message-ID: <20241023143202.2981992-17-sashal@kernel.org>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241023143202.2981992-1-sashal@kernel.org>
-References: <20241023143202.2981992-1-sashal@kernel.org>
+	s=arc-20240116; t=1729693931; c=relaxed/simple;
+	bh=1Aw1YYPKTor8fa/AfSMAmhwcPTIkzDMwkYyZMzB41TI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aokVn7TqOTSRJCAaDr5KZQEM5jxqkbANV6+zAvuxfsqj+rUYjSh53stYAXNZuSt3dge595chtTMnAljfH82+hwcJQJAWRLU88gM/fPmmxKsSl9jEOg+pynMU+3qvt4ufEClK8+0Fn8C1aE+szrpclbYEffHAg035EGatM7qgFQc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=J/W2RePC; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=st7qu5UokEHEesgocAQ0zrKfe0DY+ZCXHcQUXHppVyc=; b=J/W2RePCyEXPdnI/0AJZRR5WiN
+	r0oBCbMIAklsx4C5xn11SRlOSe97Oujl40j1YK5m3iJd5SNq4RcQqa4fdunqSptv72FLIF5uLHa0m
+	dIXiAPWJ0OEm0bgPTJDGnn3Z+6X2ZSRto5PARw0XboxrNK8aFglYeJePhs/W+oyaN6+Uwj2gloDfL
+	C6HrBWDYhMP52Q4gnajdRHQW9SF/Ot3Umhhk91i/owUIRjeCXwXJgQUpKlUf60M9u5B82U1Hr1sCA
+	+skwx1OUVBZKhOSCKrYr9wJ71tSEa0DMOJFHI4LcdTh61e42X5/+6OAjacUjCqpeMGIL83Tp5gHvV
+	cIQ0lM7A==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3cP7-00000008QA7-1az4;
+	Wed, 23 Oct 2024 14:32:05 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 7CD6330073F; Wed, 23 Oct 2024 16:32:04 +0200 (CEST)
+Date: Wed, 23 Oct 2024 16:32:04 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Cc: linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
+	oe-kbuild-all@lists.linux.dev, amadeuszx.slawinski@linux.intel.com,
+	Tony Nguyen <anthony.l.nguyen@intel.com>,
+	nex.sw.ncis.osdt.itp.upstreaming@intel.com, netdev@vger.kernel.org,
+	Markus Elfring <Markus.Elfring@web.de>,
+	Kees Cook <keescook@chromium.org>,
+	David Lechner <dlechner@baylibre.com>,
+	Dan Carpenter <error27@gmail.com>,
+	Andy Shevchenko <andriy.shevchenko@intel.com>,
+	Dmitry Torokhov <dmitry.torokhov@gmail.com>,
+	kernel test robot <lkp@intel.com>
+Subject: Re: [PATCH v3] cleanup: adjust scoped_guard() macros to avoid
+ potential warning
+Message-ID: <20241023143204.GB9767@noisy.programming.kicks-ass.net>
+References: <20241011121535.28049-1-przemyslaw.kitszel@intel.com>
+ <202410131151.SBnGQot0-lkp@intel.com>
+ <20241018105054.GB36494@noisy.programming.kicks-ass.net>
+ <a7eec76f-1fbc-4fef-9b6d-15b588eacecb@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-stable: review
-X-Patchwork-Hint: Ignore
-X-stable-base: Linux 6.1.114
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <a7eec76f-1fbc-4fef-9b6d-15b588eacecb@intel.com>
 
-From: Nilay Shroff <nilay@linux.ibm.com>
+On Wed, Oct 23, 2024 at 03:43:22PM +0200, Przemek Kitszel wrote:
+> On 10/18/24 12:50, Peter Zijlstra wrote:
+> > On Sun, Oct 13, 2024 at 12:01:24PM +0800, kernel test robot wrote:
 
-[ Upstream commit d06923670b5a5f609603d4a9fee4dec02d38de9c ]
+> > --- a/include/linux/cleanup.h
+> > +++ b/include/linux/cleanup.h
+> > @@ -323,7 +323,7 @@ static __maybe_unused const bool class_#
+> >    */
+> >   #define __scoped_guard(_name, _fail, _label, args...)				\
+> >   	for (CLASS(_name, scope)(args);	true; ({ goto _label; }))		\
+> > -		if (!__guard_ptr(_name)(&scope) && __is_cond_ptr(_name)) {	\
+> > +		if (__is_cond_ptr(_name) && !__guard_ptr(_name)(&scope)) {	\
+> 
+> but this will purge the attempt to call __guard_ptr(), and thus newer
+> lock ;) good that there is at least some comment above
 
-The nvme keep-alive operation, which executes at a periodic interval,
-could potentially sneak in while shutting down a fabric controller.
-This may lead to a race between the fabric controller admin queue
-destroy code path (invoked while shutting down controller) and hw/hctx
-queue dispatcher called from the nvme keep-alive async request queuing
-operation. This race could lead to the kernel crash shown below:
-
-Call Trace:
-    autoremove_wake_function+0x0/0xbc (unreliable)
-    __blk_mq_sched_dispatch_requests+0x114/0x24c
-    blk_mq_sched_dispatch_requests+0x44/0x84
-    blk_mq_run_hw_queue+0x140/0x220
-    nvme_keep_alive_work+0xc8/0x19c [nvme_core]
-    process_one_work+0x200/0x4e0
-    worker_thread+0x340/0x504
-    kthread+0x138/0x140
-    start_kernel_thread+0x14/0x18
-
-While shutting down fabric controller, if nvme keep-alive request sneaks
-in then it would be flushed off. The nvme_keep_alive_end_io function is
-then invoked to handle the end of the keep-alive operation which
-decrements the admin->q_usage_counter and assuming this is the last/only
-request in the admin queue then the admin->q_usage_counter becomes zero.
-If that happens then blk-mq destroy queue operation (blk_mq_destroy_
-queue()) which could be potentially running simultaneously on another
-cpu (as this is the controller shutdown code path) would forward
-progress and deletes the admin queue. So, now from this point onward
-we are not supposed to access the admin queue resources. However the
-issue here's that the nvme keep-alive thread running hw/hctx queue
-dispatch operation hasn't yet finished its work and so it could still
-potentially access the admin queue resource while the admin queue had
-been already deleted and that causes the above crash.
-
-This fix helps avoid the observed crash by implementing keep-alive as a
-synchronous operation so that we decrement admin->q_usage_counter only
-after keep-alive command finished its execution and returns the command
-status back up to its caller (blk_execute_rq()). This would ensure that
-fabric shutdown code path doesn't destroy the fabric admin queue until
-keep-alive request finished execution and also keep-alive thread is not
-running hw/hctx queue dispatch operation.
-
-Reviewed-by: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Nilay Shroff <nilay@linux.ibm.com>
-Signed-off-by: Keith Busch <kbusch@kernel.org>
-Signed-off-by: Sasha Levin <sashal@kernel.org>
----
- drivers/nvme/host/core.c | 17 +++++++----------
- 1 file changed, 7 insertions(+), 10 deletions(-)
-
-diff --git a/drivers/nvme/host/core.c b/drivers/nvme/host/core.c
-index dc25d91891327..92ffeb6605618 100644
---- a/drivers/nvme/host/core.c
-+++ b/drivers/nvme/host/core.c
-@@ -1231,10 +1231,9 @@ static void nvme_queue_keep_alive_work(struct nvme_ctrl *ctrl)
- 			   nvme_keep_alive_work_period(ctrl));
- }
- 
--static enum rq_end_io_ret nvme_keep_alive_end_io(struct request *rq,
--						 blk_status_t status)
-+static void nvme_keep_alive_finish(struct request *rq,
-+		blk_status_t status, struct nvme_ctrl *ctrl)
- {
--	struct nvme_ctrl *ctrl = rq->end_io_data;
- 	unsigned long flags;
- 	bool startka = false;
- 	unsigned long rtt = jiffies - (rq->deadline - rq->timeout);
-@@ -1252,13 +1251,11 @@ static enum rq_end_io_ret nvme_keep_alive_end_io(struct request *rq,
- 		delay = 0;
- 	}
- 
--	blk_mq_free_request(rq);
--
- 	if (status) {
- 		dev_err(ctrl->device,
- 			"failed nvme_keep_alive_end_io error=%d\n",
- 				status);
--		return RQ_END_IO_NONE;
-+		return;
- 	}
- 
- 	ctrl->ka_last_check_time = jiffies;
-@@ -1270,7 +1267,6 @@ static enum rq_end_io_ret nvme_keep_alive_end_io(struct request *rq,
- 	spin_unlock_irqrestore(&ctrl->lock, flags);
- 	if (startka)
- 		queue_delayed_work(nvme_wq, &ctrl->ka_work, delay);
--	return RQ_END_IO_NONE;
- }
- 
- static void nvme_keep_alive_work(struct work_struct *work)
-@@ -1279,6 +1275,7 @@ static void nvme_keep_alive_work(struct work_struct *work)
- 			struct nvme_ctrl, ka_work);
- 	bool comp_seen = ctrl->comp_seen;
- 	struct request *rq;
-+	blk_status_t status;
- 
- 	ctrl->ka_last_check_time = jiffies;
- 
-@@ -1301,9 +1298,9 @@ static void nvme_keep_alive_work(struct work_struct *work)
- 	nvme_init_request(rq, &ctrl->ka_cmd);
- 
- 	rq->timeout = ctrl->kato * HZ;
--	rq->end_io = nvme_keep_alive_end_io;
--	rq->end_io_data = ctrl;
--	blk_execute_rq_nowait(rq, false);
-+	status = blk_execute_rq(rq, false);
-+	nvme_keep_alive_finish(rq, status, ctrl);
-+	blk_mq_free_request(rq);
- }
- 
- static void nvme_start_keep_alive(struct nvme_ctrl *ctrl)
--- 
-2.43.0
-
+No, __guard_ptr() will only return a pointer, it has no action. The lock
+callback is in CLASS(_name, scope)(args).
 
