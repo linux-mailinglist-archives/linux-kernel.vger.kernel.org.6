@@ -1,101 +1,141 @@
-Return-Path: <linux-kernel+bounces-377478-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377477-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA97F9ABF70
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:57:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 275F79ABF6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:57:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 896AB281CCE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:57:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567441C20B26
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:57:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AB4022318;
-	Wed, 23 Oct 2024 06:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8546E14C5BF;
+	Wed, 23 Oct 2024 06:57:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="Ygv/In91"
-Received: from mail-pj1-f48.google.com (mail-pj1-f48.google.com [209.85.216.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsy/4TzI"
+Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D28114B06A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:57:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933FB22318;
+	Wed, 23 Oct 2024 06:57:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666663; cv=none; b=smWBiFWkARvsHZ9oomPQ/89NgvTIM4Sq4S4mgX/EjmAnijBPkfhCxOpt0gbYI43ZFGMkvi54k6Juz2FFq0OYEPfwIgDRMLmKGcxZuGAz0GfhHfRoST6mrJerphcReDieLyvhvoJ6LfdELf7Ut64I3tauMcoZii6WnKEG4HFDGZQ=
+	t=1729666635; cv=none; b=IVcueVnDzAAQi2HOm0P8v73DXh0iAeNYgwoVUPOUXFeMRFXLHfMLkRcNn/GUBZMu05R/fEOkTUMUIVW5rF9k9qGdCLVdJhoNFAB9SMdItPs6Nz5KxGg1GwkLLiPjjHLqW+lZLrIeB0VIDV/HLZEnFsypY2lJl/S5yAr1pC5+5eI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666663; c=relaxed/simple;
-	bh=+DJNWIZbVNn82qsQuzqolTkm6OylX+6kptnUPPo2n3U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=QfAQpnLBX/c7Yc0o1mDeVo/sIkEiV5ycPshOVNuWdDK1Q/t1XxwBHIIcZNq/0DfO4GvCkVYSzm4I9uhLUQCCM/0ScE0boMY7b9mDUBG7NsOmEGdQMFnTSV0RLKmDbnqemZMP4s3L5/lEHrBrkCa8bR18ta7cLznQalZHkgMq7U4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=Ygv/In91; arc=none smtp.client-ip=209.85.216.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f48.google.com with SMTP id 98e67ed59e1d1-2e2d1858cdfso4309569a91.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:57:42 -0700 (PDT)
+	s=arc-20240116; t=1729666635; c=relaxed/simple;
+	bh=VmCtvk6V8OmkJ5K/HWEg0c66PD8WlfznLpqAXnbKgG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=gx5E5oQxmC/UcKP8Zmjx0XFC3BS4OQU0bzLl723LDFU19U9vqQ7ZoeIwjbOlwXDMjAC5KKSL6lls0M7o4g9zycK4SLDmOzZACTMDgNBkkogb3IsaBekBL9uNxFoVMS2OzjN6FV7WffdBiLlBjDKli4z7KS9mjVROZUvT/wA1Tc4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lsy/4TzI; arc=none smtp.client-ip=209.85.210.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e93d551a3so4595678b3a.1;
+        Tue, 22 Oct 2024 23:57:14 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729666662; x=1730271462; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=aGURbA/qHkuvhmvaDTB3AAE8n+iTpH3OvqTtBmFgU3k=;
-        b=Ygv/In91UoNs/xZGt0vYQrcN9zI43rqwCgd3+HxV+cOwIVSBA1CXxW1xl6A9BTT9ut
-         olxiHr9EZMTSDpBaPTlJ63LjnEm6NHGyWBb8JsygeTkhToaPAzB53VC3IzzR7vgUmdU1
-         9vgyTzaT1Wq5ExRtjpXG9QyJvu6Xdi0+Ta8HGdrTCVBPcf5p4hkBrpwMRHfKP3IC2vFF
-         zHc5en6q1qYPinU5pIjdLmfLpsWZNlkv/ZHff2DsKS+io6o7cGLy8CjLZKFKXja8jBUQ
-         jeKVqkY7yMBnehTeDt2X1UBRcEYGT4rFH2bSC4hDUjUB+NCkPiAvGZWL7JPveDmGuLpF
-         O7cw==
+        d=gmail.com; s=20230601; t=1729666634; x=1730271434; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=OTIVgmSCTxAjeufxAhXv87pU0k2+WfMQxkIbDxZyExg=;
+        b=lsy/4TzIqO0IUO/PEKWBsOcfKKEwQn+sZpiCh8NsOKfCalkMLsHbRVXT2zZ2IL2kEG
+         9B7kwquTuado61+lJHdb4JqG30njsLVx8EdJbCkeno1JhVZ2m5hzIHfZ39jYDCLmclZj
+         vMpNTzKhbxHalEq/ALfyQrkFPkO8bHlNgqYH+nJosfTsnopo33kOnRmF5YnYfSVWkcWL
+         KiGorZtuY2UpnuCvJBFTOQfNcRnaOwjMp2ZFpqKXE+VxJ82ctrzw05tXwW3tV8qAeedB
+         rP64sVFoCCbSXCFw25UYrFSObu4ZkUbW3oMaTBXFDRQdsILQoUZTk9i48nYrhpuQo1Dy
+         ZAVQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729666662; x=1730271462;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=aGURbA/qHkuvhmvaDTB3AAE8n+iTpH3OvqTtBmFgU3k=;
-        b=Lpf06+758spLC8w/1NDEeesiTsfhnIZxKzRe66HGFSmGSZfPKnHpIB3dzGiOR10eYj
-         gLSmB9ASjwgt+LpYIr7fzCzg3zFmacTMLC5+tQB8HkC+aoy2L9hoUX6JRxu9TmcdcKey
-         HKKxx8JvVeCovrxEHAozXyfOaAtKIMI9uW5cAzjAGn3SR/1MotnZq3sGJ+GDBKOzDl15
-         K6sHE92IgLMvRZyL/2hr3nA8dmWYZCPWIWi70byOYe89Mo0PUtX79CITwH0qIps/PmEv
-         Q4saByP1aQYfcfNva41lvIeFoqW6NAvX93vjYXRrlsXUCXRgQBruuhqK09oeZ8+QG3ax
-         2i5g==
-X-Forwarded-Encrypted: i=1; AJvYcCUvXactNlGat//mxnq9PK8icKMLl/n++Pbw59ns1b112Ig4mbpXqiaZPMrn7yZkEvF35Vxxm1aqaAz24v0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx3jAfe0+Nh8wiq7OOoEOAInsELDYahNQPbEvY0a5ZmajOkGb9a
-	GU2wMcKeklOu5gq845x47kSh3HPkLvSNdqhE1vv9s6aBFTSBE5/kw3pJ0NChnqWyOcULi4Esuc2
-	mVdk9yiSj+uxWBW8hM76VnYrAcxpQRPe7nF35
-X-Google-Smtp-Source: AGHT+IEzIW4l3r51CWrL2LlpC9+Sdi5XdftU6GzooFfvIKhQDmOMb9aLs1JszBM7B3/dz4fbLSbHNrQjjSmV7B/tDBw=
-X-Received: by 2002:a17:90a:1149:b0:2e2:c406:ec8d with SMTP id
- 98e67ed59e1d1-2e76b6f1543mr1537207a91.31.1729666661435; Tue, 22 Oct 2024
- 23:57:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729666634; x=1730271434;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=OTIVgmSCTxAjeufxAhXv87pU0k2+WfMQxkIbDxZyExg=;
+        b=V/GP2MQirUajNjQVQm0O3TnoH6Po0DRzrjioj1D9TmIPrYXSEDb312mj9eCk+swKZT
+         MbL2O/uaGAtM3t7uPNnkPLjF43WaLEhPUU7J/M9DhzH0KtZwh+w8kwodd9PJzz3rioPj
+         KoOkyi/uZwyGC+PGLtAObmPD11UoIgLJBD29jhOSvKSrhxldQvnGvHIoKfgPmrj29FIF
+         1zJ+aPX3Tshfl45r0CX4DYlW3p71y/2uc0ab8Ofu1T+aCNMYw4GXXlTyXYJN1VajG8qf
+         OATSl6cvidOqCNuSWmAJJzEZqyUu77XA+sxwVwnH4kfkBGJ4Lf3120tmtB5XfbprtOgX
+         K+7Q==
+X-Forwarded-Encrypted: i=1; AJvYcCW0aTZagB/w/AFktKjn2536sQBMG/Q+jUOFMtfrNRdrb5pIqdycEI/nOzBbSk/z8Chj2/CKBt1FlAsrUxk=@vger.kernel.org, AJvYcCWa+lZVwLB2UdQL//O+syUjLkd6J44IEL8hQurXAXdCS6ImjRDCPQV417RkDKVdHa9oFzMr5rIub90WCOU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxEDMkfalsum0IW5fF4eN4KAYzqm4IkO6NmBmhObcR2Qqmv5tQ
+	Fym7a4i0MNTk3iKeF2x7Z6HBbTZqF/Y8Ef1Rp0GXL+pSRrZ1AWjY
+X-Google-Smtp-Source: AGHT+IFIDWh7p+QxP4vOovIpqinmoWSh3kYTxqjFxl6iJptJMHcOZpQbK6c8z/jqu8AvDF6b6nI6/g==
+X-Received: by 2002:a05:6a21:10a:b0:1d9:13ba:3eef with SMTP id adf61e73a8af0-1d978b3dd0fmr2004330637.26.1729666633734;
+        Tue, 22 Oct 2024 23:57:13 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13ea279sm5683088b3a.168.2024.10.22.23.57.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 23:57:12 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id E58F64396281; Wed, 23 Oct 2024 13:57:08 +0700 (WIB)
+Date: Wed, 23 Oct 2024 13:57:08 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Sebastian Fricke <sebastian.fricke@collabora.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
+	hverkuil-cisco@xs4all.nl, mauro.chehab@linux.intel.com,
+	kernel@collabora.com, bob.beckett@collabora.com,
+	nicolas.dufresne@collabora.com,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Subject: Re: [PATCH RFC v2 0/3] Documentation: Debugging guide
+Message-ID: <ZxieRCN8rFfgZGS8@archie.me>
+References: <20240529-b4-media_docs_improve-v2-0-66318b2da726@collabora.com>
+ <20241022152316.yr6jpjtcwidxytpe@basti-XPS-13-9310>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018151112.3533820-1-arnd@kernel.org> <ZxidW3lvA5Pqu71m@infradead.org>
-In-Reply-To: <ZxidW3lvA5Pqu71m@infradead.org>
-From: Marco Elver <elver@google.com>
-Date: Wed, 23 Oct 2024 08:57:02 +0200
-Message-ID: <CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com>
-Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="M6STrdpKMW46XULc"
+Content-Disposition: inline
+In-Reply-To: <20241022152316.yr6jpjtcwidxytpe@basti-XPS-13-9310>
 
-On Wed, 23 Oct 2024 at 08:53, Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Fri, Oct 18, 2024 at 03:11:09PM +0000, Arnd Bergmann wrote:
-> > From: Arnd Bergmann <arnd@arndb.de>
-> >
-> > This symbol is now used on the kasan test module, so it needs to be
-> > exported.
-> >
-> > ERROR: modpost: "copy_to_kernel_nofault" [mm/kasan/kasan_test.ko] undefined!
->
-> Meh, it would be great not to export internal helpers just because
-> someone wants to test them.  Please just mark that test built-in only
-> instead.
 
-We have EXPORT_SYMBOL_IF_KUNIT. See include/kunit/visibility.h -
-that's more appropriate, and also adjust kasan_test.c to do
-MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING).
+--M6STrdpKMW46XULc
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+
+On Tue, Oct 22, 2024 at 05:23:16PM +0200, Sebastian Fricke wrote:
+> On 24.09.2024 10:45, Sebastian Fricke wrote:
+> > The RFC contains:
+> > - a general debugging guide split into debugging for driver developers =
+and
+> >  debugging from userspace
+> > - a new summary page for all media related documentation. This is inspi=
+red by
+> >  other subsystems, which first of all allows a user to find the subsyst=
+em
+> >  under the subsystems page and secondly eases general navigation throug=
+h the
+> >  documentation that is sprinkled onto multiple places.
+> > - a guide on how to debug code in the media subsystem, which points to =
+the
+> >  parts of the general documentation and adds own routines.
+>=20
+> I wanted to give this a little push, so far I have received a lot of
+> good feedback but none from the core and documentation folks. What do
+> you think about this?
+
+Address all reviews then reroll (maybe as non-RFC series).
+
+Thanks.
+
+--=20
+An old man doll... just what I always wanted! - Clara
+
+--M6STrdpKMW46XULc
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxiePQAKCRD2uYlJVVFO
+o3JqAQDJhBM5el/ZJxxkzFRi3Wb1thDGSpEp9V1vfmhkehIdbAD+K3avvP1asWGs
+zGg0qt5pEq8BYK0c0l3mpm2F3E3lkAA=
+=W4Be
+-----END PGP SIGNATURE-----
+
+--M6STrdpKMW46XULc--
 
