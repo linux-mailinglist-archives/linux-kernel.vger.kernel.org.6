@@ -1,134 +1,123 @@
-Return-Path: <linux-kernel+bounces-377408-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377409-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 149379ABE68
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:08:25 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 19B839ABE6E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:09:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BAF2850A0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:08:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 75CD9B2291A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:09:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F162E1474B7;
-	Wed, 23 Oct 2024 06:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D01F01474B7;
+	Wed, 23 Oct 2024 06:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X82Z5W4g"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ynw25g+U"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4F51BC4E;
-	Wed, 23 Oct 2024 06:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 353C8EAC5;
+	Wed, 23 Oct 2024 06:09:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729663696; cv=none; b=C1N71S7oaLv5rs6N0Q2boA2eh3s21jX+/N+1ylei1ESJMgX46jXjbpF7ED+AI+qNUC3ihEp7dRYuHHFfvh6yq4JrhTOiQJb8g1ZDCCRPjj31cm6FEP57ZPMCBarLPEfclPSYvGAQUVCkSABuovcxm7Ogr66EzHh1BxrqPIVVwgU=
+	t=1729663781; cv=none; b=vFta3crnPFiD1SiBXc205a1mfvdo5+CjggXcxCyMkYHgrV5CeohxUH68OutxuzbJSeGP0Vqhll2YOD+S1+S8NlFKvEN2en+kmy1g85SGtXuNuC1NiWkYC+uyiwlZf+tFJezio5IQisTW40I5gKzeIRUL/XG4jWhPW1xl+n4qcas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729663696; c=relaxed/simple;
-	bh=j4XMlJCKKl/NCp8f3DD3ZgpEl3aj4KSw7rw+sv4iyB0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VaT2rMPkUejWVJYSGZwq3X13RPz6J8U9wA9v6tRMdcZZVCXWAtp/wpPYngYpzG9mQ9MWZK2rxwR6XWF2PDS7D/CtML6RZr3yJ7wXxp5VsBKODu6bCraXkQ4HtPoqt/2RIdCMRiy0tfdiDfwVNRjeytNwnbt4JHck8Wl5wYJ+Vfo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X82Z5W4g; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29111C4CEC6;
-	Wed, 23 Oct 2024 06:08:13 +0000 (UTC)
+	s=arc-20240116; t=1729663781; c=relaxed/simple;
+	bh=U1ovBUN9k7cVpjnClNMLPpEoODTsIuJ83Y2AqLN0+cY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=gsTrlss4tUV68Po5OrPSILZW40bVqgJYGIex0cAuRdTZGWAcwLpf+9zhv74iCrfqRGuIaqrR57Q72TEcIBHfxBLK+dPVDdoe0rKbuz21fjl635q/6qgvtch8IHlyH16T9VLaMeUS80MXX80kP27m1p8mHv4KfpM677iBRNtWuSw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ynw25g+U; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2FF39C4CEC6;
+	Wed, 23 Oct 2024 06:09:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729663695;
-	bh=j4XMlJCKKl/NCp8f3DD3ZgpEl3aj4KSw7rw+sv4iyB0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X82Z5W4gyo0iAwJOPV2j9Pr7vNlIie3ww7Npft8tTl1O06r02076tsqUUPxILhjpd
-	 j4qTPGr2XpszinTEn8nOC2QWiJ1hVJ5IOyYYoa5VOxoMIAJPXrc6NQUeaZ+XC9k4rt
-	 aYyGModaYkn6PKKAsg0lTiHEBMGjTwka/l+ggL17d66f8wE9xyR8HagCXjHxvNTvCj
-	 KexLmt5m7h8ehk9nIYQGWqOzSWwXHrDEzpdObd374g/uE5nHMCA+2A9GzM22ywY3J7
-	 9oznCHM1t8xg898ahtONtwrqq0T0D8Gd0ugZrrDp4dIrlWjgeH5yA6fbuYE4ZwbBX2
-	 ttdfRjUa0cVCw==
-Date: Wed, 23 Oct 2024 11:38:11 +0530
-From: Vinod Koul <vkoul@kernel.org>
-To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
-Cc: Mesih Kilinc <mesihkilinc@gmail.com>, dmaengine@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
-	linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Maxime Ripard <maxime.ripard@bootlin.com>,
-	Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>
-Subject: Re: [RFC PATCH 00/10] Add support for DMA and audio codec of F1C100s
-Message-ID: <ZxiSywkxggKboVRF@vaman>
-References: <cover.1543782328.git.mesihkilinc@gmail.com>
- <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
+	s=k20201202; t=1729663781;
+	bh=U1ovBUN9k7cVpjnClNMLPpEoODTsIuJ83Y2AqLN0+cY=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Ynw25g+Utm3Xfu3sWKVw4tpPVty1RFHtg00DhDzU0HnSU+tm+UbXa4lMIl96PaNvI
+	 8z2exy5r7/EKFeBDtHbXc8hxgROhqfJSzh/7OZe+tEvYI9PQdbtce/dDkwWa9/z71V
+	 oyx6az34GvbdnWtlqz5aSFQHntZXadJofjWg6itdgObGLGgBMp9U58naH3ldHdCHvG
+	 sO3l1UAUPLDbHTzY/54m0KxB5CApNaixOsvQNo+l4lDubBWdZbcEFcvLxd4ob867VB
+	 BcARhMvnLv4vGARP9vE1n3cKgPAydiQ6zbPNo4tumyT1Q/fN6paqPmdyAjHogZNUt7
+	 a/ZckXYWg3Zpg==
+Message-ID: <bae8ac11-ed3e-4fc1-8e07-b63282905557@kernel.org>
+Date: Wed, 23 Oct 2024 08:09:36 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] usb: core: adds support for PM control of specific USB
+ dev skip suspend.
+To: huanglei <huanglei814@163.com>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com,
+ linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
+ huanglei <huanglei@kylinos.cn>
+References: <20241022090905.9806-1-huanglei814@163.com>
+ <3691558b-55d2-43f1-ac77-5f15843f2f80@kernel.org>
+ <78620d2f.3fa2.192b76ed5f6.Coremail.huanglei814@163.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <78620d2f.3fa2.192b76ed5f6.Coremail.huanglei814@163.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On 23-10-24, 00:52, Csókás Bence wrote:
-> Hi,
-> I was trying to get audio on the F1C200s, but so far had no luck, and I came
-> across this series.
+On 23/10/2024 05:32, huanglei wrote:
 > 
-> On 2018. 12. 02. 22:23, Mesih Kilinc wrote:
-> > This is RFC patchset for Allwinner suniv F1C100s to support DMA and
-> > audio codec.
-> > 
-> > Allwinner F1C100s has a audio codec that has necessary digital and
-> > analog parts. It has r-l headphone output and microphone, line, r-l
-> > FM inputs. ADC can capture any inputs and also output channels via mux.
-> > Any input channels or DAC samples can feed output channels.
-> > 
-> > Add support for this audio codec.
-> > 
-> > F1C100s utilizes DMA channels to send and receive ADC-DAC samples. So
-> > DMA support needed. Patch 1~5 adds support for DMA. Suniv F1C100s has
-> > very similar DMA to sun4i. But there is some dissimilarities also.
-> > Suniv features a DMA reset bit in clock  control unit. It has smaller
-> > number of DMA channels. Several registers has different addresses.
-> > It's max burst size is 4 instead of 8. Also DMA endpoint numbers are
-> > different.
-> > 
-> > Patch 6 adds DMA max burst option to sun4i-codec.
-> > 
-> > Patch 7~8 Add support for suniv F1C100s audio codec.
-> > 
-> > Patch 9 adds audio codec to suniv-f1c100s.dtsi
-> > 
-> > Patch 10 adds audio codec support to Lichee Pi Nano board.
-> > Thanks!
-> > 
-> > Mesih Kilinc (10):
-> >    dma-engine: sun4i: Add a quirk to support different chips
-> >    dma-engine: sun4i: Add has_reset option to quirk
-> >    dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA
-> >    dma-engine: sun4i: Add support for Allwinner suniv F1C100s
-> >    ARM: dts: suniv: f1c100s: Add support for DMA
-> >    ASoC: sun4i-codec: Add DMA Max Burst field
-> >    dt-bindigs: sound: Add Allwinner suniv F1C100s Audio Codec
-> >    ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
-> >    ARM: dts: suniv: f1c100s: Add support for Audio Codec
-> >    ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
-> > 
-> >   .../devicetree/bindings/dma/sun4i-dma.txt          |   4 +-
-> >   .../devicetree/bindings/sound/sun4i-codec.txt      |   5 +
-> >   arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |   8 +
-> >   arch/arm/boot/dts/suniv-f1c100s.dtsi               |  25 ++
-> >   drivers/dma/Kconfig                                |   4 +-
-> >   drivers/dma/sun4i-dma.c                            | 221 ++++++++++--
-> >   sound/soc/sunxi/sun4i-codec.c                      | 371 ++++++++++++++++++++-
-> >   7 files changed, 601 insertions(+), 37 deletions(-)
-> 
-> What's the status of this series? I see that it was not merged, despite
-> getting a few ACKs and only a few minor comments. Ripard's comments make me
-> believe that the sun4i DMA driver should be able to handle the suniv family
-> with minimal adjustments, have those not been added? Or is it that the DMA
-> support is ready but the ALSA/ASoC support is missing?
+>   Yes, to be precise, it's a hardware feature, not an OS/driver policy.
 
-Maybe split the series and post dma and audio parts separately for review
+??? No, you did not describe it as hardware features. You need to fix this.
 
--- 
-~Vinod
+It's a NAK so far.
+
+Please don't top-post.
+
+Best regards,
+Krzysztof
+
 
