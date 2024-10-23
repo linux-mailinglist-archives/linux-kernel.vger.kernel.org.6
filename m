@@ -1,156 +1,94 @@
-Return-Path: <linux-kernel+bounces-377497-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377496-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA61F9ABF9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:02:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 007C69ABF97
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EB9F51C231C6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:02:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B674228553F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:01:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0004D156C6F;
-	Wed, 23 Oct 2024 06:59:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 12DB7155741;
+	Wed, 23 Oct 2024 06:59:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Zf+sq6Bq"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gpPM/pr5"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34E9D155CBD;
-	Wed, 23 Oct 2024 06:59:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FA7E14F9EE
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:59:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666759; cv=none; b=NLAP+6gE++3khtzzAbQ/LXttY5vbxGEkNbdTXEB4ddQPHcfbIvgo/LkAxFU0k5PMMiUWeB5iNvzNFjShkZP956tpIgNA7Tlt8BtFSLbup1YWd0wIMN67so41bkTdma/0jyIIVhe5mNDyhuNm+QR/67C1vHFeVBopeyuHRzbZu+M=
+	t=1729666754; cv=none; b=K9M4bM8C5wB2EppsvoEgo4C1LMMtkUvFHdT9bj8onx3oK06WOC+G8duIwxWMWMVyXER/CHllph54z2jrsFT4tRZreCE59joA/KMOTe50yly/XvpkTBilcXlrlwAjUSdL/b3rd04P/CYRvsHxwtuAkrHkU358avjavwO7VkMUqMU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666759; c=relaxed/simple;
-	bh=dWYJ5hZw4CRKNMwTRgvaoC3DrogIMgmnJ7kv8WblhHc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=NNNm39dt4quh1iGXGg7ozuxsSMLSQMuRlJ+8AX1yal0ckXFzKYqdP4vzcE4J6/mzl7hVh4/rkxvSOlRhrwMLYT12ts65WDlga4vEW5gvQUYxkQqeA7qCa084Vd9WkSy1Ci61L2PVlgF8S5woT/U5YEIXKQO+Zr9ukHVLy+CiL6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Zf+sq6Bq; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D1BB8C4CEC6;
-	Wed, 23 Oct 2024 06:59:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729666756;
-	bh=dWYJ5hZw4CRKNMwTRgvaoC3DrogIMgmnJ7kv8WblhHc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Zf+sq6BqJ2ZOiwRV6/mGAhj4NsURVkdphEf0bNxR9ZLrs8x/0IdvH2FWRP7Mr1RCN
-	 9oA0PxVKhA0N+xLlC8OfgZynUUIFSE7vzqq+O3v3lsUVav44+Y62ls3lCpK3NNLWfk
-	 a9wLWy23z/lQYn9CgtjDTBMgjK2q1r6t3w2U9QAFyNugf5yXuCTtvPBGFxzc8NZOy5
-	 OHfh0Cwq4PiDnGSAvMoV4EBDD8/HeGmfw3hzR4g4cEoq64yjpG0hM+wpVwDr+cBIEY
-	 XbyrpZZIYFdCREnf9oBgdJEWGEq1feKzk+KprS4TVMrr7HqiVbQx6Vbf82VzGPumFB
-	 JmG3oneCVWukA==
-Message-ID: <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
-Date: Wed, 23 Oct 2024 08:59:09 +0200
+	s=arc-20240116; t=1729666754; c=relaxed/simple;
+	bh=qBH7Iq7ca/YWjSbKnlMY38j7VrvrW/8idOu1Rxjroeo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jP1PTmnN9qpoKeT/SvZX6cTXhQzYsUBoAhr3M8i6347R5eRzkNJfVrKIJlBOFk2pcC4jnzUmGfFx563IVmXoi0CqCnBuK0E/9GSGE7+TcygmHM4MK0/ZEj0liUZO8fQBM6HLinkoSeBxlIfcIH1mJpQQmLLuPC7HRvhjfa6q4OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gpPM/pr5; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=jp9217593F7B7t3D6LGpvsNQ9L1wY4SIzHSdn4wfYMA=; b=gpPM/pr5TnHOW42lycLn3x0nkL
+	RoG27fx9+iV3+TYl0Zr4xQgNAwFuN77QsAs69DbTh6ybHEc3JtHl5N3LrYmjhnFLW8d8XkTBGezM4
+	hkFgwoSiJwVXLx0fXa9itaoNhQMFBsNWgXceSWOG4pndqoVspKRlbXSwEHyyzdtg1jp2dEjtO4r4Q
+	X9d4lc6fOiz2iCzHOFiiFpSFdISBtFiV2vbjikBXDpY0FIXqy5mXiQm8MwIL4odCOHkk3nNtcq0Ty
+	aFY6w0ziPGBe1HW5uGfwNRvHNJ+iSbH9bWTi+tGmkBrHQgV3d6JRMhdzjuonEbT8ycSfOvV0ob+qV
+	neRo6sXg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3VKp-0000000DIFi-0UXS;
+	Wed, 23 Oct 2024 06:59:11 +0000
+Date: Tue, 22 Oct 2024 23:59:11 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Marco Elver <elver@google.com>
+Cc: Christoph Hellwig <hch@infradead.org>, Arnd Bergmann <arnd@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>,
+	Andrey Konovalov <andreyknvl@gmail.com>,
+	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
+Message-ID: <Zxiev9UaoUlI1xs9@infradead.org>
+References: <20241018151112.3533820-1-arnd@kernel.org>
+ <ZxidW3lvA5Pqu71m@infradead.org>
+ <CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
- properties for ath12k PCI module
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
- <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
- <e2c1ce1a-89af-4feb-a21a-9ca2578430e7@quicinc.com>
- <b97b8350-3925-40b0-8f87-f89df429a52a@kernel.org>
- <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-On 23/10/2024 08:53, Raj Kumar Bhagat wrote:
-> On 10/23/2024 12:17 PM, Krzysztof Kozlowski wrote:
->> On 23/10/2024 08:45, Raj Kumar Bhagat wrote:
->>> On 10/23/2024 12:05 PM, Krzysztof Kozlowski wrote:
->>>> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
->>>>> The current device-tree bindings for the Ath12K module list many
->>>>> WCN7850-specific properties as required. However, these properties are
->>>>> not applicable to other Ath12K devices.
->>>>>
->>>>> Hence, remove WCN7850-specific properties from the required section,
->>>>> retaining only generic properties valid across all Ath12K devices.
->>>>> WCN7850-specific properties will remain required based on the device's
->>>>> compatible enum.
->>>> Just not true. These apply to all devices described in this binding.
->>>>
->>>> NAK.
->>>>
->>>> Don't send patches for your downstream stuff.
->>> This is not for downstream. This series is the per-requisite for ath12k
->>> MLO support in upstream.
->>>
->>> In the subsequent patch [2/6] we are adding new device (QCN9274) in this
->>> binding that do not require the WCN7850 specific properties.
->>>
->>> This is a refactoring patch for the next patch [2/6].
->> It's just wrong. Not true. At this point of patch there are no other
->> devices. Don't refactor uselessly introducing incorrect hardware
+On Wed, Oct 23, 2024 at 08:57:02AM +0200, Marco Elver wrote:
+> On Wed, 23 Oct 2024 at 08:53, Christoph Hellwig <hch@infradead.org> wrote:
+> >
+> > On Fri, Oct 18, 2024 at 03:11:09PM +0000, Arnd Bergmann wrote:
+> > > From: Arnd Bergmann <arnd@arndb.de>
+> > >
+> > > This symbol is now used on the kasan test module, so it needs to be
+> > > exported.
+> > >
+> > > ERROR: modpost: "copy_to_kernel_nofault" [mm/kasan/kasan_test.ko] undefined!
+> >
+> > Meh, it would be great not to export internal helpers just because
+> > someone wants to test them.  Please just mark that test built-in only
+> > instead.
 > 
-> Ok then, If we squash this patch with the next patch [2/6], that actually adding
-> the new device, then this patch changes are valid right?
+> We have EXPORT_SYMBOL_IF_KUNIT. See include/kunit/visibility.h -
+> that's more appropriate, and also adjust kasan_test.c to do
+> MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING).
 
-Yes, except I asked to have separate binding for devices with different
-interface (WSI). You add unrelated devices to same binding, growing it
-into something tricky to manage. Your second patch misses if:then
-disallwing all this WSI stuff for existing device... and then you should
-notice there is absolutely *nothing* in common.
-
-Best regards,
-Krzysztof
-
+Thats a little better, but at least in this case I still think it is
+a very bad idea.  copy_to_kernel_nofault is a perfect vector for
+exploit code to probe writing to kernel address without causing faults
+so it really should never ever be exported.
 
