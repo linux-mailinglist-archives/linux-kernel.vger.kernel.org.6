@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-377839-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377840-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 528199AC781
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:11:20 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 20EDA9AC783
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:11:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13978282F22
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:11:19 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3669E1C21798
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:11:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 877E319F437;
-	Wed, 23 Oct 2024 10:11:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99BB41A01D8;
+	Wed, 23 Oct 2024 10:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OeqQ9+qM"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hYg7mGst"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A54819EEA1
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:11:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 655421A01DD
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:11:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729678271; cv=none; b=o8gXPSerVrJ+OWkTuW9SLV5oukL78WkRDcPoF1BMEG8Fkf2stWnB9KZAae/UX/vWTF6m4SHHOnrQU2J2k3bA7ohUGQNhBQkXjimiKQQ61id0gGcTyIgQYCsS0AkrJX0rPOsAdaiodpGcXJSFOV+srm4B4YxBcmwIlDyJCSjxHwo=
+	t=1729678274; cv=none; b=TLS/F96mY06x+sIRnCreUQnBAEdSCDFDiDFx63oZAtSLyf42FkEiE8oS5Ru7pnDIdRtu/wsoc7tA0iY5tAxUYb3wszzBtiUJk95VXXfjOlfdnr/JZKQzmih9ufGXT5npQrFcHLjg5759x/iBMviBt4QzeLO+LeH0fao9QouftRg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729678271; c=relaxed/simple;
-	bh=5OOvHNGAVgHImRA4rtLY0Acms6nJmTWGumvJk2gBIAw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VN0ehYjKgN2uV6pIIUbBo6M6cKBcyddo/k5BjaWrOyIkJNvFF3LLWT+kZg9kelKzaCAWqkNmoTY3GOZOUjxrqYZH79krBZcp7ntOaXjtcOAVmPXcpAVk0xrR9eSxghLnCBopjXdBydp5fN3XTFzCARO99I7ZjPwSRfnrUjV261Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OeqQ9+qM; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1729678274; c=relaxed/simple;
+	bh=4xt+M1TKsijkRNzEk6gYKOj8U4y95Ey6HQdeI8L5ZHU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i1WP2L31D+4Wpgez+iAUSXVbRets+fUswevszttrbol7ZqMF1FoOFm1wuCfXQnNrHSTcP/OTkraPTlq+kYAzOMBC9qVp9jqUxV+LF8QtCA70cGB9iCpXu3zNQ9SqNZSkPsvw/a2wcSJPmWTyIneACi4odvXkUEFUmSA09TfsydE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hYg7mGst; arc=none smtp.client-ip=209.85.128.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539f1292a9bso8069603e87.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:11:08 -0700 (PDT)
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so69818445e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:11:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729678266; x=1730283066; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5OOvHNGAVgHImRA4rtLY0Acms6nJmTWGumvJk2gBIAw=;
-        b=OeqQ9+qMCYtymPuyjpdaeRRMaaY+/apAS5h7MWxznHYIcjoEGqt0KskN2I85Lm6QEA
-         KVse3nAg6vlCHWe52o8IcidcKEOM85yh5WTRYAYTy9MngCZJ8up5wAYpWpklD7GilJ9C
-         qi3tke/qctp+QV71mbLnc+AqR/a3jIsrMGP/5gVqpPQfjptIKzkJ39f1pYiM3zDO8izX
-         aJ5rQg0Gc7LlwN5IMk4+hLcU5QrWtR4vUuhQyUgj0Bsh7LtWVb1JS/SYcQ/rkNQw5TIH
-         +1axe90Mk2ysXnlluHABAe2jwMHfkcYv9/G3aNHlGh7hxVYlcdom/U5KPpvKa1Log8WU
-         /uHQ==
+        d=linaro.org; s=google; t=1729678271; x=1730283071; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=sKJHAMKDVpw9bzSHGhrHWmLUI3HVm1NWR3Nb/36MQk8=;
+        b=hYg7mGstB5Y/NrjBs6BAxKmUuLgZ5SBIO51/zygKh3Aw2mTjuJyzHK2wC93O71KHwc
+         bdEtOr7QYWJ/Mlj+UEQHF/HCnDhTpN7jwlbxOOHM260p0O45B0C8Iuhu2lP6RN67IjNQ
+         7SUKdrXxI+CaV227aIHn908Tu/fOEsq/jTeNvrmZD7vXatQLTLv1lsUa6VFF8WsA23SD
+         JqGOZcVZ7piavkTxcLK4u8Lx0WqE2QwNC4rvQY/CdiWp2DWfu8SONln1CsqVS4NZtWEG
+         tbCw5dchhLSJdfDsBc4htzBFr1DlVf1DkyIrc64i5pYlViF8k5lEO6aGWdYns/XYBJVS
+         iEpA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729678266; x=1730283066;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5OOvHNGAVgHImRA4rtLY0Acms6nJmTWGumvJk2gBIAw=;
-        b=ELwxeBeflP8zad+VP8a/19EAUWV9gBjZtrM/ghCkKCul9g2vJPo2z1022FhKIs5WWx
-         l3dkZEX6Lh+VMwSRDjT6EuJ1fVyj5UcAJ3gMyFkZPLDD0wsWpM+/MIaHACh8FB9jMRsT
-         VTYYfspd0WBid8y3g1uX5lSNLWTlGuVruevMuRse5j3ucjUhjMb0iBWYQstLrV6pm2eU
-         7uzRLKf7B5ycvulCtMkW0sdUotQunKlQXeDi6y9ysdPgoocHSt18p0QNgRPL9+qZ2To6
-         avlIVjcS/b79mOL5eMJEj3UfIsAs8nFIv0JdypdmYhhFzBVDmPO7GAOeQqiDLvQm/eNm
-         Y7Jg==
-X-Forwarded-Encrypted: i=1; AJvYcCVc0K5NFUzJ0NImVJEpuKBN/w9959epoFqet5yphshSFtnsw3tyc5MVkQqRRMLXvGedIHu/jDIgK+vrtYk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwUuc7VPA9fBArOzD4Xko7PN6bZg+2Fqxhr4M0QSgIwhLfko1ZI
-	1pfqlKTRjfNalJSCmdHn6uKbPvQ+UvcneiLOeHduN9A8sCj9y131qz3blDLWakGpuv7nS3wP7wy
-	COt14+BoQcwnYP2tSLxujTMwLdjCsdU83SnFhjw==
-X-Google-Smtp-Source: AGHT+IE089tWVwoXd/8Hysqc4S/uDg7EGVHjVvwgua3xypehCFmJa3XmQQ+EwelSROlylF6cOjc2uO3oYJn05SS9GVs=
-X-Received: by 2002:a05:6512:1114:b0:539:fde9:4bbe with SMTP id
- 2adb3069b0e04-53b1a30512fmr994214e87.20.1729678266366; Wed, 23 Oct 2024
- 03:11:06 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729678271; x=1730283071;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sKJHAMKDVpw9bzSHGhrHWmLUI3HVm1NWR3Nb/36MQk8=;
+        b=G8Gu7ZAnbm+OZ7gGzWbCF6RKc+rVp1vy3Yt0zR97/jucmnmGnhstSsQtMrpL2ab3o/
+         AuOHUq7ahChs+qIlQc5taPz+5SjwSTFNLyyzSma7Kd4gvost8q/qbuixB21NdDWxOD4i
+         7PNwFM01CP/A8i2npL/09esisxzZFrcv3o+AkQW37Rs3A/9E1Vv2IbWERUqySyNKEIFY
+         DHsY7/Sj6PVLeQGeTjnb/ljyKJic8qPxDUXXHKtA1RYfrEvngpQ0gc+6IR6hxn4mYgWl
+         x+LwhIuM1JKCsja6SzBlr3Egn6nuA8dgV3iM8txYxjcVD0TVWGOzjhxz40BZZjBTUN+G
+         K2fA==
+X-Forwarded-Encrypted: i=1; AJvYcCU3PUe99f45Wu2zeqigExWa1iX2q/NOWHCCcmSo8nzvopiBKbxeCur1fqtHPaLPPc8CujajvuYYFbDydbo=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3a1kTEmEcNNI6mBmF4/vGm+pqDrPsIodVH350O3rFLFBBBsNw
+	gLZkJ6M3tMAWonP/CNML/gsHz88m6sdSXFWV6/l2rj1qiLCZRjyh3B9ZxmN4qs0=
+X-Google-Smtp-Source: AGHT+IHFt3z0BuJR9H33ESobunGlzidwzdTNhACnSItxcjBr7HhF+l51ueyKrHzwmqDOM5LvN2Hcxw==
+X-Received: by 2002:a05:600c:1d9e:b0:431:52da:9d67 with SMTP id 5b1f17b1804b1-431841341d7mr19204965e9.3.1729678270707;
+        Wed, 23 Oct 2024 03:11:10 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186c3a707sm12019145e9.33.2024.10.23.03.11.09
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 03:11:10 -0700 (PDT)
+Date: Wed, 23 Oct 2024 13:11:06 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+	Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
+	Sasha Levin <sashal@kernel.org>, torvalds@linux-foundation.org,
+	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+Message-ID: <2b7d150d-a675-4a35-8f32-75d2da4b3302@stanley.mountain>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+ <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org>
+ <20241022041243.7f2e53ad@rorschach.local.home>
+ <ZxiN3aINYI4u8pRx@infradead.org>
+ <20241023042004.405056f5@rorschach.local.home>
+ <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
+ <20241023051914.7f8cf758@rorschach.local.home>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023044423.18294-1-towinchenmi@gmail.com> <CACRpkdZP9oDd+fRKKagFtGbfLx=Rk5LJ7bvaKimw5-t25XZAfQ@mail.gmail.com>
- <5e1b807f-82ac-4ab8-867c-32b2bf2a91ce@gmail.com>
-In-Reply-To: <5e1b807f-82ac-4ab8-867c-32b2bf2a91ce@gmail.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Wed, 23 Oct 2024 12:10:55 +0200
-Message-ID: <CACRpkdYjmwHaHPTmjOKR8E9kYQBZAx04Ydby7HKZzE3KhbNh2A@mail.gmail.com>
-Subject: Re: [PATCH v6 RESEND 00/20] Initial device trees for A7-A11 based
- Apple devices
-To: Nick Chan <towinchenmi@gmail.com>
-Cc: Hector Martin <marcan@marcan.st>, Sven Peter <sven@svenpeter.dev>, 
-	Alyssa Rosenzweig <alyssa@rosenzweig.io>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Wim Van Sebroeck <wim@linux-watchdog.org>, Guenter Roeck <linux@roeck-us.net>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, 
-	Lorenzo Pieralisi <lpieralisi@kernel.org>, Mark Kettenis <kettenis@openbsd.org>, asahi@lists.linux.dev, 
-	linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023051914.7f8cf758@rorschach.local.home>
 
-On Wed, Oct 23, 2024 at 11:37=E2=80=AFAM Nick Chan <towinchenmi@gmail.com> =
-wrote:
-> On 23/10/2024 17:05, Linus Walleij wrote:
-> > On Wed, Oct 23, 2024 at 6:44=E2=80=AFAM Nick Chan <towinchenmi@gmail.co=
-m> wrote:
-> >
-> >> This series adds device trees for all A7-A11 SoC based iPhones, iPads,
-> >> iPod touches and Apple TVs.
-> >
-> > This is a good and important series. FWIW:
-> > Acked-by: Linus Walleij <linus.walleij@linaro.org>
-> >
-> > Are patches not getting applied since you resend them?
->
-> This series along with the watchdog reset delay series mentioned in the
-> cover letter have not been applied.
+On Wed, Oct 23, 2024 at 05:19:14AM -0400, Steven Rostedt wrote:
+> But pushing to linux-next for a day or two, what does that give me?
+> 
 
-It seems to me that the watchdog series is only a runtime dependency
-and these binding+DTS patches are well ripe for merge.
+Two days probably gives you 80% of the testing that people do on linux-next.
+I wouldn't run linux-next on real systems but it generally boots and runs LTP
+okay these days.
 
-I suspect the three Asahi-affiliated maintainers are too busy with their
-own stuff (like M3 support...) to respond or queue patches as they haven't
-responded to the patch set for the two months it's been floating. (OK
-Sven Peter did respond to some v1 patches.)
-
-If nothing happens in a week or so, I suggest you just send a pull request
-to the SoC tree (soc@kernel.org) yourself. Perhaps you should even be added=
- as
-comaintainer for the ARM/APPLE machine support so things do not
-stack up like this?
-
-Yours,
-Linus Walleij
+regards,
+dan carpenter
 
