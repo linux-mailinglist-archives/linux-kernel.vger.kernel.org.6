@@ -1,183 +1,140 @@
-Return-Path: <linux-kernel+bounces-378163-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378164-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F7939ACC37
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:25:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BE75C9ACC38
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:25:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 677D7B238F0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:25:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 54C67B22021
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:25:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2ECF1BE223;
-	Wed, 23 Oct 2024 14:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7DD5D1BD50C;
+	Wed, 23 Oct 2024 14:25:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CqyI0ShH"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b="ExIoVPnC"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD5351BD039
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:25:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B0CCB1BD004
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:25:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693502; cv=none; b=RuGuDi0Y0i2tvFKdMTDniHsSR2TqoUafycH5VTaJA2U0GU019e/jdWzrkFDwMAtGL6/h8SU37oXwspNZNFOZtIz5ERcPZ5g7OqW6E6bQPWb8R6BiNb0NSE8wWzpCKSCO+3fc2gac5TZqKq+S0LtraIWmnVAUyNW5P0dMksQS2j8=
+	t=1729693527; cv=none; b=rD6t5PpQNNVT7bsHadxBoEuZXLv+HrejZ7SBmM6oX8EmBc4smJCeD1apW1+93V7hzcdY9eOBX7yk2QjMXtjRdsvDHcNebg467Wuq1hIAIeT6qQ78M+DjpC5I6Myq51DZ9YgMV4SwEWoSmkGq0NkU/5bwnrvsDbeUxmZ5DE7EcsE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693502; c=relaxed/simple;
-	bh=SSzHZSLHISFuoqbjbDT/5aD+AUvvdJkkWZLs3kZ6uKQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=csgNoGBTw8VyKNe7csEcmP9zczSguzkkpNreMmSB/prvgmMmP3oiYsT65XdYwYXHJE2sN1oPg4sH8MbSKY3bMu5GCPZ4k5sERBNcKbnaOZN3TRZHG2E8KcAYfftFqISTAXE4knRDSkfTyCsgfdyZTcwPRX+jzUKh0AVWCAIEC1I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CqyI0ShH; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729693501; x=1761229501;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:content-transfer-encoding:in-reply-to;
-  bh=SSzHZSLHISFuoqbjbDT/5aD+AUvvdJkkWZLs3kZ6uKQ=;
-  b=CqyI0ShHrD/JtA7MGeKR6H6wdm2S1mTb0fh54wA9Fn4ljkjmwbhSmVnK
-   EiSyBzHlhY20uuAIHN8SSOhjHd5bqp3XfpLeG/gTik61zalXildhMKndP
-   CfATcVGpx6Kd9k9Fv1AOCUYNz2d6RtgwWIXOsBh0ElP5+aoJ7nm3LP5Kw
-   +RyZ9gSbRCaMdmrEY+6gTFbMpBY3cGM2nGWtLTnTtr3A/bDROUUxdGNme
-   eW0wNr9AKbV829KWT+2b0nFItfTeradUixSIkJxDdUQqnv9sAwm5IvCHj
-   mpU+52ekH0wWXOF7m65Ip+7xdrZrow9WOtIGGPzORCeDTdTCFEp1XV3ws
-   w==;
-X-CSE-ConnectionGUID: zB16+xZcSXisO/iAxIs4hA==
-X-CSE-MsgGUID: tYQ6m8TxR06kcIy04z3jsQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="29505016"
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="29505016"
-Received: from fmviesa005.fm.intel.com ([10.60.135.145])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:25:00 -0700
-X-CSE-ConnectionGUID: LnS8vSTAQfyiJw0jqwzVoQ==
-X-CSE-MsgGUID: wUeEaWojRf6UmnDhSNOvuA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="84802141"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by fmviesa005.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 07:24:56 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t3cI8-00000006EZV-2aip;
-	Wed, 23 Oct 2024 17:24:52 +0300
-Date: Wed, 23 Oct 2024 17:24:52 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>,
-	Uros Bizjak <ubizjak@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	Dennis Zhou <dennis@kernel.org>, Tejun Heo <tj@kernel.org>,
-	Christoph Lameter <cl@linux.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Nathan Chancellor <nathan@kernel.org>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>
-Subject: Re: [PATCH v1 1/1] x86/percpu: Cast -1 to argument type when
- comparing in percpu_add_op()
-Message-ID: <ZxkHNDB6EcA7PouV@smile.fi.intel.com>
-References: <20240905170356.260300-1-andriy.shevchenko@linux.intel.com>
- <f02e0624-ad4f-473c-b172-6dadea37f600@intel.com>
- <20241016192011.GY17263@noisy.programming.kicks-ass.net>
- <de705cdf-ccce-460f-846e-dfc63c63af1a@intel.com>
- <20241017181859.GB17263@noisy.programming.kicks-ass.net>
- <c22fd9c5-6727-46c2-a811-784315edf7cb@intel.com>
+	s=arc-20240116; t=1729693527; c=relaxed/simple;
+	bh=Atp5upH3DtCIHnwaI9XOSOzgzoZpBVQq3z1PqjbCDtc=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=lnDDMXEgz3ne2xiBmKAozbpenYfLIZMdhFKOoQ1CzgXFlmsHswWjV1Hj1uOcOvKqGphgc/PSi9e+4nmSH3zumG/GP4LBN7O9uDbtIihS+n2cod7lpfMUcksVtngTvM0U0IAmPeNvqKcVJcf5hVBNKJjCTDAHYHmKsQYCgnc6zx4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com; spf=pass smtp.mailfrom=bytedance.com; dkim=pass (2048-bit key) header.d=bytedance.com header.i=@bytedance.com header.b=ExIoVPnC; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=bytedance.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bytedance.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43159c9f617so66657705e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:25:25 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bytedance.com; s=google; t=1729693524; x=1730298324; darn=vger.kernel.org;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=JbBGUrTTwoSsEPHprz8mGE870fzfQn9kpkbrOCXaRAU=;
+        b=ExIoVPnCWX8ynGHQ1bDzietNbf958uZKlsKSMnYpKN3wg2br6wi9hLBnB9nQ50HAyG
+         kDZUkwsjTvxDmCgNFedJ2hEB8CaXPjx6/NacVSRlKvitLmxiEJBC9joDRy7lRPo3dg8c
+         JE9sHb8p4/0j4GU0MKZlV9bcNDZYE8LTLXv8I0UApayh2tAMP9/PyGnk7fszrbpAtIF9
+         erBfJYOUjX4KZIvxc6MIJsw1MxD18/q9SigqsYGMwf+N7DXO66/WLAVnW77ZVRaF0zSl
+         QH/sP4g78ytDmRChb8ssOI77aR+1GfPt5Txu10KjLee0rilgz+GJR1BbhzijHJvxonOM
+         ChWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729693524; x=1730298324;
+        h=mime-version:user-agent:message-id:date:references:in-reply-to
+         :subject:cc:to:from:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JbBGUrTTwoSsEPHprz8mGE870fzfQn9kpkbrOCXaRAU=;
+        b=Y9xS2Iga/w3funS3mGv0coHetxB3Q8577yJslizomR0yuvoLsnYOy9QYyuMOCGv7Fd
+         bBZKPlFhLezMSjk4NHHkl5uooL8mUuDtPhyljTw5AMUgRXhJXhgifzfVvwq+gGkDQxQ4
+         O5LK8826tmvbW+hkhmzyag3geu5ptg9kzFpz0iNJnHXb0ZrlzycV7agoh3W73a7kxp3t
+         g9mzbdiQTUlGbpkZDTIAtz3mj28rxnI9XoNPg2Igfb2g3F3G/YOyK7ri15WeIBsTmVUz
+         yQ4unyjYskihm6ulufAYTpYhapIGmlXF3wSYC+J/Eu6KxHqNa3XU5zQta6HVdCfz8M4F
+         kCMw==
+X-Forwarded-Encrypted: i=1; AJvYcCWxrMuofugfF/4vdCV3vDFjoQafq4JcRO2LJ4EL+8iuG3BcPdRj0Jnx7f+ya/qt+g3hFJhmESuBktRsCMY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxFK32ljtNxgs0sgWBWEhsSmW4+wYo/HE0pthyzihrAP+4GUGbT
+	VmPMoQLHb+9KxdjulioBNtrDmPYF+XIIwoAbVj/XewhDet0rZ+KWs46cr0JW2Zo=
+X-Google-Smtp-Source: AGHT+IH0BmYhNGb6Zb0oJGSdG6YllMWt2Vog0aTsr5Pi+a0czFvT36y4AITV9lfciKIwZL7MAwqiDA==
+X-Received: by 2002:a5d:6707:0:b0:374:c4e2:3ca7 with SMTP id ffacd0b85a97d-37efcee8e52mr1870049f8f.5.1729693523957;
+        Wed, 23 Oct 2024 07:25:23 -0700 (PDT)
+Received: from localhost ([149.57.114.44])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a487bdsm9064779f8f.32.2024.10.23.07.25.23
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 07:25:23 -0700 (PDT)
+From: Punit Agrawal <punit.agrawal@bytedance.com>
+To: palmer@dabbelt.com
+Cc: Alexandre Ghiti <alex@ghiti.fr>,  punit.agrawal@bytedance.com,
+  paul.walmsley@sifive.com,  aou@eecs.berkeley.edu,
+  alexghiti@rivosinc.com,  chenjiahao16@huawei.com,  guoren@kernel.org,
+  vishal.moola@gmail.com,  stuart.menefy@codasip.com,
+  linux-riscv@lists.infradead.org,  linux-kernel@vger.kernel.org, yunhui
+ cui <cuiyunhui@bytedance.com>
+Subject: Re: [External] Re: [PATCH] riscv: add a warning when physical
+ memory address overflows
+In-Reply-To: <CAEEQ3w=S=Gn9qER=qNwUn8+Gs9AN4Y5-0Zg0w8-4Vps4L7n97w@mail.gmail.com>
+	(yunhui cui's message of "Wed, 18 Sep 2024 11:49:27 +0800")
+References: <20240814062625.19794-1-cuiyunhui@bytedance.com>
+	<afaa4192-da08-4180-a09b-2b953293ba76@ghiti.fr>
+	<CAEEQ3w=S=Gn9qER=qNwUn8+Gs9AN4Y5-0Zg0w8-4Vps4L7n97w@mail.gmail.com>
+Date: Wed, 23 Oct 2024 15:25:22 +0100
+Message-ID: <87fromgalp.fsf@bytedance.com>
+User-Agent: Gnus/5.13 (Gnus v5.13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <c22fd9c5-6727-46c2-a811-784315edf7cb@intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Type: text/plain
 
-On Tue, Oct 22, 2024 at 12:53:01PM -0700, Dave Hansen wrote:
-> On 10/17/24 11:18, Peter Zijlstra wrote:
-> > On Wed, Oct 16, 2024 at 12:44:18PM -0700, Dave Hansen wrote:
+Hi Palmer,
 
-...
+[...]
 
-> >> Would anybody hate if we broke this up a bit, like:
-> >>
-> >>         const typeof(var) _val = val;
-> >>         const int paoconst = __builtin_constant_p(val);
-> >>         const int paoinc   = paoconst && ((_val) == 1);
-> >>         const int paodec   = paoconst && ((_val) == (typeof(var))-1);
-> >>
-> >> and then did
-> >>
-> >> 	if (paoinc)
-> >> 		percpu_unary_op(size, qual, "inc", var);
-> >> 	...
-> > I think that is an overall improvement. Proceed! 🙂
-> 
-> I poked at this a bit:
+>> On 14/08/2024 08:26, Yunhui Cui wrote:
+>> > The part of physical memory that exceeds the size of the linear mapping
+>> > will be discarded. When the system starts up normally, a warning message
+>> > will be printed to prevent confusion caused by the mismatch between the
+>> > system memory and the actual physical memory.
+>> >
+>> > Signed-off-by: Yunhui Cui <cuiyunhui@bytedance.com>
+>> > ---
+>> >   arch/riscv/mm/init.c | 8 ++++++--
+>> >   1 file changed, 6 insertions(+), 2 deletions(-)
+>> >
+>> > diff --git a/arch/riscv/mm/init.c b/arch/riscv/mm/init.c
+>> > index 52290c9bd04bd..c93164dc51658 100644
+>> > --- a/arch/riscv/mm/init.c
+>> > +++ b/arch/riscv/mm/init.c
+>> > @@ -236,8 +236,12 @@ static void __init setup_bootmem(void)
+>> >        */
+>> >       if (IS_ENABLED(CONFIG_64BIT)) {
+>> >               max_mapped_addr = __pa(PAGE_OFFSET) + KERN_VIRT_SIZE;
+>> > -             memblock_cap_memory_range(phys_ram_base,
+>> > -                                       max_mapped_addr - phys_ram_base);
+>> > +             if (memblock_end_of_DRAM() > max_mapped_addr) {
+>> > +                     memblock_cap_memory_range(phys_ram_base,
+>> > +                                               max_mapped_addr - phys_ram_base);
+>> > +                     pr_warn("Physical memory overflows the linear mapping size: region above 0x%llx removed",
+>> > +                             max_mapped_addr);
+>> > +             }
+>> >       }
+>> >
+>> >
+>>
+>>
+>> A bit weird to review and test my own patch, but here it is anyway :)
+>>
+>> Reviewed-by: Alexandre Ghiti <alexghiti@rivosinc.com>
+>>
+>> Tested-by: Alexandre Ghiti <alexghiti@rivosinc.com>
 
-Thanks for looking into this!
+Looks like the patch has been ready for a while now. If there are no
+further problems, can it be merged please?
 
-> > https://git.kernel.org/pub/scm/linux/kernel/git/daveh/devel.git/commit/?h=testme&id=30e0899c6ab7fe1134e4b96db963f0be89b1dd5a
-> 
-> I believe it functions fine.  But it surprised me with a few things.
-> Here's one.  I assumed that doing an add((unsigned)-1) would be rare.
-> It's not.  It's actually pretty common because this:
-> 
-> #define this_cpu_sub(pcp, val)  this_cpu_add(pcp, -(typeof(pcp))(val))
-> 
-> ends up causing problems when 'pcp' is an unsigned type.  For example,
-> in this chain:
-> 
-> 	mem_cgroup_exit ->
-> 	obj_cgroup_put ->
-> 	percpu_ref_put ->
-> 	percpu_ref_put_many(ref, 1) ->
-> 	this_cpu_sub
-> 
-> the compiler can see the '1' constant.  It effectively expands to:
-> 
-> 	this_cpu_add(pcp, -(unsigned long)(1))
-> 
-> With the old code, gcc manages to generate a 'dec'.  Clang generates an
-> 'add'.  With my hack above both compilers generate an 'add'.  This
-> actually matters in some code that seems potentially rather performance
-> sensitive:
-> 
-> add/remove: 0/0 grow/shrink: 219/9 up/down: 755/-141 (614)
-> Function                                     old     new   delta
-> flush_end_io                                 905    1070    +165
-> x86_pmu_cancel_txn                           242     338     +96
-> lru_add                                      554     594     +40
-> mlock_folio_batch                           3264    3300     +36
-> compaction_alloc                            3813    3838     +25
-> tcp_leave_memory_pressure                     86     110     +24
-> account_guest_time                           270     287     +17
-> ...
-> 
-> So I think Peter's version was the best.  It shuts up clang and also
-> preserves the existing (good) gcc 'sub' behavior.  I'll send it out for
-> real in a bit, but I'm thinking of something like the attached patch.
-
-I am fine as long as you keep the (added) test cases and maybe even extend
-them. I dunno how you will go with the fact that Andrew applied my version
-already.
-
-...
-
-> This can be quickly reproduced by setting CONFIG_WERROR=y and running:
-> 
-> 	make W=1 CC=clang-14 net/ipv4/tcp_output.o
-
-Hint: You can use LLVM=-14 instead of CC=clang-14.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+[...]
 
