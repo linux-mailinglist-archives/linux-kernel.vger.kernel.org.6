@@ -1,121 +1,114 @@
-Return-Path: <linux-kernel+bounces-378596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46C8F9AD2EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:29:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 25C779AD2F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:30:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 023E82852BE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:29:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D405528170E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:30:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B101CF7BE;
-	Wed, 23 Oct 2024 17:29:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5464A1CCEE3;
+	Wed, 23 Oct 2024 17:30:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="a1i4A9yg"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="WXXer3mx"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0177C1E51D;
-	Wed, 23 Oct 2024 17:29:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EFD9312D758
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:30:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729704545; cv=none; b=FKGcoOhPH5jAXur/gvFtzlfZ6c5GNKmy1NN71oKzg4un23S/iPI9dXClWBqeRWZH1AKtEaMwrLy4rUwIfEJlTVQRHZZmS5mJuBoSihEdA0TWjut17Pcu/W6T2O5cTKk/mrOKqjfLfISuc+nZMsDcHn4ohJytxPcHSJFPiTbb8RE=
+	t=1729704621; cv=none; b=pVvLSTBHk1lzPqFCuswTZjpCbNdcm1AcJnrtzUuqG7z5v42M0dRBLqLVRXafwVFJDUwC4LPy7+pbavU3ChND1hv2yHVF+FsUmnRhHiqbqbfhnNCB2h1RtxrdHUOtUiQ/n8NpwBIvl9rWs13btXPnVerE/ZKc9SdCq92gaupydjU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729704545; c=relaxed/simple;
-	bh=k2Bj3VXPR0ZuBfvyPjLK8zR/CYVAAN8k3ytdAnEmoWw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=c0omQgSM19gFIBg+gWI/vS7YSzh19ac/DcqQrUTJl7TMIrzGLQNdnNMgQd/z3TDL28y4ZTd2exTxfviinXYOm2/qS6So/oZqP4UfwkaZ9pRvNV3Jc1GbNj2u/Fm27u65PEW87Qb3+EjgJrbfrLT8cBWGy89ms3WFtjbW8XeYkNw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=a1i4A9yg; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9xkfL025452;
-	Wed, 23 Oct 2024 17:28:51 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	3fD3aX3zs17RkkSDvbOeJ48quwFT5oEexv/xr8A200k=; b=a1i4A9ygluEtdPU8
-	j5d1F9tWSvBP2gnqPt7x2SrbEZDnVD3noHOF86qM2xlgYRlFspks/ewRHORBF1cg
-	8fvzZUeCM3xK8io/++eai+HQ8+xmKFIf5vaDr+VgmU7pFSazOjFzjTiwMSqKtsN6
-	JsBYs17BPyo8kLyxIFM4xwHSVpOq/z6ALTtWEErB47w8Lbz7E69zm61sDXJIPuDK
-	1M+69Nl85oUL8t3eZVeG1niMoH5X67fS6g8pJPue19ctEozw4DGoc0YahQ6fJ77t
-	OWV3C0hdmYY/+4l6Bf5dRAyRyQa1Ngg3vAmVTctDQH3YSIxEsoo6V8G/BStIhNwv
-	qfU/hw==
-Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41tyn8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 17:28:51 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NHSnVG008769
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 17:28:49 GMT
-Received: from [10.81.24.74] (10.49.16.6) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 10:28:49 -0700
-Message-ID: <368aa911-7a88-4a00-8830-4a183fd6f352@quicinc.com>
-Date: Wed, 23 Oct 2024 10:28:49 -0700
+	s=arc-20240116; t=1729704621; c=relaxed/simple;
+	bh=jldwutBZphTyZk0A97ZTFnQDd2dt3KyWgWlWpUn/IUc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ShtqGTaJpqxb2hFmkXgNvFCqSAhhgiWPOad1VyTMrenTpEDmoII9zayTDF7pyTKAu1ah3btvJBeeNBAl8MPq3w7jqUWzwK9Vh25FQjYYqCfoNvOR+flcIz0Mv6mvz5ElnlM2IIUzvHRuJzUyVJrEWeXvLK36AlJM/+rNZ3ahCFk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=WXXer3mx; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729704617;
+	bh=jldwutBZphTyZk0A97ZTFnQDd2dt3KyWgWlWpUn/IUc=;
+	h=From:Date:Subject:To:Cc:From;
+	b=WXXer3mxLwPsYMZxNw9mWDbOAg3QNt38De98+ntsBMfnBefHqWHfLAXK7zW/14la6
+	 MrHjtgwdSHVqBUo0NddBvx/r+ywiPZr7RYTK2Em55dHjJddihCgqBOiboJpkOev4Bh
+	 ayH+RFgwRxaCCvddEBgublFj9w2gvaNFdxHn61/w/jfnbBbpUNaMiTaMtNscUcsZf0
+	 RsStV0BFm48EZt4JYZz33YHtJJN4KyWh8/6iWEaquYVUmwdLVrKC1pkrcSyKPkwsjg
+	 52pztVODxNSYYudtf+EdKHn/zxQEhA+yKovARBGmZLYPteZrRNDkRhu6Fz877pyCxJ
+	 Sgx3LHmqYN/WA==
+Received: from localhost (unknown [188.24.146.62])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: cristicc)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 98EB517E36A7;
+	Wed, 23 Oct 2024 19:30:17 +0200 (CEST)
+From: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+Date: Wed, 23 Oct 2024 20:29:54 +0300
+Subject: [PATCH] phy: rockchip: samsung-hdptx: Set drvdata before enabling
+ runtime PM
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] selftests: add new kallsyms selftests
-To: Luis Chamberlain <mcgrof@kernel.org>, <linux-modules@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <petr.pavlu@suse.com>,
-        <samitolvanen@google.com>, <da.gomez@samsung.com>
-CC: <masahiroy@kernel.org>, <deller@gmx.de>, <linux-arch@vger.kernel.org>,
-        <live-patching@vger.kernel.org>, <kris.van.hees@oracle.com>
-References: <20241021193310.2014131-1-mcgrof@kernel.org>
-From: Jeff Johnson <quic_jjohnson@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <20241021193310.2014131-1-mcgrof@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nalasex01b.na.qualcomm.com (10.47.209.197) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: hOul45tTK3b2ScIrQNG3txmXPHvd1B2q
-X-Proofpoint-ORIG-GUID: hOul45tTK3b2ScIrQNG3txmXPHvd1B2q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1011 mlxscore=0 suspectscore=0 phishscore=0
- mlxlogscore=900 bulkscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230109
+Message-Id: <20241023-phy-sam-hdptx-rpm-fix-v1-1-87f4c994e346@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAJEyGWcC/x2MSQqAMBDAviJzdqCLuH1FPLiMdg5qaUUqpX+3e
+ EwgieDJMXnoiwiOHvZ8nRlkWcBipnMn5DUzKKEqKZRGa17004FmtXdAZw/cOOCsatFVWuhGtpB
+ b6yjr/zuMKX3FircFZwAAAA==
+X-Change-ID: 20241023-phy-sam-hdptx-rpm-fix-b26094303718
+To: Vinod Koul <vkoul@kernel.org>, 
+ Kishon Vijay Abraham I <kishon@kernel.org>, 
+ Heiko Stuebner <heiko@sntech.de>, Algea Cao <algea.cao@rock-chips.com>
+Cc: kernel@collabora.com, linux-phy@lists.infradead.org, 
+ linux-arm-kernel@lists.infradead.org, linux-rockchip@lists.infradead.org, 
+ linux-kernel@vger.kernel.org, 
+ Dmitry Osipenko <dmitry.osipenko@collabora.com>
+X-Mailer: b4 0.14.2
 
-On 10/21/24 12:33, Luis Chamberlain wrote:
-...
-> +gen_template_module_exit()
-> +{
-> +	cat <<____END_MODULE
-> +static int __init auto_test_module_init(void)
-> +{
-> +	return auto_runtime_test();
-> +}
-> +module_init(auto_test_module_init);
-> +
-> +static void __exit auto_test_module_exit(void)
-> +{
-> +}
-> +module_exit(auto_test_module_exit);
-> +
-> +MODULE_AUTHOR("Luis Chamberlain <mcgrof@kernel.org>");
-> +MODULE_LICENSE("GPL");
-> +____END_MODULE
-> +}
+In some cases, rk_hdptx_phy_runtime_resume() may be invoked before
+platform_set_drvdata() is executed in ->probe(), leading to a NULL
+pointer dereference when using the return of dev_get_drvdata().
 
-Since commit 1fffe7a34c89 ("script: modpost: emit a warning when the
-description is missing"), a module without a MODULE_DESCRIPTION() will
-result in a warning when built with make W=1. Is that a concern here?
-Should we add a MODULE_DESCRIPTION()?
+Ensure platform_set_drvdata() is called before devm_pm_runtime_enable().
 
-/jeff
+Reported-by: Dmitry Osipenko <dmitry.osipenko@collabora.com>
+Fixes: 553be2830c5f ("phy: rockchip: Add Samsung HDMI/eDP Combo PHY driver")
+Signed-off-by: Cristian Ciocaltea <cristian.ciocaltea@collabora.com>
+---
+ drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+index ceab9c71d3b53ae0b746a10c081fcfaa7d5c5ae7..0965b9d4f9cf1926ba2aaa54c3d1b105ecd1a5a2 100644
+--- a/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
++++ b/drivers/phy/rockchip/phy-rockchip-samsung-hdptx.c
+@@ -1101,6 +1101,8 @@ static int rk_hdptx_phy_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(hdptx->grf),
+ 				     "Could not get GRF syscon\n");
+ 
++	platform_set_drvdata(pdev, hdptx);
++
+ 	ret = devm_pm_runtime_enable(dev);
+ 	if (ret)
+ 		return dev_err_probe(dev, ret, "Failed to enable runtime PM\n");
+@@ -1110,7 +1112,6 @@ static int rk_hdptx_phy_probe(struct platform_device *pdev)
+ 		return dev_err_probe(dev, PTR_ERR(hdptx->phy),
+ 				     "Failed to create HDMI PHY\n");
+ 
+-	platform_set_drvdata(pdev, hdptx);
+ 	phy_set_drvdata(hdptx->phy, hdptx);
+ 	phy_set_bus_width(hdptx->phy, 8);
+ 
+
+---
+base-commit: ceab669fdf7b7510b4e4997b33d6f66e433a96db
+change-id: 20241023-phy-sam-hdptx-rpm-fix-b26094303718
+
 
