@@ -1,228 +1,233 @@
-Return-Path: <linux-kernel+bounces-378342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5517B9ACEA5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:25:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A4C99ACEA8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:25:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9221CB2203E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:25:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A37B21F229EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:25:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99C1D1CACEB;
-	Wed, 23 Oct 2024 15:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8769E1C305A;
+	Wed, 23 Oct 2024 15:24:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AZANycmS"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="ESZL7lAo"
+Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C469C1C8FB3;
-	Wed, 23 Oct 2024 15:23:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 176591A08C2;
+	Wed, 23 Oct 2024 15:24:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729696981; cv=none; b=sfnNyJ+qb9Zh9ZZqLi2937p9hY6FRuI1q/U/SvgixmOWvlSf2k/kMzLSOSgPeL8vYyR/ZcpOuwV70dOdGA0Vn/ZF5WAt+onvFnS1N0pbyYQnbh1wbO6TNHWtoLfLDHfbJQ5uB5eAsOeJjpfnJjDZ/l+8ErXbqI1+nWaoEEREcRQ=
+	t=1729697062; cv=none; b=Rv0MFPYNydcyV1LTdHFJPn3ASRdwzZmJei+2bOjT1iObwA1oig9OeKkN6NbXYUznaYOekHVI9/qbJPOUssGL80iQWgVJziEUR7pWYbjJVwL3wXcikmFU+eYbvdtUfwGxIn9jtCPTUBlHFAi6N0yC5mXTK/k5qJIkNughPsLyXlI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729696981; c=relaxed/simple;
-	bh=KXkbSwlGbCZMCSuO/HqUDNu6DmitH+pQc626B5yFwFY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TrUeiVPbbcNJ2uewd/hfhbWJeqOIq4Vu8X4qmRAWKU6UfPBlZ1BzzY182rZQkTQmxZ6bmdU6sSHwZrmHzNEoXOAWUEFkSUoX/l21zUcglCrFei3sp4/IaOAsrCtip30k9DNT+k5N2S+h+k8DfMv6iNu0QVdLf122UIMl/dM9YZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AZANycmS; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 613FCC4CECD;
-	Wed, 23 Oct 2024 15:22:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729696981;
-	bh=KXkbSwlGbCZMCSuO/HqUDNu6DmitH+pQc626B5yFwFY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AZANycmSnzGOxPgI8KK5fXhNpNn4LV5haxmCQJgpwlbzvIB72HJjTJduSk7C4D/jN
-	 c5HH9n6mNDhJd0ezGRDc8IvN++xEk3uF4DcpNNCizXGBiHGeKcJAlwUDp5n3Q50OWP
-	 7FIqAxTJ8wQfx6lBAu0hp7G2rhrdzRRWIhpV8fN9M1nRFaGyyV0FDMkmPAgnrwN+Kq
-	 JYDGS0EI20ZY6nlDRypzZDK/sEdXGgVBOWXTDdsDlMPbt70hwAyVgp0U0l2sxmrEOw
-	 WW6tqv+aXe45a+z9RtrpPHQ7Z+k1DymCwsCSJoHKaFLsRX6OuNm9ZXRHrDEy7sezVU
-	 N3JYrItlnmN5Q==
-Date: Wed, 23 Oct 2024 16:22:56 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-Cc: Angelo Dureghello <adureghello@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, dlechner@baylibre.com,
-	Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
-Message-ID: <20241023-nifty-electable-64d3b42bce3b@spud>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
- <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
- <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
- <20241022-napped-labored-6956ce18d986@spud>
- <7a4f8c718029c8c57596d950495fcf28562c6e78.camel@gmail.com>
+	s=arc-20240116; t=1729697062; c=relaxed/simple;
+	bh=ENUeDQRKZmcyBeEorDU3djMQXwXKmHQA5UwOA1nzLig=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=mihN6rI3En1FKr1GrbREyA0jQ8RSiWc4GLUOuXGKfvT6IkwDgp/zTmtDRxMKZ2YPzzHdswc5QCxz68RSg7jMuLO3YGmo8fbzxZK+HVxPWsSXTLx6Fu5KIdEHhNK4+I7ckZ9OV2yakXGUy4monh8LjPhLWeG+qWP7+Fn+6s377no=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=ESZL7lAo; arc=none smtp.client-ip=168.119.48.163
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
+From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
+	s=2023072701; t=1729697050;
+	h=from:from:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:  content-transfer-encoding:content-transfer-encoding;
+	bh=EFlQFop5Cj0jHkJDP/E169f0Zu4SqnosYllHOpEn32E=;
+	b=ESZL7lAoqnK+lK4Uk3NxXLr1lY+7sdHwKgUokNyxj1UlmcgZ4UqtSbhl0jFiaxGfucBaog
+	xgNtThNl9Q5zu5m2j9aP9ygMXyVLpHD3QIN8MDBwcfgbpSrgP+Pz+zvkwnv98lpUAvkVE/
+	RvU54ivtDtrTg0cgCHlLuJM6TbUgPD3NHaS4CvIXztG2OHhQtEkKGJyQOTeCvr8snExAoL
+	0bQSi0HX3tuiFWoxAlva4RVzSSNQGfzn0cZ03Xb7VLHVrfKSOkwB2dFwMNfL12aVqGVGJQ
+	eEQj0xOCT2nbVsDUYmxRW8ZuhLPVqWNxdTOTBb3R78hbCxK4E3x8iWHgo+G6bA==
+To: selinux@vger.kernel.org
+Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
+	Paul Moore <paul@paul-moore.com>,
+	Stephen Smalley <stephen.smalley.work@gmail.com>,
+	Ondrej Mosnacek <omosnace@redhat.com>,
+	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
+	Jacob Satterfield <jsatterfield.linux@gmail.com>,
+	Eric Suen <ericsu@linux.microsoft.com>,
+	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
+	Canfeng Guo <guocanfeng@uniontech.com>,
+	John Johansen <john.johansen@canonical.com>,
+	GUO Zihua <guozihua@huawei.com>,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH] selinux: add support for xperms in conditional policies
+Date: Wed, 23 Oct 2024 17:23:36 +0200
+Message-ID: <20241023152351.22622-1-cgoettsche@seltendoof.de>
+Reply-To: cgzones@googlemail.com
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="FcRsxxiByCiYsStm"
-Content-Disposition: inline
-In-Reply-To: <7a4f8c718029c8c57596d950495fcf28562c6e78.camel@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
+From: Christian Göttsche <cgzones@googlemail.com>
 
---FcRsxxiByCiYsStm
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Add support for extended permission rules in conditional policies.
+Currently the kernel accepts such rules already, but evaluating a
+security decision will hit a BUG() in
+services_compute_xperms_decision().  Thus reject extended permission
+rules in conditional policies for current policy versions.
 
-On Wed, Oct 23, 2024 at 04:56:39PM +0200, Nuno S=E1 wrote:
-> On Tue, 2024-10-22 at 18:21 +0100, Conor Dooley wrote:
-> > On Tue, Oct 22, 2024 at 02:36:44PM +0200, Nuno S=E1 wrote:
-> > > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
-> > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > >=20
-> > > > Extend AXI-DAC backend with new features required to interface
-> > > > to the ad3552r DAC. Mainly, a new compatible string is added to
-> > > > support the ad3552r-axi DAC IP, very similar to the generic DAC
-> > > > IP but with some customizations to work with the ad3552r.
-> > > >=20
-> > > > Then, a series of generic functions has been added to match with
-> > > > ad3552r needs. Function names has been kept generic as much as
-> > > > possible, to allow re-utilization from other frontend drivers.
-> > > >=20
-> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > ---
-> > >=20
-> > > Looks mostly good,
-> > >=20
-> > > one minor thing that (I think) could be improved
-> > > > =A0drivers/iio/dac/adi-axi-dac.c | 269
-> > > > +++++++++++++++++++++++++++++++++++++++--
-> > > > -
-> > > > =A01 file changed, 255 insertions(+), 14 deletions(-)
-> > > >=20
-> > > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-ax=
-i-dac.c
-> > > > index 04193a98616e..9d6809fe7a67 100644
-> > > > --- a/drivers/iio/dac/adi-axi-dac.c
-> > > > +++ b/drivers/iio/dac/adi-axi-dac.c
-> > > > @@ -46,9 +46,28 @@
-> > > > =A0#define AXI_DAC_CNTRL_1_REG			0x0044
-> > > > =A0#define=A0=A0 AXI_DAC_CNTRL_1_SYNC			BIT(0)
-> > > > =A0#define AXI_DAC_CNTRL_2_REG			0x0048
-> > > > +#define=A0=A0 AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
-> > > > +#define=A0=A0 AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
-> > > > =A0#define=A0=A0 ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
-> > > > +#define=A0=A0 AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
-> > > > +#define AXI_DAC_STATUS_1_REG			0x0054
-> > > > +#define AXI_DAC_STATUS_2_REG			0x0058
-> > > > =A0#define AXI_DAC_DRP_STATUS_REG			0x0074
-> > > > =A0#define=A0=A0 AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
-> > > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
-> > > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
-> > > > +#define=A0=A0 AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
-> > > > +#define=A0=A0 AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
-> > > > +#define AXI_DAC_UI_STATUS_REG			0x0088
-> > > > +#define=A0=A0 AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
-> > > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
-> > > > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
-> > > > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
-> > > > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
-> > > > +#define=A0=A0 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
-> > >=20
-> > > ...
-> > > =A0
-> > > > =A0static int axi_dac_probe(struct platform_device *pdev)
-> > > > =A0{
-> > > > -	const unsigned int *expected_ver;
-> > > > =A0	struct axi_dac_state *st;
-> > > > =A0	void __iomem *base;
-> > > > =A0	unsigned int ver;
-> > > > @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_devi=
-ce
-> > > > *pdev)
-> > > > =A0	if (!st)
-> > > > =A0		return -ENOMEM;
-> > > > =A0
-> > > > -	expected_ver =3D device_get_match_data(&pdev->dev);
-> > > > -	if (!expected_ver)
-> > > > +	st->info =3D device_get_match_data(&pdev->dev);
-> > > > +	if (!st->info)
-> > > > =A0		return -ENODEV;
-> > > > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
-> > > > +	if (IS_ERR(clk)) {
-> > >=20
-> > > If clock-names is not given, then we'll get -EINVAL. Hence we could a=
-ssume
-> > > that:
-> > >=20
-> > > 		if (PTR_ERR(clk) !=3D -EINVAL)
-> > > 			return dev_err_probe();
-> >=20
-> > clock-names isn't a required property, but the driver code effectively
-> > makes it one. Doesn't this lookup need to be by index, unless
-> > clock-names is made required for this variant?
->=20
-> Likely I'm missing something but the driver is not making clock-names man=
-datory,
-> is it?
+Add a new policy version for this feature.
 
-Did you miss the "for this variant"? Maybe I left the comment in not
-exactly the right place, but I don't think the code works correctly for
-the new variant if clock-names aren't provided:
+Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
+---
+ security/selinux/include/security.h |  3 ++-
+ security/selinux/ss/avtab.c         | 11 +++++++++--
+ security/selinux/ss/avtab.h         |  2 +-
+ security/selinux/ss/conditional.c   |  2 +-
+ security/selinux/ss/policydb.c      |  5 +++++
+ security/selinux/ss/services.c      | 12 ++++++++----
+ 6 files changed, 26 insertions(+), 9 deletions(-)
 
-+	if (st->info->has_dac_clk) {
-+		struct clk *dac_clk;
-+		dac_clk =3D devm_clk_get_enabled(&pdev->dev, "dac_clk");
-+		if (IS_ERR(dac_clk))
-+			return dev_err_probe(&pdev->dev, PTR_ERR(dac_clk),
-+					     "failed to get dac_clk clock\n");
+diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
+index c7f2731abd03..10949df22fa4 100644
+--- a/security/selinux/include/security.h
++++ b/security/selinux/include/security.h
+@@ -46,10 +46,11 @@
+ #define POLICYDB_VERSION_INFINIBAND	     31
+ #define POLICYDB_VERSION_GLBLUB		     32
+ #define POLICYDB_VERSION_COMP_FTRANS	     33 /* compressed filename transitions */
++#define POLICYDB_VERSION_COND_XPERMS	     34 /* extended permissions in conditional policies */
+ 
+ /* Range of policy versions we understand*/
+ #define POLICYDB_VERSION_MIN POLICYDB_VERSION_BASE
+-#define POLICYDB_VERSION_MAX POLICYDB_VERSION_COMP_FTRANS
++#define POLICYDB_VERSION_MAX POLICYDB_VERSION_COND_XPERMS
+ 
+ /* Mask for just the mount related flags */
+ #define SE_MNTMASK 0x0f
+diff --git a/security/selinux/ss/avtab.c b/security/selinux/ss/avtab.c
+index 8e400dd736b7..83add633f92a 100644
+--- a/security/selinux/ss/avtab.c
++++ b/security/selinux/ss/avtab.c
+@@ -339,7 +339,7 @@ static const uint16_t spec_order[] = {
+ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+ 		    int (*insertf)(struct avtab *a, const struct avtab_key *k,
+ 				   const struct avtab_datum *d, void *p),
+-		    void *p)
++		    void *p, bool conditional)
+ {
+ 	__le16 buf16[4];
+ 	u16 enabled;
+@@ -457,6 +457,13 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+ 		       "was specified\n",
+ 		       vers);
+ 		return -EINVAL;
++	} else if ((vers < POLICYDB_VERSION_COND_XPERMS) &&
++		   (key.specified & AVTAB_XPERMS) && conditional) {
++		pr_err("SELinux:  avtab:  policy version %u does not "
++		       "support extended permissions rules in conditional "
++		       "policies and one was specified\n",
++		       vers);
++		return -EINVAL;
+ 	} else if (key.specified & AVTAB_XPERMS) {
+ 		memset(&xperms, 0, sizeof(struct avtab_extended_perms));
+ 		rc = next_entry(&xperms.specified, fp, sizeof(u8));
+@@ -523,7 +530,7 @@ int avtab_read(struct avtab *a, void *fp, struct policydb *pol)
+ 		goto bad;
+ 
+ 	for (i = 0; i < nel; i++) {
+-		rc = avtab_read_item(a, fp, pol, avtab_insertf, NULL);
++		rc = avtab_read_item(a, fp, pol, avtab_insertf, NULL, false);
+ 		if (rc) {
+ 			if (rc == -ENOMEM)
+ 				pr_err("SELinux: avtab: out of memory\n");
+diff --git a/security/selinux/ss/avtab.h b/security/selinux/ss/avtab.h
+index f4407185401c..a7cbb80a11eb 100644
+--- a/security/selinux/ss/avtab.h
++++ b/security/selinux/ss/avtab.h
+@@ -108,7 +108,7 @@ struct policydb;
+ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
+ 		    int (*insert)(struct avtab *a, const struct avtab_key *k,
+ 				  const struct avtab_datum *d, void *p),
+-		    void *p);
++		    void *p, bool conditional);
+ 
+ int avtab_read(struct avtab *a, void *fp, struct policydb *pol);
+ int avtab_write_item(struct policydb *p, const struct avtab_node *cur,
+diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
+index 64ba95e40a6f..c9a3060f08a4 100644
+--- a/security/selinux/ss/conditional.c
++++ b/security/selinux/ss/conditional.c
+@@ -349,7 +349,7 @@ static int cond_read_av_list(struct policydb *p, void *fp,
+ 	for (i = 0; i < len; i++) {
+ 		data.dst = &list->nodes[i];
+ 		rc = avtab_read_item(&p->te_cond_avtab, fp, p, cond_insertf,
+-				     &data);
++				     &data, true);
+ 		if (rc) {
+ 			kfree(list->nodes);
+ 			list->nodes = NULL;
+diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
+index 383f3ae82a73..3ba5506a3fff 100644
+--- a/security/selinux/ss/policydb.c
++++ b/security/selinux/ss/policydb.c
+@@ -155,6 +155,11 @@ static const struct policydb_compat_info policydb_compat[] = {
+ 		.sym_num = SYM_NUM,
+ 		.ocon_num = OCON_NUM,
+ 	},
++	{
++		.version = POLICYDB_VERSION_COND_XPERMS,
++		.sym_num = SYM_NUM,
++		.ocon_num = OCON_NUM,
++	},
+ };
+ 
+ static const struct policydb_compat_info *
+diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
+index 9652aec400cb..66d2472d3874 100644
+--- a/security/selinux/ss/services.c
++++ b/security/selinux/ss/services.c
+@@ -946,7 +946,7 @@ static void avd_init(struct selinux_policy *policy, struct av_decision *avd)
+ }
+ 
+ static void update_xperms_extended_data(u8 specified,
+-					struct extended_perms_data *from,
++					const struct extended_perms_data *from,
+ 					struct extended_perms_data *xp_data)
+ {
+ 	unsigned int i;
+@@ -967,6 +967,8 @@ static void update_xperms_extended_data(u8 specified,
+ void services_compute_xperms_decision(struct extended_perms_decision *xpermd,
+ 					struct avtab_node *node)
+ {
++	u16 specified;
 +
-+		/* We only care about the streaming mode rate */
-+		st->dac_clk_rate =3D clk_get_rate(dac_clk) / 2;
+ 	switch (node->datum.u.xperms->specified) {
+ 	case AVTAB_XPERMS_IOCTLFUNCTION:
+ 	case AVTAB_XPERMS_NLMSG:
+@@ -982,17 +984,19 @@ void services_compute_xperms_decision(struct extended_perms_decision *xpermd,
+ 		BUG();
+ 	}
+ 
+-	if (node->key.specified == AVTAB_XPERMS_ALLOWED) {
++	specified = node->key.specified & ~(AVTAB_ENABLED | AVTAB_ENABLED_OLD);
++
++	if (specified == AVTAB_XPERMS_ALLOWED) {
+ 		xpermd->used |= XPERMS_ALLOWED;
+ 		update_xperms_extended_data(node->datum.u.xperms->specified,
+ 					    &node->datum.u.xperms->perms,
+ 					    xpermd->allowed);
+-	} else if (node->key.specified == AVTAB_XPERMS_AUDITALLOW) {
++	} else if (specified == AVTAB_XPERMS_AUDITALLOW) {
+ 		xpermd->used |= XPERMS_AUDITALLOW;
+ 		update_xperms_extended_data(node->datum.u.xperms->specified,
+ 					    &node->datum.u.xperms->perms,
+ 					    xpermd->auditallow);
+-	} else if (node->key.specified == AVTAB_XPERMS_DONTAUDIT) {
++	} else if (specified == AVTAB_XPERMS_DONTAUDIT) {
+ 		xpermd->used |= XPERMS_DONTAUDIT;
+ 		update_xperms_extended_data(node->datum.u.xperms->specified,
+ 					    &node->datum.u.xperms->perms,
+-- 
+2.45.2
 
-Isn't this going to cause a probe failure?
-
-> At least for the s_axi_aclk, we first try to get it using clock-names and=
- if
-> that fails we backup to what we're doing which is passing NULL (which
-> effectively get's the first clock in the array).
->=20
-> The reasoning is that on the generic variant we only need the AXI clk and=
- we
-> can't now enforce clock-names on it. But to keep things flexible, this was
-> purposed.
-
-Why not always just get the first clock by index and avoid the
-complexity?
-
-> Another alternative that might have more lines of code (but simpler to
-> understand the intent) is to have (for example) a callback get_clocks fun=
-ction
-> that we set depending on the variant. And this also makes me realize that=
- we
-> could improve the bindings. I mean, for the generic dac variant we do not=
- need
-> clock-names but for this new variant, clock-names is mandatory and I'm fa=
-irly
-> sure we can express that in the bindings.
-
-Right. You can "edit" required in the if/then/else branch for the new
-variant.
-
---FcRsxxiByCiYsStm
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxkUvwAKCRB4tDGHoIJi
-0iH0AQDT3WZkbiqQZikEUWqx6FC6ZERzFp5cE6EJ0uvCHfGrpwD+MwupjN9w4Yz7
-A9SQRFg6vReiv04lQ/Myk3KErlH/8Qg=
-=anK4
------END PGP SIGNATURE-----
-
---FcRsxxiByCiYsStm--
 
