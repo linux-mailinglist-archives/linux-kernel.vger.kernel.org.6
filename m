@@ -1,168 +1,151 @@
-Return-Path: <linux-kernel+bounces-377960-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377959-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 717B79AC92E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:39:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 623139AC92C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:38:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 92EBB1C21252
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:39:00 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69B01F21FAC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:38:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6DC7E1AB6E6;
-	Wed, 23 Oct 2024 11:38:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE231AB50B;
+	Wed, 23 Oct 2024 11:38:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="L5XJ1265"
-Received: from lelv0142.ext.ti.com (lelv0142.ext.ti.com [198.47.23.249])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="bMYaD7nE";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F1zrF0cW"
+Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EBD041AB51B;
-	Wed, 23 Oct 2024 11:38:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.249
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FC4134BD;
+	Wed, 23 Oct 2024 11:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683520; cv=none; b=phCaqqIp4dyqRu55as2OBAjO/4h5BvCBlwwEmLoMWG9cnVqUQfvZjGi1IU0tP3i59Dqwe6OF29ZHzIiuBgDq+EtftE7VwxhKJdEo0MK0c1s1I7wSVyDkSfz20xsA7J6QbPZJYFCJy7DOSZjxRGlOyhlQyxuAsic5RIlKePQLYXQ=
+	t=1729683517; cv=none; b=ep4YV/qE92VCqoBvIU66VJ4VNxtE/eMCQPnlh9eAGYnhNSB/M0EPVO2NVmTLeWYwBhXAgl1Lj00QDqHSte6nxPwHnislYfwAstvQcH23bH3rMyKrbd9xhbve3KLHtQmnvXHgJuqDRzrpAxfZLOrH+FJ02kIgCcIvgkg+Ky8eW2Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683520; c=relaxed/simple;
-	bh=yM5uToxV/sPoW2ZwjVB8oWvo9doX/4e1FgtkYEiLQQg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=VtA7alYyYNQnmUAIkhARa9BLZR7hGaA9NTbJ4lEBxgcxB7QEmkaAlIhyGvDtpMXFobaK1qmxWDA0VMGjG+9bxzgC81ZKdfKg+y9E9BjnTYyjCTd2YZ98FNfXRTEuXPFQM3E0zk6dq+vFU3khy5J/+M56AM52GWAJbsWs/xArhIQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=L5XJ1265; arc=none smtp.client-ip=198.47.23.249
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by lelv0142.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49NBcDAx013929;
-	Wed, 23 Oct 2024 06:38:13 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729683493;
-	bh=IB3mGWP/MB/mhIwDnna/Ib8F4OMAAgNQRJozpZxR3gU=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=L5XJ12654bbqzmEM0U+Yabb+VykPEYVA+YOOi9rbTRsw/kKMNMHa0q0eX+A7EDO4Y
-	 vLkibs1wMmzaYeajgLpnI3IQnmiWjty0hKtBU5nnNqUmwQzk9jvmVvHoRQ/yZsc5Di
-	 9JckUmFE2WCUqtlswjTLGZEOGhkXU5PmEmstoovI=
-Received: from DFLE102.ent.ti.com (dfle102.ent.ti.com [10.64.6.23])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49NBcDfQ028124
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Wed, 23 Oct 2024 06:38:13 -0500
-Received: from DFLE109.ent.ti.com (10.64.6.30) by DFLE102.ent.ti.com
- (10.64.6.23) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
- Oct 2024 06:38:12 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE109.ent.ti.com
- (10.64.6.30) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Wed, 23 Oct 2024 06:38:12 -0500
-Received: from [10.24.69.13] (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49NBc8B6071380;
-	Wed, 23 Oct 2024 06:38:08 -0500
-Message-ID: <4c529e08-084c-43b3-ba70-982ba2555b5b@ti.com>
-Date: Wed, 23 Oct 2024 17:08:07 +0530
+	s=arc-20240116; t=1729683517; c=relaxed/simple;
+	bh=UzYtrYpwqw1jaVXUafPAJfobNqaDaomuqS1vRObPCqI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=LB0CthbXaFCTjY+p0VA3s/N4hYWLpm70v+HJf5CkHZq3WzKdU/T7ftO44AVnZDDyP//39Rl9H3m5k1vuvqd2dzTQLJ4j0cNOHrET57Hl5PpcLUfu8sZjE5czn+WuwbNeFXVww1zJLcewT3K44WKrj7h/4/UnDHoe1INvz4nNiko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=bMYaD7nE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F1zrF0cW; arc=none smtp.client-ip=103.168.172.151
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfout.phl.internal (Postfix) with ESMTP id E30CD13807A3;
+	Wed, 23 Oct 2024 07:38:33 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Wed, 23 Oct 2024 07:38:33 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729683513; x=
+	1729769913; bh=G6CUi21sJIgULg4YyxpP72kDdA8AWcHDBrNG6d45KA8=; b=b
+	MYaD7nEySPXh7O4/RcFrX+MizsCOUtTadpngQe0QdRJjqVSqF/jI+5/2HmBheKkt
+	c5mCxMz8LDC+bttnTWAI600BShR5Gdx6d6lvhrw9f/0dVA7Y5K3hkGPD4KCXCyWf
+	LhUUy6ygcjx6CqdoeexPsNUMk4VnyE+n1AQgXwGJ20bwMs/1JWxsCOlWX6l8O+pw
+	Sxx4QQ4FV+zvVldo0zD62+/Wy+6XvLZ+kw1gVtaiUiWjYYkQW/4sY0lpfO2Jom2/
+	vsx53REiG/RgCrw6mRcT08/PyAqZVit3zrWbEPFiVmjIKkrtVl00Azvl7i59O/lW
+	7Mf0GGDFEvE862hbU4oDw==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729683513; x=1729769913; bh=G6CUi21sJIgULg4YyxpP72kDdA8A
+	WcHDBrNG6d45KA8=; b=F1zrF0cW0VSFjM0x4dQO0iEG41G/dAsSFFHilHRv7sfu
+	AIu+9rdB0V2od+a7vBO2r6ECptu354ukTLB5rQATGOKWCJ6lnqwcxqYHfqQVD2B3
+	q5KC+zGIaENAffEhKt7SjDFK2QCAenIO8+MMoHxlIyXc5/2+QekVZpD9KQ3lBAAI
+	DZ51zkCSz9RSC33JW+RDSFouh4g/UzMV/UKQIwxMLjGduIlqbaJqSQIP7OFM8MxW
+	+tXsB4Ific2k2oNbtWTN0b38GcTcfR0u5k0qMd/9nddciUeGFEMTkLI/yDphUt4X
+	whWok8f/eeC/NW81aHwQMzeVsBR2DT/vxRzVfztvvw==
+X-ME-Sender: <xms:OOAYZ3NRYIeL5zW1s5qndddFNCLfYN_BMBAnzQeiW5VFnnDmdIrBog>
+    <xme:OOAYZx8cKkX8nja5zUKMGGk0IcuqpAosGWiac0by3KVYDTAHnhlBp0sllrepnPWti
+    UXJDKDwuk4uw4OWi1w>
+X-ME-Received: <xmr:OOAYZ2QrJg5n52W9QAQbKGYvBjGJ7Zr9drRNF_THYv9bocosDxs5shR3U3yATtZUwcaiTA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeijedggeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hmmheskhhvrggtkhdrohhrghdprhgtphhtthhopegtghhrohhuphhssehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpth
+    htohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtjheskhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:OOAYZ7u9T06DBMvGNREnx8516Mxu-KVPbQNSUO69cEHTnvymJgftEg>
+    <xmx:OOAYZ_eOEUtSC-mwcGe2Co5_zRTAjtfsCU6bxzghKzFfeKaHMAawtg>
+    <xmx:OOAYZ31lhju9dZbobTbDYoYBZ6i2dk90w-WlcUojz764r94TgPNgHA>
+    <xmx:OOAYZ78VQX-CkXJix2eIRcGZnx1rcLekQibFSi7eobssgISEIgl7zA>
+    <xmx:OeAYZyV6c18kuhT7qTXfPQ93NA49QhVjYEMB9giM0eEGtNAoul0gK3p8>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 23 Oct 2024 07:38:27 -0400 (EDT)
+Date: Wed, 23 Oct 2024 14:38:22 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
+To: David Hildenbrand <david@redhat.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v1 04/17] mm: let _folio_nr_pages overlay memcg_data in
+ first tail page
+Message-ID: <wi53ecg3o5eemp2hwy5sjbgoroulbmnbbbz6pub2ratbwrdhg3@pnhiy45qirr3>
+References: <20240829165627.2256514-1-david@redhat.com>
+ <20240829165627.2256514-5-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net] net: ti: iccsg-prueth: Fix 1 PPS sync
-To: Vadim Fedorenko <vadim.fedorenko@linux.dev>, <vigneshr@ti.com>,
-        <horms@kernel.org>, <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>,
-        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
-        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <netdev@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <srk@ti.com>,
-        Roger Quadros
-	<rogerq@kernel.org>, <danishanwar@ti.com>
-References: <20241023091213.593351-1-m-malladi@ti.com>
- <3fe8183a-08d3-47d3-b1a1-0d84f7bf58b7@linux.dev>
-Content-Language: en-US
-From: Meghana Malladi <m-malladi@ti.com>
-In-Reply-To: <3fe8183a-08d3-47d3-b1a1-0d84f7bf58b7@linux.dev>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829165627.2256514-5-david@redhat.com>
 
-
-
-On 23/10/24 15:52, Vadim Fedorenko wrote:
-
-
-> On 23/10/2024 10:12, Meghana Malladi wrote:
->> The first PPS latch time needs to be calculated by the driver
->> (in rounded off seconds) and configured as the start time
->> offset for the cycle. After synchronizing two PTP clocks
->> running as master/slave, missing this would cause master
->> and slave to start immediately with some milliseconds
->> drift which causes the PPS signal to never synchronize with
->> the PTP master.
->> 
->> Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
->> Signed-off-by: Meghana Malladi <m-malladi@ti.com>
->> ---
->>   drivers/net/ethernet/ti/icssg/icssg_prueth.c | 12 ++++++++++--
->>   drivers/net/ethernet/ti/icssg/icssg_prueth.h | 11 +++++++++++
->>   2 files changed, 21 insertions(+), 2 deletions(-)
->> 
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> index 0556910938fa..6b2cd7c898d0 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
->> @@ -411,6 +411,8 @@ static int prueth_perout_enable(void *clockops_data,
->>   	struct prueth_emac *emac = clockops_data;
->>   	u32 reduction_factor = 0, offset = 0;
->>   	struct timespec64 ts;
->> +	u64 current_cycle;
->> +	u64 start_offset;
->>   	u64 ns_period;
->>   
->>   	if (!on)
->> @@ -449,8 +451,14 @@ static int prueth_perout_enable(void *clockops_data,
->>   	writel(reduction_factor, emac->prueth->shram.va +
->>   		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
->>   
->> -	writel(0, emac->prueth->shram.va +
->> -		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
->> +	current_cycle = icssg_readq(emac->prueth->shram.va +
->> +				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
->> +
->> +	/* Rounding of current_cycle count to next second */
->> +	start_offset = ((current_cycle / MSEC_PER_SEC) + 1) * MSEC_PER_SEC;
+On Thu, Aug 29, 2024 at 06:56:07PM +0200, David Hildenbrand wrote:
+> Let's free up some more of the "unconditionally available on 64BIT"
+> space in order-1 folios by letting _folio_nr_pages overlay memcg_data in
+> the first tail page (second folio page). Consequently, we have the
+> optimization now whenever we have CONFIG_MEMCG, independent of 64BIT.
 > 
-> This looks more like roundup(current_cycle, MSEC_PER_SEC), let's use it
-> instead of open coding.
+> We have to make sure that page->memcg on tail pages does not return
+> "surprises". page_memcg_check() already properly refuses PageTail().
+> Let's do that earlier in print_page_owner_memcg() to avoid printing
+> wrong "Slab cache page" information. No other code should touch that
+> field on tail pages of compound pages.
 > 
-
-Ok sure, I will update it.
-
->> +
->> +	icssg_writeq(start_offset, emac->prueth->shram.va +
->> +		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
->>   
->>   	return 0;
->>   }
->> diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> index 8722bb4a268a..a4af2dbcca31 100644
->> --- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> +++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
->> @@ -330,6 +330,17 @@ static inline int prueth_emac_slice(struct prueth_emac *emac)
->>   extern const struct ethtool_ops icssg_ethtool_ops;
->>   extern const struct dev_pm_ops prueth_dev_pm_ops;
->>   
->> +static inline u64 icssg_readq(const void __iomem *addr)
->> +{
->> +	return readl(addr) + ((u64)readl(addr + 4) << 32);
->> +}
->> +
->> +static inline void icssg_writeq(u64 val, void __iomem *addr)
->> +{
->> +	writel(lower_32_bits(val), addr);
->> +	writel(upper_32_bits(val), addr + 4);
->> +}
->> +
->>   /* Classifier helpers */
->>   void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac);
->>   void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac);
->> 
->> base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
+> Reset the "_nr_pages" to 0 when splitting folios, or when freeing them
+> back to the buddy (to avoid false page->memcg_data "bad page" reports).
 > 
+> Note that in __split_huge_page(), folio_nr_pages() would stop working
+> already as soon as we start messing with the subpages.
+> 
+> Most kernel configs should have at least CONFIG_MEMCG enabled, even if
+> disabled at runtime. 64byte "struct memmap" is what we usually have
+> on 64BIT.
+> 
+> While at it, rename "_folio_nr_pages" to "_nr_pages".
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
+
+BTW, have anybody evaluated how much (if anything) do we gain we a
+separate _nr_pages field in struct folio comparing to calculating it
+based on the order in _flags_1? Mask+shift should be pretty cheap.
+
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
