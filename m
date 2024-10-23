@@ -1,226 +1,290 @@
-Return-Path: <linux-kernel+bounces-378286-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0879ACDA0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:57:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D7C3E9ACDA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:57:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2A3EEB2679C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:57:33 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0537F1C257F4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:57:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE6B91EF0BF;
-	Wed, 23 Oct 2024 14:43:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 058871F80B1;
+	Wed, 23 Oct 2024 14:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c3QXyMky"
-Received: from mail-ed1-f51.google.com (mail-ed1-f51.google.com [209.85.208.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b="BCdZj1Cw"
+Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2083.outbound.protection.outlook.com [40.107.249.83])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 690DC1E8837;
-	Wed, 23 Oct 2024 14:43:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.51
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729694631; cv=none; b=tU3yp27qMu9Loyr66WebPjr31jtLKq3F+ahTYXHjAAW5fjYOOcTKfB13cdybXistqAfluM0mA21Y2CotS5QrBuLDHzVB0g4m0017LS3gSTRyQ7YNLls6iwvyVQIH0SeFehiakVs1U9OYFIRNdogoexxRh5d4UKMeTEDC+gMphE8=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729694631; c=relaxed/simple;
-	bh=/iigP6/X5LG3wncShhnLmrKx0a90T3hO86bwJp6jxT0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MkdLN3xcllnVIzdf4Sskj0aYPOOwEP14TJPPEIQHSujsZ075qusxkmUT2eQ1ZH2tznhk/wzcml8J5cYZgh9UHTKO3vvLrjbHmfVTICZo8RZFxyeFb7xFupdInpVoUPM2pHN30FEhHiuDvYGlo5R/z+OcsiHFRJ8l8e1skg+FSCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c3QXyMky; arc=none smtp.client-ip=209.85.208.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f51.google.com with SMTP id 4fb4d7f45d1cf-5c9404c0d50so7043855a12.3;
-        Wed, 23 Oct 2024 07:43:49 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729694628; x=1730299428; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=q5rYTkHY31+cXuKv/fhTi/vwecjYJXbckDY0ZiVGZng=;
-        b=c3QXyMkyXAteepZFxU7afN2aJVLE+RjydpG6iGLpCh+6Kt+AoZZRGm63Ham+5c+/aK
-         nTDBm8lydEfjvrS4uj/ECsQ+FSSqScf/jWrvEPFm38GENYHO1XFgIbEkj6PCVb+kcseW
-         AKUT9W7uyVJZ0fxBElDodRtu4ihV9IZyZVBraigaAi9Pb0X8j3iiEWgworlca9A9H/Oy
-         m60sLJVWx8w9y/32wHtEBrob9RaO19Ud5lF3WgNEf0jFLVD4BydfX5acBdcykHkd5qDX
-         LfS543MXQUdbsa2qdyAYvK43nmuigTJVal5AfxiffgBP2l3EFeSCjvf/W6db9HcuwXtU
-         vZXQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729694628; x=1730299428;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=q5rYTkHY31+cXuKv/fhTi/vwecjYJXbckDY0ZiVGZng=;
-        b=waBd+arb0fBUKy99Et6HNfhL6sW806Aij2jIJCkJ1+6W753trkx955ScuY4WL7iXn0
-         tsp3IsZFguM4FZjZoltJnOJFxGokiBPeOG0NOpO+QA/zt0IZVvzf2oSMd4Yku5U655Iz
-         svzLP3yLuSxPefM6HNVj5xWfSEly0sgnJbyqbYbEsbStOWT8cLXAjEPABSnez/I9TKs3
-         XFzUbd974pYviRtJ5OH2W6oqkS89f6ED59ZhiPL9sOblWF16jn2mK3s6hYfVs5xqv3kT
-         LDrFH91eBEzN5eJuxB3N8mOl/j873MsFCi09LsWB0mFWJmLkpts12onDpJY3SxxWzm4e
-         rhSA==
-X-Forwarded-Encrypted: i=1; AJvYcCUI1bCoiCkL9rsvAcq5gSjKTO4BCO2wHzxDZ/WIJWKb0qB4PM79dZ1ZAdi7Q4bxkyeEvYDZXGBGHE9I@vger.kernel.org, AJvYcCVVxtBcjtLhQaoHnv5yL5PEKwyW6LUdFvUVsa1/JUZiuk1OyCJ8/LS9WMvkkteLd2ZP6ZL+bFM8yH1VIVq2@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy2WwMjUbw4dodSJvFwBDPw0EksrRgNZVbuRoKXJdiSDFr3f5/T
-	vLLrz7GSBLpVIUDVL5YymSivhtQ8IziAO0HgsxK78TR0bVXs9Bw7
-X-Google-Smtp-Source: AGHT+IHDJbvo8KOhjbBnEUwYt4z0DNUgMPzm4YxcQUEljWBb7Z20ciaU2eAHyabV6G4Hjpki7LKWTA==
-X-Received: by 2002:a05:6402:2106:b0:5ca:d9f:9146 with SMTP id 4fb4d7f45d1cf-5cb8acfa78amr2972462a12.17.1729694625893;
-        Wed, 23 Oct 2024 07:43:45 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:ca73])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb6696b68fsm4503334a12.1.2024.10.23.07.43.44
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 07:43:45 -0700 (PDT)
-Message-ID: <1e117d65-b454-4d5c-b03a-c3ab3b078093@gmail.com>
-Date: Wed, 23 Oct 2024 15:43:44 +0100
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB4E1F4732;
+	Wed, 23 Oct 2024 14:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.83
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729694638; cv=fail; b=nnu5Xojce/fDZk95O1qVHW8UmEv1+yPgI4AIfQQieusqzwO1Qt9bnKFHkvm0rlcS772m73Fb39fZI1lgT9Skq8TjTx5H6HzluCxi7URKFEbwIX7vREu8D6qkazLcoQHqNLrFkAYcgsa42n/yzdGQELizQzVud1w2txZtOBG/CiE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729694638; c=relaxed/simple;
+	bh=2j8F6Bx+64AuGBqjcjWUzQF6lkrN9GagkbnbCLJlNkY=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=pwCGDrPZ3fhSkO819dSNegz7acrPMT7P4yrXUl2XaqEXd+joKxxeiOngDafNl1z8jllH4WEFYM4XiUo7snKYbwaXdaXOY9KDe6NXmj46OoO6FaF/ql6AXTXAeki+r59w857e/rmWpPf4jgkl+Gcp8JOLjwI1kIzb9NPPgAoll70=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com; spf=pass smtp.mailfrom=axis.com; dkim=pass (1024-bit key) header.d=axis.com header.i=@axis.com header.b=BCdZj1Cw; arc=fail smtp.client-ip=40.107.249.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=axis.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=axis.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=mWdEEnhg+5skRbEl69qV3gz0z5xkn/3POYoim9kGTwBmx3SfuyBqpAsaaQ+uSFROoxQkNFiD6Xsx3YJMkeNBxLep76bW1seCUxh7dQhZ4Ml+qgANr0KpV5lvMY8E4Hfi7XnXmFFPWvaFRPTC39g8J3KhcwhWlEC/AWKRDttXNLx7h82blmMd6V5TneqAS8hLSAfEs5kSFV0j/8n+Z55DY+nYZWSZxSPcPu+S+sP5OLg2TTgDlUid9ClKu6EnUXN1lc2UrAgrWCyuQWTHU+jW9kC2hkyWW5q/hOoxp5eP3LdBw/kBVIHEv0bXxAyuTGpReoppeon5NVZ0qRX/p80vCQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=gLoOfLquWZFVOTNKLhquZMh4FpGrfaol01Reca4DY2I=;
+ b=YgbMkt4wAopwwRKI4BfrvkA0EQbjevZqXFrXc+zLCYH5NAYgQ0g2UqpC7bzq6TJF1cNISaaRNDi9H9hNE+HfsbbLLnib/wixWpNOXjmA6W8SYjipv9eaq1mU6N9MlWBn/YjKaJuLLG/fukwU1YCFswB8Jr5B0yxRc+VpwIJNlA675husKg40KnREA2hNy9bLdqWpDxYrx/GkgogzFBrBXH6QmjeKeYiMLLw3o7L1l2SWkV94mKl9B/1sLonzM9jDn0ynBob361xTAtykoxVxLTbkN/BB600Nxiv4QOjrHhYRGY7CDTxwFsYVBuiG01ep+4/GJDmJOll6A7ZeLUsHrQ==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=axis.com; dmarc=pass action=none header.from=axis.com;
+ dkim=pass header.d=axis.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=axis.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=gLoOfLquWZFVOTNKLhquZMh4FpGrfaol01Reca4DY2I=;
+ b=BCdZj1CwkhP56m1yakFOBMNo0CLTzB2j+8kmEeKbfCizP+thaAVHFlCXrGrVIBb/vdPIU7cl2VlGRIb0GGKOMHfrs3eX8gp3kz2/QXthSDzLUDYHv12YRC2HRHlYGi9gdbA5glSZbvKYkBEFzeI4oev4x+N/iuCDECjaI/C9ThY=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=axis.com;
+Received: from DU0PR02MB9585.eurprd02.prod.outlook.com (2603:10a6:10:41d::20)
+ by AS8PR02MB9789.eurprd02.prod.outlook.com (2603:10a6:20b:61e::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Wed, 23 Oct
+ 2024 14:43:51 +0000
+Received: from DU0PR02MB9585.eurprd02.prod.outlook.com
+ ([fe80::b1a:32b1:13cb:e576]) by DU0PR02MB9585.eurprd02.prod.outlook.com
+ ([fe80::b1a:32b1:13cb:e576%7]) with mapi id 15.20.8069.027; Wed, 23 Oct 2024
+ 14:43:51 +0000
+Message-ID: <75c205a0-1621-4bb9-8aa4-2bf43478bad9@axis.com>
+Date: Wed, 23 Oct 2024 16:43:48 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] iio: light: Add support for TI OPT4060 color
+ sensor
+To: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+Cc: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen
+ <lars@metafoo.de>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, linux-iio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ rickard.andersson@axis.com, kernel@axis.com
+References: <20241016213409.3823162-1-perdaniel.olsson@axis.com>
+ <20241016213409.3823162-3-perdaniel.olsson@axis.com>
+ <20241020135105.36b29fe8@jic23-huawei>
+ <10d6bba4-4d25-4ee0-877e-48a27c622bde@axis.com>
+ <20241023142735.000018cb@Huawei.com>
+Content-Language: en-US
+From: Per-Daniel Olsson <perdaniel.olsson@axis.com>
+In-Reply-To: <20241023142735.000018cb@Huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: MM0P280CA0009.SWEP280.PROD.OUTLOOK.COM
+ (2603:10a6:190:a::24) To DU0PR02MB9585.eurprd02.prod.outlook.com
+ (2603:10a6:10:41d::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] of/kexec: save pa of initial_boot_params for arm64 and
- use it at kexec
-To: Rob Herring <robh@kernel.org>
-Cc: mark.rutland@arm.com, will@kernel.org, leitao@debian.org,
- catalin.marinas@arm.com, saravanak@google.com,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, kexec@lists.infradead.org
-References: <20241003113840.2972416-1-usamaarif642@gmail.com>
- <20241004000316.GA1910499-robh@kernel.org>
- <d3d90f10-1ccd-4557-843c-5b546d3b913c@gmail.com>
- <CAL_JsqJVEjPt9tHNr0uAGHQwGnUbZDZoe7kURp3Qx0ce1jv+vw@mail.gmail.com>
- <4b9456a3-47ea-4a00-92fe-131ccd80e550@gmail.com>
- <CAL_JsqLLxyhjrc-Aqg12mjUZHGGgw59=AJxPpOfh5uSST8hY0Q@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAL_JsqLLxyhjrc-Aqg12mjUZHGGgw59=AJxPpOfh5uSST8hY0Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DU0PR02MB9585:EE_|AS8PR02MB9789:EE_
+X-MS-Office365-Filtering-Correlation-Id: db6217e2-1457-4ca1-d14d-08dcf3711be3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?QldsZzZpWHBIeVlPSENNSk5lWkZGUHhKWWZlZzdqWjViYUNObnNVQ3Q3aEU2?=
+ =?utf-8?B?M1Rkb015MHVRR0xJMzJWZTJ5RklVN1N1dk9jSU8yZ2E4b1c3VHE5aGNIUURY?=
+ =?utf-8?B?bEpadk9OaVo1MHk5bnFlWVUzSlNTYUxJQkUvSkFSdVhnU2tVWE5pQWpXcTdC?=
+ =?utf-8?B?dlFtNk1ha0Judm5FVmVsNGtYZ1kxRURkekxVb3FuRjRkM0Q5RTNnUW1UVStl?=
+ =?utf-8?B?V3lybW8rN2dZZGZhM3lraVVZUWFlVEd2RVFHZ2gxSDVTTmtpU1UyNjVScjQ5?=
+ =?utf-8?B?WVUrV1hqUGFLK21DL25WZ0xLZURTbkpVS0xPN01pZ0R3VnVDMW8vZUZsOENT?=
+ =?utf-8?B?UEtFU25qVUZkR2ZuY3BVQXV1ZWVBNjNSK3l1VU9JZkpmNXRxOVpORWw1cUdB?=
+ =?utf-8?B?UnJrNVhrTm1GNHdZNG56KzRqQlJkWmRPVzVBL3N4Zkg2KzdzNDdGNEc0Q3VM?=
+ =?utf-8?B?RFZDUFAwc21lajl6M1I0TTB1Z0JvUkFFZ1FpZzZEQ1p3M0RmZ3NzemhDRDVH?=
+ =?utf-8?B?Q09JWFl6QmdDTnVvcnRPWUpVYVlqYUI5bnQwWkdJNXowOHgvcEZOcmhvYmty?=
+ =?utf-8?B?TStucngxTTczYWRmWFA2RWtJRTZQTDd3dnRTWlF2amNVNU15V3RJc3VUaDRX?=
+ =?utf-8?B?RnVvbHFPZVUrRUp0SXhSMkpMdVpIZzJKeEQ2cTljODl6alNBMzNyMkpDRVJR?=
+ =?utf-8?B?WklCUkhVbWljQmtWVXJlejNMdzIxN2pyWkZzemRYVlZXdk5kREJlZlRMcXNT?=
+ =?utf-8?B?bjFVQUlicUNRSzhmZzQrTGlYYmk2d29uZlJzZXM2T1QyNjRSaU5WL0ZQeHZ5?=
+ =?utf-8?B?K1FCdDVva3dqdDJQaWRtN20rQzk2c0RCbmMvUEk2MXdhTEVWWEZDYzJ6d3Zl?=
+ =?utf-8?B?eE9MbjIvak9uUURpN0FmN25WbWU1a0E5VzM1UHhORk1WVnFQQ1pnOUFVaFY2?=
+ =?utf-8?B?bXQ2M0w4U2RrTlRrN2gzVTYraTVQMGdiUndtbldOeWRDYjVSa3NtMXorUkxn?=
+ =?utf-8?B?TnhHcVlOQ1gvclcvSVBxTkh5VGZmVi9KdUQyUWFTUFFEaGV2bmJKTVpQOXVK?=
+ =?utf-8?B?RDBPSk44aTU1dG4zTmpoSGdlT0gybWZXVER0RUwxN2Y5bnp5REY5SmNlWE1Z?=
+ =?utf-8?B?WDZ4cWU3TjcyMFA0VG82Zis5ZXZaQnNJd3JtQ2dGQjBuUXlDS2lyMFVFbzBO?=
+ =?utf-8?B?eFRDbVdZbDczZ1hqeXZCY0Nya05ZMTFxZ0RWTEdNT0FLQ0QwV3hOZjlXdEVs?=
+ =?utf-8?B?c3NBdys0REpXdmdjbVUra010WHpiWk10OU9DZDVpd29iajNsUXlJcDhUcXVM?=
+ =?utf-8?B?c3lvNzkreUZmeXBoN2tMd055T2hjTzF4emI1TFFQb1Yyazh4SnhiV2MrOXBu?=
+ =?utf-8?B?Q0IxcWNHdlh6T216RlFyd3BJd245eW5XOHRHSjVFMXpHSmtKcGh6eWNUWTd0?=
+ =?utf-8?B?R2E4aVhWUDNhV3Fra1ptb0JpRWJ1L3VPb2NHRjNHdEZwb3hWb2orcWlpckZ6?=
+ =?utf-8?B?K25yMWpzRXVrTXlmT2kveUhRSGV4SjROa09tRnl6ZnVRL1FjZHFEc1VmQWpB?=
+ =?utf-8?B?eFJkME5VRHJKWU1CK2hLbE1MaXZMeGViZnl3TEJrTHBPakNoODlid0l5T1U3?=
+ =?utf-8?B?MG9XeGxTcFhaU3p0MXdiSVloZ01jeEExNWN2eUxCRko1eVR0eTQ2YU5zaWRU?=
+ =?utf-8?B?U0V2M01mQ3ZaSDFNcmF5K001YXNaTU11TmNTL2phbVpuUlk1SHFoc3VJVVVE?=
+ =?utf-8?Q?y7iaEytodYZF6rqOTIo/j4S3pqvYLY7Awk7ugnC?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DU0PR02MB9585.eurprd02.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?S2lBUy9LVU42UysrZG1kS0hGS0l0SG1rQVlKUjdJbG9FaEZWbTEwMHE2Ymtp?=
+ =?utf-8?B?L01OYlNoQ2d1U2NtcVkvUEhJN2VNSjZMUlJiVTg2bkZwWkNFOXNRVXN6S0Qr?=
+ =?utf-8?B?VGdLc3BqU2JQZ3h3NjNYR0NFQ1BMUjA3b1B2VlNlZWx2MXdnRFlNV0xtbXh3?=
+ =?utf-8?B?dG13R0hlaWJaQkF2bkQrOWYxdkN1YXMySEF5Q0Fscmc2ZU13ZG85L3AwZHk0?=
+ =?utf-8?B?MnN6K3VTdDRDNjliNXhCY1R5RVV5UHdnYk1vYXNzdE8weE5ZUnNYeVg0dGZZ?=
+ =?utf-8?B?Q25QWjZienBqZzkwVm9McUxtOWY5UTJzeDJVcjlDRURub1piUzA5bnVieXFX?=
+ =?utf-8?B?eEV6YUtWd29yTEpNemJJdzRmU1VYa3NNSUplV3lJSnlDWGdPeURDZFRRVURl?=
+ =?utf-8?B?OVo5eVc5d2ticzZNcDUvN2NjTnpGZndsUnBNUnVKUUpZU0RDU3NnWERnU054?=
+ =?utf-8?B?K1RPYks2UFI0MzNoQkdpaXZaNndjOHZkSWZiQnZHM0k2aUJRUUdFUUNLUEtu?=
+ =?utf-8?B?ZENWT2Y0WTArMGR5V3FTSGJBU2xKMlpUSEVDaER1VVRNTW5lR2FmbDJST2VG?=
+ =?utf-8?B?V1d2dGxid1RaV0x2dnNRbXdSWHZ2aWptTEM2dnBBNVZqVi9TQ29TWFk3S2lW?=
+ =?utf-8?B?OVlZdDY0WUFBN2pFbDdCcDBIZTRCeXNHOXBXNzdjVXA2dG56dzFXMG1xMjFC?=
+ =?utf-8?B?NmxZWmJRT0psRUxYVjBZaTh0OXlBTUNSSm5vZ2NmRUZuNWRhL0lRVHhORURK?=
+ =?utf-8?B?cDArakhjWkY2YXJlWlFTMkdWUWJyM1RkNGt0cDBoRGFNT0NhUzFqN2ZXMWFU?=
+ =?utf-8?B?SWZTYjdhQm1zQnFRNEN5Z0ovQnk5Tm4xNkQzQWdXQlhOZGtiZVYrTGZTdzgw?=
+ =?utf-8?B?UmVnTWpPREFFSU1VUEgzUE16UUMxZzIxNC9VZEkzZENlZHhBcE0rMTI0aFFZ?=
+ =?utf-8?B?cFJCWW44RCtLQVZ2VHplZTlpc3pkMWNkUXYydU0zZWU5RTZtOUtmYjJsVWtV?=
+ =?utf-8?B?Wi9rNkMrSW1vb3cyMWFMdythS1VlaEZlaG9HMzdkcGhYMWJVWjJHK0pHalpZ?=
+ =?utf-8?B?eWNNa0wwTXhaKzhxaTR5L0ZvTnJhUDh0cklMOE4wRzl2UzlnVDN0cS83eklL?=
+ =?utf-8?B?ejdER1hXL2pGc3dkQjN6V25kQVRLdHJQMVNpOXYxRWw5cm5Ca1VTNTdwREJj?=
+ =?utf-8?B?UTVRMitEVnJ4dmZKOTlTSndmRWt2cW9sa1RxVlp3S3RDZk42V25DV1lmbnpa?=
+ =?utf-8?B?dGlUUXdZWTBKTlVPNWNQVXZDY01uOXVGQ0lrcEVYTUVleURDTGlVWUtoSDNp?=
+ =?utf-8?B?QmowOXQxQWNNQytyNUd6Ti9ncko1dWRPSmZTZmhmcktkTGRMNk9MQ3lBZDFx?=
+ =?utf-8?B?MkxYbmVOM3h3b3RXL25vZCtSTFQvMWp3WHZUUVdzenFnMDIrUi9jRU85Y2Vl?=
+ =?utf-8?B?cnFsaVF5c3k4eThsRW43cGlpMkppWG1ubU5ZVDB2OXh0UXJKT0JGSGRuM2kx?=
+ =?utf-8?B?VysxRHV4dFkrb0xGVlM5cGFZU0tVNS90WDBkODRHUGFNdDZaZzNNN1B5eGYv?=
+ =?utf-8?B?ZmJKaStGOVpST1JySzNLb0xGdmVnTEd2YlBDMnlLQlFUR01VRVQvZjh3dEll?=
+ =?utf-8?B?SGtsbFRYMUJXSm5oUXJoZ01DWitFTFAzV1BhNHptdU9MU2F6a3ZQeDVqTGFF?=
+ =?utf-8?B?NWw2b3BKR09CeXZobkRkamJlNkdyQW0zWUdwZkFHbXgyTGZPdzlmeE9oQW1L?=
+ =?utf-8?B?UU9WL1NZdk5zYWVLLytnWXNjWVZJV3N3eWFScys0Sll6dE1jek5iOXA5ZThr?=
+ =?utf-8?B?d2FZNEtONEJLR1Z0UFE4b0VYbUtCOHhMZVZNNy9YdW5KRS9NVEt3MTREMGQw?=
+ =?utf-8?B?ZHlWVVcxWEp1cDIzV08wK0ZYS05tL2pvUTFUMStMOSs1eDJFMkJ0Y0V6a1Vl?=
+ =?utf-8?B?dEo2WU91S2kwZjJ3Q202RnNFY0hvZTJxZloxa2Z0WHNGNzhPdDhmRklzU1ls?=
+ =?utf-8?B?bkpDcmVlSE9UbVRsZFc3dlNSZjZCdDBMWlQxbTZRWU5DODdaTzZsdElPNjRV?=
+ =?utf-8?B?SWViaFN2YzlwQWF4QWNyUGRmMUFYb2I1TXAyN0hTSllMbzNNN00rbVkraDIr?=
+ =?utf-8?Q?7E50=3D?=
+X-OriginatorOrg: axis.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: db6217e2-1457-4ca1-d14d-08dcf3711be3
+X-MS-Exchange-CrossTenant-AuthSource: DU0PR02MB9585.eurprd02.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 14:43:51.2055
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 78703d3c-b907-432f-b066-88f7af9ca3af
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: Q+N23MjTq04Gm1w+F4np4BnQX1qQ7w5MTdS5pBJ5zxLEUBQKbVfAZ8r1MqlxI0Zi
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR02MB9789
 
-
-
-On 23/10/2024 14:40, Rob Herring wrote:
-> On Mon, Oct 7, 2024 at 10:30 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>
->>
->>
->> On 07/10/2024 15:39, Rob Herring wrote:
->>> On Mon, Oct 7, 2024 at 9:06 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>
->>>>
->>>>
->>>> On 04/10/2024 01:03, Rob Herring wrote:
->>>>> On Thu, Oct 03, 2024 at 12:38:40PM +0100, Usama Arif wrote:
->>>>>>  __pa() is only intended to be used for linear map addresses and using
->>>>>> it for initial_boot_params which is in fixmap for arm64 will give an
->>>>>> incorrect value. Hence stash the physical address when it is known at
->>>>>> boot time and use it at kexec time instead of converting the virtual
->>>>>> address using __pa().
->>>>>>
->>>>>> Reported-by: Breno Leitao <leitao@debian.org>
->>>>>> Suggested-by: Mark Rutland <mark.rutland@arm.com>
->>>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
->>>>>> Fixes: ac10be5cdbfa ("arm64: Use common of_kexec_alloc_and_setup_fdt()")
->>>>>> ---
->>>>>>  arch/arm64/kernel/setup.c | 8 ++++++++
->>>>>>  drivers/of/fdt.c          | 6 ++++++
->>>>>>  drivers/of/kexec.c        | 8 ++++++--
->>>>>>  include/linux/of_fdt.h    | 2 ++
->>>>>>  4 files changed, 22 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
->>>>>> index b22d28ec8028..a4d96f5e2e05 100644
->>>>>> --- a/arch/arm64/kernel/setup.c
->>>>>> +++ b/arch/arm64/kernel/setup.c
->>>>>> @@ -194,6 +194,14 @@ static void __init setup_machine_fdt(phys_addr_t dt_phys)
->>>>>>      /* Early fixups are done, map the FDT as read-only now */
->>>>>>      fixmap_remap_fdt(dt_phys, &size, PAGE_KERNEL_RO);
->>>>>>
->>>>>> +    /*
->>>>>> +     * Save dt_phys address so that it can be used later for kexec. This
->>>>>> +     * is done as __pa() is only intended to be used for linear map addresses
->>>>>> +     * and using it for initial_boot_params which is in fixmap will give an
->>>>>> +     * incorrect value.
->>>>>> +     */
->>>>>> +    set_initial_boot_params_pa(dt_phys);
->>>>>
->>>>> No new arch->dt functions please. If we need to save off the PA, then do
->>>>> that when we set initial_boot_params.
->>>>>
->>>>> Rob
->>>>
->>>>
->>>> initial_boot_params is set in early_init_dt_verify, called by early_init_dt_scan.
->>>> This is done in setup_machine_fdt in arm64 where the PA is available,
->>>> but in other functions in other architectures, where the PA is not available.
->>>
->>> Doesn't __pa() work for all the other architectures? That's what your
->>> patch indicates.
->>>
->>
->> Yes, __pa() works for all other architectures.
->>
->> But we would need to add initial_boot_params_pa of type phys_addr_t
->> as an argument for early_init_dt_scan, which is called by all other archs,
->> and we technically cant use 0 as an invalid value.
->>
->> We could convert initial_boot_params_pa to void *, and pass NULL for all
->> other archs. But again, I don't really think we should be changing the
->> early_init_dt_scan(dt_virt) call in all other archs to
->> early_init_dt_scan(dt_virt, NULL) just to save initial_boot_params_pa
->> in arm64?
->>
->>>> So it makes it quite messy to set it in the same place as initial_boot_params.
->>>> Its only needed for arm64 and making a change in all archs probably isnt a good idea?
->>>>
->>>> Any reason to not add a new function to make arch -> of/fdt call?
->>>
->>> Yes. It is the opposite direction I have reworked the interfaces to.
->>> We don't want each arch calling various early DT functions at random
->>> times and order. That's fragile when the DT functions make assumptions
->>> about when they are called or what's been initialized already.
->>>
->>> Another option is to make arm64 copy the DT as some arches do.
->>>
->>> Rob
->>
->> Ah maybe I didn't understand this properly, but isnt early_init_dt_scan an
->> arch -> of/fdt interfaces. set_initial_boot_params_pa is a similar interface
->> to early_init_dt_scan?
+On 10/23/24 15:27, Jonathan Cameron wrote:
+> On Wed, 23 Oct 2024 09:29:08 +0200
+> Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
 > 
-> Yes, and I don't want more APIs if they can be avoided. When is
-> set_initial_boot_params_pa() supposed to be called? Is it before or
-> after early_init_dt_scan()? 
-
-Its only needed in arm64, and can be either before or after, as long as its
-somewhere in setup_machine_fdt, where dt_phys is available.
-
-> Can subsequent OF functions assume the PA
-> is valid?
-
-After set_initial_boot_params_pa has been called, yes.
-
-> If an arch doesn't call set_initial_boot_params_pa() is
-> __pa() valid or did they just forget to call it? 
-
-Only arm64 seems to do the fixmap as discussed in
-https://lore.kernel.org/all/1ea5538f-7e96-4034-9af9-e2d5fd72e069@gmail.com/,
-so __pa should work in others.
-
-Requiring the PA to
-> be set at the same time as initial_boot_params avoids all those issues
-> with any period of time having the PA incorrect.
+>> Hi Jonathan,
+>>
+>> Thank you for your feedback, much appreciated. I have added questions and
+>> comments inline below regarding channels and triggers. I will address the other
+>> comments in the next patch.
+>>
+>> Best regards / Per-Daniel
+>>
+>> On 10/20/24 14:51, Jonathan Cameron wrote:
+>>> On Wed, 16 Oct 2024 23:34:09 +0200
+>>> Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
+>>>   
+>>>> Add support for Texas Instruments OPT4060 RGBW Color sensor.
+>>>>
+>>>> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>  
+>>>
+>>> Hi Per-Daniel,
+>>>
+>>> Comments inline.
+>>>
+>>> Jonathan
+>>>   
+>>>> diff --git a/drivers/iio/light/opt4060.c b/drivers/iio/light/opt4060.c
+>>>> new file mode 100644
+>>>> index 000000000000..2c3761ec423a
+>>>> --- /dev/null
+>>>> +++ b/drivers/iio/light/opt4060.c
+>>>> @@ -0,0 +1,1259 @@  
+>>>
+>>> ...
+>>>   
+>>>> +
+>>>> +struct opt4060_buffer {
+>>>> +	u32 chan[OPT4060_NUM_CHANS];
+>>>> +	s64 ts __aligned(8);  
+>>>
+>>> aligned_s64 is now available in linux-next + the IIO tree.
+>>>   
+>>>> +};
+>>>> +
+>>>> +static const struct opt4060_channel_factor opt4060_channel_factors[] = {
+>>>> +	{
+>>>> +		/* RED 2.4 * 2.15e-3 */  
+>>> This needs more details on wrt to what standard etc.
+>>>
+>>> The datasheet is a little vague, but it seems to me like TI invented their
+>>> own standard. To use this stuff in a consistent ABI we need to have
+>>> a common standard or at least an approximation of one.
+>>> The illuminance estimates from some devices are bad approximations, but they
+>>> are at least attempting to approximate a well defined standard.  
+>>
+>> I have read the datasheet again to try to figure out what TI means. When I read
+>> it now with your remarks from this email and previous emails in mind, I think I'm
+>> starting to understand more.
+>>
+>> I think we should expose the data from the sensor in the following way:
+>> - Four raw channels (R, G, B and Clear)
+>> - Three processed IIO_INTENSITY channels with normalized values (R, G, B)
+>>   to get the relative color components independent of light intensity.
+>> - One IIO_LIGHT channel giving the lux value.
+>>
+>> This is basically what TI is stating in chapter 8.4.5.2. I know that you don't
+>> like how TI are calculating the lux value using the green channel. But after
+>> reading the description and detailed description parts of the datasheet again,
+>> I think it sort of makes sense. Looking at the spectral response curves on the
+>> first page, the green curve covers the whole visible spectrum. It seems like this
+>> is what the sensor is actually designed for, measuring light intensity in lux and
+>> color independent of the light intensity.
+>>
+>> Does this sound like a way forward you think?
+> Not keen on the colour part.
+> 
+> As far as I can tell TI made up a colour standard.  If it were
+> CIE 1931 RGB or then 'maybe' we could consider presenting them as processed,
+> though as they are linear scales even then should present _raw and _scale, not
+> _input (processed).  We would still need to figure out if we needed to handle
+> multiple colour space definitions.
+> As it is, if we have two different colour sensors, there is no way to compare the
+> values.  In particular that Green is way too broad for the colour standards
+> I quickly compared this with.
+> 
+> The green curve does (based on eyeballing it rather than anything formal)
+> look much closer to the luminosity function (one used for illuminance)
+> than I was assuming (given it's called green!)
+> 
+> So not ideal but that one feels ok (with comments in the code explaining
+> this) to use for illuminance.
+> 
+> 
+> For the color channels maybe we could present with _scale provided
+> if we add suitable documentation to say that the scaling is to arbitrary
+> datasheet specified normalization and that the resulting _raw * _scale
+> values cannot be compared across different sensors. I don't like that
+> but it does seem silly to not present the scaling if it might be useful
+> to someone.  So if you want to do this, propose some additions
+> to Documentation/testing/ABI/sysfs-bus-iio
+> to cover this for in_intensity_red_scale
+> etc.
+> 
+> Jonathan
+> 
 > 
 
-Are you recommending I send a patch which changes all archs to call
-early_init_dt_scan(dt_virt, NULL)?
-or maybe early_init_dt_scan(dt_virt, __pa(dt_virt))?
-and arm to call early_init_dt_scan(dt_virt, dt_phys).
+Ok, great. Thank you for responding so quickly. I will try to implement it
+according to your suggestions in the next patch and also patch the
+documentation.
 
-Happy to do send a v2 with that if its the way forward, although I feel
-set_initial_boot_params_pa() in just one arch might be better than
-changing this for all archs.
-
-Thanks
-Usama
-
-> Rob
-
+/ P-D
 
