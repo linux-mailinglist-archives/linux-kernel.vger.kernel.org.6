@@ -1,141 +1,146 @@
-Return-Path: <linux-kernel+bounces-377502-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91AC39ABFB0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:04:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 069F39ABFB9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:06:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DE81C2032D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:04:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C44DD28207C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:06:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3956150994;
-	Wed, 23 Oct 2024 07:03:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2E1F14BF87;
+	Wed, 23 Oct 2024 07:06:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFSgJbX0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QKu4sHuZ"
+Received: from mail-pl1-f172.google.com (mail-pl1-f172.google.com [209.85.214.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4860713A3F3;
-	Wed, 23 Oct 2024 07:03:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19B9E17741;
+	Wed, 23 Oct 2024 07:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667039; cv=none; b=n/Vx4svFOMZxeH2CSqM0PpISYPEmyO4SyXnYjA6nMxxYfL45iEH6895x6yuHqTIjXrMHTiQ52ITV3nl0V7Q0QgAQ3kkTTggLd7kGoQaS14Qqhl0DAKm7RYK3Oq0gIqo9apmjjah3aWqMxH6NTIlUMdfsjwxutbjRT5smL/Mfmww=
+	t=1729667174; cv=none; b=Dl/PFG4vAIHHpyt5LdRfPdIFux8FZaCOm3Ey3bw1AQ4hIuwj4Rc2HVxtF1l0eYnxDF4F2hifJM6VCz+AFAwDn3mr6wifvrEkl7uUfScLT+CWdDYG3G9OoAadVDU/mDvxzU2sfnbgJHU/TSBxMMW5cKtD40lOQbdiH92Jbdd4WuE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667039; c=relaxed/simple;
-	bh=6DVKQTLwDZ80k1XcNjngRcu4GZNFUuwGnFM8c9RnzkA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q7xyGqy8XfTlFGotKOlpLe2W31xjayu/KYzWta6e13zL1kXmTWPyParIu7Q6erh7QwKUC8kvj2dr4axADvbXx6OU5ZX7wWryS0kByK6VkFi+YvDi3JslhtstOdjZVm2Gd5JXyYjciuxtYQ9dIPgrnnoUMG+01kYB/V+w/hgTOEU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFSgJbX0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE82EC4CEC6;
-	Wed, 23 Oct 2024 07:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729667038;
-	bh=6DVKQTLwDZ80k1XcNjngRcu4GZNFUuwGnFM8c9RnzkA=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=uFSgJbX0TOXKZqTgHQeTetPCujY6ARh7Kwo0rEgfyO8Oki0pjsoQE7X9qFVBBVOXm
-	 VFBZtwgsPBZuPRRl6DHVDaAv9uUkt2m1553NXprb9iVlQakmUX38lxlpJhb7XgXBdy
-	 mVzRL9opR28oW1y/+G38LRUJ1lRDiToBffmYeqNw0fhdBD+2rrnh4AtxzX/m4ybcUZ
-	 58N4ttKznHX11xI7JNYrfaP0ZhVguJRGIRbhjcNw9s8+3VH3Uv5YUQXAZSV0A5CRwl
-	 jlw8KbnDrj79K9+feR048Q8SAGyt13jrX+f1n1b2ntWbr3yMRpI3BwxVZtA0jXv7Qz
-	 hFqpJjtVn63RQ==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan@kernel.org>)
-	id 1t3VPe-000000001go-2ooC;
-	Wed, 23 Oct 2024 09:04:10 +0200
-Date: Wed, 23 Oct 2024 09:04:10 +0200
-From: Johan Hovold <johan@kernel.org>
-To: Abel Vesa <abel.vesa@linaro.org>
-Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/2] usb: typec: Add support for Parade PS8830 Type-C
- Retimer
-Message-ID: <Zxif6vmh8BE_C-_n@hovoldconsulting.com>
-References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
- <20241004-x1e80100-ps8830-v2-2-5cd8008c8c40@linaro.org>
- <Zw5oEyMj6cPGFDEI@hovoldconsulting.com>
- <Zxdp2vHzREJAFkwj@linaro.org>
+	s=arc-20240116; t=1729667174; c=relaxed/simple;
+	bh=FLMGHyAfUGy7R52xiBb/gP4uPf+mTQTx9xmSo+Xzlnk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=EcH9Z/bTirjUpA9AunzmZwlhqlr7xgPdCgQY/bFt64Cm5K+rIPcPlv79dFfwqpi6WvFFNx6NvSLuS4ezZyKCw+wMCjwtG3yNvZe2nFCIQm1ViEtE0L/7Xf6l+iE5VrQ13g9+K9d9peH0zIbMzjR2WmcN3Li3K4U0TpYWmzrBmiQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QKu4sHuZ; arc=none smtp.client-ip=209.85.214.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f172.google.com with SMTP id d9443c01a7336-20cf3e36a76so63330805ad.0;
+        Wed, 23 Oct 2024 00:06:12 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729667172; x=1730271972; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=TOq6S3BVd0FbwZK6IpEO8zNzUEsSPo37nCA15gz6oek=;
+        b=QKu4sHuZQb7lK1MYPLCYYvWOaecIQY7CF6olTPuNeHLvDfyuBbeqvVGyCytSDwLIJw
+         IOvK3hjClbEDyLwY6maIeJC3FVWRj64Jeye/sm3v6NueFrwux2Z4lB1xjOsdkwVPF5oL
+         wc+eSFqRfX5HoMNLMnhfhNdD3HiBeXyc1q01KbQxOx82bDqn9ROYO5Rdo0JCwWm+LghO
+         ybtl+/3QmPbrDpP8x4nUbtyyv6yvzutDtI+LOZpmNQYe5D3X3p+eMQNCAdj+fJCqIQjw
+         qZf1D9CMu1BPG3VZi34RCHEXXE75bzD05T0nhDEw8C8j5syXGKs83Y/Sdh0scCsSoR3S
+         RbxQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729667172; x=1730271972;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=TOq6S3BVd0FbwZK6IpEO8zNzUEsSPo37nCA15gz6oek=;
+        b=BMU3Wr41huyR9FooAjhf8NsX6DkyPehprrOG16uzFO84tQSqhmm8UYWDkjCFi1uaFR
+         rKXYprzCtS700zUUYFTLTCFL+Qs9kG6Drf+dctNhY0G97cas295ngms/ml0QMok6fno/
+         lot6id3b4hy0jUggLV+OqolHh9kOCXcaEA9L9GhIuBUpHvTWHSMgK0STqLVrg0lPv55W
+         i+qSSju6DyZdZDQOtH3gTXfv4ODf+qlTicnCKChCZMP0zZP+LIDgexYEJIOq9mCCpk0K
+         ONX29SMjY8jKKac6AIlpGXrQWCCSFAcQP5vAiWGLLY5FSxJwJfgYaMCS8zE8wVQ+z33L
+         6j9A==
+X-Forwarded-Encrypted: i=1; AJvYcCUXsd0Mjz2mug3yrFfKYyKzWIhA7gG07KhTk8bHcwVopCpA3BN204Hf8orwDYU2feetQ9+aIorcu7lucJ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw3+gx8z3M7ZdCkAikoSlKRXKy7/+UbeLOgyzWTwUAomlbzu8yy
+	Jdew4JexoYAWiclmwN22lu+rXmshCUA7pLU5nms8CTIWeD4FgU79IcjB5g==
+X-Google-Smtp-Source: AGHT+IHtJtc5WgmLOXoeCHs9nm8BvD7NfbyF/CjJ2FcQHhVWjnivQcmV2HrRrmsuLKzntQZtwbUSeg==
+X-Received: by 2002:a17:903:2447:b0:20c:ce1f:13bd with SMTP id d9443c01a7336-20fa9e2488dmr21746255ad.18.1729667171746;
+        Wed, 23 Oct 2024 00:06:11 -0700 (PDT)
+Received: from localhost.localdomain ([129.146.253.192])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20e7f0c167bsm51981745ad.140.2024.10.23.00.06.06
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 00:06:11 -0700 (PDT)
+From: Furong Xu <0x1207@gmail.com>
+To: netdev@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	Andrew Lunn <andrew@lunn.ch>,
+	Simon Horman <horms@kernel.org>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	xfr@outlook.com,
+	Furong Xu <0x1207@gmail.com>
+Subject: [PATCH net-next v3 0/6] net: stmmac: Refactor FPE as a separate module
+Date: Wed, 23 Oct 2024 15:05:20 +0800
+Message-Id: <cover.1729663066.git.0x1207@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxdp2vHzREJAFkwj@linaro.org>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 12:01:14PM +0300, Abel Vesa wrote:
-> On 24-10-15 15:03:15, Johan Hovold wrote:
-> > On Fri, Oct 04, 2024 at 04:57:38PM +0300, Abel Vesa wrote:
+Refactor FPE implementation by moving common code for DWMAC4 and
+DWXGMAC into a separate FPE module.
 
-> > > +	ret = ps8830_get_vregs(retimer);
-> > > +	if (ret)
-> > > +		return ret;
-> > > +
-> > > +	retimer->xo_clk = devm_clk_get(dev, "xo");
-> > > +	if (IS_ERR(retimer->xo_clk))
-> > > +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
-> > > +				     "failed to get xo clock\n");
-> > > +
-> > > +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
-> > 
-> > The reset line is active low and should be described as such in DT. So
-> > here you want to request it as logically low if you want to deassert
-> > reset.
-> 
-> This is being reworked in v3 as we need to support cases where the
-> retimer has been left enabled and initialized by bootloader and we want
-> to keep that state until unplug event for the cold-plug orientation
-> to work properly.
-> 
-> On top of that, we don't want to deassert the reset here. We do that
-> via gpiod_set_value() call below, after the clocks and regulators have
-> been enabled.
+FPE implementation for DWMAC4 and DWXGMAC differs only for:
+1) Offset address of MAC_FPE_CTRL_STS and MTL_FPE_CTRL_STS
+2) FPRQ(Frame Preemption Residue Queue) field in MAC_RxQ_Ctrl1
+3) Bit offset of Frame Preemption Interrupt Enable
 
-Ok, but you should generally not drive an input high before powering on
-the device as that can damage the IC (more below).
+Tested on DWMAC CORE 5.20a and DWXGMAC CORE 3.20a
 
-That is, in this case, you should not deassert reset before making sure
-the supplies are enabled.
+Changes in v3:
+  1. Drop stmmac_fpe_ops and refactor FPE functions to generic version to
+  avoid function pointers
+  2. Drop the _SHIFT macro definitions
 
-> > > +	ret = clk_prepare_enable(retimer->xo_clk);
-> > > +	if (ret) {
-> > > +		dev_err(dev, "failed to enable XO: %d\n", ret);
-> > > +		goto err_retimer_unregister;
-> > > +	}
-> > 
-> > Should you really enable the clock before the regulators?
-> 
-> So maybe in this case it might not really matter. But in principle,
-> the HW might be affected by clock glitches and such when IP block
-> is powered up but unclocked. Even more so if the clock enabling
-> (prepare, to be more exact) involves switching to a new PLL.
-> 
-> So clock first, then power up. At least that's my understanding of HW
-> in general.
+Changes in v2:
+  1. Split patches to easily review
+  2. Use struct as function param to keep param list short
+  3. Typo fixes in commit message and title
 
-I think you got that backwards as inputs are typically rated for some
-maximum voltage based on the supply voltage. That applies also to the
-reset line as I also mentioned above.
+Furong Xu (6):
+  net: stmmac: Introduce separate files for FPE implementation
+  net: stmmac: Rework macro definitions for gmac4 and xgmac
+  net: stmmac: Refactor FPE functions to generic version
+  net: stmmac: xgmac: Rename XGMAC_RQ to XGMAC_FPRQ
+  net: stmmac: xgmac: Complete FPE support
+  net: stmmac: xgmac: Enable FPE for tc-mqprio/tc-taprio
 
-What does the datasheet say?
+ drivers/net/ethernet/stmicro/stmmac/Makefile  |   2 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac4.h  |   1 -
+ .../net/ethernet/stmicro/stmmac/dwmac4_core.c |  11 +-
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.c  | 150 -------
+ drivers/net/ethernet/stmicro/stmmac/dwmac5.h  |  26 --
+ .../net/ethernet/stmicro/stmmac/dwxgmac2.h    |   6 +-
+ .../ethernet/stmicro/stmmac/dwxgmac2_core.c   |  31 +-
+ drivers/net/ethernet/stmicro/stmmac/hwif.c    |   7 +
+ drivers/net/ethernet/stmicro/stmmac/hwif.h    |  20 +-
+ drivers/net/ethernet/stmicro/stmmac/stmmac.h  |  11 +-
+ .../ethernet/stmicro/stmmac/stmmac_ethtool.c  |   6 +-
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.c  | 422 ++++++++++++++++++
+ .../net/ethernet/stmicro/stmmac/stmmac_fpe.h  |  45 ++
+ .../net/ethernet/stmicro/stmmac/stmmac_main.c | 152 +------
+ .../net/ethernet/stmicro/stmmac/stmmac_tc.c   |   4 +-
+ 15 files changed, 491 insertions(+), 403 deletions(-)
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.c
+ create mode 100644 drivers/net/ethernet/stmicro/stmmac/stmmac_fpe.h
 
-> > > +
-> > > +	ret = ps8830_enable_vregs(retimer);
-> > > +	if (ret)
-> > > +		goto err_clk_disable;
+-- 
+2.34.1
 
-Johan
 
