@@ -1,464 +1,171 @@
-Return-Path: <linux-kernel+bounces-378048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 62FBB9ACAA6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:59:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A53279ACAA9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:00:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5DC01F21795
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:59:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3398A1F21202
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:00:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1067A1AC458;
-	Wed, 23 Oct 2024 12:58:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="KeJZTGrQ";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="slMKgFLs";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="y/sf5fk6";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QCkUYC0Y"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD9841AB52E;
+	Wed, 23 Oct 2024 13:00:33 +0000 (UTC)
+Received: from mail-io1-f72.google.com (mail-io1-f72.google.com [209.85.166.72])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D764419F128
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:58:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDF903FF1
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:00:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.72
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729688330; cv=none; b=fKCDIza37FL1Tn75BeSB/wQWajwmN4iwymbgR3RdIIcsx+p8zCKFnB4jI0na6CTDtrAuY/YCtrZl2o1A7jsXLfXJqbKChisNDQCjD6dPQLTwBiL0d6kEWEgKyKbe2bj3B9K5IkTfChoCmAAi3emRK/ELm/UX28eCdE9Hb9dTSAo=
+	t=1729688433; cv=none; b=jc3f4IxW8k8LlALjd/U/ofzux4JZzDSzupn3wuSBqiNJfyl+luOlE+fp0NJ6G/ekaIfiDZdYpQPuProR2fq7GvQ1Vf4AvHfC4bqGeQ89jX7GlCG6xVSPH4B+asEO8R9S8YFaH9vT4I3XpVDl+yBJjEs1fMf9WtnXObs719LZms0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729688330; c=relaxed/simple;
-	bh=iZWEEMyh8jfIQ8b3QtbZpeM9GFGPbx3VOhOpTxAWyUQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=u0+7WBkx3YgQlHTVjwnzRT3vIAemE/Y/dg95bOI26A1cW/oNnT577fIMZj47bZagLevaO5ZEhne5A6v7RUn2Dz/ElKPf6b/uTC5aQ9Os+TjCNF2r3upA+08J64UCJ4qOpkwayoOQPMoKsO2SIM7wBgke8wYRVbQUYd5iVvro7sc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=KeJZTGrQ; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=slMKgFLs; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=y/sf5fk6; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QCkUYC0Y; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E6F8B21F05;
-	Wed, 23 Oct 2024 12:58:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729688326; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zoLfz/fjZfhokZzjollbHy6uKEWa9Wv7liSzK+L+N2s=;
-	b=KeJZTGrQoGRd8MIy3b2bUxODm9K4Z1Qp8EeTcxrAE/qgOYIPMy8sfPspyxENyPL/w5QsX4
-	n+SnetYe2Mocr4X5yc/vsHgUWHeUFpqFnmHFYiolDkf+ZhbxvzW+jARyLtDfBa+uefZtRI
-	tcL539Slu/SQxcCErmXjdTBznQfJZ6k=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729688326;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zoLfz/fjZfhokZzjollbHy6uKEWa9Wv7liSzK+L+N2s=;
-	b=slMKgFLsqPhzNdFQq1UliB7PDvl36BPVM0O7oAjk3r1X2CEUPtcQaKWG7rChP97uEnCrZU
-	a1KkKYzkxyJXnKBw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729688325; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zoLfz/fjZfhokZzjollbHy6uKEWa9Wv7liSzK+L+N2s=;
-	b=y/sf5fk6OyvmEdSiquKsE9qehRV0Vx0T3nyi9Cmx5kPbbJbUiyRgfVkCe4vCbloiP7CSEn
-	8m5LaprzuZfpEGCp5L9g4JGEuRVYMtUBk1s8pUg1YUiW1L17GKiYabBlRdMdYVZZ5BUh/z
-	qi1b/B5o4ucGB/aAC3/o0XMrdJVj9PM=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729688325;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=zoLfz/fjZfhokZzjollbHy6uKEWa9Wv7liSzK+L+N2s=;
-	b=QCkUYC0Y9RIzaK5JkVPdLGoN/iSlkNVEd4+Y1siso5Ts7vEirRMvtsN6G66hpf5ep6ULnf
-	vEQ40IeOUDWYnfAw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C671513A63;
-	Wed, 23 Oct 2024 12:58:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id 1VgAMAXzGGflcwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Wed, 23 Oct 2024 12:58:45 +0000
-Message-ID: <e2bca69d-5266-462c-b770-707ce987473e@suse.cz>
-Date: Wed, 23 Oct 2024 14:58:45 +0200
+	s=arc-20240116; t=1729688433; c=relaxed/simple;
+	bh=2e5eFoRMwBWRdDE2ylQJjZRlA3BKT2yeIoZzrzYDrYo=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=HKfwhLdC/DJgp32GdukZ6GBj0tAL8lutZMc3IlImVbaGeUMSZw5KvUeVlhrBW1TGxGOIyjbf3KW+QAKjHe8kXglgYWw8kdYfjG4qG20t6u9ovByzyIxlRM+/irM0RerM7EB2AwvsGZLjCT9aPUHjOAW6/OJIAlNImwzJnbn5Jj4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.72
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-io1-f72.google.com with SMTP id ca18e2360f4ac-83aecd993faso58008139f.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:00:31 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729688431; x=1730293231;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=lv8HGdtW8ka1/S6gFIq1Rq2zKYfib8sklnV6AOqlWUA=;
+        b=ISCszbX4X64aN/jYEu4eNWdeq28RBPWfk5JEmyTxEAiNk5N1leDZPte789UEIECnB4
+         VZgTs94nt6nLN0Wy3IuY1HDDcxvtRiY/ucqqvZCT8z67JKW7xOB0oGs+uBX71vTSYB1N
+         w5Irb3nd5gSrMEiW9S1FRyTB1rJr+2BrIJ0omo4lb6EbgLbi1ak1QN5dtpXEntTfkV9i
+         AICQ0f3ljkbb4ory8hBkOFe8FCi5o0pPjE0oNnd54c7uP6Jt9f2XpHwla4Se3YeXfQml
+         QJICOQ72HQKoidhxHMOFrGp3ZnDwV4hMBVuOeeIVvROnRmwqprCiyrQEaFpPPgwHWdgk
+         xmSQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXypmVpyWN/5BFNUyfik58wBcYyTosjv2LkdSYK7H1BhCfGmJ10dnldVCCVHSC5FA66HOVdIIoqq5xON6s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytBWMzFUgijbbfbY2Ep6/RM5cECiGPcQcQmZYXUPRka9uEZKf7
+	yp9+apxLziwvkJpoGfQg58vqiuJAgtlDPJZgOh1i1nUFTvDQ1zEyrkK7FCkgqmA8YXExK7oUhgq
+	s7PAiFxiddWrLeqjA1bOfreTnF/TF0WzIzglwyAnk8PviEmdQBjLPYTU=
+X-Google-Smtp-Source: AGHT+IGUCn/VEk9BT4YmIIc0WXyiH9uYsf9Nsnn7RlfQguqLfOryF/RmHdqmwo+50K1VVyVG3KivTIXtyOqsUK3O+k0z6rKVO4dV
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH hotfix 6.12 4/8] mm: resolve faulty mmap_region() error
- path behaviour
-Content-Language: en-US
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Andrew Morton <akpm@linux-foundation.org>
-Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
- <jannh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
- Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
-References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
- <3bc3ef7520eed73472f7ffdce044f2e94f809b32.1729628198.git.lorenzo.stoakes@oracle.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <3bc3ef7520eed73472f7ffdce044f2e94f809b32.1729628198.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[8];
-	ARC_NA(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:mid,suse.cz:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
+X-Received: by 2002:a05:6e02:1385:b0:3a0:9903:42c3 with SMTP id
+ e9e14a558f8ab-3a4d59952b4mr13803855ab.10.1729688430551; Wed, 23 Oct 2024
+ 06:00:30 -0700 (PDT)
+Date: Wed, 23 Oct 2024 06:00:30 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6718f36e.050a0220.1e4b4d.008a.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in wb_flush_one
+From: syzbot <syzbot+bbf8e41759ee46cc56cc@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 10/22/24 22:40, Lorenzo Stoakes wrote:
-> The mmap_region() function is somewhat terrifying, with spaghetti-like
-> control flow and numerous means by which issues can arise and incomplete
-> state, memory leaks and other unpleasantness can occur.
-> 
-> A large amount of the complexity arises from trying to handle errors late
-> in the process of mapping a VMA, which forms the basis of recently observed
-> issues with resource leaks and observable inconsistent state.
-> 
-> Taking advantage of previous patches in this series we move a number of
-> checks earlier in the code, simplifying things by moving the core of the
-> logic into a static internal function __mmap_region().
-> 
-> Doing this allows us to perform a number of checks up front before we do
-> any real work, and allows us to unwind the writable unmap check
-> unconditionally as required and to perform a CONFIG_DEBUG_VM_MAPLE_TREE
-> validation unconditionally also.
-> 
-> We move a number of things here:
-> 
-> 1. We preallocate memory for the iterator before we call the file-backed
->    memory hook, allowing us to exit early and avoid having to perform
->    complicated and error-prone close/free logic. We carefully free
->    iterator state on both success and error paths.
-> 
-> 2. The enclosing mmap_region() function handles the mapping_map_writable()
->    logic early. Previously the logic had the mapping_map_writable() at the
->    point of mapping a newly allocated file-backed VMA, and a matching
->    mapping_unmap_writable() on success and error paths.
-> 
->    We now do this unconditionally if this is a file-backed, shared writable
->    mapping. If a driver changes the flags to eliminate VM_MAYWRITE, however
->    doing so does not invalidate the seal check we just performed, and we in
->    any case always decrement the counter in the wrapper.
-> 
->    We perform a debug assert to ensure a driver does not attempt to do the
->    opposite.
-> 
-> 3. We also move arch_validate_flags() up into the mmap_region()
->    function. This is only relevant on arm64 and sparc64, and the check is
->    only meaningful for SPARC with ADI enabled. We explicitly add a warning
->    for this arch if a driver invalidates this check, though the code ought
->    eventually to be fixed to eliminate the need for this.
-> 
-> With all of these measures in place, we no longer need to explicitly close
-> the VMA on error paths, as we place all checks which might fail prior to a
-> call to any driver mmap hook.
-> 
-> This eliminates an entire class of errors, makes the code easier to reason
-> about and more robust.
-> 
-> Reported-by: Jann Horn <jannh@google.com>
-> Fixes: deb0f6562884 ("mm/mmap: undo ->mmap() when arch_validate_flags() fails")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hello,
 
-Reviewed-by: Vlastimil Babka <vbabka@suse.cz>
+syzbot found the following issue on:
 
-some nits below
+HEAD commit:    d2b1b3bccef6 KVM: arm64: Shave a few bytes from the EL2 id..
+git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/arm64/linux.git for-kernelci
+console output: https://syzkaller.appspot.com/x/log.txt?x=1299d240580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c154e2d4db830898
+dashboard link: https://syzkaller.appspot.com/bug?extid=bbf8e41759ee46cc56cc
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+userspace arch: arm64
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=12244430580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16244430580000
 
-> ---
->  mm/mmap.c | 120 ++++++++++++++++++++++++++++++------------------------
->  1 file changed, 66 insertions(+), 54 deletions(-)
-> 
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 66edf0ebba94..7d02b47a1895 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1361,20 +1361,18 @@ int do_munmap(struct mm_struct *mm, unsigned long start, size_t len,
->  	return do_vmi_munmap(&vmi, mm, start, len, uf, false);
->  }
-> 
-> -unsigned long mmap_region(struct file *file, unsigned long addr,
-> +static unsigned long __mmap_region(struct file *file, unsigned long addr,
->  		unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
->  		struct list_head *uf)
->  {
->  	struct mm_struct *mm = current->mm;
->  	struct vm_area_struct *vma = NULL;
->  	pgoff_t pglen = PHYS_PFN(len);
-> -	struct vm_area_struct *merge;
->  	unsigned long charged = 0;
->  	struct vma_munmap_struct vms;
->  	struct ma_state mas_detach;
->  	struct maple_tree mt_detach;
->  	unsigned long end = addr + len;
-> -	bool writable_file_mapping = false;
->  	int error;
->  	VMA_ITERATOR(vmi, mm, addr);
->  	VMG_STATE(vmg, mm, &vmi, addr, end, vm_flags, pgoff);
-> @@ -1448,28 +1446,26 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	vm_flags_init(vma, vm_flags);
->  	vma->vm_page_prot = vm_get_page_prot(vm_flags);
-> 
-> +	if (vma_iter_prealloc(&vmi, vma)) {
-> +		error = -ENOMEM;
-> +		goto free_vma;
-> +	}
-> +
->  	if (file) {
->  		vma->vm_file = get_file(file);
->  		error = mmap_file(file, vma);
->  		if (error)
-> -			goto unmap_and_free_vma;
-> -
-> -		if (vma_is_shared_maywrite(vma)) {
-> -			error = mapping_map_writable(file->f_mapping);
-> -			if (error)
-> -				goto close_and_free_vma;
-> -
-> -			writable_file_mapping = true;
-> -		}
-> +			goto unmap_and_free_file_vma;
-> 
-> +		/* Drivers cannot alter the address of the VMA. */
-> +		WARN_ON_ONCE(addr != vma->vm_start);
->  		/*
-> -		 * Expansion is handled above, merging is handled below.
-> -		 * Drivers should not alter the address of the VMA.
-> +		 * Drivers should not permit writability when previously it was
-> +		 * disallowed.
->  		 */
-> -		if (WARN_ON((addr != vma->vm_start))) {
-> -			error = -EINVAL;
-> -			goto close_and_free_vma;
-> -		}
-> +		VM_WARN_ON_ONCE(vm_flags != vma->vm_flags &&
-> +				!(vm_flags & VM_MAYWRITE) &&
-> +				(vma->vm_flags & VM_MAYWRITE));
-> 
->  		vma_iter_config(&vmi, addr, end);
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/ab5b5f1bb836/disk-d2b1b3bc.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/e47b288f7c97/vmlinux-d2b1b3bc.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/1e3e5f0bea26/Image-d2b1b3bc.gz.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/42f1c4ccbf47/mount_0.gz
 
-I wonder if this one could be removed, earlier above we did the same config
-and neither parameters changed? But it was true before this patch as well,
-and maybe it's further refactored away later in the series, just noting.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+bbf8e41759ee46cc56cc@syzkaller.appspotmail.com
 
->  		/*
-> @@ -1477,6 +1473,8 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  		 * vma again as we may succeed this time.
->  		 */
->  		if (unlikely(vm_flags != vma->vm_flags && vmg.prev)) {
-> +			struct vm_area_struct *merge;
-> +
->  			vmg.flags = vma->vm_flags;
->  			/* If this fails, state is reset ready for a reattempt. */
->  			merge = vma_merge_new_range(&vmg);
-> @@ -1491,10 +1489,11 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  				 */
->  				fput(vma->vm_file);
->  				vm_area_free(vma);
-> +				vma_iter_free(&vmi);
+bucket 0:127 gen 0 data type sb has wrong dirty_sectors: got 0, should be 256, fixing
+ done
+bcachefs (loop0): going read-write
+bcachefs (loop0): journal_replay...
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/btree_write_buffer.c:147!
+Internal error: Oops - BUG: 00000000f2000800 [#1] PREEMPT SMP
+Modules linked in:
+CPU: 0 UID: 0 PID: 6422 Comm: syz-executor340 Not tainted 6.12.0-rc3-syzkaller-gd2b1b3bccef6 #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+pstate: 80400005 (Nzcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+pc : wb_flush_one+0x15bc/0x1638 fs/bcachefs/btree_write_buffer.c:147
+lr : wb_flush_one+0x15bc/0x1638 fs/bcachefs/btree_write_buffer.c:147
+sp : ffff8000a44162a0
+x29: ffff8000a44163c0 x28: ffff8000a49fa230 x27: ffff8000a4416640
+x26: ffff0000d9858000 x25: ffff8000a44166d0 x24: ffff8000a4416720
+x23: 0000000000000009 x22: ffff700014882c64 x21: 4200000000000009
+x20: dfff800000000000 x19: ffff8000a4416320 x18: ffff8000a4415ac0
+x17: 000000000000e6f9 x16: ffff80008b3c8ac8 x15: ffff700014882be1
+x14: 1ffff00014882be0 x13: 0000000000000004 x12: ffffffffffffffff
+x11: ffff800082899880 x10: 0000000000ff0100 x9 : 0000000000000000
+x8 : ffff0000d9803c80 x7 : 0000000000000000 x6 : 0000000000000003
+x5 : ffff8000a44166d0 x4 : ffff8000a4416720 x3 : ffff8000a44166f0
+x2 : ffff8000a49fa230 x1 : 0000000000000009 x0 : 4200000000000009
+Call trace:
+ wb_flush_one+0x15bc/0x1638 fs/bcachefs/btree_write_buffer.c:147
+ bch2_btree_write_buffer_flush_locked+0x1370/0x2c98 fs/bcachefs/btree_write_buffer.c:375
+ btree_write_buffer_flush_seq+0xff8/0x1130 fs/bcachefs/btree_write_buffer.c:510
+ bch2_btree_write_buffer_journal_flush+0x58/0x94 fs/bcachefs/btree_write_buffer.c:525
+ journal_flush_pins+0x524/0xa10 fs/bcachefs/journal_reclaim.c:565
+ journal_flush_done+0x98/0x248 fs/bcachefs/journal_reclaim.c:819
+ bch2_journal_flush_pins+0x1f4/0x338 fs/bcachefs/journal_reclaim.c:852
+ bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
+ bch2_journal_replay+0x1bc8/0x1f0c fs/bcachefs/recovery.c:383
+ bch2_run_recovery_pass+0xe4/0x1d4 fs/bcachefs/recovery_passes.c:185
+ bch2_run_recovery_passes+0x430/0x71c fs/bcachefs/recovery_passes.c:232
+ bch2_fs_recovery+0x32d8/0x55a0 fs/bcachefs/recovery.c:861
+ bch2_fs_start+0x30c/0x53c fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0x938/0x1030 fs/bcachefs/fs.c:2078
+ vfs_get_tree+0x90/0x28c fs/super.c:1800
+ do_new_mount+0x278/0x900 fs/namespace.c:3507
+ path_mount+0x590/0xe04 fs/namespace.c:3834
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount fs/namespace.c:4032 [inline]
+ __arm64_sys_mount+0x45c/0x5a8 fs/namespace.c:4032
+ __invoke_syscall arch/arm64/kernel/syscall.c:35 [inline]
+ invoke_syscall+0x98/0x2b8 arch/arm64/kernel/syscall.c:49
+ el0_svc_common+0x130/0x23c arch/arm64/kernel/syscall.c:132
+ do_el0_svc+0x48/0x58 arch/arm64/kernel/syscall.c:151
+ el0_svc+0x54/0x168 arch/arm64/kernel/entry-common.c:744
+ el0t_64_sync_handler+0x84/0x108 arch/arm64/kernel/entry-common.c:762
+ el0t_64_sync+0x190/0x194 arch/arm64/kernel/entry.S:598
+Code: d4210000 9773b504 d4210000 9773b502 (d4210000) 
+---[ end trace 0000000000000000 ]---
 
-If we merged successfully, I think this is not necessary? But doesn't hurt?
 
->  				vma = merge;
->  				/* Update vm_flags to pick up the change. */
->  				vm_flags = vma->vm_flags;
-> -				goto unmap_writable;
-> +				goto file_expanded;
->  			}
->  			vma_iter_config(&vmi, addr, end);
->  		}
-> @@ -1503,26 +1502,15 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	} else if (vm_flags & VM_SHARED) {
->  		error = shmem_zero_setup(vma);
->  		if (error)
-> -			goto free_vma;
-> +			goto free_iter_vma;
->  	} else {
->  		vma_set_anonymous(vma);
->  	}
-> 
-> -	if (map_deny_write_exec(vma->vm_flags, vma->vm_flags)) {
-> -		error = -EACCES;
-> -		goto close_and_free_vma;
-> -	}
-> -
-> -	/* Allow architectures to sanity-check the vm_flags */
-> -	if (!arch_validate_flags(vma->vm_flags)) {
-> -		error = -EINVAL;
-> -		goto close_and_free_vma;
-> -	}
-> -
-> -	if (vma_iter_prealloc(&vmi, vma)) {
-> -		error = -ENOMEM;
-> -		goto close_and_free_vma;
-> -	}
-> +#ifdef CONFIG_SPARC64
-> +	/* TODO: Fix SPARC ADI! */
-> +	WARN_ON_ONCE(!arch_validate_flags(vm_flags));
-> +#endif
-> 
->  	/* Lock the VMA since it is modified after insertion into VMA tree */
->  	vma_start_write(vma);
-> @@ -1536,10 +1524,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	 */
->  	khugepaged_enter_vma(vma, vma->vm_flags);
-> 
-> -	/* Once vma denies write, undo our temporary denial count */
-> -unmap_writable:
-> -	if (writable_file_mapping)
-> -		mapping_unmap_writable(file->f_mapping);
-> +file_expanded:
->  	file = vma->vm_file;
->  	ksm_add_vma(vma);
->  expanded:
-> @@ -1572,23 +1557,17 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
-> 
->  	vma_set_page_prot(vma);
-> 
-> -	validate_mm(mm);
->  	return addr;
-> 
-> -close_and_free_vma:
-> -	vma_close(vma);
-> -
-> -	if (file || vma->vm_file) {
-> -unmap_and_free_vma:
-> -		fput(vma->vm_file);
-> -		vma->vm_file = NULL;
-> +unmap_and_free_file_vma:
-> +	fput(vma->vm_file);
-> +	vma->vm_file = NULL;
-> 
-> -		vma_iter_set(&vmi, vma->vm_end);
-> -		/* Undo any partial mapping done by a device driver. */
-> -		unmap_region(&vmi.mas, vma, vmg.prev, vmg.next);
-> -	}
-> -	if (writable_file_mapping)
-> -		mapping_unmap_writable(file->f_mapping);
-> +	vma_iter_set(&vmi, vma->vm_end);
-> +	/* Undo any partial mapping done by a device driver. */
-> +	unmap_region(&vmi.mas, vma, vmg.prev, vmg.next);
-> +free_iter_vma:
-> +	vma_iter_free(&vmi);
->  free_vma:
->  	vm_area_free(vma);
->  unacct_error:
-> @@ -1598,10 +1577,43 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  abort_munmap:
->  	vms_abort_munmap_vmas(&vms, &mas_detach);
->  gather_failed:
-> -	validate_mm(mm);
->  	return error;
->  }
-> 
-> +unsigned long mmap_region(struct file *file, unsigned long addr,
-> +			  unsigned long len, vm_flags_t vm_flags, unsigned long pgoff,
-> +			  struct list_head *uf)
-> +{
-> +	unsigned long ret;
-> +	bool writable_file_mapping = false;
-> +
-> +	/* Allow architectures to sanity-check the vm_flags. */
-> +	if (!arch_validate_flags(vm_flags))
-> +		return -EINVAL;
-> +
-> +	/* Check to see if MDWE is applicable. */
-> +	if (map_deny_write_exec(vm_flags, vm_flags))
-> +		return -EACCES;
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-The two checks above used to be in the opposite order. Can we keep that just
-to be sure we don't change user observable behavior unnecessarily?
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
 
-> +	/* Map writable and ensure this isn't a sealed memfd. */
-> +	if (file && is_shared_maywrite(vm_flags)) {
-> +		int error = mapping_map_writable(file->f_mapping);
-> +
-> +		if (error)
-> +			return error;
-> +		writable_file_mapping = true;
-> +	}
-> +
-> +	ret = __mmap_region(file, addr, len, vm_flags, pgoff, uf);
-> +
-> +	/* Clear our write mapping regardless of error. */
-> +	if (writable_file_mapping)
-> +		mapping_unmap_writable(file->f_mapping);
-> +
-> +	validate_mm(current->mm);
-> +	return ret;
-> +}
-> +
->  static int __vm_munmap(unsigned long start, size_t len, bool unlock)
->  {
->  	int ret;
-> --
-> 2.47.0
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
 
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
