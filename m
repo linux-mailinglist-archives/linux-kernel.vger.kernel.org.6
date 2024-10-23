@@ -1,196 +1,115 @@
-Return-Path: <linux-kernel+bounces-377722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B4A9AC30F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:08:51 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0DF509AC314
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:09:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C811F246F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:08:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B97181F24636
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:09:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E73176AA5;
-	Wed, 23 Oct 2024 09:08:41 +0000 (UTC)
-Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D36718660C;
+	Wed, 23 Oct 2024 09:09:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="g/OkG3ck"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FEB15CD60
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:08:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5A4C016190B;
+	Wed, 23 Oct 2024 09:09:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674520; cv=none; b=EDw2tkNj+qhNF1LokqWWpFykXdqiAxyuQYzsByeUrJviRDlxejIUR1ic7HoTZcBohswtkVoBC2wfsmhsBli20gqMxiVcnfAPgVO2wsIrRWPqZmuiXKou5quPRY29YkZc6IkeG9Bv799KWSidJ+dyZsMOKVBOjI3j3Cg495uuUtY=
+	t=1729674553; cv=none; b=uCPU1G0yvT8B97VY0/RYOeRW2wcnWI+skdJrZAr9/W28Yw2cV7S+MnFOx4a6Ot7JB0rdCybhi/mkFTZITiMwBWaqA4a1trVKL8l3TFZNerOvhB9jX9Qn/SkQuR7/OG1w3ScubeCP1EysFa42WM4XTeuB3/0f0CxB/W+O0NCElAY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674520; c=relaxed/simple;
-	bh=zEqtjKIPHRyCLSz2AKxhu0W5IyazP2Kj/dcZoCoovZs=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=URHK9982ACQ9/Hjfvg2tyIP5x5lkg2a4GLAlTLbLDBis/9PfqHQClH1qDthQ0MNZiPjt+Fa8naOL7Q0ct4AmLYdB2pNipnFAKMk7BCP/jmDx61VLCAQlQkbvijjgJYEcYWU7l0bVf4kS3pB9DWiuG/1dN9JTqmMePD/OP9LcLpI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3cd35858aso59196435ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:08:38 -0700 (PDT)
+	s=arc-20240116; t=1729674553; c=relaxed/simple;
+	bh=MPXSO7MlmL0YKy/BMMfxHrqho0YS3NUcNx2DCOjbvyU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Rk117VDfoY2bgtzcnClNfqbhTDtECx5B8MtNUS2DYkmfVmVq91qmVFSiCwfM5XnmfGIMx2L4yw70xwWvSo0sGNqXy2LGUG11+VDIvYQrCS+qjOXvL/ur4F0m9w92azfE2xwcaPTzkPXILghdNh/oplgNEoNDI8Az9RkvnKIBEAk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=g/OkG3ck; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso7883988a12.2;
+        Wed, 23 Oct 2024 02:09:10 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729674549; x=1730279349; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=tUrRWUy2mg+9eFy2uOgVTtm4AMaUGJKQ+NZVihzkt4o=;
+        b=g/OkG3ckqYBrZ/Kkk6pDcmZcSHbwQ0+6vJA1gSUm59gw3BEoZPmA1oYCo0pjXwEXeT
+         8VFRbes1P2NBzCwklqz+0DYDoxhWiiBbAzAxwO8htpQ8no8zdKdrgaOs3LTW1Z25ej/V
+         aRNtzEV99piFPpGxwsPOCCAMrYkVNyp3qO9xh7wlslk9k71JzLUswtxb3SndEvnN7VHJ
+         ae3IU62eepa2deXOme3849mjJcFyvZZ4vD9jeOvIEggn5NAm6EryJQTh0jG+TO6Wt8GN
+         3/n3CW/Vn9O55xIFoGaRSufiG3bLcDpZdX7XPUb2YZx2ZQaGonXFfIdbGH0aq2LJ0t6y
+         9Ylw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729674518; x=1730279318;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7x3De/oISwjfrDk09tDIxDDeq0y554RwIR8zLg9MxfU=;
-        b=OKofu9rQT+/p3qcd6mhp4T94RLGvXiRkFOTlM8E5ye38OHmnF70iFpvSof4DMYYRWY
-         mFACGQ+3SpAeoYNPf08vW4GLbfot7huqj7/cNUoruF7YHvlL0oqC+hRgiJPyi/j5MBUF
-         7ux/5keVJwXEQNUJntHuMfDP++HdAynPCfOY3f5qphylL0vhjlrzI4grahI323sGkIPu
-         b/QonQryJLUVHyOv2mk9wL75I70CGLqdkqP3j9sq9eejItLzN3tCe13UUJwuszpUFgBJ
-         v52a2RKwSWwPAZVu/ZGDzRivR1BnWq8WEokOD+fOzZ0F+FjzMIl8jI0wDKhPupB3bmqK
-         tn6Q==
-X-Forwarded-Encrypted: i=1; AJvYcCWRC81GeQjW0BZRh2UiGygakc/Q/hhd0pqeJ9OLhlaxd+JL9ZTTE6zZBLuao5DJ8+valtZOWnMN/gqwpbM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzW4Jh4sJxulC3Zg6udEzCydA59X5w24HRFG5/2ptflekDOOxBd
-	MM3kdBXvrzIu7GPCqx0NHBvY1+Kyx6jk/cVvkFyg9uV5H8HpatxnDoM2Ox3ORKShggCTDLQgkuY
-	6KQtbh/N78WWV9wGSWvCaHOIQZG0hAEX0TfazhEyVcZapsLKXhFBWE18=
-X-Google-Smtp-Source: AGHT+IGVd8RWxriAdjeQ26FuLwFn4saFDWlWPe7tOOqWCDsplhsVxb/XtiKImoB0Ti47VzRLi/+FCoNq91NnAzR5BwN4/Oj3gC9P
+        d=1e100.net; s=20230601; t=1729674549; x=1730279349;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tUrRWUy2mg+9eFy2uOgVTtm4AMaUGJKQ+NZVihzkt4o=;
+        b=bhw7G18Na8wYa+OL92PQeNGcdna5VAO6+WBQrNtpvHpjhoshmOzqLnwl8+Fq2PjCb+
+         CRyYJgzuQ073eunXyGOG0pDA9oYkp5fupk3+MbU9MZsJxXTLUqR4kEfF5OtvSCBTGYwu
+         zTlclSaef1HkY3NyNRBf0/WtiDo1wSuhqqQmadOhqEDWTF3yva+rAR+r28ym07zIRUOZ
+         yV7guFmVbD64VRZyHqLqB2mlXAxdT+Y5sdE9nYFJ5pdHRiaWlWbdGNDYh/DeHkXV3eIn
+         4zG3zEny1k9Zpl7FM/0GEgs9N8LxO72YToHejsrcfVcfed7K6Y88ex/uinufbWd72Znx
+         0VKA==
+X-Forwarded-Encrypted: i=1; AJvYcCUVJleDY9ARMYyT8zbVCz4cFagh4A5kFdzLPiZ7oTYo2KqDgS/sLCzwp5z8gk1mrJ6Rz+y6g/upEuPhYpAB@vger.kernel.org, AJvYcCUgIofaYQxeNYqEeCPyrjvLCsV63yex1VmJtP/oTzbf8rXHmV44S6uboOkB9BzJ1O65GrKsufO+OaDx5bt1@vger.kernel.org, AJvYcCXclHH9Zpl2OXF5SbDqvxyqftbrbukZzQGgQPXc2O3c+gQpB1lVzBsfg1eS/G5nM5CIfrZ14okoB1YF@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8XLUSRfYDx2Ru20Bw+AtddneTnCOsoMRkVbYx73yAXUVQNLUu
+	sxcQrGU2ElssEozwNxjMJXjI7ThuAoSHy+eKYG41p7rf64PRbYIh
+X-Google-Smtp-Source: AGHT+IH1co3YBg4rKf5PUxpbvDK7TPc4kKnhGRQ/nm7LiXeXMTGbhhWYCdZPkZcPIJcd+rccOP+qzw==
+X-Received: by 2002:a05:6402:3888:b0:5c9:6f20:4cf1 with SMTP id 4fb4d7f45d1cf-5cb8af7228amr1624364a12.27.1729674549217;
+        Wed, 23 Oct 2024 02:09:09 -0700 (PDT)
+Received: from ivaylo-T580.. ([77.85.230.22])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6a8efsm4133058a12.52.2024.10.23.02.09.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 02:09:08 -0700 (PDT)
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+To: Krzysztof Kozlowski <krzk@kernel.org>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>,
+	Alim Akhtar <alim.akhtar@samsung.com>,
+	Rob Herring <robh@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: linux-samsung-soc@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 0/2] tty: serial: samsung: Add Exynos8895 compatible
+Date: Wed, 23 Oct 2024 12:09:00 +0300
+Message-ID: <20241023090902.538040-1-ivo.ivanov.ivanov1@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1486:b0:3a0:9aef:4d0 with SMTP id
- e9e14a558f8ab-3a4d592cdecmr17763035ab.5.1729674518019; Wed, 23 Oct 2024
- 02:08:38 -0700 (PDT)
-Date: Wed, 23 Oct 2024 02:08:37 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6718bd15.050a0220.10f4f4.01a0.GAE@google.com>
-Subject: [syzbot] [btrfs?] general protection fault in btrfs_lookup_csums_bitmap
-From: syzbot <syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com>
-To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
-	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
 
-Hello,
+Hey folks,
 
-syzbot found the following issue on:
+This patchset adds serial driver support for Exynos8895 SoC. The main
+difference from other exynos platforms is that fifosize is only
+specified via the samsung,uart-fifosize DT property.
 
-HEAD commit:    b04ae0f45168 Merge tag 'v6.12-rc3-smb3-client-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=11478430580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d2b33d7835870519b5f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1162d240580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15478430580000
+Newer Exynos platforms also specify fifosize via DT, so in such case
+this compatible could be used with oneOf.
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b04ae0f4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3e40a4ec7885/vmlinux-b04ae0f4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9312d8ec05d3/bzImage-b04ae0f4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/d4d1e4e89afc/mount_0.gz
+Changes in v2:
+ - Grow the enum at gs101 instead of making a new if-else
+ - Add r-b from Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com
+Ivaylo Ivanov (2):
+  dt-bindings: serial: samsung: Add samsung,exynos8895-uart compatible
+  tty: serial: samsung: Add Exynos8895 compatible
 
-workqueue: max_active 32767 requested for btrfs-compressed-write is out of range, clamping between 1 and 512
-workqueue: max_active 32767 requested for btrfs-scrub is out of range, clamping between 1 and 512
-BTRFS info (device loop0 state CS): scrub: started on devid 1
-Oops: general protection fault, probably for non-canonical address 0xdffffc0000000041: 0000 [#1] PREEMPT SMP KASAN NOPTI
-KASAN: null-ptr-deref in range [0x0000000000000208-0x000000000000020f]
-CPU: 0 UID: 0 PID: 5110 Comm: syz-executor381 Not tainted 6.12.0-rc3-syzkaller-00319-gb04ae0f45168 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:btrfs_lookup_csums_bitmap+0xc4/0x1600 fs/btrfs/file-item.c:615
-Code: 8c 24 a8 00 00 00 42 c7 44 31 08 f3 f3 f3 f3 e8 d2 83 e1 fd 48 89 9c 24 88 00 00 00 48 81 c3 08 02 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 9d 39 4b fe 4c 8b 2b ba 11 00 00
-RSP: 0018:ffffc9000af5f100 EFLAGS: 00010206
-RAX: 0000000000000041 RBX: 0000000000000208 RCX: ffff888000cf2440
-RDX: 0000000000000000 RSI: ffff888047132080 RDI: 0000000000000000
-RBP: ffffc9000af5f290 R08: ffff88801fb3c800 R09: ffffc9000af5f420
-R10: dffffc0000000000 R11: ffffed1008e2402e R12: 0000000000500000
-R13: ffffc9000af5f420 R14: dffffc0000000000 R15: 0000000000500000
-FS:  00005555764d5480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055572fc64400 CR3: 0000000040a06000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- scrub_find_fill_first_stripe+0xe96/0x1200 fs/btrfs/scrub.c:1618
- queue_scrub_stripe fs/btrfs/scrub.c:1912 [inline]
- scrub_simple_mirror+0x5c6/0x960 fs/btrfs/scrub.c:2144
- scrub_stripe+0xa7a/0x2a60 fs/btrfs/scrub.c:2310
- scrub_chunk+0x2e3/0x470 fs/btrfs/scrub.c:2442
- scrub_enumerate_chunks+0xc4f/0x16a0 fs/btrfs/scrub.c:2706
- btrfs_scrub_dev+0x774/0xde0 fs/btrfs/scrub.c:3028
- btrfs_ioctl_scrub+0x236/0x370 fs/btrfs/ioctl.c:3251
- vfs_ioctl fs/ioctl.c:51 [inline]
- __do_sys_ioctl fs/ioctl.c:907 [inline]
- __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f4e99a28f19
-Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffcb799b9b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
-RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4e99a28f19
-RDX: 0000000020000000 RSI: 00000000c400941b RDI: 0000000000000004
-RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
-R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcb799ba00
-R13: 00007ffcb799bc88 R14: 431bde82d7b634db R15: 00007f4e99a7103b
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:btrfs_lookup_csums_bitmap+0xc4/0x1600 fs/btrfs/file-item.c:615
-Code: 8c 24 a8 00 00 00 42 c7 44 31 08 f3 f3 f3 f3 e8 d2 83 e1 fd 48 89 9c 24 88 00 00 00 48 81 c3 08 02 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 9d 39 4b fe 4c 8b 2b ba 11 00 00
-RSP: 0018:ffffc9000af5f100 EFLAGS: 00010206
-RAX: 0000000000000041 RBX: 0000000000000208 RCX: ffff888000cf2440
-RDX: 0000000000000000 RSI: ffff888047132080 RDI: 0000000000000000
-RBP: ffffc9000af5f290 R08: ffff88801fb3c800 R09: ffffc9000af5f420
-R10: dffffc0000000000 R11: ffffed1008e2402e R12: 0000000000500000
-R13: ffffc9000af5f420 R14: dffffc0000000000 R15: 0000000000500000
-FS:  00005555764d5480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055572fc64400 CR3: 0000000040a06000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-----------------
-Code disassembly (best guess):
-   0:	8c 24 a8             	mov    %fs,(%rax,%rbp,4)
-   3:	00 00                	add    %al,(%rax)
-   5:	00 42 c7             	add    %al,-0x39(%rdx)
-   8:	44 31 08             	xor    %r9d,(%rax)
-   b:	f3 f3 f3 f3 e8 d2 83 	repz repz repz repz call 0xfde183e6
-  12:	e1 fd
-  14:	48 89 9c 24 88 00 00 	mov    %rbx,0x88(%rsp)
-  1b:	00
-  1c:	48 81 c3 08 02 00 00 	add    $0x208,%rbx
-  23:	48 89 d8             	mov    %rbx,%rax
-  26:	48 c1 e8 03          	shr    $0x3,%rax
-* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
-  2f:	74 08                	je     0x39
-  31:	48 89 df             	mov    %rbx,%rdi
-  34:	e8 9d 39 4b fe       	call   0xfe4b39d6
-  39:	4c 8b 2b             	mov    (%rbx),%r13
-  3c:	ba                   	.byte 0xba
-  3d:	11 00                	adc    %eax,(%rax)
+ .../devicetree/bindings/serial/samsung_uart.yaml   | 14 ++++++++++++--
+ drivers/tty/serial/samsung_tty.c                   | 13 +++++++++++++
+ 2 files changed, 25 insertions(+), 2 deletions(-)
 
+-- 
+2.43.0
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
 
