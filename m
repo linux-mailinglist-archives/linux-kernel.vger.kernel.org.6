@@ -1,140 +1,201 @@
-Return-Path: <linux-kernel+bounces-377518-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377519-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F4199ABFE5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:13:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 86EC99ABFEC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:14:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CED8A1F24C77
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:13:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A7AA31C20ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:14:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0BDE14EC77;
-	Wed, 23 Oct 2024 07:13:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B543414F10F;
+	Wed, 23 Oct 2024 07:14:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q6grCQSn"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="O/YRT00V"
+Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B804136345;
-	Wed, 23 Oct 2024 07:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69AC81459F6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:14:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667620; cv=none; b=dfgf4SGmtssjikwTWSE6EeTkEXtUHfu+fPb8sy+/vwI2VMzcWXJvCsAFLIJdO4n7sdHbpUCwTRtOC3jXzYcdb1XHnUsdPLNIinYp2Vq9k2DT90W+p6A72bOmDSRTekJLenPdao0XIhcWaTQlfrCBN5exgrsemE9VtUJAYj6Z8KU=
+	t=1729667678; cv=none; b=uWAXNgdZZ8TCt48Ms7bRjoho6Ewzp/zz/QwquU/bjLVcljkTPlAPS0ZVf+vklnQv8tDfMMeyljTIaeX4nNstp3+Vd6vjwLjd2TSyVQSxpEhIA8Ny7XO95OOnYVk1fEQj48rfHR4hcaz8v087Kergkh4B8VHo3DI73r9KHHxN3+8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667620; c=relaxed/simple;
-	bh=6mcRPPfWFTCRRKsPOr7A3DI6scMeu8dER+8BgqPZ35o=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=Et0Vgai8UaDytlWlmh0Z9C8gWUcuc0oCgUzyh3qWMCdmzV6koKS/T72YXs+Qsz2Hawq/3fBwhkw0t9ysg6gjLZGtcrkMXoVZyM2I4REiDXCfrDAv5VITts6GYq5VQTzpIe1cAn4Sk3YF9aTC3OADfHLXSV3paX/AgpLdG6NI2zo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q6grCQSn; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C87EC4CEC7;
-	Wed, 23 Oct 2024 07:13:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729667620;
-	bh=6mcRPPfWFTCRRKsPOr7A3DI6scMeu8dER+8BgqPZ35o=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=Q6grCQSnMzBRGkKsu0lY08FzDnBwMQ4DnHp/Td1JG9247YEoO7ROv4y/P3I+b7/b7
-	 X+LrOJ8IKnhww0SUDhP1wmM5ReIN8G9g6xen7tz4GyPb+0Th+FF2hXvAjdH7oJo09q
-	 8nqj2bAI2fwleOnEP7Hsp+glLdf5DK16h/FcIFvO9UPMFgl/FUZcNQbPczvwn8qNn0
-	 qbn6Zr8/kLHW6+GGfs53wHobjRZObXFp2g6nuQoEE+cCXOtzdY41SePHcVs4ixieqS
-	 5MtV8/bnoVGY6gPQZ7LJ2+PO7Wo7zHhaz8I2fv2/KOdqoFr6Ze2cWbLD86LHDy3fO/
-	 dEbcXEmTcASnA==
-Message-ID: <159a5bc5-6a8d-4178-8c9b-7d3f234bd3ed@kernel.org>
-Date: Wed, 23 Oct 2024 09:13:32 +0200
+	s=arc-20240116; t=1729667678; c=relaxed/simple;
+	bh=I72PARnjhFehtEG2rAaEyLZcUgGCWCfQMi5jN8CTJuo=;
+	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=IL10lDYZatm9GWjn3QQ1ay+mQHwQ53JLTVvKMQtIrhORODnNpvBRpuLB3HXhh4BeGXw9LuKKGEcEN7P34E+4gacNn7FgTLAGzdhqDcPUIiglAeB3YbZOyTInNRLzxxbHeM4pt1ZjT+42EeMYeJwaW+Y3bZ68NrWnL0kzZKXzx38=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=O/YRT00V; arc=none smtp.client-ip=209.85.216.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
+Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso4951608a91.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:14:36 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=amarulasolutions.com; s=google; t=1729667676; x=1730272476; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=pRJ+GZAFwtn0kOSMat8djdxy5/xbVF1GRGV31Fs/Szs=;
+        b=O/YRT00VfQ346ouxB0pBFnNzfKKd6Db/wldx8T/MYxxw8CfC806+SZXjbdLy9VKh7u
+         LThgwfO1XgQE8mpzAEJGMU5Wq52DYQ3FofrbPHYbBUEPUqC0nZ6YIz+LA+g3ZTNmOBEB
+         6nSqkku76N/b8hcK931JY+a8KoLDz+sFHyHzU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729667676; x=1730272476;
+        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=pRJ+GZAFwtn0kOSMat8djdxy5/xbVF1GRGV31Fs/Szs=;
+        b=gHjcEgLjXM84VqTBh7cVpgnkmqdQ1Hz1JM/2ENy3mawj+gDcyuB+Kc3MMP6o9PGdP5
+         KF04Pg4oD6+IyRRvCzq7DdXQXMMjLu0mMBlzcRqGI5mLoaT/z8tyNVC8ZJfkcqy+i1Fn
+         12eY9osylKWTxKA53/QggEGaOMu9UZgV+nmQUZ9BfiNSQ1SdaEF6IO3bRvIUvo1CDlrR
+         QizbAK+uZWbOZG6oWqD701srZTiYu52y3PKCIN4QHEeXZIYNsg4LVkLseFqYLjAuaz39
+         qxYM3Typq9ccmJrd2NWI4ZQJQQaQOhzxWxU0xwIZTNNNp0NjGSuecqYxU/FOgS3ajzl4
+         wVFA==
+X-Forwarded-Encrypted: i=1; AJvYcCXWoW2ucbGlJQ9EwCG0awns1t7u9suqEaQBZKAL9un0v+SZYfEIphpLzye3XnIjP1QdmCKOc7C5YNV5Y3I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yziv+qUeXMlC9AocW6lYh8gftNUL8J5OAN9LSJVxItauo6+c6Mf
+	Ib6TMpMg+komskyQyDmt0bQ3JRhmLiGRGf12VGH5MfpnEhQ0vjdnfVM/9Uu4yTaqlZGcLBHHlBb
+	8CLKxjd3lMlh4XlO+iOwrvLsnz2SVs/ZNoe6IYlCuF6CLnbaL
+X-Google-Smtp-Source: AGHT+IHqoz5Q36gQyrAvK8SX4cX+RPO+EX7ZovOrR0jzMjiF+ZHWDFdkTc2ecsYzD01ehe9Oze4H1hAqq851/7V/Wf4=
+X-Received: by 2002:a17:90a:7347:b0:2d8:7561:db71 with SMTP id
+ 98e67ed59e1d1-2e76b6e80edmr1585422a91.25.1729667675570; Wed, 23 Oct 2024
+ 00:14:35 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] dt-bindings: soc: bcm: Convert
- raspberrypi,bcm2835-power to Dt schema
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Karan Sanghavi <karansanghvi98@gmail.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Florian Fainelli <florian.fainelli@broadcom.com>,
- Broadcom internal kernel review list
- <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>,
- Scott Branden <sbranden@broadcom.com>, devicetree@vger.kernel.org,
- linux-rpi-kernel@lists.infradead.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, Shuah Khan <skhan@linuxfoundation.org>,
- Alexander Aring <alex.aring@gmail.com>, Eric Anholt <eric@anholt.net>
-References: <20241022-raspberrypi-bcm2835-power-v2-1-1a4a8a8a5737@gmail.com>
- <lfzxcilud65ype66frb7eihq2hvranzxp6fomjvjyxvciiixlj@2efv5266wt5r>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <lfzxcilud65ype66frb7eihq2hvranzxp6fomjvjyxvciiixlj@2efv5266wt5r>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Michael Nazzareno Trimarchi <michael@amarulasolutions.com>
+Date: Wed, 23 Oct 2024 09:14:23 +0200
+Message-ID: <CAOf5uwmxXvHNwycaOECkX5v7+zwHtpuvCKs3pJofuJJNe2Rwyw@mail.gmail.com>
+Subject: ath11k_pci. wifi stop to work after long laptop suspend
+To: Kalle Valo <kvalo@kernel.org>, ath11k@lists.infradead.org
+Cc: Jeff Johnson <jjohnson@kernel.org>, 
+	"open list:TI WILINK WIRELES..." <linux-wireless@vger.kernel.org>, LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On 23/10/2024 09:12, Krzysztof Kozlowski wrote:
-> On Tue, Oct 22, 2024 at 06:17:03PM +0000, Karan Sanghavi wrote:
->> Convert the raspberrypi,bcm2835-power binding to Dt schema
->>
->> Signed-off-by: Karan Sanghavi <karansanghvi98@gmail.com>
->> ---
->> Changes in v2:
->> - Added original file maintainers
->> - Removed unnecessary headers from example and formating from description 
->> - Link to v1: https://lore.kernel.org/r/20241019-raspberrypi-bcm2835-power-v1-1-75e924dc3745@gmail.com
->> ---
-> 
->> @@ -0,0 +1,42 @@
->> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
->> +%YAML 1.2
->> +---
->> +$id: http://devicetree.org/schemas/soc/bcm/raspberrypi,bcm2835-power.yaml#
->> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+Hi all
 
-Ah, and this is of course not part of soc directory, but power, so move
-it there.
+I found this problem on several linux version and I will like to have
+some hint to debug or fix:
 
-Best regards,
-Krzysztof
+[  205.690214] ath11k_pci 0000:02:00.0: fw_version 0x1106196e
+fw_build_timestamp 2024-01-12 11:30 fw_build_id
+WLAN.HSP.1.1-03125-QCAHSPSWPL_V1_V2_SILICONZ_LITE-3.6510.37
+[  205.745065] ath11k_pci 0000:02:00.0: Last interrupt received for each CE:
+[  205.745074] ath11k_pci 0000:02:00.0: CE_id 0 pipe_num 0 54750ms before
+[  205.745078] ath11k_pci 0000:02:00.0: CE_id 1 pipe_num 1 36959ms before
+[  205.745081] ath11k_pci 0000:02:00.0: CE_id 2 pipe_num 2 36912ms before
+[  205.745084] ath11k_pci 0000:02:00.0: CE_id 3 pipe_num 3 36912ms before
+[  205.745087] ath11k_pci 0000:02:00.0: CE_id 5 pipe_num 5 4294872919ms before
+[  205.745091] ath11k_pci 0000:02:00.0: CE_id 7 pipe_num 7 4294872919ms before
+[  205.745094] ath11k_pci 0000:02:00.0: CE_id 8 pipe_num 8 4294872919ms before
+[  205.745097] ath11k_pci 0000:02:00.0:
+               Last interrupt received for each group:
+[  205.745099] ath11k_pci 0000:02:00.0: group_id 0 4294872919ms before
+[  205.745103] ath11k_pci 0000:02:00.0: group_id 1 4294872919ms before
+[  205.745106] ath11k_pci 0000:02:00.0: group_id 2 4294872919ms before
+[  205.745109] ath11k_pci 0000:02:00.0: group_id 3 4294872919ms before
+[  205.745112] ath11k_pci 0000:02:00.0: group_id 4 45367ms before
+[  205.745115] ath11k_pci 0000:02:00.0: group_id 5 45367ms before
+[  205.745118] ath11k_pci 0000:02:00.0: group_id 6 4294872919ms before
+[  205.745121] ath11k_pci 0000:02:00.0: group_id 7 4294872919ms before
+[  205.745124] ath11k_pci 0000:02:00.0: group_id 8 4294872919ms before
+[  205.745127] ath11k_pci 0000:02:00.0: group_id 9 4294872919ms before
+[  205.745129] ath11k_pci 0000:02:00.0: group_id 10 4294872919ms before
+[  205.745133] ath11k_pci 0000:02:00.0: dst srng id 0 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745137] ath11k_pci 0000:02:00.0: dst srng id 1 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745140] ath11k_pci 0000:02:00.0: dst srng id 2 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745143] ath11k_pci 0000:02:00.0: dst srng id 3 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745147] ath11k_pci 0000:02:00.0: dst srng id 4 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745150] ath11k_pci 0000:02:00.0: src srng id 5 hp 0, reap_hp
+248, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745154] ath11k_pci 0000:02:00.0: src srng id 8 hp 170, reap_hp
+170, cur tp 0, cached tp 0 last tp 0 napi processed before 21825ms
+[  205.745158] ath11k_pci 0000:02:00.0: dst srng id 9 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745161] ath11k_pci 0000:02:00.0: src srng id 16 hp 0, reap_hp
+4088, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745165] ath11k_pci 0000:02:00.0: src srng id 24 hp 0, reap_hp
+248, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745169] ath11k_pci 0000:02:00.0: dst srng id 25 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745172] ath11k_pci 0000:02:00.0: src srng id 32 hp 12, reap_hp
+8, cur tp 12, cached tp 12 last tp 8 napi processed before 54750ms
+[  205.745176] ath11k_pci 0000:02:00.0: src srng id 35 hp 120, reap_hp
+116, cur tp 120, cached tp 120 last tp 116 napi processed before
+36912ms
+[  205.745180] ath11k_pci 0000:02:00.0: src srng id 36 hp 48, reap_hp
+44, cur tp 48, cached tp 48 last tp 40 napi processed before 45394ms
+[  205.745184] ath11k_pci 0000:02:00.0: src srng id 39 hp 0, reap_hp
+124, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745188] ath11k_pci 0000:02:00.0: src srng id 57 hp 0, reap_hp
+0, cur tp 4, cached tp 4 last tp 4 napi processed before 36959ms
+[  205.745191] ath11k_pci 0000:02:00.0: src srng id 58 hp 160, reap_hp
+160, cur tp 164, cached tp 164 last tp 164 napi processed before
+36912ms
+[  205.745195] ath11k_pci 0000:02:00.0: src srng id 61 hp 1020,
+reap_hp 1020, cur tp 0, cached tp 0 last tp 0 napi processed before
+54751ms
+[  205.745199] ath11k_pci 0000:02:00.0: dst srng id 81 tp 8, cur hp 8,
+cached hp 8 last hp 8 napi processed before 36959ms
+[  205.745202] ath11k_pci 0000:02:00.0: dst srng id 82 tp 328, cur hp
+328, cached hp 328 last hp 328 napi processed before 36912ms
+[  205.745206] ath11k_pci 0000:02:00.0: dst srng id 85 tp 0, cur hp 0,
+cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745210] ath11k_pci 0000:02:00.0: src srng id 104 hp 65532,
+reap_hp 65532, cur tp 0, cached tp 0 last tp 0 napi processed before
+54753ms
+[  205.745213] ath11k_pci 0000:02:00.0: src srng id 105 hp 0, reap_hp
+504, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745217] ath11k_pci 0000:02:00.0: dst srng id 106 tp 0, cur hp
+0, cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745220] ath11k_pci 0000:02:00.0: dst srng id 109 tp 0, cur hp
+0, cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745224] ath11k_pci 0000:02:00.0: src srng id 128 hp 8190,
+reap_hp 8190, cur tp 4156, cached tp 0 last tp 0 napi processed before
+54500ms
+[  205.745228] ath11k_pci 0000:02:00.0: src srng id 129 hp 0, reap_hp
+2046, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745232] ath11k_pci 0000:02:00.0: src srng id 132 hp 20, reap_hp
+20, cur tp 22, cached tp 22 last tp 22 napi processed before 6ms
+[  205.745235] ath11k_pci 0000:02:00.0: dst srng id 133 tp 0, cur hp
+0, cached hp 0 last hp 0 napi processed before 4294872919ms
+[  205.745239] ath11k_pci 0000:02:00.0: src srng id 144 hp 0, reap_hp
+2046, cur tp 0, cached tp 0 last tp 0 napi processed before
+4294872919ms
+[  205.745242] ath11k_pci 0000:02:00.0: src srng id 147 hp 4, reap_hp
+4, cur tp 6, cached tp 6 last tp 6 napi processed before 6ms
+[  205.745246] ath11k_pci 0000:02:00.0: dst srng id 148 tp 0, cur hp
+0, cached hp 0 last hp 0 napi processed before 4294872919ms
 
+This happens for now on some specific access point but after it
+happens the only way to reconnect is restart the access point.
+
+Any hint?
+
+Michael
+
+--
+Michael Nazzareno Trimarchi
+Co-Founder & Chief Executive Officer
+M. +39 347 913 2170
+michael@amarulasolutions.com
+__________________________________
+
+Amarula Solutions BV
+Joop Geesinkweg 125, 1114 AB, Amsterdam, NL
+T. +31 (0)85 111 9172
+info@amarulasolutions.com
+www.amarulasolutions.com
 
