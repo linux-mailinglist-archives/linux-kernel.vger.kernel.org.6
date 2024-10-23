@@ -1,164 +1,317 @@
-Return-Path: <linux-kernel+bounces-378747-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4653F9AD4E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:34:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E20349AD4EA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:35:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B36D9B22D2F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:34:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EA96284A57
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:35:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3F8651DE4CE;
-	Wed, 23 Oct 2024 19:34:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B9151D5AB6;
+	Wed, 23 Oct 2024 19:35:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="M3/Zjr4H";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="80AmFc+f"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="eDo2eCFW"
+Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7621D47CB;
-	Wed, 23 Oct 2024 19:34:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5D7C013BC11
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:35:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729712072; cv=none; b=nomUX+22lufxeoCUGwwuuE8trbi9fvlpJGP8NyH2tkv+cd3fOXwIAHaLyS6ioJw8tRCDnrZctm5CENTiKLbrsfUw2YFnKzkAYhXwc6DWI1lppkIxxV3BsV7gJe2Y9sibjnG9MW1X0Jbnn4FEJK//jRFi5vb0lu3dL+0Fr4CQkhk=
+	t=1729712133; cv=none; b=ZygEf1VAnkM6W6yAqtq0HMpn6NwXo2Gdg7bmdHXnqfuyf4JPKPmjkFoLkKQtJLcbhNi8280rySeE6MBUIRLVcvR1NyHTNvfBke270p5kWUXx0/Q1Z7q1TbnnVPzdDgug8gRwi1FTaoDHTiHEu7Md1/ymcC4CoEfPqQ/8j4mhvUE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729712072; c=relaxed/simple;
-	bh=keEtpzn12wH3jYAScIGBjUyx/oN5KkajtGOKvPK5oV0=;
-	h=From:To:Cc:Subject:In-Reply-To:Date:Message-ID:MIME-Version:
-	 Content-Type; b=hh+H3LRs151iPaDFeqqa06VuFtj2nydV0GW4fTFNm95lxa9eEDpnfXd6ySqt9nn5CzaIUkD0Cf+cgwryCstahHP1iua+SN5XQl70zu1CL9KFAayFQzlTkyxcNBqEjPx/8oEF+wpNf772LRS0VuS3l5fKclBNoqzK4DLdlbeP91Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=M3/Zjr4H; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=80AmFc+f; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729712068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=UKIaAPZQV2NhEf5qtKaNoRvOAmY1eWGmO5suz4rUei0=;
-	b=M3/Zjr4HzJi1dr2+mXP+zcICt1DEHerfYJUYgKcV9RQvajGhYU672t9+p6yuUPSNyR6CZr
-	QtqBDo3ADc0YlhQnAVuuy+kluJUH1fRCNvOCVRIGn63NkoX0n5vTtJZMagfYiRmHNJLa+p
-	/aEYwYNjv0GS537iwgH+FcjIXshp8DxCJ+skhELwVweLTuOdh1FU3BjIe5V97xZ4Ff0NAW
-	DchCZVoM9wW4r6wedkExE4CVDdxP09rgb0Go7wh+aI9SkcRpUzvULeLkuDeklqr+Jit0Ze
-	Df4+mGmpvJRwbQ+md4tZbfABQjce8zG5gcQm9Py3yQGtCpDPLTDt1USudo+vNw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729712068;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to; bh=UKIaAPZQV2NhEf5qtKaNoRvOAmY1eWGmO5suz4rUei0=;
-	b=80AmFc+fW6GvGUEnvwawa5hPbCSOwMkH75v9fvjR1MyyXRZLVimM7LBJ8pg4FYx9XV4W5M
-	yGMhy+R/fXRLI9Ag==
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>, Lyude Paul <lyude@redhat.com>,
- rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
- airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, will@kernel.org,
- Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, wedsonaf@gmail.com, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
- aliceryhl@google.com, Trevor Gross <tmgross@umich.edu>, Boqun Feng
- <boqun.feng@gmail.com>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-In-Reply-To: <20241018055125.2784186-2-boqun.feng@gmail.com>
-Date: Wed, 23 Oct 2024 21:34:27 +0200
-Message-ID: <87a5eu7gvw.ffs@tglx>
+	s=arc-20240116; t=1729712133; c=relaxed/simple;
+	bh=wNYfSW+eYGJvx5KJp4suRILJhQZ0Ag7C+qU/GxQTLA0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GfivIKKhGykHVUG/1WLro/vNXuLU1GGG5bRqYfQW0EF7fTFwgNb5O7yDh+dYykqUhRR3oPT5DF95fezFWUOdfqAH1QbdNZj/qt9pnhf9o2X/5gaSuPlN1K7rHNZetYlROyvjAVi8BeR9WPbuYTuiXiUbLAGoBwbsgih6pnm+4L8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=eDo2eCFW; arc=none smtp.client-ip=209.85.167.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so134822e87.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:35:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729712128; x=1730316928; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=JIcRJaC4tkNbBKQG9JrVDAOe7hOw1yVBfVB1/wPO5XQ=;
+        b=eDo2eCFWLImx6enFYvTtFoSPrKMRmAPaIxFwj18h66HR4dJX7k6UsKOLarb7yCrluE
+         TnapwSXJkBTtDMfNjFzQzoUviyM0y95Zy9zaMyjpLocAdu3bJiyBR6r8TZHo6th4mmxF
+         HKWG9vtnEHoLGg3aPXRRcWBadWT+aUzAFEOkc=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729712128; x=1730316928;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=JIcRJaC4tkNbBKQG9JrVDAOe7hOw1yVBfVB1/wPO5XQ=;
+        b=hBOc/H0NgF9Eyk3/34LamktRlhch8iTlvCeLFoDScSr8/H8lNYsFZ2r3yVsMeIJVZ9
+         j2ayJy4m9nJ0wtDePs7SrKWCDOSeeo7v313TRCR24718gL6C6+bf1fueFz0y4HPfceYu
+         CCBXFFZir3QXRqmSTogo/yB4EbURHt/8xddlMQrHtKRGoSdBzdIFvLi9MY3pv3nMS/51
+         teaUP8e5L/FoarCCYpTbDA1AjUumXWkOwFvQ4AHAux2RtSsfGlsdOrgImR76rlxrrUwW
+         +fjkONeQeBLTruOSbkoh64eXV4ioPbzmRIEgpaTH8Zj5ybvUxBnbK/BtO3CMDh8C0F8A
+         qU2g==
+X-Forwarded-Encrypted: i=1; AJvYcCU7z53E7nKIJKKecj9G5XRryUOge7XOiXJgYXWYxdHFepHb4rDqWHrfwuhn6ULr0lmaotUUs65cfWrlBIY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFrBma0VHQjc2kulGg9tn8yIDmC26kbf0kExAvZBxLGB7uejV9
+	kkBAGamqDZVDyMj50pZrOxIF7LLeywx+EXnKIlOuAH0EFe/2gLINCHFD9/xHuJH/S1v51sINadH
+	urQ==
+X-Google-Smtp-Source: AGHT+IHS015o1Gdjv32e6mMZ9AsKDWWJk9v7Rcp2dpgiP0sjEx0N6WcwAyx/3Up6EBXc+aaC2iKdKw==
+X-Received: by 2002:a05:6512:108a:b0:539:e88f:2398 with SMTP id 2adb3069b0e04-53b1a34e1b2mr1903096e87.39.1729712128431;
+        Wed, 23 Oct 2024 12:35:28 -0700 (PDT)
+Received: from mail-lf1-f53.google.com (mail-lf1-f53.google.com. [209.85.167.53])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2243ecf4sm1151493e87.246.2024.10.23.12.35.26
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 12:35:27 -0700 (PDT)
+Received: by mail-lf1-f53.google.com with SMTP id 2adb3069b0e04-539f6e1f756so170462e87.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:35:26 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCVIHBETNRofZoTSEDq0i1IllfL698eO4bPsx4BV2R+ENnNi26nH1C5bFsm8Yt9nvxEC2sGEMz5VhmijtRU=@vger.kernel.org
+X-Received: by 2002:a05:6512:2355:b0:539:fa43:fc36 with SMTP id
+ 2adb3069b0e04-53b1a2f42abmr1785628e87.12.1729712126300; Wed, 23 Oct 2024
+ 12:35:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241018020815.3098263-2-charles.goodix@gmail.com>
+ <CAD=FV=UFrk4QCxWzV9zUZnjhwiFf22Fji5KH83svdwba2mPVBA@mail.gmail.com>
+ <ZxMfu4yxk961mZWB@ux-UP-WHL01> <fbde8a3a-3adc-4c1a-8529-fde0fa149c8e@kernel.org>
+ <CAD=FV=VphXewyk_mpGHUZKw8_aK8HnH8T-YumwM70eyz22S+Aw@mail.gmail.com>
+ <ZxdRaaCR7eTOCQkB@ux-UP-WHL01> <CAD=FV=UFonOVHUP5_9+BfJp71CFX7KKA1Gx=boN0=3_4cCKnZw@mail.gmail.com>
+ <ZxiZXeQzIaDYuu1F@ux-UP-WHL01>
+In-Reply-To: <ZxiZXeQzIaDYuu1F@ux-UP-WHL01>
+From: Doug Anderson <dianders@chromium.org>
+Date: Wed, 23 Oct 2024 12:35:09 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=WSUrjbEzG83kYt50FRQ-Bu+bQP17JY_wPAEBf_GxGTJg@mail.gmail.com>
+Message-ID: <CAD=FV=WSUrjbEzG83kYt50FRQ-Bu+bQP17JY_wPAEBf_GxGTJg@mail.gmail.com>
+Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
+To: Charles Wang <charles.goodix@gmail.com>
+Cc: krzk@kernel.org, dmitry.torokhov@gmail.com, hbarnor@chromium.org, 
+	conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org, 
+	linux-input@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17 2024 at 22:51, Boqun Feng wrote:
-> Currently the nested interrupt disabling and enabling is present by
-> Also add the corresponding spin_lock primitives: spin_lock_irq_disable()
-> and spin_unlock_irq_enable(), as a result, code as follow:
+Hi,
+
+On Tue, Oct 22, 2024 at 11:44=E2=80=AFPM Charles Wang <charles.goodix@gmail=
+.com> wrote:
 >
-> 	spin_lock_irq_disable(l1);
-> 	spin_lock_irq_disable(l2);
-> 	spin_unlock_irq_enable(l1);
-> 	// Interrupts are still disabled.
-> 	spin_unlock_irq_enable(l2);
+> Hi,
 >
-> doesn't have the issue that interrupts are accidentally enabled.
+> On Tue, Oct 22, 2024 at 09:12:33AM -0700, Doug Anderson wrote:
+> > Hi,
+> >
+> > On Tue, Oct 22, 2024 at 12:19=E2=80=AFAM Charles Wang <charles.goodix@g=
+mail.com> wrote:
+> > >
+> > > Hi Doug,
+> > >
+> > > On Mon, Oct 21, 2024 at 08:37:32AM -0700, Doug Anderson wrote:
+> > > > Hi,
+> > > >
+> > > > On Mon, Oct 21, 2024 at 2:43=E2=80=AFAM Krzysztof Kozlowski <krzk@k=
+ernel.org> wrote:
+> > > > >
+> > > > > On 19/10/2024 04:55, Charles Wang wrote:
+> > > > > > Hi Doug
+> > > > > >
+> > > > > > On Fri, Oct 18, 2024 at 01:48:56PM -0700, Doug Anderson wrote:
+> > > > > >>
+> > > > > >> On Thu, Oct 17, 2024 at 7:09=E2=80=AFPM Charles Wang <charles.=
+goodix@gmail.com> wrote:
+> > > > > >>>
+> > > > > >>> The Goodix GT7986U touch controller report touch data accordi=
+ng to the
+> > > > > >>> HID protocol through the SPI bus. However, it is incompatible=
+ with
+> > > > > >>> Microsoft's HID-over-SPI protocol.
+> > > > > >>>
+> > > > > >>> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
+> > > > > >>> ---
+> > > > > >>>  .../bindings/input/goodix,gt7375p.yaml        | 68 +++++++++=
++++++++---
+> > > > > >>>  1 file changed, 58 insertions(+), 10 deletions(-)
+> > > > > >>
+> > > > > >> I'm happy to let device tree folks make the call here, but IMO=
+ it
+> > > > > >> would be much cleaner to just consider the I2C-connected GT798=
+6U and
+> > > > > >> the SPI-connected GT7986U to be different things and just use =
+a
+> > > > >
+> > > > > Same device, you cannot have different compatibles. The way how t=
+he same
+> > > > > (literally same chip) device sits on the bus is not part of the b=
+inding,
+> > > > > thus no different compatibles.
+> > > >
+> > > > I don't want to belabour the point too much, but this doesn't feel
+> > > > completely black and white here.
+> > > >
+> > > > "Same chip": a whole lot of laptops and phones all use the "same ch=
+ip"
+> > > > (same SoC) yet are different products. ...or you can look at the fa=
+ct
+> > > > that many peripherals have the same STM32 or Nuvoton chip in them b=
+ut
+> > > > are wildly different peripherals.
+> > > >
+> > > > In this case, Goodix may have made an ASIC called "GT7986U" that ha=
+s
+> > > > some type of CPU on it that can run firmware that can talk as an I2=
+C
+> > > > device or a SPI device. This ASIC may be intended to be used as a
+> > > > touchscreen controller, but fundamentally it doesn't feel that
+> > > > different from an STM32. You can build different boards designs wit=
+h
+> > > > the "GT7986U" on it and those boards are intended to run different
+> > > > firmware.
+> > > >
+> > > > People manufacturing touch controller boards presumably put this
+> > > > "GT7986U" on their touch controller board, maybe set certain
+> > > > strappings telling it that it's talking over SPI or I2C or maybe ju=
+st
+> > > > decide which pins they're going to wire out to the board-to-board
+> > > > connector on the touch controller board. A touch controller board
+> > > > intended to talk over SPI may look 98% the same as a touch controll=
+er
+> > > > board intended to talk over I2C, but what percentage of "sameness"
+> > > > means that we need the same compatible string?
+> > > >
+> > > > Would things be different if Goodix decided to manufacture touch
+> > > > controller boards themselves and sold two SKUs: a GT7986U-S and a
+> > > > GT7986U-I?
+> > > >
+> > > > I would also note that (reading back in previous conversations) I
+> > > > think Charles said that they run different firmware on the SPI vs. =
+I2C
+> > > > touch controllers. As I understand it, the firmware running on a
+> > > > device can make it a different device from a device tree perspectiv=
+e.
+> > > > The device tree does its best to describe just the hardware but it =
+can
+> > > > get fuzzy. For instance the "VID/PID" of a USB device is usually
+> > > > something programmable and could be updateable by a firmware change
+> > > > but we still may need to encode the VID/PID of the firmware that is
+> > > > intended to run on the device in the device tree.
+> > > >
+> > > > Anyway, I'm happy to be quiet about this and fine if folks want to
+> > > > continue to work towards a "unified" binding. It makes me a little
+> > > > uncomfortable that I'll still end up listed as a "maintainer" of th=
+e
+> > > > unified binding because I don't totally agree with it, but I'm also
+> > > > pragmatic and I'd rather have something that can land.
+> > > >
+> > >
+> > > Thank you very much for your attention. Your understanding of the GT7=
+986U
+> > > SPI and I2C devices is correct. There is no fundamental difference be=
+tween
+> > > them and the STM32, as they are all ASIC devices. The functionality o=
+f the
+> > > device is determined by the firmware that is loaded, although the GT7=
+986U
+> > > is an ASIC specifically designed for touchscreens.
+> > >
+> > > Additionally, the firmware and devices are generally bound to specifi=
+c touch
+> > > panels, meaning that firmware intended for SPI will not function prop=
+erly on
+> > > an I2C touch panel.
+> >
+> > Just to get clarity: how is GT7986U delivered? For instance:
+> >
+> > 1. Maybe Goodix produces touchscreen controller boards and ships them
+> > to customers for use in their products. In this case, does Goodix ship
+> > a single board with two connectors, or a separate board for SPI vs.
+> > I2C? I would have to believe that maybe a "dev" board might have both
+> > connectors and a bunch of jumpers/switches to choose which ones to
+> > use, but it feels unlikely someone would ship that in any quantity.
+> >
+> > 2. Maybe Goodix provides schematics for customers to produce their own
+> > touchscreen controller boards and they tell customers to either hook
+> > up the SPI lines and load the SPI firmware or hook up the I2C lines
+> > and load the I2C firmware. In this case the assumption is that
+> > customers using the same communication method are following the
+> > schematics closely enough that they all behave the same and thus we
+> > don't need some extra distinction.
+> >
+> > In either case it seems like a touchscreen controller board that talks
+> > over SPI and one that talks over I2C are two different products and
+> > thus (to me) should have two distinct compatible strings. This is not
+> > one device that merely has multiple interfaces.
+> >
 >
-> This also makes the wrapper of interrupt-disabling locks on Rust easier
-> to design.
+> Goodix's approach is similar to Method 2. First, Goodix provides the
+> schematics and the chips (including initial firmware, no touch function)
+> to customers, and customers design their touchscreen controller boards an=
+d
+> decide whether to use the I2C or SPI interface. Then, Goodix modifies and
+> debugs the firmware based on the customer's design and provides the final
+> firmware for customers to upgrade.
 
-Clever!
+OK, thanks!
 
-> +DECLARE_PER_CPU(struct interrupt_disable_state, local_interrupt_disable_state);
-> +
-> +static inline void local_interrupt_disable(void)
-> +{
-> +	unsigned long flags;
-> +	long new_count;
-> +
-> +	local_irq_save(flags);
-> +
-> +	new_count = raw_cpu_inc_return(local_interrupt_disable_state.count);
+From the above that means that if someone uses the "goodix,gt7986u"
+compatible today (with what's landed in mainline) then by that they
+mean "This is a touchscreen that's compatible with a Goodix-defined
+standard way of talking to i2c-based touchscreens built atop a GT7986U
+touchscreen controller". With what's landed in mainline that "standard
+way" is the "i2c-hid" protocol plus a reset line (which IIRC is not
+part of the i2c-hid standard) plus a defined power up/power down
+sequence.
 
-Ideally you make that part of the preemption count. Bit 24-30 are free
-(or we can move them around as needed). That's deep enough and you get
-the debug sanity checking of the preemption counter for free (might need
-some extra debug for this...)
+I suppose one conclusion one might make is that we never should have
+used "goodix,gt7986u" as a compatible string in the first place and
+should have instead added a new compatible string for every actual
+instantiation of a touchscreen. So when Vendor1 made touchscreen 1234
+based on GT7986U then we could have used the compatible
+"vendor1,touchscreen1234" and then when Vendor2 made touchscreen 5678
+based on GT7986U we could have used the compatible
+"vendor2,touchscreen5678". Should we have done this / should we do it
+in the future? I don't know. If everyone using GT7986U is adhering to
+the same interface then it doesn't buy us a ton and adds lots more
+bindings. I think I ended up originally adding the Goodix GT7375P
+bindings because someone gave me a datasheet with all the power
+sequencing and timings that came from Goodix and said it was for the
+"Goodix GT7375P". Given the fact that Goodix provides such a datasheet
+and it includes power sequencing is a strong indicator that there
+truly is a standard and we can use that.
 
-So then this becomes:
+In any case, if we _had_ used a different compatible for each actual
+touchscreen implementation then we wouldn't be having this discussion.
+Those touchscreens that shipped with a controller board that had SPI
+connections and SPI firmware would have had obviously different
+compatible strings than the touchscreens that shipped with a
+controller board designed for I2C.
 
-local_interrupt_disable()
-{
-        cnt = preempt_count_add_return(LOCALIRQ_OFFSET);
-        if ((cnt & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
-        	local_irq_save(flags);
-                this_cpu_write(..., flags);
-        }
-}
+If we _do_ want to keep using a compatible like "goodix,gt7986u" then,
+IMO, it's beneficial to also have a SPI-variant compatible like
+"goodix,gt7986u-spi". This is not a second interface to one device but
+it's actually a distinct interface compared to the Goodix I2C
+interface. Note: this assumes there isn't some hidden benefit to
+having a combined "I2C/SPI" bindings file. I find having the combined
+file buys me nothing and just makes it more confusing / adds
+complexity. Is there some benefit I'm missing other than towing the
+line of "one chip, one compatible"?
 
-and
 
-local_interrupt_enable()
-{
-        if ((preempt_count() & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
-        	local_irq_restore(this_cpu_read(...flags);
-                preempt_count_sub_test_resched(LOCALIRQ_OFFSET);
-        } else {
-                // Does not need a resched test because it's not going
-                // to 0
-                preempt_count_sub(LOCALIRQ_OFFSET);
-        }
-}
+> It is important to note that the type of driver used by the final device
+> is related not only to the bus type but also to the final firmware. Even
+> when using the same I2C bus, different drivers may be needed, such as
+> hid-i2c or a customer-specific driver.
 
-and then the lock thing becomes
+Right. ...the firmware that's on the device matters and distinct
+firmware can make a distinct device, and IMO a GT7986U loaded with I2C
+firmware is a distinct device than a GT7986U loaded with SPI firmware.
+They are not the same and thus don't need the same compatible.
 
-spin_lock_irq_disable()
-{
-        local_interrupt_disable();
-        lock();
-}
 
-spin_unlock_irq_enable()
-{
-        unlock();
-        local_interrupt_enable();
-}
-
-instead having to do:
-
-spin_unlock_irq_enable()
-{
-        unlock();
-        local_interrupt_enable();
-        preempt_enable();
-}
-
-Which needs two distinct checks, one for the interrupt and one for the
-preemption counter. Hmm?
-
-Thanks,
-
-        tglx
+-Doug
 
