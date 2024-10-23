@@ -1,123 +1,139 @@
-Return-Path: <linux-kernel+bounces-378818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378819-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 217B69AD5B8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:43:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BCC19AD5BE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:46:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A41BEB246B4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:42:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC91E1F22888
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:46:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8397275809;
-	Wed, 23 Oct 2024 20:41:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 398BC1D1F79;
+	Wed, 23 Oct 2024 20:46:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="ORrYL8Xb"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="eyqb1hC7"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D84D11DEFD8
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:41:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41C5C13B59E;
+	Wed, 23 Oct 2024 20:46:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729716082; cv=none; b=PgwOywkGG8R6u0W7BC2Xyh5iXE94dpMDKX23OW0aZ+6S2MwoRJswhy1wJzi2mZ0aZuOkKWN7/cjXds2c+h27vrPNpb/GLmEWgYYcm0f1RLb2azZ1z1xrrrWl2wRP41z5tExQUxmUE7IDXfDuGZ8sw7F6os1E7e+derqtvkzju40=
+	t=1729716389; cv=none; b=ZFT4LhMfvIDuLZTe47tRspopwHeRYcZzz9DL8VVmF2fy8yJweeb49KJcyg2lHuuGrUNZqNf+Kd6uNXSm6fZ8phyv4/A7VwjudyUWsX0iiGifCqfD05mI4uvcAmikiOBGrsLcyaPGoKHznWU7yQEhlGzCfioSTaz4e0/7qgf8fGI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729716082; c=relaxed/simple;
-	bh=3JRZMNUNQedJCcz0d6X+3HKipkE+z+AGyw055WODxJo=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=gI9lOwoUwyFfvvZMetGlIWdkFS7SgWdkhngATrQn4PIpXkPfcQe4dHbfaGJgfyobahSS6MyfGkaIt+cvCJLlvPNBXI5j1tp6H7k4x58XB+le0m9mIjucEkfnujN0+uC+vmyq8mP3LdNU8V7vhasqsmAqmt62S13FdUBfgIUDi14=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=ORrYL8Xb; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 30B2DC4CEC6;
-	Wed, 23 Oct 2024 20:41:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729716082;
-	bh=3JRZMNUNQedJCcz0d6X+3HKipkE+z+AGyw055WODxJo=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=ORrYL8Xb0+DKOh5QHCipmhyIA+N35jK8Ld70+mse2XqSVBdlihm+zw0iQuBbUVHN0
-	 GhfZn4Hkjmnd30A+eudjOKMyRhOBzGbwiXKijtQLhn6g7cxaNhG8Z1Tr7Br2IoOLmF
-	 2FTBA3TQbyxFj7DXMSk+3gtaIMZGzdCcmiFVlOQY=
-Date: Wed, 23 Oct 2024 13:41:21 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Dongjoo Seo <dongjoo.linux.dev@gmail.com>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, dave@stgolabs.net, dan.j.williams@intel.com,
- nifan@outlook.com, a.manzanares@samsung.com
-Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
-Message-Id: <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
-In-Reply-To: <Zxk6bHlrP5S_0LBK@tiehlicka>
-References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
-	<Zxk6bHlrP5S_0LBK@tiehlicka>
-X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729716389; c=relaxed/simple;
+	bh=VE5faDGuulpA16bqytPHh+8rqbJzyZavDCJhycCNVO0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MOqcrri0jkiEKX0vhqcp51V3oLB7ZgLILUHr4ExM/AnU5OcxlmWM5ST9lTkDdBE30Oq6ETDZ0ttzxw1A2xx3IZa4BQApIOUtwqcrXpYZFaB+JBw8KgorVNKbRVjXTavacXl7YsoJGKfAGds8fWDFys1sVjbZpHL1+VdRkAReKOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=eyqb1hC7; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-8323b555a6aso7846839f.3;
+        Wed, 23 Oct 2024 13:46:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729716387; x=1730321187; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4Q9Fmtv1jhqmPQxhPj7GzThFbrtRvvOEog4jX1mozHs=;
+        b=eyqb1hC72NFyfzMwHYUNq8DdyinYXmcxlRxwGnmynvprDG6Qf2QMtGAmac/7PlR467
+         ExQc5DXbcTS9d63kbrt0641s9KgdWBSDuPEXQXRqohJExHb6nMQ5hIsI+y38vQL4C/Wz
+         P7jsvoOJlH9D/HhE/jnWvlKxjnU7kt9TwvyMbSUvwO1TWVJ20kv93y3NEbjy3IdJsHTl
+         SfqTf4l93CTYItlz+oCKcDGmk5g+zGzgcXYaW8f6qwkyRleQHgTD6ZvbAxW+5O6TODf5
+         xpbKPOSiRJ9iHRlR661kND/EUvs78Gfto2L/alBQs1MnorFx17KYf8Pk/ieExfizJZiA
+         2U1g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729716387; x=1730321187;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4Q9Fmtv1jhqmPQxhPj7GzThFbrtRvvOEog4jX1mozHs=;
+        b=PMT5stGCpQalMbEsfFG03JW5C4sNzxoHFZF4X6q1AL9dNr8S8rcuFEEYYMJIF7z3Mf
+         qac4tQ81D2t1lblOHbDf5bAl8Ykl93CgsRPr5qELRu4G3MkGukqxTav8nDUu/RFCtjPU
+         HaH9fENVNIRKWj3lt9UrUuj5XG3+Vi9F4uCwOUxbGgnBX9gY8CEY1MbGuMdN4YvBPQv6
+         mXi1fb8Ovs7B682F8jdVCguaTHFYgGD2rIvT4qEbAsdLAsZEct8RKC9Tjn3QSZXPksmY
+         YYoktMMPnfYm1zXkhKI3VIDUnAAna+fhcziQZ6gFIb7AmhKiy2YS31T6Q8AH129yCnn/
+         iGEw==
+X-Forwarded-Encrypted: i=1; AJvYcCWhwUpE9+DeHWduz6w0y6CpXlfGM26NeLbWjd2eHISs+6hURBtYuLeBDim5G+vKhslpRQ90+mPZ35zC9kIf@vger.kernel.org, AJvYcCWzRe0+GVMFMYiXxNmuFK+yiEyXAnVIjp15obAa579VwxbdAxM4xpzDxAXSWXl3As7uJz+br2J+E9uXWBwikg==@vger.kernel.org, AJvYcCXD204IZOl6qjv30H+P826HqFVNJ0jJxojme+PFGwAXQWoVawRkJ8I6qbdauvavHenSLPo51mAE+xMn@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw/Tc5eBfnOfita/tGP3V78E/jOJ9En/+Cj3y6JX0nR7NkaEg9R
+	nDQo0uFiKjCdoOw0DZR1ijO2DnkLTlsIe68YkFhZoh+pj6kb32oofjCzfat8vFojNLZYUwo2mTv
+	M+M4W4CBAIAP6mb7EVKGhMw+C1II=
+X-Google-Smtp-Source: AGHT+IHoQOEizYcj7tAixtp4PTHw4bzgJdfZ39CRrv3g6b0UEB4bcHATl1XYABgvefhFHa8Sg1I3z+Hc0eB/FkZBbQU=
+X-Received: by 2002:a92:ca0a:0:b0:3a3:40f0:cb8c with SMTP id
+ e9e14a558f8ab-3a4d59bbc12mr49771975ab.17.1729716387128; Wed, 23 Oct 2024
+ 13:46:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+References: <20240911073337.90577-1-quic_sibis@quicinc.com> <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
+In-Reply-To: <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
+From: Rob Clark <robdclark@gmail.com>
+Date: Wed, 23 Oct 2024 13:46:15 -0700
+Message-ID: <CAF6AEGvgnW5VTZYFzwiMChB4-2cShmBvMcfgQVbcCiOgH6e3Yg@mail.gmail.com>
+Subject: Re: [PATCH 0/2] X1E001DE Snapdragon Devkit for Windows
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, 
+	robh+dt@kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Oct 2024 20:03:24 +0200 Michal Hocko <mhocko@suse.com> wrote:
+On Wed, Oct 23, 2024 at 4:07=E2=80=AFAM Sibi Sankar <quic_sibis@quicinc.com=
+> wrote:
+>
+>
+>
+> On 9/11/24 13:03, Sibi Sankar wrote:
+> > Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001D=
+E
+> > is the speed binned variant of X1E80100 that supports turbo boost up to
+> > 4.3 Ghz. The initial support includes the following:
+> >
+> > -DSPs
+> > -Ethernet (RTL8125BG) over the pcie 5 instance.
+> > -NVme
+> > -Wifi
+> > -USB-C ports
+> >
+>
+> Hi All,
+>
+> With the X1E Devkit cancelled and with no firmware updates promised for
+> it perpetually, please chime in and let me know if you still want to get
+> this series and rest (external-dp, usb-A ports, sd card slot and 3.5 mm
+> Jack) merged and have it supported upstream for the folks who already
+> received it!
 
-> On Wed 23-10-24 10:50:37, Dongjoo Seo wrote:
-> > This patch corrects this issue by:
-> 
-> What is this issue? Please describe the problem first,
+(a) would the firmware update situation have been _that_ much better
+if it wasn't cancelled?  And (b) we do have dts upstream for other
+canceled boards.
 
-Actually, relocating the author's second-last paragraph to
-top-of-changelog produced a decent result ;)
+My $0.02 is that it is still useful
 
-> ideally describe
-> the NUMA topology, workload and what kind of misaccounting happens
-> (expected values vs. really reported values).
+BR,
+-R
 
-I think the changelog covered this adequately?
-
-So with these changelog alterations I've queued this for 6.12-rcX with
-a cc:stable.  As far as I can tell this has been there since 2018.
-
-: In the case of memoryless node, when a process prefers a node with no
-: memory(e.g., because it is running on a CPU local to that node), the
-: kernel treats a nearby node with memory as the preferred node.  As a
-: result, such allocations do not increment the numa_foreign counter on the
-: memoryless node, leading to skewed NUMA_HIT, NUMA_MISS, and NUMA_FOREIGN
-: stats for the nearest node.
-: 
-: This patch corrects this issue by:
-: 1. Checking if the zone or preferred zone is CPU-less before updating
-:    the NUMA stats.
-: 2. Ensuring NUMA_HIT is only updated if the zone is not CPU-less.
-: 3. Ensuring NUMA_FOREIGN is only updated if the preferred zone is not
-:    CPU-less.
-: 
-: Example Before and After Patch:
-: - Before Patch:
-:  node0                   node1           node2
-:  numa_hit                86333181       114338269            5108
-:  numa_miss                5199455               0        56844591
-:  numa_foreign            32281033        29763013               0
-:  interleave_hit                91              91               0
-:  local_node              86326417       114288458               0
-:  other_node               5206219           49768        56849702
-: 
-: - After Patch:
-:                             node0           node1           node2
-:  numa_hit                 2523058         9225528               0
-:  numa_miss                 150213           10226        21495942
-:  numa_foreign            17144215         4501270               0
-:  interleave_hit                91              94               0
-:  local_node               2493918         9208226               0
-:  other_node                179351           27528        21495942
-: 
-: Similarly, in the context of cpuless nodes, this patch ensures that NUMA
-: statistics are accurately updated by adding checks to prevent the
-: miscounting of memory allocations when the involved nodes have no CPUs. 
-: This ensures more precise tracking of memory access patterns accross all
-: nodes, regardless of whether they have CPUs or not, improving the overall
-: reliability of NUMA stat.  The reason is that page allocation from
-: dev_dax, cpuset, memcg ..  comes with preferred allocating zone in cpuless
-: node and its hard to track the zone info for miss information.
-: 
-
+> -Sibi
+>
+> > Link: https://www.qualcomm.com/news/releases/2024/05/qualcomm-accelerat=
+es-development-for-copilot--pcs-with-snapdrago
+> >
+> > Sibi Sankar (2):
+> >    dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
+> >    arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windows
+> >
+> >   .../devicetree/bindings/arm/qcom.yaml         |   6 +
+> >   arch/arm64/boot/dts/qcom/Makefile             |   1 +
+> >   arch/arm64/boot/dts/qcom/x1e001de-devkit.dts  | 813 +++++++++++++++++=
++
+> >   3 files changed, 820 insertions(+)
+> >   create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
+> >
+>
 
