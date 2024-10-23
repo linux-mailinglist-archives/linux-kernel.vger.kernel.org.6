@@ -1,188 +1,125 @@
-Return-Path: <linux-kernel+bounces-377197-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377198-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4611A9ABB21
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:48:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 611009ABB23
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 004362843F5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:48:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9041B1C224FB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:48:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EA622D047;
-	Wed, 23 Oct 2024 01:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E49C39FCE;
+	Wed, 23 Oct 2024 01:48:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="TQAuaxtg"
-Received: from out-188.mta0.migadu.com (out-188.mta0.migadu.com [91.218.175.188])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GT4qmZ7S"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C45E3D2FA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:48:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4330AD2FA;
+	Wed, 23 Oct 2024 01:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729648084; cv=none; b=HFFRo54TDnYhGddOS4ihV0gZQwE+ltA7pHWLlBqlOyu8vEi46oN4pFustNIbaKJmA30v3WpKXegP/U872nhwExhmMtOFfE2s5mf36EKxd/8XPah3xj8rtADtKGpsWsQD46YqveL1OSF92gJY/ziWSBNIZ+JM9tBetWMWnfAavKs=
+	t=1729648126; cv=none; b=RF1DHSJ8xLUY0gT3FSN42c8ldUYxBg1/eB3EcJBXkWw6vQR7b38kltowo+Eg+dDA7snGrAVFhNbPCuFVPNS03rj4gfD97xR7XtQn/CZWfdc92mm3ovGjTzIdak1K+78vDxont1vzSepcnCkmuIlsyHOCqM/HC3EPtzSWo24MlMc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729648084; c=relaxed/simple;
-	bh=2yRsAa8FSfQW1VK3TaH3+ibsLUTCnTvd7zluiEjtjvI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Qx2LLWTFTAG8jKbljWbCUIGIvIZ1TFdrpKbjE1fUAWZnlAjaIHHC7NwgBWTIAkJNx42Z7rztHgg4Q0Sxoe31AYLI7Aij2nWhENr66JdUK1/YZrItWjkn8/kLo3edwYkZP8JXxR9oZQKj1Q+Jdn0vCtVifzyhgojtgIE9cJcmZ/8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=TQAuaxtg; arc=none smtp.client-ip=91.218.175.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <32f70816-1678-d6ab-0db1-6412ff7a7333@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729648078;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=MDFJBdshtH3O5uElK6WI+zDS773xTGHMb24/nQ91nD8=;
-	b=TQAuaxtgN6g9r8X+gtHIzrwi15PdugMkQh6Knkh+dlDdcxpkMpQw+F6f8BJbAa3+gvCTFw
-	b+zZ9ScruxvW9tB52aAWHhSGBgb8hNXOcTFig2B2s5Fljlp9Ipbd0OGqAchKi01/RSjbEG
-	E04FzjxJHXahzDftsoyFUBzxL3AX0sQ=
-Date: Wed, 23 Oct 2024 09:47:25 +0800
+	s=arc-20240116; t=1729648126; c=relaxed/simple;
+	bh=OPsf2f9vTyNmn26NM00dQj65lrjywxxlSAM0Y4JmhPE=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=czJalUAqfkC2yx9g2BQ4WCRb4SUKoXHgnBgp/i20dINM6TaCU43mTGU+D6vwAH16M2CC/l3UmspkQwZaG+FvDGqpQYqvBnBAdfJ0yfkTjOWCVvhQzcDKaeXYVODb06uMJVy7tC78dUSfMCRiRE9zuLzxP4XfUBYH5CSLz3NRJlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GT4qmZ7S; arc=none smtp.client-ip=192.198.163.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729648124; x=1761184124;
+  h=message-id:date:mime-version:cc:subject:to:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=OPsf2f9vTyNmn26NM00dQj65lrjywxxlSAM0Y4JmhPE=;
+  b=GT4qmZ7SKrr1CMvIqSigH+kPrjAGjdXwZXVbjztckaBRhf4Z32a+Nwum
+   XXSUMZyfV+/ufwU10xVxWVWvsHpByrodTi06s48j18x/7hIujyimsAZ2m
+   ZLwk5wBxmzNo/G0FN9a3vRv5wUe24w8AseKdNqwb3JyOAULx8evdG/ZEL
+   D+zCOd21iyqPPJbp6PJOTvalsaog6OylnMMM8bFBKVUtIhPXpEUvknNZ+
+   qOb3MklZbsXPMeIMLTXGujzBFUoMqZ43M7AVmiRLcJ5JJWd/HA6URhIFx
+   UFP+xHC88bMcQHKcofUKQjYLNppu3epBBgu3DGtc+IkhMsUb0tBk3LPn2
+   A==;
+X-CSE-ConnectionGUID: l2H1Bl95TbyHzFWcRO25PQ==
+X-CSE-MsgGUID: 5t7s10VlS9KIYdRSIE0MrA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="16838940"
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="16838940"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa110.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 18:48:43 -0700
+X-CSE-ConnectionGUID: ja4EwEbFS4SiZHofiWkthg==
+X-CSE-MsgGUID: FrkOTik4RQeF2TiG3rO6mA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
+   d="scan'208";a="80386440"
+Received: from unknown (HELO [10.238.0.51]) ([10.238.0.51])
+  by fmviesa010-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 18:48:38 -0700
+Message-ID: <0db7401c-ca89-49a7-a9cc-502a581af66d@linux.intel.com>
+Date: Wed, 23 Oct 2024 09:48:36 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH] slub/slub_kunit:fix a panic due to __kmalloc_cache_noprof
- incorretly use
-To: Vlastimil Babka <vbabka@suse.cz>, Suren Baghdasaryan <surenb@google.com>,
- xiaopeitux@foxmail.com
-Cc: akpm@linux-foundation.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org, yuzhao@google.com, xiaopei01@kylinos.cn,
- gehao@kylinso.cn, xiongxin@kylinos.cn
-References: <tencent_C1486E2FA393F0B97DD7D308336E262A3407@qq.com>
- <CAJuCfpEpxa=jPAZiu5OP=jwQw0awiYDv6x5sz6-BAmAK40iJ6w@mail.gmail.com>
- <f2b0d4a1-6603-4f46-79bf-5edf40429d4b@linux.dev>
- <e283001d-c6f4-49f8-aca6-4e9826d45c9a@suse.cz>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Hao Ge <hao.ge@linux.dev>
-In-Reply-To: <e283001d-c6f4-49f8-aca6-4e9826d45c9a@suse.cz>
+User-Agent: Mozilla Thunderbird
+Cc: baolu.lu@linux.intel.com, Nicolin Chen <nicolinc@nvidia.com>,
+ kevin.tian@intel.com, will@kernel.org, joro@8bytes.org,
+ suravee.suthikulpanit@amd.com, robin.murphy@arm.com, dwmw2@infradead.org,
+ shuah@kernel.org, linux-kernel@vger.kernel.org, iommu@lists.linux.dev,
+ linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
+ eric.auger@redhat.com, jean-philippe@linaro.org, mdf@kernel.org,
+ mshavit@google.com, shameerali.kolothum.thodi@huawei.com,
+ smostafa@google.com, yi.l.liu@intel.com, aik@amd.com,
+ zhangfei.gao@linaro.org, patches@lists.linux.dev
+Subject: Re: [PATCH v4 02/11] iommufd: Introduce IOMMUFD_OBJ_VIOMMU and its
+ related struct
+To: Jason Gunthorpe <jgg@nvidia.com>
+References: <cover.1729553811.git.nicolinc@nvidia.com>
+ <74fec8c38a7d568bd88beba9082b4a5a4bc2046f.1729553811.git.nicolinc@nvidia.com>
+ <b2c75705-2998-4e51-90f4-00b8bab785f5@linux.intel.com>
+ <ZxcspVGPBmABjUPu@nvidia.com>
+ <dd7eb37f-13c6-4c6e-8adc-954ad9974b93@linux.intel.com>
+ <20241022131554.GF13034@nvidia.com>
+Content-Language: en-US
+From: Baolu Lu <baolu.lu@linux.intel.com>
+In-Reply-To: <20241022131554.GF13034@nvidia.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
 
-
-On 10/22/24 23:27, Vlastimil Babka wrote:
-> On 10/22/24 04:19, Hao Ge wrote:
->> On 10/22/24 01:42, Suren Baghdasaryan wrote:
->>> On Sun, Oct 20, 2024 at 11:59 PM <xiaopeitux@foxmail.com> wrote:
->>>> From: Pei Xiao <xiaopei01@kylinos.cn>
->>>>
->>>> 'modprobe slub_kunit',will have a panic.The root cause is that
->>>> __kmalloc_cache_noprof was directly ,which resulted in no alloc_tag
->>>> being allocated.This caused current->alloc_tag to be null,leading to
->>>> a null pointer dereference in alloc_tag_ref_set.
->>> I think the root cause of this crash is the bug that is fixed by
->>> https://lore.kernel.org/all/20241020070819.307944-1-hao.ge@linux.dev/.
->>> Do you get this crash if you apply that fix?
->> Yes, this patch has resolved the panic issue.
->>>> Here is the log for the panic:
->>>> [   74.779373][ T2158] Unable to handle kernel NULL pointer dereference at virtual address 0000000000000020
->>>> [   74.780130][ T2158] Mem abort info:
->>>> [   74.780406][ T2158]   ESR = 0x0000000096000004
->>>> [   74.780756][ T2158]   EC = 0x25: DABT (current EL), IL = 32 bits
->>>> [   74.781225][ T2158]   SET = 0, FnV = 0
->>>> [   74.781529][ T2158]   EA = 0, S1PTW = 0
->>>> [   74.781836][ T2158]   FSC = 0x04: level 0 translation fault
->>>> [   74.782288][ T2158] Data abort info:
->>>> [   74.782577][ T2158]   ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
->>>> [   74.783068][ T2158]   CM = 0, WnR = 0, TnD = 0, TagAccess = 0
->>>> [   74.783533][ T2158]   GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
->>>> [   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=0000000105f34000
->>>> [   74.784586][ T2158] [0000000000000020] pgd=0000000000000000, p4d=0000000000000000
->>>> [   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] SMP
->>>> [   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfilter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebtable_nat ebtable_broute ip6table_nat ip6table_mangle 4
->>>> [   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
->>>> [   74.791535][ T2158] Tainted: [W]=WARN, [N]=TEST
->>>> [   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS 0.0.0 02/06/2015
->>>> [   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
->>>> [   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x270
->>>> [   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x270
->>>>
->>>> [   74.794095][ T2158] sp : ffff800084d33cd0
->>>> [   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x27: 0000000000000000
->>>> [   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x24: ffff80007b30e314
->>>> [   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x21: 0000000000000088
->>>> [   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x18: ffffffffffffffff
->>>> [   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x15: ffff800081654c00
->>>> [   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x12: 5b5d383734363537
->>>> [   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x9 : 00000000ffffffd0
->>>> [   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x6 : c0000000ffff7fff
->>>> [   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x3 : 0000000000000001
->>>> [   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x0 : ffff80037c2cb000
->>>> [   74.801656][ T2158] Call trace:
->>>> [   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
->>>> [   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
->>>> [   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub_kunit]
->>>> [   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
->>>> [   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
->>>> [   74.804768][ T2158]  kthread+0x10c/0x118
->>>> [   74.805141][ T2158]  ret_from_fork+0x10/0x20
->>>> [   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f94012d3)
->>>> [   74.806176][ T2158] SMP: stopping secondary CPUs
->>>> [   74.808130][ T2158] Starting crashdump kernel...
->>>>
->>> CC'ing Vlastimil.
->>> This patch essentially reverts Vlastimil's "mm, slab: don't wrap
->>> internal functions with alloc_hooks()" change. Please check why that
->>> change was needed before proceeding.
->>> If this change is indeed needed, please add:
->> Hi Suren and Vlastimil
+On 2024/10/22 21:15, Jason Gunthorpe wrote:
+> On Tue, Oct 22, 2024 at 04:59:07PM +0800, Baolu Lu wrote:
+> 
+>> Is it feasible to make vIOMMU object more generic, rather than strictly
+>> tying it to nested translation? For example, a normal paging domain that
+>> translates gPAs to hPAs could also have a vIOMMU object associated with
+>> it.
 >>
->> In fact, besides the panic, there is also a warning here due to directly
->> invoking__kmalloc_cache_noprof
->>
->> Regarding this, do you have any suggestions?
->>
->> [58162.947016] WARNING: CPU: 2 PID: 6210 at
->> ./include/linux/alloc_tag.h:125 alloc_tagging_slab_alloc_hook+0x268/0x27c
->> [58162.957721] Call trace:
->> [58162.957919]  alloc_tagging_slab_alloc_hook+0x268/0x27c
->> [58162.958286]  __kmalloc_cache_noprof+0x14c/0x344
->> [58162.958615]  test_kmalloc_redzone_access+0x50/0x10c [slub_kunit]
->> [58162.959045]  kunit_try_run_case+0x74/0x184 [kunit]
->> [58162.959401]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
->> [58162.959841]  kthread+0x10c/0x118
->> [58162.960093]  ret_from_fork+0x10/0x20
->> [58162.960363] ---[ end trace 0000000000000000 ]---
-> I see.
-> The kunit test is the only user of __kmalloc_cache_noprof outside of kmalloc()
-> itself so it's not worth defining again a wrapper for everyone, how about just
-> wrapping the two callsites?
->
-> --- a/lib/slub_kunit.c
-> +++ b/lib/slub_kunit.c
-> @@ -141,7 +141,7 @@ static void test_kmalloc_redzone_access(struct kunit *test)
->   {
->          struct kmem_cache *s = test_kmem_cache_create("TestSlub_RZ_kmalloc", 32,
->                                  SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
-> -       u8 *p = __kmalloc_cache_noprof(s, GFP_KERNEL, 18);
-> +       u8 *p = alloc_hooks(__kmalloc_cache_noprof(s, GFP_KERNEL, 18));
->   
->          kasan_disable_current();
->   
-> @@ -199,7 +199,7 @@ static void test_krealloc_redzone_zeroing(struct kunit *test)
->          struct kmem_cache *s = test_kmem_cache_create("TestSlub_krealloc", 64,
->                                  SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_ZONE);
->   
-> -       p = __kmalloc_cache_noprof(s, GFP_KERNEL, 48);
-> +       p = alloc_hooks(__kmalloc_cache_noprof(s, GFP_KERNEL, 48));
->          memset(p, 0xff, 48);
->   
->          kasan_disable_current();
->
-Hi  Vlastimil
+>> While we can only support vIOMMU object allocation uAPI for S2 paging
+>> domains in the context of this series, we could consider leaving the
+>> option open to associate a vIOMMU object with other normal paging
+>> domains that are not a nested parent?
+> Why? The nested parent flavour of the domain is basically free to
+> create, what reason would be to not do that?
 
-I agree with your point of view, thank you for you and Suren's help and 
-suggestion.
+Above addressed my question. The software using vIOMMU should allocate a
+domain of nested parent type.
 
-Best regards
+> 
+> If the HW doesn't support it, then does the HW really need/support a
+> VIOMMU?
+> 
+> I suppose it could be made up to the driver, but for now I think we
+> should leave it as is in the core code requiring it until we have a
+> reason to relax it.
 
-Hao
+Yes. In such cases, the iommu driver could always allow nested parent
+domain allocation, but fails to allocate a nested domain if the hardware
+is not capable of nesting translation.
 
+Thanks,
+baolu
 
