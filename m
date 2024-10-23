@@ -1,140 +1,162 @@
-Return-Path: <linux-kernel+bounces-377931-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377932-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 408ED9AC8B6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:17:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4D99AC8BA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:18:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E06781F2263D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:17:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F205B1F2254D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:18:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DBF21A7AE3;
-	Wed, 23 Oct 2024 11:17:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4B61A7AE3;
+	Wed, 23 Oct 2024 11:18:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="KIYk3zFK"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="hu/5rsxS";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="Kkc7iPgu"
+Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 893831A0B1A;
-	Wed, 23 Oct 2024 11:17:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 093A01531F9;
+	Wed, 23 Oct 2024 11:18:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729682263; cv=none; b=UWIBbn3+4K4p0qz4V78kM5OR6l185eFIUyrt9qJj8PBk5wt6nHrX3GrqB8eOCqZrRInH51SXFI4dRKKPhu2TQcCiaLynw1OaENCmqGyNkX3YlrrNZw96BvtwCAQDKRWKKVvf4DHb6t/q72Ufz7baltfrnZRJcdsYjY4gFzXwPkY=
+	t=1729682310; cv=none; b=enhou2ksyFtFsdTi5t42pwRGbZi28dHWJulvbKDLw4z/jf5f65X3ChhQ3YS7S9e1BXSWtGbGbL3YMdr0bebxqVPLWwUiox1t5/uBX/VtbyABrVWYUAct0oVLa8mIrYOLN+7suVxK+7vDmABMs4pO2oXu9p90t5mYkhh0CZFHOPo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729682263; c=relaxed/simple;
-	bh=eCBwA2uVeaP+2Ms9EufdOjG1uAd6/PDeJZo0k69Rz0I=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=oysC20SoybLI5bIObfwjuwtcn7+HO49ggZqZ+Ft7tmQ19b/okfEOiG/IjQkrt7lQtjtjVGL4Papq0b5OguGMKZUOSzuqqJ+simBqQwu2Sg2gd9TnNCOeVWgfjOhbUCJEhGmM+iE8BYwts+c0jRR7r1nkr1BjN/jyyYgXEW3iMvg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=KIYk3zFK; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N2WV027060;
-	Wed, 23 Oct 2024 11:17:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=ZE6D+HYETUE/ynzDtMdhfiXsH2K1dY
-	hl0JDp52VsIME=; b=KIYk3zFKjt5NfqmqLpfkxYcX8Bh7E5ZOBX6MngDiUHPE7i
-	za35AfTYZSqkN3qn84cGmanG6XJibAGMbIuZeE/0leRww3WfTrn9uja63UVmQyvD
-	Dt3CgfWVW/IGXx4PzjP2G32bTqT68OB2pAvEJ3HubS7qc+d0yJmNEQYa/MB7WBfJ
-	0OMsqSw9z6ZHAtCf8qUQhMdxawGtGtIL8edswVaZJYZN32wTfJOeT0YS694mWCkP
-	QmMwUvvHS9V6eE5MPzUVbxG5due9OOfbRZ9SE4N1MHXPSXmSmlt5GkG79410yxEn
-	1N9eXrQLZ6QyzC5Y5EFuO4LnUY48ytK/9LzZyYgw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafjq2p-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 11:17:31 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NBF8co023247;
-	Wed, 23 Oct 2024 11:17:30 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafjq2g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 11:17:30 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7XXlk014287;
-	Wed, 23 Oct 2024 11:17:29 GMT
-Received: from smtprelay01.fra02v.mail.ibm.com ([9.218.2.227])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emhfjjfk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 11:17:29 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay01.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NBHPJO41615756
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 11:17:25 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 74C2D2004B;
-	Wed, 23 Oct 2024 11:17:25 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 5A65520049;
-	Wed, 23 Oct 2024 11:17:25 +0000 (GMT)
-Received: from localhost (unknown [9.155.200.179])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 11:17:25 +0000 (GMT)
-From: Alexander Egorenkov <egorenar@linux.ibm.com>
+	s=arc-20240116; t=1729682310; c=relaxed/simple;
+	bh=41+fFeT54h5/9Kenpc3V+K39uwVReLrfxuQk/RMdOYo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QdI0oyWXrJJfrT73EwKZFuzEYhWfM6DNo0kPXaPHrVGS7d0UIWm1G8DGLtCRmNv5IxY3YDFLF08Gho0aB7wMFFwAdzvOKl7yPjPK4Jfu7gTEdjhdxWrZa/I6tJWbzFzGPEcuGFzxO8bSxy+aI9Bn6ViVZ7tvj5U3s8M1dMzq1Ps=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=hu/5rsxS; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=Kkc7iPgu; arc=none smtp.client-ip=103.168.172.155
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
+Received: from phl-compute-02.internal (phl-compute-02.phl.internal [10.202.2.42])
+	by mailfhigh.phl.internal (Postfix) with ESMTP id C3F691140142;
+	Wed, 23 Oct 2024 07:18:26 -0400 (EDT)
+Received: from phl-mailfrontend-02 ([10.202.2.163])
+  by phl-compute-02.internal (MEProxy); Wed, 23 Oct 2024 07:18:26 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
+	 h=cc:cc:content-type:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729682306; x=
+	1729768706; bh=Vwy58cHeT5EOxz8ukcp8DVriSblRUlkuqAv1BT3YlWE=; b=h
+	u/5rsxSJv7FTA9zcz3QUwAFJjxbDSMi8rGfrn2tUNqMWtHHX7TTxQgIZGAQdG4+s
+	PW3i+W8mRPaSvLRr6D8YUsXMwLqKoQbr2sK/mAtYWKogGo4CRQIizk8nspSqCy15
+	B4DMVVrU7e05fxRxh0sVssLSx9Z1LH7x9bG16r037iEpcLvNdQ/pfsJH6mswiOSx
+	Ft8e1kOFpL2x1pQfTt3zTPwOUSdOwCSp1CNO/uiTId22KXqLNDty65QwQ1bXECeE
+	TvbYf3io+Tj1dJDmtz0Rxo65GyiOs5fxD0gmq5qFp7qo5O5h3SSdgOA3HtUv/Gjf
+	PVVb/t46pIXLXW42k5RVA==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-type:content-type:date:date
+	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
+	:message-id:mime-version:references:reply-to:subject:subject:to
+	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
+	fm3; t=1729682306; x=1729768706; bh=Vwy58cHeT5EOxz8ukcp8DVriSblR
+	UlkuqAv1BT3YlWE=; b=Kkc7iPguREoRZ0Iz3dWyjEGxJI3gNVjgQSqWcpb1/jcV
+	RVnUOhL6cZ27YyYYGlTnkRkZDB1v6WwD4mzOCrP5nD4Ui2JfAFti6cSDVAEh6dki
+	VFhCFHkGBFaINL7H07ra1gZVQBctesg+8Ohxl0nkDjhBrRDO7CpPDyoOJb1wV1ph
+	VEVQpnY4DShezWM3qh0z4O6PcRxvxEojZBH+0Q39Al6SUxO87IDrEIXCo9f+CBdg
+	r3L4tRpHfMQ2pa172M09ZEMWLceF12QW27jY4li9qx8wZjRydAawM2GyMWcKFe00
+	fK1z2uY1XnY/Nd035vn6WQAeTfvtsCwa/+EogQvICw==
+X-ME-Sender: <xms:gdsYZ5L6V6011EDYPzP1hTa2TH8ouvEzg_VFxmwiArTu3JOc572JhA>
+    <xme:gdsYZ1L4IrxN2_ym7ZEwYTMxiY7fVBTHZ7eSFab_jZ_VndVElDcIKSrYK1BDqNdy7
+    Onsz53KRIFsFZ_DV4o>
+X-ME-Received: <xmr:gdsYZxu_9YTCCI6dJ0C9LRSIHB-ZB1942NvizVTULDu3yF7KfLzWvnfSASTliq4B_GtnwA>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeijedgfeejucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
+    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
+    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
+    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
+    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
+    rdhnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
+    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
+    hmmheskhhvrggtkhdrohhrghdprhgtphhtthhopegtghhrohhuphhssehvghgvrhdrkhgv
+    rhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpth
+    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
+    phhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpth
+    htohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtjheskhgv
+    rhhnvghlrdhorhhg
+X-ME-Proxy: <xmx:gdsYZ6YMHEJDkejBvRYcwnlzh8ykbzD6mXigksroAnYXPg57M2YdVw>
+    <xmx:gdsYZwZLmjJ9pLEQCHdZMwoWavHL8T7Ln1e_G59BNwObZxmGSdHkLA>
+    <xmx:gdsYZ-DxhwnV_gpHO2U2s0PqwBoCSzt9UuYukbr7WOIKNFxgvFsWvw>
+    <xmx:gdsYZ-bNTt9cnfTwvDisjzqJwayBvoG0tHkEc_eNdUdQ7F43PTPUYQ>
+    <xmx:gtsYZ9SimV8y7du4jINOMoVIJGbFoCeR2ZSPdkLdr8SHZexXNUU19bar>
+Feedback-ID: ie3994620:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
+ 23 Oct 2024 07:18:20 -0400 (EDT)
+Date: Wed, 23 Oct 2024 14:18:16 +0300
+From: "Kirill A. Shutemov" <kirill@shutemov.name>
 To: David Hildenbrand <david@redhat.com>
-Cc: agordeev@linux.ibm.com, akpm@linux-foundation.org,
-        borntraeger@linux.ibm.com, cohuck@redhat.com, corbet@lwn.net,
-        eperezma@redhat.com, frankja@linux.ibm.com, gor@linux.ibm.com,
-        hca@linux.ibm.com, imbrenda@linux.ibm.com, jasowang@redhat.com,
-        kvm@vger.kernel.org, linux-doc@vger.kernel.org,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
-        svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
-        xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
-Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
-In-Reply-To: <64db4a88-4f2d-4d1d-8f7c-37c797d15529@redhat.com>
-References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
- <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
- <87sespfwtt.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
- <64db4a88-4f2d-4d1d-8f7c-37c797d15529@redhat.com>
-Date: Wed, 23 Oct 2024 13:17:25 +0200
-Message-ID: <87wmhzt6ey.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
+	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
+	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
+	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
+	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
+	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
+	Dave Hansen <dave.hansen@linux.intel.com>
+Subject: Re: [PATCH v1 02/17] mm: factor out large folio handling from
+ folio_nr_pages() into folio_large_nr_pages()
+Message-ID: <u3mwngmik3i2qgj3ymjx26chbabsjzrtf42dtvh3ejara2opa7@osasxccmufb7>
+References: <20240829165627.2256514-1-david@redhat.com>
+ <20240829165627.2256514-3-david@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: CKYpV1nV98NDEQcpmjz79r4Re2RRu4UK
-X-Proofpoint-GUID: nlELFtrFhiav0kiOq_i2qsR30bXf8Zr-
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 suspectscore=0
- mlxscore=0 mlxlogscore=804 adultscore=0 lowpriorityscore=0 malwarescore=0
- spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410230065
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20240829165627.2256514-3-david@redhat.com>
 
-Hi David,
+On Thu, Aug 29, 2024 at 06:56:05PM +0200, David Hildenbrand wrote:
+> Let's factor it out into a simple helper function. This helper will
+> also come in handy when working with code where we know that our
+> folio is large.
+> 
+> Make use of it in internal.h and mm.h, where applicable.
+> 
+> While at it, let's consistently return a "long" value from all these
+> similar functions. Note that we cannot use "unsigned int" (even though
+> _folio_nr_pages is of that type), because it would break some callers
+> that do stuff like "-folio_nr_pages()". Both "int" or "unsigned long"
+> would work as well.
+> 
+> Signed-off-by: David Hildenbrand <david@redhat.com>
+> ---
+>  include/linux/mm.h | 27 ++++++++++++++-------------
+>  mm/internal.h      |  2 +-
+>  2 files changed, 15 insertions(+), 14 deletions(-)
+> 
+> diff --git a/include/linux/mm.h b/include/linux/mm.h
+> index 3c6270f87bdc3..fa8b6ce54235c 100644
+> --- a/include/linux/mm.h
+> +++ b/include/linux/mm.h
+> @@ -1076,6 +1076,15 @@ static inline unsigned int folio_large_order(const struct folio *folio)
+>  	return folio->_flags_1 & 0xff;
+>  }
+>  
+> +static inline long folio_large_nr_pages(const struct folio *folio)
+> +{
+> +#ifdef CONFIG_64BIT
+> +	return folio->_folio_nr_pages;
+> +#else
+> +	return 1L << folio_large_order(folio);
+> +#endif
+> +}
+> +
 
-David Hildenbrand <david@redhat.com> writes:
+Maybe it would be cleaner to move #ifdef outside of the function?
 
+Otherwise:
 
-> Staring at the powerpc implementation:
->
-> /*
->   * Return true only when kexec based kernel dump capturing method is used.
->   * This ensures all restritions applied for kdump case are not automatically
->   * applied for fadump case.
->   */
-> bool is_kdump_kernel(void)
-> {
-> 	return !is_fadump_active() && elfcorehdr_addr != ELFCORE_ADDR_MAX;
-> }
-> EXPORT_SYMBOL_GPL(is_kdump_kernel);
+Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-Thanks for the pointer.
-
-I would say power's version is semantically equivalent to what i have in
-mind for s390 :) If a dump kernel is running, but not a stand-alone
-one (apart from sa kdump), then it's a kdump kernel. 
-
-Regards
-Alex
+-- 
+  Kiryl Shutsemau / Kirill A. Shutemov
 
