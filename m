@@ -1,236 +1,120 @@
-Return-Path: <linux-kernel+bounces-377957-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377958-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 687909AC921
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:36:26 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3A19E9AC924
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:37:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8993F1C2176A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:36:25 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 992A4B21050
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:37:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 125301AA7AF;
-	Wed, 23 Oct 2024 11:36:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE06F1AAE3B;
+	Wed, 23 Oct 2024 11:37:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Tc+3GqzO"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="bkcZMLmw"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A042C1A3A95
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FAE6134BD;
+	Wed, 23 Oct 2024 11:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683381; cv=none; b=TZC2eZaUbLTKcv2OlaGPVwGjpRuDn0lbhp5ZOzHengRxFfS2TVpvoGnNz+BJ7WVzUBv8JOssyFh3h4l2RBH/dspT7LdXjgrmhAgYpXqq/nUfPvCTPyVLoepK3VDHrs9jtYcVWGikyQJ8cPgKZy5CZ6wTl7YHPEO6nFL1xLw45Fc=
+	t=1729683434; cv=none; b=uErLoCTtBd2uSPP9uYfQUVLz2ppK4myc11d+Mp5hAjyTGSfVCtcGuEM9fYsIf0nARvQ8GCo0wzB42aZzH/2Oyr1g6pIl9blq1jQYtoOt1MB6+y7QAkhU6pmNNjIia159wCHVbYAr0co8jN7dXdvVe6mlFoqNZjzYkYKgFAo4ekw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683381; c=relaxed/simple;
-	bh=tWTWopg4S4K979uUNY90rhoIkke/X4IsbyyRynvUwTQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=i8h/ILgGp+rhVJJuVEs8IJsD4SGGQiRDL6CC4gxiiPpDUFZ3lqJtq/vs5tVu8GSReky7wQee5FgO3dhyoLMhFp8YqEtnp0/Aa73C05NhKMfJiYfNOz8+Nsnbyxle8gQPwnKjCpSkE8kGTgcIyMA2znZyxWbc1kzNd1YcJ5s0Utc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Tc+3GqzO; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729683378;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=IbK7kQ8vEkcrJMoQ+FO0RtZr7u9youfSgAxBJsFomyU=;
-	b=Tc+3GqzOVzop0HINbY8hmCToK5OLVf5Lwk0W0I8SQlsP7W1piZ0JohQBuarher5A0Ai5q8
-	wANEXhaZXQvPmbkIhPK17k80xWB9e9XA6kLwLR2s8Q19Bk4o3MVQoyHrkKsXUHCHVx/2cs
-	6DISdeQEMG9M0jk1BGeuLh7HiucALIU=
-Received: from mail-wm1-f70.google.com (mail-wm1-f70.google.com
- [209.85.128.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-186-OvOQIdKvOFu3W6cSQqe3TQ-1; Wed, 23 Oct 2024 07:36:17 -0400
-X-MC-Unique: OvOQIdKvOFu3W6cSQqe3TQ-1
-Received: by mail-wm1-f70.google.com with SMTP id 5b1f17b1804b1-43163a40ee0so41422815e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 04:36:15 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729683374; x=1730288174;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=IbK7kQ8vEkcrJMoQ+FO0RtZr7u9youfSgAxBJsFomyU=;
-        b=tdUY1zo8BPrJo2uC2IlP2UowujdBv7pQRMuQva4F9GjfRtz4r2UaYnuTUsLVEEf+L7
-         efq3c61y9J4Ke9R0+/vwByzg0EYWS25oVbdymAxLZS+p3yv7iCwH8OL2zpQHIDyXc5Dz
-         MDYBGE7R0NU/kPLXUSLKFwicH/0oWtDNJDJez7sCN/HUEKveuwGAk36k5JMlMobFEOFw
-         FBA0f89PmzsO+xPgzEPrum4NG6tomnUH1J9xswXqBTvDKzqAAM2MVMIh4ACsMJZQ7Sgz
-         76Z1YMzLrrUFgesFi33PS3Zvf+LIIisFLNPKYNR3hSmwX9jgMMmtQlkQ107VpVT8st67
-         ccBg==
-X-Forwarded-Encrypted: i=1; AJvYcCXdgGjmNT7GsqyRULXv4XQj2xGMs1V6BL6o7IJIx3Et7zPCr2/Tl5OFW4mmuBaXXS5R9O78IH5IOtvg2GQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxUxJlbWyesWWdf/83yHIuYXYMnDstSXKhQy8l3ULk9Bn2MRbsW
-	9y9ZQsuoqNNLYJlcCofb5tModinFNHO4N1LMRxZUJNkoBFM7pewFLRJZMTDF/+Jkzi1Tc3mje45
-	DsJAlN44ygBznIbQgatgMX4BRu9pnPS+7VWxDpUuQn20EcPUjEfM1NcZeEAB92w==
-X-Received: by 2002:a05:600c:358b:b0:431:46fe:4cad with SMTP id 5b1f17b1804b1-4318413e307mr19511435e9.9.1729683374133;
-        Wed, 23 Oct 2024 04:36:14 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHlnI6Rum6yw+kqvusORYG9admUx8Nx2nTJ4vS/KipCoJtouxXtrfMA4aBpFT81jOQsAq5pwQ==
-X-Received: by 2002:a05:600c:358b:b0:431:46fe:4cad with SMTP id 5b1f17b1804b1-4318413e307mr19510875e9.9.1729683373637;
-        Wed, 23 Oct 2024 04:36:13 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70c:cd00:c139:924e:3595:3b5? (p200300cbc70ccd00c139924e359503b5.dip0.t-ipconnect.de. [2003:cb:c70c:cd00:c139:924e:3595:3b5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b7afsm8711333f8f.59.2024.10.23.04.36.11
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 04:36:13 -0700 (PDT)
-Message-ID: <2c674241-7e40-46a0-9506-85ef37e3578a@redhat.com>
-Date: Wed, 23 Oct 2024 13:36:10 +0200
+	s=arc-20240116; t=1729683434; c=relaxed/simple;
+	bh=mZrEOKndn1ubO1KyDFbGQ7nCrbe5by9dY9IAUlOdyc0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=HI0tPU/8frQqSkwxxO+R2qVRsg8BrfoiW33SyTDfMUS8MIo8E7D2pddb8GZuo4eNJw9jOxQW95UzHW/UUGUUvUULTWNZ4/xDMiyo4ndHtIieleI/bFPaA9nwmh7Q6msd/eh7WUy9ccGzjuERyIyGMHLttl/ZIbQ9QB6TZ39BVmI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=bkcZMLmw; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1da3d004913311efbd192953cf12861f-20241023
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=mvzEvHiDHJCSQ9OPPoA+/DQ5g+AxJier5h97qmDMLdE=;
+	b=bkcZMLmwbHMDE2hb5JlIxG0W4yUtg5Djo6AemnuScBdnl5zseL9BtOG0d8QgBZgtZFxZaZN8ODXHnzW9aAEEwyW7+VbUSVoEewHPAozpCQMRQTiIZ5yIGo3Px87XFDh5WOawvjP4hjmfYtxEADapzh/9rYCklTnBuoqti+pmlV8=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:b39d38b6-ca0e-4b16-865f-02b6b96a9b38,IP:0,U
+	RL:0,TC:0,Content:-5,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION
+	:release,TS:-5
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:a979fd2d-a7a0-4b06-8464-80be82133975,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 1da3d004913311efbd192953cf12861f-20241023
+Received: from mtkmbs09n2.mediatek.inc [(172.21.101.94)] by mailgw02.mediatek.com
+	(envelope-from <chris.lu@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 792397769; Wed, 23 Oct 2024 19:36:59 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 23 Oct 2024 19:36:58 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n1.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 23 Oct 2024 19:36:58 +0800
+From: Chris Lu <chris.lu@mediatek.com>
+To: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg
+	<johan.hedberg@gmail.com>, Luiz Von Dentz <luiz.dentz@gmail.com>
+CC: Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>,
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth
+	<linux-bluetooth@vger.kernel.org>, linux-kernel
+	<linux-kernel@vger.kernel.org>, linux-mediatek
+	<linux-mediatek@lists.infradead.org>, Chris Lu <chris.lu@mediatek.com>
+Subject: [PATCH v1] Bluetooth: btmtk: adjust the position to init iso data anchor
+Date: Wed, 23 Oct 2024 19:36:26 +0800
+Message-ID: <20241023113626.12236-1-chris.lu@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
-To: Marco Elver <elver@google.com>
-Cc: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
- Vlastimil Babka <vbabka@suse.cz>, Dmitry Vyukov <dvyukov@google.com>,
- fw@deneb.enyo.de, James.Bottomley@hansenpartnership.com,
- Liam.Howlett@oracle.com, akpm@linux-foundation.org, arnd@arndb.de,
- brauner@kernel.org, chris@zankel.net, deller@gmx.de, hch@infradead.org,
- ink@jurassic.park.msu.ru, jannh@google.com, jcmvbkbc@gmail.com,
- jeffxu@chromium.org, jhubbard@nvidia.com, linux-alpha@vger.kernel.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-parisc@vger.kernel.org, mattst88@gmail.com, muchun.song@linux.dev,
- paulmck@kernel.org, richard.henderson@linaro.org, shuah@kernel.org,
- sidhartha.kumar@oracle.com, surenb@google.com, tsbogend@alpha.franken.de,
- willy@infradead.org, Linus Torvalds <torvalds@linux-foundation.org>
-References: <87a5eysmj1.fsf@mid.deneb.enyo.de>
- <20241023062417.3862170-1-dvyukov@google.com>
- <8471d7b1-576b-41a6-91fb-1c9baae8c540@redhat.com>
- <5a3d3bc8-60db-46d0-b689-9aeabcdb8eab@lucifer.local>
- <CACT4Y+ZE9Zco7KaQoT50aooXCHxhz2N_psTAFtT+ZrH14Si7aw@mail.gmail.com>
- <b1df934e-7012-4523-a513-d3d1536b7f72@suse.cz>
- <f000d21f-dd04-462a-9d34-d0e7f0f7dc2e@redhat.com>
- <b5792b5f-298b-499f-abc2-db773ceeed36@lucifer.local>
- <1768ef5d-7289-4d2b-ae02-f5d2a20d5320@redhat.com>
- <CANpmjNM_q-+FH4S8UxRqnomfT7oneN5kcFf_Sxn6cStCCqoKeQ@mail.gmail.com>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <CANpmjNM_q-+FH4S8UxRqnomfT7oneN5kcFf_Sxn6cStCCqoKeQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-On 23.10.24 13:31, Marco Elver wrote:
-> On Wed, 23 Oct 2024 at 11:29, David Hildenbrand <david@redhat.com> wrote:
->>
->> On 23.10.24 11:18, Lorenzo Stoakes wrote:
->>> On Wed, Oct 23, 2024 at 11:13:47AM +0200, David Hildenbrand wrote:
->>>> On 23.10.24 11:06, Vlastimil Babka wrote:
->>>>> On 10/23/24 10:56, Dmitry Vyukov wrote:
->>>>>>>
->>>>>>> Overall while I sympathise with this, it feels dangerous and a pretty major
->>>>>>> change, because there'll be something somewhere that will break because it
->>>>>>> expects faults to be swallowed that we no longer do swallow.
->>>>>>>
->>>>>>> So I'd say it'd be something we should defer, but of course it's a highly
->>>>>>> user-facing change so how easy that would be I don't know.
->>>>>>>
->>>>>>> But I definitely don't think a 'introduce the ability to do cheap PROT_NONE
->>>>>>> guards' series is the place to also fundmentally change how user access
->>>>>>> page faults are handled within the kernel :)
->>>>>>
->>>>>> Will delivering signals on kernel access be a backwards compatible
->>>>>> change? Or will we need a different API? MADV_GUARD_POISON_KERNEL?
->>>>>> It's just somewhat painful to detect/update all userspace if we add
->>>>>> this feature in future. Can we say signal delivery on kernel accesses
->>>>>> is unspecified?
->>>>>
->>>>> Would adding signal delivery to guard PTEs only help enough the ASAN etc
->>>>> usecase? Wouldn't it be instead possible to add some prctl to opt-in the
->>>>> whole ASANized process to deliver all existing segfaults as signals instead
->>>>> of -EFAULT ?
->>>>
->>>> Not sure if it is an "instead", you might have to deliver the signal in
->>>> addition to letting the syscall fail (not that I would be an expert on
->>>> signal delivery :D ).
->>>>
->>>> prctl sounds better, or some way to configure the behavior on VMA ranges;
->>>> otherwise we would need yet another marker, which is not the end of the
->>>> world but would make it slightly more confusing.
->>>>
->>>
->>> Yeah prctl() sounds sensible, and since we are explicitly adding a marker
->>> for guard pages here we can do this as a follow up too without breaking any
->>> userland expectations, i.e. 'new feature to make guard pages signal' is not
->>> going to contradict the default behaviour.
->>>
->>> So all makes sense to me, but I do think best as a follow up! :)
->>
->> Yeah, fully agreed. And my gut feeling is that it might not be that easy
->> ... :)
->>
->> In the end, what we want is *some* notification that a guard PTE was
->> accessed. Likely the notification must not necessarily completely
->> synchronous (although it would be ideal) and it must not be a signal.
->>
->> Maybe having a different way to obtain that information from user space
->> would work.
-> 
-> For bug detection tools (like GWP-ASan [1]) it's essential to have
-> useful stack traces. As such, having this signal be synchronous would
-> be more useful. I don't see how one could get a useful stack trace (or
-> other information like what's stashed away in ucontext like CPU
-> registers) if this were asynchronous.
+MediaTek iso data anchor init should be move to where MediaTek
+claims iso data interface.
+If there is an unexpected usb disconnect during setup flow,
+it will cause a NULL pointer crash issue when releasing iso
+anchor since the anchor wan't been init yet. Adjust the position
+to do iso data anchor init.
 
-Yes, I know. But it would be better than not getting *any* notification 
-except of some syscalls simply failing with -EFAULT, and not having an 
-idea which address was even accessed.
+Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+---
+ drivers/bluetooth/btmtk.c | 1 -
+ drivers/bluetooth/btusb.c | 2 ++
+ 2 files changed, 2 insertions(+), 1 deletion(-)
 
-Maybe the signal injection is easier than I think, but I somehow doubt 
-it ...
-
+diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+index b7fc14aafc74..8a3f7c3fcfec 100644
+--- a/drivers/bluetooth/btmtk.c
++++ b/drivers/bluetooth/btmtk.c
+@@ -1215,7 +1215,6 @@ static int btmtk_usb_isointf_init(struct hci_dev *hdev)
+ 	struct sk_buff *skb;
+ 	int err;
+ 
+-	init_usb_anchor(&btmtk_data->isopkt_anchor);
+ 	spin_lock_init(&btmtk_data->isorxlock);
+ 
+ 	__set_mtk_intr_interface(hdev);
+diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+index 9970470c9d15..15c0885c37cd 100644
+--- a/drivers/bluetooth/btusb.c
++++ b/drivers/bluetooth/btusb.c
+@@ -2628,6 +2628,8 @@ static void btusb_mtk_claim_iso_intf(struct btusb_data *data)
+ 	struct btmtk_data *btmtk_data = hci_get_priv(data->hdev);
+ 	int err;
+ 
++	init_usb_anchor(&btmtk_data->isopkt_anchor);
++
+ 	err = usb_driver_claim_interface(&btusb_driver,
+ 					 btmtk_data->isopkt_intf, data);
+ 	if (err < 0) {
 -- 
-Cheers,
-
-David / dhildenb
+2.18.0
 
 
