@@ -1,136 +1,124 @@
-Return-Path: <linux-kernel+bounces-377836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9267C9AC76B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:10:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A3379AC77A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3C2D5B23B29
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:10:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262DF1F23519
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5663919F116;
-	Wed, 23 Oct 2024 10:09:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 52FFA19F11F;
+	Wed, 23 Oct 2024 10:10:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="r9EFuW/l"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DZFiOSyZ"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF51613C836;
-	Wed, 23 Oct 2024 10:09:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC6F0137742;
+	Wed, 23 Oct 2024 10:10:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729678196; cv=none; b=tQRKZq8fY3ZLnO9XxqLZotbX6hTxVmuZE1rhQO4erSjVH0HVFZIBV8svSY4ayHgy9wLqgeEthwoXb7+ptly9L0dhyNxaLuif5xgvf86Q/TrS8PvSCeKtLAvB8JLQAdrwxdHmihetetngU8ZWS0ngVldxmutSZg2FMhANHkDhCVM=
+	t=1729678243; cv=none; b=rZQShzpc60LkORvsGpfiT2+H/ffDzb1sVWHuvI2GmRUgLJzpUDJxQYJogrQSUToBgt5JxQ3CwaD23Tgsfq33XF2F1n6UHK1ii8DpOLnc0l++IW1bvR5s9pg1uC7ABk8QSmDBg56SoOyxlFtFWVxBvWAJmqvUtVFDHSPH3kigq8Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729678196; c=relaxed/simple;
-	bh=3+7KK3MYd0AO0JEwRkr/m5qoHt4QL1/FO6wzjLuG/XE=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=uadXYRdTraJwFU9G2nLGpsFFXyPv0NXP7VcZ9VT0OPh0PagsPV9kTKO8JbDtD5kjNmBsEAnZehqUzVA8q81qfwzCiQS3COh/Rmuohm0qCjRKQGCWJZB6JF0DD1oi500fO8Lvbqo3ipn73wlpdNEOjH8tHefMxE0gX/0JJUc9Wc8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=r9EFuW/l; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3DF97C4CEE5;
-	Wed, 23 Oct 2024 10:09:56 +0000 (UTC)
+	s=arc-20240116; t=1729678243; c=relaxed/simple;
+	bh=SofnLQzyMRsaMI4sJhitH1kT4UGZy1mDhHDbaITMm9M=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYZgIQQpc42LXih5CiX0Kywdituz0LTD+g4LjXk26JilGf3puNiuZ9MQnDbcube3/+vqC4B0znxsHhMAjnhOJPKvvQA5eC+MGRsXhRrWcLNahWSbPqwVJVNlzve50bav/jAdHwB2m3ABH/MMd1lmy4rbuuhLhwo3hbzYSyJn/lk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DZFiOSyZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B1C1EC4CEC6;
+	Wed, 23 Oct 2024 10:10:42 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729678196;
-	bh=3+7KK3MYd0AO0JEwRkr/m5qoHt4QL1/FO6wzjLuG/XE=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=r9EFuW/lI+zRSGlAeCCr1wbyPczFbuUzUiaMx8naz8hhxhl8Vw3Ylo0gyeEQstZPU
-	 88AqBzRgZ075CWNXeEHgyjFZrFOQ4w6uwMkQrpKaKvd1GCINqGwgTCDx563DLvp8KY
-	 G+l8LAHh8v5LBUuKBWN9XMNhdHdK3PIIuEjMv6gGi84s4EO00s1XK6wVr2fRM6sTFc
-	 xTXzwiAm3InzVHru6SLht8SIl6z0Vl4CL5/O6u340zT5kptiriz2XkS89m39O2yYh+
-	 OWb8KM6ChXNvOcA2/Wnc20h8ykcVychT4r4sAo5Flj0nc/moElDeBcjY102Kzq+PMK
-	 eLPTjPHXwGmDQ==
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-288dfdaf833so3384734fac.3;
-        Wed, 23 Oct 2024 03:09:56 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUIlWI132IQvWPRmUNMEw3naQZUdTFzSTUFPSKkhQwhZA1yL+2MjBB270KclpZRjphQEbZXAqwl6wEo2C8=@vger.kernel.org, AJvYcCXwAXOlm60nLz0udSSorY3Di2dnhW5R6ga1PKyKhTQw42t+8cI0mnUWSX9m2SW4pbPQpb2L/nnPkqk=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxg5yIQz4q1W04JCWS8KGz2qRdNuiaViseUAVFbxdTC5CNKucrK
-	v65r4xh7cC//44u2akF0D09cMRHMuS8DZU5anX2/H2C/TAOQO0DF++Mu7InLuMQfvKAf82TTTHL
-	jnS7GrqKEd3jpOaSLVtR77+Y6L78=
-X-Google-Smtp-Source: AGHT+IFwxmaW/VuDdyPK3Iq1c8Yrq1K7IU4+yKVTI3NiMFrV80zFAIbPJTwu4H27IEQ0oWUxG5zOZ2gNM1YDedj91J0=
-X-Received: by 2002:a05:6871:207:b0:277:d7f1:db53 with SMTP id
- 586e51a60fabf-28ccb410e75mr2128499fac.17.1729678195559; Wed, 23 Oct 2024
- 03:09:55 -0700 (PDT)
+	s=k20201202; t=1729678243;
+	bh=SofnLQzyMRsaMI4sJhitH1kT4UGZy1mDhHDbaITMm9M=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=DZFiOSyZUOf57YkKyaT7ZY83SOQ+2X7+dzKbL5X0DI1js0wCT2X3c2HU+ddChPbCg
+	 SAgxUnhzvoTj64HfqWqSEqgROYTn3N8ISNYu0zMHPG19+TlE9F0J/mlhPh8M6LH7Fo
+	 tW20ygtGBYrzT/xjvR6fLDmgn/1w/KfNDXjcVt0NHqW2gXJ1SyubPDZRQzrAtvLrxU
+	 FPCTFOWhxCnTrNo8460u9KeqO0asH7vgJrKJ75p+DkkDKPVuMMuwZ4lKlGZpIudtIe
+	 kr+kRAUkC0lEZIeBk8h23/ImbYqdbSfbkZZ74OjweprFdF7XgXL/Sv8toiTvWsC51H
+	 prQB8pQKDO3lw==
+Date: Wed, 23 Oct 2024 12:10:40 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on
+ PREEMPT_RT.
+Message-ID: <ZxjLoAINhmGKImHW@pavilion.home>
+References: <20241004103842.131014-1-bigeasy@linutronix.de>
+ <20241004103842.131014-2-bigeasy@linutronix.de>
+ <ZxeomPnsi6oGHKPT@localhost.localdomain>
+ <20241022153421.zLWiABPU@linutronix.de>
+ <Zxgm1lOsddTRSToB@pavilion.home>
+ <20241023063014.iPbVTkiw@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
-In-Reply-To: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Wed, 23 Oct 2024 12:09:44 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0g=uyPA1QH-gQbTZBim7EB8Fn+8Q_7Bc+eOmPqGaDQh0A@mail.gmail.com>
-Message-ID: <CAJZ5v0g=uyPA1QH-gQbTZBim7EB8Fn+8Q_7Bc+eOmPqGaDQh0A@mail.gmail.com>
-Subject: Re: [PATCH] thermal: gov_power_allocator: Granted power set to max
- when nobody request power
-To: ZhengShaobo <zhengshaobo1@xiaomi.com>
-Cc: Lukasz Luba <lukasz.luba@arm.com>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>, 
-	linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	zhuzhangwei <chuci@xiaomi.com>, dingchongchong <dingchongchong@xiaomi.com>, 
-	chendejun <chendejun@xiaomi.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241023063014.iPbVTkiw@linutronix.de>
 
-On Mon, Oct 21, 2024 at 2:12=E2=80=AFPM ZhengShaobo <zhengshaobo1@xiaomi.co=
-m> wrote:
->
-> From: zhengshaobo1 <zhengshaobo1@xiaomi.com>
->
-> When total_req_power is 0, divvy_up_power() will set granted_power to 0,
-> and cdev will be limited to the lowest performance. If our polling delay
-> is set to 200ms, it means that cdev cannot perform better within 200ms
-> even if cdev has a sudden load. This will affect the performance of cdev
-> and is not as expected.
->
-> For this reason, if nobody requests power, then set the granted power to
-> the max_power.
->
-> Signed-off-by: zhengshaobo1 <zhengshaobo1@xiaomi.com>
+Le Wed, Oct 23, 2024 at 08:30:14AM +0200, Sebastian Andrzej Siewior a écrit :
+> On 2024-10-23 00:27:34 [+0200], Frederic Weisbecker wrote:
+> > > Try again without the "ksoftirqd will collect it all" since this won't
+> > > happen since the revert I mentioned.
+> > 
+> > I still don't get it, this makes:
+> > 
+> > """
+> > Once the ksoftirqd is marked as pending (or is running), a softirq which
+> > would have been processed at the end of the threaded interrupt, which runs
+> > at an elevated priority, is now moved to ksoftirqd which runs at SCHED_OTHER
+> > priority and competes with every regular task for CPU resources.
+> > """
+> > 
+> > ksoftirqd raised for timers still doesn't prevent a threaded IRQ from running
+> > softirqs, unless it preempts ksoftirqd and waits with PI. So is it what you're
+> > trying to solve?
+> > 
+> > Or is the problem that timer softirqs are executed with SCHED_NORMAL?
+> 
+> Exactly. It runs at SCHED_NORMAL and competes with everything else. It
+> can delay tasks wakes depending on system load.
 
-I would have applied this, but your S-o-b above needs to be fixed.
-Why don't you use your real name there?
+Ok so that narrows down the problem and it's much clearer, thanks.
 
-If it can be changed to "ZhengShaobo <zhengshaobo1@xiaomi.com>",
-please let me know, and I will fix it for you when applying the patch.
+> > > > > +void raise_timer_softirq(void)
+> > > > > +{
+> > > > > +	unsigned long flags;
+> > > > > +
+> > > > > +	local_irq_save(flags);
+> > > > > +	raise_ktimers_thread(TIMER_SOFTIRQ);
+> > > > > +	wake_timersd();
+> > > > 
+> > > > This is supposed to be called from hardirq only, right?
+> > > > Can't irq_exit_rcu() take care of it? Why is it different
+> > > > from HRTIMER_SOFTIRQ ?
+> > > 
+> > > Good question. This shouldn't be any different compared to the hrtimer
+> > > case. This is only raised in hardirq, so yes, the irq_save can go away
+> > > and the wake call, too.
+> > 
+> > Cool. You can add lockdep_assert_in_irq() within raise_ktimers_thread() for
+> > some well deserved relief :-)
+> 
+> If you want to, sure. I would add them to both raise functions.
 
-> ---
->  drivers/thermal/gov_power_allocator.c | 18 +++++++++++++-----
->  1 file changed, 13 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/thermal/gov_power_allocator.c b/drivers/thermal/gov_=
-power_allocator.c
-> index 1b2345a697c5..4301516c0938 100644
-> --- a/drivers/thermal/gov_power_allocator.c
-> +++ b/drivers/thermal/gov_power_allocator.c
-> @@ -356,11 +356,19 @@ static void divvy_up_power(struct power_actor *powe=
-r, int num_actors,
->         u32 extra_power =3D 0;
->         int i;
->
-> -       /*
-> -        * Prevent division by 0 if none of the actors request power.
-> -        */
-> -       if (!total_req_power)
-> -               total_req_power =3D 1;
-> +       if (!total_req_power) {
-> +               /*
-> +                * Nobody requested anything, just give everybody
-> +                * the maximum power
-> +                */
-> +               for (i =3D 0; i < num_actors; i++) {
-> +                       struct power_actor *pa =3D &power[i];
-> +
-> +                       pa->granted_power =3D pa->max_power;
-> +               }
-> +
-> +               return;
-> +       }
->
->         for (i =3D 0; i < num_actors; i++) {
->                 struct power_actor *pa =3D &power[i];
-> --
-> 2.43.0
->
+Yeah, just in case. Thanks!
+
+> 
+> > Thanks.
+> 
+> Sebastian
 
