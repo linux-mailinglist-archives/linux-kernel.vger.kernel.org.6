@@ -1,60 +1,60 @@
-Return-Path: <linux-kernel+bounces-378700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378702-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DFE5A9AD42F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:44:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 10E509AD432
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:44:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D0781C221AF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:44:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 329451C21E60
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:44:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A7C9D1F5829;
-	Wed, 23 Oct 2024 18:42:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367921D14EE;
+	Wed, 23 Oct 2024 18:42:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="gRIxb/xs"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="U+Wwao2X"
+Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2087.outbound.protection.outlook.com [40.107.94.87])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 609241D0F77
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:42:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF651FAC42
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.87
 ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729708969; cv=fail; b=gnP9gHs58BmvILTkaxdUQUSHFPu9xuFVf7pufGpBTMNGfgHVAoFgtiH20QkzzOAlBQo+3L27yv55CLXv35YzOMMeXrxB0IlrkEZoAK85aVppvFc7oJ7LMZuyxuunZ9vNq+r1Pu96o6mE9/Cd5O/okzU8wPekBimfofC1BwI42mc=
+	t=1729708977; cv=fail; b=PH0sBAah5b5kQiG+2k7Wt1HOIjagV1m1mMlowFYtNq7AaSK2+bQAqqgL6hXlRNhn+uURX6/sKmVdqLL/l+/NVrfuxfSOuxyVtzijFMdE30/I2E3/KK5w9DkE5Kng1Mz4Xz5AXUvmZ43Ix9sILuNtJZLR8f+TLdlXBrHjJJX39X4=
 ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729708969; c=relaxed/simple;
-	bh=KKjVOJ+4oty9aO8RZypy2MvOCRwhA1t8m96eAEAPasA=;
+	s=arc-20240116; t=1729708977; c=relaxed/simple;
+	bh=pXyERW28iFfQIMNq1OZym+4o2FxhSmQZJQ+BdbXDeWg=;
 	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=A4CKw6vvU1goT+yHK88cq7je4H3piHrxon5bkVsId64rBVaf0ZRGE0e320XET4f5/pL9zDa8WmwXzIhW3qYqUcy/3Vf0LVPwvYJdIjCeDGJX8OCg8cn2hoomlFn45llGGsaqhmjlGmyCmOBMPzXnj/B0TjYh06hH/w0hpLWCgGc=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=gRIxb/xs; arc=fail smtp.client-ip=40.107.220.43
+	 MIME-Version:Content-Type; b=GG47fzUhsMUpJ6G/D0ZI6ZvRQg/kEhyfVjd+trhgQGQClpziJkSWjHKnAcOBZABruRepil/sO7SaM7jNdWESJ2sKPf2usiv91vviilHPMrf4MuHnRLMRPLC2yiiov+lTahWSA5iZYmp+c6GeVDgPocVdsJI5dCSPXAKOp1vSIYE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=U+Wwao2X; arc=fail smtp.client-ip=40.107.94.87
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
 Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
 ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bnTD+eZIF4DVlcKtUsnMyZKJFpNiZqgV/V2wiej078+Qkv82unSQW+tl4fFtrxJChHjCq96IK5ET/YFYfZAcvb77f7Q8HXgf2lMDc0v5arYnJ0mSkyFxW+/yGVRuOzfTduhXRsZ6ncykDOuo3eAQNDRN+gbHje9kS5jG9mPZIa7PexJfxhotNTli+pS+ttKpk1MpH0iCYwz620VzqNc5XSodYZZFDv+SQUM1C6WhjS+IhwfzIEFDFPlKU4ZMFNSu2cMsPI07AK90fnJAu4Z11gQRBpjEC3bghmuFrI4z6Oh9+NoZh7UULnVBMcRGndolBmJtenRKhWZT5hAW/Wud0A==
+ b=BLcdu9xcfDcMe3cDS1hxi3t2bjQM6X8OYgqqoblOf08p5UFEEe2jM0jiUlY72ay4Y3nrEFfD6kojjw5smifJXPimA+eZvmhDJXKL4I0ZdzGllpjvgfmJuCr2jyI4rM/VBnZDx1cdZnPJnnPXtbZCPIwiF4OtMDqPntLK5J0zI1y3ASeelX6BfRwusof8Cr8m8a1sZWPRovRloLR/Kko4h9RU5gZ64lNILHo8BdBB+jkL0MNRtedF6HcyzpcGJ0RkU9pxaPoyJ6Y0fL0SGpN356Lg6EqIBC5uR0hwVBT/kqu8K1R8hYhDOdBmsWb4Y7ERntWcKEB4Wc0m15J9LA55Gw==
 ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
  s=arcselector10001;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=PVoTMHboGg7BugSOfhTuu8AzxK8hStGADWOk/xb1xCM=;
- b=be+awZNQ/HF3ZvnnY8m0o6CmjvzpZqtMTZRTxgoeaZwZYZ18HQLWKT8RzvM46F1aziLcYTpxvFaNPMWfmnH07R7D96lQd+j3cEmjJiIk4QChxXkZ0WT84xkS9um4TPIxiQiV4ikeA6vvV6VYnjP17npOZkK6i0QIbiB0Khbpt1+jd8/kyRESohV/guUuUj1/0PHHSmW6cWWPEnT7aLLkfuerFdx3QHWyFcgM0nGSn7MPiqgRfHyN8bFzvmirqy/iq93/kjTaA4uBcFdf0bMAf38aAYyE+yzcY/RBmrLQV9q2tBH3YAqswnNx0qgX66F0Tp5yX64Nc4n6ph77l5m6Pw==
+ bh=1tXIBcENEuPIf4kYwrVDfaofAFQrrirqU65cpPsJOfA=;
+ b=OSHDo3xRffaySdKBGTq7dT7AlxO0r+E0CW4T1BfjUXXv0dWSCIgpHxL8/XG5yeysxRFl7qqGxfM2nlJbjHFuuYzLcFBLwgZxQEXCDfSISiS5nVSVPoDpEEMdLTtihDy3K4BEacHP+AhzSDnvpS+YoWWP99Qkwvnizw++ggGQW4Tiyie9OvAkwudf7G69FXQYoDMK8z+C4BNdwLUJggytqOs7X8Fty/62zMx7JPCeT46tBo2kf2pMKmKYfw9b6yVcxyQc7TPsz6YDTe/5jiH6pO2VgrSjmdpzCSkjZn6CE8nCXudn6phvyCzNALzIC5sTY1XaYVTXNdKIlzWOwrbqMA==
 ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
  165.204.84.17) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=amd.com;
  dmarc=pass (p=quarantine sp=quarantine pct=100) action=none
  header.from=amd.com; dkim=none (message not signed); arc=none (0)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
  h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=PVoTMHboGg7BugSOfhTuu8AzxK8hStGADWOk/xb1xCM=;
- b=gRIxb/xsmTRKD+tseiLRBLmx2+ELkrNLK4t5dMaQ90IzUEW7zBsigA+cyiPpeuS+JpMeELMAh0/r5B/7vthf7B9yE8PPQLyfwd0AOrSc3/OJzcoFG3GUOjOUEcd4jmAKldYXqhlgvcO4+BsqJG0sFjKg1RZqM2jRY0JIHwU1Gqg=
-Received: from SJ0P220CA0030.NAMP220.PROD.OUTLOOK.COM (2603:10b6:a03:41b::6)
- by DM6PR12MB4468.namprd12.prod.outlook.com (2603:10b6:5:2ac::24) with
+ bh=1tXIBcENEuPIf4kYwrVDfaofAFQrrirqU65cpPsJOfA=;
+ b=U+Wwao2XlCCCAnLNqiX/515BSwNg9GUISWCmhND2/1da7KBHWfB5Gr+U3aHMG5p4/RSgSvyuV5cLA5ISXUpDKurezM0pWUGCA96CD81XnIHdxYBN3bX1V2plN4SCi2GYDq4Jf7u1wd6fnQYhWweuKxdQ/Sf9FuSgdEwRPy37I7E=
+Received: from CY5P221CA0045.NAMP221.PROD.OUTLOOK.COM (2603:10b6:930:4::31) by
+ CH0PR12MB8461.namprd12.prod.outlook.com (2603:10b6:610:183::10) with
  Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
- 2024 18:42:44 +0000
-Received: from CY4PEPF0000EE33.namprd05.prod.outlook.com
- (2603:10b6:a03:41b:cafe::e8) by SJ0P220CA0030.outlook.office365.com
- (2603:10b6:a03:41b::6) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29 via Frontend
- Transport; Wed, 23 Oct 2024 18:42:44 +0000
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Wed, 23 Oct
+ 2024 18:42:50 +0000
+Received: from CY4PEPF0000EE30.namprd05.prod.outlook.com
+ (2603:10b6:930:4:cafe::e6) by CY5P221CA0045.outlook.office365.com
+ (2603:10b6:930:4::31) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16 via Frontend
+ Transport; Wed, 23 Oct 2024 18:42:50 +0000
 X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
  smtp.mailfrom=amd.com; dkim=none (message not signed)
  header.d=none;dmarc=pass action=none header.from=amd.com;
@@ -62,22 +62,22 @@ Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
  165.204.84.17 as permitted sender) receiver=protection.outlook.com;
  client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
 Received: from SATLEXMB04.amd.com (165.204.84.17) by
- CY4PEPF0000EE33.mail.protection.outlook.com (10.167.242.39) with Microsoft
+ CY4PEPF0000EE30.mail.protection.outlook.com (10.167.242.36) with Microsoft
  SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.20.8093.14 via Frontend Transport; Wed, 23 Oct 2024 18:42:43 +0000
+ 15.20.8093.14 via Frontend Transport; Wed, 23 Oct 2024 18:42:50 +0000
 Received: from tlendack-t1.amd.com (10.180.168.240) by SATLEXMB04.amd.com
  (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
  cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Oct
- 2024 13:42:42 -0500
+ 2024 13:42:49 -0500
 From: Tom Lendacky <thomas.lendacky@amd.com>
 To: <linux-kernel@vger.kernel.org>, <x86@kernel.org>
 CC: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
 	Borislav Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
 	Michael Roth <michael.roth@amd.com>, Ashish Kalra <ashish.kalra@amd.com>,
 	Nikunj A Dadhania <nikunj@amd.com>, Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Subject: [PATCH v4 4/8] x86/sev: Move the SNP probe routine out of the way
-Date: Wed, 23 Oct 2024 13:41:58 -0500
-Message-ID: <783232bca4cfb1c82bacdb0a6048ff4b9ad9d05f.1729708922.git.thomas.lendacky@amd.com>
+Subject: [PATCH v4 5/8] x86/sev: Map only the RMP table entries instead of the full RMP range
+Date: Wed, 23 Oct 2024 13:41:59 -0500
+Message-ID: <915e7d6b2de0c71d8cd9f8902b1ba3ef6ae563cb.1729708922.git.thomas.lendacky@amd.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <cover.1729708922.git.thomas.lendacky@amd.com>
 References: <cover.1729708922.git.thomas.lendacky@amd.com>
@@ -93,139 +93,136 @@ X-ClientProxiedBy: SATLEXMB03.amd.com (10.181.40.144) To SATLEXMB04.amd.com
  (10.181.40.145)
 X-EOPAttributedMessage: 0
 X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE33:EE_|DM6PR12MB4468:EE_
-X-MS-Office365-Filtering-Correlation-Id: d39b6a94-ada5-4abc-0e5e-08dcf3927b1e
+X-MS-TrafficTypeDiagnostic: CY4PEPF0000EE30:EE_|CH0PR12MB8461:EE_
+X-MS-Office365-Filtering-Correlation-Id: 146b3646-1a17-4ed4-cb64-08dcf3927f63
 X-MS-Exchange-SenderADCheck: 1
 X-MS-Exchange-AntiSpam-Relay: 0
 X-Microsoft-Antispam:
 	BCL:0;ARA:13230040|376014|36860700013|1800799024|82310400026;
 X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?G3fenGeIPfcW3aVa3E8NcwG6vO52ea2Ban/yqkq8j6Y5erN+3dsD+pioHJ0L?=
- =?us-ascii?Q?OKpYqKfTfMW67jZTPlwmHPQungkTnY/9J23e3Zz5r73H9woO3ZmuQ97Uy7VD?=
- =?us-ascii?Q?E7kT/fMWP+URLJk8Y+aZGsy2xSKRUn05R4TiiLYb1rsQMCLog0E/K57LYO+h?=
- =?us-ascii?Q?lbJQ6UDKJAR3VDsaBgQs3POuwX4zihxmd6IpCR9r88BSjUpPLFZG/NEWkqoA?=
- =?us-ascii?Q?QPsf29FuWlO+h8H/QdtXz7ZNIIy4Tu3JeOdcjz386o65NqHgFRi/ko/Fu/GZ?=
- =?us-ascii?Q?uC8dgAq+dLQjCYP7R2HhLHm4/gY8vlmnWOVBDePIydkIw1XVCjfWrHdyoFTA?=
- =?us-ascii?Q?+DoWdBNYjnkciex8U0ovkBFO/6ooqqaVlUYASiSRKA5I/wXxvfeubPAqwYZu?=
- =?us-ascii?Q?hb77p3iNEFG9zsB46jj3hrR036doS7RroqhKwn5QjND3Sa89x6zrY82jhMDl?=
- =?us-ascii?Q?ssJfko1TervLynsFgPDt5C4OsbRK4XwvBtSoR62roAMH7jzdm91Z6YiQf+QB?=
- =?us-ascii?Q?8zz/7sf+eamRLcyaxAExz0oRpdXUTCJe9ndAg8BwRwypCCrAUUtKgX44JonR?=
- =?us-ascii?Q?91brrznTnXLZtnfpURYlOxsdKTSveGMbAIYVaSlU1Gyzmr3w7uRwuAsLnPhB?=
- =?us-ascii?Q?XEzUwBKV/7rRGL5pi/GpKaVwCYbDLweaQnCQfqpvuMDUG/pOt2w/GpyW4SPV?=
- =?us-ascii?Q?x9SicPNpGxnedbU4G4N0rmrxX0dMcQ3mvBi4VTbqB1X0gBibhkJ8ro2hNmu6?=
- =?us-ascii?Q?yr6lcxitEiCfI7S2kC1G9tthcDAwxY7gZQVUrjXMnxzu/RLKelOlMfAkS8D5?=
- =?us-ascii?Q?FCADKxl3uECFTBnBefkrVuZMq1hhmezUkE1omPd1AY6YMKdtPiOhQRDn/au0?=
- =?us-ascii?Q?RFdw/kbivWMuQO/he4Zz0AyjtxWasA/VI1F9IGdgXhsWwLMwhGX8cSEDRzYe?=
- =?us-ascii?Q?uWAWbcErm0bxPYg9n3UsXWzElrcaWMYp70I0UN1sucFn1CU768GoVWv4KcO+?=
- =?us-ascii?Q?TkIj2c/FdoKuw5mFIKmJeYHTyvTPqmdxCoBWaYOyUkYckYrC/OJid7dRY4jv?=
- =?us-ascii?Q?VxwfXJxriGaeXZiAlffgujyD43Q9I8mMC5XdNqGDME5DhmWyTzRdSGqCiQZl?=
- =?us-ascii?Q?3ExUij4owJv3bieLaTKJGj3Ei6vouwiNIrXMMo2PzYMF/uWHM2oCtUAX0avK?=
- =?us-ascii?Q?0jzXcwoI8fOZMPiQeoF6yCkLe9yZyvV/LJ5SkMTO9dr+0eYyW3xOgeTM/fxt?=
- =?us-ascii?Q?FrMoOJo2F0VeqRS+5t8Bn8IaMkNTscDZB7DbhoOjzK+eJEuzE3EdKJXPz12I?=
- =?us-ascii?Q?hUX+4CyAjuqNp8pW4XANZU7WffapJhiekYysQJVfqAh+c+T9/0IAX+P5tupc?=
- =?us-ascii?Q?XKFSxeH0FjOJFpawdTmMxerg60xiiy7DzQOF19ggVLlD+6yTCA=3D=3D?=
+	=?us-ascii?Q?u+9pvul0GSJfT9gEL/rC12mVA6Mv6wJCsoCriVhjmopORHEDz+OtPy04FP7u?=
+ =?us-ascii?Q?BrX8Nheqmx8YPvSM2zxgHwBGrLIf3mZ40nOWzfTMWjeYZoVeac09iOWPgkv+?=
+ =?us-ascii?Q?a/+6vIjx7JVhQJq9na6r8uMVZ+T7Wy2+TJlZx6asaGsFrb9hym6GBosf8pUV?=
+ =?us-ascii?Q?rPFrWlB+MyoBcRKYwuhCW0rLU2mDUWk97ViriiZTwQ1ZPpF9NzcC/juB6o60?=
+ =?us-ascii?Q?4i2uoKSQ+YnZ5z2qXrHxQt1kNVRBPJnPjfeSGf9NDN0DMUwJoMh7Ya/tbvPG?=
+ =?us-ascii?Q?8btx3ZTRPAkFazF/gGGKAFLs6qWgkxTOZ69P87OS1/742B8UJKhexWmGLDxy?=
+ =?us-ascii?Q?hCg5SvcQe1RWtVTkbC/4MdZHUOENXQVpmLUcaLrxKK7r8W/tdomg07ySEMfL?=
+ =?us-ascii?Q?Iju9OWjY93+g6dQsPUDxs9sNIY+MWVutgxXnwfydqIePRyJ6OXUQFJOpx+Rt?=
+ =?us-ascii?Q?Xu5OchLRz6iCptYb5AU2GfbgexyjMe+E3bOGidS4OQGwS0Nnhw9QzVJnEP7B?=
+ =?us-ascii?Q?eMP2J+GZ9sfve0AF50NG1OPajhvR2vfISDToUql9Y5whfKTw481iBznhshaU?=
+ =?us-ascii?Q?Bo4qzQBQ4/wPRsF+jyzCNeitBDcb2h84sPvqQ8e8SBacEVnekXgT7kvfYox4?=
+ =?us-ascii?Q?Zu8NVhYgQWEP0sAXD+E3N9hkc6ZlDKHDSl2TC/0Jz1pjCF5zD30TIJBuPoiv?=
+ =?us-ascii?Q?8fBGQWBOgC+mdSJaChSj8wmdCqk6ooNIYvOA6Khc1mPVtIifsnr6zjO0Ys7F?=
+ =?us-ascii?Q?zW4KzbAYXQgKl+Du5dNQdD6871zIu/xf/jzKqZrSbbjxp5+qo8Xt6DDJ2UAd?=
+ =?us-ascii?Q?onp05nmSGckAFNasQ16AASt22Es1kt5/J3drRwYudd9wcyuKnWTIiNeJw13B?=
+ =?us-ascii?Q?akEhg35urJKpQVXvoK5JIXhcEJDhXdoCF77/Lp5NvzSFIk36mEl146TOL2T7?=
+ =?us-ascii?Q?7mp1Z53p3ZqlV6aNv5GHR8NEd6J3BVREOSoJ+W3QNrcm7z4r1b/dAQfarsNL?=
+ =?us-ascii?Q?6A3yVl2cFtQvuOFoSKV/FU1+DJ+Tp3Wa/6IS54SzTIx1ykhaAy+WJ1euApp6?=
+ =?us-ascii?Q?LoMSBqmwP9Kbu2DW+cnVbeq966UVqY2NefypTo4Rbyz4B6SNVPi115zu6oRF?=
+ =?us-ascii?Q?xwJ/CXVnUnF4K93rAut5QCsuD6JkUU8JUYD9SsXu36YPnfsgQTTi+oqN5iAT?=
+ =?us-ascii?Q?x4+7Ch/dhhBr7BcnLkwGr+bmsjjxVc3OWQdcOVOufPgDxhyUv4cqMoWstlRd?=
+ =?us-ascii?Q?3XwbElLTtJdp4CaEPk+HYxPBCByRcTeYQi5AP43avhnY4M9CBd7Cr93U2xn/?=
+ =?us-ascii?Q?A3MaTvaY1GO4jEfD5DFErVFSr5QiM7mLONFOgWHeqGezSwe7a95ONrIQzdhs?=
+ =?us-ascii?Q?7rclmGt7QlyllPT+Ya21rzTTGV+Nr0AvgSb5qC+nX7hb+QY60Q=3D=3D?=
 X-Forefront-Antispam-Report:
 	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(1800799024)(82310400026);DIR:OUT;SFP:1101;
 X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 18:42:43.4234
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 18:42:50.5914
  (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: d39b6a94-ada5-4abc-0e5e-08dcf3927b1e
+X-MS-Exchange-CrossTenant-Network-Message-Id: 146b3646-1a17-4ed4-cb64-08dcf3927f63
 X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
 X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
 X-MS-Exchange-CrossTenant-AuthSource:
-	CY4PEPF0000EE33.namprd05.prod.outlook.com
+	CY4PEPF0000EE30.namprd05.prod.outlook.com
 X-MS-Exchange-CrossTenant-AuthAs: Anonymous
 X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM6PR12MB4468
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8461
 
-To make patch review easier for the segmented RMP support, move the SNP
-probe function out from in between the initialization-related routines.
-
-No functional change.
+In preparation for support of a segmented RMP table, map only the RMP
+table entries. The RMP bookkeeping area is only ever accessed when
+first enabling SNP and does not need to remain mapped. To accomplish
+this, split the initialization of the RMP bookkeeping area and the
+initialization of the RMP entry area. The RMP bookkeeping area will be
+mapped only while it is being initialized.
 
 Signed-off-by: Tom Lendacky <thomas.lendacky@amd.com>
 ---
- arch/x86/virt/svm/sev.c | 60 ++++++++++++++++++++---------------------
- 1 file changed, 30 insertions(+), 30 deletions(-)
+ arch/x86/virt/svm/sev.c | 36 +++++++++++++++++++++++++++++++-----
+ 1 file changed, 31 insertions(+), 5 deletions(-)
 
 diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
-index e197610b4eed..d0fca9bb2e12 100644
+index d0fca9bb2e12..dd256e76e443 100644
 --- a/arch/x86/virt/svm/sev.c
 +++ b/arch/x86/virt/svm/sev.c
-@@ -132,36 +132,6 @@ static __init void snp_enable(void *arg)
- 	__snp_enable(smp_processor_id());
+@@ -168,6 +168,23 @@ void __init snp_fixup_e820_tables(void)
+ 	__snp_fixup_e820_tables(probed_rmp_base + probed_rmp_size);
  }
  
--#define RMP_ADDR_MASK GENMASK_ULL(51, 13)
--
--bool snp_probe_rmptable_info(void)
--{
--	u64 rmp_sz, rmp_base, rmp_end;
--
--	rdmsrl(MSR_AMD64_RMP_BASE, rmp_base);
--	rdmsrl(MSR_AMD64_RMP_END, rmp_end);
--
--	if (!(rmp_base & RMP_ADDR_MASK) || !(rmp_end & RMP_ADDR_MASK)) {
--		pr_err("Memory for the RMP table has not been reserved by BIOS\n");
--		return false;
--	}
--
--	if (rmp_base > rmp_end) {
--		pr_err("RMP configuration not valid: base=%#llx, end=%#llx\n", rmp_base, rmp_end);
--		return false;
--	}
--
--	rmp_sz = rmp_end - rmp_base + 1;
--
--	probed_rmp_base = rmp_base;
--	probed_rmp_size = rmp_sz;
--
--	pr_info("RMP table physical range [0x%016llx - 0x%016llx]\n",
--		rmp_base, rmp_end);
--
--	return true;
--}
--
- static void __init __snp_fixup_e820_tables(u64 pa)
- {
- 	if (IS_ALIGNED(pa, PMD_SIZE))
-@@ -286,6 +256,36 @@ static int __init snp_rmptable_init(void)
-  */
- device_initcall(snp_rmptable_init);
- 
-+#define RMP_ADDR_MASK GENMASK_ULL(51, 13)
-+
-+bool snp_probe_rmptable_info(void)
++static bool __init init_rmptable_bookkeeping(void)
 +{
-+	u64 rmp_sz, rmp_base, rmp_end;
++	void *bk;
 +
-+	rdmsrl(MSR_AMD64_RMP_BASE, rmp_base);
-+	rdmsrl(MSR_AMD64_RMP_END, rmp_end);
-+
-+	if (!(rmp_base & RMP_ADDR_MASK) || !(rmp_end & RMP_ADDR_MASK)) {
-+		pr_err("Memory for the RMP table has not been reserved by BIOS\n");
++	bk = memremap(probed_rmp_base, RMPTABLE_CPU_BOOKKEEPING_SZ, MEMREMAP_WB);
++	if (!bk) {
++		pr_err("Failed to map RMP bookkeeping area\n");
 +		return false;
 +	}
 +
-+	if (rmp_base > rmp_end) {
-+		pr_err("RMP configuration not valid: base=%#llx, end=%#llx\n", rmp_base, rmp_end);
-+		return false;
-+	}
++	memset(bk, 0, RMPTABLE_CPU_BOOKKEEPING_SZ);
 +
-+	rmp_sz = rmp_end - rmp_base + 1;
-+
-+	probed_rmp_base = rmp_base;
-+	probed_rmp_size = rmp_sz;
-+
-+	pr_info("RMP table physical range [0x%016llx - 0x%016llx]\n",
-+		rmp_base, rmp_end);
++	memunmap(bk);
 +
 +	return true;
 +}
 +
- static struct rmpentry *__get_rmpentry(u64 pfn)
- {
- 	if (!rmptable)
+ /*
+  * Do the necessary preparations which are verified by the firmware as
+  * described in the SNP_INIT_EX firmware command description in the SNP
+@@ -205,12 +222,17 @@ static int __init snp_rmptable_init(void)
+ 		goto nosnp;
+ 	}
+ 
+-	rmptable_start = memremap(probed_rmp_base, probed_rmp_size, MEMREMAP_WB);
++	/* Map only the RMP entries */
++	rmptable_start = memremap(probed_rmp_base + RMPTABLE_CPU_BOOKKEEPING_SZ,
++				  probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ,
++				  MEMREMAP_WB);
+ 	if (!rmptable_start) {
+ 		pr_err("Failed to map RMP table\n");
+ 		goto nosnp;
+ 	}
+ 
++	rmptable_size = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
++
+ 	/*
+ 	 * Check if SEV-SNP is already enabled, this can happen in case of
+ 	 * kexec boot.
+@@ -219,7 +241,14 @@ static int __init snp_rmptable_init(void)
+ 	if (val & MSR_AMD64_SYSCFG_SNP_EN)
+ 		goto skip_enable;
+ 
+-	memset(rmptable_start, 0, probed_rmp_size);
++	/* Zero out the RMP bookkeeping area */
++	if (!init_rmptable_bookkeeping()) {
++		memunmap(rmptable_start);
++		goto nosnp;
++	}
++
++	/* Zero out the RMP entries */
++	memset(rmptable_start, 0, rmptable_size);
+ 
+ 	/* Flush the caches to ensure that data is written before SNP is enabled. */
+ 	wbinvd_on_all_cpus();
+@@ -230,9 +259,6 @@ static int __init snp_rmptable_init(void)
+ 	on_each_cpu(snp_enable, NULL, 1);
+ 
+ skip_enable:
+-	rmptable_start += RMPTABLE_CPU_BOOKKEEPING_SZ;
+-	rmptable_size = probed_rmp_size - RMPTABLE_CPU_BOOKKEEPING_SZ;
+-
+ 	rmptable = (struct rmpentry *)rmptable_start;
+ 	rmptable_max_pfn = rmptable_size / sizeof(struct rmpentry) - 1;
+ 
 -- 
 2.46.2
 
