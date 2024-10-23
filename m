@@ -1,179 +1,87 @@
-Return-Path: <linux-kernel+bounces-378365-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378366-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B64A29ACEF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:37:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A77E49ACEF9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 71D8D285D93
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:37:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5D871C20DAD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E6EF1C7B6D;
-	Wed, 23 Oct 2024 15:37:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ima94U6J"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4691E1C75E6;
+	Wed, 23 Oct 2024 15:38:05 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66ADF1BFE0D;
-	Wed, 23 Oct 2024 15:37:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E75E3A1DA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729697850; cv=none; b=M86eTUBuCw8pdPrqiFZDT9QUv/wkXJSOXXotKrbYEnQLIm9UxYHXskRL+n0SbaOS6g1DteltHnHY2DqKFTxMiC/CgbjVQStUd6qXH5CEKl43UIP9IDr+qb+IIaYFo8uuIiDqtcZynt8r2iv0qADhLjGujqjeUZgH/wuhE6c+9Vk=
+	t=1729697884; cv=none; b=snl9nYnUITlklKSFiZm84vZ+H8jcN6zt1PUA8h/RvM52481Z9LHxHiSKAjDUMu0VogbAdAzKo2y47uvkHs+ojiesWWLkirMQSdad9KnJUYNthqKjKQU4J7To+DWYe6+1frMISziJOl+fCCjv+ql0RRD67DYEoF0eaTvpFGh3KIk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729697850; c=relaxed/simple;
-	bh=fS3eJ8P+ux9S0OqEOhIia1lXSwXNpwLliBMdv3pspAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Kma7qhCNatFIFzEwltcKrJQHNFCfZTjbKXi/89Z2Xgs4IxRTGSiKTyEh+LJ5DGarAVZHNUdyzDI1CatACc4a7fjQbs2wdZVFi+EgGACoj4fkF/Ub2DVYP+PnmxYcxqm+02QjhaU88rQ2IKg3Ymc9eaUmhGlhRaSGg7IjQ1U+atE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ima94U6J; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 994C9C4CEC6;
-	Wed, 23 Oct 2024 15:37:29 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729697850;
-	bh=fS3eJ8P+ux9S0OqEOhIia1lXSwXNpwLliBMdv3pspAU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Ima94U6JgLfMy6s+cI3f0gVuBeruARRjleGmf80bjUWfJlQ1ythLCxLloTRSwob5D
-	 aJhF4xCCVD1f92vdHfdtnqeSg3n+JvahF2Y4OWP37JTDwMk0mRp3tW9YkmKCZIozcH
-	 47ZOYU2xTqPI4VoY3aepCTe3TDZ/qKosjWwViJyxYqscWHUbiyAQNltp5CG9O0S0wz
-	 jMkcJWDR+XMOQegavNF9+HP7hUbCx/cp7hbh7TV2rge8nY4eyFBCfQyzo6NLhBPmgg
-	 XhTnNxs27VlEMgvU0ynXSbZXi3QvR4CiH1IlIhAa1mJSwE36n7XcazpUSKuANf2Sv4
-	 x8yldypMS3AJA==
-From: Puranjay Mohan <puranjay@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Albert Ou <aou@eecs.berkeley.edu>, Alexei Starovoitov <ast@kernel.org>,
- Andrew Morton <akpm@linux-foundation.org>, Andrii Nakryiko
- <andrii@kernel.org>, bpf@vger.kernel.org, Daniel Borkmann
- <daniel@iogearbox.net>, "David S. Miller" <davem@davemloft.net>, "Eduard
- Zingerman" <eddyz87@gmail.com>, Eric Dumazet <edumazet@google.com>, Hao Luo
- <haoluo@google.com>, Helge Deller <deller@gmx.de>, Jakub Kicinski
- <kuba@kernel.org>, "James E.J. Bottomley"
- <James.Bottomley@hansenpartnership.com>, Jiri Olsa <jolsa@kernel.org>,
- John Fastabend <john.fastabend@gmail.com>, KP Singh <kpsingh@kernel.org>,
- linux-kernel@vger.kernel.org, linux-parisc@vger.kernel.org,
- linux-riscv@lists.infradead.org, Martin KaFai Lau <martin.lau@linux.dev>,
- Mykola Lysenko <mykolal@fb.com>, netdev@vger.kernel.org, Palmer Dabbelt
- <palmer@dabbelt.com>, Paolo Abeni <pabeni@redhat.com>, Paul Walmsley
- <paul.walmsley@sifive.com>, Shuah Khan <shuah@kernel.org>, Song Liu
- <song@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Yonghong Song
- <yonghong.song@linux.dev>
-Subject: Re: [PATCH bpf-next 4/5] selftests/bpf: Add benchmark for
- bpf_csum_diff() helper
-In-Reply-To: <mb61p8qugc955.fsf@kernel.org>
-References: <20241021122112.101513-1-puranjay@kernel.org>
- <20241021122112.101513-5-puranjay@kernel.org>
- <CAEf4BzY1LgCF1VOoAQkMdDTx87C0mfyftMvhvVU4GpsFc6fw5g@mail.gmail.com>
- <mb61pa5ewbfpk.fsf@kernel.org>
- <CAEf4BzZ-gfBqez-QJCSRVOPnvz-inaiVdNGOFRCdc2KQbnmeZQ@mail.gmail.com>
- <mb61p8qugc955.fsf@kernel.org>
-Date: Wed, 23 Oct 2024 15:37:07 +0000
-Message-ID: <mb61pttd2bzks.fsf@kernel.org>
+	s=arc-20240116; t=1729697884; c=relaxed/simple;
+	bh=ba4bwJtQvd0r4w6c6NG9md0Qeci/H0xP8HHhZZ5mIdc=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=oQ3F3b3hmo0SRKbQyPWZStfiQMMS2ljyCcsn+dj6ymcgOXJDjELVMlYX4gHufXDy78Zh+FYPrS88rp9kWFGRA+k0xEXtwh4oj9BWUnzqz+ntwEO85m/ZPTqTMycOe93rqBAv5NyMo3i9T28J0JNnctFxg1cjX2kY/P8ml3fNXpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c24f3111so68672295ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:38:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729697882; x=1730302682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ER8a/BFRBva1YE5+IJmQ/NCGnUlgKneuoMtMsPsDi1U=;
+        b=I/PS77ITgFxMaOqD/jbCpzSlWgvSyOpFe1KG7lAxpy3oWJSzr+pvPKCTFVMUK+4eJq
+         IyrEM7VFfLbWQLesWjpYLx1s3v2obfbffRr/DZwa6FfTK9BgvGFrkQaOfJ+j/8msG0Cs
+         zLVy1PTi4/ELNGVDrPwybpkkzf7KNWz0hiXafxMJ04KJV1RrD6vOKQgiVOzXhG+haMGJ
+         2jXIkvF4wug25Dm7IaCvHGvDxViw1knDq6NEkdXkvpSkwqR9PnHDrg7hVMfCZN/tRqGl
+         5OVlhOGX6fxs/gAJyMGafB9l6r6Blv0BcD79tBKWFOFvnswV1eDC2yWMXL3+XL/UDSKy
+         eNGw==
+X-Forwarded-Encrypted: i=1; AJvYcCW614xPjdPTlPQzYXpwa3es6XMfmnkuPQNgo92Az+HPWuIY76k22p5vEi5SQYWAm5vJ2lFjPPA3vDiZjUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzzKgjDi3S+StgVqCwNY+R92E5xDW/ZUKN+DQxe01G6D0i7vMMd
+	jwyKYZfi2146x3VsOxAR0SGxgePgXRBGa40sHlK+Tuk8gbkj0fOCZrWv9z1jdB5Xq2/BCtklEs7
+	5gAlaUBx7p32Z725GtTxVhbrA5lyi8D2Z0lpX2zn8GvgQUGBsGBeOkHc=
+X-Google-Smtp-Source: AGHT+IE+knpFY8Up6lXbbcbaYCfAoQJpwz84ICm5HX6poBDYEABqgZjRnglaJGw4MT6ibNDoOXsp+M9v8cXtS02fagWfKS68/mXJ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="=-=-=";
-	micalg=pgp-sha512; protocol="application/pgp-signature"
+X-Received: by 2002:a05:6e02:1848:b0:3a1:a293:4349 with SMTP id
+ e9e14a558f8ab-3a4d59af493mr35730145ab.18.1729697882582; Wed, 23 Oct 2024
+ 08:38:02 -0700 (PDT)
+Date: Wed, 23 Oct 2024 08:38:02 -0700
+In-Reply-To: <20241023151800.61444-1-aha310510@gmail.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6719185a.050a0220.1e4b4d.0092.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: null-ptr-deref Read in bch2_sb_set_upgrade_extra
+From: syzbot <syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com>
+To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
---=-=-=
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Hello,
 
-Puranjay Mohan <puranjay@kernel.org> writes:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
->
->> On Tue, Oct 22, 2024 at 3:21=E2=80=AFAM Puranjay Mohan <puranjay@kernel.=
-org> wrote:
->>>
->>> Andrii Nakryiko <andrii.nakryiko@gmail.com> writes:
->>>
->>> > On Mon, Oct 21, 2024 at 5:22=E2=80=AFAM Puranjay Mohan <puranjay@kern=
-el.org> wrote:
->>> >>
->>> >> Add a microbenchmark for bpf_csum_diff() helper. This benchmark work=
-s by
->>> >> filling a 4KB buffer with random data and calculating the internet
->>> >> checksum on different parts of this buffer using bpf_csum_diff().
->>> >>
->>> >> Example run using ./benchs/run_bench_csum_diff.sh on x86_64:
->>> >>
->>> >> [bpf]$ ./benchs/run_bench_csum_diff.sh
->>> >> 4                    2.296 =C2=B1 0.066M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 8                    2.320 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 16                   2.315 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 20                   2.318 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 32                   2.308 =C2=B1 0.003M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 40                   2.300 =C2=B1 0.029M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 64                   2.286 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 128                  2.250 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 256                  2.173 =C2=B1 0.001M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >> 512                  2.023 =C2=B1 0.055M/s (drops 0.000 =C2=B1 0.000=
-M/s)
->>> >
->>> > you are not benchmarking bpf_csum_diff(), you are benchmarking how
->>> > often you can call bpf_prog_test_run(). Add some batching on the BPF
->>> > side, these numbers tell you that there is no difference between
->>> > calculating checksum for 4 bytes and for 512, that didn't seem strange
->>> > to you?
->>>
->>> This didn't seem strange to me because if you see the tables I added to
->>> the cover letter, there is a clear improvement after optimizing the
->>> helper and arm64 even shows a linear drop going from 4 bytes to 512
->>> bytes, even after the optimization.
->>>
->>
->> Regardless of optimization, it's strange that throughput barely
->> differs when you vary the amount of work by more than 100x. This
->> wouldn't be strange if this checksum calculation was some sort of
->> cryptographic hash, where it's intentional to have the same timing
->> regardless of amount of work, or something along those lines. But I
->> don't think that's the case here.
->>
->> But as it is right now, this benchmark is benchmarking
->> bpf_prog_test_run(), as I mentioned, which seems to be bottlenecking
->> at about 2mln/s throughput for your machine. bpf_csum_diff()'s
->> overhead is trivial compared to bpf_prog_test_run() overhead and
->> syscall/context switch overhead.
->>
->> We shouldn't add the benchmark that doesn't benchmark the right thing.
->> So just add a bpf_for(i, 0, 100) loop doing bpf_csum_diff(), and then
->> do atomic increment *after* the loop (to minimize atomics overhead).
->
-> Thanks, now I undestand what you meant. Will add the bpf_for() in the
-> next version.
+Reported-by: syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
+Tested-by: syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com
 
-I have decided to drop this patch as even after adding bpf_for() the
-difference between 4B and 512B is not that much. So, benchmarking
-bpf_csum_diff() using this triggering based framework is not useful.
+Tested on:
 
-So, v2 will not have this patch but the cover letter will still have the
-tables to show the difference before/after the optimization.
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11e5c287980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=b468b9fef56949c3b528
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=14fe4c30580000
 
-Thanks,
-Puranjay
-
---=-=-=
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZxkYJBQccHVyYW5qYXlA
-a2VybmVsLm9yZwAKCRCwwPkjG3B2nZcNAP9LuNyLHGuE8urrunhTq/wpaMGlCwOS
-BXyQadJTABXgvgEAvD4mhW6uC3odQDgdGxBrVV/Q1eBzFf4WxzCGVME9lAw=
-=u12U
------END PGP SIGNATURE-----
---=-=-=--
+Note: testing is done by a robot and is best-effort only.
 
