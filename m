@@ -1,118 +1,174 @@
-Return-Path: <linux-kernel+bounces-378992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CC4BE9AD85E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:17:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 84B8C9AD866
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:24:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6ED81C21B54
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:17:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BFEB22696
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:24:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8239E1FEFD9;
-	Wed, 23 Oct 2024 23:16:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8B200102;
+	Wed, 23 Oct 2024 23:24:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b="UEvThBjL"
-Received: from lichtman.org (lichtman.org [149.28.33.109])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0EEB1E4A4
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:16:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=149.28.33.109
+	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="3MzUIK6V"
+Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAE21FF7AE;
+	Wed, 23 Oct 2024 23:24:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729725415; cv=none; b=jSH5SOLSDybZpIipcLbsGBWdWltIuSgt1JyrfKhPf3oaJuEyAh6h2znSvQ7rsR9Rh7cnAXFlDjYFcQ/NEqM2xGkEr9D7ABCHACO5LJL8pXjK3qe/RUxk8f4anzGN/CIRMI4QHqvczsf/E40Kk5P6YxHjnqld2OQHZkcQzc4xPeg=
+	t=1729725862; cv=none; b=VyuuQvMLHCmZh/5Uj71ay71K70c7RFlzNg12kTKT58S3juQAuwy7rsgAIZoqmZxJwQKHcH4q4axPXGMS7fhJ0yXMRQ8sJlRLJvNcz77rdV+AtePvmYWqf48Z+GtCwNRXO5EyDRqSqydpltoYuoFDRwki3QwEqZbXL8uTQs5zc9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729725415; c=relaxed/simple;
-	bh=jnsUIHQY8FoifheeEUtQaV+f9k2OU0WKSfyn3R8kkbk=;
-	h=Date:From:To:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=PJO/7bA3rBNFptsZj+Hp3rIq8PEN6SmRrp8D7IHqu2XPNOxg+ZsX9NHKSdR0ahcvegrnbUD988y7QJ6da0Nf/yFUobuvJPfj+bXLoMXC6b5WKg4R2XlWAh/BpVDmtDn7PPcde+CT8va7WueYAlq32sSilTukB7Zk/0jdd4CatBI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org; spf=pass smtp.mailfrom=lichtman.org; dkim=pass (2048-bit key) header.d=lichtman.org header.i=@lichtman.org header.b=UEvThBjL; arc=none smtp.client-ip=149.28.33.109
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lichtman.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lichtman.org
-Received: by lichtman.org (Postfix, from userid 1000)
-	id 7724317710C; Wed, 23 Oct 2024 23:16:47 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple; d=lichtman.org; s=mail;
-	t=1729725407; bh=jnsUIHQY8FoifheeEUtQaV+f9k2OU0WKSfyn3R8kkbk=;
-	h=Date:From:To:Subject:From;
-	b=UEvThBjLIfzGfHW2+0WEp4dbW1PempS9pI6lZyILyRiNH8pG4/1ZCqRJUPDUFNmQW
-	 b0vhO9wq6Opurkme9rzXF0WAcHq5dF4ZkrOK9/qXaO40pi1TCoYNH9L7csDJaQr0Hw
-	 oMnQfcW8tfdT0EGacfGtZIHqdc0AGEKTUP3CzNt4BTftf7iHx+2fXqJ2VAJFk+l0Op
-	 ui0qukEsIcX93eMVgCa3SwFm3Ih0MKQK3lfv3OBS57NBuV7RV5hX+98KGqoNsFxVeq
-	 y3sHUnUYqKG8GQ3KdE1PysIqrZKTyG42lmJZF1BVoPjWiTFJQjSo+9/SMDFOly56gQ
-	 PXhowMy+kixpw==
-Date: Wed, 23 Oct 2024 23:16:47 +0000
-From: Nir Lichtman <nir@lichtman.org>
-To: dave.hansen@linux.intel.com, luto@kernel.org, peterz@infradead.org,
-	tglx@linutronix.de, mingo@redhat.com, bp@alien8.de,
-	linux-kernel@vger.kernel.org, m.younesbadr@gmail.com
-Subject: [PATCH] KASLR: Properly injest nokaslr on x86 to avoid passing it to
- init process
-Message-ID: <20241023231647.GA860895@lichtman.org>
+	s=arc-20240116; t=1729725862; c=relaxed/simple;
+	bh=n+FFpXv4PJFw+9a/Ezyh5AocFqAzwBRGyQcwXWz5jBU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oQm52+CUHWKSqq4yrisJWwMngYnPqvp8LfI1LHlI6rfBGNC0LwWG6bjMe9aN4mzBeugGUmOwIPHwL3FRadFW+QmM7tZjCk0J2KzMzM2uFOAc4AYcTswuILy1nQfprdui5ZyebsvMqaQUcN3y1kju1Xmemidx/qMPwbrih/a4+nE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=3MzUIK6V; arc=none smtp.client-ip=62.210.214.84
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
+Received: from gaia.codewreck.org (localhost [127.0.0.1])
+	by submarine.notk.org (Postfix) with ESMTPS id 1566E14C1E1;
+	Thu, 24 Oct 2024 01:24:06 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
+	s=2; t=1729725850;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=uq4pgfK90LTAqbpoUp/Bzs/qyX4xLUiGN0J61hu/6cw=;
+	b=3MzUIK6VCbNBeTYCdYVdRvsWmdsRr1ZvZDNLTZyfXjoiIMgTVd7XXIbNa25DxcVmCrGIIw
+	7YWFC5Mbm6cm8MRoGvfnfDwraSvAWoePCkNNfJcmclcNjphRiAeCtAYALXWxAqDEt+zLHB
+	cvvSAv6JwOGVZvjhChlE4zaLHzNXISi/jc/nxMD/R+FioG+OGFHmAin+YQoTdZKDrJr0O+
+	p1MUbVMcIfDpLovxe92+8UAMyCPmz301B07kMQ2WWAemE1MMLCfMi/l7cZsMA6QSN5cHgk
+	+5rXylelAoZONZXT5/ENmOxvBQMQ6P3yTd0Kj3UebsU8IfYyzXCd2MPGpYR+Sw==
+Received: from localhost (gaia.codewreck.org [local])
+	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 0e53634f;
+	Wed, 23 Oct 2024 23:24:05 +0000 (UTC)
+Date: Thu, 24 Oct 2024 08:23:50 +0900
+From: Dominique Martinet <asmadeus@codewreck.org>
+To: David Howells <dhowells@redhat.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrii Nakryiko <andrii@kernel.org>
+Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org,
+	linux_oss@crudebyte.com, pedro.falcato@gmail.com,
+	regressions@leemhuis.info, torvalds@linux-foundation.org,
+	v9fs@lists.linux.dev, bpf@vger.kernel.org
+Subject: Re: [GIT PULL] 9p fixes for 6.12-rc4
+Message-ID: <ZxmFhiAL-ImjKe7Y@codewreck.org>
+References: <ZxL0kMXLDng3Kw_V@codewreck.org>
+ <20241023165606.3051029-1-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
+In-Reply-To: <20241023165606.3051029-1-andrii@kernel.org>
 
-Problem: Currently booting the kernel with "nokaslr" on x86 incorrectly
-doesn't recognize this parameter and passes it on to the init process
+Adding David/Willy to recpients as I'm not 100% up to date on folios
 
-Reason: On x86, this parameter is parsed by the early loader, and so the
-main kernel itself doesn't do anything with it.
+Andrii Nakryiko wrote on Wed, Oct 23, 2024 at 09:56:06AM -0700:
+> > The following changes since commit 98f7e32f20d28ec452afb208f9cffc08448a2652:
+> >
+> >   Linux 6.11 (2024-09-15 16:57:56 +0200)
+> >
+> > are available in the Git repository at:
+> > 
+> >   https://github.com/martinetd/linux tags/9p-for-6.12-rc4
+> > 
+> > for you to fetch changes up to 79efebae4afc2221fa814c3cae001bede66ab259:
+> >
+> >   9p: Avoid creating multiple slab caches with the same name (2024-09-23 05:51:27 +0900)
+> >
+> > ----------------------------------------------------------------
+> > Mashed-up update that I sat on too long:
+> > 
+> > - fix for multiple slabs created with the same name
+> > - enable multipage folios
+> > - theorical fix to also look for opened fids by inode if none
+> > was found by dentry
+> > 
+> > ----------------------------------------------------------------
+> > David Howells (1):
+> >      9p: Enable multipage folios
+> 
+> Are there any known implications of this change on madvise()'s MADV_PAGEOUT
+> behavior? After most recent pull from Linus's tree, one of BPF selftests
+> started failing. Bisection points to:
+> 
+>   9197b73fd7bb ("Merge tag '9p-for-6.12-rc4' of https://github.com/martinetd/linux")
+> 
+> ... which is just an empty merge commit. So the "9p: Enable multipage folios"
+> by itself doesn't cause any regression, but when merged with the rest of the
+> code it does. I confirmed by reverting
+> 1325e4a91a40 ("9p: Enable multipage folios"), after which the test in question
+> is succeeding again.
 
-Example: I have encountered this issue when booting the kernel with QEMU
-using -kernel and -initrd with a simple initrd I have built containing
-bash as the init executable. Upon running init, the kernel passed the
-"unrecognized parameter" to bash causing bash to exit with a failure and
-the kernel to panic.
+(looks like 3c217a182018 ("selftests/bpf: add build ID tests") wasn't in
+yet on the 9p multipage folios commit)
 
-Solution: Ingest this parameter as part of the kernel logic in x86 so the
-kernel will recognize this as a valid parameter and not pass it to user
-mode.
-This is similar to the logic that already exists in the case of ARM64
-which can be found in arch/arm64/kernel/kaslr.c:43
+> The test in question itself is a bit involved, but what it ultimately tries to
+> do is to ensure that part of ELF file containing build ID is paged out to cause
+> BPF helper to fail to retrieve said build ID (due to non-faulable context).
+> 
+> For that, we use the following sequence in target binary and process:
+> 
+> madvise(addr, page_sz, MADV_POPULATE_READ);
+> madvise(addr, page_sz, MADV_PAGEOUT);
+> 
+> First making sure page is paged in, then paged out. We make sure that build ID
+> is memory mapped in a separate segment with its own single-page memory mapping.
+> No changes or regressions there. No huge pages seem to be involved.
 
-Crediting also Mahmoud since he came up with a similar patch a couple of
-months ago, the patch was left with unaddressed CR comments by Borislav
-which I have addressed in this patch,
-link to thread: https://lore.kernel.org/all/20240331200546.869343-1-m.younesbadr@gmail.com/
+That's probably obvious but I guess the selftest runs the binary
+directly from a 9p mount?
 
-Signed-off-by: Mahmoud Younes <m.younesbadr@gmail.com>
-Signed-off-by: Nir Lichtman <nir@lichtman.org>
----
- arch/x86/mm/kaslr.c | 15 +++++++++++++++
- 1 file changed, 15 insertions(+)
+> It used to work reliably, now it doesn't work. Any clue why or what should we
+> do differently to make sure that memory page with build ID information is not
+> paged in (reliably)?
 
-diff --git a/arch/x86/mm/kaslr.c b/arch/x86/mm/kaslr.c
-index 230f1dee4f09..4d159aa6910c 100644
---- a/arch/x86/mm/kaslr.c
-+++ b/arch/x86/mm/kaslr.c
-@@ -71,6 +71,21 @@ static inline unsigned long get_padding(struct kaslr_memory_region *region)
- 	return (region->size_tb << TB_SHIFT);
- }
- 
-+/*
-+ * nokaslr param handling is done by the loader which treats the
-+ * boot parameters as read only so this is a hack to ingest this
-+ * to keep it from passing to user mode
-+ */
-+static int __init parse_nokaslr(char *p)
-+{
-+	if (!!(boot_params.hdr.loadflags & KASLR_FLAG)) {
-+		pr_warn("the loader has not parsed the nokaslr flag");
-+	}
-+
-+	return 0;
-+}
-+early_param("nokaslr", parse_nokaslr);
-+
- /* Initialize base and padding for each memory region randomized with KASLR */
- void __init kernel_randomize_memory(void)
- {
+Unless David/Willy has a solution immediately I'd say let's take the time to
+sort this out and revert that commit for now -- I'll send a revert patch
+immediately and submit it to Linus on Saturday.
+
+Conceptually I guess something is broken with MADV_PAGEOUT on >1 page
+folio, perhaps it's only evicting folios if the whole folio is in range
+but it should evict any folio that touches the range or something?
+
+Sorry I don't have time to dig further here, hopefully that's not too
+difficult to handle and we can try again in rc1 proper of another cycle,
+I shouldn't have sent that this late.
+
+
+(leaving full text below for new recipients)
+> Thanks!
+> 
+> P.S. The target binary and madvise() manipulations are at:
+> 
+>   tools/testing/selftests/bpf/uprobe_multi.c, see trigger_uprobe()
+> The test itself in BPF selftest is at:
+> 
+>   tools/testing/selftests/bpf/prog_tests/build_id.c, see subtest_nofault(),
+>   build_id_resident is false in this case.
+> 
+> >
+> > Dominique Martinet (1):
+> >       9p: v9fs_fid_find: also lookup by inode if not found dentry
+> > 
+> > Pedro Falcato (1):
+> >       9p: Avoid creating multiple slab caches with the same name
+> > 
+> >  fs/9p/fid.c       |  5 ++---
+> >  fs/9p/vfs_inode.c |  1 +
+> >  net/9p/client.c   | 10 +++++++++-
+> >  3 files changed, 12 insertions(+), 4 deletions(-)
+> > 
+> 
+
+Thanks,
 -- 
-2.39.2
+Dominique Martinet | Asmadeus
 
