@@ -1,111 +1,131 @@
-Return-Path: <linux-kernel+bounces-377558-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377559-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9D2E9AC082
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:41:53 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB0F69AC086
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:43:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 74770B21F00
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6E01A2840F0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:43:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 935F6155352;
-	Wed, 23 Oct 2024 07:41:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8008D155742;
+	Wed, 23 Oct 2024 07:42:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ArYVKW9G"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="f19CBwJC"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4EE514A639
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A5C31CA84;
+	Wed, 23 Oct 2024 07:42:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729669304; cv=none; b=ap84jufCrmwP+r1iVxAxyBOORwrMeXTNyV16yBEmleikAlzo148wHwzQUI5vXOCsOwIrbJWHEGi0kzdlJ85n2LzDP1wpUwQQZK7SH2TmcI6+PHLpflAIVZ9tmH9jKu36IkHa1f5aHnGsIEjhpi+K6RvECntBE5a1qvxN2HddhTI=
+	t=1729669376; cv=none; b=X3A3XVcgb7sHEjpJwCwZmaBREv1STwBdmLS+puzJqNwBIhnJ0siamQ7Yaja+3PJDoM+Eqqheb6t3N9ifeQ1Ww2r4f07rZ8djxzRab37xq8VGX2yUi8ZA9WA6sEOFYIj8LDwzYfipExo7pVhtIyihzaAhFKR059xZqHlUijKy4D4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729669304; c=relaxed/simple;
-	bh=lK/s1B24s6lazKk6ZuJZC6mKnM5vtX1llJDWdArksj4=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=ZWNtCZXLbvtqmy03wkCOZqHy5557uEcxIYmgfVz2nsu/tH7/fYVEV7WR81dAq6Pn1m5b7l4yyIiLySORrjr4WnwcpEDU8Lk/QicgFLXSuBiTJKm53O0DAP8thNrPs0q1n96CD5tv+DsNW5e1vypOpWh1AJjqnadT0a05CRPlYXc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ArYVKW9G; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729669303; x=1761205303;
-  h=message-id:date:mime-version:cc:subject:to:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=lK/s1B24s6lazKk6ZuJZC6mKnM5vtX1llJDWdArksj4=;
-  b=ArYVKW9GP0S1Wnp9Qep9BmYZN3xzhN4WW7E460atua1FNW+fyKxJSwWN
-   9g695UrNNrI2wkep0AZkbZ5Lt+i/FK8zn3u4061UyVvnmBp7urWGNXV2l
-   8FNE8SIJ5o8ldmcdycL49HLqL0m4LZ7ABmtmCpjZCqGiGvgopMCxedetn
-   GqWARaEw+gfNGUtmYWEVSo8VEQRyq0Qh6SVuOjWon2/6HdS6uu70KoVB5
-   Vhan8+wRw6z+Mpd+mxBysTmPCvBqXoGWO47C+OeHiwUjtHfpO7jt9nPr+
-   rdUARHMmveIH5+Qglo7rlJwOqjd69a7BfmWAY0Cvh2z7N+xuguvhMPre4
-   A==;
-X-CSE-ConnectionGUID: XKiVC3U4QE2KCayZxFWkwg==
-X-CSE-MsgGUID: pymPa3ctQc+u76wIaL40+A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51784962"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="51784962"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 00:41:42 -0700
-X-CSE-ConnectionGUID: buzNZVnXT9idMFD/8m7Dxw==
-X-CSE-MsgGUID: F1uxp14aR/u2ytwb38UCdg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="80933272"
-Received: from blu2-mobl.ccr.corp.intel.com (HELO [10.124.240.228]) ([10.124.240.228])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 00:41:39 -0700
-Message-ID: <f6d109cd-9a7e-416f-87d7-429e584e3b3e@linux.intel.com>
-Date: Wed, 23 Oct 2024 15:41:37 +0800
+	s=arc-20240116; t=1729669376; c=relaxed/simple;
+	bh=35cxrIBquTIsbDYEYNBDPA1fYWrjS2NGs2jQmboaUHw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=H7A8jmGGfbgoAxVFP9oy9sRa7GZjKWrXHeGW8jdKfup9Fj/WqMPrf4ZNHwCCoPbafaC9TkMWc+HCiaQ46Oi9FmOmKVlMpSonDzm9mNNUcIqZrw+/63bY5TorooVoUfDmrCaCuajBfaqslB25f5WiUzlzvHWhE8Vo118L4zRd7qg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=f19CBwJC; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N3UD016719;
+	Wed, 23 Oct 2024 07:42:45 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=wXo43uDtjC7AWD0EX+yzMqBe11KZsQ
+	BWpM2baTsQIq0=; b=f19CBwJCe/YpMADqjM8IM4JHazG+LF3ZoULXe9LwM55mTA
+	ySSmBfacZFfV7Th2W6cdx2mW286qOrShf+WS/B3jIKsB5VarOYtmJUmVW25aKWTK
+	vVhMGzD+xn/NYyTuwUJWZXeNBztZ1dk6qz3EC1xyJGuxgCqujOgm9vMZvx9tSIjU
+	v/yAMhMmzGKlB4EfRORrgMzLi79M4N+2bxHTvMFYQQgZbzwgehYkmxQWv0e5+pr+
+	vmaqr0SMDtOyJ/5UT8l7L5C6+5Mv/b2dlbVkvW/imNxHItIr0+weJjGtmCvt4NlF
+	1CsloGnPisq/tIx//XwtSupHXsla1J6/Ol7uQppA==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajhug0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 07:42:45 +0000 (GMT)
+Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49N7dkuX031287;
+	Wed, 23 Oct 2024 07:42:44 GMT
+Received: from ppma13.dal12v.mail.ibm.com (dd.9e.1632.ip4.static.sl-reverse.com [50.22.158.221])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajhufx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 07:42:44 +0000 (GMT)
+Received: from pps.filterd (ppma13.dal12v.mail.ibm.com [127.0.0.1])
+	by ppma13.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7UPss012603;
+	Wed, 23 Oct 2024 07:42:44 GMT
+Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
+	by ppma13.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emhf9tfe-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 07:42:43 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49N7geZ334472700
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 07:42:40 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 48BE42004B;
+	Wed, 23 Oct 2024 07:42:40 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 2532820043;
+	Wed, 23 Oct 2024 07:42:39 +0000 (GMT)
+Received: from osiris (unknown [9.152.212.60])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Wed, 23 Oct 2024 07:42:39 +0000 (GMT)
+Date: Wed, 23 Oct 2024 09:42:37 +0200
+From: Heiko Carstens <hca@linux.ibm.com>
+To: David Hildenbrand <david@redhat.com>
+Cc: Alexander Egorenkov <egorenar@linux.ibm.com>, agordeev@linux.ibm.com,
+        akpm@linux-foundation.org, borntraeger@linux.ibm.com,
+        cohuck@redhat.com, corbet@lwn.net, eperezma@redhat.com,
+        frankja@linux.ibm.com, gor@linux.ibm.com, imbrenda@linux.ibm.com,
+        jasowang@redhat.com, kvm@vger.kernel.org, linux-doc@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+        linux-s390@vger.kernel.org, mcasquer@redhat.com, mst@redhat.com,
+        svens@linux.ibm.com, thuth@redhat.com, virtualization@lists.linux.dev,
+        xuanzhuo@linux.alibaba.com, zaslonko@linux.ibm.com
+Subject: Re: [PATCH v2 1/7] s390/kdump: implement is_kdump_kernel()
+Message-ID: <20241023074237.8013-B-hca@linux.ibm.com>
+References: <87ed4g5fwk.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+ <76f4ed45-5a40-4ac4-af24-a40effe7725c@redhat.com>
+ <87sespfwtt.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
+ <64db4a88-4f2d-4d1d-8f7c-37c797d15529@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: baolu.lu@linux.intel.com, "dwmw2@infradead.org" <dwmw2@infradead.org>,
- "joro@8bytes.org" <joro@8bytes.org>, "will@kernel.org" <will@kernel.org>,
- "robin.murphy@arm.com" <robin.murphy@arm.com>,
- "Peng, Chao P" <chao.p.peng@intel.com>,
- Kyung Min Park <kyung.min.park@intel.com>
-Subject: Re: [PATCH 2/2] iommu/vt-d: Fix checks in pgtable_walk()
-To: "Duan, Zhenzhong" <zhenzhong.duan@intel.com>,
- "iommu@lists.linux.dev" <iommu@lists.linux.dev>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241022095017.479081-1-zhenzhong.duan@intel.com>
- <20241022095017.479081-3-zhenzhong.duan@intel.com>
- <813d32e8-e84c-4744-bc2c-b76adc10d00f@linux.intel.com>
- <SJ0PR11MB6744EC9F9B202E1BBE7DC4B1924D2@SJ0PR11MB6744.namprd11.prod.outlook.com>
-Content-Language: en-US
-From: Baolu Lu <baolu.lu@linux.intel.com>
-In-Reply-To: <SJ0PR11MB6744EC9F9B202E1BBE7DC4B1924D2@SJ0PR11MB6744.namprd11.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <64db4a88-4f2d-4d1d-8f7c-37c797d15529@redhat.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: kv4ZkB2-Mf5jHWjN5aziPIG7M60YrAaq
+X-Proofpoint-GUID: xdOQijmQwUZDsrA_f6jHNlHs_qGV4-Kl
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
+ mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
+ lowpriorityscore=0 spamscore=0 mlxlogscore=643 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410230042
 
-On 2024/10/23 13:16, Duan, Zhenzhong wrote:
->> -----Original Message-----
->> From: Baolu Lu<baolu.lu@linux.intel.com>
->> Sent: Wednesday, October 23, 2024 12:50 PM
->> Subject: Re: [PATCH 2/2] iommu/vt-d: Fix checks in pgtable_walk()
->>
->> On 2024/10/22 17:50, Zhenzhong Duan wrote:
->>> It's not accurate to dump super page as non-present page,
->>> meanwhile bit7 in first level page table entry is PAT bit,
->> Can you please explain how the 'bit7 in first level page table entry' is
->> relevant to the changes made in this patch?
-> When iterate to level 1, it is leaf page table entry, bit 7 is PAT bit instead of PS bit.
-> dma_pte_superpage(pte) may return true, then " PTE not present at level 1" may
-> be printed out.
+On Mon, Oct 21, 2024 at 04:45:59PM +0200, David Hildenbrand wrote:
+> For my purpose (virtio-mem), it's sufficient to only support "kexec
+> triggered kdump" either way, so I don't care.
+> 
+> So for me it's good enough to have
+> 
+> bool is_kdump_kernel(void)
+> {
+> 	return oldmem_data.start;
+> }
+> 
+> And trying to document the situation in a comment like powerpc does :)
 
-I see. Thank you!
-
-If you have a new version, can you please make it a bit clearer? My
-understanding is that dma_pte_superpage(pte) should not check against
-the leaf page table entries, right?
-
-Thanks,
-baolu
+Then let's go forward with this, since as Alexander wrote, this is returning
+what is actually happening. If this is not sufficient or something breaks we
+can still address this.
 
