@@ -1,104 +1,135 @@
-Return-Path: <linux-kernel+bounces-377880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377881-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C41F9AC801
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:30:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0299D9AC802
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:30:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 33BC41F2481C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:30:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B197B281CA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:30:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E07C61A0B08;
-	Wed, 23 Oct 2024 10:30:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 286631A2642;
+	Wed, 23 Oct 2024 10:30:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pEzpmZy1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="l+5jMATm"
+Received: from relay8-d.mail.gandi.net (relay8-d.mail.gandi.net [217.70.183.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 432E71662F6;
-	Wed, 23 Oct 2024 10:30:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C87EE15D5C3;
+	Wed, 23 Oct 2024 10:30:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729679419; cv=none; b=RXFBui1dJXG5wJNhYdyx/2cNY8IYn26r72tTkPr2IZ8E+MjaFjOHYaaMD+vxPO+VVTXpSS/pkSHzz71rGlRazMLPBoh5uwVIzJag+6cpDhsPcaNN2lSZ5wJKjZ5mvVHSlzxWUqJ+rhF/RHRtv+XQwx+MsBBvs+JE0BUwLsQ7jE0=
+	t=1729679420; cv=none; b=FkVLOStU+/ij/G0XU6XFxzX8DO6Lci2XJjBEKoQzPQgGUBYdH3O+pk9pRAknPax+JKVHR6NsGkOVU5m12XJhRI39wRkUsq6maZfrkxLSeaYdhEH1MKhE8MpGgpV3EydWkNV6ZFbW5UUS2RxKNVFi/yj1KV6/bkLuRL6+3EKJOe0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729679419; c=relaxed/simple;
-	bh=1yMvsbqKKxCmPBDkUMt3vUIL8R4RjnBl2vB8/PDwUCk=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=X+fXSVTfADxfYHL/eE7KsUeEQrbbf9XbP9Y4ud7R+w6HBoxmLIH9RuPePty6S7n8Eyh6vzqfqvuUpeGQJAyImZBJHOrjWXW4n1kqXFNDEkHIt4Gl3CDXb65tNUrNqol3rEE6jX7eZeVVtq6E7qOS7MCTPIuCSugLZPXnKdE1miM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pEzpmZy1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 33056C4CEC6;
-	Wed, 23 Oct 2024 10:30:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729679416;
-	bh=1yMvsbqKKxCmPBDkUMt3vUIL8R4RjnBl2vB8/PDwUCk=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=pEzpmZy1WbauAFljLYu5X2oUuavpPzogfbG3dvJHq0uRYEpUy5HPRo4Vyr3ZZVT59
-	 Dpmgxb0X8TpTPJcxQqbmpChIdwace8Zxaqe9T/5BocCVCz6EbbRFgyTpQ6eNb7sQPV
-	 UJhZoOOW/eNy0BB31qEtbSJ/kzdyUMNhHwF3Iqb24Xu0gdyc4Sx0TjWQH7yFtNYanC
-	 Km8POoGWxxaFPqQM342sVLn5reVMpoowxkv2VJK/vSQa6jyvCYmVJZ+gvXXA4WoeWG
-	 TfpbrlahDd5K1bxKh8K9fSYwMO8H9z+9tEzBBINPqs75DhUHUpvneD/2H4GGur096c
-	 7tMHv33au6qxQ==
-From: Conor Dooley <conor@kernel.org>
-To: Henry Bell <dmoo_dv@protonmail.com>,
-	E Shattow <e@freeshell.de>
-Cc: conor@kernel.org,
-	Conor Dooley <conor.dooley@microchip.com>,
-	Emil Renner Berthing <kernel@esmil.dk>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	devicetree@vger.kernel.org,
-	linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] riscv: dts: starfive: Update ethernet phy0 delay parameter values for Star64
-Date: Wed, 23 Oct 2024 11:30:03 +0100
-Message-ID: <20241023-guts-versus-1a2bcfdfbec2@spud>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241022061004.62812-1-e@freeshell.de>
-References: <20241022061004.62812-1-e@freeshell.de>
+	s=arc-20240116; t=1729679420; c=relaxed/simple;
+	bh=dOCQHfeOAkgXh2JrunAu9gHeLhGEIKF9LRTDykv07m4=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=mxM6X5l73qhSW5Ex4pRZYUDWdV3c4ZQzeUmavVcDt00LOoISZXf2/OakbdoVxenK2Um0RgPj/QHvSHp3QhXLuAlsNMsyGWvhnTIKKevXyl8Ovmlt1cDWDbrYfJ5mFDt/aleUVsyzLTZN6x9wgHKPTSTSMKPjdsPE1ARJQQ6uz90=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=l+5jMATm; arc=none smtp.client-ip=217.70.183.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
+Received: by mail.gandi.net (Postfix) with ESMTPSA id B45EA1BF212;
+	Wed, 23 Oct 2024 10:30:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
+	t=1729679417;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CMFTUHAj70OERwwWzi9yxbynPpD8S8y4BGK+6PB4HEU=;
+	b=l+5jMATm4m4Ezx0EVbIVhHbJWaDtJHmKEV9YtgZCabCwKgTm1DP4ZXx7hKS2HIvUvF+NIn
+	r1ckqEHVCbSrk2coJVjwDgUBxAiCPBL+THYam6OmnqVfHJnwB/So0GWfN0HEw7wXTeyht5
+	NlGRZrBu90OOuZamArfvRauuYqulHh8EPZgQyjrbUA2BCHUrKSrrJ/gsoBau5DUJV3tekP
+	1Gi8lu1vDA4+ftFJerue03hDe5pBLS87lYC3iYqR/KqjkT+HdmKIyw0HVdDFXuLehnYX9m
+	TmRGvWttQoEvHg6eK/nwnviHjaecTr584Yw3XR+i/f5NdIWg0QGoB3kuBo0ZZg==
+Message-ID: <d84debf0-5e98-4c2e-88a7-e1db73fdbac3@yoseli.org>
+Date: Wed, 23 Oct 2024 12:30:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-X-Developer-Signature: v=1; a=openpgp-sha256; l=965; i=conor.dooley@microchip.com; h=from:subject:message-id; bh=+Ekbc+eRHl5mRs0Lm29hCW/ghDBTMs/HMot0ehs2yl0=; b=owGbwMvMwCFWscWwfUFT0iXG02pJDOkSF7QL0ree2ZbMXZQlMCXr76OrQdvPHms5pi8w05kn1 rn2Y9iyjlIWBjEOBlkxRZbE230tUuv/uOxw7nkLM4eVCWQIAxenAExkRw8jwzHbSR0bzPOnlKkv OVUq98LQgVHDZdnJL+fNwyYnhosaZDD8M3rfJsfbvHmzt57gc/bPn0I4xWaW3Diw78tsza7aDKl SPgA=
-X-Developer-Key: i=conor.dooley@microchip.com; a=openpgp; fpr=F9ECA03CF54F12CD01F1655722E2C55B37CF380C
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
+From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+To: Geert Uytterhoeven <geert@linux-m68k.org>
+Cc: Steven Rostedt <rostedt@goodmis.org>, linux-m68k@lists.linux-m68k.org,
+ linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
+ <20241022012809.1ef083cd@rorschach.local.home>
+ <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
+ <20241022043037.13efb239@rorschach.local.home>
+ <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
+ <20241023044711.3eb838fe@rorschach.local.home>
+ <262d7758-c752-49f6-87ef-4f75d681a919@yoseli.org>
+ <CAMuHMdXKCWnFuyOzQyAWdEV4EhqXYXJFn4vCw5ptZ5=sbOCbxg@mail.gmail.com>
+ <ec30a0d3-6d53-4350-a26b-c4d8b41057ec@yoseli.org>
+Content-Language: en-US
+In-Reply-To: <ec30a0d3-6d53-4350-a26b-c4d8b41057ec@yoseli.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
+X-GND-Sasl: jeanmichel.hautbois@yoseli.org
 
-From: Conor Dooley <conor.dooley@microchip.com>
+Hi Geert, all,
 
-On Mon, 21 Oct 2024 23:09:51 -0700, E Shattow wrote:
-> Improve function of Star64 bottom network port phy0 with updated delay values.
-> Initial upstream patches supporting Star64 use the same vendor board support
-> package parameters known to result in an unreliable bottom network port.
+On 23/10/2024 11:31, Jean-Michel Hautbois wrote:
+> Hi Geert,
 > 
-> Success acquiring DHCP lease and no dropped packets to ping LAN address:
-> rx  900: tx 1500 1650 1800 1950
-> rx  750: tx      1650 1800 1950
-> rx  600: tx           1800 1950
-> rx 1050: tx      1650 1800 1950
-> rx 1200: tx 1500 1650 1800 1950
-> rx 1350: tx 1500 1650 1800 1950
-> rx 1500: tx 1500 1650 1800 1950
-> rx 1650: tx 1500 1650 1800 1950
-> rx 1800: tx 1500 1650 1800 1950
-> rx 1900: tx                1950
-> rx 1950: tx                1950
+> On 23/10/2024 11:13, Geert Uytterhoeven wrote:
+>> Hi Jean-Michel,
+>>
+>> On Wed, Oct 23, 2024 at 11:07 AM Jean-Michel Hautbois
+>> <jeanmichel.hautbois@yoseli.org> wrote:
+>>> On 23/10/2024 10:47, Steven Rostedt wrote:
+>>>> On Tue, 22 Oct 2024 11:21:34 +0200
+>>>> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+>>>>> I was not really expecting you to review the m68k one no :-).
+>>>>> I think I have other issues which might have impact on ftrace too.
+>>>>> For instance, when I launch cyclictest I have a warning about 
+>>>>> HRTIMERS:
+>>>>> # cyclictest -p 99
+>>>>> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
+>>>>> WARN: High resolution timers not available
+>>>>> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
+>>>>>
+>>>>> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 
+>>>>> Max:
+>>>>>      3516
+>>>>>
+>>>>> The latencies are quite high...
+>>>>
+>>>> Yes, if you don't have high resolution timers, the latency will be 
+>>>> high.
+>>>
+>>> According to my config, I should have those:
+>>> CONFIG_HIGH_RES_TIMERS=y
+>>
+>> Does your hardware have a high resolution timer, and do you have
+>> a driver for it?
+>>
+>> $ git grep hrtimer -- arch/m68k/
+>> $
+>>
 > 
-> [...]
+> No, there is nothing with hrtimer. But, the architecture has four dma 
+> timers, with a 8ns resolution at 125MHz says the documentation. I will 
+> try to find a way to implement the missing part.
+> 
 
-Applied to riscv-soc-fixes, thanks!
+I gave it a hacky try. And it seems to be *a lot* better:
+# cyclictest -p 99 -l 10000
+WARN: stat /dev/cpu_dma_latency failed: No such file or directory
+policy: fifo: loadavg: 1.18 0.71 0.33 1/122 258
 
-[1/1] riscv: dts: starfive: Update ethernet phy0 delay parameter values for Star64
-      https://git.kernel.org/conor/c/825bb69228c8
+T: 0 (  258) P:99 I:1000 C:  10000 Min:    118 Act: 1104 Avg:  418 Max: 
+   1858
+
+I will try to clean it a bit for another patch set :-).
 
 Thanks,
-Conor.
+JM
 
