@@ -1,150 +1,196 @@
-Return-Path: <linux-kernel+bounces-377721-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377722-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 09FB49AC2F7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:08:10 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id E0B4A9AC30F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:08:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E9341F23B17
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:08:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 70C811F246F7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:08:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AB7C176AA5;
-	Wed, 23 Oct 2024 09:08:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b="BqAUoxVE"
-Received: from relay9-d.mail.gandi.net (relay9-d.mail.gandi.net [217.70.183.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E73176AA5;
+	Wed, 23 Oct 2024 09:08:41 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1C7981662FA;
-	Wed, 23 Oct 2024 09:07:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FEB15CD60
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:08:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674482; cv=none; b=Qm6sNhAO0AjuJgvUvzYZW42kSxttPTsx3XVPpyIucUUW2k/tQZUjQSVlphRFhyRGVXh3QhHryQS8VjnGNk9X1dK5Ko758fmVoQSUzab5bg+2mTM0kbNtQOfE4S1B9L5vtU3EB2knTNXxjChzfxCMF6KLWJOrzitk4cs2JT8XA24=
+	t=1729674520; cv=none; b=EDw2tkNj+qhNF1LokqWWpFykXdqiAxyuQYzsByeUrJviRDlxejIUR1ic7HoTZcBohswtkVoBC2wfsmhsBli20gqMxiVcnfAPgVO2wsIrRWPqZmuiXKou5quPRY29YkZc6IkeG9Bv799KWSidJ+dyZsMOKVBOjI3j3Cg495uuUtY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674482; c=relaxed/simple;
-	bh=tbDydY/g0gP9i/qHvzsa6DB2Vdww1QZr+ZuT0zDljw4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=I4tjvjk1u64Gmekg1/sgPqlrgU6b1IfYGSFZIl/eI/bbzVnM4Bd7WTZzH4JYIurbs0X7EU3cf8GOc3IoS0SfhjW5rOI6TEK9j4mne1NG87WYL9GGl4b+icE9UlCiNZ/oRjnp+xm4dmT/ISCwxH0PYcgSwjK14pIjvMvuqSaifKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org; spf=none smtp.mailfrom=yoseli.org; dkim=pass (2048-bit key) header.d=yoseli.org header.i=@yoseli.org header.b=BqAUoxVE; arc=none smtp.client-ip=217.70.183.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=yoseli.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=yoseli.org
-Received: by mail.gandi.net (Postfix) with ESMTPSA id 0D120FF805;
-	Wed, 23 Oct 2024 09:07:57 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yoseli.org; s=gm1;
-	t=1729674478;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=duGBblZySXHjNbKpCsyaY0S9onpbOMK+ADpEkjW/JZM=;
-	b=BqAUoxVED0LIxgKeWcHgf7n1XLzvkg1oy+PjoAWgpY2rUUMVm8TE/CzS4r0mPiR48HoHxl
-	QuOdhKl4+36K0eMHOGa+HJMIqMRrtTbRf4OirwQbNDWllU43pr6bht0HzvoAE2w4CTL5/q
-	1AZ7nEBA2My9w8GFKlwYzA/sI6u9lh3ttN/Jd6WnsoJkOyFPuVDkdNxSy2ZstpKI5ZzgEz
-	wP2Oc2xgXuPfbCf76TzH34cLIU8OZOfDofRpHCaZUdRPwSA+P8xXzMhHc2R51PR0AhnEao
-	Jc61cHneZzrUrz20Ar4fzzhicKfpmO/RA/UT9kIKYzFeYHmbic67H+RwDHH4Pw==
-Message-ID: <262d7758-c752-49f6-87ef-4f75d681a919@yoseli.org>
-Date: Wed, 23 Oct 2024 11:07:57 +0200
+	s=arc-20240116; t=1729674520; c=relaxed/simple;
+	bh=zEqtjKIPHRyCLSz2AKxhu0W5IyazP2Kj/dcZoCoovZs=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=URHK9982ACQ9/Hjfvg2tyIP5x5lkg2a4GLAlTLbLDBis/9PfqHQClH1qDthQ0MNZiPjt+Fa8naOL7Q0ct4AmLYdB2pNipnFAKMk7BCP/jmDx61VLCAQlQkbvijjgJYEcYWU7l0bVf4kS3pB9DWiuG/1dN9JTqmMePD/OP9LcLpI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3cd35858aso59196435ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:08:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729674518; x=1730279318;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=7x3De/oISwjfrDk09tDIxDDeq0y554RwIR8zLg9MxfU=;
+        b=OKofu9rQT+/p3qcd6mhp4T94RLGvXiRkFOTlM8E5ye38OHmnF70iFpvSof4DMYYRWY
+         mFACGQ+3SpAeoYNPf08vW4GLbfot7huqj7/cNUoruF7YHvlL0oqC+hRgiJPyi/j5MBUF
+         7ux/5keVJwXEQNUJntHuMfDP++HdAynPCfOY3f5qphylL0vhjlrzI4grahI323sGkIPu
+         b/QonQryJLUVHyOv2mk9wL75I70CGLqdkqP3j9sq9eejItLzN3tCe13UUJwuszpUFgBJ
+         v52a2RKwSWwPAZVu/ZGDzRivR1BnWq8WEokOD+fOzZ0F+FjzMIl8jI0wDKhPupB3bmqK
+         tn6Q==
+X-Forwarded-Encrypted: i=1; AJvYcCWRC81GeQjW0BZRh2UiGygakc/Q/hhd0pqeJ9OLhlaxd+JL9ZTTE6zZBLuao5DJ8+valtZOWnMN/gqwpbM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzW4Jh4sJxulC3Zg6udEzCydA59X5w24HRFG5/2ptflekDOOxBd
+	MM3kdBXvrzIu7GPCqx0NHBvY1+Kyx6jk/cVvkFyg9uV5H8HpatxnDoM2Ox3ORKShggCTDLQgkuY
+	6KQtbh/N78WWV9wGSWvCaHOIQZG0hAEX0TfazhEyVcZapsLKXhFBWE18=
+X-Google-Smtp-Source: AGHT+IGVd8RWxriAdjeQ26FuLwFn4saFDWlWPe7tOOqWCDsplhsVxb/XtiKImoB0Ti47VzRLi/+FCoNq91NnAzR5BwN4/Oj3gC9P
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
- linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
- <20241022012809.1ef083cd@rorschach.local.home>
- <075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
- <20241022043037.13efb239@rorschach.local.home>
- <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
- <20241023044711.3eb838fe@rorschach.local.home>
-Content-Language: en-US
-From: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-In-Reply-To: <20241023044711.3eb838fe@rorschach.local.home>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-GND-Sasl: jeanmichel.hautbois@yoseli.org
+X-Received: by 2002:a05:6e02:1486:b0:3a0:9aef:4d0 with SMTP id
+ e9e14a558f8ab-3a4d592cdecmr17763035ab.5.1729674518019; Wed, 23 Oct 2024
+ 02:08:38 -0700 (PDT)
+Date: Wed, 23 Oct 2024 02:08:37 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6718bd15.050a0220.10f4f4.01a0.GAE@google.com>
+Subject: [syzbot] [btrfs?] general protection fault in btrfs_lookup_csums_bitmap
+From: syzbot <syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com>
+To: clm@fb.com, dsterba@suse.com, josef@toxicpanda.com, 
+	linux-btrfs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Hi Steve,
+Hello,
 
-On 23/10/2024 10:47, Steven Rostedt wrote:
-> On Tue, 22 Oct 2024 11:21:34 +0200
-> Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
-> 
->>
->> I was not really expecting you to review the m68k one no :-).
->> I think I have other issues which might have impact on ftrace too.
->> For instance, when I launch cyclictest I have a warning about HRTIMERS:
->> # cyclictest -p 99
->> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
->> WARN: High resolution timers not available
->> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
->>
->> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 Max:
->>     3516
->>
->> The latencies are quite high...
-> 
-> Yes, if you don't have high resolution timers, the latency will be high.
-> 
+syzbot found the following issue on:
 
-According to my config, I should have those:
-CONFIG_HIGH_RES_TIMERS=y
+HEAD commit:    b04ae0f45168 Merge tag 'v6.12-rc3-smb3-client-fixes' of gi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=11478430580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d2b33d7835870519b5f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=1162d240580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=15478430580000
 
->>
->> But regarding ftrace it seems that the trace is not able to give me more
->> than a microsecond precision. I addded a few trace_printk() in a driver
->> of mine and I get:
->>    irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt:
->> Received 2 bytes
->>    irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt:
->> Received 2 bytes
->>    irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt:
->> dspi_interrupt
->>    irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: TX
->> FIFO overflow
->>    irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt:
->> Restart FIFO
->>
->> Do you have any clue ?
-> 
-> Yes. The ring buffer clock is dependent on the architecture's clock. By
-> default, it uses whatever the scheduler clock uses. If the scheduler
-> clock is 1ms resolution, so will the tracing data be.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b04ae0f4.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/3e40a4ec7885/vmlinux-b04ae0f4.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/9312d8ec05d3/bzImage-b04ae0f4.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/d4d1e4e89afc/mount_0.gz
 
-By default. So, I could change it to mono_raw for instance :-). It seems 
-that timerlat is ok with it !
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com
 
-     irq/178-UART-99      [000] D.h1.    95.766649: #27138 context 
-irq timer_latency    525376 ns
-       timerlat/0-235     [000] .....    95.766826: #27138 context 
-thread timer_latency    697920 ns
-           <idle>-0       [000] dnh1.    95.767682: #27139 context 
-irq timer_latency    559616 ns
-       timerlat/0-235     [000] .....    95.767839: #27139 context 
-thread timer_latency    713216 ns
-           <idle>-0       [000] dnh1.    95.768701: #27140 context 
-irq timer_latency    577984 ns
-       timerlat/0-235     [000] .....    95.768861: #27140 context 
-thread timer_latency    734656 ns
-     irq/178-UART-99      [000] d.h1.    95.769671: #27141 context 
-irq timer_latency    548736 ns
-       timerlat/0-235     [000] .....    95.769838: #27141 context 
-thread timer_latency    711552 ns
-     irq/178-UART-99      [000] D.h1.    95.770664: #27142 context 
-irq timer_latency    540992 ns
-       timerlat/0-235     [000] .....    95.770841: #27142 context 
-thread timer_latency    713024 ns
+workqueue: max_active 32767 requested for btrfs-compressed-write is out of range, clamping between 1 and 512
+workqueue: max_active 32767 requested for btrfs-scrub is out of range, clamping between 1 and 512
+BTRFS info (device loop0 state CS): scrub: started on devid 1
+Oops: general protection fault, probably for non-canonical address 0xdffffc0000000041: 0000 [#1] PREEMPT SMP KASAN NOPTI
+KASAN: null-ptr-deref in range [0x0000000000000208-0x000000000000020f]
+CPU: 0 UID: 0 PID: 5110 Comm: syz-executor381 Not tainted 6.12.0-rc3-syzkaller-00319-gb04ae0f45168 #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:btrfs_lookup_csums_bitmap+0xc4/0x1600 fs/btrfs/file-item.c:615
+Code: 8c 24 a8 00 00 00 42 c7 44 31 08 f3 f3 f3 f3 e8 d2 83 e1 fd 48 89 9c 24 88 00 00 00 48 81 c3 08 02 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 9d 39 4b fe 4c 8b 2b ba 11 00 00
+RSP: 0018:ffffc9000af5f100 EFLAGS: 00010206
+RAX: 0000000000000041 RBX: 0000000000000208 RCX: ffff888000cf2440
+RDX: 0000000000000000 RSI: ffff888047132080 RDI: 0000000000000000
+RBP: ffffc9000af5f290 R08: ffff88801fb3c800 R09: ffffc9000af5f420
+R10: dffffc0000000000 R11: ffffed1008e2402e R12: 0000000000500000
+R13: ffffc9000af5f420 R14: dffffc0000000000 R15: 0000000000500000
+FS:  00005555764d5480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055572fc64400 CR3: 0000000040a06000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ scrub_find_fill_first_stripe+0xe96/0x1200 fs/btrfs/scrub.c:1618
+ queue_scrub_stripe fs/btrfs/scrub.c:1912 [inline]
+ scrub_simple_mirror+0x5c6/0x960 fs/btrfs/scrub.c:2144
+ scrub_stripe+0xa7a/0x2a60 fs/btrfs/scrub.c:2310
+ scrub_chunk+0x2e3/0x470 fs/btrfs/scrub.c:2442
+ scrub_enumerate_chunks+0xc4f/0x16a0 fs/btrfs/scrub.c:2706
+ btrfs_scrub_dev+0x774/0xde0 fs/btrfs/scrub.c:3028
+ btrfs_ioctl_scrub+0x236/0x370 fs/btrfs/ioctl.c:3251
+ vfs_ioctl fs/ioctl.c:51 [inline]
+ __do_sys_ioctl fs/ioctl.c:907 [inline]
+ __se_sys_ioctl+0xf9/0x170 fs/ioctl.c:893
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f4e99a28f19
+Code: 28 00 00 00 75 05 48 83 c4 28 c3 e8 f1 17 00 00 90 48 89 f8 48 89 f7 48 89 d6 48 89 ca 4d 89 c2 4d 89 c8 4c 8b 4c 24 08 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffcb799b9b8 EFLAGS: 00000246 ORIG_RAX: 0000000000000010
+RAX: ffffffffffffffda RBX: 0000000000000000 RCX: 00007f4e99a28f19
+RDX: 0000000020000000 RSI: 00000000c400941b RDI: 0000000000000004
+RBP: 0000000000000000 R08: 0000000000000000 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 00007ffcb799ba00
+R13: 00007ffcb799bc88 R14: 431bde82d7b634db R15: 00007f4e99a7103b
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:btrfs_lookup_csums_bitmap+0xc4/0x1600 fs/btrfs/file-item.c:615
+Code: 8c 24 a8 00 00 00 42 c7 44 31 08 f3 f3 f3 f3 e8 d2 83 e1 fd 48 89 9c 24 88 00 00 00 48 81 c3 08 02 00 00 48 89 d8 48 c1 e8 03 <42> 80 3c 30 00 74 08 48 89 df e8 9d 39 4b fe 4c 8b 2b ba 11 00 00
+RSP: 0018:ffffc9000af5f100 EFLAGS: 00010206
+RAX: 0000000000000041 RBX: 0000000000000208 RCX: ffff888000cf2440
+RDX: 0000000000000000 RSI: ffff888047132080 RDI: 0000000000000000
+RBP: ffffc9000af5f290 R08: ffff88801fb3c800 R09: ffffc9000af5f420
+R10: dffffc0000000000 R11: ffffed1008e2402e R12: 0000000000500000
+R13: ffffc9000af5f420 R14: dffffc0000000000 R15: 0000000000500000
+FS:  00005555764d5480(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 000055572fc64400 CR3: 0000000040a06000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+----------------
+Code disassembly (best guess):
+   0:	8c 24 a8             	mov    %fs,(%rax,%rbp,4)
+   3:	00 00                	add    %al,(%rax)
+   5:	00 42 c7             	add    %al,-0x39(%rdx)
+   8:	44 31 08             	xor    %r9d,(%rax)
+   b:	f3 f3 f3 f3 e8 d2 83 	repz repz repz repz call 0xfde183e6
+  12:	e1 fd
+  14:	48 89 9c 24 88 00 00 	mov    %rbx,0x88(%rsp)
+  1b:	00
+  1c:	48 81 c3 08 02 00 00 	add    $0x208,%rbx
+  23:	48 89 d8             	mov    %rbx,%rax
+  26:	48 c1 e8 03          	shr    $0x3,%rax
+* 2a:	42 80 3c 30 00       	cmpb   $0x0,(%rax,%r14,1) <-- trapping instruction
+  2f:	74 08                	je     0x39
+  31:	48 89 df             	mov    %rbx,%rdi
+  34:	e8 9d 39 4b fe       	call   0xfe4b39d6
+  39:	4c 8b 2b             	mov    (%rbx),%r13
+  3c:	ba                   	.byte 0xba
+  3d:	11 00                	adc    %eax,(%rax)
 
-> 
-> -- Steve
-> 
 
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
