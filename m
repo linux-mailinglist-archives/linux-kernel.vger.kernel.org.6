@@ -1,509 +1,339 @@
-Return-Path: <linux-kernel+bounces-377170-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377171-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B1A49ABAC4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:57:48 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B96FF9ABAC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:58:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8386C1F23E18
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:57:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7528E285017
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:58:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC21E1C6A3;
-	Wed, 23 Oct 2024 00:57:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E2DF1AAC4;
+	Wed, 23 Oct 2024 00:58:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="xmM+pHu5"
-Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CRGD0L/D"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CA68F1B813
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:57:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9D50329CA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:58:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729645058; cv=none; b=XijomRfh7pB/xaPCSWzlrIHqZGD6CG/PVTbE9D1E3TowjkUtYzgCvIx7VbJwLEqx6mw5tgOTdqcTOgsYur80MsIoWKqDauiJDM2PCDuha4Aeld0/Cb3SRdQM9pIFVs+1VwUXkcre5FD4u6Y4B1e9ltG02gmKKo4jKvISqxqxIR8=
+	t=1729645100; cv=none; b=YBzdxMYkVwK39WIpEXnvh9nduVei+16qerfviZDmf/xfIeiL6DSOEgUd3nOQiRYC64UXrleF3BrFfcns60X+bVbr1J/fug/xkyG/CXvO1A//3hsEYO4iz1qTuMrhNu5NSss65Gr77+hnW8esq9g2zU9eHrEhQaVvPZ42wJseSg8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729645058; c=relaxed/simple;
-	bh=WKMg7r5uv6sja/nST2kyGAzJQXI3GsCqP8GL/I7PYa4=;
+	s=arc-20240116; t=1729645100; c=relaxed/simple;
+	bh=SqSf5pGZ8Xm3VI+2adFpBL/dJUNIOYyz90exxJJcMfk=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=I6GNssUm7UZnNwY4oPN9qkILLRKFAr9EGL7xt4v5QZkZii1ViBNLWFjAw5pP+rXVHDm48GChr8XoeU3rzegllY7gqqnM7vZzoZ80fPDZHTwY0NSr4OB/LHM+EHIBKDVgWHKfwbyucbx37Oolxpd/kn0sPz4+t8+MWGulwYeoKPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=xmM+pHu5; arc=none smtp.client-ip=209.85.167.42
+	 To:Cc:Content-Type; b=A49HfmRUneIAgL0DEn5z9GGs0F/zP+t+EDD7KjpGOPovlJsiOimhw0sJbg0aRjJnTv3krzxpwW3oK5kPDxgVrobN0fvBfbqd42i3a+CD6arc90tc5dHwBcoMq902iAotY/jEajOv3Udxotu5qXsCP1NNtijAdoXodQLjizqkf/A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CRGD0L/D; arc=none smtp.client-ip=209.85.210.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-539f2b95775so7380484e87.1
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:57:36 -0700 (PDT)
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e7086c231so4743171b3a.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:58:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729645055; x=1730249855; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729645098; x=1730249898; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=MeXSAL+y+3H2wvc+euef7BeJQcQ0H2qAVwYECCHhQc4=;
-        b=xmM+pHu5k90e41TNGj1TnZ4SFuFg2EBsHWXAA0O+Roi3xiOOpUY/2GonfCDr0/f/Pr
-         4RZQtcwBRhzUW1hBNe/EvRVjIj4PxyUAJPgHN2VJyhSXRcp3mFKqjkY2WO0w4qBboQ8q
-         svdOwsc1NvjkkaoviBAS6qMvB90Lx14OEwLvlyh+9Y+dwIaZK0t3Jm6qCR4flmteu4N2
-         ESR3NfTEWCQGpusJp0OZX529/uhoVmOgwoWAK7ZLb/VVY0qFZQ80zVRhPwclWeblPhKO
-         tYfz89Xt1bCWAGEQ1151N8TrVEKD5vhRNqQkwUvisNjUq6yg+AhnSTJQ5Lz0Y22T9LMv
-         zikw==
+        bh=B1X+k4ALoGij2h8EJoArvR6OhIJFBlu5UZi57RZJEgs=;
+        b=CRGD0L/DzHn/lVRL+beWiwtMIbyGR9WaXX9kYaIDfPd4HlxZGukZUuP3dRAu8xQWbR
+         5j+DzSdMcoM+2Xfy854G2JfsGsFdsWiv6LlJ6JEpyE7v2vcjQkvQF1r4qbLnb5CwB7RC
+         DhiTdFW5ePugjhu5tsq202V73J+KdIZBnToPKT7HUIfLhhUAVFOVOc0LOcYGucPrybu5
+         G6vOKSOkqrmLPKyY9feoxvJfF0BGsoVFcf5rhq0Mil6eMYCDzGjyG+mSKmtTqjnqg2gb
+         oOZiCe2L1+3DbJNLFJd7i6gdrLSX/6Dx3FRrOvyvyb66EG3XdczEzFf8w8QgNE+Hz1Uj
+         gE0w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729645055; x=1730249855;
+        d=1e100.net; s=20230601; t=1729645098; x=1730249898;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MeXSAL+y+3H2wvc+euef7BeJQcQ0H2qAVwYECCHhQc4=;
-        b=D4tKmpNR64lbNL/YNHg24k51++QnNIY09BYZ42gGeOqHZxLrUXkFR3VJF+VTs/iFrw
-         fOYm6EjJ5jFQXwcfSn+15/Zms8nbht6CscNp2QewDdB94MNYQH4Ct5+rS5vDq4v/mYQb
-         UHQ74xdMBsr42oQsstpcigyFrYrVYA1tQ59aByazPVz9MkoilMReECU/1s6GWRSUbXoB
-         l7X4PN9jKcLFSPcVXtrfL7thL6pKQL1xQ3dWDfzsog2yKFqrXUAPd6bIXr2oHvuWD/EG
-         M4rZ5sviMv75qsB7hgHg089tyuR7KKII8pOZievIxMudFlFXNg5//25Tcv9+7/UI9/ch
-         gCRg==
-X-Gm-Message-State: AOJu0YxWTKJuIIEjNRuoAA7i1xiu7kZGvfTVD8amrWowTj80PXGrF5MF
-	j0iKlqntB49fVzg+a6664rKeFxNzl7djqzCRIAgosqMJ1a4OpSg2D/PlqhYf5EJiCSGW0u/htvy
-	rsqrRZpavYZwFoyov5yFwgh8dJxkEkYbkrwOEJp0QWZlXQkJtvA==
-X-Google-Smtp-Source: AGHT+IF4UEmrRhjIlbtGWa81MoTbxoRdBd5botAhosqlKJWcq9ld67eM1ZXWrrmloPnHZeSED5Xqm1DxaRCBX2N5r4w=
-X-Received: by 2002:a05:6512:10c4:b0:530:b773:b4ce with SMTP id
- 2adb3069b0e04-53b1a34e1camr501661e87.33.1729645054540; Tue, 22 Oct 2024
- 17:57:34 -0700 (PDT)
+        bh=B1X+k4ALoGij2h8EJoArvR6OhIJFBlu5UZi57RZJEgs=;
+        b=qksGqwcCtgggID/5PTLTPSzvO+CDMkq49/ODt66JqC2jKiGhF4pQLeQvXTMSfYuiSz
+         az5UFGRbjQ5h5c6liPjoteefRXBBDVIJuWFZTFT7QkRTdPCYWWiampURQejvdLZw3wdr
+         vbFuLOtXR8i9YTj1a63cLDC8p/uZiVzukvc8veLM4Q8ebiXxz0kUKudJM1RNTdFRvUk4
+         0wj0GnRGVNsO4DquT92EobKX51xZJfNtryKSxqLUT6TgI2Y87rAuc2GAxM7/bdwIXOXi
+         DtH38fg8a80MlZFkXjPzgixrP14SnSK8rv/vsyu5tCkg9JFOvb9dc5l0QCmJQ9fERZKq
+         R7Kg==
+X-Forwarded-Encrypted: i=1; AJvYcCUtlCWUQqD81Bx3PDPj9hxHWgrKagfbiVrbXHk/GBu/VGlnSn3VfEatjbWMDGT1QSd8VKeqghBGnW0VROo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwwyN08NG9mXnkArKQhwzcof03/xp8lah1EMWITGjnLlAveQWbm
+	6JP+yNWNNieiwmwBDMjv5JeJPUQG9iHMHAmKbD152PltEZ1aREfRN/ZV0qUhHIHVdYB4BxhwAGL
+	79009pfjvhvLWxce3wDqns5nHJw4SkHkMiFDu
+X-Google-Smtp-Source: AGHT+IEbEqhIXl1K1tfHoQmQ1uIOs+Y6i7tWxL4ASffCS7bsrtHTPoy6lbz+wkFAomlLun3HDdM08BoqoUxom18Txfw=
+X-Received: by 2002:aa7:8896:0:b0:71e:79a9:ec55 with SMTP id
+ d2e1a72fcca58-72030a895a4mr1688550b3a.7.1729645097384; Tue, 22 Oct 2024
+ 17:58:17 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
-In-Reply-To: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 22 Oct 2024 17:56:58 -0700
-Message-ID: <CAJD7tkamDPn8LKTd-0praj+MMJ3cNVuF3R0ivqHCW=2vWBQ_Yw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 00/13] zswap IAA compress batching
-To: Kanchana P Sridhar <kanchana.p.sridhar@intel.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
-	nphamcs@gmail.com, chengming.zhou@linux.dev, usamaarif642@gmail.com, 
-	ryan.roberts@arm.com, ying.huang@intel.com, 21cnbao@gmail.com, 
-	akpm@linux-foundation.org, linux-crypto@vger.kernel.org, 
-	herbert@gondor.apana.org.au, davem@davemloft.net, clabbe@baylibre.com, 
-	ardb@kernel.org, ebiggers@google.com, surenb@google.com, 
-	kristen.c.accardi@intel.com, zanussi@kernel.org, viro@zeniv.linux.org.uk, 
-	brauner@kernel.org, jack@suse.cz, mcgrof@kernel.org, kees@kernel.org, 
-	joel.granados@kernel.org, bfoster@redhat.com, willy@infradead.org, 
-	linux-fsdevel@vger.kernel.org, wajdi.k.feghali@intel.com, 
-	vinodh.gopal@intel.com
+References: <20240624-fwdevlink-probed-no-err-v1-1-d1213cd354e2@collabora.com>
+ <CAGETcx-sAu-wMDKT9zCeCzLzZ=ZdvK+CSoX34YxMLd5z0YeVZQ@mail.gmail.com>
+ <7b995947-4540-4b17-872e-e107adca4598@notapiano> <575b02aa-6496-492b-b37d-d0612165eda3@notapiano>
+ <CAGETcx9e4mpcMY+pqMYXsVWGcjgkctCqgO665KgqUH4JvYbUAQ@mail.gmail.com>
+ <c622df86-0372-450e-b3dd-ab93cd051d6f@notapiano> <da4e5807-712d-4d08-a780-f363cee823b9@notapiano>
+ <ce40a778-ea62-455b-9c05-aa4ff35b49b5@nvidia.com> <fecb4264-217b-464b-9b1c-226898abff7b@notapiano>
+In-Reply-To: <fecb4264-217b-464b-9b1c-226898abff7b@notapiano>
+From: Saravana Kannan <saravanak@google.com>
+Date: Tue, 22 Oct 2024 17:57:37 -0700
+Message-ID: <CAGETcx95hf+xBCXvczq=Qx1n1QgdqSM-ezBDNj4ys=gwWm6gyQ@mail.gmail.com>
+Subject: Re: [PATCH] driver core: Don't log intentional skip of device link
+ creation as error
+To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
+Cc: Jon Hunter <jonathanh@nvidia.com>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	"Rafael J. Wysocki" <rafael@kernel.org>, kernel@collabora.com, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 17, 2024 at 11:41=E2=80=AFPM Kanchana P Sridhar
-<kanchana.p.sridhar@intel.com> wrote:
+On Tue, Oct 15, 2024 at 2:32=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
+<nfraprado@collabora.com> wrote:
 >
->
-> IAA Compression Batching:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
->
-> This RFC patch-series introduces the use of the Intel Analytics Accelerat=
-or
-> (IAA) for parallel compression of pages in a folio, and for batched recla=
-im
-> of hybrid any-order batches of folios in shrink_folio_list().
->
-> The patch-series is organized as follows:
->
->  1) iaa_crypto driver enablers for batching: Relevant patches are tagged
->     with "crypto:" in the subject:
->
->     a) async poll crypto_acomp interface without interrupts.
->     b) crypto testmgr acomp poll support.
->     c) Modifying the default sync_mode to "async" and disabling
->        verify_compress by default, to facilitate users to run IAA easily =
-for
->        comparison with software compressors.
->     d) Changing the cpu-to-iaa mappings to more evenly balance cores to I=
-AA
->        devices.
->     e) Addition of a "global_wq" per IAA, which can be used as a global
->        resource for the socket. If the user configures 2WQs per IAA devic=
-e,
->        the driver will distribute compress jobs from all cores on the
->        socket to the "global_wqs" of all the IAA devices on that socket, =
-in
->        a round-robin manner. This can be used to improve compression
->        throughput for workloads that see a lot of swapout activity.
->
->  2) Migrating zswap to use async poll in zswap_compress()/decompress().
->  3) A centralized batch compression API that can be used by swap modules.
->  4) IAA compress batching within large folio zswap stores.
->  5) IAA compress batching of any-order hybrid folios in
->     shrink_folio_list(). The newly added "sysctl vm.compress-batchsize"
->     parameter can be used to configure the number of folios in [1, 32] to
->     be reclaimed using compress batching.
-
-I am still digesting this series but I have some high level questions
-that I left on some patches. My intuition though is that we should
-drop (5) from the initial proposal as it's most controversial.
-Batching reclaim of unrelated folios through zswap *might* make sense,
-but it needs a broader conversation and it needs justification on its
-own merit, without the rest of the series.
-
->
-> IAA compress batching can be enabled only on platforms that have IAA, by
-> setting this config variable:
->
->  CONFIG_ZSWAP_STORE_BATCHING_ENABLED=3D"y"
->
-> The performance testing data with usemem 30 instances shows throughput
-> gains of up to 40%, elapsed time reduction of up to 22% and sys time
-> reduction of up to 30% with IAA compression batching.
->
-> Our internal validation of IAA compress/decompress batching in highly
-> contended Sapphire Rapids server setups with workloads running on 72 core=
+> On Mon, Oct 14, 2024 at 01:49:56PM +0100, Jon Hunter wrote:
+> > Hi Nicolas, Saravanna,
+> >
+> > On 02/10/2024 21:57, N=C3=ADcolas F. R. A. Prado wrote:
+> > > On Fri, Aug 09, 2024 at 12:13:25PM -0400, N=C3=ADcolas F. R. A. Prado=
+ wrote:
+> > > > On Mon, Jul 29, 2024 at 05:08:48PM -0700, Saravana Kannan wrote:
+> > > > > On Mon, Jul 29, 2024 at 2:25=E2=80=AFPM N=C3=ADcolas F. R. A. Pra=
+do
+> > > > > <nfraprado@collabora.com> wrote:
+> > > > > >
+> > > > > > On Tue, Jun 25, 2024 at 09:56:07AM -0400, N=C3=ADcolas F. R. A.=
+ Prado wrote:
+> > > > > > > On Mon, Jun 24, 2024 at 04:53:30PM -0700, Saravana Kannan wro=
+te:
+> > > > > > > > On Mon, Jun 24, 2024 at 8:21=E2=80=AFAM N=C3=ADcolas F. R. =
+A. Prado
+> > > > > > > > <nfraprado@collabora.com> wrote:
+> > > > > > > > >
+> > > > > > > > > Commit ac66c5bbb437 ("driver core: Allow only unprobed co=
+nsumers for
+> > > > > > > > > SYNC_STATE_ONLY device links") introduced an early return=
+ in
+> > > > > > > > > device_link_add() to prevent useless links from being cre=
+ated. However
+> > > > > > > > > the calling function fw_devlink_create_devlink() uncondit=
+ionally prints
+> > > > > > > > > an error if device_link_add() didn't create a link, even =
+in this case
+> > > > > > > > > where it is intentionally skipping the link creation.
+> > > > > > > > >
+> > > > > > > > > Add a check to detect if the link wasn't created intentio=
+nally and in
+> > > > > > > > > that case don't log an error.
+> > > > > > > >
+> > > > > > > > Your point is somewhat valid, and I might Ack this. But thi=
+s really
+> > > > > > > > shouldn't be happening a lot. Can you give more context on =
+how you are
+> > > > > > > > hitting this?
+> > > > > > >
+> > > > > > > Of course. I'm seeing this on the mt8195-cherry-tomato-r2 pla=
+tform.
+> > > > > > >
+> > > > > > > The following error is printed during boot:
+> > > > > > >
+> > > > > > >    mediatek-drm-dp 1c500000.edp-tx: Failed to create device l=
+ink (0x180) with backlight-lcd0
+> > > > > > >
+> > > > > > > It doesn't happen with the upstream defconfig, but with the f=
+ollowing config
+> > > > > > > change it does:
+> > > > > > >
+> > > > > > >    -CONFIG_PWM_MTK_DISP=3Dm
+> > > > > > >    +CONFIG_PWM_MTK_DISP=3Dy
+> > > > > > >
+> > > > > > > That probably changes the order in which the MTK DP and the b=
+acklight drivers
+> > > > > > > probe, resulting in the error.
+> > > > > > >
+> > > > > > > One peculiarity that comes to mind is that the DP driver call=
 s
-> for ~25 minutes under stringent memory limit constraints have shown up to
-> 50% reduction in sys time and 3.5% reduction in workload run time as
-> compared to software compressors.
->
->
-> System setup for testing:
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D
-> Testing of this patch-series was done with mm-unstable as of 10-16-2024,
-> commit 817952b8be34, without and with this patch-series.
-> Data was gathered on an Intel Sapphire Rapids server, dual-socket 56 core=
-s
-> per socket, 4 IAA devices per socket, 503 GiB RAM and 525G SSD disk
-> partition swap. Core frequency was fixed at 2500MHz.
->
-> The vm-scalability "usemem" test was run in a cgroup whose memory.high
-> was fixed at 150G. The is no swap limit set for the cgroup. 30 usemem
-> processes were run, each allocating and writing 10G of memory, and sleepi=
-ng
-> for 10 sec before exiting:
->
-> usemem --init-time -w -O -s 10 -n 30 10g
->
-> Other kernel configuration parameters:
->
->     zswap compressor : deflate-iaa
->     zswap allocator   : zsmalloc
->     vm.page-cluster   : 2,4
->
-> IAA "compression verification" is disabled and the async poll acomp
-> interface is used in the iaa_crypto driver (the defaults with this
-> series).
->
->
-> Performance testing (usemem30):
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->
->  4K folios: deflate-iaa:
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  ------------------------------------------------------------------------=
--------
->                 mm-unstable-10-16-2024  shrink_folio_list()  shrink_folio=
-_list()
->                                          batching of folios   batching of=
- folios
->  ------------------------------------------------------------------------=
--------
->  zswap compressor          deflate-iaa          deflate-iaa          defl=
-ate-iaa
->  vm.compress-batchsize             n/a                    1              =
-     32
->  vm.page-cluster                     2                    2              =
-      2
->  ------------------------------------------------------------------------=
--------
->  Total throughput            4,470,466            5,770,824            6,=
-363,045
->            (KB/s)
->  Average throughput            149,015              192,360              =
-212,101
->            (KB/s)
->  elapsed time                   119.24               100.96              =
-  92.99
->         (sec)
->  sys time (sec)               2,819.29             2,168.08             1=
-,970.79
->
->  ------------------------------------------------------------------------=
--------
->  memcg_high                    668,185              646,357              =
-613,421
->  memcg_swap_fail                     0                    0              =
-      0
->  zswpout                    62,991,796           58,275,673           53,=
-070,201
->  zswpin                            431                  415              =
-    396
->  pswpout                             0                    0              =
-      0
->  pswpin                              0                    0              =
-      0
->  thp_swpout                          0                    0              =
-      0
->  thp_swpout_fallback                 0                    0              =
-      0
->  pgmajfault                      3,137                3,085              =
-  3,440
->  swap_ra                            99                  100              =
-     95
->  swap_ra_hit                        42                   44              =
-     45
->  ------------------------------------------------------------------------=
--------
->
->
->  16k/32/64k folios: deflate-iaa:
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D
->  All three large folio sizes 16k/32/64k were enabled to "always".
->
->  ------------------------------------------------------------------------=
--------
->                 mm-unstable-  zswap_store()      + shrink_folio_list()
->                   10-16-2024    batching of         batching of folios
->                                    pages in
->                                large folios
->  ------------------------------------------------------------------------=
--------
->  zswap compr     deflate-iaa     deflate-iaa          deflate-iaa
->  vm.compress-            n/a             n/a         4          8        =
-     16
->  batchsize
->  vm.page-                  2               2         2          2        =
-      2
->   cluster
->  ------------------------------------------------------------------------=
--------
->  Total throughput   7,182,198   8,448,994    8,584,728    8,729,643    8,=
-775,944
->            (KB/s)
->  Avg throughput       239,406     281,633      286,157      290,988      =
-292,531
->          (KB/s)
->  elapsed time           85.04       77.84        77.03        75.18      =
-  74.98
->          (sec)
->  sys time (sec)      1,730.77    1,527.40     1,528.52     1,473.76     1=
-,465.97
->
->  ------------------------------------------------------------------------=
--------
->  memcg_high           648,125     694,188      696,004      699,728      =
-724,887
->  memcg_swap_fail        1,550       2,540        1,627        1,577      =
-  1,517
->  zswpout           57,606,876  56,624,450   56,125,082    55,999,42   57,=
-352,204
->  zswpin                   421         406          422          400      =
-    437
->  pswpout                    0           0            0            0      =
-      0
->  pswpin                     0           0            0            0      =
-      0
->  thp_swpout                 0           0            0            0      =
-      0
->  thp_swpout_fallback        0           0            0            0      =
-      0
->  16kB-mthp_swpout_          0           0            0            0      =
-      0
->           fallback
->  32kB-mthp_swpout_          0           0            0            0      =
-      0
->           fallback
->  64kB-mthp_swpout_      1,550       2,539        1,627        1,577      =
-  1,517
->           fallback
->  pgmajfault             3,102       3,126        3,473        3,454      =
-  3,134
->  swap_ra                  107         144          109          124      =
-    181
->  swap_ra_hit               51          88           45           66      =
-    107
->  ZSWPOUT-16kB               2           3            4            4      =
-      3
->  ZSWPOUT-32kB               0           2            1            1      =
-      0
->  ZSWPOUT-64kB       3,598,889   3,536,556    3,506,134    3,498,324    3,=
-582,921
->  SWPOUT-16kB                0           0            0            0      =
-      0
->  SWPOUT-32kB                0           0            0            0      =
-      0
->  SWPOUT-64kB                0           0            0            0      =
-      0
->  ------------------------------------------------------------------------=
--------
->
->
->  2M folios: deflate-iaa:
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->  ------------------------------------------------------------------------=
--------
->                    mm-unstable-10-16-2024    zswap_store() batching of pa=
-ges
->                                                       in pmd-mappable fol=
-ios
->  ------------------------------------------------------------------------=
--------
->  zswap compressor             deflate-iaa                deflate-iaa
->  vm.compress-batchsize                n/a                        n/a
->  vm.page-cluster                        2                          2
->  ------------------------------------------------------------------------=
--------
->  Total throughput               7,444,592                 8,916,349
->            (KB/s)
->  Average throughput               248,153                   297,211
->            (KB/s)
->  elapsed time                       86.29                     73.44
->         (sec)
->  sys time (sec)                  1,833.21                  1,418.58
->
->  ------------------------------------------------------------------------=
--------
->  memcg_high                        81,786                    89,905
->  memcg_swap_fail                       82                       395
->  zswpout                       58,874,092                57,721,884
->  zswpin                               422                       458
->  pswpout                                0                         0
->  pswpin                                 0                         0
->  thp_swpout                             0                         0
->  thp_swpout_fallback                   82                       394
->  pgmajfault                        14,864                    21,544
->  swap_ra                           34,953                    53,751
->  swap_ra_hit                       34,895                    53,660
->  ZSWPOUT-2048kB                   114,815                   112,269
->  SWPOUT-2048kB                          0                         0
->  ------------------------------------------------------------------------=
--------
->
-> Since 4K folios account for ~0.4% of all zswapouts when pmd-mappable foli=
-os
-> are enabled for usemem30, we cannot expect much improvement from reclaim
-> batching.
->
->
-> Performance testing (Kernel compilation):
-> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
-> As mentioned earlier, for workloads that see a lot of swapout activity, w=
+> > > > > > > devm_of_dp_aux_populate_bus() to run a callback once the pane=
+l has finished
+> > > > > > > probing. I'm not sure if this could have something to do with=
+ the error.
+> > > > > > >
+> > > > > > > Full log at https://lava.collabora.dev/scheduler/job/14573149
+> > > > > >
+> > > > > > Hi Saravana,
+> > > > > >
+> > > > > > With the given context for where this issue is happening, what =
+do you think
+> > > > > > about this patch?
+> > > > >
+> > > > > Ah sorry, missed your earlier email.
+> > > > >
+> > > > > Couple of points:
+> > > > > 1. It looks like the link in question is "SYNC_STATE_ONLY" becaus=
 e
-> can benefit from configuring 2 WQs per IAA device, with compress jobs fro=
-m
-> all same-socket cores being distributed toothe wq.1 of all IAAs on the
-> socket, with the "global_wq" developed in this patch-series.
+> > > > > it's part of a cycle. Correct me if I'm wrong. You might want to =
+use
+> > > > > the new "post-init-providers" property to help fw_devlink break t=
+he
+> > > > > cycle and enforce the right dependency between the edp-tx and you=
+r
+> > > > > backlight. And then this error should go away and your device ord=
+ering
+> > > > > is enforced a bit better.
+> > > >
+> > > > I don't see any cycle there. edp-tx points to backlight, but backli=
+ght doesn't
+> > > > point back (from mt8195-cherry.dtsi):
+> > > >
+> > > >    &edp_tx {
+> > > >           ...
+> > > >           aux-bus {
+> > > >                   panel {
+> > > >                           compatible =3D "edp-panel";
+> > > >                           power-supply =3D <&pp3300_disp_x>;
+> > > >                           backlight =3D <&backlight_lcd0>;
+> > > >
+> > > >    backlight_lcd0: backlight-lcd0 {
+> > > >           compatible =3D "pwm-backlight";
+> > > >           brightness-levels =3D <0 1023>;
+> > > >           default-brightness-level =3D <576>;
+> > > >           enable-gpios =3D <&pio 82 GPIO_ACTIVE_HIGH>;
+> > > >           num-interpolated-steps =3D <1023>;
+> > > >           pwms =3D <&disp_pwm0 0 500000>;
+> > > >           power-supply =3D <&ppvar_sys>;
+> > > >    };
+> > > >
+> > > > And DL_FLAG_CYCLE is not set in the flags in the error log: 0x180. =
+(Let me know
+> > > > if there's something else that I should be looking at to detect a c=
+ycle)
+> > >
+> > > Hi Saravana,
+> > >
+> > > Here are some debug logs to help contextualize the issue:
+> > >
+> > >    [    0.198518] device: 'backlight-lcd0': device_add
+> > >    [    0.198655] platform 1c500000.edp-tx: Linked as a sync state on=
+ly consumer to backlight-lcd0
+> > >    [   34.971653] platform backlight-lcd0: error -EPROBE_DEFER: suppl=
+ier 1100e000.pwm not ready
+> > >    [   35.115480] mediatek-drm-dp 1c500000.edp-tx: driver: 'mediatek-=
+drm-dp': driver_bound: bound to device
+> > >    [   35.160115] mediatek-drm-dp 1c500000.edp-tx: Dropping the link =
+to backlight-lcd0
+> > >    [   53.910433] pwm-backlight backlight-lcd0: driver: 'pwm-backligh=
+t': driver_bound: bound to device
+> > >    [   53.919213] mediatek-drm-dp 1c500000.edp-tx: Failed to create d=
+evice link (0x180) with backlight-lcd0
+> > >
+> > > So a SYNC_STATE_ONLY device link is created from backlight-lcd0 to ed=
+p-tx. When
+> > > the edp-tx probes, the link is dropped, since it is SYNC_STATE_ONLY. =
+When the
+> > > backlight-lcd0 probes a new devlink is attempted to the consumer edp-=
+tx and
+> > > fails, since it is useless, printing the warning.
+> > >
+> > > You mentioned a cycle before. The only cycle I see is between the edp=
+-tx and the
+> > > panel, but doesn't involve the backlight:
+> > >
+> > >    [    0.198104] ----- cycle: start -----
+> > >    [    0.198105] /soc/edp-tx@1c500000/aux-bus/panel: cycle: depends =
+on /soc/edp-tx@1c500000
+> > >    [    0.198112] ----- cycle: start -----
+> > >    [    0.198113] /soc/edp-tx@1c500000/aux-bus/panel: cycle: child of=
+ /soc/edp-tx@1c500000
+> > >    [    0.198119] /soc/edp-tx@1c500000: cycle: depends on /soc/edp-tx=
+@1c500000/aux-bus/panel
+> > >    [    0.198125] ----- cycle: end -----
+> > >    [    0.198126] platform 1c500000.edp-tx: Fixed dependency cycle(s)=
+ with /soc/edp-tx@1c500000/aux-bus/panel
+> > >
+> > > Just in case I tried using post-init-providers:
+> > >
+> > >    diff --git a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi b/arc=
+h/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+> > >    index 75d56b2d5a3d..19df138ef043 100644
+> > >    --- a/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+> > >    +++ b/arch/arm64/boot/dts/mediatek/mt8195-cherry.dtsi
+> > >    @@ -322,6 +322,7 @@ &edp_tx {
+> > >            pinctrl-names =3D "default";
+> > >            pinctrl-0 =3D <&edptx_pins_default>;
+> > >    +       post-init-providers =3D <&panel>;
+> > >            ports {
+> > >                    #address-cells =3D <1>;
+> > >    @@ -344,7 +345,7 @@ edp_out: endpoint {
+> > >            };
+> > >            aux-bus {
+> > >    -               panel {
+> > >    +               panel: panel {
+> > >                            compatible =3D "edp-panel";
+> > >                            power-supply =3D <&pp3300_disp_x>;
+> > >                            backlight =3D <&backlight_lcd0>;
+> > >
+> > > It broke the cycle, as I no longer see it in the logs, but the failed=
+ device
+> > > link warning is still there as expected.
+> > >
+> > > It seems to me that the issue comes form the device link being SYNC_S=
+TATE_ONLY
+> > > in the first place. I see that comes from the 'else' path in
+> > >
+> > >     if (con->fwnode =3D=3D link->consumer)
+> > >             flags =3D fw_devlink_get_flags(link->flags);
+> > >     else
+> > >             flags =3D FW_DEVLINK_FLAGS_PERMISSIVE;
+> > >
+> > > and the value on each side of the comparison is:
+> > >
+> > > con->fwnode: /soc/edp-tx@1c500000
+> > > link->consumer: /soc/edp-tx@1c500000/aux-bus/panel
+> > >
+> > > Could you help me understand what (if anything) is wrong here?
+> > >
+> > > (I also noticed that as per the DT the consumer for backlight-lcd0 sh=
+ould be the
+> > > panel, but the devlink has it instead as the edp-tx, I'm guessing tha=
+t's another
+> > > symptom of the same issue)
+> >
+> >
+> > I did not seen any update on this. It would be great to get this fixed.
 >
-> Although this data includes IAA decompress batching, which will be
-> submitted as a separate RFC patch-series, I am listing it here to quantif=
-y
-> the benefit of distributing compress jobs among all IAAs. The kernel
-> compilation test with "allmodconfig" is able to quantify this well:
+> Since there hasn't been a reply on this, let's postpone this investigatio=
+n and
+> move forward in fixing the error log. I've sent v2 of the patch:
+> https://lore.kernel.org/all/20240624-fwdevlink-probed-no-err-45d21feb05fd=
+-v2@collabora.com
 >
->
->  4K folios: deflate-iaa: kernel compilation to quantify crypto patches
->  =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
->
->
->  ------------------------------------------------------------------------=
-------
->                    IAA shrink_folio_list() compress batching and
->                        swapin_readahead() decompress batching
->
->                                       1WQ      2WQ (distribute compress j=
-obs)
->
->                         1 local WQ (wq.0)    1 local WQ (wq.0) +
->                                   per IAA    1 global WQ (wq.1) per IAA
->
->  ------------------------------------------------------------------------=
-------
->  zswap compressor             deflate-iaa         deflate-iaa
->  vm.compress-batchsize                 32                  32
->  vm.page-cluster                        4                   4
->  ------------------------------------------------------------------------=
-------
->  real_sec                          746.77              745.42
->  user_sec                       15,732.66           15,738.85
->  sys_sec                         5,384.14            5,247.86
->  Max_Res_Set_Size_KB            1,874,432           1,872,640
->
->  ------------------------------------------------------------------------=
-------
->  zswpout                      101,648,460         104,882,982
->  zswpin                        27,418,319          29,428,515
->  pswpout                              213                  22
->  pswpin                               207                   6
->  pgmajfault                    21,896,616          23,629,768
->  swap_ra                        6,054,409           6,385,080
->  swap_ra_hit                    3,791,628           3,985,141
->  ------------------------------------------------------------------------=
-------
->
-> The iaa_crypto wq stats will show almost the same number of compress call=
-s
-> for wq.1 of all IAA devices. wq.0 will handle decompress calls exclusivel=
-y.
-> We see a latency reduction of 2.5% by distributing compress jobs among al=
-l
-> IAA devices on the socket.
->
-> I would greatly appreciate code review comments for the iaa_crypto driver
-> and mm patches included in this series!
->
-> Thanks,
-> Kanchana
->
->
->
-> Kanchana P Sridhar (13):
->   crypto: acomp - Add a poll() operation to acomp_alg and acomp_req
->   crypto: iaa - Add support for irq-less crypto async interface
->   crypto: testmgr - Add crypto testmgr acomp poll support.
->   mm: zswap: zswap_compress()/decompress() can submit, then poll an
->     acomp_req.
->   crypto: iaa - Make async mode the default.
->   crypto: iaa - Disable iaa_verify_compress by default.
->   crypto: iaa - Change cpu-to-iaa mappings to evenly balance cores to
->     IAAs.
->   crypto: iaa - Distribute compress jobs to all IAA devices on a NUMA
->     node.
->   mm: zswap: Config variable to enable compress batching in
->     zswap_store().
->   mm: zswap: Create multiple reqs/buffers in crypto_acomp_ctx if
->     platform has IAA.
->   mm: swap: Add IAA batch compression API
->     swap_crypto_acomp_compress_batch().
->   mm: zswap: Compress batching with Intel IAA in zswap_store() of large
->     folios.
->   mm: vmscan, swap, zswap: Compress batching of folios in
->     shrink_folio_list().
->
->  crypto/acompress.c                         |   1 +
->  crypto/testmgr.c                           |  70 +-
->  drivers/crypto/intel/iaa/iaa_crypto_main.c | 467 +++++++++++--
->  include/crypto/acompress.h                 |  18 +
->  include/crypto/internal/acompress.h        |   1 +
->  include/linux/fs.h                         |   2 +
->  include/linux/mm.h                         |   8 +
->  include/linux/writeback.h                  |   5 +
->  include/linux/zswap.h                      | 106 +++
->  kernel/sysctl.c                            |   9 +
->  mm/Kconfig                                 |  12 +
->  mm/page_io.c                               | 152 +++-
->  mm/swap.c                                  |  15 +
->  mm/swap.h                                  |  96 +++
->  mm/swap_state.c                            | 115 +++
->  mm/vmscan.c                                | 154 +++-
->  mm/zswap.c                                 | 771 +++++++++++++++++++--
->  17 files changed, 1870 insertions(+), 132 deletions(-)
->
->
-> base-commit: 817952b8be34aad40e07f6832fb9d1fc08961550
-> --
-> 2.27.0
->
->
+
+Sorry for the really long delay Nicolas. All the logs you provides and
+all the analysis you did so far definitely helped me narrow this down.
+
+Your instinct about devm_of_dp_aux_populate_bus() was right.
+
+Can you try this fix please? I'm 99% sure this will fix the issue.
+This has been a theme... the log message you saw mostly indicates that
+the device didn't have its fwnode set.
+
+-Saravana
+
+diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c
+b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+index d810529ebfb6..ec7eac6b595f 100644
+--- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
++++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+@@ -292,7 +292,7 @@ int of_dp_aux_populate_bus(struct drm_dp_aux *aux,
+        aux_ep->dev.parent =3D aux->dev;
+        aux_ep->dev.bus =3D &dp_aux_bus_type;
+        aux_ep->dev.type =3D &dp_aux_device_type_type;
+-       aux_ep->dev.of_node =3D of_node_get(np);
++       device_set_node(&aux_ep->dev, of_fwnode_handle(of_node_get(np)));
+        dev_set_name(&aux_ep->dev, "aux-%s", dev_name(aux->dev));
+
+        ret =3D device_register(&aux_ep->dev);
+
+Thanks,
+Saravana
 
