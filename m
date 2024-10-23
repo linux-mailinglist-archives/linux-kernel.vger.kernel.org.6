@@ -1,80 +1,118 @@
-Return-Path: <linux-kernel+bounces-377609-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377689-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1FC759AC131
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:14:17 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A2BBA9AC25B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:56:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA3C51F22776
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28BAE1F2582C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:56:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A678158870;
-	Wed, 23 Oct 2024 08:13:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SI7EUNMh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D0811662F1;
+	Wed, 23 Oct 2024 08:56:13 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF950157476;
-	Wed, 23 Oct 2024 08:13:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 212CA165F0C;
+	Wed, 23 Oct 2024 08:56:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729671184; cv=none; b=dPv44tJgbFziUVheTqtFzkwbjZ88hHRTBsj1XscCrUir7IlmcAMzeI+Be3KxT5Q6Bw1XsOIyDZEmBiC224MqegagyxDpKfZFsQI85GhcHO4r2rmI8xFg26bnqCTJzPfliR0TePxs5K+ubz7kXFa8OQpppYI3HIVE4Qkh9l0Bxds=
+	t=1729673772; cv=none; b=FcaS9J5xQJl9g8bUb2eYMmtnFbLB0QSh7TX2Von1TTiZKxNf61KYVGji/4B+Uz+sKZ23rUaFhIEl81cw1s9Dj0p8iS5B1HTSd/MrpxTpHP3VWa+ezNOPiiXbtr6qOC7f5D9EJEwQTjA0P8XY1h41FAbMFkTUBARH5meWamXYyG0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729671184; c=relaxed/simple;
-	bh=8J3YAEI5ymgvph4zK7ncOEzXxqUjFg6dl0aEFe5PEnY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fqpm9uDysi/Eoz+DcE9s2KKUjrmRE0WauOds8H6g4SMng+6//+mPgw6tyaC9fbgX1sKewKROFkP9W38yGWZHUSa4Kif8cnu/uHyPl0wzOA2awqoImYOz62Yh2AVnScWc3SwESHEAV3NwAeMrS2YXp5pLDhB7h7ueHs89SWqR+rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SI7EUNMh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E512C4CEC6;
-	Wed, 23 Oct 2024 08:13:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729671184;
-	bh=8J3YAEI5ymgvph4zK7ncOEzXxqUjFg6dl0aEFe5PEnY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SI7EUNMhGFzmfewIPepR5qWd9AqqoNWb1gJzE8lSrd7sX0RyCPnhDis+fkKxor6B1
-	 M3r5erW4QFpCcFXPxd+xmWmz4Y4SqO5F7H4pcP1jFHgPFy/SCwonjO469JWO9O4tD7
-	 +uxd429C4/QiKy9eZNjeo8BwDvfwsmrFAUS1ONj6eaBvc3f1Om8ANnYEMVbv/Ziqxa
-	 QrrGQ4VnVFVnB/mUAjV2mCTMpopzE0/ruY4tsyOgCNzbJd9hA9IeCry3uEmHb3KNn8
-	 BkSY6p9pU1MEbrLKcqaHkSIUE/QwdrGYk2T+mmwsfJAWSzBZ4nH/oWAq7Jd9HkHqCI
-	 6g9mvcK6rbrOw==
-Date: Wed, 23 Oct 2024 10:13:00 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 1/2] dt-bindings: cache: qcom,llcc: document SAR2130P and
- SAR1130P
-Message-ID: <u5gsyn22qm2syhkp3gdvvqasboq3jjybpkrsrxiisekqgpjbm3@gdawddb4kt7f>
-References: <20241019-sar2130p-llcc-v1-0-4e09063d04f2@linaro.org>
- <20241019-sar2130p-llcc-v1-1-4e09063d04f2@linaro.org>
+	s=arc-20240116; t=1729673772; c=relaxed/simple;
+	bh=LtUuF4KAjrjmqUd8QvWj0hAG1Z8HkwAdOYmGjMckmC0=;
+	h=From:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type:To; b=hGCUBAgoXivhcn80rXcOjmPBGT411/4ElsIGRClZX1pHAkCAm9wMa98HTsFIQpM6mN/SoDWlQRROctoMXbh1vBoOBpqs5PRRGD6A0VoDNwIIebFST2PlpD2Nxqm6U/NMyxO+Cfdq/HATunzDHT9uAh+Z7eUz3D9qlL4IU1Wo8f4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id E18F45F8A7;
+	Wed, 23 Oct 2024 10:56:07 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] improve qconfig C++ code
+Date: Wed, 23 Oct 2024 08:26:51 +0200
+Message-ID: <4960180.31r3eYUQgx@devpool47.emlix.com>
+Organization: emlix GmbH
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241019-sar2130p-llcc-v1-1-4e09063d04f2@linaro.org>
+Content-Type: multipart/signed; boundary="nextPart4604293.LvFx2qVVIh";
+ micalg="pgp-sha256"; protocol="application/pgp-signature"
+Resent-Message-ID: <202410231056.07265.>
+Resent-Date: Wed, 23 Oct 2024 10:56:07 +0200
+Resent-From: Rolf Eike Beer <eb@emlix.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Resent-To: Masahiro Yamada <masahiroy@kernel.org>
+Resent-Cc: 	linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
 
-On Sat, Oct 19, 2024 at 07:26:41PM +0300, Dmitry Baryshkov wrote:
-> Describe the last level cache controller on the SAR2130P and SAR1130P
-> platforms. They have 2 banks and also a separate register set to control
-> scratchpad slice.
-> 
-> Signed-off-by: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-> ---
->  .../devicetree/bindings/cache/qcom,llcc.yaml       | 28 ++++++++++++++++++++++
->  1 file changed, 28 insertions(+)
+--nextPart4604293.LvFx2qVVIh
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"; protected-headers="v1"
+From: Rolf Eike Beer <eb@emlix.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: [PATCH 0/7] improve qconfig C++ code
+Date: Wed, 23 Oct 2024 08:26:51 +0200
+Message-ID: <4960180.31r3eYUQgx@devpool47.emlix.com>
+Organization: emlix GmbH
+MIME-Version: 1.0
 
-Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+While playing around with qconfig I made some cleanups that I seemed to for=
+got=20
+to send out. This uses more of the Qt API that is already present to make t=
+he=20
+code a bit nicer (YMMV). Especially it adds some keyboard shortcuts for the=
+=20
+default actions (Save, Save as and the like).
 
-Best regards,
-Krzysztof
+Rolf Eike Beer (7):
+  kconfig: qconf: simplify character replacement
+  kconfig: qconf: use default platform shortcuts
+  kconfig: qconf: use nullptr in C++11 code
+  kconfig: qconf: use QCommandLineParser
+  kconfig: qconf: use preferred form of QString API
+  kconfig: qconf: use QString to store path to configuration file
+  kconfig: qconf: use QByteArray API instead of manually constructing a str=
+ing
+
+=2D-=20
+Rolf Eike Beer
+
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
+
+emlix - your embedded Linux partner
+--nextPart4604293.LvFx2qVVIh
+Content-Type: application/pgp-signature; name="signature.asc"
+Content-Description: This is a digitally signed message part.
+Content-Transfer-Encoding: 7Bit
+
+-----BEGIN PGP SIGNATURE-----
+
+iLMEAAEIAB0WIQQ/Uctzh31xzAxFCLur5FH7Xu2t/AUCZxiXKwAKCRCr5FH7Xu2t
+/N5cBACtC1Fc2SR1w0/aM4UeW7CwXWsoWaVa12qUSipP/vNA4bb8uDkgdQooJIu0
+X6qm2oWfdakgkq4iqxWOezhKVG+9PRd4Wr86C8UO3psHC0x9wVRZB2HI/OT1LHmu
+kp//+al3k0lr7kECHDD432nmJ7Ry9OkVhPYmba64EDjwcH37Xw==
+=+d6X
+-----END PGP SIGNATURE-----
+
+--nextPart4604293.LvFx2qVVIh--
+
+
 
 
