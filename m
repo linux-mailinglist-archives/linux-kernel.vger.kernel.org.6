@@ -1,142 +1,207 @@
-Return-Path: <linux-kernel+bounces-378989-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378990-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84E109AD837
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:06:41 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6F1389AD853
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:12:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0ABAC1F221EF
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:06:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7CFE71C21A76
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2DC71FF024;
-	Wed, 23 Oct 2024 23:06:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1FB541FEFC3;
+	Wed, 23 Oct 2024 23:12:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bUO/GL2e"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iCqBHbor"
+Received: from mail-pl1-f180.google.com (mail-pl1-f180.google.com [209.85.214.180])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 226571990C4;
-	Wed, 23 Oct 2024 23:06:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6877215B97E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:12:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729724793; cv=none; b=q9NnNANoiWE3j6CmanmTntRJDxQZGAsQbA9lTksm7HBEcWHPSAKDwux2qj2EXtaPqh+eeoiRb3X342fBuHtBROYJuaqMFqpPRIsBcCqmz+IAychHuLcJXCFoQNWvDNMnkiW3SRZrz2vfoa87cYahXoh0Kgb/kmCjf83HAeng9Hc=
+	t=1729725122; cv=none; b=f2mh9wufJ9DkYA7KeQoYU/+73/abtYuo2C7DH4HpmYGc/ABBxx3Y0xPmDs48by/HtlutSdXAKTDbv8a6J/nXAGgGJiX7qV+dYWv4GS7ri4gNCNB6QBGk7eJJLDd4GLaZxAeVggdiAMu2KrkqQHXrwNVYQhba+mz9EK5dRJW/+Zs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729724793; c=relaxed/simple;
-	bh=2l/ds5Bmv+D3lyjFYDV6EA8hVsC1rWEx9qxy5boJYJ8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=pM+AMHkZgQkjDqEPYOidGEMfQor7t2T1N3rOxfrvYYVIh6vIZOIi4omZ6OCUtIGkiisSZDM1tvcPiW3eLJVd0O0BdivQ+ZaNCN2Rypxw27CzPm8bENXa93sLCR+3WZqzwb8EKMufgNlFHpwze8YKQxO2t00b3iIByf+9Dzzm7o0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bUO/GL2e; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99B63C4CEC6;
-	Wed, 23 Oct 2024 23:06:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729724792;
-	bh=2l/ds5Bmv+D3lyjFYDV6EA8hVsC1rWEx9qxy5boJYJ8=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=bUO/GL2eNM8X2YFhLJl524BJI/JdNhpsPkro5mYw/RyScggmmi6dftssLOQNlTCWP
-	 o/KUWLVGN7P6SBfot0frYdqkyH84+e0yjST08EZrTT3KSvxqJW+g0btkWpwkgL532Y
-	 i93c46AksfkLNssyLf9AtqmsHzNbWOUZR/pRWTmNwhO58OCH3gIg+cZSsbfbZHL4/1
-	 B+lhbUr3pLFzgOYRJVQJZsGicE7X/Fib5XxY0dU1u1DokRZDG4zC0SLMOd1vaI6Y+m
-	 rSiGd/5vFTRV2DnnGz5sxGnVETyD+dwtq3Sh8u40Eh7k9oL7M6OiZqH9MyJgw1jDIy
-	 lArIVHnY9DX/A==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id 46261CE10F5; Wed, 23 Oct 2024 16:06:32 -0700 (PDT)
-Date: Wed, 23 Oct 2024 16:06:32 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Ard Biesheuvel <ardb@kernel.org>
-Cc: Dan Carpenter <dan.carpenter@linaro.org>,
-	clang-built-linux <llvm@lists.linux.dev>,
-	Nathan Chancellor <nathan@kernel.org>, kobak@nvidia.com,
-	mochs@nvidia.com, rui.zhang@intel.com, rafael.j.wysocki@intel.com,
-	sfr@canb.auug.org.au, linux-kernel@vger.kernel.org,
-	linux-next@vger.kernel.org, linux-toolchains@vger.kernel.org
-Subject: Re: [BUG] Argument-alignment build error with clang
-Message-ID: <2fc36fd9-6c7a-492a-b5f8-65cfd52aadf2@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <38508cf1-7d44-4656-8060-973e820b2957@paulmck-laptop>
- <CAMj1kXFA2_LNpZcrGh0GJyE0_9BaRC_ypnP3eigVG=Vf4B+gqg@mail.gmail.com>
+	s=arc-20240116; t=1729725122; c=relaxed/simple;
+	bh=52yxQ09WqtOP8XWTM3BCpq4gMiDnmGK4/cPqR1ygOss=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=WTV+fYPjfpTxFa3I1O5zVGY/2FuQI+oJoydoF1WSFGNVuUycCaHlta4HY3/nnC/HvWvVlhLNHvdriR8PDT8Ornt9buB5+Hhn3A0+6IQWGMpJB1i01aTAmeMOJzn733AUsZ1XKq4wLeBIJDgdeEvhp+QGgOoWEB2V7F2n1cgfWsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iCqBHbor; arc=none smtp.client-ip=209.85.214.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f180.google.com with SMTP id d9443c01a7336-20ca388d242so1906335ad.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:12:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729725120; x=1730329920; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=SU8yiz0V0vst08PcfWR+Gq/6ECQ78CI5BJYqXjnM518=;
+        b=iCqBHbormpmyGouDk5moFkjgDyHLZ1itI11FhZKPzKjQDkHMVKLO3/c9GRc/jjpHqp
+         ZK78bGczdRdswbG4ISYmxaBc+92iOopTS1XUoVjkkQywlXVLq6kwrN4C0QE1ubi/Cm/y
+         G7dyIhJXpUM4wvsB8p8UCXq10LvKbKxx01FCtft9fIITAjn/86tGOoH5zxULNclkqaHA
+         2kxhj2tn0JAUYlOXg9XSVaAyjnirP5yuDmm3IVpBq29oV1nxizl/g2rVcxIHNxBYR7dv
+         UA5oCAn7cPFKXeJJTDQuuN3gC0jdFAFBYjT3R8RkLFDNsn8/hK9tNnUzdUhx8Labc7Hd
+         o5PA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729725120; x=1730329920;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=SU8yiz0V0vst08PcfWR+Gq/6ECQ78CI5BJYqXjnM518=;
+        b=gFdzqdrXpic8gpxcK9fFVaVmgBO+nAnlHDcxrOqCK4PgqlIX4Bbj1mjVUi7LV9HHef
+         5qRwRDYg7BCK7Eu+wXG21ROsobcv32KiraBw2ARGjr/5NYC0baWuuAm7EInPmxdwsP0E
+         4wRCaH/IWxP27hfJeA4aYvW2oem9wiiG4M1HGw/YzqVsyOTPmwumQGh3Zc8X88xBWlQt
+         aWE68LN9tMarerf6sqbBqtcDUF83Qx/zAV7NAVW8J9vbt2eGL4eIGYVEn5YOqu+89c3U
+         wqznpraADuIlvxWUmNcsCm68XnhDOJNQxKSJkPrdwD5U951OLjBrj9J4TcpPfiYrcc+i
+         +BWw==
+X-Forwarded-Encrypted: i=1; AJvYcCVZyIw4M2EeH87UM1qlYkqH+ndQNqv7DSGM0kFtc3VLcTKA3qTw60ZC/1UqgqalD+3d5w+l0le1QREgX3w=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdEda94ye67zBMRiyJPepgEH7clvN9V5D+fswv3FYyN6M6BQGh
+	WAF4nGJZ9GZKLY7lZRGCAgNYwEwzH6ee6i+Exavt+gtfMG1gQYuN
+X-Google-Smtp-Source: AGHT+IEflSLaad6uyDoEl+X0MW0rMClwemlGqgqmwWEmYqE2G4G794S+5c1kY+WTIzf2CIjykB6Pdg==
+X-Received: by 2002:a17:903:32cf:b0:20b:775f:506d with SMTP id d9443c01a7336-20fa9e784f7mr55885225ad.34.1729725119640;
+        Wed, 23 Oct 2024 16:11:59 -0700 (PDT)
+Received: from localhost.localdomain ([2804:14d:4c64:81ec:97bb:b4e6:f236:f01a])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee65c9sm62508675ad.22.2024.10.23.16.11.57
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 16:11:59 -0700 (PDT)
+From: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+To: gregkh@linuxfoundation.org,
+	philipp.g.hortmann@gmail.com
+Cc: ~lkcamp/patches@lists.sr.ht,
+	linux-staging@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v3] staging: rtl8723bs: change remaining printk to proper api
+Date: Wed, 23 Oct 2024 20:11:55 -0300
+Message-Id: <20241023231155.16940-1-rodrigo.gobbi.7@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <CAMj1kXFA2_LNpZcrGh0GJyE0_9BaRC_ypnP3eigVG=Vf4B+gqg@mail.gmail.com>
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 12:37:50AM +0200, Ard Biesheuvel wrote:
-> (cc Dan, Nathan)
-> 
-> On Thu, 24 Oct 2024 at 00:26, Paul E. McKenney <paulmck@kernel.org> wrote:
-> >
-> > Hello!
-> >
-> > Running rcutorture on next-20241023 got me lots of these:
-> >
-> > drivers/acpi/prmt.c:156:29: error: passing 1-byte aligned argument to 4-byte aligned parameter 1 of 'efi_pa_va_lookup' may result in an unaligned pointer access [-Werror,-Walign-mismatch]
-> >           156 |                         (void *)efi_pa_va_lookup(&th->guid, handler_info->handler_address);
-> >
-> > This is built with CC=clang.  I don't see this diagnostic with GCC.
-> > But we are supposed to be able to build with clang, so...
-> >
-> > The first argument is the address of one of these:
-> >
-> > typedef struct {
-> >         __u8 b[UUID_SIZE];
-> > } guid_t;
-> >
-> > Where UUID_SIZE is as follows:
-> >
-> > #define UUID_SIZE 16
-> >
-> > But this guid_t is a member of one of these:
-> >
-> > struct prm_handler_info {
-> >         guid_t guid;
-> >         efi_status_t (__efiapi *handler_addr)(u64, void *);
-> >         u64 static_data_buffer_addr;
-> >         u64 acpi_param_buffer_addr;
-> >
-> >         struct list_head handler_list;
-> > };
-> >
-> > One can argue that this structure must be 16-bit aligned on a
-> > 64-bit build.  So maybe this is a bug in clang's diagnostics, hence
-> > linux-toolchains on CC.
-> >
-> > Thoughts?
-> >
-> 
-> Also discussed here:
-> https://lore.kernel.org/all/CAMj1kXFXimHaGdeDBH3fOzuBiVcATA+JNpGqDs+m5h=8M_g+yA@mail.gmail.com/T/#u
-> 
-> I agree that this looks like a spurious warning. Even if the alignment
-> of the type is only 1 byte, the fact that it appears at the start of a
-> 8-byte aligned non-packed struct guarantees sufficient alignment for
-> this particular use of the type.
+As part of TODO file for future work, use dyn debug api for
+remaining printk statements.
 
-Thank you!  I tried your s/guid_t/efi_guid_t/ change, and it works
-fine here (see below in case I messed it up and got lucky).  So:
+Signed-off-by: Rodrigo Gobbi <rodrigo.gobbi.7@gmail.com>
+---
+I didn't use the netdev_dbg() over drivers/staging/rtl8723bs/hal/hal_com.c
+because I noticed now that rtw_dump_raw_rssi_info() and the hal file is a 
+little broken with -DDBG_RX_SIGNAL_DISPLAY_RAW_DATA, maybe we can 
+fix that in a next patch. 
 
-Tested-by: Paul E. McKenney <paulmck@kernel.org>
+Suggesting to keep the pr_debug() in the hal file for now.
 
-							Thanx, Paul
+Tks and regards.
+---
+Changelog
+v3 additional changes to netdev_dbg() at rtl8723b_hal_init.c file
+v2 https://lore.kernel.org/linux-staging/20241022031825.309568-1-rodrigo.gobbi.7@gmail.com/T/#m4c2796a796d7e5b456975365147c51d7977e9e81
+v1 https://lore.kernel.org/lkml/2024101608-daycare-exterior-31fd@gregkh/T/#m1b2b4fdb8a5eec605983c12ca211d394b66cc79f
+---
+ drivers/staging/rtl8723bs/core/rtw_mlme_ext.c     |  6 +++---
+ drivers/staging/rtl8723bs/hal/hal_com.c           |  7 ++++---
+ drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c | 12 ++++++++----
+ drivers/staging/rtl8723bs/os_dep/sdio_intf.c      |  2 +-
+ 4 files changed, 16 insertions(+), 11 deletions(-)
 
-------------------------------------------------------------------------
-
-diff --git a/drivers/acpi/prmt.c b/drivers/acpi/prmt.c
-index d59307a76ca31..747f83f7114d2 100644
---- a/drivers/acpi/prmt.c
-+++ b/drivers/acpi/prmt.c
-@@ -52,7 +52,7 @@ struct prm_context_buffer {
- static LIST_HEAD(prm_module_list);
+diff --git a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+index bbdd5fce28a1..ac5066db4e78 100644
+--- a/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
++++ b/drivers/staging/rtl8723bs/core/rtw_mlme_ext.c
+@@ -1870,10 +1870,10 @@ unsigned int OnAction_sa_query(struct adapter *padapter, union recv_frame *precv
+ 	if (0) {
+ 		int pp;
  
- struct prm_handler_info {
--	guid_t guid;
-+	efi_guid_t guid;
- 	efi_status_t (__efiapi *handler_addr)(u64, void *);
- 	u64 static_data_buffer_addr;
- 	u64 acpi_param_buffer_addr;
+-		printk("pattrib->pktlen = %d =>", pattrib->pkt_len);
++		netdev_dbg(padapter->pnetdev, "pattrib->pktlen = %d =>", pattrib->pkt_len);
+ 		for (pp = 0; pp < pattrib->pkt_len; pp++)
+-			printk(" %02x ", pframe[pp]);
+-		printk("\n");
++			pr_cont(" %02x ", pframe[pp]);
++		pr_cont("\n");
+ 	}
+ 
+ 	return _SUCCESS;
+diff --git a/drivers/staging/rtl8723bs/hal/hal_com.c b/drivers/staging/rtl8723bs/hal/hal_com.c
+index faa6ed2b320d..5994e574ae99 100644
+--- a/drivers/staging/rtl8723bs/hal/hal_com.c
++++ b/drivers/staging/rtl8723bs/hal/hal_com.c
+@@ -909,10 +909,11 @@ void rtw_dump_raw_rssi_info(struct adapter *padapter)
+ 
+ 	for (rf_path = 0; rf_path < pHalData->NumTotalRFPath; rf_path++) {
+ 		if (!isCCKrate) {
+-			printk(", rx_ofdm_pwr:%d(dBm), rx_ofdm_snr:%d(dB)\n",
+-			psample_pkt_rssi->ofdm_pwr[rf_path], psample_pkt_rssi->ofdm_snr[rf_path]);
++			pr_debug(", rx_ofdm_pwr:%d(dBm), rx_ofdm_snr:%d(dB)\n",
++				 psample_pkt_rssi->ofdm_pwr[rf_path],
++				 psample_pkt_rssi->ofdm_snr[rf_path]);
+ 		} else {
+-			printk("\n");
++			pr_debug("\n");
+ 		}
+ 	}
+ }
+diff --git a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+index 46962b003d17..a8ffa219fb2a 100644
+--- a/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
++++ b/drivers/staging/rtl8723bs/hal/rtl8723b_hal_init.c
+@@ -60,7 +60,8 @@ static int _BlockWrite(struct adapter *padapter, void *buffer, u32 buffSize)
+ 	for (i = 0; i < blockCount_p1; i++) {
+ 		ret = rtw_write32(padapter, (FW_8723B_START_ADDRESS + i * blockSize_p1), *((u32 *)(bufferPtr + i * blockSize_p1)));
+ 		if (ret == _FAIL) {
+-			printk("====>%s %d i:%d\n", __func__, __LINE__, i);
++			netdev_dbg(padapter->pnetdev, "write failed at %s %d, block:%d\n",
++				   __func__, __LINE__, i);
+ 			goto exit;
+ 		}
+ 	}
+@@ -83,7 +84,8 @@ static int _BlockWrite(struct adapter *padapter, void *buffer, u32 buffSize)
+ 			ret = rtw_write8(padapter, (FW_8723B_START_ADDRESS + offset + i), *(bufferPtr + offset + i));
+ 
+ 			if (ret == _FAIL) {
+-				printk("====>%s %d i:%d\n", __func__, __LINE__, i);
++				netdev_dbg(padapter->pnetdev, "write failed at %s %d, block:%d\n",
++					   __func__, __LINE__, i);
+ 				goto exit;
+ 			}
+ 		}
+@@ -125,7 +127,8 @@ static int _WriteFW(struct adapter *padapter, void *buffer, u32 size)
+ 		ret = _PageWrite(padapter, page, bufferPtr+offset, MAX_DLFW_PAGE_SIZE);
+ 
+ 		if (ret == _FAIL) {
+-			printk("====>%s %d\n", __func__, __LINE__);
++			netdev_dbg(padapter->pnetdev, "page write failed at %s %d\n",
++				   __func__, __LINE__);
+ 			goto exit;
+ 		}
+ 	}
+@@ -136,7 +139,8 @@ static int _WriteFW(struct adapter *padapter, void *buffer, u32 size)
+ 		ret = _PageWrite(padapter, page, bufferPtr+offset, remainSize);
+ 
+ 		if (ret == _FAIL) {
+-			printk("====>%s %d\n", __func__, __LINE__);
++			netdev_dbg(padapter->pnetdev, "remaining page write failed at %s %d\n",
++				   __func__, __LINE__);
+ 			goto exit;
+ 		}
+ 	}
+diff --git a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+index d18fde4e5d6c..b845089e8d8e 100644
+--- a/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
++++ b/drivers/staging/rtl8723bs/os_dep/sdio_intf.c
+@@ -72,7 +72,7 @@ static int sdio_alloc_irq(struct dvobj_priv *dvobj)
+ 	err = sdio_claim_irq(func, &sd_sync_int_hdl);
+ 	if (err) {
+ 		dvobj->drv_dbg.dbg_sdio_alloc_irq_error_cnt++;
+-		printk(KERN_CRIT "%s: sdio_claim_irq FAIL(%d)!\n", __func__, err);
++		pr_crit("%s: sdio_claim_irq FAIL(%d)!\n", __func__, err);
+ 	} else {
+ 		dvobj->drv_dbg.dbg_sdio_alloc_irq_cnt++;
+ 		dvobj->irq_alloc = 1;
+-- 
+2.34.1
+
 
