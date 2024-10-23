@@ -1,115 +1,206 @@
-Return-Path: <linux-kernel+bounces-377651-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377652-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9BC49AC1E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:40:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2A2E9AC1EF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:40:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FA9BB23FFE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:40:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81518283B89
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:40:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240D415B13B;
-	Wed, 23 Oct 2024 08:39:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 49EF915B971;
+	Wed, 23 Oct 2024 08:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oOO/UH4u"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kVe91hxx"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BDD15852E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:39:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E185158853;
+	Wed, 23 Oct 2024 08:40:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672794; cv=none; b=jNGXWhxWo2ZhyI5/RHt3lSDKdFt7NE32AUdRMTeWnD8EX4hyDssQAxCPziaVUJ3PIFQWk0vm5ydnVeJwT/w4bFzlvNOGdXaZV6BpS5ZMFVq9W+uFKk4Kyun3HXnsw9zEZ/jP1+XdFm1DvABjGCOfUlEuN1EBrEk4639si4uChZs=
+	t=1729672844; cv=none; b=O7va1qwdRTkt2xMv5DEfQDLd5R3jtK/+ZprwbgjvPextxg8MAuAqtgeXP6+qyMOnPXWWVh8cB9R1qdRnPmK8QUdCHL90sFQKUQOwpvgW66xQMIyJLUdsskJ8SPSGynTPXzgkRJGaXl97MXmclbbUQGBbfxAGsDP7/bvu8FozmWM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672794; c=relaxed/simple;
-	bh=iJbAb8skEa4Nx/8KUs6c6Kmf1XIOGfLjcxmhZaN7zqs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=YcHiaZAP92ED+CktS3sTDGHaOHXA7jtsQXu5pBksIusMorfx2R7zntvUyW2+aFdQs2WlyRJ2KpH3V4UPtICx9qJH+S0cSaSzpSP7rLsmQVTfjV33PjOVEY+QNC76/Izj11xSK5s6yGRCEGjxXE0Ib2rTAgDJX0AlsvFOMSg3zaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oOO/UH4u; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-431695fa98bso40852605e9.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:39:52 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729672791; x=1730277591; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=2q+EqKO/SmJ+LwoOc5NqrnnNgg93ONnESekHeBkrw9I=;
-        b=oOO/UH4umUXL2q/W87+IPDPrskl4aHiSoJejqSZCsxo6nL2FYwK1IkobOa/6Rf3qv6
-         gEPhyDnMic6+Cv+ur5cqmhhW4QhFMLwq0t10p4TyYovexoLFKJpexO2xyTfoMtxNZuBU
-         9xLO6IEKCUg+TYR5lI07LxbYa0GRMLbw+6FD/g0P1zaW3Yqda4XNRq9injEsnkqD7rXE
-         6pvm1YVOuNkQcSwTC2sQtj5WMzx3PKuj1ZGdZ2c6dkxLEbPY4spsJ4dIDUHIEZ1gh6TF
-         /iU8vabl1/0ZlGh4fby9v/JfWQaD4i5hhQI1Pwwa+P3RVytTRfq2WDyatAT/14LNf5pd
-         ugFg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729672791; x=1730277591;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2q+EqKO/SmJ+LwoOc5NqrnnNgg93ONnESekHeBkrw9I=;
-        b=FMtbeq2gVAJ7kR4M5Mly0CW4qrNouGOC/JAua2rDm4RnUTljapqhu9xtS5txUiGoL9
-         UQ+MesEID0DLZzTSqtK8VL5C23xNdPsWIfT3DjAPB/I041GPv5Dwr74GjKphk4yTXhhD
-         0axm66w3kZnulrVNOw7+Q3J3i16M9elG9i9gxKHMG5KvZlwpR2BCdQkigjXUnJ1FiROj
-         AtGjew3EmIDR/izh1wLdv23/rPD7UnHHBApQ+Mf+Abl8HE9CobrFcHHN0xj+aoXWVdu+
-         yAAD4ORY6dwHIORSLfqBwHIKunRqyTwxC1M22R3R2XgGEUHfNPWf0gLcq47BqU0ZARIM
-         FtmQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUh2axS0+GjR+AW9m9z4ogJW6W+AApJcT+EAmb0zc7lTbbqFErlH85Tht4MXoLeYpy2jW2ObdD2Yzix3Zw=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy6nlHSw3iWtNwQRe/X/EwvgmWHgiUeKOx67T3c9n4ZY1IRBoxB
-	Ui6KQ79IWpXJXcr2hWb8EtonHg6dpEeYNTRdcovRGuPYGcqHGD5chOSVTjoH0Mg=
-X-Google-Smtp-Source: AGHT+IH33wSfSVODDvdL/yZ91O6rmVDtlC8FIWHeTBfVcquWAPxHFeIFGhVu1f0mob8q5XR3H0fZpw==
-X-Received: by 2002:a05:600c:190a:b0:431:561b:b32a with SMTP id 5b1f17b1804b1-43184158e72mr14918485e9.19.1729672790992;
-        Wed, 23 Oct 2024 01:39:50 -0700 (PDT)
-Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9413fsm8435305f8f.74.2024.10.23.01.39.50
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 01:39:50 -0700 (PDT)
-Date: Wed, 23 Oct 2024 11:39:47 +0300
-From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Yixun Lan <dlan@gentoo.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
-	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
-Subject: [PATCH next] pinctrl: spacemit: fix double free of map
-Message-ID: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
+	s=arc-20240116; t=1729672844; c=relaxed/simple;
+	bh=4H0UsMMCB9JmXCIXGi6MOZ2ghoBeo+pJlx+1NAUoIE4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=njMfjXjOa4q+kn5fX8kkNU+J0NXp8us5W08jjcecgQWgRZPFzAPOcDSBmuj5rJT5dDZ9vgJghiP9p/4DahDUPjnJv27LM8wJR1PJfCUvfNc06TMx2lgwkbZaR3aTTlutEe1SuT/dBLPjhyrLFeOz0I9rY7mUeOaFQbNe/Lulo0c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kVe91hxx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9D07C4CEC6;
+	Wed, 23 Oct 2024 08:40:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729672844;
+	bh=4H0UsMMCB9JmXCIXGi6MOZ2ghoBeo+pJlx+1NAUoIE4=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=kVe91hxxIAj5lgLDqV3KLSD503KzeVxHdgwyPek9j+R3hPC4ysAw2q+78VZuDW4Di
+	 HKjvz+zuaejEfSonQmlXo9YbCwTqADZxaUULGvURgtSmpoZcAdeOtwFgc83QeKJHKE
+	 bELolJUT8cVHRDa+rE63dvfTgz6Bggp0NLjWgpwD7bB5aeFMpKTGUrwEVLb21ipj5d
+	 MMS2QVkP5HxgB2x+B4vmqV5B2ZGfWZgf8k0Ri7r4Hw3rsMmw29Xtk3BOuKFOAF+1Fx
+	 Hr6OHoLiW6pDSJZx5pX2zgd8sXtjUBXinYooAJRH14s6qfmDWk6cCmlWMSXED+UvXe
+	 POwLXW/I5FBew==
+Date: Wed, 23 Oct 2024 10:40:41 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: mjchen <mjchen0829@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-input@vger.kernel.org, linux-arm-kernel@lists.infradead.org, mjchen@nuvoton.com, 
+	peng.fan@nxp.com, sudeep.holla@arm.com, arnd@arndb.de, conor+dt@kernel.org, 
+	krzk+dt@kernel.org, robh@kernel.org, dmitry.torokhov@gmail.com
+Subject: Re: [PATCH 1/2] dt-bindings: input: Add Nuvoton MA35D1 keypad
+Message-ID: <csbechg6iarxx52z2gqidszhvgjdvaraoumpfcsozelhuuhmtb@ec7es3txuzxc>
+References: <20241022063158.5910-1-mjchen0829@gmail.com>
+ <20241022063158.5910-2-mjchen0829@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-X-Mailer: git-send-email haha only kidding
+In-Reply-To: <20241022063158.5910-2-mjchen0829@gmail.com>
 
-The map pointer is freed by pinctrl_utils_free_map().  It must not be a
-devm_ pointer or it leads to a double free when the device is unloaded.
+On Tue, Oct 22, 2024 at 06:31:57AM +0000, mjchen wrote:
+> From: mjchen <mjchen@nuvoton.com>
+> 
+> Add YAML bindings for MA35D1 SoC keypad.
+> 
+> Signed-off-by: mjchen <mjchen@nuvoton.com>
+> ---
+>  .../bindings/input/nvt,ma35d1-keypad.yaml     | 88 +++++++++++++++++++
+>  1 file changed, 88 insertions(+)
+>  create mode 100755 Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
+> 
 
-This is similar to a couple bugs Harshit Mogalapalli fixed earlier in
-commits 3fd976afe974 ("pinctrl: nuvoton: fix a double free in
-ma35_pinctrl_dt_node_to_map_func()") and 4575962aeed6 ("pinctrl: sophgo:
-fix double free in cv1800_pctrl_dt_node_to_map()").
+Please run scripts/checkpatch.pl and fix reported warnings. Then please
+run 'scripts/checkpatch.pl --strict' and (probably) fix more warnings.
+Some warnings can be ignored, especially from --strict run, but the code
+here looks like it needs a fix. Feel free to get in touch if the warning
+is not clear.
 
-Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
-Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
----
- drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> diff --git a/Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml b/Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
+> new file mode 100755
+> index 000000000000..3d9fc26cc132
+> --- /dev/null
+> +++ b/Documentation/devicetree/bindings/input/nvt,ma35d1-keypad.yaml
 
-diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
-index c75ea27b2344..a32579d73613 100644
---- a/drivers/pinctrl/spacemit/pinctrl-k1.c
-+++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
-@@ -314,7 +314,7 @@ static int spacemit_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
- 	if (!grpnames)
- 		return -ENOMEM;
- 
--	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
-+	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
- 	if (!map)
- 		return -ENOMEM;
- 
--- 
-2.45.2
+Filename based on compatible. There is no nvt prefix. Entire filename is
+somehowdifferent than compatible.
+
+> @@ -0,0 +1,88 @@
+> +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> +%YAML 1.2
+> +---
+> +$id: http://devicetree.org/schemas/input/nvt,ma35d1-keypad.yaml#
+> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> +
+> +title: NVT MA35D1 Keypad
+
+NVT? Nuvoton?
+
+> +
+> +maintainers:
+> +  - Ming-jen Chen <mjchen0829@gmail.com>
+> +
+> +allOf:
+> +  - $ref: /schemas/input/matrix-keymap.yaml#
+> +
+> +properties:
+> +  compatible:
+> +    const: nuvoton,ma35d1-kpi
+> +
+> +  debounce-period:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+
+Missing vendor prefix... or why are you not using existing properties?
+
+> +    description: |
+> +      key debounce period select
+
+select? or clock cycles? I don't understand this. Say something useful
+here.
+
+
+> +      0  = 0 clock
+> +      1  = 0 clock
+> +      2  = 0 clock
+
+Heh? So this is just 0
+
+> +      3  = 8 clocks
+
+This is 8
+
+> +      4  = 16 clocks
+
+16, not 4
+
+> +      5  = 32 clocks
+> +      6  = 64 clocks
+> +      7  = 128 clocks
+> +      8  = 256 clocks
+> +      9  = 512 clocks
+> +      10 = 1024 clocks
+> +      11 = 2048 clocks
+> +      12 = 4096 clocks
+> +      13 = 8192 clocks
+
+Use proper enum
+
+
+> +
+> +  per-scale:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Row Scan Cycle Pre-scale Value (1 to 256).
+
+Missing constraints
+
+> +
+> +  per-scalediv:
+> +    $ref: /schemas/types.yaml#/definitions/uint32
+> +    description: Per-scale divider (1 to 256).
+
+Missing constraints
+
+Both properties are unexpected... aren't you duplicating existing
+properties?
+
+> +
+> +  reg:
+> +    maxItems: 1
+> +
+> +  interrupts:
+> +    maxItems: 1
+> +
+> +  clocks:
+> +    maxItems: 1
+> +
+> +required:
+> +  - compatible
+> +  - reg
+> +  - interrupts
+> +  - clocks
+> +  - linux,keymap
+> +  - debounce-period
+> +  - per-scale
+> +  - per-scalediv
+> +
+> +unevaluatedProperties: false
+> +
+> +examples:
+> +  - |
+> +    #include <dt-bindings/input/input.h>
+> +    keypad: keypad@404A0000 {
+
+Lowercase hex and drop the unused label
+
+> +      compatible = "nuvoton,ma35d1-kpi";
+> +      reg = <0x404A0000 0x10000>;
+
+Lowercase hex
+
+Best regards,
+Krzysztof
 
 
