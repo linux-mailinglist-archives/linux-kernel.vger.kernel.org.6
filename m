@@ -1,150 +1,222 @@
-Return-Path: <linux-kernel+bounces-378310-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378311-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 529B59ACE54
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:12:41 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 294AB9ACE47
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:10:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB62B23E2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:10:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D83212814C7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:10:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D761CFECA;
-	Wed, 23 Oct 2024 15:05:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82E421D3590;
+	Wed, 23 Oct 2024 15:05:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdpZ3INe"
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="jvyLBVS8"
+Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FB01CF286
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:05:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB4601D278A;
+	Wed, 23 Oct 2024 15:05:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695905; cv=none; b=B2mHInX0do82LqaQU82AwDMl8N5bnNCenoQicp26Ar/fCJf+nbYEIjHFGALaDmCF3jbX66Y0OPYwEJuBUSDqCS633rpG6ZsdryrJ83cbG4v2xYzWU6sf5WM8gTvB+WzF1PZkMYxn6d3s1ZP7evhiNH1tTnnTf5QvIl+JSBpJ+Yc=
+	t=1729695931; cv=none; b=WyWs0ko55dqoBjPu90EwdUjRrmJsOhydlbwO5Qo0GjIjDIZEtawQsw+u55E87sOZ5RuFD+Gylk/PhUp81fp2sF2pmvW7l4muWURiZVBiNQZLfgtyqvBGFbM+p7P1INOHU8J/Qi5Ye4Y7Wlvlkv6HEPZkP1WRDw7fF7PhulCajDo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695905; c=relaxed/simple;
-	bh=TZmP8TWVpFq/RwracRcNWfJZXqBhESMwz75bOYrNJYI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=cHvSVVqEJvrGDsBMbdDSd6bMFDnwwZwrmuyQBY0xlGwL6qvmdEVNd1oyQu60Nm1i5+aGDNp5I/7JqJQqaGGbAmGpVjuSIVXzCdUcYFir4DBrTvd84CWyLbvZzkiuqbhk0oFzu4w5vwQf5JCounfa63PqUGvv4uuKcYmCaTJrNJw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdpZ3INe; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e29327636f3so6989367276.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:05:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729695903; x=1730300703; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=zuy/pIpGl6mn3xPw/OH7BSEVrrvkLmg7ErfqDPz7cEo=;
-        b=KdpZ3INeDasTrZUTub8RMCoBLRlmSHXAu7IgPfWq/FbmUbKkTF0N6kCZT4lqIxDs8u
-         rmdVQjpsiH4QcEZaPUivSn2yN5fvNxLIN4ShPdjnG6orcUaDpIFIyacwkVxVS75ZoH7T
-         0XyRyeaO/uz1g1oE32zOqCf7QejMZErvv62zloL3msSyYI1ZBf5Vgx1O+7C8QNQ62S0M
-         9/ZR6GwF09KQAZWfPWyvQV+Jzu0qU/hrdAJyLJ0rza/oqJa2rQOjTdhsWvglUCnun5FS
-         /1ESmVHrUwWAOS+TXIAsmnLp4qanDTrVPHzmw1k0E6OnMIPSpzmoDI0/5UcdP9kdjlrd
-         yysw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729695903; x=1730300703;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=zuy/pIpGl6mn3xPw/OH7BSEVrrvkLmg7ErfqDPz7cEo=;
-        b=CCZyXoyMNr8rsmEygPfW/pJquuSPjIViwaj12hoER1J8bnmWgp+koFdo8jP5S80y3J
-         e6DrwyBCTBcZfYePOnhrb+IfEhHYMxBVKuRFC9Epri8eskXqzo61ARIZYoaGMNFFyA7q
-         uJpUTYPJ5yBGqzdiwvI4dPHDPPfsDFSP8u0GTmAu8RtCB6/hcMBf42Pw0EumI0Bc58JC
-         TxyryVBzKu7vp78motB14/oO3QevAmJE8Wp1IPQWaP8Gx1TQOaswC3fuBXoal2zIDXXf
-         lxFHRmooeoa3DQIkYAJ11iz5OdkZderHJIcLf0SMbKEXKFBxR1u8WUab4tSswVwyH6le
-         6mDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWJiCXyvI+sT/mMLbdcKPMAhjyYX3B7Hx4fro3F4AFpQI23+UczslwNv+z5ZT/o1iTdqqhYc2XD/fwfPPA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyKfKeKRDR85TlQFA357ppEitJxNtmD3+chloOXJgweoXyRfKfp
-	p93cMvh+C7po7jZZnu960IrnayXPlREGOIwMDoTdgk2bypYXOQ+dlDTg1g8cWDdu9o7D/pyykIk
-	LwJjQexM2ynSI7z1oZxMCR+ilQUw=
-X-Google-Smtp-Source: AGHT+IE1Y01TpxnOIBcjtswNmEO/BbAvNPhtff4tFTfaBbeGDMf2QwNzGN8XWoriLkVPx1KQ0QiXg4NauA8R8LRwhVo=
-X-Received: by 2002:a05:690c:dc7:b0:6e3:3019:6aad with SMTP id
- 00721157ae682-6e7f0e71d8fmr30977617b3.20.1729695902914; Wed, 23 Oct 2024
- 08:05:02 -0700 (PDT)
+	s=arc-20240116; t=1729695931; c=relaxed/simple;
+	bh=GnQXAr70wzJVnk/mn57v4kjZEEIUVdMGYwOK2pJ8TbI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ODT5ycOgO7xAt9w+TOqFYsYoxb5LqN0V4diEAtk8raH6nZgqbFID8kYODi6iY4eeLHBaAeYVJAwFlCmO8Jh7P7jy0yXp2ByLYD805V3zDiyef978lhHJREd4eGXfcPY7AKY2EJ49vv9QBw32MyTz2Lv6uz2T4ltYHmNQRk8ZGis=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=jvyLBVS8; arc=none smtp.client-ip=198.47.19.141
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49NF5LMN071286;
+	Wed, 23 Oct 2024 10:05:21 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729695921;
+	bh=cxfnVxjxs+e2TMfqcU/zti9/A8hiBCMmmh5nnYqaFHY=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=jvyLBVS8exSaB5VCINBrlNUsLaKuPIwkeN/K9p4A9hFhKP2n5Xxz5bwp5Oo9/N2mw
+	 pLZ5m6vyBWr0A9Iusqv6QadYEvWvVrqVFlvYclX/tj9zFO8Os95DfkK70x/B7i9OMU
+	 JmcvsqQWNBcQPmt6pHNrrqyuKWoF/aMXhUy396oI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49NF5LJS006302
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 23 Oct 2024 10:05:21 -0500
+Received: from DFLE105.ent.ti.com (10.64.6.26) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
+ Oct 2024 10:05:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE105.ent.ti.com
+ (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 23 Oct 2024 10:05:21 -0500
+Received: from [172.24.227.91] (psdkl-workstation0.dhcp.ti.com [172.24.227.91])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49NF5GnA065172;
+	Wed, 23 Oct 2024 10:05:17 -0500
+Message-ID: <942f988f-8228-43e0-9b29-41fccddcaaf1@ti.com>
+Date: Wed, 23 Oct 2024 20:35:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020165102.340838-1-aford173@gmail.com> <4539cdd4-db5c-40ac-9c99-c15d4df49b70@kontron.de>
-In-Reply-To: <4539cdd4-db5c-40ac-9c99-c15d4df49b70@kontron.de>
-From: Adam Ford <aford173@gmail.com>
-Date: Wed, 23 Oct 2024 10:04:49 -0500
-Message-ID: <CAHCN7xK70xJspeyQVHHZRpyGXp91gX+3=US7P3_mXBzLVZtH6Q@mail.gmail.com>
-Subject: Re: [PATCH 1/3] phy: freescale: fsl-samsung-hdmi: Expand Integer
- divider range
-To: Frieder Schrempf <frieder.schrempf@kontron.de>
-Cc: linux-phy@lists.infradead.org, aford@beaconembedded.com, sandor.yu@nxp.com, 
-	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
-	Dominique Martinet <dominique.martinet@atmark-techno.com>, 
-	Marco Felsch <m.felsch@pengutronix.de>, 
-	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
-	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 06/12] arm64: dts: ti: k3-j7200: Add bootph-*
+ properties
+To: Manorit Chawdhry <m-chawdhry@ti.com>, Nishanth Menon <nm@ti.com>,
+        Vignesh
+ Raghavendra <vigneshr@ti.com>,
+        Tero Kristo <kristo@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
+        Udit
+ Kumar <u-kumar1@ti.com>, Beleswar Padhi <b-padhi@ti.com>,
+        Siddharth Vadapalli
+	<s-vadapalli@ti.com>, Andrew Davis <afd@ti.com>
+References: <20241023-b4-upstream-bootph-all-v5-0-a974d06370ab@ti.com>
+ <20241023-b4-upstream-bootph-all-v5-6-a974d06370ab@ti.com>
+Content-Language: en-US
+From: Aniket Limaye <a-limaye@ti.com>
+In-Reply-To: <20241023-b4-upstream-bootph-all-v5-6-a974d06370ab@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Tue, Oct 22, 2024 at 2:04=E2=80=AFAM Frieder Schrempf
-<frieder.schrempf@kontron.de> wrote:
->
-> On 20.10.24 6:50 PM, Adam Ford wrote:
-> > The Integer divder uses values of P,M, and S to determine the PLL
-> > rate.  Currently, the range of M was set based on a series of
-> > table entries where the range was limited.  Since the ref manual
-> > shows it is 8-bit wide, expand the range to be up to 255.
-> >
-> > Signed-off-by: Adam Ford <aford173@gmail.com>
->
-> With the typo below fixed:
->
-> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-Thanks for the review.  I'll post V2 in the next few days.
->
-> > ---
-> >  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 11 +++++------
-> >  1 file changed, 5 insertions(+), 6 deletions(-)
-> >
-> > diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy=
-/freescale/phy-fsl-samsung-hdmi.c
-> > index 2c8038864357..3f9578f3f0ac 100644
-> > --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> > +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
-> > @@ -406,16 +406,15 @@ static unsigned long fsl_samsung_hdmi_phy_find_pm=
-s(unsigned long fout, u8 *p, u1
-> >                               continue;
-> >
-> >                       /*
-> > -                      * TODO: Ref Manual doesn't state the range of _m
-> > -                      * so this should be further refined if possible.
-> > -                      * This range was set based on the original value=
-s
-> > -                      * in the lookup table
-> > +                      * The Ref manual doesn't explicitly state the ra=
-nge of M,
-> > +                      * bit it does show it as an 8-bit value, so we'l=
-l reject
->
->                            ^ but
 
-whoops!  Good catch.
+On 23/10/24 12:27, Manorit Chawdhry wrote:
+> Adds bootph-* properties to the leaf nodes to enable bootloaders to
+> utilise them.
+> 
+> Following adds bootph-* to
+> - System controller nodes that allow controlling power domain, clocks, etc.
+> - secure_proxy_sa3/secure_proxy_main mboxes for communication with
+>    System Controller
+> - mcu_ringacc/mcu_udmap for DMA to SMS
+> - chipid for detection soc information.
+> - mcu_timer0 for bootloader tick-timer.
+> - hbmc_mux for enabling Hyperflash support
+> - ESM nodes for enabling ESM support.
+> - wkup_vtm for enabling Adaptive voltage scaling(AVS) support
+> 
+> Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
 
-adam
->
-> > +                      * any value above 255.
-> >                        */
-> >                       tmp =3D (u64)fout * (_p * _s);
-> >                       do_div(tmp, 24 * MHZ);
-> > -                     _m =3D tmp;
-> > -                     if (_m < 0x30 || _m > 0x7b)
-> > +                     if (tmp > 255)
-> >                               continue;
-> > +                     _m =3D tmp;
-> >
-> >                       /*
-> >                        * Rev 2 of the Ref Manual states the
->
+Thanks for the patch!
+
+Reviewed-by: Aniket Limaye <a-limaye@ti.com>
+
+> ---
+>   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi       |  2 ++
+>   arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi | 11 +++++++++++
+>   2 files changed, 13 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> index 9386bf3ef9f6..ac9c0a939461 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> @@ -136,6 +136,7 @@ secure_proxy_main: mailbox@32c00000 {
+>   			      <0x00 0x32800000 0x00 0x100000>;
+>   			interrupt-names = "rx_011";
+>   			interrupts = <GIC_SPI 37 IRQ_TYPE_LEVEL_HIGH>;
+> +			bootph-all;
+>   		};
+>   
+>   		hwspinlock: spinlock@30e00000 {
+> @@ -1527,6 +1528,7 @@ main_r5fss0_core1: r5f@5d00000 {
+>   	main_esm: esm@700000 {
+>   		compatible = "ti,j721e-esm";
+>   		reg = <0x0 0x700000 0x0 0x1000>;
+> +		bootph-pre-ram;
+>   		ti,esm-pins = <656>, <657>;
+>   	};
+>   };
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> index 5097d192c2b2..7e9ad2301937 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> @@ -21,16 +21,19 @@ dmsc: system-controller@44083000 {
+>   		k3_pds: power-controller {
+>   			compatible = "ti,sci-pm-domain";
+>   			#power-domain-cells = <2>;
+> +			bootph-all;
+>   		};
+>   
+>   		k3_clks: clock-controller {
+>   			compatible = "ti,k2g-sci-clk";
+>   			#clock-cells = <2>;
+> +			bootph-all;
+>   		};
+>   
+>   		k3_reset: reset-controller {
+>   			compatible = "ti,sci-reset";
+>   			#reset-cells = <2>;
+> +			bootph-all;
+>   		};
+>   	};
+>   
+> @@ -44,6 +47,7 @@ mcu_timer0: timer@40400000 {
+>   		assigned-clocks = <&k3_clks 35 1>;
+>   		assigned-clock-parents = <&k3_clks 35 2>;
+>   		power-domains = <&k3_pds 35 TI_SCI_PD_EXCLUSIVE>;
+> +		bootph-pre-ram;
+>   		ti,timer-pwm;
+>   	};
+>   
+> @@ -191,6 +195,7 @@ wkup_conf: bus@43000000 {
+>   		chipid: chipid@14 {
+>   			compatible = "ti,am654-chipid";
+>   			reg = <0x14 0x4>;
+> +			bootph-all;
+>   		};
+>   	};
+>   
+> @@ -344,6 +349,7 @@ mcu_ringacc: ringacc@2b800000 {
+>   			      <0x00 0x28440000 0x00 0x40000>;
+>   			reg-names = "rt", "fifos", "proxy_gcfg",
+>   				    "proxy_target", "cfg";
+> +			bootph-all;
+>   			ti,num-rings = <286>;
+>   			ti,sci-rm-range-gp-rings = <0x1>; /* GP ring range */
+>   			ti,sci = <&dmsc>;
+> @@ -363,6 +369,7 @@ mcu_udmap: dma-controller@285c0000 {
+>   				    "tchan", "rchan", "rflow";
+>   			msi-parent = <&main_udmass_inta>;
+>   			#dma-cells = <1>;
+> +			bootph-all;
+>   
+>   			ti,sci = <&dmsc>;
+>   			ti,sci-dev-id = <236>;
+> @@ -383,6 +390,8 @@ secure_proxy_mcu: mailbox@2a480000 {
+>   		reg = <0x0 0x2a480000 0x0 0x80000>,
+>   		      <0x0 0x2a380000 0x0 0x80000>,
+>   		      <0x0 0x2a400000 0x0 0x80000>;
+> +		bootph-pre-ram;
+> +
+>   		/*
+>   		 * Marked Disabled:
+>   		 * Node is incomplete as it is meant for bootloaders and
+> @@ -534,6 +543,7 @@ hbmc_mux: mux-controller@47000004 {
+>   			reg = <0x00 0x47000004 0x00 0x4>;
+>   			#mux-control-cells = <1>;
+>   			mux-reg-masks = <0x0 0x2>; /* HBMC select */
+> +			bootph-all;
+>   		};
+>   
+>   		hbmc: hyperbus@47034000 {
+> @@ -652,6 +662,7 @@ wkup_vtm0: temperature-sensor@42040000 {
+>   		      <0x00 0x42050000 0x00 0x350>;
+>   		power-domains = <&k3_pds 154 TI_SCI_PD_EXCLUSIVE>;
+>   		#thermal-sensor-cells = <1>;
+> +		bootph-pre-ram;
+>   	};
+>   
+>   	mcu_esm: esm@40800000 {
+> 
 
