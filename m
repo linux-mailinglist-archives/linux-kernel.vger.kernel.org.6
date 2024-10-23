@@ -1,145 +1,235 @@
-Return-Path: <linux-kernel+bounces-377648-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377649-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4E7F9AC1D5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:37:08 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 393BE9AC1DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:37:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 668061F22307
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:37:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FDDBB24881
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:37:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A054B15AAC1;
-	Wed, 23 Oct 2024 08:36:37 +0000 (UTC)
-Received: from mail-yw1-f175.google.com (mail-yw1-f175.google.com [209.85.128.175])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B444155A4E;
+	Wed, 23 Oct 2024 08:37:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="FjdDSNFg";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="zg2cZRiL";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="dzwWVuHh";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QXzkvYvv"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7FFD155A4E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:36:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D724E158553
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:37:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672597; cv=none; b=eIQflSMn4c+Yjmiz8a4aWCcA6T9h+uPZIP4kFLELgq7Mdw2uGRXuOe9HqqmTN1AFFJlP7YjY8XjDUWSfyFkwK5x6eAr6ORLsvkqoNShKNAzj0AAVKVUtlv3RIVxPcRVggU5t3Zz/nLYj/CuPe4Em6zu6iON//N8la1izZWY5OaU=
+	t=1729672629; cv=none; b=co00YD5TKIDns/zU9q9OjXONbXfHizHfRBv653MWbO49EULQRQtjl2EGwyI28JIcuzwK0o+iW2lrDp7te8Vxb5zAhDRm56PMa0bQdRi1IkOGiV/9dUWifCqNgk5OMrtRYrLYG9rYAg4CsfXA8CKQhiV2CBIGYmLAWoh6rvIdjkY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672597; c=relaxed/simple;
-	bh=WoszXx2jVWnLZANPTXKiGpUlWzGprmlyNf1SgZ2h6/Q=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=tGTgJq7+suuoRDmUnkJQVqYgUyAFDgBByhL8pCTWnMNeqlvMzB3TQMXHgd2Bp9MTWI+DdGij2vov3zDZ+vqwTgsjWRA2lxzyhbGs0DX4iC455icwt1tDhxTVNJfD/jy0IqI2rbbJi1WeDfXFBbiC2jIlt/+UVOjLQnXc4qJXPmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f175.google.com with SMTP id 00721157ae682-6e38fc62b9fso64653457b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:36:35 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729672594; x=1730277394;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=q9mLvo2WeXjPwcQq/5DwDt0k4XI3pjJ/l1xXIcYug8o=;
-        b=m4FW+KQVF2oqnBul6lwsG7Yx/h/zzjMUnc6JLuU4LL1KrwAvx1PiUysBp/jY48lJuc
-         a+iZGEm51+3JuZGL5Vk/ju3qTPoc0LsLX36x11qRgk1KVlEYN4zeF/8cswstNTmSycE+
-         ii+2qYikBxn1UIzwgP9imTPUPXvkEDsurznrfjKZsSpT+RUWIVPfV2jHIRBL2Ta2QKJk
-         NCBkmhBcTxTIZD4I9rPyDIMrz19ShlBITey8oVDAiq6Dht42Qzq0VOBs9Z23CRenOsz5
-         UTBjFeqMYrA85iZFq7Y2PfzWBi4rn2U4KL61RwmD1KHtBn3msSAlplrL91Af6fPLD0Eh
-         N4NQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX+cPrtnWHV9u2pKju4SgirPhkaIe29Zh7RHO6j8Wm8JE98Z6jnKCWq8vMN2a7voFFsiY28bpFW0DXVQaY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxavcYzfhpe2gD1roK9Ni06JMeUJWKsy1KmvLSF6QZ4YBEFQaly
-	CZ8TE9bNHB1XHSoJbr9/3RWBaqYGemUFfsplK3QOFelppG3YEaKP4fzeSXoS
-X-Google-Smtp-Source: AGHT+IEaUaSLaq3QZRMxNMCmHPd62i+YmUxWsjcM1fn7P+ZmtwMbYw0NCwXERfJcnAEEPXJ6/aV1kw==
-X-Received: by 2002:a05:690c:94:b0:6e3:4630:e190 with SMTP id 00721157ae682-6e7f0fc27edmr18093897b3.42.1729672594153;
-        Wed, 23 Oct 2024 01:36:34 -0700 (PDT)
-Received: from mail-yw1-f178.google.com (mail-yw1-f178.google.com. [209.85.128.178])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f59f7b5asm14145317b3.29.2024.10.23.01.36.33
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 01:36:33 -0700 (PDT)
-Received: by mail-yw1-f178.google.com with SMTP id 00721157ae682-6e38fc62b9fso64653157b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:36:33 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCX4BCGYBqpAMfOA2EXkCCjd9TnYIkupaCha4D4x/NiMZpa+ody9HovIRr1VzZzgNmb/vxMF+E2NLuRv7VY=@vger.kernel.org
-X-Received: by 2002:a05:690c:4b06:b0:6e3:2e20:a03c with SMTP id
- 00721157ae682-6e7f0e49ef0mr20466497b3.26.1729672593282; Wed, 23 Oct 2024
- 01:36:33 -0700 (PDT)
+	s=arc-20240116; t=1729672629; c=relaxed/simple;
+	bh=LcSGdVCnpfZniO7rRQkkmETE1RKdQsevzPzOCSe3i1E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=d6sBbI6Y62/3FRCJ/CwHGC08SxOF77SJJt4kHrTn1Y6QqT6HCpsiWg9q1UCDmpYXJ6R5uw0uwfGZPVkgvYgMbdobs/QXrIPpJjF3fLkBIejAWr86vXZq/Crso+kut8YR19Uk6W8vDHm/1waj5CpAiTMisjMVGSoEBOah7RuEzoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=FjdDSNFg; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=zg2cZRiL; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=dzwWVuHh; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QXzkvYvv; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id C46FC21BFF;
+	Wed, 23 Oct 2024 08:37:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729672626; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HPj4PXUptAqG05sIzETI384paGTLhZPuXZWZiETIuS4=;
+	b=FjdDSNFgVazEPT6rVbY1urpiFTNNkpOrekCvpGo/Y5klWQBNSMmJS6JnShsmsCvTe7bbON
+	1NH3dGZ9wpc0KM61+/kFiw8ZxQpT1N0H/hiR4l4sqgdvBskN84RnawQKPvcH/OKn8mfWBa
+	eSWSZyeVRaht1mo/mke8RodU3sdGZhc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729672626;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HPj4PXUptAqG05sIzETI384paGTLhZPuXZWZiETIuS4=;
+	b=zg2cZRiLmyq+xY2PmGVeSb+BOGAcROXNBioL25P9JSyg00msiknWu2qAmTTU6gzLe+W+vJ
+	mC7LxfWLdSzX+7DA==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=dzwWVuHh;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=QXzkvYvv
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729672624; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HPj4PXUptAqG05sIzETI384paGTLhZPuXZWZiETIuS4=;
+	b=dzwWVuHhW9nkRqH5aghArWsXMQ8F8bHK4PFsAZytUb1JxyQlGcdpLamSTP7mwfLhAvjV2x
+	DNgs4z7qhpUFPBX66C+OrwbeS66rE8V85ttz1tDJ7wULF86tysbYMH8vinNUgWO3jg0q6g
+	XgSNY6ErC1pStu3WBHR8/ZDQ1eQhmEI=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729672624;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=HPj4PXUptAqG05sIzETI384paGTLhZPuXZWZiETIuS4=;
+	b=QXzkvYvvTs2SsMXnU2eSdEI+Cmo+zcNegCvBnyE/3WPjmlxnFhc1TZRAHB4WB/dJWIFiNf
+	1cmpBELtUlXV+2DQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B036A13A63;
+	Wed, 23 Oct 2024 08:37:04 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id 40OtKrC1GGfLGwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Wed, 23 Oct 2024 08:37:04 +0000
+Message-ID: <2ae61141-9d88-4493-9fc1-245e29dac445@suse.cz>
+Date: Wed, 23 Oct 2024 10:37:04 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <ZxZ8MStt4e8JXeJb@sashalap> <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org> <20241022041243.7f2e53ad@rorschach.local.home>
- <ZxiN3aINYI4u8pRx@infradead.org> <20241023042004.405056f5@rorschach.local.home>
-In-Reply-To: <20241023042004.405056f5@rorschach.local.home>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Wed, 23 Oct 2024 10:36:20 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
-Message-ID: <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
-Subject: Re: linus-next: improving functional testing for to-be-merged pull requests
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>, Sasha Levin <sashal@kernel.org>, 
-	torvalds@linux-foundation.org, ksummit@lists.linux.dev, 
-	linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH hotfix 6.12 0/8] fix error handling in mmap_region() and
+ refactor
+Content-Language: en-US
+To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>,
+ Andrew Morton <akpm@linux-foundation.org>
+Cc: "Liam R . Howlett" <Liam.Howlett@oracle.com>, Jann Horn
+ <jannh@google.com>, linux-kernel@vger.kernel.org, linux-mm@kvack.org,
+ Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
+References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: C46FC21BFF
+X-Spam-Score: -4.51
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[99.99%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	TO_DN_SOME(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	MID_RHS_MATCH_FROM(0.00)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[8];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.cz:mid,suse.cz:dkim];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-Hi Steven,
+On 10/22/24 22:40, Lorenzo Stoakes wrote:
+> The mmap_region() function is somewhat terrifying, with spaghetti-like
+> control flow and numerous means by which issues can arise and incomplete
+> state, memory leaks and other unpleasantness can occur.
+> 
+> A large amount of the complexity arises from trying to handle errors late
+> in the process of mapping a VMA, which forms the basis of recently observed
+> issues with resource leaks and observable inconsistent state.
+> 
+> This series goes to great lengths to simplify how mmap_region() works and
+> to avoid unwinding errors late on in the process of setting up the VMA for
+> the new mapping, and equally avoids such operations occurring while the VMA
+> is in an inconsistent state.
+> 
+> The first four patches are intended for backporting to correct the
+> possibility of people encountering corrupted state while invoking mmap()
+> which is otherwise at risk of happening.
+> 
+> After this we go further, refactoring the code, placing it in mm/vma.c in
+> order to make it eventually userland testable, and significantly
+> simplifying the logic to avoid this issue arising in future.
 
-On Wed, Oct 23, 2024 at 10:20=E2=80=AFAM Steven Rostedt <rostedt@goodmis.or=
-g> wrote:
-> On Tue, 22 Oct 2024 22:47:09 -0700
-> Christoph Hellwig <hch@infradead.org> wrote:
-> > On Tue, Oct 22, 2024 at 04:12:43AM -0400, Steven Rostedt wrote:
-> > > You mean have everything go into linux-next before going to Linus aft=
-er -rc1?
-> > >
-> > > I'm one that doesn't do this. That's because my code in linux-next
-> > > after -rc1 is for the next merge window, and the code I send to Linus
-> > > is only fixes for code I sent before -rc1. I tend to keep an "urgent"
-> > > and "core" branch. My "core" branch is everything I plan to send in t=
-he
-> > > next merge window and goes into linux-next (via being pulled into my
-> > > for-next branch). After I send my pull request to Linus, and he pulls
-> > > it in the merge window, that "core" branch becomes my "urgent" branch=
-.
-> >
-> > You can easily have two branches in linux-next.  Many trees do that.
-> > It is also a really nice warning about self-conflicts.
->
-> I actually do have several branches in linux-next. But they are all
-> topic branches. My urgent branches usually mirror them (by naming
-> convention). My scripts pull my for-next branches together and then I
-> push them up.
->
-> I did push urgent branches to linux-next some time back, but never
-> found any advantage in doing so, so I stopped doing it. As the code in
-> my urgent branches are just fixing the stuff already in Linus's tree,
-> they seldom ever have any effect on other subsystems. My new work does
-> benefit from being in linux-next. But since I don't find more testing
-> in linux-next for things that are already in Linus's tree, I still
-> don't see how its worth the time to put my urgent work there.
->
-> To put it this way. The bugs I'm fixing was for code in linux-next
-> where the bugs were never found. They only appeared when they went into
-> Linus's tree. So why put the fixes in linux-next, if it didn't catch
-> the bugs I fixed in the first place?
+Are the latter 4 patches thus also intended as hotfix for 6.12, or was it
+just due to git applying the same PATCH prefix to the whole series, and the
+real intention is 6.13?
 
-Hmmm...
+> Lorenzo Stoakes (8):
+>   mm: avoid unsafe VMA hook invocation when error arises on mmap hook
+>   mm: unconditionally close VMAs on error
+>   mm: refactor map_deny_write_exec()
+>   mm: resolve faulty mmap_region() error path behaviour
+>   tools: testing: add additional vma_internal.h stubs
+>   mm: insolate mmap internal logic to mm/vma.c
+>   mm: refactor __mmap_region()
+>   mm: do not attempt second merge for file-backed VMAs
+> 
+>  include/linux/mman.h             |  21 +-
+>  mm/internal.h                    |  44 ++++
+>  mm/mmap.c                        | 262 ++------------------
+>  mm/mprotect.c                    |   2 +-
+>  mm/nommu.c                       |   7 +-
+>  mm/vma.c                         | 403 ++++++++++++++++++++++++++++++-
+>  mm/vma.h                         | 101 +-------
+>  mm/vma_internal.h                |   5 +
+>  tools/testing/vma/vma_internal.h | 106 +++++++-
+>  9 files changed, 591 insertions(+), 360 deletions(-)
+> 
+> --
+> 2.47.0
 
-Your arguments sound very similar to those being used in recent
-discussions about not posting patches for public review...
-
-Please follow the process! ;-)
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
