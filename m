@@ -1,111 +1,93 @@
-Return-Path: <linux-kernel+bounces-377817-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377818-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C57049AC739
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:00:13 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2373C9AC73C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:00:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 87D2D282304
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:00:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 523FB1C20968
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:00:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BB8BF16F85E;
-	Wed, 23 Oct 2024 10:00:05 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 504BE19AD97;
+	Wed, 23 Oct 2024 10:00:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y3oRAYzY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9146414A639;
-	Wed, 23 Oct 2024 10:00:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A73CF1487D6;
+	Wed, 23 Oct 2024 10:00:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677605; cv=none; b=IEakDAt8sbzlo4Kwug/Yk7Hxzpb9cyG8BB9F8V5BPfkEGeElbGC7lZNvdov53liMXt68c/jfh2piokjj8pZTwCNlll+7qtEXu7ZNHQLSAx21wjTazckRCn4yJ9s3hnyPJqIAoCFD1OfrsZ0u6277W6DQtzjHpyUnUMwZWOHYBQg=
+	t=1729677624; cv=none; b=lFSr19ODDgiW7zrhFVmBJBpKyiuRIL3DsDGGNuiHBbfaGJIO7s4jt2iSMLglM1hWp4GfOqXTeDVIp2aXI9nMGa2hyNeZIbsFv5d6UA/g+m5wsPf1TDfMrcvxn5ipDs6I2JN5v6usI//SI/PpebXux+fdT/aOOuKMUfCyvZsRYuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729677605; c=relaxed/simple;
-	bh=cYHwdl7GiBuJyzXrL6PqXsctrIZRoxCK9WuL3+RXjgI=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=OnsfetwzMG9+d00jD016BNWnSg5cakA10QJ0iwtU1YEG7TVj9+DszGr75AE1hZkVZoXMOx7AxwJ7QoaTzDhzl7R9UZ0hiHep0R2K+MWEUHg75qmLgWBgpfyselTi/3LgirjmjlF68yTSp9sSR5eQgb0s1Mmi8GoAVROwffkR/ZE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XYPfL2nh3z4f3nKT;
-	Wed, 23 Oct 2024 17:59:38 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.112])
-	by mail.maildlp.com (Postfix) with ESMTP id 9C18F1A0568;
-	Wed, 23 Oct 2024 17:59:56 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP1 (Coremail) with SMTP id cCh0CgC34i4ZyRhn+owEEw--.59896S2;
-	Wed, 23 Oct 2024 17:59:56 +0800 (CST)
-Subject: Re: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
-To: Byeonguk Jeong <jungbu2855@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
- Yonghong Song <yonghong.song@linux.dev>, bpf@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
- <26f04a6b-4248-6898-8612-793e02712017@huaweicloud.com>
- <Zxil/uyqq5qDHuRX@localhost.localdomain>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <da89a4cb-1824-2228-31ef-ad33ad6099cd@huaweicloud.com>
-Date: Wed, 23 Oct 2024 17:59:53 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1729677624; c=relaxed/simple;
+	bh=kuc8y+q3GXcLv0L3KARkdt/7V6mJAIyiPs1YVHhiG6s=;
+	h=Content-Type:MIME-Version:Subject:From:Message-Id:Date:References:
+	 In-Reply-To:To:Cc; b=eiQIY2MJlkfiVCO6L71Ic1JAjzwbCCW215Awi5eKkhSIjxA1kJ+z2Q/CMLhrbsp83oko+cw5xkI+f1919DIDU3JFx42dXnT+QqIjwoPrVp09tYc7eT1/pj36g6al9nKc3Q36HlMP7NwuOYxs8JJu4mRjkRH8tj3acaZHc2yK1PE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y3oRAYzY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29B41C4CECD;
+	Wed, 23 Oct 2024 10:00:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729677624;
+	bh=kuc8y+q3GXcLv0L3KARkdt/7V6mJAIyiPs1YVHhiG6s=;
+	h=Subject:From:Date:References:In-Reply-To:To:Cc:From;
+	b=Y3oRAYzYQKHQvWn2VmJuiDW3NlhzI1sNF2TZ2XEVCt0TgXBkIG1UwrcPdhPiPpYtI
+	 mMWL6CfWbwPZvxp2O2QNdK6oopSiA5RqJ1ycZiAfGqMkENmzgHYhuaKR56MNEzC77p
+	 3pdopZogSVIjLO5KUSVwKE8D+O97jZ8hh271rJIe7qJSpcYyDhZWzEYW7OUffQDaU6
+	 8keL89SeT02ftLHErrfcZqMNMu1BMCrIkRxx1EmDkTMEy9O2zQhtZ6vaooUGOKlbuJ
+	 O5fOSaXlDyMuKE8AWbBaPhmz71oQczyR4bAYWrQdylU7n0HY7vq1+m8bGBayhDfHJ3
+	 ebsm2+VnvMK0A==
+Received: from [10.30.226.235] (localhost [IPv6:::1])
+	by aws-us-west-2-korg-oddjob-rhel9-1.codeaurora.org (Postfix) with ESMTP id AE1703809A8A;
+	Wed, 23 Oct 2024 10:00:31 +0000 (UTC)
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <Zxil/uyqq5qDHuRX@localhost.localdomain>
-Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:cCh0CgC34i4ZyRhn+owEEw--.59896S2
-X-Coremail-Antispam: 1UD129KBjvdXoWrKr15GFyrZw18Gr1xKF1rJFb_yoWkuFX_ur
-	4Dur97WwsFkw1qgFs2yrn8JFyDGFW0kFyjv3yrur1xX34rta13XFn7Cr90vFy3GF4fu34a
-	yF98u3y5ta4avjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUIcSsGvfJTRUUUb4AYFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20E
-	Y4v20xvaj40_Wr0E3s1l1IIY67AEw4v_Jr0_Jr4l8cAvFVAK0II2c7xJM28CjxkF64kEwV
-	A0rcxSw2x7M28EF7xvwVC0I7IYx2IY67AKxVW5JVW7JwA2z4x0Y4vE2Ix0cI8IcVCY1x02
-	67AKxVWxJVW8Jr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxV
-	AFwI0_GcCE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2
-	j2WlYx0E2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7x
-	kEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1cAE67vIY487MxkF7I0En4kS14v2
-	6r126r1DMxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8CrV
-	AFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtwCI
-	c40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x0267
-	AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr0_
-	Gr1lIxAIcVC2z280aVCY1x0267AKxVW8JVW8JrUvcSsGvfC2KfnxnUUI43ZEXa7IU80fO7
-	UUUUU==
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+Subject: Re: [PATCH net-next] net/sched: act_api: unexport tcf_action_dump_1()
+From: patchwork-bot+netdevbpf@kernel.org
+Message-Id: 
+ <172967763052.1546501.9577791496088481146.git-patchwork-notify@kernel.org>
+Date: Wed, 23 Oct 2024 10:00:30 +0000
+References: <20241017161934.3599046-1-vladimir.oltean@nxp.com>
+In-Reply-To: <20241017161934.3599046-1-vladimir.oltean@nxp.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: netdev@vger.kernel.org, davem@davemloft.net, edumazet@google.com,
+ kuba@kernel.org, pabeni@redhat.com, jhs@mojatatu.com,
+ xiyou.wangcong@gmail.com, jiri@resnulli.us, pctammela@mojatatu.com,
+ linux-kernel@vger.kernel.org
 
-Hi,
+Hello:
 
-On 10/23/2024 3:30 PM, Byeonguk Jeong wrote:
-> On Wed, Oct 23, 2024 at 10:03:44AM +0800, Hou Tao wrote:
->> Without the fix, there will be KASAN report as show below when dumping
->> all keys in the lpm-trie through bpf_map_get_next_key().
-> Thank you for testing.
+This patch was applied to netdev/net-next.git (main)
+by Paolo Abeni <pabeni@redhat.com>:
 
-Alexei suggested adding a bpf self-test for the patch.  I think you
-could reference the code in lpm_trie_map_batch_ops.c [1] or similar and
-add a new file that uses bpf_map_get_next_key to demonstrate the
-out-of-bound problem. The test can be run by ./test_maps. There is some
-document for the procedure in [2].
+On Thu, 17 Oct 2024 19:19:34 +0300 you wrote:
+> This isn't used outside act_api.c, but is called by tcf_dump_walker()
+> prior to its definition. So move it upwards and make it static.
+> 
+> Simultaneously, reorder the variable declarations so that they follow
+> the networking "reverse Christmas tree" coding style.
+> 
+> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> 
+> [...]
 
-[1]:  tools/testing/selftests/bpf/map_tests/lpm_trie_map_batch_ops.c
-[2]:
-https://github.com/torvalds/linux/blob/master/Documentation/bpf/bpf_devel_QA.rst
->
->> However, I have a dumb question: does it make sense to reject the
->> element with prefixlen = 0 ? Because I can't think of a use case where a
->> zero-length prefix will be useful.
-> With prefixlen = 0, it would always return -ENOENT, I think. Maybe it is
-> good to reject it earlier!
->
-> .
+Here is the summary with links:
+  - [net-next] net/sched: act_api: unexport tcf_action_dump_1()
+    https://git.kernel.org/netdev/net-next/c/83c289e81e88
 
-Which procedure will return -ENOENT ? I think the element with
-prefixlen=0 could still be found through the key with prefixlen = 0.
+You are awesome, thank you!
+-- 
+Deet-doot-dot, I am a bot.
+https://korg.docs.kernel.org/patchwork/pwbot.html
+
 
 
