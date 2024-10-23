@@ -1,158 +1,141 @@
-Return-Path: <linux-kernel+bounces-377501-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377502-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 006DA9ABFAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:03:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91AC39ABFB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:04:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B03E3283F35
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:03:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C0DE81C2032D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:04:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3BA714B08A;
-	Wed, 23 Oct 2024 07:03:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3956150994;
+	Wed, 23 Oct 2024 07:03:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b="T4GWh7sj"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.21])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uFSgJbX0"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 20F983A8D0;
-	Wed, 23 Oct 2024 07:03:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.21
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4860713A3F3;
+	Wed, 23 Oct 2024 07:03:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729667032; cv=none; b=dq/ZB/5nWsVQwVNGZeJncwFMN8QBE3BYqCqit4kuk3m4lUI7oWxRowHZ777tP3XwW4OXkIIMmUpOQ4vkiRVITHUUz3p9n7Adja2f8GXqYFg4x6EMUbo0g/Uid6NJ9L4wNspVd/7Z4dz3SULKbOJx8/h62aSSuTg5JSa4NQdQLCY=
+	t=1729667039; cv=none; b=n/Vx4svFOMZxeH2CSqM0PpISYPEmyO4SyXnYjA6nMxxYfL45iEH6895x6yuHqTIjXrMHTiQ52ITV3nl0V7Q0QgAQ3kkTTggLd7kGoQaS14Qqhl0DAKm7RYK3Oq0gIqo9apmjjah3aWqMxH6NTIlUMdfsjwxutbjRT5smL/Mfmww=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729667032; c=relaxed/simple;
-	bh=kXnezDBNSe442Wp0C9s+qIN4YJtpiOtN2RsiZGhRlms=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=j92oDKACPynwClZSf5JYthyYDlLBSqqyCn6ktQglLp/T6e/KEwXO8dM1Pl2pB5b2bfzwdVthXNI1pb0580GIjLa2PcYHoIZdZDsxewaCRyS14MLoS926epgFgDw12q8dqGGJyLkxjh67efkTwl2RE4G8qJYY/99bwMBbQXvajrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de; spf=pass smtp.mailfrom=gmx.de; dkim=pass (2048-bit key) header.d=gmx.de header.i=w_armin@gmx.de header.b=T4GWh7sj; arc=none smtp.client-ip=212.227.17.21
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.de;
-	s=s31663417; t=1729667008; x=1730271808; i=w_armin@gmx.de;
-	bh=lITTQi1+xpDe/eRs5y9aBbZ20hdHWc0TWoYNWU0Bu/k=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=T4GWh7sj0kt2R+sHcQgs/R5eo+U2lAtSWTdSHhXN7lg8aUmRCtJ3Vi3Zf0cslCh8
-	 gir/069k0TZTC9YoXPbKdLw6RZ/+ef+c7mO1FH3lzytJQS7Dsexq+xo4S1v2UQ9Zf
-	 MLrWKAa875uMO75y5ppO7/inH5SAmh5yyYnF0BD9T6OrjmeG5QOouxx/bYR9YEgxF
-	 lZQ23hhM2aqb9X/cdi8E32lyls0Rt29+xbT7F3DV7FEUotQfkeiZy5XMga0kO2jKL
-	 fh8FGLygIDzvD/0rzWCu2CnDtYTtPWsj1vFZl/Pzb4R7408kkvmvDwbtSdgJmVO6P
-	 gk7hJcGyA4G+r05g6Q==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from [141.30.226.129] ([141.30.226.129]) by mail.gmx.net (mrgmx105
- [212.227.17.168]) with ESMTPSA (Nemesis) id 1MVvLB-1tVNOX2WnN-00RqJg; Wed, 23
- Oct 2024 09:03:28 +0200
-Message-ID: <e029404c-88f7-4e8a-affa-40d589412e61@gmx.de>
-Date: Wed, 23 Oct 2024 09:03:25 +0200
+	s=arc-20240116; t=1729667039; c=relaxed/simple;
+	bh=6DVKQTLwDZ80k1XcNjngRcu4GZNFUuwGnFM8c9RnzkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=q7xyGqy8XfTlFGotKOlpLe2W31xjayu/KYzWta6e13zL1kXmTWPyParIu7Q6erh7QwKUC8kvj2dr4axADvbXx6OU5ZX7wWryS0kByK6VkFi+YvDi3JslhtstOdjZVm2Gd5JXyYjciuxtYQ9dIPgrnnoUMG+01kYB/V+w/hgTOEU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uFSgJbX0; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id DE82EC4CEC6;
+	Wed, 23 Oct 2024 07:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729667038;
+	bh=6DVKQTLwDZ80k1XcNjngRcu4GZNFUuwGnFM8c9RnzkA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=uFSgJbX0TOXKZqTgHQeTetPCujY6ARh7Kwo0rEgfyO8Oki0pjsoQE7X9qFVBBVOXm
+	 VFBZtwgsPBZuPRRl6DHVDaAv9uUkt2m1553NXprb9iVlQakmUX38lxlpJhb7XgXBdy
+	 mVzRL9opR28oW1y/+G38LRUJ1lRDiToBffmYeqNw0fhdBD+2rrnh4AtxzX/m4ybcUZ
+	 58N4ttKznHX11xI7JNYrfaP0ZhVguJRGIRbhjcNw9s8+3VH3Uv5YUQXAZSV0A5CRwl
+	 jlw8KbnDrj79K9+feR048Q8SAGyt13jrX+f1n1b2ntWbr3yMRpI3BwxVZtA0jXv7Qz
+	 hFqpJjtVn63RQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t3VPe-000000001go-2ooC;
+	Wed, 23 Oct 2024 09:04:10 +0200
+Date: Wed, 23 Oct 2024 09:04:10 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Abel Vesa <abel.vesa@linaro.org>
+Cc: Heikki Krogerus <heikki.krogerus@linux.intel.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Trilok Soni <quic_tsoni@quicinc.com>, linux-kernel@vger.kernel.org,
+	linux-usb@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v2 2/2] usb: typec: Add support for Parade PS8830 Type-C
+ Retimer
+Message-ID: <Zxif6vmh8BE_C-_n@hovoldconsulting.com>
+References: <20241004-x1e80100-ps8830-v2-0-5cd8008c8c40@linaro.org>
+ <20241004-x1e80100-ps8830-v2-2-5cd8008c8c40@linaro.org>
+ <Zw5oEyMj6cPGFDEI@hovoldconsulting.com>
+ <Zxdp2vHzREJAFkwj@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for TUXEDO
- NB04 devices
-To: Pavel Machek <pavel@ucw.cz>
-Cc: Hans de Goede <hdegoede@redhat.com>,
- Werner Sembach <wse@tuxedocomputers.com>,
- Benjamin Tissoires <bentiss@kernel.org>,
- =?UTF-8?Q?Ilpo_J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
- dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
- lee@kernel.org, linux-input@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-leds@vger.kernel.org, miguel.ojeda.sandonis@gmail.com,
- ojeda@kernel.org, onitake@gmail.com, platform-driver-x86@vger.kernel.org
-References: <5crqia4gecxg62n2m2lf6haiifue4wlxrr3g35dyoaa3svjyuj@cd5bhouz5rlh>
- <4a761cd0-611a-4245-8353-5c66ba133715@tuxedocomputers.com>
- <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
- <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
- <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de> <ZwlDpCPhieF3tezX@duo.ucw.cz>
- <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
- <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
- <Zxd0ou7GpCRu0K5a@duo.ucw.cz> <35a98b67-d1eb-4aa9-9d3f-025c94cd6b0f@gmx.de>
- <Zxf5u9jgmt9vpz2u@duo.ucw.cz>
-Content-Language: en-US
-From: Armin Wolf <W_Armin@gmx.de>
-In-Reply-To: <Zxf5u9jgmt9vpz2u@duo.ucw.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Provags-ID: V03:K1:cuXi8m4Br6nrlYzivR7wZJwXSlMK5QyjD1PQlgXa70bII4xYI1U
- kJda8SCxdeZiizmfIeODCMFWO/j6fI0IVQkYygtQ8SjLfdkbXvvkPWwkEOnuJBwSmi0tnFo
- kw0TqdoX7Q5sxqq3XY65CHUnLle9h+2hGP6AKyILbxYu41yYOr2wmPaa8Ukx4sPokK13SCH
- 7MAiATwmgVrq1uqCTqLtA==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:jTr3/4093ac=;w0fY4nHWFtbC/hjK2YYpqhZXS+3
- ZRWHmBZQwTsgcwbKsgeZSaq6I3MKbSTJMNkr4v+fdzZOPGHlZZ/BdfCJe19zxp9/tRyoXG2e6
- syfVfCQJwOdnhWUhzQ9t+Omgjr0k7qG/b/vj82iiDiV9Fo1qdKuVLFpigjdTJKwsvmYTksJp1
- x7d4QaphkRTL5Nj30Y3zNyECkrbVisLdEyJHop5D1Tue2qNx3D/5Qie2PQXeivDobZAEXqU6o
- R+wPWDtoU2df2ulGBTFFDYCdSSOVAnUIuQnv1y2K/vDqnaRN5AjUOXRgvUkaGhRnCjkRaLmYe
- hWZs/UZ/WhCu1n4+w9r7mJfXXimp1X73ALsp1YdN8HNmrQkO4jEaP2uZviFSIFJmbpOjTX4Gg
- JjOgLAtxRmUgX6Nw5XUT/fhS0eyizJg0K53ishDAESdizDXKaUes2by97id917zGXK4ArdzkZ
- n49fzkAsh4nhZEOmdKbY3a1uXPast54gfYTygBTe4FiCVlV8U3IYiHDPkC6cGD4C7nfw+TrBN
- 4wbIV8bkoUwYbqlcrE8hQxQBqTO8e9fHyYgSI19pYcW2NWn9BWEQcIP0C0CRjx3bygPUJ64nM
- prt+bV6A4VLcsmh79kyN+NiQLOYTAYJnOIQOqpV5QtyNNHOn1yWL3hjPnoAzA2eHIfAz9IWWM
- qvc+C8JiHFKQbLMtXXcwpd3pgf39vdoFR1fuf5o3hWgj2RjRLO5jbsv18mh8MfKSugRwhUecY
- lkKfxnBtrBOG/T8Jg9RRRzGEUdzB7Wf51DQA+SxJJ5CizIvkuR/58txj83Caw6+ZOtFYfy2fo
- CnRKDGt+XBgGU8crz5B9OL/FHAa1ygdXRKj8Gl0tGkR7Y=
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxdp2vHzREJAFkwj@linaro.org>
 
-Am 22.10.24 um 21:15 schrieb Pavel Machek:
+On Tue, Oct 22, 2024 at 12:01:14PM +0300, Abel Vesa wrote:
+> On 24-10-15 15:03:15, Johan Hovold wrote:
+> > On Fri, Oct 04, 2024 at 04:57:38PM +0300, Abel Vesa wrote:
 
-> Hi!
->
->>>>> - interface for setting multiple LEDs at once
->>>>> - interface for setting a range of LEDs at once
->>> How are LEDs ordered? I don't believe range makes much sense.
->> Range would allow for efficiently changing the color of all LEDs. But i agree
->> that this can be considered optional and can be added later.
-> Yep, setting all of them makes sense. We should probably provide
-> backward-compatible interface for keyboards with single backlight, so
-> this would likely be LED class.
->
-Good idea, the LED device could also be provided by the illumination subsystem code.
+> > > +	ret = ps8830_get_vregs(retimer);
+> > > +	if (ret)
+> > > +		return ret;
+> > > +
+> > > +	retimer->xo_clk = devm_clk_get(dev, "xo");
+> > > +	if (IS_ERR(retimer->xo_clk))
+> > > +		return dev_err_probe(dev, PTR_ERR(retimer->xo_clk),
+> > > +				     "failed to get xo clock\n");
+> > > +
+> > > +	retimer->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
+> > 
+> > The reset line is active low and should be described as such in DT. So
+> > here you want to request it as logically low if you want to deassert
+> > reset.
+> 
+> This is being reworked in v3 as we need to support cases where the
+> retimer has been left enabled and initialized by bootloader and we want
+> to keep that state until unplug event for the cold-plug orientation
+> to work properly.
+> 
+> On top of that, we don't want to deassert the reset here. We do that
+> via gpiod_set_value() call below, after the clocks and regulators have
+> been enabled.
 
->>>> Personally I really like the idea to just emulate a HID LampArray device
->>>> for this instead or rolling our own API.  I believe there need to be
->>>> strong arguments to go with some alternative NIH API and I have not
->>>> heard such arguments yet.
->>> If you don't want "some alternative API", we already have perfectly
->>> working API for 2D arrays of LEDs. I believe I mentioned it before
->>> :-). Senzrohssre.
->> We may have to support 3D arrays of LEDs, so using a simple framebuffer
->> would likely cause trouble.
-> Do you have pointer for device that is 3D?
+Ok, but you should generally not drive an input high before powering on
+the device as that can damage the IC (more below).
 
-Maybe a PC case with LEDs on each corner.
+That is, in this case, you should not deassert reset before making sure
+the supplies are enabled.
 
->
-> OpenRGB manages to map keyboard into plane... so what I'd propose is
-> this:
->
-> Framebuffer
-> Information for each pixel:
-> 	    present ? (displays with missing pixels are pretty common)
-> 	    list of keys related to this pixel
-> 	    width, height, length (if we know them)
->
-> Pixels map to keys M:N.
->
-> Yes, we'll have some number of non-present pixels, but again, I
-> believe that's not uncommon due to round screens, etc.
->
-> (But I'm fine with other interfaces, as long as they are "normal")
->
-> Best regards,
-> 								Pavel
+> > > +	ret = clk_prepare_enable(retimer->xo_clk);
+> > > +	if (ret) {
+> > > +		dev_err(dev, "failed to enable XO: %d\n", ret);
+> > > +		goto err_retimer_unregister;
+> > > +	}
+> > 
+> > Should you really enable the clock before the regulators?
+> 
+> So maybe in this case it might not really matter. But in principle,
+> the HW might be affected by clock glitches and such when IP block
+> is powered up but unclocked. Even more so if the clock enabling
+> (prepare, to be more exact) involves switching to a new PLL.
+> 
+> So clock first, then power up. At least that's my understanding of HW
+> in general.
 
-Using an ID-based interface would allow for more flexibility and allow
-us to support 3D-arrays.
+I think you got that backwards as inputs are typically rated for some
+maximum voltage based on the supply voltage. That applies also to the
+reset line as I also mentioned above.
 
-Thanks,
-Armin Wolf
+What does the datasheet say?
 
+> > > +
+> > > +	ret = ps8830_enable_vregs(retimer);
+> > > +	if (ret)
+> > > +		goto err_clk_disable;
+
+Johan
 
