@@ -1,198 +1,205 @@
-Return-Path: <linux-kernel+bounces-378316-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378317-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EC9D9ACE5E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:14:19 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C79F59ACE61
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:14:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id EF576282C56
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:14:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E829B1C20BDE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:14:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B99AF19E975;
-	Wed, 23 Oct 2024 15:14:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 258F61A7046;
+	Wed, 23 Oct 2024 15:14:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GfJCbfBL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KFcnvSKz"
+Received: from mail-wm1-f54.google.com (mail-wm1-f54.google.com [209.85.128.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08D1562171;
-	Wed, 23 Oct 2024 15:14:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB57419DFB5;
+	Wed, 23 Oct 2024 15:14:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729696446; cv=none; b=fQ9ms1FHyib9/xIpgVvdbvJxme7Og6vRszIXUeDNdE4xoRs5iBz5Xqk7pdWJsQoBXGCSB89ttAm8hSgtgXKq1PAMjIN5jpFafR/pYHX1YUtwqQLkmLFBngj6SBultm/ZZNMhlMiXDUbJq5YzWGxUaTL0/SRU43OTTFfE/ExnLvQ=
+	t=1729696464; cv=none; b=CGRyc76EAVRW0PED5q6UKNss6Bx4q2OFJVQpmqYD/vVoiSxVPCRBk09fsPWj2X+bTQZUg+IOWBdUp1ZCN7sjjsMb7T/aDChoIB3+S86G2VYII+TbwUnS6Xtjb0znxILLV7Ti6omRi0h+UCOk3SQ6mzlbpUfE6/JDkwf3TnqFMt8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729696446; c=relaxed/simple;
-	bh=taE8zoZsuDjUP07UaX3+OcRzpCvHXDeBn3RxXkE2UpU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=VjfcwLdJXyA8gly9Z0CKuaJug299zCMguMIsMuj62ZrrAi51mYQD67t1sGcgCt6jrPktpAxLnBOO50dZL+5e2RC4aMVhiiejz322FPpSofjtLkCtkKKoVL4cNamx6agwYqB1gWMZGeR0wb0s5WAu3cGgBntaXGpc4tZLnTHdErY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GfJCbfBL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 795A0C4CEC6;
-	Wed, 23 Oct 2024 15:14:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729696445;
-	bh=taE8zoZsuDjUP07UaX3+OcRzpCvHXDeBn3RxXkE2UpU=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=GfJCbfBLL0yBJA2GLMFVvqDg7PBoIIJ3qhwikNb1aWwaszYTVxOW3Kr2JqNy5F4Ml
-	 mCpsu6x0GCH3cmcGvzWTU5TGr3GpCHCa7dTXN4aZMTqka0RRVbl5JdSRZxXNMjCJsj
-	 NCbt23CYWiHWWwo1qcFQaYJfAynI4vd1THLHROkbC/jaDzxyxHrWI2LpmrPMF4G99L
-	 QEnog9LT22+Kuefr6hudLAjio29XTM9Detyqdoit0VltL/ec/PR2FAvrYPMuvAZ8vg
-	 PyRiCOpWv/XYMcGlaGoPFe2Y+X7/c2xV9AdQ5/WZaB0C+2NkTtLIUHZnyZli+jPquX
-	 3QmxDULChjgrA==
-Date: Wed, 23 Oct 2024 16:14:00 +0100
-From: Will Deacon <will@kernel.org>
-To: Dominique Martinet <asmadeus@codewreck.org>
-Cc: ericvh@kernel.org, Thorsten Leemhuis <regressions@leemhuis.info>,
-	lucho@ionkov.net, Christian Brauner <brauner@kernel.org>,
-	Alexander Viro <viro@zeniv.linux.org.uk>, oss@crudebyte.com,
-	v9fs@lists.linux.dev, linux-kernel@vger.kernel.org, oleg@redhat.com,
-	keirf@google.com, regressions@lists.linux.dev
-Subject: Re: VFS regression with 9pfs ("Lookup would have caused loop")
-Message-ID: <20241023151358.GB28800@willie-the-truck>
-References: <20240923100508.GA32066@willie-the-truck>
- <20241009153448.GA12532@willie-the-truck>
- <4966de3e-6900-481c-8f6b-00e37cebab7e@leemhuis.info>
- <Zw-J0DdrCFLYpT5y@codewreck.org>
- <20241022150149.GA27397@willie-the-truck>
- <ZxgudMCSgbDOEjpD@codewreck.org>
+	s=arc-20240116; t=1729696464; c=relaxed/simple;
+	bh=bspjLlEbCik1ob2m01nvM6sPs33CEmOqvTfcPaEDQD0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=A27iBjaOsgHrub6/EqEqZV5lhR15a+fS9OneUHYWXt0obqz2jxXqkdfb32h/s1U+jNUFLqqIu4ZtxVhm2NBR+TZeH1KtKOuh2wCMzfg+jrZFZnwtQmDGS83x9VEwjT6B7/OsSAWAIYkEM9SyRKpwC3j3qrRDiUjdQasPHmKCJAc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KFcnvSKz; arc=none smtp.client-ip=209.85.128.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f54.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so65035245e9.1;
+        Wed, 23 Oct 2024 08:14:22 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729696461; x=1730301261; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=d42TPA0cMzHWK542S6EtIXLU+A1yIxGyFcYUpqKn4fs=;
+        b=KFcnvSKzTLzKEOrSnHzOqfZFhqBkgyLEQDkf5iNS0sg6rvraNLwZnJb4eg/0oS2wEf
+         x9BdlIbBHiDgImB6VgCX8rQnGAR7uhU5kOX9k7y8dTtpfo7IN+6j7P8GKXGR4JHSRu1H
+         FDFPP/4MCwPD6aLoZqzIhdlWiiLzuHtmiflGQg6NH44O/7oATCHRZXGqK4aF9JCJRqlZ
+         jnc0fS5NL0TrVmwwylMBBmi35BgQxoO10bWC62CLdehcOz1tBtG8jPMaeYmPOqy8W7Yy
+         c/dMU2GuD2TSrvaH/4evFfFK9xW8UPqzndT/7AfJ7KNAVECVSlEzM9hVwJbLT36xjqfl
+         L92w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729696461; x=1730301261;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=d42TPA0cMzHWK542S6EtIXLU+A1yIxGyFcYUpqKn4fs=;
+        b=CwSz/t9gLTJfw0PPJE6M13tGPbZdcyFX/wgGq0WJ/wv3dIOqpuOS6adUCDwi24HZWA
+         52BG8VUhBGVroT1nokI17xyC7Ar3/UnNWm0P5D+9uDDGjyr4X/0SRHXhbYV6YaVhjOwM
+         7EGfQO11wWNWcsR7LySnOHqfgf/00wqqoB5r3nHywviFkW3oNkqNpC0/0pTSAMFGcb2h
+         W2C/Zku2VOuOoT5joAMKEULZ+zAY/sZd/bRYZXqHdf8dbK6/i1cDQ+RBqww40NswvVjR
+         9a4VM6uRrApCjZpYHcXiyE7PPIStyQ8iubamIWD6AUae+HCxXgahIuTTqXxbxHCKp2lE
+         RFrA==
+X-Forwarded-Encrypted: i=1; AJvYcCW3KjenYKhBxgHhxqVNgsGY9BPWfT7zVxoJ9e45YgYe7VvyJrKVB/IjcYhCAIUn48ewVivmS4PgSk9lBvXs@vger.kernel.org, AJvYcCWJk2cpLpq4TfkSWPPQ/ipZadLuvt8W/6hbOFASpBmyBh5+Qfa+EExAUUMmTrcUyDaUtdc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxS7I2EmfP+oofDJve5v5AbfiQsrSF55y7LRtzE/oHu95e5tl+N
+	+yHR/Od/M2M6Zy6OyJatULprkRJP4+FJ81G88By5ETVwphWroINYFCwxwOfw+sFPwDno/XpgcUn
+	dOQ99uXYRBaq73NhUhJ4bAuF2WCg=
+X-Google-Smtp-Source: AGHT+IHBvvvHR6S1sInHVoaytVCpOxPUnhuvrDCsXBUlq0qKZn76mauGZ4TbD3f4S5+DKyHRJGwx9Eru/q2A+f7wrUg=
+X-Received: by 2002:a05:600c:46d0:b0:431:57e5:b251 with SMTP id
+ 5b1f17b1804b1-4318424ea03mr26365565e9.28.1729696460711; Wed, 23 Oct 2024
+ 08:14:20 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxgudMCSgbDOEjpD@codewreck.org>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
+ <20241023145640.1499722-1-jrife@google.com>
+In-Reply-To: <20241023145640.1499722-1-jrife@google.com>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 23 Oct 2024 08:14:09 -0700
+Message-ID: <CAADnVQJupBceq2DAeChBvdjSG4zOpYsMP7_o7gREVmVCA0PUYQ@mail.gmail.com>
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+To: Jordan Rife <jrife@google.com>
+Cc: Arnaldo Carvalho de Melo <acme@kernel.org>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
+	Andrii Nakryiko <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
+	Joel Fernandes <joel@joelfernandes.org>, LKML <linux-kernel@vger.kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
+	Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>, 
+	Michael Jeanson <mjeanson@efficios.com>, Namhyung Kim <namhyung@kernel.org>, 
+	"Paul E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Steven Rostedt <rostedt@goodmis.org>, syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, 
+	Yonghong Song <yhs@fb.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23, 2024 at 08:00:04AM +0900, Dominique Martinet wrote:
-> Will Deacon wrote on Tue, Oct 22, 2024 at 04:01:49PM +0100:
-> > > One note though he did sent a patch that seems related and wasn't sent
-> > > for merge:
-> > > https://lore.kernel.org/all/CAFkjPTn7JAbmKYASaeBNVpumOncPaReiPbc4Ph6ik3nNf8UTNg@mail.gmail.com/T/#u
-> > >
-> > > Will, perhaps you can try it? I'm pretty sure the setup to reproduce
-> > > this is easy enough that I'll be able to reproduce in less than an hour
-> > > (export two tmpfs [sequential inode number fs] wthin the same 9p mount
-> > > in qemu without 'multidevs=remap'), but I don't even have that time
-> > > right now.
-> > > 
-> > > (I didn't even read the patch properly and it might not help at all,
-> > > sorry in this case)
-> > 
-> > I think this patch landed upsteam as d05dcfdf5e16 (" fs/9p: mitigate
-> > inode collisions") and so I can confirm that it doesn't help with the
-> > issue.
-> 
-> Ugh, yes, sorry I'm blind it's there alright (you even listed it in your
-> first post in the list of commits to revert)
+On Wed, Oct 23, 2024 at 7:56=E2=80=AFAM Jordan Rife <jrife@google.com> wrot=
+e:
+>
+> Mathieu's patch alone does not seem to be enough to prevent the
+> use-after-free issue reported by syzbot.
+>
+> Link: https://lore.kernel.org/bpf/67121037.050a0220.10f4f4.000f.GAE@googl=
+e.com/T/#u
+>
+> I reran the repro script with his patch applied to my tree and was
+> still able to get the same KASAN crash to occur.
+>
+> In this case, when bpf_link_free is invoked it kicks off three instances
+> of call_rcu*.
+>
+> bpf_link_free()
+>   ops->release()
+>      bpf_raw_tp_link_release()
+>        bpf_probe_unregister()
+>          tracepoint_probe_unregister()
+>            tracepoint_remove_func()
+>              release_probes()
+>                call_rcu()               [1]
+>   bpf_prog_put()
+>     __bpf_prog_put()
+>       bpf_prog_put_deferred()
+>         __bpf_prog_put_noref()
+>            call_rcu()                   [2]
+>   call_rcu()                            [3]
+>
+> With Mathieu's patch, [1] is chained with call_rcu_tasks_trace()
+> making the grace period suffiently long to safely free the probe itself.
+> The callback for [2] and [3] may be invoked before the
+> call_rcu_tasks_trace() grace period has elapsed leading to the link or
+> program itself being freed while still in use. I was able to prevent
+> any crashes with the patch below which also chains
+> call_rcu_tasks_trace() and call_rcu() at [2] and [3].
+>
+> ---
+>  kernel/bpf/syscall.c | 24 ++++++++++--------------
+>  1 file changed, 10 insertions(+), 14 deletions(-)
+>
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 59de664e580d..5290eccb465e 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -2200,6 +2200,14 @@ static void __bpf_prog_put_rcu(struct rcu_head *rc=
+u)
+>         bpf_prog_free(aux->prog);
+>  }
+>
+> +static void __bpf_prog_put_tasks_trace_rcu(struct rcu_head *rcu)
+> +{
+> +       if (rcu_trace_implies_rcu_gp())
+> +               __bpf_prog_put_rcu(rcu);
+> +       else
+> +               call_rcu(rcu, __bpf_prog_put_rcu);
+> +}
+> +
+>  static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
+>  {
+>         bpf_prog_kallsyms_del_all(prog);
+> @@ -2212,10 +2220,7 @@ static void __bpf_prog_put_noref(struct bpf_prog *=
+prog, bool deferred)
+>                 btf_put(prog->aux->attach_btf);
+>
+>         if (deferred) {
+> -               if (prog->sleepable)
+> -                       call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_=
+put_rcu);
+> -               else
+> -                       call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
+> +               call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_task=
+s_trace_rcu);
+>         } else {
+>                 __bpf_prog_put_rcu(&prog->aux->rcu);
+>         }
+> @@ -2996,24 +3001,15 @@ static void bpf_link_defer_dealloc_mult_rcu_gp(st=
+ruct rcu_head *rcu)
+>  static void bpf_link_free(struct bpf_link *link)
+>  {
+>         const struct bpf_link_ops *ops =3D link->ops;
+> -       bool sleepable =3D false;
+>
+>         bpf_link_free_id(link->id);
+>         if (link->prog) {
+> -               sleepable =3D link->prog->sleepable;
+>                 /* detach BPF program, clean up used resources */
+>                 ops->release(link);
+>                 bpf_prog_put(link->prog);
+>         }
+>         if (ops->dealloc_deferred) {
+> -               /* schedule BPF link deallocation; if underlying BPF prog=
+ram
+> -                * is sleepable, we need to first wait for RCU tasks trac=
+e
+> -                * sync, then go through "classic" RCU grace period
+> -                */
+> -               if (sleepable)
+> -                       call_rcu_tasks_trace(&link->rcu, bpf_link_defer_d=
+ealloc_mult_rcu_gp);
+> -               else
+> -                       call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_g=
+p);
+> +               call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_m=
+ult_rcu_gp);
 
-Heh, no worries. It has a funny leading space at the start which is
-weirdly jarring when you read it!
-
-> > > I'm not sure this really needs to get Linus involved - it's breaking a
-> > > server that used to work even if qemu has been printing a warning about
-> > > these duplicate qid.path for a while, and the server really is the
-> > > better place to remap these inodes as we have no idea of the underlying
-> > > device id as far as I know...
-> > 
-> > FWIW, I'm not using QEMU at all. This is with kvmtool which, for better
-> > or worse, prints no such diagnostic and used to be reliable enough with
-> > whatever magic the kernel had prior to v6.9.
-> 
-> Yes, that problem isn't specific to qemu, anything that re-exports
-> multiple filesystems using underlying inode numbers directly has this
-> risk (e.g. even diod/nfs-ganesha tcp mounts ought to reproduce if they
-> don't mangle inodes); I agree we need to handle servers throwing junk at
-> us.
-> 
-> It's easy enough to reproduce with qemu if remapping is disabled as
-> expected (I don't hit the VFS warning in d_splice_alias() but the
-> behaviour is definitely wrong):
-> ----
-> # host side
-> cd /tmp/linux-test
-> mkdir m1 m2
-> mount -t tmpfs tmpfs m1
-> mount -t tmpfs tmpfs m2
-> mkdir m1/dir m2/dir
-> echo foo > m1/dir/foo
-> echo bar > m2/dir/bar
-> 
-> # guest side
-> # started with -virtfs local,path=/tmp/linux-test,mount_tag=tmp,security_model=mapped-file
-> mount -t 9p -o trans=virtio,debug=1 tmp /mnt/t
-> 
-> ls /mnt/t/m1/dir
-> # foo
-> ls /mnt/t/m2/dir
-> # bar (works ok if directry isn't open)
-> 
-> # cd to keep first dir's inode alive
-> cd /mnt/t/m1/dir
-> ls /mnt/t/m2/dir
-> # foo (should be bar)
-> ----
-> 
-> This can also be observed with files if mounting with cache=fscache or
-> similar (but interestingly even keeping the file open will properly
-> disociate both files in default cache=none mode); either way we won't be
-> able to properly work with hard links if we assume the server isn't
-> reliable; I guess that if someone wants that we'd really need to
-> implement some capability negotiation at mount time so the server can
-> tell us what is supported and unless that is done assume the server
-> cannot reliably assign inodes...
-> 
-> And if we go that way then we just shouldn't ever look at the inode
-> number?... Which seems to pretty much be what the old code was doing in
-> the "new" path of v9fs_qid_iget(); the compare function would just
-> always say the inodes are different and get a new one...
-> The mitigation Eric implemented is similar enough (re-added a 'new'
-> parameter, and fail if I_NEW isn't set when new was requested), but it
-> looks like v9fs_fid_iget_dotl() isn't called at all when accessing the
-> other overlapping directory, so that wasn't effective here as some
-> higher level of caching caught the inode first.
-
-Nice, thanks for digging into this. I'm now pretty grateful I ran into
-the vfs error rather than whacky filesystem behaviours.
-
-> I've also confirmed reverting the 4 commits listed by Will do fix both
-> behaviors (along with a fscache warning when hitting the duplicate inode
-> file, but that's expected):
->         724a08450f74 "fs/9p: simplify iget to remove unnecessary paths"
->         11763a8598f8 "fs/9p: fix uaf in in v9fs_stat2inode_dotl"
->         10211b4a23cf "fs/9p: remove redundant pointer v9ses"
->         d05dcfdf5e16 " fs/9p: mitigate inode collisions"
-> 
-> 
-> > I'm happy to test patches if there's anything available, but otherwise
-> > the reverts at least get us back to the old behaviour if nobody has time
-> > to come up with something better.
-> 
-> I think that's the sane thing to do, let's first go back to something
-> that works and we can try again if/when someone has time - I've
-> certainly just spent more time here than I have, and starting over is just
-> a matter of reapplying the patches in a local branch so it's not like
-> there's anything to lose (afaiu this was intended as code cleanup to
-> make the code more maintainable rather than fixing something specific)
-
-Agreed, and I'm happy to test any subsequent patches now that I've got
-my Android environment up and running again.
-
-> Thorsten, is there a preferred way reverts should be done?
-> In this case it'd probably make sense to squash the 4 reverts in a
-> single megarevert? At the very least getting anywhere in the middle with
-> the uaf isn't something one would want... And they all made it in 6.9
-> together so there's no benefit in splitting them for backport either.
-> 
-> Once that's decided I'll prepare something to send Linus in a few days,
-> I don't think there's much point in sitting on this either...
-
-I'll leave it up to you, but I'd personally do four separate reverts
-because it makes the whole process entirely mechanical. I can't recall
-seeing a megarevert before.
-
-Will
+This patch is completely wrong.
+Looks like Mathieu patch broke bpf program contract somewhere.
+The tracepoint type bpf programs must be called with rcu_read_lock held.
+Looks like it's not happening anymore.
 
