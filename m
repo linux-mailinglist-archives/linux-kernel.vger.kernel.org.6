@@ -1,168 +1,112 @@
-Return-Path: <linux-kernel+bounces-378940-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378941-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 885C09AD77E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:22:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 270869AD780
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:23:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 42757280C30
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:22:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDBD9282353
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:23:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8EC11FEFA4;
-	Wed, 23 Oct 2024 22:21:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4551FDFB7;
+	Wed, 23 Oct 2024 22:23:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="g4f8hSuE"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="UtE6Pfi/"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CA414D599;
-	Wed, 23 Oct 2024 22:21:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CCD424D599;
+	Wed, 23 Oct 2024 22:23:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729722118; cv=none; b=UQLEuSV8xW3XGa1eqfU0SicQdxbP52w4dP9p1m+HbFbCUqKRnBd92CuvNktOZ5oDZh0YkUa8uMoRENjwluzaTyL1q3NzwxqlKAIEajZocjLoK6537OVKscBccUOvcC3DDstKIbunhmBf02vX1xZX7HHRl+em31mZ9Y94BMeQKEU=
+	t=1729722225; cv=none; b=sQY72p0Wd+swQ0K6P+1X6RPpAuvHKQymHg4UtkAuBwG/uiXm4a/QVDXga2ovVsnC4m+5tY6nGYlnATxYi8b+NK0FczF+pB5whzL78yTbzWByP8coGOFNfNb5qrb0ZVd9XZxeR8o8b1UzAeYqxz819MZLesrd3X+ZZ6Jzvk8/Rk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729722118; c=relaxed/simple;
-	bh=RNQZ+4Gn07qWwQ1WhtJQDHeeM6BS8OoxhTDaGvEztLo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=KqLXkzf4eYC6xdTMb+krqPGu+BFcCz0/+ykTSNMri21WgbSZANEV9LIxaHty7+pYje92Gl19hXewm4DQm66nz8p9761fvDoKKnVWqEjjdSRpOKHa8RqhnZ6/Mgjmf+Sr9iuw6tWriJQIfUajP4w60GSHlZx58V6rpoiG+l9s6/o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=g4f8hSuE; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9ijGS030354;
-	Wed, 23 Oct 2024 22:21:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	oXTdl017qkFFaJjdWRfywgTTPeFRhj+b+Qyfqj4ayBo=; b=g4f8hSuE9IzYRX9l
-	zRMRaXs0HqoqFYnAmqVIWxNaTjRzyGjUVGBUQN4Q29QOCYivj3GbL2B7iDHfw1f7
-	lgrMo1mtF6IqfruPVnjbjJXFHGlam7sCA/jz2ho1jZqNoHlDbOlQviFP722Jr4bN
-	68+aiUvawC4cjbGvRsJv+cqlCl/78702Wqg9T9dmVO+K7IS/ZSVojIEjtJoHEUYv
-	9duWNTAX5ItVNFm1v/hqk6h2YYXHPe2HzNjltza02Rx1kBLnJeor+bqfRWXLCvoi
-	94m+A599HhlfZAyKIGNH0TOd7WJd0wnIU5qLDTls8fWRD4dscxX71fKO9HQyEeTE
-	85FyLQ==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w3nyg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 22:21:52 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NMLp7h001476
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 22:21:51 GMT
-Received: from [10.110.103.186] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 15:21:50 -0700
-Message-ID: <6b2b1e75-696b-4860-b6ec-ef5713fdfd21@quicinc.com>
-Date: Wed, 23 Oct 2024 15:21:50 -0700
+	s=arc-20240116; t=1729722225; c=relaxed/simple;
+	bh=l/hDO2rsupczTQSDkCShoIw8cjMAFjQC8ud27iPfF1M=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=C5WwvzQQmkfLIfch+IzC3fHYSMTDBw0Ve/9JG4QXw4Bd/2lDTV1q+PHTpdBQ0ylBOClWB9ZadghfbDSqF4VvkZZbZ965Wh0uBfCVU3MGuwZoSUq1PjbNs3JT4SRjve6rB4iJxWGpKDru0j3WOXpLm/gKXBIBXAVkHiWfS1YA4jM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=UtE6Pfi/; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729722218;
+	bh=ZNWZemPN4cKjpnMYimogI8v9Yz5gIj1eyeU3HxF99a0=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UtE6Pfi/PKEc+rCagY9f+JCu54EDwnlYQGnFGU3JxGMHODFmuWygF1wLcq1iSAOld
+	 ItbARQw2kbuVs78o0ffOAw9apguKYuTBX52+lRfw3fr56KksPK7/XHi8943t55Xb0G
+	 ZrfpkKikcuro4IV9CtsomLHIqfxvKs8wV7i521ZbxOdvqL2LOOsZNl1wLMZBzkOUHg
+	 0VODHWwu+2XXL2Ry7YAUA4EGsUv30LF09TAIc/Cp8vyO7VsCIFdDkl+p1tURNpNeFF
+	 ci5xchS6XSQUTVx24TyzQWUdEzuUY3Fi192HSMhtWtmtbwjJNnzaZqgOmv9ItpuM/S
+	 1JPMiQir+D1qw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYk8p3R2vz4w2L;
+	Thu, 24 Oct 2024 09:23:38 +1100 (AEDT)
+Date: Thu, 24 Oct 2024 09:23:38 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Su Hua <suhua.tanke@gmail.com>
+Cc: Mike Rapoport <rppt@kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: Re: linux-next: boot failure after merge of the memblock tree
+Message-ID: <20241024092338.6a8f10c7@canb.auug.org.au>
+In-Reply-To: <CALe3CaBU=9Ck-euohNna2hYxYJBbvA=LrmG7qDHTEeQ2rt9XCA@mail.gmail.com>
+References: <20241022173921.6fdbdd38@canb.auug.org.au>
+	<CALe3CaBU=9Ck-euohNna2hYxYJBbvA=LrmG7qDHTEeQ2rt9XCA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 1/2] rpmsg: glink: Handle rejected intent request
- better
-To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
-        Bjorn Andersson
-	<andersson@kernel.org>,
-        Mathieu Poirier <mathieu.poirier@linaro.org>,
-        "Konrad
- Dybcio" <konradybcio@kernel.org>,
-        Johan Hovold <johan@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>,
-        Bjorn Andersson
-	<quic_bjorande@quicinc.com>,
-        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <stable@vger.kernel.org>, Johan Hovold
-	<johan+linaro@kernel.org>
-References: <20241023-pmic-glink-ecancelled-v2-0-ebc268129407@oss.qualcomm.com>
- <20241023-pmic-glink-ecancelled-v2-1-ebc268129407@oss.qualcomm.com>
-Content-Language: en-US
-From: Chris Lew <quic_clew@quicinc.com>
-In-Reply-To: <20241023-pmic-glink-ecancelled-v2-1-ebc268129407@oss.qualcomm.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: -pAKsyJCTQ8pvqnIhdBkTm43pLuPvpxZ
-X-Proofpoint-GUID: -pAKsyJCTQ8pvqnIhdBkTm43pLuPvpxZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
- priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
- clxscore=1011 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
- phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230145
+Content-Type: multipart/signed; boundary="Sig_/AjFd7Q9eSGmq2ysPGy3OQXV";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
+--Sig_/AjFd7Q9eSGmq2ysPGy3OQXV
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
+Hi,
 
-On 10/23/2024 10:24 AM, Bjorn Andersson wrote:
-> GLINK operates using pre-allocated buffers, aka intents, where incoming
-> messages are aggregated before being passed up the stack. In the case
-> that no suitable intents have been announced by the receiver, the sender
-> can request an intent to be allocated.
-> 
-> The initial implementation of the response to such request dealt
-> with two outcomes; granted allocations, and all other cases being
-> considered -ECANCELLED (likely from "cancelling the operation as the
-> remote is going down").
-> 
-> But on some channels intent allocation is not supported, instead the
-> remote will pre-allocate and announce a fixed number of intents for the
-> sender to use. If for such channels an rpmsg_send() is being invoked
-> before any channels have been announced, an intent request will be
-> issued and as this comes back rejected the call fails with -ECANCELED.
-> 
-> Given that this is reported in the same way as the remote being shut
-> down, there's no way for the client to differentiate the two cases.
-> 
-> In line with the original GLINK design, change the return value to
-> -EAGAIN for the case where the remote rejects an intent allocation
-> request.
-> 
-> It's tempting to handle this case in the GLINK core, as we expect
-> intents to show up in this case. But there's no way to distinguish
-> between this case and a rejection for a too big allocation, nor is it
-> possible to predict if a currently used (and seemingly suitable) intent
-> will be returned for reuse or not. As such, returning the error to the
-> client and allow it to react seems to be the only sensible solution.
-> 
-> In addition to this, commit 'c05dfce0b89e ("rpmsg: glink: Wait for
-> intent, not just request ack")' changed the logic such that the code
-> always wait for an intent request response and an intent. This works out
-> in most cases, but in the event that an intent request is rejected and no
-> further intent arrives (e.g. client asks for a too big intent), the code
-> will stall for 10 seconds and then return -ETIMEDOUT; instead of a more
-> suitable error.
-> 
-> This change also resulted in intent requests racing with the shutdown of
-> the remote would be exposed to this same problem, unless some intent
-> happens to arrive. A patch for this was developed and posted by Sarannya
-> S [1], and has been incorporated here.
-> 
-> To summarize, the intent request can end in 4 ways:
-> - Timeout, no response arrived => return -ETIMEDOUT
-> - Abort TX, the edge is going away => return -ECANCELLED
-> - Intent request was rejected => return -EAGAIN
-> - Intent request was accepted, and an intent arrived => return 0
-> 
-> This patch was developed with input from Sarannya S, Deepak Kumar Singh,
-> and Chris Lew.
-> 
-> [1] https://lore.kernel.org/all/20240925072328.1163183-1-quic_deesin@quicinc.com/
-> 
-> Fixes: c05dfce0b89e ("rpmsg: glink: Wait for intent, not just request ack")
-> Cc: stable@vger.kernel.org
-> Tested-by: Johan Hovold <johan+linaro@kernel.org>
-> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-> ---
+On Wed, 23 Oct 2024 11:20:43 +0800 Su Hua <suhua.tanke@gmail.com> wrote:
+>
+> Thanks, I'd also like to set up the environment for testing; could you
+> please share the command line instructions or XML files used for
+> testing?
 
-Reviewed-by: Chris Lew <quic_clew@quicinc.com>
+Sorry for the delay.  I run the following qemu command line:
+
+qemu-system-ppc64 -M pseries -m 2G -vga none -nographic -kernel $vmlinux -i=
+nitrd $initrd
+
+where $vmlinux is the result of a PowerPC pseries_le_defconfig build
+and $initrd is just sufficient to get into user mode and then shutdown
+again.  This latter is not really relevant here since we don't get to
+user mode.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/AjFd7Q9eSGmq2ysPGy3OQXV
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcZd2oACgkQAVBC80lX
+0GxnFQf7B9rN2DLW8qNubf9JR7kjE3VEOhEHupL00V+QqZIgGnzNS1OGk0o45AX+
++62PXsiypa3xGfj3JJT7GUmEgOXSrfrVTqUDML/U6ZC1lVhdhThArfSev2xOml0s
+zeHXmaoba7d0r8aP+RNvAF5RemiZ8nDLXlEHAnbo626ajdzr4mqGRextMOhHMpU5
+xPfHzIjCB/yCrhF9RUkF0jikse6yd+DCS4eW0Ls4f7MilSzcXUwGt0guydqO+e1G
+Ampd5orjyA9uiWd1ZZ9CrnDqD0nVVeszHp5Ogm3J+4F2fLl9XNeFaRkATcM1BeV4
+aRSZVGuxeTKy5eiKHgt4Mrhuguzl0A==
+=V6SQ
+-----END PGP SIGNATURE-----
+
+--Sig_/AjFd7Q9eSGmq2ysPGy3OQXV--
 
