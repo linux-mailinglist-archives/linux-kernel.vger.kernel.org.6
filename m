@@ -1,130 +1,112 @@
-Return-Path: <linux-kernel+bounces-377966-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377967-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CEAF9AC943
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:41:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217BD9AC944
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:41:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB2371C21252
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:41:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CCFD21F21769
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:41:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0457B1AB50C;
-	Wed, 23 Oct 2024 11:41:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC96B1AB6DD;
+	Wed, 23 Oct 2024 11:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N5x+071z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="eTYmSh8U";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="eTYmSh8U"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 576A3134BD;
-	Wed, 23 Oct 2024 11:41:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CC5E1AA7AF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:41:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683695; cv=none; b=c8O2XVKN8M5MrYjBnWzx3YFuTkUsBkMS6wMEMvdenAftDmfF3RK30Nk6/wb7h4N4P5bMQFJlw779QRvYqJ9hG2SGQSjJqt9u6vR4xzEH3AMYaq+3HIGUDqICTJoZ0idZRTF/ST040+rrZc55mieAd/8fxJ/TM0/uf0Yv+tStE2Q=
+	t=1729683697; cv=none; b=HBGh43JLgKwfsHUN0fbLFe5jQVP4XsqBoPGAwPuOzEYHhwoYhTpKMe/uZJKzQ1sYHZzT24Fw/V4s4zGrcbZlG4l74aAUV8SWvFCNK4dRWB68b5gFqOdqDzpvOe6xd7kNjAxPUPI7APdVNPEZCQ51mYP7d8RuTU43wc+6OlTRSfY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683695; c=relaxed/simple;
-	bh=OKXQS4ygVGvLAMLaf78m5yuEb8FH+2TrRxZhgrF97N0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Gmb4kB5Ek40n9/OPizoQ8SXeZtUp6Muq2tcbNTqMOqVS/P14Auud/8ut6yGfmukRwFmWF936918gWp7XhF/Gsl5CnkrX19w1DbPbBOXpTFeSWJEB7Pwf/hg5wLgVNPkwH4P8CL3MdzC9dL6ktW0xrW7k/ayBJd5u2utS0EhFYTc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N5x+071z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B0E98C4CECD;
-	Wed, 23 Oct 2024 11:41:33 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729683693;
-	bh=OKXQS4ygVGvLAMLaf78m5yuEb8FH+2TrRxZhgrF97N0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=N5x+071zTbgZ87ZJfrp/30BhU6bb5X1XlWPOMy81sus4RTlOV/p1V9aC4t8jNOS/0
-	 SiThhFPhwDhhjtBiforR5cw6CjmjX3SX0EBebLwj4fD2C2qUP9j8Xpt1chOqYY/APg
-	 MzUuDiSwSCySfmTJWjxBiyQdGpBnzQoS+khc7xPb5MlkK0Q4BckoPv2BI8Vpmpcpz/
-	 wd2kTxFZ9+DqZTIIVkzlCQNNe8rF3yI/jzX2+gEoV7z7+jTj0mFZP9eHLU9v8GSjNy
-	 BwuhzayzsAyfVBuvhi6Ym8uNRDjvi+80EIn7D+9eBUuBNJ8FY5xmIhvOKdBVDYj1sV
-	 vP5+YwrukH15A==
+	s=arc-20240116; t=1729683697; c=relaxed/simple;
+	bh=oSCwQkr4IzishRO805JEjPuzC0Ufvggxbc3IuYF/kVc=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=lgFikD4UmVYJUDS1yIouxQll647G2eixQwPeW/uF1QQPDFCWg9vb/6L4D4nNO5sTmWOPieiasz4Msj8mcNDgaLz4bgA4vMVTHzcOpRoWlZp4PaHMcUgG5oTnVqyYyrQnOo/Q2hdTtnc6qjFLYp8PrsHBAF4Q3Ugo0CWLunx5YMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=eTYmSh8U; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=eTYmSh8U; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729683694;
+	bh=oSCwQkr4IzishRO805JEjPuzC0Ufvggxbc3IuYF/kVc=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=eTYmSh8UZTtqjMgOSMJD7iqti03kC6v0fzpJoBoVAvBROnM1y8wl/JaT2kV4Umz43
+	 odNxTKnTsu+5YGdZcQwEyLCN9SkwJMlSGUt2Zek9h2ySrIDWyvbnaKkWMELKvrjzHE
+	 iJlGxT3AsouMzRoW7J6WEeyKyCeZ0eivE5/ZzgTc=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id BEFCB1281A09;
+	Wed, 23 Oct 2024 07:41:34 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id 0UzoeRZ0RvAb; Wed, 23 Oct 2024 07:41:34 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729683694;
+	bh=oSCwQkr4IzishRO805JEjPuzC0Ufvggxbc3IuYF/kVc=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=eTYmSh8UZTtqjMgOSMJD7iqti03kC6v0fzpJoBoVAvBROnM1y8wl/JaT2kV4Umz43
+	 odNxTKnTsu+5YGdZcQwEyLCN9SkwJMlSGUt2Zek9h2ySrIDWyvbnaKkWMELKvrjzHE
+	 iJlGxT3AsouMzRoW7J6WEeyKyCeZ0eivE5/ZzgTc=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id E99EB12809C2;
+	Wed, 23 Oct 2024 07:41:33 -0400 (EDT)
+Message-ID: <12e62493ac3ebd47f92e7f26260780f5f4ea2780.camel@HansenPartnership.com>
+Subject: Re: linus-next: improving functional testing for to-be-merged pull
+ requests
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Steven Rostedt <rostedt@goodmis.org>, Christoph Hellwig
+ <hch@infradead.org>
+Cc: Kees Cook <kees@kernel.org>, Sasha Levin <sashal@kernel.org>, 
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
 Date: Wed, 23 Oct 2024 07:41:32 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: "Darrick J. Wong" <djwong@kernel.org>,
-	Kent Overstreet <kent.overstreet@linux.dev>,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org,
-	linux-kernel@vger.kernel.org, kees@kernel.org, hch@infradead.org,
-	broonie@kernel.org
-Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
-Message-ID: <Zxjg7Cvw0qIzl0v6@sashalap>
-References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
- <Zxf3vp82MfPTWNLx@sashalap>
- <20241022204931.GL21836@frogsfrogsfrogs>
- <ZxgXO_uhxhZYtuRZ@sashalap>
- <87iktj2j7w.fsf@mail.lhotse>
+In-Reply-To: <20241023042004.405056f5@rorschach.local.home>
+References: <ZxZ8MStt4e8JXeJb@sashalap>
+	 <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+	 <ZxdKwtTd7LvpieLK@infradead.org>
+	 <20241022041243.7f2e53ad@rorschach.local.home>
+	 <ZxiN3aINYI4u8pRx@infradead.org>
+	 <20241023042004.405056f5@rorschach.local.home>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii; format=flowed
-Content-Disposition: inline
-In-Reply-To: <87iktj2j7w.fsf@mail.lhotse>
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 09:42:59PM +1100, Michael Ellerman wrote:
->Hi Sasha,
->
->This is awesome.
->
->Sasha Levin <sashal@kernel.org> writes:
->> On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
->>>On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
->>>> other information that would be useful?
->>>
->>>As a maintainer I probably would've found this to be annoying, but with
->>>all my other outside observer / participant hats on, I think it's very
->>>good to have a bot to expose maintainers not following the process.
->>
->> This was my thinking too. Maybe it makes sense for the bot to shut up if
->> things look good (i.e. >N days in stable, everything on the mailing
->> list). Or maybe just a simple "LGTM" or a "Reviewed-by:..."?
->
->I think it has to reply with something, otherwise folks will wonder if
->the bot has broken or missed their pull request.
->
->But if all commits were in in linux-next and posted to a list, then the
->only content is the "Days in linux-next" histogram, which is not that long
->and is useful information IMHO.
->
->It would be nice if you could trim the tail of the histogram below the
->last populated row, that would make it more concise.
+On Wed, 2024-10-23 at 04:20 -0400, Steven Rostedt wrote:
+[...]
+> I did push urgent branches to linux-next some time back, but never
+> found any advantage in doing so, so I stopped doing it. As the code
+> in my urgent branches are just fixing the stuff already in Linus's
+> tree, they seldom ever have any effect on other subsystems. My new
+> work does benefit from being in linux-next. But since I don't find
+> more testing in linux-next for things that are already in Linus's
+> tree, I still don't see how its worth the time to put my urgent work
+> there.
 
-Makes sense, I'll do that.
+What do you mean "push" to linux-next?  You just give Stephen a list of
+branches and he pulls.  I do have a single for-next tag that he pulls
+so I merge both fixes and collecting merge window stuff into that, but
+I do this so I can see immediately if we have an internal conflict,
+which is the most common problem.
 
->For fixes pulls it is sometimes legitimate for commits not to have been
->in linux-next. But I think it's still good for the bot to highlight
->those, ideally fixes that miss linux-next are either very urgent or
->minor.
+If you don't want any work at all, just name your fixes branch and tell
+Stephen and then he'll tell you if there's a problem.  In this model
+you don't have to do *anything*.
 
-Right, and Linus said he's okay with those. This is not a "shame" list
-but rather "look a little closer" list.
+Regards,
 
->>>> Commits that weren't found on lore.kernel.org/all:
->>>> --------------------
->>>> e04ee8608914d bcachefs: Mark more errors as AUTOFIX
->>>> f0d3302073e60 bcachefs: Workaround for kvmalloc() not supporting > INT_MAX allocations
->>>> bc6d2d10418e1 bcachefs: fsck: Improve hash_check_key()
->>>> dc96656b20eb6 bcachefs: bch2_hash_set_or_get_in_snapshot()
->>>> 15a3836c8ed7b bcachefs: Repair mismatches in inode hash seed, type
->>>> d8e879377ffb3 bcachefs: Add hash seed, type to inode_to_text()
->>>> 78cf0ae636a55 bcachefs: INODE_STR_HASH() for bch_inode_unpacked
->>>> b96f8cd3870a1 bcachefs: Run in-kernel offline fsck without ratelimit errors
->>>> 4007bbb203a0c bcachefS: ec: fix data type on stripe deletion
->
->Are you searching by message id, or subject? I sometimes edit subjects
->when applying patches, so a subject search could miss some.
+James
 
-Both, and also by patch id, so if you just change the subject it should
-still be okay.
-
-We'll see when you send your next PR :)
-
--- 
-Thanks,
-Sasha
 
