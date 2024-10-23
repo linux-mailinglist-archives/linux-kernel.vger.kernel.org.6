@@ -1,183 +1,86 @@
-Return-Path: <linux-kernel+bounces-377936-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377939-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D040A9AC8C9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:21:39 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 548C39AC8D2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:22:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EDBAB1C21357
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:21:38 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E5D58B235F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:22:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 536EA1A7AC7;
-	Wed, 23 Oct 2024 11:21:32 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 228F31AAE3F;
+	Wed, 23 Oct 2024 11:22:14 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41BD019E97B
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:21:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5770154439;
+	Wed, 23 Oct 2024 11:22:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729682491; cv=none; b=jQBANnbm1FlgSGdC1XfthRP2y8cfFKtqgG7vJXlpNG3ntvU+uZa7lhNEmoO5BvOHo7rJxN2R93sY1RmkDbXcV/pD88I/jR4wsi12UXK2K3rq1OBFIuUSi13vFiHGg94700IwHt1GbxrrplyW1P/o0AkaHqVXGvMx63377nE87c4=
+	t=1729682533; cv=none; b=lub6637LkqAeV+F70DqkFx2NZUFm4dYtEBixtqEq1tJOdoXtb9PG7Jg3PmvH4uod0tStaACVyrOySeBFhoWsrAJVFJXtPuE/3ueuJL+QAM+DreKsAjlGRFq90R/eLWRo+5OhdNFnXsq3SaI88YXV2KiIpKLsB6aN3iMvL+Td2dg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729682491; c=relaxed/simple;
-	bh=jrWAzrOHkl4R41gA+b3jWb+QxSq6a6lgm0UimBv8U/k=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nbMVUA/1r8E8uIZt4keYfb9RGkHENYENI4fDgp+bHk1gO+IycB2gE5m+b7BIQfLiYjBTEp8U1B7IQfeZRJ8Awe9MklzVNXXziBmfoN6UsquLYLmozam/pzzjahiDkXSpKvra0ThjUPNboHQGGGeZbPYOjcqvRPpFdI+x/Qa6pSk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3cd35858aso60050695ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 04:21:30 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729682489; x=1730287289;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=ER7eBPOPMHtQyadUG47/J953jVRhit5sxW0qa/8Bg9U=;
-        b=qHed0IXcMJLyn5zVVV0vcSn3Go7AvyL+7ZUCaiXt968Zv/ulALDOpqFefrNg7hf/gf
-         g5YqGLKBCMU1TckyMjwf7gMU/O0i09o+a5nbUGzPl31yQ8OaZ0uOL5ehrmju/uJf/7jF
-         r8hf4JHJcwnZg1Ls27m5J+2OTv3wMX5iiN1To2CTesjvz+UXiWOfoWHtLqtF7gj6Bg70
-         a6fCj99jrrrWlQU3gssydXz8x0ukmY8o/yQlU4ZIQfYcMRvfLaTcYsqQx5kot6rqwTb2
-         oYGrkoh9sjm5hKyokCJU4Dh9pYfMv/qqu5r9WTFDVxTiRlFUa/rGoXZg9wljG+V31RUB
-         joFA==
-X-Forwarded-Encrypted: i=1; AJvYcCVy3n4ZS9rV72nM+pmhMhvjCOIH5gr9CRDCCDo09O1kG2h39Fn8MzUhjUGI5EiSY3BSNQuPXrxO6+z+cwk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwminNvio1XLplZqopKU41zqtXt2bOgb9JHjcOStD+6Dym8aI97
-	tx3AYv/N704itvgn54J7v/uHKQlIxGNTt8vfjJ2qjaDfcW66BwOLRpMIm0pWRTjtEKYmbzlcfhi
-	tjsLt2LxDzwOnDicJ+AtIs8c4XPmfy13f3HOTauczV+adAHrLtePC6ns=
-X-Google-Smtp-Source: AGHT+IGzh4PgGJwjcmrwuxva9h1kcWSCxlmvpZ+vONA+tG0c66jyI1Q1HBHXKXPVts4kCTwikDLaRASrCpHyk9XlIUpA9Xm7xwst
+	s=arc-20240116; t=1729682533; c=relaxed/simple;
+	bh=64C3SPxTd7AQQp65zjJ4dsy+GxKDPAo+C0dNOzIWPkw=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=JXPPKGm3nqxRcauuWItyrCqFnyAHmyRaC3tvE/fv4yKwN1bhn9NVimLCCOGZqGWB/dW3ZhUCOW+bwBy0Va81OSWN3k9DXI2OLNSaRUairq3Z3czacOt/wgLvOXUXyOYLLxWxKDo0aZeFeKYWJuehMZcmcJoEOGN4Jk0+/GfGPpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XYRR45Ft1z6FCrJ;
+	Wed, 23 Oct 2024 19:20:00 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id A5D3714022E;
+	Wed, 23 Oct 2024 19:22:03 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 23 Oct
+ 2024 13:22:02 +0200
+Date: Wed, 23 Oct 2024 12:22:01 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>, "Navneet
+ Singh" <navneet.singh@intel.com>, Jonathan Corbet <corbet@lwn.net>, "Andrew
+ Morton" <akpm@linux-foundation.org>, Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>, "Alison Schofield"
+	<alison.schofield@intel.com>, Vishal Verma <vishal.l.verma@intel.com>,
+	<linux-btrfs@vger.kernel.org>, <linux-cxl@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <nvdimm@lists.linux.dev>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 24/28] dax/region: Create resources on sparse DAX
+ regions
+Message-ID: <20241023122201.000005a4@Huawei.com>
+In-Reply-To: <67184f4ef593_7253d294d5@iweiny-mobl.notmuch>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+	<20241007-dcd-type2-upstream-v4-24-c261ee6eeded@intel.com>
+	<20241010162745.00007b31@Huawei.com>
+	<67184f4ef593_7253d294d5@iweiny-mobl.notmuch>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c8e:b0:3a0:a80a:997c with SMTP id
- e9e14a558f8ab-3a4d59ae1cfmr27018355ab.19.1729682489251; Wed, 23 Oct 2024
- 04:21:29 -0700 (PDT)
-Date: Wed, 23 Oct 2024 04:21:29 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6718dc39.050a0220.1e4b4d.0088.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_btree_path_level_init (2)
-From: syzbot <syzbot+eff0acb9087ee995577a@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    b04ae0f45168 Merge tag 'v6.12-rc3-smb3-client-fixes' of gi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15ff7c5f980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=cfbd94c114a3d407
-dashboard link: https://syzkaller.appspot.com/bug?extid=eff0acb9087ee995577a
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11ded240580000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=16d04430580000
-
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-b04ae0f4.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/3e40a4ec7885/vmlinux-b04ae0f4.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/9312d8ec05d3/bzImage-b04ae0f4.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/237d810e5baf/mount_0.gz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+eff0acb9087ee995577a@syzkaller.appspotmail.com
-
-bucket 0:29 data type btree ptr gen 0 missing in alloc btree
-while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0: seq e81e1ed936acf3df written 32 min_key POS_MIN durability: 1 ptr: 0:29:0 gen 0, fixing
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/btree_iter.c:631!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5089 Comm: syz-executor300 Not tainted 6.12.0-rc3-syzkaller-00319-gb04ae0f45168 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bch2_btree_path_level_init+0x9ca/0x9f0 fs/bcachefs/btree_iter.c:631
-Code: f5 fa ff ff e8 a7 73 7c fd 90 0f 0b e8 9f 73 7c fd 90 0f 0b e8 97 73 7c fd 90 0f 0b e8 8f 73 7c fd 90 0f 0b e8 87 73 7c fd 90 <0f> 0b e8 7f 73 7c fd 90 0f 0b e8 77 73 7c fd 90 0f 0b e8 6f 73 7c
-RSP: 0018:ffffc9000ae2e200 EFLAGS: 00010293
-RAX: ffffffff84187479 RBX: 0000000000000000 RCX: ffff88801cca8000
-RDX: 0000000000000000 RSI: 0000000001000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff84186ccc R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff203a006 R12: ffff88803d76a000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888048b60033
-FS:  000055555b46c380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 000055f38bec7120 CR3: 0000000040558000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- btree_path_lock_root fs/bcachefs/btree_iter.c:769 [inline]
- bch2_btree_path_traverse_one+0x10de/0x2940 fs/bcachefs/btree_iter.c:1170
- bch2_btree_path_traverse fs/bcachefs/btree_iter.h:247 [inline]
- __bch2_btree_iter_peek fs/bcachefs/btree_iter.c:2197 [inline]
- bch2_btree_iter_peek_upto+0xb58/0x70e0 fs/bcachefs/btree_iter.c:2297
- bch2_btree_iter_peek_upto_type fs/bcachefs/btree_iter.h:685 [inline]
- bch2_gc_btree fs/bcachefs/btree_gc.c:670 [inline]
- bch2_gc_btrees fs/bcachefs/btree_gc.c:729 [inline]
- bch2_check_allocations+0x1a8b/0x6e80 fs/bcachefs/btree_gc.c:1123
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
- bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
- bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f6a8cd1b93a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007fffa2315728 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007fffa2315740 RCX: 00007f6a8cd1b93a
-RDX: 0000000020000080 RSI: 0000000020000000 RDI: 00007fffa2315740
-RBP: 0000000000000004 R08: 00007fffa2315780 R09: 0027e461d5230a6f
-R10: 0000000000000844 R11: 0000000000000282 R12: 0000000000000844
-R13: 00007fffa2315780 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bch2_btree_path_level_init+0x9ca/0x9f0 fs/bcachefs/btree_iter.c:631
-Code: f5 fa ff ff e8 a7 73 7c fd 90 0f 0b e8 9f 73 7c fd 90 0f 0b e8 97 73 7c fd 90 0f 0b e8 8f 73 7c fd 90 0f 0b e8 87 73 7c fd 90 <0f> 0b e8 7f 73 7c fd 90 0f 0b e8 77 73 7c fd 90 0f 0b e8 6f 73 7c
-RSP: 0018:ffffc9000ae2e200 EFLAGS: 00010293
-RAX: ffffffff84187479 RBX: 0000000000000000 RCX: ffff88801cca8000
-RDX: 0000000000000000 RSI: 0000000001000000 RDI: 0000000000000000
-RBP: dffffc0000000000 R08: ffffffff84186ccc R09: 0000000000000000
-R10: dffffc0000000000 R11: fffffbfff203a006 R12: ffff88803d76a000
-R13: 0000000000000000 R14: 0000000000000000 R15: ffff888048b60033
-FS:  000055555b46c380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00005654e5f57008 CR3: 0000000040558000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
+> > > +EXPORT_SYMBOL_GPL(dax_region_add_resource);  
+> > Adding quite a few exports. Is it time to namespace DAX exports?
+> > Perhaps a follow up series.  
+> 
+> Perhaps.  The calls have a dax_ prefix.  In addition, I thought use of the
+> export namespaces were out of favor?
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+I guess I missed a change in the wind.
+Any references?
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
 
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Jonathan
 
