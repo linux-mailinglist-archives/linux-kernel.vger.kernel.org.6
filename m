@@ -1,210 +1,248 @@
-Return-Path: <linux-kernel+bounces-378322-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378323-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id A98199ACE70
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:17:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4596A9ACE72
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:17:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6541F282BD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:17:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4BA3B1C20A4A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:17:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1C171BE23F;
-	Wed, 23 Oct 2024 15:17:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8635B1C1ADB;
+	Wed, 23 Oct 2024 15:17:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Z9IZWNHO"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LolIzHaG"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E171A08C2
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:17:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B9FEB19DF53;
+	Wed, 23 Oct 2024 15:17:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729696641; cv=none; b=UBCSWPIKpcXGjMl+Dg5QCOxdR8QYsQ8mZuQ9nM5UVCGQakYuJuCO0cYidinbGDx+WW3DtRIuqcV7Sj3imkHYz/tnxteGXurGBeIbX2YE9EU0UWPLRJXaL4tws8FsssKeWyCNS94KHAOB8NOhhl56cN3Zvsx4Ipyue0Y5rWE5+bQ=
+	t=1729696652; cv=none; b=Dt1zhr5GdlfrY+dL200W6D+QbO5eAJoDmhzsotZzCtYD3PsSgnJMbV174eZUZtihRceFpwzWOb530tQQX6gciijZwtcSwBqvCZd/1d3kLyzKVuxkHc+fHMnOxEZ38XMJV6xZ+e1uX+Z5cTcPCsu53YkpN2Hh1ZTlsPti0qqRmqY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729696641; c=relaxed/simple;
-	bh=7QXtgMik+x9PyMt0aIrb9yDcVGFj/6gmQhdTCVIJNmo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Uofb4+zPuCx/AuO1z5YVC6YD8uP6mqWSqAox4VjiC/P8nN5PPlTOHk1y+o0TjYgZGtIUNTmncHA00HOSZkm2UssiHNDaBe8TIr4XWPtPHDFiQH9AbNfbo1Gcd2wliAeFG69kwFsAgb3UhH6+3Qb36bP73n6Pvb44v23SSulZceA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Z9IZWNHO; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NDAbpx027450;
-	Wed, 23 Oct 2024 15:17:01 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=9c5VXu
-	XWYBCUIxxlDDct7TgskUlWq5rnL3yH2zaR94k=; b=Z9IZWNHOeVtYBQeJresU4i
-	UQdsjzX3EGsYy3l9IhYyh8dgLOZD3w/Qd1N8DRPxRuy/XQPIOLrhkDdG9PgzlRpN
-	esRZHDK67eC1gMy7DPQUZP75P3n2v9M0l7GcMNQsB8Tf/jy0RXXcjjAz+Gf734YT
-	GM3hTocX9FHCWeJzV+omz3P0Osdyi6B79PhN72Ql3MioFTby7+OBXW4OuhAjaT1j
-	w+EH0s5/1qSmOTmLCft7p6YS0U/iRHCyIfPtK1E1iAs7qZXDH+S6Py+DW/HTF3T6
-	zS1ks83wCMl1rbXjQM6W8uDE2LY9ZH23wcPZIR8ZxNu6kX7YPwspSgo9DKS1D3BQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafkr4m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 15:17:00 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NFH0Yj000818;
-	Wed, 23 Oct 2024 15:17:00 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafkr4f-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 15:17:00 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBefop001542;
-	Wed, 23 Oct 2024 15:16:59 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emk9beff-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 15:16:59 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NFGvcN29229756
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 15:16:57 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AACC920043;
-	Wed, 23 Oct 2024 15:16:57 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id DBEE620040;
-	Wed, 23 Oct 2024 15:16:54 +0000 (GMT)
-Received: from [9.39.29.91] (unknown [9.39.29.91])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 15:16:54 +0000 (GMT)
-Message-ID: <32e0b995-eb81-42bf-904b-225a3b7c0e87@linux.ibm.com>
-Date: Wed, 23 Oct 2024 20:46:53 +0530
+	s=arc-20240116; t=1729696652; c=relaxed/simple;
+	bh=Y9lg95AOBx3IZcZyZeGwM2XaFHswE2uhvCfA6MfY39E=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=sFz8lszRPZ6s0kEswBHtDby7/MeNbAsRNhvbp+FoC7VWu+uthEE17hosg0XKU8vSXOugErBHA8xR/ifKAXpg7sg/Z6N275m3rC+u5yQnUQgIywjPLYJRBQxShehv5mB8hjIDfLzKuq/crbuU7GNb8f8vNcz0GsMYyxLrSh73amE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LolIzHaG; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3F1F9C4CECD;
+	Wed, 23 Oct 2024 15:17:32 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729696652;
+	bh=Y9lg95AOBx3IZcZyZeGwM2XaFHswE2uhvCfA6MfY39E=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=LolIzHaGBLQpJYEPCSMlz4zOflsLfvm459UKKZnqVLNnyDBSFjMiM5+4nDE7b09TY
+	 W59UX8xhkcZDTNQjWnZ5g+qI+YpcFQID8DX6WScXw0xrkJnicvZOrqTAcyB+lP9mIB
+	 1OyQUTcT3Pdh46IgiETAZSs01umGdWC07ZsiBv3zfRuqcW2lxDH46g5sIcCoEBwdRe
+	 Rkrm+ABEdixbBQ+3FSFyy+FGkLb6xPZl0wl2lce9J+B30uHVQR6slXPzO3fzG3Ph9p
+	 WJEpm284T6BJt+w1y5P4XXxGxxm5bhuWQwHxyd7I9kpVE/J7n5hWaqvr9ZTx9veeC/
+	 WjzSLT1lKSMPw==
+Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539f4d8ef66so9432468e87.1;
+        Wed, 23 Oct 2024 08:17:32 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWgx13I0MOrwsi/vU1ABK7VaexfStsU3VA3McHSG3HbK1JU2kSghs2b0/1DR8Zax2gzmJU7iUERLfG922XB@vger.kernel.org, AJvYcCXMz60HGvsm7jG47UZcRcJUMgTc5QuX7BUebCgkU8ee+UyqsWBGIF0h9HisDUxGOJmKXRrKHDjpkWTV@vger.kernel.org
+X-Gm-Message-State: AOJu0YxWHEG+IH2Oo07ZPs7Od28ry2g7zsl8EvfOyO2Afs6HawsE9Qah
+	c8qGHuZW4t3I4OMMOp2EjT8cjkKIvO4QXQ83Jd3e+dSYYhLqRL4/DmJDCU7ivhFhxeQDKLW/P+y
+	1S3tHZ0OG+KzXxMMSkPILHg3mtQ==
+X-Google-Smtp-Source: AGHT+IFO2flos8BmUbUaV2MIys/apvRsxd9oWb6MtoGL3InNud08UQCYJA2+z/ZVPUpl+CBNdQz4CESiW+WTCz4l5os=
+X-Received: by 2002:a05:6512:2c05:b0:53b:1f90:576f with SMTP id
+ 2adb3069b0e04-53b1f905959mr889920e87.22.1729696650524; Wed, 23 Oct 2024
+ 08:17:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
-To: Steve Wahl <steve.wahl@hpe.com>, Valentin Schneider <vschneid@redhat.com>
-Cc: Russ Anderson <rja@hpe.com>, Dimitri Sivanich <sivanich@hpe.com>,
-        Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, linux-kernel@vger.kernel.org
-References: <20241010155111.230674-1-steve.wahl@hpe.com>
-From: Shrikanth Hegde <sshegde@linux.ibm.com>
-Content-Language: en-US
-In-Reply-To: <20241010155111.230674-1-steve.wahl@hpe.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: m6t6agrCRGBMrlzv9TUxoUfkeHVzGCi0
-X-Proofpoint-GUID: 04CJ3LKgx1Aakwg1INhWC4fajtf1uP8A
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 suspectscore=0
- mlxscore=0 mlxlogscore=910 adultscore=0 lowpriorityscore=0 malwarescore=0
- spamscore=0 phishscore=0 priorityscore=1501 impostorscore=0 bulkscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410230091
+References: <20241003113840.2972416-1-usamaarif642@gmail.com>
+ <20241004000316.GA1910499-robh@kernel.org> <d3d90f10-1ccd-4557-843c-5b546d3b913c@gmail.com>
+ <CAL_JsqJVEjPt9tHNr0uAGHQwGnUbZDZoe7kURp3Qx0ce1jv+vw@mail.gmail.com>
+ <4b9456a3-47ea-4a00-92fe-131ccd80e550@gmail.com> <CAL_JsqLLxyhjrc-Aqg12mjUZHGGgw59=AJxPpOfh5uSST8hY0Q@mail.gmail.com>
+ <1e117d65-b454-4d5c-b03a-c3ab3b078093@gmail.com>
+In-Reply-To: <1e117d65-b454-4d5c-b03a-c3ab3b078093@gmail.com>
+From: Rob Herring <robh@kernel.org>
+Date: Wed, 23 Oct 2024 10:17:16 -0500
+X-Gmail-Original-Message-ID: <CAL_JsqJhd0X+eCW6WgXUjCLb-dBqHN4_01vzRRLU07Wz5Q2tLw@mail.gmail.com>
+Message-ID: <CAL_JsqJhd0X+eCW6WgXUjCLb-dBqHN4_01vzRRLU07Wz5Q2tLw@mail.gmail.com>
+Subject: Re: [PATCH] of/kexec: save pa of initial_boot_params for arm64 and
+ use it at kexec
+To: Usama Arif <usamaarif642@gmail.com>
+Cc: mark.rutland@arm.com, will@kernel.org, leitao@debian.org, 
+	catalin.marinas@arm.com, saravanak@google.com, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	devicetree@vger.kernel.org, kexec@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 23, 2024 at 9:43=E2=80=AFAM Usama Arif <usamaarif642@gmail.com>=
+ wrote:
+>
+>
+>
+> On 23/10/2024 14:40, Rob Herring wrote:
+> > On Mon, Oct 7, 2024 at 10:30=E2=80=AFAM Usama Arif <usamaarif642@gmail.=
+com> wrote:
+> >>
+> >>
+> >>
+> >> On 07/10/2024 15:39, Rob Herring wrote:
+> >>> On Mon, Oct 7, 2024 at 9:06=E2=80=AFAM Usama Arif <usamaarif642@gmail=
+.com> wrote:
+> >>>>
+> >>>>
+> >>>>
+> >>>> On 04/10/2024 01:03, Rob Herring wrote:
+> >>>>> On Thu, Oct 03, 2024 at 12:38:40PM +0100, Usama Arif wrote:
+> >>>>>>  __pa() is only intended to be used for linear map addresses and u=
+sing
+> >>>>>> it for initial_boot_params which is in fixmap for arm64 will give =
+an
+> >>>>>> incorrect value. Hence stash the physical address when it is known=
+ at
+> >>>>>> boot time and use it at kexec time instead of converting the virtu=
+al
+> >>>>>> address using __pa().
+> >>>>>>
+> >>>>>> Reported-by: Breno Leitao <leitao@debian.org>
+> >>>>>> Suggested-by: Mark Rutland <mark.rutland@arm.com>
+> >>>>>> Signed-off-by: Usama Arif <usamaarif642@gmail.com>
+> >>>>>> Fixes: ac10be5cdbfa ("arm64: Use common of_kexec_alloc_and_setup_f=
+dt()")
+> >>>>>> ---
+> >>>>>>  arch/arm64/kernel/setup.c | 8 ++++++++
+> >>>>>>  drivers/of/fdt.c          | 6 ++++++
+> >>>>>>  drivers/of/kexec.c        | 8 ++++++--
+> >>>>>>  include/linux/of_fdt.h    | 2 ++
+> >>>>>>  4 files changed, 22 insertions(+), 2 deletions(-)
+> >>>>>>
+> >>>>>> diff --git a/arch/arm64/kernel/setup.c b/arch/arm64/kernel/setup.c
+> >>>>>> index b22d28ec8028..a4d96f5e2e05 100644
+> >>>>>> --- a/arch/arm64/kernel/setup.c
+> >>>>>> +++ b/arch/arm64/kernel/setup.c
+> >>>>>> @@ -194,6 +194,14 @@ static void __init setup_machine_fdt(phys_add=
+r_t dt_phys)
+> >>>>>>      /* Early fixups are done, map the FDT as read-only now */
+> >>>>>>      fixmap_remap_fdt(dt_phys, &size, PAGE_KERNEL_RO);
+> >>>>>>
+> >>>>>> +    /*
+> >>>>>> +     * Save dt_phys address so that it can be used later for kexe=
+c. This
+> >>>>>> +     * is done as __pa() is only intended to be used for linear m=
+ap addresses
+> >>>>>> +     * and using it for initial_boot_params which is in fixmap wi=
+ll give an
+> >>>>>> +     * incorrect value.
+> >>>>>> +     */
+> >>>>>> +    set_initial_boot_params_pa(dt_phys);
+> >>>>>
+> >>>>> No new arch->dt functions please. If we need to save off the PA, th=
+en do
+> >>>>> that when we set initial_boot_params.
+> >>>>>
+> >>>>> Rob
+> >>>>
+> >>>>
+> >>>> initial_boot_params is set in early_init_dt_verify, called by early_=
+init_dt_scan.
+> >>>> This is done in setup_machine_fdt in arm64 where the PA is available=
+,
+> >>>> but in other functions in other architectures, where the PA is not a=
+vailable.
+> >>>
+> >>> Doesn't __pa() work for all the other architectures? That's what your
+> >>> patch indicates.
+> >>>
+> >>
+> >> Yes, __pa() works for all other architectures.
+> >>
+> >> But we would need to add initial_boot_params_pa of type phys_addr_t
+> >> as an argument for early_init_dt_scan, which is called by all other ar=
+chs,
+> >> and we technically cant use 0 as an invalid value.
+> >>
+> >> We could convert initial_boot_params_pa to void *, and pass NULL for a=
+ll
+> >> other archs. But again, I don't really think we should be changing the
+> >> early_init_dt_scan(dt_virt) call in all other archs to
+> >> early_init_dt_scan(dt_virt, NULL) just to save initial_boot_params_pa
+> >> in arm64?
+> >>
+> >>>> So it makes it quite messy to set it in the same place as initial_bo=
+ot_params.
+> >>>> Its only needed for arm64 and making a change in all archs probably =
+isnt a good idea?
+> >>>>
+> >>>> Any reason to not add a new function to make arch -> of/fdt call?
+> >>>
+> >>> Yes. It is the opposite direction I have reworked the interfaces to.
+> >>> We don't want each arch calling various early DT functions at random
+> >>> times and order. That's fragile when the DT functions make assumption=
+s
+> >>> about when they are called or what's been initialized already.
+> >>>
+> >>> Another option is to make arm64 copy the DT as some arches do.
+> >>>
+> >>> Rob
+> >>
+> >> Ah maybe I didn't understand this properly, but isnt early_init_dt_sca=
+n an
+> >> arch -> of/fdt interfaces. set_initial_boot_params_pa is a similar int=
+erface
+> >> to early_init_dt_scan?
+> >
+> > Yes, and I don't want more APIs if they can be avoided. When is
+> > set_initial_boot_params_pa() supposed to be called? Is it before or
+> > after early_init_dt_scan()?
+>
+> Its only needed in arm64, and can be either before or after, as long as i=
+ts
+> somewhere in setup_machine_fdt, where dt_phys is available.
 
+Maybe only arm64 today. What happens when riscv decides they too want
+to support the DT anywhere in memory including outside the linear
+address map and then they need the same thing.
 
-On 10/10/24 21:21, Steve Wahl wrote:
-> Use a different approach to topology_span_sane(), that checks for the
-> same constraint of no partial overlaps for any two CPU sets for
-> non-NUMA topology levels, but does so in a way that is O(N) rather
-> than O(N^2).
-> 
-> Instead of comparing with all other masks to detect collisions, keep
-> one mask that includes all CPUs seen so far and detect collisions with
-> a single cpumask_intersects test.
-> 
-> If the current mask has no collisions with previously seen masks, it
-> should be a new mask, which can be uniquely identified by the lowest
-> bit set in this mask.  Keep a pointer to this mask for future
-> reference (in an array indexed by the lowest bit set), and add the
-> CPUs in this mask to the list of those seen.
-> 
-> If the current mask does collide with previously seen masks, it should
-> be exactly equal to a mask seen before, looked up in the same array
-> indexed by the lowest bit set in the mask, a single comparison.
-> 
-> Move the topology_span_sane() check out of the existing topology level
-> loop, let it use its own loop so that the array allocation can be done
-> only once, shared across levels.
-> 
-> On a system with 1920 processors (16 sockets, 60 cores, 2 threads),
-> the average time to take one processor offline is reduced from 2.18
-> seconds to 1.01 seconds.  (Off-lining 959 of 1920 processors took
-> 34m49.765s without this change, 16m10.038s with this change in place.)
-> 
-> Signed-off-by: Steve Wahl <steve.wahl@hpe.com>
+> > Can subsequent OF functions assume the PA
+> > is valid?
+>
+> After set_initial_boot_params_pa has been called, yes.
 
-I was trying to go through this issue and observed below.
-Looks like the computations are repeated in below manner.
+How do I know it has been called? Do I have to go wade thru every arch
+to see? You could document the requirement to be immediately after
+early_init_dt_scan(), but then how do you enforce that? You can't
+unless you design the interface to just avoid the problem in the first
+place.
 
-Assume SMT4 system.
+> > If an arch doesn't call set_initial_boot_params_pa() is
+> > __pa() valid or did they just forget to call it?
+>
+> Only arm64 seems to do the fixmap as discussed in
+> https://lore.kernel.org/all/1ea5538f-7e96-4034-9af9-e2d5fd72e069@gmail.co=
+m/,
+> so __pa should work in others.
+>
+> Requiring the PA to
+> > be set at the same time as initial_boot_params avoids all those issues
+> > with any period of time having the PA incorrect.
+> >
+>
+> Are you recommending I send a patch which changes all archs to call
+> early_init_dt_scan(dt_virt, NULL)?
+> or maybe early_init_dt_scan(dt_virt, __pa(dt_virt))?
+> and arm to call early_init_dt_scan(dt_virt, dt_phys).
 
-[[0 2 4 6]   [1 3 5 7] ]   [ [8 10 12 14]  [9 11 13 15] ]
-  <--SMT-->   <--SMT-->       <---SMT---->  <----SMT--->
-<---------PKG---------->   <------------PKG------------->
+I believe that's what I suggested already, so yes. Whether NULL or
+__pa(dt_virt))? __pa() would be better because then the arch has to
+think about whether that is right or not.
 
+> Happy to do send a v2 with that if its the way forward, although I feel
+> set_initial_boot_params_pa() in just one arch might be better than
+> changing this for all archs.
 
-Lets say it happening for CPU0, at SMT level, then it will do, masking 
-in below manner.
+We don't work around kernel APIs if they don't meet changing needs. We
+change them.
 
-2: [0 2 4 6] & [0 2 4 6]
-4: [0 2 4 6] & [0 2 4 6]
-6: [0 2 4 6] & [0 2 4 6]
-
-1: [0 2 4 6] & [1 3 5 7]
-3: [0 2 4 6] & [1 3 5 7]
-5: [0 2 4 6] & [1 3 5 7]
-7: [0 2 4 6] & [1 3 5 7]
-
-8: [0 2 4 6] & [8 10 12 14]
-10:[0 2 4 6] & [8 10 12 14]
-12:[0 2 4 6] & [8 10 12 14]
-14:[0 2 4 6] & [8 10 12 14]
-
-9: [0 2 4 6] & [9 11 13 15]
-11:[0 2 4 6] & [9 11 13 15]
-13:[0 2 4 6] & [9 11 13 15]
-15:[0 2 4 6] & [9 11 13 15]
-
-
-And when it happens for CPU2, it will do the exact same computation. 
-Maybe that can be avoided with something like below. Do the computation
-if it is the first cpu in that topology level mask.
-
-Not sure if it works in all scenarios. Tested very very lightly on 
-power10 system with SMT=4.
-
-Please correct me if i got it all wrong.
-
-------------------------------------------------------------------------
-
-diff --git a/kernel/sched/topology.c b/kernel/sched/topology.c
-index 9748a4c8d668..541631ca32bd 100644
---- a/kernel/sched/topology.c
-+++ b/kernel/sched/topology.c
-@@ -2367,6 +2367,13 @@ static bool topology_span_sane(struct 
-sched_domain_topology_level *tl,
-         if (tl->flags & SDTL_OVERLAP)
-                 return true;
-
-+       /* Do the computation only if this cpu is first CPU
-+        * in the topology level mask. Same computation is kind of
-+        * Repetitions on other CPUS */
-+       if (!(cpu == cpumask_first(tl->mask(cpu)))) {
-+               return true;
-+       }
-+
-         /*
-          * Non-NUMA levels cannot partially overlap - they must be either
-          * completely equal or completely disjoint. Otherwise we can end up
-
+Rob
 
