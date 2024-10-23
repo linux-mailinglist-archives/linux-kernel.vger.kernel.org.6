@@ -1,105 +1,106 @@
-Return-Path: <linux-kernel+bounces-378448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378452-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 078F99AD058
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:26:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A5DD9AD070
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:27:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BC5312812E3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:26:36 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CA15B1F232C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:27:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 141691CF5CF;
-	Wed, 23 Oct 2024 16:25:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17DA31CDFA9;
+	Wed, 23 Oct 2024 16:26:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="bEIR1wcS"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tkVjSHUY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE4FC1CBEBA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:25:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E5C91D0797;
+	Wed, 23 Oct 2024 16:26:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729700737; cv=none; b=O2Jbygpu/nkvqt2zZ2CjWcaBpfWzPPcDxZayMydH2isLR8ZDaWbGnEF4PlNmrN9kVux1WfJPDENlVaw2ClMxtZz8l/TabXTxAgE3ju1ROmY1uKwgScsQ+3UCP2r8RWb563RCR3+idJngDO2d3V8fdLU9PZbXkKTSh1CTukWPAzg=
+	t=1729700764; cv=none; b=mSk498X5nVivEpKco3tsvwKANCP44B0v0t8GVLNprZO12ElnMFPAHwpTWqw7612fl+8Qb8VJSxMD8OAucXE2r0cvbLHvRoTlgVfgh6vmbfwn08T8QldKWmeolRZnLaN7cKRpm+3x262yq1iBPIZ39ZjvVFZAhva7x0XePeztqhw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729700737; c=relaxed/simple;
-	bh=77LpD4OV4E+Ga3+0yNWBek1q4fGhav7xENGbU0b1A14=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=uqWOmSfrlBE3jcXJAgjjd8bDVL6Ac5GT1VirdsEgYpRbIIQsXCqLVlM6gLDKyZ2ZkYcQh2V99JmbzFp7LPdf0P73Wr8TzxM96LSfXOrc3Avt6j0eebEQMyHQ+kxRm2/JCj4z/6lTXK4DyyORFqw8EIPkDq2Ry0YNZiBlOIf6+l0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=bEIR1wcS; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso108538671fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1729700733; x=1730305533; darn=vger.kernel.org;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=0vyRJzq9SE6S3u0SzDMtXCUEzA5YutsiEsRxl1MT3JE=;
-        b=bEIR1wcSTquQKISZIiaEpXkOPzBGlf6sDXaMYI3VAgnQHO9HZqHUyMc7RVdMkL5ivn
-         PjC9iDOVlxRqSfk12Wj8MB60PNdLGB2UNEXkOWdIHPwaSzBA86rR5J3/EpBlFwnHUboS
-         vG/Y3R2s1iPxLkSihWSJdXncHfKTBoV5SBXEc=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729700733; x=1730305533;
-        h=to:subject:message-id:date:from:in-reply-to:references:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=0vyRJzq9SE6S3u0SzDMtXCUEzA5YutsiEsRxl1MT3JE=;
-        b=WylvqfXa9O2EsUNKBh4Kk3VNWOf9dicACeaslS2UwvFMa8GHF1Z3AsWQ53Rdi0G7gV
-         sxuYS+ZW3baehLMyXhWU+c4OI9usOI5GJQwYqq6YPwn5maWfM5AattK9wHFQZF7lsiTi
-         j9rx7cy70ImHz8HtDemar+sC30S0hHMTpz8wi8mZZpSdN1tvBAjb9qadfNTMMOcykstD
-         N1+5KN1lqVCJi+CuIbv4CD6yn4mNYmsS1GrF8dGiJ8u10fEW2qdELdzuFQhtZrpw/2Un
-         oCGXMiXCmsP6TYKriwRpnGl7DEIvmLnR32wG3U1xOVxPPzSg83L9w/Bq32IohyDbfunq
-         whoA==
-X-Forwarded-Encrypted: i=1; AJvYcCXTvK64kxfQkZqqQCS6vXFfUVnl3SC/3DQiiT1x5IlGoRWjtjHZtpCiYgw06ug1VVZm/Rzk3oPVuwXEdkg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxl8WaEsxtEXKcPGFr5+09T1HWcIUqAoewoH59c8+EO9TjdJbtP
-	8Ad9DkzULm/uGt4J5EbAZqXGoDpyivos3wGtpHCYNEbGkUIci2XUS8Na2G1QnjGHOB7R5m2jEoN
-	P
-X-Google-Smtp-Source: AGHT+IHicLYUw1CBDi+H2Yp3I3lJc61FHK0RMHus8PZ3gmblPVuiT/5MuWKe9rmoQmlO4UuaEqoKwQ==
-X-Received: by 2002:a05:6512:12d6:b0:52c:deb9:904b with SMTP id 2adb3069b0e04-53b1a39bbfamr3242764e87.38.1729700732794;
-        Wed, 23 Oct 2024 09:25:32 -0700 (PDT)
-Received: from mail-lj1-f180.google.com (mail-lj1-f180.google.com. [209.85.208.180])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53b13cf24a0sm544204e87.273.2024.10.23.09.25.32
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 09:25:32 -0700 (PDT)
-Received: by mail-lj1-f180.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso108538231fa.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCXaeMbfOBhOoi25EC/CGgrUpFMNea3LP9GYf91OcNYHxd/rUcBg0ekfq4w0OUFwtx5Oa1+WMouLYOGbLLY=@vger.kernel.org
-X-Received: by 2002:a05:651c:221b:b0:2fb:3881:35d5 with SMTP id
- 38308e7fff4ca-2fc9d38ab4dmr26516541fa.35.1729700731684; Wed, 23 Oct 2024
- 09:25:31 -0700 (PDT)
+	s=arc-20240116; t=1729700764; c=relaxed/simple;
+	bh=ZnAYm2TJOCxsEMUg1iKlsmwaRxpZn2CUIxr94dEYTEo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tLRbfEkygVZ7mwEX986mSabH+55DBTemnBCU+Da+CxKe40SUv3o4dxfNMfutpEHT5KuYjMgFQ2qGg14lr1JDF6dZZnBs/GFOTdFqfevZ9BNRhAoWQJ9P+MMKAS+m+grXjWAsj6GYq+pCkBuupLcdKI19OPgAcy9z6JtKgYGm2Zg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tkVjSHUY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C6636C4CEC6;
+	Wed, 23 Oct 2024 16:26:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729700763;
+	bh=ZnAYm2TJOCxsEMUg1iKlsmwaRxpZn2CUIxr94dEYTEo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tkVjSHUYFWclSNvqyA9MWWrL9LSNsnCLeltO+unH9duOufiWkrRs4PiDsrAaXaykm
+	 n6sFngrTGkv0VSIcWz9qJgUQeOaHczqi124qBatb0MnCB1w866W18RW4bjAdqBiDlw
+	 ev6K7gnRgeTa98D9PFAWmxVOV8Own4ZKSs+DumtO1m1uuKzulus/X7B07rQAGjDQn+
+	 ggIRAH7kNzXeDtPhEq+dycS9rLeuaZ3GFG0uaVkcuJNCC47vVE0yy5Yfq487Vix6oO
+	 R1GRk3FVuSzKo4wc26oGSqhh2OocxfAVAJo5LbMz5XI1iL8bTEGcV6/i1/IKoPJD+v
+	 dwXe2TIhSw2zA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t3eBc-000000006FX-37sy;
+	Wed, 23 Oct 2024 18:26:16 +0200
+Date: Wed, 23 Oct 2024 18:26:16 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, ulf.hansson@linaro.org,
+	jassisinghbrar@gmail.com, linux-kernel@vger.kernel.org,
+	arm-scmi@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-arm-msm@vger.kernel.org, konradybcio@kernel.org,
+	linux-pm@vger.kernel.org, tstrudel@google.com, rafael@kernel.org
+Subject: Re: [PATCH V3 0/4] firmware: arm_scmi: Misc Fixes
+Message-ID: <ZxkjqEmkBAsC6UkL@hovoldconsulting.com>
+References: <20241007060642.1978049-1-quic_sibis@quicinc.com>
+ <ZwfsmqInJlqkQD_3@hovoldconsulting.com>
+ <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
- <e67b7f6c682bddbea2fe8b2d87b8441e4d2ea6e6.1729628198.git.lorenzo.stoakes@oracle.com>
- <3de53e7fmsql2t7byzoqonyt7e22bztucjcypykvqiystbalw3@2vwnvh7jcfed>
-In-Reply-To: <3de53e7fmsql2t7byzoqonyt7e22bztucjcypykvqiystbalw3@2vwnvh7jcfed>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Wed, 23 Oct 2024 09:25:13 -0700
-X-Gmail-Original-Message-ID: <CAHk-=whzj34fgGwK2+G3NkW7nNOkgiC28952Q+Yt+EVWEKaB3w@mail.gmail.com>
-Message-ID: <CAHk-=whzj34fgGwK2+G3NkW7nNOkgiC28952Q+Yt+EVWEKaB3w@mail.gmail.com>
-Subject: Re: [PATCH hotfix 6.12 3/8] mm: refactor map_deny_write_exec()
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	Linus Torvalds <torvalds@linux-foundation.org>, Peter Xu <peterx@redhat.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ae5eaef9-301f-7d3f-c973-faa22ae780ee@quicinc.com>
 
-On Wed, 23 Oct 2024 at 07:30, Liam R. Howlett <Liam.Howlett@oracle.com> wrote:
->
-> Nit: somehow "new" is special in my editor.  Also, I'm too lazy to fix
-> my editor so I'll live with it.
+On Wed, Oct 23, 2024 at 01:16:47PM +0530, Sibi Sankar wrote:
+> On 10/10/24 20:32, Johan Hovold wrote:
+> > On Mon, Oct 07, 2024 at 11:36:38AM +0530, Sibi Sankar wrote:
+> >> The series addresses the kernel warnings reported by Johan at [1] and are
+> >> are required to X1E cpufreq device tree changes [2] to land.
+> >>
+> >> [1] - https://lore.kernel.org/lkml/ZoQjAWse2YxwyRJv@hovoldconsulting.com/
+> >> [2] - https://lore.kernel.org/lkml/20240612124056.39230-1-quic_sibis@quicinc.com/
+> >>
+> >> The following warnings remain unadressed:
+> >> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> >> arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+> > 
+> > Are there any plans for how to address these?
 
-I think your editor might be in some "edit C++" mode, where "new" is a keyword.
+> Sorry missed replying to this. The error implies that duplicate
+> opps are reported by the SCP firmware and appear once during probe.
 
-So it might be as simple as telling your editor that it's just C.
+I only see it at boot, but it shows up four times here with the CRD:
 
-Or your editor just doesn't know or care about the difference.
+[    8.098452] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    8.109647] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    8.128970] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
+[    8.142455] arm-scmi arm-scmi.0.auto: Failed to add opps_by_lvl at 3417600 for NCC - ret:-16
 
-               Linus
+> This particular error can be fixed only by a firmware update and you
+> should be able to test it out soon on the CRD first.
+
+Can you explain why this can only be fixed by a firmware update? Why
+can't we suppress these warnings as well, like we did for the other
+warnings related to the duplicate entries?
+
+IIUC the firmware is not really broken, but rather describes a feature
+that Linux does not (yet) support, right?
+
+Johan
 
