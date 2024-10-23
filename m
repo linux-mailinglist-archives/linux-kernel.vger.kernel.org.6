@@ -1,147 +1,115 @@
-Return-Path: <linux-kernel+bounces-378880-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E9209AD6A7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:24:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C29579AD69C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2F71F285795
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:24:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7B0931F24C5A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:23:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654E51EF925;
-	Wed, 23 Oct 2024 21:24:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C2611FAC42;
+	Wed, 23 Oct 2024 21:22:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="MHNiOOwR"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Uw1EnKix"
+Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3EF4E56A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:24:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B820C15B0EE;
+	Wed, 23 Oct 2024 21:22:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729718652; cv=none; b=QPPWSQytc7L2c3CqmUUxBTQOJ/c+QAklo75X2TpJ8oDXpXMNdWimFkHAoEu3xzKgQl8FO+lO8cJgKnqwsnWqfZ7t3hIbCQPc1DPck+oOdLuQ8ARBUhtGu+38U+/dFmtxSrxiskRH7/BCh8DXDQ6osJCZxDKzDNNS8YKymO34E30=
+	t=1729718575; cv=none; b=lSA5J96NhVECQa76Cq7N22BFmgAwh9OEnZ9EnDyKKw5rOzC3clIWX5QcwXO8WYmG/1qkgfZSjUswOGMyeqFHFQf8ZXUIKmWKP8M2IkLlvxKLRwj3Hd9qozfvqO5BG5f3cS0eh5g/u0jj2T37L+9z2mIvu2VvR1vIF7kendZMSeE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729718652; c=relaxed/simple;
-	bh=Q5kNViwwQxoEPKN17gUKEtAhO5AOuMh/3+Jxh51MQ0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=qY8Dpo98bgOUKHemsY76fYO7OK6MMJuSDqkUWgyAgRfgDZuY4NtdDBk7lg+E+7dxrBitkM/agnKqXnzWRZNNKZwF4gxANmaLh8msAVzAsNtKmT23GysVytVm+r3hsgBgoewsvGpeyYjgC2jOlWNEuDhlyuH36RdOVq0+ZVPWNLk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=MHNiOOwR; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NF6Nkm018844;
-	Wed, 23 Oct 2024 21:23:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:message-id:mime-version
-	:subject:to; s=pp1; bh=w6/XyakDp8eyHd3VBcLyqRn+Elmw9FFQMqdtyMVrS
-	+A=; b=MHNiOOwRTXTNLIcJ8qovp1ULJCHb/32/cnJjAepOj8LMwy7K9z/QjAEYe
-	1TpNsqKOsXqp2gi19UEPNJvbSyFq2QGXJdhNefm1dnEdrM7ovrTrEjDbvGyK+tIq
-	H0jVLxYp1oubr/qevzqLK2pn34NuS0rw4V0BAlz/FG3JVQ6XGHvW8/a5LOsVS76j
-	UH1fZzd+TgX5Aiz95c1n9nKdVzAhfY8YaiZAXcw7CocMUqYmUNkNnDDS8M9ofPxv
-	e/fhf51qkAo44Vc/JMrfFf/YApR+GtXxShLAe8Ji6503tlvcTfgXdA2SAXkRJ8Pv
-	QpH1wUOq0Nqw3tQl/NDbr4uO9YavQ==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajn693-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 21:23:48 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NLNlB2005536;
-	Wed, 23 Oct 2024 21:23:47 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajn68y-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 21:23:47 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NIuGR8008807;
-	Wed, 23 Oct 2024 21:23:46 GMT
-Received: from smtprelay07.fra02v.mail.ibm.com ([9.218.2.229])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkan1q6-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 21:23:46 +0000
-Received: from smtpav03.fra02v.mail.ibm.com (smtpav03.fra02v.mail.ibm.com [10.20.54.102])
-	by smtprelay07.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NLNhRo37159224
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 21:23:43 GMT
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F08E620043;
-	Wed, 23 Oct 2024 21:23:42 +0000 (GMT)
-Received: from smtpav03.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C512F20040;
-	Wed, 23 Oct 2024 21:23:40 +0000 (GMT)
-Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com.com (unknown [9.43.16.156])
-	by smtpav03.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 21:23:40 +0000 (GMT)
-From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
-To: mpe@ellerman.id.au
-Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
-        maddy@linux.ibm.com, peterx@redhat.com, groug@kaod.org,
-        sshegde@linux.ibm.com, mchauras@linux.ibm.com,
-        linuxppc-dev@lists.ozlabs.org, linux-kernel@vger.kernel.org
-Subject: [PATCH] powerpc/xmon: symbol lookup length fixed
-Date: Thu, 24 Oct 2024 02:52:26 +0530
-Message-ID: <20241023212225.1306609-2-mchauras@linux.ibm.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729718575; c=relaxed/simple;
+	bh=ECpkooAsK43cCNCwIMttxSvAewIH5d28w9CoAi+YcIE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=oT5go6xV0WIRQtT+nOik4jl1GsaZJhlyeY6Cvxsvx5aW6FaUTIsKTpYuWXR5bymiL4Kb3jkOBxXUc/y+85+7DJ3Scsshnp50i1LAgqFIldACFRbltMunG+KnUll6wStcHfkcO2zOAWh/9WBEaB327ZI+i0rK9trJf3x4qvG7Fxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Uw1EnKix; arc=none smtp.client-ip=209.85.210.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-71e4244fdc6so209977b3a.0;
+        Wed, 23 Oct 2024 14:22:53 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729718573; x=1730323373; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=gv0/36hzmOzdM70FrAI8TdgGFkAi2wD5VDJAxglbS+A=;
+        b=Uw1EnKixxLuxnCBPI4YI69xLKk1E1urI1bF0aVVUTeDTPXG0jsnwMJjYYSDfR0nEL2
+         ckNBHUUi78AfAJfFedXTkaK9kRyshCzDpSPL8wJ3SJcTaGek/RliHFV6SI1dt34Eucru
+         YWi20IcND6t6sIJiE4zvAxe8W7krtUBX1mfhg0MsnruPxzjrZIp5NjPG5zSBDnEus+Ph
+         rIdpYBjtnUb6sQciVmzgDlVI825vN+BuLrwRKInCBhatupxVUFm4TykzDV6IxnIdcFlO
+         H6vMwOXQuTQh9QMIjxw/SFXu8OKYaS3vH5C3SPccouVz2nVQmln7qcpHHTl3msZWnte0
+         z/Nw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729718573; x=1730323373;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=gv0/36hzmOzdM70FrAI8TdgGFkAi2wD5VDJAxglbS+A=;
+        b=KdTouhfl4JHGW8fZga9+3IBr2DFpiQwPwPxeEoSoolIYAXJBQrJk2E1OdTkpmDO+1y
+         QnN696UpX75kmbXHDFc8jCb81a2dk50KU3AvVbLLc3A6bLYie721T1BbRK3JvkO1Ntjp
+         +61RfcmKhseVAk6YxnDbQCl4jaNhIvhqoy90GJkY0ieNeKAj1FSMGNcv4TLsG7VfgM0g
+         BWdT8eubDFTHrZRXr5Ei0AGHEfiomT+ZE0p1xrxvtg2TpAw3cqqqTeR4DYz97MxWHZ2S
+         RVGsylQDDbyZLDlZOG6xMmde6ig1xpEuNoGILfmuP96IiJ6j8RVn1iNqzy9QrivaBOcs
+         mV/g==
+X-Forwarded-Encrypted: i=1; AJvYcCUv10Ad9d2SUGfoBwuPrRrXVGLLYTN9xgzOEmVszcbiIuzNXVZO+C/hxHukX/EA0jdgIzxUw2mwAgQwLg==@vger.kernel.org, AJvYcCX2lmYPq9KKZZfPH1WXWNxTsBhQoaPPJiRhSRmvVbXpgnJYt2bjtpjjhMUTzt2BD4Po4lXfO0KBOeqcQxsV@vger.kernel.org
+X-Gm-Message-State: AOJu0YyVD4pFeKhTME0BfFOxKCYwdqBYdEnTChVvyvACNtzy2tLQyp6O
+	MK1UzsGAszlkZT9KdAh7XL2wZzKex9FvlJA6dmX2YZcycemi+7N9D1VkCQ==
+X-Google-Smtp-Source: AGHT+IGWO3RublAKQB7/m8S4Zs41UsVHLd42sYBzseBX9Djfp4UazhBgaG/kRW8ykxEmgXojRxdNbA==
+X-Received: by 2002:a05:6a00:4b10:b0:71e:69e:596b with SMTP id d2e1a72fcca58-72030cbcd7bmr5317181b3a.17.1729718572760;
+        Wed, 23 Oct 2024 14:22:52 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:84b7:953b:674b:513c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d7509sm6807845b3a.117.2024.10.23.14.22.52
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 14:22:52 -0700 (PDT)
+Date: Wed, 23 Oct 2024 14:22:50 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Zeng Heng <zengheng4@huawei.com>
+Cc: raymondhackley@protonmail.com, markuss.broks@gmail.com,
+	linux-input@vger.kernel.org, bobo.shaobowang@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] input/touchscreen: imagis: Fix not used variable
+ 'imagis_3038_data'
+Message-ID: <ZxlpKmrYy8srtckn@google.com>
+References: <20241023094831.1680214-1-zengheng4@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: ZIc45Zu_WHg3HGSQcqhevGIeHX6PQS-x
-X-Proofpoint-GUID: _Cme4AwGfZ0ENcCz5ImKYShPdhRxUccL
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=785 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410230136
+In-Reply-To: <20241023094831.1680214-1-zengheng4@huawei.com>
 
-Currently xmon cannot lookup symbol beyond 64 characters in some cases.
+On Wed, Oct 23, 2024 at 05:48:31PM +0800, Zeng Heng wrote:
+> Fix the following compilation warnings:
+> drivers/input/touchscreen/imagis.c:422:39: warning: ‘imagis_3038c_data’
+> defined but not used [-Wunused-const-variable=]
+>   422 | static const struct imagis_properties imagis_3038c_data = {
+> drivers/input/touchscreen/imagis.c:415:39: warning: ‘imagis_3038b_data’
+> defined but not used [-Wunused-const-variable=]
+>   415 | static const struct imagis_properties imagis_3038b_data = {
+> drivers/input/touchscreen/imagis.c:407:39: warning: ‘imagis_3038_data’
+> defined but not used [-Wunused-const-variable=]
+>   407 | static const struct imagis_properties imagis_3038_data = {
+> drivers/input/touchscreen/imagis.c:398:39: warning: ‘imagis_3032c_data’
+> defined but not used [-Wunused-const-variable=]
+>   398 | static const struct imagis_properties imagis_3032c_data = {
+> 
+> Only define the variables 'imagis_303*_data' when the CONFIG_OF
+> is enabled.
+> 
+> Fixes: 1e48ee99f603 ("Input: imagis - add supports for Imagis IST3038")
+> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
 
-Fix this by using KSYM_NAME_LEN instead of fixed 64 characters.
+Applied, thank you.
 
-Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
----
- arch/powerpc/xmon/xmon.c | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
-
-diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-index e6cddbb2305f..22b8b5cc4df0 100644
---- a/arch/powerpc/xmon/xmon.c
-+++ b/arch/powerpc/xmon/xmon.c
-@@ -3662,7 +3662,7 @@ symbol_lookup(void)
- 	int type = inchar();
- 	unsigned long addr, cpu;
- 	void __percpu *ptr = NULL;
--	static char tmp[64];
-+	static char tmp[KSYM_NAME_LEN];
- 
- 	switch (type) {
- 	case 'a':
-@@ -3671,7 +3671,7 @@ symbol_lookup(void)
- 		termch = 0;
- 		break;
- 	case 's':
--		getstring(tmp, 64);
-+		getstring(tmp, KSYM_NAME_LEN);
- 		if (setjmp(bus_error_jmp) == 0) {
- 			catch_memory_errors = 1;
- 			sync();
-@@ -3686,7 +3686,7 @@ symbol_lookup(void)
- 		termch = 0;
- 		break;
- 	case 'p':
--		getstring(tmp, 64);
-+		getstring(tmp, KSYM_NAME_LEN);
- 		if (setjmp(bus_error_jmp) == 0) {
- 			catch_memory_errors = 1;
- 			sync();
 -- 
-2.47.0
-
+Dmitry
 
