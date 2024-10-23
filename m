@@ -1,134 +1,96 @@
-Return-Path: <linux-kernel+bounces-378030-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378031-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 47C589ACA5D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:43:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A89F99ACA61
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F2E2E1F22AF1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:43:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1D34FB230D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35C431AC459;
-	Wed, 23 Oct 2024 12:43:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H/4j2sXW"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9AEFA1AC882;
+	Wed, 23 Oct 2024 12:44:53 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8AFBA1ABED7;
-	Wed, 23 Oct 2024 12:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F0901ABEA7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729687386; cv=none; b=jitlZZKXr5KfBBGP1/dgxWfuv1cRpF/GDawkGRWn78lU3fvfChgVzvletsLmsmq6y9STPMRgzEjn2HmEFvEBy2T+267m3mb9yvdMzT9b3rhFVuppZuLZXcbIISst4elCSL/61nKDabkURZksAyaPWg3F4gopWeyHXB9JWcLQkbo=
+	t=1729687493; cv=none; b=pza6h4WSO8roefvVqyb/5/s0C2LX99WMbx1YnQsS8NO2lVxRG7ZW9O6ZJ7CPWcT0BjOt5vFaL5u5AONbj/lavx9cAC5bQ/1w8OSeYiw05irosRJSEh0F7NRCPwpX86fr7E/QOPUnm8qb9hm3GfrcC5FnlSJhsT9UZ63j4qxKTBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729687386; c=relaxed/simple;
-	bh=/0gWrh16eEWBSX+EPa2gr0cMPyjlfx819x1/Kch8gss=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LBxKw603VA+ylM9A09Il5zG45v0j6KfuYLrPZkInRdV5uW3owGygSMfABadHnnFLmgqpAK7o5yfNRZbtEOU6Uw+dC+CU4vk8BsHIfb/0Qjh7f34on59BJFaN4Qf24sJD7x5sO2s+QmiZQMQVOjlHgWov/O6X0uVfzeXX/CIjcek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H/4j2sXW; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 10930C4CEC6;
-	Wed, 23 Oct 2024 12:43:06 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729687386;
-	bh=/0gWrh16eEWBSX+EPa2gr0cMPyjlfx819x1/Kch8gss=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=H/4j2sXW/ZcyFCdp59G7vm+FirRp88lq6JnvXQka7ABAgnLeiG6csHZo0bMuuyQ89
-	 0m4ivFyzjv4TIyfvQFR7FZStkYNTlk8Ym6Sd4HTh9dU/9YKSB+XBG9keXtCTD2eIGk
-	 oI7Xkaj/ySgJTACjpz+6H7bHBJSAMtd0zQx5/PMHT/QDow32RBCbJtBklInKipMU0U
-	 +4m46eqkyJ0ZVYZeHIyPG3seUMWezloPu0ZmPKCxwi16CvU9qtC/Ig2/Y/zABdYMZd
-	 6MbN/rdtdJ5vyv/EPbNmnEHfglqtc576vJ88WSRruHW39HDce6QQjb70UhMN/4zu8t
-	 FibgB1E65Q4AQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t3ahb-0066R3-SH;
-	Wed, 23 Oct 2024 13:43:03 +0100
-Date: Wed, 23 Oct 2024 13:43:03 +0100
-Message-ID: <864j533s88.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: oe-kbuild@lists.linux.dev,
-	lkp@intel.com,
-	oe-kbuild-all@lists.linux.dev,
+	s=arc-20240116; t=1729687493; c=relaxed/simple;
+	bh=fByUSN6RGekOx1nltk9/mF65wLziCd68dJQ299n5opY=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S2u3HVQsj/ew4nGCbnLkuc7DhWXOsOxFzgQcVJ6BAhV2t+1rkbMPK+/oQwMMGM6eURcMTDJgNqpIpIi4lnQo9ZNMtGfxLCHoi6X/ag8YO4kib802x5/im339/lMqomS4vBx2nDB/30+gVndkRC71KkcPluxdNrREnETWjRUgoiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <rcz@pengutronix.de>)
+	id 1t3ajH-0000Nc-Sd; Wed, 23 Oct 2024 14:44:47 +0200
+Received: from dude06.red.stw.pengutronix.de ([2a0a:edc0:0:1101:1d::5c])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <rcz@pengutronix.de>)
+	id 1t3ajH-0002Hq-2E;
+	Wed, 23 Oct 2024 14:44:47 +0200
+Received: from rcz by dude06.red.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <rcz@pengutronix.de>)
+	id 1t3ajH-004q6I-22;
+	Wed, 23 Oct 2024 14:44:47 +0200
+From: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+To: Rob Herring <robh@kernel.org>,
+	devicetree@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: arch/arm64/kvm/at.c:71 at_s1e1p_fast() error: uninitialized symbol 'fail'.
-In-Reply-To: <7612de9a-d262-4d40-addb-64449768b35a@stanley.mountain>
-References: <7612de9a-d262-4d40-addb-64449768b35a@stanley.mountain>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+Cc: kernel@pengutronix.de,
+	Rouven Czerwinski <r.czerwinski@pengutronix.de>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Subject: [PATCH 1/3] dt-bindings: vendor-prefixes: Add lxd
+Date: Wed, 23 Oct 2024 14:44:08 +0200
+Message-Id: <20241023124411.1153552-1-r.czerwinski@pengutronix.de>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: dan.carpenter@linaro.org, oe-kbuild@lists.linux.dev, lkp@intel.com, oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: rcz@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Mon, 21 Oct 2024 08:29:41 +0100,
-Dan Carpenter <dan.carpenter@linaro.org> wrote:
-> 
-> tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
-> head:   3d5ad2d4eca337e80f38df77de89614aa5aaceb9
-> commit: be0135bde1df5e80cffacd2ed6f952e6d38d6f71 KVM: arm64: nv: Add basic emulation of AT S1E1{R,W}P
-> date:   7 weeks ago
-> config: arm64-randconfig-r071-20241015 (https://download.01.org/0day-ci/archive/20241020/202410200209.bAXXL58Q-lkp@intel.com/config)
-> compiler: aarch64-linux-gcc (GCC) 14.1.0
-> 
-> If you fix the issue in a separate patch/commit (i.e. not just a new version of
-> the same patch/commit), kindly add following tags
-> | Reported-by: kernel test robot <lkp@intel.com>
-> | Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
-> | Closes: https://lore.kernel.org/r/202410200209.bAXXL58Q-lkp@intel.com/
-> 
-> smatch warnings:
-> arch/arm64/kvm/at.c:71 at_s1e1p_fast() error: uninitialized symbol 'fail'.
-> 
-> vim +/fail +71 arch/arm64/kvm/at.c
-> 
-> be0135bde1df5e Marc Zyngier 2024-07-14  52  static bool at_s1e1p_fast(struct kvm_vcpu *vcpu, u32 op, u64 vaddr)
-> be0135bde1df5e Marc Zyngier 2024-07-14  53  {
-> be0135bde1df5e Marc Zyngier 2024-07-14  54  	u64 host_pan;
-> be0135bde1df5e Marc Zyngier 2024-07-14  55  	bool fail;
-> be0135bde1df5e Marc Zyngier 2024-07-14  56  
-> be0135bde1df5e Marc Zyngier 2024-07-14  57  	host_pan = read_sysreg_s(SYS_PSTATE_PAN);
-> be0135bde1df5e Marc Zyngier 2024-07-14  58  	write_sysreg_s(*vcpu_cpsr(vcpu) & PSTATE_PAN, SYS_PSTATE_PAN);
-> be0135bde1df5e Marc Zyngier 2024-07-14  59  
-> be0135bde1df5e Marc Zyngier 2024-07-14  60  	switch (op) {
-> be0135bde1df5e Marc Zyngier 2024-07-14  61  	case OP_AT_S1E1RP:
-> be0135bde1df5e Marc Zyngier 2024-07-14  62  		fail = __kvm_at(OP_AT_S1E1RP, vaddr);
-> be0135bde1df5e Marc Zyngier 2024-07-14  63  		break;
-> be0135bde1df5e Marc Zyngier 2024-07-14  64  	case OP_AT_S1E1WP:
-> be0135bde1df5e Marc Zyngier 2024-07-14  65  		fail = __kvm_at(OP_AT_S1E1WP, vaddr);
-> be0135bde1df5e Marc Zyngier 2024-07-14  66  		break;
-> 
-> default case?
+Add vendor prefix for LXD Research & Display, LLC.
+Link: https://www.lxdinc.com/
 
-There is no bug here, as evidenced by the *only* caller of this
-function (__kvm_at_s1e01_fast()):
+Signed-off-by: Rouven Czerwinski <r.czerwinski@pengutronix.de>
+---
+ Documentation/devicetree/bindings/vendor-prefixes.yaml | 2 ++
+ 1 file changed, 2 insertions(+)
 
-	switch (op) {
-	case OP_AT_S1E1RP:
-	case OP_AT_S1E1WP:
-		fail = at_s1e1p_fast(vcpu, op, vaddr);
-		break;
+diff --git a/Documentation/devicetree/bindings/vendor-prefixes.yaml b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+index b320a39de7fe4..83d9e49eeb869 100644
+--- a/Documentation/devicetree/bindings/vendor-prefixes.yaml
++++ b/Documentation/devicetree/bindings/vendor-prefixes.yaml
+@@ -872,6 +872,8 @@ patternProperties:
+     description: Liebherr-Werk Nenzing GmbH
+   "^lxa,.*":
+     description: Linux Automation GmbH
++  "^lxd,.*":
++    description: LXD Research & Display, LLC
+   "^m5stack,.*":
+     description: M5Stack
+   "^macnica,.*":
 
-So 'op' can only be one of these two values, and at_s1e1p_fast()
-always initialises 'fail'.
-
-I guess this is a case of smatch not seeing beyond function scope.
-
-Thanks,
-
-	M.
-
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
 -- 
-Without deviation from the norm, progress is not possible.
+2.39.5
+
 
