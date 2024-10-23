@@ -1,127 +1,105 @@
-Return-Path: <linux-kernel+bounces-377677-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31509AC230
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:51:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2725D9AC292
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:01:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1CAF1C225A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:51:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557491C20D54
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 386AE15F330;
-	Wed, 23 Oct 2024 08:51:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="m+vIG12j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B6E1662FA;
+	Wed, 23 Oct 2024 09:00:43 +0000 (UTC)
+Received: from welho-filter4.welho.com (welho-filter4b.welho.com [83.102.41.30])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFFA156F27;
-	Wed, 23 Oct 2024 08:51:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A9815B551;
+	Wed, 23 Oct 2024 09:00:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.102.41.30
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673512; cv=none; b=fGZ+6inwCUnn+2p8K2gCVQA++cjQtl6MBaaWmPvywc/T+bzRhwoIFraoD72ZCfCcLGxxl8bkpi1sAyWxvxDnmOAbJp4awMRtx7lu5FCc5rtaANzHtkLKJ0LmDfScu3B9sy5SNx1EdLW8rN7JfmVZZc2kHcDWfy8j1tlTpk5LUpc=
+	t=1729674042; cv=none; b=nsKsm0npMjf0zsJh6bNWMkjfxCf+HZt8WPP+0XTW7gT8xlRnuMJFwF9mn+Wp/SaSJVOsFEZaLRo+1wMQ3mc0CcK+nNCQJZbIeBmqG9KZe+oEiqO+pHlLuZqPT7tStbcAhKOVKIVk6yi6gScvOhGx7UkmI/zJYp8R4Tq16gsvEE4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673512; c=relaxed/simple;
-	bh=HgvIm+497Hmdq2R0Wn5snLjGoTlA1hQo19CTjG70174=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kA6Z36ghnnOhP46bToymShXijrne1fgPjfYOsKIbzlhGCl9r8YUf5WkgsbwD9/7LHJ7unCTgtppnqm4FAMJ1lGQEgK+wXjEC0uEXLVOnxmE5ualxR84LDfZ0M2U0w8a/ZvnOB9J6PEsmxfbm6h5zxmmcsCGDYMgb8ci6wcxqLzo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=m+vIG12j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9E2D1C4CEC6;
-	Wed, 23 Oct 2024 08:51:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673512;
-	bh=HgvIm+497Hmdq2R0Wn5snLjGoTlA1hQo19CTjG70174=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=m+vIG12jWtj69d2TdKEb+dkCv8jMcz0EKHpltNBDS1/400GbeSIBlOjBfIXifOSao
-	 7lVwe2DOdbLkI4ynU6aWPCyBeZxpxNEIcWTRjMCNfAShdZU9wo+G3x1C5rxg8eOTz+
-	 7knWRBkXcPbr0cU4fWLfeEvpL210+BtxZhI2DF8+3Ehm7MJE3Wbh/31v+P34652Hzh
-	 OSOGLh9C2YSVW6Brd2I8ce7rdwt/QowMBuh7OFAvrn85lWHrXF9gCl+iZtIX1LWEPS
-	 ku7mqABnrIxLKHV9pPti3C1e8uXKFOnIUiL7oszjv+3WU3QTUrcRf/cBW1SExRfbzm
-	 TM3BCIrikeLFw==
-Date: Wed, 23 Oct 2024 10:51:48 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>, Stephane Danieau <stephane.danieau@foss.st.com>, 
-	Amelie Delaunay <amelie.delaunay@foss.st.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
-	Valentin Caron <valentin.caron@foss.st.com>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
-	Cheick Traore <cheick.traore@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 11/14] dt-bindings: pinctrl: stm32: support for
- stm32mp215 and additional packages
-Message-ID: <2g65375shtjq4udjfarfspqtpg5q27oeerqskt2uzwj44pvnbb@rderpevnrzxs>
-References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
- <20241022155658.1647350-12-antonio.borneo@foss.st.com>
+	s=arc-20240116; t=1729674042; c=relaxed/simple;
+	bh=707harTW5tzCIIcuiFXWMKBFAXzppTNwi+XJz+v3URY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=CrGT0amZKJ8kjsZAe3hQUiC2r1uSoGJoF0TJ53aSbYqu1xRnM4HiJduUBrnTdO9l9JnS46BGJzwap9b1uPuYn6xo2qUbS4nfD73iycyQ1lE8ZMj4Ate9hy52cNhw8uaaV4wNFVzwitOYv9MiJKAZVaMvhY591vhDTNYDWOFPyO8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=helsinkinet.fi; spf=pass smtp.mailfrom=helsinkinet.fi; arc=none smtp.client-ip=83.102.41.30
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=helsinkinet.fi
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=helsinkinet.fi
+Received: from localhost (localhost [127.0.0.1])
+	by welho-filter4.welho.com (Postfix) with ESMTP id 5EC4467BBB;
+	Wed, 23 Oct 2024 11:52:00 +0300 (EEST)
+X-Virus-Scanned: Debian amavisd-new at pp.htv.fi
+Received: from welho-smtp2.welho.com ([IPv6:::ffff:83.102.41.85])
+	by localhost (welho-filter4.welho.com [::ffff:83.102.41.26]) (amavisd-new, port 10024)
+	with ESMTP id 7Nu6OtO3kx19; Wed, 23 Oct 2024 11:52:00 +0300 (EEST)
+Received: from [192.168.101.100] (87-92-101-239.bb.dnainternet.fi [87.92.101.239])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by welho-smtp2.welho.com (Postfix) with ESMTPSA id BCD7472;
+	Wed, 23 Oct 2024 11:51:54 +0300 (EEST)
+Message-ID: <36c3bd1a-f025-449d-9b17-8436987f4639@helsinkinet.fi>
+Date: Wed, 23 Oct 2024 11:51:54 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022155658.1647350-12-antonio.borneo@foss.st.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+ <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
+ <4ab85330-5a50-bde1-f014-99a8e7cb28cc@gmail.com>
+ <86eea4de-2696-4485-9c16-cd3fbbd1aae6@yoseli.org>
+Content-Language: en-US
+From: Eero Tamminen <oak@helsinkinet.fi>
+In-Reply-To: <86eea4de-2696-4485-9c16-cd3fbbd1aae6@yoseli.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 05:56:55PM +0200, Antonio Borneo wrote:
-> From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+Hi,
+
+On 23.10.2024 8.53, Jean-Michel Hautbois wrote:
+...
+>> There's one similar site in arch/m68k/kernel/head.S 
+>> (ret_from_exception) where interrupts are enabled that would need a 
+>> similar change, if you want to enable this for all m68k.
 > 
-> Add support for st,stm32mp215-pinctrl and st,stm32mp215-z-pinctrl.
+> I won't be able to test it though ;-).
+> I see there are a few interrupts disabling in 
+> arch/m68k/include/asm/entry.h too ?
 
-So all previous patches are for this? Then they are supposed to be here.
+I would suggest using Hatari for testing it, as that emulates real HW 
+more accurately than Aranym, and provides better debugging & profiling 
+utilities than either Aranym or real HW [1], especially for kernel side.
 
-> Add packages AM, AN and AO (values : 0x1000, 0x2000 and 0x8000)
-> 
-> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
-> ---
->  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 +++-
->  include/dt-bindings/pinctrl/stm32-pinfunc.h                   | 3 +++
->  2 files changed, 6 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> index 9a7ecfea6eb5b..0a2d644dbece3 100644
-> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
-> @@ -27,6 +27,8 @@ properties:
->        - st,stm32mp135-pinctrl
->        - st,stm32mp157-pinctrl
->        - st,stm32mp157-z-pinctrl
-> +      - st,stm32mp215-pinctrl
-> +      - st,stm32mp215-z-pinctrl
->        - st,stm32mp257-pinctrl
->        - st,stm32mp257-z-pinctrl
->  
-> @@ -59,7 +61,7 @@ properties:
->        Indicates the SOC package used.
->        More details in include/dt-bindings/pinctrl/stm32-pinfunc.h
->      $ref: /schemas/types.yaml#/definitions/uint32
-> -    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800]
-> +    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800, 0x1000, 0x2000, 0x4000]
->  
->  patternProperties:
->    '^gpio@[0-9a-f]*$':
-> diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
-> index af3fd388329a0..01bc8be78ef72 100644
-> --- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
-> +++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
-> @@ -41,6 +41,9 @@
->  #define STM32MP_PKG_AI	0x100
->  #define STM32MP_PKG_AK	0x400
->  #define STM32MP_PKG_AL	0x800
-> +#define STM32MP_PKG_AM	0x1000
-> +#define STM32MP_PKG_AN	0x2000
-> +#define STM32MP_PKG_AO	0x4000
+(Because ColdFire is close to m68k, Hatari can help in debugging also 
+issues that are in Linux code they share.)
 
-Why these are some random hex values but not for example 0x801, 0x802
-and 0x803? That's an enum, so bitmask does not make sense here.
+Here are detailed and IMHO easy instructions on how to do that:
+https://hatari.tuxfamily.org/doc/m68k-linux.txt
 
-Best regards,
-Krzysztof
 
+I'd recommend using Git HEAD of Hatari [2] for testing though, because 
+there was a recent fix to handling prefetch during bus errors, when 030 
+MMU is enabled, and without that fix, prefetch + cache emulation would 
+need to to be disabled for user-space to work correctly.  If you disable 
+those (--compatible off --cycle-exact off), you can start with Hatari 
+version from Linux distros though...
+
+(You can mail me directly if you have problems with Hatari.  Getting 
+ftrace working on m68k would be interesting.)
+
+
+	- Eero
+
+[1] https://hatari.tuxfamily.org/doc/debugger.html
+[2] Upstream: https://git.tuxfamily.org/hatari/hatari.git/
+     or mirror: https://github.com/hatari/hatari/
 
