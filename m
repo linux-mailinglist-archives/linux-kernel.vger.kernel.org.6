@@ -1,148 +1,145 @@
-Return-Path: <linux-kernel+bounces-378376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378378-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CE2F9ACF1D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:43:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 94AA99ACF26
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:44:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 51F551F21FE1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:43:47 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2D63AB27940
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:44:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B273F1BFE0D;
-	Wed, 23 Oct 2024 15:43:40 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0B353A1DA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B16EF1CACC1;
+	Wed, 23 Oct 2024 15:44:07 +0000 (UTC)
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F0A019DFB5;
+	Wed, 23 Oct 2024 15:44:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729698220; cv=none; b=tHJGxN8EUsUJgfh02PbHWuFlsOHKVITeNI10OcLWNUPL9vbFOMFRg/5DBCZp+qsqI5kXUIJfFBeHngz4XX1ay//aKdAjdtutVy+Ui9bEq1O/b2FbocAClUqlNWh/4TL7gT9jc7cow9kc61n1OGJmfRz16caj4l6jCQMt5wdKKyE=
+	t=1729698247; cv=none; b=ZcDOePO6SGqTaztT3wGRUHkhAXtSpq5QfKs9vJSsJ60mfJuuYkyTp/irDQh2mktJfUfdmXfBUIDjmFQSSPvE7YDXfJjfGk4mXcUuXS86PbHoANg4e13GyseemOuYPMy3p/J5ECT2Oz/tVcW8jVGI4EF/ekUlUJb4EaeFMdem3to=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729698220; c=relaxed/simple;
-	bh=b78lij0mPvhA4GTViSeAwz4P0GFEcEQMxGp+5r+BBtY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=phpkYDJbWnUruV1TTqvMUGm6hB75lDd1fIuyJobfIYYw2Lm6s4Twsf8L46lALWRi+Y4bM8nB0Be2KjR/8DbCFD7RaoAvH7zb4h9Ix3eYwfoGoQt3lXECEhDj0BIVcLjc5r1rPwQMqOlbK2la3lUzRxzlqvVBXgVuQMh/I4e/VXE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 84DA9339;
-	Wed, 23 Oct 2024 08:44:06 -0700 (PDT)
-Received: from [10.57.79.135] (unknown [10.57.79.135])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id C592E3F528;
-	Wed, 23 Oct 2024 08:43:31 -0700 (PDT)
-Message-ID: <eb7ec4c3-5995-4040-8992-bb95f4b9f923@arm.com>
-Date: Wed, 23 Oct 2024 17:43:29 +0200
+	s=arc-20240116; t=1729698247; c=relaxed/simple;
+	bh=ycPj+FS/NUPzRF4ulU9fnt6FAmTyDx+kmAUaFxJePwk=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=tJq6ajkpmNJs7uU59KwQI+h+Aa+6aeKrCpxjCh4M9yYwkf0ZaxDcvHJJs5X/IOknmmfo0Od52TTTk+68qhq3nTV0OqLUUNK2CNxxYaKlQzCxtgo6J88pg6HS2rFOKJfIu1xHkMtRtv4+TI+eAjOIvZV/J5KoDJVM4CwIm6Fxr2Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=fomichev.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e18293a5efso4674190a91.3;
+        Wed, 23 Oct 2024 08:44:05 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729698245; x=1730303045;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=efAFmm/rvjXAbZLeEA0ZhIu8ih14XiKCa6umoMNYbRI=;
+        b=smCnCYBHaVE3tejFzeWo6x3PABu8SFMInXAbK/pUTZ8GnKXffw+GcMmPU9tNTyuE6O
+         uWw5iculkSUx+bRl7oY0L+xn+TXuSdIwp8BdDalMoNMArRALYvbW6Lce4M6lbOA8k8BO
+         ADlghY9am6xyTjKMZW7CgjL6MPl6BvaJuI6Kh0VWkiylz2GyOKSFFVp8AkR9nCeM/iG3
+         Jh9BWsXPytLkugDjgtkH4PimqTVrLbosiHcC8HyJmPJpIbmLE7Y1MTG/cuSbued2m1jd
+         uG68TnSADz3jC5EDoF+mK2JOZHPd2f/Tvz4R4TrgsJQQBuBdJJ9dtBQIgfWV41VW1edO
+         jWvg==
+X-Forwarded-Encrypted: i=1; AJvYcCVovn0p9GbdORFrPSedAOFUnYawoBSlD9nBGWDs9IfFu7ZLli6CDpycygc7whAUL3RKeKKE1wxz436aR7I=@vger.kernel.org, AJvYcCVqFJGxhnxcL8pmMeZ2FghFWlIaH5KFlg8Cc0JNSvw6Fx7oB9FE2CZGA4oJ71aq36FmTLNFv+ScToh+75OyqMkf@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy5jLPdyoMEtafqtvaywZsx6+Skbq2+TWKG9QtSE3sKZiDQKql
+	xCQP96C6xtzCfNNlpeWiRasYwfmSzMYK0IOvhAiA1fQwNfjghVRCF3hH1pI=
+X-Google-Smtp-Source: AGHT+IEwCb1mlT1+RvS9ZMWVwlL/C2aa86O4MH/6R91LTW5vCTuvo29v720vFrIe7aXxdyHToC3Tdw==
+X-Received: by 2002:a17:90a:2eca:b0:2e1:e19f:609b with SMTP id 98e67ed59e1d1-2e76b628edfmr3325011a91.24.1729698243124;
+        Wed, 23 Oct 2024 08:44:03 -0700 (PDT)
+Received: from localhost ([2601:646:9e00:f56e:123b:cea3:439a:b3e3])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76df72591sm1580326a91.17.2024.10.23.08.44.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 08:44:02 -0700 (PDT)
+From: Stanislav Fomichev <sdf@fomichev.me>
+To: netdev@vger.kernel.org
+Cc: davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com,
+	linux-kernel@vger.kernel.org,
+	linux-kselftest@vger.kernel.org,
+	andrew+netdev@lunn.ch,
+	shuah@kernel.org,
+	almasrymina@google.com,
+	sdf@fomichev.me,
+	willemb@google.com,
+	petrm@nvidia.com
+Subject: [PATCH net-next v5 00/12] selftests: ncdevmem: Add ncdevmem to ksft
+Date: Wed, 23 Oct 2024 08:43:50 -0700
+Message-ID: <20241023154402.441510-1-sdf@fomichev.me>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v6 2/4] arch_topology: Support SMT control for OF based
- system
-To: Yicong Yang <yangyicong@huawei.com>, catalin.marinas@arm.com,
- will@kernel.org, sudeep.holla@arm.com, tglx@linutronix.de,
- peterz@infradead.org, mpe@ellerman.id.au,
- linux-arm-kernel@lists.infradead.org, mingo@redhat.com, bp@alien8.de,
- dave.hansen@linux.intel.com, dietmar.eggemann@arm.com
-Cc: linuxppc-dev@lists.ozlabs.org, x86@kernel.org,
- linux-kernel@vger.kernel.org, morten.rasmussen@arm.com, msuchanek@suse.de,
- gregkh@linuxfoundation.org, rafael@kernel.org, jonathan.cameron@huawei.com,
- prime.zeng@hisilicon.com, linuxarm@huawei.com, yangyicong@hisilicon.com,
- xuwei5@huawei.com, guohanjun@huawei.com
-References: <20241015021841.35713-1-yangyicong@huawei.com>
- <20241015021841.35713-3-yangyicong@huawei.com>
-Content-Language: en-US
-From: Pierre Gondois <pierre.gondois@arm.com>
-In-Reply-To: <20241015021841.35713-3-yangyicong@huawei.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-Hello Yicong,
+The goal of the series is to simplify and make it possible to use
+ncdevmem in an automated way from the ksft python wrapper.
 
-On 10/15/24 04:18, Yicong Yang wrote:
-> From: Yicong Yang <yangyicong@hisilicon.com>
-> 
-> On building the topology from the devicetree, we've already
-> gotten the SMT thread number of each core. Update the largest
-> SMT thread number and enable the SMT control by the end of
-> topology parsing.
-> 
-> The core's SMT control provides two interface to the users [1]:
-> 1) enable/disable SMT by writing on/off
-> 2) enable/disable SMT by writing thread number 1/max_thread_number
-> 
-> If a system have more than one SMT thread number the 2) may
-> not handle it well, since there're multiple thread numbers in the
-> system and 2) only accept 1/max_thread_number. So issue a warning
-> to notify the users if such system detected.
-> 
-> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
-> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
-> ---
->   drivers/base/arch_topology.c | 21 +++++++++++++++++++++
->   1 file changed, 21 insertions(+)
-> 
-> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
-> index 75fcb75d5515..5eed864df5e6 100644
-> --- a/drivers/base/arch_topology.c
-> +++ b/drivers/base/arch_topology.c
-> @@ -11,6 +11,7 @@
->   #include <linux/cleanup.h>
->   #include <linux/cpu.h>
->   #include <linux/cpufreq.h>
-> +#include <linux/cpu_smt.h>
->   #include <linux/device.h>
->   #include <linux/of.h>
->   #include <linux/slab.h>
-> @@ -28,6 +29,7 @@
->   static DEFINE_PER_CPU(struct scale_freq_data __rcu *, sft_data);
->   static struct cpumask scale_freq_counters_mask;
->   static bool scale_freq_invariant;
-> +static unsigned int max_smt_thread_num;
->   DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 1;
->   EXPORT_PER_CPU_SYMBOL_GPL(capacity_freq_ref);
->   
-> @@ -561,6 +563,17 @@ static int __init parse_core(struct device_node *core, int package_id,
->   		i++;
->   	} while (1);
->   
-> +	if (max_smt_thread_num < i)
-> +		max_smt_thread_num = i;
+ncdevmem is slowly mutated into a state where it uses stdout
+to print the payload and the python wrapper is added to
+make sure the arrived payload matches the expected one.
 
-Shouldn't the conditions above/below be inverted ?
-I.e. (max_smt_thread_num != i) should never be true if there is
-   max_smt_thread_num = i;
-just before
+v5:
+- properly handle errors from inet_pton() and socket() (Paolo)
+- remove unneeded import from python selftest (Paolo)
 
-> +
-> +	/*
-> +	 * If max_smt_thread_num has been initialized and doesn't match
-> +	 * the thread number of this entry, then the system has
-> +	 * heterogeneous SMT topology.
-> +	 */
-> +	if (max_smt_thread_num && max_smt_thread_num != i)
-> +		pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
-> +
->   	cpu = get_cpu_for_node(core);
->   	if (cpu >= 0) {
->   		if (!leaf) {
-> @@ -673,6 +686,14 @@ static int __init parse_socket(struct device_node *socket)
->   	if (!has_socket)
->   		ret = parse_cluster(socket, 0, -1, 0);
->   
-> +	/*
-> +	 * Notify the CPU framework of the SMT support. A thread number of 1
-> +	 * can be handled by the framework so we don't need to check
-> +	 * max_smt_thread_num to see we support SMT or not.
-> +	 */
-> +	if (max_smt_thread_num)
-> +		cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
-> +
->   	return ret;
->   }
->   
+v4:
+- keep usage example with validation (Mina)
+- fix compilation issue in one patch (s/start_queues/start_queue/)
+
+v3:
+- keep and refine the comment about ncdevmem invocation (Mina)
+- add the comment about not enforcing exit status for ntuple reset (Mina)
+- make configure_headersplit more robust (Mina)
+- use num_queues/2 in selftest and let the users override it (Mina)
+- remove memory_provider.memcpy_to_device (Mina)
+- keep ksft as is (don't use -v validate flags): we are gonna
+  need a --debug-disable flag to make it less chatty; otherwise
+  it times out when sending too much data; so leaving it as
+  a separate follow up
+
+v2:
+- don't remove validation (Mina)
+- keep 5-tuple flow steering but use it only when -c is provided (Mina)
+- remove separate flag for probing (Mina)
+- move ncdevmem under drivers/net/hw, not drivers/net (Jakub)
+
+Cc: Mina Almasry <almasrymina@google.com>
+
+Stanislav Fomichev (12):
+  selftests: ncdevmem: Redirect all non-payload output to stderr
+  selftests: ncdevmem: Separate out dmabuf provider
+  selftests: ncdevmem: Unify error handling
+  selftests: ncdevmem: Make client_ip optional
+  selftests: ncdevmem: Remove default arguments
+  selftests: ncdevmem: Switch to AF_INET6
+  selftests: ncdevmem: Properly reset flow steering
+  selftests: ncdevmem: Use YNL to enable TCP header split
+  selftests: ncdevmem: Remove hard-coded queue numbers
+  selftests: ncdevmem: Run selftest when none of the -s or -c has been
+    provided
+  selftests: ncdevmem: Move ncdevmem under drivers/net/hw
+  selftests: ncdevmem: Add automated test
+
+ .../selftests/drivers/net/hw/.gitignore       |   1 +
+ .../testing/selftests/drivers/net/hw/Makefile |   9 +
+ .../selftests/drivers/net/hw/devmem.py        |  45 +
+ .../selftests/drivers/net/hw/ncdevmem.c       | 773 ++++++++++++++++++
+ tools/testing/selftests/net/.gitignore        |   1 -
+ tools/testing/selftests/net/Makefile          |   8 -
+ tools/testing/selftests/net/ncdevmem.c        | 570 -------------
+ 7 files changed, 828 insertions(+), 579 deletions(-)
+ create mode 100644 tools/testing/selftests/drivers/net/hw/.gitignore
+ create mode 100755 tools/testing/selftests/drivers/net/hw/devmem.py
+ create mode 100644 tools/testing/selftests/drivers/net/hw/ncdevmem.c
+ delete mode 100644 tools/testing/selftests/net/ncdevmem.c
+
+-- 
+2.47.0
+
 
