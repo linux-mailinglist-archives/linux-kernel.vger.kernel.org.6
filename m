@@ -1,293 +1,150 @@
-Return-Path: <linux-kernel+bounces-378308-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378310-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694369ACE5A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:14:02 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 529B59ACE54
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:12:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B6E27B299F9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:08:48 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3AB62B23E2C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:10:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88EF31C9B65;
-	Wed, 23 Oct 2024 15:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 63D761CFECA;
+	Wed, 23 Oct 2024 15:05:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="2ItZ1jDF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="yBKR04wg";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="fWmPOTyF";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="YuZHxXn8"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KdpZ3INe"
+Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4B1E1AD41F;
-	Wed, 23 Oct 2024 15:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41FB01CF286
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:05:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695725; cv=none; b=JFIVbuLY/wv7PK5iEyaPOERAN9Di3Trpye76gXoxOtz6r+rImmLStPX6Dj30PBY8A2aYQK65VUAf/m8fWlVf2yamdDEAw5V99M2j0ypgoFh3J2uHkVIW96qfzM+H4O1rHCU+0aeHbPUjHyShQHt/imv2H7gKF4piBw98dG+q9bE=
+	t=1729695905; cv=none; b=B2mHInX0do82LqaQU82AwDMl8N5bnNCenoQicp26Ar/fCJf+nbYEIjHFGALaDmCF3jbX66Y0OPYwEJuBUSDqCS633rpG6ZsdryrJ83cbG4v2xYzWU6sf5WM8gTvB+WzF1PZkMYxn6d3s1ZP7evhiNH1tTnnTf5QvIl+JSBpJ+Yc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695725; c=relaxed/simple;
-	bh=3xEw+UXfsGP26z4Sgtrqe6P0a/swHKk3oKUuT9CCyZY=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=es/Xve1o3XSGgEgF9ttu+R1l1mgvsjjub3a/o1YPo6LqkiW0YDtM4K76ZMtf9C6U6J8iIPQBmArNCla6/oGwaW0faJEteRFlkwQiZ38hzlztjAvVggIR4dQkPSIohG6RIRQkrjKJAZGjLlx/Wfdohw5Yjz/CKMNyi5uNQNUFRl8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=2ItZ1jDF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=yBKR04wg; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=fWmPOTyF; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=YuZHxXn8; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E4C0922003;
-	Wed, 23 Oct 2024 15:02:00 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729695722; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=45xK/8+G8mZGVAAi4hFp9PxMXe5ylZqkKcyee7y5QO0=;
-	b=2ItZ1jDFGk8fncyzUjOD6XP1yUrNx0clEVu6vx5PlWgY0pzhWkTG+ZtGuTuCRk8o3opkVR
-	dfMKygDgm3Jq5vAgizfUaf8cKtsAeQ4XF/G6TOOvoC1PCvT0gXtIJ6o1YtCFBpqgxn1lRp
-	fSH3oUU/jApkJIS3ff7Z5Hf6ZDSyVCA=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729695722;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=45xK/8+G8mZGVAAi4hFp9PxMXe5ylZqkKcyee7y5QO0=;
-	b=yBKR04wgmFIDNWBjE5QW+Hnw1mB3+YpLhbGyrDlSE5v42/Wn0oqwJTXtDYuSVV5bI/aQHq
-	NeWZpYvZRGkV4xCA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729695720; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=45xK/8+G8mZGVAAi4hFp9PxMXe5ylZqkKcyee7y5QO0=;
-	b=fWmPOTyFFK+VxPBZQ27E8g8Odi0gvPqUHrkqQ2QKeK3e96V7dTVsrUlTrX8fBfFIRYP2SR
-	9X8KyTWE0pPVrtX25EqinQG9f1t/MMtZPc4BYI42RYSDXTHUEdo2fpuxgIh4wXKOC6E8vP
-	AtQwg7XXJKV2vlZYgc+r1cxzrlGkyFE=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729695720;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=45xK/8+G8mZGVAAi4hFp9PxMXe5ylZqkKcyee7y5QO0=;
-	b=YuZHxXn8vf1q/VffvvFlmQV8HJADESPXQVyITePngDv64EqgM+RiZEQG2jZ271+0TbFBkM
-	esX+WixusA/YvVCA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 68CEE13A63;
-	Wed, 23 Oct 2024 15:01:59 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id NCtrGOcPGWeBIAAAD6G6ig
-	(envelope-from <tiwai@suse.de>); Wed, 23 Oct 2024 15:01:59 +0000
-Date: Wed, 23 Oct 2024 17:03:00 +0200
-Message-ID: <87ttd2276j.wl-tiwai@suse.de>
-From: Takashi Iwai <tiwai@suse.de>
-To: Philipp Stanner <pstanner@redhat.com>
-Cc: Takashi Iwai <tiwai@suse.de>,	Damien Le Moal <dlemoal@kernel.org>,
-	Niklas Cassel <cassel@kernel.org>,	Sergey Shtylyov <s.shtylyov@omp.ru>,
-	Basavaraj Natikar <basavaraj.natikar@amd.com>,	Jiri Kosina
- <jikos@kernel.org>,	Benjamin Tissoires <bentiss@kernel.org>,	Arnd Bergmann
- <arnd@arndb.de>,	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,	Alex
- Dubov <oakad@yahoo.com>,	Sudarsana Kalluru <skalluru@marvell.com>,	Manish
- Chopra <manishc@marvell.com>,	"David S. Miller" <davem@davemloft.net>,	Eric
- Dumazet <edumazet@google.com>,	Jakub Kicinski <kuba@kernel.org>,	Paolo
- Abeni <pabeni@redhat.com>,	Rasesh Mody <rmody@marvell.com>,
-	GR-Linux-NIC-Dev@marvell.com,	Igor Mitsyanko <imitsyanko@quantenna.com>,
-	Sergey Matyukevich <geomatsi@gmail.com>,	Kalle Valo <kvalo@kernel.org>,
-	Sanjay R Mehta <sanju.mehta@amd.com>,	Shyam Sundar S K
- <Shyam-sundar.S-k@amd.com>,	Jon Mason <jdmason@kudzu.us>,	Dave Jiang
- <dave.jiang@intel.com>,	Allen Hubbe <allenbh@gmail.com>,	Bjorn Helgaas
- <bhelgaas@google.com>,	Alex Williamson <alex.williamson@redhat.com>,
-	Juergen Gross <jgross@suse.com>,	Stefano Stabellini
- <sstabellini@kernel.org>,	Oleksandr Tyshchenko
- <oleksandr_tyshchenko@epam.com>,	Jaroslav Kysela <perex@perex.cz>,	Takashi
- Iwai <tiwai@suse.com>,	Chen Ni <nichen@iscas.ac.cn>,	Mario Limonciello
- <mario.limonciello@amd.com>,	Ricky Wu <ricky_wu@realtek.com>,	Al Viro
- <viro@zeniv.linux.org.uk>,	Breno Leitao <leitao@debian.org>,	Kevin Tian
- <kevin.tian@intel.com>,	Thomas Gleixner <tglx@linutronix.de>,	Ilpo
- =?ISO-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,	Andy
- Shevchenko <andriy.shevchenko@linux.intel.com>,	Mostafa Saleh
- <smostafa@google.com>,	Jason Gunthorpe <jgg@ziepe.ca>,	Yi Liu
- <yi.l.liu@intel.com>,	Christian Brauner <brauner@kernel.org>,	Ankit Agrawal
- <ankita@nvidia.com>,	Eric Auger <eric.auger@redhat.com>,	Reinette Chatre
- <reinette.chatre@intel.com>,	Ye Bin <yebin10@huawei.com>,	Marek
- =?ISO-8859-1?Q?Marczykowski-G=F3recki?= <marmarek@invisiblethingslab.com>,
-	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,	Peter Ujfalusi
- <peter.ujfalusi@linux.intel.com>,	Maarten Lankhorst
- <maarten.lankhorst@linux.intel.com>,	Kai Vehmanen
- <kai.vehmanen@linux.intel.com>,	Rui Salvaterra <rsalvaterra@gmail.com>,
-	linux-ide@vger.kernel.org,	linux-kernel@vger.kernel.org,
-	linux-input@vger.kernel.org,	netdev@vger.kernel.org,
-	linux-wireless@vger.kernel.org,	ntb@lists.linux.dev,
-	linux-pci@vger.kernel.org,	kvm@vger.kernel.org,
-	xen-devel@lists.xenproject.org,	linux-sound@vger.kernel.org
-Subject: Re: [PATCH 02/13] ALSA: hda_intel: Use always-managed version of pcim_intx()
-In-Reply-To: <6f3db65fe9a5dcd1a7a8d9bd5352ecb248ef57b1.camel@redhat.com>
-References: <20241015185124.64726-1-pstanner@redhat.com>
-	<20241015185124.64726-3-pstanner@redhat.com>
-	<87v7xk2ps5.wl-tiwai@suse.de>
-	<6f3db65fe9a5dcd1a7a8d9bd5352ecb248ef57b1.camel@redhat.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) Emacs/27.2 Mule/6.0
+	s=arc-20240116; t=1729695905; c=relaxed/simple;
+	bh=TZmP8TWVpFq/RwracRcNWfJZXqBhESMwz75bOYrNJYI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=cHvSVVqEJvrGDsBMbdDSd6bMFDnwwZwrmuyQBY0xlGwL6qvmdEVNd1oyQu60Nm1i5+aGDNp5I/7JqJQqaGGbAmGpVjuSIVXzCdUcYFir4DBrTvd84CWyLbvZzkiuqbhk0oFzu4w5vwQf5JCounfa63PqUGvv4uuKcYmCaTJrNJw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KdpZ3INe; arc=none smtp.client-ip=209.85.219.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e29327636f3so6989367276.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:05:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729695903; x=1730300703; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zuy/pIpGl6mn3xPw/OH7BSEVrrvkLmg7ErfqDPz7cEo=;
+        b=KdpZ3INeDasTrZUTub8RMCoBLRlmSHXAu7IgPfWq/FbmUbKkTF0N6kCZT4lqIxDs8u
+         rmdVQjpsiH4QcEZaPUivSn2yN5fvNxLIN4ShPdjnG6orcUaDpIFIyacwkVxVS75ZoH7T
+         0XyRyeaO/uz1g1oE32zOqCf7QejMZErvv62zloL3msSyYI1ZBf5Vgx1O+7C8QNQ62S0M
+         9/ZR6GwF09KQAZWfPWyvQV+Jzu0qU/hrdAJyLJ0rza/oqJa2rQOjTdhsWvglUCnun5FS
+         /1ESmVHrUwWAOS+TXIAsmnLp4qanDTrVPHzmw1k0E6OnMIPSpzmoDI0/5UcdP9kdjlrd
+         yysw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729695903; x=1730300703;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zuy/pIpGl6mn3xPw/OH7BSEVrrvkLmg7ErfqDPz7cEo=;
+        b=CCZyXoyMNr8rsmEygPfW/pJquuSPjIViwaj12hoER1J8bnmWgp+koFdo8jP5S80y3J
+         e6DrwyBCTBcZfYePOnhrb+IfEhHYMxBVKuRFC9Epri8eskXqzo61ARIZYoaGMNFFyA7q
+         uJpUTYPJ5yBGqzdiwvI4dPHDPPfsDFSP8u0GTmAu8RtCB6/hcMBf42Pw0EumI0Bc58JC
+         TxyryVBzKu7vp78motB14/oO3QevAmJE8Wp1IPQWaP8Gx1TQOaswC3fuBXoal2zIDXXf
+         lxFHRmooeoa3DQIkYAJ11iz5OdkZderHJIcLf0SMbKEXKFBxR1u8WUab4tSswVwyH6le
+         6mDQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWJiCXyvI+sT/mMLbdcKPMAhjyYX3B7Hx4fro3F4AFpQI23+UczslwNv+z5ZT/o1iTdqqhYc2XD/fwfPPA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKfKeKRDR85TlQFA357ppEitJxNtmD3+chloOXJgweoXyRfKfp
+	p93cMvh+C7po7jZZnu960IrnayXPlREGOIwMDoTdgk2bypYXOQ+dlDTg1g8cWDdu9o7D/pyykIk
+	LwJjQexM2ynSI7z1oZxMCR+ilQUw=
+X-Google-Smtp-Source: AGHT+IE1Y01TpxnOIBcjtswNmEO/BbAvNPhtff4tFTfaBbeGDMf2QwNzGN8XWoriLkVPx1KQ0QiXg4NauA8R8LRwhVo=
+X-Received: by 2002:a05:690c:dc7:b0:6e3:3019:6aad with SMTP id
+ 00721157ae682-6e7f0e71d8fmr30977617b3.20.1729695902914; Wed, 23 Oct 2024
+ 08:05:02 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=ISO-8859-1
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -3.30
-X-Spamd-Result: default: False [-3.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FREEMAIL_ENVRCPT(0.00)[yahoo.com];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCPT_COUNT_GT_50(0.00)[67];
-	FROM_HAS_DN(0.00)[];
-	FREEMAIL_CC(0.00)[suse.de,kernel.org,omp.ru,amd.com,arndb.de,linuxfoundation.org,yahoo.com,marvell.com,davemloft.net,google.com,redhat.com,quantenna.com,gmail.com,kudzu.us,intel.com,suse.com,epam.com,perex.cz,iscas.ac.cn,realtek.com,zeniv.linux.org.uk,debian.org,linutronix.de,linux.intel.com,ziepe.ca,nvidia.com,huawei.com,invisiblethingslab.com,linux.dev,vger.kernel.org,lists.linux.dev,lists.xenproject.org];
-	TO_DN_SOME(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCVD_TLS_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:mid,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Flag: NO
-X-Spam-Level: 
+MIME-Version: 1.0
+References: <20241020165102.340838-1-aford173@gmail.com> <4539cdd4-db5c-40ac-9c99-c15d4df49b70@kontron.de>
+In-Reply-To: <4539cdd4-db5c-40ac-9c99-c15d4df49b70@kontron.de>
+From: Adam Ford <aford173@gmail.com>
+Date: Wed, 23 Oct 2024 10:04:49 -0500
+Message-ID: <CAHCN7xK70xJspeyQVHHZRpyGXp91gX+3=US7P3_mXBzLVZtH6Q@mail.gmail.com>
+Subject: Re: [PATCH 1/3] phy: freescale: fsl-samsung-hdmi: Expand Integer
+ divider range
+To: Frieder Schrempf <frieder.schrempf@kontron.de>
+Cc: linux-phy@lists.infradead.org, aford@beaconembedded.com, sandor.yu@nxp.com, 
+	Vinod Koul <vkoul@kernel.org>, Kishon Vijay Abraham I <kishon@kernel.org>, 
+	Dominique Martinet <dominique.martinet@atmark-techno.com>, 
+	Marco Felsch <m.felsch@pengutronix.de>, 
+	=?UTF-8?Q?Uwe_Kleine=2DK=C3=B6nig?= <u.kleine-koenig@baylibre.com>, 
+	Lucas Stach <l.stach@pengutronix.de>, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Oct 2024 15:50:09 +0200,
-Philipp Stanner wrote:
-> 
-> On Tue, 2024-10-22 at 16:08 +0200, Takashi Iwai wrote:
-> > On Tue, 15 Oct 2024 20:51:12 +0200,
-> > Philipp Stanner wrote:
-> > > 
-> > > pci_intx() is a hybrid function which can sometimes be managed
-> > > through
-> > > devres. To remove this hybrid nature from pci_intx(), it is
-> > > necessary to
-> > > port users to either an always-managed or a never-managed version.
-> > > 
-> > > hda_intel enables its PCI-Device with pcim_enable_device(). Thus,
-> > > it needs
-> > > the always-managed version.
-> > > 
-> > > Replace pci_intx() with pcim_intx().
-> > > 
-> > > Signed-off-by: Philipp Stanner <pstanner@redhat.com>
-> > > ---
-> > >  sound/pci/hda/hda_intel.c | 2 +-
-> > >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > > 
-> > > diff --git a/sound/pci/hda/hda_intel.c b/sound/pci/hda/hda_intel.c
-> > > index b4540c5cd2a6..b44ca7b6e54f 100644
-> > > --- a/sound/pci/hda/hda_intel.c
-> > > +++ b/sound/pci/hda/hda_intel.c
-> > > @@ -786,7 +786,7 @@ static int azx_acquire_irq(struct azx *chip,
-> > > int do_disconnect)
-> > >  	}
-> > >  	bus->irq = chip->pci->irq;
-> > >  	chip->card->sync_irq = bus->irq;
-> > > -	pci_intx(chip->pci, !chip->msi);
-> > > +	pcim_intx(chip->pci, !chip->msi);
-> > >  	return 0;
-> > >  }
-> > >  
-> > 
-> > Hm, it's OK-ish to do this as it's practically same as what
-> > pci_intx()
-> > currently does.  But, the current code can be a bit inconsistent
-> > about
-> > the original intx value.  pcim_intx() always stores !enable to
-> > res->orig_intx unconditionally, and it means that the orig_intx value
-> > gets overridden at each time pcim_intx() gets called.
-> 
-> Yes.
-> 
-> > 
-> > Meanwhile, HD-audio driver does release and re-acquire the interrupt
-> > after disabling MSI when something goes wrong, and pci_intx() call
-> > above is a part of that procedure.  So, it can rewrite the
-> > res->orig_intx to another value by retry without MSI.  And after the
-> > driver removal, it'll lead to another state.
-> 
-> I'm not sure that I understand this paragraph completely. Still, could
-> a solution for the driver on the long-term just be to use pci_intx()?
+On Tue, Oct 22, 2024 at 2:04=E2=80=AFAM Frieder Schrempf
+<frieder.schrempf@kontron.de> wrote:
+>
+> On 20.10.24 6:50 PM, Adam Ford wrote:
+> > The Integer divder uses values of P,M, and S to determine the PLL
+> > rate.  Currently, the range of M was set based on a series of
+> > table entries where the range was limited.  Since the ref manual
+> > shows it is 8-bit wide, expand the range to be up to 255.
+> >
+> > Signed-off-by: Adam Ford <aford173@gmail.com>
+>
+> With the typo below fixed:
+>
+> Reviewed-by: Frieder Schrempf <frieder.schrempf@kontron.de>
 
-pci_intx() misses the restore of the original value, so it's no
-long-term solution, either.
+Thanks for the review.  I'll post V2 in the next few days.
+>
+> > ---
+> >  drivers/phy/freescale/phy-fsl-samsung-hdmi.c | 11 +++++------
+> >  1 file changed, 5 insertions(+), 6 deletions(-)
+> >
+> > diff --git a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c b/drivers/phy=
+/freescale/phy-fsl-samsung-hdmi.c
+> > index 2c8038864357..3f9578f3f0ac 100644
+> > --- a/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > +++ b/drivers/phy/freescale/phy-fsl-samsung-hdmi.c
+> > @@ -406,16 +406,15 @@ static unsigned long fsl_samsung_hdmi_phy_find_pm=
+s(unsigned long fout, u8 *p, u1
+> >                               continue;
+> >
+> >                       /*
+> > -                      * TODO: Ref Manual doesn't state the range of _m
+> > -                      * so this should be further refined if possible.
+> > -                      * This range was set based on the original value=
+s
+> > -                      * in the lookup table
+> > +                      * The Ref manual doesn't explicitly state the ra=
+nge of M,
+> > +                      * bit it does show it as an 8-bit value, so we'l=
+l reject
+>
+>                            ^ but
 
-What I meant is that pcim_intx() blindly assumes the negative of the
-passed argument as the original state, which isn't always true.  e.g.
-when the driver calls it twice with different values, a wrong value
-may be remembered.
+whoops!  Good catch.
 
-That said, I thought of something like below.
-
-
-thanks,
-
-Takashi
-
--- 8< --
---- a/drivers/pci/devres.c
-+++ b/drivers/pci/devres.c
-@@ -438,8 +438,17 @@ static void pcim_intx_restore(struct device *dev, void *data)
- 	__pcim_intx(pdev, res->orig_intx);
- }
- 
--static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
-+static void save_orig_intx(struct pci_dev *pdev)
- {
-+	u16 pci_command;
-+
-+	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
-+	res->orig_intx = !(pci_command & PCI_COMMAND_INTX_DISABLE);
-+}
-+
-+static struct pcim_intx_devres *get_or_create_intx_devres(struct pci_dev *pdev)
-+{
-+	struct device *dev = &pdev->dev;
- 	struct pcim_intx_devres *res;
- 
- 	res = devres_find(dev, pcim_intx_restore, NULL, NULL);
-@@ -447,8 +456,10 @@ static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
- 		return res;
- 
- 	res = devres_alloc(pcim_intx_restore, sizeof(*res), GFP_KERNEL);
--	if (res)
-+	if (res) {
-+		save_orig_intx(pdev);
- 		devres_add(dev, res);
-+	}
- 
- 	return res;
- }
-@@ -467,11 +478,10 @@ int pcim_intx(struct pci_dev *pdev, int enable)
- {
- 	struct pcim_intx_devres *res;
- 
--	res = get_or_create_intx_devres(&pdev->dev);
-+	res = get_or_create_intx_devres(pdev);
- 	if (!res)
- 		return -ENOMEM;
- 
--	res->orig_intx = !enable;
- 	__pcim_intx(pdev, enable);
- 
- 	return 0;
+adam
+>
+> > +                      * any value above 255.
+> >                        */
+> >                       tmp =3D (u64)fout * (_p * _s);
+> >                       do_div(tmp, 24 * MHZ);
+> > -                     _m =3D tmp;
+> > -                     if (_m < 0x30 || _m > 0x7b)
+> > +                     if (tmp > 255)
+> >                               continue;
+> > +                     _m =3D tmp;
+> >
+> >                       /*
+> >                        * Rev 2 of the Ref Manual states the
+>
 
