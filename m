@@ -1,219 +1,183 @@
-Return-Path: <linux-kernel+bounces-377278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377275-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45DB19ABC68
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:46:09 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 91A919ABC5F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1D6CB22B0A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:46:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DF3D3B2118D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:44:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03F4D45C1C;
-	Wed, 23 Oct 2024 03:45:58 +0000 (UTC)
-Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23DB87482;
-	Wed, 23 Oct 2024 03:45:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B99136353;
+	Wed, 23 Oct 2024 03:44:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=fail reason="signature verification failed" (1024-bit key) header.d=163.com header.i=@163.com header.b="WcQmfJ5q"
+Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.2])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9CDC132122;
+	Wed, 23 Oct 2024 03:44:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.2
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729655157; cv=none; b=bufqsGA/M7e4kX1SGOlBzpQ5QGg6U3D3CaiFUQklGNddZ7xVBBkq4tFiwWnVh+IU9UI6DUYwQszNoeoizSKPAODYWCR1X3aftrDq3ehx0QmlgUJvKpVO5QYm8PJCrBomSu/0WQfprUdVSueZ6noEaMnniBOw6/o54AygYOy0CBw=
+	t=1729655076; cv=none; b=t+KTV6JW1RQd6J/vZ4Ja45KuzVwwfF/7f1y0hLYhxzutK0Fo4wnocrKk2ggNIMh/kaWvQ3OBucef4Hx3lrk2lV/SbUQzrXndbfz/DMfwCS7+px6SJ8E3TQH1tdjPBzNLZyifE3Xe2G5TvlMSE3izNs5gaZ96mzaodFUI9sXkNhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729655157; c=relaxed/simple;
-	bh=W3TkmQHDj12Jg1HsUkzot9Ymdy6hYeWq0Zi6SsI4SYg=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Rumn4rwa2CA63xgT7WPXUEo+B6rFrtZJy5haqjPtggZP/d4pynZIx80ld9JstHGO84YQqPLsOyYV2dV5FoYJhfmx/mkb2JIrIdAzNSf680nRdmxZbRNNpSDt9I6YD8lNfdkX67qoFivQ+QGWFrt9c7ROVQlgE/qzgfWOVdlGCdM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.93.142])
-	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XYFLj3Fygz4f3n5d;
-	Wed, 23 Oct 2024 11:45:33 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id A87931A0359;
-	Wed, 23 Oct 2024 11:45:51 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgAHPMhucRhny1l2Ew--.4252S4;
-	Wed, 23 Oct 2024 11:45:51 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	axboe@kernel.dk,
-	yukuai3@huawei.com
-Cc: linux-block@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 5.10] block, bfq: fix procress reference leakage for bfqq in merge chain
-Date: Wed, 23 Oct 2024 11:43:14 +0800
-Message-Id: <20241023034314.4013074-1-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
+	s=arc-20240116; t=1729655076; c=relaxed/simple;
+	bh=7Iu7Jgd1jGScc0v+SzrVEnp3i8k/LekDsk2cC5z+U5I=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:Content-Type:
+	 MIME-Version:Message-ID; b=Xc06mnnbr9mD4hilU1l/Nuy5m+mbNdDyog8EsXX0KA3s9WVgOI3sbrzZk3CxlRehFdLlYTUNFPips40f5T9WFvD5/xrkY4Gn4KxMl4oDxnbcrvwhI0f5lcGAqTLuLdwHnWpAk5SUexaD98xtrpiJbAdMHLVO0ewYwZyNyYDCIJA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=fail (1024-bit key) header.d=163.com header.i=@163.com header.b=WcQmfJ5q reason="signature verification failed"; arc=none smtp.client-ip=220.197.31.2
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
+	s=s110527; h=Date:From:Subject:Content-Type:MIME-Version:
+	Message-ID; bh=Q29FHI6XBgDIuKqr+iX7FJEO8Q4vH4VWQbYPq+u2Z14=; b=W
+	cQmfJ5q/IGzCm9Fq6+pQSf4ZrL8IDggsdXcGH13iLReRIyqwUUkZAs7pD32Dx0sE
+	5PbrQfWUoPgfwi2HxBHRjus3ql4BtbS57OIuZyke59hmritXiwxWy+TLiboIrfZF
+	814CLBAnJ0LZ4RACZhb08MxlbHaoS6O2J3VUxs/1ok=
+Received: from huanglei814$163.com ( [111.48.58.10] ) by
+ ajax-webmail-wmsvr-40-122 (Coremail) ; Wed, 23 Oct 2024 11:43:51 +0800
+ (CST)
+Date: Wed, 23 Oct 2024 11:43:51 +0800 (CST)
+From: huanglei  <huanglei814@163.com>
+To: "Alan Stern" <stern@rowland.harvard.edu>
+Cc: gregkh@linuxfoundation.org, mathias.nyman@intel.com, 
+	linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	huanglei <huanglei@kylinos.cn>
+Subject: Re:Re: [PATCH v3] usb: core: adds support for PM control of
+ specific USB dev skip suspend.
+X-Priority: 3
+X-Mailer: Coremail Webmail Server Version XT5.0.14 build 20240801(9da12a7b)
+ Copyright (c) 2002-2024 www.mailtech.cn 163com
+In-Reply-To: <bcd902e0-3744-47f6-9d19-3d712ba3fece@rowland.harvard.edu>
+References: <20241022090905.9806-1-huanglei814@163.com>
+ <bcd902e0-3744-47f6-9d19-3d712ba3fece@rowland.harvard.edu>
+X-NTES-SC: AL_Qu2ZC/qeukgo5yiZbOkfm0cTguY+X8W4uv0h2IVSPJ5+jDHpxzIJU25SH0rv/Me0FgyImgmGczJE29VGf6NUYb4L8O609WXZMqZIlAEAe66WYA==
+Content-Transfer-Encoding: base64
+Content-Type: text/plain; charset=GBK
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgAHPMhucRhny1l2Ew--.4252S4
-X-Coremail-Antispam: 1UD129KBjvJXoWxZw4xtr4UCr45uw4DCFyrtFb_yoWrCF18pa
-	13ta13Ar18Xr45Wr47Jr4UZ3WFkr1fGrZrJFyvq34kJr1UAr17tF1qyw18ZFyIqrZ5uwsx
-	Xr1vqr97Jr17JFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkC14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
-	1l84ACjcxK6xIIjxv20xvE14v26F1j6w1UM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
-	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
-	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
-	2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
-	W8JwACjcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lc7CjxVAaw2AFwI0_
-	Jw0_GFyl42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4xG67
-	AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r1q6r43MIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWUJVW8
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjfUoWlkDU
-	UUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
+Message-ID: <f743f11.4307.192b779480f.Coremail.huanglei814@163.com>
+X-Coremail-Locale: zh_CN
+X-CM-TRANSID:eigvCgDnrzP3cBhn7dQUAA--.35493W
+X-CM-SenderInfo: xkxd0wxohlmiqu6rljoofrz/1tbixwWB9mcYVqlGtAAFsC
+X-Coremail-Antispam: 1U5529EdanIXcx71UUUUU7vcSsGvfC2KfnxnUU==
 
-From: Yu Kuai <yukuai3@huawei.com>
-
-[ Upstream commit 73aeab373557fa6ee4ae0b742c6211ccd9859280 ]
-
-Original state:
-
-        Process 1       Process 2       Process 3       Process 4
-         (BIC1)          (BIC2)          (BIC3)          (BIC4)
-          Λ                |               |               |
-           \--------------\ \-------------\ \-------------\|
-                           V               V               V
-          bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
-    ref    0               1               2               4
-
-After commit 0e456dba86c7 ("block, bfq: choose the last bfqq from merge
-chain in bfq_setup_cooperator()"), if P1 issues a new IO:
-
-Without the patch:
-
-        Process 1       Process 2       Process 3       Process 4
-         (BIC1)          (BIC2)          (BIC3)          (BIC4)
-          Λ                |               |               |
-           \------------------------------\ \-------------\|
-                                           V               V
-          bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
-    ref    0               0               2               4
-
-bfqq3 will be used to handle IO from P1, this is not expected, IO
-should be redirected to bfqq4;
-
-With the patch:
-
-          -------------------------------------------
-          |                                         |
-        Process 1       Process 2       Process 3   |   Process 4
-         (BIC1)          (BIC2)          (BIC3)     |    (BIC4)
-                           |               |        |      |
-                            \-------------\ \-------------\|
-                                           V               V
-          bfqq1--------->bfqq2---------->bfqq3----------->bfqq4
-    ref    0               0               2               4
-
-IO is redirected to bfqq4, however, procress reference of bfqq3 is still
-2, while there is only P2 using it.
-
-Fix the problem by calling bfq_merge_bfqqs() for each bfqq in the merge
-chain. Also change bfqq_merge_bfqqs() to return new_bfqq to simplify
-code.
-
-Fixes: 0e456dba86c7 ("block, bfq: choose the last bfqq from merge chain in bfq_setup_cooperator()")
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
-Link: https://lore.kernel.org/r/20240909134154.954924-3-yukuai1@huaweicloud.com
-Signed-off-by: Jens Axboe <axboe@kernel.dk>
----
- block/bfq-iosched.c | 33 ++++++++++++++++-----------------
- 1 file changed, 16 insertions(+), 17 deletions(-)
-
-diff --git a/block/bfq-iosched.c b/block/bfq-iosched.c
-index 515e3c1a5475..c1600e3ac333 100644
---- a/block/bfq-iosched.c
-+++ b/block/bfq-iosched.c
-@@ -2774,10 +2774,12 @@ void bfq_release_process_ref(struct bfq_data *bfqd, struct bfq_queue *bfqq)
- 	bfq_put_queue(bfqq);
- }
- 
--static void
--bfq_merge_bfqqs(struct bfq_data *bfqd, struct bfq_io_cq *bic,
--		struct bfq_queue *bfqq, struct bfq_queue *new_bfqq)
-+static struct bfq_queue *bfq_merge_bfqqs(struct bfq_data *bfqd,
-+					 struct bfq_io_cq *bic,
-+					 struct bfq_queue *bfqq)
- {
-+	struct bfq_queue *new_bfqq = bfqq->new_bfqq;
-+
- 	bfq_log_bfqq(bfqd, bfqq, "merging with queue %lu",
- 		(unsigned long)new_bfqq->pid);
- 	/* Save weight raising and idle window of the merged queues */
-@@ -2845,6 +2847,8 @@ bfq_merge_bfqqs(struct bfq_data *bfqd, struct bfq_io_cq *bic,
- 	new_bfqq->pid = -1;
- 	bfqq->bic = NULL;
- 	bfq_release_process_ref(bfqd, bfqq);
-+
-+	return new_bfqq;
- }
- 
- static bool bfq_allow_bio_merge(struct request_queue *q, struct request *rq,
-@@ -2880,14 +2884,8 @@ static bool bfq_allow_bio_merge(struct request_queue *q, struct request *rq,
- 		 * fulfilled, i.e., bic can be redirected to new_bfqq
- 		 * and bfqq can be put.
- 		 */
--		bfq_merge_bfqqs(bfqd, bfqd->bio_bic, bfqq,
--				new_bfqq);
--		/*
--		 * If we get here, bio will be queued into new_queue,
--		 * so use new_bfqq to decide whether bio and rq can be
--		 * merged.
--		 */
--		bfqq = new_bfqq;
-+		while (bfqq != new_bfqq)
-+			bfqq = bfq_merge_bfqqs(bfqd, bfqd->bio_bic, bfqq);
- 
- 		/*
- 		 * Change also bqfd->bio_bfqq, as
-@@ -5444,6 +5442,7 @@ static bool __bfq_insert_request(struct bfq_data *bfqd, struct request *rq)
- 	bool waiting, idle_timer_disabled = false;
- 
- 	if (new_bfqq) {
-+		struct bfq_queue *old_bfqq = bfqq;
- 		/*
- 		 * Release the request's reference to the old bfqq
- 		 * and make sure one is taken to the shared queue.
-@@ -5459,18 +5458,18 @@ static bool __bfq_insert_request(struct bfq_data *bfqd, struct request *rq)
- 		 * then complete the merge and redirect it to
- 		 * new_bfqq.
- 		 */
--		if (bic_to_bfqq(RQ_BIC(rq), 1) == bfqq)
--			bfq_merge_bfqqs(bfqd, RQ_BIC(rq),
--					bfqq, new_bfqq);
-+		if (bic_to_bfqq(RQ_BIC(rq), 1) == bfqq) {
-+			while (bfqq != new_bfqq)
-+				bfqq = bfq_merge_bfqqs(bfqd, RQ_BIC(rq), bfqq);
-+		}
- 
--		bfq_clear_bfqq_just_created(bfqq);
-+		bfq_clear_bfqq_just_created(old_bfqq);
- 		/*
- 		 * rq is about to be enqueued into new_bfqq,
- 		 * release rq reference on bfqq
- 		 */
--		bfq_put_queue(bfqq);
-+		bfq_put_queue(old_bfqq);
- 		rq->elv.priv[1] = new_bfqq;
--		bfqq = new_bfqq;
- 	}
- 
- 	bfq_update_io_thinktime(bfqd, bfqq);
--- 
-2.39.2
-
+CiBUaGFuayB5b3UgZm9yIHlvdXIgcmVwbHmjoQoKUGxlYXNlIHJlZmVyIHRvIHRoZSBmb2xsb3dp
+bmcgY29udGVudCBmb3IgZGV0YWlsZWQgYW5zd2Vycy4KCkF0IDIwMjQtMTAtMjIgMjM6MDA6MDEs
+ICJBbGFuIFN0ZXJuIiA8c3Rlcm5Acm93bGFuZC5oYXJ2YXJkLmVkdT4gd3JvdGU6Cj5PbiBUdWUs
+IE9jdCAyMiwgMjAyNCBhdCAwNTowOTowNVBNICswODAwLCBodWFuZ2xlaTgxNCB3cm90ZToKPj4g
+RnJvbTogaHVhbmdsZWkgPGh1YW5nbGVpQGt5bGlub3MuY24+Cj4+IAo+PiBBbGwgVVNCIGRldmlj
+ZXMgYXJlIGJyb3VnaHQgaW50byBzdXNwZW5kIHBvd2VyIHN0YXRlIGFmdGVyIHN5c3RlbSBzdXNw
+ZW5kLgo+PiBJdCBpcyBkZXNpcmFibGUgZm9yIHNvbWUgc3BlY2lmaWMgbWFudWZhY3R1cmVycyBi
+dXNlcyB0byBrZWVwIHRoZWlyIGRldmljZXMKPj4gaW4gbm9ybWFsIHN0YXRlIGV2ZW4gYWZ0ZXIg
+c3lzdGVtIHN1c3BlbmQuCj4KPldoeSBpcyBpdCBkZXNpcmFibGUgZm9yIGRldmljZXMgb24gdGhl
+c2UgYnVzZXMgdG8gcmVtYWluIGF0IGZ1bGwgcG93ZXIgCj5kdXJpbmcgc3lzdGVtIHN1c3BlbmQ/
+Cj4KPkp1c3QgdG8gZW5zdXJlIHRoZSBzdGFiaWxpdHkgb2YgVVNCIGRldmljZXMgd2hpY2ggY29u
+bmVjdGVkIHRvIHRoZSBVU0IgY29udHJvbGxlciBidXMuCj4KPldoYXQgYWJvdXQgd2FrZXVwIHJl
+cXVlc3RzPyAgSWYgdGhlIGRldmljZSBpc24ndCBzdXNwZW5kZWQsIGl0IHdvbid0IGJlIAo+YWJs
+ZSB0byBzZW5kIGEgd2FrZXVwIHJlcXVlc3QgaWYgaXQgbmVlZHMgdG8gdGVsbCB0aGUgc3lzdGVt
+IHRvIHJldHVybiAKPnRvIGZ1bGwgcG93ZXIuCj4KPlNvIFdoZW4gd2FrZXVwIGFuZCBleGVjdXRl
+IHVzYl9yZXN1bWUsIGlmIHNraXBfc3VzcGVuZCwgd2lsbCBkbyBub3RoaW5nLiAgCj4KPldoYXQg
+YWJvdXQgcnVudGltZSBzdXNwZW5kPyAgQXJlIHRoZSBkZXZpY2VzIG9uIHRoZXNlIGJ1c2VzIHN1
+cHBvc2VkIHRvIAo+cmVtYWluIGF0IGZ1bGwgcG93ZXIgYWxsIHRoZSB0aW1lLCBvciBvbmx5IGR1
+cmluZyBzeXN0ZW0gc3VzcGVuZD8KPgo+WWVzLCBvbmx5IGR1cmluZyBzeXN0ZW0gc3VzcGVuZC4g
+VGhlIGRpZmZlcmVuY2Ugd2l0aCBydW50aW1lIHN1c3BlbmQgaXMgdGhhdCB0aGlzIGF2b2lkIGFs
+bCBkZXZpY2VzIHdoaWNoIGNvbm5lY3RlZCBvbiB0aGUgVVNCIGNvbnRyb2xsZXJzIGJ1cyBlbnRl
+ciBzdXNwZW5kLCBidXQgcnVudGltZSBzdXNwZW5kIG9ubHkgZm9yIG9uZSBkZXZpY2UuCj4KPj4g
+djI6IENoYW5nZSB0byBib29sIHR5cGUgZm9yIHNraXBfc3VzcGVuZC4KPj4gdjM6IFJlYmFzZSBh
+bmQgdXBkYXRlIGNvbW1pdCBtZXNzYWdlLgo+PiAKPj4gU2lnbmVkLW9mZi1ieTogaHVhbmdsZWkg
+PGh1YW5nbGVpQGt5bGlub3MuY24+Cj4+IC0tLQo+PiAgZHJpdmVycy91c2IvY29yZS9LY29uZmln
+ICAgICB8IDExICsrKysrKysrKysrCj4+ICBkcml2ZXJzL3VzYi9jb3JlL2RyaXZlci5jICAgIHwg
+MTQgKysrKysrKysrKysrKysKPj4gIGRyaXZlcnMvdXNiL2hvc3QveGhjaS1wbGF0LmMgfCAgNyAr
+KysrKysrCj4+ICBpbmNsdWRlL2xpbnV4L3VzYi5oICAgICAgICAgIHwgIDkgKysrKysrKysrCj4+
+ICA0IGZpbGVzIGNoYW5nZWQsIDQxIGluc2VydGlvbnMoKykKPj4gCj4+IGRpZmYgLS1naXQgYS9k
+cml2ZXJzL3VzYi9jb3JlL0tjb25maWcgYi9kcml2ZXJzL3VzYi9jb3JlL0tjb25maWcKPj4gaW5k
+ZXggNThlM2NhN2U0NzkzLi42OTc3OGFhN2I5MTMgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvdXNi
+L2NvcmUvS2NvbmZpZwo+PiArKysgYi9kcml2ZXJzL3VzYi9jb3JlL0tjb25maWcKPj4gQEAgLTE0
+MywzICsxNDMsMTQgQEAgY29uZmlnIFVTQl9ERUZBVUxUX0FVVEhPUklaQVRJT05fTU9ERQo+PiAg
+CSAgQUNQSSBzZWxlY3RpbmcgdmFsdWUgMiBpcyBhbmFsb2dvdXMgdG8gc2VsZWN0aW5nIHZhbHVl
+IDAuCj4+ICAKPj4gIAkgIElmIHVuc3VyZSwga2VlcCB0aGUgZGVmYXVsdCB2YWx1ZS4KPj4gKwo+
+PiArY29uZmlnIFVTQl9TS0lQX1NVU1BFTkQKPj4gKwlib29sICJWZW5kb3IgVVNCIHN1cHBvcnQg
+c2tpcCBzdXNwZW5kIgo+PiArCWRlcGVuZHMgb24gVVNCCj4+ICsJaGVscAo+PiArCSAgU2VsZWN0
+IHRoaXMgdGhlIGFzc29jaWF0ZSBVU0IgZGV2aWNlcyB3aWxsIHNraXAgc3VzcGVuZCB3aGVuIHBt
+IGNvbnRyb2wuCj4+ICsKPj4gKwkgIFRoaXMgb3B0aW9uIGFkZHMgc3VwcG9ydCBza2lwIHN1c3Bl
+bmQgZm9yIFBNIGNvbnRyb2wgb2YgVVNCIGRldmljZXMKPj4gKwkgIGluIHNwZWNpZmljIG1hbnVm
+YWN0dXJlcnMgcGxhdGZvcm1zLgo+PiArCj4+ICsJICBJZiB1bnN1cmUsIGtlZXAgdGhlIGRlZmF1
+bHQgdmFsdWUuCj4KPldoeSBkb2VzIHRoaXMgbmVlZCB0byBiZSBhIEtjb25maWcgb3B0aW9uPyAg
+V2h5IGNhbid0IGl0IGJlIGVuYWJsZWQgCj5hbGwgdGhlIHRpbWU/Cj4KPkVuYWJsZWQgYWxsIHRo
+ZSB0aW1lIHdvbid0IGJlIGFueSBwcm9ibGVtLCBwYXRjaCB2NCB3aWxsIHJlbW92ZSBLY29uZmln
+IG9wdGlvbi4KPgo+PiBkaWZmIC0tZ2l0IGEvZHJpdmVycy91c2IvY29yZS9kcml2ZXIuYyBiL2Ry
+aXZlcnMvdXNiL2NvcmUvZHJpdmVyLmMKPj4gaW5kZXggMGMzZjEyZGFhYzc5Li4wNWZlOTIxZjgy
+OTcgMTAwNjQ0Cj4+IC0tLSBhL2RyaXZlcnMvdXNiL2NvcmUvZHJpdmVyLmMKPj4gKysrIGIvZHJp
+dmVycy91c2IvY29yZS9kcml2ZXIuYwo+PiBAQCAtMTU4Myw2ICsxNTgzLDE1IEBAIGludCB1c2Jf
+c3VzcGVuZChzdHJ1Y3QgZGV2aWNlICpkZXYsIHBtX21lc3NhZ2VfdCBtc2cpCj4+ICAJc3RydWN0
+IHVzYl9kZXZpY2UJKnVkZXYgPSB0b191c2JfZGV2aWNlKGRldik7Cj4+ICAJaW50IHI7Cj4+ICAK
+Pj4gKyNpZmRlZiBDT05GSUdfVVNCX1NLSVBfU1VTUEVORAo+PiArCWlmICh1ZGV2LT5idXMtPnNr
+aXBfc3VzcGVuZCAmJiAobXNnLmV2ZW50ID09IFBNX0VWRU5UX1NVU1BFTkQpKSB7Cj4+ICsJCWlm
+ICh1ZGV2LT5zdGF0ZSAhPSBVU0JfU1RBVEVfU1VTUEVOREVEKQo+PiArCQkJZGV2X2VycihkZXYs
+ICJhYm9ydCBzdXNwZW5kXG4iKTsKPgo+WW91IHNob3VsZCBub3QgdXNlIGRldl9lcnIoKSBiZWNh
+dXNlIHRoaXMgaXNuJ3QgYW4gZXJyb3IuICBJdCBpcyB0aGUgCj5leHBlY3RlZCBiZWhhdmlvci4K
+Pgo+cGF0Y2ggdjQgd2lsbCBjaGFuZ2UgdG8gZGV2X2luZm8uCj4KPldoeSBkbyB5b3UgdGVzdCBm
+b3IgUE1fRVZFTlRfU1VTUEVORD8gIERvbid0IHlvdSB3YW50IHRoZSBkZXZpY2UgdG8gCj5yZW1h
+aW4gYXQgZnVsbCBwb3dlciBkdXJpbmcgb3RoZXIgc29ydHMgb2YgUE0gZXZlbnRzIGFsc28/Cj4K
+Pkxvb2tzIGxpa2UgcnVudGltZSBwbSBqdXN0IHVzZWQgZm9yIHN1c3BlbmQsIE90aGVyIFBNIGV2
+ZW50cyBpcyBubyBuZWVko6wgc3VjaCBhcyBzNChoaWJlcm5hdGUpo6wgYWxsIGRldmljZXMgbXVz
+dCBwb3dlciBvZmYuICAKPgo+V2h5IGRvIHlvdSB0ZXN0IHVkZXYtPnN0YXRlPyAgRG9uJ3QgeW91
+IGFscmVhZHkga25vdyB0aGF0IHVkZXYgaXMgbm90IAo+Z29pbmcgdG8gYmUgaW4gdGhlIFNVU1BF
+TkRFRCBzdGF0ZT8KPgo+eWVzLCBTVVNQRU5ERUQgc3RhdGUganVkZ21lbnQgaXMgcmVkdW5kYW50
+LnBhdGNoIHY0IHdpbGwgbW9kaWZ5Cj4KPj4gKwo+PiArCQlyZXR1cm4gMDsKPj4gKwl9Cj4+ICsj
+ZW5kaWYKPj4gKwo+PiAgCXVuYmluZF9ub19wbV9kcml2ZXJzX2ludGVyZmFjZXModWRldik7Cj4+
+ICAKPj4gIAkvKiBGcm9tIG5vdyBvbiB3ZSBhcmUgc3VyZSBhbGwgZHJpdmVycyBzdXBwb3J0IHN1
+c3BlbmQvcmVzdW1lCj4+IEBAIC0xNjE5LDYgKzE2MjgsMTEgQEAgaW50IHVzYl9yZXN1bWUoc3Ry
+dWN0IGRldmljZSAqZGV2LCBwbV9tZXNzYWdlX3QgbXNnKQo+PiAgCXN0cnVjdCB1c2JfZGV2aWNl
+CSp1ZGV2ID0gdG9fdXNiX2RldmljZShkZXYpOwo+PiAgCWludAkJCXN0YXR1czsKPj4gIAo+PiAr
+I2lmZGVmIENPTkZJR19VU0JfU0tJUF9TVVNQRU5ECj4+ICsJaWYgKHVkZXYtPmJ1cy0+c2tpcF9z
+dXNwZW5kICYmIChtc2cuZXZlbnQgPT0gUE1fRVZFTlRfUkVTVU1FKSkKPj4gKwkJcmV0dXJuIDA7
+Cj4+ICsjZW5kaWYKPj4gKwo+PiAgCS8qIEZvciBhbGwgY2FsbHMsIHRha2UgdGhlIGRldmljZSBi
+YWNrIHRvIGZ1bGwgcG93ZXIgYW5kCj4+ICAJICogdGVsbCB0aGUgUE0gY29yZSBpbiBjYXNlIGl0
+IHdhcyBhdXRvc3VzcGVuZGVkIHByZXZpb3VzbHkuCj4+ICAJICogVW5iaW5kIHRoZSBpbnRlcmZh
+Y2VzIHRoYXQgd2lsbCBuZWVkIHJlYmluZGluZyBsYXRlciwKPj4gZGlmZiAtLWdpdCBhL2RyaXZl
+cnMvdXNiL2hvc3QveGhjaS1wbGF0LmMgYi9kcml2ZXJzL3VzYi9ob3N0L3hoY2ktcGxhdC5jCj4+
+IGluZGV4IGVjYWE3NTcxOGU1OS4uOGNiYzY2NmFiNWM2IDEwMDY0NAo+PiAtLS0gYS9kcml2ZXJz
+L3VzYi9ob3N0L3hoY2ktcGxhdC5jCj4+ICsrKyBiL2RyaXZlcnMvdXNiL2hvc3QveGhjaS1wbGF0
+LmMKPj4gQEAgLTI2NSw2ICsyNjUsMTMgQEAgaW50IHhoY2lfcGxhdF9wcm9iZShzdHJ1Y3QgcGxh
+dGZvcm1fZGV2aWNlICpwZGV2LCBzdHJ1Y3QgZGV2aWNlICpzeXNkZXYsIGNvbnN0IHMKPj4gIAkJ
+aWYgKGRldmljZV9wcm9wZXJ0eV9yZWFkX2Jvb2wodG1wZGV2LCAieGhjaS1za2lwLXBoeS1pbml0
+LXF1aXJrIikpCj4+ICAJCQl4aGNpLT5xdWlya3MgfD0gWEhDSV9TS0lQX1BIWV9JTklUOwo+PiAg
+Cj4+ICsjaWZkZWYgQ09ORklHX1VTQl9TS0lQX1NVU1BFTkQKPj4gKwkJaWYgKGRldmljZV9wcm9w
+ZXJ0eV9yZWFkX2Jvb2wodG1wZGV2LCAidXNiLXNraXAtc3VzcGVuZCIpKSB7Cj4+ICsJCQloY2Rf
+dG9fYnVzKGhjZCktPnNraXBfc3VzcGVuZCA9IHRydWU7Cj4+ICsJCQloY2RfdG9fYnVzKHhoY2kt
+PnNoYXJlZF9oY2QpLT5za2lwX3N1c3BlbmQgPSB0cnVlOwo+PiArCQl9Cj4+ICsjZW5kaWYKPgo+
+InVzYi1za2lwLXN1c3BlbmQiIGlzIGFuIG9kZCBuYW1lIGZvciB0aGlzLiAgInVzYi1uZXZlci1z
+dXNwZW5kIiAKPndvdWxkIGJlIGJldHRlciwgaW4gbXkgb3Bpbmlvbi4KPgo+cGF0Y2ggdjQgd2ls
+bCBtb2RpZnkgaXQKPgo+PiArCj4+ICAJCWRldmljZV9wcm9wZXJ0eV9yZWFkX3UzMih0bXBkZXYs
+ICJpbW9kLWludGVydmFsLW5zIiwKPj4gIAkJCQkJICZ4aGNpLT5pbW9kX2ludGVydmFsKTsKPj4g
+IAl9Cj4+IGRpZmYgLS1naXQgYS9pbmNsdWRlL2xpbnV4L3VzYi5oIGIvaW5jbHVkZS9saW51eC91
+c2IuaAo+PiBpbmRleCA2NzJkOGZjMmFiZGIuLjMwNzRjODllZDkyMSAxMDA2NDQKPj4gLS0tIGEv
+aW5jbHVkZS9saW51eC91c2IuaAo+PiArKysgYi9pbmNsdWRlL2xpbnV4L3VzYi5oCj4+IEBAIC00
+ODcsNiArNDg3LDE1IEBAIHN0cnVjdCB1c2JfYnVzIHsKPj4gIAlzdHJ1Y3QgbW9uX2J1cyAqbW9u
+X2J1czsJLyogbm9uLW51bGwgd2hlbiBhc3NvY2lhdGVkICovCj4+ICAJaW50IG1vbml0b3JlZDsJ
+CQkvKiBub24temVybyB3aGVuIG1vbml0b3JlZCAqLwo+PiAgI2VuZGlmCj4+ICsKPj4gKyNpZmRl
+ZiBDT05GSUdfVVNCX1NLSVBfU1VTUEVORAo+PiArCWJvb2wgc2tpcF9zdXNwZW5kOwkJLyogQWxs
+IFVTQiBkZXZpY2VzIGFyZSBicm91Z2h0IGludG8gc3VzcGVuZAo+PiArCQkJCQkgKiBwb3dlciBz
+dGF0ZSBhZnRlciBzeXN0ZW0gc3VzcGVuZC4gSXQgaXMKPj4gKwkJCQkJICogZGVzaXJhYmxlIGZv
+ciBzb21lIHNwZWNpZmljIG1hbnVmYWN0dXJlcnMKPj4gKwkJCQkJICogYnVzZXMgdG8ga2VlcCB0
+aGVpciBkZXZpY2VzIGluIG5vcm1hbAo+PiArCQkJCQkgKiBzdGF0ZSBldmVuIGFmdGVyIHN5c3Rl
+bSBzdXNwZW5kLgo+PiArCQkJCQkgKi8KPj4gKyNlbmRpZgo+PiAgfTsKPgo+VGhpcyBwYXRjaCB3
+aWxsIHByZXZlbnQgdGhlIFVTQiBkZXZpY2VzIG9uIHRoZSBidXMgZnJvbSBiZWluZyBzdXNwZW5k
+ZWQuICAKPkJ1dCB3aGF0IGFib3V0IHRoZSBob3N0IGNvbnRyb2xsZXI/ICBEb24ndCB5b3UgbmVl
+ZCB0byBwcmV2ZW50IGl0IGZyb20gCj5zdXNwZW5kaW5nPyAgQWZ0ZXIgYWxsLCBhIFVTQi0yIGRl
+dmljZSB3aWxsIGdvIGludG8gbG93LXBvd2VyIHN1c3BlbmQgCj5tb2RlIHdoZW5ldmVyIHRoZSBo
+b3N0IGNvbnRyb2xsZXIgc3RvcHMgc2VuZGluZyBwYWNrZXRzIC0tIGV2ZW4gaWYgaXQncyAKPmNv
+bm5lY3RlZCB0byBhIFVTQi0zIGhvc3QgY29udHJvbGxlci4KPgo+SG9zdCBjb250cm9sbGVyIHdp
+bGwgbm90IGNoYW5nZWQsIFRoZSBlc3NlbmNlIGlzIHNwZWNpZmljIGNvbnRyb2xsZXIgdG8gYXZv
+aWQgY2F1c2Ugc3RhYmlsaXR5IGlzc3Vlcwooc3VjaCBhcyByZXNwb25zZSBzbG93bHkgb3Igbm8g
+cmVzcG9uc2UpIG9mIGV4dGVybmFsIGRldmljZXMgd2hlbiB0aGV5IGVudGVyIHN1c3BlbmQvcmVz
+dW1lIG1vZGUsIApyYXRoZXIgdGhhbiBtYWtpbmcgdGhlIGNvbnRyb2xsZXJzIGFuZCBleHRlcm5h
+bCBkZXZpY2VzIHRvIGNvbnRpbnVlIHdvcmtpbmcgbm9ybWFsbHkgd2hlbiBlbnRlciBzdXNwZW5k
+Lgo+Cj5BbGFuIFN0ZXJuCgoKYmVzdCByZWdhcmQhCg==
 
