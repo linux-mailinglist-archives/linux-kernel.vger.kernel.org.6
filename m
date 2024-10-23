@@ -1,84 +1,83 @@
-Return-Path: <linux-kernel+bounces-377637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377638-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C18599AC1A2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:30:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0A2699AC1A4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:31:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 789B91F211FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:30:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B81F928385C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:31:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 022C715A849;
-	Wed, 23 Oct 2024 08:30:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4251D15A84E;
+	Wed, 23 Oct 2024 08:31:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="cbq2YyCI"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UCffsi8r"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7AE1158DA3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:30:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F2C61474A4
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:31:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672239; cv=none; b=FVWd55Sn2PkLQs3GYYEBFPJQ2T9qH1OAyseSAuEaiVgx5cVGO5+H8v8rHCRvxy2jPKWZ5uBR7f2fw01rFLeEaqzrzSDdU828pwvV6uXkXqmVWpbSj8UZnyOC8nnFbFy/mKGm+4MHITtNNK/Uxz3S7NoTmhmc5q9pWg0UHPsuRXY=
+	t=1729672262; cv=none; b=DeSyHm0JWVEoiArmYdxuJHbWKUcAsCw6oXis0gnBwhAhE1STkz3Z6MBCGQO/ZMAcfqcIeZQNQHnRYMCXniuEU8Vpm0wNTG+uuBeV7FVGuLNeeDtQjkmF1RTVjktX09EyI4iZdY/ycvoACSu7oAcpve8pLrGfLCquEi+3n4SfykE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672239; c=relaxed/simple;
-	bh=c0Vwk6WOOc2/MYBaUvlMbC6aKVmZwQj130v5adtmU0g=;
+	s=arc-20240116; t=1729672262; c=relaxed/simple;
+	bh=OdA/Lx/g/+rhQ0Eyv42s39kdQJ47dqmOO55WQ9F/BNA=;
 	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=BP6SQP3tkspUXwxX3B/m7PrND4B5VMUTa8oizWprPgJtXm1PKBy007iSEup3QZUP/FFOQst3Tsv5XgK3F3+vsNgdWKbl7uIBxyO7KyE5Bf476a2Naq68DzdQUQXNGehRGKGHQ5L7XOKKxVwbMj8fSDuI6WEXj072eJOtAQmrBzA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=cbq2YyCI; arc=none smtp.client-ip=209.85.128.51
+	 Content-Disposition; b=DOUDf+CRWQ0N0vmIyo9SUt05Sad5PhhSIVTp7YtGM17sIY5jyhXdx0VyghmNjfePrF50YUv2OxHsM6y2eluCUroa5GBt5gTm9o/VeCQsGPBszrD5kAg1vmSHkUo5/UTQkqr45hhCqeVMs/LBKuvyJ+ZuPpoJmjvylkMaMXRvpgA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UCffsi8r; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4315baec69eso61354195e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:30:36 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315eeb2601so78422825e9.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:31:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729672235; x=1730277035; darn=vger.kernel.org;
+        d=linaro.org; s=google; t=1729672259; x=1730277059; darn=vger.kernel.org;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=95Cs3StsmPVbQEmy5DYBdaAp5pMh1zUcYS64FB9PkOw=;
-        b=cbq2YyCIySlJzXT+WTBnWsfwA91kDCgYKS6s9hXuu71gTnneYBWsSoGDz0jY4v+PFs
-         jgXlT8fvYKUuyL1LBm7zyxTNyLfbTtaoqBQO27qmODtJJeJSfPc7BfhwC+AnirwBhEB1
-         2/iQ+ogh4Z1J3Ywo0fVTEsxF2WVlwI1C+sppbzmKn/XmPHv/keBDos3IFVtjDg4orDa9
-         O9QZcfWsW7Z9TPUzWQ4zMQmw1U8RdSemDZaSfu1xwoZ+Gntl68g+ztsOTayFVRO0qonw
-         BhbNSYg1/XJDCUxF9CY0AMSysq33fOE52dQ2EuI9sQ3m5yLBd7fdhxxOtFZixAdDLEnJ
-         C/tA==
+        bh=yJjPAsY+OlQh98BPt/llnxV3HvdF91YFt70SYWdsuBw=;
+        b=UCffsi8ruJeTbOB+j7Ita1rNp5XIQYORV4U4xd1kLr3gJsfTp2Eky9MjmnpvE0aNb2
+         pk7lzbpud6jko6DJyrxuvm79bc/f8UPsCOjbUcW98QmumfFLiAoPYnbgSKpiA609wFoP
+         vFJ9IBwRXeCD++rhCJj07wxdjiqhr8QSkdNdBqzg+bg0Exr9p11qQgogbT2nqmrILBnm
+         jbQbSNbwYXY6Z8HOt/dTgqMM1Uynpee82hM9QQZUTgYZsje4MY7qBArIACjyo8pcYA3t
+         IrxK5fM3h6STIsF1hEwQgC9w2483mS7uqPmHyuf8M2hkhGft89NzqHxy8rEbPwznqRls
+         CoYw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729672235; x=1730277035;
+        d=1e100.net; s=20230601; t=1729672259; x=1730277059;
         h=content-disposition:mime-version:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=95Cs3StsmPVbQEmy5DYBdaAp5pMh1zUcYS64FB9PkOw=;
-        b=A2FF860xdHYxJVTbjKsfAZpiiMfnWIlkQBtyO3ZUHjYrHJe+b5bRFuxf586qVWyuUI
-         u+3YGpTYnTstoQgFIqkO5otlDD/58q1v/QUEg+ZlKAp+CGSbM3VwDePIzELVgrDpR/dJ
-         VA6InNcnVeO+iO7IeNjxxcD7VituPHNt941VSh3xCmaFr/cTWWXGia886GxlPuLwPoev
-         KgkkWDHc3XG3ak6VYfV3dPDcQH1M3gxBpK+FsLfqABdyyybWD4rwakjp121PfYCyJkZ/
-         mZKOOzCgQLfe1y5c8R/5JwNBpELvD254cYowdmI1I9QCozx8rQVndW+z1gSBCI2H+2k2
-         mauA==
-X-Forwarded-Encrypted: i=1; AJvYcCUikzxvHUDAForeIVAnomz2S0z8iu8+rCQnmzhbSpE3q351VP01iQDK4mgZgNErDcBnLgt0jm4LHK4PjbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMYmV+l/lIPExFqoGWQQu+T7GUysrQRYhoht+bsXa1acmjM18m
-	9wXD885nBKZGNa3hMc3v5yrE1SpdEqZjSgoGZ6y44dKLRECoOZX1BA6zmLvZ/eM=
-X-Google-Smtp-Source: AGHT+IGb/UB2CSjQVVmaOHKT/K4GreGbDp8bdWYCdX3b6WAbVqGRAZOZ8sPRqWUJoRUK+LtTVQFvnw==
-X-Received: by 2002:a05:600c:46d0:b0:431:57e5:b251 with SMTP id 5b1f17b1804b1-4318424ea03mr15362385e9.28.1729672235246;
-        Wed, 23 Oct 2024 01:30:35 -0700 (PDT)
+        bh=yJjPAsY+OlQh98BPt/llnxV3HvdF91YFt70SYWdsuBw=;
+        b=oxXTehMzDeOPJzmOgQ6529BQiOO4zFYUtX7PlTv4jt5kHMAcYZlSe5gyVmkFe5drPx
+         SAS51IwgFTOwS/fbozzxGX4MImvz94DinA2lFeqKD8JcrMedFhbOpBslncUHNoHN37Cz
+         1x443VyAJD7E80xE3FEtWDLxkFWXp8EvAexwkqeKPAofc0VAxB1GaqsbIedpeZfamVZC
+         UFI7jITxLXKV1jkTilJv7pv64wS7pwhm4UBciM7i5RzaLmrghlLCvbn+UuQLFMiTIJgJ
+         mwnqw7c0gAxsUcxvu0V+ezkkcAyWtr5Yoe6QQbzB6/kD63f+n/XvffRYeo5Re/xQCbNP
+         cuwg==
+X-Forwarded-Encrypted: i=1; AJvYcCWfKmXe857zqDdB6UGN9muGnUphByLcu8MrDhRe63ClHTgv6bj3KIPEFfmvfPlErH16mDtYSNh2OBp9e0c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyCv/lbL9IYtt1WtM/uAHM/bmNpBvL6a8ZoTy8gOxKiZvyQ5TKi
+	3QwZvM8Iy0OgtWg/NiXTEiDtQlxCOmWm3rZBFwAb4g4Zct7DEukT84tFKqB8jqo=
+X-Google-Smtp-Source: AGHT+IHPU6nYNwgDM+9I4opxX+G8CARI27qe3xwEGfD9/YcLKJqmhTD/E8EfYj2M4UlFJjONaqKbmA==
+X-Received: by 2002:a5d:51c4:0:b0:37d:47e0:45fb with SMTP id ffacd0b85a97d-37efcf060f6mr1389418f8f.21.1729672259340;
+        Wed, 23 Oct 2024 01:30:59 -0700 (PDT)
 Received: from localhost ([196.207.164.177])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03ea4asm24552605e9.0.2024.10.23.01.30.34
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a58cc2sm8381119f8f.54.2024.10.23.01.30.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 01:30:34 -0700 (PDT)
-Date: Wed, 23 Oct 2024 11:30:31 +0300
+        Wed, 23 Oct 2024 01:30:58 -0700 (PDT)
+Date: Wed, 23 Oct 2024 11:30:55 +0300
 From: Dan Carpenter <dan.carpenter@linaro.org>
-To: Alex Lanzano <lanzano.alex@gmail.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Mehdi Djait <mehdi.djait@bootlin.com>,
-	Uwe =?iso-8859-1?Q?Kleine-K=F6nig?= <u.kleine-koenig@baylibre.com>,
-	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+To: Tomi Valkeinen <tomi.valkeinen@ideasonboard.com>
+Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Mauro Carvalho Chehab <mchehab@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Sakari Ailus <sakari.ailus@linux.intel.com>,
+	Naushir Patuck <naush@raspberrypi.com>, linux-media@vger.kernel.org,
+	linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
 	kernel-janitors@vger.kernel.org
-Subject: [PATCH next] drm/sharp-memory: Fix some checks in
- sharp_memory_probe()
-Message-ID: <0d307349-c141-49ee-8b34-67caf5f8b638@stanley.mountain>
+Subject: [PATCH next] media: raspberrypi: Do some cleanup in probe()
+Message-ID: <fff40b7a-20cd-4933-9534-1f72435bded8@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -89,43 +88,33 @@ Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 X-Mailer: git-send-email haha only kidding
 
-The devm_drm_dev_alloc() function returns error pointers, it never
-returns NULL.  Change that check to IS_ERR().
+If devm_clk_get() fails then we need to free "cfe" before returning.
 
-The devm_gpiod_get_optional() function returns a mix of error pointers
-if there is an error, or NULL if there is no GPIO assigned.  Add a check
-for error pointers.
-
-Fixes: b8f9f21716fe ("drm/tiny: Add driver for Sharp Memory LCD")
+Fixes: 6edb685abb2a ("media: raspberrypi: Add support for RP1-CFE")
 Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
 ---
- drivers/gpu/drm/tiny/sharp-memory.c | 6 ++++--
- 1 file changed, 4 insertions(+), 2 deletions(-)
+ drivers/media/platform/raspberrypi/rp1-cfe/cfe.c | 8 +++++---
+ 1 file changed, 5 insertions(+), 3 deletions(-)
 
-diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/sharp-memory.c
-index 2d2315bd6aef..1bcdd79166a4 100644
---- a/drivers/gpu/drm/tiny/sharp-memory.c
-+++ b/drivers/gpu/drm/tiny/sharp-memory.c
-@@ -543,8 +543,8 @@ static int sharp_memory_probe(struct spi_device *spi)
+diff --git a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+index 045910de6c57..1da58b07c1d3 100644
+--- a/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
++++ b/drivers/media/platform/raspberrypi/rp1-cfe/cfe.c
+@@ -2343,9 +2343,11 @@ static int cfe_probe(struct platform_device *pdev)
  
- 	smd = devm_drm_dev_alloc(dev, &sharp_memory_drm_driver,
- 				 struct sharp_memory_device, drm);
--	if (!smd)
--		return -ENOMEM;
-+	if (IS_ERR(smd))
-+		return PTR_ERR(smd);
+ 	/* TODO: Enable clock only when running. */
+ 	cfe->clk = devm_clk_get(&pdev->dev, NULL);
+-	if (IS_ERR(cfe->clk))
+-		return dev_err_probe(&pdev->dev, PTR_ERR(cfe->clk),
+-				     "clock not found\n");
++	if (IS_ERR(cfe->clk)) {
++		ret = dev_err_probe(&pdev->dev, PTR_ERR(cfe->clk),
++				    "clock not found\n");
++		goto err_cfe_put;
++	}
  
- 	spi_set_drvdata(spi, smd);
- 
-@@ -555,6 +555,8 @@ static int sharp_memory_probe(struct spi_device *spi)
- 		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
- 
- 	smd->enable_gpio = devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_HIGH);
-+	if (IS_ERR(smd->enable_gpio))
-+		return PTR_ERR(smd->enable_gpio);
- 	if (!smd->enable_gpio)
- 		dev_warn(dev, "Enable gpio not defined\n");
- 
+ 	cfe->mdev.dev = &pdev->dev;
+ 	cfe->mdev.ops = &cfe_media_device_ops;
 -- 
 2.45.2
 
