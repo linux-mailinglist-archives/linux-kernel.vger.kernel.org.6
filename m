@@ -1,120 +1,115 @@
-Return-Path: <linux-kernel+bounces-377650-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377651-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 42D799AC1E5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:39:46 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B9BC49AC1E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:40:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D2D3B22C02
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:39:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0FA9BB23FFE
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:40:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DF1E15ADB4;
-	Wed, 23 Oct 2024 08:39:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 240D415B13B;
+	Wed, 23 Oct 2024 08:39:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="kS0pMbq8"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oOO/UH4u"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF8B7155A4E;
-	Wed, 23 Oct 2024 08:39:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C0BDD15852E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:39:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672775; cv=none; b=anK3iTbZxFZ7sdNP7MsekYOvY+lTkvOfoHSboPagPk0HVAWEHHDencwxmAqx3y964GABpSv//2SZ72P/MXh/kB/hVTwsNd1NgCQTSgIGg+CuBqaclFmxVGF/ztl0+i5jqC6IEq5D1Gyh+aOnGvkOZBTnKNFrj4kU1cpZCBVeKws=
+	t=1729672794; cv=none; b=jNGXWhxWo2ZhyI5/RHt3lSDKdFt7NE32AUdRMTeWnD8EX4hyDssQAxCPziaVUJ3PIFQWk0vm5ydnVeJwT/w4bFzlvNOGdXaZV6BpS5ZMFVq9W+uFKk4Kyun3HXnsw9zEZ/jP1+XdFm1DvABjGCOfUlEuN1EBrEk4639si4uChZs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672775; c=relaxed/simple;
-	bh=6yZe5On9N9ES5WK+PcoGH9hQE8jwLxmL+buOlTdDEJc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=P+aZxTubsiPMUe2Pz8FdBy49RuHbNtexbtAU7fwgm5O7ch4f6lQxhkDSjxOjv+orMZ/DHt39EwkudwScSh4X7mXAtTVmD6UUDw7tmwSiWM9bEiAZzLSJLkQd9gfJTiF8NKhLBvF9af7JilYmKa1H4OSM/8nyEs9KHmMEL7TNYTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=kS0pMbq8; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N6QseC023289;
-	Wed, 23 Oct 2024 08:39:31 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=bbXgH1
-	luo5HBCa44WRLwZpoQCjCDIgPirpopAVwuCWw=; b=kS0pMbq8YWunCV6JqRi2nm
-	VsXK+U1X1fo0R1AGDWQbws+APnA8UbNpz8gfxhvqC1TWFp8eXFNzpSHwF50BAFAi
-	gyZL4mg0iCyfwmyJWAjPWOuMEh+CaJhuyPImdZ60bGwjbBUCkaRGKs0YBzMhh8up
-	+sUJU+4BX3Nh3DROkgxXXxyUIh42B32hU216eFvJXd8G/IBnWNGmhUDk/89n4HHh
-	5QjlZkvcHrNxvE4v0CpHuM5Ol/Pmi7f4FX+yF9N9UAzgjuvdyXAW4NE1LuWyjUZE
-	1JSGx1jXDQtXK3GRa3qDkx1XrrrAbFJqFBrU0kJ1vWGB9lfMltnfijMFufGfENrg
-	==
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaft276-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 08:39:31 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7aNrT001530;
-	Wed, 23 Oct 2024 08:39:30 GMT
-Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emk9a0kg-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 08:39:30 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49N8dTU246990066
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 08:39:29 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 11BB458043;
-	Wed, 23 Oct 2024 08:39:29 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7E02758059;
-	Wed, 23 Oct 2024 08:39:26 +0000 (GMT)
-Received: from [9.155.199.163] (unknown [9.155.199.163])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 08:39:26 +0000 (GMT)
-Message-ID: <dc112ac5-17bc-4b43-adf8-d7d2ca21082e@linux.ibm.com>
-Date: Wed, 23 Oct 2024 10:39:25 +0200
+	s=arc-20240116; t=1729672794; c=relaxed/simple;
+	bh=iJbAb8skEa4Nx/8KUs6c6Kmf1XIOGfLjcxmhZaN7zqs=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=YcHiaZAP92ED+CktS3sTDGHaOHXA7jtsQXu5pBksIusMorfx2R7zntvUyW2+aFdQs2WlyRJ2KpH3V4UPtICx9qJH+S0cSaSzpSP7rLsmQVTfjV33PjOVEY+QNC76/Izj11xSK5s6yGRCEGjxXE0Ib2rTAgDJX0AlsvFOMSg3zaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oOO/UH4u; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-431695fa98bso40852605e9.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:39:52 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729672791; x=1730277591; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=2q+EqKO/SmJ+LwoOc5NqrnnNgg93ONnESekHeBkrw9I=;
+        b=oOO/UH4umUXL2q/W87+IPDPrskl4aHiSoJejqSZCsxo6nL2FYwK1IkobOa/6Rf3qv6
+         gEPhyDnMic6+Cv+ur5cqmhhW4QhFMLwq0t10p4TyYovexoLFKJpexO2xyTfoMtxNZuBU
+         9xLO6IEKCUg+TYR5lI07LxbYa0GRMLbw+6FD/g0P1zaW3Yqda4XNRq9injEsnkqD7rXE
+         6pvm1YVOuNkQcSwTC2sQtj5WMzx3PKuj1ZGdZ2c6dkxLEbPY4spsJ4dIDUHIEZ1gh6TF
+         /iU8vabl1/0ZlGh4fby9v/JfWQaD4i5hhQI1Pwwa+P3RVytTRfq2WDyatAT/14LNf5pd
+         ugFg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729672791; x=1730277591;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2q+EqKO/SmJ+LwoOc5NqrnnNgg93ONnESekHeBkrw9I=;
+        b=FMtbeq2gVAJ7kR4M5Mly0CW4qrNouGOC/JAua2rDm4RnUTljapqhu9xtS5txUiGoL9
+         UQ+MesEID0DLZzTSqtK8VL5C23xNdPsWIfT3DjAPB/I041GPv5Dwr74GjKphk4yTXhhD
+         0axm66w3kZnulrVNOw7+Q3J3i16M9elG9i9gxKHMG5KvZlwpR2BCdQkigjXUnJ1FiROj
+         AtGjew3EmIDR/izh1wLdv23/rPD7UnHHBApQ+Mf+Abl8HE9CobrFcHHN0xj+aoXWVdu+
+         yAAD4ORY6dwHIORSLfqBwHIKunRqyTwxC1M22R3R2XgGEUHfNPWf0gLcq47BqU0ZARIM
+         FtmQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUh2axS0+GjR+AW9m9z4ogJW6W+AApJcT+EAmb0zc7lTbbqFErlH85Tht4MXoLeYpy2jW2ObdD2Yzix3Zw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6nlHSw3iWtNwQRe/X/EwvgmWHgiUeKOx67T3c9n4ZY1IRBoxB
+	Ui6KQ79IWpXJXcr2hWb8EtonHg6dpEeYNTRdcovRGuPYGcqHGD5chOSVTjoH0Mg=
+X-Google-Smtp-Source: AGHT+IH33wSfSVODDvdL/yZ91O6rmVDtlC8FIWHeTBfVcquWAPxHFeIFGhVu1f0mob8q5XR3H0fZpw==
+X-Received: by 2002:a05:600c:190a:b0:431:561b:b32a with SMTP id 5b1f17b1804b1-43184158e72mr14918485e9.19.1729672790992;
+        Wed, 23 Oct 2024 01:39:50 -0700 (PDT)
+Received: from localhost ([196.207.164.177])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9413fsm8435305f8f.74.2024.10.23.01.39.50
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 01:39:50 -0700 (PDT)
+Date: Wed, 23 Oct 2024 11:39:47 +0300
+From: Dan Carpenter <dan.carpenter@linaro.org>
+To: Yixun Lan <dlan@gentoo.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	Harshit Mogalapalli <harshit.m.mogalapalli@oracle.com>
+Subject: [PATCH next] pinctrl: spacemit: fix double free of map
+Message-ID: <4b5f1306-dc01-4edc-96d3-b232b930ddf2@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 07/11] s390/mm/gmap: Remove gmap_{en,dis}able()
-To: Claudio Imbrenda <imbrenda@linux.ibm.com>, linux-kernel@vger.kernel.org
-Cc: borntraeger@de.ibm.com, nsg@linux.ibm.com, nrb@linux.ibm.com,
-        frankja@linux.ibm.com, hca@linux.ibm.com, agordeev@linux.ibm.com,
-        gor@linux.ibm.com, gerald.schaefer@linux.ibm.com, kvm@vger.kernel.org,
-        linux-s390@vger.kernel.org, david@redhat.com
-References: <20241022120601.167009-1-imbrenda@linux.ibm.com>
- <20241022120601.167009-8-imbrenda@linux.ibm.com>
-Content-Language: en-US
-From: Steffen Eiden <seiden@linux.ibm.com>
-In-Reply-To: <20241022120601.167009-8-imbrenda@linux.ibm.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: vZoZXv4KINX2AFsFd4R0OS5M3kJd4kfJ
-X-Proofpoint-ORIG-GUID: vZoZXv4KINX2AFsFd4R0OS5M3kJd4kfJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 adultscore=0 mlxlogscore=711 phishscore=0 suspectscore=0
- clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230052
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+X-Mailer: git-send-email haha only kidding
 
+The map pointer is freed by pinctrl_utils_free_map().  It must not be a
+devm_ pointer or it leads to a double free when the device is unloaded.
 
+This is similar to a couple bugs Harshit Mogalapalli fixed earlier in
+commits 3fd976afe974 ("pinctrl: nuvoton: fix a double free in
+ma35_pinctrl_dt_node_to_map_func()") and 4575962aeed6 ("pinctrl: sophgo:
+fix double free in cv1800_pctrl_dt_node_to_map()").
 
-On 10/22/24 2:05 PM, Claudio Imbrenda wrote:
-> Remove gmap_enable(), gmap_disable(), and gmap_get_enabled() since they do
-> not have any users anymore.
-> 
-> Suggested-by: Heiko Carstens <hca@linux.ibm.com>
-> Signed-off-by: Claudio Imbrenda <imbrenda@linux.ibm.com>
-> Reviewed-by: Heiko Carstens <hca@linux.ibm.com>
-Reviewed-by: Steffen Eiden <seiden@linux.ibm.com>
-> ---
->   arch/s390/include/asm/gmap.h |  3 ---
->   arch/s390/mm/gmap.c          | 31 -------------------------------
->   2 files changed, 34 deletions(-)
+Fixes: a83c29e1d145 ("pinctrl: spacemit: add support for SpacemiT K1 SoC")
+Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+ drivers/pinctrl/spacemit/pinctrl-k1.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-...
+diff --git a/drivers/pinctrl/spacemit/pinctrl-k1.c b/drivers/pinctrl/spacemit/pinctrl-k1.c
+index c75ea27b2344..a32579d73613 100644
+--- a/drivers/pinctrl/spacemit/pinctrl-k1.c
++++ b/drivers/pinctrl/spacemit/pinctrl-k1.c
+@@ -314,7 +314,7 @@ static int spacemit_pctrl_dt_node_to_map(struct pinctrl_dev *pctldev,
+ 	if (!grpnames)
+ 		return -ENOMEM;
+ 
+-	map = devm_kcalloc(dev, ngroups * 2, sizeof(*map), GFP_KERNEL);
++	map = kcalloc(ngroups * 2, sizeof(*map), GFP_KERNEL);
+ 	if (!map)
+ 		return -ENOMEM;
+ 
+-- 
+2.45.2
+
 
