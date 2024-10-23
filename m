@@ -1,154 +1,145 @@
-Return-Path: <linux-kernel+bounces-377661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 966FD9AC201
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:43:01 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 576069AC207
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 324A7B25D77
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:42:59 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C4BE7B22A31
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:45:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4E1D815C158;
-	Wed, 23 Oct 2024 08:42:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6AFC15E5C2;
+	Wed, 23 Oct 2024 08:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="log0oo+M"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="gCslu3JB"
+Received: from mail-pg1-f171.google.com (mail-pg1-f171.google.com [209.85.215.171])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59D515B119;
-	Wed, 23 Oct 2024 08:42:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFDFE158A04;
+	Wed, 23 Oct 2024 08:45:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672952; cv=none; b=sFM6nE/AmKg2M9fD0mnKNnHqO/2dCy5S3L3nWEV3bMQmfSa5DJVkJqv7hwt1l8OkF/ivNlZZqWpihOOwiNB4ePq1D9vkIalW566U0sZyJFmzc8Jauxt8aAY1SJDhf1BhmzkPCbpVuNtqn0rgR5U+p3tUVHpvAFDEh1jOotkFb+8=
+	t=1729673105; cv=none; b=HPCBGj6cxdAblqfI55xzYNL0HqDHA1ht+7jLQAdg/hdLyVpRFKav8fkFKc26YwWhot1wBmhATGX7gvJmCBF8023vCZmv6dU2IACGToJqZ/CrFZUtI65ahzqwCPAIxQ+qQa66cM2nsvP7RQzIeMiNBO132IHT8c1yWIbTpXaWYXc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672952; c=relaxed/simple;
-	bh=MUvsm0SJiAa7QJxtfIg1c1B+VPR/9fnWUOukgzeCebI=;
+	s=arc-20240116; t=1729673105; c=relaxed/simple;
+	bh=yB98udhSqQkRW3pgk3lehOuNxdNm7oEPiWhTz/nBZhc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=doj6SA3bjTnTFpVpJNz9OHYScZAO7k5xsFzMfdxCE2qWi6B3VLGmdKAuxQ+0dtVKvEit0x0cvF8K9/2s8dHZFGaK5W+hweGcRd3rremN0ZJlsOOLTQavJw4NXLhvKHC5f8xxGRVR35Gl3KrvwFMkqoevcg8+gi8/X4MyICo+J4Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=log0oo+M; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5B931C4CEC6;
-	Wed, 23 Oct 2024 08:42:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729672952;
-	bh=MUvsm0SJiAa7QJxtfIg1c1B+VPR/9fnWUOukgzeCebI=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=log0oo+MY70lsYlmUABQukyclUAvCVf9UoVj1hhSijAYjdobWreM4J9NUjpM/jw6z
-	 E+UXAn6DuLEgloK0G0xE/ez0OBaQ6FsMidPIlW5JXN0RQsvoNNgxR/ZuEGQb31MRL5
-	 gQu0QQP1QiGU18fU4QDHaP2RxZxEZE6m72E64jKragb3CEKOJ+N/QYfWb8DnCd7s/6
-	 6/jgkqaTsdY72cHSt7iIY/qWr+9HrwDmb9QlLV/VbprAkmJRI/IDKVxrd6MHt3990T
-	 xgooWawOO01Q7OJfzaGdAcFv3zJPNKpjcTuG7IQueDVXCVDEGjUmcwLYBD45LSeKg/
-	 kxON/qpD4Pa5A==
-Date: Wed, 23 Oct 2024 10:42:27 +0200
-From: Danilo Krummrich <dakr@kernel.org>
-To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-Cc: rust-for-linux@vger.kernel.org, aliceryhl@google.com, dakr@redhat.com,
-	linux-kernel@vger.kernel.org, airlied@redhat.com,
-	miguel.ojeda.sandonis@gmail.com, boqun.feng@gmail.com
-Subject: Re: [PATCH v2 3/5] rust: page: Extend support to vmalloc_to_page
-Message-ID: <Zxi287W_MJcMB4YO@pollux>
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
- <20241022224832.1505432-4-abdiel.janulgue@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Nj5EVr04lJWJZ2BXwn35Psmrf9zxee98tBTlyJRcfvvxVnt/qlOmZFp2axL5kd+thy5+Tl+1sWAyE6wMvEuIdfPIAUkN4SOlOaW4q+KFDd4GxvIerTzYrrnsB8IYOXmA6un+k1sahEVVpHIvLPd9yiifkdxq9XFK59pGE5rsZyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=gCslu3JB; arc=none smtp.client-ip=209.85.215.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f171.google.com with SMTP id 41be03b00d2f7-7ea7e2ff5ceso5050828a12.2;
+        Wed, 23 Oct 2024 01:45:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729673103; x=1730277903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0J035g5WNycm3AHVCynKcQXgMo5pV2ms4qqq5QBwxuo=;
+        b=gCslu3JB4S31p122blDQ8bAKanl4sxSoTddXpI5gaZGu2J0TO2dpJ0geSS8B8Awk7B
+         pl1pxx9+TvbYAQ4AQJ+bn0O53TMsvRVj6opy8wr6QTtVi8pEQ4cJhYfKbtMxg+l72hE2
+         zA2sc2399NnkqgpJbQ4FyykDTd3/jmTvG8NhBGAKUiXfS+yMEYnmiPgT9MAJHbvWEYBW
+         neGyE7V9YijsXb+Lf1iFLPJw4ana8gtKyrbDBi4s0Svec64RuoQur3wz7OCmcxXGF7Ni
+         Sik8osWUQ8HWw2fTZuvNBvK/qGNIHqJRG5K9w7pBVSRQeF54L6ldWgk/SHeFwlZmgm/w
+         iy5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729673103; x=1730277903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0J035g5WNycm3AHVCynKcQXgMo5pV2ms4qqq5QBwxuo=;
+        b=iwM+gJZ/BuV76ettPrzUznGV8t4JLepYofZ3sMTO4QEZUebUZVI79S/xrex3AqsQms
+         1/IhuKBNSz/1jy5MQOLEHml34/xq4va8n7KE1fchVQM+gh8ff9mi43R0nOpPLtUqaxUy
+         edqq6Mx3h8peC7lSexzLCyTcZv9Bk7jIkOsBz661SilrQk4EvVVu5MBn5JgF5hikFupU
+         csv+364J5+rH0KrkWh5yEBkVSStcKfPCi6M/D2nFnQuRCXMi3eU9JXuPZa7Bb9Suk3ls
+         59azH25Qs99z8XI/I6Sy3o0ZOOcbICt52PGp5ZwVj8883A5kDec4otLYzcqPnYkFfN7A
+         CoKg==
+X-Forwarded-Encrypted: i=1; AJvYcCWycYMFrsmSBeDJNu893ecE3rdZ4rVVoXljLHRxr00m2wp7O1Bk1eVV/F/lkHG+NB9iaek=@vger.kernel.org, AJvYcCXvdsit1iSqocJaSpZvVF+QrHz/EpNDIsiZz3R7EZlPNOJD7M5BBYFsulEKEQiYRsiRi+ZYV0TqNoMsBmP5@vger.kernel.org
+X-Gm-Message-State: AOJu0YzXqVqxabyMg64UhqCDDCFbc8pexVS60ZShsMpukwaSJpJxtrkJ
+	m9xf8zLP/mfuSkvFX+sIOkoM7LWBpGskv8V1CrTsw1WXmiN98oUy
+X-Google-Smtp-Source: AGHT+IGSy9GyXqs+fwplsa9WfpXjqSFkymFMc0mxy7evawyYnCi9lOwOWllSPF9D48sJgFfyR/sbVQ==
+X-Received: by 2002:a05:6a21:3a82:b0:1d9:16db:902e with SMTP id adf61e73a8af0-1d978aebccdmr1821366637.9.1729673103101;
+        Wed, 23 Oct 2024 01:45:03 -0700 (PDT)
+Received: from localhost.localdomain ([210.205.14.5])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76dfe0cecsm899108a91.52.2024.10.23.01.45.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 01:45:02 -0700 (PDT)
+Date: Wed, 23 Oct 2024 17:44:58 +0900
+From: Byeonguk Jeong <jungbu2855@gmail.com>
+To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Daniel Borkmann <daniel@iogearbox.net>,
+	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
+Message-ID: <Zxi3iroUTKnU0ssx@localhost.localdomain>
+References: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
+ <CAADnVQ+Ow2E8qghEZw6x63VS4gM5rDtbM9R-ob00Rha2yBvfgA@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241022224832.1505432-4-abdiel.janulgue@gmail.com>
+In-Reply-To: <CAADnVQ+Ow2E8qghEZw6x63VS4gM5rDtbM9R-ob00Rha2yBvfgA@mail.gmail.com>
 
-On Wed, Oct 23, 2024 at 01:44:47AM +0300, Abdiel Janulgue wrote:
-> Extend Page to support pages that are not allocated by the constructor, for
-> example, those returned by vmalloc_to_page(). Since we don't own those pages
-> we shouldn't Drop them either. Hence we take advantage of the switch to Opaque
-> so we can cast to a Page pointer from a struct page pointer and be able to
-> retrieve the reference on an existing struct page mapping. In this case
-> no destructor will be called since we are not instantiating a new Page instance.
+On Tue, Oct 22, 2024 at 12:51:05PM -0700, Alexei Starovoitov wrote:
+> On Mon, Oct 21, 2024 at 6:49 PM Byeonguk Jeong <jungbu2855@gmail.com> wrote:
+> >
+> > trie_get_next_key() allocates a node stack with size trie->max_prefixlen,
+> > while it writes (trie->max_prefixlen + 1) nodes to the stack when it has
+> > full paths from the root to leaves. For example, consider a trie with
+> > max_prefixlen is 8, and the nodes with key 0x00/0, 0x00/1, 0x00/2, ...
+> > 0x00/8 inserted. Subsequent calls to trie_get_next_key with _key with
+> > .prefixlen = 8 make 9 nodes be written on the node stack with size 8.
 > 
-> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-> ---
->  rust/kernel/page.rs | 32 ++++++++++++++++++++++++++++++--
->  1 file changed, 30 insertions(+), 2 deletions(-)
+> Hmm. It sounds possible, but pls demonstrate it with a selftest.
+> With the amount of fuzzing I'm surprised it was not discovered earlier.
 > 
-> diff --git a/rust/kernel/page.rs b/rust/kernel/page.rs
-> index a8288c15b860..465928986f4b 100644
-> --- a/rust/kernel/page.rs
-> +++ b/rust/kernel/page.rs
-> @@ -31,11 +31,12 @@ pub const fn page_align(addr: usize) -> usize {
->      (addr + (PAGE_SIZE - 1)) & PAGE_MASK
->  }
->  
-> -/// A pointer to a page that owns the page allocation.
-> +/// A pointer to a page that may own the page allocation.
->  ///
->  /// # Invariants
->  ///
-> -/// The pointer is valid, and has ownership over the page.
-> +/// The pointer is valid, and has ownership over the page if the page is allocated by this
-> +/// abstraction.
->  #[repr(transparent)]
->  pub struct Page {
->      page: Opaque<bindings::page>,
-> @@ -88,6 +89,33 @@ pub fn alloc_page(flags: Flags) -> Result<Owned<Self>, AllocError> {
->          Ok(unsafe { Owned::to_owned(ptr) })
->      }
->  
-> +    /// This is just a wrapper to vmalloc_to_page which returns an existing page mapping, hence
+> pw-bot: cr
 
-In documentation, try to avoid filler words, such as "just". Better say
-something like:
+I sent this again because lkml did not understand previous one which is
+8B encoded.
 
-"This is an abstraction around the C `vmalloc_to_page()` function. Note that by
-a call to this function the caller doesn't take ownership of the returned `Page`
-[...]."
+With a simple test below, the kernel crashes in a minute or you can
+discover the bug on KFENCE-enabled kernels easily.
 
-> +    /// we don't take ownership of the page. Returns an error if the pointer is null or if it
-> +    /// is not returned by vmalloc().
-> +    pub fn vmalloc_to_page<'a>(
-> +        cpu_addr: *const core::ffi::c_void
+#!/bin/bash
+bpftool map create /sys/fs/bpf/lpm type lpm_trie key 5 value 1 \
+entries 16 flags 0x1name lpm
 
-When you have a raw pointer argument in your function it becomes unsafe by
-definition.
+for i in {0..8}; do
+	bpftool map update pinned /sys/fs/bpf/lpm \
+	key hex 0$i 00 00 00 00 \
+	value hex 00 any
+done
 
-I also think it would also be better to pass a `NonNull<u8>` instead.
+while true; do
+	bpftool map dump pinned /sys/fs/bpf/lpm
+done
 
-> +    ) -> Result<&'a Self, AllocError>
+In my environment (6.12-rc4, with CONFIG_KFENCE), dmesg gave me this
+message as expected.
 
-Please don't use `AllocError`. We're not allocating anything here.
+[  463.141394] BUG: KFENCE: out-of-bounds write in trie_get_next_key+0x2f2/0x670
 
-Anyway, do we need this as a separate function at all?
+[  463.143422] Out-of-bounds write at 0x0000000095bc45ea (256B right of kfence-#156):
+[  463.144438]  trie_get_next_key+0x2f2/0x670
+[  463.145439]  map_get_next_key+0x261/0x410
+[  463.146444]  __sys_bpf+0xad4/0x1170
+[  463.147438]  __x64_sys_bpf+0x74/0xc0
+[  463.148431]  do_syscall_64+0x79/0x150
+[  463.149425]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
-> +    {
-> +        if cpu_addr.is_null() {
-> +            return Err(AllocError);
-> +        }
-> +        // SAFETY: We've checked that the pointer is not null, so it is safe to call this method.
-> +        if unsafe { !bindings::is_vmalloc_addr(cpu_addr) } {
-> +            return Err(AllocError);
-> +        }
-> +        // SAFETY: We've initially ensured the pointer argument to this function is not null and
-> +        // checked for the requirement the the buffer passed to it should be allocated by vmalloc,
-> +        // so it is safe to call this method.
-> +        let page = unsafe { bindings::vmalloc_to_page(cpu_addr) };
-> +        if page.is_null() {
-> +            return Err(AllocError);
-> +        }
+[  463.151436] kfence-#156: 0x00000000279749c1-0x0000000034dc4abb, size=256, cache=kmalloc-256
 
-I think those should all return `EINVAL` instead.
-
-> +        // CAST: `Self` is a `repr(transparent)` wrapper around `bindings::page`.
-> +        // SAFETY: We just successfully allocated a page, therefore dereferencing
-> +        // the page pointer is valid.
-> +        Ok(unsafe { &*page.cast() })
-> +    }
-> +
->      /// Returns a raw pointer to the page.
->      pub fn as_ptr(&self) -> *mut bindings::page {
->          self.page.get()
-> -- 
-> 2.43.0
-> 
+[  463.153414] allocated by task 2021 on cpu 2 at 463.140440s (0.012974s ago):
+[  463.154413]  trie_get_next_key+0x252/0x670
+[  463.155411]  map_get_next_key+0x261/0x410
+[  463.156402]  __sys_bpf+0xad4/0x1170
+[  463.157390]  __x64_sys_bpf+0x74/0xc0
+[  463.158386]  do_syscall_64+0x79/0x150
+[  463.159372]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
 
