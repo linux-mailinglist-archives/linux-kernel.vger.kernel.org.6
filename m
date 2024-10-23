@@ -1,164 +1,173 @@
-Return-Path: <linux-kernel+bounces-378620-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D28F99AD346
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:49:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 45BB39AD348
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:50:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8E8FE28367C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:49:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BF0BC1F21AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:50:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 638421CFEB1;
-	Wed, 23 Oct 2024 17:49:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B2D71CF5CB;
+	Wed, 23 Oct 2024 17:50:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PmaUHOyj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="X3h5u2jw"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9A2183CDA;
-	Wed, 23 Oct 2024 17:49:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8DAB83CDA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:50:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729705782; cv=none; b=hdbsXBPCmY86tE6RNcDhcpCESE+XBv4lP/UF/r/jH8PV09KSD8hvLJMM5qCvR8tosJ8L/1W1DMsMmyQ+ZF0k40QnkqQlpRstvrE0v4HHjgCuHLFTPrHdWWbrlCeIRoxk5ElfBBK1hziRPbEM4kKEtusXaObe4yl9mn4Z1u2+lBo=
+	t=1729705843; cv=none; b=uaP8ZbG8zCmFnC2fYo1ihr3N5yT2/mK+yvhAlHrwRDtXpj7D24f1YJR/kn0mrLaJY+QwfFNg85bscc7tqDfGPFm4rqIsGI7n633Qm+/d040+dVhpxhz21YptyN1pkE/fWYxKmabegWhqtnfUVVH3u6e4u4dmU1rYBZCUPYX+XvQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729705782; c=relaxed/simple;
-	bh=Y9TCwZlSJtdxla0/yzCRKiEB7fpt1K0qsHjdub3FmmI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GM1hw9PZc0Fh7PSUtacEM0GSmt8fAbgrvqQxnYBPecal3BaroR36gD9I+kgcHIZjAhgfD5VtaNbd2932nk5fEIlssFSSbLBZU2AcZzF9q9Vjk2dlIgZ6FVZb/ZPitWIYxOIAUyBcAJR/caQJzTDYOG0M2BdI/axTEtM2wKB5gEE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PmaUHOyj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6F927C4CEC6;
-	Wed, 23 Oct 2024 17:49:37 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729705782;
-	bh=Y9TCwZlSJtdxla0/yzCRKiEB7fpt1K0qsHjdub3FmmI=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PmaUHOyjsIF/s2la1gyF32OheLEFYO2AI4QhNAUdsnfJrj49zonUU4cw6ibqLFGP5
-	 BK2sMy2qBRhymGxX8A+qajT7n8bfs4XgPN+GP9qcq7pzt+dnPbn4r81WGWuliUXoSo
-	 sR47EOws80W1N1+icMf6x2b1H9Hj9f6nvc5ReYmk94otaSJDMLyg8sPsVRoUag3kyh
-	 hLRT0cQpCjGyeOYDAw1DQNJfqx24+0/Azn+Pv1fS0mCyhsxz1NiED1uVgiRKOU9T3A
-	 fVtbWSb3fqxIsHcvnIcsUGRKPEeGmGHI8TUsrMxSOftwDKuLnaAp428dQ4kz588HVF
-	 m46JExIV5UVxg==
-Message-ID: <fdb76466-3258-4c71-bca3-50fd3cc94a0e@kernel.org>
-Date: Wed, 23 Oct 2024 19:49:34 +0200
+	s=arc-20240116; t=1729705843; c=relaxed/simple;
+	bh=U+dF3PrseWIsY+0K+pH1rf7XUrawSY1PaLbYxhEONXU=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=L+gq5PGf87EmVuz4GtgdHNoyivRrdoQZTsXI0KcDi1xTslrQQJE3rT9HhYDrVVOsU49a1GZyu8gOXaJuc1u0S7FhihmTw5pZpoI5MmS+2GsDIGi3Ds3nN1+wePU/KDuqBIdbAGwxkxUtASznVMCfWN/qMSTJoh2segor4h14850=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=X3h5u2jw; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e5130832aso74164b3a.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:50:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729705841; x=1730310641; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=Tckut9jQa7rI5qyZ9d3+QecKLLm/EO/R4ZdBFp+YfyY=;
+        b=X3h5u2jw6YGO8hZCXFqb72BMcpKIRFGGHSPKq8QztRUhFgSq4N2Wv2nYu77EkmMcVK
+         6JIXjSEGFiEavd9sbOzu2Piq2plOJUWD0U7jKbgS4R+OYB//2n8uQBNlP5255XMIHi/h
+         UCIscavW/AvsZOmW+reLZrq1HC1WKlPUXwZjGmPbju1Ln9uoI9asd83ZSBuiSW3cUI2A
+         dLjJbFf5T8ca5Sa8LssDU8kHyMYky7w/voG8nCpol5K+/SqBFZs6twnSU49K2vgDb5DD
+         QDnaIgFg7hV7ezG7ciqf90D0LCvj1LFODZe09CcgKuejXywrKBMT3+zIhFelvUYDBTyJ
+         /16Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729705841; x=1730310641;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=Tckut9jQa7rI5qyZ9d3+QecKLLm/EO/R4ZdBFp+YfyY=;
+        b=cg7hJKf+ed17t7NjvOVRqxQ8vcwM3gwZCWM8WJAKB9YSbTwKS+VKVm1k3lmBiY+7Xy
+         hfC877G9hy857PhkQ7moGjait0GNh3WVc3ndmATphqxv5NacKjg51ymM7ya2PFTNFETE
+         gMCqGV8xd2UNWlkjS+WCRR4+dtz1mz+ZNeRkG2yetfyMBJdQ5fQqdo2/WAL4dgDGVVa8
+         PXd1Xe0tiTL9D4ahE+Lu9/GeuySdev3RxKeNIprVrwxIIc/9eTvrXmNmH9qmUeH0SQFW
+         qyPEL00kfBfpQgivtLsrJ2U1CW388sME7+OWOLecaole3ZRzl2+O/FjLtUT8cYgnKdSC
+         nQGw==
+X-Forwarded-Encrypted: i=1; AJvYcCVhLK2l1/GiVaWPMUirNRrgZBSXrgV2pgSwWsxJmFV9Osvd5na9zxgDMy4KDeijt4/qhbiOBqLPFT1BO4E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz4CM1jrW2DeYh2NCAke06qdRXks6CMm26IB38LcEO24s2wd+NY
+	mhtdUiRx2drYwY1vTR9ry3V4MWYY0ist6mlhS8KKPIyoT9e71phQ
+X-Google-Smtp-Source: AGHT+IHbC9BxbdNRtNpmuEEUlHVpNB2/puTTvWOYiXtmO2xMU+xZAuBvui1C9Ac0Lt++cOuZApV5Mg==
+X-Received: by 2002:a05:6a20:7b1e:b0:1d9:83cc:fd48 with SMTP id adf61e73a8af0-1d983ccfe02mr542463637.17.1729705841218;
+        Wed, 23 Oct 2024 10:50:41 -0700 (PDT)
+Received: from eqbm-smc020.dtc.local ([149.97.161.244])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13eb02bsm6817795b3a.178.2024.10.23.10.50.40
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 10:50:40 -0700 (PDT)
+From: Dongjoo Seo <dongjoo.linux.dev@gmail.com>
+To: akpm@linux-foundation.org,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org
+Cc: dave@stgolabs.net,
+	dan.j.williams@intel.com,
+	nifan@outlook.com,
+	a.manzanares@samsung.com,
+	Dongjoo Seo <dongjoo.linux.dev@gmail.com>
+Subject: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
+Date: Wed, 23 Oct 2024 10:50:37 -0700
+Message-Id: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/6] dt-bindings: clock: imx8m-anatop: support spread
- spectrum clocking
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Cc: linux-kernel@vger.kernel.org, linux-amarula@amarulasolutions.com,
- Conor Dooley <conor+dt@kernel.org>, Fabio Estevam <festevam@gmail.com>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Michael Turquette <mturquette@baylibre.com>, Peng Fan <peng.fan@nxp.com>,
- Pengutronix Kernel Team <kernel@pengutronix.de>,
- Rob Herring <robh@kernel.org>, Sascha Hauer <s.hauer@pengutronix.de>,
- Shawn Guo <shawnguo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org
-References: <20240928083804.1073942-1-dario.binacchi@amarulasolutions.com>
- <20240928083804.1073942-2-dario.binacchi@amarulasolutions.com>
- <566859c1-a397-4465-987e-0682b07a703e@kernel.org>
- <CABGWkvqqg-PGAZTCz=MMLRx5F93jaN_=z8zJt1sDd3PHXd80PQ@mail.gmail.com>
- <6c3e6071-822f-4230-b76b-276330de07ef@kernel.org>
- <CABGWkvrU507BHoP94Y7fEyFr=chuuy3o=oBHtuWRvwTw3GnxXw@mail.gmail.com>
- <82db5037-bbd3-4005-bde9-02df1bf4c475@kernel.org>
- <CABGWkvqXZ+YAvo-AtUy+Ftdu0xxXKuhOwcSTwO5Fv6D3yzttNg@mail.gmail.com>
- <b847ccb1-1eb8-4119-8612-212804cb50d8@kernel.org>
- <CABGWkvqkmo9O-O1taR651W4xo=yqar=p71e0LKqRte2CGZ2Z8w@mail.gmail.com>
- <7bce31c0-8c74-4d65-812f-01951a0d75d1@kernel.org>
- <CABGWkvqFi_y8OzKbi=K7ucW4RuY_zh6Z4a=uO2oqQRoVE8LaCQ@mail.gmail.com>
- <CABGWkvrR-vVTpNSBD_etjn4SteO8cpUed+dTvYguHR67UUSsYA@mail.gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <CABGWkvrR-vVTpNSBD_etjn4SteO8cpUed+dTvYguHR67UUSsYA@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23/10/2024 16:58, Dario Binacchi wrote:
->>>>
->>>> This is another commit [1] on enabling spread spectrum that I
->>>> implemented some time ago for
->>>> the am335x. The most evident difference is that in that case the node
->>>> was a clock node and not
->>>> a clock controller, as in the case of anatop. The parameters are also
->>>> not exactly the same, but
->>>> that depends on the platform.
->>>>
->>>> [1] 4a8bc2644ef0cbf8e ("dt-bindings: ti: dpll: add spread spectrum support")
->>>
->>>
->>> OK, I still do not know what "0" was, but the items are fixed, so you
->>> know exactly which clock you are configuring here.
->>
->> So, after delving deeper into the topic, is it now acceptable to use
->> the property
->> "fsl,ssc-clocks" instead of "clocks"?  As in the patch I applied locally?
-> 
-> A gentle ping.
-> Sorry, but I haven't yet received your response to the previous email,
-> and I'm not sure how to proceed.
-> 
+This patch corrects this issue by:
+1. Checking if the zone or preferred zone is CPU-less before updating
+   the NUMA stats.
+2. Ensuring NUMA_HIT is only updated if the zone is not CPU-less.
+3. Ensuring NUMA_FOREIGN is only updated if the preferred zone is not
+   CPU-less.
 
-Yeah, the property is fine, but I don't think you need the clock index.
-The lists - like clocks and your spread property - have strictly defined
-items, so it is enough if schema lists items and says which spread
-points to which clock.
+Example Before and After Patch:
+- Before Patch:
+ node0                   node1           node2
+ numa_hit                86333181       114338269            5108
+ numa_miss                5199455               0        56844591
+ numa_foreign            32281033        29763013               0
+ interleave_hit                91              91               0
+ local_node              86326417       114288458               0
+ other_node               5206219           49768        56849702
 
+- After Patch:
+                            node0           node1           node2
+ numa_hit                 2523058         9225528               0
+ numa_miss                 150213           10226        21495942
+ numa_foreign            17144215         4501270               0
+ interleave_hit                91              94               0
+ local_node               2493918         9208226               0
+ other_node                179351           27528        21495942
 
-P.S. I think you might pinged me on IRC, but you know,
-https://nohello.net/en/
+In the case of memoryless node, when a process prefers a node
+with no memory(e.g., because it is running on a CPU local to that
+node), the kernel treats a nearby node with memory as the
+preffered node. As a result, such allocation do not increment the
+numa_foreign counter on the memoryless node, leading to skewed
+NUMA_HIT, NUMA_MISS, and NUMA_FOREIGN stat for the nearest node.
 
+Similarly, in the context of cpuless nodes, this patch ensures
+that NUMA statistics are accurately updated by adding checks to
+prevent the miscounting of memory allocations when the involved
+nodes have no CPUs. This ensures more precise tracking of memory
+access patterns accross all nodes, regardless of whether they
+have CPUs or not, improving the overall reliability of NUMA stat.
+The reason is that page allocation from dev_dax, cpuset, memcg ..
+comes with preferred allocating zone in cpuless node and its hard
+to track the zone info for miss information.
 
-Best regards,
-Krzysztof
+Signed-off-by: Dongjoo Seo <dongjoo.linux.dev@gmail.com>
+Cc: Davidlohr Bueso <dave@stgolabs.net>
+Cc: Fan Ni <nifan@outlook.com>
+Cc: Dan Williams <dan.j.williams@intel.com>
+Cc: Adam Manzanares <a.manzanares@samsung.com>
+---
+ mm/page_alloc.c | 10 ++++++----
+ 1 file changed, 6 insertions(+), 4 deletions(-)
+
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 0f33dab6d344..2981466e8e1a 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2894,19 +2894,21 @@ static inline void zone_statistics(struct zone *preferred_zone, struct zone *z,
+ {
+ #ifdef CONFIG_NUMA
+ 	enum numa_stat_item local_stat = NUMA_LOCAL;
++	bool z_is_cpuless = !node_state(zone_to_nid(z), N_CPU);
++	bool pref_is_cpuless = !node_state(zone_to_nid(preferred_zone), N_CPU);
+ 
+-	/* skip numa counters update if numa stats is disabled */
+ 	if (!static_branch_likely(&vm_numa_stat_key))
+ 		return;
+ 
+-	if (zone_to_nid(z) != numa_node_id())
++	if (zone_to_nid(z) != numa_node_id() || z_is_cpuless)
+ 		local_stat = NUMA_OTHER;
+ 
+-	if (zone_to_nid(z) == zone_to_nid(preferred_zone))
++	if (zone_to_nid(z) == zone_to_nid(preferred_zone) && !z_is_cpuless)
+ 		__count_numa_events(z, NUMA_HIT, nr_account);
+ 	else {
+ 		__count_numa_events(z, NUMA_MISS, nr_account);
+-		__count_numa_events(preferred_zone, NUMA_FOREIGN, nr_account);
++		if (!pref_is_cpuless)
++			__count_numa_events(preferred_zone, NUMA_FOREIGN, nr_account);
+ 	}
+ 	__count_numa_events(z, local_stat, nr_account);
+ #endif
+-- 
+2.39.2
 
 
