@@ -1,74 +1,134 @@
-Return-Path: <linux-kernel+bounces-377406-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377408-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 077C79ABE63
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:07:50 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 149379ABE68
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:08:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A78284FD5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:07:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C9BAF2850A0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:08:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B801474A4;
-	Wed, 23 Oct 2024 06:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F162E1474B7;
+	Wed, 23 Oct 2024 06:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w1E5TLJU"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X82Z5W4g"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3864813AA31;
-	Wed, 23 Oct 2024 06:07:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4F51BC4E;
+	Wed, 23 Oct 2024 06:08:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729663648; cv=none; b=qTxcBl5vFNKymrACSUNKXJNfTyigHi7+EzC53MHuI0TejBWXLz/WSyhDdzQcbOGv2EK1dkyAtcXwD7Oa2/582debnY2/xKDbAicTjf53QH9rRmG9YB5BqZ4vG6xnnBoXw3LkVspc8oPSA0noz1jrPERy2I3G/hIBODkcwQV93rg=
+	t=1729663696; cv=none; b=C1N71S7oaLv5rs6N0Q2boA2eh3s21jX+/N+1ylei1ESJMgX46jXjbpF7ED+AI+qNUC3ihEp7dRYuHHFfvh6yq4JrhTOiQJb8g1ZDCCRPjj31cm6FEP57ZPMCBarLPEfclPSYvGAQUVCkSABuovcxm7Ogr66EzHh1BxrqPIVVwgU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729663648; c=relaxed/simple;
-	bh=PtLcYvKP0GfRAQi53/bCbk06mlyUQ8B3NMXd+33V9iE=;
+	s=arc-20240116; t=1729663696; c=relaxed/simple;
+	bh=j4XMlJCKKl/NCp8f3DD3ZgpEl3aj4KSw7rw+sv4iyB0=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=iKsXqFicgZaelKfezdj3JqNJklJmhbcuJYn534FsjNqApsZ0ZyiaZR86GD0YT7tB+Xu0s4hBtwR2EChXPlNLLuLNF6XnJ4RUZj4HtBU+ZY4e7xSOtdmTr9KyQ3fOpSP6Qs+wHDJ2KZdMJwP44B6PREC1qXxU/ZqdT3zCNIsZn7I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w1E5TLJU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967BEC4CEC7;
-	Wed, 23 Oct 2024 06:07:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
-	s=korg; t=1729663648;
-	bh=PtLcYvKP0GfRAQi53/bCbk06mlyUQ8B3NMXd+33V9iE=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=VaT2rMPkUejWVJYSGZwq3X13RPz6J8U9wA9v6tRMdcZZVCXWAtp/wpPYngYpzG9mQ9MWZK2rxwR6XWF2PDS7D/CtML6RZr3yJ7wXxp5VsBKODu6bCraXkQ4HtPoqt/2RIdCMRiy0tfdiDfwVNRjeytNwnbt4JHck8Wl5wYJ+Vfo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X82Z5W4g; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 29111C4CEC6;
+	Wed, 23 Oct 2024 06:08:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729663695;
+	bh=j4XMlJCKKl/NCp8f3DD3ZgpEl3aj4KSw7rw+sv4iyB0=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=w1E5TLJUKyJFbVBjfd1b6eMRKeTrezyKji5SgY9obDN0FbWd68KrH15291SCYw4qh
-	 vlewGVIzG7YVbFDTbQ8YjZPsABaeiJ2EnpTNGOONIN6YQ66bB6IE6AOHQ3ub1sUq6Z
-	 qxJM9PFWWp5WFoZVdhDOM8iA62fjjyn1JlNk7M3c=
-Date: Wed, 23 Oct 2024 08:07:25 +0200
-From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-To: Li Lingfeng <lilingfeng3@huawei.com>
-Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
-	linux-cve-announce@vger.kernel.org,
-	Mikulas Patocka <mpatocka@redhat.com>,
-	yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>,
-	"zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao <houtao1@huawei.com>,
-	chengzhihao1@huawei.com, zhangerying <zhangerying@huawei.com>
-Subject: Re: CVE-2024-47725: dm-verity: restart or panic on an I/O error
-Message-ID: <2024102352-stable-eats-61b2@gregkh>
-References: <2024102104-CVE-2024-47725-f698@gregkh>
- <ba190e58-634a-247d-1751-b5ed7dd45982@huawei.com>
+	b=X82Z5W4gyo0iAwJOPV2j9Pr7vNlIie3ww7Npft8tTl1O06r02076tsqUUPxILhjpd
+	 j4qTPGr2XpszinTEn8nOC2QWiJ1hVJ5IOyYYoa5VOxoMIAJPXrc6NQUeaZ+XC9k4rt
+	 aYyGModaYkn6PKKAsg0lTiHEBMGjTwka/l+ggL17d66f8wE9xyR8HagCXjHxvNTvCj
+	 KexLmt5m7h8ehk9nIYQGWqOzSWwXHrDEzpdObd374g/uE5nHMCA+2A9GzM22ywY3J7
+	 9oznCHM1t8xg898ahtONtwrqq0T0D8Gd0ugZrrDp4dIrlWjgeH5yA6fbuYE4ZwbBX2
+	 ttdfRjUa0cVCw==
+Date: Wed, 23 Oct 2024 11:38:11 +0530
+From: Vinod Koul <vkoul@kernel.org>
+To: =?iso-8859-1?B?Q3Pza+Fz?= Bence <csokas.bence@prolan.hu>
+Cc: Mesih Kilinc <mesihkilinc@gmail.com>, dmaengine@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kernel@vger.kernel.org, alsa-devel@alsa-project.org,
+	linux-sunxi@googlegroups.com, Rob Herring <robh+dt@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Maxime Ripard <maxime.ripard@bootlin.com>,
+	Chen-Yu Tsai <wens@csie.org>, Liam Girdwood <lgirdwood@gmail.com>,
+	Mark Brown <broonie@kernel.org>, Jaroslav Kysela <perex@perex.cz>,
+	Takashi Iwai <tiwai@suse.com>
+Subject: Re: [RFC PATCH 00/10] Add support for DMA and audio codec of F1C100s
+Message-ID: <ZxiSywkxggKboVRF@vaman>
+References: <cover.1543782328.git.mesihkilinc@gmail.com>
+ <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=iso-8859-1
 Content-Disposition: inline
-In-Reply-To: <ba190e58-634a-247d-1751-b5ed7dd45982@huawei.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
 
-On Wed, Oct 23, 2024 at 09:37:26AM +0800, Li Lingfeng wrote:
-> Hi
+On 23-10-24, 00:52, Csókás Bence wrote:
+> Hi,
+> I was trying to get audio on the F1C200s, but so far had no luck, and I came
+> across this series.
 > 
-> I noticed that the fix patch for this CVE has been reverted by commit
-> 462763212dd7("Revert: "dm-verity: restart or panic on an I/O error"").
-> So should this CVE also be rejected?
+> On 2018. 12. 02. 22:23, Mesih Kilinc wrote:
+> > This is RFC patchset for Allwinner suniv F1C100s to support DMA and
+> > audio codec.
+> > 
+> > Allwinner F1C100s has a audio codec that has necessary digital and
+> > analog parts. It has r-l headphone output and microphone, line, r-l
+> > FM inputs. ADC can capture any inputs and also output channels via mux.
+> > Any input channels or DAC samples can feed output channels.
+> > 
+> > Add support for this audio codec.
+> > 
+> > F1C100s utilizes DMA channels to send and receive ADC-DAC samples. So
+> > DMA support needed. Patch 1~5 adds support for DMA. Suniv F1C100s has
+> > very similar DMA to sun4i. But there is some dissimilarities also.
+> > Suniv features a DMA reset bit in clock  control unit. It has smaller
+> > number of DMA channels. Several registers has different addresses.
+> > It's max burst size is 4 instead of 8. Also DMA endpoint numbers are
+> > different.
+> > 
+> > Patch 6 adds DMA max burst option to sun4i-codec.
+> > 
+> > Patch 7~8 Add support for suniv F1C100s audio codec.
+> > 
+> > Patch 9 adds audio codec to suniv-f1c100s.dtsi
+> > 
+> > Patch 10 adds audio codec support to Lichee Pi Nano board.
+> > Thanks!
+> > 
+> > Mesih Kilinc (10):
+> >    dma-engine: sun4i: Add a quirk to support different chips
+> >    dma-engine: sun4i: Add has_reset option to quirk
+> >    dt-bindings: dmaengine: Add Allwinner suniv F1C100s DMA
+> >    dma-engine: sun4i: Add support for Allwinner suniv F1C100s
+> >    ARM: dts: suniv: f1c100s: Add support for DMA
+> >    ASoC: sun4i-codec: Add DMA Max Burst field
+> >    dt-bindigs: sound: Add Allwinner suniv F1C100s Audio Codec
+> >    ASoC: sun4i-codec: Add support for Allwinner suniv F1C100s
+> >    ARM: dts: suniv: f1c100s: Add support for Audio Codec
+> >    ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
+> > 
+> >   .../devicetree/bindings/dma/sun4i-dma.txt          |   4 +-
+> >   .../devicetree/bindings/sound/sun4i-codec.txt      |   5 +
+> >   arch/arm/boot/dts/suniv-f1c100s-licheepi-nano.dts  |   8 +
+> >   arch/arm/boot/dts/suniv-f1c100s.dtsi               |  25 ++
+> >   drivers/dma/Kconfig                                |   4 +-
+> >   drivers/dma/sun4i-dma.c                            | 221 ++++++++++--
+> >   sound/soc/sunxi/sun4i-codec.c                      | 371 ++++++++++++++++++++-
+> >   7 files changed, 601 insertions(+), 37 deletions(-)
+> 
+> What's the status of this series? I see that it was not merged, despite
+> getting a few ACKs and only a few minor comments. Ripard's comments make me
+> believe that the sun4i DMA driver should be able to handle the suniv family
+> with minimal adjustments, have those not been added? Or is it that the DMA
+> support is ready but the ALSA/ASoC support is missing?
 
-Yes it should, as the revert happened in the same releases.  I'll go do
-that now, thanks for the review!
+Maybe split the series and post dma and audio parts separately for review
 
-greg k-h
+-- 
+~Vinod
 
