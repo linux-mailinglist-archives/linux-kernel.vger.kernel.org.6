@@ -1,252 +1,198 @@
-Return-Path: <linux-kernel+bounces-377764-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377769-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2617C9AC665
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:27:37 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D9049AC679
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:29:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B0F11C20F03
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:27:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3E43B1C219F2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:29:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D412719CC1C;
-	Wed, 23 Oct 2024 09:27:24 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 684D019ADAA;
+	Wed, 23 Oct 2024 09:28:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="cRnc59nW"
+Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59C9D145323;
-	Wed, 23 Oct 2024 09:27:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14CA91A0737
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729675644; cv=none; b=ln8V5xk1f5KNuyhtrg7ud0ijrlthCY8cdxJXHGegrsp0NAz/LsVoQvDEXhzzacd7iPO3Jpt2fCHdXdyCe1FynisSzorMeiGIn9v29xSrI2AUu1GXWntyFugCHCa39ag88rVZXGGS76ZfJ2xbtJ2CZB9uIY/oYbU7uRU9G7PRiIA=
+	t=1729675711; cv=none; b=R7pDtGhgLreaeIzUk59XZjPdFlMK/pAZWue9yMf+CBr/FA6jeMeRw8a9yH+yIocv9g+CKCWvMplMcFQ4cSl429jvKV6l/GcAzV2KpeFru2M1jQxIn5ssylpI+Zf0yj3wO5d5tn/52p7TtS1PawFaArekqrWTF+LSpJ0lglahqQ4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729675644; c=relaxed/simple;
-	bh=NRKFTqcKkOyFgqi22cM2rjhSz13skaSGpnm2/JRTwAM=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=EA2hHlqE3gPy1g0jOCqql/86cSEa5TEVwS4PkfP5dTMI5xYS7n8LBbpsBOcke2Mun02A1mVjZBy6Yd+em9XucGobwiZTfUCV6hSJxOWlPyQzc50RgBBQiCcQ9KtO4nL3jcwPMbTBBtu3PMyuvb5jNkF+UNOVd/HUqDTVWEE+ZgE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 080BDC4CECD;
-	Wed, 23 Oct 2024 09:27:22 +0000 (UTC)
-Date: Wed, 23 Oct 2024 05:27:19 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: Michael Schmitz <schmitzmic@gmail.com>, Geert Uytterhoeven
- <geert@linux-m68k.org>, linux-m68k@lists.linux-m68k.org,
- linux-kernel@vger.kernel.org, linux-trace-kernel@vger.kernel.org
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-Message-ID: <20241023052719.4c43b7af@rorschach.local.home>
-In-Reply-To: <57719b35-5e7a-4c9e-b9a3-5017dec73803@yoseli.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
-	<20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
-	<4ab85330-5a50-bde1-f014-99a8e7cb28cc@gmail.com>
-	<86eea4de-2696-4485-9c16-cd3fbbd1aae6@yoseli.org>
-	<4e93964e-bafb-0474-743f-8280c46898f4@gmail.com>
-	<57719b35-5e7a-4c9e-b9a3-5017dec73803@yoseli.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729675711; c=relaxed/simple;
+	bh=+euBRe+YJJ5kwBl8JCch+oTPenUgNUWi3HDBLbYPpTI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=tVm2X8jSbMbjntItdIb8V7noNKzlz8clm92jPwmQwWcEAg/Eiq/eDMUmrcJEPluom8yKLnH0VSyYzLn1gyEsMfdJ++F0y6RR+atGpnMf420Fi67PWzVfEDX1Kgqgl8AYyT82St8Gurqelo0gcgnTTGtMR4v86uMumY9GcWgaK1s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=cRnc59nW; arc=none smtp.client-ip=209.85.128.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-42f6bec84b5so72639565e9.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:28:29 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729675708; x=1730280508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=4HjhUWQx3FhByOzspd9YJMOCO+cWepr8CDKy9yIPq1U=;
+        b=cRnc59nWVQPohhyyAegBbQUGatz7xdMcYb3H9QaCgQUJsIbOF6G7+enX5tNZdTYOMh
+         UXhj+hkQn6ShaxOB0C4CSt7AY82bKnoK0aG1IlHWR1aOZbvpH0eiDP1zRmI8jThrW1Pb
+         05581wCIdq/WuEpAtrPo8KbrZwq7MNR2UAdgrZjpu2j2ttO8l0O0743H5P+Ai+YdMppG
+         acJekD5KD5mCdmyrwPaQ1AjKXgiO5TIpyDPV8eOdFVUDtGMKf1d+/1wcCu7vbFadiozU
+         7BfLryIprwzt9Go0xLu2w8BdYLk0olOX0Nt+U1mYC3ZQsNk8oAb86VOB3hcmO4qpmtWk
+         u/ag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729675708; x=1730280508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=4HjhUWQx3FhByOzspd9YJMOCO+cWepr8CDKy9yIPq1U=;
+        b=wnIwlrI5Ss+d9o0+v5rOb4EMAeBhtME0+fvnrk930gG13zUFZ8sjiqcmu6DNJMMXkB
+         XQbh5Gx4IL9+0jtF7KOCSPl4Tq6x+vbzqc6ZXZ1qeuo3pSmsbAwCgL1bU0QA4gzqltAf
+         6DfSNhQNUU81fwKKVWA+PlAzYqwu4do4DxF5bCP5L4Un22R0CbYn2ja4dtYQzR3hNpia
+         awUtPpG6uKvVl53Oe0JgYPBTT5DosRGncSt9IpRamhlvo1EdZ1bIOM74L9d1TBIMN5YH
+         oLGyT4oU0htulfQ/FxX5AuEI/fKMUIVMgVqnOazrRgqS6jHir9EndMThgi9/vA6sYJXX
+         lr3A==
+X-Forwarded-Encrypted: i=1; AJvYcCUnyLbeISQEZtACHiTNAexlIiOyOqN2uplwn677x/jbEMIZlIJFl8pdeep1pTddciL8MQX0qwzVfDS2m/g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwFUVye8fKKEJEBeZvRGpfnoOsnva99tK0zkjetBKT9dLr1Ix/C
+	1Obmt8DcJod4Iv8fC2vq6DwSb312D2fEQTU2ycaTKgJrNuHcU5AUhOU+E4Crz7542OU50rG3xk+
+	IxevpR32Y7v9F0bPcBzcC5slN/GpjAuWWUh1D
+X-Google-Smtp-Source: AGHT+IHTtT5ppppgEclk0pUPkMtYrNEcLz+4PVx4rtK92P8V92Y4yNZSUNpPVUalV85KF3okbYL8p/xnOuvpEDM4bAI=
+X-Received: by 2002:a05:600c:1d98:b0:42c:b995:2100 with SMTP id
+ 5b1f17b1804b1-431841320f1mr15567365e9.6.1729675708278; Wed, 23 Oct 2024
+ 02:28:28 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
+References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com> <20241022224832.1505432-2-abdiel.janulgue@gmail.com>
+In-Reply-To: <20241022224832.1505432-2-abdiel.janulgue@gmail.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 23 Oct 2024 11:28:13 +0200
+Message-ID: <CAH5fLgjZ91xFo4hV4dPnDXLFr9jX3na60tVt_KuNU_c6WhhzAA@mail.gmail.com>
+Subject: Re: [PATCH v2 1/5] rust: types: add `Owned` type and `Ownable` trait
+To: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+Cc: rust-for-linux@vger.kernel.org, dakr@redhat.com, 
+	linux-kernel@vger.kernel.org, airlied@redhat.com, 
+	miguel.ojeda.sandonis@gmail.com, boqun.feng@gmail.com
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Wed, 23 Oct 2024 10:59:42 +0200
-Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
+On Wed, Oct 23, 2024 at 12:49=E2=80=AFAM Abdiel Janulgue
+<abdiel.janulgue@gmail.com> wrote:
+>
+> Add the 'Owned' type, a simple smart pointer type that owns the
+> underlying data.
+>
+> An object implementing `Ownable' can constructed by wrapping it in
+> `Owned`, which has the advantage of allowing fine-grained control
+> over it's resource allocation and deallocation.
+>
+> Co-developed-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Boqun Feng <boqun.feng@gmail.com>
+> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
+> ---
+>  rust/kernel/types.rs | 62 ++++++++++++++++++++++++++++++++++++++++++++
+>  1 file changed, 62 insertions(+)
+>
+> diff --git a/rust/kernel/types.rs b/rust/kernel/types.rs
+> index ced143600eb1..3f632916bd4d 100644
+> --- a/rust/kernel/types.rs
+> +++ b/rust/kernel/types.rs
+> @@ -429,3 +429,65 @@ pub enum Either<L, R> {
+>      /// Constructs an instance of [`Either`] containing a value of type =
+`R`.
+>      Right(R),
+>  }
+> +
+> +/// A smart pointer that owns the underlying data `T`.
+> +///
+> +/// This is a simple smart pointer that owns the underlying data. Typica=
+lly, this would be
+> +/// returned as a wrapper for `T` in `T`'s constructor.
+> +/// When an object adds an option of being constructed this way, in addi=
+tion to implementing
+> +/// `Drop`, it implements `Ownable` as well, thus having finer-grained c=
+ontrol in where
+> +/// resource allocation and deallocation happens.
+> +///
+> +/// # Invariants
+> +///
+> +/// The pointer is always valid and owns the underlying data.
+> +pub struct Owned<T: Ownable> {
+> +    ptr: NonNull<T>,
+> +}
+> +
+> +impl<T: Ownable> Owned<T> {
+> +    /// Creates a new smart pointer that owns `T`.
+> +    ///
+> +    /// # Safety
+> +    /// `ptr` needs to be a valid pointer, and it should be the unique o=
+wner to the object,
+> +    /// in other words, no other entity should free the underlying data.
+> +    pub unsafe fn to_owned(ptr: *mut T) -> Self {
 
->=20
-> Sadly, not that straightforward.
-> I have this patch right now:
-> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-> index b2a3093af677..fc4a2d124514 100644
-> --- a/arch/m68k/Kconfig
-> +++ b/arch/m68k/Kconfig
-> @@ -41,6 +41,7 @@ config M68K
->          select ZONE_DMA
->          select ARCH_SUPPORTS_RT
->          select IRQ_FORCED_THREADING
-> +       select TRACE_IRQFLAGS_SUPPORT
->=20
->   config CPU_BIG_ENDIAN
->          def_bool y
-> diff --git a/arch/m68k/coldfire/entry.S b/arch/m68k/coldfire/entry.S
-> index 4ea08336e2fb..fbdc4404f29e 100644
-> --- a/arch/m68k/coldfire/entry.S
-> +++ b/arch/m68k/coldfire/entry.S
-> @@ -57,6 +57,9 @@ enosys:
->   ENTRY(system_call)
->          SAVE_ALL_SYS
->          move    #0x2000,%sr             /* enable intrs again */
-> +#ifdef CONFIG_TRACE_IRQFLAGS
-> +       jbsr    trace_hardirqs_on
-> +#endif
+Please rename this function to from_raw to match the name used by
+other similar functions.
 
-Note, the trace_hardirqs_on/off() needs to be done when interrupts are
-disabled. That is:
+Also, I don't love this wording. We don't really want to guarantee
+that it is unique. For example, pages have one primary owner, but
+there can be others who also have refcounts to the page, so it's not
+really unique. I think you just want to say that `ptr` must point at a
+valid value of type `T`, and it must remain valid until `ptr_drop` is
+called.
 
-	__local_irq_disable();
-	trace_hardirqs_off();
+> +impl<T: Ownable> Deref for Owned<T> {
+> +    type Target =3D T;
+> +
+> +    fn deref(&self) -> &Self::Target {
+> +        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object, so it is
+> +        // safe to dereference it.
+> +        unsafe { self.ptr.as_ref() }
+> +    }
+> +}
+> +
+> +impl<T: Ownable> DerefMut for Owned<T> {
+> +    fn deref_mut(&mut self) -> &mut Self::Target {
+> +        // SAFETY: By the type invariant, there is necessarily a referen=
+ce to the object, so it is
+> +        // safe to dereference it.
+> +        unsafe { self.ptr.as_mut() }
+> +    }
+> +}
 
-	[..]
+We only want Deref, not DerefMut. DerefMut both requires uniqueness in
+a way that is stronger than what we can really promise, and it also
+implies that the value is *not* pinned, but we generally want to use
+Owned with pinned things. Thus, we can't use DerefMut.
 
-	trace_hardirqs_on();
-	__local_irq_enable();
+> +/// An Ownable type is a type that can be put into `Owned<T>`, and when =
+`Owned<T>` drops,
+> +/// `ptr_drop` will be called.
+> +pub unsafe trait Ownable {
+> +    /// # Safety
+> +    /// This could only be called in the `Owned::drop` function.
+> +    unsafe fn ptr_drop(ptr: *mut Self);
+> +}
+> +
+> +impl<T: Ownable> Drop for Owned<T> {
+> +    fn drop(&mut self) {
+> +       // SAFETY: In Owned<T>::drop.
+> +       unsafe {
+> +           <T as Ownable>::ptr_drop(self.ptr.as_mut());
 
-I don't know the m68k assembly, but from the comments it looks like you
-are calling these with interrupts enabled.
+This uses NonNull::as_mut which creates a mutable reference. You
+should use NonNull::as_ptr instead.
 
--- Steve
+Also this code will look better if you move the semicolon so it is
+outside of the unsafe block.
 
 
->          GET_CURRENT(%d2)
->=20
->          cmpl    #NR_syscalls,%d0
-> @@ -99,6 +102,9 @@ ENTRY(system_call)
->          addql   #4,%sp
->=20
->   ret_from_exception:
-> +#ifdef CONFIG_TRACE_IRQFLAGS
-> +       jbsr    trace_hardirqs_off
-> +#endif
->          move    #0x2700,%sr             /* disable intrs */
->          btst    #5,%sp@(PT_OFF_SR)      /* check if returning to kernel =
-*/
->          jeq     Luser_return            /* if so, skip resched, signals =
-*/
-> @@ -140,6 +146,9 @@ Lreturn:
->   Lwork_to_do:
->          movel   %a0@(TINFO_FLAGS),%d1   /* get thread_info->flags */
->          move    #0x2000,%sr             /* enable intrs again */
-> +#ifdef CONFIG_TRACE_IRQFLAGS
-> +       jbsr    trace_hardirqs_on
-> +#endif
->          btst    #TIF_NEED_RESCHED,%d1
->          jne     reschedule
->=20
-> But it fails when init is called:
-> [    5.313000] Run /bin/bash as init process
-> [    5.314000]   with arguments:
-> [    5.315000]     /bin/bash
-> [    5.316000]   with environment:
-> [    5.317000]     HOME=3D/
-> [    5.318000]     TERM=3Dlinux
-> [    5.684000] Kernel panic - not syncing: Attempted to kill init!=20
-> exitcode=3D0x0000000b
-> [    5.684000] CPU: 0 UID: 0 PID: 1 Comm: bash Not tainted=20
-> 6.12.0-rc4-00049-g4393ca34ead3 #364
-> [    5.684000] Stack from 41a03e18:
-> [    5.684000]         41a03e18 41540187 41540187 0000000a ffffffff=20
-> 415a8fb4 4140dd90 41416588
-> [    5.684000]         41540187 4140d5de 4102ba84 4100b19c 4100b1a8=20
-> 00000000 41a38000 4102ba3a
-> [    5.684000]         41a03ea0 4100c34a 4150e87e 0000000b 0000000b=20
-> 41a03f80 0000000a 41a3c0d4
-> [    5.684000]         41a02000 400004d8 41a08000 4102ba3a 4102ba84=20
-> 00000000 00000000 000000ff
-> [    5.684000]         00000000 00000000 41a03ef4 4100cb82 0000000b=20
-> 0000000b 41a03f80 41a03f6c
-> [    5.684000]         41016cd2 0000000b 41a03f6c 0000001d 00000026=20
-> 0000048c ffffffff 00000006
-> [    5.684000] Call Trace: [<4140dd90>] _printk+0x0/0x18
-> [    5.684000]  [<41416588>] dump_stack+0xc/0x10
-> [    5.684000]  [<4140d5de>] panic+0xf2/0x2d4
-> [    5.684000]  [<4102ba84>] preempt_count_sub+0x0/0x2e
-> [    5.684000]  [<4100b19c>] arch_local_irq_enable+0x0/0xc
-> [    5.684000]  [<4100b1a8>] arch_irqs_disabled+0x0/0x10
-> [    5.684000]  [<4102ba3a>] preempt_count_add+0x0/0x1e
-> [    5.684000]  [<4100c34a>] do_exit+0x266/0x930
-> [    5.684000]  [<4102ba3a>] preempt_count_add+0x0/0x1e
-> [    5.684000]  [<4102ba84>] preempt_count_sub+0x0/0x2e
-> [    5.684000]  [<4100cb82>] do_group_exit+0x26/0xba
-> [    5.684000]  [<41016cd2>] get_signal+0x60e/0x76c
-> [    5.684000]  [<410044e8>] test_ti_thread_flag+0x0/0x14
-> [    5.684000]  [<4102ba94>] preempt_count_sub+0x10/0x2e
-> [    5.684000]  [<41004b68>] do_notify_resume+0x3a/0x4c6
-> [    5.684000]  [<41015d52>] force_sig_fault_to_task+0x32/0x3e
-> [    5.684000]  [<41015d72>] force_sig_fault+0x14/0x1a
-> [    5.684000]  [<41005606>] buserr_c+0x9a/0x188
-> [    5.684000]  [<410065fc>] Lsignal_return+0x14/0x24
-> [    5.684000]  [<410065de>] Lwork_to_do+0xe/0x18
-> [    5.684000]
-> [    5.684000] ---[ end Kernel panic - not syncing: Attempted to kill=20
-> init! exitcode=3D0x0000000b ]---
->=20
->=20
-> JM
->=20
-> >> =20
-> >>>
-> >>> Registers %d0-%d5 and %a0-%a2 are saved on the stack at this point and
-> >>> can be clobbered if need be. =20
-> >>
-> >> I don't know if they need to be clobbered... =20
-> >=20
-> > I meant to say that if you need registers to prepare function arguments=
-=20
-> > for trace_irqs_on/off() on the stack, these can be used. But that may=20
-> > not be necessary in this case.
-> >=20
-> > Cheers,
-> >=20
-> >  =C2=A0=C2=A0=C2=A0=C2=A0Michael
-> >=20
-> >  =20
-> >>
-> >> Thanks,
-> >> JM
-> >> =20
-> >>>
-> >>> Cheers,
-> >>>
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0 Michael
-> >>>
-> >>> =20
-> >>>>
-> >>>> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> >>>> ---
-> >>>> =C2=A0arch/m68k/Kconfig=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 | 1 +
-> >>>> =C2=A0arch/m68k/kernel/irq.c | 2 ++
-> >>>> =C2=A02 files changed, 3 insertions(+)
-> >>>>
-> >>>> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-> >>>> index
-> >>>> cc26df907bfe3c8143a931d259eceabb16af7411..ab3375475721fa63418c40d4ba=
-6ac76679ebc77d
-> >>>> 100644
-> >>>> --- a/arch/m68k/Kconfig
-> >>>> +++ b/arch/m68k/Kconfig
-> >>>> @@ -39,6 +39,7 @@ config M68K
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 select OLD_SIGSUSPEND3
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 select UACCESS_MEMCPY if !MMU
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 select ZONE_DMA
-> >>>> +=C2=A0=C2=A0=C2=A0 select TRACE_IRQFLAGS_SUPPORT
-> >>>>
-> >>>> =C2=A0config CPU_BIG_ENDIAN
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 def_bool y
-> >>>> diff --git a/arch/m68k/kernel/irq.c b/arch/m68k/kernel/irq.c
-> >>>> index
-> >>>> 9ab4f550342e5de11c528f55781432675ffd66bf..74cf60ebbc4bca51f3caa4046d=
-bd2bdb02355711
-> >>>> 100644
-> >>>> --- a/arch/m68k/kernel/irq.c
-> >>>> +++ b/arch/m68k/kernel/irq.c
-> >>>> @@ -21,9 +21,11 @@ asmlinkage void do_IRQ(int irq, struct pt_regs=20
-> >>>> *regs)
-> >>>> =C2=A0{
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 struct pt_regs *oldregs =3D set_irq_regs(re=
-gs);
-> >>>>
-> >>>> +=C2=A0=C2=A0=C2=A0 trace_hardirqs_off();
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 irq_enter();
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 generic_handle_irq(irq);
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 irq_exit();
-> >>>> +=C2=A0=C2=A0=C2=A0 trace_hardirqs_on();
-> >>>>
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0 set_irq_regs(oldregs);
-> >>>> =C2=A0}
-> >>>> =20
-> >> =20
-
+Alice
 
