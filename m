@@ -1,91 +1,142 @@
-Return-Path: <linux-kernel+bounces-378084-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378085-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B5309ACB2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:28:30 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F2B999ACB2D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:28:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 50613283943
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:28:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B4E79283E03
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD641ADFF7;
-	Wed, 23 Oct 2024 13:28:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 302231B4F25;
+	Wed, 23 Oct 2024 13:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="OudN8owg"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LqKDB4SW"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDE801DFEF
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:28:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5C151DFEF;
+	Wed, 23 Oct 2024 13:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729690105; cv=none; b=U7B7exSSkF0kUdHvuzTieyrPm+pdO/AX6ULZTgefWD0pWjPy7pdo5JOB59OC5IKp8MoKOF30jwhZXF3wfmwEIfDhsKA1j78Yl90LittBRjSqjpH7uIE6sNi+YPc/Hp6qHDe4Lc01Tteg1bONLBW2hELM1bH32HKV+Kq+wGAlgik=
+	t=1729690110; cv=none; b=hrLS344g44ZuZvrPOvIcDSE4j4UShmU+EfPQ7O31XoZOKXoehsLxNEtjxFZNi4w+hgJUUz4mYHs8FdidZQveD5h5YQWkkyS53nFkvpLUUwe8cfR8hTfJhecrMEiLYJhBL63V9GBtDSXgeM7MYaXbn+EafefAKP/Qn1FLIBNWdXM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729690105; c=relaxed/simple;
-	bh=YilXwYTF1EZ40CJXwCjjAwjt43uCB+NGMsmhAdeDftw=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=Mr9YDtkkSr/loUIxQg1BobI44X46W95l+CdsnRvUalny5Ww4aX6CHf+2eFkFqDJOhfa5cDnWpkkvaRx3z8Cw2NXEGrWYx5WMt0WVb36rZ67WQbq8Pcs9UiIfj7jQEocUppxbAYHgoReCedWbkDMTpEnwEaPnVS1XFZ/ATUJIwGg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=OudN8owg; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
-	s=protonmail3; t=1729690100; x=1729949300;
-	bh=3pOFyS/YAsAOctiWACFlhkUIICzQBNJM1BMSEUZeUOA=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=OudN8owgJVWeKHm8COuwi1v8OpShzpJPsGjx78ycBiQgEx01rEDAHc7yy6HSvUcN+
-	 2iCwBnNHjBVK/6e/+daWsFoQVz8e46QBJioyTFDzlG1pQ/E4FQ7ILXDB3Rsw2d6R7S
-	 Al+BiZaqsLcgmsQ3CgsJfmhL+1AvKIAKsDnFGiEdpLUnQtLy6nx0+C/wT4hcO9I4Fe
-	 P8JRul+mTCW0FaKV0QYIObEV0Eu83+VB4gQOjAkxuEeB0CDdywRhMX8Ccg7xkv2Lm2
-	 eWDN8hIhPEP0rLZG4omGyR6WZRiaI1aYP73r6zKgsel+zHC8JGbGtN+T9L/n145fsG
-	 +2t1j/5egxa+Q==
-Date: Wed, 23 Oct 2024 13:28:17 +0000
-To: ryabinin.a.a@gmail.com, glider@google.com, andreyknvl@gmail.com, dvyukov@google.com, vincenzo.frascino@arm.com
-From: =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Cc: kasan-dev@googlegroups.com, linux-kernel@vger.kernel.org, =?utf-8?Q?Dominik_Karol_Pi=C4=85tkowski?= <dominik.karol.piatkowski@protonmail.com>
-Subject: [PATCH] kasan: Fix typo in kasan_poison_new_object documentation
-Message-ID: <20241023132734.62385-1-dominik.karol.piatkowski@protonmail.com>
-Feedback-ID: 117888567:user:proton
-X-Pm-Message-ID: c0891f609ba3f3fc7d04bab32535c6be1f0bb978
+	s=arc-20240116; t=1729690110; c=relaxed/simple;
+	bh=24qEN6D0LTwvDWITbryGhmOhhVBgdVhMwO4Z2D8zL2A=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=P2DmuVNAlqctUE7cRrzoecALqjXYjBDjKV78po9VIk5mKqjsfHliDJ5c7mZB8ymdSOv25nBetbGAy9beVHwbrmEs6J6okaff2P14sIYtSvCBZN4Ivm1nvxZhw5i6+QZGn010dcz4wQJFaDPG4KlRNoFO9DNAOTQzrTKkbjMHPo0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LqKDB4SW; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb49510250so66535631fa.0;
+        Wed, 23 Oct 2024 06:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729690107; x=1730294907; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=5FukJiNYIfRRavDz6aUIEuTye2N8Bis4rnvXfShRyhg=;
+        b=LqKDB4SW+e6r7LsYSdV6wbRw9aSvaiXK4PLiRw3wXYxAoDpPG8OjS5JnnYj1dKR06h
+         mYKrVZTpLgq7QbwPG1pC5//XCxBTWzPncJ+d+qvfdKPWmCIElgdSpuI72bAbgKToA9fc
+         kLVdbkzm+LfAfz+Kqsx/Y+4nK1oGzNxSKKnS9TJjcHL5rIjpAbVmJ22TJjEkEdinnLGD
+         p7Hv08YixVD+EmwSl/G86fI3PErmGLpNT5Mber+RwaJ7XRjJ3Yo6RWGcxqhvfIfYxE77
+         +leVJpalbpAM8Rtexq97XvYJ2EHSGYSlALA9BIp6tlYZTOX0e6b0X8I4jBEmE2GrTHoY
+         2RlQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729690107; x=1730294907;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5FukJiNYIfRRavDz6aUIEuTye2N8Bis4rnvXfShRyhg=;
+        b=Zw5SxAvjy56wDfyEvUJ4Vr6qsSaPf+ee8j3izXTN+YYIl7ySx3KSZCWBkctETOSaug
+         BSdRP7sZXyQzPLwDYsst6oXqZGJHuTVxKkzRLLyR7HdLYDoYM+6JdTVu+DfH0BG1cQPI
+         n5/+l2A3+jMlYWzEEeXh/Gf13WSN06gQxDIJzUlI2az6WnEZa2aPmm4sQa3aX5MtXT8r
+         awzctDdC4/9DPT1e81TEAm29ZfaxfG5uuuvaHSomcsspRsPGOsCbct9GSVDel9ALED5H
+         BQjmDpMzesAXLMrG3a9WwlvoOW0D+GEK2GCq8vZInZ+O+yGq92zj+iGcGAyTFZtCeWLS
+         oOgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWLbMbB9j1DgKaFeD6rtBUu8bUgBpH6aF+dI5m8dWTlhrmsJKSDb2LRxtvzY1dX8SO5pAefEjXlceIdPVo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwML4y/Wc05SBYVSUooUT7YgbdIgT+rrCovubVMKojv9B84NSyF
+	GD2MWctLbknR4GnDO6egOq3qijuqu+zJbfGs2RCMKJeryfPhglb6
+X-Google-Smtp-Source: AGHT+IH7w1azbwgI6P68BjI4XS1dYhoR9JABmwXqtBbbny0QtGZJs22sYgrSMQAQlVFpCVHuqhn8WA==
+X-Received: by 2002:a05:651c:1989:b0:2fb:51f3:9212 with SMTP id 38308e7fff4ca-2fc9d32ed3bmr16687281fa.6.1729690106503;
+        Wed, 23 Oct 2024 06:28:26 -0700 (PDT)
+Received: from [192.168.1.107] ([178.136.36.129])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ae10131sm10607641fa.107.2024.10.23.06.28.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 06:28:26 -0700 (PDT)
+Message-ID: <ed4ada83-807a-44f5-840a-47b3a77c4eb9@gmail.com>
+Date: Wed, 23 Oct 2024 16:28:25 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] input/touchscreen: imagis: Fix not used variable
+ 'imagis_3038_data'
+To: Zeng Heng <zengheng4@huawei.com>, raymondhackley@protonmail.com,
+ dmitry.torokhov@gmail.com
+Cc: linux-input@vger.kernel.org, bobo.shaobowang@huawei.com,
+ linux-kernel@vger.kernel.org
+References: <20241023094831.1680214-1-zengheng4@huawei.com>
+Content-Language: en-US
+From: Markuss Broks <markuss.broks@gmail.com>
+In-Reply-To: <20241023094831.1680214-1-zengheng4@huawei.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-Fix presumed copy-paste typo of kasan_poison_new_object documentation
-referring to kasan_unpoison_new_object.
+Hello,
 
-No functional changes.
+On 10/23/24 12:48 PM, Zeng Heng wrote:
+> Fix the following compilation warnings:
+> drivers/input/touchscreen/imagis.c:422:39: warning: ‘imagis_3038c_data’
+> defined but not used [-Wunused-const-variable=]
+>    422 | static const struct imagis_properties imagis_3038c_data = {
+> drivers/input/touchscreen/imagis.c:415:39: warning: ‘imagis_3038b_data’
+> defined but not used [-Wunused-const-variable=]
+>    415 | static const struct imagis_properties imagis_3038b_data = {
+> drivers/input/touchscreen/imagis.c:407:39: warning: ‘imagis_3038_data’
+> defined but not used [-Wunused-const-variable=]
+>    407 | static const struct imagis_properties imagis_3038_data = {
+> drivers/input/touchscreen/imagis.c:398:39: warning: ‘imagis_3032c_data’
+> defined but not used [-Wunused-const-variable=]
+>    398 | static const struct imagis_properties imagis_3032c_data = {
+>
+> Only define the variables 'imagis_303*_data' when the CONFIG_OF
+> is enabled.
+>
+> Fixes: 1e48ee99f603 ("Input: imagis - add supports for Imagis IST3038")
+> Signed-off-by: Zeng Heng <zengheng4@huawei.com>
+> ---
+>   drivers/input/touchscreen/imagis.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+>
+> diff --git a/drivers/input/touchscreen/imagis.c b/drivers/input/touchscreen/imagis.c
+> index aeabf8d057de..abeae9102323 100644
+> --- a/drivers/input/touchscreen/imagis.c
+> +++ b/drivers/input/touchscreen/imagis.c
+> @@ -395,6 +395,7 @@ static int imagis_resume(struct device *dev)
+>   
+>   static DEFINE_SIMPLE_DEV_PM_OPS(imagis_pm_ops, imagis_suspend, imagis_resume);
+>   
+> +#ifdef CONFIG_OF
+>   static const struct imagis_properties imagis_3032c_data = {
+>   	.interrupt_msg_cmd = IST3038C_REG_INTR_MESSAGE,
+>   	.touch_coord_cmd = IST3038C_REG_TOUCH_COORD,
+> @@ -427,7 +428,6 @@ static const struct imagis_properties imagis_3038c_data = {
+>   	.protocol_b = true,
+>   };
+>   
+> -#ifdef CONFIG_OF
+>   static const struct of_device_id imagis_of_match[] = {
+>   	{ .compatible = "imagis,ist3032c", .data = &imagis_3032c_data },
+>   	{ .compatible = "imagis,ist3038", .data = &imagis_3038_data },
 
-Fixes: 1ce9a0523938 ("kasan: rename and document kasan_(un)poison_object_da=
-ta")
-Signed-off-by: Dominik Karol Pi=C4=85tkowski <dominik.karol.piatkowski@prot=
-onmail.com>
----
- include/linux/kasan.h | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Acked-by: Markuss Broks <markuss.broks@gmail.com>
 
-diff --git a/include/linux/kasan.h b/include/linux/kasan.h
-index 6bbfc8aa42e8..56465af31044 100644
---- a/include/linux/kasan.h
-+++ b/include/linux/kasan.h
-@@ -153,7 +153,7 @@ static __always_inline void kasan_unpoison_new_object(s=
-truct kmem_cache *cache,
-=20
- void __kasan_poison_new_object(struct kmem_cache *cache, void *object);
- /**
-- * kasan_unpoison_new_object - Repoison a new slab object.
-+ * kasan_poison_new_object - Repoison a new slab object.
-  * @cache: Cache the object belong to.
-  * @object: Pointer to the object.
-  *
---=20
-2.34.1
-
+- Markuss
 
 
