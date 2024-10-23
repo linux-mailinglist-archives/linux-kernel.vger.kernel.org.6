@@ -1,129 +1,113 @@
-Return-Path: <linux-kernel+bounces-377796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377795-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 322709AC6E9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:47:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 953909AC6E8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:46:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2072B23927
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:47:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415081F22CD3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:46:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ACE197A8B;
-	Wed, 23 Oct 2024 09:47:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HLcWtUe6"
-Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B251946C2;
+	Wed, 23 Oct 2024 09:46:27 +0000 (UTC)
+Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8037136357
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:47:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BBE136357
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:46:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729676825; cv=none; b=PbvbpxHoLQg6fv+w9BbMCTq8fyE1bysV6BhXadz/8iuu7PBG0MBZ0sso2atUkD2Rmv3Q+MtjbQUDmZ1J3mMGN1rkbD4hkRm/xathrLnDTccf9C6A8EnTCMD/CoOjhkZaKjXVueyfjitU3utPrgmY2/X7Q3Z6AUo9uvGcFAgCcyQ=
+	t=1729676786; cv=none; b=O8ifWetDp/+76Zsol5aX8crQDLw2jKdeKZ5baG8UHg6eTsjE+uKVJp4IJydrUIAFg49J24etqJGRKMuEQp10u+/kJ+5IGZcTncyrZ0Y3/ofUPNg9mlI+S8dzmUtNPMnCY+lOT1ElskEcO6MMGu7FqRKbLiCPGScTS4RGh103VaI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729676825; c=relaxed/simple;
-	bh=0W4sJD9AsasfHLYs59lV1xrUyt7o4Es2ghUZ5Nacg3k=;
-	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
-	 Content-Type:References; b=WOb5QlwFQ+F5idBJduqMEpzxH86k8xuWPhpp+5OZJbgTvzsBE7ziXevM+AyoSQdsdbgcSB+tvaVlhy1TnPvmaQcQsxw9llculReOyk30IjMy56qfG1DDyVB52kQ/JQ/2mcZj0HitKPjS7c3ZYA00vj3ArcHaL9ZxFWv/jpxwin0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HLcWtUe6; arc=none smtp.client-ip=203.254.224.33
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
-	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241023094654epoutp03a03b9c1572e271c0e6ee553fd4e1a817~BC_YH4XRs2180121801epoutp03E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:46:54 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241023094654epoutp03a03b9c1572e271c0e6ee553fd4e1a817~BC_YH4XRs2180121801epoutp03E
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729676814;
-	bh=bGpLoC3knzXadOWZtYKaVuF5uOI+14bGyUxz/W66kSI=;
-	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
-	b=HLcWtUe6xdWIfIfYobiGVYo6946fEOIVr1vHTfa9SmRWQzhkW+yWwnTzh+lO1Shaw
-	 lACQdbg+eOiWLX6ieMtJ1ChtFbr8RvYmhSUa1PQxz4sCn8WHKTy5n6Rj47kT3++RTK
-	 kjHmyJ/WzvKPApUVi3Jc9hqR24BoSUFCYngbbt1Q=
-Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
-	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
-	20241023094654epcas2p2ce40bff90e6e03b8a12b5d9b0e542a11~BC_X4DF5I3068730687epcas2p2G;
-	Wed, 23 Oct 2024 09:46:54 +0000 (GMT)
-Received: from epsmgec2p1.samsung.com (unknown [182.195.36.91]) by
-	epsnrtp1.localdomain (Postfix) with ESMTP id 4XYPMd4XTZz4x9Q8; Wed, 23 Oct
-	2024 09:46:53 +0000 (GMT)
-X-AuditID: b6c32a43-7b1b87000000216f-f3-6718c60d579a
-Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
-	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
-	33.54.08559.D06C8176; Wed, 23 Oct 2024 18:46:53 +0900 (KST)
+	s=arc-20240116; t=1729676786; c=relaxed/simple;
+	bh=7WWfdSSU0dZIz8uOzoqjntDQGqpbRKRIIMl8L+iALiA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=AK8rp1VmurVW7zuNN/YA0O5GdhcSqXfXqhVXvE4qP3xWw1F7umjesa8h+S0lHoZde83gWTkAijHKdlyL0rHjYQOVWcxEsqMoqgKHWyP4Awr10lm+0pkP2Abx79cTqQLIxa8zHqwxsVT64hrZ0mBSi6QhvjIsEqtQs5+OGiRY8io=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso943644566b.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:46:25 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729676784; x=1730281584;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=FBpqt7O1UVowxWQhdRzPD2AUA5xa75SUt7TL+T99+jU=;
+        b=Ax0ohv3Oh9gUn61uaNcPlLgWWQbkAPAuDnGbcLUYKmJs27KJ7QX4D0PS9BXMxOH+o3
+         u/0HbxxLPv7BDofpd6ZLiIkXelSqFScdH6tcY+Orz8qYRzE2N0pvAir9lY53nRMkhGZB
+         F6EMiq/g8Y36f5XT8E5UMXi8LVQ1CZTm1d/CW/SBdWWZVejWE4aJIv/t5WmnMp1NpE6F
+         bYu3bIgVnfCIE7sTgmcN+JCIqsdvmJVvlYGPvRtm/gVd04Dtwkhnjb4izYZnmKMdJrsa
+         AQBbdp/qyWzJQ6A5j8UYRs5kus1Exuw8cYi3FcZbfuBAxJCnk4kS3Xcg7MbwSfmo2BxT
+         J68A==
+X-Forwarded-Encrypted: i=1; AJvYcCWhN3pnPMAZe1FBOV7iy8nPouZMCdu8btFI4RdHIMQrzbToUTGeNPhfPtCHspaVpywEwpd73OPsa69955U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwVbSC0AtIg9bChVHDBzzU+M6oc3KlFvxVY1LRflOvY4Ka38+NW
+	Q5rxcukm6cq0P8CJC/U6RuUYxWG6ff67X/BVe5Za8eqLbBmRzH4j
+X-Google-Smtp-Source: AGHT+IGRZlRgRkyJtIDZdMdsrw1KKYaTyrzKxbx8XqOmFjRdlUXYJfrbO/clap8pTJnoJhes2xhzGA==
+X-Received: by 2002:a17:907:7247:b0:a9a:33c:f6e1 with SMTP id a640c23a62f3a-a9abf851e2dmr181732466b.5.1729676783442;
+        Wed, 23 Oct 2024 02:46:23 -0700 (PDT)
+Received: from [10.100.102.74] (89-138-78-158.bb.netvision.net.il. [89.138.78.158])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370723sm450767366b.100.2024.10.23.02.46.22
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 02:46:23 -0700 (PDT)
+Message-ID: <8a1e78e9-c064-4fce-9ab4-f2beea053d97@grimberg.me>
+Date: Wed, 23 Oct 2024 12:46:21 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: RE: [f2fs-dev] [PATCH v2] f2fs: fix to avoid potential deadlock in
- f2fs_record_stop_reason()
-Reply-To: daejun7.park@samsung.com
-Sender: Daejun Park <daejun7.park@samsung.com>
-From: Daejun Park <daejun7.park@samsung.com>
-To: "chao@kernel.org" <chao@kernel.org>, "jaegeuk@kernel.org"
-	<jaegeuk@kernel.org>
-CC: "syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com"
-	<syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-f2fs-devel@lists.sourceforge.net"
-	<linux-f2fs-devel@lists.sourceforge.net>, Daejun Park
-	<daejun7.park@samsung.com>
-X-Priority: 3
-X-Content-Kind-Code: NORMAL
-In-Reply-To: <20241022083623.2641434-1-chao@kernel.org>
-X-CPGS-Detection: blocking_info_exchange
-X-Drm-Type: N,general
-X-Msg-Generator: Mail
-X-Msg-Type: PERSONAL
-X-Reply-Demand: N
-Message-ID: <20241023094553epcms2p1c4b830a99a1f6b10cba8fd9bbcd8e2ac@epcms2p1>
-Date: Wed, 23 Oct 2024 18:45:53 +0900
-X-CMS-MailID: 20241023094553epcms2p1c4b830a99a1f6b10cba8fd9bbcd8e2ac
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without requiring
+ namespaces
+To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
+Cc: Abhishek Bapat <abhishekbapat@google.com>, Jens Axboe <axboe@kernel.dk>,
+ Prashant Malani <pmalani@google.com>, linux-nvme@lists.infradead.org,
+ linux-kernel@vger.kernel.org
+References: <20241016213108.549000-1-abhishekbapat@google.com>
+ <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
+ <CAL41Mv4_UjsD1ycpNU1xuQJdGWMf2L-SQYs=LupoM9BKurNXCg@mail.gmail.com>
+ <Zxe8e2zS5dA61Jou@kbusch-mbp> <20241023052403.GC1341@lst.de>
+Content-Language: en-US
+From: Sagi Grimberg <sagi@grimberg.me>
+In-Reply-To: <20241023052403.GC1341@lst.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: AUTO_CONFIDENTIAL
-CMS-TYPE: 102P
-X-CPGSPASS: Y
-X-CPGSPASS: Y
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTVJf3mES6wbMvShanp55lsnh5SNNi
-	1YNwiyfrZzFbXFrkbnF51xw2i7+7brA5sHtsWtXJ5rF7wWcmj74tqxg9Zr5V8/i8SS6ANSrb
-	JiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoBCWFssSc
-	UqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsaF
-	DTNYC5ayVNxq2svYwPiAuYuRk0NCwETi/5ylTF2MXBxCAjsYJZ78fgzkcHDwCghK/N0hDFIj
-	LJAusbBpMguILSSgJLH+4ix2iLiexK2HaxhBbDYBHYnpJ+6DxUUEQiSa7jaxgcxkFtjOJHGz
-	+S/UMl6JGe1PWSBsaYnty7eCNXMKmEtM7N7BBBHXkPixrBeqXlTi5uq37DD2+2PzGSFsEYnW
-	e2ehagQlHvzcDRWXlLg9dxNUfb7E/yvLoewaiW0H5kHZ+hLXOjaC3cAr4Cuxt+MKWJxFQFVi
-	++dnULe5SDx8fRzMZhaQl9j+dg4zKEyYBTQl1u/SBzElBJQljtyCquCT6Dj8lx3mw4aNv7Gy
-	d8x7AvWhmsS6n+uZJjAqz0IE9Cwku2Yh7FrAyLyKUSy1oDg3PTXZqMAQHrfJ+bmbGMGJUct5
-	B+OV+f/0DjEycTAeYpTgYFYS4VUqEU0X4k1JrKxKLcqPLyrNSS0+xGgK9OVEZinR5Hxgas4r
-	iTc0sTQwMTMzNDcyNTBXEue91zo3RUggPbEkNTs1tSC1CKaPiYNTqoHJ6jnjsRzV2Fdf8uY+
-	6PuuGaCvmBJT4eBp/DpozYtrDX8u39lvK2bj6vOm50yXZsex5vQ0JyffrO/X6xmFjYS+ZjkK
-	PPwVeVEtIK25kGFLWHfPt8PP9z61Lsjasyuv41n9TYklE7f8tNsolKPHp33vzarg4M8ntl3u
-	/yLOnN29PXbZ+1dSkudm7Au/zTshL/Sf7frMJ4cNKj7ejzA1eX3hEc+ed+knt/28WdI981Gt
-	r20UD1fL1tpDnY118/sTXoUuY5M+dOn3OpFmv7lxLrWlD0LOWX+oE9CyvzlhD1ti4xKTX5Mk
-	WdW+1HB8TcwNzijqMb9ToxOd/vKrq8ylbXpOx+rSX4i7sZsZfQ6Zwq7EUpyRaKjFXFScCADi
-	gECHFQQAAA==
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241022083741epcas2p3f9ca0827f9501134124fd47979e70cbc
-References: <20241022083623.2641434-1-chao@kernel.org>
-	<CGME20241022083741epcas2p3f9ca0827f9501134124fd47979e70cbc@epcms2p1>
 
-Hi Chao Yu,
 
-> ...
-> 
-> Let's always create an asynchronous task in f2fs_handle_critical_error()
-> rather than calling f2fs_record_stop_reason() synchronously to avoid
-> this potential deadlock issue.
-> 
-> Fixes: b62e71be2110 ("f2fs: support errors=remount-rocontinuepanic mountoption")
-> Reported-by: syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com
-> Closes: https://lore.kernel.org/all/6704d667.050a0220.1e4d62.0081.GAE@google.com
-> Signed-off-by: Chao Yu <chao@kernel.org>
 
-Reviewed-by: Daejun Park <daejun7.park@samsung.com>
+
+On 23/10/2024 8:24, Christoph Hellwig wrote:
+> On Tue, Oct 22, 2024 at 08:53:47AM -0600, Keith Busch wrote:
+>> You'd may want to know max_sectors_kb, dma_alignment, nr_requests,
+>> virt_boundary_mask. Maybe some others.
+>>
+>> The request_queue is owned by the block layer, so that seems like an
+>> okay place to export it, but attached to some other device's sysfs
+>> directory instead of a gendisk.
+>>
+>> I'm just suggesting this because it doesn't sound like this is an nvme
+>> specific problem.
+> Well, it's a problem specific to passthrough without a gendisk, which is
+> the NVMe admin queue and the /dev/sg device.  So it's common-ish :)
+>
+>
+> Note that for the programs using passthrough sysfs isn't actually a very
+> good interface, as finding the right directory is pain, as is opening,
+> reading and parsing one ASCIII file per limit.
+>
+> One thing I've been wanting to do also for mkfs tools and similar is a
+> generic extensible ioctl to dump all the queue limits.  That's a lot
+> easier and faster for the tools and would work very well here.
+>
+> Note that we could still be adding new limits at any point of time
+> (although I have a hard time thinking what limit we don't have yet),
+> so we still can't guarantee that non-trivial I/O will always work.
+
+Makes sense to me. Although people would still like to be able to
+see this value outside of an application context. We can probably
+extend nvme-cli to display this info...
 
