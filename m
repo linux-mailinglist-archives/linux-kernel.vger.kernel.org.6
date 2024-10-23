@@ -1,127 +1,175 @@
-Return-Path: <linux-kernel+bounces-378373-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378369-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD1179ACF17
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:42:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87A959ACF05
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:40:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 64C9F1F221C5
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:42:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DABC7B25042
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:40:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0FAC81CF5C9;
-	Wed, 23 Oct 2024 15:40:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 143C31CBEBA;
+	Wed, 23 Oct 2024 15:39:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="unknown key version" (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b="weYPVsfa";
-	dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="HlXRoo4z";
-	dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b="kcWy5FHC"
-Received: from e2i55.smtp2go.com (e2i55.smtp2go.com [103.2.140.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YunnH0yf"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0C4B1CEABD
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:39:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.2.140.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C3D81CACDE;
+	Wed, 23 Oct 2024 15:39:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729698000; cv=none; b=KHGSw5K2fC3tSFAjeVgYtX4svEfdiszan53egyFBSUh9LFUOk5UpZnP0EGbH0T09d2re15IaEcGnLiYSqWgpzFMWghOZ/gPpjiM4uN8/PJU+hXmakUr7JuMZPaELF1hBZyt75Avinu9uwIrbBEPPp6Nh1/GH4SZmN+VOwZNG3H8=
+	t=1729697978; cv=none; b=Gc1UgVMJIv+6Ff9CBzdnbKEH/c3FwXHynOKCfmYmRmrEQBBmBBPnFehBUGvV6/pDlVzFMj74hvgysjyzRDWM/rcb46gClsdBeX6xiM0OzvAx7sthQSRTSHRvjEKz0OSd3ptQ+lNhbeEovCEI5m20tP0ooPfcWf48ejqjzguCilA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729698000; c=relaxed/simple;
-	bh=FDw35vGF6tl6GWiJ7SwQ87WQQoIjAq+chZGhk2ZdmXU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fyGbvVjeHJi2F245E5qavrpdQVFAq5Gp+XZlU0IXTXnk4vBqtdto7nYZ2fzk82H6MXfIu9J1nuBztkN8oWQ46yaF6kM6lfD6IGl7u2PqL2asj1a1FckIz8i6ubt2e7ny2Z+647x9AjhuYnekesigsOv4jw+yvRHX9vLNoN2myEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu; spf=pass smtp.mailfrom=em1174286.fjasle.eu; dkim=fail (0-bit key) header.d=smtpservice.net header.i=@smtpservice.net header.b=weYPVsfa reason="unknown key version"; dkim=pass (2048-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=HlXRoo4z; dkim=pass (1024-bit key) header.d=fjasle.eu header.i=@fjasle.eu header.b=kcWy5FHC; arc=none smtp.client-ip=103.2.140.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fjasle.eu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=em1174286.fjasle.eu
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=smtpservice.net; s=mp6320.a1-4.dyn; x=1729698894; h=Feedback-ID:
-	X-Smtpcorp-Track:Message-ID:Subject:To:From:Date:Reply-To:Sender:
-	List-Unsubscribe:List-Unsubscribe-Post;
-	bh=464vsXYS0hOOkK2rayvez/v1qncVJ1hO6GgCfkPidww=; b=weYPVsfak6unaRUNwQg1g6DFzh
-	E4jDo/PYxwOOATuQHBzmQryFSI+NOGvzymRvxAIQGN0nUhqcKTgW9FTFeBnlFU74JSSUDhVQECv4a
-	8+jMkOIpmYsAnpoqZT2TRIXWrcMSv6PwMg1gqOqcxGqApUkZKP3V4kBc2srIDVziojFOrom7SnhVw
-	atXaFCa1fmI63gsKxHA7u9YklHdN/35KkVzqTGXiGuXaIxbix6M6HS3BXvH8Meg+6xANR2zQatw8Y
-	wn9WWkLqnRuZZdzSCPvtAnpQKFM1RD9Z8VFWmTjs1AV+jEVYwXW1YX5jfT5pgmXsbIGfcPV89iQTl
-	D5P8vEng==;
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=fjasle.eu;
- i=@fjasle.eu; q=dns/txt; s=s1174286; t=1729697994; h=from : subject :
- to : message-id : date;
- bh=464vsXYS0hOOkK2rayvez/v1qncVJ1hO6GgCfkPidww=;
- b=HlXRoo4zTscf8B6wlJ9VqrJPrelwD46K00YtiasycZkVGOL6wtDZ0C5h/vtDXrE7BY1jb
- Sdli2AfuQH9+6vbXTYHCNhRAHTB1pS0Ykm+EzuQWRxpb7KOY7O805wYKxCeew2HNmdB3D7D
- FRevHaS5LhVRNUm29TbdEALXkCjiHO+3YUykgfxdzm/Qi/rXUFaEEKNRXuWPbO+09X5OUM6
- xLv48f1eMvRbAj+cOz+wH6J5xBaGyuQmPFf9wLAIdRFBWCyGi4UciWBISu2BEhCzLN3YheR
- FqPFuAuQqsPKU/+yezOWYrRGOn2bQvR6v/tAUldKoeu9Gk9fSHajUEgWwYow==
-Received: from [10.139.162.187] (helo=SmtpCorp) by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_SECP256R1__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.94.2-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1t3dSB-cp4aFr-E0; Wed, 23 Oct 2024 15:39:19 +0000
-Received: from [10.85.249.164] (helo=leknes.fjasle.eu)
- by smtpcorp.com with esmtpsa
- (TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256)
- (Exim 4.97.1-S2G) (envelope-from <nicolas@fjasle.eu>)
- id 1t3dS9-4o5NDgrgPTO-nPcT; Wed, 23 Oct 2024 15:39:18 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=fjasle.eu; s=mail;
- t=1729697957; bh=FDw35vGF6tl6GWiJ7SwQ87WQQoIjAq+chZGhk2ZdmXU=;
- h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
- b=kcWy5FHCHInf1XRg7ovXWYNvkN5R9wGcnzyX8pZbr3/B9FshLLlohhjEG4v55kgxf
- BwuMedehcz0Sn+RfhKjRMtK1qKRD8RehZsoCBnmz7EVGG6bR8INUvwuzeeQo/+69l7
- b+zTmbzxShzjF1F2ufCmxmWza72IdA9jaYBUoDWg=
-Received: by leknes.fjasle.eu (Postfix, from userid 1000)
- id 55C3C3D2A2; Wed, 23 Oct 2024 17:39:17 +0200 (CEST)
-Date: Wed, 23 Oct 2024 17:39:17 +0200
-From: Nicolas Schier <nicolas@fjasle.eu>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: linux-kbuild@vger.kernel.org, Ben Hutchings <benh@debian.org>,
- Ron Economos <re@w6rz.net>, Nathan Chancellor <nathan@kernel.org>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 3/3] kbuild: deb-pkg: add pkg.linux-upstream.nokerneldbg
- build profile
-Message-ID: <ZxkYpWKMA_GIOjP4@fjasle.eu>
-References: <20241022181703.1710116-1-masahiroy@kernel.org>
- <20241022181703.1710116-3-masahiroy@kernel.org>
+	s=arc-20240116; t=1729697978; c=relaxed/simple;
+	bh=mdNPVEeAmRMvE8WVCh/WUhH2bcKZHSXxSo0wo2DESkA=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=CokR5sMRky7EPrLq+OwQzACOsxvny0DOSBZGrabdsQKjBwmrkxrzgZAcMJrhz/yT5f6a6iAGuVO5tA6Ei3pXjv1WHgYEEYYtxX6mjSsuR3clLwIWJUQQnvR2Jmv9rPpAQalNgjf/a1hbApj9UdsktlO93hWdc/JReKFupZWvsFo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YunnH0yf; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D8F4C4CEC6;
+	Wed, 23 Oct 2024 15:39:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729697977;
+	bh=mdNPVEeAmRMvE8WVCh/WUhH2bcKZHSXxSo0wo2DESkA=;
+	h=From:To:Subject:Date:From;
+	b=YunnH0yffkCAihsC0tg0RcEVUBcTBtsB0ug2bVopVHAnVtK9gbyJtP8z7e9OjzKqv
+	 y3elm87l+rQJA5AmW0NpAiZuQcBfRWg8YfQG8CkHR7VTimoB1NdCzibk7s9tEAEksB
+	 vRqlbe4Hel0esh5klowxnJUEftF2dv4LHsnoiRawfeCXCIYyL7qYJueUYsfuD+nYlU
+	 NqVTt9VyT/Jotqx9W0IbRwE5beA+fkI0JW0txbSFwXwHS0323OL6V23bd9EKtZ0B2l
+	 nGWGGddDAMMPyGOauGcRr+b9qvA/2A1Y1hNAEzC9lRI3rKvh3nDlkLF2DTxFBjyRiI
+	 lLNtQiXQwXh2Q==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Albert Ou <aou@eecs.berkeley.edu>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	bpf@vger.kernel.org,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eduard Zingerman <eddyz87@gmail.com>,
+	Eric Dumazet <edumazet@google.com>,
+	Hao Luo <haoluo@google.com>,
+	Helge Deller <deller@gmx.de>,
+	Jakub Kicinski <kuba@kernel.org>,
+	"James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	linux-parisc@vger.kernel.org,
+	linux-riscv@lists.infradead.org,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Mykola Lysenko <mykolal@fb.com>,
+	netdev@vger.kernel.org,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Puranjay Mohan <puranjay12@gmail.com>,
+	Puranjay Mohan <puranjay@kernel.org>,
+	Shuah Khan <shuah@kernel.org>,
+	Song Liu <song@kernel.org>,
+	Stanislav Fomichev <sdf@fomichev.me>,
+	Yonghong Song <yonghong.song@linux.dev>
+Subject: [PATCH bpf-next v2 0/4] Optimize bpf_csum_diff() and homogenize for all archs
+Date: Wed, 23 Oct 2024 15:39:18 +0000
+Message-Id: <20241023153922.86909-1-puranjay@kernel.org>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022181703.1710116-3-masahiroy@kernel.org>
-X-Smtpcorp-Track: ybF0TiyvdBb7.UJ7mYz2uxqVD.-aezaQXLvO5
-Feedback-ID: 1174286m:1174286a9YXZ7r:1174286sf9napyMcG
-X-Report-Abuse: Please forward a copy of this message, including all headers,
- to <abuse-report@smtp2go.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 03:16:59AM +0900 Masahiro Yamada wrote:
-> The Debian kernel supports the pkg.linux.nokerneldbg build profile.
-> 
-> The debug package tends to be huge, and you may not want to build it
-> even when CONFIG_DEBUG_INFO is enabled. This commit introduces a
-> similar profile for the upstream kernel.
-> 
-> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
-> ---
-> 
->  scripts/package/mkdebian | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
-> index 93eb50356ddb..fc3b7fa709fc 100755
-> --- a/scripts/package/mkdebian
-> +++ b/scripts/package/mkdebian
-> @@ -245,6 +245,7 @@ cat <<EOF >> debian/control
->  Package: linux-image-$version-dbg
->  Section: debug
->  Architecture: $debarch
-> +Build-Profiles: <!pkg.${sourcename}.nokerneldbg>
->  Description: Linux kernel debugging symbols for $version
->   This package will come in handy if you need to debug the kernel. It provides
->   all the necessary debug symbols for the kernel and its modules.
-> -- 
-> 2.43.0
-> 
-> 
+Changes in v2:
+v1: https://lore.kernel.org/all/20241021122112.101513-1-puranjay@kernel.org/
+- Remove the patch that adds the benchmark as it is not useful enough to be
+  added to the tree.
+- Fixed a sparse warning in patch 1.
+- Add reviewed-by and acked-by tags.
 
-Reviewed-by: Nicolas Schier <nicolas@fjasle.eu>
+NOTE: There are some sparse warning in net/core/filter.c but those are not
+worth fixing because bpf helpers take and return u64 values and using them
+in csum related functions that take and return __sum16 / __wsum would need
+a lot of casts everywhere.
+
+The bpf_csum_diff() helper currently returns different values on different
+architectures because it calls csum_partial() that is either implemented by
+the architecture like x86_64, arm, etc or uses the generic implementation
+in lib/checksum.c like arm64, riscv, etc.
+
+The implementation in lib/checksum.c returns the folded result that is
+16-bit long, but the architecture specific implementation can return an
+unfolded value that is larger than 16-bits.
+
+The helper uses a per-cpu scratchpad buffer for copying the data and then
+computing the csum on this buffer. This can be optimised by utilising some
+mathematical properties of csum.
+
+The patch 1 in this series does preparatory work for homogenizing the
+helper. patch 2 does the changes to the helper itself. The performance gain
+can be seen in the tables below that are generated using the benchmark
+built in patch 4 of v1 of this series:
+
+  x86-64:
+  +-------------+------------------+------------------+-------------+
+  | Buffer Size |      Before      |      After       | Improvement |
+  +-------------+------------------+------------------+-------------+
+  |      4      | 2.296 ± 0.066M/s | 3.415 ± 0.001M/s |   48.73  %  |
+  |      8      | 2.320 ± 0.003M/s | 3.409 ± 0.003M/s |   46.93  %  |
+  |      16     | 2.315 ± 0.001M/s | 3.414 ± 0.003M/s |   47.47  %  |
+  |      20     | 2.318 ± 0.001M/s | 3.416 ± 0.001M/s |   47.36  %  |
+  |      32     | 2.308 ± 0.003M/s | 3.413 ± 0.003M/s |   47.87  %  |
+  |      40     | 2.300 ± 0.029M/s | 3.413 ± 0.003M/s |   48.39  %  |
+  |      64     | 2.286 ± 0.001M/s | 3.410 ± 0.001M/s |   49.16  %  |
+  |      128    | 2.250 ± 0.001M/s | 3.404 ± 0.001M/s |   51.28  %  |
+  |      256    | 2.173 ± 0.001M/s | 3.383 ± 0.001M/s |   55.68  %  |
+  |      512    | 2.023 ± 0.055M/s | 3.340 ± 0.001M/s |   65.10  %  |
+  +-------------+------------------+------------------+-------------+
+
+  ARM64:
+  +-------------+------------------+------------------+-------------+
+  | Buffer Size |      Before      |      After       | Improvement |
+  +-------------+------------------+------------------+-------------+
+  |      4      | 1.397 ± 0.005M/s | 1.493 ± 0.005M/s |    6.87  %  |
+  |      8      | 1.402 ± 0.002M/s | 1.489 ± 0.002M/s |    6.20  %  |
+  |      16     | 1.391 ± 0.001M/s | 1.481 ± 0.001M/s |    6.47  %  |
+  |      20     | 1.379 ± 0.001M/s | 1.477 ± 0.001M/s |    7.10  %  |
+  |      32     | 1.358 ± 0.001M/s | 1.469 ± 0.002M/s |    8.17  %  |
+  |      40     | 1.339 ± 0.001M/s | 1.462 ± 0.002M/s |    9.18  %  |
+  |      64     | 1.302 ± 0.002M/s | 1.449 ± 0.003M/s |    11.29 %  |
+  |      128    | 1.214 ± 0.001M/s | 1.443 ± 0.003M/s |    18.86 %  |
+  |      256    | 1.080 ± 0.001M/s | 1.423 ± 0.001M/s |    31.75 %  |
+  |      512    | 0.887 ± 0.001M/s | 1.411 ± 0.002M/s |    59.07 %  |
+  +-------------+------------------+------------------+-------------+
+
+Patch 3 reverts a hack that was done to make the selftest pass on all
+architectures.
+
+Patch 4 adds a selftest for this helper to verify the results produced by
+this helper in multiple modes and edge cases.
+
+Puranjay Mohan (4):
+  net: checksum: move from32to16() to generic header
+  bpf: bpf_csum_diff: optimize and homogenize for all archs
+  selftests/bpf: don't mask result of bpf_csum_diff() in test_verifier
+  selftests/bpf: Add a selftest for bpf_csum_diff()
+
+ arch/parisc/lib/checksum.c                    |  13 +-
+ include/net/checksum.h                        |   6 +
+ lib/checksum.c                                |  11 +-
+ net/core/filter.c                             |  37 +-
+ .../selftests/bpf/prog_tests/test_csum_diff.c | 408 ++++++++++++++++++
+ .../selftests/bpf/progs/csum_diff_test.c      |  42 ++
+ .../bpf/progs/verifier_array_access.c         |   3 +-
+ 7 files changed, 469 insertions(+), 51 deletions(-)
+ create mode 100644 tools/testing/selftests/bpf/prog_tests/test_csum_diff.c
+ create mode 100644 tools/testing/selftests/bpf/progs/csum_diff_test.c
+
+-- 
+2.40.1
+
 
