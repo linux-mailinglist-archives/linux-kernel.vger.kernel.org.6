@@ -1,279 +1,258 @@
-Return-Path: <linux-kernel+bounces-378053-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378054-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 73EB69ACAB7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:05:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0487A9ACAB8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:06:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB2341F217C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:05:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4B191B23C39
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:06:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5DAB91ADFED;
-	Wed, 23 Oct 2024 13:05:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C75D51AD9EE;
+	Wed, 23 Oct 2024 13:06:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="A1Kg3w74"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b="LPNjDJDy"
+Received: from omta036.useast.a.cloudfilter.net (omta036.useast.a.cloudfilter.net [44.202.169.35])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6FB3156C72;
-	Wed, 23 Oct 2024 13:05:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BCAE1AB6FB
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:06:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=44.202.169.35
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729688736; cv=none; b=jkLaf4/RVaM0m8s/kU4aNEmBh60c7TowlU2jhPYsKPi5xDaZGo5dmM6c31J2L1G3mYDTTDMyJl0tbEkhEhSRRx6tOEVeCDChgG3RlZj7O0YLityc8GL0akprFnMwF0pGPhZVWuvSsSNlOq8rUq/H4x+Ldm1F/42d6NvbZpZ2Adg=
+	t=1729688776; cv=none; b=A90pkX2ZKJcg2otUVmN8nSQvj1SOiBcPMULtRR2qPKZX2Hhetm1SU+1W9LZme0fX2bFpQr392uuz5aknuKA+Hiaw7805bgAF61WdKGlM6Ha+wPDHBHyfke4eJatojAZQkFwXKIB3DFgzauacJCOJbSh1VQHKYltpl5RfGy0Nrjg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729688736; c=relaxed/simple;
-	bh=UBCLs1CT6lS89hLMeBBrgYkW5FO4QlEYT3JDYAYWdPE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=iHgG2gcqTRt/Skttxl7RpP8Nq23ZSrxuXnoHJeFsrftQQumU/fARK9DaFNJqJrK089LPiNymcIt14Cplz4vVO5TR3QiMfMPwyiA4Htj+VfMtVD4aounFF39+02vLdJ7c8YMb4iWiSGinMqrCB6gLcGZ9C4upi0bgzAqiygJMBnM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=A1Kg3w74; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9uKAa020008;
-	Wed, 23 Oct 2024 13:05:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	4403SM6nc/S9kArf7Hq5R7eFffWVXEua9Stbp6iDzSo=; b=A1Kg3w74+xsRbx0L
-	Dek8a/wPSE7yAezN3U4vxBhqh7ke86c10Utm9PqaBW228uO+BNyCfnJyb+MHbI1M
-	iyDSo8/hl0xs7EZx3rHO4yYni4UP4gFxJHqSYRz/Dr34GPps4gPDYaW7tey2aDOG
-	pKprSCBBqhBhys56Vb4C0+rE4ZlLA1vhbE0pwFCxl+J/MFoKtpMrlN0z/U5OaTun
-	GkTl36AnNXq51Ao5oziOvdTivxaYFdQ6N0zYA/fTIUYJccEwiD4xsaFvUqmmjkaf
-	rEXqtpJsuxd7knsS18nfoM8QI62tW2br9yLXMWe6Qx/xqwKnXSomQYQg/18PVnG3
-	XtzzCg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em66a8vx-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:05:17 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ND5GIx005127
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:05:16 GMT
-Received: from [10.253.39.49] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 06:05:11 -0700
-Message-ID: <a2448df9-9b8b-4b7e-ada5-6f26d7e7da97@quicinc.com>
-Date: Wed, 23 Oct 2024 21:05:09 +0800
+	s=arc-20240116; t=1729688776; c=relaxed/simple;
+	bh=flfO60TWeuxQF01508WOwBdKE/thtg0nWRNabeZ0mGY=;
+	h=Subject:To:Cc:References:In-Reply-To:From:Message-ID:Date:
+	 MIME-Version:Content-Type; b=OtXSkpKbOpqCRGde/HI09vV29rwVJik6MwVQRLp/sEmIqxJfub0SrFq40Bx6KDPe4QJ9IteVqKTqlVdyRQyOihfuuH8UVaJTR7mfRVK3yCc2Fw6VFa/PC/xswwSkq/4mEReGnwOrolN2/4k3C6EtFo9sSLXyQBlvFE8ms+4AwMk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net; spf=pass smtp.mailfrom=w6rz.net; dkim=pass (2048-bit key) header.d=w6rz.net header.i=@w6rz.net header.b=LPNjDJDy; arc=none smtp.client-ip=44.202.169.35
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=w6rz.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=w6rz.net
+Received: from eig-obgw-5006a.ext.cloudfilter.net ([10.0.29.179])
+	by cmsmtp with ESMTPS
+	id 3aoNtonyciA193b40tUJiS; Wed, 23 Oct 2024 13:06:12 +0000
+Received: from box5620.bluehost.com ([162.241.219.59])
+	by cmsmtp with ESMTPS
+	id 3b3zt36VQib8Q3b3zt6lD3; Wed, 23 Oct 2024 13:06:11 +0000
+X-Authority-Analysis: v=2.4 cv=T4qKTeKQ c=1 sm=1 tr=0 ts=6718f4c3
+ a=30941lsx5skRcbJ0JMGu9A==:117 a=30941lsx5skRcbJ0JMGu9A==:17
+ a=IkcTkHD0fZMA:10 a=DAUX931o1VcA:10 a=7vwVE5O1G3EA:10 a=HaFmDPmJAAAA:8
+ a=VwQbUJbxAAAA:8 a=fxJcL_dCAAAA:8 a=NEAV23lmAAAA:8 a=G7piZchHOouoqsGl2bUA:9
+ a=QEXdDO2ut3YA:10 a=nmWuMzfKamIsx3l42hEX:22 a=hTR6fmoedSdf3N0JiVF8:22
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=w6rz.net;
+	s=default; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Date:
+	Message-ID:From:In-Reply-To:References:Cc:To:Subject:Sender:Reply-To:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=WLBEG65iDfq4Oq3j0KXR8fkux6/NdKD8wZ6AX1HNr8k=; b=LPNjDJDyN1Va9HjdzSdw2kagT0
+	CRMzFAVwRROtcB8GcyKv047bGMCYHqedVdAv5spxHwHxh4toBVhAMM+06KaF6t9qalwgwzp6hnVFO
+	vpT0W9zFnzJtD4E3YdAPBcaqTxTVsaD3orLiAzBq7zCliR9oezMeiYFJ8ZVLkwUnb4SrhySfi/tWQ
+	XE6tuyLhzJtyVByPjOTdI3OlCHdBsnwdT3/JkawoKGJDnKGroqsHz2gdp0F0do72tHpBLvMASFOjl
+	JQONTDKFGFpQdqW/PrxryCuKrhVD88FyHEovlqBXKbcxLMGHb2l7gm0rrK6DfMXTWSS9KbSmbY4GY
+	yAXDJjBg==;
+Received: from c-73-223-253-157.hsd1.ca.comcast.net ([73.223.253.157]:49836 helo=[10.0.1.47])
+	by box5620.bluehost.com with esmtpsa  (TLS1.2) tls TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256
+	(Exim 4.96.2)
+	(envelope-from <re@w6rz.net>)
+	id 1t3b3y-003lNZ-1z;
+	Wed, 23 Oct 2024 07:06:10 -0600
+Subject: Re: [PATCH 2/3] kbuild: deb-pkg: add
+ pkg.linux-upstream.nokernelheaders build profile
+To: Masahiro Yamada <masahiroy@kernel.org>, linux-kbuild@vger.kernel.org
+Cc: Ben Hutchings <benh@debian.org>, Bill Wendling <morbo@google.com>,
+ Justin Stitt <justinstitt@google.com>, Nathan Chancellor
+ <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>,
+ Nicolas Schier <nicolas@fjasle.eu>, linux-kernel@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20241022181703.1710116-1-masahiroy@kernel.org>
+ <20241022181703.1710116-2-masahiroy@kernel.org>
+In-Reply-To: <20241022181703.1710116-2-masahiroy@kernel.org>
+From: Ron Economos <re@w6rz.net>
+Message-ID: <6fca7450-95e0-1bc0-7556-8889a398d0b6@w6rz.net>
+Date: Wed, 23 Oct 2024 06:06:08 -0700
+User-Agent: Mozilla/5.0 (X11; Linux armv7l; rv:78.0) Gecko/20100101
+ Thunderbird/78.14.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 4/4] arm64: dts: qcom: Add CMN PLL node for IPQ9574 SoC
-To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-CC: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>,
-        Catalin Marinas <catalin.marinas@arm.com>,
-        Will Deacon
-	<will@kernel.org>, Konrad Dybcio <konradybcio@kernel.org>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        <linux-arm-kernel@lists.infradead.org>, <quic_kkumarcs@quicinc.com>,
-        <quic_suruchia@quicinc.com>, <quic_pavir@quicinc.com>,
-        <quic_linchen@quicinc.com>, <quic_leiwei@quicinc.com>,
-        <bartosz.golaszewski@linaro.org>, <srinivas.kandagatla@linaro.org>
-References: <20241015-qcom_ipq_cmnpll-v4-0-27817fbe3505@quicinc.com>
- <20241015-qcom_ipq_cmnpll-v4-4-27817fbe3505@quicinc.com>
- <abro3enahzbugcwokcyyhwybbokestbigvzhywxhnfrdjihni3@7ej2hkgbgtf6>
- <b336724c-1fea-4e1e-9477-66f53d746f09@quicinc.com>
- <CAA8EJprVNOLO-CoorNhvKrrSD1bNKdFrzth5BL0GHXffPv62jw@mail.gmail.com>
- <32dbf7ee-1190-401c-b6b1-bc8c70a5158c@quicinc.com>
- <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
-Content-Language: en-US
-From: Jie Luo <quic_luoj@quicinc.com>
-In-Reply-To: <cqgkc3qpupbv47rqxiyhe2m466zxcxepyfcgyaieo2sggffprx@mstqi4pqoiqc>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-ORIG-GUID: 1CO6k--mz-lrf1Qh_Mly3NrWvlL3yEAP
-X-Proofpoint-GUID: 1CO6k--mz-lrf1Qh_Mly3NrWvlL3yEAP
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
- adultscore=0 phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=999
- suspectscore=0 clxscore=1011 mlxscore=0 bulkscore=0 priorityscore=1501
- spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230078
+Content-Language: en-US
+X-AntiAbuse: This header was added to track abuse, please include it with any abuse report
+X-AntiAbuse: Primary Hostname - box5620.bluehost.com
+X-AntiAbuse: Original Domain - vger.kernel.org
+X-AntiAbuse: Originator/Caller UID/GID - [47 12] / [47 12]
+X-AntiAbuse: Sender Address Domain - w6rz.net
+X-BWhitelist: no
+X-Source-IP: 73.223.253.157
+X-Source-L: No
+X-Exim-ID: 1t3b3y-003lNZ-1z
+X-Source: 
+X-Source-Args: 
+X-Source-Dir: 
+X-Source-Sender: c-73-223-253-157.hsd1.ca.comcast.net ([10.0.1.47]) [73.223.253.157]:49836
+X-Source-Auth: re@w6rz.net
+X-Email-Count: 9
+X-Org: HG=bhshared;ORG=bluehost;
+X-Source-Cap: d3NpeHJ6bmU7d3NpeHJ6bmU7Ym94NTYyMC5ibHVlaG9zdC5jb20=
+X-Local-Domain: yes
+X-CMAE-Envelope: MS4xfGEGbDecpRlWDH4uMrACDttkXaq6sUKY0Ef0eg6GMxJffHskhwY0efpzhbUm4b7yuIaVW23uvZ8unuVtrgsqFC21YEhCPhlew8464/CwJl+atSHhr8qo
+ O4nWtbSMbmDTeoZu+3WMALRxgujeN3n263J/5fPWDOfdSO5NgjpIKv4/HuENCYzO4RedVKxGnVH3F4cdFoJEi5gC1u9UInErjRw=
+
+On 10/22/24 11:16 AM, Masahiro Yamada wrote:
+> Since commit f1d87664b82a ("kbuild: cross-compile linux-headers package
+> when possible"), 'make bindeb-pkg' may attempt to cross-compile the
+> linux-headers package, but it fails under certain circumstances.
+>
+> For example, when CONFIG_MODULE_SIG_FORMAT is enabled on Debian, the
+> following command fails:
+>
+>    $ make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+>        [ snip ]
+>    Rebuilding host programs with aarch64-linux-gnu-gcc...
+>      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/kallsyms
+>      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/sorttable
+>      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/asn1_compiler
+>      HOSTCC  debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/sign-file
+>    In file included from /usr/include/openssl/opensslv.h:109,
+>                     from debian/linux-headers-6.12.0-rc4/usr/src/linux-headers-6.12.0-rc4/scripts/sign-file.c:25:
+>    /usr/include/openssl/macros.h:14:10: fatal error: openssl/opensslconf.h: No such file or directory
+>       14 | #include <openssl/opensslconf.h>
+>          |          ^~~~~~~~~~~~~~~~~~~~~~~
+>    compilation terminated.
+>
+> This commit adds a new profile, pkg.linux-upstream.nokernelheaders, to
+> guard the linux-headers package.
+>
+> There are two options to fix the above issue.
+>
+> [option 1] Set the pkg.linux-upstream.nokernelheaders build profile
+>
+>    $ DEB_BUILD_PROFILES=pkg.linux-upstream.nokernelheaders \
+>      make ARCH=arm64 CROSS_COMPILE=aarch64-linux-gnu- bindeb-pkg
+>
+> This skips the building of the linux-headers package.
+>
+> [option 2] Install the necessary build dependencies
+>
+> If you want to cross-compile the linux-headers package, you need to
+> install additional packages. This is a one-time installation step.
+>
+> For example, on Debian, the packages necessary for cross-compiling it
+> to arm64 can be installed with the following commands:
+>
+>    # dpkg --add-architecture arm64
+>    # apt update
+>    # apt install gcc-aarch64-linux-gnu libssl-dev:arm64
+>
+> Fixes: f1d87664b82a ("kbuild: cross-compile linux-headers package when possible")
+> Reported-by: Ron Economos <re@w6rz.net>
+> Closes: https://lore.kernel.org/all/b3d4f49e-7ddb-29ba-0967-689232329b53@w6rz.net/
+> Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
+> ---
+>
+>   scripts/package/builddeb             | 2 +-
+>   scripts/package/install-extmod-build | 6 ++----
+>   scripts/package/mkdebian             | 9 ++++++++-
+>   3 files changed, 11 insertions(+), 6 deletions(-)
+>
+> diff --git a/scripts/package/builddeb b/scripts/package/builddeb
+> index 404587fc71fe..441b0bb66e0d 100755
+> --- a/scripts/package/builddeb
+> +++ b/scripts/package/builddeb
+> @@ -123,7 +123,7 @@ install_kernel_headers () {
+>   	pdir=debian/$1
+>   	version=${1#linux-headers-}
+>   
+> -	"${srctree}/scripts/package/install-extmod-build" "${pdir}/usr/src/linux-headers-${version}"
+> +	CC="${DEB_HOST_GNU_TYPE}-gcc" "${srctree}/scripts/package/install-extmod-build" "${pdir}/usr/src/linux-headers-${version}"
+>   
+>   	mkdir -p $pdir/lib/modules/$version/
+>   	ln -s /usr/src/linux-headers-$version $pdir/lib/modules/$version/build
+> diff --git a/scripts/package/install-extmod-build b/scripts/package/install-extmod-build
+> index d2c9cacecc0c..7ec1f061a519 100755
+> --- a/scripts/package/install-extmod-build
+> +++ b/scripts/package/install-extmod-build
+> @@ -44,13 +44,11 @@ mkdir -p "${destdir}"
+>   	fi
+>   } | tar -c -f - -T - | tar -xf - -C "${destdir}"
+>   
+> -# When ${CC} and ${HOSTCC} differ, we are likely cross-compiling. Rebuild host
+> -# programs using ${CC}. This assumes CC=${CROSS_COMPILE}gcc, which is usually
+> -# the case for package building. It does not cross-compile when CC=clang.
+> +# When ${CC} and ${HOSTCC} differ, rebuild host programs using ${CC}.
+>   #
+>   # This caters to host programs that participate in Kbuild. objtool and
+>   # resolve_btfids are out of scope.
+> -if [ "${CC}" != "${HOSTCC}" ] && is_enabled CONFIG_CC_CAN_LINK; then
+> +if [ "${CC}" != "${HOSTCC}" ]; then
+>   	echo "Rebuilding host programs with ${CC}..."
+>   
+>   	cat <<-'EOF' >  "${destdir}/Kbuild"
+> diff --git a/scripts/package/mkdebian b/scripts/package/mkdebian
+> index 10637d403777..93eb50356ddb 100755
+> --- a/scripts/package/mkdebian
+> +++ b/scripts/package/mkdebian
+> @@ -179,6 +179,8 @@ fi
+>   
+>   echo $debarch > debian/arch
+>   
+> +host_gnu=$(dpkg-architecture -a "${debarch}" -q DEB_HOST_GNU_TYPE | sed 's/_/-/g')
+> +
+>   # Generate a simple changelog template
+>   cat <<EOF > debian/changelog
+>   $sourcename ($packageversion) $distribution; urgency=low
+> @@ -196,7 +198,11 @@ Priority: optional
+>   Maintainer: $maintainer
+>   Rules-Requires-Root: no
+>   Build-Depends: debhelper-compat (= 12)
+> -Build-Depends-Arch: bc, bison, cpio, flex, kmod, libelf-dev:native, libssl-dev:native, rsync
+> +Build-Depends-Arch: bc, bison, cpio, flex,
+> + gcc-${host_gnu} <!pkg.${sourcename}.nokernelheaders>,
+> + kmod, libelf-dev:native,
+> + libssl-dev:native, libssl-dev <!pkg.${sourcename}.nokernelheaders>,
+> + rsync
+>   Homepage: https://www.kernel.org/
+>   
+>   Package: $packagename-$version
+> @@ -224,6 +230,7 @@ cat <<EOF >> debian/control
+>   
+>   Package: linux-headers-$version
+>   Architecture: $debarch
+> +Build-Profiles: <!pkg.${sourcename}.nokernelheaders>
+>   Description: Linux kernel headers for $version on $debarch
+>    This package provides kernel header files for $version on $debarch
+>    .
+
+Tested with option 2 for RISC-V. On Ubuntu 24.04, the following must be 
+added to the file /etc/apt/sources.list.d/ubuntu.sources for apt update 
+to fetch the correct repositories:
+
+Types: deb
+URIs: http://ports.ubuntu.com/ubuntu-ports
+Suites: noble noble-updates noble-backports
+Components: main universe restricted multiverse
+Signed-By: /usr/share/keyrings/ubuntu-archive-keyring.gpg
+Architectures: riscv64
+
+Then:
+
+sudo dpkg --add-architecture riscv64
+sudo apt-get update
+sudo apt-get install libssl-dev:riscv64
+
+The tool chain at https://github.com/riscv-collab/riscv-gnu-toolchain 
+can also be made to work. See:
+
+https://github.com/riscv-collab/riscv-gnu-toolchain/issues/1590
+
+Tested-by: Ron Economos <re@w6rz.net>
 
 
-
-On 10/18/2024 11:38 PM, Dmitry Baryshkov wrote:
-> On Fri, Oct 18, 2024 at 10:03:08PM +0800, Jie Luo wrote:
->>
->>
->> On 10/18/2024 4:11 PM, Dmitry Baryshkov wrote:
->>> On Fri, 18 Oct 2024 at 09:55, Jie Luo <quic_luoj@quicinc.com> wrote:
->>>>
->>>>
->>>>
->>>> On 10/18/2024 6:32 AM, Dmitry Baryshkov wrote:
->>>>> On Tue, Oct 15, 2024 at 10:16:54PM +0800, Luo Jie wrote:
->>>>>> The CMN PLL clock controller allows selection of an input
->>>>>> clock rate from a defined set of input clock rates. It in-turn
->>>>>> supplies fixed rate output clocks to the hardware blocks that
->>>>>> provide ethernet functions such as PPE (Packet Process Engine)
->>>>>> and connected switch or PHY, and to GCC.
->>>>>>
->>>>>> Signed-off-by: Luo Jie <quic_luoj@quicinc.com>
->>>>>> ---
->>>>>>     arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi |  6 +++++-
->>>>>>     arch/arm64/boot/dts/qcom/ipq9574.dtsi            | 20 +++++++++++++++++++-
->>>>>>     2 files changed, 24 insertions(+), 2 deletions(-)
->>>>>>
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>>> index 91e104b0f865..77e1e42083f3 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574-rdp-common.dtsi
->>>>>> @@ -3,7 +3,7 @@
->>>>>>      * IPQ9574 RDP board common device tree source
->>>>>>      *
->>>>>>      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>>      */
->>>>>>
->>>>>>     /dts-v1/;
->>>>>> @@ -164,6 +164,10 @@ &usb3 {
->>>>>>        status = "okay";
->>>>>>     };
->>>>>>
->>>>>> +&cmn_pll_ref_clk {
->>>>>> +    clock-frequency = <48000000>;
->>>>>> +};
->>>>>> +
->>>>>>     &xo_board_clk {
->>>>>>        clock-frequency = <24000000>;
->>>>>>     };
->>>>>> diff --git a/arch/arm64/boot/dts/qcom/ipq9574.dtsi b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>>> index 14c7b3a78442..93f66bb83c5a 100644
->>>>>> --- a/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>>> +++ b/arch/arm64/boot/dts/qcom/ipq9574.dtsi
->>>>>> @@ -3,10 +3,11 @@
->>>>>>      * IPQ9574 SoC device tree source
->>>>>>      *
->>>>>>      * Copyright (c) 2020-2021 The Linux Foundation. All rights reserved.
->>>>>> - * Copyright (c) 2023, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>> + * Copyright (c) 2023-2024, Qualcomm Innovation Center, Inc. All rights reserved.
->>>>>>      */
->>>>>>
->>>>>>     #include <dt-bindings/clock/qcom,apss-ipq.h>
->>>>>> +#include <dt-bindings/clock/qcom,ipq-cmn-pll.h>
->>>>>>     #include <dt-bindings/clock/qcom,ipq9574-gcc.h>
->>>>>>     #include <dt-bindings/interconnect/qcom,ipq9574.h>
->>>>>>     #include <dt-bindings/interrupt-controller/arm-gic.h>
->>>>>> @@ -19,6 +20,11 @@ / {
->>>>>>        #size-cells = <2>;
->>>>>>
->>>>>>        clocks {
->>>>>> +            cmn_pll_ref_clk: cmn-pll-ref-clk {
->>>>>> +                    compatible = "fixed-clock";
->>>>>> +                    #clock-cells = <0>;
->>>>>> +            };
->>>>>
->>>>> Which block provides this clock? If it is provided by the external XO
->>>>> then it should not be a part of the SoC dtsi.
->>>>
->>>> The on-chip WiFi block supplies this reference clock. So keeping it in
->>>> the SoC DTSI is perhaps appropriate.
->>>
->>> Then maybe it should be provided by the WiFi device node? At least you
->>> should document your design decisions in the commit message.
->>
->> This CMN PLL reference clock is fixed rate and is automatically
->> generated by the SoC's internal Wi-Fi hardware block with no software
->> configuration required from the Wi-Fi side.
->>
->> Sure, I will enhance the commit message to add the information on the
->> fixed reference clock from Wi-Fi block. Hope this is ok.
-> 
-> We have other fixed clocks which are provided by hardware blocks.
-> Without additional details it is impossible to answer whether it is fine
-> or not.
-
-There is an XO on the board which supplies reference clock (48Mhz or
-96Mhz) to the Wi-Fi block on the SoC. There is a multiplier/divider in
-the Wi-Fi block, which ensures the output reference clock of 48Mhz is
-supplied to CMN PLL block.
-
-In summary, below is the path to receive the reference clock at CMN PLL:
-The clock path is .XO (48 MHZ/96 MHZ) --> WiFi (multiplier/divider) 
--->(48 MHZ) --> CMN PLL.
-
-There is no software configuration required for the entire path, as it
-is fully controlled by bootstrap pins on the board. There are bootstrap
-pins for selecting the selecting the XO frequency (48Mhz or 96Mhz) and
-based on this, the divider is automatically selected by HW (1 for 48Mhz,
-2 for 96Mhz), to ensure output clock to CMN PLL is 48Mhz.
-
-> 
->>
->>>
->>> Also, I don't think this node passes DT schema validation. Did you check it?
->>
->> Yes, the DT is validated against the schema, I have shared the logs
->> below. Could you please let me know If anything needs rectification?
-> 
-> I see, you are setting the cmn_pll_ref_clk frequency in the
-> ipq9574-rdp-common.dtsi file. If the PLL is internal to the SoC, why is
-> the frequency set outside of it? Is it generated by multiplying the XO
-> clk? Should you be using fixed-factor clock instead?
-> 
-
-Since the reference clock is controlled by bootstrap pins on the board,
-it may be appropriate to define the frequency for this reference clock
-in the board DTS. Given the clock tree described above, I will update
-the cmn_pll_ref_clk to define it as a fixed-factor clock as per your
-suggestion, with its frequency and factors configured in board DTSI.
-These values defined in rdp-common.dtsi will be default values that can
-be overridden if necessary by different boards. Hope this approach is
-fine.
-
-In ipq9574.dtsi:
-cmn_pll_ref_clk: cmn-pll-ref-clk { 
-  
-  
-
-         compatible = "fixed-factor-clock"; 
-  
-  
-
-         clocks = <&xo_clk>; 
-  
-  
-  
-  
-  
-
-	#clock-cells = <0>;
-};
-
-xo_clk: xo {
-	compatible = "fixed-clock";
-	#clock-cells = <0>;
-};
-
-In ipq9574-rdp-common.dtsi.
-&cmn_pll_ref_clk {
-	clock-div = <1>;
-	clock-mult = <1>;
-};
-
-&xo_clk {
-	clock-frequency = <48000000>;
-}
 
