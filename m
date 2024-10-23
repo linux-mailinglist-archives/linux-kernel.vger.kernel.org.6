@@ -1,512 +1,280 @@
-Return-Path: <linux-kernel+bounces-377930-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377938-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CCFD9AC8AE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:13:20 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C28889AC8CF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:22:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 538C7282776
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:13:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03DCDB23064
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:22:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 107E21AA78B;
-	Wed, 23 Oct 2024 11:13:07 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 696F41AA7BA;
+	Wed, 23 Oct 2024 11:21:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="UPWMCSKw";
+	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="l6M2DeK/"
+Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D7C24F21D;
-	Wed, 23 Oct 2024 11:13:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729681986; cv=none; b=l6bUMz1Rx3W+LolDDcneCxve4S3h/9NlpICYapVEglAgWc96J0+e67FWw/PmNwKeus88+sBaa01wcfQyrP1PM2YJizirS9xPIJqwgaOV6evqmbYHYpfI+ru8cC97iBJE+KxBjgtgLJrJk6vb1ltBwrbdisLMY1PnTWBPTLMUjCs=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729681986; c=relaxed/simple;
-	bh=w2dIDHsuzH+P3MBWYFVjkSTcv9ecunJ3p9KhQ6AkdzY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Cit/Mt00QicaSj30KAz9RFxGJlzhRckl17u2mYWgn4tI/qOKzKBgjLECjYTa+ntvErdnZrP9IEJbWxQBFF+shsE2TPZ9ti74OMYZenNvqImXdzZiMcFQGyKYFeb23/Hmw1F0BxfFlFDNcnpi/8Y0og+Wv5JQIcFowc/Fe1JoVXA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EC1BC4CEE4;
-	Wed, 23 Oct 2024 11:13:03 +0000 (UTC)
-Message-ID: <59047df4-1e5f-488f-a134-f8bad7cf655c@xs4all.nl>
-Date: Wed, 23 Oct 2024 13:13:02 +0200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E3331AA780;
+	Wed, 23 Oct 2024 11:21:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729682518; cv=fail; b=MD3tNlOgFt0YM6689b2DYUoRPyobNd+2YAJvcqkicRt4xklZFb/MgGtXacaiyApMRdSXz25Ld8Lf00WDzUKMuKU8bahIu/hoMxarnZrGZCFZEdziiOhMS+/N2etJk3AauJxvEdsLZxRI346VmBrYNrZRXdjhnJifie15bbVsbCE=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729682518; c=relaxed/simple;
+	bh=sq+9IJiAn4boHk+sSOOf4BLEgjwo2Ep88TMBSEDyPKk=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=A9EEU2DpannFwa1dmNyxWxEsfdDNzs9hZsbKVNcfPdDQqwUxoN4f8dH58SNTxsn9G1pMU2MwVTowv1PTQA7sISKXrkH1Ik4m8EfQ+bTKQAmAMo0WK2kA47nn45RUKcNziZioBL9Nohq0SNc5pl8r+hrnnUL62Fd24W4OIdYoP3w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=UPWMCSKw; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=l6M2DeK/; arc=fail smtp.client-ip=205.220.177.32
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
+Received: from pps.filterd (m0246632.ppops.net [127.0.0.1])
+	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7u6DS002245;
+	Wed, 23 Oct 2024 11:16:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=
+	corp-2023-11-20; bh=73hpBuGVdM3+0CM9pv0KCTO7LJBtoFgADBk4pgXcRAg=; b=
+	UPWMCSKw5Jv+v+RXj6OLqQrCc/Se+uuuP2MwoO1q+++72F+EUUscIrjPodD8LCy2
+	EitutjM+8fd4QWqXJ7MWtE8CSLh6jS0hB4yyzRKc9WanFGmFVoOyM5/k6+uQZnw9
+	oAvJW0rZrIEBds8pmfhOKSZw8UjS37MWd6cLy/7/UIk04hhYLuCo1x9qIeCWihjp
+	87WXLckFnL8FuYXHBPVRQeD7E0dABMeOkK6WRFMtgutDewH8A9gxM368+X4pkZwK
+	bCeuEDw750eyYODaTXjIkSgi1N4j+wdySBROLEEe5BnpuV+f7c2lTlTU7XQNOTAd
+	RJ8DoCwz1BLWonY3rcTQ3A==
+Received: from iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (iadpaimrmta03.appoci.oracle.com [130.35.103.27])
+	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42ckkqy686-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 11:16:28 +0000 (GMT)
+Received: from pps.filterd (iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com [127.0.0.1])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49NAtWPu039532;
+	Wed, 23 Oct 2024 11:16:27 GMT
+Received: from nam12-dm6-obe.outbound.protection.outlook.com (mail-dm6nam12lp2169.outbound.protection.outlook.com [104.47.59.169])
+	by iadpaimrmta03.imrmtpd1.prodappiadaev1.oraclevcn.com (PPS) with ESMTPS id 42emhaw8mk-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Wed, 23 Oct 2024 11:16:27 +0000
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=IRv5DVFIy91nrY+gWqdbgCSr/F6SBUzY9TdyzWFj89KgTfwEwmF+YlKGX9oO0SFYLmQkVGDqfdveeZ+VYwoZ4Wu6nJQkjdWSqPZMLcAWrEoAhoYUhxjrv0Mvo04i/dlWrn6oTUBVpNAc3Ug3vSznt7DhDSYtpO7FerPMONzZuXa3agVr8viS2rD3hAvOJNZyDcALTsvq1CCHLL9JO4zBiXSyrgjCH9NklcAKENxA89iBfZf6p/mDuFgFwBJJ71wUsXO3IGBH00OF98PFUPfVp0uV60lQ3RoSKh0m4iekQ46tfNKaOfi+hzMVKYL1YXNqoMpQ/El0lFwaYK+sRlcKtg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=73hpBuGVdM3+0CM9pv0KCTO7LJBtoFgADBk4pgXcRAg=;
+ b=jW4BuVZcul5qpOgdCVmqgR876JRoFprWnE0FsHyR8AFb7L2r3kyxKr+h/Mdr3Jq6Xw8phLnPxtoe9UazByWi/ETu9pXsQdCZimTFZ8Ibxr3Sw5y3g1JUIvUM0/tNlr0cII7qX4bsX1rr/c/83NAEjYJvV0yaqMn64q94epk9gzD/CQI/FPupJY6BqLthbst0m0fEzJWcHZfUIWj63tUYboZOVBEdzVOA1Xy4friJcC8Dq4NKr7FOPFxHuxlTvmtkyoN+PxHfWVdX9QL+NzjRpg6jkeFhNH6tzTkMGjg/KZj3PtYbd4l5H8nCL0vFgOvxRe1EYPjQ5EPAXq2VHLrPYA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
+ dkim=pass header.d=oracle.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+ d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=73hpBuGVdM3+0CM9pv0KCTO7LJBtoFgADBk4pgXcRAg=;
+ b=l6M2DeK/loCscVsmM8n1Jl4Q+WQwI09mzDH7KIx7HfrFOobao5Z5JxZSHB+ywpz/U1d4Ie6wx3mpcPX1amrBI3sBJJUEC7HZB0V7QCeF7L2ecdpnhGTxjB7elzWyz1anz5Ehnrha/BAkLqPRCzggGn+p3wLdbKAR/IgfslLXeuE=
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com (2603:10b6:5:212::20)
+ by DS7PR10MB7132.namprd10.prod.outlook.com (2603:10b6:8:ef::20) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Wed, 23 Oct
+ 2024 11:16:25 +0000
+Received: from DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088]) by DM6PR10MB4313.namprd10.prod.outlook.com
+ ([fe80::4f45:f4ab:121:e088%5]) with mapi id 15.20.8069.027; Wed, 23 Oct 2024
+ 11:16:25 +0000
+Message-ID: <0cf7985e-e7ac-4503-827b-eb2a0fd6ef67@oracle.com>
+Date: Wed, 23 Oct 2024 12:16:19 +0100
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+To: Yu Kuai <yukuai1@huaweicloud.com>, axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+        linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+        "yangerkun@huawei.com" <yangerkun@huawei.com>,
+        "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+ <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+ <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+ <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
+ <44806c6f-d96a-498c-83e1-e3853ee79d5a@oracle.com>
+ <59a46919-6c6d-46cb-1fe4-5ded849617e1@huaweicloud.com>
+ <6148a744-e62c-45f6-b273-772aaf51a2df@oracle.com>
+ <be465913-80c7-762a-51f1-56021aa323dd@huaweicloud.com>
+Content-Language: en-US
+From: John Garry <john.g.garry@oracle.com>
+Organization: Oracle Corporation
+In-Reply-To: <be465913-80c7-762a-51f1-56021aa323dd@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: AM9P193CA0014.EURP193.PROD.OUTLOOK.COM
+ (2603:10a6:20b:21e::19) To DM6PR10MB4313.namprd10.prod.outlook.com
+ (2603:10b6:5:212::20)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 16/28] media: iris: implement vb2 streaming ops
-To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>,
- Abhinav Kumar <quic_abhinavk@quicinc.com>,
- Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
-Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
- linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
- <20241014-qcom-video-iris-v4-v4-16-c5eaa4e9ab9e@quicinc.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil@xs4all.nl>
-Autocrypt: addr=hverkuil@xs4all.nl; keydata=
- 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
-In-Reply-To: <20241014-qcom-video-iris-v4-v4-16-c5eaa4e9ab9e@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DM6PR10MB4313:EE_|DS7PR10MB7132:EE_
+X-MS-Office365-Filtering-Correlation-Id: bcae71c7-cf40-4c83-d4c7-08dcf35420be
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?TDFtM3RaelBleEs1cjMwMDl1UmpzbmppYTlkQTZoWDFpZnB4aXJFUkNjUFBm?=
+ =?utf-8?B?TnZ5SXBvS2c1ZHBPenRyRGhCZTFrRUpMd09LMUhiK3RMS1JkK1pJKzg0RitR?=
+ =?utf-8?B?cVNhNUl1eVhqdjhBUElQeFJIOWxlRUMrUE9MN2Q5V2dhNUJNR1dBYmprRnZB?=
+ =?utf-8?B?N3ZqUkVGdnpLbnMyVVNkVDJkMjljRFFuSUNFeHlEdnM3KzB5Qk9sRC9pdnZR?=
+ =?utf-8?B?c00vN3hidkV0dG94dFQ1aThEWmNZWXNlT3RTd2M3MzByN0RPSTJ1SVBKa0lo?=
+ =?utf-8?B?VllPa20zZy85SHRIU1M4bW80cXN6OUpBWkR1TERuenIxM21rRll6RUVyRStw?=
+ =?utf-8?B?c3lqUlRsTGZqaDlWdmF1UC9EUHdWdysvWFhqQ05zSi9JZ2JvdzhwQmRPYXB1?=
+ =?utf-8?B?ZzJxTHFkL0JzODdoSXo1NEpxMEJJejNRMzVVVEg5WldCeTdyZ1JGNi8vSGZE?=
+ =?utf-8?B?MjJKR09HOFR5WXBDTDFhQTY1dFZScytFc2xhSThjNzljNnJGd0ppeUx5MURE?=
+ =?utf-8?B?NEVoblhVWVI5c0JVV1FOUnlxMjdSZ3VZMTZHWDdMT3ZyYlpzY0lmVXNwclVZ?=
+ =?utf-8?B?Um9UY2dyM25jV24wNVZxTzFHMWppaUxNZFBmcUZCd3BGRDM4MEF6dGVkdDc2?=
+ =?utf-8?B?blExeVY2eGhsZDFpbTczOWlZL0sxS2lUaFdTV2pKa25Vb1BWbEd0SWROYm5V?=
+ =?utf-8?B?ZWhyN20xRGxoaFpaeXBHd25LV2p5MmVmbng4QnJmUXYvL2FVWWlBRFVmcXZQ?=
+ =?utf-8?B?Q2JYRVlzN3ZBeWJEajhIVDZDcEpHMmY2RXBkQXVxYXRRSXF4L1UvWC96dmhW?=
+ =?utf-8?B?Rkg4UC9YdVhKaHJWUGt3aHJyN0Vxb2Eva0FxSFIwNWI2WitBU2EvczZBK1Nw?=
+ =?utf-8?B?QWRWSmpURTErUkQ4WE03YmVwd3VnMWpyVVk5OXh4REdTV1F0TFZha3FUK2hv?=
+ =?utf-8?B?YzV5MktGanU5KzlDbDZ0ckNrRDFyZk5DR1dpNmVGYXlTQW94czg4OEhXVC9H?=
+ =?utf-8?B?bFcwS3RKWklJTXVMWVNoNWgvTWpsbEdnMkZRY3kvcHdEaTUyUnlma0hiSUNH?=
+ =?utf-8?B?SW5RVm84MktNL2pjak5DdldkME9kMnlYOGVpeUlab2NjZ1hOQ3Q3YTlaV0Iv?=
+ =?utf-8?B?b0c3SzltT1VNcDBDVGhKazI5bHBUTjk1TytFU1dvdCs1emtJTEhoeXFqZjBI?=
+ =?utf-8?B?bGRPYk8xaVlrTng3cGNTZFo5bEVsSlNMbU44Ri82Q0RXY0FzYTIwMmdBZlBO?=
+ =?utf-8?B?VUE2TXVoM0ZoQ3R2MTFaMWoySlNobGdZcURnOGNKVUdwaUNwbHpOYmJvY1dC?=
+ =?utf-8?B?S1FlWm5oelJ5cTV3a2orU1ZUQ20yRmZDUlhJb2RST0lIV0d0eURaVk8wOFV1?=
+ =?utf-8?B?NTlsaHpqTXJKMXEyR0tjSlAvUnJpcVpXQUgyMERQODVZV3hWYWhyUmpQT3JL?=
+ =?utf-8?B?ZHhVUGlpek9scWdXSWRUK1AycFROMlVRU0c2K3NCUnVwM0tZMmpDb1hVRlZV?=
+ =?utf-8?B?dk50azIzcTQ4VFBGT2pBZDJGcDFNQmFrZ1ltaHpDZ2ZDVFhueDN1Y1ZmbEZl?=
+ =?utf-8?B?eEIrSTlJSk53ZnZyenExWWN5R1dLeWJ0L1RZdytpbHhYWk40Rnl0aWlPU2Fv?=
+ =?utf-8?B?djBtaGQ1R3NKUzk3UHpUL0tmU2ZpaEw3OGNtZlE0dlZvdmxya3hzTmJ1dkZB?=
+ =?utf-8?B?M0RoQ0pTSGdIQzNaK0tUcTRCUnNDcHVuR09jWHd6b3RlZUJrOUgzQ0x1U0pz?=
+ =?utf-8?Q?3aO/CdcuKjw7sfTiefoBSp+Yb2lT1CvC2V7dUFG?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DM6PR10MB4313.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?eXRZYzg0L2k4Nk1wYVlxSTY1WmFsN1ZrVWZYek9mcFNLQ3JQaTZPZk5mQkVt?=
+ =?utf-8?B?aFJZNXJPTHdFZlR2YjFsTUJtRVIxZmt1NTJnTEFFNVN3WVh5a3JBT0h4Nk5U?=
+ =?utf-8?B?SnhQa0k3UktIZkxvZ3QrU2syTWZQSERja3R5SCt2bHc2Q09SRHBBcWZhUngy?=
+ =?utf-8?B?Zk80UkRWUXNzUnVRdkRBQmtKT2xaZmtNQ0xjZW9pSmZUUURMNnIvOE12S3pW?=
+ =?utf-8?B?Y3A4OEd3S2V1K2s5eldLbE9SdkZnOUZ6Vkc3UFpUMmZUaUdWZnFVdGFLK1kv?=
+ =?utf-8?B?RXhhc0xwY21VanExVjIrbjRmV0NGMkFoWldqcGl6VzVIcU9INlVTUlVsS1h5?=
+ =?utf-8?B?ejlqSTM4OGovVjNKemlHRkVOVVZ5V2dQSFZaRWRhb1NHQTVkYWZLREtaK1F2?=
+ =?utf-8?B?a2phcUc5bTJCMUdOUHl4RE9UL0lWVUNzSEFnZU44d2VFQjlRZFBrMlVGcW9u?=
+ =?utf-8?B?c0czUzN1aytHMXd4MjhHUGZ1QzBZbWpHRHp4Tmk0T1d1cTI0TXpYOVlFdTZB?=
+ =?utf-8?B?ZUp0UnZYK3Y0R2ZxRmlVcmx6V0Z2dTNwWFlBcWEvOXZ2WTJkVHRQTkdXajFy?=
+ =?utf-8?B?SkVpbW1EcUJpLzFZb2hXMk40Y1ZSeUg0bDZwMUhlaDBqZCthYUk2YWtoRnFW?=
+ =?utf-8?B?RnRWb2pJdElpQ3JTeC9hZWlhbXl3clBHSzR1SVcrYng0RGlYWjdSUnpQQ0tB?=
+ =?utf-8?B?L0tWa3JVd09BK2hDZWVFUUZFVlFpTVdPdi90N0dGSVFhRHdSSUQvQjUzQmp0?=
+ =?utf-8?B?SWw2amFDQm1CQThmb0toYlBmUTREZXlLUVA1WVptVVhlZ1pieTl1OFAyWjRZ?=
+ =?utf-8?B?NCs2TUJQTnl5ZzV4a2RpY1V5VmRiSXlGQlhkakt3WTRUMkg3UGk5MDlsTHAx?=
+ =?utf-8?B?QXBEWjhxVGczL0k5WG1IMUl6YTlnTUNRbG1hQ20xQ1oxUUR6bUYxd0ErVFcz?=
+ =?utf-8?B?a3BDVWxPMVpwSTZ5cFZheElpZ0xaNFZETjVwdE5XcU05RjBNZUpMTXdvNEhR?=
+ =?utf-8?B?cnJLL3ptNUFhSmFOMVdmU1dTczBNdFdoWkFGUUo1WHp2M2FVYnJQYkhpUEw0?=
+ =?utf-8?B?SXBjN2hTU285ZUZqMWM4NGVBWDRYaXFzeXhaVUhVRXNPZ0ZCTWFGRDdTRHpU?=
+ =?utf-8?B?VmlqR1NpQlNwcVB5WjdZRUtLQVM5KzFLcUpLN1F3dUdPYVFLeGI3R21sVXhP?=
+ =?utf-8?B?azdLZG1qeTVJMEFSdkhXRjVCdElSNFNZUXMvb292dzlJRFJvRFRaUHNqcmlV?=
+ =?utf-8?B?MXVnR2NaM3BsT1p4dkRLaDFhTHdOK3hQVGdnMnlVQ3pxRjR4K0gxazl6Qm9G?=
+ =?utf-8?B?VXVBNTJaSGVsUDh1NjArR0xDWUZ6TXhuWEl0ZlFqajNNWEdLNkpSdXo5aGxF?=
+ =?utf-8?B?anFxUk5uYWt2Y2twTXIyTnlmVERla2tOSlFTcWs0M0J2SVUrb09hSXAxY25j?=
+ =?utf-8?B?RFQxcUE3R0Q3WExzUGtCbVpjdTlCNVA0Qng3T3ZUVjg4NGtVcWZmakwrcnlq?=
+ =?utf-8?B?VVJVZW5qSldsRlNtWTNVN2xzdkNscnRlWSs2bFljQUVmQUM5QnJiU1UxMUVo?=
+ =?utf-8?B?K1Y3ZVN6RVAxNXVkL3NBVGNkcVhFek4walpacURIcmpjQy9ZTDZjeDB1dXU4?=
+ =?utf-8?B?c25sUlNqdTR2T1lBUjZoQTZhTzB5NjF1RzZGOTBvamUyQlNXOTlrZUdrSnJG?=
+ =?utf-8?B?UzZ6MHdQMWNJemIyQzIwSW9ZWkRLVFBxSzAwWDEvazB0bXoxL3BOYm95M0Ix?=
+ =?utf-8?B?aHdnYUEza0NEaUl1WnA4NjMzWjM4Y296cm9CNHBvV29IQUlNS2VBQUZPOWVa?=
+ =?utf-8?B?Z3ZkZEhLSVN3SGxxRXE0QmZuQWZVT0FOQkRka2pScStUdHdDbG5DYjFFYTFw?=
+ =?utf-8?B?cWdwQ2Y3U2wzem1TRlluZndyTnJ0OUJ2aG1tNnh4QnUwdGpDNDZFRmk3aFBs?=
+ =?utf-8?B?clZJeG04QmpkelRpWlZiK0lJaVlhZHdmajZxWWM3MERJSlI1VU5rVE1BanlD?=
+ =?utf-8?B?b0x5NktPaHYwMm15dEREaDJJMnRhZTNYRFdubWlHdjJKVEVBeWtEQXZDbUVv?=
+ =?utf-8?B?T2RMWkdSRlQ0UnFtMG9rOHRPbHpOUnFhNzZmQWdtNDQwUDZwdWtVOUlEK2ZZ?=
+ =?utf-8?Q?yKQB6ZGu62JrkS3ZNGj9iSSuq?=
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
+	RjvvA6XDSu0ujqKQVnpz+HjLHBm5zY1C1x+s51OJ/po8hqv1ly2TxpNaNsXrj2kKl4utUgGLuA21EDLZYIF4ixOMtxytxcGjmD5f1HBgYsfDpQn2dCvSU+huIlUj/FnK/oUJUvsmMLakAHsHdm1sWIupfuDKq8BhRnUXudqI6szEofYrldZZilF5oOmJIl59QbaNIATXfjZ3qVLrbh9XBrfYW6h/lkPhPxyX7vr3+SHq/zAN379g7xJoyErt37cd1qSXakbgfjFd0eikQxP15C/llqwVpXTwfP1YxBYSOqqCPV1lhXVvKYoOlJefUryJyz4dpySDlsB4Kq2Hjn418IiELz8+qTM5vtEzgYsdmODBy0aLDP2FQWtzPiWpVaylWTeu1TsQwlTf41UsNfgKdxPyUf7KGcYK67YpAvzUzvOSRL8uSVBV8wlTuM5E2/7tE09njHmxuPC6luM06DUwLL9QfdUWq3zSVEZL/7M4dA4eM9pjvJg2PnyNS8L+TfGhy4w+QDVkokKzZnGgPQNP+E5M5EREZsP0dzvZ7z2DLVss6VcTRH7JT9GEBR6xxDX7BzxkH6BmFz5Tklwa3WsMKFr+PEHUuVpdholzjqmovYE=
+X-OriginatorOrg: oracle.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: bcae71c7-cf40-4c83-d4c7-08dcf35420be
+X-MS-Exchange-CrossTenant-AuthSource: DM6PR10MB4313.namprd10.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 11:16:25.2521
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: /LwrFUVJ8rNiJQ0KkxlfC87DBRq0h4B4Npanx/D0Oz82aW9bbuUr3WY3nYF4nUCabhJZHvfA5NB+S1qFSt7gdA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS7PR10MB7132
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-23_09,2024-10-23_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 spamscore=0 mlxscore=0 phishscore=0
+ suspectscore=0 bulkscore=0 adultscore=0 malwarescore=0 mlxlogscore=999
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.12.0-2409260000
+ definitions=main-2410230066
+X-Proofpoint-GUID: D1QmlXKEawTC4K-XDVy5GWzv5UuSjMmm
+X-Proofpoint-ORIG-GUID: D1QmlXKEawTC4K-XDVy5GWzv5UuSjMmm
 
-On 14/10/2024 11:07, Dikshita Agarwal wrote:
-> In stream on, send HFI_CMD_START on capture and
-> output planes to start the processing on respective planes.
+On 23/09/2024 10:38, Yu Kuai wrote:
+>>>>>
+>>>>> We need a new branch in read_balance() to choose a rdev with full 
+>>>>> copy.
+>>>>
+>>>> Sure, I do realize that the mirror'ing personalities need more 
+>>>> sophisticated error handling changes (than what I presented).
+>>>>
+>>>> However, in raid1_read_request() we do the read_balance() and then 
+>>>> the bio_split() attempt. So what are you suggesting we do for the 
+>>>> bio_split() error? Is it to retry without the bio_split()?
+>>>>
+>>>> To me bio_split() should not fail. If it does, it is likely ENOMEM 
+>>>> or some other bug being exposed, so I am not sure that retrying with 
+>>>> skipping bio_split() is the right approach (if that is what you are 
+>>>> suggesting).
+>>>
+>>> bio_split_to_limits() is already called from md_submit_bio(), so here
+>>> bio should only be splitted because of badblocks or resync. We have to
+>>> return error for resync, however, for badblocks, we can still try to
+>>> find a rdev without badblocks so bio_split() is not needed. And we need
+>>> to retry and inform read_balance() to skip rdev with badblocks in this
+>>> case.
+>>>
+>>> This can only happen if the full copy only exist in slow disks. This
+>>> really is corner case, and this is not related to your new error path by
+>>> atomic write. I don't mind this version for now, just something
+>>> I noticed if bio_spilit() can fail.
+>>
+
+Hi Kuai,
+
+I am just coming back to this topic now.
+
+Previously I was saying that we should error and end the bio if we need 
+to split for an atomic write due to BB. Continued below..
+
+>> Are you saying that some improvement needs to be made to the current 
+>> code for badblocks handling, like initially try to skip bio_split()?
+>>
+>> Apart from that, what about the change in raid10_write_request(), 
+>> w.r.t error handling?
+>>
+>> There, for an error in bio_split(), I think that we need to do some 
+>> tidy-up if bio_split() fails, i.e. undo increase in rdev->nr_pending 
+>> when looping conf->copies
+>>
+>> BTW, feel free to comment in patch 6/6 for that.
 > 
-> During stream off, send HFI_CMD_STOP to firmware which is
-> a synchronous command. After the response is received from
-> firmware, the session is closed on firmware.
-> 
-> Introduce different states for instance and state transitions.
-> 
-> IRIS_INST_INIT - video instance is opened.
-> IRIS_INST_INPUT_STREAMING - stream on is completed on output plane.
-> IRIS_INST_OUTPUT_STREAMING - stream on is completed on capture
-> plane.
-> IRIS_INST_STREAMING - stream on is completed on both output and
-> capture planes.
-> IRIS_INST_DEINIT - video instance is closed.
-> IRIS_INST_ERROR - error state.
-> 
->                    |
->                    v
->             -------------
->   +---------|   INIT    |---------  +
->   |         -------------           |
->   |            ^    ^               |
->   |           /      \              |
->   |          /        \             |
->   |         v          v            |
->   |    -----------    -----------   |
->   |   |   INPUT         OUTPUT  |   |
->   |---| STREAMING     STREAMING |---|
->   |    -----------    -----------   |
->   |        ^            ^           |
->   |         \          /            |
->   |          \        /             |
->   |           v      v              |
->   |         -------------           |
->   |--------|  STREAMING |-----------|
->   |         -------------           |
->   |               |                 |
->   |               |                 |
->   |               v                 |
->   |          -----------            |
->   +-------->|  DEINIT   |<----------+
->   |          -----------            |
->   |               |                 |
->   |               |                 |
->   |               v                 |
->   |          ----------             |
->   +-------->|   ERROR  |<-----------+
->              ----------.
-> 
-> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
-> ---
->  drivers/media/platform/qcom/iris/Makefile          |   1 +
->  drivers/media/platform/qcom/iris/iris_hfi_common.h |   2 +
->  .../platform/qcom/iris/iris_hfi_gen1_command.c     |  82 +++++++++++++++-
->  .../platform/qcom/iris/iris_hfi_gen1_defines.h     |  24 +++++
->  .../platform/qcom/iris/iris_hfi_gen1_response.c    |  39 +++++++-
->  .../platform/qcom/iris/iris_hfi_gen2_command.c     |  61 ++++++++++++
->  .../platform/qcom/iris/iris_hfi_gen2_defines.h     |   2 +
->  .../platform/qcom/iris/iris_hfi_gen2_response.c    |  32 ++++++-
->  drivers/media/platform/qcom/iris/iris_instance.h   |   4 +
->  drivers/media/platform/qcom/iris/iris_state.c      | 104 +++++++++++++++++++++
->  drivers/media/platform/qcom/iris/iris_state.h      |  58 ++++++++++++
->  drivers/media/platform/qcom/iris/iris_utils.c      |  11 ++-
->  drivers/media/platform/qcom/iris/iris_utils.h      |   2 +-
->  drivers/media/platform/qcom/iris/iris_vb2.c        |  70 ++++++++++++++
->  drivers/media/platform/qcom/iris/iris_vb2.h        |   3 +
->  drivers/media/platform/qcom/iris/iris_vdec.c       |  75 +++++++++++++++
->  drivers/media/platform/qcom/iris/iris_vdec.h       |   3 +
->  drivers/media/platform/qcom/iris/iris_vidc.c       |  32 ++++++-
->  18 files changed, 593 insertions(+), 12 deletions(-)
-> 
+> Yes, raid1/raid10 write are the same. If you want to enable atomic write
+> for raid1/raid10, you must add a new branch to handle badblocks now,
+> otherwise, as long as one copy contain any badblocks, atomic write will
+> fail while theoretically I think it can work.
 
-<snip>
+Can you please expand on what you mean by this last sentence, "I think 
+it can work".
 
-> diff --git a/drivers/media/platform/qcom/iris/iris_vb2.c b/drivers/media/platform/qcom/iris/iris_vb2.c
-> index f89891e52fde..75c1364709d1 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vb2.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vb2.c
-> @@ -6,6 +6,7 @@
->  #include "iris_buffer.h"
->  #include "iris_instance.h"
->  #include "iris_vb2.h"
-> +#include "iris_vdec.h"
->  #include "iris_vpu_buffer.h"
->  
->  int iris_vb2_queue_setup(struct vb2_queue *q,
-> @@ -22,6 +23,10 @@ int iris_vb2_queue_setup(struct vb2_queue *q,
->  	inst = vb2_get_drv_priv(q);
->  
->  	mutex_lock(&inst->lock);
-> +	if (inst->state == IRIS_INST_ERROR) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
->  
->  	core = inst->core;
->  	f = V4L2_TYPE_IS_OUTPUT(q->type) ? inst->fmt_src : inst->fmt_dst;
-> @@ -49,6 +54,10 @@ int iris_vb2_queue_setup(struct vb2_queue *q,
->  			dev_err(core->dev, "session open failed\n");
->  			goto unlock;
->  		}
-> +
-> +		ret = iris_inst_change_state(inst, IRIS_INST_INIT);
-> +		if (ret)
-> +			goto unlock;
->  	}
->  
->  	buffers = &inst->buffers[buffer_type];
-> @@ -75,3 +84,64 @@ int iris_vb2_queue_setup(struct vb2_queue *q,
->  
->  	return ret;
->  }
-> +
-> +int iris_vb2_start_streaming(struct vb2_queue *q, unsigned int count)
-> +{
-> +	struct iris_inst *inst;
-> +	int ret = 0;
-> +
-> +	inst = vb2_get_drv_priv(q);
-> +
-> +	if (V4L2_TYPE_IS_CAPTURE(q->type) && inst->state == IRIS_INST_INIT)
-> +		return 0;
-> +
-> +	mutex_lock(&inst->lock);
-> +	if (inst->state == IRIS_INST_ERROR) {
-> +		ret = -EBUSY;
+Indeed, IMO, chance of encountering a device with BBs and supporting 
+atomic writes is low, so no need to try to make it work (if it were 
+possible) - I think that we just report EIO.
 
-If an error occurs during start_streaming, then all queued buffers must be
-returned to vb2 in state VB2_BUF_STATE_QUEUED.
-
-> +		goto error;
-> +	}
-> +
-> +	if (!V4L2_TYPE_IS_OUTPUT(q->type) &&
-> +	    !V4L2_TYPE_IS_CAPTURE(q->type)) {
-> +		ret = -EINVAL;
-> +		goto error;
-> +	}
-> +
-> +	if (V4L2_TYPE_IS_OUTPUT(q->type))
-> +		ret = iris_vdec_streamon_input(inst);
-> +	else if (V4L2_TYPE_IS_CAPTURE(q->type))
-> +		ret = iris_vdec_streamon_output(inst);
-> +	if (ret)
-> +		goto error;
-> +
-> +	mutex_unlock(&inst->lock);
-> +
-> +	return ret;
-> +
-> +error:
-> +	iris_inst_change_state(inst, IRIS_INST_ERROR);
-> +	mutex_unlock(&inst->lock);
-> +
-> +	return ret;
-> +}
-> +
-> +void iris_vb2_stop_streaming(struct vb2_queue *q)
-> +{
-> +	struct iris_inst *inst;
-> +
-> +	inst = vb2_get_drv_priv(q);
-> +
-> +	if (V4L2_TYPE_IS_CAPTURE(q->type) && inst->state == IRIS_INST_INIT)
-> +		return;
-> +
-> +	mutex_lock(&inst->lock);
-> +
-> +	if (!V4L2_TYPE_IS_OUTPUT(q->type) &&
-> +	    !V4L2_TYPE_IS_CAPTURE(q->type))
-> +		goto exit;
-> +
-> +	iris_vdec_session_streamoff(inst, q->type);
-> +
-> +exit:
-
-stop_streaming must return all queued buffers to vb2 in state VB2_BUF_STATE_ERROR.
-
-> +	mutex_unlock(&inst->lock);
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_vb2.h b/drivers/media/platform/qcom/iris/iris_vb2.h
-> index 78157a97b86e..bc3bb830c2ba 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vb2.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vb2.h
-> @@ -9,4 +9,7 @@
->  int iris_vb2_queue_setup(struct vb2_queue *q,
->  			 unsigned int *num_buffers, unsigned int *num_planes,
->  			 unsigned int sizes[], struct device *alloc_devs[]);
-> +int iris_vb2_start_streaming(struct vb2_queue *q, unsigned int count);
-> +void iris_vb2_stop_streaming(struct vb2_queue *q);
-> +
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
-> index 66a54771b9e8..44372e2811c3 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
-> @@ -241,3 +241,78 @@ int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_su
->  
->  	return ret;
->  }
-> +
-> +static void iris_vdec_kill_session(struct iris_inst *inst)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +
-> +	if (!inst->session_id)
-> +		return;
-> +
-> +	hfi_ops->session_close(inst);
-> +	iris_inst_change_state(inst, IRIS_INST_ERROR);
-> +}
-> +
-> +void iris_vdec_session_streamoff(struct iris_inst *inst, u32 plane)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	int ret;
-> +
-> +	ret = hfi_ops->session_stop(inst, plane);
-> +	if (ret)
-> +		goto error;
-> +
-> +	ret = iris_inst_state_change_streamoff(inst, plane);
-> +	if (ret)
-> +		goto error;
-> +
-> +	return;
-> +
-> +error:
-> +	iris_vdec_kill_session(inst);
-> +}
-> +
-> +static int iris_vdec_process_streamon_input(struct iris_inst *inst)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	int ret;
-> +
-> +	ret = hfi_ops->session_start(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return iris_inst_state_change_streamon(inst, V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE);
-> +}
-> +
-> +int iris_vdec_streamon_input(struct iris_inst *inst)
-> +{
-> +	return iris_vdec_process_streamon_input(inst);
-> +}
-> +
-> +static int iris_vdec_process_streamon_output(struct iris_inst *inst)
-> +{
-> +	const struct iris_hfi_command_ops *hfi_ops = inst->core->hfi_ops;
-> +	int ret;
-> +
-> +	ret = hfi_ops->session_start(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> +	if (ret)
-> +		return ret;
-> +
-> +	return iris_inst_state_change_streamon(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> +}
-> +
-> +int iris_vdec_streamon_output(struct iris_inst *inst)
-> +{
-> +	int ret;
-> +
-> +	ret = iris_vdec_process_streamon_output(inst);
-> +	if (ret)
-> +		goto error;
-> +
-> +	return ret;
-> +
-> +error:
-> +	iris_vdec_session_streamoff(inst, V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE);
-> +
-> +	return ret;
-> +}
-> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
-> index d7b8a0ad6fa8..b3299164f823 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
-> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
-> @@ -14,5 +14,8 @@ int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
->  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
->  int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
->  int iris_vdec_subscribe_event(struct iris_inst *inst, const struct v4l2_event_subscription *sub);
-> +int iris_vdec_streamon_input(struct iris_inst *inst);
-> +int iris_vdec_streamon_output(struct iris_inst *inst);
-> +void iris_vdec_session_streamoff(struct iris_inst *inst, u32 plane);
->  
->  #endif
-> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
-> index 60ee05b67f86..615f57bfaddc 100644
-> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
-> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
-> @@ -142,10 +142,12 @@ int iris_open(struct file *filp)
->  
->  	inst->core = core;
->  	inst->session_id = hash32_ptr(inst);
-> +	inst->state = IRIS_INST_DEINIT;
->  
->  	mutex_init(&inst->lock);
->  	mutex_init(&inst->ctx_q_lock);
->  	init_completion(&inst->completion);
-> +	init_completion(&inst->flush_completion);
->  
->  	iris_v4l2_fh_init(inst);
->  
-> @@ -191,6 +193,9 @@ static void iris_session_close(struct iris_inst *inst)
->  	bool wait_for_response = true;
->  	int ret;
->  
-> +	if (inst->state == IRIS_INST_DEINIT)
-> +		return;
-> +
->  	reinit_completion(&inst->completion);
->  
->  	ret = hfi_ops->session_close(inst);
-> @@ -198,7 +203,7 @@ static void iris_session_close(struct iris_inst *inst)
->  		wait_for_response = false;
->  
->  	if (wait_for_response)
-> -		iris_wait_for_session_response(inst);
-> +		iris_wait_for_session_response(inst, false);
->  }
->  
->  int iris_close(struct file *filp)
-> @@ -211,6 +216,7 @@ int iris_close(struct file *filp)
->  	mutex_lock(&inst->lock);
->  	iris_vdec_inst_deinit(inst);
->  	iris_session_close(inst);
-> +	iris_inst_change_state(inst, IRIS_INST_DEINIT);
->  	iris_v4l2_fh_deinit(inst);
->  	iris_remove_session(inst);
->  	mutex_unlock(&inst->lock);
-> @@ -238,7 +244,14 @@ static int iris_try_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_form
->  	int ret;
->  
->  	mutex_lock(&inst->lock);
-> +	if (inst->state == IRIS_INST_ERROR) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-
-Why this check? You should be able to try a format at any time.
-
-> +
->  	ret = iris_vdec_try_fmt(inst, f);
-> +
-> +unlock:
->  	mutex_unlock(&inst->lock);
->  
->  	return ret;
-> @@ -250,7 +263,14 @@ static int iris_s_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
->  	int ret;
->  
->  	mutex_lock(&inst->lock);
-> +	if (inst->state == IRIS_INST_ERROR) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-> +
->  	ret = iris_vdec_s_fmt(inst, f);
-> +
-> +unlock:
->  	mutex_unlock(&inst->lock);
->  
->  	return ret;
-> @@ -262,6 +282,11 @@ static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
->  	int ret = 0;
->  
->  	mutex_lock(&inst->lock);
-> +	if (inst->state == IRIS_INST_ERROR) {
-> +		ret = -EBUSY;
-> +		goto unlock;
-> +	}
-
-Same question, this should be fine at any time.
-
-> +
->  	if (V4L2_TYPE_IS_OUTPUT(f->type))
->  		memcpy(f, inst->fmt_src, sizeof(*f));
->  	else if (V4L2_TYPE_IS_CAPTURE(f->type))
-> @@ -269,6 +294,7 @@ static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
->  	else
->  		ret = -EINVAL;
->  
-> +unlock:
->  	mutex_unlock(&inst->lock);
->  
->  	return ret;
-> @@ -402,6 +428,8 @@ static struct v4l2_file_operations iris_v4l2_file_ops = {
->  
->  static const struct vb2_ops iris_vb2_ops = {
->  	.queue_setup                    = iris_vb2_queue_setup,
-> +	.start_streaming                = iris_vb2_start_streaming,
-> +	.stop_streaming                 = iris_vb2_stop_streaming,
->  };
->  
->  static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
-> @@ -421,6 +449,8 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
->  	.vidioc_g_selection             = iris_g_selection,
->  	.vidioc_subscribe_event         = iris_subscribe_event,
->  	.vidioc_unsubscribe_event       = iris_unsubscribe_event,
-> +	.vidioc_streamon                = v4l2_m2m_ioctl_streamon,
-> +	.vidioc_streamoff               = v4l2_m2m_ioctl_streamoff,
->  };
->  
->  void iris_init_ops(struct iris_core *core)
-> 
+Thanks,
+John
 
 
