@@ -1,242 +1,156 @@
-Return-Path: <linux-kernel+bounces-378353-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378355-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id C1A189ACEC2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:28:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E8B79ACEC7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:29:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5118A1F23A48
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:28:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3E51C20985
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:29:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F16611C8797;
-	Wed, 23 Oct 2024 15:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BAF1C75E4;
+	Wed, 23 Oct 2024 15:28:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b="UrrcmPwg"
-Received: from server02.seltendoof.de (server02.seltendoof.de [168.119.48.163])
+	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RorhM/lW"
+Received: from mout.web.de (mout.web.de [212.227.17.11])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 798C619DF45;
-	Wed, 23 Oct 2024 15:27:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=168.119.48.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97C91C1746;
+	Wed, 23 Oct 2024 15:28:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729697249; cv=none; b=WfUdysFytP8PyLP2D2MSzyJlch/z4SkLDcyKfxB6VhsE90gUiQ1ZQ7ucjgc5jcIvDFuawwqgpv6QwbOi4fZHMnyOhwsJw8iGU/Y/foESFp+VacoYfFwlcDM8j+GtcTuG47e8fyn3QcHb/rs1HYlJ0+TTQi73Qh2wJJfnVR57kXU=
+	t=1729697312; cv=none; b=Z86HI82KiT1F6AbveMZ/QsHSMfyu2+NqvUX5/05OTvcxxGKOie40Uy7ZcKfz+n3MYJfDyFLGlVxfioiRMEdKf2EfmfxQb4N2/Q+NYF+O/p3rTQ6vCt9lRNOnqDPdjumpslH8BfEsD2Q+rNZE4usjinNeK05Pq2ZI/WKESJMGS/g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729697249; c=relaxed/simple;
-	bh=oik+V/RNJwWo+SeFZOEQL78KxqbRBVcEF9pGR/uapd0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VVyULNsxFI75rV2q7VA9NzqIDxwbR+iKJaYygXQ5DAbvmzE87r2SVjwruIE45iJxtC6WI/bmtKzzAa/yQfvi1tULVar+/snfrPb7RaZmcfAbv36jG8LesoP5vJXJX0O/ffYTQoTTgYK6Urq+fzptQNRiok2MXDZRBTy2T1oRB28=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de; spf=pass smtp.mailfrom=seltendoof.de; dkim=pass (2048-bit key) header.d=seltendoof.de header.i=@seltendoof.de header.b=UrrcmPwg; arc=none smtp.client-ip=168.119.48.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=seltendoof.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seltendoof.de
-From: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgoettsche@seltendoof.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=seltendoof.de;
-	s=2023072701; t=1729697243;
-	h=from:from:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=xMk5VRfzH74Sdi7bz4nUNRyR99yVu65+lDcpBo3YmLM=;
-	b=UrrcmPwgR9Olu8Gq/devFDpg9lqeq2FAqh/MIdXYGMz9A9KlVUlVAGxYHmuExxpt7KFiHG
-	vmvyV9m1yKbZEy1I04orNFG+4SVt71+CyRr/D0CUARz6cFZgoXxrw6gBId4XD0h2TEcS3m
-	ZzT37Ts0id+AJtO4XVbhTt5tiYHGpqucl/LW25dcUdqfgDv/UTK7r0Pw2ZnyXIxSpx+ZGo
-	6av703RFdKrAaHK6qczoNjqcRFQhVmnOxifOJgR8de8MmRofaNYJZOn5Jilehxg8vMjoR1
-	sGdRLQyH1hRF74hYdRpOYGzPAu6rXp/LVqrVAEk3PV6/jztBbgtibKmx3fWdYw==
-To: selinux@vger.kernel.org
-Cc: =?UTF-8?q?Christian=20G=C3=B6ttsche?= <cgzones@googlemail.com>,
-	Paul Moore <paul@paul-moore.com>,
-	Stephen Smalley <stephen.smalley.work@gmail.com>,
-	Ondrej Mosnacek <omosnace@redhat.com>,
-	=?UTF-8?q?Thi=C3=A9baud=20Weksteen?= <tweek@google.com>,
-	=?UTF-8?q?Bram=20Bonn=C3=A9?= <brambonne@google.com>,
-	Jacob Satterfield <jsatterfield.linux@gmail.com>,
-	Eric Suen <ericsu@linux.microsoft.com>,
-	Casey Schaufler <casey@schaufler-ca.com>,
-	John Johansen <john.johansen@canonical.com>,
-	Canfeng Guo <guocanfeng@uniontech.com>,
-	GUO Zihua <guozihua@huawei.com>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2] selinux: add support for xperms in conditional policies
-Date: Wed, 23 Oct 2024 17:27:10 +0200
-Message-ID: <20241023152719.24118-1-cgoettsche@seltendoof.de>
-In-Reply-To: <20240405161042.260113-1-cgoettsche@seltendoof.de>
-References: <20240405161042.260113-1-cgoettsche@seltendoof.de>
-Reply-To: cgzones@googlemail.com
+	s=arc-20240116; t=1729697312; c=relaxed/simple;
+	bh=egzzzpluxju+Brk1kUFIgghBxAeHeEx6E4RAuoSQXek=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=MQJ3JgwqvxZWNuM+nJaDv/cUug1OeAJ8dMuqpMsd5iCYOcOzW2Hpiw6sM8dUF1cQ/BWsf7ekwat75oEG7RGgdZ9K0+yZ9SQTKT0+fHsoSp6dI/izRtSsOGXzk0SY6eBdp9GAPExc4+zp7hPRviuNTUn1tiTajluz+WWxvFyL3OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RorhM/lW; arc=none smtp.client-ip=212.227.17.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
+	s=s29768273; t=1729697291; x=1730302091; i=markus.elfring@web.de;
+	bh=EAENFtjl9sz4HwwtPOdI6rZgMghwnGzijGkxKkOHbLA=;
+	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To:Content-Type:
+	 Content-Transfer-Encoding:cc:content-transfer-encoding:
+	 content-type:date:from:message-id:mime-version:reply-to:subject:
+	 to;
+	b=RorhM/lWMk7pMNYl/E56jF5zJnCPDxNZYm8GttKhQcpvr7Nysg+b59VaMiin7hs4
+	 ToRMfpcavb5zcIAtM4fxCVftGaqwHAz9Y5Qsh7KPll3M6qWZWBQEh+jtzSpKtUrRw
+	 F1apT6Hr3F8IX6E4hX3CvL+rSlLStrxt29yLoUME6eRzUk8Ioo0JUjCpzf4DOOgSD
+	 s3iVx+Dw11fBoE7299sDPxkNPCZcl/x6H7+qNYYAHUC2rD9Lsn9x3/N8fdj7T0y3K
+	 pBqPTY6Z+2FIZ64D8QcUAQn7Ul6F7F4Ky2jN35NUxQerio0FEpLbpn8NEsSgHJjwl
+	 WFn0V0When8XR0+whA==
+X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
+Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
+ [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30ZL-1u26IY2ORJ-00vV2M; Wed, 23
+ Oct 2024 17:28:11 +0200
+Message-ID: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
+Date: Wed, 23 Oct 2024 17:27:11 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: [PATCH v2] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
+To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
+ Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>,
+ Luis Chamberlain <mcgrof@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
+ Joel Granados <j.granados@samsung.com>
+References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
+ <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
+ <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
+ <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
+Content-Language: en-GB
+From: Markus Elfring <Markus.Elfring@web.de>
+In-Reply-To: <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:UL0i4NV2r5DTLgpQYTFUVA8BVfy7ERUfYRECBvNrEYUZxV1vf82
+ ljLxLuIfeQwb8Wn63oq21SJ0Qz07P6Lya7SlCHLSp5sUALM+6dzWKn9ROtcUsvITkOZDndh
+ JXbGdgqMXjfnCXIVjXqdG434ElGeAbvrjtugLlx5TrANvIa5Lui1T1SWbLBiyKB4sNu9BFF
+ qk2Z2+6lUmcx+RocxI76w==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:nMrifFBllBk=;+x1mrZqyfMrCBW3w2jah6QYdGai
+ Ah816exJrIbb/2kU5S/UvpIQ0ttC0pgMZ0SZwACqM0/Wd5BG4D7H4H+aL3b3QR7cmwtWAgQR1
+ a3r3SV9O4/a+RsPinWna6+TgFpCVXMRRsMOr8XIowuFcFU6zhe5c0E/lIWFWMdNO0HGhpsU9E
+ mFxyYJG9OOYUU4YRbcQcWEVcLE9ha8OYQZ/eHigSon4oZuEUCJCb4FmG+0JqtrEpoAcmh5+wN
+ NKZ/qqaKIuBB+vqfF/31mrynxkpxoB6lldaA2wFJW27tRLqSlO+mTfreurXqvmuv0Ilivfxz2
+ AcdCHjEXKQtbQpTPsYiR8+PvUCkPCMBk5Wd0NA9OOqO2B3YlVwjCUAMXtT9bOdJ625C3UDLkr
+ p/dZ2ORqJs6f5SfWc4UTTLe2ENbBo8mtssycg/D2QrWQxo7GUi6s4XCfD+4eJ/WLe/qXOlvbl
+ /VUOWg3kXiZ8XzHAa8skBF2ORT2K+4dd4lQq+X6wNqsQ7+PElhjGvWhIk5XEVvbbqXkD4ddoB
+ z+D8xZGahvKE991VoZR+iYK44atAX1VJSoQebAMH9HRxCXl8sG2/zvEO7WLR6bDduscZCGmCK
+ gb+JIH/J3uaIUFbGJQCVbiaSOOxXlIVAvqkmk4wcGocbEvDwy04EQK/FNIhnMD7he5DHERr/R
+ QzFxDZ1HyuN3dFb3E6sJlwTzsp5gsl8NZBJDRTjSAbPnsYKHTa4FnhH2nq2krClRCUt0UITLR
+ ueqQmBOf2MXdeTczDlsa+VbFIB5sjB0nBW295qrpHPZ7axQ2EhpniQohqdEcHB09wq1mfmx4S
+ qpGFbKxAoRd21RBbEGvGxOIw==
 
-From: Christian Göttsche <cgzones@googlemail.com>
+From: Markus Elfring <elfring@users.sourceforge.net>
+Date: Wed, 23 Oct 2024 16:54:59 +0200
 
-Add support for extended permission rules in conditional policies.
-Currently the kernel accepts such rules already, but evaluating a
-security decision will hit a BUG() in
-services_compute_xperms_decision().  Thus reject extended permission
-rules in conditional policies for current policy versions.
+Replace two dput(child) calls with one that occurs immediately before
+the IS_ERR evaluation. This transformation can be performed because
+dput() gets called regardless of the value returned by IS_ERR(res).
 
-Add a new policy version for this feature.
-
-Signed-off-by: Christian Göttsche <cgzones@googlemail.com>
----
-v2:
-  rebased onto the netlink xperm patch
----
- security/selinux/include/security.h |  3 ++-
- security/selinux/ss/avtab.c         | 11 +++++++++--
- security/selinux/ss/avtab.h         |  2 +-
- security/selinux/ss/conditional.c   |  2 +-
- security/selinux/ss/policydb.c      |  5 +++++
- security/selinux/ss/services.c      | 12 ++++++++----
- 6 files changed, 26 insertions(+), 9 deletions(-)
-
-diff --git a/security/selinux/include/security.h b/security/selinux/include/security.h
-index c7f2731abd03..10949df22fa4 100644
---- a/security/selinux/include/security.h
-+++ b/security/selinux/include/security.h
-@@ -46,10 +46,11 @@
- #define POLICYDB_VERSION_INFINIBAND	     31
- #define POLICYDB_VERSION_GLBLUB		     32
- #define POLICYDB_VERSION_COMP_FTRANS	     33 /* compressed filename transitions */
-+#define POLICYDB_VERSION_COND_XPERMS	     34 /* extended permissions in conditional policies */
- 
- /* Range of policy versions we understand*/
- #define POLICYDB_VERSION_MIN POLICYDB_VERSION_BASE
--#define POLICYDB_VERSION_MAX POLICYDB_VERSION_COMP_FTRANS
-+#define POLICYDB_VERSION_MAX POLICYDB_VERSION_COND_XPERMS
- 
- /* Mask for just the mount related flags */
- #define SE_MNTMASK 0x0f
-diff --git a/security/selinux/ss/avtab.c b/security/selinux/ss/avtab.c
-index 8e400dd736b7..83add633f92a 100644
---- a/security/selinux/ss/avtab.c
-+++ b/security/selinux/ss/avtab.c
-@@ -339,7 +339,7 @@ static const uint16_t spec_order[] = {
- int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
- 		    int (*insertf)(struct avtab *a, const struct avtab_key *k,
- 				   const struct avtab_datum *d, void *p),
--		    void *p)
-+		    void *p, bool conditional)
+This issue was transformed by using a script for the
+semantic patch language like the following.
+<SmPL>
+@extended_adjustment@
+expression e, f !=3D { mutex_unlock }, x, y;
+@@
++f(e);
+ if (...)
  {
- 	__le16 buf16[4];
- 	u16 enabled;
-@@ -457,6 +457,13 @@ int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
- 		       "was specified\n",
- 		       vers);
- 		return -EINVAL;
-+	} else if ((vers < POLICYDB_VERSION_COND_XPERMS) &&
-+		   (key.specified & AVTAB_XPERMS) && conditional) {
-+		pr_err("SELinux:  avtab:  policy version %u does not "
-+		       "support extended permissions rules in conditional "
-+		       "policies and one was specified\n",
-+		       vers);
-+		return -EINVAL;
- 	} else if (key.specified & AVTAB_XPERMS) {
- 		memset(&xperms, 0, sizeof(struct avtab_extended_perms));
- 		rc = next_entry(&xperms.specified, fp, sizeof(u8));
-@@ -523,7 +530,7 @@ int avtab_read(struct avtab *a, void *fp, struct policydb *pol)
- 		goto bad;
- 
- 	for (i = 0; i < nel; i++) {
--		rc = avtab_read_item(a, fp, pol, avtab_insertf, NULL);
-+		rc = avtab_read_item(a, fp, pol, avtab_insertf, NULL, false);
- 		if (rc) {
- 			if (rc == -ENOMEM)
- 				pr_err("SELinux: avtab: out of memory\n");
-diff --git a/security/selinux/ss/avtab.h b/security/selinux/ss/avtab.h
-index f4407185401c..a7cbb80a11eb 100644
---- a/security/selinux/ss/avtab.h
-+++ b/security/selinux/ss/avtab.h
-@@ -108,7 +108,7 @@ struct policydb;
- int avtab_read_item(struct avtab *a, void *fp, struct policydb *pol,
- 		    int (*insert)(struct avtab *a, const struct avtab_key *k,
- 				  const struct avtab_datum *d, void *p),
--		    void *p);
-+		    void *p, bool conditional);
- 
- int avtab_read(struct avtab *a, void *fp, struct policydb *pol);
- int avtab_write_item(struct policydb *p, const struct avtab_node *cur,
-diff --git a/security/selinux/ss/conditional.c b/security/selinux/ss/conditional.c
-index 64ba95e40a6f..c9a3060f08a4 100644
---- a/security/selinux/ss/conditional.c
-+++ b/security/selinux/ss/conditional.c
-@@ -349,7 +349,7 @@ static int cond_read_av_list(struct policydb *p, void *fp,
- 	for (i = 0; i < len; i++) {
- 		data.dst = &list->nodes[i];
- 		rc = avtab_read_item(&p->te_cond_avtab, fp, p, cond_insertf,
--				     &data);
-+				     &data, true);
- 		if (rc) {
- 			kfree(list->nodes);
- 			list->nodes = NULL;
-diff --git a/security/selinux/ss/policydb.c b/security/selinux/ss/policydb.c
-index 383f3ae82a73..3ba5506a3fff 100644
---- a/security/selinux/ss/policydb.c
-+++ b/security/selinux/ss/policydb.c
-@@ -155,6 +155,11 @@ static const struct policydb_compat_info policydb_compat[] = {
- 		.sym_num = SYM_NUM,
- 		.ocon_num = OCON_NUM,
- 	},
-+	{
-+		.version = POLICYDB_VERSION_COND_XPERMS,
-+		.sym_num = SYM_NUM,
-+		.ocon_num = OCON_NUM,
-+	},
- };
- 
- static const struct policydb_compat_info *
-diff --git a/security/selinux/ss/services.c b/security/selinux/ss/services.c
-index 9652aec400cb..66d2472d3874 100644
---- a/security/selinux/ss/services.c
-+++ b/security/selinux/ss/services.c
-@@ -946,7 +946,7 @@ static void avd_init(struct selinux_policy *policy, struct av_decision *avd)
+ <+... when !=3D \( e =3D x \| y(..., &e, ...) \)
+-   f(e);
+ ...+>
  }
- 
- static void update_xperms_extended_data(u8 specified,
--					struct extended_perms_data *from,
-+					const struct extended_perms_data *from,
- 					struct extended_perms_data *xp_data)
- {
- 	unsigned int i;
-@@ -967,6 +967,8 @@ static void update_xperms_extended_data(u8 specified,
- void services_compute_xperms_decision(struct extended_perms_decision *xpermd,
- 					struct avtab_node *node)
- {
-+	u16 specified;
+-f(e);
+</SmPL>
+
+Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
+=2D--
+
+V2:
+* This update suggestion was rebased on source files of the software
+  =E2=80=9CLinux next-20241023=E2=80=9D.
+
+* The change description was adjusted according to the wording preferences
+  by Joel Granados.
+
+* An SmPL script example was appended.
+
+
+ fs/proc/proc_sysctl.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
+index 9b9dfc450cb3..b277a1ca392e 100644
+=2D-- a/fs/proc/proc_sysctl.c
++++ b/fs/proc/proc_sysctl.c
+@@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
+ 			res =3D d_splice_alias(inode, child);
+ 			d_lookup_done(child);
+ 			if (unlikely(res)) {
+-				if (IS_ERR(res)) {
+-					dput(child);
+-					return false;
+-				}
+ 				dput(child);
 +
- 	switch (node->datum.u.xperms->specified) {
- 	case AVTAB_XPERMS_IOCTLFUNCTION:
- 	case AVTAB_XPERMS_NLMSG:
-@@ -982,17 +984,19 @@ void services_compute_xperms_decision(struct extended_perms_decision *xpermd,
- 		BUG();
- 	}
- 
--	if (node->key.specified == AVTAB_XPERMS_ALLOWED) {
-+	specified = node->key.specified & ~(AVTAB_ENABLED | AVTAB_ENABLED_OLD);
++				if (IS_ERR(res))
++					return false;
 +
-+	if (specified == AVTAB_XPERMS_ALLOWED) {
- 		xpermd->used |= XPERMS_ALLOWED;
- 		update_xperms_extended_data(node->datum.u.xperms->specified,
- 					    &node->datum.u.xperms->perms,
- 					    xpermd->allowed);
--	} else if (node->key.specified == AVTAB_XPERMS_AUDITALLOW) {
-+	} else if (specified == AVTAB_XPERMS_AUDITALLOW) {
- 		xpermd->used |= XPERMS_AUDITALLOW;
- 		update_xperms_extended_data(node->datum.u.xperms->specified,
- 					    &node->datum.u.xperms->perms,
- 					    xpermd->auditallow);
--	} else if (node->key.specified == AVTAB_XPERMS_DONTAUDIT) {
-+	} else if (specified == AVTAB_XPERMS_DONTAUDIT) {
- 		xpermd->used |= XPERMS_DONTAUDIT;
- 		update_xperms_extended_data(node->datum.u.xperms->specified,
- 					    &node->datum.u.xperms->perms,
--- 
-2.45.2
+ 				child =3D res;
+ 			}
+ 		}
+=2D-
+2.47.0
 
 
