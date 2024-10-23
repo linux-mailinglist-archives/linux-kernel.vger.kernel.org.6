@@ -1,104 +1,127 @@
-Return-Path: <linux-kernel+bounces-377457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377459-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id AC3A99ABF1C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:45:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE469ABF25
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:46:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 569441F24C34
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:45:42 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D08392855F8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:46:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F44F14B955;
-	Wed, 23 Oct 2024 06:45:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5BB5F1531C5;
+	Wed, 23 Oct 2024 06:45:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="D8F828hs"
-Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="em1ummYv"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 48A556EB7C;
-	Wed, 23 Oct 2024 06:45:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3710A1459FD;
+	Wed, 23 Oct 2024 06:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665914; cv=none; b=Y6MeTvrOlbdlh/n9R6r/L8E0vtQzp2Zu0hm8GjSxW60qfkQJF6B+mFqbzGgjWvNZLLus2on9XjTonX2PZSs6eFM/Uobjiq/yq3+4gQR7buNjHd4Fi3YsK/EbcxYZDKiiDhIadCww9Ism8zk3GPulm6gP6KyT2ROj6jA2ju71Byg=
+	t=1729665928; cv=none; b=BdOCiOn6q/71n1SZBwrNKxlSwGnbzzeAo23A4SMaRHvNtsUuI2m3Kf1Ri1ENkkBq1REAlbM5ISAVrP7oN5hLJTxpbBc3OlOpDd6RggIaCYfdl6TxZ//5G79kRU4bcSHQv7468tkxyHYc7tPzMyiUJvCx1xA+bFenySIJpC20I2s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665914; c=relaxed/simple;
-	bh=5QHNOKzSaP6+V6m2H0p2UwehChnWSxNkBlBVyejMPVE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ifpalqJQ3aqSySIAjeyvLq5a/mXa9nYKhizmfOgfarhySwuvCGyiVGk/2k/pryqK01HNswWn5Nmx8DomA4Tz20C/ZX42a2ardpHjOOsHUR9DsIBJ2E0Ia4NzbdOUev2yorEhGueAvJ0vP5+SCofckmp27MsPNzoif6kKudPwxAI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=D8F828hs; arc=none smtp.client-ip=198.137.202.133
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
-	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=RSQPrKwOEquJSUdRa82UBzxuqVq2bj42C8it3gsI3CQ=; b=D8F828hsvgs7JIEkxW2YE8E8K8
-	ZRIbGWqlTPyT4Kr4Y41UubrQrHSUGUlWClC1kVCgaegmr0RpziLXGd55B3fLxdGijOWy6qyXuzhEJ
-	M2cWbNmO5wAKXXeCDezszGBSPL6EvZiCQ3JDPsIo09uPqp8uFlAyQ7IBG7RU6PEEaIZoenr/aw0Ht
-	FiJ/BOqU3y/2n/jE0vT63+1mavSvBeN7YK9J6D7sk0Qmc1HmPu9b4wJeWcbYm92MqL1/LEDEbHZOm
-	JG+y+ioL/nBk4bYzRx2JLk0H0anIXiO5i9xz27LRDK6Al4s4wkGdj8ARfuoNYp0JG7/OceZ7awt0o
-	qgXl8pKw==;
-Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3V7H-0000000DFF7-1TUN;
-	Wed, 23 Oct 2024 06:45:11 +0000
-Date: Tue, 22 Oct 2024 23:45:11 -0700
-From: Christoph Hellwig <hch@infradead.org>
-To: Christian Brauner <brauner@kernel.org>
-Cc: Christoph Hellwig <hch@infradead.org>, Jan Kara <jack@suse.cz>,
-	Song Liu <songliubraving@meta.com>, Song Liu <song@kernel.org>,
-	bpf <bpf@vger.kernel.org>,
-	Linux-Fsdevel <linux-fsdevel@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>,
-	Kernel Team <kernel-team@meta.com>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Eduard Zingerman <eddyz87@gmail.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Al Viro <viro@zeniv.linux.org.uk>, KP Singh <kpsingh@kernel.org>,
-	Matt Bobrowski <mattbobrowski@google.com>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Extend test fs_kfuncs to
- cover security.bpf xattr names
-Message-ID: <ZxibdxIjfaHOpGJn@infradead.org>
-References: <20241002214637.3625277-1-song@kernel.org>
- <20241002214637.3625277-3-song@kernel.org>
- <Zw34dAaqA5tR6mHN@infradead.org>
- <0DB83868-0049-40E3-8E62-0D8D913CB9CB@fb.com>
- <Zw384bed3yVgZpoc@infradead.org>
- <BF0CD913-B067-4105-88C2-B068431EE9E5@fb.com>
- <20241016135155.otibqwcyqczxt26f@quack3>
- <20241016-luxus-winkt-4676cfdf25ff@brauner>
- <ZxEnV353YshfkmXe@infradead.org>
- <20241021-ausgleichen-wesen-3d3ae116f742@brauner>
+	s=arc-20240116; t=1729665928; c=relaxed/simple;
+	bh=j8MoC15b1OPA0J9S9VLK2gdBsI8MGpapT/XVO/GvLr8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=N7Ycnd/7Gc7pgPZl4AZJx8wpYxa0COSINELav6Dde9R7USxzr8/kANyhtKGD0Jq4DzwofuTm2BUflyildXtuvtzCwzdd/DHsw8pjcoQl61qIOFqjZzb+9xsKQVi5nHK9+bNIfWL8wruzseRhxJf1+IMPIn4tfm03uk7BKGlK/7A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=em1ummYv; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279870.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLasTt019397;
+	Wed, 23 Oct 2024 06:45:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	WKer+qmsX85eCHTIFwvdJ15J6kE+HZrwwYYsPxb0rqE=; b=em1ummYvKwdsqeZ6
+	cil+dhFZaQQ2kXKRyh3tchblFvNkQ5pugpJNSolVjPq91xu1QSDJ0qrjuNBqk8Kw
+	4S67tM0wY0XUcf2qUsjaH5RKV09KZUtFi6pKQvCfKFx44TUlb+20EavIBbLISTrd
+	WC+v+AmF0LLSBCHeu/EYz+gi5nnl97f3IsMEFXsadBBZvZgMuVZjm4ireYyReW7P
+	4WH20XPjCZ/ZEf2kq8l23/BTsqytgzn5GWnR0eNSF3tePR3dc0r8XAD5/MUZkhOn
+	m9LEVGlYJyn36pxvNNpLrWlU91Zfx4idXTP1FjunBPBTeXThQbtP0Y3rANALF+5r
+	UGSDtA==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w945u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 06:45:20 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49N6jJLk020788
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 06:45:19 GMT
+Received: from [10.151.40.160] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Tue, 22 Oct
+ 2024 23:45:15 -0700
+Message-ID: <e2c1ce1a-89af-4feb-a21a-9ca2578430e7@quicinc.com>
+Date: Wed, 23 Oct 2024 12:15:12 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-ausgleichen-wesen-3d3ae116f742@brauner>
-X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
+ properties for ath12k PCI module
+To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
+ <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 9iAiefvrxc4lCyFXutX_lbqBdZ0e_L1y
+X-Proofpoint-ORIG-GUID: 9iAiefvrxc4lCyFXutX_lbqBdZ0e_L1y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ mlxscore=0 lowpriorityscore=0 phishscore=0 impostorscore=0 clxscore=1011
+ priorityscore=1501 mlxlogscore=707 suspectscore=0 bulkscore=0 adultscore=0
+ classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
+ definitions=main-2410230040
 
-On Mon, Oct 21, 2024 at 03:24:30PM +0200, Christian Brauner wrote:
-> On Thu, Oct 17, 2024 at 08:03:51AM -0700, Christoph Hellwig wrote:
-> > On Wed, Oct 16, 2024 at 04:51:37PM +0200, Christian Brauner wrote:
-> > > > 
-> > > > I think that getting user.* xattrs from bpf hooks can still be useful for
-> > > > introspection and other tasks so I'm not convinced we should revert that
-> > > > functionality but maybe it is too easy to misuse? I'm not really decided.
-> > > 
-> > > Reading user.* xattr is fine. If an LSM decides to built a security
-> > > model around it then imho that's their business and since that happens
-> > > in out-of-tree LSM programs: shrug.
-> > 
-> > By that argument user.kfuncs is even more useless as just being able
-> > to read all xattrs should be just as fine.
+On 10/23/2024 12:05 PM, Krzysztof Kozlowski wrote:
+> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+>> The current device-tree bindings for the Ath12K module list many
+>> WCN7850-specific properties as required. However, these properties are
+>> not applicable to other Ath12K devices.
+>>
+>> Hence, remove WCN7850-specific properties from the required section,
+>> retaining only generic properties valid across all Ath12K devices.
+>> WCN7850-specific properties will remain required based on the device's
+>> compatible enum.
+> Just not true. These apply to all devices described in this binding.
 > 
-> bpf shouldn't read security.* of another LSM or a host of other examples...
+> NAK.
+> 
+> Don't send patches for your downstream stuff.
 
-Sorry if I was unclear, but this was all about user.*.
+This is not for downstream. This series is the per-requisite for ath12k
+MLO support in upstream.
+
+In the subsequent patch [2/6] we are adding new device (QCN9274) in this
+binding that do not require the WCN7850 specific properties.
+
+This is a refactoring patch for the next patch [2/6].
 
