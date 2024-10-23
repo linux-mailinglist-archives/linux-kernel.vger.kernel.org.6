@@ -1,190 +1,91 @@
-Return-Path: <linux-kernel+bounces-378765-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378766-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1834B9AD52C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:47:30 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2C8EF9AD53E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:52:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C7FE9286992
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:47:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0D861F23471
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:52:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C25191E2836;
-	Wed, 23 Oct 2024 19:47:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C0861E0DBF;
+	Wed, 23 Oct 2024 19:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="HfSWaSW4"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="AbpLzDL5"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F3861DE2AE
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:47:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7338813AA2F;
+	Wed, 23 Oct 2024 19:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729712829; cv=none; b=NrZ52CetP/y9NiC4mHuqbkQNVAZyrTQ/uMQj9btUe5p9LrExPRxbhBnu0evsZySyLDk5smeaP2D3qdpdLLb3G11EGXfZlIrae/Qeslie+rqySg94W1hCOYi6WfukxKVecdUORrAkjJ7Movg+hz4QzXdizDusixidAHWLh3iidOA=
+	t=1729713147; cv=none; b=X7iw+uFXCDIIVwNE65NFQqRrFVdOmsSHuPfxgMNzOBrfJ/hBb+hjMPlq2jfwpATZJkyA+RTo2fmhgpPLe9muGqEBQO6ysFu6Y2Zsia9Y/VO5PI3aeboBLHrGpnBLdf2n4XISsiLbAGjbSU4xGOLX4ZZAXGoFFNKF6Xln1LeYWck=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729712829; c=relaxed/simple;
-	bh=M72n/VMflKKIL8GpFlNX+001CH6qDRfRgs4vfD+Lc60=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=bsG5YYxXWm5xb47g4ngVUtqUnYV8dkp4P0YcY1rllAuCj1DhLu9NAlVxVJNSXJVBf2B75jCUZpD7B40r5Hu8ejl9PxhcmmZbtiDHMRJ/VIgBLpgW2ADAmKA7yTE+wW1/o5B1CIDVctR2cn5fKIlW/RKqJC5wirh8dOgQD8ZzEvo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=HfSWaSW4; arc=none smtp.client-ip=209.85.218.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a850270e2so13979266b.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:47:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729712826; x=1730317626; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=cjeWek960NcUIgiohtPXB+Vg0rJ92eP6xQNpgT2ubOU=;
-        b=HfSWaSW4/LSSYn0gVGStCKVyLiJ982jqCeaIAJC6Djwk3wPgbWgTNSbN71ZC+5DGoq
-         qoliTFv6nD3FEp9LIQpWbqyBt7XuEZlYdyibkRRO0zgccsBRNUOyyHmZCnPdQZXzYE74
-         Ohc/E+cE3eUdPOMqACggORslItHR/1ncv+1fFyKvZEmxM3z2QRRRNYElnK3Ton28Xegn
-         MZVS7RSOxf7AVuUGkntZAXPwpNyZuLtkNaAKzuDtNrZk6ipq3hU1KiS9a+l4xNj2MZ6o
-         zdLEpuPXMErT944YsIuZnmnBcBMREkYsqhsn7imxkaeibuwl4VTasYwopQpyI81M65FG
-         nbhg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729712826; x=1730317626;
-        h=content-transfer-encoding:mime-version:message-id:date:user-agent
-         :references:in-reply-to:subject:cc:to:from:x-gm-message-state:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=cjeWek960NcUIgiohtPXB+Vg0rJ92eP6xQNpgT2ubOU=;
-        b=jsIpLVEox0WfTmAcPCNXhnK32QMq7tnz6LXMJOKtUtfZ9rxT9Yu26xdetaarj4FbvY
-         kPV1fmK692hsjtWOXRounDuaC3wNynp/OQayRrAQ49Fqc1EBJXTtv7l7EWxeqgMD/cMt
-         ish/IcUbZnGivLJ/DO1tAyEUfJh6PSBZAgNBTfmpMarWNcn4AyzhlWdqIfVltOUAghjl
-         H4tfOcbfuc+8Qhsz2UagqYIGQAf0xHkv1cuYJPoOau2N09lsWyn7G5iKoBN+XY92/WuU
-         +8rn/hePndnfVM8NzoiB/v5mvkocoHoGnhqO55KS3yAPo1tH+p0lEIWBvEsutOHuVRjb
-         YiMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX/9YjkJ6byQE7sm/P2psfjDlXxg93LP7RBbwuPShYVr1vtoRnpFPTwjyItA2Z5DIASV9HeM39L++Y0x/E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDOLwSPUqIOBnmDZGIPQHoWci8PfTKPGp57LSaYxQoYyIkT7DS
-	CLrVsrLkZCXDmMEyhY58cdC5hhgjTuvI44E4iSdM0IAvyPmrtSnt4sC8W5JEiC4=
-X-Google-Smtp-Source: AGHT+IEIA9rIJ04+Qcp3TzNgVJAqmBz3KuIj/pMJ7zakUwT1dcG/rm3pZHFabLhpGBrqDgGq03uVBQ==
-X-Received: by 2002:a17:907:980c:b0:a99:a9b6:2eb6 with SMTP id a640c23a62f3a-a9abf53587cmr351767466b.0.1729712825573;
-        Wed, 23 Oct 2024 12:47:05 -0700 (PDT)
-Received: from draig.lan ([85.9.250.243])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d62efsm513496766b.44.2024.10.23.12.47.04
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 12:47:05 -0700 (PDT)
-Received: from draig (localhost [IPv6:::1])
-	by draig.lan (Postfix) with ESMTP id 082235F897;
-	Wed, 23 Oct 2024 20:47:04 +0100 (BST)
-From: =?utf-8?Q?Alex_Benn=C3=A9e?= <alex.bennee@linaro.org>
-To: "Arnd Bergmann" <arnd@arndb.de>
-Cc: "Naresh Kamboju" <naresh.kamboju@linaro.org>,  "open list"
- <linux-kernel@vger.kernel.org>,  "Linux ARM"
- <linux-arm-kernel@lists.infradead.org>,  lkft-triage@lists.linaro.org,
-  "Linux Regressions" <regressions@lists.linux.dev>,
-  qemu-devel@nongnu.org,  "Mark Brown" <broonie@kernel.org>,  "Catalin
- Marinas" <catalin.marinas@arm.com>,  "Aishwarya TCV"
- <Aishwarya.TCV@arm.com>,  "Peter Maydell" <peter.maydell@linaro.org>,
-  "Anders Roxell" <anders.roxell@linaro.org>,  "Vincenzo Frascino"
- <vincenzo.frascino@arm.com>,  "Thomas Gleixner" <tglx@linutronix.de>,
-  "Geert Uytterhoeven" <geert@linux-m68k.org>
-Subject: Re: Qemu v9.0.2: Boot failed qemu-arm with Linux next-20241017 tag.
-In-Reply-To: <4730e562-7d14-4f12-897a-e23783d094af@app.fastmail.com> (Arnd
-	Bergmann's message of "Wed, 23 Oct 2024 16:24:43 +0000")
-References: <CA+G9fYt86bUAu_v5dXPWnDUwQNVipj+Wq3Djir1KUSKdr9QLNg@mail.gmail.com>
-	<CA+G9fYsMg0fA-jraEvC==0a-22J97o-uBmbLJt16_ZKBpOT8EQ@mail.gmail.com>
-	<4730e562-7d14-4f12-897a-e23783d094af@app.fastmail.com>
-User-Agent: mu4e 1.12.6; emacs 29.4
-Date: Wed, 23 Oct 2024 20:47:03 +0100
-Message-ID: <87bjzalhzc.fsf@draig.linaro.org>
+	s=arc-20240116; t=1729713147; c=relaxed/simple;
+	bh=O+zehsLqoh4JYaQs/FYh0KngRH9Ood+BEx4/xBJQ++c=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a9vygxWWGm5YeyFlUz/+HiAF+U8ZD4zN6U3OV6KGRrqExNCmxidfwCWDAvmxNdcQ0cQEvxGIUQaNKjGBKcpGkSvOJaclLERnk/8KAn0RvnI5BVdp8RNvQRqbNUg8lXfEzzed2+5ooFtYopptp0hcYDrizmccEl0kdS08DfyrDyU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=AbpLzDL5; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=O+zehsLqoh4JYaQs/FYh0KngRH9Ood+BEx4/xBJQ++c=; b=AbpLzDL52Y6pbMKkz7kk8+MfbS
+	p/xLyIwnriSP/7R1dd8viQNV9aAfZHPN27VbuO6c0pStB+P8esSBWk3+nXozIyw08IOAOooNg2XLY
+	jtc3gZSch+lp8JrQrILsoN9+BgnvNov67zxRFV/WLFwsCQm3bnviv+3SyKn3ugo1kNQKVyErHDY8i
+	/EpCSs4xBmxd5WkhgkcSPGntw8a6TsKqHy5ciye8rlH1srh3mlY16Mr15B4ymOMXFP2mRnZ9eyNG3
+	ET2sjKDtZPvTtqSWJZfFiODDz7vLszxCnlAtyGHQ6v/OhVOOR7hb6dHwTT791uT3WI9GQe7TESoWT
+	wYMBrTgg==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3hOa-00000008XTm-34pI;
+	Wed, 23 Oct 2024 19:51:56 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 5216130073F; Wed, 23 Oct 2024 21:51:52 +0200 (CEST)
+Date: Wed, 23 Oct 2024 21:51:52 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Boqun Feng <boqun.feng@gmail.com>, Dirk Behme <dirk.behme@gmail.com>,
+	Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org,
+	Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
+	Ingo Molnar <mingo@redhat.com>, will@kernel.org,
+	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, wedsonaf@gmail.com,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>, aliceryhl@google.com,
+	Trevor Gross <tmgross@umich.edu>
+Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
+ disabling/enabling
+Message-ID: <20241023195152.GE11151@noisy.programming.kicks-ass.net>
+References: <20241018055125.2784186-2-boqun.feng@gmail.com>
+ <87a5eu7gvw.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87a5eu7gvw.ffs@tglx>
 
-"Arnd Bergmann" <arnd@arndb.de> writes:
+On Wed, Oct 23, 2024 at 09:34:27PM +0200, Thomas Gleixner wrote:
+> On Thu, Oct 17 2024 at 22:51, Boqun Feng wrote:
+> Ideally you make that part of the preemption count. Bit 24-30 are free
+> (or we can move them around as needed). That's deep enough and you get
+> the debug sanity checking of the preemption counter for free (might need
+> some extra debug for this...)
 
-> On Sun, Oct 20, 2024, at 17:39, Naresh Kamboju wrote:
->> On Fri, 18 Oct 2024 at 12:35, Naresh Kamboju <naresh.kamboju@linaro.org>=
- wrote:
->>>
->>> The QEMU-ARMv7 boot has failed with the Linux next-20241017 tag.
->>> The boot log is incomplete, and no kernel crash was detected.
->>> However, the system did not proceed far enough to reach the login promp=
-t.
->>>
->
->> Anders bisected this boot regressions and found,
->> # first bad commit:
->>   [efe8419ae78d65e83edc31aad74b605c12e7d60c]
->>     vdso: Introduce vdso/page.h
->>
->> We are investigating the reason for boot failure due to this commit.
->
-> Anders and I did the analysis on this, the problem turned out
-> to be the early_init_dt_add_memory_arch() function in
-> drivers/of/fdt.c, which does bitwise operations on PAGE_MASK
-> with a 'u64' instead of phys_addr_t:
->
-> void __init __weak early_init_dt_add_memory_arch(u64 base, u64 size)
-> {
->         const u64 phys_offset =3D MIN_MEMBLOCK_ADDR;
->=20=20
->         if (size < PAGE_SIZE - (base & ~PAGE_MASK)) {
->                 pr_warn("Ignoring memory block 0x%llx - 0x%llx\n",
->                         base, base + size);
->                 return;
->         }
->
->         if (!PAGE_ALIGNED(base)) {
->                 size -=3D PAGE_SIZE - (base & ~PAGE_MASK);
->                 base =3D PAGE_ALIGN(base);
->         }
->
-> On non-LPAE arm32, this broke the existing behavior for
-> large 32-bit memory sizes. The obvious fix is to change
-> back the PAGE_MASK definition for 32-bit arm to a signed
-> number.
+Urgh, so we've already had trouble that nested spinlocks bust through
+the 0xff preempt mask (because lunacy). You sure you want to be this
+stingy with bits?
 
-Agreed. However I think we were masking a calling issue that:
-
-    /* Actual RAM size depends on initial RAM and device memory settings */
-    [VIRT_MEM] =3D                { GiB, LEGACY_RAMLIMIT_BYTES },
-
-And:
-
-  -m 4G
-
-make no sense with no ARM_LPAE (which the kernel didn't have) but if you
-pass -machine virt,gic-version=3D3,highmem=3Doff (the default changed awhile
-back) you will get a warning:
-
-  qemu-system-arm: Addressing limited to 32 bits, but memory exceeds it by =
-1073741824 bytes
-
-but I guess that didn't trigger for some reason before this patch?
-
-> mips32, ppc32 and hexagon had the same definition as
-> well, so I think we should change at least those in order
-> to restore the previous behavior in case they are affected
-> by the same bug (or a different one).
->
-> x86-32 and arc git flipped the other way by the patch,
-> from unsigned to signed, when CONFIG_ARC_HAS_PAE40
-> or CONFIG_X86_PAE are set. I think we should keep
-> the 'signed' behavior as this was a bugfix by itself,
-> but we may want to change arc and x86-32 with short
-> phys_addr_t the same way for consistency.
->
-> On csky, m68k, microblaze, nios2, openrisc, parisc32,
-> riscv32, sh, sparc32, um and xtensa, we've always used
-> the 'unsigned' PAGE_MASK, and there is no 64-bit
-> phys_addr_t, so I would lean towards staying with
-> 'unsigned' in order to not introduce a regression.
-> Alternatively we could choose to go with the 'signed'
-> version on all 32-bit architectures unconditionally
-> for consistency. Any preferences?
->
->       Arnd
-
---=20
-Alex Benn=C3=A9e
-Virtualisation Tech Lead @ Linaro
+We still have a few holes in pcpu_hot iirc.
 
