@@ -1,204 +1,114 @@
-Return-Path: <linux-kernel+bounces-378075-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF87A9ACB09
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:20:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6CA959ACB07
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:19:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 62691B2222D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:20:11 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 242511F2108A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:19:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3E421AE01B;
-	Wed, 23 Oct 2024 13:19:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F59A1ADFE8;
+	Wed, 23 Oct 2024 13:19:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="l6sHvuKI"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="R2Iw+19t"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B2E56159583
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:19:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41391159583
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729689591; cv=none; b=NihJ5Gm4x5Da3+NDhyaaKztFIgcbejPG7Kiuts09baTvhajAKBUqmowm2W4oDcBYjcisxc0XShfEbKx3vCU1bIrGFQ6/eB9irN8rnUpyljZ9BW/Jn1aloop7G2YUwcX2RPxUJBUS0ca+piNUFypecNcovlNF8wMV4d2ee4uS/Sk=
+	t=1729689585; cv=none; b=VUzhyNMtQTECRwbwdfkPkGjBqGLcolfrlepgjELITVg8OrYDeJp7qlvpqTvv3ekiMV2DnAd6hxKwj3rUFnUK5Qq6RJGrUidEFxNAGeZw3HYq8LIMLYDhM2p0x676a1oSyHh+n7QpxO+f9yBpdiZ3jE01JnhDXdga0tHqAIb5+uY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729689591; c=relaxed/simple;
-	bh=UgFMxLvLCPmwXqrDXa3K9lgwLf3jrSlQBJy8I5mhyWA=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Fap2gPLMTK5U2/B8lEYpKeEjn4MhzDlWa1+3dd4xEUxNaoXLhcpVUbyRLKSiPqO6mTbYZdLmv6vNwmwlgF1NyGy/3CGQfIGVbZLaxYQXw6KYWtr3RXySHHny7K0nFGD5NItkKw3bIQPJjJ/mWY9+I2vYq5IXxLMdfJuxv/7BnoM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=l6sHvuKI; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356517.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0OhkJ018131;
-	Wed, 23 Oct 2024 13:19:24 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=llVA6e5PpHMBguB71iXY0BRFvf2DEp
-	guYU65x1n53Ec=; b=l6sHvuKItnpzqAVpzDT6DE5pXA8yd+fl000X6n9nG5UU/a
-	z8DBA1qquZoKooxAAE4zZyLotkJjI4eQEGuQO8Tyu+Fjs4Bs9pl0si9JTC6zceNJ
-	snYd8E2pP8w3Rbf8YoT4cEkfuo2yAR8n7066NabESZE5hVE93ugAgiMHuqRDWLu6
-	8e/yQGjGqxTujUJArLxgfv108ym54K8+1jpS0DGOj2iVXuRHpdl4hwrfKMsm/hc2
-	cSQYY9vdnjERuotahwlQsPIwl20DBxfa1raTHuxPAJCb10aQj/JtZDV0j7w6kmmP
-	Ga6H7WT6/fWZibRm8x29xCY0JFLw/zXBVDIpQ9jw==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emadu757-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:19:24 +0000 (GMT)
-Received: from m0356517.ppops.net (m0356517.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NDJNQm021600;
-	Wed, 23 Oct 2024 13:19:23 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emadu754-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:19:23 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBlSxM001530;
-	Wed, 23 Oct 2024 13:19:22 GMT
-Received: from smtprelay04.fra02v.mail.ibm.com ([9.218.2.228])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emk9ayq4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 13:19:22 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay04.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NDJKPS30868104
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 13:19:20 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id BFDE12004B;
-	Wed, 23 Oct 2024 13:19:20 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 05A3E20040;
-	Wed, 23 Oct 2024 13:19:18 +0000 (GMT)
-Received: from linux.ibm.com (unknown [9.124.211.29])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Oct 2024 13:19:17 +0000 (GMT)
-Date: Wed, 23 Oct 2024 18:49:15 +0530
-From: Vishal Chourasia <vishalc@linux.ibm.com>
-To: Steve Wahl <steve.wahl@hpe.com>
-Cc: Ingo Molnar <mingo@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
-        Juri Lelli <juri.lelli@redhat.com>,
-        Vincent Guittot <vincent.guittot@linaro.org>,
-        Dietmar Eggemann <dietmar.eggemann@arm.com>,
-        Steven Rostedt <rostedt@goodmis.org>, Ben Segall <bsegall@google.com>,
-        Mel Gorman <mgorman@suse.de>, Valentin Schneider <vschneid@redhat.com>,
-        linux-kernel@vger.kernel.org, Russ Anderson <rja@hpe.com>,
-        Dimitri Sivanich <sivanich@hpe.com>
-Subject: Re: [PATCH] sched/topology: improve topology_span_sane speed
-Message-ID: <Zxj30yQDRmLd2EGO@linux.ibm.com>
-References: <20241010155111.230674-1-steve.wahl@hpe.com>
- <ZxJIDwHNzPkuyGrU@linux.ibm.com>
- <ZxZ_arDwEu489GkN@swahl-home.5wahls.com>
+	s=arc-20240116; t=1729689585; c=relaxed/simple;
+	bh=wXUDUNzNvkTJI34sajXKXT26RKhKxiVNUKYpKGuk4GM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=US0JI4lhX0fWOfKGhtLn0+gIE+ysViNf76Orur3DNtrb+Wp1Tnpnwr6Mx2Eg2TEHiZnsYxECO9Y/Oe0T3tkdcD1ErJDR5u6FD6wz1MMoCOe4sGmIvowKmmAJYthCgnBISdMC5WYPm/BoLeJ1blLTCQxr0SFb90tms/tyMwjS5k8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=R2Iw+19t; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-43169902057so44220425e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:19:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729689582; x=1730294382; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=wXUDUNzNvkTJI34sajXKXT26RKhKxiVNUKYpKGuk4GM=;
+        b=R2Iw+19toJTrGoPkwQojkroteInNl89qZ+gLPvXjcOC8jHeXR4HMnoEuwYXhbTlmoS
+         ikRhgtgCscdMJjoqo8iikyqW2LNwAEwo8cs+1EJTkZajeCvaNXXM07E0rYF7TYf15x3E
+         JmpAnIwcvzwGlGF9TEHlVRryjMs7gG5bPUKNDZtlvGsCqY1nFz62g6K3ugSX9ZWgzi2q
+         ZiUsw2FsJ/p/gmEzbXVYA1lfFUII2npoPet65HprhzijKlVVw/5Lr8vYn6xsjpCt4Khh
+         lpdPrYryVouOeZYVdcxeAdY4pLJJ8IWKERqEyNRD35y70p+Q/1PGyxGH/V6poxMIwV1g
+         75+A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729689582; x=1730294382;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=wXUDUNzNvkTJI34sajXKXT26RKhKxiVNUKYpKGuk4GM=;
+        b=FBCUkp3dBK7KuVNa/movZtemqsFf03OQlOzOEG7mShMd47seoE+wA7fk/aluHL37kj
+         X3O9JaUfw7KhDjLaW2CC6jky5PcDEjXBaX8Vtm5YqgsxRf1N3azZ50zIRhzDlwQ5jCE2
+         QZdPeBezkf6FW/juRQdgwk4hjqxp5Tw2uv5HsB+XoV5x/KOyroPXE2JA3ZLSdz+kbp5b
+         m6+f1lGzlrOsP2zqP0N44lE+sd/V8V6OmPbLcNTHeZZLXMbaDvGrbrdXbqJYjJfBCVeC
+         0/Rvt0XtxHl4CO6F19xtZitd+2KZo0UPPnmmlJ5vGVw7PPggHKqeo+g/07UECycLex/A
+         lMUg==
+X-Forwarded-Encrypted: i=1; AJvYcCU3zeS7MqQFRAf1/VxT9fGt61auKnYyr3DOmob1fDb23hp5Eq/OwT9wl8s6S2IitfhOakKBBBMLbaUDDTU=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywb4Z6tGSZxysW+HvGh6hiCGWe+F4+Lp/Nb11r5lzZXL7dRSVRZ
+	E45G9S/SBL0mh+Z5kLNPQhHu3Gd9WjilOoqxTOI9iM5JOzYTts4uyar4620AR0vIvzyUeaMWTDw
+	QvebBHaO4B9NqiW2Ck52ZLcxpsFqeS82DiIrf
+X-Google-Smtp-Source: AGHT+IFiSo4NpUShHCtVNSYjKiEjh+Skjkb5U44tfEKsej3HfYBcRstnJhorp+qPDS6f1VVoCDrw0KKymmoqY5uXL9g=
+X-Received: by 2002:a05:600c:5490:b0:42c:a905:9384 with SMTP id
+ 5b1f17b1804b1-4318415c8bcmr17998235e9.20.1729689582529; Wed, 23 Oct 2024
+ 06:19:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxZ_arDwEu489GkN@swahl-home.5wahls.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: NRHiACbmdU7OS4HbOKm-xUJmj-SSy-Lf
-X-Proofpoint-GUID: CYTvHrLdoxTFG9J1COsaHlTa9BPvRK2U
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
- suspectscore=0 phishscore=0 mlxlogscore=811 adultscore=0 spamscore=0
- malwarescore=0 clxscore=1015 lowpriorityscore=0 bulkscore=0 mlxscore=0
- impostorscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230079
+References: <20241023-static-mutex-v5-1-f96b1a425c40@google.com>
+In-Reply-To: <20241023-static-mutex-v5-1-f96b1a425c40@google.com>
+From: Alice Ryhl <aliceryhl@google.com>
+Date: Wed, 23 Oct 2024 15:19:30 +0200
+Message-ID: <CAH5fLgjMo6_BJFqYfqHav6UqEwiQVm5+BPGYCZFQwEWDb4sdOg@mail.gmail.com>
+Subject: Re: [PATCH v5] rust: add global lock support
+To: Miguel Ojeda <ojeda@kernel.org>, Peter Zijlstra <peterz@infradead.org>, 
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>, Waiman Long <longman@redhat.com>, 
+	Boqun Feng <boqun.feng@gmail.com>
+Cc: Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, rust-for-linux@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Andreas Hindborg <a.hindborg@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Mon, Oct 21, 2024 at 11:20:58AM -0500, Steve Wahl wrote:
-> On Fri, Oct 18, 2024 at 05:05:43PM +0530, Vishal Chourasia wrote:
-> > On Thu, Oct 10, 2024 at 10:51:11AM -0500, Steve Wahl wrote:
- > > @@ -2417,9 +2446,6 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
-> > >  		sd = NULL;
-> > >  		for_each_sd_topology(tl) {
-> > >  
-> > > -			if (WARN_ON(!topology_span_sane(tl, cpu_map, i)))
-> > > -				goto error;
-> > > -
-> > >  			sd = build_sched_domain(tl, cpu_map, attr, sd, i);
-> > >  
-> > >  			has_asym |= sd->flags & SD_ASYM_CPUCAPACITY;
-> > > @@ -2433,6 +2459,9 @@ build_sched_domains(const struct cpumask *cpu_map, struct sched_domain_attr *att
-> > >  		}
-> > >  	}
-> > >  
-> > > +	if (WARN_ON(!topology_span_sane(cpu_map)))
-> > > +		goto error;
-> > Hi Steve,
-> 
-> Vishal, thank you for taking the time to review.
-> 
-> > Is there any reason why above check is done after initializing
-> > sched domain struct for all the CPUs in the cpu_map?
-> 
-> The original check was done in the same for_each_sd_topology(tl) loop
-> that calls build_sched_domain().  I had trouble 100% convincing myself
-> that calls to build_sched_domain() on the previous levels couldn't
-> affect calls to tl->mask() in later levels, so I placed the new check
-> after all calls to build_sched_domain were complete.
-> 
-Yeah, I don't see build_sched_domain() modifying the cpumask
-returned from tl->mask(cpu)
+On Wed, Oct 23, 2024 at 3:17=E2=80=AFPM Alice Ryhl <aliceryhl@google.com> w=
+rote:
+>
+> Add support for creating global variables that are wrapped in a mutex or
+> spinlock.
+>
+> The implementation here is intended to replace the global mutex
+> workaround found in the Rust Binder RFC [1]. In both cases, the global
+> lock must be initialized before first use. The macro is unsafe to use
+> for the same reason.
+>
+> The separate initialization step is required because it is tricky to
+> access the value of __ARCH_SPIN_LOCK_UNLOCKED from Rust. Doing so will
+> require changes to the C side. That change will happen as a follow-up to
+> this patch.
+>
+> Link: https://lore.kernel.org/rust-for-linux/20231101-rust-binder-v1-2-08=
+ba9197f637@google.com/#Z31drivers:android:context.rs [1]
+> Signed-off-by: Alice Ryhl <aliceryhl@google.com>
 
-> > It looks to me, that this check can be performed before the call to
-> > __visit_domain_allocation_hell() in the build_sched_domains()
-> > resulting in early return if topology_span_sane() detects incorrect
-> > topology.
-> 
-> This might be OK to do.  I would greatly appreciate somebody well
-> versed in this code area telling me for certain that it would work.
-> 
-Same.
+Something has gone terribly wrong with the versioning. This should be
+v6. Resending ...
 
-> > Also, the error path in the current code only cleans up d->rd struct, keeping 
-> > all the work done by build_sched_domain() inside the loop and __alloc_sdt() 
-> > called from __visit_domain_allocation_hell()
-> > 
-> > is it because we need all that work to remain intact?
-> 
-> I'm not seeing this.  The return from __visit_domain_allocation_hell()
-> is stored in alloc_state immediately checked to be == sa_rootdomain;
-> if not, the error path is taken, deallocating everything and
-> returning.
-> 
-> The rest of the function does not touch alloc_state, so any error from
-> that point on makes the call to __free_domain_allocs with what ==
-> sa_rootdomain, which seems to undo everything.
-> 
-> Are you possibly missing the fallthroughs in __free_domain_allocs()
-> even though they're clearly emphasized?
-> 
-Yes, you are right. Thank you for pointing that out.
+Sorry!
 
-> > static void __free_domain_allocs(struct s_data *d, enum s_alloc what,
-> > 				 const struct cpumask *cpu_map)
-> > {
-> > 	switch (what) {
-> > 	case sa_rootdomain:
-> > 		if (!atomic_read(&d->rd->refcount))
-> > 			free_rootdomain(&d->rd->rcu);
-> > 		fallthrough;
-> > 	case sa_sd:
-> > 		free_percpu(d->sd);
-> > 		fallthrough;
-> > 	case sa_sd_storage:
-> > 		__sdt_free(cpu_map);
-> > 		fallthrough;
-> > 	case sa_none:
-> > 		break;
-> > 	}
-> > }
-> > 
-> 
-> Thanks,
-> 
-> --> Steve Wahl
-> 
-> -- 
-> Steve Wahl, Hewlett Packard Enterprise
+Alice
 
