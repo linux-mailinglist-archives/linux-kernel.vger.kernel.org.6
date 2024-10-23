@@ -1,153 +1,168 @@
-Return-Path: <linux-kernel+bounces-377433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 969599ABEBC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:30:48 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 246E29ABEC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:31:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DDADCB22821
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:30:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF54B1F23145
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:31:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09291459F7;
-	Wed, 23 Oct 2024 06:30:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jdThJsLt"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F001A145B3F;
+	Wed, 23 Oct 2024 06:31:52 +0000 (UTC)
+Received: from mx1.emlix.com (mx1.emlix.com [178.63.209.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 366A827452
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:30:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60EAC13A3F3;
+	Wed, 23 Oct 2024 06:31:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.63.209.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665040; cv=none; b=A822WTV+R4wE8Q0OJbQef1yl2Lehiu1owVBDKEqd9Uc51S1bcLTv14Ud1VB/U3Jz8M2dlSoYxBStdykBJKNbL19Kvo1rh97pu+SSnWUTruM0HR8IqJYHRMByndNnGbat9dTu6/mHP6/q87ASyBgKLO3y8qf+QrLpmH48v4mQMAk=
+	t=1729665112; cv=none; b=S87WenzR86HESvNZZ+zC9WOYjGoAuEbKTljiJbBvG0PH7V7dVtBYtmZaz7Uw0VroDAEFfvu6M236IOVSGXnBUlI3+2CnbzTs895E60uol0hmcrhcu8aWfxxhnpMBzV5XvKAtamBnZK/Ti9xei9GLKN3oxbdQTR86snks36ht55A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665040; c=relaxed/simple;
-	bh=i78kEzSNQD2oMgFwcSk/hk16CvJ63GqSNHsZbVKSb7Q=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=D6aJ4J8MYN6DiPxs6WD4FDaPiyCXpLd1tC7/nMy/OPfBU4e6g21bo27KIHOU2zbPhH7On588UDqqbkI1wquhTwxlt3Nv4Pvv7szgRb4RdCDxznOTkX6BB2F82eCXUNgGL1g3Vh5hXUCjtBS38n7x2Tz2O+jHmV6SAY824ZxE2k0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jdThJsLt; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F5DC4CEC7;
-	Wed, 23 Oct 2024 06:30:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729665039;
-	bh=i78kEzSNQD2oMgFwcSk/hk16CvJ63GqSNHsZbVKSb7Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=jdThJsLt7+cCRh4bq6ndGkMBcZImFhX863CrgvE1y3+Dklk2UFQdLXlIdZ2rqVYMV
-	 W7iN0HJ7T6GZqewDsnP2+RMPAA78fpczdYsoHB7Nb29PXksfy8UdXy9sXwiB5n2RVg
-	 TtlYSrL8hDUO/l930JG3lmtWTdvJBmd3U9z6/ILdMqhtt/J+t3uuoi9QIhDX6z4tyP
-	 fiuu0YK4/SbbilDbFHPBeAqDDj3kWyPk7CQ0hmsaXOYiCpRRD4Es1ZFCe4QxScRWHw
-	 xG84su2PH6G4TdoF0CtHJNACwK69s7ArSuGpx9PrWdbT4vwCScwEpjXhoMK2hxm+Xg
-	 2k2Dr3NnPCWpg==
-Message-ID: <33b28b0a-b19d-459a-8db4-678df60cd799@kernel.org>
-Date: Wed, 23 Oct 2024 08:30:36 +0200
+	s=arc-20240116; t=1729665112; c=relaxed/simple;
+	bh=us+grQV/jXWmtQNBUfunsLR1+H2Rv7P8p/uyZMzN51U=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bUzZDAnF9bJ1pTsS9sDo51fsNeIJtKZhi5P10zq3f09tWgq2kSovF4mrlxUYcxpt7GySBM9AM4yDly6CcL0hMiM7SlzqbLU8nclU/kV+MnnCxoR1n9WFfWx+2KRQffkQ+ocsWQfkV4InrYVFs+2Cluiptn5/yZWItjrx7xdh/eI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com; spf=pass smtp.mailfrom=emlix.com; arc=none smtp.client-ip=178.63.209.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=emlix.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=emlix.com
+Received: from mailer.emlix.com (p5098be52.dip0.t-ipconnect.de [80.152.190.82])
+	(using TLSv1.2 with cipher ADH-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by mx1.emlix.com (Postfix) with ESMTPS id 2A52D5FAFA;
+	Wed, 23 Oct 2024 08:31:47 +0200 (CEST)
+From: Rolf Eike Beer <eb@emlix.com>
+To: Masahiro Yamada <masahiroy@kernel.org>
+Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject:
+ [PATCH 2/7] kconfig: qconf: use QString to store path to configuration file
+Date: Wed, 23 Oct 2024 08:31:46 +0200
+Message-ID: <13623531.uLZWGnKmhe@devpool47.emlix.com>
+Organization: emlix GmbH
+In-Reply-To: <4960180.31r3eYUQgx@devpool47.emlix.com>
+References: <4960180.31r3eYUQgx@devpool47.emlix.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] kfifo: don't include dma-mapping.h in kfifo.h
-To: Christoph Hellwig <hch@lst.de>, jassisinghbrar@gmail.com, afd@ti.com
-Cc: stefani@seibold.net, gregkh@linuxfoundation.org,
- linux-kernel@vger.kernel.org
-References: <20241023055317.313234-1-hch@lst.de>
-Content-Language: en-US
-From: Jiri Slaby <jirislaby@kernel.org>
-Autocrypt: addr=jirislaby@kernel.org; keydata=
- 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
-In-Reply-To: <20241023055317.313234-1-hch@lst.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset="utf-8"
 
-On 23. 10. 24, 7:53, Christoph Hellwig wrote:
-> Nothing in kfifo.h directly needs dma-mapping.h, only two macros
-> use DMA_MAPPING_ERROR when actually instantiated.  Drop the
-> dma-mapping.h include to reduce include bloat.
-> 
-> Add an explicity <linux/io.h> include to drivers/mailbox/omap-mailbox.c
-> as that file uses __raw_readl and __raw_writel through a complicated
-> include chain involving <linux/dma-mapping.h>
-> 
-> Fixes: d52b761e4b1a ("kfifo: add kfifo_dma_out_prepare_mapped()")
-> Signed-off-by: Christoph Hellwig <hch@lst.de>
-> ---
-> 
-> Changes since v1:
->   - improve the commit log
-> 
->   drivers/mailbox/omap-mailbox.c | 1 +
->   include/linux/kfifo.h          | 1 -
->   samples/kfifo/dma-example.c    | 1 +
->   3 files changed, 2 insertions(+), 1 deletion(-)
-> 
-> diff --git a/drivers/mailbox/omap-mailbox.c b/drivers/mailbox/omap-mailbox.c
-> index 6797770474a5..680243751d62 100644
-> --- a/drivers/mailbox/omap-mailbox.c
-> +++ b/drivers/mailbox/omap-mailbox.c
-> @@ -15,6 +15,7 @@
->   #include <linux/slab.h>
->   #include <linux/kfifo.h>
+This is the native type used by the file dialogs and avoids any hassle with
+filename encoding when converting this back and forth to a character array.
 
-Funnily enough, this driver does not use kfifo since:
-commit 3f58c1f4206f37d0af4595a9046c76016334b301
-Author: Andrew Davis <afd@ti.com>
-Date:   Wed Apr 10 08:59:42 2024 -0500
+Signed-off-by: Rolf Eike Beer <eb@emlix.com>
+=2D--
+ scripts/kconfig/qconf.cc | 24 ++++++------------------
+ scripts/kconfig/qconf.h  |  2 +-
+ 2 files changed, 7 insertions(+), 19 deletions(-)
 
-     mailbox: omap: Remove kernel FIFO message queuing
+diff --git a/scripts/kconfig/qconf.cc b/scripts/kconfig/qconf.cc
+index 742ca6ed289b..54640f6b29e2 100644
+=2D-- a/scripts/kconfig/qconf.cc
++++ b/scripts/kconfig/qconf.cc
+@@ -1380,7 +1380,7 @@ ConfigMainWindow::ConfigMainWindow(void)
+=20
+ 	conf_set_changed_callback(conf_changed);
+=20
+=2D	configname =3D xstrdup(conf_get_configname());
++	configname =3D conf_get_configname();
+=20
+ 	QAction *saveAsAction =3D new QAction("Save &As...", this);
+ 	connect(saveAsAction, &QAction::triggered,
+@@ -1519,28 +1519,22 @@ ConfigMainWindow::ConfigMainWindow(void)
+ void ConfigMainWindow::loadConfig(void)
+ {
+ 	QString str;
+=2D	QByteArray ba;
+=2D	const char *name;
+=20
+ 	str =3D QFileDialog::getOpenFileName(this, "", configname);
+ 	if (str.isNull())
+ 		return;
+=20
+=2D	ba =3D str.toLocal8Bit();
+=2D	name =3D ba.data();
+=2D
+=2D	if (conf_read(name))
++	if (conf_read(str.toLocal8Bit().constData()))
+ 		QMessageBox::information(this, "qconf", "Unable to load configuration!");
+=20
+=2D	free(configname);
+=2D	configname =3D xstrdup(name);
++	configname =3D str;
+=20
+ 	ConfigList::updateListAllForAll();
+ }
+=20
+ bool ConfigMainWindow::saveConfig(void)
+ {
+=2D	if (conf_write(configname)) {
++	if (conf_write(configname.toLocal8Bit().constData())) {
+ 		QMessageBox::information(this, "qconf", "Unable to save configuration!");
+ 		return false;
+ 	}
+@@ -1552,23 +1546,17 @@ bool ConfigMainWindow::saveConfig(void)
+ void ConfigMainWindow::saveConfigAs(void)
+ {
+ 	QString str;
+=2D	QByteArray ba;
+=2D	const char *name;
+=20
+ 	str =3D QFileDialog::getSaveFileName(this, "", configname);
+ 	if (str.isNull())
+ 		return;
+=20
+=2D	ba =3D str.toLocal8Bit();
+=2D	name =3D ba.data();
+=2D
+=2D	if (conf_write(name)) {
++	if (conf_write(str.toLocal8Bit().constData())) {
+ 		QMessageBox::information(this, "qconf", "Unable to save configuration!");
+ 	}
+ 	conf_write_autoconf(0);
+=20
+=2D	free(configname);
+=2D	configname =3D xstrdup(name);
++	configname =3D str;
+ }
+=20
+ void ConfigMainWindow::searchConfig(void)
+diff --git a/scripts/kconfig/qconf.h b/scripts/kconfig/qconf.h
+index 53373064d90a..aab25ece95c6 100644
+=2D-- a/scripts/kconfig/qconf.h
++++ b/scripts/kconfig/qconf.h
+@@ -237,7 +237,7 @@ public slots:
+ class ConfigMainWindow : public QMainWindow {
+ 	Q_OBJECT
+=20
+=2D	char *configname;
++	QString configname;
+ 	static QAction *saveAction;
+ 	static void conf_changed(bool);
+ public:
+=2D-=20
+2.47.0
 
->   #include <linux/err.h>
-> +#include <linux/io.h>
 
-So this should have been revealed at that point (while removing kfifo.h 
-in that commit too).
+=2D-=20
+Rolf Eike Beer
 
-Perhaps Andrew can remove the include now?
+emlix GmbH
+Headquarters: Berliner Str. 12, 37073 G=C3=B6ttingen, Germany
+Phone +49 (0)551 30664-0, e-mail info@emlix.com
+District Court of G=C3=B6ttingen, Registry Number HR B 3160
+Managing Directors: Heike Jordan, Dr. Uwe Kracke
+VAT ID No. DE 205 198 055
+Office Berlin: Panoramastr. 1, 10178 Berlin, Germany
+Office Bonn: Bachstr. 6, 53115 Bonn, Germany
+http://www.emlix.com
 
-thanks,
--- 
-js
-suse labs
+emlix - your embedded Linux partner
+
+
 
