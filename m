@@ -1,127 +1,106 @@
-Return-Path: <linux-kernel+bounces-377191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D21B9ABB0D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:33:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id ABB729ABB0E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:36:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 06490B22712
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:33:33 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 13B1A284912
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:36:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58E9039FC1;
-	Wed, 23 Oct 2024 01:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="R+PCe2ow"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.10])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A3134CC4;
+	Wed, 23 Oct 2024 01:36:07 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBC9E33991;
-	Wed, 23 Oct 2024 01:33:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7402D2FA
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:36:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729647204; cv=none; b=sqDIaeFfGUoNu7gyWV6cPKmVRjUQ91sJndbdt1PxC8+U0rUe6gqp3RltuR7occMj+zcONg0/BRbg72hKl1ZnZswLfQCi3Q8WwiaTLPfJl4oDg5pXjKCYVEYa2OKp5mMhCw3ZN473uIoZUHqY9RMGqOkhydUQiPl0rPqeWrt+5Nk=
+	t=1729647367; cv=none; b=fN4qvb7jExsZehKCMJ34Zr98ohNcaaCJ5/whBW9hTueDjmWk/3ucjjx/e+OGfKMNnYRK8MLAbAUMAUpfGFLd+2FocXpsKPRckBDGQziIv1MPx27xV07CvH23NIe0NxSKizlf0wlu30fkVSSvgnKEfMfH2A5OAaUcwFBX3JGuH3A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729647204; c=relaxed/simple;
-	bh=XRoAf6X2HyEqZxmQMc4DBFsVl4VgzjUS4h7DQliqcC8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FEuVMoOvDx67vHMpTTSDbFmYwdV2qepaZnwQulDn1Hb4hC/sQzeBC79gB5Meol6ekWF3UHQn/yAx5DhcrTLGkECbPIq5NLu5IDFSoQdqeI3ELU7sotsetXyj2xmsnTnpeDXR5qfXT4V2NpOmmWclPv1t4ohEMNfFIEsJ3xuQ2ss=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=R+PCe2ow; arc=none smtp.client-ip=192.198.163.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729647203; x=1761183203;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=XRoAf6X2HyEqZxmQMc4DBFsVl4VgzjUS4h7DQliqcC8=;
-  b=R+PCe2owkva4+zSiSqRC3097pavFR9RFFkLg5mPw0B/2NWC46BIwsBSV
-   Ha/ZFxlARl/MLSREs0inhvNYXPSQyeuXConCINhkHjEnO7GZaTwgHNpYX
-   nlz//2uUKfNQSU9KxSafkRhJmWxxVrbFeRZfxnvno5thmeecMN/2WhITC
-   SXUyDar9IefOv2p/nqgZw5rvwtGr4hzWo4eBGct5X7g384UPCfRqkeYt1
-   CJbPDs/iS6SVCuRtb2LQkkoGO8rPmzJMHlntfMFK1GjapPaqVwCZnso6r
-   rGj+2D9NHcogg6QmFLA50l6eSZY9rG9yvly4/xngPKNzfu9SwYFkWqyDh
-   Q==;
-X-CSE-ConnectionGUID: Rz/qPEheRzW1UfVmnrl2vg==
-X-CSE-MsgGUID: fMT2PKuuSImfd6wdbCtx0A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="40586852"
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="40586852"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by fmvoesa104.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 18:33:22 -0700
-X-CSE-ConnectionGUID: CFYRJcb6TlSCw5Cngg1KKA==
-X-CSE-MsgGUID: aDemVyNTRCi/J/CTKuvRgA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="80233140"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa006.jf.intel.com with ESMTP; 22 Oct 2024 18:33:16 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3QFN-000UK6-39;
-	Wed, 23 Oct 2024 01:33:13 +0000
-Date: Wed, 23 Oct 2024 09:32:44 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Machon <daniel.machon@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	andrew@lunn.ch, Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	horatiu.vultur@microchip.com,
-	jensemil.schulzostergaard@microchip.com,
-	Parthiban.Veerasooran@microchip.com, Raju.Lakkaraju@microchip.com,
-	UNGLinuxDriver@microchip.com,
-	Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, jacob.e.keller@intel.com,
-	ast@fiberby.net, maxime.chevallier@bootlin.com
-Cc: Paul Gazzillo <paul@pgazz.com>,
-	Necip Fazil Yildiran <fazilyildiran@gmail.com>,
-	oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next 06/15] net: lan969x: add match data for lan969x
-Message-ID: <202410230843.lGLDpveC-lkp@intel.com>
-References: <20241021-sparx5-lan969x-switch-driver-2-v1-6-c8c49ef21e0f@microchip.com>
+	s=arc-20240116; t=1729647367; c=relaxed/simple;
+	bh=Sdbe3OfWd0oBNONVMXtq6ky8FHMHcJ6/1bLaa0ECN/A=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=DsSj3l1AskKXDrq9ro/f2zJdMPpgWI4WrxTwASuPNhjuwMcJzN/dL6nb8sj5Tc5uRkfCHDUr763j1foP+aO90b7u8LJerq/b7wF2ftIRa9lEE9erMbL0Pk55rNhYnGjKyZDERNuKDHH6vGxzMVlF8/Ol+cTvLK/Uaa/za+Kp41w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.48])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XYBQv70yxz10Npx;
+	Wed, 23 Oct 2024 09:33:59 +0800 (CST)
+Received: from kwepemh500013.china.huawei.com (unknown [7.202.181.146])
+	by mail.maildlp.com (Postfix) with ESMTPS id 68F7B180087;
+	Wed, 23 Oct 2024 09:36:01 +0800 (CST)
+Received: from [10.67.109.254] (10.67.109.254) by
+ kwepemh500013.china.huawei.com (7.202.181.146) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.11; Wed, 23 Oct 2024 09:36:00 +0800
+Message-ID: <80114de7-19c0-d860-c888-35e535915f78@huawei.com>
+Date: Wed, 23 Oct 2024 09:35:59 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021-sparx5-lan969x-switch-driver-2-v1-6-c8c49ef21e0f@microchip.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.2.0
+Subject: Re: [PATCH v3 0/4] drm/tests: Fix some memory leaks
+Content-Language: en-US
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: Maxime Ripard <mripard@kernel.org>
+CC: <maarten.lankhorst@linux.intel.com>, <tzimmermann@suse.de>,
+	<airlied@gmail.com>, <simona@ffwll.ch>, <christian.koenig@amd.com>,
+	<ray.huang@amd.com>, <dmitry.baryshkov@linaro.org>,
+	<dave.stevenson@raspberrypi.com>, <quic_jjohnson@quicinc.com>,
+	<mcanal@igalia.com>, <davidgow@google.com>, <skhan@linuxfoundation.org>,
+	<karolina.stolarek@intel.com>, <Arunpravin.PaneerSelvam@amd.com>,
+	<thomas.hellstrom@linux.intel.com>, <asomalap@amd.com>,
+	<dri-devel@lists.freedesktop.org>, <linux-kernel@vger.kernel.org>
+References: <20241017063125.3080347-1-ruanjinjie@huawei.com>
+ <20241018-gigantic-meticulous-pug-06ec1b@houat>
+ <f7519595-8080-44c5-0477-e1281266b80b@huawei.com>
+In-Reply-To: <f7519595-8080-44c5-0477-e1281266b80b@huawei.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemh500013.china.huawei.com (7.202.181.146)
 
-Hi Daniel,
 
-kernel test robot noticed the following build warnings:
 
-[auto build test WARNING on 30d9d8f6a2d7e44a9f91737dd409dbc87ac6f6b7]
+On 2024/10/18 16:12, Jinjie Ruan wrote:
+> 
+> 
+> On 2024/10/18 15:55, Maxime Ripard wrote:
+>> Hi,
+>>
+>> On Thu, Oct 17, 2024 at 02:31:21PM GMT, Jinjie Ruan wrote:
+>>> Fix some memory leaks in drm tests.
+>>>
+>>> Changes in v3:
+>>> - Adjust drm/drm_edid.h header to drm_kunit_helpers.c.
+>>> - Drop the "helper" in the helper name.
+>>> - s/fllowing/following/
+>>> - Add Acked-by.
+>>
+>> This creates build failures since drm_display_mode were const before,
+>> and can't anymore.
+> 
+> It seems it came from bellowing v1, and this v3 has not reported the
+> issue yet.
+> 
+> https://lore.kernel.org/all/202410180830.oitxTsOv-lkp@intel.com/
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Machon/net-sparx5-add-support-for-lan969x-SKU-s-and-core-clock/20241021-220557
-base:   30d9d8f6a2d7e44a9f91737dd409dbc87ac6f6b7
-patch link:    https://lore.kernel.org/r/20241021-sparx5-lan969x-switch-driver-2-v1-6-c8c49ef21e0f%40microchip.com
-patch subject: [PATCH net-next 06/15] net: lan969x: add match data for lan969x
-config: nios2-kismet-CONFIG_SPARX5_SWITCH-CONFIG_LAN969X_SWITCH-0-0 (https://download.01.org/0day-ci/archive/20241023/202410230843.lGLDpveC-lkp@intel.com/config)
-reproduce: (https://download.01.org/0day-ci/archive/20241023/202410230843.lGLDpveC-lkp@intel.com/reproduce)
+Hi, Maxime,
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410230843.lGLDpveC-lkp@intel.com/
+Should this series send again? The issue seems not related to this version.
 
-kismet warnings: (new ones prefixed by >>)
->> kismet: WARNING: unmet direct dependencies detected for SPARX5_SWITCH when selected by LAN969X_SWITCH
-   WARNING: unmet direct dependencies detected for SPARX5_SWITCH
-     Depends on [n]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && NET_SWITCHDEV [=n] && HAS_IOMEM [=y] && OF [=y] && (ARCH_SPARX5 || COMPILE_TEST [=n]) && PTP_1588_CLOCK_OPTIONAL [=y] && (BRIDGE [=n] || BRIDGE [=n]=n [=n])
-     Selected by [y]:
-     - LAN969X_SWITCH [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> 
+>>
+>> Maxime
+> 
+> 
 
