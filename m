@@ -1,133 +1,157 @@
-Return-Path: <linux-kernel+bounces-378722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378723-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A95B49AD45F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:59:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 595BB9AD462
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:00:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 612EA1F22778
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:59:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE4FC282AEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:00:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7371D3624;
-	Wed, 23 Oct 2024 18:59:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 378C61D1E62;
+	Wed, 23 Oct 2024 19:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="VpLf83I4"
-Received: from mail-io1-f51.google.com (mail-io1-f51.google.com [209.85.166.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8wMIeuj"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D9481D14EA
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:59:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA67C1D1756;
+	Wed, 23 Oct 2024 19:00:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729709946; cv=none; b=h6a2y6OaOkHJeRKyfBrxLtKUkfg+ZQCOkaO1Her32taVaICLlkekr+IKr1KYAuODWp/Yj2+fpJMHXtLG2VImbDmVZPfOHJXgr4C7/2EOcrDXIfKg1Vt455xTFgtBh5CPM/XSujBcuRkAK2E8kQk3+RmvfVkq99MRaGIR78kwuCA=
+	t=1729710004; cv=none; b=QTKicS0Q/taumWLbCLrUFlq0OOCgP3CxUPdVPiAOnhPbVtzd8evQnfpzuiU7S7QmkpB12zLmv9QHNqNpK1LcDbOmHJtYtiK4BJaJ1QzDoSB/y6LZxkhb2C0uiJKr0UQ+JQLnisSwlprxEFKU6JQugVwFjppXnbG/R5Rx4OwQQ4s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729709946; c=relaxed/simple;
-	bh=rZAAAxHBiZ3/i9XGoNQT2Hfjanjk9R4Dig2qpm8BNx4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Kvha60v/g4hbG3hHhdC0CZEeiSVo5mqahJY9e/IKyZMd7g2QtRvVo/2w6gdSTiVoQGY0bqZVn8H4efazL19aYeHI1zobjHS+m7am0xR1AwEIYEi4g+bmHfF7tFuLHINLsM9H6LASf/ashpa4diJMI6EoBtG2SuqoTcaKLaG0CrA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=VpLf83I4; arc=none smtp.client-ip=209.85.166.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f51.google.com with SMTP id ca18e2360f4ac-83ab6cbd8b1so3798839f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:59:04 -0700 (PDT)
+	s=arc-20240116; t=1729710004; c=relaxed/simple;
+	bh=3ySqNRLtGWwpMyBHGSdChNcqITgkUEvbM2RBlgIaxds=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=evK2lHwhKR6ucDjtivdDqothVBMkQQJFt7kTfOVc6mUJbkuOCSP4vOjg9V1J5Fb2LIxDCxcY5KtYlqO9LfpCkVE3U8/oMH1OWA+mS++aXjToypqYQPpmTBb7VYPkGuWo4g/oyGGM7j1JFKh2wZzGwTFs2JUvZn3nMF0217eEMV4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8wMIeuj; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so1099535e9.1;
+        Wed, 23 Oct 2024 12:00:02 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729709944; x=1730314744; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wEYBu3Mwivbn6DlrCAkBS1rC3Gy/tlAoIzYDbA+rGsw=;
-        b=VpLf83I4LVpM+DSHagprbsr7tk05uIeg/vISE+Sd0v9Dma0w9/PvIKx3vHCw6IBG1U
-         zhKfpoUHvc/WUNh4fG4Cyliq35VixGUY+d2C/zxv+5qdbp66x++/HYLf53FYxuRkstea
-         ysnsikrw8YS56bgiCituYL85AZUvfIHrNxJvE=
+        d=gmail.com; s=20230601; t=1729710001; x=1730314801; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=FsJIF8FT1ZOAASevldtxcNuDKIhD6kU5J03bohqg87A=;
+        b=D8wMIeujxkK45xkZlhTckS8z/IGvl0mifSFRSfvdMU/XG3LvKQDtIkAONueyUwoCUB
+         ffERTNa81l1vaaJR5UTmq+YW1x13a/bzepOl0S6UlIi3rnPp2vgdJ6XuIPz1Y5iTO1n5
+         HPj/eetfe5YlN9pdfcds3Z1fGhhQeHgBZnYXvH0XPd43j6G6qwQOjbAEDBwu9as4G7/e
+         Szrt0jBEroXoz8SVr3JJc+eKWj+r8w14BZ5z/eHB++N/0Ykc5DGHGW/34D5ehNvbCoSB
+         cGj/t+lrO+fp7Q+4MYu9woL/CLUlphwypSTVyMla2oOMqXIQxbDsG//ilsiu2ABiBVye
+         hPfA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729709944; x=1730314744;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wEYBu3Mwivbn6DlrCAkBS1rC3Gy/tlAoIzYDbA+rGsw=;
-        b=gAU1uDW7gi7Ws5t//vdSrJvvdKhcyCmL2yFCU76AaupfgY09wRqSHV5QSv1qWu/pmV
-         0R1l5ueSkzPii8wBVVFaA66jc+B4gEERJ85TYTza8P9cKOqJUlw95nX203wJ3OksOXxB
-         Wafbm/tHeF833+wy+0bCgOUwWA12Sy3MM5hnD5wrXnCSAzu7QpoFFdK/DhO+gh/a5CPZ
-         gpX/x3z57E2KeptWTTREfkaiXd+304iLQ95QYRCTdfO2t+ABlNaNUbSIaGH01burdJJW
-         MuL+r+T5lejyA7Cr3x6V3i5o5FTUpsc5fnQG9LMzcudmq6U7+u83s/ZffcefiNnQmnfL
-         cHDQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVGR05S5UJe2mIPeI2FIHPw8pEBz+voiW77pNK61rzyeC7lFHsWeT0+csIQcvRqr5kZHpxWT+uSksg9SRg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzhRpWdlqthYaN9mdjJyf+Yl9h6Mbe9cJBEJq7R6d3eTWrk9BPr
-	u56m5HQqu2liSKRH27f/nu5y2SQqHpwyjeEdiRVn/L3iQgmbBaDNI0Ru9ETLXCk=
-X-Google-Smtp-Source: AGHT+IFLjRl86O+KR7T+RGF9JDnmSXXgMoptpjwR6GxkN+RqDLV9/vSmSXgRKtp8C+VmU9O5ZHrG6Q==
-X-Received: by 2002:a05:6602:48e:b0:82c:d768:aa4d with SMTP id ca18e2360f4ac-83af61a4103mr460548139f.9.1729709944060;
-        Wed, 23 Oct 2024 11:59:04 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1deff10sm232033739f.46.2024.10.23.11.59.02
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 11:59:03 -0700 (PDT)
-Message-ID: <8d1a298c-78e4-4dfd-a5fb-5dd96fb22e81@linuxfoundation.org>
-Date: Wed, 23 Oct 2024 12:59:02 -0600
+        d=1e100.net; s=20230601; t=1729710001; x=1730314801;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=FsJIF8FT1ZOAASevldtxcNuDKIhD6kU5J03bohqg87A=;
+        b=rjIjoc5NYIs4yvXwchwmSZOeyE5IEbjCEIkoNFhMo7lKju5UB1IbQui3ETgoUily7S
+         jJ+2Ezl4dFtfZ0SuIyLZePHNF2Nrs/3OXLxbo5Psqt2ZI47arXx3orR9duJCePPk2Si9
+         snTRXwiz4RxJ1+K97DRhw/FpBxJPborsUxI6RqERUEo9mR/fFiv26/eve2ObazerEe7n
+         +NBa6oPcGHJVux6s5Gbh3kLt0ePlXC+2+L2mOYbuDde4BIAeB6IwDTJluupUyum4Aa5v
+         jx0u8hTMg9zFvQWaGimiBshvtpRO4ocv3fRDJGfRPvgqVPwTzyFfZ/ULhI+wIAxZ4chU
+         NcpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUOBAF+6Cq88yOcXD1f5ACeBWYsHFGnt5Ae5k87LintPQVqKS34+9Qd/grGNoEjO/ZfEbxCHfEbSKr6jSHi@vger.kernel.org, AJvYcCViPrjEqv7B2vgp9oul/+JtMSbq4AJkWQg1th+dheyye2uS8XxSE4tpZ6LEYtOqRkSlv+zOjjlolAv7@vger.kernel.org
+X-Gm-Message-State: AOJu0YycYEdUSDKi3FIa7qLr2mg9VXdyaSjwOsFpWeIajoCKZ7SQW8YP
+	jEI5o2etfCyxNJmFjtG5DARIdxjp3i+bg4V6gBYHCJKwbMTg5D1j
+X-Google-Smtp-Source: AGHT+IFTs7ItDseyR4ZDl5HA79aGpVYcUk5tq1heIhbRH/wK064InmWoKT1MOInjiCQD2tlVX/SA5w==
+X-Received: by 2002:a05:600c:19d4:b0:431:3927:d1bc with SMTP id 5b1f17b1804b1-4318412ff0dmr29920895e9.2.1729710001082;
+        Wed, 23 Oct 2024 12:00:01 -0700 (PDT)
+Received: from [127.0.1.1] (2a02-8389-41cf-e200-b7f1-415d-4bfe-cca9.cable.dynamic.v6.surfer.at. [2a02:8389:41cf:e200:b7f1:415d:4bfe:cca9])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186c3a707sm24176485e9.33.2024.10.23.11.59.59
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 12:00:00 -0700 (PDT)
+From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Subject: [PATCH v3 0/2] iio: light: add support for veml3235
+Date: Wed, 23 Oct 2024 20:59:57 +0200
+Message-Id: <20241023-veml3235-v3-0-8490f2622f9a@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usbip: tools: update return status when failed
-To: Zongmin Zhou <min_halo@163.com>, valentina.manea.m@gmail.com,
- shuah@kernel.org, i@zenithal.me
-Cc: linux-usb@vger.kernel.org, linux-kernel@vger.kernel.org,
- Zongmin Zhou <zhouzongmin@kylinos.cn>, Shuah Khan <skhan@linuxfoundation.org>
-References: <20241022064856.4098350-1-min_halo@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241022064856.4098350-1-min_halo@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAK1HGWcC/02MywrDIBBFfyW4rmUc8+yq/1G6UDMmQl5okZaQf
+ 68JhWZ5LveclQXyjgK7ZSvzFF1w85RAXjJmejV1xF2bmCFgLgAqHmkcJMqCg5I1lgU1WhFL98W
+ Tde8j9Xgm7l14zf5zlKPY119ElP9IFBy4biC3NWCryN67UbnhauaR7ZGIJxHhJGISc20qY1VbE
+ eizuG3bF3pciwfZAAAA
+To: Jonathan Cameron <jic23@kernel.org>, 
+ Lars-Peter Clausen <lars@metafoo.de>, Rob Herring <robh@kernel.org>, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Rishi Gupta <gupt21@gmail.com>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, 
+ Javier Carrasco <javier.carrasco.cruz@gmail.com>, 
+ Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+X-Mailer: b4 0.14-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729709999; l=2472;
+ i=javier.carrasco.cruz@gmail.com; s=20240312; h=from:subject:message-id;
+ bh=3ySqNRLtGWwpMyBHGSdChNcqITgkUEvbM2RBlgIaxds=;
+ b=p6sGnY5rJllCmR1IedzW0iJxFWX3QqmzzOH5UDSp8n45HCsJLaD8Q5OkHGjcisqUZF5/fPU0m
+ EHf7+bc5yzqBzqEBNRvkE6sfo1TwnxFLuQVvycCSjhaOirfSlUdfHQh
+X-Developer-Key: i=javier.carrasco.cruz@gmail.com; a=ed25519;
+ pk=lzSIvIzMz0JhJrzLXI0HAdPwsNPSSmEn6RbS+PTS9aQ=
 
-On 10/22/24 00:48, Zongmin Zhou wrote:
-> From: Zongmin Zhou <zhouzongmin@kylinos.cn>
+This series adds support for the Vishay veml3235 ambient light sensor
+with I2C protocol interface.
 
-Update the short log to clearly indicate that this
-is a fix:
+I attempted to add support for this device in the existing veml6030
+driver, as it shares some operating principles with the supported
+devices. But given that the veml3235 has different register addresses,
+bit arrangements, and limited functionality, it ended up making most of
+the driver kind of device-agnostic.
 
-usbip: tools: Fix detach_port() invalid port error path
+Instead, the proposed driver is based on the recently updated veml6030
+with multiple simplifications and a few clean ups (e.g. regfields,
+right definition of shared-by-all info masks, which can't be modified
+in veml6030 as it breaks the ABI).
 
-> 
-> Have to set "ret" before return when found a invalid port.
+On the other hand, the dt-bindings can be recycled as there is no real
+reason to add new ones. From a dt-bindings point of view it resembles
+the already supported veml7700. But if for whatever reason new bindings
+would be preferred, I am willing to provide them in further versions.
 
-Give more details that detach_port() doesn't return error
-when detach is attempted on an invalid port.
+Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+---
+Changes in v3:
+- Add missing Tag to [1/2] (Acked-by).
+- Drop processed values from the driver, which in turn removes the need
+  to store the current resolution, gain and integration time in the
+  driver data.
+- Fix SD0 bit position (15).
+- Drop redundant configuration write in hw_init (gain and integration
+  times are the only fields to set).
+- Link to v2: https://lore.kernel.org/r/20241020-veml3235-v2-0-4bc7cfad7e0b@gmail.com
 
-This is a fix for 40ecdeb1a1875
-usbip: usbip_detach: fix to check for invalid ports
+Changes in v2:
+- Rename SD/SD0 bits to include register name.
+- Switch to dev_info() when checking ID.
+- Simplify val/val2 handling in veml3235_set_gain().
+- Move return -EINVAL to the default case in veml3235_read_avail().
+- Link to v1: https://lore.kernel.org/r/20241016-veml3235-v1-0-b904f802daef@gmail.com
 
-Add Fixes tag
+---
+Javier Carrasco (2):
+      dt-bindings: iio: light: veml6030: add veml3235
+      iio: light: add support for veml3235
 
-This patch can be tagged for stable.
+ .../bindings/iio/light/vishay,veml6030.yaml        |   5 +-
+ MAINTAINERS                                        |   6 +
+ drivers/iio/light/Kconfig                          |  11 +
+ drivers/iio/light/Makefile                         |   1 +
+ drivers/iio/light/veml3235.c                       | 504 +++++++++++++++++++++
+ 5 files changed, 526 insertions(+), 1 deletion(-)
+---
+base-commit: ceab669fdf7b7510b4e4997b33d6f66e433a96db
+change-id: 20241007-veml3235-0a38265e9bae
 
-> 
-> Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
-> ---
->   tools/usb/usbip/src/usbip_detach.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/tools/usb/usbip/src/usbip_detach.c b/tools/usb/usbip/src/usbip_detach.c
-> index b29101986b5a..6b78d4a81e95 100644
-> --- a/tools/usb/usbip/src/usbip_detach.c
-> +++ b/tools/usb/usbip/src/usbip_detach.c
-> @@ -68,6 +68,7 @@ static int detach_port(char *port)
->   	}
->   
->   	if (!found) {
-> +		ret = -1;
->   		err("Invalid port %s > maxports %d",
->   			port, vhci_driver->nports);
->   		goto call_driver_close;
+Best regards,
+-- 
+Javier Carrasco <javier.carrasco.cruz@gmail.com>
 
-With these changes:
-
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-
-thanks,
--- Shuah
 
