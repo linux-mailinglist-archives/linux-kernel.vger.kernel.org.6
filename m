@@ -1,87 +1,92 @@
-Return-Path: <linux-kernel+bounces-377883-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377884-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BCC7A9AC80F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:38:11 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 698819AC810
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:38:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68E41C21714
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:38:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A8392828D4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:38:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397619EEBF;
-	Wed, 23 Oct 2024 10:38:05 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 865B01A0AF0;
+	Wed, 23 Oct 2024 10:38:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b="GA2HRKk1"
+Received: from mx0b-001ae601.pphosted.com (mx0b-001ae601.pphosted.com [67.231.152.168])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4151CA84
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:38:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D221CA84;
+	Wed, 23 Oct 2024 10:38:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=67.231.152.168
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729679884; cv=none; b=i0+uQrw6Cfpnm2u715EEJ5YZ+it+TanENv9Ztt66uzR/Rurs8U2ye+QjOpCSJ4zQPNd65hYe4QQPxbFzC0H9t8dF7SdRm+V0BkbaAO5XiiElwwsiPXlrZW4/TL+qy+AKTtynGtoAQcAtXe+CaLi4eAwinwdIEMSchrLsmbmuGbU=
+	t=1729679914; cv=none; b=HGwXO/InIkGiuD7taNWB9rNm+c0kkB3Sd5Q7JQ/1XPT3kJOgsF4oKS2rrkcqpBp+e+lJceZhyraXUIl50BWzfDALsxnG6mlj0Us4Rf/XFltu88Wp5sXPAvE4ol2ws4cANThCkBMzGrPR9pVwnGkKdduuvlPbqMgDcuyA8FXSjRs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729679884; c=relaxed/simple;
-	bh=B+XcJb192v3YuuEOjMSBRFCQwKVSTU3vduPXMg9Vc1w=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=HlUb6u8df9W62Cnjm+jDcxqSpEZfTBYWKjEkdxsQRDt4ae/674p0WGgm+JV+dHFI3vVV2fZqopURIqkSSUrMFE4RrhARW/K1zmuQ/Jthrnlw7a9+XYf/IqetXb8wbznwNIN45uep4qnApOlQtsZwt8FVYTZMWYtdsNhEM7cq9Ls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4d630bac7so5533935ab.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:38:03 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729679882; x=1730284682;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=2M3PamQVhDSSmu15zLfa+CxeRn6M6aMFstsqsRrvm04=;
-        b=w/PMUgOngDar0QgTprLm97hPSq65c44uNLjAEyOu5Aw7WySRhBaOPZC/rpZgHw5fe5
-         RGwlcag8SQa5KOezKAHVAWN2Qf6N0/Gs6/Zhsy9FNroXZOVfJ1S+WgLI+RalC/GucKsf
-         REOy1yJjkbqiXMldvCjkB/3mD3UeoZUZTLb6GzPpwJ5rU5RdxV3RDEvNe60P5JjJKizu
-         XbYUn/jtzKm1aWXixncRvo70dQYAYe2yJsDNL2aBeB4u7WKKBQeqm7/cOzbrt9OS87ca
-         PHUoByijwy9yQUF1DObr6zWRP+6Xit4q/yoJ5uC9VpW1PFc2524iVhDub3Y659QMRwJ3
-         nWaA==
-X-Forwarded-Encrypted: i=1; AJvYcCV9B/EhB3O2qnwwzhT3c+HhQX7CK1cjs+QtaZ1Fo+Ho0Nx6u9vnpfhxhGulVySHwcs6+WWpyoyXWLPldmk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyEk+CUSf+21PIIGthnQngCg28bP+mFBewhOfX04egw+M3S6CvM
-	1vGA55FGPlzqIeYNgpNcEBQoqo50fl25e2mjg/gLPsbVGaKvy94o2KIPAb73aSFyD761R9lElVl
-	oJzda4SIXlGH79y+6+2NQ0LS8Y2oDPPtjZ7e1AJEZRe/wmVeQq9OJ2fQ=
-X-Google-Smtp-Source: AGHT+IE6djL6DgXnByaa7OhcYwZ+Nr90QTr+qqwAzoFqSWCwJ8rHLqiEibK3josx02bKKh6yachf0z5VvRSQWUDgmTALM7wO7yYg
+	s=arc-20240116; t=1729679914; c=relaxed/simple;
+	bh=dGrUkReW/jmU2friNXD2xLiCuXEVtZVo4FJ7ZK9AQTg=;
+	h=Date:From:To:CC:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kB4i5/gFZ+G7wtunH0Ak28a+Imt1YdXGkZNSBQvTVrjyla42o5g1TzfP4A0pjGUHlBqp1y6CUjReyFIpKwqt46YE6U/6qV9eHCGCx0yojq3vGrW+nCNxvXKwiWIX6srgAAShz8ZBKV/EnDkpiQyEF0CwK9s7i8dFbhtY5kgl9Ak=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com; spf=pass smtp.mailfrom=opensource.cirrus.com; dkim=pass (2048-bit key) header.d=cirrus.com header.i=@cirrus.com header.b=GA2HRKk1; arc=none smtp.client-ip=67.231.152.168
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=opensource.cirrus.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=opensource.cirrus.com
+Received: from pps.filterd (m0077474.ppops.net [127.0.0.1])
+	by mx0b-001ae601.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N2bpEp023824;
+	Wed, 23 Oct 2024 05:38:27 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cirrus.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=PODMain02222019; bh=YlIPwoifJWw+ux8fJL
+	Lw+ug+EejR1tLOpfYAWah2kPU=; b=GA2HRKk14HrgVFcQ0l1fLJ1YevJePZdwBQ
+	U5hUv/0p5Jqlqr/ZFJO2p72EtQ3yGzJKVX1tldKbcpU8YcmefUYYAepjcIdG7rFy
+	sCH5LvPyLd0rWKsM1DSZ28A4g3apAqOqKW2MNQRBy9S79lOfdRUK65w4lxXc2LR5
+	0nLvRLMOLVkamThMPI/lgU/aP7BUpuk/AUHqA7Sm5vawabOEHrHa4C21pjoNWqSl
+	kDE3HWVCix/UwHRa+spciCZFmGZq9+dDqClhi85un1C0jB/7o8At5x3SV2MZunWS
+	FjgTr8b1yf4VqsTBZ3ylmzQG5QzUVN6lV0BWBCGOIEcwVJeEFdDQ==
+Received: from ediex02.ad.cirrus.com ([84.19.233.68])
+	by mx0b-001ae601.pphosted.com (PPS) with ESMTPS id 42c96jcpk9-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 05:38:26 -0500 (CDT)
+Received: from ediex02.ad.cirrus.com (198.61.84.81) by ediex02.ad.cirrus.com
+ (198.61.84.81) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 11:38:25 +0100
+Received: from ediswmail9.ad.cirrus.com (198.61.86.93) by
+ anon-ediex02.ad.cirrus.com (198.61.84.81) with Microsoft SMTP Server id
+ 15.2.1544.9 via Frontend Transport; Wed, 23 Oct 2024 11:38:25 +0100
+Received: from opensource.cirrus.com (ediswmail9.ad.cirrus.com [198.61.86.93])
+	by ediswmail9.ad.cirrus.com (Postfix) with ESMTPS id 14BE4822563;
+	Wed, 23 Oct 2024 10:38:25 +0000 (UTC)
+Date: Wed, 23 Oct 2024 11:38:24 +0100
+From: Charles Keepax <ckeepax@opensource.cirrus.com>
+To: Maciej Strozek <mstrozek@opensource.cirrus.com>
+CC: Lee Jones <lee@kernel.org>, <patches@opensource.cirrus.com>,
+        <linux-sound@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] mfd: cs42l43: Prepare support for updated bios patch
+Message-ID: <ZxjSIBpW5syCULnZ@opensource.cirrus.com>
+References: <20241023100636.28511-1-mstrozek@opensource.cirrus.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1c44:b0:3a3:4164:eec9 with SMTP id
- e9e14a558f8ab-3a4d598caa9mr22195265ab.14.1729679882471; Wed, 23 Oct 2024
- 03:38:02 -0700 (PDT)
-Date: Wed, 23 Oct 2024 03:38:02 -0700
-In-Reply-To: <tencent_A7941CEA22EDEACFC87A5A6C242D5D6E780A@qq.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <6718d20a.050a0220.1e4b4d.0086.GAE@google.com>
-Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_lookup_csums_bitmap
-From: syzbot <syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com>
-To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241023100636.28511-1-mstrozek@opensource.cirrus.com>
+X-Proofpoint-GUID: Tu7ytfnWM6FImtN-cecc04lRP9jJGvt6
+X-Proofpoint-ORIG-GUID: Tu7ytfnWM6FImtN-cecc04lRP9jJGvt6
+X-Proofpoint-Spam-Reason: safe
 
-Hello,
+On Wed, Oct 23, 2024 at 11:06:34AM +0100, Maciej Strozek wrote:
+> Newer bios patch firmware versions now require use of the shadow register
+> interface, which was previously only required by the full firmware, update
+> the check accordingly.
+> 
+> Signed-off-by: Maciej Strozek <mstrozek@opensource.cirrus.com>
+> ---
 
-syzbot has tested the proposed patch and the reproducer did not trigger any issue:
+Reviewed-by: Charles Keepax <ckeepax@opensource.cirrus.com>
 
-Reported-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com
-Tested-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com
-
-Tested on:
-
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=1278c287980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=5d2b33d7835870519b5f
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-patch:          https://syzkaller.appspot.com/x/patch.diff?x=12356640580000
-
-Note: testing is done by a robot and is best-effort only.
+Thanks,
+Charles
 
