@@ -1,555 +1,210 @@
-Return-Path: <linux-kernel+bounces-377812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 91C399AC728
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:57:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 833829AC72D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:58:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E4E5AB217C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:57:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3061D2836D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:58:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0076E1AA781;
-	Wed, 23 Oct 2024 09:55:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 33C0A19F40A;
+	Wed, 23 Oct 2024 09:56:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="hqnjyEJ7"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pTbESDai"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFB9A1A7AF7
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E6DB13C836;
+	Wed, 23 Oct 2024 09:56:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729677317; cv=none; b=h64J0s6tgmuqPTw6W7HxZkPPeq+9pDHsX+3ohOlY71SiBUFk1Ri+Uj0UtlManT2xsVdYL0iqRCKn3DNHAJvgKXglnzr4n9FuBG2cqh1szUsGbot0Q8q4zEtKdW3a2aax6XwkclIbLnXXL4ytYQUawVoQU9g4jgs1k4fQ3VkQKdU=
+	t=1729677394; cv=none; b=P7Fz0QpOrQP+hWXgm8h7dEDFJGzHUbMHX73y0T4A4mqgEIW9zEH91x4bbB8zRzghWV2SdI5y/Dw/S1z1SUGvU59NEM7i/qpTyxU1RsR02W8KHcGcl4yccS+7xjncJWhgHMCTQQKNOlp0QbSleRv/WIfH4/oyw+U2jItsbBwSPP8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729677317; c=relaxed/simple;
-	bh=+FVdnVre7ofwoYH68Sy4BzXcOlIiJ2nUaR3uwNdr1gw=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=s37bvGHTS38ukKcKUaCvG/6BXxa10G0/LTdaClaT3AHfSIg7kiE9yNGeYQ/ldbs+vTrKqL64lVUcTBPwf8zzC6HkWGrcw8OYcldf8ojQg1Z7olphxN5hEWDX8YbCshwiugVsn/palp4MrMDsDQHjdW4S3RMZvFy8YLAxUMORANo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=hqnjyEJ7; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729677313;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6fChrjJ4PBXmjzA74oq7U7p9U5IYVMMbrVBQiegw/Jo=;
-	b=hqnjyEJ7Ncf+mC+m6K6VCj9eDQHlYWmzA96uI9dnA91mMMzX0+JSwyP2JvNgca+roQ9smM
-	cOeKfjxTXRjzgxft3IoINhl/G7RhpEf8AJygZ8oipICRr+rtSDr38Iyb13j0j2WVG/Kmao
-	Wg5PPoM2bYIDGiR8kl+LiTc74RqMueU=
-Received: from mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-655-JsdOgAHqOP2Uo6xuvAd7IA-1; Wed,
- 23 Oct 2024 05:55:10 -0400
-X-MC-Unique: JsdOgAHqOP2Uo6xuvAd7IA-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BA19E1956083;
-	Wed, 23 Oct 2024 09:55:08 +0000 (UTC)
-Received: from localhost (unknown [10.72.116.171])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 9D8D81956056;
-	Wed, 23 Oct 2024 09:55:07 +0000 (UTC)
-From: Ming Lei <ming.lei@redhat.com>
-To: Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org
-Cc: Christoph Hellwig <hch@lst.de>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>,
-	Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>,
-	Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Bart Van Assche <bvanassche@acm.org>,
-	Ming Lei <ming.lei@redhat.com>
-Subject: [PATCH 3/3] block: model freeze & enter queue as lock for supporting lockdep
-Date: Wed, 23 Oct 2024 17:54:35 +0800
-Message-ID: <20241023095438.3451156-4-ming.lei@redhat.com>
-In-Reply-To: <20241023095438.3451156-1-ming.lei@redhat.com>
-References: <20241023095438.3451156-1-ming.lei@redhat.com>
+	s=arc-20240116; t=1729677394; c=relaxed/simple;
+	bh=TDOmQNRZS+Qs1U59yrJjSwxZlDkG7IUXbp5wL5bEbrk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sts2fR+g4+LXGFxh9SjzHLmqLoqUSbzhiEnYz21J01JMSVp0J6TwgZ9ke+yGl8cxEWo89l2DRBbFIA/SmMLBhzRGNPRrn/QnFA68uNxPFVijH9cJZwowRme4mD3Zr/69Gxm8aw8+YpUg1u9rXcdQQxv86w7sElmx7RGMWuVUZ5o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pTbESDai; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3E7D8C4CEC6;
+	Wed, 23 Oct 2024 09:56:31 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729677393;
+	bh=TDOmQNRZS+Qs1U59yrJjSwxZlDkG7IUXbp5wL5bEbrk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=pTbESDailmBr+rqmFqCE+z3hSs5LqubzYmqHcgbzPczuCHde+3H5iNBTfXtiWf7St
+	 zyup/HN4MNG4hF73ANNrJEGaFCKcQdscjGt61iUw7MRfpmQ4w4LEejKWA9BO/gNJls
+	 ffBXnpdf902MoeINC+RNOBIDWNjuossLfcIocyHHCG+eH3jcHiqyk2yAUP0+94zaQZ
+	 YXy0fQWcG4B+KsEcU1G+en/M2x+yTBcQOAf2D1RJJDyAn4Kjgm9LPb8A0fvWJP610Q
+	 jtc3kUalVoRMFk7bQ2F3nPin+EwVqRAqFP7nanq7Xco2q8pLcQTnIbDMexvFdjgMxw
+	 dzPep7VW4JbLg==
+Message-ID: <fde8d1b6-9812-418c-8ba4-ae2384251ee7@kernel.org>
+Date: Wed, 23 Oct 2024 11:56:18 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird Beta
+Subject: Re: [PATCH] netfliter: xtables: fix typo causing some targets to not
+ load on IPv6
+Content-Language: en-GB
+To: Ilya Katsnelson <me@0upti.me>, Pablo Neira Ayuso <pablo@netfilter.org>,
+ Jozsef Kadlecsik <kadlec@netfilter.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Florian Westphal <fw@strlen.de>, Sasha Levin <sashal@kernel.org>
+Cc: netfilter-devel@vger.kernel.org, coreteam@netfilter.org,
+ netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018-xtables-typos-v1-1-02a51789c0ec@0upti.me>
+From: Matthieu Baerts <matttbe@kernel.org>
+Autocrypt: addr=matttbe@kernel.org; keydata=
+ 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
+ lzVbFe7fduHbABmYz9cefQpO7wDE/Q==
+Organization: NGI0 Core
+In-Reply-To: <20241018-xtables-typos-v1-1-02a51789c0ec@0upti.me>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
 
-Recently we got several deadlock report[1][2][3] caused by blk_mq_freeze_queue
-and blk_enter_queue().
+Hi Ilya,
 
-Turns out the two are just like acquiring read/write lock, so model them as
-read/write lock for supporting lockdep:
+On 18/10/2024 17:45, Ilya Katsnelson wrote:
+> These were added with the wrong family in 4cdc55e, which seems
+> to just have been a typo, but now ip6tables rules with --set-mark
+> don't work anymore, which is pretty bad.
 
-1) model q->q_usage_counter as two locks(io and queue lock)
-- queue lock covers sync with blk_enter_queue()
+Funny, with this patch, now the v4 version doesn't work any more, which
+is pretty bad as well ;-)
 
-- io lock covers sync with bio_enter_queue()
+More seriously, it looks like your patch broke MPTCP selftests:
 
-2) make the lockdep class/key as per-queue:
 
-- different subsystem has very different lock use pattern, shared lock class
-causes false positive easily
+https://netdev-3.bots.linux.dev/vmksft-mptcp-dbg/results/826643/1-mptcp-join-sh/stdout
 
-- freeze_queue degrades to no lock in case that disk state becomes DEAD because
-  bio_enter_queue() won't be blocked any more
+Two tests are now failing, because they can no longer add a mark:
 
-- freeze_queue degrades to no lock in case that request queue becomes dying
-  because blk_enter_queue() won't be blocked any more
+> # iptables -t mangle -A OUTPUT -j MARK --set-mark 1
+> Warning: Extension MARK revision 0 not supported, missing kernel module?
+> iptables v1.8.10 (nf_tables):  RULE_APPEND failed (No such file or directory): rule in chain OUTPUT
 
-3) model blk_mq_freeze_queue() as acquire_exclusive & try_lock
-- it is exclusive lock, so dependency with blk_enter_queue() is covered
+Please see below:
 
-- it is trylock because blk_mq_freeze_queue() are allowed to run concurrently
+> diff --git a/net/netfilter/xt_NFLOG.c b/net/netfilter/xt_NFLOG.c
+> index d80abd6ccaf8f71fa70605fef7edada827a19ceb..6dcf4bc7e30b2ae364a1cd9ac8df954a90905c52 100644
+> --- a/net/netfilter/xt_NFLOG.c
+> +++ b/net/netfilter/xt_NFLOG.c
+> @@ -79,7 +79,7 @@ static struct xt_target nflog_tg_reg[] __read_mostly = {
+>  	{
+>  		.name       = "NFLOG",
+>  		.revision   = 0,
+> -		.family     = NFPROTO_IPV4,
+> +		.family     = NFPROTO_IPV6,
 
-4) model blk_enter_queue() & bio_enter_queue() as acquire_read()
-- nested blk_enter_queue() are allowed
+Here, by setting the family to v6 instead of v4, we now have two targets
+that are exactly the same, both for v6:
 
-- dependency with blk_mq_freeze_queue() is covered
+>   67   │ static struct xt_target nflog_tg_reg[] __read_mostly = {
+>   68   │     {
+>   69   │         .name       = "NFLOG",
+>   70   │         .revision   = 0,
+>   71   │         .family     = NFPROTO_IPV6,  /* <== The line you modified */
+>   72   │         .checkentry = nflog_tg_check,
+>   73   │         .destroy    = nflog_tg_destroy,
+>   74   │         .target     = nflog_tg,
+>   75   │         .targetsize = sizeof(struct xt_nflog_info),
+>   76   │         .me         = THIS_MODULE,
+>   77   │     },
+>   78   │ #if IS_ENABLED(CONFIG_IP6_NF_IPTABLES)
+>   79   │     {
+>   80   │         .name       = "NFLOG",
+>   81   │         .revision   = 0,
+>   82   │         .family     = NFPROTO_IPV6,  /* <== v6 was already there */
+>   83   │         .checkentry = nflog_tg_check,
+>   84   │         .destroy    = nflog_tg_destroy,
+>   85   │         .target     = nflog_tg,
+>   86   │         .targetsize = sizeof(struct xt_nflog_info),
+>   87   │         .me         = THIS_MODULE,
+>   88   │     },
+>   89   │ #endif
+>   90   │ };
 
-- blk_queue_exit() is often called from other contexts(such as irq), and
-it can't be annotated as lock_release(), so simply do it in
-blk_enter_queue(), this way still covered cases as many as possible
+Are you sure you didn't have the bug you mentioned because your kernel
+config doesn't have CONFIG_IP6_NF_IPTABLES?
 
-With lockdep support, such kind of reports may be reported asap and
-needn't wait until the real deadlock is triggered.
+>  		.checkentry = nflog_tg_check,
+>  		.destroy    = nflog_tg_destroy,
+>  		.target     = nflog_tg,
+> diff --git a/net/netfilter/xt_mark.c b/net/netfilter/xt_mark.c
+> index f76fe04fc9a4e19f18ac323349ba6f22a00eafd7..65b965ca40ea7ea5d9feff381b433bf267a424c4 100644
+> --- a/net/netfilter/xt_mark.c
+> +++ b/net/netfilter/xt_mark.c
+> @@ -62,7 +62,7 @@ static struct xt_target mark_tg_reg[] __read_mostly = {
+>  	{
+>  		.name           = "MARK",
+>  		.revision       = 2,
+> -		.family         = NFPROTO_IPV4,
+> +		.family         = NFPROTO_IPV6,
 
-For example, the following lockdep report can be triggered in the
-report[3].
+Same here.
 
-[   31.671822] ======================================================
-[   31.673169] WARNING: possible circular locking dependency detected
-[   31.674456] 6.11.0_nbd+ #411 Not tainted
-[   31.675220] ------------------------------------------------------
-[   31.676379] bash/1425 is trying to acquire lock:
-[   31.676861] ffff990b8ea27530 (&q->limits_lock){+.+.}-{3:3}, at: queue_wc_store+0x8e/0x180
-[   31.677268]
-               but task is already holding lock:
-[   31.677548] ffff990b8ea27410 (&q->sysfs_lock){+.+.}-{3:3}, at: queue_attr_store+0x75/0xc0
-[   31.677931]
-               which lock already depends on the new lock.
+So I think this patch is not needed, right?
 
-[   31.678315]
-               the existing dependency chain (in reverse order) is:
-[   31.678664]
-               -> #2 (&q->sysfs_lock){+.+.}-{3:3}:
-[   31.678951]        __mutex_lock+0xad/0xb20
-[   31.679157]        queue_attr_store+0x75/0xc0
-[   31.679366]        kernfs_fop_write_iter+0x15c/0x210
-[   31.679608]        vfs_write+0x2a7/0x540
-[   31.679801]        ksys_write+0x75/0x100
-[   31.679999]        do_syscall_64+0x95/0x180
-[   31.680209]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   31.680488]
-               -> #1 (&q->q_usage_counter(queue)#2){++++}-{0:0}:
-[   31.680839]        blk_queue_enter+0x195/0x1d0
-[   31.681060]        blk_mq_alloc_request+0x136/0x2d0
-[   31.681301]        scsi_execute_cmd+0x9c/0x4c0
-[   31.681528]        read_capacity_16+0x116/0x410
-[   31.681765]        sd_revalidate_disk.isra.0+0x54d/0x2f00
-[   31.682044]        sd_probe+0x2ec/0x520
-[   31.682238]        really_probe+0xd3/0x390
-[   31.682445]        __driver_probe_device+0x78/0x150
-[   31.682682]        driver_probe_device+0x1f/0x90
-[   31.682908]        __device_attach_driver+0x89/0x110
-[   31.683161]        bus_for_each_drv+0x95/0xf0
-[   31.683377]        __device_attach_async_helper+0xa7/0xf0
-[   31.683639]        async_run_entry_fn+0x31/0x130
-[   31.683875]        process_one_work+0x212/0x700
-[   31.684100]        worker_thread+0x1ce/0x380
-[   31.684308]        kthread+0xd2/0x110
-[   31.684490]        ret_from_fork+0x31/0x50
-[   31.684700]        ret_from_fork_asm+0x1a/0x30
-[   31.684922]
-               -> #0 (&q->limits_lock){+.+.}-{3:3}:
-[   31.685499]        __lock_acquire+0x15c0/0x23e0
-[   31.685872]        lock_acquire+0xd8/0x300
-[   31.686207]        __mutex_lock+0xad/0xb20
-[   31.686535]        queue_wc_store+0x8e/0x180
-[   31.686877]        queue_attr_store+0x84/0xc0
-[   31.687231]        kernfs_fop_write_iter+0x15c/0x210
-[   31.687594]        vfs_write+0x2a7/0x540
-[   31.687907]        ksys_write+0x75/0x100
-[   31.688219]        do_syscall_64+0x95/0x180
-[   31.688534]        entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   31.688910]
-               other info that might help us debug this:
+>  		.target         = mark_tg,
+>  		.targetsize     = sizeof(struct xt_mark_tginfo2),
+>  		.me             = THIS_MODULE,
+> 
+> ---
+> base-commit: 75aa74d52f43e75d0beb20572f98529071b700e5
+> change-id: 20241018-xtables-typos-dfeadb8b122d
+> 
+> Best regards,
 
-[   31.689621] Chain exists of:
-                 &q->limits_lock --> &q->q_usage_counter(queue)#2 --> &q->sysfs_lock
-
-[   31.690549]  Possible unsafe locking scenario:
-
-[   31.691060]        CPU0                    CPU1
-[   31.691389]        ----                    ----
-[   31.691716]   lock(&q->sysfs_lock);
-[   31.691999]                                lock(&q->q_usage_counter(queue)#2);
-[   31.692460]                                lock(&q->sysfs_lock);
-[   31.692863]   lock(&q->limits_lock);
-[   31.693155]
-                *** DEADLOCK ***
-
-[   31.693746] 6 locks held by bash/1425:
-[   31.694043]  #0: ffff990b8007e420 (sb_writers#4){.+.+}-{0:0}, at: ksys_write+0x75/0x100
-[   31.694543]  #1: ffff990bcf1a3288 (&of->mutex#2){+.+.}-{3:3}, at: kernfs_fop_write_iter+0x115/0x210
-[   31.695119]  #2: ffff990b91888378 (kn->active#166){.+.+}-{0:0}, at: kernfs_fop_write_iter+0x11e/0x210
-[   31.695685]  #3: ffff990b8ea26ee8 (&q->q_usage_counter(io)#2){++++}-{0:0}, at: queue_attr_store+0x60/0xc0
-[   31.696269]  #4: ffff990b8ea26f20 (&q->q_usage_counter(queue)#2){++++}-{0:0}, at: queue_attr_store+0x60/0xc0
-[   31.696846]  #5: ffff990b8ea27410 (&q->sysfs_lock){+.+.}-{3:3}, at: queue_attr_store+0x75/0xc0
-[   31.697381]
-               stack backtrace:
-[   31.697826] CPU: 9 UID: 0 PID: 1425 Comm: bash Not tainted 6.11.0_nbd+ #411
-[   31.698285] Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-1.fc39 04/01/2014
-[   31.698807] Call Trace:
-[   31.699058]  <TASK>
-[   31.699289]  dump_stack_lvl+0x93/0xf0
-[   31.699598]  print_circular_bug+0x26e/0x340
-[   31.699924]  check_noncircular+0x16c/0x190
-[   31.700251]  ? lock_acquire+0x2a1/0x300
-[   31.700561]  __lock_acquire+0x15c0/0x23e0
-[   31.700877]  lock_acquire+0xd8/0x300
-[   31.701181]  ? queue_wc_store+0x8e/0x180
-[   31.701502]  __mutex_lock+0xad/0xb20
-[   31.701806]  ? queue_wc_store+0x8e/0x180
-[   31.702128]  ? queue_wc_store+0x8e/0x180
-[   31.702446]  ? queue_wc_store+0x8e/0x180
-[   31.702761]  queue_wc_store+0x8e/0x180
-[   31.703084]  ? __mutex_lock+0xad/0xb20
-[   31.703385]  ? __mutex_lock+0x6e4/0xb20
-[   31.703691]  ? mark_held_locks+0x40/0x70
-[   31.704004]  ? queue_attr_store+0x75/0xc0
-[   31.704317]  queue_attr_store+0x84/0xc0
-[   31.704643]  kernfs_fop_write_iter+0x15c/0x210
-[   31.704987]  vfs_write+0x2a7/0x540
-[   31.705274]  ksys_write+0x75/0x100
-[   31.705559]  do_syscall_64+0x95/0x180
-[   31.705864]  ? do_user_addr_fault+0x361/0x790
-[   31.706239]  ? trace_hardirqs_off+0x4b/0xc0
-[   31.706564]  ? clear_bhb_loop+0x25/0x80
-[   31.706966]  ? clear_bhb_loop+0x25/0x80
-[   31.707272]  ? clear_bhb_loop+0x25/0x80
-[   31.707568]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[   31.707927] RIP: 0033:0x7fb69d85e174
-[   31.708227] Code: 89 02 48 c7 c0 ff ff ff ff eb bd 66 2e 0f 1f 84 00 00 00 00 00 90 f3 0f 1e fa 80 3d 6d b4 0d 00 00 74 13 b8 01 00 00 00 0f 05 <48> 3d 00 f0 ff ff 77 54 c3 0f 1f 00 55 48 89 e5 48 83 ec 20 48 89
-[   31.709343] RSP: 002b:00007ffed933fb48 EFLAGS: 00000202 ORIG_RAX: 0000000000000001
-[   31.709834] RAX: ffffffffffffffda RBX: 0000000000000005 RCX: 00007fb69d85e174
-[   31.710311] RDX: 0000000000000005 RSI: 000055713d6fb7d0 RDI: 0000000000000001
-[   31.710779] RBP: 00007ffed933fb70 R08: 0000000000000073 R09: 0000000000000001
-[   31.711263] R10: 0000000000000000 R11: 0000000000000202 R12: 0000000000000005
-[   31.711755] R13: 000055713d6fb7d0 R14: 00007fb69d932780 R15: 0000000000000005
-[   31.712242]  </TASK>
-
-[1] occasional block layer hang when setting 'echo noop > /sys/block/sda/queue/scheduler'
-https://bugzilla.kernel.org/show_bug.cgi?id=219166
-
-[2] del_gendisk() vs blk_queue_enter() race condition
-https://lore.kernel.org/linux-block/20241003085610.GK11458@google.com/
-
-[3] queue_freeze & queue_enter deadlock in scsi
-https://lore.kernel.org/linux-block/ZxG38G9BuFdBpBHZ@fedora/T/#u
-
-Cc: Christoph Hellwig <hch@lst.de>
-Signed-off-by: Ming Lei <ming.lei@redhat.com>
----
- block/blk-core.c       | 18 ++++++++++++++++--
- block/blk-mq.c         | 26 ++++++++++++++++++++++----
- block/blk.h            | 29 ++++++++++++++++++++++++++---
- block/genhd.c          | 15 +++++++++++----
- include/linux/blkdev.h |  6 ++++++
- 5 files changed, 81 insertions(+), 13 deletions(-)
-
-diff --git a/block/blk-core.c b/block/blk-core.c
-index bc5e8c5eaac9..09d10bb95fda 100644
---- a/block/blk-core.c
-+++ b/block/blk-core.c
-@@ -261,6 +261,8 @@ static void blk_free_queue(struct request_queue *q)
- 		blk_mq_release(q);
- 
- 	ida_free(&blk_queue_ida, q->id);
-+	lockdep_unregister_key(&q->io_lock_cls_key);
-+	lockdep_unregister_key(&q->q_lock_cls_key);
- 	call_rcu(&q->rcu_head, blk_free_queue_rcu);
- }
- 
-@@ -278,18 +280,20 @@ void blk_put_queue(struct request_queue *q)
- }
- EXPORT_SYMBOL(blk_put_queue);
- 
--void blk_queue_start_drain(struct request_queue *q)
-+bool blk_queue_start_drain(struct request_queue *q)
- {
- 	/*
- 	 * When queue DYING flag is set, we need to block new req
- 	 * entering queue, so we call blk_freeze_queue_start() to
- 	 * prevent I/O from crossing blk_queue_enter().
- 	 */
--	blk_freeze_queue_start(q);
-+	bool freeze = __blk_freeze_queue_start(q);
- 	if (queue_is_mq(q))
- 		blk_mq_wake_waiters(q);
- 	/* Make blk_queue_enter() reexamine the DYING flag. */
- 	wake_up_all(&q->mq_freeze_wq);
-+
-+	return freeze;
- }
- 
- /**
-@@ -321,6 +325,8 @@ int blk_queue_enter(struct request_queue *q, blk_mq_req_flags_t flags)
- 			return -ENODEV;
- 	}
- 
-+	rwsem_acquire_read(&q->q_lockdep_map, 0, 0, _RET_IP_);
-+	rwsem_release(&q->q_lockdep_map, _RET_IP_);
- 	return 0;
- }
- 
-@@ -352,6 +358,8 @@ int __bio_queue_enter(struct request_queue *q, struct bio *bio)
- 			goto dead;
- 	}
- 
-+	rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-+	rwsem_release(&q->io_lockdep_map, _RET_IP_);
- 	return 0;
- dead:
- 	bio_io_error(bio);
-@@ -441,6 +449,12 @@ struct request_queue *blk_alloc_queue(struct queue_limits *lim, int node_id)
- 				PERCPU_REF_INIT_ATOMIC, GFP_KERNEL);
- 	if (error)
- 		goto fail_stats;
-+	lockdep_register_key(&q->io_lock_cls_key);
-+	lockdep_register_key(&q->q_lock_cls_key);
-+	lockdep_init_map(&q->io_lockdep_map, "&q->q_usage_counter(io)",
-+			 &q->io_lock_cls_key, 0);
-+	lockdep_init_map(&q->q_lockdep_map, "&q->q_usage_counter(queue)",
-+			 &q->q_lock_cls_key, 0);
- 
- 	q->nr_requests = BLKDEV_DEFAULT_RQ;
- 
-diff --git a/block/blk-mq.c b/block/blk-mq.c
-index 2c84c2d2510d..60c58142819e 100644
---- a/block/blk-mq.c
-+++ b/block/blk-mq.c
-@@ -120,17 +120,29 @@ void blk_mq_in_flight_rw(struct request_queue *q, struct block_device *part,
- 	inflight[1] = mi.inflight[1];
- }
- 
--void blk_freeze_queue_start(struct request_queue *q)
-+bool __blk_freeze_queue_start(struct request_queue *q)
- {
-+	int freeze;
-+
- 	mutex_lock(&q->mq_freeze_lock);
- 	if (++q->mq_freeze_depth == 1) {
- 		percpu_ref_kill(&q->q_usage_counter);
- 		mutex_unlock(&q->mq_freeze_lock);
- 		if (queue_is_mq(q))
- 			blk_mq_run_hw_queues(q, false);
-+		freeze = true;
- 	} else {
- 		mutex_unlock(&q->mq_freeze_lock);
-+		freeze = false;
- 	}
-+
-+	return freeze;
-+}
-+
-+void blk_freeze_queue_start(struct request_queue *q)
-+{
-+	if (__blk_freeze_queue_start(q))
-+		blk_freeze_acquire_lock(q, false, false);
- }
- EXPORT_SYMBOL_GPL(blk_freeze_queue_start);
- 
-@@ -176,8 +188,10 @@ void blk_mq_freeze_queue(struct request_queue *q)
- }
- EXPORT_SYMBOL_GPL(blk_mq_freeze_queue);
- 
--void __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic)
-+bool __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic)
- {
-+	int unfreeze = false;
-+
- 	mutex_lock(&q->mq_freeze_lock);
- 	if (force_atomic)
- 		q->q_usage_counter.data->force_atomic = true;
-@@ -186,13 +200,17 @@ void __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic)
- 	if (!q->mq_freeze_depth) {
- 		percpu_ref_resurrect(&q->q_usage_counter);
- 		wake_up_all(&q->mq_freeze_wq);
-+		unfreeze = true;
- 	}
- 	mutex_unlock(&q->mq_freeze_lock);
-+
-+	return unfreeze;
- }
- 
- void blk_mq_unfreeze_queue(struct request_queue *q)
- {
--	__blk_mq_unfreeze_queue(q, false);
-+	if (__blk_mq_unfreeze_queue(q, false))
-+		blk_unfreeze_release_lock(q, false, false);
- }
- EXPORT_SYMBOL_GPL(blk_mq_unfreeze_queue);
- 
-@@ -204,7 +222,7 @@ EXPORT_SYMBOL_GPL(blk_mq_unfreeze_queue);
-  */
- void blk_freeze_queue_start_non_owner(struct request_queue *q)
- {
--	blk_freeze_queue_start(q);
-+	__blk_freeze_queue_start(q);
- }
- EXPORT_SYMBOL_GPL(blk_freeze_queue_start_non_owner);
- 
-diff --git a/block/blk.h b/block/blk.h
-index c718e4291db0..832e54c5a271 100644
---- a/block/blk.h
-+++ b/block/blk.h
-@@ -4,6 +4,7 @@
- 
- #include <linux/bio-integrity.h>
- #include <linux/blk-crypto.h>
-+#include <linux/lockdep.h>
- #include <linux/memblock.h>	/* for max_pfn/max_low_pfn */
- #include <linux/sched/sysctl.h>
- #include <linux/timekeeping.h>
-@@ -35,8 +36,9 @@ struct blk_flush_queue *blk_alloc_flush_queue(int node, int cmd_size,
- void blk_free_flush_queue(struct blk_flush_queue *q);
- 
- void blk_freeze_queue(struct request_queue *q);
--void __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic);
--void blk_queue_start_drain(struct request_queue *q);
-+bool __blk_mq_unfreeze_queue(struct request_queue *q, bool force_atomic);
-+bool blk_queue_start_drain(struct request_queue *q);
-+bool __blk_freeze_queue_start(struct request_queue *q);
- int __bio_queue_enter(struct request_queue *q, struct bio *bio);
- void submit_bio_noacct_nocheck(struct bio *bio);
- void bio_await_chain(struct bio *bio);
-@@ -69,8 +71,11 @@ static inline int bio_queue_enter(struct bio *bio)
- {
- 	struct request_queue *q = bdev_get_queue(bio->bi_bdev);
- 
--	if (blk_try_enter_queue(q, false))
-+	if (blk_try_enter_queue(q, false)) {
-+		rwsem_acquire_read(&q->io_lockdep_map, 0, 0, _RET_IP_);
-+		rwsem_release(&q->io_lockdep_map, _RET_IP_);
- 		return 0;
-+	}
- 	return __bio_queue_enter(q, bio);
- }
- 
-@@ -734,4 +739,22 @@ void blk_integrity_verify(struct bio *bio);
- void blk_integrity_prepare(struct request *rq);
- void blk_integrity_complete(struct request *rq, unsigned int nr_bytes);
- 
-+static inline void blk_freeze_acquire_lock(struct request_queue *q, bool
-+		disk_dead, bool queue_dying)
-+{
-+	if (!disk_dead)
-+		rwsem_acquire(&q->io_lockdep_map, 0, 1, _RET_IP_);
-+	if (!queue_dying)
-+		rwsem_acquire(&q->q_lockdep_map, 0, 1, _RET_IP_);
-+}
-+
-+static inline void blk_unfreeze_release_lock(struct request_queue *q, bool
-+		disk_dead, bool queue_dying)
-+{
-+	if (!queue_dying)
-+		rwsem_release(&q->q_lockdep_map, _RET_IP_);
-+	if (!disk_dead)
-+		rwsem_release(&q->io_lockdep_map, _RET_IP_);
-+}
-+
- #endif /* BLK_INTERNAL_H */
-diff --git a/block/genhd.c b/block/genhd.c
-index 1c05dd4c6980..6ad3fcde0110 100644
---- a/block/genhd.c
-+++ b/block/genhd.c
-@@ -581,13 +581,13 @@ static void blk_report_disk_dead(struct gendisk *disk, bool surprise)
- 	rcu_read_unlock();
- }
- 
--static void __blk_mark_disk_dead(struct gendisk *disk)
-+static bool __blk_mark_disk_dead(struct gendisk *disk)
- {
- 	/*
- 	 * Fail any new I/O.
- 	 */
- 	if (test_and_set_bit(GD_DEAD, &disk->state))
--		return;
-+		return false;
- 
- 	if (test_bit(GD_OWNS_QUEUE, &disk->state))
- 		blk_queue_flag_set(QUEUE_FLAG_DYING, disk->queue);
-@@ -600,7 +600,7 @@ static void __blk_mark_disk_dead(struct gendisk *disk)
- 	/*
- 	 * Prevent new I/O from crossing bio_queue_enter().
- 	 */
--	blk_queue_start_drain(disk->queue);
-+	return blk_queue_start_drain(disk->queue);
- }
- 
- /**
-@@ -641,6 +641,7 @@ void del_gendisk(struct gendisk *disk)
- 	struct request_queue *q = disk->queue;
- 	struct block_device *part;
- 	unsigned long idx;
-+	bool start_drain, queue_dying;
- 
- 	might_sleep();
- 
-@@ -668,7 +669,10 @@ void del_gendisk(struct gendisk *disk)
- 	 * Drop all partitions now that the disk is marked dead.
- 	 */
- 	mutex_lock(&disk->open_mutex);
--	__blk_mark_disk_dead(disk);
-+	start_drain = __blk_mark_disk_dead(disk);
-+	queue_dying = blk_queue_dying(q);
-+	if (start_drain)
-+		blk_freeze_acquire_lock(q, true, queue_dying);
- 	xa_for_each_start(&disk->part_tbl, idx, part, 1)
- 		drop_partition(part);
- 	mutex_unlock(&disk->open_mutex);
-@@ -725,6 +729,9 @@ void del_gendisk(struct gendisk *disk)
- 		if (queue_is_mq(q))
- 			blk_mq_exit_queue(q);
- 	}
-+
-+	if (start_drain)
-+		blk_unfreeze_release_lock(q, true, queue_dying);
- }
- EXPORT_SYMBOL(del_gendisk);
- 
-diff --git a/include/linux/blkdev.h b/include/linux/blkdev.h
-index 50c3b959da28..57f1ee386b57 100644
---- a/include/linux/blkdev.h
-+++ b/include/linux/blkdev.h
-@@ -25,6 +25,7 @@
- #include <linux/uuid.h>
- #include <linux/xarray.h>
- #include <linux/file.h>
-+#include <linux/lockdep.h>
- 
- struct module;
- struct request_queue;
-@@ -471,6 +472,11 @@ struct request_queue {
- 	struct xarray		hctx_table;
- 
- 	struct percpu_ref	q_usage_counter;
-+	struct lock_class_key	io_lock_cls_key;
-+	struct lockdep_map	io_lockdep_map;
-+
-+	struct lock_class_key	q_lock_cls_key;
-+	struct lockdep_map	q_lockdep_map;
- 
- 	struct request		*last_merge;
- 
+Cheers,
+Matt
 -- 
-2.46.0
+Sponsored by the NGI0 Core fund.
 
 
