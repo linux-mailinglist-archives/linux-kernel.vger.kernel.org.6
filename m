@@ -1,156 +1,175 @@
-Return-Path: <linux-kernel+bounces-378082-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D07D9ACB27
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:26:36 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A8E559ACB2A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:27:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ACBA21C21169
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:26:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D83EC1C21289
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:27:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B9051ADFF9;
-	Wed, 23 Oct 2024 13:26:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MW5gKwLG"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.17])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B0D81AE017;
+	Wed, 23 Oct 2024 13:27:45 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29BE1DFEF;
-	Wed, 23 Oct 2024 13:26:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.17
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2FCC31DFEF;
+	Wed, 23 Oct 2024 13:27:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729689989; cv=none; b=Wr2rlIfuEYqTpJLgqrqtuANG+fNFRykLwBzeklO1eUrIhoBoACIW0+zOizt+uGiuCCqc8Y9cYGHuziyiG+1L5bBZJSkjdlttTlA/G2Uy0JY4y38Mhq0yudAXUvM49EvbjlMl8BJhLpqVx+C0ZTWGjcxMhrdKfyH5XaLxyHQpgDo=
+	t=1729690064; cv=none; b=Y11nwtwbQ0Puy/7mu/gmuIimRYqEYx9PMI9tORnovpOID/oWF0Iqi67w5zG2f9gx1JgXG9WD6EDU0qINnvTFaUrB1eMWcQWIgSpFnrge8y52/NVhqrbtJUHdES6JRQjezUtx+a7SI+lErAKYpm3WYOWuIIdTixwTadSLORbVBmo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729689989; c=relaxed/simple;
-	bh=C3erVz82tfNvDb362fEzo83f3STSjhuRqLUdPl8pVjA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=eYSO7YOquVhE+5Rhr1aT33/y2bIsG80ty9AsWdZNnWjdzYd2B83YRT4aLgqzpSepRKcIFEDBulXMTiCESBf5qErwmKi57XW0GO4yO2sOQ8W66GYzezPKgpO2iVk9xmjeC7tnrOMlaAgC/SpqcXmL6JtTM/Rd2FmHlkqn6jabqIk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MW5gKwLG; arc=none smtp.client-ip=198.175.65.17
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729689988; x=1761225988;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=C3erVz82tfNvDb362fEzo83f3STSjhuRqLUdPl8pVjA=;
-  b=MW5gKwLGd3/hVbHDgOr/naUuUIeZaxfuUIT3wBR7nPwP5FuI2XfKKTMW
-   HLwUYe5QtWPP+mdTZepL8b/TT6qwYYhFQiFmRlY4Hgd3IYhyUrXlMoo6o
-   +I+OgG3Ub1Awjhzm46PMzrrkL38zGvsdyqtNCwBThafqz2u2vhD8qxpgs
-   5jIg/dpg9MTtMI0RrYGeDM4DROl6+ZjwMArHfJnXS6P0hkNfHPMrT6Ajo
-   nXaoVI911m6nFlmQu3FZv0nxwSsI2LQ3kfEQk2KjQQz9l65XKc9SfGLBP
-   gdkP1hxmwSwH/E1wFNp1e141VQW9ECl3wSdKQQMfFAnkY0yLPM1vBnWmt
-   g==;
-X-CSE-ConnectionGUID: DYpVvpdGRDSqyHL3NSDNiw==
-X-CSE-MsgGUID: b5r5qST8QkGqLXQbJQPDSQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="29379235"
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="29379235"
-Received: from fmviesa001.fm.intel.com ([10.60.135.141])
-  by orvoesa109.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 06:26:26 -0700
-X-CSE-ConnectionGUID: plTvsQr6RXaYNMZDiCfKTA==
-X-CSE-MsgGUID: GBzCtDPZRj6v+kkMbkUc5A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
-   d="scan'208";a="110993727"
-Received: from lfiedoro-mobl.ger.corp.intel.com ([10.245.246.76])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 06:26:24 -0700
-Message-ID: <fa2bc7e5088fd309d846a57edf06520dc83632ba.camel@linux.intel.com>
-Subject: Re: [PATCHv2 2/2] blk-mq: add support for CPU latency limits
-From: Tero Kristo <tero.kristo@linux.intel.com>
-To: Jens Axboe <axboe@kernel.dk>
-Cc: hch@lst.de, linux-block@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 23 Oct 2024 16:26:21 +0300
-In-Reply-To: <cb9d65fe-47b9-4539-a8d0-9863e8ebf49f@kernel.dk>
-References: <20241018075416.436916-1-tero.kristo@linux.intel.com>
-	 <20241018075416.436916-3-tero.kristo@linux.intel.com>
-	 <cb9d65fe-47b9-4539-a8d0-9863e8ebf49f@kernel.dk>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.52.3-0ubuntu1 
+	s=arc-20240116; t=1729690064; c=relaxed/simple;
+	bh=F2ZxZPlaC9l+JfMZiw3EGc1lSCa3SkUfM7rIWrIRM4k=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IZwwXTImN9z+Hk11ZmY9QlmEIJ8XWuY31rQq97GPsN2N+/gVWSxcBq3En/S8ycDBoy+fdJr3YPX38qmK5uoaP0K9Cyq1xl57woOVZbVXUDnxb1reLyns+LGZJXFTqOVtExeQSDzKthinffd0jVQ3LaS4fLJmC7uZGH+D51BdZiI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.231])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XYV8x6NhWz6LD2C;
+	Wed, 23 Oct 2024 21:22:57 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id 4E4291400F4;
+	Wed, 23 Oct 2024 21:27:38 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Wed, 23 Oct
+ 2024 15:27:37 +0200
+Date: Wed, 23 Oct 2024 14:27:35 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Per-Daniel Olsson <perdaniel.olsson@axis.com>
+CC: Jonathan Cameron <jic23@kernel.org>, Lars-Peter Clausen <lars@metafoo.de>,
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, <linux-iio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<rickard.andersson@axis.com>, <kernel@axis.com>
+Subject: Re: [PATCH v4 2/2] iio: light: Add support for TI OPT4060 color
+ sensor
+Message-ID: <20241023142735.000018cb@Huawei.com>
+In-Reply-To: <10d6bba4-4d25-4ee0-877e-48a27c622bde@axis.com>
+References: <20241016213409.3823162-1-perdaniel.olsson@axis.com>
+	<20241016213409.3823162-3-perdaniel.olsson@axis.com>
+	<20241020135105.36b29fe8@jic23-huawei>
+	<10d6bba4-4d25-4ee0-877e-48a27c622bde@axis.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100003.china.huawei.com (7.191.160.210) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
-On Fri, 2024-10-18 at 08:21 -0600, Jens Axboe wrote:
-> On 10/18/24 1:30 AM, Tero Kristo wrote:
-> > @@ -2700,11 +2701,62 @@ static void blk_mq_plug_issue_direct(struct
-> > blk_plug *plug)
-> > =C2=A0static void __blk_mq_flush_plug_list(struct request_queue *q,
-> > =C2=A0				=C2=A0=C2=A0=C2=A0=C2=A0 struct blk_plug *plug)
-> > =C2=A0{
-> > +	struct request *req, *next;
-> > +	struct blk_mq_hw_ctx *hctx;
-> > +	int cpu;
-> > +
-> > =C2=A0	if (blk_queue_quiesced(q))
-> > =C2=A0		return;
-> > +
-> > +	rq_list_for_each_safe(&plug->mq_list, req, next) {
-> > +		hctx =3D req->mq_hctx;
-> > +
-> > +		if (next && next->mq_hctx =3D=3D hctx)
-> > +			continue;
-> > +
-> > +		if (q->disk->cpu_lat_limit < 0)
-> > +			continue;
-> > +
-> > +		hctx->last_active =3D jiffies + msecs_to_jiffies(q-
-> > >disk->cpu_lat_timeout);
-> > +
-> > +		if (!hctx->cpu_lat_limit_active) {
-> > +			hctx->cpu_lat_limit_active =3D true;
-> > +			for_each_cpu(cpu, hctx->cpumask) {
-> > +				struct dev_pm_qos_request *qos;
-> > +
-> > +				qos =3D per_cpu_ptr(hctx-
-> > >cpu_lat_qos, cpu);
-> > +				dev_pm_qos_add_request(get_cpu_dev
-> > ice(cpu), qos,
-> > +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0
-> > DEV_PM_QOS_RESUME_LATENCY,
-> > +						=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 q->disk-
-> > >cpu_lat_limit);
-> > +			}
-> > +			schedule_delayed_work(&hctx-
-> > >cpu_latency_work,
-> > +					=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 msecs_to_jiffies(q-
-> > >disk->cpu_lat_timeout));
-> > +		}
-> > +	}
-> > +
->=20
-> This is, quite literally, and insane amount of cycles to add to the
-> hot
-> issue path. You're iterating each request in the list, and then each
-> CPU
-> in the mask of the hardware context for each request.
+On Wed, 23 Oct 2024 09:29:08 +0200
+Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
 
-Ok, I made some optimizations to the code, sending v3 shortly. In this,
-all the PM QoS handling and iteration of lists is moved to the
-workqueue, and happens in the background. The initial block requests
-(until the workqueue fires) may run with higher latency, but that is
-most likely an okay compromise.
+> Hi Jonathan,
+> 
+> Thank you for your feedback, much appreciated. I have added questions and
+> comments inline below regarding channels and triggers. I will address the other
+> comments in the next patch.
+> 
+> Best regards / Per-Daniel
+> 
+> On 10/20/24 14:51, Jonathan Cameron wrote:
+> > On Wed, 16 Oct 2024 23:34:09 +0200
+> > Per-Daniel Olsson <perdaniel.olsson@axis.com> wrote:
+> >   
+> >> Add support for Texas Instruments OPT4060 RGBW Color sensor.
+> >>
+> >> Signed-off-by: Per-Daniel Olsson <perdaniel.olsson@axis.com>  
+> > 
+> > Hi Per-Daniel,
+> > 
+> > Comments inline.
+> > 
+> > Jonathan
+> >   
+> >> diff --git a/drivers/iio/light/opt4060.c b/drivers/iio/light/opt4060.c
+> >> new file mode 100644
+> >> index 000000000000..2c3761ec423a
+> >> --- /dev/null
+> >> +++ b/drivers/iio/light/opt4060.c
+> >> @@ -0,0 +1,1259 @@  
+> > 
+> > ...
+> >   
+> >> +
+> >> +struct opt4060_buffer {
+> >> +	u32 chan[OPT4060_NUM_CHANS];
+> >> +	s64 ts __aligned(8);  
+> > 
+> > aligned_s64 is now available in linux-next + the IIO tree.
+> >   
+> >> +};
+> >> +
+> >> +static const struct opt4060_channel_factor opt4060_channel_factors[] = {
+> >> +	{
+> >> +		/* RED 2.4 * 2.15e-3 */  
+> > This needs more details on wrt to what standard etc.
+> > 
+> > The datasheet is a little vague, but it seems to me like TI invented their
+> > own standard. To use this stuff in a consistent ABI we need to have
+> > a common standard or at least an approximation of one.
+> > The illuminance estimates from some devices are bad approximations, but they
+> > are at least attempting to approximate a well defined standard.  
+> 
+> I have read the datasheet again to try to figure out what TI means. When I read
+> it now with your remarks from this email and previous emails in mind, I think I'm
+> starting to understand more.
+> 
+> I think we should expose the data from the sensor in the following way:
+> - Four raw channels (R, G, B and Clear)
+> - Three processed IIO_INTENSITY channels with normalized values (R, G, B)
+>   to get the relative color components independent of light intensity.
+> - One IIO_LIGHT channel giving the lux value.
+> 
+> This is basically what TI is stating in chapter 8.4.5.2. I know that you don't
+> like how TI are calculating the lux value using the green channel. But after
+> reading the description and detailed description parts of the datasheet again,
+> I think it sort of makes sense. Looking at the spectral response curves on the
+> first page, the green curve covers the whole visible spectrum. It seems like this
+> is what the sensor is actually designed for, measuring light intensity in lux and
+> color independent of the light intensity.
+> 
+> Does this sound like a way forward you think?
+Not keen on the colour part.
 
-PS: Please bear with me, my knowledge of the block layer and/or NVMe is
-pretty limited. I am sorry if these patches make you frustrated, that
-is not my intention.
+As far as I can tell TI made up a colour standard.  If it were
+CIE 1931 RGB or then 'maybe' we could consider presenting them as processed,
+though as they are linear scales even then should present _raw and _scale, not
+_input (processed).  We would still need to figure out if we needed to handle
+multiple colour space definitions.
+As it is, if we have two different colour sensors, there is no way to compare the
+values.  In particular that Green is way too broad for the colour standards
+I quickly compared this with.
 
--Tero
+The green curve does (based on eyeballing it rather than anything formal)
+look much closer to the luminosity function (one used for illuminance)
+than I was assuming (given it's called green!)
 
->=20
-> This just won't fly, not at all. Like the previous feedback, please
-> figure out a way to make this cheaper. This means don't iterate a
-> bunch
-> of stuff.
->=20
-> Outside of that, lots of styling issues here too, but none of that
-> really matters until the base mechanism is at least half way sane.
->=20
+So not ideal but that one feels ok (with comments in the code explaining
+this) to use for illuminance.
+
+
+For the color channels maybe we could present with _scale provided
+if we add suitable documentation to say that the scaling is to arbitrary
+datasheet specified normalization and that the resulting _raw * _scale
+values cannot be compared across different sensors. I don't like that
+but it does seem silly to not present the scaling if it might be useful
+to someone.  So if you want to do this, propose some additions
+to Documentation/testing/ABI/sysfs-bus-iio
+to cover this for in_intensity_red_scale
+etc.
+
+Jonathan
+
 
 
