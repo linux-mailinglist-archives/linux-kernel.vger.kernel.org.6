@@ -1,73 +1,100 @@
-Return-Path: <linux-kernel+bounces-379008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379013-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B4B89AD893
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:42:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8BBAC9AD8AB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:51:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B67961F22CF8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:42:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4E8942843D1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F8B1FF7B7;
-	Wed, 23 Oct 2024 23:42:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 09F95200135;
+	Wed, 23 Oct 2024 23:51:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b="C6TuwGi+"
-Received: from codeconstruct.com.au (pi.codeconstruct.com.au [203.29.241.158])
+	dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b="JNNt4dk8"
+Received: from gentwo.org (gentwo.org [62.72.0.81])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F16931F4707;
-	Wed, 23 Oct 2024 23:42:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.29.241.158
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9683C1FF7B9;
+	Wed, 23 Oct 2024 23:51:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.72.0.81
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729726964; cv=none; b=GB3ffMgtCL7+7qa35dQOtCv5o7OhZ+B0yJPtOWozmpfc02qEzGLr1GHk/rxGkEn7vRSdzg5sb3U0U+1+Nd9nHKDtDykLCM/YXiRubrPnvwEZMWSTS9NfCZ8xhvzc16Gyi4OsA7sqwv/7TDmSkXb4K+6xjSJOp/Ct8O892HZPsFI=
+	t=1729727480; cv=none; b=eLWB3JThhmZp+cm0Ug27tSk7GiNVhbNkaF+Ej6EB/2myhkCWTSiP/hR6M03Wfr14ytl3MMApMQMYY7/bkFSnOmaks/xGk1pA4CeQZ8okeuBAhvtfx+C0RGaxGM/DE5vmw+RGUwhm+4IMSqqY/7j1dbJ2vpLfuJFQpUbWRVm34HI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729726964; c=relaxed/simple;
-	bh=BI6v3yvMOxexD3sSG5ohKly6PqVC6npk+POPlf5PUAE=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=A7FAtuYVzawuorhhxPHS/uYKGiI9h6Eiqpp6XbnoFCBSZ6kn1o+iXVmDKydAvG3J9twV8OnBeIAnPrDqtWThQN9Xm7vWN+6XlvzelMA+fh1vCD2yRO0hCmesyr7wdC/Sl67F1+TM8oMxXqciqRM4a7YWRjjkpa06lXr+r+r9nEk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au; spf=pass smtp.mailfrom=codeconstruct.com.au; dkim=pass (2048-bit key) header.d=codeconstruct.com.au header.i=@codeconstruct.com.au header.b=C6TuwGi+; arc=none smtp.client-ip=203.29.241.158
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codeconstruct.com.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codeconstruct.com.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=codeconstruct.com.au; s=2022a; t=1729726953;
-	bh=BI6v3yvMOxexD3sSG5ohKly6PqVC6npk+POPlf5PUAE=;
-	h=Subject:From:To:Date:In-Reply-To:References;
-	b=C6TuwGi+JuUDnThIMHcYfPM5VI3p40hN4IiRDyJfTzJUfUIeZt8tfLzWKK1QgMuD9
-	 IdW88uxyoXan2U6yyhOcT+smXUXf7+v2s47kGuJ97r0Tn6zZFuLTGk7q5lqEZBaWdg
-	 FGSUsg7UIHHz6cg4CvwE5q9KpIXPB8yKvzrSpf4XkNpSI1ToYFBQKyXF/f0Oss4rED
-	 cxEO9uBgfoncQ9IRHEHCsoanag4T8x9/f9dovX7tcLULAphXD4Cp51ozAe59apxXPj
-	 p5gHEc+LRApwAPvxJGx15Bl7kVrBAnErvsQh8q+VRMC0+iKP0olsOLHZY0xO8YrQOB
-	 IGuOD3gCaJr3A==
-Received: from [192.168.68.112] (ppp118-210-190-208.adl-adc-lon-bras34.tpg.internode.on.net [118.210.190.208])
-	by mail.codeconstruct.com.au (Postfix) with ESMTPSA id 030B16494E;
-	Thu, 24 Oct 2024 07:42:31 +0800 (AWST)
-Message-ID: <f60e70982efbc3d1ea3379b0036b25c74f953411.camel@codeconstruct.com.au>
-Subject: Re: [PATCH] pinctrl: aspeed-g6: Support drive-strength for GPIOF/G
-From: Andrew Jeffery <andrew@codeconstruct.com.au>
-To: Billy Tsai <billy_tsai@aspeedtech.com>, linus.walleij@linaro.org, 
-	joel@jms.id.au, linux-aspeed@lists.ozlabs.org, openbmc@lists.ozlabs.org, 
-	linux-gpio@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-kernel@vger.kernel.org
-Date: Thu, 24 Oct 2024 10:12:16 +1030
-In-Reply-To: <20241023104406.4083460-1-billy_tsai@aspeedtech.com>
-References: <20241023104406.4083460-1-billy_tsai@aspeedtech.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.46.4-2 
+	s=arc-20240116; t=1729727480; c=relaxed/simple;
+	bh=N5Ha61iGv8UBir+niT+G49NgrMxO0LqYfl/tYGxc/84=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=jq2EZFIk4kbEarx0kq7iA3sx+1KtmyJU2f78hzWlXFHFD4DDS6EPbzB7bbpbuJ42SZRQodPO03J1UXAdWoQKQVNu38Tn/IEL8cCorzpaloCG2ZWblLwkBlOL5/w9fsMhszCAHrDnwt+ozjB4Uzyhh8rwGFxiVlR2TVy+ctaYPeE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org; spf=pass smtp.mailfrom=gentwo.org; dkim=pass (1024-bit key) header.d=gentwo.org header.i=@gentwo.org header.b=JNNt4dk8; arc=none smtp.client-ip=62.72.0.81
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=gentwo.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gentwo.org
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=gentwo.org;
+	s=default; t=1729726956;
+	bh=N5Ha61iGv8UBir+niT+G49NgrMxO0LqYfl/tYGxc/84=;
+	h=Date:From:To:cc:Subject:In-Reply-To:References:From;
+	b=JNNt4dk8tZM9am9qFrK1MgYcweN8QSIWAAfwNjYrXyAPt1rvn0vd3hl5Se8Kdcu6z
+	 hYNWi54noABInnYI/bkcV8K8IHxlkI1RA9UP/mofSl0tdyJaYV9DHlFv9hwGBZ+jT3
+	 gy6HGfZqRWmvoSzN/namuh8iUPIbDEhCDnh7nz+4=
+Received: by gentwo.org (Postfix, from userid 1003)
+	id 3F74E4027B; Wed, 23 Oct 2024 16:42:36 -0700 (PDT)
+Received: from localhost (localhost [127.0.0.1])
+	by gentwo.org (Postfix) with ESMTP id 3D14040264;
+	Wed, 23 Oct 2024 16:42:36 -0700 (PDT)
+Date: Wed, 23 Oct 2024 16:42:36 -0700 (PDT)
+From: "Christoph Lameter (Ampere)" <cl@gentwo.org>
+To: Peter Zijlstra <peterz@infradead.org>
+cc: Linus Torvalds <torvalds@linux-foundation.org>, 
+    Will Deacon <will@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+    Catalin Marinas <catalin.marinas@arm.com>, Ingo Molnar <mingo@redhat.com>, 
+    Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>, 
+    linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+    linux-arm-kernel@lists.infradead.org, linux-arch@vger.kernel.org
+Subject: Re: [PATCH v3] Avoid memory barrier in read_seqcount() through load
+ acquire
+In-Reply-To: <20241023194543.GD11151@noisy.programming.kicks-ass.net>
+Message-ID: <e9fd5ba0-bd84-76a8-a96e-1378c66d0774@gentwo.org>
+References: <20240912-seq_optimize-v3-1-8ee25e04dffa@gentwo.org> <20240917071246.GA27290@willie-the-truck> <4b546151-d5e1-22a3-a6d5-167a82c5724d@gentwo.org> <CAHk-=wgw3UErQuBuUOOfjzejGek6Cao1sSW4AosR9WPZ1dfyZg@mail.gmail.com>
+ <CAHk-=wjdOX0t45a7aHerVPv_WBM3AmMi3sEp8xb19jpLFnk0dA@mail.gmail.com> <20241023194543.GD11151@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
 
-On Wed, 2024-10-23 at 18:44 +0800, Billy Tsai wrote:
-> Add drive strength configuration support for GPIO F and G groups.
->=20
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
+On Wed, 23 Oct 2024, Peter Zijlstra wrote:
 
-Reviewed-by: Andrew Jeffery <andrew@codeconstruct.com.au>
+> > I doubt anybody will notice, and smp_load_acquire() is the future. Any
+> > architecture that does badly on it just doesn't matter (and, as
+> > mentioned, I don't think they even exist - "smp_rmb()" is generally at
+> > least as expensive).
+>
+> Do we want to do the complementing patch and make write_seqcount_end()
+> use smp_store_release() ?
+>
+> I think at least ARM (the 32bit thing) has wmb but uses mb for
+> store_release. But I also think I don't really care about that.
+
+The proper instruction would be something like
+
+atomic_inc_release(&seqcount)
+
+The current atomics do not provide such a macro.
+
+The closest in the current tree is atomic_inc_return_release().
+
+We would prefer atomic_inc_release(&seqcount) because such an
+atomic may be executed as a far atomic in the ARM mesh.
+
+This could be cheaper than a local atomic and could f.e. be executed
+on the memory controller of a remote NUMA node in order to avoid a costly
+transfer of cacheline ownership.
+
+The code generated is a atomic that also does a release. So there would be
+no extra barrier etc needed.
+
 
 
