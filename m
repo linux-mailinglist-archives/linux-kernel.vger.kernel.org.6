@@ -1,92 +1,160 @@
-Return-Path: <linux-kernel+bounces-378616-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378617-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F391D9AD337
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:47:44 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 399C39AD33C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 19:48:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DE92285B11
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:47:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BFD1C21DC8
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:47:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 73E571CDA0F;
-	Wed, 23 Oct 2024 17:47:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B6A941D0153;
+	Wed, 23 Oct 2024 17:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q8vBYvl1"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b="CFUVwxDN"
+Received: from jabberwock.ucw.cz (jabberwock.ucw.cz [46.255.230.98])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE1801AC43E;
-	Wed, 23 Oct 2024 17:47:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CDB971BD038;
+	Wed, 23 Oct 2024 17:47:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=46.255.230.98
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729705659; cv=none; b=uRpZTxqpYtvsTFcKsAUA5WBa9E2nd2CGaHw8WNac98uyQnaVGKWSz4x3T/fcA1usZMDE9rSrhhQmQAam7y4Awg8S3VphlYqecRHBdRkFIc/Ax7gQ3eTnaaxuANVSYlXPmhdr5eIqAt0e18KwjDmD+Af/07kjsF4MIJmnBocsZu4=
+	t=1729705672; cv=none; b=f71wZ08z22Zx/ZXzl40DVhRqkv0xMuNTc1oxCAJzEOK6zubAFCr6L9U4rvDRNVmPgjNFyTizV6Ti2Wqp9/oGB5zdTfMvb9HDnkwmfDdsBjMXyk0zM4qfjrnzQ7NEvgwDLV2hLGgCW3jq6ybf56jmMNIckCU+XuOQ2113Mzojme4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729705659; c=relaxed/simple;
-	bh=rMnCFaLijyHahgc2hnLSWCJbr8t5r15Sr8AzmXXTEYE=;
+	s=arc-20240116; t=1729705672; c=relaxed/simple;
+	bh=KAUSLOsN0KAxGbYMY0+t7tPfjFlq0tlRgDTIp8mqDVE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=hUseleY0pjLbLAbOCZNZvzL4uAA39H1auEgjEUUW8XaEnhANdjGnCG3pq5DzHRVUi2UPcKGQzmlSnMN6Xxrw4cgKRQ0SvyUwiClZwfNdA5J/PLvL+RbDfs4H58b/QC076GocffLI9ORBPNgbFJfk+q6NaHqFYfg+8IE0gb32sAM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q8vBYvl1; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3A766C4CEC6;
-	Wed, 23 Oct 2024 17:47:39 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729705659;
-	bh=rMnCFaLijyHahgc2hnLSWCJbr8t5r15Sr8AzmXXTEYE=;
-	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
-	b=q8vBYvl1nvwS+LmMVrReYA+VMAqpxk5dNpNzH4W8CEmC5XSKc8ofGvNnvEGRctZOp
-	 XRwJ4AzaNNMyEeVe6x5DXDY/Kg9XJJr/zfdTITntCYYGDQUYAKeaExpoxYkitQ5vEe
-	 GR3hPjB0z4ezafLFm6H8gP/zmF+pRLmAHGjCg+LT+4iGn2UBJZqxGvYpvwHM/fY2lN
-	 IcqCGMjIClAmOZJ5RXpnHkKeXqlqXGm8DpfzEIJ0m6VtLrCnK2A0Z+EBM1hwn0cRbI
-	 ioQ7o+3r2AzjnVSIGlE7qfoa44EE8+Po7PSbLWm2ikw7NGBqGGjzX8uLZyptVuKwAl
-	 E7tdUzLBe1zRA==
-Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
-	id D0AB0CE0EE1; Wed, 23 Oct 2024 10:47:38 -0700 (PDT)
-Date: Wed, 23 Oct 2024 10:47:38 -0700
-From: "Paul E. McKenney" <paulmck@kernel.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Sasha Levin <sashal@kernel.org>, Kees Cook <kees@kernel.org>,
-	torvalds@linux-foundation.org, ksummit@lists.linux.dev,
-	linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <10b0cb74-2068-4819-ac91-fcf98ca8d96c@paulmck-laptop>
-Reply-To: paulmck@kernel.org
-References: <ZxZ8MStt4e8JXeJb@sashalap>
- <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
- <ZxdKwtTd7LvpieLK@infradead.org>
- <ZxdyYjzxSktk34Zz@sashalap>
- <ZxiOjBRdO6EMAY4H@infradead.org>
+	 Content-Type:Content-Disposition:In-Reply-To; b=W6LmDnhRGy8l65eB4tIL4yNoiUIF1kNmOls0P8CreZSUyN0IrwLwhTR8CZwAIib2KlP7/QfX/pSGb6WBj6v4xxUnSu4+Uipdl3keskErWb1hA25iFRLzi2IjpOF3JST7qScYW10RTc1tE8psOUhYtZ+FEWqZBUKn9wiJ9rwAIKQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz; spf=pass smtp.mailfrom=ucw.cz; dkim=pass (1024-bit key) header.d=ucw.cz header.i=@ucw.cz header.b=CFUVwxDN; arc=none smtp.client-ip=46.255.230.98
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ucw.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ucw.cz
+Received: by jabberwock.ucw.cz (Postfix, from userid 1017)
+	id 0DE661C00A3; Wed, 23 Oct 2024 19:47:41 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ucw.cz; s=gen1;
+	t=1729705661;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=kU9n7eT3lhEsHYkrEomNkv21bTRvaegj4/JZP474ohU=;
+	b=CFUVwxDNrqIWF0pGYifru9eA8xVj5v/SQhJMhHDLc04y1PIS8ujS+DOASUuR6IuJj9msOw
+	M6HaXTedzm0tzRTkHGUtbWCa/FjQRlPvvy/rCbACsBSx4+oX4+BSPoscCA3EUp+zGI8/8r
+	ltqqqQz4RjperDIJG/jatGa9I+lBWUo=
+Date: Wed, 23 Oct 2024 19:47:40 +0200
+From: Pavel Machek <pavel@ucw.cz>
+To: Werner Sembach <wse@tuxedocomputers.com>
+Cc: Armin Wolf <W_Armin@gmx.de>, Hans de Goede <hdegoede@redhat.com>,
+	Benjamin Tissoires <bentiss@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	dri-devel@lists.freedesktop.org, jelle@vdwaa.nl, jikos@kernel.org,
+	lee@kernel.org, linux-input@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-leds@vger.kernel.org,
+	miguel.ojeda.sandonis@gmail.com, ojeda@kernel.org,
+	onitake@gmail.com, platform-driver-x86@vger.kernel.org
+Subject: Re: [PATCH 1/1] platform/x86/tuxedo: Add virtual LampArray for
+ TUXEDO NB04 devices
+Message-ID: <Zxk2vD5FHA2w2jTL@duo.ucw.cz>
+References: <rszv4p34oivysoyi337dxwooebipiikzd3pyq7rof5r3agbzce@xejutpd4jcfv>
+ <06c58141-4aa9-4b54-8ae4-e27069561ac9@tuxedocomputers.com>
+ <48a8d62f-ea3f-4f17-b917-ff3aaa83e89c@gmx.de>
+ <ZwlDpCPhieF3tezX@duo.ucw.cz>
+ <a796f0e7-47a8-40fa-a64e-9dd56117bf78@gmx.de>
+ <c52019d7-01b4-4585-a2d1-b44b0a773fc9@redhat.com>
+ <Zxd0ou7GpCRu0K5a@duo.ucw.cz>
+ <35a98b67-d1eb-4aa9-9d3f-025c94cd6b0f@gmx.de>
+ <Zxf5u9jgmt9vpz2u@duo.ucw.cz>
+ <c0791e1d-a63f-40fd-bcb8-5f2eec15c59e@tuxedocomputers.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: multipart/signed; micalg=pgp-sha1;
+	protocol="application/pgp-signature"; boundary="5GlMUOsLquiBPieb"
+Content-Disposition: inline
+In-Reply-To: <c0791e1d-a63f-40fd-bcb8-5f2eec15c59e@tuxedocomputers.com>
+
+
+--5GlMUOsLquiBPieb
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxiOjBRdO6EMAY4H@infradead.org>
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 10:50:04PM -0700, Christoph Hellwig wrote:
-> On Tue, Oct 22, 2024 at 05:37:38AM -0400, Sasha Levin wrote:
-> > We could add a report for the above, but:
-> > 
-> > 1. Linus consistently pulls patches that haven't seen the light of day.
-> > 2. Linus explicitly objected to making a linux-next a must have.
-> > 
-> > So unless these results would be actually used, what's the point in
-> > writing all of that?
-> 
-> Yes, without Linus caring we're not going to get our process worked out.
-> Not sure how a tree that probably won't have much better latency than
-> linux-next is going to fix that, though.
+Hi!
 
-If I recall correctly, one thing Linus asked us to do earlier this year
-(ARM Summit) is to CC him on -next failures.  I have been failing to do
-this, so I will post myself a note or something to remind me.
+> > > > > Personally I really like the idea to just emulate a HID LampArray=
+ device
+> > > > > for this instead or rolling our own API.  I believe there need to=
+ be
+> > > > > strong arguments to go with some alternative NIH API and I have n=
+ot
+> > > > > heard such arguments yet.
+> > > > If you don't want "some alternative API", we already have perfectly
+> > > > working API for 2D arrays of LEDs. I believe I mentioned it before
+> > > > :-). Senzrohssre.
+> > > We may have to support 3D arrays of LEDs, so using a simple framebuff=
+er
+> > > would likely cause trouble.
+> > Do you have pointer for device that is 3D?
+>=20
+> The example from the spec is a keyboard with lightbars on the side, the we
+> actually sell notebooks with similar led configurations (mostly on the fr=
+ont
+> and not on the side). Example is the Sirius I implemented which has a not
+> yet implemented lightbar on the front.
 
-After all, if Linus doesn't know of a problem with a set of commits,
-how does he know not to pull it?
+I also have lightbar on the keyboard. Put it is still close-enough to
+2D. As would be bars on side or bar in front.
 
-							Thanx, Paul
+> > OpenRGB manages to map keyboard into plane... so what I'd propose is
+> > this:
+> >=20
+> > Framebuffer
+> > Information for each pixel:
+> > 	    present ? (displays with missing pixels are pretty common)
+> > 	    list of keys related to this pixel
+> > 	    width, height, length (if we know them)
+> >=20
+> > Pixels map to keys M:N.
+>=20
+> How would iso-enter be mapped here?
+
+I guess it depends on number of LEDs under the enter. I have one LED
+under it, so it would be one pixel.
+
+> How would the q-key be mapped relative the the 1-key? (they are exactly
+> halve a key offset)
+
+That would have to be decided. I remember this from openrgb:
+
+https://www.gamingonlinux.com/2022/01/openrgb-gets-greately-expanded-hardwa=
+re-support-in-the-07-release/
+
+and that's one option.
+
+> ~,1,2
+> tab,missing pixel,q
+
+I'd go with this one. OpenRGB does it on one screenshot, but there are
+other screenshots. Advantage is that if someone does TAB with two
+LEDs, we'll have place for it.
+
+Best regards,
+							Pavel
+--=20
+People of Russia, stop Putin before his war on Ukraine escalates.
+
+--5GlMUOsLquiBPieb
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iF0EABECAB0WIQRPfPO7r0eAhk010v0w5/Bqldv68gUCZxk2vAAKCRAw5/Bqldv6
+8vmMAJsESJ1FBGkIBcQMWxWbEH5vkbx9OgCfVS7mQ1P/Vg76qa7u8w64nAfCKjg=
+=h2uG
+-----END PGP SIGNATURE-----
+
+--5GlMUOsLquiBPieb--
 
