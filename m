@@ -1,121 +1,163 @@
-Return-Path: <linux-kernel+bounces-378715-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378716-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38E4F9AD44C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:53:18 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6B9279AD450
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:54:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E1B021F2254D
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:53:17 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C3FB9B2146B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:54:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 154D81D14E9;
-	Wed, 23 Oct 2024 18:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D0CA1D172F;
+	Wed, 23 Oct 2024 18:54:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="M4DNjJjX"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SNzG/EMy"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA1F01BD039;
-	Wed, 23 Oct 2024 18:53:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEBE51CC170;
+	Wed, 23 Oct 2024 18:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729709591; cv=none; b=qov9G9xUAM6bTzjXIEh4fj8oZYenCqfbBAtPVYanR+MNOAcjgGDa+cO0kcepNpwiDKyP1pQMAHETrNxvze7Zo60uHGaQz1EAP/wKqk/vGoaavWiiAx/vWlDGNCZPV9DMqUkQswJ41G6gfPz5P4NvEdd/M/LNu3iwznTzC5gIabw=
+	t=1729709640; cv=none; b=QzYtQJq+x2pQ+qrCaIxCHN9bkiMcvw4FLIRZt8IRzYgoHXQUV4Jk/rDF+j/KO7ulUbyhT50ID7C7f9rlXzV59A8qbNu4Qbz1PF1EQl9UJLym55lTNSdVayiHl/+YfZUzyVpXnzIeFHwgP01yuPNwgZAel4toyTJzbdSFOdpJLsg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729709591; c=relaxed/simple;
-	bh=EHxBY+6+T/wQBDA8vKVHwUkCkmIn1IhA4tV2W5b8hH4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=kT9CPJF071+XzA6IBoMYTq2M9Xh5q/ToI8kGvX7kvIwRBLqLe2hvxRJTWBXilmYxLuKga+00Oy7/2YHAdCXMImwEh+QleoX4erWzDNll9O6HeUIGh0QpQCGpbuTPPTuh4vMSMHhkVO8z5CNtwK1xTHJT0DWphDKmRB2NzIMI5do=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=M4DNjJjX; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9hUiH025415;
-	Wed, 23 Oct 2024 18:52:54 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	Sdx/bt6PJOEJstPldXkgqJQx0q6plWR/NY5/L1mrPEY=; b=M4DNjJjXmR5M8Wg3
-	YCWES9BsqHqHh2vLn1/BQnTjoYiqB8LWeEeERUS0KZ/1Y37XbzCzm3Dt1kG4aspJ
-	7It7AlfKW2BZaZDc4uxOFSvrJ6ANUYBsgR7DUJNfCJDbWJyARC3tobQDWUpoZb6e
-	UJerkgjDb3aKf75yUrDOrlWHu+VbfYJTbkHHXAghdTkIdtOSWNF0DL4N1D48Hdj2
-	35ZvPLmqU0bM2ycFq4GRXruhu4FTLenfh4uLSg6nhnNj2sR6ko81gVm0AnGd7QfG
-	rWMcj4XPC7io4sJgoTjY8hsIs6WrgICrWVjORtL2t7rKapRbTPpBi+JuODQi4gU6
-	DGLIDg==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41u7d7-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 18:52:53 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NIqqRr012105
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 18:52:52 GMT
-Received: from [10.71.108.63] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 11:52:52 -0700
-Message-ID: <3862bfc6-c2f9-4aef-98fd-1f2b5318a2a7@quicinc.com>
-Date: Wed, 23 Oct 2024 11:52:51 -0700
+	s=arc-20240116; t=1729709640; c=relaxed/simple;
+	bh=5Pt3SczTg9tl+y/wXVlx0w43lG1EclvLYHV4haFhs1Q=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=i2qZeJx1hYPONeptjclxFoMeqIPztvv7LJs3xGSZTOlIF6IHASaml7MEFnMktGPajD8wAgVHVgpDo/IQB+yJKu1sCNQJy+WxlIMPoroCE0lP2V2i3pzBrRC1dct0NUX9f9bCZYXacaVMJ7CS6VGt1vUB9cts9loX34JttHUVdkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SNzG/EMy; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EFFF3C4CEC6;
+	Wed, 23 Oct 2024 18:53:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729709639;
+	bh=5Pt3SczTg9tl+y/wXVlx0w43lG1EclvLYHV4haFhs1Q=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SNzG/EMybBKcPcmF6JfUU7O4/pzCGNTc3FbY2AIPk/pV3i5r0q014C7hxyUIa7Swe
+	 83cLVQ0Qm/Tv5icgh/xnE2rzGVXkpsvBSE0fPRJPGGlJiGl1djU8uXU30T/SzwX0J2
+	 6A0ovwGz6FhgUiKLeHO0bT4wBfESzEOjUurXDFdtjLOac66fE6s+OvAHffCi9JxaX+
+	 7wPAyPlOi7fdRt0GQjzZbFfA4LhTBUdTv1QSUWP7hpxi50iE2uMClB+4lSxmPQopUp
+	 fIJkkTLJPSRN7s3oaMTBVdgdZ2+oHWdRcivGEi7L6QmHoB5ntutdiButfQ6XdtYZ1d
+	 gYPoS2hBUFyoQ==
+Date: Wed, 23 Oct 2024 19:53:53 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Ilpo =?iso-8859-1?Q?J=E4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Inochi Amaoto <inochiama@outlook.com>, Yixun Lan <dlan@gentoo.org>,
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v2 1/2] dt-bindings: serial: snps-dw-apb-uart: Add Sophgo
+ SG2044 uarts
+Message-ID: <20241023-backroom-pending-279f9d12e9d8@spud>
+References: <20241021072606.585878-1-inochiama@gmail.com>
+ <20241021072606.585878-2-inochiama@gmail.com>
+ <20241021-outlying-washday-8f171dedc703@spud>
+ <r5ngs2j776jcy6sfirwzmtsoljotatfvgmlmv4sj4xksye2bff@xtn7adafbpfz>
+ <20241021-rosy-drove-1ae3c8985405@spud>
+ <2zawe64brm3sfuslh443352wfupgnhb4xw7jragkzxu6kgg6t7@b4qiya3jdij4>
+ <20241022-washday-glass-3db9f6a2cd27@spud>
+ <e32xi34m4lubrquluk7uu6nvqgarnxtmj57ricxg2gv45xpgcs@x6t7itvwng4h>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] dt-bindings: arm-smmu: Document sm8750 SMMU
-To: Krzysztof Kozlowski <krzk@kernel.org>
-CC: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
-        "Joerg
- Roedel" <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Trilok Soni
-	<quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala
-	<quic_satyap@quicinc.com>,
-        <linux-arm-kernel@lists.infradead.org>, <iommu@lists.linux.dev>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-References: <20241021230449.2632493-1-quic_molvera@quicinc.com>
- <tf7zt3ytxdzgeop2n5ard2kivbjtcqun5jahgqvejynj2ttyon@eg2yd4ulouw4>
-Content-Language: en-US
-From: Melody Olvera <quic_molvera@quicinc.com>
-In-Reply-To: <tf7zt3ytxdzgeop2n5ard2kivbjtcqun5jahgqvejynj2ttyon@eg2yd4ulouw4>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Cgifw-p_grS7sf9Iv9UNMCLAxMh3Xh0l
-X-Proofpoint-ORIG-GUID: Cgifw-p_grS7sf9Iv9UNMCLAxMh3Xh0l
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0
- malwarescore=0 clxscore=1015 mlxscore=0 suspectscore=0 phishscore=0
- mlxlogscore=739 bulkscore=0 adultscore=0 lowpriorityscore=0 spamscore=0
- priorityscore=1501 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230120
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="+Tk608JwS4IXNVJ/"
+Content-Disposition: inline
+In-Reply-To: <e32xi34m4lubrquluk7uu6nvqgarnxtmj57ricxg2gv45xpgcs@x6t7itvwng4h>
 
 
+--+Tk608JwS4IXNVJ/
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-On 10/23/2024 1:25 AM, Krzysztof Kozlowski wrote:
-> On Mon, Oct 21, 2024 at 04:04:49PM -0700, Melody Olvera wrote:
->> Document the sm8750 SMMU block.
->>
->> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
->> ---
->>   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
->>   1 file changed, 1 insertion(+)
->>
-> This is incomplete, what about clocks?
+On Wed, Oct 23, 2024 at 08:32:42AM +0800, Inochi Amaoto wrote:
+> On Tue, Oct 22, 2024 at 06:25:00PM +0100, Conor Dooley wrote:
+> > On Mon, Oct 21, 2024 at 08:23:30PM +0800, Inochi Amaoto wrote:
+> > > On Mon, Oct 21, 2024 at 01:21:58PM +0100, Conor Dooley wrote:
+> > > > On Mon, Oct 21, 2024 at 08:18:58PM +0800, Inochi Amaoto wrote:
+> > > > > On Mon, Oct 21, 2024 at 01:10:52PM +0100, Conor Dooley wrote:
+> > > > > > On Mon, Oct 21, 2024 at 03:26:05PM +0800, Inochi Amaoto wrote:
+> > > > > > > The UART of SG2044 is modified version of the standard Synops=
+ys
+> > > > > > > DesignWare UART. The UART on SG2044 relys on the internal div=
+isor
+> > > > > > > and can not set right clock rate for the common bitrates.
+> > > > > > >=20
+> > > > > > > Add compatibles string for the Sophgo SG2044 uarts.
+> > > > > > >=20
+> > > > > > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > > > > > > ---
+> > > > > > >  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml        =
+  | 4 ++++
+> > > > > > >  1 file changed, 4 insertions(+)
+> > > > > > >=20
+> > > > > > > diff --git a/Documentation/devicetree/bindings/serial/snps-dw=
+-apb-uart.yaml b/Documentation/devicetree/bindings/serial/snps-dw-apb-uart.=
+yaml
+> > > > > > > index 4cdb0dcaccf3..6963f89a1848 100644
+> > > > > > > --- a/Documentation/devicetree/bindings/serial/snps-dw-apb-ua=
+rt.yaml
+> > > > > > > +++ b/Documentation/devicetree/bindings/serial/snps-dw-apb-ua=
+rt.yaml
+> > > > > > > @@ -58,6 +58,10 @@ properties:
+> > > > > > >                - brcm,bcm11351-dw-apb-uart
+> > > > > > >                - brcm,bcm21664-dw-apb-uart
+> > > > > > >            - const: snps,dw-apb-uart
+> > > > > > > +      - items:
+> > > > > > > +          - enum:
+> > > > > > > +              - sophgo,sg2044-uart
+> > > > > > > +          - const: snps,dw-apb-uart
+> > > > > >=20
+> > > > > > Why does each vendor have an items entry of its own? Seems like=
+ needless
+> > > > > > clutter of the file IMO, except for the renesas bit.
+> > > > >=20
+> > > > > I just follow others when writing this binding. I think it may ne=
+ed
+> > > > > another patch to fix this problem, right?
+> > > >=20
+> > > > Yeah. But I'd hold off to see if someone gives a rationale for it b=
+eing
+> > > > done this way before sending that. I've not deleted this thread, and
+> > > > will send an ack if someone justifies why the binding is written li=
+ke
+> > > > this.
+> >=20
+> > Well, Rob doesn't think they should be separate so please add that
+> > additional patch in your next version.
+> >=20
+> > Thanks,
+> > Conor.
+>=20
+> It is OK for me. I will add a fix patch in the next version. Can
+> I add you with suggested-by tag in this fix patch?
 
-I agree, but I don't have the dt changes for the additional smmu node yet.
-Should I update the bindings regardless?
+If you want, but I don't really care for one.
 
->
+--+Tk608JwS4IXNVJ/
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxlGQQAKCRB4tDGHoIJi
+0lWCAQDLqp4C3pRf90+AdSgA9vyQTtFUkYtMqLHF8L01+nyJ2QD/cvLql7LjVd04
+9Mv7I4joqV3H0Gvfo2rKjnJsSHJcfQw=
+=SV4x
+-----END PGP SIGNATURE-----
+
+--+Tk608JwS4IXNVJ/--
 
