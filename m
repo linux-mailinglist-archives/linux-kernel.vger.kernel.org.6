@@ -1,169 +1,101 @@
-Return-Path: <linux-kernel+bounces-378027-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378028-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EA91D9ACA52
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:42:06 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C6789ACA57
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:42:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D1A1C20F71
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:42:06 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id AFFB4B23000
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:42:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD9241AC444;
-	Wed, 23 Oct 2024 12:42:00 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D09AD1AC882;
+	Wed, 23 Oct 2024 12:42:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="DETkIdaO"
-Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="W1xL2f/0"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B3ED1AB6C7
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:41:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F20221AA795;
+	Wed, 23 Oct 2024 12:42:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729687320; cv=none; b=dZSTB34LXzUkJG+qA3UCi4XRfmYi/DoG/IWPsKFsl/c6fTKLMgBFt72Bn1kvD6Qrm3vBAYJ0PtueNaD7T0sf66OefE6uMmaJ275AeAwWAQBTCwfdjHErrQEiGZ7rqXqx0ysG/aM6AeMhtqzBkoJdIYaruA86DTo8YBptabn+tF0=
+	t=1729687356; cv=none; b=brO2p04i0imrsiuEMgh0bhTotthsV3CQlBH/9J6yOHwy1Usuj3dT2VDAD63SNbUYyV+Y1niSNfwR3Q3rs/GtidZf5uRqas0/utQWaWYE99TyR5Tx+LVuFYUO/ksANc9DSAM/Ab9zV39WONbw+aH7uXxUHZMVWaGsbQ5dGCQ/Sbs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729687320; c=relaxed/simple;
-	bh=r4xQBSHSzqBbjSO15B6LqQBSJLlq/rBG7/qkg8UtW2c=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=YQlLwcNXyrDGuinmOzgUPbTYjKN/LWIy3WVEUbfRd5Q//U/owZzocyLweszjl32Eet0oxaKKmgBmvJImc5uRAJs0sTZn2CYiBkhGYrbI94E0zBHaHZP9tetR0rR0jB+N3xGrIUmCPwQaARlrvcnYrZ28Wy8F+yTn4L3hVnwj4X4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=DETkIdaO; arc=none smtp.client-ip=209.85.128.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4315dfa3e0bso8823265e9.0
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:41:57 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729687316; x=1730292116; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=OC1GUo6u6ogIaP+998OmJFrdwx6E7b3ebTutyLvUJYE=;
-        b=DETkIdaOHdOPQEuktXy6mDkM4t6rPm96scJ0FnLLCYiqmZeuDG3qeGPhm8TPL5FVvk
-         XjzMvN+DlHX0VxbvxAYojxbgPmurKPdI8G7xz2M7QtujsqsAWFz9DHsNzBlBB89Urt3r
-         ueZMuVp3ouN9X9zPaxsfeMeNxpj1oWWuMzJQgiLbkW1ym841/1ncgwm+8Yy1xMAiE9wT
-         hLF1EPgXbvdImxdjOzU7m6eKMUlVuLmphMFKlBr27Z9T3O6hFGgB37BmDF2tchFCtzJq
-         qfsqtJYrtgRp5ti4r2K8LQyKyycfYoJG/T57FK02ONWL7jaKpNL/Bvh/NAdNZ6/b6Uw8
-         RRZA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729687316; x=1730292116;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=OC1GUo6u6ogIaP+998OmJFrdwx6E7b3ebTutyLvUJYE=;
-        b=pkB/q35ncJb/tblGYZpcDwM69koa2wNzwodTL1ynM35W9ATB3SIXG/ICjIQRgoqPOC
-         fN9kkJltXQdEvFkx3PV+oInwXKcaRXzXSevYeM4dim3ZyUvuchBgB/El5PteWFBbbvDP
-         uBzinfHmR9+ZXVA2g882tzUqMMLaRPS/z5bQuHOEWDR6x1sPkE0C1hVJpdl7T7R1lpAu
-         FwDgro9k4wGcrUiAxK0/2hDIZ+2SSwIIilqx+TP/0GKUaimPBfBMVB5gaNXgJyphD6wX
-         8vdr1Y9P4HGeZSBhTuuJdPeKzVTmX2NvskF44pR1dV4od9Ca3zSfvwZAI1e6uhX45uXF
-         HaWw==
-X-Forwarded-Encrypted: i=1; AJvYcCW8P9ivDyRrpUvEudjDQTo5SqU9d4TWx/nsBvOsax7dH++1egwvnsz+FEEYccBfUL7vC6ycsMkIyNIuC40=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx67IsM6kHGraDPxDBH+nbpD3ddQRnaldY1HCOUU8VZi+C4IT9O
-	GTcbBMQuix//UpSJNTBqYh64tHahVqST3PpYizYJc9UGgn6IEp17ysag7qsXeD0=
-X-Google-Smtp-Source: AGHT+IGOOLD010FpGoIXn//GRg/EMY8PWXk1Rdw1ltM3+wHFz9aINxy6HV8Thsw/0R78Sp9Fi09moA==
-X-Received: by 2002:a05:600c:1d06:b0:42c:bfd6:9d2f with SMTP id 5b1f17b1804b1-43184133ef0mr9814505e9.1.1729687316420;
-        Wed, 23 Oct 2024 05:41:56 -0700 (PDT)
-Received: from krzk-bin.. ([178.197.211.167])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186befc90sm15101675e9.26.2024.10.23.05.41.55
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 05:41:55 -0700 (PDT)
-From: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Liam Girdwood <lgirdwood@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Jaroslav Kysela <perex@perex.cz>,
-	Takashi Iwai <tiwai@suse.com>,
-	alsa-devel@alsa-project.org,
-	linux-arm-msm@vger.kernel.org,
-	linux-sound@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
-Subject: [PATCH] ASoC: qcom: x1e80100: Support boards with two speakers
-Date: Wed, 23 Oct 2024 14:41:52 +0200
-Message-ID: <20241023124152.130706-1-krzysztof.kozlowski@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729687356; c=relaxed/simple;
+	bh=8FMQ2U+Yx5+4JJKuH97KbfWiDSrVmukhFmnAsljLTQo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=UPFuHg5UyT2yDw5TuzEKxTpd2lxcNFOGnemJh7Qqm1g3I3Ef24NX70AdI7R8E/ozrp3wa2dyxaxLxbtz9sGSbyu2Jk6p7xs8OKhNI7YprDJ+JmjxTgjBOd4HtT2I497+uubyUcT/OEuGSRDSCjgCYGco6Cb+BHldMSjqgxq9qCM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=W1xL2f/0; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=ECkcLoi6nvRMZ6z485UUavRz1TW3AZP1oqqzMx62oAc=; b=W1xL2f/0ZkdIvu3RBvN4VPj7s8
+	HWt25pPkWMTIeb8bKcnp5OzNWA++tl9VhjKT8RWGaFy7Um+O7/tUkG3clzs+mRlae+X3em5cuzPtq
+	ld5s5T9R32kTtlewbDVrG+876rR8aV3XkHGKs2tR2LwwMS01GKyGXeEN/W7MS+Zs0g90=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t3agq-00Axlr-AW; Wed, 23 Oct 2024 14:42:16 +0200
+Date: Wed, 23 Oct 2024 14:42:16 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Alexandre Torgue <alexandre.torgue@foss.st.com>,
+	Jose Abreu <joabreu@synopsys.com>,
+	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+	Richard Cochran <richardcochran@gmail.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
+	Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-stm32@st-md-mailman.stormreply.com,
+	linux-arm-kernel@lists.infradead.org,
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+Message-ID: <79f9b971-8b3f-4f31-ab42-42a31d505607@lunn.ch>
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-5-inochiama@gmail.com>
+ <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
+ <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
+ <65720a16-d165-4379-a01f-54340fb907df@lunn.ch>
+ <424erlm55tuorjvs2xgmanzpximvey22ufhzf3fli7trpimxih@st4yz53hpzzr>
+ <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
+ <zum7n3656qonk4sdfu76owfs4jk2mkjrzayd57uuoqeb6iiris@635pw3mqymqd>
+ <d691a687-c0e2-48a9-bf76-d0a086aa7870@lunn.ch>
+ <amg64lxjjetkzo5bpi7icmsfgmt5e7jmu2z2h3duqy2jcloj7s@nma2hjk4so5b>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <amg64lxjjetkzo5bpi7icmsfgmt5e7jmu2z2h3duqy2jcloj7s@nma2hjk4so5b>
 
-Some Qualcomm X1E laptops have only two speakers.  Regardless whether
-this sound card driver is suitable for them (we could re-use one for
-some older SoC), we should set reasonable channel map depending on the
-number of channels, not always 4-speaker setup.
+> Yes, this is what I have done at the beginning. At first I only
+> set up the phy setting and not set the config in the syscon. 
+> But I got a weird thing: the phy lookback test is timeout. 
+> Although the datasheet told it just adds a internal delay for 
+> the phy, I suspect sophgo does something more to set this delay.
 
-This change is necessary for bringing audio support on Lenovo Thinkpad
-T14s with Qualcomm X1E78100 and only two speakers.
+You need to understand what is going on here. Just because it works
+does not mean it is correct.
 
-Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
----
- sound/soc/qcom/x1e80100.c | 40 ++++++++++++++++++++++++++++++++++-----
- 1 file changed, 35 insertions(+), 5 deletions(-)
-
-diff --git a/sound/soc/qcom/x1e80100.c b/sound/soc/qcom/x1e80100.c
-index 898b5c26bf1e..8eb57fc12f0d 100644
---- a/sound/soc/qcom/x1e80100.c
-+++ b/sound/soc/qcom/x1e80100.c
-@@ -95,23 +95,53 @@ static int x1e80100_snd_hw_params(struct snd_pcm_substream *substream,
- 	return qcom_snd_sdw_hw_params(substream, params, &data->sruntime[cpu_dai->id]);
- }
- 
-+static int x1e80100_snd_hw_map_channels(unsigned int *ch_map, int num)
-+{
-+	switch (num) {
-+	case 1:
-+		ch_map[0] = PCM_CHANNEL_FC;
-+		break;
-+	case 2:
-+		ch_map[0] = PCM_CHANNEL_FL;
-+		ch_map[1] = PCM_CHANNEL_FR;
-+		break;
-+	case 3:
-+		ch_map[0] = PCM_CHANNEL_FL;
-+		ch_map[1] = PCM_CHANNEL_FR;
-+		ch_map[2] = PCM_CHANNEL_FC;
-+		break;
-+	case 4:
-+		ch_map[0] = PCM_CHANNEL_FL;
-+		ch_map[1] = PCM_CHANNEL_LB;
-+		ch_map[2] = PCM_CHANNEL_FR;
-+		ch_map[3] = PCM_CHANNEL_RB;
-+		break;
-+	default:
-+		return -EINVAL;
-+	}
-+
-+	return 0;
-+}
-+
- static int x1e80100_snd_prepare(struct snd_pcm_substream *substream)
- {
- 	struct snd_soc_pcm_runtime *rtd = snd_soc_substream_to_rtd(substream);
- 	struct snd_soc_dai *cpu_dai = snd_soc_rtd_to_cpu(rtd, 0);
- 	struct x1e80100_snd_data *data = snd_soc_card_get_drvdata(rtd->card);
- 	struct sdw_stream_runtime *sruntime = data->sruntime[cpu_dai->id];
--	const unsigned int rx_slot[4] = { PCM_CHANNEL_FL,
--					  PCM_CHANNEL_LB,
--					  PCM_CHANNEL_FR,
--					  PCM_CHANNEL_RB };
-+	unsigned int channels = substream->runtime->channels;
-+	unsigned int rx_slot[4];
- 	int ret;
- 
- 	switch (cpu_dai->id) {
- 	case WSA_CODEC_DMA_RX_0:
- 	case WSA_CODEC_DMA_RX_1:
-+		ret = x1e80100_snd_hw_map_channels(rx_slot, channels);
-+		if (ret)
-+			return ret;
-+
- 		ret = snd_soc_dai_set_channel_map(cpu_dai, 0, NULL,
--						  ARRAY_SIZE(rx_slot), rx_slot);
-+						  channels, rx_slot);
- 		if (ret)
- 			return ret;
- 		break;
--- 
-2.43.0
-
+	Andrew
 
