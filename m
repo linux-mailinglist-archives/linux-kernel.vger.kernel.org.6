@@ -1,143 +1,178 @@
-Return-Path: <linux-kernel+bounces-378706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6876F9AD437
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:45:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 972619AD439
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:45:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 02D4EB24403
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:45:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B4CFF1C22145
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:45:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AF3D1D14E9;
-	Wed, 23 Oct 2024 18:45:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FFA41D5AD7;
+	Wed, 23 Oct 2024 18:45:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pS8ItPWY"
-Received: from mail-pf1-f179.google.com (mail-pf1-f179.google.com [209.85.210.179])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IofE27Ek"
+Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30B291BFE05
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:45:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 096C31D049A;
+	Wed, 23 Oct 2024 18:45:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729709110; cv=none; b=nS0P0/PNSyUY0EufNJgPURHKdr+NPMW7pj1/DWp/b+KUjRjb4pMDMRTKB1C/zgW5tEaTb/pKoB+aPZHzfvS0Gin7dwTq9OjlilDt94k/Ggpnmsfd4TOpN3QQcfm/GnMi09tTbzI4daapXPaoiUMBjJcIWIx4CpLvCC+iq/Mg9z8=
+	t=1729709130; cv=none; b=jq3OgnVr7BCFB99uQMV1tb8YB/1Qh/JNiPETlhI1puPZ8SK2vIsDDnSANMWLZ9wzEJM4FEF+knofF7MlWKMiBQTTxx+2frYxXr1lnE0zM8FPD6+TYrUAinzKfRGUIvqAHE91j0Kx6KgTRqjXCp+P6gqB4PPfPUYaK6uDeZxGt+4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729709110; c=relaxed/simple;
-	bh=b9NwgqiPijcxe+rH2hf1VDuereYmfE3ICe6f2s34nvw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=EOfrPII8Tkuh/ycZaIBcbsC4TIdrUWXE8q+0oGboPL1zxBchJM+FmGVZAhF3AM7zNIBE6JRY8ameVC0CUqIkuswqreleZ6JGHXwTTVVILBDIb1TvRSWxmgxXmmMlxTHgVxB/uYb9oJNUD5PQqDczAjZ1fFN5GsU2cUlApyTyo0k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pS8ItPWY; arc=none smtp.client-ip=209.85.210.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f179.google.com with SMTP id d2e1a72fcca58-72041ff06a0so1568b3a.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:45:09 -0700 (PDT)
+	s=arc-20240116; t=1729709130; c=relaxed/simple;
+	bh=6nUgEdTr+tzSukKurFYskrMjyhTFHfwqugC64agyt+o=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=CY724EHvzw7LdI9U9jAcDBRvDjSwRwa0srsyxaVRj5iNShJAhA701hdhP8qU0gHN2qSjoimBed4cnOaCJaqg1+Vf6ma8b3NnWLEy8NWL5rGQkE5OnfPiNv4dGV48ZVqeWQp9/FxmuUciF9Z4FRVOzs9eQuxtJmI5sY9/mOVHCYw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IofE27Ek; arc=none smtp.client-ip=209.85.216.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e59746062fso133233a91.2;
+        Wed, 23 Oct 2024 11:45:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729709108; x=1730313908; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=BeEzIbcTN9Qo6z/WsUu5E7xET1l3eAfufIwhM53Y5us=;
-        b=pS8ItPWYn7rBPNf0Pn1yTxU+SGBds/Njkz/TzwmBkZrTuqU1WsSSTPGQE5LTRb/OYO
-         N3CcNuWzvaN8uduvn39yDav8rDnb8XdN3sMwjyYWNVGq//VjD0WNncR+6p1p0TYJmfMZ
-         UrwehHfbQGwbJrkp1TZwo+blAu3NWhq8VyxvkA2TW8byi0xmzoZ3AY7VbCoiPhE2dqOE
-         93yoVwsEWsh/HFyxd1LDb64s0/5LHqbwgBYy4edUrNAfQ9ZcBfiKF6tJxWCjqLN7j5Mo
-         5Ba8Mt6UcS5g3JrSwys2EPu9qdbT9jmlpREkITLTYJHZ49VtPw8dR8KzW6zizn54Innw
-         h4Kg==
+        d=gmail.com; s=20230601; t=1729709128; x=1730313928; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Ov2xAXMB6p30jTkaVMNKHZxZEIOcYKxnx7FzrQpE6GE=;
+        b=IofE27EkJQBbHdSNC/bnyCPI4D/nzV65xFTeVRkJo7JSaMk+ONC7UJB8kSLaXVrp91
+         ur+ez0zvgra9WPgOZVWLVQ61yKtii46iCYfCo2eBixmwkwqRwl6nbUuBWNvHO07SCCbY
+         awyjOo87xraXTk7/0x0zDIiT42WLGP0AG/ygeF8LXwqhGy1uQQ9CbwekGOwmrdPmewYH
+         BCcS2/KIC/nFqwZDQprt3ZuWv/DHVyusnDNy2SPoN8zzPx2oes00/noH+d44zPCway9p
+         gnCbdfdSKRkMQi4dcgZrZCf1GSWOgz9NoPv3h5jZwwvHnY9eVb2f7zI+T1GUahy8cQ+g
+         6B4A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729709108; x=1730313908;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=BeEzIbcTN9Qo6z/WsUu5E7xET1l3eAfufIwhM53Y5us=;
-        b=uUdDpy9OZR42Kqrdqd6qUQTzaugGXieR7pugo02hr/HnPJkS+J3SSRy1xh0gWfO54X
-         feszengb61NO5VtB+BuaisWXiwo10ing0Sbxn51yWGp5sI4mF8/csEJwwmFR3IAIweg+
-         eAuJhYA6wZ6FVgJKtFaZIcA318aoiNjkYsaj9bDMjY3wkn8XrxT5YWTZxv6zGUTg5kSy
-         uzKuuR9D0ADJPw01VZoDt2WAAECCSb9ZmAF6CXr2SC9/rlgjd4wAZISl/TE4bXuY6deF
-         +9DH/oI4MisZcY2dkYNtQLzwIcofPkVgE61deI62zHIMpVfX373NCGN/JiGt/LifbE94
-         hqeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVsRY0NfwzELBcPUY3W8+94RfNAaP2n9FwmAEffYg/gyBavesg0xGGDY5JEOYCgfYQmBs13peUejhpYVQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyiI6zTf+DVn2o8XRk5epoittnrtML2zwxTjZKHjlNoKh8RKxSN
-	PdGqMZVDcsRJSGLJqnaO2MMP++Xon48UGB1U3KCtyWk0NAnOaIrnN9mFR0IL+VFksYyR1VSUUcd
-	thhjZBI3XIy1+/WhcOHTQzyVyzLEFGkDJGKhv
-X-Google-Smtp-Source: AGHT+IERGNFvesrjfkA68h18NkTDtTEV1fRw3F/7aiylrOx6fyBXV9N+orq1T0sVvVFSF5V9RYn6zKm5KrhQxkmAhno=
-X-Received: by 2002:aa7:88cb:0:b0:71d:f2e3:a878 with SMTP id
- d2e1a72fcca58-72030b70485mr4902092b3a.5.1729709108125; Wed, 23 Oct 2024
- 11:45:08 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729709128; x=1730313928;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Ov2xAXMB6p30jTkaVMNKHZxZEIOcYKxnx7FzrQpE6GE=;
+        b=kNyD8Qcp/zNUjYELdY0YdlzMtA5t0o1EOOpX9L0ojN+jl7GSN1SiEPKyiH3RMg412R
+         NinVDYM935GHSC1+ir8w9nmlhk0tRll40fv+IMDhCMF1t8Bn5AoSdj/MUcVKrycdZSM0
+         GulXFKbJvANNpxOYbppur5uROdMfbx1WBfFF5wR+WdNf0MuEZwiWPj05cNl0X7ifEeE5
+         hMFCv8Ft8yBptFOEMUu6EMyoWwWE2EmmptVzslFturHBkgwIhungbSS7lrN0iiH5hCLE
+         8NN0nQfIl3DoPrnlSXx8wOJeIBDDG48/fJ/XdqmJOooX5cMI76AL7dCqXRGxjkWHeb3x
+         XRwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUz2GiWk9EiQ923DvCRZdR0SOVVaaKD2d+EKj0BYEXVgl/GlI0COlfiBe2Mn4xFFJrknnrm2jZfC5/nbDo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtbpI1IatpE/vIH+0lX7/J6BTQfZGhueVNKgi4mdcw6TIDu/Lt
+	0eweGniXKms4ObRaVGWEFAigYifSa5qAyqRHIBaydA5H/6u5Ib9G
+X-Google-Smtp-Source: AGHT+IG4l64bzbzLLU+UIi8xMJh/O3V1IttypIFpwfkTAisoWEZ99kL1wFcEcs7j980J8mn/qefubQ==
+X-Received: by 2002:a17:90a:17aa:b0:2e0:a47a:5eb0 with SMTP id 98e67ed59e1d1-2e76b72189bmr3551829a91.38.1729709128122;
+        Wed, 23 Oct 2024 11:45:28 -0700 (PDT)
+Received: from google.com ([2620:15c:9d:2:84b7:953b:674b:513c])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76e059423sm1783133a91.43.2024.10.23.11.45.27
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 11:45:27 -0700 (PDT)
+Date: Wed, 23 Oct 2024 11:45:24 -0700
+From: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+To: Benjamin Tissoires <bentiss@kernel.org>,
+	Hans de Goede <hdegoede@redhat.com>,
+	Maxim Mikityanskiy <maxtram95@gmail.com>
+Cc: Linux Input <linux-input@vger.kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>
+Subject: [PATCH v2] Input: introduce notion of passive observers for input
+ handlers
+Message-ID: <ZxlEROX7bMo5cbZP@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240910130019.35081-1-jonathanh@nvidia.com> <2024091152-impound-salt-c748@gregkh>
- <d89c89f8-0036-44a4-8ffa-ea89ed576a9f@nvidia.com> <2024091627-online-favored-7a9f@gregkh>
- <b1b67db0-3b9c-4d96-a119-fe3fcf51b6e3@nvidia.com> <CAGETcx8E9FddpwMO4+oqeEc0RVMLbUOs2m+=B900xzrLvEkSXw@mail.gmail.com>
- <2c42677c-5e8e-4805-b6a5-0a5baa3e55b5@nvidia.com> <d9aadede-dfac-410a-b65b-e295c9a64951@notapiano>
- <CAGETcx-_z4hxyNSwT-D1MKNzAjOGSX+o7x5G8J0KkiUyy+RkDQ@mail.gmail.com>
- <8b4723ba-fffe-4616-8055-02a9cf6f2894@nvidia.com> <f979aff2-34f4-4f6d-bb9a-03a02afc4635@notapiano>
- <5312c3c8-8e23-4f4b-88d5-3962f67da572@nvidia.com> <CAGETcx99h+HzL__E8w5VWgn9NrjdMk3KAdeijJXmdDF6fm7NOQ@mail.gmail.com>
-In-Reply-To: <CAGETcx99h+HzL__E8w5VWgn9NrjdMk3KAdeijJXmdDF6fm7NOQ@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 23 Oct 2024 11:44:29 -0700
-Message-ID: <CAGETcx-cgst26+2bRScx7mmJtOmrHzEfg0eVxzqHfQDTewy_yA@mail.gmail.com>
-Subject: Re: [PATCH] driver core: Don't try to create links if they are not needed
-To: Jon Hunter <jonathanh@nvidia.com>
-Cc: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J . Wysocki" <rafael@kernel.org>, 
-	linux-kernel@vger.kernel.org, linux-tegra@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Btw, Nicholas and Jon, can you give a Nack for the patches that are
-removing the error logging?
+Sometimes it is useful to observe (and maybe modify) data coming from
+an input device, but only do that if there are other users of such input
+device. An example is touchpad switching functionality on Lenovo IdeaPad
+Z570 where it is desirable to suppress events coming from the touchpad
+if user toggles touchpad on/off button (on this laptop the firmware does
+not stop the device).
 
--Saravana
+Introduce notion of passive observers for input handlers to solve this
+issue. An input handler marked as passive observer behaves exactly like
+any other input handler or filter, but with one exception: it does not
+open/start underlying input device when attaching to it.
 
-On Wed, Oct 23, 2024 at 11:34=E2=80=AFAM Saravana Kannan <saravanak@google.=
-com> wrote:
->
-> On Wed, Oct 23, 2024 at 7:09=E2=80=AFAM Jon Hunter <jonathanh@nvidia.com>=
- wrote:
-> >
-> >
-> > On 23/10/2024 14:58, N=C3=ADcolas F. R. A. Prado wrote:
-> >
-> > ...
-> >
-> > > I'm guessing a similar change to what Saravana suggested for the
-> > > of_dp_aux_populate_bus() helper is needed here:
-> > >
-> > > diff --git a/drivers/phy/tegra/xusb.c b/drivers/phy/tegra/xusb.c
-> > > index cfdb54b6070a..0a2096085971 100644
-> > > --- a/drivers/phy/tegra/xusb.c
-> > > +++ b/drivers/phy/tegra/xusb.c
-> > > @@ -543,7 +543,7 @@ static int tegra_xusb_port_init(struct tegra_xusb=
-_port *port,
-> > >
-> > >          device_initialize(&port->dev);
-> > >          port->dev.type =3D &tegra_xusb_port_type;
-> > > -       port->dev.of_node =3D of_node_get(np);
-> > > +       device_set_node(&port->dev, of_fwnode_handle(of_node_get(np))=
-);
-> > >          port->dev.parent =3D padctl->dev;
-> > >
-> > >          err =3D dev_set_name(&port->dev, "%s-%u", name, index);
-> > >
-> > >
-> > > As a side note, I wonder if it would be possible to detect these mist=
-akes... But
-> > > I'm guessing there are legitimate situations where there's no fwnode.
-> >
-> >
-> > Yes! That does indeed fix the issue.
-> >
-> > Saravana, let me know if you can send a patch? I would but I can't say =
-I
-> > understand that actual issue.
->
-> Heh... didn't know you were hitting the exact same issue. I'll send
-> out a patch. Okay to add your tested by too?
->
-> -Saravana
+Signed-off-by: Dmitry Torokhov <dmitry.torokhov@gmail.com>
+---
+
+ v2: fix incorrect handling in input_close_device() - we still need to
+     decrement handle's open count and ensure that no more events will
+     come through the handle even if the handler is an observer.
+ v1: original posting:
+     https://lore.kernel.org/all/ZteiClP9jabjHFkG@google.com
+
+Maxim, I did not add "tested-by" by you because this version is
+different from V1.
+
+Thanks!
+
+ drivers/input/input.c | 15 ++++++++++-----
+ include/linux/input.h |  5 +++++
+ 2 files changed, 15 insertions(+), 5 deletions(-)
+
+diff --git a/drivers/input/input.c b/drivers/input/input.c
+index 3c321671793f..3b1e88ead97e 100644
+--- a/drivers/input/input.c
++++ b/drivers/input/input.c
+@@ -605,6 +605,9 @@ int input_open_device(struct input_handle *handle)
+ 
+ 	handle->open++;
+ 
++	if (handle->handler->passive_observer)
++		goto out;
++
+ 	if (dev->users++ || dev->inhibited) {
+ 		/*
+ 		 * Device is already opened and/or inhibited,
+@@ -668,11 +671,13 @@ void input_close_device(struct input_handle *handle)
+ 
+ 	__input_release_device(handle);
+ 
+-	if (!--dev->users && !dev->inhibited) {
+-		if (dev->poller)
+-			input_dev_poller_stop(dev->poller);
+-		if (dev->close)
+-			dev->close(dev);
++	if (!handle->handler->passive_observer) {
++		if (!--dev->users && !dev->inhibited) {
++			if (dev->poller)
++				input_dev_poller_stop(dev->poller);
++			if (dev->close)
++				dev->close(dev);
++		}
+ 	}
+ 
+ 	if (!--handle->open) {
+diff --git a/include/linux/input.h b/include/linux/input.h
+index 89a0be6ee0e2..6437c35f0796 100644
+--- a/include/linux/input.h
++++ b/include/linux/input.h
+@@ -286,6 +286,10 @@ struct input_handle;
+  * @start: starts handler for given handle. This function is called by
+  *	input core right after connect() method and also when a process
+  *	that "grabbed" a device releases it
++ * @passive_observer: set to %true by drivers only interested in observing
++ *	data stream from devices if there are other users present. Such
++ *	drivers will not result in starting underlying hardware device
++ *	when input_open_device() is called for their handles
+  * @legacy_minors: set to %true by drivers using legacy minor ranges
+  * @minor: beginning of range of 32 legacy minors for devices this driver
+  *	can provide
+@@ -321,6 +325,7 @@ struct input_handler {
+ 	void (*disconnect)(struct input_handle *handle);
+ 	void (*start)(struct input_handle *handle);
+ 
++	bool passive_observer;
+ 	bool legacy_minors;
+ 	int minor;
+ 	const char *name;
+-- 
+2.47.0.105.g07ac214952-goog
+
+
+-- 
+Dmitry
 
