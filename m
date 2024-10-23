@@ -1,119 +1,181 @@
-Return-Path: <linux-kernel+bounces-378046-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378047-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFB39ACA9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:54:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 233829ACAA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F1E6E28611F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:54:09 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4469D1C20C62
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:58:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D73951AC458;
-	Wed, 23 Oct 2024 12:54:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 019C91ACDE8;
+	Wed, 23 Oct 2024 12:58:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="r4sJ60jG"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DH6x5Zr3"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6E8E130AF6;
-	Wed, 23 Oct 2024 12:54:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6F9A19F128
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 12:58:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729688042; cv=none; b=lw9SdgXUa1RUeeXPi447mc0JW//W9p6yYzs/nSVBG+2mUBMMa01eAdm7BlhqX2TiW9xOxN4I6amINVn3s+q6wy3vycOcuI5Hx/aMz2BVZVBUWBzSKomFwYB0m+3hJ75eEcDz3KOrN9O0l+nBmDlv1GlJWP7pJSjBy3Ss4DY48VQ=
+	t=1729688323; cv=none; b=CRbR7pFfgnb9DgRSatZ7BYt+QRbjLxAI9Q34vPDhv7H9tXdkBCOf4Sh238CIOTEexi58d/NbDpmxHxRz4OHNTjjGyW+oSMJstRNKKAcJwvACUXLEStKb3tUlr0SvqyG+SdZ7n4WFmF+XJ3i8j6bo7JFCrVorSp6sXKaIQ3RgbW4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729688042; c=relaxed/simple;
-	bh=tXaxKqHuCg1Tvq9+YFI+ZgXBgan+kLSt1m1umb+dr9c=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rqH3P6bK4o7ROVZnD1hGAACO18MAsUYqAu3N8MkYmBc8mYitwTdSRd/553zMl5D+UOzjK0bXjsEbVrMzfL0y7kXxWM81vMfW50bjDynARL9ITlNEZORAGFWjY+2CUIv/pnHHQZdSTh/AX2ThIz9ikOrgm4xdC6p3koT2OagC7RE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=r4sJ60jG; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360072.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N2HC002916;
-	Wed, 23 Oct 2024 12:53:58 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=gJjkoWx0v7EJieqmAwvTwDuoLvPP07
-	4KFvWCYB8i+LU=; b=r4sJ60jGae15GMN6FQ6YWJJs2rKKoF279cH9jmuu5RwR5l
-	y117AQ1ebruk1EUorF/4xKQ6sv4vM7uz2PBvP+NdjumT+kfuRqneV5yvFJlQqdD/
-	ZveTO/XxD/mybfM07bHOcrbairbzzIy2ZLk775qqu47WzH7VBFIA/ZBWpklnjxxR
-	C8Q4W3wwtJM4I2RByN3a2PkRxsXWl2HyWqNbzezKb8O8Lc6E7mk/IsXR8QaT6Aiz
-	yE8wg4xQHMBaj+oE7lzavJ98rehlL2HvvKg7r1I2O/xVg8YZjTNJNs7WfEGMCoBI
-	9wKHU2XNVktwVoPsPa+302x0PaKtePADjQUCBNiw==
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emafu13j-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 12:53:58 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBRcPn014308;
-	Wed, 23 Oct 2024 12:53:57 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emhfjvtc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 12:53:57 +0000
-Received: from smtpav04.fra02v.mail.ibm.com (smtpav04.fra02v.mail.ibm.com [10.20.54.103])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NCrrOi57344388
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 12:53:53 GMT
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9D27820043;
-	Wed, 23 Oct 2024 12:53:53 +0000 (GMT)
-Received: from smtpav04.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3A5AE20040;
-	Wed, 23 Oct 2024 12:53:53 +0000 (GMT)
-Received: from osiris (unknown [9.152.212.60])
-	by smtpav04.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Wed, 23 Oct 2024 12:53:53 +0000 (GMT)
-Date: Wed, 23 Oct 2024 14:53:51 +0200
-From: Heiko Carstens <hca@linux.ibm.com>
-To: David Hildenbrand <david@redhat.com>
-Cc: Alexander Egorenkov <egorenar@linux.ibm.com>, linux-kernel@vger.kernel.org,
-        linux-s390@vger.kernel.org, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>
-Subject: Re: [PATCH v3] s390/kdump: make is_kdump_kernel() consistently
- return "true" in kdump environments only
-Message-ID: <20241023125351.8013-I-hca@linux.ibm.com>
-References: <20241023090651.1115507-1-david@redhat.com>
- <87ttd3t3v7.fsf@li-0ccc18cc-2c67-11b2-a85c-a193851e4c5d.ibm.com>
- <7da9f43f-e2a8-4079-8b1d-d7b16d8f388e@redhat.com>
+	s=arc-20240116; t=1729688323; c=relaxed/simple;
+	bh=jFFsV+7qXKcZbB1QpgWXBO43D1kMLy2XtiXCrHjAheM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aAjnp3cFAvwwWkJW9moLF8ikJW6E776uwerrqsRtuLZMPBpgtB6NHkTGeKaYDIgvujh0rbVsL4VLtrP+0gSxteIaUOB7NDrO8QlDt9WIzidla/8NCNvtRcTqUyF945oiXOiXOY7sZwInt2iwL0rdByoqiudi+sBRPBq7NK+oO7g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DH6x5Zr3; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729688320;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=cmc0ZXr9HAxJy8JyfDlIHzfWmtCzYV/tdIH6aM6k9ag=;
+	b=DH6x5Zr3EYuQHcruwMAs74iw1DEQ6Zq+sRl2dGaPG+sCq9WCTdSwLmZz7jnubjdNt1NuI2
+	rlEYN6ZF53ciFQ9VYMiFxQx2+V5Cfa9NuKMGm51P4wzV42SmOIOQc9DmbJcSeU7z75EZxa
+	AVjAOCORyWOF6EgjlqC42AUDbup6L94=
+Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
+ [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-593-Melke-2HMPmmBVMigXrgog-1; Wed, 23 Oct 2024 08:58:38 -0400
+X-MC-Unique: Melke-2HMPmmBVMigXrgog-1
+Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-43154a0886bso48981015e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 05:58:38 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729688318; x=1730293118;
+        h=content-transfer-encoding:in-reply-to:autocrypt:content-language
+         :from:references:cc:to:subject:user-agent:mime-version:date
+         :message-id:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cmc0ZXr9HAxJy8JyfDlIHzfWmtCzYV/tdIH6aM6k9ag=;
+        b=TmlThFqWCxSqG+lhpPkQEfrfxkfgnwflPTxBJ6oJUgNyo8hOSy71yWLai6avOsx2Fe
+         L4LboGb4D+cpTP72ugY+tGCmOXjCXHGGhkwoa2G/qFNDYC2KrNMHA5lJMaHConDTvzvT
+         lH9rtepJ+kMYKNzhGBntMHCtOmYUEuytWjK5y2LxED6TCUniuqAX53n9kXlSaUYW56UF
+         Iqps1TMyUfZwcaC9K8IMIkrE347D2WpntoF86WjJysH0IuoQrO3KBLd5eJPWU0Dsq7JE
+         nmFPq4a8YINgfAO4hNP9b87CY2sj5cVRRD0S1mCw4zroh9SpukxDXPCoOZcImsdF6Wn/
+         X9Lg==
+X-Forwarded-Encrypted: i=1; AJvYcCXeDoRKAB4iKHaC3Nm8hfhUPwCovzNAchYVylTs8SIHV9Ygt3DQrnBc6Cnc9REeBEyW9G1EJrzDBt/v5TM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyesZpajRHRJ/1vFjAlzfsQlgI7ot/ZRjmYCmv2L+pjFGdU8w8Y
+	ahel4xlEAxo6DpXUBH+7JkOKgeNsq8rvlhVr7pfUbAN0IOrOUPoEJ/WXgz4fU+KtEuXO0ulB3Fu
+	iFxT7OtilCrh2pUr9vNC3VtOGfMiyYD5+nDEGYeYd+5RTNT0nAAgLPsSI6UYZ+Q==
+X-Received: by 2002:a05:600c:4e48:b0:426:6f27:379a with SMTP id 5b1f17b1804b1-4318421150amr22824665e9.13.1729688317715;
+        Wed, 23 Oct 2024 05:58:37 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IHRqhovKJglA+voaQrphSfrRMVD0g6zoIKMkSl73MqSyuppwrsC7R63Gw4JXp3527O9cedgiw==
+X-Received: by 2002:a05:600c:4e48:b0:426:6f27:379a with SMTP id 5b1f17b1804b1-4318421150amr22824475e9.13.1729688317286;
+        Wed, 23 Oct 2024 05:58:37 -0700 (PDT)
+Received: from [192.168.10.3] ([151.95.144.54])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4317d03b8b4sm44004325e9.0.2024.10.23.05.58.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 05:58:36 -0700 (PDT)
+Message-ID: <cd69f611-6478-4df6-907e-433ac559a20a@redhat.com>
+Date: Wed, 23 Oct 2024 14:58:34 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <7da9f43f-e2a8-4079-8b1d-d7b16d8f388e@redhat.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: AjL6nn8VDTpxcV38jjRBC9177R16lS95
-X-Proofpoint-ORIG-GUID: AjL6nn8VDTpxcV38jjRBC9177R16lS95
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 spamscore=0
- priorityscore=1501 bulkscore=0 lowpriorityscore=0 malwarescore=0
- mlxscore=0 adultscore=0 mlxlogscore=924 phishscore=0 suspectscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230076
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] KVM: Array access out of bounds
+To: Liu Jing <liujing@cmss.chinamobile.com>, mpe@ellerman.id.au
+Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
+ maddy@linux.ibm.com, linuxppc-dev@lists.ozlabs.org, kvm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241023120111.3973-1-liujing@cmss.chinamobile.com>
+From: Paolo Bonzini <pbonzini@redhat.com>
+Content-Language: en-US
+Autocrypt: addr=pbonzini@redhat.com; keydata=
+ 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
+In-Reply-To: <20241023120111.3973-1-liujing@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Wed, Oct 23, 2024 at 02:22:18PM +0200, David Hildenbrand wrote:
-> On 23.10.24 14:12, Alexander Egorenkov wrote:
-> > Here is a typo in the condition, a redundant '!' before is_ipl_type_dump().
-> > 
+On 10/23/24 14:01, Liu Jing wrote:
+> In the kvmppc_mmu_book3s_64_xlate function,
+> r = be64_to_cpu(pteg[i+1]); i used is 16 after the last loop and adding 1 will cross the line.
 > 
-> Thanks for catching these! Too much going back and forth ... :)
+> Signed-off-by: Liu Jing <liujing@cmss.chinamobile.com>
 > 
-> > Otherwise, looks very good to me.
-> 
-> Thanks for the fast review. I assume these can be fixed up when applying.
-> But please let me know if a v3 is preferred, and I can send one after
-> waiting a couple of days.
+> diff --git a/arch/powerpc/kvm/book3s_64_mmu.c b/arch/powerpc/kvm/book3s_64_mmu.c
+> index 61290282fd9e..75d2b284c4b4 100644
+> --- a/arch/powerpc/kvm/book3s_64_mmu.c
+> +++ b/arch/powerpc/kvm/book3s_64_mmu.c
+> @@ -284,11 +284,16 @@ static int kvmppc_mmu_book3s_64_xlate(struct kvm_vcpu *vcpu, gva_t eaddr,
+>   		second = true;
+>   		goto do_second;
+>   	}
+> +	if (i < 14) {
 
-Fixed typos, slightly reworded subject and commit message, and applied.
-Thanks a lot!
+This should be i <= 14 (not "<").  And in fact, if you get here you must 
+have found == true, and therefore i is indeed <= 14.  The code right 
+above is this:
+
+         if (!found) {
+                 if (second)
+                         goto no_page_found;
+                 v_val |= HPTE_V_SECONDARY;
+                 second = true;
+                 goto do_second;
+         }
+
+and  "found = true" is set just before a break statement.
+
+Paolo
+
+> +		r = be64_to_cpu(pteg[i+1]);
+> +		pp = (r & HPTE_R_PP) | key;
+> +		if (r & HPTE_R_PP0)
+> +			pp |= 8;
+> +	} else {
+> +		dprintk("KVM: Index out of bounds!\n");
+> +		goto no_page_found;
+> +	}
+>   
+> -	r = be64_to_cpu(pteg[i+1]);
+> -	pp = (r & HPTE_R_PP) | key;
+> -	if (r & HPTE_R_PP0)
+> -		pp |= 8;
+>   
+>   	gpte->eaddr = eaddr;
+>   	gpte->vpage = kvmppc_mmu_book3s_64_ea_to_vp(vcpu, eaddr, data);
+
 
