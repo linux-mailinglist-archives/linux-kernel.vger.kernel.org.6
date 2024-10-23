@@ -1,172 +1,143 @@
-Return-Path: <linux-kernel+bounces-377208-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377209-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A77F39ABB4B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:04:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBC539ABB4D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:04:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 686E82824DD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:04:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 264E81C22743
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:04:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0519D4EB45;
-	Wed, 23 Oct 2024 02:03:55 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC66A4CDEC;
+	Wed, 23 Oct 2024 02:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="eXIZhoc9"
+Received: from out-181.mta1.migadu.com (out-181.mta1.migadu.com [95.215.58.181])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A57620322;
-	Wed, 23 Oct 2024 02:03:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE63928DD0;
+	Wed, 23 Oct 2024 02:04:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729649034; cv=none; b=ZhJt9k0W9q7GsrbcEKdQURva1QjdxX0oG7k/2Q9+vudKW8B76BfplXapXoZ55wfRMc7piqEmIKRlwiVz2OwRUUDEYY24/d7Pj3oxr8JyW/SMjUIlmFT+4Iai4WT0rkuNValHgTG9MnTst7BbpR8Spia4UFruKdEogoNNEMpySxo=
+	t=1729649057; cv=none; b=NFrb3+zfOi1rd6nXai5nAY9jbGDIC4/NNLJSEDdFaWwoRBxTz4Q8F7eYvh2yit3+5vOAbGOryERzgTAPN5T5uq5X4sQJ3PgYH7UlgLI3m+HqdDOLOpQyXeuckzN6mbqKxKUve0wgNfVx+TJ4i7OIfLgLXs4EzBD2v8p+wIpRYec=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729649034; c=relaxed/simple;
-	bh=ttepsoM0aZmOx1uJFnaE6H/P6/4mIEhsZglcVNTr/JQ=;
-	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=FnLx5GhyA8z4zuxNH5FPua6PHC420aN4uRzTJOUa2ywFJ3VGkcdZZefbg+c3cSwelzhVE0MeWwxOnaYWbMF/gLNv55xkKB1qnTmmSNU6qgGzHYrHkdDNqL3a+2NuBlh68z5e1hRDO7SEaQpaldkP6WCofT35nhCM+YledgHAiZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=none smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XYC4y5156z4f3jJD;
-	Wed, 23 Oct 2024 10:03:30 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.252])
-	by mail.maildlp.com (Postfix) with ESMTP id 1FBC31A0568;
-	Wed, 23 Oct 2024 10:03:48 +0800 (CST)
-Received: from [10.174.176.117] (unknown [10.174.176.117])
-	by APP3 (Coremail) with SMTP id _Ch0CgB3zIiAWRhnKUrSEg--.30741S2;
-	Wed, 23 Oct 2024 10:03:48 +0800 (CST)
-Subject: Re: [PATCH] bpf: Fix out-of-bounds write in trie_get_next_key()
-To: Byeonguk Jeong <jungbu2855@gmail.com>,
- Daniel Borkmann <daniel@iogearbox.net>,
- Yonghong Song <yonghong.song@linux.dev>
-Cc: bpf@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
-From: Hou Tao <houtao@huaweicloud.com>
-Message-ID: <26f04a6b-4248-6898-8612-793e02712017@huaweicloud.com>
-Date: Wed, 23 Oct 2024 10:03:44 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.6.0
+	s=arc-20240116; t=1729649057; c=relaxed/simple;
+	bh=R4GGG33lUKGQnK9hCXXz7w12TC6kQJDQkpXGRbWbwpU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJDuQMFtIxB2r7ms6WOQXMOv6YgyltmemAqGpdwfhehuSQmEOlT9tZrKuVFQtufvzrvxlkshGibEW3gbrVH8XQuOuSMEpiOKM+vSyPDvDupT7tcyUw3mVmH5qHJ+Eya3RhHlhqXftGm19OaeQ38wL2gMlM5uUp1du2z5+c06eyc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=eXIZhoc9; arc=none smtp.client-ip=95.215.58.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 23 Oct 2024 02:04:07 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729649053;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=WTDEQxtL/e15npVRRblX1oHt3rcZenqRAA28VnZ+D7Q=;
+	b=eXIZhoc9TWuSBnwsavc9/J5Z7v7U1C5BMrOQyHH3rqg/Ek6KpEz+5L98tc+uhzAH3yAWew
+	6Hl+Zj+c9bioi5qtX17tmHvMgtXbdotK3zuBFfXmw4HIMxi5xd/NcYahSK69rhSlxjEn0Q
+	IMghs7iVcnFSvyFfoopgoQaGPL0eoVc=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Sean Christopherson <seanjc@google.com>
+Cc: Yosry Ahmed <yosryahmed@google.com>,
+	Matthew Wilcox <willy@infradead.org>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	Vlastimil Babka <vbabka@suse.cz>, linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org, Hugh Dickins <hughd@google.com>,
+	kvm@vger.kernel.org, Paolo Bonzini <pbonzini@redhat.com>
+Subject: Re: [PATCH v2] mm: page_alloc: move mlocked flag clearance into
+ free_pages_prepare()
+Message-ID: <ZxhZl3Qi2sRIWRIb@google.com>
+References: <20241021173455.2691973-1-roman.gushchin@linux.dev>
+ <Zxa60Ftbh8eN1MG5@casper.infradead.org>
+ <ZxcKjwhMKmnHTX8Q@google.com>
+ <ZxcgR46zpW8uVKrt@casper.infradead.org>
+ <ZxcrJHtIGckMo9Ni@google.com>
+ <CAJD7tkb2oUre-tgVyW6XgUaNfGQSSKp=QNAfB0iZoTvHcc0n0w@mail.gmail.com>
+ <ZxfHNo1dUVcOLJYK@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
 Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-Content-Language: en-US
-X-CM-TRANSID:_Ch0CgB3zIiAWRhnKUrSEg--.30741S2
-X-Coremail-Antispam: 1UD129KBjvJXoWxJw45WF1UAFyxWFWfAF1DKFg_yoW5tFWkpF
-	s8Kas7Cr48tFyDCF4FyFyUWr1kJF4xWw17JFZagry2vFy5Gr9rGr1qgFyUWFy7ury8AF4f
-	XF1qqrZIqw10gFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUkEb4IE77IF4wAFF20E14v26r1j6r4UM7CY07I20VC2zVCF04k2
-	6cxKx2IYs7xG6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4
-	vEj48ve4kI8wA2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7Cj
-	xVAFwI0_Gr1j6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x
-	0267AKxVW0oVCq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG
-	6I80ewAv7VC0I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFV
-	Cjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxk0xIA0c2IEe2xFo4CEbIxvr21lc7CjxVAaw2AF
-	wI0_JF0_Jw1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_Jr0_Gr1lx2IqxVAqx4
-	xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1VAY17CE14v26r126r1D
-	MIIYrxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Jr0_JF4lIxAIcVC0I7IYx2IY6xkF7I
-	0E14v26r1j6r4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVWU
-	JVW8JwCI42IY6I8E87Iv6xkF7I0E14v26r1j6r4UYxBIdaVFxhVjvjDU0xZFpf9x07jjVb
-	kUUUUU=
-X-CM-SenderInfo: xkrx3t3r6k3tpzhluzxrxghudrp/
+In-Reply-To: <ZxfHNo1dUVcOLJYK@google.com>
+X-Migadu-Flow: FLOW_OUT
 
+On Tue, Oct 22, 2024 at 08:39:34AM -0700, Sean Christopherson wrote:
+> On Tue, Oct 22, 2024, Yosry Ahmed wrote:
+> > On Mon, Oct 21, 2024 at 9:33 PM Roman Gushchin <roman.gushchin@linux.dev> wrote:
+> > >
+> > > On Tue, Oct 22, 2024 at 04:47:19AM +0100, Matthew Wilcox wrote:
+> > > > On Tue, Oct 22, 2024 at 02:14:39AM +0000, Roman Gushchin wrote:
+> > > > > On Mon, Oct 21, 2024 at 09:34:24PM +0100, Matthew Wilcox wrote:
+> > > > > > On Mon, Oct 21, 2024 at 05:34:55PM +0000, Roman Gushchin wrote:
+> > > > > > > Fix it by moving the mlocked flag clearance down to
+> > > > > > > free_page_prepare().
+> > > > > >
+> > > > > > Urgh, I don't like this new reference to folio in free_pages_prepare().
+> > > > > > It feels like a layering violation.  I'll think about where else we
+> > > > > > could put this.
+> > > > >
+> > > > > I agree, but it feels like it needs quite some work to do it in a nicer way,
+> > > > > no way it can be backported to older kernels. As for this fix, I don't
+> > > > > have better ideas...
+> > > >
+> > > > Well, what is KVM doing that causes this page to get mapped to userspace?
+> > > > Don't tell me to look at the reproducer as it is 403 Forbidden.  All I
+> > > > can tell is that it's freed with vfree().
+> > > >
+> > > > Is it from kvm_dirty_ring_get_page()?  That looks like the obvious thing,
+> > > > but I'd hate to spend a lot of time on it and then discover I was looking
+> > > > at the wrong thing.
+> > >
+> > > One of the pages is vcpu->run, others belong to kvm->coalesced_mmio_ring.
+> > 
+> > Looking at kvm_vcpu_fault(), it seems like we after mmap'ing the fd
+> > returned by KVM_CREATE_VCPU we can access one of the following:
+> > - vcpu->run
+> > - vcpu->arch.pio_data
+> > - vcpu->kvm->coalesced_mmio_ring
+> > - a page returned by kvm_dirty_ring_get_page()
+> > 
+> > It doesn't seem like any of these are reclaimable,
+> 
+> Correct, these are all kernel allocated pages that KVM exposes to userspace to
+> facilitate bidirectional sharing of large chunks of data.
+> 
+> > why is mlock()'ing them supported to begin with?
+> 
+> Because no one realized it would be problematic, and KVM would have had to go out
+> of its way to prevent mlock().
+> 
+> > Even if we don't want mlock() to err in this case, shouldn't we just do
+> > nothing?
+> 
+> Ideally, yes.
+> 
+> > I see a lot of checks at the beginning of mlock_fixup() to check
+> > whether we should operate on the vma, perhaps we should also check for
+> > these KVM vmas?
+> 
+> Definitely not.  KVM may be doing something unexpected, but the VMA certainly
+> isn't unique enough to warrant mm/ needing dedicated handling.
+> 
+> Focusing on KVM is likely a waste of time.  There are probably other subsystems
+> and/or drivers that .mmap() kernel allocated memory in the same way.  Odds are
+> good KVM is just the messenger, because syzkaller knows how to beat on KVM.  And
+> even if there aren't any other existing cases, nothing would prevent them from
+> coming along in the future.
 
+Yeah, I also think so.
+It seems that bpf/ringbuf.c contains another example. There are likely more.
 
-On 10/22/2024 9:45 AM, Byeonguk Jeong wrote:
-> trie_get_next_key() allocates a node stack with size trie->max_prefixlen,
-> while it writes (trie->max_prefixlen + 1) nodes to the stack when it has
-> full paths from the root to leaves. For example, consider a trie with
-> max_prefixlen is 8, and the nodes with key 0x00/0, 0x00/1, 0x00/2, ...
-> 0x00/8 inserted. Subsequent calls to trie_get_next_key with _key with
-> .prefixlen = 8 make 9 nodes be written on the node stack with size 8.
->
-> Fixes: b471f2f1de8b ("bpf: implement MAP_GET_NEXT_KEY command for LPM_TRIE map")
-> Signed-off-by: Byeonguk Jeong <jungbu2855@gmail.com>
-> ---
-
-Tested-by: Hou Tao <houtao1@huawei.com>
-
-Without the fix, there will be KASAN report as show below when dumping
-all keys in the lpm-trie through bpf_map_get_next_key().
-
-However, I have a dumb question: does it make sense to reject the
-element with prefixlen = 0 ? Because I can't think of a use case where a
-zero-length prefix will be useful.
-
-
- ==================================================================
- BUG: KASAN: slab-out-of-bounds in trie_get_next_key+0x133/0x530
- Write of size 8 at addr ffff8881076c2fc0 by task test_lpm_trie.b/446
-
- CPU: 0 UID: 0 PID: 446 Comm: test_lpm_trie.b Not tainted 6.11.0+ #52
- Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), ...
- Call Trace:
-  <TASK>
-  dump_stack_lvl+0x6e/0xb0
-  print_report+0xce/0x610
-  ? trie_get_next_key+0x133/0x530
-  ? kasan_complete_mode_report_info+0x3c/0x200
-  ? trie_get_next_key+0x133/0x530
-  kasan_report+0x9c/0xd0
-  ? trie_get_next_key+0x133/0x530
-  __asan_store8+0x81/0xb0
-  trie_get_next_key+0x133/0x530
-  __sys_bpf+0x1b03/0x3140
-  ? __pfx___sys_bpf+0x10/0x10
-  ? __pfx_vfs_write+0x10/0x10
-  ? find_held_lock+0x8e/0xb0
-  ? ksys_write+0xee/0x180
-  ? syscall_exit_to_user_mode+0xb3/0x220
-  ? mark_held_locks+0x28/0x90
-  ? mark_held_locks+0x28/0x90
-  __x64_sys_bpf+0x45/0x60
-  x64_sys_call+0x1b2a/0x20d0
-  do_syscall_64+0x5d/0x100
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
- RIP: 0033:0x7f9c5e9c9c5d
-  ......
-  </TASK>
- Allocated by task 446:
-  kasan_save_stack+0x28/0x50
-  kasan_save_track+0x14/0x30
-  kasan_save_alloc_info+0x36/0x40
-  __kasan_kmalloc+0x84/0xa0
-  __kmalloc_noprof+0x214/0x540
-  trie_get_next_key+0xa7/0x530
-  __sys_bpf+0x1b03/0x3140
-  __x64_sys_bpf+0x45/0x60
-  x64_sys_call+0x1b2a/0x20d0
-  do_syscall_64+0x5d/0x100
-  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-
- The buggy address belongs to the object at ffff8881076c2f80
-  which belongs to the cache kmalloc-rnd-09-64 of size 64
- The buggy address is located 0 bytes to the right of
-  allocated 64-byte region [ffff8881076c2f80, ffff8881076c2fc0)
-
->  kernel/bpf/lpm_trie.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->
-> diff --git a/kernel/bpf/lpm_trie.c b/kernel/bpf/lpm_trie.c
-> index 0218a5132ab5..9b60eda0f727 100644
-> --- a/kernel/bpf/lpm_trie.c
-> +++ b/kernel/bpf/lpm_trie.c
-> @@ -655,7 +655,7 @@ static int trie_get_next_key(struct bpf_map *map, void *_key, void *_next_key)
->  	if (!key || key->prefixlen > trie->max_prefixlen)
->  		goto find_leftmost;
->  
-> -	node_stack = kmalloc_array(trie->max_prefixlen,
-> +	node_stack = kmalloc_array(trie->max_prefixlen + 1,
->  				   sizeof(struct lpm_trie_node *),
->  				   GFP_ATOMIC | __GFP_NOWARN);
->  	if (!node_stack)
-
-
+So I think we have either to fix it like proposed or on the mlock side.
 
