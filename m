@@ -1,342 +1,140 @@
-Return-Path: <linux-kernel+bounces-377159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5F6369ABA9B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:38:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8F79ABA9E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:42:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0EC7C284D52
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:38:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAE31F24344
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:42:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C6341A29A;
-	Wed, 23 Oct 2024 00:38:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6FE1BDCF;
+	Wed, 23 Oct 2024 00:41:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="vR98cs1s"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ma+GZU0t"
+Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 207CB125D5;
-	Wed, 23 Oct 2024 00:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B15312B73;
+	Wed, 23 Oct 2024 00:41:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729643926; cv=none; b=crUBh/9acIuBPCmqHJh9h9XmiGejWb5e77IJN5IggkFc2amw4nxhXaBe2TrD0+BrU1EULnCgz02aTNPtTweK9255SjCCRLTLcsXymvNn9yuj/mQJ6Abvv/aul2DtkW5ltBVuIlaR5YTX3whv4+QmtoOg3ze/Gu1qPKV820A/JRA=
+	t=1729644117; cv=none; b=TWL1fAFNwAyoa1n7WufdhsIARDgfxqB3ETvCQ1kl9HWYtxAh8ebbcDitv8X9df+qvVTrfN4nUSPg8aA0XNK02S3nL8k+RoaIRhnG0qCItyyLMYIBJIleYecAeAy6xf0ZVpolxoTo5blatkWinxRHjELj7HBcvGZMn8dn18ZLKx0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729643926; c=relaxed/simple;
-	bh=hrgpu3cOSB+R1AJLvSRhSuSGxBgSV2eSaq0b+XgfTbk=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=ICRhNwuI9gkWyfA2G2N3wXrRK7G4ZV6rHHaqVsAGyd+a+hlzgXF4ziUoaHyJ0RW0kP4kF/J+4Toh9cX2c57Cl97kAVaPl5PxEXTwdOl+9Ap7bA16zwN5eEnrruKNOYOWZJpBbVDX6Ph59BCbYN/ax6zq9UWiOyHsNgTEqOhTExo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=fail smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=vR98cs1s; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1729644117; c=relaxed/simple;
+	bh=/t8Ri0bgY0VNCUZqK0akpWyNOljc7saEA/i527fuOi0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sKq0yRFG7w5eI8juj5Wazzi++9dZczT2bKmcNwm0X4ZX5zzMAMuhfQ96HqKVx5Eq0bAeeZi1UbJYRnr8HJwSgSuuZwVYL5iO2I/BJ/3OezDi7pLi9W2GTbeJwt8XZiYS+e0yvaSoqtRLghpwO4fGOfyn5M5Fz1Urvkf/QMPUAyk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ma+GZU0t; arc=none smtp.client-ip=209.85.214.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20bb39d97d1so58250685ad.2;
+        Tue, 22 Oct 2024 17:41:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729644116; x=1730248916; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=8u3IDrYvAb9YyTBydXzxhlprUyGufXaL260iyoJVT84=;
+        b=Ma+GZU0tX6oUiwzyvldqtmo/S899zZJrVybiyT0qeuozn9m22woFkImmDxSzNWDm/D
+         Z7s6VM3d4ipm1TzRzwRfL5uLi/vW/dPK75PyoLqEZGLzviFDF6jSWAMR8M7NHf8CtVOF
+         D/gNHU6PpdJq2uyw41MnsvNBEoh8yAS/MtrG/+ueY+JaSa1ufKQWi7uA+dq5KzbOEegI
+         SjT601VAWdrRc6uIIOucxKsWliIizU7+ep3oAxNJF+it93d1Qev7VrEqeCaEKX4zAgeV
+         ubxYeEwD0T4gZSa+Zzo1ZozLyUDRd/kBEosrHC1DX7jZMnKW0WSCWPghdVagVIOTYcSg
+         yWcQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729644116; x=1730248916;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=8u3IDrYvAb9YyTBydXzxhlprUyGufXaL260iyoJVT84=;
+        b=gUrkbw5TI1krfvlU5nw10suaA2tYkATdCy1MurBFETVRH1ARx669nV1iblzqN4ZIz7
+         GLljZGhDXtAwxfYIhwyclh/LgLqKWZZzlgcCeyJCB4jXFefXIJcvvcAjBBk4Rktx8+tM
+         2ZjDSRqxatTu+vYi6ddArRn3liHE/ZT3HerdYoZMRlEnv3xcTTy7aC8g0/cv3gIU1fh7
+         M1aaOv8kiMQHLHBWf5gwmJsri5UvSbnOGu/7aITHtaeLlYb0s3rThe7BlSweRuIj+04y
+         yo8LKJzs34NbB6r+KYKyzrlD9sKJS8gMbHak4rRHuE8a1z0ip3vtnfMelNBnkEfiaXJO
+         o+pQ==
+X-Forwarded-Encrypted: i=1; AJvYcCURf/q6r2EqxF4rbZjK7zuCcEt69NVlBRBXJcfdJ0JdDpvD7IiKRaLKAVBkijYh2Zzup8SF6uF8mNq/@vger.kernel.org, AJvYcCXLvYwzvZT3HdOeij1RcOb0Ay2PqFxlOUQpyhcjpde6jAUKjNzAO/yz3wxP3YRF1y2KgijxUGhLeyjuCrqD@vger.kernel.org, AJvYcCXb7Joe02r1zKsU33awW2Q4ciaib4P5hoLkcTqfuE+img6/DkM7zvwGqCHFscLDDf/XR0IqXpio@vger.kernel.org
+X-Gm-Message-State: AOJu0YzMDRI8X+MHynQQsJ1MuGJ+2G7EiTRchtlK6s5A9+r5VVbhX8Wr
+	HWrskq0vbQXEHV4pS/e2JnKbQbHBK9DWkhKR19ryo5rAbxLCDdsP
+X-Google-Smtp-Source: AGHT+IFbhgz4UwAzkmEZqrLZ7CxJnIMNJeELmjeckUQEiAROOsXtNCu++sLO4TJ9d5G/mSS8vtF+Rg==
+X-Received: by 2002:a17:903:1c6:b0:20e:95c9:4ed5 with SMTP id d9443c01a7336-20fa9de0cc3mr13205545ad.7.1729644115571;
+        Tue, 22 Oct 2024 17:41:55 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f109c4fsm47993125ad.307.2024.10.22.17.41.54
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 17:41:55 -0700 (PDT)
+Date: Wed, 23 Oct 2024 08:41:36 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
+Cc: Chen Wang <unicorn_wang@outlook.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
+Message-ID: <zum7n3656qonk4sdfu76owfs4jk2mkjrzayd57uuoqeb6iiris@635pw3mqymqd>
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-5-inochiama@gmail.com>
+ <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
+ <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
+ <65720a16-d165-4379-a01f-54340fb907df@lunn.ch>
+ <424erlm55tuorjvs2xgmanzpximvey22ufhzf3fli7trpimxih@st4yz53hpzzr>
+ <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1729643921;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=qOVebJrCvmpcO1ewjVRYqAMFpd0aJElLelEp+Ctmpwg=;
-	b=vR98cs1soCw804DUAkmxwkByateE682auq2UPOsZgO5jy2zPM3b5YtJOpPnKznpmacCgSt
-	gSXmRp6Qmf3QrITffaI1a+I/EuxFYT7r2nJzcwnrkkZtsbpPAQgLobyEHFjr6m09Aa6rfJ
-	tGn6iMqNoe5kvp+uSVZrXUyf0l+EPLf/YivODSdj9Ny6nuTyUyutyXcuG5VDCd4GGV/VVY
-	dqKPRMUw4AXmPnHm0TtrIyOuwH8V9XLzwJo3phFYm28dtV2V+8rz+lefI2Ut6ww9zm2n9F
-	lM9IG0Ma6xaKO/ylraj6s2FojFWbw5cNsBOsh5Nhvi7ZmYti/Ka7RNIk0GnZlQ==
-Date: Wed, 23 Oct 2024 02:38:41 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: FUKAUMI Naoki <naoki@radxa.com>
-Cc: linux-rockchip@lists.infradead.org, heiko@sntech.de,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, robh@kernel.org, krzk+dt@kernel.org,
- conor+dt@kernel.org, TL Lim <tllim@pine64.org>, Marek Kraus
- <gamiee@pine64.org>, Tom Cubie <tom@radxa.com>, Nicolas Frattaroli
- <frattaroli.nicolas@gmail.com>, Jonas Karlman <jonas@kwiboo.se>
-Subject: Re: [PATCH 3/3] arm64: dts: rockchip: Add new SoC dtsi for the
- RK3566T variant
-In-Reply-To: <1663957A755BE820+acc57e45-954f-4b33-90fb-47f97815db96@radxa.com>
-References: <cover.1728752527.git.dsimic@manjaro.org>
- <95fc64aaf6d3ac7124926bcb0c664406b4e5fe3d.1728752527.git.dsimic@manjaro.org>
- <CE605641E53903DC+0f0ea6b2-9423-4aa2-ac9d-652a9ac5c237@radxa.com>
- <ce54f171dfb145ce85d9a0192562e174@manjaro.org>
- <850ad8c6645b4c54bcecb7df79f9ab3a@manjaro.org>
- <1663957A755BE820+acc57e45-954f-4b33-90fb-47f97815db96@radxa.com>
-Message-ID: <2f93395f7b837ee73ad9441d10e8dbe4@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=UTF-8;
- format=flowed
-Content-Transfer-Encoding: 8bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
 
-Hello Fukaumi,
-
-On 2024-10-23 01:30, FUKAUMI Naoki wrote:
-> On 10/23/24 05:13, Dragan Simic wrote:
->> On 2024-10-14 07:16, Dragan Simic wrote:
->>> On 2024-10-14 06:38, FUKAUMI Naoki wrote:
->>>> On 10/13/24 02:04, Dragan Simic wrote:
->>>>> Add new SoC dtsi file for the RK3566T variant of the Rockchip 
->>>>> RK3566 SoC.
->>>>> The difference between the RK3566T variant and the "full-fat" 
->>>>> RK3566 variant
->>>>> is in fewer supported CPU and GPU OPPs on the RK3566T, and in the 
->>>>> absence of
->>>>> a functional NPU, which we currently don't have to worry about.
->>>>> 
->>>>> Examples of the boards based on the RK3566T include the Pine64 
->>>>> Quartz64 Zero
->>>>> SBC, [2] the Radxa ROCK 3C and the Radxa ZERO 3E/3W SBCs. 
->>>>> Unfortunately,
->>>>> Radxa doesn't mention the use of RK3566T officially, but its 
->>>>> official SBC
->>>>> specifications do state that the maximum frequency for the 
->>>>> Cortex-A55 cores
->>>>> on those SBCs is lower than the "full-fat" RK3566's 1.8 GHz, which 
->>>>> makes
->>>>> spotting the presence of the RK3566T SoC variant rather easy. 
->>>>> [3][4][5]  An
->>>>> additional, helpful cue is that Radxa handles the CPU and GPU OPPs 
->>>>> for the
->>>>> RK3566T variant separately in its downstream kernel. [6]
->>>>> 
->>>>> The CPU and GPU OPPs supported on the RK3566T SoC variant are taken 
->>>>> from the
->>>>> vendor kernel source, [1] which uses the values of the 
->>>>> "opp-supported-hw" OPP
->>>>> properties to determine which ones are supported on a particular 
->>>>> SoC variant.
->>>>> The actual values of the "opp-supported-hw" properties make it 
->>>>> rather easy
->>>>> to see what OPPs are supported on the RK3566T SoC variant, but 
->>>>> that, rather
->>>>> unfortunately, clashes with the maximum frequencies advertised 
->>>>> officially
->>>>> for the Cortex-A55 CPU cores on the above-mentioned SBCs. 
->>>>> [2][3][4][5]  The
->>>>> vendor kernel source indicates that the maximum frequency for the 
->>>>> CPU cores
->>>>> is 1.4 GHz, while the SBC specifications state that to be 1.6 GHz. 
->>>>> Unless
->>>>> that discrepancy is resolved somehow, let's take the safe approach 
->>>>> and use
->>>>> the lower maximum frequency for the CPU cores.
->>>>> 
->>>>> Update the dts files of the currently supported RK3566T-based 
->>>>> boards to use
->>>>> the new SoC dtsi for the RK3566T variant.  This actually takes the 
->>>>> CPU cores
->>>>> and the GPUs found on these boards out of their earlier overclocks, 
->>>>> but it
->>>>> also means that the officially advertised specifications 
->>>>> [2][3][4][5] of the
->>>>> highest supported frequencies for the Cortex-A55 CPU cores on these 
->>>>> boards
->>>>> may actually be wrong, as already explained above.
->>>>> 
->>>>> The correctness of the introduced changes was validated by 
->>>>> decompiling and
->>>>> comparing all affected board dtb files before and after these 
->>>>> changes.
->>>>> 
->>>>> [1] 
->>>>> https://raw.githubusercontent.com/rockchip-linux/kernel/f8b9431ee38ed561650be7092ab93f564598daa9/arch/arm64/boot/dts/rockchip/rk3568.dtsi
->>>>> [2] https://wiki.pine64.org/wiki/Quartz64
->>>>> [3] 
->>>>> https://dl.radxa.com/rock3/docs/hw/3c/radxa_rock3c_product_brief.pdf
->>>>> [4] 
->>>>> https://dl.radxa.com/zero3/docs/hw/3e/radxa_zero_3e_product_brief.pdf
->>>>> [5] 
->>>>> https://dl.radxa.com/zero3/docs/hw/3w/radxa_zero_3w_product_brief.pdf
->>>>> [6] 
->>>>> https://github.com/radxa/kernel/commit/2dfd51da472e7ebb5ef0d3db78f902454af826b8
->>>>> 
->>>>> Cc: TL Lim <tllim@pine64.org>
->>>>> Cc: Marek Kraus <gamiee@pine64.org>
->>>>> Cc: Tom Cubie <tom@radxa.com>
->>>>> Cc: FUKAUMI Naoki <naoki@radxa.com>
->>>>> Helped-by: Nicolas Frattaroli <frattaroli.nicolas@gmail.com>
->>>>> Helped-by: Jonas Karlman <jonas@kwiboo.se>
->>>>> Signed-off-by: Dragan Simic <dsimic@manjaro.org>
->>>>> ---
->>>>>   .../dts/rockchip/rk3566-radxa-zero-3.dtsi     |  2 +-
->>>>>   .../boot/dts/rockchip/rk3566-rock-3c.dts      |  2 +-
->>>>>   arch/arm64/boot/dts/rockchip/rk3566t.dtsi     | 90 
->>>>> +++++++++++++++++++
->>>>>   3 files changed, 92 insertions(+), 2 deletions(-)
->>>>>   create mode 100644 arch/arm64/boot/dts/rockchip/rk3566t.dtsi
->>>>> 
->>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi 
->>>>> b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
->>>>> index de390d92c35e..1ee5d96a46a1 100644
->>>>> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
->>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-zero-3.dtsi
->>>>> @@ -3,7 +3,7 @@
->>>>>   #include <dt-bindings/gpio/gpio.h>
->>>>>   #include <dt-bindings/leds/common.h>
->>>>>   #include <dt-bindings/soc/rockchip,vop2.h>
->>>>> -#include "rk3566.dtsi"
->>>>> +#include "rk3566t.dtsi"
->>>> 
->>>> could you drop this change for now?
->>> 
->>> This patch is also going to be used for the upcoming board dts
->>> for the Pine64 Quartz64 Zero, so there's no need for dropping it.
->>> The Quartz64 Zero definitely uses the RK3566T.
->>> 
->>>> We (Radxa) think we use RK3566.
->>> 
->>> Well, the available documentation for the Radxa ROCK 3C and ZERO
->>> 3E/3W boards doesn't say so; instead, everything points to the
->>> RK3566T being used.  The referenced commit in the Radxa downstream
->>> kernel also indicates that RK3566T is used at least on some boards.
->>> 
->>> Also, some independent testing, by reading the efuses, has showed
->>> that at least some ROCK 3C and ZERO 3E/3W boards actually have the
->>> RK3566T, which means that we should handle them all as having the
->>> RK3566T, to avoid overclocking the CPU cores and the GPU.  I'll
->>> get back to this below.
->>> 
->>>> and vendor kernel[6] refers efuse value to determine it's -T or not.
->>>> can you do similar way?
->>> 
->>> Unfortunately not at the moment, because that would require major
->>> changes to the way OPPs are handled in the upstream kernel.  Maybe
->>> we can do that at some point in the future, as part of my planned
->>> work on supporting SoC binning.
->>> 
->>> With that in place, hopefully, we could handle any ROCK 3C and ZERO
->>> 3E/3W boards that actually have the "full-fat" RK3566 variant as
->>> such, but until then, it's much safer to treat them all as having
->>> the RK3566T, and avoid the possible overclocking.
->> 
->> Just checking, and having the subsequent discussion on IRC in mind,
->> are you fine with the above-proposed approach?  Please let me know
->> if some further clarification is needed.
+On Tue, Oct 22, 2024 at 03:51:08PM +0200, Andrew Lunn wrote:
+> On Tue, Oct 22, 2024 at 06:21:49PM +0800, Inochi Amaoto wrote:
+> > On Mon, Oct 21, 2024 at 03:27:18PM +0200, Andrew Lunn wrote:
+> > > > It is related to the RGMII delay. On sg2044, when the phy 
+> > > > sets rx-delay, the interal mac is not set the same delay, 
+> > > > so this is needed to be set.
+> > > 
+> > > This is the wrong way to do it. Please look at how phy-mode should be
+> > > used, the four different "rgmii" values. Nearly everybody gets this
+> > > wrong, so there are plenty of emails from me in the netdev list about
+> > > how it should be done.
+> > > 
+> > 
+> > The phy-mode is alreay set to the "rgmii-id" and a rx delay is already
+> > set (a default tx delay is set by the phy driver). In the scenario 
+> > the extra bit is used to fix 2ns difference between the sampling clock
+> > and data. It is more like an extra setting and the kernel can not handle
+> > it by only setting the phy-mode.
 > 
-> we have no objection. please do safer way.
+> This sounds wrong.
+> 
+> So in DT you have rgmii-id? You say the PHY is doing TX delay. So you
+> pass PHY_INTERFACE_MODE_RGMII_TXID to the PHY? It is not clear from
+> this patch, i don't see any code mentioning
+> PHY_INTERFACE_MODE_RGMII_TXID. Could you point me at that code.
+> 
+> 	Andrew
 
-Great, thanks!  It's better to be on the safe side, until we get
-the full support for SoC binning in the upstream kernel.
+The phy on the board I have is YT8531, The config code is here:
+https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/motorcomm.c#n868
 
->>>>>   / {
->>>>>       chosen {
->>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts 
->>>>> b/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
->>>>> index f2cc086e5001..9a8f4f774dbc 100644
->>>>> --- a/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
->>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3566-rock-3c.dts
->>>>> @@ -5,7 +5,7 @@
->>>>>   #include <dt-bindings/leds/common.h>
->>>>>   #include <dt-bindings/pinctrl/rockchip.h>
->>>>>   #include <dt-bindings/soc/rockchip,vop2.h>
->>>>> -#include "rk3566.dtsi"
->>>>> +#include "rk3566t.dtsi"
->>>> 
->>>> same here.
->>>> 
->>>>>   / {
->>>>>       model = "Radxa ROCK 3C";
->>>>> diff --git a/arch/arm64/boot/dts/rockchip/rk3566t.dtsi 
->>>>> b/arch/arm64/boot/dts/rockchip/rk3566t.dtsi
->>>>> new file mode 100644
->>>>> index 000000000000..cd89bd3b125b
->>>>> --- /dev/null
->>>>> +++ b/arch/arm64/boot/dts/rockchip/rk3566t.dtsi
->>>>> @@ -0,0 +1,90 @@
->>>>> +// SPDX-License-Identifier: (GPL-2.0+ OR MIT)
->>>>> +
->>>>> +#include "rk3566-base.dtsi"
->>>>> +
->>>>> +/ {
->>>>> +    cpu0_opp_table: opp-table-0 {
->>>>> +        compatible = "operating-points-v2";
->>>>> +        opp-shared;
->>>>> +
->>>>> +        opp-408000000 {
->>>>> +            opp-hz = /bits/ 64 <408000000>;
->>>>> +            opp-microvolt = <850000 850000 1150000>;
->>>>> +            clock-latency-ns = <40000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-600000000 {
->>>>> +            opp-hz = /bits/ 64 <600000000>;
->>>>> +            opp-microvolt = <850000 850000 1150000>;
->>>>> +            clock-latency-ns = <40000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-816000000 {
->>>>> +            opp-hz = /bits/ 64 <816000000>;
->>>>> +            opp-microvolt = <850000 850000 1150000>;
->>>>> +            clock-latency-ns = <40000>;
->>>>> +            opp-suspend;
->>>>> +        };
->>>>> +
->>>>> +        opp-1104000000 {
->>>>> +            opp-hz = /bits/ 64 <1104000000>;
->>>>> +            opp-microvolt = <900000 900000 1150000>;
->>>>> +            clock-latency-ns = <40000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-1416000000 {
->>>>> +            opp-hz = /bits/ 64 <1416000000>;
->>>>> +            opp-microvolt = <1025000 1025000 1150000>;
->>>>> +            clock-latency-ns = <40000>;
->>>>> +        };
->>>>> +    };
->>>>> +
->>>>> +    gpu_opp_table: opp-table-1 {
->>>>> +        compatible = "operating-points-v2";
->>>>> +
->>>>> +        opp-200000000 {
->>>>> +            opp-hz = /bits/ 64 <200000000>;
->>>>> +            opp-microvolt = <850000 850000 1000000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-300000000 {
->>>>> +            opp-hz = /bits/ 64 <300000000>;
->>>>> +            opp-microvolt = <850000 850000 1000000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-400000000 {
->>>>> +            opp-hz = /bits/ 64 <400000000>;
->>>>> +            opp-microvolt = <850000 850000 1000000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-600000000 {
->>>>> +            opp-hz = /bits/ 64 <600000000>;
->>>>> +            opp-microvolt = <900000 900000 1000000>;
->>>>> +        };
->>>>> +
->>>>> +        opp-700000000 {
->>>>> +            opp-hz = /bits/ 64 <700000000>;
->>>>> +            opp-microvolt = <950000 950000 1000000>;
->>>>> +        };
->>>>> +    };
->>>>> +};
->>>>> +
->>>>> +&cpu0 {
->>>>> +    operating-points-v2 = <&cpu0_opp_table>;
->>>>> +};
->>>>> +
->>>>> +&cpu1 {
->>>>> +    operating-points-v2 = <&cpu0_opp_table>;
->>>>> +};
->>>>> +
->>>>> +&cpu2 {
->>>>> +    operating-points-v2 = <&cpu0_opp_table>;
->>>>> +};
->>>>> +
->>>>> +&cpu3 {
->>>>> +    operating-points-v2 = <&cpu0_opp_table>;
->>>>> +};
->>>>> +
->>>>> +&gpu {
->>>>> +    operating-points-v2 = <&gpu_opp_table>;
->>>>> +};
+As the syscon only has a config on rx delay. I have
+already fix the code and only set the bit when the
+mac is rgmii-rxid/id.
+
+Regards,
+Inochi.
 
