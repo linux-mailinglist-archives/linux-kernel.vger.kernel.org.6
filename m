@@ -1,103 +1,170 @@
-Return-Path: <linux-kernel+bounces-377758-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377759-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 38EEA9AC650
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:26:14 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 12C199AC65A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:26:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D83F71F21E10
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:26:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8C7C91F21B84
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:26:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3BFD415B547;
-	Wed, 23 Oct 2024 09:25:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 34CD816130B;
+	Wed, 23 Oct 2024 09:26:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b="Hs5xtLZQ"
-Received: from mail-ed1-f42.google.com (mail-ed1-f42.google.com [209.85.208.42])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GrX2D31+"
+Received: from mail-pl1-f173.google.com (mail-pl1-f173.google.com [209.85.214.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9B9B199E8D
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:25:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 454E217B51A;
+	Wed, 23 Oct 2024 09:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729675558; cv=none; b=d9pfpfU7pe6LDmx0VWISd9oc2uLcT4eQB5XklgPaoyoN21+/xXXkmthifoxcPEAdulA0J0dtmAPrQS9py8NO6sPjfcC1VZCVpgbA35ZS3cnt3l/CyTHezq/eWmm8PguKIbiCjmSzV7nvQPv7S2X6hVynrSVh4O8o+PA/PgprLIs=
+	t=1729675584; cv=none; b=LLG5BGiZHVEbwMzYjL2CtTBVaYg/0KYDv3/K7SdfXY6BZ6WZU5VoUTo/ylOTl/NjzLrk9mc2j4nJMizEJANU9ytQWalsfuuzk6dutXUPveKbgqYdb+iQwy4Zv8d65E+6Uaxl9o1BbiJWm6CSX5KJ8hptyP02vTDdwj7U+5pnXxc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729675558; c=relaxed/simple;
-	bh=5aBva71oJY4WP2gL+8hvcwG0M75spH9bjubh8VmG3c4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ch6xir4GP3wCK6nzhKr1IfLI6YA3SNw8h8ID8UJWZBQ6ZMxC+Ywqmz33TUBn+u72SRKvjW3ZKfgyoba/4svbVnOBE6VGguNdHcE0B1m6c46NZBCum/rcC5sbkZM4wNsYRC52RLhvHew5dAowqcAaW/v8b2RuvICQYF79vvVrcl4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com; spf=pass smtp.mailfrom=cloudflare.com; dkim=pass (2048-bit key) header.d=cloudflare.com header.i=@cloudflare.com header.b=Hs5xtLZQ; arc=none smtp.client-ip=209.85.208.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=cloudflare.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cloudflare.com
-Received: by mail-ed1-f42.google.com with SMTP id 4fb4d7f45d1cf-5c96df52c52so8343784a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:25:56 -0700 (PDT)
+	s=arc-20240116; t=1729675584; c=relaxed/simple;
+	bh=fJX/fTC3VkauFZFAlzEkBGg7s1aCG/bBgJYXdLFB8YE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=p2HtWlwu9cE/2uDcbZSBlWRJEFBg61UFBFQIHIf+LrbmaXijUYUGsbKDdOpGgx0mZwvbA5JS/4ca9h/iCqXN4+xwqNNSXjrmra6SeOXT2UKuvDvJroHuRYzTbmpEVycSZz/RPkkqEfpCJfLjXi18szexxrdtwRx/HqAxiXS16eU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GrX2D31+; arc=none smtp.client-ip=209.85.214.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f173.google.com with SMTP id d9443c01a7336-20c7edf2872so5118385ad.1;
+        Wed, 23 Oct 2024 02:26:23 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=cloudflare.com; s=google09082023; t=1729675555; x=1730280355; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5aBva71oJY4WP2gL+8hvcwG0M75spH9bjubh8VmG3c4=;
-        b=Hs5xtLZQQhGDExGThscHhkyPDl7Q8tsahmUM9Z4ipkiwpuT1VF/Ym9beaM2D/4+0JD
-         1PDmRzTpVedJliEn1EbGcljLiJWobLN4vzDtyDoOYFXTnGPtleYr6Yla1FMRFFijCDDN
-         Oxm2VI98/WJoOUJiRV2lsSp0QvzdTuG4vHKunc5X0jNI/gwYBjowitaUY5lWvq3mCWwd
-         P+ew+EsJ5jCDBfWqXtABR2ZnBwJmyJmhkGIxBOr8dD49ahIpa3dBAhPZ/uMS6ebsMDQH
-         LGVMvO5ogVTPwNHjriDx7scJOTaHnM4wR2BnDc5tkHA3T28EA6dXleXgFGIcr4W7QfFv
-         eO/w==
+        d=gmail.com; s=20230601; t=1729675582; x=1730280382; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=uqMTUrlhS9c2NaDPYna570q7ZTXS8TJm8rks4GyeT0E=;
+        b=GrX2D31+0ZWyDFswD1r0DtNFC12IjJqXS2MJId2iavnbbU+hd7BQvfBaQT9/lmUqza
+         yuSiTlCZjsUTej0Ij3fqG2cAxw0YzLrj3yz7+vtWZsGrvqAuR/+nevkLDE4e9CMM7roC
+         TS8HSPyMEvckK9Aqr99TvlabwDCSZp7KERR+Tnv2p3q9+hkXQJNIxp+EXQG+bimVN2gi
+         ZIBUIND4j8gBXzmsWFg1LkSHLUZAtlpjlmyO+FZSS+hZUdo/Q3EuCwgJ13t38XL6yyly
+         CFUnyO4PCvxhKydYrJ4QwagQDqdpr9AB4lNVGG/OEuS9Rr7M0OxaVO3VLrD2W7Zrj3NJ
+         RQtw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729675555; x=1730280355;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5aBva71oJY4WP2gL+8hvcwG0M75spH9bjubh8VmG3c4=;
-        b=hQ1LSx3MpB/0glQ6Wzb/UnEn8j0iaI4e1zZWM+I2RUhkZsHrfnvBkm5qAOYb9diRdu
-         MI7YZNT+w22aouYW/umH9ry2QSUYWjt2IgzJvVpRpqWUddqsiuWhm2BSmoZG/7hUMWyE
-         2+hy6/egQsiYwmUcsyzPHiQH2lnLUXJJCrOOWSYImAEHhuUxE06kIVq65JcwUVA/wgJz
-         /XR1/zKchJIhGfrWnwt4jDNe2KHlphcMbylsnSivthIeCxDB7Pyn8DQiEpZUhDYkBS8h
-         YS3PwdEptp0C/H//9Tx2j7RYlwQROXEpsndyCpSB5uEZJezUWHQJ+NBTlg1faAywJxxp
-         5O2w==
-X-Forwarded-Encrypted: i=1; AJvYcCUX99XZb4HP9UQG2sjPX6Z41FM+KlHe/6U7zX/ASPu6ahk3vHqbtzReiHabbMw1hvNwoioaOUdybonyb0M=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw30X3o4jUI0JvgBcmuOS0fxaoYbwV/+dgE4mD8Qn/doQkrq4ld
-	oK7qKqyEB3fRZbKu3nlz4toc2nboxPP2WHHFyFXWm/4ief9uVbWVitBP6eTWv96Kp0isZNtBD23
-	taz37Li9XM1QQlJqGnNuTbIHDjiRvjwx8CUZNxw==
-X-Google-Smtp-Source: AGHT+IEpffBs9Fl27XgLD9bGDxRxP6NYVE4mf17lV6l+PcB9+2lyHK8Tl1N5ohZwG3uhDUsekG0wliB5I3PyiWpjlKg=
-X-Received: by 2002:a17:907:720f:b0:a9a:3da9:6a02 with SMTP id
- a640c23a62f3a-a9abf96f0dfmr184213266b.60.1729675555052; Wed, 23 Oct 2024
- 02:25:55 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729675582; x=1730280382;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=uqMTUrlhS9c2NaDPYna570q7ZTXS8TJm8rks4GyeT0E=;
+        b=PimOLQw5ip7IYnd5M2ckgWLH2Skx9FpzyALvI4RhN37dcHR4Fc25i1jcVvUWHYCyo2
+         yfDHw1Qw79WcvDx7QthONl+3FzHp5+i3X5+SSQcgJXjeXBLZc7kC8cJGp9kfTCzrvySj
+         U9t+wUg32Zfp6njE4LbjLcHsRUrdqnr/SkBC/XnmTNgeMAURy5qMaRa9BQveEogD0qGG
+         xxzco9GaC9E0Qz1SzHhUWLzgJlYD8BOBH61HYRcL5zSNuqmeUM56Cp6Ilzmr2Caa1khb
+         utYwOqjDK2wn53JbHvPv+lu7eLB04m7IX2nz2nQca+jaC+DyOrGsjfc7d3aleQHHOAKR
+         TcOA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtiL3aSyJRRjfOae9CzaRcYd/nuBkxmqFWdcg70izZmcHe0hjFRmCTmjNWot/ifcb4q4lwKOcaSB69@vger.kernel.org, AJvYcCWeRry39Tn4u4MD76YjNOST3e75kaFuBV05ktyngLVsIX1s2te7JezmtuLoWhKI89lwtO6J+rwiEDKzMfHP@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy4yXQn4G0QqznpDWSeMLT2OsktEJTEY3t/sPwkyW5RSXP6gZxI
+	Aj/CbXQhl+Wd0895DoU6dubHD5UpppjHky1es9J6gXEu7NRwA+mG
+X-Google-Smtp-Source: AGHT+IFfo4At+Jz5FFc0TuU6S0hz6vT2tNATHOeyiCdyh2kU4xwiqLCx7UFSkT/v7yeJ2rOtQj9TRg==
+X-Received: by 2002:a17:902:e74d:b0:20c:9026:93a with SMTP id d9443c01a7336-20e970c63c8mr103663025ad.19.1729675582581;
+        Wed, 23 Oct 2024 02:26:22 -0700 (PDT)
+Received: from localhost.localdomain (60-250-192-107.hinet-ip.hinet.net. [60.250.192.107])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0bd376sm54041635ad.132.2024.10.23.02.26.20
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 02:26:22 -0700 (PDT)
+From: Hui-Ping Chen <hpchen0nvt@gmail.com>
+To: miquel.raynal@bootlin.com,
+	richard@nod.at,
+	vigneshr@ti.com,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	nikita.shubin@maquefel.me,
+	arnd@arndb.de,
+	vkoul@kernel.org,
+	esben@geanix.com
+Cc: linux-arm-kernel@lists.infradead.org,
+	linux-mtd@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Hui-Ping Chen <hpchen0nvt@gmail.com>
+Subject: [PATCH v8 0/2] Add support for nuvoton ma35 nand controller
+Date: Wed, 23 Oct 2024 09:26:15 +0000
+Message-Id: <20241023092617.108021-1-hpchen0nvt@gmail.com>
+X-Mailer: git-send-email 2.25.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020051315.356103-1-yuzhao@google.com> <ZxYNLb0CiZyw31_q@tiehlicka>
- <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
- <ZxaOo59ZwXoCduhG@tiehlicka> <82e6d623-bbf3-4dd8-af32-fdfc120fc759@suse.cz>
- <CAOUHufanF3VaLzq6o_V+-+iPvB4Oj-xHwD+Rm-gmKS02h8Dw=g@mail.gmail.com> <97ccf48e-f30c-4abd-b8ff-2b5310a8b60f@suse.cz>
-In-Reply-To: <97ccf48e-f30c-4abd-b8ff-2b5310a8b60f@suse.cz>
-From: Matt Fleming <mfleming@cloudflare.com>
-Date: Wed, 23 Oct 2024 10:25:43 +0100
-Message-ID: <CAGis_TUHyH8mM4q+pWJH+LfYchQkjL6Pap4sNfLA=HRqg50KAQ@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
- free highatomic
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Yu Zhao <yuzhao@google.com>, Michal Hocko <mhocko@suse.com>, 
-	Andrew Morton <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>, linux-mm@kvack.org, 
-	linux-kernel@vger.kernel.org, Link Lin <linkl@google.com>, 
-	Mel Gorman <mgorman@techsingularity.net>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 8:35=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> I thought the alloc demand is only blocked on the pessimistic watermark
-> calculation. Usable free pages exist, but the allocation is not allowed t=
-o
-> use them.
+This patch series adds the mtd nand driver for the nuvoton ma35 ARMv8 SoC.
+It includes DT binding documentation and the ma35 mtd nand driver.
 
-I'm confused -- I thought the problem was the inverse of your
-statement: the allocation is attempted because
-__zone_watermark_unusable_free() claims the highatomic pages are free
-but they're not?
+v8:
+  - Update ma35d1 mtd nand driver
+    - Rename to nuvoton-ma35d1-nand-controller.c.
+    - Use switch case instead of if else.
+    - Move some parameters to be set during initialization.
+    - Fix the ecc.read_page return value issue.
+    - Add enable/disable ECC engine before and after reading/writing the page.
+    - Return IRQ_NONE if (isr & INT_DMA) == 0.
+    - Move the HW ECC related settings to ON_HOST.
+    - Move hw_init() to probe.
+
+v7:
+  - Update nuvoton,ma35d1-nand.yaml
+    - Remove required 'nand-ecc-step-size' and 'nand-ecc-strength'.
+    - Add 'reg' for chip select.
+  - Update ma35d1 mtd nand driver
+    - Update space and comments style.
+    - Add chip select setting from DT.
+    - Add switch case which supports various ECC configurations.
+    - Set reset before NAND controller enable.
+
+v6:
+  - Update ma35d1 mtd nand driver
+    - Remove extra blank lines and add comments.
+
+v5:
+  - Update ma35d1 mtd nand driver
+    - Remove unnecessary definitions and comments.
+    - Modified DMA API call sequence.
+    - Move the ECC check out of the interrupt handler.
+      Check it after reading a page.
+
+v4:
+  - Update nuvoton,ma35d1-nand.yaml
+    - rename 'nuvoton,ma35d1-nand' to 'nuvoton,ma35d1-nand-controller'.
+  - Update ma35d1 mtd nand driver
+    - Rewrite the NAND driver using the exec_op API.
+
+v3:
+  - Update ma35d1 mtd nand driver
+    - Release IRQ handler.
+    - Remove unused functions.
+    - Remove '.owner'.
+
+v2:
+  - Update nuvoton,ma35d1-nand.yaml
+    - Adjust the order and remove any unnecessary items.
+    - Add 'nand-ecc-step-size' and 'nand-ecc-strength' to the required list.
+  - Update ma35d1 mtd nand driver
+    - Fix coding style.
+    - Use 'devm_clk_get' instead of 'of_clk_get'.
+    - Use 'dev_err_probe' instead of 'dev_err'.
+    - Remove 'pr_info' and 'of_match_ptr'.
+    - Remove 'module_init' and 'module_exit'.
+
+
+
+Hui-Ping Chen (2):
+  dt-bindings: mtd: nuvoton,ma35d1-nand: add new bindings
+  mtd: rawnand: nuvoton: add new driver for the Nuvoton MA35 SoC
+
+ .../bindings/mtd/nuvoton,ma35d1-nand.yaml     |  95 ++
+ drivers/mtd/nand/raw/Kconfig                  |   8 +
+ drivers/mtd/nand/raw/Makefile                 |   1 +
+ .../nand/raw/nuvoton-ma35d1-nand-controller.c | 932 ++++++++++++++++++
+ 4 files changed, 1036 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mtd/nuvoton,ma35d1-nand.yaml
+ create mode 100644 drivers/mtd/nand/raw/nuvoton-ma35d1-nand-controller.c
+
+-- 
+2.25.1
+
 
