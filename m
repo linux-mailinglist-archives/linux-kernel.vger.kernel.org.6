@@ -1,74 +1,75 @@
-Return-Path: <linux-kernel+bounces-378495-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378497-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 140209AD15F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:50:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B0E939AD170
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:50:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8D48284E92
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:50:22 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DF8881C22195
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:50:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 313881CEEA2;
-	Wed, 23 Oct 2024 16:50:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 94A051CF7D9;
+	Wed, 23 Oct 2024 16:50:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="AoNGYgDR"
-Received: from mail-wr1-f46.google.com (mail-wr1-f46.google.com [209.85.221.46])
+	dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b="GLtAHcO+"
+Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CEC12F399
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:50:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BDE61CDFB9
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:50:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702212; cv=none; b=Mqb9ZtPrHj4Ss4trWya5AeCfULA54M3Ep4xJ6BIidQubLxYI4dsCSarHRKzcYMxIYoIW375rMvekghwsS9rqw0+6uuhbjz7pQVxq+r10XW8Qh4JAgoA46cJ0jHksRrw2pejbovMRVZFEHGmZUAOLbkgXTYYRz93fd6KN4h3G7pY=
+	t=1729702214; cv=none; b=A/9y8wj1jj93Cnk51A2ebMd6oOhYPm8HG9Kqts9zQX16oEY4wj5n21qfUUPxWmtzaHkKBSUVvGiPQGp4Q83Y833suGPcjzRDnPvO+W+OKVomqksdNggv1MwIys1k6aNWNyI0FXKeuGrLiBm2cRunhAmMcU7Hrr1A81SuosejaN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702212; c=relaxed/simple;
-	bh=91Jie+ws5L+cGWdYzocLxQpP0tGJPoUasR/nJIADUQc=;
+	s=arc-20240116; t=1729702214; c=relaxed/simple;
+	bh=z2Q86fa2Du2WubOBnMYnrPBais8ImpM0cuAR16G5yvQ=;
 	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=r3wj4TIv1HJCqlbFt5SZFTaoI+eJISABaNGCiSgBObMKUCkUNsOg0dUu4KzezdEY8IctEn+DZBp8JwQspp/SEdujV+06aE5pV48xV+YzJLj0W10VWzxWu4QxlepLpSnpWdFovT5hUjPlqM86rANlGWPQq8GQBN2CGLq7vtF58xI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=AoNGYgDR; arc=none smtp.client-ip=209.85.221.46
+	 In-Reply-To:To:Cc; b=JcWg5l2jaTDtr87Xk6j9QlS9wXkWzdUXKZabw/G7Rh9mjtaAWWpL07XUrTdmmjBufsFgloWIzZ2HItcYCUSXvHbLnnrHyqz2vT7ch08Q5bv828S51kNPnAa3TkbdLtafpUg/KBc8SMdcpujJ2Gc8HC0fmlnB/sYNS5FmmZ081O0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com; spf=pass smtp.mailfrom=raspberrypi.com; dkim=pass (2048-bit key) header.d=raspberrypi.com header.i=@raspberrypi.com header.b=GLtAHcO+; arc=none smtp.client-ip=209.85.221.50
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=raspberrypi.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=raspberrypi.com
-Received: by mail-wr1-f46.google.com with SMTP id ffacd0b85a97d-37d4d1b48f3so5079414f8f.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:50:10 -0700 (PDT)
+Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d518f9abcso4769533f8f.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:50:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=raspberrypi.com; s=google; t=1729702209; x=1730307009; darn=vger.kernel.org;
+        d=raspberrypi.com; s=google; t=1729702210; x=1730307010; darn=vger.kernel.org;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=m0VXG7M0+edMYKBQpiJHMGtp1VEyRPMm6kVJ0JBtPBU=;
-        b=AoNGYgDRf4cCSy/ypmkqOeYZGGHj0JpGHYovU2YZWsN+BXHHSlLH/6uAj841BB+tfq
-         GpHMQdcMJFzpORh1GyKbZV/0QlytVt71Tr0eVWjdFRaAo54UukceSq5HAIjXautmQb/I
-         lWOSMhEoDFl1sTtFPEFe8zGb8pTSfjwGvsYgfUXrMYcn6iRJmA6CpNz+aG1Kv902jspB
-         XrfVqgM/piC+rmsSGWQBqE5c8xW3ybhTJg1fZguqmO3pCaGhzDaXwY07UQNhF4SfTM2Z
-         oaV84G5Ltc15MkZvjGDuU3j6gcNARUKzfNiJvJPcWcAnrEYnip6OyjCkiqtzNp+RDU/X
-         S9sg==
+        bh=5WK3Wcz0LjTp23A2ibh778TvWVk0jVp3LvtNmMQecJo=;
+        b=GLtAHcO+e1HFV5Tnr97fdErOsmw5Ie8YWCkCRP2bblDohwQJ+JDTjMfqNrqjE3Qe8x
+         OBu9G+1uPncPJgoku+rBh3cGnwhQLwkynsg2A6f+6eSIEXu6NINR+Un5ALxKGVmwbg81
+         cPbF97IXEjJK6fNEDWGFx+oudqR2Qa4FK8jpsgk5qWISX+jkR3u359HmD7QYZyUfV1Ff
+         yR1V8PYPexyrVNepFQ9qi5QAYF0KCuLSXIpapfmBXPl+vqVmcmUxHFJwdPSBFSeis8Ki
+         itVyNo5517W2B56ORIU7q1troRRjOS8veUX4RbVsw0PJyTK1Fnsx3U0fjx35pjE7ZXsl
+         XqXw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729702209; x=1730307009;
+        d=1e100.net; s=20230601; t=1729702210; x=1730307010;
         h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
          :mime-version:subject:date:from:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=m0VXG7M0+edMYKBQpiJHMGtp1VEyRPMm6kVJ0JBtPBU=;
-        b=Pt2msi6pHEqXR4rJSfmEW4kh1sUvdRMLiYcBfugpdDermYMVZS0ot6cf4+Xby4LqJ1
-         UECPNpIQ1LNCOJSGkX3hMwjHoeNvUBoUsF1fnni5OczXuFaQOqUY4i6m+AblIeXUAQqf
-         mJhMMVUMc6BF/KA+P6qF4G6sWfh+CCCOC49lmC1jaOiWDb9EwZSV/FDn332E+tOKt3lh
-         ki/5ipnq1AKrBPCm9T5zr8wdIHom/DNwIodvB5EWvlmXxLyrn+O8PIO7Zs/tZTVgsuuw
-         ikm0gtUQqlTM4nN5DGf/7tboYhdIhpO+xu4euOAOnQub01unC8ONsOV8TdmqQujURL1g
-         KqRQ==
-X-Forwarded-Encrypted: i=1; AJvYcCX7BJrvdUZwi13j3Kw4bAGFQYPoF9O3VxAm8DiaJgz3u/WoShCKF7Rx6u81uobQeZnJzZYoD2sjwFNOu+0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+j9BNgBjuDQnQgK2uDLXG6CVfiUcwTvqSvWNcIG8ta+B5jp2p
-	w2BLhk7pJ4Wlf96emdnDH/iCw3ird3nXIepA0Paam4BUNdJuyf2EO+bFO3YhcQs=
-X-Google-Smtp-Source: AGHT+IERCELF/aNULiFYaJhFKCUgkKnhHnsR2hcb6th/CbnCs93DrujrebahUME8WNgVcpsKAm29Eg==
-X-Received: by 2002:a05:6000:1887:b0:37c:f933:48a9 with SMTP id ffacd0b85a97d-37efcef117cmr2285226f8f.1.1729702209268;
-        Wed, 23 Oct 2024 09:50:09 -0700 (PDT)
+        bh=5WK3Wcz0LjTp23A2ibh778TvWVk0jVp3LvtNmMQecJo=;
+        b=b9BAOv0VLb6isyyujGQ+Tcvb23JolPkWwcsnwHEV43tST2p7+5+5gnXjlPkwASZ+iV
+         O10EpeXZyo6xlVIe+fdZE1Na02GA4yJlEIJTRcqtqzwbAvWkXjUfBIq6aa/nXWH/L960
+         zVUyO3KKm5SttbwkKoscBnM1Ai6/noVUHR+yhcG+0CE+QKKJJXA0WrST86/D2oOykGoI
+         hu2wIMT+ipCaZH/jb6jQfm3bbBRi5TD7tkVo8j64HdFESkNMpqz3HVddSyowQt6dlD4f
+         zDOKHY+95WF4J8YeBp33ixZC9lf6UqvDVpxoHV4tDGWHFLnPbMsc6AxGdqH+ziTPj5ht
+         DDGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVgH5ilGpLp/YKZmuLBD7l6K8PWNd02M3S7sKdmFiOwFTLrWpn8FbqKgOJ6wD5wmPunQ1M/bhMDePpMvus=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywo/KmN5JCKT/eJRiTwO/52NBgIGI8TQLbI3Y+awE4MkaouPaLz
+	wF6hjzpSFYClKPELIhF8N2wD83QsDwvxZ1eza0NtBQwbxlcDU00RYP/+MLf/9ak=
+X-Google-Smtp-Source: AGHT+IF8V/3kWZEsM033mvmCNVLqu8ni3b3xlel5RuPa1mpKVOt5Sj94RWpbn1HR47WB9YguGyyFfQ==
+X-Received: by 2002:a5d:420f:0:b0:37d:47d8:5fff with SMTP id ffacd0b85a97d-37efcf7ecc8mr1949275f8f.37.1729702210382;
+        Wed, 23 Oct 2024 09:50:10 -0700 (PDT)
 Received: from [127.0.1.1] ([2a00:1098:3142:e::8])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.08
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c50445sm21642035e9.39.2024.10.23.09.50.09
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 09:50:08 -0700 (PDT)
+        Wed, 23 Oct 2024 09:50:09 -0700 (PDT)
 From: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Date: Wed, 23 Oct 2024 17:49:58 +0100
-Subject: [PATCH 01/37] drm/vc4: Limit max_bpc to 8 on Pi0-3
+Date: Wed, 23 Oct 2024 17:49:59 +0100
+Subject: [PATCH 02/37] drm/vc4: Use of_device_get_match_data to set
+ generation
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -77,7 +78,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241023-drm-vc4-2712-support-v1-1-1cc2d5594907@raspberrypi.com>
+Message-Id: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
 References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
 In-Reply-To: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
 To: Maxime Ripard <mripard@kernel.org>, 
@@ -101,32 +102,44 @@ Cc: dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
  Dave Stevenson <dave.stevenson@raspberrypi.com>
 X-Mailer: b4 0.14.1
 
-Pi 0-3 have no deep colour support and only 24bpp output,
-so max_bpc should remain as 8, and no HDR metadata property
-should be registered.
+Use of_device_get_match_data to retrieve the generation value
+as set in the struct of_device_id, rather than manually comparing
+compatible strings.
 
-Fixes: ba8c0faebbb0 ("drm/vc4: hdmi: Enable 10/12 bpc output")
 Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 ---
- drivers/gpu/drm/vc4/vc4_hdmi.c | 5 +++++
- 1 file changed, 5 insertions(+)
+ drivers/gpu/drm/vc4/vc4_drv.c | 11 ++++-------
+ 1 file changed, 4 insertions(+), 7 deletions(-)
 
-diff --git a/drivers/gpu/drm/vc4/vc4_hdmi.c b/drivers/gpu/drm/vc4/vc4_hdmi.c
-index 62b82b1eeb36..6ebcc38be291 100644
---- a/drivers/gpu/drm/vc4/vc4_hdmi.c
-+++ b/drivers/gpu/drm/vc4/vc4_hdmi.c
-@@ -640,6 +640,11 @@ static int vc4_hdmi_connector_init(struct drm_device *dev,
- 	if (ret)
- 		return ret;
+diff --git a/drivers/gpu/drm/vc4/vc4_drv.c b/drivers/gpu/drm/vc4/vc4_drv.c
+index d47e5967592f..3099292f22a5 100644
+--- a/drivers/gpu/drm/vc4/vc4_drv.c
++++ b/drivers/gpu/drm/vc4/vc4_drv.c
+@@ -300,10 +300,7 @@ static int vc4_drm_bind(struct device *dev)
  
-+	if (vc4_hdmi->variant->supports_hdr)
-+		drm_connector_attach_max_bpc_property(connector, 8, 12);
-+	else
-+		drm_connector_attach_max_bpc_property(connector, 8, 8);
-+
- 	drm_connector_attach_encoder(connector, encoder);
+ 	dev->coherent_dma_mask = DMA_BIT_MASK(32);
  
- 	return 0;
+-	if (of_device_is_compatible(dev->of_node, "brcm,bcm2711-vc5"))
+-		gen = VC4_GEN_5;
+-	else
+-		gen = VC4_GEN_4;
++	gen = (enum vc4_gen)of_device_get_match_data(dev);
+ 
+ 	if (gen > VC4_GEN_4)
+ 		driver = &vc5_drm_driver;
+@@ -462,9 +459,9 @@ static void vc4_platform_drm_shutdown(struct platform_device *pdev)
+ }
+ 
+ static const struct of_device_id vc4_of_match[] = {
+-	{ .compatible = "brcm,bcm2711-vc5", },
+-	{ .compatible = "brcm,bcm2835-vc4", },
+-	{ .compatible = "brcm,cygnus-vc4", },
++	{ .compatible = "brcm,bcm2711-vc5", .data = (void *)VC4_GEN_5 },
++	{ .compatible = "brcm,bcm2835-vc4", .data = (void *)VC4_GEN_4 },
++	{ .compatible = "brcm,cygnus-vc4", .data = (void *)VC4_GEN_4 },
+ 	{},
+ };
+ MODULE_DEVICE_TABLE(of, vc4_of_match);
 
 -- 
 2.34.1
