@@ -1,164 +1,166 @@
-Return-Path: <linux-kernel+bounces-378489-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378490-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF84A9AD147
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:46:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2EFD19AD14B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:48:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B4B32843C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:46:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5DD881C213CC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:48:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 440131CBE8C;
-	Wed, 23 Oct 2024 16:46:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 069E31CDFAF;
+	Wed, 23 Oct 2024 16:47:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="QePzkmua"
-Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="d7vl8CU2"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D60962171;
-	Wed, 23 Oct 2024 16:46:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B163C1AB6F8;
+	Wed, 23 Oct 2024 16:47:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729702009; cv=none; b=h+FXTRqqEOaLL473hmNh5pa+WOE5Nxjn79W0onWINHfn+KbfOrmSNN1XqiVaagxhyA0jwpco8/olqguAAqOO9hgnOA4uotKtU6guAhGSJ+lMMKBoiA29kbN/T90KJvnxLtVW8lak7JueYb/BTF0GCJ8JSIWgf9M5PKNTb8qQcKM=
+	t=1729702077; cv=none; b=PooeEEkFhJDoq4ZnSedZ7AqnbNDL79uw3rVgPlMIVTr9CtYpoYMODiKm3GICb3txaC6TrYk4/IWuN7ZdNBmQM7TzI30KVhMPXNGT1rGbQi+8moY4jVhRBPU0TjLhIk68JVqG3BgnmzqToH0UiVZx5bZmsqw/R11eOwIk6b+IF1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729702009; c=relaxed/simple;
-	bh=kn5ZGlk7ek0K5Gdps0HnkcelsHkik8tEdXHBw750huY=;
-	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
-	 Message-Id:References:To; b=CqFYSVQkRjU7NPNTm4n45zX1yO1OVU075JnIQYjnmS4/bH9oB5v6M9gD9ajfax0CFjeZzXaZLAt00BghvJQt4Ye/OusIUdabH7487sz/9KuCtUDMk+oLtIDVGMW55v4TPzyKO8s9biMmv8fVOXwuJeTxG+Go9dCoV5ym8pMxdiU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=QePzkmua; arc=none smtp.client-ip=209.85.214.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-207115e3056so60416705ad.2;
-        Wed, 23 Oct 2024 09:46:48 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729702008; x=1730306808; darn=vger.kernel.org;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Gu0N00bd78y9tBZZj4xR9kjahnxtIjbsWQjHNz0o880=;
-        b=QePzkmual9YofOvZ/ooq50/HTgjQyAIKnHakti2gqoKy3RUcv1i78rIzDy54Abdnxd
-         pCaR3jPh6UVP/qyn7rKiilc4qRE/0/8SegJE1CSnG+kHuMS3dihgwMjX5U4lTlA2iSHy
-         oqc7tEBqWXZ+AV3upt7cxIff9v/ww/MaQxsnIMwma5xXClz4YeUZHK6ckWSqmBxvxh8H
-         Fc3mIsa7cmO22V5Nxx+iCqI7XYCWFBazZNkfWkEs5f/8pSY2N1BuAyKQSMWvppixUJZE
-         fP0Lxy4cTnw4GunYxxWhhXio3gPPKJicWRuHAHTGGAPqcSQOJYRhTP3j69kf+W8rTaql
-         ZpPg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729702008; x=1730306808;
-        h=to:references:message-id:content-transfer-encoding:cc:date
-         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Gu0N00bd78y9tBZZj4xR9kjahnxtIjbsWQjHNz0o880=;
-        b=gnOAXYGb9rRkQW6Ll1PyP5IrIluqheTHvClavftlZmb+hmEwPDVzQSaLltRf3vZnQK
-         hmQr34BGNUe8/EVZs8R5iD2kIwjEeZ/cvs+kAaTF889nI4DM9xX5BXpJcpgGIeqxRNP/
-         7ywYhea98VopunERDavE0f0lJq+eF8TuU/9u7EBHbbqz0FcerNBZIS2QUbIW+tetYIQR
-         jDRCcaSwlKpKVuMwa4uPC/jlzQ0nSrtKLUL1LdJVdsOmt5q/HF78yDdoD9tWVeBXbYXu
-         QlP44mJfzFuhJb7ysjuXGIlPKRcreEeCAVcArETSHMq//aOW2UzrHB6fmR6DUGLyMpjZ
-         yfsQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxD7EiDoLQF1VUdU8MQmI9Pmoj+NUx9JrdQQfnWv9BpJsvlZ1gUYzWUoAZo1JbCiShyFUl+uJ7l+fPJ5o=@vger.kernel.org, AJvYcCW+vHJdtfnqgP1LBBDm+wd6qWZZ4/tFqQ6ThsHRBJTJlyp4ixVHAneWmSvcdr9kIHRtpPu/@vger.kernel.org
-X-Gm-Message-State: AOJu0YyNr7ghfq0mkefeqDwx22lnzgL1N45RaQr3HAbvv91bKYffQ928
-	1judeKoL49S84VxRuiKIAC/ABUqGeSH5fjX5Bi7JWIm3EPybDDj0
-X-Google-Smtp-Source: AGHT+IF6kLkgcwRhc+IcJ3YxlaV+iE75CPwrx3HCRv5aGZLtkxjtTWU+h57RUCDyWi8KRWqdQdXZPg==
-X-Received: by 2002:a17:902:e054:b0:20c:bb35:dae2 with SMTP id d9443c01a7336-20fa9e5b431mr30251915ad.28.1729702007606;
-        Wed, 23 Oct 2024 09:46:47 -0700 (PDT)
-Received: from smtpclient.apple ([2402:d0c0:11:86::1])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0db968sm59229355ad.200.2024.10.23.09.46.44
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Wed, 23 Oct 2024 09:46:47 -0700 (PDT)
-Content-Type: text/plain;
-	charset=utf-8
+	s=arc-20240116; t=1729702077; c=relaxed/simple;
+	bh=mmiQZ3L89WBQ/VbA5HZ+3oDu2nJREkMgINMncEfWUwI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bo6qPn+vhPX5poMdzkb5xsvnrKDDTlz3KGY+UENABnJriDazxpEpvVqGhmSZy+yYK9FDa1mqfs2ltoClZwX9dhQ304rppaOJXqDCEHj/GOKFCsnA349W8z4U6sX5i5Ybf7QmZsqLAsIbpBZLoZ6SCEcvz3Gz6f0Ehbw+RrJtlPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=d7vl8CU2; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729702076; x=1761238076;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=mmiQZ3L89WBQ/VbA5HZ+3oDu2nJREkMgINMncEfWUwI=;
+  b=d7vl8CU2lxyNcszfW2A5Kv/KumPpwxZ9W2Nkxu2dqHKcR2E2mc5Ilyi/
+   ugnoD5oUmcjivW3HUNCHknyBv/pNOGnrXpU58/9f6rbYY4LJRDmoKZfes
+   MQZ6lydews5dhSPqBhx6ZXnRofk4aiQZheXk2TnY2wapRz60m/Jhsp15Z
+   vCohZDIgUuHF2WcWUSEIaahCHiYblFv5dWr+USYdvn8Hv6K3mxvJOsZVq
+   fRKWgzYx2kaGJ1JooX6f+mX5kpQT+ewmpoyUR7sERnoXQFeZdWO4p7GDs
+   UBve65DcFH/RWDAIjmX39sp3qBRLT//02GSNKqMDt/v9pKclM1iUZGC7I
+   Q==;
+X-CSE-ConnectionGUID: 0G9vVKDTRKSOUoFeeH/srQ==
+X-CSE-MsgGUID: x9oU5cPPRi2WHCmZuC667A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="29410284"
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="29410284"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 09:47:55 -0700
+X-CSE-ConnectionGUID: Swm1w9nFSIG9FP4egznOew==
+X-CSE-MsgGUID: M+UL1oY2S8GCFS+3nYGsIg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,226,1725346800"; 
+   d="scan'208";a="84270827"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 23 Oct 2024 09:47:49 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3eWR-000VB2-26;
+	Wed, 23 Oct 2024 16:47:47 +0000
+Date: Thu, 24 Oct 2024 00:47:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Li Li <dualli@chromium.org>, dualli@google.com, corbet@lwn.net,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, donald.hunter@gmail.com,
+	gregkh@linuxfoundation.org, arve@android.com, tkjos@android.com,
+	maco@android.com, joel@joelfernandes.org, brauner@kernel.org,
+	cmllamas@google.com, surenb@google.com, arnd@arndb.de,
+	masahiroy@kernel.org, linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org, netdev@vger.kernel.org,
+	hridya@google.com, smoreland@google.com
+Cc: oe-kbuild-all@lists.linux.dev, kernel-team@android.com
+Subject: Re: [PATCH v3 1/1] binder: report txn errors via generic netlink
+Message-ID: <202410240012.MJJTBFCx-lkp@intel.com>
+References: <20241021182821.1259487-2-dualli@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
-Subject: Re: [PATCH rcu] srcu: Guarantee non-negative return value from
- srcu_read_lock()
-From: Alan Huang <mmpgouride@gmail.com>
-In-Reply-To: <CAEf4BzaqXhq3q5kXSAgH7H3tibC3wFU7R9zr5fcwcddT-r6wUw@mail.gmail.com>
-Date: Thu, 24 Oct 2024 00:46:32 +0800
-Cc: Christoph Hellwig <hch@infradead.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- RCU <rcu@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>,
- kernel-team@meta.com,
- Steven Rostedt <rostedt@goodmis.org>,
- andrii@kernel.org
-Content-Transfer-Encoding: quoted-printable
-Message-Id: <09DF4DE0-1694-4B06-84A9-A0E1DA1B3109@gmail.com>
-References: <97594073-e296-4876-9d6a-1e4a4f33d857@paulmck-laptop>
- <ZxdLfLWWrAEfRiXV@infradead.org>
- <20241022070635.GY16066@noisy.programming.kicks-ass.net>
- <ZxdPN6wT1LMyLaNL@infradead.org>
- <20241022071018.GA16066@noisy.programming.kicks-ass.net>
- <ZxdQiLhn16FtkOys@infradead.org>
- <8b2552d8-0453-476a-8606-e8b761934783@paulmck-laptop>
- <CAEf4BzbyctiXq8L5MQmCtVqGSN8uawUmNXJMm-X8jDcp8QQ86g@mail.gmail.com>
- <ZxiacAA9LIWv70Xp@infradead.org>
- <CAEf4BzaqXhq3q5kXSAgH7H3tibC3wFU7R9zr5fcwcddT-r6wUw@mail.gmail.com>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-X-Mailer: Apple Mail (2.3776.700.51)
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021182821.1259487-2-dualli@chromium.org>
 
-On Oct 24, 2024, at 00:34, Andrii Nakryiko <andrii.nakryiko@gmail.com> =
-wrote:
->=20
-> On Tue, Oct 22, 2024 at 11:40=E2=80=AFPM Christoph Hellwig =
-<hch@infradead.org> wrote:
->>=20
->> On Tue, Oct 22, 2024 at 10:29:13AM -0700, Andrii Nakryiko wrote:
->>>>=20
->>>> Would this work?
->>>>=20
->>>> #define SRCU_INVALID_INDEX -1
->>>>=20
->>>=20
->>> But why?
->>=20
->> Becaue it very clearly documents what is going on.
->=20
-> So does saying "returned value is going to be non-negative, always".
-> It's not some weird and unusual thing in C by any means.
->=20
->>=20
->>> It's a nice property to have an int-returning API where valid
->>> values are only >=3D 0, so callers are free to use the entire =
-negative
->>> range (not just -1) for whatever they need to store in case there is
->>> no srcu_idx value.
->>=20
->> Well, if you have a concrete use case for that we can probably live
->> with it, but I'd rather have that use case extremely well documented,
->> as it will be very puzzling to the reader.
->>=20
->=20
-> See [0] for what Peter is proposing. Note hprobe_init() and its use of
-> `srcu_idx < 0` as a mark that there is no SRCU "session" associated
-> with the uprobe. Now, if we say that SRCU_INVALID_INDEX is the only
-> invalid value, it leaves a question: what to do with other negative
-> srcu_idx values? Are they valid? Should I now WARN() on "unknown
-> invalid" values? Why all these complications? I'd rather just not have
-> a unified hprobe_init() at that point, TBH.
->=20
-> But anyways, taking a step back. Take idr_alloc()/idr_alloc_cyclic()
-> APIs as an example. They return int, but valid IDs are documented to
-> be positive. This leaves users of this API free to use int to store ID
-> in their data structures, knowing that <=3D 0 is "no ID", and if
-> necessary, they can have multiple possible "no ID" situations.
->=20
-> Same principle here. Why prescribing a randomly picked -1 as the only
-> "valid" invalid value, if anything negative is clearly impossible.
->=20
+Hi Li,
 
-A IS_INVALID_SRCU_INDEX macro would suffice, you need the condition =
-anyway.
+kernel test robot noticed the following build warnings:
 
->=20
->  [0] =
-https://lore.kernel.org/linux-trace-kernel/20241018101647.GA36494@noisy.pr=
-ogramming.kicks-ass.net/
+[auto build test WARNING on staging/staging-testing]
+[also build test WARNING on staging/staging-next staging/staging-linus linus/master v6.12-rc4 next-20241023]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Li-Li/binder-report-txn-errors-via-generic-netlink/20241022-022923
+base:   staging/staging-testing
+patch link:    https://lore.kernel.org/r/20241021182821.1259487-2-dualli%40chromium.org
+patch subject: [PATCH v3 1/1] binder: report txn errors via generic netlink
+config: arc-allmodconfig (https://download.01.org/0day-ci/archive/20241024/202410240012.MJJTBFCx-lkp@intel.com/config)
+compiler: arceb-elf-gcc (GCC) 13.2.0
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410240012.MJJTBFCx-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410240012.MJJTBFCx-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+>> drivers/android/binder_genl.c:160: warning: Function parameter or struct member 'context' not described in 'binder_genl_set_report'
+>> drivers/android/binder_genl.c:160: warning: Excess function parameter 'proc' description in 'binder_genl_set_report'
+
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
 
+vim +160 drivers/android/binder_genl.c
+
+   149	
+   150	/**
+   151	 * binder_genl_set_report() - set binder report flags
+   152	 * @proc:	the binder_proc calling the ioctl
+   153	 * @pid:	the target process
+   154	 * @flags:	the flags to set
+   155	 *
+   156	 * If pid is 0, the flags are applied to the whole binder context.
+   157	 * Otherwise, the flags are applied to the specific process only.
+   158	 */
+   159	int binder_genl_set_report(struct binder_context *context, u32 pid, u32 flags)
+ > 160	{
+   161		struct binder_proc *proc;
+   162	
+   163		if (flags != (flags & (BINDER_REPORT_ALL | BINDER_REPORT_OVERRIDE))) {
+   164			pr_err("Invalid binder report flags: %u\n", flags);
+   165			return -EINVAL;
+   166		}
+   167	
+   168		if (!pid) {
+   169			/* Set the global flags for the whole binder context */
+   170			context->report_flags = flags;
+   171		} else {
+   172			/* Set the per-process flags */
+   173			proc = binder_find_proc(pid);
+   174			if (!proc) {
+   175				pr_err("Invalid binder report pid %u\n", pid);
+   176				return -EINVAL;
+   177			}
+   178	
+   179			proc->report_flags = flags;
+   180		}
+   181	
+   182		return 0;
+   183	}
+   184	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
