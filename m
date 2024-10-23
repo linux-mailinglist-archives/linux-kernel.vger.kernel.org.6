@@ -1,196 +1,266 @@
-Return-Path: <linux-kernel+bounces-377736-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0056F9AC340
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:14:13 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 635599AC346
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:15:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 85D8D1F23A84
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:14:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id CB968B24F71
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:15:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 709A818D63E;
-	Wed, 23 Oct 2024 09:13:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 61910194C89;
+	Wed, 23 Oct 2024 09:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Q9BdDVFI"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="V0PZYVyA"
+Received: from mail-oi1-f179.google.com (mail-oi1-f179.google.com [209.85.167.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC75719755A
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0053E13D2BE;
+	Wed, 23 Oct 2024 09:15:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674835; cv=none; b=FYvxMcrG2uk3PYzktjUyTB2dyqiRR3OMVU70Pmf1PsS9O8HHTC0Zuq6h634DMgDDZyo8suq0/J0vgDepNnzUMatWXTMttFzOEWHHH4DIvCoGlSo0lB1h4ul8IdxpeN1ZSVxXwdOi7cqimJy+I6UrB/wD8x3G+bKKC9n6jeTGMLM=
+	t=1729674923; cv=none; b=f0AUs/7jLhl4qRRsGcSF2gybfGRUHdw+WI8lGIuBFtgRK4XSSTIzJGDHdmf1NLd7A1no39rSpY3dYgb3nFjHCcri/jQs90loa1IpXjjWHDyptCwxsxt3fqOftcFOpgpFB48YGmDxJofdXNDCizaGV7q4SMP2fqc5MlS5sgnw2T0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674835; c=relaxed/simple;
-	bh=Ot42V/6LvRljaeKeKXvifAOWdU2Yz+HgmSj/0l5TrII=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=S9Hzje7p5TbQPghFsXNzXOVbFACJsKG8KlwO/YpQWYWmp5THg6GSY2VNelpUq3o02r/HisQpSPBlMYu1Y4ra0vQhQmi2Fl2zLgCFkOTc7p+l+J2lQeadJyM+4KfJyYQVpJCJkWtpZXLXwBI7hPFSJl/pB6kveamhj647+srWV1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Q9BdDVFI; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729674832;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=XGmXbEWPuTnEzL7jJo/H+qLlycElc1w9NY5n7oUowQU=;
-	b=Q9BdDVFIBhxO7RH/f/vGrQKDmv3cQg8jeBNw07yehNK0K6V6pk2sthn5lda/nvb2F0Wm6u
-	pPSZkPbpahi0xvh4lrXTNzR8B39Tp2JcHAeR5VLCAyAqgt6N2vyHWa5/9qo7rktns4zusi
-	tgAHKJWji5ihPUwLNeGkXPox4QIjSow=
-Received: from mail-wm1-f69.google.com (mail-wm1-f69.google.com
- [209.85.128.69]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-34-PwJ0PQxlMdGm_ny0jonSbw-1; Wed, 23 Oct 2024 05:13:51 -0400
-X-MC-Unique: PwJ0PQxlMdGm_ny0jonSbw-1
-Received: by mail-wm1-f69.google.com with SMTP id 5b1f17b1804b1-4316e2dde9eso35345745e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:13:51 -0700 (PDT)
+	s=arc-20240116; t=1729674923; c=relaxed/simple;
+	bh=K5SFh3QJNbK+421n8LZrnYzMvgiaMri/DMTIsejTOXc=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=MEv1wDaHnnaqwlF5SiF/aRoPRRfJLiex7dSc4AuED05dAtkBOLqpgcWVQZjhvec/bzm86Kbe6UVoZ3pb5mh8JRG+2p16GdNjhPwdxnwyrtfeIxoGYrc8+Hay7YQzmKQqPiTjgcDaQaTelKP5o/LJpXwm7XTUYD0vno6I58sulkc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=V0PZYVyA; arc=none smtp.client-ip=209.85.167.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oi1-f179.google.com with SMTP id 5614622812f47-3e6010a3bbfso2838079b6e.2;
+        Wed, 23 Oct 2024 02:15:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729674921; x=1730279721; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=iDPCBnT1kDnB7ATOCumf/lrJTWFSwVfmDd1LM2wc5lY=;
+        b=V0PZYVyA2nnrWlnj6Cx2XtFn6SFpIUcA/c3R87Hh679tmg3XrKASiXF+qCM7nY2QTz
+         7WkyIh6ycbXz2udIl4mgGV4ApwWxio2aZu1sCjEdT7hdqbZymNZVw4kWbLJmKa387bDa
+         On14JsrqVFGPD+4wVuasHNa2ELgz6l7nQ3lHIxfbWet5BhqSgMHWCKlQAakvU+Yzldet
+         Xl86VOhkBbKfGmZkempTd6w+OQ3t+NfX1v1Gt+gZabrpxSCEtxCj5g7VChE4D75dZrgN
+         2s5xBOa425seXWLra4tuhrg6TwEYMX8hnMX/tzpedQvDxK2twdKS0+BZ+xMLMoFz03NH
+         9OIQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729674830; x=1730279630;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:from:references:cc:to:subject:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=XGmXbEWPuTnEzL7jJo/H+qLlycElc1w9NY5n7oUowQU=;
-        b=OBXdTDnWZjy6KY36abPExZHIRQz8wqKhwghm6oMSr1UcoRXXhWXCZ1xVLwyq/UPBxh
-         apZcDs4Wm5b8h09rCvXmMClufmasj4Zv2lJnRe3pADI3ELbRsLASunBPsHgdiKqzuC6V
-         5te57vCECItUYftepOiHMeIXY5JZXnVRHEvhCKs9rF2yTqdtRiKeQuCpnIwAEcRF0v2+
-         xswlxi3JeFWTBG5+3SJBa2eduefp7HiwMri6VZcqwag8zF/KVRIUGbMVw2zPw8BnCCOX
-         dDWeY/Exk2gIgDXN3kcVwXdnPYdH5kdHestWcLY5OqFsQJC6ueubyoKtdYne7kzFfl2P
-         WtLQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVH9KznFHnW5GbFZ8E0ie2ERxqJH5G45a9Bx6jQdpK1MKuEJcWICnMiQmUeo122R3e9NtwLyPR5olbhHQw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxjkB/BTMy3cy9yfieW37FydeafDFoWdpHTTeUIHJE2293v2Mka
-	GCIRUovp7zJbtQ3lifpvbE58aTZMeUYCKB7QmSa2QiEY8SsRw/W0ub8JHSRD3VWXZV6Kqw9XJ8P
-	kw/xExcPTkXv7RXPYzgavIXpj+iulb5lZKOQZ1QnZWSH9vtKt0wKlmToPp+/gdA==
-X-Received: by 2002:a05:600c:1e0f:b0:431:518a:6826 with SMTP id 5b1f17b1804b1-43184211ee6mr18252175e9.19.1729674830353;
-        Wed, 23 Oct 2024 02:13:50 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGmKe7DKESkG0ElqhB4mK6OoPTMyk/w1RF7xPQmxYy5kxyW1yn1EExyDb58wNBxJdCNVK/FeA==
-X-Received: by 2002:a05:600c:1e0f:b0:431:518a:6826 with SMTP id 5b1f17b1804b1-43184211ee6mr18251875e9.19.1729674829869;
-        Wed, 23 Oct 2024 02:13:49 -0700 (PDT)
-Received: from ?IPV6:2003:cb:c70c:cd00:c139:924e:3595:3b5? (p200300cbc70ccd00c139924e359503b5.dip0.t-ipconnect.de. [2003:cb:c70c:cd00:c139:924e:3595:3b5])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b944fbsm8541274f8f.72.2024.10.23.02.13.48
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 02:13:49 -0700 (PDT)
-Message-ID: <f000d21f-dd04-462a-9d34-d0e7f0f7dc2e@redhat.com>
-Date: Wed, 23 Oct 2024 11:13:47 +0200
+        d=1e100.net; s=20230601; t=1729674921; x=1730279721;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=iDPCBnT1kDnB7ATOCumf/lrJTWFSwVfmDd1LM2wc5lY=;
+        b=Bbq2JIQFVRnrr7juFXZxlEC/l5OZHL3IEaMG93qw+9n8Xif3j0GMVW96CDvKdManNQ
+         1+956X2e17GTPbL/ViIWfkn4KeZnkXUotHR8I3jUSWAsHCidK2wfdrwZIuSFaUUQIwHG
+         12czDndMZR24qYzfigz1OoDRC96mcs2sTN44IptkC0dziE1ZF1sVFEOvgynGWqErn3Uu
+         N3kFAXtvhcdiAQ/vTKhE7sBmeiFYu6ZZ35+5cUO6KZcdbIVgOG5qGnKr7k5K5pBVE+KP
+         vljENYt+FN5EHezIDCvgCtfLZfxPwti3rV7vhXpYF+xFzFL8o8jqkteWFH89qMGDgrPG
+         rkcg==
+X-Forwarded-Encrypted: i=1; AJvYcCUAAMlHofVxEufzSq4sa1OuFFmpPYbBD1mpciiIClXGJLW+vJ2Xl0gwJDDOd1Lihs1Yf4CHLlGJ3Tqf@vger.kernel.org, AJvYcCUcDjTEVXaQfatwu0BmGjInRBlkVvcHMHoiX7wtVvKfqiyZbYF7lhZFSCb89JhrkG2qlCk5NILWIKQMV30=@vger.kernel.org
+X-Gm-Message-State: AOJu0YywvkuuE2wJ2OjQKzpRT/zi4l4AwX2j4BOjIxyWZBTtatygPEXH
+	EFmdYcq2kJ7NX1C/IDOrW1mQJZ/lKt5fLQhft1Z0aEphltn041QL
+X-Google-Smtp-Source: AGHT+IET47yF1muGpa4utGgqIOzdVM4jfNyKigXTTusy6A1ZX6QySA5M+IebGmTdmteT9+WS0DG3lg==
+X-Received: by 2002:a05:6808:229f:b0:3e6:27c6:352f with SMTP id 5614622812f47-3e627c63b7fmr654746b6e.4.1729674920856;
+        Wed, 23 Oct 2024 02:15:20 -0700 (PDT)
+Received: from asix-MS-7816.. ([2403:c300:5f03:e344:771b:b26a:7070:ea03])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab53749sm6359768a12.46.2024.10.23.02.15.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 02:15:20 -0700 (PDT)
+From: Tony Chung <tony467913@gmail.com>
+To: johan@kernel.org
+Cc: gregkh@linuxfoundation.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Tony Chung <tony467913@gmail.com>
+Subject: [PATCH] usb: serial: mos7840: Fix coding style warnings
+Date: Wed, 23 Oct 2024 17:14:15 +0800
+Message-Id: <20241023091414.18098-1-tony467913@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 0/5] implement lightweight guard pages
-To: Vlastimil Babka <vbabka@suse.cz>, Dmitry Vyukov <dvyukov@google.com>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: fw@deneb.enyo.de, James.Bottomley@hansenpartnership.com,
- Liam.Howlett@oracle.com, akpm@linux-foundation.org, arnd@arndb.de,
- brauner@kernel.org, chris@zankel.net, deller@gmx.de, hch@infradead.org,
- ink@jurassic.park.msu.ru, jannh@google.com, jcmvbkbc@gmail.com,
- jeffxu@chromium.org, jhubbard@nvidia.com, linux-alpha@vger.kernel.org,
- linux-api@vger.kernel.org, linux-arch@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-mips@vger.kernel.org, linux-mm@kvack.org,
- linux-parisc@vger.kernel.org, mattst88@gmail.com, muchun.song@linux.dev,
- paulmck@kernel.org, richard.henderson@linaro.org, shuah@kernel.org,
- sidhartha.kumar@oracle.com, surenb@google.com, tsbogend@alpha.franken.de,
- willy@infradead.org, elver@google.com,
- Linus Torvalds <torvalds@linux-foundation.org>
-References: <87a5eysmj1.fsf@mid.deneb.enyo.de>
- <20241023062417.3862170-1-dvyukov@google.com>
- <8471d7b1-576b-41a6-91fb-1c9baae8c540@redhat.com>
- <5a3d3bc8-60db-46d0-b689-9aeabcdb8eab@lucifer.local>
- <CACT4Y+ZE9Zco7KaQoT50aooXCHxhz2N_psTAFtT+ZrH14Si7aw@mail.gmail.com>
- <b1df934e-7012-4523-a513-d3d1536b7f72@suse.cz>
-From: David Hildenbrand <david@redhat.com>
-Content-Language: en-US
-Autocrypt: addr=david@redhat.com; keydata=
- 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
- WNyWQQ==
-Organization: Red Hat
-In-Reply-To: <b1df934e-7012-4523-a513-d3d1536b7f72@suse.cz>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 23.10.24 11:06, Vlastimil Babka wrote:
-> On 10/23/24 10:56, Dmitry Vyukov wrote:
->>>
->>> Overall while I sympathise with this, it feels dangerous and a pretty major
->>> change, because there'll be something somewhere that will break because it
->>> expects faults to be swallowed that we no longer do swallow.
->>>
->>> So I'd say it'd be something we should defer, but of course it's a highly
->>> user-facing change so how easy that would be I don't know.
->>>
->>> But I definitely don't think a 'introduce the ability to do cheap PROT_NONE
->>> guards' series is the place to also fundmentally change how user access
->>> page faults are handled within the kernel :)
->>
->> Will delivering signals on kernel access be a backwards compatible
->> change? Or will we need a different API? MADV_GUARD_POISON_KERNEL?
->> It's just somewhat painful to detect/update all userspace if we add
->> this feature in future. Can we say signal delivery on kernel accesses
->> is unspecified?
-> 
-> Would adding signal delivery to guard PTEs only help enough the ASAN etc
-> usecase? Wouldn't it be instead possible to add some prctl to opt-in the
-> whole ASANized process to deliver all existing segfaults as signals instead
-> of -EFAULT ?
+This commit fix the coding style warnings shown by checkpatch.pl
 
-Not sure if it is an "instead", you might have to deliver the signal in 
-addition to letting the syscall fail (not that I would be an expert on 
-signal delivery :D ).
+Signed-off-by: Tony Chung <tony467913@gmail.com>
+---
+ drivers/usb/serial/mos7840.c | 50 ++++++++++++++++++++++--------------
+ 1 file changed, 31 insertions(+), 19 deletions(-)
 
-prctl sounds better, or some way to configure the behavior on VMA 
-ranges; otherwise we would need yet another marker, which is not the end 
-of the world but would make it slightly more confusing.
-
+diff --git a/drivers/usb/serial/mos7840.c b/drivers/usb/serial/mos7840.c
+index ca3da79af..2de5974d4 100644
+--- a/drivers/usb/serial/mos7840.c
++++ b/drivers/usb/serial/mos7840.c
+@@ -220,7 +220,7 @@ struct moschip_port {
+ 
+ /*
+  * mos7840_set_reg_sync
+- * 	To set the Control register by calling usb_fill_control_urb function
++ *	To set the Control register by calling usb_fill_control_urb function
+  *	by passing usb_sndctrlpipe function as parameter.
+  */
+ 
+@@ -228,8 +228,9 @@ static int mos7840_set_reg_sync(struct usb_serial_port *port, __u16 reg,
+ 				__u16 val)
+ {
+ 	struct usb_device *dev = port->serial->dev;
++
+ 	val = val & 0x00ff;
+-	dev_dbg(&port->dev, "mos7840_set_reg_sync offset is %x, value %x\n", reg, val);
++	dev_dbg(&port->dev, "%s offset is %x, value %x\n", __func__, reg, val);
+ 
+ 	return usb_control_msg(dev, usb_sndctrlpipe(dev, 0), MCS_WRREQ,
+ 			       MCS_WR_RTYPE, val, reg, NULL, 0,
+@@ -238,7 +239,7 @@ static int mos7840_set_reg_sync(struct usb_serial_port *port, __u16 reg,
+ 
+ /*
+  * mos7840_get_reg_sync
+- * 	To set the Uart register by calling usb_fill_control_urb function by
++ *	To set the Uart register by calling usb_fill_control_urb function by
+  *	passing usb_rcvctrlpipe function as parameter.
+  */
+ 
+@@ -280,9 +281,11 @@ static int mos7840_set_uart_reg(struct usb_serial_port *port, __u16 reg,
+ {
+ 
+ 	struct usb_device *dev = port->serial->dev;
++
+ 	val = val & 0x00ff;
+ 	/* For the UART control registers, the application number need
+-	   to be Or'ed */
++	 * to be Or'ed
++	 */
+ 	if (port->serial->num_ports == 2 && port->port_number != 0)
+ 		val |= ((__u16)port->port_number + 2) << 8;
+ 	else
+@@ -448,6 +451,7 @@ static void mos7840_bulk_in_callback(struct urb *urb)
+ 
+ 	if (urb->actual_length) {
+ 		struct tty_port *tport = &mos7840_port->port->port;
++
+ 		tty_insert_flip_string(tport, data, urb->actual_length);
+ 		tty_flip_buffer_push(tport);
+ 		port->icount.rx += urb->actual_length;
+@@ -742,6 +746,7 @@ static unsigned int mos7840_chars_in_buffer(struct tty_struct *tty)
+ 	for (i = 0; i < NUM_URBS; ++i) {
+ 		if (mos7840_port->busy[i]) {
+ 			struct urb *urb = mos7840_port->write_urb_pool[i];
++
+ 			chars += urb->transfer_buffer_length;
+ 		}
+ 	}
+@@ -915,8 +920,8 @@ static int mos7840_write(struct tty_struct *tty, struct usb_serial_port *port,
+ 
+ 	if (status) {
+ 		mos7840_port->busy[i] = 0;
+-		dev_err_console(port, "%s - usb_submit_urb(write bulk) failed "
+-			"with status = %d\n", __func__, status);
++		dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
++			with status = %d\n", __func__, status);
+ 		bytes_sent = status;
+ 		goto exit;
+ 	}
+@@ -943,6 +948,7 @@ static void mos7840_throttle(struct tty_struct *tty)
+ 	/* if we are implementing XON/XOFF, send the stop character */
+ 	if (I_IXOFF(tty)) {
+ 		unsigned char stop_char = STOP_CHAR(tty);
++
+ 		status = mos7840_write(tty, port, &stop_char, 1);
+ 		if (status <= 0)
+ 			return;
+@@ -972,6 +978,7 @@ static void mos7840_unthrottle(struct tty_struct *tty)
+ 	/* if we are implementing XON/XOFF, send the start character */
+ 	if (I_IXOFF(tty)) {
+ 		unsigned char start_char = START_CHAR(tty);
++
+ 		status = mos7840_write(tty, port, &start_char, 1);
+ 		if (status <= 0)
+ 			return;
+@@ -1194,7 +1201,7 @@ static void mos7840_change_port_settings(struct tty_struct *tty,
+ {
+ 	struct usb_serial_port *port = mos7840_port->port;
+ 	int baud;
+-	unsigned cflag;
++	unsigned int cflag;
+ 	__u8 lData;
+ 	__u8 lParity;
+ 	__u8 lStop;
+@@ -1352,16 +1359,16 @@ static void mos7840_set_termios(struct tty_struct *tty,
+ 	}
+ }
+ 
+-/*****************************************************************************
++/*
+  * mos7840_get_lsr_info - get line status register info
+  *
+  * Purpose: Let user call ioctl() to get info when the UART physically
+- * 	    is emptied.  On bus types like RS485, the transmitter must
+- * 	    release the bus after transmitting. This must be done when
+- * 	    the transmit shift register is empty, not be done when the
+- * 	    transmit holding register is empty.  This functionality
+- * 	    allows an RS485 driver to be written in user space.
+- *****************************************************************************/
++ *	is emptied.  On bus types like RS485, the transmitter must
++ *	release the bus after transmitting. This must be done when
++ *	the transmit shift register is empty, not be done when the
++ *	transmit holding register is empty.  This functionality
++ *	allows an RS485 driver to be written in user space.
++ */
+ 
+ static int mos7840_get_lsr_info(struct tty_struct *tty,
+ 				unsigned int __user *value)
+@@ -1540,7 +1547,8 @@ static int mos7840_port_probe(struct usb_serial_port *port)
+ 	__u16 Data;
+ 
+ 	/* we set up the pointers to the endpoints in the mos7840_open *
+-	 * function, as the structures aren't created yet.             */
++	 * function, as the structures aren't created yet.
++	 */
+ 
+ 	pnum = port->port_number;
+ 
+@@ -1551,14 +1559,16 @@ static int mos7840_port_probe(struct usb_serial_port *port)
+ 
+ 	/* Initialize all port interrupt end point to port 0 int
+ 	 * endpoint. Our device has only one interrupt end point
+-	 * common to all port */
++	 * common to all port
++	 */
+ 
+ 	mos7840_port->port = port;
+ 	spin_lock_init(&mos7840_port->pool_lock);
+ 
+ 	/* minor is not initialised until later by
+ 	 * usb-serial.c:get_free_serial() and cannot therefore be used
+-	 * to index device instances */
++	 * to index device instances
++	 */
+ 	mos7840_port->port_num = pnum + 1;
+ 	dev_dbg(&port->dev, "port->minor = %d\n", port->minor);
+ 	dev_dbg(&port->dev, "mos7840_port->port_num = %d\n", mos7840_port->port_num);
+@@ -1591,7 +1601,8 @@ static int mos7840_port_probe(struct usb_serial_port *port)
+ 		dev_dbg(&port->dev, "ControlReg Reading success val is %x, status%d\n", Data, status);
+ 	Data |= 0x08;	/* setting driver done bit */
+ 	Data |= 0x04;	/* sp1_bit to have cts change reflect in
+-			   modem status reg */
++			 * modem status reg
++			 */
+ 
+ 	/* Data |= 0x20; //rx_disable bit */
+ 	status = mos7840_set_reg_sync(port,
+@@ -1603,7 +1614,8 @@ static int mos7840_port_probe(struct usb_serial_port *port)
+ 		dev_dbg(&port->dev, "ControlReg Writing success(rx_disable) status%d\n", status);
+ 
+ 	/* Write default values in DCR (i.e 0x01 in DCR0, 0x05 in DCR2
+-	   and 0x24 in DCR3 */
++	 * and 0x24 in DCR3
++	 */
+ 	Data = 0x01;
+ 	status = mos7840_set_reg_sync(port,
+ 			(__u16) (mos7840_port->DcrRegOffset + 0), Data);
 -- 
-Cheers,
-
-David / dhildenb
+2.34.1
 
 
