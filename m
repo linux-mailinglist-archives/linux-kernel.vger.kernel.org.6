@@ -1,246 +1,159 @@
-Return-Path: <linux-kernel+bounces-377849-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9269AC7A6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:20:05 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 812069AC7AA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:21:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C2631F210A3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:20:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A17471C2042C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:21:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A43E71A08DF;
-	Wed, 23 Oct 2024 10:19:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B20D1A0716;
+	Wed, 23 Oct 2024 10:21:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Bpi5fKvc"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="w0bGRLMD"
+Received: from NAM02-SN1-obe.outbound.protection.outlook.com (mail-sn1nam02on2073.outbound.protection.outlook.com [40.107.96.73])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E0441A0721
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:19:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729678797; cv=none; b=KeVrZFgI7lX94hY+CeuG385TUdkOL3Itstj4ZQeMcZGQ9TCfKKe/TKzWhyQvDtYeZUK4IJf4FGGCd/RxHh2sSiaC+k6tAVkQ7metPI7oA/fqNLPNBq9RX5Ci0X4cwnJFpTtokbtn7PeVY4FZD2jsFfW578dLApcsy+TA8XxGE7w=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729678797; c=relaxed/simple;
-	bh=xAKR+QAqI5mHNcd2iXdESHdVThBghjOvZpMPeX7VMas=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=n1dbMY6p3GAatYdYE9ymHVE9hYSi6cK0QKFC3LFVezfhFwEFzpEh3SNxUBlPb7Ste+COClIwcZ+5cnMZLDJ4I1yK4NkRHO36B+MIko9AuxEaO91IXZ0x0aEAT/sGnVDPeOaI9sh2j3ssQhnzeRMbhIXsihw5A33byw6UFVsHJjM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Bpi5fKvc; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=TOlw9CchO0GwRlnpGLylHaf5DED3aVlpTfUkpKfmzcg=; b=Bpi5fKvcft9JqEnG8yy9hoICDQ
-	VVlhsFg5DTcYQlkgWDOtykNUWDHCG9J3F3KIeMWaKpYcv56vTmVGQVk3CP3r3HT4TvjMP2w+0FC6s
-	rxY58X/4OlE3fp73G4MnyMWepC2zarGNbIk5fgJSbHvj9kxKEecy0punS8orbRaJNLC8F6iNvTXSV
-	IGucajiglwIaRsAhEeSZcm8kKRVNVMYVf5QLqi7KNqENcilN7LSNKSf1cOq2t6g/hFD1pKujvKiED
-	SwvxLQXgytfuNStEzpKvhjkgIV/cq3unKMfuXstSmdgXnoS+J7gro4H8R0zjRI0MjVrWI6taWOLmg
-	eTDuY7Cw==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3YSz-00000008Nme-1YTH;
-	Wed, 23 Oct 2024 10:19:49 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 7332830073F; Wed, 23 Oct 2024 12:19:48 +0200 (CEST)
-Date: Wed, 23 Oct 2024 12:19:48 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Christian Loehle <christian.loehle@arm.com>
-Cc: mpe@ellerman.id.au, Thomas Gleixner <tglx@linutronix.de>,
-	x86@kernel.org, Vincent Guittot <vincent.guittot@linaro.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Dietmar Eggemann <dietmar.eggemann@arm.com>,
-	Pierre Gondois <pierre.gondois@arm.com>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH] sched: Make ASYM_PACKING compile-time arch config
-Message-ID: <20241023101948.GH16066@noisy.programming.kicks-ass.net>
-References: <32c0aed9-bae1-4273-938d-36acb420eb56@arm.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E44FB15F330;
+	Wed, 23 Oct 2024 10:21:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.96.73
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729678888; cv=fail; b=P/+M8rVR74Y5LYBhqrzFthxgeDeWYdXE55g4oIQeW6VjZU5GbTEZp3IsWJ3rV+WufV6m/9gQWQOcbzksZnoS3eE6gOgrU6Fn9nprLFoYalJm8WxYzw163/UyT6ht9BCAg4vcy1PVr3IPL9jgZkKStmSZeR6TraEEmc6E41UiqV8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729678888; c=relaxed/simple;
+	bh=CP5wTFto/456SDSE71NdLU/2JqvLJr08gkTgSh3oTKQ=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=YGiPlhJIbaFXcTmtjpqxvbKxUyeci/kvmAxMIeRWGBz8NpEGBE5mXaF7HHmE6XrBKJ1ypP7glGxIJQ2HrtYP2Dyn8hn6K/X6IA9Yr4S+Zl3uScL92a8HXqJwExI0TEA9VwZQxHsisp34wLIw+qWsAWxWEiGIZP7fmp0uxfdbBRo=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=w0bGRLMD; arc=fail smtp.client-ip=40.107.96.73
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=KLYCLTFpIC30ggUlKIHsDw4X//RErtS9s78XpjgTYplES0Y3r/yZkK4m3B0SLrUKFCqSQj1odJ4TkT7qPFNpXjkWNLcndI+Ak1eiZ7EGWLRlGeTJ4Re5UONCnDpritnTlt2m4Mopp+Xu676id8Xi1HFx1Q7p2YoKWgWO/B0R8U5rguczA59nlA+SiVtvsW5WpEhtlBifOvSkGqY4juWo09x/PsTJYhuZ/g7vRj3SUBTPN1yzQ3w2sm3FXT7Q7LmRFKctbyYSGKMviP8NQdLlF9bizJ6z95K31+XKsHhiYgWgOBxRQ8+AaH9LUFjrU/rim+vx8NzAd8Abzr98v4ljog==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=sYASuStTPqkZgkiL1it4xF0mXL0Pj0Gn+89I3ldsc60=;
+ b=xJA5vIgVyBlYcW7K4jPlxIfKJ0r8TDwEu2brc5Ft2ZnPUbuL1/xIGnipxc0MwRf+m3QO3QwGHg8QTGSy4uQqe9UnN1TC0SMDHzZkAsVYldMNeCK+pAffP52iN5U7rIsLKyb7TX+8I0OvVKHONFlQvNXFVDmUaaV134tZEORE9y/TNPK28BoUb0BV7BLkOVEyy6tKowCoSc+Wf+1jrX1iJ2RmtFVlrjLIsMgCiOUc92gwKn0BeWFch+pkjcMHsEDJ/oFBQrqnq1ad5ZlZC2ggoTjpN5jlauEPvDErXiKVvz/Us39H/jhiolYNDSrb9X79MEOtkq1nefJ+oO2b+weJvA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass (sender ip is
+ 165.204.84.17) smtp.rcpttodomain=kernel.org smtp.mailfrom=amd.com; dmarc=pass
+ (p=quarantine sp=quarantine pct=100) action=none header.from=amd.com;
+ dkim=none (message not signed); arc=none (0)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=sYASuStTPqkZgkiL1it4xF0mXL0Pj0Gn+89I3ldsc60=;
+ b=w0bGRLMDoctX8eo7eYGGxhIu21Iubn3V9ZesYeoZMkWYoIc5UkGHh1MYGZ/IYHNrJxP3Bx5JRJawwjDMgjIKRpuq/f1M84NSzk2PEIWrsrgfo627Lp8CuwT3ooSXCeOtbhIv/wGLkBF3svdGbFMaW2RnngMuHSFpiqpNadnENMU=
+Received: from SA9PR11CA0028.namprd11.prod.outlook.com (2603:10b6:806:6e::33)
+ by DS0PR12MB7772.namprd12.prod.outlook.com (2603:10b6:8:138::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
+ 2024 10:21:24 +0000
+Received: from SA2PEPF0000150B.namprd04.prod.outlook.com
+ (2603:10b6:806:6e:cafe::f0) by SA9PR11CA0028.outlook.office365.com
+ (2603:10b6:806:6e::33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17 via Frontend
+ Transport; Wed, 23 Oct 2024 10:21:23 +0000
+X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 165.204.84.17)
+ smtp.mailfrom=amd.com; dkim=none (message not signed)
+ header.d=none;dmarc=pass action=none header.from=amd.com;
+Received-SPF: Pass (protection.outlook.com: domain of amd.com designates
+ 165.204.84.17 as permitted sender) receiver=protection.outlook.com;
+ client-ip=165.204.84.17; helo=SATLEXMB04.amd.com; pr=C
+Received: from SATLEXMB04.amd.com (165.204.84.17) by
+ SA2PEPF0000150B.mail.protection.outlook.com (10.167.242.43) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.20.8093.14 via Frontend Transport; Wed, 23 Oct 2024 10:21:23 +0000
+Received: from shatadru.amd.com (10.180.168.240) by SATLEXMB04.amd.com
+ (10.181.40.145) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id 15.1.2507.39; Wed, 23 Oct
+ 2024 05:21:19 -0500
+From: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+To: <gautham.shenoy@amd.com>, <mario.limonciello@amd.com>,
+	<perry.yuan@amd.com>, <rafael@kernel.org>, <viresh.kumar@linaro.org>
+CC: <linux-pm@vger.kernel.org>, <linux-kernel@vger.kernel.org>, "Dhananjay
+ Ugwekar" <Dhananjay.Ugwekar@amd.com>
+Subject: [PATCH 0/4] cpufreq/amd-pstate:Cleanups
+Date: Wed, 23 Oct 2024 10:21:04 +0000
+Message-ID: <20241023102108.5980-1-Dhananjay.Ugwekar@amd.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <32c0aed9-bae1-4273-938d-36acb420eb56@arm.com>
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: SATLEXMB04.amd.com (10.181.40.145) To SATLEXMB04.amd.com
+ (10.181.40.145)
+X-EOPAttributedMessage: 0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA2PEPF0000150B:EE_|DS0PR12MB7772:EE_
+X-MS-Office365-Filtering-Correlation-Id: b8600f3c-4089-4933-107a-08dcf34c7247
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|376014|36860700013|82310400026|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?FiOZS44/2pYu1xeJMICpo7JAgu4uUv19po97550AQjajN5O4fz/zmbORBb+C?=
+ =?us-ascii?Q?hr5fXlp5zv/bZKp6N+S7UUYwPLmhmApIXque7xX1UAQLbM94RWcOi+w0WcR2?=
+ =?us-ascii?Q?iBqyn2d/sGQXe+i/8L9KeQW82Ek8MswuYyR6y7Uv9+uw0ixo4p24Mi9+YEhg?=
+ =?us-ascii?Q?PiT1Ix55Mk0lFskS9WKmf62Hco47hXJkOn2BISsr36OzW2g0jyEs6AKg3U16?=
+ =?us-ascii?Q?VIEZnttsTZ0lyL1gumsB7vqzmV9vJ5k6vrK5w/gvNGC8CBhD3hyAZgDqMgk3?=
+ =?us-ascii?Q?ooLHuj7vzWLdqNRDKwi+iixSHZpx8W7cXhmlcUTZXAAFQ2P438JU5rgsdjFH?=
+ =?us-ascii?Q?yC5yUAjADG3OkY7hCs0hTsTz51ZtpSJjG/+Gfm28CbS4KGu48reK+mav1bnW?=
+ =?us-ascii?Q?zLCoemH7azqMIbuaFHoZGvN96KazFs81Kji8/WXXBdoW3fFMza3FmwYPTE6w?=
+ =?us-ascii?Q?B/KVIovL5x0PvdUt2UyVo0F95wZC6Pk92oMSgLgduUfdgeecqF8J5/3h/HnT?=
+ =?us-ascii?Q?vtfBCHz4XcMVOeDHwOtfrwPkB7fWYmOjCL1vqAKlAKNg0jo18LmceaW2CJE3?=
+ =?us-ascii?Q?3vWjATnra7Pmk/lmgxi4GILGXb16t+tNnHcznzMwtmybaGRPUWOrpf+ZCcE1?=
+ =?us-ascii?Q?MyLZcGGL5twVdIkMY2Z5uAA2MSaHnbmZnyjN8k+3b1Wbh146CpGIRWZsbM+C?=
+ =?us-ascii?Q?I+yr7MRcU2R9OkX8XDHxV+t359DTH+YRfhxHU7pv4SSp+SgyizCDzMT3oi6Z?=
+ =?us-ascii?Q?BpyetrCZo/9iuj9IIwa6XAA3pb0FQw8pwyMy/l+PVo5+T8vhHcP74YRxzx+o?=
+ =?us-ascii?Q?W9Fdbx//cENWdnl/vrHLWbeFu0EzVLbm984V7mTslYu3bKwVj1jR2W6l93Oq?=
+ =?us-ascii?Q?S5XzIATq7b5Eb2VuB66blPco/ESxa0QPKQ0fQgeFSHY6LbLDhczW4ZdKv3wB?=
+ =?us-ascii?Q?A9rkjwpTwmdKqlHkoe3Vrx2lv/4hILbB5R60T3Ai3shCsXJU8qg4hS5aH8Q1?=
+ =?us-ascii?Q?A0aIy7kZVaJCyrnjdCsO1TEwhKHBba2A01CBKHclRlrgxpLUCixIzNC3KvQG?=
+ =?us-ascii?Q?BW2Em6p7PVujSVB9fZekpfbvPePhKTvV31WonEncj5yZY/FSk/xPsNLvFP7i?=
+ =?us-ascii?Q?3d4hdtGAjihdByIFsHoClMjttHV37h1ciHTo4KHxIAVPj5Z35rF9BbZZIqNH?=
+ =?us-ascii?Q?ND6C5OiFx6+xS60npyuNh8XNGdP6vfGVpuQIdc1Bzjpnpsj5qvV6C6w/OUGU?=
+ =?us-ascii?Q?T4Zd9hCLgzYvDK73BnKLFK9ig2ktfPQwDmkhVKt0tovsIZlRIXfycrZmIBaX?=
+ =?us-ascii?Q?npnTNoOL3Xj9HuqK7ynZUBn9mM7EW9C/tDA/FBgY11XLLMurOMaeFOJahcbc?=
+ =?us-ascii?Q?j3/7uQRmt+LxBNxUvcCESM1ILMUQVGtxg6w9N2zuMmwkEMF1+Q=3D=3D?=
+X-Forefront-Antispam-Report:
+	CIP:165.204.84.17;CTRY:US;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:SATLEXMB04.amd.com;PTR:InfoDomainNonexistent;CAT:NONE;SFS:(13230040)(376014)(36860700013)(82310400026)(1800799024);DIR:OUT;SFP:1101;
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 10:21:23.9154
+ (UTC)
+X-MS-Exchange-CrossTenant-Network-Message-Id: b8600f3c-4089-4933-107a-08dcf34c7247
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=3dd8961f-e488-4e60-8e11-a82d994e183d;Ip=[165.204.84.17];Helo=[SATLEXMB04.amd.com]
+X-MS-Exchange-CrossTenant-AuthSource:
+	SA2PEPF0000150B.namprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Anonymous
+X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DS0PR12MB7772
 
-On Thu, Oct 17, 2024 at 10:46:49PM +0100, Christian Loehle wrote:
-> Only x86 and Power7 set SD_ASYM_PACKING at boot-time depending on the
-> system. All other platforms don't make use of asym-packing anyway,
-> so introduce auxiliary ARCH_HAS_SCHED_ASYM_PACKING and guard all the
-> related logic behind that so it isn't compiled when not needed.
-> 
-> On arm64 this reduces
-> size kernel/sched/fair.o
->    text	   data	    bss	    dec	    hex	filename
->   74120	   4097	     88	  78305	  131e1	kernel/sched/fair.o
-> to
-> size kernel/sched/fair.o
->    text	   data	    bss	    dec	    hex	filename
->   72896	   4065	     88	  77049	  12cf9	kernel/sched/fair.o
-> 
-> Most of that is on the load-balance hot-path, in particular
-> need_active_balance() reduces from 141 to 84 instructions.
-> 
-> hackbench -pTl 20000 on a rk3399 goes from
-> 58.4664 to 57.6056 (-1.5%), mean over 20 iterations.
+Explicitly rename functions that enable CPPC as *_cppc_*. 
 
-*sigh* more ifdef is the very last thing we need :/ What's the error on
-that measurement? Is it statistically relevant etc.
+Do not clear MSR_AMD_CPPC_ENABLE as it is a set-once register, i.e. it 
+cannot be cleared. 
 
+Propagate the epp value to shared mem in the reenable function.
 
-> @@ -9186,12 +9179,14 @@ enum group_type {
->  	 * a task on SMT with busy sibling to another CPU on idle core.
->  	 */
->  	group_smt_balance,
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	/*
->  	 * SD_ASYM_PACKING only: One local CPU with higher capacity is available,
->  	 * and the task should be migrated to it instead of running on the
->  	 * current CPU.
->  	 */
->  	group_asym_packing,
-> +#endif
+Replicate the offline flow of MSR based systems in shared mem systems.
 
-Do we really need to remove the value from the enum !?
+Dhananjay Ugwekar (4):
+  cpufreq/amd-pstate: Rename functions that enable CPPC
+  cpufreq/amd-pstate: Do not attempt to clear MSR_AMD_CPPC_ENABLE
+  cpufreq/amd-pstate: Call cppc_set_epp_perf in the reenable function
+  cpufreq/amd-pstate: Align offline flow of shared memory and MSR based
+    systems
 
->  	/*
->  	 * The tasks' affinity constraints previously prevented the scheduler
->  	 * from balancing the load across the system.
-> @@ -9876,7 +9871,9 @@ struct sg_lb_stats {
->  	unsigned int idle_cpus;                 /* Nr of idle CPUs         in the group */
->  	unsigned int group_weight;
->  	enum group_type group_type;
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	unsigned int group_asym_packing;	/* Tasks should be moved to preferred CPU */
-> +#endif
+ drivers/cpufreq/amd-pstate.c | 39 ++++++++++++++++++++++--------------
+ 1 file changed, 24 insertions(+), 15 deletions(-)
 
-just leave it be, who cares if it goes unused?
+-- 
+2.34.1
 
->  	unsigned int group_smt_balance;		/* Task on busy SMT be moved */
->  	unsigned long group_misfit_task_load;	/* A CPU has a task too big for its capacity */
->  #ifdef CONFIG_NUMA_BALANCING
-> @@ -10136,8 +10133,10 @@ group_type group_classify(unsigned int imbalance_pct,
->  	if (sg_imbalanced(group))
->  		return group_imbalanced;
->  
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	if (sgs->group_asym_packing)
->  		return group_asym_packing;
-> +#endif
-
-Add a helper that returns false such that the compiler can DCE it?
-
-> @@ -10360,10 +10402,12 @@ static inline void update_sg_lb_stats(struct lb_env *env,
->  
->  	sgs->group_weight = group->group_weight;
->  
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	/* Check if dst CPU is idle and preferred to this group */
->  	if (!local_group && env->idle && sgs->sum_h_nr_running &&
->  	    sched_group_asym(env, sgs, group))
->  		sgs->group_asym_packing = 1;
-> +#endif
-
-Just make sure sched_group_asym() is unconditionally false and the
-compiler will DCE it, no?
-
->  
->  	/* Check for loaded SMT group to be balanced to dst CPU */
->  	if (!local_group && smt_balance(env, sgs, group))
-> @@ -10436,9 +10480,11 @@ static bool update_sd_pick_busiest(struct lb_env *env,
->  		 */
->  		return false;
->  
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	case group_asym_packing:
->  		/* Prefer to move from lowest priority CPU's work */
->  		return sched_asym_prefer(sds->busiest->asym_prefer_cpu, sg->asym_prefer_cpu);
-> +#endif
-
-Just leave it be, it'll never get selected.
-
->  	case group_misfit_task:
->  		/*
-> @@ -10691,7 +10737,9 @@ static bool update_pick_idlest(struct sched_group *idlest,
->  		break;
->  
->  	case group_imbalanced:
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	case group_asym_packing:
-> +#endif
-
-idem
-
->  	case group_smt_balance:
->  		/* Those types are not used in the slow wakeup path */
->  		return false;
-> @@ -10823,7 +10871,9 @@ sched_balance_find_dst_group(struct sched_domain *sd, struct task_struct *p, int
->  		break;
->  
->  	case group_imbalanced:
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  	case group_asym_packing:
-> +#endif
-
-and again.
-
->  	case group_smt_balance:
->  		/* Those type are not used in the slow wakeup path */
->  		return NULL;
-> @@ -11058,7 +11108,7 @@ static inline void calculate_imbalance(struct lb_env *env, struct sd_lb_stats *s
->  		return;
->  	}
->  
-> -	if (busiest->group_type == group_asym_packing) {
-> +	if (check_asym_packing(busiest)) {
->  		/*
->  		 * In case of asym capacity, we will try to migrate all load to
->  		 * the preferred CPU.
-> @@ -11265,7 +11315,7 @@ static struct sched_group *sched_balance_find_src_group(struct lb_env *env)
->  		goto out_balanced;
->  
->  	/* ASYM feature bypasses nice load balance check */
-> -	if (busiest->group_type == group_asym_packing)
-> +	if (check_asym_packing(busiest))
->  		goto force_balance;
->  
->  	/*
-
-> diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-> index b1c3588a8f00..51d49700f643 100644
-> --- a/kernel/sched/sched.h
-> +++ b/kernel/sched/sched.h
-> @@ -937,11 +937,17 @@ static inline long se_weight(struct sched_entity *se)
->  	return scale_load_down(se->load.weight);
->  }
->  
-> -
-> +#ifdef CONFIG_ARCH_HAS_SCHED_ASYM_PACKING
->  static inline bool sched_asym_prefer(int a, int b)
->  {
->  	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
->  }
-> +#else
-> +static inline bool sched_asym_prefer(int a, int b)
-> +{
-> +	return false;
-> +}
-> +#endif
-
-Or you can write:
-
-static inline bool sched_asym_prefer(int a, int b)
-{
-	if (!IS_ENABLED(CONFIG_ARCH_HAS_SCHED_ASYM_PACKING))
-		return false;
-	return arch_asym_cpu_priority(a) > arch_asym_cpu_priority(b);
-}
-
-
-Anyway, ifdef bad, less is more. DCE good.
 
