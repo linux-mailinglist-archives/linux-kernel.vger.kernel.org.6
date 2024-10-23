@@ -1,140 +1,98 @@
-Return-Path: <linux-kernel+bounces-377160-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377161-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8F79ABA9E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:42:07 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C8DD89ABAA1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:44:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1AAE31F24344
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:42:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 329ABB21E08
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:44:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B6FE1BDCF;
-	Wed, 23 Oct 2024 00:41:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A173E19BBC;
+	Wed, 23 Oct 2024 00:44:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ma+GZU0t"
-Received: from mail-pl1-f182.google.com (mail-pl1-f182.google.com [209.85.214.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b="gXmb9pwl"
+Received: from mail-40137.protonmail.ch (mail-40137.protonmail.ch [185.70.40.137])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B15312B73;
-	Wed, 23 Oct 2024 00:41:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 819E21798F
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:44:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729644117; cv=none; b=TWL1fAFNwAyoa1n7WufdhsIARDgfxqB3ETvCQ1kl9HWYtxAh8ebbcDitv8X9df+qvVTrfN4nUSPg8aA0XNK02S3nL8k+RoaIRhnG0qCItyyLMYIBJIleYecAeAy6xf0ZVpolxoTo5blatkWinxRHjELj7HBcvGZMn8dn18ZLKx0=
+	t=1729644246; cv=none; b=Url3XEPln1UZJV7N2kEE4kdbVlfYZLdZ5mr20iHEY71R7UyQsi3YXOdrsF0eysuZgONIaGDodPRFSasWTcmxoPZEYSZdepXE4Y7vegAeR7PNjMcYBeHQPdHt6CKU/cF0WT9KptU53WrLVXbIUGweZl1ZKUd8YK/g2oPdrvsA9uc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729644117; c=relaxed/simple;
-	bh=/t8Ri0bgY0VNCUZqK0akpWyNOljc7saEA/i527fuOi0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sKq0yRFG7w5eI8juj5Wazzi++9dZczT2bKmcNwm0X4ZX5zzMAMuhfQ96HqKVx5Eq0bAeeZi1UbJYRnr8HJwSgSuuZwVYL5iO2I/BJ/3OezDi7pLi9W2GTbeJwt8XZiYS+e0yvaSoqtRLghpwO4fGOfyn5M5Fz1Urvkf/QMPUAyk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ma+GZU0t; arc=none smtp.client-ip=209.85.214.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f182.google.com with SMTP id d9443c01a7336-20bb39d97d1so58250685ad.2;
-        Tue, 22 Oct 2024 17:41:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729644116; x=1730248916; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=8u3IDrYvAb9YyTBydXzxhlprUyGufXaL260iyoJVT84=;
-        b=Ma+GZU0tX6oUiwzyvldqtmo/S899zZJrVybiyT0qeuozn9m22woFkImmDxSzNWDm/D
-         Z7s6VM3d4ipm1TzRzwRfL5uLi/vW/dPK75PyoLqEZGLzviFDF6jSWAMR8M7NHf8CtVOF
-         D/gNHU6PpdJq2uyw41MnsvNBEoh8yAS/MtrG/+ueY+JaSa1ufKQWi7uA+dq5KzbOEegI
-         SjT601VAWdrRc6uIIOucxKsWliIizU7+ep3oAxNJF+it93d1Qev7VrEqeCaEKX4zAgeV
-         ubxYeEwD0T4gZSa+Zzo1ZozLyUDRd/kBEosrHC1DX7jZMnKW0WSCWPghdVagVIOTYcSg
-         yWcQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729644116; x=1730248916;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=8u3IDrYvAb9YyTBydXzxhlprUyGufXaL260iyoJVT84=;
-        b=gUrkbw5TI1krfvlU5nw10suaA2tYkATdCy1MurBFETVRH1ARx669nV1iblzqN4ZIz7
-         GLljZGhDXtAwxfYIhwyclh/LgLqKWZZzlgcCeyJCB4jXFefXIJcvvcAjBBk4Rktx8+tM
-         2ZjDSRqxatTu+vYi6ddArRn3liHE/ZT3HerdYoZMRlEnv3xcTTy7aC8g0/cv3gIU1fh7
-         M1aaOv8kiMQHLHBWf5gwmJsri5UvSbnOGu/7aITHtaeLlYb0s3rThe7BlSweRuIj+04y
-         yo8LKJzs34NbB6r+KYKyzrlD9sKJS8gMbHak4rRHuE8a1z0ip3vtnfMelNBnkEfiaXJO
-         o+pQ==
-X-Forwarded-Encrypted: i=1; AJvYcCURf/q6r2EqxF4rbZjK7zuCcEt69NVlBRBXJcfdJ0JdDpvD7IiKRaLKAVBkijYh2Zzup8SF6uF8mNq/@vger.kernel.org, AJvYcCXLvYwzvZT3HdOeij1RcOb0Ay2PqFxlOUQpyhcjpde6jAUKjNzAO/yz3wxP3YRF1y2KgijxUGhLeyjuCrqD@vger.kernel.org, AJvYcCXb7Joe02r1zKsU33awW2Q4ciaib4P5hoLkcTqfuE+img6/DkM7zvwGqCHFscLDDf/XR0IqXpio@vger.kernel.org
-X-Gm-Message-State: AOJu0YzMDRI8X+MHynQQsJ1MuGJ+2G7EiTRchtlK6s5A9+r5VVbhX8Wr
-	HWrskq0vbQXEHV4pS/e2JnKbQbHBK9DWkhKR19ryo5rAbxLCDdsP
-X-Google-Smtp-Source: AGHT+IFbhgz4UwAzkmEZqrLZ7CxJnIMNJeELmjeckUQEiAROOsXtNCu++sLO4TJ9d5G/mSS8vtF+Rg==
-X-Received: by 2002:a17:903:1c6:b0:20e:95c9:4ed5 with SMTP id d9443c01a7336-20fa9de0cc3mr13205545ad.7.1729644115571;
-        Tue, 22 Oct 2024 17:41:55 -0700 (PDT)
-Received: from localhost ([2001:da8:7001:11::cb])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f109c4fsm47993125ad.307.2024.10.22.17.41.54
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 17:41:55 -0700 (PDT)
-Date: Wed, 23 Oct 2024 08:41:36 +0800
-From: Inochi Amaoto <inochiama@gmail.com>
-To: Andrew Lunn <andrew@lunn.ch>, Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-Message-ID: <zum7n3656qonk4sdfu76owfs4jk2mkjrzayd57uuoqeb6iiris@635pw3mqymqd>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-5-inochiama@gmail.com>
- <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
- <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
- <65720a16-d165-4379-a01f-54340fb907df@lunn.ch>
- <424erlm55tuorjvs2xgmanzpximvey22ufhzf3fli7trpimxih@st4yz53hpzzr>
- <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
+	s=arc-20240116; t=1729644246; c=relaxed/simple;
+	bh=yXgmq1BR3VIXZKYZe008gdI8Cfjzhsiou5L2Rb269o0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S6jwD2Vq+YEJ6r/7GbFu5JQDBtDczVdVmilI/sl3jt5IewIBN6Uk7DSs2o0no+NX9MY6Ljst+t+A67pMMnmpRXkPW0MgX8T1kS0BLrMQwlxJuMbQ/LG2pPop5qh4I2PTHhGcoyhgVOLEIQvrHw1MzYwk7/8KESq8b6ALXiwMdUg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com; spf=pass smtp.mailfrom=protonmail.com; dkim=pass (2048-bit key) header.d=protonmail.com header.i=@protonmail.com header.b=gXmb9pwl; arc=none smtp.client-ip=185.70.40.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=protonmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=protonmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=protonmail.com;
+	s=protonmail3; t=1729644236; x=1729903436;
+	bh=yXgmq1BR3VIXZKYZe008gdI8Cfjzhsiou5L2Rb269o0=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=gXmb9pwlvx0UwV2UeaD4SyZmwijc3TRSsEITqiF6pZMX3qf0YY94usiKLSRqzx9gY
+	 GnCxM+QcmlKPTJZX5G6qTasVM262/pClKcBUoDigMh1A8Vqvh+FKgjkgiDF6nmUxeF
+	 11rHUgaPv3Ai7wCRsMTAD6pcIZQBrNN/2f7V307zUBESlcFcbimsO0Y081+KgUvZlr
+	 coAF3VbEIvwFfWBQl+MPEb2K2IIZbtQz3MHx0lcnBtAJkjNOSX5FJIxp0mUSzQE8oT
+	 gYg+6+zX3zDPncvMHeBf//yYZiw04F1m14Nbmab7jbfADmmrBWhgwr7byK2YW9quGE
+	 poDOtBPoCBopg==
+Date: Wed, 23 Oct 2024 00:43:51 +0000
+To: Nathan Chancellor <nathan@kernel.org>
+From: Koakuma <koachan@protonmail.com>
+Cc: Masahiro Yamada <masahiroy@kernel.org>, Andreas Larsson <andreas@gaisler.com>, Andrew Morton <akpm@linux-foundation.org>, "David S. Miller" <davem@davemloft.net>, Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling <morbo@google.com>, Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de, Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org, linux-kernel@vger.kernel.org, llvm@lists.linux.dev, linux-kbuild@vger.kernel.org
+Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
+Message-ID: <etezvjy_HnDpgOTBrzap29if1ChFBhl1RawcNJK3UAsFk6i_g_cyHoz7hlqfYqASgJZ97W4HxnGA-nbCXL73pIRN9tUKUttAp1JefMRp8rs=@protonmail.com>
+In-Reply-To: <20241022200732.GA487584@thelio-3990X>
+References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com> <20241021201657.GA898643@thelio-3990X> <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com> <20241022200732.GA487584@thelio-3990X>
+Feedback-ID: 6608610:user:proton
+X-Pm-Message-ID: b87481f0a5c05dc56ab15ff9c4c1b68a54acc11e
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On Tue, Oct 22, 2024 at 03:51:08PM +0200, Andrew Lunn wrote:
-> On Tue, Oct 22, 2024 at 06:21:49PM +0800, Inochi Amaoto wrote:
-> > On Mon, Oct 21, 2024 at 03:27:18PM +0200, Andrew Lunn wrote:
-> > > > It is related to the RGMII delay. On sg2044, when the phy 
-> > > > sets rx-delay, the interal mac is not set the same delay, 
-> > > > so this is needed to be set.
-> > > 
-> > > This is the wrong way to do it. Please look at how phy-mode should be
-> > > used, the four different "rgmii" values. Nearly everybody gets this
-> > > wrong, so there are plenty of emails from me in the netdev list about
-> > > how it should be done.
-> > > 
-> > 
-> > The phy-mode is alreay set to the "rgmii-id" and a rx delay is already
-> > set (a default tx delay is set by the phy driver). In the scenario 
-> > the extra bit is used to fix 2ns difference between the sampling clock
-> > and data. It is more like an extra setting and the kernel can not handle
-> > it by only setting the phy-mode.
-> 
-> This sounds wrong.
-> 
-> So in DT you have rgmii-id? You say the PHY is doing TX delay. So you
-> pass PHY_INTERFACE_MODE_RGMII_TXID to the PHY? It is not clear from
-> this patch, i don't see any code mentioning
-> PHY_INTERFACE_MODE_RGMII_TXID. Could you point me at that code.
-> 
-> 	Andrew
+Nathan Chancellor <nathan@kernel.org> wrote:=20
+> Koakuma might know more than I do but I did not test either the
+> integrated assembler or the rest of the LLVM tools; I only tested clang
+> for CC. As far as I am aware, that has been where most of the effort in
+> llvm-project has been going and I think there are probably other fixes
+> that will be needed for the other tools. The command I tested was:
+>=20
+> $ make -skj"$(nproc)" \
+> ARCH=3Dsparc64 \
+> CC=3Dclang \
+> CROSS_COMPILE=3Dsparc64-linux-gnu- \
+> LLVM_IAS=3D0 \
+> mrproper defconfig all
+>=20
+> I see this as more of a stepping stone series to make testing those
+> other components easier as time goes on, hence why I did not really
+> consider user facing documentation either like you brought up in the
+> other thread.
+>=20
+> Cheers,
+> Nathan
 
-The phy on the board I have is YT8531, The config code is here:
-https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/motorcomm.c#n868
+Ah, pardon me for forgetting to say it in the cover letter.
+But yeah. At the moment only clang as CC works, all other LLVM tools are st=
+ill
+incomplete and need some work to be able to build the kernel, so these patc=
+hes
+indeed are intended as stepping stones to make it easier to work on
+the rest of the tools.
 
-As the syscon only has a config on rx delay. I have
-already fix the code and only set the bit when the
-mac is rgmii-rxid/id.
-
-Regards,
-Inochi.
+I'm not sure if I should update the documentation now given that LLVM suppo=
+rt
+is nowhere near as complete as other architectures, but I'll do it if neede=
+d...
 
