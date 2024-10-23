@@ -1,232 +1,155 @@
-Return-Path: <linux-kernel+bounces-377687-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377688-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 548159AC254
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:55:02 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9F9649AC25A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:56:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0F329282FA1
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5FE37283AED
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:56:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90EBC1684B0;
-	Wed, 23 Oct 2024 08:54:53 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1FAE16F288;
+	Wed, 23 Oct 2024 08:56:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Q/qmuNty"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0879615C15A;
-	Wed, 23 Oct 2024 08:54:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E69542AD2C;
+	Wed, 23 Oct 2024 08:56:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673693; cv=none; b=hyAXqP9IgEMmyG4TEsbynfSdNVSU5F3C7dAIhWvXW6+47Oq4ks7TdR1vVhifxX1bn+uQCGOFTRUetkjyO8Eda9dln5448Jsp7T5ABUgYiwOfADkAEx5m1E5Jc8FPn1u8OqPOyLx5oLnyVrfOQ3EtTVFuduCAM3VpHiRpf/VpxlE=
+	t=1729673765; cv=none; b=iQ5buDhHd1jxtCCT8OvgcDUazyNTWY3KmpIyLb1Mnx9nOD8WoWly9JM0ucyls1GnpTx1sZ14IuPppTdy+g12pr8Id1hfpeI0FxHGc4/u5ENJoSCT8LUv+c2RbvK5m6Bpu6UXX4cx19dDAl2CHK272wiIz1nTClFzfpLuwVS8ZEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673693; c=relaxed/simple;
-	bh=nwT+H26anUIegZJyg9+xo/0tGIY2YmnYHFGBiFvbbTg=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=hDJXT+G4auRBM0wi6vvWtInD0gVGzQfF9l1Oi9KnP++tH/ZMJ/eTCoItxRTsh8MMMTQAlhX4dTBu0k+n/6MrOeo96e1SzdBF9iIYgl3DUjCFLNiz5oUUSW0GjZN1aPMm7VRIaPEvh1PRmZAy72Zm0FZHeRP3MRu8ccKwqtKsPqI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 71be10bc911c11efa216b1d71e6e1362-20241023
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:2ffbf81f-72b8-450b-a69c-af7ba03e689c,IP:0,U
-	RL:0,TC:0,Content:-25,EDM:-25,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-50
-X-CID-META: VersionHash:82c5f88,CLOUDID:657e175c6be441a850cf72393bf194d2,BulkI
-	D:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:1,IP:nil,URL:0,
-	File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:N
-	O,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0
-X-CID-BAS: 0,_,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR
-X-UUID: 71be10bc911c11efa216b1d71e6e1362-20241023
-Received: from node4.com.cn [(10.44.16.170)] by mailgw.kylinos.cn
-	(envelope-from <lijiayi@kylinos.cn>)
-	(Generic MTA)
-	with ESMTP id 1144021719; Wed, 23 Oct 2024 16:54:42 +0800
-Received: from node4.com.cn (localhost [127.0.0.1])
-	by node4.com.cn (NSMail) with SMTP id 546061600209E;
-	Wed, 23 Oct 2024 16:54:42 +0800 (CST)
-X-ns-mid: postfix-6718B9D2-1726757667
-Received: from kylin-pc.. (unknown [172.25.130.133])
-	by node4.com.cn (NSMail) with ESMTPA id C4E231600209E;
-	Wed, 23 Oct 2024 08:54:41 +0000 (UTC)
-From: Jiayi Li <lijiayi@kylinos.cn>
-To: gregkh@linuxfoundation.org,
-	stern@rowland.harvard.edu,
-	linux-usb@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: lijiayi@kylinos.cn
-Subject: [PATCH v3] usb: core: use sysfs_emit() instead of sprintf()
-Date: Wed, 23 Oct 2024 16:54:29 +0800
-Message-ID: <20241023085429.2865488-1-lijiayi@kylinos.cn>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729673765; c=relaxed/simple;
+	bh=A2Ad8XKRlmcqgJz2XKG/2BRiRGesInQ+3Q287IAxvGA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=pH0FHuThiFt3mPe/oAMZa90bm7fWiHK7TJ5D/nru19yKhj9hHZ+e2YDN0I3J6BmRibjblciVHlueHzxwH4WyhTvFu//Ep0slwOar8EZDvnjnbm9BAEE3uILXPfYnMRBfUprUVhNT2HU7ZPy+Of4mbD8KlYmxRibtHUs13g8Olvk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Q/qmuNty; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0135DC4CEC6;
+	Wed, 23 Oct 2024 08:55:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729673764;
+	bh=A2Ad8XKRlmcqgJz2XKG/2BRiRGesInQ+3Q287IAxvGA=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Q/qmuNtyT7LrN6rhQ6PU2ojQHubnc+0bICeEB7M47vopejfLqckMtLsOYuYZ6YzfJ
+	 2vsMyFbSD4GZT400Nj+aNxCvHN6hcR9cZ/vjJXDWxtbh5lhGrppZPitM/0dr1d5AXG
+	 6qLn6+hp6XdQg+a+LAMhfbbAFBX2qNFaexXdWNM/FTZxcS3HNWFjpj6ultp5wKtUDC
+	 IqD8qcsnao8PC7s913E+0uldTw9lELPNyoCR4gafWw4Z2YGYQiI3V4IVT5C5AgWSnd
+	 Ipkkh31lo9jBa+FjoqDo1mVxoSmXfRIQtrVq55/7JX/1bx2WY9nyao62hAP0J6H42n
+	 eCohDE6rZz8sg==
+Message-ID: <f7064783-983a-44bd-a9db-fd20f4e50e33@kernel.org>
+Date: Wed, 23 Oct 2024 10:55:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 net-next 03/13] dt-bindings: net: add bindings for NETC
+ blocks control
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+ Frank Li <frank.li@nxp.com>,
+ "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "horms@kernel.org" <horms@kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>
+References: <20241022055223.382277-1-wei.fang@nxp.com>
+ <20241022055223.382277-4-wei.fang@nxp.com>
+ <xx4l4bs4iqmtgafs63ly2labvqzul2a7wkpyvxkbde257hfgs2@xgfs57rcdsk6>
+ <PAXPR04MB851034FDAC4E63F1866356B4884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <PAXPR04MB851034FDAC4E63F1866356B4884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Follow the advice in Documentation/filesystems/sysfs.rst:
-show() should only use sysfs_emit() or sysfs_emit_at() when formatting
-the value to be returned to user space.
+On 23/10/2024 10:18, Wei Fang wrote:
+>>> +maintainers:
+>>> +  - Wei Fang <wei.fang@nxp.com>
+>>> +  - Clark Wang <xiaoning.wang@nxp.com>
+>>> +
+>>> +properties:
+>>> +  compatible:
+>>> +    enum:
+>>> +      - nxp,imx95-netc-blk-ctrl
+>>> +
+>>> +  reg:
+>>> +    minItems: 2
+>>> +    maxItems: 3
+>>
+>> You have one device, why this is flexible? Device either has exactly 2
+>> or exactly 3 IO spaces, not both depending on the context.
+>>
+> 
+> There are three register blocks, IERB and PRB are inside NETC IP, but NETCMIX
+> is outside NETC. There are dependencies between these three blocks, so it is
+> better to configure them in one driver. But for other platforms like S32, it does
+> not have NETCMIX, so NETCMIX is optional.
 
-Signed-off-by: Jiayi Li <lijiayi@kylinos.cn>
----
-V2 -> V3: Add description of changes from the previous version.
-V1 -> V2: Add #include <linux/sysfs.h>
----
- drivers/usb/core/endpoint.c        | 11 ++++++-----
- drivers/usb/core/ledtrig-usbport.c |  3 ++-
- drivers/usb/core/port.c            | 11 ++++++-----
- 3 files changed, 14 insertions(+), 11 deletions(-)
+But how s32 is related here? That's a different device.
 
-diff --git a/drivers/usb/core/endpoint.c b/drivers/usb/core/endpoint.c
-index 4b38b87a1343..e48399401608 100644
---- a/drivers/usb/core/endpoint.c
-+++ b/drivers/usb/core/endpoint.c
-@@ -14,6 +14,7 @@
- #include <linux/kernel.h>
- #include <linux/spinlock.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <linux/usb.h>
- #include "usb.h"
-=20
-@@ -39,7 +40,7 @@ static ssize_t field##_show(struct device *dev,			\
- 			       char *buf)			\
- {								\
- 	struct ep_device *ep =3D to_ep_device(dev);		\
--	return sprintf(buf, format_string, ep->desc->field);	\
-+	return sysfs_emit(buf, format_string, ep->desc->field);	\
- }								\
- static DEVICE_ATTR_RO(field)
-=20
-@@ -52,7 +53,7 @@ static ssize_t wMaxPacketSize_show(struct device *dev,
- 				   struct device_attribute *attr, char *buf)
- {
- 	struct ep_device *ep =3D to_ep_device(dev);
--	return sprintf(buf, "%04x\n", usb_endpoint_maxp(ep->desc));
-+	return sysfs_emit(buf, "%04x\n", usb_endpoint_maxp(ep->desc));
- }
- static DEVICE_ATTR_RO(wMaxPacketSize);
-=20
-@@ -76,7 +77,7 @@ static ssize_t type_show(struct device *dev, struct dev=
-ice_attribute *attr,
- 		type =3D "Interrupt";
- 		break;
- 	}
--	return sprintf(buf, "%s\n", type);
-+	return sysfs_emit(buf, "%s\n", type);
- }
- static DEVICE_ATTR_RO(type);
-=20
-@@ -95,7 +96,7 @@ static ssize_t interval_show(struct device *dev, struct=
- device_attribute *attr,
- 		interval /=3D 1000;
- 	}
-=20
--	return sprintf(buf, "%d%cs\n", interval, unit);
-+	return sysfs_emit(buf, "%d%cs\n", interval, unit);
- }
- static DEVICE_ATTR_RO(interval);
-=20
-@@ -111,7 +112,7 @@ static ssize_t direction_show(struct device *dev, str=
-uct device_attribute *attr,
- 		direction =3D "in";
- 	else
- 		direction =3D "out";
--	return sprintf(buf, "%s\n", direction);
-+	return sysfs_emit(buf, "%s\n", direction);
- }
- static DEVICE_ATTR_RO(direction);
-=20
-diff --git a/drivers/usb/core/ledtrig-usbport.c b/drivers/usb/core/ledtri=
-g-usbport.c
-index 85c999f71ad7..5e3c515991f3 100644
---- a/drivers/usb/core/ledtrig-usbport.c
-+++ b/drivers/usb/core/ledtrig-usbport.c
-@@ -10,6 +10,7 @@
- #include <linux/module.h>
- #include <linux/of.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <linux/usb.h>
- #include <linux/usb/of.h>
-=20
-@@ -87,7 +88,7 @@ static ssize_t usbport_trig_port_show(struct device *de=
-v,
- 						      struct usbport_trig_port,
- 						      attr);
-=20
--	return sprintf(buf, "%d\n", port->observed) + 1;
-+	return sysfs_emit(buf, "%d\n", port->observed) + 1;
- }
-=20
- static ssize_t usbport_trig_port_store(struct device *dev,
-diff --git a/drivers/usb/core/port.c b/drivers/usb/core/port.c
-index e7da2fca11a4..45d7af00f8d1 100644
---- a/drivers/usb/core/port.c
-+++ b/drivers/usb/core/port.c
-@@ -9,6 +9,7 @@
-=20
- #include <linux/kstrtox.h>
- #include <linux/slab.h>
-+#include <linux/sysfs.h>
- #include <linux/pm_qos.h>
- #include <linux/component.h>
- #include <linux/usb/of.h>
-@@ -166,7 +167,7 @@ static ssize_t location_show(struct device *dev,
- {
- 	struct usb_port *port_dev =3D to_usb_port(dev);
-=20
--	return sprintf(buf, "0x%08x\n", port_dev->location);
-+	return sysfs_emit(buf, "0x%08x\n", port_dev->location);
- }
- static DEVICE_ATTR_RO(location);
-=20
-@@ -191,7 +192,7 @@ static ssize_t connect_type_show(struct device *dev,
- 		break;
- 	}
-=20
--	return sprintf(buf, "%s\n", result);
-+	return sysfs_emit(buf, "%s\n", result);
- }
- static DEVICE_ATTR_RO(connect_type);
-=20
-@@ -210,7 +211,7 @@ static ssize_t over_current_count_show(struct device =
-*dev,
- {
- 	struct usb_port *port_dev =3D to_usb_port(dev);
-=20
--	return sprintf(buf, "%u\n", port_dev->over_current_count);
-+	return sysfs_emit(buf, "%u\n", port_dev->over_current_count);
- }
- static DEVICE_ATTR_RO(over_current_count);
-=20
-@@ -219,7 +220,7 @@ static ssize_t quirks_show(struct device *dev,
- {
- 	struct usb_port *port_dev =3D to_usb_port(dev);
-=20
--	return sprintf(buf, "%08x\n", port_dev->quirks);
-+	return sysfs_emit(buf, "%08x\n", port_dev->quirks);
- }
-=20
- static ssize_t quirks_store(struct device *dev, struct device_attribute =
-*attr,
-@@ -254,7 +255,7 @@ static ssize_t usb3_lpm_permit_show(struct device *de=
-v,
- 			p =3D "0";
- 	}
-=20
--	return sprintf(buf, "%s\n", p);
-+	return sysfs_emit(buf, "%s\n", p);
- }
-=20
- static ssize_t usb3_lpm_permit_store(struct device *dev,
---=20
-2.45.2
+Best regards,
+Krzysztof
 
 
