@@ -1,105 +1,84 @@
-Return-Path: <linux-kernel+bounces-377703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2725D9AC292
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:01:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD08A9AC235
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:52:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 557491C20D54
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786BC283CCD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:52:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11B6E1662FA;
-	Wed, 23 Oct 2024 09:00:43 +0000 (UTC)
-Received: from welho-filter4.welho.com (welho-filter4b.welho.com [83.102.41.30])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B6B158DD0;
+	Wed, 23 Oct 2024 08:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ul/d/0kA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59A9815B551;
-	Wed, 23 Oct 2024 09:00:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=83.102.41.30
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBCA15C15F;
+	Wed, 23 Oct 2024 08:52:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729674042; cv=none; b=nsKsm0npMjf0zsJh6bNWMkjfxCf+HZt8WPP+0XTW7gT8xlRnuMJFwF9mn+Wp/SaSJVOsFEZaLRo+1wMQ3mc0CcK+nNCQJZbIeBmqG9KZe+oEiqO+pHlLuZqPT7tStbcAhKOVKIVk6yi6gScvOhGx7UkmI/zJYp8R4Tq16gsvEE4=
+	t=1729673538; cv=none; b=GoHbhiJ7wdcDjtP7Cv0cJV+ctu1SPWvtLXb2KCIj05kfPWBWU8uet2e6lqYMyBzKqAoAoHmOrh6p9M+dfNKFAl6boeYs/BUrE/+Hpmucw2W7orFRinrjsne8Ko9lxg6wXATayoXil2pkpevzjc6Wv3US2BlVXpOHcXqjBcRV9fk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729674042; c=relaxed/simple;
-	bh=707harTW5tzCIIcuiFXWMKBFAXzppTNwi+XJz+v3URY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=CrGT0amZKJ8kjsZAe3hQUiC2r1uSoGJoF0TJ53aSbYqu1xRnM4HiJduUBrnTdO9l9JnS46BGJzwap9b1uPuYn6xo2qUbS4nfD73iycyQ1lE8ZMj4Ate9hy52cNhw8uaaV4wNFVzwitOYv9MiJKAZVaMvhY591vhDTNYDWOFPyO8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=helsinkinet.fi; spf=pass smtp.mailfrom=helsinkinet.fi; arc=none smtp.client-ip=83.102.41.30
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=helsinkinet.fi
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=helsinkinet.fi
-Received: from localhost (localhost [127.0.0.1])
-	by welho-filter4.welho.com (Postfix) with ESMTP id 5EC4467BBB;
-	Wed, 23 Oct 2024 11:52:00 +0300 (EEST)
-X-Virus-Scanned: Debian amavisd-new at pp.htv.fi
-Received: from welho-smtp2.welho.com ([IPv6:::ffff:83.102.41.85])
-	by localhost (welho-filter4.welho.com [::ffff:83.102.41.26]) (amavisd-new, port 10024)
-	with ESMTP id 7Nu6OtO3kx19; Wed, 23 Oct 2024 11:52:00 +0300 (EEST)
-Received: from [192.168.101.100] (87-92-101-239.bb.dnainternet.fi [87.92.101.239])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by welho-smtp2.welho.com (Postfix) with ESMTPSA id BCD7472;
-	Wed, 23 Oct 2024 11:51:54 +0300 (EEST)
-Message-ID: <36c3bd1a-f025-449d-9b17-8436987f4639@helsinkinet.fi>
-Date: Wed, 23 Oct 2024 11:51:54 +0300
+	s=arc-20240116; t=1729673538; c=relaxed/simple;
+	bh=QgZQZAHGGjtLGHw0LYRXygNDG1h6h/5BqjGMqhJ4MY0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=cqiybIXg29/c4V3budZC5ZxgbHSaMD+pb6T09xJwwinMAG4VQ4COfROgYX5lkYtHNFON72KpgGhbO1KLd4DlBzcOBai9ZR/kATu8DhQmwSFfByfGuyZtHZ2KFe5hlUKwDSFBfpj/IukI8uuqXSefMNSIwSdChNkohokE4IYMC64=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ul/d/0kA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEAAC4CEC6;
+	Wed, 23 Oct 2024 08:52:17 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729673538;
+	bh=QgZQZAHGGjtLGHw0LYRXygNDG1h6h/5BqjGMqhJ4MY0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Ul/d/0kA8oYv0b0iR4ZobZJUIPwE8UkhlbBGQJZgtI5x/3Y2GVY4TOTDqhLRqoXP5
+	 VQMkLXSrvdG5GJAOOa2ODisyt02vLuAXBd4Cl4zsQuqQQlqBXkYJMj+3Gp3U3uACYf
+	 lNpmbTDdHATEgy6R1SffQh9ltcr2S4A+OwNO0yqfWLTJCap4xFBiZTCCMsUvBbrJ+j
+	 NbZ6qB6LcfkXgR4fiJJX1sF5HUQdAE7F1E88ErsFaJjFkpOUqFJlpkIohHx/vuMt8Z
+	 to0pYq6PjN9A1ROSrb4g3ZicCaISb7kBvzNm9J6GJmKuIMOg6aXkdZLhj+fHyh6mT+
+	 8DY/roqSm7nLg==
+Date: Wed, 23 Oct 2024 10:52:15 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>, Stephane Danieau <stephane.danieau@foss.st.com>, 
+	Amelie Delaunay <amelie.delaunay@foss.st.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
+	Valentin Caron <valentin.caron@foss.st.com>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
+	Cheick Traore <cheick.traore@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 13/14] dt-bindings: pinctrl: stm32: add support for
+ stm32mp235
+Message-ID: <p7lms5ouffudkszvzrf5pioqmt6ngvf2k4vrzu4hncfxf2oo4p@kbksruiaiqis>
+References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
+ <20241022155658.1647350-14-antonio.borneo@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
- <4ab85330-5a50-bde1-f014-99a8e7cb28cc@gmail.com>
- <86eea4de-2696-4485-9c16-cd3fbbd1aae6@yoseli.org>
-Content-Language: en-US
-From: Eero Tamminen <oak@helsinkinet.fi>
-In-Reply-To: <86eea4de-2696-4485-9c16-cd3fbbd1aae6@yoseli.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022155658.1647350-14-antonio.borneo@foss.st.com>
 
-Hi,
-
-On 23.10.2024 8.53, Jean-Michel Hautbois wrote:
-...
->> There's one similar site in arch/m68k/kernel/head.S 
->> (ret_from_exception) where interrupts are enabled that would need a 
->> similar change, if you want to enable this for all m68k.
+On Tue, Oct 22, 2024 at 05:56:57PM +0200, Antonio Borneo wrote:
+> Add the compatibles st,stm32mp235-pinctrl and st,stm32mp235-z-pinctrl.
 > 
-> I won't be able to test it though ;-).
-> I see there are a few interrupts disabling in 
-> arch/m68k/include/asm/entry.h too ?
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+> ---
+>  Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml | 2 ++
+>  1 file changed, 2 insertions(+)
 
-I would suggest using Hatari for testing it, as that emulates real HW 
-more accurately than Aranym, and provides better debugging & profiling 
-utilities than either Aranym or real HW [1], especially for kernel side.
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-(Because ColdFire is close to m68k, Hatari can help in debugging also 
-issues that are in Linux code they share.)
+Best regards,
+Krzysztof
 
-Here are detailed and IMHO easy instructions on how to do that:
-https://hatari.tuxfamily.org/doc/m68k-linux.txt
-
-
-I'd recommend using Git HEAD of Hatari [2] for testing though, because 
-there was a recent fix to handling prefetch during bus errors, when 030 
-MMU is enabled, and without that fix, prefetch + cache emulation would 
-need to to be disabled for user-space to work correctly.  If you disable 
-those (--compatible off --cycle-exact off), you can start with Hatari 
-version from Linux distros though...
-
-(You can mail me directly if you have problems with Hatari.  Getting 
-ftrace working on m68k would be interesting.)
-
-
-	- Eero
-
-[1] https://hatari.tuxfamily.org/doc/debugger.html
-[2] Upstream: https://git.tuxfamily.org/hatari/hatari.git/
-     or mirror: https://github.com/hatari/hatari/
 
