@@ -1,151 +1,286 @@
-Return-Path: <linux-kernel+bounces-377959-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377962-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 623139AC92C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:38:48 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38DC69AC935
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:39:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E69B01F21FAC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:38:47 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5A9021C20ED6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:39:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4FE231AB50B;
-	Wed, 23 Oct 2024 11:38:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F151AC89A;
+	Wed, 23 Oct 2024 11:38:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b="bMYaD7nE";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="F1zrF0cW"
-Received: from fout-a8-smtp.messagingengine.com (fout-a8-smtp.messagingengine.com [103.168.172.151])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="kOJARlK5"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FC4134BD;
-	Wed, 23 Oct 2024 11:38:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.151
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B64D1AB505;
+	Wed, 23 Oct 2024 11:38:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683517; cv=none; b=ep4YV/qE92VCqoBvIU66VJ4VNxtE/eMCQPnlh9eAGYnhNSB/M0EPVO2NVmTLeWYwBhXAgl1Lj00QDqHSte6nxPwHnislYfwAstvQcH23bH3rMyKrbd9xhbve3KLHtQmnvXHgJuqDRzrpAxfZLOrH+FJ02kIgCcIvgkg+Ky8eW2Q=
+	t=1729683530; cv=none; b=qRfY91ut6cN1WPvNwcLALjZrUGP3JUCHIiz+hWLGVKPDk7NJjfzADdYjHW1iTVRvovUhiHIczCrtIEJ7PeI/GLrZy3HGP615kujJbTZEFn4EAobeZwOQHE8ydg0+1HXn9ad8hQgw6O1LfMwbkfkTJBWJoRYYTFWaFb0tIpD/ovw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683517; c=relaxed/simple;
-	bh=UzYtrYpwqw1jaVXUafPAJfobNqaDaomuqS1vRObPCqI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LB0CthbXaFCTjY+p0VA3s/N4hYWLpm70v+HJf5CkHZq3WzKdU/T7ftO44AVnZDDyP//39Rl9H3m5k1vuvqd2dzTQLJ4j0cNOHrET57Hl5PpcLUfu8sZjE5czn+WuwbNeFXVww1zJLcewT3K44WKrj7h/4/UnDHoe1INvz4nNiko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name; spf=pass smtp.mailfrom=shutemov.name; dkim=pass (2048-bit key) header.d=shutemov.name header.i=@shutemov.name header.b=bMYaD7nE; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=F1zrF0cW; arc=none smtp.client-ip=103.168.172.151
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=shutemov.name
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shutemov.name
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfout.phl.internal (Postfix) with ESMTP id E30CD13807A3;
-	Wed, 23 Oct 2024 07:38:33 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Wed, 23 Oct 2024 07:38:33 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=shutemov.name;
-	 h=cc:cc:content-type:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729683513; x=
-	1729769913; bh=G6CUi21sJIgULg4YyxpP72kDdA8AWcHDBrNG6d45KA8=; b=b
-	MYaD7nEySPXh7O4/RcFrX+MizsCOUtTadpngQe0QdRJjqVSqF/jI+5/2HmBheKkt
-	c5mCxMz8LDC+bttnTWAI600BShR5Gdx6d6lvhrw9f/0dVA7Y5K3hkGPD4KCXCyWf
-	LhUUy6ygcjx6CqdoeexPsNUMk4VnyE+n1AQgXwGJ20bwMs/1JWxsCOlWX6l8O+pw
-	Sxx4QQ4FV+zvVldo0zD62+/Wy+6XvLZ+kw1gVtaiUiWjYYkQW/4sY0lpfO2Jom2/
-	vsx53REiG/RgCrw6mRcT08/PyAqZVit3zrWbEPFiVmjIKkrtVl00Azvl7i59O/lW
-	7Mf0GGDFEvE862hbU4oDw==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729683513; x=1729769913; bh=G6CUi21sJIgULg4YyxpP72kDdA8A
-	WcHDBrNG6d45KA8=; b=F1zrF0cW0VSFjM0x4dQO0iEG41G/dAsSFFHilHRv7sfu
-	AIu+9rdB0V2od+a7vBO2r6ECptu354ukTLB5rQATGOKWCJ6lnqwcxqYHfqQVD2B3
-	q5KC+zGIaENAffEhKt7SjDFK2QCAenIO8+MMoHxlIyXc5/2+QekVZpD9KQ3lBAAI
-	DZ51zkCSz9RSC33JW+RDSFouh4g/UzMV/UKQIwxMLjGduIlqbaJqSQIP7OFM8MxW
-	+tXsB4Ific2k2oNbtWTN0b38GcTcfR0u5k0qMd/9nddciUeGFEMTkLI/yDphUt4X
-	whWok8f/eeC/NW81aHwQMzeVsBR2DT/vxRzVfztvvw==
-X-ME-Sender: <xms:OOAYZ3NRYIeL5zW1s5qndddFNCLfYN_BMBAnzQeiW5VFnnDmdIrBog>
-    <xme:OOAYZx8cKkX8nja5zUKMGGk0IcuqpAosGWiac0by3KVYDTAHnhlBp0sllrepnPWti
-    UXJDKDwuk4uw4OWi1w>
-X-ME-Received: <xmr:OOAYZ2QrJg5n52W9QAQbKGYvBjGJ7Zr9drRNF_THYv9bocosDxs5shR3U3yATtZUwcaiTA>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeijedggeduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtsfdttddtvden
-    ucfhrhhomhepfdfmihhrihhllhcutedrucfuhhhuthgvmhhovhdfuceokhhirhhilhhlse
-    hshhhuthgvmhhovhdrnhgrmhgvqeenucggtffrrghtthgvrhhnpeffvdevueetudfhhfff
-    veelhfetfeevveekleevjeduudevvdduvdelteduvefhkeenucevlhhushhtvghrufhiii
-    gvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkihhrihhllhesshhhuhhtvghmohhv
-    rdhnrghmvgdpnhgspghrtghpthhtohepudekpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegurghvihgusehrvgguhhgrthdrtghomhdprhgtphhtthhopehlihhnuhigqdhk
-    vghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopehlihhnuhigqd
-    hmmheskhhvrggtkhdrohhrghdprhgtphhtthhopegtghhrohhuphhssehvghgvrhdrkhgv
-    rhhnvghlrdhorhhgpdhrtghpthhtohepgiekieeskhgvrhhnvghlrdhorhhgpdhrtghpth
-    htoheplhhinhhugidqfhhsuggvvhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgt
-    phhtthhopegrkhhpmheslhhinhhugidqfhhouhhnuggrthhiohhnrdhorhhgpdhrtghpth
-    htohepfihilhhlhiesihhnfhhrrgguvggrugdrohhrghdprhgtphhtthhopehtjheskhgv
-    rhhnvghlrdhorhhg
-X-ME-Proxy: <xmx:OOAYZ7u9T06DBMvGNREnx8516Mxu-KVPbQNSUO69cEHTnvymJgftEg>
-    <xmx:OOAYZ_eOEUtSC-mwcGe2Co5_zRTAjtfsCU6bxzghKzFfeKaHMAawtg>
-    <xmx:OOAYZ31lhju9dZbobTbDYoYBZ6i2dk90w-WlcUojz764r94TgPNgHA>
-    <xmx:OOAYZ78VQX-CkXJix2eIRcGZnx1rcLekQibFSi7eobssgISEIgl7zA>
-    <xmx:OeAYZyV6c18kuhT7qTXfPQ93NA49QhVjYEMB9giM0eEGtNAoul0gK3p8>
-Feedback-ID: ie3994620:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Wed,
- 23 Oct 2024 07:38:27 -0400 (EDT)
-Date: Wed, 23 Oct 2024 14:38:22 +0300
-From: "Kirill A. Shutemov" <kirill@shutemov.name>
-To: David Hildenbrand <david@redhat.com>
-Cc: linux-kernel@vger.kernel.org, linux-mm@kvack.org, 
-	cgroups@vger.kernel.org, x86@kernel.org, linux-fsdevel@vger.kernel.org, 
-	Andrew Morton <akpm@linux-foundation.org>, "Matthew Wilcox (Oracle)" <willy@infradead.org>, 
-	Tejun Heo <tj@kernel.org>, Zefan Li <lizefan.x@bytedance.com>, 
-	Johannes Weiner <hannes@cmpxchg.org>, Michal =?utf-8?Q?Koutn=C3=BD?= <mkoutny@suse.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Andy Lutomirski <luto@kernel.org>, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>
-Subject: Re: [PATCH v1 04/17] mm: let _folio_nr_pages overlay memcg_data in
- first tail page
-Message-ID: <wi53ecg3o5eemp2hwy5sjbgoroulbmnbbbz6pub2ratbwrdhg3@pnhiy45qirr3>
-References: <20240829165627.2256514-1-david@redhat.com>
- <20240829165627.2256514-5-david@redhat.com>
+	s=arc-20240116; t=1729683530; c=relaxed/simple;
+	bh=/+WFEnvDjivJX4Au126VwACdaOw4qcV7VLLYvjLfqVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=hQ3mWtTBhpfekgJmDT1SaAxzG8+eCLT/G+gF3r2x6CyuvQhsCQlOX8W7KY70+0IXDy49HMEHvGwWHeMjsocE7mkHGuOE2Ip1/JWCe2e0wAOxyisJyThIhldglS3fX2Ua8FKvpy4YmSwY23Hek7rY6EJ+EWgfzH9t1yWf6NpP3yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=kOJARlK5; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279872.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9V37f005091;
+	Wed, 23 Oct 2024 11:38:42 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	5dBF+Sk+S4kNDoPW+metDIn5VFDJ/fiEgaWVi9mtMqc=; b=kOJARlK5OIhU6ALl
+	nC0zhOPse5pS4zVdy3TPM4ldIqveRiGpFxOzOrZgtHfFb2hOP+Q2AD1W0CkNDki+
+	V0jlympX7MgyA8Dy2G51lzdgtPN788+zyfV2K9h9FJa22x5YboQLGM/QAt9pIHxz
+	mQ8QwiVgNwb0H78vgwjulKDLbAMgGsNr2XkYv+7c4/pFtZzWRmbP+TP8pCUP6nXR
+	gyqrt1f9zWLhrEFE83bIshHdVrsnP9EZmo1ijqrs+jm2nWK60rR+vYNjUoTSbobC
+	EyyXuY4osSj2MdPtSqzkuniBI/5vODNTcPgE51TXqasm5DNww938tGZpWlsA3pvL
+	29qaAw==
+Received: from nalasppmta03.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em681yq8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 11:38:41 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NBceOS019198
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 11:38:40 GMT
+Received: from [10.216.48.230] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 04:38:36 -0700
+Message-ID: <48307b08-dbf5-bec5-ac0e-41ad64d0bad4@quicinc.com>
+Date: Wed, 23 Oct 2024 17:08:33 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20240829165627.2256514-5-david@redhat.com>
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 12/28] media: iris: implement enum_fmt and
+ enum_frameintervals ioctls
+Content-Language: en-US
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Sebastian Fricke <sebastian.fricke@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vedang Nagar
+	<quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-12-c5eaa4e9ab9e@quicinc.com>
+ <5a1f5d57-341c-47c3-b478-7d6a7842ae70@xs4all.nl>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <5a1f5d57-341c-47c3-b478-7d6a7842ae70@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: ZG01fZ-F0M06Vpy-em9D4xVQWoBABabO
+X-Proofpoint-GUID: ZG01fZ-F0M06Vpy-em9D4xVQWoBABabO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 malwarescore=0
+ priorityscore=1501 adultscore=0 bulkscore=0 phishscore=0 mlxscore=0
+ lowpriorityscore=0 mlxlogscore=999 impostorscore=0 suspectscore=0
+ clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230068
 
-On Thu, Aug 29, 2024 at 06:56:07PM +0200, David Hildenbrand wrote:
-> Let's free up some more of the "unconditionally available on 64BIT"
-> space in order-1 folios by letting _folio_nr_pages overlay memcg_data in
-> the first tail page (second folio page). Consequently, we have the
-> optimization now whenever we have CONFIG_MEMCG, independent of 64BIT.
-> 
-> We have to make sure that page->memcg on tail pages does not return
-> "surprises". page_memcg_check() already properly refuses PageTail().
-> Let's do that earlier in print_page_owner_memcg() to avoid printing
-> wrong "Slab cache page" information. No other code should touch that
-> field on tail pages of compound pages.
-> 
-> Reset the "_nr_pages" to 0 when splitting folios, or when freeing them
-> back to the buddy (to avoid false page->memcg_data "bad page" reports).
-> 
-> Note that in __split_huge_page(), folio_nr_pages() would stop working
-> already as soon as we start messing with the subpages.
-> 
-> Most kernel configs should have at least CONFIG_MEMCG enabled, even if
-> disabled at runtime. 64byte "struct memmap" is what we usually have
-> on 64BIT.
-> 
-> While at it, rename "_folio_nr_pages" to "_nr_pages".
-> 
-> Signed-off-by: David Hildenbrand <david@redhat.com>
 
-Reviewed-by: Kirill A. Shutemov <kirill.shutemov@linux.intel.com>
 
-BTW, have anybody evaluated how much (if anything) do we gain we a
-separate _nr_pages field in struct folio comparing to calculating it
-based on the order in _flags_1? Mask+shift should be pretty cheap.
-
--- 
-  Kiryl Shutsemau / Kirill A. Shutemov
+On 10/23/2024 4:19 PM, Hans Verkuil wrote:
+> On 14/10/2024 11:07, Dikshita Agarwal wrote:
+>> From: Vedang Nagar <quic_vnagar@quicinc.com>
+>>
+>> Implement enum_fmt and enum_frameintervals ioctls with
+>> necessary hooks.
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  .../platform/qcom/iris/iris_platform_common.h      |  4 +++
+>>  .../platform/qcom/iris/iris_platform_sm8550.c      |  4 +++
+>>  drivers/media/platform/qcom/iris/iris_vdec.c       | 21 ++++++++++++
+>>  drivers/media/platform/qcom/iris/iris_vdec.h       |  1 +
+>>  drivers/media/platform/qcom/iris/iris_vidc.c       | 39 ++++++++++++++++++++++
+>>  5 files changed, 69 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+>> index e345667dfbf2..54a2d723797b 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+>> @@ -43,6 +43,10 @@ struct ubwc_config_data {
+>>  };
+>>  
+>>  struct platform_inst_caps {
+>> +	u32 min_frame_width;
+>> +	u32 max_frame_width;
+>> +	u32 min_frame_height;
+>> +	u32 max_frame_height;
+>>  	u32 max_mbpf;
+>>  };
+>>  struct iris_core_power {
+>> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+>> index bc4769732aad..37c0130d7059 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+>> @@ -11,6 +11,10 @@
+>>  #define VIDEO_ARCH_LX 1
+>>  
+>>  static struct platform_inst_caps platform_inst_cap_sm8550 = {
+>> +	.min_frame_width = 96,
+>> +	.max_frame_width = 8192,
+>> +	.min_frame_height = 96,
+>> +	.max_frame_height = 8192,
+>>  	.max_mbpf = (8192 * 4352) / 256,
+>>  };
+>>  
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+>> index e807decdda2b..fd0f1ebc33e8 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+>> @@ -60,6 +60,27 @@ void iris_vdec_inst_deinit(struct iris_inst *inst)
+>>  	kfree(inst->fmt_src);
+>>  }
+>>  
+>> +int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f)
+>> +{
+>> +	switch (f->type) {
+>> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+>> +		f->pixelformat = V4L2_PIX_FMT_H264;
+>> +		f->flags = V4L2_FMT_FLAG_COMPRESSED | V4L2_FMT_FLAG_DYN_RESOLUTION;
+>> +		strscpy(f->description, "codec", sizeof(f->description));
+> 
+> Don't set description, it's handled in v4l_fill_fmtdesc in v4l2-ioctl.c.
+> 
+>> +		break;
+>> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+>> +		f->pixelformat = V4L2_PIX_FMT_NV12;
+>> +		strscpy(f->description, "colorformat", sizeof(f->description));
+> 
+> Ditto.
+> 
+> Hmm, v4l2-compliance should warn about this. Is this changed in a later patch perhaps?
+> 
+Oh, we didn't see such warning.
+Will make the change.
+>> +		break;
+>> +	default:
+>> +		return -EINVAL;
+>> +	}
+>> +
+>> +	memset(f->reserved, 0, sizeof(f->reserved));
+> 
+> No need to do this, it's already zeroed by v4l_enum_fmt.
+> 
+Sure, Noted.
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>>  {
+>>  	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
+>> index 4f2557d15ca2..eb8a1121ae92 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
+>> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
+>> @@ -10,6 +10,7 @@ struct iris_inst;
+>>  
+>>  void iris_vdec_inst_init(struct iris_inst *inst);
+>>  void iris_vdec_inst_deinit(struct iris_inst *inst);
+>> +int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
+>>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>>  int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>>  
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> index 481fa0a7b7f3..1d6c5e8fafb4 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> @@ -214,6 +214,16 @@ int iris_close(struct file *filp)
+>>  	return 0;
+>>  }
+>>  
+>> +static int iris_enum_fmt(struct file *filp, void *fh, struct v4l2_fmtdesc *f)
+>> +{
+>> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> +
+>> +	if (f->index)
+>> +		return -EINVAL;
+>> +
+>> +	return iris_vdec_enum_fmt(inst, f);
+>> +}
+>> +
+>>  static int iris_try_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format *f)
+>>  {
+>>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> @@ -256,6 +266,32 @@ static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
+>>  	return ret;
+>>  }
+>>  
+>> +static int iris_enum_framesizes(struct file *filp, void *fh,
+>> +				struct v4l2_frmsizeenum *fsize)
+>> +{
+>> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> +	struct platform_inst_caps *caps;
+>> +
+>> +	if (fsize->index)
+>> +		return -EINVAL;
+>> +
+>> +	if (fsize->pixel_format != V4L2_PIX_FMT_H264 &&
+>> +	    fsize->pixel_format != V4L2_PIX_FMT_NV12)
+>> +		return -EINVAL;
+>> +
+>> +	caps = inst->core->iris_platform_data->inst_caps;
+>> +
+>> +	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+>> +	fsize->stepwise.min_width = caps->min_frame_width;
+>> +	fsize->stepwise.max_width = caps->max_frame_width;
+>> +	fsize->stepwise.step_width = STEP_WIDTH;
+>> +	fsize->stepwise.min_height = caps->min_frame_height;
+>> +	fsize->stepwise.max_height = caps->max_frame_height;
+>> +	fsize->stepwise.step_height = STEP_HEIGHT;
+>> +
+>> +	return 0;
+>> +}
+>> +
+>>  static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *s)
+>>  {
+>>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> @@ -298,12 +334,15 @@ static const struct vb2_ops iris_vb2_ops = {
+>>  };
+>>  
+>>  static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+>> +	.vidioc_enum_fmt_vid_cap        = iris_enum_fmt,
+>> +	.vidioc_enum_fmt_vid_out        = iris_enum_fmt,
+>>  	.vidioc_try_fmt_vid_cap_mplane  = iris_try_fmt_vid_mplane,
+>>  	.vidioc_try_fmt_vid_out_mplane  = iris_try_fmt_vid_mplane,
+>>  	.vidioc_s_fmt_vid_cap_mplane    = iris_s_fmt_vid_mplane,
+>>  	.vidioc_s_fmt_vid_out_mplane    = iris_s_fmt_vid_mplane,
+>>  	.vidioc_g_fmt_vid_cap_mplane    = iris_g_fmt_vid_mplane,
+>>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+>> +	.vidioc_enum_framesizes         = iris_enum_framesizes,
+>>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>>  	.vidioc_g_selection             = iris_g_selection,
+>>  };
+>>
+> 
 
