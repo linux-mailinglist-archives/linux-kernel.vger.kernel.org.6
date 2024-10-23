@@ -1,158 +1,213 @@
-Return-Path: <linux-kernel+bounces-377596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A19AC109
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:07:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 477E69AC111
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:09:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6954F1C215EB
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:07:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6C8D1F228E2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:09:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B780156F41;
-	Wed, 23 Oct 2024 08:07:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0F31158555;
+	Wed, 23 Oct 2024 08:09:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JSUyjfoz"
-Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="uosTkOjU"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518C713B5B3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:07:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30E8C153BD7;
+	Wed, 23 Oct 2024 08:09:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729670830; cv=none; b=S/rR6Tj+blgBEVs2NY1tjS39Zti6mnut0rPtgiNYqnr/myaCYG2xJ8VhrIflG54ipMqfmu2amboaEPo5dlrxGval3s2pGT/Va/6LCGxxm39BJBgAcZH8X93E7el9aq9lsBkpA/B5NIEQ9KsIO9tCHzkSaI5fg/IfPghvWHcx56Q=
+	t=1729670966; cv=none; b=WSDwQuNQVT2/8TFq0rRVV2vVZRe5QXuhEd3wuhDWtyQP5i8k260FVPINx0muX3j2/GaLpTVOTNqumPbE9/1lfVRSwUMZwoX4VYrr9dNXopmjQkwmjN1SLXcxYUbLul962Gnw3Xtt3j2vUaZZulZ8ESPTbcUTMCfcdh8DwayLLNs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729670830; c=relaxed/simple;
-	bh=vPfSz3qHWAUn1+CfWqVe5BPCTuXiz66jLqw1PwW7gdw=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AOZyJmzTgPsX0yQV8hVSwfaGrs3wYQoUsug8vXdLz4FtOorjOyPgKPKoV6Edk2WaR4jkBmzyLopOibmdDHlLAxURXlCgoHIZlFJfz1lzvWgJwgElAJkkmfQyXCy+Ow820iXuVfl625UC8/3uc8rdZI8pOkCSIZJvS0jnwYiyBx0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JSUyjfoz; arc=none smtp.client-ip=185.70.40.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729670821; x=1729930021;
-	bh=WiNZoFE52HUQsAh3tRwh1y3054lK2w2JIjigaJTNQhU=;
-	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
-	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
-	 Message-ID:BIMI-Selector;
-	b=JSUyjfozECz9DhuR67qyua5UNf9t9WWUSjqZLwtRm2pBknDEfm89211bmGksZzOeR
-	 0nmsR0jF30gy+LeYm5CvjcUcxuyZMSqBYqcqoS1Jv4lCFq673mlmxVcthb+gPhuGvK
-	 TCzP8NdF8/snymuRomRG2p93kRDHoGXNIXl/6lM+SnGskMsJ2+LlP3Ko7srxNW7zWz
-	 X3orIAlydBY2jHpZZOtt2/tCQj6aQ0+8jYFDNuGFE/vQBDtjfWbwdj7ZtJf8RhTsQ1
-	 YHE6NVA83j2WNjdCwsz36lAXLBxMemcBUkaacoVrpe0Rwa8zL9KU3AI1g563H8k41U
-	 dPfsaua5g1Yxg==
-Date: Wed, 23 Oct 2024 08:06:59 +0000
-To: Alan Huang <mmpgouride@gmail.com>
-From: Piotr Zalewski <pZ010001011111@proton.me>
-Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-Subject: Re: [PATCH] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
-Message-ID: <L78wBCQQaurE7tyQP_T2Fklx8afGKmTXxDh-gweSzakgUoCwjCYeMHINndXWj4LWdUFpOvynoYeKlE7N0rUMiXYEM_VLDye48iN5ysgM09A=@proton.me>
-In-Reply-To: <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
-References: <20241023072024.98915-3-pZ010001011111@proton.me> <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
-Feedback-ID: 53478694:user:proton
-X-Pm-Message-ID: ce19c318e8fae47aff127ee6e443c76350c685ef
+	s=arc-20240116; t=1729670966; c=relaxed/simple;
+	bh=b9rIGqkwFiF+b1e6pMCLITJkoINEPLKpPW+O+tiLKek=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=OOYAW+BTKb224rpa8sa/Yibkj6gZ3EJYi6ia5TuJnC8zYE6SDuKci1BCkQ48mTP7+Y6NhCTfyfPbqixb+W5oS0kaIZrGgLk50XyREfHZwQwIDt0YB1t5J/65nckkxwme0grT6zTUMVE3NhOszotA8YyAulDvJa9n4IqQCP/BkR0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=uosTkOjU; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 194a1daa911611efbd192953cf12861f-20241023
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=1DC0MZ+8RliOZSB75DH8kd3TwbqOFjqN7QSkI/xXet0=;
+	b=uosTkOjUXhPoqgTtjWERjY2QR2OyU/MiBpFbPwKaLpVMLbnTpTCZP9CP3zXlVTSAhxxBETdo1VbApwRqTOehxrZWmz5RhqK/seci/NPTUtymRZp/rch1fQM8Yo28NPm+yx62oAPWy3UYAfsaDA2rVOCaXLzoNg3/JuosUZe+IIc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:fb9f2bc7-c86c-4add-9659-62c70111ea83,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:3e04b441-8751-41b2-98dd-475503d45150,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 194a1daa911611efbd192953cf12861f-20241023
+Received: from mtkmbs10n1.mediatek.inc [(172.21.101.34)] by mailgw02.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1632562414; Wed, 23 Oct 2024 16:09:17 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ MTKMBS14N1.mediatek.inc (172.21.101.75) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 23 Oct 2024 16:09:15 +0800
+Received: from mtksdccf07.mediatek.inc (172.21.84.99) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Wed, 23 Oct 2024 16:09:15 +0800
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+	<matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, <devicetree@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+	<linux-mediatek@lists.infradead.org>, Alexandre Mergnat
+	<amergnat@baylibre.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul.lin@mediatek.com>, Macpaul Lin <macpaul@gmail.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>,
+	<linux-usb@vger.kernel.org>, Chris-qj chen <chris-qj.chen@mediatek.com>,
+	Fabien Parent <fparent@baylibre.com>, Yow-Shin Liou
+	<yow-shin.liou@mediatek.com>, Simon Sun <simon.sun@yunjingtech.com>
+Subject: [PATCH v3 1/2] arm64: dts: mediatek: mt8395-genio-1200-evk: add support for TCPC port
+Date: Wed, 23 Oct 2024 16:09:11 +0800
+Message-ID: <20241023080912.15349-1-macpaul.lin@mediatek.com>
+X-Mailer: git-send-email 2.18.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--4.063000-8.000000
+X-TMASE-MatchedRID: jrpkWNovQHLL05PW1HuK4hcqpH7D1rtQE21NSmBqEKdeARTvhomDCuHM
+	eGIgxik9FU2rnI3D77gOHPadhy5U4iUyFVKm+WpVMZ8cIdf+aBRhBfGxmdHCgvHFoBcOsKezmQJ
+	6sUxppuIriEKQi78d2EIIZCwYBulFL0W1btd8e55H4a2iJdV4MdiK7AdEh6lNi093rJhkH8DeSC
+	fd3mLQsdz6+jdXWZjHIUmX+V9fKhLSuXLpNqOJSQ2HDswcCnIjFk73i4rVVIEL7naABknk8qPFj
+	JEFr+olwXCBO/GKkVqOhzOa6g8KrUejv7saCNrxDkDf5XgSMVjSgRuPc0nbfBQdxtQMtuV3bTJk
+	Ocw4jjZoosmzpgSGI9wd5pmRNJ9i6cN15/z/mmzyzY8c1oKYwOLDq7G+Ik/yv22xKJRyIGVDnOx
+	ozmpp1r+WvXJiKHRLMw/B2eF7ydmUTGVAhB5EbQ==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--4.063000-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP:
+	29A60159753BBF7D539EB962A6F99A9AA4213D7938370545EF29296C4B93CDEB2000:8
+X-MTK: N
 
-Hi Alan,
+From: Fabien Parent <fparent@baylibre.com>
 
-On Wednesday, October 23rd, 2024 at 9:33 AM, Alan Huang <mmpgouride@gmail.c=
-om> wrote:
+Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
+configuration for TCPC Port, USB-C connector, and related settings.
 
-> On Oct 23, 2024, at 15:21, Piotr Zalewski pZ010001011111@proton.me wrote:
->=20
-> > Add NULL check for key returned from bch2_btree_and_journal_iter_peek i=
-n
-> > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
-> > bch2_bkey_buf_reassemble.
->=20
->=20
-> It would be helpful if the commit message explained why k.k is null in th=
-is case
-=20
-I will debug this more thoroughly and provide details. For now I see that
-during GC it sees journal replay hasn't finished but journal turns out to
-be empty? Which seems weird, so maybe underlying issue should be solved on
-a deeper level.
+Configure dual role switch capability, set up PD (Power Delivery) profiles,
+and establish endpoints for SSUSB (SuperSpeed USB).
 
-Log from the reproducer is:
-```
-[   27.391332] bcachefs (loop0): accounting_read... done
-[   27.408141] bcachefs (loop0): alloc_read... done
-[   27.409118] bcachefs (loop0): stripes_read... done
-[   27.410059] bcachefs (loop0): snapshots_read... done
-[   27.411161] bcachefs (loop0): check_allocations...
-[   27.415003] bucket 0:26 data type btree ptr gen 0 missing in alloc btree
-[   27.415024] while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0=
-: seq ac62141f8dc7e261 written 24 min_kg
-[   27.422560] bucket 0:38 data type btree ptr gen 0 missing in alloc btree
-[   27.422571] while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0=
-: seq 7589ab5e0c11cc7a written 24 min_kg
-[   27.428033] bucket 0:41 data type btree ptr gen 0 missing in alloc btree
-[   27.428042] while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0=
-: seq 9aa2895aefce4bdf written 24 min_kg
-[   27.432315] bcachefs (loop0): btree topology error: attempting to get bt=
-ree node with non-btree key u64s 0 type
-[   27.435343] bcachefs (loop0): inconsistency detected - emergency read on=
-ly at journal seq 10
-[   27.436947] bcachefs (loop0): bch2_gc_btree(): error btree_need_topology=
-_repair
-[   27.438756] btree node read error for xattrs, shutting down
-[   27.440081] bcachefs (loop0): bch2_gc_btrees(): error fsck_errors_not_fi=
-xed
-[   27.441915] bcachefs (loop0): bch2_check_allocations(): error fsck_error=
-s_not_fixed
-[   27.443349] bcachefs (loop0): bch2_fs_recovery(): error fsck_errors_not_=
-fixed
-[   27.444802] bcachefs (loop0): bch2_fs_start(): error starting filesystem=
- fsck_errors_not_fixed
-[   27.446270] bcachefs (loop0): shutting down
-[   27.456042] bcachefs (loop0): shutdown complete
-[   27.835683] bcachefs: bch2_fs_get_tree() error: fsck_errors_not_fixed
-```
+Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
+to "otg" for OTG (On-The-Go) mode operation.
 
+Signed-off-by: Fabien Parent <fparent@baylibre.com>
+Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
+Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
+Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+---
+ .../dts/mediatek/mt8395-genio-1200-evk.dts    | 54 +++++++++++++++++++
+ 1 file changed, 54 insertions(+)
 
-> > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
-> > Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
-> > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
-> > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
-> > ---
-> > fs/bcachefs/btree_iter.c | 3 +++
-> > 1 file changed, 3 insertions(+)
-> >=20
-> > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
-> > index 0883cf6e1a3e..625167ce191f 100644
-> > --- a/fs/bcachefs/btree_iter.c
-> > +++ b/fs/bcachefs/btree_iter.c
-> > @@ -882,6 +882,8 @@ static noinline int btree_node_iter_and_journal_pee=
-k(struct btree_trans *trans,
-> > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->it=
-er, path->pos);
-> >=20
-> > k =3D bch2_btree_and_journal_iter_peek(&jiter);
-> > + if (!k.k)
-> > + goto err;
-> >=20
-> > bch2_bkey_buf_reassemble(out, c, k);
-> >=20
-> > @@ -889,6 +891,7 @@ static noinline int btree_node_iter_and_journal_pee=
-k(struct btree_trans *trans,
-> > c->opts.btree_node_prefetch)
-> > ret =3D btree_path_prefetch_j(trans, path, &jiter);
-> >=20
-> > +err:
-> > bch2_btree_and_journal_iter_exit(&jiter);
-> > return ret;
-> > }
-> > --
-> > 2.47.0
+Changes for v2:
+ - Drop the no need '1/2' DT Schema update patch in the 1st version.  
+ - Fix intent for 'ports' node, it should under the 'connector' node.
+ - Correct the index for 'port@0' and 'port@1' node.
 
-Best regards, Piotr Zalewski
+Changes for v3:
+ - Correct the order between new added nodes.
+
+diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+index 5f16fb820580..83d520226302 100644
+--- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
++++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
+@@ -335,6 +335,43 @@ mt6360_ldo7: ldo7 {
+ 				regulator-always-on;
+ 			};
+ 		};
++
++		tcpc {
++			compatible = "mediatek,mt6360-tcpc";
++			interrupts-extended = <&pio 17 IRQ_TYPE_LEVEL_LOW>;
++			interrupt-names = "PD_IRQB";
++
++			connector {
++				compatible = "usb-c-connector";
++				label = "USB-C";
++				data-role = "dual";
++				power-role = "dual";
++				try-power-role = "sink";
++				source-pdos = <PDO_FIXED(5000, 1000, \
++					       PDO_FIXED_DUAL_ROLE | \
++					       PDO_FIXED_DATA_SWAP)>;
++				sink-pdos = <PDO_FIXED(5000, 2000, \
++					     PDO_FIXED_DUAL_ROLE | \
++					     PDO_FIXED_DATA_SWAP)>;
++				op-sink-microwatt = <10000000>;
++
++				ports {
++					#address-cells = <1>;
++					#size-cells = <0>;
++
++					port@0 {
++						reg = <0>;
++					};
++
++					port@1 {
++						reg = <1>;
++						mt6360_ssusb_ep: endpoint {
++							remote-endpoint = <&ssusb_ep>;
++						};
++					};
++				};
++			};
++		};
+ 	};
+ };
+ 
+@@ -770,6 +807,13 @@ pins-reset {
+ 		};
+ 	};
+ 
++	u3_p0_vbus: u3-p0-vbus-default-pins {
++		pins-cmd-dat {
++			pinmux = <PINMUX_GPIO63__FUNC_VBUSVALID>;
++			input-enable;
++		};
++	};
++
+ 	uart0_pins: uart0-pins {
+ 		pins {
+ 			pinmux = <PINMUX_GPIO98__FUNC_UTXD0>,
+@@ -900,8 +944,18 @@ &ufsphy {
+ };
+ 
+ &ssusb0 {
++	dr_mode = "otg";
++	pinctrl-names = "default";
++	pinctrl-0 = <&u3_p0_vbus>;
++	usb-role-switch;
+ 	vusb33-supply = <&mt6359_vusb_ldo_reg>;
+ 	status = "okay";
++
++	port {
++		ssusb_ep: endpoint {
++			remote-endpoint = <&mt6360_ssusb_ep>;
++		};
++	};
+ };
+ 
+ &ssusb2 {
+-- 
+2.45.2
+
 
