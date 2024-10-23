@@ -1,106 +1,117 @@
-Return-Path: <linux-kernel+bounces-378473-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378474-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id ECA919AD11A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:36:09 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8646E9AD11B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:37:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 97F301F21F38
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:36:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 464D6283234
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:36:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 990101CDA14;
-	Wed, 23 Oct 2024 16:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3791D1CBE8F;
+	Wed, 23 Oct 2024 16:36:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="LEYQtEHi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="QldgTxo3"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07201CC8AC;
-	Wed, 23 Oct 2024 16:35:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3183055C29;
+	Wed, 23 Oct 2024 16:36:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729701356; cv=none; b=tPLXQHuzjAWG4b1WKjQ291w0VeG5p9wnfplLnHNwgKnZb2aSj//XjCrynFoTTSVAApNh/frvwgZ8MpczW7JnPzS+QJsl3Y/clvvhvOloI+CVxsideILOBBWe4Xyj/eoStk/SR5vvY6WiJquMJgMkzndQ9RcCApshcNTsCXWJg74=
+	t=1729701412; cv=none; b=AXL1MCuIC8n6D9nt35HBhdM5Jgr/EoE1FYq1IMlYuhiTt26QzYSD9AkE3VwaK3JX14L4xO6ZQ+u0v7hkOCiRbkCTDL2YmbYU3SdP+kgkvs/zpNRRqtkQgAkwJ020ms1MDLfb3CmSzGs0Fs9jjd2pzCtH6mK7SA0Sti/Iy11EvU8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729701356; c=relaxed/simple;
-	bh=61nkL2C+ow+E8+Boatl+Xw80BRmS0nwl/WaD14/w0Mg=;
+	s=arc-20240116; t=1729701412; c=relaxed/simple;
+	bh=lcQqnPRwBbySYqVbc4NvyiNATFNLotniwalM4Qll9sc=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AUnATkZeQdU2NFJb5Dy8dsICUMSTocp09YxXdGzwhQEr0qDw6SkwQxNuZhO8R4CklYH8ZfvEmxTN/C7ZoldSnDWTjH0LSBDI88LcPKnCd783FdeQHIHOeiaHebqG7d99K/TsqnZw4cpNee0t6uNBvvAiadPG8LL1ozBSl5GBG5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=LEYQtEHi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAD82C4CEE8;
-	Wed, 23 Oct 2024 16:35:54 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729701355;
-	bh=61nkL2C+ow+E8+Boatl+Xw80BRmS0nwl/WaD14/w0Mg=;
+	 Content-Type:Content-Disposition:In-Reply-To; b=aN0+V5tZPdYgr3aPJy7Yh8rrd7y5++p1gceSOIpVcTSmQkN+dJapWh4UhphRAPluU8XSn9FUp2+C7S4THzIjBaR2sAYNyY+eQnlFbBTqDF1rQ/EVxo7IEVNsiuRvvtiSihcMF4GG5qnU9cvFBOWfN2oTbjuvrmRZ3bB+/mWmQ34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=QldgTxo3; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id F162A40E0284;
+	Wed, 23 Oct 2024 16:36:48 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id wPqrMK0mrn0d; Wed, 23 Oct 2024 16:36:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729701404; bh=ziKteH5nfXbarEbCPwq6+vnEM5k9YyOPuCeee59ZCT4=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=LEYQtEHi1EWI19ko67O+0PU8zE/qAT/gJ9cHaqpK9/e3SiXj/uunELGuLjk1HOJSW
-	 fikUcIvBKW5JcdUht1RV4pn2HHP3/kjG/6UKMoIAmwAYB2/0Bawqn9+ta3uk8rRokd
-	 K7ELEghKHxcO3uj2Vv4uQS57mrDQf/B/zvKsSW6fc3MZmT2wRsaA1Rf68QUrFElX+8
-	 Pec4XLGIsbLIKsJKRGLvxJJytHyBTkyN37AK9Ryxb+2I1HIfKB8iS3tODXegExhSvH
-	 15C2jq2G29MHx042l8avzXsksKBKKj2sjH0JPphmqb43JXqZws4o+3LSdpOhSi1wV2
-	 Mz4lZeo9eHteA==
-Date: Wed, 23 Oct 2024 09:35:52 -0700
-From: Nathan Chancellor <nathan@kernel.org>
-To: Masahiro Yamada <masahiroy@kernel.org>
-Cc: Koakuma <koachan@protonmail.com>, Andreas Larsson <andreas@gaisler.com>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Nick Desaulniers <ndesaulniers@google.com>,
-	Bill Wendling <morbo@google.com>,
-	Justin Stitt <justinstitt@google.com>, glaubitz@physik.fu-berlin.de,
-	Nicolas Schier <nicolas@fjasle.eu>, sparclinux@vger.kernel.org,
-	linux-kernel@vger.kernel.org, llvm@lists.linux.dev,
-	linux-kbuild@vger.kernel.org
-Subject: Re: [PATCH v2 0/2] sparc/build: Rework CFLAGS for clang compatibility
-Message-ID: <20241023163552.GA4081497@thelio-3990X>
-References: <20240717-sparc-cflags-v2-0-259407e6eb5f@protonmail.com>
- <20241021201657.GA898643@thelio-3990X>
- <CAK7LNASTkUTK8JZCzySNh3BVKxauusVKRhjnchy6iZz4qLbq8w@mail.gmail.com>
- <20241022200732.GA487584@thelio-3990X>
- <CAK7LNARSHhKr=4jrAFUrnVwU6Yw3reybku3CEVxDnSKqBptRVQ@mail.gmail.com>
+	b=QldgTxo3AsGrUKc97C4GT3QMF4DDxWYg/0YUCQ84OZd+A2scAyIkEq+m/wDLah9rZ
+	 HAPXLZFBbgcT4v8O5m/vHV5SLheOe1+45fctHHEDIm7Mi4fhXXz889yZHefHD1sxkK
+	 tu4QK5kwy4vuohoOn3VS0VQlHTL2EaxzgLl7Ug5dKz8HR1xQAYnm/MQBIuUPq5dOh1
+	 LsCCOSa0Rsfb0rlbJA2qxrlIcZ/qc4ClcFYwbDClCOmeC0hZf56RMfWn1HaUsKkZr2
+	 E/6pA/KTHcBAQR3ru2saP41WxcOhGYMMe2MdSCb1VNTo1eaQMo4gtSSYa6F7fHasON
+	 WNeuYGNVzbUM4ai/P8YmBwzvODVJDCvRAnOLxhAS4WMUFvL8uNHRO3cA4EoaxQZIu9
+	 PAdAYetcfj8SYWvHE4Gr/cOKdBl+i9AdqFGxii3nxxJxMahjbk8ee2T/BnPLQ6pUoK
+	 VTfO503IRaW6APe5CvOnZcl4cqs7DtW21nANuOW7zfTshOGiXtoW7mwUObdMRzRyzd
+	 AwsV8/Ega4Ei2Ub2wJ7B5LeiibbzosYPqh85TdPivD4+K5IRedf/1zBME4RUOPuDL0
+	 wFlAfRH5v75ZTOe91RZHLEjSeqkTDhfg+Ao8Q0Za984j2ZkK2rkRPtOGOtMa7SCiYg
+	 /Z4ODK0h8W9HNs6+5nuee4Q8=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 7A28640E0198;
+	Wed, 23 Oct 2024 16:36:27 +0000 (UTC)
+Date: Wed, 23 Oct 2024 18:36:26 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: linux-kernel@vger.kernel.org, tglx@linutronix.de, mingo@redhat.com,
+	dave.hansen@linux.intel.com, Thomas.Lendacky@amd.com,
+	nikunj@amd.com, Santosh.Shukla@amd.com, Vasant.Hegde@amd.com,
+	Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com, x86@kernel.org,
+	hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+	pbonzini@redhat.com, kvm@vger.kernel.org
+Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
+Message-ID: <20241023163626.GKZxkmCi8ZyyCZlkrX@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <CAK7LNARSHhKr=4jrAFUrnVwU6Yw3reybku3CEVxDnSKqBptRVQ@mail.gmail.com>
+In-Reply-To: <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
 
-On Wed, Oct 23, 2024 at 12:29:26PM +0900, Masahiro Yamada wrote:
-> With running this command in Ubuntu 24.10, I got improvements,
-> but I still got another build error.  (unknown argument: '-mv8plus')
+On Fri, Sep 13, 2024 at 05:06:53PM +0530, Neeraj Upadhyay wrote:
+> @@ -61,8 +65,30 @@ static void x2apic_savic_send_IPI_mask_allbutself(const struct cpumask *mask, in
+>  	__send_IPI_mask(mask, vector, APIC_DEST_ALLBUT);
+>  }
+>  
+> +static void x2apic_savic_setup(void)
+> +{
+> +	void *backing_page;
+> +	enum es_result ret;
+> +	unsigned long gpa;
+> +
+> +	if (this_cpu_read(savic_setup_done))
 
-> clang: error: unknown argument: '-mv8plus'
-> make[5]: *** [scripts/Makefile.build:229:
+I'm sure you can get rid of that silly bool. Like check the apic_backing_page
+pointer instead and use that pointer to verify whether the per-CPU setup has
+been done successfully.
 
-> masahiro@3606c94ac88c:~/workspace/linux-kbuild$ clang --version
-> Ubuntu clang version 19.1.1 (1ubuntu1)
+> +		return;
+> +
+> +	backing_page = this_cpu_read(apic_backing_page);
+> +	gpa = __pa(backing_page);
+> +	ret = sev_notify_savic_gpa(gpa);
+> +	if (ret != ES_OK)
+> +		snp_abort();
+> +	this_cpu_write(savic_setup_done, true);
+> +}
 
-> Is this version too old, or am I missing something?
+-- 
+Regards/Gruss,
+    Boris.
 
-Yes, that is the issue resolved by the pull request that Koakuma
-mentioned in the changelog:
-
-https://github.com/llvm/llvm-project/pull/98713
-https://github.com/llvm/llvm-project/commit/6c270a8b9f1e1b80a6016aafb438db7dd89bcb99
-
-which depends on some codegen changes too:
-
-https://github.com/llvm/llvm-project/commit/aca971d336d9c7650120fc0fd6dfe58866408216
-
-Those patches missed the LLVM 19 branch point by a couple of weeks:
-
-https://github.com/llvm/llvm-project/commit/8f701b5df0adb3a2960d78ca2ad9cf53f39ba2fe
-
-They are relatively simple, so maybe we would have a chance of
-convincing the stable maintainer of LLVM to take them for a later 19.1
-release but given how little usage this is likely to see until the full
-LLVM stack is further developed, I am not sure that petition would be
-worth it.
-
-Cheers,
-Nathan
+https://people.kernel.org/tglx/notes-about-netiquette
 
