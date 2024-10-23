@@ -1,141 +1,106 @@
-Return-Path: <linux-kernel+bounces-377536-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377537-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 350A39AC02F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:28:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0554F9AC030
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:28:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CD82E1F23830
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:28:28 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B3EE1284AB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:28:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 255AD154BE2;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7B0AD1552EB;
 	Wed, 23 Oct 2024 07:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="S1xjOfxW"
-Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SfNYIbtY"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 07D94153835;
-	Wed, 23 Oct 2024 07:28:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668499; cv=pass; b=TqtCPMD4J/B3Q3wmPnLrXmkFSfZ+EZojQkwb7odTJkOLSKcbOeDs6h5dw4YZnGjAGnyBxa0J9zs4YyvPOOrns/mxeZOm8gDjtpJbH2ImImjQlR3862g6gDodxY2172ZV1FkGYdTVy6DlA+wz2Ie5WoBOHA2x2c59Up+ceBVK0ts=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8B90153BF8;
+	Wed, 23 Oct 2024 07:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729668499; cv=none; b=HmFEvEPYDUJY4DoyWTpT5vM1B/+09C7TxbveuTr+5Uz4q8bd+gYP2kNwBebwZ/i3ASQN/LY2WgOkyJhFk5eCVXZUkVM3Q+ERFFo4QEe3UhIfViDtJmSqyrSQODJNkqdCEnRSdgHzrsTdQdANmhF6F7+hTIpdR15orNHEZ4W5JEA=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729668499; c=relaxed/simple;
-	bh=vk1Ixavo5AIW3EHKpG4os4kWFE7xCuW2TWUN3o/6NvA=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=CZNao8eWoLykcEu1mP8fOlkMGgUzkWE1wBt2qDi4mT4qbC4UAQQlgXAgcI21zLUp380XSICMCUuf9dIEMFQHIMR+tbI3AclMUd1lIHq3uduge67wUmrViykM+y0CBE4HiamfwBWb8Z6lOkdhZxdyzXb3ZfTSsAASgAWwAm2Y+gA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=S1xjOfxW; arc=pass smtp.client-ip=136.143.188.112
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-ARC-Seal: i=1; a=rsa-sha256; t=1729668465; cv=none; 
-	d=zohomail.com; s=zohoarc; 
-	b=C/2EwbLhmz6G2Ou2KtzULuW8/gnWJbsO62/+cEywrlquHLq3WIvkxLwDyJzcHnyOLAZHTh84sVlLx0z2Cr03Ef9eDgmvIqNEPozhU/6TAsRuSfwh1P3f1Z2ClA+FlaoERKyTa4uueSDnS/b3a0dXhfbO7+x8X25nsGcn6NV39vk=
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
-	t=1729668465; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
-	bh=xYPqH8i/jPZ3SVIk0j6dfaZf9c/dkI1qA0EU0u/Upf4=; 
-	b=FnHuzK+l4ovOuJbO5+x5hUSRqh6IQcp2JhW9Vsx64ASTThb+PeUm5jtgENQe661CyMSPikBjcl6Z7JiejZtI0LvWdkjYLmYHNF3wfy+nSYoqiR0t98OrhWobX9xUcMlaNliwGIxuR6U/tIvp8q+lRCkVz5BnRh54n+78vFNeTKQ=
-ARC-Authentication-Results: i=1; mx.zohomail.com;
-	dkim=pass  header.i=collabora.com;
-	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
-	dmarc=pass header.from=<Usama.Anjum@collabora.com>
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729668465;
-	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
-	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
-	bh=xYPqH8i/jPZ3SVIk0j6dfaZf9c/dkI1qA0EU0u/Upf4=;
-	b=S1xjOfxWAnL9DpOcyskOZHCbQab8h3MWLghpDTRE+BpvA1c2kpc8snxRKyUKkhIA
-	X4pjkHatf5nsW2aa9zCn4n9RUPF221coAd0M9RVFPcdsUv7XlGZTBiwP9r3BHAnlery
-	2sSiV3FcUCTS5tKB325o1etJ5ew64DnvwKgJ/xIs=
-Received: by mx.zohomail.com with SMTPS id 172966846416624.627621061485456;
-	Wed, 23 Oct 2024 00:27:44 -0700 (PDT)
-Message-ID: <b111d58b-8701-46a3-a82d-d4180b7a56b9@collabora.com>
-Date: Wed, 23 Oct 2024 12:27:34 +0500
+	bh=L5yLsoBUR0IuLJ1N3QGS6JUyNVDuJDXCUWIy6oU9b78=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=a54GrtGUy0XnxZyeyzEKAOvR3U+fgOUAGPlu5keW5w6K9o5QVXwhEtJ9WORKN3mYNjkcrhmwWFXYEx197sMI5xy7ixLxcO0wJbDYoKiRSJH9A4x3oqjbYC8VvesOPD2ptlUJWR2bpmxiCex0JGaBFz97W53KU7VyBxcDxXoGMiU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SfNYIbtY; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 601F3C4CEC6;
+	Wed, 23 Oct 2024 07:28:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729668499;
+	bh=L5yLsoBUR0IuLJ1N3QGS6JUyNVDuJDXCUWIy6oU9b78=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=SfNYIbtYFfUadbPENunNtc4OXS8S7g0+icsrnc5y+c1DPfM7VJ8Jg/BqjwlF4fCv0
+	 AOq4Ko5KdqQuIEf1bFxav7GJwME49gWkJ5koLSG9GUFNHzY2Bk7cCd75SgPiG+1wZ8
+	 BuncKNFMt56EfTzhXLA4+dcE7i3SiICq0IfD6vjahkFIQis8JNdqSnCdFlmYQl8AAL
+	 RCUSAosxUWO/qyvCD2LsJxfYF66z7hsQ/pMosLaMAO8RL135EVTAUF/+HVWj5QboGf
+	 piCqOM4YfH0o9vDbLqjC56iiJUQgCqJHP4xRHYyc93GrQMZrmxEE4DeTKRTbZCX9yM
+	 iN4FSEa9cwoSQ==
+Date: Wed, 23 Oct 2024 09:28:11 +0200
+From: Danilo Krummrich <dakr@kernel.org>
+To: Greg KH <gregkh@linuxfoundation.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 00/16] Device / Driver PCI / Platform Rust abstractions
+Message-ID: <Zxili5yze1l5p5GN@pollux>
+References: <20241022213221.2383-1-dakr@kernel.org>
+ <2024102324-giver-scavenger-a295@gregkh>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
- linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
- akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
- patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
- jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
- srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
- allen.lkml@gmail.com, broonie@kernel.org
-Subject: Re: [PATCH 5.10 00/52] 5.10.228-rc1 review
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
-References: <20241021102241.624153108@linuxfoundation.org>
-Content-Language: en-US
-From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
-In-Reply-To: <20241021102241.624153108@linuxfoundation.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-ZohoMailClient: External
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <2024102324-giver-scavenger-a295@gregkh>
 
-On 10/21/24 3:25 PM, Greg Kroah-Hartman wrote:
-> This is the start of the stable review cycle for the 5.10.228 release.
-> There are 52 patches in this series, all will be posted as a response
-> to this one.  If anyone has any issues with these being applied, please
-> let me know.
+On Wed, Oct 23, 2024 at 07:13:37AM +0200, Greg KH wrote:
+> On Tue, Oct 22, 2024 at 11:31:37PM +0200, Danilo Krummrich wrote:
+> > This patch series implements the necessary Rust abstractions to implement
+> > device drivers in Rust.
+> > 
+> > This includes some basic generalizations for driver registration, handling of ID
+> > tables, MMIO operations and device resource handling.
+> > 
+> > Those generalizations are used to implement device driver support for two
+> > busses, the PCI and platfrom bus (with OF IDs) in order to provide some evidence
+> > that the generalizations work as intended.
+> > 
+> > The patch series also includes two patches adding two driver samples, one PCI
+> > driver and one platform driver.
+> > 
+> > The PCI bits are motivated by the Nova driver project [1], but are used by at
+> > least one more OOT driver (rnvme [2]).
+> > 
+> > The platform bits, besides adding some more evidence to the base abstractions,
+> > are required by a few more OOT drivers aiming at going upstream, i.e. rvkms [3],
+> > cpufreq-dt [4], asahi [5] and the i2c work from Fabien [6].
+> > 
+> > The patches of this series can also be [7], [8] and [9].
 > 
-> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
-> Anything received after that time might be too late.
+> Nice!
 > 
-> The whole patch series can be found in one patch at:
-> 	https://www.kernel.org/pub/linux/kernel/v5.x/stable-review/patch-5.10.228-rc1.gz
-> or in the git tree and branch at:
-> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-> and the diffstat can be found below.
+> Thanks for redoing this, at first glance it's much better.  It will be a
+> few days before I can dive into this, It's conference season and the
+> travel is rough, so be patient but I will get to this...
+
+No worries, I'll be also a bit less responsive than usual in the next weeks.
+
 > 
 > thanks,
 > 
 > greg k-h
 > 
-> -------------
-Hi,
-
-Please find the KernelCI report below :-
-
-
-OVERVIEW
-
-    Builds: 24 passed, 0 failed
-
-    Boot tests: 53 passed, 1 failed
-
-    CI systems: maestro
-
-REVISION
-
-    Commit
-        name: 
-        hash: 11656f6fe2df8ad7262fe635fd9a53f66bb23102
-    Checked out from
-        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-5.10.y
-
-
-BUILDS
-
-    No new build failures found
-
-BOOT TESTS
-
-      Failures
-      - i386 (defconfig)
-      Error detail: UBSAN: shift-out-of-bounds in ./include/linux/log2.h:57:13
-                    BUG: kernel NULL pointer dereference, address: 00000000
-      Build error: https://kcidb.kernelci.org/d/test/test?var-datasource=edquppk2ghfcwc&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-id=maestro:671648503eaa4b46ca68a35c&orgId=1
-
-See complete and up-to-date report at:
- https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=11656f6fe2df8ad7262fe635fd9a53f66bb23102&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
-
-Tested-by: kernelci.org bot <bot@kernelci.org>
-
-Thanks,
-KernelCI team
-
 
