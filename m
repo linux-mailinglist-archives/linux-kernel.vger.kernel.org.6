@@ -1,139 +1,146 @@
-Return-Path: <linux-kernel+bounces-377674-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377675-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FE679AC226
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:49:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2FA969AC22A
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:50:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E5528283B2C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:49:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0FB5283AD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:50:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0F0515C15F;
-	Wed, 23 Oct 2024 08:49:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 235F2166308;
+	Wed, 23 Oct 2024 08:49:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iZMmn3+n"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rN6WKyaA"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B33417F7;
-	Wed, 23 Oct 2024 08:49:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7AD5F15E5BB;
+	Wed, 23 Oct 2024 08:49:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673388; cv=none; b=eK27yOM37hhgEqGbHXATSc+VKMKquVxTa/qiiKHXXH53Oyc5X7nXelsM6QeFi5EB3PzVRmOhpf1+t3Gd2qcSUR12FmQ9y5R6EA55gEKFShoyAu9R7dB2SsUuoa7AIV8dv5E328hZJekqat3yKh9ykhfsxRd8VoQD6Uz/cEYOO3s=
+	t=1729673389; cv=none; b=ofahYoAket1p0gMtBKxrW3z65YWqRgGFnUxFccMlfP/wfN93QfKUBgI7x23SxxHcpeSIpzApz5ootJSy0kHviEIxEW0i4P78vxS9jDuBk/bSSzyJnde/aNoO/w902WuOX+H6AqIvmpcTIQsesAXTQ9r2vi4EaUMKAIweYuc7Jl8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673388; c=relaxed/simple;
-	bh=LbO3NbepQkvZk7yCTg035pexaVjgPBDZmBLuQhHYH40=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=fOv+V7TcZ5S1n0U5e/oqNVM9YtXHbUXLVgc4irevDWiN45DhFR4OISiPD8/ZRAUZgVlWpWjNr4ndSHGqXoCdurRhaFxJuUQz6p3RfFOPfVLSIYaOLryXVnnULerSH/w8O+ZajSSbHtSQurhOBtqOXbM4EXlNNb1kvVuq/7Wkqn4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iZMmn3+n; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2BB44C4CEC6;
-	Wed, 23 Oct 2024 08:49:46 +0000 (UTC)
+	s=arc-20240116; t=1729673389; c=relaxed/simple;
+	bh=lgGbkc6uaJYpUzsc1Gh3kVF2XFhM1rzwAZjnJSwPphI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dzmzX4BdpjCinmrHqiE6Mpq4Enf0tozOk3CnDd6KFFa9D9jYCBp0WdrZa9dpWq5XucxFx0MlABaq9u5PMo8ompq9M7BlNaJugZApYU4Cp0rG5Jvch0gDyzHO4PmjtRuEkhcQs+LoaAeVaLiSsjrQ/WCBS8Li9IgQW5jDlfNtp/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rN6WKyaA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 82F54C4CEC6;
+	Wed, 23 Oct 2024 08:49:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673387;
-	bh=LbO3NbepQkvZk7yCTg035pexaVjgPBDZmBLuQhHYH40=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iZMmn3+n4j1CNsLy1QLuB05dT9u9rS+PPdrTPy8VVpXISB0padJvdTeXoB9x6Hwv4
-	 AU974L3tZ5PkctyWTs2fGgDWjUzBztuMVWlKVgyjaM+oiJI5vk9KGE4k+LgpTBUqOd
-	 7DAXg1wn24wiDVAV1BdtTK5MLPSX9rWOM+l9KlKW6rWcSwhOk8uV4K1CJRCPTSiYvo
-	 s8qRiGPN+f1tA/EL/hG8deU+Ri5WOykQYD+c+nJfDb5FSaOtUo9CLg4u+zpkQnFdKF
-	 2Ny1VDz/5znszIyT57l2Io5RTq/pGdTyhVxcu81EG2leknegld/uVC+Kf+MuuTtmD2
-	 bC2DA3rme0YGg==
-Date: Wed, 23 Oct 2024 17:49:44 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Nir Lichtman <nir@lichtman.org>
-Cc: kgdb-bugreport@lists.sourceforge.net,
- linux-trace-kernel@vger.kernel.org, yuran.pereira@hotmail.com,
- jason.wessel@windriver.com, daniel.thompson@linaro.org,
- dianders@chromium.org, rostedt@goodmis.org, mhiramat@kernel.org,
- linux-kernel@vger.kernel.org,
- linux-kernel-mentees@lists.linuxfoundation.org
-Subject: Re: [PATCH v2 2/2] trace: kdb: Replace simple_strtoul with kstrtoul
- in kdb_ftdump
-Message-Id: <20241023174944.e85832349ef91ebff9cab31e@kernel.org>
-In-Reply-To: <20241021211724.GC835676@lichtman.org>
-References: <20241021211724.GC835676@lichtman.org>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=k20201202; t=1729673389;
+	bh=lgGbkc6uaJYpUzsc1Gh3kVF2XFhM1rzwAZjnJSwPphI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=rN6WKyaA6gR0etHHoxMHugUoM5I4bhZAvWw0Ih5lCiYC9+06idpzCaGNDt9NvmdZi
+	 Q19ul2J0lVL4ndKksr0hM2KOnjWV8LhUyDO5LRUIlfmS2iDUhzrf7cjOqubyJ1eHA2
+	 8EsC5ZBfdj8hChTqynVuEK8Ee57NxEc5PgM/ZacW9RvRXX83tIOLW1SoOGCK1Ip7qU
+	 25QoQhymEmjdUcY8Nvwr5t7g5mWV2QpwMvpcO16SqPmBwDZ/3X8Oa/rH3DR23eTbQb
+	 n+RINzAmQv5SOWrdMC8yUxe2O1zKphVfJDfQaH2jDrLaEmmj2HUrjJSjJvnHkhjw5a
+	 Ho9lsRDUwqTvA==
+Date: Wed, 23 Oct 2024 10:49:46 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Alexandre Torgue <alexandre.torgue@foss.st.com>, Catalin Marinas <catalin.marinas@arm.com>, 
+	Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>, Stephane Danieau <stephane.danieau@foss.st.com>, 
+	Amelie Delaunay <amelie.delaunay@foss.st.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
+	Valentin Caron <valentin.caron@foss.st.com>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
+	Cheick Traore <cheick.traore@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
+Subject: Re: [PATCH 07/14] dt-bindings: pinctrl: stm32: support IO
+ synchronization parameters
+Message-ID: <e6sz7p4lgkmuvgosafob5dvwtvp4ruzuzmwz4oyepcajfui2xm@fom7mj5fbik6>
+References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
+ <20241022155658.1647350-8-antonio.borneo@foss.st.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241022155658.1647350-8-antonio.borneo@foss.st.com>
 
-On Mon, 21 Oct 2024 21:17:24 +0000
-Nir Lichtman <nir@lichtman.org> wrote:
-
-> The function simple_strtoul performs no error checking in scenarios
-> where the input value overflows the intended output variable.
-> This results in this function successfully returning, even when the
-> output does not match the input string (aka the function returns
-> successfully even when the result is wrong).
+On Tue, Oct 22, 2024 at 05:56:51PM +0200, Antonio Borneo wrote:
+> From: Fabien Dessenne <fabien.dessenne@foss.st.com>
 > 
-> Or as it was mentioned [1], "...simple_strtol(), simple_strtoll(),
-> simple_strtoul(), and simple_strtoull() functions explicitly ignore
-> overflows, which may lead to unexpected results in callers."
-> Hence, the use of those functions is discouraged.
+> Support the following IO synchronization parameters:
+> - Delay (in ns)
+> - Delay path (input / output)
+> - Clock edge (single / double edge)
+> - Clock inversion
+> - Retiming
+
+Why? What is missing for existing hardware support?
+
 > 
-> This patch replaces all uses of the simple_strtoul with the safer
-> alternatives kstrtoint and kstrtol.
-> 
-> [1] https://www.kernel.org/doc/html/latest/process/deprecated.html#simple-strtol-simple-strtoll-simple-strtoul-simple-strtoull
-> 
-
-Looks good to me.
-
-Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-
-Thank you,
-
-> Signed-off-by: Yuran Pereira <yuran.pereira@hotmail.com>
-> Signed-off-by: Nir Lichtman <nir@lichtman.org>
+> Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
 > ---
->  kernel/trace/trace_kdb.c | 15 ++++++---------
->  1 file changed, 6 insertions(+), 9 deletions(-)
+>  .../bindings/pinctrl/st,stm32-pinctrl.yaml    | 48 +++++++++++++++++++
+>  1 file changed, 48 insertions(+)
 > 
-> diff --git a/kernel/trace/trace_kdb.c b/kernel/trace/trace_kdb.c
-> index 59857a1ee44c..eadda6e05526 100644
-> --- a/kernel/trace/trace_kdb.c
-> +++ b/kernel/trace/trace_kdb.c
-> @@ -96,23 +96,20 @@ static int kdb_ftdump(int argc, const char **argv)
->  {
->  	int skip_entries = 0;
->  	long cpu_file;
-> -	char *cp;
-> +	int err;
->  	int cnt;
->  	int cpu;
->  
->  	if (argc > 2)
->  		return KDB_ARGCOUNT;
->  
-> -	if (argc) {
-> -		skip_entries = simple_strtol(argv[1], &cp, 0);
-> -		if (*cp)
-> -			skip_entries = 0;
-> -	}
-> +	if (argc && kstrtoint(argv[1], 0, &skip_entries))
-> +		return KDB_BADINT;
->  
->  	if (argc == 2) {
-> -		cpu_file = simple_strtol(argv[2], &cp, 0);
-> -		if (*cp || cpu_file >= NR_CPUS || cpu_file < 0 ||
-> -		    !cpu_online(cpu_file))
-> +		err = kstrtol(argv[2], 0, &cpu_file);
-> +		if (err || cpu_file >= NR_CPUS || cpu_file < 0 ||
-> +			!cpu_online(cpu_file))
->  			return KDB_BADINT;
->  	} else {
->  		cpu_file = RING_BUFFER_ALL_CPUS;
-> -- 
-> 2.39.2
+> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> index 5d17d6487ae9c..9a7ecfea6eb5b 100644
+> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+> @@ -207,6 +207,54 @@ patternProperties:
+>                3: High speed
+>              $ref: /schemas/types.yaml#/definitions/uint32
+>              enum: [0, 1, 2, 3]
+> +          st,io-delay-path:
+> +            description: |
+> +              IO synchronization delay path location
+> +              0: Delay switched into the output path
+> +              1: Delay switched into the input path
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1]
 
+Why enum? Why not bool? What is the "synchronization delay"? Why this is
+needed per board?
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+> +          st,io-clk-edge:
+> +            description: |
+> +              IO synchronization clock edge
+> +              0: Data single-edge (changing on rising or falling clock edge)
+> +              1: Data double-edge (changing on both clock edges)
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1]
+
+All the same questions.
+
+> +          st,io-clk-type:
+> +            description: |
+> +              IO synchronization clock inversion
+> +              0: IO clocks not inverted. Data retimed to rising clock edge
+> +              1: IO clocks inverted. Data retimed to falling clock edge
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1]
+
+OK, so if not bool why this cannot be a readable string?
+
+> +          st,io-retime:
+> +            description: |
+> +              IO synchronization data retime
+> +              0: Data not synchronized or retimed on clock edges
+> +              1: Data retimed to either rising or falling clock edge
+> +            $ref: /schemas/types.yaml#/definitions/uint32
+> +            enum: [0, 1]
+
+Missing blank lines everywhere between properties.
+
+> +          st,io-delay:
+
+Use proper unit suffix. Or is there no such?
+
+Best regards,
+Krzysztof
+
 
