@@ -1,141 +1,123 @@
-Return-Path: <linux-kernel+bounces-377762-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377767-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C71589AC663
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:27:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 82D7F9AC677
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:28:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 4E509B21BF9
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:27:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13601B238C0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:28:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29FF419E7F8;
-	Wed, 23 Oct 2024 09:26:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F31A119E7F7;
+	Wed, 23 Oct 2024 09:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="l3nMobwd";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="jj7j6Aiv"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="hfRsGYbm"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AE73D19DFAC;
-	Wed, 23 Oct 2024 09:26:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4695C155393;
+	Wed, 23 Oct 2024 09:28:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729675598; cv=none; b=QHVCnHWRbgc1uY0FskPAo6JoDKxZb7NNV3c4T7vPu0aW8z4szofvzxAqtOuHsS1KlNwbL2tP8pyiNu/QExGIvJaktcTf2ZnPvhcNStA9s2YMKJ/glWVPcDPbWRkersyvWk+DioUqXlW29D6PYmfGe6KPIDAw8k+04APclILwAiM=
+	t=1729675692; cv=none; b=KB0L9oM9qOxafurleuVq3MWe2e6OYEUcu6BUWlg+sWSz7xc8ANUspG1p8cosoXDPXQE5PAMdYdXT4d4I7ShOLZD4P/Xki9CaooZLSv5Q/DUoRPw2I5ZcbA5eil8+UgU4shRjcQS353gIBYveCKVMsKmCsRC80qNrIEVfEA85Gko=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729675598; c=relaxed/simple;
-	bh=VxvVDNyw6ySri3t4X+ACuVSJgTGXxU/81JYx7yBMXiA=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=owxnWv1Xrt3GGmHAP0bQiRXPyoeT6Vyn2TlOIREXJr0fYhytireyetnS1lj+41L6RDKrakrgPq7Fqj9Am0G80nyz7TL2RB0e1MWfD40/L/2xtWRM03/SzDn6TWaxmm9P4pa7HLemgnXQtOjbCC5bNQpxH25NT3SBUa5LTxcG7P0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=l3nMobwd; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=jj7j6Aiv reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729675594; x=1761211594;
-  h=message-id:subject:from:to:cc:date:in-reply-to:
-   references:content-transfer-encoding:mime-version;
-  bh=+BKf5KNrU31RpU4f9DG5CAmvfL+4I9L1qsDYZ+zZzCE=;
-  b=l3nMobwdH3kvxtE4X86BSUNEGqDqTbAieKux3jVhJ4jTVut+M9N5jD4f
-   aUE60hO8JD40qWPfd2PmM+cg1I3vi1F6KNIM6zhERLLWSprfV6YatxQ6A
-   0e74qy9aES4Nly6FQ5XGBllC2w49L8D9r2ASF7FBRlwFtI6oQAHn3kdCQ
-   stGCI/bsQNtH3MUt0AwpWPHF2126Czbh6lo7ySxhS10OwfxMnCNM/6m6K
-   QJ67e18a4XmYFc9tg2/0oHvZa7lY1Fxorpy3rm+7IwF8D8NzPaKLfcS9j
-   bgSBc8lehJFHcCh+jFHC7rboB3l3xidK4cWbwQOfuuz83/FHklm/hwj41
-   Q==;
-X-CSE-ConnectionGUID: N5sDUTW0TzWaNZbOIF1DaQ==
-X-CSE-MsgGUID: BV9o/6MzQE6vVbNfyAy0Jg==
-X-IronPort-AV: E=Sophos;i="6.11,225,1725314400"; 
-   d="scan'208";a="39619700"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 23 Oct 2024 11:26:31 +0200
-X-CheckPoint: {6718C147-4-21611FC3-DAD22B0C}
-X-MAIL-CPID: B425432F9F0D62CAF79F75DB369425F4_4
-X-Control-Analysis: str=0001.0A682F25.6718C147.006C,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 9D4FB163EF1;
-	Wed, 23 Oct 2024 11:26:24 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729675586;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=+BKf5KNrU31RpU4f9DG5CAmvfL+4I9L1qsDYZ+zZzCE=;
-	b=jj7j6AivhZGqdOxW9K9Ox6trqW/UaA2OOFLhI/gKvbP1o7poL8tpQ9wuO2AhzuMpDwhlb7
-	t9XNkJBSYJ/rqr9suy69zOGSjwhFOGsY6YzPqh+oAilizzZMix+sXu+mOnUc9ARBH9yz0i
-	ugvhNjdcQb3KpD6g/VgdvwtFuyDTm2DZVRie0/llR8O/W2R511Z2/GWiveARKmJCYIY5Au
-	Yij+bpuudRSNyGbgWleh8E7OSxaOnZcc0FStMNXsJ0Kid5imp8nt5Nad0eKxxliNmigoIl
-	qkBxf9W408ds5fwHtbA0eEQ4XWjLRewijHyvjIAlb5tnnsMSHxyZ0/+s9UnV3A==
-Message-ID: <e45a5f9a63e6dba8eb57bac3c5001e8a360af393.camel@ew.tq-group.com>
-Subject: Re: [PATCH next] drm/fsl-dcu: prevent error pointer dereference in
- fsl_dcu_load()
-From: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Stefan Agner <stefan@agner.ch>, Alison Wang <alison.wang@nxp.com>, 
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard
- <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>, David Airlie
- <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov
- <dmitry.baryshkov@linaro.org>, Alexander Stein
- <alexander.stein@ew.tq-group.com>, dri-devel@lists.freedesktop.org, 
- linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Date: Wed, 23 Oct 2024 11:26:24 +0200
-In-Reply-To: <e4e078ed-9342-48f4-80c5-28f0f7b711b0@stanley.mountain>
-References: <e4e078ed-9342-48f4-80c5-28f0f7b711b0@stanley.mountain>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.44.4-0ubuntu2 
+	s=arc-20240116; t=1729675692; c=relaxed/simple;
+	bh=VY5NdMaZIvLA7s0Cdx20aTCw4d+xsTj4YBfSP6qLQao=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=U2BWL8C8lYmxyU1s4CVARBHqwjyBrFGA+cKPvjzKlDCpI5KrGRp3844K3QedRccYDMZZANCwluHRTOhxYnNSDPVwpQzuODlkFYbqS5XzZjDKSUCsHqpHrhaboplUpvFG7clgoWzSWneTElibhIorKd0H6xb1bEhK99aDikyqv6c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=qualcomm.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=hfRsGYbm; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=qualcomm.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49MLa4x1025445;
+	Wed, 23 Oct 2024 09:28:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:date:from:message-id:mime-version
+	:subject:to; s=qcppdkim1; bh=AlpIcVGnnvJ+HBshW88ZibZDP4K+4ikzz1p
+	uxILa3wI=; b=hfRsGYbmUIjcGc4sWIrXNpELUYZI+BshfMvu8iaFxVct9+BrR55
+	iUVXpBmCNBHUuRI9G085XicPH2ug/rstJDK/ha9aOehoeISJ+pRd5Lbw9Ac97rPK
+	2vHKf7wkXa584QNIfJIyBrfjhzGeJzDOJ1Gy91VS5xsbUV5llvtCT83rDbFm0LU2
+	XrmNqE05UIq76XbOLO+OMkLQXX3k6RJR8uqZc5Iie2Zb0CNaVIuDLgbNd2lBJiAo
+	jg6MTZAAR1V3rhKcMb8bSkdoa49bTxSStaFrRdJh6o0fYk1L1Tjs6cDposVaylTj
+	ANv/K43wBUnxfyJ6xj1ZqDm6Ld/YAtVeVZA==
+Received: from aptaippmta02.qualcomm.com (tpe-colo-wan-fw-bordernet.qualcomm.com [103.229.16.4])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em409nwx-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 09:28:05 +0000 (GMT)
+Received: from pps.filterd (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9S3tF016260;
+	Wed, 23 Oct 2024 09:28:03 GMT
+Received: from pps.reinject (localhost [127.0.0.1])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 42cpckqq25-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 09:28:03 +0000
+Received: from APTAIPPMTA02.qualcomm.com (APTAIPPMTA02.qualcomm.com [127.0.0.1])
+	by pps.reinject (8.17.1.5/8.17.1.5) with ESMTP id 49N9S3Bb016238;
+	Wed, 23 Oct 2024 09:28:03 GMT
+Received: from cse-cd02-lnx.ap.qualcomm.com (cse-cd02-lnx.qualcomm.com [10.64.75.246])
+	by APTAIPPMTA02.qualcomm.com (PPS) with ESMTPS id 49N9S2Cx016230
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 09:28:03 +0000
+Received: by cse-cd02-lnx.ap.qualcomm.com (Postfix, from userid 4571896)
+	id 7A7E6137B; Wed, 23 Oct 2024 17:28:01 +0800 (CST)
+From: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+To: ulf.hansson@linaro.org, robh@kernel.org, krzk+dt@kernel.org,
+        conor+dt@kernel.org, bhupesh.sharma@linaro.org, andersson@kernel.org,
+        konradybcio@kernel.org
+Cc: linux-mmc@vger.kernel.org, devicetree@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+        quic_tingweiz@quicinc.com, Yuanjie Yang <quic_yuanjiey@quicinc.com>
+Subject: [PATCH v1 0/3] Enable emmc and SD on QCS615
+Date: Wed, 23 Oct 2024 17:27:05 +0800
+Message-Id: <20241023092708.604195-1-quic_yuanjiey@quicinc.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Last-TLS-Session-Version: TLSv1.3
+Content-Transfer-Encoding: 8bit
+X-QCInternal: smtphost
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: T-tugc3eDUQJyZEF7YWgYe-RzSegNURI
+X-Proofpoint-GUID: T-tugc3eDUQJyZEF7YWgYe-RzSegNURI
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=991
+ lowpriorityscore=0 clxscore=1011 malwarescore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230058
 
-On Wed, 2024-10-23 at 11:35 +0300, Dan Carpenter wrote:
->=20
-> The syscon_regmap_lookup_by_compatible() function returns -ENODEV if
-> there isn't a compatible for it or other error pointers on error.  This
-> code only checks for -ENODEV instead of checking for other errors so it
-> could lead to an error pointer dereference inside the regmap_update_bits(=
-)
-> function.
->=20
-> Fixes: ffcde9e44d3e ("drm: fsl-dcu: enable PIXCLK on LS1021A")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+Add SD and emmc support to the QCS615 Ride platform. The SD controller
+and emmc controller of QCS615 are derived from SM6115. Include the
+relevant binding documents accordingly. Additionally, configure emmc-related
+and SD-related opp, power, and interconnect settings in the device tree.
 
-Reviewed-by: Matthias Schiffer <matthias.schiffer@ew.tq-group.com>
+Signed-off-by: Yuanjie Yang <quic_yuanjiey@quicinc.com>
+---
+This patch series depends on below patch series:
+https://lore.kernel.org/all/20240926-add_initial_support_for_qcs615-v3-0-e37617e91c62@quicinc.com/
+https://lore.kernel.org/all/20241011063112.19087-1-quic_qqzhou@quicinc.com/
 
+Yuanjie Yang (3):
+  dt-bindings: mmc: Add sdhci compatible for QCS615
+  arm64: dts: qcom: qcs615: add SD and emmc node
+  arm64: dts: qcom: qcs615-ride: Enable SD and emmc node
 
+ .../devicetree/bindings/mmc/sdhci-msm.yaml    |   1 +
+ arch/arm64/boot/dts/qcom/qcs615-ride.dts      |  31 +++
+ arch/arm64/boot/dts/qcom/qcs615.dtsi          | 198 ++++++++++++++++++
+ 3 files changed, 230 insertions(+)
 
-> ---
->  drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
->=20
-> diff --git a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c b/drivers/gpu/drm/=
-fsl-dcu/fsl_dcu_drm_drv.c
-> index 91a48d774cf7..5997d9b4a431 100644
-> --- a/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-> +++ b/drivers/gpu/drm/fsl-dcu/fsl_dcu_drm_drv.c
-> @@ -109,7 +109,9 @@ static int fsl_dcu_load(struct drm_device *dev, unsig=
-ned long flags)
->  		return dev_err_probe(dev->dev, ret, "failed to initialize mode setting=
-\n");
-> =20
->  	scfg =3D syscon_regmap_lookup_by_compatible("fsl,ls1021a-scfg");
-> -	if (PTR_ERR(scfg) !=3D -ENODEV) {
-> +	if (IS_ERR(scfg) && PTR_ERR(scfg) !=3D -ENODEV)
-> +		return dev_err_probe(dev->dev, PTR_ERR(scfg), "failed to find regmap\n=
-");
-> +	if (!IS_ERR(scfg)) {
->  		/*
->  		 * For simplicity, enable the PIXCLK unconditionally,
->  		 * resulting in increased power consumption. Disabling
+-- 
+2.34.1
 
---=20
-TQ-Systems GmbH | M=C3=BChlstra=C3=9Fe 2, Gut Delling | 82229 Seefeld, Germ=
-any
-Amtsgericht M=C3=BCnchen, HRB 105018
-Gesch=C3=A4ftsf=C3=BChrer: Detlef Schneider, R=C3=BCdiger Stahl, Stefan Sch=
-neider
-https://www.tq-group.com/
+Thanks,
+Yuanjie
 
