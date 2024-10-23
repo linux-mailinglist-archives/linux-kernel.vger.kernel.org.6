@@ -1,173 +1,211 @@
-Return-Path: <linux-kernel+bounces-378315-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378319-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A5A9ACE5B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:14:03 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 09C469ACE67
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:15:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0827C2825AD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:14:02 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2B4291C21A94
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:15:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 278FC19AA46;
-	Wed, 23 Oct 2024 15:13:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C1587404E;
+	Wed, 23 Oct 2024 15:15:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="rzn/dP1j"
-Received: from out-176.mta1.migadu.com (out-176.mta1.migadu.com [95.215.58.176])
+	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="C7YnjKBd"
+Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B14A0154439
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 15:13:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6179349659;
+	Wed, 23 Oct 2024 15:15:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729696436; cv=none; b=om3kiSY2+Zt9MfQd81OQgI5pm2aouOZwMP2CN+hHrgyHCrujln0VW6LFCGRXomBojnHbgOPx+ZAu+pjGA7bb3w610Gmpw0RHYPuvfTJl1kpwiRYhNT11nvRGckKeQe7zjHZxwGXjRe8pJY3RUr5GVtBmRmgYIFRwpyOxTa06vLg=
+	t=1729696542; cv=none; b=mIM76sjpmGod2JCkUapUjllNycAzbkLpJ1rCeZSCUiYEmjANN/jcNtNjK8mhK4XTgdcIg98QU5wn/yQFIxCSbYQOzFC/PaX7AQuvEMAJrY8/hDcdc3DTWvsrifCSIkDt0GaOemfWXC/K6PmP1olBwKsngtOFUQPsBMprtFJDSuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729696436; c=relaxed/simple;
-	bh=C1l56v3HMyOoYB5Hj6ka0yLfHWLITvZBAVXhHbTMyuI=;
+	s=arc-20240116; t=1729696542; c=relaxed/simple;
+	bh=91WqjZhGGL9eZj1PfM2R3xoEtckIHk5FRBu48g+lScs=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hV03IMM3/hi5/LPNYFzLxhJg1OG6RbXhDszFDhnMHRC1jcABmIr6zJ4mgcHkH1E7xCL2pGcJvFR0y054znj++jF73c0nRNVeB/eX1LpW3mV3SIQ8uBJJqZfztBqyhu4PlnqfsPJHx4+8YAEbcQVm8Yy+WxIzyUA4P7wvGWJ2WjA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=rzn/dP1j; arc=none smtp.client-ip=95.215.58.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <e8ab33e8-cba8-48f9-b438-7e6f09f3b068@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729696431;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6QShPcvbnlf3AY+IgNeQhWdpvwedI8/s0p3vJE4J8yQ=;
-	b=rzn/dP1jb/m1DsNvtBJNECwnFg5GQPlY/On+S943JW4glQtX+rBi/tum1hyw25KADruARB
-	1g/6F92UUsWdUAgzv+2dRx0P90Q7ovXdvGPPYr1e8Kxu3SpkSlgc56gcPRq0e6GpZMORfJ
-	AyD07fmA80xuImjGobpJyWlz28AwP/E=
-Date: Wed, 23 Oct 2024 17:13:46 +0200
+	 In-Reply-To:Content-Type; b=Gqx7jnE8Bh2wfELoFZVLdMFN/ca9A1UsaF/+C+23qMvkKFrn2qGwZha2HFcTxe1mggTCspO0V119rfSfuDtH5TTdpwC8YK6+xG3YMKRIZ+PNHetQ1gJeixFlsMZnQ+9AzBrhW3MbzHzOqCwkUXagxa9nXwY77kzgmSrP01IdoPM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=C7YnjKBd; arc=none smtp.client-ip=167.114.26.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
+	s=smtpout1; t=1729696538;
+	bh=91WqjZhGGL9eZj1PfM2R3xoEtckIHk5FRBu48g+lScs=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=C7YnjKBdWFDORLMcH3+3gHyGOXnZUDjGzEhSwq2+GomkYrV2dfgCJ5n4sMgpoMRm2
+	 +2ZMUsqDt9rvYSd59IToucXzhups6JOH2zQqAEQ2tmvyLJExeBuB9MUOYr6Sx4pk1r
+	 5DX2L5qDeXLDCJP9yECNZ+XicfbWE14jBe7YjO5DNOZpVgd5eUey5kBMKcWHCFa+Q2
+	 HGWTA/HyPok46wnBNxRSzH5rYKBhes3FFn7ZUtKkFAK3vk35ZrnBN/WFHtNUEsL0y2
+	 7AY61A2N0729LWhPu6XHbbjQLN9OZuizVtI8w6HKOmXJn13T7Y62PWlgHCesTFAAGZ
+	 7g6I0ycUrwLNg==
+Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
+	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XYXfx5CWvzfQM;
+	Wed, 23 Oct 2024 11:15:37 -0400 (EDT)
+Message-ID: <f63cc172-72a7-4666-a15f-c53d8562d7d7@efficios.com>
+Date: Wed, 23 Oct 2024 11:13:53 -0400
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH for-rc 2/5] RDMA/hns: Fix flush cqe error when racing with
- destroy qp
-To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca, leon@kernel.org
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
- linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-References: <20241022111017.946170-1-huangjunxian6@hisilicon.com>
- <20241022111017.946170-3-huangjunxian6@hisilicon.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20241022111017.946170-3-huangjunxian6@hisilicon.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+To: Jordan Rife <jrife@google.com>
+Cc: acme@kernel.org, alexander.shishkin@linux.intel.com,
+ andrii.nakryiko@gmail.com, ast@kernel.org, bpf@vger.kernel.org,
+ joel@joelfernandes.org, linux-kernel@vger.kernel.org, mark.rutland@arm.com,
+ mhiramat@kernel.org, mingo@redhat.com, mjeanson@efficios.com,
+ namhyung@kernel.org, paulmck@kernel.org, peterz@infradead.org,
+ rostedt@goodmis.org, syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
+ yhs@fb.com
+References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
+ <20241023145640.1499722-1-jrife@google.com>
+From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Content-Language: en-US
+In-Reply-To: <20241023145640.1499722-1-jrife@google.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 7bit
 
-在 2024/10/22 13:10, Junxian Huang 写道:
-> From: wenglianfa <wenglianfa@huawei.com>
+On 2024-10-23 10:56, Jordan Rife wrote:
+> Mathieu's patch alone does not seem to be enough to prevent the
+> use-after-free issue reported by syzbot.
 > 
-> QP needs to be modified to IB_QPS_ERROR to trigger HW flush cqe. But
-> when this process races with destroy qp, the destroy-qp process may
-> modify the QP to IB_QPS_RESET first. In this case flush cqe will fail
-> since it is invalid to modify qp from IB_QPS_RESET to IB_QPS_ERROR.
+> Link: https://lore.kernel.org/bpf/67121037.050a0220.10f4f4.000f.GAE@google.com/T/#u
 > 
-> Add lock and bit flag to make sure pending flush cqe work is completed
-> first and no more new works will be added.
+> I reran the repro script with his patch applied to my tree and was
+> still able to get the same KASAN crash to occur.
 > 
-> Fixes: ffd541d45726 ("RDMA/hns: Add the workqueue framework for flush cqe handler")
-> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
+> In this case, when bpf_link_free is invoked it kicks off three instances
+> of call_rcu*.
+> 
+> bpf_link_free()
+>    ops->release()
+>       bpf_raw_tp_link_release()
+>         bpf_probe_unregister()
+>           tracepoint_probe_unregister()
+>             tracepoint_remove_func()
+>               release_probes()
+>                 call_rcu()               [1]
+>    bpf_prog_put()
+>      __bpf_prog_put()
+>        bpf_prog_put_deferred()
+>          __bpf_prog_put_noref()
+>             call_rcu()                   [2]
+>    call_rcu()                            [3]
+> 
+> With Mathieu's patch, [1] is chained with call_rcu_tasks_trace()
+> making the grace period suffiently long to safely free the probe itself.
+> The callback for [2] and [3] may be invoked before the
+> call_rcu_tasks_trace() grace period has elapsed leading to the link or
+> program itself being freed while still in use. I was able to prevent
+> any crashes with the patch below which also chains
+> call_rcu_tasks_trace() and call_rcu() at [2] and [3].
+
+Right, so removal of the tracepoint probe is done by
+tracepoint_probe_unregister by effectively removing the
+probe function from the array. The read-side counterpart
+of that is in __DO_TRACE(), where the rcu dereference is
+protected by rcu_read_lock_trace for syscall tracepoints
+now.
+
+We cannot expect that surrounding the ebpf probe execution
+with preempt disable like so:
+
+#define __BPF_DECLARE_TRACE_SYSCALL(call, proto, args)                  \
+static notrace void                                                     \
+__bpf_trace_##call(void *__data, proto)                                 \
+{                                                                       \
+         might_fault();                                                  \
+         preempt_disable_notrace();                                      \
+         CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));        \
+         preempt_enable_notrace();                                       \
+}
+
+Is sufficient to delay reclaim with call_rcu() after a tracepoint
+unregister, because the preempt disable does not include the rcu
+dereference done by the tracepoint in its critical section.
+
+So relying on a call_rcu() to delay reclaim of the bpf objects
+after unregistering their associated tracepoint is indeed not
+enough. Chaining call_rcu with call_rcu_tasks_trace works though.
+
+That question is relevant for ftrace and perf too: are there data
+structures that are reclaimed with call_rcu() after being unregistered
+from syscall tracepoints ?
+
+Thanks Jordan for your thorough analysis,
+
+Mathieu
+
+> 
 > ---
->   drivers/infiniband/hw/hns/hns_roce_device.h |  2 ++
->   drivers/infiniband/hw/hns/hns_roce_hw_v2.c  |  7 +++++++
->   drivers/infiniband/hw/hns/hns_roce_qp.c     | 14 ++++++++++++--
->   3 files changed, 21 insertions(+), 2 deletions(-)
+>   kernel/bpf/syscall.c | 24 ++++++++++--------------
+>   1 file changed, 10 insertions(+), 14 deletions(-)
 > 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> index 73c78005901e..9b51d5a1533f 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
-> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> @@ -593,6 +593,7 @@ struct hns_roce_dev;
->   
->   enum {
->   	HNS_ROCE_FLUSH_FLAG = 0,
-> +	HNS_ROCE_STOP_FLUSH_FLAG = 1,
->   };
->   
->   struct hns_roce_work {
-> @@ -656,6 +657,7 @@ struct hns_roce_qp {
->   	enum hns_roce_cong_type	cong_type;
->   	u8			tc_mode;
->   	u8			priority;
-> +	spinlock_t flush_lock;
-spin_lock_init is missing?
-
-The spin lock flush_lock should be initialized before used.
-
-Zhu Yanjun
->   };
->   
->   struct hns_roce_ib_iboe {
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> index e85c450e1809..aa42c5a9b254 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> @@ -5598,8 +5598,15 @@ int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
->   {
->   	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
->   	struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
-> +	unsigned long flags;
->   	int ret;
->   
-> +	/* Make sure flush_cqe() is completed */
-> +	spin_lock_irqsave(&hr_qp->flush_lock, flags);
-> +	set_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag);
-> +	spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
-> +	flush_work(&hr_qp->flush_work.work);
-> +
->   	ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
->   	if (ret)
->   		ibdev_err(&hr_dev->ib_dev,
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
-> index dcaa370d4a26..3439312b0138 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-> @@ -90,11 +90,18 @@ static void flush_work_handle(struct work_struct *work)
->   void init_flush_work(struct hns_roce_dev *hr_dev, struct hns_roce_qp *hr_qp)
->   {
->   	struct hns_roce_work *flush_work = &hr_qp->flush_work;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&hr_qp->flush_lock, flags);
-> +	/* Exit directly after destroy_qp() */
-> +	if (test_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag)) {
-> +		spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
-> +		return;
-> +	}
->   
-> -	flush_work->hr_dev = hr_dev;
-> -	INIT_WORK(&flush_work->work, flush_work_handle);
->   	refcount_inc(&hr_qp->refcount);
->   	queue_work(hr_dev->irq_workq, &flush_work->work);
-> +	spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
+> diff --git a/kernel/bpf/syscall.c b/kernel/bpf/syscall.c
+> index 59de664e580d..5290eccb465e 100644
+> --- a/kernel/bpf/syscall.c
+> +++ b/kernel/bpf/syscall.c
+> @@ -2200,6 +2200,14 @@ static void __bpf_prog_put_rcu(struct rcu_head *rcu)
+>   	bpf_prog_free(aux->prog);
 >   }
 >   
->   void flush_cqe(struct hns_roce_dev *dev, struct hns_roce_qp *qp)
-> @@ -1140,6 +1147,7 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
->   				     struct ib_udata *udata,
->   				     struct hns_roce_qp *hr_qp)
+> +static void __bpf_prog_put_tasks_trace_rcu(struct rcu_head *rcu)
+> +{
+> +	if (rcu_trace_implies_rcu_gp())
+> +		__bpf_prog_put_rcu(rcu);
+> +	else
+> +		call_rcu(rcu, __bpf_prog_put_rcu);
+> +}
+> +
+>   static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
 >   {
-> +	struct hns_roce_work *flush_work = &hr_qp->flush_work;
->   	struct hns_roce_ib_create_qp_resp resp = {};
->   	struct ib_device *ibdev = &hr_dev->ib_dev;
->   	struct hns_roce_ib_create_qp ucmd = {};
-> @@ -1151,6 +1159,8 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
+>   	bpf_prog_kallsyms_del_all(prog);
+> @@ -2212,10 +2220,7 @@ static void __bpf_prog_put_noref(struct bpf_prog *prog, bool deferred)
+>   		btf_put(prog->aux->attach_btf);
 >   
->   	hr_qp->state = IB_QPS_RESET;
->   	hr_qp->flush_flag = 0;
-> +	flush_work->hr_dev = hr_dev;
-> +	INIT_WORK(&flush_work->work, flush_work_handle);
+>   	if (deferred) {
+> -		if (prog->sleepable)
+> -			call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_rcu);
+> -		else
+> -			call_rcu(&prog->aux->rcu, __bpf_prog_put_rcu);
+> +		call_rcu_tasks_trace(&prog->aux->rcu, __bpf_prog_put_tasks_trace_rcu);
+>   	} else {
+>   		__bpf_prog_put_rcu(&prog->aux->rcu);
+>   	}
+> @@ -2996,24 +3001,15 @@ static void bpf_link_defer_dealloc_mult_rcu_gp(struct rcu_head *rcu)
+>   static void bpf_link_free(struct bpf_link *link)
+>   {
+>   	const struct bpf_link_ops *ops = link->ops;
+> -	bool sleepable = false;
 >   
->   	if (init_attr->create_flags)
->   		return -EOPNOTSUPP;
+>   	bpf_link_free_id(link->id);
+>   	if (link->prog) {
+> -		sleepable = link->prog->sleepable;
+>   		/* detach BPF program, clean up used resources */
+>   		ops->release(link);
+>   		bpf_prog_put(link->prog);
+>   	}
+>   	if (ops->dealloc_deferred) {
+> -		/* schedule BPF link deallocation; if underlying BPF program
+> -		 * is sleepable, we need to first wait for RCU tasks trace
+> -		 * sync, then go through "classic" RCU grace period
+> -		 */
+> -		if (sleepable)
+> -			call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+> -		else
+> -			call_rcu(&link->rcu, bpf_link_defer_dealloc_rcu_gp);
+> +		call_rcu_tasks_trace(&link->rcu, bpf_link_defer_dealloc_mult_rcu_gp);
+>   	} else if (ops->dealloc)
+>   		ops->dealloc(link);
+>   }
+
+-- 
+Mathieu Desnoyers
+EfficiOS Inc.
+https://www.efficios.com
 
 
