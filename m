@@ -1,182 +1,139 @@
-Return-Path: <linux-kernel+bounces-378718-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378719-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DFB09AD456
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:58:39 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98BF59AD458
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:59:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 14B05282EAE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:58:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C73AB1C21DE7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:58:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10C081D1756;
-	Wed, 23 Oct 2024 18:58:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F36C1D1F50;
+	Wed, 23 Oct 2024 18:58:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="A2wP0WMx"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FdKBkgrP"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 827F883CDA;
-	Wed, 23 Oct 2024 18:58:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 42E1A1D14E4;
+	Wed, 23 Oct 2024 18:58:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729709910; cv=none; b=sGEIDWf8WNqE9ye+h9vblML27dHu34xBw07bc3e+KrJMPGWBWjQVxDBNeYFl+MnG+/bFsfexaHSJ43lDz0yXGhdz1PgtIRWT/tgxDm5mhxjF90WY20zZvtLHfqBrJkv+z3Fl86z50Ns9fiyhG71fYgC8q9O35gRZRx48iHGtNfQ=
+	t=1729709933; cv=none; b=dByvHI3BDf9CnIqEGFfON9aKQdSCPfsssBTERP2hVPh3N1hjx2JgiTW7eKkOxW6IyJQxg2BtGtdZkkWTma4o0jCezdTZ8AFA+5mLBjWkKZkRUYeoMWY9YWQIglZAzhf2S2wFJe8ndv24hKl9CAw3G9sABIs9WJQXPNCtZIIm9xg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729709910; c=relaxed/simple;
-	bh=rcYqs8WxAXoMxce9UI7AdY0n5dCYUtnjFG7JTfh1AJg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s66cX9Z1UTAA9Po0Y0Xfxunp6yqw/vejwEcRRaklR9Bm0OIfuUWMyy1L93lxegBrj8jRj9W8Viz/0N67hUvFp5zjOp7wP74++dYE4ZSct4nvYD7bDMizI9AXLr8SgvwaUj+aBVdgGPjXAwE/9JpQPAb2aZzN/gADWKQRymqaeBY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=A2wP0WMx; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NDI0xP025218;
-	Wed, 23 Oct 2024 18:58:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=r/Qqxj
-	blBJWojKe0KlwoCvmdu8op31yPwNG0aKoFEKM=; b=A2wP0WMxKhHp0Qkmd0CXrt
-	VrdCBQ8cUfDBneCXbm7mC5C5j5DtFqp0KyIYyrjAlS+04ZrE/mHscCNlWUwYlml6
-	x7y+da3H8HNDTvRhS8XMswxejY5iNHFCVLKNtvUjycW9iVOnfLFv7+GBxYxK4Zc3
-	KLpp9q8lA5IJ0NdxK6ql6uKt9JtbZPHfh0EpMgg0kjCHsLKncY7Vrw++hjqoCrOp
-	U4wUvi1b30XXWqQL1blLbYhoN99Or7NomEfgOydrH0lNcwbhYuivpf3iVsZfuKEo
-	QgOU/WgGuS78UzRcgbYLwpYJ2rFiLT49AG1SHNe/93ny1n/bdbNmBHzjjyH1D+/w
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaevm0k-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 18:58:05 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49NIw40G002651;
-	Wed, 23 Oct 2024 18:58:04 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaevm0g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 18:58:04 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49NIjrp0014303;
-	Wed, 23 Oct 2024 18:58:04 GMT
-Received: from smtprelay06.dal12v.mail.ibm.com ([172.16.1.8])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emhfmdk0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 18:58:04 +0000
-Received: from smtpav05.wdc07v.mail.ibm.com (smtpav05.wdc07v.mail.ibm.com [10.39.53.232])
-	by smtprelay06.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49NIw25739846204
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 18:58:03 GMT
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id ACF3458053;
-	Wed, 23 Oct 2024 18:58:02 +0000 (GMT)
-Received: from smtpav05.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 8D75958043;
-	Wed, 23 Oct 2024 18:58:01 +0000 (GMT)
-Received: from [9.24.4.192] (unknown [9.24.4.192])
-	by smtpav05.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 18:58:01 +0000 (GMT)
-Message-ID: <bbeede5b-3568-4ae6-a844-88ff1e06359d@linux.ibm.com>
-Date: Wed, 23 Oct 2024 13:58:00 -0500
+	s=arc-20240116; t=1729709933; c=relaxed/simple;
+	bh=63W5Ky+pMOBBnhK2c1KQgIZjKxCECrOTMw1zvS/YZEE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=A7AvZamN3K1vN2wihvWWVw+hWEIGrCXS97BPpNQuT7DT8lvsduyhrde6tnRb8lq+rU9szEop/IPFZI7VVAVjZ5y697xj+zR1REK3/0gX9zVXirbIdH/YijM1GB28oDVN/LpGRYs+mE9gc6/Mc8atD2r99BbSJjtMERfCeQgSubo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FdKBkgrP; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c805a0753so747305ad.0;
+        Wed, 23 Oct 2024 11:58:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729709931; x=1730314731; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=bETUmi3XIXD8kJXknLOuOgQdcHp3kntpbqzcQWybJyo=;
+        b=FdKBkgrP46uniLiPbhDVS4k95RK/wyp7VNJ5FygKDvYTm1NpaSWy69HBxIrv2K8Ias
+         tXhkIM0r4/zT2jJEtDabiMfqQvxTvTBMcMQFWsbrpXEI4VPlW3klzcslPUreEp1co/mv
+         9HDzTTWFnL2snom825thNvNzXcsL0ifBg6w7LifnW+L/9cvSfrrkOdOfnxe3dHKL/DWH
+         eIlxx0zwsmwJEJ518KhTVo6ninaAB/RGLPqJ5cdRq244RlWyfn1a+wviWpEtIgsLllld
+         nUMLsH+znh4eDOzhpTHKDKX4purq/0ZkR18z+Fvg042tmiu2WO8bJdIKxI2UZuGglojh
+         aipQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729709931; x=1730314731;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=bETUmi3XIXD8kJXknLOuOgQdcHp3kntpbqzcQWybJyo=;
+        b=GRF8ZgbmChW0UFJPF5eKgZ0OL5sc/z+8Rs2yINHuYXroClRnoidVwBXxUaWZfphnsa
+         kzjJdMkNfqGBP1+N9haHp61FJA60jazdsjNWmhTxfI0+kLPG21CxDF5qivV5Z87TZSuW
+         C4+/ZDv3TiHjvED+EtUKRurDDsiKCSaOkP/+ga4UJy/xNDUsvPG3o6LvlQvF8oJ/sSCw
+         MA4cANHPDNQmPMr/Sxez7/bmGbMRyHSMuvWhEYk7gHnZ2SO+t2GQZqbCNXwop62Ty6y0
+         C/4Bzn3QbEJiAoPMCtG1Orqw/aMqvYYhXNBFYfSzSKomv0maurOmEo8GCP77NpJ5g0QI
+         Gbpg==
+X-Forwarded-Encrypted: i=1; AJvYcCUsphNlnlWmrYuWfb9Kqv5urOfEn2zu9E2ETwsAG2PdVQw4hXR1LONhQOlYpJ06uuPLPmthiqOhiFhF@vger.kernel.org, AJvYcCV98nxs8ckwbf/sEgMuyXdj2RGcYjBJAH+S7XH5YYEEkQOYjuUKT44z6BFgLnfiDWhXYOASzexTxQ7JHdko@vger.kernel.org
+X-Gm-Message-State: AOJu0YwDM9bC/Mxy3bFjIQHBi83bGWkRg7s1faBaRlVX4kgDtjG/BCsW
+	blT51uoHCC+8LTLzGGZNZ/i5MIdtt3IapoARrBMbPiyU/ap7lggl
+X-Google-Smtp-Source: AGHT+IEiMM+L5uFTC2VVfCZ7I44sSELbZMIx+Zoda6jHBhFMKFwgs8wwCZULrOSJN8mgnxIegVhiIQ==
+X-Received: by 2002:a17:902:d482:b0:20c:8df8:5066 with SMTP id d9443c01a7336-20fa9ea096cmr44157185ad.45.1729709931402;
+        Wed, 23 Oct 2024 11:58:51 -0700 (PDT)
+Received: from fabio-Precision-3551.. ([2804:14c:485:4b61:248:317f:2ba9:e66c])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f6ee4sm60619955ad.295.2024.10.23.11.58.48
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 11:58:50 -0700 (PDT)
+From: Fabio Estevam <festevam@gmail.com>
+To: tglx@linutronix.de
+Cc: daniel.lezcano@linaro.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	imx@lists.linux.dev,
+	linux-arm-kernel@lists.infradead.org,
+	Fabio Estevam <festevam@denx.de>
+Subject: [PATCH 1/2] dt-bindings: timer: fsl,imxgpt: Fix the fsl,imx7d-gpt fallback
+Date: Wed, 23 Oct 2024 15:58:40 -0300
+Message-Id: <20241023185841.1183706-1-festevam@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] ibmvnic: use ethtool string helpers
-To: Rosen Penev <rosenp@gmail.com>, netdev@vger.kernel.org
-Cc: Michael Ellerman <mpe@ellerman.id.au>,
-        Nicholas Piggin
- <npiggin@gmail.com>,
-        Christophe Leroy <christophe.leroy@csgroup.eu>,
-        Naveen N Rao <naveen@kernel.org>,
-        Madhavan Srinivasan <maddy@linux.ibm.com>,
-        Haren Myneni <haren@linux.ibm.com>,
-        Rick Lindsley <ricklind@linux.ibm.com>,
-        Thomas Falcon <tlfalcon@linux.ibm.com>,
-        Andrew Lunn <andrew+netdev@lunn.ch>,
-        "David S. Miller" <davem@davemloft.net>,
-        Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
-        Paolo Abeni <pabeni@redhat.com>,
-        "open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)"
- <linuxppc-dev@lists.ozlabs.org>,
-        open list <linux-kernel@vger.kernel.org>
-References: <20241022203240.391648-1-rosenp@gmail.com>
-Content-Language: en-US
-From: Nick Child <nnac123@linux.ibm.com>
-In-Reply-To: <20241022203240.391648-1-rosenp@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: TnOPjsNF8DYuwR0ea2GOoCIlEgMtLL2p
-X-Proofpoint-ORIG-GUID: 8lJsUry5mbrxGGcbZMFRg1Ou9DSyY6bJ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=668
- priorityscore=1501 suspectscore=0 clxscore=1011 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410230120
+Content-Transfer-Encoding: 8bit
 
+From: Fabio Estevam <festevam@denx.de>
 
+imx7s.dtsi correctly describes the GPT node as:
 
-On 10/22/24 15:32, Rosen Penev wrote:
-> They are the prefered way to copy ethtool strings.
-> 
-> Avoids manually incrementing the data pointer.
-> 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
-> ---
->   drivers/net/ethernet/ibm/ibmvnic.c | 30 +++++++++---------------------
->   1 file changed, 9 insertions(+), 21 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/ibm/ibmvnic.c b/drivers/net/ethernet/ibm/ibmvnic.c
-> index cca2ed6ad289..e95ae0d39948 100644
-> --- a/drivers/net/ethernet/ibm/ibmvnic.c
-> +++ b/drivers/net/ethernet/ibm/ibmvnic.c
-> @@ -3808,32 +3808,20 @@ static void ibmvnic_get_strings(struct net_device *dev, u32 stringset, u8 *data)
->   	if (stringset != ETH_SS_STATS)
->   		return;
->   
-> -	for (i = 0; i < ARRAY_SIZE(ibmvnic_stats); i++, data += ETH_GSTRING_LEN)
-> -		memcpy(data, ibmvnic_stats[i].name, ETH_GSTRING_LEN);
-> +	for (i = 0; i < ARRAY_SIZE(ibmvnic_stats); i++)
-> +		ethtool_puts(&data, ibmvnic_stats[i].name);
->   
->   	for (i = 0; i < adapter->req_tx_queues; i++) {
-> -		snprintf(data, ETH_GSTRING_LEN, "tx%d_batched_packets", i);
-> -		data += ETH_GSTRING_LEN;
-> -
-> -		snprintf(data, ETH_GSTRING_LEN, "tx%d_direct_packets", i);
-> -		data += ETH_GSTRING_LEN;
-> -
-> -		snprintf(data, ETH_GSTRING_LEN, "tx%d_bytes", i);
-> -		data += ETH_GSTRING_LEN;
-> -
-> -		snprintf(data, ETH_GSTRING_LEN, "tx%d_dropped_packets", i);
-> -		data += ETH_GSTRING_LEN;
-> +		ethtool_sprintf(&data, "tx%d_batched_packets", i);
-> +		ethtool_sprintf(&data, "tx%d_direct_packets", i);
-> +		ethtool_sprintf(&data, "tx%d_bytes", i);
-> +		ethtool_sprintf(&data, "tx%d_dropped_packets", i);
->   	}
->   
->   	for (i = 0; i < adapter->req_rx_queues; i++) {
-> -		snprintf(data, ETH_GSTRING_LEN, "rx%d_packets", i);
-> -		data += ETH_GSTRING_LEN;
-> -
-> -		snprintf(data, ETH_GSTRING_LEN, "rx%d_bytes", i);
-> -		data += ETH_GSTRING_LEN;
-> -
-> -		snprintf(data, ETH_GSTRING_LEN, "rx%d_interrupts", i);
-> -		data += ETH_GSTRING_LEN;
-> +		ethtool_sprintf(&data, "rx%d_packets", i);
-> +		ethtool_sprintf(&data, "rx%d_bytes", i);
-> +		ethtool_sprintf(&data, "rx%d_interrupts", i);
->   	}
->   }
->   
+compatible = "fsl,imx7d-gpt", "fsl,imx6dl-gpt";
 
-Tested-by: Nick Child <nnac123@linux.ibm.com>
+Document the fallback compatible to be "fsl,imx6dl-gpt" in the bindings.
+
+This fixes the following dt-schema warnings:
+
+timer@302f0000: compatible: 'oneOf' conditional failed, one must be fixed:
+	['fsl,imx7d-gpt', 'fsl,imx6dl-gpt'] is too long
+	'fsl,imx1-gpt' was expected
+	'fsl,imx21-gpt' was expected
+	'fsl,imx27-gpt' was expected
+	'fsl,imx31-gpt' was expected
+	'fsl,imx7d-gpt' is not one of ['fsl,imx25-gpt', 'fsl,imx50-gpt', 'fsl,imx51-gpt', 'fsl,imx53-gpt', 'fsl,imx6q-gpt']
+	'fsl,imx6dl-gpt' was expected
+	'fsl,imx7d-gpt' is not one of ['fsl,imx6sl-gpt', 'fsl,imx6sx-gpt', 'fsl,imx8mp-gpt', 'fsl,imxrt1050-gpt', 'fsl,imxrt1170-gpt']
+	'fsl,imx6sx-gpt' was expected
+
+Signed-off-by: Fabio Estevam <festevam@denx.de>
+---
+ Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml b/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
+index e2607377cbae..a2fcb1e8e74e 100644
+--- a/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
++++ b/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
+@@ -31,6 +31,7 @@ properties:
+           - enum:
+               - fsl,imx6sl-gpt
+               - fsl,imx6sx-gpt
++              - fsl,imx7d-gpt
+               - fsl,imx8mp-gpt
+               - fsl,imxrt1050-gpt
+               - fsl,imxrt1170-gpt
+@@ -38,7 +39,6 @@ properties:
+       - items:
+           - enum:
+               - fsl,imx6ul-gpt
+-              - fsl,imx7d-gpt
+           - const: fsl,imx6sx-gpt
+ 
+   reg:
+-- 
+2.34.1
+
 
