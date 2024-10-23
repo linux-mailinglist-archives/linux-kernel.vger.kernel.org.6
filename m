@@ -1,174 +1,76 @@
-Return-Path: <linux-kernel+bounces-378993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378994-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84B8C9AD866
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:24:53 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DAFA9AD868
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:25:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C8BFEB22696
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:24:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7A6B5B228A2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:24:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E2E8B200102;
-	Wed, 23 Oct 2024 23:24:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CF4EA1FF7B9;
+	Wed, 23 Oct 2024 23:24:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b="3MzUIK6V"
-Received: from submarine.notk.org (submarine.notk.org [62.210.214.84])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1EAE21FF7AE;
-	Wed, 23 Oct 2024 23:24:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=62.210.214.84
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="sPdfZD3C"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2739A1CCB31;
+	Wed, 23 Oct 2024 23:24:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729725862; cv=none; b=VyuuQvMLHCmZh/5Uj71ay71K70c7RFlzNg12kTKT58S3juQAuwy7rsgAIZoqmZxJwQKHcH4q4axPXGMS7fhJ0yXMRQ8sJlRLJvNcz77rdV+AtePvmYWqf48Z+GtCwNRXO5EyDRqSqydpltoYuoFDRwki3QwEqZbXL8uTQs5zc9M=
+	t=1729725889; cv=none; b=ohtKSWLvjlr0nRmImDyFJl6r/8SbIjrMs6lPDIn5GorLNg1qKNXE9jd9xOFCJAr/Vkr0baJHRYaQRvLsfwvSBw/o1PwKmP7ImLkpr7Ya+paOVcXRqOebe82tkbdAvYvjaEvyKlIBOGuZxK5mdTd35HcNhUvQC/YTW/LshlQxK6Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729725862; c=relaxed/simple;
-	bh=n+FFpXv4PJFw+9a/Ezyh5AocFqAzwBRGyQcwXWz5jBU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oQm52+CUHWKSqq4yrisJWwMngYnPqvp8LfI1LHlI6rfBGNC0LwWG6bjMe9aN4mzBeugGUmOwIPHwL3FRadFW+QmM7tZjCk0J2KzMzM2uFOAc4AYcTswuILy1nQfprdui5ZyebsvMqaQUcN3y1kju1Xmemidx/qMPwbrih/a4+nE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org; spf=pass smtp.mailfrom=codewreck.org; dkim=pass (2048-bit key) header.d=codewreck.org header.i=@codewreck.org header.b=3MzUIK6V; arc=none smtp.client-ip=62.210.214.84
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=codewreck.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=codewreck.org
-Received: from gaia.codewreck.org (localhost [127.0.0.1])
-	by submarine.notk.org (Postfix) with ESMTPS id 1566E14C1E1;
-	Thu, 24 Oct 2024 01:24:06 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=codewreck.org;
-	s=2; t=1729725850;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=uq4pgfK90LTAqbpoUp/Bzs/qyX4xLUiGN0J61hu/6cw=;
-	b=3MzUIK6VCbNBeTYCdYVdRvsWmdsRr1ZvZDNLTZyfXjoiIMgTVd7XXIbNa25DxcVmCrGIIw
-	7YWFC5Mbm6cm8MRoGvfnfDwraSvAWoePCkNNfJcmclcNjphRiAeCtAYALXWxAqDEt+zLHB
-	cvvSAv6JwOGVZvjhChlE4zaLHzNXISi/jc/nxMD/R+FioG+OGFHmAin+YQoTdZKDrJr0O+
-	p1MUbVMcIfDpLovxe92+8UAMyCPmz301B07kMQ2WWAemE1MMLCfMi/l7cZsMA6QSN5cHgk
-	+5rXylelAoZONZXT5/ENmOxvBQMQ6P3yTd0Kj3UebsU8IfYyzXCd2MPGpYR+Sw==
-Received: from localhost (gaia.codewreck.org [local])
-	by gaia.codewreck.org (OpenSMTPD) with ESMTPA id 0e53634f;
-	Wed, 23 Oct 2024 23:24:05 +0000 (UTC)
-Date: Thu, 24 Oct 2024 08:23:50 +0900
-From: Dominique Martinet <asmadeus@codewreck.org>
-To: David Howells <dhowells@redhat.com>,
-	Matthew Wilcox <willy@infradead.org>,
-	Andrii Nakryiko <andrii@kernel.org>
-Cc: ericvh@kernel.org, linux-kernel@vger.kernel.org,
-	linux_oss@crudebyte.com, pedro.falcato@gmail.com,
-	regressions@leemhuis.info, torvalds@linux-foundation.org,
-	v9fs@lists.linux.dev, bpf@vger.kernel.org
-Subject: Re: [GIT PULL] 9p fixes for 6.12-rc4
-Message-ID: <ZxmFhiAL-ImjKe7Y@codewreck.org>
-References: <ZxL0kMXLDng3Kw_V@codewreck.org>
- <20241023165606.3051029-1-andrii@kernel.org>
+	s=arc-20240116; t=1729725889; c=relaxed/simple;
+	bh=Qx5v7hPYIHtsQ8iDSicYJL/L3Zyh0HA051qawU0dk9g=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=KRJEk7DcGfqO3Py/AhuKkruwO7HndvfzAUzWqivaNXAbF7kaQ6XiTjRECw9UlqEqi2kyUhb59Sz3YJ6rpm6xZWjF4DXteZ6UyxFCc8i9X21EKesNdatm7KVnO1yhKZU6QtG4XCViFivLog4qR98VOcCAqt2XoWPJZ+CbgDfaeZA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=sPdfZD3C; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 76899C4CEC6;
+	Wed, 23 Oct 2024 23:24:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1729725888;
+	bh=Qx5v7hPYIHtsQ8iDSicYJL/L3Zyh0HA051qawU0dk9g=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=sPdfZD3C75x+zdwpX980Cb5uMMaWdXbkRoTNOzjDZ2QZ1GzduGr4Y/46wyyZ2WzJ0
+	 NBtfmwq/HIUpUfnA02BVvZUpSBiGzw9Y91N4txja77ie89aYDKsuSst3as8PAdINh0
+	 BEm/IeUUCHR5Wx3iwauiU+93Yw3yobj41jjYyDTc=
+Date: Wed, 23 Oct 2024 16:24:47 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Jim Zhao <jimzhao.ai@gmail.com>
+Cc: willy@infradead.org, linux-fsdevel@vger.kernel.org, linux-mm@kvack.org,
+ linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write
+ blocking with strictlimit
+Message-Id: <20241023162447.2bf480b4ce590fdeb8b6c52d@linux-foundation.org>
+In-Reply-To: <20241023100032.62952-1-jimzhao.ai@gmail.com>
+References: <20241023100032.62952-1-jimzhao.ai@gmail.com>
+X-Mailer: Sylpheed 3.7.0 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241023165606.3051029-1-andrii@kernel.org>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Adding David/Willy to recpients as I'm not 100% up to date on folios
+On Wed, 23 Oct 2024 18:00:32 +0800 Jim Zhao <jimzhao.ai@gmail.com> wrote:
 
-Andrii Nakryiko wrote on Wed, Oct 23, 2024 at 09:56:06AM -0700:
-> > The following changes since commit 98f7e32f20d28ec452afb208f9cffc08448a2652:
-> >
-> >   Linux 6.11 (2024-09-15 16:57:56 +0200)
-> >
-> > are available in the Git repository at:
-> > 
-> >   https://github.com/martinetd/linux tags/9p-for-6.12-rc4
-> > 
-> > for you to fetch changes up to 79efebae4afc2221fa814c3cae001bede66ab259:
-> >
-> >   9p: Avoid creating multiple slab caches with the same name (2024-09-23 05:51:27 +0900)
-> >
-> > ----------------------------------------------------------------
-> > Mashed-up update that I sat on too long:
-> > 
-> > - fix for multiple slabs created with the same name
-> > - enable multipage folios
-> > - theorical fix to also look for opened fids by inode if none
-> > was found by dentry
-> > 
-> > ----------------------------------------------------------------
-> > David Howells (1):
-> >      9p: Enable multipage folios
-> 
-> Are there any known implications of this change on madvise()'s MADV_PAGEOUT
-> behavior? After most recent pull from Linus's tree, one of BPF selftests
-> started failing. Bisection points to:
-> 
->   9197b73fd7bb ("Merge tag '9p-for-6.12-rc4' of https://github.com/martinetd/linux")
-> 
-> ... which is just an empty merge commit. So the "9p: Enable multipage folios"
-> by itself doesn't cause any regression, but when merged with the rest of the
-> code it does. I confirmed by reverting
-> 1325e4a91a40 ("9p: Enable multipage folios"), after which the test in question
-> is succeeding again.
+> With the strictlimit flag, wb_thresh acts as a hard limit in
+> balance_dirty_pages() and wb_position_ratio(). When device write
+> operations are inactive, wb_thresh can drop to 0, causing writes to
+> be blocked. The issue occasionally occurs in fuse fs, particularly
+> with network backends, the write thread is blocked frequently during
+> a period. To address it, this patch raises the minimum wb_thresh to a
+> controllable level, similar to the non-strictlimit case.
 
-(looks like 3c217a182018 ("selftests/bpf: add build ID tests") wasn't in
-yet on the 9p multipage folios commit)
+Please tell us more about the userspace-visible effects of this.  It
+*sounds* like a serious (but occasional) problem, but that is unclear.
 
-> The test in question itself is a bit involved, but what it ultimately tries to
-> do is to ensure that part of ELF file containing build ID is paged out to cause
-> BPF helper to fail to retrieve said build ID (due to non-faulable context).
-> 
-> For that, we use the following sequence in target binary and process:
-> 
-> madvise(addr, page_sz, MADV_POPULATE_READ);
-> madvise(addr, page_sz, MADV_PAGEOUT);
-> 
-> First making sure page is paged in, then paged out. We make sure that build ID
-> is memory mapped in a separate segment with its own single-page memory mapping.
-> No changes or regressions there. No huge pages seem to be involved.
+And, very much relatedly, do you feel this fix is needed in earlier
+(-stable) kernels?
 
-That's probably obvious but I guess the selftest runs the binary
-directly from a 9p mount?
-
-> It used to work reliably, now it doesn't work. Any clue why or what should we
-> do differently to make sure that memory page with build ID information is not
-> paged in (reliably)?
-
-Unless David/Willy has a solution immediately I'd say let's take the time to
-sort this out and revert that commit for now -- I'll send a revert patch
-immediately and submit it to Linus on Saturday.
-
-Conceptually I guess something is broken with MADV_PAGEOUT on >1 page
-folio, perhaps it's only evicting folios if the whole folio is in range
-but it should evict any folio that touches the range or something?
-
-Sorry I don't have time to dig further here, hopefully that's not too
-difficult to handle and we can try again in rc1 proper of another cycle,
-I shouldn't have sent that this late.
-
-
-(leaving full text below for new recipients)
-> Thanks!
-> 
-> P.S. The target binary and madvise() manipulations are at:
-> 
->   tools/testing/selftests/bpf/uprobe_multi.c, see trigger_uprobe()
-> The test itself in BPF selftest is at:
-> 
->   tools/testing/selftests/bpf/prog_tests/build_id.c, see subtest_nofault(),
->   build_id_resident is false in this case.
-> 
-> >
-> > Dominique Martinet (1):
-> >       9p: v9fs_fid_find: also lookup by inode if not found dentry
-> > 
-> > Pedro Falcato (1):
-> >       9p: Avoid creating multiple slab caches with the same name
-> > 
-> >  fs/9p/fid.c       |  5 ++---
-> >  fs/9p/vfs_inode.c |  1 +
-> >  net/9p/client.c   | 10 +++++++++-
-> >  3 files changed, 12 insertions(+), 4 deletions(-)
-> > 
-> 
-
-Thanks,
--- 
-Dominique Martinet | Asmadeus
 
