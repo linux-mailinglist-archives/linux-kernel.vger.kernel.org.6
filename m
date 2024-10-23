@@ -1,140 +1,121 @@
-Return-Path: <linux-kernel+bounces-377882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C4E39AC804
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:30:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0309B9AC7FD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:29:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 76C0C1C23011
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:30:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9725D1C20B57
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:29:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9417C1A0AFA;
-	Wed, 23 Oct 2024 10:30:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9FE1A0AE1;
+	Wed, 23 Oct 2024 10:29:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="P0bLxgUG"
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGLvvY2X"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DA4F1662F6
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:30:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079BC155393;
+	Wed, 23 Oct 2024 10:29:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729679444; cv=none; b=Mau8pn6PKVb4d8tvfuDRZy0is+szjfwtCQXbyaJh0iOwgdzP93ZrlYZ52xSnQlTpFjKO4lxP0XksawWehLzPSiLxDwqVzfdhyFkb++WkKKxu0er2zGM1M0B82FSgXPiKU6l/c4xI/TYVctSn+al9Qagh73Zfm1bucexZZuIw8S8=
+	t=1729679360; cv=none; b=TaQyEd49kN+bgtVMj78XsyuT+dYW8Yt8MZzkVrtcdRlldJC56PpBw36uURX4LRv3yOJq3K4/2NzQc/Fv5rj4s6FcQ7DepJSwQfQ7pNcPk8Z2DWoXfWK25m4zoIx8xGIXt7ut6RDHCNtnZf9vzfW3oT+5A1HkPZEir1p0HEcKNnA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729679444; c=relaxed/simple;
-	bh=R6g5/T333p7bL09fgwrAKHE6ys9mRtrOaG0WuCbPMRg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kQJI8ByCUnGPFYhDSfbv2xiGswKbGN/oO9shb0hIpI8ti4fK0ARrWO7QWu4xZ8xr3/4bsfeEa33lJE5t5mqa/52ZCgnSoOOFu5TcCtawVQ1gz7GFsIbch/vz/9AqUss+KkNTOcLBO/MzELaxo0gbuHI8iWCOkbdXzILW7L8IrI4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=P0bLxgUG; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e3c3da5bcdso69003897b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:30:42 -0700 (PDT)
+	s=arc-20240116; t=1729679360; c=relaxed/simple;
+	bh=Gut0VnewNuT0LdmLi16hq5QIvsI+I9WMoZnZJlOfPAs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=Ghq5PP6Xz6FU7XZsmsJfuMQ4r58nm+3yCFZ+zIvT+QDr6w4g2S7kD9NYK57M9eLSUKtNU4werdqjSXtlsIa+s+110/f3wfj4ZphQzMUHW1SBQaD8ZrL823xMdqiZEXzDIyVUr6Bbfa0gONIewBDSc8aSiARnTUIXJrigmLJ+wwo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGLvvY2X; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d47b38336so4521502f8f.3;
+        Wed, 23 Oct 2024 03:29:18 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729679441; x=1730284241; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=fe1yjQgKJ3ayziVzgIhHJB/NYEugDt6h8bA0vccQE6Q=;
-        b=P0bLxgUGIkrN+EmObavwfgzXawpavcOvtlIqTHkkGe79uocnNJA+4ISNfMqvzYPThW
-         9HKqkNEcClncCKrjIYxeIOz+Krgp5blDDuAbK/iVDI1Sm10QExQ86rJx+jmfIiEr1m8x
-         2Mm21k/YzH8fZO2uIkle0y8Ha94aZn82/Q0yM+VO1lhv1oii3X1sC45PIVmfuf5/ZBAW
-         tpxX4s3SqtqILfrm+jFI+TH6yP/BLb5W5V2TlCCrNsZLVNHDd7xCdIghvFSj/DObnPUU
-         DC+XWIp0KJCtVxFe2lLfLV12c02AFNFBSHwJ0Gwydrfaf46nB68outXyJjmV093JTwfs
-         bLsw==
+        d=gmail.com; s=20230601; t=1729679357; x=1730284157; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Gut0VnewNuT0LdmLi16hq5QIvsI+I9WMoZnZJlOfPAs=;
+        b=BGLvvY2XVjFH4hmvaimwDv76C123Wa20iKKA3hv1rUzL+6a/0Ah38whQGDZ1LSgMGS
+         XfGVKg/Nnj8V+iNonIZSOezh+RqYmWS0jkfN8fhhBd1ZXCLu43IF7SfWOA1Z1O9dgWTX
+         t3hcyn9m4Y7x71ET7DrLG5GMRsJmuGJhNyrGytH5GtEiP49eAzv4eaeYMONSLreCFkta
+         qIszBx2D0WOQZ0WQneAUleJ0H4u0KIbSI477pPsrY0E4Ay4NJarEzgsRujOIlIwnDAKQ
+         oqmqD/1cr25yNR/+ijyV/gIQ8rLGX9Fd9Ce/4uQ5wtD4VxhJf0vUvOOUCkr14TCTCN2m
+         ZIwQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729679441; x=1730284241;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=fe1yjQgKJ3ayziVzgIhHJB/NYEugDt6h8bA0vccQE6Q=;
-        b=lQReWQtn9tabkVEbwb6JjZHY+nsCdzUiRv4LmvZdbiN7lFrqD18ymWgvO4+deBLVYr
-         tTgkiybl010iBihF5Eip/9J74DVXDjUGtWOcDwA+v6CVXZ7QrovSqJM5MCM9no+KOerO
-         5nTQ45YRaYx4dzbF2J//Oh2Jnk4eBq1wQ6DJGOqpvlwgaIW66LrgBf+e1n1Gg4NfElXR
-         s4U6C5xldLbz2Dlxie8tM85OfxWKFpwghhMGpgX9CjmeU53CKugL+tH4JiAlCQS0eDr7
-         A0wvmVLCEc7mQRpUEmIxGg8stTclbWVzJgkZUQ31obWfZ6EklxwURzIZJPKEzkKieMNu
-         kHFw==
-X-Forwarded-Encrypted: i=1; AJvYcCXnvwjVbGW/bb7PZXV75WNC9bBoqbo7IovmnaQbIaHHBQR3rGRdY92k5/hvs1mXX2RKAVYP9CiRgoSmEBk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyDJ9QNn0z6VMBBKuDfH++7V36zCe5TMvdIqJ0oxTeNrKGvoBIo
-	EwHY3lpCoXkgVO63rjcHDpU8kNYot7IKk8NVegWER6qDG5bg/RUPmfHpXHqtG/eZ+qZw0f/ItuZ
-	M4Tl7cZ1bWyaO5KlFRmOZpjIgPRafU169eRNmcA==
-X-Google-Smtp-Source: AGHT+IG1MdstemASpIV41utWb+Ie0/963OIcwmqLoWX6VsLbWq+ezDQWnypptlgoS0AAEAV5lWswidzGLnskvX3v+PQ=
-X-Received: by 2002:a05:690c:38b:b0:6e3:178d:1873 with SMTP id
- 00721157ae682-6e7f0fa6d6fmr21170907b3.33.1729679441094; Wed, 23 Oct 2024
- 03:30:41 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729679357; x=1730284157;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Gut0VnewNuT0LdmLi16hq5QIvsI+I9WMoZnZJlOfPAs=;
+        b=ouxYB5VqO3X06A6AWVDDkaRyD9fVIeGdRWNfzuO6mI6dDSiky32gxUjEVie2pE+1PW
+         XCnDlmQ6qNUSZ0RYNurWHkDCOYU8BpZJQlyvqwIfUrlezdfB6q6J34RpZRZFKKers5Q/
+         xHcM9R5EmAENMkKxjlnPqsvIM8RB6j5XtL60KA1w+KuP1KrJpdgr76mFHAQ7TGKYeHmd
+         NclmPQW3a1nkMUE2hcIog4Bie59BGM0ErWhUSYdWBEraWf3YVXh/l6Zm2RMLviKppJZw
+         Tl2zpCwCSdrt+B5W07tWCY04F9Yk4xDgC4WdCpSoBWPBgulAKxcp8BxNxSm6YGG1FyfD
+         QjRA==
+X-Forwarded-Encrypted: i=1; AJvYcCUSsmcNEroJ+sf04nvx4BS1rZ7lZKxRGMi7C0S2DCCYA+3+kvK0MDGXPvSwARtIAKDDkTbDYcUwSWrP@vger.kernel.org, AJvYcCVVrDlR2vupVDxE/wzgZYcBRWFc9ks08XpnCMsDmeYFY9/qvxTqHI3lugJJt2InSGgNhPf/kJI8pbvS@vger.kernel.org, AJvYcCX31zTtVWF89ao8W0Ynxm0ZDcc86S7kaujq4h0FYUDdxLTxerPywpD8ozXfsa1t79Cr9TeX9kC2VyagWsBs@vger.kernel.org
+X-Gm-Message-State: AOJu0YynhXeuAphQsm00r96Pq5pEu7UENdixJh807DQL0vd97K1WdN/c
+	b06i2kvwspryNAuEKIcJjS57d6Elg4MFDSNQcK8cq8rihltLivAx
+X-Google-Smtp-Source: AGHT+IHK3wCNc3RpQVpZ454cZp0zMtJu7nlGiRTUxZethjnQCgS4SELAAgxTJwdbVnWRkrmDEj0+bA==
+X-Received: by 2002:a05:6000:ac2:b0:37d:52e3:e3f0 with SMTP id ffacd0b85a97d-37efcf7ba39mr1572374f8f.44.1729679357155;
+        Wed, 23 Oct 2024 03:29:17 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a587f4sm8640688f8f.52.2024.10.23.03.29.16
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 03:29:16 -0700 (PDT)
+Message-ID: <e58d43d19daea622719f26193c49aa4fcacdaf3c.camel@gmail.com>
+Subject: Re: [PATCH 0/2] dt-bindings: dma: adi,axi-dmac: convert to yaml and
+ update
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Vinod Koul <vkoul@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>,  Nuno Sa <nuno.sa@analog.com>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Wed, 23 Oct 2024 12:33:35 +0200
+In-Reply-To: <20241022-axi-dma-dt-yaml-v1-0-68f2a2498d53@baylibre.com>
+References: <20241022-axi-dma-dt-yaml-v1-0-68f2a2498d53@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
-In-Reply-To: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Date: Wed, 23 Oct 2024 12:30:30 +0200
-Message-ID: <CACMJSeuhEQVaXhB8hotG_cimQ4rqQVyzF1DyPwtV4m1T5D=o+g@mail.gmail.com>
-Subject: Re: [PATCH 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are probed
- before PCI client drivers
-To: manivannan.sadhasivam@linaro.org
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Johan Hovold <johan+linaro@kernel.org>, Abel Vesa <abel.vesa@linaro.org>, 
-	Stephan Gerhold <stephan.gerhold@linaro.org>, 
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, 
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, stable+noautosel@kernel.org
-Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 22 Oct 2024 at 12:28, Manivannan Sadhasivam via B4 Relay
-<devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
->
-> Hi,
->
-> This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
-> are always probed before the PCI client drivers. This series addresses a race
-> condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
-> the later one probes last). One such issue was reported for the Qcom X13s
-> platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
-> sequencing: request the WLAN enable GPIO as-is")'.
->
-> Though the issue was fixed with a hack in the pwrseq driver, it was clear that
-> the issue is applicable to all pwrctl drivers. Hence, this series tries to
-> address the issue in the PCI/pwrctl integration.
->
-> - Mani
->
-> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+On Tue, 2024-10-22 at 12:46 -0500, David Lechner wrote:
+> Convert the ADI AXI DMAC bindings to YAML and then update the bindings
+> to reflect the current actual use of the bindings.
+>=20
 > ---
-> Manivannan Sadhasivam (5):
->       PCI/pwrctl: Use of_platform_device_create() to create pwrctl devices
->       PCI/pwrctl: Create pwrctl devices only if at least one power supply is present
->       PCI/pwrctl: Ensure that the pwrctl drivers are probed before the PCI client drivers
->       PCI/pwrctl: Move pwrctl device creation to its own helper function
->       PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent
->
->  drivers/pci/bus.c         | 64 +++++++++++++++++++++++++++++++++++++++++------
->  drivers/pci/of.c          | 27 ++++++++++++++++++++
->  drivers/pci/pci.h         |  5 ++++
->  drivers/pci/pwrctl/core.c | 10 --------
->  drivers/pci/remove.c      | 17 ++++++-------
->  5 files changed, 96 insertions(+), 27 deletions(-)
+
+Nothing to add on Rob's comment. Basically adding my ack to show that I'm f=
+ine
+being the maintainer for this:
+
+Acked-by: Nuno Sa <nuno.sa@analog.com>
+
+> David Lechner (2):
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: dma: adi,axi-dmac: convert to=
+ yaml schema
+> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: dma: adi,axi-dmac: deprecate =
+adi,channels node
+>=20
+> =C2=A0.../devicetree/bindings/dma/adi,axi-dmac.txt=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0=C2=A0 |=C2=A0 61 ----------
+> =C2=A0.../devicetree/bindings/dma/adi,axi-dmac.yaml=C2=A0=C2=A0=C2=A0=C2=
+=A0=C2=A0 | 127
+> +++++++++++++++++++++
+> =C2=A02 files changed, 127 insertions(+), 61 deletions(-)
 > ---
-> base-commit: 48dc7986beb60522eb217c0016f999cc7afaf0b7
-> change-id: 20241022-pci-pwrctl-rework-a1b024158555
->
+> base-commit: 52a53aecddb1b407268ebc80695c38e5093dc08f
+> change-id: 20241022-axi-dma-dt-yaml-c6c71ad2eb9e
+>=20
 > Best regards,
-> --
-> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
->
->
 
-Excellent work, thanks for doing this.
-
-Tested on: sc8280xp-crd, RB5 and sm8450-hdk.
-
-Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-
-Just a couple nits from my side under respective patches.
-
-Bart
 
