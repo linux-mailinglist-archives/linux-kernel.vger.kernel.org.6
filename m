@@ -1,47 +1,55 @@
-Return-Path: <linux-kernel+bounces-377407-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377406-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BED789ABE65
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:08:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077C79ABE63
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:07:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 750FA1F24A8F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:08:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 47A78284FD5
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:07:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD7B214A0B5;
-	Wed, 23 Oct 2024 06:07:30 +0000 (UTC)
-Received: from verein.lst.de (verein.lst.de [213.95.11.211])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F3B801474A4;
+	Wed, 23 Oct 2024 06:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="w1E5TLJU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 61AE41448E0;
-	Wed, 23 Oct 2024 06:07:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.95.11.211
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3864813AA31;
+	Wed, 23 Oct 2024 06:07:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729663650; cv=none; b=HyLPROSmV/Z6acljgDN4O0RaNQj1/XWbuZEjOoCRD0uLr50x51t2QUQD+Ga2tXY09GKSdAitEUAwJlBJR1d70pRpgxD2SnCdkL3sQ1A0KrrsX5z4uISrR3e67gmxtR+nE9nLUvp8fIasJiN8MV8B1NrCw2izBSIoK8ENd/d4lEc=
+	t=1729663648; cv=none; b=qTxcBl5vFNKymrACSUNKXJNfTyigHi7+EzC53MHuI0TejBWXLz/WSyhDdzQcbOGv2EK1dkyAtcXwD7Oa2/582debnY2/xKDbAicTjf53QH9rRmG9YB5BqZ4vG6xnnBoXw3LkVspc8oPSA0noz1jrPERy2I3G/hIBODkcwQV93rg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729663650; c=relaxed/simple;
-	bh=4jfMWaT+qUSZpzXlDP3FNMIhV8u/fRXXViI6c01XeZM=;
+	s=arc-20240116; t=1729663648; c=relaxed/simple;
+	bh=PtLcYvKP0GfRAQi53/bCbk06mlyUQ8B3NMXd+33V9iE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GKPAGdUlSAEkwdT1MCl5B4zqiobDeGx+eBIgOVrb94hYnd/TlfBbjjK58OTr0PHO8nCr1uswN9MTXPG0MPo3VrKFNW/+/8SrJTyBlDYPKVyPOfrSYZN5SKFpe3bAKcwDzdq8JfeQ+/ME4xoL2kwUnwNTBW0YjUPcS+1Wv+7GxBQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de; spf=pass smtp.mailfrom=lst.de; arc=none smtp.client-ip=213.95.11.211
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=lst.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lst.de
-Received: by verein.lst.de (Postfix, from userid 2407)
-	id EB149227A88; Wed, 23 Oct 2024 08:07:15 +0200 (CEST)
-Date: Wed, 23 Oct 2024 08:07:15 +0200
-From: Christoph Hellwig <hch@lst.de>
-To: Ming Lei <ming.lei@redhat.com>
-Cc: Christoph Hellwig <hch@lst.de>, Jens Axboe <axboe@kernel.dk>,
-	linux-block@vger.kernel.org, Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] block: model freeze & enter queue as rwsem for
- supporting lockdep
-Message-ID: <20241023060715.GA2468@lst.de>
-References: <20241018013542.3013963-1-ming.lei@redhat.com> <20241022061805.GA10573@lst.de> <ZxhsD2zZLnZVaGZf@fedora>
+	 Content-Type:Content-Disposition:In-Reply-To; b=iKsXqFicgZaelKfezdj3JqNJklJmhbcuJYn534FsjNqApsZ0ZyiaZR86GD0YT7tB+Xu0s4hBtwR2EChXPlNLLuLNF6XnJ4RUZj4HtBU+ZY4e7xSOtdmTr9KyQ3fOpSP6Qs+wHDJ2KZdMJwP44B6PREC1qXxU/ZqdT3zCNIsZn7I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=w1E5TLJU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 967BEC4CEC7;
+	Wed, 23 Oct 2024 06:07:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729663648;
+	bh=PtLcYvKP0GfRAQi53/bCbk06mlyUQ8B3NMXd+33V9iE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=w1E5TLJUKyJFbVBjfd1b6eMRKeTrezyKji5SgY9obDN0FbWd68KrH15291SCYw4qh
+	 vlewGVIzG7YVbFDTbQ8YjZPsABaeiJ2EnpTNGOONIN6YQ66bB6IE6AOHQ3ub1sUq6Z
+	 qxJM9PFWWp5WFoZVdhDOM8iA62fjjyn1JlNk7M3c=
+Date: Wed, 23 Oct 2024 08:07:25 +0200
+From: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+To: Li Lingfeng <lilingfeng3@huawei.com>
+Cc: cve@kernel.org, linux-kernel@vger.kernel.org,
+	linux-cve-announce@vger.kernel.org,
+	Mikulas Patocka <mpatocka@redhat.com>,
+	yangerkun <yangerkun@huawei.com>, "yukuai (C)" <yukuai3@huawei.com>,
+	"zhangyi (F)" <yi.zhang@huawei.com>, Hou Tao <houtao1@huawei.com>,
+	chengzhihao1@huawei.com, zhangerying <zhangerying@huawei.com>
+Subject: Re: CVE-2024-47725: dm-verity: restart or panic on an I/O error
+Message-ID: <2024102352-stable-eats-61b2@gregkh>
+References: <2024102104-CVE-2024-47725-f698@gregkh>
+ <ba190e58-634a-247d-1751-b5ed7dd45982@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -50,43 +58,17 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <ZxhsD2zZLnZVaGZf@fedora>
-User-Agent: Mutt/1.5.17 (2007-11-01)
+In-Reply-To: <ba190e58-634a-247d-1751-b5ed7dd45982@huawei.com>
 
-On Wed, Oct 23, 2024 at 11:22:55AM +0800, Ming Lei wrote:
-> > > 2) model blk_enter_queue() as down_read()
-> > > - it is shared lock, so concurrent blk_enter_queue() are allowed
-> > > - it is read lock, so dependency with blk_mq_freeze_queue() is modeled
-> > > - blk_queue_exit() is often called from other contexts(such as irq), and
-> > > it can't be annotated as rwsem_release(), so simply do it in
-> > > blk_enter_queue(), this way still covered cases as many as possible
-> > > 
-> > > NVMe is the only subsystem which may call blk_mq_freeze_queue() and
-> > > blk_mq_unfreeze_queue() from different context, so it is the only
-> > > exception for the modeling. Add one tagset flag to exclude it from
-> > > the lockdep support.
-> > 
-> > rwsems have a non_owner variant for these kinds of uses cases,
-> > we should do the same for blk_mq_freeze_queue to annoate the callsite
-> > instead of a global flag.
->  
-> Here it isn't real rwsem, and lockdep doesn't have non_owner variant
-> for rwsem_acquire() and rwsem_release().
+On Wed, Oct 23, 2024 at 09:37:26AM +0800, Li Lingfeng wrote:
+> Hi
+> 
+> I noticed that the fix patch for this CVE has been reverted by commit
+> 462763212dd7("Revert: "dm-verity: restart or panic on an I/O error"").
+> So should this CVE also be rejected?
 
-Hmm, it looks like down_read_non_owner completely skips lockdep,
-which seems rather problematic.  Sure we can't really track an
-owner, but having it take part in the lock chain would be extremely
-useful.  Whatever we're using there should work for the freeze
-protection.
+Yes it should, as the revert happened in the same releases.  I'll go do
+that now, thanks for the review!
 
-> Another corner case is blk_mark_disk_dead() in which freeze & unfreeze
-> may be run from different task contexts too.
-
-Yes, this is a pretty questionable one though as we should be able
-to unfreeze as soon as the dying bit is set.  Separate discussion,
-though.
-
-Either way the non-ownership should be per call and not a queue or
-tagset flag.
-
+greg k-h
 
