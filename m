@@ -1,115 +1,136 @@
-Return-Path: <linux-kernel+bounces-377500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377503-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9B88F9ABFA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:03:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 912E19ABFB2
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:04:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0261C2133E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:03:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 49945285D88
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:04:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0001448C1;
-	Wed, 23 Oct 2024 07:03:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6699A14B06E;
+	Wed, 23 Oct 2024 07:04:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="drjx/xV5"
-Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b="ZIptjTDa"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01453E23
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:03:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666981; cv=none; b=hvflwALCf/cVVgOGNJQl5S9AQ3Czf3xcu+GwoVkCPFIEKaSkLvmiTTCaLJjquoZEBbuxk/lZGlS+wmLjQR4gdO3k8o4KAgkW+X833OL0sOSsvHUxfD+JNX4ql5l7LNfBwOIoMu0UIoDqpNZ2sAiE9fLpYyVVFHc5LftEi1gSg3E=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666981; c=relaxed/simple;
-	bh=90k4mUxa4TToi5H0ZYiSnEuecPVeb96YK0+jz3W8+B4=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=JT0m40AOd88V1DQNya1j40hbsteQRR25MFOKB8TEy7hMFPWEpXX4TvEaD9D3geqLueeGp70lCCnVymF/8b7DWVtTpF62v5gto3UIr+hs8G0GqSka6s2LERfkb915VEXSrclZT24hG0g9dStPHDYTLv+elN8TugoUgqmDMnupM34=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=drjx/xV5; arc=none smtp.client-ip=209.85.215.178
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ed9f1bcb6bso268310a12.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:03:00 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729666980; x=1730271780; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdSwWgJ1k0ZtaVkiK93SKIJMNYM2PubLs1+cCBiZLJk=;
-        b=drjx/xV52/HHcNfVfACmlETH8a3QLhvxq0yOQSdMQZJzbJfSdDVKMab+BEF9yZs7ag
-         yZzEF5a/bTH7NbBNAn7jqADM/JFj8BpisxcGBWE6kaJ1Fm6h8TdZb6DWeW4ZJnh06rdY
-         pXQ1YJM7Im1xH3KLaC6JS2HSrzX99WmNPksKsEH3HcXr5aHdjUiWpqrroCOWCZ0vPSSE
-         Fmuk2LRKlIYT1eAHJRjZxiqt9LzVU9USn+DJLWp5NsGgbYNWXNx8edRmCZLifHXg1vCB
-         XhOSjO12+ViIYsMYVd9FAZnrqqfGKrdRpNvJ6RCMiVSbwRBjERVHOb3e/V98k1Dk6bX/
-         jFOw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729666980; x=1730271780;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=jdSwWgJ1k0ZtaVkiK93SKIJMNYM2PubLs1+cCBiZLJk=;
-        b=vGRAZbKWLpnnHLKgLkgDvZElCLV4ZF1igxBR3S/8iT0GGHB28NRSkwPDvUck2pDcrJ
-         wCO+Ldhk7/HxOBTkKFDmx+I0JZtvsMEDYPo6g5x2UHAA9UuJfEA9tUm1qZwL33PWnldH
-         3m4peUKn8ZP0T2XB469QH+tG1GuG6pk6p7r89vT/LOahjJajJI5ebfSJhuovHyC2ApNf
-         jgFSnwnp4xlPck6h6HRPqAxj9Chbc12x4dmG6PZBX/b+gpLbo7y+9eQlE7uLDTVFA7Wo
-         6ZAAogpUQAMbdvUkII7rtjA2aaB/v1JCw4tJeCG70g7jbdn8uC/0L+zcETGxisIbUC4p
-         YJLg==
-X-Forwarded-Encrypted: i=1; AJvYcCWrrRRLL9Ru8bfHGF8QR2+qRgroTWqIxEblR03s8OoWaDt89O04Hu+4yn0qKlQBt/6pfr0Gcf0hXuVPdo8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxVX+eP77wa+k84psC2818kSh1vL2dX6waMvyr1Ho/GpIuGasmK
-	FeGVPyqH4DxD+3+AJq+4T9n3TgPxXk12wJnIIH5bif08Iogp+7fTamupkrzrux4aqRP6JsEUa27
-	3r/uiZ/K+DRl7eZ0p1GJ7zcOr1Tqej7Jk6ZD4
-X-Google-Smtp-Source: AGHT+IEISTQeXabs4ioQ5AeCbLgv9CXugVq3MQgadQe1dl/7sZYwRFgzmfdnX1oUJbl2vVmKVPJnaxd/NX1zkrDG8Kc=
-X-Received: by 2002:a05:6a21:60c4:b0:1d9:a90:8879 with SMTP id
- adf61e73a8af0-1d978b2d7b6mr1813000637.21.1729666979390; Wed, 23 Oct 2024
- 00:02:59 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2AADE1448C1;
+	Wed, 23 Oct 2024 07:04:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729667059; cv=pass; b=FdMzf39sXRpOLfuKZBtY5Z9PZa/fjbouMcXyYcFQRHgGuiKVSp2/ulaDgcnWksvwg0QYoZ2MGb19LcDpz/rt0CFQx1MYlRdy6/toZ5H/VO0CtjtQUTnnmmrAEVymOJaoibljQrZRptQQwepGcT9kJCdAsJfWXxzW5ZcxYrXMaEA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729667059; c=relaxed/simple;
+	bh=xpckz667ECUV5SqYy6i40SypV2TRZYJrg8Ltbh0tDbo=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=PI6R6ZB0L5TCZODt+JG0MwB4l5+R+ewleCi0h/JiXp2bGTMc2jLMI4/TZ0H8uBO2bH54jgSMRS8/7eq8hf5pJr7dAx515IdVUOjTGopJojUQQHpOxsAdCcEmTJLGbI62NZOzOQd7dS3gLqWTQTrFSbFTdR0/YzCv+8IdzxoBhVY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=Usama.Anjum@collabora.com header.b=ZIptjTDa; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729667011; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=i2dBqxVEL25f57hIMwkSAqcEQ0YCse9Gmbsa7u5TdnZNVx+CLKTGXVh8c3b0SWbOIbEvpzoDZyZezVlhJ64KCD3MDkwZ/Vpd8Pp3qewW/UkueeLZr6qU8XNVwMiCwQuTI0D2Eim24nRPJleGYPtD0Mn9MGzkguofjiBp8UDxHh8=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729667011; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:In-Reply-To:MIME-Version:Message-ID:References:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=fc8IEdKD9REzwJIzIqKTlg94QTjRn2ZW2QNsLPievH0=; 
+	b=ItFMlo0EKrMERUpSyFbJ1eL1DEwCWJqk8kbuQj8qjWIZl8aN09Vk5+RfWNTEDhwWRdyJo1m53QDre6r5i5VyJLaVyuBm7qhg9NA5k/BFSY2afVFYtsZXnJbsQCua1K3Kmw9fHHwOSPB4AtYbBPbPa236Wj6iA7T432CZmMfQmBU=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=Usama.Anjum@collabora.com;
+	dmarc=pass header.from=<Usama.Anjum@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729667011;
+	s=zohomail; d=collabora.com; i=Usama.Anjum@collabora.com;
+	h=Message-ID:Date:Date:MIME-Version:Cc:Cc:Subject:Subject:To:To:References:From:From:In-Reply-To:Content-Type:Content-Transfer-Encoding:Message-Id:Reply-To;
+	bh=fc8IEdKD9REzwJIzIqKTlg94QTjRn2ZW2QNsLPievH0=;
+	b=ZIptjTDaA7YlF2NPRyAy9rzKa2uPNkMPaWrQAvT4I7TIc6WyotM4zNtWNxvYWeoR
+	0AaqOr6Lfc88WOCpK7sL+CoHfCZ6m2ZHSwsz471iLpqTHd24xhJLm2wNvWABa8Cq8lD
+	xpM0Lr16YZV1fqKhds2kV07cETIsddBNkWJ5iJV0=
+Received: by mx.zohomail.com with SMTPS id 1729667009606741.3329161747271;
+	Wed, 23 Oct 2024 00:03:29 -0700 (PDT)
+Message-ID: <24a31123-2c84-4dc7-87e0-c6f960a31e5d@collabora.com>
+Date: Wed, 23 Oct 2024 12:03:18 +0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018151112.3533820-1-arnd@kernel.org> <ZxidW3lvA5Pqu71m@infradead.org>
- <CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com> <Zxiev9UaoUlI1xs9@infradead.org>
-In-Reply-To: <Zxiev9UaoUlI1xs9@infradead.org>
-From: Marco Elver <elver@google.com>
-Date: Wed, 23 Oct 2024 09:02:23 +0200
-Message-ID: <CANpmjNPvBnov-EFk1PNO4GEOF7XLG7S1bYYjg9i4Ej=ZzaA6ag@mail.gmail.com>
-Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Arnd Bergmann <arnd@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Sabyrzhan Tasbolatov <snovitoll@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
-	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Cc: Usama.Anjum@collabora.com, patches@lists.linux.dev,
+ linux-kernel@vger.kernel.org, torvalds@linux-foundation.org,
+ akpm@linux-foundation.org, linux@roeck-us.net, shuah@kernel.org,
+ patches@kernelci.org, lkft-triage@lists.linaro.org, pavel@denx.de,
+ jonathanh@nvidia.com, f.fainelli@gmail.com, sudipm.mukherjee@gmail.com,
+ srw@sladewatkins.net, rwarsow@gmx.de, conor@kernel.org,
+ allen.lkml@gmail.com, broonie@kernel.org
+Subject: Re: [PATCH 6.11 000/135] 6.11.5-rc1 review
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, stable@vger.kernel.org
+References: <20241021102259.324175287@linuxfoundation.org>
+Content-Language: en-US
+From: Muhammad Usama Anjum <Usama.Anjum@collabora.com>
+In-Reply-To: <20241021102259.324175287@linuxfoundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ZohoMailClient: External
 
-On Wed, 23 Oct 2024 at 08:59, Christoph Hellwig <hch@infradead.org> wrote:
->
-> On Wed, Oct 23, 2024 at 08:57:02AM +0200, Marco Elver wrote:
-> > On Wed, 23 Oct 2024 at 08:53, Christoph Hellwig <hch@infradead.org> wrote:
-> > >
-> > > On Fri, Oct 18, 2024 at 03:11:09PM +0000, Arnd Bergmann wrote:
-> > > > From: Arnd Bergmann <arnd@arndb.de>
-> > > >
-> > > > This symbol is now used on the kasan test module, so it needs to be
-> > > > exported.
-> > > >
-> > > > ERROR: modpost: "copy_to_kernel_nofault" [mm/kasan/kasan_test.ko] undefined!
-> > >
-> > > Meh, it would be great not to export internal helpers just because
-> > > someone wants to test them.  Please just mark that test built-in only
-> > > instead.
-> >
-> > We have EXPORT_SYMBOL_IF_KUNIT. See include/kunit/visibility.h -
-> > that's more appropriate, and also adjust kasan_test.c to do
-> > MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING).
->
-> Thats a little better, but at least in this case I still think it is
-> a very bad idea.  copy_to_kernel_nofault is a perfect vector for
-> exploit code to probe writing to kernel address without causing faults
-> so it really should never ever be exported.
+On 10/21/24 3:22 PM, Greg Kroah-Hartman wrote:
+> This is the start of the stable review cycle for the 6.11.5 release.
+> There are 135 patches in this series, all will be posted as a response
+> to this one.  If anyone has any issues with these being applied, please
+> let me know.
+> 
+> Responses should be made by Wed, 23 Oct 2024 10:22:25 +0000.
+> Anything received after that time might be too late.
+> 
+> The whole patch series can be found in one patch at:
+> 	https://www.kernel.org/pub/linux/kernel/v6.x/stable-review/patch-6.11.5-rc1.gz
+> or in the git tree and branch at:
+> 	git://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+> and the diffstat can be found below.
+> 
+> thanks,
+> 
+> greg k-h
+> 
+> -------------
+Hi,
 
-Another alternative is to just #ifndef MODULE the offending test case,
-so it's only available if built-in. No need to just make the whole
-test built-in only. I know there are users of this particular test
-that rely on it being a module.
+Please find the KernelCI report below :-
+
+
+OVERVIEW
+
+    Builds: 25 passed, 0 failed
+
+    Boot tests: 76 passed, 0 failed
+
+    CI systems: maestro
+
+REVISION
+
+    Commit
+        name: 
+        hash: 96563e3507d7fd82e448c6803ed8e07bc6e5ec86
+    Checked out from
+        https://git.kernel.org/pub/scm/linux/kernel/git/stable/linux-stable-rc.git linux-6.11.y
+
+
+BUILDS
+
+    No new build failures found
+
+BOOT TESTS
+
+    No new boot failures found
+
+See complete and up-to-date report at:
+ https://kcidb.kernelci.org/d/revision/revision?orgId=1&var-datasource=edquppk2ghfcwc&var-git_commit_hash=96563e3507d7fd82e448c6803ed8e07bc6e5ec86&var-patchset_hash=&var-origin=maestro&var-build_architecture=All&var-build_config_name=All&var-test_path=boot
+
+Tested-by: kernelci.org bot <bot@kernelci.org>
+
+Thanks,
+KernelCI team
 
