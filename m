@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-377780-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377781-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 286C39AC6B3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:34:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB68D9AC6B4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:34:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56B881C22F05
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:34:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D440281CAA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:34:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0D5319D081;
-	Wed, 23 Oct 2024 09:33:52 +0000 (UTC)
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E73AF7482;
-	Wed, 23 Oct 2024 09:33:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01F531714B9;
+	Wed, 23 Oct 2024 09:34:08 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E4C515B0E2;
+	Wed, 23 Oct 2024 09:34:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729676032; cv=none; b=jhAmlhMo/jjaYTHcwC3UFH8ttTu7azeMvkRT30i4M5fkQbhmC5EeW6U2AXlChS8mUCmGZFyGuyohhT2LR2TG9ODmdeWC3olgbWzGfmhdPQCKukA+yA5eI4I6qjBCm6MIdobyVt/JFXhLr8ZCxtspHawuJdX+SO4W+Me8EIOSh8s=
+	t=1729676047; cv=none; b=JAifPdwFKTd2MBazfmsv9NwUBcgRHP5NDfAEFuz1LVn6biIU9LJX0YRarCm2Rh8v2BCiMAfk7FspRX2nv7l8BVI4NBYmGqlAf1q7tW+6FN4owU5e35eVhHVKuxfn56gu5RIhvRYh9pbc5Ga8lyeoqMGJQzFYlmPQPNtUuM7PvXQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729676032; c=relaxed/simple;
-	bh=I+t5Y1LPYeVgxRmZ+1UAf49hXymGsrVgLf2jhMU34Oo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=kRuPE1K1VqXYzKHfHk6ggpY1EsgFxxEiSE1n8KeYrknd8h359gQymeiN0N11HE5KRNqIiblkcJbj2civcQGF2ZAnJY/I2KdZdvnQPGM260TLJvwunpJRyYIoRRK41y8tBCN3p4tnzDfnCMkxQ5cvpZPzOm3SfSoBeAicOtq9SsM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=debian.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso873190666b.2;
-        Wed, 23 Oct 2024 02:33:50 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729676029; x=1730280829;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nvoMYU14br2JwNAhJzhWrmnAu9bil/nQbgtl7e1GbYk=;
-        b=BL/jY7yDd8LV6ZRP3YXm7u5pTkduCXbrV0W2I5s5+yLwF9AyIkWs+J+QCSdqzVX0M8
-         ZPrL++lehFOu1zR5sPNWlie4xbKiEjiyT/pvwDcOuNKjPjq3CUwmt5EgPL3vQ6tlUJuW
-         vXLdAkdYv47Tv0RFg8nC1TrTY9u8d0pOAoeODH3ILP5J1Ja1I8/LnJHw0sDVQfVjwWmt
-         CKlf7yDFJTJoC5/GTD124tffB0RcdGp7391pUJlCcTAnd02Hg0T0+6zSswLnCjtQ+KdO
-         nd3fRn1GRtgXiVVRbAF3DpOoP1I9xoXZOG1dfLBYO6YOFinXOvI/cpeXDkm06E7a7aCP
-         0Fgg==
-X-Forwarded-Encrypted: i=1; AJvYcCU/JZF6n1VnY8pjCFubV4BitElj8xlIPYY9m+3VprrSRIA8M3nPGMBHdKUXvaeCSAKorhd8K2gSNrY=@vger.kernel.org, AJvYcCUKdWxbYD11ER89G2PkhtCx7JANvACQcu32zcIIcD35HPtRDONpX+2RIKxb2I3FeLj2hd8RSrOQYN1HQRHV@vger.kernel.org, AJvYcCUWb0rAEcakXYz0RJZ39uQODaax7+XvykAPaPEaYL6kSABzifTta6Gn8AHB9TcMfOmK65q4MYhL@vger.kernel.org
-X-Gm-Message-State: AOJu0YzbIMENjIH4BbKa5enpgFvyNdmI6zYbQwzOVWizFzsp9Jlxkz0W
-	0m+ljt8Ua54xXqtJiJcn/KzIWvu3Mf5Q+qmFbp2HJBMJzOa5H/Cf
-X-Google-Smtp-Source: AGHT+IH6IguzdeEsuxacjyH9mS3q+nAPKkgRAK8asjxpAb8XRl2duCALzsVvrykgoTpiSWZmOeEw8A==
-X-Received: by 2002:a17:907:7211:b0:a99:f71a:4305 with SMTP id a640c23a62f3a-a9abf871265mr154553666b.18.1729676029134;
-        Wed, 23 Oct 2024 02:33:49 -0700 (PDT)
-Received: from gmail.com (fwdproxy-lla-114.fbsv.net. [2a03:2880:30ff:72::face:b00c])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d6307sm450952066b.33.2024.10.23.02.33.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 02:33:48 -0700 (PDT)
-Date: Wed, 23 Oct 2024 02:33:46 -0700
-From: Breno Leitao <leitao@debian.org>
-To: Paolo Abeni <pabeni@redhat.com>
-Cc: Akinobu Mita <akinobu.mita@gmail.com>, Jonathan Corbet <corbet@lwn.net>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Andrew Morton <akpm@linux-foundation.org>, kernel-team@meta.com,
-	Pavel Begunkov <asml.silence@gmail.com>,
-	Mina Almasry <almasrymina@google.com>,
-	Oleksij Rempel <o.rempel@pengutronix.de>,
-	Kuniyuki Iwashima <kuniyu@amazon.com>,
-	Alexander Lobakin <aleksander.lobakin@intel.com>,
-	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
-Subject: Re: [PATCH net-next v3] net: Implement fault injection forcing skb
- reallocation
-Message-ID: <20241023-hasty-inescapable-tapir-a2f7d9@leitao>
-References: <20241014135015.3506392-1-leitao@debian.org>
- <d0fa8332-aeef-4d33-9167-b9716b050594@redhat.com>
+	s=arc-20240116; t=1729676047; c=relaxed/simple;
+	bh=iHUY89vn25umH+1yGshHz52mTMNZow05R42xVeaG8HU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EZpbpZtqXKYbqaBevtWT70ish5/dW42a+PpqYaqWvQwJjTBInCpZQes6VJ3EJMC/KOpqER/KgWBgXgf3g/1e/4dsJjtrx3jKrtgAQMRvEhw/ZHZsRYNyVOIl8H9Zte3v/b7hFFWVzt7j0aNYedvJAt+3qnqNyaihkzamYsL988U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id E9C5E497;
+	Wed, 23 Oct 2024 02:34:34 -0700 (PDT)
+Received: from [10.57.88.34] (unknown [10.57.88.34])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2D2983F71E;
+	Wed, 23 Oct 2024 02:34:02 -0700 (PDT)
+Message-ID: <060b220d-f7d6-4594-9b2b-e878a2ba98c6@arm.com>
+Date: Wed, 23 Oct 2024 10:33:54 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <d0fa8332-aeef-4d33-9167-b9716b050594@redhat.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v2] perf Documentation: Describe the PMU naming
+ convention
+To: Ian Rogers <irogers@google.com>, "Liang, Kan" <kan.liang@linux.intel.com>
+Cc: Randy Dunlap <rdunlap@infradead.org>,
+ Tuan Phan <tuanphan@os.amperecomputing.com>,
+ Thomas Richter <tmricht@linux.ibm.com>,
+ Bhaskara Budiredla <bbudiredla@marvell.com>,
+ Bharat Bhushan <bbhushan2@marvell.com>, Peter Zijlstra
+ <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
+ Arnaldo Carvalho de Melo <acme@kernel.org>,
+ Namhyung Kim <namhyung@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+ Jiri Olsa <jolsa@kernel.org>, Adrian Hunter <adrian.hunter@intel.com>,
+ James Clark <james.clark@arm.com>, Ravi Bangoria <ravi.bangoria@amd.com>,
+ linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Will Deacon <will@kernel.org>, Stephane Eranian <eranian@google.com>
+References: <20240606044959.335715-1-irogers@google.com>
+ <c7d6eedb-7c5e-4411-a83f-4328dc75ec46@linux.intel.com>
+ <CAP-5=fXY2Ofr_GRc7Mq7BfoR+2150o8e1JeyGctcGPRG70DqPg@mail.gmail.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <CAP-5=fXY2Ofr_GRc7Mq7BfoR+2150o8e1JeyGctcGPRG70DqPg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 17, 2024 at 03:50:41PM +0200, Paolo Abeni wrote:
-> On 10/14/24 15:50, Breno Leitao wrote:
-> > Introduce a fault injection mechanism to force skb reallocation. The
-> > primary goal is to catch bugs related to pointer invalidation after
-> > potential skb reallocation.
-> > 
-> > The fault injection mechanism aims to identify scenarios where callers
-> > retain pointers to various headers in the skb but fail to reload these
-> > pointers after calling a function that may reallocate the data. This
-> > type of bug can lead to memory corruption or crashes if the old,
-> > now-invalid pointers are used.
-> > 
-> > By forcing reallocation through fault injection, we can stress-test code
-> > paths and ensure proper pointer management after potential skb
-> > reallocations.
-> > 
-> > Add a hook for fault injection in the following functions:
-> > 
-> >   * pskb_trim_rcsum()
-> >   * pskb_may_pull_reason()
-> >   * pskb_trim()
-> > 
-> > As the other fault injection mechanism, protect it under a debug Kconfig
-> > called CONFIG_FAIL_SKB_FORCE_REALLOC.
-> > 
-> > This patch was *heavily* inspired by Jakub's proposal from:
-> > https://lore.kernel.org/all/20240719174140.47a868e6@kernel.org/
-> > 
-> > CC: Akinobu Mita <akinobu.mita@gmail.com>
-> > Suggested-by: Jakub Kicinski <kuba@kernel.org>
-> > Signed-off-by: Breno Leitao <leitao@debian.org>
+On 2024-10-23 5:06 am, Ian Rogers wrote:
+> On Thu, Jun 6, 2024 at 11:15 AM Liang, Kan <kan.liang@linux.intel.com> wrote:
+>>
+>>
+>>
+>> On 2024-06-06 12:49 a.m., Ian Rogers wrote:
+>>> It is an existing convention to use suffixes with PMU names. Try to
+>>> capture that convention so that future PMU devices may adhere to it.
+>>>
+>>> The name of the file and date within the file try to follow existing
+>>> conventions, particularly sysfs-bus-event_source-devices-events.
+>>>
+>>> Signed-off-by: Ian Rogers <irogers@google.com>
+>>> Reviewed-by: Randy Dunlap <rdunlap@infradead.org>
+>>> ---
+>>>   .../testing/sysfs-bus-event_source-devices    | 24 +++++++++++++++++++
+>>>   1 file changed, 24 insertions(+)
+>>>   create mode 100644 Documentation/ABI/testing/sysfs-bus-event_source-devices
+>>>
+>>
+>> Reviewed-by: Kan Liang <kan.liang@linux.intel.com>
 > 
-> I'm sorry to nit-pick, but checkpatch laments that the new command line
-> argument lacks documentation in
-> Documentation/admin-guide/kernel-parameters.txt, and I feel that could be
-> actually useful.
-> 
-> With that, feel free to include my ack in the next revision,
+> Thanks for all the reviews. Could we land this?
 
-Thanks Paolo, I will send a new updated version soon.
+Hmm, it's not always going to be strictly true as written though - we 
+will also have cases where multiple PMU instances owned by the same 
+driver don't all support the same events/filters/etc., and/or are 
+entirely unrelated such that the same event encoding may mean completely 
+different things. I've just landed a driver where not only are the 
+instances going to be heterogeneous (since it's for arbitrary bits of 
+interconnect), but for hierarchy reasons the most logical place to put 
+the instance ID in the name wasn't even at the end :(
+
+FWIW I think if we want to nail down a strict ABI, it would seem more 
+robust to have an explicit attribute to describe underlying PMU 
+properties like whether instances do represent identical "slices" or 
+not. The hex suffix thing is already proving how fragile names alone are 
+liable to be.
+
+Thanks,
+Robin.
+
+> 
+> Thanks,
+> Ian
+> 
+>>> diff --git a/Documentation/ABI/testing/sysfs-bus-event_source-devices b/Documentation/ABI/testing/sysfs-bus-event_source-devices
+>>> new file mode 100644
+>>> index 000000000000..79b268319df1
+>>> --- /dev/null
+>>> +++ b/Documentation/ABI/testing/sysfs-bus-event_source-devices
+>>> @@ -0,0 +1,24 @@
+>>> +What: /sys/bus/event_source/devices/<pmu>
+>>> +Date: 2014/02/24
+>>> +Contact:     Linux kernel mailing list <linux-kernel@vger.kernel.org>
+>>> +Description: Performance Monitoring Unit (<pmu>)
+>>> +
+>>> +             Each <pmu> directory, for a PMU device, is a name
+>>> +             optionally followed by an underscore and then either a
+>>> +             decimal or hexadecimal number. For example, cpu is a
+>>> +             PMU name without a suffix as is intel_bts,
+>>> +             uncore_imc_0 is a PMU name with a 0 numeric suffix,
+>>> +             ddr_pmu_87e1b0000000 is a PMU name with a hex
+>>> +             suffix. The hex suffix must be more than two
+>>> +             characters long to avoid ambiguity with PMUs like the
+>>> +             S390 cpum_cf.
+>>> +
+>>> +             Tools can treat PMUs with the same name that differ by
+>>> +             suffix as instances of the same PMU for the sake of,
+>>> +             for example, opening an event. For example, the PMUs
+>>> +             uncore_imc_free_running_0 and
+>>> +             uncore_imc_free_running_1 have an event data_read;
+>>> +             opening the data_read event on a PMU specified as
+>>> +             uncore_imc_free_running should be treated as opening
+>>> +             the data_read event on PMU uncore_imc_free_running_0
+>>> +             and PMU uncore_imc_free_running_1.
+
 
