@@ -1,126 +1,122 @@
-Return-Path: <linux-kernel+bounces-377174-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377175-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01F2F9ABAD4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:09:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 002EC9ABAD7
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:11:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 76C79B21ADA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:09:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2F6331C21142
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:11:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38CAD20B22;
-	Wed, 23 Oct 2024 01:09:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="aEgBdFd7"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93D60200A0;
+	Wed, 23 Oct 2024 01:11:09 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B414E36B;
-	Wed, 23 Oct 2024 01:09:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0C7D44A32;
+	Wed, 23 Oct 2024 01:11:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729645753; cv=none; b=kPAz/0ShztyyubLHxEIiP/N/gOVwenzDMOrL3YQos6LD4sZpo01opfE5PmHtjWuJLJWyOZSHPqmDtIsWS7+WP9xUi9FDQ0/F4dbHh9vsE9Uqzmm/4POPj3Gk38hM2wwDqJkerm6zW2mkzw9arq2HrOwQQsKkOKwwqKm8x2UAaxc=
+	t=1729645869; cv=none; b=dVxGuvmHqEpcAchNwMUelE4KJC02LmVrht6/l6ps8+NhekCvE7hJdJd8onhEa5mkl0kbofPTtJNr1VO0z+6q80ExxCP2ZmranM1fzxfZ7HF2XmG3M6uS4FCQAZhLYdo+Rlns8EUk+VZH2iYHc/aS8EJ5yymy5FP2COO8GgQzhfA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729645753; c=relaxed/simple;
-	bh=eUyRW2nq2PM2+wK4ivE581lNhZuoS/1YaFjB9OcUsR0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=eB+nL9Z5rdqLT/GMRKnyCOn+8LJ6WrSAOgfc/2xdwsC2ZkSjiaQXbSSlEPMd2SdxKNb0PpG268/F9tho/zVDUO8k56OC+yDos+f4fMfgIEVmwghtk7Z3b06FCZvKJ/qwpeusB+EnZHhU0EeY7VUzqSYnLSD5LQSmWPN6DBYBlRo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=aEgBdFd7; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=Luc414sqlYd9r0hDusrFOUlGPmShpMBsFYhEzzPbPG8=; b=aEgBdFd7EvMykDpVG1QVfh49KR
-	5u9QFtmR4J7sflyt1GIeWIFboSZRFtINEdsb08ZeGtSJbNlinAimtn8fpFRuP3MWjkp38q1HWNocG
-	h8ynoSuwrb9LfOGoX/pw869W4udzciX9gh/6NHwhIGv5REsP6umt77XbQWTKsum6FfR8=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t3Pro-00AtuF-B7; Wed, 23 Oct 2024 03:08:52 +0200
-Date: Wed, 23 Oct 2024 03:08:52 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-Message-ID: <d691a687-c0e2-48a9-bf76-d0a086aa7870@lunn.ch>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-5-inochiama@gmail.com>
- <227daa87-1924-4b0b-80db-77507fc20f19@lunn.ch>
- <gwtiuotmwj2x3d5rhfrploj7o763yjye4jj7vniomv77s7crqx@5jwrpwrlwn4s>
- <65720a16-d165-4379-a01f-54340fb907df@lunn.ch>
- <424erlm55tuorjvs2xgmanzpximvey22ufhzf3fli7trpimxih@st4yz53hpzzr>
- <66f35d1b-fd26-429b-bbf9-d03ed0c1edaf@lunn.ch>
- <zum7n3656qonk4sdfu76owfs4jk2mkjrzayd57uuoqeb6iiris@635pw3mqymqd>
+	s=arc-20240116; t=1729645869; c=relaxed/simple;
+	bh=6U5By2Ch/g2SvsFdLkpdUpapmFgINR8zZ0uZD7Jbv9k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ILGu/xuZ9rXbqhsvQDfteR6lJM7acWAwtr3su3mu5vA5U6D3WtASUKthdx6pMYPONqfK+y+FafUAXmFjTaqPdGyWvdPQBXg88tCoMaRYwX1RRsxCqQcc9DGA8uodMj4J3r9JZrHf5vsBUAF4EGsdilECuDIt6I0hkJ6n2R85aa4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.105])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XY9t65Ghhz10N07;
+	Wed, 23 Oct 2024 09:09:02 +0800 (CST)
+Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
+	by mail.maildlp.com (Postfix) with ESMTPS id 2C8F514010D;
+	Wed, 23 Oct 2024 09:11:04 +0800 (CST)
+Received: from [10.67.111.104] (10.67.111.104) by
+ dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 23 Oct 2024 09:11:03 +0800
+Message-ID: <68aa186e-a6ab-4fd8-bc17-6d131a80636b@huawei.com>
+Date: Wed, 23 Oct 2024 09:11:01 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <zum7n3656qonk4sdfu76owfs4jk2mkjrzayd57uuoqeb6iiris@635pw3mqymqd>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] bcachefs: fix shift oob in alloc_lru_idx_fragmentation
+Content-Language: en-US
+To: Jeongjun Park <aha310510@gmail.com>
+CC: <kent.overstreet@linux.dev>, <mmpgouride@gmail.com>,
+	<linux-bcachefs@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com>
+References: <1e46f070-3e78-4a81-b7c7-ea021271b12b@huawei.com>
+ <D983ED6A-1206-4D3F-AAEB-4572BD81AB2B@gmail.com>
+From: Hongbo Li <lihongbo22@huawei.com>
+In-Reply-To: <D983ED6A-1206-4D3F-AAEB-4572BD81AB2B@gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems702-chm.china.huawei.com (10.3.19.179) To
+ dggpeml500022.china.huawei.com (7.185.36.66)
 
-On Wed, Oct 23, 2024 at 08:41:36AM +0800, Inochi Amaoto wrote:
-> On Tue, Oct 22, 2024 at 03:51:08PM +0200, Andrew Lunn wrote:
-> > On Tue, Oct 22, 2024 at 06:21:49PM +0800, Inochi Amaoto wrote:
-> > > On Mon, Oct 21, 2024 at 03:27:18PM +0200, Andrew Lunn wrote:
-> > > > > It is related to the RGMII delay. On sg2044, when the phy 
-> > > > > sets rx-delay, the interal mac is not set the same delay, 
-> > > > > so this is needed to be set.
-> > > > 
-> > > > This is the wrong way to do it. Please look at how phy-mode should be
-> > > > used, the four different "rgmii" values. Nearly everybody gets this
-> > > > wrong, so there are plenty of emails from me in the netdev list about
-> > > > how it should be done.
-> > > > 
-> > > 
-> > > The phy-mode is alreay set to the "rgmii-id" and a rx delay is already
-> > > set (a default tx delay is set by the phy driver). In the scenario 
-> > > the extra bit is used to fix 2ns difference between the sampling clock
-> > > and data. It is more like an extra setting and the kernel can not handle
-> > > it by only setting the phy-mode.
-> > 
-> > This sounds wrong.
-> > 
-> > So in DT you have rgmii-id? You say the PHY is doing TX delay. So you
-> > pass PHY_INTERFACE_MODE_RGMII_TXID to the PHY? It is not clear from
-> > this patch, i don't see any code mentioning
-> > PHY_INTERFACE_MODE_RGMII_TXID. Could you point me at that code.
-> > 
-> > 	Andrew
+
+
+On 2024/10/22 12:05, Jeongjun Park wrote:
 > 
-> The phy on the board I have is YT8531, The config code is here:
-> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/drivers/net/phy/motorcomm.c#n868
+> 
+>> Hongbo Li <lihongbo22@huawei.com> wrote:
+>>
+>> ﻿
+>>
+>>> On 2024/10/21 23:43, Jeongjun Park wrote:
+>>> The size of a.data_type is set abnormally large, causing shift-out-of-bounds.
+>>> To fix this, we need to add validation on a.data_type in
+>>> alloc_lru_idx_fragmentation().
+>>> Reported-by: syzbot+7f45fa9805c40db3f108@syzkaller.appspotmail.com
+>>> Fixes: 260af1562ec1 ("bcachefs: Kill alloc_v4.fragmentation_lru")
+>>> Signed-off-by: Jeongjun Park <aha310510@gmail.com>
+>>> ---
+>>>   fs/bcachefs/alloc_background.h | 3 +++
+>>>   1 file changed, 3 insertions(+)
+>>> diff --git a/fs/bcachefs/alloc_background.h b/fs/bcachefs/alloc_background.h
+>>> index f8e87c6721b1..163a67b97a40 100644
+>>> --- a/fs/bcachefs/alloc_background.h
+>>> +++ b/fs/bcachefs/alloc_background.h
+>>> @@ -168,6 +168,9 @@ static inline bool data_type_movable(enum bch_data_type type)
+>>>   static inline u64 alloc_lru_idx_fragmentation(struct bch_alloc_v4 a,
+>>>                             struct bch_dev *ca)
+>>>   {
+>>> +    if (a.data_type >= BCH_DATA_NR)
+>>> +        return 0;
+>>> +
+>>
+>> oh, I found I have done the same thing in [1]("Re: [syzbot] [bcachefs?] UBSAN: shift-out-of-bounds in bch2_alloc_to_text"). But in my humble opinion, the validation changes also should be added. And in addition, move the condition about a.data_type into data_type_movable will be better. Just my personal opinion.:)
+>>
+>> [1] https://www.spinics.net/lists/kernel/msg5412619.html
+> 
+> I still disagree with the fix to make data_type_movable() do the validation,
+> but I think [1] is definitely a patch that needs to be added.
+> 
+> However, [1] is far from preventing the shift oob vulnerability described
+> in that syzbot report. Therefore, I think [1] should be written as a
+> standalone patch and committed, rather than as a patch for that
 
-This PHY should be able to do rgmii-id, so there is no need for the
-MAC to add delays. We encourage that setup in linux, so all RGMII
-MAC/PHY pairs are the same, the PHY add the delays.
+I'm fine for this.:)
 
-	Andrew
+Thanks,
+Hongbo
+
+> syzbot report.
+> 
+>>
+>> Thanks,
+>> Hongbo
+>>
+>>>       if (!data_type_movable(a.data_type) ||
+>>>           !bch2_bucket_sectors_fragmented(ca, a))
+>>>           return 0;
+>>> --
 
