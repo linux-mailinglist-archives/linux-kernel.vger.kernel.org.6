@@ -1,202 +1,193 @@
-Return-Path: <linux-kernel+bounces-377442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377443-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83E29ABEEA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:37:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 38CC49ABEEF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:38:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C31ED1C23181
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:37:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BC4321F24829
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:38:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D6A14A09C;
-	Wed, 23 Oct 2024 06:37:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151C214A62A;
+	Wed, 23 Oct 2024 06:37:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aSSC4W6A"
-Received: from mail-vs1-f53.google.com (mail-vs1-f53.google.com [209.85.217.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="HEW+sHHH"
+Received: from EUR05-DB8-obe.outbound.protection.outlook.com (mail-db8eur05on2041.outbound.protection.outlook.com [40.107.20.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F42213BC11
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 06:37:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.217.53
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665447; cv=none; b=pVP1HazWrl3QM6fdtcM+CmvVhaiYqXYgOCekrFeHMlvAnflbiee2gft0p4L+OuXAZLvRsihAufgtBMXIifO1LxSsQR2Gcv1dzyj8vh8oOqmezb4J28Owz+LKyLiywI/5JtVlXASGVm5j2HeEvwcPn/255NNFO6+WFJMOcpDwP1Y=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665447; c=relaxed/simple;
-	bh=hK6aO6xWFWAX1AmLrmaGviN7d8UU64ABCZAto+OG8LA=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AE2Ls84PByqM/JSNKSFloCi9Qyd/cP3355OR5xrP6q+JLs7AXaGhFgZo+CQsnGNnkyY2FOxrVnPsgO3aEUYg3zILiYayB02hK/05EsuAAGxFweQJ2c/Dya4fjuRiSAK+AP3nzF+zNJBVXkxzs+/OUqVBLe6Fn1PYmWrYjxFKD9Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aSSC4W6A; arc=none smtp.client-ip=209.85.217.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-vs1-f53.google.com with SMTP id ada2fe7eead31-4a46b6affeaso2100564137.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 23:37:25 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729665444; x=1730270244; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=3RwGWVZWgUL28jOJ2ZorbzjGVGR4NAagIvpYUFNtjGU=;
-        b=aSSC4W6AtZEk8qnuj7Z4LvpooWYoDMfYBuYBjGcJPn4jerh98l5JnIAwngUnyY0L75
-         uAWFnSq5m+eZ512qugdL/KIwtTaqWxFG2uhirNn6uwRfw4TfcJzSCtM+Y3+sPPo9GMi2
-         YWWXPUX95RTazfQg7JxbSbfPEOpXIzmNCostMXoZmpYYQcFFXpT3upXmJGSj7yCEKaGd
-         x6tjUEijw6vt5ntz+R4lPx8s+cB53Y0UH4/lrWdHp4+2ShsYu0IaLDNGUwnE4QUCAusY
-         oJrcvK5D/92y0HiCkzSR7UMaYDe2/p7Gk0p1DOYodPkv/2K/w5lnr1RFCWpo7wBwOrrG
-         DGAg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729665444; x=1730270244;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=3RwGWVZWgUL28jOJ2ZorbzjGVGR4NAagIvpYUFNtjGU=;
-        b=nCyi72Sj5Y6gpC8tgoYvpSGNHVmeoRq3T3Fo3wyEo3FzredAYDc/GelypZVmWam0Iz
-         mM4RsZXwGvSpxXDClIs5R8fGWKp9VCyR20lUbiwdNOMacpaABVWbUmMglMQdPPnFnpz5
-         VJVe6EdZbLPAvlrLKoNuaBjW5LGnseQUIatib8snzUZMz2krNxL1xSolvLIPlfVpdhRE
-         jqR8Rwm7irhLK9NHd5xFg3WSoEKaKL5o2Rln93uQJtEMGco3BUGo1RLo9+BOohHM66O5
-         iOEIMIbG063BR4T8fwinOhi8+Llbi0ExJI6ePThw845JXB6AWLLWLiSamLKmA+7PLO1g
-         yDnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVSC7VXAgU+YhvNVpZkeMyrBw8Jo9tn3I0ke+IJKehI9ejKoAhVAoLPdePMB4+icktBya3yVxH1A1gE0RQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxuJqkgs9pRtaqtQ3DB14EpcIogqulr3hNhzb5lM2fAU/Wk3zgc
-	ryJIjnYjKq6IJQ+UIsUsUfwk8ZKjufjaQ+MiWfAfg0VlsTouLxxIrbVF1h2G6hDwWAIkOusiSBV
-	N+UJ61unixxWGkl9hPoaMZ9oPpoQwANFDQkrD
-X-Google-Smtp-Source: AGHT+IH/ZsPlxgBddWsHfy39It0obvWBL67n4AK9/EC/iSAclsEp52smPUSwcD1dGZTcT4IWFQe34vwo7pjm/KxvH9g=
-X-Received: by 2002:a05:6102:5113:b0:4a4:6a8a:d2dd with SMTP id
- ada2fe7eead31-4a751c94356mr1642162137.21.1729665444011; Tue, 22 Oct 2024
- 23:37:24 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C6EF14A0AA;
+	Wed, 23 Oct 2024 06:37:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.20.41
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729665474; cv=fail; b=FLE2LxnXdPdkPlVjmd9Y5Igmm1d+LySLkeJCtZOgq9uSytxTSqGXRJBeJeXQ8//d9bw2qFxhw002ilFb5YFCwRyzHGxzSHuH1m4Yrzr/6d3osAqq8AnTyZ5J8x/PDoBlAOvKyw2msGstFkyY0QUiFWpKTJnSa9nvpvDbQCoZe8k=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729665474; c=relaxed/simple;
+	bh=BL538X9Eh0aQFwuKJjZIfh5zdIpdSUZR/9tmeV579Nc=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=lTtPHF7d0G6nRWrjKBDTEzIXzHeRrxV5kjOYXlhoil3t5ZJJfhfNomeM2gmvKL36Tb5MrkMlYCVGwywIeyiz2m6qWEgF6U986qtsR9OaN2WUTR7rO9j/e4vsstZ+lzdyvYjqwb+O6w2AKZNzISFKPtsaw67NFsMRP4kxGhd7x4o=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=HEW+sHHH; arc=fail smtp.client-ip=40.107.20.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Wxy5Ydk+cNBS15dy7CCh0Nh8Uft+LDAG7u1rlm8pzAYoiZE6aPnPs9FmoWP44OD35mSBUkGvd6yD/zJspt5vfbAsA9NUPASIWo1tYF4APFP4zAao0hjSPyvz3SyerWNyLuG9YE8cCkK5zh5oyFj9Qn1Z1uQteWFbgna7zOQfrBzM30u8laaMQFXClXsZKnPULMS9p8n25umXaqXtTvdqnu3cg5CwogtmXet5Wg9NPQelNaNx4lKYoFo7tEaHLsLDgZQnZinF0GeiWyIwwzZRN4SJ5owQ4IFplLg/5Jj4g33ITLuoGKleyUtfluv+jmqOL1oocJdYdbv2ZH6/x2g90Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=BL538X9Eh0aQFwuKJjZIfh5zdIpdSUZR/9tmeV579Nc=;
+ b=U7QRjm5wVPEcwf63aZV7LW4ZnM3w00cY5GOVEmtDyET1WIflY1x8frUaBFtEzUmXBAIa4GFIEQB+Qtqi5QxD6EmCssV5d6J1dyl7AVYsX+4LSahbMm++AtkUyHX6DOjc0PnN3Mi6OwlHtjW2RfEqBJonGKboQ9fpHeUAzw7gZUpZECK9jr76PqY7lpm0+VBJPHxz5ygpAS4RKOo74LZAC4OToCeNGFBf42F9dcvIQ3SU+qOfv3nHhyJgIjBIm0F4ai5ZllkzIxm8OErW+/n9XfsYYLYQtV3sI9bTh6K5Rrwawo5+6m2HK2BoGOPnPUkwBfVt+L34Qd6iK5IyrbY09A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=BL538X9Eh0aQFwuKJjZIfh5zdIpdSUZR/9tmeV579Nc=;
+ b=HEW+sHHHeJzIZ4pP+v1Z/YieQIib1sWtnVpuoBDoj4r5AHmAL/9P6OMKZXvpFTcRY4KAWPIkIa28oaSwCaRRfIO83L3uysnmm7GgDWlVnmImK121AVtb5/696ZdPgrehLdqcK1vl24eALbDBoVF1cOdv5y8GMV7b9LPEflWjksOlvucqOgTn1EWNnZqi6OWEX8Ss4ujrveuHeo/YxxoYRdZNCl14ZISPxuwhht986/1Wi6wA6ugafpC+ZqPPO808+ZXuMBw0m62LHnRcxX6AoXVgf2waG5pftMycSzQ+E8ZvooW5b4mDvy9/ZbPVG8IEdg3wndA8riuydIOGPdtWVQ==
+Received: from AS8PR04MB8849.eurprd04.prod.outlook.com (2603:10a6:20b:42c::17)
+ by DB9PR04MB9867.eurprd04.prod.outlook.com (2603:10a6:10:4c0::8) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.24; Wed, 23 Oct
+ 2024 06:37:49 +0000
+Received: from AS8PR04MB8849.eurprd04.prod.outlook.com
+ ([fe80::d8e2:1fd7:2395:b684]) by AS8PR04MB8849.eurprd04.prod.outlook.com
+ ([fe80::d8e2:1fd7:2395:b684%7]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
+ 06:37:48 +0000
+From: Claudiu Manoil <claudiu.manoil@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>,
+	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
+	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org"
+	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+	"conor+dt@kernel.org" <conor+dt@kernel.org>, Vladimir Oltean
+	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Frank Li
+	<frank.li@nxp.com>, "christophe.leroy@csgroup.eu"
+	<christophe.leroy@csgroup.eu>, "linux@armlinux.org.uk"
+	<linux@armlinux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>,
+	"horms@kernel.org" <horms@kernel.org>
+CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
+	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
+	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
+	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
+	<linux-pci@vger.kernel.org>, "alexander.stein@ew.tq-group.com"
+	<alexander.stein@ew.tq-group.com>
+Subject: RE: [PATCH v4 net-next 10/13] net: enetc: extract
+ enetc_int_vector_init/destroy() from enetc_alloc_msix()
+Thread-Topic: [PATCH v4 net-next 10/13] net: enetc: extract
+ enetc_int_vector_init/destroy() from enetc_alloc_msix()
+Thread-Index: AQHbJEjRMaGd/16dp0ueGxJYDqbmkLKT3vUA
+Date: Wed, 23 Oct 2024 06:37:48 +0000
+Message-ID:
+ <AS8PR04MB88497C3155127C27C2C5A9DA964D2@AS8PR04MB8849.eurprd04.prod.outlook.com>
+References: <20241022055223.382277-1-wei.fang@nxp.com>
+ <20241022055223.382277-11-wei.fang@nxp.com>
+In-Reply-To: <20241022055223.382277-11-wei.fang@nxp.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: AS8PR04MB8849:EE_|DB9PR04MB9867:EE_
+x-ms-office365-filtering-correlation-id: f4ce999a-da10-4184-6411-08dcf32d362c
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam:
+ BCL:0;ARA:13230040|376014|7416014|366016|1800799024|38070700018|921020;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?oixWGAAoSOr1/uEgfDiGXXsioUj2sFOIViRs6410V0K604DhtWX4hN9YX4VH?=
+ =?us-ascii?Q?rcgmuAZWAWcjhjIvPADD8jxrRjVfaAXMXEmMHHe0k4aj7IUoKCu/gq2TKj6/?=
+ =?us-ascii?Q?mVq3IT7V/Meu6wa01vcE1wmuak79RXKhWU010QKKxSD5IWOlTSOvI2FuGxlv?=
+ =?us-ascii?Q?MMP5JQ5B6kNeuhcST6c2eNj8wgXmaPUBsX5/ogzhIUeUfRfkbM1GaZjARQoz?=
+ =?us-ascii?Q?hYG4eIjFU7glPsVRYX1PqbMW+6UZif2WOS8jEK2Nh+x6M+t8ANbrCvz8BQqU?=
+ =?us-ascii?Q?LLPWga1P2l98RSnyTrFHuQwtO5E4AKMBgOb7RlX66Lcf/wcNjT9CirqM3dEQ?=
+ =?us-ascii?Q?3Q6yb5ddkcQuUTmGMkyyCQjZBOF/Th2Ck9TTXDZRUgRVryY0yPANHKN7U5/I?=
+ =?us-ascii?Q?CJaULudkvV2hrQd4CWqJheIcpNBr5eazNQ3LrEIu8cgq8YDNK7odahtkaVqe?=
+ =?us-ascii?Q?LJEa2zJqmOC78P5/iwO9osQoxgm5mx7OcKmvHMADjBRhOcJkh4zS5kzN7N7U?=
+ =?us-ascii?Q?rhQZ2Nk6UA9+mYXBvHmG0wRI/KKwXfhU/QNdQ/JpvDEyHLaSe3G/L2XKbB3/?=
+ =?us-ascii?Q?Tnw1sIVCKBGLjMLE31KdOYyyRzH65LtnbIyE5FwcPzbX/4t/G1eL3s2nXqkY?=
+ =?us-ascii?Q?mQ43IKIcg8dC/7hKcUQK+z4ddVz5TfFgAtocxlvc7xllAogz2ISp4ZxnHduj?=
+ =?us-ascii?Q?+hdb+iOm+7WF4K6h+rT5m3xL2xcaNUFmOymOx+7s+2jjLwQu1jm9COOiZw94?=
+ =?us-ascii?Q?qoVCxZYR8k18KFZ7rwy6aVmlLvKXKxGUbf0VVzTJnDy3XSoXEevvdcT2iKS4?=
+ =?us-ascii?Q?xde93FuaP0vS6yw11ChtsMTl6RGmw8dAu2EVDdUvGy1VTIHVXTZNvXmgkW5A?=
+ =?us-ascii?Q?vvcePxfhsJ3tnJ691XB8zBWPj5DdiYCtHOjzbwFRvh0j8nd7AN7co1m781P9?=
+ =?us-ascii?Q?3biEwGGunQdwbvfKI/JFJ5gii/V4bCgC1bo+NgxQiPjmUjV4jDcMn/eDqm2U?=
+ =?us-ascii?Q?m3JUQ/0AdJvqWswcu3t4lkPvUEpSTEvhlWquM/LGVOHOVxSLP+UuwKgtqqwv?=
+ =?us-ascii?Q?UtXR70Al20WX1HKL7i3W7T5iJH2y5tMU0z6frVWIbWzQhy0/t4buyU+5JyVE?=
+ =?us-ascii?Q?dg5MSZq/Xeytod+5pKGVYoi22mKrVnUEeY86D2U/0c2dKFsEJNGOuxuoNKg+?=
+ =?us-ascii?Q?i/kZLwgkufmq44gZgEc6XioRbyzuVhdVr0gO2dh5+1u58hWJXPSjtnCKeY8I?=
+ =?us-ascii?Q?3z78BfLmTt6bu6C295PwMykVoH9IoQeLvQyTdTfnvvCQ9h4aTYIkG8SAqxo/?=
+ =?us-ascii?Q?SKpwTmM9cYA7RVdTIf70VEk7sf+oQuagLRh2ypRZaZSUx4mnX6CBidUywBcM?=
+ =?us-ascii?Q?vp0WcETD1ihIkQHFh6sjw9qBAVFv?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8849.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024)(38070700018)(921020);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?85P+vEh4ymNf6PsW/+ifMXVRqhz4kzys3bGsMwONLIdVCe9aDSgfGa7FN4a5?=
+ =?us-ascii?Q?7BrisVpAk+Mh4qnKxti4yiL+3yJMDKwPbbW4p0q4pSz8fue2no0SQuU+6qzA?=
+ =?us-ascii?Q?P7ajp8DB7+PFqpZWFH+ssWUNX5VV5VbvhWwPR5i8St+M0N+9UZM2eORzzTzY?=
+ =?us-ascii?Q?oiCcg4a1Gb/yDePpQZD/mSW3ZRehqNVZpUlD0r5xjDaZOfvMcgoNqshi/NSe?=
+ =?us-ascii?Q?InmKq5qxNrTZiC/FSgtMAs6iOmisMlBcrjd4d0zUh2KIaP+bWUOsPiceo2oX?=
+ =?us-ascii?Q?tI/43T0UBXZU7ymp8NJqsobNRDtvmgMh0j6GPP2npLip/ff7EcFNFv8mDNA6?=
+ =?us-ascii?Q?d2woQWgl4eeC3zH0daocG3hSYxZ+rp0IzQk0BOmi1RsikmbqT/4pGFocegG8?=
+ =?us-ascii?Q?WfpktEJCHm8jBt70gq06h5RMl8EbIPmfjrsUiHiXIjzn3TcvsOlTyhXiOSvW?=
+ =?us-ascii?Q?P/p1IRBTn5hcW15qqRIC538LcHjENKkhSJnzEaljslk/Mi0mg1GaCu820vM2?=
+ =?us-ascii?Q?OdJsIkmveLteAYgmhLmakt3/lKdjQGDGu0bBCeqcjGJ66Kn8r85XusquDAuK?=
+ =?us-ascii?Q?MIXvfMrSda6WGit3mpf+EBcsuwRa0C6NueK0GJ1SPHzKQC8/DhMfVpW3uMSY?=
+ =?us-ascii?Q?RbR8vmPts781+xRK4rKD2APB4k/QN323WxszmAy0XcS8Paxj6tUyExjPKoUP?=
+ =?us-ascii?Q?IclTNTb5l5uNwJQ/pxDYRz2K62I/bV0OSzyEuvvN90lH0hjkF/qG5u8uHljm?=
+ =?us-ascii?Q?ne0xlkkPBefzaCM+dhLcOVybYmwi9XZxCeBvA8xEC8VtHp/66jMGhspnZSxF?=
+ =?us-ascii?Q?TA6HW7MIz2w0GJFIt+2uEhmGqCe+uucKYmstv9q9+N8qH61sDale8Cxh3vIC?=
+ =?us-ascii?Q?O1JhSWL8Kht7Zppd8v3Bd9FKyQyK4nDuBvaFqnT4nvst9u2uLksqSvJUvcPw?=
+ =?us-ascii?Q?bWeBC6b1TkmGdof2Y3KUQcpphL4rrUoiwH8FONeur8TdRA5VHcmSP/fyoUdR?=
+ =?us-ascii?Q?cYqWiLK5guQg1Fj5Lfy/X5oktTecv7KbvSa3aEu+IeCPhuU9DZTwBfpm1H2y?=
+ =?us-ascii?Q?IDwhsdLQVbu6CATeJIyLFjBMNRy/8LbAubXUSOHncoAHNA4D5pdkKPRc0+IF?=
+ =?us-ascii?Q?o8xQ0d4GrKsla05cV2W1vfTQiUM0ZMuEMxUD2gW+5wMsBDjxjL3xaZcZnaPH?=
+ =?us-ascii?Q?YyepSxlTXpuLpCjekcwkpSNV6zOUPrtv2WQ0V8/cQ/a3yASArjnbfSBWgYkb?=
+ =?us-ascii?Q?NmlrU9L4F3wog8xRSdY+AhsyyAxfiOPTGxzajpHGObJ3QB/SMos+MeSjpzIM?=
+ =?us-ascii?Q?3QhHYZwWe/bbkXhJZsjblMYvyGFmu/oR0wkcGMszWCL5Y3048sTGL3ZeUaA1?=
+ =?us-ascii?Q?aEImN8Ujq+RQIrb9YSBwdoL6P9grJfy7NsJddU34wVrZ3qynn9n76MxvNMr9?=
+ =?us-ascii?Q?xDQllWauMRsaI/6BQfag7xKRm7Qib7CHIrAE/iAwkZIMRGr2DLuSSLPrjlB8?=
+ =?us-ascii?Q?rIo+IPCgVumhcOf8IUPdpkq1u15rbxlX8PdEHVmpzQQruO3Xkjjz/GxOP5Gy?=
+ =?us-ascii?Q?ycAjSHKX46lOri4Z5RBqlDXfxPBob3WCJEAx3mgy?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241020051315.356103-1-yuzhao@google.com> <ZxYNLb0CiZyw31_q@tiehlicka>
- <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
- <ZxaOo59ZwXoCduhG@tiehlicka> <82e6d623-bbf3-4dd8-af32-fdfc120fc759@suse.cz>
-In-Reply-To: <82e6d623-bbf3-4dd8-af32-fdfc120fc759@suse.cz>
-From: Yu Zhao <yuzhao@google.com>
-Date: Wed, 23 Oct 2024 00:36:46 -0600
-Message-ID: <CAOUHufanF3VaLzq6o_V+-+iPvB4Oj-xHwD+Rm-gmKS02h8Dw=g@mail.gmail.com>
-Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
- free highatomic
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Michal Hocko <mhocko@suse.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	David Rientjes <rientjes@google.com>, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	Link Lin <linkl@google.com>, Mel Gorman <mgorman@techsingularity.net>, 
-	Matt Fleming <mfleming@cloudflare.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8849.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: f4ce999a-da10-4184-6411-08dcf32d362c
+X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 06:37:48.7617
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: hP5ESibZgY0UV8E8NkUh3JMnu1HMPAuP8Sm+3+IgHC10rB1Tp8/rz7RzAaGadsnNTgxKBe9JcDd3xtm082baSA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: DB9PR04MB9867
 
-On Tue, Oct 22, 2024 at 4:53=E2=80=AFAM Vlastimil Babka <vbabka@suse.cz> wr=
-ote:
->
-> +Cc Mel and Matt
->
-> On 10/21/24 19:25, Michal Hocko wrote:
-> > On Mon 21-10-24 11:10:50, Yu Zhao wrote:
-> >> On Mon, Oct 21, 2024 at 2:13=E2=80=AFAM Michal Hocko <mhocko@suse.com>=
- wrote:
-> >> >
-> >> > On Sat 19-10-24 23:13:15, Yu Zhao wrote:
-> >> > > OOM kills due to vastly overestimated free highatomic reserves wer=
-e
-> >> > > observed:
-> >> > >
-> >> > >   ... invoked oom-killer: gfp_mask=3D0x100cca(GFP_HIGHUSER_MOVABLE=
-), order=3D0 ...
-> >> > >   Node 0 Normal free:1482936kB boost:0kB min:410416kB low:739404kB=
- high:1068392kB reserved_highatomic:1073152KB ...
-> >> > >   Node 0 Normal: 1292*4kB (ME) 1920*8kB (E) 383*16kB (UE) 220*32kB=
- (ME) 340*64kB (E) 2155*128kB (UE) 3243*256kB (UE) 615*512kB (U) 1*1024kB (=
-M) 0*2048kB 0*4096kB =3D 1477408kB
-> >> > >
-> >> > > The second line above shows that the OOM kill was due to the follo=
-wing
-> >> > > condition:
-> >> > >
-> >> > >   free (1482936kB) - reserved_highatomic (1073152kB) =3D 409784KB =
-< min (410416kB)
-> >> > >
-> >> > > And the third line shows there were no free pages in any
-> >> > > MIGRATE_HIGHATOMIC pageblocks, which otherwise would show up as ty=
-pe
-> >> > > 'H'. Therefore __zone_watermark_unusable_free() overestimated free
-> >> > > highatomic reserves. IOW, it underestimated the usable free memory=
- by
-> >> > > over 1GB, which resulted in the unnecessary OOM kill.
-> >> >
-> >> > Why doesn't unreserve_highatomic_pageblock deal with this situation?
-> >>
-> >> The current behavior of unreserve_highatomic_pageblock() seems WAI to
-> >> me: it unreserves highatomic pageblocks that contain *free* pages so
->
-> Hm I don't think it's completely WAI. The intention is that we should be
-> able to unreserve the highatomic pageblocks before going OOM, and there
-> seems to be an unintended corner case that if the pageblocks are fully
-> exhausted, they are not reachable for unreserving.
+> -----Original Message-----
+> From: Wei Fang <wei.fang@nxp.com>
+> Sent: Tuesday, October 22, 2024 8:52 AM
+[...]
+> Subject: [PATCH v4 net-next 10/13] net: enetc: extract
+> enetc_int_vector_init/destroy() from enetc_alloc_msix()
+>=20
+> From: Clark Wang <xiaoning.wang@nxp.com>
+>=20
+> Extract enetc_int_vector_init() and enetc_int_vector_destroy() from
+> enetc_alloc_msix() so that the code is more concise and readable. In
+> addition, slightly different from before, the cleanup helper function
+> is used to manage dynamically allocated memory resources.
+>=20
+> Signed-off-by: Clark Wang <xiaoning.wang@nxp.com>
+> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+> Reviewed-by: Frank Li <Frank.Li@nxp.com>
+> ---
 
-I still think unreserving should only apply to highatomic PBs that
-contain free pages. Otherwise, it seems to me that it'd be
-self-defecting because:
-1. Unreserving fully used hightatomic PBs can't fulfill the alloc
-demand immediately.
-2. More importantly, it only takes one alloc failure in
-__alloc_pages_direct_reclaim() to reset nr_reserved_highatomic to 2MB,
-from as high as 1% of a zone (in this case 1GB). IOW, it makes more
-sense to me that highatomic only unreserves what it doesn't fully use
-each time unreserve_highatomic_pageblock() is called, not everything
-it got (except the last PB).
-
-Also not reachable from free_area[] isn't really a big problem. There
-are ways to solve this without scanning the PB bitmap.
-
-> The nr_highatomic is then
-> also fully misleading as it prevents allocations due to a limit that does
-> not reflect reality.
-
-Right, and the comments warn about this.
-
-> Your patch addresses the second issue, but there's a
-> cost to it when calculating the watermarks, and it would be better to
-> address the root issue instead.
-
-Theoretically, yes. And I don't think it's actually measurable
-considering the paths (alloc/reclaim) we are in -- all the data
-structures this patch accesses should already have been cache-hot, due
-to unreserve_highatomic_pageblock(), etc.
-
-Also, we have not agreed on the root cause yet.
-
-> >> that those pages can become usable to others. There is nothing to
-> >> unreserve when they have no free pages.
->
-> Yeah there are no actual free pages to unreserve, but unreserving would f=
-ix
-> the nr_highatomic overestimate and thus allow allocations to proceed.
-
-Yes, but honestly, I think this is going to cause regression in
-highatomic allocs.
-
-> > I do not follow. How can you have reserved highatomic pages of that siz=
-e
-> > without having page blocks with free memory. In other words is this an
-> > accounting problem or reserves problem? This is not really clear from
-> > your description.
->
-> I think it's the problem of finding the highatomic pageblocks for
-> unreserving them once they become full. The proper fix is not exactly
-> trivial though. Either we'll have to scan for highatomic pageblocks in th=
-e
-> pageblock bitmap, or track them using an additional data structure.
-
-Assuming we want to unreserve fully used hightatomic PBs, we wouldn't
-need to scan for them or track them. We'd only need to track the delta
-between how many we want to unreserve (full or not) and how many we
-are able to do so. The first page freed in a PB that's highatomic
-would need to try to reduce the delta by changing the MT.
-
-To summarize, I think this is an estimation problem, which I would
-categorize as a lesser problem than accounting problems. But it sounds
-to me that you think it's a policy problem, i.e., the highatomic
-unreserving policy is wrong or not properly implemented?
+Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
 
