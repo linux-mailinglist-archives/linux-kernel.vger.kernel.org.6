@@ -1,171 +1,211 @@
-Return-Path: <linux-kernel+bounces-378772-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378773-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724AF9AD54C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:04:47 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A8A5A9AD555
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 920881C212CD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:04:46 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6AAA228445E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:10:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54A1D1D174A;
-	Wed, 23 Oct 2024 20:04:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76A6D1E2309;
+	Wed, 23 Oct 2024 20:10:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UWZpMiL6"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="IegbwoeX"
+Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB3B1C7B6D
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:04:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A024142623;
+	Wed, 23 Oct 2024 20:10:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729713879; cv=none; b=foioo7dctrqk3HraQsSQeEoRv3B5zkcfpVWDlPMPuQLznzdxSdkSc0fLTrUzDt0T/ZoaoxYREFbUzkmc/1V9pkFfAQhMKWYTjIHnzenfgIRtI6BPykR9yQkRia5hAM2aLLHqqTJeIPb6BU88Hogmr6yHJcEVC9WTn/vWYiOIbRU=
+	t=1729714244; cv=none; b=TqY82+HT91ezdsZDRZ7Ihk4JfJ1Rn40p9JikTaZOvj6O5pSyZ5sTbw/QkpCybzf8WZVmUAAg2pu3yzzXXkewhPB2Zcz8RHK6NxINcBUCgeELtirhMazNy3CH800DZj4w6vUkUjuXxQiNgNoWFwvOvu4lejN0zy1lPvfYGAix0Bk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729713879; c=relaxed/simple;
-	bh=NLHyTVAsvLkSf7fYgyHVBaxhH5A+j6JytRQL/AwsTLs=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=MqTSdclZmsa4c2cgW2KM/BsgugpQOqFLEqT2C7DDzr8oj2zzUBNLeR6kpe/Nof6CDKMBnXqWbMsWbMYtZQ4W90NJ58eEH9f08eSTxK3Kjy3sOo/Qb77l/dMRBmj66jPmWUnc4bbaWQbtA1v2l3QVI+YwADNyxuowM0eQQ8WJ+Io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UWZpMiL6; arc=none smtp.client-ip=209.85.128.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e377e4aea3so1245907b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 13:04:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729713877; x=1730318677; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=QvmeCs4ivALx0RDr+VD+yfIRPn0WVf+CXAfO2vANeFE=;
-        b=UWZpMiL6G5elwE872AcUe0vnZtZCfjtbe9t5mGyaDKcubglP+HlTfAOSctsxifiRMp
-         QwMz+4xfq4IQOQ2nTcJIwL23lAqNf1ya96MXNffrxDzvSOc2b15cE0nkI736mVwLvc7e
-         AGRQlzf+gare7Tjer78bCIi4HNCkcKX/vv7u2H0I0Fle2V+lTv6loUe/2I5uo5ZqNCZG
-         wd9Lvc/1yFnVLB4Ap0j9ZYc121aSrsZ7i31d//MZdUgM+foEu0LJRJgr9o7aRwOwfnsc
-         JAmhRWj2tCzb2dn3QoBK+IK0+AU+dqCP5t/EuojLtKhdz+AjvHeD8MisNB9YIybvMSh9
-         a3DQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729713877; x=1730318677;
-        h=content-transfer-encoding:mime-version:message-id:subject:cc:to
-         :from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=QvmeCs4ivALx0RDr+VD+yfIRPn0WVf+CXAfO2vANeFE=;
-        b=LwzD/LpPv83PaBuU+ClcWd3HjPQG5evQgKIgGOqsJhKwskoDL9G/RTGx9RRkIEIjG8
-         gp99Z1vLKLfDu3A0GtXfyw+NSgoZo/o0nHLtfWkKFb0j4+AhDlEefnPL7G+nDgV74kAk
-         ViCfi3ZZKlp/qbGThfIuHpg6iJgQXB9cCn2FmMkMnQe1XhxWKMOQYqNVfuL1zjlE0iU6
-         3n9yezwWboJD/lp+/PLuv6PiQm3mDDyrUtp/5JvvcW1td1RnL7NwcrGpX+hbuOCG+jFK
-         qCdjy0jwtDfpH1AIWQdD3lsV+btA+m2rmT83rM2kdxQVrPHfwqS/1xmi3UtChRGh6kqQ
-         lwRA==
-X-Gm-Message-State: AOJu0YyPNdSvQOmenc3tLoc1sJ4ORSHlCCBYZvnj0yOFWDizv+QrawIF
-	VsQIRgfUE2HzxMB3ykYkKIRz7LamMMNdoQJaHwDXOk6PoYzk1l2k
-X-Google-Smtp-Source: AGHT+IHRxDDgxhtbsnEFOgZDcL0Ns56DwsgxxQjM5QfYSzCmJp16RF0qvQT/5oHFpgwHrBldLkFGkg==
-X-Received: by 2002:a05:690c:6281:b0:6dd:c6e1:7570 with SMTP id 00721157ae682-6e7f0fa6d89mr46310287b3.34.1729713877135;
-        Wed, 23 Oct 2024 13:04:37 -0700 (PDT)
-Received: from hob ([2600:1700:5af3:4510::48])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5adab49sm16930917b3.73.2024.10.23.13.04.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 13:04:37 -0700 (PDT)
-Date: Wed, 23 Oct 2024 15:04:39 -0500
-From: Pedro Perez <pedropz1537@gmail.com>
-To: gregkh@linuxfoundation.org
-Cc: linux-kernel@vger.kernel.org, linux-staging@lists.linux.dev
-Subject: [PATCH] staging: vme_user: vme_bridge.h: Name function pointer
- arguments
-Message-ID: <20241023150439.4a0dbc05@hob>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729714244; c=relaxed/simple;
+	bh=wjzY5hlWokJZJqyCtoM63iivGkyHT750Iiaq8dtTlDI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M0LX+nx2n/Mh59PXcdZX4C7apaJ0it5KzdRPCGVeN9+bTg0VX7FxuElKQI6RTznznPJmlezEDiIcKBkBJvv8F8fmi6sHUrbe6hfsH6Sqa0CMdJt0HWAI+tN4I26JDBK7xWe3cTUU17TkT5jDvlVo6GJFJrZ4MCDUf/5sbGUzjwY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=IegbwoeX; arc=none smtp.client-ip=90.155.50.34
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=k0kAR5oFjFmERcfAhxKq77ZBkdV3j2tk6jq69iAXIpk=; b=IegbwoeXWLDI9S3bJ1Edwr1HxX
+	DfFu7/Gy9o9gQOxI+Ks2lINBvVQXlt5al9v8StJjEFc+iSal5hFl98T8J6xYCu308FBuDnHpD9Szg
+	ATQLIROpIUwzU2hYvNGxqy+womlZ8R13BfBHphc5+cZtm8YNQh6o6VK75mqudL3XBoMGXK/8JmIFN
+	YGZUDj7fln1t2Sl23QYY3JER5PpJDjO/1Erk7TWSMDcNeMpLUdrrfeK5G/K05RGASlM4M07R/+f3b
+	yoglMgVd6MsUCSKdxsxqtGfE8u0Wb41puKCDs1avWmNHL+7LBRULgnwFwRM1ormRjBfhohfm4eSed
+	w4uWKSQQ==;
+Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
+	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3hgd-00000003JY4-3N8d;
+	Wed, 23 Oct 2024 20:10:32 +0000
+Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
+	id 756DE30073F; Wed, 23 Oct 2024 22:10:31 +0200 (CEST)
+Date: Wed, 23 Oct 2024 22:10:31 +0200
+From: Peter Zijlstra <peterz@infradead.org>
+To: Andrii Nakryiko <andrii@kernel.org>
+Cc: linux-trace-kernel@vger.kernel.org, linux-mm@kvack.org, oleg@redhat.com,
+	rostedt@goodmis.org, mhiramat@kernel.org, bpf@vger.kernel.org,
+	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
+	willy@infradead.org, surenb@google.com, akpm@linux-foundation.org,
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com,
+	mhocko@kernel.org, vbabka@suse.cz, shakeel.butt@linux.dev,
+	hannes@cmpxchg.org, Liam.Howlett@oracle.com,
+	lorenzo.stoakes@oracle.com
+Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce
+ mmap_lock_speculation_{start|end}
+Message-ID: <20241023201031.GF11151@noisy.programming.kicks-ass.net>
+References: <20241010205644.3831427-1-andrii@kernel.org>
+ <20241010205644.3831427-2-andrii@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241010205644.3831427-2-andrii@kernel.org>
 
-This patch names the function pointer arguments in vme_bridge
-consistently with the implementations.
+On Thu, Oct 10, 2024 at 01:56:41PM -0700, Andrii Nakryiko wrote:
+> From: Suren Baghdasaryan <surenb@google.com>
+> 
+> Add helper functions to speculatively perform operations without
+> read-locking mmap_lock, expecting that mmap_lock will not be
+> write-locked and mm is not modified from under us.
+> 
+> Suggested-by: Peter Zijlstra <peterz@infradead.org>
+> Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+> Signed-off-by: Andrii Nakryiko <andrii@kernel.org>
+> Link: https://lore.kernel.org/bpf/20240912210222.186542-1-surenb@google.com
+> ---
+>  include/linux/mm_types.h  |  3 ++
+>  include/linux/mmap_lock.h | 72 ++++++++++++++++++++++++++++++++-------
+>  kernel/fork.c             |  3 --
+>  3 files changed, 63 insertions(+), 15 deletions(-)
+> 
+> diff --git a/include/linux/mm_types.h b/include/linux/mm_types.h
+> index 6e3bdf8e38bc..5d8cdebd42bc 100644
+> --- a/include/linux/mm_types.h
+> +++ b/include/linux/mm_types.h
+> @@ -887,6 +887,9 @@ struct mm_struct {
+>  		 * Roughly speaking, incrementing the sequence number is
+>  		 * equivalent to releasing locks on VMAs; reading the sequence
+>  		 * number can be part of taking a read lock on a VMA.
+> +		 * Incremented every time mmap_lock is write-locked/unlocked.
+> +		 * Initialized to 0, therefore odd values indicate mmap_lock
+> +		 * is write-locked and even values that it's released.
+>  		 *
+>  		 * Can be modified under write mmap_lock using RELEASE
+>  		 * semantics.
+> diff --git a/include/linux/mmap_lock.h b/include/linux/mmap_lock.h
+> index de9dc20b01ba..9d23635bc701 100644
+> --- a/include/linux/mmap_lock.h
+> +++ b/include/linux/mmap_lock.h
+> @@ -71,39 +71,84 @@ static inline void mmap_assert_write_locked(const struct mm_struct *mm)
+>  }
+>  
+>  #ifdef CONFIG_PER_VMA_LOCK
+> +static inline void init_mm_lock_seq(struct mm_struct *mm)
+> +{
+> +	mm->mm_lock_seq = 0;
+> +}
+> +
+>  /*
+> - * Drop all currently-held per-VMA locks.
+> - * This is called from the mmap_lock implementation directly before releasing
+> - * a write-locked mmap_lock (or downgrading it to read-locked).
+> - * This should normally NOT be called manually from other places.
+> - * If you want to call this manually anyway, keep in mind that this will release
+> - * *all* VMA write locks, including ones from further up the stack.
+> + * Increment mm->mm_lock_seq when mmap_lock is write-locked (ACQUIRE semantics)
+> + * or write-unlocked (RELEASE semantics).
+>   */
+> -static inline void vma_end_write_all(struct mm_struct *mm)
+> +static inline void inc_mm_lock_seq(struct mm_struct *mm, bool acquire)
+>  {
+>  	mmap_assert_write_locked(mm);
+>  	/*
+>  	 * Nobody can concurrently modify mm->mm_lock_seq due to exclusive
+>  	 * mmap_lock being held.
+> -	 * We need RELEASE semantics here to ensure that preceding stores into
+> -	 * the VMA take effect before we unlock it with this store.
+> -	 * Pairs with ACQUIRE semantics in vma_start_read().
+>  	 */
+> -	smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> +
+> +	if (acquire) {
+> +		WRITE_ONCE(mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> +		/*
+> +		 * For ACQUIRE semantics we should ensure no following stores are
+> +		 * reordered to appear before the mm->mm_lock_seq modification.
+> +		 */
+> +		smp_wmb();
 
-Signed-off-by: Pedro Perez <pedropz1537@gmail.com>
----
- drivers/staging/vme_user/vme_bridge.h | 56 ++++++++++++++++-----------
- 1 file changed, 33 insertions(+), 23 deletions(-)
+Strictly speaking this isn't ACQUIRE, nor do we care about ACQUIRE here.
+This really is about subsequent stores, loads are irrelevant.
 
-diff --git a/drivers/staging/vme_user/vme_bridge.h b/drivers/staging/vme_user/vme_bridge.h
-index 9bdc41bb6602..abf880d68b12 100644
---- a/drivers/staging/vme_user/vme_bridge.h
-+++ b/drivers/staging/vme_user/vme_bridge.h
-@@ -128,39 +128,49 @@ struct vme_bridge {
- 	struct mutex irq_mtx;
- 
- 	/* Slave Functions */
--	int (*slave_get)(struct vme_slave_resource *, int *, unsigned long long *,
--			 unsigned long long *, dma_addr_t *, u32 *, u32 *);
--	int (*slave_set)(struct vme_slave_resource *, int, unsigned long long,
--			 unsigned long long, dma_addr_t, u32, u32);
-+	int (*slave_get)(struct vme_slave_resource *image, int *enabled,
-+			 unsigned long long *vme_base, unsigned long long *size,
-+			 dma_addr_t *buf_base, u32 *aspace, u32 *cycle);
-+	int (*slave_set)(struct vme_slave_resource *image, int enabled,
-+			 unsigned long long vme_base, unsigned long long size,
-+			 dma_addr_t buf_base, u32 aspace, u32 cycle);
- 
- 	/* Master Functions */
--	int (*master_get)(struct vme_master_resource *, int *, unsigned long long *,
--			  unsigned long long *, u32 *, u32 *, u32 *);
--	int (*master_set)(struct vme_master_resource *, int, unsigned long long,
--			  unsigned long long,  u32, u32, u32);
--	ssize_t (*master_read)(struct vme_master_resource *, void *, size_t, loff_t);
--	ssize_t (*master_write)(struct vme_master_resource *, void *, size_t, loff_t);
--	unsigned int (*master_rmw)(struct vme_master_resource *, unsigned int,
--				   unsigned int, unsigned int, loff_t);
-+	int (*master_get)(struct vme_master_resource *image, int *enabled,
-+			  unsigned long long *vme_base, unsigned long long *size,
-+			  u32 *aspace, u32 *cycle, u32 *dwidth);
-+	int (*master_set)(struct vme_master_resource *image, int enabled,
-+			  unsigned long long vme_base, unsigned long long size,
-+			  u32 aspace, u32 cycle, u32 dwidth);
-+	ssize_t (*master_read)(struct vme_master_resource *image, void *buf,
-+			       size_t count, loff_t offset);
-+	ssize_t (*master_write)(struct vme_master_resource *image, void *buf,
-+				size_t count, loff_t offset);
-+	unsigned int (*master_rmw)(struct vme_master_resource *image,
-+				   unsigned int mask, unsigned int compare,
-+				   unsigned int swap, loff_t offset);
- 
- 	/* DMA Functions */
--	int (*dma_list_add)(struct vme_dma_list *, struct vme_dma_attr *,
--			    struct vme_dma_attr *, size_t);
--	int (*dma_list_exec)(struct vme_dma_list *);
--	int (*dma_list_empty)(struct vme_dma_list *);
-+	int (*dma_list_add)(struct vme_dma_list *list, struct vme_dma_attr *src,
-+			    struct vme_dma_attr *dest, size_t count);
-+	int (*dma_list_exec)(struct vme_dma_list *list);
-+	int (*dma_list_empty)(struct vme_dma_list *list);
- 
- 	/* Interrupt Functions */
--	void (*irq_set)(struct vme_bridge *, int, int, int);
--	int (*irq_generate)(struct vme_bridge *, int, int);
-+	void (*irq_set)(struct vme_bridge *bridge, int level, int state, int sync);
-+	int (*irq_generate)(struct vme_bridge *bridge, int level, int statid);
- 
- 	/* Location monitor functions */
--	int (*lm_set)(struct vme_lm_resource *, unsigned long long, u32, u32);
--	int (*lm_get)(struct vme_lm_resource *, unsigned long long *, u32 *, u32 *);
--	int (*lm_attach)(struct vme_lm_resource *, int, void (*callback)(void *), void *);
--	int (*lm_detach)(struct vme_lm_resource *, int);
-+	int (*lm_set)(struct vme_lm_resource *lm, unsigned long long lm_base,
-+		      u32 aspace, u32 cycle);
-+	int (*lm_get)(struct vme_lm_resource *lm, unsigned long long *lm_base,
-+		      u32 *aspace, u32 *cycle);
-+	int (*lm_attach)(struct vme_lm_resource *lm, int monitor,
-+			 void (*callback)(void *), void *data);
-+	int (*lm_detach)(struct vme_lm_resource *lm, int monitor);
- 
- 	/* CR/CSR space functions */
--	int (*slot_get)(struct vme_bridge *);
-+	int (*slot_get)(struct vme_bridge *bridge);
- 
- 	/* Bridge parent interface */
- 	void *(*alloc_consistent)(struct device *dev, size_t size, dma_addr_t *dma);
--- 
-2.46.1
+> +	} else {
+> +		/*
+> +		 * We need RELEASE semantics here to ensure that preceding stores
+> +		 * into the VMA take effect before we unlock it with this store.
+> +		 * Pairs with ACQUIRE semantics in vma_start_read().
+> +		 */
 
+Again, not strictly true. We don't care about loads. Using RELEASE here
+is fine and probably cheaper on a few platforms, but we don't strictly
+need/care about RELEASE.
+
+> +		smp_store_release(&mm->mm_lock_seq, mm->mm_lock_seq + 1);
+> +	}
+> +}
+
+Also, it might be saner to stick closer to the seqcount naming of
+things and use two different functions for these two different things.
+
+/* straight up copy of do_raw_write_seqcount_begin() */
+static inline void mm_write_seqlock_begin(struct mm_struct *mm)
+{
+	kcsan_nestable_atomic_begin();
+	mm->mm_lock_seq++;
+	smp_wmb();
+}
+
+/* straigjt up copy of do_raw_write_seqcount_end() */
+static inline void mm_write_seqcount_end(struct mm_struct *mm)
+{
+	smp_wmb();
+	mm->mm_lock_seq++;
+	kcsan_nestable_atomic_end();
+}
+
+Or better yet, just use seqcount...
+
+> +
+> +static inline bool mmap_lock_speculation_start(struct mm_struct *mm, int *seq)
+> +{
+> +	/* Pairs with RELEASE semantics in inc_mm_lock_seq(). */
+> +	*seq = smp_load_acquire(&mm->mm_lock_seq);
+> +	/* Allow speculation if mmap_lock is not write-locked */
+> +	return (*seq & 1) == 0;
+> +}
+> +
+> +static inline bool mmap_lock_speculation_end(struct mm_struct *mm, int seq)
+> +{
+> +	/* Pairs with ACQUIRE semantics in inc_mm_lock_seq(). */
+> +	smp_rmb();
+> +	return seq == READ_ONCE(mm->mm_lock_seq);
+>  }
+
+Because there's nothing better than well known functions with a randomly
+different name and interface I suppose...
+
+
+Anyway, all the actual code proposed is not wrong. I'm just a bit
+annoyed its a random NIH of seqcount.
 
