@@ -1,90 +1,98 @@
-Return-Path: <linux-kernel+bounces-377670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377671-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 450369AC21C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:47:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B33BD9AC21D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:47:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1F46B24CD7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:47:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6F76F28536E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:47:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C8F2158845;
-	Wed, 23 Oct 2024 08:47:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="X1VlbBu3"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3DBA15E5D4;
+	Wed, 23 Oct 2024 08:47:16 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E89C15B149;
-	Wed, 23 Oct 2024 08:47:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44B2A158A33;
+	Wed, 23 Oct 2024 08:47:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673230; cv=none; b=dgK1FqSA7+YbRnhchXVGEaYadpu9/7RAfltCifa28/+pxW+OAQ2ac2m2JxV9Hl04hj1kgGpscm+JgZltMIWcv4nXkuisgtz6KATHZVyWhNumZ3Mc4bLDlLQCbpOkjyowXRo3yW/XOH7qycfcNE9bnivAXKC6nzcKVlmi8cnAb5g=
+	t=1729673236; cv=none; b=g/VA1Ouafjq/JcP1Y6ku7sO2PPsy6DPqaJ6qFgp24ckCUXpyRBUSZ17+rpNqLloZjqa6dx0wfdaZwF+ksb7tKpgObacLMVDmQUTB1W4xupzmD21771is+QO5uz/7ft9cRk2BronqKNBxpgxJXlQiActivumJDeFkSmqirKYfAfU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673230; c=relaxed/simple;
-	bh=sQCaL8wIVaWesMEl2IuBh8yvFnEYERMyZxkVskwu+gY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=l/DX8ScguhW5393cO2oKwItDGfa69dfu0ZnkI/TfL69Bt1mnlkMM/665NkZyvjMXczHxNWjg8oRMkEm3DjttVQxE7Fmg6xi7CithwN2wa+4Qf4a+aGifI56tQ7A6kWOF/WGVG+eRsQq4c8oig1Xi+8NDGL4nhYIPTTQSAN1bG+I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=X1VlbBu3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 508BAC4CEC6;
-	Wed, 23 Oct 2024 08:47:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673229;
-	bh=sQCaL8wIVaWesMEl2IuBh8yvFnEYERMyZxkVskwu+gY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=X1VlbBu3skf4BjgI8ETke0TDHkMsFdd/J0wO4Ydwx65B+gLJOzbDiuhUELm3g32uA
-	 wN7IdytXIswgmShGb3dH4bMatayOTP4FigLInhS4PTYUrZ8RbQcy7av5m66uxEGhPf
-	 fn0nBeGeYRO6WHBBHx5llN6eO7kIz3U1auSKhO9GHS771LdLMqNQHg6JBOiP7nLjkQ
-	 3itSdsZh2YwHK/wbafbyzupDM5uEfiuAxMPqabh+I0LD5Qrcs6NKOHUFeiCtcj4ViO
-	 RP9Vd6gZuVSMcRICAL1Y8cwF/APmDkq7c88DMkw8xy3GTs+LIv3Odi6IfowmWGgM/e
-	 MRzRzv6Sb19WA==
-Date: Wed, 23 Oct 2024 10:47:07 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>, Stephane Danieau <stephane.danieau@foss.st.com>, 
-	Amelie Delaunay <amelie.delaunay@foss.st.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
-	Valentin Caron <valentin.caron@foss.st.com>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
-	Cheick Traore <cheick.traore@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 04/14] dt-bindings: pinctrl: stm32: add RSVD mux function
-Message-ID: <swbppwzpavktjpyb6piayzzht6ta75w3g36oyndmim54oztar5@svb4452yob7g>
-References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
- <20241022155658.1647350-5-antonio.borneo@foss.st.com>
+	s=arc-20240116; t=1729673236; c=relaxed/simple;
+	bh=jE+psI9L5oywH/YvfvyfipOHf6eGhY0aBTmDvQ6Tfrc=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=MzZje9anW7O/yuA1fSGo2qBzcE0dTxUVBmPCsRT3KyuWcn840CB6xGwoZPu53ZSRig7DT0DLLcBeukjhLY6tPTN0imDo5/mna+PwmbCpQR9yks4QOt8biNJIFcfJsA7IhZlumVoSdgC/qS0yR8yBlW8SAMslFto6tcFNG5/v2ww=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0FAA2C4CEC6;
+	Wed, 23 Oct 2024 08:47:14 +0000 (UTC)
+Date: Wed, 23 Oct 2024 04:47:11 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
+Cc: Geert Uytterhoeven <geert@linux-m68k.org>,
+ linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
+ linux-trace-kernel@vger.kernel.org
+Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
+Message-ID: <20241023044711.3eb838fe@rorschach.local.home>
+In-Reply-To: <2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
+References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
+	<20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
+	<20241022012809.1ef083cd@rorschach.local.home>
+	<075d6720-a690-437c-a10f-e2746651e2a8@yoseli.org>
+	<20241022043037.13efb239@rorschach.local.home>
+	<2c79be22-1157-41e4-9f3a-53443112ca9a@yoseli.org>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022155658.1647350-5-antonio.borneo@foss.st.com>
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 05:56:48PM +0200, Antonio Borneo wrote:
-> From: Fabien Dessenne <fabien.dessenne@foss.st.com>
-> 
-> Document the RSVD (Reserved) mux function, used to reserve pins
-> for a coprocessor not running Linux.
-> 
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
-> ---
->  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml     | 8 ++++++++
->  include/dt-bindings/pinctrl/stm32-pinfunc.h               | 1 +
->  2 files changed, 9 insertions(+)
-> 
+On Tue, 22 Oct 2024 11:21:34 +0200
+Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org> wrote:
 
-BTW, which *existing* SoCs use it? Aren't you adding it for the new
-platform?
+> 
+> I was not really expecting you to review the m68k one no :-).
+> I think I have other issues which might have impact on ftrace too.
+> For instance, when I launch cyclictest I have a warning about HRTIMERS:
+> # cyclictest -p 99
+> WARN: stat /dev/cpu_dma_latency failed: No such file or directory
+> WARN: High resolution timers not available
+> policy: fifo: loadavg: 1.21 0.40 0.14 1/122 245
+> 
+> T: 0 (  245) P:99 I:1000 C:  11203 Min:     92 Act:  623 Avg:  775 Max: 
+>    3516
+> 
+> The latencies are quite high...
 
-Best regards,
-Krzysztof
+Yes, if you don't have high resolution timers, the latency will be high.
+
+> 
+> But regarding ftrace it seems that the trace is not able to give me more 
+> than a microsecond precision. I addded a few trace_printk() in a driver 
+> of mine and I get:
+>   irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt: 
+> Received 2 bytes
+>   irq/182-dspi-sl-112     [000] D....   277.160000: dspi_interrupt: 
+> Received 2 bytes
+>   irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: 
+> dspi_interrupt
+>   irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: TX 
+> FIFO overflow
+>   irq/182-dspi-sl-112     [000] D....   277.163000: dspi_interrupt: 
+> Restart FIFO
+> 
+> Do you have any clue ?
+
+Yes. The ring buffer clock is dependent on the architecture's clock. By
+default, it uses whatever the scheduler clock uses. If the scheduler
+clock is 1ms resolution, so will the tracing data be.
+
+-- Steve
 
 
