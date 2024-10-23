@@ -1,153 +1,115 @@
-Return-Path: <linux-kernel+bounces-377499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377500-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6CB3E9ABFA2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:02:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9B88F9ABFA3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:03:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E5BFC1F210C3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:02:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CA0261C2133E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:03:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4554D156F5E;
-	Wed, 23 Oct 2024 07:00:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D0001448C1;
+	Wed, 23 Oct 2024 07:03:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Nxou0tKm"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="drjx/xV5"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F9CE13D896;
-	Wed, 23 Oct 2024 07:00:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7E01453E23
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:03:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666824; cv=none; b=k4HQDDYeF5xzLxtHDn5FTceiwaYepJ7DaYCOKZmxHUpoQIAWj0/y2xM/j7ESUy2UKrDc2hWdiiHE6yWtAtuuLpnmSz4j2XXMW6FVYNifW/7EMAZkMDqTxdOOJpDUuE4EtYHGxkQhqX86je1UAlhprhWMnV6Ie6PML70dW+9aUMc=
+	t=1729666981; cv=none; b=hvflwALCf/cVVgOGNJQl5S9AQ3Czf3xcu+GwoVkCPFIEKaSkLvmiTTCaLJjquoZEBbuxk/lZGlS+wmLjQR4gdO3k8o4KAgkW+X833OL0sOSsvHUxfD+JNX4ql5l7LNfBwOIoMu0UIoDqpNZ2sAiE9fLpYyVVFHc5LftEi1gSg3E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666824; c=relaxed/simple;
-	bh=MGwG3YdItCc878aLJDylUKdLwrKGxl01AckUB4YzOpc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=b9F7FXcYaa1OLvLM2o8e+8ZSsDKP/OlaZ48btPAZK2kWSDs5FPQxbuRngWjYyhqrmVWgeiMV1u6JWi6m4EDOu4KQ+0b4x9akFLjrQN2bLT1t/gcVQKc+9XVLz7NRlatsSkF6/jqHgwK5ekoFg8+or/W0fhFLTQ13k0co59FN2BU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Nxou0tKm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41676C4CEE5;
-	Wed, 23 Oct 2024 07:00:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729666824;
-	bh=MGwG3YdItCc878aLJDylUKdLwrKGxl01AckUB4YzOpc=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Nxou0tKmDqlb0ntqVzpzEixkRGjP4ty96WOtbCBjvXWmf8LXhvF6dwaRjlP22Popu
-	 zYMem7JbmKbvSBs+/d7Y6SHtEg43SGtRhdHAkD+x6QmYw/RL/VvCa6biIk4f5y2DK7
-	 vuk+1qynNg76QLk1dmY2u8x2HpI/IkEmZ87FT17iXp5E0jBiS2YMKLyphsP2/iVRYZ
-	 rRZI/tQh/q3mD7wEiHvNzq/kwGn4KckuLlAiQ+Ik2CgKh0QIHo1az+zd1D9UoqWfTK
-	 +8RxdFnIAAMmvt+Kdh8yagse+z+PYOQWkFUp3FjdykOEOBc/n3rkS7fKfpACLmR/hk
-	 3L91IqfDz6tbg==
-Message-ID: <c7c6bf7e-0f79-44b1-aed4-db1fdbedc9a8@kernel.org>
-Date: Wed, 23 Oct 2024 09:00:16 +0200
+	s=arc-20240116; t=1729666981; c=relaxed/simple;
+	bh=90k4mUxa4TToi5H0ZYiSnEuecPVeb96YK0+jz3W8+B4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=JT0m40AOd88V1DQNya1j40hbsteQRR25MFOKB8TEy7hMFPWEpXX4TvEaD9D3geqLueeGp70lCCnVymF/8b7DWVtTpF62v5gto3UIr+hs8G0GqSka6s2LERfkb915VEXSrclZT24hG0g9dStPHDYTLv+elN8TugoUgqmDMnupM34=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=drjx/xV5; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7ed9f1bcb6bso268310a12.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:03:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729666980; x=1730271780; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=jdSwWgJ1k0ZtaVkiK93SKIJMNYM2PubLs1+cCBiZLJk=;
+        b=drjx/xV52/HHcNfVfACmlETH8a3QLhvxq0yOQSdMQZJzbJfSdDVKMab+BEF9yZs7ag
+         yZzEF5a/bTH7NbBNAn7jqADM/JFj8BpisxcGBWE6kaJ1Fm6h8TdZb6DWeW4ZJnh06rdY
+         pXQ1YJM7Im1xH3KLaC6JS2HSrzX99WmNPksKsEH3HcXr5aHdjUiWpqrroCOWCZ0vPSSE
+         Fmuk2LRKlIYT1eAHJRjZxiqt9LzVU9USn+DJLWp5NsGgbYNWXNx8edRmCZLifHXg1vCB
+         XhOSjO12+ViIYsMYVd9FAZnrqqfGKrdRpNvJ6RCMiVSbwRBjERVHOb3e/V98k1Dk6bX/
+         jFOw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729666980; x=1730271780;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=jdSwWgJ1k0ZtaVkiK93SKIJMNYM2PubLs1+cCBiZLJk=;
+        b=vGRAZbKWLpnnHLKgLkgDvZElCLV4ZF1igxBR3S/8iT0GGHB28NRSkwPDvUck2pDcrJ
+         wCO+Ldhk7/HxOBTkKFDmx+I0JZtvsMEDYPo6g5x2UHAA9UuJfEA9tUm1qZwL33PWnldH
+         3m4peUKn8ZP0T2XB469QH+tG1GuG6pk6p7r89vT/LOahjJajJI5ebfSJhuovHyC2ApNf
+         jgFSnwnp4xlPck6h6HRPqAxj9Chbc12x4dmG6PZBX/b+gpLbo7y+9eQlE7uLDTVFA7Wo
+         6ZAAogpUQAMbdvUkII7rtjA2aaB/v1JCw4tJeCG70g7jbdn8uC/0L+zcETGxisIbUC4p
+         YJLg==
+X-Forwarded-Encrypted: i=1; AJvYcCWrrRRLL9Ru8bfHGF8QR2+qRgroTWqIxEblR03s8OoWaDt89O04Hu+4yn0qKlQBt/6pfr0Gcf0hXuVPdo8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxVX+eP77wa+k84psC2818kSh1vL2dX6waMvyr1Ho/GpIuGasmK
+	FeGVPyqH4DxD+3+AJq+4T9n3TgPxXk12wJnIIH5bif08Iogp+7fTamupkrzrux4aqRP6JsEUa27
+	3r/uiZ/K+DRl7eZ0p1GJ7zcOr1Tqej7Jk6ZD4
+X-Google-Smtp-Source: AGHT+IEISTQeXabs4ioQ5AeCbLgv9CXugVq3MQgadQe1dl/7sZYwRFgzmfdnX1oUJbl2vVmKVPJnaxd/NX1zkrDG8Kc=
+X-Received: by 2002:a05:6a21:60c4:b0:1d9:a90:8879 with SMTP id
+ adf61e73a8af0-1d978b2d7b6mr1813000637.21.1729666979390; Wed, 23 Oct 2024
+ 00:02:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
- property for QCN9274
-To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
-Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
- Bjorn Andersson <andersson@kernel.org>,
- Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
-References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
- <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <20241018151112.3533820-1-arnd@kernel.org> <ZxidW3lvA5Pqu71m@infradead.org>
+ <CANpmjNNK_viqTuPxywfvZSZSdWGRsb5-u1-oR=RZYTh7YKk8cQ@mail.gmail.com> <Zxiev9UaoUlI1xs9@infradead.org>
+In-Reply-To: <Zxiev9UaoUlI1xs9@infradead.org>
+From: Marco Elver <elver@google.com>
+Date: Wed, 23 Oct 2024 09:02:23 +0200
+Message-ID: <CANpmjNPvBnov-EFk1PNO4GEOF7XLG7S1bYYjg9i4Ej=ZzaA6ag@mail.gmail.com>
+Subject: Re: [PATCH] mm: export copy_to_kernel_nofault
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Arnd Bergmann <arnd@kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
+	Sabyrzhan Tasbolatov <snovitoll@gmail.com>, Andrey Konovalov <andreyknvl@gmail.com>, 
+	Arnd Bergmann <arnd@arndb.de>, linux-mm@kvack.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
 
-On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
-> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
-> It is used for the exchange of specific control information across
-> radios based on the doorbell mechanism. This WSI connection is
-> essential to exchange control information among these devices
-> 
-> Hence, describe WSI interface supported in QCN9274 with the following
-> properties:
-> 
->  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
->    connection. All the ath12k devices connected to same WSI connection
->    have the same wsi-group-id.
-> 
->  - qcom,wsi-index: It represents the identifier assigned to ath12k
->    device in the order of the WSI connection.
-> 
->  - qcom,wsi-num-devices: Number of devices connected through WSI in
->    the same group ID.
-> 
-> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
-> ---
->  .../bindings/net/wireless/qcom,ath12k.yaml    | 61 +++++++++++++++++++
->  1 file changed, 61 insertions(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> index ecf38af747f7..6c8f97865075 100644
-> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
-> @@ -19,6 +19,7 @@ properties:
->    compatible:
->      enum:
->        - pci17cb,1107  # WCN7850
-> +      - pci17cb,1109  # QCN9274
+On Wed, 23 Oct 2024 at 08:59, Christoph Hellwig <hch@infradead.org> wrote:
+>
+> On Wed, Oct 23, 2024 at 08:57:02AM +0200, Marco Elver wrote:
+> > On Wed, 23 Oct 2024 at 08:53, Christoph Hellwig <hch@infradead.org> wrote:
+> > >
+> > > On Fri, Oct 18, 2024 at 03:11:09PM +0000, Arnd Bergmann wrote:
+> > > > From: Arnd Bergmann <arnd@arndb.de>
+> > > >
+> > > > This symbol is now used on the kasan test module, so it needs to be
+> > > > exported.
+> > > >
+> > > > ERROR: modpost: "copy_to_kernel_nofault" [mm/kasan/kasan_test.ko] undefined!
+> > >
+> > > Meh, it would be great not to export internal helpers just because
+> > > someone wants to test them.  Please just mark that test built-in only
+> > > instead.
+> >
+> > We have EXPORT_SYMBOL_IF_KUNIT. See include/kunit/visibility.h -
+> > that's more appropriate, and also adjust kasan_test.c to do
+> > MODULE_IMPORT_NS(EXPORTED_FOR_KUNIT_TESTING).
+>
+> Thats a little better, but at least in this case I still think it is
+> a very bad idea.  copy_to_kernel_nofault is a perfect vector for
+> exploit code to probe writing to kernel address without causing faults
+> so it really should never ever be exported.
 
-Missing supplies. How does the device take power? Everything through
-standard PCI pins? Are you sure? Please submit complete binding, so with
-all required properties.
-
-Best regards,
-Krzysztof
-
+Another alternative is to just #ifndef MODULE the offending test case,
+so it's only available if built-in. No need to just make the whole
+test built-in only. I know there are users of this particular test
+that rely on it being a module.
 
