@@ -1,137 +1,105 @@
-Return-Path: <linux-kernel+bounces-377223-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377224-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BDA029ABB7B
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:28:20 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 55C979ABB7C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 13AE71C21084
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:28:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 824FB1C210DC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:29:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C14A49659;
-	Wed, 23 Oct 2024 02:28:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 423DA49620;
+	Wed, 23 Oct 2024 02:29:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="mBI0CMSz"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b="hve83jYf"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8562C51C5A;
-	Wed, 23 Oct 2024 02:28:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A16E22615
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:29:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729650492; cv=none; b=HhFTkGDJDL4FTiKLx4k0iOIm/3zrlvALKLPjxcAvA4qzbinjTkYmlwYHYdi2VTju3UoCZdD/2ESyJXStkxFOKj9iBPrmd6JkMVCkE8Tuuum+RsuU3yKoYcDezqmMepsPkEvXBk2VQ89YrutNDcOPqJGxdrO4aJat0Xp9cFnWQPE=
+	t=1729650587; cv=none; b=QHT32p/1YtketmWESVfq7VJnlH0Ge9a500j8udSKIQ9fwe2g2QpMBlAg2QFmHsU3uLBm9j5v78J/CkX3qZd0ISywRzdp5tHuo2ULPviu499Z04D0UJm462JMfsyXF9iyJJpvx9FzHYu7l1dnhUMjiDUmUI0GyP2wS5e/CAUmXbo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729650492; c=relaxed/simple;
-	bh=5YgZWN0FSnvAUUOW8PG/vGbazwm/77Rke6f+PmF5WrU=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=bVSh2vKDbDKtZGe+gSOQlwXjEKpMOeNqeHOU+N1jQGX8rHLLZYizX8gcWawRu2pqM2paBOsg7AkFgyTN0UDUhCjHBuMlGncUtqGiEmPJwDEOzqQMgjv8AeSJPiaZwaTJ3KozQUbf3FZDYtrO4CS32ZJNVncbh35avLk6s1hXZ3M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=fail smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=mBI0CMSz; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=manjaro.org
+	s=arc-20240116; t=1729650587; c=relaxed/simple;
+	bh=+qDKiWzI86Y8bcFyisq++tmVL+kI9BxOdLZRsUy/agY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=iENpnZo7kplXr3B3vy4h3Nzxs04cWazA3KOL4SEwWm7ot+y5a2RqJ8y6zKukQREd4RtYSQH0L+7l0G+uAQk1WC7kCLCJK/RPT+WLLz4zofpMP03ai2fhAKrxhMvIQIhKK5AD/DYUKg4xYDERvOOUQQ2QIekU1F73t4gg3pk004A=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au; spf=pass smtp.mailfrom=ellerman.id.au; dkim=pass (2048-bit key) header.d=ellerman.id.au header.i=@ellerman.id.au header.b=hve83jYf; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ellerman.id.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ellerman.id.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ellerman.id.au;
+	s=201909; t=1729650582;
+	bh=LVtT3dbjYqdKh/T94XNPQzLasLotD+NBYrIWiSYWxzY=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=hve83jYft0cbN0TtQyEhuIu+d9QuwMCB9YhTuZsaBLLryxgslSKKV0YLEMn67zb8m
+	 Y+hqKogMZCb281mGwf6KGJr1YMnvYCDEJA+APHSF91Uqajkovlh/58DznvPYYX2P47
+	 V01xyHDDxR5gD8gfjPPmawSOPFc83tq/TT3X678HIQ4F9ct8X3JVBBoJusPUqEEg/q
+	 jrY72sR8wuwHlAj4qWxuvsT4NSaV6zEMy8dXF2zHivZIK63F6l0w1ylRfzXOgbpDhe
+	 7QcKXJDEHRcSYgtX+P2SzCvak4PLuSrR2f69wOGII5TrlLXBHEM/izpfIdMAWTQthY
+	 6wFHFRQRCf6pA==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYCg949ssz4w2K;
+	Wed, 23 Oct 2024 13:29:41 +1100 (AEDT)
+From: Michael Ellerman <mpe@ellerman.id.au>
+To: Shrikanth Hegde <sshegde@linux.ibm.com>, Christian Loehle
+ <christian.loehle@arm.com>
+Cc: x86@kernel.org, Vincent Guittot <vincent.guittot@linaro.org>, Ingo
+ Molnar <mingo@redhat.com>, Dietmar Eggemann <dietmar.eggemann@arm.com>,
+ Pierre Gondois <pierre.gondois@arm.com>, "linux-kernel@vger.kernel.org"
+ <linux-kernel@vger.kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
+ Peter Zijlstra <peterz@infradead.org>
+Subject: Re: [PATCH] sched: Make ASYM_PACKING compile-time arch config
+In-Reply-To: <e7d7a3d8-4b4a-47ff-8d69-a4c2e75d6818@linux.ibm.com>
+References: <32c0aed9-bae1-4273-938d-36acb420eb56@arm.com>
+ <e7d7a3d8-4b4a-47ff-8d69-a4c2e75d6818@linux.ibm.com>
+Date: Wed, 23 Oct 2024 13:29:42 +1100
+Message-ID: <87ldyf3621.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1729650488;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=YPF02x/3XuMAe6LpdRIXWrJKdwRi5Z9k99f3PM62XZ8=;
-	b=mBI0CMSzZLumzLD2ffsd8EXjlhn40IUot7xmrlISwW2Udl1PSSI44IWK1dNvEkkZqKf9bJ
-	RFPN1og6gAtOjg0q/awkPY+iAvij7vB/dnaonF1RBDX6QuMex/haAcTsmbGbBWF6BL2F1C
-	qCWxRANtQ55qY0j/73Ylm58ltYygPpopHerSJUij8cQd0JYKK/7eMBxqY2C7taMDU7D4xM
-	PhEJPGnoRdNfFsxY0etVGiDpWu6XP0Jwjhk92WiGic/A4gpF8QiCHpO9L7dtIeSKocRfUo
-	Lyc2LWwxEn/vp95lWyO2Lp/sFJiKSxK7u7kuU3hu/n8iDJaMXJI5DO+yE3KzFA==
-Date: Wed, 23 Oct 2024 04:28:06 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Diederik de Haas <didi.debian@cknow.org>
-Cc: Heiko Stuebner <heiko@sntech.de>, Krzysztof Kozlowski
- <krzk+dt@kernel.org>, Rob Herring <robh@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, linux-rockchip@lists.infradead.org, Samuel Holland
- <samuel@sholland.org>, devicetree@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
-Subject: Re: [PATCH v2] arm64: dts: rockchip: Correct GPIO polarity on brcm BT
- nodes
-In-Reply-To: <20241018145053.11928-2-didi.debian@cknow.org>
-References: <20241018145053.11928-2-didi.debian@cknow.org>
-Message-ID: <32d1b0cd30e5464e6744f7f1d87d745d@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+Content-Type: text/plain
 
-Hello Diederik,
+Shrikanth Hegde <sshegde@linux.ibm.com> writes:
+> On 10/18/24 03:16, Christian Loehle wrote:
+>> Only x86 and Power7 set SD_ASYM_PACKING at boot-time depending on the
+>
+> Power10 on Shared Processor LPAR also enables that.
+>
+>> system. All other platforms don't make use of asym-packing anyway,
+>> so introduce auxiliary ARCH_HAS_SCHED_ASYM_PACKING and guard all the
+>> related logic behind that so it isn't compiled when not needed.
+>> 
+>> On arm64 this reduces
+>> size kernel/sched/fair.o
+>>     text	   data	    bss	    dec	    hex	filename
+>>    74120	   4097	     88	  78305	  131e1	kernel/sched/fair.o
+>> to
+>> size kernel/sched/fair.o
+>>     text	   data	    bss	    dec	    hex	filename
+>>    72896	   4065	     88	  77049	  12cf9	kernel/sched/fair.o
+>> 
+>> Most of that is on the load-balance hot-path, in particular
+>> need_active_balance() reduces from 141 to 84 instructions.
+>
+> This patch sprinkes #ifdef across the code. IMHO it makes the code 
+> difficult to read.
 
-On 2024-10-18 16:45, Diederik de Haas wrote:
-> Paragraph "3.4 Power up Timing Sequence" of the AzureWave-CM256SM
-> datasheet mentions the following about the BT_REG_ON pin, which is
-> connected to GPIO0_C4_d:
-> 
->   When this pin is low and WL_REG_ON is high,
->   the BT section is in reset.
-> 
-> Therefor set that pin to GPIO_ACTIVE_HIGH so that it can be pulled low
-> for a reset.
-> If set to GPIO_ACTIVE_LOW, the following errors are observed:
-> 
->   Bluetooth: hci0: command 0x0c03 tx timeout
->   Bluetooth: hci0: BCM: Reset failed (-110)
-> 
-> So fix the GPIO polarity by setting it to ACTIVE_HIGH.
-> This also matches what other devices with the same BT device have.
-> 
-> Fixes: a3a625086192 ("arm64: dts: rockchip: Fix reset-gpios property
-> on brcm BT nodes")
-> Signed-off-by: Diederik de Haas <didi.debian@cknow.org>
+Yes, strong agree on that.
 
-I'm a bit late to the party, :) but just wanted to confirm that
-the information provided in the patch description is correct.
+It should be possible to clean that up for the most part with some
+static inline helpers with stubs for the disabled case, in the usual
+kernel style.
 
-> ---
-> Changes in v2:
-> - Better commit description with references to the datasheet
-> - Dropped the (self-)blame as it's not useful to evaluate the 
-> usefulness
->   of this patch
-> 
->  arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi  | 2 +-
->  arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi | 2 +-
->  2 files changed, 2 insertions(+), 2 deletions(-)
-> 
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> index a477bd992b40..0131f2cdd312 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566-pinenote.dtsi
-> @@ -688,7 +688,7 @@ bluetooth {
->  		host-wakeup-gpios = <&gpio0 RK_PC3 GPIO_ACTIVE_HIGH>;
->  		pinctrl-0 = <&bt_enable_h>, <&bt_host_wake_l>, <&bt_wake_h>;
->  		pinctrl-names = "default";
-> -		shutdown-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_LOW>;
-> +		shutdown-gpios = <&gpio0 RK_PC4 GPIO_ACTIVE_HIGH>;
->  		vbat-supply = <&vcc_wl>;
->  		vddio-supply = <&vcca_1v8_pmu>;
->  	};
-> diff --git a/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> b/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> index e9fa9bee995a..1e36f73840da 100644
-> --- a/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> +++ b/arch/arm64/boot/dts/rockchip/rk3566-radxa-cm3.dtsi
-> @@ -404,7 +404,7 @@ bluetooth {
->  		host-wakeup-gpios = <&gpio2 RK_PB1 GPIO_ACTIVE_HIGH>;
->  		pinctrl-names = "default";
->  		pinctrl-0 = <&bt_host_wake_h &bt_reg_on_h &bt_wake_host_h>;
-> -		shutdown-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_LOW>;
-> +		shutdown-gpios = <&gpio2 RK_PC0 GPIO_ACTIVE_HIGH>;
->  		vbat-supply = <&vcc_3v3>;
->  		vddio-supply = <&vcc_1v8>;
->  	};
+Also Christian please Cc linuxppc-dev@lists.ozlabs.org on v2.
+
+cheers
 
