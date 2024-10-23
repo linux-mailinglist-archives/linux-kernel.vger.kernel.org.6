@@ -1,194 +1,143 @@
-Return-Path: <linux-kernel+bounces-377548-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377549-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3D45F9AC05E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:33:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B82C69AC05F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:33:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B0148B24399
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:33:41 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60ADD283693
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:33:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80304154457;
-	Wed, 23 Oct 2024 07:33:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381F41553B7;
+	Wed, 23 Oct 2024 07:33:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="juK//rR2"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="I/PdG6ci"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F1FB673451;
-	Wed, 23 Oct 2024 07:33:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3388A73451;
+	Wed, 23 Oct 2024 07:33:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729668814; cv=none; b=G3tHnI3zHonIUeoHEV7dwBga2NgM5fs9wP+S9eaATf8A4/FJjXQg75cHrjgOVOxv2p5TwImtj9LH+swql5h5eec2nT+eOpBwGJl/y5002B62pgsJV1WmnUz5MePLF2IEYD+Uw0e+KqCxb+XwLOH1zlKN2PYWRLqf0Ls9oaCLJDc=
+	t=1729668820; cv=none; b=j2cUZzgwJtk1EeJcSxNmza/2Ogt0mknchwMZEZPQa2aNotgSW4aDFbGFoRFb7QULPXMWZUVUC71ed0tk7+/DKiLLkTmgIQH2IQOc2ThaqBb8YQaH0CInOTsaXNBNXue/6q3rLR4KoHnL/sr2JTvJXo3e1ou3kZHch31ESqgeako=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729668814; c=relaxed/simple;
-	bh=hjrh+N7pG6QkaiT1Rq5synmi4FTXHv4iBa3jgHNJ1Fg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=H2lXFoLtwjsBYgeDiBCmHdq+1JhNwZtQl1faoXRKtFHwI5ponR1HCsd5fyevgqy6mO+tvebcNwyxBugPkE2d9sDNQcKQa04GcbOgmGoUhXP/LGIYzVRpFKix3mYagplD4D1CSsFKTEAb4eH/Z7LI9fcqlIPwrfKkYWZp/B8c5Jw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=juK//rR2; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N0N3ew016718;
-	Wed, 23 Oct 2024 07:33:17 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=+14j3B
-	s1y17Qe/TmSl9HqlcusnpTT/37DpsFx8amwoA=; b=juK//rR2e6I+SU7MGdx86V
-	OORqc5gb3uipO/CCQZO2z13oeKk5/H/q4jbdV105vdR7RZ61bubyKkiCEfvnBEW0
-	klUiRD/HdfRCWG10lIEXfAGgUr1sjbbWeEsRHXx9xuuu/xfkhwxl7UEBPN6dfeOi
-	aqH3jJ086YHkTWWFJpyAykWTY0BpHD9QaHbLn0pO/qH8qp//sERvAB7gvQGgWx2Y
-	eOq9l+p2Eol6W8BeKxR+ZKAISLEuw29D7yH4fjozsMfC5NNedVmOhm1r5YeIqBzL
-	wwoMBFKKJpCsi3oK/jwhFhXyS8206r1NHli4ToiwpLgvK8tHuVThScF3sjThsKJQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajht6e-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 07:33:17 +0000 (GMT)
-Received: from m0353725.ppops.net (m0353725.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49N7UwCG012410;
-	Wed, 23 Oct 2024 07:33:16 GMT
-Received: from ppma11.dal12v.mail.ibm.com (db.9e.1632.ip4.static.sl-reverse.com [50.22.158.219])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajht68-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 07:33:16 +0000 (GMT)
-Received: from pps.filterd (ppma11.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma11.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49N7TX3w008791;
-	Wed, 23 Oct 2024 07:33:15 GMT
-Received: from smtprelay06.fra02v.mail.ibm.com ([9.218.2.230])
-	by ppma11.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emkahrx8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Wed, 23 Oct 2024 07:33:15 +0000
-Received: from smtpav07.fra02v.mail.ibm.com (smtpav07.fra02v.mail.ibm.com [10.20.54.106])
-	by smtprelay06.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49N7XCRn17105252
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 07:33:12 GMT
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 1618E20043;
-	Wed, 23 Oct 2024 07:33:12 +0000 (GMT)
-Received: from smtpav07.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id AF79F20040;
-	Wed, 23 Oct 2024 07:33:11 +0000 (GMT)
-Received: from [9.152.212.137] (unknown [9.152.212.137])
-	by smtpav07.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Wed, 23 Oct 2024 07:33:11 +0000 (GMT)
-Message-ID: <7234670b-b119-44c2-9465-dd4d9451aae7@linux.ibm.com>
-Date: Wed, 23 Oct 2024 09:33:11 +0200
+	s=arc-20240116; t=1729668820; c=relaxed/simple;
+	bh=7/XKigXuC97EO4hBvGCC9fyMB0r05484l5DDM24QqE0=;
+	h=Content-Type:Mime-Version:Subject:From:In-Reply-To:Date:Cc:
+	 Message-Id:References:To; b=PhIsJIqDR2FVFigd/4gKa/PgE7RoPQKQVSc3k7JhHMg7tsLlRXLeX0NED5z8EDF62XQ4PssMcBTyBV5pwNd+9f/pDtbIlJ2BKJSWqe0QXmagdzZjZ4b9uF8ovWrQ+1LgpRgkgj5lnb/LPH6vKCxMQzKkoUELpOTkH11Mf5i0hKc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=I/PdG6ci; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-718065d6364so3050588a34.3;
+        Wed, 23 Oct 2024 00:33:38 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729668817; x=1730273617; darn=vger.kernel.org;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ZAjqjr6bU9AHssEjGBws6avXM1iyDJeINARZbx3wDCo=;
+        b=I/PdG6ciimqmN47yBEzqSpe7sY9iQXuBBScKKjUe6ZN5j303GRn1zo1mtttAR00v+w
+         ieVI2W68E0U60R0r1vv9/ptoCOE4DiPP0nE4nIlOUDVX3DwNPjq9w/VCkjC1nIIKVuEB
+         tl4/xqGtVJ3lIaIIYh0ACK4zGnj4O82wf7tsve4YRg/Mb9CxAC2wJQ6gs//kQUofxEDS
+         4Kxys7opoIaF/GkNxH6Te7yGQQm9OHuXT1c5YEXUv2A+LQh+UCANEJK7Hjd5vjdW343X
+         dVIXmRF2MciJfxA5ed5p4ozAW3cBt8NPzHyLHXXMiRI+xOg0HTo0+2pQesFisJwQ047N
+         GDwg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729668817; x=1730273617;
+        h=to:references:message-id:content-transfer-encoding:cc:date
+         :in-reply-to:from:subject:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ZAjqjr6bU9AHssEjGBws6avXM1iyDJeINARZbx3wDCo=;
+        b=R2WuPPZmm90nVWH5i9qIgSziDb6FpmAi1NFz2Ma72JzmUGrcWRTXxQ2BOMrSy5Mzsu
+         CRzrqyc36G1FT/ItMvfUXaFpGrkOdjBQUGn/BYudMRjLRwN4AHxTToeGifhwnLmBy5Wr
+         IMvc1TaNscN838ymJXYki9iRCO/fuTgo2KdmgnLchfphuE2mnhjMzekgytsKqV4qxcfQ
+         hW264PC4swT3TEvqF8Svg6rwMUcssSiENP3mFD6CXckZ/WqkXCwLFcFygN2uQ5JPpuzi
+         dOYwESnVvRgO7n6jv4bwayDJqcxcfkZVn4f6+/eAyERT6eja3ahf9P87qjTIzuAd/A15
+         w6KQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVAlh/2yu8c7V1a6IwqcDJwLvwnePPiGOIArulgSgB93uZa1+R9fyJ39c45f+x893uobXzkgN1ZRN+YirXY@vger.kernel.org, AJvYcCXHS6dqXdPYSjQP+P1AIRkSQcIR7p07vaD8y6w0GbWnhbzk4ri7NwWCNo0I8+iuTkBHQdEhZiG5BhBkwYhg+w==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy3MIhCfAtMmJfbeOIW4EV+U/NqpO4axlcHdLyCl6aQlGvyq91m
+	9WaTiORv0mdVVxEuer84fuzTdmFEioQEBf26pW5xcjPBpBhEjDHG
+X-Google-Smtp-Source: AGHT+IHGxoTpmD1Fn7QShAC5ShitKn/rp54NuZPzOSOHSvD6BGqTyHGxlj2B9f8Elw4flKB3CQ6bVw==
+X-Received: by 2002:a05:6830:6489:b0:710:f223:3e32 with SMTP id 46e09a7af769-7184b3771aemr1585741a34.10.1729668817120;
+        Wed, 23 Oct 2024 00:33:37 -0700 (PDT)
+Received: from smtpclient.apple ([2402:d0c0:11:86::1])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabde7d5sm6128596a12.93.2024.10.23.00.33.34
+        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
+        Wed, 23 Oct 2024 00:33:36 -0700 (PDT)
+Content-Type: text/plain;
+	charset=us-ascii
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 2/5] perf/core: Export perf_exclude_event()
-To: Namhyung Kim <namhyung@kernel.org>, Peter Zijlstra
- <peterz@infradead.org>,
-        Ingo Molnar <mingo@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>,
-        Mark Rutland
- <mark.rutland@arm.com>,
-        Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-        Arnaldo Carvalho de Melo <acme@kernel.org>,
-        LKML <linux-kernel@vger.kernel.org>,
-        Stephane Eranian <eranian@google.com>,
-        Ravi Bangoria <ravi.bangoria@amd.com>,
-        Sandipan Das <sandipan.das@amd.com>,
-        Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
-        Alexander Gordeev <agordeev@linux.ibm.com>,
-        Christian Borntraeger <borntraeger@linux.ibm.com>,
-        Sven Schnelle <svens@linux.ibm.com>, linux-s390@vger.kernel.org
-References: <20241023000928.957077-1-namhyung@kernel.org>
- <20241023000928.957077-3-namhyung@kernel.org>
-Content-Language: en-US
-From: Thomas Richter <tmricht@linux.ibm.com>
-Organization: IBM
-In-Reply-To: <20241023000928.957077-3-namhyung@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: Zxrj1CMsiVQ9VCHWXHBRQiTHjJUHo6MH
-X-Proofpoint-GUID: CPcuLdcL4WMafYnVbigjxFqDoFUbO5VD
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1011 malwarescore=0
- mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=999 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410230042
+Mime-Version: 1.0 (Mac OS X Mail 16.0 \(3776.700.51\))
+Subject: Re: [PATCH] bcachefs: Fix NULL ptr dereference in
+ btree_node_iter_and_journal_peek
+From: Alan Huang <mmpgouride@gmail.com>
+In-Reply-To: <20241023072024.98915-3-pZ010001011111@proton.me>
+Date: Wed, 23 Oct 2024 15:33:22 +0800
+Cc: Kent Overstreet <kent.overstreet@linux.dev>,
+ linux-bcachefs@vger.kernel.org,
+ LKML <linux-kernel@vger.kernel.org>,
+ skhan@linuxfoundation.org,
+ syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+Content-Transfer-Encoding: quoted-printable
+Message-Id: <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
+References: <20241023072024.98915-3-pZ010001011111@proton.me>
+To: Piotr Zalewski <pZ010001011111@proton.me>
+X-Mailer: Apple Mail (2.3776.700.51)
 
-On 10/23/24 02:09, Namhyung Kim wrote:
-> And increase the dropped_sample count when it returns 1.  Now it can
-> track how many samples are dropped due to the privilege filters in
-> software events.
-> 
-> While at it, rename the same function in s390 cpum_sf PMU and also count
-> the dropped samples.
-> 
-> Cc: Heiko Carstens <hca@linux.ibm.com>
-> Cc: Vasily Gorbik <gor@linux.ibm.com>
-> Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> Cc: Sven Schnelle <svens@linux.ibm.com>
-> Cc: Thomas Richter <tmricht@linux.ibm.com>
-> Cc: linux-s390@vger.kernel.org
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+On Oct 23, 2024, at 15:21, Piotr Zalewski <pZ010001011111@proton.me> =
+wrote:
+>=20
+> Add NULL check for key returned from bch2_btree_and_journal_iter_peek =
+in
+> btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
+> bch2_bkey_buf_reassemble.
+
+It would be helpful if the commit message explained why k.k is null in =
+this case
+
+>=20
+> Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
+> Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
+> Signed-off-by: Piotr Zalewski <pZ010001011111@proton.me>
 > ---
->  arch/s390/kernel/perf_cpum_sf.c |  8 +++++---
->  include/linux/perf_event.h      |  6 ++++++
->  kernel/events/core.c            | 11 +++++++----
->  3 files changed, 18 insertions(+), 7 deletions(-)
-> 
-> diff --git a/arch/s390/kernel/perf_cpum_sf.c b/arch/s390/kernel/perf_cpum_sf.c
-> index 5b765e3ccf0cadc8..ff9e694f2be45c6b 100644
-> --- a/arch/s390/kernel/perf_cpum_sf.c
-> +++ b/arch/s390/kernel/perf_cpum_sf.c
-> @@ -996,7 +996,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
->  	cpuhw->flags &= ~PMU_F_ENABLED;
->  }
->  
-> -/* perf_exclude_event() - Filter event
-> +/* perf_event_exclude() - Filter event
->   * @event:	The perf event
->   * @regs:	pt_regs structure
->   * @sde_regs:	Sample-data-entry (sde) regs structure
-> @@ -1005,7 +1005,7 @@ static void cpumsf_pmu_disable(struct pmu *pmu)
->   *
->   * Return non-zero if the event shall be excluded.
->   */
-> -static int perf_exclude_event(struct perf_event *event, struct pt_regs *regs,
-> +static int perf_event_exclude(struct perf_event *event, struct pt_regs *regs,
->  			      struct perf_sf_sde_regs *sde_regs)
->  {
->  	if (event->attr.exclude_user && user_mode(regs))
-> @@ -1088,8 +1088,10 @@ static int perf_push_sample(struct perf_event *event,
->  	data.tid_entry.pid = basic->hpp & LPP_PID_MASK;
->  
->  	overflow = 0;
-> -	if (perf_exclude_event(event, &regs, sde_regs))
-> +	if (perf_event_exclude(event, &regs, sde_regs)) {
-> +		atomic64_inc(&event->dropped_samples);
->  		goto out;
-> +	}
->  	if (perf_event_overflow(event, &data, &regs)) {
->  		overflow = 1;
->  		event->pmu->stop(event, 0);
+> fs/bcachefs/btree_iter.c | 3 +++
+> 1 file changed, 3 insertions(+)
+>=20
+> diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+> index 0883cf6e1a3e..625167ce191f 100644
+> --- a/fs/bcachefs/btree_iter.c
+> +++ b/fs/bcachefs/btree_iter.c
+> @@ -882,6 +882,8 @@ static noinline int =
+btree_node_iter_and_journal_peek(struct btree_trans *trans,
+> __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, =
+l->iter, path->pos);
+>=20
+> k =3D bch2_btree_and_journal_iter_peek(&jiter);
+> + if (!k.k)
+> + goto err;
+>=20
+> bch2_bkey_buf_reassemble(out, c, k);
+>=20
+> @@ -889,6 +891,7 @@ static noinline int =
+btree_node_iter_and_journal_peek(struct btree_trans *trans,
+>    c->opts.btree_node_prefetch)
+> ret =3D btree_path_prefetch_j(trans, path, &jiter);
+>=20
+> +err:
+> bch2_btree_and_journal_iter_exit(&jiter);
+> return ret;
+> }
+> --=20
+> 2.47.0
+>=20
+>=20
+>=20
 
-For the s390 part:
-
-Acked-by: Thomas Richter <tmricht@linux.ibm.com>
-
--- 
-Thomas Richter, Dept 3303, IBM s390 Linux Development, Boeblingen, Germany
---
-IBM Deutschland Research & Development GmbH
-
-Vorsitzender des Aufsichtsrats: Wolfgang Wendt
-
-Geschäftsführung: David Faller
-
-Sitz der Gesellschaft: Böblingen / Registergericht: Amtsgericht Stuttgart, HRB 243294
 
