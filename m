@@ -1,374 +1,286 @@
-Return-Path: <linux-kernel+bounces-378167-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0EA39ACC3C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:26:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D28819ACC3F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:27:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6CF412841B7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:26:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 071EA1C20C4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 14:27:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B3D211BD039;
-	Wed, 23 Oct 2024 14:26:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b="dLS1cOEg";
-	dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b="D2AulT9a"
-Received: from mx0b-00069f02.pphosted.com (mx0b-00069f02.pphosted.com [205.220.177.32])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE751C1753;
+	Wed, 23 Oct 2024 14:27:35 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AAFD239FC1
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:26:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=205.220.177.32
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729693600; cv=fail; b=c09JHxcB6w6ZVzH50LobxGimoONlJ+cQrrd9x9Kugci0Qs46sELtdQh/Uyq9bDEiC2xtg4JwMty2kAb7eDBTeeTCZ4gmIs3tKArqn0c8MYYVkcp9w1XtSB/85ePUWFlsmiOLalfbIruYgzeTr3CVYc4/cdy4cdAaYc7iV8q/vmc=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729693600; c=relaxed/simple;
-	bh=Xves6otuj4fT9EGWLoIgzPb2N0THI0sk899YXycAfXM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
-	 Content-Disposition:In-Reply-To:MIME-Version; b=urvfPj8PlDoK9y7OiewhhBe8ieuhTxWkbh/Wg5Rd5WHR6U/0MtmwFZ3FxVxBgZWZCfANiAKZ4Cu/3GczrqtLdFuysufRrBn+9lE55J2hm2GLfYTLU2n1VN3fVTnjEkC9tS0M42oJKtCjWAyrAc3Nx61kPfuhmtK6BN8fKjjWXyo=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com; spf=pass smtp.mailfrom=oracle.com; dkim=pass (2048-bit key) header.d=oracle.com header.i=@oracle.com header.b=dLS1cOEg; dkim=pass (1024-bit key) header.d=oracle.onmicrosoft.com header.i=@oracle.onmicrosoft.com header.b=D2AulT9a; arc=fail smtp.client-ip=205.220.177.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oracle.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oracle.com
-Received: from pps.filterd (m0333520.ppops.net [127.0.0.1])
-	by mx0b-00069f02.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NBQWXV017377;
-	Wed, 23 Oct 2024 14:26:28 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=oracle.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=corp-2023-11-20; bh=C4+HHrzxOQtNH7W1Xt
-	UdE6gmNINvRnvEI09BUjlNnQs=; b=dLS1cOEggWMHUVkqyjR7CpbNeUvje/bWjU
-	5/uKmGv5mVs+JROipfICWvsYB9YROX/7D10ypllWfN/uMJ/Y6yXoCyDvDXn5XYAi
-	Q5Tr8/alVj4ijgW2yCWx8yFWkIzh0ziJ8bh/7Qc40Tifue+yGjNijJfN2Pezmil3
-	MF5k4tjt5VMkP1EES4wSt7PqPSTBh0rD/bvJUxIA3FeDCG0gTGZmWdqe2p+rVtyv
-	mHmGBrR/i6Cpp/3gqnE2Iumq8piq+KN92L0n+gsccpMAWgJruJuiTfRiSDxBceYJ
-	CHT2RphaB6B2G+A94Q+1acHzyMmwCbjdO9vBBQnh/pzw564+63WQ==
-Received: from phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (phxpaimrmta01.appoci.oracle.com [138.1.114.2])
-	by mx0b-00069f02.pphosted.com (PPS) with ESMTPS id 42c5458cuj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 14:26:28 +0000 (GMT)
-Received: from pps.filterd (phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com [127.0.0.1])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (8.18.1.2/8.18.1.2) with ESMTP id 49NCvb1T030906;
-	Wed, 23 Oct 2024 14:26:27 GMT
-Received: from nam11-bn8-obe.outbound.protection.outlook.com (mail-bn8nam11lp2174.outbound.protection.outlook.com [104.47.58.174])
-	by phxpaimrmta01.imrmtpd1.prodappphxaev1.oraclevcn.com (PPS) with ESMTPS id 42emh1kn1v-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Wed, 23 Oct 2024 14:26:27 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=R+VhWVOriWsgQ7uWhNy9SLKdMT5y4iXa38e3H9x31/1+bEXCdDUAnl1mmYr6I7WzWQl+1+HICX0/znimSwSx4xVPJKI9nHWK3awD+uctsM9a5gCw8lTagOKX3zuH+B7fK6ic/nZudSmDRUDVvqRfaGdyTIJi5U3vae8Bb8T+HxzRSFfM7Rmt+74T0dH3QDK1IMqYaXOjXL2GT+eIHse29rreOn/4Tl6gNUomXo3Hu4JwvjjEUyXdKGWjLWQK10OiDnpprFr6EbHL7rFiQPRzPwH70YoXDVSkG+TT1XY1izT5DCoNjtS3DcuDcKB17x/zmxlS3bVXoMNriP+L7yCpiw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=C4+HHrzxOQtNH7W1XtUdE6gmNINvRnvEI09BUjlNnQs=;
- b=kLhKLe1OrpYo3Y3qLDdoRtPXVf0pKSXkkcqCKDLz+hEvLEVQN+zi3A5xXzlfi4ACZbUQ85mfchen3ybyxxrP2e7ctq6ddHLVUshcexPhrAjkoclHrhqf0+fY57eI46f0PTt1C72rTyFQIghScdF+QjUOs6/YfFG/V2ksbk2C6e097dvV0qTlJFUs9jTI9JHppLGAlxcxJsfg3qj82CJGSRFkMBrWc1eEiJJgt26ftd989M7eYxy6Ps39ZJHXPKKF/xQ+zm0KI6QW2klOgfBrC9lamDsZ3Gkk+02GoV9H2AZQ4+FlR3/mfOYh74MnuPeJYViKUapxDpDXhKYZmsi7wQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=oracle.com; dmarc=pass action=none header.from=oracle.com;
- dkim=pass header.d=oracle.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
- d=oracle.onmicrosoft.com; s=selector2-oracle-onmicrosoft-com;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=C4+HHrzxOQtNH7W1XtUdE6gmNINvRnvEI09BUjlNnQs=;
- b=D2AulT9a9p+YlndGjhTbBecgRSh/cmEM5UZyqh84sc+a9UYoGBIZy7TbIkM2T0fgmF6aqGgm+f2EsjQMgzIaQVuYKvoYPJFE5psA65EEQOQziN8gxT7/TW19OTUbao5bgZ32Qv2BYOAzZW6D0wm50NfTvzM+rVE/GHIthyMSKUs=
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com (2603:10b6:8:1b8::15)
- by CH3PR10MB7807.namprd10.prod.outlook.com (2603:10b6:610:1bd::5) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.23; Wed, 23 Oct
- 2024 14:26:24 +0000
-Received: from DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490]) by DS0PR10MB7933.namprd10.prod.outlook.com
- ([fe80::2561:85b0:ae8f:9490%7]) with mapi id 15.20.8069.024; Wed, 23 Oct 2024
- 14:26:24 +0000
-Date: Wed, 23 Oct 2024 10:26:21 -0400
-From: "Liam R. Howlett" <Liam.Howlett@oracle.com>
-To: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
-        Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>,
-        linux-kernel@vger.kernel.org, linux-mm@kvack.org,
-        Linus Torvalds <torvalds@linux-foundation.org>,
-        Peter Xu <peterx@redhat.com>
-Subject: Re: [PATCH hotfix 6.12 2/8] mm: unconditionally close VMAs on error
-Message-ID: <ce452qkevarrw4q3rlsvasw6srur7rwa7iyc443vxsvq3wsf6v@5gy23ibfxa4k>
-Mail-Followup-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>, 
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Andrew Morton <akpm@linux-foundation.org>, 
-	Vlastimil Babka <vbabka@suse.cz>, Jann Horn <jannh@google.com>, linux-kernel@vger.kernel.org, 
-	linux-mm@kvack.org, Linus Torvalds <torvalds@linux-foundation.org>, 
-	Peter Xu <peterx@redhat.com>
-References: <cover.1729628198.git.lorenzo.stoakes@oracle.com>
- <9a84bad9fdebbdb0adca2b5b43ed63afceb5bacc.1729628198.git.lorenzo.stoakes@oracle.com>
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <9a84bad9fdebbdb0adca2b5b43ed63afceb5bacc.1729628198.git.lorenzo.stoakes@oracle.com>
-User-Agent: NeoMutt/20240425
-X-ClientProxiedBy: YTBP288CA0025.CANP288.PROD.OUTLOOK.COM
- (2603:10b6:b01:14::38) To DS0PR10MB7933.namprd10.prod.outlook.com
- (2603:10b6:8:1b8::15)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8341A1ABEC6
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:27:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729693655; cv=none; b=QCeRxsjVcovF5pQJ21dqKlwkypmMShr7FpGO6Cz232MQpFe1LI7NXR5gx/LQvejZAzAIiGZjYnqcEWayTtWJFNCQE3JYbTGZYQykg+z/loxjjXwv2TA96DCNIzAm6Q9aLRrKcTXuXUsVwpExD4L2v0B3I3xfWrhp36g5mnS/dUI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729693655; c=relaxed/simple;
+	bh=iFRNWlUe7uqiqQhA5bR39N3N+ZKPUXvBjLwpkm0+3oU=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=M7JN2jy6REVHo+tqK1juSmeerRXSrWU4Wmtjr5LHXgWR17EUgZuAXZ6xY/SyaWm4Ca9ucGDpi/erQVWFu0/zpMGKFgbGS/8Ot5GzIWjJtRcQesMZF3PCuMPlcEYpbZ/TPHisTEgibsAZ/Xtc2uHe/r4wv1EhgzGq5rydwtcCc6Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3e1ef9102so69160165ab.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:27:33 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729693653; x=1730298453;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=FfFQLo8pA5nR+ZAeIDgDKmZs8/dPtqqDrYz9/8hiyVA=;
+        b=XnXkYNEL+x4X3M7dOdHKiI3T2em0H/Sh5MHwSyoCx55oIpraekgQn11LZkWKgCM6Rk
+         wwHs0YvuSd8qIUYwUB/VL5X+Tk5PYiDAj/n2AFM+DeDqMw2WL33SykCPn225TyMsrJxo
+         7XdS4OR/4xzcjC8jcrvkOcRtrkmuKm00XGSEdPp4X/E6PE2NGe3vGQ8/lB3GgK/IiCcP
+         3zTUXADpB/VaGeW74bTaThdt+m0VcAbIQ4DbC8VvLGGZpDn+3fT8oW2Z8F3IBambT/rr
+         3dDRvhEEPcjuAZwmJGw3efDY9Kz4fHvvMB9bEKt+hXRD8JhwpmGnS8eDbGdUJLR6WviE
+         xz9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUdTUFfGKy2UH7lkGQHlSjip4Rk/TbkiHuTqc01YzYR1hG9h/t/kQR1NgM4MD4le/rlO1QxEzl0r7jLfuo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxPvqBFiqNZadDyI2ztn54UP3jj1qe4siBDW+OZplJ9S/Gg2GLP
+	TPVtBNI1rkch1wQ1fxBa9whtj19iYDUlEMTZ0JkrRB5ErfEgjSpY20CpWLvXUHAY1oiLU4miIi8
+	YkAsBOH04sqPSXl/xNAECTQ8MPJinfzRBl4DfTzcL7crqbf3ulFEAWHQ=
+X-Google-Smtp-Source: AGHT+IGSRgiGyj6b6Re4zDooDVa1ZOB2X10iiqZvotw2FVR4uacdozAs+eEzwi2ThNgL1aN7cVi81sJc0XpVtshKx61Dh85QnVPQ
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS0PR10MB7933:EE_|CH3PR10MB7807:EE_
-X-MS-Office365-Filtering-Correlation-Id: 931d8018-fc79-48f5-37bb-08dcf36eabfc
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|366016;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?+lwzH15vWI0nyKUzGjcqOq2gAG6OPWvo07bce402e3qAHOA4JBU25LIGvWVe?=
- =?us-ascii?Q?14LeaDif3cN0YVI+b6MYiGszW1ugjmjdx2rDcek+CkbFC7yjPLrfxCm6l7Cj?=
- =?us-ascii?Q?t+oKCfaXhqH6nInChaMt8Khe44TtVcoWWrCTjDWIKl+JLRd4p50KHZaRPNuQ?=
- =?us-ascii?Q?4OGMxqvbHOWJvZdXDSpkL4imwvPsLFUcnDqcQgIeD89LdMle7xC0D1XDIsel?=
- =?us-ascii?Q?QWb7zlkoK18GowSEbd/L0CZD+a3SfptNE9+RYHUbtwc2qYz6VZ0iuLO7qk6x?=
- =?us-ascii?Q?3nJFpdwobh37U7kTRcl/Zw9OEbSevjaOvBKIsCKnaXRptwomHuaa4wTTYjtp?=
- =?us-ascii?Q?clEJ53wyp9HGJ7eBYZtwcjj7yyteMdiWoIbPWG/6R2brf6Q7zR8hQB+oURMr?=
- =?us-ascii?Q?umoqHYKpPj67BPimoffVhUpsskTsvjel+aW+BfdO6p10Qr/xOrQ6fgXrUjTd?=
- =?us-ascii?Q?BTWeP5XutM/8pwT1tca5tgbQCdNwZ4jV1vJvNgJDgGS8E+7wg8QfUHeZuM+G?=
- =?us-ascii?Q?faacbsIlnml8yK37SM7N+/rhNGPki1C33gEoPEX3KnAiVDGi2wTAKWhMAPjj?=
- =?us-ascii?Q?grYX3u26hA3s+/1a4vlmfwGmKD7NfbFu9cauDfFsF9zu93PtvFvQs538UhqJ?=
- =?us-ascii?Q?b8zdYClz5g0RrJrw4G2Ec5DDO40V5xtcbxngwtNwvU0Htit8idz3qT/qzIan?=
- =?us-ascii?Q?sI/hdHsdRNrDdWYv3AbmXEKl7XvZhXnA1+oYfjtpZWd5TbG5CQazIIaneREw?=
- =?us-ascii?Q?ZpC/tv/dbliIygMHcTBAcD7nwLhJYusP+29dT6vk0/eD3E8HwUlpTR47FfHM?=
- =?us-ascii?Q?bC6O7EMZsjH0l+8vCvbswkHJOKoBRHfCEPlKi0/ujtdqPh2sDIZFzGY5XV8l?=
- =?us-ascii?Q?BDGnHm3h3F52toh+TLScU0NqbO3ofoRjY88FR1gsmRQuH0kn3KpK1lV2QQRH?=
- =?us-ascii?Q?5T2gtTxo+momZwNSUqeCtszLJFkkr1R2OCNIexv6m8pMDEXKd5FYkJ7FRgDX?=
- =?us-ascii?Q?1Kz1a7MItxGDm9wdrfppaurdq2HVYDFiB1mkjk4ZtjgyqgVLaqVz1x3/OufW?=
- =?us-ascii?Q?LaQoP7y9igx5L5sfznsq1TIWRaZgMfprQkzizUz3OY8drF+ppgN6mNy18mLz?=
- =?us-ascii?Q?IfAWYAqLIYg5djBHKUfFVjKhToT0C+ALWsM7XKmabpmFg6iGtbQURd5AGI+n?=
- =?us-ascii?Q?OJmJaZxGtDl+XCugHnGwtQaDewpPfNekE3nOK3vCtEQ7rP1+kF3kz9YW7NVy?=
- =?us-ascii?Q?X5LnapehDlwJuswnrwqsmQhHmhnfzaDUbZZ4fgqEvjtCcrDMVUBFbPu24xX7?=
- =?us-ascii?Q?GWCWF5j1JRDk3bWmCesDOMKu?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR10MB7933.namprd10.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?us-ascii?Q?2ru7Yy7lwJcSYQPsOskvEQ8dcG4PFB43Rj3it6sXqi4xORLwk205OsVmB5sx?=
- =?us-ascii?Q?a9fGbK0WMirmrjLbMFRdeX8ZSrMwVcVJAUx620aUdpCHXJIT3kaQNH4P41Dj?=
- =?us-ascii?Q?b2Tj8//O8DJGI4T9F4d/lhYpvaH7yi8W8iTfmVRHK9yOzUce7F0bbuQsll54?=
- =?us-ascii?Q?KQsQM0h06wo5iLxL85DISMGEBn5c/BKixnlX686HgzBFBd/2CiZSFMYaxf/C?=
- =?us-ascii?Q?tMCHApDAhj0ckSogr6K6er5PY5KPbBNPVrbSdVM4gHdEZbZ/2yNHu9ICKA+v?=
- =?us-ascii?Q?bND321fMx0XBbx7EQdJIvadprZAYGnhYOv4AVkgOAydvxMikXDwrRJC5HWmQ?=
- =?us-ascii?Q?jGK/1l9ShTZZYiw7k3KZQgj9/AOzKn039wRIAfCD+aDGQGY6mLihrAP3cZ8s?=
- =?us-ascii?Q?vvHXu/RtDhdFGqCOXjikVmVxzExprZy1rsRfh11JK5e6ZR/6P8bv7RwxXpZD?=
- =?us-ascii?Q?wNOljkojQNyB3L19j4U3i/EBhh8HC4mTwwBsEf9lvPAddy4x/HdwWMOYg+sL?=
- =?us-ascii?Q?FZdm4Lz8vGHowbp9m/FSwmsf8knYtwBPS3YirdHrCISXqLZhz6bV+uPe+awm?=
- =?us-ascii?Q?0WiaNDUOITZTbjwYWuvThEWqvEU7Q3Qw19GI8OJMva6aKQwFXlX0g3UABYlj?=
- =?us-ascii?Q?feYKpbv+b63/OGe1gY1TWJFUC8E9yucg/4j3588RSVA2D0fY9hs3E8uaUtxj?=
- =?us-ascii?Q?4buu0hQmzwjtD8xexSbKGtBsBVSqrVuGB2ZtIwdbetw1T0FTgb8RSJ57toSi?=
- =?us-ascii?Q?YC26ZsFFealam1055Jj1dU/T7/6hH89txVJED3TJuAd0QTEfSkbrRTm2A0yk?=
- =?us-ascii?Q?/lazfnv9cZtG5Hop8fQqO2yQTodjbJV9vjOSmtlhi6DvTO+VNmhodlJH0e9H?=
- =?us-ascii?Q?GEOODCpHOXaGr31GjlZ7xBDP49kbm5VzgMmDXWsgt58zq3N1AtslONqf2spm?=
- =?us-ascii?Q?Y1EFasK6+NPdgD0bHgK0oCnmTFtmiq7yM8tHmnrx5bTBmOdoGPp32BpywMM7?=
- =?us-ascii?Q?Mh+APlfkevKYtA8AZQOVJLGITd2vT7bkIqRhnphT67GQC7WwqKj+RZxCxz6e?=
- =?us-ascii?Q?ZQY8VeLvGvnck8x4oswhgDSKEWegbRRLSJtroVJGUG/MslWWCXvcN6ZEyBFA?=
- =?us-ascii?Q?wBx8n3FXAgUIYuQqFURYPWdRwLi+DRuMcfLvN5RcuvBMmear5jXDjnMpwRTR?=
- =?us-ascii?Q?ugoBfYk0A6C2RgQ7RUlxtKzJy1Mpge6WBAXKkzWEEaxGO1bvemsTaK4Vl++F?=
- =?us-ascii?Q?/Yt1oZNtKCnNrzsEaeVYwGIaZXo8NvEFlp8Y+XUcdYhO1/lOxYIY2du6L5Ah?=
- =?us-ascii?Q?xG0UUKWXJnzfQz1VPsiDl24rW1W391YPizApt68Hms9i0X53v89KFSeaJe4o?=
- =?us-ascii?Q?dsR//Q2Bxw28fF49WnYQwJTgXIwcBd44nrs/RCtuofN06W+5TuqfZi0wrzaP?=
- =?us-ascii?Q?yg/M4diu0rfHiprC/MVBHoj1PUljM37JRB5dPyzdOwsx3XKVk687l0mbXtva?=
- =?us-ascii?Q?V4qmbv22jPfoMDr3gJvWh3L8YaDBeAwGZ/8RUNLS+cAKjaApssSehP4eqiMW?=
- =?us-ascii?Q?+I2nsUGAn7ywWhJzJmPgmlovJJ5Qk+VCZcgb72aTTXjPP7+fBvo+8c5eKmvX?=
- =?us-ascii?Q?mw=3D=3D?=
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-ExternalHop-MessageData-0:
-	v+ChsMoUnpfML1fyLJPYRRs/ZLRMfo2rl4UA3vf4Uce09TR+yyrz17KqP1ViO0wCZChO1+vOSx7DwePpBJl23lpzwzxMqjSsUAhayMjrl2ZY2Pp+cY/qK9/0a+5KUi07yeuLI7fDC41/PJmEk+ZQUBjOqD7lpCgWiJvjwiepDeVJbAgPxwyVIsQ084axMcdHJvVeCgYxHX+DR34+NTVPjcQZZTGVCOKUqAiVWjqDsWf3f5OmZWBaEH94vZoWpROvLG0N6a073PXVg5gaj+ZX7Tx/Ys8IU3nOSdShfZEkTv5jgDfBbO5sTsHASdBTcSy4+VnpF0JMSEfeLMd71Xquwe7an878WnqpRPDzv3P7TEAoaCVfrvJP/QWDTeh0ZrlBlZvy6vZggFMTRPmq9WP/z/kZXyHLe60uQxJVtgRsuI/g6fIHVeetZaxkQCIdOX7WP7+nzBxXuYU0CebibuqZQf/2tEZVZT6xvrTKoXu0j02hOBSSEf+QYltyWkfYqxa59lzto67WOIKudCANOtqF5v0JFHZRELa/SSJK27ai4zLiIvlFvfiWjKWsxzPAGEB0C7vQNxz8FogH3CRoGjO8icr7JHMasBH6U1jM5wCXLt8=
-X-OriginatorOrg: oracle.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 931d8018-fc79-48f5-37bb-08dcf36eabfc
-X-MS-Exchange-CrossTenant-AuthSource: DS0PR10MB7933.namprd10.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 14:26:23.9964
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 4e2c6054-71cb-48f1-bd6c-3a9705aca71b
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: wSooEvliDB06nMOsm5KLYYjjCt1kATtGJ8bnklePE7RHUaD59+etubZ+ZHAEaUXo/1lDLuIOxFvl5K7xt8cPsQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR10MB7807
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-23_12,2024-10-23_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 adultscore=0 mlxlogscore=999
- phishscore=0 suspectscore=0 mlxscore=0 spamscore=0 bulkscore=0
- malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.12.0-2409260000 definitions=main-2410230087
-X-Proofpoint-ORIG-GUID: HKcuFRr0PyxZ2ScExdwgkVOL4rBGjwyX
-X-Proofpoint-GUID: HKcuFRr0PyxZ2ScExdwgkVOL4rBGjwyX
+X-Received: by 2002:a05:6e02:1e0d:b0:3a3:63c3:352e with SMTP id
+ e9e14a558f8ab-3a4d59bbd73mr35446045ab.19.1729693652719; Wed, 23 Oct 2024
+ 07:27:32 -0700 (PDT)
+Date: Wed, 23 Oct 2024 07:27:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671907d4.050a0220.1e4b4d.008f.GAE@google.com>
+Subject: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_reconstruct_alloc
+From: syzbot <syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com>
+To: bfoster@redhat.com, kent.overstreet@linux.dev, 
+	linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-* Lorenzo Stoakes <lorenzo.stoakes@oracle.com> [241022 16:41]:
-> Incorrect invocation of VMA callbacks when the VMA is no longer in a
-> consistent state is bug prone and risky to perform.
-> 
-> With regards to the important vm_ops->close() callback We have gone to
-> great lengths to try to track whether or not we ought to close VMAs.
-> 
-> Rather than doing so and risking making a mistake somewhere, instead
-> unconditionally close and reset vma->vm_ops to an empty dummy operations
-> set with a NULL .close operator.
-> 
-> We introduce a new function to do so - vma_close() - and simplify existing
-> vms logic which tracked whether we needed to close or not.
-> 
-> This simplifies the logic, avoids incorrect double-calling of the .close()
-> callback and allows us to update error paths to simply call vma_close()
-> unconditionally - making VMA closure idempotent.
-> 
-> Reported-by: Jann Horn <jannh@google.com>
-> Fixes: deb0f6562884 ("mm/mmap: undo ->mmap() when arch_validate_flags() fails")
-> Cc: stable <stable@kernel.org>
-> Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Hello,
 
-Reviewed-by: Liam R. Howlett <Liam.Howlett@oracle.com>
+syzbot found the following issue on:
 
-> ---
->  mm/internal.h | 17 +++++++++++++++++
->  mm/mmap.c     |  5 ++---
->  mm/nommu.c    |  3 +--
->  mm/vma.c      | 14 +++++---------
->  mm/vma.h      |  4 +---
->  5 files changed, 26 insertions(+), 17 deletions(-)
-> 
-> diff --git a/mm/internal.h b/mm/internal.h
-> index af032e76dfd4..3a45cc592fd0 100644
-> --- a/mm/internal.h
-> +++ b/mm/internal.h
-> @@ -135,6 +135,23 @@ static inline int mmap_file(struct file *file, struct vm_area_struct *vma)
->  	return err;
->  }
-> 
-> +/*
-> + * Unconditionally close the VMA if it has a close hook and prevent hooks from
-> + * being invoked after close. VMA hooks are mutated.
-> + */
-> +static inline void vma_close(struct vm_area_struct *vma)
-> +{
-> +	if (vma->vm_ops && vma->vm_ops->close) {
-> +		vma->vm_ops->close(vma);
-> +
-> +		/*
-> +		 * The mapping is in an inconsistent state, and no further hooks
-> +		 * may be invoked upon it.
-> +		 */
-> +		vma->vm_ops = &vma_dummy_vm_ops;
-> +	}
-> +}
-> +
->  #ifdef CONFIG_MMU
-> 
->  /* Flags for folio_pte_batch(). */
-> diff --git a/mm/mmap.c b/mm/mmap.c
-> index 10f4ccaf491b..d55c58e99a54 100644
-> --- a/mm/mmap.c
-> +++ b/mm/mmap.c
-> @@ -1576,8 +1576,7 @@ unsigned long mmap_region(struct file *file, unsigned long addr,
->  	return addr;
-> 
->  close_and_free_vma:
-> -	if (file && !vms.closed_vm_ops && vma->vm_ops && vma->vm_ops->close)
-> -		vma->vm_ops->close(vma);
-> +	vma_close(vma);
-> 
->  	if (file || vma->vm_file) {
->  unmap_and_free_vma:
-> @@ -1937,7 +1936,7 @@ void exit_mmap(struct mm_struct *mm)
->  	do {
->  		if (vma->vm_flags & VM_ACCOUNT)
->  			nr_accounted += vma_pages(vma);
-> -		remove_vma(vma, /* unreachable = */ true, /* closed = */ false);
-> +		remove_vma(vma, /* unreachable = */ true);
->  		count++;
->  		cond_resched();
->  		vma = vma_next(&vmi);
-> diff --git a/mm/nommu.c b/mm/nommu.c
-> index f9ccc02458ec..635d028d647b 100644
-> --- a/mm/nommu.c
-> +++ b/mm/nommu.c
-> @@ -589,8 +589,7 @@ static int delete_vma_from_mm(struct vm_area_struct *vma)
->   */
->  static void delete_vma(struct mm_struct *mm, struct vm_area_struct *vma)
->  {
-> -	if (vma->vm_ops && vma->vm_ops->close)
-> -		vma->vm_ops->close(vma);
-> +	vma_close(vma);
->  	if (vma->vm_file)
->  		fput(vma->vm_file);
->  	put_nommu_region(vma->vm_region);
-> diff --git a/mm/vma.c b/mm/vma.c
-> index 3c5a80876725..bb7cfa2dc282 100644
-> --- a/mm/vma.c
-> +++ b/mm/vma.c
-> @@ -323,11 +323,10 @@ static bool can_vma_merge_right(struct vma_merge_struct *vmg,
->  /*
->   * Close a vm structure and free it.
->   */
-> -void remove_vma(struct vm_area_struct *vma, bool unreachable, bool closed)
-> +void remove_vma(struct vm_area_struct *vma, bool unreachable)
->  {
->  	might_sleep();
-> -	if (!closed && vma->vm_ops && vma->vm_ops->close)
-> -		vma->vm_ops->close(vma);
-> +	vma_close(vma);
->  	if (vma->vm_file)
->  		fput(vma->vm_file);
->  	mpol_put(vma_policy(vma));
-> @@ -1115,9 +1114,7 @@ void vms_clean_up_area(struct vma_munmap_struct *vms,
->  	vms_clear_ptes(vms, mas_detach, true);
->  	mas_set(mas_detach, 0);
->  	mas_for_each(mas_detach, vma, ULONG_MAX)
-> -		if (vma->vm_ops && vma->vm_ops->close)
-> -			vma->vm_ops->close(vma);
-> -	vms->closed_vm_ops = true;
-> +		vma_close(vma);
->  }
-> 
->  /*
-> @@ -1160,7 +1157,7 @@ void vms_complete_munmap_vmas(struct vma_munmap_struct *vms,
->  	/* Remove and clean up vmas */
->  	mas_set(mas_detach, 0);
->  	mas_for_each(mas_detach, vma, ULONG_MAX)
-> -		remove_vma(vma, /* = */ false, vms->closed_vm_ops);
-> +		remove_vma(vma, /* unreachable = */ false);
-> 
->  	vm_unacct_memory(vms->nr_accounted);
->  	validate_mm(mm);
-> @@ -1684,8 +1681,7 @@ struct vm_area_struct *copy_vma(struct vm_area_struct **vmap,
->  	return new_vma;
-> 
->  out_vma_link:
-> -	if (new_vma->vm_ops && new_vma->vm_ops->close)
-> -		new_vma->vm_ops->close(new_vma);
-> +	vma_close(new_vma);
-> 
->  	if (new_vma->vm_file)
->  		fput(new_vma->vm_file);
-> diff --git a/mm/vma.h b/mm/vma.h
-> index 55457cb68200..75558b5e9c8c 100644
-> --- a/mm/vma.h
-> +++ b/mm/vma.h
-> @@ -42,7 +42,6 @@ struct vma_munmap_struct {
->  	int vma_count;                  /* Number of vmas that will be removed */
->  	bool unlock;                    /* Unlock after the munmap */
->  	bool clear_ptes;                /* If there are outstanding PTE to be cleared */
-> -	bool closed_vm_ops;		/* call_mmap() was encountered, so vmas may be closed */
->  	/* 1 byte hole */
->  	unsigned long nr_pages;         /* Number of pages being removed */
->  	unsigned long locked_vm;        /* Number of locked pages */
-> @@ -198,7 +197,6 @@ static inline void init_vma_munmap(struct vma_munmap_struct *vms,
->  	vms->unmap_start = FIRST_USER_ADDRESS;
->  	vms->unmap_end = USER_PGTABLES_CEILING;
->  	vms->clear_ptes = false;
-> -	vms->closed_vm_ops = false;
->  }
->  #endif
-> 
-> @@ -269,7 +267,7 @@ int do_vmi_munmap(struct vma_iterator *vmi, struct mm_struct *mm,
->  		  unsigned long start, size_t len, struct list_head *uf,
->  		  bool unlock);
-> 
-> -void remove_vma(struct vm_area_struct *vma, bool unreachable, bool closed);
-> +void remove_vma(struct vm_area_struct *vma, bool unreachable);
-> 
->  void unmap_region(struct ma_state *mas, struct vm_area_struct *vma,
->  		struct vm_area_struct *prev, struct vm_area_struct *next);
-> --
-> 2.47.0
+HEAD commit:    15e7d45e786a Add linux-next specific files for 20241016
+git tree:       linux-next
+console+strace: https://syzkaller.appspot.com/x/log.txt?x=10cbc0a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=c36416f1c54640c0
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fc4dac4775d07bcfe34
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=11c7f487980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=167b3240580000
+
+Downloadable assets:
+disk image: https://storage.googleapis.com/syzbot-assets/cf2ad43c81cc/disk-15e7d45e.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/c85347a66a1c/vmlinux-15e7d45e.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/648cf8e59c13/bzImage-15e7d45e.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/bca28bd33502/mount_0.gz
+
+The issue was bisected to:
+
+commit 84f1638795da1ff2084597de4251e9054f1ad728
+Author: Kent Overstreet <kent.overstreet@linux.dev>
+Date:   Fri Dec 29 20:25:07 2023 +0000
+
+    bcachefs: bch_sb_field_downgrade
+
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=12ca7240580000
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=11ca7240580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=16ca7240580000
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com
+Fixes: 84f1638795da ("bcachefs: bch_sb_field_downgrade")
+
+bcachefs (loop0): recovering from clean shutdown, journal seq 8
+bcachefs (loop0): dropping and reconstructing all alloc info
+==================================================================
+BUG: KASAN: slab-use-after-free in bch2_reconstruct_alloc+0x2af/0xac0 fs/bcachefs/recovery.c:134
+Read of size 8 at addr ffff888075728f58 by task syz-executor251/5234
+
+CPU: 1 UID: 0 PID: 5234 Comm: syz-executor251 Not tainted 6.12.0-rc3-next-20241016-syzkaller #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ bch2_reconstruct_alloc+0x2af/0xac0 fs/bcachefs/recovery.c:134
+ bch2_fs_recovery+0x12dd/0x39a0 fs/bcachefs/recovery.c:842
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7fe135241f6a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffc99fea9d8 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffc99fea9f0 RCX: 00007fe135241f6a
+RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007ffc99fea9f0
+RBP: 0000000000000004 R08: 00007ffc99feaa30 R09: 0000000000005b27
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffc99feaa30 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+
+Allocated by task 5234:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:260 [inline]
+ __do_kmalloc_node mm/slub.c:4273 [inline]
+ __kmalloc_node_track_caller_noprof+0x28b/0x4c0 mm/slub.c:4292
+ __do_krealloc mm/slub.c:4767 [inline]
+ krealloc_noprof+0x65/0x100 mm/slub.c:4816
+ bch2_sb_realloc+0x2d2/0x660 fs/bcachefs/super-io.c:189
+ __copy_super+0x5dc/0xe70 fs/bcachefs/super-io.c:586
+ bch2_sb_to_fs+0xab/0x150 fs/bcachefs/super-io.c:613
+ bch2_fs_alloc fs/bcachefs/super.c:828 [inline]
+ bch2_fs_open+0x16b2/0x2fa0 fs/bcachefs/super.c:2065
+ bch2_fs_get_tree+0x738/0x1710 fs/bcachefs/fs.c:2161
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Freed by task 5234:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:582
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:233 [inline]
+ slab_free_hook mm/slub.c:2329 [inline]
+ slab_free mm/slub.c:4588 [inline]
+ kfree+0x1a0/0x460 mm/slub.c:4736
+ krealloc_noprof+0xc9/0x100
+ bch2_sb_realloc+0x2d2/0x660 fs/bcachefs/super-io.c:189
+ bch2_sb_field_resize_id+0x140/0x7c0 fs/bcachefs/super-io.c:221
+ bch2_sb_counters_from_cpu+0xac/0x300 fs/bcachefs/sb-counters.c:67
+ bch2_write_super+0xe80/0x3c50 fs/bcachefs/super-io.c:976
+ bch2_reconstruct_alloc+0x28c/0xac0 fs/bcachefs/recovery.c:131
+ bch2_fs_recovery+0x12dd/0x39a0 fs/bcachefs/recovery.c:842
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1037
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+The buggy address belongs to the object at ffff888075728000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 3928 bytes inside of
+ freed 4096-byte region [ffff888075728000, ffff888075729000)
+
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x75728
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801ac42140 dead000000000122 0000000000000000
+raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801ac42140 dead000000000122 0000000000000000
+head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0001d5ca01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 5234, tgid 5234 (syz-executor251), ts 72141103867, free_ts 58943313114
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3123/0x3270 mm/page_alloc.c:3493
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4769
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2399
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2565
+ new_slab mm/slub.c:2618 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3805
+ __slab_alloc+0x58/0xa0 mm/slub.c:3895
+ __slab_alloc_node mm/slub.c:3970 [inline]
+ slab_alloc_node mm/slub.c:4131 [inline]
+ __do_kmalloc_node mm/slub.c:4272 [inline]
+ __kmalloc_node_track_caller_noprof+0x2e9/0x4c0 mm/slub.c:4292
+ __do_krealloc mm/slub.c:4767 [inline]
+ krealloc_noprof+0x65/0x100 mm/slub.c:4816
+ bch2_sb_realloc+0x2d2/0x660 fs/bcachefs/super-io.c:189
+ __copy_super+0x5dc/0xe70 fs/bcachefs/super-io.c:586
+ bch2_sb_to_fs+0xab/0x150 fs/bcachefs/super-io.c:613
+ bch2_fs_alloc fs/bcachefs/super.c:828 [inline]
+ bch2_fs_open+0x16b2/0x2fa0 fs/bcachefs/super.c:2065
+ bch2_fs_get_tree+0x738/0x1710 fs/bcachefs/fs.c:2161
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1814
+page last free pid 5215 tgid 5215 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2674
+ __folio_put+0x2c7/0x440 mm/swap.c:126
+ pipe_buf_release include/linux/pipe_fs_i.h:219 [inline]
+ pipe_update_tail fs/pipe.c:224 [inline]
+ pipe_read+0x6ed/0x13e0 fs/pipe.c:344
+ new_sync_read fs/read_write.c:488 [inline]
+ vfs_read+0x9bb/0xbc0 fs/read_write.c:569
+ ksys_read+0x183/0x2b0 fs/read_write.c:712
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+Memory state around the buggy address:
+ ffff888075728e00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888075728e80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff888075728f00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                    ^
+ ffff888075728f80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff888075729000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
