@@ -1,141 +1,160 @@
-Return-Path: <linux-kernel+bounces-377477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377484-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 275F79ABF6E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:57:45 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CF7EB9ABF80
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:59:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 567441C20B26
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:57:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8BE94285ACF
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:59:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8546E14C5BF;
-	Wed, 23 Oct 2024 06:57:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71E8415696E;
+	Wed, 23 Oct 2024 06:58:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lsy/4TzI"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="gYz9EMVr"
+Received: from lelv0143.ext.ti.com (lelv0143.ext.ti.com [198.47.23.248])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 933FB22318;
-	Wed, 23 Oct 2024 06:57:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D5E6C155743;
+	Wed, 23 Oct 2024 06:57:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.23.248
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729666635; cv=none; b=IVcueVnDzAAQi2HOm0P8v73DXh0iAeNYgwoVUPOUXFeMRFXLHfMLkRcNn/GUBZMu05R/fEOkTUMUIVW5rF9k9qGdCLVdJhoNFAB9SMdItPs6Nz5KxGg1GwkLLiPjjHLqW+lZLrIeB0VIDV/HLZEnFsypY2lJl/S5yAr1pC5+5eI=
+	t=1729666679; cv=none; b=WuCeIjD1xzvgTi4awhnNZaHzrJicNFxtNrnajyhiTMY97e4c6xZwUIC4ocZsvJl4zQ31V8QPCSGXt99tQD0SotpoAJIQQfPL+NLUySvTiy+n/WHrT4vr31QfD1MoUrH6vIa4Uvw4F9iphiQw4QK6miC040f1hZoriFaeicIcHtg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729666635; c=relaxed/simple;
-	bh=VmCtvk6V8OmkJ5K/HWEg0c66PD8WlfznLpqAXnbKgG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gx5E5oQxmC/UcKP8Zmjx0XFC3BS4OQU0bzLl723LDFU19U9vqQ7ZoeIwjbOlwXDMjAC5KKSL6lls0M7o4g9zycK4SLDmOzZACTMDgNBkkogb3IsaBekBL9uNxFoVMS2OzjN6FV7WffdBiLlBjDKli4z7KS9mjVROZUvT/wA1Tc4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lsy/4TzI; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e93d551a3so4595678b3a.1;
-        Tue, 22 Oct 2024 23:57:14 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729666634; x=1730271434; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=OTIVgmSCTxAjeufxAhXv87pU0k2+WfMQxkIbDxZyExg=;
-        b=lsy/4TzIqO0IUO/PEKWBsOcfKKEwQn+sZpiCh8NsOKfCalkMLsHbRVXT2zZ2IL2kEG
-         9B7kwquTuado61+lJHdb4JqG30njsLVx8EdJbCkeno1JhVZ2m5hzIHfZ39jYDCLmclZj
-         vMpNTzKhbxHalEq/ALfyQrkFPkO8bHlNgqYH+nJosfTsnopo33kOnRmF5YnYfSVWkcWL
-         KiGorZtuY2UpnuCvJBFTOQfNcRnaOwjMp2ZFpqKXE+VxJ82ctrzw05tXwW3tV8qAeedB
-         rP64sVFoCCbSXCFw25UYrFSObu4ZkUbW3oMaTBXFDRQdsILQoUZTk9i48nYrhpuQo1Dy
-         ZAVQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729666634; x=1730271434;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OTIVgmSCTxAjeufxAhXv87pU0k2+WfMQxkIbDxZyExg=;
-        b=V/GP2MQirUajNjQVQm0O3TnoH6Po0DRzrjioj1D9TmIPrYXSEDb312mj9eCk+swKZT
-         MbL2O/uaGAtM3t7uPNnkPLjF43WaLEhPUU7J/M9DhzH0KtZwh+w8kwodd9PJzz3rioPj
-         KoOkyi/uZwyGC+PGLtAObmPD11UoIgLJBD29jhOSvKSrhxldQvnGvHIoKfgPmrj29FIF
-         1zJ+aPX3Tshfl45r0CX4DYlW3p71y/2uc0ab8Ofu1T+aCNMYw4GXXlTyXYJN1VajG8qf
-         OATSl6cvidOqCNuSWmAJJzEZqyUu77XA+sxwVwnH4kfkBGJ4Lf3120tmtB5XfbprtOgX
-         K+7Q==
-X-Forwarded-Encrypted: i=1; AJvYcCW0aTZagB/w/AFktKjn2536sQBMG/Q+jUOFMtfrNRdrb5pIqdycEI/nOzBbSk/z8Chj2/CKBt1FlAsrUxk=@vger.kernel.org, AJvYcCWa+lZVwLB2UdQL//O+syUjLkd6J44IEL8hQurXAXdCS6ImjRDCPQV417RkDKVdHa9oFzMr5rIub90WCOU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxxEDMkfalsum0IW5fF4eN4KAYzqm4IkO6NmBmhObcR2Qqmv5tQ
-	Fym7a4i0MNTk3iKeF2x7Z6HBbTZqF/Y8Ef1Rp0GXL+pSRrZ1AWjY
-X-Google-Smtp-Source: AGHT+IFIDWh7p+QxP4vOovIpqinmoWSh3kYTxqjFxl6iJptJMHcOZpQbK6c8z/jqu8AvDF6b6nI6/g==
-X-Received: by 2002:a05:6a21:10a:b0:1d9:13ba:3eef with SMTP id adf61e73a8af0-1d978b3dd0fmr2004330637.26.1729666633734;
-        Tue, 22 Oct 2024 23:57:13 -0700 (PDT)
-Received: from archie.me ([103.124.138.155])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13ea279sm5683088b3a.168.2024.10.22.23.57.12
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 23:57:12 -0700 (PDT)
-Received: by archie.me (Postfix, from userid 1000)
-	id E58F64396281; Wed, 23 Oct 2024 13:57:08 +0700 (WIB)
-Date: Wed, 23 Oct 2024 13:57:08 +0700
-From: Bagas Sanjaya <bagasdotme@gmail.com>
-To: Sebastian Fricke <sebastian.fricke@collabora.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
-	hverkuil-cisco@xs4all.nl, mauro.chehab@linux.intel.com,
-	kernel@collabora.com, bob.beckett@collabora.com,
-	nicolas.dufresne@collabora.com,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
-Subject: Re: [PATCH RFC v2 0/3] Documentation: Debugging guide
-Message-ID: <ZxieRCN8rFfgZGS8@archie.me>
-References: <20240529-b4-media_docs_improve-v2-0-66318b2da726@collabora.com>
- <20241022152316.yr6jpjtcwidxytpe@basti-XPS-13-9310>
+	s=arc-20240116; t=1729666679; c=relaxed/simple;
+	bh=2rax7yKIhQsvJYcFNUUG2GwYkUux9uFf7U2h0ad1IhY=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=exuNLfpn52ZQ1r6EC5Hr+7tiWUmxRN5a7iiiKLATThicbxsgJMuJF7/XJ9F+lvdIM3tUpzsomd7OZmV9pTDZ8OSD8pCdIxzV+kNDtNM7IPJlhZ8LF0cxHljgQh1wmJDfJbhmsTdUklAwYLGbZ67ftdJ+Iw9tubsWsheXARY+cTs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=gYz9EMVr; arc=none smtp.client-ip=198.47.23.248
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0265.itg.ti.com ([10.180.67.224])
+	by lelv0143.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49N6vbRv031021;
+	Wed, 23 Oct 2024 01:57:37 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729666657;
+	bh=EoDhictmZsJJtG/6BZ26mfYqwG6vumYLSrV54R2HCM0=;
+	h=From:Subject:Date:To:CC;
+	b=gYz9EMVrbCWsV2S9+AVGvzpNktXjH8+amxKcvvQCwDBaIPBXpqxEAd1n/0xTTr3iR
+	 yE/xnWju66BAthFenC19tPCN1eT/RGi7NLDW27XPW7rLNEyzWQlFGtalgYV51TUKJD
+	 z1hRttD8zoBbprEx41DI8C5AMlvWMjbD5y9Ouvk0=
+Received: from DFLE107.ent.ti.com (dfle107.ent.ti.com [10.64.6.28])
+	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49N6vbAC006031
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Wed, 23 Oct 2024 01:57:37 -0500
+Received: from DFLE114.ent.ti.com (10.64.6.35) by DFLE107.ent.ti.com
+ (10.64.6.28) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Wed, 23
+ Oct 2024 01:57:36 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE114.ent.ti.com
+ (10.64.6.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Wed, 23 Oct 2024 01:57:36 -0500
+Received: from [127.0.1.1] (uda0497581.dhcp.ti.com [10.24.68.185])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49N6vWUN129058;
+	Wed, 23 Oct 2024 01:57:32 -0500
+From: Manorit Chawdhry <m-chawdhry@ti.com>
+Subject: [PATCH v5 00/12] Add bootph-all property for J7 boards
+Date: Wed, 23 Oct 2024 12:27:14 +0530
+Message-ID: <20241023-b4-upstream-bootph-all-v5-0-a974d06370ab@ti.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="M6STrdpKMW46XULc"
-Content-Disposition: inline
-In-Reply-To: <20241022152316.yr6jpjtcwidxytpe@basti-XPS-13-9310>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAEqeGGcC/3XPS27CMBCA4asgr3E1nvgFK+5RsYhfxBLgyE4tq
+ ih3r0OlUhZZ/iPNN5qZFJ+jL+S4m0n2NZaY7i3Efkfs0N8vnkbXmiAgB94BNZx+jWXKvr9Rk9I
+ 0DrS/Xql2XBmFxkJwpC2P2Yf4eMKf59ZDLFPK3887la3TX1KA2iIro0CtdAKlYFrIcJrih003s
+ noVX4YCsWlgMw4ASmrmnXL6zej+Gduv1W41jEVvrZEHgW8Gfxma8U2DNyOg4RIBIKD4M5Zl+QE
+ y8N2+hQEAAA==
+To: Nishanth Menon <nm@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Tero
+ Kristo <kristo@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof
+ Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, Neha Malcom Francis <n-francis@ti.com>,
+        Aniket Limaye <a-limaye@ti.com>, Udit Kumar <u-kumar1@ti.com>,
+        Beleswar Padhi
+	<b-padhi@ti.com>,
+        Siddharth Vadapalli <s-vadapalli@ti.com>, Andrew Davis
+	<afd@ti.com>,
+        Manorit Chawdhry <m-chawdhry@ti.com>
+X-Mailer: b4 0.15-dev
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729666652; l=3137;
+ i=m-chawdhry@ti.com; s=20231127; h=from:subject:message-id;
+ bh=2rax7yKIhQsvJYcFNUUG2GwYkUux9uFf7U2h0ad1IhY=;
+ b=NrpsPdITotx96VGFq/zPvy2ItlU0MFt58GQqxaXkUXEciVEEkhk8fZJSzusSRzs0xX1HHQSni
+ hdrWzj7SwtBAgNx3kb30Ug9hox3cUo4BsjitViiac03HqMUuq2/s1NM
+X-Developer-Key: i=m-chawdhry@ti.com; a=ed25519;
+ pk=fsr6Tm39TvsTgfyfFQLk+nnqIz2sBA1PthfqqfiiYSs=
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
+The idea of this series is to add bootph-all and bootph-pre-ram property
+in all the leaf nodes wherever required and cleanup any other places where
+bootph-all/bootph-pre-ram exist in the parent nodes as well since now
+the bootloaders can handle it.
 
---M6STrdpKMW46XULc
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Signed-off-by: Manorit Chawdhry <m-chawdhry@ti.com>
+---
+Changes in v5:
+* Nishanth
+- Break the patch into EVM and SoC
 
-On Tue, Oct 22, 2024 at 05:23:16PM +0200, Sebastian Fricke wrote:
-> On 24.09.2024 10:45, Sebastian Fricke wrote:
-> > The RFC contains:
-> > - a general debugging guide split into debugging for driver developers =
-and
-> >  debugging from userspace
-> > - a new summary page for all media related documentation. This is inspi=
-red by
-> >  other subsystems, which first of all allows a user to find the subsyst=
-em
-> >  under the subsystems page and secondly eases general navigation throug=
-h the
-> >  documentation that is sprinkled onto multiple places.
-> > - a guide on how to debug code in the media subsystem, which points to =
-the
-> >  parts of the general documentation and adds own routines.
->=20
-> I wanted to give this a little push, so far I have received a lot of
-> good feedback but none from the core and documentation folks. What do
-> you think about this?
+- Drop serdes0_pcie_link, serdes0_qsgmii_link, serdes_ln_ctrl bootph tags
+- Drop usb0 bootph from am68-base-board
+- Drop exp nodes bootph from j7200 and j721e ( along with main_i2c )
+- Drop wkup_gpio bootph as it is only used as interrupt parent or for CAN nodes
+- Sort some missed bootph entries
 
-Address all reviews then reroll (maybe as non-RFC series).
+- Drop Aniket and Neha's r-by due to quite a few changes in j721e and
+  j7200
+- Link to v4: https://lore.kernel.org/r/20240814-b4-upstream-bootph-all-v4-0-f2b462000f25@ti.com
 
-Thanks.
+---
+Manorit Chawdhry (12):
+      arm64: dts: ti: k3-j784s4-j742s2-mcu-wakeup: Move bootph from mcu_timer1 to mcu_timer0
+      arm64: dts: ti: k3-j784s4-j742s2-mcu-wakeup: Remove parent nodes bootph-*
+      arm64: dts: ti: k3-j784s4: Add bootph-* properties
+      arm64: dts: ti: k3-j721s2: Add bootph-* properties
+      arm64: dts: ti: k3-j721e: Add bootph-* properties
+      arm64: dts: ti: k3-j7200: Add bootph-* properties
+      arm64: dts: ti: k3-j784s4-j742s2-evm-common: Remove parent nodes bootph-*
+      arm64: dts: ti: k3-j721s2-evm*: Add bootph-* properties
+      arm64: dts: ti: k3-am68-sk*: Add bootph-* properties
+      arm64: dts: ti: k3-j721e-evm*: Add bootph-* properties
+      arm64: dts: ti: k3-j721e-sk*: Add bootph-* properties
+      arm64: dts: ti: k3-j7200-evm*: Add bootph-* properties
 
---=20
-An old man doll... just what I always wanted! - Clara
+ arch/arm64/boot/dts/ti/k3-am68-sk-base-board.dts       |  8 ++++++++
+ arch/arm64/boot/dts/ti/k3-am68-sk-som.dtsi             |  5 +++--
+ arch/arm64/boot/dts/ti/k3-j7200-common-proc-board.dts  | 13 +++++++++++++
+ arch/arm64/boot/dts/ti/k3-j7200-main.dtsi              |  2 ++
+ arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi        | 11 +++++++++++
+ arch/arm64/boot/dts/ti/k3-j7200-som-p0.dtsi            |  6 ++++++
+ arch/arm64/boot/dts/ti/k3-j721e-common-proc-board.dts  | 16 ++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j721e-main.dtsi              |  2 ++
+ arch/arm64/boot/dts/ti/k3-j721e-mcu-wakeup.dtsi        | 10 ++++++++++
+ arch/arm64/boot/dts/ti/k3-j721e-sk.dts                 | 18 ++++++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j721e-som-p0.dtsi            |  5 +++++
+ arch/arm64/boot/dts/ti/k3-j721s2-common-proc-board.dts | 14 ++++++++++++++
+ arch/arm64/boot/dts/ti/k3-j721s2-main.dtsi             |  1 +
+ arch/arm64/boot/dts/ti/k3-j721s2-mcu-wakeup.dtsi       | 13 +++++++++++++
+ arch/arm64/boot/dts/ti/k3-j721s2-som-p0.dtsi           |  3 +++
+ .../arm64/boot/dts/ti/k3-j784s4-j742s2-evm-common.dtsi |  9 ---------
+ .../dts/ti/k3-j784s4-j742s2-mcu-wakeup-common.dtsi     | 10 ++++++----
+ 17 files changed, 131 insertions(+), 15 deletions(-)
+---
+base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
+change-id: 20240430-b4-upstream-bootph-all-8d47b72bc0fd
 
---M6STrdpKMW46XULc
-Content-Type: application/pgp-signature; name="signature.asc"
+Best regards,
+-- 
+Manorit Chawdhry <m-chawdhry@ti.com>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxiePQAKCRD2uYlJVVFO
-o3JqAQDJhBM5el/ZJxxkzFRi3Wb1thDGSpEp9V1vfmhkehIdbAD+K3avvP1asWGs
-zGg0qt5pEq8BYK0c0l3mpm2F3E3lkAA=
-=W4Be
------END PGP SIGNATURE-----
-
---M6STrdpKMW46XULc--
 
