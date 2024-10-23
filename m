@@ -1,80 +1,160 @@
-Return-Path: <linux-kernel+bounces-377877-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377878-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05EF9AC7F6
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:28:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D5A39AC7FA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:28:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CD6FC1C20B33
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:28:25 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DDDFF289B41
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:28:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A60A51A0AFA;
-	Wed, 23 Oct 2024 10:27:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0095E1A38E3;
+	Wed, 23 Oct 2024 10:28:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="KYZFKdtE"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="HrfzTN9S"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11CA0186E40
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:27:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF39714F108;
+	Wed, 23 Oct 2024 10:28:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729679266; cv=none; b=R8w9hhTCoSNtYosUaOfxWrrSfjYWtdtYjev9VfMpLZozZOP+0CSnZIj17JDkWk2DkTN5i1gRNt7NRnZRztA2styy9ud9VkMLrQ9vwGg9A+oBmSZKb7AgRV+GtbtEnftO3jv+enGdMw2KcDhXKZ9HuHSS4TNnYqfAOEvYDeoU+ww=
+	t=1729679297; cv=none; b=IHaGXEbERVgdQbMpYWhbyDMt5L4EcFDTQBUWyg2CikD2Kb8viVJOqFenuvrGVbMFWq5Qr86SgFkGfQJLXoH+6CficlSjVKL81nKLGv5T8QKUtwE27cFe+6ttSvqLP5OSCZjEiySzwk9RsUnWfrYlx3Os77E0QSEuusjCQzIVfHE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729679266; c=relaxed/simple;
-	bh=+a2THu3k5g0s7vgeFB0G4UC22zi05HNxEYaMBCxse0k=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=MxfchrDRTE7UybgsBcToUv37gB5rpIJU9uuax6waAUP0JrfRtGGdeLbHHdijW4yDBwumdA8+m90HCb5ENsaj3tSP5RngQ+vOg9Pq+GY3ITCVkLgG7r/EuUiGYC68GFHabJSca0ZqlGQx876F6dKfyHR/dsrE73nbPFfItEkGYJM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=KYZFKdtE; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0ABA7C4CEC6;
-	Wed, 23 Oct 2024 10:27:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729679265;
-	bh=+a2THu3k5g0s7vgeFB0G4UC22zi05HNxEYaMBCxse0k=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=KYZFKdtEBKZdLVzJq71uEWbaA9sb5ynU8TiUmzammXaISDadlOc2r92Ppxi/JAD8m
-	 z0fYUi8v8ajy1yw54tzLeFELQ527m6kGryNk8i8zY9c8yH4IS+QgSBLKgBYmcaO4uh
-	 oHwRYd3bh5KmC05qo6td2vmFDMk3b5cQZPNpBIm8=
-Date: Wed, 23 Oct 2024 03:27:44 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Kairui Song <kasong@tencent.com>
-Cc: Kairui Song <ryncsn@gmail.com>, linux-mm@kvack.org, Chris Li
- <chrisl@kernel.org>, Barry Song <v-songbaohua@oppo.com>, Ryan Roberts
- <ryan.roberts@arm.com>, Hugh Dickins <hughd@google.com>, Yosry Ahmed
- <yosryahmed@google.com>, "Huang, Ying" <ying.huang@intel.com>, Tim Chen
- <tim.c.chen@linux.intel.com>, Nhat Pham <nphamcs@gmail.com>,
- linux-kernel@vger.kernel.org
-Subject: Re: [PATCH 00/13] mm, swap: rework of swap allocator locks
-Message-Id: <20241023032744.84a6a9f6f5f1e3aa1fe5f0d9@linux-foundation.org>
-In-Reply-To: <20241022192451.38138-1-ryncsn@gmail.com>
-References: <20241022192451.38138-1-ryncsn@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729679297; c=relaxed/simple;
+	bh=iHOp32SFkBd7m82e8yskiq+ewhqH5uFRQqMZdB2NOvo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=ibcC1y8Fn6sVHP5yPjM8K4aWRU2Gw65X7I3eOuSIuIwxiuJzCgZVFIleQ0RfBbD+zpvUjDaLNfKJxD9KlNgCYWHNRfzO8oDk4dnRVIsXPveVOid5MiTHrF4VOZKajhF8NEjLH8t5XT4Ar9FCExbGrFt4UTE28EuzFuLBorvrFUA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=HrfzTN9S; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279864.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49N9v1hK025427;
+	Wed, 23 Oct 2024 10:28:10 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	/1RhKFk91LwuJ9KLrEjUapOT6KTyBjv1q2UPl2OI9ss=; b=HrfzTN9SIVYgQddQ
+	0/QZ6JuHxOPEaVDaikTe7Z7MQXhpuTRaWdKFYnKB0fPbmrhVYc/yocx2gHmTNsrR
+	Qnzuoliysc8w+/D2CvTb3uhThBDm0qmpgcDGh5xNnHbbET5kUwsURoYFIPVFzfBe
+	1u+Qv2RNFCtnaDW13iNlntO2e36kjg4/C+RWBJlTs2MXS7agetDwRlVKqkio1Xly
+	zVdLXkFdWicXprdDIgbBrJHxXmC87TejTm2sN6Yp2NS65cWZ6rHwb+aePq5ezkK1
+	g1YIVTQg843QAcJUveCC4vVLdZZONZzEwDivW/iLg54oHn/qOfPvq7lAkhksjPQg
+	kC24gA==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em409uq4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 10:28:10 +0000 (GMT)
+Received: from nalasex01b.na.qualcomm.com (nalasex01b.na.qualcomm.com [10.47.209.197])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NAS9aK007187
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 10:28:09 GMT
+Received: from [10.151.40.160] (10.80.80.8) by nalasex01b.na.qualcomm.com
+ (10.47.209.197) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 03:28:05 -0700
+Message-ID: <94defe49-c87a-44f6-8768-03f3d6687ac3@quicinc.com>
+Date: Wed, 23 Oct 2024 15:58:02 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 1/6] dt-bindings: net: wireless: update required
+ properties for ath12k PCI module
+To: Krzysztof Kozlowski <krzk@kernel.org>, <ath12k@lists.infradead.org>
+CC: <linux-wireless@vger.kernel.org>, Kalle Valo <kvalo@kernel.org>,
+        Rob
+ Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor
+ Dooley <conor+dt@kernel.org>,
+        Jeff Johnson <jjohnson@kernel.org>,
+        Bjorn
+ Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konradybcio@kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <linux-arm-msm@vger.kernel.org>
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-2-quic_rajkbhag@quicinc.com>
+ <87db3d68-ab1a-4cc4-9857-416de39cea0f@kernel.org>
+ <e2c1ce1a-89af-4feb-a21a-9ca2578430e7@quicinc.com>
+ <b97b8350-3925-40b0-8f87-f89df429a52a@kernel.org>
+ <e7b27f57-efb2-45ea-bbe0-e5aeb90cbff9@quicinc.com>
+ <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
+Content-Language: en-US
+From: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
+In-Reply-To: <606083d8-4332-45e4-be41-08ca5425cc03@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01b.na.qualcomm.com (10.47.209.197)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 7nlqLKTs3YYANTZf9zjWISYTedC-DO5Y
+X-Proofpoint-GUID: 7nlqLKTs3YYANTZf9zjWISYTedC-DO5Y
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501 mlxscore=0
+ impostorscore=0 spamscore=0 phishscore=0 mlxlogscore=598
+ lowpriorityscore=0 clxscore=1015 malwarescore=0 bulkscore=0 suspectscore=0
+ adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230064
 
-On Wed, 23 Oct 2024 03:24:38 +0800 Kairui Song <ryncsn@gmail.com> wrote:
-
-> After this series, lock contention on si->lock is nearly unobservable
-> with `perf lock` with the same test above :
+On 10/23/2024 12:29 PM, Krzysztof Kozlowski wrote:
+> On 23/10/2024 08:53, Raj Kumar Bhagat wrote:
+>> On 10/23/2024 12:17 PM, Krzysztof Kozlowski wrote:
+>>> On 23/10/2024 08:45, Raj Kumar Bhagat wrote:
+>>>> On 10/23/2024 12:05 PM, Krzysztof Kozlowski wrote:
+>>>>> On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+>>>>>> The current device-tree bindings for the Ath12K module list many
+>>>>>> WCN7850-specific properties as required. However, these properties are
+>>>>>> not applicable to other Ath12K devices.
+>>>>>>
+>>>>>> Hence, remove WCN7850-specific properties from the required section,
+>>>>>> retaining only generic properties valid across all Ath12K devices.
+>>>>>> WCN7850-specific properties will remain required based on the device's
+>>>>>> compatible enum.
+>>>>> Just not true. These apply to all devices described in this binding.
+>>>>>
+>>>>> NAK.
+>>>>>
+>>>>> Don't send patches for your downstream stuff.
+>>>> This is not for downstream. This series is the per-requisite for ath12k
+>>>> MLO support in upstream.
+>>>>
+>>>> In the subsequent patch [2/6] we are adding new device (QCN9274) in this
+>>>> binding that do not require the WCN7850 specific properties.
+>>>>
+>>>> This is a refactoring patch for the next patch [2/6].
+>>> It's just wrong. Not true. At this point of patch there are no other
+>>> devices. Don't refactor uselessly introducing incorrect hardware
+>> Ok then, If we squash this patch with the next patch [2/6], that actually adding
+>> the new device, then this patch changes are valid right?
+> Yes, except I asked to have separate binding for devices with different
+> interface (WSI). You add unrelated devices to same binding, growing it
+> into something tricky to manage. Your second patch misses if:then
+> disallwing all this WSI stuff for existing device... and then you should
+> notice there is absolutely *nothing* in common.
 > 
->   contended   total wait     max wait     avg wait         type   caller
->   ... snip ...
->          91    204.62 us      4.51 us      2.25 us     spinlock   cluster_move+0x2e
->   ... snip ...
->          47    125.62 us      4.47 us      2.67 us     spinlock   cluster_move+0x2e
->   ... snip ...
->          23     63.15 us      3.95 us      2.74 us     spinlock   cluster_move+0x2e
->   ... snip ...
->          17     41.26 us      4.58 us      2.43 us     spinlock   cluster_isolate_lock+0x1d
->   ... snip ...
 
-Were any overall runtime benefits observed?
+I understand your point about having separate bindings if there are no common
+properties. However, the title and description of this binding indicate that it
+is intended for Qualcomm ath12k wireless devices with a PCI bus. Given this, the
+QCN9274 seems to fit within the same binding.
+
+Additionally, there will likely be more properties added in the future that could
+be common. For example, the “qcom,ath12k-calibration-variant” property (which the
+ath12k host currently doesn’t support reading and using, hence we are not adding it
+now) could be a common property.
+
+If you still recommend creating a separate binding for the QCN9274, we are open to
+working on that.
+
+Thank you for your guidance.
+
 
