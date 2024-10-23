@@ -1,251 +1,211 @@
-Return-Path: <linux-kernel+bounces-378656-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EDF639AD3C4
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:16:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98CA69AD3BD
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:16:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7236D1F22CFA
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:16:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5491828531B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:16:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 670801D220E;
-	Wed, 23 Oct 2024 18:16:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 84C3C1D0949;
+	Wed, 23 Oct 2024 18:16:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="JZrZdHGQ"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="D3GOLgIF"
+Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2053.outbound.protection.outlook.com [40.107.21.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A7CFB1D151F
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:16:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729707390; cv=none; b=bQi/zVGZVw+wTtg+60Wq8Z5i2I9Kr5EFoYrLxwn+udpkp6RLbO9/qo48chdWmBIw41Vw0NONPyufGEeM9dGSCb9bSkdFp0MT+F/LmTMLqHZ3QJMBTnh8QB9GlGpTWrZ0PvhJMyXRne120fzR//xw779EiRRJ6b0NKthc/8hKUjc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729707390; c=relaxed/simple;
-	bh=6yO2piS0HmIIYQIVHC9faKpYYJZLj3Onaqd5+osUSpk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LS1ZrEyNuwmlidDnyEW6BDdOEma8X6w8/zeRkV3DkUcEZHBcjeROo5YyhKFIZTdEjs9A9Sb6DZ3R5Qr66+md2XvPLwHzPV3Zw4iKNvG2oOWVI6vw8pj6aU1BaxZ/O8uaB5Oi6AQSnfB9M/WdQLA6/rw50zSKZiq2drpwMtOHszI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=JZrZdHGQ; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0cee600aso2766b.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:16:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729707387; x=1730312187; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SwCuA4yImROJvhJywn+YK8+uWaKia67TwRqA6S/vp1A=;
-        b=JZrZdHGQfONu9ylh5XqcctOHUnNzy+S5RFzMyvDWv7rVFuq++dA6jkTjiEwQbQLScH
-         w4lCx01YIEtpta+xm0qAEPwAiOaCJygzb+fny9Aiqp0RlLJeArGx9WbGQYms1KfqGGtE
-         n3IyNJxP7e1RzLKuTtFiL3i1/2oXoTnlq+G0pmQ52e5osw0CJU7osepXSK4tYFOoebJ7
-         NvUn0EMfLp7Rxxcrez6tLLwNQVxvVuvLEse3X6cmWY66zYP9NOUPwrefZVy5K3q/QXgU
-         okHJ7rxoZdQlUdGnPsL7t45Ci9r8+JUQI3YM9SQ7gl3O0VGk+rAuzBsn9O9DwxWSKfox
-         WXKg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729707387; x=1730312187;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=SwCuA4yImROJvhJywn+YK8+uWaKia67TwRqA6S/vp1A=;
-        b=XZeh6Bo73GLoRYFxSKgwgQ8+uBmMcrOG4MS9hJHOY3wKtsIkmdXB2fxCpbxCGDt95O
-         TAUeVcBjvYHnl0DBwGnhGLOs7Jo9SGGRb0d/F/WzGv8qYyLLYrcgeZbJ/iTsAMbtqcOK
-         2U4KUA2ClWUulDwyhKoZOHPbEACjbhePIf3A7nX9bxJK+Le+LRIAgY6sVhP1h/ptHkPc
-         VAt8ah3xYNJy+QSUjQgkbd/XynoD9o20vzY3NyZ9JShZH69A2XCP+0HGZJv6z5ieP0AZ
-         wP/FmNZtuRwttgMCmTcbeyW+f3HOe8z28jGczXkoCWPnfbN9uHVdCXq1F0Mi6x9VHJge
-         InVQ==
-X-Gm-Message-State: AOJu0Yy1+t2TgFaQFEOKDi3HvmpZcmrs91AesQfZ76B1ovDI+bNR1yaI
-	ReVaZbvuk1rUibBTql5ndr3ohgTcU4A9TwNYa5p6DeYbQv7M2MZH5SokFBOBZ8zXJZlqjb5WllH
-	mSgSSfuezZgXcEiVxFVIVK1McLFTk2QAlRbr+
-X-Google-Smtp-Source: AGHT+IEt31RESgiqF7AyjCPe7bxP29/f2XcyC3yNA9DrNXUcssSqGbRlVaHXeYozRvGDtobwboAYgwdDefa4Xch1ZNQ=
-X-Received: by 2002:a17:907:3e0a:b0:a9a:6ab:c93b with SMTP id
- a640c23a62f3a-a9abf9b5984mr302142766b.62.1729707386560; Wed, 23 Oct 2024
- 11:16:26 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C8EE31E51D;
+	Wed, 23 Oct 2024 18:16:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.53
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729707364; cv=fail; b=XnXh40vtZnMU3hV6jyYvb69lHf3d7KtF+Y1lMTWUr3/Ule7ZXdpXRQaqlCufS1bSAjnhXPuwWRelTQYPgZG4lsJcbep0jhVKfIxdWjWiIXZv1AqAjMAu5jsDhEZz7KV2gztASoLVsaNzHWVgbs2BOg8c8LVMMUlJ+4Hp9ZtuXR4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729707364; c=relaxed/simple;
+	bh=kyh3boZg5ypOCGtyCc+sLEAmNRPr3FGj5mw/nvVfQOA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=HhEUEl5B8BYD4ThJrcTOC+UXcZyMCfxUhmFhsH5U953KLsHC6DBEV4Mv8/PTjt2sAcowxoMX8MjuQ8FniafO6PDNecWV/LujEs3EcuruAKhYSX7ajjy/O4TIGDlcutFwReCMLhXQHDIOze0Wf1d8mEvjxE0LPlGEivrN+pCZO34=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=D3GOLgIF; arc=fail smtp.client-ip=40.107.21.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=VLlSgQwJvuZmPHX5LnJBzg0+rdLqeD14w9fMvV/dWldHLS8EQRBzXSqEXE8bmYlw5sTg7/4nySQqKET8eSD4CDnqdK3FcIfWEMtYgFsuVTnYCZ8FH9iYGuN4Yhvmw7uyVWDq0/LXbpzQtyh83+ioTdpk4m8Wv40XGl7q/uJO8iUxl0w3xsC6xmHbDg7G07Ya5ztPvP+9PQxHYjiVCAplkxxU1mpFjQSHNTFN9TtHjKUjtoP0KwWS/PZkQ4HLrW79+UoSvxy35QWZ9QtUXba8HrF54UpAOlJVo3NeBeCkztkiIs2FONX/g39mOLKCKxr2T17ucvpYvwweIHMBBJLAyQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7C8Yjzno8z8a+kD2YrU+AObUlk8fs8IIoT0GnangFms=;
+ b=RT8KAw08D1d4nPKaUPEZXEQqQrmAFD+R6OQymFGL8IBHnIOOZ1XNEB5MNDRukFc//Xn1rXLEvQ5tFFA/9Wrzd8d+TUgUdhjuDpt5b97+xNBWewaxi8EmidBKVVgdRXlu0XmRHod6klT8c1GU6PTNepT1/u4A6OoVx7E08uamgv5CmcgL86d3n9oh/iqgjZ/mSdEamdhgluHLWovYYktICeE/PqGGiTBU+GAIwCQu5BjmIIHmtjp3tx58xRP+44ba5z/8DwaGC7wBaeIpJjWDx0sVt4HQjYSwvMxiebsXENMY/OWRyrl1mqsh8AzdPucUo0ywObUM39xt5Jl/0SAfGg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7C8Yjzno8z8a+kD2YrU+AObUlk8fs8IIoT0GnangFms=;
+ b=D3GOLgIF8izMTzJBedVnIIgPcLujAaG1lTBPhwCZykQNtfpxKasKU0Okfe7K0dVfCJDZlEHP+DirrJx7m/utLa0Rh+MV0v147NCoMW7EmhF8Q34cLTwFDFk9mRbuo3GuW2IQRsWgXOMu0OIOUMTmO+QxVkimXs9tafrHJUPO/176ffHgWEGHna65dwFjG3yuAq3+iXjBLPc52JL0MdCD3zK8cAWuk2Xjm6047SG4kYXhkIPtwkqxf1vvylXdkUA0RZavVYhSPfp4hgk8o+ELUd9GKFWWrkz9jrkKKukM+fU2praqSsV4NyWAYBivWLu6aD/Xt8Jp5aMslh6/BCFdhg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com (2603:10a6:102:240::14)
+ by AS8PR04MB8341.eurprd04.prod.outlook.com (2603:10a6:20b:3b0::24) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Wed, 23 Oct
+ 2024 18:15:59 +0000
+Received: from PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06]) by PAXPR04MB9642.eurprd04.prod.outlook.com
+ ([fe80::9126:a61e:341d:4b06%4]) with mapi id 15.20.8069.024; Wed, 23 Oct 2024
+ 18:15:59 +0000
+Date: Wed, 23 Oct 2024 14:15:50 -0400
+From: Frank Li <Frank.li@nxp.com>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, sound-open-firmware@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/4] ASoC: dt-bindings: audio-graph-card2: add widgets
+ and hp-det-gpios support
+Message-ID: <Zxk9Vq0jtws/DNAb@lizhi-Precision-Tower-5810>
+References: <20241023162114.3354-1-laurentiumihalcea111@gmail.com>
+ <20241023162114.3354-3-laurentiumihalcea111@gmail.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023162114.3354-3-laurentiumihalcea111@gmail.com>
+X-ClientProxiedBy: SJ0PR13CA0090.namprd13.prod.outlook.com
+ (2603:10b6:a03:2c4::35) To PAXPR04MB9642.eurprd04.prod.outlook.com
+ (2603:10a6:102:240::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018064101.336232-1-kanchana.p.sridhar@intel.com>
- <CAJD7tkamDPn8LKTd-0praj+MMJ3cNVuF3R0ivqHCW=2vWBQ_Yw@mail.gmail.com> <SJ0PR11MB56784C5C542E84014525BA8CC94D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-In-Reply-To: <SJ0PR11MB56784C5C542E84014525BA8CC94D2@SJ0PR11MB5678.namprd11.prod.outlook.com>
-From: Yosry Ahmed <yosryahmed@google.com>
-Date: Wed, 23 Oct 2024 11:15:50 -0700
-Message-ID: <CAJD7tkZ9VLNrwyeRQf0AXdQAG8vW_ZL_y0rfU77p5HMZnch=mw@mail.gmail.com>
-Subject: Re: [RFC PATCH v1 00/13] zswap IAA compress batching
-To: "Sridhar, Kanchana P" <kanchana.p.sridhar@intel.com>
-Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "linux-mm@kvack.org" <linux-mm@kvack.org>, 
-	"hannes@cmpxchg.org" <hannes@cmpxchg.org>, "nphamcs@gmail.com" <nphamcs@gmail.com>, 
-	"chengming.zhou@linux.dev" <chengming.zhou@linux.dev>, 
-	"usamaarif642@gmail.com" <usamaarif642@gmail.com>, "ryan.roberts@arm.com" <ryan.roberts@arm.com>, 
-	"Huang, Ying" <ying.huang@intel.com>, "21cnbao@gmail.com" <21cnbao@gmail.com>, 
-	"akpm@linux-foundation.org" <akpm@linux-foundation.org>, 
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>, 
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>, "davem@davemloft.net" <davem@davemloft.net>, 
-	"clabbe@baylibre.com" <clabbe@baylibre.com>, "ardb@kernel.org" <ardb@kernel.org>, 
-	"ebiggers@google.com" <ebiggers@google.com>, "surenb@google.com" <surenb@google.com>, 
-	"Accardi, Kristen C" <kristen.c.accardi@intel.com>, "zanussi@kernel.org" <zanussi@kernel.org>, 
-	"viro@zeniv.linux.org.uk" <viro@zeniv.linux.org.uk>, "brauner@kernel.org" <brauner@kernel.org>, 
-	"jack@suse.cz" <jack@suse.cz>, "mcgrof@kernel.org" <mcgrof@kernel.org>, "kees@kernel.org" <kees@kernel.org>, 
-	"joel.granados@kernel.org" <joel.granados@kernel.org>, "bfoster@redhat.com" <bfoster@redhat.com>, 
-	"willy@infradead.org" <willy@infradead.org>, 
-	"linux-fsdevel@vger.kernel.org" <linux-fsdevel@vger.kernel.org>, 
-	"Feghali, Wajdi K" <wajdi.k.feghali@intel.com>, "Gopal, Vinodh" <vinodh.gopal@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: PAXPR04MB9642:EE_|AS8PR04MB8341:EE_
+X-MS-Office365-Filtering-Correlation-Id: a36edde6-8780-4cc2-08b4-08dcf38ebef6
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|366016|1800799024|376014|7416014|38350700014;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?BLR0iZzxPUA9xnQL/EGFMk+nfm/axBk9YDcE/wQA2ki2/MFsX2/s0prhNnD5?=
+ =?us-ascii?Q?wb215eYFMgmC/JLYHwju/S0TClEhSKD3kpNgb+sYTseSlt6G8bn83BzoSwIp?=
+ =?us-ascii?Q?N1svxMz35Mf50BojDDPP5lPv+f9v8Zcwo3sew9uLXfPQTK+pUX0fbLQ9Pc+k?=
+ =?us-ascii?Q?jvoAwRkwblcFzj3VvgChoyCpXmHgEmV6pLAcgtQH5Cp6XKwBFZ0BZBfvxuTx?=
+ =?us-ascii?Q?S6WgYDsr5O9uFq3ESTuIQwNdWxYWIWwHmo9hgQ8UHmA6lVc/tOIQvI4I4YIj?=
+ =?us-ascii?Q?IfaY7JQnYqnL6qeaQhShXhGDfa3eJSOIoDCah8gefEf+ueSQrvjl2xATbGMU?=
+ =?us-ascii?Q?jIXf/HIvaVIC3qjR03ZRcPUI+Nn9GDZ1T0YCwuFEKss4DghjGABTOjiiaP3L?=
+ =?us-ascii?Q?7C1WKet4BESFU1ERpJsgva6YPKswjW5xMU17UpZbhAsA9eezLM+uKf5fuBzJ?=
+ =?us-ascii?Q?zDWH981XjMmzY4Ii4qIlXiXsZGznpVn6eWo2LLiqBedN8O8oajP6ae3qk0jP?=
+ =?us-ascii?Q?yGS0/fzcvNV0IRR+rW2U//jsbyIuNtVXjo53vmsKRfEpz+mDbJRa61wCMRMg?=
+ =?us-ascii?Q?IxbSum0o+BmcVE6UALodEYcPQAS7uaWdVVJllfGgKJx3nl5AHiTlaHj5QU5m?=
+ =?us-ascii?Q?FLChkbVp6bU029VeDDzIHm+H7lGLTV4uMC/5cicV6V2wwaDXCRmcpLjLXhwO?=
+ =?us-ascii?Q?kW13O4CbrRnssd8QlSq8c2KsfHb6rw4moinVERAhHT2iTkGI7xJ+4tAd3Fek?=
+ =?us-ascii?Q?ES8G1issZswkaQwEwuIemrzAUks4l13BYpmVfr1nJSSmGt5+E2wpBOrbnCpX?=
+ =?us-ascii?Q?oYl7V0lFoj8BSYAAnlHOxCsJUeUE3Ez1FdJMBl/L0WH9r2ZWlRyEJTOwDAvW?=
+ =?us-ascii?Q?a+4CBsEHKeGrlR2Mlb15QmgbtHdtspvvHT/Xakdng/NEZXlsGaA21+wVBxFX?=
+ =?us-ascii?Q?pbTpNIYF4xxu1gSyKkx0DXt9hf+p/sR6fubIxBHE2pooFbyHlJ4Dv3IdPoVa?=
+ =?us-ascii?Q?GkPSSuagYNGiBT9Z9+oXe0vby8oqnUD+WnyoAfNYQwz0WXlx0EvpOBRUoqqQ?=
+ =?us-ascii?Q?q+ZAxtwdUvlV/SzeTJ0vs3XkL9GflSj6LvN7ezrND8D2GC3Z8ILFAJrreA+Z?=
+ =?us-ascii?Q?xwVnhARUEj4uXSHqMFALediyHD1/jKUUP1zlvvgigdUmvNJJTcvhlivR3stv?=
+ =?us-ascii?Q?hEC7+WVyvVMIPuyYOt6TCe78Su8XCqwCBhxk/BNBv3jMErqDKidpAB5OkB6e?=
+ =?us-ascii?Q?2rgx4htu3H5VMPmuXcqhAAXUJ9MsFun/RQOmYxj8TGhg2p+UOxZoicun1SSk?=
+ =?us-ascii?Q?HM3jxBJmsbyqwcavm4IijEcRGlXmViO1SqcupOQjvktdA2uLDeTX/JJ9CkkX?=
+ =?us-ascii?Q?1Ae5skk=3D?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:PAXPR04MB9642.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(366016)(1800799024)(376014)(7416014)(38350700014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?rMG1kjdK/wveCn+aQ5JgGsSlvBo2TPSK6QGUlH5nh6eQHQIGc4cMXLPKquJC?=
+ =?us-ascii?Q?rIE9Rz/rwgtH8thjDCUTddE3KETiE/jYHTdCxoO0GKwTI6kiwMOdK4EOKWO7?=
+ =?us-ascii?Q?jRyT3fqJGeAaE9ybJWbJf9asozGJSmoUGMbdQ/WvKI3byVIsWNYmsITNCCBE?=
+ =?us-ascii?Q?oCvGGssLzFtjdDzOKIZyfI26RXptPgAVpCZbXvJBlWJwLP7TECl0eOWP2ITN?=
+ =?us-ascii?Q?/fJjlBus8yqjVsj8VtvMOr5sB+DH2hg6mlvOWTPGD4b3mguHM5JMiIGnCQH2?=
+ =?us-ascii?Q?7bvMd1fZXxn3jIw18xcgLbR1+djkr0p5ZDKi9UPMOj1jCXONtJ+LDrGaZC7x?=
+ =?us-ascii?Q?Ki5s+pFdoI1+y0QzURkoE7bAbYVo7VxURRzIqIXOsyAKSYjCYOV54iFr+Z3A?=
+ =?us-ascii?Q?Uxe8wJIHSQVSInR8dA3RvMLLYs3Fo82Ejmre+gnTlnglZLwPjFF09VE9oBUa?=
+ =?us-ascii?Q?pgwiWIFmwPDBrCDF4PqzP/5K7f2TCj2bmM6eeYzmx+zCiak8m4I+OqfEQ8kP?=
+ =?us-ascii?Q?Y9t4JFDsFbEBKD2PeBZAC25YMmY0NMKvv/hmbo6ApQR8pPgt41VjpCWtj9Qd?=
+ =?us-ascii?Q?45vvKn1A3CLdPWfEsMX8z6xM3qdF6FKPCgRzDS7ZV6UIv2/UYc7tdtOuulxy?=
+ =?us-ascii?Q?eYSOE2ZPX3AHAOLXwAgJWEWlJBJQ1RTnbwFG7vR0W1ABrj3zxzz/La010h6b?=
+ =?us-ascii?Q?r6YVU7r0hqx5GbmuMu2PLFRL+gZpnMmBr0n9EytmGX8Rk/pml/dV3VKmywvY?=
+ =?us-ascii?Q?L8LFzn2ExPnCv5Zg7+LCJLFqMfOq3LQTIj9Ce1EgImwLGBgU6BHtjnS7mZX/?=
+ =?us-ascii?Q?teic8pbzJ963x/F9yWC1Et+uVQZtXaZBHRihBGgfc8Pkxi3FEKanefx02IKL?=
+ =?us-ascii?Q?URqd5O0FzvTuKEEqvlNguxkj8zSl6QvRaxN3OgVpsQJmSNZXJSOx+tnDGEP/?=
+ =?us-ascii?Q?73jVq7Wc4TgF5RWxCiR1rVZe6D6390AYMm8c0sbOnO4uYl8Q2Yg1ftP3p4s+?=
+ =?us-ascii?Q?xmqKr/bll9pLJM0qwDXZefUO429Fdjpvqn438SRq2rCdbnaO6ONZYKLkzNfq?=
+ =?us-ascii?Q?QaecWm2py+EHUDnAtLcDOpRBQVlM40OzgCjSdhrRdkIuZf9hjk1+jdXm5Fhc?=
+ =?us-ascii?Q?IVJoOJaEDWALbBLhynZpzSxN87fgwJbFmrqmk19NGgHkRbJtYQ2V81giY+Ni?=
+ =?us-ascii?Q?AQ5qxMSjjEjLu95gXJrYnh+o3V8B/2G0IKuuCv3rCJx3bjojsH0H3DK2eKS1?=
+ =?us-ascii?Q?dmHzsVFGxdxAAZk8xnOuzrG0XjfJwJGUwrpGjSYCW69AIX2C8FJiLaqBl6oi?=
+ =?us-ascii?Q?6s8eBhs+xY7vlNYBcwIkIDgAY+odxlUVPztRD0jWIwktdfBRM07afKL0A6tu?=
+ =?us-ascii?Q?lGnQnDAWeyJ1n63TZSJuBwYh/ju/+J9FqzujKJ2QntBEs/5720DqQyeXJSom?=
+ =?us-ascii?Q?ZvXFCdJ337I2Sjhsi62pYildUx0IOQTB5D4gd+ArsgwH7z+gTDnkdLQ2pGkw?=
+ =?us-ascii?Q?Q/d8nfFGBU6BLkHJ6WwNOV6FEI3zLcN8/6izUdXiQ0KU3Uh/kRot6dB2hK3T?=
+ =?us-ascii?Q?hGzXKJDZL258rRLSsZc/ZsWxOfUhUjtf/JRKbxlL?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a36edde6-8780-4cc2-08b4-08dcf38ebef6
+X-MS-Exchange-CrossTenant-AuthSource: PAXPR04MB9642.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 23 Oct 2024 18:15:59.6069
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: QG34cf1FBL/8iCm6oBf046aSSO3oOzJNjkqmHTwXhncoHlfCyH57ThrmBrYebFpjEFiukS037ad3iQ+Q6111MQ==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR04MB8341
 
-On Tue, Oct 22, 2024 at 7:53=E2=80=AFPM Sridhar, Kanchana P
-<kanchana.p.sridhar@intel.com> wrote:
+On Wed, Oct 23, 2024 at 12:21:12PM -0400, Laurentiu Mihalcea wrote:
+> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
 >
-> Hi Yosry,
+> Introduce the 'widgets' property, allowing the creation of widgets from
+> 4 template widgets: Microphone, Line, Headphone, and Speaker. Also
+> introduce the 'hp-det-gpios' property, which allows using headphone
+> detection using the specified GPIO.
 >
-> > -----Original Message-----
-> > From: Yosry Ahmed <yosryahmed@google.com>
-> > Sent: Tuesday, October 22, 2024 5:57 PM
-> > To: Sridhar, Kanchana P <kanchana.p.sridhar@intel.com>
-> > Cc: linux-kernel@vger.kernel.org; linux-mm@kvack.org;
-> > hannes@cmpxchg.org; nphamcs@gmail.com; chengming.zhou@linux.dev;
-> > usamaarif642@gmail.com; ryan.roberts@arm.com; Huang, Ying
-> > <ying.huang@intel.com>; 21cnbao@gmail.com; akpm@linux-foundation.org;
-> > linux-crypto@vger.kernel.org; herbert@gondor.apana.org.au;
-> > davem@davemloft.net; clabbe@baylibre.com; ardb@kernel.org;
-> > ebiggers@google.com; surenb@google.com; Accardi, Kristen C
-> > <kristen.c.accardi@intel.com>; zanussi@kernel.org; viro@zeniv.linux.org=
-.uk;
-> > brauner@kernel.org; jack@suse.cz; mcgrof@kernel.org; kees@kernel.org;
-> > joel.granados@kernel.org; bfoster@redhat.com; willy@infradead.org; linu=
-x-
-> > fsdevel@vger.kernel.org; Feghali, Wajdi K <wajdi.k.feghali@intel.com>; =
-Gopal,
-> > Vinodh <vinodh.gopal@intel.com>
-> > Subject: Re: [RFC PATCH v1 00/13] zswap IAA compress batching
-> >
-> > On Thu, Oct 17, 2024 at 11:41=E2=80=AFPM Kanchana P Sridhar
-> > <kanchana.p.sridhar@intel.com> wrote:
-> > >
-> > >
-> > > IAA Compression Batching:
-> > > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D
-> > >
-> > > This RFC patch-series introduces the use of the Intel Analytics Accel=
-erator
-> > > (IAA) for parallel compression of pages in a folio, and for batched r=
-eclaim
-> > > of hybrid any-order batches of folios in shrink_folio_list().
-> > >
-> > > The patch-series is organized as follows:
-> > >
-> > >  1) iaa_crypto driver enablers for batching: Relevant patches are tag=
-ged
-> > >     with "crypto:" in the subject:
-> > >
-> > >     a) async poll crypto_acomp interface without interrupts.
-> > >     b) crypto testmgr acomp poll support.
-> > >     c) Modifying the default sync_mode to "async" and disabling
-> > >        verify_compress by default, to facilitate users to run IAA eas=
-ily for
-> > >        comparison with software compressors.
-> > >     d) Changing the cpu-to-iaa mappings to more evenly balance cores =
-to IAA
-> > >        devices.
-> > >     e) Addition of a "global_wq" per IAA, which can be used as a glob=
-al
-> > >        resource for the socket. If the user configures 2WQs per IAA d=
-evice,
-> > >        the driver will distribute compress jobs from all cores on the
-> > >        socket to the "global_wqs" of all the IAA devices on that sock=
-et, in
-> > >        a round-robin manner. This can be used to improve compression
-> > >        throughput for workloads that see a lot of swapout activity.
-> > >
-> > >  2) Migrating zswap to use async poll in zswap_compress()/decompress(=
-).
-> > >  3) A centralized batch compression API that can be used by swap modu=
-les.
-> > >  4) IAA compress batching within large folio zswap stores.
-> > >  5) IAA compress batching of any-order hybrid folios in
-> > >     shrink_folio_list(). The newly added "sysctl vm.compress-batchsiz=
-e"
-> > >     parameter can be used to configure the number of folios in [1, 32=
-] to
-> > >     be reclaimed using compress batching.
-> >
-> > I am still digesting this series but I have some high level questions
-> > that I left on some patches. My intuition though is that we should
-> > drop (5) from the initial proposal as it's most controversial.
-> > Batching reclaim of unrelated folios through zswap *might* make sense,
-> > but it needs a broader conversation and it needs justification on its
-> > own merit, without the rest of the series.
+> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> ---
+>  .../devicetree/bindings/sound/audio-graph-card2.yaml     | 9 +++++++++
+>  1 file changed, 9 insertions(+)
 >
-> Thanks for these suggestions!  Sure, I can drop (5) from the initial patc=
-h-set.
-> Agree also, this needs a broader discussion.
->
-> I believe the 4K folios usemem30 data in this patchset does bring across
-> the batching reclaim benefits to provide justification on its own merit. =
-I added
-> the data on batching reclaim with kernel compilation as part of the 4K fo=
-lios
-> experiments in the IAA decompression batching patch-series [1].
-> Listing it here as well. I will make sure to add this data in subsequent =
-revs.
->
-> -------------------------------------------------------------------------=
--
->  Kernel compilation in tmpfs/allmodconfig, 2G max memory:
->
->  No large folios          mm-unstable-10-16-2024       shrink_folio_list(=
-)
->                                                        batching of folios
->  ------------------------------------------------------------------------=
---
->  zswap compressor         zstd       deflate-iaa       deflate-iaa
->  vm.compress-batchsize     n/a               n/a                32
->  vm.page-cluster             3                 3                 3
->  ------------------------------------------------------------------------=
---
->  real_sec               783.87            761.69            747.32
->  user_sec            15,750.07         15,716.69         15,728.39
->  sys_sec              6,522.32          5,725.28          5,399.44
->  Max_RSS_KB          1,872,640         1,870,848         1,874,432
->
->  zswpout            82,364,991        97,739,600       102,780,612
->  zswpin             21,303,393        27,684,166        29,016,252
->  pswpout                    13               222               213
->  pswpin                     12               209               202
->  pgmajfault         17,114,339        22,421,211        23,378,161
->  swap_ra             4,596,035         5,840,082         6,231,646
->  swap_ra_hit         2,903,249         3,682,444         3,940,420
->  ------------------------------------------------------------------------=
---
->
-> The performance improvements seen does depend on compression batching in
-> the swap modules (zswap). The implementation in patch 12 in the compress
-> batching series sets up this zswap compression pipeline, that takes an ar=
-ray of
-> folios and processes them in batches of 8 pages compressed in parallel in=
- hardware.
-> That being said, we do see latency improvements even with reclaim batchin=
-g
-> combined with zswap compress batching with zstd/lzo-rle/etc. I haven't do=
-ne a
-> lot of analysis of this, but I am guessing fewer calls from the swap laye=
-r
-> (swap_writepage()) into zswap could have something to do with this. If we=
- believe
-> that batching can be the right thing to do even for the software compress=
-ors,
-> I can gather batching data with zstd for v2.
+> diff --git a/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml b/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml
+> index f943f90d8b15..f0300a08f7fe 100644
+> --- a/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml
+> +++ b/Documentation/devicetree/bindings/sound/audio-graph-card2.yaml
+> @@ -37,6 +37,15 @@ properties:
+>    codec2codec:
+>      type: object
+>      description: Codec to Codec node
+> +  hp-det-gpios:
+> +    maxItems: 1
+> +  widgets:
+> +    description:
+> +      User specified audio sound widgets.
+> +      Each entry is a pair of strings, the first being the type of
+> +      widget ("Microphone", "Line", "Headphone", "Speaker"), the
+> +      second being the machine specific name for the widget.
+> +    $ref: /schemas/types.yaml#/definitions/non-unique-string-array
 
-Thanks for sharing the data. What I meant is, I think we should focus
-on supporting large folio compression batching for this series, and
-only present figures for this support to avoid confusion.
+Is it possible $ref: /schemas/sound/audio-graph.yaml to avoid duplicate
+these properties like audio-graph-card.yaml
 
-Once this lands, we can discuss support for batching the compression
-of different unrelated folios separately, as it spans areas beyond
-just zswap and will need broader discussion.
+Frank
+
+>
+>  required:
+>    - compatible
+> --
+> 2.34.1
+>
 
