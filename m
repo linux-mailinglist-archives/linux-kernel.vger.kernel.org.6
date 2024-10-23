@@ -1,88 +1,57 @@
-Return-Path: <linux-kernel+bounces-377352-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377353-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A55C49ABDAD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:12:40 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id EF6A99ABDB0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 07:13:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C63651C224FE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:12:39 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2AF1C1C22FB4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:13:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01AA8142624;
-	Wed, 23 Oct 2024 05:12:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85A9B143C7E;
+	Wed, 23 Oct 2024 05:13:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HKrTQYGx"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="BOk4yNCl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1233E7482;
-	Wed, 23 Oct 2024 05:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C993F7482;
+	Wed, 23 Oct 2024 05:13:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729660350; cv=none; b=AJHoAAACkQfhHSBbVqXYkzXKV2GRp0yNmwwuRDooF6q65FTf8keWNCs06MJ+7gLT7koAAEtdvwBaHCeGQQulAz+Dhzg/wr7rArq7k8wQo3PVKgX/SNwz1TSSxnnklv2HRUqD6QZPc2trjwHrWXjmxQBoL6kHxQgQYiLlb0w3etA=
+	t=1729660419; cv=none; b=IrJxXWlVT9qVJ4k9csMpbYr1tIA9t8wFNFAg2H7Egj/69nBYb02ocWDCD1jMB7BqlI6KMEHCSWznJcbIq39Q6tUJD2D4lQUXtjYNpTFHmZlIJgubiDtUr0Bl51WFr29jTUl9xjpYILLtYom2H5nVADlTP3BiOo+HVSCjbW03taI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729660350; c=relaxed/simple;
-	bh=q1SzjfyDUqXTFJ8ANykxGho3lrGhh+OK/KZR6BD3ocg=;
+	s=arc-20240116; t=1729660419; c=relaxed/simple;
+	bh=m+rPki2tptmN7S7B5MXCF9gSzNRRmnntfBRrd6Hgdfo=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TPyxCX0oO1NXFpDH2TnbLw6J8uU17GaSZufx1DOAndAGQJROeG8gAIO+wtPCyFG/zxnEcTQzVfUsPlVw1HI1TEm6a9FI8dSRw8R7lerz5yh0Z7aIHcClvK6UytXFXKiaQu5xfIlIVwuyZs1lx4aoXFubrMwoMxntT7hTC8Lro/0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HKrTQYGx; arc=none smtp.client-ip=192.198.163.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729660348; x=1761196348;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=q1SzjfyDUqXTFJ8ANykxGho3lrGhh+OK/KZR6BD3ocg=;
-  b=HKrTQYGxdopPZ4Ocdy6SH2BRBb9NIiP513eolWYvdxvp4oT98g0a8xey
-   CXY6sbz1uLmWOZQyiUWs4rPP2+qR5j9FGVL6QnF4KKREC84iL6cofUyY3
-   /ihRokxdz5kTH3y4+6hVhoTMTSEoVHZLu+Kc58txzLSSWA9hd+8kVZ4AW
-   AdAjz22Eu1vzHhBQ80LPVa9d/7cDgojMyAfEJP0isXAkQsntqqwVq0H1z
-   t/7CQMu81pVsdfCxAFPavIXoUEQHBqQFf2JF3eofaQgzLGw9uaSkQ6NGa
-   QwqtEnEyk9boROHKutfeAoDk7VBn/rlmcBxpgpkaGFWMrOmPxdtOjeDMm
-   g==;
-X-CSE-ConnectionGUID: D11pabiTQ/y8Of5vjqfgBA==
-X-CSE-MsgGUID: QEZS/ZSZT/OHk6zFIRc/YA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="39806559"
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="39806559"
-Received: from orviesa010.jf.intel.com ([10.64.159.150])
-  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 22:12:25 -0700
-X-CSE-ConnectionGUID: tJRGyc9lR+O3cFVIgZC7PA==
-X-CSE-MsgGUID: 710md+vERMGX5DWxINm0kA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
-   d="scan'208";a="80020677"
-Received: from jwolwowi-mobl.amr.corp.intel.com (HELO desk) ([10.125.147.24])
-  by orviesa010-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 22:12:24 -0700
-Date: Tue, 22 Oct 2024 22:12:10 -0700
-From: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-To: Mario Limonciello <mario.limonciello@amd.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
-	daniel.sneddon@linux.intel.com, tony.luck@intel.com,
-	linux-kernel@vger.kernel.org, linux-pm@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Ricardo Neri <ricardo.neri-calderon@linux.intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Brice Goglin <brice.goglin@gmail.com>,
-	Perry Yuan <Perry.Yuan@amd.com>,
-	Dapeng Mi <dapeng1.mi@linux.intel.com>
-Subject: Re: [PATCH v4 02/10] x86/cpu/topology: Add CPU type to struct
- cpuinfo_topology
-Message-ID: <20241023051210.fjpuyxhzzima4iu7@desk>
-References: <20240930-add-cpu-type-v4-0-104892b7ab5f@linux.intel.com>
- <20240930-add-cpu-type-v4-2-104892b7ab5f@linux.intel.com>
- <1a96323d-f6e9-4a59-97c4-8cab149a7b31@amd.com>
- <20241018211139.wvvfn7az3gp35lwe@desk>
- <c54a76d9-414d-45c2-9bb6-4250a31cdd5f@amd.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=J2bOcT1xBXUSnahWQhyuXAyrv4x1i+BTw2w6WSnOzd1X8N5mUJrn9lbw9AmXVL5yBkM3ZRKN6g1Bga4F8g3r0YH2GZy06bhqKFT75+2jaoKcj2rcpo3IbOKTtRH7Ul1EtIuHBHoM/5akE3Fm79D8pUZexyheffDqlo36N0KTbHw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=BOk4yNCl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 121A5C4CEC6;
+	Wed, 23 Oct 2024 05:13:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729660419;
+	bh=m+rPki2tptmN7S7B5MXCF9gSzNRRmnntfBRrd6Hgdfo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=BOk4yNClyJ3XLpfFa2iOs16JDykqYJZqrLVqoN0faTrZg+xuH1SJecsMl3B9dPYP9
+	 rwH0sayzLp3sO+7sUh79SUoKXkNglLyncBoOQ6lBSyx2KqjH372V8Ltszk9nkcaHb1
+	 4P0cZmC2/0yC32YCudCniiI+DAS340Yymh/slD3E=
+Date: Wed, 23 Oct 2024 07:13:37 +0200
+From: Greg KH <gregkh@linuxfoundation.org>
+To: Danilo Krummrich <dakr@kernel.org>
+Cc: rafael@kernel.org, bhelgaas@google.com, ojeda@kernel.org,
+	alex.gaynor@gmail.com, boqun.feng@gmail.com, gary@garyguo.net,
+	bjorn3_gh@protonmail.com, benno.lossin@proton.me, tmgross@umich.edu,
+	a.hindborg@samsung.com, aliceryhl@google.com, airlied@gmail.com,
+	fujita.tomonori@gmail.com, lina@asahilina.net, pstanner@redhat.com,
+	ajanulgu@redhat.com, lyude@redhat.com, robh@kernel.org,
+	daniel.almeida@collabora.com, saravanak@google.com,
+	rust-for-linux@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, devicetree@vger.kernel.org
+Subject: Re: [PATCH v3 00/16] Device / Driver PCI / Platform Rust abstractions
+Message-ID: <2024102324-giver-scavenger-a295@gregkh>
+References: <20241022213221.2383-1-dakr@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -91,138 +60,38 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <c54a76d9-414d-45c2-9bb6-4250a31cdd5f@amd.com>
+In-Reply-To: <20241022213221.2383-1-dakr@kernel.org>
 
-On Tue, Oct 22, 2024 at 09:42:37AM -0500, Mario Limonciello wrote:
-> On 10/18/2024 16:11, Pawan Gupta wrote:
-> > On Fri, Oct 18, 2024 at 11:28:31AM -0500, Mario Limonciello wrote:
-> > > On 9/30/2024 09:47, Pawan Gupta wrote:
-> > > > Sometimes it is required to take actions based on if a CPU is a performance
-> > > > or efficiency core. As an example, intel_pstate driver uses the Intel
-> > > > core-type to determine CPU scaling. Also, some CPU vulnerabilities only
-> > > > affect a specific CPU type, like RFDS only affects Intel Atom. Hybrid
-> > > > systems that have variants P+E, P-only(Core) and E-only(Atom), it is not
-> > > > straightforward to identify which variant is affected by a type specific
-> > > > vulnerability.
-> > > > 
-> > > > Such processors do have CPUID field that can uniquely identify them. Like,
-> > > > P+E, P-only and E-only enumerates CPUID.1A.CORE_TYPE identification, while
-> > > > P+E additionally enumerates CPUID.7.HYBRID. Based on this information, it
-> > > > is possible for boot CPU to identify if a system has mixed CPU types.
-> > > > 
-> > > > Add a new field hw_cpu_type to struct cpuinfo_topology that stores the
-> > > > hardware specific CPU type. This saves the overhead of IPIs to get the CPU
-> > > > type of a different CPU. CPU type is populated early in the boot process,
-> > > > before vulnerabilities are enumerated.
-> > > > 
-> > > > Signed-off-by: Pawan Gupta <pawan.kumar.gupta@linux.intel.com>
-> > > > ---
-> > > >    arch/x86/include/asm/cpu.h            |  6 ++++++
-> > > >    arch/x86/include/asm/processor.h      | 11 +++++++++++
-> > > >    arch/x86/include/asm/topology.h       |  8 ++++++++
-> > > >    arch/x86/kernel/cpu/debugfs.c         |  1 +
-> > > >    arch/x86/kernel/cpu/intel.c           |  5 +++++
-> > > >    arch/x86/kernel/cpu/topology_common.c | 11 +++++++++++
-> > > >    6 files changed, 42 insertions(+)
-> > > > 
-> > > > diff --git a/arch/x86/include/asm/cpu.h b/arch/x86/include/asm/cpu.h
-> > > > index aa30fd8cad7f..2244dd86066a 100644
-> > > > --- a/arch/x86/include/asm/cpu.h
-> > > > +++ b/arch/x86/include/asm/cpu.h
-> > > > @@ -32,6 +32,7 @@ extern bool handle_user_split_lock(struct pt_regs *regs, long error_code);
-> > > >    extern bool handle_guest_split_lock(unsigned long ip);
-> > > >    extern void handle_bus_lock(struct pt_regs *regs);
-> > > >    u8 get_this_hybrid_cpu_type(void);
-> > > > +u32 intel_native_model_id(struct cpuinfo_x86 *c);
-> > > >    #else
-> > > >    static inline void __init sld_setup(struct cpuinfo_x86 *c) {}
-> > > >    static inline bool handle_user_split_lock(struct pt_regs *regs, long error_code)
-> > > > @@ -50,6 +51,11 @@ static inline u8 get_this_hybrid_cpu_type(void)
-> > > >    {
-> > > >    	return 0;
-> > > >    }
-> > > > +
-> > > > +static u32 intel_native_model_id(struct cpuinfo_x86 *c)
-> > > > +{
-> > > > +	return 0;
-> > > > +}
-> > > >    #endif
-> > > >    #ifdef CONFIG_IA32_FEAT_CTL
-> > > >    void init_ia32_feat_ctl(struct cpuinfo_x86 *c);
-> > > > diff --git a/arch/x86/include/asm/processor.h b/arch/x86/include/asm/processor.h
-> > > > index 4a686f0e5dbf..61c8336bc99b 100644
-> > > > --- a/arch/x86/include/asm/processor.h
-> > > > +++ b/arch/x86/include/asm/processor.h
-> > > > @@ -105,6 +105,17 @@ struct cpuinfo_topology {
-> > > >    	// Cache level topology IDs
-> > > >    	u32			llc_id;
-> > > >    	u32			l2c_id;
-> > > > +
-> > > > +	// Hardware defined CPU-type
-> > > > +	union {
-> > > > +		u32		hw_cpu_type;
-> > > > +		struct {
-> > > > +			/* CPUID.1A.EAX[23-0] */
-> > > > +			u32	intel_core_native_model_id:24;
-> > > > +			/* CPUID.1A.EAX[31-24] */
-> > > > +			u32	intel_core_type:8;
-> > > > +		};
-> > > > +	};
-> > > >    };
-> > > >    struct cpuinfo_x86 {
-> > > > diff --git a/arch/x86/include/asm/topology.h b/arch/x86/include/asm/topology.h
-> > > > index aef70336d624..faf7cb7f7d7e 100644
-> > > > --- a/arch/x86/include/asm/topology.h
-> > > > +++ b/arch/x86/include/asm/topology.h
-> > > > @@ -114,6 +114,12 @@ enum x86_topology_domains {
-> > > >    	TOPO_MAX_DOMAIN,
-> > > >    };
-> > > > +enum x86_topology_hw_cpu_type {
-> > > > +	TOPO_HW_CPU_TYPE_UNKNOWN	= 0,
-> > > > +	TOPO_HW_CPU_TYPE_INTEL_ATOM	= 0x20,
-> > > > +	TOPO_HW_CPU_TYPE_INTEL_CORE	= 0x40,
-> > > > +};
-> > > 
-> > > This isn't exactly generic.  Unless you have a strong need to know "Atom"
-> > 
-> > The goal was not to have generic cpu_type here, but the actual CPU type
-> > that hardware enumerates. I was asked to prepend "hw_" to cpu_type to make
-> > is clear that this is hardware defined, and to leave scope for generic
-> > cpu_type, if we add those in future.
-> > 
-> > > instead of "Efficient" or "Core" instead of "Performance" I think it would
-> > > be better to do this as:
-> > > 
-> > > enum x86_topology_hw_core_type {
-> > > 	TOPO_HW_CORE_TYPE_UNKNOWN	= 0,
-> > > 	TOPO_HW_CORE_TYPE_PERFORMANT,
-> > > 	TOPO_HW_CORE_TYPE_EFFICIENT,
-> > > };
-> > > 
-> > > Then you can do the mapping of 0x20 = Efficient and 0x40 = performant in the
-> > > Intel topology lookup function.
-> > 
-> > I can add a lookup function, but I wanted to understand the use case of
-> > generic cpu_type. If we always have to lookup and map the cpu_type, then
-> > why not have the actual cpu_type in the first place?
-> > 
-> > One case where generic cpu_type can be useful is when we expose them to
-> > userspace, which I think is inevitable. Overall I am fine with adding generic
-> > cpu type. It may also make sense to have separate accessors for generic and
-> > and hardware defined cpu_type, and the generic ones when we actually have a
-> > use case. Thoughts?
-> > 
-> > > After you land the series we can do something similar to move AMD code
-> > > around and map it out to the right generic mapping.
+On Tue, Oct 22, 2024 at 11:31:37PM +0200, Danilo Krummrich wrote:
+> This patch series implements the necessary Rust abstractions to implement
+> device drivers in Rust.
 > 
-> I took your patch and made the modifications that I thought made sense for a
-> generic type while adding the matching AMD code and sent it out (you're on
-> CC).  Can you take a look and see what you think?  Boris already provided
-> some feedback that I'm going to spin it again.
-> I think if we can align on that one we can land that patch and you can
-> rebase the rest of the series on it.
+> This includes some basic generalizations for driver registration, handling of ID
+> tables, MMIO operations and device resource handling.
+> 
+> Those generalizations are used to implement device driver support for two
+> busses, the PCI and platfrom bus (with OF IDs) in order to provide some evidence
+> that the generalizations work as intended.
+> 
+> The patch series also includes two patches adding two driver samples, one PCI
+> driver and one platform driver.
+> 
+> The PCI bits are motivated by the Nova driver project [1], but are used by at
+> least one more OOT driver (rnvme [2]).
+> 
+> The platform bits, besides adding some more evidence to the base abstractions,
+> are required by a few more OOT drivers aiming at going upstream, i.e. rvkms [3],
+> cpufreq-dt [4], asahi [5] and the i2c work from Fabien [6].
+> 
+> The patches of this series can also be [7], [8] and [9].
 
-I left some feedback on that series. Overall it looks good. For Intel's use
-case it needs to add accessor for hardware defined cpu_type. This is needed
-for cpu-type matching in affected processor list.
+Nice!
+
+Thanks for redoing this, at first glance it's much better.  It will be a
+few days before I can dive into this, It's conference season and the
+travel is rough, so be patient but I will get to this...
+
+thanks,
+
+greg k-h
 
