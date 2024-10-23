@@ -1,225 +1,209 @@
-Return-Path: <linux-kernel+bounces-377922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377924-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A84E99AC894
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:08:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CAB99AC89B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F5002830A8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:08:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9E5ABB23592
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D67031AAE08;
-	Wed, 23 Oct 2024 11:07:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 367301AB50C;
+	Wed, 23 Oct 2024 11:07:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="d/ifaD7m"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="NentQEad";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="f6EO7KOs"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4BD301531F9;
-	Wed, 23 Oct 2024 11:07:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EBC31AA794;
+	Wed, 23 Oct 2024 11:07:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729681633; cv=none; b=ZoS+01LyuD4o7411ICSpRI/44QUiIjvSJQZjfx82cqPxfXjBIhEca2gWhNI1aT/TFvaY6KDqRqkcJWCo8sXpsNCLstcmivt8xxpXgsaHSjys8R4hPJPl+IvzD4hA3KMXEx0QKXVJSD/cmXpqoEk+bcLADKH9lmUPY4zxWjHXUtE=
+	t=1729681654; cv=none; b=ND1s/F1otqjfcAO/YCRcKOQLLUV0qNzG8c3tfutTu5trY6Hw/NOQ07+pbiNlxbKEgLwGMUnQ9KpftTsdnnmia5Wmnz9v/SphlX7UHxAugRvZ1IWQzlTsDXayddQZY1XCUnTLn5jOuPqigsNjHrENtAEZxuwo+sSzSdDsb/GrVzo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729681633; c=relaxed/simple;
-	bh=8e9uBwaZxAnoAdX6FU+kL2IHiXRh0zZ7Wcs7TopuVBE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ws4SgWvCza9DHn6nP9ldhbpDU3hkzAoCrPWJV0i2RCJ11KihrsCkthKJhLp7WDJMXRQbLYODi1fqCceZtijJItIGTXvFJVzb8Dm6ZQZtUmkC3rxydhW4b0MthPYxUHGaNzJSI+L9WYEJKmftb/yQ+6RG7TkZGjEaip//6fjlb+k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=d/ifaD7m; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729681629;
-	bh=8e9uBwaZxAnoAdX6FU+kL2IHiXRh0zZ7Wcs7TopuVBE=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=d/ifaD7mUx7X3IC0sUiN+TzLsGOnIissTUtkkov9oiM6M80qbQb8Wdw8uNu3VN3ya
-	 KSaLoOPBAbdkn80Dl1v7+TffChDjMZx6lY5eaxKp901LQSgDikS1pYR3sy1fJXFQWH
-	 Kdw4xCBaTDj0BQQpc3VKsfi/taKkGbi6NACPAR2qSFP5Bdpgv+0D1YK8jNUl8p+Dj0
-	 GgT9RVuEeQv0eTz3bfIICC1eAJTL9qOKKVgvcdpcZ7/6Q2jm38yinigR0f2/mVj41E
-	 +Lh3v5zBBfy3oq9/wLBTQ0OlmfWeY+NEHlWI+HQe/RUP77qCjKPkVTicwrWG78AOL1
-	 5G2OsIYIKQNcQ==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id B624217E1576;
-	Wed, 23 Oct 2024 13:07:08 +0200 (CEST)
-Message-ID: <c4b5e78e-5337-464c-9dca-9d4e5353cc46@collabora.com>
-Date: Wed, 23 Oct 2024 13:07:08 +0200
+	s=arc-20240116; t=1729681654; c=relaxed/simple;
+	bh=ZCs1fw9409QEi3f89nGi4CPcpH5nuzA0D3A8PqjG4KM=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=mhwrwF51Xn3pBPQFbx4sX6EeTNh9RgTs8xtodqQjsGBEzd03L/0H2RvryBFa41z/AUt211qcUW2aFcM2JGNOKiDyp4nBR6CXHHJTcjoJQrfyOMvdKNFFEkNpJzFL8S5BvqIY41x3SyT0yOcRQdcn3PcY5Yjhj3qUecfmYtS/T9Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=NentQEad; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=f6EO7KOs; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Wed, 23 Oct 2024 11:07:27 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729681649;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/HthCsXsFcjXMcp9quteAwOAzrZwq88g/YRAokMF+RU=;
+	b=NentQEadFqENSPSHEpKl8VFYQ5OaDUYcEjsgRXxmitMHItxgCVl+HANDCixyY07PwP8fDH
+	bmkfFkd1x8jI5PTOEHawhlN2HtK+F5+vUsG4Maeq3h7qqTjSlU7vE8etWdfa29Lonr9WVy
+	QOnkJfZ7PkhaYEOPwJZjoTfGUl1LKpT2+7O/1er6LuXiE2ndjIFHA5v/3BvDLi3l+JKMCx
+	wsKpcZJvKb+6Tx/7elY0eey9B+mJSQ9dwzjY2mIMVIyBwspohEKXLuLGO8dB/CiaJH9u9l
+	Wd448qm3IniYDtFixf8dwIZVJDR/A/x81Ki7Pp8vSbCHpJTVoJLUannDGxTseQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729681649;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=/HthCsXsFcjXMcp9quteAwOAzrZwq88g/YRAokMF+RU=;
+	b=f6EO7KOsiLuVQT/My7N/kMD18eA+a7iULqX9REjqTERnGkElHRQeKSkmvYMu+1xzjSWKgZ
+	xSYrNfXkEZ4B5yAQ==
+From: "tip-bot2 for Ashish Kalra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: x86/urgent] x86/sev: Ensure that RMP table fixups are reserved
+Cc: Thomas Lendacky <thomas.lendacky@amd.com>,
+ Ashish Kalra <ashish.kalra@amd.com>, "Borislav Petkov (AMD)" <bp@alien8.de>,
+  <stable@kernel.org>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20240815221630.131133-1-Ashish.Kalra@amd.com>
+References: <20240815221630.131133-1-Ashish.Kalra@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 1/2] arm64: dts: mediatek: mt8395-genio-1200-evk: add
- support for TCPC port
-To: Macpaul Lin <macpaul.lin@mediatek.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Alexandre Mergnat <amergnat@baylibre.com>
-Cc: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
- Macpaul Lin <macpaul@gmail.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com,
- linux-usb@vger.kernel.org, Chris-qj chen <chris-qj.chen@mediatek.com>,
- Fabien Parent <fparent@baylibre.com>,
- Yow-Shin Liou <yow-shin.liou@mediatek.com>,
- Simon Sun <simon.sun@yunjingtech.com>
-References: <20241023080912.15349-1-macpaul.lin@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241023080912.15349-1-macpaul.lin@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172968164814.1442.8035313578482871705.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
-Il 23/10/24 10:09, Macpaul Lin ha scritto:
-> From: Fabien Parent <fparent@baylibre.com>
-> 
-> Enable USB Type-C support on MediaTek MT8395 Genio 1200 EVK by adding
-> configuration for TCPC Port, USB-C connector, and related settings.
-> 
-> Configure dual role switch capability, set up PD (Power Delivery) profiles,
-> and establish endpoints for SSUSB (SuperSpeed USB).
-> 
-> Update pinctrl configurations for U3 P0 VBus default pins and set dr_mode
-> to "otg" for OTG (On-The-Go) mode operation.
-> 
-> Signed-off-by: Fabien Parent <fparent@baylibre.com>
-> Signed-off-by: Yow-Shin Liou <yow-shin.liou@mediatek.com>
-> Signed-off-by: Simon Sun <simon.sun@yunjingtech.com>
-> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
-> ---
->   .../dts/mediatek/mt8395-genio-1200-evk.dts    | 54 +++++++++++++++++++
->   1 file changed, 54 insertions(+)
-> 
-> Changes for v2:
->   - Drop the no need '1/2' DT Schema update patch in the 1st version.
->   - Fix intent for 'ports' node, it should under the 'connector' node.
->   - Correct the index for 'port@0' and 'port@1' node.
-> 
-> Changes for v3:
->   - Correct the order between new added nodes.
-> 
-> diff --git a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-> index 5f16fb820580..83d520226302 100644
-> --- a/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-> +++ b/arch/arm64/boot/dts/mediatek/mt8395-genio-1200-evk.dts
-> @@ -335,6 +335,43 @@ mt6360_ldo7: ldo7 {
->   				regulator-always-on;
->   			};
->   		};
-> +
-> +		tcpc {
-> +			compatible = "mediatek,mt6360-tcpc";
-> +			interrupts-extended = <&pio 17 IRQ_TYPE_LEVEL_LOW>;
-> +			interrupt-names = "PD_IRQB";
-> +
-> +			connector {
-> +				compatible = "usb-c-connector";
-> +				label = "USB-C";
-> +				data-role = "dual";
+The following commit has been merged into the x86/urgent branch of tip:
 
-op-sink-microwatt goes here
+Commit-ID:     88a921aa3c6b006160d6a46a231b8b32227e8196
+Gitweb:        https://git.kernel.org/tip/88a921aa3c6b006160d6a46a231b8b32227e8196
+Author:        Ashish Kalra <ashish.kalra@amd.com>
+AuthorDate:    Thu, 15 Aug 2024 22:16:30 
+Committer:     Borislav Petkov (AMD) <bp@alien8.de>
+CommitterDate: Wed, 23 Oct 2024 12:34:06 +02:00
 
-> +				power-role = "dual";
-> +				try-power-role = "sink";
-> +				source-pdos = <PDO_FIXED(5000, 1000, \
-> +					       PDO_FIXED_DUAL_ROLE | \
-> +					       PDO_FIXED_DATA_SWAP)>;
+x86/sev: Ensure that RMP table fixups are reserved
 
-Please fix the indentation (and also you don't need the escaping)
+The BIOS reserves RMP table memory via e820 reservations. This can still lead
+to RMP page faults during kexec if the host tries to access memory within the
+same 2MB region.
 
-				source-pdos = <PDO_FIXED(5000, 1000,
-							 PDO_FIXED_DUAL_ROLE |
-							 PDO_FIXED_DATA_SWAP)>;
+Commit
 
-> +				sink-pdos = <PDO_FIXED(5000, 2000, \
-> +					     PDO_FIXED_DUAL_ROLE | \
-> +					     PDO_FIXED_DATA_SWAP)>;
-> +				op-sink-microwatt = <10000000>;
-> +
-> +				ports {
-> +					#address-cells = <1>;
-> +					#size-cells = <0>;
-> +
-> +					port@0 {
-> +						reg = <0>;
+  400fea4b9651 ("x86/sev: Add callback to apply RMP table fixups for kexec"
 
-Just to make sure that this is ok: are you sure that this port supports
-SuperSpeed (physical connector too) and that it's not limited to HighSpeed?
+adjusts the e820 reservations for the RMP table so that the entire 2MB range
+at the start/end of the RMP table is marked reserved.
 
-I have seen Rob's comment stating that ssusb_ep goes to port@1, but I think
-that his comment came after reading "ss" in "ssusb": while the controller
-does surely support SS, if the port does not, this should still go to port@0.
+The e820 reservations are then passed to firmware via SNP_INIT where they get
+marked HV-Fixed.
 
-P.S.: I didn't check the schematics - just please make sure it's correct, and
-       that this actually works.
+The RMP table fixups are done after the e820 ranges have been added to
+memblock, allowing the fixup ranges to still be allocated and used by the
+system.
 
-> +					};
-> +
-> +					port@1 {
-> +						reg = <1>;
-> +						mt6360_ssusb_ep: endpoint {
-> +							remote-endpoint = <&ssusb_ep>;
-> +						};
-> +					};
-> +				};
-> +			};
-> +		};
->   	};
->   };
->   
-> @@ -770,6 +807,13 @@ pins-reset {
->   		};
->   	};
->   
-> +	u3_p0_vbus: u3-p0-vbus-default-pins {
-> +		pins-cmd-dat {
+The problem is that this memory range is now marked reserved in the e820
+tables and during SNP initialization these reserved ranges are marked as
+HV-Fixed.  This means that the pages cannot be used by an SNP guest, only by
+the hypervisor.
 
-That's not a command nor data pin.
+However, the memory management subsystem does not make this distinction and
+can allocate one of those pages to an SNP guest. This will ultimately result
+in RMPUPDATE failures associated with the guest, causing it to fail to start
+or terminate when accessing the HV-Fixed page.
 
-pins-vbus {
+The issue is captured below with memblock=debug:
 
-> +			pinmux = <PINMUX_GPIO63__FUNC_VBUSVALID>;
-> +			input-enable;
-> +		};
-> +	};
-> +
->   	uart0_pins: uart0-pins {
->   		pins {
->   			pinmux = <PINMUX_GPIO98__FUNC_UTXD0>,
-> @@ -900,8 +944,18 @@ &ufsphy {
->   };
->   
->   &ssusb0 {
-> +	dr_mode = "otg";
-> +	pinctrl-names = "default";
-> +	pinctrl-0 = <&u3_p0_vbus>;
+  [    0.000000] SEV-SNP: *** DEBUG: snp_probe_rmptable_info:352 - rmp_base=0x280d4800000, rmp_end=0x28357efffff
+  ...
+  [    0.000000] BIOS-provided physical RAM map:
+  ...
+  [    0.000000] BIOS-e820: [mem 0x00000280d4800000-0x0000028357efffff] reserved
+  [    0.000000] BIOS-e820: [mem 0x0000028357f00000-0x0000028357ffffff] usable
+  ...
+  ...
+  [    0.183593] memblock add: [0x0000028357f00000-0x0000028357ffffff] e820__memblock_setup+0x74/0xb0
+  ...
+  [    0.203179] MEMBLOCK configuration:
+  [    0.207057]  memory size = 0x0000027d0d194000 reserved size = 0x0000000009ed2c00
+  [    0.215299]  memory.cnt  = 0xb
+  ...
+  [    0.311192]  memory[0x9]     [0x0000028357f00000-0x0000028357ffffff], 0x0000000000100000 bytes flags: 0x0
+  ...
+  ...
+  [    0.419110] SEV-SNP: Reserving start/end of RMP table on a 2MB boundary [0x0000028357e00000]
+  [    0.428514] e820: update [mem 0x28357e00000-0x28357ffffff] usable ==> reserved
+  [    0.428517] e820: update [mem 0x28357e00000-0x28357ffffff] usable ==> reserved
+  [    0.428520] e820: update [mem 0x28357e00000-0x28357ffffff] usable ==> reserved
+  ...
+  ...
+  [    5.604051] MEMBLOCK configuration:
+  [    5.607922]  memory size = 0x0000027d0d194000 reserved size = 0x0000000011faae02
+  [    5.616163]  memory.cnt  = 0xe
+  ...
+  [    5.754525]  memory[0xc]     [0x0000028357f00000-0x0000028357ffffff], 0x0000000000100000 bytes on node 0 flags: 0x0
+  ...
+  ...
+  [   10.080295] Early memory node ranges[   10.168065]
+  ...
+  node   0: [mem 0x0000028357f00000-0x0000028357ffffff]
+  ...
+  ...
+  [ 8149.348948] SEV-SNP: RMPUPDATE failed for PFN 28357f7c, pg_level: 1, ret: 2
 
-Is this port usb host by default? If it is:
+As shown above, the memblock allocations show 1MB after the end of the RMP as
+available for allocation, which is what the RMP table fixups have reserved.
+This memory range subsequently gets allocated as SNP guest memory, resulting
+in an RMPUPDATE failure.
 
-	role-switch-default-mode = "host";
+This can potentially be fixed by not reserving the memory range in the e820
+table, but that causes kexec failures when using the KEXEC_FILE_LOAD syscall.
 
-Cheers,
-Angelo
+The solution is to use memblock_reserve() to mark the memory reserved for the
+system, ensuring that it cannot be allocated to an SNP guest.
 
-> +	usb-role-switch;
->   	vusb33-supply = <&mt6359_vusb_ldo_reg>;
->   	status = "okay";
-> +
-> +	port {
-> +		ssusb_ep: endpoint {
-> +			remote-endpoint = <&mt6360_ssusb_ep>;
-> +		};
-> +	};
->   };
->   
->   &ssusb2 {
+Since HV-Fixed memory is still readable/writable by the host, this only ends
+up being a problem if the memory in this range requires a page state change,
+which generally will only happen when allocating memory in this range to be
+used for running SNP guests, which is now possible with the SNP hypervisor
+support in kernel 6.11.
 
+Backporter note:
+
+Fixes tag points to a 6.9 change but as the last paragraph above explains,
+this whole thing can happen after 6.11 received SNP HV support, therefore
+backporting to 6.9 is not really necessary.
+
+  [ bp: Massage commit message. ]
+
+Fixes: 400fea4b9651 ("x86/sev: Add callback to apply RMP table fixups for kexec")
+Suggested-by: Thomas Lendacky <thomas.lendacky@amd.com>
+Signed-off-by: Ashish Kalra <ashish.kalra@amd.com>
+Signed-off-by: Borislav Petkov (AMD) <bp@alien8.de>
+Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+Cc: <stable@kernel.org> # 6.11, see Backporter note above.
+Link: https://lore.kernel.org/r/20240815221630.131133-1-Ashish.Kalra@amd.com
+---
+ arch/x86/virt/svm/sev.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/x86/virt/svm/sev.c b/arch/x86/virt/svm/sev.c
+index 0ce1776..9a6a943 100644
+--- a/arch/x86/virt/svm/sev.c
++++ b/arch/x86/virt/svm/sev.c
+@@ -173,6 +173,8 @@ static void __init __snp_fixup_e820_tables(u64 pa)
+ 		e820__range_update(pa, PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
+ 		e820__range_update_table(e820_table_kexec, pa, PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
+ 		e820__range_update_table(e820_table_firmware, pa, PMD_SIZE, E820_TYPE_RAM, E820_TYPE_RESERVED);
++		if (!memblock_is_region_reserved(pa, PMD_SIZE))
++			memblock_reserve(pa, PMD_SIZE);
+ 	}
+ }
+ 
 
