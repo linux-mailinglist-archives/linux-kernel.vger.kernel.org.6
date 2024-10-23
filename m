@@ -1,171 +1,120 @@
-Return-Path: <linux-kernel+bounces-377282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B0E9F9ABC7C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:54:21 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC689ABC7F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:56:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3F018B21DC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:54:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33546283CE0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:56:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C84E136E3B;
-	Wed, 23 Oct 2024 03:54:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id ECC1F13B7BE;
+	Wed, 23 Oct 2024 03:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="NmedK4xn"
-Received: from mail-pl1-f171.google.com (mail-pl1-f171.google.com [209.85.214.171])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="bmNzdM//"
+Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 736D04B5AE;
-	Wed, 23 Oct 2024 03:54:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.171
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 86BC7132139
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:55:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729655651; cv=none; b=AFf6TAwNq6vIE92DmM7atuQXY856k2sNq/jHWz5pN3vCdZfMxeohU4KnnkrIYFSAncLx4YnXdzEhAVXtZ3WJocG2MTIMgUc1zXoyt0N+HaoPFxtVED+B7L2rEdZDOqTGyyDHR3SZdV9Oq0/Fn/s9t9OxV2gx/eKTCRycWzqZcwU=
+	t=1729655754; cv=none; b=uqTlVirVFjSpi+npLnYAZfW+SPtd/maQgacG4L0EP7HAS63YwO4oCUP+45DsFZdlp6DRqD7dpGTGHn25HXGrjYnpY417HYFlPtNw0LzTCp0mkEaNJrknoINvragjEkGNIg+/2/EeUUJWoyEMvhKxxd8q0A6ZoR559TUMu+i5Muk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729655651; c=relaxed/simple;
-	bh=wIYPFd1ECFqYcBpUUBUDNuBZLsQHxVKxItc1oZ/BPq0=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=BQpm64UeWzbJS5jdZw3jEwYDrU4IbGoSMzsHmShrQwZLp9vYtvwoj7YkJzBDrEtLTu5lx0MhBOiN1JiLvuHRH57DCI+4alYiP0Tu7IaUPhG0h86oPjz9KcWJ9lKyx1mwLJ0KsTYhvm9KSLqYJtf7NaxefPIFyuoq5//B1SoMcBs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=NmedK4xn; arc=none smtp.client-ip=209.85.214.171
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f171.google.com with SMTP id d9443c01a7336-207115e3056so53486175ad.2;
-        Tue, 22 Oct 2024 20:54:10 -0700 (PDT)
+	s=arc-20240116; t=1729655754; c=relaxed/simple;
+	bh=rQK7gWxJRbkk3/XjsQg40ZMmcbV1ZzdgRRVvnvpPn74=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=ibP4tI5/FT/6Qf+xQBNZsMSwWN4gpL4n8ergXHRMGxC69NduJmMDl5Ph4tVFDP2k0iOiebLksJ+Z0Fy/iL9ohsAyn0K+fcAlpfFEK4cttmSWWs08zPLcgxNG+DtNhZacJlQ1KAAX9YcGpvZ0/fUK4hmbbS35/HulXuKz4RDx3BI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=bmNzdM//; arc=none smtp.client-ip=209.85.128.201
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--amitsd.bounces.google.com
+Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3c638cc27so111662307b3.0
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 20:55:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729655650; x=1730260450; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=47KfYWZzbJlPbzsig/V/+47dXkCR0XBbErKjie4MZZc=;
-        b=NmedK4xnZdw4F8ywKhIy8oVHWE0pZsLepTcMbRKIeWsBErkuRsQUBYhOQe8TXMUPIV
-         RF8qA66VSjALzciBzasozoGY8kiWXMMtnEXIAHD/fcyERIxpqdKWbOMHJ53731223rIW
-         PDk37AviXtW+wI/5Ss7qx6kPivaVaUuoeM8k14HvO7KYSO1YeVGa2WDSYiUkxeavFDjG
-         3mNL46z6n9/0/xVOOrtb2J1gwchclreOgK+05dc/B65Wtxs63c5Bs1WsWyZhQn0yKWx8
-         fexq3T/4uD/P4zgqHdxHaejX+7Ymxw65HlBN9XeR2BvOVbcUiSiVczxzWrO3995koTw0
-         dU+Q==
+        d=google.com; s=20230601; t=1729655750; x=1730260550; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=GmI7Soq3roDCUAnbE0COUFZpGZsP+EnUANl8dSnaRwU=;
+        b=bmNzdM//XPpZ6jkGh5C9gEXwgFsP239CdsnQCejuW37rVPeYxb0tzztn8q0YzbbHiF
+         ezl/zOz66elITlOEEmeb07y8Iqhv/suUIdZATGuFoMP4erPJt3C16jq2IJcLBiHwPt6j
+         tWEjp/tofZFw1EhXFXVolXf8jgLO/4nzjDsFLOU+9tgPqazmyyxddFA2dVpUYuCz02Uj
+         KmmO8mElDQMdYltIk0O+ZOoMgcm1B+XF9rdEIweWvEruQCWGmAvVPO7nhoZHwNzj01Yc
+         Tgc0SYbUvSrrOIIWxgzH8azWnMDVplrb6Wdr+iSl8TDJ8oQwuwmH4m/bmlkzoDG4+mE4
+         sXsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729655650; x=1730260450;
-        h=content-transfer-encoding:in-reply-to:mime-version:user-agent:date
-         :message-id:from:cc:references:to:subject:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=47KfYWZzbJlPbzsig/V/+47dXkCR0XBbErKjie4MZZc=;
-        b=HZmKlPNnV9rcUIqal5J7ScvHuwQ1Ga+5ngQCsx68pZRyJdzfwnU0fBmj7NGAqpWwWj
-         Y/m/4shndWVaby5ePXBXGJcrnKzO74sIDJ8+NvMLX3gxTexfu2yxdRM+QxsKnRQwIQsb
-         YU+Yd+b7ZWz2Ir8FANL+GLqrpUKneD4/u3MX7sHqVWqzJpjuPjT2h6UdeeJ2NC3J2f6H
-         c/Ea1eQUgGzklM8RfMiW0NbOdB+FNjmSXWbWvXmuHyI97ePsVyKc+i5pVKpBNzvKgrjy
-         mHrov5TXZ4CA3TyA3MO8MnnkUBtDfcQb6xkDmXCf81uAdCsibIA8yPgMxp8TH4jkhg3E
-         IvtA==
-X-Forwarded-Encrypted: i=1; AJvYcCUBMSJQNxQwP34WttKl+OvONphgAniUUSAiPk4yAkTiV6ZGT0aUua8gkg+g4M9tH5URp0BZKn1uqqMpUBo=@vger.kernel.org, AJvYcCX5s0Q97TJPmy1SeB+hcyizuFMAuLENdJEixf8o1iZXXF/bh/fOPF/Zf/wlJGpDlNYvQa4ew1o4sRhkkMYh6yMckg2y@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt5FweIEjvvC2qlFnK4c6ecJ29j8+LXCHMa/si9ilFSul4EygK
-	k4+4ndsXA2J173rc7l292552Z55cmlVbsYdGulpskUpHwehOsrLATqrxCg==
-X-Google-Smtp-Source: AGHT+IGUdfCfM3QYCu6suXxsF586R6Gdy9CD3PBp1aBTBnfp+rRc4cVRKvMmcFpQ4p0Hgi9KZL3jFQ==
-X-Received: by 2002:a17:902:c951:b0:20c:d04a:a53f with SMTP id d9443c01a7336-20fab2dbbf9mr19307115ad.58.1729655649555;
-        Tue, 22 Oct 2024 20:54:09 -0700 (PDT)
-Received: from [10.1.1.24] (125-238-248-82-fibre.sparkbb.co.nz. [125.238.248.82])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7eee6408sm49390995ad.37.2024.10.22.20.54.01
-        (version=TLS1_2 cipher=ECDHE-ECDSA-AES128-GCM-SHA256 bits=128/128);
-        Tue, 22 Oct 2024 20:54:09 -0700 (PDT)
-Subject: Re: [PATCH RFC 1/2] m68k: Add tracirqs
-To: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>,
- Geert Uytterhoeven <geert@linux-m68k.org>
-References: <20241021-add-m68k-tracing-support-v1-0-0883d704525b@yoseli.org>
- <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
-Cc: linux-m68k@lists.linux-m68k.org, linux-kernel@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org, rostedt@goodmis.org
-From: Michael Schmitz <schmitzmic@gmail.com>
-Message-ID: <4ab85330-5a50-bde1-f014-99a8e7cb28cc@gmail.com>
-Date: Wed, 23 Oct 2024 16:53:58 +1300
-User-Agent: Mozilla/5.0 (X11; Linux ppc; rv:45.0) Gecko/20100101
- Icedove/45.4.0
+        d=1e100.net; s=20230601; t=1729655750; x=1730260550;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=GmI7Soq3roDCUAnbE0COUFZpGZsP+EnUANl8dSnaRwU=;
+        b=Nbh0yaVjirbwyRWCeaMMRESTeO6GJyx5SSWPKBwzg1sYiexRx1LbYQVRcNuaDSLS5x
+         tKHn02R3jpCSCEQLbeWLcODTb5C8Ib10BNGoEF2Zts3wAftHjDzLXuJ4DCVEjNwe7hLp
+         w2yymNsD/AKAnD5Piz6igTEGRmgIePiSswOcU0E7CEC/R6ossx69/R3CZVcOCW+c1LK5
+         NjEAjNtcmVRBBesOIVtPAxeY7CoVJx7wlyFD+PoIFj88NWWQNBuQTpkpBYy4TXIMauGb
+         bPEV+cETMy8SzFxrfjbcG6OTi5ZjpbDg9OU5ezHGVLymfsW//iBUJsHXtP8UCfr2EsCd
+         V0qw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCGyRKzQegIDy8R4TcwQHRz+UeSHKTt6n8TGtc8sTCs6UIzC9mlv/Rsj284pxDEXtGiKqH4cZOEDUhJtg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxCJ0jp4ng6K4Cw/2d3i8or3vzkPQ2xzLfDt9GLDz04n5pqXzQl
+	bn4oEkdgzsob8N+QAaFIKV+3m1T8OkScICMJwMp6jhgA7nu19AHWjr0wictimB2sKFpGQKBUvtp
+	5cA==
+X-Google-Smtp-Source: AGHT+IFwM7FsOs33Bm6JoIK39+oXfBykLbhJ1raXYq//FeA3l6SBgfdQIZAUAQ8v3qbIAYaoTToB5BzkchM=
+X-Received: from amitsd-gti.c.googlers.com ([fda3:e722:ac3:cc00:20:ed76:c0a8:827])
+ (user=amitsd job=sendgmr) by 2002:a05:690c:7488:b0:6e3:1023:3645 with SMTP id
+ 00721157ae682-6e7f0fd1f99mr182307b3.8.1729655750550; Tue, 22 Oct 2024
+ 20:55:50 -0700 (PDT)
+Date: Tue, 22 Oct 2024 20:55:47 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-In-Reply-To: <20241021-add-m68k-tracing-support-v1-1-0883d704525b@yoseli.org>
-Content-Type: text/plain; charset=utf-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Mime-Version: 1.0
+X-B4-Tracking: v=1; b=H4sIAMNzGGcC/x3MTQqAIBBA4avIrBvQoT+6SrSwnGoWpWhEIN09a
+ fkt3suQOAonGFSGyLck8WeBqRQsuz03RnHFQJpqo4kwOHQXXnIwhuhDQtP0XavnlVpLULIQeZX nX47T+36ptcVUYgAAAA==
+X-Mailer: b4 0.13.0
+Message-ID: <20241022-pd-dt-time-props-v1-0-fea96f51b302@google.com>
+Subject: [PATCH 0/2] Add support for time DT property in TCPM
+From: Amit Sunil Dhamne <amitsd@google.com>
+To: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Heikki Krogerus <heikki.krogerus@linux.intel.com>, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-usb@vger.kernel.org, Badhri Jagan Sridharan <badhri@google.com>, 
+	RD Babiera <rdbabiera@google.com>, Kyle Tso <kyletso@google.com>, 
+	Amit Sunil Dhamne <amitsd@google.com>
+Content-Type: text/plain; charset="utf-8"
 
-Jean-Michel,
+USB PD specification defines a bunch of timers that can have a range of
+acceptable values instead of specific values. These values have to be
+tuned based on the platform. However, TCPM currently sets them to a
+default value without providing a mechanism to set platform specific
+values.
 
-thanks for your patches!
+This patchset adds new DT properties per timer to allow users to define
+platform specific values.
 
-Am 21.10.2024 um 22:44 schrieb Jean-Michel Hautbois:
-> The TRACE_IRQFLAGS_SUPPORT requires the architecture to call
-> trace_hardirqs_off() when interrupts are disabled and
-> trace_hardirqs_on() when they are enabled.
-> Add those calls to do_IRQ function.
+The RFC patchset for this was already reviewed and no changes have been
+made since. The link is:
+https://lore.kernel.org/linux-usb/20240925031135.1101048-1-amitsd@google.com/
+Because of this, I have retained the Reviewed-by tags. If you  think
+they should be cleared since this is a more formal [PATCH], please
+let me know and I'll do so.
 
-You will also have to add these calls to the three sites in 
-arch/m68k/coldfire/head.S where interrupts are enabled or disabled.
+Signed-off-by: Amit Sunil Dhamne <amitsd@google.com>
+---
+Amit Sunil Dhamne (2):
+      dt-bindings: connector: Add properties to define time values
+      usb: typec: tcpm: Add support for parsing time dt properties
 
-Here:
-> ENTRY(system_call)
->         SAVE_ALL_SYS
->         move    #0x2000,%sr             /* enable intrs again */
->         GET_CURRENT(%d2)
+ .../bindings/connector/usb-connector.yaml          | 35 ++++++++++-
+ drivers/usb/typec/tcpm/tcpm.c                      | 73 +++++++++++++++++-----
+ 2 files changed, 91 insertions(+), 17 deletions(-)
+---
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+change-id: 20241022-pd-dt-time-props-158760bf26a2
 
-and here:
-> ret_from_exception:
->         move    #0x2700,%sr             /* disable intrs */
->         btst    #5,%sp@(PT_OFF_SR)      /* check if returning to kernel */
->         jeq     Luser_return            /* if so, skip resched, signals */
+Best regards,
+-- 
+Amit Sunil Dhamne <amitsd@google.com>
 
-and here:
-> Lwork_to_do:
->         movel   %a0@(TINFO_FLAGS),%d1   /* get thread_info->flags */
->         move    #0x2000,%sr             /* enable intrs again */
->         btst    #TIF_NEED_RESCHED,%d1
->         jne     reschedule
-
-There's one similar site in arch/m68k/kernel/head.S (ret_from_exception) 
-where interrupts are enabled that would need a similar change, if you 
-want to enable this for all m68k.
-
-Registers %d0-%d5 and %a0-%a2 are saved on the stack at this point and 
-can be clobbered if need be.
-
-Cheers,
-
-	Michael
-
-
->
-> Signed-off-by: Jean-Michel Hautbois <jeanmichel.hautbois@yoseli.org>
-> ---
->  arch/m68k/Kconfig      | 1 +
->  arch/m68k/kernel/irq.c | 2 ++
->  2 files changed, 3 insertions(+)
->
-> diff --git a/arch/m68k/Kconfig b/arch/m68k/Kconfig
-> index cc26df907bfe3c8143a931d259eceabb16af7411..ab3375475721fa63418c40d4ba6ac76679ebc77d 100644
-> --- a/arch/m68k/Kconfig
-> +++ b/arch/m68k/Kconfig
-> @@ -39,6 +39,7 @@ config M68K
->  	select OLD_SIGSUSPEND3
->  	select UACCESS_MEMCPY if !MMU
->  	select ZONE_DMA
-> +	select TRACE_IRQFLAGS_SUPPORT
->
->  config CPU_BIG_ENDIAN
->  	def_bool y
-> diff --git a/arch/m68k/kernel/irq.c b/arch/m68k/kernel/irq.c
-> index 9ab4f550342e5de11c528f55781432675ffd66bf..74cf60ebbc4bca51f3caa4046dbd2bdb02355711 100644
-> --- a/arch/m68k/kernel/irq.c
-> +++ b/arch/m68k/kernel/irq.c
-> @@ -21,9 +21,11 @@ asmlinkage void do_IRQ(int irq, struct pt_regs *regs)
->  {
->  	struct pt_regs *oldregs = set_irq_regs(regs);
->
-> +	trace_hardirqs_off();
->  	irq_enter();
->  	generic_handle_irq(irq);
->  	irq_exit();
-> +	trace_hardirqs_on();
->
->  	set_irq_regs(oldregs);
->  }
->
 
