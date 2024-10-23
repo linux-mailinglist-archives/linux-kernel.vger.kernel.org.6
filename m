@@ -1,190 +1,237 @@
-Return-Path: <linux-kernel+bounces-377445-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377446-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B854A9ABEF7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:38:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B9C69ABEFC
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:39:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0EF51C21277
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:38:52 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BEA52B22CBB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:39:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5FB8114F115;
-	Wed, 23 Oct 2024 06:38:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0CCE14AD0E;
+	Wed, 23 Oct 2024 06:38:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="CvET/Cqe"
-Received: from EUR05-VI1-obe.outbound.protection.outlook.com (mail-vi1eur05on2068.outbound.protection.outlook.com [40.107.21.68])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F+5xXC0D"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B36C914A609;
-	Wed, 23 Oct 2024 06:38:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.21.68
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665495; cv=fail; b=kbDmCPHoI8add30/ooGDYJVPjGc/Dif2R9P3xopgPNw4j0N9gwY0Sg+AVQR+DYuPM3OHtOUSx9/S1igcWNggtrxZtWqsbjDHRYKHnB9dHbiwDZokXfENcA/L7wZO5pR6ufm9+03TVboxryOupZRPRlfFmt/QF5WbLyDeB96+2+g=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665495; c=relaxed/simple;
-	bh=lOm918QLHMoCYL5xdMkBluZRdyVzyCqWB9i4yatX92U=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=JWIjwU9TzuzPlbKnRxMu31+1PP7WnGH0jYOos2qbE+hJDRd2tfPMdmDm6KoD4p3yQdN1uqH8O36c8J6ar+CylxxLkyAIo15QHAdyHwMBy4ZS4TTrQ6joN4sGMoC4CYLtFKX06hcd+HqmEb8tMvV2iZ8Er8sThGFac8+iFSb6Pvw=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=CvET/Cqe; arc=fail smtp.client-ip=40.107.21.68
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=bRMIGU9xb+dNUmSbNHYEL9180kDFWkQG+53bs2vUimWRIIygwQPXjtz0XcHnPFFz8uHv0ggz9tbq6IrQYuxlQw9/2NZYR9tHqjSCue34QTvhbg5c/5D8oIFXZp1GrSbiwszmxilqh9zPktiArhBzLLB+A59elRcVLlEK/mRlc6lV6wykdbfKyQ/pmAD1ovCTk/Ox6knKBF/8Vj9hyebZsunTPR2DKH6GGnK+GpSsMGR3KpKT4OiJfZWPRyBK739fN2ixJ5qtic/V42YsxbpTp410Nod34GHu1UTdCbmujDQQ6mEjNwb+fL0l3mCIm2XxOon/7AgTHSqwVO8xIzQ4uQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=lOm918QLHMoCYL5xdMkBluZRdyVzyCqWB9i4yatX92U=;
- b=dR1gw0Eoe5aPsK3B99vxVEGLfAShzEbZA/ehbctO4vdCAdlLzNf8ujgfQUhNPLzU4aQTxSJLwjJjKIdV+2JPDvlFO3JsqhjRwNo4c6ygmqWR/N2I6oPsjO7FpSMNyrsvKelzD6jYtidYi4tAnzMqa+AMqO6j3WsHRby9qXnTPqPxtn+tuDLUo5BAA5UY5oI7+xCNGYiytMr7UJok5qRCTGlnTNQ6RPj3pcyGScliBhw7jh6SJj7WqSQSLG33gjd6Fepcj871a+moh9YPTI1YQPoL14TwTdKm+rkda/N9PrkE7ZVXq1+Z2tQNccDmgX5+WSv0dD9TZbMs7lxDDehzxw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
- header.d=nxp.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=lOm918QLHMoCYL5xdMkBluZRdyVzyCqWB9i4yatX92U=;
- b=CvET/CqeHSp3hveYyEu4vRKlCeFRijjRQpso94fnURQy0k+u6pYJCvX8uJkvv09/ItFYizdWdkMJKAoUwXFCfLQHaRjSjH+MQFJHBd5x4142ttNcz4cmAo3uj1U1fSYyO1WaaBoL69UCmAcvQog6YnQewdi5kBWsrQMNxdKtSzDhNkgv7sUx9BcrNMY5MT7q5iJpYJMcrcNhg1g+OZCuKPE95RL0cqBVUxW6MD1g+/kaSwDkjIapjlatW4WozIoXN9n6ZuE/yuPYrg27BfsGzEwV3C5fCilVMwmZ67UAm2JGvDcgrt/iYipBHf41rMr43nE3JCZ5xVyBLWZh4qOLvA==
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com (2603:10a6:20b:42c::17)
- by AM9PR04MB7489.eurprd04.prod.outlook.com (2603:10a6:20b:281::15) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Wed, 23 Oct
- 2024 06:38:10 +0000
-Received: from AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684]) by AS8PR04MB8849.eurprd04.prod.outlook.com
- ([fe80::d8e2:1fd7:2395:b684%7]) with mapi id 15.20.8093.014; Wed, 23 Oct 2024
- 06:38:10 +0000
-From: Claudiu Manoil <claudiu.manoil@nxp.com>
-To: Wei Fang <wei.fang@nxp.com>, "davem@davemloft.net" <davem@davemloft.net>,
-	"edumazet@google.com" <edumazet@google.com>, "kuba@kernel.org"
-	<kuba@kernel.org>, "pabeni@redhat.com" <pabeni@redhat.com>, "robh@kernel.org"
-	<robh@kernel.org>, "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
-	"conor+dt@kernel.org" <conor+dt@kernel.org>, Vladimir Oltean
-	<vladimir.oltean@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>, Frank Li
-	<frank.li@nxp.com>, "christophe.leroy@csgroup.eu"
-	<christophe.leroy@csgroup.eu>, "linux@armlinux.org.uk"
-	<linux@armlinux.org.uk>, "bhelgaas@google.com" <bhelgaas@google.com>,
-	"horms@kernel.org" <horms@kernel.org>
-CC: "imx@lists.linux.dev" <imx@lists.linux.dev>, "netdev@vger.kernel.org"
-	<netdev@vger.kernel.org>, "devicetree@vger.kernel.org"
-	<devicetree@vger.kernel.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-pci@vger.kernel.org"
-	<linux-pci@vger.kernel.org>, "alexander.stein@ew.tq-group.com"
-	<alexander.stein@ew.tq-group.com>
-Subject: RE: [PATCH v4 net-next 06/13] net: enetc: build enetc_pf_common.c as
- a separate module
-Thread-Topic: [PATCH v4 net-next 06/13] net: enetc: build enetc_pf_common.c as
- a separate module
-Thread-Index: AQHbJEjD4d7XV+dQNEmGlpwr3OE4rLKT4rsg
-Date: Wed, 23 Oct 2024 06:38:09 +0000
-Message-ID:
- <AS8PR04MB88491C33CF940ED44BF685FE964D2@AS8PR04MB8849.eurprd04.prod.outlook.com>
-References: <20241022055223.382277-1-wei.fang@nxp.com>
- <20241022055223.382277-7-wei.fang@nxp.com>
-In-Reply-To: <20241022055223.382277-7-wei.fang@nxp.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nxp.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: AS8PR04MB8849:EE_|AM9PR04MB7489:EE_
-x-ms-office365-filtering-correlation-id: 5a58a69a-4ca4-4583-149b-08dcf32d42dc
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam:
- BCL:0;ARA:13230040|7416014|1800799024|366016|376014|921020|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?0U8RbiAJ4RmbtCscbNQEi726bNIM/bZy2gIpPepGzgDmNO8QFu8Ca9Cl/YDY?=
- =?us-ascii?Q?JQLDIZiPDQ8WUwaXdZ8jD/ttH3BrJp8a/hFy/RHUCcW3055WcJu+WPI8gWai?=
- =?us-ascii?Q?AXeeP7T+s2DwB5At3utetPfuDQ9c9zDdyWf2A5tnG0cyxxGScBTceYEZcMGA?=
- =?us-ascii?Q?pdKJW4RakNxXzuu6s4+fgJbeX4WeWc3lfByF1dDVpCvT4dFthvtGfWoE6cc2?=
- =?us-ascii?Q?ghboArJ1W8+KFG+xzB0MrlWoNPr3udgFvAjh/FV7cgC1MbRvVvSIHm44vwZ+?=
- =?us-ascii?Q?PNxdP1WuxT091R63q1U/2j6qIvX/tquwbAQSbHVi3I3O9Af2OoL4+LHsonzO?=
- =?us-ascii?Q?iu13UslcLxzcUShzWXgUQYwlZra0jQRBxNHfsjEohiXi8oapL0mHmaUeSe5D?=
- =?us-ascii?Q?e69kMJcPSREzldK5C+GC2JZMxPkK+MqaKDtS8kKSvMyJwwnOCUYSKTwRddCc?=
- =?us-ascii?Q?D09df07ZeLDH7Dd4304nd9oZXMNLtUZobrJRpovTXFpg5XvWJ8T4nRENfNxC?=
- =?us-ascii?Q?RHMUWeKWgzmswfCoQ/0hsrb2+Wzq1y+vjWJsWA1W6vYhzL62VmlW5XclouVh?=
- =?us-ascii?Q?KFD6sYn3EZLanYYUH1hMZUWjCE/utV7ycni7cUvedFAaeLnqLoqM4ni8x0Om?=
- =?us-ascii?Q?GqY37+I+qUQDUwYgIJH2rZOE+IMJ3wwmQ8/Tjq5nI3Ltl1l8AW+6+nJhQ0ub?=
- =?us-ascii?Q?7dU0mvW3r0brk3fbc86dKNReeio1Eg8NgR5rNZGg8L9Jeop5L0gEFjBPDYzg?=
- =?us-ascii?Q?h2u1VHJwp+y7+bQq7LGqkWFTcEzYS4aRilGa3fM4JpXzLafXKyeStHyN2l72?=
- =?us-ascii?Q?JsFQnUElNEiH/CNrdFO43CrLHAzfESv8VnqS/NDaCcYZ1xEeTiSq+vSrCjb/?=
- =?us-ascii?Q?zCZ7ZOFaijRL+nwEuX5Qea8aj/WgiB1amuD/ICTWf2lCqdkZ708glbZABrOd?=
- =?us-ascii?Q?/10o0/t+2qXG2TquUKtsC5GjEXtlFNpg8JM3KQQRXxocJ6kzddGzVckAW8eD?=
- =?us-ascii?Q?g3U3OuW5oB7UNzV0EpoUaXz32/FovQwCcu8Drct0x0yw4GnHYWJ7+JXJ9mlS?=
- =?us-ascii?Q?N+V2XjBKdBbLLgRc2zxWTmRdhuCg+JktYYzODdhg38QPYjSc5ZGNLbCTnT5T?=
- =?us-ascii?Q?LHJTmqAIXupKmwwZt60lvTMK/HrnnWFNi4hD6flpvI3sPBdwxGmy8bAlxVwV?=
- =?us-ascii?Q?bkGlSH8ZRlHaryD7R6U2W7VHE+aW26mHM+MkiytuAoDBDgeCWZldklW7XBS4?=
- =?us-ascii?Q?kz4QYS8jcKFVgI7y2ei5D0Sk6cQhMzsmkuYEeDzN31giXelU1bQgxwqC8Y6S?=
- =?us-ascii?Q?7x1rBpZZ0J/IUM2lMIoCDgAtOAwdW0841nhgeDf4hd9BNDoerrkLlw9FoNdM?=
- =?us-ascii?Q?msoKzHv+waVujc0Bmo1wMyKD4mba?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8849.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(1800799024)(366016)(376014)(921020)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?rZ6TEpx+FlQaoB+xB+C/DXynKMBFAYXNWuRhYPQvpw14cTyFccb7cIKXvF4E?=
- =?us-ascii?Q?/lYLlWqIrbLnNs6yhQ188HaIzCScJ83IfMZMA55REZRoA++7HLLC3qpOOG0j?=
- =?us-ascii?Q?964dSDaPEGpA7mSy+gPD6WFPUaFf5RbTc3f71CLFxcJ/iMe5keMDV/0+351v?=
- =?us-ascii?Q?vcdf3YGyMK+XOtpgthoIvs1+ZIeHo4VoemStdLAyTF4k7rOfFAnpVOUkM7E9?=
- =?us-ascii?Q?1R9/YWs9Pm1W1NGh8ypmMunu8WwUPkXOrxGwXSIs/xWraz9vJfQhx1plicNu?=
- =?us-ascii?Q?JfrTnhY0osWpdyFdUDn6+nUPHLSF9Cs31DubH4fnuXeKLnDSmcJFzJNc+UfB?=
- =?us-ascii?Q?x+RtAL3/1/6ztYzKkyxMLiIW4nXOb9D1z819DrQhQrGmWTMrAUKNIvyKipNF?=
- =?us-ascii?Q?6D+4Xt2LbjVHJq+DuwLhJ4QIig2rlNzwjR0eDngENG4Bp+JjK9W9c8npPVDY?=
- =?us-ascii?Q?bOEGAxT1S4yIF2UjTRxQokGHe+JUtcIuzOFFHON7xkgX1+hwtSCzWP4ngrRx?=
- =?us-ascii?Q?GIIYQx5Dumki0JtOlDMpJQNq/PKbAt7gOMZOQVqd4uRQqhwkssNwmUmPv2pF?=
- =?us-ascii?Q?5GjBFBeEaO1da7NFd0lEcBXbinAipCE7oQx62GZeIlNTpe10J6lAwOU6vQU2?=
- =?us-ascii?Q?jupIJ1IpeAC+Tk48tF9htcOute0j9OXAQtps2nGP1tmVSLtvd0eoEbAJQM08?=
- =?us-ascii?Q?M940j0b9suWTDzE0uWDX4ZRzDUmIpTi0lIjmyp2JWGbfxN+GrbW6VEyTZmQO?=
- =?us-ascii?Q?Zd+WsNOuqdCkFBoF09zgSKMzrhlc4WB4xyVBTURFYHn9VFeMmqbLHS4jrmNF?=
- =?us-ascii?Q?4XkxT1mAHSKGV8s9Vyzg4YVPr8bXRADY2UJIZbd6dQiK2Sn7UFM/huIARkfQ?=
- =?us-ascii?Q?Yt5vmYjuUnFgHUxCvObXxcNcZvg/2huQ+WLs1WaVLfNHMdhHNDm9cx/I+9bf?=
- =?us-ascii?Q?H0dDF4ZLr6r/eomOH0ye8lsmOoNZROkCDv44vw+F2qsztrWXaK9BHvuPZGmo?=
- =?us-ascii?Q?Pe6iMrlcw4s7ODWCc6s9J3IZWlq1rpgAYUwj6dwVYai3nRzl5uczuxZoYZqz?=
- =?us-ascii?Q?qXskzgJbJpDLWoRQaH8EyZEZMEEf1qqqd4UQ6DDWhFhhzt90XgH+sCB2uX/1?=
- =?us-ascii?Q?CpTJOU1ZMDg1N6ZjCVFme778Br3zoyx6ZNyLfxTOvnCqRss0ktMkTd6fafuq?=
- =?us-ascii?Q?KU0Owr1qe/kCCwt8E0RARxmCr5AA2Xe3VWaJjrB8ELl3HkShEk0R85bzF9NI?=
- =?us-ascii?Q?yuSPT8DocjFbr/3BqMMj9H+UjMZBx+VjHTFXgp923/8Du6/9L+tQnF/a5gXJ?=
- =?us-ascii?Q?OtMk23i0H4AubyLeT7v2KB0xq2G61u1b5FEDp/hhXsCehTDo2Veqo9PnZ6Nh?=
- =?us-ascii?Q?N6ZJ2EaUtWuOL4ZM+mkFM7EwLygPp5VdTIlPiIOZXEWnWVKTYevwiDGeSyrE?=
- =?us-ascii?Q?QYcMeWHoHCHxkw2RV1saRB2VAcJ+DD6dz6Di8h/SPBtAYeDFWv5Zc304WHtH?=
- =?us-ascii?Q?xgJbIs5BPZUzoMQKFtXjX70nkdhaUeia6HUFx29rIh7UnO6j4BeSsm5zYouf?=
- =?us-ascii?Q?sQ/s19BtJ+Bm3uZOufZiv4+Zw5vTPuWQ0RpL+vsX?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 10A0114A4E9;
+	Wed, 23 Oct 2024 06:38:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729665513; cv=none; b=rm64pT5KLwWfmp8QYo0+/tf9Jwst6gIxwDU3CucXage6YSb9uf0E4Cz11DugC4yq/6gZlAyA/84734WIoYfFOPj0O0ejQqNs11VgLpk5jWfju6NxJV847It4sD5CF1Lf1VTXPRlXaSlhjTgFzE6gN+4dmotJyaT3++v5hji4vro=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729665513; c=relaxed/simple;
+	bh=GcLjJLl4bdrbNEueEEx5BAkDjYYGI3kimT6+iC9naD8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=GSFw297csPaDYOx7XpXyL5ucWKRTCOJJOY0QlbnBZChvfoeAcbGsomC7ya4o3c26+Wt2qwOASHWWiHqNgQSv9Rmr4B4Tx5PzeibTGM7HCl/AF/SJxZKjB3euFizbQnHdKlsLKnuBWK9NklaX/IBj6JccZtZM5sb3AR3+13JQk1g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F+5xXC0D; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96F10C4CEC6;
+	Wed, 23 Oct 2024 06:38:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729665512;
+	bh=GcLjJLl4bdrbNEueEEx5BAkDjYYGI3kimT6+iC9naD8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=F+5xXC0DTsSiKe5Qyyvp+1SHkcKEUk837rs9yH5REGtFZlLj0CtWrcVXXPD/QPxZZ
+	 tb3Vogy29cEh82hPzaFouH+eUxzFn34avQkqIKf5bAnQi9JGSqt1PFTNFZ55QoCWmt
+	 x49ELNvGETUxpKxO9ZXZ4IbIn8GsO+REVVDwbf5GYAytQdvIR7uU8POfaqSUsZfM1C
+	 NH8QUr3XmU4ODcBQtax3eSWVrrF4DEF/ZFgRFb57i1zOzxoTPxzasic7BSj2smWGkF
+	 kFFqgmMNooGALHHUuMjed4mJvWE0alZ9xAmWuG6MWGhSERlQnuZInbYNNbt0NHFXSx
+	 miFuetex0tGLQ==
+Message-ID: <b42da7f0-2034-467b-ab17-fb13ef7800c4@kernel.org>
+Date: Wed, 23 Oct 2024 08:38:25 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: nxp.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8849.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 5a58a69a-4ca4-4583-149b-08dcf32d42dc
-X-MS-Exchange-CrossTenant-originalarrivaltime: 23 Oct 2024 06:38:10.0096
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 14tw1mlUIRr8bC3bkOv5V3QLFWr9qViGaqrN/WZSkCXWFPgGAaYjjHR+I/8JjqXiQrLwhTnBaxF/T7vAh0IEaw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AM9PR04MB7489
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH 2/6] dt-bindings: net: wireless: ath12k: describe WSI
+ property for QCN9274
+To: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>, ath12k@lists.infradead.org
+Cc: linux-wireless@vger.kernel.org, Kalle Valo <kvalo@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Jeff Johnson <jjohnson@kernel.org>,
+ Bjorn Andersson <andersson@kernel.org>,
+ Konrad Dybcio <konradybcio@kernel.org>, devicetree@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org
+References: <20241023060352.605019-1-quic_rajkbhag@quicinc.com>
+ <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241023060352.605019-3-quic_rajkbhag@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-> -----Original Message-----
-> From: Wei Fang <wei.fang@nxp.com>
-> Sent: Tuesday, October 22, 2024 8:52 AM
-[...]
-> Subject: [PATCH v4 net-next 06/13] net: enetc: build enetc_pf_common.c as=
- a
-> separate module
->=20
-> Compile enetc_pf_common.c as a standalone module to allow shared usage
-> between ENETC v1 and v4 PF drivers. Add struct enetc_pf_ops to register
-> different hardware operation interfaces for both ENETC v1 and v4 PF
-> drivers.
->=20
-> Signed-off-by: Wei Fang <wei.fang@nxp.com>
+On 23/10/2024 08:03, Raj Kumar Bhagat wrote:
+> QCN9274 device has WSI support. WSI stands for WLAN Serial Interface.
+> It is used for the exchange of specific control information across
+> radios based on the doorbell mechanism. This WSI connection is
+> essential to exchange control information among these devices
+> 
+> Hence, describe WSI interface supported in QCN9274 with the following
+> properties:
+> 
+>  - qcom,wsi-group-id: It represents the identifier assigned to the WSI
+>    connection. All the ath12k devices connected to same WSI connection
+>    have the same wsi-group-id.
+> 
+>  - qcom,wsi-index: It represents the identifier assigned to ath12k
+>    device in the order of the WSI connection.
+> 
+>  - qcom,wsi-num-devices: Number of devices connected through WSI in
+>    the same group ID.
+
+You should have separate binding.
+
+> 
+> Signed-off-by: Raj Kumar Bhagat <quic_rajkbhag@quicinc.com>
 > ---
+>  .../bindings/net/wireless/qcom,ath12k.yaml    | 61 +++++++++++++++++++
+>  1 file changed, 61 insertions(+)
+> 
+> diff --git a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> index ecf38af747f7..6c8f97865075 100644
+> --- a/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> +++ b/Documentation/devicetree/bindings/net/wireless/qcom,ath12k.yaml
+> @@ -19,6 +19,7 @@ properties:
+>    compatible:
+>      enum:
+>        - pci17cb,1107  # WCN7850
+> +      - pci17cb,1109  # QCN9274
+>  
+>    reg:
+>      maxItems: 1
+> @@ -50,6 +51,41 @@ properties:
+>    vddpcie1p8-supply:
+>      description: VDD_PCIE_1P8 supply regulator handle
+>  
+> +  wsi:
+> +    type: object
+> +    description:
+> +      The ath12k devices (QCN9274) feature WSI support. WSI stands for
+> +      WLAN Serial Interface. It is used for the exchange of specific
+> +      control information across radios based on the doorbell mechanism.
+> +      This WSI connection is essential to exchange control information
+> +      among these devices.
+> +
+> +    properties:
+> +      qcom,wsi-group-id:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          It represents the identifier assigned to the WSI connection. All
+> +          the ath12k devices connected to same WSI connection have the
+> +          same wsi-group-id.
 
-Reviewed-by: Claudiu Manoil <claudiu.manoil@nxp.com>
+Why it cannot be implied by compatible?
+
+> +
+> +      qcom,wsi-index:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          It represents the identifier assigned to ath12k device in the
+> +          order of the WSI connection.
+
+No, we do not have indices in DTS.
+
+> +
+> +      qcom,wsi-num-devices:
+> +        $ref: /schemas/types.yaml#/definitions/uint32
+> +        description:
+> +          Number of devices connected through WSI in the same group ID.
+
+Wait, why? Number of devices is visible from DTS. You are missing some
+diagram showing this but it looks like you stuff multiple nodes into one
+node.
+
+
+
+> +
+> +    required:
+> +      - qcom,wsi-group-id
+> +      - qcom,wsi-index
+> +      - qcom,wsi-num-devices
+> +
+> +    additionalProperties: false
+> +
+>  required:
+>    - compatible
+>    - reg
+> @@ -108,3 +144,28 @@ examples:
+>              };
+>          };
+>      };
+> +
+> +  - |
+> +    pcie {
+> +        #address-cells = <3>;
+> +        #size-cells = <2>;
+> +
+> +        pcie@0 {
+> +            device_type = "pci";
+> +            reg = <0x0 0x0 0x0 0x0 0x0>;
+> +            #address-cells = <3>;
+> +            #size-cells = <2>;
+> +            ranges;
+> +
+> +            wifi@0 {
+> +                compatible = "pci17cb,1109";
+> +                reg = <0x0 0x0 0x0 0x0 0x0>;
+> +
+> +                wsi {
+> +                    qcom,wsi-group-id = <0>;
+> +                    qcom,wsi-index = <0>;
+> +                    qcom,wsi-num-devices = <3>;
+
+So what are the other 2 devices? Where are they documented?
+
+Best regards,
+Krzysztof
+
 
