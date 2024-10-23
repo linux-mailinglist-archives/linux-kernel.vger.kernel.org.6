@@ -1,160 +1,158 @@
-Return-Path: <linux-kernel+bounces-377595-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377596-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id E1C729AC108
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:07:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B0A19AC109
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:07:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A0B2A1F21517
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:07:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6954F1C215EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:07:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1CEA156F3F;
-	Wed, 23 Oct 2024 08:07:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B780156F41;
+	Wed, 23 Oct 2024 08:07:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Bf2bOZz8"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="JSUyjfoz"
+Received: from mail-40131.protonmail.ch (mail-40131.protonmail.ch [185.70.40.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C27113B5B3
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:07:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 518C713B5B3
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:07:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729670821; cv=none; b=lzchGs6tc5keL04AuQYL2hz7lmb1KHqITVBzoVbfXyywDcOUf34oc98djsw918uH4wrqmxWK5TbWIt3TpIcAnIXtGvK+XXh6OdwhWpaoeH0TwQWAEfOt2hWsxJZ3UfU6iCSlaDdV1V7BBle+uHmQxxCgusRvXAtDxMvYXu7laSY=
+	t=1729670830; cv=none; b=S/rR6Tj+blgBEVs2NY1tjS39Zti6mnut0rPtgiNYqnr/myaCYG2xJ8VhrIflG54ipMqfmu2amboaEPo5dlrxGval3s2pGT/Va/6LCGxxm39BJBgAcZH8X93E7el9aq9lsBkpA/B5NIEQ9KsIO9tCHzkSaI5fg/IfPghvWHcx56Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729670821; c=relaxed/simple;
-	bh=BrPGJSsFR50m0x0nz9fvVLzKZkp6YxV1ErfJzYmZ32s=;
-	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=qaCA8mi1uvbSf2bs8JYb2SZ7AM28KIve5R221jiG3acQwOI2o03psVu0ydihZ10fCjDMjonbxYsnhaBwMy0h68ViAtVudQWnr2RLQAV/mnszXo5pryohXXbdwNq4nY1o5ir9xIE4S4L1UXjnFXdw0ljcl/NK/5p/EWf2BoWdKyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Bf2bOZz8; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4021EC4CEC6;
-	Wed, 23 Oct 2024 08:06:59 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729670820;
-	bh=BrPGJSsFR50m0x0nz9fvVLzKZkp6YxV1ErfJzYmZ32s=;
-	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
-	b=Bf2bOZz8gcBBmuaYLP5SenDfzWYS+PXK540NcmOit7X+g/AwHLyB/nVXp6dkqDVT9
-	 3H2x5Y2HGhhF6paAqBlWY2lkaeHgALajXGNdLGbl3U6tSs5l7MsDiVlJ6+2TypKXMN
-	 njj2HaEhRLKsQAHkvVyI0wh3Chy/K5J5aaebaY3pps+DB5mWbQ6FoCJOgugDjroAsk
-	 HHAp0OtcDTygmbFU3xVDCL5pYIE+EYCfgjrpNJ+nUHySNVyC2SEDaACoQTMfpeRcFf
-	 MsmVu8h+eqAK5FhsEbzs2aYtriWl+3ydsxy5uBzwAKdSypSzI9muEna7Kwr0iULI14
-	 chRyPSRqFIU6g==
-Message-ID: <12559def-2ca2-4e4d-851c-6ae906b6a2d7@kernel.org>
-Date: Wed, 23 Oct 2024 16:06:56 +0800
+	s=arc-20240116; t=1729670830; c=relaxed/simple;
+	bh=vPfSz3qHWAUn1+CfWqVe5BPCTuXiz66jLqw1PwW7gdw=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AOZyJmzTgPsX0yQV8hVSwfaGrs3wYQoUsug8vXdLz4FtOorjOyPgKPKoV6Edk2WaR4jkBmzyLopOibmdDHlLAxURXlCgoHIZlFJfz1lzvWgJwgElAJkkmfQyXCy+Ow820iXuVfl625UC8/3uc8rdZI8pOkCSIZJvS0jnwYiyBx0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=JSUyjfoz; arc=none smtp.client-ip=185.70.40.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
+	s=protonmail; t=1729670821; x=1729930021;
+	bh=WiNZoFE52HUQsAh3tRwh1y3054lK2w2JIjigaJTNQhU=;
+	h=Date:To:From:Cc:Subject:Message-ID:In-Reply-To:References:
+	 Feedback-ID:From:To:Cc:Date:Subject:Reply-To:Feedback-ID:
+	 Message-ID:BIMI-Selector;
+	b=JSUyjfozECz9DhuR67qyua5UNf9t9WWUSjqZLwtRm2pBknDEfm89211bmGksZzOeR
+	 0nmsR0jF30gy+LeYm5CvjcUcxuyZMSqBYqcqoS1Jv4lCFq673mlmxVcthb+gPhuGvK
+	 TCzP8NdF8/snymuRomRG2p93kRDHoGXNIXl/6lM+SnGskMsJ2+LlP3Ko7srxNW7zWz
+	 X3orIAlydBY2jHpZZOtt2/tCQj6aQ0+8jYFDNuGFE/vQBDtjfWbwdj7ZtJf8RhTsQ1
+	 YHE6NVA83j2WNjdCwsz36lAXLBxMemcBUkaacoVrpe0Rwa8zL9KU3AI1g563H8k41U
+	 dPfsaua5g1Yxg==
+Date: Wed, 23 Oct 2024 08:06:59 +0000
+To: Alan Huang <mmpgouride@gmail.com>
+From: Piotr Zalewski <pZ010001011111@proton.me>
+Cc: Kent Overstreet <kent.overstreet@linux.dev>, linux-bcachefs@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>, skhan@linuxfoundation.org, syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+Subject: Re: [PATCH] bcachefs: Fix NULL ptr dereference in btree_node_iter_and_journal_peek
+Message-ID: <L78wBCQQaurE7tyQP_T2Fklx8afGKmTXxDh-gweSzakgUoCwjCYeMHINndXWj4LWdUFpOvynoYeKlE7N0rUMiXYEM_VLDye48iN5ysgM09A=@proton.me>
+In-Reply-To: <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
+References: <20241023072024.98915-3-pZ010001011111@proton.me> <09A7740A-3113-4ABF-8587-8E0A4231DD61@gmail.com>
+Feedback-ID: 53478694:user:proton
+X-Pm-Message-ID: ce19c318e8fae47aff127ee6e443c76350c685ef
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Cc: Chao Yu <chao@kernel.org>,
- "linux-f2fs-devel@lists.sourceforge.net"
- <linux-f2fs-devel@lists.sourceforge.net>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- Zhiguo Niu <niuzhiguo84@gmail.com>
-Subject: Re: [PATCH v3] f2fs: modify f2fs_is_checkpoint_ready logic to allow
- more data to be written with the CP disable
-To: =?UTF-8?B?6Z+p5qOL?= <hanqi@vivo.com>,
- "jaegeuk@kernel.org" <jaegeuk@kernel.org>
-References: <20241023025945.1817457-1-hanqi@vivo.com>
- <9825b1c1-9d24-48d1-a807-d1e6e25c4157@vivo.com>
-Content-Language: en-US
-From: Chao Yu <chao@kernel.org>
-In-Reply-To: <9825b1c1-9d24-48d1-a807-d1e6e25c4157@vivo.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 2024/10/23 15:40, 韩棋 wrote:
-> 在 2024/10/23 10:59, Qi Han 写道:
->> When the free segment is used up during CP disable, many write or
->> ioctl operations will get ENOSPC error codes, even if there are
->> still many blocks available. We can reproduce it in the following
->> steps:
->>
->> dd if=/dev/zero of=f2fs.img bs=1M count=65
->> mkfs.f2fs -f f2fs.img
->> mount f2fs.img f2fs_dir -o checkpoint=disable:10%
->> cd f2fs_dir
->> i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; dd \
->> if=/dev/random of=$file_name bs=1M count=2); i=$((i+1)); done
->> sync
->> i=1 ; while [[ $i -lt 50 ]] ; do (file_name=./2M_file$i ; truncate \
->> -s 1K $file_name); i=$((i+1)); done
->> sync
->> dd if=/dev/zero of=./file bs=1M count=20
->>
->> In f2fs_need_SSR() function, it is allowed to use SSR to allocate
->> blocks when CP is disabled, so in f2fs_is_checkpoint_ready function,
->> can we judge the number of invalid blocks when free segment is not
->> enough, and return ENOSPC only if the number of invalid blocks is
->> also not enough?
->>
->> Signed-off-by: Qi Han <hanqi@vivo.com>
->> ---
->>    fs/f2fs/segment.h | 17 +++++++++++++++++
->>    1 file changed, 17 insertions(+)
->>
->> diff --git a/fs/f2fs/segment.h b/fs/f2fs/segment.h
->> index 71adb4a43bec..20b568eaa95e 100644
->> --- a/fs/f2fs/segment.h
->> +++ b/fs/f2fs/segment.h
->> @@ -637,12 +637,29 @@ static inline bool has_enough_free_secs(struct f2fs_sb_info *sbi,
->>    	return !has_not_enough_free_secs(sbi, freed, needed);
->>    }
->>    
->> +static inline bool has_enough_free_blks(struct f2fs_sb_info *sbi)
->> +{
->> +	unsigned int total_free_blocks = 0;
->> +	unsigned int avail_user_block_count;
+Hi Alan,
 
+On Wednesday, October 23rd, 2024 at 9:33 AM, Alan Huang <mmpgouride@gmail.c=
+om> wrote:
+
+> On Oct 23, 2024, at 15:21, Piotr Zalewski pZ010001011111@proton.me wrote:
+>=20
+> > Add NULL check for key returned from bch2_btree_and_journal_iter_peek i=
+n
+> > btree_node_iter_and_journal_peek to avoid NULL ptr dereference in
+> > bch2_bkey_buf_reassemble.
+>=20
+>=20
+> It would be helpful if the commit message explained why k.k is null in th=
+is case
+=20
+I will debug this more thoroughly and provide details. For now I see that
+during GC it sees journal replay hasn't finished but journal turns out to
+be empty? Which seems weird, so maybe underlying issue should be solved on
+a deeper level.
+
+Log from the reproducer is:
+```
+[   27.391332] bcachefs (loop0): accounting_read... done
+[   27.408141] bcachefs (loop0): alloc_read... done
+[   27.409118] bcachefs (loop0): stripes_read... done
+[   27.410059] bcachefs (loop0): snapshots_read... done
+[   27.411161] bcachefs (loop0): check_allocations...
+[   27.415003] bucket 0:26 data type btree ptr gen 0 missing in alloc btree
+[   27.415024] while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0=
+: seq ac62141f8dc7e261 written 24 min_kg
+[   27.422560] bucket 0:38 data type btree ptr gen 0 missing in alloc btree
+[   27.422571] while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0=
+: seq 7589ab5e0c11cc7a written 24 min_kg
+[   27.428033] bucket 0:41 data type btree ptr gen 0 missing in alloc btree
+[   27.428042] while marking u64s 11 type btree_ptr_v2 SPOS_MAX len 0 ver 0=
+: seq 9aa2895aefce4bdf written 24 min_kg
+[   27.432315] bcachefs (loop0): btree topology error: attempting to get bt=
+ree node with non-btree key u64s 0 type
+[   27.435343] bcachefs (loop0): inconsistency detected - emergency read on=
+ly at journal seq 10
+[   27.436947] bcachefs (loop0): bch2_gc_btree(): error btree_need_topology=
+_repair
+[   27.438756] btree node read error for xattrs, shutting down
+[   27.440081] bcachefs (loop0): bch2_gc_btrees(): error fsck_errors_not_fi=
+xed
+[   27.441915] bcachefs (loop0): bch2_check_allocations(): error fsck_error=
+s_not_fixed
+[   27.443349] bcachefs (loop0): bch2_fs_recovery(): error fsck_errors_not_=
+fixed
+[   27.444802] bcachefs (loop0): bch2_fs_start(): error starting filesystem=
+ fsck_errors_not_fixed
+[   27.446270] bcachefs (loop0): shutting down
+[   27.456042] bcachefs (loop0): shutdown complete
+[   27.835683] bcachefs: bch2_fs_get_tree() error: fsck_errors_not_fixed
+```
 
 
->> +
->> +	spin_lock(&sbi->stat_lock);
->> +
->> +	avail_user_block_count = get_available_block_count(sbi, NULL, true);
->> +	total_free_blocks = avail_user_block_count - (unsigned int)valid_user_blocks(sbi);
->> +
->> +	spin_unlock(&sbi->stat_lock);
->> +
->> +	return total_free_blocks > 0;
->> +}
->> +
->>    static inline bool f2fs_is_checkpoint_ready(struct f2fs_sb_info *sbi)
->>    {
->>    	if (likely(!is_sbi_flag_set(sbi, SBI_CP_DISABLED)))
->>    		return true;
->>    	if (likely(has_enough_free_secs(sbi, 0, 0)))
->>    		return true;
-> 
-> Hi, Chao,
-> 
-> After Zhiguo's reminder, I just saw your previous patch:
-> f2fs: fix to account dirty data in __get_secs_required(),
-> the current modification may still return true if the segment
-> is found to be insufficient when LFS and CP is closed, should
-> I add the LFS mode restriction here?
+> > Reported-by: syzbot+005ef9aa519f30d97657@syzkaller.appspotmail.com
+> > Closes: https://syzkaller.appspot.com/bug?extid=3D005ef9aa519f30d97657
+> > Fixes: 5222a4607cd8 ("bcachefs: BTREE_ITER_WITH_JOURNAL")
+> > Signed-off-by: Piotr Zalewski pZ010001011111@proton.me
+> > ---
+> > fs/bcachefs/btree_iter.c | 3 +++
+> > 1 file changed, 3 insertions(+)
+> >=20
+> > diff --git a/fs/bcachefs/btree_iter.c b/fs/bcachefs/btree_iter.c
+> > index 0883cf6e1a3e..625167ce191f 100644
+> > --- a/fs/bcachefs/btree_iter.c
+> > +++ b/fs/bcachefs/btree_iter.c
+> > @@ -882,6 +882,8 @@ static noinline int btree_node_iter_and_journal_pee=
+k(struct btree_trans *trans,
+> > __bch2_btree_and_journal_iter_init_node_iter(trans, &jiter, l->b, l->it=
+er, path->pos);
+> >=20
+> > k =3D bch2_btree_and_journal_iter_peek(&jiter);
+> > + if (!k.k)
+> > + goto err;
+> >=20
+> > bch2_bkey_buf_reassemble(out, c, k);
+> >=20
+> > @@ -889,6 +891,7 @@ static noinline int btree_node_iter_and_journal_pee=
+k(struct btree_trans *trans,
+> > c->opts.btree_node_prefetch)
+> > ret =3D btree_path_prefetch_j(trans, path, &jiter);
+> >=20
+> > +err:
+> > bch2_btree_and_journal_iter_exit(&jiter);
+> > return ret;
+> > }
+> > --
+> > 2.47.0
 
-Hi Qi,
-
-I guess so, I think we need to add a lfs_mode check condition in
-has_enough_free_blks(), otherwise this patch will trigger system
-panic w/ below testcase:
-
-https://lore.kernel.org/fstests/20241015025106.3203676-1-chao@kernel.org/
-
-Thanks,
-
-> 
-> Thanks.
-> 
->> +	if (likely(has_enough_free_blks(sbi)))
->> +		return true;
->>    	return false;
->>    }
->>    
-> 
-
+Best regards, Piotr Zalewski
 
