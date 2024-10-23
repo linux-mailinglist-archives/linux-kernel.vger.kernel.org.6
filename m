@@ -1,131 +1,210 @@
-Return-Path: <linux-kernel+bounces-378302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378296-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0A6879ACE0C
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:06:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D81309ACDD1
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF669281CB2
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:06:24 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 751C51F22637
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:01:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F9631CBE8F;
-	Wed, 23 Oct 2024 14:56:05 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 778941C689D;
+	Wed, 23 Oct 2024 14:52:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CIAPVZaB"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4851B85C0
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:56:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F17041C5792;
+	Wed, 23 Oct 2024 14:52:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729695365; cv=none; b=Lmjt5NcoWq5X7zIYpyEUrYjWFSOR3+NxBGFIOvT/wc7r7wdE/fprwWTLJS3T9AelTacel2aVaINKb6qTJY2uHMNc8cQN3IWED5LyBLkWRt7FlHI8Cq13Cwa/KZyduIsP7tcDyP3KAgVVCzE4UfmuoKWVyQPIQMV1Z2xf8NJt/S0=
+	t=1729695145; cv=none; b=OJOxNnw74qgSFD4WjvHBFaj5LkW+Mnxlhm0SGLELWPmbmqKIQeOolgJ77z981JgQ3wkiRQC3wZ94aHSvJO7D87Sj0HP5CghQtCniwGWvNgEENvDr7ooHEH7vjJlLKoXXO/aTjdyHXYMczYSFwqLIsufIVHVtetpfGM1T+pR7ya0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729695365; c=relaxed/simple;
-	bh=IdiltfG8435WSjaXORtvgsVcZGhVEMX0hpcaalSxNVU=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
-	 Content-Type; b=saOqxCQYN3Z89AhMIpbsTBeyna7jU4LQN7umsv/a0tXovCDz0tRkit6idyRpTMYC3xNWnJd9jRyeRd0XeZ4a1TxePbPCjZho5VQl1TBxC9SWfzZTBzD2n/njidKluznaWlkx4UNYS5MRu9Ntb3reUC5j4b5RxsZ9CeH5QysqEyw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3b45bfc94so66160805ab.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 07:56:03 -0700 (PDT)
+	s=arc-20240116; t=1729695145; c=relaxed/simple;
+	bh=LUa/WnRwLe0ezlLUw6bOjDBGNmC3QbLtYUV/mVRUxTs=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=KoSAlpVcwjVJFfDhlZP7QjXZQ/K/6mNjZgYFtjCgvOKZF5jesEYw25no2vfMsimipnn8WwrZz1OY03RDroCQ1/HjN3cWsw/uqDKbna/UY7lXClJG+5XzecboAGobYENlCKUQAi6TAJVPmbGHueJWmYJZ3K5kEEn4pM9e/4heYp8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CIAPVZaB; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315f24a6bbso61184875e9.1;
+        Wed, 23 Oct 2024 07:52:23 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729695142; x=1730299942; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=fGAGjdzZ/U198pz7p43PfUzhBwFlaYTWYMQjDyByFEQ=;
+        b=CIAPVZaB4MBghj0NOhWFrEtHuu6gMe/K+9aOCwRvK/hiaCIIYvEhOwkWTeLvDOPMnT
+         2h90JgiOU0ZK+Id0pf+yoMoWyHw6U7KqcwAXbfUbPBf9Wow9kVFT9uHWABlqSQjPHG4r
+         UujhjpXDMEKIe8v8bhF2kyFpyDFj+vTm13JvORGqeoBGs+D2/V9uhludDQeNMCJagJas
+         y5kPSVK0d2vbTGWNd85+hIArnP24nzdoxpF8MhQ7hg7+I/fQpOO0zjvMned0B8pE3QK0
+         PA3d+nKtfJGey5ooYgwsKHUs76hwf8OfMDsKYVkfnjV5Vvr2XvjUp3hAXGG5/AmGM3hy
+         kMyg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729695362; x=1730300162;
-        h=to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Q+pzlpPTVrcaAEwNPAoTWxPAND7t2xQt/C1348MfH4c=;
-        b=ddeYV+rytf80aZBo8Zctz4RC4hPbg+7pghzpG9yrglgK1TsUtyldpRVe0/05gsFd4v
-         RPY7Cc+YbxxiooeIx23bixzQkmGFmXoKI9FJ8ZKLI9Bb6z9SpDtQpZEidDATHkz5wIHf
-         YjijviPMpVWmgtWlVrSUAOGmQ9TuRSXYYkLxUxsB6SFvsVQBOqWrtBG6NDUdIFG0fXXJ
-         JCplapZgSiwIUz2eimCngxreyTy/zTNnIyd0bMsGayECwUND4KAjRgE0chN7Eq0m6G6S
-         iCWCvvhwSUrKPsPu4r6vOS3FhNuER1ohsqxecdyDh+FLTsW0TvMiL3eWC/jBm9deox24
-         bXXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUqXHiyzKkgiI9BRa93GOwaTiz2DZJKm93SWyCHHxT2+b0jK5hNzc3f4BvtG44uguxohPKKpbHFv3WI160=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxOocfoTh36QgQWkEKhXHpiqUC+vmxPI3k5QyoAcJcQEEtHU1N0
-	SnYCDxZ43CoRcfvuX7PFWKPh+uZ6ECsUruOD6lMEB1niAhmh2NyscBCN2RgO/MJYeZFFPjOOAFN
-	WY8PZqw2oODKY9dBdXUnwjjOPKtFwcpbY1U1vwCpYGBZPwuaWTLe+IbE=
-X-Google-Smtp-Source: AGHT+IHYy3yW+6HP8hCc8HPYeMMubxPW9pXtzZATwe5FFZG93C3D1//z0YadJvPKNiUBQpDH5zq1TxhpUPTf7kQqgts60LBrnQW4
+        d=1e100.net; s=20230601; t=1729695142; x=1730299942;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=fGAGjdzZ/U198pz7p43PfUzhBwFlaYTWYMQjDyByFEQ=;
+        b=AR6A3MoRHGoNXJyyiSUdy36qUzArFrDsL5FLPkyYxBbz92BSE8wrgz59D/Wm7CcUQe
+         uXuGBrgaWunwyeK0KHOaJ7bFKuKn6UVbjbTdzmcdsuqttsCm/P5cpd6L+BPhHDTpq46J
+         Jp09ZcGPrl2JKL6yIKNVJ85Z9cf2wWcaFByIYVwkFm7Wy7zGOZ9XvE0eQ3SdYtnXt2+p
+         quz42q7MAQSgOTQQNNCWhKdEbnWtVOWr1/gMSSOcXn815NZ7WTGoGZzWKx8U4cMWDRzq
+         BDoZTgb0AQyhelwFbR5Q6mbMK+NJjAswLFt9ZrNy+hhqgjoJSvGP6R6w/aj+fv9nRHYK
+         oKuQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWIjCgdEcjTS1HMirExy+RSBws5Z3p2uvOonR6Q3nw4gNsM81B71yaiSndTkdWUC4sScJkTdFez1KGD7zaB@vger.kernel.org, AJvYcCXQqrvM8fBeAcfPEPpQ6JPJD+Odfl9fp+JM1va1EFghUHQSfY/q4fJb10OzVcEdOp7PhS50Pd6wd1Gt@vger.kernel.org, AJvYcCXfeJtVfVvc+w8zFtlrINp7w++L6blDk6SWM1sKbGN9DzFf7JZbkmuhFgFf7wJZwRdh1IyJxG9cjyhH@vger.kernel.org
+X-Gm-Message-State: AOJu0YwvmcnMjqeG0vD9kWR3yiMm8Y9DCJHZUGPNufwATvDDahtsoKGi
+	VmYNs4Jlq3bPBnEZRB8cCM2B8EbV95PhCC3GiV9kQlBSv1h4pOEK
+X-Google-Smtp-Source: AGHT+IF10CszRtIgcGNvdMQcPgv3q4B9GxJoMvj0JW3NenFCOAFbXNLRguOJAe8omCZXeBYFl+hzGw==
+X-Received: by 2002:a05:600c:1d9b:b0:426:5e91:3920 with SMTP id 5b1f17b1804b1-4318419d392mr26014755e9.29.1729695141813;
+        Wed, 23 Oct 2024 07:52:21 -0700 (PDT)
+Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a614d0sm9097434f8f.63.2024.10.23.07.52.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 07:52:21 -0700 (PDT)
+Message-ID: <7a4f8c718029c8c57596d950495fcf28562c6e78.camel@gmail.com>
+Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: Conor Dooley <conor@kernel.org>
+Cc: Angelo Dureghello <adureghello@baylibre.com>, Nuno =?ISO-8859-1?Q?S=E1?=
+	 <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, Michael
+ Hennerich	 <Michael.Hennerich@analog.com>, Jonathan Cameron
+ <jic23@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley	 <conor+dt@kernel.org>, Olivier Moysan
+ <olivier.moysan@foss.st.com>, 	linux-iio@vger.kernel.org,
+ devicetree@vger.kernel.org, 	linux-kernel@vger.kernel.org,
+ dlechner@baylibre.com, Mark Brown	 <broonie@kernel.org>
+Date: Wed, 23 Oct 2024 16:56:39 +0200
+In-Reply-To: <20241022-napped-labored-6956ce18d986@spud>
+References: 
+	<20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
+	 <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
+	 <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
+	 <20241022-napped-labored-6956ce18d986@spud>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.54.1 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1a6d:b0:3a0:c820:c5f0 with SMTP id
- e9e14a558f8ab-3a4d59e4a51mr29677575ab.24.1729695362598; Wed, 23 Oct 2024
- 07:56:02 -0700 (PDT)
-Date: Wed, 23 Oct 2024 07:56:02 -0700
-In-Reply-To: <20241023144129.39005-1-aha310510@gmail.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67190e82.050a0220.10f4f4.01ad.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: null-ptr-deref Read in bch2_sb_set_upgrade_extra
-From: syzbot <syzbot+b468b9fef56949c3b528@syzkaller.appspotmail.com>
-To: aha310510@gmail.com, linux-kernel@vger.kernel.org, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
 
-Hello,
+On Tue, 2024-10-22 at 18:21 +0100, Conor Dooley wrote:
+> On Tue, Oct 22, 2024 at 02:36:44PM +0200, Nuno S=C3=A1 wrote:
+> > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
+> > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > >=20
+> > > Extend AXI-DAC backend with new features required to interface
+> > > to the ad3552r DAC. Mainly, a new compatible string is added to
+> > > support the ad3552r-axi DAC IP, very similar to the generic DAC
+> > > IP but with some customizations to work with the ad3552r.
+> > >=20
+> > > Then, a series of generic functions has been added to match with
+> > > ad3552r needs. Function names has been kept generic as much as
+> > > possible, to allow re-utilization from other frontend drivers.
+> > >=20
+> > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > ---
+> >=20
+> > Looks mostly good,
+> >=20
+> > one minor thing that (I think) could be improved
+> > > =C2=A0drivers/iio/dac/adi-axi-dac.c | 269
+> > > +++++++++++++++++++++++++++++++++++++++--
+> > > -
+> > > =C2=A01 file changed, 255 insertions(+), 14 deletions(-)
+> > >=20
+> > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-=
+dac.c
+> > > index 04193a98616e..9d6809fe7a67 100644
+> > > --- a/drivers/iio/dac/adi-axi-dac.c
+> > > +++ b/drivers/iio/dac/adi-axi-dac.c
+> > > @@ -46,9 +46,28 @@
+> > > =C2=A0#define AXI_DAC_CNTRL_1_REG			0x0044
+> > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_CNTRL_1_SYNC			BIT(0)
+> > > =C2=A0#define AXI_DAC_CNTRL_2_REG			0x0048
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
+> > > =C2=A0#define=C2=A0=C2=A0 ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
+> > > +#define AXI_DAC_STATUS_1_REG			0x0054
+> > > +#define AXI_DAC_STATUS_2_REG			0x0058
+> > > =C2=A0#define AXI_DAC_DRP_STATUS_REG			0x0074
+> > > =C2=A0#define=C2=A0=C2=A0 AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
+> > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
+> > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
+> > > +#define AXI_DAC_UI_STATUS_REG			0x0088
+> > > +#define=C2=A0=C2=A0 AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
+> > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
+> > > +#define=C2=A0=C2=A0 AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
+> >=20
+> > ...
+> > =C2=A0
+> > > =C2=A0static int axi_dac_probe(struct platform_device *pdev)
+> > > =C2=A0{
+> > > -	const unsigned int *expected_ver;
+> > > =C2=A0	struct axi_dac_state *st;
+> > > =C2=A0	void __iomem *base;
+> > > =C2=A0	unsigned int ver;
+> > > @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_device
+> > > *pdev)
+> > > =C2=A0	if (!st)
+> > > =C2=A0		return -ENOMEM;
+> > > =C2=A0
+> > > -	expected_ver =3D device_get_match_data(&pdev->dev);
+> > > -	if (!expected_ver)
+> > > +	st->info =3D device_get_match_data(&pdev->dev);
+> > > +	if (!st->info)
+> > > =C2=A0		return -ENODEV;
+> > > +	clk =3D devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+> > > +	if (IS_ERR(clk)) {
+> >=20
+> > If clock-names is not given, then we'll get -EINVAL. Hence we could ass=
+ume
+> > that:
+> >=20
+> > 		if (PTR_ERR(clk) !=3D -EINVAL)
+> > 			return dev_err_probe();
+>=20
+> clock-names isn't a required property, but the driver code effectively
+> makes it one. Doesn't this lookup need to be by index, unless
+> clock-names is made required for this variant?
 
-syzbot has tested the proposed patch but the reproducer is still triggering an issue:
-KASAN: null-ptr-deref Read in bch2_sb_set_upgrade_extra
+Likely I'm missing something but the driver is not making clock-names manda=
+tory,
+is it?
 
-bcachefs (loop0): flagging btree freespace lost data
-error reading btree root freespace l=0: btree_node_read_error, fixing
-==================================================================
-BUG: KASAN: null-ptr-deref in instrument_atomic_read include/linux/instrumented.h:68 [inline]
-BUG: KASAN: null-ptr-deref in _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
-BUG: KASAN: null-ptr-deref in btree_node_fake fs/bcachefs/btree_types.h:622 [inline]
-BUG: KASAN: null-ptr-deref in have_stripes fs/bcachefs/sb-downgrade.c:146 [inline]
-BUG: KASAN: null-ptr-deref in bch2_sb_set_upgrade_extra+0x152/0x270 fs/bcachefs/sb-downgrade.c:161
-Read of size 8 at addr 00000000000000b0 by task syz.0.15/5608
+At least for the s_axi_aclk, we first try to get it using clock-names and i=
+f
+that fails we backup to what we're doing which is passing NULL (which
+effectively get's the first clock in the array).
 
-CPU: 0 UID: 0 PID: 5608 Comm: syz.0.15 Not tainted 6.12.0-rc4-syzkaller-00047-gc2ee9f594da8 #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-Call Trace:
- <TASK>
- __dump_stack lib/dump_stack.c:94 [inline]
- dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
- print_report+0xe8/0x550 mm/kasan/report.c:491
- kasan_report+0x143/0x180 mm/kasan/report.c:601
- kasan_check_range+0x282/0x290 mm/kasan/generic.c:189
- instrument_atomic_read include/linux/instrumented.h:68 [inline]
- _test_bit include/asm-generic/bitops/instrumented-non-atomic.h:141 [inline]
- btree_node_fake fs/bcachefs/btree_types.h:622 [inline]
- have_stripes fs/bcachefs/sb-downgrade.c:146 [inline]
- bch2_sb_set_upgrade_extra+0x152/0x270 fs/bcachefs/sb-downgrade.c:161
- bch2_fs_recovery+0x25c4/0x39c0 fs/bcachefs/recovery.c:860
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4057 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f822957f79a
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007f822a311e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007f822a311ef0 RCX: 00007f822957f79a
-RDX: 00000000200058c0 RSI: 0000000020000000 RDI: 00007f822a311eb0
-RBP: 00000000200058c0 R08: 00007f822a311ef0 R09: 0000000000010000
-R10: 0000000000010000 R11: 0000000000000246 R12: 0000000020000000
-R13: 00007f822a311eb0 R14: 000000000000590f R15: 0000000020000140
- </TASK>
-==================================================================
+The reasoning is that on the generic variant we only need the AXI clk and w=
+e
+can't now enforce clock-names on it. But to keep things flexible, this was
+purposed.
 
+Another alternative that might have more lines of code (but simpler to
+understand the intent) is to have (for example) a callback get_clocks funct=
+ion
+that we set depending on the variant. And this also makes me realize that w=
+e
+could improve the bindings. I mean, for the generic dac variant we do not n=
+eed
+clock-names but for this new variant, clock-names is mandatory and I'm fair=
+ly
+sure we can express that in the bindings.
 
-Tested on:
-
-commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
-git tree:       git://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/ master
-console output: https://syzkaller.appspot.com/x/log.txt?x=17c588a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
-dashboard link: https://syzkaller.appspot.com/bug?extid=b468b9fef56949c3b528
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Note: no patches were applied.
+- Nuno S=C3=A1
 
