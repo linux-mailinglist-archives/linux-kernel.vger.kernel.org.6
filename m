@@ -1,35 +1,79 @@
-Return-Path: <linux-kernel+bounces-377970-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377972-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C259AC951
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:43:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A624F9AC961
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 13:47:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E26921F21A78
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:43:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7B121C20C50
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:47:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D1451AB515;
-	Wed, 23 Oct 2024 11:43:38 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6EB91AB515;
+	Wed, 23 Oct 2024 11:47:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=outbound.mailhop.org header.i=@outbound.mailhop.org header.b="H9cQMtBc"
+Received: from outbound1f.eu.mailhop.org (outbound1f.eu.mailhop.org [52.28.59.28])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4718134BD;
-	Wed, 23 Oct 2024 11:43:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729683817; cv=none; b=Dpnru40640RQdpTY3C3MGA2Y4w+S0mXkGwhlN8WY+mObCXcsbQ2/4oeZO2qwGEHl8JW41VmRAswH2Wp8X3uQkEsRWmuf64cnUq0FncFwqdFjP2Acob8Lf4u40ryD6AtnwOKhRhgGSXpry9gxJJ9MvN6ygZ8jCh0kIhoyNSoRHoc=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729683817; c=relaxed/simple;
-	bh=sbHaD+NR2gPojEu1iJuHmwSv832BxdenzfY/kWPfhIU=;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7951949652
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 11:47:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=52.28.59.28
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729684066; cv=pass; b=TRXXmMff20GxJD4ZG9edD+APNfgnOKRJsiEWNuzD3AkLfCXkUGvxvRw5DaA1V2DBKrsTR+cXJ0UESjn8lPi7fA5jwG35l8m81ebH3bknygegEptoWXKNi8vb8IFTF6bhcfJovyiuFerTl6aX6xysYxr4eMpTpOyU5mvmUbstEjs=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729684066; c=relaxed/simple;
+	bh=68hre9auU0UcFzrj6qjvpNuezBS+ifdYUUmtEsT2ovg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=dyeTYRPHxdSFy1vLuDstVNLxEYc30WVjbZoyedts3TO5pgZHpdy1Q0YBDGxgHJHOeBrXt7GvGqMS0F2n8waR/bHn0JO/Tb4kfvb7HpNkB3uu1w0wQW1t0em0vPXzBKYeYF6S7t2pFLCGHuVGNwLjIW/YrbrBa29iPpaRC6vlz0M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B51A3C4CEC6;
-	Wed, 23 Oct 2024 11:43:35 +0000 (UTC)
-Message-ID: <c809983f-9559-434b-b1c6-a54e3fcb88f1@xs4all.nl>
-Date: Wed, 23 Oct 2024 13:43:34 +0200
+	 In-Reply-To:Content-Type; b=jrgCgSiMjUxKD6/6c1H08zeckF+G7V1f7yPKTdoaS2A7+nIRUaBWRMaYzMGu+Tf28nWbew78ctihSbrLz1ik6k7lZqCzeeGlex3NT7GefQ7h+1YttIngY0enWlz/4JV4qKTwxqhSbz+KD8xJrSWy3fAprNnEi0fWgduEb+0P5/g=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=demonlair.co.uk; spf=pass smtp.mailfrom=demonlair.co.uk; dkim=pass (2048-bit key) header.d=outbound.mailhop.org header.i=@outbound.mailhop.org header.b=H9cQMtBc; arc=pass smtp.client-ip=52.28.59.28
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=demonlair.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=demonlair.co.uk
+ARC-Seal: i=1; a=rsa-sha256; t=1729683995; cv=none;
+	d=outbound.mailhop.org; s=arc-outbound20181012;
+	b=tNuwgbCFwqrFe/JLmi3+/rbC+QpRelgVA4N5GR40Z40yX8xacaOY4+tpJ4J4KwyiLUkUcHPBcBtmv
+	 1xXJwJnNxAVCJauqaWBWOnYlNTNjLDrPuqFvAVOYOuYpGe1b275OIpbYQJsqHwRy5OByJtwYmBtkNi
+	 edYIarg7utoi9GJvs/VAfg2IMaB2BPpmlcitm2r4r3rzVBrWVtLRY13bDNiZ/WxP+UfTPkJPoAyZ0H
+	 qbLlro72aqlG+fJTYJfuujZy+l3VGHrt7Z+89qEdxZQ0rmq4F1qMjcPKK5vZRCGj/SjRP7DS93QR1w
+	 FqAshdcEwShjw4nieUHF/UGD45PVgBw==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=outbound.mailhop.org; s=arc-outbound20181012;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:dkim-signature:from;
+	bh=15OBzub3D3TNmzRyaJ2oUMZpMVecCcfBW7sEJ66/fEo=;
+	b=g2raR+xHroem/WwmpRm6Gq6kdun6zqtdTO9NaHtg3eL2/nNVvwc7jVEdbjzRPxBBLJ+ArR7fMRkXW
+	 HHaAuHgGuPvNYEYu7cMvK7lKPTnm/Ny765WFGI+aakto9ZD6iJwqTbOxDg81IzTfHrsIaMCdJ5dQfC
+	 dGnFhPGoAQdwQ9FpTmMibkoRszf1aCUSw0rwYEcIA+wWFIJQEU+mV3IGSyHGdU92mRdxi9x9oYlko/
+	 t1M03hJt2TFVJtlwIMlL8SDULJzSOIInXPFx8QXwBQxOHjKV/Au0SinAsbjgRtDHpSp9Qcp7vx/yKY
+	 jHCo9HBAKXNU41azcPNfKDVrT/UOyDw==
+ARC-Authentication-Results: i=1; outbound2.eu.mailhop.org;
+	spf=softfail smtp.mailfrom=demonlair.co.uk smtp.remote-ip=217.43.3.134;
+	dmarc=none header.from=demonlair.co.uk;
+	arc=none header.oldest-pass=0;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=outbound.mailhop.org; s=dkim-high;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=15OBzub3D3TNmzRyaJ2oUMZpMVecCcfBW7sEJ66/fEo=;
+	b=H9cQMtBceSScH1z9RSGEltupp2X0UfQWWCG5SEOfAInqau5k6uzd8np05bxVFAzRdR5QCmYQz9uME
+	 h/gqKuqILr5wpUXptBijxylO/Oeac0igyqGljVzzVMdzLi0NKEs2A842BVWgaJKgR/3eOdq0dCjrav
+	 PFZig4iljL/RcpP5WkfgSFKMaJOsupmbGtNiow3xb7n4VA12ZuBSEoMpa6kgrNzdWgUcU3ZmsifazR
+	 Vy6MV4rbJx8By0fldTfbTIJVWFGkUObE4g37G+sAsISABzNeFQ35Q2zJatuGhDYXU9DykOzoEYyObW
+	 uzeWhvvlmLC68wePepxtEXEKnkOioXA==
+X-MHO-RoutePath: ZGVtb25sYWly
+X-MHO-User: 706bbe76-9134-11ef-9b27-7b4c7e2b9385
+X-Report-Abuse-To: https://support.duocircle.com/support/solutions/articles/5000540958-duocircle-standard-smtp-abuse-information
+X-Mail-Handler: DuoCircle Outbound SMTP
+Received: from phoenix.demonlair.co.uk (host217-43-3-134.range217-43.btcentralplus.com [217.43.3.134])
+	by outbound2.eu.mailhop.org (Halon) with ESMTPA
+	id 706bbe76-9134-11ef-9b27-7b4c7e2b9385;
+	Wed, 23 Oct 2024 11:46:29 +0000 (UTC)
+Received: from [10.57.1.52] (neptune.demonlair.co.uk [10.57.1.52])
+	by phoenix.demonlair.co.uk (Postfix) with ESMTP id 22E501EA107;
+	Wed, 23 Oct 2024 12:46:28 +0100 (BST)
+Message-ID: <098e65e7-53fb-4bf1-b973-2bda425139ae@demonlair.co.uk>
+Date: Wed, 23 Oct 2024 12:46:27 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -37,265 +81,118 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 3/3] docs: media: Debugging guide for the media
- subsystem
-To: Sebastian Fricke <sebastian.fricke@collabora.com>,
- Jonathan Corbet <corbet@lwn.net>
-Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-media@vger.kernel.org, laurent.pinchart@ideasonboard.com,
- mauro.chehab@linux.intel.com, kernel@collabora.com,
- bob.beckett@collabora.com, nicolas.dufresne@collabora.com
-References: <20240529-b4-media_docs_improve-v2-0-66318b2da726@collabora.com>
- <20240529-b4-media_docs_improve-v2-3-66318b2da726@collabora.com>
-Content-Language: en-US, nl
-From: Hans Verkuil <hverkuil-cisco@xs4all.nl>
-In-Reply-To: <20240529-b4-media_docs_improve-v2-3-66318b2da726@collabora.com>
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+Content-Language: en-GB
+To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+ <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+ <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+ <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
+ <44806c6f-d96a-498c-83e1-e3853ee79d5a@oracle.com>
+ <59a46919-6c6d-46cb-1fe4-5ded849617e1@huaweicloud.com>
+ <6148a744-e62c-45f6-b273-772aaf51a2df@oracle.com>
+ <be465913-80c7-762a-51f1-56021aa323dd@huaweicloud.com>
+ <0cf7985e-e7ac-4503-827b-eb2a0fd6ef67@oracle.com>
+From: Geoff Back <geoff@demonlair.co.uk>
+In-Reply-To: <0cf7985e-e7ac-4503-827b-eb2a0fd6ef67@oracle.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/09/2024 10:45, Sebastian Fricke wrote:
-> Create a guides section for all documentation material, that isn't
-> strictly related to a specific piece of code.
-> 
-> Provide a guide for developers on how to debug code with a focus on the
-> media subsystem. This document aims to provide a rough overview over the
-> possibilities and a rational to help choosing the right tool for the
-> given circumstances.
-> 
-> Signed-off-by: Sebastian Fricke <sebastian.fricke@collabora.com>
-> ---
->  Documentation/media/guides/debugging_issues.rst | 174 ++++++++++++++++++++++++
->  Documentation/media/guides/index.rst            |  11 ++
->  Documentation/media/index.rst                   |   1 +
->  3 files changed, 186 insertions(+)
-> 
-> diff --git a/Documentation/media/guides/debugging_issues.rst b/Documentation/media/guides/debugging_issues.rst
-> new file mode 100644
-> index 000000000000..5f37801dd4ba
-> --- /dev/null
-> +++ b/Documentation/media/guides/debugging_issues.rst
-> @@ -0,0 +1,174 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +.. include:: <isonum.txt>
-> +
-> +============================================
-> +Debugging and tracing in the media subsystem
-> +============================================
-> +
-> +This document serves as a starting point and lookup for debugging device
-> +drivers in the media subsystem.
-> +
-> +.. contents::
-> +    :depth: 3
-> +
-> +General debugging advice
-> +========================
-> +
-> +For general advice see the `general-debugging-guide <../../debugging/index.html>`__.
-> +
-> +Available tools
-> +===============
-> +
-> +dev_debug module parameter
-> +--------------------------
-> +
-> +For a general overview please see the `driver-development-debugging-guide <../../debugging/driver_development_debugging_guide.html>`__.
-> +
-> +Every video device provides a `dev_debug` parameter, which allows to get further insights into the IOCTLs in the background.
-> +::
-> +
-> +  # cat /sys/class/video4linux/video3/name
-> +  rkvdec
-> +  # echo 0xff > /sys/class/video4linux/video3/dev_debug
-> +  # dmesg -wH
-> +  [...] videodev: v4l2_open: video3: open (0)
-> +  [  +0.000036] video3: VIDIOC_QUERYCAP: driver=rkvdec, card=rkvdec, bus=platform:rkvdec, version=0x00060900, capabilities=0x84204000, device_caps=0x04204000
-> +
-> +`Full documentation <../../driver-api/media/v4l2-dev.html#video-device-debugging>`__
-> +
-> +dev_dbg / v4l2_dbg
-> +------------------
-> +
-> +- Difference between both?
-> +
-> +  - v4l2_dbg utilizes v4l2_printk under the hood, which further uses printk directly, thus it cannot be targeted by dynamic debug
-> +  - dev_dbg can be targeted by dynamic debug
-> +  - v4l2_dbg has a more specific prefix format for the media subsystem, while dev_dbg only highlights the driver name and the location of the log
-> +
-> +Dynamic debug
-> +-------------
-> +
-> +For general advice see the `userspace-debugging-guide <../../debugging/userspace_debugging_guide.html>`__.
-> +
-> +Here is one example, that enables all available `pr_debug()`'s within the file:
-> +::
-> +
-> +  $ alias ddcmd='echo $* > /proc/dynamic_debug/control'
-> +  $ ddcmd '-p; file v4l2-h264.c +p'
-> +  $ grep =p /proc/dynamic_debug/control
-> +   drivers/media/v4l2-core/v4l2-h264.c:372 [v4l2_h264]print_ref_list_b =p "ref_pic_list_b%u (cur_poc %u%c) %s"
-> +   drivers/media/v4l2-core/v4l2-h264.c:333 [v4l2_h264]print_ref_list_p =p "ref_pic_list_p (cur_poc %u%c) %s\n"
-> +
-> +Ftrace
-> +------
-> +
-> +For general advice see the `userspace-debugging-guide <../../debugging/userspace_debugging_guide.html>`__.
-> +
-> +Trace whenever the `rkvdec_try_ctrl` function is called
-> +::
-> +
-> +  $ cd /sys/kernel/tracing
-> +  $ echo function > /sys/kernel/tracing/current_tracer
-> +  $ echo rkvdec_try_ctrl > set_ftrace_filter
-> +  $ echo 1 > tracing_on
-> +  $ cat trace
-> +   h264parse0:sink-6359    [001] ...1. 172714.547523: rkvdec_try_ctrl <-try_or_set_cluster
-> +   h264parse0:sink-6359    [005] ...1. 172714.567386: rkvdec_try_ctrl <-try_or_set_cluster
-> +
-> +Find out from where the calls originate
-> +::
-> +
-> +  $ echo 1 > options/func_stack_trace
-> +   h264parse0:sink-6715    [002] ..... 172837.967762: rkvdec_try_ctrl <-try_or_set_cluster
-> +   h264parse0:sink-6715    [002] ..... 172837.967773: <stack trace>
-> +   => rkvdec_try_ctrl
-> +   => try_or_set_cluster
-> +   => try_set_ext_ctrls_common
-> +   => try_set_ext_ctrls
-> +   => v4l2_s_ext_ctrls
-> +   => v4l_s_ext_ctrls
-> +   ...
-> +   h264parse0:sink-6715    [004] ..... 172837.985747: rkvdec_try_ctrl <-try_or_set_cluster
-> +   h264parse0:sink-6715    [004] ..... 172837.985750: <stack trace>
-> +   => rkvdec_try_ctrl
-> +   => try_or_set_cluster
-> +   => v4l2_ctrl_request_setup
-> +   => rkvdec_run_preamble
-> +   => rkvdec_h264_run
-> +   => rkvdec_device_run
-> +   ...
-> +
-> +Trace the children of a function call and show the return values (requires config `FUNCTION_GRAPH_RETVAL`)
-> +::
-> +
-> +  echo function_graph > current_tracer
-> +  echo rkvdec_h264_run > set_graph_function
-> +  echo 4 > max_graph_depth
-> +  echo do_interrupt_handler mutex_* > set_graph_notrace
-> +  echo 1 > options/funcgraph-retval
-> +   ...
-> +   4)               |  rkvdec_h264_run [rockchip_vdec]() {
-> +   4)               |    v4l2_ctrl_find [videodev]() {
-> +   ...
-> +   4)               |    rkvdec_run_preamble [rockchip_vdec]() {
-> +   4)   4.666 us    |      v4l2_m2m_next_buf [v4l2_mem2mem](); /* = 0xffff000005782000 */
-> +   ...
-> +   4)               |      v4l2_ctrl_request_setup [videodev]() {
-> +   4)   4.667 us    |        media_request_object_find [mc](); /* = 0xffff000005e3aa98 */
-> +   4)   1.750 us    |        find_ref [videodev](); /* = 0xffff00000833b2a0 */
-> +   ...
-> +   4)   1.750 us    |      v4l2_m2m_buf_copy_metadata [v4l2_mem2mem](); /* = 0x0 */
-> +   4) ! 114.333 us  |    } /* rkvdec_run_preamble [rockchip_vdec] = 0x0 */
-> +   4)   2.334 us    |    v4l2_h264_init_reflist_builder [v4l2_h264](); /* = 0x3e */
-> +   ...
-> +   4)               |    v4l2_h264_build_b_ref_lists [v4l2_h264]() {
-> +   ...
-> +   4)               |    rkvdec_run_postamble [rockchip_vdec]() {
-> +   ...
-> +   4) ! 444.208 us  |  } /* rkvdec_h264_run [rockchip_vdec] = 0x0 */
-> +
-> +DebugFS
-> +-------
-> +
-> +For general advice see the `driver-development-debugging-guide <../../debugging/driver_development_debugging_guide.html>`__.
-> +
-> +Perf & alternatives
-> +-------------------
-> +
-> +For general advice see the `userspace-debugging-guide <../../debugging/userspace_debugging_guide.html>`__.
-> +
-> +Example for media devices:
-> +
-> +Gather statistics data for a decoding job: (This example is on a RK3399 SoC with the rkvdec codec driver using the `fluster test suite <https://github.com/fluendo/fluster>`__)
-> +::
-> +
-> +  perf stat -d python3 fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -ts JVT-AVC_V1 -tv AUD_MW_E -j1
-> +  ...
-> +  Performance counter stats for 'python3 fluster.py run -d GStreamer-H.264-V4L2SL-Gst1.0 -ts JVT-AVC_V1 -tv AUD_MW_E -j1 -v':
-> +
-> +           7794.23 msec task-clock:u                     #    0.697 CPUs utilized
-> +                 0      context-switches:u               #    0.000 /sec
-> +                 0      cpu-migrations:u                 #    0.000 /sec
-> +             11901      page-faults:u                    #    1.527 K/sec
-> +         882671556      cycles:u                         #    0.113 GHz                         (95.79%)
-> +         711708695      instructions:u                   #    0.81  insn per cycle              (95.79%)
-> +          10581935      branches:u                       #    1.358 M/sec                       (15.13%)
-> +           6871144      branch-misses:u                  #   64.93% of all branches             (95.79%)
-> +         281716547      L1-dcache-loads:u                #   36.144 M/sec                       (95.79%)
-> +           9019581      L1-dcache-load-misses:u          #    3.20% of all L1-dcache accesses   (95.79%)
-> +   <not supported>      LLC-loads:u
-> +   <not supported>      LLC-load-misses:u
-> +
-> +      11.180830431 seconds time elapsed
-> +
-> +       1.502318000 seconds user
-> +       6.377221000 seconds sys
-> +
-> +The availability of events and metrics depends on the system you are running.
-> +
-> +Error checking & panic analysis
-> +-------------------------------
-> +
-> +For general advice see the `driver-development-debugging-guide <../../debugging/driver_development_debugging_guide.html>`__.
-> +
-> +**Copyright** |copy| 2024 : Collabora
 
-I would add a few more:
+On 23/10/2024 12:16, John Garry wrote:
+> On 23/09/2024 10:38, Yu Kuai wrote:
+>>>>>> We need a new branch in read_balance() to choose a rdev with full 
+>>>>>> copy.
+>>>>> Sure, I do realize that the mirror'ing personalities need more 
+>>>>> sophisticated error handling changes (than what I presented).
+>>>>>
+>>>>> However, in raid1_read_request() we do the read_balance() and then 
+>>>>> the bio_split() attempt. So what are you suggesting we do for the 
+>>>>> bio_split() error? Is it to retry without the bio_split()?
+>>>>>
+>>>>> To me bio_split() should not fail. If it does, it is likely ENOMEM 
+>>>>> or some other bug being exposed, so I am not sure that retrying with 
+>>>>> skipping bio_split() is the right approach (if that is what you are 
+>>>>> suggesting).
+>>>> bio_split_to_limits() is already called from md_submit_bio(), so here
+>>>> bio should only be splitted because of badblocks or resync. We have to
+>>>> return error for resync, however, for badblocks, we can still try to
+>>>> find a rdev without badblocks so bio_split() is not needed. And we need
+>>>> to retry and inform read_balance() to skip rdev with badblocks in this
+>>>> case.
+>>>>
+>>>> This can only happen if the full copy only exist in slow disks. This
+>>>> really is corner case, and this is not related to your new error path by
+>>>> atomic write. I don't mind this version for now, just something
+>>>> I noticed if bio_spilit() can fail.
+> Hi Kuai,
+>
+> I am just coming back to this topic now.
+>
+> Previously I was saying that we should error and end the bio if we need 
+> to split for an atomic write due to BB. Continued below..
+>
+>>> Are you saying that some improvement needs to be made to the current 
+>>> code for badblocks handling, like initially try to skip bio_split()?
+>>>
+>>> Apart from that, what about the change in raid10_write_request(), 
+>>> w.r.t error handling?
+>>>
+>>> There, for an error in bio_split(), I think that we need to do some 
+>>> tidy-up if bio_split() fails, i.e. undo increase in rdev->nr_pending 
+>>> when looping conf->copies
+>>>
+>>> BTW, feel free to comment in patch 6/6 for that.
+>> Yes, raid1/raid10 write are the same. If you want to enable atomic write
+>> for raid1/raid10, you must add a new branch to handle badblocks now,
+>> otherwise, as long as one copy contain any badblocks, atomic write will
+>> fail while theoretically I think it can work.
+> Can you please expand on what you mean by this last sentence, "I think 
+> it can work".
+>
+> Indeed, IMO, chance of encountering a device with BBs and supporting 
+> atomic writes is low, so no need to try to make it work (if it were 
+> possible) - I think that we just report EIO.
+>
+> Thanks,
+> John
+>
+>
+Hi all,
 
-- Implementing vidioc_log_status in the driver: this can log the current status to the kernel log.
-  It's called by v4l2-ctl --log-status. Very useful for debugging problems with receiving video
-  (TV/S-Video/HDMI/etc) since the video signal is external (so unpredictable). Less useful with
-  camera sensor inputs since you have control over what the camera sensor does.
+Looking at this from a different angle: what does the bad blocks system
+actually gain in modern environments?  All the physical storage devices
+I can think of (including all HDDs and SSDs, NVME or otherwise) have
+internal mechanisms for remapping faulty blocks, and therefore
+unrecoverable blocks don't become visible to the Linux kernel level
+until after the physical storage device has exhausted its internal
+supply of replacement blocks.  At that point the physical device is
+already catastrophically failing, and in the case of SSDs will likely
+have already transitioned to a read-only state.  Using bad-blocks at the
+kernel level to map around additional faulty blocks at this point does
+not seem to me to have any benefit, and the device is unlikely to be
+even marginally usable for any useful length of time at that point anyway.
 
-- Run v4l2-compliance to verify the driver. To see the detailed media topology (and check it) use:
-  v4l2-compliance -M /dev/mediaX --verbose
-  You can also run a full compliance check for all devices referenced in the media topology by
-  running v4l2-compliance -m /dev/mediaX
+It seems to me that the bad-blocks capability is a legacy from the
+distant past when HDDs did not do internal block remapping and hence the
+kernel could usefully keep a disk usable by mapping out individual
+blocks in software.
+If this is the case and there isn't some other way that bad-blocks is
+still beneficial, might it be better to drop it altogether rather than
+implementing complex code to work around its effects?
+
+Of course I'm happy to be corrected if there's still a real benefit to
+having it, just because I can't see one doesn't mean there isn't one.
 
 Regards,
+Geoff.
 
-	Hans
 
-
-> diff --git a/Documentation/media/guides/index.rst b/Documentation/media/guides/index.rst
-> new file mode 100644
-> index 000000000000..0008966c0862
-> --- /dev/null
-> +++ b/Documentation/media/guides/index.rst
-> @@ -0,0 +1,11 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
-> +============
-> +Media Guides
-> +============
-> +
-> +.. toctree::
-> +    :caption: Table of Contents
-> +    :maxdepth: 1
-> +
-> +    debugging_issues
-> diff --git a/Documentation/media/index.rst b/Documentation/media/index.rst
-> index d056a9e99dca..5461876fc401 100644
-> --- a/Documentation/media/index.rst
-> +++ b/Documentation/media/index.rst
-> @@ -7,6 +7,7 @@ Media Subsystem Documentation
->  .. toctree::
->     :maxdepth: 2
->  
-> +   guides/index
->     ../userspace-api/media/index
->     ../driver-api/media/index.rst
->     ../admin-guide/media/index
-> 
 
 
