@@ -1,227 +1,180 @@
-Return-Path: <linux-kernel+bounces-377454-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377455-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7985B9ABF15
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:44:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id F3C779ABF17
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:45:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35B0528186E
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:44:47 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AF5C928238F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 06:45:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D76C014AD2B;
-	Wed, 23 Oct 2024 06:44:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 836B614AD22;
+	Wed, 23 Oct 2024 06:44:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cXNQO7f3"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="FuDrhIy5"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BA5481B7;
-	Wed, 23 Oct 2024 06:44:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27A1A481B7;
+	Wed, 23 Oct 2024 06:44:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729665878; cv=none; b=HxYXWThKJSecvVc4U6RaPpq9scHOc4W4xT0dYyXY2ktV8TgnvOPzdHpoPg8dVs8tBAVwmqCNYQLbrc+8stT+4g6nZc+0CukqHYcNrGIct09r1hwGpEJkxUMWHWVZCdONod2xYOvvKXGAENccm0O2Cz5LKrT40JY4Luju5f65x2E=
+	t=1729665887; cv=none; b=L+rSYbh2YuCurG/mpJEmy3dKPIsBssN+eTpxge0Y9N8EnqDU42ROd3sLu3rMJgrfeQEVKBaUUUdVxlCh2dwjdDXxXWttbBHC7N0gbxfQLGjsO/ppR+bW0g2YkPlbIlDiNrv8wJj7PW7vEOX3F8T77viQ6gLVT7tr/u4cvshuil0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729665878; c=relaxed/simple;
-	bh=fOKFshdQzxgGUEGpFtjZ568FZYT4tRvvkIuNir9RK+A=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=A4CSZktLQvHfATUapbI4VRUvRm6k5GPn2Qyye8YVMF+Xbq5CuQ0eUgbLmlL4xYNgmcWQFSfB/iujPtrb3NdowwYYymOLNZn6/VffGeqtnoXqGaPPkSSAzf8acmWFsZrdeGDQELnQHZ+PG93OcoJ/efMyYwzDcSDA+0KfpIeBYb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cXNQO7f3; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a156513a1so879396666b.0;
-        Tue, 22 Oct 2024 23:44:36 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729665874; x=1730270674; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=jsdVuQK0tqplZr5d1PpgO1JpvQuxio4Fj5Kb6xdlEIw=;
-        b=cXNQO7f37w9PezUiDzxlIz+rPcMmLYMaefE9aiW9IOHCB4RiVp6AnPpnOne0G/VSTA
-         IqrYvQ2y30zXb2nDmmLGNW5fXC9BmG/wQq+SFDI9wj3BsyOL8++cSFdIZYfPjqXBcZZv
-         jfXZGKnrrxPDX49ap+7nIXAMonJNUePJn7dcfEA7PQLzP0V5TpdIP2c/t9JyRVILA2dO
-         ax3tNvzal0nMOh4Qj2e6ZyatdLvIHfvTiUII6DIVP14d1lG5hEm7ikDhS3MWk5oew2wX
-         jXnT+WxWjvjuXY7LeSUJDUcPbLJ/ln9I7ec+mMjen8EUm7IbzYvB3BPpQzm/R8EEfyzO
-         pAHA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729665874; x=1730270674;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=jsdVuQK0tqplZr5d1PpgO1JpvQuxio4Fj5Kb6xdlEIw=;
-        b=Zxb0uLEewPabNfVdJ55j1zCc5UGRxG7EKnoHLZZ598hWEGu4sd4OwwBx32Nc6LpoQ7
-         MU98e09sLqeEkptqj83chPk0mrUgUvLNAlMNHiMTUQzRwp/yW9a7rYeUKiEMkMZHorDA
-         p+YRJPk04TalA1w40EFGz9tb3My3I/bHokC+LnipGJA84DX8epq/bGI6m0zOTmRbnjET
-         9tW47gFoq3hvi1Ffl86g7nx/AloTn17oKsGSwKXnGUrsGB/xW5yuf72YwxpjfNsGoblX
-         vs3TIChA/DB7O3cU8UatAhTFDEsFgQR1JfCPQ4FfmxX7INmYcSim2DcdYP3Ak2aM/5ge
-         n5Ug==
-X-Forwarded-Encrypted: i=1; AJvYcCW+mzzjNqtORzX+cqyIstvQDDR8sBMXNmmPrQu8fVqITKWQ61RfXqOj+2oy4IKpZwuhj8p3OLMHASBv5UEd@vger.kernel.org, AJvYcCW9ijrQq4N9ihDBgEm0pXLNs/daA9s0PGqliCyi/8IxQssRxB83GQKYHw5B2+6OKcszKWkVHaPL/T0G@vger.kernel.org, AJvYcCXOmLTL4nbiDr0Gd36uKmKITZc8CLH3UCninkUcVoe4K8ZID0wxxCeNnxeww5cti7FnAsYpftVZhKuUMP4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgkHQm5+rgUqoK2iTueFI8Vixd32fKqNxgFrPUV83D+IU4g9RT
-	G+Sayw8ZevqGuTSfNi2iUoUkb/TnTYu/G5lEVc82Y5k8nB0WsaJFUs9towB1J84=
-X-Google-Smtp-Source: AGHT+IHBPfa3kbMGCdAdDe5QU8hIr3I5hl7fBCe0GeJaGxy0b8pTP8y7QpFyoCU/+b6YeL3oJksWDw==
-X-Received: by 2002:a17:906:c150:b0:a9a:2afc:e4e3 with SMTP id a640c23a62f3a-a9abf92d226mr131024166b.50.1729665874190;
-        Tue, 22 Oct 2024 23:44:34 -0700 (PDT)
-Received: from ux-UP-WHL01 (mailgw01.gttektw.com. [45.117.96.243])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91572c0dsm433914466b.177.2024.10.22.23.44.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Tue, 22 Oct 2024 23:44:33 -0700 (PDT)
-Date: Wed, 23 Oct 2024 14:44:26 +0800
-From: Charles Wang <charles.goodix@gmail.com>
-To: Doug Anderson <dianders@chromium.org>
-Cc: krzk@kernel.org, dmitry.torokhov@gmail.com, hbarnor@chromium.org,
-	conor.dooley@microchip.com, jikos@kernel.org, bentiss@kernel.org,
-	linux-input@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] dt-bindings: input: Goodix SPI HID Touchscreen
-Message-ID: <ZxiZXeQzIaDYuu1F@ux-UP-WHL01>
-References: <20241018020815.3098263-2-charles.goodix@gmail.com>
- <CAD=FV=UFrk4QCxWzV9zUZnjhwiFf22Fji5KH83svdwba2mPVBA@mail.gmail.com>
- <ZxMfu4yxk961mZWB@ux-UP-WHL01>
- <fbde8a3a-3adc-4c1a-8529-fde0fa149c8e@kernel.org>
- <CAD=FV=VphXewyk_mpGHUZKw8_aK8HnH8T-YumwM70eyz22S+Aw@mail.gmail.com>
- <ZxdRaaCR7eTOCQkB@ux-UP-WHL01>
- <CAD=FV=UFonOVHUP5_9+BfJp71CFX7KKA1Gx=boN0=3_4cCKnZw@mail.gmail.com>
+	s=arc-20240116; t=1729665887; c=relaxed/simple;
+	bh=xVbTMSxcUlqK7MDOgo6acnDe14gnr92aTZ+Vz3qIc8E=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:CC:References:
+	 In-Reply-To:Content-Type; b=MgbgDR51LWEzx4oq/aL4CaZBfludFCdd3fiP03WuIO2Q6NkpXLNLromwKxxmi74+q3rsnMVoMJljRpSIJ9j6EZUkRLBFunZISpSusgBz5DCKqpFudpOayKy3CPELVJ2YHODqctphY38E77h+T2yCeb3CWEJvz1dECINWsxKtiLc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=FuDrhIy5; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 4673e858910a11efb88477ffae1fc7a5-20241023
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:CC:To:From:Subject:MIME-Version:Date:Message-ID; bh=/LlyPax/7pZTsDzzT62rFA+njlFCuzS51AjASbHBcXQ=;
+	b=FuDrhIy5dSp5HmVbFRIwY5+QEpy5W3536QpetOkAK3rgvIjkoOe4DfbjDgithFBXruB4lONL3CVz5UNxVEEObHBBH0tBhmPPp+O0dc+xMyezc3LqeJaeC4PBJAJFSXiOXQ3jQ7nCMQTLZbXKsJIhyzza170b1nLmkSJeI5wodvc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:2ed6a149-bead-4843-9491-4e84b2d97db4,IP:0,U
+	RL:0,TC:0,Content:1,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:1
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:a370f92d-a7a0-4b06-8464-80be82133975,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:4|-5,EDM:-3,IP:ni
+	l,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_ULS,TF_CID_SPAM_SNR
+X-UUID: 4673e858910a11efb88477ffae1fc7a5-20241023
+Received: from mtkmbs14n1.mediatek.inc [(172.21.101.75)] by mailgw01.mediatek.com
+	(envelope-from <macpaul.lin@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 523556408; Wed, 23 Oct 2024 14:44:38 +0800
+Received: from mtkmbs11n1.mediatek.inc (172.21.101.185) by
+ mtkmbs10n1.mediatek.inc (172.21.101.34) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Wed, 23 Oct 2024 14:44:33 +0800
+Received: from [172.21.84.99] (172.21.84.99) by mtkmbs11n1.mediatek.inc
+ (172.21.101.73) with Microsoft SMTP Server id 15.2.1118.26 via Frontend
+ Transport; Wed, 23 Oct 2024 14:44:32 +0800
+Message-ID: <7db67825-cd14-8085-081d-90f090804724@mediatek.com>
+Date: Wed, 23 Oct 2024 14:44:31 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
+User-Agent: Mozilla/5.0 (X11; Linux x86_64; rv:91.0) Gecko/20100101
+ Thunderbird/91.9.1
+Subject: Re: [PATCH v2] arm64: dts: mediatek: mt8195: Fix dtbs_check error for
+ tphy
+Content-Language: en-US
+From: Macpaul Lin <macpaul.lin@mediatek.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, "Rob
+ Herring" <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, "Conor
+ Dooley" <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>,
+	<devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Seiya Wang <seiya.wang@mediatek.com>, Tinghan Shen
+	<tinghan.shen@mediatek.com>, Chunfeng Yun <chunfeng.yun@mediatek.com>,
+	Alexandre Mergnat <amergnat@baylibre.com>, Jian Yang
+	<jian.yang@mediatek.com>, Jianguo Zhang <jianguo.zhang@mediatek.com>, "Jieyy
+ Yang" <jieyy.yang@mediatek.com>
+CC: Bear Wang <bear.wang@mediatek.com>, Pablo Sun <pablo.sun@mediatek.com>,
+	Macpaul Lin <macpaul@gmail.com>, Sen Chu <sen.chu@mediatek.com>, "Chris-qj
+ chen" <chris-qj.chen@mediatek.com>, MediaTek Chromebook Upstream
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Chen-Yu Tsai
+	<wenst@chromium.org>
+References: <20241008071540.32607-1-macpaul.lin@mediatek.com>
+ <e9277edf-d372-4a8e-881c-49a907f0a883@collabora.com>
+ <314aafed-5903-2478-971f-59870b8ac5fa@mediatek.com>
+In-Reply-To: <314aafed-5903-2478-971f-59870b8ac5fa@mediatek.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAD=FV=UFonOVHUP5_9+BfJp71CFX7KKA1Gx=boN0=3_4cCKnZw@mail.gmail.com>
+X-TM-AS-Product-Ver: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-AS-Result: No-10--14.693900-8.000000
+X-TMASE-MatchedRID: 6otD/cJAac0OwH4pD14DsPHkpkyUphL9Wot5Z16+u76+UkTh6A/Dwdno
+	quRwHY3BkAluVYknZHpbzVVgo9RtXiA1dgOjatGGXP5rFAucBUHnpmIrKZRxTs/PM4nfEDArIyZ
+	NTlgT7qnRLHyi43Gvn5VYfV6rzvhfRyV3gdKbiKMpa6LJktEjgPioIsi7Sa0gUUVrdcYJZJ0sgd
+	kHScxUMZKrGRECKhSOExCEFq1jOnsTY/HRCFabdLU+IyHhkXf1f2g6KJZtxl2YBF1C0J2QPuuYG
+	VimV8axiI8t/Y95trJ7nZmSglxg9i1Wsi+5O6JcJQI+kfsRJdqeimGtNywjtpsoi2XrUn/Jsuf7
+	RWbvUtyrusVRy4an8SAHAopEd76vRgZ0es9KU/RKAyF67tDyvJxdMmyRqn9gNXm9bRYGgkKW0XD
+	zeoW8Rw==
+X-TM-AS-User-Approved-Sender: No
+X-TM-AS-User-Blocked-Sender: No
+X-TMASE-Result: 10--14.693900-8.000000
+X-TMASE-Version: SMEX-14.0.0.3152-9.1.1006-23728.005
+X-TM-SNTS-SMTP: C810F8B9D87195458A9F7EFB21E49AFFF30BA1B0E50E32FA1B6818C4E7A366842000:8
 
-Hi,
 
-On Tue, Oct 22, 2024 at 09:12:33AM -0700, Doug Anderson wrote:
-> Hi,
-> 
-> On Tue, Oct 22, 2024 at 12:19 AM Charles Wang <charles.goodix@gmail.com> wrote:
-> >
-> > Hi Doug,
-> >
-> > On Mon, Oct 21, 2024 at 08:37:32AM -0700, Doug Anderson wrote:
-> > > Hi,
-> > >
-> > > On Mon, Oct 21, 2024 at 2:43 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
-> > > >
-> > > > On 19/10/2024 04:55, Charles Wang wrote:
-> > > > > Hi Doug
-> > > > >
-> > > > > On Fri, Oct 18, 2024 at 01:48:56PM -0700, Doug Anderson wrote:
-> > > > >>
-> > > > >> On Thu, Oct 17, 2024 at 7:09 PM Charles Wang <charles.goodix@gmail.com> wrote:
-> > > > >>>
-> > > > >>> The Goodix GT7986U touch controller report touch data according to the
-> > > > >>> HID protocol through the SPI bus. However, it is incompatible with
-> > > > >>> Microsoft's HID-over-SPI protocol.
-> > > > >>>
-> > > > >>> Signed-off-by: Charles Wang <charles.goodix@gmail.com>
-> > > > >>> ---
-> > > > >>>  .../bindings/input/goodix,gt7375p.yaml        | 68 ++++++++++++++++---
-> > > > >>>  1 file changed, 58 insertions(+), 10 deletions(-)
-> > > > >>
-> > > > >> I'm happy to let device tree folks make the call here, but IMO it
-> > > > >> would be much cleaner to just consider the I2C-connected GT7986U and
-> > > > >> the SPI-connected GT7986U to be different things and just use a
-> > > >
-> > > > Same device, you cannot have different compatibles. The way how the same
-> > > > (literally same chip) device sits on the bus is not part of the binding,
-> > > > thus no different compatibles.
-> > >
-> > > I don't want to belabour the point too much, but this doesn't feel
-> > > completely black and white here.
-> > >
-> > > "Same chip": a whole lot of laptops and phones all use the "same chip"
-> > > (same SoC) yet are different products. ...or you can look at the fact
-> > > that many peripherals have the same STM32 or Nuvoton chip in them but
-> > > are wildly different peripherals.
-> > >
-> > > In this case, Goodix may have made an ASIC called "GT7986U" that has
-> > > some type of CPU on it that can run firmware that can talk as an I2C
-> > > device or a SPI device. This ASIC may be intended to be used as a
-> > > touchscreen controller, but fundamentally it doesn't feel that
-> > > different from an STM32. You can build different boards designs with
-> > > the "GT7986U" on it and those boards are intended to run different
-> > > firmware.
-> > >
-> > > People manufacturing touch controller boards presumably put this
-> > > "GT7986U" on their touch controller board, maybe set certain
-> > > strappings telling it that it's talking over SPI or I2C or maybe just
-> > > decide which pins they're going to wire out to the board-to-board
-> > > connector on the touch controller board. A touch controller board
-> > > intended to talk over SPI may look 98% the same as a touch controller
-> > > board intended to talk over I2C, but what percentage of "sameness"
-> > > means that we need the same compatible string?
-> > >
-> > > Would things be different if Goodix decided to manufacture touch
-> > > controller boards themselves and sold two SKUs: a GT7986U-S and a
-> > > GT7986U-I?
-> > >
-> > > I would also note that (reading back in previous conversations) I
-> > > think Charles said that they run different firmware on the SPI vs. I2C
-> > > touch controllers. As I understand it, the firmware running on a
-> > > device can make it a different device from a device tree perspective.
-> > > The device tree does its best to describe just the hardware but it can
-> > > get fuzzy. For instance the "VID/PID" of a USB device is usually
-> > > something programmable and could be updateable by a firmware change
-> > > but we still may need to encode the VID/PID of the firmware that is
-> > > intended to run on the device in the device tree.
-> > >
-> > > Anyway, I'm happy to be quiet about this and fine if folks want to
-> > > continue to work towards a "unified" binding. It makes me a little
-> > > uncomfortable that I'll still end up listed as a "maintainer" of the
-> > > unified binding because I don't totally agree with it, but I'm also
-> > > pragmatic and I'd rather have something that can land.
-> > >
-> >
-> > Thank you very much for your attention. Your understanding of the GT7986U
-> > SPI and I2C devices is correct. There is no fundamental difference between
-> > them and the STM32, as they are all ASIC devices. The functionality of the
-> > device is determined by the firmware that is loaded, although the GT7986U
-> > is an ASIC specifically designed for touchscreens.
-> >
-> > Additionally, the firmware and devices are generally bound to specific touch
-> > panels, meaning that firmware intended for SPI will not function properly on
-> > an I2C touch panel.
-> 
-> Just to get clarity: how is GT7986U delivered? For instance:
-> 
-> 1. Maybe Goodix produces touchscreen controller boards and ships them
-> to customers for use in their products. In this case, does Goodix ship
-> a single board with two connectors, or a separate board for SPI vs.
-> I2C? I would have to believe that maybe a "dev" board might have both
-> connectors and a bunch of jumpers/switches to choose which ones to
-> use, but it feels unlikely someone would ship that in any quantity.
-> 
-> 2. Maybe Goodix provides schematics for customers to produce their own
-> touchscreen controller boards and they tell customers to either hook
-> up the SPI lines and load the SPI firmware or hook up the I2C lines
-> and load the I2C firmware. In this case the assumption is that
-> customers using the same communication method are following the
-> schematics closely enough that they all behave the same and thus we
-> don't need some extra distinction.
-> 
-> In either case it seems like a touchscreen controller board that talks
-> over SPI and one that talks over I2C are two different products and
-> thus (to me) should have two distinct compatible strings. This is not
-> one device that merely has multiple interfaces.
-> 
 
-Goodix's approach is similar to Method 2. First, Goodix provides the
-schematics and the chips (including initial firmware, no touch function)
-to customers, and customers design their touchscreen controller boards and
-decide whether to use the I2C or SPI interface. Then, Goodix modifies and
-debugs the firmware based on the customer's design and provides the final
-firmware for customers to upgrade.
+On 10/9/24 17:21, Macpaul Lin wrote:
+> 
+> 
+> On 10/8/24 17:09, AngeloGioacchino Del Regno wrote:
+>> Il 08/10/24 09:15, Macpaul Lin ha scritto:
+>>> The u3phy1 node in mt8195.dtsi was triggering a dtbs_check error.
+>>> The error message was:
+>>>    t-phy@11e30000: 'power-domains' does not match any of the regexes:
+>>>      '^(usb|pcie|sata)-phy@[0-9a-f]+$', 'pinctrl-[0-9]+'
+>>> Fix this issue by dropping 'power-domains' of u3phy1 node.
+>>>
+>>> This is because MediaTek tphy dose not need to add mtcmos.  It is not
+>>> necessary to add 'power-domains'. If the power of the tphy is turned 
+>>> off,
+>>> it will affect other functions. From the current USB hardware design
+>>> perspective, even if mtcmos is added to the phy, it is always on.
+>>>
+>>> Fixes: 37f2582883be ("arm64: dts: Add mediatek SoC mt8195 and 
+>>> evaluation board")
+>>> Signed-off-by: Macpaul Lin <macpaul.lin@mediatek.com>
+>>
+>> Reviewed-by: AngeloGioacchino Del Regno 
+>> <angelogioacchino.delregno@collabora.com>
+> 
+> Sorry for bothering, it seems MediaTek internal still have some
+> discussion about according to Conor's suggestion:
+> 
+> [1] 
+> https://lore.kernel.org/lkml/20241008-disorder-slacking-d8196ceb68f7@spud/T/#mccf978d76f52cc26970f3f3be6120055e4698fe6 
+> 
+> 
+> Please don't to pick this patch until if MediaTek could have some
+> conclusions.
 
-It is important to note that the type of driver used by the final device
-is related not only to the bus type but also to the final firmware. Even
-when using the same I2C bus, different drivers may be needed, such as
-hid-i2c or a customer-specific driver.
+Update: This patch could be dropped since the correct fix in
+TPHY's DT Schema has been accepted.
 
-Best regards,
-Charles
+[2] 
+https://lore.kernel.org/all/172917936283.288841.9548294790735623997.b4-ty@kernel.org/
+
+>>> ---
+>>>   arch/arm64/boot/dts/mediatek/mt8195.dtsi | 1 -
+>>>   1 file changed, 1 deletion(-)
+>>>
+>>> Changes for v2:
+>>>   - Add detail description of the tphy design for explaining the reason
+>>>     of this change.
+>>>
+>>> diff --git a/arch/arm64/boot/dts/mediatek/mt8195.dtsi 
+>>> b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>> index ade685ed2190..1c6f08dde31c 100644
+>>> --- a/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>> +++ b/arch/arm64/boot/dts/mediatek/mt8195.dtsi
+>>> @@ -1920,7 +1920,6 @@ u3phy1: t-phy@11e30000 {
+>>>               #address-cells = <1>;
+>>>               #size-cells = <1>;
+>>>               ranges = <0 0 0x11e30000 0xe00>;
+>>> -            power-domains = <&spm MT8195_POWER_DOMAIN_SSUSB_PCIE_PHY>;
+>>>               status = "disabled";
+>>>               u2port1: usb-phy@0 {
+>>
+>>
+> 
+> Thanks!
+> Macpaul Lin
+
+Thanks!
+Macpaul Lin
 
