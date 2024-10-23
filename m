@@ -1,59 +1,59 @@
-Return-Path: <linux-kernel+bounces-377795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 953909AC6E8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:46:33 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1B3459AC6EB
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:47:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 415081F22CD3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:46:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6BA56B23CA4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:47:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40B251946C2;
-	Wed, 23 Oct 2024 09:46:27 +0000 (UTC)
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 164FD19B5AC;
+	Wed, 23 Oct 2024 09:47:24 +0000 (UTC)
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44BBE136357
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:46:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DFD5136357
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:47:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729676786; cv=none; b=O8ifWetDp/+76Zsol5aX8crQDLw2jKdeKZ5baG8UHg6eTsjE+uKVJp4IJydrUIAFg49J24etqJGRKMuEQp10u+/kJ+5IGZcTncyrZ0Y3/ofUPNg9mlI+S8dzmUtNPMnCY+lOT1ElskEcO6MMGu7FqRKbLiCPGScTS4RGh103VaI=
+	t=1729676843; cv=none; b=YOXB5wQut/HLa0MeJ5mhNU1XKHP2aCqze0mEL1dTmUTOxie0bIidTlZA7HrzkoUbnqJtF/6dWNqkPBuIiXP/dZfPuWuvgfL+bOdWbfC57PD7u4iPUuW7bRyqUbuyiiBP8LLcBvmfeh+EHfKIn9H3XRWpIQOzpd3rWOkNPF2jYTQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729676786; c=relaxed/simple;
-	bh=7WWfdSSU0dZIz8uOzoqjntDQGqpbRKRIIMl8L+iALiA=;
+	s=arc-20240116; t=1729676843; c=relaxed/simple;
+	bh=woF5q3pESPJk+4/WKMXM3SDBqmy29+UPMBlAR59Ig20=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=AK8rp1VmurVW7zuNN/YA0O5GdhcSqXfXqhVXvE4qP3xWw1F7umjesa8h+S0lHoZde83gWTkAijHKdlyL0rHjYQOVWcxEsqMoqgKHWyP4Awr10lm+0pkP2Abx79cTqQLIxa8zHqwxsVT64hrZ0mBSi6QhvjIsEqtQs5+OGiRY8io=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.54
+	 In-Reply-To:Content-Type; b=S1KNw+K8iCVytmq6wCIWBP61mNN9sXHcUS9y3sCyI7o6DViHrwYpt6Dti54ujIHnTacxcb82EtszmG1OQ2suyPd0qjfMSmB4Nww7POqC1PLq11zSt455st8oWnyolqI0wxJWpfql51/Hg1jUKiNUSI6IthpQ7f3/5dtcjSpmj7s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.218.49
 Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=grimberg.me
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso943644566b.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:46:25 -0700 (PDT)
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a99f1fd20c4so889466166b.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 02:47:21 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729676784; x=1730281584;
+        d=1e100.net; s=20230601; t=1729676840; x=1730281640;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=FBpqt7O1UVowxWQhdRzPD2AUA5xa75SUt7TL+T99+jU=;
-        b=Ax0ohv3Oh9gUn61uaNcPlLgWWQbkAPAuDnGbcLUYKmJs27KJ7QX4D0PS9BXMxOH+o3
-         u/0HbxxLPv7BDofpd6ZLiIkXelSqFScdH6tcY+Orz8qYRzE2N0pvAir9lY53nRMkhGZB
-         F6EMiq/g8Y36f5XT8E5UMXi8LVQ1CZTm1d/CW/SBdWWZVejWE4aJIv/t5WmnMp1NpE6F
-         bYu3bIgVnfCIE7sTgmcN+JCIqsdvmJVvlYGPvRtm/gVd04Dtwkhnjb4izYZnmKMdJrsa
-         AQBbdp/qyWzJQ6A5j8UYRs5kus1Exuw8cYi3FcZbfuBAxJCnk4kS3Xcg7MbwSfmo2BxT
-         J68A==
-X-Forwarded-Encrypted: i=1; AJvYcCWhN3pnPMAZe1FBOV7iy8nPouZMCdu8btFI4RdHIMQrzbToUTGeNPhfPtCHspaVpywEwpd73OPsa69955U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVbSC0AtIg9bChVHDBzzU+M6oc3KlFvxVY1LRflOvY4Ka38+NW
-	Q5rxcukm6cq0P8CJC/U6RuUYxWG6ff67X/BVe5Za8eqLbBmRzH4j
-X-Google-Smtp-Source: AGHT+IGRZlRgRkyJtIDZdMdsrw1KKYaTyrzKxbx8XqOmFjRdlUXYJfrbO/clap8pTJnoJhes2xhzGA==
-X-Received: by 2002:a17:907:7247:b0:a9a:33c:f6e1 with SMTP id a640c23a62f3a-a9abf851e2dmr181732466b.5.1729676783442;
-        Wed, 23 Oct 2024 02:46:23 -0700 (PDT)
+        bh=woF5q3pESPJk+4/WKMXM3SDBqmy29+UPMBlAR59Ig20=;
+        b=WBrmjieygBCm71+pgVYBcfOfn2SpZxBupC7yDCYcT+HvfqTmviINtFkLiCC/VIt/CC
+         +c2qFuWdlMGqWTHaIfUZqDQWXoaOJ7CJOC+T2CtIViYm1Lis1oTNQH7yMPoZUh2kSDMB
+         6kOLKNmtIwV5caF39/Hr0SKeRKJJIwhJsZmXfUDdMNqWkjHBjiKRhh+b4SsWNYsMumOn
+         Ggl4h6p34dgT+LtP3r8Q9NQEXNf63OoOlroKSfd6wJXwb+1UWDctTLb42Ioh+GlugRV7
+         FXvvuexGOxv64koaBiwJpBakh44Kto6SSC0y/08/v5FbBZPhrcHeK5emhwCbO3PsKRYK
+         Tjug==
+X-Forwarded-Encrypted: i=1; AJvYcCUneHikhxX4bDs772GBflUuk08TpkAAmR8I9O0o9n59BzVtgvS8805BIaJajxNp4inZVZRJkpBL4cXoHYg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyS7CEs72shCE+BIRj006HeXL85Dd6zYf5a9ave/TXG4zfOwMgz
+	cBxM6GODUgFMro25Ke6GKiq43v2zRWHFvGm7EMEtQm6GIe9DPDiv
+X-Google-Smtp-Source: AGHT+IGY61ZsPuBvI/QH9aKmiOpOuy6+oKGeCbiXlliZD278FpkCfl/TmavvW7l0xDH8iO2qXiGBSQ==
+X-Received: by 2002:a17:906:478f:b0:a99:ee83:2b19 with SMTP id a640c23a62f3a-a9abf8a4f28mr199033366b.35.1729676840080;
+        Wed, 23 Oct 2024 02:47:20 -0700 (PDT)
 Received: from [10.100.102.74] (89-138-78-158.bb.netvision.net.il. [89.138.78.158])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370723sm450767366b.100.2024.10.23.02.46.22
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9159a231sm450360766b.210.2024.10.23.02.47.18
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 02:46:23 -0700 (PDT)
-Message-ID: <8a1e78e9-c064-4fce-9ab4-f2beea053d97@grimberg.me>
-Date: Wed, 23 Oct 2024 12:46:21 +0300
+        Wed, 23 Oct 2024 02:47:19 -0700 (PDT)
+Message-ID: <dfa54876-5ed4-4cbe-b62b-be1cb0fdd296@grimberg.me>
+Date: Wed, 23 Oct 2024 12:47:17 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,51 +63,45 @@ MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
 Subject: Re: [PATCH] nvme-sysfs: display max_hw_sectors_kb without requiring
  namespaces
-To: Christoph Hellwig <hch@lst.de>, Keith Busch <kbusch@kernel.org>
+To: Keith Busch <kbusch@kernel.org>
 Cc: Abhishek Bapat <abhishekbapat@google.com>, Jens Axboe <axboe@kernel.dk>,
- Prashant Malani <pmalani@google.com>, linux-nvme@lists.infradead.org,
- linux-kernel@vger.kernel.org
+ Christoph Hellwig <hch@lst.de>, Prashant Malani <pmalani@google.com>,
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org
 References: <20241016213108.549000-1-abhishekbapat@google.com>
  <ZxE-BE4hLVRR2Zcp@kbusch-mbp.dhcp.thefacebook.com>
  <CAL41Mv4_UjsD1ycpNU1xuQJdGWMf2L-SQYs=LupoM9BKurNXCg@mail.gmail.com>
- <Zxe8e2zS5dA61Jou@kbusch-mbp> <20241023052403.GC1341@lst.de>
+ <Zxe8e2zS5dA61Jou@kbusch-mbp>
+ <6b00d25e-fe6a-4552-9945-d6181af83137@grimberg.me>
+ <ZxfJ_TfT7MMGWs4X@kbusch-mbp>
 Content-Language: en-US
 From: Sagi Grimberg <sagi@grimberg.me>
-In-Reply-To: <20241023052403.GC1341@lst.de>
+In-Reply-To: <ZxfJ_TfT7MMGWs4X@kbusch-mbp>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
 
 
 
-On 23/10/2024 8:24, Christoph Hellwig wrote:
-> On Tue, Oct 22, 2024 at 08:53:47AM -0600, Keith Busch wrote:
->> You'd may want to know max_sectors_kb, dma_alignment, nr_requests,
->> virt_boundary_mask. Maybe some others.
->>
->> The request_queue is owned by the block layer, so that seems like an
->> okay place to export it, but attached to some other device's sysfs
->> directory instead of a gendisk.
->>
->> I'm just suggesting this because it doesn't sound like this is an nvme
->> specific problem.
-> Well, it's a problem specific to passthrough without a gendisk, which is
-> the NVMe admin queue and the /dev/sg device.  So it's common-ish :)
+On 22/10/2024 18:51, Keith Busch wrote:
+> On Tue, Oct 22, 2024 at 06:35:11PM +0300, Sagi Grimberg wrote:
+>> On 22/10/2024 17:53, Keith Busch wrote:
+>>> On Thu, Oct 17, 2024 at 02:32:18PM -0700, Abhishek Bapat wrote:
+>>>
+>>> The request_queue is owned by the block layer, so that seems like an
+>>> okay place to export it, but attached to some other device's sysfs
+>>> directory instead of a gendisk.
+>>>
+>>> I'm just suggesting this because it doesn't sound like this is an nvme
+>>> specific problem.
+>> Won't it be confusing to find queue/ directory in controller nvmeX sysfs
+>> entry?
+> It's the attributes of the request queue associated with that
+> controller, so I think a queue/ directory under it makes sense. That's
+> how it looks for gendisks, so why not for disk-less queues?
 >
->
-> Note that for the programs using passthrough sysfs isn't actually a very
-> good interface, as finding the right directory is pain, as is opening,
-> reading and parsing one ASCIII file per limit.
->
-> One thing I've been wanting to do also for mkfs tools and similar is a
-> generic extensible ioctl to dump all the queue limits.  That's a lot
-> easier and faster for the tools and would work very well here.
->
-> Note that we could still be adding new limits at any point of time
-> (although I have a hard time thinking what limit we don't have yet),
-> so we still can't guarantee that non-trivial I/O will always work.
+> Many queue attributes only make sense for gendisks, though, so maybe
+> need to tweak visibility if we decide to do it like this.
 
-Makes sense to me. Although people would still like to be able to
-see this value outside of an application context. We can probably
-extend nvme-cli to display this info...
+It'd be good to name it "admin_queue" to clarify a bit (although its still
+confusing).
 
