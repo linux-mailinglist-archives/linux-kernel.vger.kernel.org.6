@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-378944-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378945-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BB1D29AD787
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:26:16 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 380FC9AD78B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:26:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 721341F237C0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:26:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 65FAD1C23A5C
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:26:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F2CC71FE100;
-	Wed, 23 Oct 2024 22:26:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 628931FEFB3;
+	Wed, 23 Oct 2024 22:26:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="LzIQA+jN"
-Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="LD6svwZs"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D698513B7BE;
-	Wed, 23 Oct 2024 22:26:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E62431EF08A;
+	Wed, 23 Oct 2024 22:26:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729722367; cv=none; b=lSrylirz4HZe5cMtYKiQKCij7QotDFTZWgIxwjadAchaH/lIJ3RQ+DGLzYQNph1vOc9sk4uGEba1rjEfb/N2ezvf2LqB70i7nDjk3Tq4lwrlenfw557HfSbTZEYAD0JYih2cnuS7oEJbwC+APJsagQ83E0pZKKMvx3LsrGt5BME=
+	t=1729722385; cv=none; b=n4DirU8mJsDwevopvyNNdWxRmoKHQQezxm9neazdzTTysnlQ7OnQb7vlwrRzX3YcZRlaVL90qBVMVJCZB6vomg4X4PPBvRAzoJp1UlmcN5bdaS+9/hkMICU7kCCpawP0EPVRYv36WCkoGJSzvHiwj1wexfNSj+djy+cXn76ZpN0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729722367; c=relaxed/simple;
-	bh=NUZDyRpafdrTHYY+TdNYMLOsYCnLmCKOhSnQEvicWhU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ZV9OcScZJHKPnrmK7fjrVYXkyWyX/4IqkyUGbbbpXlyr8WW9HJncmSx9srAP4kvGhMgnGOzMEF0kvyt+sJwosXyKUJQMjnH1T5sSAiI6EOVLBrAZnpxkKKlVFkZR/w2PbeAc+hl13HAanbllBVhJLe3691FP+LJkQ3rjpuhs54M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=LzIQA+jN; arc=none smtp.client-ip=199.89.1.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
-Received: from localhost (localhost [127.0.0.1])
-	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XYkCb21hcz6ClY96;
-	Wed, 23 Oct 2024 22:26:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
-	content-transfer-encoding:content-type:content-type:in-reply-to
-	:from:from:content-language:references:subject:subject
-	:user-agent:mime-version:date:date:message-id:received:received;
-	 s=mr01; t=1729722360; x=1732314361; bh=uXOJL0mtJVKcEgFBIwqq6c43
-	DJi21LRRMqX8IOftEUA=; b=LzIQA+jNotU5+4Kyo9J9F1AGImEMb68JRI+LRVgf
-	lF3elQkGg+vPk5tbfabb74ZxY/OjEXmA+jSoCKpy1pPLNhUuIQLBUQdaCVzc+QMa
-	MMcr/2VtYnUJzdlbNK5amu8rTjHtm0R+rb+ZA+j3t1+iR4mNJA+0BKq02VvLXyi7
-	hsuN61H440oBITWOcoh+ualbC/cYYzNrIbDQoCpC9Ut48M9Qf5IG2NAYMaNGZ6+E
-	/0qXsznrU1z73RGMK1FMgvtzbHMc6K+2xlb9rlTforYsE0jMzKNSVYHNGd6nsMoJ
-	BoWiMMHgJNLW9rWRwq57zWN5x0qJMl9L+nZOAU7tGeDtwg==
-X-Virus-Scanned: by MailRoute
-Received: from 008.lax.mailroute.net ([127.0.0.1])
- by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
- id tHlLI3-A0q3M; Wed, 23 Oct 2024 22:26:00 +0000 (UTC)
-Received: from [100.66.154.22] (unknown [104.135.204.82])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: bvanassche@acm.org)
-	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XYkCW6ftFz6ClY94;
-	Wed, 23 Oct 2024 22:25:59 +0000 (UTC)
-Message-ID: <9ca3fb4b-85d9-493c-8b90-5210f5530e7f@acm.org>
-Date: Wed, 23 Oct 2024 15:25:58 -0700
+	s=arc-20240116; t=1729722385; c=relaxed/simple;
+	bh=+rYygrhoSOc3Knp2xYlAxLQmiQ25V2jPf8SKuiMUiz8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=dxmkOxWvgn6KSLj7tM+OMUY/xumknFhfwgHGjMNo5XSLFmg9NV48eE/liOyF17Gz4EViP6GmtQtbQzUKKSJiBhxe7XI8iUqlT4St1WGggte/DVHs78tsvdJmg1A988F3HfRLO2RfSDidoynfuqoOCSmXU3HPiHf6te2epXk0h2w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=LD6svwZs; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279866.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NKTYZX023371;
+	Wed, 23 Oct 2024 22:26:20 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DkNeeUY6AJ1V+YP4DeUtDk6d5YyyilBFns8lgByPOiA=; b=LD6svwZsmaOfGLe2
+	thlyVlCHTSxkyXUqvZkEgLvBmHg85JSMLU50qmM14YJKOupmlGfGpQuXchkG/Ns2
+	rrsy4trRI85DTsMS0fE7H2y6YqhSD7eAgb7Tc0oi+CtTVx2DE16MQ+32ux/xH+rb
+	qMIYw43KmR1lZYwNU52M6omuVpNCLrD/6rFxLNhc9lGZSjYNp2hMyLScXyOE0JMo
+	q8lq2nxlqaO/7IYIv12+z5jKLqXBCtbux6T5TyJRa33ayynwcScTOl5vBYWwdes1
+	W8rKF7fJqP/xmg/3/7h/3f69F3yBKAJ33kd2KOOITNVtnk0MGCRST7iK3gpju0qr
+	tbCHEQ==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3ukq51-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 22:26:20 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49NMQJsW007728
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Wed, 23 Oct 2024 22:26:19 GMT
+Received: from [10.110.103.186] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 15:26:18 -0700
+Message-ID: <58b74ec6-8185-42d2-ae64-c5c40c303364@quicinc.com>
+Date: Wed, 23 Oct 2024 15:26:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -64,46 +64,77 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the
- end of structures
-To: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20241023221700.220063-2-mtodorovac69@gmail.com>
+Subject: Re: [PATCH v2 2/2] soc: qcom: pmic_glink: Handle GLINK intent
+ allocation rejections
+To: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>,
+        Bjorn Andersson
+	<andersson@kernel.org>,
+        Mathieu Poirier <mathieu.poirier@linaro.org>,
+        "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Johan Hovold <johan@kernel.org>
+CC: <linux-arm-msm@vger.kernel.org>,
+        Bjorn Andersson
+	<quic_bjorande@quicinc.com>,
+        <linux-remoteproc@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <stable@vger.kernel.org>, Johan Hovold
+	<johan+linaro@kernel.org>
+References: <20241023-pmic-glink-ecancelled-v2-0-ebc268129407@oss.qualcomm.com>
+ <20241023-pmic-glink-ecancelled-v2-2-ebc268129407@oss.qualcomm.com>
 Content-Language: en-US
-From: Bart Van Assche <bvanassche@acm.org>
-In-Reply-To: <20241023221700.220063-2-mtodorovac69@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Chris Lew <quic_clew@quicinc.com>
+In-Reply-To: <20241023-pmic-glink-ecancelled-v2-2-ebc268129407@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: 4STLd7XG6AQjIag_FPjJMqLZ624narOp
+X-Proofpoint-ORIG-GUID: 4STLd7XG6AQjIag_FPjJMqLZ624narOp
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ impostorscore=0 lowpriorityscore=0 spamscore=0 bulkscore=0 adultscore=0
+ suspectscore=0 phishscore=0 clxscore=1015 mlxscore=0 mlxlogscore=815
+ malwarescore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410230146
 
-On 10/23/24 3:17 PM, Mirsad Todorovac wrote:
-> Fixes: 21038b0900d1b ("scsi: qla2xxx: Fix endianness annotations in header files")
 
-The "Fixes:" tag is wrong. The one-element arrays were introduced long
-before I fixed the endianness annotations.
 
-> diff --git a/drivers/scsi/qla2xxx/qla_dbg.h b/drivers/scsi/qla2xxx/qla_dbg.h
-> index 54f0a412226f..ca9304df484b 100644
-> --- a/drivers/scsi/qla2xxx/qla_dbg.h
-> +++ b/drivers/scsi/qla2xxx/qla_dbg.h
-> @@ -31,7 +31,7 @@ struct qla2300_fw_dump {
->   	__be16 fpm_b1_reg[64];
->   	__be16 risc_ram[0xf800];
->   	__be16 stack_ram[0x1000];
-> -	__be16 data_ram[1];
-> +	__be16 data_ram[];
->   };
->   
+On 10/23/2024 10:24 AM, Bjorn Andersson wrote:
+> Some versions of the pmic_glink firmware does not allow dynamic GLINK
+> intent allocations, attempting to send a message before the firmware has
+> allocated its receive buffers and announced these intent allocations
+> will fail. When this happens something like this showns up in the log:
+> 
+>      pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to send altmode request: 0x10 (-125)
+>      pmic_glink_altmode.pmic_glink_altmode pmic_glink.altmode.0: failed to request altmode notifications: -125
+>      ucsi_glink.pmic_glink_ucsi pmic_glink.ucsi.0: failed to send UCSI read request: -125
+>      qcom_battmgr.pmic_glink_power_supply pmic_glink.power-supply.0: failed to request power notifications
+> 
+> GLINK has been updated to distinguish between the cases where the remote
+> is going down (-ECANCELED) and the intent allocation being rejected
+> (-EAGAIN).
+> 
+> Retry the send until intent buffers becomes available, or an actual
+> error occur.
+> 
+> To avoid infinitely waiting for the firmware in the event that this
+> misbehaves and no intents arrive, an arbitrary 5 second timeout is
+> used.
+> 
+> This patch was developed with input from Chris Lew.
+> 
+> Reported-by: Johan Hovold <johan@kernel.org>
+> Closes: https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/#t
+> Cc: stable@vger.kernel.org # rpmsg: glink: Handle rejected intent request better
+> Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
+> Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+> ---
 
-How has this patch been tested? Has it even been compile-tested? This
-patch probably breaks at least the following statement:
-
-	BUILD_BUG_ON(sizeof(struct qla2300_fw_dump) != 136100);
-
-Thanks,
-
-Bart.
+Reviewed-by: Chris Lew <quic_clew@quicinc.com>
 
