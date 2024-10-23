@@ -1,313 +1,255 @@
-Return-Path: <linux-kernel+bounces-377206-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377203-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BF5AE9ABB44
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 04:01:38 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 691499ABB39
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:58:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E00B61C2261A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:01:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1B8E92845D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 01:58:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2F494D8D1;
-	Wed, 23 Oct 2024 02:01:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5503D381BA;
+	Wed, 23 Oct 2024 01:58:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="m+4V1WyK"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="10eXvid8"
+Received: from mail-qt1-f182.google.com (mail-qt1-f182.google.com [209.85.160.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3945420322;
-	Wed, 23 Oct 2024 02:01:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D3B531798C
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 01:58:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729648881; cv=none; b=E11xILs4GiothSovai1sPXF/7QWjQZ/5Ff5WiIpSZneB5TQIbpy5+rXmWrxBDrsYVVaLGdaC4jbA02quNr0n2rIt0cVTZ2m0LPHMOvxH6VT1KgLUoeDPC7dBDN4275k9bQHvS8NbufJLojItaJbd1fpuHW9yYQtTg8SoGSVtJ6I=
+	t=1729648699; cv=none; b=W0gec8zsKHoaJb85NUo36SL8YavnHlaOhOkn7teVkA7iTZ9FDYpZYkAnefeIKe7rXciDw6LQXNhJlVW8UZErtLH3XeAFAVG++4xyTsz76lYsqPC9malenLlyVwoxnkXb+NeZ4M2dt+cufuiIIKK6GQJdHU8HhN3y/hrYaxHK5i4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729648881; c=relaxed/simple;
-	bh=1i3ThIkrrVe2fLu6Tt2tqRj2QRumtfMWOK9itQrA6xA=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=Ywv/GD/Wl2TKWEQc8ZEkGa0PErDne1i65MWi+pYbJY2eExuvTvIltqMjoopCMzLcLlrbmB8KIPbCkiCql4c+2BqOjIZPEzvs/J/fVJ9AhY6SmHMngg795c5/MwsW/oTZ2wIL99P2twKly6omt/NHTAehT9nfsPXaueXdPw+arWU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=m+4V1WyK; arc=none smtp.client-ip=198.175.65.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729648879; x=1761184879;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version:content-transfer-encoding;
-  bh=1i3ThIkrrVe2fLu6Tt2tqRj2QRumtfMWOK9itQrA6xA=;
-  b=m+4V1WyKTWkv9diUU5zR8QSB1tDqmK9mh7lmEStXIpZGx3BdwDw7mqEW
-   7TkxSqar/iPz97H+kRlCCDy2gs9kcJ6/T9j3T/ShX29DXyqRxi55XABVJ
-   /xrGbyHBW6xx9rHHJSfgpAw4QaLxK4S5w/kUvTpP1OjkSrQ4MUonZUB/p
-   kTcFYYazgkc1U5L2zUuv5RpegpUWLL4ELltk8iDI1S3Ap+hF0g64WIuhF
-   +rxk8fmPkvT8YXUb+v/RRhvSu8FIBGzREdB34U/WVrM2hzuYQtpa+eueT
-   mRrJIA5GK8a7CpSxWQbwA3thHgNpFpnGAXMq8+RNQAzlsyeqneU+WusnJ
-   w==;
-X-CSE-ConnectionGUID: OKpY9xzhQ5200lJnTuH86g==
-X-CSE-MsgGUID: QrUG8SA/TYu1/lE3/ZybWA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="39763195"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="39763195"
-Received: from fmviesa006.fm.intel.com ([10.60.135.146])
-  by orvoesa103.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 19:01:18 -0700
-X-CSE-ConnectionGUID: NqEj6QBqTYCHESkKj4X0+Q==
-X-CSE-MsgGUID: EBVpR1IVTC2bIlI0mIUBkw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,223,1725346800"; 
-   d="scan'208";a="79623556"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by fmviesa006-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 22 Oct 2024 19:01:14 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Kairui Song <ryncsn@gmail.com>
-Cc: akpm@linux-foundation.org,  chrisl@kernel.org,  david@redhat.com,
-  hannes@cmpxchg.org,  hughd@google.com,  kaleshsingh@google.com,
-  linux-kernel@vger.kernel.org,  linux-mm@kvack.org,
-  liyangouwen1@oppo.com,  mhocko@suse.com,  minchan@kernel.org,
-  sj@kernel.org,  stable@vger.kernel.org,  surenb@google.com,
-  v-songbaohua@oppo.com,  willy@infradead.org,  yosryahmed@google.com,
-  yuzhao@google.com,  Barry Song <21cnbao@gmail.com>
-Subject: Re: [PATCH] mm: avoid unconditional one-tick sleep when
- swapcache_prepare fails
-In-Reply-To: <CAMgjq7D6Ku4-0mfJUexB9ARxY5eHwJjMS_M9qqXrvR=ScW0jtA@mail.gmail.com>
-	(Kairui Song's message of "Tue, 22 Oct 2024 17:21:07 +0800")
-References: <87ikuani1f.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<20241008130807.40833-1-21cnbao@gmail.com>
-	<87set6m73u.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<CAMgjq7D6Ku4-0mfJUexB9ARxY5eHwJjMS_M9qqXrvR=ScW0jtA@mail.gmail.com>
-Date: Wed, 23 Oct 2024 09:57:41 +0800
-Message-ID: <87iktj4m3u.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	s=arc-20240116; t=1729648699; c=relaxed/simple;
+	bh=sjXYwAuVhvLjlf70ZwFYWsEH5rWc0KU1Z4c55IXe4tE=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=syC/5kiFaFrs11x8XpJN+4saaKJ1y816rAoM+eL+3/Hy7BsSFpSIlf58Cpdpmb/3dJrUYKKtps9QdTJw35qa6/2ob69K3jA3PIPCI1CG60BukjRuoQzdT7Qtwyw8HrwKgTQ15Ztge89uOR9vz6EeHUDNGK6hWmsr+svpyLoj8FE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=10eXvid8; arc=none smtp.client-ip=209.85.160.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f182.google.com with SMTP id d75a77b69052e-460a8d1a9b7so87911cf.1
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 18:58:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729648696; x=1730253496; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qul5hLmQAu+fWVlqGFGYgtVKdRyN4ZhOl3zbp5Ssux4=;
+        b=10eXvid8ajNgajTPglj+JLoNgJQACFh2aXlm6Awrej/KQLE3Uz6+fGCjiwXfCaU8RW
+         bVTPeitP4MdluTcTOlDkyij0VjVMakfRawOERANzdDcgSNgsZRnP+bnIQ6pus2OvvGUT
+         LibvCvHMdj0eOrgzA+1ssSqpfzn6DpAKcTVYvLqyRzjjEkeH+algQmRLCAI70Ec7TRq9
+         mWlXc6v3/KzwQ+L9mXs07U2kkXDfz6JaG5m3qsSjrwwhsn1wHjz7BPF/PSjN+mA/Bv0j
+         T403/o7b4o5mZp04/KQx0ZuBOVHz4LKk3TPUOFR12AnN2ty/TB2jwY7AaNMo7bl5EdTK
+         2tpg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729648696; x=1730253496;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qul5hLmQAu+fWVlqGFGYgtVKdRyN4ZhOl3zbp5Ssux4=;
+        b=aCTZb7Uqeua1ILQKg62KzfdEm0G9wjZch53dqEOsdHcR1MowSVsF2CgER5mdVgjcH2
+         8AxinShel2bRvDwc3kUytRpzv/K4Rtu1FYfGpG4ZA+6Hqo4D0/ox44iI+SUofdjZNIj+
+         wntCuy8UIIvmdeH5+2FvmSdtJfXgrWzwOsQZ3k9Xvl3clU6zufXoxknoRKj6/gg2ml/2
+         MvAv4MX5FyE0OACQuIK6l2ANWM+dGhEb4LY6jm6G96SChymmbc65mbT3+4NDBLGRE5Bk
+         7LacvtOkGqp/Cw5AkOpfCN4eccfbvW3iTzlgRSK1ypZ4z8YKbd1UQXXsW03IzsEVQ5ND
+         SZGQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWCWT769J70FPCR5VtiJgu37tX6JtE+UKjh1x1kmVt4Z9Wy3FoOmgn2r2rBWiFZML6/yYVtEZ0SwM7tT1I=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxefqdm6NRhKCk6sbTjI0r9IB//GzvB8FTiIV1wrf/q+CLWeqbQ
+	8E/pa4BCFtvbxds6/V5Xs0eAWocl0ao2/n8gsSQ3POrZfWx4MLtg9Bi87CMBv3GS52GSuTPbMQX
+	rcHewyiZlFbZ6RsIDFpN930AMxPVc/GeTcSo4
+X-Google-Smtp-Source: AGHT+IEXNDm0BLPjKfpJzKU5ks7mDQGYPygYIIjU5CoGy8C32YDo/LicyZhWjZFCdyr9c69s0t6/gbsD4i/CuS9Mrf8=
+X-Received: by 2002:a05:622a:2986:b0:460:afbd:4101 with SMTP id
+ d75a77b69052e-46113afa5c2mr1823401cf.4.1729648696304; Tue, 22 Oct 2024
+ 18:58:16 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+References: <tencent_C1486E2FA393F0B97DD7D308336E262A3407@qq.com>
+ <CAJuCfpEpxa=jPAZiu5OP=jwQw0awiYDv6x5sz6-BAmAK40iJ6w@mail.gmail.com>
+ <f2b0d4a1-6603-4f46-79bf-5edf40429d4b@linux.dev> <e283001d-c6f4-49f8-aca6-4e9826d45c9a@suse.cz>
+ <32f70816-1678-d6ab-0db1-6412ff7a7333@linux.dev>
+In-Reply-To: <32f70816-1678-d6ab-0db1-6412ff7a7333@linux.dev>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Tue, 22 Oct 2024 18:58:02 -0700
+Message-ID: <CAJuCfpHxrN_12h3pmK6Z+k7W1_6QWgAym9xgczcKTjYyLQ+S_Q@mail.gmail.com>
+Subject: Re: [PATCH] slub/slub_kunit:fix a panic due to __kmalloc_cache_noprof
+ incorretly use
+To: Hao Ge <hao.ge@linux.dev>
+Cc: Vlastimil Babka <vbabka@suse.cz>, xiaopeitux@foxmail.com, akpm@linux-foundation.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, yuzhao@google.com, 
+	xiaopei01@kylinos.cn, gehao@kylinso.cn, xiongxin@kylinos.cn
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Kairui Song <ryncsn@gmail.com> writes:
+On Tue, Oct 22, 2024 at 6:47=E2=80=AFPM Hao Ge <hao.ge@linux.dev> wrote:
+>
+>
+> On 10/22/24 23:27, Vlastimil Babka wrote:
+> > On 10/22/24 04:19, Hao Ge wrote:
+> >> On 10/22/24 01:42, Suren Baghdasaryan wrote:
+> >>> On Sun, Oct 20, 2024 at 11:59=E2=80=AFPM <xiaopeitux@foxmail.com> wro=
+te:
+> >>>> From: Pei Xiao <xiaopei01@kylinos.cn>
+> >>>>
+> >>>> 'modprobe slub_kunit',will have a panic.The root cause is that
+> >>>> __kmalloc_cache_noprof was directly ,which resulted in no alloc_tag
+> >>>> being allocated.This caused current->alloc_tag to be null,leading to
+> >>>> a null pointer dereference in alloc_tag_ref_set.
+> >>> I think the root cause of this crash is the bug that is fixed by
+> >>> https://lore.kernel.org/all/20241020070819.307944-1-hao.ge@linux.dev/=
+.
+> >>> Do you get this crash if you apply that fix?
+> >> Yes, this patch has resolved the panic issue.
+> >>>> Here is the log for the panic:
+> >>>> [   74.779373][ T2158] Unable to handle kernel NULL pointer derefere=
+nce at virtual address 0000000000000020
+> >>>> [   74.780130][ T2158] Mem abort info:
+> >>>> [   74.780406][ T2158]   ESR =3D 0x0000000096000004
+> >>>> [   74.780756][ T2158]   EC =3D 0x25: DABT (current EL), IL =3D 32 b=
+its
+> >>>> [   74.781225][ T2158]   SET =3D 0, FnV =3D 0
+> >>>> [   74.781529][ T2158]   EA =3D 0, S1PTW =3D 0
+> >>>> [   74.781836][ T2158]   FSC =3D 0x04: level 0 translation fault
+> >>>> [   74.782288][ T2158] Data abort info:
+> >>>> [   74.782577][ T2158]   ISV =3D 0, ISS =3D 0x00000004, ISS2 =3D 0x0=
+0000000
+> >>>> [   74.783068][ T2158]   CM =3D 0, WnR =3D 0, TnD =3D 0, TagAccess =
+=3D 0
+> >>>> [   74.783533][ T2158]   GCS =3D 0, Overlay =3D 0, DirtyBit =3D 0, X=
+s =3D 0
+> >>>> [   74.784010][ T2158] user pgtable: 4k pages, 48-bit VAs, pgdp=3D00=
+00000105f34000
+> >>>> [   74.784586][ T2158] [0000000000000020] pgd=3D0000000000000000, p4=
+d=3D0000000000000000
+> >>>> [   74.785293][ T2158] Internal error: Oops: 0000000096000004 [#1] S=
+MP
+> >>>> [   74.785805][ T2158] Modules linked in: slub_kunit kunit ip6t_rpfi=
+lter ip6t_REJECT nf_reject_ipv6 ipt_REJECT nf_reject_ipv4 xt_conntrack ebta=
+ble_nat ebtable_broute ip6table_nat ip6table_mangle 4
+> >>>> [   74.790661][ T2158] CPU: 0 UID: 0 PID: 2158 Comm: kunit_try_catch=
+ Kdump: loaded Tainted: G        W        N 6.12.0-rc3+ #2
+> >>>> [   74.791535][ T2158] Tainted: [W]=3DWARN, [N]=3DTEST
+> >>>> [   74.791889][ T2158] Hardware name: QEMU KVM Virtual Machine, BIOS=
+ 0.0.0 02/06/2015
+> >>>> [   74.792479][ T2158] pstate: 40400005 (nZcv daif +PAN -UAO -TCO -D=
+IT -SSBS BTYPE=3D--)
+> >>>> [   74.793101][ T2158] pc : alloc_tagging_slab_alloc_hook+0x120/0x27=
+0
+> >>>> [   74.793607][ T2158] lr : alloc_tagging_slab_alloc_hook+0x120/0x27=
+0
+> >>>>
+> >>>> [   74.794095][ T2158] sp : ffff800084d33cd0
+> >>>> [   74.794418][ T2158] x29: ffff800084d33cd0 x28: 0000000000000000 x=
+27: 0000000000000000
+> >>>> [   74.795095][ T2158] x26: 0000000000000000 x25: 0000000000000012 x=
+24: ffff80007b30e314
+> >>>> [   74.795822][ T2158] x23: ffff000390ff6f10 x22: 0000000000000000 x=
+21: 0000000000000088
+> >>>> [   74.796555][ T2158] x20: ffff000390285840 x19: fffffd7fc3ef7830 x=
+18: ffffffffffffffff
+> >>>> [   74.797283][ T2158] x17: ffff8000800e63b4 x16: ffff80007b33afc4 x=
+15: ffff800081654c00
+> >>>> [   74.798011][ T2158] x14: 0000000000000000 x13: 205d383531325420 x=
+12: 5b5d383734363537
+> >>>> [   74.798744][ T2158] x11: ffff800084d337e0 x10: 000000000000005d x=
+9 : 00000000ffffffd0
+> >>>> [   74.799476][ T2158] x8 : 7f7f7f7f7f7f7f7f x7 : ffff80008219d188 x=
+6 : c0000000ffff7fff
+> >>>> [   74.800206][ T2158] x5 : ffff0003fdbc9208 x4 : ffff800081edd188 x=
+3 : 0000000000000001
+> >>>> [   74.800932][ T2158] x2 : 0beaa6dee1ac5a00 x1 : 0beaa6dee1ac5a00 x=
+0 : ffff80037c2cb000
+> >>>> [   74.801656][ T2158] Call trace:
+> >>>> [   74.801954][ T2158]  alloc_tagging_slab_alloc_hook+0x120/0x270
+> >>>> [   74.802494][ T2158]  __kmalloc_cache_noprof+0x148/0x33c
+> >>>> [   74.802976][ T2158]  test_kmalloc_redzone_access+0x4c/0x104 [slub=
+_kunit]
+> >>>> [   74.803607][ T2158]  kunit_try_run_case+0x70/0x17c [kunit]
+> >>>> [   74.804124][ T2158]  kunit_generic_run_threadfn_adapter+0x2c/0x4c=
+ [kunit]
+> >>>> [   74.804768][ T2158]  kthread+0x10c/0x118
+> >>>> [   74.805141][ T2158]  ret_from_fork+0x10/0x20
+> >>>> [   74.805540][ T2158] Code: b9400a80 11000400 b9000a80 97ffd858 (f9=
+4012d3)
+> >>>> [   74.806176][ T2158] SMP: stopping secondary CPUs
+> >>>> [   74.808130][ T2158] Starting crashdump kernel...
+> >>>>
+> >>> CC'ing Vlastimil.
+> >>> This patch essentially reverts Vlastimil's "mm, slab: don't wrap
+> >>> internal functions with alloc_hooks()" change. Please check why that
+> >>> change was needed before proceeding.
+> >>> If this change is indeed needed, please add:
+> >> Hi Suren and Vlastimil
+> >>
+> >> In fact, besides the panic, there is also a warning here due to direct=
+ly
+> >> invoking__kmalloc_cache_noprof
+> >>
+> >> Regarding this, do you have any suggestions?
+> >>
+> >> [58162.947016] WARNING: CPU: 2 PID: 6210 at
+> >> ./include/linux/alloc_tag.h:125 alloc_tagging_slab_alloc_hook+0x268/0x=
+27c
+> >> [58162.957721] Call trace:
+> >> [58162.957919]  alloc_tagging_slab_alloc_hook+0x268/0x27c
+> >> [58162.958286]  __kmalloc_cache_noprof+0x14c/0x344
+> >> [58162.958615]  test_kmalloc_redzone_access+0x50/0x10c [slub_kunit]
+> >> [58162.959045]  kunit_try_run_case+0x74/0x184 [kunit]
+> >> [58162.959401]  kunit_generic_run_threadfn_adapter+0x2c/0x4c [kunit]
+> >> [58162.959841]  kthread+0x10c/0x118
+> >> [58162.960093]  ret_from_fork+0x10/0x20
+> >> [58162.960363] ---[ end trace 0000000000000000 ]---
+> > I see.
+> > The kunit test is the only user of __kmalloc_cache_noprof outside of km=
+alloc()
+> > itself so it's not worth defining again a wrapper for everyone, how abo=
+ut just
+> > wrapping the two callsites?
+> >
+> > --- a/lib/slub_kunit.c
+> > +++ b/lib/slub_kunit.c
+> > @@ -141,7 +141,7 @@ static void test_kmalloc_redzone_access(struct kuni=
+t *test)
+> >   {
+> >          struct kmem_cache *s =3D test_kmem_cache_create("TestSlub_RZ_k=
+malloc", 32,
+> >                                  SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_=
+ZONE);
+> > -       u8 *p =3D __kmalloc_cache_noprof(s, GFP_KERNEL, 18);
+> > +       u8 *p =3D alloc_hooks(__kmalloc_cache_noprof(s, GFP_KERNEL, 18)=
+);
+> >
+> >          kasan_disable_current();
+> >
+> > @@ -199,7 +199,7 @@ static void test_krealloc_redzone_zeroing(struct ku=
+nit *test)
+> >          struct kmem_cache *s =3D test_kmem_cache_create("TestSlub_krea=
+lloc", 64,
+> >                                  SLAB_KMALLOC|SLAB_STORE_USER|SLAB_RED_=
+ZONE);
+> >
+> > -       p =3D __kmalloc_cache_noprof(s, GFP_KERNEL, 48);
+> > +       p =3D alloc_hooks(__kmalloc_cache_noprof(s, GFP_KERNEL, 48));
+> >          memset(p, 0xff, 48);
+> >
+> >          kasan_disable_current();
+> >
+> Hi  Vlastimil
+>
+> I agree with your point of view, thank you for you and Suren's help and
+> suggestion.
 
-> On Wed, Oct 9, 2024 at 8:55=E2=80=AFAM Huang, Ying <ying.huang@intel.com>=
- wrote:
->>
->> Barry Song <21cnbao@gmail.com> writes:
->>
->> > On Thu, Oct 3, 2024 at 8:35=E2=80=AFAM Huang, Ying <ying.huang@intel.c=
-om> wrote:
->> >>
->> >> Barry Song <21cnbao@gmail.com> writes:
->> >>
->> >> > On Wed, Oct 2, 2024 at 8:43=E2=80=AFAM Huang, Ying <ying.huang@inte=
-l.com> wrote:
->> >> >>
->> >> >> Barry Song <21cnbao@gmail.com> writes:
->> >> >>
->> >> >> > On Tue, Oct 1, 2024 at 7:43=E2=80=AFAM Huang, Ying <ying.huang@i=
-ntel.com> wrote:
->> >> >> >>
->> >> >> >> Barry Song <21cnbao@gmail.com> writes:
->> >> >> >>
->> >> >> >> > On Sun, Sep 29, 2024 at 3:43=E2=80=AFPM Huang, Ying <ying.hua=
-ng@intel.com> wrote:
->> >> >> >> >>
->> >> >> >> >> Hi, Barry,
->> >> >> >> >>
->> >> >> >> >> Barry Song <21cnbao@gmail.com> writes:
->> >> >> >> >>
->> >> >> >> >> > From: Barry Song <v-songbaohua@oppo.com>
->> >> >> >> >> >
->> >> >> >> >> > Commit 13ddaf26be32 ("mm/swap: fix race when skipping swap=
-cache")
->> >> >> >> >> > introduced an unconditional one-tick sleep when `swapcache=
-_prepare()`
->> >> >> >> >> > fails, which has led to reports of UI stuttering on latenc=
-y-sensitive
->> >> >> >> >> > Android devices. To address this, we can use a waitqueue t=
-o wake up
->> >> >> >> >> > tasks that fail `swapcache_prepare()` sooner, instead of a=
-lways
->> >> >> >> >> > sleeping for a full tick. While tasks may occasionally be =
-woken by an
->> >> >> >> >> > unrelated `do_swap_page()`, this method is preferable to t=
-wo scenarios:
->> >> >> >> >> > rapid re-entry into page faults, which can cause livelocks=
-, and
->> >> >> >> >> > multiple millisecond sleeps, which visibly degrade user ex=
-perience.
->> >> >> >> >>
->> >> >> >> >> In general, I think that this works.  Why not extend the sol=
-ution to
->> >> >> >> >> cover schedule_timeout_uninterruptible() in __read_swap_cach=
-e_async()
->> >> >> >> >> too?  We can call wake_up() when we clear SWAP_HAS_CACHE.  T=
-o avoid
->> >> >> >> >
->> >> >> >> > Hi Ying,
->> >> >> >> > Thanks for your comments.
->> >> >> >> > I feel extending the solution to __read_swap_cache_async() sh=
-ould be done
->> >> >> >> > in a separate patch. On phones, I've never encountered any is=
-sues reported
->> >> >> >> > on that path, so it might be better suited for an optimizatio=
-n rather than a
->> >> >> >> > hotfix?
->> >> >> >>
->> >> >> >> Yes.  It's fine to do that in another patch as optimization.
->> >> >> >
->> >> >> > Ok. I'll prepare a separate patch for optimizing that path.
->> >> >>
->> >> >> Thanks!
->> >> >>
->> >> >> >>
->> >> >> >> >> overhead to call wake_up() when there's no task waiting, we =
-can use an
->> >> >> >> >> atomic to count waiting tasks.
->> >> >> >> >
->> >> >> >> > I'm not sure it's worth adding the complexity, as wake_up() o=
-n an empty
->> >> >> >> > waitqueue should have a very low cost on its own?
->> >> >> >>
->> >> >> >> wake_up() needs to call spin_lock_irqsave() unconditionally on =
-a global
->> >> >> >> shared lock.  On systems with many CPUs (such servers), this ma=
-y cause
->> >> >> >> severe lock contention.  Even the cache ping-pong may hurt perf=
-ormance
->> >> >> >> much.
->> >> >> >
->> >> >> > I understand that cache synchronization was a significant issue =
-before
->> >> >> > qspinlock, but it seems to be less of a concern after its implem=
-entation.
->> >> >>
->> >> >> Unfortunately, qspinlock cannot eliminate cache ping-pong issue, as
->> >> >> discussed in the following thread.
->> >> >>
->> >> >> https://lore.kernel.org/lkml/20220510192708.GQ76023@worktop.progra=
-mming.kicks-ass.net/
->> >> >>
->> >> >> > However, using a global atomic variable would still trigger cach=
-e broadcasts,
->> >> >> > correct?
->> >> >>
->> >> >> We can only change the atomic variable to non-zero when
->> >> >> swapcache_prepare() returns non-zero, and call wake_up() when the =
-atomic
->> >> >> variable is non-zero.  Because swapcache_prepare() returns 0 most =
-times,
->> >> >> the atomic variable is 0 most times.  If we don't change the value=
- of
->> >> >> atomic variable, cache ping-pong will not be triggered.
->> >> >
->> >> > yes. this can be implemented by adding another atomic variable.
->> >>
->> >> Just realized that we don't need another atomic variable for this, ju=
-st
->> >> use waitqueue_active() before wake_up() should be enough.
->> >>
->> >> >>
->> >> >> Hi, Kairui,
->> >> >>
->> >> >> Do you have some test cases to test parallel zram swap-in?  If so,=
- that
->> >> >> can be used to verify whether cache ping-pong is an issue and whet=
-her it
->> >> >> can be fixed via a global atomic variable.
->> >> >>
->> >> >
->> >> > Yes, Kairui please run a test on your machine with lots of cores be=
-fore
->> >> > and after adding a global atomic variable as suggested by Ying. I am
->> >> > sorry I don't have a server machine.
->> >> >
->> >> > if it turns out you find cache ping-pong can be an issue, another
->> >> > approach would be a waitqueue hash:
->> >>
->> >> Yes.  waitqueue hash may help reduce lock contention.  And, we can ha=
-ve
->> >> both waitqueue_active() and waitqueue hash if necessary.  As the first
->> >> step, waitqueue_active() appears simpler.
->> >
->> > Hi Andrew,
->> > If there are no objections, can you please squash the below change? Ov=
-en
->> > has already tested the change and the original issue was still fixed w=
-ith
->> > it. If you want me to send v2 instead, please let me know.
->> >
->> > From a5ca401da89f3b628c3a0147e54541d0968654b2 Mon Sep 17 00:00:00 2001
->> > From: Barry Song <v-songbaohua@oppo.com>
->> > Date: Tue, 8 Oct 2024 20:18:27 +0800
->> > Subject: [PATCH] mm: wake_up only when swapcache_wq waitqueue is active
->> >
->> > wake_up() will acquire spinlock even waitqueue is empty. This might
->> > involve cache sync overhead. Let's only call wake_up() when waitqueue
->> > is active.
->> >
->> > Suggested-by: "Huang, Ying" <ying.huang@intel.com>
->> > Signed-off-by: Barry Song <v-songbaohua@oppo.com>
->> > ---
->> >  mm/memory.c | 6 ++++--
->> >  1 file changed, 4 insertions(+), 2 deletions(-)
->> >
->> > diff --git a/mm/memory.c b/mm/memory.c
->> > index fe21bd3beff5..4adb2d0bcc7a 100644
->> > --- a/mm/memory.c
->> > +++ b/mm/memory.c
->> > @@ -4623,7 +4623,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->> >       /* Clear the swap cache pin for direct swapin after PTL unlock */
->> >       if (need_clear_cache) {
->> >               swapcache_clear(si, entry, nr_pages);
->> > -             wake_up(&swapcache_wq);
->> > +             if (waitqueue_active(&swapcache_wq))
->> > +                     wake_up(&swapcache_wq);
->> >       }
->> >       if (si)
->> >               put_swap_device(si);
->> > @@ -4641,7 +4642,8 @@ vm_fault_t do_swap_page(struct vm_fault *vmf)
->> >       }
->> >       if (need_clear_cache) {
->> >               swapcache_clear(si, entry, nr_pages);
->> > -             wake_up(&swapcache_wq);
->> > +             if (waitqueue_active(&swapcache_wq))
->> > +                     wake_up(&swapcache_wq);
->> >       }
->> >       if (si)
->> >               put_swap_device(si);
->>
->> Hi, Kairui,
->>
->> Do you have time to give this patch (combined with the previous patch
->> from Barry) a test to check whether the overhead introduced in the
->> previous patch has been eliminated?
->
-> Hi Ying, Barry
->
-> I did a rebase on mm tree and run more tests with the latest patch:
->
-> Before the two patches:
-> make -j96 (64k): 33814.45 35061.25 35667.54 36618.30 37381.60 37678.75
-> make -j96: 20456.03 20460.36 20511.55 20584.76 20751.07 20780.79
-> make -j64:7490.83 7515.55 7535.30 7544.81 7564.77 7583.41
->
-> After adding workqueue:
-> make -j96 (64k): 33190.60 35049.57 35732.01 36263.81 37154.05 37815.50
-> make -j96: 20373.27 20382.96 20428.78 20459.73 20534.59 20548.48
-> make -j64: 7469.18 7522.57 7527.38 7532.69 7543.36 7546.28
->
-> After adding workqueue with workqueue_active() check:
-> make -j96 (64k): 33321.03 35039.68 35552.86 36474.95 37502.76 37549.04
-> make -j96: 20601.39 20639.08 20692.81 20693.91 20701.35 20740.71
-> make -j64: 7538.63 7542.27 7564.86 7567.36 7594.14 7600.96
->
-> So I think it's just noise level performance change, it should be OK
-> in either way.
+That seems reasonable to me. Thanks!
 
-Thanks for your test results.  There should be bottlenecks in other
-places.
-
---
-Best Regards,
-Huang, Ying
+>
+> Best regards
+>
+> Hao
+>
 
