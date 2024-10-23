@@ -1,73 +1,35 @@
-Return-Path: <linux-kernel+bounces-377897-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377898-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D064F9AC834
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:48:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id AAE2D9AC838
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:49:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 586C01F22C1F
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:48:21 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 262121F22927
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:49:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85D0D19CC20;
-	Wed, 23 Oct 2024 10:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fNcNu480"
-Received: from mail-ej1-f48.google.com (mail-ej1-f48.google.com [209.85.218.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE96F1A7060;
+	Wed, 23 Oct 2024 10:49:33 +0000 (UTC)
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2BFAA1990D3;
-	Wed, 23 Oct 2024 10:48:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3BBD719CC20;
+	Wed, 23 Oct 2024 10:49:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729680495; cv=none; b=nmSOvpryV1JP4tSDNRqrmKu5Ou0kb7pSm2LKSuesve3tZa6ck+7szo4LtSO9I+aYidaOBARjm2CYYI6TxDlCsTAdYr85ZYq0s6xoC/Q/BIOMxWrnobYaxwcP9GCEgfEIdNwJAhtaJllBnuUvNL6rDOEnyO7Z88wct4wDCJww97k=
+	t=1729680573; cv=none; b=FfkNadWYVbyyxeDtWXRLrySncSRQ2nGzgP7AB04Ob1phSDbbrKSnht/KG0TTnLawwX/HdeZAg8yPUUxq3uE7Wa227fYxzcfbA6izpygfGujQ38bcO9wsJK6DdH3K83QGHfL5WozPC7puoNiICpBHgsvRj4IyKVSHNaxq077D6hk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729680495; c=relaxed/simple;
-	bh=RLO/q9WGWSWVKSNGEsLLkLGyULBwskzaCedoxLF4UaE=;
+	s=arc-20240116; t=1729680573; c=relaxed/simple;
+	bh=vhqnE6x/W95T5PUYfN8TPILunogCT9MwNsz+QWgpRnQ=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EsJijIMx0nEPv9YXk9t2Q1l4OrFAckAm9a1ypvKJ8ufKlqv3/n7hdjooKtWOty+UnOY+Xz1AlirqyRE3Ko5KygiaxmSvWJR4NwpYarjeA7RKhQnnLqMn4LBNj9zSl5xEBStW+5mg2ltDmC3RnDKEz9ibaqoMvZETlx62JK0lDmM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fNcNu480; arc=none smtp.client-ip=209.85.218.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f48.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso881978466b.2;
-        Wed, 23 Oct 2024 03:48:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729680491; x=1730285291; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=wQsAxOoHpCBFjjCtuSXqJKrel9ACGY64HU1SixNMRmk=;
-        b=fNcNu480s2yEofOmVd0QqbYfPeu2JaKBIwwVVAIPbAT+oPQw68Oc+NnYYXweIwNeu9
-         m+Stiop89KPNtGcXPFFMK0wYohf73GRKhBM1tPaQJ4b8c0nvwyTrvWDOQ4BOng6GReWH
-         8zg1zyQNJMnzwZRY7C0C7z+BYDbAeEdlwSdR3x+Bex3Q2e6WLTLwWvIOZ4MLnEZ2qAEV
-         oGuXd8pLmE50lK1MIT+/K+/N6ttS16SBPyd/PtD9BzpkSfJQSfHvyf9YyzYooAnSr5pV
-         l//OQGhCE0sQKyejzA6weNWoE7c04sA2k1jXGFuPDm4LIVNwkVYbn5qbbc5q3WQ/uL9c
-         XWaQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729680491; x=1730285291;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=wQsAxOoHpCBFjjCtuSXqJKrel9ACGY64HU1SixNMRmk=;
-        b=J0KFchg8cdpmVDOCXl7KrbXFXyPmiNJ+TKMjqBfUDwCXTPDAvUGusx5YoCAAsdBlNQ
-         n/lOvZAPP+lDjDiDDioMUaJ2qPK5m57RyKRIoPXxg/VArC6NsGWNV983cH+By6M7+bv+
-         2WoDREfWEzG6SPaQxnyK4jGeWSDwPGxAcvruvQ8xFeti+Z/idSqhuZQ6RJ3dUBSMimVh
-         etj6iKsMW3b7qw/kfqo9RGCdnTu15+t9N0QdZ5pWtbeFoRmWRFi5k2w2CV6WbwW/KPQv
-         yrr3uQDM4qZZqS8Qoq31hWPZdvrxN1btZnkdjnwHxPp9WPWmsv67ey8JK0k1eDl92Cud
-         Jojw==
-X-Forwarded-Encrypted: i=1; AJvYcCU/VITjdw0zsxeihBcbbLWoKMQZ7y3stwij8Pt8csp1FZbQdNMc784NVrSxUxGh5XHhHre+D+A/BGbqjEQh@vger.kernel.org, AJvYcCU7aBWg8mSNC0dohgzJOEMiX9z3/rHLMZWTIDZosHPczB92H45V/ot5gUNiY1PZ+eJM1hW+Gan4prU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxOZfPna2Why8CP+J3+sNvY6ADnzH+bBOx5apJDvpv+r8vP6LC
-	gCvknAzqz2DYRLl4aioxbAEhV6vVbWZp9CXqNxLvg43tEDGWQ7EC
-X-Google-Smtp-Source: AGHT+IHueF9moqugv7EDlqlver/9RLB+7JxXlkI7eft5E/5/UDJV3/V4TP6hdw3bEUImJad1pI/ttA==
-X-Received: by 2002:a17:907:7ea0:b0:a9a:2afc:e4cc with SMTP id a640c23a62f3a-a9abf963fb3mr194672366b.58.1729680491120;
-        Wed, 23 Oct 2024 03:48:11 -0700 (PDT)
-Received: from ?IPV6:2a03:83e0:1126:4:eb:d0d0:c7fd:c82c? ([2620:10d:c092:500::7:ca73])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9137074fsm460402066b.135.2024.10.23.03.48.10
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 03:48:10 -0700 (PDT)
-Message-ID: <4c30cc30-0f7c-4ca7-a933-c8edfadaee5c@gmail.com>
-Date: Wed, 23 Oct 2024 11:48:10 +0100
+	 In-Reply-To:Content-Type; b=YzgxPzSrQmb8RIjV0ZiTvOv/j5XRTgkd7vSzuLerL5UVZL8OLxVBgiBZCgL+Glf27ZSYxHNAj3DZg7V+apO2btQkKwMAC0Q/255n7YPdcN30wlx/KXkxMs85Uxu5qjXGiAhQYZe8WO6QmsNyohwCDE737qNyPlZEfNErq5nazBI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 5CC81C4CEC6;
+	Wed, 23 Oct 2024 10:49:30 +0000 (UTC)
+Message-ID: <5a1f5d57-341c-47c3-b478-7d6a7842ae70@xs4all.nl>
+Date: Wed, 23 Oct 2024 12:49:29 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,484 +37,240 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC 0/4] mm: zswap: add support for zswapin of large folios
-To: Barry Song <21cnbao@gmail.com>
-Cc: senozhatsky@chromium.org, minchan@kernel.org, hanchuanhua@oppo.com,
- v-songbaohua@oppo.com, akpm@linux-foundation.org, linux-mm@kvack.org,
- hannes@cmpxchg.org, david@redhat.com, willy@infradead.org,
- kanchana.p.sridhar@intel.com, yosryahmed@google.com, nphamcs@gmail.com,
- chengming.zhou@linux.dev, ryan.roberts@arm.com, ying.huang@intel.com,
- riel@surriel.com, shakeel.butt@linux.dev, kernel-team@meta.com,
- linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
-References: <20241018105026.2521366-1-usamaarif642@gmail.com>
- <CAGsJ_4xweuSwMUBuLSr2eUy69mtQumeDpMZ1g2jFPGq6nFn9fg@mail.gmail.com>
- <5313c721-9cf1-4ecd-ac23-1eeddabd691f@gmail.com>
- <b1c17b5e-acd9-4bef-820e-699768f1426d@gmail.com>
- <CAGsJ_4wykOyJupLhcqkSPe27rdANd=bOJhqxL74vcdZ+T9f==g@mail.gmail.com>
- <eab11780-e671-4d09-86a6-af4cf3589392@gmail.com>
- <CAGsJ_4wWf7QnibY_uU8B=efuEACrvFaJJ=bJTD+9KrxFtfoMmQ@mail.gmail.com>
- <CAGsJ_4w5XLMok4F6Xw7aTAdV6rY9OvCVPM3U+hzFnKyTXBUpOA@mail.gmail.com>
-Content-Language: en-US
-From: Usama Arif <usamaarif642@gmail.com>
-In-Reply-To: <CAGsJ_4w5XLMok4F6Xw7aTAdV6rY9OvCVPM3U+hzFnKyTXBUpOA@mail.gmail.com>
+Subject: Re: [PATCH v4 12/28] media: iris: implement enum_fmt and
+ enum_frameintervals ioctls
+To: Dikshita Agarwal <quic_dikshita@quicinc.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>,
+ Abhinav Kumar <quic_abhinavk@quicinc.com>,
+ Mauro Carvalho Chehab <mchehab@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>
+Cc: Sebastian Fricke <sebastian.fricke@collabora.com>,
+ linux-arm-msm@vger.kernel.org, linux-media@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Vedang Nagar <quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-12-c5eaa4e9ab9e@quicinc.com>
+Content-Language: en-US, nl
+From: Hans Verkuil <hverkuil@xs4all.nl>
+Autocrypt: addr=hverkuil@xs4all.nl; keydata=
+ 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
+In-Reply-To: <20241014-qcom-video-iris-v4-v4-12-c5eaa4e9ab9e@quicinc.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 14/10/2024 11:07, Dikshita Agarwal wrote:
+> From: Vedang Nagar <quic_vnagar@quicinc.com>
+> 
+> Implement enum_fmt and enum_frameintervals ioctls with
+> necessary hooks.
+> 
+> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+> ---
+>  .../platform/qcom/iris/iris_platform_common.h      |  4 +++
+>  .../platform/qcom/iris/iris_platform_sm8550.c      |  4 +++
+>  drivers/media/platform/qcom/iris/iris_vdec.c       | 21 ++++++++++++
+>  drivers/media/platform/qcom/iris/iris_vdec.h       |  1 +
+>  drivers/media/platform/qcom/iris/iris_vidc.c       | 39 ++++++++++++++++++++++
+>  5 files changed, 69 insertions(+)
+> 
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_common.h b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> index e345667dfbf2..54a2d723797b 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_common.h
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_common.h
+> @@ -43,6 +43,10 @@ struct ubwc_config_data {
+>  };
+>  
+>  struct platform_inst_caps {
+> +	u32 min_frame_width;
+> +	u32 max_frame_width;
+> +	u32 min_frame_height;
+> +	u32 max_frame_height;
+>  	u32 max_mbpf;
+>  };
+>  struct iris_core_power {
+> diff --git a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> index bc4769732aad..37c0130d7059 100644
+> --- a/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> +++ b/drivers/media/platform/qcom/iris/iris_platform_sm8550.c
+> @@ -11,6 +11,10 @@
+>  #define VIDEO_ARCH_LX 1
+>  
+>  static struct platform_inst_caps platform_inst_cap_sm8550 = {
+> +	.min_frame_width = 96,
+> +	.max_frame_width = 8192,
+> +	.min_frame_height = 96,
+> +	.max_frame_height = 8192,
+>  	.max_mbpf = (8192 * 4352) / 256,
+>  };
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.c b/drivers/media/platform/qcom/iris/iris_vdec.c
+> index e807decdda2b..fd0f1ebc33e8 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.c
+> @@ -60,6 +60,27 @@ void iris_vdec_inst_deinit(struct iris_inst *inst)
+>  	kfree(inst->fmt_src);
+>  }
+>  
+> +int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f)
+> +{
+> +	switch (f->type) {
+> +	case V4L2_BUF_TYPE_VIDEO_OUTPUT_MPLANE:
+> +		f->pixelformat = V4L2_PIX_FMT_H264;
+> +		f->flags = V4L2_FMT_FLAG_COMPRESSED | V4L2_FMT_FLAG_DYN_RESOLUTION;
+> +		strscpy(f->description, "codec", sizeof(f->description));
 
+Don't set description, it's handled in v4l_fill_fmtdesc in v4l2-ioctl.c.
 
-On 23/10/2024 11:26, Barry Song wrote:
-> On Wed, Oct 23, 2024 at 11:07 AM Barry Song <21cnbao@gmail.com> wrote:
->>
->> On Wed, Oct 23, 2024 at 10:17 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>
->>>
->>>
->>> On 22/10/2024 21:46, Barry Song wrote:
->>>> On Wed, Oct 23, 2024 at 4:26 AM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>>
->>>>>
->>>>>
->>>>> On 21/10/2024 11:40, Usama Arif wrote:
->>>>>>
->>>>>>
->>>>>> On 21/10/2024 06:09, Barry Song wrote:
->>>>>>> On Fri, Oct 18, 2024 at 11:50 PM Usama Arif <usamaarif642@gmail.com> wrote:
->>>>>>>>
->>>>>>>> After large folio zswapout support added in [1], this patch adds
->>>>>>>> support for zswapin of large folios to bring it on par with zram.
->>>>>>>> This series makes sure that the benefits of large folios (fewer
->>>>>>>> page faults, batched PTE and rmap manipulation, reduced lru list,
->>>>>>>> TLB coalescing (for arm64 and amd)) are not lost at swap out when
->>>>>>>> using zswap.
->>>>>>>>
->>>>>>>> It builds on top of [2] which added large folio swapin support for
->>>>>>>> zram and provides the same level of large folio swapin support as
->>>>>>>> zram, i.e. only supporting swap count == 1.
->>>>>>>>
->>>>>>>> Patch 1 skips swapcache for swapping in zswap pages, this should improve
->>>>>>>> no readahead swapin performance [3], and also allows us to build on large
->>>>>>>> folio swapin support added in [2], hence is a prerequisite for patch 3.
->>>>>>>>
->>>>>>>> Patch 3 adds support for large folio zswapin. This patch does not add
->>>>>>>> support for hybrid backends (i.e. folios partly present swap and zswap).
->>>>>>>>
->>>>>>>> The main performance benefit comes from maintaining large folios *after*
->>>>>>>> swapin, large folio performance improvements have been mentioned in previous
->>>>>>>> series posted on it [2],[4], so have not added those. Below is a simple
->>>>>>>> microbenchmark to measure the time needed *for* zswpin of 1G memory (along
->>>>>>>> with memory integrity check).
->>>>>>>>
->>>>>>>>                                 |  no mTHP (ms) | 1M mTHP enabled (ms)
->>>>>>>> Base kernel                     |   1165        |    1163
->>>>>>>> Kernel with mTHP zswpin series  |   1203        |     738
->>>>>>>
->>>>>>> Hi Usama,
->>>>>>> Do you know where this minor regression for non-mTHP comes from?
->>>>>>> As you even have skipped swapcache for small folios in zswap in patch1,
->>>>>>> that part should have some gain? is it because of zswap_present_test()?
->>>>>>>
->>>>>>
->>>>>> Hi Barry,
->>>>>>
->>>>>> The microbenchmark does a sequential read of 1G of memory, so it probably
->>>>>> isnt very representative of real world usecases. This also means that
->>>>>> swap_vma_readahead is able to readahead accurately all pages in its window.
->>>>>> With this patch series, if doing 4K swapin, you get 1G/4K calls of fast
->>>>>> do_swap_page. Without this patch, you get 1G/(4K*readahead window) of slow
->>>>>> do_swap_page calls. I had added some prints and I was seeing 8 pages being
->>>>>> readahead in 1 do_swap_page. The larger number of calls causes the slight
->>>>>> regression (eventhough they are quite fast). I think in a realistic scenario,
->>>>>> where readahead window wont be as large, there wont be a regression.
->>>>>> The cost of zswap_present_test in the whole call stack of swapping page is
->>>>>> very low and I think can be ignored.
->>>>>>
->>>>>> I think the more interesting thing is what Kanchana pointed out in
->>>>>> https://lore.kernel.org/all/f2f2053f-ec5f-46a4-800d-50a3d2e61bff@gmail.com/
->>>>>> I am curious, did you see this when testing large folio swapin and compression
->>>>>> at 4K granuality? Its looks like swap thrashing so I think it would be common
->>>>>> between zswap and zram. I dont have larger granuality zswap compression done,
->>>>>> which is why I think there is a regression in time taken. (It could be because
->>>>>> its tested on intel as well).
->>>>>>
->>>>>> Thanks,
->>>>>> Usama
->>>>>>
->>>>>
->>>>> Hi,
->>>>>
->>>>> So I have been doing some benchmarking after Kanchana pointed out a performance
->>>>> regression in [1] of swapping in large folio. I would love to get thoughts from
->>>>> zram folks on this, as thats where large folio swapin was first added [2].
->>>>> As far as I can see, the current support in zram is doing large folio swapin
->>>>> at 4K granuality. The large granuality compression in [3] which was posted
->>>>> in March is not merged, so I am currently comparing upstream zram with this series.
->>>>>
->>>>> With the microbenchmark below of timing 1G swapin, there was a very large improvement
->>>>> in performance by using this series. I think similar numbers would be seen in zram.
->>>>
->>>> Imagine running several apps on a phone and switching
->>>> between them: A → B → C → D → E … → A → B … The app
->>>> currently on the screen retains its memory, while the ones
->>>> sent to the background are swapped out. When we bring
->>>> those apps back to the foreground, their memory is restored.
->>>> This behavior is quite similar to what you're seeing with
->>>> your microbenchmark.
->>>>
->>>
->>> Hi Barry,
->>>
->>> Thanks for explaining this! Do you know if there is some open source benchmark
->>> we could use to show an improvement in app switching with large folios?
->>>
->>
->> I’m fairly certain the Android team has this benchmark, but it’s not
->> open source.
->>
->> A straightforward way to simulate this is to use a script that
->> cyclically launches multiple applications, such as Chrome, Firefox,
->> Office, PDF, and others.
->>
->> for example:
->>
->> launch chrome;
->> launch firefox;
->> launch youtube;
->> ....
->> launch chrome;
->> launch firefox;
->> ....
->>
->> On Android, we have "Android activity manager 'am' command" to do that.
->> https://gist.github.com/tsohr/5711945
->>
->> Not quite sure if other windows managers have similar tools.
->>
->>> Also I guess swap thrashing can happen when apps are brought back to foreground?
->>>
->>
->> Typically, the foreground app doesn't experience much swapping,
->> as it is the most recently or frequently used. However, this may
->> not hold for very low-end phones, where memory is significantly
->> less than the app's working set. For instance, we can't expect a
->> good user experience when playing a large game that requires 8GB
->> of memory on a 4GB phone! :-)
->> And for low-end phones, we never even enable mTHP.
->>
->>>>>
->>>>> But when doing kernel build test, Kanchana saw a regression in [1]. I believe
->>>>> its because of swap thrashing (causing large zswap activity), due to larger page swapin.
->>>>> The part of the code that decides large folio swapin is the same between zswap and zram,
->>>>> so I believe this would be observed in zram as well.
->>>>
->>>> Is this an extreme case where the workload's working set far
->>>> exceeds the available memory by memcg limitation? I doubt mTHP
->>>> would provide any real benefit from the start if the workload is bound to
->>>> experience swap thrashing. What if we disable mTHP entirely?
->>>>
->>>
->>> I would agree, this is an extreme case. I wanted (z)swap activity to happen so limited
->>> memory.max to 4G.
->>>
->>> mTHP is beneficial in kernel test benchmarking going from no mTHP to 16K:
->>>
->>> ARM make defconfig; time make -j$(nproc) Image, cgroup memory.max=4G
->>> metric         no mTHP         16K mTHP=always
->>> real           1m0.613s         0m52.008s
->>> user           25m23.028s       25m19.488s
->>> sys            25m45.466s       18m11.640s
->>> zswpin         1911194          3108438
->>> zswpout        6880815          9374628
->>> pgfault        120430166        48976658
->>> pgmajfault     1580674          2327086
->>>
->>>
->>
->> Interesting! We never use a phone to build the Linux kernel, but
->> let me see if I can find some other machines to reproduce your data.
-> 
-> Hi Usama,
-> 
-> I suspect the regression occurs because you're running an edge case
-> where the memory cgroup stays nearly full most of the time (this isn't
-> an inherent issue with large folio swap-in). As a result, swapping in
-> mTHP quickly triggers a memcg overflow, causing a swap-out. The
-> next swap-in then recreates the overflow, leading to a repeating
-> cycle.
-> 
+> +		break;
+> +	case V4L2_BUF_TYPE_VIDEO_CAPTURE_MPLANE:
+> +		f->pixelformat = V4L2_PIX_FMT_NV12;
+> +		strscpy(f->description, "colorformat", sizeof(f->description));
 
-Yes, agreed! Looking at the swap counters, I think this is what is going
-on as well.
+Ditto.
 
-> We need a way to stop the cup from repeatedly filling to the brim and
-> overflowing. While not a definitive fix, the following change might help
-> improve the situation:
-> 
-> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
-> 
-> index 17af08367c68..f2fa0eeb2d9a 100644
-> --- a/mm/memcontrol.c
-> +++ b/mm/memcontrol.c
-> 
-> @@ -4559,7 +4559,10 @@ int mem_cgroup_swapin_charge_folio(struct folio
-> *folio, struct mm_struct *mm,
->                 memcg = get_mem_cgroup_from_mm(mm);
->         rcu_read_unlock();
-> 
-> -       ret = charge_memcg(folio, memcg, gfp);
-> +       if (folio_test_large(folio) && mem_cgroup_margin(memcg) <
-> MEMCG_CHARGE_BATCH)
-> +               ret = -ENOMEM;
-> +       else
-> +               ret = charge_memcg(folio, memcg, gfp);
-> 
->         css_put(&memcg->css);
->         return ret;
-> }
-> 
+Hmm, v4l2-compliance should warn about this. Is this changed in a later patch perhaps?
 
-The diff makes sense to me. Let me test later today and get back to you.
+> +		break;
+> +	default:
+> +		return -EINVAL;
+> +	}
+> +
+> +	memset(f->reserved, 0, sizeof(f->reserved));
 
-Thanks!
+No need to do this, it's already zeroed by v4l_enum_fmt.
 
-> Please confirm if it makes the kernel build with memcg limitation
-> faster. If so, let's
-> work together to figure out an official patch :-) The above code hasn't consider
-> the parent memcg's overflow, so not an ideal fix.
+> +
+> +	return 0;
+> +}
+> +
+>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f)
+>  {
+>  	struct v4l2_pix_format_mplane *pixmp = &f->fmt.pix_mp;
+> diff --git a/drivers/media/platform/qcom/iris/iris_vdec.h b/drivers/media/platform/qcom/iris/iris_vdec.h
+> index 4f2557d15ca2..eb8a1121ae92 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vdec.h
+> +++ b/drivers/media/platform/qcom/iris/iris_vdec.h
+> @@ -10,6 +10,7 @@ struct iris_inst;
+>  
+>  void iris_vdec_inst_init(struct iris_inst *inst);
+>  void iris_vdec_inst_deinit(struct iris_inst *inst);
+> +int iris_vdec_enum_fmt(struct iris_inst *inst, struct v4l2_fmtdesc *f);
+>  int iris_vdec_try_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>  int iris_vdec_s_fmt(struct iris_inst *inst, struct v4l2_format *f);
+>  
+> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+> index 481fa0a7b7f3..1d6c5e8fafb4 100644
+> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+> @@ -214,6 +214,16 @@ int iris_close(struct file *filp)
+>  	return 0;
+>  }
+>  
+> +static int iris_enum_fmt(struct file *filp, void *fh, struct v4l2_fmtdesc *f)
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +
+> +	if (f->index)
+> +		return -EINVAL;
+> +
+> +	return iris_vdec_enum_fmt(inst, f);
+> +}
+> +
+>  static int iris_try_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format *f)
+>  {
+>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> @@ -256,6 +266,32 @@ static int iris_g_fmt_vid_mplane(struct file *filp, void *fh, struct v4l2_format
+>  	return ret;
+>  }
+>  
+> +static int iris_enum_framesizes(struct file *filp, void *fh,
+> +				struct v4l2_frmsizeenum *fsize)
+> +{
+> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> +	struct platform_inst_caps *caps;
+> +
+> +	if (fsize->index)
+> +		return -EINVAL;
+> +
+> +	if (fsize->pixel_format != V4L2_PIX_FMT_H264 &&
+> +	    fsize->pixel_format != V4L2_PIX_FMT_NV12)
+> +		return -EINVAL;
+> +
+> +	caps = inst->core->iris_platform_data->inst_caps;
+> +
+> +	fsize->type = V4L2_FRMSIZE_TYPE_STEPWISE;
+> +	fsize->stepwise.min_width = caps->min_frame_width;
+> +	fsize->stepwise.max_width = caps->max_frame_width;
+> +	fsize->stepwise.step_width = STEP_WIDTH;
+> +	fsize->stepwise.min_height = caps->min_frame_height;
+> +	fsize->stepwise.max_height = caps->max_frame_height;
+> +	fsize->stepwise.step_height = STEP_HEIGHT;
+> +
+> +	return 0;
+> +}
+> +
+>  static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *s)
+>  {
+>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
+> @@ -298,12 +334,15 @@ static const struct vb2_ops iris_vb2_ops = {
+>  };
+>  
+>  static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+> +	.vidioc_enum_fmt_vid_cap        = iris_enum_fmt,
+> +	.vidioc_enum_fmt_vid_out        = iris_enum_fmt,
+>  	.vidioc_try_fmt_vid_cap_mplane  = iris_try_fmt_vid_mplane,
+>  	.vidioc_try_fmt_vid_out_mplane  = iris_try_fmt_vid_mplane,
+>  	.vidioc_s_fmt_vid_cap_mplane    = iris_s_fmt_vid_mplane,
+>  	.vidioc_s_fmt_vid_out_mplane    = iris_s_fmt_vid_mplane,
+>  	.vidioc_g_fmt_vid_cap_mplane    = iris_g_fmt_vid_mplane,
+>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+> +	.vidioc_enum_framesizes         = iris_enum_framesizes,
+>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>  	.vidioc_g_selection             = iris_g_selection,
+>  };
 > 
->>
->>>
->>>
->>>>>
->>>>> My initial thought was this might be because its intel, where you dont have the advantage
->>>>> of TLB coalescing, so tested on AMD and ARM, but the regression is there on AMD
->>>>> and ARM as well, though a bit less (have added the numbers below).
->>>>>
->>>>> The numbers show that the zswap activity increases and page faults decrease.
->>>>> Overall this does result in sys time increasing and real time slightly increases,
->>>>> likely because the cost of increased zswap activity is more than the benefit of
->>>>> lower page faults.
->>>>> I can see in [3] that pagefaults reduced in zram as well.
->>>>>
->>>>> Large folio swapin shows good numbers in microbenchmarks that just target reduce page
->>>>> faults and sequential swapin only, but not in kernel build test. Is a similar regression
->>>>> observed with zram when enabling large folio swapin on kernel build test? Maybe large
->>>>> folio swapin makes more sense on workloads where mappings are kept for a longer time?
->>>>>
->>>>
->>>> I suspect this is because mTHP doesn't always benefit workloads
->>>> when available memory is quite limited compared to the working set.
->>>> In that case, mTHP swap-in might introduce more features that
->>>> exacerbate the problem. We used to have an extra control "swapin_enabled"
->>>> for swap-in, but it never gained much traction:
->>>> https://lore.kernel.org/linux-mm/20240726094618.401593-5-21cnbao@gmail.com/
->>>> We can reconsider whether to include the knob, but if it's better
->>>> to disable mTHP entirely for these cases, we can still adhere to
->>>> the policy of "enabled".
->>>>
->>> Yes I think this makes sense to have. The only thing is, its too many knobs!
->>> I personally think its already difficult to decide upto which mTHP size we
->>> should enable (and I think this changes per workload). But if we add swapin_enabled
->>> on top of that it can make things more difficult.
->>>
->>>> Using large block compression and decompression in zRAM will
->>>> significantly reduce CPU usage, likely making the issue unnoticeable.
->>>> However, the default minimum size for large block support is currently
->>>> set to 64KB(ZSMALLOC_MULTI_PAGES_ORDER = 4).
->>>>
->>>
->>> I saw that the patch was sent in March, and there werent any updates after?
->>> Maybe I can try and cherry-pick that and see if we can develop large
->>> granularity compression for zswap.
->>
->> will provide an updated version next week.
->>
->>>
->>>>>
->>>>> Kernel build numbers in cgroup with memory.max=4G to trigger zswap
->>>>> Command for AMD: make defconfig; time make -j$(nproc) bzImage
->>>>> Command for ARM: make defconfig; time make -j$(nproc) Image
->>>>>
->>>>>
->>>>> AMD 16K+32K THP=always
->>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
->>>>> real           1m23.038s        1m23.050s
->>>>> user           53m57.210s       53m53.437s
->>>>> sys            7m24.592s        7m48.843s
->>>>> zswpin         612070           999244
->>>>> zswpout        2226403          2347979
->>>>> pgfault        20667366         20481728
->>>>> pgmajfault     385887           269117
->>>>>
->>>>> AMD 16K+32K+64K THP=always
->>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
->>>>> real           1m22.975s        1m23.266s
->>>>> user           53m51.302s       53m51.069s
->>>>> sys            7m40.168s        7m57.104s
->>>>> zswpin         676492           1258573
->>>>> zswpout        2449839          2714767
->>>>> pgfault        17540746         17296555
->>>>> pgmajfault     429629           307495
->>>>> --------------------------
->>>>> ARM 16K+32K THP=always
->>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
->>>>> real           0m51.168s        0m52.086s
->>>>> user           25m14.715s       25m15.765s
->>>>> sys            17m18.856s       18m8.031s
->>>>> zswpin         3904129          7339245
->>>>> zswpout        11171295         13473461
->>>>> pgfault        37313345         36011338
->>>>> pgmajfault     2726253          1932642
->>>>>
->>>>>
->>>>> ARM 16K+32K+64K THP=always
->>>>> metric         mm-unstable      mm-unstable + large folio zswapin series
->>>>> real           0m52.017s        0m53.828s
->>>>> user           25m2.742s        25m0.046s
->>>>> sys            18m24.525s       20m26.207s
->>>>> zswpin         4853571          8908664
->>>>> zswpout        12297199         15768764
->>>>> pgfault        32158152         30425519
->>>>> pgmajfault     3320717          2237015
->>>>>
->>>>>
->>>>> Thanks!
->>>>> Usama
->>>>>
->>>>>
->>>>> [1] https://lore.kernel.org/all/f2f2053f-ec5f-46a4-800d-50a3d2e61bff@gmail.com/
->>>>> [2] https://lore.kernel.org/all/20240821074541.516249-3-hanchuanhua@oppo.com/
->>>>> [3] https://lore.kernel.org/all/20240327214816.31191-1-21cnbao@gmail.com/
->>>>>
->>>>>>
->>>>>>>>
->>>>>>>> The time measured was pretty consistent between runs (~1-2% variation).
->>>>>>>> There is 36% improvement in zswapin time with 1M folios. The percentage
->>>>>>>> improvement is likely to be more if the memcmp is removed.
->>>>>>>>
->>>>>>>> diff --git a/tools/testing/selftests/cgroup/test_zswap.c b/tools/testing/selftests/cgroup/test_zswap.c
->>>>>>>> index 40de679248b8..77068c577c86 100644
->>>>>>>> --- a/tools/testing/selftests/cgroup/test_zswap.c
->>>>>>>> +++ b/tools/testing/selftests/cgroup/test_zswap.c
->>>>>>>> @@ -9,6 +9,8 @@
->>>>>>>>  #include <string.h>
->>>>>>>>  #include <sys/wait.h>
->>>>>>>>  #include <sys/mman.h>
->>>>>>>> +#include <sys/time.h>
->>>>>>>> +#include <malloc.h>
->>>>>>>>
->>>>>>>>  #include "../kselftest.h"
->>>>>>>>  #include "cgroup_util.h"
->>>>>>>> @@ -407,6 +409,74 @@ static int test_zswap_writeback_disabled(const char *root)
->>>>>>>>         return test_zswap_writeback(root, false);
->>>>>>>>  }
->>>>>>>>
->>>>>>>> +static int zswapin_perf(const char *cgroup, void *arg)
->>>>>>>> +{
->>>>>>>> +       long pagesize = sysconf(_SC_PAGESIZE);
->>>>>>>> +       size_t memsize = MB(1*1024);
->>>>>>>> +       char buf[pagesize];
->>>>>>>> +       int ret = -1;
->>>>>>>> +       char *mem;
->>>>>>>> +       struct timeval start, end;
->>>>>>>> +
->>>>>>>> +       mem = (char *)memalign(2*1024*1024, memsize);
->>>>>>>> +       if (!mem)
->>>>>>>> +               return ret;
->>>>>>>> +
->>>>>>>> +       /*
->>>>>>>> +        * Fill half of each page with increasing data, and keep other
->>>>>>>> +        * half empty, this will result in data that is still compressible
->>>>>>>> +        * and ends up in zswap, with material zswap usage.
->>>>>>>> +        */
->>>>>>>> +       for (int i = 0; i < pagesize; i++)
->>>>>>>> +               buf[i] = i < pagesize/2 ? (char) i : 0;
->>>>>>>> +
->>>>>>>> +       for (int i = 0; i < memsize; i += pagesize)
->>>>>>>> +               memcpy(&mem[i], buf, pagesize);
->>>>>>>> +
->>>>>>>> +       /* Try and reclaim allocated memory */
->>>>>>>> +       if (cg_write_numeric(cgroup, "memory.reclaim", memsize)) {
->>>>>>>> +               ksft_print_msg("Failed to reclaim all of the requested memory\n");
->>>>>>>> +               goto out;
->>>>>>>> +       }
->>>>>>>> +
->>>>>>>> +       gettimeofday(&start, NULL);
->>>>>>>> +       /* zswpin */
->>>>>>>> +       for (int i = 0; i < memsize; i += pagesize) {
->>>>>>>> +               if (memcmp(&mem[i], buf, pagesize)) {
->>>>>>>> +                       ksft_print_msg("invalid memory\n");
->>>>>>>> +                       goto out;
->>>>>>>> +               }
->>>>>>>> +       }
->>>>>>>> +       gettimeofday(&end, NULL);
->>>>>>>> +       printf ("zswapin took %fms to run.\n", (end.tv_sec - start.tv_sec)*1000 + (double)(end.tv_usec - start.tv_usec) / 1000);
->>>>>>>> +       ret = 0;
->>>>>>>> +out:
->>>>>>>> +       free(mem);
->>>>>>>> +       return ret;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>> +static int test_zswapin_perf(const char *root)
->>>>>>>> +{
->>>>>>>> +       int ret = KSFT_FAIL;
->>>>>>>> +       char *test_group;
->>>>>>>> +
->>>>>>>> +       test_group = cg_name(root, "zswapin_perf_test");
->>>>>>>> +       if (!test_group)
->>>>>>>> +               goto out;
->>>>>>>> +       if (cg_create(test_group))
->>>>>>>> +               goto out;
->>>>>>>> +
->>>>>>>> +       if (cg_run(test_group, zswapin_perf, NULL))
->>>>>>>> +               goto out;
->>>>>>>> +
->>>>>>>> +       ret = KSFT_PASS;
->>>>>>>> +out:
->>>>>>>> +       cg_destroy(test_group);
->>>>>>>> +       free(test_group);
->>>>>>>> +       return ret;
->>>>>>>> +}
->>>>>>>> +
->>>>>>>>  /*
->>>>>>>>   * When trying to store a memcg page in zswap, if the memcg hits its memory
->>>>>>>>   * limit in zswap, writeback should affect only the zswapped pages of that
->>>>>>>> @@ -584,6 +654,7 @@ struct zswap_test {
->>>>>>>>         T(test_zswapin),
->>>>>>>>         T(test_zswap_writeback_enabled),
->>>>>>>>         T(test_zswap_writeback_disabled),
->>>>>>>> +       T(test_zswapin_perf),
->>>>>>>>         T(test_no_kmem_bypass),
->>>>>>>>         T(test_no_invasive_cgroup_shrink),
->>>>>>>>  };
->>>>>>>>
->>>>>>>> [1] https://lore.kernel.org/all/20241001053222.6944-1-kanchana.p.sridhar@intel.com/
->>>>>>>> [2] https://lore.kernel.org/all/20240821074541.516249-1-hanchuanhua@oppo.com/
->>>>>>>> [3] https://lore.kernel.org/all/1505886205-9671-5-git-send-email-minchan@kernel.org/T/#u
->>>>>>>> [4] https://lwn.net/Articles/955575/
->>>>>>>>
->>>>>>>> Usama Arif (4):
->>>>>>>>   mm/zswap: skip swapcache for swapping in zswap pages
->>>>>>>>   mm/zswap: modify zswap_decompress to accept page instead of folio
->>>>>>>>   mm/zswap: add support for large folio zswapin
->>>>>>>>   mm/zswap: count successful large folio zswap loads
->>>>>>>>
->>>>>>>>  Documentation/admin-guide/mm/transhuge.rst |   3 +
->>>>>>>>  include/linux/huge_mm.h                    |   1 +
->>>>>>>>  include/linux/zswap.h                      |   6 ++
->>>>>>>>  mm/huge_memory.c                           |   3 +
->>>>>>>>  mm/memory.c                                |  16 +--
->>>>>>>>  mm/page_io.c                               |   2 +-
->>>>>>>>  mm/zswap.c                                 | 120 ++++++++++++++-------
->>>>>>>>  7 files changed, 99 insertions(+), 52 deletions(-)
->>>>>>>>
->>>>>>>> --
->>>>>>>> 2.43.5
->>>>>>>>
->>>>>>>
->>>>
->>
-> 
-> Thanks
-> Barry
 
 
