@@ -1,163 +1,129 @@
-Return-Path: <linux-kernel+bounces-377794-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377796-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 532269AC6E7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:45:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322709AC6E9
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 11:47:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 823961C22A2A
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:45:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A2072B23927
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 09:47:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CBD5419CC27;
-	Wed, 23 Oct 2024 09:45:34 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62167156F3F;
-	Wed, 23 Oct 2024 09:45:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38ACE197A8B;
+	Wed, 23 Oct 2024 09:47:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="HLcWtUe6"
+Received: from mailout3.samsung.com (mailout3.samsung.com [203.254.224.33])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D8037136357
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:47:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.33
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729676734; cv=none; b=B8BBN80FhsBY8gOSAfrePR/pAQdDPsDMCcb9euyd1eYnV1tkEdln01/6tVwCLkl+RJkCR77kCBnqkR+QSuMP/js5PhdVjJuTW8wt46jrYUVhe0uCvC5uzFvsz33ohTBBCMdcHhE1hLDCH8pAndnKcfZC2ou09JZ7hylgin7yoMk=
+	t=1729676825; cv=none; b=PbvbpxHoLQg6fv+w9BbMCTq8fyE1bysV6BhXadz/8iuu7PBG0MBZ0sso2atUkD2Rmv3Q+MtjbQUDmZ1J3mMGN1rkbD4hkRm/xathrLnDTccf9C6A8EnTCMD/CoOjhkZaKjXVueyfjitU3utPrgmY2/X7Q3Z6AUo9uvGcFAgCcyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729676734; c=relaxed/simple;
-	bh=6bdiM1C9x9DzXpyduWBjkQ6YQKqrdVrwqalYTJ3PLcw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Mb6lUphDRp5wh8itiL1cYVAOICpmxBQvJkFS3GxDBZpHj9iizAxj09oLXur3Vjz0FoaftDIb3wZ++UaNK9+OfmdzfrV28QFt/0sYSO7xEFF1IBv/Yddl9vrNQNUuE3B1nWEEIObpsgr01Wg8zfWOtvT6qEyGqAOdD47A1AP7Emw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 7A0BB339;
-	Wed, 23 Oct 2024 02:46:01 -0700 (PDT)
-Received: from [10.57.66.28] (unknown [10.57.66.28])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPA id 7C6DE3F71E;
-	Wed, 23 Oct 2024 02:45:30 -0700 (PDT)
-Message-ID: <98173130-bb52-4378-aa54-119b5c3ab131@arm.com>
-Date: Wed, 23 Oct 2024 10:45:29 +0100
+	s=arc-20240116; t=1729676825; c=relaxed/simple;
+	bh=0W4sJD9AsasfHLYs59lV1xrUyt7o4Es2ghUZ5Nacg3k=;
+	h=Mime-Version:Subject:From:To:CC:In-Reply-To:Message-ID:Date:
+	 Content-Type:References; b=WOb5QlwFQ+F5idBJduqMEpzxH86k8xuWPhpp+5OZJbgTvzsBE7ziXevM+AyoSQdsdbgcSB+tvaVlhy1TnPvmaQcQsxw9llculReOyk30IjMy56qfG1DDyVB52kQ/JQ/2mcZj0HitKPjS7c3ZYA00vj3ArcHaL9ZxFWv/jpxwin0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=HLcWtUe6; arc=none smtp.client-ip=203.254.224.33
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas2p2.samsung.com (unknown [182.195.41.54])
+	by mailout3.samsung.com (KnoxPortal) with ESMTP id 20241023094654epoutp03a03b9c1572e271c0e6ee553fd4e1a817~BC_YH4XRs2180121801epoutp03E
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:46:54 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout3.samsung.com 20241023094654epoutp03a03b9c1572e271c0e6ee553fd4e1a817~BC_YH4XRs2180121801epoutp03E
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729676814;
+	bh=bGpLoC3knzXadOWZtYKaVuF5uOI+14bGyUxz/W66kSI=;
+	h=Subject:Reply-To:From:To:CC:In-Reply-To:Date:References:From;
+	b=HLcWtUe6xdWIfIfYobiGVYo6946fEOIVr1vHTfa9SmRWQzhkW+yWwnTzh+lO1Shaw
+	 lACQdbg+eOiWLX6ieMtJ1ChtFbr8RvYmhSUa1PQxz4sCn8WHKTy5n6Rj47kT3++RTK
+	 kjHmyJ/WzvKPApUVi3Jc9hqR24BoSUFCYngbbt1Q=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas2p2.samsung.com (KnoxPortal) with ESMTP id
+	20241023094654epcas2p2ce40bff90e6e03b8a12b5d9b0e542a11~BC_X4DF5I3068730687epcas2p2G;
+	Wed, 23 Oct 2024 09:46:54 +0000 (GMT)
+Received: from epsmgec2p1.samsung.com (unknown [182.195.36.91]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XYPMd4XTZz4x9Q8; Wed, 23 Oct
+	2024 09:46:53 +0000 (GMT)
+X-AuditID: b6c32a43-7b1b87000000216f-f3-6718c60d579a
+Received: from epcas2p1.samsung.com ( [182.195.41.53]) by
+	epsmgec2p1.samsung.com (Symantec Messaging Gateway) with SMTP id
+	33.54.08559.D06C8176; Wed, 23 Oct 2024 18:46:53 +0900 (KST)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 RESEND 3/3] coresight-tpdm: Add support to enable the
- lane for MCMB TPDM
-Content-Language: en-GB
-To: Mao Jinlong <quic_jinlmao@quicinc.com>, Mike Leach
- <mike.leach@linaro.org>, James Clark <james.clark@linaro.org>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: Tao Zhang <quic_taozha@quicinc.com>, coresight@lists.linaro.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241011064732.8480-1-quic_jinlmao@quicinc.com>
- <20241011064732.8480-4-quic_jinlmao@quicinc.com>
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241011064732.8480-4-quic_jinlmao@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Mime-Version: 1.0
+Subject: RE: [f2fs-dev] [PATCH v2] f2fs: fix to avoid potential deadlock in
+ f2fs_record_stop_reason()
+Reply-To: daejun7.park@samsung.com
+Sender: Daejun Park <daejun7.park@samsung.com>
+From: Daejun Park <daejun7.park@samsung.com>
+To: "chao@kernel.org" <chao@kernel.org>, "jaegeuk@kernel.org"
+	<jaegeuk@kernel.org>
+CC: "syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com"
+	<syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-f2fs-devel@lists.sourceforge.net"
+	<linux-f2fs-devel@lists.sourceforge.net>, Daejun Park
+	<daejun7.park@samsung.com>
+X-Priority: 3
+X-Content-Kind-Code: NORMAL
+In-Reply-To: <20241022083623.2641434-1-chao@kernel.org>
+X-CPGS-Detection: blocking_info_exchange
+X-Drm-Type: N,general
+X-Msg-Generator: Mail
+X-Msg-Type: PERSONAL
+X-Reply-Demand: N
+Message-ID: <20241023094553epcms2p1c4b830a99a1f6b10cba8fd9bbcd8e2ac@epcms2p1>
+Date: Wed, 23 Oct 2024 18:45:53 +0900
+X-CMS-MailID: 20241023094553epcms2p1c4b830a99a1f6b10cba8fd9bbcd8e2ac
 Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+X-Sendblock-Type: AUTO_CONFIDENTIAL
+CMS-TYPE: 102P
+X-CPGSPASS: Y
+X-CPGSPASS: Y
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpik+LIzCtJLcpLzFFi42LZdljTVJf3mES6wbMvShanp55lsnh5SNNi
+	1YNwiyfrZzFbXFrkbnF51xw2i7+7brA5sHtsWtXJ5rF7wWcmj74tqxg9Zr5V8/i8SS6ANSrb
+	JiM1MSW1SCE1Lzk/JTMv3VbJOzjeOd7UzMBQ19DSwlxJIS8xN9VWycUnQNctMwfoBCWFssSc
+	UqBQQGJxsZK+nU1RfmlJqkJGfnGJrVJqQUpOgXmBXnFibnFpXrpeXmqJlaGBgZEpUGFCdsaF
+	DTNYC5ayVNxq2svYwPiAuYuRk0NCwETi/5ylTF2MXBxCAjsYJZ78fgzkcHDwCghK/N0hDFIj
+	LJAusbBpMguILSSgJLH+4ix2iLiexK2HaxhBbDYBHYnpJ+6DxUUEQiSa7jaxgcxkFtjOJHGz
+	+S/UMl6JGe1PWSBsaYnty7eCNXMKmEtM7N7BBBHXkPixrBeqXlTi5uq37DD2+2PzGSFsEYnW
+	e2ehagQlHvzcDRWXlLg9dxNUfb7E/yvLoewaiW0H5kHZ+hLXOjaC3cAr4Cuxt+MKWJxFQFVi
+	++dnULe5SDx8fRzMZhaQl9j+dg4zKEyYBTQl1u/SBzElBJQljtyCquCT6Dj8lx3mw4aNv7Gy
+	d8x7AvWhmsS6n+uZJjAqz0IE9Cwku2Yh7FrAyLyKUSy1oDg3PTXZqMAQHrfJ+bmbGMGJUct5
+	B+OV+f/0DjEycTAeYpTgYFYS4VUqEU0X4k1JrKxKLcqPLyrNSS0+xGgK9OVEZinR5Hxgas4r
+	iTc0sTQwMTMzNDcyNTBXEue91zo3RUggPbEkNTs1tSC1CKaPiYNTqoHJ6jnjsRzV2Fdf8uY+
+	6PuuGaCvmBJT4eBp/DpozYtrDX8u39lvK2bj6vOm50yXZsex5vQ0JyffrO/X6xmFjYS+ZjkK
+	PPwVeVEtIK25kGFLWHfPt8PP9z61Lsjasyuv41n9TYklE7f8tNsolKPHp33vzarg4M8ntl3u
+	/yLOnN29PXbZ+1dSkudm7Au/zTshL/Sf7frMJ4cNKj7ejzA1eX3hEc+ed+knt/28WdI981Gt
+	r20UD1fL1tpDnY118/sTXoUuY5M+dOn3OpFmv7lxLrWlD0LOWX+oE9CyvzlhD1ti4xKTX5Mk
+	WdW+1HB8TcwNzijqMb9ToxOd/vKrq8ylbXpOx+rSX4i7sZsZfQ6Zwq7EUpyRaKjFXFScCADi
+	gECHFQQAAA==
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241022083741epcas2p3f9ca0827f9501134124fd47979e70cbc
+References: <20241022083623.2641434-1-chao@kernel.org>
+	<CGME20241022083741epcas2p3f9ca0827f9501134124fd47979e70cbc@epcms2p1>
 
-On 11/10/2024 07:47, Mao Jinlong wrote:
-> From: Tao Zhang <quic_taozha@quicinc.com>
+Hi Chao Yu,
+
+> ...
 > 
-> Add the sysfs file to set/get the enablement of the lane. For MCMB
-> configurations, the field "E_LN" in CMB_CR register is the
-> individual lane enables. MCMB lane N is enabled for trace
-> generation when M_CMB_CR.E=1 and M_CMB_CR.E_LN[N]=1. For lanes
-> that are not implemented on a given MCMB configuration, the
-> corresponding bits of this field read as 0 and ignore writes.
+> Let's always create an asynchronous task in f2fs_handle_critical_error()
+> rather than calling f2fs_record_stop_reason() synchronously to avoid
+> this potential deadlock issue.
 > 
-> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
-> ---
->   .../testing/sysfs-bus-coresight-devices-tpdm  |  7 +++++
->   drivers/hwtracing/coresight/coresight-tpdm.c  | 29 +++++++++++++++++++
->   drivers/hwtracing/coresight/coresight-tpdm.h  |  3 ++
->   3 files changed, 39 insertions(+)
-> 
-> diff --git a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-> index b3292fa2a022..214f681a68ec 100644
-> --- a/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-> +++ b/Documentation/ABI/testing/sysfs-bus-coresight-devices-tpdm
-> @@ -265,3 +265,10 @@ Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
->   Description:
->   		(RW) Set/Get which lane participates in the output pattern
->   		match cross trigger mechanism for the MCMB subunit TPDM.
-> +
-> +What:		/sys/bus/coresight/devices/<tpdm-name>/mcmb_lanes_select
-> +Date:		June 2024
-> +KernelVersion	6.9
-> +Contact:	Tao Zhang (QUIC) <quic_taozha@quicinc.com>
-> +Description:
-> +		(RW) Set/Get the enablement of the individual lane.
-> \ No newline at end of file
-> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.c b/drivers/hwtracing/coresight/coresight-tpdm.c
-> index f32c119e1b67..f8e22f4c3b52 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpdm.c
-> +++ b/drivers/hwtracing/coresight/coresight-tpdm.c
-> @@ -1055,6 +1055,34 @@ static ssize_t mcmb_trig_lane_store(struct device *dev,
->   }
->   static DEVICE_ATTR_RW(mcmb_trig_lane);
->   
-> +static ssize_t mcmb_lanes_select_show(struct device *dev,
-> +				      struct device_attribute *attr,
-> +				      char *buf)
-> +{
-> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-> +
-> +	return sysfs_emit(buf, "%u\n",
-> +			  (unsigned int)drvdata->cmb->mcmb->mcmb_lane_select);
-> +}
-> +
-> +static ssize_t mcmb_lanes_select_store(struct device *dev,
-> +				       struct device_attribute *attr,
-> +				       const char *buf,
-> +				       size_t size)
-> +{
-> +	struct tpdm_drvdata *drvdata = dev_get_drvdata(dev->parent);
-> +	unsigned long val;
-> +
-> +	if (kstrtoul(buf, 0, &val))
+> Fixes: b62e71be2110 ("f2fs: support errors=remount-rocontinuepanic mountoption")
+> Reported-by: syzbot+be4a9983e95a5e25c8d3@syzkaller.appspotmail.com
+> Closes: https://lore.kernel.org/all/6704d667.050a0220.1e4d62.0081.GAE@google.com
+> Signed-off-by: Chao Yu <chao@kernel.org>
 
-	if (kstrstoul(buf, 0, &val) || (val & ~TPDM_MCMB_E_LN_MASK)) ?
-
-> +		return -EINVAL;
-> +
-> +	guard(spinlock)(&drvdata->spinlock);
-> +	drvdata->cmb->mcmb->mcmb_lane_select = val & TPDM_MCMB_E_LN_MASK;
-> +
-> +	return size;
-> +}
-> +static DEVICE_ATTR_RW(mcmb_lanes_select);
-> +
->   static struct attribute *tpdm_dsb_edge_attrs[] = {
->   	&dev_attr_ctrl_idx.attr,
->   	&dev_attr_ctrl_val.attr,
-> @@ -1219,6 +1247,7 @@ static struct attribute *tpdm_cmb_msr_attrs[] = {
->   
->   static struct attribute *tpdm_mcmb_attrs[] = {
->   	&dev_attr_mcmb_trig_lane.attr,
-> +	&dev_attr_mcmb_lanes_select.attr,
->   	NULL,
->   };
->   
-> diff --git a/drivers/hwtracing/coresight/coresight-tpdm.h b/drivers/hwtracing/coresight/coresight-tpdm.h
-> index e72dc19da310..e740039cd650 100644
-> --- a/drivers/hwtracing/coresight/coresight-tpdm.h
-> +++ b/drivers/hwtracing/coresight/coresight-tpdm.h
-> @@ -48,6 +48,9 @@
->   /* MAX lanes in the output pattern for MCMB configurations*/
->   #define TPDM_MCMB_MAX_LANES 8
->   
-> +/* High performance mode */
-
-This doesn't match the descriptions ?
-
-Suzuki
-
-> +#define TPDM_MCMB_E_LN_MASK		GENMASK(7, 0)
-> +
->   /* DSB Subunit Registers */
->   #define TPDM_DSB_CR		(0x780)
->   #define TPDM_DSB_TIER		(0x784)
-
+Reviewed-by: Daejun Park <daejun7.park@samsung.com>
 
