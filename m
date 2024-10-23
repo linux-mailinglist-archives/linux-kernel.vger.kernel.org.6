@@ -1,191 +1,111 @@
-Return-Path: <linux-kernel+bounces-378821-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378822-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18B539AD5C8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:49:53 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D4ECC9AD5CA
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 22:50:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9F1AE1F21249
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:49:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5A4FAB21801
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 20:50:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 40D9D1DEFD8;
-	Wed, 23 Oct 2024 20:49:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 850341AB6F8;
+	Wed, 23 Oct 2024 20:50:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="SbsmEFuB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="QFJFSwq3"
+Received: from out-177.mta0.migadu.com (out-177.mta0.migadu.com [91.218.175.177])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 937CC149013;
-	Wed, 23 Oct 2024 20:49:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D3A31CEE8D
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:50:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729716581; cv=none; b=eD1U0nnnRMYbVtPckwqsNU9pXIz11q8dEtReJGYfuLn1WpLnvhGEVF3q3o086uZP4OIbPwFNFavFoDF4MgrGOiN669sKQggmDaAG/ZnmLwiWjdPNxSywQxkd63KBTTrPA9qVHL8OcIT9dkarKMBEl1t9i3RbqP+0+RevazHb1xc=
+	t=1729716611; cv=none; b=B02BZt+uAOgWDrzDX9guVxDscvXyAzTD+XYm43vsdeix1Q3VockMlOIAptdlQ3uB0sFj+0RrecvrN02XAYLIzp/zYKQamMqp0kjYkCZyQkEOzwAvEPb6byHBLo5VaDUW5+Jg84beNONDXVQQr6HEhUyVXhjEBNnS9ZEKh0Ndt9Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729716581; c=relaxed/simple;
-	bh=D6rOAupw7nWaOfhbwJhOxY7u+4yNaJ1nMm3CkyxSZ4I=;
+	s=arc-20240116; t=1729716611; c=relaxed/simple;
+	bh=pvwcKlWToYR7b5QhxrkFznqG7vI9ECyzu+ZT1VFC1tg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fvBqNmduASY6S8mSJoNeJAcpyIvjEAp38CV8X0G70jy69PDp0K9H9WmU/TFd2Wgd5hVF7oWH/XBTpxDhqLsisKvinXfj8X1dbrP8r0YnC7pSc6cLSLd55YSGqJchq+5UUuvJqo8Ik0P90atfphQc3wzIe9Kuy8im3gAPb2GN16w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=SbsmEFuB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 612EEC4CEC6;
-	Wed, 23 Oct 2024 20:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729716581;
-	bh=D6rOAupw7nWaOfhbwJhOxY7u+4yNaJ1nMm3CkyxSZ4I=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=SbsmEFuBcYBJxfd9aKYJEJhvm5sOCBpuq3Gkw8XBVAgaBVAtodo4MzzFydgz9lmre
-	 lYFf+4Bc3gblOkDrHaTeXYplOKsx+ARhDq7I84evZ9AqNJW6sdl8mkvHTdvLRiNWq7
-	 HIxQV0FTIhIlXU1I0UWU0dYoCb4/La4ArGqqwj83V1yPu64TjVihcSJtg+Lv4hnx7j
-	 nsU4mql2Gn/IGBFQELdRYpyG77D96qEA7RspsiJJx3jVWn3y5NFarKPXPlN+Fhh4du
-	 ljtB6NwbDGGW5+zuy3s8XNOWGeFaUUoztmYHWjCyMnJg20bW3Ehuw32LgawaSV0yAA
-	 ne0ctkmBg3+FQ==
-Date: Wed, 23 Oct 2024 21:49:34 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Inochi Amaoto <inochiama@outlook.com>,
-	Alexandre Torgue <alexandre.torgue@foss.st.com>,
-	Jose Abreu <joabreu@synopsys.com>,
-	Maxime Coquelin <mcoquelin.stm32@gmail.com>,
-	Richard Cochran <richardcochran@gmail.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>,
-	Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-stm32@st-md-mailman.stormreply.com,
-	linux-arm-kernel@lists.infradead.org,
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 2/4] dt-bindings: net: Add support for Sophgo SG2044 dwmac
-Message-ID: <20241023-paper-crease-befa8239f7f0@spud>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-3-inochiama@gmail.com>
- <20241022-crisply-brute-45f98632ef78@spud>
- <yt2idyivivcxctosec3lwkjbmr4tmctbs4viefxsuqlsvihdeh@alya6g27625l>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Edx9d9kvDflUnTVISVqZqebdBia3r4oUSsVBqz7sRhLc536GU+w72wNtaAyhxHgJFwxAi1GdLpoYZBHmeo4jyteAboh6QxrHknk7gvTl9pHipU7wFbVphuEKTco7S8XQuBZw2ux2H1wY+bjIoi43Jw3jwUc8qSOiNrJhIfzb+NU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=QFJFSwq3; arc=none smtp.client-ip=91.218.175.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Wed, 23 Oct 2024 13:49:54 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729716607;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=1hCMrhfwuTMkqv2o8jrBH2IAf5A8l6moy/IvYT4IwtM=;
+	b=QFJFSwq3mkH0O1xfqXiYVQ+llGFoDemevTmYhM0TGdKFSNHiq20NssA8fFMyuK9vwfr9Wb
+	HNfMz759cK8vjjvR/YgxPN9ulOewqeY0JcjbBuIVxS4boli9PuJZgj5ftIYx7RlstYRQ6Y
+	JtFVvHtiaNwlLVzDT42np3l5BaOvCfs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Russ Weight <russ.weight@linux.dev>
+To: Gaosheng Cui <cuigaosheng1@huawei.com>
+Cc: mcgrof@kernel.org, dakr@redhat.com, gregkh@linuxfoundation.org,
+	rafael@kernel.org, amadeuszx.slawinski@linux.intel.com,
+	cezary.rojewski@intel.com, wangweiyang2@huawei.com,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH -next] firmware_loader: Fix possible resource leak in
+ fw_log_firmware_info()
+Message-ID: <20241023204954.d4n5rba6e37cvmpn@4VRSMR2-DT.corp.robot.car>
+References: <20241016110335.3677924-1-cuigaosheng1@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="HZ3OWjJABGOCrTlm"
-Content-Disposition: inline
-In-Reply-To: <yt2idyivivcxctosec3lwkjbmr4tmctbs4viefxsuqlsvihdeh@alya6g27625l>
-
-
---HZ3OWjJABGOCrTlm
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <20241016110335.3677924-1-cuigaosheng1@huawei.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 23, 2024 at 08:31:24AM +0800, Inochi Amaoto wrote:
-> On Tue, Oct 22, 2024 at 06:28:06PM +0100, Conor Dooley wrote:
-> > On Mon, Oct 21, 2024 at 06:36:15PM +0800, Inochi Amaoto wrote:
-> > > The GMAC IP on SG2044 is almost a standard Synopsys DesignWare MAC
-> > > with some extra clock.
-> > >=20
-> > > Add necessary compatible string for this device.
-> > >=20
-> > > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
-> > > ---
-> > >  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
-> > >  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 145 ++++++++++++++++=
-++
-> > >  2 files changed, 146 insertions(+)
-> > >  create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg20=
-44-dwmac.yaml
-> > >=20
-> > > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/=
-Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > > index 3c4007cb65f8..69f6bb36970b 100644
-> > > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
-> > > @@ -99,6 +99,7 @@ properties:
-> > >          - snps,dwmac-5.30a
-> > >          - snps,dwxgmac
-> > >          - snps,dwxgmac-2.10
-> > > +        - sophgo,sg2044-dwmac
-> > >          - starfive,jh7100-dwmac
-> > >          - starfive,jh7110-dwmac
-> > > =20
-> > > diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwma=
-c.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > new file mode 100644
-> > > index 000000000000..93c41550b0b6
-> > > --- /dev/null
-> > > +++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
-> > > @@ -0,0 +1,145 @@
-> > > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> > > +%YAML 1.2
-> > > +---
-> > > +$id: http://devicetree.org/schemas/net/sophgo,sg2044-dwmac.yaml#
-> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> > > +
-> > > +title: StarFive JH7110 DWMAC glue layer
-> > > +
-> > > +maintainers:
-> > > +  - Inochi Amaoto <inochiama@gmail.com>
-> > > +
-> > > +select:
-> > > +  properties:
-> > > +    compatible:
-> > > +      contains:
-> > > +        enum:
-> > > +          - sophgo,sg2044-dwmac
-> > > +  required:
-> > > +    - compatible
-> > > +
-> > > +properties:
-> > > +  compatible:
-> > > +    items:
-> > > +      - const: sophgo,sg2044-dwmac
-> > > +      - const: snps,dwmac-5.30a
-> > > +
-> > > +  reg:
-> > > +    maxItems: 1
-> > > +
-> > > +  clocks:
-> > > +    items:
-> > > +      - description: GMAC main clock
-> > > +      - description: PTP clock
-> > > +      - description: TX clock
-> > > +
-> > > +  clock-names:
-> > > +    items:
-> > > +      - const: stmmaceth
-> > > +      - const: ptp_ref
-> > > +      - const: tx
-> > > +
-> > > +  sophgo,syscon:
-> >=20
-> > How many dwmac instances does the sg2044 have?
-> >=20
->=20
-> Only one, there is another 100G dwxgmac instance, but it does not
-> use this syscon.
 
-That dwxgmac is a different device, with a different compatible etc?
+On Wed, Oct 16, 2024 at 07:03:35PM +0800, Gaosheng Cui wrote:
+> The alg instance should be released under the exception path, otherwise
+> there may be resource leak here.
+> 
+> To mitigate this, free the alg instance with crypto_free_shash when kmalloc
+> fails.
+> 
+> Fixes: 02fe26f25325 ("firmware_loader: Add debug message with checksum for FW file")
+> Signed-off-by: Gaosheng Cui <cuigaosheng1@huawei.com>
 
---HZ3OWjJABGOCrTlm
-Content-Type: application/pgp-signature; name="signature.asc"
+Reviewed-by: Russ Weight <russ.weight@linux.dev>
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxlhXgAKCRB4tDGHoIJi
-0pO0AQD5Swmhv1mfvz5DiD/5f5DGV3m+rvoUAhPp697EkSD9KgD/fnWAmf29z3yR
-O/N/hNkW71ULWbchz7jsFDwGdd6q4Ao=
-=k7np
------END PGP SIGNATURE-----
-
---HZ3OWjJABGOCrTlm--
+> ---
+>  drivers/base/firmware_loader/main.c | 5 ++---
+>  1 file changed, 2 insertions(+), 3 deletions(-)
+> 
+> diff --git a/drivers/base/firmware_loader/main.c b/drivers/base/firmware_loader/main.c
+> index 324a9a3c087a..c6664a787969 100644
+> --- a/drivers/base/firmware_loader/main.c
+> +++ b/drivers/base/firmware_loader/main.c
+> @@ -829,19 +829,18 @@ static void fw_log_firmware_info(const struct firmware *fw, const char *name, st
+>  	shash->tfm = alg;
+>  
+>  	if (crypto_shash_digest(shash, fw->data, fw->size, sha256buf) < 0)
+> -		goto out_shash;
+> +		goto out_free;
+>  
+>  	for (int i = 0; i < SHA256_DIGEST_SIZE; i++)
+>  		sprintf(&outbuf[i * 2], "%02x", sha256buf[i]);
+>  	outbuf[SHA256_BLOCK_SIZE] = 0;
+>  	dev_dbg(device, "Loaded FW: %s, sha256: %s\n", name, outbuf);
+>  
+> -out_shash:
+> -	crypto_free_shash(alg);
+>  out_free:
+>  	kfree(shash);
+>  	kfree(outbuf);
+>  	kfree(sha256buf);
+> +	crypto_free_shash(alg);
+>  }
+>  #else
+>  static void fw_log_firmware_info(const struct firmware *fw, const char *name,
+> -- 
+> 2.25.1
+> 
 
