@@ -1,159 +1,121 @@
-Return-Path: <linux-kernel+bounces-377257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 335979ABC13
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:21:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id E2F9F9ABC16
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 05:21:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E8F14284DA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:21:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F6821F2465B
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 03:21:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9838584A2F;
-	Wed, 23 Oct 2024 03:21:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A447F1369BB;
+	Wed, 23 Oct 2024 03:21:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EKEMTky8"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fs6Oiiu1"
+Received: from mail-pl1-f170.google.com (mail-pl1-f170.google.com [209.85.214.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5400B139E;
-	Wed, 23 Oct 2024 03:21:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD7E1139E;
+	Wed, 23 Oct 2024 03:21:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729653684; cv=none; b=kXbjrwzbgIJ1YAdug9UVIor3NP7SUhnKaj8WxkYEgwO2VtPcDWm2Wcyy5lKyvt3LtU1I0UxqF1KkMKFRAyfhU7EmZ82RETpYHhJod50KyE8nWZO+evYkI1Tq2cjF8QUhJAe7oauOyU7o3dsq2nYALWBKbT+OhQSKf34NCDkFSVg=
+	t=1729653693; cv=none; b=l0mOmGclbnPN5EdaINw2Eo2BM3eL3DRtaT5vk11F4hud+KHL3jywbKIx8qPjnvSgvsChVDQeD3vRswJue6Kxe5fSh9PIEo94TsgUbEKwIipxqoUMTK79R3QuUnWDkW90Y0A8n6JxKNSsOTwaeX+Pqk/svmzd37CXWZwUg1RYIf4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729653684; c=relaxed/simple;
-	bh=vfwq4CGbi67FZzd3D7/GwRIzh20AGEhmF5BAf1p3Q5c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LJyzux/By5NKWpSWDnBuWB15iPgOWR4FCuMSt4tym6Mtdokoho3KauaDJ0juQopFxYy2uJgCSqMPGjYh4BYtnA2uuMO9fnpdjQ2wPdTLR18QHfR64AR9P+PlEFOEB0mrh9WX4yzRxVdhiqTngHuAPKPigpl90LQJROaxQ5SXlpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EKEMTky8; arc=none smtp.client-ip=209.85.167.49
+	s=arc-20240116; t=1729653693; c=relaxed/simple;
+	bh=nt8rJBEuD0Q9sUA//jJUcUThgf2M4Ags7Y9vCxUhnuc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=LtTi9Jut89jXigHzPq49WbO/Flq15q6vzGzohi1FSnvfElZKId5TO1IK1AIWJ1OiSG91pjokBiHd0jzA75E4ddSzuU/DBF3K2xMrJogyehpPy/9cMX+gT8xuxffsq5Iwozg0KUc8IviznyoQziG4KLCDzCO2MIIEwmUIKIKT0hU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fs6Oiiu1; arc=none smtp.client-ip=209.85.214.170
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e8607c2aso6914940e87.3;
-        Tue, 22 Oct 2024 20:21:21 -0700 (PDT)
+Received: by mail-pl1-f170.google.com with SMTP id d9443c01a7336-20e6981ca77so47715595ad.2;
+        Tue, 22 Oct 2024 20:21:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729653680; x=1730258480; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=DvuQbPXYbODiGaP/9RXJzxAYeJ4UgG+zcj8XZ0RoIUw=;
-        b=EKEMTky8T5JPVP/bkxTdu8vJ33peeS1Msl2o7UTRLPvdsrndO8r49Ln7SXIzFKJyEs
-         FZKCoc1fFGvw8kYZlWgSrvIRFB2VIlfOajw/qdyrN4cSIvHnAQSX73crQB7fitiPresW
-         qNIz8FhW2Hfjhm9PeOr4SzHsXdbSLBCYZN6O7f9niwLQlULVQlmLuPm5+hx90ehGNdej
-         BSIKSCcyQ45jdHVnspNas9odwrX4SJ+F9StBioDKxH6AkG4mzERV3ntzD7+G52pMuTWd
-         HVvBWCSj5rROAL6PTlYy0Phucz+B3KiHP3m4dZAbajrN86FAmXxs6FLaLAMUUvteC1tE
-         QjZg==
+        d=gmail.com; s=20230601; t=1729653691; x=1730258491; darn=vger.kernel.org;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=29eHXV9bqIXK5xc3pmwxd96Tf3JMnOuCUVgc44dHjjo=;
+        b=fs6Oiiu1xs9O2PZ3JCO7H9s5/aLKzp1O1vcp0AUaDmAWjiqteq0zOK0fvxbok2Kbut
+         3EptgAtinjWASWbZCTJt6KcSXK3Nka+zsw2WV6kwi2fMIvBzKSoVMGKULtHey4wGANJM
+         8hZ10L+a/qMTNP9e+YkmD98iS1mQMPtVIw7zWVl07WKcDd4uvjMqeV0SeEoSJnSMoIJB
+         SxlZMVXR7IrD/eYlLjR6u8vpHrwdqyeAI9FnjhwQPQ1mnnx5IdyRvjLwE9DXle0M8huw
+         9K9RA1KiO2u3YnBTep+JkcSGAwUlM1UxL68L7EJ/FqQKoEptoLdrXy7o/BTDnhneGYDL
+         Yheg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729653680; x=1730258480;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DvuQbPXYbODiGaP/9RXJzxAYeJ4UgG+zcj8XZ0RoIUw=;
-        b=mVoDj/QKR3RefVwtsRtsOtnfjCjtEFMseu8crJfZRtTHpf6GLU1l9qp5GVqHHVI6mw
-         KlRgcL6QvrMjckLat4DesYAy6BLezjU34fn+VNqwxHu2sR3Mrl7EyRQH67ldToK/SDgt
-         5Ot/4HYrBheVYQS93rECD7bdm9uYIhf3l/ijrCBDojLf7mjwCBMfsl5zO51hT5bQpArB
-         xWwUSAwWK0t8rYNUcp9qb9XqReSaU3C3SqXn4FR0R1OCbIip7wT1uWCYiCn061JFfacO
-         4wzsdT6ZVPAtBUwcdB/OA+ReFJWKUL59bCcO6kyxGzRVcV1U+cuUJ2XdO81ujOaWS6yi
-         Q2gg==
-X-Forwarded-Encrypted: i=1; AJvYcCV8SyP06OcLpsen1Oit/5Qt274PLVucU6DBcPIIlN6w0VnL+1UWAUNEzhRf+CTdJCfqdfShaPkU+IqxXOE=@vger.kernel.org, AJvYcCVB108mb/Ml/p5KJVKAzTyl4fejyDmjyzv3QvUcRcspLp6advCM0g/gja4f7NI6rcQLcl/vNU+G4UWp2g==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8PpMBSojOVQ0BXYI4ApF/1pWScPb1B5amu0qecyR6+tGlnhU9
-	qx8uaLay8M7d2bpus50z1ZopF9MwToDFGtiRSbTDCm/CIC2mYCLLrVAiZgWUmgomVMyebX76iOU
-	56NTEHNs8bDQ8VNRHA1a6pjI/JkUMbNwI
-X-Google-Smtp-Source: AGHT+IGt8sO9Z8qwn0a+Kj2m0DgEHQX/Nl5ZXhBzunT2/k50uKjkCqsiyYQMClt3FceQeZpFBQVDHDsMj6nPw7mmFVw=
-X-Received: by 2002:a05:6512:1294:b0:539:fb49:c47d with SMTP id
- 2adb3069b0e04-53b1a2f4619mr383855e87.12.1729653680173; Tue, 22 Oct 2024
- 20:21:20 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729653691; x=1730258491;
+        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=29eHXV9bqIXK5xc3pmwxd96Tf3JMnOuCUVgc44dHjjo=;
+        b=mDxHcKoIrMr7wht4bjCUEexyJ7xx6OkFJKvZ0JkjetCu5WgYpgTDwLcp1Sh0c+hk7o
+         aAo849ZcdIDwlFnhe41TWN7b8jilL4VdEkYkwNjEvjjwxDq9F9faPcK3wRBzKAl89p0z
+         avTgo+OCYbiDxKuVnyzUr7nQSw2HKpN9BXOMptJIUrygd3OkZxivPdjXPXGaCy21kbCd
+         KXt4mU9zUeMGR4Niw1W7NcwKPKFAMPr61V/6C6LrEwYGeezx+5dL7HTY7amIULs/b0NC
+         d7WKwzOMgpRE251Jd9Db2zZBK8XqgJbfdx9U6oA8MjRb8BK1wOUlATN1K9ldpv+sLTGT
+         Fu4w==
+X-Forwarded-Encrypted: i=1; AJvYcCULUcnARC2kqf4vm4JGr7NQ4mKfosTMaUNbX6sgIJ6PQ1VLuFUQkuBwctOyVKy+7ZglrqrCcEOi6juRHkPVz+Q=@vger.kernel.org, AJvYcCWQMmHNQKaubeQirxDOYpeXLkDK/gky1UJVbLoyZGkNScSIQ/2bHdTIOhtjp4uGcjmQqQVvp1DY@vger.kernel.org, AJvYcCWgARCkjkEiIgMane1cL09Xj3OO1VE3pgQWVHGlDOb6GRv2PVQQGLMJ1qf2vYiPUfw5GLrI+5HOmmqP2OnN@vger.kernel.org
+X-Gm-Message-State: AOJu0YxTDHtEhsqs4cczQ7FJsSUZjSdKgLopHdxBybTdCcO/iWpKYgly
+	AmxIDFaOndTjUjOCB/WQGzCoQFIAyuxKjMECmB6cOb5P4dz22C+N
+X-Google-Smtp-Source: AGHT+IHzluk/mO7QsiX7WblFK/SH2YN/WhRfpbiFtyyiimjV/181mnxEUMWR1GEWvL8QX5ADLxcu+g==
+X-Received: by 2002:a17:902:f64c:b0:20b:7a46:1071 with SMTP id d9443c01a7336-20fa9deb645mr19087025ad.4.1729653690929;
+        Tue, 22 Oct 2024 20:21:30 -0700 (PDT)
+Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:b2d3:e25a:778e:1172])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f65e1sm48994225ad.285.2024.10.22.20.21.29
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Tue, 22 Oct 2024 20:21:30 -0700 (PDT)
+Date: Tue, 22 Oct 2024 21:21:28 -0600
+From: Johnny Park <pjohnny0508@gmail.com>
+To: horms@kernel.org
+Cc: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
+	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, andrew@lunn.ch, intel-wired-lan@lists.osuosl.org,
+	netdev@vger.kernel.org, kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/1] [net-next] igb: Fix spelling in igb_main.c
+Message-ID: <ZxhruNNXvQI-xUwE@Fantasy-Ubuntu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022173921.6fdbdd38@canb.auug.org.au>
-In-Reply-To: <20241022173921.6fdbdd38@canb.auug.org.au>
-From: Su Hua <suhua.tanke@gmail.com>
-Date: Wed, 23 Oct 2024 11:20:43 +0800
-Message-ID: <CALe3CaBU=9Ck-euohNna2hYxYJBbvA=LrmG7qDHTEeQ2rt9XCA@mail.gmail.com>
-Subject: Re: linux-next: boot failure after merge of the memblock tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Rapoport <rppt@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Stephen Rothwell <sfr@canb.auug.org.au> =E4=BA=8E2024=E5=B9=B410=E6=9C=8822=
-=E6=97=A5=E5=91=A8=E4=BA=8C 14:39=E5=86=99=E9=81=93=EF=BC=9A
->
-> Hi all,
->
-> After merging the memblock tree, today's linux-next build
-> (powerpc_pseries_le_defconfig) failed my qemu boot test like this:
->
-> mem auto-init: stack:all(zero), heap alloc:off, heap free:off
-> BUG: Unable to handle kernel data access on read at 0x00001878
-> Faulting instruction address: 0xc0000000004f00e4
-> Oops: Kernel access of bad area, sig: 7 [#1]
-> LE PAGE_SIZE=3D4K MMU=3DRadix SMP NR_CPUS=3D2048 NUMA pSeries
-> Modules linked in:
-> CPU: 0 UID: 0 PID: 0 Comm: swapper Not tainted 6.12.0-rc4-06078-g367eaba2=
-691a #1
-> Hardware name: IBM pSeries (emulated by qemu) POWER10 (architected) 0x801=
-200 0xf000006 of:SLOF,HEAD pSeries
-> NIP:  c0000000004f00e4 LR: c000000000489df8 CTR: 0000000000000000
-> REGS: c0000000028cfae0 TRAP: 0300   Not tainted  (6.12.0-rc4-06078-g367ea=
-ba2691a)
-> MSR:  8000000002001033 <SF,VEC,ME,IR,DR,RI,LE>  CR: 84000240  XER: 000000=
-00
-> CFAR: c0000000004f2c48 DAR: 0000000000001878 DSISR: 00080000 IRQMASK: 3
-> GPR00: c00000000204994c c0000000028cfd80 c0000000016a4300 c00c00000004000=
-0
-> GPR04: 0000000000000001 0000000000001000 0000000000000007 c000000002a1117=
-8
-> GPR08: 0000000000000000 0000000000001800 c00000007fffe720 000000000000200=
-1
-> GPR12: 0000000000000000 c000000002a6a000 0000000000000000 00000000018855c=
-0
-> GPR16: c000000002940270 c00c000000000000 0000000000040000 000000000000000=
-0
-> GPR20: 0000000000000000 ffffffffffffffff 0000000000000001 fffffffffffffff=
-f
-> GPR24: 00c0000000000000 0000000000000000 0000000000000000 000000000800000=
-0
-> GPR28: 0000000000000000 0000000000002a6b 0000000000000000 000000000000100=
-0
-> NIP [c0000000004f00e4] set_pfnblock_flags_mask+0x74/0x140
-> LR [c000000000489df8] reserve_bootmem_region+0x2a8/0x2c0
-> Call Trace:
-> c0000000028cfd80] [c0000000028cfdd0] 0xc0000000028cfdd0 (unreliable)
-> c0000000028cfe20] [c00000000204994c] memblock_free_all+0x144/0x2d0
-> c0000000028cfea0] [c000000002016354] mem_init+0x5c/0x70
-> c0000000028cfec0] [c00000000204547c] mm_core_init+0x158/0x1dc
-> c0000000028cff30] [c000000002004350] start_kernel+0x608/0x944
-> c0000000028cffe0] [c00000000000e99c] start_here_common+0x1c/0x20
-> Code: 4182000c 79082d28 7d4a4214 e9230000 3d020137 38e8ce78 79284620 7929=
-57a0 79081f24 79295d24 7d07402a 7d284a14 <e9090078> 7c254040 41800094 e9290=
-088
-> ---[ end trace 0000000000000000 ]---
->
-> Kernel panic - not syncing: Attempted to kill the idle task!
->
-> Caused by commit
->
->   ad48825232a9 ("memblock: uniformly initialize all reserved pages to MIG=
-RATE_MOVABLE")
->
-> I bisected the failure to this commit and have reverted it for today.
->
-> --
-> Cheers,
-> Stephen Rothwell
+Simple patch that fix spelling mistakes in igb_main.c
 
-Thanks, I'd also like to set up the environment for testing; could you
-please share the command line instructions or XML files used for
-testing?
+Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
+---
+Changes in v2:
+  - Fix spelling mor -> more
+---
+ drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-Sincerely yours,
-Su
+diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+index 1ef4cb871452..fc587304b3c0 100644
+--- a/drivers/net/ethernet/intel/igb/igb_main.c
++++ b/drivers/net/ethernet/intel/igb/igb_main.c
+@@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
+ 	/* initialize pointer to rings */
+ 	ring = q_vector->ring;
+ 
+-	/* intialize ITR */
++	/* initialize ITR */
+ 	if (rxr_count) {
+ 		/* rx or rx/tx vector */
+ 		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
+@@ -3906,7 +3906,7 @@ static void igb_remove(struct pci_dev *pdev)
+  *
+  *  This function initializes the vf specific data storage and then attempts to
+  *  allocate the VFs.  The reason for ordering it this way is because it is much
+- *  mor expensive time wise to disable SR-IOV than it is to allocate and free
++ *  more expensive time wise to disable SR-IOV than it is to allocate and free
+  *  the memory for the VFs.
+  **/
+ static void igb_probe_vfs(struct igb_adapter *adapter)
+-- 
+2.43.0
+
 
