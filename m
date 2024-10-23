@@ -1,156 +1,216 @@
-Return-Path: <linux-kernel+bounces-378355-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378354-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E8B79ACEC7
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:29:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 228959ACEC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 17:28:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3E51C20985
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:29:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D35AC28816E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 15:28:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C1BAF1C75E4;
-	Wed, 23 Oct 2024 15:28:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2271C8785;
+	Wed, 23 Oct 2024 15:27:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b="RorhM/lW"
-Received: from mout.web.de (mout.web.de [212.227.17.11])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZvXrV4fo"
+Received: from mail-pg1-f169.google.com (mail-pg1-f169.google.com [209.85.215.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E97C91C1746;
-	Wed, 23 Oct 2024 15:28:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DE271C9DFE;
+	Wed, 23 Oct 2024 15:27:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729697312; cv=none; b=Z86HI82KiT1F6AbveMZ/QsHSMfyu2+NqvUX5/05OTvcxxGKOie40Uy7ZcKfz+n3MYJfDyFLGlVxfioiRMEdKf2EfmfxQb4N2/Q+NYF+O/p3rTQ6vCt9lRNOnqDPdjumpslH8BfEsD2Q+rNZE4usjinNeK05Pq2ZI/WKESJMGS/g=
+	t=1729697257; cv=none; b=HwjUpeTB6eKq7lBqXecnQ0QHbqXnIqmQPJDjpdwCcK5GZPNDAqe47keTnLnZxZnwBwHHA1QCVfWzY0ac92YVkaFxRnj6l7bab9kLEpmJ5WEZGmnDRmNEWwnnmd6AjqQ3GbXgfCgPYckpBj/0uGSmRkqKhIOT8mNVbY3qFHi/3uU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729697312; c=relaxed/simple;
-	bh=egzzzpluxju+Brk1kUFIgghBxAeHeEx6E4RAuoSQXek=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=MQJ3JgwqvxZWNuM+nJaDv/cUug1OeAJ8dMuqpMsd5iCYOcOzW2Hpiw6sM8dUF1cQ/BWsf7ekwat75oEG7RGgdZ9K0+yZ9SQTKT0+fHsoSp6dI/izRtSsOGXzk0SY6eBdp9GAPExc4+zp7hPRviuNTUn1tiTajluz+WWxvFyL3OI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de; spf=pass smtp.mailfrom=web.de; dkim=pass (2048-bit key) header.d=web.de header.i=markus.elfring@web.de header.b=RorhM/lW; arc=none smtp.client-ip=212.227.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=web.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=web.de
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=web.de;
-	s=s29768273; t=1729697291; x=1730302091; i=markus.elfring@web.de;
-	bh=EAENFtjl9sz4HwwtPOdI6rZgMghwnGzijGkxKkOHbLA=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=RorhM/lWMk7pMNYl/E56jF5zJnCPDxNZYm8GttKhQcpvr7Nysg+b59VaMiin7hs4
-	 ToRMfpcavb5zcIAtM4fxCVftGaqwHAz9Y5Qsh7KPll3M6qWZWBQEh+jtzSpKtUrRw
-	 F1apT6Hr3F8IX6E4hX3CvL+rSlLStrxt29yLoUME6eRzUk8Ioo0JUjCpzf4DOOgSD
-	 s3iVx+Dw11fBoE7299sDPxkNPCZcl/x6H7+qNYYAHUC2rD9Lsn9x3/N8fdj7T0y3K
-	 pBqPTY6Z+2FIZ64D8QcUAQn7Ul6F7F4Ky2jN35NUxQerio0FEpLbpn8NEsSgHJjwl
-	 WFn0V0When8XR0+whA==
-X-UI-Sender-Class: 814a7b36-bfc1-4dae-8640-3722d8ec6cd6
-Received: from [192.168.178.21] ([94.31.84.95]) by smtp.web.de (mrweb106
- [213.165.67.124]) with ESMTPSA (Nemesis) id 1N30ZL-1u26IY2ORJ-00vV2M; Wed, 23
- Oct 2024 17:28:11 +0200
-Message-ID: <582379a6-dea3-482f-86e4-259d4b23204e@web.de>
-Date: Wed, 23 Oct 2024 17:27:11 +0200
+	s=arc-20240116; t=1729697257; c=relaxed/simple;
+	bh=i5zW47oWQ1zjUDyGnHaSmskOj1n5LuiK33aGO8bUccI=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=MO+LbupOLlZrTsPH3pwSuvXKrCASmdJGKWcvQomM1cQdXB7W5PNRMUpvHfceLeUWhF4iWyFJxUcJfR6cI+xOCxxSn48u0UHCu9Evd1E48mZtCIyNkVfQGAEbtCi4P1T4XhVCUySMwJUdvULfy7hLowAr6MicHDIvbifcEPxr0Mk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZvXrV4fo; arc=none smtp.client-ip=209.85.215.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f169.google.com with SMTP id 41be03b00d2f7-7e9f377a3c9so763671a12.3;
+        Wed, 23 Oct 2024 08:27:35 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729697254; x=1730302054; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=dgIQoq6KNaLLN/YAbOHNwmlTZJmPg/4UDeUr0HAYKcA=;
+        b=ZvXrV4fo7dlSDSGNAO1jFffeKxWeTfm/Cryjd2Di337oQFLrri748J/OALcD9YCxU/
+         CT+Knr+7naFs6hC0NMb28xGvISvAnP3EFh34NjKI3AhEgYvmSBTc5Jc7uSJGwWcfVRhM
+         Dr7S7AVn8Bx9Xm3Hv44/7sDpMpJ00g5XJWdBbq3rloJLI3RccsO5MLFk61bjkzqnfWXd
+         OyU9ndAmSv3J0OwikZn2sTy+V2xu3DmvSGn/vgsL0TE8MSBGW5kUN+NS7QIHv+J1bZwC
+         3eOWSmOo//awBlvGyyKcUTkxTzkuQR7DG/b/9JBikwhFo3nrFr1BpVO5g0OfJ2EZRfNl
+         yJeQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729697254; x=1730302054;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=dgIQoq6KNaLLN/YAbOHNwmlTZJmPg/4UDeUr0HAYKcA=;
+        b=XxmpEvc4M/OHmKg69IO98DZj9XkKTSVvr4Bp1j4ZyiGk6gTzDgazNi108cyviLxVsU
+         zRzjuylcniWiTJee6D6+vvFZCXnUqSmbZOk4X+ODarFIayZLM8U78gSS4QV9Rv63WrEG
+         7lzU/drBs0mTQAK1Rl4D9t5xlY32q0KQ+U2NaVoQekNVqS1RNmt9koyo9gKiq9Fg1WO2
+         n0H5YRy0Dd/Z/OacReRbLh5gUZZeumeAO24WHji/KEe9/FtZUwJsvjuJPoLJTAWe85f3
+         dgeHQUcGlrJt80G/tQ0qJuspYjLl+IIGB+YrqPnWqQ+UEkcpaDxR+kgkO0tLvuPmdRc1
+         FZBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVBTShi97N3dOEi5MsL6mXLcwWs+fWEFaOqc2PuZwqy/k30Hz4n8sF8//S6rPbdiUm0ON0TgQq1GWVKdNw=@vger.kernel.org, AJvYcCWnJOiD1w2zACmXKMRrfdsQrl/VVLyfDqoNMFIdzHohzzPAJ6RYFb045ygWaxBBE0Fackm1I5495h8v@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzs/OZ/Yf5KhSOMrnrW58BB4rPakV8V1Y8jdPFdf1yziCerfP+t
+	JUCS75KbmCMEy9IuY9AVIVdS5X167quxC8JfPtMWU5YI/dbiQuUJdeBORO2CXal1nFkAiXzydNI
+	SAA9git2dO+byDiEKWiCRqzeg6/A=
+X-Google-Smtp-Source: AGHT+IHx8hn46XoyrIBSavBR29Txf0wclGSq28wvr+ELnHXP69lVjDWT3I5vfqfFUQPcQOdabS6idpRapRcqFXeAxws=
+X-Received: by 2002:a05:6a20:6a0e:b0:1cf:34a9:63d2 with SMTP id
+ adf61e73a8af0-1d978b96069mr2009125637.9.1729697254464; Wed, 23 Oct 2024
+ 08:27:34 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: [PATCH v2] sysctl: Reduce dput(child) calls in proc_sys_fill_cache()
-To: linux-fsdevel@vger.kernel.org, Al Viro <viro@zeniv.linux.org.uk>,
- Joel Granados <joel.granados@kernel.org>, Kees Cook <kees@kernel.org>,
- Luis Chamberlain <mcgrof@kernel.org>
-Cc: LKML <linux-kernel@vger.kernel.org>, kernel-janitors@vger.kernel.org,
- Joel Granados <j.granados@samsung.com>
-References: <7be4c6d7-4da1-43bb-b081-522a8339fd99@web.de>
- <y27xv53nb5rqg4ozske4efdoh2omzryrmflkg6lhg2sx3ka3lf@gmqinxx5ta62>
- <3a94a3cb-1beb-4e48-ab78-4f24b18d9077@web.de>
- <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
-Content-Language: en-GB
-From: Markus Elfring <Markus.Elfring@web.de>
-In-Reply-To: <t4phgjtexlsw3njituayfa6x5ahzhpvv6vc2m6xk6ffcbzizkl@ybhnpzkhih7z>
-Content-Type: text/plain; charset=UTF-8
+References: <20241014152502.1477809-1-superm1@kernel.org> <20b48c6f-7ea9-4571-a39c-f20a9cf62319@app.fastmail.com>
+ <f56c555f-7313-43ff-abe4-28fb246e31cc@nvidia.com> <CADnq5_OjfJzcOqa=NbWVw5ENvi+nmvNAZX0u_0hOvk3EVoh0bw@mail.gmail.com>
+ <fd7cae9a-5ee1-4e18-915d-4115f0a6a156@nvidia.com>
+In-Reply-To: <fd7cae9a-5ee1-4e18-915d-4115f0a6a156@nvidia.com>
+From: Alex Deucher <alexdeucher@gmail.com>
+Date: Wed, 23 Oct 2024 11:27:22 -0400
+Message-ID: <CADnq5_NTBXPbW+u_AxTewH-aouLNn4gxebpzUSzsyev-VxOtcg@mail.gmail.com>
+Subject: Re: [PATCH] PCI/VGA: Don't assume only VGA device found is the boot
+ VGA device
+To: Kai-Heng Feng <kaihengf@nvidia.com>
+Cc: Luke Jones <luke@ljones.dev>, Mario Limonciello <superm1@kernel.org>, 
+	Bjorn Helgaas <bhelgaas@google.com>, "open list:PCI SUBSYSTEM" <linux-pci@vger.kernel.org>, 
+	open list <linux-kernel@vger.kernel.org>, dri-devel@lists.freedesktop.org, 
+	Mario Limonciello <mario.limonciello@amd.com>, Alex Deucher <alexander.deucher@amd.com>
+Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:UL0i4NV2r5DTLgpQYTFUVA8BVfy7ERUfYRECBvNrEYUZxV1vf82
- ljLxLuIfeQwb8Wn63oq21SJ0Qz07P6Lya7SlCHLSp5sUALM+6dzWKn9ROtcUsvITkOZDndh
- JXbGdgqMXjfnCXIVjXqdG434ElGeAbvrjtugLlx5TrANvIa5Lui1T1SWbLBiyKB4sNu9BFF
- qk2Z2+6lUmcx+RocxI76w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:nMrifFBllBk=;+x1mrZqyfMrCBW3w2jah6QYdGai
- Ah816exJrIbb/2kU5S/UvpIQ0ttC0pgMZ0SZwACqM0/Wd5BG4D7H4H+aL3b3QR7cmwtWAgQR1
- a3r3SV9O4/a+RsPinWna6+TgFpCVXMRRsMOr8XIowuFcFU6zhe5c0E/lIWFWMdNO0HGhpsU9E
- mFxyYJG9OOYUU4YRbcQcWEVcLE9ha8OYQZ/eHigSon4oZuEUCJCb4FmG+0JqtrEpoAcmh5+wN
- NKZ/qqaKIuBB+vqfF/31mrynxkpxoB6lldaA2wFJW27tRLqSlO+mTfreurXqvmuv0Ilivfxz2
- AcdCHjEXKQtbQpTPsYiR8+PvUCkPCMBk5Wd0NA9OOqO2B3YlVwjCUAMXtT9bOdJ625C3UDLkr
- p/dZ2ORqJs6f5SfWc4UTTLe2ENbBo8mtssycg/D2QrWQxo7GUi6s4XCfD+4eJ/WLe/qXOlvbl
- /VUOWg3kXiZ8XzHAa8skBF2ORT2K+4dd4lQq+X6wNqsQ7+PElhjGvWhIk5XEVvbbqXkD4ddoB
- z+D8xZGahvKE991VoZR+iYK44atAX1VJSoQebAMH9HRxCXl8sG2/zvEO7WLR6bDduscZCGmCK
- gb+JIH/J3uaIUFbGJQCVbiaSOOxXlIVAvqkmk4wcGocbEvDwy04EQK/FNIhnMD7he5DHERr/R
- QzFxDZ1HyuN3dFb3E6sJlwTzsp5gsl8NZBJDRTjSAbPnsYKHTa4FnhH2nq2krClRCUt0UITLR
- ueqQmBOf2MXdeTczDlsa+VbFIB5sjB0nBW295qrpHPZ7axQ2EhpniQohqdEcHB09wq1mfmx4S
- qpGFbKxAoRd21RBbEGvGxOIw==
 
-From: Markus Elfring <elfring@users.sourceforge.net>
-Date: Wed, 23 Oct 2024 16:54:59 +0200
+On Tue, Oct 22, 2024 at 9:27=E2=80=AFPM Kai-Heng Feng <kaihengf@nvidia.com>=
+ wrote:
+>
+>
+>
+> On 2024/10/22 9:04 PM, Alex Deucher wrote:
+> > External email: Use caution opening links or attachments
+> >
+> >
+> > On Tue, Oct 22, 2024 at 2:31=E2=80=AFAM Kai-Heng Feng <kaihengf@nvidia.=
+com> wrote:
+> >>
+> >> Hi Luke,
+> >>
+> >> On 2024/10/15 4:04 PM, Luke Jones wrote:
+> >>> On Mon, 14 Oct 2024, at 5:25 PM, Mario Limonciello wrote:
+> >>>> From: Mario Limonciello <mario.limonciello@amd.com>
+> >>>>
+> >>>> The ASUS GA605W has a NVIDIA PCI VGA device and an AMD PCI display d=
+evice.
+> >>>>
+> >>>> ```
+> >>>> 65:00.0 VGA compatible controller: NVIDIA Corporation AD106M [GeForc=
+e
+> >>>> RTX 4070 Max-Q / Mobile] (rev a1)
+> >>>> 66:00.0 Display controller: Advanced Micro Devices, Inc. [AMD/ATI]
+> >>>> Strix [Radeon 880M / 890M] (rev c1)
+> >>>> ```
+> >>>>
+> >>>> The fallback logic in vga_is_boot_device() flags the NVIDIA dGPU as =
+the
+> >>>> boot VGA device, but really the eDP is connected to the AMD PCI disp=
+lay
+> >>>> device.
+> >>>>
+> >>>> Drop this case to avoid marking the NVIDIA dGPU as the boot VGA devi=
+ce.
+> >>>>
+> >>>> Suggested-by: Alex Deucher <alexander.deucher@amd.com>
+> >>>> Reported-by: Luke D. Jones <luke@ljones.dev>
+> >>>> Closes: https://gitlab.freedesktop.org/drm/amd/-/issues/3673
+> >>>> Signed-off-by: Mario Limonciello <mario.limonciello@amd.com>
+> >>>> ---
+> >>>>    drivers/pci/vgaarb.c | 7 -------
+> >>>>    1 file changed, 7 deletions(-)
+> >>>>
+> >>>> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> >>>> index 78748e8d2dba..05ac2b672d4b 100644
+> >>>> --- a/drivers/pci/vgaarb.c
+> >>>> +++ b/drivers/pci/vgaarb.c
+> >>>> @@ -675,13 +675,6 @@ static bool vga_is_boot_device(struct vga_devic=
+e *vgadev)
+> >>>>               return true;
+> >>>>       }
+> >>>>
+> >>>> -    /*
+> >>>> -     * Vgadev has neither IO nor MEM enabled.  If we haven't found =
+any
+> >>>> -     * other VGA devices, it is the best candidate so far.
+> >>>> -     */
+> >>>> -    if (!boot_vga)
+> >>>> -            return true;
+> >>>> -
+> >>>>       return false;
+> >>>>    }
+> >>>>
+> >>>> --
+> >>>> 2.43.0
+> >>>
+> >>> Hi Mario,
+> >>>
+> >>> I can verify that this does leave the `boot_vga` attribute set as 0 f=
+or the NVIDIA device.
+> >>
+> >> Does the following diff work for you?
+> >> This variant should be less risky for most systems.
+> >>
+> >> diff --git a/drivers/pci/vgaarb.c b/drivers/pci/vgaarb.c
+> >> index 78748e8d2dba..3fb734cb9c1b 100644
+> >> --- a/drivers/pci/vgaarb.c
+> >> +++ b/drivers/pci/vgaarb.c
+> >> @@ -675,6 +675,9 @@ static bool vga_is_boot_device(struct vga_device *=
+vgadev)
+> >>                   return true;
+> >>           }
+> >>
+> >> +       if (vga_arb_integrated_gpu(&pdev->dev))
+> >> +               return true;
+> >> +
+> >
+> > The problem is that the integrated graphics does not support VGA.
+>
+> Right, so the check has to be used much earlier.
+>
+> I wonder does the integrated GFX have _DOD/_DOS while the discrete one do=
+esn't?
+> If that's the case, vga_arb_integrated_gpu() can be used to differentiate=
+ which
+> one is the boot GFX.
 
-Replace two dput(child) calls with one that occurs immediately before
-the IS_ERR evaluation. This transformation can be performed because
-dput() gets called regardless of the value returned by IS_ERR(res).
+I think the problem is that the boot GPU is being conflated with vga
+arb.  In this case the iGPU has no VGA so has no reason to be involved
+in vga arb.  Trying to mess with any vga related resources on it could
+be problematic.  Do higher levels of the stack look at vga arb to
+determine the "primary" GPU?
 
-This issue was transformed by using a script for the
-semantic patch language like the following.
-<SmPL>
-@extended_adjustment@
-expression e, f !=3D { mutex_unlock }, x, y;
-@@
-+f(e);
- if (...)
- {
- <+... when !=3D \( e =3D x \| y(..., &e, ...) \)
--   f(e);
- ...+>
- }
--f(e);
-</SmPL>
+Alex
 
-Signed-off-by: Markus Elfring <elfring@users.sourceforge.net>
-=2D--
-
-V2:
-* This update suggestion was rebased on source files of the software
-  =E2=80=9CLinux next-20241023=E2=80=9D.
-
-* The change description was adjusted according to the wording preferences
-  by Joel Granados.
-
-* An SmPL script example was appended.
-
-
- fs/proc/proc_sysctl.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
-
-diff --git a/fs/proc/proc_sysctl.c b/fs/proc/proc_sysctl.c
-index 9b9dfc450cb3..b277a1ca392e 100644
-=2D-- a/fs/proc/proc_sysctl.c
-+++ b/fs/proc/proc_sysctl.c
-@@ -698,11 +698,11 @@ static bool proc_sys_fill_cache(struct file *file,
- 			res =3D d_splice_alias(inode, child);
- 			d_lookup_done(child);
- 			if (unlikely(res)) {
--				if (IS_ERR(res)) {
--					dput(child);
--					return false;
--				}
- 				dput(child);
-+
-+				if (IS_ERR(res))
-+					return false;
-+
- 				child =3D res;
- 			}
- 		}
-=2D-
-2.47.0
-
+>
+> Kai-Heng
+>
+> >
+> > Alex
+> >
+> >>           /*
+> >>            * Vgadev has neither IO nor MEM enabled.  If we haven't fou=
+nd any
+> >>            * other VGA devices, it is the best candidate so far.
+> >>
+> >>
+> >> Kai-Heng
+> >>
+> >>>
+> >>> Tested-by: Luke D. Jones <luke@ljones.dev>
+> >>
+>
 
