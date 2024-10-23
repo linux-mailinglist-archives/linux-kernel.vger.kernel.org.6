@@ -1,121 +1,87 @@
-Return-Path: <linux-kernel+bounces-377879-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377883-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0309B9AC7FD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:29:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCC7A9AC80F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 12:38:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9725D1C20B57
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:29:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E68E41C21714
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:38:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A9FE1A0AE1;
-	Wed, 23 Oct 2024 10:29:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BGLvvY2X"
-Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2397619EEBF;
+	Wed, 23 Oct 2024 10:38:05 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 079BC155393;
-	Wed, 23 Oct 2024 10:29:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A4151CA84
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 10:38:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729679360; cv=none; b=TaQyEd49kN+bgtVMj78XsyuT+dYW8Yt8MZzkVrtcdRlldJC56PpBw36uURX4LRv3yOJq3K4/2NzQc/Fv5rj4s6FcQ7DepJSwQfQ7pNcPk8Z2DWoXfWK25m4zoIx8xGIXt7ut6RDHCNtnZf9vzfW3oT+5A1HkPZEir1p0HEcKNnA=
+	t=1729679884; cv=none; b=i0+uQrw6Cfpnm2u715EEJ5YZ+it+TanENv9Ztt66uzR/Rurs8U2ye+QjOpCSJ4zQPNd65hYe4QQPxbFzC0H9t8dF7SdRm+V0BkbaAO5XiiElwwsiPXlrZW4/TL+qy+AKTtynGtoAQcAtXe+CaLi4eAwinwdIEMSchrLsmbmuGbU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729679360; c=relaxed/simple;
-	bh=Gut0VnewNuT0LdmLi16hq5QIvsI+I9WMoZnZJlOfPAs=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=Ghq5PP6Xz6FU7XZsmsJfuMQ4r58nm+3yCFZ+zIvT+QDr6w4g2S7kD9NYK57M9eLSUKtNU4werdqjSXtlsIa+s+110/f3wfj4ZphQzMUHW1SBQaD8ZrL823xMdqiZEXzDIyVUr6Bbfa0gONIewBDSc8aSiARnTUIXJrigmLJ+wwo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BGLvvY2X; arc=none smtp.client-ip=209.85.221.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37d47b38336so4521502f8f.3;
-        Wed, 23 Oct 2024 03:29:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729679357; x=1730284157; darn=vger.kernel.org;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=Gut0VnewNuT0LdmLi16hq5QIvsI+I9WMoZnZJlOfPAs=;
-        b=BGLvvY2XVjFH4hmvaimwDv76C123Wa20iKKA3hv1rUzL+6a/0Ah38whQGDZ1LSgMGS
-         XfGVKg/Nnj8V+iNonIZSOezh+RqYmWS0jkfN8fhhBd1ZXCLu43IF7SfWOA1Z1O9dgWTX
-         t3hcyn9m4Y7x71ET7DrLG5GMRsJmuGJhNyrGytH5GtEiP49eAzv4eaeYMONSLreCFkta
-         qIszBx2D0WOQZ0WQneAUleJ0H4u0KIbSI477pPsrY0E4Ay4NJarEzgsRujOIlIwnDAKQ
-         oqmqD/1cr25yNR/+ijyV/gIQ8rLGX9Fd9Ce/4uQ5wtD4VxhJf0vUvOOUCkr14TCTCN2m
-         ZIwQ==
+	s=arc-20240116; t=1729679884; c=relaxed/simple;
+	bh=B+XcJb192v3YuuEOjMSBRFCQwKVSTU3vduPXMg9Vc1w=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=HlUb6u8df9W62Cnjm+jDcxqSpEZfTBYWKjEkdxsQRDt4ae/674p0WGgm+JV+dHFI3vVV2fZqopURIqkSSUrMFE4RrhARW/K1zmuQ/Jthrnlw7a9+XYf/IqetXb8wbznwNIN45uep4qnApOlQtsZwt8FVYTZMWYtdsNhEM7cq9Ls=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a4d630bac7so5533935ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 03:38:03 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729679357; x=1730284157;
-        h=mime-version:user-agent:content-transfer-encoding:references
-         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gut0VnewNuT0LdmLi16hq5QIvsI+I9WMoZnZJlOfPAs=;
-        b=ouxYB5VqO3X06A6AWVDDkaRyD9fVIeGdRWNfzuO6mI6dDSiky32gxUjEVie2pE+1PW
-         XCnDlmQ6qNUSZ0RYNurWHkDCOYU8BpZJQlyvqwIfUrlezdfB6q6J34RpZRZFKKers5Q/
-         xHcM9R5EmAENMkKxjlnPqsvIM8RB6j5XtL60KA1w+KuP1KrJpdgr76mFHAQ7TGKYeHmd
-         NclmPQW3a1nkMUE2hcIog4Bie59BGM0ErWhUSYdWBEraWf3YVXh/l6Zm2RMLviKppJZw
-         Tl2zpCwCSdrt+B5W07tWCY04F9Yk4xDgC4WdCpSoBWPBgulAKxcp8BxNxSm6YGG1FyfD
-         QjRA==
-X-Forwarded-Encrypted: i=1; AJvYcCUSsmcNEroJ+sf04nvx4BS1rZ7lZKxRGMi7C0S2DCCYA+3+kvK0MDGXPvSwARtIAKDDkTbDYcUwSWrP@vger.kernel.org, AJvYcCVVrDlR2vupVDxE/wzgZYcBRWFc9ks08XpnCMsDmeYFY9/qvxTqHI3lugJJt2InSGgNhPf/kJI8pbvS@vger.kernel.org, AJvYcCX31zTtVWF89ao8W0Ynxm0ZDcc86S7kaujq4h0FYUDdxLTxerPywpD8ozXfsa1t79Cr9TeX9kC2VyagWsBs@vger.kernel.org
-X-Gm-Message-State: AOJu0YynhXeuAphQsm00r96Pq5pEu7UENdixJh807DQL0vd97K1WdN/c
-	b06i2kvwspryNAuEKIcJjS57d6Elg4MFDSNQcK8cq8rihltLivAx
-X-Google-Smtp-Source: AGHT+IHK3wCNc3RpQVpZ454cZp0zMtJu7nlGiRTUxZethjnQCgS4SELAAgxTJwdbVnWRkrmDEj0+bA==
-X-Received: by 2002:a05:6000:ac2:b0:37d:52e3:e3f0 with SMTP id ffacd0b85a97d-37efcf7ba39mr1572374f8f.44.1729679357155;
-        Wed, 23 Oct 2024 03:29:17 -0700 (PDT)
-Received: from ?IPv6:2003:f6:ef15:2100:888:d3c6:a442:4910? (p200300f6ef1521000888d3c6a4424910.dip0.t-ipconnect.de. [2003:f6:ef15:2100:888:d3c6:a442:4910])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a587f4sm8640688f8f.52.2024.10.23.03.29.16
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 03:29:16 -0700 (PDT)
-Message-ID: <e58d43d19daea622719f26193c49aa4fcacdaf3c.camel@gmail.com>
-Subject: Re: [PATCH 0/2] dt-bindings: dma: adi,axi-dmac: convert to yaml and
- update
-From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
-To: David Lechner <dlechner@baylibre.com>, Vinod Koul <vkoul@kernel.org>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,  Nuno Sa <nuno.sa@analog.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, dmaengine@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Wed, 23 Oct 2024 12:33:35 +0200
-In-Reply-To: <20241022-axi-dma-dt-yaml-v1-0-68f2a2498d53@baylibre.com>
-References: <20241022-axi-dma-dt-yaml-v1-0-68f2a2498d53@baylibre.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
-User-Agent: Evolution 3.54.1 
+        d=1e100.net; s=20230601; t=1729679882; x=1730284682;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=2M3PamQVhDSSmu15zLfa+CxeRn6M6aMFstsqsRrvm04=;
+        b=w/PMUgOngDar0QgTprLm97hPSq65c44uNLjAEyOu5Aw7WySRhBaOPZC/rpZgHw5fe5
+         RGwlcag8SQa5KOezKAHVAWN2Qf6N0/Gs6/Zhsy9FNroXZOVfJ1S+WgLI+RalC/GucKsf
+         REOy1yJjkbqiXMldvCjkB/3mD3UeoZUZTLb6GzPpwJ5rU5RdxV3RDEvNe60P5JjJKizu
+         XbYUn/jtzKm1aWXixncRvo70dQYAYe2yJsDNL2aBeB4u7WKKBQeqm7/cOzbrt9OS87ca
+         PHUoByijwy9yQUF1DObr6zWRP+6Xit4q/yoJ5uC9VpW1PFc2524iVhDub3Y659QMRwJ3
+         nWaA==
+X-Forwarded-Encrypted: i=1; AJvYcCV9B/EhB3O2qnwwzhT3c+HhQX7CK1cjs+QtaZ1Fo+Ho0Nx6u9vnpfhxhGulVySHwcs6+WWpyoyXWLPldmk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEk+CUSf+21PIIGthnQngCg28bP+mFBewhOfX04egw+M3S6CvM
+	1vGA55FGPlzqIeYNgpNcEBQoqo50fl25e2mjg/gLPsbVGaKvy94o2KIPAb73aSFyD761R9lElVl
+	oJzda4SIXlGH79y+6+2NQ0LS8Y2oDPPtjZ7e1AJEZRe/wmVeQq9OJ2fQ=
+X-Google-Smtp-Source: AGHT+IE6djL6DgXnByaa7OhcYwZ+Nr90QTr+qqwAzoFqSWCwJ8rHLqiEibK3josx02bKKh6yachf0z5VvRSQWUDgmTALM7wO7yYg
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+X-Received: by 2002:a05:6e02:1c44:b0:3a3:4164:eec9 with SMTP id
+ e9e14a558f8ab-3a4d598caa9mr22195265ab.14.1729679882471; Wed, 23 Oct 2024
+ 03:38:02 -0700 (PDT)
+Date: Wed, 23 Oct 2024 03:38:02 -0700
+In-Reply-To: <tencent_A7941CEA22EDEACFC87A5A6C242D5D6E780A@qq.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6718d20a.050a0220.1e4b4d.0086.GAE@google.com>
+Subject: Re: [syzbot] [btrfs?] general protection fault in btrfs_lookup_csums_bitmap
+From: syzbot <syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com>
+To: eadavis@qq.com, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, 2024-10-22 at 12:46 -0500, David Lechner wrote:
-> Convert the ADI AXI DMAC bindings to YAML and then update the bindings
-> to reflect the current actual use of the bindings.
->=20
-> ---
+Hello,
 
-Nothing to add on Rob's comment. Basically adding my ack to show that I'm f=
-ine
-being the maintainer for this:
+syzbot has tested the proposed patch and the reproducer did not trigger any issue:
 
-Acked-by: Nuno Sa <nuno.sa@analog.com>
+Reported-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com
+Tested-by: syzbot+5d2b33d7835870519b5f@syzkaller.appspotmail.com
 
-> David Lechner (2):
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: dma: adi,axi-dmac: convert to=
- yaml schema
-> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 dt-bindings: dma: adi,axi-dmac: deprecate =
-adi,channels node
->=20
-> =C2=A0.../devicetree/bindings/dma/adi,axi-dmac.txt=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0 |=C2=A0 61 ----------
-> =C2=A0.../devicetree/bindings/dma/adi,axi-dmac.yaml=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0 | 127
-> +++++++++++++++++++++
-> =C2=A02 files changed, 127 insertions(+), 61 deletions(-)
-> ---
-> base-commit: 52a53aecddb1b407268ebc80695c38e5093dc08f
-> change-id: 20241022-axi-dma-dt-yaml-c6c71ad2eb9e
->=20
-> Best regards,
+Tested on:
 
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1278c287980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d2b33d7835870519b5f
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=12356640580000
+
+Note: testing is done by a robot and is best-effort only.
 
