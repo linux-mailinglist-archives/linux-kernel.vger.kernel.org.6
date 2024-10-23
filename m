@@ -1,111 +1,148 @@
-Return-Path: <linux-kernel+bounces-378998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379000-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 929D09AD873
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:31:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B4ED9AD87B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:36:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B2A2B20CD0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:31:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 326CA1F22C4E
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:36:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D66D61A76C6;
-	Wed, 23 Oct 2024 23:31:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6D8DF1FF021;
+	Wed, 23 Oct 2024 23:36:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="t8XGC5V0"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b="WapHcoDt"
+Received: from mail-pl1-f195.google.com (mail-pl1-f195.google.com [209.85.214.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 332C878C9C;
-	Wed, 23 Oct 2024 23:31:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 991F91CCB31
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:36:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729726269; cv=none; b=Han2aaM0p7fbaJdrmkEwU0jrJFltl9KhZFyluppN6NtVS+IwTMw2PQpzYpjKvu2b0n5ZoqBBSOagf3INS8uFYEiKcMyw62nZl6lO0Lq8KR8Nl55d8gQQHJNNeQT/abE3ZibFIlnRCiBkOmIxtSsl313BMbeOstQgmnVLFnE6w4Q=
+	t=1729726575; cv=none; b=rqh4JsHDaPmhJD+RNlaFrAz65X4mH6vSrmaLGZqc02haI1zAGO8fX94mh7h5INofzWsIyX/73XLJJFtSJLFJLpWVgr+scxxhCeapYSXcj7r3yOL345rG3ceB8Gnq2vMYqpEDGMEKtanY70qBmX/lNjs9gAwV9BL/8F/zssH8YtQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729726269; c=relaxed/simple;
-	bh=4ea7wWTwkRtdh2RaDmD6c/QNHMZBnTfz2285rFbBDno=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ixaDxi9RxgBeiBbKMq3mrrMdvdB6EhZUzmj/Of/igUL7NZkAGq08mzjsSXU6SLal+pdXKfJofdzIl8BQIg6zQdbIv6HRl4fbyoIsA6q+xLevKlJPVdGuebCSaHd4nIpOBQsg9ek84gj0KHhAssBuwTH5sze8vzgPmELJ7FCQB4M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=t8XGC5V0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 42744C4CECD;
-	Wed, 23 Oct 2024 23:31:08 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729726268;
-	bh=4ea7wWTwkRtdh2RaDmD6c/QNHMZBnTfz2285rFbBDno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=t8XGC5V0XJeXU+g9Xte4WVZl31AH6fklggPwlyyaXOEX3VPAVpxn8mNbNuPJEsRVG
-	 6DHzGrBUCthGxAVmjFZt3BCKswjfKHDwuOWcr60oBl2Xs//BknM09gYuVm56vTvqH3
-	 U40BEDk3tei0TCK6rWCFcnF9nQn/vVdvwwus5p3/tev8rUD0SLTua5qnzZlpDIrqTU
-	 ceW9J1lqIgrGKN8LXxMAf7RGkXqAmy0fwsdJFYPZFJSuIxJgl8axiLe22tYhWPzbwM
-	 Qtp2QUhNZOjHkvEUceMt5AjjBzv2+/EzKxlKRxHASpwdvLo93p7S5znTRnAOEZY4xg
-	 YUkPsmacQccGQ==
-Date: Wed, 23 Oct 2024 16:31:06 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Thomas Richter <tmricht@linux.ibm.com>,
-	James Clark <james.clark@linaro.org>,
-	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v3 2/2] perf test: Skip annotate test for sanitizer builds
-Message-ID: <ZxmHOkp1USQCujM-@google.com>
-References: <20241022174838.449862-1-irogers@google.com>
- <20241022174838.449862-2-irogers@google.com>
+	s=arc-20240116; t=1729726575; c=relaxed/simple;
+	bh=KWHcT982DYDGFB/gQdzNCBlUMvMAGFMVeTv80N7sStc=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=B+Urj8e9uAjjvmUCAOBuNGkaL9QSCxMenh/BmzBZbsxe+XuadUdh5D129eIQ56nftTmRXrGbJ5rTaK3AyP+nb+PLr6HYB0sq//vQHnClr4mTpKRnNzdhIYOAMnMH0fOrAVdwLL8apsIfjeuohg6rep99mc1BAVelDtusUD3UuLs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np; spf=pass smtp.mailfrom=everestkc.com.np; dkim=pass (2048-bit key) header.d=everestkc-com-np.20230601.gappssmtp.com header.i=@everestkc-com-np.20230601.gappssmtp.com header.b=WapHcoDt; arc=none smtp.client-ip=209.85.214.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=everestkc.com.np
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=everestkc.com.np
+Received: by mail-pl1-f195.google.com with SMTP id d9443c01a7336-20c803787abso2800225ad.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:36:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=everestkc-com-np.20230601.gappssmtp.com; s=20230601; t=1729726573; x=1730331373; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2O3NkkjIemIsAieDahgo6WCW7UZHnrJROVrMuNKxroU=;
+        b=WapHcoDtRQB+CBC1NYmZjoVHWlX31y+ERb2nIk/xcDMZeVfSQSSdYzyEiUNuPffnWU
+         Oqp/qx1ZPKUMDc/FGbpDHd4anR3Ytn8Dx67hRLtmJC4MXTPY5Z2xr91SNCMmtGf1zIR+
+         Dq6Scct7Ws/ff1Sw8OQgqtE2+uc0HWIMShxmisRdFygHkIPX2u4xkDszn2NNTfTmQwBn
+         ZFoLjoWHbSRHctxM/Fb2YexTUwC1PQsr8/pMSa0gEYwfSoTMlOUDiqhZsqPVGXPiQuFD
+         Fr5DAQL3mRPkz0I574ZxcLX3roxU/W70q/P6YZZpYNcqzLUGsbbt7p+Mj0IOjjhEGu/5
+         iOjg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729726573; x=1730331373;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2O3NkkjIemIsAieDahgo6WCW7UZHnrJROVrMuNKxroU=;
+        b=DNNWyNhTyy2DHywlOfcwoxB7m9LFFZF1pz/RO1AbrWoEOtRhPs/U0IX/dQ8WtUIcjh
+         z/oK8mLOXY6R2ZArrr2lFhVaWJzeZnBPSiqB+w7AD1KqSx+Hm74aAW56uXLGc8pKO+SB
+         yl4/wuuPjajOi+NX5K7eT+eGR9tYiyOp8b2xS15NLXYN3un30Cb+aYY9XMTZn+tbyT/+
+         kLAGOK4G7kSfoha3fIOareeFTjFP7DiTh2P4toYP3ecRN/6iu93DScV+jeFN0iIoX6X5
+         CrDjWUHqt5g6yLOM1JUZElEqGKke1aedIOGEGSAPJZI0cMSJWrB20sx899c1DwCvRhaW
+         HGVw==
+X-Forwarded-Encrypted: i=1; AJvYcCVYL1EknmkVpDXa7Spt/IqDwCsfbzJKN1+0v1YNO/jRDlSNRrV1yUypg2MA8ukEht+XCtLJM/qV3pALFPw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzAYRwKyJKkjSvJvfrFnElWKJeQG54lIYlUBjNHVmGjX7T5PZE/
+	AGcYR7TRZk0ZDu/b6cZq2O6VwRkx5JAEi+t5l1TiD5tjOzGHkDOhhX8h+LbAdOQ=
+X-Google-Smtp-Source: AGHT+IHwaFUU21df+imHVfe6pTP9I9aELH11EYkAeXYd/RsFrtAI3BUr3gcBnM47ZiLm1gigdv3+Ug==
+X-Received: by 2002:a17:902:ce8d:b0:20c:ea22:3317 with SMTP id d9443c01a7336-20fb89ffc5bmr2049015ad.29.1729726572793;
+        Wed, 23 Oct 2024 16:36:12 -0700 (PDT)
+Received: from localhost.localdomain ([81.17.122.70])
+        by smtp.googlemail.com with ESMTPSA id d9443c01a7336-20e7eee89bfsm62534695ad.29.2024.10.23.16.36.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 16:36:12 -0700 (PDT)
+From: "Everest K.C." <everestkc@everestkc.com.np>
+To: lucas.demarchi@intel.com,
+	thomas.hellstrom@linux.intel.com,
+	rodrigo.vivi@intel.com,
+	maarten.lankhorst@linux.intel.com,
+	mripard@kernel.org,
+	tzimmermann@suse.de,
+	airlied@gmail.com,
+	simona@ffwll.ch
+Cc: "Everest K.C." <everestkc@everestkc.com.np>,
+	skhan@linuxfoundation.org,
+	dan.carpenter@linaro.org,
+	michal.wajdeczko@intel.com,
+	intel-xe@lists.freedesktop.org,
+	dri-devel@lists.freedesktop.org,
+	kernel-janitors@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v4 RESEND] [next] drm/xe/guc: Fix dereference before NULL check
+Date: Wed, 23 Oct 2024 17:33:55 -0600
+Message-ID: <20241023233356.5479-1-everestkc@everestkc.com.np>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022174838.449862-2-irogers@google.com>
+Content-Transfer-Encoding: 8bit
 
-On Tue, Oct 22, 2024 at 10:48:38AM -0700, Ian Rogers wrote:
-> Symbols vary and the test breaks.
-> 
-> Closes: https://lore.kernel.org/lkml/CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com/
-> Signed-off-by: Ian Rogers <irogers@google.com>
-> ---
->  tools/perf/tests/shell/annotate.sh | 6 ++++++
->  1 file changed, 6 insertions(+)
-> 
-> diff --git a/tools/perf/tests/shell/annotate.sh b/tools/perf/tests/shell/annotate.sh
-> index 1590a37363de..199f547e656d 100755
-> --- a/tools/perf/tests/shell/annotate.sh
-> +++ b/tools/perf/tests/shell/annotate.sh
-> @@ -4,6 +4,12 @@
->  
->  set -e
->  
-> +if perf check feature -q sanitizer
-> +then
-> +  echo "Skip test with sanitizers due to differing assembly code"
+The pointer list->list is dereferenced before the NULL check.
+Fix this by moving the NULL check outside the for loop, so that
+the check is performed before the dereferencing.
+The list->list pointer cannot be NULL so this has no effect on runtime.
+It's just a correctness issue.
 
-I don't think it's because of different assembly code.
-It should be the return value from ASAN leak detector.
+This issue was reported by Coverity Scan.
+https://scan7.scan.coverity.com/#/project-view/51525/11354?selectedIssue=1600335
 
-Maybe we can enable it using "ASAN_OPTIONS=detect_leaks=0"?
-Probably with a comment that mentions we don't call
-perf_session__delete() in perf annotate for a performance reason.
+Fixes: 0f1fdf559225 ("drm/xe/guc: Save manual engine capture into capture list")
+Signed-off-by: Everest K.C. <everestkc@everestkc.com.np>
+Reviewed-by: Dan Carpenter <dan.carpenter@linaro.org>
+---
+V3 -> V4: - Corrected the Fixes tag
+          - Added Reviewed-by tag
+V2 -> V3: - Changed Null to NULL in the changelog
+          - Corrected typo in the changelong
+          - Added more description to the changelong
+	  - Fixed the link for Coverity Report
+	  - Removed the space after the Fixes tag
+V1 -> V2: - Combined the `!list->list` check in preexisting if statement
+	  - Added Fixes tag 
+	  - Added the link to the Coverity Scan report 
 
-Thanks,
-Namhyung
+ drivers/gpu/drm/xe/xe_guc_capture.c | 5 +----
+ 1 file changed, 1 insertion(+), 4 deletions(-)
 
-
-> +  exit 2
-> +fi
-> +
->  shelldir=$(dirname "$0")
->  
->  # shellcheck source=lib/perf_has_symbol.sh
-> -- 
-> 2.47.0.163.g1226f6d8fa-goog
-> 
+diff --git a/drivers/gpu/drm/xe/xe_guc_capture.c b/drivers/gpu/drm/xe/xe_guc_capture.c
+index 41262bda20ed..947c3a6d0e5a 100644
+--- a/drivers/gpu/drm/xe/xe_guc_capture.c
++++ b/drivers/gpu/drm/xe/xe_guc_capture.c
+@@ -1531,7 +1531,7 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+ {
+ 	int i;
+ 
+-	if (!list || list->num_regs == 0)
++	if (!list || !list->list || list->num_regs == 0)
+ 		return;
+ 
+ 	if (!regs)
+@@ -1541,9 +1541,6 @@ read_reg_to_node(struct xe_hw_engine *hwe, const struct __guc_mmio_reg_descr_gro
+ 		struct __guc_mmio_reg_descr desc = list->list[i];
+ 		u32 value;
+ 
+-		if (!list->list)
+-			return;
+-
+ 		if (list->type == GUC_STATE_CAPTURE_TYPE_ENGINE_INSTANCE) {
+ 			value = xe_hw_engine_mmio_read32(hwe, desc.reg);
+ 		} else {
+-- 
+2.43.0
 
