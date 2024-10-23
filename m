@@ -1,84 +1,135 @@
-Return-Path: <linux-kernel+bounces-377678-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377679-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD08A9AC235
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:52:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 08C209AC23F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:52:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 786BC283CCD
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:52:22 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 43D26B2498F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:52:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1B6B158DD0;
-	Wed, 23 Oct 2024 08:52:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DAC4F16190B;
+	Wed, 23 Oct 2024 08:52:36 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Ul/d/0kA"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CPZU7jIP"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBCA15C15F;
-	Wed, 23 Oct 2024 08:52:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CC59148FF3;
+	Wed, 23 Oct 2024 08:52:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673538; cv=none; b=GoHbhiJ7wdcDjtP7Cv0cJV+ctu1SPWvtLXb2KCIj05kfPWBWU8uet2e6lqYMyBzKqAoAoHmOrh6p9M+dfNKFAl6boeYs/BUrE/+Hpmucw2W7orFRinrjsne8Ko9lxg6wXATayoXil2pkpevzjc6Wv3US2BlVXpOHcXqjBcRV9fk=
+	t=1729673556; cv=none; b=fO8r4Wz+x59NY2aC9QRGfjdnmJlQlWw1BqNdrGcCBYQJKkpHgY0lkLJdbvjur4hkl7qYerZe4nRsOi+/D3pbse6OvYwNonAtgCsc+iew1ij2klX+uvhe0mrxqXxk6Sq3uvktgE+obf08QHuU/vzx/+CAw3T/wzvafs1GR+KtYoI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673538; c=relaxed/simple;
-	bh=QgZQZAHGGjtLGHw0LYRXygNDG1h6h/5BqjGMqhJ4MY0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cqiybIXg29/c4V3budZC5ZxgbHSaMD+pb6T09xJwwinMAG4VQ4COfROgYX5lkYtHNFON72KpgGhbO1KLd4DlBzcOBai9ZR/kATu8DhQmwSFfByfGuyZtHZ2KFe5hlUKwDSFBfpj/IukI8uuqXSefMNSIwSdChNkohokE4IYMC64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Ul/d/0kA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FEAAC4CEC6;
-	Wed, 23 Oct 2024 08:52:17 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673538;
-	bh=QgZQZAHGGjtLGHw0LYRXygNDG1h6h/5BqjGMqhJ4MY0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Ul/d/0kA8oYv0b0iR4ZobZJUIPwE8UkhlbBGQJZgtI5x/3Y2GVY4TOTDqhLRqoXP5
-	 VQMkLXSrvdG5GJAOOa2ODisyt02vLuAXBd4Cl4zsQuqQQlqBXkYJMj+3Gp3U3uACYf
-	 lNpmbTDdHATEgy6R1SffQh9ltcr2S4A+OwNO0yqfWLTJCap4xFBiZTCCMsUvBbrJ+j
-	 NbZ6qB6LcfkXgR4fiJJX1sF5HUQdAE7F1E88ErsFaJjFkpOUqFJlpkIohHx/vuMt8Z
-	 to0pYq6PjN9A1ROSrb4g3ZicCaISb7kBvzNm9J6GJmKuIMOg6aXkdZLhj+fHyh6mT+
-	 8DY/roqSm7nLg==
-Date: Wed, 23 Oct 2024 10:52:15 +0200
-From: Krzysztof Kozlowski <krzk@kernel.org>
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	=?utf-8?Q?Cl=C3=A9ment?= Le Goffic <clement.legoffic@foss.st.com>, Stephane Danieau <stephane.danieau@foss.st.com>, 
-	Amelie Delaunay <amelie.delaunay@foss.st.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
-	Valentin Caron <valentin.caron@foss.st.com>, Gatien Chevallier <gatien.chevallier@foss.st.com>, 
-	Cheick Traore <cheick.traore@foss.st.com>, linux-stm32@st-md-mailman.stormreply.com
-Subject: Re: [PATCH 13/14] dt-bindings: pinctrl: stm32: add support for
- stm32mp235
-Message-ID: <p7lms5ouffudkszvzrf5pioqmt6ngvf2k4vrzu4hncfxf2oo4p@kbksruiaiqis>
-References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
- <20241022155658.1647350-14-antonio.borneo@foss.st.com>
+	s=arc-20240116; t=1729673556; c=relaxed/simple;
+	bh=Q5ucK7d7uRJd+cvR1lR4/2r90nHVsOJOCPAxYH7QWpM=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=IvtqLe0t8aKspJouAsTKrJUnWfXe0VDFQCYu4I01y/2BoSxAOeNxkxVAvjbtlAB56ZMebCc7qj1R1yrsKdBQsJNfr6Gz1z91w0knVaIyezMS8QeeX1RoDZ85W+McYIwJADiEpoFyAIKFECEriyRVpInyhWP5etDO3xQJEBrUc8Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CPZU7jIP; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729673555; x=1761209555;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=Q5ucK7d7uRJd+cvR1lR4/2r90nHVsOJOCPAxYH7QWpM=;
+  b=CPZU7jIPlvZOyxXa9SHDDHms3Xs7ynSgrwi2/BjqWVqN3z+/OcWvvd6b
+   V7knGh6vvUQfF6kLU9kHDhFhEL2mJKo6Dm8mi3LOSf1VUR4lUYKH+REKs
+   VlUTE3ALyWfcFoU5LFdCO6tsYpJAe56M9+Sc1f50EVkek+k7yEPXLNgLm
+   RUTu35olRWgF6/3v7PkoyeQbL1pUf5NlGvMrqpFsyqVx5fSPfwLmxQltL
+   42Qg2JTrBxrJa5ylBYGY6iYrYdeiPzmeEk3gdBSWI1q1CiavP2sdqMmAy
+   Fh8NWhL57NSqf1BESrNjsXA+i+7HhIywcLrLwvL/qjjcxEvqNiMPBxlqY
+   A==;
+X-CSE-ConnectionGUID: UZGhIBulRPac0n1QqOyCAA==
+X-CSE-MsgGUID: +erpfj5wRiagXnf5DDfWHw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51792573"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51792573"
+Received: from fmviesa008.fm.intel.com ([10.60.135.148])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:52:33 -0700
+X-CSE-ConnectionGUID: h73qZ12oSHigC3GIMnT0gA==
+X-CSE-MsgGUID: ZVHijG1OSPSJdXDXnmMvjA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="80207426"
+Received: from kniemiec-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.246.84])
+  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:52:29 -0700
+From: Jani Nikula <jani.nikula@linux.intel.com>
+To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+ dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>, Zefan Li
+ <lizefan.x@bytedance.com>, Johannes Weiner <hannes@cmpxchg.org>, Andrew
+ Morton <akpm@linux-foundation.org>
+Cc: Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+ linux-mm@kvack.org, Maxime Ripard <mripard@kernel.org>, Maarten Lankhorst
+ <maarten.lankhorst@linux.intel.com>
+Subject: Re: [PATCH 6/7] [HACK] drm/xe: Hack to test with mapped pages
+ instead of vram.
+In-Reply-To: <20241023075302.27194-7-maarten.lankhorst@linux.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
+ <20241023075302.27194-7-maarten.lankhorst@linux.intel.com>
+Date: Wed, 23 Oct 2024 11:52:26 +0300
+Message-ID: <875xpjurp1.fsf@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022155658.1647350-14-antonio.borneo@foss.st.com>
+Content-Type: text/plain
 
-On Tue, Oct 22, 2024 at 05:56:57PM +0200, Antonio Borneo wrote:
-> Add the compatibles st,stm32mp235-pinctrl and st,stm32mp235-z-pinctrl.
-> 
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+On Wed, 23 Oct 2024, Maarten Lankhorst <maarten.lankhorst@linux.intel.com> wrote:
+> We will probably want to make this a proper region in TTM for
+> everything, so that we can charge VRAM twice, once for mapped
+> in sysmem, once for mapped in vram. That way we don't need to
+> deal with evict failing from lack of available memory in mapped.
+>
+> Signed-off-by: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
+> Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > ---
->  Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml | 2 ++
->  1 file changed, 2 insertions(+)
+>  drivers/gpu/drm/xe/xe_ttm_sys_mgr.c | 14 ++++++++++++++
+>  1 file changed, 14 insertions(+)
+>
+> diff --git a/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c b/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c
+> index 9844a8edbfe19..20fa8ec8925ef 100644
+> --- a/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c
+> +++ b/drivers/gpu/drm/xe/xe_ttm_sys_mgr.c
+> @@ -101,6 +101,18 @@ static void ttm_sys_mgr_fini(struct drm_device *drm, void *arg)
+>  	ttm_set_driver_manager(&xe->ttm, XE_PL_TT, NULL);
+>  }
+>  
+> +static inline void apply_cg(struct xe_device *xe,
+> +			    struct ttm_resource_manager *man,
+> +			    u64 gtt_size)
 
-Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Ditto here about static inline in .c.
 
-Best regards,
-Krzysztof
+> +{
+> +	int cgregion = xe->cg.num_regions++;
+> +
+> +	xe->cg.regions[cgregion].size = gtt_size;
+> +	xe->cg.regions[cgregion].name = "mapped";
+> +	man->cgdev = &xe->cg;
+> +	man->cgidx = cgregion;
+> +
+> +}
+>  int xe_ttm_sys_mgr_init(struct xe_device *xe)
+>  {
+>  	struct ttm_resource_manager *man = &xe->mem.sys_mgr;
+> @@ -116,6 +128,8 @@ int xe_ttm_sys_mgr_init(struct xe_device *xe)
+>  	man->func = &xe_ttm_sys_mgr_func;
+>  	ttm_resource_manager_init(man, &xe->ttm, gtt_size >> PAGE_SHIFT);
+>  	ttm_set_driver_manager(&xe->ttm, XE_PL_TT, man);
+> +	apply_cg(xe, man, gtt_size);
+> +
+>  	ttm_resource_manager_set_used(man, true);
+>  	return drmm_add_action_or_reset(&xe->drm, ttm_sys_mgr_fini, xe);
+>  }
 
+-- 
+Jani Nikula, Intel
 
