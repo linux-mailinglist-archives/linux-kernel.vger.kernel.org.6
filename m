@@ -1,142 +1,165 @@
-Return-Path: <linux-kernel+bounces-378894-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378895-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BEC69AD6D0
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:38:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4E5A89AD6D3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 23:41:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6EC42B221D8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:38:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09AF3284F3D
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 21:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D21771E2304;
-	Wed, 23 Oct 2024 21:38:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936C01F7087;
+	Wed, 23 Oct 2024 21:41:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="goinhEN3"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="aqoBl4ab"
+Received: from mail-qt1-f171.google.com (mail-qt1-f171.google.com [209.85.160.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 823C4481B1
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:38:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04CFDE56A
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:40:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729719526; cv=none; b=st2TJDcEQj4D6ZTNWWImkOYLx5SEikzjwEbunnWZ2ofxHSBLcdHbfNwhpdIh0h5J89Mb86sevl/WtXYfd2HmqjPyUtr+SoTcddEbly7C/48Rn1MJoT6zVdwTvwyPMiZaAbs0oXH4zN7w+z+Jq5qhPKwzvN/VUP8s07MvL21Exr8=
+	t=1729719661; cv=none; b=lxqHVM8w10sUyqYOUNZngSmzcAxS3g2ALKm21miWotrP8rkvqPi0qOM3TzHTMYD+99nnRbvD0muXLlzTt77NEi+K29t9V66mFu9VKJdNg1yjEIcD6ESNFVSqzoBVMWT0Zd280HBTcViiaRfl5HmAX8TzJq+0vVKyuY/Zam7LY8Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729719526; c=relaxed/simple;
-	bh=hsySq/lFsh/WAJFgsffH3RwpObfPP97z54BUgccrJpQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=rVBb5AO6ssUGu2ZBQ1GNAgy9Gmw8nXhYS/6SSmh1mS+JaU4HSQbH8bEjfvM2203ra2S+gd7XwjLh5f5i6wmWpJVHjpX/+/aAxIabitxtrj7omdI9U8P9hPmKV2xxifOvHvZQJCv7aB4ASC3tLCpAQrzE1UXDwzA9CV0fWjn+c7U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=goinhEN3; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-4314fa33a35so2213555e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:38:43 -0700 (PDT)
+	s=arc-20240116; t=1729719661; c=relaxed/simple;
+	bh=1uf8OIKKp+NdtE/pJfJZCgDe/L5ipzQNnNqRIsLrXZc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Lt/EjJajI1S8k4k9lHCU4kiVommNJZQXlMz4FCttNFwsfTquDBjvIh/eT5tPKOL2MRomftvKBiYNejl1DVbf6xP8005SBs2s3zCgl22bVydOJ/p+zsNSs/6Yor3263LU6m6F9oMxXU7TwGWgdlQFzFdix+9tUJ7kjGJ/6u/Kcqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=aqoBl4ab; arc=none smtp.client-ip=209.85.160.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-qt1-f171.google.com with SMTP id d75a77b69052e-4608dddaa35so36441cf.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 14:40:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729719522; x=1730324322; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=3L+Mi6DCqfrLQhTJ9/me+xzacY5Zdwe6SV+TH0hXgAM=;
-        b=goinhEN3fsQ+VbpraZ2Kn5x7k7xL2PceWikCLrQUTl/chZqigntX+J8eJrWp9seMik
-         fIR0Qu1SjXtHKk5cH1O+WDqeXg7qcNIDNMLe/tGbNLjPvkBmuzj3HVlv4LM2fS3/qIBV
-         cQGV79h4S2aU4EHVWnx1Xizqzsz3RaZKmZIpdG6pY/sFulC4QzGjBeAngBWujl3sygYx
-         WSnPdT4l3VxD+1DspTUTtXvZqBz54Vc5oez58Vk0F72ol85vYa3L20O4Q0R8PumVga15
-         mQtrxfBKJqsYwu9RliFoKKiPJtiS1eDyZUeQ0UCCDn4WqgrRuVfWyIpkPyVaS4pKPHsW
-         xi/Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729719522; x=1730324322;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=google.com; s=20230601; t=1729719658; x=1730324458; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=3L+Mi6DCqfrLQhTJ9/me+xzacY5Zdwe6SV+TH0hXgAM=;
-        b=InxMUdz3pEkj8UMpM3xo3cnmr6G04caqupb27EfWnumXDoIn54SCf9kug6YXFD9Vyu
-         /mlmxBh5Hw8Brz5M4navvEuBnASR8NpDgPT38wyLRNbuZwaan1vsBJdaZWvgdx1Tr2un
-         69IHeY1HtgEFXr0LY745BK0lu+6UYjfqUlv+1XoZLGTudH5PkfzJ6S3ALjMPaWs0WRGq
-         XGri0YUPiAoHpOl9ZgBesmrPAQdzhSw/Av1l2vkdIKafy4Hl/Zu1sDDZbqr1RMh1vVD7
-         ESoz3OEHOrj9LJFL90j+n8TVVvGlkk1AJmxB0/xl6NCIHhxyFvG4vxRQplB2lgswqL7i
-         rllA==
-X-Forwarded-Encrypted: i=1; AJvYcCUA2hFvvq1rt4tHOC8kUJZ/FJO4kCS+Jw7Hw5MVvTPlfFCRpy5GFkS/1E3mzUFmgsIavbRm38jg9eUHLcI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwYwYZ9mTmEtQWiPkx8x0DpkJJ6BWT3y/wp5ET11STtnTdoBoMO
-	om7alG/DJHKj76A2zso9tv+/POXK8kf4oddht9P+j5hqC9f3tprgXzRWst7XbCs=
-X-Google-Smtp-Source: AGHT+IFQIpR/FPx7yYotfITiaiDTqf+2At9gJKCIzm55AVfINq+xpgx0h7c8KFDVMRBdtt22f36MYQ==
-X-Received: by 2002:a5d:61d2:0:b0:37c:d2f3:b3af with SMTP id ffacd0b85a97d-37efcef116cmr2589164f8f.5.1729719521780;
-        Wed, 23 Oct 2024 14:38:41 -0700 (PDT)
-Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a477d9sm9809215f8f.26.2024.10.23.14.38.41
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 14:38:41 -0700 (PDT)
-Date: Wed, 23 Oct 2024 23:38:40 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Dongjoo Seo <dongjoo.linux.dev@gmail.com>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, dave@stgolabs.net,
-	dan.j.williams@intel.com, nifan@outlook.com,
-	a.manzanares@samsung.com
-Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
-Message-ID: <Zxls4HqdkV_yBYxZ@tiehlicka>
-References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
- <Zxk6bHlrP5S_0LBK@tiehlicka>
- <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
+        bh=YfvazoqlYCjqRkYx7l7QlbGhjN9SEp8GOHbwEYd68EI=;
+        b=aqoBl4abMgcf+PEbRmyl9gi37e7pi0AOpPrsfj3OXH3KweP0Zh6Mh044z+oCn+Ivii
+         6714UeENIL65BVlio3YwC4S4i/GS6gZGTR2tClpLqMrJ1PJCSh2maz02f8ag6cOQEEMv
+         PtCEe3taG2sTRlsg9mRORoJyzFPSKf6c/PlDxDxKzhiMLqO6HfmJ+Dqdc59lsS2DeTdN
+         a/80ITNvuyJQrp5IO5rkDVUseUnG4RvmVnLuB3eMi/YrTXKuGeHDjZstlU9rTs808EGd
+         ZIi7pWnm76t558bk/eTopCHzAoFasZhK2RXbUkjSnqM/3wNEsioWDievVdmylZrdocyp
+         OcZA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729719658; x=1730324458;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=YfvazoqlYCjqRkYx7l7QlbGhjN9SEp8GOHbwEYd68EI=;
+        b=KeGYK2Ujt4NxIJfUeThSLRwc47xW6zPhPbcfGGSe8R9+T6UXY2717SNIgiDyO2lcDv
+         Jja/oGrgINR4xc9TMnY3Eh3gXqHjpk3dV1R9VzXjE+dOAn4EeXnieWTcSZoo1F5mZZdT
+         SCQkd1syaJTVxQ54tJSfUBVHB+KbxUUPjND/k6qJj03ry5ZybBw8RzJ2tvZgAU9TgcY8
+         mu9VBu+TruwwnsL1vZBgfdZYhu5Qy2eDus7GomOMTqnI/ELAnXwcPks+z+UxJThlva/v
+         5+7NP8L0xEaEieI2SHWY3J95lmzmFUJOwVND5DjKLgxeSG/j2/v039laWCsTjw2j6QJA
+         wdWw==
+X-Forwarded-Encrypted: i=1; AJvYcCXTiYpDSr8OU98JTKD3iw2qsAa+5nUlXTd0rwEQ4MA1+HZ6MEeOEsvDhgJ5FoQ6xEUz8ZoqN+WfOZh/EH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwPazmN92znZFMmVBF4hUhV7wcKOX0TUHZ7xDQ0kavSOfqcxxpS
+	TQCf9nmNXrEZUZ1/ZtibWTcMw+Fau0mjcuay5kVJsJavAr4EAGi3s+lJmCwey+t2krqd9j7Mc5p
+	bWEFFK4Hy/+dNPrsxmiU1+t3KTlnScTe+wfk6
+X-Google-Smtp-Source: AGHT+IGt5BrL0ynohwcQHFAarnxSHCFSAf9jK25+4hYiJBIoa94ycBS2i1HnMLE/a0ATqe+WrRn1kONilfmhu2zwb9Y=
+X-Received: by 2002:ac8:7f8d:0:b0:460:4a47:fd83 with SMTP id
+ d75a77b69052e-4612439f4a8mr196671cf.27.1729719657708; Wed, 23 Oct 2024
+ 14:40:57 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
+References: <ZxllAtpmEw5fg9oy@x1>
+In-Reply-To: <ZxllAtpmEw5fg9oy@x1>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 23 Oct 2024 14:40:45 -0700
+Message-ID: <CAP-5=fUF1kfioGSgnXzPmadwKrd65mUpHPamPNt29ra9qZAzJw@mail.gmail.com>
+Subject: Re: [PATCH 1/1 perf-tools] perf python: Fix up the build on
+ architectures without HAVE_KVM_STAT_SUPPORT
+To: Arnaldo Carvalho de Melo <acme@kernel.org>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, linux-perf-users@vger.kernel.org, 
+	Jiri Olsa <jolsa@kernel.org>, Kan Liang <kan.liang@linux.intel.com>, 
+	Namhyung Kim <namhyung@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed 23-10-24 13:41:21, Andrew Morton wrote:
-> On Wed, 23 Oct 2024 20:03:24 +0200 Michal Hocko <mhocko@suse.com> wrote:
-> 
-> > On Wed 23-10-24 10:50:37, Dongjoo Seo wrote:
-> > > This patch corrects this issue by:
-> > 
-> > What is this issue? Please describe the problem first,
-> 
-> Actually, relocating the author's second-last paragraph to
-> top-of-changelog produced a decent result ;)
-> 
-> > ideally describe
-> > the NUMA topology, workload and what kind of misaccounting happens
-> > (expected values vs. really reported values).
-> 
-> I think the changelog covered this adequately?
-> 
-> So with these changelog alterations I've queued this for 6.12-rcX with
-> a cc:stable.  As far as I can tell this has been there since 2018.
-> 
-> : In the case of memoryless node, when a process prefers a node with no
-> : memory(e.g., because it is running on a CPU local to that node), the
-> : kernel treats a nearby node with memory as the preferred node.  As a
-> : result, such allocations do not increment the numa_foreign counter on the
-> : memoryless node, leading to skewed NUMA_HIT, NUMA_MISS, and NUMA_FOREIGN
-> : stats for the nearest node.
-
-I am sorry but I still do not underastand that. Especially when I do
-look at the patch which would like to treat cpuless nodes specially.
-Let me be more specific. Why ...
-
-> -     if (zone_to_nid(z) != numa_node_id())
-> +     if (zone_to_nid(z) != numa_node_id() || z_is_cpuless)
->               local_stat = NUMA_OTHER;
+On Wed, Oct 23, 2024 at 2:05=E2=80=AFPM Arnaldo Carvalho de Melo
+<acme@kernel.org> wrote:
 >
-> -     if (zone_to_nid(z) == zone_to_nid(preferred_zone))
-> +     if (zone_to_nid(z) == zone_to_nid(preferred_zone) && !z_is_cpuless)
->               __count_numa_events(z, NUMA_HIT, nr_account);
->       else {
->               __count_numa_events(z, NUMA_MISS, nr_account);
-> -             __count_numa_events(preferred_zone, NUMA_FOREIGN, nr_account);
-> +             if (!pref_is_cpuless)
-> +                     __count_numa_events(preferred_zone, NUMA_FOREIGN, nr_account);
+> Noticed while building on a raspbian arm 32-bit system.
+>
+> There was also this other case, fixed by adding a missing util/stat.h
+> with the prototypes:
+>
+>   /tmp/tmp.MbiSHoF3dj/perf-6.12.0-rc3/tools/perf/util/python.c:1396:6: er=
+ror: no previous prototype for =E2=80=98perf_stat__set_no_csv_summary=E2=80=
+=99 [-Werror=3Dmissing-prototypes]
+>    1396 | void perf_stat__set_no_csv_summary(int set __maybe_unused)
+>         |      ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+>   /tmp/tmp.MbiSHoF3dj/perf-6.12.0-rc3/tools/perf/util/python.c:1400:6: er=
+ror: no previous prototype for =E2=80=98perf_stat__set_big_num=E2=80=99 [-W=
+error=3Dmissing-prototypes]
+>    1400 | void perf_stat__set_big_num(int set __maybe_unused)
+>         |      ^~~~~~~~~~~~~~~~~~~~~~
+>   cc1: all warnings being treated as errors
+>
+> In other architectures this must be building due to some lucky indirect
+> inclusion of that header.
+>
+> Fixes: 9dabf4003423c8d3 ("perf python: Switch module to linking libraries=
+ from building source")
+> Cc: Adrian Hunter <adrian.hunter@intel.com>
+> Cc: Ian Rogers <irogers@google.com>
+> Cc: Jiri Olsa <jolsa@kernel.org>
+> Cc: Kan Liang <kan.liang@linux.intel.com>
+> Cc: Namhyung Kim <namhyung@kernel.org>
+> Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
 
-... a (well?) established meaning of local needs to be changed? Why
-prefrerred policy should have a different meaning for cpuless policies?
-Those are memory specific rather than cpu specific right?
+So this will at least conflict with:
+https://lore.kernel.org/lkml/20241022173015.437550-6-irogers@google.com/
+where the #ifdef-ed out functions are removed. Does that series fix
+the ARM32 issue? Could we land that?
 
-Quite some quiestions to have it in linux-next IMHO....
--- 
-Michal Hocko
-SUSE Labs
+Thanks,
+Ian
+
+> ---
+>  tools/perf/util/python.c | 3 +++
+>  1 file changed, 3 insertions(+)
+>
+> diff --git a/tools/perf/util/python.c b/tools/perf/util/python.c
+> index 31a223eaf8e65fa3..ee3d43a7ba4570f0 100644
+> --- a/tools/perf/util/python.c
+> +++ b/tools/perf/util/python.c
+> @@ -19,6 +19,7 @@
+>  #include "util/bpf-filter.h"
+>  #include "util/env.h"
+>  #include "util/kvm-stat.h"
+> +#include "util/stat.h"
+>  #include "util/kwork.h"
+>  #include "util/sample.h"
+>  #include "util/lock-contention.h"
+> @@ -1355,6 +1356,7 @@ PyMODINIT_FUNC PyInit_perf(void)
+>
+>  unsigned int scripting_max_stack =3D PERF_MAX_STACK_DEPTH;
+>
+> +#ifdef HAVE_KVM_STAT_SUPPORT
+>  bool kvm_entry_event(struct evsel *evsel __maybe_unused)
+>  {
+>         return false;
+> @@ -1384,6 +1386,7 @@ void exit_event_decode_key(struct perf_kvm_stat *kv=
+m __maybe_unused,
+>                            char *decode __maybe_unused)
+>  {
+>  }
+> +#endif // HAVE_KVM_STAT_SUPPORT
+>
+>  int find_scripts(char **scripts_array  __maybe_unused, char **scripts_pa=
+th_array  __maybe_unused,
+>                 int num  __maybe_unused, int pathlen __maybe_unused)
+> --
+> 2.46.0
+>
 
