@@ -1,126 +1,146 @@
-Return-Path: <linux-kernel+bounces-377657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377662-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C37D9AC1F8
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:41:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CB6C9AC202
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:43:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B6652841CC
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:41:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D87C1C25FA0
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:43:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4CA6515B984;
-	Wed, 23 Oct 2024 08:41:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90D6115D5C5;
+	Wed, 23 Oct 2024 08:42:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XY+PNV53"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SYQLKkoP"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F94015886D;
-	Wed, 23 Oct 2024 08:41:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 69BE715CD55
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 08:42:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729672888; cv=none; b=rbZubB8lZJMFHo25tKTHocDwkQ+juOWgkMif4tkkEREhbIRaklRy297LfgTTkzMYCzqW8Ro6ry5fhMEgIWANibHKUn//10R9ysIYwDU00XYSpMHowUM/MdMa6tWAwAz/urtRpwyLp1/gKkHctchFLPadMsi9ErZb4UJZGAeRD9M=
+	t=1729672962; cv=none; b=qo/dJhBhCIgRQVInjLxOEzUkqGO8qMyc5ksOGuoxqaFRn2/4znMoLOeVSa9G9HEywsW9hCNOABy7oj9FlAgsWZdB1pXiv4fZETQMHZ9bdafg0NiTAFxo3vIcws5QojhqMehZN9FsnHiKAs1zUHlKTgDHkNWJkHWq5ChFyBFqdnY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729672888; c=relaxed/simple;
-	bh=RPQq0MD5YPhrZxpE3BiwohX7MWP4yuzeoVGWtKjQWgE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=IPtFQsqUpdOaRZzdgdsY+TxFn1GyhhWH+5laAqf7IIqxpelUsqnQWIkIKyoOi8dRpp7n+GYiNrHyk5x1WCsWVqoMpwfqqgP49iXltbbFs44TwxZrsw3CU28NAvsh32nLQxSPxJMong3noKtbCdUj4qEuU95mYbC2r8DyZJJ14j0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XY+PNV53; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99ebb390a5so110299066b.1;
-        Wed, 23 Oct 2024 01:41:26 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729672885; x=1730277685; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id:from
-         :to:cc:subject:date:message-id:reply-to;
-        bh=o3m+jGvhTZvFu8vnBmFkPGAav8w0MskfOqv9WrwcR8M=;
-        b=XY+PNV53RtaRbBP/pYTOn52l5bO84ImcHew+jdDEud1JJI9rN/ZiPrQZk7CbHFZuiR
-         5Y/MykH7NpDSyg93px7FRm9FGI5jKH32sZwenmSs9SVslselK6dLrM0yTnQwUiQ9dgJq
-         hPDIT1pMbhI6EZIglrj/vxGw1wqJoJkn622JPQaxdnd7gFVTQiCbKUKtNcBK1+bwHoNP
-         R015It/0t52FaNPy/pXIpPwGd40LPXDnQsX5ScHS6u3YhxmZY/S+bQ3bCxskNYHLM6+p
-         Ap2eJA5Dzj9g7DFzFVR4mWza3SqSeJ6w+MN5p/DqDii3F7Jj3Ds5QuHR82BSPyNoKvUO
-         nBZQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729672885; x=1730277685;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=o3m+jGvhTZvFu8vnBmFkPGAav8w0MskfOqv9WrwcR8M=;
-        b=OULVo1txwAJzfojpgroA4QXKO9s8CILhoaRpF8s6EGTz03yy0NsN52ivM6UErdRbXs
-         cRA8hF61pVaTMQB49OOkHhoAhIBCffnGje2+2TRM2dqn+PcIH1hRcYXgshqjs/DS51p7
-         X+Ff7H2E/KAmXTkv5tYXpfuZOp6kzugoCscrb27CmAXD+rYXIcJq94Ippm1XGZVTZzg6
-         EQiDXeLLQ2u5KE2EJisWVhIgQ+TR0lnAKKS490g1f9MXpFGrYJfRmXd9NmcCWVcshLzg
-         JOqtMdqPjAos7tZBY4fVgfy7nQ5j4VOg+hgc9nCi0WCvnZun1t2wsVm8YWhe504DY1S0
-         fBJQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWNFVPw7GXWwTecWvz4ddNFpPPbuTpsN5DtTThU6rOLtEibM+O7WDu303dsRAZ0EZ6jCJUZRQdQ5Ew9HrwX@vger.kernel.org, AJvYcCXmlVJJDNHbcbIaztAX7CcV0gOfVQZqA/LKEWbS/D71vgwg3Y06ntEyWm6pFrqLZ8r7k2jckp/qvgo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMLDw30qckrOOzrMXnePIoBD7vKgZHomsdGqBxDUVERXTj4gn1
-	w4QtKjdNn74BcjvWsMBvADq4lBEzBEz60e/2yURX2mfJ4tO7Fodk
-X-Google-Smtp-Source: AGHT+IGjgTscanjqaQvjgPoy+gTYwYNqELv6t37GRN6MY4QIpWWzsLfkOJAEvyPZlFmgIbO7dJZ5pQ==
-X-Received: by 2002:a17:907:3f1d:b0:a9a:170d:67b2 with SMTP id a640c23a62f3a-a9abf32535cmr172378866b.29.1729672885119;
-        Wed, 23 Oct 2024 01:41:25 -0700 (PDT)
-Received: from [10.10.40.97] (91-118-163-37.static.upcbusiness.at. [91.118.163.37])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912d62efsm439658266b.44.2024.10.23.01.41.23
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 01:41:24 -0700 (PDT)
-Message-ID: <ae939f90-c23f-483b-b4bc-70891d0de167@gmail.com>
-Date: Wed, 23 Oct 2024 10:41:23 +0200
+	s=arc-20240116; t=1729672962; c=relaxed/simple;
+	bh=it7iOZzrSGyV18dKm/xYlDLf2JyYaFHTrOEwgjHFvkA=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=I08fjBagvTz9GLxKARPKKUUaYRRglL7HmmqhwzK7sysNAdSlalEpQsTsEn4ME3alwnuFkQCGs6my5VRD3Tc7F8Amfmu//JUTVALXxWIbGTPbE3os0N4+3RO/Ak+QGh459oATtPEhRUjvtk59H0qK3b1xw2adOjyaIR//qVg7e8g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SYQLKkoP; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729672960; x=1761208960;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=it7iOZzrSGyV18dKm/xYlDLf2JyYaFHTrOEwgjHFvkA=;
+  b=SYQLKkoPI+9S0eO6NsDlqEsDxDKQk9Ht9jVVD528DRNdpJA0Dzk4q3oM
+   CGUT1gcGh8l2vfaTHRjNEGYzsu7oQXx46TmWqCB9xlBPANL3UOOwVpSej
+   ntnVlkY4Vb9Bg2OURIPRkmSM7147bFAGQ3LiItlvI0EnnIR6adc010ipt
+   crgq11l/YHZHDZq3SOZe1beanMMt/xgRUKNFsKFDA01WhisZka5kM8VcQ
+   mxKCKIwkD4eq69s96Q6+m5k233nrrMCr/vPjzCJkVmVWVgp3uWCFBNH4/
+   yzzj/8f7Vj3Q0fSsh7j2DH/rMlctebVSzNei1xHO7a/MkD9n3XxHigFFq
+   g==;
+X-CSE-ConnectionGUID: tW7klmsFQ1eqcl9ybL76Jw==
+X-CSE-MsgGUID: DgXAkXmUQY2XIRvF/HU2xA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="28690625"
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="28690625"
+Received: from orviesa003.jf.intel.com ([10.64.159.143])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:42:39 -0700
+X-CSE-ConnectionGUID: y8+BnbJDSDmEYVOejeDJ/g==
+X-CSE-MsgGUID: IIbzzS3xSbKYk3b7F1AH5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="84941557"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa003.jf.intel.com with ESMTP; 23 Oct 2024 01:42:38 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3Wwt-000Ug1-1Q;
+	Wed, 23 Oct 2024 08:42:35 +0000
+Date: Wed, 23 Oct 2024 16:41:35 +0800
+From: kernel test robot <lkp@intel.com>
+To: Thangaraj Samynathan <thangaraj.s@microchip.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org,
+	Mark Brown <broonie@kernel.org>
+Subject: drivers/spi/spi-pci1xxxx.c:373:34: sparse: sparse: incorrect type in
+ argument 2 (different address spaces)
+Message-ID: <202410231613.esFBi2e7-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] iio: Fix build error for ltc2664
-To: Jinjie Ruan <ruanjinjie@huawei.com>, jic23@kernel.org, lars@metafoo.de,
- paul.walmsley@sifive.com, palmer@dabbelt.com, aou@eecs.berkeley.edu,
- nuno.sa@analog.com, conor.dooley@microchip.com,
- michael.hennerich@analog.com, anshulusr@gmail.com, sunke@kylinos.cn,
- kimseer.paller@analog.com, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-References: <20241023082309.1002917-1-ruanjinjie@huawei.com>
-Content-Language: en-US, de-AT
-From: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-In-Reply-To: <20241023082309.1002917-1-ruanjinjie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 23/10/2024 10:23, Jinjie Ruan wrote:
-> If REGMAP_SPI is n and LTC2664 is y, the following build error occurs:
-> 
-> 	riscv64-unknown-linux-gnu-ld: drivers/iio/dac/ltc2664.o: in function `ltc2664_probe':
-> 	ltc2664.c:(.text+0x714): undefined reference to `__devm_regmap_init_spi'
-> 
-> Select REGMAP_SPI for LTC2664 to fix it.
-> 
-> Fixes: 4cc2fc445d2e ("iio: dac: ltc2664: Add driver for LTC2664 and LTC2672")
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-> ---
->  drivers/iio/dac/Kconfig | 1 +
->  1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index 45e337c6d256..ae6d04c758d1 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -381,6 +381,7 @@ config LTC2664
->  	tristate "Analog Devices LTC2664 and LTC2672 DAC SPI driver"
->  	depends on SPI
->  	select REGMAP
-> +	select REGMAP_SPI
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c2ee9f594da826bea183ed14f2cc029c719bf4da
+commit: 9538edeb72c989a4b90964ae4bba107eaf21a791 spi: mchp-pci1xxxx: DMA support for copying data to and from SPI Buf
+date:   9 months ago
+config: mips-randconfig-r131-20241020 (https://download.01.org/0day-ci/archive/20241023/202410231613.esFBi2e7-lkp@intel.com/config)
+compiler: mips64-linux-gcc (GCC) 14.1.0
+reproduce: (https://download.01.org/0day-ci/archive/20241023/202410231613.esFBi2e7-lkp@intel.com/reproduce)
 
-Should you not replace REGMAP with REGMAP_SPI instead?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410231613.esFBi2e7-lkp@intel.com/
 
+sparse warnings: (new ones prefixed by >>)
+   drivers/spi/spi-pci1xxxx.c:369:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/spi/spi-pci1xxxx.c:369:22: sparse:     expected void *base
+   drivers/spi/spi-pci1xxxx.c:369:22: sparse:     got void [noderef] __iomem *
+   drivers/spi/spi-pci1xxxx.c:371:22: sparse: sparse: incorrect type in assignment (different address spaces) @@     expected void *base @@     got void [noderef] __iomem * @@
+   drivers/spi/spi-pci1xxxx.c:371:22: sparse:     expected void *base
+   drivers/spi/spi-pci1xxxx.c:371:22: sparse:     got void [noderef] __iomem *
+>> drivers/spi/spi-pci1xxxx.c:373:34: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:373:34: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/spi/spi-pci1xxxx.c:373:34: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:374:26: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:374:26: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/spi/spi-pci1xxxx.c:374:26: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:375:46: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:375:46: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/spi/spi-pci1xxxx.c:375:46: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:376:46: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:376:46: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/spi/spi-pci1xxxx.c:376:46: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:378:21: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:378:21: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/spi/spi-pci1xxxx.c:378:21: sparse:     got void *
+   drivers/spi/spi-pci1xxxx.c:380:21: sparse: sparse: incorrect type in argument 2 (different address spaces) @@     expected void volatile [noderef] __iomem *mem @@     got void * @@
+   drivers/spi/spi-pci1xxxx.c:380:21: sparse:     expected void volatile [noderef] __iomem *mem
+   drivers/spi/spi-pci1xxxx.c:380:21: sparse:     got void *
 
->  	help
->  	  Say yes here to build support for Analog Devices
->  	  LTC2664 and LTC2672 converters (DAC).
+vim +373 drivers/spi/spi-pci1xxxx.c
 
+   362	
+   363	static void pci1xxxx_spi_setup_dma_from_io(struct pci1xxxx_spi_internal *p,
+   364						   dma_addr_t dma_addr, u32 len)
+   365	{
+   366		void *base;
+   367	
+   368		if (!p->hw_inst)
+   369			base = p->parent->dma_offset_bar + SPI_DMA_CH0_WR_BASE;
+   370		else
+   371			base = p->parent->dma_offset_bar + SPI_DMA_CH1_WR_BASE;
+   372	
+ > 373		writel(DMA_INTR_EN, base + SPI_DMA_CH_CTL1_OFFSET);
+   374		writel(len, base + SPI_DMA_CH_XFER_LEN_OFFSET);
+   375		writel(lower_32_bits(dma_addr), base + SPI_DMA_CH_DAR_LO_OFFSET);
+   376		writel(upper_32_bits(dma_addr), base + SPI_DMA_CH_DAR_HI_OFFSET);
+   377		writel(lower_32_bits(SPI_PERI_ADDR_BASE + SPI_MST_RSP_BUF_OFFSET(p->hw_inst)),
+   378		       base + SPI_DMA_CH_SAR_LO_OFFSET);
+   379		writel(upper_32_bits(SPI_PERI_ADDR_BASE + SPI_MST_RSP_BUF_OFFSET(p->hw_inst)),
+   380		       base + SPI_DMA_CH_SAR_HI_OFFSET);
+   381	}
+   382	
 
-Best regards,
-Javier Carrasco
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
