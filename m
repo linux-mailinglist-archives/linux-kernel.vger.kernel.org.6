@@ -1,68 +1,68 @@
-Return-Path: <linux-kernel+bounces-377162-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377163-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AEE649ABAA3
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:47:17 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4512F9ABAA6
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 02:47:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 72295285350
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:47:16 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0593A28478F
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 00:47:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6F221C2BD;
-	Wed, 23 Oct 2024 00:46:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 126061AAC4;
+	Wed, 23 Oct 2024 00:47:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="pm7fWzL6"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="stXvqY30"
+Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DB6782C7E
-	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:46:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E00B73A8F7
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 00:47:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729644381; cv=none; b=Bs5NkyZ2lXslsiWNi9kBZbUoEvVUQoj+tMr0MHouKteXAOHZ+jEjQA3m1gYgzib03snpOWP6KaovF1Yz5ZIn7Ik8FWNvtkBrKU5LJN/fBIKzclJgJmbaVD6zlnvowrmQ0C+JC18K5cTlrgHf6K96AwsZB24gV3GQz4V0RAa07l4=
+	t=1729644471; cv=none; b=FUVT9yuQ68ax3KM/0TbP0Ai4VGbrINjbGW4QNDWGG1zHp/Vilhl6aQi+MaoiCYYdKnxyz1qr2C6uSuIG0RKFKBNAC0B07vLyTSWXE337a9eB5M35L1d9FX0rqXeHistrEUbVUm6eA08aIr3p0jjH/xKdbNugyoXcyULO7ZAWdGo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729644381; c=relaxed/simple;
-	bh=AwFPasjpqb3XFrQ+EU3pKzTQisB3kEoJsciOeoRSIrA=;
+	s=arc-20240116; t=1729644471; c=relaxed/simple;
+	bh=JTijmUUpqtnx7GnCjifgf9sVB4yRXHlwK2giRkk0fEY=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=G9V8VsSXAdgWXqSATcJisxRK/DZO2YCpCW4aeeyQLnM0QWq78gg9EvtONRllBfj0JJ1TWa4ek6XqMwQ6J2wcei7ta/bolVniTxyOtgGNaA2qBytWPsGtOTdUZwx261D7eGSNgXmsLabPApcPRhhB8zL3HWWURDStgIfB4abz9HU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=pm7fWzL6; arc=none smtp.client-ip=209.85.218.47
+	 To:Cc:Content-Type; b=h67xIXx8q7UtRMdxQV4wnVOjhicJHgPsvPj6KMIxSrGv27qEiuUo2lRNxDeL9Ayr+UQXZU2w7o34Q0rqI5PT3e7ygKalz2SNnlkhm8Ptq3Lt11erF4haa+YpUhlpkEfKJLSZv9SJpLCnGDevTD4d6a457gMPVGGG8R5SSP9kscM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=stXvqY30; arc=none smtp.client-ip=209.85.208.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a0c7abaa6so719696166b.2
-        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:46:18 -0700 (PDT)
+Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9552d02e6so7909386a12.2
+        for <linux-kernel@vger.kernel.org>; Tue, 22 Oct 2024 17:47:49 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729644377; x=1730249177; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729644468; x=1730249268; darn=vger.kernel.org;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=DA7hqLuD0SjigMcr5CX7c/N2Gt0IuASV0oXAPrAxSYE=;
-        b=pm7fWzL6vO1NI4DfvTYAjk8E3RrvEcP0fDskncZBHMod6T7IB8aeJlpWyOi/dfl9y+
-         lPCwiiqPsH29vhQKZuxTlXHNNyihF93P+5BmefVqomypCa4Y+blUd0MGEKrvgThgyuWd
-         00PmnuzDwsT8qYIzlcb0kP4Ox5TrZ0u9s4xGQbct5tz7UJADrEkW5H/OKFZGNcsx86R/
-         vlsiiGSldZ1jCVRU71Yf5Qw5V8z+PvxELRmRNsFhzF6Fb6xPzC3AhQrPYKH0D0grgEi1
-         vtA22XkQqFuEdPiZzMyyvaNpu6zeBfXF2VWbqsL2xemSgl5onrwunI1kGeAhn/bDT1T3
-         KHMg==
+        bh=OQTL1Ixvyu9GBgkBHMSSAH8WTvSZvQTSYgwd9mQ+ijY=;
+        b=stXvqY30K5m2ro53JSRY+WrtX+Se5a20657DPyUDiHG4BRqVRWXl0sgp4vUd7mX2t5
+         zX/XW0o5A6VhzwXmZ47t5LJL/6i2BvQii4KcjXbRVxXK0DaKZqFxED6h5n7EUiQHNmu6
+         bqP547UPD1wuNbbCX0bPcBNyAVwsIV2Zj36CSzKBBSYH9JtlVy5qlX64Ed7qDkHMbiI7
+         T/J5xqBR8p4UR6jcxpw1X8FRQikHMfRbHYlKB0k1tYsR+iW55o2UV/ncL3IUbXrubFLK
+         s9uoS7u0KdK7E+0gTeBBfljfkJYnqUcdpt4uWDez00I1iiK5fevDNeiX4zsk2mzitwkT
+         0qeg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729644377; x=1730249177;
+        d=1e100.net; s=20230601; t=1729644468; x=1730249268;
         h=cc:to:subject:message-id:date:from:in-reply-to:references
          :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
          :reply-to;
-        bh=DA7hqLuD0SjigMcr5CX7c/N2Gt0IuASV0oXAPrAxSYE=;
-        b=QI+xAhJb/Xp+oHTetu9M4yM6d7cNjIVgu5G7rDuTDwFLWrZU9+HnQyQoT+cjxpLFSV
-         KiuDQHUW1TovBzSnL3SzI7X/nPPEvRDTAftXnKR9JnLedAmQkuU6Z7QuTc2kwfuiIVeD
-         PCHQGBit/kA44MvUCBuckprTzt5LZr03sllQUPCPBgqjlJwWRbzEKyBZQK2/hmhK9794
-         +ZJZ/l7C2yvpGUY0tPy3jsQZKIdD+x7UIvKVlUHrJ+iSD2v1toCe0IUvVEe58YN4e3ZB
-         yWYWbLkYI0XNBoLaFMwKit5JRaLfIFfZlOo9/CrdJrfI8QRhJ3ZcHbhyQO9hzAH/avnR
-         ukqQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVx7PYyLOzLWFIKRArUzaWXPq0Z425o11I5K4R+9XIYMrF05aWvzh43s/BoeOLLm1usrd6W3lCFXo/Ku+E=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwE6EDgP/QrFLmmrISBkRZkkz/xj6jCwYIl0qakJx6kso9TjJsR
-	Y8tz8qcaRmc2RKRYQ1cAu30tjht0OElA9c79ZUTIIryUmFgkKhAbVlbZviVVEXtyOQvIehOphqz
-	9X/rRIpDuvCnGtj0QzSkA7qEZj1szr2dMIvmr
-X-Google-Smtp-Source: AGHT+IGoIXJSAkpe8fqP9IrcYJDa0aJQe1g/26o/fr+1FgSNM3uCwl32CQGzeahCvVbb7An+pP6mrWo8wwZaJmOUvUU=
-X-Received: by 2002:a17:907:3fa6:b0:a99:c0be:a8ac with SMTP id
- a640c23a62f3a-a9abf8b233amr58602066b.37.1729644377238; Tue, 22 Oct 2024
- 17:46:17 -0700 (PDT)
+        bh=OQTL1Ixvyu9GBgkBHMSSAH8WTvSZvQTSYgwd9mQ+ijY=;
+        b=KM0S/waE/wDDDhXh5evjvwPO/SE1MgOxAKRYSTgs/nOtgubm7j4GuoeUla5N9A0ffS
+         Fy9xHrJvZEHp6k8+3QzTT5DUKkIqb5nfEsI98KwYa7N7d/FLBLXpKhWHRFB/hOKTuPi4
+         W/Blpdv0u+7vSbrpIHTSDYhjCj4WXbOpLBPOpnDDhpmKXqqOQLhs+Ok3mXq2Rvf8qXo8
+         9ioERhMGKoEpKpAgltktrDnb+XxX3oaLe/uKbtPiheMHplQYc/P0c/t7IQFi8ks5hJXT
+         rFMaHp0p2QHWtwPlHwc53+DqqowlsxYssbUxJ/WJ9Dc+zQQ8X9KEP7PibmxbxWjszHRj
+         ihEA==
+X-Forwarded-Encrypted: i=1; AJvYcCX7kqbANU/9lVpG6N1WyfLwpMUpovbSCgVbnQdzobFHNHdwMUEObIQ8/0W+TmHmFtftvpE7sx23CIZ8OgE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywmb/j7mnQhtd6TcDHp1LpfZcCKlsaVyaMUWmVLiBioSPLqaZqu
+	Zd1NB3v4RyscGEF39Mj0FeOcEJr3+Nh6F4/wca+MknMBATC3tq7voB+ttSfack5JACPjWxoUDLF
+	AJWRFRMMY7ZNaTLS0GOl2EHhLFGiWAj1J+5AN
+X-Google-Smtp-Source: AGHT+IEVqx7O7ORCeR4U/6OdY9r9M+LO12vrLNYYbjZyOxjQVHwbdL54vYjiJg2le7Vro5+Yh+SRJ4tNhaNBsWtRRTQ=
+X-Received: by 2002:a17:907:9811:b0:a99:eb94:3e37 with SMTP id
+ a640c23a62f3a-a9abf964492mr54242566b.58.1729644467828; Tue, 22 Oct 2024
+ 17:47:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -70,12 +70,12 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 References: <20241018105026.2521366-1-usamaarif642@gmail.com>
- <20241018105026.2521366-2-usamaarif642@gmail.com> <CAJD7tkYEe10Xw-8azM-80pHv6YjvosZDHTdZfYttAuD5u1+s8A@mail.gmail.com>
- <07e6018b-bc6f-4e1e-9bc3-07a4b5a384fc@gmail.com>
-In-Reply-To: <07e6018b-bc6f-4e1e-9bc3-07a4b5a384fc@gmail.com>
+ <20241018105026.2521366-2-usamaarif642@gmail.com> <CAJD7tkYOGA2oQ=BSP3oXeV0Fh2=QRZZ=_5t2Wg6qrYZixCkZAg@mail.gmail.com>
+ <032b5d28-68bb-4fea-91f7-e4a8bc4c4bb6@gmail.com>
+In-Reply-To: <032b5d28-68bb-4fea-91f7-e4a8bc4c4bb6@gmail.com>
 From: Yosry Ahmed <yosryahmed@google.com>
-Date: Tue, 22 Oct 2024 17:45:41 -0700
-Message-ID: <CAJD7tkaD0m7ciiy6Nj7CZb2_26Dv4T=2cRW7h728vLxczOVkYg@mail.gmail.com>
+Date: Tue, 22 Oct 2024 17:47:12 -0700
+Message-ID: <CAJD7tkYJg08EzZNv39ufJOmc4ekv+9gqrZMrbrqB9VMxYOd9_w@mail.gmail.com>
 Subject: Re: [RFC 1/4] mm/zswap: skip swapcache for swapping in zswap pages
 To: Usama Arif <usamaarif642@gmail.com>
 Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org, 
@@ -83,11 +83,14 @@ Cc: akpm@linux-foundation.org, linux-mm@kvack.org, hannes@cmpxchg.org,
 	nphamcs@gmail.com, chengming.zhou@linux.dev, ryan.roberts@arm.com, 
 	ying.huang@intel.com, 21cnbao@gmail.com, riel@surriel.com, 
 	shakeel.butt@linux.dev, kernel-team@meta.com, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, Kairui Song <kasong@tencent.com>, 
-	Kairui Song <ryncsn@gmail.com>
+	linux-doc@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
 [..]
+> >> diff --git a/mm/zswap.c b/mm/zswap.c
+> >> index 7f00cc918e7c..f4b03071b2fb 100644
+> >> --- a/mm/zswap.c
+> >> +++ b/mm/zswap.c
 > >> @@ -1576,6 +1576,52 @@ bool zswap_store(struct folio *folio)
 > >>         return ret;
 > >>  }
@@ -95,99 +98,23 @@ Content-Type: text/plain; charset="UTF-8"
 > >> +static bool swp_offset_in_zswap(unsigned int type, pgoff_t offset)
 > >> +{
 > >> +       return (offset >> SWAP_ADDRESS_SPACE_SHIFT) <  nr_zswap_trees[type];
-> >
-> > I am not sure I understand what we are looking for here. When does
-> > this return false? Aren't the zswap trees always allocated during
-> > swapon?
-> >
->
-> Hi Yosry,
->
-> Thanks for the review!
->
-> It becomes useful in patch 3 when trying to determine if a large folio can be allocated.
->
-> For e.g. if the swap entry is the last entry of the last tree, and 1M folios are enabled
-> (nr_pages = 256), then the while loop in zswap_present_test will try to access a tree
-> that doesn't exist from the 2nd 4K page onwards if we dont have this check in
-> zswap_present_test.
-
-Doesn't swap_pte_batch() make sure that the range of swap entries
-passed here all corresponds to existing swap entries, and those
-entries should always have a corresponding zswap tree? How can the
-passed in range contain an entry that is not in any zswap tree?
-
-I feel like I am missing something.
-
->
 > >> +}
 > >> +
 > >> +/* Returns true if the entire folio is in zswap */
-> >
-> > There isn't really a folio at this point, maybe "Returns true if the
-> > entire range is in zswap"?
->
-> Will change, Thanks!
->
-> >
-> > Also, this is racy because an exclusive load, invalidation, or
-> > writeback can cause an entry to be removed from zswap. Under what
-> > conditions is this safe? The caller can probably guarantee we don't
-> > race against invalidation, but can we guarantee that concurrent
-> > exclusive loads or writebacks don't happen?
-> >
-> > If the answer is yes, this needs to be properly documented.
->
-> swapcache_prepare should stop things from becoming racy.
->
-> lets say trying to swapin a mTHP of size 32 pages:
-> - T1 is doing do_swap_page, T2 is doing zswap_writeback.
-> - T1 - Check if the entire 32 pages is in zswap, swapcache_prepare(entry, nr_pages) in do_swap_page is not yet called.
-> - T2 - zswap_writeback_entry starts and lets say writes page 2 to swap. it calls __read_swap_cache_async -> swapcache_prepare increments swap_map count, writes page to swap.
-
-Can the folio be dropped from the swapcache at this point (e.g. by
-reclaim)? If yes, it seems like swapcache_prepare() can succeed and
-try to read it from zswap.
-
-> - T1 - swapcache_prepare is then called and fails and then there will be a pagefault again for it.
->
-> I will try and document this better.
-
-We need to establish the rules for zswap_present_test() to not be
-racy, document them at the definition, establish the safety of racy
-callers (i.e. can_swapin_thp()), and document them at the call sites.
-
->
-> >
 > >> +bool zswap_present_test(swp_entry_t swp, int nr_pages)
-> >> +{
-> >> +       pgoff_t offset = swp_offset(swp), tree_max_idx;
-> >> +       int max_idx = 0, i = 0, tree_offset = 0;
-> >> +       unsigned int type = swp_type(swp);
-> >> +       struct zswap_entry *entry = NULL;
-> >> +       struct xarray *tree;
-> >> +
-> >> +       while (i < nr_pages) {
-> >> +               tree_offset = offset + i;
-> >> +               /* Check if the tree exists. */
-> >> +               if (!swp_offset_in_zswap(type, tree_offset))
-> >> +                       return false;
-> >> +
-> >> +               tree = swap_zswap_tree(swp_entry(type, tree_offset));
-> >> +               XA_STATE(xas, tree, tree_offset);
 > >
-> > Please do not mix declarations with code.
+> > Also, did you check how the performance changes if we bring back the
+> > bitmap of present entries (i.e. what used to be frontswap's bitmap)
+> > instead of the tree lookups here?
 > >
-> >> +
-> >> +               tree_max_idx = tree_offset % SWAP_ADDRESS_SPACE_PAGES ?
-> >> +                       ALIGN(tree_offset, SWAP_ADDRESS_SPACE_PAGES) :
-> >> +                       ALIGN(tree_offset + 1, SWAP_ADDRESS_SPACE_PAGES);
-> >
-> > Does this work if we always use ALIGN(tree_offset + 1,
-> > SWAP_ADDRESS_SPACE_PAGES)?
 >
-> Yes, I think max_idx = min(offset + nr_pages, ALIGN(tree_offset + 1, SWAP_ADDRESS_SPACE_PAGES)) - 1;
-> will work. I will test it out, Thanks!
+> I think the cost of tree lookup is not much and compared to zswap_decompress
+> can probably be ignored. zswap_present_test is essentially just xa_load for
+> the first entry, and then xas_next_entry for subsequent entries which is even
+> cheaper than xa_load.
 
-Might need to split it over two lines.
+Maybe it's worth measuring if it's not too much work. IIUC there is a
+regression that we don't fully understand with this series, and the
+extra lookup may be contributing to that. I think it could be just
+fine, but I can't tell without numbers :)
 
