@@ -1,144 +1,178 @@
-Return-Path: <linux-kernel+bounces-377695-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-377696-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 033099AC272
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:59:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B6B529AC275
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 10:59:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 89922B25CBE
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:58:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E53ED1C209C3
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 08:59:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C968E17108A;
-	Wed, 23 Oct 2024 08:58:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0070B1714B9;
+	Wed, 23 Oct 2024 08:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F1UE5WdM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JoY7Ghmu"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 25A5B15C15F;
-	Wed, 23 Oct 2024 08:58:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 90DC8155A4E;
+	Wed, 23 Oct 2024 08:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729673929; cv=none; b=Tyi8/6HZUXG6cuwqEeqLxIx3sxT8VxZ6pBQAZ1qXn+7ml5mHYXVGuypBC70nESxKH58Mt8Vghdi2Gb/Mq5poHMfoQfKBlARJE7pgc6zw2fnbOQ1FhYlhFZ94Q6Cd9Rc0wMmD3noPDFV8QNa5Zq9g1GgAlqIlrv6QQwUK0ro0AsI=
+	t=1729673952; cv=none; b=J8bO/0bEaaXeVHdX9Rm9HL5iNPHbJESzlxLnniQCov64gVs3os1hjRVzCQpzZIK9TkErCCqMqNc48mmqRbVspbFlsv7z7l0zDB2BtOpoqqH3NbIisH73MzJwduBZnreFTvzMn19YqkWLzt2YK6qFm6EZpb6cI/J+vy5Ph4ro4xY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729673929; c=relaxed/simple;
-	bh=3ohT1rTcrcAg928IYFQmdlYqJAvLX7jh6yLC37ict58=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=WPynIBZ3fYJzt0rxLcWIrg2ufBGk7ppbO7iYUob1iLbiprKULj89mqEQBj0Jx5oxH+NA4Yw2jr86uFcfibXjyeiHikW8CwMU1igEb0mAFqcFQbbozmrFPBItQmc45EA7ErO0NW7Z4iIJEKrAQNXlCxMo+Vv0T8R5+C+YEaa+qhw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F1UE5WdM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AAA56C4CEC6;
-	Wed, 23 Oct 2024 08:58:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729673929;
-	bh=3ohT1rTcrcAg928IYFQmdlYqJAvLX7jh6yLC37ict58=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=F1UE5WdMGvk8miZhYlOlaAXT29njINa1OJiFJwyxJUvlkvrnFGT047wxTDvEZbzjy
-	 vC6WNCi69yTMx2BmCgGSmUogqYZoXe7qHNas5FaEswNqPpMbTbc69acxaz2pAiMwQz
-	 tpcwU6qT/tTm1DHVXy+J3Dhx+UA6VRm8JlqAM8jielAtqKyV6KWDjDzJJ+NG0rKpXS
-	 n86PQ2ZmjtkMrQVAJr0nbswK0JyvF16Ho7uVPDBhISJMJB7p1k9zHNouZ+vI+bDwLu
-	 1fmofMiIPITPLr3QvZCg0JtFqGcbBuC31EnKcEZE0rrsr5RqV7/jz6fZXdnW5smrLT
-	 ucIOXeTwjXEZQ==
-Date: Wed, 23 Oct 2024 17:58:43 +0900
-From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-To: Will Deacon <will@kernel.org>
-Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Steven Rostedt
- <rostedt@goodmis.org>, Florent Revest <revest@chromium.org>,
- linux-trace-kernel@vger.kernel.org, LKML <linux-kernel@vger.kernel.org>,
- Martin KaFai Lau <martin.lau@linux.dev>, bpf <bpf@vger.kernel.org>, Alexei
- Starovoitov <ast@kernel.org>, Jiri Olsa <jolsa@kernel.org>, Alan Maguire
- <alan.maguire@oracle.com>, Mark Rutland <mark.rutland@arm.com>,
- linux-arch@vger.kernel.org, Heiko Carstens <hca@linux.ibm.com>, Catalin
- Marinas <catalin.marinas@arm.com>, Huacai Chen <chenhuacai@kernel.org>,
- WANG Xuerui <kernel@xen0n.name>, Paul Walmsley <paul.walmsley@sifive.com>,
- Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>,
- Vasily Gorbik <gor@linux.ibm.com>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Christian Borntraeger
- <borntraeger@linux.ibm.com>, Sven Schnelle <svens@linux.ibm.com>, Thomas
- Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>, Borislav
- Petkov <bp@alien8.de>, Dave Hansen <dave.hansen@linux.intel.com>,
- x86@kernel.org, "H. Peter Anvin" <hpa@zytor.com>, Mathieu Desnoyers
- <mathieu.desnoyers@efficios.com>
-Subject: Re: [PATCH v17 02/16] function_graph: Replace fgraph_ret_regs with
- ftrace_regs
-Message-Id: <20241023175843.e1f92bb25e9f65a4e3ff2861@kernel.org>
-In-Reply-To: <20241021164658.GB26073@willie-the-truck>
-References: <172904026427.36809.516716204730117800.stgit@devnote2>
-	<172904028952.36809.12123402713602405457.stgit@devnote2>
-	<20241021164658.GB26073@willie-the-truck>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729673952; c=relaxed/simple;
+	bh=3Z7u4wZm/iuLqCCuaeor5uPPDgpyABJSSkp9X+2Lfyg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=C61CidQ8u25g3vx1h1OXy2amUoQ5pcjgiKF1X3hhe3fRe5dfBtXeXCKAJa4dumVy1FknSscx7cSmif8ZrdJqjBGhKwydW+1kYEieZfZkXLDG92H2A5f49NztG7XZsCb7nJetRkuaUcaNTi/iq81IQOV7+w4mXZy9L1eQRXK59UI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JoY7Ghmu; arc=none smtp.client-ip=192.198.163.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729673951; x=1761209951;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=3Z7u4wZm/iuLqCCuaeor5uPPDgpyABJSSkp9X+2Lfyg=;
+  b=JoY7GhmumQ9k63v9d4Uu43SRkDrs62+tahV8W+7cFtJHDNeqJLNZ8Yqj
+   OTdF8mkrNjH6qtv/yhVGhBxnvZPsBGXp6Px+hU/3sOinMIDVKApVSEyB9
+   S3H0l6PRT0Pdt7rbtBlVEIU7MHnUDL7Vp1c48udv4aPQA1qtweg0U/E2U
+   PDC9udkp0PxsPvQ6VP5jdwqiYDbIRTSRwueZH4SHce74W5oatYXOPrTZH
+   Quk4Sb6QQEn9pNlwMH+B6SYzXkC6b6xLvJmZyPV3avH9sVYNQuuCea5Ui
+   PdVE/lURe18M6WejwdgbqsAuGNXcfkWGMKx4VjMSLeNjQS5AHypXQDGH9
+   A==;
+X-CSE-ConnectionGUID: fuDkEGrGRHGkd9eGz02dHw==
+X-CSE-MsgGUID: NpplyEdEQGewISAe4CSaAA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11233"; a="29360978"
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="29360978"
+Received: from fmviesa002.fm.intel.com ([10.60.135.142])
+  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:59:10 -0700
+X-CSE-ConnectionGUID: 1HHVKIziSdGBTI6/bdW74w==
+X-CSE-MsgGUID: 3d3neFQNSFWQwkjXzm5tAA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,225,1725346800"; 
+   d="scan'208";a="103414582"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.245.115.59])
+  by fmviesa002-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 01:59:06 -0700
+Message-ID: <1cb08708-fca2-48a9-9cf9-c0c1ac004587@intel.com>
+Date: Wed, 23 Oct 2024 11:59:01 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC v3 1/2] mmc: core: Add vendor hook to control
+ reprogram keys to Crypto Engine
+To: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, quic_rampraka@quicinc.com,
+ quic_nitirawa@quicinc.com, quic_sachgupt@quicinc.com,
+ quic_bhaskarv@quicinc.com, quic_neersoni@quicinc.com,
+ quic_gaurkash@quicinc.com, Eric Biggers <ebiggers@google.com>,
+ Abel Vesa <abel.vesa@linaro.org>
+References: <20241006135530.17363-1-quic_spuppala@quicinc.com>
+ <20241006135530.17363-2-quic_spuppala@quicinc.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241006135530.17363-2-quic_spuppala@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On Mon, 21 Oct 2024 17:46:58 +0100
-Will Deacon <will@kernel.org> wrote:
-
-> On Wed, Oct 16, 2024 at 09:58:09AM +0900, Masami Hiramatsu (Google) wrote:
-> > From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > 
-> > Use ftrace_regs instead of fgraph_ret_regs for tracing return value
-> > on function_graph tracer because of simplifying the callback interface.
-> > 
-> > The CONFIG_HAVE_FUNCTION_GRAPH_RETVAL is also replaced by
-> > CONFIG_HAVE_FUNCTION_GRAPH_FREGS.
-> > 
-> > Signed-off-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
-> > Acked-by: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Catalin Marinas <catalin.marinas@arm.com>
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Steven Rostedt <rostedt@goodmis.org>
-> > Cc: Mark Rutland <mark.rutland@arm.com>
-> > Cc: Huacai Chen <chenhuacai@kernel.org>
-> > Cc: WANG Xuerui <kernel@xen0n.name>
-> > Cc: Paul Walmsley <paul.walmsley@sifive.com>
-> > Cc: Palmer Dabbelt <palmer@dabbelt.com>
-> > Cc: Albert Ou <aou@eecs.berkeley.edu>
-> > Cc: Vasily Gorbik <gor@linux.ibm.com>
-> > Cc: Alexander Gordeev <agordeev@linux.ibm.com>
-> > Cc: Heiko Carstens <hca@linux.ibm.com>
-> > Cc: Christian Borntraeger <borntraeger@linux.ibm.com>
-> > Cc: Sven Schnelle <svens@linux.ibm.com>
-> > Cc: Thomas Gleixner <tglx@linutronix.de>
-> > Cc: Ingo Molnar <mingo@redhat.com>
-> > Cc: Borislav Petkov <bp@alien8.de>
-> > Cc: Dave Hansen <dave.hansen@linux.intel.com>
-> > Cc: x86@kernel.org
-> > Cc: "H. Peter Anvin" <hpa@zytor.com>
-> > Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-> > 
-> > ---
-> >  Changes in v17:
-> >   - Fixes s390 return_to_handler according to Heiko's advice.
-> >  Changes in v16:
-> >   - According to the recent ftrace_regs.h change, override
-> >     ftrace_regs_get_frame_pointer() if needed.
-> >   - s390: keep stack_frame on stack, just replace fgraph_ret_regs
-> >     with ftrace_regs.
-> >  Changes in v8:
-> >   - Newly added.
-> > ---
-> >  arch/arm64/Kconfig                  |    1 +
-> >  arch/arm64/include/asm/ftrace.h     |   23 ++++++-----------------
-> >  arch/arm64/kernel/asm-offsets.c     |   12 ------------
-> >  arch/arm64/kernel/entry-ftrace.S    |   32 ++++++++++++++++++--------------
+On 6/10/24 16:55, Seshu Madhavi Puppala wrote:
+> Add mmc_host_ops hook avoid_reprogram_allkeys to control
+> reprogramming keys to Inline Crypto Engine by vendor as some
+> vendors might not require this feature.
 > 
-> For the arm64 parts:
+> Signed-off-by: Seshu Madhavi Puppala <quic_spuppala@quicinc.com>
+> Co-developed-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+> ---
+>  drivers/mmc/core/crypto.c | 8 +++++---
+>  drivers/mmc/host/sdhci.c  | 6 ++++++
+>  include/linux/mmc/host.h  | 7 +++++++
+>  3 files changed, 18 insertions(+), 3 deletions(-)
 > 
-> Acked-by: Will Deacon <will@kernel.org>
+> diff --git a/drivers/mmc/core/crypto.c b/drivers/mmc/core/crypto.c
+> index fec4fbf16a5b..4168f7d135ff 100644
+> --- a/drivers/mmc/core/crypto.c
+> +++ b/drivers/mmc/core/crypto.c
+> @@ -14,9 +14,11 @@
+>  
+>  void mmc_crypto_set_initial_state(struct mmc_host *host)
+>  {
+> -	/* Reset might clear all keys, so reprogram all the keys. */
+> -	if (host->caps2 & MMC_CAP2_CRYPTO)
+> -		blk_crypto_reprogram_all_keys(&host->crypto_profile);
+> +	if (host->ops->avoid_reprogram_allkeys && !host->ops->avoid_reprogram_allkeys()) {
+> +		/* Reset might clear all keys, so reprogram all the keys. */
+> +		if (host->caps2 & MMC_CAP2_CRYPTO)
+> +			blk_crypto_reprogram_all_keys(&host->crypto_profile);
+> +	}
 
-Thank you!
+Probably nicer to put MMC_CAP2_CRYPTO check first, but also the logic
+needs a tweak:
 
-> 
-> Will
+	/* Reset might clear all keys, so reprogram all the keys. */
+	if (host->caps2 & MMC_CAP2_CRYPTO &&
+	    (!host->ops->avoid_reprogram_allkeys ||
+	     !host->ops->avoid_reprogram_allkeys()))
+		blk_crypto_reprogram_all_keys(&host->crypto_profile);
 
+>  }
+>  
+>  void mmc_crypto_setup_queue(struct request_queue *q, struct mmc_host *host)
+> diff --git a/drivers/mmc/host/sdhci.c b/drivers/mmc/host/sdhci.c
+> index fbf7a91bed35..cd663899c025 100644
+> --- a/drivers/mmc/host/sdhci.c
+> +++ b/drivers/mmc/host/sdhci.c
+> @@ -2704,6 +2704,11 @@ int sdhci_start_signal_voltage_switch(struct mmc_host *mmc,
+>  }
+>  EXPORT_SYMBOL_GPL(sdhci_start_signal_voltage_switch);
+>  
+> +static bool sdhci_avoid_reprogram_allkeys(void)
+> +{
+> +	return false;
+> +}
+> +
+>  static int sdhci_card_busy(struct mmc_host *mmc)
+>  {
+>  	struct sdhci_host *host = mmc_priv(mmc);
+> @@ -3066,6 +3071,7 @@ static const struct mmc_host_ops sdhci_ops = {
+>  	.execute_tuning			= sdhci_execute_tuning,
+>  	.card_event			= sdhci_card_event,
+>  	.card_busy	= sdhci_card_busy,
+> +	.avoid_reprogram_allkeys	= sdhci_avoid_reprogram_allkeys,
 
--- 
-Masami Hiramatsu (Google) <mhiramat@kernel.org>
+There isn't any need for this
+
+>  };
+>  
+>  /*****************************************************************************\
+> diff --git a/include/linux/mmc/host.h b/include/linux/mmc/host.h
+> index 88c6a76042ee..c4109d17f177 100644
+> --- a/include/linux/mmc/host.h
+> +++ b/include/linux/mmc/host.h
+> @@ -218,6 +218,13 @@ struct mmc_host_ops {
+>  
+>  	/* Initialize an SD express card, mandatory for MMC_CAP2_SD_EXP. */
+>  	int	(*init_sd_express)(struct mmc_host *host, struct mmc_ios *ios);
+> +
+> +	/*
+> +	 * Optional callback to support controllers that dont require to
+> +	 * reprogram all crypto keys on card suspend/resume.
+> +	 */
+> +	bool	(*avoid_reprogram_allkeys)(void);
+> +
+>  };
+>  
+>  struct mmc_cqe_ops {
+
 
