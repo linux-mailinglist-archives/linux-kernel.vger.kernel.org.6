@@ -1,142 +1,118 @@
-Return-Path: <linux-kernel+bounces-378482-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-378481-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B1F5A9AD132
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:40:10 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BAE19AD130
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 18:40:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D34141C21D68
-	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:40:09 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C0355282AC4
+	for <lists+linux-kernel@lfdr.de>; Wed, 23 Oct 2024 16:39:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FD7755C29;
-	Wed, 23 Oct 2024 16:40:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 493961CC178;
+	Wed, 23 Oct 2024 16:39:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qJ9OXg6t"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="AjlCJPsb"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0517613B792;
-	Wed, 23 Oct 2024 16:40:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDB4A1CACEF
+	for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 16:39:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729701604; cv=none; b=WmoyuzzhsG+IpOubn2BvT7ZkTPWMi8idX5FG0RmwwbnY77Ot17w1qFVLgqJEMJcQHzNwFGqqmPWm5vO3Lv+K7tdzESpOiGxsUbTRdea69ERDfP2f927fQ3u/DR39y5K7GwRIfextKx8+ReBHIVj8+jIE/Ymcv55NELavAOt1vng=
+	t=1729701592; cv=none; b=snhr09VXDSx6sN77d86LcJ8YuiK3Qfl96pnDfAeKHCa8QjTYxgHB2Fyrr0WXVblWPk0mxK4HW6qhvx9GM8JxeozWN92ucMlykJj2ncBzL0kqyW2cJ95CpB1EfmFasZJfEeKiT7U1DoQxBTyBmyvbtZcx6KHeP3wJ+WsqjAOr4as=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729701604; c=relaxed/simple;
-	bh=SM+PhxcCD78xzMljAIGesz5757/4P4r5jOX096fIats=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q2MOWFZ6mg0bWx3ZzT14tlW2TFZAmoqlqzppKQVjjmqoiSCLylI414yk+lflp8No8k4Qzpvp+UcXonPLk4KUE86j99HqPnIjdd8kxSqEU2uvfEedQQ5rBOHCS0Pb8K8cdP6UFOot9k6bonI07Vpb9h48pObDaOTb+k1gsshP5H0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qJ9OXg6t; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 84BF4C4CECD;
-	Wed, 23 Oct 2024 16:40:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729701603;
-	bh=SM+PhxcCD78xzMljAIGesz5757/4P4r5jOX096fIats=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=qJ9OXg6tr2UN8G8NJSKZ61b/INjSyKmWqbZxBl5LKfNKOXCZ7Vm9FF7ZT7dZ44m4J
-	 HTdpCKbSid1aIg3xJ1mj2xG1KkcgsUbSMzvGG0rV8MULbHk5aSdLkaMHUwiu57aglV
-	 tUJdkYEGcYHRa9mjN2nG7FkzSVJsUgAlSCj7yjqUXPUl0Hnj/6OSEHiMrNlmZCPkyD
-	 NM6KhiEaYBtYIi+QYPgjVqGmyzn0Nfdfqq/mP1KDuDVPaDGO5jMTo2TQa2y7q4q7/I
-	 z8oSxQ5ibZvHb1B6RviJ8mAVla/imGNywGP6MxkAKooIdIgXL+6W1eRMrpPBwgj5qq
-	 JBEjG5ZjEWZhg==
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e6c754bdso6877093e87.2;
-        Wed, 23 Oct 2024 09:40:03 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCWg2lhy6EmJBz5VacCR/hHpm05Bkf11a8onh0+oPvpmh5Et3XmCpbvMvM4XGzgEtiD7Lrxy2KDQ5j3rspU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz/ma42NI8baaVr4AYehBCyfaYcBFo+OMn0n69+/XLAvBfKpwBz
-	TE2ya3q+7YaKKdHYOGEhsZTJihGMp1GZXj4xS0v+e58btWsWS1JU/6tXMwWgs4j9KdcrwRBN/jx
-	r67BhTe7a1t30ZNn3FYI5ZXzpzKY=
-X-Google-Smtp-Source: AGHT+IE4JDkG3iBTL2QAGPNMWtY0jVkQ3fXLUbUBzPl9zUt3gwuCH1uoxmcJTfBaUS5Gh/fI7Jrz4vjXRIoLEUxOdDA=
-X-Received: by 2002:a05:6512:15a9:b0:539:d9e2:9d15 with SMTP id
- 2adb3069b0e04-53b1a3441c4mr1745819e87.29.1729701602194; Wed, 23 Oct 2024
- 09:40:02 -0700 (PDT)
+	s=arc-20240116; t=1729701592; c=relaxed/simple;
+	bh=xgYde0kYGRiEie8bOJeIGOMdO8PtreNYsoIJWrnKk8g=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=tLhMFxNNgMKxn3783ec+hBuJDWpUt9LBQ8qBNEGE3ntAQdNWwfklFpir7NxtxCCoKCQRQt8TDcAMZVTsY+D4Avw17YJ/328fC9EzPLRgGdA/P/voR+HFTXXZu2t/zAbezP2VuoZWilAf0fvWbABWuZQ/OIST/wIH943xx+G/kUw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=AjlCJPsb; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729701589;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=xgYde0kYGRiEie8bOJeIGOMdO8PtreNYsoIJWrnKk8g=;
+	b=AjlCJPsbqBUCDHF0YU2CJpfdGOE0iw3Ny+ehywjHHmHVvm0P7UsAtAqsC/yE04t/1SM/fP
+	W0woKbysIKa28q4Jd3NtKzQ+X8JoMOmufAQwcOVx4Hn+H09ctwz98pgSUleBL8wFxdVWAB
+	029j+p32ziETfwTlcRaYN+/HuE+B1cg=
+Received: from mail-oo1-f70.google.com (mail-oo1-f70.google.com
+ [209.85.161.70]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-562-s9KCCAWwOdydW-1A49XYAg-1; Wed, 23 Oct 2024 12:39:43 -0400
+X-MC-Unique: s9KCCAWwOdydW-1A49XYAg-1
+Received: by mail-oo1-f70.google.com with SMTP id 006d021491bc7-5eb59e38e9aso5156592eaf.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 09:39:43 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729701583; x=1730306383;
+        h=mime-version:message-id:date:references:in-reply-to:subject:cc:to
+         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=xgYde0kYGRiEie8bOJeIGOMdO8PtreNYsoIJWrnKk8g=;
+        b=iSlf0OyDZ5POA23DWeBvVlynfOw83ytzPV+xz9Qv9SbXxxfq1AGZKhgytDOj0AaEcX
+         eRA8qA1eDcbzogug6ZYxVHz2jYtgb81zW8JIO0Qkuypnmw+057l/5wz+DSBW6u13VuCQ
+         lf+dE7urzTKkr0+mWKusXDPuaTNwc/a9BLxrWgpx09RgU0KNFgGlBfij8ecokeQJXECP
+         CdbBKOV/Bhd6ZH8CrD09P2bL+htnwgniTNER+GAavpxs0EHySod234ioWANycLtzx0kP
+         gssGr6oh/HztQ1DojzSvKmYeA4QLELb/rurx/DPWToXK8xtS39S5qvpZJBUnDGk6CwcB
+         wonA==
+X-Forwarded-Encrypted: i=1; AJvYcCVl0SNPACuAjx6XF0UdMh3tagcLI0jLkyYfR5R2T0KPG7V+rpDXFZLoVZ9nARGa5Gr46KrRo1WuHzp06CE=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzdNMC0w2dA8XSF9sMvni8pOBBEDk4MveG1i2g8mzzv33KuhtJD
+	ONSO4RVFjMB3B9VGFQP1qHx0U6TqJA4BsKgD1Ao86WxauOYGe6cCKFKvHj1A+mZ5NYBg/w2i9Nw
+	wzbDWjdLAfUtTpuap8CxXfZofEs1WAUGS9SSGdMoObVMZM4etn3U476cNb6BsQA==
+X-Received: by 2002:a05:6358:7301:b0:1b5:a38c:11d1 with SMTP id e5c5f4694b2df-1c3d81b1c55mr215714155d.26.1729701582816;
+        Wed, 23 Oct 2024 09:39:42 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IH5uJ85hkEz2INCCPDQFtdhJuoP49vMzKxw9NE+7RKWs4MM8KvFHPEu83z6kixqE7MV11l1uA==
+X-Received: by 2002:a05:6358:7301:b0:1b5:a38c:11d1 with SMTP id e5c5f4694b2df-1c3d81b1c55mr215712055d.26.1729701582497;
+        Wed, 23 Oct 2024 09:39:42 -0700 (PDT)
+Received: from vschneid-thinkpadt14sgen2i.remote.csb (213-44-141-166.abo.bbox.fr. [213.44.141.166])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3d70a6bsm41746811cf.63.2024.10.23.09.39.39
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 09:39:41 -0700 (PDT)
+From: Valentin Schneider <vschneid@redhat.com>
+To: Saurabh Sengar <ssengar@linux.microsoft.com>, mingo@redhat.com,
+ peterz@infradead.org, juri.lelli@redhat.com, vincent.guittot@linaro.org,
+ dietmar.eggemann@arm.com, rostedt@goodmis.org, bsegall@google.com,
+ mgorman@suse.de, linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org, ssengar@microsoft.com, srivatsa@csail.mit.edu
+Subject: Re: [PATCH] sched/topology: Enable topology_span_sane check only
+ for debug builds
+In-Reply-To: <1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com>
+References: <1729619853-2597-1-git-send-email-ssengar@linux.microsoft.com>
+Date: Wed, 23 Oct 2024 18:39:37 +0200
+Message-ID: <xhsmhsesmu62e.mognet@vschneid-thinkpadt14sgen2i.remote.csb>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <4960180.31r3eYUQgx@devpool47.emlix.com> <8441512.T7Z3S40VBb@devpool47.emlix.com>
-In-Reply-To: <8441512.T7Z3S40VBb@devpool47.emlix.com>
-From: Masahiro Yamada <masahiroy@kernel.org>
-Date: Thu, 24 Oct 2024 01:39:26 +0900
-X-Gmail-Original-Message-ID: <CAK7LNASdLT-KQA7+Vn+Y2ZJeropcR-sjmv8p2=DCgzCyQdJAEw@mail.gmail.com>
-Message-ID: <CAK7LNASdLT-KQA7+Vn+Y2ZJeropcR-sjmv8p2=DCgzCyQdJAEw@mail.gmail.com>
-Subject: Re: [PATCH 4/7] kconfig: qconf: use QCommandLineParser
-To: Rolf Eike Beer <eb@emlix.com>
-Cc: linux-kbuild@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
 
-On Wed, Oct 23, 2024 at 3:33=E2=80=AFPM Rolf Eike Beer <eb@emlix.com> wrote=
-:
+On 22/10/24 10:57, Saurabh Sengar wrote:
+> On a x86 system under test with 1780 CPUs, topology_span_sane() takes
+> around 8 seconds cumulatively for all the iterations. It is an expensive
+> operation which does the sanity of non-NUMA topology masks.
 >
-> This has a much nicer output without manual processing. It also adds wind=
-ow
-> management options from Qt for free.
+> CPU topology is not something which changes very frequently hence make
+> this check optional for the systems where the topology is trusted and
+> need faster bootup.
 >
-> Signed-off-by: Rolf Eike Beer <eb@emlix.com>
-> ---
+> Restrict this to SCHED_DEBUG builds so that this penalty can be avoided
+> for the systems who wants to avoid it.
+>
+> Fixes: ccf74128d66c ("sched/topology: Assert non-NUMA topology masks don't (partially) overlap")
+> Signed-off-by: Saurabh Sengar <ssengar@linux.microsoft.com>
 
-The help message looks as follows:
+Please see:
+http://lore.kernel.org/r/20241010155111.230674-1-steve.wahl@hpe.com
 
+Also note that most distros ship with CONFIG_SCHED_DEBUG=y, so while I'm
+not 100% against it this would at the very least need to be gated behind
+e.g. the sched_verbose cmdline argument to be useful.
 
-$ ./scripts/kconfig/qconf --help
-QSocketNotifier: Can only be used with threads started with QThread
-Usage: ./scripts/kconfig/qconf [options] Kconfig
+But before that I'd like the "just run it once" option to be explored
+first.
 
-Options:
-  -s          silent
-  -h, --help  Displays help on commandline options.
-  --help-all  Displays help including Qt specific options.
-
-Arguments:
-  file        config file to open
-
-
-
-I want to see something better for the explanation of '-s'
-and I want 'file' and 'Kconfig' to match.
-
-
-
->  int main(int ac, char** av)
->  {
->         ConfigMainWindow* v;
-> -       const char *name;
-> +       configApp =3D new QApplication(ac, av);
-> +       QCommandLineParser cmdline;
-
-Please rename 'cmdline' to 'parser' because this is
-used in the code example.
-
-https://doc.qt.io/qt-6/qcommandlineparser.html#details
-
-
-
-> +       QCommandLineOption silent("s", "silent");
-
-How about  this ?
-
-silent("s", "Print this message and exit.");
-
-The description is consistent with
-"./scripts/kconfig/conf --help".
-
-
-
-> +       cmdline.addOption(silent);
-> +       cmdline.addHelpOption();
-> +       cmdline.addPositionalArgument("file", "config file to open", "Kco=
-nfig");
-
-I think the third parameter is unneeded.
-Then, the help message will look better.
-
-
-
-
---
-Best Regards
-Masahiro Yamada
 
