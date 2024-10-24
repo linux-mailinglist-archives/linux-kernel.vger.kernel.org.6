@@ -1,209 +1,210 @@
-Return-Path: <linux-kernel+bounces-379122-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379123-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0F2689ADA4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:13:57 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F1A769ADA4E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:14:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 86346B22670
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:13:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AE182282F19
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:14:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 66B6815B96E;
-	Thu, 24 Oct 2024 03:13:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE872158D80;
+	Thu, 24 Oct 2024 03:14:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="jc/YBuLg"
-Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="L3WrdGS1"
+Received: from mailout1.samsung.com (mailout1.samsung.com [203.254.224.24])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B0F155308
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:13:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DF13C1CD3F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:14:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.24
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729739624; cv=none; b=ljmUSzfbvzxstPKUCuJLkgxjE6uABS8NcqWrAKrOQEiH8oCdinnVB0dbyBNEZdn/QtVgCafZTw0YlSWQxFParkofU5tooA9otak/o+kr0GBy1d+JIjkXfvez49fbWefo5oZsHh/m+O9vXVw3tC3O1e/14wuuUKkHTzLROyTBgfE=
+	t=1729739686; cv=none; b=GEVgpaRZ/kLgfdTF2pYu7F+3DQYfSLZB03cWC2imb+EctiAAJs/Lul3JI2uoZpSapBdcOGo9B9NBzo1EUt49Fi90TdJQ3AmnkbOUvW47tW/hlG0rc+5ld2ID7+rSA9drWttbDurwxYsQpQ0Dgz7ZjaQm14g4vAN3yhTOLQ+e0lo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729739624; c=relaxed/simple;
-	bh=iOPoDKzK2AmC1N0sgZTuwXPqY49UuLCsftKjWpgz5i8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ba4+RuiBbxiWzk9NfBhJElA1PH/OhYwmvd3ojDqL59nvl6z5Kai0HZUt2ux1p/X1D/kvsmfJ+n9ozXcfAaLg+G89lPXvEA40RQDyMMO08YXm6vr2nMOhqRWFpqkHVVwgvfOhMfxlJxqTY94tPc7X1zMCaozn/VEdditxt+5HIpQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=jc/YBuLg; arc=none smtp.client-ip=209.85.216.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2b9480617so390143a91.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:13:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729739620; x=1730344420; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=xP6sdeYNg4L9xmeUb5AgsCXs2olbhdVL7zaGRhsZ/a8=;
-        b=jc/YBuLg1KucMS5dKMdObSu9y0DkVo+Qu670IFDkdR1LOp1QectXBL6ifgo7rQxuCs
-         dS7BwYYYB2JVzAEXFBWmLRHmccJFBcOlQU7zyZoSVJ6AK/b3/WUXjvPr1HMX0Qd+H6Wc
-         EsUj/p/D5+zZ3ve2Mqhn3MZCO/6KBMJeb+KHqVZM3iIrYza3KUUqc17KwxzC8+6EpCVT
-         Z9H8KHmAdFEJf5x8jWCo4u42SYJJBYxLcS7svwC1xPZWWUmz3dYM20vn55c1ECO/0fOg
-         D0lbebo5sp/HFRQ4imWf22kEDPMbw5F9mpWLznBOQkiE9BLeibqDloV7uvqN7M3BpGKF
-         Ah2A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729739620; x=1730344420;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=xP6sdeYNg4L9xmeUb5AgsCXs2olbhdVL7zaGRhsZ/a8=;
-        b=j21hLeQ4IXrrgQcCSaRHNE9n5PIpfG4JhABeGIB7q2LBGAVbpJEiN43d8z3BRJPoRY
-         X3R7nn82BXxLhjxWpZebk7a0U/ulY/y8UXwy/RZ/B/ICFyG7jYCVsM8tSAN2u7Kskczc
-         6oY9oLQHoJrVzXwWv5A5M4TNwuzxTFZviipESdPXqtZTExtwqLZMKwSIr47SPKiQMj5u
-         Q0Y3EMWu/Zv1bzT42ZwV0HYYWsdF+dhw5bsmmDWFMH7Jy5dJCZ9M3o+2pwTsPboMh3XA
-         bDDhznUhf7U202l88YRlWpL1EexHJmCfWS8Y0R+KZ7euFBMW+bDF6jqx9w7+rg9hapbW
-         mBAw==
-X-Forwarded-Encrypted: i=1; AJvYcCWU8fTZjClY95/EOT363CUkEFZ8b8W/+4jcYMnURQQGFH2Y01DFCTdipjy3zFYQzdVkbz0VRG9Gs02S68o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqBi4Y/AiicWBmvFKLddzNCpHa6thZ5kkpnnwKVbxl7xl+P5Za
-	61KEBw/Jtd7uz+rFqjVFP4aX05jG8IhoN63agEBBZNryGsIZQhilKsBf6Qemyw==
-X-Google-Smtp-Source: AGHT+IEqcaOy41a74/QJo1V0+sa8hEK4p1INoNXDBNPsxy2R+DE6joNBtePQTdENvYDN9mC4D5lLsA==
-X-Received: by 2002:a17:90a:3ec7:b0:2e2:bd7a:71ea with SMTP id 98e67ed59e1d1-2e76b5b56cdmr4882107a91.8.1729739619929;
-        Wed, 23 Oct 2024 20:13:39 -0700 (PDT)
-Received: from ?IPV6:2a00:79e0:2e14:7:d115:de66:80f:f3f7? ([2a00:79e0:2e14:7:d115:de66:80f:f3f7])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e4e4008sm273121a91.24.2024.10.23.20.13.38
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 20:13:39 -0700 (PDT)
-Message-ID: <d6bbd32a-6de4-492a-8965-c0bc3dbddcff@google.com>
-Date: Wed, 23 Oct 2024 20:13:36 -0700
+	s=arc-20240116; t=1729739686; c=relaxed/simple;
+	bh=h6goQelkQhCtCNjQMZhXZHgq3DnK42C2BOkU88IzqXo=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:Message-ID:Content-Type:
+	 References; b=eLfhi/JaFAxv1IzKDzkBMzsJxUHIXLNFoKC+UPY6v/rINTrrPoO8dGXi3hliutYASqlQhji53TwORxs/s8oWboZMkl3YmJugqsw5wk3wzUsebjC3tZuQJHIZTsFQVmVdb1jzL+SZLzz+/whIRacmk0N8Mm6erVpdmGpSczLOqeM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=L3WrdGS1; arc=none smtp.client-ip=203.254.224.24
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
+Received: from epcas1p2.samsung.com (unknown [182.195.41.46])
+	by mailout1.samsung.com (KnoxPortal) with ESMTP id 20241024031433epoutp01ea1b5571cd191fb9f6f561eb98362bee~BRRGat6Qp2837128371epoutp01y
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:14:33 +0000 (GMT)
+DKIM-Filter: OpenDKIM Filter v2.11.0 mailout1.samsung.com 20241024031433epoutp01ea1b5571cd191fb9f6f561eb98362bee~BRRGat6Qp2837128371epoutp01y
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
+	s=mail20170921; t=1729739673;
+	bh=4A7t4wY4g8JdHoX+mOqquSVaVL9KhycL8z1IonG2Phc=;
+	h=From:To:Cc:In-Reply-To:Subject:Date:References:From;
+	b=L3WrdGS16ISqt7SYNdq8AiHkBQ3OfEq/k6BGyk+nRRc+2nZc5u/W//kJbJL+mf9Y4
+	 W/adqP+Ph1RUcOl7GsD7jnhNcxedv2jYGb1BBZSayyi6mPsZyMf7idSye9zH46t99w
+	 lEGEvZY5IlVckqjjhMmFiFmAY01ocD96B4S/ZWEY=
+Received: from epsnrtp1.localdomain (unknown [182.195.42.162]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTP id
+	20241024031433epcas1p29f3c2ec762dcf9d0fb280bd09611f8e5~BRRF-9BE71961619616epcas1p2K;
+	Thu, 24 Oct 2024 03:14:33 +0000 (GMT)
+Received: from epsmges1p4.samsung.com (unknown [182.195.36.134]) by
+	epsnrtp1.localdomain (Postfix) with ESMTP id 4XYrcR5KBtz4x9Q1; Thu, 24 Oct
+	2024 03:14:31 +0000 (GMT)
+Received: from epcas1p1.samsung.com ( [182.195.41.45]) by
+	epsmges1p4.samsung.com (Symantec Messaging Gateway) with SMTP id
+	3D.4A.09951.79BB9176; Thu, 24 Oct 2024 12:14:31 +0900 (KST)
+Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
+	epcas1p2.samsung.com (KnoxPortal) with ESMTPA id
+	20241024031431epcas1p2b3b5e06f95768605dae1ea5eacaefe61~BRREQdjl40949509495epcas1p2Y;
+	Thu, 24 Oct 2024 03:14:31 +0000 (GMT)
+Received: from epsmgms1p1new.samsung.com (unknown [182.195.42.41]) by
+	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
+	20241024031431epsmtrp1cdcf13a1e18e2038f0b2ac31bf6c0a42~BRREPvqsd2747327473epsmtrp1J;
+	Thu, 24 Oct 2024 03:14:31 +0000 (GMT)
+X-AuditID: b6c32a38-b3fff700000026df-d3-6719bb974bb9
+Received: from epsmtip1.samsung.com ( [182.195.34.30]) by
+	epsmgms1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
+	26.80.08229.79BB9176; Thu, 24 Oct 2024 12:14:31 +0900 (KST)
+Received: from jh80chung01 (unknown [10.113.111.84]) by epsmtip1.samsung.com
+	(KnoxPortal) with ESMTPA id
+	20241024031431epsmtip1f88613f8317bc08bcb95475d1c4ede41~BRREDWXur1889118891epsmtip11;
+	Thu, 24 Oct 2024 03:14:31 +0000 (GMT)
+From: "Jaehoon Chung" <jh80.chung@samsung.com>
+To: "'Tim Harvey'" <tharvey@gateworks.com>, "'Heiko Schocher'" <hs@denx.de>,
+	"'Tom Rini'" <trini@konsulko.com>, "'Peng Fan'" <peng.fan@nxp.com>,
+	<u-boot@lists.denx.de>
+Cc: <linux-kernel@vger.kernel.org>
+In-Reply-To: <20241023202855.1571188-2-tharvey@gateworks.com>
+Subject: RE: [PATCH 2/4] imx: power-domain: Convert to use livetree API for
+ fdt access
+Date: Thu, 24 Oct 2024 12:14:31 +0900
+Message-ID: <0c5801db25c2$d7d2c840$877858c0$@samsung.com>
+X-Mailer: Microsoft Outlook 16.0
+Content-Language: ko
+Thread-Index: AQI9tlBLkulT+iAYa8f+rqP6Oy1iRAKQ6qIIAYd1P1exr1XwAA==
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFvrKKsWRmVeSWpSXmKPExsWy7bCmru703ZLpBvOPaVrsuHOf2eLyrjls
+	Fj9WfWG1uHjiE7PF1Emb2S3e7u1kd2DzmDfrBIvHuZ67bB6vDqxi9zh7Zwejx8Z3O5g8Pm+S
+	C2CLyrbJSE1MSS1SSM1Lzk/JzEu3VfIOjneONzUzMNQ1tLQwV1LIS8xNtVVy8QnQdcvMATpD
+	SaEsMacUKBSQWFyspG9nU5RfWpKqkJFfXGKrlFqQklNgWqBXnJhbXJqXrpeXWmJlaGBgZApU
+	mJCd8fjZQ6aCM2IVMz7sYG1gPCbUxcjJISFgInHn/XzWLkYuDiGBHYwS/2etZ4RwPjFKHJ/f
+	yQZSJSTwjVHi67tamI5rr/+yQxTtZZQ4unghG4TzklHi0rfDYB1sAnoS/xctZAZJiAisZpRY
+	+XgS0BIODmYBJYmrp+RAajgFbCXOfZ7LBGILC0RIvGiawgxiswioShw5OI8FxOYVsJRofXaT
+	EWKzgsTPp8tYQWxmARGJ2Z1tzCAjRQScJBpmloKskhB4yS7x+cw1qHoXidYzS9ghbGGJV8e3
+	QNlSEi/729ghGpoZJZYuOcgK4fQwSvxruM4GUWUssX/pZCaIozUl1u/Sh1jMJ/Huaw/YLxIC
+	vBIdbdBwVJG49PolE8z8u0/+s0LYHhIv125mhgTQYUaJXT//ME1glJ+F5IdZCBsWMDKtYhRL
+	LSjOTU8tNiwwgUdlcn7uJkZw+tOy2ME49+0HvUOMTByMhxglOJiVRHgvZkimC/GmJFZWpRbl
+	xxeV5qQWH2I0BYbkRGYp0eR8YALOK4k3NLE0MDEzMjaxMDQzVBLnPXOlLFVIID2xJDU7NbUg
+	tQimj4mDU6qBqWgb556XOQ3PVPknv/+9aYrDa6HptrdFN5c+09Fa7vrfTulO52cdyUtbKrpv
+	1SiLyabrOLCoB7yPnKBzPj7g/dT2G5JcAnaixV0ae9Lu1v2/N621ieX+oof/9vs4naneyzBD
+	hd+uau81IbM/mjGBr7Xn/19tuvShOvfvSTfYDiuuu+bUUKeUsXni1vIjh54vbhU8+LtZcIPM
+	ZLezBvUpGj48OQvNP68w+VTnumJhUfC1Y1ZNfD1XpgWqSJxfnOG13SjyVLGOavmW9Zvj6kI+
+	W0Urec1ePfm/uS5T9PoDAiJTXR1XOLLlfv13mlvAYkbl2j+9U6YWmXSwbtE98NJteZDm5SX5
+	mQrfLLYn2V3bpMRSnJFoqMVcVJwIACut5UIIBAAA
+X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFtrJLMWRmVeSWpSXmKPExsWy7bCSnO703ZLpBpcPiVvsuHOf2eLyrjls
+	Fj9WfWG1uHjiE7PF1Emb2S3e7u1kd2DzmDfrBIvHuZ67bB6vDqxi9zh7Zwejx8Z3O5g8Pm+S
+	C2CL4rJJSc3JLEst0rdL4Mp4/OwhU8EZsYoZH3awNjAeE+pi5OSQEDCRuPb6L3sXIxeHkMBu
+	Rok/tw8yQiSkJD4/ncrWxcgBZAtLHD5cDFHznFFix+5rYDVsAnoS/xctZAZJiAisZ5SY3rGJ
+	EaSBWUBJ4uopOYiG/YwS7S/7mEEaOAVsJc59nssEUiMsECZxpF8LJMwioCpx5OA8FhCbV8BS
+	ovXZTagbFCR+Pl3GCmIzC4hIzO5sYwZpFRFwkmiYWTqBUWAWkswCRsZVjJKpBcW56bnFhgWG
+	eanlesWJucWleel6yfm5mxjBoauluYNx+6oPeocYmTgYDzFKcDArifBezJBMF+JNSaysSi3K
+	jy8qzUktPsQozcGiJM4r/qI3RUggPbEkNTs1tSC1CCbLxMEp1cA0I/J10fsJOy5WH69l+t/a
+	P09keqNsZy7jtL5PIaqrS+TSM01U1hx66bvjVNXRWGPjO1EMTm/v3Ve/rhuWOG3xN3Nn57KI
+	DpVVsiZhW1QiUh7x/5MunpY7pWQP40EHzeqTNsLLnazK7vJ/vWp1nPkcc8CPu1pfP6002H27
+	9pnthZdrLRa9V/PxE8rJuF6g6vUidCuLSoT3qd2Tfk9o3eK3sU6Rge3+tJ2e8U5Wj6a2bBW3
+	Y59zPfVIjxnP+uIIFubKuDf5S1guJ9fpnws+1+ESd9TaK+OcpsHTcyEZP3QtaxT5jFI3mFX8
+	X3vukFMhm3zxjg86vOf41zxKjgyetd/BRlhKpuVQ06Qf8eIbgpVYijMSDbWYi4oTAYy6MB3M
+	AgAA
+X-CMS-MailID: 20241024031431epcas1p2b3b5e06f95768605dae1ea5eacaefe61
+X-Msg-Generator: CA
+Content-Type: text/plain; charset="utf-8"
+CMS-TYPE: 101P
+DLP-Filter: Pass
+X-CFilter-Loop: Reflected
+X-CMS-RootMailID: 20241023202955epcas1p2ec95a2a3fdf8e84e065b86e3570c9509
+References: <20241023202855.1571188-1-tharvey@gateworks.com>
+	<CGME20241023202955epcas1p2ec95a2a3fdf8e84e065b86e3570c9509@epcas1p2.samsung.com>
+	<20241023202855.1571188-2-tharvey@gateworks.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] usb: typec: tcpm: Prevent Hard_Reset if Vbus was never
- low
-To: Yanik Fuchs <Yanik.fuchs@mbv.ch>,
- "heikki.krogerus@linux.intel.com" <heikki.krogerus@linux.intel.com>,
- "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>,
- "rdbabiera@google.com" <rdbabiera@google.com>,
- "linux@roeck-us.net" <linux@roeck-us.net>,
- "kyletso@google.com" <kyletso@google.com>,
- "badhri@google.com" <badhri@google.com>,
- "xu.yang_2@nxp.com" <xu.yang_2@nxp.com>, sebastian.reichel@collabora.com
-Cc: "linux-usb@vger.kernel.org" <linux-usb@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <GVAP278MB0662F98EAAFAD95645E7010A974C2@GVAP278MB0662.CHEP278.PROD.OUTLOOK.COM>
-Content-Language: en-US
-From: Amit Sunil Dhamne <amitsd@google.com>
-In-Reply-To: <GVAP278MB0662F98EAAFAD95645E7010A974C2@GVAP278MB0662.CHEP278.PROD.OUTLOOK.COM>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
 
-Hi Yanik,
 
-On 10/22/24 10:28 AM, Yanik Fuchs wrote:
-> Good Evening
+
+> -----Original Message-----
+> From: Tim Harvey <tharvey@gateworks.com>
+> Sent: Thursday, October 24, 2024 5:29 AM
+> To: Heiko Schocher <hs@denx.de>; Tom Rini <trini@konsulko.com>; Peng Fan <peng.fan@nxp.com>; Jaehoon
+> Chung <jh80.chung@samsung.com>; u-boot@lists.denx.de
+> Cc: linux-kernel@vger.kernel.org; Tim Harvey <tharvey@gateworks.com>
+> Subject: [PATCH 2/4] imx: power-domain: Convert to use livetree API for fdt access
 >
-> Here is a Patch to resolve an issue with TCPM if Vbus was never low.
-> Please consider that this is one of my first kernel pull requests, I may have missunderstood the process.
+> Convert to using livetree API functions.
 >
-> Freundliche Grüsse
-> Best regards
+> Without this if livetree is enabled (OF_LIVE) the imx8m-power-domain
+> driver will (silently) fail to probe its children leaving you with
+> no power domain support causing issues with certain devices.
 >
->
-> Yanik Fuchs
->
+> Signed-off-by: Tim Harvey <tharvey@gateworks.com>
+
+Reviewed-by: Jaehoon Chung <jh80.chung@samsung.com>
+
+Best Regards,
+Jaehoon Chung
+
 > ---
+>  drivers/power/domain/imx8m-power-domain.c | 18 +++++++-----------
+>  1 file changed, 7 insertions(+), 11 deletions(-)
 >
->  From 604b97b6394b5643394bc63d4ac691c098c99c40 Mon Sep 17 00:00:00 2001
-> From: yfu <yanikfuchs@me.com>
-> Date: Tue, 22 Oct 2024 18:23:18 +0200
-> Subject: [PATCH] usb: typec: tcpm: Prevent Hard_Reset if Vbus was never low
+> diff --git a/drivers/power/domain/imx8m-power-domain.c b/drivers/power/domain/imx8m-power-domain.c
+> index 8b6870c86463..c22fbe60675e 100644
+> --- a/drivers/power/domain/imx8m-power-domain.c
+> +++ b/drivers/power/domain/imx8m-power-domain.c
+> @@ -456,25 +456,22 @@ static int imx8m_power_domain_of_xlate(struct power_domain *power_domain,
 >
-> Before this patch, tcpm went into SOFT_RESET state, if Vbus was never low
-> resulting in Hard_Reset, if power supply does not support USB_PD Soft_Reset.
+>  static int imx8m_power_domain_bind(struct udevice *dev)
+>  {
+> -	int offset;
+> +	ofnode subnode;
+>  	const char *name;
+>  	int ret = 0;
 >
-> In order to prevent this, I remove the Vbus check completely, so that
-> we go as well into the SNK_WAIT_CAPABILITIES_TIMEOUT state. There, we send
-> PD_CTRL_GET_SOURCE_CAP which many power supply do support.
-> (122968f8dda8 usb: typec: tcpm: avoid resets for missing source capability messages)
-
-Please refer to 
-https://lore.kernel.org/all/20241024022233.3276995-1-amitsd@google.com/ as
-122968f8dda8 is causing USB Type-C PD compliance failures.
-
+> -	offset = dev_of_offset(dev);
+> -	for (offset = fdt_first_subnode(gd->fdt_blob, offset); offset > 0;
+> -	     offset = fdt_next_subnode(gd->fdt_blob, offset)) {
+> +	ofnode_for_each_subnode(subnode, dev_ofnode(dev)) {
+>  		/* Bind the subnode to this driver */
+> -		name = fdt_get_name(gd->fdt_blob, offset, NULL);
+> +		name = ofnode_get_name(subnode);
 >
-> Additionally, I added SOFT_RESET (instead of Hard_Reset) as Fallback solution
-> if we still not have gotten any capabilities. Hard_Reset is now only done,
-> if PD_CTRL_GET_SOURCE_CAP and SOFT_RESET fail to get capabilities.
-> ---
->   drivers/usb/typec/tcpm/tcpm.c | 10 ++--------
->   1 file changed, 2 insertions(+), 8 deletions(-)
+>  		/* Descend into 'pgc' subnode */
+>  		if (!strstr(name, "power-domain")) {
+> -			offset = fdt_first_subnode(gd->fdt_blob, offset);
+> -			name = fdt_get_name(gd->fdt_blob, offset, NULL);
+> +			subnode = ofnode_first_subnode(subnode);
+> +			name = ofnode_get_name(subnode);
+>  		}
+> -
+>  		ret = device_bind_with_driver_data(dev, dev->driver, name,
+>  						   dev->driver_data,
+> -						   offset_to_ofnode(offset),
+> +						   subnode,
+>  						   NULL);
 >
-> diff --git a/drivers/usb/typec/tcpm/tcpm.c b/drivers/usb/typec/tcpm/tcpm.c
-> index fc619478200f..c7a59c9f78ee 100644
-> --- a/drivers/usb/typec/tcpm/tcpm.c
-> +++ b/drivers/usb/typec/tcpm/tcpm.c
-> @@ -5038,14 +5038,8 @@ static void run_state_machine(struct tcpm_port *port)
->   		 * were already in a stable contract before this boot.
->   		 * Do this only once.
->   		 */
-> -		if (port->vbus_never_low) {
-> -			port->vbus_never_low = false;
-> -			tcpm_set_state(port, SNK_SOFT_RESET,
-> +		tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
->   				       PD_T_SINK_WAIT_CAP);
-> -		} else {
-> -			tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT,
-> -				       PD_T_SINK_WAIT_CAP);
-> -		}
-
-Instead of deleting code, please restrict this behavior to non self 
-powered battery case as this most likely break compliance and
-
-may break actual use-cases for other users as a result. If you want you 
-can move stuff around after
-
-https://lore.kernel.org/all/20241024022233.3276995-1-amitsd@google.com/
-
-gets accepted in the following way:
-
-```
-
-if (!port->self_powered) {
-
-         tcpm_set_state(port, SNK_WAIT_CAPABILITIES_TIMEOUT, 
-PD_T_SINK_WAIT_CAP);
-
-         break;
-
-}
+>  		if (ret == -ENODEV)
+> @@ -514,8 +511,7 @@ static int imx8m_power_domain_of_to_plat(struct udevice *dev)
+>  	struct imx_pgc_domain_data *domain_data =
+>  		(struct imx_pgc_domain_data *)dev_get_driver_data(dev);
+>
+> -	pdata->resource_id = fdtdec_get_int(gd->fdt_blob, dev_of_offset(dev),
+> -					    "reg", -1);
+> +	pdata->resource_id = ofnode_read_u32_default(dev_ofnode(dev), "reg", -1);
+>  	pdata->domain = &domain_data->domains[pdata->resource_id];
+>  	pdata->regs = domain_data->pgc_regs;
+>  	pdata->base = dev_read_addr_ptr(dev->parent);
+> --
+> 2.25.1
+>
 
 
-if (port->vbus_never_low) {
 
-         tcpm_set_state(port, SNK_SOFT_RESET, PD_T_SINK_WAIT_CAP);
-
-} else {
-
-         tcpm_set_state(port, hard_reset_state(..), PD_T_SINK_WAIT_CAP);
-
-}
-
-```
-
-This way you don't have to execute the SNK_SOFT_RESET flow for non self 
-powered use-case.
-
-Thanks,
-
-Amit
-
->   		break;
->   	case SNK_WAIT_CAPABILITIES_TIMEOUT:
->   		/*
-> @@ -5064,7 +5058,7 @@ static void run_state_machine(struct tcpm_port *port)
->   		 * according to the specification.
->   		 */
->   		if (tcpm_pd_send_control(port, PD_CTRL_GET_SOURCE_CAP, TCPC_TX_SOP))
-> -			tcpm_set_state_cond(port, hard_reset_state(port), 0);
-> +			tcpm_set_state_cond(port, SNK_SOFT_RESET, 0);
->   		else
->   			tcpm_set_state(port, hard_reset_state(port), PD_T_SINK_WAIT_CAP);
->   		break;
 
