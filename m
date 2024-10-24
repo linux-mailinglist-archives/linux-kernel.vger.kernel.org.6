@@ -1,99 +1,136 @@
-Return-Path: <linux-kernel+bounces-379625-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379626-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A679C9AE137
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2BA109AE139
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E28282751
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C001C21A83
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F85D1B85C4;
-	Thu, 24 Oct 2024 09:39:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA6C1C07F3;
+	Thu, 24 Oct 2024 09:39:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WxUMJwxe"
-Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kC8PGQTk"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AA11B3947
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:39:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D13C1B85DF;
+	Thu, 24 Oct 2024 09:39:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762763; cv=none; b=Ut1G8lGbUW3aNkJS5eVFK6pO2+wOjttJdvj1nfFjE7g2zQybfnEB2oZqrXFUCbu9UCQepA4s93j+t31klb2IiuumO+LzGp3Ykj06O4o+v0DpLbvomsoDyStwoDeEPnu4nEgTAV6Kc8VVpetweLu9tNIBZw0snXzfSjgos7YLbwY=
+	t=1729762788; cv=none; b=LewCy8mHVDsp4Ec50gAtwxJLdK0m0ie3KuIKu3GofvcTRrH7lGZMwkkNI17th1ArFdI4azN+/fAxdlFQqAH4EUji9E0HD+cvUjwPajMELVcSpunT2KVDCcTvHc8hQp9DMEb0T6S0POnv/Ie0B8+rBYZPV70ny9EKa3Db03TkUI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762763; c=relaxed/simple;
-	bh=psIUbzYLU4wFIXrzpbnQ/vVEnWJP9SPVhMuz47ZQnSI=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Dwtka/OY4wglx1nypSbKc8Grm6sGmmfBYf6KkSy8BvNRQdWefTl90OnjpuZb2zoxIQOxZ+PwYeqRkeJPigZAX/g84r6sCb9WvS+5h/k0tq3XvI8/oy1gsH2ssU78nQDuZ1hk6yhfT1JBMHEYYzwCCimyXC1sCSCwUuHCHMZaICA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WxUMJwxe; arc=none smtp.client-ip=209.85.216.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso535723a91.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:39:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729762761; x=1730367561; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=psIUbzYLU4wFIXrzpbnQ/vVEnWJP9SPVhMuz47ZQnSI=;
-        b=WxUMJwxevqeDB/jkSpz8EWP7IxD/8hYPRCGf51b6WZWGdDxaCmlTPQhZP/oNyf8f36
-         OaCq+4zJlS1SYVUJCebG08o6qU+ZiARy8a8kV1jgcl0AohbnWyaAuZprGvrdt2e7ZvDU
-         JwpRCuuUCIEf4obZZyvY7IvXys5jI55Bo+64Y=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729762761; x=1730367561;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=psIUbzYLU4wFIXrzpbnQ/vVEnWJP9SPVhMuz47ZQnSI=;
-        b=jTn+vuCGpe4L9TguVlfkC+IlkJD1e+L7MNrom5Jenr5RKN+Yule2r8J/b3+47H+kBf
-         mlZ1Pjh97jriME4Ykp99ctChO8cO9A25O+ts7Ui7wyHCpAAV3F7/1ORB3Bfjr9FeDSLS
-         3g0lIvrahIOhkQEfH8cJM10QXCNmk3DHUG8OaQQ104HeP+SkS5gDSKMqV2xSlFL6qXwC
-         nKy8na0pYWHpRiqTSGuKRFJrGSY7127wxQxthPGgsJImo3gaRECW2RCNQBLaqYXuNXt2
-         zJflxz4DqcX3CNdduE32hCSIoVwcuypWxollyvSdIKnjcL+XyMdDKnl0X1pDfAVu6yZU
-         piDg==
-X-Forwarded-Encrypted: i=1; AJvYcCVASGr5s9BK1t7KtblsbebxBsnXpge1A28W4baPPQTBdvgScw7cKO0FCyq7myBlZ9yVF+q0b2OsafjDt2s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxgCWughV4z60ar2I9ggNC6nuXmljXtjbaleMIZ85v0eXL6xKN3
-	jHvXANcXFtyY2aJEoYUrmFVt/Q8v5GJbQiZ1Rrl+RWTMfwYe0SmCdnj4o1Vr4QD2ZfagJa7lBOl
-	k6Q==
-X-Google-Smtp-Source: AGHT+IG/IKjjlwb1UaL7FOR7rGdqnfvfZnxV4AE1xFUVjA5gLqDjXVktzbl6HM0Z4bmYO3X6wcbh1g==
-X-Received: by 2002:a05:6a20:d492:b0:1d9:19a0:c36e with SMTP id adf61e73a8af0-1d978b98610mr5702616637.31.1729762761004;
-        Thu, 24 Oct 2024 02:39:21 -0700 (PDT)
-Received: from google.com ([2401:fa00:8f:203:c7f5:2aa6:333b:bb6d])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f36f3sm69432655ad.263.2024.10.24.02.39.19
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 02:39:20 -0700 (PDT)
-Date: Thu, 24 Oct 2024 18:39:16 +0900
-From: Sergey Senozhatsky <senozhatsky@chromium.org>
-To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
-	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
-	Vikash Garodia <quic_vgarodia@quicinc.com>,
-	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCHv2 2/2] media: venus: sync with threaded IRQ during inst
- destruction
-Message-ID: <20241024093916.GM1279924@google.com>
-References: <20241024061809.400260-1-senozhatsky@chromium.org>
- <20241024061809.400260-3-senozhatsky@chromium.org>
- <4b96f1f8-e084-4599-abe9-05039bfac569@linaro.org>
+	s=arc-20240116; t=1729762788; c=relaxed/simple;
+	bh=FW20GfbGsGiLyvJNvG1nJse9qdrvhRn6b52CFWefg4Q=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=IT+vav0GhaR2MsEM4aA2wITnRbyBxNynZEFLhp7+IKQEFxcFX4oqlwKN0vpBxtcLGDKEtV0RltvKKa8cYuEO73ETjQg2hrMbwrWPjHtv3keYUAJTowiT2YC6y9dyLu2kA25kJYPNRUYdSHO/jyQ2m22om9sihGi0Fdz9NWnjvg4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kC8PGQTk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9009C4CEC7;
+	Thu, 24 Oct 2024 09:39:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729762787;
+	bh=FW20GfbGsGiLyvJNvG1nJse9qdrvhRn6b52CFWefg4Q=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=kC8PGQTkt5IOuz/Pu3XYtPeXa+PM7kkAL/22B5yDSVWVauNm9rXgn7qA50FIErOmc
+	 lqDrGI2vR/0hP+y5gHeP3ikcaLho8fae9pyP/+Ehf02JVNCnJolD9wv8K8ojWPe0Jc
+	 ITtsOS4YQpNygjD4uH8HdRG5b5rESWBJajMARIAAhSk2U20tGZHRWFw/nLUdguxan2
+	 UENGLYBvQRYxF0c6iCf7QDEWHWVXXPjy2mfJ7IrQ36goA+u6G/80OIFpeJ8LQplTcw
+	 XXLdgWEn7Yk6Voj4VvLtNsSX1HMY/o2LBJ6z0jg9TghP/f1PQwSE6JqC4cahMzQRyR
+	 0tdocDku5BadA==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t3uJl-006OWJ-Kg;
+	Thu, 24 Oct 2024 10:39:45 +0100
+Date: Thu, 24 Oct 2024 10:39:45 +0100
+Message-ID: <86v7xh3km6.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	corbet@lwn.net,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] Documentation: Update the behaviour of "kvm-arm.mode"
+In-Reply-To: <20241023171244.4031151-1-smostafa@google.com>
+References: <20241023171244.4031151-1-smostafa@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <4b96f1f8-e084-4599-abe9-05039bfac569@linaro.org>
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: smostafa@google.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, corbet@lwn.net, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On (24/10/24 09:59), Bryan O'Donoghue wrote:
-> This needs a Fixes: tag too.
+Hi Mostafa,
 
-Ack.
+On Wed, 23 Oct 2024 18:12:43 +0100,
+Mostafa Saleh <smostafa@google.com> wrote:
+> 
+> Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
+> VHE support") modified the behaviour of "kvm-arm.mode=protected" without
+> the updating the kernel parameters doc.
+> 
+> Update it to match the current implementation.
+> 
+> Cc: Will Deacon <will@kernel.org>
+> Cc: Marc Zyngier <maz@kernel.org>
+> 
+> Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> ---
+>  Documentation/admin-guide/kernel-parameters.txt | 6 +++++-
+>  1 file changed, 5 insertions(+), 1 deletion(-)
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index bb48ae24ae69..59a0dd7e2de6 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2723,8 +2723,12 @@
+>  			nvhe: Standard nVHE-based mode, without support for
+>  			      protected guests.
+>  
+> -			protected: nVHE-based mode with support for guests whose
+> +			protected: hVHE-based mode with support for guests whose
+>  				   state is kept private from the host.
+> +				   In case hVHE is not supported in hardware, it will
 
-> It also occurs to me that most of the close() operation code is shared
-> between venc_close() and vdec_close() a welcome patch for V3 would be to
-> functionally decompose the common code to a shared location.
+nit: it is VHE that is supported or not, hVHE is only a SW concept.
 
-Any preferences where that "shared location" should be?
+> +				   boot with protected nVHE.
+> +				   nVHE protected mode can still be forced on VHE systems
+> +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
+
+This opens another question: none of the arm_sw.*, nor any of the
+id_aa64* parameters are described (basically, anything that's in
+arch/arm64/kernel/pi/id_override.c). What should we do about these?
+
+
+
+>
+>  			nested: VHE-based mode with support for nested
+>  				virtualization. Requires at least ARMv8.3
+
+Huh, another nit to fix. We only support nested with ARMv8.4 (with
+FEAT_NV2), as the ARMv8.3 version (the original FEAT_NV) is too ugly
+for words.
+
+Mind addressing this?
+
+Thanks!
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
