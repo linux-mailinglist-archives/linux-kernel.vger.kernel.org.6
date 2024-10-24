@@ -1,212 +1,260 @@
-Return-Path: <linux-kernel+bounces-379073-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379074-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E8979AD951
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:32:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C7BDF9AD952
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:33:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6414283A0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:32:26 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 05608B22378
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:33:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D036446A1;
-	Thu, 24 Oct 2024 01:32:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="yF2aXA17"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CF161BDDF;
+	Thu, 24 Oct 2024 01:33:07 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAA1F136A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:32:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FCED136A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:33:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729733541; cv=none; b=CZvLM6+BGJ2rUSp/UmNl5krd/ae/1sTwphg12n8mX/o9Zfftdyx8r6jIWhbBqGlSegZxdCOYbyPT8nLeR9imHKJ8m7o6bgN0U5ztJnvdsrCQ6kyliW9ELczUHnt+zqhxrxgKivX4eiJGladERGtcX0cldxWJZQudUY5T+PrG7Tc=
+	t=1729733586; cv=none; b=bQgh8EMolNdbuQZ9VxERi0eDQesHtmIdZ0BPojCTmgAW03NH0EjDardHmcd4Y5CWNtGUwwcCu8/4ik7Fz4hKy14oe+986mJEFSlv14WJ2wOkB0XdpOLd56bzu+ldAxcEzpiyHqmF3sC7FJ/reuMDyvklGovajKXrEJ22fe7hWJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729733541; c=relaxed/simple;
-	bh=anAMNayDW2dpd0fEkaNGI8dtKLw4drQ+y5NAra95Q6w=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=tg4MwLaGJnVY/q/2cwABicuvo85+YoUdGGsWGDvEAk1ake0Cy9sKAvim6YQbaEOtm0o498/5bO5r/Shy3I5mhlHA5ZfCR12YNmmtb4YSjg7zY8lh+ig6EomqeNtopLqabwJpy5RtY8VyZrCjTKmA/hpwYx0a2eVZJ8wC26RcUCo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=yF2aXA17; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 405F5C4CEC6;
-	Thu, 24 Oct 2024 01:32:21 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729733541;
-	bh=anAMNayDW2dpd0fEkaNGI8dtKLw4drQ+y5NAra95Q6w=;
-	h=From:To:Cc:Subject:Date:From;
-	b=yF2aXA17RcqwcSS3LTJs5rCLJNrVhjTZo3QKD9hwnKZTWjG6RkhdotwApoqE+zVK6
-	 SdrBDtS1mL/xvB6pPWZhZPhVcjefZelnwy0GVadiyHTPQ69zr456au7qWIelq+fMwt
-	 dl/3WFIKm2EgjTrOLNJrWJ2JDj0YGW5/apvPA7xQ=
-From: Linus Torvalds <torvalds@linux-foundation.org>
-To: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>
-Cc: x86@kernel.org,
-	Linus Torvalds <torvalds@linux-foundation.org>,
-	Andrew Cooper <andrew.cooper3@citrix.com>,
-	Josh Poimboeuf <jpoimboe@kernel.org>,
-	Borislav Petkov <bp@alien8.de>
-Subject: [PATCH] x86: fix user address masking non-canonical speculation issue
-Date: Wed, 23 Oct 2024 18:31:59 -0700
-Message-ID: <20241024013214.129639-1-torvalds@linux-foundation.org>
-X-Mailer: git-send-email 2.46.1.608.gc56f2c11c8
+	s=arc-20240116; t=1729733586; c=relaxed/simple;
+	bh=k2cq9X8FcQ3DiSKMowaxFOUMbXDhyCTsmUQ82X2XlKQ=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=Ww5SaHhaCUke6vpX7e1QB12Ww4+IMTo4nY2QnDIl/ck9RAlDbw8wNxpHi7/fwB2AUd7xt3vaLcXPWlYBAU3EphKmegJMMnNZyyGMJwn8oECC3FwVCKWYUarGOpanv393jQ6Me40A3Bg75pLXng6POijymZIBwgVwzghDNFGU0N8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so5760895ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:33:03 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729733583; x=1730338383;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=5++g5B98p56VASAziMCXZCIVSreW3nHFT1dGjA6o7Q0=;
+        b=HmqbimJaMLCSBjnlpiRI0pUlv13J2VfgZSnl1WtthPIqsC+xfuXRZa2+G9Wby8L/ZT
+         qPa2VpdN64cS+Qn6B/m6OQWnnFOl8Tg1MjDOvVCEZBYnsHBiRwa8+RSCPCt1yak+2Ktu
+         LvYP/96IfXy/nMrrFt822jynfDfJ2coDBkUos219S6aOhcLGePE19AotnR8s7B+G3UhE
+         J42uj5yT0zl2dPnlkUMNBsDZ6dwdFPD1TwMI9H79NUoHpfA5znQNB7XqEhmpj5q6IWMj
+         sJzF0eHe/4acPQZ3zcVk90vufjP7KmuJ6fcxqDOakWvaX0DfHqOUHgCTrbdmpbfVZDt9
+         v2tw==
+X-Gm-Message-State: AOJu0YzLf8ntiVAfC5rBJJz5IGUExFGdqpUb+rg6psLPO6TRYm5nirm2
+	wKcbT8w4YVIE8R+kuH2852jVkjamw3pBV4ozeM3rrW4FZjoOmlYxL+pKEVLGiomMB/wdg3Eclh8
+	2CyJ1jPXP6uD7ouHReC2Ny6fZJfMG3k4BqUD2TRIRsXBpI4oL2PUtEdA=
+X-Google-Smtp-Source: AGHT+IEz5/xnCeigehBV6mIieOx4ON4U+OXozxeZEbHMaSpjCBlLWcSkEjHBB55CD3hP77z7qA4K+TyhtgAHQyaUswo08gPZ83zo
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:188f:b0:3a0:9244:191d with SMTP id
+ e9e14a558f8ab-3a4de8183d8mr3503295ab.16.1729733583118; Wed, 23 Oct 2024
+ 18:33:03 -0700 (PDT)
+Date: Wed, 23 Oct 2024 18:33:03 -0700
+In-Reply-To: <20241024011358.918019-1-lizhi.xu@windriver.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6719a3cf.050a0220.1e4b4d.0099.GAE@google.com>
+Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_reconstruct_alloc
+From: syzbot <syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, lizhi.xu@windriver.com, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-It turns out that AMD has a "Meltdown Lite(tm)" issue with non-canonical
-accesses in kernel space.  And so using just the high bit to decide
-whether an access is in user space or kernel space ends up with the good
-old "leak speculative data" if you have the right gadget using the
-result:
+Hello,
 
-  CVE-2020-12965 “Transient Execution of Non-Canonical Accesses“
+syzbot has tested the proposed patch but the reproducer is still triggering an issue:
+KASAN: slab-use-after-free Read in bch2_reconstruct_alloc
 
-Now, the kernel surrounds the access with a STAC/CLAC pair, and those
-instructions end up serializing execution on older Zen architectures,
-which closes the speculation window.
+bcachefs (loop0): starting version 1.7: mi_btree_bitmap opts=metadata_checksum=none,data_checksum=xxhash,str_hash=crc32c,nojournal_transaction_names,reconstruct_alloc,version_upgrade=none
+bcachefs (loop0): recovering from clean shutdown, journal seq 8
+bcachefs (loop0): dropping and reconstructing all alloc info
+==================================================================
+BUG: KASAN: slab-use-after-free in bch2_reconstruct_alloc+0x2aa/0xab0 fs/bcachefs/recovery.c:99
+Read of size 8 at addr ffff88802912cf58 by task syz.0.15/6007
 
-But that was true only up until Zen 5, which renames the AC bit [1].
-That improves performance of STAC/CLAC a lot, but also means that the
-speculation window is now open.
+CPU: 1 UID: 0 PID: 6007 Comm: syz.0.15 Not tainted 6.12.0-rc4-syzkaller-gc2ee9f594da8-dirty #0
+Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_address_description mm/kasan/report.c:377 [inline]
+ print_report+0x169/0x550 mm/kasan/report.c:488
+ kasan_report+0x143/0x180 mm/kasan/report.c:601
+ bch2_reconstruct_alloc+0x2aa/0xab0 fs/bcachefs/recovery.c:99
+ bch2_fs_recovery+0x12dd/0x39c0 fs/bcachefs/recovery.c:812
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f8421f7f79a
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 de 1a 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 a8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007f8422d09e68 EFLAGS: 00000246 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007f8422d09ef0 RCX: 00007f8421f7f79a
+RDX: 0000000020005b00 RSI: 0000000020005b40 RDI: 00007f8422d09eb0
+RBP: 0000000020005b00 R08: 00007f8422d09ef0 R09: 0000000000000000
+R10: 0000000000000000 R11: 0000000000000246 R12: 0000000020005b40
+R13: 00007f8422d09eb0 R14: 0000000000005b2d R15: 00000000200003c0
+ </TASK>
 
-Note that this affects not just the new address masking, but also the
-regular valid_user_address() check used by access_ok(), and the asm
-version of the sign bit check in the get_user() helpers.
+Allocated by task 6007:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ poison_kmalloc_redzone mm/kasan/common.c:377 [inline]
+ __kasan_kmalloc+0x98/0xb0 mm/kasan/common.c:394
+ kasan_kmalloc include/linux/kasan.h:257 [inline]
+ __do_kmalloc_node mm/slub.c:4264 [inline]
+ __kmalloc_node_track_caller_noprof+0x225/0x440 mm/slub.c:4283
+ __do_krealloc mm/slab_common.c:1220 [inline]
+ krealloc_noprof+0x88/0x120 mm/slab_common.c:1269
+ bch2_sb_realloc+0x2d2/0x660 fs/bcachefs/super-io.c:189
+ __copy_super+0x5dc/0xe70 fs/bcachefs/super-io.c:586
+ bch2_sb_to_fs+0xab/0x150 fs/bcachefs/super-io.c:613
+ bch2_fs_alloc fs/bcachefs/super.c:827 [inline]
+ bch2_fs_open+0x1693/0x2f80 fs/bcachefs/super.c:2064
+ bch2_fs_get_tree+0x738/0x1710 fs/bcachefs/fs.c:2161
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-It does not affect put_user() or clear_user() variants, since there's no
-speculative result to be used in a gadget for those operations.
+Freed by task 6007:
+ kasan_save_stack mm/kasan/common.c:47 [inline]
+ kasan_save_track+0x3f/0x80 mm/kasan/common.c:68
+ kasan_save_free_info+0x40/0x50 mm/kasan/generic.c:579
+ poison_slab_object mm/kasan/common.c:247 [inline]
+ __kasan_slab_free+0x59/0x70 mm/kasan/common.c:264
+ kasan_slab_free include/linux/kasan.h:230 [inline]
+ slab_free_hook mm/slub.c:2342 [inline]
+ slab_free mm/slub.c:4579 [inline]
+ kfree+0x1a0/0x440 mm/slub.c:4727
+ krealloc_noprof+0xec/0x120
+ bch2_sb_realloc+0x2d2/0x660 fs/bcachefs/super-io.c:189
+ bch2_sb_field_resize_id+0x140/0x7c0 fs/bcachefs/super-io.c:221
+ bch2_sb_counters_from_cpu+0xac/0x300 fs/bcachefs/sb-counters.c:67
+ bch2_write_super+0xe80/0x3c50 fs/bcachefs/super-io.c:976
+ bch2_reconstruct_alloc+0x291/0xab0 fs/bcachefs/recovery.c:97
+ bch2_fs_recovery+0x12dd/0x39c0 fs/bcachefs/recovery.c:812
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4057 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4034
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
 
-Reported-by: Andrew Cooper <andrew.cooper3@citrix.com>
-Link: https://lore.kernel.org/all/80d94591-1297-4afb-b510-c665efd37f10@citrix.com/
-Link: https://lore.kernel.org/all/20241023094448.GAZxjFkEOOF_DM83TQ@fat_crate.local/ [1]
-Link: https://www.amd.com/en/resources/product-security/bulletin/amd-sb-1010.html
-Link: https://arxiv.org/pdf/2108.10771
-Cc: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Fixes: 2865baf54077 ("x86: support user address masking instead of non-speculative conditional")
-Fixes: 6014bc27561f ("x86-64: make access_ok() independent of LAM")
-Fixes: b19b74bc99b1 ("x86/mm: Rework address range check in get_user() and put_user()")
-Signed-off-by: Linus Torvalds <torvalds@linux-foundation.org>
----
- arch/x86/include/asm/uaccess_64.h | 25 ++++++++++++++++++-------
- arch/x86/kernel/cpu/common.c      | 10 ++++++++++
- arch/x86/kernel/vmlinux.lds.S     |  1 +
- arch/x86/lib/getuser.S            |  9 +++++++--
- 4 files changed, 36 insertions(+), 9 deletions(-)
+The buggy address belongs to the object at ffff88802912c000
+ which belongs to the cache kmalloc-4k of size 4096
+The buggy address is located 3928 bytes inside of
+ freed 4096-byte region [ffff88802912c000, ffff88802912d000)
 
-diff --git a/arch/x86/include/asm/uaccess_64.h b/arch/x86/include/asm/uaccess_64.h
-index afce8ee5d7b7..c03d49c4fe54 100644
---- a/arch/x86/include/asm/uaccess_64.h
-+++ b/arch/x86/include/asm/uaccess_64.h
-@@ -12,6 +12,13 @@
- #include <asm/cpufeatures.h>
- #include <asm/page.h>
- #include <asm/percpu.h>
-+#include <asm/runtime-const.h>
-+
-+/*
-+ * Virtual variable: there's no actual backing store for this,
-+ * it can purely be used as 'runtime_const_ptr(USER_PTR_MAX)'
-+ */
-+extern unsigned long USER_PTR_MAX;
- 
- #ifdef CONFIG_ADDRESS_MASKING
- /*
-@@ -46,19 +53,23 @@ static inline unsigned long __untagged_addr_remote(struct mm_struct *mm,
- 
- #endif
- 
--/*
-- * The virtual address space space is logically divided into a kernel
-- * half and a user half.  When cast to a signed type, user pointers
-- * are positive and kernel pointers are negative.
-- */
--#define valid_user_address(x) ((__force long)(x) >= 0)
-+#define valid_user_address(x) \
-+	((__force unsigned long)(x) < runtime_const_ptr(USER_PTR_MAX))
- 
- /*
-  * Masking the user address is an alternative to a conditional
-  * user_access_begin that can avoid the fencing. This only works
-  * for dense accesses starting at the address.
-  */
--#define mask_user_address(x) ((typeof(x))((long)(x)|((long)(x)>>63)))
-+static inline void __user *mask_user_address(const void __user *ptr)
-+{
-+	void __user *ret;
-+	asm("cmp %1,%0; sbb %0,%0; or %1,%0"
-+		:"=r" (ret)
-+		:"r" (ptr),
-+		 "0" (runtime_const_ptr(USER_PTR_MAX)));
-+	return ret;
-+}
- #define masked_user_access_begin(x) ({				\
- 	__auto_type __masked_ptr = (x);				\
- 	__masked_ptr = mask_user_address(__masked_ptr);		\
-diff --git a/arch/x86/kernel/cpu/common.c b/arch/x86/kernel/cpu/common.c
-index f1040cb64841..d671f78f658e 100644
---- a/arch/x86/kernel/cpu/common.c
-+++ b/arch/x86/kernel/cpu/common.c
-@@ -69,6 +69,7 @@
- #include <asm/sev.h>
- #include <asm/tdx.h>
- #include <asm/posted_intr.h>
-+#include <asm/runtime-const.h>
- 
- #include "cpu.h"
- 
-@@ -2389,6 +2390,15 @@ void __init arch_cpu_finalize_init(void)
- 	alternative_instructions();
- 
- 	if (IS_ENABLED(CONFIG_X86_64)) {
-+		unsigned long USER_PTR_MAX = TASK_SIZE_MAX;
-+
-+		/*
-+		 * Enable this when LAM is gated on LASS support
-+		if (cpu_feature_enabled(X86_FEATURE_LAM))
-+			USER_PTR_MAX = (1ul << 63) - PAGE_SIZE;
-+		 */
-+		runtime_const_init(ptr, USER_PTR_MAX);
-+
- 		/*
- 		 * Make sure the first 2MB area is not mapped by huge pages
- 		 * There are typically fixed size MTRRs in there and overlapping
-diff --git a/arch/x86/kernel/vmlinux.lds.S b/arch/x86/kernel/vmlinux.lds.S
-index 6726be89b7a6..b8c5741d2fb4 100644
---- a/arch/x86/kernel/vmlinux.lds.S
-+++ b/arch/x86/kernel/vmlinux.lds.S
-@@ -358,6 +358,7 @@ SECTIONS
- #endif
- 
- 	RUNTIME_CONST_VARIABLES
-+	RUNTIME_CONST(ptr, USER_PTR_MAX)
- 
- 	. = ALIGN(PAGE_SIZE);
- 
-diff --git a/arch/x86/lib/getuser.S b/arch/x86/lib/getuser.S
-index d066aecf8aeb..4357ec2a0bfc 100644
---- a/arch/x86/lib/getuser.S
-+++ b/arch/x86/lib/getuser.S
-@@ -39,8 +39,13 @@
- 
- .macro check_range size:req
- .if IS_ENABLED(CONFIG_X86_64)
--	mov %rax, %rdx
--	sar $63, %rdx
-+	movq $0x0123456789abcdef,%rdx
-+  1:
-+  .pushsection runtime_ptr_USER_PTR_MAX,"a"
-+	.long 1b - 8 - .
-+  .popsection
-+	cmp %rax, %rdx
-+	sbb %rdx, %rdx
- 	or %rdx, %rax
- .else
- 	cmp $TASK_SIZE_MAX-\size+1, %eax
--- 
-2.46.1.608.gc56f2c11c8
+The buggy address belongs to the physical page:
+page: refcount:1 mapcount:0 mapping:0000000000000000 index:0x0 pfn:0x29128
+head: order:3 mapcount:0 entire_mapcount:0 nr_pages_mapped:0 pincount:0
+flags: 0xfff00000000040(head|node=0|zone=1|lastcpupid=0x7ff)
+page_type: f5(slab)
+raw: 00fff00000000040 ffff88801ac42140 dead000000000100 dead000000000122
+raw: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 00fff00000000040 ffff88801ac42140 dead000000000100 dead000000000122
+head: 0000000000000000 0000000000040004 00000001f5000000 0000000000000000
+head: 00fff00000000003 ffffea0000a44a01 ffffffffffffffff 0000000000000000
+head: 0000000000000008 0000000000000000 00000000ffffffff 0000000000000000
+page dumped because: kasan: bad access detected
+page_owner tracks the page as allocated
+page last allocated via order 3, migratetype Unmovable, gfp_mask 0xd2040(__GFP_IO|__GFP_NOWARN|__GFP_NORETRY|__GFP_COMP|__GFP_NOMEMALLOC), pid 4894, tgid 4894 (sh), ts 27374338740, free_ts 27344707881
+ set_page_owner include/linux/page_owner.h:32 [inline]
+ post_alloc_hook+0x1f3/0x230 mm/page_alloc.c:1537
+ prep_new_page mm/page_alloc.c:1545 [inline]
+ get_page_from_freelist+0x3045/0x3190 mm/page_alloc.c:3457
+ __alloc_pages_noprof+0x292/0x710 mm/page_alloc.c:4733
+ alloc_pages_mpol_noprof+0x3e8/0x680 mm/mempolicy.c:2265
+ alloc_slab_page+0x6a/0x120 mm/slub.c:2412
+ allocate_slab+0x5a/0x2f0 mm/slub.c:2578
+ new_slab mm/slub.c:2631 [inline]
+ ___slab_alloc+0xcd1/0x14b0 mm/slub.c:3818
+ __slab_alloc+0x58/0xa0 mm/slub.c:3908
+ __slab_alloc_node mm/slub.c:3961 [inline]
+ slab_alloc_node mm/slub.c:4122 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x25a/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ tomoyo_realpath_from_path+0xcf/0x5e0 security/tomoyo/realpath.c:251
+ tomoyo_realpath_nofollow+0xba/0x100 security/tomoyo/realpath.c:304
+ tomoyo_find_next_domain+0x27c/0x1d40 security/tomoyo/domain.c:726
+ tomoyo_bprm_check_security+0x114/0x180 security/tomoyo/tomoyo.c:102
+ security_bprm_check+0x86/0x250 security/security.c:1297
+ search_binary_handler fs/exec.c:1740 [inline]
+ exec_binprm fs/exec.c:1794 [inline]
+ bprm_execve+0xa56/0x1770 fs/exec.c:1845
+ do_execveat_common+0x55f/0x6f0 fs/exec.c:1952
+page last free pid 4893 tgid 4893 stack trace:
+ reset_page_owner include/linux/page_owner.h:25 [inline]
+ free_pages_prepare mm/page_alloc.c:1108 [inline]
+ free_unref_page+0xcfb/0xf20 mm/page_alloc.c:2638
+ discard_slab mm/slub.c:2677 [inline]
+ __put_partials+0xeb/0x130 mm/slub.c:3145
+ put_cpu_partial+0x17c/0x250 mm/slub.c:3220
+ __slab_free+0x2ea/0x3d0 mm/slub.c:4449
+ qlink_free mm/kasan/quarantine.c:163 [inline]
+ qlist_free_all+0x9a/0x140 mm/kasan/quarantine.c:179
+ kasan_quarantine_reduce+0x14f/0x170 mm/kasan/quarantine.c:286
+ __kasan_slab_alloc+0x23/0x80 mm/kasan/common.c:329
+ kasan_slab_alloc include/linux/kasan.h:247 [inline]
+ slab_post_alloc_hook mm/slub.c:4085 [inline]
+ slab_alloc_node mm/slub.c:4134 [inline]
+ __do_kmalloc_node mm/slub.c:4263 [inline]
+ __kmalloc_noprof+0x1a6/0x400 mm/slub.c:4276
+ kmalloc_noprof include/linux/slab.h:882 [inline]
+ kzalloc_noprof include/linux/slab.h:1014 [inline]
+ tomoyo_init_log+0x1b3d/0x2050 security/tomoyo/audit.c:275
+ tomoyo_supervisor+0x38a/0x11f0 security/tomoyo/common.c:2089
+ tomoyo_audit_env_log security/tomoyo/environ.c:36 [inline]
+ tomoyo_env_perm+0x178/0x210 security/tomoyo/environ.c:63
+ tomoyo_environ security/tomoyo/domain.c:672 [inline]
+ tomoyo_find_next_domain+0x146e/0x1d40 security/tomoyo/domain.c:881
+ tomoyo_bprm_check_security+0x114/0x180 security/tomoyo/tomoyo.c:102
+ security_bprm_check+0x86/0x250 security/security.c:1297
+ search_binary_handler fs/exec.c:1740 [inline]
+ exec_binprm fs/exec.c:1794 [inline]
+ bprm_execve+0xa56/0x1770 fs/exec.c:1845
+ do_execveat_common+0x55f/0x6f0 fs/exec.c:1952
+
+Memory state around the buggy address:
+ ffff88802912ce00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802912ce80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+>ffff88802912cf00: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+                                                    ^
+ ffff88802912cf80: fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb fb
+ ffff88802912d000: fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc fc
+==================================================================
+
+
+Tested on:
+
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=160dcc30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=9fc4dac4775d07bcfe34
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=11e5cc30580000
 
 
