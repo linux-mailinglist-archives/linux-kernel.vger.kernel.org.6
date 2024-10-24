@@ -1,143 +1,164 @@
-Return-Path: <linux-kernel+bounces-379985-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379987-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0270B9AE6C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:37:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 018749AE6CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:37:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 29BCF1C22D3D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:37:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEE41F27BD9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:37:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A4AB1FBF58;
-	Thu, 24 Oct 2024 13:32:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D791F7084;
+	Thu, 24 Oct 2024 13:32:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="H6lZmS94"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xdRcTUkU"
+Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEFC01F667E;
-	Thu, 24 Oct 2024 13:32:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846471EF097;
+	Thu, 24 Oct 2024 13:32:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776730; cv=none; b=QRlxPmfX6wE1goEfTo9WUegGU/b+gLmXqA99MvXnz6z8l4T7vIHoo/8RIZV5XKfGbMoKW1M8ST17zWPwLzXjyKUa0/jWxHNAGU0f6bUVL1r299/9fkNY6KP+K+XfTk6y5fGmfmHIBz6KvUj55ofNrsNKygTZ/ZEfcjLjjlp4Egc=
+	t=1729776769; cv=none; b=ecpy1p8Hr3wHGdmp4C0/wg0i9MzDGdt26mt1521lJoY9EEBP/sWg11eDQQT4gKZgQBifRweSfRW5eMdHxN7D6MKZl7UwzqFN0BLEH4fLJ0RhHwWMbwrbdMEZRlgvgb2EjBSTsO8r0caQByTjfj8U4kP8DZ0HLAZJOmevVIMNFc0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776730; c=relaxed/simple;
-	bh=Mn2pmr6wwJiDzx8Q+vyNXKeaGJlP9Z5kxfsmkd+Ur1Q=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:References:
-	 In-Reply-To:To:CC; b=nPpM/dhUWIcXZgWK8GbWOftBwVWUZymlEykEBbYdT9959V93tCcSl2mP+plcEWKduaFWW0tlqyIaTJMLjW1NfwKOcAV6hJfBGTULyZ8i0suahhQJ1iRoDuFleoVhP8pKJu4ecP+4WioD6ON0HPXB0T6/jtwfcPJYiWc7/PGk7EA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=H6lZmS94; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9aJeJ028304;
-	Thu, 24 Oct 2024 13:32:05 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	ZtMlp4gGjKBW6FEZSa2ElwA4XN8uyE3U9LyxPPYzKiI=; b=H6lZmS947vbQ2sgJ
-	2lCXgGmmBn6VUVLj1ozFz/C2WU1woQ4entH57AwUx2yjPzaVNq+Av886d0Umv0KU
-	Gu/QQCPJycPVRsYe6Vo+v/NM454CK4afZjXx6ELQW1Lzz36wXmXQZmGhbBEskjYB
-	S/mbbG+RNSnYQkhrkt2T4oWhbmw//S00mBVLJRPg47fSNiXVa7gfMZsH683pGcMO
-	EDrujaTwioW8Rxshwy2fsTp9QryDLUl0CDfLJ4t1u22KM4mHH2o/rmZbzzL3QEEG
-	Ei215/+CWO2Uzr7OGAdktecujm59Wqy5HQENhOpV8hK1cLgCoc6ZWa4cGVHMMBUg
-	f0pVog==
-Received: from nasanppmta01.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41wr25-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 13:32:05 +0000 (GMT)
-Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
-	by NASANPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ODW4K3011643
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 13:32:04 GMT
-Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
- nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 24 Oct 2024 06:32:00 -0700
-From: Imran Shaik <quic_imrashai@quicinc.com>
-Date: Thu, 24 Oct 2024 19:01:19 +0530
-Subject: [PATCH v2 6/6] clk: qcom: Add support for Video Clock Controller
- on QCS8300
+	s=arc-20240116; t=1729776769; c=relaxed/simple;
+	bh=paS26i/SjF5cRqBIozfje/J0XyE2H4LFuZCbWxcOlWA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1Tfb2pMtQYRzR4eQghkDUXn02nD9BB8HfI6hX8F4avpQnzW3Iv4yqAqSW6c5fCpUi8WBICvex45AYa623GmPuwwEf3+BCspx5bqpgFXcHMmSEe0u4eMAb+DdSHi+I9MvH9VMtiFvyw+QtUf29IUkFYzE++8YRxDvpRt0EqwzF4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xdRcTUkU; arc=none smtp.client-ip=185.11.138.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
+	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	List-Subscribe:List-Post:List-Owner:List-Archive;
+	bh=OntcF2LDcuLBkXSM2En+JfGB3Jl5eFSXxvJ7ANnr81Q=; b=xdRcTUkUw6WtN9ur1eJvgRfwKW
+	HwV0UPL3m6H94N6HpfdGUpWgpc/MbDOWUszVPhYhs4503kN/0wGNBNFIRwZ5i1RKN6UMsiQJ7qYIf
+	3BJbJiOU/qj1YYkTWN5OVxmHtEPci4859fe6VswhX9ty/B21HuxGBftaeiiATGf2Bo0d/9C8euVvK
+	o8NvESGfQXl0KITPYyHlAaM8lr5D51Yzv/vN7YFBLD6Z8+sP2D+1Jx2l9qOjj5lhvXGFA0DbSKz2E
+	eH+Og/n+fu3FMjMNC3R+Dlt6mVVxYaKbF4Skfzk1uemvxGSFKX780ZeT9w0swcA5dh9gztacLQt1Y
+	esKMx2NQ==;
+Received: from i53875b34.versanet.de ([83.135.91.52] helo=phil.lan)
+	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <heiko@sntech.de>)
+	id 1t3xxD-0007hQ-AY; Thu, 24 Oct 2024 15:32:43 +0200
+From: Heiko Stuebner <heiko@sntech.de>
+To: heiko@sntech.de
+Cc: quentin.schulz@cherry.de,
+	devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-rockchip@lists.infradead.org,
+	linux-kernel@vger.kernel.org,
+	Heiko Stuebner <heiko.stuebner@cherry.de>
+Subject: [PATCH 1/2] arm64: dts: rockchip: add HDMI support to rk3588-tiger-haikou
+Date: Thu, 24 Oct 2024 15:32:39 +0200
+Message-ID: <20241024133240.1737647-1-heiko@sntech.de>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241024-qcs8300-mm-patches-v2-6-76c905060d0a@quicinc.com>
-References: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
-In-Reply-To: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
-To: Bjorn Andersson <andersson@kernel.org>,
-        Michael Turquette
-	<mturquette@baylibre.com>,
-        Stephen Boyd <sboyd@kernel.org>, Rob Herring
-	<robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
-	<conor+dt@kernel.org>
-CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
-        Jagadeesh Kona <quic_jkona@quicinc.com>,
-        Satya Priya Kakitapalli
-	<quic_skakitap@quicinc.com>,
-        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
-        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-        Imran Shaik <quic_imrashai@quicinc.com>
-X-Mailer: b4 0.14.1
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01a.na.qualcomm.com (10.52.223.231)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: ceIQ2rEd0lUguhqMY5t8TUoA8Qz6iBE5
-X-Proofpoint-ORIG-GUID: ceIQ2rEd0lUguhqMY5t8TUoA8Qz6iBE5
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240110
+Content-Transfer-Encoding: 8bit
 
-Add support to the QCS8300 Video clock controller by extending
-the SA8775P Video clock controller, which is mostly identical
-but QCS8300 has minor difference.
+From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+The Haikou baseboard has an hdmi output port, which is connected
+via the Q7 connector to the hdmi0 controller of the rk3588.
+
+Add the necessary plumbing to enable it using the recently merged
+hdmi-qp controller.
+
+Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 ---
- drivers/clk/qcom/videocc-sa8775p.c | 8 ++++++++
- 1 file changed, 8 insertions(+)
+ .../boot/dts/rockchip/rk3588-tiger-haikou.dts | 50 +++++++++++++++++++
+ 1 file changed, 50 insertions(+)
 
-diff --git a/drivers/clk/qcom/videocc-sa8775p.c b/drivers/clk/qcom/videocc-sa8775p.c
-index bf5de411fd5d..db492984fd7d 100644
---- a/drivers/clk/qcom/videocc-sa8775p.c
-+++ b/drivers/clk/qcom/videocc-sa8775p.c
-@@ -523,6 +523,7 @@ static struct qcom_cc_desc video_cc_sa8775p_desc = {
- };
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
+index e4b7a0a4444b..e3596341b816 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
+@@ -5,6 +5,7 @@
  
- static const struct of_device_id video_cc_sa8775p_match_table[] = {
-+	{ .compatible = "qcom,qcs8300-videocc" },
- 	{ .compatible = "qcom,sa8775p-videocc" },
- 	{ }
- };
-@@ -550,6 +551,13 @@ static int video_cc_sa8775p_probe(struct platform_device *pdev)
- 	clk_lucid_evo_pll_configure(&video_pll0, regmap, &video_pll0_config);
- 	clk_lucid_evo_pll_configure(&video_pll1, regmap, &video_pll1_config);
+ /dts-v1/;
+ #include <dt-bindings/input/input.h>
++#include <dt-bindings/soc/rockchip,vop2.h>
+ #include "rk3588-tiger.dtsi"
  
-+	/*
-+	 * Set mvs0c clock divider to div-3 to make the mvs0 and
-+	 * mvs0c clocks to run at the same frequency on QCS8300
-+	 */
-+	if (of_device_is_compatible(pdev->dev.of_node, "qcom,qcs8300-videocc"))
-+		regmap_write(regmap, video_cc_mvs0c_div2_div_clk_src.reg, 2);
+ / {
+@@ -61,6 +62,17 @@ switch-lid-btn-n {
+ 		};
+ 	};
+ 
++	hdmi-con {
++		compatible = "hdmi-connector";
++		type = "a";
 +
- 	/* Keep some clocks always enabled */
- 	qcom_branch_set_clk_en(regmap, 0x80ec); /* VIDEO_CC_AHB_CLK */
- 	qcom_branch_set_clk_en(regmap, 0x8144); /* VIDEO_CC_SLEEP_CLK */
-
++		port {
++			hdmi_con_in: endpoint {
++				remote-endpoint = <&hdmi0_out_con>;
++			};
++		};
++	};
++
+ 	i2s3-sound {
+ 		compatible = "simple-audio-card";
+ 		simple-audio-card,format = "i2s";
+@@ -155,6 +167,29 @@ &gmac0 {
+ 	status = "okay";
+ };
+ 
++&hdmi0 {
++	/* No CEC on Haikou */
++	pinctrl-names = "default";
++	pinctrl-0 = <&hdmim0_tx0_hpd &hdmim1_tx0_scl &hdmim1_tx0_sda>;
++	status = "okay";
++};
++
++&hdmi0_in {
++	hdmi0_in_vp0: endpoint {
++		remote-endpoint = <&vp0_out_hdmi0>;
++	};
++};
++
++&hdmi0_out {
++	hdmi0_out_con: endpoint {
++		remote-endpoint = <&hdmi_con_in>;
++	};
++};
++
++&hdptxphy_hdmi0 {
++	status = "okay";
++};
++
+ &i2c1 {
+ 	status = "okay";
+ 
+@@ -321,3 +356,18 @@ &usb_host1_xhci {
+ &usb_host2_xhci {
+ 	status = "okay";
+ };
++
++&vop {
++	status = "okay";
++};
++
++&vop_mmu {
++	status = "okay";
++};
++
++&vp0 {
++	vp0_out_hdmi0: endpoint@ROCKCHIP_VOP2_EP_HDMI0 {
++		reg = <ROCKCHIP_VOP2_EP_HDMI0>;
++		remote-endpoint = <&hdmi0_in_vp0>;
++	};
++};
 -- 
-2.25.1
+2.45.2
 
 
