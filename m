@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-379448-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379449-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A05909ADEBE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:16:44 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CA7CD9ADEC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:16:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 59272286BC6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:16:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 497211F234F9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:16:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1543A1D0E11;
-	Thu, 24 Oct 2024 08:11:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 767841D319B;
+	Thu, 24 Oct 2024 08:12:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NkGfUq5K"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cUFdVI2o"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2424E1CF2A4;
-	Thu, 24 Oct 2024 08:11:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F99E1CFECF;
+	Thu, 24 Oct 2024 08:11:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757517; cv=none; b=Wcyqjr7dUFHMr8z8t8Yy6fJ93ceD5EOakxlDMvAHOfAGgV9W4M6aS9y107V6skKL1qx0XAQKolqIotWTi4HoTSapx/SrD/uFMKY1KpO98ry948jnj5q0xRIBpKGwS8x5bt77J+wBkBQI8BhxJtMjYrc2PNEHC96RNIzL5jRkhPc=
+	t=1729757519; cv=none; b=iAcu5agIFG+Xvz0U1vMhG0d9RlDzev8n5glzaO8mxLLKKNbYBca3yIvYEoYM7FyxR92q8GBMCeUK5J5TyJ/juzyUi/PAXH573wNZLjiSjxBTdfq0CiYaf2pYnWko7cyElqmNwSTbaxG00Mtu61k2k+HH5iD2CUXoN/SgD2Ym11w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757517; c=relaxed/simple;
-	bh=jKcTbpu0yx48Oo7kn+lKZ4Peipb412R0jRYzrX+F444=;
+	s=arc-20240116; t=1729757519; c=relaxed/simple;
+	bh=x0uDvN0LiEIGKnBbbkpHzikuMA2H3McSz3NIcjKGs38=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=VWIeJtSOiqTOVXaaSSnOWwj85L2nlq2HvUlUg4jO1FrCx85UneHhOPvbHyioDUoYnnFymHCBM+YYAVwOdxMA6MVyzbabBWFXq+IDfQsQANXWR3RE/hRk9g3yeQ0wny21VnaWlapgIDhda6TAdpxWdqmfpr0nLie6acqe9FKqDA0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NkGfUq5K; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=jBOnbIM1b5k4BBhX/LwkLwSLLCZrZRoLycHCrM90S5+L6yvKTvaovZRh9cg3QldQS8T6baIWzJkDTk9DxwyfPxlro9LHap58CA12XPnpMVnuZB9eUWxcRkIs4TpljRM5FLKo60BQFGoLHtJUTdZeRUoszXAmHjee3xwjLF83eKw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cUFdVI2o; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729757515; x=1761293515;
+  t=1729757517; x=1761293517;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=jKcTbpu0yx48Oo7kn+lKZ4Peipb412R0jRYzrX+F444=;
-  b=NkGfUq5K5IIv7Tx1yatHEpbkNNvMWBytF2IErNmV0dQzsG3A6NDlgrbP
-   DBTlA8x9ajusCVWUoFb/fKVKQr5CSaKY0aFQbNN6tTIMRoD3hAbbpUA/k
-   AKZzOJHJ8M2lD/ckuU5zj1ahD92uqF9RVLF/mqJ+7TBRtAFtw3Ye8UFQ0
-   h6aEmD0rTeBJkMPL0/Eh7tFhRhulKRaRsr6tr3JQMI2ZvxYVTMxO6rbl8
-   tZPv6yQorlRUNi4tHV81vYLTKxHz0QR8rFi4erQunWHhjo2ORYHyfcN93
-   giaZjoLa1RfR1b2GPwsk4DNDG9HYfBH5hllt4Kfb6BWSDhTd/C+smyg7j
-   A==;
-X-CSE-ConnectionGUID: QJisZj34S2yNFPFTiAgYsA==
-X-CSE-MsgGUID: 0MF+zaX3Qi20rkq1Thm+kg==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29501157"
+  bh=x0uDvN0LiEIGKnBbbkpHzikuMA2H3McSz3NIcjKGs38=;
+  b=cUFdVI2ouuoC/MhdV6qI6zyxcYUuTP87aHjx/mcEwww/tWtNMURLKSXd
+   tJ4Wo2rIqDUQcGbOixGPbJDo2u4wy3qwDZNtx1nR1+mQNhkiaFEjsRf9c
+   b3xGNVoBnSP7yUBlYBL1LDrA5j++Vzr+maURteOPABhO0XHpmuCCGqZS5
+   ZnuXTVmojaJx8+rmDDHrMUHDYHWKzghb4eRfQHsroMA6Sm3xY0E5bBiTb
+   9MEMmAgKIvzoBAhrmuTPQZMU3jHCH7HtueTSYM0kxtZUNJISbeJChnSQT
+   sqJisOxPjnEcGzSHeuscKLWaPSy1KmM87JF79ZIPJ5Nq/ynuduBe539gM
+   Q==;
+X-CSE-ConnectionGUID: LGUxjtJcR+mru7KccJFCag==
+X-CSE-MsgGUID: 7BnOFrb0Q2GU/TawW6CD1Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29501164"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29501157"
+   d="scan'208";a="29501164"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:11:53 -0700
-X-CSE-ConnectionGUID: AXmFCrsWRz6AIpbbNtfbiA==
-X-CSE-MsgGUID: JCY5s+5UQviTcpUAXtPy2A==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:11:57 -0700
+X-CSE-ConnectionGUID: MkQPnStVRQaqyhYQODGAzA==
+X-CSE-MsgGUID: weOAuKdGRy2XOXXc7O56TQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="80691056"
+   d="scan'208";a="80691086"
 Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
-  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 01:11:50 -0700
+  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 01:11:53 -0700
 From: Even Xu <even.xu@intel.com>
 To: jikos@kernel.org,
 	bentiss@kernel.org,
@@ -68,9 +68,9 @@ Cc: linux-input@vger.kernel.or,
 	Xinpeng Sun <xinpeng.sun@intel.com>,
 	Rui Zhang <rui1.zhang@intel.com>,
 	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v1 20/22] HID: intel-thc-hid: intel-quicki2c: Add HIDI2C protocol implementation
-Date: Thu, 24 Oct 2024 16:10:21 +0800
-Message-Id: <20241024081023.1468951-21-even.xu@intel.com>
+Subject: [PATCH v1 21/22] HID: intel-thc-hid: intel-quicki2c: Complete THC QuickI2C driver
+Date: Thu, 24 Oct 2024 16:10:22 +0800
+Message-Id: <20241024081023.1468951-22-even.xu@intel.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20241024081023.1468951-1-even.xu@intel.com>
 References: <20241024081023.1468951-1-even.xu@intel.com>
@@ -82,14 +82,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Intel QuickI2C driver uses THC hardware to accelerate HID over I2C
-(HIDI2C) protocol flow.
-
-This patch implements all data flows described in HID over I2C protocol
-SPEC by using THC hardware layer APIs.
-
-HID over I2C SPEC:
-https://learn.microsoft.com/en-us/previous-versions/windows/hardware/design/dn642101(v=vs.85)
+Fully implement QuickI2C driver probe/remove callbacks, interrupt
+handler, integrate HIDI2C protocol, enumerate HID device and register
+HID device.
 
 Co-developed-by: Xinpeng Sun <xinpeng.sun@intel.com>
 Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
@@ -97,402 +92,457 @@ Signed-off-by: Even Xu <even.xu@intel.com>
 Tested-by: Rui Zhang <rui1.zhang@intel.com>
 Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- drivers/hid/intel-thc-hid/Makefile            |   1 +
+ .../intel-quicki2c/pci-quicki2c.c             | 271 ++++++++++++++++++
  .../intel-quicki2c/quicki2c-dev.h             |   6 +
- .../intel-quicki2c/quicki2c-hid.c             |  18 +-
- .../intel-quicki2c/quicki2c-protocol.c        | 192 ++++++++++++++++++
- .../intel-quicki2c/quicki2c-protocol.h        |  19 ++
- include/linux/hid-over-i2c.h                  |  73 +++++++
- 6 files changed, 308 insertions(+), 1 deletion(-)
- create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
- create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
+ .../intel-quicki2c/quicki2c-protocol.c        |  27 ++
+ .../intel-quicki2c/quicki2c-protocol.h        |   1 +
+ 4 files changed, 305 insertions(+)
 
-diff --git a/drivers/hid/intel-thc-hid/Makefile b/drivers/hid/intel-thc-hid/Makefile
-index 91bde6d6aa14..6f762d87af07 100644
---- a/drivers/hid/intel-thc-hid/Makefile
-+++ b/drivers/hid/intel-thc-hid/Makefile
-@@ -17,5 +17,6 @@ intel-quickspi-objs += intel-quickspi/quickspi-protocol.o
- obj-$(CONFIG_INTEL_QUICKI2C) += intel-quicki2c.o
- intel-quicki2c-objs += intel-quicki2c/pci-quicki2c.o
- intel-quicki2c-objs += intel-quicki2c/quicki2c-hid.o
-+intel-quicki2c-objs += intel-quicki2c/quicki2c-protocol.o
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+index 035d0f5ce3b8..0c1082f0da34 100644
+--- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+@@ -8,11 +8,14 @@
+ #include <linux/interrupt.h>
+ #include <linux/irqreturn.h>
+ #include <linux/pci.h>
++#include <linux/sizes.h>
  
- ccflags-y += -I $(src)/intel-thc
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-index 59907e59b96f..043126803997 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-@@ -134,6 +134,9 @@ struct acpi_device;
-  * @i2c_clock_hcnt: I2C CLK high period time (unit in cycle count)
-  * @i2c_clock_lcnt: I2C CLK low period time (unit in cycle count)
-  * @report_descriptor: store a copy of device report descriptor
-+ * @input_buf: store a copy of latest input report data
-+ * @report_buf: store a copy of latest input/output report packet from set/get feature
-+ * @report_len: the length of input/output report packet
-  */
- struct quicki2c_device {
- 	struct device *dev;
-@@ -157,6 +160,9 @@ struct quicki2c_device {
- 	u32 i2c_clock_lcnt;
- 
- 	u8 *report_descriptor;
-+	u8 *input_buf;
-+	u8 *report_buf;
-+	u32 report_len;
- };
- 
- #endif /* _QUICKI2C_DEV_H_ */
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
-index 4236603f3f76..e8e6f10b7952 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
-@@ -6,6 +6,7 @@
+ #include "intel-thc-dev.h"
+ #include "intel-thc-hw.h"
  
  #include "quicki2c-dev.h"
- #include "quicki2c-hid.h"
-+#include "quicki2c-protocol.h"
- 
- /**
-  * quicki2c_hid_parse() - HID core parse() callback
-@@ -51,7 +52,22 @@ static int quicki2c_hid_raw_request(struct hid_device *hid,
- 				    __u8 *buf, size_t len,
- 				    unsigned char rtype, int reqtype)
- {
--	return 0;
-+	struct quicki2c_device *qcdev = hid->driver_data;
-+	int ret = 0;
-+
-+	switch (reqtype) {
-+	case HID_REQ_GET_REPORT:
-+		ret = quicki2c_get_report(qcdev, rtype, reportnum, buf, len);
-+		break;
-+	case HID_REQ_SET_REPORT:
-+		ret = quicki2c_set_report(qcdev, rtype, reportnum, buf, len);
-+		break;
-+	default:
-+		dev_err(qcdev->dev, "Not supported request type %d\n", reqtype);
-+		break;
-+	}
-+
-+	return ret;
- }
- 
- static int quicki2c_hid_power(struct hid_device *hid, int lvl)
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
-new file mode 100644
-index 000000000000..6e6463abe894
---- /dev/null
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
-@@ -0,0 +1,192 @@
-+/* SPDX-License-Identifier: GPL-2.0-only */
-+/* Copyright (c) 2024 Intel Corporation */
-+
-+#include <linux/bitfield.h>
-+#include <linux/hid.h>
-+#include <linux/hid-over-i2c.h>
-+
-+#include "intel-thc-dev.h"
-+#include "intel-thc-dma.h"
-+
-+#include "quicki2c-dev.h"
 +#include "quicki2c-hid.h"
 +#include "quicki2c-protocol.h"
-+
-+static int quicki2c_init_write_buf(struct quicki2c_device *qcdev, u32 cmd, int cmd_len,
-+				   bool append_data_reg, u8 *data, int data_len,
-+				   u8 *write_buf, int write_buf_len)
+ 
+ /* THC QuickI2C ACPI method to get device properties */
+ /* HIDI2C device method */
+@@ -210,6 +213,69 @@ static irqreturn_t quicki2c_irq_quick_handler(int irq, void *dev_id)
+ 	return IRQ_WAKE_THREAD;
+ }
+ 
++/**
++ * try_recover - Try to recovery THC and Device
++ * @qcdev: pointer to quicki2c device
++ *
++ * This function is a error handler, called when fatal error happens.
++ * It try to reset Touch Device and re-configure THC to recovery
++ * transferring between Device and THC.
++ *
++ * Return: 0 if successful or error code on failed
++ */
++static int try_recover(struct quicki2c_device *qcdev)
 +{
-+	int buf_len, offset = 0;
-+
-+	buf_len = HIDI2C_REG_LEN + cmd_len;
-+
-+	if (append_data_reg)
-+		buf_len += HIDI2C_REG_LEN;
-+
-+	if (data && data_len)
-+		buf_len += data_len;
-+
-+	if (buf_len > write_buf_len)
-+		return -EINVAL;
-+
-+	memcpy(write_buf, &qcdev->dev_desc.cmd_reg, HIDI2C_REG_LEN);
-+	offset += HIDI2C_REG_LEN;
-+	memcpy(write_buf + offset, &cmd, cmd_len);
-+	offset += cmd_len;
-+
-+	if (append_data_reg) {
-+		memcpy(write_buf + offset, &qcdev->dev_desc.data_reg, HIDI2C_REG_LEN);
-+		offset += HIDI2C_REG_LEN;
-+	}
-+
-+	if (data && data_len)
-+		memcpy(write_buf + offset, data, data_len);
-+
-+	return buf_len;
-+}
-+
-+static int quicki2c_encode_cmd(struct quicki2c_device *qcdev, u32 *cmd_buf,
-+			       u8 opcode, u8 report_type, u8 report_id)
-+{
-+	int cmd_len;
-+
-+	*cmd_buf = FIELD_PREP(HIDI2C_CMD_OPCODE, opcode) |
-+		   FIELD_PREP(HIDI2C_CMD_REPORT_TYPE, report_type);
-+
-+	if (report_id < HIDI2C_CMD_MAX_RI) {
-+		*cmd_buf |= FIELD_PREP(HIDI2C_CMD_REPORT_ID, report_id);
-+		cmd_len = HIDI2C_CMD_LEN;
-+	} else {
-+		*cmd_buf |= FIELD_PREP(HIDI2C_CMD_REPORT_ID, HIDI2C_CMD_MAX_RI) |
-+			    FIELD_PREP(HIDI2C_CMD_3RD_BYTE, report_id);
-+		cmd_len = HIDI2C_CMD_LEN_OPT;
-+	}
-+
-+	return cmd_len;
-+}
-+
-+static int write_cmd_to_txdma(struct quicki2c_device *qcdev, int opcode,
-+			      int report_type, int report_id, u8 *buf, int buf_len)
-+{
-+	size_t write_buf_len;
-+	int cmd_len, ret;
-+	u32 cmd;
-+
-+	cmd_len = quicki2c_encode_cmd(qcdev, &cmd, opcode, report_type, report_id);
-+
-+	ret = quicki2c_init_write_buf(qcdev, cmd, cmd_len, buf ? true : false, buf,
-+				      buf_len, qcdev->report_buf, qcdev->report_len);
-+	if (ret < 0)
-+		return ret;
-+
-+	write_buf_len = ret;
-+
-+	return thc_dma_write(qcdev->thc_hw, qcdev->report_buf, write_buf_len);
-+}
-+
-+int quicki2c_set_power(struct quicki2c_device *qcdev, enum hidi2c_power_state power_state)
-+{
-+	return write_cmd_to_txdma(qcdev, HIDI2C_SET_POWER, HIDI2C_RESERVED, power_state, NULL, 0);
-+}
-+
-+int quicki2c_get_device_descriptor(struct quicki2c_device *qcdev)
-+{
-+	u32 read_len = 0;
 +	int ret;
 +
-+	ret = thc_tic_pio_write_and_read(qcdev->thc_hw, qcdev->hid_desc_addr,
-+					 HIDI2C_REG_LEN, NULL, HIDI2C_DEV_DESC_LEN,
-+					 &read_len, (u32 *)&qcdev->dev_desc);
-+	if (ret || HIDI2C_DEV_DESC_LEN != read_len) {
-+		dev_err_once(qcdev->dev, "Get device descriptor failed, ret %d, read len %u\n",
-+			     ret, read_len);
-+		return -EIO;
-+	}
++	thc_dma_unconfigure(qcdev->thc_hw);
 +
-+	if (le16_to_cpu(qcdev->dev_desc.bcd_ver) != HIDI2C_HID_DESC_BCDVERSION)
-+		return -EOPNOTSUPP;
++	ret = thc_dma_configure(qcdev->thc_hw);
++	if (ret) {
++		dev_err(qcdev->dev, "Reconfig DMA failed\n");
++		return ret;
++	}
 +
 +	return 0;
 +}
 +
-+int quicki2c_get_report_descriptor(struct quicki2c_device *qcdev)
++static int handle_input_report(struct quicki2c_device *qcdev)
 +{
-+	u16 desc_reg = le16_to_cpu(qcdev->dev_desc.report_desc_reg);
-+	size_t read_len = le16_to_cpu(qcdev->dev_desc.report_desc_len);
-+	u32 prd_len = read_len;
-+
-+	return thc_swdma_read(qcdev->thc_hw, (u8 *)&desc_reg, HIDI2C_REG_LEN,
-+			      &prd_len, qcdev->report_descriptor, &read_len);
-+}
-+
-+int quicki2c_get_report(struct quicki2c_device *qcdev, u8 report_type,
-+			unsigned int reportnum, void *buf, u32 buf_len)
-+{
-+	struct hidi2c_report_packet *rpt;
-+	size_t write_buf_len, read_len = 0;
-+	int cmd_len, rep_type;
-+	u32 cmd;
++	struct hidi2c_report_packet *pkt = (struct hidi2c_report_packet *)qcdev->input_buf;
++	int rx_dma_finished = 0;
++	size_t report_len;
 +	int ret;
 +
-+	if (report_type == HID_INPUT_REPORT) {
-+		rep_type = HIDI2C_INPUT;
-+	} else if (report_type == HID_FEATURE_REPORT) {
-+		rep_type = HIDI2C_FEATURE;
-+	} else {
-+		dev_err(qcdev->dev, "Unsupported report type for GET REPORT: %d\n", report_type);
-+		return -EINVAL;
++	while (!rx_dma_finished) {
++		ret = thc_rxdma_read(qcdev->thc_hw, THC_RXDMA2,
++				     (u8 *)pkt, &report_len,
++				     &rx_dma_finished);
++		if (ret)
++			return ret;
++
++		if (!pkt->len) {
++			if (qcdev->state == QUICKI2C_RESETING) {
++				qcdev->reset_ack = true;
++				wake_up(&qcdev->reset_ack_wq);
++
++				qcdev->state = QUICKI2C_RESETED;
++			} else {
++				dev_warn(qcdev->dev, "unexpected DIR happen\n");
++			}
++
++			continue;
++		}
++
++		/* discard samples before driver probe complete */
++		if (qcdev->state != QUICKI2C_ENABLED)
++			continue;
++
++		quicki2c_hid_send_report(qcdev, pkt->data,
++					 HIDI2C_DATA_LEN(le16_to_cpu(pkt->len)));
 +	}
 +
-+	cmd_len = quicki2c_encode_cmd(qcdev, &cmd, HIDI2C_GET_REPORT, rep_type, reportnum);
-+
-+	ret = quicki2c_init_write_buf(qcdev, cmd, cmd_len, true, NULL, 0,
-+				      qcdev->report_buf, qcdev->report_len);
-+	if (ret < 0)
-+		return ret;
-+
-+	write_buf_len = ret;
-+
-+	rpt = (struct hidi2c_report_packet *)qcdev->input_buf;
-+
-+	ret = thc_swdma_read(qcdev->thc_hw, qcdev->report_buf, write_buf_len,
-+			     NULL, rpt, &read_len);
-+	if (ret) {
-+		dev_err_once(qcdev->dev, "Get report failed, ret %d, read len (%zu vs %d)\n",
-+			     ret, read_len, buf_len);
-+		return ret;
-+	}
-+
-+	if (HIDI2C_DATA_LEN(le16_to_cpu(rpt->len)) != buf_len || rpt->data[0] != reportnum) {
-+		dev_err_once(qcdev->dev, "Invalid packet, len (%d vs %d) report id (%d vs %d)\n",
-+			     le16_to_cpu(rpt->len), buf_len, rpt->data[0], reportnum);
-+		return -EINVAL;
-+	}
-+
-+	memcpy(buf, rpt->data, buf_len);
-+
-+	return buf_len;
++	return 0;
 +}
-+
-+int quicki2c_set_report(struct quicki2c_device *qcdev, u8 report_type,
-+			unsigned int reportnum, void *buf, u32 buf_len)
-+{
-+	int rep_type;
-+	int ret;
-+
-+	if (report_type == HID_OUTPUT_REPORT) {
-+		rep_type = HIDI2C_OUTPUT;
-+	} else if (report_type == HID_FEATURE_REPORT) {
-+		rep_type = HIDI2C_FEATURE;
-+	} else {
-+		dev_err(qcdev->dev, "Unsupported report type for SET REPORT: %d\n", report_type);
-+		return -EINVAL;
-+	}
-+
-+	ret = write_cmd_to_txdma(qcdev, HIDI2C_SET_REPORT, rep_type, reportnum, buf, buf_len);
-+	if (ret) {
-+		dev_err_once(qcdev->dev, "Set Report failed, ret %d\n", ret);
-+		return ret;
-+	}
-+
-+	return buf_len;
-+}
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
-new file mode 100644
-index 000000000000..3a0d66c7d9ef
---- /dev/null
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
-@@ -0,0 +1,19 @@
-+/* SPDX-License-Identifier: GPL-2.0 */
-+/* Copyright (c) 2024 Intel Corporation */
-+
-+#ifndef _QUICKI2C_PROTOCOL_H_
-+#define _QUICKI2C_PROTOCOL_H_
-+
-+#include <linux/hid-over-i2c.h>
-+
-+struct quicki2c_device;
-+
-+int quicki2c_set_power(struct quicki2c_device *qcdev, enum hidi2c_power_state power_state);
-+int quicki2c_get_report(struct quicki2c_device *qcdev, u8 report_type,
-+			unsigned int reportnum, void *buf, u32 buf_len);
-+int quicki2c_set_report(struct quicki2c_device *qcdev, u8 report_type,
-+			unsigned int reportnum, void *buf, u32 buf_len);
-+int quicki2c_get_device_descriptor(struct quicki2c_device *qcdev);
-+int quicki2c_get_report_descriptor(struct quicki2c_device *qcdev);
-+
-+#endif /* _QUICKI2C_PROTOCOL_H_ */
-diff --git a/include/linux/hid-over-i2c.h b/include/linux/hid-over-i2c.h
-index b70626723a38..3b1a0208a6b8 100644
---- a/include/linux/hid-over-i2c.h
-+++ b/include/linux/hid-over-i2c.h
-@@ -1,9 +1,80 @@
- /* SPDX-License-Identifier: GPL-2.0 */
- /* Copyright 2024 Intel Corporation */
- 
-+#include <linux/bits.h>
-+
- #ifndef _HID_OVER_I2C_H_
- #define _HID_OVER_I2C_H_
- 
-+#define HIDI2C_REG_LEN		sizeof(__le16)
-+
-+/* Input report type definition in HIDI2C protocol */
-+enum hidi2c_report_type {
-+	HIDI2C_RESERVED = 0,
-+	HIDI2C_INPUT,
-+	HIDI2C_OUTPUT,
-+	HIDI2C_FEATURE,
-+};
-+
-+/* Power state type definition in HIDI2C protocol */
-+enum hidi2c_power_state {
-+	HIDI2C_ON,
-+	HIDI2C_SLEEP,
-+};
-+
-+/* Opcode type definition in HIDI2C protocol */
-+enum hidi2c_opcode {
-+	HIDI2C_RESET = 1,
-+	HIDI2C_GET_REPORT,
-+	HIDI2C_SET_REPORT,
-+	HIDI2C_GET_IDLE,
-+	HIDI2C_SET_IDLE,
-+	HIDI2C_GET_PROTOCOL,
-+	HIDI2C_SET_PROTOCOL,
-+	HIDI2C_SET_POWER,
-+};
-+
-+/**
-+ * struct hidi2c_report_packet - Report packet definition in HIDI2C protocol
-+ * @len: data field length
-+ * @data: HIDI2C report packet data
-+ */
-+struct hidi2c_report_packet {
-+	__le16 len;
-+	u8 data[];
-+} __packed;
-+
-+#define HIDI2C_LENGTH_LEN	sizeof(__le16)
-+
-+#define HIDI2C_PACKET_LEN(data_len)	((data_len) + HIDI2C_LENGTH_LEN)
-+#define HIDI2C_DATA_LEN(pkt_len)	((pkt_len) - HIDI2C_LENGTH_LEN)
-+
-+#define HIDI2C_CMD_MAX_RI	0x0F
-+
-+/**
-+ * HIDI2C command data packet - Command packet definition in HIDI2C protocol
-+ * @report_id:		[0:3] report id (<15) for features or output reports
-+ * @report_type:	[4:5] indicate report type, reference to hidi2c_report_type
-+ * @reserved0:		[6:7] reserved bits
-+ * @opcode:		[8:11] command operation code, reference to hidi2c_opcode
-+ * @reserved1:		[12:15] reserved bits
-+ * @report_id_optional: [23:16] appended 3rd byte.
-+ *                      If the report_id in the low byte is set to the
-+ *                      sentinel value (HIDI2C_CMD_MAX_RI), then this
-+ *                      optional third byte represents the report id (>=15)
-+ *                      Otherwise, not this 3rd byte.
-+ */
-+
-+#define HIDI2C_CMD_LEN			sizeof(__le16)
-+#define HIDI2C_CMD_LEN_OPT		(sizeof(__le16) + 1)
-+#define HIDI2C_CMD_REPORT_ID		GENMASK(3, 0)
-+#define HIDI2C_CMD_REPORT_TYPE		GENMASK(5, 4)
-+#define HIDI2C_CMD_OPCODE		GENMASK(11, 8)
-+#define HIDI2C_CMD_OPCODE		GENMASK(11, 8)
-+#define HIDI2C_CMD_3RD_BYTE		GENMASK(23, 16)
-+
-+#define HIDI2C_HID_DESC_BCDVERSION	0x100
 +
  /**
-  * struct hidi2c_dev_descriptor - HIDI2C device descriptor definition
-  * @dev_desc_len: The length of the complete device descriptor, fixed to 0x1E (30).
-@@ -41,4 +112,6 @@ struct hidi2c_dev_descriptor {
- 	__le16 reserved1;
- } __packed;
+  * quicki2c_irq_thread_handler - IRQ thread handler of quicki2c driver
+  *
+@@ -221,6 +287,7 @@ static irqreturn_t quicki2c_irq_quick_handler(int irq, void *dev_id)
+ static irqreturn_t quicki2c_irq_thread_handler(int irq, void *dev_id)
+ {
+ 	struct quicki2c_device *qcdev = dev_id;
++	int err_recover = 0;
+ 	int int_mask;
  
-+#define HIDI2C_DEV_DESC_LEN		sizeof(struct hidi2c_dev_descriptor)
+ 	if (qcdev->state == QUICKI2C_DISABLED)
+@@ -228,8 +295,25 @@ static irqreturn_t quicki2c_irq_thread_handler(int irq, void *dev_id)
+ 
+ 	int_mask = thc_interrupt_handler(qcdev->thc_hw);
+ 
++	if (int_mask & BIT(THC_FATAL_ERR_INT) || int_mask & BIT(THC_TXN_ERR_INT) ||
++	    int_mask & BIT(THC_UNKNOWN_INT)) {
++		err_recover = 1;
++		goto exit;
++	}
 +
- #endif /* _HID_OVER_I2C_H_ */
++	if (int_mask & BIT(THC_RXDMA2_INT)) {
++		err_recover = handle_input_report(qcdev);
++		if (err_recover)
++			goto exit;
++	}
++
++exit:
+ 	thc_interrupt_enable(qcdev->thc_hw, true);
+ 
++	if (err_recover)
++		if (try_recover(qcdev))
++			qcdev->state = QUICKI2C_DISABLED;
++
+ 	return IRQ_HANDLED;
+ }
+ 
+@@ -260,6 +344,9 @@ static struct quicki2c_device *quicki2c_dev_init(struct pci_dev *pdev, void __io
+ 	qcdev->pdev = pdev;
+ 	qcdev->dev = dev;
+ 	qcdev->mem_addr = mem_addr;
++	qcdev->state = QUICKI2C_DISABLED;
++
++	init_waitqueue_head(&qcdev->reset_ack_wq);
+ 
+ 	/* thc hw init */
+ 	qcdev->thc_hw = thc_dev_init(qcdev->dev, qcdev->mem_addr);
+@@ -292,6 +379,8 @@ static struct quicki2c_device *quicki2c_dev_init(struct pci_dev *pdev, void __io
+ 
+ 	thc_interrupt_enable(qcdev->thc_hw, true);
+ 
++	qcdev->state = QUICKI2C_INITED;
++
+ 	return qcdev;
+ }
+ 
+@@ -305,6 +394,114 @@ static struct quicki2c_device *quicki2c_dev_init(struct pci_dev *pdev, void __io
+ static void quicki2c_dev_deinit(struct quicki2c_device *qcdev)
+ {
+ 	thc_interrupt_enable(qcdev->thc_hw, false);
++	thc_ltr_unconfig(qcdev->thc_hw);
++
++	qcdev->state = QUICKI2C_DISABLED;
++}
++
++/**
++ * quicki2c_dma_init - Configure THC DMA for quicki2c device
++ * @qcdev: pointer to the quicki2c device structure
++ *
++ * This function uses TIC's parameters(such as max input length, max output
++ * length) to allocate THC DMA buffers and configure THC DMA engines.
++ *
++ * Return: 0 if success or error code on failed.
++ */
++static int quicki2c_dma_init(struct quicki2c_device *qcdev)
++{
++	size_t swdma_max_len;
++	int ret;
++
++	swdma_max_len = max(le16_to_cpu(qcdev->dev_desc.max_input_len),
++			    le16_to_cpu(qcdev->dev_desc.report_desc_len));
++
++	ret = thc_dma_set_max_packet_sizes(qcdev->thc_hw, 0,
++					   le16_to_cpu(qcdev->dev_desc.max_input_len),
++					   le16_to_cpu(qcdev->dev_desc.max_output_len),
++					   swdma_max_len);
++	if (ret)
++		return ret;
++
++	ret = thc_dma_allocate(qcdev->thc_hw);
++	if (ret) {
++		dev_err(qcdev->dev, "Allocate THC DMA buffer failed, ret = %d\n", ret);
++		return ret;
++	}
++
++	/* Enable RxDMA */
++	ret = thc_dma_configure(qcdev->thc_hw);
++	if (ret) {
++		dev_err(qcdev->dev, "Configure THC DMA failed, ret = %d\n", ret);
++		thc_dma_unconfigure(qcdev->thc_hw);
++		thc_dma_release(qcdev->thc_hw);
++		return ret;
++	}
++
++	return ret;
++}
++
++/**
++ * quicki2c_dma_deinit - Release THC DMA for quicki2c device
++ * @qcdev: pointer to the quicki2c device structure
++ *
++ * Stop THC DMA engines and release all DMA buffers.
++ *
++ */
++static void quicki2c_dma_deinit(struct quicki2c_device *qcdev)
++{
++	thc_dma_unconfigure(qcdev->thc_hw);
++	thc_dma_release(qcdev->thc_hw);
++}
++
++/**
++ * quicki2c_alloc_report_buf - Alloc report buffers
++ * @qcdev: pointer to the quicki2c device structure
++ *
++ * Allocate report descritpor buffer, it will be used for restore TIC HID
++ * report descritpor.
++ *
++ * Allocate input report buffer, it will be used for receive HID input report
++ * data from TIC.
++ *
++ * Allocate output report buffer, it will be used for store HID output report,
++ * such as set feature.
++ *
++ * Return: 0 if success or error code on failed.
++ */
++static int quicki2c_alloc_report_buf(struct quicki2c_device *qcdev)
++{
++	size_t max_report_len;
++
++	qcdev->report_descriptor = devm_kzalloc(qcdev->dev,
++						le16_to_cpu(qcdev->dev_desc.report_desc_len),
++						GFP_KERNEL);
++	if (!qcdev->report_descriptor)
++		return -ENOMEM;
++
++	/*
++	 * Some HIDI2C devices don't declare input/output max length correctly,
++	 * give default 4K buffer to avoid DMA buffer overrun.
++	 */
++	max_report_len = max(le16_to_cpu(qcdev->dev_desc.max_input_len), SZ_4K);
++
++	qcdev->input_buf = devm_kzalloc(qcdev->dev, max_report_len, GFP_KERNEL);
++	if (!qcdev->input_buf)
++		return -ENOMEM;
++
++	if (!le16_to_cpu(qcdev->dev_desc.max_output_len))
++		qcdev->dev_desc.max_output_len = cpu_to_le16(SZ_4K);
++
++	max_report_len = max(le16_to_cpu(qcdev->dev_desc.max_output_len),
++			     max_report_len);
++
++	qcdev->report_buf = devm_kzalloc(qcdev->dev, max_report_len, GFP_KERNEL);
++	if (!qcdev->report_buf)
++		return -ENOMEM;
++
++	qcdev->report_len = max_report_len;
++
++	return 0;
+ }
+ 
+ /*
+@@ -313,6 +510,18 @@ static void quicki2c_dev_deinit(struct quicki2c_device *qcdev)
+  * @pdev: point to pci device
+  * @id: point to pci_device_id structure
+  *
++ * This function initializes THC and HIDI2C device, the flow is:
++ * - do THC pci device initialization
++ * - query HIDI2C ACPI parameters
++ * - configure THC to HIDI2C mode
++ * - go through HIDI2C enumeration flow
++ *   |- read device descriptor
++ *   |- reset HIDI2C device
++ * - enable THC interrupt and DMA
++ * - read report descriptor
++ * - register HID device
++ * - enable runtime power management
++ *
+  * Return 0 if success or error code on failed.
+  */
+ static int quicki2c_probe(struct pci_dev *pdev,
+@@ -365,6 +574,10 @@ static int quicki2c_probe(struct pci_dev *pdev,
+ 
+ 	pci_set_drvdata(pdev, qcdev);
+ 
++	ret = thc_interrupt_quiesce(qcdev->thc_hw, true);
++	if (ret)
++		goto dev_deinit;
++
+ 	ret = devm_request_threaded_irq(&pdev->dev, pdev->irq,
+ 					quicki2c_irq_quick_handler,
+ 					quicki2c_irq_thread_handler,
+@@ -376,8 +589,60 @@ static int quicki2c_probe(struct pci_dev *pdev,
+ 		goto dev_deinit;
+ 	}
+ 
++	ret = quicki2c_get_device_descriptor(qcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Get device descriptor failed, ret = %d\n", ret);
++		goto dev_deinit;
++	}
++
++	ret = quicki2c_alloc_report_buf(qcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Alloc report buffers failed, ret= %d\n", ret);
++		goto dev_deinit;
++	}
++
++	ret = quicki2c_dma_init(qcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Setup THC DMA failed, ret= %d\n", ret);
++		goto dev_deinit;
++	}
++
++	ret = thc_interrupt_quiesce(qcdev->thc_hw, false);
++	if (ret)
++		goto dev_deinit;
++
++	ret = quicki2c_set_power(qcdev, HIDI2C_ON);
++	if (ret) {
++		dev_err(&pdev->dev, "Set Power On command failed, ret= %d\n", ret);
++		goto dev_deinit;
++	}
++
++	ret = quicki2c_reset(qcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Reset HIDI2C device failed, ret= %d\n", ret);
++		goto dev_deinit;
++	}
++
++	ret = quicki2c_get_report_descriptor(qcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Get report descriptor failed, ret = %d\n", ret);
++		goto dma_deinit;
++	}
++
++	ret = quicki2c_hid_probe(qcdev);
++	if (ret) {
++		dev_err(&pdev->dev, "Failed to register HID device, ret = %d\n", ret);
++		goto dma_deinit;
++	}
++
++	qcdev->state = QUICKI2C_ENABLED;
++
++	dev_dbg(&pdev->dev, "QuickI2C probe success\n");
++
+ 	return 0;
+ 
++dma_deinit:
++	quicki2c_dma_deinit(qcdev);
+ dev_deinit:
+ 	quicki2c_dev_deinit(qcdev);
+ unmap_io_region:
+@@ -405,6 +670,9 @@ static void quicki2c_remove(struct pci_dev *pdev)
+ 	if (!qcdev)
+ 		return;
+ 
++	quicki2c_hid_remove(qcdev);
++	quicki2c_dma_deinit(qcdev);
++
+ 	quicki2c_dev_deinit(qcdev);
+ 
+ 	pcim_iounmap_regions(pdev, BIT(0));
+@@ -429,6 +697,9 @@ static void quicki2c_shutdown(struct pci_dev *pdev)
+ 	if (!qcdev)
+ 		return;
+ 
++	/* Must stop DMA before reboot to avoid DMA entering into unknown state */
++	quicki2c_dma_deinit(qcdev);
++
+ 	quicki2c_dev_deinit(qcdev);
+ }
+ 
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+index 043126803997..d9fac30da827 100644
+--- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+@@ -5,6 +5,7 @@
+ #define _QUICKI2C_DEV_H_
+ 
+ #include <linux/hid-over-i2c.h>
++#include <linux/workqueue.h>
+ 
+ #define THC_LNL_DEVICE_ID_I2C_PORT1	0xA848
+ #define THC_LNL_DEVICE_ID_I2C_PORT2	0xA84A
+@@ -137,6 +138,8 @@ struct acpi_device;
+  * @input_buf: store a copy of latest input report data
+  * @report_buf: store a copy of latest input/output report packet from set/get feature
+  * @report_len: the length of input/output report packet
++ * @reset_ack_wq: workqueue for waiting reset response from device
++ * @reset_ack: indicate reset response received or not
+  */
+ struct quicki2c_device {
+ 	struct device *dev;
+@@ -163,6 +166,9 @@ struct quicki2c_device {
+ 	u8 *input_buf;
+ 	u8 *report_buf;
+ 	u32 report_len;
++
++	wait_queue_head_t reset_ack_wq;
++	bool reset_ack;
+ };
+ 
+ #endif /* _QUICKI2C_DEV_H_ */
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
+index 6e6463abe894..2810283df708 100644
+--- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
+@@ -190,3 +190,30 @@ int quicki2c_set_report(struct quicki2c_device *qcdev, u8 report_type,
+ 
+ 	return buf_len;
+ }
++
++#define HIDI2C_RESET_TIMEOUT		5
++
++int quicki2c_reset(struct quicki2c_device *qcdev)
++{
++	int ret;
++
++	qcdev->reset_ack = false;
++	qcdev->state = QUICKI2C_RESETING;
++
++	ret = write_cmd_to_txdma(qcdev, HIDI2C_RESET, HIDI2C_RESERVED, 0, NULL, 0);
++	if (ret) {
++		dev_err_once(qcdev->dev, "Send reset command failed, ret %d\n", ret);
++		return ret;
++	}
++
++	ret = wait_event_interruptible_timeout(qcdev->reset_ack_wq, qcdev->reset_ack,
++					       HIDI2C_RESET_TIMEOUT * HZ);
++	if (ret <= 0 || !qcdev->reset_ack) {
++		dev_err_once(qcdev->dev,
++			     "Wait reset response timed out ret:%d timeout:%ds\n",
++			     ret, HIDI2C_RESET_TIMEOUT);
++		return -ETIMEDOUT;
++	}
++
++	return 0;
++}
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
+index 3a0d66c7d9ef..bf4908cce59c 100644
+--- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
+@@ -15,5 +15,6 @@ int quicki2c_set_report(struct quicki2c_device *qcdev, u8 report_type,
+ 			unsigned int reportnum, void *buf, u32 buf_len);
+ int quicki2c_get_device_descriptor(struct quicki2c_device *qcdev);
+ int quicki2c_get_report_descriptor(struct quicki2c_device *qcdev);
++int quicki2c_reset(struct quicki2c_device *qcdev);
+ 
+ #endif /* _QUICKI2C_PROTOCOL_H_ */
 -- 
 2.40.1
 
