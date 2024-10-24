@@ -1,222 +1,157 @@
-Return-Path: <linux-kernel+bounces-379701-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379703-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8253E9AE26A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:23:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 353AA9AE26F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA281F24AE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:23:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E735D284395
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:23:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5479B1C07D8;
-	Thu, 24 Oct 2024 10:23:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88861C07DF;
+	Thu, 24 Oct 2024 10:23:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QSU/iG+n";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ATrCr48H"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D/OVl4hl"
+Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD283399F;
-	Thu, 24 Oct 2024 10:22:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A731C07D1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:23:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765381; cv=none; b=f2ylHj1/a850I2/EzimItfFJFdnt5Wp49lB+qpfW1BogN/aYBYe272lrhD+yv7dn6tPPvSnCtc4hV6HoIt5A7eICIrNYKqrUSGNNrElEMLgUy1PE4YTZ3fgPIJUiN/xWx0YcQjG3jNYIP9AjdSKMY2xVr+g+7yUdvM5Jub1x7jY=
+	t=1729765411; cv=none; b=d+Xiph/eSiee4QcN+x9Y1tpqAx0h/AOB/qPleCn6XFW+t02hGc/ewj+U9Vx7XbqnLSouYltUKwkgzyZrkkGzQ1NbCwpDsexX69PnSSQ7rjtwSTtPrJcIpGd9CN/Y0NqS6XE5yku0fhAOp6xBv07lFAahbqhW5D+wsBsQ215mqIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729765381; c=relaxed/simple;
-	bh=d2PrWworP54vGMDjYcDE/erPr7IdIisIFZi9wyGmblI=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=sLF0EBRSrQ0auhf0in7ss0SBqfo2rCL5AAr6vhnhsGeF3BVtiZ564rG0WOJg68eBXpj7bb0B0G82Z28AMw1+YvqE9zZ8U/u/dy3xNWCR6xP2W0iZHruOxXbWzkpeMqjG5lRb+khLL6SIEVkNLVTTVV9qHK9a/YqdivY8y4w4LzY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QSU/iG+n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ATrCr48H; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 24 Oct 2024 10:22:56 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729765377;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=08iFft7sVuQpER5fbxoEWVZ3znTgjOYapPeqViWdRSQ=;
-	b=QSU/iG+ncxgaiB62urkZrO+y1S6FMkw3NUH4OlnOuDkqpV+pucB4fGEnT3cmzSvk7C0Gt3
-	1ld94wOoqSFoQ4mxq2L8ptJX1knOXEj7Fm+Xgin/xoolzkNRt1g8vNt7rCa9qCusJDNgqU
-	cf52beUfY3ZffGnTeRMU9tQVNbppxCgKdEdTZkZXwR7kB+n9k0MWEF/PXk42WLmBhs9otd
-	yb0hZbw8YfH/m1oHvWf7A9pWNn+pYihUuw4oKvOJD8l9N0GwdGfYRSHnMy6GpICIxdylen
-	c0hY2UOX0e1vs+inl08XjxBTgqmFIQRJp9+eAh8Z2cX1OtUC60g5pCWpVytANw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729765377;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=08iFft7sVuQpER5fbxoEWVZ3znTgjOYapPeqViWdRSQ=;
-	b=ATrCr48H8X0o2HLrQudJLT/lEXGAhSXp4MEhcMFy/cogWCLwcy2lHoWmi8lUDVmT+A/xbd
-	kaCoPKJv8tCEmhBA==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject:
- [tip: sched/urgent] sched: Fix pick_next_task_fair() vs try_to_wake_up() race
-Cc: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com,
- Kent Overstreet <kent.overstreet@linux.dev>,
- "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Marco Elver <elver@google.com>, x86@kernel.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241023093641.GE16066@noisy.programming.kicks-ass.net>
-References: <20241023093641.GE16066@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729765411; c=relaxed/simple;
+	bh=eXzIVANoSdckZ6/KVBlOoXOvkdYkN+bwsUCbZIcRgns=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UKCe2GTyOfSq5ScTNz4QkyL81ru6F1QfYvn3BXOKkn1eMkN9T15EKiMB2Oy1yf/TySuKK29jVy06nh2I9HCtOvUwrEv/OiBp9RdsipMVRmVCqeacDm88daOvcb6gZTakMUSeIEDzShzag0eVzBHd9WdpDsgUAaUd4FbDe9nI9lQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D/OVl4hl; arc=none smtp.client-ip=209.85.128.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so7444355e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:23:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729765407; x=1730370207; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=vGfd1JHcREPOU5Z6qqF2PdooBtljEuBL480hQIscwuw=;
+        b=D/OVl4hl66LLD+LI16/Laue7XUgvCXFW1Co3iqu6AoW+jvXfc5z+CoXFCn98i5jCpp
+         f8MzYWwJb7Of+2+INlz8uExV361cnsGS827Bkcfz/SRpfh19FunrAehQrUq5Mz5zRlLv
+         PQbmRamSvsrkqrPb1e2mDqqxlRTgD8XjZYx6la5d1fA1eWuh7jCkPFxBhA+7jrpiL4MO
+         +FIazLh2qCyw7Ku54ccZjxlMhAbAbGYnVyw7fSmseeBRyKLhlzLp1pS3Xia9oenNMnph
+         FDdfzRLvXHndq99UMzV/qTBsr/IbYxxJGXK51jCMTbE3w/fNrrwrPsCzkmvdcXIyjfo+
+         FuCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729765407; x=1730370207;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=vGfd1JHcREPOU5Z6qqF2PdooBtljEuBL480hQIscwuw=;
+        b=HFLyYGwvHOy5n0wevF+V0fBCiqFwePsYnYVcV7gWJ4MVi06OiIrnCBZ+vx+7oxINg3
+         Do85CAsmDOBp0bh034+O75IJtbpr5UrX7N8ZtHzqbaxBvwY2C0vl59joFF/RCktHSM+i
+         KOHdZ510QJSemQPF3cHqETakgsENGuaBqcJD23iU+I2O6pGOddNTs7KkqRrsRUI1HU0T
+         ohcANnj97vbvXNls+tHMx8GX7mY2EeY0UZAAFSMBN5YHs8l64VShfEwEvN96Lh8OAXpQ
+         DO6wlpA4G17Q56/etS0noci7X7eU8Ei09LdMNtAKKEMW0aMXsxkZCy1t3V+gfRDLVjEc
+         8RFA==
+X-Forwarded-Encrypted: i=1; AJvYcCWqAQhsUSZ8V6M8rixTpp4A4sWcpwyT7EVse88auH5s1ZZKVoSuT8sTpLZRizbnlTnr0eOXBVt39Xu+XTQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyQX4mnaN/D/+RT8dQBBqlclM9+ccTYgdk9I5ZOc5x44Q7GSGTH
+	2QfGSbb7eLCT0mzjgO+KjUU0VLY8mUfcnBwWbot56CW5CSdpJLG6eWbcMOLjunk=
+X-Google-Smtp-Source: AGHT+IGwgk1Q6Ug+BVFVnUXFcZ9dVuF5hFZk5XTuZGnRFR7wmgF12+GD4A9jzFwefYAW34tVJukA0A==
+X-Received: by 2002:a05:600c:5490:b0:431:5d14:1cae with SMTP id 5b1f17b1804b1-4318415fee0mr44990735e9.19.1729765406341;
+        Thu, 24 Oct 2024 03:23:26 -0700 (PDT)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bfb0f2sm40739335e9.22.2024.10.24.03.23.24
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 03:23:25 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: daniel.lezcano@linaro.org,
+	rjw@rjwysocki.net
+Cc: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Zhang Rui <rui.zhang@intel.com>,
+	Lukasz Luba <lukasz.luba@arm.com>,
+	linux-pm@vger.kernel.org (open list:THERMAL),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] thermal/thresholds: Fix thermal lock annotation issue
+Date: Thu, 24 Oct 2024 12:23:03 +0200
+Message-ID: <20241024102303.1086147-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172976537654.1442.4491396972715085236.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-The following commit has been merged into the sched/urgent branch of tip:
+When the thermal zone is unregistered (thermal sensor module being
+unloaded), no lock is held when flushing the thresholds. That results
+in a WARN when the lockdep validation is set in the kernel config.
 
-Commit-ID:     b55945c500c5723992504aa03b362fab416863a6
-Gitweb:        https://git.kernel.org/tip/b55945c500c5723992504aa03b362fab416863a6
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Wed, 23 Oct 2024 11:36:41 +02:00
-Committer:     Peter Zijlstra <peterz@infradead.org>
-CommitterDate: Wed, 23 Oct 2024 20:52:26 +02:00
+This has been reported by syzbot.
 
-sched: Fix pick_next_task_fair() vs try_to_wake_up() race
+As the thermal zone is in the process of being destroyed, there is no
+need to send a notification about purging the thresholds to the
+userspace as this one will receive a thermal zone deletion
+notification which imply the deletion of all the associated resources
+like the trip points or the user thresholds.
 
-Syzkaller robot reported KCSAN tripping over the
-ASSERT_EXCLUSIVE_WRITER(p->on_rq) in __block_task().
+Split the function thermal_thresholds_flush() into a lockless one
+without notification and its call with the lock annotation followed
+with the thresholds flushing notification.
 
-The report noted that both pick_next_task_fair() and try_to_wake_up()
-were concurrently trying to write to the same p->on_rq, violating the
-assertion -- even though both paths hold rq->__lock.
+Please note this scenario is unlikely to happen, as the sensor drivers
+are usually compiled-in in order to have the thermal framework to be
+able to kick in at boot time if needed.
 
-The logical consequence is that both code paths end up holding a
-different rq->__lock. And looking through ttwu(), this is possible
-when the __block_task() 'p->on_rq = 0' store is visible to the ttwu()
-'p->on_rq' load, which then assumes the task is not queued and
-continues to migrate it.
-
-Rearrange things such that __block_task() releases @p with the store
-and no code thereafter will use @p again.
-
-Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
-Reported-by: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com
-Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Tested-by: Marco Elver <elver@google.com>
-Link: https://lkml.kernel.org/r/20241023093641.GE16066@noisy.programming.kicks-ass.net
+Link: https://lore.kernel.org/all/67124175.050a0220.10f4f4.0012.GAE@google.com
+Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
 ---
- kernel/sched/fair.c  | 21 ++++++++++++++-------
- kernel/sched/sched.h | 34 ++++++++++++++++++++++++++++++++--
- 2 files changed, 46 insertions(+), 9 deletions(-)
+ drivers/thermal/thermal_thresholds.c | 13 +++++++++----
+ 1 file changed, 9 insertions(+), 4 deletions(-)
 
-diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
-index c157d48..8796146 100644
---- a/kernel/sched/fair.c
-+++ b/kernel/sched/fair.c
-@@ -5625,8 +5625,9 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
- 	struct sched_entity *se = pick_eevdf(cfs_rq);
- 	if (se->sched_delayed) {
- 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
--		SCHED_WARN_ON(se->sched_delayed);
--		SCHED_WARN_ON(se->on_rq);
-+		/*
-+		 * Must not reference @se again, see __block_task().
-+		 */
- 		return NULL;
- 	}
- 	return se;
-@@ -7176,7 +7177,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
- 		/* Fix-up what dequeue_task_fair() skipped */
- 		hrtick_update(rq);
- 
--		/* Fix-up what block_task() skipped. */
-+		/*
-+		 * Fix-up what block_task() skipped.
-+		 *
-+		 * Must be last, @p might not be valid after this.
-+		 */
- 		__block_task(rq, p);
- 	}
- 
-@@ -7193,12 +7198,14 @@ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
- 	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
- 		util_est_dequeue(&rq->cfs, p);
- 
--	if (dequeue_entities(rq, &p->se, flags) < 0) {
--		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
-+	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
-+	if (dequeue_entities(rq, &p->se, flags) < 0)
- 		return false;
--	}
- 
--	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
-+	/*
-+	 * Must not reference @p after dequeue_entities(DEQUEUE_DELAYED).
-+	 */
-+
- 	hrtick_update(rq);
- 	return true;
+diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/thermal_thresholds.c
+index ea4aa5a2e86c..2888eabd3efe 100644
+--- a/drivers/thermal/thermal_thresholds.c
++++ b/drivers/thermal/thermal_thresholds.c
+@@ -20,17 +20,22 @@ int thermal_thresholds_init(struct thermal_zone_device *tz)
+ 	return 0;
  }
-diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
-index 081519f..9f9d1cc 100644
---- a/kernel/sched/sched.h
-+++ b/kernel/sched/sched.h
-@@ -2769,8 +2769,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
  
- static inline void __block_task(struct rq *rq, struct task_struct *p)
+-void thermal_thresholds_flush(struct thermal_zone_device *tz)
++static void __thermal_thresholds_flush(struct thermal_zone_device *tz)
  {
--	WRITE_ONCE(p->on_rq, 0);
--	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
- 	if (p->sched_contributes_to_load)
- 		rq->nr_uninterruptible++;
+ 	struct list_head *thresholds = &tz->user_thresholds;
+ 	struct user_threshold *entry, *tmp;
  
-@@ -2778,6 +2776,38 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
- 		atomic_inc(&rq->nr_iowait);
- 		delayacct_blkio_start();
+-	lockdep_assert_held(&tz->lock);
+-
+ 	list_for_each_entry_safe(entry, tmp, thresholds, list_node) {
+ 		list_del(&entry->list_node);
+ 		kfree(entry);
  	}
++}
 +
-+	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
++void thermal_thresholds_flush(struct thermal_zone_device *tz)
++{
++	lockdep_assert_held(&tz->lock);
 +
-+	/*
-+	 * The moment this write goes through, ttwu() can swoop in and migrate
-+	 * this task, rendering our rq->__lock ineffective.
-+	 *
-+	 * __schedule()				try_to_wake_up()
-+	 *   LOCK rq->__lock			  LOCK p->pi_lock
-+	 *   pick_next_task()
-+	 *     pick_next_task_fair()
-+	 *       pick_next_entity()
-+	 *         dequeue_entities()
-+	 *           __block_task()
-+	 *             RELEASE p->on_rq = 0	  if (p->on_rq && ...)
-+	 *					    break;
-+	 *
-+	 *					  ACQUIRE (after ctrl-dep)
-+	 *
-+	 *					  cpu = select_task_rq();
-+	 *					  set_task_cpu(p, cpu);
-+	 *					  ttwu_queue()
-+	 *					    ttwu_do_activate()
-+	 *					      LOCK rq->__lock
-+	 *					      activate_task()
-+	 *					        STORE p->on_rq = 1
-+	 *   UNLOCK rq->__lock
-+	 *
-+	 * Callers must ensure to not reference @p after this -- we no longer
-+	 * own it.
-+	 */
-+	smp_store_release(&p->on_rq, 0);
++	__thermal_thresholds_flush(tz);
+ 
+ 	thermal_notify_threshold_flush(tz);
+ 
+@@ -39,7 +44,7 @@ void thermal_thresholds_flush(struct thermal_zone_device *tz)
+ 
+ void thermal_thresholds_exit(struct thermal_zone_device *tz)
+ {
+-	thermal_thresholds_flush(tz);
++	__thermal_thresholds_flush(tz);
  }
  
- extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
+ static int __thermal_thresholds_cmp(void *data,
+-- 
+2.43.0
+
 
