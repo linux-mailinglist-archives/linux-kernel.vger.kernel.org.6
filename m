@@ -1,194 +1,135 @@
-Return-Path: <linux-kernel+bounces-379881-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379880-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D1369AE56E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:57:55 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B6DF9AE56C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:57:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5D8F7B22922
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:57:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EB80D1F235C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:57:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610A11D63EC;
-	Thu, 24 Oct 2024 12:57:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D295D1D63E2;
+	Thu, 24 Oct 2024 12:57:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="afIAjaWu"
-Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="UkPfp5hf"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F9A71D319B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:57:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D76F1D63C1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:57:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774663; cv=none; b=ABu/p2qOoPkdtA3AuZRFcKh0BIhlotD3pJd+WwDTM37XzKHgVUHhf3pjZ8BjktkUDKoeioR29Q9DUcoUDzF/mwX96ZFHvlYBiwDApUWEGCUxtMp9t8YqgPFtgGVMMO11pXsYQbB75eMHcCY5gB+bcwiBICUiwcfKfKKpqBVMWtE=
+	t=1729774634; cv=none; b=ALSsYVb+m/E0Cd5v//3P4tgXqllkBD++cNtepupZRABul7h0fJTbCmIjYZ3NPY1VVzc6J3+kihh7Kr8DLRW+mzNQErigNBjHe8NkMspHlIl7pD+reaXY2WL4ST1rqNsS+UTKlptoPY1cTjzuGH1XM0GSWI0VlFIBb+NK5kRzBuY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774663; c=relaxed/simple;
-	bh=cQyhfsSc+QXVdTgShDspXvyHPJOSEjQo4rAUnpwMl4I=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=p0axCDU7bvF5NtG+7hVOrWp6DizIk/lSX85KgjJ9z8vmUdIS1E36Foh8JLC5UwS1At8tJXyYfTEnHd8xHF4Q2ht86WNwwuBghxlr/Zh9+s1OsZyREp89hIZ5zpmWOXLlXF/E5TE7e8xDzkblEbxbjMszmdA3omv3eeKQFxr+lNE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=afIAjaWu; arc=none smtp.client-ip=209.85.128.174
+	s=arc-20240116; t=1729774634; c=relaxed/simple;
+	bh=fqEoIh+dgxuIFMBN6cyueAHztwW8N9qpgQuWpBDpkGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=uBrudL4FRj34xrdmQbGK/ldnRoaM+mf1x0bu2cCv2D7cQxT1ZvYR7a6NW6z6Muqql1l51cT/7HSlA1/Ch1sHw0zIwWeLw12Z8PKnSdoHavtCCLtk7bc4Cujeynjf8T3R/Csxm9YPMYJoCZJLb8Ylmo+s/v/9WJ4Lvtp/q/jjEV8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=UkPfp5hf; arc=none smtp.client-ip=209.85.128.47
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e3d7e6f832so8259557b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:57:41 -0700 (PDT)
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4314b316495so8419075e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:57:11 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729774660; x=1730379460; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=5vBhWSYNa611sIJg62H3My9cs8KLwfQc2KO3oXMo6UY=;
-        b=afIAjaWuJq+WJIbHJrPuLP+k5iY2ifSmFdQ2T9uuiPBQVZizsWbxqcjCi0FsTQvhbz
-         lQx1cQI2PmgOqeBimgDo1lwm5yedH48bJgwQDrPs6+w0dX2lx39kpjmNccOEVPRUWCRu
-         aRcqKPMTWd6OmnP9aEf0BM/aP8pZHwXCGJ743FtJFCUZxmjlLJStMn5JwfEAEj/LKEsc
-         QZVLjDDOqZ9+QlZVSxbXgqAAbl6QTQJLpOvcCvyU8gdDS141VgkGvY7evyjRDNtuWXE+
-         J5eUgMvu+eATmvhMjXy+sVEPbKdaueitjOvR24WnWGXWHM9q2MmIvBj+CBU7JyYmv02d
-         YSCg==
+        d=linaro.org; s=google; t=1729774630; x=1730379430; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Il7PJErLFSTwbIIob3qN4HBHgXZw+lBDkmE4mAtAfRs=;
+        b=UkPfp5hf6WaTkvW59YpE3aoJ91OOWShbeLxAjWJLdNKW0bzejpu9qowgNXAMpoSSCQ
+         FCZHdbMLta73Zk8L6Ca2hl9BA171cJFWgTKEsxeMgPuq3Q2dy/NQo2HKnDmHLWWCJCq4
+         rkvw1k6ARIlcKyCerjk2x4V9jSFU+3Qz/VnIMoGFw4iEJKQGRz3FtK4rvNuUHraRHm4M
+         7GTlZmPCz2zHdvYv3HUVVQDIE7dHE/5soHstNZkJ/xWOco+/3ONI3lM075mQ1keIsGjd
+         EJxSvx4Qusg/z6L26QDPz8142kh5JFnElAgcFRfed4kn3Xp+4aY9IQxhLWSPjj6I3igY
+         FAfQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729774660; x=1730379460;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=5vBhWSYNa611sIJg62H3My9cs8KLwfQc2KO3oXMo6UY=;
-        b=XsYkwouqCAoOteIIo3BeqRkPwrnMhBUAE62Bb/A5Wmb6pR8IjlDMz/b/6QTCICPwYg
-         Hgf/Zg9BEmiu10fiQhmVZBCjk3oJ2fFbrbCLmQJmCmFIDR8vH0fZO4QOw1xqbM1RHWyl
-         QRr0wkMt4q1WQcyIymdu9M4Mn/LMKlsuW/XfinHQlvwBg+kfHUptoZE1SwfcAOThDAU4
-         9z2MZ+ZOMexZ3fKlLCmH2fAjoy4XEOsVkXPJxHRb+BP/GL8V34+8NmW45Yj6MSyXurdv
-         CtOXN0M4uZ/Fz+bp6mFkhMnSxGuRzsCIGViykcIW24yVAT7w09+0uOzSjNGx0vWIWOnd
-         7CMQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVxU2AjHPMscuSiN/AKFpXvyrUAlrVkvOC/TZgdNwA3ftMdbTGnsKKGRzeQzXpRyKelpyOHSwTewokA1JY=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzwx8qi3yj++CxC83EMhk76S435lt+OhKtulJUuAA7rFmnltchB
-	rJJXoGTXahrx8DMSHV9hon2QpBzi9PNEX4Jf7ajc+hMy6uE3sUp6Im+Ync/q5QbHcVB4oRhy0Cr
-	hZa5HKvmb0VFZPLVX8Fx9elvI8gSoG22LOFTUnA==
-X-Google-Smtp-Source: AGHT+IE7NVTYCzyATqQRLTCNICXhJNdunQUxsnGa+DMBXRcbGXUcfSCZyt6G3MVbWQ4oA3XsK/sRUnX0SDF3ytvz/K4=
-X-Received: by 2002:a05:690c:39c:b0:6e2:f32:bd2c with SMTP id
- 00721157ae682-6e86630c0bcmr17865107b3.29.1729774660388; Thu, 24 Oct 2024
- 05:57:40 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729774630; x=1730379430;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=Il7PJErLFSTwbIIob3qN4HBHgXZw+lBDkmE4mAtAfRs=;
+        b=at/rM9CiDjnLcKaqCOSS3Tk8eWy5EqlSddTjWz7RcI8WTz7Zk5lU4Y60aB5O3M9SkO
+         bteHYq8x5xsZgzKM+fixHO4d9GL7B2Bi/euku/aCR2zWcNabAmwnaORbwi9cfh9w0aWC
+         s6M0FqOtY5UE7MD9DnnM8eeB2z/6dgR1/rHkLb5jH+hJvq2IVMfUQJ/08b/jJ4NgEM6l
+         2Uf/VOjtKDBx5no6Vopdz/s+QsWec5Lfmrqs3UtgCuMEadLNovunJQckuVL4R9t3j7FV
+         5+oI7N4Vbqbr9Ces/1j3543ltgg5aE3ODXfDwv7yomu0w29T4otgSnsP8ZSgiDU2Gjsb
+         KESA==
+X-Gm-Message-State: AOJu0YyJ+xLQQmxmVucuyQzoxWl0JOhoUexwtoEIoF1HL6XW9CbIlfre
+	Nbl2bhBd5GPXDl9O5yBG9Xi+PENsVOFEixTSMTHIpCwXtGluPkLhyhjQIdUlt/8=
+X-Google-Smtp-Source: AGHT+IFcCk4ndxwV1eYGLw1HNaQkSMmcWJhjmwBTuLmOTNWjeZKVSceV3A3F12X0UF///gySqGg5IQ==
+X-Received: by 2002:a05:600c:35cd:b0:430:52ec:1e41 with SMTP id 5b1f17b1804b1-4318415c0acmr57933815e9.17.1729774630318;
+        Thu, 24 Oct 2024 05:57:10 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-4318b5431ecsm17580855e9.5.2024.10.24.05.57.09
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 05:57:09 -0700 (PDT)
+Message-ID: <9ba3fa17-57c3-41e9-9e19-33fa105a179e@linaro.org>
+Date: Thu, 24 Oct 2024 14:57:09 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018105333.4569-1-victorshihgli@gmail.com>
-In-Reply-To: <20241018105333.4569-1-victorshihgli@gmail.com>
-From: Ulf Hansson <ulf.hansson@linaro.org>
-Date: Thu, 24 Oct 2024 14:57:04 +0200
-Message-ID: <CAPDyKFrgwmPaAnv3CgH=rL9yV4JfbF9mX6nt+Wy=2OUphadZJQ@mail.gmail.com>
-Subject: Re: [PATCH V23 00/16] Add support UHS-II for GL9755 and GL9767
-To: Victor Shih <victorshihgli@gmail.com>
-Cc: adrian.hunter@intel.com, linux-mmc@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, benchuanggli@gmail.com, 
-	Lucas.Lai@genesyslogic.com.tw, HL.Liu@genesyslogic.com.tw, 
-	Greg.tu@genesyslogic.com.tw, dlunev@chromium.org, 
-	Victor Shih <victor.shih@genesyslogic.com.tw>
-Content-Type: text/plain; charset="UTF-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/lib: Fix memory leak on error in
+ thermal_genl_auto()
+To: Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org,
+ Lukasz Luba <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>
+References: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
+ <45265aca-7371-455f-819f-c4d68cbb089b@web.de>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <45265aca-7371-455f-819f-c4d68cbb089b@web.de>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Fri, 18 Oct 2024 at 12:53, Victor Shih <victorshihgli@gmail.com> wrote:
->
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
->
-> Summary
-> =======
-> These patches[1] support UHS-II and fix GL9755 and GL9767
-> UHS-II compatibility.
->
-> About UHS-II, roughly deal with the following three parts:
-> 1) A UHS-II detection and initialization:
-> - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
->   Sequence[2]).
-> - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
->   [2]).
-> - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
->   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
->   Setting Register Setup Sequence.
->
-> 2) Send Legacy SD command through SD-TRAN
-> - Encapsulated SD packets are defined in SD-TRAN in order to ensure Legacy
->   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.1
->   Packet Types and Format Overview[3]).
-> - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-II
->   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2]).
->
-> 3) UHS-II Interrupt
-> - Except for UHS-II error interrupts, most interrupts share the original
->   interrupt registers.
->
-> Patch structure
-> ===============
-> patch#1:     for core
-> patch#2-#14: for sdhci
-> patch#15:    for GL9755
-> patch#16:    for GL9767
->
-> Tests
-> =====
-> Ran 'dd' command to evaluate the performance 3 times:
-> (SanDisk UHS-II card on GL9755 controller)
->                              Read    Write
-> UHS-II disabled (UHS-I): 81.9MB/s 51.4MB/s
-> UHS-II enabled         :  206MB/s 80.5MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 82.3MB/s 49.7MB/s
-> UHS-II enabled         :  208MB/s 80.8MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 82.9MB/s 50.8MB/s
-> UHS-II enabled         :  205MB/s 90.0MB/s
-> (SanDisk UHS-II card on GL9767 controller)
->                              Read    Write
-> UHS-II disabled (UHS-I): 83.5MB/s 50.5MB/s
-> UHS-II enabled         :  200MB/s 75.3MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 85.2MB/s 56.3MB/s
-> UHS-II enabled         :  203MB/s 75.8MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 82.9MB/s 51.1MB/s
-> UHS-II enabled         :  196MB/s 77.8MB/s
->
-> Test command
-> =====
-> Read: dd if=/dev/mmcxxx of=/dev/null bs=4096k count=2000 iflag=direct
-> Write:dd if=/dev/zero of=/dev/mmcxxx bs=4096k count=2000 oflag=direct
->
-> Changes in v23 (October. 18, 2024)
-> * Rebase on latest mmc/next.
-> * Version 22 patch#1-patch#6 have already been applied to the mmc/next
->   branch, so the patch order for version 23 has been shifted forward.
-> * Patch#1: Remove mmc_uhs2_card_prepare_cmd() function.
->            Remove mmc_sd_can_poweroff_notify() function.
->            Modify ios.timing setting in the sd_uhs2_power_off() function.
->            Restore the position of assign the host->card to original
->            position in the sd_uhs2_init_card() function.
->            Remove unnecessary error handle in the sd_uhs2_init_card()
->            function.
->            Add oldcard judgment to skip some programs in the
->            sd_uhs2_legacy_init() function.
->            Remove unnecessary error handle in the sd_uhs2_legacy_init()
->            function.
->            Remove mmc_card_set_present() function in the
->            sd_uhs2_reinit()function.
+On 24/10/2024 14:02, Markus Elfring wrote:
+>> The function thermal_genl_auto() does not free the allocated message
+>> in the error path. Fix that by putting a out label and jump to it
+>> which will free the message instead of directly returning an error.
+> 
+> Would you like to add any tags (like “Fixes” and “Cc”) accordingly?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc4#n145
+> 
+> 
+> …
+>> +++ b/tools/lib/thermal/commands.c
+>> @@ -375,27 +375,30 @@ static thermal_error_t thermal_genl_auto(struct thermal_handler *th, cmd_cb_t cm
+>>   					 struct cmd_param *param,
+>>   					 int cmd, int flags, void *arg)
+>>   {
+>> +	thermal_error_t ret = THERMAL_ERROR;
+>>   	struct nl_msg *msg;
+>>   	void *hdr;
+>>
+>>   	msg = nlmsg_alloc();
+>>   	if (!msg)
+>> -		return THERMAL_ERROR;
+>> +		goto out;
+> …
+> 
+> Is it really reasonable to pass a null pointer (from a failed function call)
+> to a subsequent nlmsg_free() call?
 
-I have queued this up for next, with a few amendments and added
-Adrian's acks to the SDHCI patches.
+You are right, I should return here :S
 
-When applying, I made a couple of cleanups and fixed
-sd_uhs2_power_off() to patch 1. I also took care of the checkpatch
-warnings for the SDHCI patches.
 
-That said, there are still some issues that remain to be fixed, but
-let's do that on top of the $subject series. See below:
 
-*) The error/re-init path of the card is broken, as also pointed out
-by Adrian. I will work on this shortly and send patches to fix this
-up, please help to review and test.
-*) We should read the card's ext registers, to for example enable the
-card's internal cache to be used.
-*) We should avoid unnecessary commands during re-init of the card, to
-decrease latency.
-*) During suspend, we should probably send the go-dormant command with
-the hibernate bit, rather than just doing a plain power-off.
+> Can it be more appropriate to return directly in such an error case?
+> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/coding-style.rst?h=v6.12-rc4#n532
+> 
+> Regards,
+> Markus
 
-[...]
 
-Thanks and kind regards
-Uffe
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
