@@ -1,312 +1,321 @@
-Return-Path: <linux-kernel+bounces-379746-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379745-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4B4F9AE31D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:53:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C662D9AE312
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:52:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D0C791C223C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:53:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6FF31C2233A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:52:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE7AE1C9B7C;
-	Thu, 24 Oct 2024 10:52:55 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A249F176AAD;
-	Thu, 24 Oct 2024 10:52:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E48CF1C75EB;
+	Thu, 24 Oct 2024 10:52:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b="Rnn2ki3s"
+Received: from mail-ed1-f50.google.com (mail-ed1-f50.google.com [209.85.208.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 481F9167D80
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:52:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767175; cv=none; b=gOfo3Wfoca++OGmgNWwnFY9LOeolu56VpUWmGSQPuVxJUtBpqbC0z7rstA5O5Y4g4xNTG/EW9KbShKmCv1z6fm0WVTCv5BcjtTg16VI9WUkpWnFbEwHPNEDCKuYPk8eo0Xj1zK7U0lNb3CRkgI6s8tBhR+DzFCpGzcWAUOMmyXM=
+	t=1729767173; cv=none; b=Fm8rFUHHGGbvOkcL2d3d0bXrkUvx2L67a8cNBa9OyXY9ZDzvvkBusP/XFrOaFfFnp/LjDcHzcODWJAwtyzkpZMSMCI7bVcCg4Dx7leBfEQA60w3kFcEuyGu/6VGfl7gMgkn4rARZyxBb0kHEUej6Wx4rBbAuRlcwvLzCwaUXuyw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767175; c=relaxed/simple;
-	bh=gPlA1+J0NJzLZMqSBN3DdFrWVxb4cP6uwM/TMB44Xh0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Y2odxkdl13w70K1QbFujqkSUxRsrfHonhmrMTjh7bvNymP+5nA+36n+q0rdIY26Dq917WBfHbIcA5pbbzEgYHDGrFaMt0w+sXmFwcKXiLTWNaX1CZIUzeeoKHaGjDAeG+rPjC7KCWeTWfB7W41U8cTW/kJ2XUSeI5+q6Qh66y64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 8D23C339;
-	Thu, 24 Oct 2024 03:53:21 -0700 (PDT)
-Received: from [10.1.30.45] (e122027.cambridge.arm.com [10.1.30.45])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 67C983F71E;
-	Thu, 24 Oct 2024 03:52:42 -0700 (PDT)
-Message-ID: <b11631ba-224f-41fb-b82e-59f1b258aea1@arm.com>
-Date: Thu, 24 Oct 2024 11:52:40 +0100
+	s=arc-20240116; t=1729767173; c=relaxed/simple;
+	bh=jyYD8uR6VgC8lK/BK1I+6pBahtt51XbNxjWzuzB5+BM=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Subject:Cc:To:From:
+	 References:In-Reply-To; b=SZRCb2tLX0KO/5Fib+xTsGZQ1bauQ76RkGSSM0XtD+c1ob11myzcZ9hINqm0eOGnQilkPdP5vaGubh0MSAfqdasFwFvatB2XWtB2zv6cSam41AAdzU6Uhl9iDXVDO2oUh0SRNT1jAPDtEGg2MMaZyLrT9R7CfxtCag6gfVKDkvE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com; spf=pass smtp.mailfrom=kruces.com; dkim=pass (2048-bit key) header.d=kruces-com.20230601.gappssmtp.com header.i=@kruces-com.20230601.gappssmtp.com header.b=Rnn2ki3s; arc=none smtp.client-ip=209.85.208.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kruces.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kruces.com
+Received: by mail-ed1-f50.google.com with SMTP id 4fb4d7f45d1cf-5cb72918bddso994132a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:52:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kruces-com.20230601.gappssmtp.com; s=20230601; t=1729767168; x=1730371968; darn=vger.kernel.org;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=J2jK48K5rMf9PM6EZMKUSQBND1vGsRxeS6yIIGOf0RE=;
+        b=Rnn2ki3s/AqjX3E/u07bA3Mg6iRqHEQzAko4/drvhygXFHnxBrdAHKS5EOLMdvp4cj
+         pk8IJmIFqAlEo7zNKRkoiLWwH1BwUm7feurtd/h+E7bzdrX/wxg3Cnfx2zsc3Jc15H2M
+         Yr8P6h/ryBKG9HEOQne2n7bdQdtuIoHRxQUXEkrcO/JSmnG+nIga/SoJRsQwO0thHeFQ
+         pmvApvqAa86olbI1H25fMZCKv1Rd5Xe609X8NpYxE9Tt8jPGKgbVHG/lJswsov50MSv8
+         40XcQFtkWs2SU8q4RJoBsd1jHL0YFYLunrU7Jh/PvskM1PatoXbX6aEYmkMcNQoAUDx9
+         iUMg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729767168; x=1730371968;
+        h=in-reply-to:references:from:to:cc:subject:message-id:date
+         :content-transfer-encoding:mime-version:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=J2jK48K5rMf9PM6EZMKUSQBND1vGsRxeS6yIIGOf0RE=;
+        b=sjrIg2Ys8XRK+RmPXvs6wc64Lg4bNF94CPcQ7SWcbTDnWsiV0W3zSFbuhemjGUtFHy
+         XbiBthTvB5KTiAhpYtmaTiFQ31B/J7v43oghv/Fi58Zq/CflqaRTFfOL+cZ42RDwau5r
+         FScWgKnnZfrcx8YBfH3TEW6rKurWg2a9hPfgTWZi2wn3X06aXtq8wQpzJRGm2m+s6s3m
+         gW5yFLwvKTNNqt9PMfpTq5fan52f0AzhKHEqdREYb00j9biYyiztJ6k7OmjqcBroBUCf
+         2vnfWVpeCVgb4kbY6l7SBLPkxDpt5Z+4h15bNXSB18hOD7e0bKm9ROltiTVl8POYpWWS
+         XVrw==
+X-Forwarded-Encrypted: i=1; AJvYcCV+6E2dxCZJGIpCI6Kub7xPWnAsKWderT+M6tKqdMAd1gl9G+g+WEXzyTpTYX02+3jlpFHx0+bWko8w4rw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxuQlNeNF6HCm8111pSthhzv9VYB34XHP3h6r3yg6yuv5zQM+TQ
+	Cqe/zrLbJXEx85+ZZrSJ5DOd02m1MTvVUgokEvsOl8sNjZRcnIDAr/d+kI9n5DY2dgyc9WQOpk1
+	J
+X-Google-Smtp-Source: AGHT+IEnSf1hdbNIqPwxL30tQa/ozUeZocqJqjScDoLB3huUD5IaauOrOfS6UWSad94b31sfV703Ug==
+X-Received: by 2002:a05:6402:13cc:b0:5c5:b9bb:c65a with SMTP id 4fb4d7f45d1cf-5cb8ac2d6fbmr4475663a12.1.1729767168144;
+        Thu, 24 Oct 2024 03:52:48 -0700 (PDT)
+Received: from localhost ([194.62.217.67])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c73b50sm5500642a12.97.2024.10.24.03.52.47
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 03:52:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v2 0/4] mm: Introduce MAP_BELOW_HINT
-To: "Liam R. Howlett" <Liam.Howlett@oracle.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>,
- Charlie Jenkins <charlie@rivosinc.com>, Arnd Bergmann <arnd@arndb.de>,
- Richard Henderson <richard.henderson@linaro.org>,
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Matt Turner
- <mattst88@gmail.com>, Vineet Gupta <vgupta@kernel.org>,
- Russell King <linux@armlinux.org.uk>, Guo Ren <guoren@kernel.org>,
- Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>,
- Thomas Bogendoerfer <tsbogend@alpha.franken.de>,
- "James E.J. Bottomley" <James.Bottomley@hansenpartnership.com>,
- Helge Deller <deller@gmx.de>, Michael Ellerman <mpe@ellerman.id.au>,
- Nicholas Piggin <npiggin@gmail.com>,
- Christophe Leroy <christophe.leroy@csgroup.eu>,
- Naveen N Rao <naveen@kernel.org>, Alexander Gordeev
- <agordeev@linux.ibm.com>, Gerald Schaefer <gerald.schaefer@linux.ibm.com>,
- Heiko Carstens <hca@linux.ibm.com>, Vasily Gorbik <gor@linux.ibm.com>,
- Christian Borntraeger <borntraeger@linux.ibm.com>,
- Sven Schnelle <svens@linux.ibm.com>,
- Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>,
- John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>,
- "David S. Miller" <davem@davemloft.net>,
- Andreas Larsson <andreas@gaisler.com>, Thomas Gleixner <tglx@linutronix.de>,
- Ingo Molnar <mingo@redhat.com>, Borislav Petkov <bp@alien8.de>,
- Dave Hansen <dave.hansen@linux.intel.com>, x86@kernel.org,
- "H. Peter Anvin" <hpa@zytor.com>, Andy Lutomirski <luto@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>, Muchun Song <muchun.song@linux.dev>,
- Andrew Morton <akpm@linux-foundation.org>, Vlastimil Babka <vbabka@suse.cz>,
- Lorenzo Stoakes <lorenzo.stoakes@oracle.com>, Shuah Khan <shuah@kernel.org>,
- linux-arch@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-alpha@vger.kernel.org, linux-snps-arc@lists.infradead.org,
- linux-arm-kernel@lists.infradead.org, linux-csky@vger.kernel.org,
- loongarch@lists.linux.dev, linux-mips@vger.kernel.org,
- linux-parisc@vger.kernel.org, linuxppc-dev@lists.ozlabs.org,
- linux-s390@vger.kernel.org, linux-sh@vger.kernel.org,
- sparclinux@vger.kernel.org, linux-mm@kvack.org,
- linux-kselftest@vger.kernel.org
-References: <20240829-patches-below_hint_mmap-v2-0-638a28d9eae0@rivosinc.com>
- <yu7um2tcxg2apoz372rmzpkrfgbb42ndvabvrsp4usb2e3bkrf@huaucjsp5vlj>
- <Ztnp3OAIRz/daj7s@ghost>
- <pbotlphw77fkfacldtpxfjcs2w5nhb2uvxszv5rmlrhjm42akd@4pvcqb7ojq4v>
- <b6ca55b7-4de2-4085-97bd-619f91d9fcb8@arm.com>
- <5u7xntjdye5ejjmkgpp7m3ogpzblxcztrwngulejdft63fzuwf@xcxfcbaccqtw>
- <07c5e292-5218-43ee-a167-da09d108a663@arm.com>
- <gcyxymiqvxgkkhn76a6ksvevzcq36rridwakgyjsa24obcab3t@leqlqjcx3va3>
-From: Steven Price <steven.price@arm.com>
-Content-Language: en-GB
-In-Reply-To: <gcyxymiqvxgkkhn76a6ksvevzcq36rridwakgyjsa24obcab3t@leqlqjcx3va3>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 24 Oct 2024 12:52:46 +0200
+Message-Id: <D53ZAA760YS1.B4SVBIPY8MTV@kruces.com>
+Subject: Re: [RFC PATCH v3 0/4] Support large folios for tmpfs
+Cc: "Matthew Wilcox" <willy@infradead.org>, <akpm@linux-foundation.org>,
+ <hughd@google.com>, <wangkefeng.wang@huawei.com>, <21cnbao@gmail.com>,
+ <ryan.roberts@arm.com>, <ioworker0@gmail.com>, <linux-mm@kvack.org>,
+ <linux-kernel@vger.kernel.org>, "Kirill A . Shutemov"
+ <kirill.shutemov@linux.intel.com>
+To: "Daniel Gomez" <d@kruces.com>, "David Hildenbrand" <david@redhat.com>,
+ "Baolin Wang" <baolin.wang@linux.alibaba.com>, "Daniel Gomez"
+ <da.gomez@samsung.com>, "Kirill A. Shutemov" <kirill@shutemov.name>
+From: "Daniel Gomez" <d@kruces.com>
+X-Mailer: aerc 0.18.2
+References: <cover.1728548374.git.baolin.wang@linux.alibaba.com>
+ <Zw_IT136rxW_KuhU@casper.infradead.org>
+ <e1b6fa05-019c-4a40-afc0-bc1efd15ad42@linux.alibaba.com>
+ <6dohx7zna7x6hxzo4cwnwarep3a7rohx4qxubds3uujfb7gp3c@2xaubczl2n6d>
+ <8e48cf24-83e1-486e-b89c-41edb7eeff3e@linux.alibaba.com>
+ <CGME20241021085439eucas1p10a0b6e7c3b0ace3c9a0402427595875a@eucas1p1.samsung.com> <ppgciwd7cxmeqssryshe42lxwb4sdzr6gjhwwbotw4gx2l7vi5@7y4hedxpf4nx> <D51IU4N746MI.FDS6C7GYO4RP@samsung.com> <c59f2881-fbbb-41b1-830d-9d81f36ecc0b@linux.alibaba.com> <486a72c6-5877-4a95-a587-2a32faa8785d@redhat.com> <7eb412d1-f90e-4363-8c7b-072f1124f8a6@linux.alibaba.com> <1b0f9f94-06a6-48ac-a68e-848bce1008e9@redhat.com> <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
+In-Reply-To: <D53Z7I8D6MRB.XN14XUEFQFG7@kruces.com>
 
-On 23/10/2024 19:10, Liam R. Howlett wrote:
-> * Steven Price <steven.price@arm.com> [241023 05:31]:
->>>>   * Box64 seems to have a custom allocator based on reading 
->>>>     /proc/self/maps to allocate a block of VA space with a low enough 
->>>>     address [1]
->>>>
->>>>   * PHP has code reading /proc/self/maps - I think this is to find a 
->>>>     segment which is close enough to the text segment [2]
->>>>
->>>>   * FEX-Emu mmap()s the upper 128TB of VA on Arm to avoid full 48 bit
->>>>     addresses [3][4]
->>>
->>> Can't the limited number of applications that need to restrict the upper
->>> bound use an LD_PRELOAD compatible library to do this?
->>
->> I'm not entirely sure what point you are making here. Yes an LD_PRELOAD
->> approach could be used instead of a personality type as a 'hack' to
->> preallocate the upper address space. The obvious disadvantage is that
->> you can't (easily) layer LD_PRELOAD so it won't work in the general case.
-> 
-> My point is that riscv could work around the limited number of
-> applications that requires this.  It's not really viable for you.
+On Thu Oct 24, 2024 at 12:49 PM CEST, Daniel Gomez wrote:
+> On Wed Oct 23, 2024 at 11:27 AM CEST, David Hildenbrand wrote:
+> > On 23.10.24 10:04, Baolin Wang wrote:
+> > >=20
+> > >=20
+> > > On 2024/10/22 23:31, David Hildenbrand wrote:
+> > >> On 22.10.24 05:41, Baolin Wang wrote:
+> > >>>
+> > >>>
+> > >>> On 2024/10/21 21:34, Daniel Gomez wrote:
+> > >>>> On Mon Oct 21, 2024 at 10:54 AM CEST, Kirill A. Shutemov wrote:
+> > >>>>> On Mon, Oct 21, 2024 at 02:24:18PM +0800, Baolin Wang wrote:
+> > >>>>>>
+> > >>>>>>
+> > >>>>>> On 2024/10/17 19:26, Kirill A. Shutemov wrote:
+> > >>>>>>> On Thu, Oct 17, 2024 at 05:34:15PM +0800, Baolin Wang wrote:
+> > >>>>>>>> + Kirill
+> > >>>>>>>>
+> > >>>>>>>> On 2024/10/16 22:06, Matthew Wilcox wrote:
+> > >>>>>>>>> On Thu, Oct 10, 2024 at 05:58:10PM +0800, Baolin Wang wrote:
+> > >>>>>>>>>> Considering that tmpfs already has the 'huge=3D' option to
+> > >>>>>>>>>> control the THP
+> > >>>>>>>>>> allocation, it is necessary to maintain compatibility with t=
+he
+> > >>>>>>>>>> 'huge=3D'
+> > >>>>>>>>>> option, as well as considering the 'deny' and 'force' option
+> > >>>>>>>>>> controlled
+> > >>>>>>>>>> by '/sys/kernel/mm/transparent_hugepage/shmem_enabled'.
+> > >>>>>>>>>
+> > >>>>>>>>> No, it's not.=C2=A0 No other filesystem honours these setting=
+s.
+> > >>>>>>>>> tmpfs would
+> > >>>>>>>>> not have had these settings if it were written today.=C2=A0 I=
+t should
+> > >>>>>>>>> simply
+> > >>>>>>>>> ignore them, the way that NFS ignores the "intr" mount option
+> > >>>>>>>>> now that
+> > >>>>>>>>> we have a better solution to the original problem.
+> > >>>>>>>>>
+> > >>>>>>>>> To reiterate my position:
+> > >>>>>>>>>
+> > >>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0 - When using tmpfs as a filesystem,=
+ it should behave like
+> > >>>>>>>>> other
+> > >>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 filesystems.
+> > >>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0 - When using tmpfs to implement MAP=
+_ANONYMOUS | MAP_SHARED,
+> > >>>>>>>>> it should
+> > >>>>>>>>>  =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 behave like anonymous m=
+emory.
+> > >>>>>>>>
+> > >>>>>>>> I do agree with your point to some extent, but the =E2=80=98hu=
+ge=3D=E2=80=99 option
+> > >>>>>>>> has
+> > >>>>>>>> existed for nearly 8 years, and the huge orders based on write
+> > >>>>>>>> size may not
+> > >>>>>>>> achieve the performance of PMD-sized THP in some scenarios, su=
+ch
+> > >>>>>>>> as when the
+> > >>>>>>>> write length is consistently 4K. So, I am still concerned that
+> > >>>>>>>> ignoring the
+> > >>>>>>>> 'huge' option could lead to compatibility issues.
+> > >>>>>>>
+> > >>>>>>> Yeah, I don't think we are there yet to ignore the mount option=
+.
+> > >>>>>>
+> > >>>>>> OK.
+> > >>>>>>
+> > >>>>>>> Maybe we need to get a new generic interface to request the sem=
+antics
+> > >>>>>>> tmpfs has with huge=3D on per-inode level on any fs. Like a set=
+ of
+> > >>>>>>> FADV_*
+> > >>>>>>> handles to make kernel allocate PMD-size folio on any allocatio=
+n
+> > >>>>>>> or on
+> > >>>>>>> allocations within i_size. I think this behaviour is useful bey=
+ond
+> > >>>>>>> tmpfs.
+> > >>>>>>>
+> > >>>>>>> Then huge=3D implementation for tmpfs can be re-defined to set =
+these
+> > >>>>>>> per-inode FADV_ flags by default. This way we can keep tmpfs
+> > >>>>>>> compatible
+> > >>>>>>> with current deployments and less special comparing to rest of
+> > >>>>>>> filesystems on kernel side.
+> > >>>>>>
+> > >>>>>> I did a quick search, and I didn't find any other fs that requir=
+e
+> > >>>>>> PMD-sized
+> > >>>>>> huge pages, so I am not sure if FADV_* is useful for filesystems
+> > >>>>>> other than
+> > >>>>>> tmpfs. Please correct me if I missed something.
+> > >>>>>
+> > >>>>> What do you mean by "require"? THPs are always opportunistic.
+> > >>>>>
+> > >>>>> IIUC, we don't have a way to hint kernel to use huge pages for a
+> > >>>>> file on
+> > >>>>> read from backing storage. Readahead is not always the right way.
+> > >>>>>
+> > >>>>>>> If huge=3D is not set, tmpfs would behave the same way as the r=
+est of
+> > >>>>>>> filesystems.
+> > >>>>>>
+> > >>>>>> So if 'huge=3D' is not set, tmpfs write()/fallocate() can still
+> > >>>>>> allocate large
+> > >>>>>> folios based on the write size? If yes, that means it will chang=
+e the
+> > >>>>>> default huge behavior for tmpfs. Because previously having 'huge=
+=3D'
+> > >>>>>> is not
+> > >>>>>> set means the huge option is 'SHMEM_HUGE_NEVER', which is simila=
+r
+> > >>>>>> to what I
+> > >>>>>> mentioned:
+> > >>>>>> "Another possible choice is to make the huge pages allocation ba=
+sed
+> > >>>>>> on write
+> > >>>>>> size as the *default* behavior for tmpfs, ..."
+> > >>>>>
+> > >>>>> I am more worried about breaking existing users of huge pages. So
+> > >>>>> changing
+> > >>>>> behaviour of users who don't specify huge is okay to me.
+> > >>>>
+> > >>>> I think moving tmpfs to allocate large folios opportunistically by
+> > >>>> default (as it was proposed initially) doesn't necessary conflict =
+with
+> > >>>> the default behaviour (huge=3Dnever). We just need to clarify that=
+ in
+> > >>>> the documentation.
+> > >>>>
+> > >>>> However, and IIRC, one of the requests from Hugh was to have a way=
+ to
+> > >>>> disable large folios which is something other FS do not have contr=
+ol
+> > >>>> of as of today. Ryan sent a proposal to actually control that glob=
+ally
+> > >>>> but I think it didn't move forward. So, what are we missing to go =
+back
+> > >>>> to implement large folios in tmpfs in the default case, as any oth=
+er fs
+> > >>>> leveraging large folios?
+> > >>>
+> > >>> IMHO, as I discussed with Kirill, we still need maintain compatibil=
+ity
+> > >>> with the 'huge=3D' mount option. This means that if 'huge=3Dnever' =
+is set
+> > >>> for tmpfs, huge page allocation will still be prohibited (which can
+> > >>> address Hugh's request?). However, if 'huge=3D' is not set, we can
+> > >>> allocate large folios based on the write size.
+>
+> So, in order to make tmpfs behave like other filesystems, we need to
+> allocate large folios by default. Not setting 'huge=3D' is the same as
+> setting it to 'huge=3Dnever' as per documentation. But 'huge=3D' is meant=
+ to
+> control THP, not large folios, so it should not have a conflict here, or
+> else, what case are you thinking?
+>
+> So, to make tmpfs behave like other filesystems, we need to allocate
+> large folios by default. According to the documentation, not setting
+> 'huge=3D' is the same as setting 'huge=3Dnever.' However, 'huge=3D' is
+> intended to control THP, not large folios, so there shouldn't be
+> a conflict in this case. Can you clarify what specific scenario or
+> conflict you're considering here? Perhaps when large folios order is the
+> same as PMD-size?
 
-Ah ok - thanks for the clarification.
+Sorry for duplicate paragraph.
 
->>
->>>>
->>>>   * pmdk has some funky code to find the lowest address that meets 
->>>>     certain requirements - this does look like an ALSR alternative and 
->>>>     probably couldn't directly use MAP_BELOW_HINT, although maybe this 
->>>>     suggests we need a mechanism to map without a VA-range? [5]
->>>>
->>>>   * MIT-Scheme parses /proc/self/maps to find the lowest mapping within 
->>>>     a range [6]
->>>>
->>>>   * LuaJIT uses an approach to 'probe' to find a suitable low address 
->>>>     for allocation [7]
->>>>
->>>
->>> Although I did not take a deep dive into each example above, there are
->>> some very odd things being done, we will never cover all the use cases
->>> with an exact API match.  What we have today can be made to work for
->>> these users as they have figured ways to do it.
->>>
->>> Are they pretty? no.  Are they common? no.  I'm not sure it's worth
->>> plumbing in new MM code in for these users.
->>
->> My issue with the existing 'solutions' is that they all seem to be fragile:
->>
->>  * Using /proc/self/maps is inherently racy if there could be any other
->> code running in the process at the same time.
-> 
-> Yes, it is not thread safe.  Parsing text is also undesirable.
-> 
->>
->>  * Attempting to map the upper part of the address space only works if
->> done early enough - once an allocation arrives there, there's very
->> little you can robustly do (because the stray allocation might be freed).
->>
->>  * LuaJIT's probing mechanism is probably robust, but it's inefficient -
->> LuaJIT has a fallback of linear probing, following by no hint (ASLR),
->> followed by pseudo-random probing. I don't know the history of the code
->> but it looks like it's probably been tweaked to try to avoid performance
->> issues.
->>
->>>> The biggest benefit I see of MAP_BELOW_HINT is that it would allow a
->>>> library to get low addresses without causing any problems for the rest
->>>> of the application. The use case I'm looking at is in a library and 
->>>> therefore a personality mode wouldn't be appropriate (because I don't 
->>>> want to affect the rest of the application). Reading /proc/self/maps
->>>> is also problematic because other threads could be allocating/freeing
->>>> at the same time.
->>>
->>> As long as you don't exhaust the lower limit you are trying to allocate
->>> within - which is exactly the issue riscv is hitting.
->>
->> Obviously if you actually exhaust the lower limit then any
->> MAP_BELOW_HINT API would also fail - there's really not much that can be
->> done in that case.
-> 
-> Today we reverse the search, so you end up in the higher address
-> (bottom-up vs top-down) - although the direction is arch dependent.
-> 
-> If the allocation is too high/low then you could detect, free, and
-> handle the failure.
-
-Agreed, that's fine.
-
->>
->>> I understand that you are providing examples to prove that this is
->>> needed, but I feel like you are better demonstrating the flexibility
->>> exists to implement solutions in different ways using todays API.
->>
->> My intention is to show that today's API doesn't provide a robust way of
->> doing this. Although I'm quite happy if you can point me at a robust way
->> with the current API. As I mentioned my goal is to be able to map memory
->> in a (multithreaded) library with a (ideally configurable) number of VA
->> bits. I don't particularly want to restrict the whole process, just
->> specific allocations.
-> 
-> If you don't need to restrict everything, won't the hint work for your
-> usecase?  I must be missing something from your requirements.
-
-The hint only works if the hint address is actually free. Otherwise
-mmap() falls back to as if the hint address wasn't specified.
-
-E.g.
-
-> 	for(int i = 0; i < 2; i++) {
-> 		void *addr = mmap((void*)(1UL << 32), PAGE_SIZE, PROT_NONE, MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-> 		printf("%p\n", addr);
-> 	}
-
-Prints something like:
-
-0x100000000
-0x7f20d21e0000
-
-The hint is ignored for the second mmap() because there's already a VMA
-at the hint address.
-
-So the question is how to generate a hint value that is (or has a high
-likelihood of being) empty? This AFAICT is the LuaJIT approach, but
-their approach is to pick random values in the hope of getting a free
-address (and then working linearly up for subsequent allocations). Which
-doesn't meet my idea of "robust".
-
->>
->> I had typed up a series similar to this one as a MAP_BELOW flag would
->> fit my use-case well.
->>
->>> I think it would be best to use the existing methods and work around the
->>> issue that was created in riscv while future changes could mirror amd64
->>> and arm64.
->>
->> The riscv issue is a different issue to the one I'm trying to solve. I
->> agree MAP_BELOW_HINT isn't a great fix for that because we already have
->> differences between amd64 and arm64 and obviously no software currently
->> out there uses this new flag.
->>
->> However, if we had introduced this flag in the past (e.g. if MAP_32BIT
->> had been implemented more generically, across architectures and with a
->> hint value, like this new flag) then we probably wouldn't be in this
->> situation. Applications that want to restrict the VA space would be able
->> to opt-in and be portable across architectures.
-> 
-> I don't think that's true.  Some of the applications want all of the
-> allocations below a certain threshold and by the time they are adding
-> flags to allocations, it's too late.  What you are looking for is a
-> counterpart to mmap_min_addr, but for higher addresses?  This would have
-> to be set before any of the allocations occur for a specific binary (ie:
-> existing libraries need to be below that threshold too), I think?
-
-Well that's not what *I* am looking for. A mmap_max_addr might be useful
-for others for the purpose of restricting all allocations.
-
-I think there are roughly three classes of application:
-
- 1. Applications which do nothing special with pointers. This is most
-applications and they could benefit from any future expansions to the VA
-size without any modification. E.g. if 64 bit VA addresses were somehow
-available they could deal with them today (without recompilation).
-
- 2. Applications which need VA addresses to meet certain requirements.
-They might be emulating another architecture (e.g. FEX) and want
-pointers that can be exposed to the emulation. They might be aware of
-restrictions in JIT code (e.g. PHP). Or they might want to store
-pointers in 'weird' ways which involve fewer bits - AFAICT that's the
-LuaJIT situation. These applications are usually well aware that they
-are doing something "unusual" and would likely use a Linux API if it
-existed.
-
- 3. Applications which abuse the top bits of a VA because they've read
-the architecture documentation and they "know" that the VA space is limited.
-
-Class 3 would benefit from mmap_max_addr - either because the
-architecture has been extended (although that's been worked around by
-requiring the hint value to allocate into the top address space) or
-because they get ported to another architecture (which I believe is the
-RiscV issue). There is some argument these applications are buggy but
-"we don't break userspace" so we deal with them in kernel until they get
-ported and then ideally the bugs are fixed.
-
-Class 1 is the applications we know and love, they don't need anything
-special.
-
-Class 2 is the case I care about. The application knows it wants special
-addresses, and in the cases I've detailed there has been significant
-code written to try to achieve this. But the kernel isn't currently
-providing a good mechanism to do this.
-
->>
->> Another potential option is a mmap3() which actually allows the caller
->> to place constraints on the VA space (e.g. minimum, maximum and
->> alignment). There's plenty of code out there that has to over-allocate
->> and munmap() the unneeded part for alignment reasons. But I don't have a
->> specific need for that, and I'm guessing you wouldn't be in favour.
-> 
-> You'd probably want control of the direction of the search too.
-
-Very true, and one of the reasons I don't want to do a mmap3() is that
-I'm pretty I'd miss something.
-
-> I think mmap3() would be difficult to have accepted as well.
-
-And that's the other major reason ;)
-
-Thanks,
-
-Steve
-
-> ...
-> 
-> Thanks,
-> Liam
-> 
+>
+> > >>
+> > >> I consider allocating large folios in shmem/tmpfs on the write path =
+less
+> > >> controversial than allocating them on the page fault path -- especia=
+lly
+> > >> as long as we stay within the size to-be-written.
+> > >>
+> > >> I think in RHEL THP on shmem/tmpfs are disabled as default (e.g.,
+> > >> shmem_enabled=3Dnever). Maybe because of some rather undesired
+> > >> side-effects (maybe some are historical?): I recall issues with VMs =
+with
+> > >> THP+ memory ballooning, as we cannot reclaim pages of folios if
+> > >> splitting fails). I assume most of these problematic use cases don't=
+ use
+> > >> tmpfs as an ordinary file system (write()/read()), but mmap() the wh=
+ole
+> > >> thing.
+> > >>
+> > >> Sadly, I don't find any information about shmem/tmpfs + THP in the R=
+HEL
+> > >> documentation; most documentation is only concerned about anon THP.
+> > >> Which makes me conclude that they are not suggested as of now.
+> > >>
+> > >> I see more issues with allocating them on the page fault path and no=
+t
+> > >> having a way to disable it -- compared to allocating them on the wri=
+te()
+> > >> path.
+> > >=20
+> > > I may not understand your issues. IIUC, you can disable allocating hu=
+ge
+> > > pages on the page fault path by using the 'huge=3Dnever' mount option=
+ or
+> > > setting shmem_enabled=3Ddeny. No?
+> >
+> > That's what I am saying: if there is some way to disable it that will=
+=20
+> > keep working, great.
+>
+> I agree. That aligns with what I recall Hugh requested. However, I
+> believe if that is the way to go, we shouldn't limit it to tmpfs.
+> Otherwise, why should tmpfs be prevented from allocating large folios if
+> other filesystems in the system are allowed to allocate them? I think,
+> if we want to disable large folios we should make it more generic,
+> something similar to Ryan's proposal [1] for controlling folio sizes.
+>
+> [1] https://lore.kernel.org/all/20240717071257.4141363-1-ryan.roberts@arm=
+.com/
+>
+> That said, there has already been disagreement on this point here [2].
+>
+> [2] https://lore.kernel.org/all/ZvVRiJYfaXD645Nh@casper.infradead.org/
 
 
