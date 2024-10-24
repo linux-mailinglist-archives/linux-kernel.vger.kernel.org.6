@@ -1,228 +1,219 @@
-Return-Path: <linux-kernel+bounces-379224-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379226-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 986CC9ADBAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:50:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E08E59ADBB1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:52:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF7D6B22638
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:50:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0E54D1C20E76
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:52:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9999E1741D9;
-	Thu, 24 Oct 2024 05:50:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C183177998;
+	Thu, 24 Oct 2024 05:52:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="SoCuA2UO"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="PSRigfJi"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F8E41714CA;
-	Thu, 24 Oct 2024 05:50:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.7
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729749005; cv=fail; b=otPS6WxsWYbAPS0M8x0I8hwI+6uU9yhouwXIZnuF/evRfiMXZPy/OLDKjc8ekv8h6Kry2EUbOylKBX4IleuMPRfAVNMHV2FTynAUgAN9kBPSyGBKB0hEDPOtypnJqSu8C6euiDXOpHDXaxD2DnuI0iKun9ecUFW6JdfiGVHFZD4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729749005; c=relaxed/simple;
-	bh=F06vtAE8e+biRwF9Y4EYzEJTd8tkyUUySzG4H2hv48w=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=aSSF/UxzpdpcZi3c5ROEMusKblGuvy/8q3om6ZkGlc+zvZZjd7DNGwKDiwYPaCJBGuctR+t1zhqi5+RLDxKeBsHm5ufLQgVOJ5kpuu98U4onQdMvqF3yco3ivPVeDgpPr+yTI/Jy07OXCWTqR3Zb6+dkertx5z5vThmgccfmOsM=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=SoCuA2UO; arc=fail smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729749004; x=1761285004;
-  h=from:to:cc:subject:date:message-id:references:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=F06vtAE8e+biRwF9Y4EYzEJTd8tkyUUySzG4H2hv48w=;
-  b=SoCuA2UOzoB8P3jA+VvmRD48YPSRpf6u7X7aCV/qd1iTqc0CsiSF+abe
-   Rcp3Nclm1yR4AUCUpxGEYVKq5SU9rm/S7Zns7o29QBg8cAwvfM9KtGR70
-   uEgSXduOCcY3lzmlIjn/YeyQ9+XulPq9du9VZixizWnoZdCwgMQxItZ8t
-   RtgqSZrcgJFm+/seqTIwQjaqTPX7AdVIyI3dO+yYUAinOAhilSkU6bUaI
-   kguxd7jJ31Im7mhCdvtMKtcDNnKNGiU8G7YS641Mg8CCGcolOzJo8BEAz
-   BPneoq5oZ72jYPCzutGnwMdAeU0yMpip5Iop4N5q0SQ9jRwXSITebc/NX
-   Q==;
-X-CSE-ConnectionGUID: 0cJFKGR5RDGATlWrDH7ymg==
-X-CSE-MsgGUID: R+kodfGNTlixJCGiTrnO8g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="54767680"
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="54767680"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 22:50:03 -0700
-X-CSE-ConnectionGUID: oBcUzxCoT6+5Slu7lGwoww==
-X-CSE-MsgGUID: 6uishX+YTmaAzCbq1b7tjw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="103809809"
-Received: from orsmsx601.amr.corp.intel.com ([10.22.229.14])
-  by fmviesa002.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 22:50:02 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Wed, 23 Oct 2024 22:50:01 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 22:50:01 -0700
-Received: from NAM11-DM6-obe.outbound.protection.outlook.com (104.47.57.177)
- by edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Wed, 23 Oct 2024 22:50:01 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=iFq2giBfoLPCpaIpfSADe6CaO/NGnpNyTocOdIq6KKYrMI8W4MiyT+rtIVFw4Lc5FCnwjlLvV/2K8ixJ5qfmKspDfYaq5WgMCpldGgECvIpk1O01AF2p9CKlMeXwrLy+TIP7AJB5bFYuV3kTbP15fpikAJl7OSf/Fh+gIh+lAxbUvYfHsPEQQZ2LD403gT8VASInZwEUlzffxpdJQYssw+8hTqeG9DS3/lk7gMWAv1iRPWHe/YDnoJSyzYm6RrKkTIk8PzoM6hgx5ih/jIkNrd3nIJKcS50MuDKXfddNQuDSH2x6Z/wyf7ljgMKWUdzmGPVtz5kKiKFmwnyJzaJQqw==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=c2xYStNsD34c0wY7gzPyNWr8zyCSwjWgqtNhebt+yYs=;
- b=AV75hX5MBPb2qEOKhSxH2ClBtOPRIW41Dd7Nrr2LFgfkpvK/Ls+gIkp/PpA6OjdXAjpeTDJ1lHqz2UAR617sGmmFxKW7kyQ2bxXmpICJiad2Sy7W8fHH8SLdRyG++lKqtqL0vm4mGq5R+YxaubI8vbRX2rlpYIg3fYKHLFsUCbZcBAEG6Tjddj2WbRXVqQdVBeuIahrA3Z7+77rTOy5OgLduXmTN1v4nPFHTOcGIrQ7NhROrvbZK14mxYVkwThl2t8Bi6DMP7pvBw5fCh3Y2dbHZtD/4ra2rh0uMjX1Hcjm3W/3ouontz99Xj7pqVeqeIm4w3Kx7phMjabh1B/3/vg==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com (2603:10b6:930:62::17)
- by LV2PR11MB6000.namprd11.prod.outlook.com (2603:10b6:408:17c::12) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Thu, 24 Oct
- 2024 05:49:59 +0000
-Received: from CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d]) by CY8PR11MB7134.namprd11.prod.outlook.com
- ([fe80::cd87:9086:122c:be3d%7]) with mapi id 15.20.8093.014; Thu, 24 Oct 2024
- 05:49:59 +0000
-From: "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-To: Avadhut Naik <avadhut.naik@amd.com>, "x86@kernel.org" <x86@kernel.org>,
-	"linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
-	"linux-trace-kernel@vger.kernel.org" <linux-trace-kernel@vger.kernel.org>
-CC: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"bp@alien8.de" <bp@alien8.de>, "Luck, Tony" <tony.luck@intel.com>,
-	"tglx@linutronix.de" <tglx@linutronix.de>, "mingo@redhat.com"
-	<mingo@redhat.com>, "rostedt@goodmis.org" <rostedt@goodmis.org>,
-	"mchehab@kernel.org" <mchehab@kernel.org>, "yazen.ghannam@amd.com"
-	<yazen.ghannam@amd.com>, "john.allen@amd.com" <john.allen@amd.com>
-Subject: RE: [PATCH v7 5/5] EDAC/mce_amd: Add support for FRU Text in MCA
-Thread-Topic: [PATCH v7 5/5] EDAC/mce_amd: Add support for FRU Text in MCA
-Thread-Index: AQHbJLqqoSEHCnqnXkmP9yN1EoZKBbKVZ3eA
-Date: Thu, 24 Oct 2024 05:49:58 +0000
-Message-ID: <CY8PR11MB71343897FBA9B277ED5454E8894E2@CY8PR11MB7134.namprd11.prod.outlook.com>
-References: <20241022194158.110073-1-avadhut.naik@amd.com>
- <20241022194158.110073-6-avadhut.naik@amd.com>
-In-Reply-To: <20241022194158.110073-6-avadhut.naik@amd.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: CY8PR11MB7134:EE_|LV2PR11MB6000:EE_
-x-ms-office365-filtering-correlation-id: 6b9dd589-ebb0-4292-7cc8-08dcf3efb20c
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|7416014|366016|1800799024|376014|38070700018;
-x-microsoft-antispam-message-info: =?us-ascii?Q?5Uky7AV3Zw3AGXVzJ928dHE4dM+xI4J3kS3dhygr2Jb0hz5zAuVeTiKfu0fi?=
- =?us-ascii?Q?RFWVgjbWZ5K5o0i3Kp4nCH2wtDsgYd4eAkMApXctOqjvk7HZWFzF0VThRvdH?=
- =?us-ascii?Q?xAF2WwBh4GLljHlUa4sSYKPBp0cdiWEAQiOb9NdutFOxYCI9cxMaTTLiV//o?=
- =?us-ascii?Q?CaGX3tiJRPuiPfYLeuOUa0K33hADe54JXJAyfeSIC3t//6TI4vPd8CfrXpaR?=
- =?us-ascii?Q?GztGthqFgx5fmJ3w/oijmtFvKevlt7Jj0syjcVaNG1Dsaoqa6a/1mc1yNzsQ?=
- =?us-ascii?Q?TL1cS09ogilFpMA65h64US4j9v5FjutMDGFUSV7pkMCQfwsuQx/AhXYhXJV8?=
- =?us-ascii?Q?4+8xGDypFNzYfQT+X/d7sKMhDzZa8BwCnYvRQFoHjn+6Or+yOjNja6MpPxk3?=
- =?us-ascii?Q?6+o9ph62RURfcyME/tRdhSiKugZ5V9ffrcYWnbx+TuN5JU8KW5cTvrEyEsJs?=
- =?us-ascii?Q?BQ4LXTurB1R8ixjA5TWlRo6z4gPJ66j3YNb/qf3GRrhPlhHKN8bOHp64EqIr?=
- =?us-ascii?Q?8uyNWtNIAljoYAIPYsPYJQG2zeOduRlB60NdAhnAItzUx3D421CegRvKFAis?=
- =?us-ascii?Q?zGZAaphr6kTev/763hhGAY7EzNOVUs96Bjg/d2Q7VNweERLlkMbyuwc3Brk7?=
- =?us-ascii?Q?/fScpsWHrDOXEEQb8/fye710enPC/UwfAgd6L886aGsjOcYPVFwhh6TKLtli?=
- =?us-ascii?Q?XUuSmOvkbjI58YOALEwHfHxeQYXDoZf9xQw+l18s6B4MNv7ZQ+A1k7kuQmK+?=
- =?us-ascii?Q?MYEIWVSZ6S1MLgFnU8xzkfh/0djw8H5ho471BHwkxn1hDs6Jsy8CQVzEN84l?=
- =?us-ascii?Q?T+w/xSRDGfvrA7D1wEgrL0VGONTuAeW37Ftd8JdsLT2m1j3ZmLoYYB6nR8Sj?=
- =?us-ascii?Q?NZFjesfAAbN5Qm913yXeU5v8VZz9ul9zf/hUJ9mkRBQBmAKO0J5HADjCHDXt?=
- =?us-ascii?Q?XVuSzUWkCVWRbRbZgBx36H3GIURjdiuCoHnLDbdonBFFve3UljHdJEodd5uC?=
- =?us-ascii?Q?XJeQxD/wdcNOomGwor1gvzfkYFYlt0IyoTP6Q7YcYaooFq/3ESvLardthdrW?=
- =?us-ascii?Q?Z4lRupEjIZpTu1sRJuema5JB6NQ5d7sO7Po5mTTFRbfME68Ys7KFp/zs/Fnz?=
- =?us-ascii?Q?YKBKmOCs90zat3B/CnHc78BgH+RQG2001GrkcCQ5f+lqdu1UVU+k4mJZ6nRf?=
- =?us-ascii?Q?W4Pr7RpKFAqkKWxQ1nx0gsEl3LssH2geNrSR5GB/zmVjX49r7kxDPgVzEHNh?=
- =?us-ascii?Q?3gtsiZPuJk0JeyhdWJbwN93aQO/MDAqH/GDsIasLbR6umezWLup1i9PT4Sxz?=
- =?us-ascii?Q?xf+4nhjU+KOork9ZYFMAfAtWez91J9vsh2yR6gC5BVfw+YAXOf3dTbNlK8U2?=
- =?us-ascii?Q?glvl3S0=3D?=
-x-forefront-antispam-report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CY8PR11MB7134.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(366016)(1800799024)(376014)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0: =?us-ascii?Q?XHql3/qQbUsnNNZEJyLKLa86vRjWQF/XRDL5HEHmRWzaWtiptb0PXbnzUizc?=
- =?us-ascii?Q?JbM0875owjtUkC2f5pZIQLNuI/BNVepBqzfc0oq8XoYZyOHtk/eF8kpsZf6b?=
- =?us-ascii?Q?uRNfZX8mM1lNM2SY/OTlhlVzxvPnVGYgYCo8l6KN9v/0zHFpk1P7PaL9Zx8f?=
- =?us-ascii?Q?2sxsrezM4o+nBXIW6Swqd1ZiHMcX4IGeH7sWC82cSdSETT3VEaVMzmRU/+HN?=
- =?us-ascii?Q?vbVMPeP6xtzk8KonyXlprMntSINe8Re3bY11sURluouBj0dqlAd/TDc/Eagd?=
- =?us-ascii?Q?uF3+gxY0W0eYq6tkwYeEiH2xqlZHvY3hntMcGZzIEGXpV+nGWd6thaNLVvmL?=
- =?us-ascii?Q?xhsH4X8JtOGp8o/NpjZ13LOmmPPAQZf+tX8fUtDw9lgYshpQqdNAVKKJ+Piy?=
- =?us-ascii?Q?plkkBG4jQlPL/izpOXK2Qx50zbxFFgUtMDQNZ7S84DK4rTogdVebNSOH+FmN?=
- =?us-ascii?Q?D/DgVIvtiD4Z1n7eoy4BTvs79cdOrPvrJwh/Vxp74OBvbUGY6zHuJ//TQtlE?=
- =?us-ascii?Q?aDslsJFTMFK5KrSd3JHD/CBDgtsXA/yL2ocgz9U1D+o6KtAXi5pX2OYYpgn6?=
- =?us-ascii?Q?WmcwloPQd4DC21bonR87dJTva/YFt09W8ERoPD3UEt8CxwcQswnAV8leFCq1?=
- =?us-ascii?Q?6HDTxEFkPspBsb579TrcTMOM8w1nnTAtAjoD+pMJh8m57bebwfUSEo3aeQBn?=
- =?us-ascii?Q?NxKjeuiThxOq8qCd7TQBKt5uLxhFdPJVBShss6ZgZTtlUsvbvNdUC0YOYRHo?=
- =?us-ascii?Q?0LlVA/AgQlTsGJRYFI3iX82kk4+YQhI9KYzKQq4zAE1pwtXWk0e/kopFliIg?=
- =?us-ascii?Q?Tr8r08Kr4zXtuIYep7CfhS54gMxS83BwbUMtKe2JeVNHW54S/l+t56qFhVve?=
- =?us-ascii?Q?wQnnO3rXXzipsNYI15BVhLmUhazjgAwpBtxtMdh8R0HSdLqufraRzQnv6Sn1?=
- =?us-ascii?Q?idSHAybt8MPktyva3A1CUbevBIVfvWpdQVmVjC6ndykmWofWFULk+K+m+HkC?=
- =?us-ascii?Q?yRhIq9W8oUi1GDAdUuiitL+S4xqIpJ8mBThemm+bCTfcYKme7ZjcwDDQibwt?=
- =?us-ascii?Q?K6XYOmIqRPY0WsL1qUIEmcqJ0cFELeGum3wZ61ZucbHMIkFClTSydgksuLRO?=
- =?us-ascii?Q?Cegh1cT2nidF2PzgX4AI4jam1K7Ng9peGR5+JERx7+8Rj/EgJhsYHJNnpYTK?=
- =?us-ascii?Q?svXFsirnwpi49Mln3wZo6++mb/ZmLNvrSrrEUmf6i7ifCrk1+Lt72jH7vNwo?=
- =?us-ascii?Q?kLK1t9f0VzuOFIGMhmvMwToymJ530JkveeLV4Mbp8Val4tfJ/GBGx9FtBmxK?=
- =?us-ascii?Q?j6pKxaR09047Ju+S5AQ/5qb17QWeUs1HI+VtpuOcA3uX4wKXGvFL5NbpAw+z?=
- =?us-ascii?Q?9pDMYQtkaNCSmBcY9JbrgHfBnOCik217RrlVKPBKI++4U0AhMUc+momOBU+e?=
- =?us-ascii?Q?oFFobsI1pzG6fqSCPFFo57b+62P1ecEWLHcFLQo+MCeWCjDtFEiZF70hXEVq?=
- =?us-ascii?Q?MG9RVeQOWAuXrrBfCUDtXiEsnnhlUiRw3YeRmTto1mFvJamElYCQDG8De75l?=
- =?us-ascii?Q?DohvmqKLCY7Tm/VwRPMHECms+b2W+Eb2QUr3qaQM?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DF0B175D47;
+	Thu, 24 Oct 2024 05:52:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729749144; cv=none; b=Nx8Rd8h6JSmpUG8j2LNLinLGKTQ4gYjlOw58kxhuSQA65rhQS2VPkhYc56i4gtX8AdwD36NVQ5yX+gKj6hvZcF/9C7wfwsdFBcGvTtIzSR0fSUMgB28Db/SYul/a7rc9HM28L/GCI4HvcCLr6jBmW4UUhUfmrMN4kd7VLkQSFtg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729749144; c=relaxed/simple;
+	bh=H/v2vKPXkcQ5t90AgsLCbyIR8E+ZB2BVZJQwBlliVgA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=DcjShZh7PwHbei3dwewcFYMFfDlV0QdoaHh4mtCB5x4na0Yx5Q+A71Bek2cuR5g1XY5U1VcDJ7KBvXiVfFpB0bElQ5lhoefsWF2I93c0l+5Bff+quoz5isjyPdH3BaR57XhVd2yo3/r6cn7GLoL6DKmxcmGYgQwuDwEC1Ojl83c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=PSRigfJi; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NL9gY1029454;
+	Thu, 24 Oct 2024 05:50:18 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	BJeOHwrcBgZcKztjE3nBe45ohKy9u2fJ3xGNMkWvCLA=; b=PSRigfJi33NbqriX
+	L1rqFq62ZD2sYOpBuUVBf/MwJlG4uZLtmJHLcQQ83g3yBeeHF1uy5uemLKHm+yya
+	fvnho2mritjSD3iY0mJYeXCOCKUn0yIGxWe8dYj7re3ciPmzbZ2MVE9A/yZOQ2XZ
+	YSjXJD/oRByFTIUAjI18V6lo+IZSb26oa8fIiDxIwjEWYdFPklXiWTa1hR3EJs9F
+	3NDLjkKyDAhYyFogQubpVnlGTSCl+0ELREqNWYSFbkobDsn7Wi9Q33tqL3LxmIqh
+	S5ia2Xkc8SJwCykVFsG/jIVU9vsrugNbxUj0ZmUwD/0aFpWIduLD68p+Sfpsry7j
+	3Sbxgg==
+Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w4mv8-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 05:50:18 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49O5oH18019941
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 05:50:17 GMT
+Received: from [10.204.101.50] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
+ 2024 22:50:13 -0700
+Message-ID: <593ea165-c3d0-e247-b6fc-d9266673858b@quicinc.com>
+Date: Thu, 24 Oct 2024 11:20:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: CY8PR11MB7134.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 6b9dd589-ebb0-4292-7cc8-08dcf3efb20c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2024 05:49:58.9262
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: MTCKhTX+4XqkQB5ZH0WpqnA56CshPqp8nDUpzRYTj4XAYnaUoiNvEE3WIDJ4iLEgGBrhV3PRzYaJ5UFoQL+dHA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: LV2PR11MB6000
-X-OriginatorOrg: intel.com
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.13.0
+Subject: Re: [PATCH v4 15/28] media: iris: implement query_cap, query_ctrl and
+ query_menu ioctls
+Content-Language: en-US
+To: Hans Verkuil <hverkuil@xs4all.nl>,
+        Vikash Garodia
+	<quic_vgarodia@quicinc.com>,
+        Abhinav Kumar <quic_abhinavk@quicinc.com>,
+        "Mauro Carvalho Chehab" <mchehab@kernel.org>,
+        Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>
+CC: Sebastian Fricke <sebastian.fricke@collabora.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-media@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Vedang Nagar
+	<quic_vnagar@quicinc.com>
+References: <20241014-qcom-video-iris-v4-v4-0-c5eaa4e9ab9e@quicinc.com>
+ <20241014-qcom-video-iris-v4-v4-15-c5eaa4e9ab9e@quicinc.com>
+ <c4350128-a05c-47af-a7e7-2810171cd311@xs4all.nl>
+From: Dikshita Agarwal <quic_dikshita@quicinc.com>
+In-Reply-To: <c4350128-a05c-47af-a7e7-2810171cd311@xs4all.nl>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: vqQSDjV-aW-yArHobwcxZhxJ71ppJbSf
+X-Proofpoint-GUID: vqQSDjV-aW-yArHobwcxZhxJ71ppJbSf
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=999
+ priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240041
 
-> From: Avadhut Naik <avadhut.naik@amd.com>
-> [...]
-> Subject: [PATCH v7 5/5] EDAC/mce_amd: Add support for FRU Text in MCA
->=20
-> From: Yazen Ghannam <yazen.ghannam@amd.com>
->=20
-> A new "FRU Text in MCA" feature is defined where the Field Replaceable Un=
-it
-> (FRU) Text for a device is represented by a string in the new
-> MCA_SYND1 and MCA_SYND2 registers. This feature is supported per MCA
-> bank, and it is advertised by the McaFruTextInMca bit (MCA_CONFIG[9]).
->=20
-> The FRU Text is populated dynamically for each individual error state
-> (MCA_STATUS, MCA_ADDR, et al.). This handles the case where an MCA bank
-> covers multiple devices, for example, a Unified Memory Controller (UMC)
-> bank that manages two DIMMs.
->=20
-> Since MCA_CONFIG[9] is instrumental in decoding FRU Text, it has to be
-> exported through the mce_record tracepoint so that userspace tools like t=
-he
-> rasdaemon can determine if FRU Text has been reported through the
-> MCA_SYND1 and MCA_SYND2 registers and output it.
->=20
-> [Yazen: Add Avadhut as co-developer for wrapper changes.]
->=20
-> Co-developed-by: Avadhut Naik <avadhut.naik@amd.com>
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
-> Signed-off-by: Yazen Ghannam <yazen.ghannam@amd.com>
-> Signed-off-by: Avadhut Naik <avadhut.naik@amd.com>
 
-LGTM.
 
-    Reviewed-by: Qiuxu Zhuo <qiuxu.zhuo@intel.com>
+On 10/23/2024 4:35 PM, Hans Verkuil wrote:
+> On 14/10/2024 11:07, Dikshita Agarwal wrote:
+>> From: Vedang Nagar <quic_vnagar@quicinc.com>
+>>
+>> Implement query_cap, query_ctrl and query_menu ioctls
+>> with necessary hooks.
+>>
+>> Signed-off-by: Vedang Nagar <quic_vnagar@quicinc.com>
+>> Signed-off-by: Dikshita Agarwal <quic_dikshita@quicinc.com>
+>> ---
+>>  drivers/media/platform/qcom/iris/iris_vidc.c | 52 ++++++++++++++++++++++++++++
+>>  1 file changed, 52 insertions(+)
+>>
+>> diff --git a/drivers/media/platform/qcom/iris/iris_vidc.c b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> index 93d2be118a81..60ee05b67f86 100644
+>> --- a/drivers/media/platform/qcom/iris/iris_vidc.c
+>> +++ b/drivers/media/platform/qcom/iris/iris_vidc.c
+>> @@ -300,6 +300,55 @@ static int iris_enum_framesizes(struct file *filp, void *fh,
+>>  	return 0;
+>>  }
+>>  
+>> +static int iris_querycap(struct file *filp, void *fh, struct v4l2_capability *cap)
+>> +{
+>> +	strscpy(cap->driver, IRIS_DRV_NAME, sizeof(cap->driver));
+>> +	strscpy(cap->bus_info, IRIS_BUS_NAME, sizeof(cap->bus_info));
+> 
+> Filled in automatically, just drop this.
+Sure, will do.
+> 
+>> +	memset(cap->reserved, 0, sizeof(cap->reserved));
+> 
+> The core zeroes this already, just drop this.
+> 
+Sure, will do.
+>> +	strscpy(cap->card, "iris_decoder", sizeof(cap->card));
+>> +
+>> +	return 0;
+>> +}
+>> +
+>> +static int iris_queryctrl(struct file *filp, void *fh, struct v4l2_queryctrl *q_ctrl)
+>> +{
+>> +	struct v4l2_ctrl *ctrl;
+>> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> +
+>> +	ctrl = v4l2_ctrl_find(&inst->ctrl_handler, q_ctrl->id);
+>> +	if (!ctrl)
+>> +		return -EINVAL;
+>> +
+>> +	q_ctrl->minimum = ctrl->minimum;
+>> +	q_ctrl->maximum = ctrl->maximum;
+>> +	q_ctrl->default_value = ctrl->default_value;
+>> +	q_ctrl->flags = 0;
+>> +	q_ctrl->step = ctrl->step;
+>> +
+>> +	return 0;
+>> +}
+> 
+> Huh???
+> 
+>> +
+>> +static int iris_querymenu(struct file *filp, void *fh, struct v4l2_querymenu *qmenu)
+>> +{
+>> +	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> +	struct v4l2_ctrl *ctrl;
+>> +
+>> +	ctrl = v4l2_ctrl_find(&inst->ctrl_handler, qmenu->id);
+>> +	if (!ctrl)
+>> +		return -EINVAL;
+>> +
+>> +	if (ctrl->type != V4L2_CTRL_TYPE_MENU)
+>> +		return -EINVAL;
+>> +
+>> +	if (qmenu->index < ctrl->minimum || qmenu->index > ctrl->maximum)
+>> +		return -EINVAL;
+>> +
+>> +	if (ctrl->menu_skip_mask & (1 << qmenu->index))
+>> +		return -EINVAL;
+>> +
+>> +	return 0;
+>> +}
+> 
+> Huh??
+> 
+>> +
+>>  static int iris_g_selection(struct file *filp, void *fh, struct v4l2_selection *s)
+>>  {
+>>  	struct iris_inst *inst = iris_get_inst(filp, NULL);
+>> @@ -366,6 +415,9 @@ static const struct v4l2_ioctl_ops iris_v4l2_ioctl_ops = {
+>>  	.vidioc_g_fmt_vid_out_mplane    = iris_g_fmt_vid_mplane,
+>>  	.vidioc_enum_framesizes         = iris_enum_framesizes,
+>>  	.vidioc_reqbufs                 = v4l2_m2m_ioctl_reqbufs,
+>> +	.vidioc_querycap                = iris_querycap,
+>> +	.vidioc_queryctrl               = iris_queryctrl,
+>> +	.vidioc_querymenu               = iris_querymenu,
+> 
+> queryctrl/menu are handled by the core if you set ctrl_handler in the v4l2_fh struct.
+> 
+> If you use the control handler, then this should never be used.Right, make sense, will remove these.
 
+Thanks,
+Dikshita
+> 
+>>  	.vidioc_g_selection             = iris_g_selection,
+>>  	.vidioc_subscribe_event         = iris_subscribe_event,
+>>  	.vidioc_unsubscribe_event       = iris_unsubscribe_event,
+>>
+> 
+> Regards,
+> 
+> 	Hans
 
