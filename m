@@ -1,152 +1,222 @@
-Return-Path: <linux-kernel+bounces-379700-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379701-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id A31609AE266
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:21:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8253E9AE26A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:23:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F9E1B23561
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:21:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABA281F24AE1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:23:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E16733399F;
-	Thu, 24 Oct 2024 10:20:56 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E0AB1C07D8;
-	Thu, 24 Oct 2024 10:20:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5479B1C07D8;
+	Thu, 24 Oct 2024 10:23:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="QSU/iG+n";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ATrCr48H"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DD283399F;
+	Thu, 24 Oct 2024 10:22:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765256; cv=none; b=YrNDDdQdXDJCL58k+p9FN4Oac16VKzNn+U9rWqXAXc1mU3YWGDD5wzRjcVRWPT1sSswYeC9i6HhTjMHI4amB7Z2f7o1cBAZswtwNpA67hEfwYJR56i9D8s2VipYu44CqzhL20K+GNzHIYUzg7zTog8TJ1wc4OBHYgQ24NikVEUs=
+	t=1729765381; cv=none; b=f2ylHj1/a850I2/EzimItfFJFdnt5Wp49lB+qpfW1BogN/aYBYe272lrhD+yv7dn6tPPvSnCtc4hV6HoIt5A7eICIrNYKqrUSGNNrElEMLgUy1PE4YTZ3fgPIJUiN/xWx0YcQjG3jNYIP9AjdSKMY2xVr+g+7yUdvM5Jub1x7jY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729765256; c=relaxed/simple;
-	bh=rrnBHWUo2aaeyUFKZ5dcC6YbyBwFy4haspuNHfKJgW4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lECPOrPIErf5hsWKI3UnFlRuSzdI7JD9EgKj4owSaAv1IIQQWfK6ulNO8a85Y9bqvi+aSDrTfgZWIutrbCJW9mUbhKVDNVfdmDZkPP2kSHA7JJsxUtiDDKMSY+9gspBFP1CezgPOIOuAVFSMieC5HAeyI2v1T1ytK5qzxNVE5I4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 1A404339;
-	Thu, 24 Oct 2024 03:21:23 -0700 (PDT)
-Received: from [10.57.55.74] (unknown [10.57.55.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 666BF3F71E;
-	Thu, 24 Oct 2024 03:20:52 -0700 (PDT)
-Message-ID: <17578871-30aa-4f6e-8e75-bdbbb4324f3c@arm.com>
-Date: Thu, 24 Oct 2024 11:22:02 +0100
+	s=arc-20240116; t=1729765381; c=relaxed/simple;
+	bh=d2PrWworP54vGMDjYcDE/erPr7IdIisIFZi9wyGmblI=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=sLF0EBRSrQ0auhf0in7ss0SBqfo2rCL5AAr6vhnhsGeF3BVtiZ564rG0WOJg68eBXpj7bb0B0G82Z28AMw1+YvqE9zZ8U/u/dy3xNWCR6xP2W0iZHruOxXbWzkpeMqjG5lRb+khLL6SIEVkNLVTTVV9qHK9a/YqdivY8y4w4LzY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=QSU/iG+n; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ATrCr48H; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 24 Oct 2024 10:22:56 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729765377;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=08iFft7sVuQpER5fbxoEWVZ3znTgjOYapPeqViWdRSQ=;
+	b=QSU/iG+ncxgaiB62urkZrO+y1S6FMkw3NUH4OlnOuDkqpV+pucB4fGEnT3cmzSvk7C0Gt3
+	1ld94wOoqSFoQ4mxq2L8ptJX1knOXEj7Fm+Xgin/xoolzkNRt1g8vNt7rCa9qCusJDNgqU
+	cf52beUfY3ZffGnTeRMU9tQVNbppxCgKdEdTZkZXwR7kB+n9k0MWEF/PXk42WLmBhs9otd
+	yb0hZbw8YfH/m1oHvWf7A9pWNn+pYihUuw4oKvOJD8l9N0GwdGfYRSHnMy6GpICIxdylen
+	c0hY2UOX0e1vs+inl08XjxBTgqmFIQRJp9+eAh8Z2cX1OtUC60g5pCWpVytANw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729765377;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=08iFft7sVuQpER5fbxoEWVZ3znTgjOYapPeqViWdRSQ=;
+	b=ATrCr48H8X0o2HLrQudJLT/lEXGAhSXp4MEhcMFy/cogWCLwcy2lHoWmi8lUDVmT+A/xbd
+	kaCoPKJv8tCEmhBA==
+From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: sched/urgent] sched: Fix pick_next_task_fair() vs try_to_wake_up() race
+Cc: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com,
+ Kent Overstreet <kent.overstreet@linux.dev>,
+ "Peter Zijlstra (Intel)" <peterz@infradead.org>,
+ Marco Elver <elver@google.com>, x86@kernel.org, linux-kernel@vger.kernel.org
+In-Reply-To: <20241023093641.GE16066@noisy.programming.kicks-ass.net>
+References: <20241023093641.GE16066@noisy.programming.kicks-ass.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 05/10] thermal: core: Pass trip descriptor to
- thermal_trip_crossed()
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
- <10547668.nUPlyArG6x@rjwysocki.net>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <10547668.nUPlyArG6x@rjwysocki.net>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Message-ID: <172976537654.1442.4491396972715085236.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the sched/urgent branch of tip:
 
+Commit-ID:     b55945c500c5723992504aa03b362fab416863a6
+Gitweb:        https://git.kernel.org/tip/b55945c500c5723992504aa03b362fab416863a6
+Author:        Peter Zijlstra <peterz@infradead.org>
+AuthorDate:    Wed, 23 Oct 2024 11:36:41 +02:00
+Committer:     Peter Zijlstra <peterz@infradead.org>
+CommitterDate: Wed, 23 Oct 2024 20:52:26 +02:00
 
-On 10/16/24 12:27, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> 
-> In preparation for subsequent changes, modify thermal_trip_crossed()
-> to take a trip descriptor pointer instead of a pointer to struct
-> thermal_trip and propagate this change to thermal_zone_trip_down().
-> 
-> No functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->   drivers/thermal/thermal_core.c |   12 +++++++-----
->   drivers/thermal/thermal_core.h |    2 +-
->   drivers/thermal/thermal_trip.c |    2 +-
->   3 files changed, 9 insertions(+), 7 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -526,10 +526,12 @@ static void thermal_governor_trip_crosse
->   }
->   
->   static void thermal_trip_crossed(struct thermal_zone_device *tz,
-> -				 const struct thermal_trip *trip,
-> +				 struct thermal_trip_desc *td,
->   				 struct thermal_governor *governor,
->   				 bool crossed_up)
->   {
-> +	const struct thermal_trip *trip = &td->trip;
-> +
->   	if (crossed_up) {
->   		thermal_notify_tz_trip_up(tz, trip);
->   		thermal_debug_tz_trip_up(tz, trip);
-> @@ -589,12 +591,12 @@ void __thermal_zone_device_update(struct
->   	}
->   
->   	list_for_each_entry_safe(td, next, &way_up_list, list_node) {
-> -		thermal_trip_crossed(tz, &td->trip, governor, true);
-> +		thermal_trip_crossed(tz, td, governor, true);
->   		list_del_init(&td->list_node);
->   	}
->   
->   	list_for_each_entry_safe_reverse(td, next, &way_down_list, list_node) {
-> -		thermal_trip_crossed(tz, &td->trip, governor, false);
-> +		thermal_trip_crossed(tz, td, governor, false);
->   		list_del_init(&td->list_node);
->   	}
->   
-> @@ -664,9 +666,9 @@ void thermal_zone_device_update(struct t
->   EXPORT_SYMBOL_GPL(thermal_zone_device_update);
->   
->   void thermal_zone_trip_down(struct thermal_zone_device *tz,
-> -			    const struct thermal_trip *trip)
-> +			    struct thermal_trip_desc *td)
->   {
-> -	thermal_trip_crossed(tz, trip, thermal_get_tz_governor(tz), false);
-> +	thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
->   }
->   
->   int for_each_thermal_governor(int (*cb)(struct thermal_governor *, void *),
-> Index: linux-pm/drivers/thermal/thermal_core.h
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.h
-> +++ linux-pm/drivers/thermal/thermal_core.h
-> @@ -274,7 +274,7 @@ int thermal_zone_trip_id(const struct th
->   			 const struct thermal_trip *trip);
->   int __thermal_zone_get_temp(struct thermal_zone_device *tz, int *temp);
->   void thermal_zone_trip_down(struct thermal_zone_device *tz,
-> -			    const struct thermal_trip *trip);
-> +			    struct thermal_trip_desc *td);
->   void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
->   				struct thermal_trip *trip, int hyst);
->   
-> Index: linux-pm/drivers/thermal/thermal_trip.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_trip.c
-> +++ linux-pm/drivers/thermal/thermal_trip.c
-> @@ -118,7 +118,7 @@ void thermal_zone_set_trip_temp(struct t
->   				tz->passive--;
->   				WARN_ON_ONCE(tz->passive < 0);
->   			}
-> -			thermal_zone_trip_down(tz, trip);
-> +			thermal_zone_trip_down(tz, td);
->   		}
->   		/*
->   		 * Invalidate the threshold to avoid triggering a spurious
-> 
-> 
-> 
+sched: Fix pick_next_task_fair() vs try_to_wake_up() race
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Syzkaller robot reported KCSAN tripping over the
+ASSERT_EXCLUSIVE_WRITER(p->on_rq) in __block_task().
+
+The report noted that both pick_next_task_fair() and try_to_wake_up()
+were concurrently trying to write to the same p->on_rq, violating the
+assertion -- even though both paths hold rq->__lock.
+
+The logical consequence is that both code paths end up holding a
+different rq->__lock. And looking through ttwu(), this is possible
+when the __block_task() 'p->on_rq = 0' store is visible to the ttwu()
+'p->on_rq' load, which then assumes the task is not queued and
+continues to migrate it.
+
+Rearrange things such that __block_task() releases @p with the store
+and no code thereafter will use @p again.
+
+Fixes: 152e11f6df29 ("sched/fair: Implement delayed dequeue")
+Reported-by: syzbot+0ec1e96c2cdf5c0e512a@syzkaller.appspotmail.com
+Reported-by: Kent Overstreet <kent.overstreet@linux.dev>
+Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
+Tested-by: Marco Elver <elver@google.com>
+Link: https://lkml.kernel.org/r/20241023093641.GE16066@noisy.programming.kicks-ass.net
+---
+ kernel/sched/fair.c  | 21 ++++++++++++++-------
+ kernel/sched/sched.h | 34 ++++++++++++++++++++++++++++++++--
+ 2 files changed, 46 insertions(+), 9 deletions(-)
+
+diff --git a/kernel/sched/fair.c b/kernel/sched/fair.c
+index c157d48..8796146 100644
+--- a/kernel/sched/fair.c
++++ b/kernel/sched/fair.c
+@@ -5625,8 +5625,9 @@ pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
+ 	struct sched_entity *se = pick_eevdf(cfs_rq);
+ 	if (se->sched_delayed) {
+ 		dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
+-		SCHED_WARN_ON(se->sched_delayed);
+-		SCHED_WARN_ON(se->on_rq);
++		/*
++		 * Must not reference @se again, see __block_task().
++		 */
+ 		return NULL;
+ 	}
+ 	return se;
+@@ -7176,7 +7177,11 @@ static int dequeue_entities(struct rq *rq, struct sched_entity *se, int flags)
+ 		/* Fix-up what dequeue_task_fair() skipped */
+ 		hrtick_update(rq);
+ 
+-		/* Fix-up what block_task() skipped. */
++		/*
++		 * Fix-up what block_task() skipped.
++		 *
++		 * Must be last, @p might not be valid after this.
++		 */
+ 		__block_task(rq, p);
+ 	}
+ 
+@@ -7193,12 +7198,14 @@ static bool dequeue_task_fair(struct rq *rq, struct task_struct *p, int flags)
+ 	if (!(p->se.sched_delayed && (task_on_rq_migrating(p) || (flags & DEQUEUE_SAVE))))
+ 		util_est_dequeue(&rq->cfs, p);
+ 
+-	if (dequeue_entities(rq, &p->se, flags) < 0) {
+-		util_est_update(&rq->cfs, p, DEQUEUE_SLEEP);
++	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
++	if (dequeue_entities(rq, &p->se, flags) < 0)
+ 		return false;
+-	}
+ 
+-	util_est_update(&rq->cfs, p, flags & DEQUEUE_SLEEP);
++	/*
++	 * Must not reference @p after dequeue_entities(DEQUEUE_DELAYED).
++	 */
++
+ 	hrtick_update(rq);
+ 	return true;
+ }
+diff --git a/kernel/sched/sched.h b/kernel/sched/sched.h
+index 081519f..9f9d1cc 100644
+--- a/kernel/sched/sched.h
++++ b/kernel/sched/sched.h
+@@ -2769,8 +2769,6 @@ static inline void sub_nr_running(struct rq *rq, unsigned count)
+ 
+ static inline void __block_task(struct rq *rq, struct task_struct *p)
+ {
+-	WRITE_ONCE(p->on_rq, 0);
+-	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
+ 	if (p->sched_contributes_to_load)
+ 		rq->nr_uninterruptible++;
+ 
+@@ -2778,6 +2776,38 @@ static inline void __block_task(struct rq *rq, struct task_struct *p)
+ 		atomic_inc(&rq->nr_iowait);
+ 		delayacct_blkio_start();
+ 	}
++
++	ASSERT_EXCLUSIVE_WRITER(p->on_rq);
++
++	/*
++	 * The moment this write goes through, ttwu() can swoop in and migrate
++	 * this task, rendering our rq->__lock ineffective.
++	 *
++	 * __schedule()				try_to_wake_up()
++	 *   LOCK rq->__lock			  LOCK p->pi_lock
++	 *   pick_next_task()
++	 *     pick_next_task_fair()
++	 *       pick_next_entity()
++	 *         dequeue_entities()
++	 *           __block_task()
++	 *             RELEASE p->on_rq = 0	  if (p->on_rq && ...)
++	 *					    break;
++	 *
++	 *					  ACQUIRE (after ctrl-dep)
++	 *
++	 *					  cpu = select_task_rq();
++	 *					  set_task_cpu(p, cpu);
++	 *					  ttwu_queue()
++	 *					    ttwu_do_activate()
++	 *					      LOCK rq->__lock
++	 *					      activate_task()
++	 *					        STORE p->on_rq = 1
++	 *   UNLOCK rq->__lock
++	 *
++	 * Callers must ensure to not reference @p after this -- we no longer
++	 * own it.
++	 */
++	smp_store_release(&p->on_rq, 0);
+ }
+ 
+ extern void activate_task(struct rq *rq, struct task_struct *p, int flags);
 
