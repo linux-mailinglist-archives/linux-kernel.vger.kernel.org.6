@@ -1,54 +1,74 @@
-Return-Path: <linux-kernel+bounces-379825-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379826-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E47A9AE44C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:59:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 466CF9AE44F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:00:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2F1C4B221BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:59:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B66E1C21E55
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:00:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC0051D1E72;
-	Thu, 24 Oct 2024 11:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5C851BE86E;
+	Thu, 24 Oct 2024 12:00:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="mc6LQAmU"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VuwGmNEO"
+Received: from mail-lf1-f42.google.com (mail-lf1-f42.google.com [209.85.167.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF2B51CF7AE;
-	Thu, 24 Oct 2024 11:59:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9714B1D173E;
+	Thu, 24 Oct 2024 12:00:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729771186; cv=none; b=KXJfNI7/bSAwcm7rIlklOFUZwVQQaYAf9prcgzI8eVz+epk8gRQUqILuBSm8PQgZi8Omt94IJRJ59Ef5yAARC1zwpRwfUtMGbkFd+Aw/DnDU1BVCDLUeFGm0sa9nwhU16gKgqKW69vVvDATDCIwt7ac5vJpodhCN/85Full48v8=
+	t=1729771204; cv=none; b=uXhKX35IISqBsafBk0QQtx1nQr9pNMxmvjgVswkkqOZckSgfzoxSi7ZZ2I28P4xWfWtdcBSo+VIIMOs4RG4VgHKz3mSPREtzFgWK6M8ZVSvcUzamqFxY6rhSaBpxUnR8scrZc4dvRD0OSWkuCy+xw41pCyTzuuLT4kNcPKnLG3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729771186; c=relaxed/simple;
-	bh=A4o15toB6iNyZruRWfsVqZQLU8qUvQJABUWMfPi2iSo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PmPr9Gh9F/ofZS5/ZMZ/mq1pkxtl9P8Neph31T9BpWEmigr5e5WsSSSbHl9xvGS9L3wVVO6IFiS/vM/qUjOJyF6w5CFx7H2soJXALHlr+SDSB7znxwCKFdqXz+9q0lYVru6psncMFywt4gLFw7yqQlZPjgifUMrfZ8HeFA9xwlk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=mc6LQAmU; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729771181;
-	bh=A4o15toB6iNyZruRWfsVqZQLU8qUvQJABUWMfPi2iSo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=mc6LQAmU9/FOqpGAxAMqJPgaCT6WfWqhO0NNRI0/uuYbgS4DABY1ve7VwbmJy1VCw
-	 o7ZBqLB3yYP2bfGAeqJppzRUO5hf/u1M1pByqQO9G+Cr/wb2OyircblWzIJO99at+8
-	 lLwQMHkY6TI7emfnGNKTPsmK/sFnrLfr8b1iF69PZWdeSWwmMTWrpHF2zAcig74v6S
-	 1cNXnwPHdlwL9XRvPbLauw0bjfE0U3kX1AxDr/l6VOLiQzAYouDEoXC8lDhccUkLVh
-	 DxCpo+USMyyrk4e4OFpBRPdpZjIhlGjKgkuLwAE4IGABVOnkHRTcGh5/Ca+CgFtIuq
-	 5bDpz/hrucQwg==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 51C9017E35E0;
-	Thu, 24 Oct 2024 13:59:41 +0200 (CEST)
-Message-ID: <216c62ae-04ae-4eb9-8344-9e5de2efdd14@collabora.com>
-Date: Thu, 24 Oct 2024 13:59:41 +0200
+	s=arc-20240116; t=1729771204; c=relaxed/simple;
+	bh=nYlTSkVh7NgY07mCWIDG1+s+ry6uRpTH2y/84XRCNVs=;
+	h=Content-Type:Message-ID:Date:MIME-Version:Subject:To:Cc:
+	 References:From:In-Reply-To; b=m9DNmZZ12HqTffJ4ghBJt74Bpz8YwjMPsKGtpi6PDTm/3ePxigGv/7G24BpwNp10TCFDhVPoZU1y6p21Qx1ossrZw6uMm4k4ahI9WpFrecoWPzXZCgfJy5aCGfLUzJLLh+sg4O4qtP7PnXgoPSayYpmLJhpCCanORxf0oie9utA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VuwGmNEO; arc=none smtp.client-ip=209.85.167.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f42.google.com with SMTP id 2adb3069b0e04-53a0c160b94so996203e87.2;
+        Thu, 24 Oct 2024 05:00:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729771200; x=1730376000; darn=vger.kernel.org;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hKA994wAyo+egBxKA4JKuuuhQBYbY3bVVHxjAoOb2d4=;
+        b=VuwGmNEOf4Yo9iTDnnzvHqQU2xW5Fkg3zJJ7NcSEgRlmpXqfdgyKXp/YDTMrsjXUMj
+         lqWPybJlHG7U88DbVmQIgYJ0IZIcGjCnxuqVkoTPkCTPWBtvodmCOi+pg8PKL0IwRa3B
+         wKyI64rg4BSce9zjhLZAMwR7UH3/rqGUJbcEu0JDrNY2a5NTfoWQREzr12ERxJxLynMj
+         lU30tuD276kCcUxg/BJbT9HcZLtoIXEBtcDRbpyzh2cXubh1IolqB8v+Pvja5tdCh3Jc
+         Se6/1f26CcDLYtoy1nYmSs6ZIfwzVly56Fk6a3F/SKlH6cWrsi5rZqYkdrt7LJP05aa2
+         8GDA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729771200; x=1730376000;
+        h=in-reply-to:from:content-language:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=hKA994wAyo+egBxKA4JKuuuhQBYbY3bVVHxjAoOb2d4=;
+        b=ryG4848iAj3V91d5OZuFZPwDMeU5OK9zU1eKj1fbcLcIp3SDz1NpDqy7TwKUYva+Yc
+         bnD4niZUbBLn4yo1DVcf2odosFoQZ82ab4QVzJXd8QJthCzyaJQejg0PJSFNyvDbQcso
+         eicF4ocZ7hCXBZ8rH2vZ3DkqygpIWrfPs7Lx1TmONUkJ1iuPdXw1Xtx32+ZWQYU1W+T4
+         HNulHsm2uquZL923rrrD/zFHPx8LvW35KL/6Up4VIh/GRL3ErdGAxgCOHovI+aV/D04p
+         E/2RqarC3Oubf8L9KVnkT7DiQrnlNE3LHTL9ZV/PZkFrnTKvnkOCn8ioty+IXOw0bvji
+         l08g==
+X-Forwarded-Encrypted: i=1; AJvYcCUxzYRDKxoVhpcRHYEtnOpOveeogUrvUbN7VFe1DIrYe0/XWCS/iSdjU/zwkIPwLEYOcBchDnpyR9IK@vger.kernel.org, AJvYcCV5t0s5OcLMQBI9LF3UDSNCXhfg8E1N2FHrwlWq4dJzPG0AqI8HoLL/UbGMTHPNWp+e4/92EkuUHt4QPCd+@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyf5PDwW35pL1Zorl3PqCI98sXkKYFCHk4qT5+Jb1LnHtgnR4Pi
+	ck38PvfsrQ5Pe/ZYxu7JQNGByu7gl19L9z5hQfYy4WdiLKe6Kxw5
+X-Google-Smtp-Source: AGHT+IHpcBjQ9n0enTg+gxMCp9XOHlTZTV+cWabshbjufkPk+DVQEouPKdJYFEd1xukTJ3RY0oNr7g==
+X-Received: by 2002:a05:6512:3c9d:b0:539:9645:97ab with SMTP id 2adb3069b0e04-53b1a31f37dmr3401048e87.33.1729771199140;
+        Thu, 24 Oct 2024 04:59:59 -0700 (PDT)
+Received: from ?IPV6:2001:678:a5c:1202:4fb5:f16a:579c:6dcb? (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a224200acsm1346891e87.141.2024.10.24.04.59.57
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 04:59:57 -0700 (PDT)
+Content-Type: multipart/mixed; boundary="------------g0JXqH05nzju718vJmfr0xrc"
+Message-ID: <195a21e5-79e1-4502-bc75-05e2893a2503@gmail.com>
+Date: Thu, 24 Oct 2024 13:59:56 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -56,177 +76,220 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/4] dt-bindings: memory: mediatek: Add smi-sub-common
- property for reset
-To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>,
- "robh@kernel.org" <robh@kernel.org>,
- "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
- "conor+dt@kernel.org" <conor+dt@kernel.org>,
- "krzk@kernel.org" <krzk@kernel.org>
-Cc: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
- "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
- Project_Global_Chrome_Upstream_Group
- <Project_Global_Chrome_Upstream_Group@mediatek.com>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
-References: <20240821082845.11792-1-friday.yang@mediatek.com>
- <20240821082845.11792-3-friday.yang@mediatek.com>
- <3b31bf46-c5c0-41c9-bb4d-3ba9f64a5d1c@kernel.org>
- <7ca196cf1c1f57426fc6b733d01d38f073da7d94.camel@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <7ca196cf1c1f57426fc6b733d01d38f073da7d94.camel@mediatek.com>
+Subject: Re: [PATCH v5 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+To: Bartosz Golaszewski <brgl@bgdev.pl>
+Cc: Linus Walleij <linus.walleij@linaro.org>,
+ Kent Gibson <warthog618@gmail.com>, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+ Mark Brown <broonie@kernel.org>
+References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
+ <20241018-gpio-notify-in-kernel-events-v5-8-c79135e58a1c@linaro.org>
+ <d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk>
+ <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
+ <CAMRc=MdER_JNcvPMRuzbDFpAUqarC9K8KRP+i5SFTW3H7Mkg=w@mail.gmail.com>
+ <bf16af3b-d00e-4084-aa29-6e4c1955ed88@gmail.com>
+ <CAMRc=McUpRJ=EN3DB7gsgsNKZHhJym6vfURmX9+mXnYuXjNwMA@mail.gmail.com>
+Content-Language: en-US, sv-SE
+From: Klara Modin <klarasmodin@gmail.com>
+In-Reply-To: <CAMRc=McUpRJ=EN3DB7gsgsNKZHhJym6vfURmX9+mXnYuXjNwMA@mail.gmail.com>
+
+This is a multi-part message in MIME format.
+--------------g0JXqH05nzju718vJmfr0xrc
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-Il 24/10/24 03:28, Friday Yang (杨阳) ha scritto:
-> On Wed, 2024-08-21 at 10:55 +0200, Krzysztof Kozlowski wrote:
->>   	
->> External email : Please do not click links or open attachments until
->> you have verified the sender or the content.
->>   On 21/08/2024 10:26, friday.yang wrote:
->>> On the MediaTek platform, some SMI LARBs are directly linked to SMI
->>> common. While some SMI LARBs are linked to SMI sub common, then SMI
->>> sub common is linked to SMI common. Add 'mediatek,smi-sub-comm' and
->>> 'mediatek,smi-sub-comm-in-portid' properties here. The SMI reset
->>> driver could query which port of the SMI sub common the current
->> LARB
->>> is linked to through the two properties. The hardware block diagram
->>> could be described as below.
->>>
->>>               SMI Common(Smart Multimedia Interface Common)
->>>                   |
->>>           +----------------+-------
->>>           |                |
->>>           |                |
->>>           |                |
->>>           |                |
->>>           |                |
->>>         larb0       SMI Sub Common
->>>                     |      |     |
->>>                    larb1  larb2 larb3
->>>
->>> Signed-off-by: friday.yang <friday.yang@mediatek.com>
->>> ---
->>>   .../mediatek,smi-common.yaml                  |  2 ++
->>>   .../memory-controllers/mediatek,smi-larb.yaml | 22
->> +++++++++++++++++++
->>>   2 files changed, 24 insertions(+)
->>>
->>> diff --git a/Documentation/devicetree/bindings/memory-
->> controllers/mediatek,smi-common.yaml
->> b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-
->> common.yaml
->>> index 2f36ac23604c..4392d349878c 100644
->>> --- a/Documentation/devicetree/bindings/memory-
->> controllers/mediatek,smi-common.yaml
->>> +++ b/Documentation/devicetree/bindings/memory-
->> controllers/mediatek,smi-common.yaml
->>> @@ -39,6 +39,7 @@ properties:
->>>             - mediatek,mt8186-smi-common
->>>             - mediatek,mt8188-smi-common-vdo
->>>             - mediatek,mt8188-smi-common-vpp
->>> +          - mediatek,mt8188-smi-sub-common
->>>             - mediatek,mt8192-smi-common
->>>             - mediatek,mt8195-smi-common-vdo
->>>             - mediatek,mt8195-smi-common-vpp
->>> @@ -107,6 +108,7 @@ allOf:
->>>           compatible:
->>>             contains:
->>>               enum:
->>> +              - mediatek,mt8188-smi-sub-common
->>>                 - mediatek,mt8195-smi-sub-common
->>>       then:
->>>         required:
->>> diff --git a/Documentation/devicetree/bindings/memory-
->> controllers/mediatek,smi-larb.yaml
->> b/Documentation/devicetree/bindings/memory-controllers/mediatek,smi-
->> larb.yaml
->>> index 2381660b324c..5f162bb360db 100644
->>> --- a/Documentation/devicetree/bindings/memory-
->> controllers/mediatek,smi-larb.yaml
->>> +++ b/Documentation/devicetree/bindings/memory-
->> controllers/mediatek,smi-larb.yaml
->>> @@ -69,6 +69,16 @@ properties:
->>>       description: the hardware id of this larb. It's only required
->> when this
->>>         hardware id is not consecutive from its M4U point of view.
->>>   
->>> +  mediatek,smi-sub-comm:
->>> +    $ref: /schemas/types.yaml#/definitions/phandle
->>> +    description: a phandle of smi_sub_common that the larb is
->> linked to.
+On 2024-10-24 13:45, Bartosz Golaszewski wrote:
+> On Thu, 24 Oct 2024 13:34:11 +0200, Klara Modin <klarasmodin@gmail.com> said:
 >>
->> Why do you have to smi phandle properties per each node?
+>> I think I hit the same, or a similar bug, on my Edgerouter 6P (Cavium
+>> Octeon III):
+>>
+>> CPU 3 Unable to handle kernel paging request at virtual address
+>> 0000000000000000, epc == ffffffff817a40c8, ra == ffffffff817a40a4
+>> Oops[#1]:
+>> CPU: 3 UID: 0 PID: 1 Comm: swapper/0 Not tainted
+>> 6.12.0-rc4-next-20241023-00032-g01c8e35f8d89 #84
+>> ...
+>> Call Trace:
+>> gpiod_direction_output (drivers/gpio/gpiolib.c:4164
+>> drivers/gpio/gpiolib.c:2700 drivers/gpio/gpiolib.c:2694)
+>> i2c_register_adapter (drivers/i2c/i2c-core-base.c:396
+>> drivers/i2c/i2c-core-base.c:422 drivers/i2c/i2c-core-base.c:434
+>> drivers/i2c/i2c-core-base.c:1574)
+>> octeon_i2c_probe (drivers/i2c/busses/i2c-octeon-platdrv.c:247)
+>>
+>> (the complete log is attached)
+>>
+>> Unfortunately the oops remains after applying the diff and the call
+>> trace looks to be the same.
+>>
+>> Please let me know if there's anything else you need.
 >>
 > 
-> As shown in the picture from the commit message, we have multipule smi-
-> sub-common, each SMI larb may link to one of the smi-sub-common. So we
-> need the 'mediatek,smi-sub-comm' to describe which smi-sub-common the
-> larb is linked to.
-> In next version, I will add two smi-sub-common to the diagram in the
-> commit message.
+> Hmm so it's desc->gdev that is NULL... Could you try the following:
 > 
->>> +
->>> +  mediatek,smi-sub-comm-in-portid:
->>> +    $ref: /schemas/types.yaml#/definitions/uint32
->>> +    minimum: 0
->>> +    maximum: 7
->>> +    description: which port of smi_sub_common that the larb is
->> linked to.
->>
->> Merge it into phandle.
->>
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index ae758ba6dc3d..c95c79ea2b49 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -1026,6 +1026,9 @@ int gpiochip_add_data_with_key(struct gpio_chip
+> *gc, void *data,
+>   		}
+>   	}
 > 
-> Just confirm,
-> Do you mean merge these two into one property, like:
-> mediatek,smi-sub-comm = <&phandle port-id>;
+> +	for (desc_index = 0; desc_index < gc->ngpio; desc_index++)
+> +		gdev->descs[desc_index].gdev = gdev;
+> +
+>   	ATOMIC_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
+>   	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
 > 
->>> +
->>>   required:
->>>     - compatible
->>>     - reg
->>> @@ -125,6 +135,18 @@ allOf:
->>>         required:
->>>           - mediatek,larb-id
->>>   
->>> +  - if:
->>> +      properties:
->>> +        compatible:
->>> +          contains:
->>> +            enum:
->>> +              - mediatek,mt8188-smi-larb
->>> +
->>> +    then:
->>> +      required:
->>> +        - mediatek,smi-sub-comm
->>> +        - mediatek,smi-sub-comm-in-portid
->>> +
->>
->> and add it to the example (since you claim it is valid for every
->> device).
->>
-
-It's valid only for the Local Arbiters that have a sub-common port, which anyway
-are only the ones that are used by CAMSYS if I'm not wrong....
-
-Regardless of that, not all of the mt8188-smi-larb *require* smi-sub-comm.
-
-Besides, if the larb is anyway already linked to a sub-common, can't we just grab
-that from walking back?
-Or is this property's purpose to actually add a link to a sub-common?
-
-Regards,
-Angelo
-
+> @@ -1055,8 +1058,6 @@ int gpiochip_add_data_with_key(struct gpio_chip
+> *gc, void *data,
+>   	for (desc_index = 0; desc_index < gc->ngpio; desc_index++) {
+>   		struct gpio_desc *desc = &gdev->descs[desc_index];
 > 
-> OK, I will add this to the example.
+> -		desc->gdev = gdev;
+> -
+>   		if (gc->get_direction && gpiochip_line_is_valid(gc, desc_index)) {
+>   			assign_bit(FLAG_IS_OUT,
+>   				   &desc->flags, !gc->get_direction(gc, desc_index));
 > 
->> Best regards,
->> Krzysztof
->>
+> I'm wondering if this is not an earlier commit.
+> 
+> Bart
 
+That doesn't seem to change anything significantly:
 
+Call Trace:
+gpiod_direction_output (drivers/gpio/gpiolib.c:4165 
+drivers/gpio/gpiolib.c:2701 drivers/gpio/gpiolib.c:2695)
+i2c_register_adapter (drivers/i2c/i2c-core-base.c:396 
+drivers/i2c/i2c-core-base.c:422 drivers/i2c/i2c-core-base.c:434 
+drivers/i2c/i2c-core-base.c:1574)
+octeon_i2c_probe (drivers/i2c/busses/i2c-octeon-platdrv.c:247)
+
+--------------g0JXqH05nzju718vJmfr0xrc
+Content-Type: application/gzip; name="gpiod_oops3_decoded.gz"
+Content-Disposition: attachment; filename="gpiod_oops3_decoded.gz"
+Content-Transfer-Encoding: base64
+
+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
+
+--------------g0JXqH05nzju718vJmfr0xrc--
 
