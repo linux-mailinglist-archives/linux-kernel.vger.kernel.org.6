@@ -1,157 +1,109 @@
-Return-Path: <linux-kernel+bounces-379703-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379704-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 353AA9AE26F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:23:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CB9B9AE271
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:23:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E735D284395
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:23:37 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4945C284890
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:23:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D88861C07DF;
-	Thu, 24 Oct 2024 10:23:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53D451C2DDE;
+	Thu, 24 Oct 2024 10:23:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="D/OVl4hl"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="YkrdX2bI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6A731C07D1
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:23:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6DF91C174A;
+	Thu, 24 Oct 2024 10:23:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765411; cv=none; b=d+Xiph/eSiee4QcN+x9Y1tpqAx0h/AOB/qPleCn6XFW+t02hGc/ewj+U9Vx7XbqnLSouYltUKwkgzyZrkkGzQ1NbCwpDsexX69PnSSQ7rjtwSTtPrJcIpGd9CN/Y0NqS6XE5yku0fhAOp6xBv07lFAahbqhW5D+wsBsQ215mqIo=
+	t=1729765411; cv=none; b=lcsFFnHl2oj5IrO1JJbJ3iQdur1bnn/0r8YZbhTChan+XORPfCrJgS004BgALd1MH4bUIJxx1clk9fPBv3EzMl1WAfs8Dx9gqEboTfUVyTg5Liqh7kHZuRcVYEfr61l8lmhCymBtJOMkf5Tk7CJy3BPCMmpO6yqn/3k88xqADUo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729765411; c=relaxed/simple;
-	bh=eXzIVANoSdckZ6/KVBlOoXOvkdYkN+bwsUCbZIcRgns=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=UKCe2GTyOfSq5ScTNz4QkyL81ru6F1QfYvn3BXOKkn1eMkN9T15EKiMB2Oy1yf/TySuKK29jVy06nh2I9HCtOvUwrEv/OiBp9RdsipMVRmVCqeacDm88daOvcb6gZTakMUSeIEDzShzag0eVzBHd9WdpDsgUAaUd4FbDe9nI9lQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=D/OVl4hl; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-4314c4cb752so7444355e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:23:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729765407; x=1730370207; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=vGfd1JHcREPOU5Z6qqF2PdooBtljEuBL480hQIscwuw=;
-        b=D/OVl4hl66LLD+LI16/Laue7XUgvCXFW1Co3iqu6AoW+jvXfc5z+CoXFCn98i5jCpp
-         f8MzYWwJb7Of+2+INlz8uExV361cnsGS827Bkcfz/SRpfh19FunrAehQrUq5Mz5zRlLv
-         PQbmRamSvsrkqrPb1e2mDqqxlRTgD8XjZYx6la5d1fA1eWuh7jCkPFxBhA+7jrpiL4MO
-         +FIazLh2qCyw7Ku54ccZjxlMhAbAbGYnVyw7fSmseeBRyKLhlzLp1pS3Xia9oenNMnph
-         FDdfzRLvXHndq99UMzV/qTBsr/IbYxxJGXK51jCMTbE3w/fNrrwrPsCzkmvdcXIyjfo+
-         FuCg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729765407; x=1730370207;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=vGfd1JHcREPOU5Z6qqF2PdooBtljEuBL480hQIscwuw=;
-        b=HFLyYGwvHOy5n0wevF+V0fBCiqFwePsYnYVcV7gWJ4MVi06OiIrnCBZ+vx+7oxINg3
-         Do85CAsmDOBp0bh034+O75IJtbpr5UrX7N8ZtHzqbaxBvwY2C0vl59joFF/RCktHSM+i
-         KOHdZ510QJSemQPF3cHqETakgsENGuaBqcJD23iU+I2O6pGOddNTs7KkqRrsRUI1HU0T
-         ohcANnj97vbvXNls+tHMx8GX7mY2EeY0UZAAFSMBN5YHs8l64VShfEwEvN96Lh8OAXpQ
-         DO6wlpA4G17Q56/etS0noci7X7eU8Ei09LdMNtAKKEMW0aMXsxkZCy1t3V+gfRDLVjEc
-         8RFA==
-X-Forwarded-Encrypted: i=1; AJvYcCWqAQhsUSZ8V6M8rixTpp4A4sWcpwyT7EVse88auH5s1ZZKVoSuT8sTpLZRizbnlTnr0eOXBVt39Xu+XTQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyQX4mnaN/D/+RT8dQBBqlclM9+ccTYgdk9I5ZOc5x44Q7GSGTH
-	2QfGSbb7eLCT0mzjgO+KjUU0VLY8mUfcnBwWbot56CW5CSdpJLG6eWbcMOLjunk=
-X-Google-Smtp-Source: AGHT+IGwgk1Q6Ug+BVFVnUXFcZ9dVuF5hFZk5XTuZGnRFR7wmgF12+GD4A9jzFwefYAW34tVJukA0A==
-X-Received: by 2002:a05:600c:5490:b0:431:5d14:1cae with SMTP id 5b1f17b1804b1-4318415fee0mr44990735e9.19.1729765406341;
-        Thu, 24 Oct 2024 03:23:26 -0700 (PDT)
-Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bfb0f2sm40739335e9.22.2024.10.24.03.23.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 03:23:25 -0700 (PDT)
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-To: daniel.lezcano@linaro.org,
-	rjw@rjwysocki.net
-Cc: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Zhang Rui <rui.zhang@intel.com>,
-	Lukasz Luba <lukasz.luba@arm.com>,
-	linux-pm@vger.kernel.org (open list:THERMAL),
-	linux-kernel@vger.kernel.org (open list)
-Subject: [PATCH] thermal/thresholds: Fix thermal lock annotation issue
-Date: Thu, 24 Oct 2024 12:23:03 +0200
-Message-ID: <20241024102303.1086147-1-daniel.lezcano@linaro.org>
-X-Mailer: git-send-email 2.43.0
+	bh=sLem/rGrykk79e3RMqlPZLsw/40EPz5CsCor6sYGK1I=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=rMsfOdnL4ZuxkRsHui5nBy+Uy4k3vntkUFj8e/AJnUlBYIJe9yuJ5ogTok6dXofzvidUZz3hE5iLL6h6KT5hpGnNwT9krXxoUwAfuc+TV9s6HJGNoUMqT9xCemfK3/ou+qQ2f1LBGTeqg+EfnlxCV9Uabg1GCQ9RRuphkoUHggw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=YkrdX2bI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B9ACEC4CEC7;
+	Thu, 24 Oct 2024 10:23:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linuxfoundation.org;
+	s=korg; t=1729765411;
+	bh=sLem/rGrykk79e3RMqlPZLsw/40EPz5CsCor6sYGK1I=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=YkrdX2bINPCx9QEt7pcvUO9Jfx6ItBqW+F6S1OK86V9aTn3aDzUnS8g0J4rbqtqLa
+	 DLiYBO/IoKLYFzqtz6uJGXX7mcQV51J7AZ7WsPwLLrsCD8sxIyfOgZMB6JqpB156b8
+	 +xKMOjAhYy1CB9JPOE2VD2e2OIv8g7WbJlB07R6I=
+Date: Thu, 24 Oct 2024 12:23:20 +0200
+From: "gregkh@linuxfoundation.org" <gregkh@linuxfoundation.org>
+To: Jason-JH Lin =?utf-8?B?KOael+edv+elpSk=?= <Jason-JH.Lin@mediatek.com>
+Cc: "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"saravanak@google.com" <saravanak@google.com>,
+	"stable@vger.kernel.org" <stable@vger.kernel.org>,
+	Seiya Wang =?utf-8?B?KOeOi+i/uuWQmyk=?= <seiya.wang@mediatek.com>,
+	Singo Chang =?utf-8?B?KOW8teiIiOWciyk=?= <Singo.Chang@mediatek.com>
+Subject: Re: [PATCH] Revert "drm/mipi-dsi: Set the fwnode for mipi_dsi_device"
+Message-ID: <2024102411-handgrip-repayment-f149@gregkh>
+References: <20241024-fixup-5-15-v1-1-74d360bd3002@mediatek.com>
+ <2024102406-shore-refurbish-767a@gregkh>
+ <88f78b11804b0f18e0dce0dca95544bf6cf6c7c6.camel@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <88f78b11804b0f18e0dce0dca95544bf6cf6c7c6.camel@mediatek.com>
 
-When the thermal zone is unregistered (thermal sensor module being
-unloaded), no lock is held when flushing the thresholds. That results
-in a WARN when the lockdep validation is set in the kernel config.
+On Thu, Oct 24, 2024 at 10:16:05AM +0000, Jason-JH Lin (林睿祥) wrote:
+> Hi Greg,
+> 
+> Thanks for your information.
+> 
+> On Thu, 2024-10-24 at 11:47 +0200, Greg KH wrote:
+> >  	 
+> > External email : Please do not click links or open attachments until
+> > you have verified the sender or the content.
+> >  On Thu, Oct 24, 2024 at 05:37:13PM +0800, Jason-JH.Lin via B4 Relay
+> > wrote:
+> > > From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+> > > 
+> > > This reverts commit ac88a1f41f93499df6f50fd18ea835e6ff4f3200.
+> > > 
+> > > Reason for revert:
+> > > 1. The commit [1] does not land on linux-5.15, so this patch does
+> > not
+> > > fix anything.
+> > > 
+> > > 2. Since the fw_device improvements series [2] does not land on
+> > > linux-5.15, using device_set_fwnode() causes the panel to flash
+> > during
+> > > bootup.
+> > > 
+> > > Incorrect link management may lead to incorrect device
+> > initialization,
+> > > affecting firmware node links and consumer relationships.
+> > > The fwnode setting of panel to the DSI device would cause a DSI
+> > > initialization error without series[2], so this patch was reverted
+> > to
+> > > avoid using the incomplete fw_devlink functionality.
+> > > 
+> > > [1] commit 3fb16866b51d ("driver core: fw_devlink: Make cycle
+> > detection more robust")
+> > > [2] Link: 
+> > https://lore.kernel.org/all/20230207014207.1678715-1-saravanak@google.com
+> > > 
+> 
+> Please don't mind me make a confirmation.
+> I just need to add this line here and send it again, right?
+> 
+> Cc: <stable@vger.kernel.org> #5.15.169
 
-This has been reported by syzbot.
-
-As the thermal zone is in the process of being destroyed, there is no
-need to send a notification about purging the thresholds to the
-userspace as this one will receive a thermal zone deletion
-notification which imply the deletion of all the associated resources
-like the trip points or the user thresholds.
-
-Split the function thermal_thresholds_flush() into a lockless one
-without notification and its call with the lock annotation followed
-with the thresholds flushing notification.
-
-Please note this scenario is unlikely to happen, as the sensor drivers
-are usually compiled-in in order to have the thermal framework to be
-able to kick in at boot time if needed.
-
-Link: https://lore.kernel.org/all/67124175.050a0220.10f4f4.0012.GAE@google.com
-Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
-Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
----
- drivers/thermal/thermal_thresholds.c | 13 +++++++++----
- 1 file changed, 9 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/thermal_thresholds.c
-index ea4aa5a2e86c..2888eabd3efe 100644
---- a/drivers/thermal/thermal_thresholds.c
-+++ b/drivers/thermal/thermal_thresholds.c
-@@ -20,17 +20,22 @@ int thermal_thresholds_init(struct thermal_zone_device *tz)
- 	return 0;
- }
- 
--void thermal_thresholds_flush(struct thermal_zone_device *tz)
-+static void __thermal_thresholds_flush(struct thermal_zone_device *tz)
- {
- 	struct list_head *thresholds = &tz->user_thresholds;
- 	struct user_threshold *entry, *tmp;
- 
--	lockdep_assert_held(&tz->lock);
--
- 	list_for_each_entry_safe(entry, tmp, thresholds, list_node) {
- 		list_del(&entry->list_node);
- 		kfree(entry);
- 	}
-+}
-+
-+void thermal_thresholds_flush(struct thermal_zone_device *tz)
-+{
-+	lockdep_assert_held(&tz->lock);
-+
-+	__thermal_thresholds_flush(tz);
- 
- 	thermal_notify_threshold_flush(tz);
- 
-@@ -39,7 +44,7 @@ void thermal_thresholds_flush(struct thermal_zone_device *tz)
- 
- void thermal_thresholds_exit(struct thermal_zone_device *tz)
- {
--	thermal_thresholds_flush(tz);
-+	__thermal_thresholds_flush(tz);
- }
- 
- static int __thermal_thresholds_cmp(void *data,
--- 
-2.43.0
-
+Yes.
 
