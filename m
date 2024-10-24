@@ -1,121 +1,481 @@
-Return-Path: <linux-kernel+bounces-380597-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380598-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 36F189AF325
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:58:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 98DE59AF329
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:58:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D654F1F223D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:58:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 58B432826BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0BB2003AA;
-	Thu, 24 Oct 2024 19:57:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5103F1F5831;
+	Thu, 24 Oct 2024 19:58:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tPILtAAX"
-Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Rwsgc4hE"
+Received: from mail-pj1-f54.google.com (mail-pj1-f54.google.com [209.85.216.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A11F80AD
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:57:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46D917333D;
+	Thu, 24 Oct 2024 19:58:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799878; cv=none; b=r2ukj3nMXQa5jwpn8h8bHr4hjoD+RBkFtu9pcnZm6TjpjwfQlV86aZ3/vfGTNsy4sH50vaHYg/kbz0kk0gD/ZJsZ5Z2Au/BR2nZTx+rltP7ph/AsvcAgDAKZBPAarh9Sxuh/QK7/tEHhTQdc5n+0L9Hit3kXTk8Y+5w2n+pr2VA=
+	t=1729799920; cv=none; b=YxOoxmIJlLEwVShCtDOssqq2njbDFagleUc9HpL110FzafoIhBhbqSzGSTwkvTYxv2N1lVAx6L778sD/428NGwy+I8vF82izxQ3ah178tfDWUOuLl95u/ve2Spvjc5dXLbX/kCGDId4YNOsWPqQOSJ6bS3tpozdn0ZCubcO9dzs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799878; c=relaxed/simple;
-	bh=bTSZ+AIYW4PtKktAhtWQiw/nwwUpqv9LctwwUYhZcYs=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=TY4AJDvaQGy9Y2qNBE6kXPSfC1PVZiDmbNO13UKIWEND8II4t49nqwfHEn2vEX/wLcInIDTrdGGVpD5LSHWv76dD3XJnlVBL4D7LiA9Wml4TBfsFdVKnnWzmMd2kruLWi8hEaaSaljx79ZQcV5bTWjj+Y0WUJvaWUFxwfsjpZnw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tPILtAAX; arc=none smtp.client-ip=95.215.58.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 24 Oct 2024 12:57:38 -0700
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729799868;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=8BK0ZcosXDoOXzSbDL6svDcVkcl94/C1ybPNkAKv7is=;
-	b=tPILtAAXE+IgUeUPC4X+luEap2SlsyS17q2HLFknCMik+U8I3s2RvzCZUnSAzQqNJDKt9e
-	M/MTZyMVUnCKCJYUBNzj0u5ZsYLzm6ShCLECXJkxN//oG4dDtOWhz5P9RCDzSDwfta6E2h
-	1b0NgK8VyuKZarNkmkLJPSv4ZjfS/hI=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Oliver Upton <oliver.upton@linux.dev>
-To: David Woodhouse <dwmw2@infradead.org>
-Cc: Miguel Luis <miguel.luis@oracle.com>,
-	Paolo Bonzini <pbonzini@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
-	Shuah Khan <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
-	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
-	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
-	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
-	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
-	Francesco Lavra <francescolavra.fl@gmail.com>
-Subject: Re: [PATCH v6 6/6] arm64: Use SYSTEM_OFF2 PSCI call to power off for
- hibernate
-Message-ID: <ZxqmsiXV6ZYTANKY@linux.dev>
-References: <20241019172459.2241939-1-dwmw2@infradead.org>
- <20241019172459.2241939-7-dwmw2@infradead.org>
- <23C91005-7304-4312-A5E0-F5E6C05B3209@oracle.com>
- <ECD0CA58-2C3B-48F3-AF12-95E37CB0FC48@infradead.org>
- <ZxprcWDe2AXuLhD_@linux.dev>
- <691447A1-8F3F-4890-B00F-8068A14CA126@infradead.org>
+	s=arc-20240116; t=1729799920; c=relaxed/simple;
+	bh=SylD/FPYMPNGXVx/b23+9YAx2tvTUGK4FTCC6Pk4rb0=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=Bp2cbPart1rAhKGCbgmgaTXv6NVw4PHu9AgVPpO7NxFPAqLUWkKm6C8Q0MNBpXPvo/NTcwD69szQo2PejnBxUXwILA80i8Ff0ddAqJ3vbt/+hUCdsS2CNHxyfQw3BiMjKX+H2X0qesbtQIHZTXJgAmmB76NKxsbEUM/+49eBANo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Rwsgc4hE; arc=none smtp.client-ip=209.85.216.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f54.google.com with SMTP id 98e67ed59e1d1-2e2c6bc4840so1014025a91.2;
+        Thu, 24 Oct 2024 12:58:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729799917; x=1730404717; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=aQ0fckIUBSZGYm0Y3cG31DTqbNFeUBeqFQ0n5b8DC4o=;
+        b=Rwsgc4hEW4cDCCT/Zp/L+z3+oQ0FihIguaRztALzmY6xrX5JXhAVYfEfHetMZJpHhT
+         4NZxRz/fcL+NOtwt7WeqbA8zcYLUOMTh5pVYIuJrzggA2wAjDGPRhbhKBo1nLkFkIjAn
+         hTM0UIK0cJJjvQHinP1G4ulwjCfjUE1T16pXZfTM5ihY/JnopE2NGOS7kj+vIvqqNTqt
+         /JsQJoX5kJpVDS5MOapSanfAP8GVzq+bg/CMqHIM4FZ80TapWeHtIm9k3VIS8+O3v0ZQ
+         CLmR2/f6yKOWSzEvtnlCBMUuePnwmFrEra2UpiHlNESdYo05zDuKdJbOGITiPF3HaODu
+         1JuA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729799917; x=1730404717;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=aQ0fckIUBSZGYm0Y3cG31DTqbNFeUBeqFQ0n5b8DC4o=;
+        b=iTu0Mbbdl70xdV+h6y9l4hklZd/N+MKbWLdjsjeCBKGNQF8xt/cI6gBKNBKrOKyI/G
+         DeobxWpbz/xAWprrFUhBwJ+JMt8+9ER5HNEALqQFdtpSu3qC7kPSYKJrxMrbAq4C85jT
+         aHZimxkAeglSb2z9tZBW7WpbmfjYBxwv8ej0zWmKYdjyu84HPVJXote72Ar5f3QPZzng
+         X+iIpGbi6ZhSyATPjxmqLaG/OFKsE2a4Ngffs1KPWEh3QUX/4tsgEccmj/HwRh+WVgHw
+         fEsAiyiTPOk+eumJ66rAsyJjDHfLMo1WnBajEO7DS3fOZ3kQBlvhkdX+viLz9+SefRNE
+         FqNw==
+X-Forwarded-Encrypted: i=1; AJvYcCW/ii0Gw9zWbj/b28juUSrMJ4A4fseHvQe5v+pmb1itd8jRUE/W78VHfjqngfpgdjJ3cyg=@vger.kernel.org, AJvYcCXYLfXwIYOgVjKBML0GAtvvru8O122E3pcPFVNQwlUn1O9h9oeGf3066L9DE+/Vc19h0Hwl+70lP83jmpol@vger.kernel.org
+X-Gm-Message-State: AOJu0YzGf1TzBfl0GWdMGJWoEi42/Y5RZvY4rlczDA6Aoyva7zEyh0JL
+	1C2k6NFWK7tC2pLIB9cF+xpKnnELihGxBlTCT0Zigby3OqlfZOmjcFxLKsue
+X-Google-Smtp-Source: AGHT+IEYaZRBRpxjeM2dXVVDRby3CtroIFkM9Ji2wlvhOTDjAbPEyy1LR3V313OOqkt63b5yLLwThA==
+X-Received: by 2002:a17:90b:370e:b0:2e2:d7db:41fa with SMTP id 98e67ed59e1d1-2e76b711b55mr7685245a91.33.1729799916696;
+        Thu, 24 Oct 2024 12:58:36 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e587402sm1905910a91.48.2024.10.24.12.58.34
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 12:58:36 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Marcin Wojtas <marcin.s.wojtas@gmail.com>,
+	Russell King <linux@armlinux.org.uk>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Veerasenareddy Burru <vburru@marvell.com>,
+	Sathesh Edara <sedara@marvell.com>,
+	Shinas Rasheed <srasheed@marvell.com>,
+	Satananda Burla <sburla@marvell.com>,
+	Sunil Goutham <sgoutham@marvell.com>,
+	Geetha sowjanya <gakula@marvell.com>,
+	Subbaraya Sundeep <sbhatta@marvell.com>,
+	hariprasad <hkelam@marvell.com>,
+	Mirko Lindner <mlindner@marvell.com>,
+	Stephen Hemminger <stephen@networkplumber.org>,
+	Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Jesper Dangaard Brouer <hawk@kernel.org>,
+	John Fastabend <john.fastabend@gmail.com>,
+	Rosen Penev <rosenp@gmail.com>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Sabrina Dubroca <sd@queasysnail.net>,
+	Simon Horman <horms@kernel.org>,
+	Mina Almasry <almasrymina@google.com>,
+	linux-kernel@vger.kernel.org (open list),
+	bpf@vger.kernel.org (open list:XDP (eXpress Data Path):Keyword:(?:\b|_)xdp(?:\b|_))
+Subject: [PATCH net-next] net: marvell: use ethtool string helpers
+Date: Thu, 24 Oct 2024 12:58:33 -0700
+Message-ID: <20241024195833.176843-1-rosenp@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <691447A1-8F3F-4890-B00F-8068A14CA126@infradead.org>
-X-Migadu-Flow: FLOW_OUT
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 05:56:09PM +0200, David Woodhouse wrote:
-> On 24 October 2024 17:44:49 CEST, Oliver Upton <oliver.upton@linux.dev> wrote:
-> >IIUC, you're really wanting to 0x0 because there are hypervisors out
-> >there that violate the final spec and *only* accept this value.
-> >
-> >That's perfectly fine, but it'd help avoid confusion if the supporting
-> >comment was a bit more direct:
-> >
-> >	/*
-> >	 * If no hibernate type is specified SYSTEM_OFF2 defaults to
-> >	 * selecting HIBERNATE_OFF.
-> >	 *
-> >	 * There are hypervisors in the wild that violate the spec and
-> >	 * reject calls that explicitly provide a hibernate type. For
-> >	 * compatibility with these nonstandard implementations, pass 0
-> >	 * as the type.
-> >	 */
-> >	 if (system_entering_hibernation())
-> >		invoke_psci_fn(PSCI_FN_NATIVE(1_3, SYSTEM_OFF2), 0 , 0, 0);
-> 
-> By the time this makes it into released versions of the guest Linux kernel, that comment won't be true any more.
+The latter is the preferred way to copy ethtool strings.
 
-Then does it even matter? What is the problem you're trying to solve
-with using a particular value for the hibernate type?
+Avoids manually incrementing the pointer. Cleans up the code quite well.
 
-Either the goal of this is to make the PSCI client code compatible with
-your hypervisor today (and any other implementation based on 'F ALP1') or
-we don't care and go with whatever value we want.
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
+---
+ .../net/ethernet/marvell/mvpp2/mvpp2_main.c   | 39 ++++------
+ .../marvell/octeon_ep/octep_ethtool.c         | 31 +++-----
+ .../marvell/octeon_ep_vf/octep_vf_ethtool.c   | 31 +++-----
+ .../marvell/octeontx2/nic/otx2_ethtool.c      | 78 +++++++------------
+ drivers/net/ethernet/marvell/skge.c           |  3 +-
+ drivers/net/ethernet/marvell/sky2.c           |  3 +-
+ 6 files changed, 68 insertions(+), 117 deletions(-)
 
-Even if the comment eventually becomes stale, there is a ton of value in
-documenting the exact implementation decision being made.
-
+diff --git a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+index 103632ba78a2..571631a30320 100644
+--- a/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
++++ b/drivers/net/ethernet/marvell/mvpp2/mvpp2_main.c
+@@ -1985,45 +1985,32 @@ static void mvpp2_ethtool_get_strings(struct net_device *netdev, u32 sset,
+ 				      u8 *data)
+ {
+ 	struct mvpp2_port *port = netdev_priv(netdev);
++	const char *str;
+ 	int i, q;
+ 
+ 	if (sset != ETH_SS_STATS)
+ 		return;
+ 
+-	for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_mib_regs); i++) {
+-		strscpy(data, mvpp2_ethtool_mib_regs[i].string,
+-			ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_mib_regs); i++)
++		ethtool_puts(&data, mvpp2_ethtool_mib_regs[i].string);
+ 
+-	for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_port_regs); i++) {
+-		strscpy(data, mvpp2_ethtool_port_regs[i].string,
+-			ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_port_regs); i++)
++		ethtool_puts(&data, mvpp2_ethtool_port_regs[i].string);
+ 
+-	for (q = 0; q < port->ntxqs; q++) {
++	for (q = 0; q < port->ntxqs; q++)
+ 		for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_txq_regs); i++) {
+-			snprintf(data, ETH_GSTRING_LEN,
+-				 mvpp2_ethtool_txq_regs[i].string, q);
+-			data += ETH_GSTRING_LEN;
++			str = mvpp2_ethtool_txq_regs[i].string;
++			ethtool_sprintf(&data, str, q);
+ 		}
+-	}
+ 
+-	for (q = 0; q < port->nrxqs; q++) {
++	for (q = 0; q < port->nrxqs; q++)
+ 		for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_rxq_regs); i++) {
+-			snprintf(data, ETH_GSTRING_LEN,
+-				 mvpp2_ethtool_rxq_regs[i].string,
+-				 q);
+-			data += ETH_GSTRING_LEN;
++			str = mvpp2_ethtool_rxq_regs[i].string;
++			ethtool_sprintf(&data, str, q);
+ 		}
+-	}
+ 
+-	for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_xdp); i++) {
+-		strscpy(data, mvpp2_ethtool_xdp[i].string,
+-			ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < ARRAY_SIZE(mvpp2_ethtool_xdp); i++)
++		ethtool_puts(&data, mvpp2_ethtool_xdp[i].string);
+ }
+ 
+ static void
+diff --git a/drivers/net/ethernet/marvell/octeon_ep/octep_ethtool.c b/drivers/net/ethernet/marvell/octeon_ep/octep_ethtool.c
+index 7d0124b283da..4f4d58189118 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep/octep_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeon_ep/octep_ethtool.c
+@@ -47,7 +47,7 @@ static const char octep_gstrings_global_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_err_pkts",
+ };
+ 
+-#define OCTEP_GLOBAL_STATS_CNT (sizeof(octep_gstrings_global_stats) / ETH_GSTRING_LEN)
++#define OCTEP_GLOBAL_STATS_CNT ARRAY_SIZE(octep_gstrings_global_stats)
+ 
+ static const char octep_gstrings_tx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"tx_packets_posted[Q-%u]",
+@@ -56,7 +56,7 @@ static const char octep_gstrings_tx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"tx_busy[Q-%u]",
+ };
+ 
+-#define OCTEP_TX_Q_STATS_CNT (sizeof(octep_gstrings_tx_q_stats) / ETH_GSTRING_LEN)
++#define OCTEP_TX_Q_STATS_CNT ARRAY_SIZE(octep_gstrings_tx_q_stats)
+ 
+ static const char octep_gstrings_rx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_packets[Q-%u]",
+@@ -64,7 +64,7 @@ static const char octep_gstrings_rx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_alloc_errors[Q-%u]",
+ };
+ 
+-#define OCTEP_RX_Q_STATS_CNT (sizeof(octep_gstrings_rx_q_stats) / ETH_GSTRING_LEN)
++#define OCTEP_RX_Q_STATS_CNT ARRAY_SIZE(octep_gstrings_rx_q_stats)
+ 
+ static void octep_get_drvinfo(struct net_device *netdev,
+ 			      struct ethtool_drvinfo *info)
+@@ -80,32 +80,25 @@ static void octep_get_strings(struct net_device *netdev,
+ {
+ 	struct octep_device *oct = netdev_priv(netdev);
+ 	u16 num_queues = CFG_GET_PORTS_ACTIVE_IO_RINGS(oct->conf);
+-	char *strings = (char *)data;
++	const char *str;
+ 	int i, j;
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		for (i = 0; i < OCTEP_GLOBAL_STATS_CNT; i++) {
+-			snprintf(strings, ETH_GSTRING_LEN,
+-				 octep_gstrings_global_stats[i]);
+-			strings += ETH_GSTRING_LEN;
+-		}
++		for (i = 0; i < OCTEP_GLOBAL_STATS_CNT; i++)
++			ethtool_puts(&data, octep_gstrings_global_stats[i]);
+ 
+-		for (i = 0; i < num_queues; i++) {
++		for (i = 0; i < num_queues; i++)
+ 			for (j = 0; j < OCTEP_TX_Q_STATS_CNT; j++) {
+-				snprintf(strings, ETH_GSTRING_LEN,
+-					 octep_gstrings_tx_q_stats[j], i);
+-				strings += ETH_GSTRING_LEN;
++				str = octep_gstrings_tx_q_stats[j];
++				ethtool_sprintf(&data, str, i);
+ 			}
+-		}
+ 
+-		for (i = 0; i < num_queues; i++) {
++		for (i = 0; i < num_queues; i++)
+ 			for (j = 0; j < OCTEP_RX_Q_STATS_CNT; j++) {
+-				snprintf(strings, ETH_GSTRING_LEN,
+-					 octep_gstrings_rx_q_stats[j], i);
+-				strings += ETH_GSTRING_LEN;
++				str = octep_gstrings_rx_q_stats[j];
++				ethtool_sprintf(&data, str, i);
+ 			}
+-		}
+ 		break;
+ 	default:
+ 		break;
+diff --git a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c
+index a1979b45e355..7b21439a315f 100644
+--- a/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeon_ep_vf/octep_vf_ethtool.c
+@@ -25,7 +25,7 @@ static const char octep_vf_gstrings_global_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_dropped_bytes_fifo_full",
+ };
+ 
+-#define OCTEP_VF_GLOBAL_STATS_CNT (sizeof(octep_vf_gstrings_global_stats) / ETH_GSTRING_LEN)
++#define OCTEP_VF_GLOBAL_STATS_CNT ARRAY_SIZE(octep_vf_gstrings_global_stats)
+ 
+ static const char octep_vf_gstrings_tx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"tx_packets_posted[Q-%u]",
+@@ -34,7 +34,7 @@ static const char octep_vf_gstrings_tx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"tx_busy[Q-%u]",
+ };
+ 
+-#define OCTEP_VF_TX_Q_STATS_CNT (sizeof(octep_vf_gstrings_tx_q_stats) / ETH_GSTRING_LEN)
++#define OCTEP_VF_TX_Q_STATS_CNT ARRAY_SIZE(octep_vf_gstrings_tx_q_stats)
+ 
+ static const char octep_vf_gstrings_rx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_packets[Q-%u]",
+@@ -42,7 +42,7 @@ static const char octep_vf_gstrings_rx_q_stats[][ETH_GSTRING_LEN] = {
+ 	"rx_alloc_errors[Q-%u]",
+ };
+ 
+-#define OCTEP_VF_RX_Q_STATS_CNT (sizeof(octep_vf_gstrings_rx_q_stats) / ETH_GSTRING_LEN)
++#define OCTEP_VF_RX_Q_STATS_CNT ARRAY_SIZE(octep_vf_gstrings_rx_q_stats)
+ 
+ static void octep_vf_get_drvinfo(struct net_device *netdev,
+ 				 struct ethtool_drvinfo *info)
+@@ -58,32 +58,25 @@ static void octep_vf_get_strings(struct net_device *netdev,
+ {
+ 	struct octep_vf_device *oct = netdev_priv(netdev);
+ 	u16 num_queues = CFG_GET_PORTS_ACTIVE_IO_RINGS(oct->conf);
+-	char *strings = (char *)data;
++	const char *str;
+ 	int i, j;
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+-		for (i = 0; i < OCTEP_VF_GLOBAL_STATS_CNT; i++) {
+-			snprintf(strings, ETH_GSTRING_LEN,
+-				 octep_vf_gstrings_global_stats[i]);
+-			strings += ETH_GSTRING_LEN;
+-		}
++		for (i = 0; i < OCTEP_VF_GLOBAL_STATS_CNT; i++)
++			ethtool_puts(&data, octep_vf_gstrings_global_stats[i]);
+ 
+-		for (i = 0; i < num_queues; i++) {
++		for (i = 0; i < num_queues; i++)
+ 			for (j = 0; j < OCTEP_VF_TX_Q_STATS_CNT; j++) {
+-				snprintf(strings, ETH_GSTRING_LEN,
+-					 octep_vf_gstrings_tx_q_stats[j], i);
+-				strings += ETH_GSTRING_LEN;
++				str = octep_vf_gstrings_tx_q_stats[j];
++				ethtool_sprintf(&data, str, i);
+ 			}
+-		}
+ 
+-		for (i = 0; i < num_queues; i++) {
++		for (i = 0; i < num_queues; i++)
+ 			for (j = 0; j < OCTEP_VF_RX_Q_STATS_CNT; j++) {
+-				snprintf(strings, ETH_GSTRING_LEN,
+-					 octep_vf_gstrings_rx_q_stats[j], i);
+-				strings += ETH_GSTRING_LEN;
++				str = octep_vf_gstrings_rx_q_stats[j];
++				ethtool_sprintf(&data, str, i);
+ 			}
+-		}
+ 		break;
+ 	default:
+ 		break;
+diff --git a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+index 5197ce816581..2d53dc77ef1e 100644
+--- a/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
++++ b/drivers/net/ethernet/marvell/octeontx2/nic/otx2_ethtool.c
+@@ -85,26 +85,22 @@ static void otx2_get_qset_strings(struct otx2_nic *pfvf, u8 **data, int qset)
+ 	int start_qidx = qset * pfvf->hw.rx_queues;
+ 	int qidx, stats;
+ 
+-	for (qidx = 0; qidx < pfvf->hw.rx_queues; qidx++) {
+-		for (stats = 0; stats < otx2_n_queue_stats; stats++) {
+-			sprintf(*data, "rxq%d: %s", qidx + start_qidx,
+-				otx2_queue_stats[stats].name);
+-			*data += ETH_GSTRING_LEN;
+-		}
+-	}
++	for (qidx = 0; qidx < pfvf->hw.rx_queues; qidx++)
++		for (stats = 0; stats < otx2_n_queue_stats; stats++)
++			ethtool_sprintf(data, "rxq%d: %s", qidx + start_qidx,
++					otx2_queue_stats[stats].name);
+ 
+-	for (qidx = 0; qidx < otx2_get_total_tx_queues(pfvf); qidx++) {
+-		for (stats = 0; stats < otx2_n_queue_stats; stats++) {
++	for (qidx = 0; qidx < otx2_get_total_tx_queues(pfvf); qidx++)
++		for (stats = 0; stats < otx2_n_queue_stats; stats++)
+ 			if (qidx >= pfvf->hw.non_qos_queues)
+-				sprintf(*data, "txq_qos%d: %s",
+-					qidx + start_qidx - pfvf->hw.non_qos_queues,
+-					otx2_queue_stats[stats].name);
++				ethtool_sprintf(data, "txq_qos%d: %s",
++						qidx + start_qidx -
++							pfvf->hw.non_qos_queues,
++						otx2_queue_stats[stats].name);
+ 			else
+-				sprintf(*data, "txq%d: %s", qidx + start_qidx,
+-					otx2_queue_stats[stats].name);
+-			*data += ETH_GSTRING_LEN;
+-		}
+-	}
++				ethtool_sprintf(data, "txq%d: %s",
++						qidx + start_qidx,
++						otx2_queue_stats[stats].name);
+ }
+ 
+ static void otx2_get_strings(struct net_device *netdev, u32 sset, u8 *data)
+@@ -115,36 +111,25 @@ static void otx2_get_strings(struct net_device *netdev, u32 sset, u8 *data)
+ 	if (sset != ETH_SS_STATS)
+ 		return;
+ 
+-	for (stats = 0; stats < otx2_n_dev_stats; stats++) {
+-		memcpy(data, otx2_dev_stats[stats].name, ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (stats = 0; stats < otx2_n_dev_stats; stats++)
++		ethtool_puts(&data, otx2_dev_stats[stats].name);
+ 
+-	for (stats = 0; stats < otx2_n_drv_stats; stats++) {
+-		memcpy(data, otx2_drv_stats[stats].name, ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (stats = 0; stats < otx2_n_drv_stats; stats++)
++		ethtool_puts(&data, otx2_drv_stats[stats].name);
+ 
+ 	otx2_get_qset_strings(pfvf, &data, 0);
+ 
+ 	if (!test_bit(CN10K_RPM, &pfvf->hw.cap_flag)) {
+-		for (stats = 0; stats < CGX_RX_STATS_COUNT; stats++) {
+-			sprintf(data, "cgx_rxstat%d: ", stats);
+-			data += ETH_GSTRING_LEN;
+-		}
++		for (stats = 0; stats < CGX_RX_STATS_COUNT; stats++)
++			ethtool_sprintf(&data, "cgx_rxstat%d: ", stats);
+ 
+-		for (stats = 0; stats < CGX_TX_STATS_COUNT; stats++) {
+-			sprintf(data, "cgx_txstat%d: ", stats);
+-			data += ETH_GSTRING_LEN;
+-		}
++		for (stats = 0; stats < CGX_TX_STATS_COUNT; stats++)
++			ethtool_sprintf(&data, "cgx_txstat%d: ", stats);
+ 	}
+ 
+-	strcpy(data, "reset_count");
+-	data += ETH_GSTRING_LEN;
+-	sprintf(data, "Fec Corrected Errors: ");
+-	data += ETH_GSTRING_LEN;
+-	sprintf(data, "Fec Uncorrected Errors: ");
+-	data += ETH_GSTRING_LEN;
++	ethtool_puts(&data, "reset_count");
++	ethtool_puts(&data, "Fec Corrected Errors: ");
++	ethtool_puts(&data, "Fec Uncorrected Errors: ");
+ }
+ 
+ static void otx2_get_qset_stats(struct otx2_nic *pfvf,
+@@ -1375,20 +1360,15 @@ static void otx2vf_get_strings(struct net_device *netdev, u32 sset, u8 *data)
+ 	if (sset != ETH_SS_STATS)
+ 		return;
+ 
+-	for (stats = 0; stats < otx2_n_dev_stats; stats++) {
+-		memcpy(data, otx2_dev_stats[stats].name, ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (stats = 0; stats < otx2_n_dev_stats; stats++)
++		ethtool_puts(&data, otx2_dev_stats[stats].name);
+ 
+-	for (stats = 0; stats < otx2_n_drv_stats; stats++) {
+-		memcpy(data, otx2_drv_stats[stats].name, ETH_GSTRING_LEN);
+-		data += ETH_GSTRING_LEN;
+-	}
++	for (stats = 0; stats < otx2_n_drv_stats; stats++)
++		ethtool_puts(&data, otx2_drv_stats[stats].name);
+ 
+ 	otx2_get_qset_strings(vf, &data, 0);
+ 
+-	strcpy(data, "reset_count");
+-	data += ETH_GSTRING_LEN;
++	ethtool_puts(&data, "reset_count");
+ }
+ 
+ static void otx2vf_get_ethtool_stats(struct net_device *netdev,
+diff --git a/drivers/net/ethernet/marvell/skge.c b/drivers/net/ethernet/marvell/skge.c
+index fcfb34561882..25bf6ec44289 100644
+--- a/drivers/net/ethernet/marvell/skge.c
++++ b/drivers/net/ethernet/marvell/skge.c
+@@ -484,8 +484,7 @@ static void skge_get_strings(struct net_device *dev, u32 stringset, u8 *data)
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+ 		for (i = 0; i < ARRAY_SIZE(skge_stats); i++)
+-			memcpy(data + i * ETH_GSTRING_LEN,
+-			       skge_stats[i].name, ETH_GSTRING_LEN);
++			ethtool_puts(&data, skge_stats[i].name);
+ 		break;
+ 	}
+ }
+diff --git a/drivers/net/ethernet/marvell/sky2.c b/drivers/net/ethernet/marvell/sky2.c
+index a7a16eac1891..3914cd9210d4 100644
+--- a/drivers/net/ethernet/marvell/sky2.c
++++ b/drivers/net/ethernet/marvell/sky2.c
+@@ -3800,8 +3800,7 @@ static void sky2_get_strings(struct net_device *dev, u32 stringset, u8 * data)
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+ 		for (i = 0; i < ARRAY_SIZE(sky2_stats); i++)
+-			memcpy(data + i * ETH_GSTRING_LEN,
+-			       sky2_stats[i].name, ETH_GSTRING_LEN);
++			ethtool_puts(&data, sky2_stats[i].name);
+ 		break;
+ 	}
+ }
 -- 
-Thanks,
-Oliver
+2.47.0
+
 
