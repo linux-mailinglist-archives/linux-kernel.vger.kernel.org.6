@@ -1,144 +1,88 @@
-Return-Path: <linux-kernel+bounces-380500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 755159AEFAD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:28:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5433C9AEFAE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:30:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F3009B213F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:28:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 84C981C211F6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:30:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6602003DF;
-	Thu, 24 Oct 2024 18:28:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fErzhPTT"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C40C9200CAF;
+	Thu, 24 Oct 2024 18:30:06 +0000 (UTC)
+Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 34AB516DC3C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:28:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A9911FAEE3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:30:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729794528; cv=none; b=sAvPb09Yv+jZbRZxyFjvlzkBeu7E8w6RTC3Il4PxjbiQo/ychV0wff1Kg3mkFkuyyMjsv3OymY958ZrHyMg8fzZBgGlNvmnjrlHl4mR1+PSaxPiPlqjRW/DFwaKc6dCf/UoegIjqto7Qxi80rKekoST36TFq9RWvmOc4f+3SPNU=
+	t=1729794606; cv=none; b=QLDlB20qdHk4NBl20EThlPxxMuyHM4nKH5GbhgowxgzS4KwtsyIfq8yXhWuJ7+76yrl+EkLzIat3l50ZwoyWjRzTbFwlQ+2O/jh3KrhPctIPJU3OGxL7C0vTXa3g75zhAWUE5s9ZXXKCr8j7p3LSKCY3weeeH2bgg1JKBxR+t5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729794528; c=relaxed/simple;
-	bh=sS7XEftG8NwIg0jvOsxy+xf/DVgTuOwDySgcJpjgz04=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=rJKe2MsLV7ghJFTkPYGgYILEcCI6xkRJV/UpsZXH4pcYs/Cf5h0Dk09SQL24YQAB8qG6hidLFdwDRYnYKjceassHEV/OeYqsTHSNSX0+XfDhzFGzUqcQ7GMFtM/UwuXJZlr5HkYGfU54oj/xTbHulN3hNf73kei7tP/dfVLQ6tU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fErzhPTT; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c9150f9ed4so1575027a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:28:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729794524; x=1730399324; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=ZnCw1JhVMlHCUGTY3kum+p0Q1aFqVM0KcNSrF8JwsPI=;
-        b=fErzhPTTEV7GrUxe21x2OjQZ0yj0XipU04HxVp5ntveDFjHj1uB5+ADnH2O3XNzTZn
-         zN85KnV2q2ndHI2xK3mvK4OaEeOcWsAVRaDNTtblDxp18ezWcMqMcuTRBdtGiAWkiUiZ
-         VQbbJYOBmTELqzc4C0Ne5onPZflplJu5T+VJJ12KZ6oIw754Cc8jq54pj7MHcdLr/Iba
-         alYa5bkwRk+627uYGrkNF7LdQ7inktT7BfXv+4pfBqYL1RNqLSu8pHil4FnFqLD7X6m9
-         aURLaQL88LMSgZohKIWKqgF714a3Z9AcJ8KFB+7645oWibBny62rQCuoQCryGgw5rjsD
-         4EFw==
+	s=arc-20240116; t=1729794606; c=relaxed/simple;
+	bh=19oxF56MG/dvkfTzMrO6YCBefQeItzgXH8qE5Xg5IXs=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=eTfldLCa2EIX50SubOXuEThA7FsbdDe1iciiUqsTMmW8CIn6mKRexQn4JScCgW5f7a+1C/XrrrmpyctvGHgJ+5JnuaPzHODFGLPoLI8zv7DHVGWnk9OuaMCLcEtlk9m34QDt/ZTp1aeI7ZERVcANb/nToya4MEWp9Yc7TbucCzc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3b7d1e8a0so11170875ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:30:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729794524; x=1730399324;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=ZnCw1JhVMlHCUGTY3kum+p0Q1aFqVM0KcNSrF8JwsPI=;
-        b=gutx1se+jbLcuY5wSNO5L5tsDjamPZdjtv5em4KCfoF2lCptWnYdmtPwIxo5C5rZYN
-         0CdgeEXG/LBn0eCL/bOjnp3677lVLST2nqgpOSI9Bgqeuj1XMO3iVpG965VO+Vs2Aaep
-         uW1drqF3BIr6dUFqlmLZzdNwIEo5zNXOeBDeKggjZmMoxrUX9EOxU3OL1QpOebBHvakX
-         DFWD23mpVCCxOooZEFQnMWgEoRL3R8hyZpkhMUeTpdrJabPmVhX1n7pqAJgZGx13Xbdi
-         VYWKK6tV9HIgqOIxyYmcgLAITrkyKhDWDj3RCyd58jVg3SKGA6JMmu1vD2ZpvmYZFWli
-         wB1g==
-X-Forwarded-Encrypted: i=1; AJvYcCVnFDFGtaf/BvadB37gjIL4dqZLwDtu2mnmytmsyOJx3NEggqdWcRmkNi+3+j5sLpqB0Z/ymjg7HEtus3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxCbccnua6gCUJim2GxpOrrXuSPLRv5hHxokC+OAEjzlsLRjtBP
-	vZ1SRXBsqOxdE2UV7cL9bNxIiIRPI5/vdadDlJwBUwOv5Qfn6SoJ
-X-Google-Smtp-Source: AGHT+IHnBqTl/xJxWBwJh5GwWwMP8akxVMRvgD6mDmqkERdk/KIJHipRL/gCf6Xy4s+Kt/6JJamoAw==
-X-Received: by 2002:a05:6402:3586:b0:5ca:e4e:59e6 with SMTP id 4fb4d7f45d1cf-5cba249c5d9mr2237754a12.27.1729794524254;
-        Thu, 24 Oct 2024 11:28:44 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c726besm5989669a12.93.2024.10.24.11.28.43
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 11:28:43 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH v2] x86/ioperm: Use atomic64_inc_return() in ksys_ioperm()
-Date: Thu, 24 Oct 2024 20:28:14 +0200
-Message-ID: <20241024182833.177994-1-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
+        d=1e100.net; s=20230601; t=1729794603; x=1730399403;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ULUaI94C9ZBvln0bzmZyACj8nhhqDg+gEhUCA7NjALM=;
+        b=DYiAUwni0JPsPHtZe8G9ijvJlnZwvqTYWoySRHVpDKVgglJt2oPEGGrTnPwbHKd4Hp
+         GPZeu+fT9KUw3BkqoG5W/ws33fTilxwhHNIJ+mScCNMyzKDbmsLWEGlNmA5kqgfmjUIM
+         vSZTZaE0c1ccSBTEwG2WmJeWGmocicl+jYuXY0xnZpr9Zui0S3zUlNEIggxcvteaQscf
+         aocM/J1jHM6E2LEIuazE00cRJC5AgZs7MhR18ILxIsMdo6bZRMZ7W7K89V8fbgxncvXN
+         72ICQsqfYxFSWyTlv3BszScm70i6u55VffwbA2Wmr1ijxF8gEM0q+57Qc22NA7uAxAYn
+         lcJQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUobgEHOZq0glqSDRgqUQwoazpyOLdmWDFbUaU93XqacgovWqIurT6H12zxar+8w55wC+S2Ele6n5j6zS8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJ66LdcSC98e5azVVmVpFEdctDo8WcSYHxh9TC7ImFfp8lD0WK
+	0di+oZKICtB8ocWebboWJdN0FJJkRZ/9A1FtqCS1ogekStRvim5QrXLQqPXMvYsd2J5cLH9xM1d
+	gQBeT3HDtBWFq1OXJj5FkW5IU64NCJz3yHUVIJBAoF6/YYbJzQY8Tz9o=
+X-Google-Smtp-Source: AGHT+IEmMEp8gqNAkg1FW3VGCfSSdDQYvCVYgLK7RmSVhogPIsfFu1NBNyfokndo7/24tME2RlO5RSfTPUC/TdocFe/Q5fr/8JjA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+X-Received: by 2002:a05:6e02:1485:b0:3a3:9792:e9f5 with SMTP id
+ e9e14a558f8ab-3a4d592f369mr75279975ab.5.1729794603541; Thu, 24 Oct 2024
+ 11:30:03 -0700 (PDT)
+Date: Thu, 24 Oct 2024 11:30:03 -0700
+In-Reply-To: <411d4343-0a1f-4629-9c81-56f7c2e363da@yandex.ru>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671a922b.050a0220.381c35.0001.GAE@google.com>
+Subject: Re: [syzbot] [pm?] KASAN: use-after-free Read in netdev_unregister_kobject
+From: syzbot <syzbot+6cf5652d3df49fae2e3f@syzkaller.appspotmail.com>
+To: dmantipov@yandex.ru, linux-kernel@vger.kernel.org, 
+	syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-to use optimized implementation on targets that define
-atomic_inc_return() and to remove now unneeded initialization of
-%eax/%edx register pair before the call toatomic64_inc_return().
+Hello,
 
-On x86_32 the code improves from:
+syzbot tried to test the proposed patch but the build/boot failed:
 
- 1b0:    b9 00 00 00 00           mov    $0x0,%ecx
-            1b1: R_386_32    .bss
- 1b5:    89 43 0c                 mov    %eax,0xc(%ebx)
- 1b8:    31 d2                    xor    %edx,%edx
- 1ba:    b8 01 00 00 00           mov    $0x1,%eax
- 1bf:    e8 fc ff ff ff           call   1c0 <ksys_ioperm+0xa8>
-            1c0: R_386_PC32    atomic64_add_return_cx8
- 1c4:    89 03                    mov    %eax,(%ebx)
- 1c6:    89 53 04                 mov    %edx,0x4(%ebx)
+failed to apply patch:
+checking file net/bluetooth/hci_core.c
+patch: **** unexpected end of file in patch
 
-to:
 
- 1b0:    be 00 00 00 00           mov    $0x0,%esi
-            1b1: R_386_32    .bss
- 1b5:    89 43 0c                 mov    %eax,0xc(%ebx)
- 1b8:    e8 fc ff ff ff           call   1b9 <ksys_ioperm+0xa1>
-            1b9: R_386_PC32    atomic64_inc_return_cx8
- 1bd:    89 03                    mov    %eax,(%ebx)
- 1bf:    89 53 04                 mov    %edx,0x4(%ebx)
 
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
-v2: Mention specific code improvement on x86_32 target instead
-    of register pressure issue
----
- arch/x86/kernel/ioport.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+Tested on:
 
-diff --git a/arch/x86/kernel/ioport.c b/arch/x86/kernel/ioport.c
-index e2fab3ceb09f..6290dd120f5e 100644
---- a/arch/x86/kernel/ioport.c
-+++ b/arch/x86/kernel/ioport.c
-@@ -144,7 +144,7 @@ long ksys_ioperm(unsigned long from, unsigned long num, int turn_on)
- 	 * Update the sequence number to force a TSS update on return to
- 	 * user mode.
- 	 */
--	iobm->sequence = atomic64_add_return(1, &io_bitmap_sequence);
-+	iobm->sequence = atomic64_inc_return(&io_bitmap_sequence);
- 
- 	return 0;
- }
--- 
-2.42.0
+commit:         c2ee9f59 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git
+kernel config:  https://syzkaller.appspot.com/x/.config?x=d239903bd07761e5
+dashboard link: https://syzkaller.appspot.com/bug?extid=6cf5652d3df49fae2e3f
+compiler:       
+patch:          https://syzkaller.appspot.com/x/patch.diff?x=1203665f980000
 
 
