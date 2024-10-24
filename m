@@ -1,144 +1,88 @@
-Return-Path: <linux-kernel+bounces-380521-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D65E79AF024
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD9A19AEFCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:47:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 81A091F22E60
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:55:01 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7273E28245D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:46:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3465215002;
-	Thu, 24 Oct 2024 18:54:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 80E2B200BA6;
+	Thu, 24 Oct 2024 18:46:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b="YVhA4YLF"
-Received: from dilbert.mork.no (dilbert.mork.no [65.108.154.246])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UVgkk0Yn"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AD3222141D0;
-	Thu, 24 Oct 2024 18:54:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.108.154.246
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1349482EF;
+	Thu, 24 Oct 2024 18:46:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729796092; cv=none; b=FxTAxU9ITAlFA30ybAbZNKEk33ltCpxUBq3TvA1y55BX0Fg+/mvRRyrNpWvLMx5uzjNBerEdF2659Z6uw+4HC6N3ZZf9jYH4ZSd5FiOay+p87fT6y0yJ5LWf44OPC7Ob0ScMgnqgup9n8D8kMS3cfbwfFLLnSBnNaPgMozEncpM=
+	t=1729795611; cv=none; b=HzoLWdzJQxyMAA3FAqzgyRmglf+4NAJh1a7cZxW5siM8qQf95bmOiu9gzvvCH9jNr2IzIG/ku+nv8hdiDf7l8g0c47/ZFkgSTlufbeJp8s/lO4uvw2sROXbsE6mMb0SvDeqHKg7ChI9xy9cZo4HxRalukiV/UPvGNSoZv7v62oo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729796092; c=relaxed/simple;
-	bh=vcj4Zl30hZKPQmEgDV2ndtG3//dMR+88Svx8gersokc=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version:Content-Type; b=Ez0qGVxiWUOuYHpLrrUcWbyn3IIlOJCjz03ogREw+HhoWhWa9K4Ip+ZvpDQT3hQilqG+CKQM3ARAPUQD83I97dlz6yLrNU18TY3PuUiqxzQ7Ghe3sTFx8I9EfXpGP9EZGQxhZjcJXB3OAdjpWCoEUf94AEv6Iu1nTsdEBftgfD4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no; spf=pass smtp.mailfrom=miraculix.mork.no; dkim=pass (1024-bit key) header.d=mork.no header.i=@mork.no header.b=YVhA4YLF; arc=none smtp.client-ip=65.108.154.246
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=mork.no
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=miraculix.mork.no
-Authentication-Results: dilbert.mork.no;
-	dkim=pass (1024-bit key; secure) header.d=mork.no header.i=@mork.no header.a=rsa-sha256 header.s=b header.b=YVhA4YLF;
-	dkim-atps=neutral
-Received: from canardo.dyn.mork.no ([IPv6:2a01:799:10de:2e00:0:0:0:1])
-	(authenticated bits=0)
-	by dilbert.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 49OIhGvY1383422
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 24 Oct 2024 19:43:17 +0100
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mork.no; s=b;
-	t=1729795395; bh=HAoa7xblMSKwHtp1ssQvpwrF+I1Db85YOC/jYT6LvdY=;
-	h=From:To:Cc:Subject:Date:Message-Id:From;
-	b=YVhA4YLFT5sS0545dThy+CmfLgQw1v4ec1jNDzcHagUrfrPRP32dXMC07z6w3WXOY
-	 67tHRxNRooIQCP1j/5gnHBo4dQdbVwCT3uvyStCB1pjjQMciGyQTEDI8r6uoopC2YL
-	 1yovFG2FzeIVA0s5PlkJBgzC14lzxzGadEiRNw2s=
-Received: from miraculix.mork.no ([IPv6:2a01:799:10de:2e0a:149a:2079:3a3a:3457])
-	(authenticated bits=0)
-	by canardo.dyn.mork.no (8.17.1.9/8.17.1.9) with ESMTPSA id 49OIhFmN609116
-	(version=TLSv1.3 cipher=TLS_AES_256_GCM_SHA384 bits=256 verify=OK);
-	Thu, 24 Oct 2024 20:43:15 +0200
-Received: (nullmailer pid 700022 invoked by uid 1000);
-	Thu, 24 Oct 2024 18:43:15 -0000
-From: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-To: linux-media@vger.kernel.org
-Cc: linux-kernel@vger.kernel.org, Manu Abraham <abraham.manu@gmail.com>,
-        Mauro Carvalho Chehab <mchehab@kernel.org>,
-        =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>
-Subject: [PATCH] media: mantis: remove orphan mantis_core.h
-Date: Thu, 24 Oct 2024 20:43:13 +0200
-Message-Id: <20241024184313.700010-1-bjorn@mork.no>
-X-Mailer: git-send-email 2.39.5
+	s=arc-20240116; t=1729795611; c=relaxed/simple;
+	bh=5FVyEGboaM4rj+GScXdt9qEVYfTNOXNL6tZ7z4VeYFo=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=qPAcR+bxmJH9dSxnG45S8Zlh9UGG1I7gdfkwdPEy/36EuLuBOxnfmsyHFqE58eFQpQ/naGEGJftjbfKo+Y8jb0WowHuRf9ibxbDnxNg5qdNFsDIHkZa+rTdUYwtn1RfRMRtV1XTOg8FaPEdDRW0T+ChSaqiX4s1mMG84a2pZ3WM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UVgkk0Yn; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6897C4CEC7;
+	Thu, 24 Oct 2024 18:46:50 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729795611;
+	bh=5FVyEGboaM4rj+GScXdt9qEVYfTNOXNL6tZ7z4VeYFo=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=UVgkk0YnFNtvfXKZbtHA23X2t0DzDyhu17nPkgpQtV/XewjU9cZpGGRGY29oopDx2
+	 jeQ+6pQ+4u/zDsdh7qT2DeFqTOYRwLbzccirvWp0KwT1QLmYLRtHgd0fkVWeblVExC
+	 ptAvZ4ntayRZsIdrF24TyQxb9+XtMfvzNOpWwnI0ou2hC+jnNpwzXIa2FyRD2AU8I3
+	 WVGSw0VmdPkxxPXwZXl3Ut9E/L35tPM8GmiHUddw6oZKtxdXl6uM9yzBSfgHg5ru3j
+	 C7j8ulGmYRuieHdCXHxQMCvBmwA8QSMvawhxjk3jH6Cx4CQIqbgbf+jigVf8XVaEla
+	 CwbcKlzONrSOA==
+Date: Thu, 24 Oct 2024 13:46:49 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Conor Dooley <conor@kernel.org>
+Cc: linux-pci@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 0/2] PCI: microchip: support using either instance 1
+ or 2
+Message-ID: <20241024184649.GA967731@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 1.0.5 at canardo.mork.no
-X-Virus-Status: Clean
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-gout-kinfolk-0f24b28d41b7@spud>
 
-This file has been an orphan ever since commit b3b961448f70
-("V4L/DVB (13795): [Mantis/Hopper] Code overhaul, add Hopper
-devices into the PCI ID list"), having no references except
-for the orphan removed by commit 519648bed470 ("media: mantis:
-remove orphan mantis_core.c")
+On Thu, Oct 24, 2024 at 10:38:11AM +0100, Conor Dooley wrote:
+> On Wed, Aug 14, 2024 at 09:08:40AM +0100, Conor Dooley wrote:
+> > From: Conor Dooley <conor.dooley@microchip.com>
+> > 
+> > The current driver and binding for PolarFire SoC's PCI controller assume
+> > that the root port instance in use is instance 1. The second reg
+> > property constitutes the region encompassing both "control" and "bridge"
+> > registers for both instances. In the driver, a fixed offset is applied to
+> > find the base addresses for instance 1's "control" and "bridge"
+> > registers. The BeagleV Fire uses root port instance 2, so something must
+> > be done so that software can differentiate. This series splits the
+> > second reg property in two, with dedicated "control" and "bridge"
+> > entries so that either instance can be used.
+> 
+> Just attempting to bump this patchset. It has gone over 2 months without
+> response, and I am afraid it has completely fallen between the cracks.
 
-Fixes: b3b961448f70 ("V4L/DVB (13795): [Mantis/Hopper] Code overhaul, add Hopper devices into the PCI ID list")
-Link: https://patchwork.linuxtv.org/project/linux-media/patch/1277054487-14384-1-git-send-email-bjorn@mork.no/
-Signed-off-by: Bjørn Mork <bjorn@mork.no>
----
+Thanks for bumping this.  It looks pretty straightforward to me, so if
+nobody acts on it soon, I'll pick it up.
 
-Yes, I did try to clean up this mess in 2010 already. Not sure
-why I bother, really.
-
-
- drivers/media/pci/mantis/mantis_core.h | 43 --------------------------
- 1 file changed, 43 deletions(-)
- delete mode 100644 drivers/media/pci/mantis/mantis_core.h
-
-diff --git a/drivers/media/pci/mantis/mantis_core.h b/drivers/media/pci/mantis/mantis_core.h
-deleted file mode 100644
-index 93c89a10a2c7..000000000000
---- a/drivers/media/pci/mantis/mantis_core.h
-+++ /dev/null
-@@ -1,43 +0,0 @@
--/* SPDX-License-Identifier: GPL-2.0-or-later */
--/*
--	Mantis PCI bridge driver
--
--	Copyright (C) Manu Abraham (abraham.manu@gmail.com)
--
--*/
--
--#ifndef __MANTIS_CORE_H
--#define __MANTIS_CORE_H
--
--#include "mantis_common.h"
--
--
--#define FE_TYPE_SAT	0
--#define FE_TYPE_CAB	1
--#define FE_TYPE_TER	2
--
--#define FE_TYPE_TS204	0
--#define FE_TYPE_TS188	1
--
--
--struct vendorname {
--	u8  *sub_vendor_name;
--	u32 sub_vendor_id;
--};
--
--struct devicetype {
--	u8  *sub_device_name;
--	u32 sub_device_id;
--	u8  device_type;
--	u32 type_flags;
--};
--
--
--extern int mantis_dma_init(struct mantis_pci *mantis);
--extern int mantis_dma_exit(struct mantis_pci *mantis);
--extern void mantis_dma_start(struct mantis_pci *mantis);
--extern void mantis_dma_stop(struct mantis_pci *mantis);
--extern int mantis_i2c_init(struct mantis_pci *mantis);
--extern int mantis_i2c_exit(struct mantis_pci *mantis);
--
--#endif /* __MANTIS_CORE_H */
--- 
-2.39.5
-
+Bjorn
 
