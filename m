@@ -1,116 +1,148 @@
-Return-Path: <linux-kernel+bounces-379298-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379287-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4151D9ADC9B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:52:38 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 90DCA9ADC88
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 022AB2825B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:52:37 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id DE7C5B2166E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:49:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 194C71ABEC7;
-	Thu, 24 Oct 2024 06:51:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 53CF8189916;
+	Thu, 24 Oct 2024 06:49:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="mWCpdugv"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="xF78g8TL"
+Received: from mail-lj1-f182.google.com (mail-lj1-f182.google.com [209.85.208.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C52A918A957;
-	Thu, 24 Oct 2024 06:51:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AAF1170822
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:49:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729752667; cv=none; b=T7qqGh1RvNdftkRSwIzyTBCGcnH2HabJyD5nYuYZhAHoQK6ar7VIAa95FrxU3cDA99iL2eHV0OqVvcSS3PzGsLtgpPtkuLzOCLoPTPrvWoEVhadQwNRdycxJK7dVX9VsoOXXHOPMfOrt1g2PpZ/JOIDBqlvCS0LPwuESvdATg/o=
+	t=1729752585; cv=none; b=d0naT1jC0OaN5H4mEdV272w9dCsYhN7NAyx2tNVaZJZsec0DsU5EjOUFIl1WjwoA46ax9mXzrzUcBglB7ZgmEMTmHqaf5ugsKeNfbFYYal+5bssp3HBd8y4f6dXerhTmXOzP6o8DIHqlLd9vm63hePhILBJboHGu7Dm85L/PeiA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729752667; c=relaxed/simple;
-	bh=m7Nnpt7+Em+YtnTakZ342bSNZd7YHvDXCOvkkROzWC0=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=JIx9r0dmak94DNNFM8yM+aXdF+zNeoivd3nEbDHv34zSuPJBRDhfNRy3gOdbtXK/oLbEjO5k7LFry+3jIoyU8iVSDaj9wQHRe7ii8GWgPfYBxudTvtkCczVkRMAxH9vWVgfDz8HZDEhKvW2aQs6fNeFPJhwXIUMqWzH6F/imbvk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=mWCpdugv; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id C1E1CA0DC8;
-	Thu, 24 Oct 2024 08:50:56 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=VwFiDc1hiKzfuZAf7wDn
-	7BLFZ2hIohDQzw55SHVWscI=; b=mWCpdugvEpYYvgldU8BpaCNf4axJdxj1yq/p
-	7jYKrw5cSCxznoGf7hD/Wd4HL1SfqPjs8flitKDu4FDTuZ553uiFZ8qIILvZxOUy
-	fSSH1ToY1djtUW3AyfFhxIcShhJY+gJEs3g/Zn4H1Z981rFLFntLbu2VUmgvYq27
-	km+g56AD4clkYaoJh0DejslAKoH0xBxWBeZwfRcWXjFq8bhcHODJ5Au2dpWzSpuO
-	B4lYH3XNXIe7vFVcQKTIh44wlCYr/5zMS9X5m/jNPXo/pWRcP3/HWdTi2jgFDCCG
-	RUZgbePj3oyobtKYSailSZ94lGQUrXN9uHGFGRLLY3KeB3tNSAK8aaWMD1kRRxwS
-	Ea9TiA8XqIcyquHcyxkFO3Ty7PzKXoIpUIOe9z2OnfuGfI9kjWb1OgOLG+MOC7v9
-	Fkw32oDqN8HXehubHnFuhQKIrsF94zZp5rMfA4wbyGAnFuDBd3VIf++8QC+qOnCm
-	5aw7Y8S9KKoS3vjcQVd2AemuVsF/0uokFeQSRofmBOadoeuGz0cLdkeMGu8IzNil
-	VwX9BXwb8flw4Zh5ggbEvuMryvuOqpGn1kUe5IIzYDspfOs6okUFTgKKUuaR3T4J
-	5L4m1W/wlm7UkgZnjD2+Fy2Ps7Ss/g2faks4PtbXcT3kxDHIB6w8KAmDDww/4ZDX
-	/wgnhII=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
-	Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 09/10] ARM: dts: suniv: f1c100s: Add support for Audio Codec
-Date: Thu, 24 Oct 2024 08:49:30 +0200
-Message-ID: <20241024064931.1144605-10-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
-References:
+	s=arc-20240116; t=1729752585; c=relaxed/simple;
+	bh=+YxnxosZT/eyq9qGUq649cD1oJPyBYuQgRE/G2Oq8bc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Gi+9a4+Y9PJZfgLuoxPxlWsxvERkPsUfm42qkADwsl1PUJTF5ePAyqT0CX58XRDgZPR48Se101N0sxCpYPOxC4VCm+rcg4cz86Z/kYiGRQDjKId2XKD+TDxYpNBnJtz79/LXSiRThsrUKeVlcconzbLKS36H9IKgNtB9M2EOB/o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=xF78g8TL; arc=none smtp.client-ip=209.85.208.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lj1-f182.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so15750271fa.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:49:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729752581; x=1730357381; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=UqmqTH83P2HaPWfrbm9uUBr/H9htXfVkZ8VBcknquU0=;
+        b=xF78g8TL+oyWbReK9NTif2Pr11zBwjrqsgmTeukGDBBw+r2CuB4u8DQvR3UwoEP9p8
+         Ghlcp/Z1ih6klOjQ2AooJ6ktwtTUI9GjkzpVSYUoj9LaE856aaxG3YlRBIlcRHtp+LnS
+         6GGCmO1fdmjY7awxNcXCSK+DaTbluuOAZr9yeEXwqAHGJKIHNo5z8K4CXTMzJYUS4Nll
+         m8+9hGCIo+QcTsr030V6t4trFl/aO0iQNQAb5DAccxRMF7+ELDECbaXgI/y/jx9lQJvL
+         lsVN8E0RnLtpdNTGCfcmkTfM0/aCLp/nQQmYK5gbGMfyxAfcx2lQzxlYS667esi1mkkE
+         dx6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729752581; x=1730357381;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=UqmqTH83P2HaPWfrbm9uUBr/H9htXfVkZ8VBcknquU0=;
+        b=BDQTjEvAwOXC8+RvLN+Hk6qtqCvOj5V/dRaZAY1Irx+sGo+3LvQUcqBokDm24Fzly/
+         XQg5EB1MFAq9luXAsW+kscFjq8Alxrm1AUZnsgMWBAh+sKbetjVIRIANeELDQKh7NqOr
+         Yr/RgOBDl/3ceCIZVhJWQNsHFzUY9BCYIkcz9e1SXwUZUT9RweRkRBoSdrC8GPoexghI
+         8DRdd15+t8ESfczWmtZ8aBzpF4KR4qNNukhk0Fi0Yhyd/79k+XaC69jJIOp7KI01/rDG
+         IHOh/X84LDMwI0TzWCfycE4uA2E5wO38SZasPtltujt+gcw/aQXaCdCWn9E1Yac555mk
+         DfcA==
+X-Forwarded-Encrypted: i=1; AJvYcCVtbp5p91wjK/Pe5CE3dEAqO3XrMDq6DuIlKB8PWGG+/KvdvbGJniuiYoKGbQ/1a2G4Z0D3zqxmqy7zl9g=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxukD3RIG3i3uf6B109fQqHUIEi2ET/YEfR9AQo32bqRs6U6/Ho
+	jp2Irkr8Qsw0brwOtfCY4ZJt5eFTkIJNJofKqDssZ0Lqlf+zNRC/VB3ygY2tmov+EWWJamoK53m
+	tmlfT1BErMRjKjfomXAhMN4WqftlopVtce6t29w==
+X-Google-Smtp-Source: AGHT+IEWjBJncByCCl7enq/GnMU1+EKrCnNTytQZIByE0RQSst7Rou5XDK9q3/yWAA/jI9WwwcPBxuNUZ7BXeZKKgJw=
+X-Received: by 2002:a05:6512:3b2a:b0:53b:1fd1:df4e with SMTP id
+ 2adb3069b0e04-53b23749bf5mr305771e87.19.1729752581320; Wed, 23 Oct 2024
+ 23:49:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1729752656;VERSION=7978;MC=4016601128;ID=153597;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855677065
+References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
+ <20241018-gpio-notify-in-kernel-events-v5-8-c79135e58a1c@linaro.org> <d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk>
+In-Reply-To: <d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk>
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Date: Thu, 24 Oct 2024 08:49:30 +0200
+Message-ID: <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
+Subject: Re: [PATCH v5 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-From: Mesih Kilinc <mesihkilinc@gmail.com>
+On Wed, Oct 23, 2024 at 11:05=E2=80=AFPM Mark Brown <broonie@kernel.org> wr=
+ote:
+>
+> On Fri, Oct 18, 2024 at 11:10:16AM +0200, Bartosz Golaszewski wrote:
+> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> >
+> > We currently only notify user-space about line config changes that are
+> > made from user-space. Any kernel config changes are not signalled.
+> >
+> > Let's improve the situation by emitting the events closer to the source=
+.
+> > To that end let's call the relevant notifier chain from the functions
+> > setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
+> > gpiod_toggle_active_low(). This covers all the options that we can
+> > inform the user-space about. We ignore events which don't have
+> > corresponding flags exported to user-space on purpose - otherwise the
+> > user would see a config-changed event but the associated line-info woul=
+d
+> > remain unchanged.
+>
+> Today's -next is not booting on several of my platforms, including
+> beaglebone-black, i.MX8MP-EVK and pine64plus.  Bisects are pointing at
+> this commit, and i.MX8MP-EVK is actually giving some console output:
+>
+> [    2.502208] Unable to handle kernel NULL pointer dereference at virtua=
+l address 0000000000000000
+> [    2.511036] Mem abort info:
+>
+> ...
+>
+> [    2.679934] Call trace:
+> [    2.682379]  gpiod_direction_output+0x34/0x5c
+> [    2.686745]  i2c_register_adapter+0x59c/0x670
+> [    2.691111]  __i2c_add_numbered_adapter+0x58/0xa8
+> [    2.695822]  i2c_add_adapter+0xa0/0xd0
+> [    2.699578]  i2c_add_numbered_adapter+0x2c/0x38
+> [    2.704117]  i2c_imx_probe+0x2d0/0x640
+>
+> which looks plausible given the change.
+>
+> Full boot log for i.MX8MP-EVK:
+>
+>    https://lava.sirena.org.uk/scheduler/job/887083
+>
+> Bisect log for that, the others look similar (the long run of good/bad
+> tags at the start for random commits is my automation pulling test
+> results it already knows about in the affected range to try to speed up
+> the bisect):
+>
 
-Allwinner suniv F1C100s now has basic audio codec support. Enable it
-under device tree.
+Hi Mark!
 
-Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
----
- arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi | 14 ++++++++++++++
- 1 file changed, 14 insertions(+)
+Any chance you could post the output of
 
-diff --git a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi b/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
-index 290efe026ceb..e4b41bc93852 100644
---- a/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
-+++ b/arch/arm/boot/dts/allwinner/suniv-f1c100s.dtsi
-@@ -336,5 +336,19 @@ uart2: serial@1c25800 {
- 			resets = <&ccu RST_BUS_UART2>;
- 			status = "disabled";
- 		};
-+
-+		codec: codec@1c23c00 {
-+			#sound-dai-cells = <0>;
-+			compatible = "allwinner,suniv-f1c100s-codec";
-+			reg = <0x01c23c00 0x400>;
-+			interrupts = <21>;
-+			clocks = <&ccu CLK_BUS_CODEC>, <&ccu CLK_CODEC>;
-+			clock-names = "apb", "codec";
-+			dmas = <&dma SUN4I_DMA_NORMAL 12>,
-+			       <&dma SUN4I_DMA_NORMAL 12>;
-+			dma-names = "rx", "tx";
-+			resets = <&ccu RST_BUS_CODEC>;
-+			status = "disabled";
-+		};
- 	};
- };
--- 
-2.34.1
+    scripts/faddr2line drivers/gpio/gpiolib.o gpiod_direction_output+0x34/0=
+x5c
 
+for that build?
 
+Bart
 
