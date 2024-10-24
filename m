@@ -1,105 +1,209 @@
-Return-Path: <linux-kernel+bounces-379055-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379056-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id F27709AD917
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:05:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5B2179AD919
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:05:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C321F22931
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:05:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A8B31C219D3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:05:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0034B22EED;
-	Thu, 24 Oct 2024 01:05:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EEFA522EED;
+	Thu, 24 Oct 2024 01:05:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zbxwe9h8"
-Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="COuYb7yf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Adu8e4QN";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="COuYb7yf";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="Adu8e4QN"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BF0BE6C;
-	Thu, 24 Oct 2024 01:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D78BB5223;
+	Thu, 24 Oct 2024 01:05:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729731909; cv=none; b=o97m6TjGv4a3cUP4sY0B2UBMBslNPDvhhMZlK2qZ/3MwF10YbrWYQnqcyDOuTrfFTvi5Z/i2PFYHE2rGYFwBsURQF+8/MUxRKWHQhU70HngT6vt0yZDV4BVLm9DCIZ7lC9UAmRGeIMgL9xV+oomhMmWouZ59KpAccJRJze4rvZ0=
+	t=1729731926; cv=none; b=D7nEqQ71NY2/3If21bnd4aeT7NKYxktHSaw/M2RtdgOsSlQhcaRfvhaQ0cPeK8aEoEDzezslIYZMagmUU/F9TfLk4CqeC9mkhG6XjvU2U6s4EcfrIhtZx4C3vwLh2khU+F0drfcQlhH3QrnZS4a7eIMlZ+0aBDOuOGMdBfG6AF0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729731909; c=relaxed/simple;
-	bh=VwmoJBYAlvdeAwr3NyiwJYWThIBjXS2RFKMcwFAmyv0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Pb1afnX5QUUb1H7Jtmt8Zqm5obWI2Em70JgO2CTB056cJEDrhldr6GKiFmn3PgnmIEAv+ceUrjHB7HOI/z15+10qsbCTqKLxmjQXkbUGFVSyaTRJVjfK7CWW7/cw6TRB1s7Hd8JbEOpLljIaGCdRL9N3SIehwo1miUBwIUXaDoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zbxwe9h8; arc=none smtp.client-ip=209.85.221.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so205998f8f.0;
-        Wed, 23 Oct 2024 18:05:07 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729731906; x=1730336706; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VwmoJBYAlvdeAwr3NyiwJYWThIBjXS2RFKMcwFAmyv0=;
-        b=Zbxwe9h85M/sKWlr4kjEmq27Rt2wVYBzyCi4u34fpRLUxgKNi9TOiVqAJ05xCbChnz
-         dnnKiA87XuqGNybKyjKZZB6g+aINHwDT/Dd86qJBIAQM1bddIqtRa8JxQBdR6zY4emj7
-         Nl7idxtIgsjKUbzwYRJGBi9wEn+3QPAAGWT0gS3HB1/TVHrmAyO3UL9YOA0K3Npl1UeX
-         kMd4afIV68XuqJQAaUH7ovTkY8twYg////cKxJck8hZRbm6qp8nYQIJSVrQzEqdGpedh
-         MNBLjcEDFUUbj+naP2DCaWcjZBcT4Cq372LL1TwxPJXIll2hvVR8wwWuaCRo5+jdmmlv
-         c53Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729731906; x=1730336706;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=VwmoJBYAlvdeAwr3NyiwJYWThIBjXS2RFKMcwFAmyv0=;
-        b=mvuPoN8t8iQY8yaph+GPtLsL54y5vUvR0wDOq0TBWoAUVc00zAVMEqLIpECbTtnSAO
-         XZSkBMHDMFN59jygHuEGtJFJIYW928QytJMXVoIfKoNvovuKF8ZwBXmuqYNyk20SXXvU
-         +mXvN12xWk1eKFv5O1A6UybgZZnR52FHL7a2qsf3j45PSpzCb6RAAA9PbciOi+1uz8ex
-         cmYC7e4DTrV8RP+1k32dzCNKmPaInMRJmFg+vI3nLBsh4c37IZWEmyzhZSSEgn5D2ME5
-         hc+7TYKgGOJXBktddbxyg60G9p2qGZFdXPaOeNZGlFan74zP7nPNZ23HClHD9DTMh4w6
-         STnQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWGtr4jLwDMg6yhdMnJ/tDpkSAXu+GE/qsnOVClaJB0thkuFbq8X02xonittefRI3jM4QY=@vger.kernel.org, AJvYcCXFbEuMF+YR9zSw4xKcOHSzGTgJRvnfdfmbiBlglRDzMq6NFfCujN7S+z/ntQS83lmXTLaoDxx3zRxS22aW@vger.kernel.org
-X-Gm-Message-State: AOJu0YyU4gp1sZ+HS6BTIas5TzUZ/pezbyoGcUaRPVPw2Q6xmGxwEO4g
-	o4Z+BJotFivfAXffDkYxgPPYu7USUI+I2w/l7t8c+Rhu0U9C/vsNamJ2Q3qTCkTry34474heyKg
-	VrjlCXyIPewT2GVMuni1sDJvbc3c=
-X-Google-Smtp-Source: AGHT+IEReK+2bo3a2EDoGND9G6OU4ntwKP5Y36zhBXB5tuTWaCOFLZsetWRsYrUG0doujB/TpkelkILpV7zgrP4lsEI=
-X-Received: by 2002:a05:6000:1fab:b0:37d:39f8:a77a with SMTP id
- ffacd0b85a97d-37efcef0d2dmr3263113f8f.8.1729731905614; Wed, 23 Oct 2024
- 18:05:05 -0700 (PDT)
+	s=arc-20240116; t=1729731926; c=relaxed/simple;
+	bh=WdqBYMoNf+Cws36bhXhrD5L/VO7tzGfRJ+73JrOTOec=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=l8RZGlpCkFUBJTN2kdDRgcULko1d+1zaZ3+sx27dj1grnNSTxpLWPGKu4SjSRdeK2JXlURxW9Qy0hYaCe29KkUD4PXK94WGQWojGFonu6dQkQLHL8++rrqxtwCAke7un3uNi6Yq5H44C6xfXmHWd3kf40Dayx8ER5qgyrFUj/PM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=COuYb7yf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Adu8e4QN; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=COuYb7yf; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=Adu8e4QN; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id A85ED21CC2;
+	Thu, 24 Oct 2024 01:05:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729731921;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5j5psG3f2T4wWVD4B7Jco+i4QYf02hyA3fPkukRpTnQ=;
+	b=COuYb7yfsmlXHWk4XO+vf+cwXyq9rdg8CuMW6QhePVyRLo5SFlPfPuVVVdsqVzgf6rOWs2
+	Q6xfCy3tUJrjl9+IMJvu6tHQzzPUKR4Z9tROITlw9ILJDw0gAd+/SeoFLDS+NcNZKkZPuu
+	MKufNy4Z5kn8mM2fNm92cTdlY8wx57A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729731921;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5j5psG3f2T4wWVD4B7Jco+i4QYf02hyA3fPkukRpTnQ=;
+	b=Adu8e4QNZJrekPCLjs3c92iCLMFt+eY2TibuhEWGI7fLc49fIy8xduUB0UDvGcDGUrZQcZ
+	Q5ZSAANpL8Sca8Ag==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=COuYb7yf;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=Adu8e4QN
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729731921;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5j5psG3f2T4wWVD4B7Jco+i4QYf02hyA3fPkukRpTnQ=;
+	b=COuYb7yfsmlXHWk4XO+vf+cwXyq9rdg8CuMW6QhePVyRLo5SFlPfPuVVVdsqVzgf6rOWs2
+	Q6xfCy3tUJrjl9+IMJvu6tHQzzPUKR4Z9tROITlw9ILJDw0gAd+/SeoFLDS+NcNZKkZPuu
+	MKufNy4Z5kn8mM2fNm92cTdlY8wx57A=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729731921;
+	h=from:from:reply-to:reply-to:date:date:message-id:message-id:to:to:
+	 cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=5j5psG3f2T4wWVD4B7Jco+i4QYf02hyA3fPkukRpTnQ=;
+	b=Adu8e4QNZJrekPCLjs3c92iCLMFt+eY2TibuhEWGI7fLc49fIy8xduUB0UDvGcDGUrZQcZ
+	Q5ZSAANpL8Sca8Ag==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 8380913A63;
+	Thu, 24 Oct 2024 01:05:21 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id YjzgH1GdGWcjQwAAD6G6ig
+	(envelope-from <dsterba@suse.cz>); Thu, 24 Oct 2024 01:05:21 +0000
+Date: Thu, 24 Oct 2024 03:05:20 +0200
+From: David Sterba <dsterba@suse.cz>
+To: Qu Wenruo <wqu@suse.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>,
+	David Sterba <dsterba@suse.com>,
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
+	Linux Next Mailing List <linux-next@vger.kernel.org>
+Subject: Re: linux-next: build failure after merge of the btrfs tree
+Message-ID: <20241024010520.GG31418@suse.cz>
+Reply-To: dsterba@suse.cz
+References: <20241024085701.64263a3b@canb.auug.org.au>
+ <95af7735-cb97-491c-be22-8e9759f4720f@suse.com>
+ <20241024004729.GF31418@suse.cz>
+ <1ecd327d-108d-427a-b964-da46b0496088@suse.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <Zxma0Vt6kwWFe1hx@slm.duckdns.org> <Zxma-ZFPKYZDqCGu@slm.duckdns.org>
-In-Reply-To: <Zxma-ZFPKYZDqCGu@slm.duckdns.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Wed, 23 Oct 2024 18:04:54 -0700
-Message-ID: <CAADnVQLsUZ9SoWomC_2tSw=KsK6YkdDTmg7Hmr8wk-GHMv3kNQ@mail.gmail.com>
-Subject: Re: [PATCH sched_ext/for-6.13 2/2] sched_ext: Replace
- set_arg_maybe_null() with __nullable CFI stub tags
-To: Tejun Heo <tj@kernel.org>
-Cc: David Vernet <void@manifault.com>, bpf <bpf@vger.kernel.org>, 
-	Martin KaFai Lau <martin.lau@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
-	Kernel Team <kernel-team@meta.com>, sched-ext@meta.com, 
-	LKML <linux-kernel@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <1ecd327d-108d-427a-b964-da46b0496088@suse.com>
+User-Agent: Mutt/1.5.23.1-rc1 (2014-03-12)
+X-Rspamd-Queue-Id: A85ED21CC2
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.21 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	HAS_REPLYTO(0.30)[dsterba@suse.cz];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	MIME_TRACE(0.00)[0:+];
+	RCVD_TLS_ALL(0.00)[];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	REPLYTO_DOM_NEQ_TO_DOM(0.00)[];
+	RCPT_COUNT_FIVE(0.00)[5];
+	REPLYTO_ADDR_EQ_FROM(0.00)[];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:replyto,suse.cz:dkim,suse.cz:mid];
+	TO_DN_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.21
+X-Spam-Flag: NO
 
-On Wed, Oct 23, 2024 at 5:55=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
->
-> ops.dispatch() and ops.yield() may be fed a NULL task_struct pointer.
-> set_arg_maybe_null() is used to tell the verifier that they should be NUL=
-L
-> checked before being dereferenced. BPF now has an a lot prettier way to
-> express this - tagging arguments in CFI stubs with __nullable. Replace
-> set_arg_maybe_null() with __nullable CFI stub tags.
->
-> Signed-off-by: Tejun Heo <tj@kernel.org>
-> Cc: Martin KaFai Lau <martin.lau@kernel.org>
-> Cc: Alexei Starovoitov <ast@kernel.org>
+On Thu, Oct 24, 2024 at 11:22:57AM +1030, Qu Wenruo wrote:
+> 
+> 
+> 在 2024/10/24 11:17, David Sterba 写道:
+> > On Thu, Oct 24, 2024 at 08:58:58AM +1030, Qu Wenruo wrote:
+> >>
+> >>
+> >> 在 2024/10/24 08:27, Stephen Rothwell 写道:
+> >>> Hi all,
+> >>>
+> >>> After merging the btrfs tree, today's linux-next build (x86_64
+> >>> allmodconfig) failed like this:
+> >>>
+> >>> fs/btrfs/super.c: In function 'btrfs_reconfigure_for_mount':
+> >>> fs/btrfs/super.c:2011:56: error: suggest parentheses around '&&' within '||' [-Werror=parentheses]
+> >>>    2011 |         if (!fc->oldapi || !(fc->sb_flags & SB_RDONLY) && (mnt->mnt_sb->s_flags & SB_RDONLY))
+> >>>         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+> >>> cc1: all warnings being treated as errors
+> >>>
+> >>> Caused by commit
+> >>>
+> >>>     4642e430c55b ("btrfs: fix mount failure due to remount races")
+> >>
+> >> My bad, in fact a new patch is going to remove the oldapi check
+> >> completely as newer mount using new API will break the per-subvolume
+> >> RO/RW again.
+> >>
+> >> Thus a new patch is needed to remove the oldapi check first
+> >> (https://lore.kernel.org/linux-btrfs/e1a70aa6dd0fc9ba6c7050a5befb3bd5b75a1377.1729664802.git.wqu@suse.com/),
+> >> then the newer v2 patch
+> >> (https://lore.kernel.org/linux-btrfs/08e45ca0-5ed9-4684-940f-1e956a936628@gmx.com/T/#t)
+> >> will be completely fine.
+> > 
+> > I probably missed the v2 and picked the patch with warning that I did
+> > not consider too serious but it seems linux-next builds with -Werrror.
+> > Meanwhile I've updated the for-next snapshot branch and dropped the
+> > patch.
+> 
+> I'd prefer to pick the v2 and its dependency ("btrfs: fix per-subvolume 
+> RO/RW flags with new mount API") for early testing.
+> 
+> As I'm pretty sure the rolling distros are already rolling out new mount 
+> using the fsconfig API, and breaking our per-subvolume RO/RW mount.
+> 
+> The promise that new mount API will solve the per-subvolume RO/RW 
+> without reconfiguration is mostly a lie.
+> The reality is, RO mount is still passed with both 
+> fsconfig(FSCONFIG_SET_FLAG, "ro") and  mount_setattr(MOUNT_ATTR_RDONLY), 
+> doing exactly the same thing as the old mount.
 
-for this and 1st patch:
-Acked-by: Alexei Starovoitov <ast@kernel.org>
-
-Nice cleanup!
+I'm monitoring the recent mount option problems, it's maybe due to
+syzbot and/or various users noticing what does not work anymore after
+the conversion to the new mount API in 6.8. Once the fixes are tested
+they're on the fast track to be in the next RC. In particular the RO/RW
+for subvolumes is maybe the most contentious change, but we have the use
+case and it ultimately must work. I would not call it a 'lie', I don't
+think there's an evil interest to break it, but we may be missing
+testing coverage so we notice it a few releases later. Anyway, fixes for
+mount option behaviour are always amenable for RC fixes.
 
