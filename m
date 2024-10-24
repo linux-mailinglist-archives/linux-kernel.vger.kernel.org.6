@@ -1,146 +1,126 @@
-Return-Path: <linux-kernel+bounces-380119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380113-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7CD849AE927
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:42:22 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F31BB9AE919
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:40:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BC26B24036
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:42:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBA41C21FE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:40:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 99A841E7675;
-	Thu, 24 Oct 2024 14:40:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DA21E3765;
+	Thu, 24 Oct 2024 14:40:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b="hYcgBkly"
-Received: from pv50p00im-hyfv10011601.me.com (pv50p00im-hyfv10011601.me.com [17.58.6.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTa5I9R+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 50BDD1E7664
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:40:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=17.58.6.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF0C1E5735;
+	Thu, 24 Oct 2024 14:40:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780856; cv=none; b=tri85WnKQD9C/okaNvDD/Hca6OFDNEQ/TZ1HwWOGv9Vl+5MpcRVh7exu5t4cwqeebmVguzlmtUruKc+RgpUlP8gayFflYoqQx0gagBJl73s3IVq8qnXxLGNUrT5EU2YNV1V1BfmncWIr5hdlGniM7e79icsY6fIa3FSUrnvzytM=
+	t=1729780831; cv=none; b=rOBoJBnudzbYPNhHQJGh3cgiTfiOrHkIa+Cmr23p5BfLFO3C10eGpv8pYvnMCFTSTEKImBXVVzw2nMbVn1Q5Z1nwetBi+8/aP1Bh5/E3Lb4Yb/JGlZROofdb4kzKECBi+xKo0oS+pT+YI1n9e3pSHdB4DK/G73NWU1XZksfP64w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780856; c=relaxed/simple;
-	bh=MJbrB7W8kX/cyQEalTTmjsZNEab1KL1hzlNY1ejl9U8=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=l08MkbZWBlO5/WRsRqHfsB7ntjXpWB1J23EJMJ2TsaL8iPyMikcej7scc8iQwcHD5WVTQkaldmzniOW7PlCHUi+HPgZcIoH5gRJcH7tHm9lQF/JiaSoLrvP8eIjwLotZRCcJqnW0pb/UTR4NvlgJhWP67klZ+ygqCQAzDElGy6Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com; spf=pass smtp.mailfrom=icloud.com; dkim=pass (2048-bit key) header.d=icloud.com header.i=@icloud.com header.b=hYcgBkly; arc=none smtp.client-ip=17.58.6.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=icloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=icloud.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=icloud.com;
-	s=1a1hai; t=1729780854;
-	bh=WmCswZRvkq5WGhabYEyPR/NmcnJ9vmObxp5kPrfpCBY=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To;
-	b=hYcgBkly1dOfQwz/FwLHxlli7FRnHINaxmitJN2ytTrAZ2i9555OuGsPe4Ncwd6Fn
-	 VnkaxwSrnzBu1FVjNp6cQ8KyRIRI1zgj4wvf6wxpl4P1vVkt1VvEZZwzz1pP5i7tYb
-	 4vRN1/0dUg7i+QOicQKLdnsNBv+X6miGqmH9Ke8XfnHK2guU8A+AWsWxSm8XefV1TH
-	 fdJaxQhta5amcUls0goL57b4ZLJBK5wee9/e+CYViqg5u9wuaEwGDzzIScp3sQIsCk
-	 79a1ZksS3iRgmWYGM6xoQkuwXfCIxDl3xbGf4ea3C3BqT3qwNO2E1/iua/lbMG8ibC
-	 N+sMxp6fMJiUA==
-Received: from [192.168.1.26] (pv50p00im-dlb-asmtp-mailmevip.me.com [17.56.9.10])
-	by pv50p00im-hyfv10011601.me.com (Postfix) with ESMTPSA id 636BAC80102;
-	Thu, 24 Oct 2024 14:40:46 +0000 (UTC)
-From: Zijun Hu <zijun_hu@icloud.com>
-Date: Thu, 24 Oct 2024 22:39:31 +0800
-Subject: [PATCH v2 6/6] phy: core: Simplify API of_phy_simple_xlate()
- implementation
+	s=arc-20240116; t=1729780831; c=relaxed/simple;
+	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=XPVLeUHFPykKVtn2+AYQNkJXe8RnUS18vc/hEuMluTy8KOF40UIFmzigHK5MGTLS/EqHefRrQLdqsWzjYgeQ/z1XHPQgxQTAbo0R5llWnV7zKLhFy5QB2ms1o70Pm7z9J+8C5n5iy2HPjjqVc11dr4P+4R52uQOn/4d4edEXOkA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTa5I9R+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80094C4CEC7;
+	Thu, 24 Oct 2024 14:40:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729780831;
+	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=oTa5I9R+zDvC61UZ/jQMxvUG/O2HJqLMjvYPNxvWoWZRvvUWKA+82QBebsQE4uVWI
+	 cPQIsEMF2VEIUjP6vYa6m8QRoSxuqSBBv2zbcYgnKtouSQoHvYzTpJ05nF1lUt/Rr4
+	 3oucgT721Ii9Q7Q/C2N7aUFOC7OsXN0MT9uGr9r2HzSYq62Y6ZTdoKQ4BznXZzJzQL
+	 4/OgXqYKXftwcyU3F68cLHDuUmaCJgulC0slRXttv88DVD35DHA1rjQTUupm/zeZPW
+	 rxVjJJ3R+Rh1IZtk08zn6WYA/gzf4cOfeivuNFzTPr06y9nd1a3LUNt+GO5XRMzZpl
+	 kMy+7rETutDsw==
+Date: Thu, 24 Oct 2024 16:40:28 +0200
+From: Maxime Ripard <mripard@kernel.org>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>
+Cc: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
+	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Florian Fainelli <florian.fainelli@broadcom.com>, 
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
+	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
+	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
+	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
+Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
+ gpu clocks
+Message-ID: <20241024-intelligent-proficient-python-720a0c@houat>
+References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
+ <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241024-phy_core_fix-v2-6-fc0c63dbfcf3@quicinc.com>
-References: <20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com>
-In-Reply-To: <20241024-phy_core_fix-v2-0-fc0c63dbfcf3@quicinc.com>
-To: Vinod Koul <vkoul@kernel.org>, 
- Kishon Vijay Abraham I <kishon@kernel.org>, Felipe Balbi <balbi@ti.com>, 
- Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
- Rob Herring <robh@kernel.org>, Arnd Bergmann <arnd@arndb.de>, 
- Lee Jones <lee@kernel.org>
-Cc: Lorenzo Pieralisi <lpieralisi@kernel.org>, 
- =?utf-8?q?Krzysztof_Wilczy=C5=84ski?= <kw@linux.com>, 
- Bjorn Helgaas <bhelgaas@google.com>, 
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, 
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
- Christophe JAILLET <christophe.jaillet@wanadoo.fr>, 
- Zijun Hu <zijun_hu@icloud.com>, stable@vger.kernel.org, 
- linux-phy@lists.infradead.org, linux-kernel@vger.kernel.org, 
- Zijun Hu <quic_zijuhu@quicinc.com>
-X-Mailer: b4 0.14.1
-X-Proofpoint-ORIG-GUID: bMZgaXaVPFhitUgiIfVpQoWbRlqMPNO3
-X-Proofpoint-GUID: bMZgaXaVPFhitUgiIfVpQoWbRlqMPNO3
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.272,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-24_15,2024-10-24_02,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=notspam policy=default score=0 mlxlogscore=999 clxscore=1015
- mlxscore=0 spamscore=0 phishscore=0 malwarescore=0 adultscore=0
- suspectscore=0 bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2308100000 definitions=main-2410240120
-X-Apple-Remote-Links: v=1;h=KCk=;charset=UTF-8
+Content-Type: multipart/signed; micalg=pgp-sha384;
+	protocol="application/pgp-signature"; boundary="osg67ubcsv3cmq32"
+Content-Disposition: inline
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
 
-From: Zijun Hu <quic_zijuhu@quicinc.com>
 
-Simplify of_phy_simple_xlate() implementation by API
-class_find_device_by_of_node() which is also safer since it subsys_get()
-the class's subsystem in advance of iterating over the class's devices.
+--osg67ubcsv3cmq32
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
+ gpu clocks
+MIME-Version: 1.0
 
-Also correct comments to mark its parameter @dev as unused instead of
-@args in passing.
+On Wed, Oct 23, 2024 at 05:50:28PM +0100, Dave Stevenson wrote:
+> From: Dom Cobley <popcornmix@gmail.com>
+>=20
+> For performance/power it is beneficial to adjust gpu clocks with arm cloc=
+k.
+> This is how the downstream cpufreq driver works
+>=20
+> Signed-off-by: Dom Cobley <popcornmix@gmail.com>
+> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
+> ---
+>  drivers/clk/bcm/clk-raspberrypi.c | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
+>=20
+> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
+berrypi.c
+> index 6d5ee1cddded..274176a938c6 100644
+> --- a/drivers/clk/bcm/clk-raspberrypi.c
+> +++ b/drivers/clk/bcm/clk-raspberrypi.c
+> @@ -156,7 +156,7 @@ static int raspberrypi_clock_property(struct rpi_firm=
+ware *firmware,
+>  	struct raspberrypi_firmware_prop msg =3D {
+>  		.id =3D cpu_to_le32(data->id),
+>  		.val =3D cpu_to_le32(*val),
+> -		.disable_turbo =3D cpu_to_le32(1),
+> +		.disable_turbo =3D cpu_to_le32(0),
 
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
----
- drivers/phy/phy-core.c | 20 +++++++-------------
- 1 file changed, 7 insertions(+), 13 deletions(-)
+I guess we can simply remove that line?
 
-diff --git a/drivers/phy/phy-core.c b/drivers/phy/phy-core.c
-index de0264dfc387..b83c6aa0287d 100644
---- a/drivers/phy/phy-core.c
-+++ b/drivers/phy/phy-core.c
-@@ -749,8 +749,8 @@ EXPORT_SYMBOL_GPL(devm_phy_put);
- 
- /**
-  * of_phy_simple_xlate() - returns the phy instance from phy provider
-- * @dev: the PHY provider device
-- * @args: of_phandle_args (not used here)
-+ * @dev: the PHY provider device (not used here)
-+ * @args: of_phandle_args
-  *
-  * Intended to be used by phy provider for the common case where #phy-cells is
-  * 0. For other cases where #phy-cells is greater than '0', the phy provider
-@@ -760,20 +760,14 @@ EXPORT_SYMBOL_GPL(devm_phy_put);
- struct phy *of_phy_simple_xlate(struct device *dev,
- 				const struct of_phandle_args *args)
- {
--	struct phy *phy;
--	struct class_dev_iter iter;
--
--	class_dev_iter_init(&iter, &phy_class, NULL, NULL);
--	while ((dev = class_dev_iter_next(&iter))) {
--		phy = to_phy(dev);
--		if (args->np != phy->dev.of_node)
--			continue;
-+	struct device *target_dev;
- 
--		class_dev_iter_exit(&iter);
--		return phy;
-+	target_dev = class_find_device_by_of_node(&phy_class, args->np);
-+	if (target_dev) {
-+		put_device(target_dev);
-+		return to_phy(target_dev);
- 	}
- 
--	class_dev_iter_exit(&iter);
- 	return ERR_PTR(-ENODEV);
- }
- EXPORT_SYMBOL_GPL(of_phy_simple_xlate);
+Maxime
 
--- 
-2.34.1
+--osg67ubcsv3cmq32
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
+
+iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxpcVwAKCRAnX84Zoj2+
+dhWuAYD5PMJD9prMYHyBdObDqF92o81SwNrQ04NtnD5jG5jYeEpmA3MzmyqCAh/o
+7YBXa68BgIzZ4yp54frmW6KMod1/8J/vZSTgQD/IZkrDqafE7+wZ06WmivkbUo6B
+zfJw7nahEg==
+=mmzK
+-----END PGP SIGNATURE-----
+
+--osg67ubcsv3cmq32--
 
