@@ -1,725 +1,566 @@
-Return-Path: <linux-kernel+bounces-380260-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380262-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B8D1C9AEB1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:54:11 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 415699AEB23
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:55:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC9D1F23816
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:54:11 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8881CB21C11
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:55:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887AA1F4FCA;
-	Thu, 24 Oct 2024 15:54:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB461D514D;
+	Thu, 24 Oct 2024 15:55:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GhWrqixf"
-Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="TH2U124w"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A871D63E5
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:53:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F1501E0B6F;
+	Thu, 24 Oct 2024 15:55:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729785243; cv=none; b=EfowQEu0CmlcLFpbclt3SPaTcY3mmcAcBReEBJ8ayeG6tZ6Nl0f5ZEInOA6sqIERwOSScNNKkS2alA4e4JO90YlXOE1UqkFqIojpLRZ4jMuCAUX2QcvqSiMO5fQLccVmbO/VgQQjN8mPWJtNWcXXmolMSyIiEWuNR3VAZaiTFfk=
+	t=1729785307; cv=none; b=OJ574BNAN9ZNyJbDfwjZtiqHjnBVFngj1oSUn2GB1yvvcTOmw7oS5H+ZtC80Orm2h0GFfDoG/tJYq39vMHxQNBSZYUW5VLK16wN5tVq+c2gEwlVdEHlU6Gw83P8MeRHOaPDK4geO1N+OnXVB5qj4sHuC9fQvOCawVUovtnD3esA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729785243; c=relaxed/simple;
-	bh=JYVTuWVAiy61FuLhGA33EwyaeaybXR+m1jriJEbPNsQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GLUyphxcyfKJJky8SBKhX/KgWy/gJ6H0YCMGwzWZhJRbfuUY7B+cQyVnQjnjWKjQIoqb5t2/U+Idnl+eMEPVg+p6e/Qr0AlSOQbxi/LVZTxJw5MFpW+LeQ7oscLJSfl2eCLCwiFa3P2I1tK+joAM6I+gv95GS0UsiFaqCFkNyag=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GhWrqixf; arc=none smtp.client-ip=209.85.215.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso665892a12.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:53:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729785239; x=1730390039; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=woU+p18yHG4zlBLjCg/Fv0a08tbBn/4YkcuaH8csTak=;
-        b=GhWrqixfFR6OlYspqSStviF/h5BPL0fZjjHGFNv5lLWJzFbKvz3lApjht091xEQAAi
-         c5auhYBkV1EkiwjGnl5vD/0NQk2vP4W1NXxx5O5w19wzkXhrWJSQ11aLhx8xfulWuMd4
-         DEB5tn+YhZyNjDzcrqrh0c7kCl48DR56NXlM08T077lX36pCs9bab5/8Lj5WA6SJlhOL
-         kHdAhZ5lnvs2bWUkWoapXglFV7+wCMXi4PKlNJzEbrC5wN3lViHBdg4/vVF4NqMBCNey
-         bqw7pVZQE/Rxti1AhFEqlMjsg/Jm+pdv4lZbnuZB0Cl2QdRLpcDcw3IcHVfWpr0j0X0I
-         134Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729785239; x=1730390039;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=woU+p18yHG4zlBLjCg/Fv0a08tbBn/4YkcuaH8csTak=;
-        b=vIftLB05CBSlrAewzGcbBFCeaQVfmxWMFYZAJIChd8RA+ASfSp1LZawaCRcOm36f+2
-         aCDYU+imxksZj8m7VmcEEhnzVNbr13rGkMEONBoq28UF+u24SrnjQQhyQmfJN0gC1J6h
-         hZfnqhJ8R1wnvths704bIM5CBApWioqORizAhiqyOGhHXiuzYIisEpYkxbS97861sW0H
-         lstV09rJ6gECvDp6krsuuiTjbX2IdzQWTGppM/8MZvt/KNwo1Eh88N77Jax0cMYLIW1n
-         9EM790rCSGCGByVTXA9tQb/ck5zrvDj2N7LtI5EwFAlvh6i4xmNSZThu4MveuHc0APiK
-         dC6w==
-X-Forwarded-Encrypted: i=1; AJvYcCXrtyKJkO8jpbkc8TE38kdIolrVdm12GhnJ+mnEQiMLl7bf53Yz/SUvKmsln7fNKKETZptZaNnhjrf9Tps=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxY0fhMOS4WB6ruqu3Y75cmmj11ncoODdXys1UJ+TzRLa6lab0v
-	CsOuw0VP+AadpSP+StB9OxpoAk4LxE0oYEHGsTl+zoHQX2Ag6PXe+S8oXIBq7JA=
-X-Google-Smtp-Source: AGHT+IH8MesR6UcCPyhAz6PKmAPzOuj56RQ5mkxszOPxtRwtK9N+nOGQv1gakC43OJ6NuGnldb0/vg==
-X-Received: by 2002:a05:6a21:70c8:b0:1d8:b81c:4e1a with SMTP id adf61e73a8af0-1d978bd634amr7809730637.44.1729785238540;
-        Thu, 24 Oct 2024 08:53:58 -0700 (PDT)
-Received: from p14s ([2604:3d09:148c:c800:7c96:e131:bee8:c8a4])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132feb9sm8143096b3a.67.2024.10.24.08.53.56
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 08:53:57 -0700 (PDT)
-Date: Thu, 24 Oct 2024 09:53:54 -0600
-From: Mathieu Poirier <mathieu.poirier@linaro.org>
-To: anish kumar <yesanishhere@gmail.com>
-Cc: ohad@wizery.com, bjorn.andersson@linaro.org, corbet@lwn.net,
-	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V4 3/7] Documentation: remoteproc: add more information
-Message-ID: <ZxptkuoohxeWKaeD@p14s>
-References: <20241023053357.5261-1-yesanishhere@gmail.com>
- <20241023053357.5261-4-yesanishhere@gmail.com>
+	s=arc-20240116; t=1729785307; c=relaxed/simple;
+	bh=4T2a4+mRhV9NvQBidUmk4rDen6/Uz+l5BXbpJTPNH2Q=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iFFCgnO2ZQVK5UrnpgBGMRl3fVcVTjexY17FQQ2t7Lxd6UZ8zNVbq52H+tmqa24CNS6fHB+Kzzcq8Dp7Wn1OIPBG6LThsBW9R9C3nMWfWqvB3ocaGQkOcqfGXJT/KioGPlLIfUW9P5UB8PCU0KdMAJaBuwfJiO9Uu4b7O8JP2qo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=TH2U124w; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729785302;
+	bh=4T2a4+mRhV9NvQBidUmk4rDen6/Uz+l5BXbpJTPNH2Q=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=TH2U124whINBH6S9OU8xY1sdbLbiqpBIQ2run8jUDi4yuikZmiwErQwh2rxeCk6Aa
+	 gxTaGdP+Kj5ouHFLXWwZ0A7pf1qcilLze+aH9IksWitLcmThTEG+lKZlEYzFApK6yF
+	 cOZfEtzQ15Mx+0Rrx9C3OW1kb5skWgVakJ2QGs4fURkKZItmfYvNmBvZpNIRLo/obQ
+	 tSBJ8/K2zXVBqDfAZTM9LQTuCcMYF9QEbc0Ju3RSisS4x8lrJ94e2LljpNJ8fwkW+B
+	 G4zbwdhiXR8qRKgA1PHTdyuv1hgquiS1olUT5FSfQggCNV4Gak7wRQtzzIQBhFUuiS
+	 kmfgKjeBXQ2/A==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5413817E3676;
+	Thu, 24 Oct 2024 17:55:02 +0200 (CEST)
+Message-ID: <127675b8-51c5-4c32-8bd1-ecbed96cdaa0@collabora.com>
+Date: Thu, 24 Oct 2024 17:55:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023053357.5261-4-yesanishhere@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] pinctrl: mediatek: add eint new design for mt8196
+To: chang hao <ot_chhao.chang@mediatek.com>, matthias.bgg@gmail.com,
+ sean.wang@kernel.org, linus.walleij@linaro.org
+Cc: linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org
+References: <20241024141517.10312-1-ot_chhao.chang@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241024141517.10312-1-ot_chhao.chang@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 10:33:53PM -0700, anish kumar wrote:
-> Added following changes:
-> 1. Components provided by remoteproc framework.
-> 2. Remoteproc driver responsibilities.
-> 3. Remoteproc framework responsibilities.
-> 4. Better explanation of how to ask for resources
-> from the framework by the remote processor.
+Il 24/10/24 16:15, chang hao ha scritto:
+> From: Chhao Chang <ot_chhao.chang@mediatek.com>
 > 
-> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> eint is divided from the original base address into base addresses
+> in five directions: east, south, west, north, and center.
+> Stores a limited number of eint numbers in each direction.
+> 
+> Signed-off-by: Chhao Chang <ot_chhao.chang@mediatek.com>
 > ---
->  .../driver-api/remoteproc/remoteproc.rst      | 596 +++++++-----------
->  1 file changed, 243 insertions(+), 353 deletions(-)
+>   drivers/pinctrl/mediatek/mtk-eint.c           | 830 +++++++++++++-----
+>   drivers/pinctrl/mediatek/mtk-eint.h           |  75 +-
+>   .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |  50 +-
+>   3 files changed, 722 insertions(+), 233 deletions(-)
 > 
-> diff --git a/Documentation/driver-api/remoteproc/remoteproc.rst b/Documentation/driver-api/remoteproc/remoteproc.rst
-> index 9cccd3dd6a4b..7ca545eea153 100644
-> --- a/Documentation/driver-api/remoteproc/remoteproc.rst
-> +++ b/Documentation/driver-api/remoteproc/remoteproc.rst
-> @@ -1,359 +1,249 @@
-> +.. SPDX-License-Identifier: GPL-2.0
-> +
->  ==========================
->  Remote Processor Framework
->  ==========================
->  
-> -Introduction
-> -============
-> -
-> -Modern SoCs typically have heterogeneous remote processor devices in asymmetric
-> -multiprocessing (AMP) configurations, which may be running different instances
-> -of operating system, whether it's Linux or any other flavor of real-time OS.
-> -
-> -OMAP4, for example, has dual Cortex-A9, dual Cortex-M3 and a C64x+ DSP.
-> -In a typical configuration, the dual cortex-A9 is running Linux in a SMP
-> -configuration, and each of the other three cores (two M3 cores and a DSP)
-> -is running its own instance of RTOS in an AMP configuration.
-> -
-> -The remoteproc framework allows different platforms/architectures to
-> -control (power on, load firmware, power off) those remote processors while
-> -abstracting the hardware differences, so the entire driver doesn't need to be
-> -duplicated. In addition, this framework also adds rpmsg virtio devices
-> -for remote processors that supports this kind of communication. This way,
-> -platform-specific remoteproc drivers only need to provide a few low-level
-> -handlers, and then all rpmsg drivers will then just work
-> -(for more information about the virtio-based rpmsg bus and its drivers,
-> -please read Documentation/staging/rpmsg.rst).
-> -Registration of other types of virtio devices is now also possible. Firmwares
-> -just need to publish what kind of virtio devices do they support, and then
-> -remoteproc will add those devices. This makes it possible to reuse the
-> -existing virtio drivers with remote processor backends at a minimal development
-> -cost.
-> -
-> -User API
-> -========
-> -
-> -::
-> -
-> -  int rproc_boot(struct rproc *rproc)
-> -
-> -Boot a remote processor (i.e. load its firmware, power it on, ...).
-> -
-> -If the remote processor is already powered on, this function immediately
-> -returns (successfully).
-> -
-> -Returns 0 on success, and an appropriate error value otherwise.
-> -Note: to use this function you should already have a valid rproc
-> -handle. There are several ways to achieve that cleanly (devres, pdata,
-> -the way remoteproc_rpmsg.c does this, or, if this becomes prevalent, we
-> -might also consider using dev_archdata for this).
-> -
-> -::
-> -
-> -  void rproc_shutdown(struct rproc *rproc)
-> -
-> -Power off a remote processor (previously booted with rproc_boot()).
-> -In case @rproc is still being used by an additional user(s), then
-> -this function will just decrement the power refcount and exit,
-> -without really powering off the device.
-> -
-> -Every call to rproc_boot() must (eventually) be accompanied by a call
-> -to rproc_shutdown(). Calling rproc_shutdown() redundantly is a bug.
-> -
-> -.. note::
-> -
-> -  we're not decrementing the rproc's refcount, only the power refcount.
-> -  which means that the @rproc handle stays valid even after
-> -  rproc_shutdown() returns, and users can still use it with a subsequent
-> -  rproc_boot(), if needed.
-> -
-> -::
-> -
-> -  struct rproc *rproc_get_by_phandle(phandle phandle)
-> -
-> -Find an rproc handle using a device tree phandle. Returns the rproc
-> -handle on success, and NULL on failure. This function increments
-> -the remote processor's refcount, so always use rproc_put() to
-> -decrement it back once rproc isn't needed anymore.
-> -
-> -Typical usage
-> -=============
-> -
-> -::
-> -
-> -  #include <linux/remoteproc.h>
-> -
-> -  /* in case we were given a valid 'rproc' handle */
-> -  int dummy_rproc_example(struct rproc *my_rproc)
-> -  {
-> -	int ret;
-> -
-> -	/* let's power on and boot our remote processor */
-> -	ret = rproc_boot(my_rproc);
-> -	if (ret) {
-> -		/*
-> -		 * something went wrong. handle it and leave.
-> -		 */
-> -	}
-> -
-> -	/*
-> -	 * our remote processor is now powered on... give it some work
-> -	 */
-> -
-> -	/* let's shut it down now */
-> -	rproc_shutdown(my_rproc);
-> -  }
-> -
-> -API for implementors
-> -====================
-> -
-> -::
-> -
-> -  struct rproc *rproc_alloc(struct device *dev, const char *name,
-> -				const struct rproc_ops *ops,
-> -				const char *firmware, int len)
-> -
-> -Allocate a new remote processor handle, but don't register
-> -it yet. Required parameters are the underlying device, the
-> -name of this remote processor, platform-specific ops handlers,
-> -the name of the firmware to boot this rproc with, and the
-> -length of private data needed by the allocating rproc driver (in bytes).
-> -
-> -This function should be used by rproc implementations during
-> -initialization of the remote processor.
-> -
-> -After creating an rproc handle using this function, and when ready,
-> -implementations should then call rproc_add() to complete
-> -the registration of the remote processor.
-> -
-> -On success, the new rproc is returned, and on failure, NULL.
-> -
-> -.. note::
-> -
-> -  **never** directly deallocate @rproc, even if it was not registered
-> -  yet. Instead, when you need to unroll rproc_alloc(), use rproc_free().
-> -
-> -::
-> -
-> -  void rproc_free(struct rproc *rproc)
-> -
-> -Free an rproc handle that was allocated by rproc_alloc.
-> -
-> -This function essentially unrolls rproc_alloc(), by decrementing the
-> -rproc's refcount. It doesn't directly free rproc; that would happen
-> -only if there are no other references to rproc and its refcount now
-> -dropped to zero.
-> -
-> -::
-> -
-> -  int rproc_add(struct rproc *rproc)
-> -
-> -Register @rproc with the remoteproc framework, after it has been
-> -allocated with rproc_alloc().
-> -
-> -This is called by the platform-specific rproc implementation, whenever
-> -a new remote processor device is probed.
-> -
-> -Returns 0 on success and an appropriate error code otherwise.
-> -Note: this function initiates an asynchronous firmware loading
-> -context, which will look for virtio devices supported by the rproc's
-> -firmware.
-> -
-> -If found, those virtio devices will be created and added, so as a result
-> -of registering this remote processor, additional virtio drivers might get
-> -probed.
-> -
-> -::
-> -
-> -  int rproc_del(struct rproc *rproc)
-> -
-> -Unroll rproc_add().
-> -
-> -This function should be called when the platform specific rproc
-> -implementation decides to remove the rproc device. it should
-> -_only_ be called if a previous invocation of rproc_add()
-> -has completed successfully.
-> -
-> -After rproc_del() returns, @rproc is still valid, and its
-> -last refcount should be decremented by calling rproc_free().
-> -
-> -Returns 0 on success and -EINVAL if @rproc isn't valid.
-> -
-> -::
-> -
-> -  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
-> -
-> -Report a crash in a remoteproc
-> -
-> -This function must be called every time a crash is detected by the
-> -platform specific rproc implementation. This should not be called from a
-> -non-remoteproc driver. This function can be called from atomic/interrupt
-> -context.
-> -
-> -Implementation callbacks
-> +.. Contents:
-> +
-> +   1.  Introduction
-> +   2.  Remoteproc framework responsibilities
-> +   3.  Remoteproc driver responsibilities
-> +   4.  Virtio and rpmsg
-> +
-> +1. Introduction
-> +===============
-> +
-> +Modern System on Chips (SoCs) typically integrate heterogeneous remote
-> +processor devices in asymmetric multiprocessing (AMP) configurations.
-> +These processors may run different operating systems, such as Linux and
-> +various real-time operating systems (RTOS).
+> diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+> index 27f0a54e12bf..0bb017eb1893 100644
+> --- a/drivers/pinctrl/mediatek/mtk-eint.c
+> +++ b/drivers/pinctrl/mediatek/mtk-eint.c
+> @@ -17,16 +17,13 @@
+>   #include <linux/irqdomain.h>
+>   #include <linux/module.h>
+>   #include <linux/of_irq.h>
+> +#include <linux/of_address.h>
+>   #include <linux/platform_device.h>
+>   
+>   #include "mtk-eint.h"
+>   
+> -#define MTK_EINT_EDGE_SENSITIVE           0
+> -#define MTK_EINT_LEVEL_SENSITIVE          1
+> -#define MTK_EINT_DBNC_SET_DBNC_BITS	  4
+> -#define MTK_EINT_DBNC_MAX		  16
+> -#define MTK_EINT_DBNC_RST_BIT		  (0x1 << 1)
+> -#define MTK_EINT_DBNC_SET_EN		  (0x1 << 0)
+> +static struct mtk_eint *global_eintc;
+> +struct mtk_eint_pin pin;
 
-You are moving things around _and_ making modifications to the text in the same
-patch, something I specifically asked not to do.  Moreover, the above conveys
-exactly the same information as found in [1] but using different words.  I
-am in favour of enhancing documentation but not creating unneeded churn.
+Noupe, don't introduce these globals.
 
-I found several instances of the same rewording pattern in the sections below.
-As such I will not look at the other patches nor move forward with this set. 
+>   
+>   static const struct mtk_eint_regs mtk_generic_eint_regs = {
+>   	.stat      = 0x000,
+> @@ -47,6 +44,10 @@ static const struct mtk_eint_regs mtk_generic_eint_regs = {
+>   	.dbnc_ctrl = 0x500,
+>   	.dbnc_set  = 0x600,
+>   	.dbnc_clr  = 0x700,
+> +	.event     = 0x800,
+> +	.event_set = 0x840,
+> +	.event_clr = 0x880,
+> +	.raw_stat  = 0xa00,
+>   };
+>   
+>   const unsigned int debounce_time_mt2701[] = {
+> @@ -64,60 +65,145 @@ const unsigned int debounce_time_mt6795[] = {
+>   };
+>   EXPORT_SYMBOL_GPL(debounce_time_mt6795);
+>   
+> -static void __iomem *mtk_eint_get_offset(struct mtk_eint *eint,
+> +/*
+> + * Return the iomem of specific register ofset and decode the coordinate
+> + * (instance, index) from global eint number.
+> + * If return NULL, then it must be either out-of-range or do-not-support.
+> + */
+> +static void __iomem *mtk_eint_get_ofset(struct mtk_eint *eint,
 
-Thanks,
-Mathieu
+You're replacing this with a typo....
 
-[1]. https://elixir.bootlin.com/linux/v6.12-rc4/source/Documentation/staging/remoteproc.rst
+>   					 unsigned int eint_num,
+> -					 unsigned int offset)
+> +					 unsigned int ofset,
+
+and you're typoing offset on purpose again?! :-\
+
+> +					 unsigned int *instance,
+> +					 unsigned int *index)
+>   {
+> -	unsigned int eint_base = 0;
+>   	void __iomem *reg;
+>   
+> -	if (eint_num >= eint->hw->ap_num)
+> -		eint_base = eint->hw->ap_num;
+> +	if (eint_num >= eint->total_pin_number ||
+> +	    !eint->pins[eint_num].enabled) {
+> +		WARN_ON(1);
+> +		return NULL;
+> +	}
+>   
+> -	reg = eint->base + offset + ((eint_num - eint_base) / 32) * 4;
+> +	*instance = eint->pins[eint_num].instance;
+> +	*index = eint->pins[eint_num].index;
+> +	reg = eint->instances[*instance].base + ofset + (*index / MAX_BIT * REG_OFSET);
+>   
+>   	return reg;
+>   }
+>   
+> +/*
+> + * Generate helper function to access property register of a dedicate pin.
+> + */
+
+...and you don't need this (sorry, ugly!) macro either, as this is only
+helping you to create a mass-duplication situation here.
+
+If you need a helper, write *one* function that retrieves the data for you
+from a chosen register.
+
+> +#define DEFINE_EINT_GET_FUNCTION(_NAME, _OFSET) \
+> +static unsigned int mtk_eint_get_##_NAME(struct mtk_eint *eint, \
+> +				   unsigned int eint_num) \
+> +{ \
+> +	unsigned int instance, index; \
+> +	void __iomem *reg = mtk_eint_get_ofset(eint, eint_num, \
+> +						_OFSET, \
+> +						&instance, &index); \
+> +	unsigned int bit = BIT(index & 0x1f);\
+> +\
+> +	if (!reg) { \
+> +		dev_err(eint->dev, "%s invalid eint_num %d\n", \
+> +			__func__, eint_num); \
+> +		return 0;\
+> +	} \
+> +\
+> +	return !!(readl(reg) & bit); \
+> +}
+> +
+> +DEFINE_EINT_GET_FUNCTION(stat, eint->comp->regs->stat);
+> +DEFINE_EINT_GET_FUNCTION(mask, eint->comp->regs->mask);
+> +DEFINE_EINT_GET_FUNCTION(sens, eint->comp->regs->sens);
+> +DEFINE_EINT_GET_FUNCTION(pol, eint->comp->regs->pol);
+> +DEFINE_EINT_GET_FUNCTION(dom_en, eint->comp->regs->dom_en);
+> +DEFINE_EINT_GET_FUNCTION(event, eint->comp->regs->event);
+> +DEFINE_EINT_GET_FUNCTION(raw_stat, eint->comp->regs->raw_stat);
+> +
+> +int dump_eint_pin_status(unsigned int eint_num)
+
+I don't think that this is necessary... also because, there's already irq/debugfs.c
+for debugging. If you really need debug, hook it to the right APIs.
+
+> +{
+> +       unsigned int stat, raw_stat, mask, sens, pol, dom_en, event;
+> +
+> +       if (eint_num < 0 || eint_num > global_eintc->total_pin_number)
+> +               return ENODEV;
+> +
+> +       stat = mtk_eint_get_stat(global_eintc, eint_num);
+> +       raw_stat = mtk_eint_get_raw_stat(global_eintc, eint_num);
+> +       mask = mtk_eint_get_mask(global_eintc, eint_num);
+> +       sens = mtk_eint_get_sens(global_eintc, eint_num);
+> +       pol = mtk_eint_get_pol(global_eintc, eint_num);
+> +       dom_en = mtk_eint_get_dom_en(global_eintc, eint_num);
+> +       event = mtk_eint_get_event(global_eintc, eint_num);
+> +       dev_info(global_eintc->dev, "%s eint_num:%u=stat:%u,raw:%u, \
+> +		       mask:%u, sens:%u,pol:%u,dom_en:%u,event:%u\n",
+> +		       __func__, eint_num, stat, raw_stat, mask, sens,
+> +		       pol, dom_en, event);
+> +       return 0;
+> +}
+> +EXPORT_SYMBOL_GPL(dump_eint_pin_status);
+> +
+>   static unsigned int mtk_eint_can_en_debounce(struct mtk_eint *eint,
+>   					     unsigned int eint_num)
+>   {
+>   	unsigned int sens;
+> -	unsigned int bit = BIT(eint_num % 32);
+> -	void __iomem *reg = mtk_eint_get_offset(eint, eint_num,
+> -						eint->regs->sens);
+> +	unsigned int instance, index;
+> +	void __iomem *reg = mtk_eint_get_ofset(eint, eint_num,
+> +						eint->comp->regs->sens,
+> +						&instance, &index);
+> +	unsigned int bit = BIT(index & 0x1f);
+
+I'm not sure why you can't use BIT(eint_num % 32) anymore.
+
+Even though your EINT is split in 5, that should be still aligned the same as
+the "old" EINT.
 
 > +
-> +For example, the OMAP4 platform features dual Cortex-A9 cores, dual
-> +Cortex-M3 cores, and a C64x+ DSP. In a standard setup, the Cortex-A9
-> +cores execute Linux in a symmetric multiprocessing (SMP) configuration,
-> +while the M3 cores and DSP run independent instances of an RTOS.
+> +	if (!reg) {
+
+That won't ever happen, because you're already checking that in callers of
+this function, hence this check is redundant, or looks like it is anyway.
+
+> +		dev_err(eint->dev, "%s invalid eint_num %d\n",
+> +			__func__, eint_num);
+> +		return 0;
+> +	}
+>   
+>   	if (readl(reg) & bit)
+>   		sens = MTK_EINT_LEVEL_SENSITIVE;
+>   	else
+>   		sens = MTK_EINT_EDGE_SENSITIVE;
+>   
+> -	if (eint_num < eint->hw->db_cnt && sens != MTK_EINT_EDGE_SENSITIVE)
+> +	if (eint->pins[eint_num].debounce &&
+> +	    sens != MTK_EINT_EDGE_SENSITIVE)
+>   		return 1;
+>   	else
+>   		return 0;
+>   }
+>   
+> -static int mtk_eint_flip_edge(struct mtk_eint *eint, int hwirq)
+> +static int mtk_eint_flip_edge(struct mtk_eint *eint, int eint_num)
+
+Why are you changing the parameter name from hwirq to eint_num?!
+
+>   {
+>   	int start_level, curr_level;
+> -	unsigned int reg_offset;
+> -	u32 mask = BIT(hwirq & 0x1f);
+> -	u32 port = (hwirq >> 5) & eint->hw->port_mask;
+> -	void __iomem *reg = eint->base + (port << 2);
+> +	unsigned int reg_ofset;
+> +	unsigned int instance, index, mask, port;
+> +	void __iomem *reg;
+>   
+> -	curr_level = eint->gpio_xlate->get_gpio_state(eint->pctl, hwirq);
+> +	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
+> +				  &instance, &index);
 > +
-> +The remoteproc framework allows various platforms and architectures to
-> +manage remote processors, including operations such as powering on,
-> +loading firmware, and powering off. This framework abstracts hardware
-> +differences, promoting code reuse and minimizing duplication. It also
-> +supports rpmsg virtio devices for remote processors that utilize this
-> +communication method. Consequently, platform-specific remoteproc drivers
-> +need only implement a few low-level handlers, enabling seamless operation
-> +of all rpmsg drivers. (For more details about the virtio-based rpmsg
-> +bus and its drivers, refer to rpmsg documentation.)
+> +	if (!reg) {
+> +		dev_err(eint->dev, "%s invalid eint_num %d\n",
+> +			__func__, eint_num);
+> +		return 0;
+> +	}
 > +
-> +Additionally, the framework allows for the registration of various
-> +virtio devices. Firmware can publish the types of virtio devices it
-> +supports, facilitating their addition to the remoteproc framework. This
-> +flexibility enables the reuse of existing virtio drivers with remote
-> +processor backends at minimal development cost.
+> +	mask = BIT(index & 0x1f);
+> +	port = index >> REG_GROUP;
+> +	reg = eint->instances[instance].base + port * REG_OFSET;
 > +
-> +The primary purpose of the remoteproc framework is to download firmware
-> +for remote processors and manage their lifecycle. The framework consists
-> +of several key components:
+
+
+..snip..
+
+> @@ -403,7 +572,20 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+>   
+>   int mtk_eint_do_suspend(struct mtk_eint *eint)
+>   {
+> -	mtk_eint_chip_write_mask(eint, eint->base, eint->wake_mask);
+> +	unsigned int i, j, port;
 > +
-> +- **Character Driver**: Provides userspace access to control the remote
-> +  processor.
-> +- **ELF Utility**: Offers functions for handling ELF files and managing
-> +  resources requested by the remote processor.
-> +- **Remoteproc Core**: Manages firmware downloads and recovery actions
-> +  in case of a remote processor crash.
-> +- **Coredump**: Provides facilities for coredumping and tracing from
-> +  the remote processor in the event of a crash.
-> +- **Userspace Interaction**: Uses sysfs and debugfs to manage the
-> +  lifecycle and status of the remote processor.
-> +- **Virtio Support**: Facilitates interaction with the virtio and
-> +  rpmsg bus.
+> +	for (i = 0; i < eint->instance_number; i++) {
+> +		struct mtk_eint_instance inst = eint->instances[i];
+
+Just register five different instances if they really have to be separated,
+which I don't believe they do, anyway.
+
+You should really read what mtk_eint_hw is for.
+
 > +
-> +From here on, references to "framework" denote the remoteproc
-> +framework, and "driver" refers to the remoteproc driver that utilizes
-> +the framework for managing remote processors.
+> +		for (j = 0; j < inst.number; j += MAX_BIT) {
+> +			port = j >> REG_GROUP;
+> +			writel_relaxed(~inst.wake_mask[port],
+> +				       inst.base + port*REG_OFSET + eint->comp->regs->mask_set);
+> +			writel_relaxed(inst.wake_mask[port],
+> +				       inst.base + port*REG_OFSET + eint->comp->regs->mask_clr);
+> +		}
+> +	}
+> +	dsb(sy);
+>   
+>   	return 0;
+>   }
+
+..snip..
+
+> @@ -420,27 +615,45 @@ EXPORT_SYMBOL_GPL(mtk_eint_do_resume);
+>   int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_num,
+>   			  unsigned int debounce)
+>   {
+> -	int virq, eint_offset;
+> -	unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask,
+> +	int virq, eint_ofset;
+> +	unsigned int set_ofset, bit, clr_bit, clr_ofset, rst, i, unmask,
+>   		     dbnc;
+> +	static const unsigned int debounce_time[] = { 156, 313, 625, 1250,
+> +		20000, 40000, 80000, 160000, 320000, 640000 };
+
+This is another mtk_eint_hw array that you're carelessly hardcoding inside of the
+eint driver.
+
+>   	struct irq_data *d;
+> +	unsigned int instance, index;
+> +	void __iomem *reg;
+>   
+> -	if (!eint->hw->db_time)
+> -		return -EOPNOTSUPP;
+> +	/*
+> +	 * Due to different number of bit field, we only decode
+> +	 * the coordinate here, instead of get the VA.
+> +	 */
+> +	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
+> +				  &instance, &index);
 > +
-> +2. Remoteproc framework Responsibilities
-> +========================================
+> +	if (!reg) {
+> +		dev_err(eint->dev, "%s invalid eint_num %lu\n",
+> +			__func__, eint_num);
+> +		return 0;
+> +	}
+>   
+>   	virq = irq_find_mapping(eint->domain, eint_num);
+> -	eint_offset = (eint_num % 4) * 8;
+> +	eint_ofset = (index % REG_OFSET) * DB_GROUP;
+>   	d = irq_get_irq_data(virq);
+>   
+> -	set_offset = (eint_num / 4) * 4 + eint->regs->dbnc_set;
+> -	clr_offset = (eint_num / 4) * 4 + eint->regs->dbnc_clr;
+> +	reg = eint->instances[instance].base;
+> +	set_ofset = (index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_set;
+> +	clr_ofset = (index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_clr;
+>   
+>   	if (!mtk_eint_can_en_debounce(eint, eint_num))
+>   		return -EINVAL;
+>   
+> -	dbnc = eint->num_db_time;
+> -	for (i = 0; i < eint->num_db_time; i++) {
+> -		if (debounce <= eint->hw->db_time[i]) {
+> +	/*
+> +	 * Check eint number to avoid access out-of-range
+> +	 */
+> +	dbnc = ARRAY_SIZE(debounce_time) - 1;
+
+And here, you carelessly break every other supported MediaTek SoC.
+
+> +	for (i = 0; i < ARRAY_SIZE(debounce_time); i++) {
+> +		if (debounce <= debounce_time[i]) {
+>   			dbnc = i;
+>   			break;
+>   		}
+
+..snip..
+
 > +
-> +The framework begins by gathering information about the firmware file
-> +to be downloaded through the request_firmware function. It supports
-> +the ELF format and parses the firmware image to identify the physical
-> +addresses that need to be populated from the corresponding ELF sections.
-> +The framework also requires knowledge of the logical or I/O-mapped
-> +addresses in the application processor. Once this information is
-> +obtained from the driver, the framework transfers the data to the
-> +specified addresses and starts the remote, along with
-> +any devices physically or logically connected to it.
+> +int mtk_eint_do_init_v2(struct mtk_eint *eint)
+> +{
+> +	int i, virq, matrix_number = 0;
+> +	struct device_node *node;
+> +	unsigned int ret, size, ofset;
+> +	unsigned int id, inst, idx, support_deb;
 > +
-> +Dependent devices, referred to as `subdevices` within the framework,
-> +are also managed post-registration by their respective drivers.
-> +Subdevices can register themselves using `rproc_(add/remove)_subdev`.
-> +Non-remoteproc drivers can use subdevices as a way to logically connect
-> +to remote and get lifecycle notifications of the remote.
+> +	const phandle *ph;
 > +
-> +The framework oversees the lifecycle of the remote and
-> +provides the `rproc_report_crash` function, which the driver invokes
-> +upon receiving a crash notification from the remote. The
-> +notification method can differ based on the design of the remote
-> +processor and its communication with the application processor. For
-> +instance, if the remote is a DSP equipped with a watchdog,
-> +unresponsive behavior triggers the watchdog, generating an interrupt
-> +that routes to the application processor, allowing it to call
-> +`rproc_report_crash` in the driver's interrupt context.
+> +	ph = of_get_property(eint->dev->of_node, "mediatek,eint", NULL);
+
+No, a SoC always has the same eint controller(s), always mapped to the same pins.
+
+This is not something for devicetree - but rather something that was already
+resolved in the past, when `struct mtk_eint_hw` was introduced.
+
+You should just look at how this driver works upstream and implement support for
+the new EINT in there.... not by copy-pasting something from downstream to upstream
+and expecting it to be accepted.
+
+> +	if (!ph) {
+> +		dev_err(eint->dev, "Cannot find EINT phandle in PIO node.\n");
+> +		return -ENODEV;
+> +	}
 > +
-> +During crash handling, the framework performs the following actions:
+> +	node = of_find_node_by_phandle(be32_to_cpup(ph));
+> +	if (!node) {
+> +		dev_err(eint->dev, "Cannot find EINT node by phandle.\n");
+> +		return -ENODEV;
+> +	}
 > +
-> +a. Sends a request to stop the remote and any connected or
-> +   dependent subdevices.
-> +b. Generates a coredump, dumping all `resources` requested by the
-> +   remote alongside relevant debugging information. Resources are
-> +   explained below.
-> +c. Reloads the firmware and restarts the remote.
+> +	ret = of_property_read_u32(node, "mediatek,total-pin-number",
+> +				   &eint->total_pin_number);
+
+eint_hw->ap_num is the same thing as this.
+
+> +	if (ret) {
+> +		dev_err(eint->dev,
+> +		       "%s cannot read total-pin-number from device node.\n",
+> +		       __func__);
+> +		return -EINVAL;
+> +	}
 > +
-> +If the `RPROC_FEAT_ATTACH_ON_RECOVERY` flag is set, the detach and
-> +attach callbacks of the driver are invoked without reloading the
-> +firmware. This is useful when the remote requires no
-> +assistance for recovery, or when the application processor can restart
-> +independently. After recovery, the application processor can reattach
-> +to the remote.
+> +	dev_info(eint->dev, "%s eint total %u pins.\n", __func__,
+> +		eint->total_pin_number);
 > +
-> +The remote can request resources from the framework, which
-> +allocates a ".resource_table" section. During the ELF parsing phase,
-> +the framework identifies this section and calls the appropriate
-> +handler to allocate the requested resources.
+> +	ret = of_property_read_u32(node, "mediatek,instance-num",
+> +				   &eint->instance_number);
+> +	if (ret)
+> +		eint->instance_number = 1; // only 1 instance in legacy chip
 > +
-> +Resource management within the framework can accommodate any type of
-> +`fw_resource_type`.
+> +	size = eint->instance_number * sizeof(struct mtk_eint_instance);
+> +	eint->instances = devm_kzalloc(eint->dev, size, GFP_KERNEL);
+> +	if (!eint->instances)
+>   		return -ENOMEM;
+>   
+> -	eint->dual_edge = devm_kcalloc(eint->dev, eint->hw->ap_num,
+> -				       sizeof(int), GFP_KERNEL);
+> -	if (!eint->dual_edge)
+> +	size = eint->total_pin_number * sizeof(struct mtk_eint_pin);
+> +	eint->pins = devm_kzalloc(eint->dev, size, GFP_KERNEL);
+> +	if (!eint->pins)
+>   		return -ENOMEM;
+>   
+> +	for (i = 0; i < eint->instance_number; i++) {
+> +		ret = of_property_read_string_index(node, "reg-name", i,
+> +						    &(eint->instances[i].name));
+> +		if (ret) {
+> +			dev_info(eint->dev,
+> +				 "%s cannot read the name of instance %d.\n",
+> +				 __func__, i);
+> +		}
 > +
-> +.. code-block:: c
+> +		eint->instances[i].base = of_iomap(node, i);
+> +		if (!eint->instances[i].base)
+> +			return -ENOMEM;
+> +	}
 > +
-> +   enum fw_resource_type {
-> +       RSC_CARVEOUT      = 0,
-> +       RSC_DEVMEM        = 1,
-> +       RSC_TRACE         = 2,
-> +       RSC_VDEV          = 3,
-> +       RSC_LAST          = 4,
-> +       RSC_VENDOR_START  = 128,
-> +       RSC_VENDOR_END    = 512,
-> +   };
+> +	matrix_number = of_property_count_u32_elems(node, "mediatek,pins") / ARRAY_0;
+> +	if (matrix_number < 0) {
+> +		matrix_number = eint->total_pin_number;
+> +		dev_info(eint->dev, "%s eint in legacy mode, assign the matrix number to %u.\n",
+> +			 __func__, matrix_number);
+> +	} else
+> +		dev_info(eint->dev, "%s eint in new mode, assign the matrix number to %u.\n",
+> +			 __func__, matrix_number);
 > +
-> +   struct resource_table {
-> +       u32 ver;
-> +       u32 num;
-> +       u32 reserved[2];
-> +       u32 offset[];
-> +   } __packed;
+> +	for (i = 0; i < matrix_number; i++) {
+> +		ofset = i * REG_OFSET;
 > +
-> +   struct fw_rsc_hdr {
-> +       u32 type;
-> +       u8 data[];
-> +   } __packed;
+> +		ret = of_property_read_u32_index(node, "mediatek,pins",
+> +					   ofset, &id);
+
+So basically this means that if a SoC has 200 EINT pins, you'll have 200 values
+in devicetree?!
+
+> +		ret |= of_property_read_u32_index(node, "mediatek,pins",
+> +					   ofset+FIRST, &inst);
+> +		ret |= of_property_read_u32_index(node, "mediatek,pins",
+> +					   ofset+SECOND, &idx);
+> +		ret |= of_property_read_u32_index(node, "mediatek,pins",
+> +					   ofset+THIRD, &support_deb);
 > +
-> +For example, if the remote requests both `RSC_TRACE` and
-> +`RSC_CARVEOUT` for memory allocation, the ELF firmware can be structured
-> +as follows:
+> +		/* Legacy chip which no need to give coordinate list */
+> +		if (ret) {
+> +			id = i;
+> +			inst = 0;
+> +			idx = i;
+> +			support_deb = (i < MAX_BIT) ? 1 : 0;
+> +		}
 > +
-> +.. code-block:: c
+> +		eint->pins[id].enabled = true;
+> +		eint->pins[id].instance = inst;
+> +		eint->pins[id].index = idx;
+> +		eint->pins[id].debounce = support_deb;
 > +
-> +   #define MAX_SHARED_RESOURCE 2
-> +   #define LOG_BUF_SIZE 1000
-> +   #define CARVEOUT_DUMP_PA 0x12345678
-> +   #define CARVEOUT_DUMP_SIZE 2000
+> +		eint->instances[inst].pin_list[idx] = id;
+> +		eint->instances[inst].number++;
 > +
-> +   struct shared_resource_table {
-> +       u32 ver;
-> +       u32 num;
-> +       u32 reserved[2];
-> +       u32 offset[MAX_SHARED_RESOURCE];
-> +       struct fw_rsc_trace log_trace;
-> +       struct fw_rsc_carveout dump_carveout;
-> +   };
+
+..snip..
+
+> diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+> index 6139b16cd225..aa17a6073029 100644
+> --- a/drivers/pinctrl/mediatek/mtk-eint.h
+> +++ b/drivers/pinctrl/mediatek/mtk-eint.h
+> @@ -11,6 +11,25 @@
+>   
+>   #include <linux/irqdomain.h>
+>   
+> +#define MAX_PIN 999
+> +#define MTK_EINT_EDGE_SENSITIVE           0
+> +#define MTK_EINT_LEVEL_SENSITIVE          1
+> +#define MTK_EINT_DBNC_SET_DBNC_BITS       4
+> +#define MTK_EINT_DBNC_RST_BIT             (0x1 << 1)
+> +#define MTK_EINT_DBNC_SET_EN              (0x1 << 0)
+> +#define MTK_EINT_NO_OFSET                 0
+
+> +#define MAX_BIT                           32
+
+MAX_BIT==32? Ok, so I was right in saying that the new eint is just the old one
+but with more than one instance.
+
+> +#define REG_OFSET                         4
+> +#define REG_GROUP                         5
+> +#define REG_VAL                           0xFFFFFFFF
+
+
+> +#define DB_GROUP                          8
+> +#define FIRST                             1
+> +#define SECOND                            2
+> +#define THIRD                             3
+> +#define ARRAY_0                           4
 > +
-> +   volatile struct shared_resource_table table = {
-> +       .ver = 1,
-> +       .num = 2,
-> +       .reserved = {0, 0},
-> +       .offset = {
-> +           offsetof(struct resource_table, log_trace),
-> +           offsetof(struct resource_table, dump_carveout),
-> +       },
-> +       .log_trace = {
-> +           RSC_TRACE,
-> +           (u32)log_buf, LOG_BUF_SIZE, 0, "log_trace",
-> +       },
-> +       .dump_carveout = {
-> +           RSC_CARVEOUT,
-> +           (u32)FW_RSC_ADDR_ANY, CARVEOUT_PA, 0, "carveout_dump",
-> +       },
-> +   };
-> +
-> +The framework creates a sysfs file when it encounters the `RSC_TRACE`
-> +type to expose log information to userspace. Other resource types are
-> +handled accordingly. In the example above, `CARVEOUT_DUMP_SIZE` bytes
-> +of DMA memory will be allocated starting from `CARVEOUT_DUMP_PA`.
-> +
-> +
-> +3. Remoteproc driver responsibilities
-> +=====================================
-> +
-> +The driver must provide the following information to the core:
-> +
-> +a. Translate device addresses (physical addresses) found in the ELF
-> +   firmware to virtual addresses in Linux using the `da_to_va`
-> +   callback. This allows the framework to copy ELF firmware from the
-> +   filesystem to the addresses expected by the remote since
-> +   the framework cannot directly access those physical addresses.
-> +b. Prepare/unprepare the remote prior to firmware loading,
-> +   which may involve allocating carveout and reserved memory regions.
-> +c. Implement methods for starting and stopping the remote,
-> +   whether by setting registers or sending explicit interrupts,
-> +   depending on the hardware design.
-> +d. Provide attach and detach callbacks to start the remote
-> +   without loading the firmware. This is beneficial when the remote
-> +   processor is already loaded and running.
-> +e. Implement a load callback for firmware loading, typically using
-> +   the ELF loader provided by the framework; currently, only ELF
-> +   format is supported.
-> +f. Invoke the framework's crash handler API upon detecting a remote
-> +   crash.
-> +
-> +Drivers must fill the `rproc_ops` structure and call `rproc_alloc`
-> +to register themselves with the framework.
-> +
-> +.. code-block:: c
-> +
-> +   struct rproc_ops {
-> +       int (*prepare)(struct rproc *rproc);
-> +       int (*unprepare)(struct rproc *rproc);
-> +       int (*start)(struct rproc *rproc);
-> +       int (*stop)(struct rproc *rproc);
-> +       int (*attach)(struct rproc *rproc);
-> +       int (*detach)(struct rproc *rproc);
-> +       void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len,
-> +                          bool *is_iomem);
-> +       int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
-> +       int (*handle_rsc)(struct rproc *rproc, u32 rsc_type,
-> +                         void *rsc, int offset, int avail);
-> +       int (*load)(struct rproc *rproc, const struct firmware *fw);
-> +       //snip
-> +   };
-> +
-> +
-> +4. Virtio and Remoteproc
->  ========================
->  
-> -These callbacks should be provided by platform-specific remoteproc
-> -drivers::
-> -
-> -  /**
-> -   * struct rproc_ops - platform-specific device handlers
-> -   * @start:	power on the device and boot it
-> -   * @stop:	power off the device
-> -   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
-> -   */
-> -  struct rproc_ops {
-> -	int (*start)(struct rproc *rproc);
-> -	int (*stop)(struct rproc *rproc);
-> -	void (*kick)(struct rproc *rproc, int vqid);
-> -  };
-> -
-> -Every remoteproc implementation should at least provide the ->start and ->stop
-> -handlers. If rpmsg/virtio functionality is also desired, then the ->kick handler
-> -should be provided as well.
-> -
-> -The ->start() handler takes an rproc handle and should then power on the
-> -device and boot it (use rproc->priv to access platform-specific private data).
-> -The boot address, in case needed, can be found in rproc->bootaddr (remoteproc
-> -core puts there the ELF entry point).
-> -On success, 0 should be returned, and on failure, an appropriate error code.
-> -
-> -The ->stop() handler takes an rproc handle and powers the device down.
-> -On success, 0 is returned, and on failure, an appropriate error code.
-> -
-> -The ->kick() handler takes an rproc handle, and an index of a virtqueue
-> -where new message was placed in. Implementations should interrupt the remote
-> -processor and let it know it has pending messages. Notifying remote processors
-> -the exact virtqueue index to look in is optional: it is easy (and not
-> -too expensive) to go through the existing virtqueues and look for new buffers
-> -in the used rings.
-> -
-> -Binary Firmware Structure
-> -=========================
-> -
-> -At this point remoteproc supports ELF32 and ELF64 firmware binaries. However,
-> -it is quite expected that other platforms/devices which we'd want to
-> -support with this framework will be based on different binary formats.
-> -
-> -When those use cases show up, we will have to decouple the binary format
-> -from the framework core, so we can support several binary formats without
-> -duplicating common code.
-> -
-> -When the firmware is parsed, its various segments are loaded to memory
-> -according to the specified device address (might be a physical address
-> -if the remote processor is accessing memory directly).
-> -
-> -In addition to the standard ELF segments, most remote processors would
-> -also include a special section which we call "the resource table".
-> -
-> -The resource table contains system resources that the remote processor
-> -requires before it should be powered on, such as allocation of physically
-> -contiguous memory, or iommu mapping of certain on-chip peripherals.
-> -Remotecore will only power up the device after all the resource table's
-> -requirement are met.
-> -
-> -In addition to system resources, the resource table may also contain
-> -resource entries that publish the existence of supported features
-> -or configurations by the remote processor, such as trace buffers and
-> -supported virtio devices (and their configurations).
-> -
-> -The resource table begins with this header::
-> -
-> -  /**
-> -   * struct resource_table - firmware resource table header
-> -   * @ver: version number
-> -   * @num: number of resource entries
-> -   * @reserved: reserved (must be zero)
-> -   * @offset: array of offsets pointing at the various resource entries
-> -   *
-> -   * The header of the resource table, as expressed by this structure,
-> -   * contains a version number (should we need to change this format in the
-> -   * future), the number of available resource entries, and their offsets
-> -   * in the table.
-> -   */
-> -  struct resource_table {
-> -	u32 ver;
-> -	u32 num;
-> -	u32 reserved[2];
-> -	u32 offset[0];
-> -  } __packed;
-> -
-> -Immediately following this header are the resource entries themselves,
-> -each of which begins with the following resource entry header::
-> -
-> -  /**
-> -   * struct fw_rsc_hdr - firmware resource entry header
-> -   * @type: resource type
-> -   * @data: resource data
-> -   *
-> -   * Every resource entry begins with a 'struct fw_rsc_hdr' header providing
-> -   * its @type. The content of the entry itself will immediately follow
-> -   * this header, and it should be parsed according to the resource type.
-> -   */
-> -  struct fw_rsc_hdr {
-> -	u32 type;
-> -	u8 data[0];
-> -  } __packed;
-> -
-> -Some resources entries are mere announcements, where the host is informed
-> -of specific remoteproc configuration. Other entries require the host to
-> -do something (e.g. allocate a system resource). Sometimes a negotiation
-> -is expected, where the firmware requests a resource, and once allocated,
-> -the host should provide back its details (e.g. address of an allocated
-> -memory region).
-> -
-> -Here are the various resource types that are currently supported::
-> -
-> -  /**
-> -   * enum fw_resource_type - types of resource entries
-> -   *
-> -   * @RSC_CARVEOUT:   request for allocation of a physically contiguous
-> -   *		    memory region.
-> -   * @RSC_DEVMEM:     request to iommu_map a memory-based peripheral.
-> -   * @RSC_TRACE:	    announces the availability of a trace buffer into which
-> -   *		    the remote processor will be writing logs.
-> -   * @RSC_VDEV:       declare support for a virtio device, and serve as its
-> -   *		    virtio header.
-> -   * @RSC_LAST:       just keep this one at the end
-> -   * @RSC_VENDOR_START:	start of the vendor specific resource types range
-> -   * @RSC_VENDOR_END:	end of the vendor specific resource types range
-> -   *
-> -   * Please note that these values are used as indices to the rproc_handle_rsc
-> -   * lookup table, so please keep them sane. Moreover, @RSC_LAST is used to
-> -   * check the validity of an index before the lookup table is accessed, so
-> -   * please update it as needed.
-> -   */
-> -  enum fw_resource_type {
-> -	RSC_CARVEOUT		= 0,
-> -	RSC_DEVMEM		= 1,
-> -	RSC_TRACE		= 2,
-> -	RSC_VDEV		= 3,
-> -	RSC_LAST		= 4,
-> -	RSC_VENDOR_START	= 128,
-> -	RSC_VENDOR_END		= 512,
-> -  };
-> -
-> -For more details regarding a specific resource type, please see its
-> -dedicated structure in include/linux/remoteproc.h.
-> -
-> -We also expect that platform-specific resource entries will show up
-> -at some point. When that happens, we could easily add a new RSC_PLATFORM
-> -type, and hand those resources to the platform-specific rproc driver to handle.
-> -
-> -Virtio and remoteproc
-> -=====================
-> -
-> -The firmware should provide remoteproc information about virtio devices
-> -that it supports, and their configurations: a RSC_VDEV resource entry
-> -should specify the virtio device id (as in virtio_ids.h), virtio features,
-> -virtio config space, vrings information, etc.
-> -
-> -When a new remote processor is registered, the remoteproc framework
-> -will look for its resource table and will register the virtio devices
-> -it supports. A firmware may support any number of virtio devices, and
-> -of any type (a single remote processor can also easily support several
-> -rpmsg virtio devices this way, if desired).
-> -
-> -Of course, RSC_VDEV resource entries are only good enough for static
-> -allocation of virtio devices. Dynamic allocations will also be made possible
-> -using the rpmsg bus (similar to how we already do dynamic allocations of
-> -rpmsg channels; read more about it in rpmsg.txt).
-> +The firmware must provide remoteproc with information regarding the
-> +virtio devices it supports and their configurations: an `RSC_VDEV`
-> +resource entry should detail the virtio device ID (as defined in
-> +`virtio_ids.h`), virtio features, virtio config space, vrings
-> +information, etc.
-> +
-> +Upon registration of a new remote, the remoteproc framework
-> +searches for its resource table and registers the supported virtio
-> +devices. A firmware may support multiple virtio devices, of various
-> +types (a single remote can support multiple rpmsg virtio
-> +devices if required).
-> +
-> +Moreover, `RSC_VDEV` resource entries suffice for static allocation
-> +of virtio devices. Dynamic allocations will also be supported using
-> +the rpmsg bus, akin to the handling of dynamic allocations for rpmsg
-> +channels. For more information, refer to rpmsg documentation.
-> -- 
-> 2.39.3 (Apple Git-146)
-> 
+> +//#define MTK_EINT_DEBUG
+
+Those definitions are either cryptic or unneeded.
+And I'll stop my review here.
+
+To be clear, the response is a huge "NACK"; you really have to redo everything
+from scratch, but this time, just implement support for the new design on the base
+of this upstream driver.
+
+Regards,
+Angelo
 
