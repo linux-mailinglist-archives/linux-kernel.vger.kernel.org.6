@@ -1,137 +1,160 @@
-Return-Path: <linux-kernel+bounces-380319-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380321-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3BFB89AEC4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:35:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5F7E9AEC53
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:38:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F31D5284FAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:35:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E9B771C22F11
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:38:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2DA101FAEEE;
-	Thu, 24 Oct 2024 16:35:03 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 273C11F81B8;
+	Thu, 24 Oct 2024 16:37:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GYawLDYW"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 788461F9EA6;
-	Thu, 24 Oct 2024 16:34:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66EEC1F819C;
+	Thu, 24 Oct 2024 16:37:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787702; cv=none; b=PemS8li3cBVqEkujzX7SImHbqMEIMJGSLurKgMmz58rhRzaZYJsEYjBXhsMElanyyAiiigBOx7bNT/BuVUUFZzJHayMzFy7AA6UIf4D6tG8yv7A6Mh6t8bLF4/1PisBxmZrtR7m2icgTynJxeSucu3lPqA5L2phZXBdJfvFa9mI=
+	t=1729787877; cv=none; b=SaFaxiDYRtfIRS8dR9NcGQye3ocq7yLkMeKxCSyvv2mqI162JBMtjWaHUKjQKW/IiwAIUv/l59IdxTmSDAY5GXUKl7ciW2zEw/kj1orABV87IV32Bhjfoy2GD1ZnHxA4qwR6WAkWOs3hgurksFPTRpqPxIkTsxemGj4ycCOyDdw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787702; c=relaxed/simple;
-	bh=IoytTz6FlczuCtBnLxvEi0mTRI7KDE/USf6usLPfusg=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Sj7ZJNl1lW7xzc1EAtKsaRIB05Gjs/zkzAPPLtzznoEvgkwKQb4cozKc8HzdPLuUKQMFX2D7lUViXfWqjiKTf1v5Ah6fq2tboEk2j2WrYqO3i8kRCW+VUpx45hh6oGl6Mm9tSQoTQv92l8eYyx00BO2tTJ6GcCgCnKcEYSwMXIY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.216])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZBGb0lsxz6L74C;
-	Fri, 25 Oct 2024 00:30:15 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id 2CC341404FC;
-	Fri, 25 Oct 2024 00:34:57 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 24 Oct
- 2024 18:34:56 +0200
-Date: Thu, 24 Oct 2024 17:34:54 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Andy Shevchenko <andy.shevchenko@gmail.com>
-CC: Hans de Goede <hdegoede@redhat.com>, Rayyan Ansari <rayyan@ansari.sh>,
-	<linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-	<linux-iio@vger.kernel.org>, Bjorn Andersson <andersson@kernel.org>, "Conor
- Dooley" <conor+dt@kernel.org>, Jonathan Cameron <jic23@kernel.org>, "Konrad
- Dybcio" <konrad.dybcio@linaro.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, <linux-kernel@vger.kernel.org>, "Rafael
- J. Wysocki" <rafael@kernel.org>, Robert Yang <decatf@gmail.com>, Rob Herring
-	<robh@kernel.org>, Sean Rhodes <sean@starlabs.systems>
-Subject: Re: [PATCH 2/3] iio: accel: kxcjk-1013: Add support for KX022-1020
-Message-ID: <20241024173454.00006240@Huawei.com>
-In-Reply-To: <ZxpZfgsf-KldiX4w@black.fi.intel.com>
-References: <20240714173431.54332-1-rayyan@ansari.sh>
-	<20240714173431.54332-3-rayyan@ansari.sh>
-	<823ce598-dffd-4983-bffa-32559558235d@redhat.com>
-	<ZxpZfgsf-KldiX4w@black.fi.intel.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729787877; c=relaxed/simple;
+	bh=tMRIJwGOIyXkvbyO3axtHNxHibwKtTL78XtazOrNFq8=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pcdhu25kualeH9+rf2BO0Wn8kFLyXZqNYQHVPJNJcTteT7QXFcZfqo8DM6nRz0t6eS/Brojp6/nAWva7upt2FVYuXGLW7pQIKlj4tJwRv5jAJvAJ6Z4ltY7cdzQtt/423UQ2uPvBBZoWdR2fr/n4SOpy6CXngeaRoa0/EmExdV0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GYawLDYW; arc=none smtp.client-ip=209.85.221.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d8901cb98so1494396f8f.0;
+        Thu, 24 Oct 2024 09:37:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729787873; x=1730392673; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=jBq0IYyIrXW2U/4VyMu6CdxVNH0pTKvNmUvJUMNOHoY=;
+        b=GYawLDYWaao9k40yGE+ZonWpJggcT5b2k/qimFVY6CV+9R6K1AtZvXSLC7HCL2MDE9
+         xOZXxIUhS3nrKY7hGXhiDpkgGuZleBqcF6Aj3AuYGz26uWQ+O/GAcxiukEqm36EEfLJ1
+         7l4H5rD3yTmWNY2gTJA8JBX8XBQ39szeo9udLOckmqqMxNmU0FbO/EwOAJuroVg4ASXl
+         Dopgkb85PTlQ0YoDEJs4aecsqCiZPPeBDTvoU3MIe+99JoHmOlNr486M2KHZHUMUoMds
+         Aq/ZA5sXxxDiXApg49FK3i24k6su2JCRRZLEyc/z+4UclDFGah8GvTdZRPwpCNgxDYBd
+         CBxA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729787873; x=1730392673;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=jBq0IYyIrXW2U/4VyMu6CdxVNH0pTKvNmUvJUMNOHoY=;
+        b=GNkOEWYJmJQtl44ghHeBa3aScLRcNXVS1609H9YewVSKf3aZ1dU0kf8sUWgvw2JQ7W
+         /AMsTPGr+Xo97+pDWkBp/Xp+VoNwtiU34fGW1Cl6DbygCrUCDOcAIY65kobA3CJKmlkq
+         SVUF7UA5kyZe5M7z4cTVlX5Z7+SFVJmzIFrhQKKwQiKoirMehDwBj3wTxTzVZe4tyS21
+         MKJAW1YLuXXrDsXMen43ZNCPFXzaGoRH2JRsMdnRJBW2/PO1bxS5WEVPU4rfl2hlqz2G
+         GrGVOsnLrwHzSG09MJlhweY4oIhA//WM85js/xQMsOmKGGfGBq9I77m9O0v2N8rfmQiG
+         5e/g==
+X-Forwarded-Encrypted: i=1; AJvYcCVQKu6yLxEwJq4bZAcT81G3PqgPQYjeTbX/h8Xcw2GBdHW3oczKF5ZtgDF+no/+CtTWs5da6H7pG3BW0Ug=@vger.kernel.org, AJvYcCVo+u7GehPGPKx4oGBL7VLEXWfhNQBqMu+XWNNu2VcF+rLmFSidssddupCdhPcJx5tgWHJTGG8SxzqIuaA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyFkgL3B6rjAqjW8N34631XfI3Qw/K2gtzeDaFuE4Vy8AdovvXT
+	ME9PxIttjWne1T83mWlOO95hbW1+kTSAjGqhKzcwdFq39qSYikZZ
+X-Google-Smtp-Source: AGHT+IGYZ1yNYDej+Ev6P6dtLpilmsmlUTQVNHRe83XK77pvf/ozsjMozGVR5OTLz78nGOnhWLUJZQ==
+X-Received: by 2002:adf:ec42:0:b0:37c:ffdd:6d5a with SMTP id ffacd0b85a97d-3803ab6710amr2287942f8f.6.1729787871814;
+        Thu, 24 Oct 2024 09:37:51 -0700 (PDT)
+Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4ac2esm11716954f8f.44.2024.10.24.09.37.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 09:37:51 -0700 (PDT)
+Date: Thu, 24 Oct 2024 18:37:49 +0200
+From: Thierry Reding <thierry.reding@gmail.com>
+To: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+Cc: Jonathan Hunter <jonathanh@nvidia.com>, linux-tegra@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH] firmware: tegra: bpmp: Revert "firmware: tegra: bpmp:
+ Use scoped device node handling to simplify error paths"
+Message-ID: <o4l6z722yzz3hjskeloqfpzypjl5h46ahweziz2k3cwdnw5oeq@pvylkxm35gwt>
+References: <20241001204025.5632-1-krzysztof.kozlowski@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100005.china.huawei.com (7.191.160.25) To
- frapeml500008.china.huawei.com (7.182.85.71)
-
-On Thu, 24 Oct 2024 17:28:14 +0300
-Andy Shevchenko <andy.shevchenko@gmail.com> wrote:
-
-> On Mon, Jul 15, 2024 at 10:30:46AM +0200, Hans de Goede wrote:
-> > On 7/14/24 7:33 PM, Rayyan Ansari wrote:  
-> > > Add compatible for the KX022-1020 accelerometer [1] using the
-> > > KX022-1023 [2] register map as both have an identical i2c interface.
-> > > 
-> > > [1]: https://kionixfs.azureedge.net/en/datasheet/KX022-1020%20Specifications%20Rev%2012.0.pdf
-> > > [2]: https://kionixfs.azureedge.net/en/datasheet/KX023-1025%20Specifications%20Rev%2012.0.pdf
-> > > 
-> > > Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>  
-> > 
-> > Thanks, patch looks good to me:
-> > 
-> > Reviewed-by: Hans de Goede <hdegoede@redhat.com>  
-> 
-> Note, this patch broke kx231025 case...
-> 
-> > >  	KXCJ91008,
-> > >  	KXTJ21009,
-> > >  	KXTF9,
-> > > +	KX0221020,
-> > >  	KX0231025,
-> > >  	KX_MAX_CHIPS /* this must be last */
-> > >  };  
-> 
-> ...because this enum is used of ODR startup timeout settings which
-> are all moved now to be 0 and new ID inherited the timeouts from
-> the KX0231025 case.
-> 
-> Since I have been looking into the driver, and I have a few patches
-> coming, I propose to do the following (as it's still ODR data being
-> missed) to:
-> 1) revert this one
-> 2) apply my set;
-> 3) re-apply this with the fixed data.
-
-> 
-> Another approach can be done (but probably not by me) is to move the ID
-> to the proper location, add ODR startup timeouts or explain why it's not
-> needed and then apply my patch.
-> 
-> But, taking into account that we are almost at -rc5 and I want my stuff
-> not to be postponed, I tend to follow the first approach.
-> 
-> Opinions, comments?
-> 
-> P.S. FWIW, my set will include switching this driver to use chip_info
-> structure so the similar mistakes won't happen again, that's also why
-> I prefer the first approach I listed above.
-> 
-
-Hmm. Either I want the revert in before the release, or your series
-to make the merge window (and hence probably hit in first couple of stable
-releases).
-
-Ideal would be revert very soon and chase it in to togreg so your series
-can go on top, but that would rely on some lucky timing of pull requests
-and merges that is probably too optimistic.
-
-Jonathan
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="kzk7dcb643gprhsk"
+Content-Disposition: inline
+In-Reply-To: <20241001204025.5632-1-krzysztof.kozlowski@linaro.org>
 
 
+--kzk7dcb643gprhsk
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH] firmware: tegra: bpmp: Revert "firmware: tegra: bpmp:
+ Use scoped device node handling to simplify error paths"
+MIME-Version: 1.0
 
+On Tue, Oct 01, 2024 at 10:40:25PM +0200, Krzysztof Kozlowski wrote:
+> This reverts commit 8812b8689ee6 ("firmware: tegra: bpmp: Use scoped
+> device node handling to simplify error paths") because it was silently
+> modified by committer during commit process, by moving declaration of
+> 'struct device_node *np' above the initializer/constructor.  Such code
+> was not intention of the author, is not conforming to cleanup.h code
+> style and decreases the code readability.
+>=20
+> I did not write such code and I did not agree to put my name with such
+> commit.
+>=20
+> Original patch:
+> https://lore.kernel.org/all/20240816135722.105945-2-krzysztof.kozlowski@l=
+inaro.org/
+>=20
+> Cc: Arnd Bergmann <arnd@arndb.de>
+> Signed-off-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
+>=20
+> ---
+>=20
+> It's very strange to see own patches silently modified without any
+> explanation in Signed-off-by area.
+> ---
+>  drivers/firmware/tegra/bpmp.c | 14 +++++++++-----
+>  1 file changed, 9 insertions(+), 5 deletions(-)
+
+Sorry this got burried. I will sometimes do cosmetic cleanups like this
+instead of having submitters go through an extra round of review. I
+suppose I could've mentioned it specifically, but I thought this was
+minor enough that it didn't matter.
+
+The reason why I changed it was because the original didn't conform to
+any discernible kind of coding style and I thought it was difficult to
+read. I also did go through the cleanup.h documentation to check that
+doing it this way was fine. I am aware of the LIFO behavior of these
+helpers, but since there's exactly one occurrence of these it's
+perfectly fine to do so in this case.
+
+Anyway, I'll revert this as you requested.
+
+Thierry
+
+--kzk7dcb643gprhsk
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcad90ACgkQ3SOs138+
+s6HBDg/9GfDUbDFhYo12GH5dta6FuYjtVFuu51mF4yi9iUgmWIvdWyZhGWLxMLa/
+PBx+Itx2ka0Ks+WuUxfeHUu5DNDgRaAlIXXI0eIYiPrt8T4dMbzQ/4PFM8RK/LbE
+hYBXr3Hf8LnY8Y2ouF5bW5ReQtvYFMmCvWbGXXFzLr8+thKxvH/lAbyBdeDtftpY
+tvYPOpClcSU6WXymiggBy/3B4S1eMQqLSLJl4q93Yw7I5WT/3rNbQgk8dRONombT
+Uc5vHnyZ56i7QIbUWbb+1Q4wg+s1hkXLu8Hn5fhkgfRoNvbQJYfOlH1nv/PZlKxM
+9BcsrygjQ6uu2FFVzugV9r5GLFPxQguq7FKIpAX5ZIEQD4+nNapZ7AWgSphfnFj1
+BspiW+UnkHH2mMNz67HT8b1afeO8Mkwrt+H706mEgb4GG5Edi5weNK4lBIr4Uqhp
+B1imObhSDqKw1LaRG7xQD543tHzB2MBlA6xUDUkvMCmyONuULX+OOd3T5V52Z4uY
+bqj9ixJFJMLEETCxL6mki9FcEk12MWaBif/I04qg3UdOZvg0qYtdQDdnH37zNNJY
+r/ZIxP7PUpvMDFOBuKCzs2YxYPSoe+/tnX/yk38CvXG7Ul9VS+lJDHZim/41fs5A
+NHHoF7GbDdNSZ61Lk+4Ny1h3Xavpi75ABzOA4QA6/p4bPfoAFYs=
+=Xpqy
+-----END PGP SIGNATURE-----
+
+--kzk7dcb643gprhsk--
 
