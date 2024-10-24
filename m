@@ -1,138 +1,148 @@
-Return-Path: <linux-kernel+bounces-379161-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503379ADAD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:23:14 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 217B69ADADB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:25:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id D012E1F22BE2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:23:13 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 84696B21EFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:25:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A81116DC0E;
-	Thu, 24 Oct 2024 04:23:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 60D3D16DC0E;
+	Thu, 24 Oct 2024 04:25:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="S+wWGNIT"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BLJvND4l"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0200816C451;
-	Thu, 24 Oct 2024 04:23:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A983222EED;
+	Thu, 24 Oct 2024 04:25:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729743785; cv=none; b=EabjYSQKkW9+iZGctkwgo1iI4q6gVu9V/Dit+Sa3KqGK9wTztUqxBbNMTr2HeiFh978UimynaPW1UVSlo/hHWRbSKpKjaFpzjh7IhjUW9+n0SRQLLDx7OEFjElzHHe7jvt27LNXPz1MD/eZwPtF6+Kwgdp0lxtxXifGxS3q1CUg=
+	t=1729743941; cv=none; b=KRe+mhyxk92Qw5JKu1y1m/03mBafPy7QRVH2C/jmpD700zttiDh7nhtRCJ9r1TgCRGl1ucYrvgXILCdvJbrnNkdF81U8Yr7qMWGhS/0I9PNZ2w0Plltr4HAWmx0iLVZzThETxo+25hnQHpuuygEOtcAJ+eheMWeYAjwzxO6Qxtk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729743785; c=relaxed/simple;
-	bh=ltyryit/pCASlQIhRQSt/hsaG3ceW24lcWv//gyNnRc=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=bFDFNv1lSkALOgew3t5Vo3FlnbUChg3rgeoM7IuVlA8Av6539VJcKtFYNhi6G0Q5X6dwqiCXrMfnUgN8/9Uw6t8/9DNt9BEiDkQwEwfDB2gPP/g/wlzeRofKfhm3S9UOGLzd/FN56ah4SAqH0FMfu/sIeH7flDbWTAMGntARnrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=S+wWGNIT; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso54663966b.1;
-        Wed, 23 Oct 2024 21:23:02 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729743781; x=1730348581; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5woqYSL4j8aB832acx6nClZKfil6mOTdOS8ULzyVik=;
-        b=S+wWGNITjziZ4j+GRcc5tXkwEifd27hyvpnpMxO6Zhq2Ky+Abr6nn6ulIymkiKJcLE
-         iYcP/JDLMNSnHnojY0EaB8ImrLBQLDCH7fve8iqMvnIN+LHmUCXEgvMwMQo6S9xmRe7U
-         oZXUw277MDc1Z06+HMok8B3CW6Pgz3O/TPDMS/BeMnrLYurxG7mlPnyalwUm3omcMSr8
-         hL0IeOxD9EcTLoHuotnrk7t3k0Km0TleG620PRWhp0VfbxfOnhEj8kp0xBBBBU4wjIT1
-         YVWZ1DT2tP5Jzt1Zw2ma3ToHDADTZI3M1/mFBNAfZCwH+ZGGFhnY9eJTxberi5mSYIyf
-         4EFQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729743781; x=1730348581;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z5woqYSL4j8aB832acx6nClZKfil6mOTdOS8ULzyVik=;
-        b=OUg69pnVBgCB+q9ws3/3hWnCjCvGylJCs+GkGyhOX62ud9a1F95Uq0sajk1lMp2SZi
-         XnCcRmExtTqPaOKYy5bVDe2VzSDk37RGmNDpij1YrmOvzV1ofdZ5/WfUXyi151dQDsW6
-         0yxvw7yeMxSn/KLVWF/IHZX4DMBmnpS3cqrzCdPzaiBC5o+3tSjpj38ZXN4v8pd+2D1d
-         weXpV+sR12hzzYjQvtW83MTDSsR/g2bVVy/Sv1asBpn2yOR5CSAeiJ+8pRxe20yN9LWc
-         2XQdZc1Z4xP+vHQ0iwa0RVcsGuXDlJYmX1knPtH6oU94StmbcNSDoxjSDyAsFbPqHn9V
-         yvjw==
-X-Forwarded-Encrypted: i=1; AJvYcCVMx+1fyotqCUvHir8pUn+oX67ARa1DtFg/M2J49i03Jvba283d7dq7TJNk2GrOAuqGsQM2Tkzw9YGPTK0=@vger.kernel.org, AJvYcCWF+rrtJxVxzzGqPOblbKoP8kJMSvo2WiQUVNUf082PRwl9TiqVtoPg68hGdrYgM00xYB1n+yEhhOPU5Q==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxsmt2aqCvYqwZtL9aGOzNaLg12K4Yt00D3kgaYp8KxwZ5XAUJI
-	u1bc0UXQ/GfQcH58OQNPyuS6+vIVlYQbabNd3xiP1jMrxY7OHz3W
-X-Google-Smtp-Source: AGHT+IG7ayHwJSFjPCb0O7Cs7avdwOw8DAwicCfkxqnGXHqz+GiQQz+gVMvOJuGTFOZP+mxrnC2UBg==
-X-Received: by 2002:a17:906:6a25:b0:a99:7539:2458 with SMTP id a640c23a62f3a-a9ad288f856mr53904466b.65.1729743781056;
-        Wed, 23 Oct 2024 21:23:01 -0700 (PDT)
-Received: from [192.168.178.20] (dh207-42-182.xnet.hr. [88.207.42.182])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91573603sm565365066b.179.2024.10.23.21.23.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 21:23:00 -0700 (PDT)
-Message-ID: <414ef7aa-a1a3-4c13-887b-25a51236f83e@gmail.com>
-Date: Thu, 24 Oct 2024 06:22:09 +0200
+	s=arc-20240116; t=1729743941; c=relaxed/simple;
+	bh=0MM5LDYxFthhIc4WNzguyAyibX+ea7PYax8n2zwG03A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Cy4gCdJZg+emIk8vcBEQPWx61fCFhbZ4T7k/5OPhbLl+2SK0bJiNmoXiLpyvNTAORivsjEUix2oNm56w30w+KRudi80Eqq5KrrOr3n3TX0tUhbfl1GHLkEuePh+W68iwtmZQ+T/FzW0pfFa6ASd/FMgOS5Jxy3llEZPt8o46Icw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BLJvND4l; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 2C25FC4CEC7;
+	Thu, 24 Oct 2024 04:25:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729743941;
+	bh=0MM5LDYxFthhIc4WNzguyAyibX+ea7PYax8n2zwG03A=;
+	h=Date:From:To:Cc:Subject:Reply-To:References:In-Reply-To:From;
+	b=BLJvND4l4EDGi/kP16ESgcNC5YJM6uFvQ4ATrsrWM/EHzNcxNyQ0eUfpkNaWLAe4L
+	 vC1IyZR3yNOt7GDoOrdoNPfDxpNDqaI9gFvZ/B+zRPrmLMYrk4WWd0fWdXngrxs0Hy
+	 rYJ16PEED3qBna5C57LgqnLJXhI/0QgApK+XG3eXxfIChIlXjNDGCijA/5Yb3OifjP
+	 79sj3s1pZoBHlY7vsB7rtEofzFvrCOU5xxb1vWRmgONP2Q+9KT0rjqk5hQHDe6mK6M
+	 UrSUz7HvMQP0rsEDONyG07klOQkmevePOvppln6eNpVx2qDZf3B4lL/TkZEPUozRJ7
+	 rxkadJJZJfn9g==
+Received: by paulmck-ThinkPad-P17-Gen-1.home (Postfix, from userid 1000)
+	id C8813CE0BB1; Wed, 23 Oct 2024 21:25:40 -0700 (PDT)
+Date: Wed, 23 Oct 2024 21:25:40 -0700
+From: "Paul E. McKenney" <paulmck@kernel.org>
+To: Andrea Parri <parri.andrea@gmail.com>
+Cc: puranjay@kernel.org, bpf@vger.kernel.org, lkmm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: Some observations (results) on BPF acquire and release
+Message-ID: <13f60db0-b334-4638-a768-d828ecf7c8d0@paulmck-laptop>
+Reply-To: paulmck@kernel.org
+References: <Zxk2wNs4sxEIg-4d@andrea>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the
- end of structures
-To: Bart Van Assche <bvanassche@acm.org>, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org
-Cc: Nilesh Javali <njavali@marvell.com>,
- GR-QLogic-Storage-Upstream@marvell.com,
- "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
- "Martin K. Petersen" <martin.petersen@oracle.com>
-References: <20241023221700.220063-2-mtodorovac69@gmail.com>
- <9ca3fb4b-85d9-493c-8b90-5210f5530e7f@acm.org>
-Content-Language: en-US
-From: Mirsad Todorovac <mtodorovac69@gmail.com>
-In-Reply-To: <9ca3fb4b-85d9-493c-8b90-5210f5530e7f@acm.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxk2wNs4sxEIg-4d@andrea>
 
-On 10/24/24 00:25, Bart Van Assche wrote:
-> On 10/23/24 3:17 PM, Mirsad Todorovac wrote:
->> Fixes: 21038b0900d1b ("scsi: qla2xxx: Fix endianness annotations in header files")
+On Wed, Oct 23, 2024 at 08:47:44PM +0300, Andrea Parri wrote:
+> Hi Puranjay and Paul,
 > 
-> The "Fixes:" tag is wrong. The one-element arrays were introduced long
-> before I fixed the endianness annotations.
+> I'm running some experiment on the (experimental) formalization of BPF
+> acquire and release available from [1] and wanted to report about some
+> (initial) observations for discussion and possibly future developments;
+> apologies in advance for the relatively long email and any repetition.
 > 
->> diff --git a/drivers/scsi/qla2xxx/qla_dbg.h b/drivers/scsi/qla2xxx/qla_dbg.h
->> index 54f0a412226f..ca9304df484b 100644
->> --- a/drivers/scsi/qla2xxx/qla_dbg.h
->> +++ b/drivers/scsi/qla2xxx/qla_dbg.h
->> @@ -31,7 +31,7 @@ struct qla2300_fw_dump {
->>       __be16 fpm_b1_reg[64];
->>       __be16 risc_ram[0xf800];
->>       __be16 stack_ram[0x1000];
->> -    __be16 data_ram[1];
->> +    __be16 data_ram[];
->>   };
->>   
 > 
-> How has this patch been tested? Has it even been compile-tested? This
-> patch probably breaks at least the following statement:
+> A first and probably most important observation is that the (current)
+> formalization of acquire and release appears to be "too strong": IIUC,
+> the simplest example/illustration for this is given by the following
 > 
->     BUILD_BUG_ON(sizeof(struct qla2300_fw_dump) != 136100);
+> BPF R+release+fence
+> {
+>  0:r2=x; 0:r4=y;
+>  1:r2=y; 1:r4=x; 1:r6=l;
+> }
+>  P0                                 | P1                                         ;
+>  r1 = 1                             | r1 = 2                                     ;
+>  *(u32 *)(r2 + 0) = r1              | *(u32 *)(r2 + 0) = r1                      ;
+>  r3 = 1                             | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) ;
+>  store_release((u32 *)(r4 + 0), r3) | r3 = *(u32 *)(r4 + 0)                      ;
+> exists ([y]=2 /\ 1:r3=0)
 > 
-> Thanks,
-> 
-> Bart.
+> This "exists" condition is not satisfiable according to the BPF model;
+> however, if we adopt the "natural"/intended(?) PowerPC implementations
+> of the synchronization primitives above (aka, with store_release() -->
+> LWSYNC and atomic_fetch_add() --> SYNC ; [...] ), then we see that the
+> condition in question becomes (architecturally) satisfiable on PowerPC
+> (although I'm not aware of actual observations on PowerPC hardware).
 
-From next-20241023, it seems to have passed compilation:
+Yes, you are quite right, for efficient use on PowerPC, we need the BPF
+memory model to allow the above cycle in the R litmus test.  My bad,
+as I put too much emphasis on ARM64.
 
-  INSTALL debian/linux-libc-dev/usr/include
-dpkg-deb: building package 'linux-image-6.12.0-rc4-next-20241023-00001-gdcf82889780d' in '../linux-image-6.12.0-rc4-next-20241023-00001-gdcf82889780d_6.12.0-rc4-00001-gdcf82889780d-4_amd64.deb'.
-dpkg-deb: building package 'linux-libc-dev' in '../linux-libc-dev_6.12.0-rc4-00001-gdcf82889780d-4_amd64.deb'.
- dpkg-genbuildinfo --build=binary -O../linux-upstream_6.12.0-rc4-00001-gdcf82889780d-4_amd64.buildinfo
- dpkg-genchanges --build=binary -O../linux-upstream_6.12.0-rc4-00001-gdcf82889780d-4_amd64.changes
-dpkg-genchanges: info: binary-only upload (no source code included)
- dpkg-source --after-build .
-dpkg-buildpackage: info: binary-only upload (no source included)
+> At first, the previous observation (validated via simulations and later
+> extended to similar but more complex scenarios ) made me believe that
+> the BPF formalization of acquire and release could be strictly stronger
+> than the corresponding LKMM formalization; but that is _not_ the case:
+> 
+> The following "exists" condition is satisfiable according to the BPF
+> model (and it remains satisfiable even if the load_acquire() in P2 is
+> paired with an additional store_release() in P1).  In contrast, the
+> corresponding LKMM condition (e.g load_acquire() --> smp_load_acquire()
+> and atomic_fetch_add() --> smp_mb()) is not satisfiable (in fact, the
+> same conclusion holds even if the putative smp_load_acquire() in P2 is
+> "replaced" with an smp_rmb() or with an address dependency).
+> 
+> BPF Z6.3+fence+fence+acquire
+> {
+>  0:r2=x; 0:r4=y; 0:r6=l;
+>  1:r2=y; 1:r4=z; 1:r6=m;
+>  2:r2=z; 2:r4=x;
+> }
+>  P0                                         | P1                                         | P2                                 ;
+>  r1 = 1                                     | r1 = 2                                     | r1 = load_acquire((u32 *)(r2 + 0)) ;
+>  *(u32 *)(r2 + 0) = r1                      | *(u32 *)(r2 + 0) = r1                      | r3 = *(u32 *)(r4 + 0)              ;
+>  r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) | r5 = atomic_fetch_add((u32 *)(r6 + 0), r5) |                                    ;
+>  r3 = 1                                     | r3 = 1                                     |                                    ;
+>  *(u32 *)(r4 + 0) = r3                      | *(u32 *)(r4 + 0) = r3                      |                                    ;
+> exists ([y]=2 /\ 2:r1=1 /\ 2:r3=0)
 
-Perhaps I should have told that it was from the linux-next tree.
+And again agreed, we do want to forbid Z6.3.
 
-Best regards,
-Mirsad
+> These remarks show that the proposed BPF formalization of acquire and
+> release somehow, but substantially, diverged from the corresponding
+> LKMM formalization.  My guess is that the divergences mentioned above
+> were not (fully) intentional, or I'm wondering -- why not follow the
+> latter (the LKMM's) more closely? -  This is probably the first question
+> I would need to clarify before trying/suggesting modifications to the
+> present formalizations.  ;-)  Thoughts?
+
+Thank you for digging into this!
+
+I clearly need to get my validation work going again, but I very much
+welcome any further help you would be willing to provide.
+
+							Thanx, Paul
+
+>   Andrea
+> 
+> 
+> [1] https://github.com/puranjaymohan/herdtools7/commits/bpf_acquire_release/
 
