@@ -1,130 +1,79 @@
-Return-Path: <linux-kernel+bounces-380094-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380105-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 047C99AE8DA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:31:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DA3E49AE900
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:34:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CB11C22531
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:31:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7F7BE1F23073
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:34:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB7A1F76A5;
-	Thu, 24 Oct 2024 14:28:22 +0000 (UTC)
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2BDF98614E;
+	Thu, 24 Oct 2024 14:34:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="qGASYWmC"
+Received: from out0-193.mail.aliyun.com (out0-193.mail.aliyun.com [140.205.0.193])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B351F669F;
-	Thu, 24 Oct 2024 14:28:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF54D14F12F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:33:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.193
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780102; cv=none; b=sBayP/2KkMjL1Z6Fz4U3VmBrtfhTo3/DTFZt3MOB3ZPglhTBmRTb3Vowo0UWG9yEGeHDF0ZjjEGvT3LS1EPeensUstqJghFvmIIY27EIdZK01zfqSwop+6zDlkvYH9RIjTbLOvlK899GMlA++oZAllh/bbFBDUSvHNo4NLS4kkg=
+	t=1729780439; cv=none; b=mE2gBHJuGGLp5W3CXIychC5Yuwq58g3FtkTirgXnyYXFQnwqTtmNXDCzmMgbzSJR9czNkopj4+ianPA86z/oHkQGyn5dYEn0Ub0joqUw3esKf0RWsqhMay2WS2bxgWSD87UefyoxOuN9LJ/NnslKUuVqIEKzLjHPs03ZA+W7WoM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780102; c=relaxed/simple;
-	bh=9KmBYw1eiZZ45NfTasyieiF5LdLBmbJ72ug2/gAsLL4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Eepb3oj2sOgPU1bMVfknhzV9wAih8uCZbJRGu865gLd/VRgijLgwO3mf3/1HrTsT/b8Rzfl7njwuARUswFD/OWieq1U1d2Bm5Hy1/JCrZXaQsRR4vZteXHEOF81zS1ZRkC3ukR9kBd4btp9jA7YPxpeY/qGq4zaCFmnDVXKd21k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
-X-CSE-ConnectionGUID: dcA/yEC9RTOptQYJQJFs5Q==
-X-CSE-MsgGUID: q+V8CnhlQyKW+z9MOo4oLA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="33209024"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="33209024"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 07:28:19 -0700
-X-CSE-ConnectionGUID: kAxyAEgGRsqzP2CbF2dKlA==
-X-CSE-MsgGUID: ROTIQ0wXTPGJYZDISuk74A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="80776831"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 07:28:16 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id 30C1B252; Thu, 24 Oct 2024 17:28:14 +0300 (EEST)
-Date: Thu, 24 Oct 2024 17:28:14 +0300
-From: Andy Shevchenko <andy.shevchenko@gmail.com>
-To: Hans de Goede <hdegoede@redhat.com>
-Cc: Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
-	Bjorn Andersson <andersson@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Jonathan Cameron <jic23@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
-	"Rafael J. Wysocki" <rafael@kernel.org>,
-	Robert Yang <decatf@gmail.com>, Rob Herring <robh@kernel.org>,
-	Sean Rhodes <sean@starlabs.systems>
-Subject: Re: [PATCH 2/3] iio: accel: kxcjk-1013: Add support for KX022-1020
-Message-ID: <ZxpZfgsf-KldiX4w@black.fi.intel.com>
-References: <20240714173431.54332-1-rayyan@ansari.sh>
- <20240714173431.54332-3-rayyan@ansari.sh>
- <823ce598-dffd-4983-bffa-32559558235d@redhat.com>
+	s=arc-20240116; t=1729780439; c=relaxed/simple;
+	bh=hHv32pTbIHeCcn4InqeoBgLkXlSccB/lv7UepkiorzM=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=S5puFXmI9vdfyVkEy2Yx+p3XTWUzRcHesYurKXo28scMgvgmw1sVyB7eYUWtm0seaUf20yPEjLgkkZbaTNp8hHYSY7eO3mwDuAYv/YMFprIKKKsYz8XvAhFJ70yPVQWm6Q6hLP2n4kdonHQqdK2U18mkYvyxFPXvrphLFGH82+c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=qGASYWmC; arc=none smtp.client-ip=140.205.0.193
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=antgroup.com; s=default;
+	t=1729780433; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=klL1ZgjZxIjtqjW3xwH+I3qTIyPhe6x0FsOJ1N0m5N4=;
+	b=qGASYWmCipX/NVe8lj0L9u+DhTMyoNBhDwm8P6korJu/+tybCnaUSduPbjQMilcuDv0IIRU+4sp7bvn1pj3PLQcUDgJQ3LsrSRVMSM5ibpYoOKAvSdTYmVbliHUWfpyuVeYy+KfK7e1upZMbQbEI1ir9OYnrHu5DVNIXUsziJ0M=
+Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.ZreBszI_1729780109 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Thu, 24 Oct 2024 22:28:34 +0800
+From: "Tiwei Bie" <tiwei.btw@antgroup.com>
+To: richard@nod.at,
+	anton.ivanov@cambridgegreys.com,
+	johannes@sipsolutions.net
+Cc:  <linux-um@lists.infradead.org>,
+   <linux-kernel@vger.kernel.org>,
+  "Tiwei Bie" <tiwei.btw@antgroup.com>
+Subject: [PATCH 0/4] um: Set parent-death signal for sub-processes
+Date: Thu, 24 Oct 2024 22:28:24 +0800
+Message-Id: <20241024142828.2612828-1-tiwei.btw@antgroup.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <823ce598-dffd-4983-bffa-32559558235d@redhat.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
 
-On Mon, Jul 15, 2024 at 10:30:46AM +0200, Hans de Goede wrote:
-> On 7/14/24 7:33 PM, Rayyan Ansari wrote:
-> > Add compatible for the KX022-1020 accelerometer [1] using the
-> > KX022-1023 [2] register map as both have an identical i2c interface.
-> > 
-> > [1]: https://kionixfs.azureedge.net/en/datasheet/KX022-1020%20Specifications%20Rev%2012.0.pdf
-> > [2]: https://kionixfs.azureedge.net/en/datasheet/KX023-1025%20Specifications%20Rev%2012.0.pdf
-> > 
-> > Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
-> 
-> Thanks, patch looks good to me:
-> 
-> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
+The ubd io and write_sigio threads/processes may leak e.g. when
+the main process is killed by "kill -9". Fix it by setting the
+parent-death signal for them.
 
-Note, this patch broke kx231025 case...
+Tiwei Bie (4):
+  um: Add os_set_pdeathsig helper function
+  um: Set parent-death signal for ubd io thread/process
+  um: Set parent-death signal for write_sigio thread/process
+  um: Use os_set_pdeathsig helper in winch thread/process
 
-> >  	KXCJ91008,
-> >  	KXTJ21009,
-> >  	KXTF9,
-> > +	KX0221020,
-> >  	KX0231025,
-> >  	KX_MAX_CHIPS /* this must be last */
-> >  };
-
-...because this enum is used of ODR startup timeout settings which
-are all moved now to be 0 and new ID inherited the timeouts from
-the KX0231025 case.
-
-Since I have been looking into the driver, and I have a few patches
-coming, I propose to do the following (as it's still ODR data being
-missed) to:
-1) revert this one;
-2) apply my set;
-3) re-apply this with the fixed data.
-
-Another approach can be done (but probably not by me) is to move the ID
-to the proper location, add ODR startup timeouts or explain why it's not
-needed and then apply my patch.
-
-But, taking into account that we are almost at -rc5 and I want my stuff
-not to be postponed, I tend to follow the first approach.
-
-Opinions, comments?
-
-P.S. FWIW, my set will include switching this driver to use chip_info
-structure so the similar mistakes won't happen again, that's also why
-I prefer the first approach I listed above.
+ arch/um/drivers/chan_user.c | 3 +--
+ arch/um/drivers/ubd_kern.c  | 1 +
+ arch/um/include/shared/os.h | 2 ++
+ arch/um/os-Linux/process.c  | 6 ++++++
+ arch/um/os-Linux/sigio.c    | 1 +
+ 5 files changed, 11 insertions(+), 2 deletions(-)
 
 -- 
-With Best Regards,
-Andy Shevchenko
-
+2.34.1
 
 
