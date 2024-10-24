@@ -1,82 +1,92 @@
-Return-Path: <linux-kernel+bounces-379086-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379087-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9E2999AD98B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:05:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 364AC9AD98D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:06:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 45DB31F2232B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:05:23 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 650F71C2171E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:06:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 11C5880034;
-	Thu, 24 Oct 2024 02:05:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="GPcfIUC4"
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC1BA13AD20;
+	Thu, 24 Oct 2024 02:05:58 +0000 (UTC)
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BFF1EEA6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:05:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B7B7EEA6;
+	Thu, 24 Oct 2024 02:05:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729735516; cv=none; b=f+E2+AxDnJ1S9HqPyA6alPZLcSfCiKcmt18FPgjtNXx6SreIBIehL0tktMLWMBuEleupSN4Jd9aBfAV/fNOzb0cI4VSqNkJplfpxRMq9HVk5oy81jqxJ3+mumFcxq6W18DOh0R/Boo17c4x/qHgAd0BaTGtxfU8ahJKyKngpVBQ=
+	t=1729735558; cv=none; b=k8cwKWYnbjJIFcHdBTrZ5WIE/cv3Gw9IyO0awQo2cPHs1j+qReCAedsCKM5NzlH/dwZdvkrTbt3x1WD0FeD4GnaEt1e2A5/G6qzKtE1jfCddAl7zYyDPJ/mi8ys1HQUC5VL200Oo1HUU12fZScMPaRl5k2NhzM4N5KRDJ4WdARE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729735516; c=relaxed/simple;
-	bh=j5iaB5Vx7h/wjwuyqqNj81gSLrS8+ygDJ1Mrf9QAvWM=;
-	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
-	 Mime-Version:Content-Type; b=ebKgoOOjYIxEtqYkXDAw/kVhOuCz8qGm81GUrsBA5XN9yRy3nlg7M09ASyB2ZVOVBXuxqd+TwJkIXpRqcyyW85cMeGOlbJlyfuuQS7ljhAgSlxaYpnq5oNb77hWgB0rcFwbWt9uGNc8Z6YsxL2M67SrZ3jlu2bI+LEm9m+tGSLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=GPcfIUC4; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 99D1AC4CEC6;
-	Thu, 24 Oct 2024 02:05:15 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
-	s=korg; t=1729735516;
-	bh=j5iaB5Vx7h/wjwuyqqNj81gSLrS8+ygDJ1Mrf9QAvWM=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=GPcfIUC4/RBhqiqGlRsaXIMJBiGDuedB09/tV+wB2i4jC9wM4NU5NH3i4WAVtl/xz
-	 oN5EwP3k+ZyyNBgE/TdsZT+4avs3MYnBrDNDnm38TkoKKuijlzNG16IWZWQE2IfnUe
-	 GSVwbEqlkhpocMfXQn+XscC/h/eRpwUDDIwFo3gI=
-Date: Wed, 23 Oct 2024 19:05:15 -0700
-From: Andrew Morton <akpm@linux-foundation.org>
-To: Lance Yang <ioworker0@gmail.com>
-Cc: cunhuang@tencent.com, leonylgao@tencent.com, j.granados@samsung.com,
- jsiddle@redhat.com, kent.overstreet@linux.dev, 21cnbao@gmail.com,
- ryan.roberts@arm.com, david@redhat.com, ziy@nvidia.com,
- libang.li@antgroup.com, baolin.wang@linux.alibaba.com,
- linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Subject: Re: [PATCH 0/2] hung_task: add detect count for hung tasks
-Message-Id: <20241023190515.a80c77fe3fa895910d554888@linux-foundation.org>
-In-Reply-To: <20241022114736.83285-1-ioworker0@gmail.com>
-References: <20241022114736.83285-1-ioworker0@gmail.com>
-X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729735558; c=relaxed/simple;
+	bh=zojUPKo/a2Phs/uz9NZlQQm+PJPQVy1ZnEjHsf0HTb4=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=gsNpO9mWkMVxOSGKxyFu8veeq9xlE3SwxC8zhTL854+5V/bMX3P177TKU4nJY7s972YsI143lbKHs8p14gMySPSzDI+esvybTPQqP5M0bNo8G6sXDL9h10dWhjUIk3PzDr9pgEYrYU4oIjDlIONm0fNdDvVwF6FBywFyrA5Zj2M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 9805DC4CEC6;
+	Thu, 24 Oct 2024 02:05:55 +0000 (UTC)
+Date: Wed, 23 Oct 2024 22:05:52 -0400
+From: Steven Rostedt <rostedt@goodmis.org>
+To: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
+Cc: Alexei Starovoitov <alexei.starovoitov@gmail.com>, Jordan Rife
+ <jrife@google.com>, Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander
+ Shishkin <alexander.shishkin@linux.intel.com>, Andrii Nakryiko
+ <andrii.nakryiko@gmail.com>, Alexei Starovoitov <ast@kernel.org>, bpf
+ <bpf@vger.kernel.org>, Joel Fernandes <joel@joelfernandes.org>, LKML
+ <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>, Masami
+ Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>, Michael
+ Jeanson <mjeanson@efficios.com>, Namhyung Kim <namhyung@kernel.org>, "Paul
+ E. McKenney" <paulmck@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
+ syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, Yonghong Song
+ <yhs@fb.com>
+Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
+Message-ID: <20241023220552.74ca0c3e@rorschach.local.home>
+In-Reply-To: <7bcea009-b58c-4a00-b7cd-f2fc06b90a02@efficios.com>
+References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
+	<20241023145640.1499722-1-jrife@google.com>
+	<CAADnVQJupBceq2DAeChBvdjSG4zOpYsMP7_o7gREVmVCA0PUYQ@mail.gmail.com>
+	<7bcea009-b58c-4a00-b7cd-f2fc06b90a02@efficios.com>
+X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
+MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Tue, 22 Oct 2024 19:47:34 +0800 Lance Yang <ioworker0@gmail.com> wrote:
+On Wed, 23 Oct 2024 11:19:40 -0400
+Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
+> 
+> > Looks like Mathieu patch broke bpf program contract somewhere.  
+> 
+> My patch series introduced this in the probe:
+> 
+> #define __BPF_DECLARE_TRACE_SYSCALL(call, proto, args)                  \
+> static notrace void                                                     \
+> __bpf_trace_##call(void *__data, proto)                                 \
+> {                                                                       \
+>          might_fault();                                                  \
+>          preempt_disable_notrace();                                      \
 
-> Hi all,
-> 
-> This patchset adds a counter, hung_task_detect_count, to track the number of
-> times hung tasks are detected. This counter provides a straightforward way
-> to monitor hung task events without manually checking dmesg logs.
-> 
-> With this counter in place, system issues can be spotted quickly, allowing
-> admins to step in promptly before system load spikes occur, even if the
-> hung_task_warnings value has been decreased to 0 well before.
-> 
-> Recently, we encountered a situation where warnings about hung tasks were
-> buried in dmesg logs during load spikes. Introducing this counter could
-> have helped us detect such issues earlier and improve our analysis efficiency.
-> 
+Is the problem that we can call this function *after* the prog has been
+freed? That is, the preempt_disable_notrace() here is meaningless.
 
-Isn't the answer to this problem "write a better parser"?  I mean,
-we're providing userspace with information which is already available.
+Is there a way to add something here to make sure the program is still
+valid? Like set a flag in the link structure?
 
+(I don't know how BPF works well enough to know what is involved here,
+so excuse me if this is totally off)
+
+-- Steve
+
+
+>          CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U64(args));        \
+>          preempt_enable_notrace();                                       \
+> }
+> 
 
