@@ -1,214 +1,252 @@
-Return-Path: <linux-kernel+bounces-380292-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380293-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 893459AEBC7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:20:46 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id C723B9AEBCF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:23:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AB51C2278A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:20:45 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B423B2150B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:23:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946D81F80B9;
-	Thu, 24 Oct 2024 16:20:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF5A1F80A3;
+	Thu, 24 Oct 2024 16:23:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyQ9R+Py"
-Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EbEP6ont"
+Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C8F1B0F16;
-	Thu, 24 Oct 2024 16:20:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D8C1F4707
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:23:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786834; cv=none; b=f1eM+RjSuzy9NwdjZ11Z16vPbyxR5Im/3WEGoj8skXzZR2hjwfPH3wPG846p5dasDrrbkyf1oSkuw30hsNgroKhGePDOUfr7pUklG7zBLGQVX/11MKNajGhAmZeONr8nsc+HjIEo9wlXwhmrQ5eswcEFOR4iv+NnvbeBGwZE5Ps=
+	t=1729787004; cv=none; b=nXi6KbJWh3Y6P57UMeyIxj7WEyUOjdl4NhWiV8LBy3z+0JdMvH6oqifIa8jRFK18A/yLr0Tq+1/VFgQOKKgKJTs8r50G3PGq6RrYHpTRXCU5gnpJZ8y43wRWCBtJeTjHSIgEasD2vwzx0Lcrux/GrqZig4XP6HrZoIfejAYCIDQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786834; c=relaxed/simple;
-	bh=Y8Rgx5jOjflLlPs7Nf9yLu0bT4vcdUWwtwso6LqrjS0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=KsJMBQrDH3PAQTG6KlSVM8ORlxz6Zq8DcScZTE/t00EzVwfCBPwY5jGTQEeeMVGVMk6Oj7HGycedq5IRmtgxBkSuewZ9pU1C628VePTbPxvDy8+xmx3kz4yd/cxCZ9l8+6uReQRHywGFPNS+e+vnZyhGNqGFG3fu1BrHrxR6HK4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EyQ9R+Py; arc=none smtp.client-ip=209.85.219.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cc250bbc9eso6924536d6.2;
-        Thu, 24 Oct 2024 09:20:32 -0700 (PDT)
+	s=arc-20240116; t=1729787004; c=relaxed/simple;
+	bh=8oc5PdhhlgmJAcecp9jnCe71f+xSSCxou7pzD2J331M=;
+	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oCT6eWZk1HTGLhzR7DKGqOBO3Z+tLvqHInl3Q74FkcIAk6cYLnu29+8biE5uIZyPFEVra0S6AHetAXwQGM7LKt8AZ0SCp8ehVE+U1tcHOAtsb2ToHPzr3dMGKczIoI7rxU1R/mmz3xiGw6q+IUfqkJp/5FAIlZ3oCa3VE2DZepk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EbEP6ont; arc=none smtp.client-ip=209.85.128.202
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e7e0093018so20045657b3.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:23:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729786832; x=1730391632; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=oIdsOKA3czoGJIx1Zf2z3KM/oyGGy6VzPqA/VM0UsXI=;
-        b=EyQ9R+Py/FPXrElB2imhi/3HJCt7dqwU+R488uxMLeUXHYBRyFszWbKM+2cwr22qMq
-         4nWDRVH5VPpKGSw91mPN8q6SwRPeYeL6nOu/boFq+Zfhm8udbFtjpy8c/On85fHxt+L3
-         omWUUVRWGiI6iD80Lv/4YcdGuh1Lsq8OhylEAiUC7QZ/vYvKGepPg9cRGAaKV0bb7Vfq
-         sGUSGxniocfTYrsl1OrmsHPMgZQcjr4tgowo+ycpO8P4/SOrA5DpcgdHD2OvnPBPFQNQ
-         LE5xLFjEwnzYvmNhCMz9/yEBjGrHit+ZZsdQwHyhXDwpAHcfDqs9wUKOHCayZAaQc7Qh
-         HAMQ==
+        d=google.com; s=20230601; t=1729787001; x=1730391801; darn=vger.kernel.org;
+        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=gTU/Az6oQC87qV0R2JNeB98NQAAeDAB9smYAoMmnxCc=;
+        b=EbEP6ontvRrpJmWoan7khR+fAXGZ0ZLIhrdBLEox3s2QYTRlubVt5FSEgkq/aYITFk
+         QfMPbR2lZMcBNrGppJWwIcCwqS3RJXiSR4JYBtuzubHb3RCkjasq5Qz1fLhZYU2U/4F+
+         zOwCrRXI9PPIVGaEOhJRyZySWHUofs/whlotdcK71xApYr1I22MZJnYo+plxLD0tWggR
+         0tBOOgBRiULdFoO9cBBSwwZ+sNDI7sPpVtntaID607n7Vr3WR9Si+hEG3O/IcGd87HHZ
+         DnV8UooSV0TI7geYqHj87reYzeo42EjXx9RnUt3UzwKe0PhpYmT9apZddwZ1r+KM+jOg
+         TppA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729786832; x=1730391632;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=oIdsOKA3czoGJIx1Zf2z3KM/oyGGy6VzPqA/VM0UsXI=;
-        b=P8/Ssnek05y7rF8vM8WPM7svADvEWKSlXCZ8l5PbMncl3XlIBtJIqsTTyRJXX2srWX
-         eslIfAnBBWIU5uesopFK2L8vt4g0SFVdIdNVZNsqsf34B7oFfppr2xDLeaj1o42/lofs
-         KvFgGmnstvnWqByyaoIVj1KgXnEeAEn5cWLDw5kUhZiiQAhpZhL6+ao5npUALqa86wi+
-         WxGDSZJgax2Nn4tRylQ4ItJEvvsb1p2J7tVJUyk9Lu2WreV5YzVlONocXU8gTUJA8BzX
-         b8ZtOMQb5Q7atUuRHy6ygj1FYuYvlWaj9f9Y1CYuH75kmwZAkk88MsTWuFhQvytQUKWi
-         i0Dw==
-X-Forwarded-Encrypted: i=1; AJvYcCUmKeoKH6oROXw1FV9BWGACM7U3ZmoLvN5eu4qJEfO+0pWvS8oHksUw77GkVSRYWsiUpU1UNPGoEPNgPEHQSpU=@vger.kernel.org, AJvYcCWAiklxzrxdB68guYjHw6xUZkOmJtWHUSVfQyVaRSvX2kVJozCKbXEbcFJekFh25x/8KmChzWfCOsbgi/U=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxn/WVYa7r5Q2G5A0wdrEK1bMbpGtXMPiTvE7vBfMZogZjf//JN
-	8Fksh1DvlwkO9YaF2TGr+KUpqto4aZsJOC6V/UEpWcJYoNYxLANn
-X-Google-Smtp-Source: AGHT+IHNXYfo5jJXKqaDZB41a8s3uB+7CeKjUO09n8CEz4H7pqYy/60uGv6AjXTo8ldZiDkKwdZsOw==
-X-Received: by 2002:a05:6214:3d9f:b0:6cc:53a:70b8 with SMTP id 6a1803df08f44-6ce34130e98mr80996746d6.1.1729786831659;
-        Thu, 24 Oct 2024 09:20:31 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce00a04406sm50871686d6.145.2024.10.24.09.20.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 09:20:31 -0700 (PDT)
-Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
-	by mailfauth.phl.internal (Postfix) with ESMTP id 8D3BD1200070;
-	Thu, 24 Oct 2024 12:20:30 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-03.internal (MEProxy); Thu, 24 Oct 2024 12:20:30 -0400
-X-ME-Sender: <xms:znMaZzXvBQE28LKK4XqPikQ4wxEu76ZGJT0mqKzQbu2_FW0la3mOcw>
-    <xme:znMaZ7mTQofBnYBWzFx0zkfrDPYGlXHuidCwyQkBmtNw5Dw1rI8rIJHEYbO6IpDcE
-    9q4eF-szqECMCFMgw>
-X-ME-Received: <xmr:znMaZ_Zz_fumYWx_2p4LOmViIub3iU7mbjrkXeDQ6J8JGovurS3xWmZsE24>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddgjeefucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-    dprhgtphhtthhopeguihhrkhdrsggvhhhmvgesghhmrghilhdrtghomhdprhgtphhtthho
-    pehlhihuuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlh
-    hinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrhesrhgv
-    ughhrghtrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtg
-    homh
-X-ME-Proxy: <xmx:znMaZ-XPxIBcyH1l7CLnkzt5TZFHo1ZmDqQD5JRf9CsdesaydaPtfw>
-    <xmx:znMaZ9kG9B_A90W9pqhCYObm1jYwZz_uF3RizW_uVk6yffarE9xPTA>
-    <xmx:znMaZ7d8ANh6OvE7Mzsc-DyWrrjwltwvNuiHLo67xraeo6RFtEnqpQ>
-    <xmx:znMaZ3EVk4XoR_tmUwSMPk6qJh29jwSTdZQBua2V3mnTFiipzRMzQw>
-    <xmx:znMaZ_lzwM9Kp8hKhj2wkINaNi4PsAdMyrj2TSPdncobzwcQDGi14X3L>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Oct 2024 12:20:29 -0400 (EDT)
-Date: Thu, 24 Oct 2024 09:20:28 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dirk Behme <dirk.behme@gmail.com>, Lyude Paul <lyude@redhat.com>,
-	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
-	airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, will@kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, wedsonaf@gmail.com,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>, aliceryhl@google.com,
-	Trevor Gross <tmgross@umich.edu>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-Message-ID: <ZxpzzExItrGMISp3@Boquns-Mac-mini.local>
-References: <20241018055125.2784186-2-boqun.feng@gmail.com>
- <87a5eu7gvw.ffs@tglx>
- <ZxnVmCqk2PzsOj2h@Boquns-Mac-mini.local>
- <87zfmt6hk2.ffs@tglx>
+        d=1e100.net; s=20230601; t=1729787001; x=1730391801;
+        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=gTU/Az6oQC87qV0R2JNeB98NQAAeDAB9smYAoMmnxCc=;
+        b=acshLgPluo4Hw25jaDkPPjmIMAgAWLbO/RW8o09OOVmTH38QqJkYmH0XA8i3RRM7Uk
+         TktJ+toB/GDc/wndFKmwJraIs5BqNW7R478eH2sme2YBRQw1uYrBiOxCWZYFElR7o0yz
+         uZiL4iaecd4PY2OXXeDI2iMqpYRH6u765AzCsZ8ZjrKmeom1PlvJ3jzCh+EghfDAkEVX
+         f7C0nc+FK4VzH1TFYZDQCGx8e6EiQyrErMobUvcVv7PIt7tZrBJjslTd4uKhyrI7+Lt5
+         UAPpwhvk4yOqhhtBbe3bm3oIpzLwC9WDaQYc0C2zSdPNZeUWyKFVVG3EpYSrhhZqdHU2
+         Tlvw==
+X-Forwarded-Encrypted: i=1; AJvYcCUtxOHY0m0SPQbFrroM5QcX/MAbc3v+a/r0Ub2x5K+ho/rr9GK4dxNbQSnF+oWgDQrzm/jMRsdaN8UpH+o=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxL6arHfg8HJtu3F8KcIiVMYXVrC0C+PIHa9NH3s/w+82uuir73
+	uUym6OdYMMR9EpYgVz5eY0M1HHof3lThIvgsEbShPN2fSD0tiuqYWX6gP2r5z5yCXHeGdGyJn/c
+	VHw==
+X-Google-Smtp-Source: AGHT+IGzDL8ww+0/uK6UkUgn7P+6nNxCybhx2NYsrl5o+4THb/v3434ldbCSMuGjsNZGJegfhEedS/IaArE=
+X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:47e4:54e:bc8e:cb18])
+ (user=surenb job=sendgmr) by 2002:a05:690c:3802:b0:6de:19f:34d7 with SMTP id
+ 00721157ae682-6e858143817mr695977b3.2.1729787001130; Thu, 24 Oct 2024
+ 09:23:21 -0700 (PDT)
+Date: Thu, 24 Oct 2024 09:23:18 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <87zfmt6hk2.ffs@tglx>
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
+Message-ID: <20241024162318.1640781-1-surenb@google.com>
+Subject: [PATCH 1/1] mm/codetag: uninline and move pgalloc_tag_copy and pgalloc_tag_split
+From: Suren Baghdasaryan <surenb@google.com>
+To: akpm@linux-foundation.org
+Cc: kent.overstreet@linux.dev, yuzhao@google.com, souravpanda@google.com, 
+	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
+	surenb@google.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 24, 2024 at 10:17:33AM +0200, Thomas Gleixner wrote:
-> On Wed, Oct 23 2024 at 22:05, Boqun Feng wrote:
-> > On Wed, Oct 23, 2024 at 09:34:27PM +0200, Thomas Gleixner wrote:
-> >> local_interrupt_enable()
-> >> {
-> >>         if ((preempt_count() & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
-> >>         	local_irq_restore(this_cpu_read(...flags);
-> >>                 preempt_count_sub_test_resched(LOCALIRQ_OFFSET);
-> >>         } else {
-> >>                 // Does not need a resched test because it's not going
-> >>                 // to 0
-> >>                 preempt_count_sub(LOCALIRQ_OFFSET);
-> >>         }
-> >> }
-> >> 
-> >
-> > Yes, this looks nice, one tiny problem is that it requires
-> > PREEMPT_COUNT=y ;-) Maybe we can do: if PREEMPT_COUNT=y, we use preempt
-> > count, otherwise use a percpu?
-> >
-> > Hmm... but this will essentially be: we have a irq_disable_count() which
-> > is always built-in, and we also uses it as preempt count if
-> > PREEMPT_COUNT=y. This doesn't look too bad to me.
-> 
-> The preempt counter is always there even when PREEMPT_COUNT=n. It's
-> required for tracking hard/soft interrupt and NMI context.
-> 
-> The only difference is that preempt_disable()/enable() are NOOPs. So in
-> that case preempt_count_sub_test_resched() becomes a plain preempt_count_sub().
-> 
+pgalloc_tag_copy() and pgalloc_tag_split() are sizable and outside of
+any performance-critical paths, so it should be fine to uninline them.
+Also move their declarations into pgalloc_tag.h which seems like a more
+appropriate place for them.
+No functional changes other than uninlining.
 
-Ah, good point!
+Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+Suggested-by: Andrew Morton <akpm@linux-foundation.org>
+---
+Applies over mm-unstable
 
-> >> and then the lock thing becomes
-> >> 
-> >> spin_lock_irq_disable()
-> >> {
-> >>         local_interrupt_disable();
-> >>         lock();
-> >> }
-> >> 
-> >> spin_unlock_irq_enable()
-> >> {
-> >>         unlock();
-> >>         local_interrupt_enable();
-> >> }
-> >> 
-> >> instead having to do:
-> >> 
-> >> spin_unlock_irq_enable()
-> >> {
-> >>         unlock();
-> >>         local_interrupt_enable();
-> >>         preempt_enable();
-> >> }
-> >> 
-> >> Which needs two distinct checks, one for the interrupt and one for the
-> >
-> > No? Because now since we fold the interrupt disable count into preempt
-> > count, so we don't need to care about preempt count any more if we we
-> > local_interrupt_{disable,enable}(). For example, in the above
-> > local_interrupt_enable(), interrupts are checked at local_irq_restore()
-> > and preemption is checked at preempt_count_sub_test_resched(). Right?
-> 
-> Correct. That's what I pointed out. By folding it into preempt count
-> this becomes one operation, while in your POC it's two distinct checks
-> and operations.
-> 
+ include/linux/mm.h          | 58 -------------------------------------
+ include/linux/pgalloc_tag.h |  5 ++++
+ lib/alloc_tag.c             | 48 ++++++++++++++++++++++++++++++
+ 3 files changed, 53 insertions(+), 58 deletions(-)
 
-Yes, I seemed to mis-read what you meant previously, much clear now, let
-me put this into implementation for a POC v2.
+diff --git a/include/linux/mm.h b/include/linux/mm.h
+index 4ef8cf1043f1..5184624c0f21 100644
+--- a/include/linux/mm.h
++++ b/include/linux/mm.h
+@@ -4165,62 +4165,4 @@ static inline int do_mseal(unsigned long start, size_t len_in, unsigned long fla
+ }
+ #endif
+ 
+-#ifdef CONFIG_MEM_ALLOC_PROFILING
+-static inline void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
+-{
+-	int i;
+-	struct alloc_tag *tag;
+-	unsigned int nr_pages = 1 << new_order;
+-
+-	if (!mem_alloc_profiling_enabled())
+-		return;
+-
+-	tag = pgalloc_tag_get(&folio->page);
+-	if (!tag)
+-		return;
+-
+-	for (i = nr_pages; i < (1 << old_order); i += nr_pages) {
+-		union pgtag_ref_handle handle;
+-		union codetag_ref ref;
+-
+-		if (get_page_tag_ref(folio_page(folio, i), &ref, &handle)) {
+-			/* Set new reference to point to the original tag */
+-			alloc_tag_ref_set(&ref, tag);
+-			update_page_tag_ref(handle, &ref);
+-			put_page_tag_ref(handle);
+-		}
+-	}
+-}
+-
+-static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
+-{
+-	union pgtag_ref_handle handle;
+-	union codetag_ref ref;
+-	struct alloc_tag *tag;
+-
+-	tag = pgalloc_tag_get(&old->page);
+-	if (!tag)
+-		return;
+-
+-	if (!get_page_tag_ref(&new->page, &ref, &handle))
+-		return;
+-
+-	/* Clear the old ref to the original allocation tag. */
+-	clear_page_tag_ref(&old->page);
+-	/* Decrement the counters of the tag on get_new_folio. */
+-	alloc_tag_sub(&ref, folio_size(new));
+-	__alloc_tag_ref_set(&ref, tag);
+-	update_page_tag_ref(handle, &ref);
+-	put_page_tag_ref(handle);
+-}
+-#else /* !CONFIG_MEM_ALLOC_PROFILING */
+-static inline void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
+-{
+-}
+-
+-static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
+-{
+-}
+-#endif /* CONFIG_MEM_ALLOC_PROFILING */
+-
+ #endif /* _LINUX_MM_H */
+diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
+index 1fe63b52e5e5..0e43ab653ab6 100644
+--- a/include/linux/pgalloc_tag.h
++++ b/include/linux/pgalloc_tag.h
+@@ -230,6 +230,9 @@ static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr)
+ 		this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
+ }
+ 
++void pgalloc_tag_split(struct folio *folio, int old_order, int new_order);
++void pgalloc_tag_copy(struct folio *new, struct folio *old);
++
+ void __init alloc_tag_sec_init(void);
+ 
+ #else /* CONFIG_MEM_ALLOC_PROFILING */
+@@ -241,6 +244,8 @@ static inline void pgalloc_tag_sub(struct page *page, unsigned int nr) {}
+ static inline struct alloc_tag *pgalloc_tag_get(struct page *page) { return NULL; }
+ static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr) {}
+ static inline void alloc_tag_sec_init(void) {}
++static inline void pgalloc_tag_split(struct folio *folio, int old_order, int new_order) {}
++static inline void pgalloc_tag_copy(struct folio *new, struct folio *old) {}
+ 
+ #endif /* CONFIG_MEM_ALLOC_PROFILING */
+ 
+diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
+index a6f6f014461e..c1ddac2d29f0 100644
+--- a/lib/alloc_tag.c
++++ b/lib/alloc_tag.c
+@@ -163,6 +163,54 @@ size_t alloc_tag_top_users(struct codetag_bytes *tags, size_t count, bool can_sl
+ 	return nr;
+ }
+ 
++void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
++{
++	int i;
++	struct alloc_tag *tag;
++	unsigned int nr_pages = 1 << new_order;
++
++	if (!mem_alloc_profiling_enabled())
++		return;
++
++	tag = pgalloc_tag_get(&folio->page);
++	if (!tag)
++		return;
++
++	for (i = nr_pages; i < (1 << old_order); i += nr_pages) {
++		union pgtag_ref_handle handle;
++		union codetag_ref ref;
++
++		if (get_page_tag_ref(folio_page(folio, i), &ref, &handle)) {
++			/* Set new reference to point to the original tag */
++			alloc_tag_ref_set(&ref, tag);
++			update_page_tag_ref(handle, &ref);
++			put_page_tag_ref(handle);
++		}
++	}
++}
++
++void pgalloc_tag_copy(struct folio *new, struct folio *old)
++{
++	union pgtag_ref_handle handle;
++	union codetag_ref ref;
++	struct alloc_tag *tag;
++
++	tag = pgalloc_tag_get(&old->page);
++	if (!tag)
++		return;
++
++	if (!get_page_tag_ref(&new->page, &ref, &handle))
++		return;
++
++	/* Clear the old ref to the original allocation tag. */
++	clear_page_tag_ref(&old->page);
++	/* Decrement the counters of the tag on get_new_folio. */
++	alloc_tag_sub(&ref, folio_size(new));
++	__alloc_tag_ref_set(&ref, tag);
++	update_page_tag_ref(handle, &ref);
++	put_page_tag_ref(handle);
++}
++
+ static void shutdown_mem_profiling(bool remove_file)
+ {
+ 	if (mem_alloc_profiling_enabled())
 
-Regards,
-Boqun
+base-commit: 9c111059234a949a4d3442a413ade19cc65ab927
+-- 
+2.47.0.105.g07ac214952-goog
 
-> Thanks,
-> 
->         tglx
 
