@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-379965-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379970-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 660DF9AE67A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:31:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD1CB9AE68E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A9D728AEDE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:31:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7E31C254BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:33:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 36B551DD0DF;
-	Thu, 24 Oct 2024 13:26:13 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD7FE1F5840;
-	Thu, 24 Oct 2024 13:26:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 794EB1F8196;
+	Thu, 24 Oct 2024 13:27:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e09i9gPP"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A49DC1DD9D1;
+	Thu, 24 Oct 2024 13:27:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776372; cv=none; b=Wo0uzSE9qQCVbHVJIUueQpbH5UPqar0B3r8crZb/9wiiRvmuRraFeACm4NEl9AqWXO2UteEyxYPByVRJWNDQmas653PhgWZc1htXa6EwpCc5GxcTPyGfsMzgDE1YaZPW6+X7NP/CpCk2XlxsLoZL+FCS+DWE9Nk7m4mH3tlXhPE=
+	t=1729776449; cv=none; b=QsBfqORfchAolwuq3YlB+0SOws8n166fdV2SeI1+GenmccDf4WCTapOed+q33U6PxyWif9wTkFdRvuc3uoRGoJoQglTQ4Gb/aMPOm0Uz0IVjYZ0x5UsB2kvTpwdShtDeH0W3JTG5K1x63lEhRpHy5843GbXIv4E+e7Qw3M79ml4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776372; c=relaxed/simple;
-	bh=pwiq/eaNUvB2cYRIsPcxJhyT0FH4o9oUMMHH4lSg6oI=;
+	s=arc-20240116; t=1729776449; c=relaxed/simple;
+	bh=37vPV7z3GHny87sgA9pvUW5mM1Cy15dDQ648OmpjBCk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=t55xmfdPS0jw/FB4SV0ABTqqn2DWuigI3JBB+pZYDyIo2cIxwqy7nZ+lnZ+r3aEg3fzTGuz+tjWHDsi9bvXEP1HGGH/b3Kue3QOtNxM4nYsKyskjxdN1yK1WiNyIk6omxNQ7APVYM8VGUO9ojWrJPleEnQ2nGeqZr/Usl4J1pfs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id BB71F339;
-	Thu, 24 Oct 2024 06:26:38 -0700 (PDT)
-Received: from [10.57.55.74] (unknown [10.57.55.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 169863F71E;
-	Thu, 24 Oct 2024 06:26:07 -0700 (PDT)
-Message-ID: <f6ad24c8-0065-4d73-98f1-dc4246ca70ea@arm.com>
-Date: Thu, 24 Oct 2024 14:27:18 +0100
+	 In-Reply-To:Content-Type; b=Y94wUfhUbsH2kCiWa/XwzecQPLGd8ty3iHhuy2AhPZLM4fVujVKpkvIVMosa+HtqevSdnWjhlwQPHF/GfOYILNBGaMA9EWnbvmdlT/kDuMnFl2oBpmK2mCQRRjOIBiaSn+LYiVL5Ow+fNUv3t0p1IIwlRQCxBZxQ1AVioD/qsI8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e09i9gPP; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 90653C4CECC;
+	Thu, 24 Oct 2024 13:27:23 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729776449;
+	bh=37vPV7z3GHny87sgA9pvUW5mM1Cy15dDQ648OmpjBCk=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=e09i9gPPGGBv4VFvDk58dg3uNhL/EiQkVOMA3VkjWksThWr7w07lpIzymzNUVrwuk
+	 8cd/cTTy+TSHfNZpH5MIH4ynTrXFS/tPzGJIKiLN/eRIJ1ZxTqy/4/Iv84NxyeWNoi
+	 Ngah0VA4C8zhiCi0FZOZRSi4R2ovzZ9Bwl5v9jeIcWbRkG3ox6lIMPcJyaZws6gRvx
+	 FoTqLypRGwjhaBDxqe/3qAWM/8BighYF42fdSDPLoH/yvoSNRwoEjuzMiVdrhxaW0j
+	 A7OyRN6kuO0OhDALIzSVsCH/O+tbPEnCV6yiM3LPRLemZwKMcXgJcVlyYJnjKvdF/F
+	 hU0uLMLub8xHg==
+Message-ID: <a1528ced-930c-4e5d-91e6-6be5f5363e8d@kernel.org>
+Date: Thu, 24 Oct 2024 15:27:21 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,68 +49,138 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/lib: Fix memory leak on error in
- thermal_genl_auto()
-To: "Rafael J. Wysocki" <rafael@kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org,
- LKML <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>
-References: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
- <45265aca-7371-455f-819f-c4d68cbb089b@web.de>
- <9ba3fa17-57c3-41e9-9e19-33fa105a179e@linaro.org>
- <CAJZ5v0jWGdzakj8ob2otAO6auwGBvVsewujG-d9b1Z5nnO7Vkw@mail.gmail.com>
+Subject: Re: [PATCH v4 net-next 03/13] dt-bindings: net: add bindings for NETC
+ blocks control
+To: Wei Fang <wei.fang@nxp.com>
+Cc: "davem@davemloft.net" <davem@davemloft.net>,
+ "edumazet@google.com" <edumazet@google.com>,
+ "kuba@kernel.org" <kuba@kernel.org>, "pabeni@redhat.com"
+ <pabeni@redhat.com>, "robh@kernel.org" <robh@kernel.org>,
+ "krzk+dt@kernel.org" <krzk+dt@kernel.org>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ Vladimir Oltean <vladimir.oltean@nxp.com>,
+ Claudiu Manoil <claudiu.manoil@nxp.com>, Clark Wang <xiaoning.wang@nxp.com>,
+ Frank Li <frank.li@nxp.com>,
+ "christophe.leroy@csgroup.eu" <christophe.leroy@csgroup.eu>,
+ "linux@armlinux.org.uk" <linux@armlinux.org.uk>,
+ "bhelgaas@google.com" <bhelgaas@google.com>,
+ "horms@kernel.org" <horms@kernel.org>,
+ "imx@lists.linux.dev" <imx@lists.linux.dev>,
+ "netdev@vger.kernel.org" <netdev@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-pci@vger.kernel.org" <linux-pci@vger.kernel.org>,
+ "alexander.stein@ew.tq-group.com" <alexander.stein@ew.tq-group.com>
+References: <20241022055223.382277-1-wei.fang@nxp.com>
+ <20241022055223.382277-4-wei.fang@nxp.com>
+ <xx4l4bs4iqmtgafs63ly2labvqzul2a7wkpyvxkbde257hfgs2@xgfs57rcdsk6>
+ <PAXPR04MB851034FDAC4E63F1866356B4884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+ <f7064783-983a-44bd-a9db-fd20f4e50e33@kernel.org>
+ <PAXPR04MB85101A3DFF08F8C8DD7513F8884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAJZ5v0jWGdzakj8ob2otAO6auwGBvVsewujG-d9b1Z5nnO7Vkw@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <PAXPR04MB85101A3DFF08F8C8DD7513F8884D2@PAXPR04MB8510.eurprd04.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-
-
-On 10/24/24 14:18, Rafael J. Wysocki wrote:
-> On Thu, Oct 24, 2024 at 2:57 PM Daniel Lezcano
-> <daniel.lezcano@linaro.org> wrote:
+On 23/10/2024 12:03, Wei Fang wrote:
+>> -----Original Message-----
+>> From: Krzysztof Kozlowski <krzk@kernel.org>
+>> Sent: 2024年10月23日 16:56
+>> To: Wei Fang <wei.fang@nxp.com>
+>> Cc: davem@davemloft.net; edumazet@google.com; kuba@kernel.org;
+>> pabeni@redhat.com; robh@kernel.org; krzk+dt@kernel.org;
+>> conor+dt@kernel.org; Vladimir Oltean <vladimir.oltean@nxp.com>; Claudiu
+>> Manoil <claudiu.manoil@nxp.com>; Clark Wang <xiaoning.wang@nxp.com>;
+>> Frank Li <frank.li@nxp.com>; christophe.leroy@csgroup.eu;
+>> linux@armlinux.org.uk; bhelgaas@google.com; horms@kernel.org;
+>> imx@lists.linux.dev; netdev@vger.kernel.org; devicetree@vger.kernel.org;
+>> linux-kernel@vger.kernel.org; linux-pci@vger.kernel.org;
+>> alexander.stein@ew.tq-group.com
+>> Subject: Re: [PATCH v4 net-next 03/13] dt-bindings: net: add bindings for NETC
+>> blocks control
 >>
->> On 24/10/2024 14:02, Markus Elfring wrote:
->>>> The function thermal_genl_auto() does not free the allocated message
->>>> in the error path. Fix that by putting a out label and jump to it
->>>> which will free the message instead of directly returning an error.
->>>
->>> Would you like to add any tags (like “Fixes” and “Cc”) accordingly?
->>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc4#n145
->>>
->>>
->>> …
->>>> +++ b/tools/lib/thermal/commands.c
->>>> @@ -375,27 +375,30 @@ static thermal_error_t thermal_genl_auto(struct thermal_handler *th, cmd_cb_t cm
->>>>                                        struct cmd_param *param,
->>>>                                        int cmd, int flags, void *arg)
->>>>    {
->>>> +    thermal_error_t ret = THERMAL_ERROR;
->>>>       struct nl_msg *msg;
->>>>       void *hdr;
+>> On 23/10/2024 10:18, Wei Fang wrote:
+>>>>> +maintainers:
+>>>>> +  - Wei Fang <wei.fang@nxp.com>
+>>>>> +  - Clark Wang <xiaoning.wang@nxp.com>
+>>>>> +
+>>>>> +properties:
+>>>>> +  compatible:
+>>>>> +    enum:
+>>>>> +      - nxp,imx95-netc-blk-ctrl
+>>>>> +
+>>>>> +  reg:
+>>>>> +    minItems: 2
+>>>>> +    maxItems: 3
 >>>>
->>>>       msg = nlmsg_alloc();
->>>>       if (!msg)
->>>> -            return THERMAL_ERROR;
->>>> +            goto out;
->>> …
+>>>> You have one device, why this is flexible? Device either has exactly
+>>>> 2 or exactly 3 IO spaces, not both depending on the context.
+>>>>
 >>>
->>> Is it really reasonable to pass a null pointer (from a failed function call)
->>> to a subsequent nlmsg_free() call?
+>>> There are three register blocks, IERB and PRB are inside NETC IP, but
+>>> NETCMIX is outside NETC. There are dependencies between these three
+>>> blocks, so it is better to configure them in one driver. But for other
+>>> platforms like S32, it does not have NETCMIX, so NETCMIX is optional.
 >>
->> You are right, I should return here :S
+>> But how s32 is related here? That's a different device.
+>>
 > 
-> Do you want to respin it?
-> 
-> Alternatively, I can fix it up when applying the patch.
+> The S32 SoC also uses the NETC IP, so this YAML should be compatible with
+> S32 SoC.
 
-The nlmskg_free() function should handle that similar to kfree().
-Under the hood there is a check in skb_unref():
-if (unlikely(!skb))
+What? How? Where is this compatible documented?
 
-AFAIK the kfree() is used similar way and NULL is part of generic
-case sometimes, not handles with extra code.
+> Or do you mean when S32 NETC is supported, we then add restrictions
+> to the reg property for S32?
 
-Up to you. You can keep my review tag in both cases.
+I don't know what you are creating here. That's a binding for one
+specific device (see writing bindings guideline).
+
+Best regards,
+Krzysztof
+
 
