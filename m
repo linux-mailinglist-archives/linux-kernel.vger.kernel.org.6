@@ -1,49 +1,49 @@
-Return-Path: <linux-kernel+bounces-379653-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379654-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6B8EC9AE19D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:56:48 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id DF1A79AE1A0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:57:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 22A531F222E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:56:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EB6D1F21484
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:57:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB8CD1C4A35;
-	Thu, 24 Oct 2024 09:55:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E9501C878A;
+	Thu, 24 Oct 2024 09:55:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="HSXJrohl"
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="VbCsqeHF"
 Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8049D1B85CB;
-	Thu, 24 Oct 2024 09:55:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 932701B85E2;
+	Thu, 24 Oct 2024 09:55:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763749; cv=none; b=XdUxnsnxnuXMjH6mFNrah5sFXBMtvTcEGFeCnbgl7gw8e7s6MMkBZrZrNHeJwdOEs/Op8M/wiLKgwJvXeo1J53EpGzkSg2b7GcTjN/D5z2NorqsH6fajziPvKF1WOqTAxx3xNwQI6I3nTPmTe3cFdbZLT7i27X8IgVatAsYVVPY=
+	t=1729763750; cv=none; b=uPMnOcqX6Qq7RO0gg6exuUq6m5Ylnt5WgHpzfrLn6Kyn8xraZ6RE7vgRz3LCrfs5kE/SEPc8lnxrTkAVWilfd2lxOYE83h1DjLpSy+zWx3CA1/3zre5OusYdWUW3RnE6eL6h3zzj0FczfgTncm4mOwdSNm8uBrOZQgSTBRrmEI8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729763749; c=relaxed/simple;
-	bh=3bNuyNqTCqctE1Y5C/z7XLN3NgQXwfflMN0uz3D4eag=;
+	s=arc-20240116; t=1729763750; c=relaxed/simple;
+	bh=IEDWlRrG0DDSC67begBEfQGU7uvDlVWxu7DCnp6qwGs=;
 	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=EcCL/GqZRwd7DUWdHZPwGR5KReK4ycp0S5zv/YBA9tcFmibXsJBokkv9RaxykVaNTNLGiJC5UK9e9ETtPB4hN5gOMPpzHeMzD6wfZWX4BkLjOFW3zmrsoqTFTOaczTIC6D0opg/VDjGMPN1VL33WEd8jQUeySe8WnyvSrooUUm8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=HSXJrohl; arc=none smtp.client-ip=217.70.183.194
+	 MIME-Version; b=RYmYSHgBMQz2ThIIPIRArAJbs3SXaZrD0Mz3cmgNKRlF2pfdRWUt1Z9O+pwZY/dIFyPNZp+hFSrVT+M+ErswCetr9QDtDcEnLCODu34UOzzFJY87RiYjRNsOLD9HLtyFk4G2oi6K9kKEcm62Thhna4kIdJh1CJOTcnrsVZ2zqiM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=VbCsqeHF; arc=none smtp.client-ip=217.70.183.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPA id E355840005;
-	Thu, 24 Oct 2024 09:55:43 +0000 (UTC)
+Received: by mail.gandi.net (Postfix) with ESMTPA id E5EC140010;
+	Thu, 24 Oct 2024 09:55:44 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729763744;
+	t=1729763745;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=re3k969/SlvgwROLTlKKLvNJkp+Z9Z/HnVPkdFKy4V0=;
-	b=HSXJrohlUgJJIsTUV1WUUKYrcz1hc6hgvNNTHiLerynqwjMmPaFJJ85vQgO0b9m7ZOZr6w
-	uhQ3lJC5eIGgpogpUccKQ+zSMNvkldQqUjTQuilGbp01Qrv74hayRMkPtOGXgCctEOz2wT
-	1dCApNsZ6jHgm1JJz54f25So8fviiujexGIXEz5bQQKS/31mTO7PpUPH+T//COV4qY6mAq
-	7uWxQLP8QG7tITqcv5AcrTclk94ixSjVFZn9MwPkMG2Gf5Az9z1c8kNgCqD4AK6Q7RwiH/
-	84dBA1vVKzsIIZ13u7iirPNLYuh2o4/WsAyh/uEYTgt3BxxD8xFdd79C1dIn9Q==
+	bh=nUQXtdTvn9UVSZH4EkPi10r3WhhKAUdc+B9p/wH61yw=;
+	b=VbCsqeHFuQuz6k8aevTlfEhl56CY4MWWNhlHmsvB6VkN8iPVhuEauYY+AZNnirOHwO0Apv
+	AUNnXTHt0tgm7OHwmuyfKOV47SEzDT9JD1flKPQ7VZ3LX/bitFkSeIUkM91wEQMfgEr1zz
+	cF4PQltKsnh0jX9Yq91L1cfjam1tm9zy6SEWHjjUdq8yeT8SxIIctrUrZ5+dTlD4pLUYnr
+	LUjoEsHYcRjW5hBVYm5srZIZI6QPxtO+0H/gAR2tSzT8UgZmoyy/Hq0i8PETZn/zl0+qlo
+	/6wbDUbZLbZfeTEOV6DIj64Xkk9kMklqbn2fD+j/hknCeCsZy0sGHMXmCC+rKA==
 From: Herve Codina <herve.codina@bootlin.com>
 To: Andrzej Hajda <andrzej.hajda@intel.com>,
 	Neil Armstrong <neil.armstrong@linaro.org>,
@@ -66,9 +66,9 @@ Cc: dri-devel@lists.freedesktop.org,
 	Luca Ceresoli <luca.ceresoli@bootlin.com>,
 	Thomas Petazzoni <thomas.petazzoni@bootlin.com>,
 	Herve Codina <herve.codina@bootlin.com>
-Subject: [PATCH 1/2] dt-bindings: display: bridge: sn65dsi83: Add interrupt
-Date: Thu, 24 Oct 2024 11:55:37 +0200
-Message-ID: <20241024095539.1637280-2-herve.codina@bootlin.com>
+Subject: [PATCH 2/2] drm: bridge: ti-sn65dsi83: Add error recovery mechanism
+Date: Thu, 24 Oct 2024 11:55:38 +0200
+Message-ID: <20241024095539.1637280-3-herve.codina@bootlin.com>
 X-Mailer: git-send-email 2.46.2
 In-Reply-To: <20241024095539.1637280-1-herve.codina@bootlin.com>
 References: <20241024095539.1637280-1-herve.codina@bootlin.com>
@@ -81,31 +81,218 @@ MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 X-GND-Sasl: herve.codina@bootlin.com
 
-Both the TI SN65DSI83 and SN65DSI84 bridges have an IRQ pin to signal
-errors using interrupt.
+In some cases observed during ESD tests, the TI SN65DSI83 cannot recover
+from errors by itself. A full restart of the bridge is needed in those
+cases to have the bridge output LVDS signals again.
 
-This interrupt is not documented in the binding.
+The TI SN65DSI83 has some error detection capabilities. Introduce an
+error recovery mechanism based on this detection.
 
-Add the missing interrupts property.
+The errors detected are signaled through an interrupt. On system where
+this interrupt is not available, the driver uses a polling monitoring
+fallback to check for errors. When an error is present, the recovery
+process is launched.
+
+Restarting the bridge needs to redo the initialization sequence. This
+initialization sequence has to be done with the DSI data lanes driven in
+LP11 state. In order to do that, the recovery process resets the entire
+pipeline.
 
 Signed-off-by: Herve Codina <herve.codina@bootlin.com>
 ---
- .../devicetree/bindings/display/bridge/ti,sn65dsi83.yaml       | 3 +++
- 1 file changed, 3 insertions(+)
+ drivers/gpu/drm/bridge/ti-sn65dsi83.c | 128 ++++++++++++++++++++++++++
+ 1 file changed, 128 insertions(+)
 
-diff --git a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-index 48a97bb3e2e0..4505d2d83e0d 100644
---- a/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-+++ b/Documentation/devicetree/bindings/display/bridge/ti,sn65dsi83.yaml
-@@ -35,6 +35,9 @@ properties:
-   vcc-supply:
-     description: A 1.8V power supply (see regulator/regulator.yaml).
+diff --git a/drivers/gpu/drm/bridge/ti-sn65dsi83.c b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+index 96e829163d87..22975b60e80f 100644
+--- a/drivers/gpu/drm/bridge/ti-sn65dsi83.c
++++ b/drivers/gpu/drm/bridge/ti-sn65dsi83.c
+@@ -35,9 +35,12 @@
+ #include <linux/of_graph.h>
+ #include <linux/regmap.h>
+ #include <linux/regulator/consumer.h>
++#include <linux/timer.h>
++#include <linux/workqueue.h>
  
-+  interrupts:
-+    maxItems: 1
+ #include <drm/drm_atomic_helper.h>
+ #include <drm/drm_bridge.h>
++#include <drm/drm_drv.h> /* DRM_MODESET_LOCK_ALL_BEGIN() need drm_drv_uses_atomic_modeset() */
+ #include <drm/drm_mipi_dsi.h>
+ #include <drm/drm_of.h>
+ #include <drm/drm_panel.h>
+@@ -147,6 +150,9 @@ struct sn65dsi83 {
+ 	struct regulator		*vcc;
+ 	bool				lvds_dual_link;
+ 	bool				lvds_dual_link_even_odd_swap;
++	bool				use_irq;
++	struct delayed_work		monitor_work;
++	struct work_struct		reset_work;
+ };
+ 
+ static const struct regmap_range sn65dsi83_readable_ranges[] = {
+@@ -321,6 +327,92 @@ static u8 sn65dsi83_get_dsi_div(struct sn65dsi83 *ctx)
+ 	return dsi_div - 1;
+ }
+ 
++static int sn65dsi83_reset_pipeline(struct sn65dsi83 *sn65dsi83)
++{
++	struct drm_device *dev = sn65dsi83->bridge.dev;
++	struct drm_modeset_acquire_ctx ctx;
++	struct drm_atomic_state *state;
++	int err;
 +
-   ports:
-     $ref: /schemas/graph.yaml#/properties/ports
++	/* Use operation done in drm_atomic_helper_suspend() followed by
++	 * operation done in drm_atomic_helper_resume() but without releasing
++	 * the lock between suspend()/resume()
++	 */
++
++	DRM_MODESET_LOCK_ALL_BEGIN(dev, ctx, 0, err);
++
++	state = drm_atomic_helper_duplicate_state(dev, &ctx);
++	if (IS_ERR(state)) {
++		err = PTR_ERR(state);
++		goto unlock;
++	}
++
++	err = drm_atomic_helper_disable_all(dev, &ctx);
++	if (err < 0)
++		goto unlock;
++
++	drm_mode_config_reset(dev);
++
++	err = drm_atomic_helper_commit_duplicated_state(state, &ctx);
++
++unlock:
++	DRM_MODESET_LOCK_ALL_END(dev, ctx, err);
++	if (!IS_ERR(state))
++		drm_atomic_state_put(state);
++	return err;
++}
++
++static void sn65dsi83_reset_work(struct work_struct *ws)
++{
++	struct sn65dsi83 *ctx = container_of(ws, struct sn65dsi83, reset_work);
++	int ret;
++
++	dev_warn(ctx->dev, "reset pipeline\n");
++
++	/* Reset the pipeline */
++	ret = sn65dsi83_reset_pipeline(ctx);
++	if (ret) {
++		dev_err(ctx->dev, "reset pipeline failed %pe\n", ERR_PTR(ret));
++		return;
++	}
++}
++
++static void sn65dsi83_handle_errors(struct sn65dsi83 *ctx)
++{
++	unsigned int irq_stat;
++	int ret;
++
++	/*
++	 * Schedule a reset in case of:
++	 *  - the bridge doesn't answer
++	 *  - the bridge signals an error
++	 */
++
++	ret = regmap_read(ctx->regmap, REG_IRQ_STAT, &irq_stat);
++	if (ret || irq_stat)
++		schedule_work(&ctx->reset_work);
++}
++
++static void sn65dsi83_monitor_work(struct work_struct *work)
++{
++	struct sn65dsi83 *ctx = container_of(to_delayed_work(work),
++					     struct sn65dsi83, monitor_work);
++
++	sn65dsi83_handle_errors(ctx);
++
++	schedule_delayed_work(&ctx->monitor_work, msecs_to_jiffies(1000));
++}
++
++static void sn65dsi83_monitor_start(struct sn65dsi83 *ctx)
++{
++	schedule_delayed_work(&ctx->monitor_work, msecs_to_jiffies(1000));
++}
++
++static void sn65dsi83_monitor_stop(struct sn65dsi83 *ctx)
++{
++	cancel_delayed_work_sync(&ctx->monitor_work);
++}
++
+ static void sn65dsi83_atomic_pre_enable(struct drm_bridge *bridge,
+ 					struct drm_bridge_state *old_bridge_state)
+ {
+@@ -509,6 +601,15 @@ static void sn65dsi83_atomic_enable(struct drm_bridge *bridge,
+ 	regmap_read(ctx->regmap, REG_IRQ_STAT, &pval);
+ 	if (pval)
+ 		dev_err(ctx->dev, "Unexpected link status 0x%02x\n", pval);
++
++	if (ctx->use_irq) {
++		/* Enable irq to detect errors */
++		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, REG_IRQ_GLOBAL_IRQ_EN);
++		regmap_write(ctx->regmap, REG_IRQ_EN, 0xff);
++	} else {
++		/* Use the polling task */
++		sn65dsi83_monitor_start(ctx);
++	}
+ }
+ 
+ static void sn65dsi83_atomic_disable(struct drm_bridge *bridge,
+@@ -517,6 +618,15 @@ static void sn65dsi83_atomic_disable(struct drm_bridge *bridge,
+ 	struct sn65dsi83 *ctx = bridge_to_sn65dsi83(bridge);
+ 	int ret;
+ 
++	if (ctx->use_irq) {
++		/* Disable irq */
++		regmap_write(ctx->regmap, REG_IRQ_EN, 0x0);
++		regmap_write(ctx->regmap, REG_IRQ_GLOBAL, 0x0);
++	} else {
++		/* Stop the polling task */
++		sn65dsi83_monitor_stop(ctx);
++	}
++
+ 	/* Put the chip in reset, pull EN line low, and assure 10ms reset low timing. */
+ 	gpiod_set_value_cansleep(ctx->enable_gpio, 0);
+ 	usleep_range(10000, 11000);
+@@ -673,6 +783,14 @@ static int sn65dsi83_host_attach(struct sn65dsi83 *ctx)
+ 	return 0;
+ }
+ 
++static irqreturn_t sn65dsi83_irq(int irq, void *data)
++{
++	struct sn65dsi83 *ctx = data;
++
++	sn65dsi83_handle_errors(ctx);
++	return IRQ_HANDLED;
++}
++
+ static int sn65dsi83_probe(struct i2c_client *client)
+ {
+ 	const struct i2c_device_id *id = i2c_client_get_device_id(client);
+@@ -686,6 +804,8 @@ static int sn65dsi83_probe(struct i2c_client *client)
+ 		return -ENOMEM;
+ 
+ 	ctx->dev = dev;
++	INIT_WORK(&ctx->reset_work, sn65dsi83_reset_work);
++	INIT_DELAYED_WORK(&ctx->monitor_work, sn65dsi83_monitor_work);
+ 
+ 	if (dev->of_node) {
+ 		model = (enum sn65dsi83_model)(uintptr_t)
+@@ -710,6 +830,14 @@ static int sn65dsi83_probe(struct i2c_client *client)
+ 	if (IS_ERR(ctx->regmap))
+ 		return dev_err_probe(dev, PTR_ERR(ctx->regmap), "failed to get regmap\n");
+ 
++	if (client->irq) {
++		ret = devm_request_threaded_irq(ctx->dev, client->irq, NULL, sn65dsi83_irq,
++						IRQF_ONESHOT, dev_name(ctx->dev), ctx);
++		if (ret)
++			return dev_err_probe(dev, ret, "failed to request irq\n");
++		ctx->use_irq = true;
++	}
++
+ 	dev_set_drvdata(dev, ctx);
+ 	i2c_set_clientdata(client, ctx);
  
 -- 
 2.46.2
