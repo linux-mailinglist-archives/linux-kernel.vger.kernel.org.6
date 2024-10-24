@@ -1,129 +1,144 @@
-Return-Path: <linux-kernel+bounces-379313-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379314-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEE49ADCF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:00:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D44F9ADCFA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:01:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id BB2D31F237A7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:00:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CBE6E1F22955
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:01:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A4A2818B486;
-	Thu, 24 Oct 2024 06:59:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KIN3WDpu"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 973BE187856;
+	Thu, 24 Oct 2024 07:01:32 +0000 (UTC)
+Received: from mail-yb1-f172.google.com (mail-yb1-f172.google.com [209.85.219.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E947A189B88;
-	Thu, 24 Oct 2024 06:59:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B328E6F305
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:01:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729753147; cv=none; b=k8PgFMVr4fwAFhBF3xKZ6nvbSpSp0pFPAVXF8AovCMMnSC804pYUhi50Ptl7G3TSCbmBtYHjkI1jAiV8c+wiOKBoFGWTTK+7UMjFEv36dNwvZqFxwxpXklW8NtRwcbgFMZrn7wsSBEEYjHRpbTK3uouOVuF3b3uMkWY0rVcReKQ=
+	t=1729753292; cv=none; b=un2sTrDvdOcz8Oa3UZjH5KympV1mlX5jFUdY4Hv2DRTXW3+xaDjtF0PnZfuym0UrB3ai/nee7h993ZM6ozkn20QD9I7ZkrhvQhG+nE1HlwU+LNLd5GCjEQGFSEmd56csxgLVAqbX0lXQ/MkSSLhJ0N00cNZz2t3ptxqjuN5fHNo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729753147; c=relaxed/simple;
-	bh=N9evOzKR9qQkb0jTmwdxreVwdmPlvZ4vIascLRoTQVM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YTu7yB+J2w0DXXSJkCHx9ikxIwJp/C5koF5wNmwGEi/4RQ/vzPxCqurevmmYK93pIZG00Q1Z+9QJDJkiBq0qSKNos+V79Xg8i2XVGukPS8EkxTP71qnVC+3EMJhS4pA4YqJPS57fh+Az36tve/x3gqe9nwF2tP/ZZjatP6tkjIA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KIN3WDpu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B11DCC4CEC7;
-	Thu, 24 Oct 2024 06:59:02 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729753146;
-	bh=N9evOzKR9qQkb0jTmwdxreVwdmPlvZ4vIascLRoTQVM=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=KIN3WDpuP4NP5behVdbOl723TWbwnMLpyN49Ras0UEp4JTDv9IGlBw70gZKFXEG5Q
-	 n3teO0C/hRaLD7DVrA9UXSreOmhek4Pz6Q9f+ZQC+Rtx/wJJRNXGB2F5yg5xIsLCVo
-	 sLTf4rSODa7gD5c31+DEm3Zb8i82fqnYWJzL6QQj5GKvHVKicmA2gkpJzrQcIHh3+F
-	 0bn165gcHmEwWmzMQ8yEguJDgl44h/j247vmPEYBfFEu+FNsVCaXwzlP5W34wTSlJy
-	 Y8+khpBbHaG3ZPuTle0+VI8QUQO51NgdAA/9paJjpwP0D5XiYjaNaSBJT5aQ6KLTOo
-	 xgQ5HRzqlbtBw==
-Message-ID: <87e89ecb-a072-4607-83ca-74be4844237a@kernel.org>
-Date: Thu, 24 Oct 2024 08:59:00 +0200
+	s=arc-20240116; t=1729753292; c=relaxed/simple;
+	bh=Dfj5Sbt9RkJvswJTvAUKrfpiSeeG8BctHTGwblcSLjg=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SHfJjAugwdeI68/W3e6Qzs2u5awbTmp0MDAIXJTRPJaVTTf40gOUXfOjlfS1dZAuSAauRttJuzY93P49sXBmwk05Tgmqbw7123WqzG/FqquYc8ctjwHMHFN8C4yyE+oL89cnIIyi27HASTPQlZrFiJeWga0ZUtJE5gZ+gsN6wXA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f172.google.com with SMTP id 3f1490d57ef6-e2e32bc454fso642981276.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:01:29 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729753288; x=1730358088;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=53MA+Hqr0gkDrAv9I+Ueg9wmlWZM6CD+GlKPa+fEHao=;
+        b=L2cjx4KxASWdZOkqT0ihoKG36InLAATesrElLxnbhTARgdZMVvs2Vj0LpOWuiNtKJI
+         feX64iHli8NYsEb2GD/J3ztfY/jcbluG0zn4FWwvuUTl30e2vAYOPPHUF7mgx+MyENUQ
+         N60d/RKhNSmmEZHrTAiWViRXpNzwcuAYqhRfjM/0O8IQ0wFOVrASg2z/Sgwdoyvvmy2L
+         Dy7cFAPTBK3MK5qEi8qt0NJBqDQuYLNyypRbb2QB48L61pUY+TWNs+oCrxTBM+MkBT3+
+         NmWsYZ1UaL1zm1E4tQ9PeRp4FrhPEbOyriDNi2QsXiJPC++KRaL8AsBNUq2zd18qQdOm
+         vDwA==
+X-Forwarded-Encrypted: i=1; AJvYcCUXtt6uMzek2n7ZXxBxN4LIx1wd/CYOS/WwDXaGE7m8CfYqt6Mx2Qspoa6XBu/Q30AYdahIS9tO2qopVrE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzr4/k2KGW0FzBNvP8sSmSGfUEFJVHowCT2rvuzpc+KULXKB5el
+	ICs7DEEdtTeCymSfkKCiHmLYu9yN60Fq/q8h6iIlbxpltpwN+85pVIiNSmL2
+X-Google-Smtp-Source: AGHT+IHCb5ynMAiB/31w71gRBMKLKUslkoaHFNjiKjrTQtOzXg4nFR61Fcu9vXRSV+KZt4NodBsYdQ==
+X-Received: by 2002:a05:690c:d8f:b0:6e7:e009:183e with SMTP id 00721157ae682-6e85814d515mr12062597b3.8.1729753287977;
+        Thu, 24 Oct 2024 00:01:27 -0700 (PDT)
+Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5d2e7easm18831407b3.131.2024.10.24.00.01.27
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 00:01:27 -0700 (PDT)
+Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e35f08e23eso5325127b3.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:01:27 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCXawpUDTkLlqlVsFEIYy44rLr1LnaF5zb0v+819ZcB2BKL8Lm56kdZLeA6HU09ktokJO2sRlCN3kXYo2BQ=@vger.kernel.org
+X-Received: by 2002:a05:690c:9b09:b0:6dd:ba22:d946 with SMTP id
+ 00721157ae682-6e858165118mr10839537b3.13.1729753286965; Thu, 24 Oct 2024
+ 00:01:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 2/7] dt-bindings: mfd: add maxim,max77705
-To: Dzmitry Sankouski <dsankouski@gmail.com>,
- Sebastian Reichel <sre@kernel.org>, Chanwoo Choi <cw00.choi@samsung.com>,
- Lee Jones <lee@kernel.org>, Rob Herring <robh@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>,
- Dmitry Torokhov <dmitry.torokhov@gmail.com>, Pavel Machek <pavel@ucw.cz>
-Cc: linux-pm@vger.kernel.org, linux-kernel@vger.kernel.org,
- devicetree@vger.kernel.org, linux-input@vger.kernel.org,
- linux-leds@vger.kernel.org
-References: <20241023-starqltechn_integration_upstream-v7-0-9bfaa3f4a1a0@gmail.com>
- <20241023-starqltechn_integration_upstream-v7-2-9bfaa3f4a1a0@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241023-starqltechn_integration_upstream-v7-2-9bfaa3f4a1a0@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <ZxZ8MStt4e8JXeJb@sashalap> <792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
+ <ZxdKwtTd7LvpieLK@infradead.org> <20241022041243.7f2e53ad@rorschach.local.home>
+ <ZxiN3aINYI4u8pRx@infradead.org> <20241023042004.405056f5@rorschach.local.home>
+ <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
+ <20241023051914.7f8cf758@rorschach.local.home> <8734km2lt7.fsf@mail.lhotse>
+ <20241024010103.238ef40b@rorschach.local.home> <07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
+ <20241024024928.6fb9d892@rorschach.local.home>
+In-Reply-To: <20241024024928.6fb9d892@rorschach.local.home>
+From: Geert Uytterhoeven <geert@linux-m68k.org>
+Date: Thu, 24 Oct 2024 09:01:15 +0200
+X-Gmail-Original-Message-ID: <CAMuHMdVLsLA97u4AVTA6=YKyfyWNrJOQk7S02s36AFTrFoUM3A@mail.gmail.com>
+Message-ID: <CAMuHMdVLsLA97u4AVTA6=YKyfyWNrJOQk7S02s36AFTrFoUM3A@mail.gmail.com>
+Subject: Re: linus-next: improving functional testing for to-be-merged pull requests
+To: Steven Rostedt <rostedt@goodmis.org>
+Cc: Guenter Roeck <linux@roeck-us.net>, Michael Ellerman <mpe@ellerman.id.au>, 
+	Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>, Sasha Levin <sashal@kernel.org>, 
+	torvalds@linux-foundation.org, ksummit@lists.linux.dev, 
+	linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 23/10/2024 21:42, Dzmitry Sankouski wrote:
-> Add maxim,max77705 core binding part.
-> 
-> Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
-> Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
-> ---
-> Changes in v6:
-> - unevaluatedProperties must be false
-> - drop excessive sentence from description,
->   just describe the device
-> - change leds compatible to maxim,max77705-rgb
+Hi Steven,
 
-Forgot about example...
+On Thu, Oct 24, 2024 at 8:49=E2=80=AFAM Steven Rostedt <rostedt@goodmis.org=
+> wrote:
+> On Wed, 23 Oct 2024 22:16:31 -0700
+> Guenter Roeck <linux@roeck-us.net> wrote:
+> > I do get notifications, so it is still running.
+> > Its configuration is (still) at https://github.com/intel/lkp-tests.git,
+> > so you can check yourself if your current repositories and branches are
+> > listed (and send a pull request to update it if needed). I see
+> >
+> > repo/linux/rostedt-kconfig:owner: Steven Rostedt <rostedt@goodmis.org>
+> > repo/linux/rostedt-ktest:owner: Steven Rostedt <rostedt@goodmis.org>
+> > repo/linux/rostedt-trace:owner: Steven Rostedt <rostedt@goodmis.org>
+> >
+> > so at least some testing should still happen. I did notice though
+> > that "notify_build_success_branch:" is only set in one of the files,
+> > so you might not get notified if a build was successful in the other
+> > two.
+>
+> Thanks for the update!
+>
+> Yeah, I started using topic branches (requested by Linus) and I didn't
+> update the success notifications. That explains why I don't receive
+> them anymore.
+>
+> Now I have to ask. What's the benefit of pushing to linux-next over
+> waiting for the zero-day bot?
 
-Best regards,
-Krzysztof
+On Thu, Oct 24, 2024 at 5:59=E2=80=AFAM Michael Ellerman <mpe@ellerman.id.a=
+u> wrote:
+> Several thousand build tests, across pretty much every architecture.
+>
+> And a few hundred boot tests, lots virtualised, but some on real HW.
+>
+> A single character typo in an #ifdef your testing doesn't cover can
+> break the build for lots of people ...
 
+Or a missing "static" for a dummy function.
+Or a plain 64-bit division.
+Or ...
+
+Gr{oetje,eeting}s,
+
+                        Geert
+
+--=20
+Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
+.org
+
+In personal conversations with technical people, I call myself a hacker. Bu=
+t
+when I'm talking to journalists I just say "programmer" or something like t=
+hat.
+                                -- Linus Torvalds
 
