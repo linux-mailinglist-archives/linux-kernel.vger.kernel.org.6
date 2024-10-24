@@ -1,114 +1,116 @@
-Return-Path: <linux-kernel+bounces-379925-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379926-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E218E9AE5E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:18:56 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id EF96E9AE5E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:19:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A1AF22885AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:18:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2C6381C214D5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:19:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21E1B1DF970;
-	Thu, 24 Oct 2024 13:18:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D7E401D8A12;
+	Thu, 24 Oct 2024 13:18:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rpT8pek0"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QS90Y9zu"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6F0D91DD88B;
-	Thu, 24 Oct 2024 13:18:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4090F1D63DB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:18:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775909; cv=none; b=UUHxrTAmOfqkrYf28+QeJKXU3pgKyktZ6dgcwIJj4oclZ68MylyynPO0V1Jvs6Legx3RkoA5Vwl7/wHEUgPyD5J2sy95A/KoitDcSEs2UpbQOoh5o34rEqCsFds7V8l6AvwJOz5srVHX81rvReFrSS4HDFljtgwojS+UdxTsePg=
+	t=1729775931; cv=none; b=o7wkuwuu0rRmSPK2Gxt+5Thp7talRK87CF5lQFoQqyykBwpwHVL1mRmWoPtAExrnZrf9Si+2a7GcmrfJYwH7zmJeAiNDXvi1gynhQwNWS2wxXcbAHWtXqzndLt339STar+LhKu/NCvJ8iglYoXt3cHn3619UVriacDEETN9iRbg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775909; c=relaxed/simple;
-	bh=fUPMtLGUu5qsQ9CvPJPbRbDf4Ywd2f07fy+PXcaOFUk=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=X1mqK6qGRdPdiLm7frwgUmkz6oeIndxX4Fz6LdZ8Du6kv3pLGMi9n3Mo/1UpP5xBPa2j7qxbb2BH1jq53SjsbpmsbluklFjoU+hvkQsPJmUcEhIPYFwK0k/Mv495kxYGKCpEQdh9xsC3CKmDtmwWzIWdti/wVjGVTqJqwpCT0Gg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rpT8pek0; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E3D40C4CEE8;
-	Thu, 24 Oct 2024 13:18:28 +0000 (UTC)
+	s=arc-20240116; t=1729775931; c=relaxed/simple;
+	bh=tyI7JDkp0t33YbBcSFvFoSSEBcFZuHm9pqI3LNWIbmk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ru9BAuYwKqKCf/yvonWgGSU/YuwgcLQI/Tf/VPGvMR6+uqRCVL478BCcZEUgkjbckUODpZNbzCq1JIygiV8/LOXuVHycD5TW5N5VEXHWwIWkultuVr+t7SKLKb5pfDA6JHTfRzXWx2n7WCYfLu6T4RURhFNp4Ucqg5Pzak+h6SQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QS90Y9zu; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E21B2C4CECC;
+	Thu, 24 Oct 2024 13:18:48 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729775908;
-	bh=fUPMtLGUu5qsQ9CvPJPbRbDf4Ywd2f07fy+PXcaOFUk=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=rpT8pek0qutK7KGKpdZ49JQUG2hi4UD5nDgICPm/dmLTHOG+cL8FJL+P4Xfv32fGh
-	 XbRZacCxhHu6q19EhTSlM7JHYBYRmHA2hjZuGllaHqZKrdoO/tAVIHwe6AnAXxaUP+
-	 YD2CV9Jf1pAtQwYt3lOjNi+EQQCSTcHGu/cqz1my9G89LJyhPrWVfJcJDs/iDVIOgi
-	 A2U/hmjXzqpkL8tofc8DGOs5/sQUhVLYDzBiASvYsF7kDLXYk+m0jf1qLiNajfK0tY
-	 ZLKOaTysRIQ4ZPwqgkLZB+CXkW4bVYzqgASHmHzJ6+ZIQQI3oUSl5NU+W5VMlTcV5k
-	 nw57M8vJtfIQw==
-Received: by mail-oi1-f176.google.com with SMTP id 5614622812f47-3e5ffea2699so917048b6e.1;
-        Thu, 24 Oct 2024 06:18:28 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUxnGdRmsU9f/dBI0+Yn5zLnRLu8OX31UI4sPXqFRE+hwk7hNYn1FFGoSXIgsbSd+m4QOZaRTS37aRn6X8=@vger.kernel.org, AJvYcCVGaI9bW665gMCEg0Mx2cdyskyYKQMGoIErbdVuvIqurV/uM/BJIorz0KFIrmyLFo8zSxwUxLtXxbI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyL4h38CvcLa7iAb5O75BuidJ2IgSCOP9OyhSs6RYvSE8ognBt1
-	27NBkigwuTnCTyJ+vCu4ogAhekixJvk7QpNn3FZB96pyT9WIU5sNQ/o+BrUjbvZUjzkxtg+4sfw
-	MmnVve8e+T/X28NQo6WImz3AheQ0=
-X-Google-Smtp-Source: AGHT+IGLRzCtSDhNTOWOusH4AqBYnt+g8QFbKTd3yubHvDvJVyXXGjbi9ShRWEWpLZclfZ3Cem/g7ViDIYj0SqVOi1Y=
-X-Received: by 2002:a05:6808:d52:b0:3e6:1f35:62c9 with SMTP id
- 5614622812f47-3e62c48defcmr1120934b6e.0.1729775908144; Thu, 24 Oct 2024
- 06:18:28 -0700 (PDT)
+	s=k20201202; t=1729775930;
+	bh=tyI7JDkp0t33YbBcSFvFoSSEBcFZuHm9pqI3LNWIbmk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QS90Y9zusgjWlncMcUS0Hbjl3NF3iem9EQ//727OBCCjvQDez0N0wvZ+uJbyDSkNE
+	 znswK6t/2WOAE99SVSXVgqhTjF9LvcsMadEB6PuS3kpZ4R+jQiuKrP4PqyfasG/Hsa
+	 9jjQZ6etYJ8fVt2RbYzBYWoBjK5ygLm34iBXHg9IR8zSEXtnXGFcxRn2kz7T6/0NLR
+	 ohxVEAd70vCT8nKCZERaWIwPhOLdBSsuk97wfmisdMoPaOoStt/20iEaQPkW7V8T8Q
+	 DvryfvWHJlDt2tXSqhLZkD6QlowlJeUkjmvEXRkx96RP7cNq45aB1UQOPKSqbmKxHP
+	 UhJCMKzyq9wtA==
+Date: Thu, 24 Oct 2024 14:18:45 +0100
+From: Will Deacon <will@kernel.org>
+To: John Hubbard <jhubbard@nvidia.com>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	David Hildenbrand <david@redhat.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Jordan Niethe <jniethe@nvidia.com>,
+	linux-arm-kernel@lists.infradead.org, x86@kernel.org,
+	linux-mm@kvack.org, LKML <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH] kaslr: rename physmem_end and PHYSMEM_END to
+ direct_map_physmem_end
+Message-ID: <20241024131844.GI30704@willie-the-truck>
+References: <20241009025024.89813-1-jhubbard@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
- <45265aca-7371-455f-819f-c4d68cbb089b@web.de> <9ba3fa17-57c3-41e9-9e19-33fa105a179e@linaro.org>
-In-Reply-To: <9ba3fa17-57c3-41e9-9e19-33fa105a179e@linaro.org>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 24 Oct 2024 15:18:16 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jWGdzakj8ob2otAO6auwGBvVsewujG-d9b1Z5nnO7Vkw@mail.gmail.com>
-Message-ID: <CAJZ5v0jWGdzakj8ob2otAO6auwGBvVsewujG-d9b1Z5nnO7Vkw@mail.gmail.com>
-Subject: Re: [PATCH] thermal/lib: Fix memory leak on error in thermal_genl_auto()
-To: Daniel Lezcano <daniel.lezcano@linaro.org>
-Cc: Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org, 
-	Lukasz Luba <lukasz.luba@arm.com>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	LKML <linux-kernel@vger.kernel.org>, Zhang Rui <rui.zhang@intel.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241009025024.89813-1-jhubbard@nvidia.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Oct 24, 2024 at 2:57=E2=80=AFPM Daniel Lezcano
-<daniel.lezcano@linaro.org> wrote:
->
-> On 24/10/2024 14:02, Markus Elfring wrote:
-> >> The function thermal_genl_auto() does not free the allocated message
-> >> in the error path. Fix that by putting a out label and jump to it
-> >> which will free the message instead of directly returning an error.
-> >
-> > Would you like to add any tags (like =E2=80=9CFixes=E2=80=9D and =E2=80=
-=9CCc=E2=80=9D) accordingly?
-> > https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree=
-/Documentation/process/submitting-patches.rst?h=3Dv6.12-rc4#n145
-> >
-> >
-> > =E2=80=A6
-> >> +++ b/tools/lib/thermal/commands.c
-> >> @@ -375,27 +375,30 @@ static thermal_error_t thermal_genl_auto(struct =
-thermal_handler *th, cmd_cb_t cm
-> >>                                       struct cmd_param *param,
-> >>                                       int cmd, int flags, void *arg)
-> >>   {
-> >> +    thermal_error_t ret =3D THERMAL_ERROR;
-> >>      struct nl_msg *msg;
-> >>      void *hdr;
-> >>
-> >>      msg =3D nlmsg_alloc();
-> >>      if (!msg)
-> >> -            return THERMAL_ERROR;
-> >> +            goto out;
-> > =E2=80=A6
-> >
-> > Is it really reasonable to pass a null pointer (from a failed function =
-call)
-> > to a subsequent nlmsg_free() call?
->
-> You are right, I should return here :S
+On Tue, Oct 08, 2024 at 07:50:24PM -0700, John Hubbard wrote:
+> For clarity. It's increasingly hard to reason about the code, when KASLR
+> is moving around the boundaries. In this case where KASLR is randomizing
+> the location of the kernel image within physical memory, the maximum
+> number of address bits for physical memory has not changed.
+> 
+> What has changed is the ending address of memory that is allowed to be
+> directly mapped by the kernel.
+> 
+> Let's name the variable, and the associated macro accordingly.
+> 
+> Also, enhance the comment above the direct_map_physmem_end definition,
+> to further clarify how this all works.
+> 
+> Cc: Thomas Gleixner <tglx@linutronix.de>
+> Cc: Alistair Popple <apopple@nvidia.com>
+> Cc: Jordan Niethe <jniethe@nvidia.com>
+> Cc: David Hildenbrand <david@redhat.com>
+> Signed-off-by: John Hubbard <jhubbard@nvidia.com>
+> ---
+> 
+> David Hildenbrand, I recall you had an unanswered question in this
+> vicinity [1] when tglx's recent kaslr fix was being reviewed. Maybe this
+> will help with that.
+> 
+> 
+> [1] https://lore.kernel.org/linux-mm/ee205448-5fdd-495e-9d7c-c8a2b59f9c9e@roeck-us.net/T/#mdf442f077c9023590e144dbed2b04a109793484d
+> 
+> thanks,
+> John Hubbard
+> 
+> 
+>  arch/arm64/include/asm/memory.h         |  2 +-
+>  arch/x86/include/asm/page_64.h          |  2 +-
+>  arch/x86/include/asm/pgtable_64_types.h |  2 +-
+>  arch/x86/mm/init_64.c                   |  2 +-
+>  arch/x86/mm/kaslr.c                     | 14 +++++++++-----
+>  include/linux/mm.h                      |  6 +++---
+>  kernel/resource.c                       |  4 ++--
+>  mm/memory_hotplug.c                     |  2 +-
+>  mm/sparse.c                             |  2 +-
+>  9 files changed, 20 insertions(+), 16 deletions(-)
 
-Do you want to respin it?
+For arm64:
 
-Alternatively, I can fix it up when applying the patch.
+Acked-by: Will Deacon <will@kernel.org>
+
+Will
 
