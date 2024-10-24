@@ -1,113 +1,144 @@
-Return-Path: <linux-kernel+bounces-380188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C6CA29AE9F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:10:57 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFE489AE9FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:12:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 040381C2509E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:10:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 975CF1F21BB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:12:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA9BA1EABC6;
-	Thu, 24 Oct 2024 15:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 027111F4708;
+	Thu, 24 Oct 2024 15:11:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="HM35wlmT"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.7])
+	dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b="goYxWV3v"
+Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 32DE81D63EC;
-	Thu, 24 Oct 2024 15:10:47 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D7C391EC01D;
+	Thu, 24 Oct 2024 15:11:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782650; cv=none; b=vCOLYc72vQaHsZoknqMCP/RIHtlebO0nHG02Vid20D1ky5nARqah1pGavG9syvYCmJBujbetaIVs+3CMP3Z2fb9SIUiYU1rNLL4g1DFrEA1/hgqZ3d3G84vjkbh7oIjLRoR0tenAhQQLDMU0coUctpkwzlozTRU1GuSykjpBnQc=
+	t=1729782697; cv=none; b=KDYHqNRKy4YeODSxCOz12kN9MEWZmIyr3mKsTetB6CguQclGtVxLjVKFuXM8Sd/GGiuQBseeYRqr9uuzpGMaPx3JPkTCHhcB9VeN7WipJI8s3qmhQbUp3kP+56i/ncCHfx53/MIC/hyBmhShN9Vkjmmq/JOnCUXJjUBB0RtIPcc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782650; c=relaxed/simple;
-	bh=fg2iUjB9ok9T9PqDKLYeVQmlV/E1hoeONZ0ZobczaDI=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=nspM+PZTmPqf5fIoI1hnzFyAqk76EEUPeahspkqs6bdqbUjL2JQBa0Jg8Lx75bAj68J4/1t6tHujCG9QybqxskD9aqfOaWiuDsx/0K5OhUS3mok2hZ49GdxhwYtMsqAhMOoV5LQycZ0f8N3LcYp5pnsNE8BAWMU2P2/BBEfBMio=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=HM35wlmT; arc=none smtp.client-ip=192.198.163.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729782648; x=1761318648;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=fg2iUjB9ok9T9PqDKLYeVQmlV/E1hoeONZ0ZobczaDI=;
-  b=HM35wlmTdG9o8PeJm2F0kEcClOUTU0GCrtOySnwfOb1yqVD+hlZ0Z9Lb
-   LPEtPEOkZlwkOnhzP2ike3g2A11xcGTZtNFhq08dqIHBzDsz2f3OgYyGK
-   dFWtIfTlGs7tBCU2PoW0xstFJnXOy+z0XAwIiAD+nHzuBAyvVsBGqBUhK
-   +dLsFHxhl0o2LEgygbVilhOw/O5jevZdlv9LQtaiAheA9YNH571zjBh+M
-   6vUQT5C0GRfpeNqqegDg7AbYukYT1kUnwS7VPEYn4/Wo/uChBPvEsnYZr
-   myQC+viejqY+rAGxKgda40A16HFqJ24j3nWhifz/xFFvtKyUTQuSdZ0+0
-   g==;
-X-CSE-ConnectionGUID: 387OYP2aTQ+O8odNVrx0QQ==
-X-CSE-MsgGUID: w/X7GDRJRA2M00aNmpSGAA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="54816190"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="54816190"
-Received: from fmviesa002.fm.intel.com ([10.60.135.142])
-  by fmvoesa101.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 08:10:48 -0700
-X-CSE-ConnectionGUID: Uy38wwZtQYWvaONhTs51WQ==
-X-CSE-MsgGUID: vcsXL/HhTgiDkIYxQf6tWQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="103933258"
-Received: from black.fi.intel.com ([10.237.72.28])
-  by fmviesa002.fm.intel.com with ESMTP; 24 Oct 2024 08:10:46 -0700
-Received: by black.fi.intel.com (Postfix, from userid 1003)
-	id E3472252; Thu, 24 Oct 2024 18:10:44 +0300 (EEST)
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Andy Shevchenko <andy@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>
-Subject: [PATCH v1 1/1] pinctrl: intel: Add a human readable decoder for pull bias values
-Date: Thu, 24 Oct 2024 18:10:44 +0300
-Message-ID: <20241024151044.4038250-1-andriy.shevchenko@linux.intel.com>
-X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
+	s=arc-20240116; t=1729782697; c=relaxed/simple;
+	bh=kupkq+e0iXwoyEx+Mu/kldwf8T6QO/wDfPkuWUHdpWg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b38tGRfpejwHPQcBDz4ejvl9cyMp0A7uX0I8RiXEHGf75sSP8rzcYlKB98R97qT0XMSYGMVPz+tK9UmXwHlCxQvW9tzgKCCdOkmHCL8yvBoCaqpjcYmvnwoe1v4wXfjr7mb1+GepooGeQArOR8chzrp3l5gPPb1Na973BBd5c6w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr; spf=pass smtp.mailfrom=gmx.fr; dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b=goYxWV3v; arc=none smtp.client-ip=212.227.17.22
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.fr
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.fr;
+	s=s31663417; t=1729782676; x=1730387476; i=benoit.monin@gmx.fr;
+	bh=h5r7XlNzCKWUXlhx2b6D+ImaHyu9K2mtKbQlo6p47pE=;
+	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
+	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
+	 content-transfer-encoding:content-type:date:from:message-id:
+	 mime-version:reply-to:subject:to;
+	b=goYxWV3v8zKbox0ZhWAeFTAV9qcOnLTw1PAK2ymprishR43fnggh86ry0ddK+v1e
+	 /KdheEkm4PZUOtRlMaEpkjeBmsPmEKLKJe5udqTbpl+BFVPc3PSEUT7fbQ1u9O4vC
+	 bgBnOTzXydiAiGg6C1hA9cvxQbwOGDS0ib/vpQ3YJpzBIdcUuBwX9/Fc6kwJjOD2l
+	 SdhEZHC7JXtRugEx3fXfa9ZEMFJRznqWW7u5rbojiEeEhnh3XE+1d/8onErtoQjzK
+	 7aNBvh7Jb1cq3nLFKuOaZVJ4nJkZISOsFO9uwVEiNWZKzUUTty7qGvA+OxCs4Bz3b
+	 WDxkR8ttXXlbewBexg==
+X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
+Received: from pianobar.pianonet ([176.145.30.241]) by mail.gmx.net (mrgmx104
+ [212.227.17.174]) with ESMTPSA (Nemesis) id 1MXXyJ-1tOXSG3Yw3-00PNjA; Thu, 24
+ Oct 2024 17:11:15 +0200
+From: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>
+To: =?UTF-8?q?Bj=C3=B8rn=20Mork?= <bjorn@mork.no>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org,
+	linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	=?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>
+Subject: [PATCH] net: usb: qmi_wwan: add Quectel RG650V
+Date: Thu, 24 Oct 2024 17:11:13 +0200
+Message-ID: <20241024151113.53203-1-benoit.monin@gmx.fr>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-Provags-ID: V03:K1:SoRCAwhh/gT1I0eJpud+LzerQvoUSVq4SKYdpFyeNZ2ddxstT4h
+ M8yJitFp95yViOgHaYoeaLHaqY+Q+e4XO2isOLss+pcf1kPH4n6stvv6gx8mIMeKxcQ2J1o
+ SBfKf20Y/n9HilZ99PE+lkMScGXMu8UDUcOz5QKILeqEzK6L+6IlokLAhFTq7JwunS52e+M
+ QnQvCJ1L2XTR35jVsAVXQ==
+X-Spam-Flag: NO
+UI-OutboundReport: notjunk:1;M01:P0:aS/qKiG/jn4=;ju14ffzvFIklat2khKgaHYdA3Vd
+ r74zdrPbaVrSVfu4uiESo6gppmha/+cCknsEBZtymEWPl8Y0ndOshGDe/ccXdkQRgeE86HWZ6
+ n/ETtorimTCUnowh2zSxvMZGT6tHUlj5uGgxqMapEU+q45Xai8NRqCSgunSKfGjE7f1IVfq4H
+ 2WWPVIWWE54sv54H32tBsXRPQI3O4ejBe0tpr3k5k0+iGMAudlK7r5BlVxUtMH3EdCQOXtYcH
+ A30dA3EAnN6nkBaltKt1oHHrq/lRrwYZ6u+nJ2sGpLcv+iRLhDntHLB5D7Rmbjn3jJl67scz6
+ t+eG+0voClLrYMZcKkhKObZZxXbE5vdPQtad3K96gm3vSHNdoEhLbQwr50vxtJkG65/aBspU9
+ XKOz7RedNJOY84uNVWNy+TE/3EN2Hm1I6NQ+KefiH5s21oS+KafrCZu1ptqYsInbSBMiYk0cF
+ tLqnYPn4Pv8e5eJCU8ZYFXtLtmJ6eC3I4uvLpt7e5BtcFVyrTEBtKPVhrxQ0JArv/mlDMTNRm
+ DR3FQzX7XRagywLG9XuDumORwkhRfDzNsVrr8e4bszWFjNOiHUUMu7viUhYpAz4C00Fl0SUQp
+ g8pYcrsCK2RjlQVRmav3YjgvlLUkx5oJvILUoiOuU57su1ANoD2WMCIBQ9hqZR+irTdrr2BEo
+ MMLtdPkILWq+qOoLnJuyuVFIX6cHdvpIl8nYILKSILVINYgEceeH7W75xrBk/fbD8oRTBkF6R
+ o5LIB+FHfJn2LwPo5umuD6Row4hGg5haHdR0e0o7SdIG/52JZjrUk5wxhftFA/Vmeo7f0+EXX
+ dr5rf3bbv5Ml0Mc/glzl3vZD67n002hTG3YpPR0EkQW68=
 
-Add a human readable decoder for pull bias values in the comment.
+Add support for Quectel RG650V which is based on Qualcomm SDX65 chip.
+The composition is DIAG / NMEA / AT / AT / QMI.
 
-Signed-off-by: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
----
- drivers/pinctrl/intel/pinctrl-intel.c | 12 ++++++++++++
- 1 file changed, 12 insertions(+)
+T:  Bus=3D02 Lev=3D01 Prnt=3D01 Port=3D03 Cnt=3D01 Dev#=3D  4 Spd=3D5000 M=
+xCh=3D 0
+D:  Ver=3D 3.20 Cls=3D00(>ifc ) Sub=3D00 Prot=3D00 MxPS=3D 9 #Cfgs=3D  1
+P:  Vendor=3D2c7c ProdID=3D0122 Rev=3D05.15
+S:  Manufacturer=3DQuectel
+S:  Product=3DRG650V-EU
+S:  SerialNumber=3Dxxxxxxx
+C:  #Ifs=3D 5 Cfg#=3D 1 Atr=3Da0 MxPwr=3D896mA
+I:  If#=3D 0 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3Dff Prot=3D30 Driver=
+=3Doption
+E:  Ad=3D01(O) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D81(I) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+I:  If#=3D 1 Alt=3D 0 #EPs=3D 2 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
+=3Doption
+E:  Ad=3D02(O) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D82(I) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+I:  If#=3D 2 Alt=3D 0 #EPs=3D 3 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
+=3Doption
+E:  Ad=3D03(O) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D83(I) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D84(I) Atr=3D03(Int.) MxPS=3D  10 Ivl=3D9ms
+I:  If#=3D 3 Alt=3D 0 #EPs=3D 3 Cls=3Dff(vend.) Sub=3D00 Prot=3D00 Driver=
+=3Doption
+E:  Ad=3D04(O) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D85(I) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D86(I) Atr=3D03(Int.) MxPS=3D  10 Ivl=3D9ms
+I:  If#=3D 4 Alt=3D 0 #EPs=3D 3 Cls=3Dff(vend.) Sub=3Dff Prot=3Dff Driver=
+=3Dqmi_wwan
+E:  Ad=3D05(O) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D87(I) Atr=3D02(Bulk) MxPS=3D1024 Ivl=3D0ms
+E:  Ad=3D88(I) Atr=3D03(Int.) MxPS=3D   8 Ivl=3D9ms
+Signed-off-by: Beno=C3=AEt Monin <benoit.monin@gmx.fr>
+=2D--
+ drivers/net/usb/qmi_wwan.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-diff --git a/drivers/pinctrl/intel/pinctrl-intel.c b/drivers/pinctrl/intel/pinctrl-intel.c
-index f6f6d3970d5d..86cabb73904f 100644
---- a/drivers/pinctrl/intel/pinctrl-intel.c
-+++ b/drivers/pinctrl/intel/pinctrl-intel.c
-@@ -85,6 +85,18 @@
- #define PADCFG1_TERM_UP			BIT(13)
- #define PADCFG1_TERM_SHIFT		10
- #define PADCFG1_TERM_MASK		GENMASK(12, 10)
-+/*
-+ * Bit 0  Bit 1  Bit 2			Value, Ohms
-+ *
-+ *   0      0      0			-
-+ *   0      0      1			20000
-+ *   0      1      0			5000
-+ *   0      1      1			~4000
-+ *   1      0      0			1000 (if supported)
-+ *   1      0      1			~952 (if supported)
-+ *   1      1      0			~833 (if supported)
-+ *   1      1      1			~800 (if supported)
-+ */
- #define PADCFG1_TERM_20K		BIT(2)
- #define PADCFG1_TERM_5K			BIT(1)
- #define PADCFG1_TERM_4K			(BIT(2) | BIT(1))
--- 
-2.43.0.rc1.1336.g36b5255a03ac
-
+diff --git a/drivers/net/usb/qmi_wwan.c b/drivers/net/usb/qmi_wwan.c
+index 4823dbdf5465..2b84d7211b13 100644
+=2D-- a/drivers/net/usb/qmi_wwan.c
++++ b/drivers/net/usb/qmi_wwan.c
+@@ -1076,6 +1076,7 @@ static const struct usb_device_id products[] =3D {
+ 		USB_DEVICE_AND_INTERFACE_INFO(0x03f0, 0x581d, USB_CLASS_VENDOR_SPEC, 1,=
+ 7),
+ 		.driver_info =3D (unsigned long)&qmi_wwan_info,
+ 	},
++	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0122)},	/* Quectel RG650V */
+ 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0125)},	/* Quectel EC25, EC20 R2.0  Mini P=
+CIe */
+ 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0306)},	/* Quectel EP06/EG06/EM06 */
+ 	{QMI_MATCH_FF_FF_FF(0x2c7c, 0x0512)},	/* Quectel EG12/EM12 */
 
