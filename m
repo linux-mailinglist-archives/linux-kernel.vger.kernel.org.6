@@ -1,212 +1,83 @@
-Return-Path: <linux-kernel+bounces-380193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDAF9AEA03
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:13:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C2B589AEA07
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2F0B25496
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:12:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 002191C22DA7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA8A1E7C00;
-	Thu, 24 Oct 2024 15:12:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB1891EABD9;
+	Thu, 24 Oct 2024 15:13:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w4NtCV+1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cHtBXh6T";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w4NtCV+1";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cHtBXh6T"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="mEORTeaL"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBF91C8788;
-	Thu, 24 Oct 2024 15:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 403E41E378A;
+	Thu, 24 Oct 2024 15:13:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782771; cv=none; b=pR3zFN7PDpMBLpCeTzajLO4I32DvzIwBBrBXEvP5V11F4t3olqOEX2ya0bEVcy88YB2eCnqG77XCL2uApDXwFlwIfxxWOExq72t6WdtKQBBFAeZy7CXnc9gPJinZXx3yFe2hTeD2nRa79rfrsEiev242eQfy7AtlKJu3IxFAk1I=
+	t=1729782810; cv=none; b=PEh4dPMSEAiv/BOJfNQMGpYtn5BUgRWg15cbTzw4quxe1FMjSCxVHpz0QZ4bTPjnUfJX/fWuRJt2796M7/MZm4HAMVb/5P4OkPbkTuqgXSNVCn9tsIyhGgKn/2eHQOyLCFziK8H6VYUFNwNILfpF6TneNYWuVX+mXcLw5uqTNCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782771; c=relaxed/simple;
-	bh=e5yZyDC8w+nQLKP9TChVKzM2wtrTM52rx9LU0Oy7c7w=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=VmwRW1P+kgho4W7FxUci6HLg57qp7Ht6v1MUDlBrVSCJVPzYauu3CsCUaRePEV/lzu9aG3cZAWuomvphyS/PuIyf4Ogc6lw/AKA9WYCsbHKM1TMsrxsXXf7KXbwF0bQ8B0hHNTNFExKlOp66hX2pbqGXkGCymnkU+C9xz/2VA+E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w4NtCV+1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cHtBXh6T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w4NtCV+1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cHtBXh6T; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 241C722153;
-	Thu, 24 Oct 2024 15:12:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729782765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
-	b=w4NtCV+1PXhRANojgclEsLkM44CgDPAFrn96mLtWcW6qnRmFTQKcozW1Dz7vlMgENemK/1
-	cbV3ECymKdxQxrNLrGkmtsu+/+m0Hy9fn7Kd4TWpDdtmG4UHdJ3TX9/KjUuFfNsak5mhin
-	xjo7jbcztY8JT360seRaAhz/26JC8io=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729782765;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
-	b=cHtBXh6Tz4HByMzeg7ITW0IwfohzkLaV6JNhFogCv4LeQf2cc666QVxm6eU4aBKNHkSp5l
-	A73bdgqmmvZl+/CQ==
-Authentication-Results: smtp-out1.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=w4NtCV+1;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cHtBXh6T
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729782765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
-	b=w4NtCV+1PXhRANojgclEsLkM44CgDPAFrn96mLtWcW6qnRmFTQKcozW1Dz7vlMgENemK/1
-	cbV3ECymKdxQxrNLrGkmtsu+/+m0Hy9fn7Kd4TWpDdtmG4UHdJ3TX9/KjUuFfNsak5mhin
-	xjo7jbcztY8JT360seRaAhz/26JC8io=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729782765;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
-	b=cHtBXh6Tz4HByMzeg7ITW0IwfohzkLaV6JNhFogCv4LeQf2cc666QVxm6eU4aBKNHkSp5l
-	A73bdgqmmvZl+/CQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 076881368E;
-	Thu, 24 Oct 2024 15:12:45 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id d4UWAe1jGmcDPwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 15:12:45 +0000
-From: Vlastimil Babka <vbabka@suse.cz>
-To: Andrew Morton <akpm@linux-foundation.org>,
-	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
-	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Cc: Jann Horn <jannh@google.com>,
-	Thorsten Leemhuis <regressions@leemhuis.info>,
-	linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org,
-	Petr Tesarik <ptesarik@suse.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Michael Matz <matz@suse.de>,
-	Gabriel Krisman Bertazi <gabriel@krisman.be>,
-	Matthias Bodenbinder <matthias@bodenbinder.de>,
-	stable@vger.kernel.org,
-	Rik van Riel <riel@surriel.com>,
-	Yang Shi <yang@os.amperecomputing.com>
-Subject: [PATCH hotfix 6.12] mm, mmap: limit THP aligment of anonymous mappings to PMD-aligned sizes
-Date: Thu, 24 Oct 2024 17:12:29 +0200
-Message-ID: <20241024151228.101841-2-vbabka@suse.cz>
-X-Mailer: git-send-email 2.47.0
-In-Reply-To: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
-References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
+	s=arc-20240116; t=1729782810; c=relaxed/simple;
+	bh=+2/uySlBuG14jAytYUtOfQ+CdOhbHG/L2RdziFggh6A=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Ib8pQoEEOC+zlE2/NDW8EcEey4bp/efksMpYkcHlDjPgOqJ9H0oim5XFEUagX7JmmcgO3Trkf6WYcOPg59hnA6Zmb/oZG23WBAZgc21jLPzktD5AaTQLvHOr7h+NyUmqmTBgZEXvjmTtybuR1T9jkyLEkDRYnfssb/rG7NQJwNo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=mEORTeaL; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2328C4CEC7;
+	Thu, 24 Oct 2024 15:13:26 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729782810;
+	bh=+2/uySlBuG14jAytYUtOfQ+CdOhbHG/L2RdziFggh6A=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=mEORTeaLkZDxVvyF3BOW9HHvNx88UMCv0Tio04GdcG9VUjPkPmTxhKP/Co7EVJD32
+	 r9vPeaGx3h3gqyxkt1RpipYVvpKutXryFUubGQbWCYuqwrXZjxGBGfbxeGst/oOJ+2
+	 ROO5RAnVoQaQI/YCWQYUN61BWcF4uXc12TR9br0cg73n/oho+O/Ltu3tNj9z7cHYT3
+	 HOkTfC4kUn1u467IAvWrouRYqaIvWWKcis6L2jpK4rDUi/zQD72zoF568gjE8Lbn9Y
+	 BtjkwNT4HfqsOpvzsR+XEuFMgpGMYVWePJ75CeR5UqygtPmsDMUdqjVeIs8Zg7syGV
+	 8fBS8pYX8gVvA==
+Date: Thu, 24 Oct 2024 16:13:24 +0100
+From: Simon Horman <horms@kernel.org>
+To: Rosen Penev <rosenp@gmail.com>
+Cc: netdev@vger.kernel.org, Michael Ellerman <mpe@ellerman.id.au>,
+	Nicholas Piggin <npiggin@gmail.com>,
+	Christophe Leroy <christophe.leroy@csgroup.eu>,
+	Naveen N Rao <naveen@kernel.org>,
+	Madhavan Srinivasan <maddy@linux.ibm.com>,
+	Haren Myneni <haren@linux.ibm.com>,
+	Rick Lindsley <ricklind@linux.ibm.com>,
+	Nick Child <nnac123@linux.ibm.com>,
+	Thomas Falcon <tlfalcon@linux.ibm.com>,
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"open list:LINUX FOR POWERPC (32-BIT AND 64-BIT)" <linuxppc-dev@lists.ozlabs.org>,
+	open list <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next] ibmvnic: use ethtool string helpers
+Message-ID: <20241024151324.GX1202098@kernel.org>
+References: <20241022203240.391648-1-rosenp@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 241C722153
-X-Spam-Score: -3.01
-X-Rspamd-Action: no action
-X-Spamd-Result: default: False [-3.01 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	MID_CONTAINS_FROM(1.00)[];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_MISSING_CHARSET(0.50)[];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	MIME_TRACE(0.00)[0:+];
-	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
-	RCPT_COUNT_TWELVE(0.00)[15];
-	ARC_NA(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
-	FROM_EQ_ENVFROM(0.00)[];
-	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	TO_DN_SOME(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.cz:dkim,suse.cz:mid,suse.cz:email]
-X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
-X-Spam-Flag: NO
-X-Spam-Level: 
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022203240.391648-1-rosenp@gmail.com>
 
-Since commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
-boundaries") a mmap() of anonymous memory without a specific address
-hint and of at least PMD_SIZE will be aligned to PMD so that it can
-benefit from a THP backing page.
+On Tue, Oct 22, 2024 at 01:32:40PM -0700, Rosen Penev wrote:
+> They are the prefered way to copy ethtool strings.
+> 
+> Avoids manually incrementing the data pointer.
+> 
+> Signed-off-by: Rosen Penev <rosenp@gmail.com>
 
-However this change has been shown to regress some workloads
-significantly. [1] reports regressions in various spec benchmarks, with
-up to 600% slowdown of the cactusBSSN benchmark on some platforms. The
-benchmark seems to create many mappings of 4632kB, which would have
-merged to a large THP-backed area before commit efa7df3e3bb5 and now
-they are fragmented to multiple areas each aligned to PMD boundary with
-gaps between. The regression then seems to be caused mainly due to the
-benchmark's memory access pattern suffering from TLB or cache aliasing
-due to the aligned boundaries of the individual areas.
-
-Another known regression bisected to commit efa7df3e3bb5 is darktable
-[2] [3] and early testing suggests this patch fixes the regression there
-as well.
-
-To fix the regression but still try to benefit from THP-friendly
-anonymous mapping alignment, add a condition that the size of the
-mapping must be a multiple of PMD size instead of at least PMD size. In
-case of many odd-sized mapping like the cactusBSSN creates, those will
-stop being aligned and with gaps between, and instead naturally merge
-again.
-
-Reported-by: Michael Matz <matz@suse.de>
-Debugged-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
-Closes: https://bugzilla.suse.com/show_bug.cgi?id=1229012 [1]
-Reported-by: Matthias Bodenbinder <matthias@bodenbinder.de>
-Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219366 [2]
-Closes: https://lore.kernel.org/all/2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info/ [3]
-Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
-Cc: <stable@vger.kernel.org>
-Cc: Rik van Riel <riel@surriel.com>
-Cc: Yang Shi <yang@os.amperecomputing.com>
-Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
----
- mm/mmap.c | 3 ++-
- 1 file changed, 2 insertions(+), 1 deletion(-)
-
-diff --git a/mm/mmap.c b/mm/mmap.c
-index 9c0fb43064b5..a5297cfb1dfc 100644
---- a/mm/mmap.c
-+++ b/mm/mmap.c
-@@ -900,7 +900,8 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
- 
- 	if (get_area) {
- 		addr = get_area(file, addr, len, pgoff, flags);
--	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
-+	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
-+		   && IS_ALIGNED(len, PMD_SIZE)) {
- 		/* Ensures that larger anonymous mappings are THP aligned. */
- 		addr = thp_get_unmapped_area_vmflags(file, addr, len,
- 						     pgoff, flags, vm_flags);
--- 
-2.47.0
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
