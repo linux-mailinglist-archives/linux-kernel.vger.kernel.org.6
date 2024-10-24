@@ -1,143 +1,260 @@
-Return-Path: <linux-kernel+bounces-379248-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379249-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2857E9ADC00
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:20:43 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id EE8D49ADC04
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:20:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 576491C21F42
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:20:42 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 728D91F22A8F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:20:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EF3817D340;
-	Thu, 24 Oct 2024 06:20:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 665CA176AB9;
+	Thu, 24 Oct 2024 06:20:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b="BvuGKwKm";
-	dkim=fail reason="key not found in DNS" (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b="tj/GtwTb"
-Received: from mx1.tq-group.com (mx1.tq-group.com [93.104.207.81])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OCbY/itl"
+Received: from mail-ej1-f52.google.com (mail-ej1-f52.google.com [209.85.218.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0CA93176AB9;
-	Thu, 24 Oct 2024 06:20:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=93.104.207.81
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6732517DFE4;
+	Thu, 24 Oct 2024 06:20:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750836; cv=none; b=Lt1yc/uQNTvwSMdNMb5LbFNt2OLIA0VRA8nSe7nEHd5smhSk5fTEiRq2LJ6xpUlgcwYJ3riGY4weNX9Ze2iyZlR/eUNaddIyufd1mgljkk9Wi9yRwgmc7bIQWH83OJQZXgPGPxEMNGrw7jNAHVmR+AFEtanIBnL40JZ0ufj2qFw=
+	t=1729750839; cv=none; b=EjExreW0OLY+Bzp6b77fQTIfigqSeJ36q/hQWCzD1lntaCREvepsWcMPYZFjzGH9Tqzjs/XpbORw4KlTfaVtyd7Nd4RW9Go6rBkii6hJaHSoIWvauOAcs8KrD0cAlBzyEHy1qleS0UfQ26hGQZv5g/qkBqzsmdoz3yLsete7VBw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750836; c=relaxed/simple;
-	bh=QihDfc0zG+yQhaMjUpH54lbu6ws7YJ3TULK9ohfEJH8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Gu7o5p3dLigwa8dDIQ2W8t1lYLnFNF2gQMl7gUYE6crXRmyL7JYUUwHFTM03MnGHPqJx51oAF2dqtcU5XPaxirHBE6i/5XQozmnwKqvasYKw5Q9bVaU9CbcoOr/MNalYbd7CeQXGML+APIBdVS75opAvnADKbBNm5Rb1+A0653w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com; spf=pass smtp.mailfrom=ew.tq-group.com; dkim=pass (2048-bit key) header.d=tq-group.com header.i=@tq-group.com header.b=BvuGKwKm; dkim=fail (0-bit key) header.d=ew.tq-group.com header.i=@ew.tq-group.com header.b=tj/GtwTb reason="key not found in DNS"; arc=none smtp.client-ip=93.104.207.81
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=ew.tq-group.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ew.tq-group.com
+	s=arc-20240116; t=1729750839; c=relaxed/simple;
+	bh=F6MJJnnDk0jnO26BG9wROdqp419N4B38VCFEsR5eJe4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rc68D7cRG3EkeeEwjbLE3UXy4xsrkf18PwsNWBFaAKb+3cfBUm4g8VU8KoXClqAPNNtPsYhvFsmO6XPjV3NVbo/cIyBpzX4xI169a7LMVX5S8Tcux0r089AdnAIrDfIstR9UcWxSYFgF9NyySaryigvdqqlBs0LlfOkdMACS6JA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OCbY/itl; arc=none smtp.client-ip=209.85.218.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f52.google.com with SMTP id a640c23a62f3a-a9a16b310f5so69029666b.0;
+        Wed, 23 Oct 2024 23:20:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=tq-group.com; i=@tq-group.com; q=dns/txt; s=key1;
-  t=1729750834; x=1761286834;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=pMfzafKl2ILaN+gwwJJ2kgFQaW+qwP6JHJK7Tm1XA7k=;
-  b=BvuGKwKmBqR0ViT+j0T+qpdwk6tCvtcVootVS2WxAkqxVk0QPke2GFeF
-   LbdvNzJu4JcNIEy8FHn7LW3bo4ZMRGLkw69FCj84CBbh8rH59kaHZitH+
-   E1uBXd7p2HgdG76ixJ0ejBRmcvfl3W9cx5BxM5oSvLwhz5eBERiBhYPP5
-   J/38ES9cOVjJqFyopOiG7RIEn1qWDECrjnBXJaNVtnpTHCeuo6jviw7zI
-   6O2l5Bu2fBu4iEhBgIZclVYuqNT9y/jTFKuZZY4EikAgFDYHTcK8Q7o0D
-   hAGhmU8yT7s4uJXUztV0zMIkGXL6cTPE9noVXA+4bQ8UHnUtntqreARit
-   g==;
-X-CSE-ConnectionGUID: 4t7TM3LLTQOFvyqzOO/sFg==
-X-CSE-MsgGUID: d+7AR5vQR0iTc9Djlj4mtQ==
-X-IronPort-AV: E=Sophos;i="6.11,228,1725314400"; 
-   d="scan'208";a="39639020"
-Received: from vmailcow01.tq-net.de ([10.150.86.48])
-  by mx1.tq-group.com with ESMTP; 24 Oct 2024 08:20:31 +0200
-X-CheckPoint: {6719E72F-37-65F98A6A-FADAF7F3}
-X-MAIL-CPID: 0FEE07E58522C4DBB3A2AD6C0E15FC33_5
-X-Control-Analysis: str=0001.0A682F22.6719E730.0018,ss=1,re=0.000,recu=0.000,reip=0.000,cl=1,cld=1,fgs=0
-Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 3E71C1634B9;
-	Thu, 24 Oct 2024 08:20:27 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ew.tq-group.com;
-	s=dkim; t=1729750827;
-	h=from:subject:date:message-id:to:cc:mime-version:content-type:
-	 content-transfer-encoding:in-reply-to:references;
-	bh=pMfzafKl2ILaN+gwwJJ2kgFQaW+qwP6JHJK7Tm1XA7k=;
-	b=tj/GtwTbL6gXVdNLJ7gPB655tbNog4tCcAeAwFEev5BSFEW/01KjHsPVrw5AurDWZSq5Nc
-	J9kwhzdgsloufRxgDEHn2v8ZZTd0oTQKtmBlj5eNNneJSK7KEsq3NOX4GsGoL9Ze7xgv+I
-	d2BS8HZuG6HUdT+tTyZfkmevhOkEYJJU9qDsFDQpnjZVaPwbinH5VsZF8u8QIIct580soN
-	SMzM7AmMZNSpqQ8USFf9sbBbdAKIzU+YthW/U/uLRiQaVXhVS/NdmXw5MqUG2RoojSaGbC
-	1uB4iT5YdDvhWRCIafEu+lajgKzXTiye8Y043ouc9VURWOApIre5e+o57c621Q==
-From: Alexander Stein <alexander.stein@ew.tq-group.com>
-To: tglx@linutronix.de, linux-arm-kernel@lists.infradead.org
-Cc: daniel.lezcano@linaro.org, robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org, Fabio Estevam <festevam@gmail.com>, Fabio Estevam <festevam@gmail.com>
-Subject: Re: [PATCH 2/2] dt-bindings: timer: fsl,imxgpt: Document fsl,imx35-gpt
-Date: Thu, 24 Oct 2024 08:20:26 +0200
-Message-ID: <2203796.irdbgypaU6@steina-w>
-Organization: TQ-Systems GmbH
-In-Reply-To: <20241023185841.1183706-2-festevam@gmail.com>
-References: <20241023185841.1183706-1-festevam@gmail.com> <20241023185841.1183706-2-festevam@gmail.com>
+        d=gmail.com; s=20230601; t=1729750836; x=1730355636; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=MHiB1nsK1qpZhm/FdPl8dF5UIwuidEAxiYymrmn4Sd0=;
+        b=OCbY/itl1m7epQHD0VDi+iBA4SugXfquNBpi5AIyzaDE/6NZz4cBlyB5p6fu7bUSd/
+         7/HRDtvLs0+Voh78qAyQor5gFeS73B+Ul05EXaTNlo4Tt40RkZhmP+Bkn8xO4i4tM1vz
+         YkakuVkJTrwNswc7hR8MqcIIEy4ajLabd2vk4M01KQQebHOPp+tnkXX0Qmg3ASC+5Rxm
+         0V+4PShiYrfNAbEwfxLiW1MuIe7FGlQbqd2Hf8XdT2ZPU5MFenG6DUWfCxX0LPm/CoqJ
+         /y3HHkmM/YU7jCeqI1HjY6UjNLkcab7qr2YwmKoATnCEPwD6ZkmhPGPijMpfD1fLxDEa
+         l9iA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729750836; x=1730355636;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=MHiB1nsK1qpZhm/FdPl8dF5UIwuidEAxiYymrmn4Sd0=;
+        b=OzLbi0RO2b6kFViz6QOLEPGpi2bC/0NHn7IyNuJFXymLXe57wjC8njK3S62E9BClSK
+         yxEXGiRrA7DlDM5IUWn/SoVcL9goidndbFcGUQ9LjTiKGBPoEZjWBFnQviqAL1dyiPC/
+         F5/E6q/IkmCL+SP0pQgGckx4X92/mnd9cUM+CiwLRa4Q2fO69mftzeZd0BrsSYqK8/NR
+         hTJVqGsbyHKAYCotdCt4w185wr9ELdukdRleUcjiot4NjClz5jBAaH66967Ef2OnLXjW
+         4FRJW0WM6xZvNglLnve+6u8BCKxvMpkSgPs20Wdua2pqYikeYTIBOc4FpohUZPlD3fzI
+         5DMg==
+X-Forwarded-Encrypted: i=1; AJvYcCV5+A2Rrghxn6YUaASYXfANFfeAJZqstqcR3UpLgvnGF8ixSOjzVHINkEJl2rnYSTWwB8H9wt2mytae2iKBdkTARe0=@vger.kernel.org, AJvYcCVHtxwGTTpm5rwjgfRIwkPmWkQlc0bE8psuNIy+60v9qB8160SRIejgVP/mLsHsv14cYpN7mQRlghzS7T8q@vger.kernel.org, AJvYcCWmAlRZiSgI3b448FhbmfvPz7JiIQZjA92mx+jZAug91yiR/U02DAEgjsWhZcfPwWbvX97QGk9OumPP@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywy40w8vJ3jbzQCLmQt3OjsTZcZ08Lw1Y4MvPe5dEq3NgSaw+al
+	eqRmwDxCSCE5G0/XhbbmcZabarfa4xSyjqx0zxbxTPHImCDO/O4a
+X-Google-Smtp-Source: AGHT+IE2ZpY7TmUgBuR96ZhsvqeyEqfMsfdiuqhfVmq7J7r5uGb4JyadGqwO6kl6EYjCqQuB82Uu0A==
+X-Received: by 2002:a17:906:7309:b0:a99:dde6:9f42 with SMTP id a640c23a62f3a-a9abf96ce04mr509757366b.47.1729750835227;
+        Wed, 23 Oct 2024 23:20:35 -0700 (PDT)
+Received: from [192.168.35.18] ([77.85.230.22])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91559dfcsm564188966b.132.2024.10.23.23.20.33
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 23:20:34 -0700 (PDT)
+Message-ID: <596cc7e3-ecba-40f4-a3c1-321c31c0240f@gmail.com>
+Date: Thu, 24 Oct 2024 09:20:32 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
-Content-Type: text/plain; charset="iso-8859-1"
-X-Last-TLS-Session-Version: TLSv1.3
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 12/12] arm64: dts: exynos: Add initial support for Samsung
+ Galaxy S9 (SM-G960F)
+To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
+ Alim Akhtar <alim.akhtar@samsung.com>,
+ Sylwester Nawrocki <s.nawrocki@samsung.com>,
+ Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
+ <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
+ Mark Rutland <mark.rutland@arm.com>
+Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
+ linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
+ Maksym Holovach <nergzd@nergzd723.xyz>
+References: <20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com>
+ <20241024-exynos9810-v1-12-ed14d0d60d08@gmail.com>
+Content-Language: en-US
+From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
+In-Reply-To: <20241024-exynos9810-v1-12-ed14d0d60d08@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Fabio,
 
-thanks for the patch.
-
-Am Mittwoch, 23. Oktober 2024, 20:58:41 CEST schrieb Fabio Estevam:
-> The i.MX35 General Purpose Timer is compatible with i.MX31.
->=20
-> Document the fsl,imx35-gpt compatible.
->=20
-> This fixes the following dt-schema warning:
->=20
-> timer@53f90000: compatible: 'oneOf' conditional failed, one must be fixed:
-> 	['fsl,imx35-gpt', 'fsl,imx31-gpt'] is too long
-> 	'fsl,imx1-gpt' was expected
-> 	'fsl,imx21-gpt' was expected
-> 	'fsl,imx27-gpt' was expected
-> 	'fsl,imx31-gpt' was expected
-> 	'fsl,imx35-gpt' is not one of ['fsl,imx25-gpt', 'fsl,imx50-gpt', 'fsl,im=
-x51-gpt', 'fsl,imx53-gpt', 'fsl,imx6q-gpt']
-> 	'fsl,imx6dl-gpt' was expected
-> 	'fsl,imx35-gpt' is not one of ['fsl,imx6sl-gpt', 'fsl,imx6sx-gpt', 'fsl,=
-imx8mp-gpt', 'fsl,imxrt1050-gpt', 'fsl,imxrt1170-gpt']
-> 	'fsl,imx35-gpt' is not one of ['fsl,imx6ul-gpt', 'fsl,imx7d-gpt']
-> 	'fsl,imx6sx-gpt' was expected
->=20
-> Signed-off-by: Fabio Estevam <festevam@gmail.com>
-
-Reviewed-by: Alexander Stein <alexander.stein@ew.tq-group.com>
-
+On 10/24/24 01:36, Markuss Broks wrote:
+> Samsung Galaxy S9 (SM-G960F), codenamed starlte, is a mobile phone
+> released in 2017. It has 4GB of RAM, 64GB of UFS storage, Exynos9810
+> SoC and 1440x2960 Super AMOLED display.
+>
+> This initial device tree enables the framebuffer pre-initialised
+> by bootloader and physical buttons of the device, with more support
+> to come in the future.
+>
+> Co-authored-by: Maksym Holovach <nergzd@nergzd723.xyz>
+> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
 > ---
->  Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml | 1 +
->  1 file changed, 1 insertion(+)
->=20
-> diff --git a/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml b/Do=
-cumentation/devicetree/bindings/timer/fsl,imxgpt.yaml
-> index a2fcb1e8e74e..9898dc7ea97b 100644
-> --- a/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
-> +++ b/Documentation/devicetree/bindings/timer/fsl,imxgpt.yaml
-> @@ -21,6 +21,7 @@ properties:
->        - items:
->            - enum:
->                - fsl,imx25-gpt
-> +              - fsl,imx35-gpt
->                - fsl,imx50-gpt
->                - fsl,imx51-gpt
->                - fsl,imx53-gpt
->=20
-
-
-=2D-=20
-TQ-Systems GmbH | M=FChlstra=DFe 2, Gut Delling | 82229 Seefeld, Germany
-Amtsgericht M=FCnchen, HRB 105018
-Gesch=E4ftsf=FChrer: Detlef Schneider, R=FCdiger Stahl, Stefan Schneider
-http://www.tq-group.com/
-
-
+>  arch/arm64/boot/dts/exynos/Makefile               |   1 +
+>  arch/arm64/boot/dts/exynos/exynos9810-starlte.dts | 119 ++++++++++++++++++++++
+>  2 files changed, 120 insertions(+)
+>
+> diff --git a/arch/arm64/boot/dts/exynos/Makefile b/arch/arm64/boot/dts/exynos/Makefile
+> index 7a934499b235892eef38cd926905e02f0ce08278..6760b3d59e819fb52bc8cf4dc6877a0b9db9ce47 100644
+> --- a/arch/arm64/boot/dts/exynos/Makefile
+> +++ b/arch/arm64/boot/dts/exynos/Makefile
+> @@ -8,6 +8,7 @@ dtb-$(CONFIG_ARCH_EXYNOS) += \
+>  	exynos7885-jackpotlte.dtb	\
+>  	exynos850-e850-96.dtb		\
+>  	exynos8895-dreamlte.dtb		\
+> +	exynos9810-starlte.dtb		\
+>  	exynos990-c1s.dtb		\
+>  	exynosautov9-sadk.dtb		\
+>  	exynosautov920-sadk.dtb
+> diff --git a/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts b/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts
+> new file mode 100644
+> index 0000000000000000000000000000000000000000..f3a1910402b8d686dd7bd156a691ec541e10ad08
+> --- /dev/null
+> +++ b/arch/arm64/boot/dts/exynos/exynos9810-starlte.dts
+> @@ -0,0 +1,119 @@
+> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
+> +/*
+> + * Samsung Galaxy S9 (starlte/SM-G960F) device tree source
+> + *
+> + * Copyright (c) 2024 Markuss Broks <markuss.broks@gmail.com>
+> + * Copyright (c) 2024 Maksym Holovach <nergzd@nergzd723.xyz>
+> + */
+> +
+> +/dts-v1/;
+> +#include "exynos9810.dtsi"
+> +#include <dt-bindings/gpio/gpio.h>
+> +#include <dt-bindings/input/input.h>
+> +
+> +/ {
+> +	model = "Samsung Galaxy S9 (SM-G960F)";
+> +	compatible = "samsung,starlte", "samsung,exynos9810";
+> +	chassis-type = "handset";
+> +
+> +	chosen {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		framebuffer@cc000000 {
+> +			compatible = "simple-framebuffer";
+> +			reg = <0x0 0xcc000000 (1440 * 2960 * 4)>;
+> +			width = <1440>;
+> +			height = <2960>;
+> +			stride = <(1440 * 4)>;
+> +			format = "a8r8g8b8";
+> +		};
+> +	};
+> +
+> +	memory@80000000 {
+> +		device_type = "memory";
+> +		reg = <0x0 0x80000000 0x3c800000>,
+> +		      <0x8 0x80000000 0x80000000>,
+> +		      <0x0 0xc0000000 0x20000000>,
+> +		      <0x0 0xe1900000 0x1e700000>;
+> +	};
+> +
+> +	reserved-memory {
+> +		#address-cells = <2>;
+> +		#size-cells = <1>;
+> +		ranges;
+> +
+> +		framebuffer@cc000000 {
+> +			reg = <0x0 0xcc000000 (1440 * 2960 * 4)>;
+> +			no-map;
+> +		};
+> +	};
+> +
+> +	gpio-keys {
+> +		compatible = "gpio-keys";
+> +
+> +		pinctrl-0 = <&key_voldown &key_volup &key_bixby &key_power>;
+Sort alphabetically the same way as the nodes below.
+> +		pinctrl-names = "default";
+> +
+> +		/* In stock firmware used for assistant. Map it as a camera button for now */
+> +		bixby-key {
+> +			label = "Bixby";
+Small nit: isn't it referred to as a "wink" button in downstream? Might be
+best to stay consistent with that, like exynos8895-dreamlte.
+> +			linux,code = <KEY_CAMERA>;
+> +			gpios = <&gpa0 6 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		power-key {
+> +			label = "Power";
+> +			linux,code = <KEY_POWER>;
+> +			gpios = <&gpa2 4 GPIO_ACTIVE_LOW>;
+> +			wakeup-source;
+> +		};
+> +
+> +		volup-key {
+> +			label = "Volume Up";
+> +			linux,code = <KEY_VOLUMEUP>;
+> +			gpios = <&gpa0 3 GPIO_ACTIVE_LOW>;
+> +		};
+> +
+> +		voldown-key {
+> +			label = "Volume Down";
+> +			linux,code = <KEY_VOLUMEDOWN>;
+> +			gpios = <&gpa0 4 GPIO_ACTIVE_LOW>;
+> +		};
+Sort the nodes alphabetically.
+> +	};
+> +};
+> +
+> +&oscclk {
+> +	clock-frequency = <26000000>;
+> +};
+> +
+> +&pinctrl_alive {
+> +	key_bixby: key-bixby-pins {
+> +		samsung,pins = "gpa0-6";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> +	};
+> +
+> +	key_volup: key-volup-pins {
+> +		samsung,pins = "gpa0-3";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> +	};
+> +
+> +	key_voldown: key-voldown-pins {
+> +		samsung,pins = "gpa0-4";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> +	};
+> +
+> +	key_power: key-power-pins {
+> +		samsung,pins = "gpa2-4";
+> +		samsung,pin-function = <EXYNOS_PIN_FUNC_EINT>;
+> +		samsung,pin-pud = <EXYNOS_PIN_PULL_UP>;
+> +		samsung,pin-drv = <EXYNOS5420_PIN_DRV_LV1>;
+> +	};
+Sort these too.
+> +};
+>
 
