@@ -1,167 +1,122 @@
-Return-Path: <linux-kernel+bounces-380204-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380205-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id F00FD9AEA29
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:17:18 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E6FF59AEA2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:18:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B45BC2826AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:17:17 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 252A51C22A39
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:18:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB781E25FA;
-	Thu, 24 Oct 2024 15:17:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6BFE1E379C;
+	Thu, 24 Oct 2024 15:18:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="jHIPwf0d"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="aaC+z8Bx"
+Received: from relay2-d.mail.gandi.net (relay2-d.mail.gandi.net [217.70.183.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F28AF15853B;
-	Thu, 24 Oct 2024 15:17:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF95158A31;
+	Thu, 24 Oct 2024 15:18:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729783031; cv=none; b=j4XC4H0Eq8uffbnsnsdoMlPt3PdrEw8cMwpKp0cBwgMeTk8RxX6DUrHuNsWEQ4MtqabuU+rilbXiQhS+n8F+OHL3jf0fl8/XbtO1yJs8YpFEfoB8LV8kkDEPM3+ROOQjH+2B+TRoQGOw5LS+IbAHzJc1X7ulWgLyWdfg0dezxXY=
+	t=1729783090; cv=none; b=Gi5sVlykeQt2f8Ev1oPBwH3ygFwHOecFoRISTMujfzKfyaMRBN8kDvYP5pS2y9O983luXJBdhezwMxD/cdefvaOe0zlD12Fcx6FO4DBC4aB2x0ZExITSfSNEJuFBUdyrwLsPyFDeIYW2HS26efSnATtj3MoUsG81S+UtefyMa+w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729783031; c=relaxed/simple;
-	bh=2Kve0loElZNKii6MgyGBUDusGqHjRRmkEVjHcH8MDHI=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=KSp9Hp6Z3gTLHu6civLdjS1LCM/4ExuogBoUqHZ88DdGZOf34H6sTTTrvVmxsMQrK+xFCv2J9ZfNPyxKHeb3zoCwmlQtlIg+OIywyF8mz7wQkV/AN6KXLC6f/cFN73x1ADnU0jr5euAQm1d5jml459B0qgkSkCzXH7wDSCvCceU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=jHIPwf0d; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729783027;
-	bh=2Kve0loElZNKii6MgyGBUDusGqHjRRmkEVjHcH8MDHI=;
-	h=Date:Subject:From:To:Cc:References:In-Reply-To:From;
-	b=jHIPwf0da3VkiA6MyWCQRxgWZMsLgxaXSmYoBtUKQPclhbCIjta2dEo48riMRAvS/
-	 IR60w0PmCG98ZQeCVU0WSbwYlOgmdZfTPQj3Ulwg6H5UDySFiXjF7RV/D5CskfYdoH
-	 5JjB74wb4Bd2kfaOTPYr4q2hUw1HX4TTho8rMLR40duK+qL98i98jnkZL1kCnMDNqx
-	 k27UlrSnqGk5PeTfaM/pEAip5Oa/4gRZTPjmc0Is219kemSiP6pkNXsqqNRYupcdJn
-	 u2rT9NPZjRqisz8L6AlvkoxqERXHP8TyyDLCwmgi5BHdltbvl9UpNpA0Pl1XDxsOB5
-	 z2hd18mJStVjA==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id A23C217E1543;
-	Thu, 24 Oct 2024 17:17:06 +0200 (CEST)
-Message-ID: <8fdeec5c-5de7-44ae-9086-7930d02d610e@collabora.com>
-Date: Thu, 24 Oct 2024 17:17:05 +0200
+	s=arc-20240116; t=1729783090; c=relaxed/simple;
+	bh=vfBgRDZICdBX7vrh3gWNdMs2YSr3+0qAdG2MPGNRhNQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=bca8sPa7Eu5vUuqZva/HJPtQCMIpS9Y4Atl1/9naNY3XmKcMRuz+JTBB8VBVV/1lI1Hr38eVI+7LmQVlg/afDuh5H8506f0KTRH8jOtCnJqt1Ix6RPuDhqbpr1q+whnWgBqdT1GHOCPLGVxcGO19wJ4LLcueiu1AD3ULJAkYt00=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=aaC+z8Bx; arc=none smtp.client-ip=217.70.183.194
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id DB6B740006;
+	Thu, 24 Oct 2024 15:18:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729783085;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=fxtvD6UgMPlmvoiFhQH9u7TUGjdN67dBAYP00fGP+aY=;
+	b=aaC+z8BxF4avkFVKeWLMEbY0mgSv+vWVLkuZQ9sliwVNLYISTUW0OmtyRpwspLo3lbllKO
+	B6bJHNeO4MA0oFuX2xQb3se/97J8iqv4Kc4Mf6G1lsucixXPrkK43FiV4gbnXyIPVV35tb
+	mUtgOuBgWonKp+GvSsOoyAAqEXK3IwWjcsRJ6TfOz4yXoQUXt92F4TlJBZQTqPcgCT3M8C
+	gemG9wAbBcSVRZ79o3EshmhODXkpsc/mmNulfTxQXQWb8pQiBLqr7eOrz653FaJce9cuGV
+	9I/A9uHDc16ZoAW+V3Pu6hTcIeb9FifcDkpwQ25Mv+s0EE7F0HxLkaX+BVefNQ==
+Date: Thu, 24 Oct 2024 17:18:02 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Simon Horman <horms@kernel.org>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, thomas.petazzoni@bootlin.com, "David S.
+ Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>, Jakub
+ Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, Jonathan
+ Corbet <corbet@lwn.net>
+Subject: Re: [PATCH net-next] Documentation: networking: Add missing PHY_GET
+ command in the message list
+Message-ID: <20241024171802.4e0f0110@kmaincent-XPS-13-7390>
+In-Reply-To: <20241024145223.GR1202098@kernel.org>
+References: <20241023141559.100973-1-kory.maincent@bootlin.com>
+	<20241024145223.GR1202098@kernel.org>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/3] pinctrl: mediatek: paris: Expose more
- configurations to GPIO set_config
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>,
- Sean Wang <sean.wang@kernel.org>, Linus Walleij <linus.walleij@linaro.org>,
- Matthias Brugger <matthias.bgg@gmail.com>,
- Bamvor Jian Zhang <bamv2005@gmail.com>, Shuah Khan <shuah@kernel.org>
-Cc: kernel@collabora.com, linux-mediatek@lists.infradead.org,
- linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kselftest@vger.kernel.org,
- kernelci@lists.linux.dev
-References: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
- <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
- <01020191e0901d10-d427a5dd-af4e-4ecf-99e1-4bb051ad1475-000000@eu-west-1.amazonses.com>
-Content-Language: en-US
-In-Reply-To: <01020191e0901d10-d427a5dd-af4e-4ecf-99e1-4bb051ad1475-000000@eu-west-1.amazonses.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Il 11/09/24 12:10, AngeloGioacchino Del Regno ha scritto:
-> Il 09/09/24 20:37, Nícolas F. R. A. Prado ha scritto:
->> Currently the set_config callback in the gpio_chip registered by the
->> pinctrl_paris driver only supports PIN_CONFIG_INPUT_DEBOUNCE, despite
-> 
-> [...] only supports operations configuring the input debounce parameter
-> of the EINT controller and denies configuring params on the other AP GPIOs [...]
-> 
-> (reword as needed)
-> 
->> many other configurations already being implemented and available
->> through the pinctrl API for configuration of pins by the Devicetree and
->> other drivers.
->>
->> Expose all configurations currently implemented through the GPIO API so
->> they can also be set from userspace, which is particularly useful to
->> allow testing them from userspace.
->>
->> Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
->> ---
->>   drivers/pinctrl/mediatek/pinctrl-paris.c | 20 ++++++++++----------
-> 
-> You can do the same for pinctrl-moore too, it's trivial.
-> 
-> Other than that, I agree about performing this change, as this may be useful
-> for more than just testing.
-> 
+On Thu, 24 Oct 2024 15:52:23 +0100
+Simon Horman <horms@kernel.org> wrote:
 
-Nicolas, please don't forget to respin this patch.
+> On Wed, Oct 23, 2024 at 04:15:58PM +0200, Kory Maincent wrote:
+> > ETHTOOL_MSG_PHY_GET/GET_REPLY/NTF is missing in the ethtool message lis=
+t.
+> > Add it to the ethool netlink documentation.
+> >=20
+> > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
+> > ---
+> >  Documentation/networking/ethtool-netlink.rst | 3 +++
+> >  1 file changed, 3 insertions(+)
+> >=20
+> > diff --git a/Documentation/networking/ethtool-netlink.rst
+> > b/Documentation/networking/ethtool-netlink.rst index
+> > 295563e91082..70ecc3821007 100644 ---
+> > a/Documentation/networking/ethtool-netlink.rst +++
+> > b/Documentation/networking/ethtool-netlink.rst @@ -236,6 +236,7 @@
+> > Userspace to kernel: ``ETHTOOL_MSG_MM_GET``                get MAC merge
+> > layer state ``ETHTOOL_MSG_MM_SET``                set MAC merge layer
+> > parameters ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``   flash transceiver modu=
+le
+> > firmware
+> > +  ``ETHTOOL_MSG_PHY_GET``               get Ethernet PHY information
+> >    =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D =3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =20
+> >  Kernel to userspace:
+> > @@ -283,6 +284,8 @@ Kernel to userspace:
+> >    ``ETHTOOL_MSG_PLCA_NTF``                 PLCA RS parameters
+> >    ``ETHTOOL_MSG_MM_GET_REPLY``             MAC merge layer status
+> >    ``ETHTOOL_MSG_MODULE_FW_FLASH_NTF``      transceiver module flash up=
+dates
+> > +  ``ETHTOOL_MSG_PHY_GET_REPLY``            Ethernet PHY information
+> > +  ``ETHTOOL_MSG_PHY_NTF``                  Ethernet PHY information =20
+>=20
+> I wonder if ETHTOOL_MSG_PHY_NTF should be removed.
+> It doesn't seem to be used anywhere.
 
-Thanks,
-Angelo
+We can't, as it is in the ethtool UAPI. Also I believe Maxime will use it on
+later patch series. Maxime, you confirm?
 
-
->>   1 file changed, 10 insertions(+), 10 deletions(-)
->>
->> diff --git a/drivers/pinctrl/mediatek/pinctrl-paris.c b/drivers/pinctrl/mediatek/ 
->> pinctrl-paris.c
->> index e12316c42698..668f8055a544 100644
->> --- a/drivers/pinctrl/mediatek/pinctrl-paris.c
->> +++ b/drivers/pinctrl/mediatek/pinctrl-paris.c
->> @@ -255,10 +255,9 @@ static int mtk_pinconf_get(struct pinctrl_dev *pctldev,
->>       return err;
->>   }
->> -static int mtk_pinconf_set(struct pinctrl_dev *pctldev, unsigned int pin,
->> +static int mtk_pinconf_set(struct mtk_pinctrl *hw, unsigned int pin,
->>                  enum pin_config_param param, u32 arg)
->>   {
->> -    struct mtk_pinctrl *hw = pinctrl_dev_get_drvdata(pctldev);
->>       const struct mtk_pin_desc *desc;
->>       int err = -ENOTSUPP;
->>       u32 reg;
->> @@ -795,7 +794,7 @@ static int mtk_pconf_group_set(struct pinctrl_dev *pctldev, 
->> unsigned group,
->>       int i, ret;
->>       for (i = 0; i < num_configs; i++) {
->> -        ret = mtk_pinconf_set(pctldev, grp->pin,
->> +        ret = mtk_pinconf_set(hw, grp->pin,
->>                         pinconf_to_config_param(configs[i]),
->>                         pinconf_to_config_argument(configs[i]));
->>           if (ret < 0)
->> @@ -937,18 +936,19 @@ static int mtk_gpio_set_config(struct gpio_chip *chip, 
->> unsigned int offset,
->>   {
->>       struct mtk_pinctrl *hw = gpiochip_get_data(chip);
->>       const struct mtk_pin_desc *desc;
->> -    u32 debounce;
->> +    enum pin_config_param param = pinconf_to_config_param(config);
->> +    u32 arg = pinconf_to_config_argument(config);
->>       desc = (const struct mtk_pin_desc *)&hw->soc->pins[offset];
->> -    if (!hw->eint ||
->> -        pinconf_to_config_param(config) != PIN_CONFIG_INPUT_DEBOUNCE ||
->> -        desc->eint.eint_n == EINT_NA)
->> -        return -ENOTSUPP;
->> +    if (param == PIN_CONFIG_INPUT_DEBOUNCE) {
->> +        if (!hw->eint || desc->eint.eint_n == EINT_NA)
->> +            return -ENOTSUPP;
->> -    debounce = pinconf_to_config_argument(config);
->> +        return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, arg);
->> +    }
->> -    return mtk_eint_set_debounce(hw->eint, desc->eint.eint_n, debounce);
->> +    return mtk_pinconf_set(hw, offset, param, arg);
->>   }
->>   static int mtk_build_gpiochip(struct mtk_pinctrl *hw)
->>
-> 
-> 
-
-
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
