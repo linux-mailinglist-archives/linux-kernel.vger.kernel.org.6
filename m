@@ -1,153 +1,166 @@
-Return-Path: <linux-kernel+bounces-380490-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380491-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27DF89AEF74
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:13:58 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF889AEF76
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:14:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6FDDAB251C1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:13:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9E7741F21D41
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:14:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D0FCE1FF7B9;
-	Thu, 24 Oct 2024 18:13:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9974A200105;
+	Thu, 24 Oct 2024 18:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="GK0OpRkA"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="Kc+xie/j"
+Received: from mail-lj1-f171.google.com (mail-lj1-f171.google.com [209.85.208.171])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CBB02003C7
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:13:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3391F1FF7B7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:13:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.171
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729793615; cv=none; b=fK62C5AN0D7BKjQ6AcQTet9v3yN4py/5HNj5x81kHshfVdBoO4qyqAe/2I5OhqEI8bizUL0JeYNiuJWTHxcQrapq3lq88HMc9BQz6RjySSOAaHUPQNXrNd8eL+sLzI5W2DUvwF9fDgiKQS9CN6M1TmkxWxDqFuKK8YkATWrAzjQ=
+	t=1729793638; cv=none; b=cbI3+KzdmLCx5WTWEB1y9kKZDJPpms5cXSatx+Z5bvYikB4izdYU8xYlXI1wAzRhpWgqDtvm49h6pxi+2VRdiqg0RPcHH4J7/9oG4nX3G85G6f3xI9kBLUufpbjIY3gkODg2NltbEeCXYXNBIeeFj7J5hJ140gKSuGnZrVV1TX4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729793615; c=relaxed/simple;
-	bh=0gLe6NHOG92pQEGjjPof1iR7mZJaLcKflve/uEao75k=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=U1OyI7lOpU8Hu6TYWLEI/4sm7akOYWqInQXe2V8HzEiikt725kqjcpLMhQNJn2IKkGEU0wtuZV/VrrfQxLVPT0TjiB/6REbDW4O+8p9iYmQloQEgSJk35Q0w6K3G0an7gMigt3YKDcI4lRPLYug833SSeou/nvg7KULKkBmSLX8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=GK0OpRkA; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a3b0247d67so4749005ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:13:33 -0700 (PDT)
+	s=arc-20240116; t=1729793638; c=relaxed/simple;
+	bh=BpejwGN5VDXOYy7zfQT+/E1eqgcN84fFNF2NDn0BsrQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kN2o9umLvGv3M9fIJ1aEaKqEhAw3qtJ+ZnOwlCrVgFuveJk9ciiIV/y9xtBQMO105lbGTXbc7lzFc1fobnOBQxYTyeCm1dkyp6zxcx8/cBBP8YuxLiNgCiSSEfj38HzZ3ULX4rVlKscJyOtr9UfrNfCMrXpucNbDSYV77ErYCz8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=Kc+xie/j; arc=none smtp.client-ip=209.85.208.171
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-lj1-f171.google.com with SMTP id 38308e7fff4ca-2fb51e00c05so18969381fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:13:55 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729793612; x=1730398412; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=KElvkcoCdWuugkIgjm4VYhnrKDOwYCGs3Tu2Zr3567Y=;
-        b=GK0OpRkARzvLpaXcTth0PS1XEFUGXNYjgk5DQvOJncQd4jkA7tVPjonn7CTWasitt5
-         7ZjUyJX5ESggZmEekBOUuZ/sK7iZEaaeQXCj5p7CcbXnekP1Ln5S7BMPb+1O5b3mZOf/
-         68GAbtWf5/EwozezFxMD83OocIv6IAAhGFe3LvK4DF8Q6ZtHweV1LXLCDwpF0bn7uL8r
-         9JszFhCnXZke1OwL8OUG2b/JM49nnYXXSjhLgCkUMOx3OpIjMUeY2CfSt3lJvckdj8Cs
-         rLJhO+sX92oH//YhYO+MgR6PCfQAYl2XXFhmqnWpCh5A0MIwBi6Irh0DFZGB4hDj9L5q
-         tqvQ==
+        d=linux-foundation.org; s=google; t=1729793634; x=1730398434; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=+DW+8x8NHe5NzA/ffifTMltnL9SvM451tK6ilFS4i/A=;
+        b=Kc+xie/ji4WoYfxX5pqcy6rE+E6sf8WiSEK3SdMc3ALO1N5IX6MEI8NPMwYwuXXAvs
+         G+dzUs3dgjaAijdUSLU8ltPEMSOj1YJjoC3Updf9EzYqh9oRftvTQUfxV3nnLYqVgGi3
+         x+nT5pmed+LUbOXdOjeECuyl2yhY5ma1QUaaA=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729793612; x=1730398412;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=KElvkcoCdWuugkIgjm4VYhnrKDOwYCGs3Tu2Zr3567Y=;
-        b=TsjJLqyGST+FQ5husHWmddlHVVIIpeXg9cpN6haOKhAMOAL28bbOl1ALMCRSY92ctw
-         N7hNoff/WDycqFRE5HSL3JZY1g2/nk8SHdzDR+N4ybaM9INth5cxPeXR7mv37X9BmVkU
-         R0dghXGYqvBIinrM0QENZsqXcGAaFl0V0FYuqCMlPfJ1zNh/8GW3xdcesyZc2bWDqvwT
-         o3u/XfbNXMIodATkaHXSvV0U1+lE6RFxlnE84UuR7+YHOhbdRNvrBQWuFEgjfI/go2vl
-         m1Wa3PTkPiRTtAonUOmSs7R5vI4dd7NPpy5dYgh5BYfDFsbqk7BhWBKwc8EMJUPzflU1
-         jqPQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUzK5sEfxqt21Q3Wmkcax3A3hyOQTKn9nHRFAg4RA4+0HArqG38gMdgCB5ha1H+8RJ3FQyB+SCARrcRn60=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yw+JrNmMvQw2CsLnpjQcwDr5uJ3AOv0zb2zNq1KbzPun+NdwpYM
-	s5eBmGKR5DHD3Nm72v935xZu1MY/C9+yQPEQkd3D5zSvahB8iB5O
-X-Google-Smtp-Source: AGHT+IEO8kuJdouS8g34Z/zlGvWlpr/YHS3v9uYxgiaFsqsdvu/XAX2S1QCl8xQXiByFKTdke7/H6Q==
-X-Received: by 2002:a05:6e02:12cd:b0:3a3:67b1:3080 with SMTP id e9e14a558f8ab-3a4d595c67amr75181115ab.7.1729793612093;
-        Thu, 24 Oct 2024 11:13:32 -0700 (PDT)
-Received: from eqbm-smc020.dtc.local ([149.97.161.244])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeaafb669sm8847432a12.7.2024.10.24.11.13.30
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 11:13:31 -0700 (PDT)
-Date: Thu, 24 Oct 2024 11:13:29 -0700
-From: Dongjoo Seo <dongjoo.linux.dev@gmail.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, dave@stgolabs.net,
-	dan.j.williams@intel.com, nifan@outlook.com,
-	a.manzanares@samsung.com
-Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
-Message-ID: <ZxqOSbTa2z2JgOFf@eqbm-smc020.dtc.local>
-References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
- <Zxk6bHlrP5S_0LBK@tiehlicka>
- <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
- <Zxls4HqdkV_yBYxZ@tiehlicka>
- <Zxl1eOooy5lwJwSo@eqbm-smc020.dtc.local>
- <Zxl3fB9FVz5i1huh@tiehlicka>
- <ZxnTDYiQWU45eX-Y@eqbm-smc020.dtc.local>
- <ZxoEWBakAv64wfhD@tiehlicka>
+        d=1e100.net; s=20230601; t=1729793634; x=1730398434;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=+DW+8x8NHe5NzA/ffifTMltnL9SvM451tK6ilFS4i/A=;
+        b=oMn5It8toufr0AFNhOIto9/NN0hppqRCq4atqMidNMCYtFRkVkLtP7hX5sQIm51MTQ
+         vO5cHjbH6TSIOt+jh3jLNnrrw8FDzvT6ayW13d7SHm45tLP1Y1QJWpyWylzBtwNwAjAJ
+         PSCiKo0T3X8Yjk0KLMrIe1OqWEMGrDRnzgwsOD7oxomZiTLcNhQ7MS0ZU33Uws6oGSTU
+         YiFgC4bBa1xH6PIZLPOhFesprcaWPT3HjYX6nrIUNVaQ5ZVneadnvK15uNWShYJdmSRl
+         O2Su54xUJa98Uw4W0Fk8m1WuMohETt39TGz2aYA/D7houSu6qxY0zML6f+yy/BQT5+fS
+         YwUw==
+X-Gm-Message-State: AOJu0YwhjdrqJMKXMAetwSyN1q9nIGev+wsUd4JIc/k5Dn541slNg6uC
+	nVaJlXjyB0atxCk9CHm2Bi5AVUWcMWpHhXgButhBbgd3y/vMvsZpVa4wiwQBnZpFFMNkbriRYxi
+	nR5C5ew==
+X-Google-Smtp-Source: AGHT+IHrPoX5V+iJk01KHEJUE/cCGy3dY3z2qCLPyyYes9iSGCMyBZc2vL17ddkisT2BVQRM3gRKpw==
+X-Received: by 2002:a2e:bc1d:0:b0:2fa:d84a:bda5 with SMTP id 38308e7fff4ca-2fc9d2e529dmr64751651fa.7.1729793633864;
+        Thu, 24 Oct 2024 11:13:53 -0700 (PDT)
+Received: from mail-lj1-f172.google.com (mail-lj1-f172.google.com. [209.85.208.172])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9adf7bc2sm14704661fa.99.2024.10.24.11.13.52
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 11:13:52 -0700 (PDT)
+Received: by mail-lj1-f172.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso19706231fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:13:52 -0700 (PDT)
+X-Received: by 2002:a2e:be85:0:b0:2fa:d4ef:f234 with SMTP id
+ 38308e7fff4ca-2fc9d2e4e0cmr60775501fa.1.1729793632223; Thu, 24 Oct 2024
+ 11:13:52 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZxoEWBakAv64wfhD@tiehlicka>
+References: <20241024013214.129639-1-torvalds@linux-foundation.org>
+ <20241024110822.GBZxoqppmxp0xxG7ew@fat_crate.local> <CAHk-=wgynHGhG9dzwRdySJSHZTOCp9jBHChomEF-mERJmsUeQg@mail.gmail.com>
+In-Reply-To: <CAHk-=wgynHGhG9dzwRdySJSHZTOCp9jBHChomEF-mERJmsUeQg@mail.gmail.com>
+From: Linus Torvalds <torvalds@linux-foundation.org>
+Date: Thu, 24 Oct 2024 11:13:35 -0700
+X-Gmail-Original-Message-ID: <CAHk-=wjBkvHNTy3orkjw=2GH25S4MSFWesSjni2zZNW2+gjomg@mail.gmail.com>
+Message-ID: <CAHk-=wjBkvHNTy3orkjw=2GH25S4MSFWesSjni2zZNW2+gjomg@mail.gmail.com>
+Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation issue
+To: Borislav Petkov <bp@alien8.de>
+Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, 
+	Andrew Cooper <andrew.cooper3@citrix.com>, Josh Poimboeuf <jpoimboe@kernel.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 24, 2024 at 10:24:56AM +0200, Michal Hocko wrote:
-> On Wed 23-10-24 21:54:37, Dongjoo Seo wrote:
-> > On Thu, Oct 24, 2024 at 12:23:56AM +0200, Michal Hocko wrote:
-> > > On Wed 23-10-24 15:15:20, Dongjoo Seo wrote:
-> > > > Hi Andrew, Michal,
-> > > > 
-> > > > Thanks for the feedback.
-> > > > 
-> > > > The issue is that CPU-less nodes can lead to incorrect NUMA stats.
-> > > > For example, NUMA_HIT may incorrectly increase for CPU-less nodes
-> > > > because the current logic doesn't account for whether a node has CPUs.
-> > > 
-> > > Define incorrect
-> > > 
-> > > Current semantic doesn't really care about cpu less NUMA nodes because
-> > > current means whatever is required AFIU. This is certainly a long term
-> > 
-> > I agree that, in the long term, special logging for preferred_zone 
-> > and a separate counter might be necessary for CPU-less nodes.
-> > 
-> > > semantic. Why does this need to change and why it makes sense to 
-> > > pre-existing users?
-> > 
-> > This patch doesn't change existing logic; the additional logic only 
-> > applies when a CPU-less node is present, so there shouldn't be 
-> > concerns for pre-existing users. Currently, the NUMA stats for 
-> > configurations with CPU-less nodes are incorrect, as allocations
-> > are not properly accounted for.
-> > 
-> > I believe this approach improves logging accuracy with minimal impact
-> > on the memory allocation path, but I'm open to alternative solutions.
-> > This isn't the only way to address the issue—any suggestions?
-> 
-> I still do not understand the actual problem. CPU-less nodes are nothing
-> really special. They just never have local allocations for obvious
-> reasons. NUMA_HIT which your patch is special casing has a very well
-> defined meaning and that is that the memory allocated matches the
-> preferred node. That doesn't have any notion of CPU at all. Say somebody
-> explicitly requests to allocate from a CPU less node. Why should you
-> consider thiat as NUMA_OTHER just because that node has no CPUs? That
-> just seems completely wrong.
+On Thu, 24 Oct 2024 at 10:53, Linus Torvalds
+<torvalds@linux-foundation.org> wrote:
+>
+> >
+> >         asm("cmp %[ptr],%[ret]\n\t"
+> >             "sbb %[ret],%[ret]\n\t"
+> >             "or  %[ptr],%[ret]"
+> >                 : [ret] "=r" (ret)
+> >                 : [ptr] "r" (ptr),
+> >                   "0" (runtime_const_ptr(USER_PTR_MAX)));
+>
+> Will do at least for the newlines.
 
-Thank you for your feedback. After reviewing ur reply and [1], I realize 
-my misunderstanding of numa_* stats. I mistakenly assumed node referred to
-CPU locality. The current logic is indeed memory-centric and operates 
-correctly as it is. 
-I appreciate the clarification, and I now understand that no changes are 
-needed to special case CPU-less nodes in this context. 
+Actually, I should also just remove the "or" and move that into C
+code. It will allow the compiler to decide which way it wants to do
+the bitwise 'or', which means that the compiler can pick whichever
+output register is a better choice.
 
-Thanks again for pointing this out.
+Probably never matters in practice, but leaving decisions like that to
+the compiler and avoiding one more fixed asm instruction is a good
+thing.
 
-[1] https://docs.kernel.org/admin-guide/numastat.html
+It does result in a few more casts on the C side, since you can't just
+do bitwise 'or' on a pointer, but I think it's still the right thing
+to do. So that thing becomes
 
-> -- 
-> Michal Hocko
-> SUSE Labs
+  static inline void __user *mask_user_address(const void __user *ptr)
+  {
+        unsigned long mask;
+        asm("cmp %1,%0\n\t"
+            "sbb %0,%0"
+                :"=r" (mask)
+                :"r" (ptr),
+                 "0" (runtime_const_ptr(USER_PTR_MAX)));
+        return (__force void __user *)(mask | (__force unsigned long)ptr);
+  }
+
+which I'm certainly not claiming is a thing of beauty, but the
+generated code looks ok if you just ignore the #APP/#NOAPP noise:
+
+  # ./arch/x86/include/asm/uaccess_64.h:71:                "0"
+(runtime_const_ptr(USER_PTR_MAX)));
+  #APP
+  # 71 "./arch/x86/include/asm/uaccess_64.h" 1
+        mov $81985529216486895,%rax     #, __ret
+  1:
+  .pushsection runtime_ptr_USER_PTR_MAX,"a"
+        .long 1b - 8 - .        #
+        .popsection
+  # 0 "" 2
+  # lib/strncpy_from_user.c:114: {
+  #NO_APP
+        pushq   %rbx    #
+        movq    %rdi, %r9       # tmp149, dst
+        movq    %rdx, %r11      # tmp151, count
+  # ./arch/x86/include/asm/uaccess_64.h:67:       asm("cmp %1,%0\n\t"
+  #APP
+  # 67 "./arch/x86/include/asm/uaccess_64.h" 1
+        cmp %rsi,%rax   # src, mask
+        sbb %rax,%rax   # mask
+  # 0 "" 2
+  # ./arch/x86/include/asm/uaccess_64.h:72:       return (__force void
+__user *)(mask | (__force unsigned long)ptr);
+  #NO_APP
+        orq     %rax, %rsi      # mask, _44
+
+so you actually see gcc filling in variable names etc (well "variable
+names" may be a bit generous: "_44" is a pseudo for the new value of
+src, but that's just how compilers are with SSA - assignments create a
+whole new temporary).
+
+So legibility is very much in the eye of the beholder. You have to be
+pretty damn used to looking at the generated asm to find any of this
+even remotely legible.
+
+                Linus
 
