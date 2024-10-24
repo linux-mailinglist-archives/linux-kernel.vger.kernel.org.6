@@ -1,161 +1,302 @@
-Return-Path: <linux-kernel+bounces-379661-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379664-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C378D9AE1D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:01:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A45949AE1EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:02:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731E5280FB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:01:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CE21F2492E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:02:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D611B6CE7;
-	Thu, 24 Oct 2024 10:00:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29731ABEB1;
+	Thu, 24 Oct 2024 10:02:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U/vNpmrB"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="x9wy6+L7"
+Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A5314B088;
-	Thu, 24 Oct 2024 10:00:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4DF14F11E;
+	Thu, 24 Oct 2024 10:02:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764051; cv=none; b=tL5n6zTkrJcCLHoZej2RUZHeD+9xnuMrCeXPRrDLQ1nXtFSlXMNqnNgioLLVSIbGSQJ3qwIqmy1ijdQAKUaOPCb7ODZBNJoRElUeTy4pEoxAeEdHov17tn/IN7jKQg+wRov1EoqPCO107lB89T9CqI8T+isc8jDeeSggXM17R/c=
+	t=1729764126; cv=none; b=DGlV59BvATyHgYL/1eZ6g+wQBefLzV3UcXF3l23O+v7blraIBM7tLPBU08RyCdNdfpHpQIIL7aBQ+DBjvsiAx8gySeOOJBZOaWhC8ASSDLf/MPUvPcGaAsI+nA+Opg87IFDlJRf+D8fpZX1Gq8YOsmcWlWmVXlJH80IpNT0sChY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764051; c=relaxed/simple;
-	bh=/MzpiqBK5uBE0u3FoqrrKUK+jiIckyJWA0U5/GOwrtk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=aXd0BjXfm/w5V9kjRTXzGy77/tncEs633VHCVZNETlybRkhOANo7rasXwfLZvNcEB33uW/q6Z1k+/apotmzM1Zw0eRTVTviJ93LU2Aaz3IpcLX9FniYgQ/ilKYzouGLy6dwPnX2n6BR6bc+Mr8xl/dSm5fQ2Bk7n8cdrt/YtVkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U/vNpmrB; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O7WvcO026027;
-	Thu, 24 Oct 2024 10:00:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=dhKHsS
-	XcbJQEnePonUcJC6X9r2M3tUpNdJGkfNo7KOA=; b=U/vNpmrBO/I2wbUNvlnwiR
-	5pbGWWG1unLK/QzasCK3rOM+qGOZAqteSlhNEUf3lkJofK3C3pwBt4JhgMNAr+j8
-	piXXvnBxtot1j2OXRsO9u5CEAppRdBdyg6lp5sQV4iht4CD/BOhtfqmKpeCOWgWG
-	mBA2ohDnN6NjUmSuwwb6D80CLnR/cMcfeDca9DEz/NkJ1gVqLi/Dj6r/7JsPYhMJ
-	LSnGjrDDzt6Qc6tN7Xf6ygZQHgeRLyWiC2s+NL8OE0s7h+zi0mRNJEObZB6cWj8S
-	O8eaicqhsHybIHrg+BJB4NJE2Gh/0/2ovg7BWcZ8NJZnAiNp3f9mOQ8+MjfiRRZw
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fhxnrpk4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 10:00:44 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49OA0iWI013147;
-	Thu, 24 Oct 2024 10:00:44 GMT
-Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fhxnrpjy-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 10:00:44 +0000 (GMT)
-Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49O6npRh014576;
-	Thu, 24 Oct 2024 10:00:42 GMT
-Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
-	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emk7ysjj-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 10:00:42 +0000
-Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
-	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49OA0fhh35193304
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Oct 2024 10:00:42 GMT
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B4E1658054;
-	Thu, 24 Oct 2024 10:00:41 +0000 (GMT)
-Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id B478858066;
-	Thu, 24 Oct 2024 10:00:39 +0000 (GMT)
-Received: from [9.171.35.241] (unknown [9.171.35.241])
-	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 24 Oct 2024 10:00:39 +0000 (GMT)
-Message-ID: <61cf578f-020e-4e0d-a551-98df5367ee27@linux.ibm.com>
-Date: Thu, 24 Oct 2024 12:00:38 +0200
+	s=arc-20240116; t=1729764126; c=relaxed/simple;
+	bh=L4OBI9kmzhb8Y5Z7ccxqHqPubs7j/bYb/whltKZ13n8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Iv2PLGr9AIPE+lG31M/Dui+xGrZNnmt3pyKz0Y2hwFemS/zkRzBFvTU2RF+QEAjMV2sPcMyCBihnLdyqU22De3XqJkq02af179PpeUvKJisAe7dBFRhmLgG4LEPxIOMLq4TPEMUGIkrvp5g4htGERXCGg71f+Dhf99SjuvMGli8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=x9wy6+L7; arc=none smtp.client-ip=68.232.154.123
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
+  t=1729764123; x=1761300123;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=L4OBI9kmzhb8Y5Z7ccxqHqPubs7j/bYb/whltKZ13n8=;
+  b=x9wy6+L7+A4z6HGFs/7RedsuyfTXri6r2lVLdDYH015ziiHy0xYStmpT
+   UKPeL9tLRqD1GHph6X2ZBc1IJgOYjvhD5YoRhrSBydj4wG8tsdp/W5A8T
+   0enFSNCIMOnra9UtbWFGp8dolB978qmJZQF/6zqZl0J0YkocrJOUOG/ro
+   8dj0u3m2wZYaXV94MV2JhL4f1j9gYFAReG982kezB2nDAUpq+HhXInFGj
+   PRHLxl8FKMF3Pw7u+XDdUUq8l3VyfP+2itnHa6qNTvxUzSAhRN+jKJD9F
+   dWpPS5JemxMnBTyGK59nzfPMdzyB7x+fh6Q4alAxGJAAutR4gG80u+mqg
+   w==;
+X-CSE-ConnectionGUID: SzYnXIcCSW+5oX6M0jz6iw==
+X-CSE-MsgGUID: hd12t9s6RUK6zhh9WJd9mA==
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="200854445"
+X-Amp-Result: SKIPPED(no attachment in message)
+Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
+  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Oct 2024 03:02:02 -0700
+Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
+ chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.35; Thu, 24 Oct 2024 03:01:41 -0700
+Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
+ chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
+ 15.1.2507.35 via Frontend Transport; Thu, 24 Oct 2024 03:01:40 -0700
+From: <victor.duicu@microchip.com>
+To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
+CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
+	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+Subject: [PATCH v6] iio: adc: pac1921: Add ACPI support to Microchip pac1921
+Date: Thu, 24 Oct 2024 13:00:50 +0300
+Message-ID: <20241024100050.4727-1-victor.duicu@microchip.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH net-next] net/smc: use new helper to get the netdev
- associated to an ibdev
-To: Wen Gu <guwen@linux.alibaba.com>, jaka@linux.ibm.com, davem@davemloft.net,
-        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
-Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
-        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
-        linux-kernel@vger.kernel.org
-References: <20241024054456.37124-1-guwen@linux.alibaba.com>
-Content-Language: en-US
-From: Wenjia Zhang <wenjia@linux.ibm.com>
-In-Reply-To: <20241024054456.37124-1-guwen@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: xV3DHfE8zzSz7iSyun__0WW7cfMcBbu2
-X-Proofpoint-GUID: xOBevlq1o5fhyrsUS31uY8OD-MlLYglO
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- mlxlogscore=544 malwarescore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240075
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
+From: Victor Duicu <victor.duicu@microchip.com>
 
+This patch implements ACPI support to Microchip pac1921.
+The driver can read shunt resistor value and label from ACPI table.
 
-On 24.10.24 07:44, Wen Gu wrote:
-> Patch [1] provides common interfaces to store and get net devices
-> associated to an IB device port and removes the ops->get_netdev()
-> callback of mlx5 driver. So use the new interface in smc.
-> 
-> [1]: 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and get_netdev functions")
-> 
-> Reported-by: D. Wythe <alibuda@linux.alibaba.com>
-> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
-> ---
-[...]
+Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
+---
 
-We detected the problem as well, and I already sent a patch with the 
-same code change in our team internally these. Because some agreement 
-issues on the commit message, it is still not sent out externally. Now 
-we (our team) have almost an agreement, I'd like to attach it here. 
-Please have a look if it is also for you to use:
+The patch was tested on minnowboard and sama5.
 
-"
-[PATCH net] net/smc: Fix lookup of netdev by using ib_device_get_netdev()
+Differences related to previous versions:
+v6:
+- set maximum acceptable value of shunt resistor to INT_MAX UOHMS
+in devicetree, ACPI table and user input.
+- in pac1921_match_acpi_device remove temp variable.
 
-Since/Although commit c2261dd76b54 ("RDMA/device: Add 
-ib_device_set_netdev() as an alternative to get_netdev") introduced an 
-API ib_device_get_netdev, the SMC-R variant of the SMC protocol 
-continued to use the old API ib_device_ops.get_netdev() to lookup 
-netdev. As commit 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and 
-get_netdev functions") removed the get_netdev callback from 
-mlx5_ib_dev_common_roce_ops, calling ib_device_ops.get_netdev didn't 
-work any more at least by using a mlx5 device driver. Thus, using 
-ib_device_set_netdev() now became mandatory.
+v5:
+- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
+ACPI table and user input. The chosen value is lesser than INT_MAX,
+which is about 2.1KOHM.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
+  read 32b values for resistor shunt.
 
-Replace ib_device_ops.get_netdev() with ib_device_get_netdev().
+v4:
+- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
+- fix coding style.
+- in pac1921_parse_of_fw change back to device_property_read_u32.
 
-Fixes: 54903572c23c ("net/smc: allow pnetid-less configuration")
-Fixes: 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and get_netdev 
-functions")
-"
-My main points are:
-- This patch should go to net, not net-next. Because it can result in 
-malfunction. e.g. if the RoCE devices are used as both handshake device 
-and RDMA device without any PNET_ID, it would be failed to find SMC-R 
-device, then fallback.
-- We need the both fixes, which would help us for the backport
+v3:
+- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
+- fix link to DSM documentation.
+- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
+read as u64.
+- in pac1921_parse_of_fw remove code for reading label value from
+devicetree.
+- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
+to fix overflow.
 
+v2:
+- remove name variable from priv. Driver reads label attribute with
+sysfs.
+- define pac1921_shunt_is_valid function.
+- move default assignments in pac1921_probe to original position.
+- roll back coding style changes.
+- add documentation for DSM(the linked document was used as reference).
+- remove acpi_match_device in pac1921_match_acpi_device.
+- remove unnecessary null assignment and comment.
+- change name of function pac1921_match_of_device to
+pac1921_parse_of_fw.
 
-Thanks,
-Wenjia
+v1:
+- initial version for review.
+
+ drivers/iio/adc/pac1921.c | 106 +++++++++++++++++++++++++++++++++-----
+ 1 file changed, 93 insertions(+), 13 deletions(-)
+
+diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
+index a96fae546bc1..cbbb3c1525c1 100644
+--- a/drivers/iio/adc/pac1921.c
++++ b/drivers/iio/adc/pac1921.c
+@@ -67,6 +67,12 @@ enum pac1921_mxsl {
+ #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
+ #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
+ 
++#define PAC1921_ACPI_GET_UOHMS_VALS             0
++#define PAC1921_ACPI_GET_LABEL			1
++#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
++/* The maximum accepted value of shunt_resistor in UOHMS <= INT_MAX */
++#define PAC1921_MAX_SHUNT_VALUE_OHMS		2147
++
+ /*
+  * Pre-computed scale factors for BUS voltage
+  * format: IIO_VAL_INT_PLUS_NANO
+@@ -204,6 +210,11 @@ struct pac1921_priv {
+ 	} scan;
+ };
+ 
++static inline bool pac1921_shunt_is_invalid(u32 shunt_val)
++{
++	return (shunt_val == 0 || shunt_val > INT_MAX);
++}
++
+ /*
+  * Check if first integration after configuration update has completed.
+  *
+@@ -781,7 +792,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 					    const char *buf, size_t len)
+ {
+ 	struct pac1921_priv *priv = iio_priv(indio_dev);
+-	u64 rshunt_uohm;
++	u32 rshunt_uohm;
+ 	int val, val_fract;
+ 	int ret;
+ 
+@@ -792,8 +803,12 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
+ 	if (ret)
+ 		return ret;
+ 
++	/* This check is to ensure val * MICRO won't overflow */
++	if (val < 0 || val > PAC1921_MAX_SHUNT_VALUE_OHMS)
++		return -EINVAL;
++
+ 	rshunt_uohm = val * MICRO + val_fract;
+-	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
++	if (pac1921_shunt_is_invalid(rshunt_uohm))
+ 		return -EINVAL;
+ 
+ 	guard(mutex)(&priv->lock);
+@@ -1150,6 +1165,69 @@ static void pac1921_regulator_disable(void *data)
+ 	regulator_disable(regulator);
+ }
+ 
++/*
++ * documentation related to the ACPI device definition
++ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
++ */
++static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv,
++				     struct iio_dev *indio_dev)
++{
++	acpi_handle handle;
++	union acpi_object *rez;
++	guid_t guid;
++	char *label;
++
++	guid_parse(PAC1921_DSM_UUID, &guid);
++	handle = ACPI_HANDLE(&client->dev);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read shunt from ACPI table\n");
++
++	priv->rshunt_uohm = rez->package.elements[0].integer.value;
++	ACPI_FREE(rez);
++
++	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
++		return dev_err_probe(&client->dev, -EINVAL, "Invalid shunt resistor\n");
++
++	pac1921_calc_current_scales(priv);
++
++	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
++	if (!rez)
++		return dev_err_probe(&client->dev, -EINVAL,
++				     "Could not read label from ACPI table\n");
++
++	label = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
++			     (size_t)rez->package.elements->string.length + 1,
++			     GFP_KERNEL);
++	label[rez->package.elements->string.length] = '\0';
++	indio_dev->label = label;
++	ACPI_FREE(rez);
++
++	return 0;
++}
++
++static int pac1921_parse_of_fw(struct i2c_client *client, struct pac1921_priv *priv)
++{
++	int ret;
++	struct device *dev = &client->dev;
++
++	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
++				       &priv->rshunt_uohm);
++	if (ret)
++		return dev_err_probe(dev, ret,
++				     "Cannot read shunt resistor property\n");
++
++	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
++		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
++				     priv->rshunt_uohm);
++
++	pac1921_calc_current_scales(priv);
++
++	return 0;
++}
++
+ static int pac1921_probe(struct i2c_client *client)
+ {
+ 	struct device *dev = &client->dev;
+@@ -1176,17 +1254,13 @@ static int pac1921_probe(struct i2c_client *client)
+ 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
+ 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
+ 
+-	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
+-				       &priv->rshunt_uohm);
+-	if (ret)
+-		return dev_err_probe(dev, ret,
+-				     "Cannot read shunt resistor property\n");
+-	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
+-		return dev_err_probe(dev, -EINVAL,
+-				     "Invalid shunt resistor: %u\n",
+-				     priv->rshunt_uohm);
+-
+-	pac1921_calc_current_scales(priv);
++	if (ACPI_HANDLE(&client->dev))
++		ret = pac1921_match_acpi_device(client, priv, indio_dev);
++	else
++		ret = pac1921_parse_of_fw(client, priv);
++	if (ret < 0)
++		return dev_err_probe(&client->dev, ret,
++				     "parameter parsing error\n");
+ 
+ 	priv->vdd = devm_regulator_get(dev, "vdd");
+ 	if (IS_ERR(priv->vdd))
+@@ -1243,11 +1317,17 @@ static const struct of_device_id pac1921_of_match[] = {
+ };
+ MODULE_DEVICE_TABLE(of, pac1921_of_match);
+ 
++static const struct acpi_device_id pac1921_acpi_match[] = {
++	{ "MCHP1921" },
++	{ }
++};
++MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
+ static struct i2c_driver pac1921_driver = {
+ 	.driver	 = {
+ 		.name = "pac1921",
+ 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
+ 		.of_match_table = pac1921_of_match,
++		.acpi_match_table = pac1921_acpi_match
+ 	},
+ 	.probe = pac1921_probe,
+ 	.id_table = pac1921_id,
+
+base-commit: 185a947e0ef928226f99c05fc973cde872806aa1
+-- 
+2.43.0
 
 
