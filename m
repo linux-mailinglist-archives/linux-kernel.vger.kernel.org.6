@@ -1,129 +1,163 @@
-Return-Path: <linux-kernel+bounces-379391-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379394-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7B7569ADE0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:44:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2CD039ADE15
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:45:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39523282C7A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:44:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DFFB82828FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:45:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF891AE863;
-	Thu, 24 Oct 2024 07:44:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D39B318B488;
+	Thu, 24 Oct 2024 07:45:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4XOFNrU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b="XW+zhzq5"
+Received: from wp530.webpack.hosteurope.de (wp530.webpack.hosteurope.de [80.237.130.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7503A1AD403;
-	Thu, 24 Oct 2024 07:44:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6A2BF15573D;
+	Thu, 24 Oct 2024 07:45:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=80.237.130.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729755869; cv=none; b=WZ1DZLjJEyhbVkgSd5r7wo35GgV5padSSGjEte8sokm1wu76arpVv9xb7BOYvb+QtXeLkFzVBV4BuZklNTFiGiXy53RT9kY+jk/Dexnkm8ncHLIZZq1bt7g0H1PWxr2UH+8dXALeF4AGnX7neRbBtWiBq4u3Xi5X23JdCzRHryc=
+	t=1729755914; cv=none; b=rIN107A7T81L2QRac4RScfXCqKuStDxPqeUL8dAC6FHnjIYnzVFgoUiPG6nRHpm29NAz05RuQC/AEPodRd2fJcuEmJK4KO5xygbXU2HBbqWTUFK0aW69KRKw2gfx8iXWIMxhpGT+aVLR5lmfJp7DJ8V0ixICOyQ4xDlXOCQ9YVM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729755869; c=relaxed/simple;
-	bh=zylwN3ythosBgJwCjjnHYB5VcHWDkTD5jqrqiuJzVLw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=emvyHLwpN+k7BajckJa0ro8t6XuFJNzk281T9jOyiCeQrGMG0VGi1ABhzParxMw3SWLC6sXxiO6gp11rOBgyHv7YshaFrp3RKjSm6b0ZIXzSYHQPEDrAZouW2WVu63TNBI/1XW0Tuw1bYjlMBWsTkH5PO0Alc6vlm5nyrL2DbmQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4XOFNrU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8BAC4CEE5;
-	Thu, 24 Oct 2024 07:44:27 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729755868;
-	bh=zylwN3ythosBgJwCjjnHYB5VcHWDkTD5jqrqiuJzVLw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=F4XOFNrU1T3xszMOzuwJGlqqbGnrssI8S8Uh061izZujPIYSl65IzbFbZ9bEGiWS6
-	 ju2otyQ0OStQHyCJyJp1hBvmaa04H4soC6kEzf5IkbdHIE/YFpWBetSrdBBD48PS6M
-	 LUQU4UQdSKI2WN6Hweo7V/75zOTs6ceClClF036MWf/mNF9cvonEQVNAxGD5pZq6cm
-	 b4tennYpK8Ks5Z2W55o97e/JGoYcn0rXX1UAK2S0rCofmj+6dA+k+iptc5VJjweNcn
-	 kgZo2evHKpkKdVhWO+G/hoXgpf2KAn8lvk1wuYwf2M1g65e/fa7ph0COTR2R6G+ddI
-	 Wqy2szMQ4JhjA==
-Date: Thu, 24 Oct 2024 00:44:25 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Cc: Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Andrii Nakryiko <andrii@kernel.org>,
-	Martin KaFai Lau <martin.lau@linux.dev>,
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
-	Yonghong Song <yonghong.song@linux.dev>,
-	John Fastabend <john.fastabend@gmail.com>,
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
-	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
-	David Rientjes <rientjes@google.com>,
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
-	Vlastimil Babka <vbabka@suse.cz>,
-	Roman Gushchin <roman.gushchin@linux.dev>,
-	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add a test for open coded
- kmem_cache iter
-Message-ID: <Zxn62WotvxH0UZ_h@google.com>
-References: <20241017080604.541872-1-namhyung@kernel.org>
- <20241017080604.541872-2-namhyung@kernel.org>
- <CAEf4BzaipQcGFWQu+o5d+aXVMN17LDnHOv9MwrZis1wpiCWwCw@mail.gmail.com>
+	s=arc-20240116; t=1729755914; c=relaxed/simple;
+	bh=QqjRQ9Z7EFjHhrZxhpnQHdFmOfdAcs3Qn3WVkNTGs7g=;
+	h=Message-ID:Date:MIME-Version:From:Subject:Cc:To:Content-Type; b=HmvE05nNoQYPCN8zJ2t9Zaj4C2By86LUm4zwm9PVtamREbl4prgl6xsnL9qPuE4lOlr3xxpPyI/U7DdES8qP9WHl49Va+2gc0hWRLkioIDq/4Dy27ACbbEILx63Am/eUyBSiTIuY2KhiQfjNEpWGYEhRJF2AqsML4+W9QFh0qh0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info; spf=pass smtp.mailfrom=leemhuis.info; dkim=pass (2048-bit key) header.d=leemhuis.info header.i=@leemhuis.info header.b=XW+zhzq5; arc=none smtp.client-ip=80.237.130.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=leemhuis.info
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=leemhuis.info
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=leemhuis.info; s=he214686; h=Content-Transfer-Encoding:Content-Type:To:Cc:
+	Subject:From:MIME-Version:Date:Message-ID:From:Sender:Reply-To:Subject:Date:
+	Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:In-Reply-To:References;
+	bh=x7zQv6WLWCBckv+xucBTETL7MnDWTDn514ggvPhcUaw=; t=1729755911; x=1730187911;
+	 b=XW+zhzq5DkmeCt+mO1c+f1F0ZrsC+VUdDjZ0+dsr6sDAx3LnZQmiuMLd8Z5oFHbVHbIuiy+vWJ
+	fgkeeZlcFFyJsYbFkeeeixOdVg3gwRVhT0RxcnnEV3XGXFvcInCFSqkgiNteVMmqnfcx4hUFW48FU
+	EQFYRnH7Sf3wCtsnjHmLs2bGVzRRd0+9jIadD1VnDP9Sfrh0gtXnBy583mI25x5TaKxUMzZdaoZ8p
+	fB40uvf1Ijtq0VL7YA3u6cL94QZYS8uaNoM87wCf36t6mrEzxUxJJ5ItLggL989B2ABVm8VV73cBc
+	DTRTOluKq4ymwmRzRKUatk2ax4a/QRFcCNYWg==;
+Received: from [2a02:8108:8980:2478:8cde:aa2c:f324:937e]; authenticated
+	by wp530.webpack.hosteurope.de running ExIM with esmtpsa (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
+	id 1t3sWq-00086o-F3; Thu, 24 Oct 2024 09:45:08 +0200
+Message-ID: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
+Date: Thu, 24 Oct 2024 09:45:07 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <CAEf4BzaipQcGFWQu+o5d+aXVMN17LDnHOv9MwrZis1wpiCWwCw@mail.gmail.com>
+User-Agent: Mozilla Thunderbird
+From: Thorsten Leemhuis <regressions@leemhuis.info>
+Subject: darktable performance regression on AMD systems caused by "mm: align
+ larger anonymous mappings on THP boundaries"
+Content-Language: en-US, de-DE
+Cc: Matthias <matthias@bodenbinder.de>,
+ Andrew Morton <akpm@linux-foundation.org>,
+ Linux kernel regressions list <regressions@lists.linux.dev>,
+ LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
+ Yang Shi <yang@os.amperecomputing.com>
+To: Rik van Riel <riel@surriel.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-bounce-key: webpack.hosteurope.de;regressions@leemhuis.info;1729755911;b8aa0f46;
+X-HE-SMSGID: 1t3sWq-00086o-F3
 
-On Mon, Oct 21, 2024 at 04:36:49PM -0700, Andrii Nakryiko wrote:
-> On Thu, Oct 17, 2024 at 1:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
-> >
-> > The new subtest is attached to sleepable fentry of syncfs() syscall.
-> > It iterates the kmem_cache using bpf_for_each loop and count the number
-> > of entries.  Finally it checks it with the number of entries from the
-> > regular iterator.
-> >
-> >   $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
-> >   ...
-> >   #130/1   kmem_cache_iter/check_task_struct:OK
-> >   #130/2   kmem_cache_iter/check_slabinfo:OK
-> >   #130/3   kmem_cache_iter/open_coded_iter:OK
-> >   #130     kmem_cache_iter:OK
-> >   Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
-> >
-> > Also simplify the code by using attach routine of the skeleton.
-> >
-> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> > ---
-> >  .../testing/selftests/bpf/bpf_experimental.h  |  6 ++++
-> >  .../bpf/prog_tests/kmem_cache_iter.c          | 28 +++++++++++--------
-> >  .../selftests/bpf/progs/kmem_cache_iter.c     | 24 ++++++++++++++++
-> >  3 files changed, 46 insertions(+), 12 deletions(-)
-> >
-> > diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
-> > index b0668f29f7b394eb..cd8ecd39c3f3c68d 100644
-> > --- a/tools/testing/selftests/bpf/bpf_experimental.h
-> > +++ b/tools/testing/selftests/bpf/bpf_experimental.h
-> > @@ -582,4 +582,10 @@ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
-> >                 unsigned int flags__k, void *aux__ign) __ksym;
-> >  #define bpf_wq_set_callback(timer, cb, flags) \
-> >         bpf_wq_set_callback_impl(timer, cb, flags, NULL)
-> > +
-> > +struct bpf_iter_kmem_cache;
-> > +extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym;
-> > +extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
-> > +extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
-> > +
+Hi, Thorsten here, the Linux kernel's regression tracker.
+
+Rik, I noticed a report about a regression in bugzilla.kernel.org that
+appears to be caused by the following change of yours:
+
+efa7df3e3bb5da ("mm: align larger anonymous mappings on THP boundaries")
+[v6.7]
+
+It might be one of those "some things got faster, a few things became
+slower" situations. Not sure. Felt odd that the reporter was able to
+reproduce it on two AMD systems, but not on a Intel system. Maybe there
+is a bug somewhere else that was exposed by this.
+
+So in the end it felt worth forwarding by mail to me. Not tracking this
+yet, first waiting for feedback.
+
+To quote from https://bugzilla.kernel.org/show_bug.cgi?id=219366 :
+
+> Matthias 2024-10-09 05:37:51 UTC
 > 
-> we should be getting this from vmlinux.h nowadays, so this is probably
-> unnecessary
+> I am using a darktable benchmark and I am finding that RAW-to-JPG
+> conversion is about 15-25 % slower with kernels 6.7-6.10. The last
+> fast kernel series is 6.6. I also tested kernel series 6.5 and it is
+> as fast as 6.6
+> 
+> I know this sounds weird. What has darktable to do with the kernel?
+> But the numbers are true. And the darktable devs tell me that this
+> is a kernel regression. The darktable github issue is: https://
+> github.com/darktable-org/darktable/issues/17397  You can find more
+> details there.
+> 
+> What do I do to measure the performance?
+> 
+> I am executing darktable on the command line. opencl is disabled so
+> that all activities are only on the CPU:
+> 
+> darktable-cli bench.SRW /tmp/test.jpg --core --disable-opencl -d
+> perf -d opencl --configdir /tmp
+> 
+> ( bench.SRW and the sidecar file can be found here: https://
+> drive.google.com/drive/folders/1cfV2b893JuobVwGiZXcaNv5-yszH6j-N )
+> 
+> This will show some debug output. The line to look for is
+> 
+> 4,2765 [dev_process_export] pixel pipeline processing took 3,811
+> secs (81,883 CPU)
+> 
+> This gives an exact number how much time darktable needed to convert
+> the image. The time darktable needs has a clear dependency on the
+> kernel version. It is fast with kernel 6.6. and older and slow with
+> kernel 6.7 and newer. Something must have happened from 6.6 to 6.7
+> which slows down darktable.
+> 
+> The darktable debug output shows that basically only one module is
+> responsible for the slow down: 'atrous'
+> 
+> with kernel 6.6.47:
+> 
+> 4,0548 [dev_pixelpipe] took 0,635 secs (14,597 CPU) [export]
+> processed 'atrous' on CPU, blended on CPU ... 4,2765
+> [dev_process_export] pixel pipeline processing took 3,811 secs
+> (81,883 CPU)
+> 
+> with kernel 6.10.6:
+> 
+> 4,9645 [dev_pixelpipe] took 1,489 secs (33,736 CPU) [export]
+> processed 'atrous' on CPU, blended on CPU ... 5,2151
+> [dev_process_export] pixel pipeline processing took 4,773 secs
+> (102,452 CPU)
+> 
+> 
+> This is also being discussed here: https://discuss.pixls.us/t/
+> darktable-performance-regression-with-kernel-6-7-and-newer/45945/1 
+> And other users confirm the performance degradation.
 
-I got some build errors without this.  I'll leave it for v2.
+[...]
 
-Thanks,
-Namhyung
+> This seems to affect AMD only. I reproduced this performance
+> degradation on two different Ryzen Desktop PCs (Ryzen 5 and Ryzen
+> 9). But I can not reproduce it on my Intel PC (Lenovo X1 Carbon,
+> core i5).
+
+[...]
+
+> By the way, there is also a thread in the darktable forum on this topic:
+> https://discuss.pixls.us/t/darktable-performance-regression-with-kernel-6-7-and-newer/45945
+>  
+> Some users reproduced it there as well.
+
+See the ticket for more details. The reporter is CCed. openZFS is in
+use, but the problem was reproduced on vanilla kernels.
+
+Ciao, Thorsten
 
