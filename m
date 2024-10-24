@@ -1,113 +1,99 @@
-Return-Path: <linux-kernel+bounces-379624-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379625-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2070E9AE134
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A679C9AE137
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FD7B1C229DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 64E28282751
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A6B1D5144;
-	Thu, 24 Oct 2024 09:39:04 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1F85D1B85C4;
+	Thu, 24 Oct 2024 09:39:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="WxUMJwxe"
+Received: from mail-pj1-f41.google.com (mail-pj1-f41.google.com [209.85.216.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A33D97A;
-	Thu, 24 Oct 2024 09:39:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B6AA11B3947
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:39:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762744; cv=none; b=c+gYI5GKX+qxzas5/guXU14CHkv+vIC3f4GvxfK3qxlPqtMSxHDoZhaLBMK+gYEmcIpxXMFNRyAvtQI1ZDzLvYMOfw9MMA4jvYc1/G2iooV/l4PSXcbpJgTyyuKhTU4dJwG+ozogu+5vzI/1Uai9vgCUFgog0CQ3uysWGPZQhrE=
+	t=1729762763; cv=none; b=Ut1G8lGbUW3aNkJS5eVFK6pO2+wOjttJdvj1nfFjE7g2zQybfnEB2oZqrXFUCbu9UCQepA4s93j+t31klb2IiuumO+LzGp3Ykj06O4o+v0DpLbvomsoDyStwoDeEPnu4nEgTAV6Kc8VVpetweLu9tNIBZw0snXzfSjgos7YLbwY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762744; c=relaxed/simple;
-	bh=2m73KAYM6zCci5LsNmrhwhdMM5NOURZE9sSH/sEkT5s=;
-	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=P0FQM885lK377gQpZH5h3TlhDPZi1EZ2wbn2GxgKg1BqORlmnHDdIXe30LQgP/WUOt5vl9i6sxMphwTTfbPX7U0e/0NtBLvKmGDSw9EQsN/dnNsuW4dNcXkZ8zghQWPETo2sKR5wuzL1j4GXwPOilMlMVAsLE1rnLrAZ8TmwypA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZ16t2rNBz6K5rC;
-	Thu, 24 Oct 2024 17:37:58 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
-	by mail.maildlp.com (Postfix) with ESMTPS id D99D7140158;
-	Thu, 24 Oct 2024 17:38:58 +0800 (CST)
-Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
- (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 24 Oct
- 2024 11:38:58 +0200
-Date: Thu, 24 Oct 2024 10:38:56 +0100
-From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
-To: Zicheng Qu <quzicheng@huawei.com>
-CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
-	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
-	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>, <tanghui20@huawei.com>,
-	<zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>
-Subject: Re: [PATCH] cxl: core-pmu: Fix the usage of uninitialized variable
-Message-ID: <20241024103856.000031ed@Huawei.com>
-In-Reply-To: <20241023105610.668964-1-quzicheng@huawei.com>
-References: <20241023105610.668964-1-quzicheng@huawei.com>
-Organization: Huawei Technologies Research and Development (UK) Ltd.
-X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
+	s=arc-20240116; t=1729762763; c=relaxed/simple;
+	bh=psIUbzYLU4wFIXrzpbnQ/vVEnWJP9SPVhMuz47ZQnSI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Dwtka/OY4wglx1nypSbKc8Grm6sGmmfBYf6KkSy8BvNRQdWefTl90OnjpuZb2zoxIQOxZ+PwYeqRkeJPigZAX/g84r6sCb9WvS+5h/k0tq3XvI8/oy1gsH2ssU78nQDuZ1hk6yhfT1JBMHEYYzwCCimyXC1sCSCwUuHCHMZaICA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=WxUMJwxe; arc=none smtp.client-ip=209.85.216.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f41.google.com with SMTP id 98e67ed59e1d1-2e56750bb0dso535723a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:39:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729762761; x=1730367561; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=psIUbzYLU4wFIXrzpbnQ/vVEnWJP9SPVhMuz47ZQnSI=;
+        b=WxUMJwxevqeDB/jkSpz8EWP7IxD/8hYPRCGf51b6WZWGdDxaCmlTPQhZP/oNyf8f36
+         OaCq+4zJlS1SYVUJCebG08o6qU+ZiARy8a8kV1jgcl0AohbnWyaAuZprGvrdt2e7ZvDU
+         JwpRCuuUCIEf4obZZyvY7IvXys5jI55Bo+64Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729762761; x=1730367561;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=psIUbzYLU4wFIXrzpbnQ/vVEnWJP9SPVhMuz47ZQnSI=;
+        b=jTn+vuCGpe4L9TguVlfkC+IlkJD1e+L7MNrom5Jenr5RKN+Yule2r8J/b3+47H+kBf
+         mlZ1Pjh97jriME4Ykp99ctChO8cO9A25O+ts7Ui7wyHCpAAV3F7/1ORB3Bfjr9FeDSLS
+         3g0lIvrahIOhkQEfH8cJM10QXCNmk3DHUG8OaQQ104HeP+SkS5gDSKMqV2xSlFL6qXwC
+         nKy8na0pYWHpRiqTSGuKRFJrGSY7127wxQxthPGgsJImo3gaRECW2RCNQBLaqYXuNXt2
+         zJflxz4DqcX3CNdduE32hCSIoVwcuypWxollyvSdIKnjcL+XyMdDKnl0X1pDfAVu6yZU
+         piDg==
+X-Forwarded-Encrypted: i=1; AJvYcCVASGr5s9BK1t7KtblsbebxBsnXpge1A28W4baPPQTBdvgScw7cKO0FCyq7myBlZ9yVF+q0b2OsafjDt2s=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxgCWughV4z60ar2I9ggNC6nuXmljXtjbaleMIZ85v0eXL6xKN3
+	jHvXANcXFtyY2aJEoYUrmFVt/Q8v5GJbQiZ1Rrl+RWTMfwYe0SmCdnj4o1Vr4QD2ZfagJa7lBOl
+	k6Q==
+X-Google-Smtp-Source: AGHT+IG/IKjjlwb1UaL7FOR7rGdqnfvfZnxV4AE1xFUVjA5gLqDjXVktzbl6HM0Z4bmYO3X6wcbh1g==
+X-Received: by 2002:a05:6a20:d492:b0:1d9:19a0:c36e with SMTP id adf61e73a8af0-1d978b98610mr5702616637.31.1729762761004;
+        Thu, 24 Oct 2024 02:39:21 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:c7f5:2aa6:333b:bb6d])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0f36f3sm69432655ad.263.2024.10.24.02.39.19
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 02:39:20 -0700 (PDT)
+Date: Thu, 24 Oct 2024 18:39:16 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCHv2 2/2] media: venus: sync with threaded IRQ during inst
+ destruction
+Message-ID: <20241024093916.GM1279924@google.com>
+References: <20241024061809.400260-1-senozhatsky@chromium.org>
+ <20241024061809.400260-3-senozhatsky@chromium.org>
+ <4b96f1f8-e084-4599-abe9-05039bfac569@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="US-ASCII"
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
- frapeml500008.china.huawei.com (7.182.85.71)
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <4b96f1f8-e084-4599-abe9-05039bfac569@linaro.org>
 
-On Wed, 23 Oct 2024 10:56:10 +0000
-Zicheng Qu <quzicheng@huawei.com> wrote:
+On (24/10/24 09:59), Bryan O'Donoghue wrote:
+> This needs a Fixes: tag too.
 
-> In the devm_cxl_pmu_add() function, the variable rc might be
-> uninitialized before its first use 'if (rc) goto err', leading
-> to undefined behavior since its value depends on the compiler.
-> Currently, the switch statement is limited to the CXL_PMU_MEMDEV type.
-> If additional types are introduced, it could lead to similar concerns.
-> If the type range remains unchanged, using a switch case is unnecessary.
-> To enhance code extensibility and stability, it is recommended to
-> address this potential aspect.
-> 
-> Cc: stable@vger.kernel.org # v6.6+
-> Fixes: 1ad3f701c399 ("cxl/pci: Find and register CXL PMU devices")
+Ack.
 
-Not a fix, because this is only called for CXL_PMU_MEMDEV.
-So drop stable and fixes tag as I don't see this as appropriate to
-backport (unless I'm missing something!)
+> It also occurs to me that most of the close() operation code is shared
+> between venc_close() and vdec_close() a welcome patch for V3 would be to
+> functionally decompose the common code to a shared location.
 
-Reasonable to harden the code. These might turn up in other
-types of device. Ports will be handled differently (part of the
-portdrv rework that I need to get back to), but maybe someone
-will put a CXL PMU on a type 2 device and call this function.
-
-Jonathan
- 
-
-> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
-> ---
->  drivers/cxl/core/pmu.c | 3 +++
->  1 file changed, 3 insertions(+)
-> 
-> diff --git a/drivers/cxl/core/pmu.c b/drivers/cxl/core/pmu.c
-> index 5d8e06b0ba6e..2d12887c9915 100644
-> --- a/drivers/cxl/core/pmu.c
-> +++ b/drivers/cxl/core/pmu.c
-> @@ -51,6 +51,9 @@ int devm_cxl_pmu_add(struct device *parent, struct cxl_pmu_regs *regs,
->  	case CXL_PMU_MEMDEV:
->  		rc = dev_set_name(dev, "pmu_mem%d.%d", assoc_id, index);
->  		break;
-> +	default:
-> +		rc = -EINVAL;
-> +		break;
->  	}
->  	if (rc)
->  		goto err;
-
+Any preferences where that "shared location" should be?
 
