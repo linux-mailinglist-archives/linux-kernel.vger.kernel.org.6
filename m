@@ -1,106 +1,113 @@
-Return-Path: <linux-kernel+bounces-379622-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379624-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 695629AE130
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:41:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2070E9AE134
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0175B22A99
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:41:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4FD7B1C229DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DA41D150C;
-	Thu, 24 Oct 2024 09:38:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWboTjyI"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 82A6B1D5144;
+	Thu, 24 Oct 2024 09:39:04 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CAC1D172B;
-	Thu, 24 Oct 2024 09:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 743A33D97A;
+	Thu, 24 Oct 2024 09:39:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762696; cv=none; b=aam7HCvOFPltSexu9LhOqLO64F48v4ke6vSY3DGCbzGVfDn3N7gIyKOssIV//TmJZQyyuQd63VqlAEXbXepw4NPVL5vqM2A6tgV/2XxCjQhEMSv38ory1C0oWK3yDq2l4mHLrUasGSZ0EAVDnlWy9iLsS6K4zYxSsWN6Uv2SwGU=
+	t=1729762744; cv=none; b=c+gYI5GKX+qxzas5/guXU14CHkv+vIC3f4GvxfK3qxlPqtMSxHDoZhaLBMK+gYEmcIpxXMFNRyAvtQI1ZDzLvYMOfw9MMA4jvYc1/G2iooV/l4PSXcbpJgTyyuKhTU4dJwG+ozogu+5vzI/1Uai9vgCUFgog0CQ3uysWGPZQhrE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762696; c=relaxed/simple;
-	bh=TM7UNffSSOmAOZkaONHkwvnJYn+RtQ7/d5lFvohpBnM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=M5G2/g/Q+yKGrhExYhc9tw8QCae87hUJhU/oJPWYfQ22SFAGg9dcjg/hnC65nkQuwYFBDlPLEK5LMK4QA/A+bjMOTrVePiP+6CTzgxHMPkJIuGwthPnbAI3dyZJMTn8HLnQg++x0kcm053BUJZxDTBSQJS4CXp1OTCyFljxLit8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWboTjyI; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26EEAC4CEC7;
-	Thu, 24 Oct 2024 09:38:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729762695;
-	bh=TM7UNffSSOmAOZkaONHkwvnJYn+RtQ7/d5lFvohpBnM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=AWboTjyIQkjp08p9YShGmcoM7pqqYthPP6XGtm+Dl811CsjBV+JzMBevlJyusgVvG
-	 ZgccgktLRRy7kuZSwAWnMKaIvfPi5q5hBURUdsnSpToD9FblTPvrdpYTurXr+WDZkT
-	 tyFfGAeOymPWNi0pHE1CTqovskZ4zPQQ2LJNrBWdNHkqb5jgfE1+1nAhGAXp3QC+9X
-	 jMi8qQ0igZIZghT5MSBxfjaP5aJOMap2mtjFLsMfh8cLgJ9d6K9xEc6nL3sjoeRmBY
-	 K+5zsbpi5R0nct7+/NfNmuU2y9KkyzoGS5Lch0t0z7oNG8d8vZXZdeoSYuqhcvBbFU
-	 TrTygL8pzHYTg==
-Date: Thu, 24 Oct 2024 10:38:11 +0100
-From: Conor Dooley <conor@kernel.org>
-To: linux-pci@vger.kernel.org
-Cc: Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Lorenzo Pieralisi <lpieralisi@kernel.org>,
-	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
-	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
-Subject: Re: [PATCH v5 0/2] PCI: microchip: support using either instance 1
- or 2
-Message-ID: <20241024-gout-kinfolk-0f24b28d41b7@spud>
-References: <20240814-setback-rumbling-c6393c8f1a91@spud>
+	s=arc-20240116; t=1729762744; c=relaxed/simple;
+	bh=2m73KAYM6zCci5LsNmrhwhdMM5NOURZE9sSH/sEkT5s=;
+	h=Date:From:To:CC:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=P0FQM885lK377gQpZH5h3TlhDPZi1EZ2wbn2GxgKg1BqORlmnHDdIXe30LQgP/WUOt5vl9i6sxMphwTTfbPX7U0e/0NtBLvKmGDSw9EQsN/dnNsuW4dNcXkZ8zghQWPETo2sKR5wuzL1j4GXwPOilMlMVAsLE1rnLrAZ8TmwypA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=Huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZ16t2rNBz6K5rC;
+	Thu, 24 Oct 2024 17:37:58 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (unknown [7.182.85.71])
+	by mail.maildlp.com (Postfix) with ESMTPS id D99D7140158;
+	Thu, 24 Oct 2024 17:38:58 +0800 (CST)
+Received: from localhost (10.203.177.66) by frapeml500008.china.huawei.com
+ (7.182.85.71) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 24 Oct
+ 2024 11:38:58 +0200
+Date: Thu, 24 Oct 2024 10:38:56 +0100
+From: Jonathan Cameron <Jonathan.Cameron@Huawei.com>
+To: Zicheng Qu <quzicheng@huawei.com>
+CC: <dave@stgolabs.net>, <dave.jiang@intel.com>, <alison.schofield@intel.com>,
+	<vishal.l.verma@intel.com>, <ira.weiny@intel.com>,
+	<dan.j.williams@intel.com>, <linux-cxl@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <tanghui20@huawei.com>,
+	<zhangqiao22@huawei.com>, <judy.chenhui@huawei.com>
+Subject: Re: [PATCH] cxl: core-pmu: Fix the usage of uninitialized variable
+Message-ID: <20241024103856.000031ed@Huawei.com>
+In-Reply-To: <20241023105610.668964-1-quzicheng@huawei.com>
+References: <20241023105610.668964-1-quzicheng@huawei.com>
+Organization: Huawei Technologies Research and Development (UK) Ltd.
+X-Mailer: Claws Mail 4.1.0 (GTK 3.24.33; x86_64-w64-mingw32)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="U6iyZokWShLT5gWe"
-Content-Disposition: inline
-In-Reply-To: <20240814-setback-rumbling-c6393c8f1a91@spud>
+Content-Type: text/plain; charset="US-ASCII"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: lhrpeml100006.china.huawei.com (7.191.160.224) To
+ frapeml500008.china.huawei.com (7.182.85.71)
 
+On Wed, 23 Oct 2024 10:56:10 +0000
+Zicheng Qu <quzicheng@huawei.com> wrote:
 
---U6iyZokWShLT5gWe
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+> In the devm_cxl_pmu_add() function, the variable rc might be
+> uninitialized before its first use 'if (rc) goto err', leading
+> to undefined behavior since its value depends on the compiler.
+> Currently, the switch statement is limited to the CXL_PMU_MEMDEV type.
+> If additional types are introduced, it could lead to similar concerns.
+> If the type range remains unchanged, using a switch case is unnecessary.
+> To enhance code extensibility and stability, it is recommended to
+> address this potential aspect.
+> 
+> Cc: stable@vger.kernel.org # v6.6+
+> Fixes: 1ad3f701c399 ("cxl/pci: Find and register CXL PMU devices")
 
-On Wed, Aug 14, 2024 at 09:08:40AM +0100, Conor Dooley wrote:
-> From: Conor Dooley <conor.dooley@microchip.com>
->=20
-> The current driver and binding for PolarFire SoC's PCI controller assume
-> that the root port instance in use is instance 1. The second reg
-> property constitutes the region encompassing both "control" and "bridge"
-> registers for both instances. In the driver, a fixed offset is applied to
-> find the base addresses for instance 1's "control" and "bridge"
-> registers. The BeagleV Fire uses root port instance 2, so something must
-> be done so that software can differentiate. This series splits the
-> second reg property in two, with dedicated "control" and "bridge"
-> entries so that either instance can be used.
+Not a fix, because this is only called for CXL_PMU_MEMDEV.
+So drop stable and fixes tag as I don't see this as appropriate to
+backport (unless I'm missing something!)
 
-Just attempting to bump this patchset. It has gone over 2 months without
-response, and I am afraid it has completely fallen between the cracks.
+Reasonable to harden the code. These might turn up in other
+types of device. Ports will be handled differently (part of the
+portdrv rework that I need to get back to), but maybe someone
+will put a CXL PMU on a type 2 device and call this function.
 
-Thanks,
-Conor.
+Jonathan
+ 
 
---U6iyZokWShLT5gWe
-Content-Type: application/pgp-signature; name="signature.asc"
+> Signed-off-by: Zicheng Qu <quzicheng@huawei.com>
+> ---
+>  drivers/cxl/core/pmu.c | 3 +++
+>  1 file changed, 3 insertions(+)
+> 
+> diff --git a/drivers/cxl/core/pmu.c b/drivers/cxl/core/pmu.c
+> index 5d8e06b0ba6e..2d12887c9915 100644
+> --- a/drivers/cxl/core/pmu.c
+> +++ b/drivers/cxl/core/pmu.c
+> @@ -51,6 +51,9 @@ int devm_cxl_pmu_add(struct device *parent, struct cxl_pmu_regs *regs,
+>  	case CXL_PMU_MEMDEV:
+>  		rc = dev_set_name(dev, "pmu_mem%d.%d", assoc_id, index);
+>  		break;
+> +	default:
+> +		rc = -EINVAL;
+> +		break;
+>  	}
+>  	if (rc)
+>  		goto err;
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxoVgwAKCRB4tDGHoIJi
-0rSkAQDDxvSCVpyNBChctdnTAmn52RkLFOl+dBGBX8kpkw1apQD+LA70iId0caDT
-vs957ff3Zq274+khzayKzwkmeaf0Zgk=
-=nk2E
------END PGP SIGNATURE-----
-
---U6iyZokWShLT5gWe--
 
