@@ -1,97 +1,111 @@
-Return-Path: <linux-kernel+bounces-379562-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379563-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 87E7A9AE07B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:21:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B53279AE088
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:25:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2192CB228E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:21:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B1CA1F23EE8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:25:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 197BE1B21AB;
-	Thu, 24 Oct 2024 09:21:46 +0000 (UTC)
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 609391B21B4;
+	Thu, 24 Oct 2024 09:24:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="EDBdkMpN"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A0F3F1ADFE6;
-	Thu, 24 Oct 2024 09:21:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAB3A1B21A9
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:24:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.13
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729761705; cv=none; b=ARLdfFj97ErTYClKrFVa4IWmKWNdbnKLneEF/WhDOeO/AJRfeUUaZKXUaw1z/GN5XnqjsOzPVXg2TZrjPRO8SSKFtteqn6ZBpqL+wXKwsKFls5/JwHJDeiKYxaRgVVgPV5aNd4R43DHpxBY3WBSIqN0VmACwbksXHhVJsn2kXRA=
+	t=1729761898; cv=none; b=m0oGTsOFezzB6GbSsW2uo68du43NxIme+mVBZQbOuB/Ns7CDdU1eGljeJ6lRfrKAp/gbA8mThoKNAqhcRh20qBAx1r0yHQFzYHu5W61UJuVG8FdKQVAHrE4EkR2vqfKauGYATvE54v3foQ1PEjdDlyTuqAmliuQ4gdueHPZKZ+U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729761705; c=relaxed/simple;
-	bh=99Yrc0L17TG3fMxums1Dkq+SnVpEoYsxEGXOnf+fuGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sw3DMcXRepMK4DtnY3BUAD6EYu2po90WoS3Qq+dAugxJkHvo8iY4URGCwqbdYqVWMRx8fza50qkgKunCe07nNkNsOd/IHyc7FEx5Sge7OFeE6DeOujuLhuMu+/IGMsptDHE3TDnZrgdlg3JyQaKoF23aCjvKE5v4lZzjJBitLa8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E6734C4CEC7;
-	Thu, 24 Oct 2024 09:21:43 +0000 (UTC)
-Date: Thu, 24 Oct 2024 05:21:39 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Geert Uytterhoeven <geert@linux-m68k.org>
-Cc: Guenter Roeck <linux@roeck-us.net>, Michael Ellerman
- <mpe@ellerman.id.au>, Christoph Hellwig <hch@infradead.org>, Kees Cook
- <kees@kernel.org>, Sasha Levin <sashal@kernel.org>,
- torvalds@linux-foundation.org, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <20241024052139.2cf7397f@rorschach.local.home>
-In-Reply-To: <CAMuHMdVLsLA97u4AVTA6=YKyfyWNrJOQk7S02s36AFTrFoUM3A@mail.gmail.com>
-References: <ZxZ8MStt4e8JXeJb@sashalap>
-	<792F4759-EA33-48B8-9AD0-FA14FA69E86E@kernel.org>
-	<ZxdKwtTd7LvpieLK@infradead.org>
-	<20241022041243.7f2e53ad@rorschach.local.home>
-	<ZxiN3aINYI4u8pRx@infradead.org>
-	<20241023042004.405056f5@rorschach.local.home>
-	<CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
-	<20241023051914.7f8cf758@rorschach.local.home>
-	<8734km2lt7.fsf@mail.lhotse>
-	<20241024010103.238ef40b@rorschach.local.home>
-	<07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
-	<20241024024928.6fb9d892@rorschach.local.home>
-	<CAMuHMdVLsLA97u4AVTA6=YKyfyWNrJOQk7S02s36AFTrFoUM3A@mail.gmail.com>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729761898; c=relaxed/simple;
+	bh=Yy0+R3nQ5ZTLp7mJ07qu9riQztocucCCQTh/qkOpXeE=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=cgHqwNkCPreKHiGgLs2hCWhj7x1RO2FRRbykvb3W75TpGzNc7M5mEsaE/SqAVPTTmcWHWE4Bw2Lfp4h+jhYLl54Lxn084USslXqCaG0tw1zyFkxD6AvMTjcA9B5UowCmN4uL/K2Ta3PhhDAqWq0gdd4wjAZfG67ZHWzUCdvqhEE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=EDBdkMpN; arc=none smtp.client-ip=198.175.65.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729761896; x=1761297896;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=Yy0+R3nQ5ZTLp7mJ07qu9riQztocucCCQTh/qkOpXeE=;
+  b=EDBdkMpNKwxBGN8Pz3V2XMzPIpC6X3kCg8lnSBisLH/L4HbllOQJ4etj
+   QRwWutsoQPkzx0jaLytP215ebf9HUJfukHKha7JwWfJkhjOs0LY81zdde
+   T2EWZAuoA1OIk2dIyqfpW4CFZs8RymmVUCXJjaVsrneIdKdgnMJK81gqX
+   p86aW8T6ShUfpy7Jbz6AkMZcAiU7UR1nLE8wzjszMVbnhPIB5qMQU7S8o
+   OlLwvG2H7d4LKB5qCihJPFdtEt0Rh6nhkFC1OzrXO7evgdsG5hNsOq8AQ
+   0w1V/ls+o/T1CpmbFJfoZSXTZgdQ3SfhL6/PUxLsx6lFhK9TakpFeCU0X
+   w==;
+X-CSE-ConnectionGUID: YUfEBk6eTGaz3PmWx//Y3g==
+X-CSE-MsgGUID: BlaelD7eTuqb6FmVQQhC5w==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="40501231"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="40501231"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa105.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 02:24:56 -0700
+X-CSE-ConnectionGUID: O2kx0rG+SK6WUC8eM1s/GQ==
+X-CSE-MsgGUID: /3ggvvb0SZCxu/ZOmPff5w==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="80705034"
+Received: from spr-s2600bt.bj.intel.com ([10.240.192.127])
+  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 02:24:54 -0700
+From: Zhenzhong Duan <zhenzhong.duan@intel.com>
+To: iommu@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Cc: dwmw2@infradead.org,
+	baolu.lu@linux.intel.com,
+	joro@8bytes.org,
+	will@kernel.org,
+	robin.murphy@arm.com,
+	chao.p.peng@intel.com,
+	Zhenzhong Duan <zhenzhong.duan@intel.com>
+Subject: [PATCH v3 0/2] vtd: Minor cleanup
+Date: Thu, 24 Oct 2024 17:21:44 +0800
+Message-Id: <20241024092146.715063-1-zhenzhong.duan@intel.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-On Thu, 24 Oct 2024 09:01:15 +0200
-Geert Uytterhoeven <geert@linux-m68k.org> wrote:
+Hi,
+
+This cleanup the vtd dump code to dump lower entry after check current
+level entry's present bit. Also fix the print to avoid confusing.
+
+See patch log for details.
+
+Thanks
+Zhenzhong
+
+Changelog:
+v3:
+- Fix a missed check
+- Refine commit log further
+
+v2:
+- Add Fixes tag in patch1 (Baolu)
+- Refine commit log in patch2 (Baolu)
 
 
-> On Thu, Oct 24, 2024 at 5:59=E2=80=AFAM Michael Ellerman <mpe@ellerman.id=
-.au> wrote:
-> > Several thousand build tests, across pretty much every architecture.
-> >
-> > And a few hundred boot tests, lots virtualised, but some on real HW.
-> >
-> > A single character typo in an #ifdef your testing doesn't cover can
-> > break the build for lots of people ... =20
->=20
-> Or a missing "static" for a dummy function.
-> Or a plain 64-bit division.
-> Or ...
+Zhenzhong Duan (2):
+  iommu/vt-d: Fix checks and print in dmar_fault_dump_ptes()
+  iommu/vt-d: Fix checks and print in pgtable_walk()
 
-Note, my fixes code seldom adds dummy functions. I like to try to keep
-them as small as possible. That's not always the case, so maybe I could
-push it. But it will change my workflow quite a bit or burden Stephen
-with broken branches.
+ drivers/iommu/intel/iommu.c | 40 ++++++++++++++++++++++++-------------
+ 1 file changed, 26 insertions(+), 14 deletions(-)
 
-I'm still not convinced it's worth it.
+-- 
+2.34.1
 
-We are not talking about new development code. We are talking about bug
-fixes for code that is in Linus's tree. The zero day bot and my tests
-appear to find most issues. Bugs that happened on my fixes patches are
-usually other use cases. For instance, cpu hotplug while tracing from
-rtla. That's not coverage I get from linux-next.
-
--- Steve
 
