@@ -1,135 +1,91 @@
-Return-Path: <linux-kernel+bounces-379909-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379910-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5649C9AE5BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:09:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1D4719AE5C3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:11:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED521C222B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:09:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3BDD01C218F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:11:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564E51D319B;
-	Thu, 24 Oct 2024 13:09:22 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF2101D9674;
+	Thu, 24 Oct 2024 13:11:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+DhenBA"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tFGvmb/h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09D1CB33E;
-	Thu, 24 Oct 2024 13:09:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4A7631CB9E5;
+	Thu, 24 Oct 2024 13:11:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775361; cv=none; b=byYvuPq2mmCrD9gGzIHQtl4sF7jcqxkCmlCwcsDivOBH6W1JheaPmyoRX3gnxBQ/g5h3+N8fmUDAIZnzIxOThjttqw274GylErp5iuxETOZtYdTUH1VhooV3kd08vjgCNfwKI3+OqfxqsBz77fy4uiDUzRaopOhR8Dxud2Q30EU=
+	t=1729775474; cv=none; b=PFfLLvrRDBjNL8iCgeJmiMCfJZpkzm0+Y7eVFOeOV8sMm05S+gXR6lsU4jRMzRWc9wQYKj5VD5JBK/N9iAquR/CSKIx/cjze0oOVDIUmnKb/I0LOLPUCbqfQ20AfaLeIhak0CyRkRMHLx1FZC6N0ycc89B8imBr8xoJS940NNZo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775361; c=relaxed/simple;
-	bh=nb17tpFBEr4PRv+4HRivZY+/kDVAsGeu50KxgyQfFtM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bJTV6BkSLhlyhfTHLcXy7K1uCib+LZfItuYKXpDu9eznmaynFxhhunB/e3Balpt3Z/lGOhxjRQRwaQCFcBBG+QSmV43QPHsBoQhRY5BetsaK+Nbysu+arGIq3jyOjFUzX0aC9hEIZO47FhcJfUgZeDHt0jTYX4H/8QfrAgLYl5I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+DhenBA; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70EEBC4CEE6;
-	Thu, 24 Oct 2024 13:09:18 +0000 (UTC)
+	s=arc-20240116; t=1729775474; c=relaxed/simple;
+	bh=AI1/myMLo/KQjV1YPFWjAT9xvXbzGL5k7SGI9jX2yjE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NQxk1COo2PPsYz9wvr+dLNmV4QRunNvdM20SBO29Fe1smn1d0aKA5EV+qCJEwx57Sx1rVu8TC/KZ05Pd/LJjV849bTE6rGblx2EBZ3KdRav1gYF05KYdyl1wjObxNkFx4BySWfHpfh9cARfCRfv5sPHZbAB47aoe4CxCpDpOyPA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tFGvmb/h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B3E1BC4CEC7;
+	Thu, 24 Oct 2024 13:11:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729775361;
-	bh=nb17tpFBEr4PRv+4HRivZY+/kDVAsGeu50KxgyQfFtM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Z+DhenBAKevA2lfvMQCT080RR15CYZlFd2OBex6DKPZSr3GlSJCnwVUvC/6MZpWav
-	 atJeLaRqsLRsSbOgLmN9Dwjf2ik8vwDpRp/O2qkRL1ypA9TJFHhSJ6h8jjxZDcFSNG
-	 kosMIC5Nt2BjAK39z4huh/7xjQKN1UF+X9TaSIx2RzTMCcK4amX66HejnuWydxomkS
-	 tbcx3hdsDo7hWfeHHv4iP83Eroipu8AnnLKrEHA8HBRWMKBa0D7ZgyVHMJXogENKhG
-	 bOMXwfdLhlWJfJnsnCEUJI8F29OJIMRSnnTlT+rmub7IRRCGCPO8hD4eNxXQAYyk1W
-	 Y69zdtfXGdQ9Q==
-Date: Thu, 24 Oct 2024 14:09:15 +0100
-From: Will Deacon <will@kernel.org>
-To: Tomasz Jeznach <tjeznach@rivosinc.com>
-Cc: Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <apatel@ventanamicro.com>,
-	Sunil V L <sunilvl@ventanamicro.com>,
-	Nick Kossifidis <mick@ics.forth.gr>,
-	Sebastien Boeuf <seb@rivosinc.com>,
-	Rob Herring <robh+dt@kernel.org>,
+	s=k20201202; t=1729775473;
+	bh=AI1/myMLo/KQjV1YPFWjAT9xvXbzGL5k7SGI9jX2yjE=;
+	h=From:To:Cc:Subject:Date:From;
+	b=tFGvmb/ho14sHrd9GTr+sseYUW4KwayjwZzh2KARc2AChAI7mWOhc/ubSOdyI2voU
+	 HPJkGBZXm1ydEUbxl73Z9zOKnDVAwbZw/lmTFB/U+19+nyeix03sMgZU8qWw7Vew0U
+	 Rb9Ng4d60D2i1QHxIdtNkFAtiyJwbjn8OkVpVzNELR/TRgXKICnMT4QV17BU7302eH
+	 IJ11QKUIdZxtGmn9/avo/TRR4Xy8XXDJwWyWzhi4Pjz9fgrwCBxWRf8qpHp//xqamO
+	 R2bXX48ixJdHfSli5odvUBZlj8W4XqBi9ysNHacP2vJ6GPuPwwicvHOrKIwgHxRX0b
+	 uA+41u3JL4CGA==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan+linaro@kernel.org>)
+	id 1t3xcf-000000003Xo-23B5;
+	Thu, 24 Oct 2024 15:11:29 +0200
+From: Johan Hovold <johan+linaro@kernel.org>
+To: Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konradybcio@kernel.org>
+Cc: Rob Herring <robh@kernel.org>,
 	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
-	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
-	linux-kernel@vger.kernel.org, linux@rivosinc.com
-Subject: Re: [PATCH v10 0/7] Linux RISC-V IOMMU Support
-Message-ID: <20241024130914.GF30704@willie-the-truck>
-References: <cover.1729059707.git.tjeznach@rivosinc.com>
+	Conor Dooley <conor+dt@kernel.org>,
+	Rajendra Nayak <quic_rjendra@quicinc.com>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH 0/2] arm64: dts: qcom: x1e80100: fix PCIe interconnects
+Date: Thu, 24 Oct 2024 15:10:58 +0200
+Message-ID: <20241024131101.13587-1-johan+linaro@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <cover.1729059707.git.tjeznach@rivosinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Tue, Oct 15, 2024 at 11:52:12PM -0700, Tomasz Jeznach wrote:
-> This patch series introduces support for RISC-V IOMMU architected
-> hardware into the Linux kernel.
-> 
-> The RISC-V IOMMU specification, which this series is based on, is
-> ratified and available at GitHub/riscv-non-isa [1].
-> 
-> At a high level, the RISC-V IOMMU specification defines:
-> 
-> 1) Data structures:
->   - Device-context: Associates devices with address spaces and holds
->     per-device parameters for address translations.
->   - Process-contexts: Associates different virtual address spaces based
->     on device-provided process identification numbers.
->   - MSI page table configuration used to direct an MSI to a guest
->     interrupt file in an IMSIC.
-> 2) In-memory queue interface:
->   - Command-queue for issuing commands to the IOMMU.
->   - Fault/event queue for reporting faults and events.
->   - Page-request queue for reporting "Page Request" messages received
->     from PCIe devices.
->   - Message-signaled and wire-signaled interrupt mechanisms.
-> 3) Memory-mapped programming interface:
->   - Mandatory and optional register layout and description.
->   - Software guidelines for device initialization and capabilities discovery.
-> 
-> 
-> This series introduces RISC-V IOMMU hardware initialization and complete
-> single-stage translation with paging domain support.
-> 
-> The patches are organized as follows:
-> 
-> Patch 1: Introduces minimal required device tree bindings for the driver.
-> Patch 2: Defines RISC-V IOMMU data structures, hardware programming interface
->          registers layout, and minimal initialization code for enabling global
->          pass-through for all connected masters.
-> Patch 3: Implements the device driver for PCIe implementation of RISC-V IOMMU
->          architected hardware.
-> Patch 4: Introduces IOMMU interfaces to the kernel subsystem.
-> Patch 5: Implements device directory management with discovery sequences for
->          I/O mapped or in-memory device directory table location, hardware
->          capabilities discovery, and device to domain attach implementation.
-> Patch 6: Implements command and fault queue, and introduces directory cache
->          invalidation sequences.
-> Patch 7: Implements paging domain, using highest page-table mode advertised
->          by the hardware. This series enables only 4K mappings; complete support
->          for large page mappings will be introduced in follow-up patch series.
-> 
-> Follow-up patch series providing MSI interrupt remapping, complete ATS/PRI/SVA
-> and VFIO/IOMMUFD support are available at the GitHub [2], and has been tested
-> with published QEMU RISC-V IOMMU device model [3].
-> 
-> Changes from v9:
-> - rebase on v6.12-rc3
-> - #6 Memory ordering fix and updated commentary, based on Will’s suggestions.
-> - #7 Remove riscv_iommu_device_domain_type() and use head-less kfree_rcu in
->      riscv_iommu_release_device(), based on Jason's suggestions.
+The fourth and fifth PCIe controllers on x1e80100 are connected to the
+PCIe North ANoC.
 
-Thanks, looks ok to me now.
+Fix the corresponding interconnect properties so that the OS manages the
+right paths.
 
-Will
+These should go into 6.12-rc.
+
+Johan
+
+
+Johan Hovold (2):
+  arm64: dts: qcom: x1e80100: fix PCIe4 interconnect
+  arm64: dts: qcom: x1e80100: fix PCIe5 interconnect
+
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+-- 
+2.45.2
+
 
