@@ -1,104 +1,139 @@
-Return-Path: <linux-kernel+bounces-380091-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380093-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9405B9AE8D1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:30:36 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8647B9AE8D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:31:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589502921E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:30:35 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B07041C228A5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365841F4FBD;
-	Thu, 24 Oct 2024 14:27:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0A5121F6697;
+	Thu, 24 Oct 2024 14:28:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="E4MTcwgh"
-Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="rsrHhhpI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40371B393E;
-	Thu, 24 Oct 2024 14:27:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 615F01F667B;
+	Thu, 24 Oct 2024 14:28:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780068; cv=none; b=YlaV8x1qpnzrOWN/g5JgO7moXdlHUoT4eEW2ZQYxd5koVIhYGyk6Nn5LMFhtXzfd9jcSsJ8hQ6JmgwyZLBLRHsjVie5EPG49OjslfvwfQKk2WBPEEPwSSgMAtlSKbbKS1g4zOAm1hUqdeLHL9f2fPbTyMgkoCIGi3lfu1MyFAdM=
+	t=1729780087; cv=none; b=dks4q5MZccypZefRGcAlfFBAGtpYg6E+tl2h/vDWUoJ9GNnXKUwfUJ12VuMn/9fK8/8AZutFitd+GKWSLYg1XJ8UhVAOjYHQJaPnr80o2XAUqPrn7SExgymO4/5EZxAGuniXkJPxbkADS6vIrzWV4+5abKDZ1xPz0HYSl2NlA+Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780068; c=relaxed/simple;
-	bh=J2+aXeLl5DWdt6WEQwAIXdlYTgr0+J1Z9HBQ4zDYOf4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=tPu9viEeSVEXsY2yFRYr908QUgPfoAExE0YTgiBCm9+Id/+rFmS4d3gWfug6zNxF5y6IMsuhs/gYQcdgMESWFJZtCe/movGgHGmTsvVz59xe9fKu38Ewn18ELVP7JjcAYqY3DtH01wiMmHXC3FmeUou699KyCJ5fLUA9XrzX2nA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=E4MTcwgh; arc=none smtp.client-ip=156.67.10.101
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
-	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
-	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
-	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
-	bh=UPDtZCWQSXIyqEMMrOFW3RSbg7kYcGlFgSFOZvcOZkQ=; b=E4MTcwgh3meIWxKHk8/zFQAyRy
-	0/AG0XD2Q+OitRy3tLK8anp/ixmgrLDDV08JWDCJJek0VEe7Nx8aov4ejrvKXiJk1Ebg2nIWSanZn
-	DCiYbyqyZs0AU2itOf4K4tzh7u/uwGYw/26falcJ7g0+sPgL+aLOKJLlo0UcxXqOnLTQ=;
-Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
-	(envelope-from <andrew@lunn.ch>)
-	id 1t3yoF-00B8MN-RV; Thu, 24 Oct 2024 16:27:31 +0200
-Date: Thu, 24 Oct 2024 16:27:31 +0200
-From: Andrew Lunn <andrew@lunn.ch>
-To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
-Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org,
-	Andy Gross <agross@kernel.org>,
-	Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konrad.dybcio@linaro.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Rob Herring <robh+dt@kernel.org>,
-	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Philipp Zabel <p.zabel@pengutronix.de>,
-	Jacob Keller <jacob.e.keller@intel.com>,
-	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
-	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
-	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
-	Pavithra R <quic_pavir@quicinc.com>,
-	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
-	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
-Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
-Message-ID: <28409cbc-09c8-4c88-b11e-2c46457c9e8e@lunn.ch>
-References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
- <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
- <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
- <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
- <Zv_6mf3uYcqtHC2j@shell.armlinux.org.uk>
- <ba1bf2a6-76b7-4e82-b192-86de9a8b8012@quicinc.com>
- <7b5227fc-0114-40be-ba5d-7616cebb4bf9@lunn.ch>
- <641f830e-8d21-4bc0-abe2-59e2c4d29b92@quicinc.com>
+	s=arc-20240116; t=1729780087; c=relaxed/simple;
+	bh=t476ydiJw4Yxe6GO8SwSasYToXGgWXap70lQnOiSPYY=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=G5phr8fXYOWOx5+9rjCs+4myJRdQhKOovicPQMqsRRR70xi+6WfhSldcY0alNmXYWTvx52qgTmmq7/G0Dq9sBoMFpIgI8UTJ1/NdPJY6+HVshbUJGCQGmfILMVWe0MbkgZAOHyth6+bTUHLW22cppAAL6zy8Fcm4E0nxqGL5j94=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=rsrHhhpI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EB11DC4CECC;
+	Thu, 24 Oct 2024 14:28:04 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729780086;
+	bh=t476ydiJw4Yxe6GO8SwSasYToXGgWXap70lQnOiSPYY=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=rsrHhhpIiPkkOjI/h2w0LELI2aDTqIDAsFWc1yNkMlU+q+qeajpojUmzuBNlgEe5x
+	 Lxl0bi5/roh0cVZgGBK7uzGMYWW8FBRORaN6qnuyd5QqStb82d8X07RKySPOksd6WO
+	 efzS+y4Q5rHaVXzLFLwFGKJCF7Lw1HVeVo2d40t4FSeADBPQNS3RmRZwWSFYlaLqGL
+	 HxxBuJpvTpVfenBHR7HTTtRcWTvw3wKnA/86auKyeLw0o0vMcAMGW/Rh02Ujz7u6UZ
+	 0nBfzYTRcShZq9RxHsNte9+Nol2wKPUhbKgBtaDlPHOHVgEB/i3Iv4md0H3R0A9K1m
+	 s94pE0DN8XHoA==
+Date: Thu, 24 Oct 2024 23:28:02 +0900
+From: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+To: Li Huafei <lihuafei1@huawei.com>
+Cc: <rostedt@goodmis.org>, <dan.carpenter@linaro.org>,
+ <mhiramat@kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-trace-kernel@vger.kernel.org>, <oe-kbuild@lists.linux.dev>,
+ <lkp@intel.com>
+Subject: Re: [PATCH v2] fgraph: Fix missing unlock in
+ register_ftrace_graph()
+Message-Id: <20241024232802.57bb710cc1fee46608c4aed4@kernel.org>
+In-Reply-To: <20241024155917.1019580-1-lihuafei1@huawei.com>
+References: <20241024155917.1019580-1-lihuafei1@huawei.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <641f830e-8d21-4bc0-abe2-59e2c4d29b92@quicinc.com>
+Mime-Version: 1.0
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-> > I'm just wondering if you have circular dependencies at runtime?
-> > 
-> > Where you will need to be careful is probe time vs runtime. Since you
-> > have circular phandles you need to first create all the clock
-> > providers, and only then start the clock consumers. Otherwise you
-> > might get into an endless EPROBE_DEFER loop.
-> > 
+On Thu, 24 Oct 2024 23:59:17 +0800
+Li Huafei <lihuafei1@huawei.com> wrote:
+
+> Use guard(mutex)() to acquire and automatically release ftrace_lock,
+> fixing the issue of not unlocking when calling cpuhp_setup_state()
+> fails.
 > 
-> The Rx/Tx clocks sourced from the SERDES are registered as provider
-> clocks by the UNIPHY/PCS driver during probe time. There is no runtime
-> operation needed for these clocks after this.
+> Fixes smatch warning:
+> 
+> kernel/trace/fgraph.c:1317 register_ftrace_graph() warn: inconsistent returns '&ftrace_lock'.
+> 
 
-So they are always ticking. You cannot turn them on/off? It is nice to
-model them a fixed-clocks, since it describes the architecture, but i
-have to question if it is worth the effort.
+Looks good to me.
 
-	Andrew
+Acked-by: Masami Hiramatsu (Google) <mhiramat@kernel.org>
+
+Thank you,
+
+> Fixes: 2c02f7375e65 ("fgraph: Use CPU hotplug mechanism to initialize idle shadow stacks")
+> Reported-by: kernel test robot <lkp@intel.com>
+> Reported-by: Dan Carpenter <dan.carpenter@linaro.org>
+> Closes: https://lore.kernel.org/r/202410220121.wxg0olfd-lkp@intel.com/
+> Suggested-by: Steven Rostedt <rostedt@goodmis.org>
+> Signed-off-by: Li Huafei <lihuafei1@huawei.com>
+> ---
+> Changes in v2:
+>  - Use guard() to acquire and automatically release ftrace_lock.
+> ---
+>  kernel/trace/fgraph.c | 10 +++-------
+>  1 file changed, 3 insertions(+), 7 deletions(-)
+> 
+> diff --git a/kernel/trace/fgraph.c b/kernel/trace/fgraph.c
+> index 41e7a15dcb50..cd1c2946018c 100644
+> --- a/kernel/trace/fgraph.c
+> +++ b/kernel/trace/fgraph.c
+> @@ -1252,7 +1252,7 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  	int ret = 0;
+>  	int i = -1;
+>  
+> -	mutex_lock(&ftrace_lock);
+> +	guard(mutex)(&ftrace_lock);
+>  
+>  	if (!fgraph_initialized) {
+>  		ret = cpuhp_setup_state(CPUHP_AP_ONLINE_DYN, "fgraph_idle_init",
+> @@ -1273,10 +1273,8 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  	}
+>  
+>  	i = fgraph_lru_alloc_index();
+> -	if (i < 0 || WARN_ON_ONCE(fgraph_array[i] != &fgraph_stub)) {
+> -		ret = -ENOSPC;
+> -		goto out;
+> -	}
+> +	if (i < 0 || WARN_ON_ONCE(fgraph_array[i] != &fgraph_stub))
+> +		return -ENOSPC;
+>  	gops->idx = i;
+>  
+>  	ftrace_graph_active++;
+> @@ -1313,8 +1311,6 @@ int register_ftrace_graph(struct fgraph_ops *gops)
+>  		gops->saved_func = NULL;
+>  		fgraph_lru_release_index(i);
+>  	}
+> -out:
+> -	mutex_unlock(&ftrace_lock);
+>  	return ret;
+>  }
+>  
+> -- 
+> 2.25.1
+> 
+> 
+
+
+-- 
+Masami Hiramatsu (Google) <mhiramat@kernel.org>
 
