@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-380130-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380131-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 202659AE947
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:49:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E0F99AE94C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:49:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D1CAB21973
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:49:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6EB1C220B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:49:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D40D61E32C4;
-	Thu, 24 Oct 2024 14:49:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18465145B0B;
+	Thu, 24 Oct 2024 14:49:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="fhUMtAIh"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yvW2F9zO"
+Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A08101B6CE2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:49:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3631E0DB0
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:49:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781375; cv=none; b=Q1uq11zkaOuiGGwPv+kQzeiuw8VrAexo9oD7Z84SizIi+BlMTOcN5ZnRnSu6CoRJLXwD5Ns5mDBhUROZT3xs8B6AeCFd4bAjN4matokiI3pCRuG+BUMSH8UpUcSGnZ9OyRwg40WTb4v3BX0k6lbLjT+IhpbCgvLAK+thQSnuyB8=
+	t=1729781392; cv=none; b=nIAlJhCeg8m8qKZgVfnYUr7zNxHlRtjvkAfmHKZChi2IDtIgw1WEnPRJVgIX5gOLdoKJPDevAoCbCo7iBJhl7JpeOu6lk1+if7O9FMdaT8MJDzjsmTzN152YG/qcErF/rOvvicUruWEiRnIsRH2HR7Htnn8nnOFo2X5ENNdHFk4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781375; c=relaxed/simple;
-	bh=7EB+KL34+gso/d+CRmWtKh7IFrlB8NA85v8f0Vq6yks=;
+	s=arc-20240116; t=1729781392; c=relaxed/simple;
+	bh=gVUPvv/FnmRY7foM5Tyh9ireuXWq1boSSJ5EWGM8bO0=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Jqv6V6DVe4qr9oPgHS5aWxsuC7IZ6gbQA4FEK7kF6nWRplpByZFMuBjFvS/aWOn1YYXOA0T6mCP8o6oH+tQPWbcCxyy5nyfcjdudJH8Y/Y5CfOqK2oeUxziaaaI0GqyEPNCZ+I7rIi0jGU4DQf1kzO129srkmYHEosi4G6RTlCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=fhUMtAIh; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83ab00438acso31234539f.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:49:32 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=lAmPnm1ycFN4DDIdX72PmeA7Xix4NDeG/zrHGVX0KBwfg+SsLmSsdvrPI4xBY5pBr7Ht5Y9nQ4nVBSkb+kTMOQJuR9nU/aTCkZLOJp4AcYYGxQcxrgpyPdSM5uudxld/8w03w9jKcdrB9zsNminBl+Oe2eXXhQGnWd5FHdPlqTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yvW2F9zO; arc=none smtp.client-ip=209.85.210.54
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-71809fe188cso635869a34.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:49:50 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729781371; x=1730386171; darn=vger.kernel.org;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729781389; x=1730386189; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=cEE+Tifceqc/YN/4H/k/q++NkaaA/JoseVNvq94j9Nc=;
-        b=fhUMtAIhEQhKRn4scE0i4wE+lXOnp7h/5WYMVi3D867VdMohXzBKRal3lMOm/IG+C6
-         n/TBInoaOkXaXmUlUJIZv3xbr5B83Twxy5sUdCUEzMv4WRBsjePdqu5UMa9rupDCztZh
-         InS69FycAfvyOabHS8xAuGRVfX2oMBgbLZkAFGmeuWyyFORU5Kjfo1OpB1J6UhSi4+bO
-         7iQhsWQwokQ/trCnx2/evVikwSqMX777MP5SwfZBu5OrLQeSpQmhSnS364QOVpw3sqVC
-         YiXxjvPmT8RfZlXD89GYJ4+VQB+cwtwY0XF0ShkbrWKl32vu1XiY6q31TxYErYutu2CY
-         5J2g==
+        bh=v94UAHAt0z/GlIRWzSb/aqpgf9U8SvwT3lelP7L/T8M=;
+        b=yvW2F9zOr9Sf1sqnEkbgC6EXZYUktEdcgHjquzA3w5nctGrXXS0YQQlvpTagDF70fE
+         u1IIvlJ4/CF0wns8G2I6AXN4b0+3DjGS4dpi7mvqZCC0SMee11i3rw67CS7WZFxbQ9Mf
+         csHS54c0thr3Pu821cyVYf9sDbUhwqz/q2v3BO/c9fcntGxAyJdqTNhbvYN3LGjIVfI4
+         buUXWu10WB3BgOtaIzMZCKjy7q68IEDt7I4zCQSCCvQP0k6uvp8utPAUP88H2D9xuiFQ
+         MURyC7IA3tRb+znUcPR90uXzIu3pCgry+mZrihIxWntVpqLmXHcLIg8QMsCg7RFXO29m
+         N3nQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729781371; x=1730386171;
+        d=1e100.net; s=20230601; t=1729781389; x=1730386189;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=cEE+Tifceqc/YN/4H/k/q++NkaaA/JoseVNvq94j9Nc=;
-        b=rSz7k38DANxQ8/zevjFtEIdgBkaowd/NCiId6dZQkMiFesPgr1IfHf/reOztvBBnOU
-         SeHHejFdKbWRQRSRv6vqn3oKWlu6VyVo8gj203pfwDOMzFWlEdWTbtmKAPVZUY0tycaX
-         L/Fy6MkjDpT2+ZQHRWgl/jhtOeox6WHxmmJoC7SBk0AGPFmSK4+wabjj3HEuYa1C0z7E
-         6jIhHEqra4hRWVdojrkCxHZOCigbLXdP0xXCLjZ5NBhUg+s6d8FhxOzzoiI4Uq4xMrSo
-         25W7N+kFHbwIzBXjavAKs5dN9HwX0wZYPxfUXNZuFVcrW3dfHd+YvmMB3bNju3SgqBmh
-         1crA==
-X-Forwarded-Encrypted: i=1; AJvYcCXA0xkpAqiHF5j93hNocBuz4QsZXYaPzxeUvLZDiyg9n4d5bv+0pdPd3daYgU+/qqBTrqWs4u65yhB+aJI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzujAV+GiZuGuSTZeeOisCMFltr2witwFEBhkzVJMOjn5pLHTjN
-	BY1BlTfWNEn0y2QBKf4a5PzQ8k6SoUSmVjDWRPCxee244aAAKlCibnae/llMMKc=
-X-Google-Smtp-Source: AGHT+IFcKagZNVxnbRrEEdWW6Ze2R6s46McKtz+x9BGvmpgEPZVvMa8svouKm2Z1ah8rRi3Na3hI0Q==
-X-Received: by 2002:a05:6602:2b0d:b0:83a:adb4:e2c9 with SMTP id ca18e2360f4ac-83b043405f4mr158559839f.1.1729781371488;
-        Thu, 24 Oct 2024 07:49:31 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1df0658sm284877139f.49.2024.10.24.07.49.30
+        bh=v94UAHAt0z/GlIRWzSb/aqpgf9U8SvwT3lelP7L/T8M=;
+        b=PsNuxKxtVG0joscV01xn3t54qJDB10ylq3Y1T9sPFmuAeyi4dBkdYuP5Je7rYhXcVJ
+         cYJxs5Zio/kJ6CvwqllCUNUzB+G449egtA1fp2QWvFp0q0GNuPVkhu+XdImo8BUtRrYC
+         gYF3inlGUPGsC/YzLF0QQQkrAQNP76xBD/7y3+DLG29sMPwL4Lmezt3V45BybjqmLixC
+         Y40iLnKjJw9IobxGCWc1wXPGX4sVN4aPlid7I25EJu6keH782DpZ840LnBiPsZY/fil7
+         RoY/0z5SNRakKkEssVHtqKoXUfb4UkzaSz0md8nev3/Ab4bnb2VZPQM0FmYvwCZSrII+
+         HGrA==
+X-Forwarded-Encrypted: i=1; AJvYcCUQLbQY72JS/gBAQkrgBZaYwRrnWC7hQ0OCDySW8u/vz65UfP7u9cY4UHrJ1Wkks4sKsfWb0pCH6iU5ZDc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzQM66XyR4qG8/WSyl250lEUyyxX95ZnbO+8sVd+0HvwpHswFIF
+	0EOcjX8Qn63T3DKaMvWVh/W1VLyPGPuF+7c6lOzbXXur+9ju7lc/6zUBnybJNA4=
+X-Google-Smtp-Source: AGHT+IFSOJa5tZQDfiyvifYRt2spOoqw/LKgbaZOjiDrgieDP9qwmB+SmfLhxczWOx70km6r217TWg==
+X-Received: by 2002:a05:6830:2113:b0:718:8eb:531a with SMTP id 46e09a7af769-7184b29606dmr6867406a34.4.1729781389223;
+        Thu, 24 Oct 2024 07:49:49 -0700 (PDT)
+Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182ec025cdsm2152200a34.68.2024.10.24.07.49.47
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:49:30 -0700 (PDT)
-Message-ID: <62e57b0e-b646-4f96-bb83-5a0ecb4050da@kernel.dk>
-Date: Thu, 24 Oct 2024 08:49:30 -0600
+        Thu, 24 Oct 2024 07:49:47 -0700 (PDT)
+Message-ID: <7782352b-b8b3-4f2c-8a6a-b92dab8cb1b6@baylibre.com>
+Date: Thu, 24 Oct 2024 09:49:46 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,143 +75,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
-To: Pavel Begunkov <asml.silence@gmail.com>, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
- <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
- <20241024023805.1082769-1-xue01.he@samsung.com>
- <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
- <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
- <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
- <8e0f74c1-aa11-4036-ba20-6f4dc0c40333@gmail.com>
+Subject: Re: [PATCH RFC v4 02/15] spi: add basic support for SPI offloading
+To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
+ Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
+ <nuno.sa@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
+ Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
+ Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+ <20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
+ <ba3eed090e29deda797b0dea8162949c82743ccf.camel@gmail.com>
 Content-Language: en-US
-From: Jens Axboe <axboe@kernel.dk>
-In-Reply-To: <8e0f74c1-aa11-4036-ba20-6f4dc0c40333@gmail.com>
+From: David Lechner <dlechner@baylibre.com>
+In-Reply-To: <ba3eed090e29deda797b0dea8162949c82743ccf.camel@gmail.com>
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 10/24/24 8:49 AM, Pavel Begunkov wrote:
-> On 10/24/24 15:40, Jens Axboe wrote:
->> On 10/24/24 8:26 AM, Pavel Begunkov wrote:
->>> On 10/24/24 15:18, Jens Axboe wrote:
->>>> On 10/23/24 8:38 PM, hexue wrote:
->>>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
->>> ...
->>>>> When the number of threads exceeds the number of CPU cores,the
->>>>> database throughput does not increase significantly. However,
->>>>> hybrid polling can releasing some CPU resources during the polling
->>>>> process, so that part of the CPU time can be used for frequent
->>>>> data processing and other operations, which speeds up the reading
->>>>> process, thereby improving throughput and optimizaing database
->>>>> performance.I tried different compression strategies and got
->>>>> results similar to the above table.(~30% throughput improvement)
->>>>>
->>>>> As more database applications adapt to the io_uring engine, I think
->>>>> the application of hybrid poll may have potential in some scenarios.
->>>>
->>>> Thanks for posting some numbers on that part, that's useful. I do
->>>> think the feature is useful as well, but I still have some issues
->>>> with the implementation. Below is an incremental patch on top of
->>>> yours to resolve some of those, potentially. Issues:
->>>>
->>>> 1) The patch still reads a bit like a hack, in that it doesn't seem to
->>>>      care about following the current style. This reads a bit lazy/sloppy
->>>>      or unfinished. I've fixed that up.
->>>>
->>>> 2) Appropriate member and function naming.
->>>>
->>>> 3) Same as above, it doesn't care about proper placement of additions to
->>>>      structs. Again this is a bit lazy and wasteful, attention should be
->>>>      paid to where additions are placed to not needlessly bloat
->>>>      structures, or place members in cache unfortunate locations. For
->>>>      example, available_time is just placed at the end of io_ring_ctx,
->>>>      why? It's a submission side member, and there's room with other
->>>>      related members. Not only is the placement now where you'd want it to
->>>>      be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
->>>>
->>>> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
->>>>      that we can share space with the polling hash_node. This obviously
->>>>      needs careful vetting, haven't done that yet. IOPOLL setups should
->>>>      not be using poll at all. This needs extra checking. The poll_state
->>>>      can go with cancel_seq_set, as there's a hole there any. And just
->>>>      like that, rather than add 24b to io_kiocb, it doesn't take any extra
->>>>      space at all.
->>>>
->>>> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
->>>>      please use a name related to that. And require IOPOLL being set with
->>>>      HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
->>>>      HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
->>>>      can't exist without that.
->>>>
->>>> Please take a look at this incremental and test it, and then post a v9
->>>> that looks a lot more finished. Caveat - I haven't tested this one at
->>>> all. Thanks!
->>>>
->>>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
->>>> index c79ee9fe86d4..6cf6a45835e5 100644
->>>> --- a/include/linux/io_uring_types.h
->>>> +++ b/include/linux/io_uring_types.h
->>>> @@ -238,6 +238,8 @@ struct io_ring_ctx {
->>>>            struct io_rings        *rings;
->>>>            struct percpu_ref    refs;
->>>>    +        u64            poll_available_time;
->>>> +
->>>>            clockid_t        clockid;
->>>>            enum tk_offsets        clock_offset;
->>>>    @@ -433,9 +435,6 @@ struct io_ring_ctx {
->>>>        struct page            **sqe_pages;
->>>>          struct page            **cq_wait_page;
->>>> -
->>>> -    /* for io_uring hybrid poll*/
->>>> -    u64            available_time;
->>>>    };
->>>>      struct io_tw_state {
->>>> @@ -647,9 +646,22 @@ struct io_kiocb {
->>>>          atomic_t            refs;
->>>>        bool                cancel_seq_set;
->>>> +    bool                poll_state;
->>>
->>> As mentioned briefly before, that can be just a req->flags flag
+On 10/24/24 8:27 AM, Nuno Sá wrote:
+> On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
+>> Add the basic infrastructure to support SPI offload providers and
+>> consumers.
 >>
->> That'd be even better, I generally despise random bool addition.
->>
->>>>        struct io_task_work        io_task_work;
->>>> -    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
->>>> -    struct hlist_node        hash_node;
->>>> +    union {
->>>> +        /*
->>>> +         * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
->>>> +         * poll
->>>> +         */
->>>> +        struct hlist_node    hash_node;
->>>> +        /*
->>>> +         * For IOPOLL setup queues, with hybrid polling
->>>> +         */
->>>> +        struct {
->>>> +            u64        iopoll_start;
->>>> +            u64        iopoll_end;
->>>
->>> And IIRC it doesn't need to store the end as it's used immediately
->>> after it's set in the same function.
->>
->> Nice, that opens up the door for less esoteric sharing as well. And
->> yeah, I'd just use:
->>
->> runtime = ktime_get_ns() - req->iopoll_start - sleep_time;
->>
->> in io_uring_hybrid_poll() and kill it entirely, doesn't even need a
->> local variable there. And then shove iopoll_start into the union with
->> comp_list/apoll_events.
+
+...
+
+>> +struct spi_offload *devm_spi_offload_get(struct device *dev,
+>> +					 struct spi_device *spi,
+>> +					 const struct spi_offload_config *config)
+>> +{
+>> +	struct spi_offload *offload;
+>> +	int ret;
+>> +
+>> +	if (!spi || !config)
+>> +		return ERR_PTR(-EINVAL);
+>> +
+>> +	if (!spi->controller->get_offload)
+>> +		return ERR_PTR(-ENODEV);
+>> +
+>> +	offload = spi->controller->get_offload(spi, config);
+>> +	if (IS_ERR(offload))
+>> +		return offload;
+>> +
+>> +	if (offload->spi)
+>> +		return ERR_PTR(-EBUSY);
+>> +
+>> +	offload->spi = spi;
+>> +	get_device(offload->provider_dev);
 > 
-> That's with what the current request is hooked into the list,
-> IOW such aliasing will corrupt the request
+> Isn't this redundant? From what I can tell, we're assuming that the spi controller
+> (of the spi device) is the offload provider. Therefore, getting an extra reference
+> for it does not really seems necessary. The device cannot go away without under the
+> spi_device feet. If that could happen, then we would also need to take care about
+> callback access and things like that. Going this way, it would also be arguable to
+> have a try_module_get().
+> 
+> - Nuno Sá
+> 
+> 
 
-Ah true, well some other spot then, should be pretty easy to find 8
-bytes for iopoll_start. As mentioned, the point is really just to THINK
-about where it should go, rather than lazily just shove it at the end
-like no thought has been given to it.
-
--- 
-Jens Axboe
+Yes, you are right that we don't really need to take a reference to the device.
+This was left over from when I made an implementation that assumed the offload
+provider could be anything, not just a SPI controller.
 
