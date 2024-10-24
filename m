@@ -1,229 +1,241 @@
-Return-Path: <linux-kernel+bounces-379103-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379104-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7661E9AD9F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:32:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D32189AD9F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:33:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 076581F227E6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:32:12 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id F3B3E1C216B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:33:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAB6E14A0A3;
-	Thu, 24 Oct 2024 02:32:02 +0000 (UTC)
-Received: from hust.edu.cn (mail.hust.edu.cn [202.114.0.240])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3B97C15383A;
-	Thu, 24 Oct 2024 02:31:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=202.114.0.240
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729737122; cv=none; b=Zvocton3FgsckHItganyROJlPBfyqJ6WBB2c6yid+UUhzwH7TeMu6reDlA4CzhxMHb5/XFjNwRxeEn9rpqVNUK36CEHF5QfQc6BAIaNyixW8K5pUQqNHFkHQgeCM9M6o51OGicavP18hJHFUAOW9uJC4XWVr7yS77yvzzaquIfE=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729737122; c=relaxed/simple;
-	bh=hnzWLeXrbkyQISAmKM5lV+4jV+erpVGdvE8PKeWtrZY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Ul3cLF/jgv0cbkEDbch2PwP2cxHXERSRg0NP+7G77bcllV+l05vbUh9RHDRdke9WrJCRLnGapGC8Of6k05gW3S0vtcfZlwKLy7WdcFKWjfzSfKlGgW9R6MED/BtBi2GQ/jZ2Pm6y9khe+UvbDfU7cA/kKnaXgWvwPK/OLY6sXbU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn; spf=pass smtp.mailfrom=hust.edu.cn; arc=none smtp.client-ip=202.114.0.240
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=hust.edu.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=hust.edu.cn
-Received: from hust.edu.cn (unknown [172.16.0.52])
-	by app2 (Coremail) with SMTP id HwEQrAC3vc1hsRlnO_IkAQ--.30536S2;
-	Thu, 24 Oct 2024 10:30:57 +0800 (CST)
-Received: from [10.12.174.47] (unknown [10.12.174.47])
-	by gateway (Coremail) with SMTP id _____wAnK81dsRln8RuNAA--.15442S2;
-	Thu, 24 Oct 2024 10:30:55 +0800 (CST)
-Message-ID: <345e8f10-fe1a-4736-9468-7c92ac55d62e@hust.edu.cn>
-Date: Thu, 24 Oct 2024 10:30:53 +0800
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD0A814C5B3;
+	Thu, 24 Oct 2024 02:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="lMmSsJJ8"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4108F433B9;
+	Thu, 24 Oct 2024 02:33:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=198.175.65.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729737219; cv=fail; b=DnRD+sENLIQVJveZk2D9HiYV+AD0EVHt1bznGJW1U4QFJA34yPPtJKUgVTiOV8vEnSxfAKvk3cRQkHk7gbyV5GuM9AMAxXsXOMD11KipoWX/9cHBW/azAnZJgSEjUlPueseUbES26qgCONZj6B7+UjxTS34nuu02gDbRKrbH07M=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729737219; c=relaxed/simple;
+	bh=c9KDgjs6Ot5LtRGBuZme9QBwSm73v0h1gP7m1/KBfJI=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=OVpcYGSReaViLoYAk5Dn0nChRvPbt17jBtzIMQnCEFIQvlMaNQ5SaiQbpPDr5L/QArLyR2eoRdmYh9Ldx6nOQC8NeoSbUXd53sBdpGOhoRxN0jWPM1gah9VBGcttv0tzxiFx/9c5TGQ3uuOy2fv0Vwam8BsTSSnxzaRNmzXrkFM=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=lMmSsJJ8; arc=fail smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729737217; x=1761273217;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=c9KDgjs6Ot5LtRGBuZme9QBwSm73v0h1gP7m1/KBfJI=;
+  b=lMmSsJJ87SZ9ixFfoIz7WkVBfcmQ5A5dqI3BFTO0D0SDn6a6P0AX1vcJ
+   ZAY+RZPsnuf6MBopr/nke2OQUf2ENI2pAJCtsp730D4SQF2RDSnpKCK12
+   p2qrClkW5QcjRQdiuaOcshGKBJzWvohyovck6Mtf2R75mnUodYwmBWh6p
+   HlXsuuhfyP/q13lRCphjNZ2JFZDwwRgwTr8TEGtXiS4tFtigcpQ5UFj6p
+   oJxOCZ6VjbYDTMuPd4b7udOIzk4IiUu2kBoneNGWMQxHC+gDTrr+oQmb2
+   MvMVoAQBHThfMk9XdVGtzeoOSuKFeQavWvjuiWyVIckO574p42leOQr8a
+   Q==;
+X-CSE-ConnectionGUID: V223TsqhTP68Iw6U5t6oCQ==
+X-CSE-MsgGUID: qgaNPTR4Rpmv+zdm4NdCcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29213540"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29213540"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 19:33:37 -0700
+X-CSE-ConnectionGUID: qQVKCF7WTXqQFq1HJKSdDw==
+X-CSE-MsgGUID: 84EQjJjUQBGj7FCdp2Nrwg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="80026619"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa006.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 19:33:36 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 23 Oct 2024 19:33:36 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 19:33:36 -0700
+Received: from NAM04-MW2-obe.outbound.protection.outlook.com (104.47.73.169)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 23 Oct 2024 19:33:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=hujaaPE9uDMVKpUPT7hGNAmy5dQ/kA2VpeLb6dXzXkJxOLwJu6a3axQALR7qJSLmS/xuD0aKZow95amVb212HTYRSALwuUduFwDFoI3CsCEAuVEscTDUs92sp2PBe42EpWXTgmQWEKtUYnmRNQqH6YD7zDu5mjJGoyXk284J4jZWL3w/i7nlals7yolo0RDEMuoYpxFiNKw/LMO8rFSIExnGzhz2iMxP3qZZVULly0ryhpuWrh0njL3e6HJM0S7oi4LuzSHN9dha81Zn2qxnjav16jSDtjCtFDakHgzywrb83faXtdJJNsLTedewggYz+asH+mj0bC8V1S8WRFY8FA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=u0R0B98r/vVY/RBHxZj6bwNdbCoJGdv7cgvh4/k9KrQ=;
+ b=SmH9XWArqHMhf3yaj9bGZ6PObqb06urUxwcs4L3w2vvfEhF+H06Amsq/X9MBcU5ms6PSq05mXECu3RSzWqxfE0hGS/0yhTo75GT7OdlGZV4p4y4X+LYFKd88gGaSNVgmlGw0Mpq3/DJ270kZo1vsNUcT3amHf8caOCrUotsI7eMT9qnqddbETmecBqRYXixrerZOnOamsm/acAgcbJN5irVjw+h6e9O0r7WcQhAiHuatPlgDvblGq5YlppqBnjP1h7aF1zp9IaaV/Vni4HQVEy2WLwu3sKWO10kO25c4a3e6o6ypIoEQdZVhSoETU1eu++v6ZidYDz6SC+ttZuqDhA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com (2603:10b6:806:25c::17)
+ by PH0PR11MB5926.namprd11.prod.outlook.com (2603:10b6:510:14d::14) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.28; Thu, 24 Oct
+ 2024 02:33:26 +0000
+Received: from SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57]) by SA1PR11MB6733.namprd11.prod.outlook.com
+ ([fe80::cf7d:9363:38f4:8c57%3]) with mapi id 15.20.8069.027; Thu, 24 Oct 2024
+ 02:33:25 +0000
+Date: Wed, 23 Oct 2024 21:33:21 -0500
+From: Ira Weiny <ira.weiny@intel.com>
+To: Fan Ni <nifan.cxl@gmail.com>, Ira Weiny <ira.weiny@intel.com>
+CC: Dave Jiang <dave.jiang@intel.com>, Jonathan Cameron
+	<Jonathan.Cameron@huawei.com>, Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>, Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>, Davidlohr Bueso <dave@stgolabs.net>,
+	Alison Schofield <alison.schofield@intel.com>, Vishal Verma
+	<vishal.l.verma@intel.com>, <linux-btrfs@vger.kernel.org>,
+	<linux-cxl@vger.kernel.org>, <linux-doc@vger.kernel.org>,
+	<nvdimm@lists.linux.dev>, <linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH v4 17/28] cxl/events: Split event msgnum configuration
+ from irq setup
+Message-ID: <6719b1f1c7dd_da1f929462@iweiny-mobl.notmuch>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-17-c261ee6eeded@intel.com>
+ <ZwgV4D9NmcC-SAYQ@fan>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <ZwgV4D9NmcC-SAYQ@fan>
+X-ClientProxiedBy: MW4PR04CA0171.namprd04.prod.outlook.com
+ (2603:10b6:303:85::26) To SA1PR11MB6733.namprd11.prod.outlook.com
+ (2603:10b6:806:25c::17)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/zh_CN: update the translation of
- process/programming-language.rst
-To: Alex Shi <seakeel@gmail.com>, si.yanteng@linux.dev,
- Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20241023062750.849951-1-dzm91@hust.edu.cn>
- <46e54088-ad96-4387-8a39-2e4686c842bd@gmail.com>
-From: Dongliang Mu <dzm91@hust.edu.cn>
-In-Reply-To: <46e54088-ad96-4387-8a39-2e4686c842bd@gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:HwEQrAC3vc1hsRlnO_IkAQ--.30536S2
-Authentication-Results: app2; spf=neutral smtp.mail=dzm91@hust.edu.cn;
-X-Coremail-Antispam: 1UD129KBjvJXoW3AF4fXr47GrWxAFyDCrWruFg_yoWxCF15pF
-	W7GasrKa18AFn7GrWfKr1UuF1Fkrs5ta18JrWUt3W5tr48ta90gFyxtr43W3y2yryxCFWk
-	X3W3uFWkX3y5AFDanT9S1TB71UUUUbJqnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUHab7Iv0xC_Cr1lb4IE77IF4wAFc2x0x2IEx4CE42xK8VAvwI8I
-	cIk0rVWrJVCq3wA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK021l84ACjcxK6xIIjx
-	v20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4UJVWxJr1l84ACjcxK
-	6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1ln4kS14v26r
-	1q6r43M2vYz4IE04k24VAvwVAKI4IrM2AIxVAIcxkEcVAq07x20xvEncxIr21l57IF6xkI
-	12xvs2x26I8E6xACxx1l5I8CrVACY4xI64kE6c02F40Ex7xfMcIj64x0Y40En7xvr7AKxV
-	WxJVW8Jr1lYx0E74AGY7Cv6cx26r4fZr1UJr1lYx0Ec7CjxVAajcxG14v26r4UJVWxJr1l
-	Ox8S6xCaFVCjc4AY6r1j6r4UM4x0Y48IcVAKI48JMxkF7I0En4kS14v26r4a6rW5MxAIw2
-	8IcxkI7VAKI48JMxAIw28IcVCjz48v1sIEY20_GFW3Jr1UJwCFx2IqxVCFs4IE7xkEbVWU
-	JVW8JwCFI7km07C267AKxVW8ZVWrXwC20s026c02F40E14v26r1j6r18MI8I3I0E7480Y4
-	vE14v26r106r1rMI8E67AF67kF1VAFwI0_GFv_WrylIxkvb40EIxkG14v26r4j6ryUMIIY
-	rxkI7VAKI48JMIIF0xvE2Ix0cI8IcVAFwI0_Gr0_Xr1lIxAIcVC0I7IYx2IY6xkF7I0E14
-	v26r4j6F4UMIIF0xvE42xK8VAvwI8IcIk0rVWUJVWUCwCI42IY6I8E87Iv67AKxVW8JVWx
-	JwCI42IY6I8E87Iv6xkF7I0E14v26r4j6r4UJbIYCTnIWIevJa73UjIFyTuYvjxU3wIDUU
-	UUU
-X-CM-SenderInfo: asqsiiirqrkko6kx23oohg3hdfq/
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: SA1PR11MB6733:EE_|PH0PR11MB5926:EE_
+X-MS-Office365-Filtering-Correlation-Id: a4816834-f4d9-4185-9e03-08dcf3d43cb6
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|376014|1800799024|7416014;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?G6/lWS1YA80UvMVH8yrn9eWT0y0+jGMLeDxdUZSW5V8Zai/WA4taQ1b70Jdw?=
+ =?us-ascii?Q?q0becxwx4KwcWekdNjzOlzz2IeKZIZ6p1AsFg52q24//B+kiLskW11BDmFza?=
+ =?us-ascii?Q?8UP1TK5aA0c0hwTxF/shERm1z3q0qketjxGe0WK2bjQOQ8b0EX7SOzrCXWJU?=
+ =?us-ascii?Q?pFyNK9Ykm/Bd6dpKDemHWpa33j3btTgj+mR6ILjBD//jX0aMvgxP0K/X5TBf?=
+ =?us-ascii?Q?IyoZ6k6ZP9P/Z9I34L406Gco5Qmm9LoU+dpsU6Fi8SKYq6wx/ZstvgH4Pnw3?=
+ =?us-ascii?Q?AmFTm0nX2vdws8/EYvOHqvDI6UUz0okDOlTSxlOjLguyIEQokEXCqNAj9hH2?=
+ =?us-ascii?Q?eNiV7bX3T2c09qEk8CIvcj7wl80NNmqBsAwfcKUq9ZbvSpVqXk/3ZlfqOX5i?=
+ =?us-ascii?Q?ktuyIBsolQXNXEkrHmz1NKSSpllB7SntMyYwtyErNEHtvN5E/EK4ibR/5KV8?=
+ =?us-ascii?Q?RgiQWBfB45ed5VvItNgaEJRPHbN1/LKSG6nkAbvKneepa2CfIvm0T7xkGPEd?=
+ =?us-ascii?Q?6N5hzWKwA9jnoXMFdCZCTdAE/TdiNq8sOkr/iVcv0lqCHh14Nmb9obB47MdL?=
+ =?us-ascii?Q?n4l2kaWXfcGwi6mp0ZxnjuWrjpwQWbYyU+6aO0/eph4WgKNdtq1po7VsTUHv?=
+ =?us-ascii?Q?awAA7j5XupL0n/gfwA4E8ETvHdfvZ/YJ8YJNX8z+RBOZxb/DJh7Rvj323fsC?=
+ =?us-ascii?Q?dV/3guZGhLfWLtrEBjW6WNuaNP5SkREurHZpilXycOTlZ6QpliOkP/ZYPO+L?=
+ =?us-ascii?Q?JLgoy3I7M1mseSmkGCFIhcGVveX/YNxO/Si1pMtnH7OVLRGv1StkoBPteN6D?=
+ =?us-ascii?Q?rO29FXlo9LoCr2MM/h7T4nMpiqGo5ib32v7p9B5YSAPYMQTRuahT3zqhXh/4?=
+ =?us-ascii?Q?26SdMRSOIBahP7y0ZW9d+hwKgxGX23Dce9N9Tj02Ws7gdwUTdTXNCxIc00Z/?=
+ =?us-ascii?Q?73M0RDDzxnS+0glwitNSxpqFAlIyytxd8RAAYv41ppGvHkbmBZxqiMcg9Mzz?=
+ =?us-ascii?Q?e5nA7HuDH/BW9mJFv5It1DZ7m12ldza+/fz74EtMYNpbx6Ozk9jRkC82XX+X?=
+ =?us-ascii?Q?9UWh8OYWv31JBr0O1pzlmotXi3wnQJBO5hq7H9ir15LDE7xIeHG0G7/TquJX?=
+ =?us-ascii?Q?SJiADxrfWd42n8nkuSXdGseUMZIckEuxArxE8oK9ZPn558Xv8/KfqxnstZNA?=
+ =?us-ascii?Q?cRhIZMbwsGTCQy5uf9EJPT+KgbpqpGSqkQMMbsioaBriAkyLFRWjjN4ODRls?=
+ =?us-ascii?Q?mlMoKed6QMaFu4an9v832MzcvQ2JpgoKSNMvPCQ/BqQVcVPYXP+pwfi/G4uA?=
+ =?us-ascii?Q?4toQ3ktKXX2sLv3qQg/8Hl8m?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SA1PR11MB6733.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(7416014);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?MNv/ILSbH/y2fL5RijFtMOTd807sAfa/evZTzLqoslUNhziXoVrOwszRhLTY?=
+ =?us-ascii?Q?OVpLRprnC78INvdpoqg1CISABibPVWtfaNT3VSlC2U2ioZ2rNXlMTeJJlvoT?=
+ =?us-ascii?Q?j37SOP3uhtyqaEqKIwR2ffymix4xr/1EcixwS0Y99yweyz6USNQ0qDaTvwz/?=
+ =?us-ascii?Q?AqqwxQtmTezhFDfWhbbJpnPNJGeN7bAksypWnfPc2RLp7QPpptEUXowUEns9?=
+ =?us-ascii?Q?bSrZ+YuWKCpk4mCtlYyL48AtAo0EqawDfCpBfdLI8L/6ovA+LN0TB2jTTOft?=
+ =?us-ascii?Q?BvMxkhmxC5v4z/BodkOKQPgxLwP6dFjnSWwcgpNIwdx60P/Yo93wAL0Zt8Qw?=
+ =?us-ascii?Q?IeAW86xBFnTb6AWDvCXv+LTosSqdNQ7zNCt3n3CpOf/gKARSLzuUnDnJTups?=
+ =?us-ascii?Q?C49CwlBDxPyF8B1QKt3c+xGO7pfRoh1U7Zo/eppMLNzWcrS06WYP+FVjJHXl?=
+ =?us-ascii?Q?VK8m+mzMh3a5BzwVEde/lrG9Tqi9wfjosCFJGPtDV9WQsOvk5wnxXChMdQCf?=
+ =?us-ascii?Q?GQsA3fx5f/NLAWiuAAAl/IavrB4cQYAa5XTlfrcKo5TQBu65LWg3s1oXexVs?=
+ =?us-ascii?Q?fbqF5GMFPyUmPxLp4xyT6xheyCVxxFrvCeCMbnlCniIEcbAfInxWYKolDyxU?=
+ =?us-ascii?Q?JEVuXslf/vWsdDCAKmNXSTPew41zlsr1Gpgz27CnSXTJ/zljLthlNfqg66/K?=
+ =?us-ascii?Q?CBObsII6uD5QUak46jQ9cbgkmwhvLnfaobw63ImiCeLir7UJV2bNR5D5CQT8?=
+ =?us-ascii?Q?HKasDxEOC97BPaEzFEVhfdfuo2GpRel5ail4gDxLUrWuR6g6QiAZm+5rpjK0?=
+ =?us-ascii?Q?1wlQqgmlXsmU6s/wU+lfmXKBhXEd/+hKDcsjdCT0qbjsIQskIpKchk3kegqN?=
+ =?us-ascii?Q?QBlwN22PA+Dm8nYpZxIOECrnun8JmlOUXFZeDhZ6UKDzguoTgDdZbM+BOBv6?=
+ =?us-ascii?Q?7C0yjOuFVTTMGulAnzyvKJxHKL4WTMxGjcSyEDUQxRVn7ZJrJlwDL5VGOPn0?=
+ =?us-ascii?Q?cDx5uLdUg10xaqLyaaFGqxFjzRof2+ifxUjm3OZChWF7QtkC2h/tSrHnv2gz?=
+ =?us-ascii?Q?UIryo6MmXi5/WlDuOQ3WtOmYh1mVJ+3MSrJOCa1UNZgrntMhLz4bnIIOJZrt?=
+ =?us-ascii?Q?ZnPTWzZZGmQHl7CwIT8+opDHOJg+WKF36fT4Ew3M80NkMTHxapD1Py/pjIl5?=
+ =?us-ascii?Q?OFJHSKbvRBHD8ixzhPfMSVCh+4zfEzqvsL3J2gbD6yuuhDY0QAdvt32MLBbj?=
+ =?us-ascii?Q?Ogl6KXKcW35rtdBiFUrLc8AA+Ne8ak5jc7bDGOk5xGcMZ2tQzGYTojvf6c7P?=
+ =?us-ascii?Q?+nLApVfKbD0Us/6we+Ir8hbdXkED9kI2D9BPckJ/XMxcMGiTUxne+B/FYH/d?=
+ =?us-ascii?Q?5dqZRMJoQEthGWic1UOBBsS6W+66553vyYEJvQkdxxZGmz1B618PgFKFxsqo?=
+ =?us-ascii?Q?Y0rvENIi/eOxvjjp7eP77KXSb84uAal6C4kCHZYK61pGVfuykTrOJcnV36n+?=
+ =?us-ascii?Q?qZZObGk2LrtP1Ii5jSWLZ/TithgzXnT19q5EeXgN1KbOhQZLluxqMDlKCU5y?=
+ =?us-ascii?Q?VoX9QSB/wVy2cGVWXsf+VAoJdfOR9u5sIDBfdo/6?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a4816834-f4d9-4185-9e03-08dcf3d43cb6
+X-MS-Exchange-CrossTenant-AuthSource: SA1PR11MB6733.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 02:33:25.8664
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: m09yFnvhCHJ6M9TWlZP4FdMbQ4BN0b0rN4DYZo2vELHJcDOhYBpUDxPKprIhnuRncdV4UsAUm1aj8el87LPhLg==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PH0PR11MB5926
+X-OriginatorOrg: intel.com
 
+Fan Ni wrote:
+> On Mon, Oct 07, 2024 at 06:16:23PM -0500, Ira Weiny wrote:
+> > Dynamic Capacity Devices (DCD) require event interrupts to process
+> > memory addition or removal.  BIOS may have control over non-DCD event
+> > processing.  DCD interrupt configuration needs to be separate from
+> > memory event interrupt configuration.
+> > 
+> > Split cxl_event_config_msgnums() from irq setup in preparation for
+> > separate DCD interrupts configuration.
+> > 
+> > Signed-off-by: Ira Weiny <ira.weiny@intel.com>
+> > ---
+> One minor comment inline; otherwise
+> 
+> Reviewed-by: Fan Ni <fan.ni@samsung.com>
+> 
 
-On 2024/10/24 10:21, Alex Shi wrote:
+[snip]
+
+> >  
+> > -	rc = cxl_event_req_irq(cxlds, policy.fatal_settings);
+> > +	rc = cxl_event_req_irq(cxlds, policy->fatal_settings);
+> >  	if (rc) {
+> >  		dev_err(cxlds->dev, "Failed to get interrupt for event Fatal log\n");
+> >  		return rc;
+> 
+> There is a lot of duplicate code here, can we simplify it by
+> iteratting all setttings in cxl_event_interrrupt_policy like 
+> 
+> for setting in policy:
+>     rc = cxl_event_req_irq(cxlds, setting);
+>     if (rc) {
+>         ...
+>     }
 >
-> On 10/23/24 14:27, Dongliang Mu wrote:
->> Update to commit 0b02076f9953 ("docs: programming-language: add Rust
->> programming language section")
->>
->> scripts/checktransupdate.py reports:
->>
->> Documentation/translations/zh_CN/process/programming-language.rst
->> commit 0b02076f9953 ("docs: programming-language: add Rust programming
->> language section")
->> commit 38484a1d0c50 ("docs: programming-language: remove mention of the
->> Intel compiler")
->> 2 commits needs resolving in total
->>
->> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->> ---
->> v2->v3: fix warnings in the make htmldocs
->> v1->v2: revise the script name
->>   .../zh_CN/process/programming-language.rst    | 78 +++++++------------
->>   1 file changed, 30 insertions(+), 48 deletions(-)
->>
->> diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
->> index fabdc338dbfb..95aa4829d78f 100644
->> --- a/Documentation/translations/zh_CN/process/programming-language.rst
->> +++ b/Documentation/translations/zh_CN/process/programming-language.rst
->> @@ -3,25 +3,22 @@
->>   :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
->>   :Translator: Alex Shi <alex.shi@linux.alibaba.com>
->>   
->> -.. _cn_programming_language:
->> -
->>   程序设计语言
->>   ============
->>   
->> -内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
->> -在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
->> -
->> -这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
->> +内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [zh_cn_gcc]_ 编译，
->> +并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
->> +``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
->> +:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
->>   
->> -对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
->> -的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
->> +这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
->>   
->>   属性
->>   ----
->>   
->> -在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
->> +在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
->>   属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
->> -重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
->> +重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
->>   
->>   在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
->>   即使其速度较慢或执行的编译时检查/诊断次数不够）
->> @@ -30,42 +27,27 @@
->>   ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
->>   请参阅 ``include/linux/compiler_attributes.h``
->>   
->> -.. _cn_c-language:
->> -
->> -c-language
->> -   http://www.open-std.org/jtc1/sc22/wg14/www/standards
->> -
->> -.. _cn_gcc:
->> -
->> -gcc
->> -   https://gcc.gnu.org
->> -
->> -.. _cn_clang:
->> -
->> -clang
->> -   https://clang.llvm.org
->> -
->> -.. _cn_icc:
->> -
->> -icc
->> -   https://software.intel.com/en-us/c-compilers
->> -
->> -.. _cn_gcc-c-dialect-options:
->> -
->> -c-dialect-options
->> -   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
->> -
->> -.. _cn_gnu-extensions:
->> -
->> -gnu-extensions
->> -   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
->> -
->> -.. _cn_gcc-attribute-syntax:
->> -
->> -gcc-attribute-syntax
->> -   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
->> -
->> -.. _cn_n2049:
->> +Rust
->> +----
->>   
->> -n2049
->> -   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
->> +内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
->> +``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [zh_cn_rustc]_ 编译器在
->> +``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
->> +在语言中引入非后向兼容的小型变更的方式。
->> +
->> +除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
->> +的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
->> +
->> +具体请参阅 Documentation/rust/index.rst
->> +
->> +.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
->> +.. [zh_cn_gcc] https://gcc.gnu.org
->> +.. [zh_cn_clang] https://clang.llvm.org
->> +.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
->> +.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
->> +.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
->> +.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
->> +.. [zh_cn_rust-language] https://www.rust-lang.org
->> +.. [zh_cn_rustc] https://doc.rust-lang.org/rustc/
->> +.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
->> +.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
-> Hi Dongliang,
->
-> Good job! Most of translation are good.
-> Just the above doc seems still English version, give them a zh_cn name may cause misunderstand?
 
-Oh, I see. However, you cannot use gcc or rustc since it already exists 
-in the English documents. We need another name to make sphinx happy. 
-Therefore, why do not we directly use the final version of name? :)
+Do you mean by treating struct cxl_event_interrupt_policy as an u8 array?
 
-Correct me if I make any misunderstanding.
+I'm not sure that is super beneficial.
 
-Dongliang Mu
+Ira
 
->   
-> Thanks
+> 
+> For DCD, handle the setup separately afterwards.
+> 
+> Fan
 
+[snip]
 
