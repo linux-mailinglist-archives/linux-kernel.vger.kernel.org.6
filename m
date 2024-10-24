@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-379494-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D20E9ADF4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:37:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6DE1C9ADF4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:38:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ABEBA1C21394
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:37:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E4AA81F21605
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:38:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A63A61ABEC7;
-	Thu, 24 Oct 2024 08:36:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 317EB1B0F18;
+	Thu, 24 Oct 2024 08:38:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="B2+DmbQY"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="j072weQ/"
+Received: from mail-wm1-f42.google.com (mail-wm1-f42.google.com [209.85.128.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45BBE1AB52D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:36:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A9BE116C6A1
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:38:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759018; cv=none; b=k1ntUE8SComxRh6mjv3nb1DTqG1AVisivGm7LY/gbuoCvnPIelfEQSeX9GxM3Rt4t4xRxbg/otYmkPJrcaQ8AmxsmZ1LjuaIuARQtnxXWWyADB4KWNPtCWuamm+kriZoSdBci2EDTNZVkB8UcxJU0pq7/pc6Dhs/W2yTBTGXk4E=
+	t=1729759102; cv=none; b=Fn4YMCZaabDkL1S71aucLR4DgF8m9JqxN1JOBYN3jMbFCpuerA/0776Ty6EWPB8DG1ashxokmDx6jGuxt2Hi8OTOWDk8gfSVCdXPdbUwKhaMxFIYG2HCNAF5WUD97JBpyxYQUvKD4Z40Yk8CPHTorlLU+Q2FJUy5icB+oidx4Uo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759018; c=relaxed/simple;
-	bh=k2MmQUlbmKg5pfXrWwba7RLrW+gbXDhqcwKxhuulIyo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=nxtdVA8TS2H5gVhWULhDlO9+D2uH6lqnK1Ef8th13GkDkf/57tR5Pik8QAQgznghchk4RHvLfUJnm4yqFuzmjWHj6I6lIVIO+qDIJ183vMtXDeQH9GNKqqK5XqWGwhCG7+uFHPlDhmSn9S6efr8a9VjXwYQXEwf5OHjZn2127iU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=B2+DmbQY; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729759011;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bV9TQmFfSs8yLsU7QCmDt4U0aRRMcN9r5MoA2ahCdZ0=;
-	b=B2+DmbQYRA6uLWzQEvAoD1JmuHljwhpyHQX0C9yB1VcrduFR6sZcNV0R2pFhaT9msxdpC/
-	SQQ+fWRoLkoV2ZyAQBalYj0IVYl9VaE0FQ4h5s0bKAGQJmfWe777nN7rk0Q1JIf3VOSf0V
-	y5YNBDJxHcmV3G+A/Z8ioajsSzcIu64=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-354-5GpkkiceNL-C9wBsmd__UQ-1; Thu, 24 Oct 2024 04:36:49 -0400
-X-MC-Unique: 5GpkkiceNL-C9wBsmd__UQ-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4314a22ed8bso4606745e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:36:48 -0700 (PDT)
+	s=arc-20240116; t=1729759102; c=relaxed/simple;
+	bh=a1vFp0j5SSJamM8OhuteRSQJkTWrElcY5xS6rgIOcjI=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=L1D94VHPTb6aFP9DoQT1ws+tuoj+MaqxiX1DNySb/UPdUFRvzfh6NzwyqVMXLAMDLxsX9Z+AH75/IgtRJRUkmdZ0te+Frt8P4bVkIZP/SgL7kKedpKvVYrYG0RapGFIeNCodD7NmxQk7OAwE4dld+LjCkfCgwTLi8VA8/k3kgn8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=j072weQ/; arc=none smtp.client-ip=209.85.128.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f42.google.com with SMTP id 5b1f17b1804b1-4314a26002bso6837345e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:38:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729759099; x=1730363899; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=qRCfpLlVmBA/GhwBZGPGVhYfkecAk0ZjJSjMaPm2f3k=;
+        b=j072weQ/vwQvytYsbXs9t3qNiEvdhq3cz4QFK6lmj5KqoN4eT4n7OAPNaPPiRSd3jt
+         qdxLGhMzsa+hnlwb407HtvnZErynl0Mka/84KIKMmc/sdMZiBS6ZtU/Ln7vFos4Q1C0Y
+         E4n84GNem2Zf1Q9mKvmiHy1D8VvJLoBFltfNYR/aVo92OLSrj8dGVGWNph9f4wY7zcOX
+         VZn1++iILrf3gC7r/Zg48VXccvJ5Rd7RMdFyDXMG9YI6KbV/CAEEL5pnKtSsmNtLY09J
+         Gn0cMAryBYW0RaXSVdh1f6AHBwVSix8l63DDIS8q7iQv419MIhJrJZ3NFmkmmR+aXiK1
+         C3Bw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729759008; x=1730363808;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=bV9TQmFfSs8yLsU7QCmDt4U0aRRMcN9r5MoA2ahCdZ0=;
-        b=OGCUzBNwoQAsWJT+sSDkufd5u05/pnMK861RNR+8p3TSgEpfSl34obFRYuefzwmaS7
-         4w0F/ScUN0sfyWUmh1NYyMMuHic907zZA0Ueg8I0xhKx5AZ4oMWlYaiw34KQno0NlAPa
-         nwz7lQ8a9PG608+OgaWl/Mfj+J0UsAhIYZi/B2kAejf+2x1/7M9YyRRlYBxnVlxsJyTU
-         DBTVYXdEqwjOWineobXyNaNrR/PhthPFLeccFBw100FjKGSwstfwK5OxhPTCaYF7pTpP
-         mg2zDrgQS/3xkyiMvmgPVdhlZlnJjSd0uSbhlUVv+jWbDVXc2O7mcjKGW/A/ShTarC8Z
-         qSrw==
-X-Forwarded-Encrypted: i=1; AJvYcCXJl8jphUJQZECTWF+0sW6awkFoIFwKiAHZ29wl57J1l8v/X4jfpzK6p0hmkjSgMe9RWjhy/bJen1rnXTE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyhwXlv+wEO7gAnXRttPMHRhs3qJGdfVeKsV1nUnjihpI95arJj
-	mAAhXd1YEvQJmmmyl9gZ28A4Uu5QSXbPpIxFj7gXxH2yR4+ZWnN62iEBdlO/oxtd1grQKdWfeb9
-	vxGrvTYA+u4MC12E3v1OEMYsO8Amcdh/C5t2xaxPm9MO9pDTU/lO7kOKUCZxiAw==
-X-Received: by 2002:a05:600c:4708:b0:431:55af:a22f with SMTP id 5b1f17b1804b1-4318413f05amr48109395e9.13.1729759007806;
-        Thu, 24 Oct 2024 01:36:47 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IG/jQmgjcxFF+0jPxIt8I7wIYJFqljK4xsgl4yRw+G3zf82LoQ8Um3/a9/gCesPsa8XUy9BUQ==
-X-Received: by 2002:a05:600c:4708:b0:431:55af:a22f with SMTP id 5b1f17b1804b1-4318413f05amr48109195e9.13.1729759007442;
-        Thu, 24 Oct 2024 01:36:47 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd6894sm38675655e9.10.2024.10.24.01.36.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 01:36:47 -0700 (PDT)
-Message-ID: <214d37cc-96c0-4d47-bea0-3985e920d88c@redhat.com>
-Date: Thu, 24 Oct 2024 10:36:45 +0200
+        d=1e100.net; s=20230601; t=1729759099; x=1730363899;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=qRCfpLlVmBA/GhwBZGPGVhYfkecAk0ZjJSjMaPm2f3k=;
+        b=V46jzzSQPvJhSgxlctIb/s5sqxB4mygMyPBvzeHfarA47yww4HJle4FGRoy04MGPqw
+         zqelBycRm5ZNpnNkRzesxaxocACoIAQbvPPOKAAlNAt7JqoeUF89v6AWLTSnvmr7coxp
+         gebbUv6iM0AoLE/yVTlMQlJNypnTCmidwAuKRVcX6KoO7123aBStX1mf7Fg2YovK7eS9
+         6mCLDUQXvdxGxe85aTZPJTcVYUNv3LqyKnoqdqcmujLZvcGzOviYTcy9xS2s5bRECFGp
+         nyXuQk43rOsa4ssOuDpJrqvwBrsw9jleWx4+bhiPfTbKGjOj/WKee4QEQNr3O9OiKrd7
+         MuGw==
+X-Forwarded-Encrypted: i=1; AJvYcCWRoUl19w1Dab7N9Rgi993737uG06tUyYg38rb4CRSjNGdspqmDCwxN7TWdXAEduExmNMUeQKIFY0JtiJ4=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxv3M3Yckx6f/alQcQIoMD7x9p5u2LYoNnNq4saO+DqOEB0SAN5
+	zm3peXYAI19zFnPdeSohsgomQmZ8z+j5qTq41JSuCw8E9aDQyxEjazb77Yo2LZc=
+X-Google-Smtp-Source: AGHT+IH59D6trEtlIGfhSaQUFfOISh1j6XVS0wklp7e0TLgrmSzRjpGtPxH4z69HNeeyStMMxfld7g==
+X-Received: by 2002:a05:600c:4f88:b0:426:5269:1a50 with SMTP id 5b1f17b1804b1-4318c6e8f6dmr8250915e9.11.1729759099048;
+        Thu, 24 Oct 2024 01:38:19 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a4864csm10789687f8f.35.2024.10.24.01.38.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 01:38:17 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>
+Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Bartosz Golaszewski <brgl@bgdev.pl>,
+	linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	kernel-janitors@vger.kernel.org
+Subject: Re: [PATCH] gpio: mb86s7x: remove some dead code in mb86s70_gpio_to_irq()
+Date: Thu, 24 Oct 2024 10:38:15 +0200
+Message-ID: <172975909020.16227.8464107518075486069.b4-ty@linaro.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
+References: <b7f3a78b-7163-42a0-bd09-8b3184f29661@stanley.mountain>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V2 net 2/9] net: hns3: add sync command to sync io-pgtable
-To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, shenjian15@huawei.com,
- salil.mehta@huawei.com
-Cc: liuyonglong@huawei.com, wangpeiyang1@huawei.com, lanhao@huawei.com,
- chenhao418@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241018101059.1718375-1-shaojijie@huawei.com>
- <20241018101059.1718375-3-shaojijie@huawei.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241018101059.1718375-3-shaojijie@huawei.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
-On 10/18/24 12:10, Jijie Shao wrote:
-> From: Jian Shen <shenjian15@huawei.com>
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
+
+On Wed, 23 Oct 2024 11:35:53 +0300, Dan Carpenter wrote:
+> The platform_get_irq() function never returns zero so delete this check.
 > 
-> To avoid errors in pgtable prefectch, add a sync command to sync
-> io-pagtable.
 > 
-> In the case of large traffic, the TX bounce buffer may be used up.
 
-It's unclear to me what do you mean for large traffic. Is that large
-packets instead?
+Applied, thanks!
 
-Skimming over the previous patch, it looks like the for the bugger H/W
-driver will use the bounce buffer for all packets with len < 64K. As
-this driver does not support big tcp, such condition means all packets.
+[1/1] gpio: mb86s7x: remove some dead code in mb86s70_gpio_to_irq()
+      commit: 4295f4ccfe8c6e6ac5b631919ba7a4fe89d22acf
 
-So its not clear to me the 'may' part - it looks like the critical path
-will always happen on the bugged H/W
-
-> At this point, we go to mapping/unmapping on TX path again.
-> So we added the sync command in driver to avoid hardware issue.
-
-I thought the goal of the previous patch was to avoid such sync-up.
-
-So I don't understand why it's there.
-
-A more verbose explanation will help.
-
-> Signed-off-by: Jian Shen <shenjian15@huawei.com>
-> Signed-off-by: Peiyang Wang <wangpeiyang1@huawei.com>
-> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-
-Also we need a fixes tag.
-
-Thanks,
-
-Paolo
-
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
