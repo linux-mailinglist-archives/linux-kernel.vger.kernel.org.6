@@ -1,147 +1,163 @@
-Return-Path: <linux-kernel+bounces-380466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7F06E9AEF16
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:01:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D55099AEF1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:01:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 420CA28387C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:01:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 585781F21C5B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:01:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17265200105;
-	Thu, 24 Oct 2024 18:01:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 672422003A2;
+	Thu, 24 Oct 2024 18:01:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b="Wmgj/tGe"
-Received: from mail.manjaro.org (mail.manjaro.org [116.203.91.91])
-	(using TLSv1.2 with cipher DHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="RSQlohiX"
+Received: from AM0PR83CU005.outbound.protection.outlook.com (mail-westeuropeazon11010026.outbound.protection.outlook.com [52.101.69.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B1C391FE0E4
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:00:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=116.203.91.91
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792861; cv=none; b=u0FpF5ko5WuGy29czuysW7eLsIeTwq+51/ZPJp7LrqHidPUCS/bok5jgVEnfqaeyYVNabvS/PibgE5JlWAxK0Insjr/5QSt4VRtBnYjuO/4eecxtDr840ecIqfYBsV9tv7YHU4iEYx9lDVe9PEUXA92h/OR+7EzPjqixBs8HzXQ=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792861; c=relaxed/simple;
-	bh=OgWldQezjpBrrbfCshiZNSNUzgKfNReUGscix533674=;
-	h=MIME-Version:Date:From:To:Cc:Subject:In-Reply-To:References:
-	 Message-ID:Content-Type; b=NRhuN7PJCX8hqRZjgE5fvLjuqo93sN9S7Gyfrz7IYtO5zhnJGZ0HCIzt+iUWzvpjNJicUkNvrt70lB7MXa/N6hGB45AKdkxZmZ/uOYCeus2gNAnhjTignXCrrFRnETf4ui9PLue9v5WLlcH2eeAj1KcGZQ5xbjAEeYra2207OMY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org; spf=pass smtp.mailfrom=manjaro.org; dkim=pass (2048-bit key) header.d=manjaro.org header.i=@manjaro.org header.b=Wmgj/tGe; arc=none smtp.client-ip=116.203.91.91
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=manjaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=manjaro.org
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77DF31F8196;
+	Thu, 24 Oct 2024 18:01:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.69.26
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729792893; cv=fail; b=ACotvhZUyQQIWvNJDnrLyYhR7vfkLideBWm2XvvvS0uwaZbzu0Nc659+kiPHY4CX2I1lPH4INDJf+4uNvtlS6RuViwLYMA6cFGP6go+341XgzPX0PUKX4kS69YMr0CnnZcPPdszwcywPJrRWMeRUwC0FRb8IyruioaatGQRxT9s=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729792893; c=relaxed/simple;
+	bh=SDL93SAaesgAKD9tjy/wCDVVfOSkCyYAiSvua+WDgu0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=XwcT/0tJc7zQuSuO43ELi4M60xR6o8aCjN79Uo25efBgPCcb4gAm+QNh76ui+nRr3fNf86Lx9SGKzlAIUITbp9xQiQ3aHqubF7SIfgm4BlptG9R02qGKM/FspduLF/ZRqXvAzb2nR9rEUde6Mf9uPeB+krwS3prg31K/ln6clVE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=RSQlohiX; arc=fail smtp.client-ip=52.101.69.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=iRqnmvxmjt8OqfHdby6BpQVhmplhGnJZmW6CmjtMJJsLlfOh/PoTuvmN1sLD8c5KXbCurJjwQbqzNrrBZw5HRrbfnaqQNOFkFPezpKiUycG+K0ZJF4QH6CBQeoeVjdVQ+4nUyNOumCgeoz3HGtPIbX05YoPzNM5UMRiEe+h4oH+Ie8a97znCY2okQ+mVR7Hjxtpc9VLXB7p1mqhFHIoMY4+R+Ev2KuUYjyRaF4PCHE0fnLvRaLLHYOKsPeFlAbPsRvkPmvRD08nFB26+G9S9Ucar3t9nBDPF0eAjEg4mxhsjAA4AGqOFCWIQwAksi7EKqsPUHmsfgMBAxNOkR4F0bQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SDL93SAaesgAKD9tjy/wCDVVfOSkCyYAiSvua+WDgu0=;
+ b=RWSXV55d06LshUG1FEGIVqbV1SWezGk8TP2Zpt1juuHTFxTNp47k4DjXmTY9BWutIISDFlrzRUoD3zldZNu4Dri8X2aM06Tr8goCwXA8+/1dpNFUTSHqhVUB/ZMgTS6bRygcAfDA9dDc0qJm4yiC4uuVb3wNA9VPc7U1ctjFThs5nW+qtcJ12l+wZIfc/nrte+rsBs8fY1uzstwkO2GRETis9FZksXIpH1pWr3dyxIEWkmcQM3mIwJdMiePCE4nizIjLMVqIaFtvWEIiX4u1YeI5K8SOSFYshV5BBNkhvPoqeX1RrRq2u3OUHnC2O1jPYRhI4dvPrp6n6Ycbozw6xw==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=SDL93SAaesgAKD9tjy/wCDVVfOSkCyYAiSvua+WDgu0=;
+ b=RSQlohiXfRi8DDuZsYkVwtPkh/Z1aPyEIkMX5na4FPqBZCQRXUb0xd1N9NEOAf+MciQptImLJWhdNTcHKUPavXMkckk5TRK2n4q+I/U6Y0NpE/6WYelMSLg/bj1lkusuHUfdHw9tgasrOP2s+eCzFGLSicU3Ibg9plHahDUGkWLcKiOPECnA0KovTkVssMl5LMVctWQxETOneevykFWmGBwOpV14mLGfM4UaA3/EDS+h4KPqr8pFC6GeUBPe8Y5wOGCQwQvhp5DCQKV7Ws4ASGlGp7yqW/k8r6fBXldEomXtkktkXCML7aRXsxJW6Mk9tp79v0u2VmW3WMUZq4V42Q==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by VI0PR04MB11069.eurprd04.prod.outlook.com (2603:10a6:800:266::12) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20; Thu, 24 Oct
+ 2024 18:01:28 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
+ 18:01:28 +0000
+Date: Thu, 24 Oct 2024 21:01:25 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Wei Fang <wei.fang@nxp.com>
+Cc: davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
+	pabeni@redhat.com, robh@kernel.org, krzk+dt@kernel.org,
+	conor+dt@kernel.org, claudiu.manoil@nxp.com, xiaoning.wang@nxp.com,
+	Frank.Li@nxp.com, christophe.leroy@csgroup.eu,
+	linux@armlinux.org.uk, bhelgaas@google.com, horms@kernel.org,
+	imx@lists.linux.dev, netdev@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-pci@vger.kernel.org, alexander.stein@ew.tq-group.com
+Subject: Re: [PATCH v5 net-next 09/13] net: enetc: add i.MX95 EMDIO support
+Message-ID: <20241024180125.yf26yd6japvn2nfc@skbuf>
+References: <20241024065328.521518-1-wei.fang@nxp.com>
+ <20241024065328.521518-10-wei.fang@nxp.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024065328.521518-10-wei.fang@nxp.com>
+X-ClientProxiedBy: VI1P190CA0008.EURP190.PROD.OUTLOOK.COM
+ (2603:10a6:802:2b::21) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=manjaro.org; s=2021;
-	t=1729792856;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=GHgDKeqNVrBn9md44XPQvQ0FnJfd+8TS+EEdFg8hSss=;
-	b=Wmgj/tGeb9etrXamiid7kJygIUFAPiuOTEw2Bl7jRkdMO3AeVubAJOrxP7xjX+u/JtGO7W
-	QukaMZNhloBrZ3M3gVEwSLM8XhcZqdqMrlsNrG46CEXZ28OsCcUUYtcHriPn7hlW3eEE1t
-	rMGti/cpYeTQk+SZU1S5qhZQPHC4kf62+hkLuSIvcOeGARcraCu8MmhzGhlPlum9dZc3iL
-	DSH3sO/Ved//K0YDX9OqghfLchk9n4pd0sSR1vtco0220Rl61wqtbWJ65/GuGu55Ez66KH
-	XrvtUqZANP95XOSVsn/yWDLu37EZMq1GZjc3IyxkmOODfjMoTzul/2RbxD5eLA==
-Date: Thu, 24 Oct 2024 20:00:56 +0200
-From: Dragan Simic <dsimic@manjaro.org>
-To: Shimrra Shai <shimrrashai@gmail.com>
-Cc: linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-rockchip@lists.infradead.org
-Subject: Re: Thinking about firmware and hardware description for latest
- Rockchip platforms
-In-Reply-To: <20241023173514.4538-1-shimrrashai@gmail.com>
-References: <b12103b968cd5817f25deb7277d6054a@manjaro.org>
- <20241023173514.4538-1-shimrrashai@gmail.com>
-Message-ID: <560b5a4f419aa4bbe2df198fd528e5a8@manjaro.org>
-X-Sender: dsimic@manjaro.org
-Content-Type: text/plain; charset=US-ASCII;
- format=flowed
-Content-Transfer-Encoding: 7bit
-Authentication-Results: ORIGINATING;
-	auth=pass smtp.auth=dsimic@manjaro.org smtp.mailfrom=dsimic@manjaro.org
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|VI0PR04MB11069:EE_
+X-MS-Office365-Filtering-Correlation-Id: 76dd3272-d73e-42b7-fec6-08dcf455e22f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|376014|7416014|366016;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?E07chqFrkUnNAGqMzs0Prmy19+Y6KyfQrFVZaDLUv0yGZ40uSV2QLeXukbxH?=
+ =?us-ascii?Q?40CBTUJklmlKF0p4nq9DOEZgW5vKvLc3k7L71VzvQbyiZmrV4jYKXR3bnxpq?=
+ =?us-ascii?Q?VjHpF32/lBbcDrxlT7U1a27jiOCch3QnjZlwCasEkqaO5Izw3fLxXeKHJzNm?=
+ =?us-ascii?Q?pOgMWycZqy5lYM+imJKGBJNByFqAZZDEHc7wcs+klYarpNkD7/DytPq+amkQ?=
+ =?us-ascii?Q?/bEHQ3C2gm6t7D5HI16IYuu3oalc9+l29OQGkk629KFPDmDHqTTukn6vDKGh?=
+ =?us-ascii?Q?Zinqcynq5FlYohk5zDR3K52+QQZZmy4B/KOq3olKIG1933elogKnzi7YETDe?=
+ =?us-ascii?Q?pWVSvCS+wBTjuRmg2pjG68FMPXuZIRlpOrbC8QA0zQcUE0gmdY+pLJ4oxkkR?=
+ =?us-ascii?Q?bGT6vOuZA69MnzPIhA3ijsBQl6HNisBns0jSRutZlNYjvDvsTp/QmcQOQiOv?=
+ =?us-ascii?Q?rphZrzAqK8+40goHHCY/wsktymBQZhUQObqbkCx5yAdd25DXUAaoGSmBp4Nz?=
+ =?us-ascii?Q?UPah7ieWFhxf/Zz8vkYZ5zqaAEn8STcQZAOVhs5mOfRmiER7nRhWZjQmbPvp?=
+ =?us-ascii?Q?bF8avk2ajWrxnTjB4kGRhAJ9ZmXzTXV/E0gYfWadWxUQUXCKXm2PfYOqa80n?=
+ =?us-ascii?Q?gVamn6sL1+4xRhJda0rW3YgSnlU0R1SnZ5+9YwnjV51V6NMcdSpakt6EbUBu?=
+ =?us-ascii?Q?A1MDh8zoJDA24mLNAIDT9jh44mxZfsC+NlwfWWq+vLi+CyZyp5aBtTpHmseQ?=
+ =?us-ascii?Q?PMamhcxrYqVuOvPGbAX0Jr+y1Nn2XvsH/SpyIDmwBZIO85uvE9lThAuW4ezV?=
+ =?us-ascii?Q?5KY+PdXoH+TkMW38Fy+dpqiZPBCPqKHEr8aeAujn/rPtik8mIzHiZCaE4Dzg?=
+ =?us-ascii?Q?McLAtJwwGLaLTauRG311stoJqPuthxs00L7qUMa+edAvXOcjdRfC6nuCNA5w?=
+ =?us-ascii?Q?XVA9JgWfPsgAN7iQ40Eb4KQyVl1eLgcMd+tCOH2+0OMlGk439Xf9saTmesZf?=
+ =?us-ascii?Q?YmKNi2jlJUZddIDw/NMNBVDe+DdvB3ni9+rAhK5QyU+t68HjuofAwjBMF2Fc?=
+ =?us-ascii?Q?fC+yDBkCm62Ua4EjbW5zNwj1CNPZkAyMvyd8R3shTv6oNfxD4XX8yN2bFu2o?=
+ =?us-ascii?Q?OEF8N84lPtN4aqfJ3XFLIKLjLvvK+UhvxNbTLXzwGDd+HzRKR5txQSBn/LCp?=
+ =?us-ascii?Q?QGjtMSzTvbhox8qw9d6F05ZFyfMgebMvmSTthkxOcObI7+YCVKVJWglcz11z?=
+ =?us-ascii?Q?nEmM1OuokAGefbxOhebw7HtV2qjKdXF7qCodIbuWoMTbanICjg+r841vPQmw?=
+ =?us-ascii?Q?6AxlMdeeWBhKedEziFJoRiYu?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(376014)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?LtlRg9gyjOBLyW3eT5jC12dh8wgeTiDwHuVG1Utrm9oDpu59JwRmwQ9IlheZ?=
+ =?us-ascii?Q?C12uuigvwMnqSMMPokxYURV0u8t1NjTp4FLOyle/O/7rg9/5l11qxkkk7VMj?=
+ =?us-ascii?Q?D5I/pJiAPSW6WIfcqcXzrs1vGG3K/1BJ3fk2UYq9z9cTOvfC4z/YNSog60T0?=
+ =?us-ascii?Q?0u0JpoOyiaXfI3NYypI6RhH42sCuAnoR0fk6VhXgcWG+UKVX/Z14FtJyPAmD?=
+ =?us-ascii?Q?AkR37a6JacU5sVNlXq1Ka74hi6LlrKtpnhkg79sI2HYqft/RoisaYuesnr/X?=
+ =?us-ascii?Q?wRE9amzsdpyZFG2yKuiZRE/1QsM/YAETCaFZN28Bc8JfHZQb55EsnRSc1mEj?=
+ =?us-ascii?Q?w7MDQR9bba9P15Tv63ZnYgQMBmgsynV8uZ8+0bpv9AXXhmdPAjbcMs+a6y92?=
+ =?us-ascii?Q?VH/iNi4ynTqusLVl5xStb1Ed2cCGkdJyt2pTb/0P7CpTVYx6JSbcrLhFg3gI?=
+ =?us-ascii?Q?NAckKdfRTLoba5RGFXPznohcPZ8pCz3G7bqrQmqf7CaVHGI1711zkvFrvmrh?=
+ =?us-ascii?Q?yfIX+b0hiVhZO3BA1vYGU5CqMspukcKpL8SwUhGakjLDt601VT2KttA8/qJ1?=
+ =?us-ascii?Q?4gyKb+93DGMVl2w8iPIkjyuCmqUacu6miJBMMiqjeHRk/q8I1TtEJSC0jE1n?=
+ =?us-ascii?Q?p46Bk/VrfcsowSvz81SEsYbk0o9xnmxvPNNq6plsnOHI2I8YiFWdvmtYdDP+?=
+ =?us-ascii?Q?t0O4yRIfo3hyfW738BPtMHD1eFCLWlopSsQVRWc3a1wA+uXf0UE1GwKCL9Pa?=
+ =?us-ascii?Q?q/baXpHwCq+gg3QXP04DukbDkEIjN26vvbnCJAEddSOD/ncttmiV92kE4cLf?=
+ =?us-ascii?Q?GcKJI1/LxfaZjyj3yIoNeUG1flxfxQpnT3OzJnZqcrdBismkfk//WqQuDANP?=
+ =?us-ascii?Q?zp78E4F5hJ2PguTj2yChaUBUC/WYNFwaUCv245WKYwaCIMvHD0MCT7NYcDw+?=
+ =?us-ascii?Q?Mt6gItfRlLzSSqBRY2+Q04t5crs+RDJ7sPCxECAAPdDx/piX2z0JecGZwoGg?=
+ =?us-ascii?Q?zaohjc0KoCK9d10/aVZNvEVNVxU3NlZxVH9kVVifUU0Vnk+oBqjzH0Kb5BfF?=
+ =?us-ascii?Q?DiXSSPSBrPM5maX0WN8x8Kiwb4N9UOKucuklTcUFBYUQNhnKTldPt+ivuyTY?=
+ =?us-ascii?Q?q81fT7TBSRlQ26nH/kmT08kaogDS0XNi9hPJBcMRiL0/UJg+sX6DI66VdH0E?=
+ =?us-ascii?Q?5RFTQWIOPHygbzI81BK6NXqOr7UEL3ZW2jbooqDqF9werlFR6VHCvq+Dh9e6?=
+ =?us-ascii?Q?a1V6ByLpz2YDQuC5kFMkQLq2WO/yXa3bxFOBKRV+SkDITapgLT3Tx9dvsjr0?=
+ =?us-ascii?Q?gZK75PQJSYSNZxDj2f1SBNJSqS8a3Dv1uulwQYb9un3acyN7FJEEVGHSXmm9?=
+ =?us-ascii?Q?4ndzL2Y4n3jVKKCvakXm9g8cqTU/H9Ro/OqMe3g3h6zrJ4M7z4EEEn1CQWQ0?=
+ =?us-ascii?Q?DLV5mxTpWtnFpr4rN8Fu2XkwVA/lpWx1uubwEE6RYys1Vz+tg5oiH7MKhmMI?=
+ =?us-ascii?Q?OWZtXke1XCXK15s5li47oncxvDkiKdUIMAzyE544g1aX4B6N+YOyyzCiDdvK?=
+ =?us-ascii?Q?O3sGpAtIvfbJ8B0Ktkj0SFq6ibPn90nP2wCNtz26lM59YUMx6I3Ji9XPTjBs?=
+ =?us-ascii?Q?xg=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 76dd3272-d73e-42b7-fec6-08dcf455e22f
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 18:01:28.5082
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: kd6vkQW3fUfr0c6BJRIDlMEjtn1moL2PThHeCBOOlKCQvlzWmCDHHfuPjh3TJ32O1a5Nh3XiBQ/0b9EqVQ5A/w==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: VI0PR04MB11069
 
-Hello Shimrra,
+On Thu, Oct 24, 2024 at 02:53:24PM +0800, Wei Fang wrote:
+> The verdor ID and device ID of i.MX95 EMDIO are different from LS1028A
 
-On 2024-10-23 19:35, Shimrra Shai wrote:
-> On 2024-10-23  2:46, Dragan Simic wrote:
->> As you noted already, the DT definitions are fixed and improved
->> all the time, which is actually great.  However, the backward
->> compatibility is ensured, because newer kernels are guaranteed
->> to work with older DTs, which doesn't mean that the board DTs
->> provided through firmware should become frozen in any way, as
->> explained further below.
-> 
-> Thanks - my concern was about backward compatibility so that if some
-> user did not upgrade their FW but then tried to install a *newer*
-> Linux found things mysteriously breaking due to that some DT revision
-> in code had broken the backwards compatibility. Of course that could
-> also be considered a bug, even while new FWs could/would still be
-> rolled out.
-
-That's a valid concern, but such scenarios shouldn't happen by
-design, unless there's some bug, of course.
-
->> Freezing anything would be simply wrong.  It might look good from
->> the perspective of having something "stable", which is similar to
->> how x86_64 firmware works on PC motheboards, but the continual
->> bugfixes and improvements are actually extremely good, because
->> they prevent various ARM boards from effectively becoming abandoned,
->> which is unfortunately rather usual with x86_64 motherboards that
->> become so "stable" that some nasty firmware bugs are never fixed
->> and their users are left high and dry.
-> 
-> Yes, I'm not against new FW upgrades, just the idea of users *having*
-> to upgrade their FW simply because a new kernel came out when nothing
-> like that is typical on x86 or at least in my experience using it over
-> many years).
-
-Yes, users don't _have_ to upgrade their firmware, as described
-above in more detail, but they actually _should_ upgrade.  In fact,
-they should be happy and eager to upgrade. :)
-
-> Note that the situation of a DT upgrade that is obtained by FW
-> upgrade breaking older kernels, i.e. broken *forward* compatibility of
-> the older kernel with later DT, isn't so much a problem because we can
-> simply keep the older DT in the FW when issuing the FW upgrade, as I
-> believe there is a facility for supporting multiple, versioned DTs in
-> that UEFI package [and if not, it could easily be added]. It's the
-> backward compatibility that is my issue because reflashing FW, even
-> though not too hard on these boards, is perhaps more heady for your
-> average PC or smartphone user.
-
-Hmm, I don't think that keeping older DTs around is a good idea.
-Instead, we should simply document the required kernel version,
-or even better, make some kind of a dependency between the firmware
-version and the version of the kernel packages.  The latter is,
-of course, a much more complex option, but also better.
-
-For the record, please note that I have zero interest whatsoever
-in any kind of "full-fat" UEFI firmware implementation.
-
-> That is to say, I'm imagining the case of bundled computers
-> pre-shipped with the loaded FW and OS installed as usual and someone
-> says "hey they got a new Ubuntu [or whatever], let's install it!" BAM,
-> devices stop working because they did not upgrade FW, forcing an FW
-> upgrade in a way an x86 user would not be similarly forced. Though of
-> course, that could then be reasonably called a regression bug (as it
-> would appear from the user's perspective, not knowing about the FW
-> change), if backwards compatibility is indeed already a long-standing
-> policy (and is really what I was after with that "freeze" suggestion
-> even if it itself would not be the way to get it).
-
-Well, it's perfectly reasonable to expect the users to install
-different Linux distributions, etc.  However, as already described
-above, running a newer kernel version without updating the firmware
-should never lead to such issues.
-
-I think we should raise the awareness of the actual benefits coming
-from the openness of firmware on various ARM boards, and the available
-choice of _not_ having to use "full-fat" UEFI firmware, instead of
-trying to make the whole thing be more like x86_64 UEFI firmware.
+Also: s/verdor/vendor/
 
