@@ -1,102 +1,127 @@
-Return-Path: <linux-kernel+bounces-379279-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379280-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1C5919ADC6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:44:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C5979ADC73
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:44:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCBE2858B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 5BF4028274E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:44:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED1189916;
-	Thu, 24 Oct 2024 06:44:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 038DB189BA0;
+	Thu, 24 Oct 2024 06:44:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QkmJaKSS"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="mg3TLwOc"
+Received: from mail-oa1-f45.google.com (mail-oa1-f45.google.com [209.85.160.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE7D6CDBA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:43:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 880206CDBA;
+	Thu, 24 Oct 2024 06:44:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729752241; cv=none; b=AQ8Bpc9LcwA3Pkp0EetNumEwegpOnOp8OL47VKmsn2q7AJc3zI0IuR2VEgvCBSbQhEv5NHVEY5vzVjPWzpiVAlnQMN8VuJ9sllF/leKfqeqLmBhPi4uYz8MYeameXlPaqsSzxxU83rxjkGK4m9YWFK1fnue3j4e0VVPg6ks1gmA=
+	t=1729752261; cv=none; b=FnLU/BTBqKa9dd7sUn6o0eqSSamNs73EYyLl6dNSH0P9Z1S4fogtEmGp+lZnHDK8oS+eSch0i7N8xSvu2AzYY7l7ikEhf2gVCX64k+Tzh13wI527ycfBFAgv59x5+MWG0rv+ohnoTkfdX2r4I4d3f0y4BRL4sTPo4vzdbDFB4Kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729752241; c=relaxed/simple;
-	bh=7qwxY+MjcwxNSeEVG+Jw2X+n5rwsZ26Qy/PSYiV69XE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bYZTxJEKvev+hAId0l8E3pGEymCm0C+/e0ejefmSbFCOQXG+IVbaz5zBXwnsS8ZHcy37rkiqRn95AV9n1GIPKhtYfjcUllSddKyTzFb1uXuaLgvMqqBd/88WsLxkmZ9WRDb8srho2XY74aEWDM8GvzGbIelnZUlEp7vPoizu5qI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QkmJaKSS; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729752238;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=wZTcf9FaJs3vSECpIGbKVXH4nMxTQvdG2R4odgw5TYI=;
-	b=QkmJaKSSNPzcwjA9uECFZ7jOiiEWc1d+c+XMxCGAJp+fLYM2OpkJeKJp4zOY1BaXXLjEg7
-	nk6Wt7rATl79UCTPe2VEu471W503KiFyWJqOA5F1NHNZ+oG9C4zelh/SknMpzDsb7G6szU
-	SyE5HgHuOILAggcQ1VVWCSle7jryBDY=
-Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-227-67DGZ8xSN-S6Oxh1Q8U5Jw-1; Thu,
- 24 Oct 2024 02:43:52 -0400
-X-MC-Unique: 67DGZ8xSN-S6Oxh1Q8U5Jw-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D595E19560B5;
-	Thu, 24 Oct 2024 06:43:50 +0000 (UTC)
-Received: from fedora (unknown [10.72.116.150])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D05B21956056;
-	Thu, 24 Oct 2024 06:43:43 +0000 (UTC)
-Date: Thu, 24 Oct 2024 14:43:38 +0800
-From: Ming Lei <ming.lei@redhat.com>
-To: Christoph Hellwig <hch@lst.de>
-Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
-	Peter Zijlstra <peterz@infradead.org>,
-	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
-	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
-	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
-Subject: Re: [PATCH 2/3] nvme: core: switch to non_owner variant of
- start_freeze/unfreeze queue
-Message-ID: <Zxnsmsunc9848hkK@fedora>
-References: <20241023095438.3451156-1-ming.lei@redhat.com>
- <20241023095438.3451156-3-ming.lei@redhat.com>
- <20241023122115.GB28777@lst.de>
- <ZxmmPKFksWc5LLlc@fedora>
- <20241024050053.GA30659@lst.de>
+	s=arc-20240116; t=1729752261; c=relaxed/simple;
+	bh=NXetDMK/L1pnmV2P2THQJEIEy11n4oSpCXDcoIwy05A=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=X7quJemYQ20p+hbBNvUR7RkNSBiZO2EGS/Pt/6Sjx3vaMGzwf/tSXvyOeowwZq5VXgB8YLzKGqlbPJjKEQZk7RRxMZD93UInJ2ncUGZA1XONvXHVZp5unZdADdcDesFkeyChPo+536/vhWwmyEj9Il+1cEQh9nn8oCRvGTRdGBs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=mg3TLwOc; arc=none smtp.client-ip=209.85.160.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-28c7f207806so292860fac.3;
+        Wed, 23 Oct 2024 23:44:19 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729752258; x=1730357058; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2FoyLE/Cf4zQLw+m56F5a8lGY5yFq1EiEZ4WN3sp8cs=;
+        b=mg3TLwOc6LBlbfIlJLqjnRNSOXbBEhowRWG7Ih4oy8s27CRH7lPWgQyd77cqNmMNcW
+         bdh3v5WLIXma2sr37kFyzDUlT66apOEtzL0P6MSjyE4/bqUBgi7Fpzb7004X7RDe1Zy7
+         R3/OlxPrP+S+ffY2o5zgCJdOK4UNQlT/APg8dB40AjyHBB70wd7MWqCDM+S12i4R8yFZ
+         fEys2caM733lACRiUwidht+UZmPP4udbNzwF57KT/yXZfYekmvqZcDkurJftq5hOG44p
+         WLkVrzwsQNsCOD2OoOQWywlptPD1/Wd7phsLhxMJxWWnAlReTJxhgOoWZnos1rFZDH3Y
+         ZF8w==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729752258; x=1730357058;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2FoyLE/Cf4zQLw+m56F5a8lGY5yFq1EiEZ4WN3sp8cs=;
+        b=KNGQFMa9JGj9Xz9+D4JBPcPiuFH0/TeJiX84dMK/U5sKn2XECc4N956BsJIlRVtuBK
+         YyBIlyFrAaAcKrNfhjXfQMpdaaZWLAtRWcWE611n11VhzqPi62bCBOZoyFBS6BlzYYu+
+         Bv7kcX91K5YAZLupSrC8eGRBA4mIvS4IdJ4ePrA4NnwLejh+kbpLaDOqMAM9AYlIHVYd
+         mQMwZC380XqShS8QOHmBTQiMcIutwnY3xTg9DPxoERV8Qnswt/7Pry3fTq8SPOUIh1Tp
+         ez25pjNUPRXjxWVdVobdH0FLAT/O3idCDOtINYYPkwWfjP6Xb6QMd/Pq4lcjkS46IYKd
+         9SBQ==
+X-Forwarded-Encrypted: i=1; AJvYcCXDQDo9p0atVdx1JaWc7ks+NtdRr8ZxON6mP32mKJmprazTnwBNE5ikifxsuPTNfCKGlz/qitIWc7jH@vger.kernel.org, AJvYcCXTofoHPnqQN3oPu3rINXBQliIhREVWKRnvfkkoojZ8SXeMI+x/nLWvOKZSXnHMymupEFdiy7cBMfzBZ5ud@vger.kernel.org, AJvYcCXxETrdJljLQp0axzT4VWKv4F3NhAz9zx6qbp056GVUr2jJZXFNdgzZIZgLRwlb3M/eeqpVjkw628eSCQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0YyAvQFnAR6XqSXRu8O04dIZ+kLv39GQ62JtyJJ3ckx1PZXrfocW
+	rb7hkD54YMXtL9R00l8/kYZqEgKJVeUXHvYERb0Q63NYyCkXYCiz
+X-Google-Smtp-Source: AGHT+IGZ+O2r4XtVYPHiHdNtVx8h+km4OBAtGWY/VsB1qpgXll72J2UuhE4eux2WpZ4NG1pffRU0nA==
+X-Received: by 2002:a05:6870:1701:b0:288:816a:72e6 with SMTP id 586e51a60fabf-28ccb44c8c7mr5021125fac.7.1729752258523;
+        Wed, 23 Oct 2024 23:44:18 -0700 (PDT)
+Received: from localhost ([2001:da8:7001:11::cb])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312ccbsm7311977b3a.1.2024.10.23.23.44.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 23:44:17 -0700 (PDT)
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Chen Wang <unicorn_wang@outlook.com>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Inochi Amaoto <inochiama@outlook.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Guo Ren <guoren@kernel.org>,
+	Arnd Bergmann <arnd@arndb.de>
+Cc: Yixun Lan <dlan@gentoo.org>,
+	Inochi Amaoto <inochiama@gmail.com>,
+	linux-gpio@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Subject: [PATCH 0/3] riscv: sophgo: Add pinctrl support for SG2042
+Date: Thu, 24 Oct 2024 14:43:53 +0800
+Message-ID: <20241024064356.865055-1-inochiama@gmail.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024050053.GA30659@lst.de>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 07:00:53AM +0200, Christoph Hellwig wrote:
-> On Thu, Oct 24, 2024 at 09:43:24AM +0800, Ming Lei wrote:
-> > > so that it's clear why the non_owner version is used here.
-> > 
-> > There are one more such usage: 
-> > 
-> > - freeze in nvme_dev_disable()/apple_nvme_disable() from timeout work, but
-> > unfreeze in nvme_reset_work()
-> 
-> Then add it to the comment :)
+SG2042 has a simple pinctrl device for all configurable pins.
+It supports setting pull up/down, drive strength and input schmitt
+trigger.
 
-OK, also nvme_passthru_start() and nvme_passthru_end() are always
-paired, so they are actually not non_owner use.
+Add support for SG2042 pinctrl device.
 
+Inochi Amaoto (3):
+  dt-bindings: pinctrl: Add pinctrl for Sophgo SG2042 series SoC
+  pinctrl: sophgo: add support for SG2042 SoC
+  riscv: dts: sophgo: sg2042: add pinctrl support
 
-Thanks, 
-Ming
+ .../pinctrl/sophgo,sg2042-pinctrl.yaml        |  96 +++
+ .../boot/dts/sophgo/sg2042-milkv-pioneer.dts  |  72 ++
+ arch/riscv/boot/dts/sophgo/sg2042.dtsi        |   6 +
+ drivers/pinctrl/sophgo/Kconfig                |  14 +
+ drivers/pinctrl/sophgo/Makefile               |   2 +
+ drivers/pinctrl/sophgo/pinctrl-sg2042-ops.c   | 583 ++++++++++++++++
+ drivers/pinctrl/sophgo/pinctrl-sg2042.c       | 642 ++++++++++++++++++
+ drivers/pinctrl/sophgo/pinctrl-sg2042.h       |  50 ++
+ include/dt-bindings/pinctrl/pinctrl-sg2042.h  | 196 ++++++
+ 9 files changed, 1661 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/pinctrl/sophgo,sg2042-pinctrl.yaml
+ create mode 100644 drivers/pinctrl/sophgo/pinctrl-sg2042-ops.c
+ create mode 100644 drivers/pinctrl/sophgo/pinctrl-sg2042.c
+ create mode 100644 drivers/pinctrl/sophgo/pinctrl-sg2042.h
+ create mode 100644 include/dt-bindings/pinctrl/pinctrl-sg2042.h
+
+--
+2.47.0
 
 
