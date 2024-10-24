@@ -1,284 +1,94 @@
-Return-Path: <linux-kernel+bounces-379545-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379535-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D5189AE03D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:13:11 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id AB2B89AE016
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:05:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0BF15283334
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:13:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA0001C221B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90AFF1B3951;
-	Thu, 24 Oct 2024 09:12:50 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 91E421B4F0C;
+	Thu, 24 Oct 2024 09:04:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="2iCuWIsV"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DC601B3956
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:12:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B824B1B4F32;
+	Thu, 24 Oct 2024 09:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729761170; cv=none; b=BOJm/zK0bxuoP5R0r+A5fBVQ2iifhpEs95fZRKKV8zF1O6w3j2OzFmw0uFgN5uywjymy3Wjq39wg2OzeyGZyiI+/Mp6WKGDn6AYO/5Z2No1wc7a7fdvy+Cy2ZguZNwQNIrc7hsAhpPzEXS+nXQSKwZU4qNwD00aszC+TTxAD8Rg=
+	t=1729760651; cv=none; b=fvW/uFGIRuiDnZTaIq8MJfMo3qpREZMdNs/+bSMr7xKu7V4VKzUpg91t7bt2mkCbi/gkgNGzRURPDIRGNTCvdxbuNQP6e6lGdrzXE1nnEQgOP1BEjV0/jGcxRdbj4qQTddPJSftmS0mX9P4oG90kIbepyflprA5jk0+SRXQCTZk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729761170; c=relaxed/simple;
-	bh=qOFmV9WZ9sh/+C3fpLshCL2Kht2BK/C1cpKcjRH+csw=;
+	s=arc-20240116; t=1729760651; c=relaxed/simple;
+	bh=EyPmGCUfQ8Y6M9C7NmD4I3C5x0XLdLsYt0oZ7HJm5gg=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PE3ASB52ugn9apvc9PvkzInYBfbLEXtdlZ5q6WBXVe+dcBdMMgOG5AwbOY18NTmWkD9HlkgW7XqO0zsiFh588aHDXhGXaxQ37/1putibxprPPegwFv1MUVyrf6Y1TkaPQ3HWiM1PDB8aDQCBP5xRvkd3R35s35ZuLfzTxNooEng=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t3tsw-0002gF-W9; Thu, 24 Oct 2024 11:12:03 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t3tsu-000AhL-0y;
-	Thu, 24 Oct 2024 11:12:00 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id 275DB35D8E6;
-	Thu, 24 Oct 2024 09:03:43 +0000 (UTC)
-Date: Thu, 24 Oct 2024 11:03:42 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-Message-ID: <20241024-daffodil-raccoon-of-champagne-6f6f04-mkl@pengutronix.de>
-References: <20241024085922.133071-1-tmyu0@nuvoton.com>
- <20241024085922.133071-2-tmyu0@nuvoton.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=V7kVIhswyZb0XoNifghbCZNT87RXM0BCMze9vjiAYfbdajzEoJMEH0AXTLBkWVbGqKRgk5jkULL0lxKCc8hUOV+mWaTIvFozNDgEaHXFmf8TE1q8eRNQTvLmkUfZcDeYOswnTSLviYjs5MtVxKFkqTeRiGh9JSn1uxWDfO5fkNc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=2iCuWIsV; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=gc7TIYx8RU4Q8PM3q2bw2LoJRKDeD/wqCcHiZkboyi8=; b=2iCuWIsV6og9kCCjBAMgNtgAFB
+	NkVgJ1lGp9IE//O8ftcsOdgO7RgipukKx3iKsr021YPA5+RsQyUC4SAv630Hlu3EVxBB+DHAptfMR
+	Ul4s2+O+ncSyqrwggtvEw4IU2TT8hENWji8jnJvzRs2ee5euvq9maSgxoSh2NBYtZKFtRdKQYH3xU
+	vJhnvjkafdLRVlqhx2oAfIcvpdYB0wP340JhJWwU2rFLBvIoofkMYsFlzVYQvFxNAnmuY7Bxo1I6f
+	voIPgQSJC+yCKsFA9deNbxXbEIkBfo+HsB5xI3Qg7mllvOhTISoueY2QJz1qfHbu1OReQ1sp7s+RF
+	H7pC19zg==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3tlC-0000000HNxA-3eJc;
+	Thu, 24 Oct 2024 09:04:02 +0000
+Date: Thu, 24 Oct 2024 02:04:02 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Adrian Vovk <adrianvovk@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
+	song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
+	snitzer@kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+	adrian.hunter@intel.com, quic_asutoshd@quicinc.com,
+	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org,
+	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+Message-ID: <ZxoNgmwFVCXivbd3@infradead.org>
+References: <ZvJt9ceeL18XKrTc@infradead.org>
+ <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+ <ZxHwgsm2iP2Z_3at@infradead.org>
+ <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
+ <ZxH4lnkQNhTP5fe6@infradead.org>
+ <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+ <ZxieZPlH-S9pakYW@infradead.org>
+ <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+ <Zxnl4VnD6K6No4UQ@infradead.org>
+ <14126375-5F6F-484A-B34B-F0C011F3A9C5@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="dwvre6734ixnnoql"
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024085922.133071-2-tmyu0@nuvoton.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+In-Reply-To: <14126375-5F6F-484A-B34B-F0C011F3A9C5@gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
+On Thu, Oct 24, 2024 at 03:52:24AM -0400, Adrian Vovk wrote:
+> >
+> >Sure.  But why would you do that?
+> 
+> As mentioned earlier in the thread: I don't have a usecase specifically for this and it was an example of a situation where passthrough is necessary and no filesystem is involved at all. Though, as I also pointed out, a usecase where you're putting encrypted virtual partitions on an encrypted LVM setup isn't all that absurd.
 
---dwvre6734ixnnoql
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
-MIME-Version: 1.0
+Can you please fix your mailer?  It's creating crazy long lines
+that are completely unreadable.
 
-On 24.10.2024 16:59:14, Ming Yu wrote:
-> The Nuvoton NCT6694 is a peripheral expander with 16 GPIO chips,
-> 6 I2C controllers, 2 CANfd controllers, 2 Watchdog timers, ADC,
-> PWM, and RTC.
->=20
-> This driver implements USB device functionality and shares the
-> chip's peripherals as a child device.
->=20
-> Each child device can use the USB functions nct6694_read_msg()
-> and nct6694_write_msg() to issue a command. They can also register
-> a handler function that will be called when the USB device receives
-> its interrupt pipe.
->=20
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ---
->  MAINTAINERS                 |   7 +
->  drivers/mfd/Kconfig         |  10 +
->  drivers/mfd/Makefile        |   2 +
->  drivers/mfd/nct6694.c       | 394 ++++++++++++++++++++++++++++++++++++
->  include/linux/mfd/nct6694.h | 168 +++++++++++++++
->  5 files changed, 581 insertions(+)
->  create mode 100644 drivers/mfd/nct6694.c
->  create mode 100644 include/linux/mfd/nct6694.h
->=20
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index e9659a5a7fb3..30157ca95cf3 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16434,6 +16434,13 @@ F:	drivers/nubus/
->  F:	include/linux/nubus.h
->  F:	include/uapi/linux/nubus.h
-> =20
-> +NUVOTON NCT6694 MFD DRIVER
-> +M:	Ming Yu <tmyu0@nuvoton.com>
-> +L:	linux-kernel@vger.kernel.org
-> +S:	Supported
-> +F:	drivers/mfd/nct6694.c
-> +F:	include/linux/mfd/nct6694.h
-> +
->  NVIDIA (rivafb and nvidiafb) FRAMEBUFFER DRIVER
->  M:	Antonino Daplas <adaplas@gmail.com>
->  L:	linux-fbdev@vger.kernel.org
-> diff --git a/drivers/mfd/Kconfig b/drivers/mfd/Kconfig
-> index f9325bcce1b9..da2600958697 100644
-> --- a/drivers/mfd/Kconfig
-> +++ b/drivers/mfd/Kconfig
-> @@ -546,6 +546,16 @@ config MFD_MX25_TSADC
->  	  i.MX25 processors. They consist of a conversion queue for general
->  	  purpose ADC and a queue for Touchscreens.
-> =20
-> +config MFD_NCT6694
-> +	tristate "Nuvoton NCT6694 support"
-> +	select MFD_CORE
-> +	depends on USB
-> +	help
-> +	  This adds support for Nuvoton USB device NCT6694 sharing peripherals
-> +	  This includes the USB devcie driver and core APIs.
-> +	  Additional drivers must be enabled in order to use the functionality
-> +	  of the device.
-> +
->  config MFD_HI6421_PMIC
->  	tristate "HiSilicon Hi6421 PMU/Codec IC"
->  	depends on OF
-> diff --git a/drivers/mfd/Makefile b/drivers/mfd/Makefile
-> index 2a9f91e81af8..2cf816d67d03 100644
-> --- a/drivers/mfd/Makefile
-> +++ b/drivers/mfd/Makefile
-> @@ -116,6 +116,8 @@ obj-$(CONFIG_TWL6040_CORE)	+=3D twl6040.o
-> =20
->  obj-$(CONFIG_MFD_MX25_TSADC)	+=3D fsl-imx25-tsadc.o
-> =20
-> +obj-$(CONFIG_MFD_NCT6694)	+=3D nct6694.o
-> +
->  obj-$(CONFIG_MFD_MC13XXX)	+=3D mc13xxx-core.o
->  obj-$(CONFIG_MFD_MC13XXX_SPI)	+=3D mc13xxx-spi.o
->  obj-$(CONFIG_MFD_MC13XXX_I2C)	+=3D mc13xxx-i2c.o
-> diff --git a/drivers/mfd/nct6694.c b/drivers/mfd/nct6694.c
-> new file mode 100644
-> index 000000000000..9838c7be0b98
-> --- /dev/null
-> +++ b/drivers/mfd/nct6694.c
-> @@ -0,0 +1,394 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Nuvoton NCT6694 MFD driver based on USB interface.
-> + *
-> + * Copyright (C) 2024 Nuvoton Technology Corp.
-> + */
-> +
-> +#include <linux/io.h>
-> +#include <linux/usb.h>
-> +#include <linux/slab.h>
-> +#include <linux/kernel.h>
-> +#include <linux/module.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/nct6694.h>
-> +
-> +#define DRVNAME "nct6694-usb_mfd"
-> +
-> +#define MFD_DEV_SIMPLE(_name)		\
-> +{					\
-> +	.name =3D NCT6694_DEV_##_name,	\
-> +}					\
-> +
-> +#define MFD_DEV_WITH_ID(_name, _id)	\
-> +{					\
-> +	.name =3D NCT6694_DEV_##_name,	\
-> +	.id =3D _id,			\
-> +}
-> +
-> +/* MFD device resources */
-> +static const struct mfd_cell nct6694_dev[] =3D {
-> +	MFD_DEV_WITH_ID(GPIO, 0x0),
-> +	MFD_DEV_WITH_ID(GPIO, 0x1),
-> +	MFD_DEV_WITH_ID(GPIO, 0x2),
-> +	MFD_DEV_WITH_ID(GPIO, 0x3),
-> +	MFD_DEV_WITH_ID(GPIO, 0x4),
-> +	MFD_DEV_WITH_ID(GPIO, 0x5),
-> +	MFD_DEV_WITH_ID(GPIO, 0x6),
-> +	MFD_DEV_WITH_ID(GPIO, 0x7),
-> +	MFD_DEV_WITH_ID(GPIO, 0x8),
-> +	MFD_DEV_WITH_ID(GPIO, 0x9),
-> +	MFD_DEV_WITH_ID(GPIO, 0xA),
-> +	MFD_DEV_WITH_ID(GPIO, 0xB),
-> +	MFD_DEV_WITH_ID(GPIO, 0xC),
-> +	MFD_DEV_WITH_ID(GPIO, 0xD),
-> +	MFD_DEV_WITH_ID(GPIO, 0xE),
-> +	MFD_DEV_WITH_ID(GPIO, 0xF),
-> +
-> +	MFD_DEV_WITH_ID(I2C, 0x0),
-> +	MFD_DEV_WITH_ID(I2C, 0x1),
-> +	MFD_DEV_WITH_ID(I2C, 0x2),
-> +	MFD_DEV_WITH_ID(I2C, 0x3),
-> +	MFD_DEV_WITH_ID(I2C, 0x4),
-> +	MFD_DEV_WITH_ID(I2C, 0x5),
-> +
-> +	MFD_DEV_WITH_ID(CAN, 0x0),
-> +	MFD_DEV_WITH_ID(CAN, 0x1),
-> +
-> +	MFD_DEV_WITH_ID(WDT, 0x0),
-> +	MFD_DEV_WITH_ID(WDT, 0x1),
-> +
-> +	MFD_DEV_SIMPLE(IIO),
-> +	MFD_DEV_SIMPLE(HWMON),
-> +	MFD_DEV_SIMPLE(PWM),
-> +	MFD_DEV_SIMPLE(RTC),
-> +};
-> +
-> +int nct6694_register_handler(struct nct6694 *nct6694, int irq_bit,
-> +			     void (*handler)(void *), void *private_data)
-> +{
-> +	struct nct6694_handler_entry *entry;
-> +	unsigned long flags;
-> +
-> +	entry =3D kmalloc(sizeof(*entry), GFP_KERNEL);
-> +	if (!entry)
-> +		return -ENOMEM;
-> +
-> +	entry->irq_bit =3D irq_bit;
-> +	entry->handler =3D handler;
-> +	entry->private_data =3D private_data;
-> +
-> +	spin_lock_irqsave(&nct6694->lock, flags);
-> +	list_add_tail(&entry->list, &nct6694->handler_list);
-> +	spin_unlock_irqrestore(&nct6694->lock, flags);
-> +
-> +	return 0;
-> +}
-> +EXPORT_SYMBOL(nct6694_register_handler);
-
-Where's the corresponding nct6694_free_handler() function?
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---dwvre6734ixnnoql
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcaDWsACgkQKDiiPnot
-vG/14wgAgoWLTibZpUmoNvOo0qLLAlp/YFpDa4iS3anD0MVkcgJIJwOg6aHDIw+F
-qp749L7WL9qp+19SQjeSUvHyDgc3Eqv4PuQae5NMAcY+KFqQcItGBFkB2j2ewhn6
-JMI5tSpNKoqJUflio0P0nNHt7JRciyi6EBfiU5TvB0J2+9cf6qRHjknmIkrxROSD
-OMBmGK0e0Ki8TfOnhi8PQmLbv8RhoIe7/W6qHzTsOOPZ/66fjGqDcBUC6oi+Vw7f
-mOVr2zW2DJ7xr++nBsBsvCzM8YQ7NDzt3qfBIHS21WE04dOWyBQlj6n01LYL7mta
-+1F9tQnxpRonNQlU1mjXj6tMn2DjUw==
-=raiy
------END PGP SIGNATURE-----
-
---dwvre6734ixnnoql--
 
