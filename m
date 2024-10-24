@@ -1,114 +1,122 @@
-Return-Path: <linux-kernel+bounces-379818-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379817-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 744489AE42A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:49:11 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 73DE49AE429
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:48:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3411D28513D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:49:10 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2D750284CB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:48:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A6411CFED9;
-	Thu, 24 Oct 2024 11:48:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C569E1D220A;
+	Thu, 24 Oct 2024 11:48:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="UcOl0W+1"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="jv9NaMRk"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E075A170853
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:48:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23E401A0BC4;
+	Thu, 24 Oct 2024 11:48:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729770535; cv=none; b=Z3cLIDDCZ8CJmkxFYqKvIDfKR2rxiZ6CVUXXnPzEBH7UQJgqPM5BVItjDsheJePHZx7zLFQ98BAw3Acao6thbCzV/03uz6JtEWlks3vf9vcH1i1J6njiHEg3ZLkSJswrIgGwg9zgjnaJTW/DIsBBwXQD0b95kU+GhOnJ3lBzHog=
+	t=1729770523; cv=none; b=PEeYKYIFXxeMLAAcnn4D5AaGZJkPCMnJQd3BApVBdkDZsSRH0q6ewArP5UcsvRRkgZnNnLtuEQEvS23xYybn6wW/1hGDvU+A1KKjsHQrEHqbHAvfyP8JF9mxKSYvDVE3jaOS5UA7rwu8iNzl6M6sVcZi2cQng2Q2DS4f2lyTkv0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729770535; c=relaxed/simple;
-	bh=U2nasN99oW5nE8o0v69Lu67J21k9hxMqZ1t8tlbUC9U=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=oTPVZ2k0MydJTnf0RmF+B5RLeRBSDHg6AptbPv1isEVYzZbKVKx4DWq4Lu2S8/257lTP12FLeK1zevE4iB4sjUjEtCLo0mMf8Wy5tY8Bzn2m1DS5RlRhj6Ylz9ps8OcX8FMMrFx4Ye04QY3ynBpH6xWUcgSEFIEpO8bhbudsdzM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=UcOl0W+1; arc=none smtp.client-ip=192.198.163.15
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+	s=arc-20240116; t=1729770523; c=relaxed/simple;
+	bh=d+qe/+ODoW5q7XT1R1VfgK5+hBdUWlBAmc0IyODhTEU=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=CskCdefWEBekP4KZanOuT8kxWmoujjFFfiqzNf1QyFlF4Y7LckclSsRz+L71nf2yub/ypZXeM3bwQlFYkQqs9fS0jxcPvR/zuAA0MiB7k0TxztMp2cXt7hAe9unTRrStR/c5ojFclYWtQQ7+9LyNkv6zkl7mzoKwVgNuEy8cmKY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=jv9NaMRk; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729770533; x=1761306533;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=U2nasN99oW5nE8o0v69Lu67J21k9hxMqZ1t8tlbUC9U=;
-  b=UcOl0W+1jIYrki5NeeHwi6t1BtyKPfegw0XiQhMyh1PP+zP6PBr+mV4E
-   mEm7V8PEWHeA6Q6RywtEkH2ZmM5wokEpTFqE6Fw4rcHhL4lvSiW4Lpr0b
-   zLMjfNQje/osn43y1skMOpiks2Uh6BWASrGri/VckKgKUdZt5c4aJ7CjE
-   NRVmVItLS6sasLln4EkFDPitCtmFIsyrdKSCUSpBWUAtYu/Ry0NrVglJI
-   0gSLR2EaE2OBGMtYmcGiQhwn04KmfOUezVzqxZUBth2Usi5BRuoEt/x0w
-   4dpWjaV5/xvqw+1cD0MI6EaW328YKlqBdFl91SNcE2oIrkRa+HGE50mzj
-   A==;
-X-CSE-ConnectionGUID: 0goZu/PgS5mBqpkbJLJE0Q==
-X-CSE-MsgGUID: E5GiW8CUSAWLL3fWhqnYfw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="29508678"
+  t=1729770521; x=1761306521;
+  h=from:to:cc:subject:in-reply-to:references:date:
+   message-id:mime-version;
+  bh=d+qe/+ODoW5q7XT1R1VfgK5+hBdUWlBAmc0IyODhTEU=;
+  b=jv9NaMRkIVM+KcS9sb7u8LIIvIDxYkXI3Gy/94ZY6Sia71Sm/tf0k4ec
+   Vj5pbISK3MXNgF1wkTvmY4kX9RKCZNMRCg6WlHzAGkCc1Ts/9NCwi0822
+   CpRj9Q7j+6BJE3zvo4hI392fi68Mv/zK0aIIFWRTqhoFgZzmMCG3aJRzI
+   xvpuDfIODQUjLbxrqy06wAkpH2CboieUHnZXLxU7gm/ckOiDkWHGUo/pz
+   EO8AOYGJVsdxH+50BLWEPEC5cFwHcijEmyLBF9EbS7txmj5kHxJr9mcyK
+   stM2hdnml2/ajY0b82bRTQcIGcCWq4L7uAP0HQ6MB6q0NUM9aosUHsyw+
+   w==;
+X-CSE-ConnectionGUID: leMACKUsREK04hfvB33ECA==
+X-CSE-MsgGUID: lAzpuLPSTwi9HBvMR1zhRg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="46884354"
 X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="29508678"
-Received: from orviesa009.jf.intel.com ([10.64.159.149])
-  by fmvoesa109.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:48:52 -0700
-X-CSE-ConnectionGUID: cwIxLK5bSbmGFRxPN8yQlg==
-X-CSE-MsgGUID: kJ2WMSqNTSuVQ45i4T+UCw==
+   d="scan'208";a="46884354"
+Received: from fmviesa001.fm.intel.com ([10.60.135.141])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:48:40 -0700
+X-CSE-ConnectionGUID: KZjPdK6kSvSUdStGO1YFkw==
+X-CSE-MsgGUID: 9RK3dTjhQg26wkfpdI3qGA==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="80489192"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa009.jf.intel.com with ESMTP; 24 Oct 2024 04:48:50 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3wKd-000WLw-31;
-	Thu, 24 Oct 2024 11:48:47 +0000
-Date: Thu, 24 Oct 2024 19:48:02 +0800
-From: kernel test robot <lkp@intel.com>
-To: Liad Peretz <liad.per@gmail.com>, linux-kernel@vger.kernel.org
-Cc: oe-kbuild-all@lists.linux.dev, akpm@linux-foundation.org,
-	bhe@redhat.com, hbathini@linux.ibm.com, yang.lee@linux.alibaba.com,
-	david@redhat.com, liad.per@gmail.com
-Subject: Re: [PATCH] Makefile: Remove unused filechk_cat
-Message-ID: <202410241924.AdD9UHio-lkp@intel.com>
-References: <20241023070611.67449-1-liad.per@gmail.com>
+   d="scan'208";a="111385152"
+Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
+  by fmviesa001.fm.intel.com with ESMTP; 24 Oct 2024 04:48:29 -0700
+From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
+To: Philipp Stanner <pstanner@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
+ Damien Le Moal <dlemoal@kernel.org>, Niklas Cassel <cassel@kernel.org>,
+ Giovanni Cabiddu <giovanni.cabiddu@intel.com>, Herbert Xu
+ <herbert@gondor.apana.org.au>, "David S. Miller" <davem@davemloft.net>,
+ Boris Brezillon <bbrezillon@kernel.org>, Arnaud Ebalard
+ <arno@natisbad.org>, Srujana Challa <schalla@marvell.com>, Miri Korenblit
+ <miriam.rachel.korenblit@intel.com>, Kalle Valo <kvalo@kernel.org>, Serge
+ Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>, Dave Jiang
+ <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, Bjorn Helgaas
+ <bhelgaas@google.com>, Kevin Cernekee <cernekee@gmail.com>, Greg
+ Kroah-Hartman <gregkh@linuxfoundation.org>, Jiri Slaby
+ <jirislaby@kernel.org>, Jaroslav Kysela <perex@perex.cz>, Takashi Iwai
+ <tiwai@suse.com>, Mark Brown <broonie@kernel.org>, David Lechner
+ <dlechner@baylibre.com>, Philipp Stanner <pstanner@redhat.com>, Uwe
+ =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>, Jie Wang
+ <jie.wang@intel.com>, Tero Kristo <tero.kristo@linux.intel.com>, Adam
+ Guerin <adam.guerin@intel.com>, Shashank Gupta <shashank.gupta@intel.com>,
+ Przemek Kitszel <przemyslaw.kitszel@intel.com>, Bharat Bhushan
+ <bbhushan2@marvell.com>, Nithin Dabilpuram <ndabilpuram@marvell.com>,
+ Johannes Berg <johannes.berg@intel.com>, Emmanuel Grumbach
+ <emmanuel.grumbach@intel.com>, Gregory Greenman
+ <gregory.greenman@intel.com>, Benjamin Berg <benjamin.berg@intel.com>,
+ Yedidya Benshimol <yedidya.ben.shimol@intel.com>, Breno Leitao
+ <leitao@debian.org>, Florian Fainelli <florian.fainelli@broadcom.com>,
+ Ilpo =?utf-8?Q?J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+Cc: linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-ide@vger.kernel.org, qat-linux@intel.com,
+ linux-crypto@vger.kernel.org, linux-wireless@vger.kernel.org,
+ ntb@lists.linux.dev, linux-pci@vger.kernel.org,
+ linux-serial@vger.kernel.org, linux-sound@vger.kernel.org,
+ alexander.shishkin@linux.intel.com
+Subject: Re: [PATCH v4 05/10] intel_th: pci: Replace deprecated PCI functions
+In-Reply-To: <20241016124136.41540-6-pstanner@redhat.com>
+References: <20241016124136.41540-1-pstanner@redhat.com>
+ <20241016124136.41540-6-pstanner@redhat.com>
+Date: Thu, 24 Oct 2024 14:48:27 +0300
+Message-ID: <878qudvi0k.fsf@ubik.fi.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023070611.67449-1-liad.per@gmail.com>
+Content-Type: text/plain
 
-Hi Liad,
+Philipp Stanner <pstanner@redhat.com> writes:
 
-kernel test robot noticed the following build errors:
+> pcim_iomap_table() and pcim_iomap_regions_request_all() have been
+> deprecated by the PCI subsystem in commit e354bb84a4c1 ("PCI: Deprecate
+> pcim_iomap_table(), pcim_iomap_regions_request_all()").
+>
+> Replace these functions with their successors, pcim_iomap() and
+> pcim_request_all_regions().
+>
+> Signed-off-by: Philipp Stanner <pstanner@redhat.com>
 
-[auto build test ERROR on akpm-mm/mm-everything]
-[also build test ERROR on linus/master v6.12-rc4 next-20241024]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+Acked-by: Alexander Shishkin <alexander.shishkin@linux.intel.com>
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Liad-Peretz/Makefile-Remove-unused-filechk_cat/20241023-150726
-base:   https://git.kernel.org/pub/scm/linux/kernel/git/akpm/mm.git mm-everything
-patch link:    https://lore.kernel.org/r/20241023070611.67449-1-liad.per%40gmail.com
-patch subject: [PATCH] Makefile: Remove unused filechk_cat
-config: x86_64-rhel-8.3 (https://download.01.org/0day-ci/archive/20241024/202410241924.AdD9UHio-lkp@intel.com/config)
-compiler: gcc-12 (Debian 12.2.0-14) 12.2.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410241924.AdD9UHio-lkp@intel.com/reproduce)
-
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410241924.AdD9UHio-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
->> /bin/bash: -c: line 1: syntax error near unexpected token `;'
->> /bin/bash: -c: line 1: `set -e; mkdir -p kernel/; trap "rm -f kernel/.tmp_config_data" EXIT; { ; } > kernel/.tmp_config_data; if [ ! -r kernel/config_data ] || ! cmp -s kernel/config_data kernel/.tmp_config_data; then echo '  UPD     kernel/config_data'; mv -f kernel/.tmp_config_data kernel/config_data; fi'
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+Regards,
+--
+Alex
 
