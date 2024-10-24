@@ -1,346 +1,183 @@
-Return-Path: <linux-kernel+bounces-380169-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380206-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 586479AE9BD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:05:03 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 66F6A9AEA30
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:18:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CF99E1F23BF6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:05:02 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 265292812BB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:18:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7AD8D1EF087;
-	Thu, 24 Oct 2024 15:04:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03B721D9A42;
+	Thu, 24 Oct 2024 15:18:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="GVzKZVHv";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="9iwJxl1a"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="WnBCP6NR"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27D7D1E377D;
-	Thu, 24 Oct 2024 15:04:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729ED15884A;
+	Thu, 24 Oct 2024 15:18:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782269; cv=none; b=fHiQYxKiCQF7gyhKSeC4iFX2hqJa2YgiLy/GjyLEYXoxQGbe9bntxtQ1fxdIaQRrh+GzgIecGyxhGFV/M66aQnoeORIGhknlW6ELByFN+Oq/bgV62WxhAISfWncAV8suoCCNFl0/aVxEeSxUC7BMlkYuJRQUfV3oBiA20DyRJ8w=
+	t=1729783106; cv=none; b=bCk+R/BhVSYyU8hdZiZDF4Nk+AnQdlppiq72ABeNBEUznJdWuRIvcxGmHIG5JH+NeX/F4zzrSOtOmmi5FPeu511Ak2xdIdwspeTOtFvjAN3bwjHDavsZILRJRUiXwoGfV8Ysu7yPxzuVKejKXFBGdk4YedDev2+R6o72NU9CRsw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782269; c=relaxed/simple;
-	bh=xcGhakrZUBn48OepV138/F7Fax1Vq6RyEkJQAX6vOCA=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=phpE+S772E59wjBMqazFLTKyE/3qZzMAigKyneConV6hJrg0pZjTrWaQwtxXQkejyY9lwycpvnLoyzIl1T2S0XByRIBH31Sibfoago6hh5wqqf8JYPv8CnCVOk00geurz0coJYKMJIE427CCDDmhL4+ayN6o58y5bGTrqQSvYoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=GVzKZVHv; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=9iwJxl1a; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729782260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/12p1wmUAGKBLrwHiGde7XNj74xQnBZYdchqQ0uIiA=;
-	b=GVzKZVHvTWU/hEVDPA4LpwKsGqciuLzfyLhE7NmxRj9ieJAijHXp0MFrLigvA1QtW9s3Lm
-	bnoCaZ17u02ZRjRGJGs9hZYfhMtbopvvN4J/SDvbTZeHcxik8ZrEwidad6zS8+oQhzq7Xg
-	WG5dOoUNd+5joW9WZl57V7K4o9YkqoGMrMcXNzbv+ZM6rSbNCFwDh8OSZHVRoIyYjj+zQZ
-	JXa1ot7KAaWpSxp2nZE9syjGyQggMwL11jjA2APB2Q7ixHh5qYX9mpES+moZAFYoB5V8nw
-	LLckmlSj51HFfLPWi1eqrgKzwmFkCNqCXNPAnlunFzd6PTDkR9WqyGhy1cdaJg==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729782260;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=N/12p1wmUAGKBLrwHiGde7XNj74xQnBZYdchqQ0uIiA=;
-	b=9iwJxl1aau/1a/3xsGIkftUvETeuDro6EWvPDsM3gh0Na8RWbKKFjVyI48boBhpHqWXGtR
-	/GWA1bmcdK7et4Dw==
-To: linux-kernel@vger.kernel.org,
-	rcu@vger.kernel.org
-Cc: "Paul E. McKenney" <paulmck@kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	s=arc-20240116; t=1729783106; c=relaxed/simple;
+	bh=8TORefZgTSpEJeiOCBWdj+qC9hOeHTf5lUQ/hDBy9MA=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=NI5M2ES1Y2wakIu1NskbG7JcX1VgztiEcwHH9maa0v5YqW2w2sTG51YKhLA4L0ZZp8hemCh3u5RBsCslJMinzAh5gq0sYNXJ/f3SWI+kR44qlud6qrdQwFryTEkAv820T9j9BvHLZfsJR8DnZ+VWNL/HEG6CUFjDYyQZ0y3CoxM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=WnBCP6NR; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:MIME-Version:Message-ID:
+	Date:Subject:Cc:To:From:Sender:Reply-To:Content-ID:Content-Description:
+	Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID:
+	In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=hklWwJuJAP4UGgX7NEh6jnRaJ2z2hO4fw2dC/KmpMwQ=; b=WnBCP6NRIRZeBh2lDcGcz++koH
+	3tOm0y61oTMCUxD93D+TS9/g+JKH3qDqAjm8iLQ00tWfE5l2jPhSikwrkAUy9UJLJCDOW8+XMnKMe
+	ru1zPtqnsPp/a7XOQNNowFlqu+9peLaIrHALvSb7EE2zKyPo0DUIZSywVBH4IQEX9MNrjm4Z4n75y
+	TXHKkexplv9EheaJKTFUpHGHCLlkVKeZ4rmBv+z7jEEnkXu9S+ZUy9sjrAToRPpt6h0PLLQJcIHZY
+	WMu+L8DAT2lKgs128hDvMUy6m7BGWbp76IYdLMVAm0waLao0ugBQjrcZ6M/QRMsaCFR1nWoi6BCVI
+	hLzM7jVw==;
+Received: from [177.172.124.83] (helo=localhost.localdomain)
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_256_GCM:256) (Exim)
+	id 1t3zHX-00EXrz-E1; Thu, 24 Oct 2024 16:57:47 +0200
+From: =?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+To: Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>,
+	Darren Hart <dvhart@infradead.org>,
 	Davidlohr Bueso <dave@stgolabs.net>,
-	Frederic Weisbecker <frederic@kernel.org>,
-	Ingo Molnar <mingo@kernel.org>,
-	Josh Triplett <josh@joshtriplett.org>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Subject: [PATCH v2 3/3] softirq: Use a dedicated thread for timer wakeups on PREEMPT_RT.
-Date: Thu, 24 Oct 2024 16:55:51 +0200
-Message-ID: <20241024150413.518862-4-bigeasy@linutronix.de>
-In-Reply-To: <20241024150413.518862-1-bigeasy@linutronix.de>
-References: <20241024150413.518862-1-bigeasy@linutronix.de>
+	Arnd Bergmann <arnd@arndb.de>,
+	sonicadvance1@gmail.com
+Cc: linux-kernel@vger.kernel.org,
+	kernel-dev@igalia.com,
+	linux-api@vger.kernel.org,
+	=?UTF-8?q?Andr=C3=A9=20Almeida?= <andrealmeid@igalia.com>
+Subject: [PATCH RFC 0/1] futex: Add a new robust list syscall
+Date: Thu, 24 Oct 2024 11:57:34 -0300
+Message-ID: <20241024145735.162090-1-andrealmeid@igalia.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-A timer/ hrtimer softirq is raised in-IRQ context. With threaded
-interrupts enabled or on PREEMPT_RT this leads to waking the ksoftirqd
-for the processing of the softirq. ksoftirqd runs as SCHED_OTHER which
-means it will compete with other tasks for CPU ressources.
-This can introduce long delays for timer processing on heavy loaded
-systems and is not desired.
+This patch adds a new robust_list() syscall. The current syscall
+can't be expanded to cover the following use case, so a new one is
+needed. This new syscall allows users to set multiple robust lists per
+process and to have either 32bit or 64bit pointers in the list.
 
-Split the TIMER_SOFTIRQ and HRTIMER_SOFTIRQ processing into a dedicated
-timers thread and let it run at the lowest SCHED_FIFO priority.
-Wake-ups for RT tasks happen from hardirq context so only timer_list timers
-and hrtimers for "regular" tasks are processed here. The higher priority
-ensures that wakeups are performed before scheduling SCHED_OTHER tasks.
+* Use case
 
-Using a dedicated variable to store the pending softirq bits values
-ensure that the timer are not accidentally picked up by ksoftirqd and
-other threaded interrupts.
-It shouldn't be picked up by ksoftirqd since it runs at lower priority.
-However if ksoftirqd is already running while a timer fires, then
-ksoftird will be PI-boosted due to the BH-lock to ktimer's priority.
-Ideally we try to avoid having ksoftirqd running.
+FEX-Emu[1] is an application that runs x86 and x86-64 binaries on an
+AArch64 Linux host. One of the tasks of FEX-Emu is to translate syscalls
+from one platform to another. Existing set_robust_list() can't be easily
+translated because of two limitations:
 
-The timer thread can pick up pending softirqs from ksoftirqd but only
-if the softirq load is high. It is not be desired that the picked up
-softirqs are processed at SCHED_FIFO priority under high softirq load
-but this can already happen by a PI-boost by a force-threaded interrupt.
+1) x86 apps can have 32bit pointers robust lists. For a x86-64 kernel
+   this is not a problem, because of the compat entry point. But there's
+   no such compat entry point for AArch64, so the kernel would do the
+   pointer arithmetic wrongly. Is also unviable to userspace to keep
+   track every addition/removal to the robust list and keep a 64bit
+   version of it somewhere else to feed the kernel. Thus, the new
+   interface has an option of telling the kernel if the list is filled
+   with 32bit or 64bit pointers.
 
-[ frederic@kernel.org: rcutorture.c fixes, storm fix by introduction of
-  local_timers_pending() for tick_nohz_next_event() ]
+2) Apps can set just one robust list (in theory, x86-64 can set two if
+   they also use the compat entry point). That means that when a x86 app
+   asks FEX-Emu to call set_robust_list(), FEX have two options: to
+   overwrite their own robust list pointer and make the app robust, or
+   to ignore the app robust list and keep the emulator robust. The new
+   interface allows for multiple robust lists per application, solving
+   this.
 
-[ junxiao.chang@intel.com: Ensure ktimersd gets woken up even if a
-  softirq is currently served. ]
+* Interface
 
-Reviewed-by: Paul E. McKenney <paulmck@kernel.org> [rcutorture]
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
----
- include/linux/interrupt.h | 44 +++++++++++++++++++++++++
- kernel/rcu/rcutorture.c   |  6 ++++
- kernel/softirq.c          | 69 ++++++++++++++++++++++++++++++++++++++-
- kernel/time/hrtimer.c     |  4 +--
- kernel/time/tick-sched.c  |  2 +-
- kernel/time/timer.c       |  2 +-
- 6 files changed, 122 insertions(+), 5 deletions(-)
+This is the proposed interface:
 
-diff --git a/include/linux/interrupt.h b/include/linux/interrupt.h
-index 457151f9f263d..9637af78087f3 100644
---- a/include/linux/interrupt.h
-+++ b/include/linux/interrupt.h
-@@ -616,6 +616,50 @@ extern void __raise_softirq_irqoff(unsigned int nr);
- extern void raise_softirq_irqoff(unsigned int nr);
- extern void raise_softirq(unsigned int nr);
-=20
-+/*
-+ * Handle timers in a dedicated thread at a low SCHED_FIFO priority instea=
-d in
-+ * ksoftirqd as to be prefred over SCHED_NORMAL tasks.
-+ */
-+#ifdef CONFIG_PREEMPT_RT
-+DECLARE_PER_CPU(struct task_struct *, timersd);
-+DECLARE_PER_CPU(unsigned long, pending_timer_softirq);
-+
-+void raise_ktimers_thread(unsigned int nr);
-+
-+static inline void raise_timer_softirq(void)
-+{
-+	raise_ktimers_thread(TIMER_SOFTIRQ);
-+}
-+
-+static inline void raise_hrtimer_softirq(void)
-+{
-+	raise_ktimers_thread(HRTIMER_SOFTIRQ);
-+}
-+
-+static inline unsigned int local_timers_pending(void)
-+{
-+	return __this_cpu_read(pending_timer_softirq);
-+}
-+
-+#else
-+static inline void raise_timer_softirq(void)
-+{
-+	lockdep_assert_in_irq();
-+	__raise_softirq_irqoff(TIMER_SOFTIRQ);
-+}
-+
-+static inline void raise_hrtimer_softirq(void)
-+{
-+	lockdep_assert_in_irq();
-+	__raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-+}
-+
-+static inline unsigned int local_timers_pending(void)
-+{
-+	return local_softirq_pending();
-+}
-+#endif
-+
- DECLARE_PER_CPU(struct task_struct *, ksoftirqd);
-=20
- static inline struct task_struct *this_cpu_ksoftirqd(void)
-diff --git a/kernel/rcu/rcutorture.c b/kernel/rcu/rcutorture.c
-index bb75dbf5c800c..609687fd742d5 100644
---- a/kernel/rcu/rcutorture.c
-+++ b/kernel/rcu/rcutorture.c
-@@ -2440,6 +2440,12 @@ static int rcutorture_booster_init(unsigned int cpu)
- 		WARN_ON_ONCE(!t);
- 		sp.sched_priority =3D 2;
- 		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-+#ifdef CONFIG_PREEMPT_RT
-+		t =3D per_cpu(timersd, cpu);
-+		WARN_ON_ONCE(!t);
-+		sp.sched_priority =3D 2;
-+		sched_setscheduler_nocheck(t, SCHED_FIFO, &sp);
-+#endif
- 	}
-=20
- 	/* Don't allow time recalculation while creating a new task. */
-diff --git a/kernel/softirq.c b/kernel/softirq.c
-index d082e7840f880..b452206cf93b2 100644
---- a/kernel/softirq.c
-+++ b/kernel/softirq.c
-@@ -624,6 +624,24 @@ static inline void tick_irq_exit(void)
- #endif
- }
-=20
-+#ifdef CONFIG_PREEMPT_RT
-+DEFINE_PER_CPU(struct task_struct *, timersd);
-+DEFINE_PER_CPU(unsigned long, pending_timer_softirq);
-+
-+static void wake_timersd(void)
-+{
-+	struct task_struct *tsk =3D __this_cpu_read(timersd);
-+
-+	if (tsk)
-+		wake_up_process(tsk);
-+}
-+
-+#else
-+
-+static inline void wake_timersd(void) { }
-+
-+#endif
-+
- static inline void __irq_exit_rcu(void)
- {
- #ifndef __ARCH_IRQ_EXIT_IRQS_DISABLED
-@@ -636,6 +654,10 @@ static inline void __irq_exit_rcu(void)
- 	if (!in_interrupt() && local_softirq_pending())
- 		invoke_softirq();
-=20
-+	if (IS_ENABLED(CONFIG_PREEMPT_RT) && local_timers_pending() &&
-+	    !(in_nmi() | in_hardirq()))
-+		wake_timersd();
-+
- 	tick_irq_exit();
- }
-=20
-@@ -971,12 +993,57 @@ static struct smp_hotplug_thread softirq_threads =3D {
- 	.thread_comm		=3D "ksoftirqd/%u",
- };
-=20
-+#ifdef CONFIG_PREEMPT_RT
-+static void timersd_setup(unsigned int cpu)
-+{
-+	/* Above SCHED_NORMAL to handle timers before regular tasks. */
-+	sched_set_fifo_low(current);
-+}
-+
-+static int timersd_should_run(unsigned int cpu)
-+{
-+	return local_timers_pending();
-+}
-+
-+void raise_ktimers_thread(unsigned int nr)
-+{
-+	lockdep_assert_in_irq();
-+	trace_softirq_raise(nr);
-+	__this_cpu_or(pending_timer_softirq, 1 << nr);
-+}
-+
-+static void run_timersd(unsigned int cpu)
-+{
-+	unsigned int timer_si;
-+
-+	ksoftirqd_run_begin();
-+
-+	timer_si =3D local_timers_pending();
-+	__this_cpu_write(pending_timer_softirq, 0);
-+	or_softirq_pending(timer_si);
-+
-+	__do_softirq();
-+
-+	ksoftirqd_run_end();
-+}
-+
-+static struct smp_hotplug_thread timer_threads =3D {
-+	.store			=3D &timersd,
-+	.setup			=3D timersd_setup,
-+	.thread_should_run	=3D timersd_should_run,
-+	.thread_fn		=3D run_timersd,
-+	.thread_comm		=3D "ktimers/%u",
-+};
-+#endif
-+
- static __init int spawn_ksoftirqd(void)
- {
- 	cpuhp_setup_state_nocalls(CPUHP_SOFTIRQ_DEAD, "softirq:dead", NULL,
- 				  takeover_tasklets);
- 	BUG_ON(smpboot_register_percpu_thread(&softirq_threads));
--
-+#ifdef CONFIG_PREEMPT_RT
-+	BUG_ON(smpboot_register_percpu_thread(&timer_threads));
-+#endif
- 	return 0;
- }
- early_initcall(spawn_ksoftirqd);
-diff --git a/kernel/time/hrtimer.c b/kernel/time/hrtimer.c
-index 5402e0f242178..133d49f703d93 100644
---- a/kernel/time/hrtimer.c
-+++ b/kernel/time/hrtimer.c
-@@ -1811,7 +1811,7 @@ void hrtimer_interrupt(struct clock_event_device *dev)
- 	if (!ktime_before(now, cpu_base->softirq_expires_next)) {
- 		cpu_base->softirq_expires_next =3D KTIME_MAX;
- 		cpu_base->softirq_activated =3D 1;
--		__raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-+		raise_hrtimer_softirq();
- 	}
-=20
- 	__hrtimer_run_queues(cpu_base, now, flags, HRTIMER_ACTIVE_HARD);
-@@ -1906,7 +1906,7 @@ void hrtimer_run_queues(void)
- 	if (!ktime_before(now, cpu_base->softirq_expires_next)) {
- 		cpu_base->softirq_expires_next =3D KTIME_MAX;
- 		cpu_base->softirq_activated =3D 1;
--		__raise_softirq_irqoff(HRTIMER_SOFTIRQ);
-+		raise_hrtimer_softirq();
- 	}
-=20
- 	__hrtimer_run_queues(cpu_base, now, flags, HRTIMER_ACTIVE_HARD);
-diff --git a/kernel/time/tick-sched.c b/kernel/time/tick-sched.c
-index 753a184c70907..976a212cca2e8 100644
---- a/kernel/time/tick-sched.c
-+++ b/kernel/time/tick-sched.c
-@@ -859,7 +859,7 @@ static void tick_nohz_restart(struct tick_sched *ts, kt=
-ime_t now)
-=20
- static inline bool local_timer_softirq_pending(void)
- {
--	return local_softirq_pending() & BIT(TIMER_SOFTIRQ);
-+	return local_timers_pending() & BIT(TIMER_SOFTIRQ);
- }
-=20
- /*
-diff --git a/kernel/time/timer.c b/kernel/time/timer.c
-index 1759de934284c..79f0dc73ac436 100644
---- a/kernel/time/timer.c
-+++ b/kernel/time/timer.c
-@@ -2499,7 +2499,7 @@ static void run_local_timers(void)
- 		 */
- 		if (time_after_eq(jiffies, READ_ONCE(base->next_expiry)) ||
- 		    (i =3D=3D BASE_DEF && tmigr_requires_handle_remote())) {
--			__raise_softirq_irqoff(TIMER_SOFTIRQ);
-+			raise_timer_softirq();
- 			return;
- 		}
- 	}
---=20
-2.45.2
+	long set_robust_list2(void *head, int index, unsigned int flags)
+
+`head` is the head of the userspace struct robust_list_head, just as old
+set_robust_list(). It needs to be a void pointer since it can point to a normal
+robust_list_head or a compat_robust_list_head.
+
+`flags` can be used for defining the list type:
+
+	enum robust_list_type {
+	 	ROBUST_LIST_32BIT,
+		ROBUST_LIST_64BIT,
+	 };
+
+`index` is the index in the internal robust_list's linked list (the naming
+starts to get confusing, I reckon). If `index == -1`, that means that user wants
+to set a new robust_list, and the kernel will append it in the end of the list,
+assign a new index and return this index to the user. If `index >= 0`, that
+means that user wants to re-set `*head` of an already existing list (similarly
+to what happens when you call set_robust_list() twice with different `*head`).
+
+If `index` is out of range, or it points to a non-existing robust_list, or if
+the internal list is full, an error is returned.
+
+* Implementation
+
+The implementation re-uses most of the existing robust list interface as
+possible. The new task_struct member `struct list_head robust_list2` is just a
+linked list where new lists are appended as the user requests more lists, and by
+futex_cleanup(), the kernel walks through the internal list feeding
+exit_robust_list() with the robust_list's.
+
+This implementation supports up to 10 lists (defined at ROBUST_LISTS_PER_TASK),
+but it was an arbitrary number for this RFC. For the described use case above, 4
+should be enough, I'm not sure which should be the limit.
+
+It doesn't support list removal (should it support?). It doesn't have a proper
+get_robust_list2() yet as well, but I can add it in a next revision. We could
+also have a generic robust_list() syscall that can be used to set/get and be
+controlled by flags.
+
+The new interface has a `unsigned int flags` argument, making it
+extensible for future use cases as well.
+
+* Testing
+
+I will provide a selftest similar to the one I proposed for the current
+interface here:
+https://lore.kernel.org/lkml/20241010011142.905297-1-andrealmeid@igalia.com/
+
+Also, FEX-Emu added support for this interface to validate it:
+https://github.com/FEX-Emu/FEX/pull/3966
+
+Feedback is very welcomed!
+
+Thanks,
+	André
+
+[1] https://github.com/FEX-Emu/FEX
+
+André Almeida (1):
+  futex: Create set_robust_list2
+
+ arch/arm/tools/syscall.tbl             |  1 +
+ arch/x86/entry/syscalls/syscall_64.tbl |  1 +
+ include/linux/futex.h                  |  1 +
+ include/linux/sched.h                  |  1 +
+ include/uapi/asm-generic/unistd.h      |  5 +-
+ include/uapi/linux/futex.h             | 24 +++++++++
+ init/init_task.c                       |  3 ++
+ kernel/futex/core.c                    | 34 +++++++++---
+ kernel/futex/syscalls.c                | 71 ++++++++++++++++++++++++++
+ scripts/syscall.tbl                    |  1 +
+ 10 files changed, 133 insertions(+), 9 deletions(-)
+
+--
+2.47.0
 
 
