@@ -1,224 +1,184 @@
-Return-Path: <linux-kernel+bounces-379425-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379424-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B497D9ADE88
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:11:12 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 251609ADE85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:11:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 402FC1F23377
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:11:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9DA4D1F233A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:11:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBC531B0F09;
-	Thu, 24 Oct 2024 08:10:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A721E1AF0AD;
+	Thu, 24 Oct 2024 08:10:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="SzajlhbB"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GLWzbTvE"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ECE681AE005;
-	Thu, 24 Oct 2024 08:10:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6178B2B9CD;
+	Thu, 24 Oct 2024 08:10:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757454; cv=none; b=J7H1RLwG6vhtFuU7TQy90JD5CzbY5++GbcO+SUt9y3qPDKdDMIrt860quS7fDK3xTjmkIrWC2mpvP+JSeqD69muoNaib/ghPWGrzSITDPHfv3tCH8I1LQ8VCoMjRp1BX7jkLYrgeDDkj1yR2tGkA7RE3zn3LVUQWytMdkAuDrsk=
+	t=1729757453; cv=none; b=TsHaSXKSNUebCKBrqgvEvaf7QCNwBbC1BvYXNC+pfEjNeHurdNKT5ttCOokFvDw2hczmGPXeL85bl0Yc8mhco9hFjN0YempIOeveWhUcKEi271IZLKg6nc5MrkpT2wPTfk5ef2hSMFedKwmNzC5r0qOw/fvt4HRTSMQa8pwmN1o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757454; c=relaxed/simple;
-	bh=gscWgojEUanIV0DyFKMS6hDfBu/y+xjxw7+/o7qWgfI=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=QUmZohIWjclhOqn1FgdlVoOZae+gs1+FG+ZLujXWVXTjGpUUUBzTyU0Uj71L73Ht4NIzCf0Y5QVM4OIrYkZ3c0pmbE4hpOPuvrCM3Iixq3BMk68KVlK+7hT6Pe29jW+vClKj4baEs6AV0MEI3kC5XbTv4hYzJfBrwPIky9UCC98=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=SzajlhbB; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NL4V75028304;
-	Thu, 24 Oct 2024 08:10:48 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:message-id
-	:mime-version:subject:to; s=qcppdkim1; bh=aDUYIh+5i8guvYp5QFB1wb
-	bOqtDS8iKbjDahnB/AU2Q=; b=SzajlhbBPCT/7d4b08/qwFlJ9UYHoqQa75IFyM
-	36qYcrj/ZaiMlaKADNdh69O9UWZOuUByhUktpF5upvSs45b4BoDCUZuoBXJwRg6k
-	GISUMjntAVXFHOYifxzPadWiCUAC6lvKZ6OUoh/rIzX0ih0hhingOtsqDdg20x7o
-	BEIWSRMxwyXrN8kCLURpgeNK85rKRDkV26gjOug++nzNwQt+Pfymnc0CQoUBAaYt
-	/PfsGc1eXD8mivazKIN9gDmnyIeMrpkkNewoD5HV8DJrf/uwRLfB3/xTHzFMDW0s
-	nSmqYTK+ZmXOjPHBWesEDcW8vp6ZH08C2Tw/JkSmpiE9Lumg==
-Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41vwww-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 08:10:46 +0000 (GMT)
-Received: from nasanex01c.na.qualcomm.com (nasanex01c.na.qualcomm.com [10.45.79.139])
-	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49O8AjbT006206
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 08:10:45 GMT
-Received: from cse-cd02-lnx.ap.qualcomm.com (10.80.80.8) by
- nasanex01c.na.qualcomm.com (10.45.79.139) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1544.9; Thu, 24 Oct 2024 01:10:39 -0700
-From: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Date: Thu, 24 Oct 2024 16:09:48 +0800
-Subject: [PATCH v2] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and
- peripherals
+	s=arc-20240116; t=1729757453; c=relaxed/simple;
+	bh=E2UMrjOOB1RTCxZbP86AJXOuiZ5+TRIP/vocU98RNY8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=Yq2LE8VF7B/P9QJR0VIazpwwHNYlmcT33LmcMP2GNTr4YZIiQX1oxsDGb+yysB3i8CIOXZeS3wwKrX9G61e+AoCzN6gr9RX3g1koNofp/NtQr7enCJoLa84zLkFasdyx2mzh2UfjRG8+c/Ev/Xik3qJDJ1bz3WnB9Z3HSUSkbiA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GLWzbTvE; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729757451; x=1761293451;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=E2UMrjOOB1RTCxZbP86AJXOuiZ5+TRIP/vocU98RNY8=;
+  b=GLWzbTvEBkHTuXA30dRDp5pltmRO9KaDlV7T+57sFVp49pJ4FXjDidh+
+   H+2auVW08gTQJAcTeGAWXW3d5AXgbJk1eYXJGJ6dPMt/cBq/p22z0YkOG
+   aFnP+LgxblbZBBHhT8gjUdU00Qdqid87bEsY4nHzPeZlu0Dh024uw2FpC
+   WkmcRwMvNScyqJ63gTk35GwDpRhycak/+vqCBpM2M6U9aRwp1tkA1dGPd
+   KFz3UD7cQc66lkzZE3+8wZDaA3bvYKp+DDwl+Y3O3KmC9pr8TA5vlvGsN
+   tLpNouEHYhE0C/DpSpCxaQLNHlp83vjSX/ZrkuUWse+8IgouxuoM6t4YU
+   w==;
+X-CSE-ConnectionGUID: ZCxL3jaHSmm3hBrQ8hLF/g==
+X-CSE-MsgGUID: IQMLBKKVRseJDCSY8uYQ6Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29500963"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29500963"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:10:50 -0700
+X-CSE-ConnectionGUID: d7fOBfywQuCPM6W9NMJz4g==
+X-CSE-MsgGUID: TwRmqQ1mTYa6IHx09mf5nA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="80690698"
+Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
+  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 01:10:48 -0700
+From: Even Xu <even.xu@intel.com>
+To: jikos@kernel.org,
+	bentiss@kernel.org,
+	corbet@lwn.net
+Cc: linux-input@vger.kernel.or,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	Even Xu <even.xu@intel.com>
+Subject: [PATCH v1 00/22] Add Intel Touch Host Controller drivers
+Date: Thu, 24 Oct 2024 16:10:01 +0800
+Message-Id: <20241024081023.1468951-1-even.xu@intel.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-ID: <20241024-adds-spmi-pmic-peripherals-for-qcs615-v2-1-f262ba243b63@quicinc.com>
-X-B4-Tracking: v=1; b=H4sIAM4AGmcC/62QQWrDMBBFrxK0ropHliU5q9yjBDMejRpBYjuSY
- 1pC7l45KZQuugh0ocUX6L3/dRWZU+QstpurSLzEHMehBPWyEXTA4Z1l9CULVSldtaqV6H2WeTp
- FWQ7JqTyfDpzwmGUYkzxTNtBIMMxNDbZF60VhTYlD/Lh73vaPnPh8Kbr5cfljK/Ligkqp1dXFI
- c4Rj12+TNOY5q5Ium+JUo0JRmNLSm8XvXp6zCxpPJ3ivN14bmtnwPle9Rh6BrQVuUC6DpUh8t5
- UtdG9EmujQ8zzmD7vH7HAvdKTmxeQIHtrbQjOQqhpVwZSHOi1FFrLPXYBPMNrtXfKeAie+A+ef
- oZnmobRog+A9B88hzUZ693a8xdvf7vdvgDL2uldXgIAAA==
-X-Change-ID: 20240929-adds-spmi-pmic-peripherals-for-qcs615-16ee53179a7d
-To: <quic_fenglinw@quicinc.com>, <quic_tingweiz@quicinc.com>,
-        <kernel@quicinc.com>, Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio
-	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski
-	<krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>
-CC: <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>,
-        Tingguo Cheng <quic_tingguoc@quicinc.com>
-X-Mailer: b4 0.15-dev-dedf8
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729757438; l=3846;
- i=quic_tingguoc@quicinc.com; s=20240917; h=from:subject:message-id;
- bh=gscWgojEUanIV0DyFKMS6hDfBu/y+xjxw7+/o7qWgfI=;
- b=58eSs6XTVjCBYB/4Q0x/P0kmh4/Y0s9KCZn13irBA3bR5XDMXHcbpPIgJE6M7IRjBNaYclCde
- oWD02rm4DgWDrgeb2J1bY6Qv9RpGdJQfJOxooKRxf4nJ2FdDw3kbbN8
-X-Developer-Key: i=quic_tingguoc@quicinc.com; a=ed25519;
- pk=PiFYQPN5GCP7O6SA43tuKfHAbl9DewSKOuQA/GiHQrI=
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01c.na.qualcomm.com (10.45.79.139)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: LTtkUse2ZST4K8miD4IFJos4w4yzcW1q
-X-Proofpoint-ORIG-GUID: LTtkUse2ZST4K8miD4IFJos4w4yzcW1q
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
- adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
- spamscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
- suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240063
+Content-Transfer-Encoding: 8bit
 
-Add SPMI bus arbiter and include pm8150.dtsi for PMIC peripherals in
-pmm6155au which is a variant of pm8150. The power key and volume do-
-wn key are controlled by PMIC PON hardware on pmm6155au.
+Intel Touch Host Controller (THC) is a new high performance input IP
+which can benefit HID device's data transaction, such as touch screen,
+touch pad, stylus.
 
-Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
----
-This patch depends on the patch series:
-- https://lore.kernel.org/all/20241022-add_initial_support_for_qcs615-v4-0-0a551c6dd342@quicinc.com/
----
-Changes in v2:
-- Include "pm8150.dtsi" for QCS615 PMIC instead of creating a new
-  qcs615-pmic.dtsi in the case that pmm6155au is a variant of pm8150.
-- Fixed comments from community in V1.
-- Link to v1: https://lore.kernel.org/r/20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com
----
- arch/arm64/boot/dts/qcom/qcs615-ride.dts | 27 +++++++++++++++++++++++++++
- arch/arm64/boot/dts/qcom/qcs615.dtsi     | 23 +++++++++++++++++++++++
- 2 files changed, 50 insertions(+)
+THC IP now evoluates to V4, it can support 3 different modes: IPTS,
+HIDSPI and HIDI2C. Here are upgrade history:
+- THC v1, for TGL/LKF, supports intel private IPTS (Intel Precise Touch
+  and Stylus) protocol ( IPTS mode)
+- THC v2, for ADL, add industrial standard HID over SPI protocol support
+  (HIDSPI mode)
+- THC v3, for MTL, enhance HID over SPI mode
+- THC v4, for LNL, add inudstrial standard HID over I2C protocol support
+  (HIDI2C mode) 
 
-diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-index ee6cab3924a6d71f29934a8debba3a832882abdd..71ea0cb32eebed713b2a80ab692b14fdb4bd0ce4 100644
---- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-+++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-@@ -6,6 +6,7 @@
- 
- #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
- #include "qcs615.dtsi"
-+#include "pm8150.dtsi"
- / {
- 	model = "Qualcomm Technologies, Inc. QCS615 Ride";
- 	compatible = "qcom,qcs615-ride", "qcom,qcs615";
-@@ -210,6 +211,32 @@ &rpmhcc {
- 	clocks = <&xo_board_clk>;
- };
- 
-+&spmi_bus {
-+	pmm6155au_0: pmic@0 {
-+
-+		pon: pon@800 {
-+
-+			/delete-property/ mode-bootloader;
-+			/delete-property/ mode-recovery;
-+
-+			pon_pwrkey: pwrkey {
-+				status = "okay";
-+			};
-+
-+			pon_resin: resin {
-+				linux,code = <KEY_VOLUMEDOWN>;
-+				status = "okay";
-+			};
-+		};
-+
-+		pmm6155au_0_gpios: gpio@c000 {};
-+	};
-+
-+	pmm6155au_1: pmic@1 {
-+		status = "disabled";
-+	};
-+};
-+
- &uart0 {
- 	status = "okay";
- };
-diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-index ac4c4c751da1fbb28865877555ba317677bc6bd2..3fc928913239cfc61c24d1b16c183b96f38e589d 100644
---- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-+++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-@@ -517,6 +517,29 @@ sram@c3f0000 {
- 			reg = <0x0 0x0c3f0000 0x0 0x400>;
- 		};
- 
-+		spmi_bus: spmi@c440000 {
-+			compatible = "qcom,spmi-pmic-arb";
-+			reg = <0x0 0x0c440000 0x0 0x1100>,
-+			      <0x0 0x0c600000 0x0 0x2000000>,
-+			      <0x0 0x0e600000 0x0 0x100000>,
-+			      <0x0 0x0e700000 0x0 0xa0000>,
-+			      <0x0 0x0c40a000 0x0 0x26000>;
-+			reg-names = "core",
-+				    "chnls",
-+				    "obsrvr",
-+				    "intr",
-+				    "cnfg";
-+			interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
-+			interrupt-names = "periph_irq";
-+			interrupt-controller;
-+			#interrupt-cells = <4>;
-+			#address-cells = <2>;
-+			#size-cells = <0>;
-+			cell-index = <0>;
-+			qcom,channel = <0>;
-+			qcom,ee = <0>;
-+		};
-+
- 		intc: interrupt-controller@17a00000 {
- 			compatible = "arm,gic-v3";
- 			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+Linux Surface community (https://github.com/linux-surface) already
+implemented IPTS mode. These patch series provides THC HIDSPI mode and
+THC HIDI2C mode support on Linux.
 
----
-base-commit: de938618db2bafbe1a70c8fc43f06ccdd60364b2
-change-id: 20240929-adds-spmi-pmic-peripherals-for-qcs615-16ee53179a7d
-prerequisite-change-id: 20241022-add_initial_support_for_qcs615-2256f64a9c24:v4
-prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
-prerequisite-patch-id: 624720e543d7857e46d3ee49b8cea413772deb4c
-prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
-prerequisite-patch-id: ab88a42ec69ad90e8509c9c5b7c6bdd595a7f783
-prerequisite-patch-id: 918724fafe43acaa4c4b980bfabe36e9c3212cd1
-prerequisite-patch-id: 3bd8edd83297815fcb1b81fcd891d3c14908442f
-prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
+These patch series includes:
+1. Document for THC hardware and software introduction.
+2. Intel THC Hardware layer driver which provides control interfaces
+   for protocol layer.
+3. Intel QuickSPI (R) driver working as a HIDSPI device driver which
+   implements HID over SPI protocol and flow.
+4. Intel QuickI2C (R) driver working as a HIDI2C device driver which
+   implements HID over I2C protocol and flow.
 
-Best regards,
+Even Xu (13):
+  HID: THC: Add documentation
+  HID: intel-thc-hid: intel-thc: Add THC DMA interfaces
+  HID: intel-thc-hid: intel-thc: Add THC I2C config interfaces
+  HID: intel-thc-hid: intel-quickspi: Add THC QuickSPI driver hid layer
+  HID: intel-thc-hid: intel-quickspi: Add THC QuickSPI ACPI interfaces
+  HID: intel-thc-hid: intel-quickspi: Add HIDSPI protocol implementation
+  HID: intel-thc-hid: intel-quickspi: Add PM implementation
+  HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C driver skeleton
+  HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C driver hid layer
+  HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C ACPI interfaces
+  HID: intel-thc-hid: intel-quicki2c: Add HIDI2C protocol implementation
+  HID: intel-thc-hid: intel-quicki2c: Complete THC QuickI2C driver
+  HID: intel-thc-hid: intel-quicki2c: Add PM implementation
+
+Xinpeng Sun (9):
+  HID: intel-thc-hid: Add basic THC driver skeleton
+  HID: intel-thc-hid: intel-thc: Add THC registers definition
+  HID: intel-thc-hid: intel-thc: Add THC PIO operation APIs
+  HID: intel-thc-hid: intel-thc: Add APIs for interrupt
+  HID: intel-thc-hid: intel-thc: Add THC LTR interfaces
+  HID: intel-thc-hid: intel-thc: Add THC interrupt handler
+  HID: intel-thc-hid: intel-thc: Add THC SPI config interfaces
+  HID: intel-thc-hid: intel-quickspi: Add THC QuickSPI driver skeleton
+  HID: intel-thc-hid: intel-quickspi: Complete THC QuickSPI driver
+
+ Documentation/hid/intel-thc-hid.rst           |  560 +++++++
+ MAINTAINERS                                   |    6 +
+ drivers/hid/Kconfig                           |    2 +
+ drivers/hid/Makefile                          |    2 +
+ drivers/hid/intel-thc-hid/Kconfig             |   42 +
+ drivers/hid/intel-thc-hid/Makefile            |   22 +
+ .../intel-quicki2c/pci-quicki2c.c             |  962 +++++++++++
+ .../intel-quicki2c/quicki2c-dev.h             |  182 +++
+ .../intel-quicki2c/quicki2c-hid.c             |  166 ++
+ .../intel-quicki2c/quicki2c-hid.h             |   14 +
+ .../intel-quicki2c/quicki2c-protocol.c        |  219 +++
+ .../intel-quicki2c/quicki2c-protocol.h        |   20 +
+ .../intel-quickspi/pci-quickspi.c             |  970 +++++++++++
+ .../intel-quickspi/quickspi-dev.h             |  168 ++
+ .../intel-quickspi/quickspi-hid.c             |  165 ++
+ .../intel-quickspi/quickspi-hid.h             |   14 +
+ .../intel-quickspi/quickspi-protocol.c        |  410 +++++
+ .../intel-quickspi/quickspi-protocol.h        |   25 +
+ .../intel-thc-hid/intel-thc/intel-thc-dev.c   | 1442 +++++++++++++++++
+ .../intel-thc-hid/intel-thc/intel-thc-dev.h   |  116 ++
+ .../intel-thc-hid/intel-thc/intel-thc-dma.c   |  969 +++++++++++
+ .../intel-thc-hid/intel-thc/intel-thc-dma.h   |  146 ++
+ .../intel-thc-hid/intel-thc/intel-thc-hw.h    |  878 ++++++++++
+ include/linux/hid-over-i2c.h                  |  117 ++
+ include/linux/hid-over-spi.h                  |  155 ++
+ 25 files changed, 7772 insertions(+)
+ create mode 100644 Documentation/hid/intel-thc-hid.rst
+ create mode 100644 drivers/hid/intel-thc-hid/Kconfig
+ create mode 100644 drivers/hid/intel-thc-hid/Makefile
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-protocol.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quickspi/quickspi-protocol.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dev.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-dma.h
+ create mode 100644 drivers/hid/intel-thc-hid/intel-thc/intel-thc-hw.h
+ create mode 100644 include/linux/hid-over-i2c.h
+ create mode 100644 include/linux/hid-over-spi.h
+
 -- 
-Tingguo Cheng <quic_tingguoc@quicinc.com>
+2.40.1
 
 
