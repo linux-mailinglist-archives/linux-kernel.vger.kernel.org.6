@@ -1,96 +1,110 @@
-Return-Path: <linux-kernel+bounces-379777-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379778-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 417679AE384
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:16:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3CA729AE3A8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:19:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 79FD51C2289D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:16:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id F05E02841FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:19:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3AF41BFDF4;
-	Thu, 24 Oct 2024 11:16:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DC1E41CEAB1;
+	Thu, 24 Oct 2024 11:19:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="e+EiVbWo"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VM8swpYX"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB7BA3399F;
-	Thu, 24 Oct 2024 11:16:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4080C1CCB55;
+	Thu, 24 Oct 2024 11:19:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729768573; cv=none; b=Z5wUqZ9RfotiJ0DI9a5Poygd3BCR9liinvfbdOzIO3DFNX7eUvrqsv51/PElGPxVaKwJ0lvohseb3UnWeg9YvJ9d1KOxvj3bvu8lyCO08/yhABU/9rqJHkJIadowZAvn8rTve2GVYb/8/6M4TTT7Wh29l+xWK1/ZzMm+e+98WvM=
+	t=1729768784; cv=none; b=DZ7NeMjr43Oa09ymIGq/bzs5+t2MYSBpUcIWZaCJkTtlKL9lZFkX8VCKr/WdQq05ypi533hri2sa0aHVB0j74fY39jnE+FfBGOH3o5LGt+T6JTOFuXYe0qbyOHAq/5DEJJ4D79qkHGHh6cmv+vd24JvqEORdpZ1gwrDOqNs4jWo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729768573; c=relaxed/simple;
-	bh=VINJQHQzS6kytZz2fSnKOBmP+rBAzTun7oi2xBRLVWM=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=VMtRmYo6q/miivEzQl0Y7UkLnwHA3XNkdIOl+WarTJEf6E4qivLmeuz87Sjx04uyKhbbn4GfVNU0F4Bz5h5jOROz5Va1+Afa7bWvRWNPnvBFgKPzVKH5mMRETNFlLPjZ3b9Z5Z1cICT/8w0KMmjlnIQN+MjtOKIqMXRh+Ak7ecY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=e+EiVbWo; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729768571; x=1761304571;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=VINJQHQzS6kytZz2fSnKOBmP+rBAzTun7oi2xBRLVWM=;
-  b=e+EiVbWoY0IhvgiFVV1xuBV1BykAhfeM5TYDKnxsPE/617qsfSwr9kWA
-   RaCvQXX7cacqKdWtfDLEpustGkyf4O7R8KkPO/rAHNarCIDSL4nVzRZjo
-   jB2qI1S7iIAPfi0LtztU5Pu1L3ltybXfB9kYFfux/+nyHVMfFqy+tDUci
-   lClribwVc50VMlGF/IJMTH9X7MtuvnsWX261o1zE6koRmDs1YVLMpAWsv
-   PG1XR9Fb20+arrsEfw2iydeQ5AEby43WNcHb+ZxXIP7eRpfTKFXeQH6jc
-   CNE5zhXGSpoozSvm4tbPVyHumoqCetQS/qmXKzJDfp3xP9f9VslAtvMUG
-   w==;
-X-CSE-ConnectionGUID: MnU5e/v4SJiVd7tjIXr+ig==
-X-CSE-MsgGUID: cFtdR7R4QnKcZ6wOmIDyxQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="28850339"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="28850339"
-Received: from orviesa005.jf.intel.com ([10.64.159.145])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:16:10 -0700
-X-CSE-ConnectionGUID: xNyGQUnrTdabXEUIu+R1Eg==
-X-CSE-MsgGUID: v92XG2nxRDapz9VAeVQ+Uw==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="85355046"
-Received: from ubik.fi.intel.com (HELO localhost) ([10.237.72.184])
-  by orviesa005.jf.intel.com with ESMTP; 24 Oct 2024 04:16:08 -0700
-From: Alexander Shishkin <alexander.shishkin@linux.intel.com>
-To: Qianqiang Liu <qianqiang.liu@163.com>, namhyung@kernel.org
-Cc: linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org,
- Qianqiang Liu <qianqiang.liu@163.com>, alexander.shishkin@linux.intel.com
-Subject: Re: [PATCH] perf/x86/intel/pt: Fix NULL pointer dereference in
- pt_buffer_reset_markers
-In-Reply-To: <20241001082757.111385-2-qianqiang.liu@163.com>
-References: <20241001082757.111385-2-qianqiang.liu@163.com>
-Date: Thu, 24 Oct 2024 14:16:06 +0300
-Message-ID: <87bjz9vjih.fsf@ubik.fi.intel.com>
+	s=arc-20240116; t=1729768784; c=relaxed/simple;
+	bh=R8H0oTrJhlxLauZX8Am2cYhcj+75a4gif8pXEAK16Lc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=o+g9+yC95JTDEETR7efNVrOLjuKLW3nYb192R3nKNX9ayhO5menQ94sgMBR5d5JPfvUZb+Rcdo8N5ULFQfQanNZ64KnFZkXLqvamLQ7JWWtzWZvO42f0JAEV9JKAOjUCEWzqjlEVPUWd9OirpxKFlpMWbxSjbsum1QBp9kKufto=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VM8swpYX; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BC84C4CEC7;
+	Thu, 24 Oct 2024 11:19:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729768784;
+	bh=R8H0oTrJhlxLauZX8Am2cYhcj+75a4gif8pXEAK16Lc=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=VM8swpYX6CpbBM+wKTB2ZxyzQKkiHc9ifZN2U0QzK+2MLHqun9l6x6+jzy4OGT6Ey
+	 ebDwPiunvpB5Nk7iLupeSXxDDupLXpGCQjXml8pF8poDobF2Z1HzhH0Av7hhaglUtN
+	 4V80dcSp9LMk6tSn4U5ww7ypNglUrrUBCYAFvFAQzaiI3DttQdjj9Jgju0dfBXTuHu
+	 KEvW1EjskymUnPuezPoIaFI5yrvE4rGEmncEYig2jHstz6mQEyoOolqZr5219YSkdv
+	 Fewd3eF8qTiI+h9Mi85CeP8AqOvR9lhF0fqPfEB5qtb5tc/+GhkejkqKpwWVvxfiwD
+	 PhhUegQv03euw==
+Date: Thu, 24 Oct 2024 12:19:39 +0100
+From: Mark Brown <broonie@kernel.org>
+To: Stefan Kerkmann <s.kerkmann@pengutronix.de>
+Cc: Linux regressions mailing list <regressions@lists.linux.dev>,
+	Dhruva Gole <d-gole@ti.com>, Yoshitaka Ikeda <ikeda@nskint.co.jp>,
+	linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
+	kernel-team@pengutronix.de
+Subject: Re: [REGRESSION] spi: cadence-quadspi: STIG mode results in timeouts
+ for Micron MT25QL01 flash
+Message-ID: <99fe47e0-c4bb-4a25-86e1-513d79835c8c@sirena.org.uk>
+References: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
+ <43b6b750-3f7d-437f-a62e-ab2dba06827a@leemhuis.info>
+ <1127989f-3175-49c0-9611-e30194b04018@sirena.org.uk>
+ <ed331ddc-9b61-459f-b7a9-90b7442d0166@pengutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="/jvHP5gYAIx+jHDm"
+Content-Disposition: inline
+In-Reply-To: <ed331ddc-9b61-459f-b7a9-90b7442d0166@pengutronix.de>
+X-Cookie: Real programs don't eat cache.
 
-Qianqiang Liu <qianqiang.liu@163.com> writes:
 
-> The buf->stop_te and buf->intr_te may be NULL, so we need to check
-> for NULL pointers before using them.
+--/jvHP5gYAIx+jHDm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-Iirc, this has come up before, because static analyzers get the idea
-that at that point ->stop_te and ->intr_te can be NULL, but in reality,
-they can't. When the buffer is created, stop_pos and intr_pos are set to
--1, which will always force ->stop_te and ->intr_te to be set the first
-time around.
+On Thu, Oct 24, 2024 at 09:12:11AM +0200, Stefan Kerkmann wrote:
+> On 22.10.24 18:39, Mark Brown wrote:
 
-So no, not a bug. It might deserve a comment explaining the above logic,
-so that more versions of this patch don't get generated from static
-analyzers' reports.
+> > Given the description of the original commit I'd expect so.  My guess
+> > would be that this is either tuning of the lengths involved or a quirk
+> > that's needed to disable STIG on some devices.
 
-Regards,
---
-Alex
+> Adding a quirk came to my mind as well. I unfortunately do not have a different
+> QSPI chip to test against to see if it is a specific combination of peripheral
+> and chip  or if using STIG is generally broken on the socfpga. With trying
+
+I guess if you do a very tightly defined quirk initially then it'll be
+fixed for the systems we definitely know have problems and we can always
+apply it to more systems later if we discover that it's a more
+widespread issue.
+
+> different lenghts do you refeer to `CQSPI_STIG_DATA_LEN_MAX`?
+
+Yes.
+
+--/jvHP5gYAIx+jHDm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcaLUsACgkQJNaLcl1U
+h9CQLgf8DbkA+dPq7vyyHJQLo7hFLdrPwOqvkVVkMtbuIMQH1j4WFCSy1/d+iYB5
+3wHXap+R8i2IY/bUicp8g9mp9Yve93Anq6FSahn7iidDA95PVhyioB18iKq5nWpW
+q6VRUh7CezQo3AeDimsv0H0ZVJcvGBgLW6ohoPf2+IRR4StnvU1IkgZYRcIvJu42
+mOFxbUK79+U6QSSwutGpKCSt/cqsui+bFOqDEagMGLWukuMQVVReWsUHJM7AmXQy
+3jBMPlzK1nPQSpGkBeDHufjX/+47YSogXdhIFrjYmSnWGpqplGrpJ60L6oyXnds+
+Ixqd3fZfSbVc3bswDM5TgsoQHVnZpg==
+=5ZRi
+-----END PGP SIGNATURE-----
+
+--/jvHP5gYAIx+jHDm--
 
