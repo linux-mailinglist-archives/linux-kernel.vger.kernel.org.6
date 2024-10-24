@@ -1,280 +1,160 @@
-Return-Path: <linux-kernel+bounces-379500-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379501-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8420D9ADF60
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:43:49 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id D22D19ADF63
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:44:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E2948B22916
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:43:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4FB041F2225A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:44:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D60731B0F05;
-	Thu, 24 Oct 2024 08:43:39 +0000 (UTC)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com [209.85.219.170])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CDC5D1B0F37;
+	Thu, 24 Oct 2024 08:43:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Qvorgh1P"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8733223CB;
-	Thu, 24 Oct 2024 08:43:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D246B1AC42B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:43:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759419; cv=none; b=AyEnYKxHQ991ijFw0HV41Fw4shZcaMt5Zj5DfRE5KLCgRA+YQn8jYl+eD96kLooe8BGSkrDBJ0SGCJ7ELv+tu/Sqo/aXKgFk/UK2gX3z7IYi+SvsPEu9/GjcmfsoqQfVj3OfSu4egX/bB2FNETEv6hM67CBKrFHrxVD8b/QEr3I=
+	t=1729759437; cv=none; b=JUkxuAS9JCMoYmos3SC+c1G91k7etC2HcIRZ4BYjN6eo/0BCTvCK+yfBN/0s0R8+pq23WfW5OydTJWLKifdRlptYM6QCfyYUZTqi8h3UaB5qqg88JRwQZNkVjKfwRPriP+aZ9m3QHb8yNHYksjGv+X01UmRCrspmSWowXct/3Js=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759419; c=relaxed/simple;
-	bh=jQ83AzUv/DC8tU0P+N4GjoXN80FxENOn+WqCZHMMxiI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=PvePStFpB7rgIPl5G8eKzwfNhiLX/3hAICbzzPPc2YIR6ovhy2g08H6DhooS7VkFlc8chdobsZwUDL4kpv00R5mZM3ggqAoMXJwLzejJgKr25B0x0TVNHuoeSBqy19LSzXoQ3zCZXLNoo0e1mNFCUTch9dc59WgzTHK70Z0IZhI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.219.170
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e28fd83b5bbso732867276.0;
-        Thu, 24 Oct 2024 01:43:36 -0700 (PDT)
+	s=arc-20240116; t=1729759437; c=relaxed/simple;
+	bh=UCi5ELepQZZwWFe9oCjZrBvOZ/qfebT40DeKQbBbNjs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FOWGPS4sXtaJ/xxfbw4lvMcU9RDiR9gBWp2H2fZqcNhSNgJmgvEMDTUI6ceroEYGeP6j3lh5E1lHp9+J4J06ur6QCPqfKXCVbr5SEb+xgy4dLgjOAf7pC8uS7+9cltpbTZBnYWS1yird+fEl7yhJ+Gdwn2RqwI380h4Txk5UOE4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Qvorgh1P; arc=none smtp.client-ip=170.10.133.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729759433;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=iR9AjakJn4hoJuTZIbyhybHiqFDkYJYpjuoN4hxDG2w=;
+	b=Qvorgh1Pq+uLYH7Aq/4BCgZCV2o+R7LppxPnn6Tek4Ko5TmWFhipVRmBPo4qYdSnjBdAXT
+	E9olfwFtKb4LsgnTBlOBEqFSpkmg6BZKqEPWzM/seou/pwzZ/ifGuLtHUGXybTNWflA0af
+	/04dPWZSmM9oimolyYlsKMBbtreV5O8=
+Received: from mail-vs1-f71.google.com (mail-vs1-f71.google.com
+ [209.85.217.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-264-whwmBOhyOwOBba6AKjDoBQ-1; Thu, 24 Oct 2024 04:43:51 -0400
+X-MC-Unique: whwmBOhyOwOBba6AKjDoBQ-1
+Received: by mail-vs1-f71.google.com with SMTP id ada2fe7eead31-4a4819de765so274888137.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:43:51 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729759414; x=1730364214;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=0EdHvJaPlIyM5TMupEvLhPEXXyn9Awd20txGlqEPek4=;
-        b=p4rYbYJ0HppQrdoy48eabnCxis+QUcFRlte7PYLUV9XVY9nODLtNEzgUYyhiThAp71
-         hWa9g3W7/AsLwrButUhDVQjHXIMOc57IA4/U9VuxefmFO6PWjGoFsmr3p4CYOqn9EFqG
-         AIFWI5ywMkPwhMLwQB6IVMPAZWmjpXfVQR1pc+K6d2l0srwYiLp/m0DEqob1o7Bn2CMf
-         YcBN417zFvhV/iTXzsRbslm2T7+jnkd1HQGOxQwZSYiIXcwvj60HCS5XPISvjx1ml159
-         MG7CRlgGWHDN9fSTY+q5kcTU50cSxRIGKL+mxW4AtTLxx5XKQWe8vnWc05CbWGjPMEkl
-         M+uQ==
-X-Forwarded-Encrypted: i=1; AJvYcCV8kUFaQ+eZClcbOdjRSnfWA6hi0KzHHSPiJvz+mCuqKH6DKjiqqAhO4MXKCFrzMuKqhTYvaUFTIT6uqLA=@vger.kernel.org, AJvYcCXpFmQwWhAZO0XkbH72iTgMEAKamqCthd4m8j96hkpzMLbmm5qZoNLPn+bjb1Wo6SLDyeoR/7MoDTLvc1zE9Ou8Qlk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyyBW6mFITu+U24dCC1HY4rWSB73tSmp8hpnKWVBbt9Y/l6BfOd
-	25mRoJanQQAlGq4k4Qh18FDF3taa5tWzpqEg8oM5BbSyILkKEk0lnjhmkHN4
-X-Google-Smtp-Source: AGHT+IHH44HVf6UumnATwUziyNnkrEDuGYM5rVTEwjkef/+ZrLRxhEOYgNuQO8l7ifjtPP56m+oQRw==
-X-Received: by 2002:a05:690c:e21:b0:6e2:a129:1623 with SMTP id 00721157ae682-6e7f0fc11dfmr58907447b3.38.1729759414131;
-        Thu, 24 Oct 2024 01:43:34 -0700 (PDT)
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com. [209.85.128.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ad18adsm18807107b3.67.2024.10.24.01.43.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 01:43:32 -0700 (PDT)
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e38fc62b9fso5970047b3.2;
-        Thu, 24 Oct 2024 01:43:32 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUgrSrWKpYLWEqA8W1ioal7NmYlDfMHiAZlU1a1/c5jmCpwEemcjlm+iDQsLE6upkl+P7S6PXISQ7181J0=@vger.kernel.org, AJvYcCXaZmw639uKFm8/AQPEKjxXvxZkOVivOD7CO4Vq/1d72l4YyQTcIQUzpHuZoUjW6BQ8Y1S4fwuxglBeicOneLW25Hg=@vger.kernel.org
-X-Received: by 2002:a05:690c:30e:b0:6c7:a120:e0ec with SMTP id
- 00721157ae682-6e7f0e445acmr58794887b3.22.1729759412579; Thu, 24 Oct 2024
- 01:43:32 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729759431; x=1730364231;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=iR9AjakJn4hoJuTZIbyhybHiqFDkYJYpjuoN4hxDG2w=;
+        b=S9BY24l1s+HrHs+dO69rSfvik1uxBQ0x9sAsoab1xSsAmFzlazfnSzuHzIf3t5rUl6
+         jBgtCadkggQR26UMp05PpCShgyCoOHHkSbR8LX3lElktBL1tvYx9JGTVdok5NPitKr7u
+         41Tw9dITRM0P4A/f7WAeFNZ7G9oqId+8SoQhEkktiRTEztLuz2/DSc8U0LWc4vWNRhy5
+         19HwndCQxtfRtaVkcWUzH1pDh/qE8iWGr+SVD8FNyCcZ10aBDd89bgOAUGmCOLFdaVWv
+         TGzfcc7gzgBWLfYUM5fFgUCx1YpcMm8khUKbg1Wi2IT8I257K8srgIJ5yn13NcCeyY2s
+         7y0g==
+X-Forwarded-Encrypted: i=1; AJvYcCUqrguiAsTERgLnIHzYc4GpY9HX67JN94q17neUTqalwOEe4kmVN8p+dxDOq2I/P7WetlOGKaIF24UZk7Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwE7preGdiE08AOaRhBaLIbEP+Ug+5578AQ5FJ+Jd1OkTWBnmP8
+	gtuh4gUOgm7kGzh6OX6VWKKL7pA9eP0MB/DYX8cL9YAab4d2pMz68vs1HS42fFuFcq3Vt/NKhVg
+	Xv0KoAspHNh2CC86dYd5q5w23R5+rYlDpgYwWnICYHfr1I2znbbpcyY5hRoaN+Q==
+X-Received: by 2002:a05:6102:3f4e:b0:4a5:ba70:1c6e with SMTP id ada2fe7eead31-4a751cf131amr7794002137.29.1729759431421;
+        Thu, 24 Oct 2024 01:43:51 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IGHiPWrknWvL/ANNpfbc0GJfbqV2BdD/Y2S5/yeKMxfEgmbao0nwYIWy04QhKvvoS4AizptAw==
+X-Received: by 2002:a05:6102:3f4e:b0:4a5:ba70:1c6e with SMTP id ada2fe7eead31-4a751cf131amr7793972137.29.1729759430966;
+        Thu, 24 Oct 2024 01:43:50 -0700 (PDT)
+Received: from sgarzare-redhat (host-79-46-200-231.retail.telecomitalia.it. [79.46.200.231])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3cbb043sm49052421cf.50.2024.10.24.01.43.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 01:43:50 -0700 (PDT)
+Date: Thu, 24 Oct 2024 10:43:45 +0200
+From: Stefano Garzarella <sgarzare@redhat.com>
+To: Konstantin Shkolnyy <kshk@linux.ibm.com>
+Cc: virtualization@lists.linux.dev, netdev@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, mjrosato@linux.ibm.com
+Subject: Re: [PATCH] vsock/test: fix failures due to wrong SO_RCVLOWAT
+ parameter
+Message-ID: <k5otzhemrqeau7iilr6j42ytasddatbx53godcm2fm6zckevti@nqnetgj6odmb>
+References: <20241023210031.274017-1-kshk@linux.ibm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241009230817.798582-1-fabrizio.castro.jz@renesas.com> <20241009230817.798582-3-fabrizio.castro.jz@renesas.com>
-In-Reply-To: <20241009230817.798582-3-fabrizio.castro.jz@renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 10:43:20 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXxJhQ2Ra+PiR-UUv1HhL69Zpva2b-N9KygSMKUApHdwQ@mail.gmail.com>
-Message-ID: <CAMuHMdXxJhQ2Ra+PiR-UUv1HhL69Zpva2b-N9KygSMKUApHdwQ@mail.gmail.com>
-Subject: Re: [PATCH v3 2/3] irqchip: Add RZ/V2H(P) Interrupt Control Unit
- (ICU) driver
-To: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Philipp Zabel <p.zabel@pengutronix.de>, 
-	Magnus Damm <magnus.damm@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-renesas-soc@vger.kernel.org, 
-	Chris Paterson <Chris.Paterson2@renesas.com>, Biju Das <biju.das.jz@bp.renesas.com>, 
-	Lad Prabhakar <prabhakar.mahadev-lad.rj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii; format=flowed
+Content-Disposition: inline
+In-Reply-To: <20241023210031.274017-1-kshk@linux.ibm.com>
 
-Hi Fabrizio,
-
-On Thu, Oct 10, 2024 at 1:08=E2=80=AFAM Fabrizio Castro
-<fabrizio.castro.jz@renesas.com> wrote:
-> Add driver for the Renesas RZ/V2H(P) Interrupt Control Unit (ICU).
+On Wed, Oct 23, 2024 at 04:00:31PM -0500, Konstantin Shkolnyy wrote:
+>This happens on 64-bit big-endian machines.
+>SO_RCVLOWAT requires an int parameter. However, instead of int, the test
+>uses unsigned long in one place and size_t in another. Both are 8 bytes
+>long on 64-bit machines. The kernel, having received the 8 bytes, doesn't
+>test for the exact size of the parameter, it only cares that it's >=
+>sizeof(int), and casts the 4 lower-addressed bytes to an int, which, on
+>a big-endian machine, contains 0. 0 doesn't trigger an error, SO_RCVLOWAT
+>returns with success and the socket stays with the default SO_RCVLOWAT = 1,
+>which results in test failures.
 >
-> This driver supports the external interrupts NMI, IRQn, and TINTn.
+>Signed-off-by: Konstantin Shkolnyy <kshk@linux.ibm.com>
+>---
 >
-> Signed-off-by: Fabrizio Castro <fabrizio.castro.jz@renesas.com>
-> ---
+>Notes:
+>    The problem was found on s390 (big endian), while x86-64 didn't show it. After this fix, all tests pass on s390.
+
+Thanks for the fix!
+
+Other setsockopt() in the tests where we use unsigned long are
+SO_VM_SOCKETS_* but they are expected to be unsigned, so we should be
+fine.
+
+Not for this patch, but do you think adding a getsockopt() for each
+setsockopt in the test to check that kind of issue can help?
+
+BTW, this patch LGTM:
+
+Reviewed-by: Stefano Garzarella <sgarzare@redhat.com>
+
+
+Not sure if we want this with net tree since are just tests,
+in that case I think you should add:
+
+Fixes: b1346338fbae ("vsock_test: POLLIN + SO_RCVLOWAT test")
+Fixes: 542e893fbadc ("vsock/test: two tests to check credit update logic")
+
 >
-> v2->v3:
-> * Reworked line breaks
-> * Improved performance of rzv2h_icu_eoi
-> * Replaced raw_spin_lock with guards
-> * Improved the style of rzv2h_icu_domain_ops
-> * Removed put_device from the successful path of rzv2h_icu_init
+> tools/testing/vsock/vsock_test.c | 4 ++--
+> 1 file changed, 2 insertions(+), 2 deletions(-)
+>
+>diff --git a/tools/testing/vsock/vsock_test.c b/tools/testing/vsock/vsock_test.c
+>index 8d38dbf8f41f..7fd25b814b4b 100644
+>--- a/tools/testing/vsock/vsock_test.c
+>+++ b/tools/testing/vsock/vsock_test.c
+>@@ -835,7 +835,7 @@ static void test_stream_poll_rcvlowat_server(const struct test_opts *opts)
+>
+> static void test_stream_poll_rcvlowat_client(const struct test_opts *opts)
+> {
+>-	unsigned long lowat_val = RCVLOWAT_BUF_SIZE;
+>+	int lowat_val = RCVLOWAT_BUF_SIZE;
+> 	char buf[RCVLOWAT_BUF_SIZE];
+> 	struct pollfd fds;
+> 	short poll_flags;
+>@@ -1357,7 +1357,7 @@ static void test_stream_rcvlowat_def_cred_upd_client(const struct test_opts *opt
+> static void test_stream_credit_update_test(const struct test_opts *opts,
+> 					   bool low_rx_bytes_test)
+> {
+>-	size_t recv_buf_size;
+>+	int recv_buf_size;
+> 	struct pollfd fds;
+> 	size_t buf_size;
+> 	void *buf;
+>-- 
+>2.34.1
+>
 
-Thanks for the update!
-
-> --- /dev/null
-> +++ b/drivers/irqchip/irq-renesas-rzv2h.c
-
-> +static void rzv2h_clear_irq_int(struct rzv2h_icu_priv *priv, unsigned in=
-t hwirq)
-> +{
-> +       unsigned int irq_nr =3D hwirq - ICU_IRQ_START;
-> +       u32 isctr, iitsr, iitsel;
-> +       u32 bit =3D BIT(irq_nr);
-> +
-> +       isctr =3D readl_relaxed(priv->base + ICU_ISCTR);
-> +       iitsr =3D readl_relaxed(priv->base + ICU_IITSR);
-> +       iitsel =3D ICU_IITSR_IITSEL_GET(iitsr, irq_nr);
-> +
-> +       /*
-> +        * When level sensing is used, the interrupt flag gets automatica=
-lly cleared when the
-> +        * interrupt signal is de-asserted by the source of the interrupt=
- request, therefore clear
-> +        * the interrupt only for edge triggered interrupts.
-> +        */
-> +       if ((isctr & bit) && (iitsel !=3D ICU_IRQ_LEVEL_LOW))
-> +               writel_relaxed(bit, priv->base + ICU_ISCLR);
-> +}
-
-Given you already manually inlined one call of this function in this v2,
-I am not sure it's worthwhile to keep this helper.  Manually inlining the
-single remaining call would drop some boilerplate.
-
-> +
-> +static int rzv2h_irq_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +       struct rzv2h_icu_priv *priv =3D irq_data_to_priv(d);
-> +       unsigned int hwirq =3D irqd_to_hwirq(d);
-> +       u32 irq_nr =3D hwirq - ICU_IRQ_START;
-> +       u32 iitsr, sense;
-> +
-> +       switch (type & IRQ_TYPE_SENSE_MASK) {
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               sense =3D ICU_IRQ_LEVEL_LOW;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               sense =3D ICU_IRQ_EDGE_FALLING;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               sense =3D ICU_IRQ_EDGE_RISING;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_BOTH:
-> +               sense =3D ICU_IRQ_EDGE_BOTH;
-> +               break;
-> +
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +
-> +       guard(raw_spinlock)(&priv->lock);
-> +       iitsr =3D readl_relaxed(priv->base + ICU_IITSR);
-> +       iitsr &=3D ~ICU_IITSR_IITSEL_MASK(irq_nr);
-> +       iitsr |=3D ICU_IITSR_IITSEL_PREP(sense, irq_nr);
-> +       rzv2h_clear_irq_int(priv, hwirq);
-> +       writel_relaxed(iitsr, priv->base + ICU_IITSR);
-> +
-> +       return 0;
-> +}
-> +
-> +static void rzv2h_clear_tint_int(struct rzv2h_icu_priv *priv, unsigned i=
-nt hwirq)
-> +{
-> +       unsigned int tint_nr =3D hwirq - ICU_TINT_START;
-> +       int titsel_n =3D ICU_TITSR_TITSEL_N(tint_nr);
-> +       u32 tsctr, titsr, titsel;
-> +       u32 bit =3D BIT(tint_nr);
-> +       int k =3D tint_nr / 16;
-> +
-> +       tsctr =3D readl_relaxed(priv->base + ICU_TSCTR);
-> +       titsr =3D readl_relaxed(priv->base + ICU_TITSR(k));
-> +       titsel =3D ICU_TITSR_TITSEL_GET(titsr, titsel_n);
-> +
-> +       /*
-> +        * Writing 1 to the corresponding flag from register ICU_TSCTR on=
-ly has effect if
-> +        * TSTATn =3D 1b and if it's a rising edge or a falling edge inte=
-rrupt.
-> +        */
-> +       if ((tsctr & bit) && ((titsel =3D=3D ICU_TINT_EDGE_RISING) ||
-> +                             (titsel =3D=3D ICU_TINT_EDGE_FALLING)))
-> +               writel_relaxed(bit, priv->base + ICU_TSCLR);
-> +}
-
-Likewise.
-
-> +
-> +static int rzv2h_tint_set_type(struct irq_data *d, unsigned int type)
-> +{
-> +       u32 titsr, titsr_k, titsel_n, tien;
-> +       struct rzv2h_icu_priv *priv;
-> +       u32 tssr, tssr_k, tssel_n;
-> +       unsigned int hwirq;
-> +       u32 tint, sense;
-> +       int tint_nr;
-> +
-> +       switch (type & IRQ_TYPE_SENSE_MASK) {
-> +       case IRQ_TYPE_LEVEL_LOW:
-> +               sense =3D ICU_TINT_LEVEL_LOW;
-> +               break;
-> +
-> +       case IRQ_TYPE_LEVEL_HIGH:
-> +               sense =3D ICU_TINT_LEVEL_HIGH;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_RISING:
-> +               sense =3D ICU_TINT_EDGE_RISING;
-> +               break;
-> +
-> +       case IRQ_TYPE_EDGE_FALLING:
-> +               sense =3D ICU_TINT_EDGE_FALLING;
-> +               break;
-> +
-> +       default:
-> +               return -EINVAL;
-> +       }
-> +
-> +       tint =3D (u32)(uintptr_t)irq_data_get_irq_chip_data(d);
-> +       if (tint > ICU_PB5_TINT)
-> +               return -EINVAL;
-> +
-> +       priv =3D irq_data_to_priv(d);
-> +       hwirq =3D irqd_to_hwirq(d);
-> +
-> +       tint_nr =3D hwirq - ICU_TINT_START;
-> +
-> +       tssr_k =3D ICU_TSSR_K(tint_nr);
-> +       tssel_n =3D ICU_TSSR_TSSEL_N(tint_nr);
-> +
-> +       titsr_k =3D ICU_TITSR_K(tint_nr);
-> +       titsel_n =3D ICU_TITSR_TITSEL_N(tint_nr);
-> +       tien =3D ICU_TSSR_TIEN(titsel_n);
-> +
-> +       guard(raw_spinlock)(&priv->lock);
-> +
-> +       tssr =3D readl_relaxed(priv->base + ICU_TSSR(tssr_k));
-> +       tssr &=3D ~(ICU_TSSR_TSSEL_MASK(tssel_n) | tien);
-> +       tssr |=3D ICU_TSSR_TSSEL_PREP(tint, tssel_n);
-> +
-> +       writel_relaxed(tssr, priv->base + ICU_TSSR(tssr_k));
-> +
-> +       titsr =3D readl_relaxed(priv->base + ICU_TITSR(titsr_k));
-> +       titsr &=3D ~ICU_TITSR_TITSEL_MASK(titsel_n);
-> +       titsr |=3D ICU_TITSR_TITSEL_PREP(sense, titsel_n);
-> +
-> +       writel_relaxed(titsr, priv->base + ICU_TITSR(titsr_k));
-> +
-> +       rzv2h_clear_tint_int(priv, hwirq);
-> +
-> +       writel_relaxed(tssr | tien, priv->base + ICU_TSSR(tssr_k));
-> +
-> +       return 0;
-> +}
-
-
-Gr{oetje,eeting}s,
-
-                        Geert
-
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
-
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
 
