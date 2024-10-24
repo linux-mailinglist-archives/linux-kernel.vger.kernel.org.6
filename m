@@ -1,227 +1,160 @@
-Return-Path: <linux-kernel+bounces-379812-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379813-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F7F99AE418
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id E21039AE41B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:46:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9767C1F2474B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:45:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2483E1C22640
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:46:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EA9D1D31AF;
-	Thu, 24 Oct 2024 11:45:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AFD91D1745;
+	Thu, 24 Oct 2024 11:46:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="HnS2WQG8"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UzBf+GM1"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 218051D0171
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:45:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9539B1D041D;
+	Thu, 24 Oct 2024 11:46:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729770326; cv=none; b=VxpQNqfUzHg7tByHQSCnT/8rQ9lIWkmjzZwhUigTzGvwSsec0AYgUHAQFhlj8KBqs99+G9wjU6h3KQWmkb2zE1lgLT23xPZ2MBph082gPJ8K9HsG5N1M7u94B43x2fQw6biRe34kHW9siDxXgtA12gYNHA9KN2OGkiaC69ZB3YM=
+	t=1729770390; cv=none; b=OIF9gpwF3EwWfDl3lyqfx1ajqFde9K4YbQom9KjjbaYV3UjSJpkm6KstrGBU9VxDfJqK867gNeDWlUPP4m0pQ7hCV9liTSN6cxjANcKmnTgyjlpy4HRYDqFeH0Fzz27iWVNo02fF1wVoiWQQMa8er7leXDVptDuP2k9a0ZBFO0U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729770326; c=relaxed/simple;
-	bh=YV4I2QVaqnBO2IW3pvFq8nhSSCGuatOd5xz1HRAVSjg=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=BN6FqOU4suBb6p5hx2qFPI2zuAbhFEeBbawftDF9Cs0BUVG7oKOIcm6q4EsKb7pFCSSoTe8hg5BQxozFWXsmMewZTx0eydW7YEYoH5WUDfooq+G0/vqEXF4dGeJ91brKkip1EFnVF2a8YaeDJiULs4c2ZEbTIjlZhziSt0URC1s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=HnS2WQG8; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43152fa76aaso901195e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:45:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729770322; x=1730375122; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=2CL2wCU2HH+fd4vHOU7eIexO99AmYoDs4dDo7720ek4=;
-        b=HnS2WQG812yBB2XGmiTi+3NsW+KjsUCC7uZ/HzgntN2w4kT29Dxd9B9RyJcjNXFVf4
-         sVE53drdgyHSCrli0DC1PkBX/hypn8ARmrmfaCml9eZTkdJIp76rHG4XipDSS5NUJknd
-         Fvd+LdYDG65Enm1YibQh07KhQINOx9MrSeC83C9Rk52W/VH9FPXvMhpXiE5CTzaymaE4
-         vQkp366b3C6snoIFRTNaJYfvvnMDhnOJ1PGkJ9Y8lTCZ1TqccATfcxSkosvACNXHfPl/
-         29A4Y3aVqyNQrgRpADrRZsxj7sc9WY7ITxG/PVMvIe8a8K92niy0MK1qHkLAm0LnpaGL
-         zxWA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729770322; x=1730375122;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=2CL2wCU2HH+fd4vHOU7eIexO99AmYoDs4dDo7720ek4=;
-        b=ZJgvOIOyjpLz7d5rMTdqwL6n/kOhMgRRC/ceJRGuiZtF0r3sriceaIn40+mwzfkXCx
-         IkmOS8/Y6AB3xgGHhDQh8uRIHx+M0VgEhslGxs2NDG2A9F4fA69lAnI9niNX4sc1HVrp
-         ZMQQ6wh4s0B5aswwNAaYEXRS1GnDyHHT33BjyfD5gZyATKkHjI1vLR4adP2eqzZLziRX
-         jz/hAhyDygGgRtWgbn36KLpQHfeWglgLUyPL/fsOkdhWUp+0u8PwvMNdEOk8WPa/rqJR
-         kAMcOWC7TME1f2WZH+R6adxVd7hXUNJSx7hijRvPGMFgDhNEzisl7yHohM7GCNknWaSx
-         ou3g==
-X-Forwarded-Encrypted: i=1; AJvYcCVrpye9LvrMWpy7ezoSsWF8ZkKmKVdmoFjZNctWFiZY0V/2lTqaSxLey9ee6jtbaVqURCJZPjq9cRsRbBo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yylpwfocr5cRPOVPCg5ksdX6/JXeqULzC0LThOdcw4Pm5C7fg4/
-	FYyeDx+BUj9Qs+gRxIFuV5W9y7LMOMKcWrDah+FVI19zBuBRr4MTEc6nG1jU5j4=
-X-Google-Smtp-Source: AGHT+IFA4GABsskGJAvhBVgwpM0Becu10rrF1/mPcNcESTyA5925ZJdl1RcPGWOTLM6OI2YjfLoBKg==
-X-Received: by 2002:a05:600c:4f91:b0:42c:c0d8:bf49 with SMTP id 5b1f17b1804b1-4318408b98bmr20665275e9.0.1729770322153;
-        Thu, 24 Oct 2024 04:45:22 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186be531esm42591215e9.18.2024.10.24.04.45.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 04:45:21 -0700 (PDT)
-Date: Thu, 24 Oct 2024 13:45:19 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Ryan Roberts <ryan.roberts@arm.com>
-Cc: Thomas Tai <thomas.tai@oracle.com>, Andrew Morton
- <akpm@linux-foundation.org>, Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas
- <catalin.marinas@arm.com>, David Hildenbrand <david@redhat.com>, Greg
- Marsden <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>, Mark
- Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Message-ID: <20241024134519.18ed4657@mordecai.tesarici.cz>
-In-Reply-To: <df753b4a-0cf1-4544-b073-0ebf2bb71ef2@arm.com>
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
-	<20241017142752.17f2c816@mordecai.tesarici.cz>
-	<aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
-	<fed3b427-a600-4ce5-afef-4ccbfff64931@oracle.com>
-	<df753b4a-0cf1-4544-b073-0ebf2bb71ef2@arm.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1729770390; c=relaxed/simple;
+	bh=rR8OViBzcMSTBynf6dkGB9uTCV4/IpUGVpmpDDEIQOU=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=HPYVuUge0vkpx5fbCozqq9JK6oXmcpJXCJ0R2vEmadOTHcpY1Wt1aKTXrxoXQ/CmDLWqsf1YZbxAPZIPHUv9GDJEpBv7ubPc2ksvsqyYybTtwOy88N5YsxL8LsbJ3GKJxd3PhX9W8QVVwAuwsUOKPgF+5rIhHyy9EcEFJcT/1q4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UzBf+GM1; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1C6F4C4CEC7;
+	Thu, 24 Oct 2024 11:46:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729770390;
+	bh=rR8OViBzcMSTBynf6dkGB9uTCV4/IpUGVpmpDDEIQOU=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=UzBf+GM16VUYQ8JK3v6lMqMBikV1DCIS06piSdRWDctK/ICNtdlwmQ44EwdkkruyC
+	 flze11PEEo8MYr0KN+7VJ54GQ/R9VcrnvQGjL3Tu7Cm7lC8vijdY6n8EjKlSzuQbQd
+	 4l3Ir3NtWj4j0wrsKNkd+qINle3AiddDAiV7SpBPf+nhCczAaswSk80WJFOpFp9TjJ
+	 q8M6N45fHp/7q6hc1GTIhnzPLLJ6DCKzkHlRmu+pj0mqXE9F7lt/xOTqayeAGRPzcY
+	 9S4XR3TUSn3sLNlmUktVLG0yNfYwR5Hrp5nRN+HWE4ApI9fTxzyKV61F9/JAUx1fz5
+	 FPDe6azWp9IZw==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t3wIO-006Qps-77;
+	Thu, 24 Oct 2024 12:46:28 +0100
+Date: Thu, 24 Oct 2024 12:46:27 +0100
+Message-ID: <86ttd13er0.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Mostafa Saleh <smostafa@google.com>
+Cc: linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	corbet@lwn.net,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH] Documentation: Update the behaviour of "kvm-arm.mode"
+In-Reply-To: <ZxowSYHQeOq7W_JT@google.com>
+References: <20241023171244.4031151-1-smostafa@google.com>
+	<86v7xh3km6.wl-maz@kernel.org>
+	<ZxowSYHQeOq7W_JT@google.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: smostafa@google.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, corbet@lwn.net, will@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Thu, 24 Oct 2024 11:48:55 +0100
-Ryan Roberts <ryan.roberts@arm.com> wrote:
+On Thu, 24 Oct 2024 12:32:25 +0100,
+Mostafa Saleh <smostafa@google.com> wrote:
+> 
+> Hi Marc,
+> 
+> On Thu, Oct 24, 2024 at 10:39:45AM +0100, Marc Zyngier wrote:
+> > Hi Mostafa,
+> > 
+> > On Wed, 23 Oct 2024 18:12:43 +0100,
+> > Mostafa Saleh <smostafa@google.com> wrote:
+> > > 
+> > > Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
+> > > VHE support") modified the behaviour of "kvm-arm.mode=protected" without
+> > > the updating the kernel parameters doc.
+> > > 
+> > > Update it to match the current implementation.
+> > > 
+> > > Cc: Will Deacon <will@kernel.org>
+> > > Cc: Marc Zyngier <maz@kernel.org>
+> > > 
+> > > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > > ---
+> > >  Documentation/admin-guide/kernel-parameters.txt | 6 +++++-
+> > >  1 file changed, 5 insertions(+), 1 deletion(-)
+> > > 
+> > > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > > index bb48ae24ae69..59a0dd7e2de6 100644
+> > > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > > @@ -2723,8 +2723,12 @@
+> > >  			nvhe: Standard nVHE-based mode, without support for
+> > >  			      protected guests.
+> > >  
+> > > -			protected: nVHE-based mode with support for guests whose
+> > > +			protected: hVHE-based mode with support for guests whose
+> > >  				   state is kept private from the host.
+> > > +				   In case hVHE is not supported in hardware, it will
+> > 
+> > nit: it is VHE that is supported or not, hVHE is only a SW concept.
+> > 
+> > > +				   boot with protected nVHE.
+> > > +				   nVHE protected mode can still be forced on VHE systems
+> > > +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
+> > 
+> > This opens another question: none of the arm_sw.*, nor any of the
+> > id_aa64* parameters are described (basically, anything that's in
+> > arch/arm64/kernel/pi/id_override.c). What should we do about these?
+> 
+> Yes, I mainly added this, to make it easier if someone wants to boot to
+> protected nVHE so they don't have to go through the code, but I can
+> remove it if it's confusing.
 
-> On 23/10/2024 22:00, Thomas Tai wrote:
-> >=20
-> > On 10/17/2024 8:32 AM, Ryan Roberts wrote: =20
-> >> On 17/10/2024 13:27, Petr Tesarik wrote: =20
-> >>> On Mon, 14 Oct 2024 11:55:11 +0100
-> >>> Ryan Roberts <ryan.roberts@arm.com> wrote:
-> >>> =20
-> >>>> [...]
-> >>>> The series is arranged as follows:
-> >>>>
-> >>>> =C2=A0=C2=A0 - patch 1:=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 Add macr=
-os required for converting non-arch code to support
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 boot-time page size selection
-> >>>> =C2=A0=C2=A0 - patches 2-36:=C2=A0 Remove PAGE_SIZE compile-time con=
-stant assumption from all
-> >>>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0 non-arch code =20
-> >>> I have just tried to recompile the openSUSE kernel with these patches
-> >>> applied, and I'm running into this:
-> >>>
-> >>> =C2=A0=C2=A0 CC=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 arch/arm64/hyperv/hv_co=
-re.o
-> >>> In file included from ../arch/arm64/hyperv/hv_core.c:14:0:
-> >>> ../include/linux/hyperv.h:158:5: error: variably modified =E2=80=98re=
-served2=E2=80=99 at file
-> >>> scope
-> >>> =C2=A0=C2=A0 u8 reserved2[PAGE_SIZE - 68];
-> >>> =C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 ^~~~~~~~~
-> >>>
-> >>> It looks like one more place which needs a patch, right? =20
-> >> As mentioned in the cover letter, so far I've only converted enough to=
- get the
-> >> defconfig *image* building (i.e. no modules). If you are compiling a d=
-ifferent
-> >> config or compiling the modules for defconfig, you will likely run int=
-o these
-> >> types of issues. =20
-> >=20
-> > It would be nice if you could provide the defconfig you are using; I al=
-so ran
-> > into build issues when using the arch/arm64/configs/defconfig. =20
->=20
-> git clean -xdfq
-> make defconfig
->=20
-> # Set CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-> ./scripts/config --disable CONFIG_ARM64_4K_PAGES
-> ./scripts/config --disable CONFIG_ARM64_16K_PAGES
-> ./scripts/config --disable CONFIG_ARM64_64K_PAGES
-> ./scripts/config --disable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-> ./scripts/config --enable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
->=20
-> # Set ARM64_VA_BITS_48
-> ./scripts/config --disable ARM64_VA_BITS_36
-> ./scripts/config --disable ARM64_VA_BITS_39
-> ./scripts/config --disable ARM64_VA_BITS_42
-> ./scripts/config --disable ARM64_VA_BITS_47
-> ./scripts/config --disable ARM64_VA_BITS_48
-> ./scripts/config --disable ARM64_VA_BITS_52
-> ./scripts/config --enable ARM64_VA_BITS_48
->=20
-> # Optional: filesystems known to compile with boot-time page size
-> ./scripts/config --enable CONFIG_SQUASHFS_LZ4
-> ./scripts/config --enable CONFIG_SQUASHFS_LZO
-> ./scripts/config --enable CONFIG_SQUASHFS_XZ
-> ./scripts/config --enable CONFIG_SQUASHFS_ZSTD
-> ./scripts/config --enable CONFIG_XFS_FS
->=20
-> # Optional: trace stuff known to compile with boot-time page size
-> ./scripts/config --enable CONFIG_FTRACE
-> ./scripts/config --enable CONFIG_FUNCTION_TRACER
-> ./scripts/config --enable CONFIG_KPROBES
-> ./scripts/config --enable CONFIG_HIST_TRIGGERS
-> ./scripts/config --enable CONFIG_FTRACE_SYSCALLS
->=20
-> # Optional: misc mm stuff known to compile with boot-time page size
-> ./scripts/config --enable CONFIG_PTDUMP_DEBUGFS
-> ./scripts/config --enable CONFIG_READ_ONLY_THP_FOR_FS
-> ./scripts/config --enable CONFIG_USERFAULTFD
->=20
-> # Optional: mm debug stuff known compile with boot-time page size
-> ./scripts/config --enable CONFIG_DEBUG_VM
-> ./scripts/config --enable CONFIG_DEBUG_VM_MAPLE_TREE
-> ./scripts/config --enable CONFIG_DEBUG_VM_RB
-> ./scripts/config --enable CONFIG_DEBUG_VM_PGFLAGS
-> ./scripts/config --enable CONFIG_DEBUG_VM_PGTABLE
-> ./scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-> ./scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
->=20
-> make olddefconfig
-> make -s -j`nproc` Image
->=20
-> So I'm explicitly only building and booting the kernel image, not the mod=
-ules.
-> The kernel image contains all the drivers needed to get a VM up and runni=
-ng
-> under QEMU/KVM.
+No, I think it is good to capture that sort of information somewhere,
+specially given that it is non-trivial to convince the kernel to do
+what you want.
 
-FWIW with the attached patch I was also able to boot the kernel on
-Ampere Altra bare metal and using modules.
+But maybe at some point we should document the rest of the options, as
+they keep growing, and people are starting to rely on them for one
+thing or the other. Not now though.
 
-Petr T
+> 
+> > 
+> > 
+> > 
+> > >
+> > >  			nested: VHE-based mode with support for nested
+> > >  				virtualization. Requires at least ARMv8.3
+> > 
+> > Huh, another nit to fix. We only support nested with ARMv8.4 (with
+> > FEAT_NV2), as the ARMv8.3 version (the original FEAT_NV) is too ugly
+> > for words.
+> > 
+> > Mind addressing this?
+> 
+> Sure, I will update it in v2.
 
-diff --git a/arch/arm64/mm/pgtable-geometry.c b/arch/arm64/mm/pgtable-geome=
-try.c
-index ba50637f1e9d..4eb074b99654 100644
---- a/arch/arm64/mm/pgtable-geometry.c
-+++ b/arch/arm64/mm/pgtable-geometry.c
-@@ -15,8 +15,14 @@
-  */
-=20
- int ptg_page_shift __read_mostly;
-+EXPORT_SYMBOL_GPL(ptg_page_shift);
-+
- int ptg_pmd_shift __read_mostly;
-+EXPORT_SYMBOL_GPL(ptg_pmd_shift);
-+
- int ptg_pud_shift __read_mostly;
-+EXPORT_SYMBOL_GPL(ptg_pud_shift);
-+
- int ptg_p4d_shift __read_mostly;
- int ptg_pgdir_shift __read_mostly;
- int ptg_cont_pte_shift __read_mostly;
+Thank you!
+
+	M.
+
+-- 
+Without deviation from the norm, progress is not possible.
 
