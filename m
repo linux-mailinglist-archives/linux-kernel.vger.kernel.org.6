@@ -1,246 +1,131 @@
-Return-Path: <linux-kernel+bounces-379508-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379509-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 30F079ADF7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:52:12 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 398979ADF81
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:52:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA3F281F8B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:52:10 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68BEA1C2175A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:52:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5171B0F2F;
-	Thu, 24 Oct 2024 08:52:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4DFCB1B0F10;
+	Thu, 24 Oct 2024 08:52:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g9gjzmve"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="EYDXUAZp";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vbw4Y72h"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0E31A76AC;
-	Thu, 24 Oct 2024 08:52:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D561716133C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:52:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759924; cv=none; b=nBSQli6TbHJzut4Waw+wT6w5inlNB/OMSZWQ5y1TZj2GcE8XM06HtMngCFQ22rDrWliVy5vjv52TTsJrfrJGKazWYBoKM3P2ylIomKdVDWo5ZNueJ0KSEHVTdJOP7/1krtxPKLB/wGcnDHsPs7e2CQkB4fBS+S1Zj1MKPRVzbuU=
+	t=1729759961; cv=none; b=nzuhaJhB4KfVtJwdNlZmfLJc7KpZBIRCplQOPP3YKoDR+1tEjmBSpBgVAxuVBxrfYQZZWTuEbN92AX9Vsr2Re4icuxw6P3AtjZSIh4s7yCzy3BInmny7uxNAdwmlcgexSnvwf2GWgaSQXDrrNSZp+3a9dqVes4I2Z3XSZlbIWyQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759924; c=relaxed/simple;
-	bh=hSB7ki9TCv25gEGRioPxfqiFePl7Oi/9o5aj1Euzkrs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kDcD/PDu1Ch8mtB0GBrGy65fXEuEH3nHfcPUHSRjnhINejfP5PTkckLgQVp14LZElTrjcJ9TFUfkI7DMIRXJsj+C8/1FAD+sdBRaoBZMxZu/VOessx3SPrd2vXy7kgOFySdsAi3Q/tUixgNeYGLU2hUEEQDO4DGjurjhyaJrwys=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g9gjzmve; arc=none smtp.client-ip=198.175.65.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729759922; x=1761295922;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=hSB7ki9TCv25gEGRioPxfqiFePl7Oi/9o5aj1Euzkrs=;
-  b=g9gjzmve/+OszGrozU4dxWcm6XuQl9HiW7REmQuus0AHf39DKmawao9C
-   kXEzVx5495ZFfSs4Qo0dayeXJtd1VUqmcCa/qeGIsZY7RleeHK0AOA5ot
-   r1EcC7IOgEebthng+bFNYYIe7ZM7aQrElokaNGffSBnrJRT6Gh5x/QS/k
-   sjcNPHlGG2Bx7VV8oZWL36REA+3E0iU6ZmoF8vPhW50kWWyNfgPjK+taJ
-   gynAiAkDY4LcYeKAH/RSGQ+mM56aJrCEyOs3+nWfRYo9yfkED7aC+FyaW
-   ClgMBEsEcgA3ugQ16ikQkhaclqxX2lIzPmN/15RkJLQ8BVava09nrRvZi
-   Q==;
-X-CSE-ConnectionGUID: xtjVZoSNSRimd/qiz6ZoyA==
-X-CSE-MsgGUID: UCoe1PHDShGEDMPX60DKDA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29244044"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29244044"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:52:01 -0700
-X-CSE-ConnectionGUID: ZAiubq5eRbeJn35ZDyTAxg==
-X-CSE-MsgGUID: lskRkljnSluJE2b6bfaR7A==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="80950434"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:51:57 -0700
-Message-ID: <80c10cb0-20d8-4b36-93ec-1b2e4bd660ff@intel.com>
-Date: Thu, 24 Oct 2024 11:51:53 +0300
+	s=arc-20240116; t=1729759961; c=relaxed/simple;
+	bh=z0wdPe+PdQsB6H/hIv+XNRSHZha6CBKBef8/H137lJI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=HqVxc8nqkBzap1Rse0hlfLpl0I7DSAjoHPtaQ6CXh1g77Q7806vIMIjcMtPItp/bHqaq+yxBGumdlL36n/+fJUpjRmr5MYOXH0Hgn/Z2R75DblcPaH+xg4weP2o/dUhvCuf3v7tBdel5Ncu6dcYUj3rpSMjBw+pYSwHXp3x+UNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=EYDXUAZp; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vbw4Y72h; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729759958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vO1x52qiJPMmVXO9d4njem3wDaP4CO3DkA/dPoclxh8=;
+	b=EYDXUAZpAaN0vX+MetHClN+eR7nfwGrqUsT98cnERO3Nvlhp9hYNqyyzrJzmP//voKIMe4
+	hErWmLI4h4csXeYHgO+iHND7ulcagLMt5hFIXgXFfyXyWl8HPzfciVi32rsdDM6e1j7LSk
+	WqKqauaCwN5loNO0tNisgn59gU32WdFGLvcYCrFGiPlLO7iEkroor2+5eqfXEY8dQ1XWJM
+	SHiF4vZQR5djLgEC0pVlIRvF4wLhRZa09Y1NqrL4Hrsl/4GUSqZqdYUcGUdcvLNqTQlev0
+	5dwZFJW8w4tDvzmBO/mXiKGspuovle80hMQt5fmw4jymZdtIbMsDC8D7sQN0dA==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729759958;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=vO1x52qiJPMmVXO9d4njem3wDaP4CO3DkA/dPoclxh8=;
+	b=vbw4Y72hj5752xZlNUFw8p1pG3X31m6n5NDDk+oMXxNIWeF8Vd3gkF0uGFkT9LRp9UokhB
+	F7kChl5WboapqCCA==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
+ Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
+ Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 08/26] posix-timers: Make signal delivery consistent
+In-Reply-To: <ZxZn9gwnk4Vr5L6k@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083835.730528613@linutronix.de>
+ <ZxZn9gwnk4Vr5L6k@localhost.localdomain>
+Date: Thu, 24 Oct 2024 10:52:38 +0200
+Message-ID: <87o7396fxl.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V23 00/16] Add support UHS-II for GL9755 and GL9767
-To: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org
-Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
- benchuanggli@gmail.com, Lucas.Lai@genesyslogic.com.tw,
- HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
- dlunev@chromium.org, Victor Shih <victor.shih@genesyslogic.com.tw>
-References: <20241018105333.4569-1-victorshihgli@gmail.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241018105333.4569-1-victorshihgli@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 18/10/24 13:53, Victor Shih wrote:
-> From: Victor Shih <victor.shih@genesyslogic.com.tw>
-> 
-> Summary
-> =======
-> These patches[1] support UHS-II and fix GL9755 and GL9767
-> UHS-II compatibility.
-> 
-> About UHS-II, roughly deal with the following three parts:
-> 1) A UHS-II detection and initialization:
-> - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
->   Sequence[2]).
-> - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
->   [2]).
-> - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
->   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
->   Setting Register Setup Sequence.
-> 
-> 2) Send Legacy SD command through SD-TRAN
-> - Encapsulated SD packets are defined in SD-TRAN in order to ensure Legacy
->   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.1
->   Packet Types and Format Overview[3]).
-> - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-II
->   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2]).
-> 
-> 3) UHS-II Interrupt
-> - Except for UHS-II error interrupts, most interrupts share the original
->   interrupt registers.
-> 
-> Patch structure
-> ===============
-> patch#1:     for core
-> patch#2-#14: for sdhci
-> patch#15:    for GL9755
-> patch#16:    for GL9767
-> 
-> Tests
-> =====
-> Ran 'dd' command to evaluate the performance 3 times:
-> (SanDisk UHS-II card on GL9755 controller)
->                              Read    Write
-> UHS-II disabled (UHS-I): 81.9MB/s 51.4MB/s
-> UHS-II enabled         :  206MB/s 80.5MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 82.3MB/s 49.7MB/s
-> UHS-II enabled         :  208MB/s 80.8MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 82.9MB/s 50.8MB/s
-> UHS-II enabled         :  205MB/s 90.0MB/s
-> (SanDisk UHS-II card on GL9767 controller)
->                              Read    Write
-> UHS-II disabled (UHS-I): 83.5MB/s 50.5MB/s
-> UHS-II enabled         :  200MB/s 75.3MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 85.2MB/s 56.3MB/s
-> UHS-II enabled         :  203MB/s 75.8MB/s
->                              Read    Write
-> UHS-II disabled (UHS-I): 82.9MB/s 51.1MB/s
-> UHS-II enabled         :  196MB/s 77.8MB/s
-> 
-> Test command
-> =====
-> Read: dd if=/dev/mmcxxx of=/dev/null bs=4096k count=2000 iflag=direct
-> Write:dd if=/dev/zero of=/dev/mmcxxx bs=4096k count=2000 oflag=direct
-> 
-> Changes in v23 (October. 18, 2024)
-> * Rebase on latest mmc/next.
-> * Version 22 patch#1-patch#6 have already been applied to the mmc/next
->   branch, so the patch order for version 23 has been shifted forward.
-> * Patch#1: Remove mmc_uhs2_card_prepare_cmd() function.
->            Remove mmc_sd_can_poweroff_notify() function.
->            Modify ios.timing setting in the sd_uhs2_power_off() function.
->            Restore the position of assign the host->card to original
->            position in the sd_uhs2_init_card() function.
->            Remove unnecessary error handle in the sd_uhs2_init_card()
->            function.
->            Add oldcard judgment to skip some programs in the
->            sd_uhs2_legacy_init() function.
->            Remove unnecessary error handle in the sd_uhs2_legacy_init()
->            function.
->            Remove mmc_card_set_present() function in the
->            sd_uhs2_reinit()function.
-> 
-> Reference
-> =========
-> [1] https://gitlab.com/VictorShih/linux-uhs2.git
-> [2] SD Host Controller Simplified Specification 4.20
-> [3] UHS-II Simplified Addendum 1.02
-> [4] https://patchwork.kernel.org/project/linux-mmc/cover/20240913102836.6144-1-victorshihgli@gmail.com/
+On Mon, Oct 21 2024 at 16:40, Frederic Weisbecker wrote:
+> Le Tue, Oct 01, 2024 at 10:42:10AM +0200, Thomas Gleixner a =C3=A9crit :
+>> --- a/kernel/time/posix-timers.c
+>> +++ b/kernel/time/posix-timers.c
+>> @@ -269,7 +269,10 @@ bool posixtimer_deliver_signal(struct ke
+>>  	if (!timr)
+>>  		goto out;
+>>=20=20
+>> -	if (timr->it_interval && timr->it_signal_seq =3D=3D info->si_sys_priva=
+te) {
+>> +	if (timr->it_signal_seq !=3D info->si_sys_private)
+>> +		goto out_unlock;
+>> +
+>> +	if (timr->it_interval && timr->it_status =3D=3D POSIX_TIMER_REQUEUE_PE=
+NDING) {
+>
+> Can it be something else than POSIX_TIMER_REQUEUE_PENDING actually?
+> And if not, should it be a WARN_ON() ?
 
-Not all SDHCI patches show my Acked-by although I did give it
-in V22 for SDHCI patches.  So again for SDHCI:
+Good point. It should not be anything else than pending.
 
-Acked-by: Adrian Hunter <adrian.hunter@intel.com>
+>>  		timr->kclock->timer_rearm(timr);
+>>=20=20
+>>  		timr->it_status =3D POSIX_TIMER_ARMED;
+>> @@ -281,6 +284,7 @@ bool posixtimer_deliver_signal(struct ke
+>>  	}
+>>  	ret =3D true;
+>>=20=20
+>> +out_unlock:
+>>  	unlock_timer(timr, flags);
+>>  out:
+>>  	spin_lock(&current->sighand->siglock);
+>> @@ -293,19 +297,19 @@ bool posixtimer_deliver_signal(struct ke
+>>  int posix_timer_queue_signal(struct k_itimer *timr)
+>>  {
+>>  	enum posix_timer_state state =3D POSIX_TIMER_DISARMED;
+>> -	int ret, si_private =3D 0;
+>>  	enum pid_type type;
+>> +	int ret;
+>>=20=20
+>>  	lockdep_assert_held(&timr->it_lock);
+>>=20=20
+>>  	if (timr->it_interval) {
+>> +		timr->it_signal_seq++;
+>
+> Is the increment here is still needed then, since it's done
+> from del and set?
 
-Ulf mentioned checkpatch warnings.  Here is a summary:
+Probably not. Let me stare at it.
 
-  ---------------------------------------------------------------------------------------
-  heads/head-2024-10-24-01/0002-mmc-sdhci-add-UHS-II-related-definitions-in-headers.patch
-  ---------------------------------------------------------------------------------------
-  WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-  #20: 
-  new file mode 100644
+Thanks,
 
-Nope - already covered by drivers/mmc/host/sdhci*
-
-  WARNING: It's generally not useful to have the filename in the file
-  #27: FILE: drivers/mmc/host/sdhci-uhs2.h:3:
-  + *  linux/drivers/mmc/host/sdhci-uhs2.h - Secure Digital Host Controller Interface driver
-
-Could drop the file name
-
-  ----------------------------------------------------------------------------------------
-  heads/head-2024-10-24-01/0003-mmc-sdhci-add-UHS-II-module-and-add-a-kernel-configu.patch
-  ----------------------------------------------------------------------------------------
-  WARNING: please write a help paragraph that fully describes the config symbol
-  #33: FILE: drivers/mmc/host/Kconfig:101:
-  +config MMC_SDHCI_UHS2
-  +	tristate "UHS2 support on SDHCI controller"
-  +	depends on MMC_SDHCI
-  +	help
-  +	  This option is selected by SDHCI controller drivers that want to
-  +	  support UHS2-capable devices.
-  +
-  +	  If you have a controller with this feature, say Y or M here.
-  +
-
-A web-search for uhs2 says what it is, so I have no strong feelings
-about adding more.
-
-  WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
-  #58: 
-  new file mode 100644
-
-Nope - already covered by drivers/mmc/host/sdhci*
-
-  ----------------------------------------------------------------------------------------
-  heads/head-2024-10-24-01/0010-mmc-sdhci-uhs2-add-related-functions-to-initialize-t.patch
-  ----------------------------------------------------------------------------------------
-  WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
-  #11: 
-  After detected the UHS-II interface, the host's UHS-II capabilities will be set up here and
-
-Commit message could be wrapped as requested
-
-There is also the ones below, but please _leave_ the code as it is
-consistent with the current code in the struct.
-
-------------------------------------------------------------------------------
-heads/head-2024-10-24-01/0014-mmc-sdhci-pci-add-UHS-II-support-framework.patch
-------------------------------------------------------------------------------
-WARNING: Unnecessary space before function pointer arguments
-#81: FILE: drivers/mmc/host/sdhci-pci.h:148:
-+	void			(*remove_host) (struct sdhci_pci_slot *, int);
-WARNING: function definition argument 'struct sdhci_pci_slot *' should also have an identifier name
-#81: FILE: drivers/mmc/host/sdhci-pci.h:148:
-+	void			(*remove_host) (struct sdhci_pci_slot *, int);
-WARNING: function definition argument 'int' should also have an identifier name
-#81: FILE: drivers/mmc/host/sdhci-pci.h:148:
-+	void			(*remove_host) (struct sdhci_pci_slot *, int);
-total: 0 errors, 3 warnings, 0 checks, 56 lines checked
-
+        tglx
 
