@@ -1,138 +1,141 @@
-Return-Path: <linux-kernel+bounces-380336-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380337-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id ED9FA9AEC84
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:48:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 257359AEC89
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:49:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 25D5F1C22C7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:48:13 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 56DD01C22A1C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:49:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E1E2F1F81B1;
-	Thu, 24 Oct 2024 16:48:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 517211F8196;
+	Thu, 24 Oct 2024 16:48:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T3Cal0Ap"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fb00uFPC"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2184E1F4724;
-	Thu, 24 Oct 2024 16:48:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B43F167DAC;
+	Thu, 24 Oct 2024 16:48:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788487; cv=none; b=L2fWDzn4p2ZuGOb6PmfaoWJ0AEuic2c8QkqWnLMNFd5CiFuf2MtmcA8xw0c0O0HT7Ddb13LbX2I91qbImJMGfH2IV48FSmUZ7K8aZv3E+j12fGBK+7ZpW2zgWbhcd8svX9YuaF8ZLrzQkdcsPhIjIDEbuWT51FPNkpM+dax0Hb8=
+	t=1729788532; cv=none; b=WVUTAqiUP5og4NIyB7VrqB1MIvNVUhjKupU2kIpauizZ5IFquEDwzIDCMi/XOyvvjE1QYLaUdEBQobgKc++HGgErnnI1SJQ0IhnH3xErQ+qCgiuXuAxnL3pe5tS9u0AFtH0lpgWxGIO/GPZI3VloByWA6TT2zM5I/UbaBdzKHXw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788487; c=relaxed/simple;
-	bh=Xd3zCQJSFluPLr68+g0FTOhdgAUJKcVEhtol9bIe3uM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=f27gWP0Et7AgKikZLrvY7LxDGvxjZ3XUUasaql/m9n3+Uhcm7j09TSxdBeeoz3cuKODEiQphNfuomKu29fT4uHdMBc9nyiicSzSDHhBgT1NaV5TF4DAlvlu0uMo3x3k13Ao00CyeZVaIR2K7eqCkujRW0lUn8DVK0oD+2iqHgKE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T3Cal0Ap; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d3ecad390so1671890f8f.1;
-        Thu, 24 Oct 2024 09:48:04 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729788483; x=1730393283; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=b/QXTPupZszyGbqY5pviify12KAi6ghznoufyE83p4g=;
-        b=T3Cal0ApOWP0WVDJWjOfA4loW0BPedT2DilTFqkVH0/XkQWRb/0XEwosiIe5DMf2ZK
-         ifvGGaWPJlEJuJKQvl7J9VHAwvjs7du4OxFnwCluRvPiyNHavIIJsrrlLsuCte6swCrL
-         nZy+mB/WViSgqZklLNh2d+FMGKP/Jl9hcP/zzDCN2ej+0SEuASAIPxoccXg1XIbPcWu6
-         rb/fvm0I66Ho5iD7mYmms3A+OFBVSBEGwr1q6X5qrUZiXlibGHI0YStkqDdAvRaRApps
-         D0BBVMa7Zwria8cnX0mmqIkLW8tx2n/La+dOA7PxZhrNbZIa2GPJSYDRYR9EwvmUbLwv
-         2PWQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729788483; x=1730393283;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=b/QXTPupZszyGbqY5pviify12KAi6ghznoufyE83p4g=;
-        b=NxnR2f20tm8c1+KoTL8x6+yMc8+SY5I38vQzZGYK1EeNGmG1CeZrT+enuG/J4Ihika
-         OS3wPj5tqO64sSS9jWblV4Lo3LqgCzZYtDhe10Xh3PnKoRJwP1pRS9JZP7shWa6gxOmv
-         782eQNAR0DGdPkNYCpvr2h9LMvpKgiHM+xl6+GXvbR83N83EYqd7y5xKVhJQYXRQ05kr
-         6MYfZh9Cz5JjqizwztYmnfl9C1tO34viG/3SWkyzVmTO+QWBK3n3KjSu7wQC0SitzWnO
-         jqSOvWTbZ6sPEJF58nKpbDQhYexkl7n8pqFA7Ckn3xF8zzmcWl/zQ5rLHMAS6NTMiB1B
-         EQCw==
-X-Forwarded-Encrypted: i=1; AJvYcCUpsyb88MhnrH2wA81pkyp2436rpd5QCwGHpPhHPKT6MTLGD6cMHr3l7u+7mNt/flIhzFpW+sf8@vger.kernel.org, AJvYcCV/TfMy5kmllHKbvkUtaZmYH3drFcZZfaZmq2RxE4a3fjum1s0xhtdyrRt4nqNHpqIxgMQbbdeRAR6TTzI=@vger.kernel.org, AJvYcCVmjRyfOSlAVf/3b/HUSmQmMrEY6mwS/mrOCjAo+EtJZXyQ/qYgxu/zbBuLqZNCnKsY/d94KThql2TWKw==@vger.kernel.org
-X-Gm-Message-State: AOJu0YyqDYWB7fDiv+3kV8DWZv03ngu8nUw26TDQtk6j6ZWlTCg8eUMC
-	HLetGIZkHJiURjVpREFbWRa+LEyDOXim8Mel47/WlZ+pzftBzWY/HuP6lQ==
-X-Google-Smtp-Source: AGHT+IECqRZ6Q/nyl6/XwIc1sJkxWZUlLZwLcHVdEwkx/anPOckDX+XnYpJxIl0h+hzyf4SZFMPUfg==
-X-Received: by 2002:a5d:4248:0:b0:374:c1ea:2d40 with SMTP id ffacd0b85a97d-3803abc523bmr2013545f8f.1.1729788482907;
-        Thu, 24 Oct 2024 09:48:02 -0700 (PDT)
-Received: from [172.27.21.144] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f39fsm23045525e9.12.2024.10.24.09.48.00
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:48:02 -0700 (PDT)
-Message-ID: <4e3fbf05-3a88-43be-826c-a16a6718217f@gmail.com>
-Date: Thu, 24 Oct 2024 19:47:54 +0300
+	s=arc-20240116; t=1729788532; c=relaxed/simple;
+	bh=LaYLWkO8yuCfO8X6eZ1a7AiJcXeGGIn3VLInYOF8AJ0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QYrACNA27NBAYHE6UAEpeMePrVQfV9m3M0s/VySj8AUguckVV4E1NZFzB6rnW1/j/KLFtuy84VE6Oe05qvrdcQ1I4KE18y/nsbRhvvLmhQ+cRYwg8jJ9HIzfbd03gjT7M4k/HyKDJbBG7zns9wITpBltRbWv7oNe0IqPwLoxm/Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fb00uFPC; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1A9D1C4CEE3;
+	Thu, 24 Oct 2024 16:48:52 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729788532;
+	bh=LaYLWkO8yuCfO8X6eZ1a7AiJcXeGGIn3VLInYOF8AJ0=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=fb00uFPCMIHg/CtcINPRFL0FSf0hZAsz2HJAaie4YFEi3U+CfnMbGk0jobrkAneEY
+	 8HaDvnMsxo6F7qUWVDYWopMPfyHKIxTJoe6fWQHenxmRb+s33FSPMWqYvU7p3t9OHQ
+	 O0qTNSLdLiB4dRc8cgEi6GtUJGC7zxDfiveOY0J6U+BO+pARFRxnJNnet2bu5lmDM+
+	 kanb0AGwtFN6HB1SPxaUmwLf/eUdYBdKHW0sRSp8UqUfGiVsbCG2KZemcWr80ow9wg
+	 SO/xXJmbuQLT+n3/w2Y2hy50DOkiTnXx+36zNaE0TiHx0vTkPsjL7jKP+tgByyabNG
+	 OgSTKud6bv7Nw==
+Date: Thu, 24 Oct 2024 11:48:51 -0500
+From: Rob Herring <robh@kernel.org>
+To: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
+Cc: Krzysztof Kozlowski <krzk@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Shawn Guo <shawnguo@kernel.org>,
+	Daniel Baluta <daniel.baluta@nxp.com>, Peng Fan <peng.fan@nxp.com>,
+	Mark Brown <broonie@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
+	Bard Liao <yung-chuan.liao@linux.intel.com>,
+	Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
+	Jaroslav Kysela <perex@perex.cz>,
+	Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Iuliana Prodan <iuliana.prodan@nxp.com>,
+	linux-remoteproc@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org,
+	linux-sound@vger.kernel.org, sound-open-firmware@alsa-project.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: fsl,imx-rproc: add new
+ compatible
+Message-ID: <20241024164851.GA572386-robh@kernel.org>
+References: <20241023162114.3354-1-laurentiumihalcea111@gmail.com>
+ <20241023162114.3354-2-laurentiumihalcea111@gmail.com>
+ <ub7yylef6qyztjtg3pciamg6jjznxh3ydlqsdcg2xcoxqngpi4@j5jlex4qukyz>
+ <8a017e66-6d84-4bdf-8188-9ae3428b6d17@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] net/mlx5: unique names for per device caches
-To: Sebastian Ott <sebott@redhat.com>, netdev@vger.kernel.org,
- linux-rdma@vger.kernel.org, linux-kernel@vger.kernel.org
-Cc: Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, "David S . Miller" <davem@davemloft.net>,
- Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Parav Pandit <parav@nvidia.com>,
- Breno Leitao <leitao@debian.org>
-References: <20240920181129.37156-1-sebott@redhat.com>
- <20241023134146.28448-1-sebott@redhat.com>
-Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20241023134146.28448-1-sebott@redhat.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <8a017e66-6d84-4bdf-8188-9ae3428b6d17@gmail.com>
 
-
-
-On 23/10/2024 16:41, Sebastian Ott wrote:
-> Add the device name to the per device kmem_cache names to
-> ensure their uniqueness. This fixes warnings like this:
-> "kmem_cache of name 'mlx5_fs_fgs' already exists".
+On Thu, Oct 24, 2024 at 01:47:53PM +0300, Laurentiu Mihalcea wrote:
 > 
-> Reviwed-by: Breno Leitao <leitao@debian.org>
-> Signed-off-by: Sebastian Ott <sebott@redhat.com>
-> ---
->   drivers/net/ethernet/mellanox/mlx5/core/fs_core.c | 7 +++++--
->   1 file changed, 5 insertions(+), 2 deletions(-)
 > 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-> index 8505d5e241e1..c2db0a1c132b 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/fs_core.c
-> @@ -3689,6 +3689,7 @@ void mlx5_fs_core_free(struct mlx5_core_dev *dev)
->   int mlx5_fs_core_alloc(struct mlx5_core_dev *dev)
->   {
->   	struct mlx5_flow_steering *steering;
-> +	char name[80];
->   	int err = 0;
->   
->   	err = mlx5_init_fc_stats(dev);
-> @@ -3713,10 +3714,12 @@ int mlx5_fs_core_alloc(struct mlx5_core_dev *dev)
->   	else
->   		steering->mode = MLX5_FLOW_STEERING_MODE_DMFS;
->   
-> -	steering->fgs_cache = kmem_cache_create("mlx5_fs_fgs",
-> +	snprintf(name, sizeof(name), "%s-mlx5_fs_fgs", dev_name(dev->device));
-> +	steering->fgs_cache = kmem_cache_create(name,
->   						sizeof(struct mlx5_flow_group), 0,
->   						0, NULL);
-> -	steering->ftes_cache = kmem_cache_create("mlx5_fs_ftes", sizeof(struct fs_fte), 0,
-> +	snprintf(name, sizeof(name), "%s-mlx5_fs_ftes", dev_name(dev->device));
-> +	steering->ftes_cache = kmem_cache_create(name, sizeof(struct fs_fte), 0,
->   						 0, NULL);
->   	if (!steering->ftes_cache || !steering->fgs_cache) {
->   		err = -ENOMEM;
+> On 10/24/2024 10:45 AM, Krzysztof Kozlowski wrote:
+> > On Wed, Oct 23, 2024 at 12:21:11PM -0400, Laurentiu Mihalcea wrote:
+> >> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >>
+> >> Add new compatible for imx95's CM7 with SOF.
+> >>
+> >> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
+> >> ---
+> >>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 58 +++++++++++++++++--
+> >>  1 file changed, 53 insertions(+), 5 deletions(-)
+> >>
+> >> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> >> index 57d75acb0b5e..ab0d8e017965 100644
+> >> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> >> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
+> >> @@ -28,6 +28,15 @@ properties:
+> >>        - fsl,imx8qxp-cm4
+> >>        - fsl,imx8ulp-cm33
+> >>        - fsl,imx93-cm33
+> >> +      - fsl,imx95-cm7-sof
+> >> +
+> >> +  reg:
+> >> +    maxItems: 2
+> >> +
+> >> +  reg-names:
+> >> +    items:
+> >> +      - const: dram
+> >> +      - const: mailbox
+> > That's quite different programming model. Are you sure these are devices
+> > from similar class/type?
+> Yep, these are all Cortex-M cores. It's just that their usage differs quite a lot.
+> >
+> > Your big if:then: block suggests this could be separate binding.
+> Ideally I would have wanted to place the compatible inside dsp/fsl,dsp.yaml as the
+> programming model would have been more similar.
+> 
+> Unfortunately, these are different physical devices (HiFi DSP core vs CM core) even
+> though they're all used for DSP purposes so I'm not sure this is entirely appropriate.
 
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+That doesn't matter too much. trivial-devices.yaml is a bunch of 
+completely unrelated devices which happen to have the same binding. We 
+could probably take that farther with things like trivial clock 
+providers for example. 
 
-Thanks.
+Having 'reg' vs not is pretty clearly something that should be different 
+binding.
+
+> 
+> Alternatively, if you think grouping these devices (i.e: those represented by the -dsp compatibles
+> from fsl,dsp and the one represented by the compatible introduced here) under the same binding
+> is alright we can just branch off from fsl,dsp and fsl,imx-rproc and create a new binding for
+> these devices. I'm expecting this to be relatively clean as they have the same programming
+> model.
+
+If it's just add a compatible and nothing else somewhere, I'd do that. 
+If it's more than that, then I'd make a new binding doc.
+
+Rob
 
