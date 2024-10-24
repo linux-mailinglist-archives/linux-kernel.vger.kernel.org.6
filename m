@@ -1,126 +1,139 @@
-Return-Path: <linux-kernel+bounces-379229-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379230-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC6839ADBC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:09:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 013D89ADBC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:10:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 873A3B22361
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:09:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ADD51C2187D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:10:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5403175D2A;
-	Thu, 24 Oct 2024 06:09:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8E5B175D54;
+	Thu, 24 Oct 2024 06:10:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Tx+t+zJU"
-Received: from mail-lf1-f46.google.com (mail-lf1-f46.google.com [209.85.167.46])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Y7JWcuA0"
+Received: from mail-pg1-f194.google.com (mail-pg1-f194.google.com [209.85.215.194])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 211E917BD3;
-	Thu, 24 Oct 2024 06:09:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DCBE17BD3;
+	Thu, 24 Oct 2024 06:09:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.194
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750178; cv=none; b=kPavHu3tFtiFFGCRiPYaZ5sCLFG4Xhq6v5BDMdRID4+t+KJOtV6SHKHPbhwedM867/hwQ3EHe80aov7moVyjY6MIdJqUBWRJMs23jWxVgjTX0t7buYssm/qJ+UVE+f7A6FSW6+PpuvDXTuKOuUmcmUbS7hH9gETPreU+ZmNJ2dU=
+	t=1729750200; cv=none; b=FrzrHzEI0V1nA8HduzCmC8cq9nuocRqKaryxG4rG1IFoy+9QN95nHSVngBV1OpMfyxgLA2l1QgUv8DY+i1ctgw1l6lzEQ8KB2vUxnxiV6KU4xCq1asuExW2Pm1MGkLtr9A/heb2NabHfa9gccEZ0hXHlQvWYR+pz3z3dCJTg+DY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750178; c=relaxed/simple;
-	bh=PcgAAox4ofYSglKlR7U2qP9QT63P1uz7ubVNbTxtPfs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=YqiLQRGVgDzxOBg5edehreihKAbRjruA/poIYDjDpL/T0GQjFOlVUEDjQFtERDLMn0770FUnkA4xjy/vXaFcSqlyTKvk1tlhn72YE7MfI/CMubHQP/RiETNoRULGRMBDQ7w4jTO8UOmRxBqlBVXlTtpNRq3T2IsZzusHelYtgGk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Tx+t+zJU; arc=none smtp.client-ip=209.85.167.46
+	s=arc-20240116; t=1729750200; c=relaxed/simple;
+	bh=Rb6ntbZSVwnjaYn15Q1UXmMWbHf3qu9YkFhJ89kDEs0=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=PqGZss9D3nxExWcCnoG9ULA/CrOqFuUCYWRI0ckXqfIFlKvpKZKvz5aIfjdP7WvpC8BrpZozvP+UOeqDtqwmvKQeZoUvmoNxtem63cn+WpShInCw99+89RQcWOto24Bf7sGPjj3zAXDngUV0tpp8WXNk90yWhfjodmy53nG47CM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Y7JWcuA0; arc=none smtp.client-ip=209.85.215.194
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f46.google.com with SMTP id 2adb3069b0e04-539f58c68c5so776468e87.3;
-        Wed, 23 Oct 2024 23:09:35 -0700 (PDT)
+Received: by mail-pg1-f194.google.com with SMTP id 41be03b00d2f7-7ea7e250c54so366151a12.0;
+        Wed, 23 Oct 2024 23:09:58 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729750174; x=1730354974; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=mxebdquBlAlwZJ5oz/fW7V6vZLRtB6HS9hVsNow4hfk=;
-        b=Tx+t+zJU1iWxv0rBWfuwQmOeabJzjWEQiyQVDto/2KfHXuVfZH4tzqI/KRV9svC8Ag
-         A22HYD/8ijXWeuW7PCq3K68eK/Xp9NbcXouWbPT8KQWcQxbC79TCHfUwMHp2pxHRcxE7
-         0VKzdWD5fPcC316NjrUSoZ3gopiaewHdCkX1Yz1M4mJuVJxsYliF7sHH9n9as4pv8Aik
-         8my1WSWj6VjHIX/5d6LT81SgLpR0BEReMlbVgT261eLO3lou47P4NdgVU76cJzYCc4NE
-         EWNfDdIENErZS357Pe7igzTmDj9F0ipQAjfd+jTFkC6RFVfNClshiSGWBBw5+eBjZLH2
-         EsTA==
+        d=gmail.com; s=20230601; t=1729750197; x=1730354997; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3YtbyEaMsa4GAbWnsy2Tbe/1HjhrxOqJDOx9rhvgg2o=;
+        b=Y7JWcuA0TzX2F+a91fvvpbCJACOl5XCoImMZMZZW/GgNFQC9nn6s+SYVHId3pMBjGu
+         CdIN4jYPzcwirPhLUvIm3LFyUeTW0tH6cO9OnvIyhK4JQF2m7RnXfGUASapizsj5bQ/a
+         dEtSGMKQlLRiTlks66pCtn4kqrSc0QP8ySOD31ZuJixHDYqfM25RkNVUPVASEFGnwxVi
+         u6XQvQGtpxxFcwxFSRBlvyQQRF0mNr8t9Ksfty+g38y6rRSCnOmrpDOHrATteVFCe+QQ
+         cwUbHjHUicq+jSZWlj7KmE3CXX+e0LrXDqPNmAJcbh55CF6/FA/Dr2o+oV25eN1XJEMy
+         zWZQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729750174; x=1730354974;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=mxebdquBlAlwZJ5oz/fW7V6vZLRtB6HS9hVsNow4hfk=;
-        b=dZREKa+bkcSpgstlp6hbj6Nt72zi9jm07QiERElNjeUfqj5X0YYUGqKdcaIdN5Xp6C
-         JCSXGhWxtYkh8/a5zONHp5uAfOvTcfJxm2DwLmspx9pnC5q7Mi0iwnEWUPfn9A5RFDQ9
-         oJsgdRPseYiGGyomgNtvWhfYymGpfcTdXgGrNkTc4u8velHw2gOS+/Pn+g09hRmCp1uN
-         xFiy8e00pSb7aHJ8Qy9wz3o5mBEmW9TR5ffEGhXOOmDqpsd7AiNnT04vY5VWNyHqzN90
-         yxfkzzSww2R0z2VUOHKGQHjq0eASOnXGbSOxzlIf+Un4gGx1WObbsGdgvKyBC7pVQ8kp
-         RbfA==
-X-Forwarded-Encrypted: i=1; AJvYcCUyQvETqFJv5OsINq91sR7ov34Ukl6cF1h1y3Uv3Tqf23CXlmLa4KbAngEk51UIv1ep+wGPZ4W4cWKvD4Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTiGWzGTfInsW2g8KEIxsHNI/IrOVkkk0c/3DZRqzkfAwkaZ//
-	y+qm1YgthKCD+ZHLgDFBGFcfp0B0CixMEGisOA1vWeE6hE18Z+9U
-X-Google-Smtp-Source: AGHT+IFhFF/po4GR7sgK1fno9tCDeh8VOqPb14fKZK/pIpdsZzUoh3CrVD0afSZ/iVNCBqSM9nc0dw==
-X-Received: by 2002:a05:6512:1154:b0:539:e0e6:cf42 with SMTP id 2adb3069b0e04-53b1a39b039mr4532355e87.43.1729750174091;
-        Wed, 23 Oct 2024 23:09:34 -0700 (PDT)
-Received: from [192.168.1.146] (87-94-132-183.rev.dnainternet.fi. [87.94.132.183])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2243145fsm1254817e87.192.2024.10.23.23.09.32
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 23:09:33 -0700 (PDT)
-Message-ID: <bc15b5f4-9596-486e-a275-5cde82a92985@gmail.com>
-Date: Thu, 24 Oct 2024 09:09:32 +0300
+        d=1e100.net; s=20230601; t=1729750197; x=1730354997;
+        h=content-transfer-encoding:mime-version:references:in-reply-to
+         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=3YtbyEaMsa4GAbWnsy2Tbe/1HjhrxOqJDOx9rhvgg2o=;
+        b=g2Us5Qa7o/+DkyrARtm6dAn2VVtGAgzM9Ht3I8r654kg0vkBjhZ5AquRSzJztspVXn
+         rG6KGStXw3Ugvj+i/lmfkV/X3qjGBY8ENEEuUhN5A6Zzfzsi3CmZDWO3EMkd31dpQ4wN
+         f7/krC6/SjyDPJp9ije+wv7TsXxxmvi2Qh0kJ7fT4iF6s6dgvs65SYtVtI42zbyOpxg8
+         N4gPAg1F7VBATUrn46U/lVAVHGVtwtCCxfluo5h6Afm2Jf41/cKlaS6GkVScaUXhko8t
+         vFG2CJRTgRTzdr/5uyOvl6+NLmYlDZrzcZijop9heReEelDaObBNRmlbkmjUG4leKnkm
+         kCLw==
+X-Forwarded-Encrypted: i=1; AJvYcCU9G8USnfSM2m90aI9n2scoHqeZzfrjdw/JWuBfi12y/yl/7CkFrC8CtEK5HkS07JLReI0qTcjj81fmVp6A@vger.kernel.org, AJvYcCXgS6Bq8gW/Cy5NI2gxrpCTVaq1Q37CzFcRs8hl6duDMy3xkg8qH3qbs0fTbaPE45DiARzXfIsVnC2Kr543@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy43X6f7hnjzkwLHKz3vlLFJX+HGoY1wd4eb0UHD7XBH00spy7d
+	zhzjRjkCObVUmM3Wb4TcejZ/APZ41iPDWbHRnIBYq4e/fYYtfLAb
+X-Google-Smtp-Source: AGHT+IEb4DbHvwbycDEptOsdZXO6q1mXwibi0nQJsNWuqbQ3vGbu82WIslgzpjLzZdW8RPJK3z2x2A==
+X-Received: by 2002:a05:6a21:174d:b0:1cf:38cf:df92 with SMTP id adf61e73a8af0-1d978b2e2d8mr6172207637.30.1729750197500;
+        Wed, 23 Oct 2024 23:09:57 -0700 (PDT)
+Received: from localhost.localdomain ([43.154.34.99])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132ffb8sm7329074b3a.50.2024.10.23.23.09.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 23:09:57 -0700 (PDT)
+From: Jim Zhao <jimzhao.ai@gmail.com>
+To: akpm@linux-foundation.org
+Cc: jimzhao.ai@gmail.com,
+	linux-fsdevel@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-mm@kvack.org,
+	willy@infradead.org
+Subject: Re: [PATCH] mm/page-writeback: Raise wb_thresh to prevent write blocking with strictlimit
+Date: Thu, 24 Oct 2024 14:09:54 +0800
+Message-Id: <20241024060954.443574-1-jimzhao.ai@gmail.com>
+X-Mailer: git-send-email 2.25.1
+In-Reply-To: <20241023162447.2bf480b4ce590fdeb8b6c52d@linux-foundation.org>
+References: <20241023162447.2bf480b4ce590fdeb8b6c52d@linux-foundation.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] rust: error: Add EOVERFLOW
-To: Alice Ryhl <aliceryhl@google.com>
-Cc: rust-for-linux@vger.kernel.org, a.hindborg@kernel.org,
- linux-kernel@vger.kernel.org, dakr@redhat.com, airlied@redhat.com,
- miguel.ojeda.sandonis@gmail.com, wedsonaf@gmail.com
-References: <20241023113309.1724992-1-abdiel.janulgue@gmail.com>
- <20241023113309.1724992-2-abdiel.janulgue@gmail.com>
- <CAH5fLgj7zYc6jg3vyqKNc85vkAvfgD1yqrUWj2-NcyR3kDPCbQ@mail.gmail.com>
-Content-Language: en-US
-From: Abdiel Janulgue <abdiel.janulgue@gmail.com>
-In-Reply-To: <CAH5fLgj7zYc6jg3vyqKNc85vkAvfgD1yqrUWj2-NcyR3kDPCbQ@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
+> On Wed, 23 Oct 2024 18:00:32 +0800 Jim Zhao <jimzhao.ai@gmail.com> wrote:
+
+> > With the strictlimit flag, wb_thresh acts as a hard limit in
+> > balance_dirty_pages() and wb_position_ratio(). When device write
+> > operations are inactive, wb_thresh can drop to 0, causing writes to
+> > be blocked. The issue occasionally occurs in fuse fs, particularly
+> > with network backends, the write thread is blocked frequently during
+> > a period. To address it, this patch raises the minimum wb_thresh to a
+> > controllable level, similar to the non-strictlimit case.
+
+> Please tell us more about the userspace-visible effects of this.  It
+> *sounds* like a serious (but occasional) problem, but that is unclear.
+
+> And, very much relatedly, do you feel this fix is needed in earlier
+> (-stable) kernels?
+
+The problem exists in two scenarios:
+1. FUSE Write Transition from Inactive to Active
+
+sometimes, active writes require several pauses to ramp up to the appropriate wb_thresh.
+As shown in the trace below, both bdi_setpoint and task_ratelimit are 0, means wb_thresh is 0. 
+The dd process pauses multiple times before reaching a normal state.
+
+dd-1206590 [003] .... 62988.324049: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259360 dirty=454 bdi_setpoint=0 bdi_dirty=32 dirty_ratelimit=18716 task_ratelimit=0 dirtied=32 dirtied_pause=32 paused=0 pause=4 period=4 think=0 cgroup_ino=1
+dd-1206590 [003] .... 62988.332063: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259453 dirty=454 bdi_setpoint=0 bdi_dirty=33 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+dd-1206590 [003] .... 62988.340064: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259526 dirty=454 bdi_setpoint=0 bdi_dirty=34 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+dd-1206590 [003] .... 62988.348061: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259531 dirty=489 bdi_setpoint=0 bdi_dirty=35 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+dd-1206590 [003] .... 62988.356063: balance_dirty_pages: bdi 0:51: limit=295073 setpoint=259531 dirty=490 bdi_setpoint=0 bdi_dirty=36 dirty_ratelimit=18716 task_ratelimit=0 dirtied=1 dirtied_pause=0 paused=0 pause=4 period=4 think=4 cgroup_ino=1
+...
+
+2. FUSE with Unstable Network Backends and Occasional Writes
+Not easy to reproduce, but when it occurs in this scenario, 
+it causes the write thread to experience more pauses and longer durations.
 
 
-On 23/10/2024 14:39, Alice Ryhl wrote:
-> On Wed, Oct 23, 2024 at 1:34 PM Abdiel Janulgue
-> <abdiel.janulgue@gmail.com> wrote:
->>
->> Trivial addition for missing EOVERFLOW error.
->>
->> Signed-off-by: Abdiel Janulgue <abdiel.janulgue@gmail.com>
->> ---
->>   rust/kernel/error.rs | 1 +
->>   1 file changed, 1 insertion(+)
->>
->> diff --git a/rust/kernel/error.rs b/rust/kernel/error.rs
->> index 7cd3bbab52f2..92bfdaaedb02 100644
->> --- a/rust/kernel/error.rs
->> +++ b/rust/kernel/error.rs
->> @@ -63,6 +63,7 @@ macro_rules! declare_err {
->>       declare_err!(EPIPE, "Broken pipe.");
->>       declare_err!(EDOM, "Math argument out of domain of func.");
->>       declare_err!(ERANGE, "Math result not representable.");
->> +    declare_err!(EOVERFLOW, "Value too large for defined data type.");
->>       declare_err!(ERESTARTSYS, "Restart the system call.");
->>       declare_err!(ERESTARTNOINTR, "System call was interrupted by a signal and will be restarted.");
->>       declare_err!(ERESTARTNOHAND, "Restart if no handler.");
-> 
-> The commit message should explain why you're adding it. What will you
-> use it for?
+Currently, some code is in place to improve this situation, but seems insufficient:
+if (dtc->wb_dirty < 8)
+{
+	// ...
+}
 
-Yup I forgot to include the intent of the change, which is needed in the 
-next patch. But will fix in next update.
+So the patch raise min wb_thresh to keep the occasional writes won't be blocked and
+active writes can rampup the threshold quickly.
 
-/Abdiel
+--
+
+Thanks,
+Jim Zhao
 
 
