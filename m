@@ -1,153 +1,109 @@
-Return-Path: <linux-kernel+bounces-379240-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379239-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8224E9ADBEE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:16:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 16D5D9ADBEC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:16:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A84E9B23092
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:16:50 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1B591F21E84
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:16:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3141A17836B;
-	Thu, 24 Oct 2024 06:16:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 39CE3178362;
+	Thu, 24 Oct 2024 06:16:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KD4bJpSS"
-Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="XTLRdbQY"
+Received: from mail-yb1-f169.google.com (mail-yb1-f169.google.com [209.85.219.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 980481662E8;
-	Thu, 24 Oct 2024 06:16:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D88D01662E8;
+	Thu, 24 Oct 2024 06:16:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750600; cv=none; b=p1VA0STWIhOdTDS3yKv0qcGTLa4eFmrpf3UjDrPHR6iRIvJK4vAAnL/iie8mgv+cOjD7IWvWtbuF91Ldtd8tS8yfkIGm4xf/hOgX8AK90HUkr1nkGTezz9p/A5CD5JlaCzFDszMNUwoupEZfZyt8LDDZv6Mz9I8n+X+9GwBhkzk=
+	t=1729750593; cv=none; b=oRQmRdGLpyfSeLEZhkXj7kr7W5SfKmHFpiXlsjhf4PJuilCiI3qFFN0haN8glTiTzq9IEYy7H98/edjJleU1gIrgi1DEapASuL3X6cEgLVrso6lcTYX02Jad0hwDjD96/YFdrUCh1nYY41J32HutAUstaCHYTrcm937MEXCyBrk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750600; c=relaxed/simple;
-	bh=Rz9gcIh2T984d6q4XYRRs9ihe2oBjbaS4KKpRfQZtcM=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=abMEJZRl69BDD/Px2COgXO7UYXyyjeR/Ni/Xb5PSdcFT6sTXR0PBqU8bWUGlCPLt4W9Pye6A9sRS5MWjGiJXHtV01bqqowsnVJ6hqFD9+r/NfBzCKHweLt3TWpdJDLLW/yCC+48cdEvdujicQCV/IkNYp2g4p4uaNDmfFY7Z9pA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KD4bJpSS; arc=none smtp.client-ip=209.85.160.51
+	s=arc-20240116; t=1729750593; c=relaxed/simple;
+	bh=e4s/0aVmLKHKsb6eRnB189r9RTuimLFClX/WPz4X650=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=k2csCJhu3C3mewwopqXXREwohSOSSMAgpAh3HUYy+qLqP2QQJLW3Y8ZXGpJKN/uvK3j0CpifS9B1a85ihoeQu5YUdLMWg7O4QwDSwpcOQc1tyz4uBZ+9fHcOdInxAYQMh7ayZK+a7irOhNar5RsrSXVV5C6V7zUOS4P68UofvAM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=XTLRdbQY; arc=none smtp.client-ip=209.85.219.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-288a90e4394so309265fac.0;
-        Wed, 23 Oct 2024 23:16:38 -0700 (PDT)
+Received: by mail-yb1-f169.google.com with SMTP id 3f1490d57ef6-e2e2e50a796so106197276.0;
+        Wed, 23 Oct 2024 23:16:31 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729750598; x=1730355398; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=rhU89+FS6LG/pnvMPb4jHbxWWyR3TKaTBd3ILGa9E0A=;
-        b=KD4bJpSS7sGrcJZ6nHMzl7l2jQsNmHcLfadUmvBoY4/kTNmrQEfhjZ4L3SMEJX8vCK
-         0RNWQ4APN2dAC0KJBCuW09WyJH+hSQBeSTGWsB/rotofUiKK3BRzxWE2lr5lcITaNjWD
-         e5OFUe02575VIxG38KrxmGPwrdnntMY6efMWmy/pBX6Dtm0nf3+xZoZAwqJJt9VGAP99
-         FRJIy6SRQ8kQa2ehO+BNxn6NGYpjMy3YkLfGxbpVxuc5125EkjZ7M6YvcEkl9hjROYWD
-         uNdxuM61RQGhtojJ6k+EWxSTwOSM9yyrmPP/8TfADTqyrI9Vp96qQlNSl9ohBkskhICu
-         fbEQ==
+        d=gmail.com; s=20230601; t=1729750591; x=1730355391; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=e4s/0aVmLKHKsb6eRnB189r9RTuimLFClX/WPz4X650=;
+        b=XTLRdbQYUGR/pZu5yWmlrvJbq40yGSNmBG1Pp/YmYKRpVOuyR1YQzD+3vYuYTZCVI0
+         llF43DH+jrkW621G+z2vIBo9FDi4Kyj8Mg4j6MlacVhSA7n8le+guB9YulIxOAhZADEa
+         a9F/a8rAJoBTB2gz/hz81JXYZhXPO6O7oteq29V7PbxGO6f8j3sTBq33SMjHtjOfsJzA
+         WLxIXDtW6RK7DKIvPv+JEDUZDr8wptBmcI1nWYd1LPsIMu3eQQtgvovkHYIidoqobLyX
+         e+nqk7irycbuqKthEOckH97aKmyMabqSm9w1PuBBZlSdUTgeuR23+gipzph+BjLYKvgM
+         hujg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729750598; x=1730355398;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=rhU89+FS6LG/pnvMPb4jHbxWWyR3TKaTBd3ILGa9E0A=;
-        b=nIemKcJ4SqgQe4PuFSLiZb7Xb+ygwd6e0YGQYSsUbp9bDHGEWd0ma3av0KIQ3UOQnq
-         wjQe+sckCQnVHmCm7AZX18+LSqmr+BPJGeJdLiNuN2AM+6pzG3VV0VOj3QF0cXF5XHF3
-         N66CAuJyG0QNotWXfRp3DdtCzx96EKGwjr4xtn/Y2V5FK4ecL0edd1HABsoGlFQ2HA8C
-         1ts7gdi0hC8k9JpV8hxSsutXOOFpzKjfMV1g5Uc0TNqj2S3POjjcYXhd5YdrsCXyOUBJ
-         K1CYhhLTI5rWY+ABnqKz2LghG7unrbwJ5U+oREO5xMBBz+E427FUzwy/S9kwIiuzIHRC
-         RjjQ==
-X-Forwarded-Encrypted: i=1; AJvYcCXwVpMVC1KPqUaJ2YxxsEajOix5hnFmrNoxnTzod5jU3qApyyoP3yrgp61O6HvGjurxhO+4722Itf1CZgc=@vger.kernel.org, AJvYcCXzNTNg2GTchadv+M9S9IyXMdmusKikoyfrRXnNfNQLtaOlTSy50d6egrxBxVoRww5iHCeS3yrrH5cDdB54L3WUWlzmEA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwhRAMTmx/KmDAUPUzuORKXw02JkqlZF+t94Gzo5Ull0YcKYxSB
-	o3SfgWy84l5CWwnDlvRbLXDDsikT+jz8toC2DRznVl1MUbgFfinI
-X-Google-Smtp-Source: AGHT+IGxyiC1qiHDctfXP/glrz7aFXuDsu2S/QxjXUI4biGmtqSSqvBVqvlllwt5i8Np2wF+tqpdHw==
-X-Received: by 2002:a05:6870:15d0:b0:288:49a5:7562 with SMTP id 586e51a60fabf-28ccb73b52dmr4751102fac.41.1729750597589;
-        Wed, 23 Oct 2024 23:16:37 -0700 (PDT)
-Received: from localhost.localdomain (host95.181-12-202.telecom.net.ar. [181.12.202.95])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1313988sm7297063b3a.22.2024.10.23.23.16.35
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 23:16:37 -0700 (PDT)
-From: Kurt Borja <kuurtb@gmail.com>
-To: kuurtb@gmail.com
-Cc: W_Armin@gmx.de,
-	hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	linux-kernel@vger.kernel.org,
-	platform-driver-x86@vger.kernel.org
-Subject: [PATCH v7 0/4] Dell AWCC platform_profile support
-Date: Thu, 24 Oct 2024 03:15:48 -0300
-Message-ID: <20241024061547.33918-2-kuurtb@gmail.com>
-X-Mailer: git-send-email 2.47.0
+        d=1e100.net; s=20230601; t=1729750591; x=1730355391;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=e4s/0aVmLKHKsb6eRnB189r9RTuimLFClX/WPz4X650=;
+        b=jJmRVYBHxTDt8Q5wkqGIQRHQr++oELPy+p2r4o0TaBj3ioEKLYMdtfI3y/lSfS+LBO
+         8dhUdKluwjuqlUD0ieWi64uZ0t6TUcJ5fkaKNSP3gl+pPMCgAWuaBtMv2mbxQmWA6O9o
+         JWcvjG6AeJeG1Sch47dvavpvMwTxsiTnPMgM3w9R3mSVjyPzR/ZuNgL5WXkXOQ+2nQYq
+         Tx70J2jjb07xKBeVOhuLYIsD9eXaCp+3FqEY+k8ND4ccSrAO+DkWWJn8s+u8nnI/gZxu
+         XW69++t+9Z5zgXp7j8JD92CKUx8r/c63XiKydX9/Z+ADtnkqUyz7yWOYnIlyfWukAW6w
+         +kWQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUga36PPRivC2jsgvlzh9yqZqo+zV7A7mZbMp0Tl3BHrHbdWKX2gZiY5U/BCxbU+sO/PLvgXOjE5z/c@vger.kernel.org, AJvYcCX2MEzNgatVELwSLbTjS9aD+XDqlOD56DXGaLVoAKb1017Kr/w0JElgoa6AmS+IRMTIdN0WPW4v2N2gRvoi@vger.kernel.org
+X-Gm-Message-State: AOJu0YwxQoNiyyKjZU0UdwiWA/4DcDxuR9+H3LdPotjp60pBr8GzYOPG
+	Z++1oLHEpZG8mKwSWU8WNV1LyF/m7qEMsAZhY0WN8Z8+4Nn5IdRp/4ZBl8XGR/Y3fHOiBnViyvt
+	3pjJFJhFYoMhz6YNNVofAvfQdGX4=
+X-Google-Smtp-Source: AGHT+IEiktjsXRRJZ9s03L8bbRvEpzeTPvd7flMzXuA99X+WplcS4fyaQyYm9BD8NNA6g2t0eG73Nz3mIqVe9kvDqp8=
+X-Received: by 2002:a05:690c:39d:b0:6e2:b263:1050 with SMTP id
+ 00721157ae682-6e7f0fa358dmr21523897b3.7.1729750590726; Wed, 23 Oct 2024
+ 23:16:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241020194028.2272371-1-l.rubusch@gmail.com> <20241020194028.2272371-14-l.rubusch@gmail.com>
+ <b6a6b9d8-ec2d-4360-9747-4b44d24e0b06@pengutronix.de>
+In-Reply-To: <b6a6b9d8-ec2d-4360-9747-4b44d24e0b06@pengutronix.de>
+From: Lothar Rubusch <l.rubusch@gmail.com>
+Date: Thu, 24 Oct 2024 08:15:54 +0200
+Message-ID: <CAFXKEHbefgGSa2LQsFR887N9y-OJnw8M1qT0vzA7kEwdkRDXOw@mail.gmail.com>
+Subject: Re: [PATCHv2 13/23] ARM: dts: socfpga: add Enclustra boot-mode dtsi
+To: Ahmad Fatoum <a.fatoum@pengutronix.de>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org, 
+	dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-This patch adds platform_profile support for Dell devices which implement
-WMAX thermal interface, that are meant to be controlled by Alienware Command
-Center (AWCC). These devices may include newer Alienware M-Series, Alienware
-X-Series and Dell's G-Series.
+On Wed, Oct 23, 2024 at 7:20=E2=80=AFPM Ahmad Fatoum <a.fatoum@pengutronix.=
+de> wrote:
+>
+> Hello Lothar,
+>
+> On 20.10.24 21:40, Lothar Rubusch wrote:
+> > Add generic boot-mode support to Enclustra Arria10 and Cyclone5 boards.
+> > Some Enclustra carrier boards need hardware adjustments specific to the
+> > selected boot-mode.
+>
+> Can you elaborate more on these hardware adjustments?
+>
+> Do the different boot media e.g. share pins and can't be active at the sa=
+me
+> time?
 
-Tested on an Alienware x15 R1.
----
-v7:
- - Platform profile implementation refactored in order to efficently
-   autodetect available thermal profiles
- - Added GameShiftStatus method to documentation
- - Implemented GameShiftStatus switch for devices that support it 
-v6:
- - Removed quirk thermal_ustt.
- - Now quirk thermal can take canonical thermal profile _tables_ defined
-   in enum WMAX_THERMAL_TABLES
- - Added autodetect_thermal_profile
- - Proper removal of thermal profile
-v5:
- - Better commit messages
- - insize renamed to in_size in alienware_wmax_command() to match other
-   arguments.
- - Kudos in documentation now at the end of the file
-v4:
- - Fixed indentation on previous code
- - Removed unnecessary (acpi_size) and (u32 *) casts
- - Return -EIO on ACPI_FAILURE
- - Appropiate prefixes given to macros
- - 0xFFFFFFFF named WMAX_FAILURE_CODE
- - Added support for a new set of thermal codes. Old ones now have USTT
-   in their names
- - A new quirk has been added to differantiate between the two sets.
-   thermal and thermal_ustt are mutually exclusive
- - Added documentation for WMAX interface
-v3:
- - Removed extra empty line
- - 0x0B named WMAX_ARG_GET_CURRENT_PROF
- - Removed casts to the same type on functions added in this patch
- - Thermal profile to WMAX argument is now an static function and makes
-   use of in-built kernel macros
- - Platform profile is now removed only if it was created first
- - create_platform_profile is now create_thermal_profile to avoid
-   confusion
- - profile_get and profile_set functions renamed too to match the above
-v2:
- - Moved functionality to alienware-wmi driver
- - Added thermal and gmode quirks to add support based on dmi match
- - Performance profile is now GMODE for devices that support it
- - alienware_wmax_command now is insize agnostic to support new thermal
-   methods
-
-Kurt Borja (4):
-  alienware-wmi: fixed indentation and clean up
-  alienware-wmi: alienware_wmax_command() is now input size agnostic
-  alienware-wmi: added platform profile support
-  alienware-wmi: WMAX interface documentation
-
- Documentation/wmi/devices/alienware-wmi.rst | 378 +++++++++++++++++
- MAINTAINERS                                 |   1 +
- drivers/platform/x86/dell/Kconfig           |   1 +
- drivers/platform/x86/dell/alienware-wmi.c   | 435 ++++++++++++++++----
- 4 files changed, 739 insertions(+), 76 deletions(-)
- create mode 100644 Documentation/wmi/devices/alienware-wmi.rst
-
--- 
-2.47.0
-
+Exactly. Example, for booting from emmc, qspi needs to be turned off.
+For reaching SD card or eMMC the boot mode pins need to be mux'd
+accordingly. That's also why for e.g. flashing QSPI from off u-boot
+Enclustra implemented a GPIO based boot mode switch. Same for
+switching the MMCs.
 
