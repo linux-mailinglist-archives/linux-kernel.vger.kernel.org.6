@@ -1,60 +1,79 @@
-Return-Path: <linux-kernel+bounces-379878-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379879-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9DA329AE563
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:53:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB959AE568
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:54:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 52FBBB229AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:52:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CB7771C21386
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:54:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6007F1D63D8;
-	Thu, 24 Oct 2024 12:52:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D1631D63DE;
+	Thu, 24 Oct 2024 12:54:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="i/sBA5UM"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="h/twMj9i"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B49FC17277F;
-	Thu, 24 Oct 2024 12:52:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CC81B1D319B;
+	Thu, 24 Oct 2024 12:53:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774368; cv=none; b=qJAdyMrtRavhlMKc0GYO3iL62AHk6WJXYY8JktBpUqBF5J115R+OPX1q3tDi1buPETFiTXsz6BVyR7QyC2jMA4bnOVFHwS9wVNoZI0DEa+2YH5KAiHi6GQrH2HLW+rxGGX7+ssRw21WeMip5LzyGwgcWunopiMWp7+Q5C/OZTPU=
+	t=1729774441; cv=none; b=ixYcbDfxi2FGJIZi1C4Duw1VBmcyzR69gT+JrEoM8n0J6609AYAKm2n6ITxNr4hLzffVXgACGq4nozpWHptk77+8V9DaGGlyy+CYu4dzj5vwYwI9EdYrjD09/Obt8mBqnAefDZicdoGHaOROwCq3zMlmLt14weno7dZZo9S1Gxo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774368; c=relaxed/simple;
-	bh=VZMvfqMs9VK+URQwyF5bu0BC9mH3LnMJpZHC1P4Hkk4=;
+	s=arc-20240116; t=1729774441; c=relaxed/simple;
+	bh=HUuhAWk3dXLnQPMq/6w0jxdCVg118X9Z6g0zogfDEU8=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Id9F9SZgh6EGfT9y6LCJodCM8BzpVtUdncGtr/hfJTBJFJfUZeD1zaTC0IDPttbr28BQT2hU6xMst+YoV5XpXCL2xhI88PGfoWNawN4dTQsduKtBWIsR1WRhRqWrGnzVqOvcsNENhz6s9S6fJ3oCVL4NHq4uUkZ7ScbE5UhVZVo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=i/sBA5UM; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B8C1EC4CEC7;
-	Thu, 24 Oct 2024 12:52:45 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729774368;
-	bh=VZMvfqMs9VK+URQwyF5bu0BC9mH3LnMJpZHC1P4Hkk4=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=i/sBA5UM6VCbznl1IEyxcuO2JCcxxUb1q6F0qYnGNkVtuzS2Oe/Km11XaTqOjICd+
-	 iwK8Y5D3FK4o50bS1M1dgBvKIYl+KCLAjGMeV+b/XF6/8mDjNHqQBqw3lnMWnMsvIg
-	 T1R+p39COp9lVxtuBFVF5aLWTqx9h/dJ7Sj8h7pyR9AFB4codMCwLLAt1l077WuvD2
-	 l9rb/kEeIVZ26qJ9cQillhMyFE/4EAnQnyYieMFw3Olr/ZfyVsAjAwm3V8YYqVcZYf
-	 6mygk27j4xfsssiS2LKjEAuaudfzbW/dOeqpSZXY/hLkMlDsmhRKJ/mbStmTh4hoOC
-	 bIW3aXkXH+wnQ==
-Date: Thu, 24 Oct 2024 13:52:42 +0100
-From: Will Deacon <will@kernel.org>
-To: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-Cc: robdclark@gmail.com, robin.murphy@arm.com, joro@8bytes.org,
-	jgg@ziepe.ca, jsnitsel@redhat.com, robh@kernel.org,
-	krzysztof.kozlowski@linaro.org, quic_c_gdjako@quicinc.com,
-	dmitry.baryshkov@linaro.org, iommu@lists.linux.dev,
-	linux-arm-msm@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kernel@vger.kernel.org,
-	Konrad Dybcio <konrad.dybcio@linaro.org>
-Subject: Re: [PATCH v16 1/5] iommu/arm-smmu: re-enable context caching in
- smmu reset operation
-Message-ID: <20241024125241.GD30704@willie-the-truck>
-References: <20241008125410.3422512-1-quic_bibekkum@quicinc.com>
- <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=aFyC3qiOh49w/G8MfbFg1YoCaSN0YZttz3pJJjfePXhlbNiEK3LVOyWKNMlRvtCWu6aFkQB5RXUtk0CQCKyre+DqJ3tetFgF1DqH4hte5F/AJaHBQEO/zHxV78Dk4SYmQiU2kBHwBRpFyWFpti7sZOcINfJLU/+jgzn2QdUPGq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=h/twMj9i; arc=none smtp.client-ip=192.198.163.12
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729774439; x=1761310439;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=HUuhAWk3dXLnQPMq/6w0jxdCVg118X9Z6g0zogfDEU8=;
+  b=h/twMj9iyxDgIK1xNShcTxbYu34r8LmGLfm78Ks2T3pYSuMebxGYtMut
+   r4YtSw4giXhKLSOnDnoihWQ3nYgMT5QYkKJ6CBmajl36rEzOSK/GUkqgn
+   R80HQtXBoI0/XBP7sw6ZHwKbWDO1UUUjExtwnSRr1PCebc+iL7ko2n3Uc
+   BhcvOev7c7HJsul3W9/4rlvU96o5Eh2QJOHxpbKMOhisBagPLYxibqL63
+   HIAZYWOEprFpgrzdGbzgM9pictpkfYIbHoiBJsW8TwK1ijuEzjkLlUHMJ
+   ZYp/kpfE+Z0sWadNVBgKldd1RVciw8QpBSgvKPUU86j8+hXHn/PM6xsp/
+   Q==;
+X-CSE-ConnectionGUID: Pt/EvxJ4RZGStFXH5FByHA==
+X-CSE-MsgGUID: 696ex9sdQemjfC2gTK0fWw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="33305510"
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="33305510"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 05:53:58 -0700
+X-CSE-ConnectionGUID: CYQhb0LyQ/O314nR33NJFw==
+X-CSE-MsgGUID: T60QwaPzQhGgKJLZPt2oiA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="84560553"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Oct 2024 05:53:54 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3xLc-000WRA-04;
+	Thu, 24 Oct 2024 12:53:52 +0000
+Date: Thu, 24 Oct 2024 20:53:28 +0800
+From: kernel test robot <lkp@intel.com>
+To: Ryan Chen <ryan_chen@aspeedtech.com>, lee@kernel.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au,
+	andrew@codeconstruct.com.au, mturquette@baylibre.com,
+	sboyd@kernel.org, p.zabel@pengutronix.de,
+	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, dmitry.baryshkov@linaro.org
+Cc: oe-kbuild-all@lists.linux.dev
+Subject: Re: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+Message-ID: <202410242017.1valHJUC-lkp@intel.com>
+References: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,78 +82,61 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241008125410.3422512-2-quic_bibekkum@quicinc.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20241023090153.1395220-4-ryan_chen@aspeedtech.com>
 
-On Tue, Oct 08, 2024 at 06:24:06PM +0530, Bibek Kumar Patro wrote:
-> Default MMU-500 reset operation disables context caching in
-> prefetch buffer. It is however expected for context banks using
-> the ACTLR register to retain their prefetch value during reset
-> and runtime suspend.
-> 
-> Replace default MMU-500 reset operation with Qualcomm specific reset
-> operation which envelope the default reset operation and re-enables
-> context caching in prefetch buffer for Qualcomm SoCs.
-> 
-> Reviewed-by: Konrad Dybcio <konrad.dybcio@linaro.org>
-> Signed-off-by: Bibek Kumar Patro <quic_bibekkum@quicinc.com>
-> ---
->  drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c | 45 ++++++++++++++++++++--
->  1 file changed, 42 insertions(+), 3 deletions(-)
-> 
-> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> index 087fb4f6f4d3..0cb10b354802 100644
-> --- a/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu-qcom.c
-> @@ -16,6 +16,16 @@
-> 
->  #define QCOM_DUMMY_VAL	-1
-> 
-> +/*
-> + * SMMU-500 TRM defines BIT(0) as CMTLB (Enable context caching in the
-> + * macro TLB) and BIT(1) as CPRE (Enable context caching in the prefetch
-> + * buffer). The remaining bits are implementation defined and vary across
-> + * SoCs.
-> + */
-> +
-> +#define CPRE			(1 << 1)
-> +#define CMTLB			(1 << 0)
-> +
->  static struct qcom_smmu *to_qcom_smmu(struct arm_smmu_device *smmu)
->  {
->  	return container_of(smmu, struct qcom_smmu, smmu);
-> @@ -396,11 +406,40 @@ static int qcom_smmu_def_domain_type(struct device *dev)
->  	return match ? IOMMU_DOMAIN_IDENTITY : 0;
->  }
-> 
-> +static int qcom_smmu500_reset(struct arm_smmu_device *smmu)
-> +{
-> +	int ret;
-> +	u32 val;
-> +	int i;
-> +
-> +	ret = arm_mmu500_reset(smmu);
-> +	if (ret)
-> +		return ret;
-> +
-> +	/*
-> +	 * arm_mmu500_reset() disables CPRE which is re-enabled here.
-> +	 * The errata for MMU-500 before the r2p2 revision requires CPRE to be
-> +	 * disabled. The arm_mmu500_reset function disables CPRE to accommodate all
-> +	 * RTL revisions. Since all Qualcomm SoCs are on the r2p4 revision, where
-> +	 * the CPRE bit can be enabled, the qcom_smmu500_reset function re-enables
-> +	 * the CPRE bit for the next-page prefetcher to retain the prefetch value
-> +	 * during reset and runtime suspend operations.
-> +	 */
-> +
-> +	for (i = 0; i < smmu->num_context_banks; ++i) {
-> +		val = arm_smmu_cb_read(smmu, i, ARM_SMMU_CB_ACTLR);
-> +		val |= CPRE;
-> +		arm_smmu_cb_write(smmu, i, ARM_SMMU_CB_ACTLR, val);
-> +	}
+Hi Ryan,
 
-If CPRE only needs to be disabled prior to r2p2, then please teach the
-MMU-500 code about that instead of adding qualcomm-specific logic here.
+kernel test robot noticed the following build warnings:
 
-Will
+[auto build test WARNING on clk/clk-next]
+[also build test WARNING on pza/reset/next lee-mfd/for-mfd-next lee-leds/for-leds-next linus/master lee-mfd/for-mfd-fixes v6.12-rc4 next-20241024]
+[cannot apply to pza/imx-drm/next]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
+
+url:    https://github.com/intel-lab-lkp/linux/commits/Ryan-Chen/dt-bindings-mfd-aspeed-support-for-AST2700/20241023-170434
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/clk/linux.git clk-next
+patch link:    https://lore.kernel.org/r/20241023090153.1395220-4-ryan_chen%40aspeedtech.com
+patch subject: [PATCH v6 3/3] clk: aspeed: add AST2700 clock driver.
+config: arm64-randconfig-r133-20241024 (https://download.01.org/0day-ci/archive/20241024/202410242017.1valHJUC-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+reproduce: (https://download.01.org/0day-ci/archive/20241024/202410242017.1valHJUC-lkp@intel.com/reproduce)
+
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410242017.1valHJUC-lkp@intel.com/
+
+All warnings (new ones prefixed by >>):
+
+   In file included from drivers/clk/clk-ast2700.c:17:
+>> include/soc/aspeed/reset-aspeed.h:14:5: warning: no previous prototype for function 'aspeed_reset_controller_register' [-Wmissing-prototypes]
+      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+         |     ^
+   include/soc/aspeed/reset-aspeed.h:14:1: note: declare 'static' if the function is not intended to be used outside of this translation unit
+      14 | int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+         | ^
+         | static 
+   1 warning generated.
+
+
+vim +/aspeed_reset_controller_register +14 include/soc/aspeed/reset-aspeed.h
+
+1476d29e4461f6 Ryan Chen 2024-10-23   9  
+1476d29e4461f6 Ryan Chen 2024-10-23  10  #if IS_ENABLED(CONFIG_RESET_ASPEED)
+1476d29e4461f6 Ryan Chen 2024-10-23  11  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+1476d29e4461f6 Ryan Chen 2024-10-23  12  				     const char *adev_name);
+1476d29e4461f6 Ryan Chen 2024-10-23  13  #else
+1476d29e4461f6 Ryan Chen 2024-10-23 @14  int aspeed_reset_controller_register(struct device *clk_dev, void __iomem *base,
+1476d29e4461f6 Ryan Chen 2024-10-23  15  				     const char *adev_name)
+1476d29e4461f6 Ryan Chen 2024-10-23  16  {
+1476d29e4461f6 Ryan Chen 2024-10-23  17  	return -ENODEV;
+1476d29e4461f6 Ryan Chen 2024-10-23  18  }
+1476d29e4461f6 Ryan Chen 2024-10-23  19  #endif /* if IS_ENABLED(CONFIG_RESET_ASPEED) */
+1476d29e4461f6 Ryan Chen 2024-10-23  20  
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
