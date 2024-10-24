@@ -1,126 +1,210 @@
-Return-Path: <linux-kernel+bounces-380113-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380116-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F31BB9AE919
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:40:51 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id CDEC19AE921
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:41:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2DBA41C21FE3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:40:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 520F01F21C48
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:41:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51DA21E3765;
-	Thu, 24 Oct 2024 14:40:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 414E11EC00A;
+	Thu, 24 Oct 2024 14:40:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="oTa5I9R+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="cdKeYq31"
+Received: from mail-io1-f45.google.com (mail-io1-f45.google.com [209.85.166.45])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7BF0C1E5735;
-	Thu, 24 Oct 2024 14:40:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E19021E32C4
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:40:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.45
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780831; cv=none; b=rOBoJBnudzbYPNhHQJGh3cgiTfiOrHkIa+Cmr23p5BfLFO3C10eGpv8pYvnMCFTSTEKImBXVVzw2nMbVn1Q5Z1nwetBi+8/aP1Bh5/E3Lb4Yb/JGlZROofdb4kzKECBi+xKo0oS+pT+YI1n9e3pSHdB4DK/G73NWU1XZksfP64w=
+	t=1729780844; cv=none; b=W9pkYyDqpFVqW8VrVwcQ7MfRkagpNKuIa0dS7VJK+mv4nGvBjVpcu2Oki4bwXMF5HdWRgoDDpyEhicU9aVCrP2oE47XMsMTwc1O/Hi5gteo8CRYzYwrBDvrJISgk7o/O5TextYHoYJ2T/yCfZUNugjOtb5WxFmyJV7S2obEz4iA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780831; c=relaxed/simple;
-	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=XPVLeUHFPykKVtn2+AYQNkJXe8RnUS18vc/hEuMluTy8KOF40UIFmzigHK5MGTLS/EqHefRrQLdqsWzjYgeQ/z1XHPQgxQTAbo0R5llWnV7zKLhFy5QB2ms1o70Pm7z9J+8C5n5iy2HPjjqVc11dr4P+4R52uQOn/4d4edEXOkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=oTa5I9R+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 80094C4CEC7;
-	Thu, 24 Oct 2024 14:40:30 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729780831;
-	bh=PLdPNWEGAxUx7bs29I+xXhoPOoEWXEpUgtcBm+uEJq8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=oTa5I9R+zDvC61UZ/jQMxvUG/O2HJqLMjvYPNxvWoWZRvvUWKA+82QBebsQE4uVWI
-	 cPQIsEMF2VEIUjP6vYa6m8QRoSxuqSBBv2zbcYgnKtouSQoHvYzTpJ05nF1lUt/Rr4
-	 3oucgT721Ii9Q7Q/C2N7aUFOC7OsXN0MT9uGr9r2HzSYq62Y6ZTdoKQ4BznXZzJzQL
-	 4/OgXqYKXftwcyU3F68cLHDuUmaCJgulC0slRXttv88DVD35DHA1rjQTUupm/zeZPW
-	 rxVjJJ3R+Rh1IZtk08zn6WYA/gzf4cOfeivuNFzTPr06y9nd1a3LUNt+GO5XRMzZpl
-	 kMy+7rETutDsw==
-Date: Thu, 24 Oct 2024 16:40:28 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: =?utf-8?B?TWHDrXJh?= Canal <mcanal@igalia.com>, 
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Michael Turquette <mturquette@baylibre.com>, 
-	Stephen Boyd <sboyd@kernel.org>, Javier Martinez Canillas <javierm@redhat.com>, 
-	Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org, 
-	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org, Dom Cobley <popcornmix@gmail.com>
-Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
- gpu clocks
-Message-ID: <20241024-intelligent-proficient-python-720a0c@houat>
-References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
- <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
+	s=arc-20240116; t=1729780844; c=relaxed/simple;
+	bh=Zqyf6G7EWpyPb0E6EP/8o4ogo4doOTNJFut5sn+GPt0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Aq4l+MKFfCU+8um9omJo3NWoCjwNsm92rjB+73d/NM3hIqV6juqI09EhGTYEudcID4Qg7rO9sTqn0XeSCw+FAflkR/YMiwalEnojos7YRJgpbd4pcQP3Ki8tvkJ9AZVSIb4u+smREskBYC7oDrmmh/JrzAoMVwAQmPZvvf4OFLY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=cdKeYq31; arc=none smtp.client-ip=209.85.166.45
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
+Received: by mail-io1-f45.google.com with SMTP id ca18e2360f4ac-83ab9445254so42321239f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:40:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729780839; x=1730385639; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=c8dgch9h6/ddwkKcahJf8uCo+FVSUUTd8MNxrHmVrWk=;
+        b=cdKeYq31MZVKougG1wfxrXkNMP43cmqUEv54h2W1aiUkIszJ02cCJwsZPTMlfFdZvF
+         uUWO93cK9n6Fwc/YWqaR3+PIZwjbyvJhKF1I0bXBDRwEGwb3sZtGuQ4V3u5v/+KMdhSn
+         dLWN9h8G18VuOyjZVJYGq/p+bDipMCIhC0fAnq/1EhXAlXSaZKcfgwOTOs6R0CqeeaY/
+         1jqpSUiPowhJ2VrhR+UzNEQz0egpptTF9VEpZ9lb5JNCsy2h39KqVM7HLM3pjuKfCKL+
+         OjksLOzjwKW866Hq98IvToNDp6vSkxwokefWNHd8gvJku3YUxg9WL475H2WNkmvAhtaE
+         +6yA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729780839; x=1730385639;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=c8dgch9h6/ddwkKcahJf8uCo+FVSUUTd8MNxrHmVrWk=;
+        b=or8xKEY86Huld0K522Pr00t9zzSK0uyQz4cnTl7U2EhnAaY/JhPc0c04Vd6cQGmiAP
+         ECobAB4Gwq1rdWRzUJom3gBnB6flEeEYkiY9gO9tfJSsFt71in05/mrkbY7reMLYDG0p
+         AEIrLv5Bec/kCaqFf/pX2gNkRQ1jmrblzHj3niTJM4zFkdB85yhsPwsyV2fTJ01t2lI3
+         9S49HCMYDPvWupd9pucd/Gu5VHQA5tFgshjANu2GXvyiQ9oyjOoquRmb3kZGsHG6Kr9E
+         NwLS98pa58iHBSr9F8tFzaeT9w+ocwUbmt8ODOq3wkO577bBYgrp9LhjNJA8PHeuLfs7
+         gMCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWEHh/v+RZa64OxVb3YavFhXS9+CbukGww5u2oBcLcmC1a61Hx6eh7Zr7KM3GfD8xJ/G4ESMMAGpkYFcvo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YztXgezTo5g0IwRNXD4s6HQhmjN8dl2abx/AfkPwVrq16E6HHTU
+	ndvIsKMxdbvVetzQvfbojEsuRiixIJdBwe50nPb/Ly95/xg3u4BunqG5Vfy6qIA=
+X-Google-Smtp-Source: AGHT+IEPUVvgxne25Bp0uIrpKmbnJk51XcDluIHPBNH8hGAkBt9cRAM+LoNsopUyfgAaVBbnBBvCKw==
+X-Received: by 2002:a05:6602:2cc9:b0:83a:aa8e:5f72 with SMTP id ca18e2360f4ac-83af6163931mr618697939f.4.1729780838796;
+        Thu, 24 Oct 2024 07:40:38 -0700 (PDT)
+Received: from [192.168.1.116] ([96.43.243.2])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc49baafd1sm1440243173.104.2024.10.24.07.40.37
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 07:40:38 -0700 (PDT)
+Message-ID: <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
+Date: Thu, 24 Oct 2024 08:40:37 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="osg67ubcsv3cmq32"
-Content-Disposition: inline
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-31-1cc2d5594907@raspberrypi.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
+To: Pavel Begunkov <asml.silence@gmail.com>, hexue <xue01.he@samsung.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
+ <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
+ <20241024023805.1082769-1-xue01.he@samsung.com>
+ <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+ <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
+Content-Language: en-US
+From: Jens Axboe <axboe@kernel.dk>
+In-Reply-To: <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 10/24/24 8:26 AM, Pavel Begunkov wrote:
+> On 10/24/24 15:18, Jens Axboe wrote:
+>> On 10/23/24 8:38 PM, hexue wrote:
+>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
+> ...
+>>> When the number of threads exceeds the number of CPU cores,the
+>>> database throughput does not increase significantly. However,
+>>> hybrid polling can releasing some CPU resources during the polling
+>>> process, so that part of the CPU time can be used for frequent
+>>> data processing and other operations, which speeds up the reading
+>>> process, thereby improving throughput and optimizaing database
+>>> performance.I tried different compression strategies and got
+>>> results similar to the above table.(~30% throughput improvement)
+>>>
+>>> As more database applications adapt to the io_uring engine, I think
+>>> the application of hybrid poll may have potential in some scenarios.
+>>
+>> Thanks for posting some numbers on that part, that's useful. I do
+>> think the feature is useful as well, but I still have some issues
+>> with the implementation. Below is an incremental patch on top of
+>> yours to resolve some of those, potentially. Issues:
+>>
+>> 1) The patch still reads a bit like a hack, in that it doesn't seem to
+>>     care about following the current style. This reads a bit lazy/sloppy
+>>     or unfinished. I've fixed that up.
+>>
+>> 2) Appropriate member and function naming.
+>>
+>> 3) Same as above, it doesn't care about proper placement of additions to
+>>     structs. Again this is a bit lazy and wasteful, attention should be
+>>     paid to where additions are placed to not needlessly bloat
+>>     structures, or place members in cache unfortunate locations. For
+>>     example, available_time is just placed at the end of io_ring_ctx,
+>>     why? It's a submission side member, and there's room with other
+>>     related members. Not only is the placement now where you'd want it to
+>>     be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
+>>
+>> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
+>>     that we can share space with the polling hash_node. This obviously
+>>     needs careful vetting, haven't done that yet. IOPOLL setups should
+>>     not be using poll at all. This needs extra checking. The poll_state
+>>     can go with cancel_seq_set, as there's a hole there any. And just
+>>     like that, rather than add 24b to io_kiocb, it doesn't take any extra
+>>     space at all.
+>>
+>> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
+>>     please use a name related to that. And require IOPOLL being set with
+>>     HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
+>>     HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
+>>     can't exist without that.
+>>
+>> Please take a look at this incremental and test it, and then post a v9
+>> that looks a lot more finished. Caveat - I haven't tested this one at
+>> all. Thanks!
+>>
+>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+>> index c79ee9fe86d4..6cf6a45835e5 100644
+>> --- a/include/linux/io_uring_types.h
+>> +++ b/include/linux/io_uring_types.h
+>> @@ -238,6 +238,8 @@ struct io_ring_ctx {
+>>           struct io_rings        *rings;
+>>           struct percpu_ref    refs;
+>>   +        u64            poll_available_time;
+>> +
+>>           clockid_t        clockid;
+>>           enum tk_offsets        clock_offset;
+>>   @@ -433,9 +435,6 @@ struct io_ring_ctx {
+>>       struct page            **sqe_pages;
+>>         struct page            **cq_wait_page;
+>> -
+>> -    /* for io_uring hybrid poll*/
+>> -    u64            available_time;
+>>   };
+>>     struct io_tw_state {
+>> @@ -647,9 +646,22 @@ struct io_kiocb {
+>>         atomic_t            refs;
+>>       bool                cancel_seq_set;
+>> +    bool                poll_state;
+> 
+> As mentioned briefly before, that can be just a req->flags flag
 
---osg67ubcsv3cmq32
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH 31/37] clk: bcm: rpi: Allow cpufreq driver to also adjust
- gpu clocks
-MIME-Version: 1.0
+That'd be even better, I generally despise random bool addition.
 
-On Wed, Oct 23, 2024 at 05:50:28PM +0100, Dave Stevenson wrote:
-> From: Dom Cobley <popcornmix@gmail.com>
->=20
-> For performance/power it is beneficial to adjust gpu clocks with arm cloc=
-k.
-> This is how the downstream cpufreq driver works
->=20
-> Signed-off-by: Dom Cobley <popcornmix@gmail.com>
-> Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
-> ---
->  drivers/clk/bcm/clk-raspberrypi.c | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
->=20
-> diff --git a/drivers/clk/bcm/clk-raspberrypi.c b/drivers/clk/bcm/clk-rasp=
-berrypi.c
-> index 6d5ee1cddded..274176a938c6 100644
-> --- a/drivers/clk/bcm/clk-raspberrypi.c
-> +++ b/drivers/clk/bcm/clk-raspberrypi.c
-> @@ -156,7 +156,7 @@ static int raspberrypi_clock_property(struct rpi_firm=
-ware *firmware,
->  	struct raspberrypi_firmware_prop msg =3D {
->  		.id =3D cpu_to_le32(data->id),
->  		.val =3D cpu_to_le32(*val),
-> -		.disable_turbo =3D cpu_to_le32(1),
-> +		.disable_turbo =3D cpu_to_le32(0),
+>>       struct io_task_work        io_task_work;
+>> -    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+>> -    struct hlist_node        hash_node;
+>> +    union {
+>> +        /*
+>> +         * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
+>> +         * poll
+>> +         */
+>> +        struct hlist_node    hash_node;
+>> +        /*
+>> +         * For IOPOLL setup queues, with hybrid polling
+>> +         */
+>> +        struct {
+>> +            u64        iopoll_start;
+>> +            u64        iopoll_end;
+> 
+> And IIRC it doesn't need to store the end as it's used immediately
+> after it's set in the same function.
 
-I guess we can simply remove that line?
+Nice, that opens up the door for less esoteric sharing as well. And
+yeah, I'd just use:
 
-Maxime
+runtime = ktime_get_ns() - req->iopoll_start - sleep_time;
 
---osg67ubcsv3cmq32
-Content-Type: application/pgp-signature; name="signature.asc"
+in io_uring_hybrid_poll() and kill it entirely, doesn't even need a
+local variable there. And then shove iopoll_start into the union with
+comp_list/apoll_events.
 
------BEGIN PGP SIGNATURE-----
+My main points are really: don't randomly sprinkle additions to structs.
+Think about if they are needed, and if they are, be a bit smarter about
+where to place them. The original patch did neither of those, and that's
+a non-starter.
 
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxpcVwAKCRAnX84Zoj2+
-dhWuAYD5PMJD9prMYHyBdObDqF92o81SwNrQ04NtnD5jG5jYeEpmA3MzmyqCAh/o
-7YBXa68BgIzZ4yp54frmW6KMod1/8J/vZSTgQD/IZkrDqafE7+wZ06WmivkbUo6B
-zfJw7nahEg==
-=mmzK
------END PGP SIGNATURE-----
-
---osg67ubcsv3cmq32--
+-- 
+Jens Axboe
 
