@@ -1,122 +1,120 @@
-Return-Path: <linux-kernel+bounces-380228-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380229-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB47A9AEA92
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:34:19 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D96159AEA95
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:34:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8EA72281616
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:34:17 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 911621F22B2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:34:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC5981EF938;
-	Thu, 24 Oct 2024 15:34:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DD901C728E;
+	Thu, 24 Oct 2024 15:34:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="N+d2AuwH"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Ly4TswQj"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 294891E8833;
-	Thu, 24 Oct 2024 15:34:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D4DA816DC36
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:34:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784052; cv=none; b=FMM0HHW7zG6lCBLXuBvpZuemJX9d8LaP8QHQ6W96l42MDeN5sxnnjdA/9134kkNlG5CXxopXKNV2uagS///HUbhrwZpa/lot5k+ne2ZiPJsviZGOFuMOWJ7deI/iBHojnenPutGyj6gkEEAIsYUgeAgeVInRpUkF0Y+TrLGo9d0=
+	t=1729784067; cv=none; b=f+m15p9oaBHw1NbIg6wc6RGJasym5Q86q6S6w+t6EULjiWvCzX4zEbCat8wdV7iSqrRe0RlUL8G4Mtm32NDWzSBXwiv1XwdfZcUVZ/UqL5F7Vhpv8ru6Tynn9Gti77Z6JEa4VcL/sFAuljQeqXHCFgmlRP3KHFpwHysNo2nbuRY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784052; c=relaxed/simple;
-	bh=V0mys8VKe+wh2bASr2FBVzaXHPp9Hknt6GUorObUwnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=qCxWuiCypO27ICHzM0B7Zu8m+6/oem9peyWGncIbhXxG9qFIByE5pUlHORWH6Mdcr0o1gkKrXrvg3wNpI0/shPh/c1lhrcW1dTA8XFkXf7xE9QM+GPROKMFcO6TBwflq8w1hfo4HGZo+YC9XCj4P0ATYnn1yTOZCr6H+yZkAxuk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=N+d2AuwH; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729784050; x=1761320050;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=V0mys8VKe+wh2bASr2FBVzaXHPp9Hknt6GUorObUwnI=;
-  b=N+d2AuwH1p7Lzq54EXDPntlCO9mEm+kgyJT4ValNcFbpTwRtGKlMAUEz
-   A2WvA4b2gvnWrYC7Z5FTDsCbmsidq54JRk/Vjq46g4tjQhUQD1NwEWjon
-   n2gviIJH9n7NO6elhAv9cb0b66jFgVFKhA+m0npIbtgKliMVb0ZVu6qq5
-   SajWAlg5SlghstfyBUGiDQFb9kmxMSorMpjlzqLUGIAssQa0IsKTbtSAL
-   oRhQEVSeKWK7rMZIkcUsRYlKwzlnRXRpvqgncC0uX7+i4tn+kfl/4gvND
-   aPZEpdrjJ0d0UmmO8uDygh8jNL17bsw8bmy2N+2gmmpqPTk509QIh3+ED
-   g==;
-X-CSE-ConnectionGUID: lsf9YFQ9SOynJH7wBr3EOg==
-X-CSE-MsgGUID: 6tE7FM9nRbChir1z4DJ92g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29583192"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29583192"
-Received: from orviesa007.jf.intel.com ([10.64.159.147])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 08:34:09 -0700
-X-CSE-ConnectionGUID: gW42Oo/YQu2zuGBgdWh9Hw==
-X-CSE-MsgGUID: snwWtF/4TK+EHgsFint1IA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="81059031"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
-  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 08:34:06 -0700
-Message-ID: <b2cdf533-08f0-487b-998f-0d436be923f5@intel.com>
-Date: Thu, 24 Oct 2024 23:34:02 +0800
+	s=arc-20240116; t=1729784067; c=relaxed/simple;
+	bh=DmaNumx1B9Ch/TRtvCjSsjZvuo2pfUkSNhQa17xSru8=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=bCht0WtBoOg1rcIkwIDDFBosAPI4MSi6SbcoQvRvyLAITD4bpb8FI00pdT9GOhW/EOSQLlGOE3+29+wzxdM8Sw7lM3zIi2E4QCVN5zKRadbaz3vkIt8tvgNSGqnKcBT3kRHiNhBFTdQTX7lH0VNxEhHVnqT3SpCWTNlL3c2OxpE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Ly4TswQj; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729784064;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding;
+	bh=cXUUAup2BSwJWOmEG3JvcIkWwS4Ltp5hO2So1hfEC/o=;
+	b=Ly4TswQjUigPdDyQpOnyiLkp647XrzN//peO3MQn1/FRUR4QtvtIvxsfQfL3jE3sSRCuDu
+	z7xMythkCxyPl227uVSuK/kl1GWwqM/GpL3mB0Kc9NZkECxBeAzgLNYEnyOkkz7jrWToba
+	P8pIew0D+zI3vkXn95P+pZsUBlFYXi0=
+Received: from mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-613-Pkhxl-hhPlWK5XtZSJRhmA-1; Thu,
+ 24 Oct 2024 11:34:21 -0400
+X-MC-Unique: Pkhxl-hhPlWK5XtZSJRhmA-1
+Received: from mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.4])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id EF16C1955D50;
+	Thu, 24 Oct 2024 15:34:19 +0000 (UTC)
+Received: from cantor.redhat.com (unknown [10.2.144.217])
+	by mx-prod-int-01.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 287D73000198;
+	Thu, 24 Oct 2024 15:34:17 +0000 (UTC)
+From: Jerry Snitselaar <jsnitsel@redhat.com>
+To: iommu@lists.linux.dev
+Cc: Robin Murphy <robin.murphy@arm.com>,
+	Joerg Roedel <joro@8bytes.org>,
+	Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org
+Subject: [PATCH] iommu/dma: Reserve iova ranges for reserved regions of all devices
+Date: Thu, 24 Oct 2024 08:34:12 -0700
+Message-ID: <20241024153412.141765-1-jsnitsel@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 05/13] x86/sev: Prevent RDTSC/RDTSCP interception for
- Secure TSC enabled guests
-To: "Nikunj A. Dadhania" <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-6-nikunj@amd.com>
- <aff9bf82-e11e-43d9-8661-aefa328242ad@intel.com>
- <de0b0551-003d-0cc8-9015-9124c25f5d43@amd.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <de0b0551-003d-0cc8-9015-9124c25f5d43@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+X-Scanned-By: MIMEDefang 3.4.1 on 10.30.177.4
 
-On 10/24/2024 4:44 PM, Nikunj A. Dadhania wrote:
-> 
-> 
-> On 10/24/2024 1:26 PM, Xiaoyao Li wrote:
->> On 10/21/2024 1:51 PM, Nikunj A Dadhania wrote:
->>> The hypervisor should not be intercepting RDTSC/RDTSCP when Secure TSC is
->>> enabled. A #VC exception will be generated if the RDTSC/RDTSCP instructions
->>> are being intercepted. If this should occur and Secure TSC is enabled,
->>> terminate guest execution.
->>
->> There is another option to ignore the interception and just return back to
->> guest execution.
-> 
-> That is not correct, RDTSC/RDTSCP should return the timestamp counter value
-> computed using the GUEST_TSC_SCALE and GUEST_TSC_OFFSET part of VMSA.
+Only the first device that is passed when the domain is set up will
+have its reserved regions reserved in the iova address space.  So if
+there are other devices in the group with unique reserved regions,
+those regions will not get reserved in the iova address space.  All of
+the ranges do get set up in the iopagetables via calls to
+iommu_create_device_direct_mappings for all devices in a group.
 
-Ah, I missed this. Yes, if ignore the interception, guest needs to do 
-TSC scale itself with GUEST_TSC_SCALE and GUEST_TSC_OFFSET to get the 
-correct TSC. It's complicating things while making not intercepting 
-RDTSC/RDTSP a hard requirement is much simple.
+In the case of vt-d system this resulted in messages like the following:
 
-I think it's worth adding it as the justification.
+[ 1632.693264] DMAR: ERROR: DMA PTE for vPFN 0xf1f7e already set (to f1f7e003 not 173025001)
 
->> I think it better to add some justification on why make it> fatal and terminate the guest is better than ignoring the interception.
-> 
-> How about the below updated commit message:
-> 
-> The hypervisor should not be intercepting RDTSC/RDTSCP when Secure TSC is
-> enabled. A #VC exception will be generated if the RDTSC/RDTSCP instructions
-> are being intercepted. If this should occur and Secure TSC is enabled,
-> terminate guest execution as the guest cannot rely on the TSC value provided
-> by the hypervisor.
-> 
-> Regards
-> Nikunj
-> 
+To make sure iova ranges are reserved for the reserved regions all of
+the devices, call iova_reserve_iommu_regions in iommu_dma_init_domain
+prior to exiting in the case where the domain is already initialized.
+
+Cc: Robin Murphy <robin.murphy@arm.com>
+Cc: Joerg Roedel <joro@8bytes.org>
+Cc: Will Deacon <will@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Cc: stable@vger.kernel.org
+Fixes: 7c1b058c8b5a ("iommu/dma: Handle IOMMU API reserved regions")
+Signed-off-by: Jerry Snitselaar <jsnitsel@redhat.com>
+---
+Robin: I wasn't positive if this is the correct solution, or if it should be
+       done for the entire group at once.
+
+ drivers/iommu/dma-iommu.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/iommu/dma-iommu.c b/drivers/iommu/dma-iommu.c
+index 2a9fa0c8cc00..5fd3cccbb233 100644
+--- a/drivers/iommu/dma-iommu.c
++++ b/drivers/iommu/dma-iommu.c
+@@ -707,7 +707,7 @@ static int iommu_dma_init_domain(struct iommu_domain *domain, struct device *dev
+ 			goto done_unlock;
+ 		}
+ 
+-		ret = 0;
++		ret = iova_reserve_iommu_regions(dev, domain);
+ 		goto done_unlock;
+ 	}
+ 
+-- 
+2.44.0
 
 
