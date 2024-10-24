@@ -1,261 +1,134 @@
-Return-Path: <linux-kernel+bounces-380643-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380644-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 032CD9AF407
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:46:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A2B7F9AF40B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:48:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47676B225A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:46:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38C001F2210F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:48:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1E5102178ED;
-	Thu, 24 Oct 2024 20:45:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C8911F5831;
+	Thu, 24 Oct 2024 20:48:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="BKndqoH4"
-Received: from mail-yw1-f181.google.com (mail-yw1-f181.google.com [209.85.128.181])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="T7OcwCPE"
+Received: from mail-lj1-f173.google.com (mail-lj1-f173.google.com [209.85.208.173])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 45DFC2003C2;
-	Thu, 24 Oct 2024 20:45:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8CB0A22B665
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 20:48:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729802747; cv=none; b=p0ohv6b5JqwxuaRebBWjpHaS0QpEvfQ20hpOl7YYW9oAyxWrgUjJsCbk5Z1A3PXAd6bQUhNfnLKskqX4keaKnqADS/3fnYb4Dnc3Zgt9uL3+76TCUaX/Mt5DkoguGx3TGDgg73cuhkJ5nBOcFcuEct4yryiIfkbCRKaXn/J9kdY=
+	t=1729802888; cv=none; b=tGU2k2Z4uSU+hx1QOFoG5d/brOvWhwgdF3HNFc2A8+QsKhYNF9vQUyjl+rD3IRTP2frgRM6bpZ1XK3YqoOURjJNvse0oYe/qx44zKkJAJY4dz2LubwJDuoMtIIp9r4NKV7hBAIzMDn3SLMY6MJ4uTBgOtdCzBWPUOEmtAmO+kRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729802747; c=relaxed/simple;
-	bh=3ayg46zIKeFZoO+X2Wcnl0LIEXu6WGk1odc9VLIfr8Q=;
+	s=arc-20240116; t=1729802888; c=relaxed/simple;
+	bh=uscNUaQqzc42Vj7KMQrrjFPhlKfSrJyEtDD2uRa1GNc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RO8yFf0MkU/dAysEdskFTCNCA9nqhpIRT8TNKbdPrVNJJ2AvhTi7iAH4SMcpfznJmvXU/zifGjviu2up7Q+ASQWrQXYoOnus861+UIN5v75uzOoQF6UuIUoSIkQPQRj5vIbR25WTa2WxJSZMPRoE9iVGLBzEu7DDyzSPTXrXcoU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=BKndqoH4; arc=none smtp.client-ip=209.85.128.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f181.google.com with SMTP id 00721157ae682-6e3cdbc25a0so17536877b3.2;
-        Thu, 24 Oct 2024 13:45:44 -0700 (PDT)
+	 To:Cc:Content-Type; b=ATIcpp7R4ZyzoRwa0Ygv8KUphmZzejRakN9weaUdWg4LWLwdMYT4JtqXdRrgJFqKFsHbz+l+MKopcs+7btAPxUaB4vOAJda2GjjOMswsuZg8DyGnl5srjXjx2ZcBbf7YzvElPmsXv3UW40iLGNAnp1tUPf/2aAr1cmOpD3gDX4Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=T7OcwCPE; arc=none smtp.client-ip=209.85.208.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-lj1-f173.google.com with SMTP id 38308e7fff4ca-2fb470a8b27so22322331fa.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:48:06 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729802743; x=1730407543; darn=vger.kernel.org;
+        d=chromium.org; s=google; t=1729802884; x=1730407684; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=/2U/xmqL6VmN2LwWpIEhhcQQ83Rsr/TgmHhM2/FpOoo=;
-        b=BKndqoH47f6os80/G4+SGnlBXPKAVRS/IHFZ2N0HDLzRTF3JuRSXm4lEszvOMWEyXO
-         DtQ6N/zweuyRF5JhrlwHLzC35dTVFvNCT+hG4c50+lu8tTBpfp5CpW4ZUpNwGzlfHEzs
-         dfl8Kr8qCVFF044e33hXTXH4/WGZ59XPsJK6CaqfO7/KhN3Ljb2cedJUCVKZnmr8cygW
-         pupjD34e0hwsG3lTrpA/OjThLgh7Cb4hX9KbzMB+l/oD1yUMIL0THykfb4d016q5vOKh
-         62DGB+A/IVijYX1oYm7JUQ+xXHzmTRt1i+L1PzwFNyq/46U4ULgtJ7IYxyccOnD/JwRJ
-         Fhjw==
+        bh=MylHOwKXaTo3xQDXg/sSZOBifyCTeLdawXaFYKq87vU=;
+        b=T7OcwCPELCO27sPBtmhEJ/rDOxANkHHR4aFr8Rz7GgFJ5eAr2SE3PHmM/kV1cXUE68
+         km8mvIN3nZkYC6qDApDGBKrT6RN4wDQIVNFlOU///jjOo1qLrVffU17i8KaFmCaHX29A
+         8JUzhB2EwZNXcWhee73Kh+X+hxrVCE9rj4GhE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729802743; x=1730407543;
+        d=1e100.net; s=20230601; t=1729802884; x=1730407684;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=/2U/xmqL6VmN2LwWpIEhhcQQ83Rsr/TgmHhM2/FpOoo=;
-        b=LYipaZbU/4CJMMBLnTfvX1VZjC64878BYnP5bl0FWJabGmDIpz3j35Sgj6bnPXQ4us
-         zmJpGS5fz11VjNBw9kwlOPxRfCg202m5jEfNBU+4pIt1QBQVryLIVrfwio0bHU4aUdzb
-         eDIzxsfazmDetkWie2ZiFb88USh6j5j+kg/yXZIrJNjbFLeA5TUlRhBKwxABkzogZ/8l
-         qyf5UV5lkOzWahTQiTiyN0lrymJXj2hABbu5oyZcaRW541U6Vd2sW51f8Z9ZLc5plVrx
-         ZYvBx08aLlDRfiZESCIZ8GLrxdtP7BvlLyQN5IIeww8oRb+tKRC/a7rtRpD8iVriOHL4
-         Xgpg==
-X-Forwarded-Encrypted: i=1; AJvYcCUI3XEBAauM+Nm43GfOL9/JRRUkvlqzj1DGBY8UWowpCSX2XXjGiIptIAVeyEiu2ThPVRmg3aiMRgXQho8=@vger.kernel.org, AJvYcCUJD6b/zK4ZS5Ap3Hc3OrAn0WJutxElllpznqrzxgG/Jm9BRRUky/6wdT9OP7USwhYbco5x/hZfMDkUbdtl@vger.kernel.org, AJvYcCVEdGOekoyWWZsTRagDBOhn2WNY/EHjJpniT51/lFr3iV1PwNShi8LOIg4uJiAd30HQcrbBHFNO9HeUqy4Z7G0R@vger.kernel.org, AJvYcCVRZhe+GKw+irgOBDu75rtqX2j2BAQDfUglx8+/Rvxi9sVHEvZCsbfoj9yhUIyssU/Z1j65y0yuww6KDA==@vger.kernel.org, AJvYcCVtfKrbjjGi+jO6QnFqX2nEupPnrrkxc/RcauFPPpjRFsy592Is7UI37P1yIBRSxf3hb9rN7/BE3ss/a/Fu@vger.kernel.org, AJvYcCXP4hfWu1c4ZyaEBYYpT4a7X3031qR8PCDjR84xJgVrByxx6sRxxjSnQsahQD/pVxXUtxC2A6gdUcTV@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyh7kF4OdxfYHbDACgdh7PWuhgXRzWn1lxTbLdNIBHeF9OJzGtN
-	4rWBQqqaSxvdw9lWhILtQI4pix0jkAOIR484elY0Io7RPmNRZD7YHv+7nuMDc1Q91jxlPNYDaWb
-	9+zHjQ/8s8rB86jeIusv03fPKGeY=
-X-Google-Smtp-Source: AGHT+IFzblQ9puj991how00tuuoiZFFvFMJ0QTk55nDO5R1JUY5KhEEZ90uHNFgYdfXSVSGbp7B73kNRe+QJs5MwWTg=
-X-Received: by 2002:a05:690c:668a:b0:6db:de34:8049 with SMTP id
- 00721157ae682-6e7f0e40050mr94523647b3.16.1729802742988; Thu, 24 Oct 2024
- 13:45:42 -0700 (PDT)
+        bh=MylHOwKXaTo3xQDXg/sSZOBifyCTeLdawXaFYKq87vU=;
+        b=m6bi5nKS6brOWhqe2MafLfhFUkHxu93a/n0NsP408JlePal1yB9ijCmVdauWHp8+pw
+         JRvmc98SMTUGGBQe8RdzToGZpuoAxUaWRPWvi9+6YHnkS/FF6PzQ2Db/Pny7pymXkrFA
+         HSCtUmkLBQivh7YozoyjFPGsrALTeQoVeBVA4tSB8N8WVlopufEGkkTVlHHhAv7UPcXc
+         H6eFMCy/CqMcilK3fgDsyrYhJXf6I8xG7400qGsnnw/GJjeo4FydQpsHwYiH+Yfyl9zI
+         9g0a+sigDALQ+BaXnB/fFM+QAHYGfkaMQ/6YewK2FBLBWfn8Tb9+Hmw/gMqRTdJ7baBM
+         FlHw==
+X-Forwarded-Encrypted: i=1; AJvYcCVcDmeVo+k96JCYko/Hdg6kTbBxoO6YyanAxRmcgBLOlLWFDBWVt4a8NQca3pUmRqGwA9bEEVvc9bB5/lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxpLkoky7Hoe+N4zyWC88dUB5VB2Pus0Ze2wYSyOGMl3FFSZ36B
+	J+r/AjekNNmUb39f1LjAaavEhhtk1nNjJ0FtYRoYKxwaR+rmV5lvjXyAVPsxscg/VyLa7lXx5Vp
+	BXQ==
+X-Google-Smtp-Source: AGHT+IGSD19g8XG+17XfIXo/BdqVU9c5AUopIjNfV5079jmAbXCU1GJ2I10qW5/GBg6++kVu65seMQ==
+X-Received: by 2002:a05:6512:3ba8:b0:539:ede3:827f with SMTP id 2adb3069b0e04-53b23752284mr1161742e87.24.1729802883669;
+        Thu, 24 Oct 2024 13:48:03 -0700 (PDT)
+Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com. [209.85.208.176])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a224202e0sm1453486e87.167.2024.10.24.13.48.02
+        for <linux-kernel@vger.kernel.org>
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 13:48:03 -0700 (PDT)
+Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fb3ce15172so22902211fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:48:02 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU8Th/F8wPQDXn43GCyu3meyeZUkSuw98cQ9HFmVHEfh/TS7iKxHIODr54Xyky+tm3lZARCr1A7/dtR3E4=@vger.kernel.org
+X-Received: by 2002:a05:6512:3b8e:b0:53b:205c:e9ac with SMTP id
+ 2adb3069b0e04-53b2374a94fmr1177376e87.20.1729802881828; Thu, 24 Oct 2024
+ 13:48:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
- <20240916085741.1636554-2-quic_mdalam@quicinc.com> <20240921185519.GA2187@quark.localdomain>
- <ZvJt9ceeL18XKrTc@infradead.org> <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
- <ZxHwgsm2iP2Z_3at@infradead.org> <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
- <ZxH4lnkQNhTP5fe6@infradead.org> <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
- <ZxieZPlH-S9pakYW@infradead.org> <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
- <dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk> <CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
- <26394.40513.57614.718772@quad.stoffel.home>
-In-Reply-To: <26394.40513.57614.718772@quad.stoffel.home>
-From: Adrian Vovk <adrianvovk@gmail.com>
-Date: Thu, 24 Oct 2024 16:45:31 -0400
-Message-ID: <CAAdYy_=DnhpwOyU0d-UNuLrd+nhQ6kijwxsrJJykL5hJ7Fb5HA@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-To: John Stoffel <john@stoffel.org>
-Cc: Geoff Back <geoff@demonlair.co.uk>, Christoph Hellwig <hch@infradead.org>, 
-	Eric Biggers <ebiggers@kernel.org>, Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, 
-	song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org, 
-	Mikulas Patocka <mpatocka@redhat.com>, adrian.hunter@intel.com, quic_asutoshd@quicinc.com, 
-	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org, 
-	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, 
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com
+References: <20240620-igt-v3-0-a9d62d2e2c7e@mediatek.com> <20240620-igt-v3-8-a9d62d2e2c7e@mediatek.com>
+In-Reply-To: <20240620-igt-v3-8-a9d62d2e2c7e@mediatek.com>
+From: Doug Anderson <dianders@chromium.org>
+Date: Thu, 24 Oct 2024 13:47:47 -0700
+X-Gmail-Original-Message-ID: <CAD=FV=XTsPBQ7Qp_oQmBXkNY==KQWZdN7VYbuVPoBTHhMvzjUQ@mail.gmail.com>
+Message-ID: <CAD=FV=XTsPBQ7Qp_oQmBXkNY==KQWZdN7VYbuVPoBTHhMvzjUQ@mail.gmail.com>
+Subject: Re: [PATCH v3 08/14] drm/mediatek: Add DRM_MODE_ROTATE_0 to rotation property
+To: shawn.sung@mediatek.com
+Cc: Chun-Kuang Hu <chunkuang.hu@kernel.org>, Philipp Zabel <p.zabel@pengutronix.de>, 
+	David Airlie <airlied@gmail.com>, Daniel Vetter <daniel@ffwll.ch>, 
+	Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, CK Hu <ck.hu@mediatek.com>, 
+	Bibby Hsieh <bibby.hsieh@mediatek.com>, Daniel Kurtz <djkurtz@chromium.org>, 
+	Mao Huang <littlecvr@chromium.org>, "Nancy.Lin" <nancy.lin@mediatek.com>, 
+	YT Shen <yt.shen@mediatek.com>, dri-devel@lists.freedesktop.org, 
+	linux-mediatek@lists.infradead.org, linux-kernel@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 3:21=E2=80=AFPM John Stoffel <john@stoffel.org> wro=
-te:
+Hi,
+
+On Wed, Jun 19, 2024 at 9:39=E2=80=AFAM Hsiao Chien Sung via B4 Relay
+<devnull+shawn.sung.mediatek.com@kernel.org> wrote:
 >
-> >>>>> "Adrian" =3D=3D Adrian Vovk <adrianvovk@gmail.com> writes:
+> From: Hsiao Chien Sung <shawn.sung@mediatek.com>
 >
-> > On Thu, Oct 24, 2024 at 4:11=E2=80=AFAM Geoff Back <geoff@demonlair.co.=
-uk> wrote:
-> >>
-> >>
-> >> On 24/10/2024 03:52, Adrian Vovk wrote:
-> >> > On Wed, Oct 23, 2024 at 2:57=E2=80=AFAM Christoph Hellwig <hch@infra=
-dead.org> wrote:
-> >> >> On Fri, Oct 18, 2024 at 11:03:50AM -0400, Adrian Vovk wrote:
-> >> >>> Sure, but then this way you're encrypting each partition twice. On=
-ce by the dm-crypt inside of the partition, and again by the dm-crypt that'=
-s under the partition table. This double encryption is ruinous for performa=
-nce, so it's just not a feasible solution and thus people don't do this. Wo=
-uld be nice if we had the flexibility though.
-> >>
-> >> As an encrypted-systems administrator, I would actively expect and
-> >> require that stacked encryption layers WOULD each encrypt.  If I have
-> >> set up full disk encryption, then as an administrator I expect that to
-> >> be obeyed without exception, regardless of whether some higher level
-> >> file system has done encryption already.
-> >>
-> >> Anything that allows a higher level to bypass the full disk encryption
-> >> layer is, in my opinion, a bug and a serious security hole.
+> Always add DRM_MODE_ROTATE_0 to rotation property to meet
+> IGT's (Intel GPU Tools) requirement.
 >
-> > Sure I'm sure there's usecases where passthrough doesn't make sense.
-> > It should absolutely be an opt-in flag on the dm target, so you the
-> > administrator at setup time can choose whether or not you perform
-> > double-encryption (and it defaults to doing so). Because there are
-> > usecases where it doesn't matter, and for those usecases we'd set
-> > the flag and allow passthrough for performance reasons.
->
-> If you're so concerend about security that you're double or triple
-> encrypting data at various layers, then obviously skipping encryption
-> at a lower layer just because an upper layer says "He, I already
-> encrypted this!" just doesn't make any sense.
+> Reviewed-by: CK Hu <ck.hu@mediatek.com>
+> Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@collab=
+ora.com>
+> Fixes: 119f5173628a ("drm/mediatek: Add DRM Driver for Mediatek SoC MT817=
+3.")
+> Signed-off-by: Hsiao Chien Sung <shawn.sung@mediatek.com>
+> ---
+>  drivers/gpu/drm/mediatek/mtk_ddp_comp.h |  6 +++++-
+>  drivers/gpu/drm/mediatek/mtk_disp_ovl.c | 17 +++++------------
+>  drivers/gpu/drm/mediatek/mtk_plane.c    |  2 +-
+>  3 files changed, 11 insertions(+), 14 deletions(-)
 
-I'm double or triple encrypting data at various layers to give myself
-a broader set of keys that I can work with and revoke individually,
-not because encrypting the same data more than once makes the
-encryption more secure. I expressly _don't_ want to encrypt the data
-multiple times, I just want the flexibility to wipe keys from memory
-and make parts of the filesystem tree cryptographically inaccessible.
+FWIW, this patch got into ChromeOS's 5.15 branch via stable merge and
+apparently broke things. As a short term fix we've reverted it there:
 
-For example: my loop devices. I'd like to stack three layers of
-encryption: the backing filesystem is encrypted, the loop devices are
-encrypted, and inside the loop devices we use fsverity. Specifically
-in my use-case: the backing filesystem is the root filesystem, each
-loopback file is a user's home directory, and each folder with fscrypt
-encryption belongs to a single app. The root filesystem is protected
-with generic full-disk-encryption, and contains both the home
-directories and other lightly-sensitive data that can be shared
-between users (WiFi passwords, installed software). The
-full-disk-encryption key is in memory for as long as the system is
-booted, so the data is protected while the system is powered off. Then
-on top of that I have the home directories, which are in an encrypted
-loopback file encrypted with a key derived from the user's login
-password. We deem not only file names and contents sensitive, but also
-directory structures and file metadata (xattrs, etc), so fsverity is
-not an option for us. The user's encryption key is in memory for as
-long as the user is logged in. Note that this is a stronger protection
-than the rootfs's encryption: each user's data is protected not only
-when the device is off, but also when the user is logged out. A
-similar pattern repeats for the fscrypt dirs: each app gets an
-fsverity-protected data directory, and keys are only given to the app
-while it's running and while the user's session is unlocked. When the
-user locks their device, or when an app is closed, that app's keys are
-wiped from memory. This way, an attacker can get their hands on a
-booted and logged-in device, but as long as it's locked they won't be
-able to extract the necessary keys to read your banking app's login
-credentials and steal your money (for example...)
+https://crrev.com/c/5960799
 
-That's the encryption scheme I'd like to implement on the Linux
-desktop. We're part of the way there already, and we've hit the
-double-encryption barrier. Note that none of the security of this
-scheme comes from the fact that data is encrypted twice. Again we
-don't want the data to be encrypted multiple times: the performance
-cost that this would incur is a blocker to implementing this
-encryption scheme. We stack encryption so that we can revoke parts of
-the key hierarchy, not to actually stack encryption.
+...apparently the patch is fine on newer kernels so maybe there is a
+missing dependency? Hopefully someone on this list can dig into this
+and either post the revert to stable 5.15 kernels or suggest
+additional backports.
 
-> So how does your scheme defend against bad actors?
 
-Hopefully my explanation above makes my threat model and use-case a
-bit more clear.
-
-> I'm on a system with an encrypted disk.  I make a file and mount it with =
-loop, and the
-> encrypt it.  But it's slow!  So I turn off encryption.  Now I shutdown
-> the loop device cleanly, unmount, and reboot the system.  So what
-> should I be seing in those blocks if I examine the plain file that's
-> now not mounted?
-
-Depends on what you mean by "turn off encryption".
-
-I'm going to assume you mean that you just turned on the passthrough
-mode in the lower dm-default-key table and did nothing else? In this
-case, if you read the loopback file you'll get the ciphertext of the
-lower encryption layer, or in other words you'll see the ciphertext
-resulting from encrypting the loopback file twice. If you try to mount
-the loopback file as you normally do, you'll just see gibberish data,
-and the data will be inaccessible until you turn passthrough back off.
-You already wrote data to disk that was encrypted twice, and now
-you're telling the lower layer to do nothing for those block ranges.
-So, the upper layer will see the lower layer's ciphertext, instead of
-its own. It'll decrypt the lower layer's ciphertext with the upper
-layer's key, and return the gibberish result that this operation
-produces. New data you write to the loopback file will work as it's
-supposed to: it'll be encrypted once, and can be read back fine.
-Similar things will happen if you flip the passthrough flag from on to
-off as well.  Changing the passthrough mode flag on a lower layer
-requires a reformat of the data inside. It's similar behavior to
-setting up dm-crypt with the wrong encryption algorithm or the wrong
-key.
-
-Let's say that you _do_ reformat the loopback file when you turn on
-passthrough mode. So now you have passthrough mode on, and all data is
-encrypted once on disk. Then you try to read the loopback file. You'll
-see the same ciphertext that you'd see if you were stacking two
-instances of dm-crypt on top of each other. The only difference from
-dm-crypt is that this ciphertext is stored directly on disk, instead
-of being encrypted a second time. So if you get the LBAs on disk, then
-read the disk directly on those LBAs, you'll see the same ciphertext
-as reading it through a filesystem. That's the difference.
-
-> Could this be a way to smuggle data out because now the data written
-> to the low level disk is encypted with a much weaker algorithm?  So I
-> can just take the system disk and read the raw data and find the data?
-
-The weakest encryption algorithm is just storing the plaintext on
-disk; XOR with a null key, if you will. Let's say that there's an
-out-of-tree device-mapper driver for this, called dm-fake-encryption.
-You're asking what would happen if we put an instance of
-dm-fake-encryption on top of a passthrough-enabled dm-default-key.
-
-Well, then data that went through dm-fake-encryption will be stored in
-plaintext on disk, and data that doesn't go through dm-fake-encryption
-will instead go through dm-default-key and get properly encrypted on
-disk. If an attacker gets the disk, then all the data that was written
-through the dm-fake-encryption layer will be stored in plaintext on
-disk and the attacker will be able to read it. Data that didn't go
-through dm-fake-encryption will be encrypted on disk and the attacker
-will be unable to read it.
-
-However, I don't understand the risk of smuggling this introduces. In
-situations where smuggling data through layers of encryption is a risk
-factor to worry about (a cloud VPS host?), the administrator would
-just disable passthrough. With passthrough off on the layer below,
-dm-fake-encryption's signalling is ignored and the data is
-double-encrypted anyways. No smuggling possible then.
-
-Could you walk me through a specific attack scenario for this that you
-have in mind? Because I can't really think of one, so it's hard to
-think of a solution.
-
-Best,
-Adrian
+-Doug
 
