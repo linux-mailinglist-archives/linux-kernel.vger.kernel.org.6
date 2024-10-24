@@ -1,364 +1,118 @@
-Return-Path: <linux-kernel+bounces-379634-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379635-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF86F9AE15F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:48:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id F28D29AE162
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:48:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 68DBC1F23500
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:48:08 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A951E1F2481E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:48:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A78EE1B6D1F;
-	Thu, 24 Oct 2024 09:47:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18CC91B0F17;
+	Thu, 24 Oct 2024 09:48:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Dz30bllZ"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Cx1NMQAj"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B7CA1B392C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:47:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7233515886D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763272; cv=none; b=Lq3K07/ymy7uWYO3Cxjhs4uSJ1nPuAGanFqqynA50rB9hMgCyFlom0vBU05Vv16CDx0MQAiIJjXwCNMzNFm9e+jU5HxG82+KFGXImMd8bklPjwh7fetCoxYvGVOuLnmjOIR3h38HDUtYzBEG+GZGoOrP6SwxwvVLiBcbAUTRk3U=
+	t=1729763326; cv=none; b=hAtt2xvTwkW9g8vAnalDiqp4gVb/88y6usTU4QqXwhYhg8v9irlybdVG38DaAqYqrAWL7NYQ8Mlf80BPfJlB57yeo8npcTYWaCBpYEvNK4TsphS3kGRgiPHwCmWu1A6xbt/Zt+5q/1l0H25iOQaIeX3E02M5LZqRCrp2xgYh57c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729763272; c=relaxed/simple;
-	bh=6oZISG8zyOtWCv3Xk/jvqSSwQW1cfD2LoGxyXi6vTwc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=rQ1HJETnZ16P2XiEJMaVLj30HIXjRuMfjzn2rvKEejX0mW2HTcJsyX7rFbNZ2KsxmtBq6b99gW0Gj5alEExwpWBnfJrC6chQj560Z5wHT+mUpGuJP5IJyASvmMFvqgh08x+cQQ/Qzg9/GWABL6Xb1aUlqiQcTM8LzKiberuAfeM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Dz30bllZ; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbbadf83so957376e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:47:48 -0700 (PDT)
+	s=arc-20240116; t=1729763326; c=relaxed/simple;
+	bh=XKOD2jBG5q8LDXkECHMtUDCYx4eK/rFol9l1QGTiXGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=JKctf1874ZWCEs2ps/j7e4OKyQxf2pkTjk6oBMngkX1xLVvK86Q1qN1fZHtOs3vaYdIz/OvQka2299Q2+ycr4mqe1VkWMkYCvDp3iYqAgiPL3Omn+9Zics9PUZ0nEtpF8Vf9Olbz+mujp6NOg2bBAybyXuG5G5NB4FCJpl2KHhA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Cx1NMQAj; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37d8901cb98so1200020f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:48:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729763267; x=1730368067; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729763322; x=1730368122; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Vfv6ibufZ+CwrpcqLdBrsrQ/W9gQaceAobDNplXh7i0=;
-        b=Dz30bllZ46xfmjHsyBnRQ/Hsj0atcO52eIbyzx2rrsTKJPRdTg+Ec+LbVfUZVNxdmo
-         yXQeVX18Y6wTCQKdpJdZY9szhhliTd5XPJYVzEn4at4qSeRiFNDhY8qncfpaUhIt5kk0
-         o4/0D2kYj+qLEZeFFFkEJRiADyXhJRJI7cr9egDEZW4FagwzO97yIrIyDcIvSxXMUuHO
-         NNfdUfpyuyTSa+sRUrB9HHMWWrUx1XgQGr3wg3XgwCsXnD2c5RGVpu0OOFUonzqfr4lP
-         5+MJA7IEr6GJA3e3M+y90KCqPu6HA38iOtfOtQ1pkqAK0cCp9LG0zjI2N8/ss4x9CAIw
-         i6Rg==
+        bh=F8BZO8UMhk9f5gARVSgM1x6fEmct9HcXbugVM0Zv/jE=;
+        b=Cx1NMQAjzWpa+2w3TcRIqWdoFH3JT7ClU4R7OP9lLg/RRi8piUAgZzi5qnvQqoeV4e
+         DMZF41TypZyL/9fPgqwUYlUR8j7oq4SUbLkaax+GcZ/v5bcCbkgEnM3rfQSpAhXknh1t
+         +Agc908AcWY8ZSkwGWO2ipjr30roNq62CDvTgR4Uo5uNJ0FoL7P7syuKAgg4DDeTl2Yv
+         aqrO2nCx8j8rv6gjMyBYfS1FmIsXyIFQRm8QDKdpAwygLLMBwAwC2gkLGiE537E2flGC
+         FiYKBvzkGH6dD1BV3DBVo/TvyEQXVWnpxYy73YYxNjpWbkrzP6wNbd5iv+/1J2vUMpc1
+         ay2A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729763267; x=1730368067;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Vfv6ibufZ+CwrpcqLdBrsrQ/W9gQaceAobDNplXh7i0=;
-        b=haSGv6VWgbYHYVGqtbK1OXzAe4KjpBkT204pg25Srjmqcy17mcow4gDdunxUeF5IZj
-         JjDXInHL9092wv9z4BmRvtoIAZXXwbqA1bqeBuXTcJj6seRrK0GTFw50qGpTNwCl35/c
-         4FdgmZjD74p2PpQkFIuJgX00kD2QsXe6majTpIRSJ/5ezT3/qZaDu7dBAeB3vLHLFFqU
-         grI/CJnirQoiNxhFxnPVmNhmDfSBx/nguGccYtctygmG8sV9qq8ez/YiRVrp9GzFosAy
-         3RCdDsItcX49vDa1XyTkZYv1oZ3xoJaZELIwuhNdUawGblw4UY/VVnAV49TcLfZtVl7w
-         62jQ==
-X-Forwarded-Encrypted: i=1; AJvYcCVV+USauHXj1UsrkQQqynVPDXSBlKm14UJJ4ewEWxwHIf+Agp65Bo/uQFtJ4lqvBNqOI+Zj83aGHyFxQ68=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUQtuQKF7JpoYoPfBAo2ZpTQQqhXo0e6EFoaKod+QiQeg0QUxK
-	QcLuhYDllSQWVWBSkiYS6SQHTys/nT/CWeUcqJhN5WjMo9l3Nu6Wjs3qiKNX8fpnoYL+8XpMQro
-	ejZJdfEQN97ZMIV2GmaO8ajYhusNdK10gX8MeJw==
-X-Google-Smtp-Source: AGHT+IEWBEehWTnq4Rbixjghfb8o2yvBF/xxe7NK2SwSHJgjYLywf14gzBfaH+tfcPlaC6bw5yJWICqXJ+gwpbBN2SY=
-X-Received: by 2002:a05:6512:2810:b0:539:f763:789d with SMTP id
- 2adb3069b0e04-53b1a36c638mr3298988e87.43.1729763266315; Thu, 24 Oct 2024
- 02:47:46 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729763322; x=1730368122;
+        h=content-transfer-encoding:in-reply-to:from:references:cc:to:subject
+         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=F8BZO8UMhk9f5gARVSgM1x6fEmct9HcXbugVM0Zv/jE=;
+        b=mD0swQ7rSuTC+mwGF4agT3/pzjkpgwz7GiJr3N5uln/Itb0/SeInNmym/glEOVcp/g
+         81u2vjz1SGhX10TWGJ/XjBNuldS5yfwssGcDeXotfXj/5D8Dy8V015WCOAd9ki0Nu9Ou
+         2f5kIuEwIq+JnPZqFRss6h7f/Gl+/SIzISTG4l8ge0GvHIOVEQvYB0Dt61l7Pele+TbL
+         ns4fm7aEkGojSunDJNw5HXhKlP+RY829jSBsMuNiw6fvjyMesPAOfoQ7qdEB6aRsKS+A
+         VOSlygKwzwMExRJUiCuQBma7FOxG7WYKGX8NwjLFrBMO7vgdpfN0UMqz1B6LuoDKDLjI
+         +Zhw==
+X-Forwarded-Encrypted: i=1; AJvYcCXCs31dHO0yb3tByTa897u5RBhxzYZvVPxg8yb2K4qQzpb7EvgaD7d4GvKEOPdrjKs6p1cI7YmPHKPG4Ls=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxGoQWX26RNdyMfb8mw7+wxRMRJdibTAfV4ksgX6E31/giW4lbN
+	H5k0Z6UVP40rxCzbsGVlpi6EgwUX4WTkYukINjF0hM5LXqPlUK78Lbta1Ophw3Y=
+X-Google-Smtp-Source: AGHT+IHN5AR8ffhQUJ/Cu2oVbvyYCcnPaticb9PKfFa56t66E7hCSKpQWG+wuvvIeJs/NxAsAsrt0Q==
+X-Received: by 2002:adf:e602:0:b0:37d:43a8:dee0 with SMTP id ffacd0b85a97d-3803ac7d59bmr942850f8f.17.1729763322146;
+        Thu, 24 Oct 2024 02:48:42 -0700 (PDT)
+Received: from [192.168.2.39] (ip-109-192-223-157.um38.pools.vodafone-ip.de. [109.192.223.157])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b566f11sm12048495e9.20.2024.10.24.02.48.41
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 02:48:41 -0700 (PDT)
+Message-ID: <25ca154e-d960-49f7-9e5f-3a4233a0396b@gmail.com>
+Date: Thu, 24 Oct 2024 11:48:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024085922.133071-1-tmyu0@nuvoton.com> <20241024085922.133071-3-tmyu0@nuvoton.com>
-In-Reply-To: <20241024085922.133071-3-tmyu0@nuvoton.com>
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-Date: Thu, 24 Oct 2024 11:47:34 +0200
-Message-ID: <CAMRc=Mc+SZN=EytxY=qA-qBEAY_F17GP-7FRE9oLojLbdUoPaQ@mail.gmail.com>
-Subject: Re: [PATCH v1 2/9] gpio: Add Nuvoton NCT6694 GPIO support
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	andi.shyti@kernel.org, mkl@pengutronix.de, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, 
-	kuba@kernel.org, pabeni@redhat.com, wim@linux-watchdog.org, 
-	linux@roeck-us.net, jdelvare@suse.com, jic23@kernel.org, lars@metafoo.de, 
-	ukleinek@kernel.org, alexandre.belloni@bootlin.com, 
-	linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, 
-	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org, 
-	linux-rtc@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/mm: -Werror fixes in page-types/slabinfo
+To: Andrew Morton <akpm@linux-foundation.org>
+Cc: linux-mm@kvack.org, linux-kernel@vger.kernel.org,
+ Vlastimil Babka <vbabka@suse.cz>
+References: <c1ceb507-94bc-461c-934d-c19b77edd825@gmail.com>
+ <20241023165115.b524c51e80c36e120edabb36@linux-foundation.org>
+From: Wladislav Wiebe <wladislav.kw@gmail.com>
+In-Reply-To: <20241023165115.b524c51e80c36e120edabb36@linux-foundation.org>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 10:59=E2=80=AFAM Ming Yu <a0282524688@gmail.com> wr=
-ote:
+
+On 24/10/2024 01:51, Andrew Morton wrote:
+> On Tue, 22 Oct 2024 19:21:13 +0200 Wladislav Wiebe <wladislav.kw@gmail.com> wrote:
 >
-> This driver supports GPIO and IRQ functionality for NCT6694 MFD
-> device based on USB interface.
+>> Commit e6d2c436ff693 ("tools/mm: allow users to provide
+>> additional cflags/ldflags") passes now CFLAGS to Makefile.
+>> With this, build systems with default -Werror enabled found:
+>>
+>> slabinfo.c:1300:25: error: ignoring return value of 'chdir'
+>> declared with attribute 'warn_unused_result' [-Werror=unused-result]
+>>                          chdir("..");
+>>                          ^~~~~~~~~~~
+>> page-types.c:397:35: error: format '%lu' expects argument of type
+>> 'long unsigned int', but argument 2 has type 'uint64_t'
+>> {aka 'long long unsigned int'} [-Werror=format=]
+>>                          printf("%lu\t", mapcnt0);
+>>                                  ~~^     ~~~~~~~
+>> ..
+>>
+>> Fix page-types by using PRIu64 for uint64_t prints and check
+>> in slabinfo for return code on chdir("..").
+>>
+> Thanks.
 >
-> Signed-off-by: Ming Yu <tmyu0@nuvoton.com>
-> ---
->  MAINTAINERS                 |   1 +
->  drivers/gpio/Kconfig        |  12 +
->  drivers/gpio/Makefile       |   1 +
->  drivers/gpio/gpio-nct6694.c | 489 ++++++++++++++++++++++++++++++++++++
->  4 files changed, 503 insertions(+)
->  create mode 100644 drivers/gpio/gpio-nct6694.c
->
-> diff --git a/MAINTAINERS b/MAINTAINERS
-> index 30157ca95cf3..2c86d5dab3f1 100644
-> --- a/MAINTAINERS
-> +++ b/MAINTAINERS
-> @@ -16438,6 +16438,7 @@ NUVOTON NCT6694 MFD DRIVER
->  M:     Ming Yu <tmyu0@nuvoton.com>
->  L:     linux-kernel@vger.kernel.org
->  S:     Supported
-> +F:     drivers/gpio/gpio-nct6694.c
->  F:     drivers/mfd/nct6694.c
->  F:     include/linux/mfd/nct6694.h
->
-> diff --git a/drivers/gpio/Kconfig b/drivers/gpio/Kconfig
-> index d93cd4f722b4..aa78ad9ff4ac 100644
-> --- a/drivers/gpio/Kconfig
-> +++ b/drivers/gpio/Kconfig
-> @@ -1450,6 +1450,18 @@ config GPIO_MAX77650
->           GPIO driver for MAX77650/77651 PMIC from Maxim Semiconductor.
->           These chips have a single pin that can be configured as GPIO.
->
-> +config GPIO_NCT6694
-> +       tristate "Nuvoton NCT6694 GPIO controller support"
-> +       depends on MFD_NCT6694
-> +       select GENERIC_IRQ_CHIP
-> +       select GPIOLIB_IRQCHIP
-> +       help
-> +         This driver supports 8 GPIO pins per bank that can all be inter=
-rupt
-> +         sources.
-> +
-> +         This driver can also be built as a module. If so, the module wi=
-ll be
-> +         called gpio-nct6694.
-> +
->  config GPIO_PALMAS
->         bool "TI PALMAS series PMICs GPIO"
->         depends on MFD_PALMAS
-> diff --git a/drivers/gpio/Makefile b/drivers/gpio/Makefile
-> index 1429e8c0229b..02c94aa28017 100644
-> --- a/drivers/gpio/Makefile
-> +++ b/drivers/gpio/Makefile
-> @@ -121,6 +121,7 @@ obj-$(CONFIG_GPIO_MXC)                      +=3D gpio=
--mxc.o
->  obj-$(CONFIG_GPIO_MXS)                 +=3D gpio-mxs.o
->  obj-$(CONFIG_GPIO_NOMADIK)             +=3D gpio-nomadik.o
->  obj-$(CONFIG_GPIO_NPCM_SGPIO)          +=3D gpio-npcm-sgpio.o
-> +obj-$(CONFIG_GPIO_NCT6694)             +=3D gpio-nct6694.o
->  obj-$(CONFIG_GPIO_OCTEON)              +=3D gpio-octeon.o
->  obj-$(CONFIG_GPIO_OMAP)                        +=3D gpio-omap.o
->  obj-$(CONFIG_GPIO_PALMAS)              +=3D gpio-palmas.o
-> diff --git a/drivers/gpio/gpio-nct6694.c b/drivers/gpio/gpio-nct6694.c
-> new file mode 100644
-> index 000000000000..42c0e6e76730
-> --- /dev/null
-> +++ b/drivers/gpio/gpio-nct6694.c
-> @@ -0,0 +1,489 @@
-> +// SPDX-License-Identifier: GPL-2.0
-> +/*
-> + * Nuvoton NCT6694 GPIO controller driver based on USB interface.
-> + *
-> + * Copyright (C) 2024 Nuvoton Technology Corp.
-> + */
-> +
-> +#include <linux/gpio.h>
+> Your email client messed this up in strange ways, so I basically typed
+> it in again.  I added the Fixes: target and a cc:stable.
 
-Don't include this header. It's documented as obsolete.
+thanks for the feedback, seems something went wrong after updating my mail client, I will fix it.
 
-> +#include <linux/gpio/driver.h>
-> +#include <linux/module.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/platform_device.h>
-> +#include <linux/mfd/core.h>
-> +#include <linux/mfd/nct6694.h>
-> +
-
-You only use it once, drop it.
-
-> +#define DRVNAME "nct6694-gpio"
-> +
-> +/* Host interface */
-> +#define REQUEST_GPIO_MOD               0xFF
-> +#define REQUEST_GPIO_LEN               0x01
-> +
-> +/* Report Channel */
-> +#define GPIO_VER_REG                   0x90
-> +#define GPIO_VALID_REG                 0x110
-> +#define GPI_DATA_REG                   0x120
-> +#define GPO_DIR_REG                    0x170
-> +#define GPO_TYPE_REG                   0x180
-> +#define GPO_DATA_REG                   0x190
-> +
-> +#define GPI_STS_REG                    0x130
-> +#define GPI_CLR_REG                    0x140
-> +#define GPI_FALLING_REG                        0x150
-> +#define GPI_RISING_REG                 0x160
-> +
-
-Please use the NCT6694 prefix for these defines, otherwise it's not
-clear whether they come from the driver or from GPIO core.
-
-[]
-
-> +
-> +static const char * const nct6694_gpio_name[] =3D {
-> +       "NCT6694-GPIO0",
-> +       "NCT6694-GPIO1",
-> +       "NCT6694-GPIO2",
-> +       "NCT6694-GPIO3",
-> +       "NCT6694-GPIO4",
-> +       "NCT6694-GPIO5",
-> +       "NCT6694-GPIO6",
-> +       "NCT6694-GPIO7",
-> +       "NCT6694-GPIO8",
-> +       "NCT6694-GPIO9",
-> +       "NCT6694-GPIOA",
-> +       "NCT6694-GPIOB",
-> +       "NCT6694-GPIOC",
-> +       "NCT6694-GPIOD",
-> +       "NCT6694-GPIOE",
-> +       "NCT6694-GPIOF",
-> +};
-
-This looks like it corresponds with the MFD cells and makes me wonder:
-am I getting that wrong or do you want to register 0xf GPIO chips? Or
-a single GPIO chip with 0xf lines? What is the topology?
-
-> +
-> +static int nct6694_gpio_probe(struct platform_device *pdev)
-> +{
-> +       const struct mfd_cell *cell =3D mfd_get_cell(pdev);
-> +       struct nct6694 *nct6694 =3D dev_get_drvdata(pdev->dev.parent);
-> +       struct nct6694_gpio_data *data;
-> +       struct gpio_irq_chip *girq;
-> +       int ret;
-> +
-> +       data =3D devm_kzalloc(&pdev->dev, sizeof(*data), GFP_KERNEL);
-> +       if (!data)
-> +               return -ENOMEM;
-> +
-> +       data->nct6694 =3D nct6694;
-> +       data->group =3D cell->id;
-> +
-> +       data->gpio.label                =3D nct6694_gpio_name[cell->id];
-> +       data->gpio.direction_input      =3D nct6694_direction_input;
-> +       data->gpio.get                  =3D nct6694_get_value;
-> +       data->gpio.direction_output     =3D nct6694_direction_output;
-> +       data->gpio.set                  =3D nct6694_set_value;
-> +       data->gpio.get_direction        =3D nct6694_get_direction;
-> +       data->gpio.set_config           =3D nct6694_set_config;
-> +       data->gpio.init_valid_mask      =3D nct6694_init_valid_mask;
-> +       data->gpio.base                 =3D -1;
-> +       data->gpio.can_sleep            =3D false;
-> +       data->gpio.owner                =3D THIS_MODULE;
-> +       data->gpio.ngpio                =3D 8;
-> +
-> +       INIT_WORK(&data->irq_work, nct6694_irq);
-> +       INIT_WORK(&data->irq_trig_work, nct6694_irq_trig);
-> +       mutex_init(&data->irq_lock);
-> +
-> +       ret =3D nct6694_register_handler(nct6694, GPIO_IRQ_STATUS,
-> +                                      nct6694_gpio_handler, data);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "%s:  Failed to register handler: %pe=
-\n",
-> +                       __func__, ERR_PTR(ret));
-> +               return ret;
-> +       }
-> +
-> +       platform_set_drvdata(pdev, data);
-> +
-> +       ret =3D nct6694_get_irq_trig(data);
-> +       if (ret)
-> +               return ret;
-> +
-> +       /* Register gpio chip to GPIO framework */
-> +       girq =3D &data->gpio.irq;
-> +       gpio_irq_chip_set_chip(girq, &nct6694_irq_chip);
-> +       girq->parent_handler =3D NULL;
-> +       girq->num_parents =3D 0;
-> +       girq->parents =3D NULL;
-> +       girq->default_type =3D IRQ_TYPE_NONE;
-> +       girq->handler =3D handle_level_irq;
-> +       girq->threaded =3D true;
-> +
-> +       ret =3D gpiochip_add_data(&data->gpio, data);
-> +       if (ret) {
-> +               dev_err(&pdev->dev, "%s: Failed to register GPIO chip: %p=
-e",
-> +                       __func__, ERR_PTR(ret));
-> +               return ret;
-> +       }
-> +
-> +       return 0;
-> +}
-> +
-> +static void nct6694_gpio_remove(struct platform_device *pdev)
-> +{
-> +       struct nct6694_gpio_data *data =3D platform_get_drvdata(pdev);
-> +
-> +       gpiochip_remove(&data->gpio);
-
-This should be dropped in favor of using devm_gpiochip_add_data().
-Especially since you probably want to cancel the irq_work before
-removing the chip.
-
-> +       cancel_work(&data->irq_work);
-> +       cancel_work(&data->irq_trig_work);
-> +}
-> +
-> +static struct platform_driver nct6694_gpio_driver =3D {
-> +       .driver =3D {
-> +               .name   =3D DRVNAME,
-> +       },
-> +       .probe          =3D nct6694_gpio_probe,
-> +       .remove         =3D nct6694_gpio_remove,
-> +};
-> +
-> +static int __init nct6694_init(void)
-> +{
-> +       int err;
-> +
-> +       err =3D platform_driver_register(&nct6694_gpio_driver);
-> +       if (!err) {
-> +               if (err)
-
-If err is equal to 0, check if it's not equal to zero?
-
-> +                       platform_driver_unregister(&nct6694_gpio_driver);
-
-If platform_driver_register() failed, then the device was never registered.
-
-> +       }
-> +
-> +       return err;
-> +}
-> +subsys_initcall(nct6694_init);
-
-Any reason why this must be initialized earlier? It's a USB driver after al=
-l.
-
-> +
-> +static void __exit nct6694_exit(void)
-> +{
-> +       platform_driver_unregister(&nct6694_gpio_driver);
-> +}
-> +module_exit(nct6694_exit);
-> +
-> +MODULE_DESCRIPTION("USB-GPIO controller driver for NCT6694");
-> +MODULE_AUTHOR("Ming Yu <tmyu0@nuvoton.com>");
-> +MODULE_LICENSE("GPL");
-> --
-> 2.34.1
->
-
-Bart
 
