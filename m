@@ -1,121 +1,130 @@
-Return-Path: <linux-kernel+bounces-379668-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379669-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id D04449AE209
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:04:29 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C5A1B9AE20B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:04:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7A8D11F244F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:04:29 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 005171C226B5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:04:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2A6991C4A21;
-	Thu, 24 Oct 2024 10:03:55 +0000 (UTC)
-Received: from mail-yw1-f172.google.com (mail-yw1-f172.google.com [209.85.128.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2CD91C2334;
+	Thu, 24 Oct 2024 10:04:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cfMH7Pt3"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C28001C07E8;
-	Thu, 24 Oct 2024 10:03:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 067CC1B85DF;
+	Thu, 24 Oct 2024 10:04:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764234; cv=none; b=tLH3XPUU+9WWi1QxHtDIo6sjBGjQOHmaDYgDmNNdyz422h7xPUkG7SU5+q3Mfum6tyHd754Jf8r//LbrxPyIhOx2kveujn/olUCFZPr9f1HrrJPzyFJ0D1G3JUa2yhQqyCwIaqatQ4VOQSHeStZftYTyQKm6Z3QRLEEB8hQg3gE=
+	t=1729764245; cv=none; b=f/CDA4ceCBucF0GXq4EHqRYuK5OyDtmM1zlq89ez/h3hrkgd/ELJqoLWViTvEe32p0K8tO29z77uTBTZMR8n017szbz7CTPsD9ClTnrrewsk8G8fhFMuSrDuk3mE3+x4swGFFPa1tUQmuyE58xxjslDVIZS9SjdPzm3lydGvKx8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764234; c=relaxed/simple;
-	bh=Bm0t+UbS6/N6Y1136yIFyLmb5F/KydJo4Y9Kvz6oqyw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=MC5fTDTp238X7URgETKFKL1qa84WhGIgL7JE2fCVuFnKEdENSM3s/1nS3sdZvrTi5fdkf40ek/5D0sZVpp0Yze+8mrzFPmXumj+XJD2Zsu352eoOi64BaF6D2VblFAzYstBE7YZqdsBxZbiCGYFNqUpCr699w5AaxbWIDy8SlLM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f172.google.com with SMTP id 00721157ae682-6e34339d41bso7535117b3.0;
-        Thu, 24 Oct 2024 03:03:52 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729764231; x=1730369031;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=kBNib9fI7OsKe0S0XoMgI5p0KxqmwSJ7TbyOIgCT61I=;
-        b=n+5Q8L8MP1cruHBT8h99oTScSQyNsfw7GVKV5bgN+TI/k6wcsHCkgqG26mEiiJz0xS
-         DtwaTmi3gpjyyv5WRMsxczCkCU90Y3JQrD/0lwfxZ7lFeAq6DaG40iCzqp535xDGS5oK
-         E9+bGIaYid3IKJovZwRAnorzZ+gdfa++SFVbLe9CPa9uCMCH9x9X6JqWHIW9Sc2lXmeR
-         V0rTvOFra9POO87JAQzWL/HnQVBWKTXz86eNNCDyuTR1BnG3e3Pu+UL3mQZxYcM8N5+A
-         f/2z5+p5OANmmfgH2ad8QT3fjUJY7WufMG9rFCUAKpP4u0Huwi2KP4OV8CLxpvUmkl7D
-         wJdA==
-X-Forwarded-Encrypted: i=1; AJvYcCU0BZqbGR1jpZg319I48eJF1iDSQet2KiWdQy9xqG/Kp45ucWO/qQHu6M5OTo10XEXiqv/z5Tk8AeI=@vger.kernel.org, AJvYcCV7whR5rlzAL+0eKIm9PvETEIVd6OSWB6HR8M/rEMw+aqfp0e/71B+8h0hC/bP47XeOSch7Jk+HN0AIRC6z6h8=@vger.kernel.org, AJvYcCW4WnjD5NDPH8XH66B9C0QoSYncVtloAeyFlcxJcpxSr/+M/oIxYljy3IHSah8KJ40x2axyQloWAR4=@vger.kernel.org, AJvYcCWB5B7MDhT8cFpods6F2g5hO/c/1u8DEo3dKE8Oh/E/YeIxQVCKZv+MEdgQ5ghbVCROEKNML61W0M30SY2J/CJmiuc=@vger.kernel.org, AJvYcCWKM64QBXT0FeyNdpiHLeRO9Kajccn65ZfFNMNC8QMMXqqCABj7foXZGIrhYhvovkQCv9rcOzOfwQssYWt1@vger.kernel.org
-X-Gm-Message-State: AOJu0YzeF5emDR7q968TqeBdEQSv2h74DkoMc9pyurs31jmLAESqS4fE
-	O+R1lAnrOL4109kfcrUhxIf6n3/kluLuBnGEpZ03jzLrpXmXzRQ1INamWnhA
-X-Google-Smtp-Source: AGHT+IGhu7YOMVfWbv6QUP3X9d6DUjcNCObmVuumXVoXb/CekxesvT/qehzsFkgjGqdP957Bs8QhbQ==
-X-Received: by 2002:a05:690c:6b09:b0:6e3:31ee:23ab with SMTP id 00721157ae682-6e8581aed96mr15670177b3.25.1729764230767;
-        Thu, 24 Oct 2024 03:03:50 -0700 (PDT)
-Received: from mail-yw1-f169.google.com (mail-yw1-f169.google.com. [209.85.128.169])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ccb641sm19144537b3.83.2024.10.24.03.03.50
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 03:03:50 -0700 (PDT)
-Received: by mail-yw1-f169.google.com with SMTP id 00721157ae682-6e33c65d104so6507987b3.3;
-        Thu, 24 Oct 2024 03:03:50 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUplpB7SxUzgyiMwgBxEzyZ85tlH4v0YX3lf+8oU4U3zPz+L4r0ykzLhhreppv1LDEf2n0BreJWeudBxXOmvlq2kLY=@vger.kernel.org, AJvYcCVrQLaG4oAAws5a2dYoSRboBn16pObJkWBH1EFd/GJtgZ5Lco/aSwj6y9f6bzm+QmI4vWBn9rPj/BZ/oVHg@vger.kernel.org, AJvYcCW2PNI67yA85CSeKF33/CpTTfrtaziQTzUJMa+cOH1bjj2Qavt/7ZF3A+mp85cqPSsddYZBjb5cl3I=@vger.kernel.org, AJvYcCWy1ttWdU/y3+kbQE9NNKUXRStjeXqPb6pJlsUp4IuTzkhZcafCAgzWHqdxFTlo6aLjKRjLNWQMFfo=@vger.kernel.org, AJvYcCX7dixJdPZrZLkWGTPr3750lhj+1clDP6igiY3qls2QzcauF/n67C7bQW5PU1vdm2ZQKzq6uj9fLwON7JNXBDQ=@vger.kernel.org
-X-Received: by 2002:a05:690c:6610:b0:6b1:2825:a3cd with SMTP id
- 00721157ae682-6e866319e02mr13432837b3.35.1729764230288; Thu, 24 Oct 2024
- 03:03:50 -0700 (PDT)
+	s=arc-20240116; t=1729764245; c=relaxed/simple;
+	bh=DCLSjyVxD4E+9mxp2TmkqInRMBTjZIgH6PevLvpjvDY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=dtAc1N3+Wn+TyPD2DAbh+abZEEiEFEk+JEZ+pNGULyzEDw0TuZFJeRDuavbbZU8heEMzLlETnUBlnm3NYgcYMgbFuep+t8uQAHE/5hEQ8U/EQjgKH3bOLBhJXlmxLx3XTw1HUWJVQxRMZPTNW5gchmnjg9li+4hIIfWg8x1+008=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cfMH7Pt3; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3C975C4CEC7;
+	Thu, 24 Oct 2024 10:04:02 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729764244;
+	bh=DCLSjyVxD4E+9mxp2TmkqInRMBTjZIgH6PevLvpjvDY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=cfMH7Pt3Slfn+IkPJz+EEREtdoLxD4HMjtuOFx/Gm7sM35LGlmr0ywDNu4huJVpIX
+	 RSXbv/2Gj3QUZuV28TlHmMcXkCabzFJQvgufTSjZg7Nu8uy3QEtUqCbyafwaO2jtaq
+	 aCIYypoI/wWQzULj5o2IIS/ba+Px59gAZOsf8QCoq2bv/c51J2f3+wxxsPd+moVox7
+	 WZzVl+ZKQ3R2pP+lgBrR2IGh4PK5Xa6+hHHI7Br7uV2yrH4jB2p0/bBmhhDbCrd9Pd
+	 CiiuRrG8rGAmIoCxLyhxOa4U+N9wVsgcUbe5shl/HrqJ3wCOCPKGki42biep3qH/8v
+	 Imp7nB2S5Sl4Q==
+Date: Thu, 24 Oct 2024 12:03:57 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: avifishman70@gmail.com, tmaimon77@gmail.com, tali.perry1@gmail.com, 
+	venture@google.com, yuenn@google.com, benjaminfair@google.com, 
+	andriy.shevchenko@linux.intel.com, wsa@kernel.org, rand.sec96@gmail.com, 
+	wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, Avi.Fishman@nuvoton.com, 
+	tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, kfting@nuvoton.com, 
+	openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/4] i2c: npcm: Modify the client address assignment
+Message-ID: <kzsvr3jepoqjahn7n2jch5vrqim5eknylrasvsbjugfhzny46o@bemfk6knfmxi>
+References: <20241021062732.5592-1-kfting@nuvoton.com>
+ <20241021062732.5592-3-kfting@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241015164732.4085249-1-claudiu.beznea.uj@bp.renesas.com> <20241015164732.4085249-4-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241015164732.4085249-4-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 12:03:37 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdWCDBrivxN0pzbrH=fiwMWM3sj3BTsgHOjeOAT4dr3DEA@mail.gmail.com>
-Message-ID: <CAMuHMdWCDBrivxN0pzbrH=fiwMWM3sj3BTsgHOjeOAT4dr3DEA@mail.gmail.com>
-Subject: Re: [PATCH v4 3/4] clk: renesas: r9a08g045: Mark the watchdog and
- always-on PM domains as IRQ safe
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, wim@linux-watchdog.org, 
-	linux@roeck-us.net, ulf.hansson@linaro.org, linux-renesas-soc@vger.kernel.org, 
-	linux-clk@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-pm@vger.kernel.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241021062732.5592-3-kfting@nuvoton.com>
 
-On Tue, Oct 15, 2024 at 6:48=E2=80=AFPM Claudiu <claudiu.beznea@tuxon.dev> =
-wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> If the watchdog is part of a dedicated power domain (as it may be on
-> RZ/G3S) the watchdog PM domain need to be powered on in the watchdog
-> restart handler. Currently, only the clocks are enabled in the watchdog
-> restart handler. To be able to also power on the PM domain we need to
-> call pm_runtime_resume_and_get() on the watchdog restart handler, mark
-> the watchdog device as IRQ safe and register the watchdog PM domain
-> with GENPD_FLAG_IRQ_SAFE.
->
-> Register watchdog PM domain as IRQ safe. Along with it the always-on
-> PM domain (parent of the watchdog domain) was marked as IRQ safe.
->
-> Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v4:
-> - collected tags
+Hi Tyrone,
 
-Thanks, will queue in renesas-clk for v6.13.
+...
 
-Gr{oetje,eeting}s,
+> +	/*
+> +	 * Previously, the 7-bit address was stored and being converted to
+> +	 * the address of event in the following call to npcm_i2c_master_start_xmit().
 
-                        Geert
+Do we care how it was done previously? I think this is not a
+useful information as the code readers will se the code the way
+it is now, not the way it was done "previously".
 
---=20
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+(there is a related comment at the end)
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+> +	 * Since there are cases that the i2c_recover_bus() gets called at the
+> +	 * early stage of npcm_i2c_master_xfer(), the address of event is stored
+> +	 * and then used in the i2c_recover_bus().
+
+I could rephrase this sentence to something like:
+
+/*
+ * Store the address early in a global position to ensure it is
+ * accessible for a potential call to i2c_recover_bus().
+ */
+
+> +	 */
+> +	bus->dest_addr = i2c_8bit_addr_from_msg(msg0);
+> +
+>  	/*
+>  	 * Check the BER (bus error) state, when ber_state is true, it means that the module
+>  	 * detects the bus error which is caused by some factor like that the electricity
+> @@ -2165,6 +2175,15 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>  	 * bus is busy.
+>  	 */
+>  	if (bus_busy || bus->ber_state) {
+> +		/*
+> +		 * Since the transfer might be a read operation, remove the I2C_M_RD flag
+> +		 * from the bus->dest_addr for the i2c_recover_bus() call later.
+> +		 *
+> +		 * The i2c_recover_bus() uses the address in a write direction to recover
+> +		 * the i2c bus if some error condition occurs.
+> +		 */
+> +		bus->dest_addr &= ~I2C_M_RD;
+> +
+>  		iowrite8(NPCM_I2CCST_BB, bus->reg + NPCM_I2CCST);
+>  		npcm_i2c_reset(bus);
+>  		i2c_recover_bus(adap);
+> @@ -2172,7 +2191,6 @@ static int npcm_i2c_master_xfer(struct i2c_adapter *adap, struct i2c_msg *msgs,
+>  	}
+>  
+>  	npcm_i2c_init_params(bus);
+> -	bus->dest_addr = slave_addr;
+
+We can now get rid of slave_addr. It's just used in
+npcm_i2c_master_start_xmit(). Right?
+
+Andi
+
+>  	bus->msgs = msgs;
+>  	bus->msgs_num = num;
+>  	bus->cmd_err = 0;
+> -- 
+> 2.34.1
+> 
 
