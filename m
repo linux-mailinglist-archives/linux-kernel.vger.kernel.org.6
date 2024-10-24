@@ -1,162 +1,141 @@
-Return-Path: <linux-kernel+bounces-379511-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379515-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CD749ADF86
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:54:42 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id C37649ADF91
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:57:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 26D771C21651
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:54:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E4D781C21730
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:57:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 41C841B218E;
-	Thu, 24 Oct 2024 08:54:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4EE4B1B2181;
+	Thu, 24 Oct 2024 08:57:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="hLnQ+JH9"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3MNcFKZq";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LaFVov5w"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 545581B0F17
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:54:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C53065258
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:57:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729760072; cv=none; b=jGtyt36UNHqiDW+/seWxuRgkW9osr6PPx2Z72Hth1Zg+aFbcVf1Ymg00+3VUbhmOWRKaK6Z4qX5iiQs0R12EEe9OCWooi6TtDXF4HTJ2gwVUHPBoKDk4kc3io/c0rHHIvAuwhycAeh4UvcLBoZCT5usVp+Km3AgcvOwd1gD1oXc=
+	t=1729760227; cv=none; b=J/icES0ct0DYKTIPyYuPofKKnBoP9Ijo6YY7msdBqgwJh83hryyOVia1JKxW+HzcL64xSnkzDMafuipcrXti8Dfqne57b3Fdeib7gvmLyYBMWCjk2+ehPc+QoC6zuhlMlu7b5cbZkwO0Sneoon2Bd9TVo3jIcwwGsaRTFnZitCg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729760072; c=relaxed/simple;
-	bh=DJfiaNN0XemKK4RktxCCVMa36EfHMCL8pPutCdn1OTM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ugB3eABsHaQczGNyfcGuLubBfD1HF8tXwVZyFQAlF60JbzSVLHADB/Htp2782JGN02ayu7t26KouMSYVVEukYZJrzXVOBHfdLPu07Qf0LqBh4zuZdTWxDK/Q/9sHAVJKrN7+QTZl66AJ6WsLfAQn+cxqyV4/d76DeaMh21gvHJ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=hLnQ+JH9; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c941623a5aso3063439a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:54:30 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729760068; x=1730364868; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=d0qmLDbeSABodAIc8gmIXN4es8vz5n5AiRUE4hqdnTk=;
-        b=hLnQ+JH9Q7TSiB0wJNbQIQNHNVk9ZvyNP0RDEDFmS6HRFmlAkBkXpERrsiKOlODyLh
-         VR5AwFbVnbd2zPJL0uLLyX7hBOmciWm3eUJ4E6ayZLCXWwEEX12cmqBiOCEndwdZyxer
-         o/YUJlSPR3pJTHOgZtCAijv0fqD2cUmrQE2HV1yuuTST/IWFAa4jCOZ4jPx3kjA6zvmk
-         eJVhtOuu+FbNgna2SkCOoD68brVBwd1Aof5ZNyeX6aJnWjS4CSNP0sAsuhAjQPEsDMOD
-         Y0RiNazxaPjE3DzZCMqyaotQfLYdDf7toyVjCo6NOLAIU8ePQCpalRYcZzCinECNlria
-         afXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729760068; x=1730364868;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=d0qmLDbeSABodAIc8gmIXN4es8vz5n5AiRUE4hqdnTk=;
-        b=dhl7GFgIeyUT2Ua2a22x8mC/Aq1sCTbu9WNF+VfOxx7cAYQNOAH/JqbGBsAD43tFD9
-         ebH0TYRamnjKMRRwpDp7MymnAeAJWRIQOw9nG/+rQGQG4U4GrRWMJ4OiM6Fl9qWodxru
-         l5u6/k2ciX/q1L56U90NlibHO4yKWaTZ/COBGZZbgsxBwkM//PMDuN08mzlKqXKPZ32m
-         5IRHi3NY3bHWmJLlvw8SuSSWNjFicBlacQicA3wTv9XEFLmh+awuidoTNBUpc5oT6OKo
-         PJ4pad7ZhhlyIWMMYLPXHQLsG7A9QDEJRPcKx4+YTVEsN7fDzuft6LprrVRjk5lzEQP0
-         obBQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWuzO8vS/wKF22saZL0Dqy2RlCtaOQ2FldGxpzUIPofXdqCSCjj48DpVmypv7Z7QBSkaijI5b6NPP1u6WY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzDFbyl3FSs8yKEI1vy070DKgNLvLaYMgUQREYNyeectWbzW5Pg
-	N2PCfbH/Fj/WPz444WCKbQR4hTnKueDIWyPMkPLTQwb+YHukzZFLw9y3g4W4CNY=
-X-Google-Smtp-Source: AGHT+IEtkv88aszDqGLRcL7SdViTGUOQM4RoLn3yhnz+YHcVFpufFnKSLz6jGrfZU7O0d1cTY3WVmQ==
-X-Received: by 2002:a17:906:c104:b0:a9a:4b51:9e7 with SMTP id a640c23a62f3a-a9ad19c4e2dmr139529266b.16.1729760068494;
-        Thu, 24 Oct 2024 01:54:28 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571e3asm589303966b.147.2024.10.24.01.54.27
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 01:54:28 -0700 (PDT)
-Message-ID: <ae479f58-5474-401b-adf3-3937c91cae1a@linaro.org>
-Date: Thu, 24 Oct 2024 09:54:27 +0100
+	s=arc-20240116; t=1729760227; c=relaxed/simple;
+	bh=Pw6FJosMejIFSDmfEmMu0ZzLX7Maw3+lCwFAqfIqBBI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=jHEA9QE0O/szuqWvdU9rXJkX3ABocfPqB7Zc4/GnOPOSaNtfF2+63NpdjZyjPOgJDKa63+mHs0Bd3VKfnX/BDiy51Pl72VHCorp7VYWCF0EECTc/G4Q+eYfrUstlPD+jqs1vzRYK6tEh4/hm0oPMjZf4mj5ZPmFN/qs6YvR4ZRY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3MNcFKZq; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LaFVov5w; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729760224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8csvGl6+uTEFF4hb7wWV+oNN3A8Arzdk1CAP2JjMvBM=;
+	b=3MNcFKZqa0xrK1ZEKJmCqozp3DjCcD3RLmc2zL+mFSf9fjLo96d4c0/hbto5ukaWQbZtvJ
+	yTK93+N4prvakhxl4xlDqeyzuehYlCeqTv1COPHWFSab6XoSdIjAtDYlv40dGwGA48wA3M
+	U2iNTAgP2cInJAFclkqNIJ1uAPFCwtxn1HE3RdyB8OS6tYXmuC/2kP21laC8+kZ/7qLj0v
+	UdOnoMJz2oi1eUiuKJ5Q1TWV6FF+WdB/MI+1ttg2ZP773QaW0yG2tBPODpsZbRYVFiBp76
+	Vn+LYZrUgOEUHGUbcEKMScVlcZSY6jjQKTxQM6Lwc4G7Q8huUDP1lxYQhjuJVg==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729760224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8csvGl6+uTEFF4hb7wWV+oNN3A8Arzdk1CAP2JjMvBM=;
+	b=LaFVov5wPebqtBSYRz+0d5ESOfSUH0H1P7JBfXtTAZHdLzkVEOoXUL3bYEYdxrg2TeJ/RV
+	1wBnPYY0I2v2LqBw==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
+ Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
+ Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 09/26] posix-timers: Make signal overrun accounting
+ sensible
+In-Reply-To: <ZxbNlw4F5tUI1a5D@pavilion.home>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083835.790542522@linutronix.de> <ZxbNlw4F5tUI1a5D@pavilion.home>
+Date: Thu, 24 Oct 2024 10:57:03 +0200
+Message-ID: <87ldyd6fq8.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 1/2] media: venus: fix enc/dec destruction order
-To: Sergey Senozhatsky <senozhatsky@chromium.org>,
- Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>
-Cc: linux-media@vger.kernel.org, linux-kernel@vger.kernel.org,
- Tomasz Figa <tfiga@google.com>
-References: <20241024061809.400260-1-senozhatsky@chromium.org>
- <20241024061809.400260-2-senozhatsky@chromium.org>
-Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241024061809.400260-2-senozhatsky@chromium.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 24/10/2024 07:16, Sergey Senozhatsky wrote:
-> We destroy mutex-es too early as they are still taken in
-> v4l2_fh_exit()->v4l2_event_unsubscribe()->v4l2_ctrl_find().
-> 
-> We should destroy mutex-es right before kfree().  Also
-> do not vdec_ctrl_deinit() before v4l2_fh_exit().
-> 
-> Suggested-by: Tomasz Figa <tfiga@google.com>
-> Signed-off-by: Sergey Senozhatsky <senozhatsky@chromium.org>
-> ---
->   drivers/media/platform/qcom/venus/vdec.c | 7 ++++---
->   drivers/media/platform/qcom/venus/venc.c | 6 +++---
->   2 files changed, 7 insertions(+), 6 deletions(-)
-> 
-> diff --git a/drivers/media/platform/qcom/venus/vdec.c b/drivers/media/platform/qcom/venus/vdec.c
-> index 6252a6b3d4ba..0013c4704f03 100644
-> --- a/drivers/media/platform/qcom/venus/vdec.c
-> +++ b/drivers/media/platform/qcom/venus/vdec.c
-> @@ -1752,13 +1752,14 @@ static int vdec_close(struct file *file)
->   	cancel_work_sync(&inst->delayed_process_work);
->   	v4l2_m2m_ctx_release(inst->m2m_ctx);
->   	v4l2_m2m_release(inst->m2m_dev);
-> -	vdec_ctrl_deinit(inst);
->   	ida_destroy(&inst->dpb_ids);
->   	hfi_session_destroy(inst);
-> -	mutex_destroy(&inst->lock);
-> -	mutex_destroy(&inst->ctx_q_lock);
->   	v4l2_fh_del(&inst->fh);
->   	v4l2_fh_exit(&inst->fh);
-> +	vdec_ctrl_deinit(inst);
-> +
-> +	mutex_destroy(&inst->lock);
-> +	mutex_destroy(&inst->ctx_q_lock);
->   
->   	vdec_pm_put(inst, false);
->   
-> diff --git a/drivers/media/platform/qcom/venus/venc.c b/drivers/media/platform/qcom/venus/venc.c
-> index 322a7737e2c7..6a26a6592424 100644
-> --- a/drivers/media/platform/qcom/venus/venc.c
-> +++ b/drivers/media/platform/qcom/venus/venc.c
-> @@ -1519,14 +1519,14 @@ static int venc_close(struct file *file)
->   
->   	v4l2_m2m_ctx_release(inst->m2m_ctx);
->   	v4l2_m2m_release(inst->m2m_dev);
-> -	venc_ctrl_deinit(inst);
->   	hfi_session_destroy(inst);
-> -	mutex_destroy(&inst->lock);
-> -	mutex_destroy(&inst->ctx_q_lock);
->   	v4l2_fh_del(&inst->fh);
->   	v4l2_fh_exit(&inst->fh);
-> +	venc_ctrl_deinit(inst);
->   
->   	inst->enc_state = VENUS_ENC_STATE_DEINIT;
-> +	mutex_destroy(&inst->lock);
-> +	mutex_destroy(&inst->ctx_q_lock);
->   
->   	venc_pm_put(inst, false);
->   
+On Mon, Oct 21 2024 at 23:54, Frederic Weisbecker wrote:
+> Le Tue, Oct 01, 2024 at 10:42:12AM +0200, Thomas Gleixner a =C3=A9crit :
+>> +	/*
+>> +	 * Set the overrun count to zero unconditionally. The posix timer
+>> +	 * code does not self rearm periodic timers. They are rearmed from
+>> +	 * dequeue_signal().
+>> +	 *
+>> +	 * But there is a situation where @q is already enqueued:
+>> +	 *
+>> +	 * 1) timer_settime()
+>> +	 *      arm_timer()
+>> +	 * 2) timer_expires()
+>> +	 *      send_sigqueue(@q)
+>> +	 *        enqueue(@q)
+>> +	 * 3) timer_settime()
+>> +	 *      arm_timer()
+>> +	 * 4) timer_expires()
+>> +	 *      send_sigqueue(@q) <- Observes @q already queued
+>> +	 *
+>> +	 * In this case incrementing si_overrun does not make sense because
+>> +	 * there is no relationship between timer_settime() #1 and #2.
+>> +	 *
+>> +	 * The POSIX specification is useful as always: "The effect of
+>> +	 * disarming or resetting a timer with pending expiration
+>> +	 * notifications is unspecified."
+>> +	 *
+>> +	 * Just do the sensible thing and reset the overrun.
+>> +	 */
+>> +	q->info.si_overrun =3D 0;
+>
+> So this means that in the above example case, no signal at all is going t=
+o be
+> delivered (because the seq will be impaired on the previously queued
+> signal) and no overrun count will be incremented either?
 
-Lgtm
+So #2 queues the signal, but before delivery the timer is rearmed, which
+invalidates the signal via the sequence count. So #4 has to set the
+overrun counter which might be set already.
 
-Requires a Fixes: tag though
+>> +
+>>  	ret =3D 1; /* the signal is ignored */
+>>  	result =3D TRACE_SIGNAL_IGNORED;
+>>  	if (!prepare_signal(sig, t, false))
+>> @@ -1968,15 +1996,9 @@ int send_sigqueue(struct sigqueue *q, st
+>>=20=20
+>>  	ret =3D 0;
+>>  	if (unlikely(!list_empty(&q->list))) {
+>> -		/*
+>> -		 * If an SI_TIMER entry is already queue just increment
+>> -		 * the overrun count.
+>> -		 */
+>> -		q->info.si_overrun++;
+>
+> Who is ever incrementing this after that? I'm a bit confused between the
+> timer overrun and the sigqueue overrun. Those seem to be two different
+> things without any link...
 
-i.e.
+Hmm. You're right. This should now never happen. Let me stare at it some
+moar.
 
-Fixes: 7472c1c69138 ("[media] media: venus: vdec: add video decoder files")
+Thanks,
 
-Once added
-
-Reviewed-by: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+        tglx
 
