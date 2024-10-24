@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-379998-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379999-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EEA29AE6F3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:46:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4F7D89AE6F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:46:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 67C0BB237B1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:45:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 148C2284378
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:46:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D45681DE2C5;
-	Thu, 24 Oct 2024 13:45:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D58AA1E1C11;
+	Thu, 24 Oct 2024 13:45:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tvZhZ/Wm"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hJZbzmra"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 28C6F136A;
-	Thu, 24 Oct 2024 13:45:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3D1B51E048D;
+	Thu, 24 Oct 2024 13:45:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729777551; cv=none; b=u75SzGhfBdM4N5v/DT4Y4T0429wzcgjaWT1mPNdT02O/LkMfrjl7yiKruVWDio6amuXY6t/ADFLaTEqZtwg2Hgl4lYWzyBSkpufnjloLwHJmeKAOon8Ffer5+vqNuNZx/0I06AwGHHQw1CsyHuBs0TKBwRq+2pBsSO/1DSXljEA=
+	t=1729777552; cv=none; b=VkTBqLRWfvNdE5+oTxw0KccLJMw68jQmbLAsBYv/Al1l92ngOV2CMhl4ID0EqTJkzVvIX5e1biHiqXnBYRb1+V5CtZbe85j7aeO2gdjmNfUkzG1cZXrRdekVYU5CUVnZHMOZ8+dn+3zFGkTwgaSr2e3hCXBB37tAzCtljRAn0DA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729777551; c=relaxed/simple;
-	bh=wwPWvSBGUvSYbh2tv8Xhy1j32pV3xMYlKdte6yQ/l2Q=;
+	s=arc-20240116; t=1729777552; c=relaxed/simple;
+	bh=ysaebKzqz4XXZimRWbG9UPVLLN1JN2MVZiCwi9rRVUM=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=P3a65zOUTU75PgvPyAkrwmyoGjb0ijjYWC6CiDdcS11SU8gnT7GWbWFV4yki8EtKuS4UL7Dl8HiqAA+kftRd89NZmo/MeZ47ciq6uSSJpbQo697osdo2wp6TeGCGY2e/2lADtVgtfefcgKounF7cqhYI7efFvRq4loezSbBXCfU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tvZhZ/Wm; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73AA6C4CEC7;
-	Thu, 24 Oct 2024 13:45:49 +0000 (UTC)
+	 Message-Id:Subject; b=ZnCtQC5lGHF6xuLGHopv7nroeX60svJRQK9T9xVxHFQMhPlvwlF4eIrC4LcfzPzpQlGobKld6+HilPeXxctj3Eo0oJcD6uRZvt48v1jYMtEsKDzsgXI9JW7Nd7MHMFTNknpsZx6wfQW+4WdJWGyX0SGxlX63BtZfAU80oP7ITs0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hJZbzmra; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8EE3EC4CEE3;
+	Thu, 24 Oct 2024 13:45:51 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729777550;
-	bh=wwPWvSBGUvSYbh2tv8Xhy1j32pV3xMYlKdte6yQ/l2Q=;
+	s=k20201202; t=1729777551;
+	bh=ysaebKzqz4XXZimRWbG9UPVLLN1JN2MVZiCwi9rRVUM=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=tvZhZ/WmfNUnyiKb5Ug+aYDARYpCaIaVruHf8RzheKEtrmA119942UEAyYXBDTIu4
-	 Ij802krosYUO8QjsIiY7S0l0fkv7KWTLyVjKzJiRB/8+PTeYVyR2729dlbrS4xic9S
-	 i3PNz0/nt5WYqKx5CZyeN+2RNC119c467bPSf2U7pLq/cBxS2XnRgjaLRKVD4e8Y83
-	 +UUneGva/+KcjKgregL0zfY6OLdFOU1kuzilwUBX0YPJwC8zmbGVzpBYBfKWUQv4a8
-	 t4htVWQwwVJ/KnXYfHbiTrWlisRfL6nwN8GK8ZwIgJSw3v0WKo6f8UMq9Y++my8OXd
-	 vXDn+M6UHDTqA==
-Date: Thu, 24 Oct 2024 08:45:48 -0500
+	b=hJZbzmraRElTGj4KBom6GeCanhFOrtyiiz4Av4mm37YQgm08e7xJeXdowMAeUrKwN
+	 OIr3+hJ/ughyyiPztWDSFEIus2G5qEpLvKQae7NId4tYMZgh9XbF9X6vN0q7QnDrFk
+	 zrMtEwNLzdObM3qsTNT8ZNV2RCulL0/cZADvpKtbRZenAQD2bYRFPmne9tXKypxrbO
+	 GxvsSJwreM0+TK5b9MG82mQaq0bp+jmUDDMCQHudtEMPrisod10+kLx0tK47MmJeS/
+	 0h9sBep6NTNBshN34uWpdQlQ+7bRN9/PKUm7i7zjE/xPEFdqjHRMsQlclm3kwRmp+7
+	 nSdabjxBxSC2w==
+Date: Thu, 24 Oct 2024 08:45:50 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,30 +50,33 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Billy Tsai <billy_tsai@aspeedtech.com>
-Cc: BMC-SW@aspeedtech.com, conor+dt@kernel.org, devicetree@vger.kernel.org, 
- linux@roeck-us.net, jdelvare@suse.com, krzk+dt@kernel.org, joel@jms.id.au, 
- linux-hwmon@vger.kernel.org, linux-pwm@vger.kernel.org, ukleinek@kernel.org, 
- linux-aspeed@lists.ozlabs.org, andrew@codeconstruct.com.au, 
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-In-Reply-To: <20241024071548.3370363-2-billy_tsai@aspeedtech.com>
-References: <20241024071548.3370363-1-billy_tsai@aspeedtech.com>
- <20241024071548.3370363-2-billy_tsai@aspeedtech.com>
-Message-Id: <172977754729.100390.12938687199677719303.robh@kernel.org>
-Subject: Re: [PATCH v1 1/2] hwmon: (aspeed-g6-pwm-tacho): Extend the
- #pwm-cells to 4
+To: "Karl.Li" <karl.li@mediatek.com>
+Cc: Jassi Brar <jassisinghbrar@gmail.com>, devicetree@vger.kernel.org, 
+ linux-arm-kernel@lists.infradead.org, 
+ Chungying Lu <chungying.lu@mediatek.com>, Karl Li <Karl.Li@mediatek.com>, 
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+ Project_Global_Chrome_Upstream_Group@mediatek.com, 
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, linux-kernel@vger.kernel.org, 
+ linux-mediatek@lists.infradead.org, Conor Dooley <conor+dt@kernel.org>, 
+ Matthias Brugger <matthias.bgg@gmail.com>
+In-Reply-To: <20241024092608.431581-2-karl.li@mediatek.com>
+References: <20241024092608.431581-1-karl.li@mediatek.com>
+ <20241024092608.431581-2-karl.li@mediatek.com>
+Message-Id: <172977754868.100447.11555196771647688261.robh@kernel.org>
+Subject: Re: [PATCH 1/3] dt-bindings: mailbox: mediatek: Add apu-mailbox
+ document
 
 
-On Thu, 24 Oct 2024 15:15:47 +0800, Billy Tsai wrote:
-> Add an option to support #pwm-cells up to 4. The additional cell is used
-> to enable the WDT reset feature, which is specific to the ASPEED PWM
-> controller.
+On Thu, 24 Oct 2024 17:25:43 +0800, Karl.Li wrote:
+> From: Karl Li <karl.li@mediatek.com>
 > 
-> Signed-off-by: Billy Tsai <billy_tsai@aspeedtech.com>
-> Change-Id: Iefcc9622ac3dc684441d3e77aeb53c00f2ce4097
+> Add apu-mailbox dt-binding document.
+> 
+> Signed-off-by: Karl Li <karl.li@mediatek.com>
 > ---
->  .../bindings/hwmon/aspeed,g6-pwm-tach.yaml    | 25 ++++++++++++++++++-
->  1 file changed, 24 insertions(+), 1 deletion(-)
+>  .../mailbox/mediatek,apu-mailbox.yaml         | 55 +++++++++++++++++++
+>  1 file changed, 55 insertions(+)
+>  create mode 100644 Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.yaml
 > 
 
 My bot found errors running 'make dt_binding_check' on your patch:
@@ -81,16 +84,12 @@ My bot found errors running 'make dt_binding_check' on your patch:
 yamllint warnings/errors:
 
 dtschema/dtc warnings/errors:
-Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.example.dts:54.48-70.11: ERROR (duplicate_label): /example-1/pwm-tach-controller@1e610000: Duplicate label 'pwm_tach' on /example-1/pwm-tach-controller@1e610000 and /example-0/pwm-tach-controller@1e610000
-ERROR: Input tree has errors, aborting (use -f to force output)
-make[2]: *** [scripts/Makefile.dtbs:129: Documentation/devicetree/bindings/hwmon/aspeed,g6-pwm-tach.example.dtb] Error 2
-make[2]: *** Waiting for unfinished jobs....
-make[1]: *** [/builds/robherring/dt-review-ci/linux/Makefile:1442: dt_binding_check] Error 2
-make: *** [Makefile:224: __sub-make] Error 2
+/builds/robherring/dt-review-ci/linux/Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.example.dtb: mailbox@4c200000: reg: [[0, 1277165568], [0, 1048575]] is too long
+	from schema $id: http://devicetree.org/schemas/mailbox/mediatek,apu-mailbox.yaml#
 
 doc reference errors (make refcheckdocs):
 
-See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241024071548.3370363-2-billy_tsai@aspeedtech.com
+See https://patchwork.ozlabs.org/project/devicetree-bindings/patch/20241024092608.431581-2-karl.li@mediatek.com
 
 The base for the series is generally the latest rc1. A different dependency
 should be noted in *this* patch.
