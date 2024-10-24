@@ -1,123 +1,83 @@
-Return-Path: <linux-kernel+bounces-379411-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379413-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A0F0A9ADE52
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:56:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 209309ADE5C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:02:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D044B213E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:56:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4F0BA1C20F4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:02:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9D01AD3E1;
-	Thu, 24 Oct 2024 07:56:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hEfCTUDr"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC3E176227;
-	Thu, 24 Oct 2024 07:56:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CE6D61AF0A8;
+	Thu, 24 Oct 2024 08:01:57 +0000 (UTC)
+Received: from outboundhk.mxmail.xiaomi.com (outboundhk.mxmail.xiaomi.com [207.226.244.122])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C2285258;
+	Thu, 24 Oct 2024 08:01:54 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.226.244.122
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729756603; cv=none; b=pgkVOgEh4NFpdocEPUXRu37nPH2am7ck4qibNbtJv9qwhKuKn9OzD2nHP8UkRhiOz8DUgHy4JmELayDR7RjKA6CZiptsf8TDklzIgPA4fOTCKNlymLUC4sqFr1tVOkGCLHOltP7/0qO1f7TxGIIEfsUKTu7/rqslZgQ7QQ2iINg=
+	t=1729756917; cv=none; b=cWf48FrzyqjsgCYbuirHU5qA/XsFhzIAVVzvC9VifgS5bgQniodrQlSl+M4QBI/OBwq9kbDVTzmdCDuAffBn6NMl4xQWgIUXcerXnIrNKNgSFwZwJVOuvzoUggdOk8PMzAy5IWuZr4WKN+qND3fILcGBDQ5crrArWMNDBCiyklY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729756603; c=relaxed/simple;
-	bh=96E/wi/tl7VQCri4VG0xUqj+y+//emGpqRv6r1BRDfE=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SdiWUTPZzRVd4k7tFvtMDaxOuoXX0kyDBxPe2Hg02VbeNoryoUWHsGpRR6CuVoR+vuL7scAAQR7sKhT0nUK93hhMf9tJVMIOueLXvrFUkquWCwDKXWbEp60awvXTgp+V5EFKVmG2aKSb+Ahr+efETmzoaKNPKqIdVTWXA2lqDco=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hEfCTUDr; arc=none smtp.client-ip=198.175.65.9
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729756602; x=1761292602;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=96E/wi/tl7VQCri4VG0xUqj+y+//emGpqRv6r1BRDfE=;
-  b=hEfCTUDr38K15qcFhJIeT0b/aqhl0ozZf3V11+dPmrcyEwwuz6R7XO0X
-   J70wB38s5dODNMQ++fYjFDuWkK20lXWX54MvVXKJOVt0n92yDcWAQ0qw0
-   yvUUH24EJkmGBSOPM0yV1MjrRm9Vs/DsW3EyAixVNsnxg/ST6eCjJgXt0
-   WQPAox+bBe4XQX6SFd0/r8PpVttc5TxFgYTDFxV640ZzhnCQDLXdTsmzn
-   2kDd/e22t9YW3pnWBn8MvpX2tMvNgmvIYkV52iU0ZrOp4+zGrMR3qhe1V
-   abOUbn1fTyg4pcysxLlrYlzrULb1Y9ESNXuLlsvBsDT649EAwcQkOVHzM
-   g==;
-X-CSE-ConnectionGUID: cy0HMR2FScK6XENx8YgBPA==
-X-CSE-MsgGUID: rCL6D172RhKOSBFsCTbYFA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51915847"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="51915847"
-Received: from orviesa002.jf.intel.com ([10.64.159.142])
-  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 00:56:41 -0700
-X-CSE-ConnectionGUID: JUCSMg8pQMehL2XTDKJJfQ==
-X-CSE-MsgGUID: uQgSKJf7SgyCmacXl6kgAg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="111361025"
-Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
-  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 00:56:39 -0700
-Message-ID: <aff9bf82-e11e-43d9-8661-aefa328242ad@intel.com>
-Date: Thu, 24 Oct 2024 15:56:35 +0800
+	s=arc-20240116; t=1729756917; c=relaxed/simple;
+	bh=gogD0i7bwHKLV0LMRBH2B2NSjmA6gbgxRSx0dkfFLbY=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=YApun37kBOS9z1eJ1Ody3zV64rZU5OfgRUjBPzFVQrV4HCH/6rZXZzv+TTEFNf7JcOyruBrvvwgsqooJ7idqpmphZ0GhjtnM8XBgbRftGG/dYdBldAE9vM8hvvF0DzRo4kPgvTWQOdlg/sflk2spz7DLIYgQfMlzagFNitRPL4w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com; spf=pass smtp.mailfrom=xiaomi.com; arc=none smtp.client-ip=207.226.244.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=xiaomi.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=xiaomi.com
+X-CSE-ConnectionGUID: ZK3QAJymR2aNII5/Rircfg==
+X-CSE-MsgGUID: gG7XiE7ESc6JC6p4ZMuOqA==
+X-IronPort-AV: E=Sophos;i="6.11,228,1725292800"; 
+   d="scan'208";a="125164653"
+From: ZhengShaobo <zhengshaobo1@xiaomi.com>
+To: <zhengshaobo1@xiaomi.com>
+CC: <chendejun@xiaomi.com>, <chuci@xiaomi.com>, <daniel.lezcano@linaro.org>,
+	<dingchongchong@xiaomi.com>, <linux-kernel@vger.kernel.org>,
+	<linux-pm@vger.kernel.org>, <lukasz.luba@arm.com>, <rafael@kernel.org>,
+	<rui.zhang@intel.com>
+Subject: Re: [PATCH] thermal: gov_power_allocator: Granted power set to max when nobody request power
+Date: Thu, 24 Oct 2024 16:00:34 +0800
+Message-ID: <20241024080043.647-1-zhengshaobo1@xiaomi.com>
+X-Mailer: git-send-email 2.43.0
+In-Reply-To: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
+References: <20241021121138.422-1-zhengshaobo1@xiaomi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v13 05/13] x86/sev: Prevent RDTSC/RDTSCP interception for
- Secure TSC enabled guests
-To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-6-nikunj@amd.com>
-Content-Language: en-US
-From: Xiaoyao Li <xiaoyao.li@intel.com>
-In-Reply-To: <20241021055156.2342564-6-nikunj@amd.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: BJ-MBX17.mioffice.cn (10.237.8.137) To BJ-MBX15.mioffice.cn
+ (10.237.8.135)
 
-On 10/21/2024 1:51 PM, Nikunj A Dadhania wrote:
-> The hypervisor should not be intercepting RDTSC/RDTSCP when Secure TSC is
-> enabled. A #VC exception will be generated if the RDTSC/RDTSCP instructions
-> are being intercepted. If this should occur and Secure TSC is enabled,
-> terminate guest execution.
+On Wed, Oct 23, 2024 at 12:09:44PM +0200, Rafael J. Wysocki wrote:
+> On Mon, Oct 21, 2024 at 2:12 PM ZhengShaobo <zhengshaobo1@xiaomi.com> wrote:
+> >
+> > From: zhengshaobo1 <zhengshaobo1@xiaomi.com>
+> >
+> > When total_req_power is 0, divvy_up_power() will set granted_power to 0,
+> > and cdev will be limited to the lowest performance. If our polling delay
+> > is set to 200ms, it means that cdev cannot perform better within 200ms
+> > even if cdev has a sudden load. This will affect the performance of cdev
+> > and is not as expected.
+> >
+> > For this reason, if nobody requests power, then set the granted power to
+> > the max_power.
+> >
+> > Signed-off-by: zhengshaobo1 <zhengshaobo1@xiaomi.com>
+>
+> I would have applied this, but your S-o-b above needs to be fixed.
+> Why don't you use your real name there?
+>
+> If it can be changed to "ZhengShaobo <zhengshaobo1@xiaomi.com>",
+> please let me know, and I will fix it for you when applying the patch.
+>
+Yes, it should be "ZhengShaobo <zhengshaobo1@xiaomi.com>".
+I would really appreciate your help in solving this problem.
 
-There is another option to ignore the interception and just return back 
-to guest execution. I think it better to add some justification on why 
-make it fatal and terminate the guest is better than ignoring the 
-interception.
-
-> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
-> Tested-by: Peter Gonda <pgonda@google.com>
-> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
-> ---
->   arch/x86/coco/sev/shared.c | 10 ++++++++++
->   1 file changed, 10 insertions(+)
-> 
-> diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
-> index 71de53194089..c2a9e2ada659 100644
-> --- a/arch/x86/coco/sev/shared.c
-> +++ b/arch/x86/coco/sev/shared.c
-> @@ -1140,6 +1140,16 @@ static enum es_result vc_handle_rdtsc(struct ghcb *ghcb,
->   	bool rdtscp = (exit_code == SVM_EXIT_RDTSCP);
->   	enum es_result ret;
->   
-> +	/*
-> +	 * RDTSC and RDTSCP should not be intercepted when Secure TSC is
-> +	 * enabled. Terminate the SNP guest when the interception is enabled.
-> +	 * This file is included from kernel/sev.c and boot/compressed/sev.c,
-> +	 * use sev_status here as cc_platform_has() is not available when
-> +	 * compiling boot/compressed/sev.c.
-> +	 */
-> +	if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
-> +		return ES_VMM_ERROR;
-> +
->   	ret = sev_es_ghcb_hv_call(ghcb, ctxt, exit_code, 0, 0);
->   	if (ret != ES_OK)
->   		return ret;
-
+Thanks,
+ZhengShaobo
 
