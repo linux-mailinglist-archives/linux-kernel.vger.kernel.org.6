@@ -1,254 +1,193 @@
-Return-Path: <linux-kernel+bounces-379748-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379749-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 453EA9AE326
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:56:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 44CC29AE327
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:58:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C0E47B220E9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:56:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id BE3201F23152
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:58:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2AB1D1C75FA;
-	Thu, 24 Oct 2024 10:56:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4C4A11C75FA;
+	Thu, 24 Oct 2024 10:58:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lfuhaUvl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0ZpefFSZ";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="lfuhaUvl";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="0ZpefFSZ"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M5is9arf"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F276314831C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:56:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5AB541C07F3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:58:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767393; cv=none; b=E9cf3yGp7IxPKlMthNEMZn8lN5izjSgXvj0zgHUns3JT4a6LgH0mg9FMhU76kDHONgyMQGQaZMZsXfneLls4WhJBrRDFiCcOLradRXcvNEpf4DD3fPQuguNvJllD3/h7RDeEBpTuG/LodM5Sq00P04AqmJEOQ2XmIzSa4FtQyKM=
+	t=1729767495; cv=none; b=JZyRhqX5m0U9T6xneasLdXzDdkZfGU69TpF4RAZDVGTKPqHNxB+aDMK2EGLPku5Q67XG/ZS+4zkD395iY+KtG3tveI1+H3I0wBeCBCDpgPoBxzC/K8pbEmsGezrt22VkVeU7dPV1Vzy9TO/V1+6uwHjBzIaR0Cs4icLas71me6Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767393; c=relaxed/simple;
-	bh=HqyJ4E6UIAKppDxRdEsb52cMNEEEgjcXQCP5U1ON1QU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SvuZ68yK1F8kkMZyxfeQiMPj+7VvNq2FN3+dcyQjEPgc3VjLUZ3Tulsx2rgsNudYY1jN0wwNcIWhDii01Hc7uv4CLxWl6eN9qlZQoakDHx3S3mZs9sjoAqX9T3gOV432xl90susduAJq2U3oJPxcEd1+nz8z/qI2lg/Yf0q5w9c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lfuhaUvl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0ZpefFSZ; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=lfuhaUvl; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=0ZpefFSZ; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 2775D21DC7;
-	Thu, 24 Oct 2024 10:56:28 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729767388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pRmX8pxGVlkGb4sGuXmXSVjvnifiK2iYcZOE14qRdY=;
-	b=lfuhaUvl3SfdWccS9n8MeFCZRdqA5uauFC6J9kivk4IVwRo7ZffP2mAQGDbY9t87dTOkia
-	5Prn2kKaVe3Grp1thUz6mGNcr3qOnh1b4gKIg0DomfUPUhL1TBdFAu9XHShyJkBi1mAwHO
-	VNd4/B1Lr9CgzLr8DCTL1/tkrNeOqWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729767388;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pRmX8pxGVlkGb4sGuXmXSVjvnifiK2iYcZOE14qRdY=;
-	b=0ZpefFSZYnoI7B8K7RHJrt3ddYiOGPl2b/o0FzGtIjfEhnbxiWqVSG09LcE24/CQT3RXfF
-	KWWIRFs8DNBa3ZDw==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729767388; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pRmX8pxGVlkGb4sGuXmXSVjvnifiK2iYcZOE14qRdY=;
-	b=lfuhaUvl3SfdWccS9n8MeFCZRdqA5uauFC6J9kivk4IVwRo7ZffP2mAQGDbY9t87dTOkia
-	5Prn2kKaVe3Grp1thUz6mGNcr3qOnh1b4gKIg0DomfUPUhL1TBdFAu9XHShyJkBi1mAwHO
-	VNd4/B1Lr9CgzLr8DCTL1/tkrNeOqWU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729767388;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=6pRmX8pxGVlkGb4sGuXmXSVjvnifiK2iYcZOE14qRdY=;
-	b=0ZpefFSZYnoI7B8K7RHJrt3ddYiOGPl2b/o0FzGtIjfEhnbxiWqVSG09LcE24/CQT3RXfF
-	KWWIRFs8DNBa3ZDw==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 0C37413AF0;
-	Thu, 24 Oct 2024 10:56:28 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id ++iZAtwnGmcVZwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 10:56:28 +0000
-Message-ID: <a7585f3e-d6c7-4982-8214-63a7ec6258ad@suse.cz>
-Date: Thu, 24 Oct 2024 12:56:27 +0200
+	s=arc-20240116; t=1729767495; c=relaxed/simple;
+	bh=fH/avE1wCiXE0JKUS41iySaag9GfaWjZ+91HXVlG2Gc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=GY1COn57Jy5HEQbDKky2ab0JCQj92J6f1XN6JsMlBofk4qwnH+gyVDgMiRETxALpqThLRxcbF7w9js61Yv2R+QrlskPKbF5+awpwq1hb5IZx1ftsrfxpzI5u1yfReW9IMLQmaLIfH2gIXtWy7usm4T9tSzR6/CiikXG2lO/nJnU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M5is9arf; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43159469053so964255e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:58:13 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729767491; x=1730372291; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0zv4SMHXvV0Lwj3C1Vjp7KHVDJuw2pOpFawGmV23O5A=;
+        b=M5is9arf+jlhPDjFR7BKHGJnWvDyemzfiXltDC+5x0Usb1H9ywZk6WYPnutmMb1Hft
+         k+ko8BOzu9x7UTVmhPWhHIUH4DcjpQp/X8S2p2NuOysgGBPbGTPKj5pv68eZ7M239fK9
+         odoGwG4bvnS+uHN+2yJTrn5VPno2JgBFzhepssooxIfjewX38yuPEBReh1e4RUaBzfR4
+         74uo0DLiLd9ijv1q9N7TcrVJ+OM9SJ5XsPgtb974Mw/93BulD3QJrZv5A9JZWiYnX3zh
+         qngrEXQkU3va6gY42lk5+fV1UAhXhLGWN4OOtNaapeKGDsxLM8EmSYVdiz6QO7txS42f
+         7p6Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729767491; x=1730372291;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=0zv4SMHXvV0Lwj3C1Vjp7KHVDJuw2pOpFawGmV23O5A=;
+        b=euB+wjqIdHH1+xKUhqwA0yxkjKluNdNGGlhUV17l3hv0qSHdoyjd1rpHs1KPjVfCtH
+         V7AWX/KCw810c08+SM7BlFi5v2ItA0EYqfXRzTSoPjWwVnAXVEnAoL16dPieXbdTSTEn
+         pW4b+4n460325jQ7OkMjWfNN0e5sfoXROgqTCzbk6VpjQyxXi6VbKqBbX1lPMv98otYl
+         s8HNwEFMADjWMoNUHESKeRaGm1W/oikeUc6m+pbBxhfJa21Cl+VWHHoMqCRE5MbLkK5s
+         bTKmTtUEH8wmizd+BpBlppCQUsW9zxHXaxMX0axPM3SE35FO90IT+QzzojMwI3dk1qXm
+         FZ0Q==
+X-Forwarded-Encrypted: i=1; AJvYcCXGZ6B/brbGSxbSL2/OphccoAVDVYRcuLkWYdazDIxhe4YhonXPfB/Bo3tQj5kEWfStNjkM+GsTV1+mzl0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwktVBVCNzMXR5oVI3DVQNCks8DsMaIvPCTwga7R13knDp1of62
+	3f7YdpETnAlHdI69jGT/fv1m7sf32JlRSYFikdKPblXHIbaGzaKY7x80ZstC9wQKc+CuKg2ki5Z
+	yDBKQ1sBXyDI+23YGmRnoYEp5X10=
+X-Google-Smtp-Source: AGHT+IF3V+ObpOWRQ5gjk0uIrskTuM/wJAHieZfGNYPmC6LXK/5o/EYX7DdEOnP8BUfj1Xd60A26cASjhsbWE27wUG4=
+X-Received: by 2002:a05:600c:350f:b0:42c:b9c8:2b95 with SMTP id
+ 5b1f17b1804b1-431841a3515mr22899395e9.6.1729767490993; Thu, 24 Oct 2024
+ 03:58:10 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: darktable performance regression on AMD systems caused by "mm:
- align larger anonymous mappings on THP boundaries"
-Content-Language: en-US
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
- Rik van Riel <riel@surriel.com>, Matthias <matthias@bodenbinder.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
- Yang Shi <yang@os.amperecomputing.com>
-References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
- <f81ef5bd-e930-4982-a5a8-cd4aca272912@suse.cz>
- <ce35b58e-f18c-4701-8494-fa8d1f6e5148@suse.cz>
- <20241024124953.5d77c0b3@mordecai.tesarici.cz>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241024124953.5d77c0b3@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	TO_DN_ALL(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+References: <1729762134-380-1-git-send-email-zhiguo.niu@unisoc.com> <a224e560-2937-4edd-93d8-8077de6054b1@kernel.org>
+In-Reply-To: <a224e560-2937-4edd-93d8-8077de6054b1@kernel.org>
+From: Zhiguo Niu <niuzhiguo84@gmail.com>
+Date: Thu, 24 Oct 2024 18:57:59 +0800
+Message-ID: <CAHJ8P3J+OZHhKNSSXc_RM8Xn=1nvfCk8_rqknjXsq==VpvuFPQ@mail.gmail.com>
+Subject: Re: [PATCH] f2fs-tools: correct some confused desc about unit
+To: Chao Yu <chao@kernel.org>
+Cc: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org, 
+	linux-f2fs-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, 
+	ke.wang@unisoc.com, Hao_hao.Wang@unisoc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/24 12:49, Petr Tesarik wrote:
-> On Thu, 24 Oct 2024 12:23:48 +0200
-> Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
->> On 10/24/24 11:58, Vlastimil Babka wrote:
->> > On 10/24/24 09:45, Thorsten Leemhuis wrote:  
->> >> Hi, Thorsten here, the Linux kernel's regression tracker.
->> >> 
->> >> Rik, I noticed a report about a regression in bugzilla.kernel.org that
->> >> appears to be caused by the following change of yours:
->> >> 
->> >> efa7df3e3bb5da ("mm: align larger anonymous mappings on THP boundaries")
->> >> [v6.7]
->> >> 
->> >> It might be one of those "some things got faster, a few things became
->> >> slower" situations. Not sure. Felt odd that the reporter was able to
->> >> reproduce it on two AMD systems, but not on a Intel system. Maybe there
->> >> is a bug somewhere else that was exposed by this.  
->> > 
->> > It seems very similar to what we've seen with spec benchmarks such as cactus
->> > and bisected to the same commit:
->> > 
->> > https://bugzilla.suse.com/show_bug.cgi?id=1229012
->> > 
->> > The exact regression varies per system. Intel regresses too but relatively
->> > less. The theory is that there are many large-ish allocations that don't
->> > have individual sizes aligned to 2MB and would have been merged, commit
->> > efa7df3e3bb5da causes them to become separate areas where each aligns its
->> > start at 2MB boundary and there are gaps between. This (gaps and vma
->> > fragmentation) itself is not great, but most of the problem seemed to be
->> > from the start alignment, which togethter with the access pattern causes
->> > more TLB or cache missess due to limited associtativity.
->> > 
->> > So maybe darktable has a similar problem. A simple candidate fix could
->> > change commit efa7df3e3bb5da so that the mapping size has to be a multiple
->> > of THP size (2MB) in order to become aligned, right now it's enough if it's
->> > THP sized or larger.  
->> 
->> Maybe this could be enough to fix the issue? (on 6.12-rc4)
-> 
-> 
-> Yes, this should work. I was unsure if thp_get_unmapped_area_vmflags()
-> differs in other ways from mm_get_unmapped_area_vmflags(), which might
-> still be relevant. I mean, does mm_get_unmapped_area_vmflags() also
-> prefer to allocate THPs if the virtual memory block is large enough?
-
-Well any sufficiently large area spanning a PMD aligned/sized block (either
-a result of a single allocation or merging of several allocations) can
-become populated by THPs (at least in those aligned blocks), and the
-preference depends on system-wide THP settings and madvise(MADV_HUGEPAGE) or
-prctl.
-
-But mm_get_unmapped_area_vmflags() will AFAIK not try to align the area to
-PMD size like the thp_ version would, even if the request is large enough.
-
-> Petr T
-> 
->> 
->> diff --git a/mm/mmap.c b/mm/mmap.c
->> index 9c0fb43064b5..a5297cfb1dfc 100644
->> --- a/mm/mmap.c
->> +++ b/mm/mmap.c
->> @@ -900,7 +900,8 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
->>  
->>  	if (get_area) {
->>  		addr = get_area(file, addr, len, pgoff, flags);
->> -	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
->> +	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
->> +		   && IS_ALIGNED(len, PMD_SIZE)) {
->>  		/* Ensures that larger anonymous mappings are THP aligned. */
->>  		addr = thp_get_unmapped_area_vmflags(file, addr, len,
->>  						     pgoff, flags, vm_flags);
->> 
-> 
-
+Chao Yu <chao@kernel.org> =E4=BA=8E2024=E5=B9=B410=E6=9C=8824=E6=97=A5=E5=
+=91=A8=E5=9B=9B 18:49=E5=86=99=E9=81=93=EF=BC=9A
+>
+> On 2024/10/24 17:28, Zhiguo Niu wrote:
+> > F2FS_BLKSIZE may be 4KB, 16KB, so use F2FS_BLKSIZE to replace
+> > some hardcode desc about unit in some f2fs_io cmd, also
+> > adjust "-c" parameters in mkfs man, to be consistent with
+> > commit c35fa8cd75ac ("mkfs.f2fs: change -c option description").
+> >
+> > Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> > ---
+> >   man/mkfs.f2fs.8         | 2 +-
+> >   tools/f2fs_io/f2fs_io.c | 6 +++---
+> >   2 files changed, 4 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+> > index de885be..8b3b0cc 100644
+> > --- a/man/mkfs.f2fs.8
+> > +++ b/man/mkfs.f2fs.8
+> > @@ -122,7 +122,7 @@ block size matches the page size.
+> >   The default value is 4096.
+> >   .TP
+> >   .BI \-c " device-list"
+> > -Build f2fs with these additional comma separated devices, so that the =
+user can
+> > +Build f2fs with these additional devices, so that the user can
+> >   see all the devices as one big volume.
+> >   Supports up to 7 devices except meta device.
+> >   .TP
+> > diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+> > index 95f575f..ee4ed0e 100644
+> > --- a/tools/f2fs_io/f2fs_io.c
+> > +++ b/tools/f2fs_io/f2fs_io.c
+> > @@ -1013,7 +1013,7 @@ static void do_randread(int argc, char **argv, co=
+nst struct cmd_desc *cmd)
+> >
+> >   #define fiemap_desc "get block address in file"
+> >   #define fiemap_help                                 \
+> > -"f2fs_io fiemap [offset in 4kb] [count in 4kb] [file_path]\n\n"\
+> > +"f2fs_io fiemap [offset in F2FS_BLKSIZE] [count in F2FS_BLKSIZE] [file=
+_path]\n\n"\
+> >
+> >   #if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_LINUX_FS_H)
+> >   static void do_fiemap(int argc, char **argv, const struct cmd_desc *c=
+md)
+> > @@ -1617,8 +1617,8 @@ static void do_move_range(int argc, char **argv, =
+const struct cmd_desc *cmd)
+> >   #define gc_range_desc "trigger filesystem gc_range"
+> >   #define gc_range_help "f2fs_io gc_range [sync_mode] [start] [length] =
+[file_path]\n\n"\
+> >   "  sync_mode : 0: asynchronous, 1: synchronous\n"                   \
+> > -"  start     : start offset of defragment region, unit: 4kb\n"       \
+> > -"  length    : bytes number of defragment region, unit: 4kb\n"       \
+> > +"  start     : start offset of defragment region, unit: F2FS_BLKSIZE\n=
+"      \
+> > +"  length    : bytes number of defragment region, unit: F2FS_BLKSIZE\n=
+"      \
+>
+> I think we'd better unify default block size to 4096 since in most of
+> places in f2fs_io.c, we use 4096 as default IO/buffer size.
+>
+> git grep -n "4096" tools/f2fs_io/f2fs_io.c
+> tools/f2fs_io/f2fs_io.c:212:    args.block_size =3D 4096;
+> tools/f2fs_io/f2fs_io.c:662:    buf_size =3D bs * 4096;
+> tools/f2fs_io/f2fs_io.c:666:    buf =3D aligned_xalloc(4096, buf_size);
+> tools/f2fs_io/f2fs_io.c:877:    buf_size =3D bs * 4096;
+> tools/f2fs_io/f2fs_io.c:881:    buf =3D aligned_xalloc(4096, buf_size);
+> tools/f2fs_io/f2fs_io.c:901:            if (posix_fadvise(fd, 0, 4096, PO=
+SIX_FADV_SEQUENTIAL) !=3D 0)
+> tools/f2fs_io/f2fs_io.c:903:            if (posix_fadvise(fd, 0, 4096, PO=
+SIX_FADV_WILLNEED) !=3D 0)
+> tools/f2fs_io/f2fs_io.c:979:    buf_size =3D bs * 4096;
+> tools/f2fs_io/f2fs_io.c:981:    buf =3D aligned_xalloc(4096, buf_size);
+> tools/f2fs_io/f2fs_io.c:994:    aligned_size =3D (u64)stbuf.st_size & ~((=
+u64)(4096 - 1));
+> tools/f2fs_io/f2fs_io.c:997:    end_idx =3D (u64)(aligned_size - buf_size=
+) / (u64)4096 + 1;
+> tools/f2fs_io/f2fs_io.c:1004:           ret =3D pread(fd, buf, buf_size, =
+4096 * idx);
+> tools/f2fs_io/f2fs_io.c:1222:           char *buf =3D aligned_xalloc(4096=
+, 4096);
+> tools/f2fs_io/f2fs_io.c:1224:           while ((ret =3D xread(src_fd, buf=
+, 4096)) > 0)
+>
+> git grep -n "F2FS_BLKSIZE" tools/f2fs_io/f2fs_io.c
+> tools/f2fs_io/f2fs_io.c:1034:   start =3D (u64)atoi(argv[1]) * F2FS_BLKSI=
+ZE;
+> tools/f2fs_io/f2fs_io.c:1035:   length =3D (u64)atoi(argv[2]) * F2FS_BLKS=
+IZE;
+> tools/f2fs_io/f2fs_io.c:1042:                           start / F2FS_BLKS=
+IZE, length / F2FS_BLKSIZE);
+>
+> We can add a new macro F2FS_DEFAULT_BLKSIZE and use it instead of magic
+> number and F2FS_BLKSIZE, what do you think?
+Dear Chao,
+It is a good  suggestions,  will update it.
+now it is a little confused when I use f2fs_io fiemap in 16KB page system. =
+^^
+thanks!
+>
+> Thanks,
+>
+> >
+> >   static void do_gc_range(int argc, char **argv, const struct cmd_desc =
+*cmd)
+> >   {
+>
 
