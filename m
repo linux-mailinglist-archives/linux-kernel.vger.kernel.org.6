@@ -1,158 +1,230 @@
-Return-Path: <linux-kernel+bounces-380449-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380451-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id B938F9AEEBB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:54:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6810D9AEED2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:56:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5AE39B20D80
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:54:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA6991F22304
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:56:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 58BD71FF02F;
-	Thu, 24 Oct 2024 17:53:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 417AF20011A;
+	Thu, 24 Oct 2024 17:56:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="LUMSJ4s2"
-Received: from mail-lj1-f174.google.com (mail-lj1-f174.google.com [209.85.208.174])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="D5Lv+pQ7"
+Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3FD911F76A3
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:53:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 695B41FC7F6;
+	Thu, 24 Oct 2024 17:56:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792438; cv=none; b=nDsCivzIpE5FuWcyhxC99o7Yv+UGROu8eMUtKzATpi66PXdRAy041BvA9w1gBs0gp6pprQB27ONWwMrk8sA92GYp0d3HruGNbaRKj28x+R1+WOpSag+xq6jKc6nhy2PW5uqz3y+u6HG02RX3UtK23se2B9LmGDH0Qx3D6hr8OrI=
+	t=1729792587; cv=none; b=gF+cZ5YlGtY/rqXb0mlC8BP1lrZlF1uAoEPrNkGJ0YLcAEX4dnTd9TTOivZu9R1sWApdvQTp0BSfg9f/hwRY1cV+B+l6PVoQBGVSl/gtT8fNkzWeo83NkHdl62CjHdMCcmqRNhVRnfmNf8spTlk7wKoy2S07kreHx9unXiI0dg0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792438; c=relaxed/simple;
-	bh=J5UxzA7PmdNaayncefRqCj4vn5VHCYLbt6413Spj1+U=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=sXrc29DQ0TSynP2N3LbXELBYQMhTnb9ZB93QMfFgxg6zhMyxr5umodPYkUA9YmimcG4FdXKCrJUG/ELu1tawNijAmeVvd5ScSE3pD5qjN3ud+AUdSGd6x5RkcjclIRZOvkixduF4PV1/ZFwOz6XfzpQhXf3U6R4JdM+rktI4fjg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=LUMSJ4s2; arc=none smtp.client-ip=209.85.208.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-lj1-f174.google.com with SMTP id 38308e7fff4ca-2fb5fa911aaso16639981fa.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:53:56 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1729792434; x=1730397234; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=CGTLic2GTJcWTpmlkARaMs2mShZ4/TuHGxtCngkihdM=;
-        b=LUMSJ4s2NZVVeqV4hJxp7kxRtKwgnlaXE409VU378V8IGTn/jLc8mIisKStxVum/F1
-         82IeHK7Hf59xBjtB9qd9wWIFvoxnAfJfPUQHOUwqcH9MU2DLBSEAg4zAdMbbS87t+R3F
-         02Ls3nwHvXSJVPsCHmDXy7UdJLpRx6ipmER/g=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729792434; x=1730397234;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=CGTLic2GTJcWTpmlkARaMs2mShZ4/TuHGxtCngkihdM=;
-        b=CGrw0+M0HACEDj+hQUE51Wlimeloq6Kigjyp9jlPH1JhAFiQM78VbRRC0jo7ePvjar
-         nqSTJIFi88pwMzIiccBldibDA9EJQEfxM1ySoD0ZcvLvKZpKgmqKT4ILM+Qg4Ku+A2sV
-         1hnvxnQMi6Ax6h6abl85ldK92VAVbm1cQ//NPwI7m43ny30tZRbtTMDB3+pS6TEmz1HY
-         k4mnzk8wDcuSWXtVKa+KAGXC3FdpOJt6ASbpeCYLHU6X/emHP5e2P+DikAw94yz0RhKj
-         MvXCFMMabWXMSpl4/LsmY0JG8C6T/P26hFhaQIe81YpuGMk2/JYGD7dIuDSWCK9GIoed
-         A44A==
-X-Gm-Message-State: AOJu0YxSGAEyJktMpAW/jfKaSmyrXRg03ajJawYUiKQuKdIP8wV/ZxTT
-	MT4gIYLcxQ9ApiOaP/kOnxjJHqvayGx1qQ9aLnLd+e77Hlk6sTf7HmC4xYP+f/YQ231uZmAsADP
-	oFIK8WA==
-X-Google-Smtp-Source: AGHT+IFqfBYtQRmx3eBn7elWFRzETSxvMy98vgdIt4ja78ZQWA4Wd8EhegKPkhgJNDjoOf7I6mc2cg==
-X-Received: by 2002:a05:651c:1545:b0:2fb:3960:9667 with SMTP id 38308e7fff4ca-2fc9d31b55bmr62821751fa.14.1729792434045;
-        Thu, 24 Oct 2024 10:53:54 -0700 (PDT)
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com. [209.85.167.48])
-        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ad7665csm14787361fa.57.2024.10.24.10.53.52
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 10:53:53 -0700 (PDT)
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539f58c68c5so2234969e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:53:52 -0700 (PDT)
-X-Received: by 2002:a05:6512:3a95:b0:539:959e:f0d0 with SMTP id
- 2adb3069b0e04-53b1a33d0a2mr6037448e87.21.1729792432440; Thu, 24 Oct 2024
- 10:53:52 -0700 (PDT)
+	s=arc-20240116; t=1729792587; c=relaxed/simple;
+	bh=dwa97Zv3mMxp89DjOwcC74hl8WXFjK0hXQS5Qkk1N/M=;
+	h=From:Subject:Date:Message-Id:Content-Type:To:Cc:MIME-Version; b=hzFcrNdPY9S0zswUr4s7/XduTW3PkpULFWwXvVFPY3MbgAnMNKpiwv8GdJnCC8MXCxzWS+7wHZJ6UvFgY+40a9dDJvmcuVMKoGAyEmSlrxseL0c/uX+rw00nPCa1Ds0ECabuqLFt+OUDVj7B+bTaluA12H+LPcKQ4c/dz7Bv1ew=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=D5Lv+pQ7; arc=none smtp.client-ip=148.163.158.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OEUgn4025218;
+	Thu, 24 Oct 2024 17:55:57 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=pp1; bh=xnEGdyTnpg4xM+QjkDVMi2R9voLU
+	vQJVrDKuSvjiRtc=; b=D5Lv+pQ7rewYUy72gB3EE0/NM8xN1S8kqgsBD2M8c31t
+	X4AoKRl21BtN5j3SlHYHcpT7CtZwlwaiOJOuLr4XTp3jrsNnqH7Ail+31H2LWEpz
+	OggWto5gr21gA6ajFGQzOWurjCsQOB/vdhdl8wn6OOoCiOc5lVhc+kFTxVhjBSrz
+	LKJdnDSZDw2DV8YtrTMWhVrdJTXnQvZyf18YGkwWvPmf2VWSmQhKdlI9Dfy54X8E
+	xC5GryC4OijXnJprAGkdQThVUXQoQjcm+17uoT8ZyAI0caUfbYru5XNUTA6P4g1r
+	40jG/xK1b/56EbWF6KcC+P6rvSchWr6eQOKL60mt+Q==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaf21r2-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 17:55:56 +0000 (GMT)
+Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49OHttc3019270;
+	Thu, 24 Oct 2024 17:55:55 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaf21qw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 17:55:55 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49OHsDxE014565;
+	Thu, 24 Oct 2024 17:55:55 GMT
+Received: from smtprelay01.wdc07v.mail.ibm.com ([172.16.1.68])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emk81pbp-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 17:55:55 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay01.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49OHtrAN49021382
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Oct 2024 17:55:53 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id A12885805D;
+	Thu, 24 Oct 2024 17:55:53 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id ECE5A5805C;
+	Thu, 24 Oct 2024 17:55:48 +0000 (GMT)
+Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 24 Oct 2024 17:55:48 +0000 (GMT)
+From: Niklas Schnelle <schnelle@linux.ibm.com>
+Subject: [PATCH v9 0/5] treewide: Remove I/O port accessors for
+ HAS_IOPORT=n
+Date: Thu, 24 Oct 2024 19:54:39 +0200
+Message-Id: <20241024-b4-has_ioport-v9-0-6a6668593f71@linux.ibm.com>
+Content-Type: text/plain; charset="utf-8"
+X-B4-Tracking: v=1; b=H4sIAN+JGmcC/33M0QqCMBiG4VuRHTeZurbZUfcREXP7zR/SyWZii
+ PfeFIKQ6PD94HtmEsAjBHJKZuJhxICui1EeEmIa3d2Boo1NcpbzjDFOK04bHW7oeucHKpg2wkB
+ moRIkfnoPNU6bd7nGbjAMzr82fhTr+pHkThoFZZQVtcw5s1rA8fzA7jmlWLWpcS1ZtVF+C2ovy
+ CgokXPDSs2tlL8E9VdQUZBlAUJp0NbqvbAsyxuhkJDsMgEAAA==
+X-Change-ID: 20241004-b4-has_ioport-60ac6ce1deb6
+To: Brian Cain <bcain@quicinc.com>, Marcel Holtmann <marcel@holtmann.org>,
+        Luiz Augusto von Dentz <luiz.dentz@gmail.com>,
+        Patrik Jakobsson <patrik.r.jakobsson@gmail.com>,
+        Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+        Maxime Ripard <mripard@kernel.org>,
+        Thomas Zimmermann <tzimmermann@suse.de>,
+        David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+        Dave Airlie <airlied@redhat.com>, Gerd Hoffmann <kraxel@redhat.com>,
+        Lucas De Marchi <lucas.demarchi@intel.com>,
+        =?utf-8?q?Thomas_Hellstr=C3=B6m?= <thomas.hellstrom@linux.intel.com>,
+        Rodrigo Vivi <rodrigo.vivi@intel.com>,
+        Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+        Jiri Slaby <jirislaby@kernel.org>, Arnd Bergmann <arnd@arndb.de>,
+        "Maciej W. Rozycki" <macro@orcam.me.uk>,
+        Heiko Carstens <hca@linux.ibm.com>
+Cc: linux-kernel@vger.kernel.org, linux-hexagon@vger.kernel.org,
+        linux-bluetooth@vger.kernel.org, dri-devel@lists.freedesktop.org,
+        virtualization@lists.linux.dev, spice-devel@lists.freedesktop.org,
+        intel-xe@lists.freedesktop.org, linux-serial@vger.kernel.org,
+        linux-arch@vger.kernel.org, Niklas Schnelle <schnelle@linux.ibm.com>,
+        Arnd Bergmann <arnd@kernel.org>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3956;
+ i=schnelle@linux.ibm.com; h=from:subject:message-id;
+ bh=dwa97Zv3mMxp89DjOwcC74hl8WXFjK0hXQS5Qkk1N/M=;
+ b=owGbwMvMwCX2Wz534YHOJ2GMp9WSGNKlOn/9Tc23s9+Ytnn2beaQUpMX53o17DdMPuE2uUGgZ
+ bHY3IvNHaUsDGJcDLJiiiyLupz91hVMMd0T1N8BM4eVCWQIAxenAEzEXIThf/Zd8bd1jy8tTfGt
+ P9MY+cfvW5DanO1/VpzuKCkyE/JMSWJkmKYevFJimtD5l0cvW2x349jvJy1859+vPwUzL3xxElx
+ 1hAsA
+X-Developer-Key: i=schnelle@linux.ibm.com; a=openpgp;
+ fpr=9DB000B2D2752030A5F72DDCAFE43F15E8C26090
+X-TM-AS-GCONF: 00
+X-Proofpoint-GUID: ZzK5_Bh6ZhzA52n2zOUZDhguzOYUudTo
+X-Proofpoint-ORIG-GUID: oNqOtwFfRbanHLYgT_LLYcqw484r7CU5
+Content-Transfer-Encoding: 7bit
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024013214.129639-1-torvalds@linux-foundation.org> <20241024110822.GBZxoqppmxp0xxG7ew@fat_crate.local>
-In-Reply-To: <20241024110822.GBZxoqppmxp0xxG7ew@fat_crate.local>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 24 Oct 2024 10:53:35 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wgynHGhG9dzwRdySJSHZTOCp9jBHChomEF-mERJmsUeQg@mail.gmail.com>
-Message-ID: <CAHk-=wgynHGhG9dzwRdySJSHZTOCp9jBHChomEF-mERJmsUeQg@mail.gmail.com>
-Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation issue
-To: Borislav Petkov <bp@alien8.de>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, Josh Poimboeuf <jpoimboe@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
+ lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
+ priorityscore=1501 suspectscore=0 clxscore=1011 impostorscore=0
+ bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240145
 
-On Thu, 24 Oct 2024 at 04:08, Borislav Petkov <bp@alien8.de> wrote:
->
-> Can we make this more readable pls?
->
-> Something like this:
->
-> static inline void __user *mask_user_address(const void __user *ptr)
-> {
->         void __user *ret;
->
->         asm("cmp %[ptr],%[ret]\n\t"
->             "sbb %[ret],%[ret]\n\t"
->             "or  %[ptr],%[ret]"
->                 : [ret] "=r" (ret)
->                 : [ptr] "r" (ptr),
->                   "0" (runtime_const_ptr(USER_PTR_MAX)));
+Hi All,
 
-Will do at least for the newlines.
+This is a follow up in my long running effort of making inb()/outb() and
+similar I/O port accessors compile-time optional. After initially
+sending this as a treewide series with the latest revision at[0]
+we switched to per subsystem series. Now though as we're left with only
+5 patches left I'm going back to a single series with Arnd planning
+to take this via the the asm-generic tree.
 
-I actually find the '%[ret]' kind of verbosity *less* readable than
-using the numbers that are needed anyway to disambiguate the
-input/output thing.
+This series may also be viewed for your convenience on my git.kernel.org
+tree[1] under the b4/has_ioport branch. As for compile-time vs runtime
+see Linus' reply to my first attempt[2].
 
-Yes, named arguments are good when there's enough of them to be a big
-deal, but in this case the variable naming ends up just becoming line
-noise and overwhelming the actual code in question.
+Thanks,
+Niklas
 
-> This way the compiler-generated asm is more readable too due to the newlines
-> and tabs.
+[0] https://lore.kernel.org/all/20230522105049.1467313-1-schnelle@linux.ibm.com/
+[1] https://git.kernel.org/pub/scm/linux/kernel/git/niks/linux.git
+[2] https://lore.kernel.org/lkml/CAHk-=wg80je=K7madF4e7WrRNp37e3qh6y10Svhdc7O8SZ_-8g@mail.gmail.com/
 
-Ack. I don't find the compiler-generated asm very readable due to all
-the magic section tricks, but certainly that can be avoided for the
-cmp/sbb/or sequence.
+Signed-off-by: Niklas Schnelle <schnelle@linux.ibm.com>
+---
+Changes in v9:
+- In drm patch sort includes and reformat if (Thomas). Use IS_ENABELD()
+  and add a helper instead of #ifdef (Arnd, Thomas)
+- Rebased on v6.12-rc4
+- Compile tested applied to next. There are a few conflicts with drm
+  next but they're all just context changes
+- Link to v8: https://lore.kernel.org/r/20241008-b4-has_ioport-v8-0-793e68aeadda@linux.ibm.com
 
-> In any case, it looks good, I single-stepped strnlen_user() and I got:
+Changes in v8:
+- Don't remove "depends on !S390" for SERIAL_8250
+- Link to v7: https://lore.kernel.org/r/20241008-b4-has_ioport-v7-0-8624c09a4d77@linux.ibm.com
 
-Thanks, looks good.
+Changes in v7:
+- Renamed serial_8250_need_ioport() helper to
+  serial_8250_warn_need_ioport() and move it to 8250_pcilib.c so it can
+  be used in serial8250_pci_setup_port()
+- Flattened if in serial8250_pci_setup_port() (Maciej)
+- Removed gratuituous changes (Maciej)
+- Removed is_upf_fourport() helper in favor of zeroing UPF_FOURPORT
+  if CONFIG_HAS_IOPORT is not set (Maciej)
+- Link to v6: https://lore.kernel.org/r/20241007-b4-has_ioport-v6-0-03f7240da6e5@linux.ibm.com
 
-> Looking at Documentation/arch/x86/x86_64/mm.rst, 5 level page tables define
-> USR_PTR_MAX as 0x00ffffffffffffff, i.e., bits [55:0].
->
-> So I guess that USER_PTR_MAX needs to look at X86_FEATURE_LA57, no?
+Changes since v5 / per subsystem patches:
 
-The *page tables* only cover bits [55:0] of user space, yes.
+drm:
+- Add HAS_IOPORT dependency for GMA500
+tty: serial:
+- Make 8250 PCI driver emit an error message when trying to use devices
+  which require I/O ports without CONFIG_HAS_IOPORT (Maciej)
+- Use early returns + dead code elimination to skip inb()/outb() uses
+  in quirks (Arnd)
+- In 8250 PCI driver also handle fintek and moxi quirks
+- In 8250 ports code handle um's defined(__i385__) &&
+  defined(CONFIG_HAS_IOPORT) case
+- Use IS_ENABLED() early return also in is_upf_fourport()
+  __always_inline to force constant folding
 
-But the user *pointers* are bigger. That's the point of LAM. The upper
-bits are masked off by hardware.
+---
+Niklas Schnelle (5):
+      hexagon: Don't select GENERIC_IOMAP without HAS_IOPORT support
+      Bluetooth: add HAS_IOPORT dependencies
+      drm: handle HAS_IOPORT dependencies
+      tty: serial: handle HAS_IOPORT dependencies
+      asm-generic/io.h: Remove I/O port accessors for HAS_IOPORT=n
 
-So a valid user pointer with LAM57 looks like:
+ arch/hexagon/Kconfig                  |  1 -
+ drivers/bluetooth/Kconfig             |  6 ++--
+ drivers/gpu/drm/gma500/Kconfig        |  2 +-
+ drivers/gpu/drm/qxl/Kconfig           |  2 +-
+ drivers/gpu/drm/tiny/bochs.c          | 19 ++++++++---
+ drivers/gpu/drm/tiny/cirrus.c         |  2 ++
+ drivers/gpu/drm/xe/Kconfig            |  2 +-
+ drivers/tty/Kconfig                   |  4 +--
+ drivers/tty/serial/8250/8250_early.c  |  4 +++
+ drivers/tty/serial/8250/8250_pci.c    | 40 +++++++++++++++++++++++
+ drivers/tty/serial/8250/8250_pcilib.c | 12 ++++++-
+ drivers/tty/serial/8250/8250_pcilib.h |  2 ++
+ drivers/tty/serial/8250/8250_port.c   | 27 +++++++++++++---
+ drivers/tty/serial/8250/Kconfig       |  4 +--
+ drivers/tty/serial/Kconfig            |  2 +-
+ include/asm-generic/io.h              | 60 +++++++++++++++++++++++++++++++++++
+ include/linux/serial_core.h           |  4 +++
+ 17 files changed, 171 insertions(+), 22 deletions(-)
+---
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+change-id: 20241004-b4-has_ioport-60ac6ce1deb6
 
- [63: MBZ] [62-57: masked off] [56: MBZ] [55-0: used for TLB lookup]
+Best regards,
+-- 
+Niklas Schnelle
 
-LAM48 is the same, except obviously [62-48] are masked off, and bit 47
-is the one that must-be-zero.
-
-So as far as the kernel is concerned, any address with the top bit
-clear is a user address.
-
-So with LAM, you basically end up with the sign bit test again (except
-that we still don't allow the last page of user space to be mapped).
-
-We could also take the whole "bit 56 must be zero too" thing into
-account and further tighten it, but it really doesn't change the
-situation in any material ways, since we have that page-sized hole at
-the end of the user address space anyway even without it (and with
-LAM, the upper bit masking just means that special guard page is
-repeated in the linear address space).
-
-                   Linus
 
