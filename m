@@ -1,174 +1,298 @@
-Return-Path: <linux-kernel+bounces-379785-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379786-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B81F9AE3C8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:24:59 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id C858B9AE3CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:25:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D4093B22FC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:24:56 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 57BB61F2386B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:25:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A68271CF7BE;
-	Thu, 24 Oct 2024 11:24:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 924DE1CF5C0;
+	Thu, 24 Oct 2024 11:25:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="WBKywO1P"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="KCxWXQhV"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9874E148838;
-	Thu, 24 Oct 2024 11:24:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CFCFB148838;
+	Thu, 24 Oct 2024 11:25:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729769089; cv=none; b=aHBnvyVn0oB4vjep6Z09LFInLU9gRw8sQToTtrk9q80luz/ljk/q93/1oymBUT/ZYocjgVeXgB4Z9Lti7ypjRmUZ2W19EM/XxLGB49/muRsh5iv51quWzQWmKix1tbfNtapW5JelecKZvSU4n3SsypR6pXRcr2EU6RKGOTLvEgM=
+	t=1729769140; cv=none; b=chbLGgjEA1e+ArNTtLFz0Gk69lw931JvgxP96irKTDry6c2I+BYMvzrjB9U8MCJNsM5LZvLKeTlsm38VYxLO8Uouk5fsZfi3IcxB/FgdsSQks7oLZet4YRv8r39sZzaiy9kPoS6kwKeB8fNbw+hUZUbs+JukDqNa7O2ZLox/Qms=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729769089; c=relaxed/simple;
-	bh=bKn1zWxfQ+atPPXQ2airthHAbMPyOIETHQqWmdUEkMo=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=UDZ6VSNsooim5e1tCE9IOXMNhYNARASlRe8urgYc3SnZLD1GmtVJfx7hyDZy2E7Vkj2E2GDI2H7C/e9YssUoM0rJsBw5Yx86yQWkqEBBczEUJEjqih9T2odl0pFMsq6/7g7+Cm+t8cAz2z8jVqtY/+IrkRejnVmoK/uIkDUq1iQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=WBKywO1P; arc=none smtp.client-ip=198.175.65.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729769087; x=1761305087;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=bKn1zWxfQ+atPPXQ2airthHAbMPyOIETHQqWmdUEkMo=;
-  b=WBKywO1Pm1NH3hvIB2fG/6rNZ0kqx/QPX41SBI96VdkKuohi+0YjcjZT
-   IiU5U2ozjmwQAKfJwISrj0zC2DgcEwMWQcKPr97uPFvpkHIATUSfZo1Db
-   oxff63ZFG0VjKI2bM6NRB+0yDRG9ViUg02VARKBptmNmtCXSlDn+JFT+B
-   6qRvqiBYmQwnM5diRPZmL2/o6c7gFm9T1BmUDGHSiE6QFauPLMjqQjPao
-   Ld46plKc1Pl71DIfpOrJCIeIFSa1uHr/G2VeScrEwsVXH91JO9z9EZ5lR
-   bAODVCEWt7++PyoilsCtrct4To0V7jQFG4khQsoQeNGiNTcOj4OisCO40
-   g==;
-X-CSE-ConnectionGUID: ISOuK6Q5SU+WHX6vejvkmA==
-X-CSE-MsgGUID: mrWAhxaKQzyKkLPb8MjJCQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="33192631"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="33192631"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:24:46 -0700
-X-CSE-ConnectionGUID: 9fViNcHISpWdpdOkUE7INA==
-X-CSE-MsgGUID: WOBsemSpSI+Pq49VF0YsRA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="80735898"
-Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
-  by orviesa006-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:24:42 -0700
-Message-ID: <ed236a63-6505-4cd9-8ccf-97a1035e2848@intel.com>
-Date: Thu, 24 Oct 2024 14:24:36 +0300
+	s=arc-20240116; t=1729769140; c=relaxed/simple;
+	bh=aniAk/uo+DHhMidSJrOrrMW/7/+J1b6IF2Jcmz4YOIc=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=lUWzNGyJmeZgxBLOi7yXBIhsEgguEjrLADwIKxKX+Wq8utMVdn8K9aID119e/hlXJ5YoAZe0IB7c01sqjmHZf1D6m+Gnbd5XmkeCwdSZYsQsBjXmawsIBiCevwG2puQCkpb91cl0ea5c712PYFATYmZo7g+U2Qeg3jq2ZuRzPT8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=KCxWXQhV; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id C7717C4CEC7;
+	Thu, 24 Oct 2024 11:25:39 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729769140;
+	bh=aniAk/uo+DHhMidSJrOrrMW/7/+J1b6IF2Jcmz4YOIc=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=KCxWXQhVoxwEbL2ycEbuqfgGTz3lkfMcrDSFrz20Hll1Y2YEaM0bZLsU1CwX7AFPM
+	 G+izVv+tCuAD92jeEo4LPPQ7/hIGp6ACRfIJGPd1phU4U2qtSbqW+7hZP5jFMlYF/f
+	 Ai2LUr2/CQJdjzhOEOB+Dz/P8VZOmcONZrV5Ul7wPAisEo4RXaY5YEAZWExJgcrC3S
+	 hzuqfxOZkbiAPm+VuryYL+7wXMvh3aKX36M1zMd4XE10ixOUvN2O244VlzF0SYotBp
+	 x4PsxXLuZrMOzUJRbH0hs6p52c7PilzWc97TCLIILecaBdyRbYpFAk0qUr4BaQIw8m
+	 23Iu9YGN31FPA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mmc: sdhci-msm: Add sysfs attribute for error state in
- SDHCI MSM driver
-To: Sachin Gupta <quic_sachgupt@quicinc.com>,
- Ulf Hansson <ulf.hansson@linaro.org>
-Cc: linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
- quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com, quic_mapa@quicinc.com,
- quic_narepall@quicinc.com, quic_nitirawa@quicinc.com,
- quic_rampraka@quicinc.com, quic_sartgarg@quicinc.com
-References: <20241022141659.18764-1-quic_sachgupt@quicinc.com>
-Content-Language: en-US
-From: Adrian Hunter <adrian.hunter@intel.com>
-Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
- Business Identity Code: 0357606 - 4, Domiciled in Helsinki
-In-Reply-To: <20241022141659.18764-1-quic_sachgupt@quicinc.com>
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
 Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Date: Thu, 24 Oct 2024 14:25:35 +0300
+Message-Id: <D53ZZEUWMSY9.2Y3DY0CA1MWZC@kernel.org>
+Cc: "David Howells" <dhowells@redhat.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "Roberto Sassu" <roberto.sassu@huawei.com>,
+ <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>, "Pengyu Ma"
+ <mapengyu@gmail.com>
+Subject: Re: [PATCH v7 3/5] tpm: flush the null key only when /dev/tpm0 is
+ accessed
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>
+X-Mailer: aerc 0.18.2
+References: <20241021053921.33274-1-jarkko@kernel.org>
+ <20241021053921.33274-4-jarkko@kernel.org>
+ <531b27a8-6e99-40ca-9d74-f94a3b8c638e@linux.ibm.com>
+In-Reply-To: <531b27a8-6e99-40ca-9d74-f94a3b8c638e@linux.ibm.com>
 
-On 22/10/24 17:16, Sachin Gupta wrote:
-> Introduce a new sysfs attribute err_state to the SDHCI MSM driver.
-> The attribute allows users to query the error state of the SDHCI host controller.
+On Wed Oct 23, 2024 at 9:18 PM EEST, Stefan Berger wrote:
+>
+>
+> On 10/21/24 1:39 AM, Jarkko Sakkinen wrote:
+> > Instead of flushing and reloading the null key for every single auth
+> > session, flush it only when:
+> >=20
+> > 1. User space needs to access /dev/tpm{rm}0.
+> > 2. When going to sleep.
+> > 3. When unregistering the chip.
+> >=20
+> > This removes the need to load and swap the null key between TPM and
+> > regular memory per transaction, when the user space is not using the
+> > chip.
+> >=20
+> > Cc: stable@vger.kernel.org # v6.10+
+> > Fixes: d2add27cf2b8 ("tpm: Add NULL primary creation")
+> > Tested-by: Pengyu Ma <mapengyu@gmail.com>
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v5:
+> > - No changes.
+> > v4:
+> > - Changed to bug fix as not having the patch there is a major hit
+> >    to bootup times.
+> > v3:
+> > - Unchanged.
+> > v2:
+> > - Refined the commit message.
+> > - Added tested-by from Pengyu Ma <mapengyu@gmail.com>.
+> > - Removed spurious pr_info() statement.
+> > ---
+> >   drivers/char/tpm/tpm-chip.c       | 13 +++++++++++++
+> >   drivers/char/tpm/tpm-dev-common.c |  7 +++++++
+> >   drivers/char/tpm/tpm-interface.c  |  9 +++++++--
+> >   drivers/char/tpm/tpm2-cmd.c       |  3 +++
+> >   drivers/char/tpm/tpm2-sessions.c  | 17 ++++++++++++++---
+> >   include/linux/tpm.h               |  2 ++
+> >   6 files changed, 46 insertions(+), 5 deletions(-)
+> >=20
+> > diff --git a/drivers/char/tpm/tpm-chip.c b/drivers/char/tpm/tpm-chip.c
+> > index 854546000c92..0ea00e32f575 100644
+> > --- a/drivers/char/tpm/tpm-chip.c
+> > +++ b/drivers/char/tpm/tpm-chip.c
+> > @@ -674,6 +674,19 @@ EXPORT_SYMBOL_GPL(tpm_chip_register);
+> >    */
+> >   void tpm_chip_unregister(struct tpm_chip *chip)
+> >   {
+> > +#ifdef CONFIG_TCG_TPM2_HMAC
+> > +	int rc;
+> > +
+> > +	rc =3D tpm_try_get_ops(chip);
+> > +	if (!rc) {
+> > +		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > +			tpm2_flush_context(chip, chip->null_key);
+>
+> If chip->null_key is already 0, the above function will not do anything=
+=20
+> good, but you could avoid this whole block then by checking for 0 before=
+=20
+> tpm_try_get_ops().
+>
+> > +			chip->null_key =3D 0;
+> > +		}
+> > +		tpm_put_ops(chip);
+> > +	}
+> > +#endif
+> > +
+> >   	tpm_del_legacy_sysfs(chip);
+> >   	if (tpm_is_hwrng_enabled(chip))
+> >   		hwrng_unregister(&chip->hwrng);
+> > diff --git a/drivers/char/tpm/tpm-dev-common.c b/drivers/char/tpm/tpm-d=
+ev-common.c
+> > index 30b4c288c1bb..4eaa8e05c291 100644
+> > --- a/drivers/char/tpm/tpm-dev-common.c
+> > +++ b/drivers/char/tpm/tpm-dev-common.c
+> > @@ -27,6 +27,13 @@ static ssize_t tpm_dev_transmit(struct tpm_chip *chi=
+p, struct tpm_space *space,
+> >   	struct tpm_header *header =3D (void *)buf;
+> >   	ssize_t ret, len;
+> >  =20
+> > +#ifdef CONFIG_TCG_TPM2_HMAC
+> > +	if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > +		tpm2_flush_context(chip, chip->null_key);
+> > +		chip->null_key =3D 0;
+> > +	}
+> > +#endif
+> > +
+> >   	ret =3D tpm2_prepare_space(chip, space, buf, bufsiz);
+> >   	/* If the command is not implemented by the TPM, synthesize a
+> >   	 * response with a TPM2_RC_COMMAND_CODE return for user-space.
+> > diff --git a/drivers/char/tpm/tpm-interface.c b/drivers/char/tpm/tpm-in=
+terface.c
+> > index 5da134f12c9a..bfa47d48b0f2 100644
+> > --- a/drivers/char/tpm/tpm-interface.c
+> > +++ b/drivers/char/tpm/tpm-interface.c
+> > @@ -379,10 +379,15 @@ int tpm_pm_suspend(struct device *dev)
+> >  =20
+> >   	rc =3D tpm_try_get_ops(chip);
+> >   	if (!rc) {
+> > -		if (chip->flags & TPM_CHIP_FLAG_TPM2)
+> > +		if (chip->flags & TPM_CHIP_FLAG_TPM2) {
+> > +#ifdef CONFIG_TCG_TPM2_HMAC
+> > +			tpm2_flush_context(chip, chip->null_key);
+> > +			chip->null_key =3D 0;
+> > +#endif
+>
+> Worth using an inline on this repeating pattern? Up to you.
+>
+> static inline void tpm2_flush_null_key(struct tpm_chip *chip)
+> {
+> #ifdef CONFIG_TCG_TPM2_HMAC
+>      if (chip->flags & TPM_CHIP_FLAG_TPM2 && chip->null_key) {
+>          tpm2_flush_context(chip, chip->null_key);
+>          chip->null_key =3D 0;
+>      }
+> #endif
+> }
+>
+> >   			tpm2_shutdown(chip, TPM2_SU_STATE);
+> > -		else
+> > +		} else {
+> >   			rc =3D tpm1_pm_suspend(chip, tpm_suspend_pcr);
+> > +		}
+> >  =20
+> >   		tpm_put_ops(chip);
+> >   	}
+> > diff --git a/drivers/char/tpm/tpm2-cmd.c b/drivers/char/tpm/tpm2-cmd.c
+> > index 1e856259219e..aba024cbe7c5 100644
+> > --- a/drivers/char/tpm/tpm2-cmd.c
+> > +++ b/drivers/char/tpm/tpm2-cmd.c
+> > @@ -364,6 +364,9 @@ void tpm2_flush_context(struct tpm_chip *chip, u32 =
+handle)
+> >   	struct tpm_buf buf;
+> >   	int rc;
+> >  =20
+> > +	if (!handle)
+> > +		return;
+> > +
+>
+> wouldn't be necessary with inline.
 
-We already have err_stats and err_state in debugfs.  That seems
-more appropriate.
+True!
 
-> 
-> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
-> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
-> ---
->  drivers/mmc/host/sdhci-msm.c | 40 ++++++++++++++++++++++++++++++++++++
->  1 file changed, 40 insertions(+)
-> 
-> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
-> index e113b99a3eab..a256e3569a92 100644
-> --- a/drivers/mmc/host/sdhci-msm.c
-> +++ b/drivers/mmc/host/sdhci-msm.c
-> @@ -290,6 +290,7 @@ struct sdhci_msm_host {
->  	u32 dll_config;
->  	u32 ddr_config;
->  	bool vqmmc_enabled;
-> +	bool err_occurred;
->  };
->  
->  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
-> @@ -2255,6 +2256,8 @@ static void sdhci_msm_dump_vendor_regs(struct sdhci_host *host)
->  	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
->  	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
->  
-> +	msm_host->err_occurred = true;
-> +
->  	SDHCI_MSM_DUMP("----------- VENDOR REGISTER DUMP -----------\n");
->  
->  	SDHCI_MSM_DUMP(
-> @@ -2398,6 +2401,41 @@ static int sdhci_msm_gcc_reset(struct device *dev, struct sdhci_host *host)
->  	return ret;
->  }
->  
-> +static ssize_t err_state_show(struct device *dev,
-> +			struct device_attribute *attr, char *buf)
-> +{
-> +	struct sdhci_host *host = dev_get_drvdata(dev);
-> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
-> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
-> +
-> +	if (!host || !host->mmc)
-> +		return -EINVAL;
-> +
-> +	return scnprintf(buf, PAGE_SIZE, "%d\n", !!msm_host->err_occurred);
-> +}
-> +
-> +static DEVICE_ATTR_RO(err_state);
-> +
-> +static struct attribute *sdhci_msm_sysfs_attrs[] = {
-> +	&dev_attr_err_state.attr,
-> +	NULL
-> +};
-> +
-> +static const struct attribute_group sdhci_msm_sysfs_group = {
-> +	.name = "qcom",
-> +	.attrs = sdhci_msm_sysfs_attrs,
-> +};
-> +
-> +static void sdhci_msm_init_sysfs(struct device *dev)
-> +{
-> +	int ret;
-> +
-> +	ret = sysfs_create_group(&dev->kobj, &sdhci_msm_sysfs_group);
-> +	if (ret)
-> +		dev_err(dev, "%s: Failed to create qcom sysfs group (err = %d)\n",
-> +				__func__, ret);
-> +}
-> +
->  static int sdhci_msm_probe(struct platform_device *pdev)
->  {
->  	struct sdhci_host *host;
-> @@ -2442,6 +2480,8 @@ static int sdhci_msm_probe(struct platform_device *pdev)
->  	sdhci_get_of_property(pdev);
->  	sdhci_msm_get_of_property(pdev, host);
->  
-> +	sdhci_msm_init_sysfs(&pdev->dev);
-> +
->  	msm_host->saved_tuning_phase = INVALID_TUNING_PHASE;
->  
->  	ret = sdhci_msm_gcc_reset(&pdev->dev, host);
+>
+> >   	rc =3D tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_FLUSH_CONTEXT=
+);
+> >   	if (rc) {
+> >   		dev_warn(&chip->dev, "0x%08x was not flushed, out of memory\n",
+> > diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-s=
+essions.c
+> > index bdac11964b55..78c650ce4c9f 100644
+> > --- a/drivers/char/tpm/tpm2-sessions.c
+> > +++ b/drivers/char/tpm/tpm2-sessions.c
+> > @@ -920,11 +920,19 @@ static int tpm2_load_null(struct tpm_chip *chip, =
+u32 *null_key)
+> >   	u32 tmp_null_key;
+> >   	int rc;
+> >  =20
+> > +	/* fast path */
+> > +	if (chip->null_key) {
+> > +		*null_key =3D chip->null_key;
+> > +		return 0;
+> > +	}
+> > +
+> >   	rc =3D tpm2_load_context(chip, chip->null_key_context, &offset,
+> >   			       &tmp_null_key);
+> >   	if (rc !=3D -EINVAL) {
+> > -		if (!rc)
+> > +		if (!rc) {
+> > +			chip->null_key =3D tmp_null_key;
+> >   			*null_key =3D tmp_null_key;
+> > +		}
+> >   		goto err;
+> >   	}
+> >  =20
+> > @@ -934,6 +942,7 @@ static int tpm2_load_null(struct tpm_chip *chip, u3=
+2 *null_key)
+> >  =20
+> >   	/* Return the null key if the name has not been changed: */
+> >   	if (memcmp(name, chip->null_key_name, sizeof(name)) =3D=3D 0) {
+> > +		chip->null_key =3D tmp_null_key;
+> >   		*null_key =3D tmp_null_key;
+> >   		return 0;
+> >   	}
+> > @@ -1006,7 +1015,6 @@ int tpm2_start_auth_session(struct tpm_chip *chip=
+)
+> >   	tpm_buf_append_u16(&buf, TPM_ALG_SHA256);
+> >  =20
+> >   	rc =3D tpm_transmit_cmd(chip, &buf, 0, "start auth session");
+> > -	tpm2_flush_context(chip, null_key);
+> >  =20
+> >   	if (rc =3D=3D TPM2_RC_SUCCESS)
+> >   		rc =3D tpm2_parse_start_auth_session(auth, &buf);
+> > @@ -1338,7 +1346,10 @@ static int tpm2_create_null_primary(struct tpm_c=
+hip *chip)
+> >  =20
+> >   		rc =3D tpm2_save_context(chip, null_key, chip->null_key_context,
+> >   				       sizeof(chip->null_key_context), &offset);
+> > -		tpm2_flush_context(chip, null_key);
+> > +		if (rc)
+> > +			tpm2_flush_context(chip, null_key);
+> > +		else
+> > +			chip->null_key =3D null_key;
+> >   	}
+> >  =20
+> >   	return rc;
+> > diff --git a/include/linux/tpm.h b/include/linux/tpm.h
+> > index e93ee8d936a9..4eb39db80e05 100644
+> > --- a/include/linux/tpm.h
+> > +++ b/include/linux/tpm.h
+> > @@ -205,6 +205,8 @@ struct tpm_chip {
+> >   #ifdef CONFIG_TCG_TPM2_HMAC
+> >   	/* details for communication security via sessions */
+> >  =20
+> > +	/* loaded null key */
+>
+> nit: handle of loaded null key
+>
+> > +	u32 null_key;
+> >   	/* saved context for NULL seed */
+> >   	u8 null_key_context[TPM2_MAX_CONTEXT_SIZE];
+> >   	 /* name of NULL seed */
 
+I agree with all of your remarks. I'll send one more round because there
+is enough changes. Thank you.
+
+BR, Jarkko
 
