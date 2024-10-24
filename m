@@ -1,187 +1,158 @@
-Return-Path: <linux-kernel+bounces-379876-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379877-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 337F09AE55A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:48:57 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CFF09AE55F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:50:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E6633284323
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:48:55 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 528172840C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:50:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D8291D63CB;
-	Thu, 24 Oct 2024 12:48:45 +0000 (UTC)
-Received: from mx3.molgen.mpg.de (mx3.molgen.mpg.de [141.14.17.11])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C7421D63C0;
+	Thu, 24 Oct 2024 12:50:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="LqIszyJS"
+Received: from relay6-d.mail.gandi.net (relay6-d.mail.gandi.net [217.70.183.198])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D1FDE1B0F16;
-	Thu, 24 Oct 2024 12:48:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=141.14.17.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 561331B6CEE;
+	Thu, 24 Oct 2024 12:50:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774124; cv=none; b=XdXR2HY3dCUOhcPqLs81dRF9U5MXea9mU4Yi5YNWAZpLNhE9LHH3vjR3CRQQcgfw2BihSHt/hV2iLIqV1ocRkoa3naRoBDG71cfLRbEMcdEHv4cxCJet7y4Ot5ZbKJJeFHpysQxoi1+8ZSwHOvPARUbcJpVyC+DpPXTRKqkh2Kk=
+	t=1729774222; cv=none; b=Y62pCEVFP9O+Ohrwc7C+6RMICClcE6sN6+DXJjTXxX2Crfnpg/+ZAXz7K5Hpq5BFFaNLPqTe+cEh8hXUiT08aZ1p77lH6ALj5ApkM74FuOVg23r/t8tExVpeMnAo7ajapnfCcYHm9CTeuE0As0mPH/uYTEdg3MLpwxBbQ9sKW4E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774124; c=relaxed/simple;
-	bh=MdggDXIi+w1JotD/hWApURsDP2o4HDuEtCr+Bi9lOC8=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=b6KZwUM+YRYm3p6x2Sdwjnr36gK/Y4KOYPix+/xKUOR0RZUdyWzsxhoHJiHD2Me+q908hEBPWapyFCOX3Z53Zp6t80Z1UpWAfMr12eXzJaBxtPBCZXSfI685U/GNEbwQ64cewbUccztAdLvYLBDqRup4msJjeWJ9Na/Nj6s/Gkk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de; spf=pass smtp.mailfrom=molgen.mpg.de; arc=none smtp.client-ip=141.14.17.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=molgen.mpg.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=molgen.mpg.de
-Received: from [141.14.220.45] (g45.guest.molgen.mpg.de [141.14.220.45])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: pmenzel)
-	by mx.molgen.mpg.de (Postfix) with ESMTPSA id 328F261E5FE05;
-	Thu, 24 Oct 2024 14:48:10 +0200 (CEST)
-Message-ID: <598d4118-3f63-44dd-b0da-e19efbb73933@molgen.mpg.de>
-Date: Thu, 24 Oct 2024 14:48:09 +0200
+	s=arc-20240116; t=1729774222; c=relaxed/simple;
+	bh=avnNeoeIT8JpECkgYOeBGQu4w8Q/PrPpQiEZobjRdnI=;
+	h=Mime-Version:Content-Type:Date:Message-Id:To:From:Subject:Cc:
+	 References:In-Reply-To; b=FylnHlisGEog6F50/rEarAryvH9hdG8fC7PixZmKRpazpHOMFkaL8RY4htx7w3nBBCJ1fMpmpE1wTj2FoC2Ljn0NZJab589pX0UQLGS4wmPZig6hLG5Z4zSsm2BHyUbwwyyJvQerFeF9G29PpwyhLx86ZTwppA6Ayb7tPaMVi5s=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=LqIszyJS; arc=none smtp.client-ip=217.70.183.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id D67A7C0004;
+	Thu, 24 Oct 2024 12:50:16 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729774217;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FGC5TIDFWHTEOzBsSk81jwrMpqimrnfQMOZKCKiznX0=;
+	b=LqIszyJSBO0jIhBCI8z1vLKfO+/lMMshwNPPNXhRONN45/G5H9xvtR/B8g8RFBQ01zLu/j
+	XyqkSlioPkpu0jqMvw2vncogxZuvL3tgN9W8oL1hCak3H7sSjfWm7tWZfU+vuUS8wVIYRL
+	ZrzkDyJmpqDWRP7CaGHBPmeNolcFgWTm4GrnEmlnk+hp4blXYsIKI34SANbb5gcoP+zrD9
+	7cwZfg5cPsGCgv9jA1dSEvBXZ66jqAYrv1otALE/hK813AWOgqtCpLYTl4bYqcHONfF2mu
+	NQgTP124boEQO+9N6iN3dUjtOhmWnhXvT7Jzsz2k/UpynNxrPIsGzzeXIkNUww==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: NOHZ tick-stop error: local softirq work is pending, handler
- #08!!! on Dell XPS 13 9360
-From: Paul Menzel <pmenzel@molgen.mpg.de>
-To: Anna-Maria Behnsen <anna-maria@linutronix.de>
-Cc: Frederic Weisbecker <frederic@kernel.org>, Ingo Molnar
- <mingo@kernel.org>, Thomas Gleixner <tglx@linutronix.de>,
- LKML <linux-kernel@vger.kernel.org>, linux-usb@vger.kernel.org,
- linux-trace-kernel@vger.kernel.org
-References: <354a2690-9bbf-4ccb-8769-fa94707a9340@molgen.mpg.de>
- <87o7ak411y.fsf@somnus> <256fdb2e-9b83-4837-bd31-0c34e4267c31@molgen.mpg.de>
- <87sezv7ytw.fsf@somnus> <1cf78f6f-af21-48bc-a9d8-755dd7bf8503@molgen.mpg.de>
- <9de8ebd1-53fc-48d7-af11-b5c1ed828b3d@molgen.mpg.de>
-Content-Language: en-US
-In-Reply-To: <9de8ebd1-53fc-48d7-af11-b5c1ed828b3d@molgen.mpg.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Oct 2024 14:50:16 +0200
+Message-Id: <D541S8TMBS94.3AKP8ET4TID6Y@bootlin.com>
+To: "Stephen Boyd" <sboyd@kernel.org>, "Conor Dooley" <conor+dt@kernel.org>,
+ "Krzysztof Kozlowski" <krzk+dt@kernel.org>, "Michael Turquette"
+ <mturquette@baylibre.com>, "Rob Herring" <robh@kernel.org>
+From: =?utf-8?q?Th=C3=A9o_Lebrun?= <theo.lebrun@bootlin.com>
+Subject: Re: [PATCH v5 4/4] clk: eyeq: add driver
+Cc: <devicetree@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+ <linux-kernel@vger.kernel.org>, "Vladimir Kondratiev"
+ <vladimir.kondratiev@mobileye.com>, =?utf-8?q?Gr=C3=A9gory_Clement?=
+ <gregory.clement@bootlin.com>, "Thomas Petazzoni"
+ <thomas.petazzoni@bootlin.com>, "Tawfik Bayouk"
+ <tawfik.bayouk@mobileye.com>
+X-Mailer: aerc 0.18.2-0-ge037c095a049
+References: <20241007-mbly-clk-v5-0-e9d8994269cb@bootlin.com>
+ <20241007-mbly-clk-v5-4-e9d8994269cb@bootlin.com>
+ <b3f8bf0e933064a49d1a5e3527646200.sboyd@kernel.org>
+ <D534ZSNLN6G0.3HSREQ803OFIQ@bootlin.com>
+ <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
+In-Reply-To: <02cbfefaf7db9220652c2f9605838f96.sboyd@kernel.org>
+X-GND-Sasl: theo.lebrun@bootlin.com
 
-Dear Anna-Maria,
+Hello Stephen, Conor, Krzysztof, Michael, Rob,
 
+On Thu Oct 24, 2024 at 12:12 AM CEST, Stephen Boyd wrote:
+> Quoting Th=C3=A9o Lebrun (2024-10-23 04:08:31)
+> > On Thu Oct 17, 2024 at 8:48 PM CEST, Stephen Boyd wrote:
+> > > Quoting Th=C3=A9o Lebrun (2024-10-07 06:49:19)
+> > > > +/* Required early for UART. */
+> > >
+> > > I still don't get this. UART isn't an early device. It's only the
+> > > interrupt controller and the timer that matter. Does MIPS do somethin=
+g
+> > > special for UARTs?
+> >=20
+> > Our hardware has a PL011. That is AMBA stuff; they get probed before
+> > platform devices by of_platform_bus_create(). "pll-per" on EyeQ5 must
+> > be available at that time.
+> >=20
+> > In concrete terms, if we don't register pll-per on EyeQ5 at
+> > of_clk_init(), we stare at void because the serial fails probing.
+> > I haven't digged into why EPROBE_DEFER doesn't do its job. Anyway we
+> > don't want our serial to stall for some time during our boot process.
+> >=20
+>
+> Ok thanks for the details. It sounds like there's a bug in there
+> somewhere. Eventually this should be removed.
+>
+> Can you dump_stack() in clk_get() when the "pll-per" clk is claimed?
+>
+> I suspect of_clk_get_hw_from_clkspec() is seeing NULL if
+> of_clk_hw_onecell_get() is being used and the clk_hw pointer isn't set
+> yet. NULL is a valid clk and it will be returned to the consumer. You'll
+> want to write a custom 'get' function for of_clk_add_hw_provider() that
+> returns -EPROBE_DEFER for any clk that isn't registered early. Then the
+> AMBA stuff should defer probe until the "full" clk provider is
+> registered.
 
-Am 21.08.24 um 23:01 schrieb Paul Menzel:
-> [Added URLs for files.]
-> 
-> Am 21.08.24 um 10:20 schrieb Paul Menzel:
->> Dear Anna-Maria,
->>
->>
->> Thank you very much for the support. I was finally able to collect the 
->> data you asked for.
->>
->> Am 09.04.24 um 09:57 schrieb Anna-Maria Behnsen:
->>> Paul Menzel writes:
->>
->> […]
->>
->>>> Am 08.04.24 um 12:10 schrieb Anna-Maria Behnsen:
->>>>
->>>>> Paul Menzel writes:
->>>>
->>>>>> On Dell XPS 13 9360/0596KF, BIOS 2.21.0 06/02/2022, with Linux 
->>>>>> 6.9- rc2+
->>>>>> built from commit b1e6ec0a0fd0 (Merge tag 'docs-6.9-fixes' of
->>>>>> git://git.lwn.net/linux) the external USB-C adapter Dell DA300 
->>>>>> stopped
->>>>>> working (only the Ethernet port was used). Linux logged:
->>>>>
->>>>> thanks for the report. Can you please provide a trace beside the dmesg
->>>>> output? The following trace events should be enabled (via kernel 
->>>>> command
->>>>> line):
->>>>>
->>>>> trace_event=timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit
->>>> Unfortunately I haven’t been able to reproduce it until now. Should it
->>>> happen again, I am going to try your suggestion.
->>>
->>> Thanks for letting me know.
->>
->> I wanted to configure that in the running system, but wasn’t able to 
->> set all of these at once with `set_event`:
->>
->>      echo 'timer:*,timer_migration:*,sched:sched_switch,sched:sched_wakeup,sched:sched_process_hang,irq:softirq_entry,irq:softirq_raise,irq:softirq_exit' | sudo tee /sys/kernel/tracing/set_event
->>
->> For some reason setting them individually also did *not* work:
->>
->>      for e in timer:* timer_migration:* sched:sched_switch sched:sched_wakeup sched:sched_process_hang irq:softirq_entry irq:softirq_raise irq:softirq_exit'; do echo "$e" | sudo tee -a /sys/ kernel/tracing/set_event; done
->>
->> I then used
->>
->>      echo 1 | sudo tee /sys/kernel/tracing/events/timer/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/timer_migration/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_switch/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_wakeup/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/sched/sched_process_hang/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_entry/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_raise/enable
->>      echo 1 | sudo tee /sys/kernel/tracing/events/irq/softirq_exit/enable
->>
->> and also had to increase the buffer to bridge the gap between the 
->> event and me noticing it:
->>
->>      echo 96000 | sudo tee /sys/kernel/tracing/buffer_size_kb
->>
->> Then, with Linux v6.11-rc4-11-g521b1e7f4cf0b, I was able to get the 
->> trace for the event below:
->>
->>      [ 7542.706299] NOHZ tick-stop error: local softirq work is pending, handler #08!!!
->>
->> $ sudo cat /sys/kernel/tracing/trace
->> […]
->>   MediaPD~der #28-14000   [000] d..1.  7542.703768: hrtimer_cancel: hrtimer=000000008d2c9f3f
->>   MediaPD~der #28-14000   [000] .....  7542.703810: hrtimer_init: hrtimer=00000000c6f259e7 clockid=CLOCK_MONOTONIC mode=ABS
->>   MediaPD~der #28-14000   [000] d..1.  7542.703812: hrtimer_start:hrtimer=00000000c6f259e7 function=hrtimer_wakeup expires=7602581538204 softexpires=7602581488204 mode=ABS
->>   MediaPD~der #28-14000   [000] d..2.  7542.703821: sched_switch: prev_comm=MediaPD~der #28 prev_pid=14000 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] dN.2.  7542.703931: sched_wakeup: comm=ImageBridgeChld pid=6041 prio=120 target_cpu=000
->>            <idle>-0       [000] d..2.  7542.703937: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=ImageBridgeChld next_pid=6041 next_prio=120
->>   ImageBridgeChld-6041    [000] d..2.  7542.704041: sched_switch: prev_comm=ImageBridgeChld prev_pid=6041 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] dN.2.  7542.704174: sched_wakeup: comm=Renderer pid=4113 prio=120 target_cpu=000
->>            <idle>-0       [000] d..2.  7542.704179: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=Renderer next_pid=4113 next_prio=120
->>          Renderer-4113    [000] d..2.  7542.704245: sched_switch: prev_comm=Renderer prev_pid=4113 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] dNh2.  7542.704260: sched_wakeup: comm=IPC I/O Child pid=6029 prio=120 target_cpu=000
->>            <idle>-0       [000] d..2.  7542.704267: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==>  next_comm=IPC I/O Child next_pid=6029 next_prio=120
->>     IPC I/O Child-6029    [000] d..2.  7542.704340: sched_switch: prev_comm=IPC I/O Child prev_pid=6029 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] dN.2.  7542.704786: sched_wakeup: comm=Compositor pid=4123 prio=120 target_cpu=000
->>            <idle>-0       [000] d..2.  7542.704791: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=Compositor next_pid=4123 next_prio=120
->>        Compositor-4123    [000] d..2.  7542.704944: sched_switch: prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] dN.2.  7542.705943: sched_wakeup: comm=Compositor pid=4123 prio=120 target_cpu=000
->>            <idle>-0       [000] d..2.  7542.705950: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=Compositor next_pid=4123 next_prio=120
->>        Compositor-4123    [000] d..2.  7542.706105: sched_switch: prev_comm=Compositor prev_pid=4123 prev_prio=120 prev_state=S ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] d.h2.  7542.706328: hrtimer_cancel: hrtimer=000000009bbda66a
->>            <idle>-0       [000] d.h1.  7542.706329: hrtimer_expire_entry: hrtimer=000000009bbda66a function=tick_nohz_handler now=7542584007490
->>            <idle>-0       [000] d.h1.  7542.706333: softirq_raise: vec=9 [action=RCU]
->>            <idle>-0       [000] d.h1.  7542.706338: softirq_raise: vec=7 [action=SCHED]
->>            <idle>-0       [000] d.h1.  7542.706339: hrtimer_expire_exit: hrtimer=000000009bbda66a
->>            <idle>-0       [000] d.h2.  7542.706340: hrtimer_start: hrtimer=000000009bbda66a function=tick_nohz_handler expires=7542588000000 softexpires=7542588000000 mode=ABS
->>            <idle>-0       [000] ..s1.  7542.706345: softirq_entry: vec=7 [action=SCHED]
->>            <idle>-0       [000] ..s1.  7542.706359: softirq_exit: vec=7 [action=SCHED]
->>            <idle>-0       [000] ..s1.  7542.706360: softirq_entry: vec=9 [action=RCU]
->>            <idle>-0       [000] ..s1.  7542.706362: softirq_exit: vec=9 [action=RCU]
->>            <idle>-0       [000] dNh4.  7542.707672: sched_wakeup:  comm=irq/51-DLL075B: pid=194 prio=49 target_cpu=000
->>            <idle>-0       [000] d..2.  7542.707685: sched_switch: prev_comm=swapper/0 prev_pid=0 prev_prio=120 prev_state=R ==> next_comm=irq/51-DLL075B: next_pid=194 next_prio=49
->>   irq/51-DLL075B:-194     [000] .....  7542.707708: timer_init: timer=00000000630ae178
->>   irq/51-DLL075B:-194     [000] d..1.  7542.707710: timer_start: timer=00000000630ae178 function=process_timeout expires=4296778179 [timeout=250] bucket_expiry=4296778184 cpu=0 idx=121 flags=
->>   irq/51-DLL075B:-194     [000] d..2.  7542.707718: sched_switch: prev_comm=irq/51-DLL075B: prev_pid=194 prev_prio=49 prev_state=D ==> next_comm=swapper/0 next_pid=0 next_prio=120
->>            <idle>-0       [000] dN.2.  7542.709072: sched_wakeup: comm=AudioIP~ent RPC pid=6671 prio=120 target_cpu=000
->> […]
->>
->> The trace file is 320 MB big. If you need the full trace and log, 
->> please tell me, and I’ll upload it somewhere.
-> 
-> https://owww.molgen.mpg.de/~pmenzel/20240821--linux-6.10-rc4+.txt
-> https://owww.molgen.mpg.de/~pmenzel/20240821--soft-irq--trace.7z
+You encouraged me to keep digging.
 
-Just for the record, I am still seeing this with 
-6.12.0-rc4-00047-gc2ee9f594da8 (KVM: selftests: Fix build on on non-x86 
-architectures).
+The bug is elsewhere: we do get valid clocks from PL011. Both clk_get()
+calls give proper pointers.
 
+The issue is that we are using `compatible =3D "fixed-factor-clock"`
+clocks in the middle, and those don't wait for their parents to be
+active.
 
-Kind regards,
+Simplified clock graph is: pll-per -> occ-periph.
+pll-per is register by our driver. occ-periph looks like:
 
-Paul
+	occ_periph: occ-periph {
+		compatible =3D "fixed-factor-clock";
+		clocks =3D <&olb EQ5C_PLL_PER>;
+		#clock-cells =3D <0>;
+		clock-div =3D <16>;
+		clock-mult =3D <1>;
+	};
+
+Sequence is:
+ - eqc_early_init(): it registers a clock provider that will return
+   EPROBE_DEFER for our pll-per.
+ - _of_fixed_factor_clk_setup(): it registers occ-periph, even though
+   its parent is EPROBE_DEFER. clk_core_populate_parent_map() runs all
+   fine without complaining; logical as it doesn't query the clk_hw for
+   its parent, it only stores indexes.
+ - amba_get_enable_pclk(): it does a clk_get() which works because
+   occ-periph exists.
+
+Maybe __clk_register() should check the clk_hw for each parent: if any
+is an EPROBE_DEFER then it should EPROBE_DEFER itself? That looks like
+a rather big behavioral change.
+
+The other solution is to keep as-is: provide all clocks consumed by
+fixed-factor-clocks at of_clk_init() stage.
+
+Hoping I provided enough info,
+Thanks,
+
+--
+Th=C3=A9o Lebrun, Bootlin
+Embedded Linux and Kernel engineering
+https://bootlin.com
+
 
