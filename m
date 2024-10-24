@@ -1,200 +1,1365 @@
-Return-Path: <linux-kernel+bounces-380062-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380063-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0748E9AE8B9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:29:01 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2D40E9AE85F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:23:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E00AB2A606
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:23:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 43A601C222BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:23:38 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B5CF1EABCC;
-	Thu, 24 Oct 2024 14:14:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405681EBFE4;
+	Thu, 24 Oct 2024 14:15:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="XCFt74mu"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="m+KkGwqu"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 014621EABD2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:14:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BEF021E105A;
+	Thu, 24 Oct 2024 14:15:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779283; cv=none; b=I3aWo8pIVsomCOCTCH3e8eVd7VKIRdz7NJGJS8yd4x0NHcTm9sNPS99IKXUTIFSkYglhXDRLWMfEoikfZe308mrEjOdfSQ7/mghAnML5aiI6jKAQiI9eiKSui9s8JRIR1h6FbhOJwOKI75g129dlcnwPnNd9RIwcs/k19Bj8joU=
+	t=1729779322; cv=none; b=X4t1Bt4l6fZHo0qyHtiRrwP9gDSsSGNZ7HrK71OuyEitmCNLWeaLIk5eztII6uSCIB0TKltIfmCKwAaeQYMSBcZ1GGQ0AVoh+GOCHvDUwtUwOtBaaQ88RhW2BkR+YaBSBOI0R6h3UIt0KoH0CN4OyTeYNmeml+dTmOFNt2Tw8GQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779283; c=relaxed/simple;
-	bh=7hZ731pVv4vAUrv+Xfq3c+tDnlWXTRLGwAiqz0jpnCw=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Jxc07mw3eUZkaoE0DcqOZ8lek8uJ/nAXKLk5UFxtc+pK7QxsVcg3Co/0NVT4BhM0Znl2Shw7fyeEmbHJV5WsMlsHkSya7S+VAUwNbla+XU2mI+zwbSq9N+imsO+NxbfOaYCMdyaCSkB/q2HEaSavbY062vO4cz9BlyZMIHIF9Tk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=XCFt74mu; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43152fa76aaso1095765e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:14:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729779279; x=1730384079; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=OQFzOo5CVCoEL91pQtXFsiJ0Cpv2r/dDWbECjn6yy18=;
-        b=XCFt74muJEqmaOw+OIidoR8hqwFHno0cSFdz7+2NEECiLYazuuuQnW8y8uKoKmMlHy
-         eJiDne6Z86sgcxLdf3Q4+gdzpnC11EPm1eYQS6Qcj1xneW6fUBmgLZy8Gm9+rg/+n5b0
-         hP98dwNr7p93/zwMDcS9ZCNGExPII6SWkz3tW0rvQfd5ASbSn7CImygbgs6XwW6Gw5b8
-         TT06qycNoJe0UgDUeQxNzKNFEn+w1sH42BkXNcWYR7qDuTfqR/6KEHPVoR951YJH1CP+
-         tZNcULHTuJeOvXoSDILyQS+DcBDY+lKG6jFGHfepfl1nv7al/XOe8QaI0m2kbk/TozeO
-         riXg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729779279; x=1730384079;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=OQFzOo5CVCoEL91pQtXFsiJ0Cpv2r/dDWbECjn6yy18=;
-        b=ZeqhqhW0+n7gw8rt4Ivr+zlZV2YwD42/BlHwcBYn49GsNuXTfO0evC+m3pV9kNRC9H
-         Wo3QDBLaF/QywSzWJ/XAzBOWh7/vBf3V4Jx/5AfEEeyNy8qpOXewGMTCqKGxzEktu8hT
-         kJJLJtyqhvlFoywIg/7HUQ7VXSHJAC4DAvEramKA4DAbw1QjfoTSnPkaEqCC/KfPQp/7
-         7vZ1unV0XuLDFIl5D10MGkOS4cKXtOdQwNwa8LbSFFRTxv4NmZqb7p4YWjg963W71h6p
-         sRey3ulpACfmNDl/eIomyHsUC/zO8slrx7As9i/c42eA17goPKUZ1LeEXeduXMLd3SHi
-         M/wA==
-X-Forwarded-Encrypted: i=1; AJvYcCUz+HPAqJp0jgoLGu0cENVhhaj0OiOI6wWtXCniYQpUmHDTQJ/LG5TGrVtZNA1V1Qj7tFunKN2x/B8CUno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwXiUV5D9Q+2hfhEeSVm8BITiV7t7fqRqRiGzMVd0wiABVY5qkZ
-	trNrNForcmYPmDecT0r96eowO8VkrB6yZNui4OUTkPzL5Wpxp7zQYRJYmLQ2FjU=
-X-Google-Smtp-Source: AGHT+IFxtSZQXQIWvRKt7WWnElnMVbb/MwJke6BBx6dlXxrWvHPkhdiGUWHAnC7FM+E6yAuMmQHS5w==
-X-Received: by 2002:a05:600c:4588:b0:42c:aeee:80b with SMTP id 5b1f17b1804b1-431841c9cd1mr22288515e9.8.1729779279027;
-        Thu, 24 Oct 2024 07:14:39 -0700 (PDT)
-Received: from mordecai.tesarici.cz (dynamic-2a00-1028-83b8-1e7a-3010-3bd6-8521-caf1.ipv6.o2.cz. [2a00:1028:83b8:1e7a:3010:3bd6:8521:caf1])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186c1ef8dsm46649345e9.47.2024.10.24.07.14.38
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 07:14:38 -0700 (PDT)
-Date: Thu, 24 Oct 2024 16:14:36 +0200
-From: Petr Tesarik <ptesarik@suse.com>
-To: Vlastimil Babka <vbabka@suse.cz>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>, Rik van Riel
- <riel@surriel.com>, Matthias <matthias@bodenbinder.de>, Andrew Morton
- <akpm@linux-foundation.org>, Linux kernel regressions list
- <regressions@lists.linux.dev>, LKML <linux-kernel@vger.kernel.org>,
- Linux-MM <linux-mm@kvack.org>, Yang Shi <yang@os.amperecomputing.com>,
- Matthew Wilcox <willy@infradead.org>
-Subject: Re: darktable performance regression on AMD systems caused by "mm:
- align larger anonymous mappings on THP boundaries"
-Message-ID: <20241024161436.625579e3@mordecai.tesarici.cz>
-In-Reply-To: <9d7c73f6-1e1a-458b-93c6-3b44959022e0@suse.cz>
-References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
-	<f81ef5bd-e930-4982-a5a8-cd4aca272912@suse.cz>
-	<ce35b58e-f18c-4701-8494-fa8d1f6e5148@suse.cz>
-	<20241024124953.5d77c0b3@mordecai.tesarici.cz>
-	<a7585f3e-d6c7-4982-8214-63a7ec6258ad@suse.cz>
-	<20241024131331.6ee16603@mordecai.tesarici.cz>
-	<9d7c73f6-1e1a-458b-93c6-3b44959022e0@suse.cz>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-suse-linux-gnu)
+	s=arc-20240116; t=1729779322; c=relaxed/simple;
+	bh=OjEQrFWod3YXmalr++qYcRczWwTyzGQLmhBSUnV90ag=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EcKAFac8iBskPLr3ApalyUgUSBs8i6FjTGMZhkz3wWytIAuzxfrpQvWsa5vMgy1X228ikq30ZmSD/jbyYOOjxmdITGNoYTvRzyDHYj7DL6d7LmeLMcT/cqlH9y6XACnKzj4iFfIScywmTy2pgh6L930cO15ALXuG/5MRpAc55h0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=m+KkGwqu; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 5e4eebc2921211efbd192953cf12861f-20241024
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=rqimCADafkU8TfuHDpS9ZlbStSGVuQvqrJNo5PQkI7Q=;
+	b=m+KkGwqut5DEMNVzBKamRhLt3kxsP3z9q+tsGj8/VZMnvvc+dX6JKgS/pbep55mUqBTrd1n6AlVwTxTCIKxf+xx49ptipALmceEPFVkcF/1/BGPpTArjKgAqjKrD4GkZHi3wVNgmyIkMCiIBGH+eOsHUlC57lce9FoMymkWTYAc=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:9913015b-fa2c-46e6-9aac-985d5b4a7b82,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:5a360e2e-a7a0-4b06-8464-80be82133975,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:0,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,
+	SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0,NGT
+X-CID-BAS: 0,NGT,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR
+X-UUID: 5e4eebc2921211efbd192953cf12861f-20241024
+Received: from mtkmbs14n2.mediatek.inc [(172.21.101.76)] by mailgw02.mediatek.com
+	(envelope-from <ot_chhao.chang@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 662825707; Thu, 24 Oct 2024 22:15:06 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 24 Oct 2024 22:15:04 +0800
+Received: from mhfsdcap04.gcn.mediatek.inc (10.17.3.154) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 24 Oct 2024 22:15:04 +0800
+From: chang hao <ot_chhao.chang@mediatek.com>
+To: <matthias.bgg@gmail.com>, <angelogioacchino.delregno@collabora.com>,
+	<sean.wang@kernel.org>, <linus.walleij@linaro.org>
+CC: <linux-mediatek@lists.infradead.org>, <linux-gpio@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>, Chhao
+ Chang <ot_chhao.chang@mediatek.com>
+Subject: [PATCH] pinctrl: mediatek: add eint new design for mt8196
+Date: Thu, 24 Oct 2024 22:15:13 +0800
+Message-ID: <20241024141517.10312-1-ot_chhao.chang@mediatek.com>
+X-Mailer: git-send-email 2.46.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-On Thu, 24 Oct 2024 15:29:35 +0200
-Vlastimil Babka <vbabka@suse.cz> wrote:
+From: Chhao Chang <ot_chhao.chang@mediatek.com>
 
-> On 10/24/24 13:13, Petr Tesarik wrote:
-> > On Thu, 24 Oct 2024 12:56:27 +0200
-> > Vlastimil Babka <vbabka@suse.cz> wrote:
-> >   
-> >> On 10/24/24 12:49, Petr Tesarik wrote:  
-> >> > On Thu, 24 Oct 2024 12:23:48 +0200
-> >> > Vlastimil Babka <vbabka@suse.cz> wrote:
-> >> >     
-> >> >> On 10/24/24 11:58, Vlastimil Babka wrote:    
-> >> >> > On 10/24/24 09:45, Thorsten Leemhuis wrote:      
-> >> >> >> Hi, Thorsten here, the Linux kernel's regression tracker.
-> >> >> >> 
-> >> >> >> Rik, I noticed a report about a regression in bugzilla.kernel.org that
-> >> >> >> appears to be caused by the following change of yours:
-> >> >> >> 
-> >> >> >> efa7df3e3bb5da ("mm: align larger anonymous mappings on THP boundaries")
-> >> >> >> [v6.7]
-> >> >> >> 
-> >> >> >> It might be one of those "some things got faster, a few things became
-> >> >> >> slower" situations. Not sure. Felt odd that the reporter was able to
-> >> >> >> reproduce it on two AMD systems, but not on a Intel system. Maybe there
-> >> >> >> is a bug somewhere else that was exposed by this.      
-> >> >> > 
-> >> >> > It seems very similar to what we've seen with spec benchmarks such as cactus
-> >> >> > and bisected to the same commit:
-> >> >> > 
-> >> >> > https://bugzilla.suse.com/show_bug.cgi?id=1229012
-> >> >> > 
-> >> >> > The exact regression varies per system. Intel regresses too but relatively
-> >> >> > less. The theory is that there are many large-ish allocations that don't
-> >> >> > have individual sizes aligned to 2MB and would have been merged, commit
-> >> >> > efa7df3e3bb5da causes them to become separate areas where each aligns its
-> >> >> > start at 2MB boundary and there are gaps between. This (gaps and vma
-> >> >> > fragmentation) itself is not great, but most of the problem seemed to be
-> >> >> > from the start alignment, which togethter with the access pattern causes
-> >> >> > more TLB or cache missess due to limited associtativity.
-> >> >> > 
-> >> >> > So maybe darktable has a similar problem. A simple candidate fix could
-> >> >> > change commit efa7df3e3bb5da so that the mapping size has to be a multiple
-> >> >> > of THP size (2MB) in order to become aligned, right now it's enough if it's
-> >> >> > THP sized or larger.      
-> >> >> 
-> >> >> Maybe this could be enough to fix the issue? (on 6.12-rc4)    
-> >> > 
-> >> > 
-> >> > Yes, this should work. I was unsure if thp_get_unmapped_area_vmflags()
-> >> > differs in other ways from mm_get_unmapped_area_vmflags(), which might
-> >> > still be relevant. I mean, does mm_get_unmapped_area_vmflags() also
-> >> > prefer to allocate THPs if the virtual memory block is large enough?    
-> >> 
-> >> Well any sufficiently large area spanning a PMD aligned/sized block (either
-> >> a result of a single allocation or merging of several allocations) can
-> >> become populated by THPs (at least in those aligned blocks), and the
-> >> preference depends on system-wide THP settings and madvise(MADV_HUGEPAGE) or
-> >> prctl.
-> >> 
-> >> But mm_get_unmapped_area_vmflags() will AFAIK not try to align the area to
-> >> PMD size like the thp_ version would, even if the request is large enough.  
-> > 
-> > Then it sounds like exactly what we want. But I prefer to move the
-> > check down to __thp_get_unmapped_area() like this:  
-> 
-> I wanted to limit the fix to the place commit efa7df3e3bb5da changes, i.e.
-> anonymous mappings, because there are other callers of
-> __thp_get_unmapped_area(), namely the filesystems via
-> thp_get_unmapped_area() and I wasn't sure if that wouldn't regress them. But
-> since you suggested I had a brief look now...
-> 
-> > diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> > index 2fb328880b50..8d80f3af5525 100644
-> > --- a/mm/huge_memory.c
-> > +++ b/mm/huge_memory.c
-> > @@ -1082,6 +1082,9 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
-> >  	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
-> >  		return 0;
-> >  
-> > +	if (!IS_ALIGNED(len, size))
-> > +		return 0;  
-> 
-> I think the filesystem might be asked to create a mapping for e.g. a
-> [1MB, 4MB] range from a file, thus the offset would be 1MB (with anonymous
-> pages an off=0 is passed) and the current implementation would try to do the
-> right thing for that (align the [2MB, 4MB] range to THP) but after your
-> patch it would see len is 3MB and give up, no?
+eint is divided from the original base address into base addresses
+in five directions: east, south, west, north, and center.
+Stores a limited number of eint numbers in each direction.
 
-I'm probably showing my ignorance, but I didn't know it is somehow
-beneficial to align THP boundaries with corresponding file offsets. In
-that case you're right, and the check should be limited to anonymous
-mappings.
+Signed-off-by: Chhao Chang <ot_chhao.chang@mediatek.com>
+---
+ drivers/pinctrl/mediatek/mtk-eint.c           | 830 +++++++++++++-----
+ drivers/pinctrl/mediatek/mtk-eint.h           |  75 +-
+ .../pinctrl/mediatek/pinctrl-mtk-common-v2.c  |  50 +-
+ 3 files changed, 722 insertions(+), 233 deletions(-)
 
-Petr T
-
-> > +
-> >  	if (off_end <= off_align || (off_end - off_align) < size)
-> >  		return 0;
-> >    
-> 
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.c b/drivers/pinctrl/mediatek/mtk-eint.c
+index 27f0a54e12bf..0bb017eb1893 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.c
++++ b/drivers/pinctrl/mediatek/mtk-eint.c
+@@ -17,16 +17,13 @@
+ #include <linux/irqdomain.h>
+ #include <linux/module.h>
+ #include <linux/of_irq.h>
++#include <linux/of_address.h>
+ #include <linux/platform_device.h>
+ 
+ #include "mtk-eint.h"
+ 
+-#define MTK_EINT_EDGE_SENSITIVE           0
+-#define MTK_EINT_LEVEL_SENSITIVE          1
+-#define MTK_EINT_DBNC_SET_DBNC_BITS	  4
+-#define MTK_EINT_DBNC_MAX		  16
+-#define MTK_EINT_DBNC_RST_BIT		  (0x1 << 1)
+-#define MTK_EINT_DBNC_SET_EN		  (0x1 << 0)
++static struct mtk_eint *global_eintc;
++struct mtk_eint_pin pin;
+ 
+ static const struct mtk_eint_regs mtk_generic_eint_regs = {
+ 	.stat      = 0x000,
+@@ -47,6 +44,10 @@ static const struct mtk_eint_regs mtk_generic_eint_regs = {
+ 	.dbnc_ctrl = 0x500,
+ 	.dbnc_set  = 0x600,
+ 	.dbnc_clr  = 0x700,
++	.event     = 0x800,
++	.event_set = 0x840,
++	.event_clr = 0x880,
++	.raw_stat  = 0xa00,
+ };
+ 
+ const unsigned int debounce_time_mt2701[] = {
+@@ -64,60 +65,145 @@ const unsigned int debounce_time_mt6795[] = {
+ };
+ EXPORT_SYMBOL_GPL(debounce_time_mt6795);
+ 
+-static void __iomem *mtk_eint_get_offset(struct mtk_eint *eint,
++/*
++ * Return the iomem of specific register ofset and decode the coordinate
++ * (instance, index) from global eint number.
++ * If return NULL, then it must be either out-of-range or do-not-support.
++ */
++static void __iomem *mtk_eint_get_ofset(struct mtk_eint *eint,
+ 					 unsigned int eint_num,
+-					 unsigned int offset)
++					 unsigned int ofset,
++					 unsigned int *instance,
++					 unsigned int *index)
+ {
+-	unsigned int eint_base = 0;
+ 	void __iomem *reg;
+ 
+-	if (eint_num >= eint->hw->ap_num)
+-		eint_base = eint->hw->ap_num;
++	if (eint_num >= eint->total_pin_number ||
++	    !eint->pins[eint_num].enabled) {
++		WARN_ON(1);
++		return NULL;
++	}
+ 
+-	reg = eint->base + offset + ((eint_num - eint_base) / 32) * 4;
++	*instance = eint->pins[eint_num].instance;
++	*index = eint->pins[eint_num].index;
++	reg = eint->instances[*instance].base + ofset + (*index / MAX_BIT * REG_OFSET);
+ 
+ 	return reg;
+ }
+ 
++/*
++ * Generate helper function to access property register of a dedicate pin.
++ */
++#define DEFINE_EINT_GET_FUNCTION(_NAME, _OFSET) \
++static unsigned int mtk_eint_get_##_NAME(struct mtk_eint *eint, \
++				   unsigned int eint_num) \
++{ \
++	unsigned int instance, index; \
++	void __iomem *reg = mtk_eint_get_ofset(eint, eint_num, \
++						_OFSET, \
++						&instance, &index); \
++	unsigned int bit = BIT(index & 0x1f);\
++\
++	if (!reg) { \
++		dev_err(eint->dev, "%s invalid eint_num %d\n", \
++			__func__, eint_num); \
++		return 0;\
++	} \
++\
++	return !!(readl(reg) & bit); \
++}
++
++DEFINE_EINT_GET_FUNCTION(stat, eint->comp->regs->stat);
++DEFINE_EINT_GET_FUNCTION(mask, eint->comp->regs->mask);
++DEFINE_EINT_GET_FUNCTION(sens, eint->comp->regs->sens);
++DEFINE_EINT_GET_FUNCTION(pol, eint->comp->regs->pol);
++DEFINE_EINT_GET_FUNCTION(dom_en, eint->comp->regs->dom_en);
++DEFINE_EINT_GET_FUNCTION(event, eint->comp->regs->event);
++DEFINE_EINT_GET_FUNCTION(raw_stat, eint->comp->regs->raw_stat);
++
++int dump_eint_pin_status(unsigned int eint_num)
++{
++       unsigned int stat, raw_stat, mask, sens, pol, dom_en, event;
++
++       if (eint_num < 0 || eint_num > global_eintc->total_pin_number)
++               return ENODEV;
++
++       stat = mtk_eint_get_stat(global_eintc, eint_num);
++       raw_stat = mtk_eint_get_raw_stat(global_eintc, eint_num);
++       mask = mtk_eint_get_mask(global_eintc, eint_num);
++       sens = mtk_eint_get_sens(global_eintc, eint_num);
++       pol = mtk_eint_get_pol(global_eintc, eint_num);
++       dom_en = mtk_eint_get_dom_en(global_eintc, eint_num);
++       event = mtk_eint_get_event(global_eintc, eint_num);
++       dev_info(global_eintc->dev, "%s eint_num:%u=stat:%u,raw:%u, \
++		       mask:%u, sens:%u,pol:%u,dom_en:%u,event:%u\n",
++		       __func__, eint_num, stat, raw_stat, mask, sens,
++		       pol, dom_en, event);
++       return 0;
++}
++EXPORT_SYMBOL_GPL(dump_eint_pin_status);
++
+ static unsigned int mtk_eint_can_en_debounce(struct mtk_eint *eint,
+ 					     unsigned int eint_num)
+ {
+ 	unsigned int sens;
+-	unsigned int bit = BIT(eint_num % 32);
+-	void __iomem *reg = mtk_eint_get_offset(eint, eint_num,
+-						eint->regs->sens);
++	unsigned int instance, index;
++	void __iomem *reg = mtk_eint_get_ofset(eint, eint_num,
++						eint->comp->regs->sens,
++						&instance, &index);
++	unsigned int bit = BIT(index & 0x1f);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return 0;
++	}
+ 
+ 	if (readl(reg) & bit)
+ 		sens = MTK_EINT_LEVEL_SENSITIVE;
+ 	else
+ 		sens = MTK_EINT_EDGE_SENSITIVE;
+ 
+-	if (eint_num < eint->hw->db_cnt && sens != MTK_EINT_EDGE_SENSITIVE)
++	if (eint->pins[eint_num].debounce &&
++	    sens != MTK_EINT_EDGE_SENSITIVE)
+ 		return 1;
+ 	else
+ 		return 0;
+ }
+ 
+-static int mtk_eint_flip_edge(struct mtk_eint *eint, int hwirq)
++static int mtk_eint_flip_edge(struct mtk_eint *eint, int eint_num)
+ {
+ 	int start_level, curr_level;
+-	unsigned int reg_offset;
+-	u32 mask = BIT(hwirq & 0x1f);
+-	u32 port = (hwirq >> 5) & eint->hw->port_mask;
+-	void __iomem *reg = eint->base + (port << 2);
++	unsigned int reg_ofset;
++	unsigned int instance, index, mask, port;
++	void __iomem *reg;
+ 
+-	curr_level = eint->gpio_xlate->get_gpio_state(eint->pctl, hwirq);
++	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
++				  &instance, &index);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return 0;
++	}
++
++	mask = BIT(index & 0x1f);
++	port = index >> REG_GROUP;
++	reg = eint->instances[instance].base + port * REG_OFSET;
++
++	curr_level = eint->gpio_xlate->get_gpio_state(eint->pctl, eint_num);
+ 
+ 	do {
+ 		start_level = curr_level;
+ 		if (start_level)
+-			reg_offset = eint->regs->pol_clr;
++			reg_ofset = eint->comp->regs->pol_clr;
+ 		else
+-			reg_offset = eint->regs->pol_set;
+-		writel(mask, reg + reg_offset);
++			reg_ofset = eint->comp->regs->pol_set;
++
++		writel(mask, reg + reg_ofset);
+ 
+ 		curr_level = eint->gpio_xlate->get_gpio_state(eint->pctl,
+-							      hwirq);
++							      eint_num);
+ 	} while (start_level != curr_level);
+ 
+ 	return start_level;
+@@ -126,11 +212,19 @@ static int mtk_eint_flip_edge(struct mtk_eint *eint, int hwirq)
+ static void mtk_eint_mask(struct irq_data *d)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+-	u32 mask = BIT(d->hwirq & 0x1f);
+-	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+-						eint->regs->mask_set);
++	unsigned int instance, index;
++	void __iomem *reg = mtk_eint_get_ofset(eint, d->hwirq,
++						eint->comp->regs->mask_set,
++						&instance, &index);
++	u32 mask = BIT(index & 0x1f);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %lu\n",
++			__func__, d->hwirq);
++		return;
++	}
+ 
+-	eint->cur_mask[d->hwirq >> 5] &= ~mask;
++	eint->instances[instance].cur_mask[index >> REG_GROUP] &= ~mask;
+ 
+ 	writel(mask, reg);
+ }
+@@ -138,43 +232,91 @@ static void mtk_eint_mask(struct irq_data *d)
+ static void mtk_eint_unmask(struct irq_data *d)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+-	u32 mask = BIT(d->hwirq & 0x1f);
+-	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+-						eint->regs->mask_clr);
++	unsigned int instance, index;
++	void __iomem *reg = mtk_eint_get_ofset(eint, d->hwirq,
++						eint->comp->regs->mask_clr,
++						&instance, &index);
++	u32 mask = BIT(index & 0x1f);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %lu\n",
++			__func__, d->hwirq);
++		return;
++	}
+ 
+-	eint->cur_mask[d->hwirq >> 5] |= mask;
++	eint->instances[instance].cur_mask[index >> REG_GROUP] |= mask;
+ 
+ 	writel(mask, reg);
+ 
+-	if (eint->dual_edge[d->hwirq])
++	if (eint->pins[d->hwirq].dual_edge)
+ 		mtk_eint_flip_edge(eint, d->hwirq);
+ }
+ 
+-static unsigned int mtk_eint_get_mask(struct mtk_eint *eint,
++static void mtk_eint_ack(struct irq_data *d)
++{
++	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
++	unsigned int instance, index;
++	void __iomem *reg;
++	unsigned int bit;
++
++	if (eint->comp->ops.ack)
++		eint->comp->ops.ack(d);
++	else {
++		reg = mtk_eint_get_ofset(eint, d->hwirq,
++					  eint->comp->regs->ack,
++					  &instance, &index);
++		bit = BIT(index & 0x1f);
++		if (!reg) {
++			dev_err(eint->dev, "%s invalid eint_num %lu\n",
++				__func__, d->hwirq);
++			return;
++		}
++
++		writel(bit, reg);
++	}
++}
++
++static void mtk_eint_soft_set(struct mtk_eint *eint,
+ 				      unsigned int eint_num)
+ {
+-	unsigned int bit = BIT(eint_num % 32);
+-	void __iomem *reg = mtk_eint_get_offset(eint, eint_num,
+-						eint->regs->mask);
++	unsigned int instance, index;
++	void __iomem *reg = mtk_eint_get_ofset(eint, eint_num,
++						eint->comp->regs->soft_set,
++						&instance, &index);
++	unsigned int bit = BIT(index & 0x1f);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return;
++	}
+ 
+-	return !!(readl(reg) & bit);
++	writel(bit, reg);
+ }
+ 
+-static void mtk_eint_ack(struct irq_data *d)
++static void mtk_eint_soft_clr(struct mtk_eint *eint,
++				      unsigned int eint_num)
+ {
+-	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+-	u32 mask = BIT(d->hwirq & 0x1f);
+-	void __iomem *reg = mtk_eint_get_offset(eint, d->hwirq,
+-						eint->regs->ack);
++	unsigned int instance, index;
++	void __iomem *reg = mtk_eint_get_ofset(eint, eint_num,
++						eint->comp->regs->soft_clr,
++						&instance, &index);
++	unsigned int bit = BIT(index & 0x1f);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return;
++	}
+ 
+-	writel(mask, reg);
++	writel(bit, reg);
+ }
+ 
+ static int mtk_eint_set_type(struct irq_data *d, unsigned int type)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+-	bool masked;
+-	u32 mask = BIT(d->hwirq & 0x1f);
++	u32 mask;
++	unsigned int instance, index;
+ 	void __iomem *reg;
+ 
+ 	if (((type & IRQ_TYPE_EDGE_BOTH) && (type & IRQ_TYPE_LEVEL_MASK)) ||
+@@ -186,36 +328,42 @@ static int mtk_eint_set_type(struct irq_data *d, unsigned int type)
+ 	}
+ 
+ 	if ((type & IRQ_TYPE_EDGE_BOTH) == IRQ_TYPE_EDGE_BOTH)
+-		eint->dual_edge[d->hwirq] = 1;
++		eint->pins[d->hwirq].dual_edge = 1;
+ 	else
+-		eint->dual_edge[d->hwirq] = 0;
++		eint->pins[d->hwirq].dual_edge = 0;
+ 
+-	if (!mtk_eint_get_mask(eint, d->hwirq)) {
+-		mtk_eint_mask(d);
+-		masked = false;
+-	} else {
+-		masked = true;
+-	}
++	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING))
++		reg = mtk_eint_get_ofset(eint, d->hwirq,
++					  eint->comp->regs->pol_clr,
++					  &instance, &index);
++	else
++		reg = mtk_eint_get_ofset(eint, d->hwirq,
++					  eint->comp->regs->pol_set,
++					  &instance, &index);
+ 
+-	if (type & (IRQ_TYPE_LEVEL_LOW | IRQ_TYPE_EDGE_FALLING)) {
+-		reg = mtk_eint_get_offset(eint, d->hwirq, eint->regs->pol_clr);
+-		writel(mask, reg);
+-	} else {
+-		reg = mtk_eint_get_offset(eint, d->hwirq, eint->regs->pol_set);
+-		writel(mask, reg);
+-	}
++	mask = BIT(index & 0x1f);
++	writel(mask, reg);
++
++	if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING))
++		reg = mtk_eint_get_ofset(eint, d->hwirq,
++					  eint->comp->regs->sens_clr,
++					  &instance, &index);
++	else
++		reg = mtk_eint_get_ofset(eint, d->hwirq,
++					  eint->comp->regs->sens_set,
++					  &instance, &index);
+ 
+-	if (type & (IRQ_TYPE_EDGE_RISING | IRQ_TYPE_EDGE_FALLING)) {
+-		reg = mtk_eint_get_offset(eint, d->hwirq, eint->regs->sens_clr);
+-		writel(mask, reg);
+-	} else {
+-		reg = mtk_eint_get_offset(eint, d->hwirq, eint->regs->sens_set);
+-		writel(mask, reg);
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %lu\n",
++			__func__, d->hwirq);
++		return 0;
+ 	}
+ 
+-	mtk_eint_ack(d);
+-	if (!masked)
+-		mtk_eint_unmask(d);
++	mask = BIT(index & 0x1f);
++	writel(mask, reg);
++
++	if (eint->pins[d->hwirq].dual_edge)
++		mtk_eint_flip_edge(eint, d->hwirq);
+ 
+ 	return 0;
+ }
+@@ -223,30 +371,28 @@ static int mtk_eint_set_type(struct irq_data *d, unsigned int type)
+ static int mtk_eint_irq_set_wake(struct irq_data *d, unsigned int on)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+-	int shift = d->hwirq & 0x1f;
+-	int reg = d->hwirq >> 5;
++	unsigned int instance, index, shift, port;
++	void __iomem *reg = mtk_eint_get_ofset(eint, d->hwirq,
++						MTK_EINT_NO_OFSET,
++						&instance, &index);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %lu\n",
++			__func__, d->hwirq);
++		return 0;
++	}
++
++	shift = index & 0x1f;
++	port = index >> REG_GROUP;
+ 
+ 	if (on)
+-		eint->wake_mask[reg] |= BIT(shift);
++		eint->instances[instance].wake_mask[port] |= BIT(shift);
+ 	else
+-		eint->wake_mask[reg] &= ~BIT(shift);
++		eint->instances[instance].wake_mask[port] &= ~BIT(shift);
+ 
+ 	return 0;
+ }
+ 
+-static void mtk_eint_chip_write_mask(const struct mtk_eint *eint,
+-				     void __iomem *base, u32 *buf)
+-{
+-	int port;
+-	void __iomem *reg;
+-
+-	for (port = 0; port < eint->hw->ports; port++) {
+-		reg = base + (port << 2);
+-		writel_relaxed(~buf[port], reg + eint->regs->mask_set);
+-		writel_relaxed(buf[port], reg + eint->regs->mask_clr);
+-	}
+-}
+-
+ static int mtk_eint_irq_request_resources(struct irq_data *d)
+ {
+ 	struct mtk_eint *eint = irq_data_get_irq_chip_data(d);
+@@ -290,7 +436,7 @@ static void mtk_eint_irq_release_resources(struct irq_data *d)
+ }
+ 
+ static struct irq_chip mtk_eint_irq_chip = {
+-	.name = "mt-eint",
++	.name = "mtk-eint",
+ 	.irq_disable = mtk_eint_mask,
+ 	.irq_mask = mtk_eint_mask,
+ 	.irq_unmask = mtk_eint_unmask,
+@@ -301,35 +447,51 @@ static struct irq_chip mtk_eint_irq_chip = {
+ 	.irq_release_resources = mtk_eint_irq_release_resources,
+ };
+ 
++/*
++ * Configure all EINT pins as domain 0, which only belongs to AP.
++ */
+ static unsigned int mtk_eint_hw_init(struct mtk_eint *eint)
+ {
+-	void __iomem *dom_en = eint->base + eint->regs->dom_en;
+-	void __iomem *mask_set = eint->base + eint->regs->mask_set;
+-	unsigned int i;
+-
+-	for (i = 0; i < eint->hw->ap_num; i += 32) {
+-		writel(0xffffffff, dom_en);
+-		writel(0xffffffff, mask_set);
+-		dom_en += 4;
+-		mask_set += 4;
++	void __iomem *reg,*eevt_clr;
++	unsigned int i, j;
++
++	for (i = 0; i < eint->instance_number; i++) {
++		reg = eint->instances[i].base + eint->comp->regs->dom_en;
++		eevt_clr = eint->instances[i].base + eint->comp->regs->event_clr;
++		for (j = 0; j < eint->instances[i].number; j += MAX_BIT, reg += REG_OFSET, eevt_clr += REG_OFSET) {
++			writel(REG_VAL, reg);
++			writel(REG_VAL, eevt_clr);
++		}
+ 	}
+ 
+ 	return 0;
+ }
+ 
+ static inline void
+-mtk_eint_debounce_process(struct mtk_eint *eint, int index)
++mtk_eint_debounce_process(struct mtk_eint *eint, int eint_num)
+ {
+-	unsigned int rst, ctrl_offset;
++	unsigned int rst, ctrl_ofset;
+ 	unsigned int bit, dbnc;
++	unsigned int instance, index;
++	void __iomem *reg;
++
++	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
++				  &instance, &index);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return;
++	}
++
++	ctrl_ofset = (index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_ctrl;
++	dbnc = readl(eint->instances[instance].base + ctrl_ofset);
++	bit = MTK_EINT_DBNC_SET_EN << ((index % REG_OFSET) * DB_GROUP);
+ 
+-	ctrl_offset = (index / 4) * 4 + eint->regs->dbnc_ctrl;
+-	dbnc = readl(eint->base + ctrl_offset);
+-	bit = MTK_EINT_DBNC_SET_EN << ((index % 4) * 8);
+ 	if ((bit & dbnc) > 0) {
+-		ctrl_offset = (index / 4) * 4 + eint->regs->dbnc_set;
+-		rst = MTK_EINT_DBNC_RST_BIT << ((index % 4) * 8);
+-		writel(rst, eint->base + ctrl_offset);
++		ctrl_ofset = (index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_set;
++		rst = MTK_EINT_DBNC_RST_BIT << ((index % REG_OFSET) * DB_GROUP);
++		writel(rst, eint->instances[instance].base + ctrl_ofset);
+ 	}
+ }
+ 
+@@ -337,65 +499,72 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+ {
+ 	struct irq_chip *chip = irq_desc_get_chip(desc);
+ 	struct mtk_eint *eint = irq_desc_get_handler_data(desc);
+-	unsigned int status, eint_num;
+-	int offset, mask_offset, index;
+-	void __iomem *reg =  mtk_eint_get_offset(eint, 0, eint->regs->stat);
+-	int dual_edge, start_level, curr_level;
++	unsigned int status, i, j;
++	int shift, port, eint_num, virq;
++	unsigned int dual_edge, start_level, curr_level;
++	struct mtk_eint_instance eint_instance;
++	void __iomem *addr;
+ 
+ 	chained_irq_enter(chip, desc);
+-	for (eint_num = 0; eint_num < eint->hw->ap_num; eint_num += 32,
+-	     reg += 4) {
+-		status = readl(reg);
+-		while (status) {
+-			offset = __ffs(status);
+-			mask_offset = eint_num >> 5;
+-			index = eint_num + offset;
+-			status &= ~BIT(offset);
+-
+-			/*
+-			 * If we get an interrupt on pin that was only required
+-			 * for wake (but no real interrupt requested), mask the
+-			 * interrupt (as would mtk_eint_resume do anyway later
+-			 * in the resume sequence).
+-			 */
+-			if (eint->wake_mask[mask_offset] & BIT(offset) &&
+-			    !(eint->cur_mask[mask_offset] & BIT(offset))) {
+-				writel_relaxed(BIT(offset), reg -
+-					eint->regs->stat +
+-					eint->regs->mask_set);
+-			}
+-
+-			dual_edge = eint->dual_edge[index];
+-			if (dual_edge) {
+-				/*
+-				 * Clear soft-irq in case we raised it last
+-				 * time.
+-				 */
+-				writel(BIT(offset), reg - eint->regs->stat +
+-				       eint->regs->soft_clr);
+ 
+-				start_level =
+-				eint->gpio_xlate->get_gpio_state(eint->pctl,
+-								 index);
+-			}
++	for (i = 0; i < eint->instance_number; i++) {
++		eint_instance = eint->instances[i];
+ 
+-			generic_handle_domain_irq(eint->domain, index);
++		/* Iterate all pins by port */
++		for (j = 0; j < eint_instance.number; j += MAX_BIT) {
++			port = j >> REG_GROUP;
++			status = readl(eint_instance.base + port * REG_OFSET +
++				       eint->comp->regs->stat);
++			while (status) {
++				shift = __ffs(status);
++				status &= ~BIT(shift);
+ 
+-			if (dual_edge) {
+-				curr_level = mtk_eint_flip_edge(eint, index);
++				eint_num = eint->instances[i].pin_list[shift + j];
++				virq = irq_find_mapping(eint->domain, eint_num);
+ 
+ 				/*
+-				 * If level changed, we might lost one edge
+-				 * interrupt, raised it through soft-irq.
++				 * If we get an interrupt on pin that was only required
++				 * for wake (but no real interrupt requested), mask the
++				 * interrupt (as would mtk_eint_resume do anyway later
++				 * in the resume sequence).
+ 				 */
+-				if (start_level != curr_level)
+-					writel(BIT(offset), reg -
+-					       eint->regs->stat +
+-					       eint->regs->soft_set);
+-			}
++				if (eint->instances[i].wake_mask[port] & BIT(shift) &&
++				    !(eint->instances[i].cur_mask[port] & BIT(shift))) {
++					addr = eint_instance.base + port * REG_OFSET +
++						eint->comp->regs->mask_set;
++					writel_relaxed(BIT(shift), addr);
++				}
++
++				dual_edge = eint->pins[eint_num].dual_edge;
++				if (dual_edge) {
++					/*
++					 * Clear soft-irq in case we raised it last
++					 * time.
++					 */
++					mtk_eint_soft_clr(eint, eint_num);
++
++					start_level =
++					eint->gpio_xlate->get_gpio_state(eint->pctl,
++									 eint_num);
++				}
++
++				generic_handle_irq(virq);
++
++				if (dual_edge) {
++					curr_level = mtk_eint_flip_edge(eint, eint_num);
++
++					/*
++					 * If level changed, we might lost one edge
++					 * interrupt, raised it through soft-irq.
++					 */
++					if (start_level != curr_level)
++						mtk_eint_soft_set(eint, eint_num);
++				}
++
++				if (eint->pins[eint_num].debounce)
++					mtk_eint_debounce_process(eint, eint_num);
+ 
+-			if (index < eint->hw->db_cnt)
+-				mtk_eint_debounce_process(eint, index);
++			}
+ 		}
+ 	}
+ 	chained_irq_exit(chip, desc);
+@@ -403,7 +572,20 @@ static void mtk_eint_irq_handler(struct irq_desc *desc)
+ 
+ int mtk_eint_do_suspend(struct mtk_eint *eint)
+ {
+-	mtk_eint_chip_write_mask(eint, eint->base, eint->wake_mask);
++	unsigned int i, j, port;
++
++	for (i = 0; i < eint->instance_number; i++) {
++		struct mtk_eint_instance inst = eint->instances[i];
++
++		for (j = 0; j < inst.number; j += MAX_BIT) {
++			port = j >> REG_GROUP;
++			writel_relaxed(~inst.wake_mask[port],
++				       inst.base + port*REG_OFSET + eint->comp->regs->mask_set);
++			writel_relaxed(inst.wake_mask[port],
++				       inst.base + port*REG_OFSET + eint->comp->regs->mask_clr);
++		}
++	}
++	dsb(sy);
+ 
+ 	return 0;
+ }
+@@ -411,7 +593,20 @@ EXPORT_SYMBOL_GPL(mtk_eint_do_suspend);
+ 
+ int mtk_eint_do_resume(struct mtk_eint *eint)
+ {
+-	mtk_eint_chip_write_mask(eint, eint->base, eint->cur_mask);
++	unsigned int i, j, port;
++
++	for (i = 0; i < eint->instance_number; i++) {
++		struct mtk_eint_instance inst = eint->instances[i];
++
++		for (j = 0; j < inst.number; j += MAX_BIT) {
++			port = j >> REG_GROUP;
++			writel_relaxed(~inst.cur_mask[port],
++				       inst.base + port*REG_OFSET + eint->comp->regs->mask_set);
++			writel_relaxed(inst.cur_mask[port],
++				       inst.base + port*REG_OFSET + eint->comp->regs->mask_clr);
++		}
++	}
++	dsb(sy);
+ 
+ 	return 0;
+ }
+@@ -420,27 +615,45 @@ EXPORT_SYMBOL_GPL(mtk_eint_do_resume);
+ int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_num,
+ 			  unsigned int debounce)
+ {
+-	int virq, eint_offset;
+-	unsigned int set_offset, bit, clr_bit, clr_offset, rst, i, unmask,
++	int virq, eint_ofset;
++	unsigned int set_ofset, bit, clr_bit, clr_ofset, rst, i, unmask,
+ 		     dbnc;
++	static const unsigned int debounce_time[] = { 156, 313, 625, 1250,
++		20000, 40000, 80000, 160000, 320000, 640000 };
+ 	struct irq_data *d;
++	unsigned int instance, index;
++	void __iomem *reg;
+ 
+-	if (!eint->hw->db_time)
+-		return -EOPNOTSUPP;
++	/*
++	 * Due to different number of bit field, we only decode
++	 * the coordinate here, instead of get the VA.
++	 */
++	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
++				  &instance, &index);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %lu\n",
++			__func__, eint_num);
++		return 0;
++	}
+ 
+ 	virq = irq_find_mapping(eint->domain, eint_num);
+-	eint_offset = (eint_num % 4) * 8;
++	eint_ofset = (index % REG_OFSET) * DB_GROUP;
+ 	d = irq_get_irq_data(virq);
+ 
+-	set_offset = (eint_num / 4) * 4 + eint->regs->dbnc_set;
+-	clr_offset = (eint_num / 4) * 4 + eint->regs->dbnc_clr;
++	reg = eint->instances[instance].base;
++	set_ofset = (index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_set;
++	clr_ofset = (index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_clr;
+ 
+ 	if (!mtk_eint_can_en_debounce(eint, eint_num))
+ 		return -EINVAL;
+ 
+-	dbnc = eint->num_db_time;
+-	for (i = 0; i < eint->num_db_time; i++) {
+-		if (debounce <= eint->hw->db_time[i]) {
++	/*
++	 * Check eint number to avoid access out-of-range
++	 */
++	dbnc = ARRAY_SIZE(debounce_time) - 1;
++	for (i = 0; i < ARRAY_SIZE(debounce_time); i++) {
++		if (debounce <= debounce_time[i]) {
+ 			dbnc = i;
+ 			break;
+ 		}
+@@ -449,23 +662,20 @@ int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_num,
+ 	if (!mtk_eint_get_mask(eint, eint_num)) {
+ 		mtk_eint_mask(d);
+ 		unmask = 1;
+-	} else {
++	} else
+ 		unmask = 0;
+-	}
+ 
+-	clr_bit = 0xff << eint_offset;
+-	writel(clr_bit, eint->base + clr_offset);
++	clr_bit = 0xff << eint_ofset;
++	writel(clr_bit, reg + clr_ofset);
+ 
+-	bit = ((dbnc << MTK_EINT_DBNC_SET_DBNC_BITS) | MTK_EINT_DBNC_SET_EN) <<
+-		eint_offset;
+-	rst = MTK_EINT_DBNC_RST_BIT << eint_offset;
+-	writel(rst | bit, eint->base + set_offset);
++	bit = ((dbnc << MTK_EINT_DBNC_SET_DBNC_BITS)
++		| MTK_EINT_DBNC_SET_EN) << eint_ofset;
++	rst = MTK_EINT_DBNC_RST_BIT << eint_ofset;
++	writel(rst | bit, reg + set_ofset);
+ 
+ 	/*
+-	 * Delay a while (more than 2T) to wait for hw debounce counter reset
+-	 * work correctly.
++	 * Delay should be (8T @ 32k) from dbc rst to work correctly.
+ 	 */
+-	udelay(1);
+ 	if (unmask == 1)
+ 		mtk_eint_unmask(d);
+ 
+@@ -473,6 +683,53 @@ int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_num,
+ }
+ EXPORT_SYMBOL_GPL(mtk_eint_set_debounce);
+ 
++unsigned int mtk_eint_get_debounce_en(struct mtk_eint *eint,
++				      unsigned int eint_num)
++{
++	unsigned int instance, index, bit;
++	void __iomem *reg;
++
++	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
++				  &instance, &index);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return 0;
++	}
++
++	reg = eint->instances[instance].base +
++		(index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_ctrl;
++
++	bit = MTK_EINT_DBNC_SET_EN << ((index % REG_OFSET) * DB_GROUP);
++
++	return (readl(reg) & bit) ? 1 : 0;
++}
++
++unsigned int mtk_eint_get_debounce_value(struct mtk_eint *eint,
++					   unsigned int eint_num)
++{
++	unsigned int instance, index, mask, ofset;
++	void __iomem *reg;
++
++	reg = mtk_eint_get_ofset(eint, eint_num, MTK_EINT_NO_OFSET,
++				  &instance, &index);
++
++	if (!reg) {
++		dev_err(eint->dev, "%s invalid eint_num %d\n",
++			__func__, eint_num);
++		return 0;
++	}
++
++	reg = eint->instances[instance].base +
++		(index / REG_OFSET) * REG_OFSET + eint->comp->regs->dbnc_ctrl;
++
++	ofset = MTK_EINT_DBNC_SET_DBNC_BITS + ((index % REG_OFSET) * DB_GROUP);
++	mask = 0xf << ofset;
++
++	return ((readl(reg) & mask) >> ofset);
++}
++
+ int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
+ {
+ 	int irq;
+@@ -485,45 +742,208 @@ int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
+ }
+ EXPORT_SYMBOL_GPL(mtk_eint_find_irq);
+ 
++static const struct mtk_eint_compatible default_compat = {
++	.regs = &mtk_generic_eint_regs,
++};
++
++static const struct of_device_id eint_compatible_ids[] = {
++	{ }
++};
++
+ int mtk_eint_do_init(struct mtk_eint *eint)
+ {
+-	int i;
++	int i, virq;
++	unsigned int size;
++	eint->instance_number = 1;
++
++	for (i = 0; i < eint->total_pin_number; i++) {
++		eint->pins[i].enabled = true;
++		eint->pins[i].instance = 0;
++		eint->pins[i].index = i;
++		eint->pins[i].debounce =  (i < eint->hw->db_cnt) ? 1 : 0;
++
++		eint->instances[0].pin_list[i] = i;
++		eint->instances[0].number++;
++	}
+ 
+-	/* If clients don't assign a specific regs, let's use generic one */
+-	if (!eint->regs)
+-		eint->regs = &mtk_generic_eint_regs;
++	for (i = 0; i < eint->instance_number; i++) {
++		size = (eint->instances[i].number / MAX_BIT + 1) * sizeof(unsigned int);
++		eint->instances[i].wake_mask =
++			devm_kzalloc(eint->dev, size, GFP_KERNEL);
++		eint->instances[i].cur_mask =
++			devm_kzalloc(eint->dev, size, GFP_KERNEL);
+ 
+-	eint->wake_mask = devm_kcalloc(eint->dev, eint->hw->ports,
+-				       sizeof(*eint->wake_mask), GFP_KERNEL);
+-	if (!eint->wake_mask)
++		if (!eint->instances[i].wake_mask ||
++		    !eint->instances[i].cur_mask)
++			return -ENOMEM;
++	}
++
++	eint->comp = &default_compat;
++
++	eint->domain = irq_domain_add_linear(eint->dev->of_node,
++					     eint->total_pin_number,
++					     &irq_domain_simple_ops, NULL);
++	if (!eint->domain)
+ 		return -ENOMEM;
+ 
+-	eint->cur_mask = devm_kcalloc(eint->dev, eint->hw->ports,
+-				      sizeof(*eint->cur_mask), GFP_KERNEL);
+-	if (!eint->cur_mask)
++	mtk_eint_hw_init(eint);
++	for (i = 0; i < eint->total_pin_number; i++) {
++		virq = irq_create_mapping(eint->domain, i);
++
++		irq_set_chip_and_handler(virq, &mtk_eint_irq_chip,
++					 handle_level_irq);
++		irq_set_chip_data(virq, eint);
++	}
++
++	irq_set_chained_handler_and_data(eint->irq, mtk_eint_irq_handler,
++					 eint);
++
++	global_eintc = eint;
++
++	return 0;
++}
++EXPORT_SYMBOL_GPL(mtk_eint_do_init);
++
++int mtk_eint_do_init_v2(struct mtk_eint *eint)
++{
++	int i, virq, matrix_number = 0;
++	struct device_node *node;
++	unsigned int ret, size, ofset;
++	unsigned int id, inst, idx, support_deb;
++
++	const phandle *ph;
++
++	ph = of_get_property(eint->dev->of_node, "mediatek,eint", NULL);
++	if (!ph) {
++		dev_err(eint->dev, "Cannot find EINT phandle in PIO node.\n");
++		return -ENODEV;
++	}
++
++	node = of_find_node_by_phandle(be32_to_cpup(ph));
++	if (!node) {
++		dev_err(eint->dev, "Cannot find EINT node by phandle.\n");
++		return -ENODEV;
++	}
++
++	ret = of_property_read_u32(node, "mediatek,total-pin-number",
++				   &eint->total_pin_number);
++	if (ret) {
++		dev_err(eint->dev,
++		       "%s cannot read total-pin-number from device node.\n",
++		       __func__);
++		return -EINVAL;
++	}
++
++	dev_info(eint->dev, "%s eint total %u pins.\n", __func__,
++		eint->total_pin_number);
++
++	ret = of_property_read_u32(node, "mediatek,instance-num",
++				   &eint->instance_number);
++	if (ret)
++		eint->instance_number = 1; // only 1 instance in legacy chip
++
++	size = eint->instance_number * sizeof(struct mtk_eint_instance);
++	eint->instances = devm_kzalloc(eint->dev, size, GFP_KERNEL);
++	if (!eint->instances)
+ 		return -ENOMEM;
+ 
+-	eint->dual_edge = devm_kcalloc(eint->dev, eint->hw->ap_num,
+-				       sizeof(int), GFP_KERNEL);
+-	if (!eint->dual_edge)
++	size = eint->total_pin_number * sizeof(struct mtk_eint_pin);
++	eint->pins = devm_kzalloc(eint->dev, size, GFP_KERNEL);
++	if (!eint->pins)
+ 		return -ENOMEM;
+ 
++	for (i = 0; i < eint->instance_number; i++) {
++		ret = of_property_read_string_index(node, "reg-name", i,
++						    &(eint->instances[i].name));
++		if (ret) {
++			dev_info(eint->dev,
++				 "%s cannot read the name of instance %d.\n",
++				 __func__, i);
++		}
++
++		eint->instances[i].base = of_iomap(node, i);
++		if (!eint->instances[i].base)
++			return -ENOMEM;
++	}
++
++	matrix_number = of_property_count_u32_elems(node, "mediatek,pins") / ARRAY_0;
++	if (matrix_number < 0) {
++		matrix_number = eint->total_pin_number;
++		dev_info(eint->dev, "%s eint in legacy mode, assign the matrix number to %u.\n",
++			 __func__, matrix_number);
++	} else
++		dev_info(eint->dev, "%s eint in new mode, assign the matrix number to %u.\n",
++			 __func__, matrix_number);
++
++	for (i = 0; i < matrix_number; i++) {
++		ofset = i * REG_OFSET;
++
++		ret = of_property_read_u32_index(node, "mediatek,pins",
++					   ofset, &id);
++		ret |= of_property_read_u32_index(node, "mediatek,pins",
++					   ofset+FIRST, &inst);
++		ret |= of_property_read_u32_index(node, "mediatek,pins",
++					   ofset+SECOND, &idx);
++		ret |= of_property_read_u32_index(node, "mediatek,pins",
++					   ofset+THIRD, &support_deb);
++
++		/* Legacy chip which no need to give coordinate list */
++		if (ret) {
++			id = i;
++			inst = 0;
++			idx = i;
++			support_deb = (i < MAX_BIT) ? 1 : 0;
++		}
++
++		eint->pins[id].enabled = true;
++		eint->pins[id].instance = inst;
++		eint->pins[id].index = idx;
++		eint->pins[id].debounce = support_deb;
++
++		eint->instances[inst].pin_list[idx] = id;
++		eint->instances[inst].number++;
++
++#if defined(MTK_EINT_DEBUG)
++		pin = eint->pins[id];
++		dev_info(eint->dev,
++			 "EINT%u in (%u-%u), su_deb = %u",
++			 id,
++			 pin.instance,
++			 eint->instances[inst].number,
++			 pin.debounce,
++#endif
++	}
++
++	for (i = 0; i < eint->instance_number; i++) {
++		size = (eint->instances[i].number / MAX_BIT + 1) * sizeof(unsigned int);
++		eint->instances[i].wake_mask =
++			devm_kzalloc(eint->dev, size, GFP_KERNEL);
++		eint->instances[i].cur_mask =
++			devm_kzalloc(eint->dev, size, GFP_KERNEL);
++
++		if (!eint->instances[i].wake_mask ||
++		    !eint->instances[i].cur_mask)
++			return -ENOMEM;
++	}
++
++	eint->comp = &default_compat;
++
++	eint->irq = irq_of_parse_and_map(node, 0);
++	if (!eint->irq) {
++		dev_err(eint->dev,
++			"%s IRQ parse fail.\n", __func__);
++		return -EINVAL;
++	}
++
+ 	eint->domain = irq_domain_add_linear(eint->dev->of_node,
+-					     eint->hw->ap_num,
++					     eint->total_pin_number,
+ 					     &irq_domain_simple_ops, NULL);
+ 	if (!eint->domain)
+ 		return -ENOMEM;
+ 
+-	if (eint->hw->db_time) {
+-		for (i = 0; i < MTK_EINT_DBNC_MAX; i++)
+-			if (eint->hw->db_time[i] == 0)
+-				break;
+-		eint->num_db_time = i;
+-	}
+-
+ 	mtk_eint_hw_init(eint);
+-	for (i = 0; i < eint->hw->ap_num; i++) {
+-		int virq = irq_create_mapping(eint->domain, i);
++	for (i = 0; i < eint->total_pin_number; i++) {
++		virq = irq_create_mapping(eint->domain, i);
+ 
+ 		irq_set_chip_and_handler(virq, &mtk_eint_irq_chip,
+ 					 handle_level_irq);
+@@ -533,9 +953,11 @@ int mtk_eint_do_init(struct mtk_eint *eint)
+ 	irq_set_chained_handler_and_data(eint->irq, mtk_eint_irq_handler,
+ 					 eint);
+ 
++	global_eintc = eint;
++
+ 	return 0;
+ }
+-EXPORT_SYMBOL_GPL(mtk_eint_do_init);
++EXPORT_SYMBOL_GPL(mtk_eint_do_init_v2);
+ 
+ MODULE_LICENSE("GPL v2");
+ MODULE_DESCRIPTION("MediaTek EINT Driver");
+diff --git a/drivers/pinctrl/mediatek/mtk-eint.h b/drivers/pinctrl/mediatek/mtk-eint.h
+index 6139b16cd225..aa17a6073029 100644
+--- a/drivers/pinctrl/mediatek/mtk-eint.h
++++ b/drivers/pinctrl/mediatek/mtk-eint.h
+@@ -11,6 +11,25 @@
+ 
+ #include <linux/irqdomain.h>
+ 
++#define MAX_PIN 999
++#define MTK_EINT_EDGE_SENSITIVE           0
++#define MTK_EINT_LEVEL_SENSITIVE          1
++#define MTK_EINT_DBNC_SET_DBNC_BITS       4
++#define MTK_EINT_DBNC_RST_BIT             (0x1 << 1)
++#define MTK_EINT_DBNC_SET_EN              (0x1 << 0)
++#define MTK_EINT_NO_OFSET                 0
++#define MAX_BIT                           32
++#define REG_OFSET                         4
++#define REG_GROUP                         5
++#define REG_VAL                           0xFFFFFFFF
++#define DB_GROUP                          8
++#define FIRST                             1
++#define SECOND                            2
++#define THIRD                             3
++#define ARRAY_0                           4
++
++//#define MTK_EINT_DEBUG
++
+ struct mtk_eint_regs {
+ 	unsigned int	stat;
+ 	unsigned int	ack;
+@@ -30,6 +49,36 @@ struct mtk_eint_regs {
+ 	unsigned int	dbnc_ctrl;
+ 	unsigned int	dbnc_set;
+ 	unsigned int	dbnc_clr;
++	unsigned int	event;
++	unsigned int	event_set;
++	unsigned int	event_clr;
++	unsigned int	raw_stat;
++};
++
++struct mtk_eint_ops {
++	void (*ack)(struct irq_data *d);
++};
++
++struct mtk_eint_compatible {
++	struct mtk_eint_ops ops;
++	const struct mtk_eint_regs *regs;
++};
++
++struct mtk_eint_instance {
++	const char *name;
++	void __iomem *base;
++	unsigned int number;
++	unsigned int pin_list[MAX_PIN];
++	unsigned int *wake_mask;
++	unsigned int *cur_mask;
++};
++
++struct mtk_eint_pin {
++	bool enabled;
++	unsigned int instance;
++	unsigned int index;
++	bool debounce;
++	bool dual_edge;
+ };
+ 
+ struct mtk_eint_hw {
+@@ -60,11 +109,14 @@ struct mtk_eint {
+ 	struct irq_domain *domain;
+ 	int irq;
+ 
+-	int *dual_edge;
+-	u32 *wake_mask;
+-	u32 *cur_mask;
+-
+-	/* Used to fit into various EINT device */
++	/* An array to record the coordinate, index by global EINT ID */
++	struct mtk_eint_pin *pins;
++	/* An array to record the global EINT ID, index by coordinate*/
++	struct mtk_eint_instance *instances;
++	unsigned int total_pin_number;
++	unsigned int instance_number;
++	unsigned int dump_target_eint;
++	const struct mtk_eint_compatible *comp;
+ 	const struct mtk_eint_hw *hw;
+ 	const struct mtk_eint_regs *regs;
+ 	u16 num_db_time;
+@@ -74,13 +126,15 @@ struct mtk_eint {
+ 	const struct mtk_eint_xt *gpio_xlate;
+ };
+ 
+-#if IS_ENABLED(CONFIG_EINT_MTK)
++#if (IS_ENABLED(CONFIG_EINT_MTK) || IS_ENABLED(CONFIG_DEVICE_MODULES_EINT_MTK))
+ int mtk_eint_do_init(struct mtk_eint *eint);
++int mtk_eint_do_init_v2(struct mtk_eint *eint);
+ int mtk_eint_do_suspend(struct mtk_eint *eint);
+ int mtk_eint_do_resume(struct mtk_eint *eint);
+ int mtk_eint_set_debounce(struct mtk_eint *eint, unsigned long eint_n,
+ 			  unsigned int debounce);
+ int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n);
++int dump_eint_pin_status(unsigned int eint_num);
+ 
+ #else
+ static inline int mtk_eint_do_init(struct mtk_eint *eint)
+@@ -88,6 +142,11 @@ static inline int mtk_eint_do_init(struct mtk_eint *eint)
+ 	return -EOPNOTSUPP;
+ }
+ 
++static inline int mtk_eint_do_init_v2(struct mtk_eint *eint)
++{
++	return -EOPNOTSUPP;
++}
++
+ static inline int mtk_eint_do_suspend(struct mtk_eint *eint)
+ {
+ 	return -EOPNOTSUPP;
+@@ -108,5 +167,9 @@ static inline int mtk_eint_find_irq(struct mtk_eint *eint, unsigned long eint_n)
+ {
+ 	return -EOPNOTSUPP;
+ }
++static inline int dump_eint_pin_status(unsigned int eint_num)
++{
++	return -EOPNOTSUPP;
++}
+ #endif
+ #endif /* __MTK_EINT_H */
+diff --git a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+index 54301fbba524..3740e868c650 100644
+--- a/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
++++ b/drivers/pinctrl/mediatek/pinctrl-mtk-common-v2.c
+@@ -375,33 +375,37 @@ int mtk_build_eint(struct mtk_pinctrl *hw, struct platform_device *pdev)
+ 	if (!of_property_read_bool(np, "interrupt-controller"))
+ 		return -ENODEV;
+ 
+-	hw->eint = devm_kzalloc(hw->dev, sizeof(*hw->eint), GFP_KERNEL);
+-	if (!hw->eint)
+-		return -ENOMEM;
+-
+-	hw->eint->base = devm_platform_ioremap_resource_byname(pdev, "eint");
+-	if (IS_ERR(hw->eint->base)) {
+-		ret = PTR_ERR(hw->eint->base);
+-		goto err_free_eint;
+-	}
++	if (hw->soc->eint_hw) {
++		hw->eint = devm_kzalloc(hw->dev, sizeof(*hw->eint), GFP_KERNEL);
++		if (!hw->eint)
++			return -ENOMEM;
++
++		hw->eint->base = devm_platform_ioremap_resource_byname(pdev, "eint");
++		if (IS_ERR(hw->eint->base)) {
++			ret = PTR_ERR(hw->eint->base);
++			goto err_free_eint;
++		}
+ 
+-	hw->eint->irq = irq_of_parse_and_map(np, 0);
+-	if (!hw->eint->irq) {
+-		ret = -EINVAL;
+-		goto err_free_eint;
+-	}
++		hw->eint->irq = irq_of_parse_and_map(np, 0);
++		if (!hw->eint->irq) {
++			ret = -EINVAL;
++			goto err_free_eint;
++		}
+ 
+-	if (!hw->soc->eint_hw) {
+-		ret = -ENODEV;
+-		goto err_free_eint;
+-	}
++		hw->eint->dev = &pdev->dev;
++		hw->eint->hw = hw->soc->eint_hw;
++		hw->eint->pctl = hw;
++		hw->eint->gpio_xlate = &mtk_eint_xt;
++
++                return mtk_eint_do_init(hw->eint);
+ 
+-	hw->eint->dev = &pdev->dev;
+-	hw->eint->hw = hw->soc->eint_hw;
+-	hw->eint->pctl = hw;
+-	hw->eint->gpio_xlate = &mtk_eint_xt;
++        } else {
++                hw->eint->dev = &pdev->dev;
++                hw->eint->pctl = hw;
++                hw->eint->gpio_xlate = &mtk_eint_xt;
+ 
+-	return mtk_eint_do_init(hw->eint);
++                return mtk_eint_do_init_v2(hw->eint);
++	}
+ 
+ err_free_eint:
+ 	devm_kfree(hw->dev, hw->eint);
+-- 
+2.34.1
 
 
