@@ -1,92 +1,134 @@
-Return-Path: <linux-kernel+bounces-379555-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379554-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7BC869AE056
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:15:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D4C9AE054
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:15:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 385D22843BB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:15:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 76CB9284912
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:15:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D53981B85C2;
-	Thu, 24 Oct 2024 09:14:10 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF7391B392C;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5718F1B21A0;
 	Thu, 24 Oct 2024 09:14:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="aGwT6WrJ"
+Received: from mail-wr1-f41.google.com (mail-wr1-f41.google.com [209.85.221.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4FFA41B21BA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:14:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729761250; cv=none; b=Ose8A47k/bIBeFZhhPQutJRV+Cq86tmPiJYStql8Vd0IShHYGNyO3tm/c9iv7cELQ5MN4IHc8SzsYHRX46PzGavpFrDUm/bn8vy5044MLuTlCNPdSJpiubTWXVsNHocssdi+lI9zKIrC7Xr+zST6IZkgJ5Qki2TKSg56Fl9hsno=
+	t=1729761246; cv=none; b=U/cBo9Vu0Qlo65UkZdNMNvc99qJMmN4ZEfo3ZwgGvy5z5vhno2UchkDtDl5HemaflM/mq18mV+01odmrJeY8PcnyqjGSm5I1DL+OKgzjdl2d5GX5OPoU1ldpggQ6L0JieiJ8fW52ozX1QAsiTq4AC1cJera3uyWC84CiRP6UzPQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729761250; c=relaxed/simple;
-	bh=0dzYr9wKqIl96gl44VDYmj5L/BbxzZNy8P6cHkaNWrc=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=XYqClVHouA9Ps4XcOgdJK1srRR37dYCqZWNdsUzLQ2Ekf2xYewW//oFYknX1nxPyAOvSsOynzxPrhi4VzBBGzK0mKcMywwLHZXysoZLEsrEBv7P/QkDmjQlQtaoLHywem+EoYiZISZZ8NTVod+mlbpx53r68AvWPCkX1pmzNAb4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 34278339;
-	Thu, 24 Oct 2024 02:14:36 -0700 (PDT)
-Received: from [192.168.3.172] (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 2EB0C3F73B;
-	Thu, 24 Oct 2024 02:14:03 -0700 (PDT)
-Message-ID: <b60bd51b-14e9-4b5c-adfe-bf546691a94d@arm.com>
-Date: Thu, 24 Oct 2024 10:13:57 +0100
+	s=arc-20240116; t=1729761246; c=relaxed/simple;
+	bh=avpK6tUcSJyxEr2R0gQ1mEBxd/wWm8tXZZZXLNlYYuA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=h1IJneARk/P4en//Rm0KA95WKWMKScLwLkbDUKMd/3rML7nr8ph4WIGDfmenAWgQ9I6qjV9s8x0tteTajwZC/hh+/n1nzVjGWNMU+6NeuYHQ3EJ3gU7rZMVq0ucFFTKbNttBn0QCC1EJDC615ODDCNVqX+oW1wsYU+N1uvqeLmc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=aGwT6WrJ; arc=none smtp.client-ip=209.85.221.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wr1-f41.google.com with SMTP id ffacd0b85a97d-37d3ecad390so1279945f8f.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:14:04 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729761242; x=1730366042; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=C1TB/Q2XIMnswl+oxbdIOcW6rv6E1hiXPecGzghRmFA=;
+        b=aGwT6WrJO3xM8T7cSU9jWv/B0IW9djxGZ0rJIMbb89VgOZgT+fziGcsKMu/tTFNOR7
+         jorQMDWo2/62WjufMn813RiMt0/YJYuTZm2W627UkN8Kf9ANtZhEx61dWJO9psKTbNgJ
+         4Mhu+/mCD4qWXF4I0jeBhsm2hMquIz/a3Kj+8pIUmPnwBka5pfFYESeNk5hwD4ipEiko
+         2O8wtx3bk3cbpI9ptI8Lj1tRlkzZRQJd4jhC8MQo8efzq/H0diY5n7hF/W+B4a4u1chs
+         pKfAokPaWkXeRQPCbXbHLtVJjAsO+bXbBNzfwPNvgKZUpe+XHEwJ6iwrl4sQdIzlI/Ne
+         E/9Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729761242; x=1730366042;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=C1TB/Q2XIMnswl+oxbdIOcW6rv6E1hiXPecGzghRmFA=;
+        b=Ne3eaoPWs7VH+mveFGa+wt2LBrZBXqq7GCUriZAlvfNYnHmGZ/WV7loJwZ+RNKgHHc
+         kVARvvUXiXLOOuw6+dHQvphdRBSokbwjWzIzysydrkXXfP3Imhbg3JTKs5eJtc7CP8UO
+         YwXokyK0FW/oyF2eOPvmomJSX46vZGHGiPmtvj55OZvC0WLlChB0ABa1K6Z9wa5/aDDQ
+         8oYKyg8O7TZCMq60gKdMXAB97bMxi97ZuFQ6foLdX9wwmSN5oCQjrOpO0Q68xH+S1X1E
+         mZtfSkV1WBZ+Asp9FKLZ/bA0ccmGEJA009UAwMWly0eGQtTxAMGlgavWns2eUnVicZP2
+         s9lA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIeRsJza9hnyT5tduMNcCCFal/rGzWcFXbwgr0zPtWykEV4mDO7/n5XyA3zMWdywjcKJlixYi888Acamw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy7/Lu0wJx+b024G9B5vrPaF9BB+2KBkKFDgmbEpFGHymzUw/RR
+	kPLnxMykzQO9iuWGI/T342VNu2Zsa8VVedTP2mwg0FYcE90HoQGz2p4chxn+y44=
+X-Google-Smtp-Source: AGHT+IH0FAdozsb/aFk6DgRgsawnhV0d3I7f2qAuMC29RAOVCnDBw1CjfFrUTETiG6wfB7DtjCmyuw==
+X-Received: by 2002:adf:f10d:0:b0:37d:39ff:a9cf with SMTP id ffacd0b85a97d-3803abc5251mr845102f8f.5.1729761242477;
+        Thu, 24 Oct 2024 02:14:02 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd6923sm40205915e9.9.2024.10.24.02.14.02
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 02:14:02 -0700 (PDT)
+Date: Thu, 24 Oct 2024 11:14:01 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 1/3] memcg-v1: fully deprecate
+ move_charge_at_immigrate
+Message-ID: <ZxoP2TLCGnSm9c8p@tiehlicka>
+References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+ <20241024065712.1274481-2-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2] cpufreq/schedutil: Only bind threads if needed
-From: Christian Loehle <christian.loehle@arm.com>
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Viresh Kumar <viresh.kumar@linaro.org>, Qais Yousef
- <qyousef@layalina.io>, Vincent Guittot <vincent.guittot@linaro.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- linux-pm <linux-pm@vger.kernel.org>,
- Dietmar Eggemann <dietmar.eggemann@arm.com>,
- Pierre Gondois <pierre.gondois@arm.com>, Juri Lelli <juri.lelli@redhat.com>,
- Vincent Guittot <vincent.guittot@linaro.org>
-References: <a4a70646-98a4-4b85-955e-62d66ba68927@arm.com>
- <CAJZ5v0jpdZBX5tJgdiOvEZbdRJ0kXxT6+uX=s++NG=dNrCMntQ@mail.gmail.com>
- <e09f3682-ee0c-4abc-b387-5358bbdf6e79@arm.com>
-Content-Language: en-US
-In-Reply-To: <e09f3682-ee0c-4abc-b387-5358bbdf6e79@arm.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024065712.1274481-2-shakeel.butt@linux.dev>
 
-On 10/7/24 11:42, Christian Loehle wrote:
-> On 10/1/24 19:31, Rafael J. Wysocki wrote:
->> On Fri, Sep 27, 2024 at 10:59 AM Christian Loehle
->> <christian.loehle@arm.com> wrote:
->>>
->>> Remove the unconditional binding of sugov kthreads to the affected CPUs
->>> if the cpufreq driver indicates that updates can happen from any CPU.
->>> This allows userspace to set affinities to either save power (waking up
->>> bigger CPUs on HMP can be expensive) or increasing performance (by
->>> letting the utilized CPUs run without preemption of the sugov kthread).
->>>
->>> Signed-off-by: Christian Loehle <christian.loehle@arm.com>
->>
->> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
->>
->> and I'm assuming that this will go in via tip.
+On Wed 23-10-24 23:57:10, Shakeel Butt wrote:
+> Proceed with the complete deprecation of memcg v1's charge moving
+> feature. The deprecation warning has been in the kernel for almost two
+> years and has been ported to all stable kernel since. Now is the time to
+> fully deprecate this feature.
 > 
-> Peter, is that fine with you?
-> 
-> @Juri: I didn't add your (somewhat implied?) ACK on v2, so I'd be happy to
-> get it on the dl_task_check_affinity() part.
-> 
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Peter,
-gentle ping on this.
-Thank you.
+I fine with this move, just one detail we might need to consider
+[...]
+> @@ -606,17 +606,7 @@ static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
+>  		     "Please report your usecase to linux-mm@kvack.org if you "
+>  		     "depend on this functionality.\n");
+>  
+> -	if (val & ~MOVE_MASK)
+> -		return -EINVAL;
+> -
+> -	/*
+> -	 * No kind of locking is needed in here, because ->can_attach() will
+> -	 * check this value once in the beginning of the process, and then carry
+> -	 * on with stale data. This means that changes to this value will only
+> -	 * affect task migrations starting after the change.
+> -	 */
+> -	memcg->move_charge_at_immigrate = val;
+> -	return 0;
+> +	return -EINVAL;
 
-Regards,
-Christian
+Would it make more sense to -EINVAL only if val != 0? The reason being
+that some userspace might be just writing 0 here for whatever reason and
+see the failure unexpected.
 
+>  }
+>  #else
+>  static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
+> -- 
+> 2.43.5
+
+-- 
+Michal Hocko
+SUSE Labs
 
