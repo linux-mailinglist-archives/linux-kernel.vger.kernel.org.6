@@ -1,143 +1,152 @@
-Return-Path: <linux-kernel+bounces-380131-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380133-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1E0F99AE94C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:49:59 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3DE489AE95A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:50:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 4B6EB1C220B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:49:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 610431C22224
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:50:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18465145B0B;
-	Thu, 24 Oct 2024 14:49:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 54EF11E378F;
+	Thu, 24 Oct 2024 14:50:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="yvW2F9zO"
-Received: from mail-ot1-f54.google.com (mail-ot1-f54.google.com [209.85.210.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="E2iK3IST";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="E2iK3IST"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F3631E0DB0
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:49:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 787361E5731;
+	Thu, 24 Oct 2024 14:50:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781392; cv=none; b=nIAlJhCeg8m8qKZgVfnYUr7zNxHlRtjvkAfmHKZChi2IDtIgw1WEnPRJVgIX5gOLdoKJPDevAoCbCo7iBJhl7JpeOu6lk1+if7O9FMdaT8MJDzjsmTzN152YG/qcErF/rOvvicUruWEiRnIsRH2HR7Htnn8nnOFo2X5ENNdHFk4=
+	t=1729781428; cv=none; b=TW+tbzyG4FQxow0/DINTgdI2YHMJxdWQDIS/ajlVZqm2M+ciKaykGMVvs1nD/6iv2NfVMWHCuvQXqkEXJxYj0i8a4hn9OEANwyrKBwM1N3w+ikfcXlExYUwtc3Ql6RmGZbgUiIau0I97OpdgG67Bxj7pUSoVGA/oiDU6MwBBxBs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781392; c=relaxed/simple;
-	bh=gVUPvv/FnmRY7foM5Tyh9ireuXWq1boSSJ5EWGM8bO0=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=lAmPnm1ycFN4DDIdX72PmeA7Xix4NDeG/zrHGVX0KBwfg+SsLmSsdvrPI4xBY5pBr7Ht5Y9nQ4nVBSkb+kTMOQJuR9nU/aTCkZLOJp4AcYYGxQcxrgpyPdSM5uudxld/8w03w9jKcdrB9zsNminBl+Oe2eXXhQGnWd5FHdPlqTM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=yvW2F9zO; arc=none smtp.client-ip=209.85.210.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-ot1-f54.google.com with SMTP id 46e09a7af769-71809fe188cso635869a34.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:49:50 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729781389; x=1730386189; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=v94UAHAt0z/GlIRWzSb/aqpgf9U8SvwT3lelP7L/T8M=;
-        b=yvW2F9zOr9Sf1sqnEkbgC6EXZYUktEdcgHjquzA3w5nctGrXXS0YQQlvpTagDF70fE
-         u1IIvlJ4/CF0wns8G2I6AXN4b0+3DjGS4dpi7mvqZCC0SMee11i3rw67CS7WZFxbQ9Mf
-         csHS54c0thr3Pu821cyVYf9sDbUhwqz/q2v3BO/c9fcntGxAyJdqTNhbvYN3LGjIVfI4
-         buUXWu10WB3BgOtaIzMZCKjy7q68IEDt7I4zCQSCCvQP0k6uvp8utPAUP88H2D9xuiFQ
-         MURyC7IA3tRb+znUcPR90uXzIu3pCgry+mZrihIxWntVpqLmXHcLIg8QMsCg7RFXO29m
-         N3nQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729781389; x=1730386189;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=v94UAHAt0z/GlIRWzSb/aqpgf9U8SvwT3lelP7L/T8M=;
-        b=PsNuxKxtVG0joscV01xn3t54qJDB10ylq3Y1T9sPFmuAeyi4dBkdYuP5Je7rYhXcVJ
-         cYJxs5Zio/kJ6CvwqllCUNUzB+G449egtA1fp2QWvFp0q0GNuPVkhu+XdImo8BUtRrYC
-         gYF3inlGUPGsC/YzLF0QQQkrAQNP76xBD/7y3+DLG29sMPwL4Lmezt3V45BybjqmLixC
-         Y40iLnKjJw9IobxGCWc1wXPGX4sVN4aPlid7I25EJu6keH782DpZ840LnBiPsZY/fil7
-         RoY/0z5SNRakKkEssVHtqKoXUfb4UkzaSz0md8nev3/Ab4bnb2VZPQM0FmYvwCZSrII+
-         HGrA==
-X-Forwarded-Encrypted: i=1; AJvYcCUQLbQY72JS/gBAQkrgBZaYwRrnWC7hQ0OCDySW8u/vz65UfP7u9cY4UHrJ1Wkks4sKsfWb0pCH6iU5ZDc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzQM66XyR4qG8/WSyl250lEUyyxX95ZnbO+8sVd+0HvwpHswFIF
-	0EOcjX8Qn63T3DKaMvWVh/W1VLyPGPuF+7c6lOzbXXur+9ju7lc/6zUBnybJNA4=
-X-Google-Smtp-Source: AGHT+IFSOJa5tZQDfiyvifYRt2spOoqw/LKgbaZOjiDrgieDP9qwmB+SmfLhxczWOx70km6r217TWg==
-X-Received: by 2002:a05:6830:2113:b0:718:8eb:531a with SMTP id 46e09a7af769-7184b29606dmr6867406a34.4.1729781389223;
-        Thu, 24 Oct 2024 07:49:49 -0700 (PDT)
-Received: from [192.168.0.142] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
-        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182ec025cdsm2152200a34.68.2024.10.24.07.49.47
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:49:47 -0700 (PDT)
-Message-ID: <7782352b-b8b3-4f2c-8a6a-b92dab8cb1b6@baylibre.com>
-Date: Thu, 24 Oct 2024 09:49:46 -0500
+	s=arc-20240116; t=1729781428; c=relaxed/simple;
+	bh=mbwn8u7Yo3t7bDM95MTrZ4UZzGeDlEInOig7frVVxu4=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=upeQYk2UkLathXsZKBzasC5rfh9SGn0/8LeB+zKtVsY9TRzjnpf/Ff/qpHCxICUH3wMOmbfNOqjjPDB3l3sqJThyVT2D+FGudecDKAxcJTkebxZgWA/+5zp0dPcWokTJHUp6M9lu5xARJGMEdmUglrGil3zEhtIBMg9j1JT20Hw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=E2iK3IST; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=E2iK3IST; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729781424;
+	bh=mbwn8u7Yo3t7bDM95MTrZ4UZzGeDlEInOig7frVVxu4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=E2iK3ISTp30X2+aGDqLS5ovzA+ZxuPF+Qs1/qm/BZZE5Y8Z7cYne9E6BkM/JjFKW5
+	 KNcQGDDjwV8ftEehohuSqC2Zfc/yjYs3MfiDr7hQvVDwC2ObzLDyFNHL1Zs2snoNMc
+	 9TxtlJXCErz4t/Zjx2NkCSxIy/O4N5ISUZrncBWo=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id 313D01281D6E;
+	Thu, 24 Oct 2024 10:50:24 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id hmjYRFYioZ5c; Thu, 24 Oct 2024 10:50:24 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729781424;
+	bh=mbwn8u7Yo3t7bDM95MTrZ4UZzGeDlEInOig7frVVxu4=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
+	b=E2iK3ISTp30X2+aGDqLS5ovzA+ZxuPF+Qs1/qm/BZZE5Y8Z7cYne9E6BkM/JjFKW5
+	 KNcQGDDjwV8ftEehohuSqC2Zfc/yjYs3MfiDr7hQvVDwC2ObzLDyFNHL1Zs2snoNMc
+	 9TxtlJXCErz4t/Zjx2NkCSxIy/O4N5ISUZrncBWo=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 430D21281CC7;
+	Thu, 24 Oct 2024 10:50:20 -0400 (EDT)
+Message-ID: <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
+Subject: Re: linux: Goodbye from a Linux community volunteer
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>, 
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev, Andy Shevchenko <andy@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Kory Maincent
+ <kory.maincent@bootlin.com>, Cai Huoqing <cai.huoqing@linux.dev>, 
+ dmaengine@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ linux-spi@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+ linux-ide@vger.kernel.org, Paul Burton <paulburton@kernel.org>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Arnd Bergmann <arnd@arndb.de>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,  linux-mips@vger.kernel.org, Bjorn
+ Helgaas <bhelgaas@google.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Yoshihiro Shimoda
+ <yoshihiro.shimoda.uh@renesas.com>,  linux-pci@vger.kernel.org, "David S.
+ Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, Russell King
+ <linux@armlinux.org.uk>, Vladimir Oltean <olteanv@gmail.com>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Yanteng Si <siyanteng@loongson.cn>, 
+ netdev@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+ linux-hwmon@vger.kernel.org, Borislav Petkov <bp@alien8.de>, 
+ linux-edac@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  linux-serial@vger.kernel.org
+Cc: Andrew Halaney <ajhalaney@gmail.com>, Nikita Travkin <nikita@trvn.ru>, 
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Alexander Shiyan
+ <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,  Sergey Shtylyov
+ <s.shtylyov@omp.ru>, Evgeniy Dushistov <dushistov@mail.ru>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Sergio Paracuellos
+ <sergio.paracuellos@gmail.com>,  Nikita Shubin <nikita.shubin@maquefel.me>,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 24 Oct 2024 10:50:19 -0400
+In-Reply-To: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+References: 
+	<2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC v4 02/15] spi: add basic support for SPI offloading
-To: =?UTF-8?Q?Nuno_S=C3=A1?= <noname.nuno@gmail.com>,
- Mark Brown <broonie@kernel.org>, Jonathan Cameron <jic23@kernel.org>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, =?UTF-8?Q?Nuno_S=C3=A1?=
- <nuno.sa@analog.com>, =?UTF-8?Q?Uwe_Kleine-K=C3=B6nig?= <ukleinek@kernel.org>
-Cc: Michael Hennerich <Michael.Hennerich@analog.com>,
- Lars-Peter Clausen <lars@metafoo.de>, David Jander <david@protonic.nl>,
- Martin Sperl <kernel@martin.sperl.org>, linux-spi@vger.kernel.org,
- devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
-References: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
- <20241023-dlech-mainline-spi-engine-offload-2-v4-2-f8125b99f5a1@baylibre.com>
- <ba3eed090e29deda797b0dea8162949c82743ccf.camel@gmail.com>
-Content-Language: en-US
-From: David Lechner <dlechner@baylibre.com>
-In-Reply-To: <ba3eed090e29deda797b0dea8162949c82743ccf.camel@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 10/24/24 8:27 AM, Nuno Sá wrote:
-> On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
->> Add the basic infrastructure to support SPI offload providers and
->> consumers.
->>
+On Thu, 2024-10-24 at 07:27 +0300, Serge Semin wrote:
+> Hello Linux-kernel community,
+> 
+> I am sure you have already heard the news caused by the recent Greg'
+> commit 6e90b675cf942e ("MAINTAINERS: Remove some entries due to
+> various compliance requirements."). As you may have noticed the
+> change concerned some of the Ru-related developers removal from the
+> list of the official kernel maintainers, including me.
+> 
+> The community members rightly noted that the _quite_ short commit log
+> contained very vague terms with no explicit change justification. No
+> matter how hard I tried to get more details about the reason, alas
+> the senior maintainer I was discussing the matter with haven't given
+> an explanation to what compliance requirements that was.
 
-...
+Please accept all of our apologies for the way this was handled.  A
+summary of the legal advice the kernel is operating under is
 
->> +struct spi_offload *devm_spi_offload_get(struct device *dev,
->> +					 struct spi_device *spi,
->> +					 const struct spi_offload_config *config)
->> +{
->> +	struct spi_offload *offload;
->> +	int ret;
->> +
->> +	if (!spi || !config)
->> +		return ERR_PTR(-EINVAL);
->> +
->> +	if (!spi->controller->get_offload)
->> +		return ERR_PTR(-ENODEV);
->> +
->> +	offload = spi->controller->get_offload(spi, config);
->> +	if (IS_ERR(offload))
->> +		return offload;
->> +
->> +	if (offload->spi)
->> +		return ERR_PTR(-EBUSY);
->> +
->> +	offload->spi = spi;
->> +	get_device(offload->provider_dev);
-> 
-> Isn't this redundant? From what I can tell, we're assuming that the spi controller
-> (of the spi device) is the offload provider. Therefore, getting an extra reference
-> for it does not really seems necessary. The device cannot go away without under the
-> spi_device feet. If that could happen, then we would also need to take care about
-> callback access and things like that. Going this way, it would also be arguable to
-> have a try_module_get().
-> 
-> - Nuno Sá
-> 
-> 
+   If your company is on the U.S. OFAC SDN lists, subject to an OFAC
+   sanctions program, or owned/controlled by a company on the list, our
+   ability to collaborate with you will be subject to restrictions, and
+   you cannot be in the MAINTAINERS file.
 
-Yes, you are right that we don't really need to take a reference to the device.
-This was left over from when I made an implementation that assumed the offload
-provider could be anything, not just a SPI controller.
+Anyone who wishes to can query the list here:
+
+https://sanctionssearch.ofac.treas.gov/
+
+In your specific case, the problem is your employer is on that list. 
+If there's been a mistake and your employer isn't on the list, that's
+the documentation Greg is looking for.
+
+I would also like to thank you for all your past contributions and if
+you (or anyone else) would like an entry in the credit file, I'm happy
+to shepherd it for you if you send me what you'd like.
+
+Again, we're really sorry it's come to this, but all of the Linux
+infrastructure and a lot of its maintainers are in the US and we can't
+ignore the requirements of US law.  We are hoping that this action
+alone will be sufficient to satisfy the US Treasury department in
+charge of sanctions and we won't also have to remove any existing
+patches.
+
+Regards,
+
+James Bottomley
+
 
