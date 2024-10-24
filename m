@@ -1,111 +1,161 @@
-Return-Path: <linux-kernel+bounces-379662-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379661-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BC45F9AE1DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:01:37 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C378D9AE1D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:01:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 584ABB23E96
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:01:35 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 731E5280FB4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:01:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB5DC1B85CC;
-	Thu, 24 Oct 2024 10:01:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 07D611B6CE7;
+	Thu, 24 Oct 2024 10:00:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b="jIXhL67Z"
-Received: from smtp-fw-80009.amazon.com (smtp-fw-80009.amazon.com [99.78.197.220])
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="U/vNpmrB"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3E4D31B0F2E;
-	Thu, 24 Oct 2024 10:01:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.220
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 70A5314B088;
+	Thu, 24 Oct 2024 10:00:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764085; cv=none; b=tLJUFNf+rqO/NjxtA7DfpaHGbZ+43sBP0PrLMpHMFvgWHuTkmxoRulaMwOq0cqUpLSiHlGzKMOCXsw213s3A3pyrK1R6iGpDDfmDh4fFftEufc0Zd5L3h00FSQtJoDO7pWMRfzoHUG4+bnAn6j0Kjmg6qaCG8XiKrNdEO0G7qyo=
+	t=1729764051; cv=none; b=tL5n6zTkrJcCLHoZej2RUZHeD+9xnuMrCeXPRrDLQ1nXtFSlXMNqnNgioLLVSIbGSQJ3qwIqmy1ijdQAKUaOPCb7ODZBNJoRElUeTy4pEoxAeEdHov17tn/IN7jKQg+wRov1EoqPCO107lB89T9CqI8T+isc8jDeeSggXM17R/c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764085; c=relaxed/simple;
-	bh=rTaEixUjq69X3PsehfWtcV4xr2/JgkjOMzNJ5s0sNr0=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=apIxygR5yGehyHRPyc2E90y5Bh90G68972iT1xRM+PYWJ7ACuuYWMjWPzABSD4eJ4GQ/H+VQca8b5jRq0/a2e87xTPeeewtNJN6eyJCnpm3IMi6DWwI0gzPvJPofDDye/FNW5faHzK2+g7YcnK7CURTeNVaLRd5Seg8imHmB/ZI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.co.uk header.i=@amazon.co.uk header.b=jIXhL67Z; arc=none smtp.client-ip=99.78.197.220
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.co.uk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-  d=amazon.co.uk; i=@amazon.co.uk; q=dns/txt;
-  s=amazon201209; t=1729764083; x=1761300083;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=5apd9HcXeKuq8wX3cYQw2KG3LxM7fHdbRFcmZPkFS4s=;
-  b=jIXhL67Z9LEtuFu/qws+p15BGkDKcoy6Xk39TN2cr8f79yWosvGesVTw
-   5CCuVJHyBn0XJML6jO17mvAgUzd+Mdrm6j4uZ/KpseGe79JbhC9skqSZ0
-   rx4Vh23nz9z1hxlKu2OvIjhGZSNckF+4Jqi7O5vbB3yu9iEk8jD4dsB9q
-   Y=;
-X-IronPort-AV: E=Sophos;i="6.11,228,1725321600"; 
-   d="scan'208";a="141281902"
-Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
-  by smtp-border-fw-80009.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 10:01:21 +0000
-Received: from EX19MTAUWA001.ant.amazon.com [10.0.21.151:19050]
- by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.0.143:2525] with esmtp (Farcaster)
- id 6dfb1a6f-113c-4c87-ac50-28e96b604137; Thu, 24 Oct 2024 10:01:20 +0000 (UTC)
-X-Farcaster-Flow-ID: 6dfb1a6f-113c-4c87-ac50-28e96b604137
-Received: from EX19D020UWC002.ant.amazon.com (10.13.138.147) by
- EX19MTAUWA001.ant.amazon.com (10.250.64.204) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 24 Oct 2024 10:01:20 +0000
-Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
- EX19D020UWC002.ant.amazon.com (10.13.138.147) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
- Thu, 24 Oct 2024 10:01:19 +0000
-Received: from email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com
- (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
- Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
- 15.2.1258.34 via Frontend Transport; Thu, 24 Oct 2024 10:01:19 +0000
-Received: from ua2d7e1a6107c5b.home (dev-dsk-roypat-1c-dbe2a224.eu-west-1.amazon.com [172.19.88.180])
-	by email-imr-corp-prod-pdx-all-2b-c1559d0e.us-west-2.amazon.com (Postfix) with ESMTPS id 9325640316;
-	Thu, 24 Oct 2024 10:01:17 +0000 (UTC)
-From: Patrick Roy <roypat@amazon.co.uk>
-To: <pbonzini@redhat.com>, <shuah@kernel.org>, <kvm@vger.kernel.org>,
-	<linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-CC: Patrick Roy <roypat@amazon.co.uk>, <chao.p.peng@linux.intel.com>,
-	<ackerleytng@google.com>, <seanjc@google.com>, <graf@amazon.com>,
-	<jgowans@amazon.com>
-Subject: [PATCH] kvm: selftest: fix noop test in guest_memfd_test.c
-Date: Thu, 24 Oct 2024 10:59:53 +0100
-Message-ID: <20241024095956.3668818-1-roypat@amazon.co.uk>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729764051; c=relaxed/simple;
+	bh=/MzpiqBK5uBE0u3FoqrrKUK+jiIckyJWA0U5/GOwrtk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=aXd0BjXfm/w5V9kjRTXzGy77/tncEs633VHCVZNETlybRkhOANo7rasXwfLZvNcEB33uW/q6Z1k+/apotmzM1Zw0eRTVTviJ93LU2Aaz3IpcLX9FniYgQ/ilKYzouGLy6dwPnX2n6BR6bc+Mr8xl/dSm5fQ2Bk7n8cdrt/YtVkk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=U/vNpmrB; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O7WvcO026027;
+	Thu, 24 Oct 2024 10:00:44 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=pp1; bh=dhKHsS
+	XcbJQEnePonUcJC6X9r2M3tUpNdJGkfNo7KOA=; b=U/vNpmrBO/I2wbUNvlnwiR
+	5pbGWWG1unLK/QzasCK3rOM+qGOZAqteSlhNEUf3lkJofK3C3pwBt4JhgMNAr+j8
+	piXXvnBxtot1j2OXRsO9u5CEAppRdBdyg6lp5sQV4iht4CD/BOhtfqmKpeCOWgWG
+	mBA2ohDnN6NjUmSuwwb6D80CLnR/cMcfeDca9DEz/NkJ1gVqLi/Dj6r/7JsPYhMJ
+	LSnGjrDDzt6Qc6tN7Xf6ygZQHgeRLyWiC2s+NL8OE0s7h+zi0mRNJEObZB6cWj8S
+	O8eaicqhsHybIHrg+BJB4NJE2Gh/0/2ovg7BWcZ8NJZnAiNp3f9mOQ8+MjfiRRZw
+	==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fhxnrpk4-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 10:00:44 +0000 (GMT)
+Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49OA0iWI013147;
+	Thu, 24 Oct 2024 10:00:44 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fhxnrpjy-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 10:00:44 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49O6npRh014576;
+	Thu, 24 Oct 2024 10:00:42 GMT
+Received: from smtprelay05.dal12v.mail.ibm.com ([172.16.1.7])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emk7ysjj-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 10:00:42 +0000
+Received: from smtpav03.wdc07v.mail.ibm.com (smtpav03.wdc07v.mail.ibm.com [10.39.53.230])
+	by smtprelay05.dal12v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49OA0fhh35193304
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Oct 2024 10:00:42 GMT
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B4E1658054;
+	Thu, 24 Oct 2024 10:00:41 +0000 (GMT)
+Received: from smtpav03.wdc07v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id B478858066;
+	Thu, 24 Oct 2024 10:00:39 +0000 (GMT)
+Received: from [9.171.35.241] (unknown [9.171.35.241])
+	by smtpav03.wdc07v.mail.ibm.com (Postfix) with ESMTP;
+	Thu, 24 Oct 2024 10:00:39 +0000 (GMT)
+Message-ID: <61cf578f-020e-4e0d-a551-98df5367ee27@linux.ibm.com>
+Date: Thu, 24 Oct 2024 12:00:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH net-next] net/smc: use new helper to get the netdev
+ associated to an ibdev
+To: Wen Gu <guwen@linux.alibaba.com>, jaka@linux.ibm.com, davem@davemloft.net,
+        edumazet@google.com, kuba@kernel.org, pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com, tonylu@linux.alibaba.com,
+        linux-s390@vger.kernel.org, netdev@vger.kernel.org,
+        linux-kernel@vger.kernel.org
+References: <20241024054456.37124-1-guwen@linux.alibaba.com>
+Content-Language: en-US
+From: Wenjia Zhang <wenjia@linux.ibm.com>
+In-Reply-To: <20241024054456.37124-1-guwen@linux.alibaba.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: xV3DHfE8zzSz7iSyun__0WW7cfMcBbu2
+X-Proofpoint-GUID: xOBevlq1o5fhyrsUS31uY8OD-MlLYglO
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
+ mlxlogscore=544 malwarescore=0 impostorscore=0 bulkscore=0
+ priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
+ phishscore=0 clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240075
 
-The loop in test_create_guest_memfd_invalid that is supposed to test
-that nothing is accepted as a valid flag to KVM_CREATE_GUEST_MEMFD was
-initializing `flag` as 0 instead of BIT(0). This caused the loop to
-immediately exit instead of iterating over BIT(0), BIT(1), ... .
 
-Fixes: 8a89efd43423 ("KVM: selftests: Add basic selftest for guest_memfd()")
-Signed-off-by: Patrick Roy <roypat@amazon.co.uk>
----
- tools/testing/selftests/kvm/guest_memfd_test.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
 
-diff --git a/tools/testing/selftests/kvm/guest_memfd_test.c b/tools/testing/selftests/kvm/guest_memfd_test.c
-index ba0c8e9960358..ce687f8d248fc 100644
---- a/tools/testing/selftests/kvm/guest_memfd_test.c
-+++ b/tools/testing/selftests/kvm/guest_memfd_test.c
-@@ -134,7 +134,7 @@ static void test_create_guest_memfd_invalid(struct kvm_vm *vm)
- 			    size);
- 	}
- 
--	for (flag = 0; flag; flag <<= 1) {
-+	for (flag = BIT(0); flag; flag <<= 1) {
- 		fd = __vm_create_guest_memfd(vm, page_size, flag);
- 		TEST_ASSERT(fd == -1 && errno == EINVAL,
- 			    "guest_memfd() with flag '0x%lx' should fail with EINVAL",
--- 
-2.47.0
+On 24.10.24 07:44, Wen Gu wrote:
+> Patch [1] provides common interfaces to store and get net devices
+> associated to an IB device port and removes the ops->get_netdev()
+> callback of mlx5 driver. So use the new interface in smc.
+> 
+> [1]: 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and get_netdev functions")
+> 
+> Reported-by: D. Wythe <alibuda@linux.alibaba.com>
+> Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
+> ---
+[...]
+
+We detected the problem as well, and I already sent a patch with the 
+same code change in our team internally these. Because some agreement 
+issues on the commit message, it is still not sent out externally. Now 
+we (our team) have almost an agreement, I'd like to attach it here. 
+Please have a look if it is also for you to use:
+
+"
+[PATCH net] net/smc: Fix lookup of netdev by using ib_device_get_netdev()
+
+Since/Although commit c2261dd76b54 ("RDMA/device: Add 
+ib_device_set_netdev() as an alternative to get_netdev") introduced an 
+API ib_device_get_netdev, the SMC-R variant of the SMC protocol 
+continued to use the old API ib_device_ops.get_netdev() to lookup 
+netdev. As commit 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and 
+get_netdev functions") removed the get_netdev callback from 
+mlx5_ib_dev_common_roce_ops, calling ib_device_ops.get_netdev didn't 
+work any more at least by using a mlx5 device driver. Thus, using 
+ib_device_set_netdev() now became mandatory.
+
+Replace ib_device_ops.get_netdev() with ib_device_get_netdev().
+
+Fixes: 54903572c23c ("net/smc: allow pnetid-less configuration")
+Fixes: 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and get_netdev 
+functions")
+"
+My main points are:
+- This patch should go to net, not net-next. Because it can result in 
+malfunction. e.g. if the RoCE devices are used as both handshake device 
+and RDMA device without any PNET_ID, it would be failed to find SMC-R 
+device, then fallback.
+- We need the both fixes, which would help us for the backport
+
+
+Thanks,
+Wenjia
 
 
