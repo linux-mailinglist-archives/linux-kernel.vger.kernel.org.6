@@ -1,56 +1,59 @@
-Return-Path: <linux-kernel+bounces-380431-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380432-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 259339AEE6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:43:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B3879AEE7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:46:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 39C921C21AAB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:43:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375A11F22D74
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:46:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AA0D1FF047;
-	Thu, 24 Oct 2024 17:42:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F7A1FE0E7;
+	Thu, 24 Oct 2024 17:46:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z4BXJJT3"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2gnKRPi"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F8831FE100;
-	Thu, 24 Oct 2024 17:42:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290E01F76A3;
+	Thu, 24 Oct 2024 17:46:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729791773; cv=none; b=rw9ocUNFcbXUcllxLWU2HDGsIcpTCA9L0F+0OmLBOlgJMgjK/mn89qAdas6BOZ+55M7YUpY0x+QfaOLvl2mhPzi0FS+OHb+MTLCEw8175BzO8XED6ez7DY+lbiGx/fd/a13PuwsKm1/sI5S+0YnnvXly+q4mbCYbKZmP6iUJXJ8=
+	t=1729792004; cv=none; b=svyFLpgG1RpGycBPJxOy+HAAs1j7VpqYOSLB045rF0duQkIq70hPLM/udxegjv4gfgkAYcBbSdQE2jWtKqKPg0mn+qWT0jArI2gJWMmKRALeQND/zDrjivqvP9zsLC6nfnm5XzFjfzDfUoLnUIXcXHNCoI/ccCBeT2zEN6f7Pqg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729791773; c=relaxed/simple;
-	bh=rgwkQHONl3k5lKfdipk3SO5F9eAWZNlyVIfQ29lbZsY=;
+	s=arc-20240116; t=1729792004; c=relaxed/simple;
+	bh=0oe8ZaFyqJHIzvDer+HKlnboZayD2eODXd02TS0w2+8=;
 	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=VVb3BiNYNukdTp/LykjI6/ZSe2C/Vp+a1yqd/nsc6zyU/IL8+xI60u0E5USm8h03UZElJ8inlXCeTRYkTymm2Aevy4iq+D58/S5BKfi7HpCkSH5SURFIREbbnR8x2JSf6vp8+OZfjRB+EpK75pbPZ5aysEisWao2QaMHSmLmQek=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z4BXJJT3; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 816EFC4CEC7;
-	Thu, 24 Oct 2024 17:42:50 +0000 (UTC)
+	 MIME-Version:Content-Type; b=faatVBiMRpf+4Eyd5bLJFbKxpYo5ieUIP26jFglUlwRIOmAcOGehAm40AgxW3stYCK5ZljFkH0Q+EI7LbjVwsMCViys77dX1Ue9rRgVxdBr6Ey4PvmHb5QNTH5ZOPXHuYgy/KipPfIzTW8obaoZjbtOpL6jb4hCT+t5bs0JWJ40=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2gnKRPi; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60947C4CEC7;
+	Thu, 24 Oct 2024 17:46:38 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729791772;
-	bh=rgwkQHONl3k5lKfdipk3SO5F9eAWZNlyVIfQ29lbZsY=;
+	s=k20201202; t=1729792003;
+	bh=0oe8ZaFyqJHIzvDer+HKlnboZayD2eODXd02TS0w2+8=;
 	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Z4BXJJT3aWuRhvYRTkGPI59Apy2sdoSkVAv5dFPSmEO8LO8SXDsNQFFyh8gRe4uK3
-	 LZEqv1nNXcUn1BimMR7XxSCOUj3R4HLfWkFreNu6O9An5WtWVrJGkQ0R7Sc1fJ0lJf
-	 hvocUfCtPb7MNFwwKbzQMWzVHJmHJOjv5YuZNESW96EsOE3EssZ+MsGYV4BCuW3slA
-	 DoxW/TLUE+oFevwzmJIMCSjocAmRpiGEKe7RMwBgtQjtdLCmpKCpqRDBeDyKsFXT8V
-	 pAuUhY3SigID/oDsLyHmlhOrhDijOI4MjN/jhpPXR6bvjiFN9RHzzMIHyDn9LQHSvZ
-	 cJPwEecvAvtew==
-Date: Thu, 24 Oct 2024 18:42:45 +0100
+	b=Y2gnKRPioD/Z5egwlJ/6dS+E/lum1fNQLt/sPBMPdcjNKpydwW0bZDFh0ZPU8rlX/
+	 AGoSyQ5eDpRFfVzR2BkED0rtDVJLGsu8iGhAv4jBZhIgLGtyOlke3Fk4uR8LgL6IYb
+	 ZXU8MzikUVwqgR0iewFfhkYpTWxhkXal5hU+RYDwGePDNJ39y+WdXrQkCJZv+N9vKQ
+	 QyYk/qguUbsGAJRvMBZ+hMEdrnke6vsa/RUbd/KGLjmRhJd5tfz8GvpzAIxwlEN9NT
+	 GIbrPgmohatXfVQzMrcltgwrKl4nvNDhXDs8YPKOF42TwpBkAjYboqthttTv4mib9e
+	 bCRB56R17vzaA==
+Date: Thu, 24 Oct 2024 18:46:34 +0100
 From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Lars-Peter Clausen <lars@metafoo.de>, Rishi Gupta <gupt21@gmail.com>,
- Jonathan Cameron <Jonathan.Cameron@huawei.com>, linux-iio@vger.kernel.org,
- linux-kernel@vger.kernel.org, stable@vger.kernel.org
-Subject: Re: [PATCH] iio: light: veml6030: fix microlux value calculation
-Message-ID: <20241024184245.29374611@jic23-huawei>
-In-Reply-To: <20241019153359.43f0c1af@jic23-huawei>
-References: <20241016-veml6030-fix-processed-micro-v1-1-4a5644796437@gmail.com>
-	<20241019153359.43f0c1af@jic23-huawei>
+To: Jinjie Ruan <ruanjinjie@huawei.com>
+Cc: <lars@metafoo.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
+ <aou@eecs.berkeley.edu>, <nuno.sa@analog.com>,
+ <javier.carrasco.cruz@gmail.com>, <sunke@kylinos.cn>,
+ <conor.dooley@microchip.com>, <anshulusr@gmail.com>,
+ <kimseer.paller@analog.com>, <michael.hennerich@analog.com>,
+ <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+ <linux-riscv@lists.infradead.org>, <noname.nuno@gmail.com>
+Subject: Re: [PATCH v2] iio: dac: Kconfig: Fix build error for ltc2664
+Message-ID: <20241024184634.3bfcde82@jic23-huawei>
+In-Reply-To: <20241024015553.1111253-1-ruanjinjie@huawei.com>
+References: <20241024015553.1111253-1-ruanjinjie@huawei.com>
 X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
@@ -61,78 +64,45 @@ MIME-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: 7bit
 
-On Sat, 19 Oct 2024 15:33:59 +0100
-Jonathan Cameron <jic23@kernel.org> wrote:
+On Thu, 24 Oct 2024 09:55:53 +0800
+Jinjie Ruan <ruanjinjie@huawei.com> wrote:
 
-> On Wed, 16 Oct 2024 19:04:31 +0200
-> Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+> If REGMAP_SPI is n and LTC2664 is y, the following build error occurs:
 > 
-> > The raw value conversion to obtain a measurement in lux as
-> > INT_PLUS_MICRO does not calculate the decimal part properly to display
-> > it as micro (in this case microlux). It only calculates the module to
-> > obtain the decimal part from a resolution that is 10000 times the
-> > provided in the datasheet (0.5376 lux/cnt for the veml6030). The
-> > resulting value must still be multiplied by 100 to make it micro.
-> > 
-> > This bug was introduced with the original implementation of the driver.
-> > 
-> > Cc: stable@vger.kernel.org
-> > Fixes: 7b779f573c48 ("iio: light: add driver for veml6030 ambient light sensor")
-> > Signed-off-by: Javier Carrasco <javier.carrasco.cruz@gmail.com>  
-> Applied to the fixes-togreg branch of iio.git.
-
-As per the linux-next merge conflict email that I've just +CC linux-iio on,
-I messed this up and it landed on the wrong code block.
-
-Tried again...
+> 	riscv64-unknown-linux-gnu-ld: drivers/iio/dac/ltc2664.o: in function `ltc2664_probe':
+> 	ltc2664.c:(.text+0x714): undefined reference to `__devm_regmap_init_spi'
+> 
+> Select REGMAP_SPI instead of REGMAP for LTC2664 to fix it.
+> 
+> Fixes: 4cc2fc445d2e ("iio: dac: ltc2664: Add driver for LTC2664 and LTC2672")
+> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
+> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+Applied to the fixes-togreg branch of iio.git 
+Thanks,
 
 Jonathan
 
+> ---
+> v2:
+> - Select REGMAP_SPI instead of REGMAP.
+> - Update the commit subject.
+> - Add Reviewed-by.
+> ---
+>  drivers/iio/dac/Kconfig | 2 +-
+>  1 file changed, 1 insertion(+), 1 deletion(-)
 > 
-> Thanks,
-> 
-> Jonathan
-> 
-> > ---
-> > I found this almost by chance while testing new supported devices. The
-> > decimal part was always suspiciously small, and when I compared samples
-> > to the expected value according to the datasheet, it became clear what was
-> > going on.
-> > 
-> > Example with a veml7700 (same resolution as the veml6030):
-> > 
-> > Resolution for gain = 1/8, IT = 100 ms: 0.5736 lux/cnt.
-> > 
-> > cat in_illuminance_raw in_illuminance_input
-> > 40
-> > 21.005040 -> wrong! 40 * 0.5736 is 21.504.
-> > 
-> > Tested with a veml6035 and a veml7700, the same will happen with the
-> > original veml6030, as the operation is identical for all devices.
-> > ---
-> >  drivers/iio/light/veml6030.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> > 
-> > diff --git a/drivers/iio/light/veml6030.c b/drivers/iio/light/veml6030.c
-> > index d6f3b104b0e6..a0bf03e37df7 100644
-> > --- a/drivers/iio/light/veml6030.c
-> > +++ b/drivers/iio/light/veml6030.c
-> > @@ -691,7 +691,7 @@ static int veml6030_read_raw(struct iio_dev *indio_dev,
-> >  			}
-> >  			if (mask == IIO_CHAN_INFO_PROCESSED) {
-> >  				*val = (reg * data->cur_resolution) / 10000;
-> > -				*val2 = (reg * data->cur_resolution) % 10000;
-> > +				*val2 = (reg * data->cur_resolution) % 10000 * 100;
-> >  				return IIO_VAL_INT_PLUS_MICRO;
-> >  			}
-> >  			*val = reg;
-> > 
-> > ---
-> > base-commit: 15e7d45e786a62a211dd0098fee7c57f84f8c681
-> > change-id: 20241016-veml6030-fix-processed-micro-616d00d555dc
-> > 
-> > Best regards,  
-> 
-> 
+> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> index 45e337c6d256..9f5d5ebb8653 100644
+> --- a/drivers/iio/dac/Kconfig
+> +++ b/drivers/iio/dac/Kconfig
+> @@ -380,7 +380,7 @@ config LTC2632
+>  config LTC2664
+>  	tristate "Analog Devices LTC2664 and LTC2672 DAC SPI driver"
+>  	depends on SPI
+> -	select REGMAP
+> +	select REGMAP_SPI
+>  	help
+>  	  Say yes here to build support for Analog Devices
+>  	  LTC2664 and LTC2672 converters (DAC).
 
 
