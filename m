@@ -1,302 +1,186 @@
-Return-Path: <linux-kernel+bounces-379664-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379663-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id A45949AE1EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:02:31 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7BC5E9AE1ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:02:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 27CE21F2492E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:02:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 126641F24A36
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:02:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E29731ABEB1;
-	Thu, 24 Oct 2024 10:02:06 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8B631B85E3;
+	Thu, 24 Oct 2024 10:01:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="x9wy6+L7"
-Received: from esa.microchip.iphmx.com (esa.microchip.iphmx.com [68.232.154.123])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YvwUEdbE"
+Received: from mail-pl1-f175.google.com (mail-pl1-f175.google.com [209.85.214.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D4DF14F11E;
-	Thu, 24 Oct 2024 10:02:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=68.232.154.123
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A19514F11E;
+	Thu, 24 Oct 2024 10:01:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764126; cv=none; b=DGlV59BvATyHgYL/1eZ6g+wQBefLzV3UcXF3l23O+v7blraIBM7tLPBU08RyCdNdfpHpQIIL7aBQ+DBjvsiAx8gySeOOJBZOaWhC8ASSDLf/MPUvPcGaAsI+nA+Opg87IFDlJRf+D8fpZX1Gq8YOsmcWlWmVXlJH80IpNT0sChY=
+	t=1729764106; cv=none; b=BVdS4kHnKd1oJo6vHi0sZou01VfUlEf3cGCzJAavJqgx4T/OUhdBv021mVq0xZ9XIpxxKnFhmYklhfENwrHrkzNrFJNPg1VMDCq4ELv1KMIYMFIMK+/yIknt12780FldH+gzJM2eIdwjxFCRu2S1XdWc6F34ydfELyvvbTe7IKU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764126; c=relaxed/simple;
-	bh=L4OBI9kmzhb8Y5Z7ccxqHqPubs7j/bYb/whltKZ13n8=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=Iv2PLGr9AIPE+lG31M/Dui+xGrZNnmt3pyKz0Y2hwFemS/zkRzBFvTU2RF+QEAjMV2sPcMyCBihnLdyqU22De3XqJkq02af179PpeUvKJisAe7dBFRhmLgG4LEPxIOMLq4TPEMUGIkrvp5g4htGERXCGg71f+Dhf99SjuvMGli8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=x9wy6+L7; arc=none smtp.client-ip=68.232.154.123
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=microchip.com; i=@microchip.com; q=dns/txt; s=mchp;
-  t=1729764123; x=1761300123;
-  h=from:to:cc:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=L4OBI9kmzhb8Y5Z7ccxqHqPubs7j/bYb/whltKZ13n8=;
-  b=x9wy6+L7+A4z6HGFs/7RedsuyfTXri6r2lVLdDYH015ziiHy0xYStmpT
-   UKPeL9tLRqD1GHph6X2ZBc1IJgOYjvhD5YoRhrSBydj4wG8tsdp/W5A8T
-   0enFSNCIMOnra9UtbWFGp8dolB978qmJZQF/6zqZl0J0YkocrJOUOG/ro
-   8dj0u3m2wZYaXV94MV2JhL4f1j9gYFAReG982kezB2nDAUpq+HhXInFGj
-   PRHLxl8FKMF3Pw7u+XDdUUq8l3VyfP+2itnHa6qNTvxUzSAhRN+jKJD9F
-   dWpPS5JemxMnBTyGK59nzfPMdzyB7x+fh6Q4alAxGJAAutR4gG80u+mqg
-   w==;
-X-CSE-ConnectionGUID: SzYnXIcCSW+5oX6M0jz6iw==
-X-CSE-MsgGUID: hd12t9s6RUK6zhh9WJd9mA==
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="200854445"
-X-Amp-Result: SKIPPED(no attachment in message)
-Received: from unknown (HELO email.microchip.com) ([170.129.1.10])
-  by esa6.microchip.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES128-GCM-SHA256; 24 Oct 2024 03:02:02 -0700
-Received: from chn-vm-ex02.mchp-main.com (10.10.85.144) by
- chn-vm-ex04.mchp-main.com (10.10.85.152) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.35; Thu, 24 Oct 2024 03:01:41 -0700
-Received: from vduicu-Virtual-Machine.mshome.net (10.10.85.11) by
- chn-vm-ex02.mchp-main.com (10.10.85.144) with Microsoft SMTP Server id
- 15.1.2507.35 via Frontend Transport; Thu, 24 Oct 2024 03:01:40 -0700
-From: <victor.duicu@microchip.com>
-To: <matteomartelli3@gmail.com>, <jic23@kernel.org>, <lars@metafoo.de>
-CC: <marius.cristea@microchip.com>, <victor.duicu@microchip.com>,
-	<linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>
-Subject: [PATCH v6] iio: adc: pac1921: Add ACPI support to Microchip pac1921
-Date: Thu, 24 Oct 2024 13:00:50 +0300
-Message-ID: <20241024100050.4727-1-victor.duicu@microchip.com>
-X-Mailer: git-send-email 2.43.0
+	s=arc-20240116; t=1729764106; c=relaxed/simple;
+	bh=MPy6/5ShmaA/r3iJah2uDelJSClWGiyq3tiinNtqT90=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ViEErLueYLvjf/XDL6pK8z+H8aOcVFLR6uIbSGnLp2KzbcT1jcVYQLkK6QbG/R9ncud/TeK2LvqmTndcOjeKD0YeAZMQ7CdsVZE+Fd/upc+aLFvTBxBsOfRCU/93t8VYziUV50clViEhkAhnws0ZZ/0UNKXzmNiEPpcyNbW3elY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YvwUEdbE; arc=none smtp.client-ip=209.85.214.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f175.google.com with SMTP id d9443c01a7336-20cbcd71012so6402605ad.3;
+        Thu, 24 Oct 2024 03:01:43 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729764103; x=1730368903; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=HYUvSi+gse+8H/LOQ3JaF6Mgi/9sTqvwNeV7DL4St4s=;
+        b=YvwUEdbEB+JjvSCl06endnZppGHpWUhpHUZVIzjlec5kjYpu73Hg5wTai/Aj4TYOK+
+         6w7qsspPsUgMshNT75c8fldoE3T+zcdTy70iJb0k8Wj3HE7wXLwpHIr5Xcnayr1aO2Il
+         zX3jf1SAndzmBA8t5r41qIy2efBHYTpl1NhbP2yHZ5dacMMHOl/JDWXk2e7kI+ZvfVrb
+         lvmH+jolw6Bfst5kezbyBQzJCwbmXkcUsI7gj9H37hgn40bH9E46WHUlbp6NY7qm/zTJ
+         ynDlLoholOC4G+MIpuwq2LuilYdjhHqhmNrnJcWTThEHMM82y7Cn06xVQB9LTTGitBrc
+         MFxw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729764103; x=1730368903;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=HYUvSi+gse+8H/LOQ3JaF6Mgi/9sTqvwNeV7DL4St4s=;
+        b=qVMqn9G7bKtS0tiYHHbsj3VNCGhiADnbb0c3BnSHEoopFL/91gmzSb5fGQMsTzSJS9
+         KyyCUzEa4dr6k8GaZiLC4iMza6/g3ZHgDKayFFNKtWByXXxetXrLZLPQT6ptkhky/6rD
+         uf4RFPBuou7y00NjMZvHgXsZ7FyJ7g/GoS99nrxmhrP6ONuZl3QJRDKcfERQ74RkjbNF
+         rPP2b9gCoUvn54Ui5f6sYo4lqbpee3XzFOEwerSQCiqrwulKdfOHqif03VUBMk0KpcMR
+         wvmxVpcZ7ID/5LX2x19TTf8Bsna5m3yC7Xu/VjxPFdDmPeM81PbG4cbBh8gifo4PT2eq
+         nYsA==
+X-Forwarded-Encrypted: i=1; AJvYcCWs+Til+2M0CPfM9d9QE87a/07h++mTYHkj/qxYiD8Tz2XI6eckQ4lPtNLj3M+4nrJ/cVPpOu4ITN3LEKV1@vger.kernel.org, AJvYcCX05uPvECwspglyMEmRo7q3GaPuC09Rt5ibt+1JGZhZJEMrC2IcP9IhpJWAMEBTL/gMegKCEcA57nU=@vger.kernel.org, AJvYcCXk6S/vZxCWWvPS745eiVLiw3H8XRZ7HsDTHUZ3kEI42OOobzBqpN23NJ5RUktnoDOjroqOoUKu@vger.kernel.org
+X-Gm-Message-State: AOJu0YyHLuXAefpnejavGzSTNl79XdVKavJCeOj0U0bqMhONH7CtVd5Q
+	w+j7qEJWIrjHbgxt7pQA2N7d5pUiGtsta6lQfJsT9VWjyrJT1D6g
+X-Google-Smtp-Source: AGHT+IHVtZgCwaNHrrrkEsT/G/oYXdvXmuP6ANPNRJmjPBg1sdexrB5zsRm2r8XpvSP4j1jVbplywg==
+X-Received: by 2002:a17:902:db0f:b0:20b:5aff:dd50 with SMTP id d9443c01a7336-20fa9e5e924mr82116675ad.31.1729764103111;
+        Thu, 24 Oct 2024 03:01:43 -0700 (PDT)
+Received: from archie.me ([103.124.138.155])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0de3fasm69876125ad.196.2024.10.24.03.01.41
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 03:01:41 -0700 (PDT)
+Received: by archie.me (Postfix, from userid 1000)
+	id 71C594416BFE; Thu, 24 Oct 2024 17:01:38 +0700 (WIB)
+Date: Thu, 24 Oct 2024 17:01:38 +0700
+From: Bagas Sanjaya <bagasdotme@gmail.com>
+To: Breno Leitao <leitao@debian.org>, Jonathan Corbet <corbet@lwn.net>,
+	Akinobu Mita <akinobu.mita@gmail.com>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>
+Cc: kernel-team@meta.com, Thomas Huth <thuth@redhat.com>,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	"Borislav Petkov (AMD)" <bp@alien8.de>,
+	Steven Rostedt <rostedt@goodmis.org>,
+	Xiongwei Song <xiongwei.song@windriver.com>,
+	Mina Almasry <almasrymina@google.com>,
+	Kuniyuki Iwashima <kuniyu@amazon.com>,
+	Alexander Lobakin <aleksander.lobakin@intel.com>,
+	Oleksij Rempel <o.rempel@pengutronix.de>,
+	"open list:DOCUMENTATION" <linux-doc@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:NETWORKING [GENERAL]" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next v4] net: Implement fault injection forcing skb
+ reallocation
+Message-ID: <ZxobAhwYt5I3rgNW@archie.me>
+References: <20241023113819.3395078-1-leitao@debian.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="r7nh6+ejvv9gOphX"
+Content-Disposition: inline
+In-Reply-To: <20241023113819.3395078-1-leitao@debian.org>
 
-From: Victor Duicu <victor.duicu@microchip.com>
 
-This patch implements ACPI support to Microchip pac1921.
-The driver can read shunt resistor value and label from ACPI table.
+--r7nh6+ejvv9gOphX
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Victor Duicu <victor.duicu@microchip.com>
----
+On Wed, Oct 23, 2024 at 04:38:01AM -0700, Breno Leitao wrote:
+> +- fail_skb_realloc
+> +
+> +  inject skb (socket buffer) reallocation events into the network path. =
+The
+> +  primary goal is to identify and prevent issues related to pointer
+> +  mismanagement in the network subsystem.  By forcing skb reallocation at
+> +  strategic points, this feature creates scenarios where existing pointe=
+rs to
+> +  skb headers become invalid.
+> +
+> +  When the fault is injected and the reallocation is triggered, these po=
+inters
+> +  no longer reference valid memory locations. This deliberate invalidati=
+on
+> +  helps expose code paths where proper pointer updating is neglected aft=
+er a
+> +  reallocation event.
+> +
+> +  By creating these controlled fault scenarios, the system can catch ins=
+tances
+> +  where stale pointers are used, potentially leading to memory corruptio=
+n or
+> +  system instability.
+> +
+> +  To select the interface to act on, write the network name to the follo=
+wing file:
+> +  `/sys/kernel/debug/fail_skb_realloc/devname`
+> +  If this field is left empty (which is the default value), skb realloca=
+tion
+> +  will be forced on all network interfaces.
+> +
+>  - NVMe fault injection
+> =20
+>    inject NVMe status code and retry flag on devices permitted by setting
+> @@ -216,6 +238,19 @@ configuration of fault-injection capabilities.
+>  	use a negative errno, you better use 'printf' instead of 'echo', e.g.:
+>  	$ printf %#x -12 > retval
+> =20
+> +- /sys/kernel/debug/fail_skb_realloc/devname:
+> +
+> +        Specifies the network interface on which to force SKB reallocati=
+on.  If
+> +        left empty, SKB reallocation will be applied to all network inte=
+rfaces.
+> +
+> +        Example usage::
+> +
+> +          # Force skb reallocation on eth0
+> +          echo "eth0" > /sys/kernel/debug/fail_skb_realloc/devname
+> +
+> +          # Clear the selection and force skb reallocation on all interf=
+aces
+> +          echo "" > /sys/kernel/debug/fail_skb_realloc/devname
+> +
 
-The patch was tested on minnowboard and sama5.
+The doc LGTM, thanks!
 
-Differences related to previous versions:
-v6:
-- set maximum acceptable value of shunt resistor to INT_MAX UOHMS
-in devicetree, ACPI table and user input.
-- in pac1921_match_acpi_device remove temp variable.
+Reviewed-by: Bagas Sanjaya <bagasdotme@gmail.com>
 
-v5:
-- set maximum acceptable value of shunt resistor to 2KOHM in devicetree,
-ACPI table and user input. The chosen value is lesser than INT_MAX,
-which is about 2.1KOHM.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw change to only
-  read 32b values for resistor shunt.
+--=20
+An old man doll... just what I always wanted! - Clara
 
-v4:
-- change name of pac1921_shunt_is_valid to pac1921_shunt_is_invalid.
-- fix coding style.
-- in pac1921_parse_of_fw change back to device_property_read_u32.
+--r7nh6+ejvv9gOphX
+Content-Type: application/pgp-signature; name="signature.asc"
 
-v3:
-- simplify and make inline function pac1921_shunt_is_valid. Make argument u64.
-- fix link to DSM documentation.
-- in pac1921_match_acpi_device and pac1921_parse_of_fw, the shunt value is
-read as u64.
-- in pac1921_parse_of_fw remove code for reading label value from
-devicetree.
-- in pac1921_write_shunt_resistor cast the multiply result to u64 in order
-to fix overflow.
+-----BEGIN PGP SIGNATURE-----
 
-v2:
-- remove name variable from priv. Driver reads label attribute with
-sysfs.
-- define pac1921_shunt_is_valid function.
-- move default assignments in pac1921_probe to original position.
-- roll back coding style changes.
-- add documentation for DSM(the linked document was used as reference).
-- remove acpi_match_device in pac1921_match_acpi_device.
-- remove unnecessary null assignment and comment.
-- change name of function pac1921_match_of_device to
-pac1921_parse_of_fw.
+iHUEABYKAB0WIQSSYQ6Cy7oyFNCHrUH2uYlJVVFOowUCZxoa+wAKCRD2uYlJVVFO
+o7zXAP9tIGnmbEhtrEuMpZzgsDagMAIHMMOCahEbv+bVZCTIDAEAzbrkaL2aj++P
+1EF/KP6qOo9Uv0LmTmD6G7a+p9OPYA4=
+=JpzN
+-----END PGP SIGNATURE-----
 
-v1:
-- initial version for review.
-
- drivers/iio/adc/pac1921.c | 106 +++++++++++++++++++++++++++++++++-----
- 1 file changed, 93 insertions(+), 13 deletions(-)
-
-diff --git a/drivers/iio/adc/pac1921.c b/drivers/iio/adc/pac1921.c
-index a96fae546bc1..cbbb3c1525c1 100644
---- a/drivers/iio/adc/pac1921.c
-+++ b/drivers/iio/adc/pac1921.c
-@@ -67,6 +67,12 @@ enum pac1921_mxsl {
- #define PAC1921_DEFAULT_DI_GAIN		0 /* 2^(value): 1x gain (HW default) */
- #define PAC1921_DEFAULT_NUM_SAMPLES	0 /* 2^(value): 1 sample (HW default) */
- 
-+#define PAC1921_ACPI_GET_UOHMS_VALS             0
-+#define PAC1921_ACPI_GET_LABEL			1
-+#define PAC1921_DSM_UUID                        "f7bb9932-86ee-4516-a236-7a7a742e55cb"
-+/* The maximum accepted value of shunt_resistor in UOHMS <= INT_MAX */
-+#define PAC1921_MAX_SHUNT_VALUE_OHMS		2147
-+
- /*
-  * Pre-computed scale factors for BUS voltage
-  * format: IIO_VAL_INT_PLUS_NANO
-@@ -204,6 +210,11 @@ struct pac1921_priv {
- 	} scan;
- };
- 
-+static inline bool pac1921_shunt_is_invalid(u32 shunt_val)
-+{
-+	return (shunt_val == 0 || shunt_val > INT_MAX);
-+}
-+
- /*
-  * Check if first integration after configuration update has completed.
-  *
-@@ -781,7 +792,7 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 					    const char *buf, size_t len)
- {
- 	struct pac1921_priv *priv = iio_priv(indio_dev);
--	u64 rshunt_uohm;
-+	u32 rshunt_uohm;
- 	int val, val_fract;
- 	int ret;
- 
-@@ -792,8 +803,12 @@ static ssize_t pac1921_write_shunt_resistor(struct iio_dev *indio_dev,
- 	if (ret)
- 		return ret;
- 
-+	/* This check is to ensure val * MICRO won't overflow */
-+	if (val < 0 || val > PAC1921_MAX_SHUNT_VALUE_OHMS)
-+		return -EINVAL;
-+
- 	rshunt_uohm = val * MICRO + val_fract;
--	if (rshunt_uohm == 0 || rshunt_uohm > INT_MAX)
-+	if (pac1921_shunt_is_invalid(rshunt_uohm))
- 		return -EINVAL;
- 
- 	guard(mutex)(&priv->lock);
-@@ -1150,6 +1165,69 @@ static void pac1921_regulator_disable(void *data)
- 	regulator_disable(regulator);
- }
- 
-+/*
-+ * documentation related to the ACPI device definition
-+ * https://ww1.microchip.com/downloads/aemDocuments/documents/OTH/ApplicationNotes/ApplicationNotes/PAC193X-Integration-Notes-for-Microsoft-Windows-10-and-Windows-11-Driver-Support-DS00002534.pdf
-+ */
-+static int pac1921_match_acpi_device(struct i2c_client *client, struct pac1921_priv *priv,
-+				     struct iio_dev *indio_dev)
-+{
-+	acpi_handle handle;
-+	union acpi_object *rez;
-+	guid_t guid;
-+	char *label;
-+
-+	guid_parse(PAC1921_DSM_UUID, &guid);
-+	handle = ACPI_HANDLE(&client->dev);
-+
-+	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_UOHMS_VALS, NULL);
-+	if (!rez)
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "Could not read shunt from ACPI table\n");
-+
-+	priv->rshunt_uohm = rez->package.elements[0].integer.value;
-+	ACPI_FREE(rez);
-+
-+	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
-+		return dev_err_probe(&client->dev, -EINVAL, "Invalid shunt resistor\n");
-+
-+	pac1921_calc_current_scales(priv);
-+
-+	rez = acpi_evaluate_dsm(handle, &guid, 1, PAC1921_ACPI_GET_LABEL, NULL);
-+	if (!rez)
-+		return dev_err_probe(&client->dev, -EINVAL,
-+				     "Could not read label from ACPI table\n");
-+
-+	label = devm_kmemdup(&client->dev, rez->package.elements->string.pointer,
-+			     (size_t)rez->package.elements->string.length + 1,
-+			     GFP_KERNEL);
-+	label[rez->package.elements->string.length] = '\0';
-+	indio_dev->label = label;
-+	ACPI_FREE(rez);
-+
-+	return 0;
-+}
-+
-+static int pac1921_parse_of_fw(struct i2c_client *client, struct pac1921_priv *priv)
-+{
-+	int ret;
-+	struct device *dev = &client->dev;
-+
-+	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
-+				       &priv->rshunt_uohm);
-+	if (ret)
-+		return dev_err_probe(dev, ret,
-+				     "Cannot read shunt resistor property\n");
-+
-+	if (pac1921_shunt_is_invalid(priv->rshunt_uohm))
-+		return dev_err_probe(dev, -EINVAL, "Invalid shunt resistor: %u\n",
-+				     priv->rshunt_uohm);
-+
-+	pac1921_calc_current_scales(priv);
-+
-+	return 0;
-+}
-+
- static int pac1921_probe(struct i2c_client *client)
- {
- 	struct device *dev = &client->dev;
-@@ -1176,17 +1254,13 @@ static int pac1921_probe(struct i2c_client *client)
- 	priv->di_gain = PAC1921_DEFAULT_DI_GAIN;
- 	priv->n_samples = PAC1921_DEFAULT_NUM_SAMPLES;
- 
--	ret = device_property_read_u32(dev, "shunt-resistor-micro-ohms",
--				       &priv->rshunt_uohm);
--	if (ret)
--		return dev_err_probe(dev, ret,
--				     "Cannot read shunt resistor property\n");
--	if (priv->rshunt_uohm == 0 || priv->rshunt_uohm > INT_MAX)
--		return dev_err_probe(dev, -EINVAL,
--				     "Invalid shunt resistor: %u\n",
--				     priv->rshunt_uohm);
--
--	pac1921_calc_current_scales(priv);
-+	if (ACPI_HANDLE(&client->dev))
-+		ret = pac1921_match_acpi_device(client, priv, indio_dev);
-+	else
-+		ret = pac1921_parse_of_fw(client, priv);
-+	if (ret < 0)
-+		return dev_err_probe(&client->dev, ret,
-+				     "parameter parsing error\n");
- 
- 	priv->vdd = devm_regulator_get(dev, "vdd");
- 	if (IS_ERR(priv->vdd))
-@@ -1243,11 +1317,17 @@ static const struct of_device_id pac1921_of_match[] = {
- };
- MODULE_DEVICE_TABLE(of, pac1921_of_match);
- 
-+static const struct acpi_device_id pac1921_acpi_match[] = {
-+	{ "MCHP1921" },
-+	{ }
-+};
-+MODULE_DEVICE_TABLE(acpi, pac1921_acpi_match);
- static struct i2c_driver pac1921_driver = {
- 	.driver	 = {
- 		.name = "pac1921",
- 		.pm = pm_sleep_ptr(&pac1921_pm_ops),
- 		.of_match_table = pac1921_of_match,
-+		.acpi_match_table = pac1921_acpi_match
- 	},
- 	.probe = pac1921_probe,
- 	.id_table = pac1921_id,
-
-base-commit: 185a947e0ef928226f99c05fc973cde872806aa1
--- 
-2.43.0
-
+--r7nh6+ejvv9gOphX--
 
