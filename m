@@ -1,146 +1,128 @@
-Return-Path: <linux-kernel+bounces-379219-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379217-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 095D69ADB90
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:36:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A64969ADB87
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BAFC1283AC3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:36:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4F9F11F231AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:31:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0DE17334E;
-	Thu, 24 Oct 2024 05:35:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5705A16E863;
+	Thu, 24 Oct 2024 05:31:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="epV0ymeS"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.13])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="ROrOUxOq"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7093CC8F0;
-	Thu, 24 Oct 2024 05:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.13
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E2A6AC8F0;
+	Thu, 24 Oct 2024 05:30:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729748156; cv=none; b=QRkc60Ts+bjLKgxfMqNB27UrAzd6Gu3bkllQEiF4oOxs+KC/2G9VddCNpLh+9axcTJNLzMa8zClNDm3Nw73lR3jFaJBZwMHFHL8awNV1IRs+Z10U8fjXWeFnZzJjluY0G3kKEzPhkrhrNjhL0Mbgg4+GMo53kkPx2SuXrcZHR9w=
+	t=1729747860; cv=none; b=HP5Vn9NpYR/Ime3wh3nNSywQ0HJgHw+tjGjp2wIaQW0dROdS+rnQcY7h1bcxL/XF+MgRJyBdD4QhxYtTxFiVATHBbaTpAmxq80riesVzrNBtBcFsZhsqptQsbG381LqtQ+TSN/50M+4DDRU9/hHcVoXVjVJBXoNW7S8aV/Cl+ZU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729748156; c=relaxed/simple;
-	bh=g60dll80FQxag8/SLufMUrNVGPzznH20zTIyl/HTuJY=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=eF0Y+n9o9yP0/SWfw61GDVH3gFs1OYM2By2RdDSaYLdxSgSiNfTkl8PpCaMG0Zz9j1ki6tU5bTWjnn7GASJFVd1OmBkqUp80OxmMz0Js4Nt+BwqOFHiytyiglasWeEtJ+kG8UrIQLP4fxQF4TE0qP1vW+93brXtY+hxZNseUubg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=epV0ymeS; arc=none smtp.client-ip=212.227.17.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1729748151; x=1730352951;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=g60dll80FQxag8/SLufMUrNVGPzznH20zTIyl/HTuJY=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:From:Subject:To:
-	 Cc:References:In-Reply-To:Content-Type:Content-Transfer-Encoding:
-	 cc:content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=epV0ymeSQ/AGz6GeBi7MT1laPzKqGZ3g/FUkTt5uP4eog8ZJ1S97wV1fFuatkgTG
-	 0tFRFnrFbem14pbLIauKs/DKAwgRUkqKhHLNY988qI49fQv71RkBF16SIk5i5i9Mo
-	 UaSxqs157wnPLZvzuqlobToleMNrnAA7UDTj+zw743Kh+ntlsnQttGkISLgCriLOC
-	 cNMDdKV7mwVv9ZMaPkz3KgAMsR+/5wS/bL+TR+p4pd2w8EetcxyyaRp2pumhTG+l3
-	 8SCFJWmtyKslCyA9KNs2sfHcmcreUwvT8ClS3uCAbtTkWMYkppf39NlegvBK/qCn4
-	 0ono0Eu0k+I1Wb8RvQ==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue107 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MRBac-1tI3tL0HGm-00LVMc; Thu, 24 Oct 2024 07:30:15 +0200
-Message-ID: <80334280-1c51-48a0-84ec-f0f81d834da6@oldschoolsolutions.biz>
-Date: Thu, 24 Oct 2024 07:30:14 +0200
+	s=arc-20240116; t=1729747860; c=relaxed/simple;
+	bh=ZCV1tER884byTXVhFdZ2f/nOxNkR/XjtuGdEcrW9ya0=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=A8Ygwkn7MGmmdCvThZhyNh/ueuBu1b77RFt6rYEj6xiUEr4ofv9rXMJI812AoU+moscGZTFVX4qw4bvhHpIEF/gZAV1xs7KsEbwT6CWAD+ICahFdlBWfUsSVbMLWawrt8PeLc/RCL8il5QFOMzTgiuG2OwjmdVz/atMjfF/ZuZs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=ROrOUxOq; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729747852;
+	bh=+JgXnY1w/ueOEsWHErKS/+gcp1Sh9XSIJWMfsDqcc0Q=;
+	h=Date:From:To:Cc:Subject:From;
+	b=ROrOUxOqGM1z36a+sS5mIyR98irG0dBDd+3hxN9frukZRTm0DY4/tYKPDw6IzaMkF
+	 UzjXHxwDcbi6ZHVEGDEBy7GWgjWIE3HVEeds1H0jkFVYbZg6ouF52g3xpb/gA58N9m
+	 /HXMcMM3GQAN8na+H8dJO6Wlwo3cy/O8WCwxw3+aB8LiYnlHgRhH+L9Uk1X6RiEyqZ
+	 kUmwwmVcKiQnQpj5EfvQYw76OepiyndYkmAhqziEWencOnrG1eQhBbN1FjfEw/DFhQ
+	 oiIyf8TfpgrgjmNY6cV4q5sUaJ/uhSH6lf8Toh7UrRvaZHNUrGIDvSOE1lv61i+P8n
+	 fMwFeRCLX1dmw==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYvdm13J1z4wc4;
+	Thu, 24 Oct 2024 16:30:52 +1100 (AEDT)
+Date: Thu, 24 Oct 2024 16:30:52 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Hans de Goede <hdegoede@redhat.com>, Mark Gross <markgross@kernel.org>
+Cc: Ilpo =?UTF-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Suma
+ Hegde <suma.hegde@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: build warnings after merge of the drivers-x86 tree
+Message-ID: <20241024163052.32fda0f0@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-Subject: Re: [PATCH 0/2] X1E001DE Snapdragon Devkit for Windows
-To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org, abel.vesa@linaro.org,
- srinivas.kandagatla@linaro.org
-References: <20240911073337.90577-1-quic_sibis@quicinc.com>
- <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
-Content-Language: en-US
-In-Reply-To: <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: multipart/signed; boundary="Sig_/7C3nmPEYYWc4xx/lH1+bmSj";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
+
+--Sig_/7C3nmPEYYWc4xx/lH1+bmSj
+Content-Type: text/plain; charset=US-ASCII
 Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:qK+BrI5Vz73rqYM48skDu2mGNQ2ApZPiuZM814xNkSJcZ2i/xOH
- N8KitGNqBKXfC30gteZ0aw7kk48FoeKYRJRZ+sO4SXAuisMubFWZtp7jSh07xHvA2Ele321
- 7oAd9VRJssdHHobCZ6EB1h0e8O86eNPgOCZo7OxtnkNUUIrkViKAQUtX3LpsksdLVDQSL7o
- ILlvVI+rLmNuDWBFxOe3w==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:2wbg/tJno10=;S0BDExEUg0HU8c5y6IuaaA3ApJE
- iliG+XiNjsibQsd+y/PzcgnpDNU9MDRo7zzN+ifzo8Xn1uH0b4IS3IrBg/yel+sauVcNVDLEy
- yWXSwV/i5MWFep3UXV8NrIS49yE54kOCqatOpgCPmrFG33aqzPtdZyAWxPqaq1rA+k8qFCyXE
- EJXlOktliKfAyVuEaTDn2o2Lw8P0f9h+MhVdHDDC8GLGe/3lzVnimcHJYsJtz++GLCktbdrb7
- ubhIccs8lx3HQN13pjcFEv7EjttglvveY/EjmRdnSnqQZgWEoQN1tWA7cEwiaaM6cbXLl7ROH
- GZp3xuywFJZUaYDbi8AVPuRAQBFZuiow91Fzvz8wRWQ5xO2lP3F2xJfPiX6Id1EUbCBjgTAWb
- QSpumhnFlYFh8C1I55Hj390Vhc1B8ANxK19ep7QskAlUHyb0/KWwxHwme6eU2r1W29quZMvfl
- 70hI016mllKH3FWHI2cXx84EoY1OHGbQcNIqDky/80lo3xXHr4+5ZG0UlHIB6tU1ejmB6Dujn
- DfjNP4xfPWjJqCMT5haxWP/kx3WUM++GeepIyQA5A0Whpy3AZI1I5drzQxz9ykYX/+W+0igQN
- btCh+dpK4GFrbPltMBzuoZcsc9PahWOyieClgrj6hi+aDfzAyPLlxwRSQyNYzLBugSVrpoD6k
- Cyf33toI9+I6hPRtr54O13OzKfM7T29UWDuwQa7zl8Zu04vNDgZHc1skfjKuRCYvJeP9rh5+Q
- 9hwzgyGlJOJyOqFXvv3yyie1UwxEG2qfA==
 
+Hi all,
 
-On 23.10.24 13:05, Sibi Sankar wrote:
->
->
-> On 9/11/24 13:03, Sibi Sankar wrote:
->> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001D=
-E
->> is the speed binned variant of X1E80100 that supports turbo boost up to
->> 4.3 Ghz. The initial support includes the following:
->>
->> -DSPs
->> -Ethernet (RTL8125BG) over the pcie 5 instance.
->> -NVme
->> -Wifi
->> -USB-C ports
->>
->
-> Hi All,
->
-> With the X1E Devkit cancelled and with no firmware updates promised for
-> it perpetually, please chime in and let me know if you still want to get
-> this series and rest (external-dp, usb-A ports, sd card slot and 3.5 mm
-> Jack) merged and have it supported upstream for the folks who already
-> received it!
->
-> -Sibi
->
->> Link:
->> https://www.qualcomm.com/news/releases/2024/05/qualcomm-accelerates-dev=
-elopment-for-copilot--pcs-with-snapdrago
->>
->> Sibi Sankar (2):
->> =C2=A0=C2=A0 dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
->> =C2=A0=C2=A0 arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windo=
-ws
->>
->> =C2=A0 .../devicetree/bindings/arm/qcom.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +
->> =C2=A0 arch/arm64/boot/dts/qcom/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
->> =C2=A0 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts=C2=A0 | 813 +++++++=
-+++++++++++
->> =C2=A0 3 files changed, 820 insertions(+)
->> =C2=A0 create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
->>
->
-Hi there,
+After merging the drivers-x86 tree, today's linux-next build (htmldocs)
+produced these warnings:
 
-as one of the few owners of this box I am very interested in getting an
-as complete dt as possible. It may be unsupported (who cares), but it is
-quite useful hardware. So, yes please! I already have it up with the
-published patch and its doing useful stuff.
+Documentation/arch/x86/amd_hsmp.rst:86: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:87: WARNING: Block quote ends without a=
+ blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:90: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:91: WARNING: Block quote ends without a=
+ blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:94: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:96: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:97: WARNING: Block quote ends without a=
+ blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:100: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:101: WARNING: Block quote ends without =
+a blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:102: WARNING: Block quote ends without =
+a blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:105: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:107: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:109: WARNING: Block quote ends without =
+a blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:112: ERROR: Unexpected indentation.
+Documentation/arch/x86/amd_hsmp.rst:115: WARNING: Block quote ends without =
+a blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:116: WARNING: Block quote ends without =
+a blank line; unexpected unindent.
+Documentation/arch/x86/amd_hsmp.rst:117: WARNING: Definition list ends with=
+out a blank line; unexpected unindent.
 
-- Jens
+Introduced by commit
 
+  f9ad7a2843a6 ("platform/x86/amd/hsmp: Create separate ACPI, plat and comm=
+on drivers")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/7C3nmPEYYWc4xx/lH1+bmSj
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcZ24wACgkQAVBC80lX
+0Gz1LggAkHpGh/VXHoQyRoFKp8lxOny6QiiHLXxRoeCtGEIYTPLAEh9w0fggyn45
+5LI70kpvLgUsW5vTLPvukIwqTPelXZ8TteqE9fEDBwGnp5SkgpinEyjUtGmqn+I/
+HI34mT8WtBu1N+enwyzlGkGnRSPoZcnSWrCraHwaQeKuL1EG1NKPtbXEFBvJisMd
+jx5ZWYGByr/w401cMuMDAB7XLEa891lf0oJ7uugliRO3GgdPWnA73eHDknKqLrya
+dEenxFHQJndHvvrAnHJ39mPEKFAVgzKDotKsZp6C8OV7SlRwgs0y/+69/xI1g3VO
+fL1aJ76lWfiWwLPN/PJlt3I5WKnLlQ==
+=0Lgh
+-----END PGP SIGNATURE-----
+
+--Sig_/7C3nmPEYYWc4xx/lH1+bmSj--
 
