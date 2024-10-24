@@ -1,113 +1,131 @@
-Return-Path: <linux-kernel+bounces-380220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43AF19AEA65
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:28:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2E6F19AEA6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:29:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 74BEE1C22DB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:28:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F72283B3E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:28:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A3571EF92E;
-	Thu, 24 Oct 2024 15:28:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FBF1F585C;
+	Thu, 24 Oct 2024 15:28:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZFlSlW3f"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKOXGfWZ"
+Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEDC91EC00F;
-	Thu, 24 Oct 2024 15:28:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D295D1EF0A0;
+	Thu, 24 Oct 2024 15:28:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729783701; cv=none; b=WO6GgwP0GT+TKQ6GL1Ekc6anE4olMA/+PXTyMu0IxuOsWqoVXC14tyhve5+RJ8EAbFz10SwgSrQU8vc8UsrYC/sBxJ50nKyQeMImxmt0mgPPfjE+ernaRJHvu4Yk39r403UjbitxhFU09Pij61lANAG/DuHJ+2SKZXc29kV0Ubc=
+	t=1729783710; cv=none; b=aIfJD4NwZoyJ3b0H+/hX2T7fdTd3k4pGSsfTo7B7B9WzUqAGUqtZC30KCdiBh5bKm6VWBNnnDh8IbnbQcDAcZptGeyOJRlzLmG91E3wjx05XVJM8gO70/zu3KqRcAqnHrRYeIdSIUc49TP+i7igAMTz5kQFKsetYyYTxeaWOadk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729783701; c=relaxed/simple;
-	bh=A3+WFvu5Hl8t2/BhdPAsefVmYLEp9do9rPFLS0+ariQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=a33QpGGTmW/FFAU11dROv0cu/cZbOn2bHxQNdccWObmHyHRJKjgKNhN6IgVj/CwAC7Y9LQesP/wi153g7TZ9G/SYU3116h0lHJPIQ+Wbvxl6Vf3VWpmyJMG0pk9uc9t5wJ3ELgFkP5RAKfIOwGZhynQuwdNmjLnZ6+l/01vQJ9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZFlSlW3f; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6AC48C4CEC7;
-	Thu, 24 Oct 2024 15:28:18 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729783700;
-	bh=A3+WFvu5Hl8t2/BhdPAsefVmYLEp9do9rPFLS0+ariQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZFlSlW3f8oB626HmiKkyLOJu5+l42JXKVnmoUyWYKkhsdnxMNRC6ziN8Dnvhj82+X
-	 Dt93tXjeQISjgAFxG58PgmzBzNQDFAvv2jT+/h/vvwmdfF0v5+2pQomOpR84n+g/1n
-	 BJlvm9VovVkudzla+NNkE11u0SEIWHWWW/giX7mezrOHTDL13odSH5ehhPIhKrN1nd
-	 FToP+cc93aWSMwkZJrEA2ZKKpM2gDz+pJ5cZLgFnQTMRy1rCpzWl4Ie2r5lYAQn3J4
-	 zOWQsxm2qtmiOTXNB6xCEAQUMlKRWUYf2arQ1ehMX0l9O6GSoEzJ5qmaLTpGMambej
-	 qFtjF+59xfdsw==
-Date: Thu, 24 Oct 2024 16:28:16 +0100
-From: Simon Horman <horms@kernel.org>
-To: Kory Maincent <kory.maincent@bootlin.com>
-Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Maxime Chevallier <maxime.chevallier@bootlin.com>,
-	thomas.petazzoni@bootlin.com,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next] Documentation: networking: Add missing PHY_GET
- command in the message list
-Message-ID: <20241024152816.GA1202098@kernel.org>
-References: <20241023141559.100973-1-kory.maincent@bootlin.com>
- <20241024145223.GR1202098@kernel.org>
- <20241024171802.4e0f0110@kmaincent-XPS-13-7390>
+	s=arc-20240116; t=1729783710; c=relaxed/simple;
+	bh=Fs2tc1WwAR2PY2tTefPbWYTpSMFv2nPyy55SErMhtP0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=WZQ29Gojrz9ZMhTlEWq9pPYsVV75D6jo72NrSTV0VZALsOKQfvlPypnQC7NJ57uR/hGB1LHPEGvGOZb3JQz0TNhSLMw0ntlsNGz20C3WArsc+LtQ3d9FpumCFYW5oSpC0Ds+XyP28DqijpBR8ItsQ1cuYZuDH0aWMt1WGkIjRJI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKOXGfWZ; arc=none smtp.client-ip=209.85.128.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e38fc62b9fso10341197b3.2;
+        Thu, 24 Oct 2024 08:28:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729783708; x=1730388508; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=MrA+PE9QFVQSWd15h41v5TtusoT9a0SkYDwQrFOXSR4=;
+        b=dKOXGfWZlb8w2TV6ORCoa2GSdteQMW3Ww8bwNPmkiHrtmUCpMj2L/pU5359U2zxLNK
+         zOh8PAZcPT/HFdIJU2du6oGuf6QuInOZe1NL9Znf2yevnw2RHGmgZQRUuaCA/iTfp3oz
+         nE5zlv1JoTDA3zdzBtSgL7/u9wck8Jlg96jKtl1xxMj7WZ4UMR8l1tSUUPmU1mAu61iQ
+         UUgSqd4TJTicmEanzQGG19Ks0K1ur71rdiG1vSyrB0bFy5+oup8/Z1Y4lLAI/VglFcvu
+         mZHLW0SeJ5EtVf931hR55P0CUurVuO+1WTP1HdTLJ9y3X9U6xDAqRt5iiAwgtwMRE/X6
+         PwHA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729783708; x=1730388508;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=MrA+PE9QFVQSWd15h41v5TtusoT9a0SkYDwQrFOXSR4=;
+        b=uPEqKyhgs4pM3YnkNirpfESfYCwmFqS0bXHwjVpdS2yFsCy++jF5tKWacLzU+mm6Vb
+         WgO+5IuH9yUbqNDBAxPO75UU+L4wzVf4yhezE4I6knuB9memBi3XrXmSf59DWOi6JAHM
+         ANho+MB5Qs3OnREGO6mgtpRhoQ5Wi+W7ycSZgyOtWk5WdXM4WJY1VHyDtPRDylbDic5J
+         xabUPz5m2ueSMKnpS1G+k3xKD9JpmA/l/TY3k/Vuo1Q36uKUqgbcEnB4NTRgOjlbcKQ5
+         W9dWegXLftvMcu/NvPdXuFV8h10fJXHz81TqisuY20zrpKTth6zGP9wmd/Cjy6kMcm/p
+         L8qg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7ApozTMW6sDVKkLPANP7hZGKieoA+QvdlvnDu5Mp2wXOqmiclhbq5C/o3j48eAl75TTM1QaXk39WLOMg=@vger.kernel.org, AJvYcCU8//vezLo3OKNiKMY40Inepzpp0WFBEWV0R4HYrkRqyTvnBgPZ4j52LTqJebcF8iu1nF1kAqHYzAmVXLKj@vger.kernel.org, AJvYcCUBqgV6ftGTNcpMZr3sWybADfG8ClsUKXsMFKXOj7KU4FJH1g5pQq5WnqBH3TkLr7Ic7K3dl3/oh3HSenxG@vger.kernel.org, AJvYcCW5lOtyEE20Ujru1vmOhhWfPvz1gQ0NXCMikjLPIw5mI5svtY3qvATSveKtYClmLONHocaE+Z+PF8NpmbTjvj8q@vger.kernel.org, AJvYcCXkZx4hply13gHMAuujRUYSJgGbXoS9XgXcYIjC67IrwEafc4JzTaVofSqYDNNEATCpDyFXZwTe9x+q@vger.kernel.org, AJvYcCXrN5Gwi6XSRxp0Q92etCnZB8MW+GnjW99phCv8HqqKJD1zRE6ol0BrrqKn3VSugemqMTfZN5cD/P47FA==@vger.kernel.org
+X-Gm-Message-State: AOJu0YxIpnC7T9T+lp8QtQJNi7oXDhHk3rfvjwb4vLhjOrNYUg4Zca0j
+	ksAAaHZ/99Wk/is5bYp/TBK/ISjv5qSX82EdgFQEdTGj1Z/H3tGem12Kc+7V72g7iv0OTlW7Imy
+	R3V2bnjfFZzhN76nPXmzgzGw/V/s=
+X-Google-Smtp-Source: AGHT+IFRyXW0hYO2Swz9RLGo1csIv7IsSIQzzTKkoxMY8+2S6NZhcmqrrYbuG7/FRn1ItAKRcQRE+umN/jZ8cxvEJOI=
+X-Received: by 2002:a05:690c:fd5:b0:6dd:ce14:a245 with SMTP id
+ 00721157ae682-6e7f0dc1121mr77233267b3.6.1729783707713; Thu, 24 Oct 2024
+ 08:28:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024171802.4e0f0110@kmaincent-XPS-13-7390>
+References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
+ <20240916085741.1636554-2-quic_mdalam@quicinc.com> <20240921185519.GA2187@quark.localdomain>
+ <ZvJt9ceeL18XKrTc@infradead.org> <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+ <ZxHwgsm2iP2Z_3at@infradead.org> <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
+ <ZxH4lnkQNhTP5fe6@infradead.org> <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+ <ZxieZPlH-S9pakYW@infradead.org> <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+ <dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
+In-Reply-To: <dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
+From: Adrian Vovk <adrianvovk@gmail.com>
+Date: Thu, 24 Oct 2024 11:28:16 -0400
+Message-ID: <CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+To: Geoff Back <geoff@demonlair.co.uk>
+Cc: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>, 
+	Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, song@kernel.org, 
+	yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org, 
+	Mikulas Patocka <mpatocka@redhat.com>, adrian.hunter@intel.com, quic_asutoshd@quicinc.com, 
+	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org, 
+	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, 
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 05:18:02PM +0200, Kory Maincent wrote:
-> On Thu, 24 Oct 2024 15:52:23 +0100
-> Simon Horman <horms@kernel.org> wrote:
-> 
-> > On Wed, Oct 23, 2024 at 04:15:58PM +0200, Kory Maincent wrote:
-> > > ETHTOOL_MSG_PHY_GET/GET_REPLY/NTF is missing in the ethtool message list.
-> > > Add it to the ethool netlink documentation.
-> > > 
-> > > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> > > ---
-> > >  Documentation/networking/ethtool-netlink.rst | 3 +++
-> > >  1 file changed, 3 insertions(+)
-> > > 
-> > > diff --git a/Documentation/networking/ethtool-netlink.rst
-> > > b/Documentation/networking/ethtool-netlink.rst index
-> > > 295563e91082..70ecc3821007 100644 ---
-> > > a/Documentation/networking/ethtool-netlink.rst +++
-> > > b/Documentation/networking/ethtool-netlink.rst @@ -236,6 +236,7 @@
-> > > Userspace to kernel: ``ETHTOOL_MSG_MM_GET``                get MAC merge
-> > > layer state ``ETHTOOL_MSG_MM_SET``                set MAC merge layer
-> > > parameters ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``   flash transceiver module
-> > > firmware
-> > > +  ``ETHTOOL_MSG_PHY_GET``               get Ethernet PHY information
-> > >    ===================================== =================================
-> > >  
-> > >  Kernel to userspace:
-> > > @@ -283,6 +284,8 @@ Kernel to userspace:
-> > >    ``ETHTOOL_MSG_PLCA_NTF``                 PLCA RS parameters
-> > >    ``ETHTOOL_MSG_MM_GET_REPLY``             MAC merge layer status
-> > >    ``ETHTOOL_MSG_MODULE_FW_FLASH_NTF``      transceiver module flash updates
-> > > +  ``ETHTOOL_MSG_PHY_GET_REPLY``            Ethernet PHY information
-> > > +  ``ETHTOOL_MSG_PHY_NTF``                  Ethernet PHY information  
-> > 
-> > I wonder if ETHTOOL_MSG_PHY_NTF should be removed.
-> > It doesn't seem to be used anywhere.
-> 
-> We can't, as it is in the ethtool UAPI. Also I believe Maxime will use it on
-> later patch series. Maxime, you confirm?
+On Thu, Oct 24, 2024 at 4:11=E2=80=AFAM Geoff Back <geoff@demonlair.co.uk> =
+wrote:
+>
+>
+> On 24/10/2024 03:52, Adrian Vovk wrote:
+> > On Wed, Oct 23, 2024 at 2:57=E2=80=AFAM Christoph Hellwig <hch@infradea=
+d.org> wrote:
+> >> On Fri, Oct 18, 2024 at 11:03:50AM -0400, Adrian Vovk wrote:
+> >>> Sure, but then this way you're encrypting each partition twice. Once =
+by the dm-crypt inside of the partition, and again by the dm-crypt that's u=
+nder the partition table. This double encryption is ruinous for performance=
+, so it's just not a feasible solution and thus people don't do this. Would=
+ be nice if we had the flexibility though.
+>
+> As an encrypted-systems administrator, I would actively expect and
+> require that stacked encryption layers WOULD each encrypt.  If I have
+> set up full disk encryption, then as an administrator I expect that to
+> be obeyed without exception, regardless of whether some higher level
+> file system has done encryption already.
+>
+> Anything that allows a higher level to bypass the full disk encryption
+> layer is, in my opinion, a bug and a serious security hole.
 
-Ok, if it's in the UAPI then I suppose it needs to stay.
+Sure I'm sure there's usecases where passthrough doesn't make sense.
+It should absolutely be an opt-in flag on the dm target, so you the
+administrator at setup time can choose whether or not you perform
+double-encryption (and it defaults to doing so). Because there are
+usecases where it doesn't matter, and for those usecases we'd set the
+flag and allow passthrough for performance reasons.
 
-But could we differentiate in the documentation between
-ETHTOOL_MSG_PHY_GET_REPLY and ETHTOOL_MSG_PHY_NTF?
+- Adrian
 
