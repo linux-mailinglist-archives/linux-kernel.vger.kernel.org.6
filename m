@@ -1,202 +1,156 @@
-Return-Path: <linux-kernel+bounces-379992-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379993-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB319AE6D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:38:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C21AB9AE6D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:39:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9BCC51F287BF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:38:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C56FB21D2A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:39:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C0C7E1E3DF1;
-	Thu, 24 Oct 2024 13:36:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DE01DD524;
+	Thu, 24 Oct 2024 13:37:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="SQzhPISO"
-Received: from out-185.mta0.migadu.com (out-185.mta0.migadu.com [91.218.175.185])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+lRoR6a"
+Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 236401DFEF
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:36:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.185
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1850718A957
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:37:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776983; cv=none; b=gv37CkT5vb9/qexT9eHzYGv1IsvBe9j5gkx0VhoZdlOPYwKipzQHWby+217Sct5JLYUuxc8H8H5187Av0mtpov1Ko9aDMUwjWFqJb0W5k7K6fogMcOLH5IwPRcvOySNnJaqhklVb7sdT7QSK0NGWSerznkYTtul61Z8L0gb6Wzw=
+	t=1729777062; cv=none; b=lUEtLQcZQAGpYRwvZrtHzRIfd6CSBVDrxHN/vMFIZerfapKN47utL81QV35rL/u8crm+HY9gChC1dzof7bZf8jsL5O9kR+I8SL8nXKikjjTBl8MevOTy9eG918qmSvWQqxPPX0aXwl8XnApk0hvKMEgWfXEogR0syuuMEgvDyMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776983; c=relaxed/simple;
-	bh=dNw4yiNxvN3RffVsXURN65ZdLfgHK4tC7Yc1e224ELQ=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=DHFlFQUKG4U5oWz79lReEvyoQKTCGh/nSEhj64xTF6qiP1lfZ3nZvTzw4esIEkLjSPPy6ZZy/vOqumAHCIS4jsLVlL+9tzG0oR1miWvEzg36rqSVnA8gqf15JcRnvfGQnRSaLP4JQr5PPOdyifzERKycW/W9gkeHt5hSW3zhlqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=SQzhPISO; arc=none smtp.client-ip=91.218.175.185
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <6cd4d59d-b635-47a3-8207-c07a18603037@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729776978;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=Wf2g1jKmKuGEGD90gcjJ+D3Suvt0meADVKnkeTAAty8=;
-	b=SQzhPISO9aL3GFavgXIE7050rMHRPRmuAJ3mGuvOQ+2Ez/w/a6dHS2GZ3kyN/KScT0+qM0
-	ofsmXgFBSnGggJ6baSLnbUNsrY2IjkFMzlnzpUkMHCGSooSA1ydnKQ8iVP/MT8LhP1qYEe
-	ZEc9cu5NBsr6tXwn2cqqmQgZhF9/wrI=
-Date: Thu, 24 Oct 2024 14:36:10 +0100
+	s=arc-20240116; t=1729777062; c=relaxed/simple;
+	bh=2SnOCBhwyZXux7fMxMhAoghWlcal9u7yKI8UxNjFwvU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=fBsDqYjrsY5JeBh2/evNyqORpl35TO4epPLjUeW9Yhk1zoBdtx8XiDM/ac1CoR5vJTZKIt9tk4cxAKrlshQR/Ava3sIQcPseANrwm4hssoQ9HotOFOsWL/fKLTjY2q1HgxKxKsVX3klMCuNurjq/TQhk+Lo5pMY/jOaqST32wrs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+lRoR6a; arc=none smtp.client-ip=209.85.214.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c693b68f5so8958585ad.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:37:39 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729777059; x=1730381859; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=OEUVjMM5cP3IVCnt0k5pdLcYpW2rv69GG7ZEMarKJtw=;
+        b=o+lRoR6aKD0qeBdWA+K4bPC+5SWgH7n596QcIzRKSHB1kj17A5qI1Wa/7JExqPLYyF
+         SrBdyXrZemDb+UfxeF+m0NTB81047dj5cQp6GAW4IFqcuMb2TwO7L6UKa+5PmYdgvYob
+         0G20R/H4vT23h70rmZvvxvDfmCYNjXv5SyZfepVJNxCYjS0j4ZUUIzNzkf93VkHRLq3i
+         CHhW/GEkFekwrPHZnZ1bYAHQB9TYdmlDS9cRSJrD2JTYhI4IYKDQa0nQpqAZQ+/UETgc
+         qfgFcisXKpMWM8NMzk4+iQ/+t0vLylkDvb8e2su0HdHdxOYEVGKkMZLEYZ2KjXka0eAc
+         Dpag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729777059; x=1730381859;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=OEUVjMM5cP3IVCnt0k5pdLcYpW2rv69GG7ZEMarKJtw=;
+        b=aBsbGIRKfCZGnA454NzoKUIHnpvd6WfR12Tz+2+Rxv8c6ia371UlzTEqfdqW49Tz55
+         DpH7WCk1bGJsyf4e54M6TIU8M8oMmK9/EOHgjemDan0v6eBJgOGZ7QINoR3ktR0jLrsX
+         9wqkPi/wVT23YLgWp9nwwgdoDwWciMlnjZ0EWGo8vTLurABmynNHV9SX0EwoIGBQwMGq
+         Ddi4vp2K1KPct9ru8MfFxR0YmZe0ApM0Zkc/OOf3ofGPEsDu1M1TI0m0CCb1iegU5ggc
+         MMofFTO11fy0DB6Zio5jOiBowlCYa2gjJIY10RyxtX3Phk6UUc462xN8C153f6IOHv0k
+         rKkw==
+X-Forwarded-Encrypted: i=1; AJvYcCWh4PWg498NUw5cnCZcTJrfgagjeS/SqgdsximjywUXxWRIBUz+wNPr5NdzlfqeBgJgP2Dhc2LxiApvoTg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy/t+o7DTv7kMPejI1ot6c/1ZvpgBQeJjZ02Hl4+CwPRNfnyljb
+	54IzjNvTcJqOcPgMZmxFPKUdnLECw7iXB6epkoBSyD2vNdC312acnLGaLuEykQ==
+X-Google-Smtp-Source: AGHT+IFiiaGstAUCa0yhoLQK9WOfZBFCSnbIm9dfRr0/3J1Y6pVv4EtfDs8oy/FmQdzWGXDBeKjijw==
+X-Received: by 2002:a17:902:e747:b0:20c:bda8:3a10 with SMTP id d9443c01a7336-20fa9eb64bdmr87232365ad.37.1729777059284;
+        Thu, 24 Oct 2024 06:37:39 -0700 (PDT)
+Received: from thinkpad ([220.158.156.77])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0d671sm72669225ad.98.2024.10.24.06.37.36
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 06:37:38 -0700 (PDT)
+Date: Thu, 24 Oct 2024 19:07:34 +0530
+From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Stephan Gerhold <stephan.gerhold@linaro.org>,
+	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Subject: Re: [PATCH 1/5] PCI/pwrctl: Use of_platform_device_create() to
+ create pwrctl devices
+Message-ID: <20241024133734.7iibqvjby3id4hjt@thinkpad>
+References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
+ <20241022-pci-pwrctl-rework-v1-1-94a7e90f58c5@linaro.org>
+ <CACMJSeuBb9VmRrGJnak6D3Ddow+-OMb+79uZzUUaWe3BF1SgTg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 2/4] net: hsr: Add VLAN CTAG filter support
-To: MD Danish Anwar <danishanwar@ti.com>, geliang@kernel.org,
- liuhangbin@gmail.com, dan.carpenter@linaro.org, jiri@resnulli.us,
- n.zhandarovich@fintech.ru, aleksander.lobakin@intel.com, lukma@denx.de,
- horms@kernel.org, jan.kiszka@siemens.com, diogo.ivo@siemens.com,
- shuah@kernel.org, pabeni@redhat.com, kuba@kernel.org, edumazet@google.com,
- davem@davemloft.net, andrew+netdev@lunn.ch
-Cc: linux-kselftest@vger.kernel.org, linux-kernel@vger.kernel.org,
- netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org, srk@ti.com,
- Vignesh Raghavendra <vigneshr@ti.com>, Roger Quadros <rogerq@kernel.org>,
- m-malladi@ti.com
-References: <20241024103056.3201071-1-danishanwar@ti.com>
- <20241024103056.3201071-3-danishanwar@ti.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241024103056.3201071-3-danishanwar@ti.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CACMJSeuBb9VmRrGJnak6D3Ddow+-OMb+79uZzUUaWe3BF1SgTg@mail.gmail.com>
 
-On 24/10/2024 11:30, MD Danish Anwar wrote:
-> From: Murali Karicheri <m-karicheri2@ti.com>
+On Wed, Oct 23, 2024 at 11:18:51AM +0200, Bartosz Golaszewski wrote:
+> On Tue, 22 Oct 2024 at 12:28, Manivannan Sadhasivam via B4 Relay
+> <devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
+> >
+> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> >
+> > of_platform_populate() API creates platform devices by descending through
+> > the children of the parent node. But it provides no control over the child
+> > nodes, which makes it difficult to add checks for the child nodes in the
+> > future. So use of_platform_device_create() API together with
+> > for_each_child_of_node_scoped() so that it is possible to add checks for
+> > each node before creating the platform device.
+> >
+> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+> > ---
+> >  drivers/pci/bus.c | 12 +++++++-----
+> >  1 file changed, 7 insertions(+), 5 deletions(-)
+> >
+> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
+> > index 55c853686051..959044b059b5 100644
+> > --- a/drivers/pci/bus.c
+> > +++ b/drivers/pci/bus.c
+> > @@ -13,6 +13,7 @@
+> >  #include <linux/ioport.h>
+> >  #include <linux/of.h>
+> >  #include <linux/of_platform.h>
+> > +#include <linux/platform_device.h>
+> >  #include <linux/proc_fs.h>
+> >  #include <linux/slab.h>
+> >
+> > @@ -329,6 +330,7 @@ void __weak pcibios_bus_add_device(struct pci_dev *pdev) { }
+> >  void pci_bus_add_device(struct pci_dev *dev)
+> >  {
+> >         struct device_node *dn = dev->dev.of_node;
+> > +       struct platform_device *pdev;
+> >         int retval;
+> >
+> >         /*
+> > @@ -351,11 +353,11 @@ void pci_bus_add_device(struct pci_dev *dev)
+> >         pci_dev_assign_added(dev, true);
+> >
+> >         if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
+> > -               retval = of_platform_populate(dev_of_node(&dev->dev), NULL, NULL,
+> > -                                             &dev->dev);
+> > -               if (retval)
+> > -                       pci_err(dev, "failed to populate child OF nodes (%d)\n",
+> > -                               retval);
+> > +               for_each_child_of_node_scoped(dn, child) {
 > 
-> This patch adds support for VLAN ctag based filtering at slave devices.
-> The slave ethernet device may be capable of filtering ethernet packets
-> based on VLAN ID. This requires that when the VLAN interface is created
-> over an HSR/PRP interface, it passes the VID information to the
-> associated slave ethernet devices so that it updates the hardware
-> filters to filter ethernet frames based on VID. This patch adds the
-> required functions to propagate the vid information to the slave
-> devices.
+> Since we won't be populating any disabled nodes, I'd use
+> for_each_available_child_of_node_scoped() here.
 > 
-> Signed-off-by: Murali Karicheri <m-karicheri2@ti.com>
-> Signed-off-by: MD Danish Anwar <danishanwar@ti.com>
-> ---
->   net/hsr/hsr_device.c | 71 +++++++++++++++++++++++++++++++++++++++++++-
->   1 file changed, 70 insertions(+), 1 deletion(-)
-> 
-> diff --git a/net/hsr/hsr_device.c b/net/hsr/hsr_device.c
-> index 0ca47ebb01d3..ff586bdc2bde 100644
-> --- a/net/hsr/hsr_device.c
-> +++ b/net/hsr/hsr_device.c
-> @@ -515,6 +515,68 @@ static void hsr_change_rx_flags(struct net_device *dev, int change)
->   	}
->   }
->   
-> +static int hsr_ndo_vlan_rx_add_vid(struct net_device *dev,
-> +				   __be16 proto, u16 vid)
-> +{
-> +	struct hsr_port *port;
-> +	struct hsr_priv *hsr;
-> +	int ret = 0;
-> +
-> +	hsr = netdev_priv(dev);
-> +
-> +	hsr_for_each_port(hsr, port) {
-> +		if (port->type == HSR_PT_MASTER)
-> +			continue;
-> +
-> +		ret = vlan_vid_add(port->dev, proto, vid);
-> +		switch (port->type) {
-> +		case HSR_PT_SLAVE_A:
-> +			if (ret) {
-> +				netdev_err(dev, "add vid failed for Slave-A\n");
-> +				return ret;
-> +			}
-> +			break;
-> +
-> +		case HSR_PT_SLAVE_B:
-> +			if (ret) {
-> +				/* clean up Slave-A */
-> +				netdev_err(dev, "add vid failed for Slave-B\n");
-> +				vlan_vid_del(port->dev, proto, vid);
-> +				return ret;
-> +			}
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
 
-This function doesn't match with hsr_ndo_vlan_rx_kill_vid().
-vlan_vid_add() can potentially be executed for port->type
-equals to HSR_PT_INTERLINK, but the result will be ignored. And
-the vlan_vid_del() will never happen in this case. Is it desired
-behavior? Maybe it's better to synchronize add/del code and refactor
-error path to avoid coping the code?
+Ack.
 
-> +
-> +static int hsr_ndo_vlan_rx_kill_vid(struct net_device *dev,
-> +				    __be16 proto, u16 vid)
-> +{
-> +	struct hsr_port *port;
-> +	struct hsr_priv *hsr;
-> +
-> +	hsr = netdev_priv(dev);
-> +
-> +	hsr_for_each_port(hsr, port) {
-> +		if (port->type == HSR_PT_MASTER)
-> +			continue;
-> +		switch (port->type) {
-> +		case HSR_PT_SLAVE_A:
-> +		case HSR_PT_SLAVE_B:
-> +			vlan_vid_del(port->dev, proto, vid);
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +
-> +	return 0;
-> +}
-> +
->   static const struct net_device_ops hsr_device_ops = {
->   	.ndo_change_mtu = hsr_dev_change_mtu,
->   	.ndo_open = hsr_dev_open,
-> @@ -523,6 +585,8 @@ static const struct net_device_ops hsr_device_ops = {
->   	.ndo_change_rx_flags = hsr_change_rx_flags,
->   	.ndo_fix_features = hsr_fix_features,
->   	.ndo_set_rx_mode = hsr_set_rx_mode,
-> +	.ndo_vlan_rx_add_vid = hsr_ndo_vlan_rx_add_vid,
-> +	.ndo_vlan_rx_kill_vid = hsr_ndo_vlan_rx_kill_vid,
->   };
->   
->   static const struct device_type hsr_type = {
-> @@ -569,7 +633,8 @@ void hsr_dev_setup(struct net_device *dev)
->   
->   	dev->hw_features = NETIF_F_SG | NETIF_F_FRAGLIST | NETIF_F_HIGHDMA |
->   			   NETIF_F_GSO_MASK | NETIF_F_HW_CSUM |
-> -			   NETIF_F_HW_VLAN_CTAG_TX;
-> +			   NETIF_F_HW_VLAN_CTAG_TX |
-> +			   NETIF_F_HW_VLAN_CTAG_FILTER;
->   
->   	dev->features = dev->hw_features;
->   }
-> @@ -647,6 +712,10 @@ int hsr_dev_finalize(struct net_device *hsr_dev, struct net_device *slave[2],
->   	    (slave[1]->features & NETIF_F_HW_HSR_FWD))
->   		hsr->fwd_offloaded = true;
->   
-> +	if ((slave[0]->features & NETIF_F_HW_VLAN_CTAG_FILTER) &&
-> +	    (slave[1]->features & NETIF_F_HW_VLAN_CTAG_FILTER))
-> +		hsr_dev->features |= NETIF_F_HW_VLAN_CTAG_FILTER;
-> +
->   	res = register_netdevice(hsr_dev);
->   	if (res)
->   		goto err_unregister;
+- Mani
 
+-- 
+மணிவண்ணன் சதாசிவம்
 
