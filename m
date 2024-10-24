@@ -1,235 +1,147 @@
-Return-Path: <linux-kernel+bounces-380749-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380750-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E7E139AF584
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:38:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC9979AF587
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:41:42 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 17D5D1C23040
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:38:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9224C282E72
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:41:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50962185B3;
-	Thu, 24 Oct 2024 22:38:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BD262185BC;
+	Thu, 24 Oct 2024 22:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Vqs3Mhn/"
-Received: from mail-lf1-f51.google.com (mail-lf1-f51.google.com [209.85.167.51])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="vVWYG4YR"
+Received: from mail-ej1-f41.google.com (mail-ej1-f41.google.com [209.85.218.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4638B2170C5
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:38:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 904C122B641
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:41:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729809505; cv=none; b=UbO6ObbFlGfbTGBIb77rNZXpQkqvKiCyIYsLsvtnabnQeSsRc6T4On3PvbMClCN/y7TPjfMDsgOF9v+rw8XX2/0ZtfRaN+T8juoRb7a9RN/BsoQHlTrFLucJEH8wL9sz0BrOKscRdUTgWvDD5hNzH3QWFbcIQLGkoddeHk73ef0=
+	t=1729809694; cv=none; b=IJoIPcIXvEFpjbjwkdCU551hX0o/7SYUbN5PxZHnUfKOWSu8v6VL9HXPsQSzf7MmGfl6cb5vuhW3rVrkin+eCyP6Yp/XVmjpIpM5t/7ZQ9vOqLQRgqCPwV31fHbRJmk30gvtxafnOdWUvZrmX/3V66Lgtaa5ob0lHZEXaWaDTjw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729809505; c=relaxed/simple;
-	bh=X8VlimnOpM3aYSaRCVCsg/PKQwzSkTGsHNQgqT+QXbw=;
+	s=arc-20240116; t=1729809694; c=relaxed/simple;
+	bh=Jl12nz369VYuGP1luOWuXZxpYCLrPVDlDRhUE4vjT+c=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WNQmsCoMBMwBx5Rf8O2zweqAH6L2JhA8fLmxhXaYmo7Da3UGFFsfB78dALCvxTaJWu41bq2Kt0fLhythmoY33VrwpB3svaY6JD12AkQRQLltgsSGppSqE7GcXou9WLJGG102dZXqQyTtT+W4SjJbTWSSF8Hkx32smZP0co2058I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Vqs3Mhn/; arc=none smtp.client-ip=209.85.167.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f51.google.com with SMTP id 2adb3069b0e04-53a007743e7so1760270e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:38:21 -0700 (PDT)
+	 To:Cc:Content-Type; b=gBMrgaV+HZaWpyLN+gZr6vNMTf4SVoiYaKIIEfOTzCFl0W8jYZ1dFCYtKxdMzvILMwWa2SZALHENDYFwtoWFPxYLvN04pBPXkM/4ZLYynBwPufhNT1GmTnpXjHwTnHZSpEcDnZEkWoxcfEsyPirA5etL+isfhmrnPodba/rR8ek=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=vVWYG4YR; arc=none smtp.client-ip=209.85.218.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f41.google.com with SMTP id a640c23a62f3a-a9a2209bd7fso178595666b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:41:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729809499; x=1730414299; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729809691; x=1730414491; darn=vger.kernel.org;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=Sd8x1e93gyeJX8KDkGrIIHUTJan7juKooq/kAucfUrQ=;
-        b=Vqs3Mhn//W33/enae8vuFIx5z323FRts3jxve4kgRbrT+DsJqkH9oQEh2Ct1edco6x
-         vO2q0nyOdP5FVMTMc7mOaTbgiYYTJkablH+Ef4mffbWVJZtxf8M/OBQGQTJcsSB+PV6L
-         Ro4Cwbyco6Xwnc/QHAU2vP8D9BNJ8vpeuhu40AZ2S/9owwj9vP/oya+/XOw2MMzqv19Y
-         f1jPRwzipoNuPThalOsRlbUAe6303AmIcMMkkJpSChNVgmH864vCDl8mqIoiDK68ChBy
-         /Uv8Ro65HiwtDG6Ph4S6V0K1xkMSadM7TgeQcLHrNVFkvRPWy6hZHYWvVOwXYm6uQMGO
-         rAWA==
+        bh=/Yt5Cgkc4G7tTz07LApg3hXjFp6M5pGm/7kpNHdbJzI=;
+        b=vVWYG4YRbkDCc6Z9p52/mF8HO2ritPwBzzGI+qrS9gzbmaPtz8+BBKWcMuqWjCyo5D
+         niJTQekyhxm0eAS1+LcYLVJZdmGuZ1//9vwC1/YjHMqxb4BYKJ4cLT8C8ycgqGNA58fv
+         KFtu2nu9KKrUBhZStuOuGqRKHHwWAiAgxNOSYIsM4nN2EzX8OkqczlnIHX3afQUmMl38
+         2TAHt75kReFef4NVB0fOS11I6ndxaj7LsjP/spa5RZP9LuHVjPWQCmzjiY8+zMeTFRQ4
+         OM5meYgpRk+KlFWtzbm21ddjll3cIH3Q0lPSaF+qho2xRBiHqCPbTDb4zSe5EVtVJnKV
+         uPvA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729809499; x=1730414299;
+        d=1e100.net; s=20230601; t=1729809691; x=1730414491;
         h=content-transfer-encoding:cc:to:subject:message-id:date:from
          :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=Sd8x1e93gyeJX8KDkGrIIHUTJan7juKooq/kAucfUrQ=;
-        b=u2Sv3i8qVEkOcShP4LgAiBOHeP7FeCQYOVTNuiUhqK+tAZsVjYbIu9tYn8vnYNNxjx
-         F5LehA7ghtmPipIXe1Zx+sqimg0zRZUM//0odXBFuCgLuYAgne87x+Jt5vPGtcz5hc+i
-         spIWbwF8lHazaPWQQsVMlb8R6pPfRo/dwKBV6frKJA6xX5nI8kwR2/7qYcqa43Yv85S6
-         aEAxzQ4iiiX2uvQHcyTAeJLGdqcjxb3nshbgyxynzRvB8K2ngiEqBknlhz9I+amBq0Z1
-         76bUlL740x8C6/QGvB3OCO/756oWi8DaxTl71jAU7lNEdwm3yC3KNP8SM7shI5RVO26f
-         ZFpw==
-X-Forwarded-Encrypted: i=1; AJvYcCUNtU1NZgEapWBa9xImt77im6BSew6POcFI4t/RXN9dMeDYy0tf9Yy/HrEtZIZr5w1hFbLCEMGRm5M8SXo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwmqjQKV+fUVeV2+UhB6mq9WAOuv59cqGMEV2KQaL/yDibv5bjS
-	0ov+sMl1IhFqiQdaj46YXMfrNrgCac7sXZlUvd5Q3y6iF6PfjS5avt/FM84hNA7C1hFVj/YY/Xg
-	Q79uqKkHGn8MduP7iyuV0zA310gJ6j+wJlEAvLw==
-X-Google-Smtp-Source: AGHT+IE5xxtC2Rc24n40JWosDcNQf9KHvHXEMlpBefnnaFUNn8d62HXfg1mRdDkM6cR/UQGw/6tcJB7OYxes1hC/wMA=
-X-Received: by 2002:a05:6512:a8d:b0:539:fbfa:4a9f with SMTP id
- 2adb3069b0e04-53b1a3a7a4bmr3558958e87.58.1729809499262; Thu, 24 Oct 2024
- 15:38:19 -0700 (PDT)
+        bh=/Yt5Cgkc4G7tTz07LApg3hXjFp6M5pGm/7kpNHdbJzI=;
+        b=MpLQpQvJyPgjMxAXwk5dQvRAqaGVK7siQ3X8MYoj1BF+iCY/gPmZC/KzwAZvB4R75I
+         MxuNzYGQT/dVcagcTipTN+Xbe4guPSt9U8OtL7GOsyTgVaSl4ji5WM96lZkL9PIhNv5R
+         /yyIo5KYwuMpL7K05KfyR6J80HWrBOTuxi9ZMHEtl+WIl3Yz4KOfSva2OWqDPnW7+3D9
+         VUZBJ3I2NrpS1x+o/2+z4zqEolLtRVRB/Ym8MbUJjhBjPeGHXcvKNv9ibBEfvAXjAzKT
+         fguktVxyFWD348FOulUqbqyViuJBEEvG+H478bRNsvRB20m2Myy22FkhsrDJLgQ8+XRB
+         Iztw==
+X-Forwarded-Encrypted: i=1; AJvYcCV9kwM0xjiTgg3MKWiGWU0WqqBNSxODp267Da6XibM4uKPowuDk+ScJZLDXrJaaxRbra+ogJ8fOvzrjO/I=@vger.kernel.org
+X-Gm-Message-State: AOJu0YybPh02vQQErjz/PSjaCDBMO8cQ3uCsoKqZf7ULpVXYjRjTa/0g
+	xQequi2VPRcZ1tehTXKpSdZYpL9BUswPlZ3fh9KOIfH32txkuQPqfq2NFqhBh+Ucaz6VOz4E+OH
+	zG8BdT2R/W2b+YU2DyT4m2mLep/Gyjy+ZkwE=
+X-Google-Smtp-Source: AGHT+IEMUoIBtLKwgTVwxkC0PUhRKX+6wO7n6u1dbecUrsdWz5Dsy9p2MJfLwx1u4mMOKUMKDFSBgbFY8/9/OaDyPps=
+X-Received: by 2002:a17:906:d552:b0:a9a:c651:e7d9 with SMTP id
+ a640c23a62f3a-a9ad2815503mr269633866b.46.1729809690489; Thu, 24 Oct 2024
+ 15:41:30 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022155658.1647350-1-antonio.borneo@foss.st.com> <20241022155658.1647350-8-antonio.borneo@foss.st.com>
-In-Reply-To: <20241022155658.1647350-8-antonio.borneo@foss.st.com>
-From: Linus Walleij <linus.walleij@linaro.org>
-Date: Fri, 25 Oct 2024 00:38:08 +0200
-Message-ID: <CACRpkdZKimfE_00kxa_qAf+jjwxBtuKizDTd3RvOS_PDuZ_JKg@mail.gmail.com>
-Subject: Re: [PATCH 07/14] dt-bindings: pinctrl: stm32: support IO
- synchronization parameters
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Alexandre Torgue <alexandre.torgue@foss.st.com>, Catalin Marinas <catalin.marinas@arm.com>, 
-	Will Deacon <will@kernel.org>, linux-gpio@vger.kernel.org, devicetree@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	=?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>, 
-	Stephane Danieau <stephane.danieau@foss.st.com>, 
-	Amelie Delaunay <amelie.delaunay@foss.st.com>, Fabien Dessenne <fabien.dessenne@foss.st.com>, 
-	Valentin Caron <valentin.caron@foss.st.com>, 
-	Gatien Chevallier <gatien.chevallier@foss.st.com>, Cheick Traore <cheick.traore@foss.st.com>, 
-	linux-stm32@st-md-mailman.stormreply.com
+References: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-0-554456a44a15@linutronix.de>
+ <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-25-554456a44a15@linutronix.de>
+In-Reply-To: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-25-554456a44a15@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 24 Oct 2024 15:41:19 -0700
+Message-ID: <CANDhNCpFFRoj6O_0WP0yZt-A+hk7QAkQXjd9ekxvsgUT+yYXiQ@mail.gmail.com>
+Subject: Re: [PATCH v2 25/25] timekeeping: Merge timekeeping_update_staged()
+ and timekeeping_update()
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
+	Christopher S Hall <christopher.s.hall@intel.com>
 Content-Type: text/plain; charset="UTF-8"
 Content-Transfer-Encoding: quoted-printable
 
-Hi Antonio/Fabien,
-
-thanks for your patch!
-
-On Tue, Oct 22, 2024 at 5:59=E2=80=AFPM Antonio Borneo
-<antonio.borneo@foss.st.com> wrote:
-
-> From: Fabien Dessenne <fabien.dessenne@foss.st.com>
+On Wed, Oct 9, 2024 at 1:29=E2=80=AFAM Anna-Maria Behnsen
+<anna-maria@linutronix.de> wrote:
 >
-> Support the following IO synchronization parameters:
-> - Delay (in ns)
-> - Delay path (input / output)
-> - Clock edge (single / double edge)
-> - Clock inversion
-> - Retiming
+> From: Anna-Maria Behnsen <anna-maria@linutronix.de>
 >
-> Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
-> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
-(...)
+> timekeeping_update_staged() is the only call site of timekeeping_update()=
+.
+>
+> Merge those functions. No functional change.
+>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
+> ---
+>  kernel/time/timekeeping.c | 31 ++++++++++++++-----------------
+>  1 file changed, 14 insertions(+), 17 deletions(-)
+>
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 67d7be2e02fb..d07eb1946ff1 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -529,7 +529,7 @@ EXPORT_SYMBOL_GPL(ktime_get_raw_fast_ns);
+>   *    timekeeping_inject_sleeptime64()
+>   *    __timekeeping_inject_sleeptime(tk, delta);
+>   *                                                 timestamp();
+> - *    timekeeping_update(tkd, tk, TK_CLEAR_NTP...);
+> + *    timekeeping_update_staged(tkd, TK_CLEAR_NTP...);
+>   *
+>   * (2) On 32-bit systems, the 64-bit boot offset (tk->offs_boot) may be
+>   * partially updated.  Since the tk->offs_boot update is a rare event, t=
+his
+> @@ -775,10 +775,21 @@ static void timekeeping_restore_shadow(struct tk_da=
+ta *tkd)
+>         memcpy(&tkd->shadow_timekeeper, &tkd->timekeeper, sizeof(tkd->tim=
+ekeeper));
+>  }
+>
+> -static void timekeeping_update(struct tk_data *tkd, struct timekeeper *t=
+k, unsigned int action)
+> +static void timekeeping_update_staged(struct tk_data *tkd, unsigned int =
+action)
 
-I want to check if we already have some of these properties
-and if we don't, if they could and should be made generic,
-i.e. will we see more of them, also from other vendors?
+I still think timekeeping_update_from_shadow would be a better name.
 
-> +          st,io-delay-path:
-> +            description: |
-> +              IO synchronization delay path location
-> +              0: Delay switched into the output path
-> +              1: Delay switched into the input path
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1]
+>  {
+> +       struct timekeeper *tk =3D &tk_core.shadow_timekeeper;
+> +
 
-This looks related to the st,io-delay below so please keep those
-properties together.
+Same naming nit, as its easy to mix up what tk is modifying.
 
-Is this path identification really needed in practice, isn't it
-implicit from other pin config properties if the pin is used as
-input or output, and in that case where the delay applies?
+Other than those,
+Acked-by: John Stultz <jstultz@google.com>
 
-Do you really have - in practice - pins that change between
-input and output and need different delays at runtime (i.e. not
-at startup)?
+Thanks so much for these really nice cleanups! They are a great
+improvement to the code!
+And again, my apologies for jumping off to other things midway through
+reviewing these and not getting back to them until now.
 
-Otherwise I would say that just checking if the line is in input
-or output from other properties should be enough to configure
-this? input-enable, output-enable to name the obvious.
-
-
-> +          st,io-clk-edge:
-> +            description: |
-> +              IO synchronization clock edge
-> +              0: Data single-edge (changing on rising or falling clock e=
-dge)
-> +              1: Data double-edge (changing on both clock edges)
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1]
-
-This looks like it should be made into a generic property,
-it seems to be about how the logic is used rather than something
-electronic but arguable fits in pin config.
-
-Isn't this usually called DDR (double data rate) in tech speak?
-
-What about a generic property "double-data-rate"?
-
-> +          st,io-clk-type:
-> +            description: |
-> +              IO synchronization clock inversion
-> +              0: IO clocks not inverted. Data retimed to rising clock ed=
-ge
-> +              1: IO clocks inverted. Data retimed to falling clock edge
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1]
-
-Doesn't this require st,io-retime to be specified at the same time?
-
-Then we should add some YAML magic (if we can) to make sure
-that happens.
-
-> +          st,io-retime:
-> +            description: |
-> +              IO synchronization data retime
-> +              0: Data not synchronized or retimed on clock edges
-> +              1: Data retimed to either rising or falling clock edge
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            enum: [0, 1]
-
-Can't these two be merged into one (generic) property:
-
-io-retime
-
-enum [0, 1, 2]
-
-0=3Dnone
-1=3Drising retime
-2=3Dfalling retime
-
-Retiming seems like a very generic concept so I think it should
-be made into a generic property.
-
-> +          st,io-delay:
-> +            description: |
-> +              IO synchronization delay applied to the input or output pa=
-th
-> +              0: No delay
-> +              1: Delay 0.30 ns
-> +              2: Delay 0.50 ns
-> +              3: Delay 0.75 ns
-> +              4: Delay 1.00 ns
-> +              5: Delay 1.25 ns
-> +              6: Delay 1.50 ns
-> +              7: Delay 1.75 ns
-> +              8: Delay 2.00 ns
-> +              9: Delay 2.25 ns
-> +              10: Delay 2.50 ns
-> +              11: Delay 2.75 ns
-> +              12: Delay 3.00 ns
-> +              13: Delay 3.25 ns
-> +            $ref: /schemas/types.yaml#/definitions/uint32
-> +            minimum: 0
-> +            maximum: 13
-
-This looks very similar to the existing "skew-delay" property:
-
-  skew-delay:
-    $ref: /schemas/types.yaml#/definitions/uint32
-    description:
-      this affects the expected clock skew on input pins
-      and the delay before latching a value to an output
-      pin. Typically indicates how many double-inverters are
-      used to delay the signal.
-
-can't we just use that?
-
-Feel free to edit the text for it in
-Documentation/devicetree/bindings/pinctrl/pincfg-node.yaml
-if that is too clock-specific.
-
-Yours,
-Linus Walleij
+thanks
+-john
 
