@@ -1,298 +1,159 @@
-Return-Path: <linux-kernel+bounces-379458-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379460-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F5299ADED7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:19:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CAE29ADEDD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:19:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408951C20294
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:19:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 05BB428A0A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:19:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE1F1B21A5;
-	Thu, 24 Oct 2024 08:16:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 276B01BD012;
+	Thu, 24 Oct 2024 08:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OBubRTSL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QfFMJNI/";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OBubRTSL";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QfFMJNI/"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="jp2WD3Rz"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729BB1B219D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:16:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438DC1B21AF
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:17:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757782; cv=none; b=rsyi6sUqzW54N4DiGhVLc2kbXK09hvkv7NV2Vu23rv7CxcYu84WLJ0PQrvjgzKyBakmDptvE4pYfDIfZLOGYVSPJMdp41FaTD8aO1pQ03rbgSdMuuFV5gGp86upbQke9+s0uf/bblDPb9BzUHHqDx9TDhbEuBr82Sss2eFO5z5g=
+	t=1729757847; cv=none; b=Y3gkOwmSCqchxsKnVNOdZeqfsWTNDBBsXRKmiNee0ejj/Ngum/PkI7wOzdbMSits13eze2WYfLhekVFvRqDJGqW38TcWrV2A2SvyIId70unHETk4dLgKuvPRa7aMkO0Uh3/2hJeAOlgxgM9MRJOZqkSlkkraBgnxwfG1I/Oe5oI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757782; c=relaxed/simple;
-	bh=eqjuAh8tpKAwsPdkNztKv8T09eMW1BKep8ZIYGlNmFs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=M2kf7wu/boGlpbCg6HnlC0/7xNV27UMnhrsjWD+5oHZz0JycM92rm063XsctAWapf0J06PAM+Fyo35lWPdTjIlmtAW3RdgE6Kme4gCS0Z04mjKf+VgikzeK9nzU50vPiL0OO1ANTugDAeiy6nUYtlmnw6F6HFYbi5AQq71gkjIU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OBubRTSL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QfFMJNI/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OBubRTSL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QfFMJNI/; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 3F5F11FB7F;
-	Thu, 24 Oct 2024 08:16:13 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729757773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
-	b=OBubRTSLGYYlVzpN7006ePYeCVtBGuGdJzoDNFmWMsojvupyN8gKAWRnz1I2b92dvQiGZx
-	ISlgdLuKGl44++buPKpvfahJj88fOk7AnWr6dWWKMArLa+TMkyYIQWRTXhqYpR9bBi2IxU
-	XFZoHIZ4QdwbU20wkmnUo16owNDGIfc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729757773;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
-	b=QfFMJNI/89VQKpVRvQudPPH7n14UWsG4ZzfLGOmqWo5Cw19EmvxdsXPkVBayLNVunYqs6F
-	ix2NauhQWr6wEvAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OBubRTSL;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="QfFMJNI/"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729757773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
-	b=OBubRTSLGYYlVzpN7006ePYeCVtBGuGdJzoDNFmWMsojvupyN8gKAWRnz1I2b92dvQiGZx
-	ISlgdLuKGl44++buPKpvfahJj88fOk7AnWr6dWWKMArLa+TMkyYIQWRTXhqYpR9bBi2IxU
-	XFZoHIZ4QdwbU20wkmnUo16owNDGIfc=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729757773;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
-	b=QfFMJNI/89VQKpVRvQudPPH7n14UWsG4ZzfLGOmqWo5Cw19EmvxdsXPkVBayLNVunYqs6F
-	ix2NauhQWr6wEvAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28D66136F5;
-	Thu, 24 Oct 2024 08:16:13 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id /f2XCU0CGmfcMgAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 08:16:13 +0000
-Message-ID: <b594795a-7f26-4c0d-80f4-88d242fdc0fb@suse.cz>
-Date: Thu, 24 Oct 2024 10:16:12 +0200
+	s=arc-20240116; t=1729757847; c=relaxed/simple;
+	bh=5+PPddUOggBcLzUgVM4JAjl8yf57Cfb1Vspg+FOHcvE=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=bVkU4QHmJ6menlxk1G//KHK+1Im4NQcbDMk88N9JIttbvsj2wyDCAYJJIySUO09ALwAGSKj+clBYoD4kHYVuCNVx3HuMTBBkGXbSFLsIw5uri57qHeKSzVjkCjYEG1+pCBlRXzXTrJv5UX34O3kGQk7eicBV1uLyg2jEr+CwzSU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=jp2WD3Rz; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so6386145e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:17:24 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729757842; x=1730362642; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=4dTM6QAgU0iBX1/55GNjACOUfUPsURXI/ZYFo7NvddM=;
+        b=jp2WD3RzYsD/rrhoPjzwKAVbbI96vp2o/tRu0Shs0cKzwzcabClhxJClIP4D4N6kDY
+         ztHVvD5/1zFbdY+1u1oCG9SqcF5Yt6SoINRVZnytD0Ja/lUk+N1ii1cVjXYjUqq1bsUf
+         BbQrkWDiBt/U3GmXVXXX4ADGiIE3jewLW4Famp9N/b+GNPQF7P19Ybscqb7Uzeu3YEA2
+         C0Kmprc9/HFsJgrMvdqUIW610j67EFYgXq/phh3g2ACxbWA13veZh5PMalGpK3J2M3+G
+         Oww9eu0GAggky/0Kx6GOY5PMH1dE6zrgsS9xoa41WY3AUfu0+Z6I5aVor7+58TtF4Mfp
+         yDaA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729757842; x=1730362642;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=4dTM6QAgU0iBX1/55GNjACOUfUPsURXI/ZYFo7NvddM=;
+        b=fsyju7khLCu82/n1FxtKL6ZcClgBBqfZv6YD6n1nXTXr9eLXsLna1cLnjDeZICylmv
+         juc+IK2eFdog1fd8dc2/TKHpZpifyVhtp9DNxVStArkdfQDjcuqeNjH/5AaRG+KnfIvC
+         iKgWKcwtQ6mhmsBFzqzhoAl3U3m3mkQtMymps7SoMBFY7vVi5EOMf6rewqWGTZlWL2yM
+         totYXg67mfPoIazv60kMrAV6G2vv15yI3vwYJv1tdgFvxPEogyzScDNNEQsL1n1QseVv
+         PE0SxdrCkbYPC+odYTrF01xBQ3RJH3at1NEjtrAeQ6jpD2Yae8EMqG091Uj2IpU3/iR/
+         bAXw==
+X-Forwarded-Encrypted: i=1; AJvYcCWFbdmCpNdD50zWll3FNs9WV7QJJULnlMRqeXW+/d5Sqt0ex9WCBIZiU2VOMqwj4oda8GKCNuGqV8xWfXI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzgDVcpXnY9Y4aO7Xu4cgjZranhWaQg0ln6Vbx4iiEl/OwsS/TV
+	BTnbF0RtKvJIBLhGzOvW6pT/bh4DdoQ/H1MQ4VWxmszDV/eSS0z6WPo1JKYIs6m5TERdNTXd44+
+	z/lc=
+X-Google-Smtp-Source: AGHT+IGRnp0CPyE9Lu8MiPJUC8cE2tOabAKZQUMJoKtx0sHKMX+8ebn9dBSN/PK5Xm3LKaO9EFz3xQ==
+X-Received: by 2002:a05:600c:3595:b0:42c:a8cb:6a75 with SMTP id 5b1f17b1804b1-4318415f707mr48674225e9.17.1729757842561;
+        Thu, 24 Oct 2024 01:17:22 -0700 (PDT)
+Received: from [192.168.1.64] (2a02-842a-d52e-6101-6fd0-06c4-5d68-f0a5.rev.sfr.net. [2a02:842a:d52e:6101:6fd0:6c4:5d68:f0a5])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b93d53sm10828922f8f.70.2024.10.24.01.17.21
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 01:17:22 -0700 (PDT)
+From: Julien Stephan <jstephan@baylibre.com>
+Subject: [PATCH v3 0/4] ad7380: add adaq4370-4 and adaq4380-4 support
+Date: Thu, 24 Oct 2024 10:16:55 +0200
+Message-Id: <20241024-ad7380-add-adaq4380-4-support-v3-0-6a29bd0f79da@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
- free highatomic
-To: Yu Zhao <yuzhao@google.com>, Mel Gorman <mgorman@techsingularity.net>
-Cc: Michal Hocko <mhocko@suse.com>, Andrew Morton
- <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, Link Lin
- <linkl@google.com>, Matt Fleming <mfleming@cloudflare.com>
-References: <20241020051315.356103-1-yuzhao@google.com>
- <ZxYNLb0CiZyw31_q@tiehlicka>
- <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
- <ZxaOo59ZwXoCduhG@tiehlicka> <82e6d623-bbf3-4dd8-af32-fdfc120fc759@suse.cz>
- <CAOUHufanF3VaLzq6o_V+-+iPvB4Oj-xHwD+Rm-gmKS02h8Dw=g@mail.gmail.com>
- <97ccf48e-f30c-4abd-b8ff-2b5310a8b60f@suse.cz>
- <CAOUHufb=Ze1pj2BeasCLYpAvOhBQfKXcz678Zo_==9DeMbgT9Q@mail.gmail.com>
-Content-Language: en-US
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <CAOUHufb=Ze1pj2BeasCLYpAvOhBQfKXcz678Zo_==9DeMbgT9Q@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
-X-Rspamd-Queue-Id: 3F5F11FB7F
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	RCPT_COUNT_SEVEN(0.00)[9];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FROM_EQ_ENVFROM(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.cz:mid];
-	DKIM_TRACE(0.00)[suse.cz:+]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+X-B4-Tracking: v=1; b=H4sIAHcCGmcC/42Py2rDMBBFf8VoXQU9Y8Wr/kfpYiSNGkESO5JjG
+ oL/PWObQuimXQzDncWZcx+sYslYWdc8WMEp19xfKOi3hoUjXL6Q50iZKaGMFNJyiK12glakgat
+ ZguH1Ngx9Gbk0McgWgxDqwIgxFEz5e+V/fG654PVGb8btyDxU5KE/n/PYNc4jaNc6kFZKHxBiU
+ Mkn5YwXwodgQSGlyF71umaTE+ZHjl6uRidqxvW+bfXehuQAukmzReOY69iX+9p6kqvHPwtOkgs
+ eFUo42OSVce8e7qfsC+6oxAqf1AtQ6b+AagFam4Cqe4zpF3Ce5ydvb9P9pQEAAA==
+X-Change-ID: 20241015-ad7380-add-adaq4380-4-support-14dc17ec0029
+To: Lars-Peter Clausen <lars@metafoo.de>, 
+ Michael Hennerich <Michael.Hennerich@analog.com>, 
+ =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jonathan Corbet <corbet@lwn.net>
+Cc: linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, 
+ Julien Stephan <jstephan@baylibre.com>
+X-Mailer: b4 0.14.2
 
-On 10/24/24 06:35, Yu Zhao wrote:
-> On Wed, Oct 23, 2024 at 1:35 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->>
->> On 10/23/24 08:36, Yu Zhao wrote:
->> > On Tue, Oct 22, 2024 at 4:53 AM Vlastimil Babka <vbabka@suse.cz> wrote:
->> >>
->> >> +Cc Mel and Matt
->> >>
->> >> On 10/21/24 19:25, Michal Hocko wrote:
->> >>
->> >> Hm I don't think it's completely WAI. The intention is that we should be
->> >> able to unreserve the highatomic pageblocks before going OOM, and there
->> >> seems to be an unintended corner case that if the pageblocks are fully
->> >> exhausted, they are not reachable for unreserving.
->> >
->> > I still think unreserving should only apply to highatomic PBs that
->> > contain free pages. Otherwise, it seems to me that it'd be
->> > self-defecting because:
->> > 1. Unreserving fully used hightatomic PBs can't fulfill the alloc
->> > demand immediately.
->>
->> I thought the alloc demand is only blocked on the pessimistic watermark
->> calculation. Usable free pages exist, but the allocation is not allowed to
->> use them.
-> 
-> I think we are talking about two different problems here:
-> 1. The estimation problem.
-> 2. The unreserving policy problem.
-> 
-> What you said here is correct w.r.t. the first problem, and I was
-> talking about the second problem.
+Hello,
 
-OK but the problem with unreserving currently makes the problem of
-estimation worse and unfixable.
+This series add support for adaq4370-4 (2MSPS) and adaq4380-4 (4MSPS)
+which are quad-channel precision data acquisition signal chain μModule
+solutions compatible with the ad738x family, with the following differences:
 
->> > 2. More importantly, it only takes one alloc failure in
->> > __alloc_pages_direct_reclaim() to reset nr_reserved_highatomic to 2MB,
->> > from as high as 1% of a zone (in this case 1GB). IOW, it makes more
->> > sense to me that highatomic only unreserves what it doesn't fully use
->> > each time unreserve_highatomic_pageblock() is called, not everything
->> > it got (except the last PB).
->>
->> But if the highatomic pageblocks are already full, we are not really
->> removing any actual highatomic reserves just by changing the migratetype and
->> decreasing nr_reserved_highatomic?
-> 
-> If we change the MT, they can be fragmented a lot faster, i.e., from
-> the next near OOM condition to upon becoming free. Trying to persist
-> over time is what actually makes those PBs more fragmentation
-> resistant.
+- pin selectable gain in front of each 4 adc
+- internal reference is 3V derived from refin-supply (5V)
+- additional supplies
 
-If we assume the allocations there have similar sizes and lifetimes, then I
-guess yeah.
+This series depends on [1] which fix several supplies issues
 
->> In fact that would allow the reserves
->> grow with some actual free pages in the future.
-> 
-> Good point. I think I can explain it better along this line.
-> 
-> If highatomic is under the limit, both your proposal and the current
-> implementation would try to grow, making not much difference. However,
-> the current implementation can also reuse previously full PBs when
-> they become available. So there is a clear winner here: the current
-> implementation.
+[1]: https://lore.kernel.org/all/20241007-ad7380-fix-supplies-v1-0-badcf813c9b9@baylibre.com/
 
-I'd say it depends on the user of the highatomic blocks (the workload),
-which way ends up better.
+Signed-off-by: Julien Stephan <jstephan@baylibre.com>
+---
+Changes in v3:
+bindings:
+  - remove item from channel reg property (should be part of V2, but get
+    lost during rebase)
+  - remove unnecessary () for channel property
+  - keep consistent quotes
 
-> If highatomic has reached the limit, with your proposal, the growth
-> can only happen after unreserve, and unreserve only happens under
-> memory pressure. This means it's likely that it tries to grow under
-> memory pressure, which is more difficult than the condition where
-> there is plenty of memory. For the current implementation, it doesn't
-> try to grow, rather, it keeps what it already has, betting those full
-> PBs becoming available for reuse. So I don't see a clear winner
-> between trying to grow under memory pressure and betting on becoming
-> available for reuse.
+- Link to v2: https://lore.kernel.org/r/20241023-ad7380-add-adaq4380-4-support-v2-0-d55faea3bedf@baylibre.com
 
-Understood. But also note there are many conditions where the current
-implementation and my proposal behave the same. If highatomic pageblocks
-become full and then only one or few pages from each is freed, it suddenly
-becomes possible to unreserve them due to memory pressure, and there is no
-reuse for those highatomic allocations anymore. This very different outcome
-only depends on whether a single page is free for the unreserve to work, but
-from the efficiency of pageblock reusal you describe above a single page is
-only a minor difference. My proposal would at least remove the sudden change
-of behavior when going from a single free page to no free page.
+Changes in v2:
+- fix commit messages and documentation about the gain: pin selectable
+  gain instead of configurable gain
+- add the enum of available gains inthe binding and array of available
+  gains in the driver as ad4000 series
+- in the bindings, remove item from channel reg property
+- in the bindings, merge additional supplies and channel properties inside
+  the same if branch for adaq devices
+- fix comment as suggested by Jonathan in the driver
 
->> Hm that assumes we're adding some checks in free fastpath, and for that to
->> work also that there will be a freed page in highatomic PC in near enough
->> future from the decision we need to unreserve something. Which is not so
->> much different from the current assumption we'll find such a free page
->> already in the free list immediately.
->>
->> > To summarize, I think this is an estimation problem, which I would
->> > categorize as a lesser problem than accounting problems. But it sounds
->> > to me that you think it's a policy problem, i.e., the highatomic
->> > unreserving policy is wrong or not properly implemented?
->>
->> Yeah I'd say not properly implemented, but that sounds like a mechanism, not
->> policy problem to me :)
-> 
-> What about adding a new counter to keep track of the size of free
-> pages reserved for highatomic?
+- Link to v1: https://lore.kernel.org/r/20241015-ad7380-add-adaq4380-4-support-v1-0-d2e1a95fb248@baylibre.com
 
-That's doable but not so trivial and means starting to handle the highatomic
-pageblocks much more carefully, like we do with CMA pageblocks and
-NR_FREE_CMA_PAGES counter, otherwise we risk drifting the counter unrecoverably.
+---
+Julien Stephan (4):
+      dt-bindings: iio: adc: ad7380: add adaq4370-4 and adaq4380-4 compatible parts
+      iio: adc: ad7380: fix oversampling formula
+      iio: adc: ad7380: add support for adaq4370-4 and adaq4380-4
+      docs: iio: ad7380: add adaq4370-4 and adaq4380-4
 
-> Mel?
+ .../devicetree/bindings/iio/adc/adi,ad7380.yaml    | 120 +++++++++++++++++
+ Documentation/iio/ad7380.rst                       |  18 +++
+ drivers/iio/adc/ad7380.c                           | 149 +++++++++++++++++++--
+ 3 files changed, 278 insertions(+), 9 deletions(-)
+---
+base-commit: 8bea3878a1511bceadc2fbf284b00bcc5a2ef28d
+change-id: 20241015-ad7380-add-adaq4380-4-support-14dc17ec0029
+prerequisite-change-id: 20241004-ad7380-fix-supplies-3677365cf8aa:v3
+prerequisite-patch-id: 6127a52d3b14e82d1a6081c7e504d0e4eb323089
+prerequisite-patch-id: 7dee57142d0d12682b0be3b62f1c16851aeac069
+prerequisite-patch-id: f737e56a372cd91e5fac651a2063b06827f9aa21
+prerequisite-patch-id: 7c8d5fbde82810057630b95e12bb2f6576da6980
+prerequisite-patch-id: 972bdbf06bafa7c56f604dbe8eb7d236aadaad99
+
+Best regards,
+-- 
+Julien Stephan <jstephan@baylibre.com>
 
 
