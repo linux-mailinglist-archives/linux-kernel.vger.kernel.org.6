@@ -1,106 +1,131 @@
-Return-Path: <linux-kernel+bounces-380345-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380346-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B20A9AECA4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:52:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0EE599AECA9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:52:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CE501C21A20
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:52:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9441D1F2483D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:52:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id ED98C1F81B9;
-	Thu, 24 Oct 2024 16:51:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F5A01F9EC2;
+	Thu, 24 Oct 2024 16:52:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="togMtEry"
-Received: from out-179.mta0.migadu.com (out-179.mta0.migadu.com [91.218.175.179])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QrqSXV9k"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C5941F7086
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:51:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC8A11F76DA;
+	Thu, 24 Oct 2024 16:52:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788716; cv=none; b=gPR23vOZXeuy+c4hPK8LpgfvGgK9owXzEWo68aZzRnon8BxlM43BsLmwCVXymRG75dpejPcavNxqi/xDNDQOvE9aWCSD6vF+1BDvaU0x/9rGd64yMaLjHb/7VMOlQ7dsRxGuPzFQgRjSSpAmCeZbi6IcSqdpex/xhmit+x+6Ihk=
+	t=1729788732; cv=none; b=uxafxieP6aQ/TkBIHNOb/JjvBTZNUWQPC3FmHVqzdmCiueVDotGAMYvR1BTXbAmwDamoPGOwbndiZ/tM1V/v0O8dydyPSlg8jpK2vxwLzKA9pFkwmYBp18T6RQGcRmz6YA6n8i+tI1KCGrb6Qw78XrqgmbjQxmaXgtAJgHuN3HU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788716; c=relaxed/simple;
-	bh=EwwFUFK+3XJyQkCZ5q0IDSEAlV5PRkel+AvB4wcYCug=;
+	s=arc-20240116; t=1729788732; c=relaxed/simple;
+	bh=r3tslcMdhzBd/TeShHIMCrP8oQyKFhtQOLSCSOVBUHk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=mAb65vu85g8mW/TjEfRPF6Ll7Ltmlrvy7N3EBCrakaxPUHom2SgCgxGHw8KoBLvRzSNcEMqSTe1/u4rPzqmE0vvf3WQxVGBTNWCkB5hU5uQmCxhikhE7+dTiSO88Ai0VnqalZJyBd+cqW4PDeM7vYenSy/PUVV1utERe1kTcch4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=togMtEry; arc=none smtp.client-ip=91.218.175.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Date: Thu, 24 Oct 2024 16:51:46 +0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729788712;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=p8/7V012aGi/ix5qvOdVjTsWOiWzv6xTtXKacFsTU9c=;
-	b=togMtEryYhBBovyKlcUefTizUP29zonGQZK02rvyNo3MZD8niYCcAv5iUBo8jvr3cM/qgP
-	CXgRL5XCGpgHnHWys39JomVl0su4ivTsgCrdQzMhQ3Tqk5pbB7gC17PIX0zcbP1cLCMZbE
-	FloTphrENDTDSPH//gah6eU/bg5B9W4=
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Roman Gushchin <roman.gushchin@linux.dev>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Shakeel Butt <shakeel.butt@linux.dev>,
-	Andrew Morton <akpm@linux-foundation.org>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Muchun Song <muchun.song@linux.dev>,
-	Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
-	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
-	Meta kernel team <kernel-team@meta.com>
-Subject: Re: [RFC PATCH 1/3] memcg-v1: fully deprecate
- move_charge_at_immigrate
-Message-ID: <Zxp7ItxIf744tFbD@google.com>
-References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
- <20241024065712.1274481-2-shakeel.butt@linux.dev>
- <ZxoP2TLCGnSm9c8p@tiehlicka>
+	 Content-Type:Content-Disposition:In-Reply-To; b=T2c83hcpqrOKJ4teMouGsZAZHZrQiLR1tRHymoIhe8mRGw89jg+IFuEbRuMHDdlZdyEyc5QHWihpVQJ59KDW9u8kDxEfXaAv3rrnTGPuI79TFRXXvxH+HHrzjAXpXebT6Gl1vXvvWzFNV3CmK3zPYnrD44Z2rJMojYEDYI3lMHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QrqSXV9k; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 352A2C4CEC7;
+	Thu, 24 Oct 2024 16:52:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729788731;
+	bh=r3tslcMdhzBd/TeShHIMCrP8oQyKFhtQOLSCSOVBUHk=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=QrqSXV9kUF3TqpF51VSGPHx7GUuoHwWa106yRznXQL0hWK/fa6CC6cMUWYAHASav/
+	 QxMfRcVTwt5oIBZO05VyaH0YLS9TF9Lu57YmrLN/GLMOh0xI6KQGK1v4s3nleucnTf
+	 xKpxu3R4l/xcluPYtRg8/OFi1ZGVQFuB7Puzyq0IWBHl0isJCZae7iwDIKyAoVRESx
+	 3HXiAZLMe7jAN7S71KzIhfapz4Z28x4X6Wj8oZju+pLZJpohL2KojYHbfSDtI3Rnip
+	 E7YNpC2kld+KtMQNCjUspX65R4EDUUfn4mfN0qexDQobOS3Su+5pNMWiLE4hykD1cI
+	 MpiuxpYRQ2AGw==
+Date: Thu, 24 Oct 2024 17:52:05 +0100
+From: Conor Dooley <conor@kernel.org>
+To: =?iso-8859-1?B?Q3Pza+FzLA==?= Bence <csokas.bence@prolan.hu>
+Cc: Chen-Yu Tsai <wens@csie.org>, Maxime Ripard <mripard@kernel.org>,
+	dmaengine@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+	linux-kernel@vger.kernel.org, Vinod Koul <vkoul@kernel.org>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jernej Skrabec <jernej.skrabec@gmail.com>,
+	Samuel Holland <samuel@sholland.org>
+Subject: Re: [PATCH 03/10] dt-bindings: dmaengine: Add Allwinner suniv
+ F1C100s DMA
+Message-ID: <20241024-recycler-borrowing-5d4296fd4a56@spud>
+References: <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
+ <20241024064931.1144605-4-csokas.bence@prolan.hu>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="CqzdtQmyY58U3O5U"
 Content-Disposition: inline
-In-Reply-To: <ZxoP2TLCGnSm9c8p@tiehlicka>
-X-Migadu-Flow: FLOW_OUT
+In-Reply-To: <20241024064931.1144605-4-csokas.bence@prolan.hu>
 
-On Thu, Oct 24, 2024 at 11:14:01AM +0200, Michal Hocko wrote:
-> On Wed 23-10-24 23:57:10, Shakeel Butt wrote:
-> > Proceed with the complete deprecation of memcg v1's charge moving
-> > feature. The deprecation warning has been in the kernel for almost two
-> > years and has been ported to all stable kernel since. Now is the time to
-> > fully deprecate this feature.
-> > 
-> > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
-> 
-> I fine with this move, just one detail we might need to consider
-> [...]
-> > @@ -606,17 +606,7 @@ static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
-> >  		     "Please report your usecase to linux-mm@kvack.org if you "
-> >  		     "depend on this functionality.\n");
-> >  
-> > -	if (val & ~MOVE_MASK)
-> > -		return -EINVAL;
-> > -
-> > -	/*
-> > -	 * No kind of locking is needed in here, because ->can_attach() will
-> > -	 * check this value once in the beginning of the process, and then carry
-> > -	 * on with stale data. This means that changes to this value will only
-> > -	 * affect task migrations starting after the change.
-> > -	 */
-> > -	memcg->move_charge_at_immigrate = val;
-> > -	return 0;
-> > +	return -EINVAL;
-> 
-> Would it make more sense to -EINVAL only if val != 0? The reason being
-> that some userspace might be just writing 0 here for whatever reason and
-> see the failure unexpected.
 
-I think it's a good idea.
+--CqzdtQmyY58U3O5U
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Thanks!
+On Thu, Oct 24, 2024 at 08:49:24AM +0200, Cs=F3k=E1s, Bence wrote:
+> Add compatible string for Allwinner suniv F1C100s DMA.
+
+> [ csokas.bence: reimplemented in YAML ]
+
+This implies you took someone else's work and modified it, so I would
+expect to see them mentioned here. However, I don't personally think a
+compatible name is copyrightable and would suggest just dropping this.
+
+<2 minutes later> I checked the rest of the series, you've got a lot of
+missing signoffs from yourself on other patches. You sent them, so you
+need to sign off even if you didn;t author them.
+
+Otherwise,
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
+
+> Signed-off-by: Cs=F3k=E1s, Bence <csokas.bence@prolan.hu>
+> ---
+>  .../devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml      | 4 +++-
+>  1 file changed, 3 insertions(+), 1 deletion(-)
+>=20
+> diff --git a/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dm=
+a.yaml b/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml
+> index 02d5bd035409..9b5180c0a7c4 100644
+> --- a/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml
+> +++ b/Documentation/devicetree/bindings/dma/allwinner,sun4i-a10-dma.yaml
+> @@ -22,7 +22,9 @@ properties:
+>        number.
+> =20
+>    compatible:
+> -    const: allwinner,sun4i-a10-dma
+> +    enum:
+> +      - allwinner,sun4i-a10-dma
+> +      - allwinner,suniv-f1c100s-dma
+> =20
+>    reg:
+>      maxItems: 1
+> --=20
+> 2.34.1
+>=20
+>=20
+
+--CqzdtQmyY58U3O5U
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxp7NQAKCRB4tDGHoIJi
+0kVVAQDIf6oJhRhzclI1CTid5giOG/kvB2MGrzj6VU6YX5l7agD/fGR3sowa78na
+7GbS6JuJbow5pjzpsrjPdU2IMejCogo=
+=6eZ/
+-----END PGP SIGNATURE-----
+
+--CqzdtQmyY58U3O5U--
 
