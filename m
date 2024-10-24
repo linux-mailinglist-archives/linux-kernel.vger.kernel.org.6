@@ -1,149 +1,175 @@
-Return-Path: <linux-kernel+bounces-379366-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379367-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFB869ADDC0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:33:34 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4CA229ADDC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E0DEA1C21593
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:33:33 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C839D1F22739
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 13435156228;
-	Thu, 24 Oct 2024 07:33:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8ABF81ABEB8;
+	Thu, 24 Oct 2024 07:33:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="T3EHCbcC"
-Received: from mail-wm1-f52.google.com (mail-wm1-f52.google.com [209.85.128.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="FdDMa56r"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4DBBC176227
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:33:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 648981A0B1A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:33:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729755196; cv=none; b=r7Vv5TgVmrh2Kc08Le30MQ3R2efH62qgCwICKXqJ6JdrFsceyRDrsuSOyUtWLfd2j95LD+QC7Qn5YIsbR+24fZ4aCQJBkPTtXuHGAE/iliD6QK4GrXj6V1VXKkRzl1ZNOsToZrP4WyV0yHHz4M2MmCmsWPI3SWmRYc4tE9AD2DA=
+	t=1729755211; cv=none; b=EfZdpXfEnY0Iu025CRQkmDl2mm96VCQf7VnImPVhvnX5cVBCpyOupsDAWUhHSAo7k3ssy2ej6mEV3KeFioZ8Ppa6UICZzJbu9rW6qNuqzqjqZDW+bkOeCerBpWRvStM9xlunuddqYbWKqNoqbVhclJlzZ0r9ND8mDlx7I/Cmwd4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729755196; c=relaxed/simple;
-	bh=GmtVR/2IZ5UoC7zJzkUrdMzzcs0o4+oB7Cpl2y1NXWg=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=oTsI04tFTgSb7RCVY1sC8NsnAoPTXgILaEcvzTExBGRHXY9PSdXeE8vR5LTUZxGxYAwCBxBBzbF6Dcv3sgUvOCsPX/XmjOa7WdasgTBhKJthAxuPoZ1xiqEDKzNe5I05kiUrbk1FFhW3XB65P6nQuEa/fVx+oV/uzgX2HPBuUqg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=T3EHCbcC; arc=none smtp.client-ip=209.85.128.52
+	s=arc-20240116; t=1729755211; c=relaxed/simple;
+	bh=OQkhUlmEEqbXpB+pBzdQUwbOmBl0iJzWCygIQYaTCg8=;
+	h=Date:Message-Id:Mime-Version:Subject:From:To:Content-Type; b=aIaa6XdmuqOc25j8MT7xaWggfufGkMYuN9ouQQrv7kN5K/tL30zsv1gG75H3JgCW+teCPZZ8tETcFiFltQ12Fopn5KlIdrD82CqBbmL/MsnuyJLiBrycemM0/W3KdXoPT1uluTtj7ng/S4Y9+4wNz9ED7nzjI8ifYt7Ap+Fu4Yg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=FdDMa56r; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f52.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so5920015e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:33:14 -0700 (PDT)
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e2e3f8dc62cso1717780276.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:33:29 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729755193; x=1730359993; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=N3ZML2pwt9SA2klMFVHj7vwI3wct/WwmcXV3aWafSbA=;
-        b=T3EHCbcC5MeVZtSy4w8DlzLjwkc9p+/gFPKi7jBfxWeCNkOdopiZjl+a20E159j3wY
-         WPu8UMmv9a7KfrEmtEjCnLt6mhMfq9tUYDICHYKnsOvSQqW5SlCMo196BqCHckWVCAvV
-         TPIY0EWJJ3CeDBPfA0wwIt1YK7hxI9t0cl/2uks4DUAQYT0+gt7KfZXb7fTLxWgFpjIX
-         Wmm0iBele8eFp/hKfYQdGMqzScMKmaPbN0a63H7Gb213eaU9rwtgC7znfIh8C+SdIzWc
-         kIhSIaNd5Nz2J3QzwIGaqwGcY25wQ04uUoWjfeATOjKZcmUoMLJX32y9YoBWYsU6DxH8
-         TC8g==
+        d=google.com; s=20230601; t=1729755208; x=1730360008; darn=vger.kernel.org;
+        h=to:from:subject:mime-version:message-id:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=M77V5JZaZYSeYCOYRB0a7mZE3uzLmx3YYpmuM6s/PP8=;
+        b=FdDMa56riLvMPtuOZPsB8qh8J/pyyPbaLTuhf16mejP8FkrdNa5erNeXm821kIbmwP
+         cFKtBMTE1esxJcOyOQwi+yBqSg6pDJ71a+CYWTRfr7xsMAWEgKpC6OIRbSr5LqvaiLuB
+         E4Dwi/LUbpHFVKVMH6PVWi36VoFyPxF2A1p8y3x1YZuCRBgDmwgyW1eeRThMTd9Tw5Bi
+         /xpFbxKnFf7i1AfOnZ8xfuOqgoCH92gksiClqSrUMDZnEFzk+weloJFTagy7IWSZkldy
+         576UMzscSHrh8sWAHfv7oI5b5URH5A2UQ6FBBt4t4hSzFMjHxUVvj/VtKeLT6Lc7gxyR
+         MT6A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729755193; x=1730359993;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=N3ZML2pwt9SA2klMFVHj7vwI3wct/WwmcXV3aWafSbA=;
-        b=JQy6ha9qhcX0pAS4HmRiWJ8HQHjDbYt8OEGWB+AzUjtV/mSWSNjnhAY92j0r2JQLZv
-         xIfnmFSXdm8rkPoTplRNhsrdqwVckgHLS1npCXyQzmPRnh7yTk7Sno6mCYVdVeHT2H3e
-         dzKCyFoe9jhaauHcoO57Hv9aVivich3hjqhVJqbANGNF2noTUMU3HNMo0wuTunECRY8Q
-         QuUvPlxWn0vkFbmyDZfF2ow7TJBx84vKSmmUsJFz4GSci3G/m/+62Kf4jPr/iz1l5u8w
-         BlranVIMbSR64yXj4E8fmBJolYZW03qoyy13BuQipaMybgQRPiS6K4JUaM7MumumjU3m
-         a01Q==
-X-Forwarded-Encrypted: i=1; AJvYcCV+xdxCDNQAM9WTaCYGrSrEYZ/J1roRO2iZ0SLw0b8o/McjQXxmapy5trUM0sLAXKpkMfFGkaxTPwDIoJc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyt5j8Azkvaya7GJZv4lMoFunTFxMWeaAqiFDHXCofTX0TJTj/2
-	qLTGEqnJfnd2llTYl52cadhz0028xa8FHMRtTJ/1fpHOV8/hq4MpIchrSL+t1Tt2LEcRYe31TGW
-	DRJTMJp1N2Uc7xcXAte8Q194aZ8w6yaW2vriw
-X-Google-Smtp-Source: AGHT+IFAGhESqKClPHFOGoIGXnRexEURzt0tfdT98U++xy8JJtB3w5EjLFNRfvnqUgdiLHJAbImXKx3IIhmMWvjUEhE=
-X-Received: by 2002:a5d:4535:0:b0:37d:4a2d:6948 with SMTP id
- ffacd0b85a97d-37efcf1f289mr3253401f8f.33.1729755192575; Thu, 24 Oct 2024
- 00:33:12 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729755208; x=1730360008;
+        h=to:from:subject:mime-version:message-id:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=M77V5JZaZYSeYCOYRB0a7mZE3uzLmx3YYpmuM6s/PP8=;
+        b=GrOI+DuRTT5Ui5TC7Rb8J8FxMDwrJsG2rJ5w3PPmXdtSqJsrS9zaWhDLLI0R1WZZtt
+         Lns4SAFNosnWW4xYfhn1shTEBSUnFP/zKNZSsaW7wc7fW5bobrhtP3zvd1wqm9MJoNqq
+         PwsJjtymcLBHVAl3fIMthhOWaPace4RnP9QTju7rWlXNccFIXr4C7akvQTDqPLJiW8y/
+         +8Gu1WM3Fg4QLRZkHJUzCEXrUMXdCPZLlrJDJ6z9jRQgV+JVL+gogC4sqIJ0jrDDWA9I
+         YpobLgqYywtGbk6A7kWWFSKublqiS6IQJd9a40oYiFNRTJbTRJaTd0GpS4l0qx1q6VQf
+         9lVw==
+X-Forwarded-Encrypted: i=1; AJvYcCXmm0JXq/ccOFh07+gEpAvjBxa/X5xph8i6AlzWKgW0wRaZW4ABuvSr/EhUbVv5D3IuTmwAQQSGXDr4gB0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyTQOAIlK94+nIf1FwS+3TL6b4DCApeGjH74vSUgGGjH2Bd5tLh
+	u78BJUT+kjKa5JmVbQIgBItgjRtrlmUMm2V1OOnEKr4/U/TeB+B6Z+mcDeSUriQVPu1Hb+MoADn
+	o273O4w==
+X-Google-Smtp-Source: AGHT+IFX2iXZND5ZNv6DTaf/WGNs9vqFP3Y9OJNvW5URba/OF+Oua1CDf+FnSnTQOsXtRULyO26E0vGPEL9z
+X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:2391:e0be:5394:f85d])
+ (user=irogers job=sendgmr) by 2002:a05:6902:52b:b0:e2e:2c2e:277b with SMTP id
+ 3f1490d57ef6-e2eb86afea8mr11407276.3.1729755208334; Thu, 24 Oct 2024 00:33:28
+ -0700 (PDT)
+Date: Thu, 24 Oct 2024 00:33:14 -0700
+Message-Id: <20241024073324.1513433-1-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <20241022224832.1505432-1-abdiel.janulgue@gmail.com>
- <20241022224832.1505432-2-abdiel.janulgue@gmail.com> <CAH5fLgjZ91xFo4hV4dPnDXLFr9jX3na60tVt_KuNU_c6WhhzAA@mail.gmail.com>
- <b154dd13-8cd8-4066-ba3d-6597959ca5c5@gmail.com> <ZxkPC-dLRBqBKZ5J@Boquns-Mac-mini.local>
- <CAH5fLggEGMVspJoO6CE-gTa3-OHfkUnS=L1X-VNC8Cp57GYVkA@mail.gmail.com>
- <Zxk7Tf-jhSse51AS@Boquns-Mac-mini.local> <CAH5fLgh1zXRA1dHBEtiNxWW8kNMtO47bBnaFLVhpzgxsnS1ysw@mail.gmail.com>
-In-Reply-To: <CAH5fLgh1zXRA1dHBEtiNxWW8kNMtO47bBnaFLVhpzgxsnS1ysw@mail.gmail.com>
-From: Alice Ryhl <aliceryhl@google.com>
-Date: Thu, 24 Oct 2024 09:33:00 +0200
-Message-ID: <CAH5fLgjLouU9ZRabJtP9qK6RWNLHZvW6dtUqbCkzFqZO+9skTQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/5] rust: types: add `Owned` type and `Ownable` trait
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Abdiel Janulgue <abdiel.janulgue@gmail.com>, rust-for-linux@vger.kernel.org, 
-	dakr@redhat.com, linux-kernel@vger.kernel.org, airlied@redhat.com, 
-	miguel.ojeda.sandonis@gmail.com
+Mime-Version: 1.0
+X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
+Subject: [PATCH v4 00/10] Run tests in parallel showing number of tests running
+From: Ian Rogers <irogers@google.com>
+To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
+	Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Ian Rogers <irogers@google.com>, Adrian Hunter <adrian.hunter@intel.com>, 
+	Kan Liang <kan.liang@linux.intel.com>, James Clark <james.clark@linaro.org>, 
+	Howard Chu <howardchu95@gmail.com>, Athira Jajeev <atrajeev@linux.vnet.ibm.com>, 
+	Michael Petlan <mpetlan@redhat.com>, Veronika Molnarova <vmolnaro@redhat.com>, 
+	Dapeng Mi <dapeng1.mi@linux.intel.com>, Thomas Richter <tmricht@linux.ibm.com>, 
+	Ilya Leoshkevich <iii@linux.ibm.com>, Colin Ian King <colin.i.king@gmail.com>, 
+	Weilin Wang <weilin.wang@intel.com>, Andi Kleen <ak@linux.intel.com>, linux-kernel@vger.kernel.org, 
+	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 9:23=E2=80=AFAM Alice Ryhl <aliceryhl@google.com> w=
-rote:
->
-> On Wed, Oct 23, 2024 at 8:07=E2=80=AFPM Boqun Feng <boqun.feng@gmail.com>=
- wrote:
-> >
-> > On Wed, Oct 23, 2024 at 07:52:23PM +0200, Alice Ryhl wrote:
-> > [...]
-> > > > > > > +impl<T: Ownable> Owned<T> {
-> > > > > > > +    /// Creates a new smart pointer that owns `T`.
-> > > > > > > +    ///
-> > > > > > > +    /// # Safety
-> > > > > > > +    /// `ptr` needs to be a valid pointer, and it should be =
-the unique owner to the object,
-> > > > > > > +    /// in other words, no other entity should free the unde=
-rlying data.
-> > > > > > > +    pub unsafe fn to_owned(ptr: *mut T) -> Self {
-> > > > > >
-> > > > > > Please rename this function to from_raw to match the name used =
-by
-> > > > > > other similar functions.
-> > > > > >
-> > > > > > Also, I don't love this wording. We don't really want to guaran=
-tee
-> > > > > > that it is unique. For example, pages have one primary owner, b=
-ut
-> > > > > > there can be others who also have refcounts to the page, so it'=
-s not
-> > > > > > really unique. I think you just want to say that `ptr` must poi=
-nt at a
-> > > >
-> > > > But then when `Owned<Page>` dropped, it will call __free_pages() wh=
-ich
-> > > > invalidate any other existing users. Do you assume that the users w=
-ill
-> > > > use pointers anyway, so it's their unsafe responsiblity to guarante=
-e
-> > > > that they don't use an invalid pointer?
-> > > >
-> > > > Also I assume you mean the others have refcounts to the page *befor=
-e* an
-> > > > `Owned<Page>` is created, right? Because if we really have a use ca=
-se
-> > > > where we want to have multiple users of a page after `Owned<Page>`
-> > > > created, we should better provide a `Owned<Page>` to `ARef<Page>`
-> > > > function.
-> > >
-> > > The __free_pages function just decrements a refcount. If there are
-> > > other references to it, it's not actually freed.
-> > >
-> >
-> > Then why don't we use page_put() there? ;-) And instead of
-> > `Owned<Page>`, we can wrap the kernel::page as `ARef<Page>`, no?
->
-> I don't think there's a function called page_put?
+Avoid waitpid so that stdout/stderr aren't destroyed prior to wanting
+to read them for display. When running on a color terminal, display
+the number of running tests (1 if sequential). To avoid previous
+flicker, only delete and refresh the display line when it changes. An
+earlier version of this code is here:
+https://lore.kernel.org/lkml/20240701044236.475098-1-irogers@google.com/
 
-Sorry I confused myself. It's because it's called put_page.
+Add a signal handler for perf tests so that unexpected signals are
+displayed and test clean up is possible.
 
-Alice
+In perf test add an "exclusive" flag that causes a test to be run with
+no other test. Set this flag manually for C tests and via a
+"(exclusive)" in the test description for shell tests. Add the flag to
+shell tests that may fail when run with other tests.
+
+Change the perf test loop to run in two passes. For parallel
+execution, the first pass runs all tests that can be run in parallel
+then the 2nd runs remaining tests sequentially. This causes the
+"exclusive" tests to be run last and with test numbers moderately out
+of alignment.
+
+Change the default to be to run tests in parallel. Running tests in
+parallel brings the execution time down to less than half.
+
+v4: Add patch to sort exclusive tests last, this allows for increasing
+    test numbers as requested by Namhyung.
+
+v3: Mark additional shell tests as "(exclusive)" to avoid issues with
+    shared resources suggested by Namhyung. Add dependent signal
+    handler change so that kill/ctrl-C don't leave lots of processes,
+    previously sent here:
+    https://lore.kernel.org/lkml/20241017052137.225514-1-irogers@google.com/
+
+v2: Fix inaccurate remaining counts when running specific
+    tests. Rename "remaining" to "active" to better reflect the
+    testing behavior. Move the exclusive flag to test cases and not
+    entire suites. Add more "(exclusive)" flags to test as
+    suggested-by James Clark. Remove "(exclusive)" flag from test
+    descriptions to keep the command line output more concise. Add
+    James Clark's tested-by.
+
+Ian Rogers (10):
+  tools subcmd: Add non-waitpid check_if_command_finished()
+  perf test: Display number of active running tests
+  perf test: Reduce scope of parallel variable
+  perf test: Avoid list test blocking on writing to stdout
+  perf test: Tag parallel failing shell tests with "(exclusive)"
+  perf test: Add a signal handler around running a test
+  perf test: Run parallel tests in two passes
+  perf test: Make parallel testing the default
+  perf test: Add a signal handler to kill forked child processes
+  perf test: Sort tests placing exclusive tests last
+
+ tools/lib/subcmd/run-command.c                |  33 ++
+ tools/perf/tests/builtin-test.c               | 405 ++++++++++++------
+ .../tests/shell/coresight/asm_pure_loop.sh    |   2 +-
+ .../shell/coresight/memcpy_thread_16k_10.sh   |   2 +-
+ .../coresight/thread_loop_check_tid_10.sh     |   2 +-
+ .../coresight/thread_loop_check_tid_2.sh      |   2 +-
+ .../shell/coresight/unroll_loop_thread_10.sh  |   2 +-
+ tools/perf/tests/shell/list.sh                |   5 +-
+ .../tests/shell/perftool-testsuite_report.sh  |   2 +-
+ tools/perf/tests/shell/probe_vfs_getname.sh   |   2 +-
+ .../shell/record+script_probe_vfs_getname.sh  |   2 +-
+ tools/perf/tests/shell/record.sh              |   2 +-
+ tools/perf/tests/shell/record_lbr.sh          |   2 +-
+ tools/perf/tests/shell/record_offcpu.sh       |   2 +-
+ tools/perf/tests/shell/stat_all_pmu.sh        |   2 +-
+ tools/perf/tests/shell/stat_bpf_counters.sh   |   2 +-
+ tools/perf/tests/shell/test_arm_coresight.sh  |   2 +-
+ .../tests/shell/test_arm_coresight_disasm.sh  |   2 +-
+ tools/perf/tests/shell/test_arm_spe.sh        |   2 +-
+ tools/perf/tests/shell/test_data_symbol.sh    |   2 +-
+ tools/perf/tests/shell/test_intel_pt.sh       |   2 +-
+ .../perf/tests/shell/test_stat_intel_tpebs.sh |   2 +-
+ .../tests/shell/trace+probe_vfs_getname.sh    |   2 +-
+ tools/perf/tests/task-exit.c                  |   9 +-
+ tools/perf/tests/tests-scripts.c              |   7 +-
+ tools/perf/tests/tests.h                      |   9 +
+ tools/perf/util/color.h                       |   1 +
+ 27 files changed, 365 insertions(+), 144 deletions(-)
+
+-- 
+2.47.0.163.g1226f6d8fa-goog
+
 
