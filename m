@@ -1,443 +1,163 @@
-Return-Path: <linux-kernel+bounces-379451-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379439-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5FFB39ADEC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:17:22 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 341839ADEAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:14:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 80DD61C21AD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:17:21 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E18B1284D72
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:14:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E7E01D5179;
-	Thu, 24 Oct 2024 08:12:03 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C2E831C57B1;
+	Thu, 24 Oct 2024 08:11:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Gqs0L43R"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	dkim=pass (2048-bit key) header.d=outbound.mailhop.org header.i=@outbound.mailhop.org header.b="leqWNAvf"
+Received: from outbound5e.eu.mailhop.org (outbound5e.eu.mailhop.org [52.28.168.19])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 839891D1512;
-	Thu, 24 Oct 2024 08:11:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757522; cv=none; b=ullAapHyIUxuQ5RFVmGGezHnxFy5gPyZ8YTcF14sgSBZ70tSOd6NyFy3z50LKWeMaYvE3YXBw5usrpeyu5pD2MpTuEwJfRac0GZF8HKEvG8BKi3vg4NNW6S8bEf3jLswTi11bEW0wVErtF/+VLALBK3m59rm0yoYIy67j3xppgI=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757522; c=relaxed/simple;
-	bh=tNxpycssazDt0iI4wc/OsewbFOkrxnl3tjY/JqZOqco=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=LT7yBkZf6FBgjPhVoRwcfRnPdeidN28M6QYOGqE6y8bxrl5MnO+s8dVsmBVAyVLkt8QnQe9LvnVCET99NAU3SIpq32nhZ6t+YM+Q0qdvzTXaYTnViZwutsjXCiPAn7donmciLCiQxAVa7y5vwUppP9XlArf3VXK0TQcyUGa+8cI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Gqs0L43R; arc=none smtp.client-ip=198.175.65.16
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729757520; x=1761293520;
-  h=from:to:cc:subject:date:message-id:in-reply-to:
-   references:mime-version:content-transfer-encoding;
-  bh=tNxpycssazDt0iI4wc/OsewbFOkrxnl3tjY/JqZOqco=;
-  b=Gqs0L43RsImtSWoX3Jozzj3oRzkIuBkaTT2eIPqZma3mPuVrwK70PYUE
-   27Ey0B12D6GtKycImwKSjFy+N9ccXvfFI7jC67Q6SyWvWmm/2AcbEnDZT
-   M7I/wp2eO6kC7GTXSNpZmWnmXMojKhd5tUU8vmEDG/geXBlHPyGMU/q5d
-   ktQiVln8ur77+khkmQJekAqkrQiJjBlkMtyHEXfgUQtZt5WH1g0rKsWZX
-   Bzq1XnRE5uBRDzqAxTVcwanIRzJfWecq6Ye63RAPzVfC3TphStrKgfz/F
-   DBpEXICfgtXL8P2U68OzCThKz99tDMeQQgI5un1DkNF8T5k1xDtkrKYzH
-   A==;
-X-CSE-ConnectionGUID: koqb8jVTQSCtPh0Q8I3U/w==
-X-CSE-MsgGUID: zStqrv5URS6oaEwERm7b0g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29501172"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29501172"
-Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:12:00 -0700
-X-CSE-ConnectionGUID: qvad9TrpTBWU7mNGrDHfVw==
-X-CSE-MsgGUID: 3M+Bn78QTG+482BdLL17dQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="80691101"
-Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
-  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 01:11:57 -0700
-From: Even Xu <even.xu@intel.com>
-To: jikos@kernel.org,
-	bentiss@kernel.org,
-	corbet@lwn.net
-Cc: linux-input@vger.kernel.or,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	Even Xu <even.xu@intel.com>,
-	Xinpeng Sun <xinpeng.sun@intel.com>,
-	Rui Zhang <rui1.zhang@intel.com>,
-	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v1 22/22] HID: intel-thc-hid: intel-quicki2c: Add PM implementation
-Date: Thu, 24 Oct 2024 16:10:23 +0800
-Message-Id: <20241024081023.1468951-23-even.xu@intel.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <20241024081023.1468951-1-even.xu@intel.com>
-References: <20241024081023.1468951-1-even.xu@intel.com>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0B0641C4A20
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:11:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=52.28.168.19
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729757499; cv=pass; b=Uv8pHEXJHVxYRvnoF5eb8UmwZIJ6OeU2pbRRuaKVAkM462l4BzREJSaaxMyxuVGkK4yNtMUXNYtv3M5SiFyVqeTIv053Bbziwe7SMP2ish0uE/tIRnAvivSdgIzs7qNqToNRvqBn91CTHxfZrAE8KR5YV4xU/IrmkMxy0bgyje8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729757499; c=relaxed/simple;
+	bh=KArsoC11KVIWCNUmC3ZjBiqmSFW6aY2M79+FZ3Z8XFM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kbYCqc8I2L/VWOz57Yy/Ar8ae1h2TWHWcYtwwXWOBXu7ZglcBkPmjchMiHnoHSb9iyHZxfzWpHQClkABzm2HEXoHK21f/zIjX63ePYBk/BbTDsr/qXKyR4OXUiKvyEojONDsVJS5sK3hHHWlO+D8p5lFl0G4TbVFyKjYAB2aUYg=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=demonlair.co.uk; spf=pass smtp.mailfrom=demonlair.co.uk; dkim=pass (2048-bit key) header.d=outbound.mailhop.org header.i=@outbound.mailhop.org header.b=leqWNAvf; arc=pass smtp.client-ip=52.28.168.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=demonlair.co.uk
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=demonlair.co.uk
+ARC-Seal: i=1; a=rsa-sha256; t=1729757493; cv=none;
+	d=outbound.mailhop.org; s=arc-outbound20181012;
+	b=eZ1MLRvOIC7WzQgf+rId7p+cmGZdaxUikIe7gGLJwRkTXochL5BUFpt4A2etNI9OA5pEHRIbYAX0y
+	 SdoOP8ZJM65bFcf4a9u24eUZXQZs5pBXN7t68ZbzX86yh0D5nEX3nViOIo29f5LpbDhJcqKqC3rhQe
+	 rXuCG73GmRlQX9nXLk8wJhpiL65vvtoLKYIbL/4OLZBhgn8MeTym/Ew8UjrapFM1qt4L9PJcTg/UVd
+	 IbvL+MnHfOyk3aCKgoWS+MQnpbjtyW9OWRpftMs260WySHoqs0epvs+IfE0GGeP3xu5E9DOA1u9m+6
+	 IaBwedKLAdxCmpCS+Rkx6/23T8+3SQQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=outbound.mailhop.org; s=arc-outbound20181012;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:dkim-signature:from;
+	bh=AaVvclh9QZ53PLSnyOJZ8mzm2MIO2jd4GM/cgUMkd+o=;
+	b=rcLUzQA5Rj5RKUwHwr1nZSyUP0JWLal5K7WfLCnw3p46P0Uee+X7MtSg5YnO4BRMormYx9V7aZgQG
+	 G6HukKxfDIJOJOi339965kzsyxYFY+Crad/akLAvYPe+e1tTry10kIg58cW7bYSWBAKjZQHVPnj23i
+	 dKX8Na9/wHcXeDMTXvTGqxTIrATk2wzTncU+/oE9xpylg9A/7chn8oDtqN+WgzvjdU3mQwMZgAjlBx
+	 AAMIL8+Htreuy3zfSZa4gUQDUidd9dOUhhtvny5lgmlKL+2Ba8JH10yL3EN3jgQ6G0CyfvXkxE+LDc
+	 4Cm/Wu5d9CqG/8/szqWxU/ScF0/QITQ==
+ARC-Authentication-Results: i=1; outbound2.eu.mailhop.org;
+	spf=softfail smtp.mailfrom=demonlair.co.uk smtp.remote-ip=217.43.3.134;
+	dmarc=none header.from=demonlair.co.uk;
+	arc=none header.oldest-pass=0;
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=outbound.mailhop.org; s=dkim-high;
+	h=content-transfer-encoding:content-type:in-reply-to:from:references:cc:to:
+	 subject:mime-version:date:message-id:from;
+	bh=AaVvclh9QZ53PLSnyOJZ8mzm2MIO2jd4GM/cgUMkd+o=;
+	b=leqWNAvfbUwKVMIca8V8cB42gLdOAxnLWreZsnmoHG1KnVXqO1RNI2xiI6HzU/nq0oZ4YOEOJB4/3
+	 UV7jWx9suy8DnRvzRTIizoT5oi2f//I5IXjoGS+qptz/r5dvD4jm7em37cJq0GgTZ5Tr6ESHjEJZpS
+	 0U/8tPsjWc3pf+AQ0V20mdz+myOd1xm5aKEDWIUcFZrve0ps3qHBTyOYHmEw+byjekRLyNHvONP8zl
+	 dt9Es9zunA2DxaMeXwJIHgcAEyGGvsKgbeHPzl/7WgJVnI4umPqel5h5CW9Dq9v7ur88cIygY2Jxxv
+	 0r99P3lvRserXXW30uoXBUQXwGhn2ow==
+X-MHO-RoutePath: ZGVtb25sYWly
+X-MHO-User: 89f053c2-91df-11ef-9b6c-7b4c7e2b9385
+X-Report-Abuse-To: https://support.duocircle.com/support/solutions/articles/5000540958-duocircle-standard-smtp-abuse-information
+X-Mail-Handler: DuoCircle Outbound SMTP
+Received: from phoenix.demonlair.co.uk (host217-43-3-134.range217-43.btcentralplus.com [217.43.3.134])
+	by outbound2.eu.mailhop.org (Halon) with ESMTPA
+	id 89f053c2-91df-11ef-9b6c-7b4c7e2b9385;
+	Thu, 24 Oct 2024 08:11:17 +0000 (UTC)
+Received: from [10.57.1.52] (neptune.demonlair.co.uk [10.57.1.52])
+	by phoenix.demonlair.co.uk (Postfix) with ESMTP id D9D111EA107;
+	Thu, 24 Oct 2024 09:11:14 +0100 (BST)
+Message-ID: <dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
+Date: Thu, 24 Oct 2024 09:11:14 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+Content-Language: en-GB
+To: Adrian Vovk <adrianvovk@gmail.com>, Christoph Hellwig <hch@infradead.org>
+Cc: Eric Biggers <ebiggers@kernel.org>,
+ Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, song@kernel.org,
+ yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org,
+ Mikulas Patocka <mpatocka@redhat.com>, adrian.hunter@intel.com,
+ quic_asutoshd@quicinc.com, ritesh.list@gmail.com, ulf.hansson@linaro.org,
+ andersson@kernel.org, konradybcio@kernel.org, kees@kernel.org,
+ gustavoars@kernel.org, linux-block@vger.kernel.org,
+ linux-kernel@vger.kernel.org, linux-raid@vger.kernel.org,
+ dm-devel@lists.linux.dev, linux-mmc@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org, linux-hardening@vger.kernel.org,
+ quic_srichara@quicinc.com, quic_varada@quicinc.com
+References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
+ <20240916085741.1636554-2-quic_mdalam@quicinc.com>
+ <20240921185519.GA2187@quark.localdomain> <ZvJt9ceeL18XKrTc@infradead.org>
+ <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+ <ZxHwgsm2iP2Z_3at@infradead.org>
+ <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
+ <ZxH4lnkQNhTP5fe6@infradead.org>
+ <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+ <ZxieZPlH-S9pakYW@infradead.org>
+ <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+From: Geoff Back <geoff@demonlair.co.uk>
+In-Reply-To: <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-Implement THC QuickI2C driver power management callbacks.
 
-Co-developed-by: Xinpeng Sun <xinpeng.sun@intel.com>
-Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
-Signed-off-by: Even Xu <even.xu@intel.com>
-Tested-by: Rui Zhang <rui1.zhang@intel.com>
-Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
----
- .../intel-quicki2c/pci-quicki2c.c             | 233 ++++++++++++++++++
- .../intel-quicki2c/quicki2c-dev.h             |   8 +
- .../intel-quicki2c/quicki2c-hid.c             |   8 +
- 3 files changed, 249 insertions(+)
+On 24/10/2024 03:52, Adrian Vovk wrote:
+> On Wed, Oct 23, 2024 at 2:57 AM Christoph Hellwig <hch@infradead.org> wrote:
+>> On Fri, Oct 18, 2024 at 11:03:50AM -0400, Adrian Vovk wrote:
+>>> Sure, but then this way you're encrypting each partition twice. Once by the dm-crypt inside of the partition, and again by the dm-crypt that's under the partition table. This double encryption is ruinous for performance, so it's just not a feasible solution and thus people don't do this. Would be nice if we had the flexibility though.
 
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-index 0c1082f0da34..707d86aed3dc 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
-@@ -9,6 +9,7 @@
- #include <linux/irqreturn.h>
- #include <linux/pci.h>
- #include <linux/sizes.h>
-+#include <linux/pm_runtime.h>
- 
- #include "intel-thc-dev.h"
- #include "intel-thc-hw.h"
-@@ -289,10 +290,15 @@ static irqreturn_t quicki2c_irq_thread_handler(int irq, void *dev_id)
- 	struct quicki2c_device *qcdev = dev_id;
- 	int err_recover = 0;
- 	int int_mask;
-+	int ret;
- 
- 	if (qcdev->state == QUICKI2C_DISABLED)
- 		return IRQ_HANDLED;
- 
-+	ret = pm_runtime_resume_and_get(qcdev->dev);
-+	if (ret)
-+		return IRQ_HANDLED;
-+
- 	int_mask = thc_interrupt_handler(qcdev->thc_hw);
- 
- 	if (int_mask & BIT(THC_FATAL_ERR_INT) || int_mask & BIT(THC_TXN_ERR_INT) ||
-@@ -314,6 +320,9 @@ static irqreturn_t quicki2c_irq_thread_handler(int irq, void *dev_id)
- 		if (try_recover(qcdev))
- 			qcdev->state = QUICKI2C_DISABLED;
- 
-+	pm_runtime_mark_last_busy(qcdev->dev);
-+	pm_runtime_put_autosuspend(qcdev->dev);
-+
- 	return IRQ_HANDLED;
- }
- 
-@@ -637,6 +646,13 @@ static int quicki2c_probe(struct pci_dev *pdev,
- 
- 	qcdev->state = QUICKI2C_ENABLED;
- 
-+	/* Enable runtime power management */
-+	pm_runtime_use_autosuspend(qcdev->dev);
-+	pm_runtime_set_autosuspend_delay(qcdev->dev, DEFAULT_AUTO_SUSPEND_DELAY_MS);
-+	pm_runtime_mark_last_busy(qcdev->dev);
-+	pm_runtime_put_noidle(qcdev->dev);
-+	pm_runtime_put_autosuspend(qcdev->dev);
-+
- 	dev_dbg(&pdev->dev, "QuickI2C probe success\n");
- 
- 	return 0;
-@@ -673,6 +689,8 @@ static void quicki2c_remove(struct pci_dev *pdev)
- 	quicki2c_hid_remove(qcdev);
- 	quicki2c_dma_deinit(qcdev);
- 
-+	pm_runtime_get_noresume(qcdev->dev);
-+
- 	quicki2c_dev_deinit(qcdev);
- 
- 	pcim_iounmap_regions(pdev, BIT(0));
-@@ -703,6 +721,220 @@ static void quicki2c_shutdown(struct pci_dev *pdev)
- 	quicki2c_dev_deinit(qcdev);
- }
- 
-+static int quicki2c_suspend(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+	int ret;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	/*
-+	 * As I2C is THC subsystem, no register auto save/restore support,
-+	 * need driver to do that explicitly for every D3 case.
-+	 */
-+	ret = thc_i2c_subip_regs_save(qcdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_interrupt_quiesce(qcdev->thc_hw, true);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_enable(qcdev->thc_hw, false);
-+
-+	thc_dma_unconfigure(qcdev->thc_hw);
-+
-+	return 0;
-+}
-+
-+static int quicki2c_resume(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+	int ret;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	ret = thc_port_select(qcdev->thc_hw, THC_PORT_TYPE_I2C);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_i2c_subip_regs_restore(qcdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_config(qcdev->thc_hw);
-+
-+	thc_interrupt_enable(qcdev->thc_hw, true);
-+
-+	ret = thc_dma_configure(qcdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_interrupt_quiesce(qcdev->thc_hw, false);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int quicki2c_freeze(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+	int ret;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	ret = thc_interrupt_quiesce(qcdev->thc_hw, true);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_enable(qcdev->thc_hw, false);
-+
-+	thc_dma_unconfigure(qcdev->thc_hw);
-+
-+	return 0;
-+}
-+
-+static int quicki2c_thaw(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+	int ret;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	ret = thc_dma_configure(qcdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_enable(qcdev->thc_hw, true);
-+
-+	ret = thc_interrupt_quiesce(qcdev->thc_hw, false);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
-+static int quicki2c_poweroff(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+	int ret;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	ret = thc_interrupt_quiesce(qcdev->thc_hw, true);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_enable(qcdev->thc_hw, false);
-+
-+	thc_ltr_unconfig(qcdev->thc_hw);
-+
-+	quicki2c_dma_deinit(qcdev);
-+
-+	return 0;
-+}
-+
-+static int quicki2c_restore(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+	int ret;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	/* Reconfig THC HW when back from hibernate */
-+	ret = thc_port_select(qcdev->thc_hw, THC_PORT_TYPE_I2C);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_i2c_subip_init(qcdev->thc_hw, qcdev->i2c_slave_addr,
-+				 qcdev->i2c_speed_mode,
-+				 qcdev->i2c_clock_hcnt,
-+				 qcdev->i2c_clock_lcnt);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_config(qcdev->thc_hw);
-+
-+	thc_interrupt_enable(qcdev->thc_hw, true);
-+
-+	ret = thc_interrupt_quiesce(qcdev->thc_hw, false);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_dma_configure(qcdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	thc_ltr_config(qcdev->thc_hw,
-+		       qcdev->active_ltr_val,
-+		       qcdev->low_power_ltr_val);
-+
-+	thc_change_ltr_mode(qcdev->thc_hw, THC_LTR_MODE_ACTIVE);
-+
-+	return 0;
-+}
-+
-+static int quicki2c_runtime_suspend(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	thc_change_ltr_mode(qcdev->thc_hw, THC_LTR_MODE_LP);
-+
-+	pci_save_state(pdev);
-+
-+	return 0;
-+}
-+
-+static int quicki2c_runtime_resume(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quicki2c_device *qcdev;
-+
-+	qcdev = pci_get_drvdata(pdev);
-+	if (!qcdev)
-+		return -ENODEV;
-+
-+	thc_change_ltr_mode(qcdev->thc_hw, THC_LTR_MODE_ACTIVE);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops quicki2c_pm_ops = {
-+	.suspend = quicki2c_suspend,
-+	.resume = quicki2c_resume,
-+	.freeze = quicki2c_freeze,
-+	.thaw = quicki2c_thaw,
-+	.poweroff = quicki2c_poweroff,
-+	.restore = quicki2c_restore,
-+	.runtime_suspend = quicki2c_runtime_suspend,
-+	.runtime_resume = quicki2c_runtime_resume,
-+	.runtime_idle = NULL,
-+};
-+
- static const struct pci_device_id quicki2c_pci_tbl[] = {
- 	{PCI_VDEVICE(INTEL, THC_LNL_DEVICE_ID_I2C_PORT1), },
- 	{PCI_VDEVICE(INTEL, THC_LNL_DEVICE_ID_I2C_PORT2), },
-@@ -716,6 +948,7 @@ static struct pci_driver quicki2c_driver = {
- 	.probe = quicki2c_probe,
- 	.remove = quicki2c_remove,
- 	.shutdown = quicki2c_shutdown,
-+	.driver.pm = &quicki2c_pm_ops,
- 	.driver.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- };
- 
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-index d9fac30da827..00aaf094d2d3 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
-@@ -32,6 +32,14 @@
- #define QUICKI2C_DEFAULT_LP_LTR_VALUE		500
- #define QUICKI2C_RPM_TIMEOUT_MS			500
- 
-+/*
-+ * THC uses runtime auto suspend to dynamically switch between THC active LTR
-+ * and low power LTR to save CPU power.
-+ * Default value is 5000ms, that means if no touch event in this time, THC will
-+ * change to low power LTR mode.
-+ */
-+#define DEFAULT_AUTO_SUSPEND_DELAY_MS			5000
-+
- enum quicki2c_dev_state {
- 	QUICKI2C_NONE,
- 	QUICKI2C_RESETING,
-diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
-index e8e6f10b7952..5c3ec95bb3fd 100644
---- a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
-+++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-hid.c
-@@ -3,6 +3,7 @@
- 
- #include <linux/hid.h>
- #include <linux/input.h>
-+#include <linux/pm_runtime.h>
- 
- #include "quicki2c-dev.h"
- #include "quicki2c-hid.h"
-@@ -55,6 +56,10 @@ static int quicki2c_hid_raw_request(struct hid_device *hid,
- 	struct quicki2c_device *qcdev = hid->driver_data;
- 	int ret = 0;
- 
-+	ret = pm_runtime_resume_and_get(qcdev->dev);
-+	if (ret)
-+		return ret;
-+
- 	switch (reqtype) {
- 	case HID_REQ_GET_REPORT:
- 		ret = quicki2c_get_report(qcdev, rtype, reportnum, buf, len);
-@@ -67,6 +72,9 @@ static int quicki2c_hid_raw_request(struct hid_device *hid,
- 		break;
- 	}
- 
-+	pm_runtime_mark_last_busy(qcdev->dev);
-+	pm_runtime_put_autosuspend(qcdev->dev);
-+
- 	return ret;
- }
- 
--- 
-2.40.1
+As an encrypted-systems administrator, I would actively expect and
+require that stacked encryption layers WOULD each encrypt.  If I have
+set up full disk encryption, then as an administrator I expect that to
+be obeyed without exception, regardless of whether some higher level
+file system has done encryption already.
+
+Anything that allows a higher level to bypass the full disk encryption
+layer is, in my opinion, a bug and a serious security hole.
+
+Regards,
+
+Geoff.
+
+
+>> Why do you assume the encryption would happen twice?
+> I'm not assuming. That's the behavior of dm-crypt without passthrough.
+> It just encrypts everything that moves through it. If I stack two
+> layers of dm-crypt on top of each other my data is encrypted twice.
+>
+>>>> Because you are now bypassing encryption for certainl LBA ranges in
+>>>> the file system based on hints/flags for something sitting way above
+>>>> in the stack.
+>>>>
+>>> Well the data is still encrypted. It's just encrypted with a different key. If the attacker has a FDE dump of the disk, the data is still just as inaccessible to them.
+>> No one knows that it actually is encryped.  The lower layer just knows
+>> the skip encryption flag was set, but it has zero assurance data
+>> actually was encrypted.
+> I think it makes sense to require that the data is actually encrypted
+> whenever the flag is set. Of course there's no way to enforce that
+> programmatically, but code that sets the flag without making sure the
+> data gets encrypted some other way wouldn't pass review.
+>
+> Alternatively, if I recall correctly it should be possible to just
+> check if the bio has an attached encryption context. If it has one,
+> then just pass-through. If it doesn't, then attach your own. No flag
+> required this way, and dm-default-key would only add encryption iff
+> the data isn't already encrypted.
+>
+> Would either of those solutions be acceptable?
+>
+> Best,
+> Adrian
+>
 
 
