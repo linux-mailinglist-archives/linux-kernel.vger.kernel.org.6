@@ -1,95 +1,122 @@
-Return-Path: <linux-kernel+bounces-380446-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380447-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8DD0B9AEEB4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:53:30 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 332FE9AEEB7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:53:50 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1E075B215CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:53:28 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 654911C20E7D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:53:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD0A51FE0FC;
-	Thu, 24 Oct 2024 17:53:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D030F1FF03E;
+	Thu, 24 Oct 2024 17:53:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZrXkB456"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="OZ2gebQa"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 406EC1EF958;
-	Thu, 24 Oct 2024 17:53:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E7101F76A4;
+	Thu, 24 Oct 2024 17:53:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792401; cv=none; b=RfYLy2i05HNSGqNBjjjPK+DTsIFO40hlLaH8f/9gjMA5D4gMx5x98qIlv+mlU9JwVwH9EvVHr0X/0OwpcxLIPNQ9qkQfaxt9jDcw1ISYq7F0n5qKMMovD+Jog7LcRIH1Jg2srVhp5Yg6HW5Bk9FSYSNncZSLmVfu1nH4gFg0DPU=
+	t=1729792422; cv=none; b=o36PlpDEcnlR2AgA2U8RFuBg46snF7L0HwFfj3AVtLN1AjYVTlIkzZbFDbGTG8lVx4JJPMAhhFTmUdIfNJg92WfZ9N5qOrdPKsw2bR6/gKtIqSrr9iGTahQ8NWYWtoS3wRJVw57ZuDExbQQqleA9//i9R0Q64tV1JZvcE7RW64w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792401; c=relaxed/simple;
-	bh=97XRz7peIuJVQC43k4/ySRQsyp3Yj1gdZ3QpFFd9A1s=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=MnbMKrTpOurVX430FvAL/lb1ETD6pmqzJeaVRXkPuMAY5XCU5D3Vq+GIB04gkSfVFyF1u/0HqiT489v9l4e92R6+LAG4ORxnbej5fjGIi3ptNwUU7X8rvtNrSU1p8gNumpsIeui2rYvLG8Jqjzl/0eMzOHj8MxUrLSBcCAPYDmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZrXkB456; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id A72AAC4CEE3;
-	Thu, 24 Oct 2024 17:53:20 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729792400;
-	bh=97XRz7peIuJVQC43k4/ySRQsyp3Yj1gdZ3QpFFd9A1s=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ZrXkB456NQZ4h8TJqF6MtBj691/WRDz3oXQasTSMa896eo3yzm9xjYg5L9lSyPGqC
-	 PTK5WR5TVXdcigZTrfKd73qRxgrhrT7/TISKtc1FfXaCTzkxiMGGFZ56cFzT1y1vDy
-	 9OR5OzLzaLRWr+N1xMTqurE5nRMkyXTFXKengvHAfjcsOBNb+DLkobK2Sqtiu9F2zE
-	 0R7EjPsLAkJJ7q1W2mRYgq6CMuMzmNxfjU2w0phnASRcJWC0iYw9wcdeAbCQQHjEJH
-	 4zJctfOwsoD83uzHPUCnfpov1pdvAS2+X3CCc0KJD/X5MLmfOL+gEASVBxwc1OOTbL
-	 6wrkKaC1TtqIQ==
-Date: Thu, 24 Oct 2024 10:53:19 -0700
-From: Luis Chamberlain <mcgrof@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Guenter Roeck <linux@roeck-us.net>,
-	Michael Ellerman <mpe@ellerman.id.au>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Christoph Hellwig <hch@infradead.org>, Kees Cook <kees@kernel.org>,
-	Sasha Levin <sashal@kernel.org>, torvalds@linux-foundation.org,
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <ZxqJj9IZ2GF3IStb@bombadil.infradead.org>
-References: <ZxdKwtTd7LvpieLK@infradead.org>
- <20241022041243.7f2e53ad@rorschach.local.home>
- <ZxiN3aINYI4u8pRx@infradead.org>
- <20241023042004.405056f5@rorschach.local.home>
- <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
- <20241023051914.7f8cf758@rorschach.local.home>
- <8734km2lt7.fsf@mail.lhotse>
- <20241024010103.238ef40b@rorschach.local.home>
- <07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
- <20241024024928.6fb9d892@rorschach.local.home>
+	s=arc-20240116; t=1729792422; c=relaxed/simple;
+	bh=gVdBWZgjEzErTQcLG35kNcui/iuWPZZ4OQiyX08vqhY=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=Qf6igAhHTh6bwuvoxTgK2P+DjH4BC5XWTnC/FF31Ob2mciQk4ookWd2WkhvovKgEVDAj54KJyynK6X6e0t+9KhIhmvV/0BJUPq+N+dwAlJ0dof0Jj19RbydIQbhsBP/vsDhUvy9hzqYHM/MSjyTMvQIEpxHkU3G7P0OXKP17IXM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=OZ2gebQa; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9X2xb018730;
+	Thu, 24 Oct 2024 17:53:28 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	1i2ZXNwjEcPtLkLQKb7CxSRAKZ/hfhZMiMaFS6mOGpQ=; b=OZ2gebQauWdyEHHP
+	8xZYh/BWLIgle3S8v6vNi/edwqwbPjJ/M+WEDYkmgVPJWf8FbXsY/u0SYedgbh2+
+	FWQlm48hoVr/kr7uQEqxfoMlKzmrMqtB1NXEja6Kt0c5oR91dKCrdOp2V+nldarq
+	Us82f27ERqEWKRXH1VpEHe7a5PYQiLccdEaTZrMig0AzQjwyHRDh5U3Rz4IUvwVS
+	XdTdg7m8G3hC5xbf+NZHIjwPOGniOotQ8lDxz3lECb4jGlTrEGJZMBoFJrOmtplQ
+	b2cA9xkG4HhvYOWLhhvV/mOD+jKJCO9CF0ywNC0GuYO2Uv+7VXU3Dum4GAN3Ih/Y
+	ZJeOIg==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em66ej1u-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 17:53:27 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49OHrRdf029277
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 17:53:27 GMT
+Received: from [10.216.42.109] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
+ 2024 10:53:23 -0700
+Message-ID: <1b6b8585-4e7a-4ac3-85c6-bb6dafc147ac@quicinc.com>
+Date: Thu, 24 Oct 2024 23:23:20 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024024928.6fb9d892@rorschach.local.home>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] arm64: defconfig: Enable sa8775p clock controllers
+To: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+CC: Bjorn Andersson <andersson@kernel.org>,
+        Catalin Marinas
+	<catalin.marinas@arm.com>,
+        Will Deacon <will@kernel.org>, <linux-arm-msm@vger.kernel.org>,
+        Ajit Pandey <quic_ajipan@quicinc.com>,
+        "Imran Shaik" <quic_imrashai@quicinc.com>,
+        Jagadeesh Kona
+	<quic_jkona@quicinc.com>,
+        <linux-arm-kernel@lists.infradead.org>, <linux-clk@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>
+References: <20241022-defconfig_sa8775p_clock_controllers-v1-1-cb399b0342c8@quicinc.com>
+ <glhmky5r3rd44hmnxgtgeelqp426fdsh7w2fqpuusz2ek6eauw@sfptftzsilix>
+Content-Language: en-US
+From: Taniya Das <quic_tdas@quicinc.com>
+In-Reply-To: <glhmky5r3rd44hmnxgtgeelqp426fdsh7w2fqpuusz2ek6eauw@sfptftzsilix>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: VSzStdRTRqwzeI_PgqhInfsFWFqLStKP
+X-Proofpoint-GUID: VSzStdRTRqwzeI_PgqhInfsFWFqLStKP
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=527
+ suspectscore=0 clxscore=1015 mlxscore=0 bulkscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240147
 
-On Thu, Oct 24, 2024 at 02:49:28AM -0400, Steven Rostedt wrote:
-> Now I have to ask. What's the benefit of pushing to linux-next over
-> waiting for the zero-day bot?
 
-0-day only does build tests by default, there are many places which have
-actual run time tests which *run* off of linux-next, those are both bots
-and human. Granted you can get your own run time tests out of your own
-branches but that's on each developer to set up and a developer's test
-exposure of just one branch is small compared to linux-next. For example
-I've seen obscure bugs creep up on linux-next for modules which only some
-odd arch or setup was able to capture before which no test we had during
-development was able to capture. So more exposure to system variability
-and test variability.
 
-The other benefit is you get to see *way ahead of time* possible merge
-conflicts, and if you can coordinate with the respective maintainers
-which your code conflicts with, you can prepare so that this is smooth
-sailing upon pull request to Linus.
+On 10/22/2024 3:33 PM, Dmitry Baryshkov wrote:
+> On Tue, Oct 22, 2024 at 01:36:38PM +0530, Taniya Das wrote:
+>> Enable the SA8775P video, camera and display clock controllers to enable
+>> the video, camera and display functionalities on Qualcomm QCS9100.
+> 
+> Please mention the board / device rather than a platform.
+> 
 
-  Luis
+Will update in the next patch.
+
+>> Signed-off-by: Taniya Das <quic_tdas@quicinc.com>
+>> ---
+>>   arch/arm64/configs/defconfig | 3 +++
+>>   1 file changed, 3 insertions(+)
+> 
+
+-- 
+Thanks & Regards,
+Taniya Das.
 
