@@ -1,111 +1,135 @@
-Return-Path: <linux-kernel+bounces-379908-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379909-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E4DA9AE5B8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:09:15 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5649C9AE5BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:09:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0595A1F24CAE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:09:15 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5ED521C222B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:09:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C8F421D89F1;
-	Thu, 24 Oct 2024 13:08:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 564E51D319B;
+	Thu, 24 Oct 2024 13:09:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Vlwfnii9"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.18])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+DhenBA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6BD6A1D172B;
-	Thu, 24 Oct 2024 13:08:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.18
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9C09D1CB33E;
+	Thu, 24 Oct 2024 13:09:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775304; cv=none; b=Ph9hbsFQCLs4wn1LVbUIon9SnuxzH9lITA05BJCLr15MhoEPZJ6jP06kCKJXPrIY4aoLWRslkJ8SEnapMntRPaIQpZe/DJov62i6uDZV4CTpIjr7VKuJiF4dMFZQWHHkb7+fgZUrzGxuwy1gZHK9fm5I//OFHNAaVKeL6jClsMQ=
+	t=1729775361; cv=none; b=byYvuPq2mmCrD9gGzIHQtl4sF7jcqxkCmlCwcsDivOBH6W1JheaPmyoRX3gnxBQ/g5h3+N8fmUDAIZnzIxOThjttqw274GylErp5iuxETOZtYdTUH1VhooV3kd08vjgCNfwKI3+OqfxqsBz77fy4uiDUzRaopOhR8Dxud2Q30EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775304; c=relaxed/simple;
-	bh=EQnbbhpNIa6zDMOk34a2lVBWAg6GcWCIWLGiU/MLnAA=;
+	s=arc-20240116; t=1729775361; c=relaxed/simple;
+	bh=nb17tpFBEr4PRv+4HRivZY+/kDVAsGeu50KxgyQfFtM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=RbBVYuwrrGXeAVrDKX0ncYv2F19mzhPaoN0e4GkKXg7FcZilnRIsmi4yi14y6yncO6QiYLOn+Z0NFo/E9IY6epWiO/wqeVQEdRABn/7EId6ziLoF020GvsLBB3uGkbuL56TYgkLh1a0QPDm9CCn+P4R0NVhR9WMUgxQZRJY3X64=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Vlwfnii9; arc=none smtp.client-ip=198.175.65.18
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729775303; x=1761311303;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=EQnbbhpNIa6zDMOk34a2lVBWAg6GcWCIWLGiU/MLnAA=;
-  b=Vlwfnii9n3aq+0d7l8qjW8rBmm/9/Dyi91hh//kN83no5mrz7IMg2ky9
-   Z/jOc4MKyiTZOiUmQlkdxfeR10FAvGSlLiz+JZvUnqgAP+WGVs3bV/Odv
-   Yhs2z+fAE55qdAxsrd7ofCt4kU++gpBVZh3j2KYCgnnIT/IMPXO7iAVqU
-   aDjD8/tPWgcsfSt1aptdDYtSZLHAQ8Hzwz2XcXeA0DLrK0Ymkz9XtnbuJ
-   ofdSiTO2XIlNwvCgBuc2IcOmIiDAjqu5Pg7yADEEmyLNpzQ5I4S4T9gRt
-   4uqrDk5wsw7jUBFZT04YkKe91Abyra5dy5AxK803VPT8szg0B76nBsSUe
-   w==;
-X-CSE-ConnectionGUID: gvPCsKBWSQGNkUYrpdPHTw==
-X-CSE-MsgGUID: SvWu3XtzSwSi+hUuLja75g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29565894"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29565894"
-Received: from orviesa003.jf.intel.com ([10.64.159.143])
-  by orvoesa110.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:08:22 -0700
-X-CSE-ConnectionGUID: hzJvD565T+6gUWdyqxwJZw==
-X-CSE-MsgGUID: sR9tmcbHSu2l63fjDKddbA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="85371588"
-Received: from smile.fi.intel.com ([10.237.72.154])
-  by orviesa003.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:08:20 -0700
-Received: from andy by smile.fi.intel.com with local (Exim 4.98)
-	(envelope-from <andriy.shevchenko@linux.intel.com>)
-	id 1t3xZY-00000006a67-1pCv;
-	Thu, 24 Oct 2024 16:08:16 +0300
-Date: Thu, 24 Oct 2024 16:08:16 +0300
-From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-To: Jonathan Cameron <Jonathan.Cameron@huawei.com>,
-	Marius Cristea <marius.cristea@microchip.com>,
-	Trevor Gamblin <tgamblin@baylibre.com>,
-	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
-	Hans de Goede <hdegoede@redhat.com>, linux-iio@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Jonathan Cameron <jic23@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>
-Subject: Re: [PATCH v2 00/13] iio: Clean up acpi_match_device() use cases
-Message-ID: <ZxpGwOcreTRCdEgR@smile.fi.intel.com>
-References: <20241024130424.3818291-1-andriy.shevchenko@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=bJTV6BkSLhlyhfTHLcXy7K1uCib+LZfItuYKXpDu9eznmaynFxhhunB/e3Balpt3Z/lGOhxjRQRwaQCFcBBG+QSmV43QPHsBoQhRY5BetsaK+Nbysu+arGIq3jyOjFUzX0aC9hEIZO47FhcJfUgZeDHt0jTYX4H/8QfrAgLYl5I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+DhenBA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70EEBC4CEE6;
+	Thu, 24 Oct 2024 13:09:18 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729775361;
+	bh=nb17tpFBEr4PRv+4HRivZY+/kDVAsGeu50KxgyQfFtM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Z+DhenBAKevA2lfvMQCT080RR15CYZlFd2OBex6DKPZSr3GlSJCnwVUvC/6MZpWav
+	 atJeLaRqsLRsSbOgLmN9Dwjf2ik8vwDpRp/O2qkRL1ypA9TJFHhSJ6h8jjxZDcFSNG
+	 kosMIC5Nt2BjAK39z4huh/7xjQKN1UF+X9TaSIx2RzTMCcK4amX66HejnuWydxomkS
+	 tbcx3hdsDo7hWfeHHv4iP83Eroipu8AnnLKrEHA8HBRWMKBa0D7ZgyVHMJXogENKhG
+	 bOMXwfdLhlWJfJnsnCEUJI8F29OJIMRSnnTlT+rmub7IRRCGCPO8hD4eNxXQAYyk1W
+	 Y69zdtfXGdQ9Q==
+Date: Thu, 24 Oct 2024 14:09:15 +0100
+From: Will Deacon <will@kernel.org>
+To: Tomasz Jeznach <tjeznach@rivosinc.com>
+Cc: Joerg Roedel <joro@8bytes.org>, Robin Murphy <robin.murphy@arm.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <apatel@ventanamicro.com>,
+	Sunil V L <sunilvl@ventanamicro.com>,
+	Nick Kossifidis <mick@ics.forth.gr>,
+	Sebastien Boeuf <seb@rivosinc.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	iommu@lists.linux.dev, linux-riscv@lists.infradead.org,
+	linux-kernel@vger.kernel.org, linux@rivosinc.com
+Subject: Re: [PATCH v10 0/7] Linux RISC-V IOMMU Support
+Message-ID: <20241024130914.GF30704@willie-the-truck>
+References: <cover.1729059707.git.tjeznach@rivosinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241024130424.3818291-1-andriy.shevchenko@linux.intel.com>
-Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <cover.1729059707.git.tjeznach@rivosinc.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Thu, Oct 24, 2024 at 03:36:05PM +0300, Andy Shevchenko wrote:
-> There are current uses of acpi_match_device():
-> - as strange way of checking if the device was enumerated via ACPI
-> - as a way to get IIO device name as ACPI device instance name
-> - as above with accompanying driver data
+On Tue, Oct 15, 2024 at 11:52:12PM -0700, Tomasz Jeznach wrote:
+> This patch series introduces support for RISC-V IOMMU architected
+> hardware into the Linux kernel.
 > 
-> Deduplicate its use by providing two new helper functions in IIO ACPI
-> library and update the rest accordingly.
+> The RISC-V IOMMU specification, which this series is based on, is
+> ratified and available at GitHub/riscv-non-isa [1].
 > 
-> This also includes a rework of previously sent ltr501 patch.
+> At a high level, the RISC-V IOMMU specification defines:
+> 
+> 1) Data structures:
+>   - Device-context: Associates devices with address spaces and holds
+>     per-device parameters for address translations.
+>   - Process-contexts: Associates different virtual address spaces based
+>     on device-provided process identification numbers.
+>   - MSI page table configuration used to direct an MSI to a guest
+>     interrupt file in an IMSIC.
+> 2) In-memory queue interface:
+>   - Command-queue for issuing commands to the IOMMU.
+>   - Fault/event queue for reporting faults and events.
+>   - Page-request queue for reporting "Page Request" messages received
+>     from PCIe devices.
+>   - Message-signaled and wire-signaled interrupt mechanisms.
+> 3) Memory-mapped programming interface:
+>   - Mandatory and optional register layout and description.
+>   - Software guidelines for device initialization and capabilities discovery.
+> 
+> 
+> This series introduces RISC-V IOMMU hardware initialization and complete
+> single-stage translation with paging domain support.
+> 
+> The patches are organized as follows:
+> 
+> Patch 1: Introduces minimal required device tree bindings for the driver.
+> Patch 2: Defines RISC-V IOMMU data structures, hardware programming interface
+>          registers layout, and minimal initialization code for enabling global
+>          pass-through for all connected masters.
+> Patch 3: Implements the device driver for PCIe implementation of RISC-V IOMMU
+>          architected hardware.
+> Patch 4: Introduces IOMMU interfaces to the kernel subsystem.
+> Patch 5: Implements device directory management with discovery sequences for
+>          I/O mapped or in-memory device directory table location, hardware
+>          capabilities discovery, and device to domain attach implementation.
+> Patch 6: Implements command and fault queue, and introduces directory cache
+>          invalidation sequences.
+> Patch 7: Implements paging domain, using highest page-table mode advertised
+>          by the hardware. This series enables only 4K mappings; complete support
+>          for large page mappings will be introduced in follow-up patch series.
+> 
+> Follow-up patch series providing MSI interrupt remapping, complete ATS/PRI/SVA
+> and VFIO/IOMMUFD support are available at the GitHub [2], and has been tested
+> with published QEMU RISC-V IOMMU device model [3].
+> 
+> Changes from v9:
+> - rebase on v6.12-rc3
+> - #6 Memory ordering fix and updated commentary, based on Will’s suggestions.
+> - #7 Remove riscv_iommu_device_domain_type() and use head-less kfree_rcu in
+>      riscv_iommu_release_device(), based on Jason's suggestions.
 
-> In v2:
-> - collected tags (Hans, Jean-Baptiste)
-> - updated SoB chain in patch 4
+Thanks, looks ok to me now.
 
-Heck, I forgot to address the main comment by Jonathan! Sorry for the noise,
-I will send a v3 later today.
-
--- 
-With Best Regards,
-Andy Shevchenko
-
-
+Will
 
