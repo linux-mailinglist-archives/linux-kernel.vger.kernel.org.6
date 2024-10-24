@@ -1,139 +1,125 @@
-Return-Path: <linux-kernel+bounces-379472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6FDA49ADF11
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:25:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id E1ED19ADF13
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:26:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CF5028475D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:25:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 702401F234D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:26:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A111D137930;
-	Thu, 24 Oct 2024 08:25:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED81AF0CF;
+	Thu, 24 Oct 2024 08:26:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="KI3DbAky"
-Received: from mail-wr1-f48.google.com (mail-wr1-f48.google.com [209.85.221.48])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="f1I0nika"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A46FF757FC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:24:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 447EE18A6AB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:26:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729758302; cv=none; b=Vr33chWYGXtCiv2+7lk6aPniZg3KJpcqqTpBPxzJn681hgYGMbRihKqELt7+WRRCvFO9jE7g2GWpVLvJ+YubgLzK8Ynv9x+U6m1cSzr5/ciHx4C+FWxjjnLenCmZ0m/NuYy2OnFShLOBnzEtTA61CP4pcp8iqhaMQRmQdCaiXnI=
+	t=1729758373; cv=none; b=h5UmUHhrsCkR8rVHRjOulOMu1u57eCzeFD8LNbIQd62wrbGO/UN1ZzI6z9eKh/jn1R4dTynmNvSOrMNvEHhbv7sMJ2xYvowKhkN4Rq+krXDWzwZvIm6Svv6v9UwuD20Mki84jRSiWlbyO20JRS3B6VP5PiWR0AgHVEiZIDNkn5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729758302; c=relaxed/simple;
-	bh=9FNsT6ISVDeFGuCN1DU/1w+IcHnbXHrraMG7wVBrND8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNKDbZmwqTQdd1gNeNGokIyzWsNZehNIuayqa444vXTcfbLI8khEpF4ReSlYBax8OOLSVaJ/Eno15YaZL+7SovwkFn2hu3oXRQatyPdSRr4J2Sn5HjcOg2IbC0hSbGMMIJqrsH5UwyfsqYrI2xjQqcxYBhiNd4SjXMInC4AFItg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=KI3DbAky; arc=none smtp.client-ip=209.85.221.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f48.google.com with SMTP id ffacd0b85a97d-37d41894a32so434010f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:24:59 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729758298; x=1730363098; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=CqiCsjxfc2P2m9O4T3RIYxyfddsRpc80UkRWd9InIdo=;
-        b=KI3DbAky0tzgWuEMrdMcAFjqbVTUVrgl3TBSIrTMUCvKmNf+tWgcAY6KK/k/nR+Yy+
-         KOfee8L5Cu+Y8p1+eGrEuVwziLDodJDiDtRYu9DMTRFPkm57achEER1Vfzom1sZswIq7
-         kwe1ViakZ4WsTzbY0mtS1i5nmxLzd1V/SZRpmngmvyA+WpHYpuXtD6x/Bw2mAo5Y0IQM
-         JWjWs9k1pbpmyi7KljAiXBrrpSxqO6cTCsMnglqqOckS5GGBYqzyPueW8VKMRFBEqmiP
-         6o8XvchyFw+8MWyToeaopHVndhaus44Bd61c6n8DqcEbsyOn4CDE0n2GzOSBVwAlnhIB
-         yz1w==
+	s=arc-20240116; t=1729758373; c=relaxed/simple;
+	bh=91V0h/7zDnGI9sCOjMHFf6NA0Jnh9LCDW0ToMZO1JSw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=OR8jUGQmim2lSFcK73NSb5qwQnVtiHjUG/E5VQSmcVAS3jY929DDSiAZOPWI2iUruH5gyjbYL+NqFO60kIN71VMPV+dM6OJwMpbsvgkfhpcTTOjd3gR3+7yavEnURBWaQY41ArwswqtWorBet8wEYlCHPGps0ZizKx3vYU1AnJ4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=f1I0nika; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729758367;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=CwIK22jJTXiNl/4qz1QFJTbAu0ESQS65/f/CMFNbJQE=;
+	b=f1I0nikahp7iU2DPDdc8rKd6OCwQtukMBjL7E0Gosug2Mluv8/Z+uDalQkKNTPYRPI6Sso
+	vz/WZ8rL8FU/MDtdn9WD/w2/NgrEI4LVgT2o4i1MHbWilXK98nppmFvTHhftjmYjcREbwq
+	0Im3j56qvM5kY9LaYD4pMqQdYM3shDU=
+Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
+ [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-353-aabdOaKvM1SOC8LSSWu11w-1; Thu, 24 Oct 2024 04:26:05 -0400
+X-MC-Unique: aabdOaKvM1SOC8LSSWu11w-1
+Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d5116f0a6so351499f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:26:05 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729758298; x=1730363098;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
+        d=1e100.net; s=20230601; t=1729758364; x=1730363164;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CqiCsjxfc2P2m9O4T3RIYxyfddsRpc80UkRWd9InIdo=;
-        b=SnqugvIQ9/A13rlNSd7EJaDEMsW08nQyhIft48FTuATdgGFnMbprjhczkz0Dpp/uvH
-         qRHO1c9OjyLzth6Sww53cG+DZ7n4PUlx/FJGMwgVZlO9Y68837fM8FeaNOCj9dMG355s
-         gljsmZNmyFBzJ43l4+XH0MZrII4qWdhjhjsYfpa5z4oZvz8W6x7rlYyGIPAtaPIWY4sk
-         ixIA9IBP9NRIigUBES4GrMLJI0fF0Ux5VJabWLlrEP5I2mDMy78aOuNZN6JbR97ELsPh
-         +gfeHXcYCIzp0L++ZQzJDPut0Rho+c7isqds4/ASYv3vZbqA+rmb068g3H2X2BiuZSJX
-         xBfg==
-X-Forwarded-Encrypted: i=1; AJvYcCU6Ya1JAMvFvTLynRI90za+nk7WxsWGdykVrid9WntAOGlrZKqbVUoe07fwiNnR+yLRcGscUf9DEeueVH4=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxH6pVslAfIayTwhKRsBTuw7gKOeSDAI5uNcHtPPUWft30fKUTh
-	HmYPcI1mJrmxcKa8xBztgceN3ahcVlu9Z79UGe6RZ8db/8m+nFthLhkgyUtRC9k=
-X-Google-Smtp-Source: AGHT+IESJKOMwf+RZiVBHWmX3AZR4ukV/miP9SpvfZ2ei9dwjNnTMG2G35izlIu7na0hR/suP4zpfw==
-X-Received: by 2002:a5d:4ac8:0:b0:374:b6e4:16a7 with SMTP id ffacd0b85a97d-3803abf0250mr681659f8f.8.1729758297877;
-        Thu, 24 Oct 2024 01:24:57 -0700 (PDT)
-Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bfaba0sm38007245e9.20.2024.10.24.01.24.57
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 01:24:57 -0700 (PDT)
-Date: Thu, 24 Oct 2024 10:24:56 +0200
-From: Michal Hocko <mhocko@suse.com>
-To: Dongjoo Seo <dongjoo.linux.dev@gmail.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, dave@stgolabs.net,
-	dan.j.williams@intel.com, nifan@outlook.com,
-	a.manzanares@samsung.com
-Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
-Message-ID: <ZxoEWBakAv64wfhD@tiehlicka>
-References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
- <Zxk6bHlrP5S_0LBK@tiehlicka>
- <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
- <Zxls4HqdkV_yBYxZ@tiehlicka>
- <Zxl1eOooy5lwJwSo@eqbm-smc020.dtc.local>
- <Zxl3fB9FVz5i1huh@tiehlicka>
- <ZxnTDYiQWU45eX-Y@eqbm-smc020.dtc.local>
+        bh=CwIK22jJTXiNl/4qz1QFJTbAu0ESQS65/f/CMFNbJQE=;
+        b=mzbbCvXKciK5mYTarPAB3c7jY8Q//Q9EmtM0B87/DFR2rkEBvaZcYR0yDA4BPGVBO/
+         lK+oq7jOL5AzxnjIB9cdmsOSGTPfDkgHrN0rLwc6mwW6E7ujgkJ6DLXgBO5hC6bplFzp
+         N0fic4qI4bzzjXp/ZOcQMTJO2zT9h/JRc839eEZLehvORT5unIK3g7pJCoFxBevLdfYz
+         nqbKorEbG+lOhCeM7hDyebFne44oXwppKHEHF61iSZFeL28SwfV46wRKIJzCeymSxXNK
+         1pNokzw9LVhx1KNc4JtSp0znxYXyN7QmpSpUF2vbZRtU4ckpF3M934rFHtyn154Tna+g
+         tuQA==
+X-Forwarded-Encrypted: i=1; AJvYcCW+m77oTWkRwjqPuEO/TuS1Vnw8x7HZWN6ZuIzYaQ6vvRV/t+ZyqAWG8CRjd5d9JLoeiL4pv0U8grlBqS0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzelbsajLaY/GSVALoZWxPGK9nRkLRCk0vslr/fm3SvUolAa5Ta
+	Mwoqgzwupf/W42TOiDROhCD4BJStTF8IkFbs9ivvqk4FEX739C+6iak7QXOymvikvq/zBlb2Umi
+	ocvHccNvRh2uK0luCabGXmiPumi6v1gMkVd2UMB6tMU3VfyG2Z4bk2pIugv5xzQ==
+X-Received: by 2002:adf:f0cb:0:b0:37d:46fa:d1d3 with SMTP id ffacd0b85a97d-37efcf33bb0mr3582920f8f.34.1729758364346;
+        Thu, 24 Oct 2024 01:26:04 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFUHc3F4aF9Xtr+r5ckouML3Lz2RpgiwwzhufdwsDQDe1WdqdqUHPm6HAtVWSTtcDcEHoiDqQ==
+X-Received: by 2002:adf:f0cb:0:b0:37d:46fa:d1d3 with SMTP id ffacd0b85a97d-37efcf33bb0mr3582905f8f.34.1729758363954;
+        Thu, 24 Oct 2024 01:26:03 -0700 (PDT)
+Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b94071sm10764981f8f.89.2024.10.24.01.26.02
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 01:26:03 -0700 (PDT)
+Message-ID: <50874428-b4ef-4e65-b60b-1bd917f1933c@redhat.com>
+Date: Thu, 24 Oct 2024 10:26:01 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <ZxnTDYiQWU45eX-Y@eqbm-smc020.dtc.local>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V2 net 1/9] net: hns3: default enable tx bounce buffer
+ when smmu enabled
+To: Jijie Shao <shaojijie@huawei.com>, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, shenjian15@huawei.com,
+ salil.mehta@huawei.com
+Cc: liuyonglong@huawei.com, wangpeiyang1@huawei.com, lanhao@huawei.com,
+ chenhao418@huawei.com, netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018101059.1718375-1-shaojijie@huawei.com>
+ <20241018101059.1718375-2-shaojijie@huawei.com>
+Content-Language: en-US
+From: Paolo Abeni <pabeni@redhat.com>
+In-Reply-To: <20241018101059.1718375-2-shaojijie@huawei.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Wed 23-10-24 21:54:37, Dongjoo Seo wrote:
-> On Thu, Oct 24, 2024 at 12:23:56AM +0200, Michal Hocko wrote:
-> > On Wed 23-10-24 15:15:20, Dongjoo Seo wrote:
-> > > Hi Andrew, Michal,
-> > > 
-> > > Thanks for the feedback.
-> > > 
-> > > The issue is that CPU-less nodes can lead to incorrect NUMA stats.
-> > > For example, NUMA_HIT may incorrectly increase for CPU-less nodes
-> > > because the current logic doesn't account for whether a node has CPUs.
-> > 
-> > Define incorrect
-> > 
-> > Current semantic doesn't really care about cpu less NUMA nodes because
-> > current means whatever is required AFIU. This is certainly a long term
+On 10/18/24 12:10, Jijie Shao wrote:
+> From: Peiyang Wang <wangpeiyang1@huawei.com>
 > 
-> I agree that, in the long term, special logging for preferred_zone 
-> and a separate counter might be necessary for CPU-less nodes.
+> The SMMU engine on HIP09 chip has a hardware issue.
+> SMMU pagetable prefetch features may prefetch and use a invalid PTE
+> even the PTE is valid at that time. This will cause the device trigger
+> fake pagefaults. The solution is to avoid prefetching by adding a
+> SYNC command when smmu mapping a iova. But the performance of nic has a
+> sharp drop. Then we do this workaround, always enable tx bounce buffer,
+> avoid mapping/unmapping on TX path.
 > 
-> > semantic. Why does this need to change and why it makes sense to 
-> > pre-existing users?
+> This issue only affects HNS3, so we always enable
+> tx bounce buffer when smmu enabled to improve performance.
 > 
-> This patch doesn't change existing logic; the additional logic only 
-> applies when a CPU-less node is present, so there shouldn't be 
-> concerns for pre-existing users. Currently, the NUMA stats for 
-> configurations with CPU-less nodes are incorrect, as allocations
-> are not properly accounted for.
-> 
-> I believe this approach improves logging accuracy with minimal impact
-> on the memory allocation path, but I'm open to alternative solutions.
-> This isn't the only way to address the issue—any suggestions?
+> Signed-off-by: Peiyang Wang <wangpeiyang1@huawei.com>
+> Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
 
-I still do not understand the actual problem. CPU-less nodes are nothing
-really special. They just never have local allocations for obvious
-reasons. NUMA_HIT which your patch is special casing has a very well
-defined meaning and that is that the memory allocated matches the
-preferred node. That doesn't have any notion of CPU at all. Say somebody
-explicitly requests to allocate from a CPU less node. Why should you
-consider thiat as NUMA_OTHER just because that node has no CPUs? That
-just seems completely wrong.
--- 
-Michal Hocko
-SUSE Labs
+I'm sorry to nick pick on somewhat small details, but we really need a
+fixes tag here to make 110% clear is a bugfix. I guess it could be the
+commit introducing the support for the buggy H/W.
+
+Thanks,
+
+Paolo
+
 
