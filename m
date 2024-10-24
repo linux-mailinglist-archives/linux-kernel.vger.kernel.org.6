@@ -1,83 +1,75 @@
-Return-Path: <linux-kernel+bounces-379574-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 46A519AE0A4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:27:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DDC689AE0B8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:29:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0596D2848E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:27:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9D42928464B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:29:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4EA71B4F1E;
-	Thu, 24 Oct 2024 09:26:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5CAE41B85FD;
+	Thu, 24 Oct 2024 09:26:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="U0DIYaCL"
-Received: from mail-pf1-f172.google.com (mail-pf1-f172.google.com [209.85.210.172])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="IVynVBW5"
+Received: from mailgw01.mediatek.com (unknown [60.244.123.138])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2B50C1C32EC;
-	Thu, 24 Oct 2024 09:26:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 205F51B85D4;
+	Thu, 24 Oct 2024 09:26:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=60.244.123.138
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729761987; cv=none; b=lNtxDwMlb8VIY4gALUpCoLWNwVD+bwb0FBArB1nsNG54nJEO5tz46+Urp0EO0IbpcDLuYAE022rRtTXuq14gbq03qZuYPl4NQsWW070bOkS1xt8laGSDLFZj7bPP7GOxGZcx39R4LZ4zOZPN7+6BHWBSm46brE6zlwl4o9UH1AU=
+	t=1729762007; cv=none; b=sC6rgFCZJodFNdqFZkC3SmxIwUNyAg6Hfjl+2VSsvsC12Yeo5YH+QqaA28pwh6NBBKU4W5KEWCgbid7oWY211RvP9Ym84rbK/DYxwUQ+IdXEZlEEIU0kj5UUsaGR1rhW/EWFOIqWLcLinrGnGbLIl9OeuKP1FbnGRadek4D09V8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729761987; c=relaxed/simple;
-	bh=C3/JXOy6pyXEnet2ZU3cquvkOzRp30347+gzWGD6VE4=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=Upaj1aZStH0c6CPGzcwmPc3/WzrPUgGD7t/vZGzEZNEh6utjuNkM3xyQgrJ1dNjqM3lfDvzASmUB5hHr5j1DKzM/S0Vcx1QbZfP7pNjarzN7Ic5RIeWqi/I4cV0KCtB5cXILkQLBhuG4BDMGMFSeJ5iijzFnhMkn/QarhBGysuQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=U0DIYaCL; arc=none smtp.client-ip=209.85.210.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f172.google.com with SMTP id d2e1a72fcca58-71e625b00bcso515795b3a.3;
-        Thu, 24 Oct 2024 02:26:24 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729761984; x=1730366784; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=d+VrIqKKYOtO3M0mpfjgZhM5oDURd/5X3mD5U8C7QOQ=;
-        b=U0DIYaCLPFEhekvfMQzsiQZtKSRTp7om8lpbO+KBDWHbDnmqQtaENtajxd9RnyHLtH
-         jr+jipUBz07AN0Scis3tTqyQoF/DAvTfVz7DVuC0pXqGlecXi1OrhN78/bvI74uuE1Dr
-         Jz0ybHI1zgd/clVLhB373zx8wXQJ3oN24/GC81zChPB/DSV3Jfksjet2xQATaKCnow/e
-         IijRYFLufNp7VUbcaTKn9O3mE9/UbgR/hNL8jeCz+QhVnXHno8EgOfpXMJtj+u/Pb9OH
-         OzP9NxHDDqWMTVAfKzg74gRKgdcptUm3kXXC/S9bp4k793pnl7R0LNXeTRl13T5N0ig+
-         E0Xw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729761984; x=1730366784;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=d+VrIqKKYOtO3M0mpfjgZhM5oDURd/5X3mD5U8C7QOQ=;
-        b=AH1oTj02raLoQhT5IjCsPfIsT2sdNneFmZZyeHB5EUYdX5VRG7vzMauM1OSVTmWZBx
-         UFTHxKBfyngmrdJ3IUUJOTIDrLEgpXd2Pte3p1RS7uj+BeE4nzToCzDlJGmTqMv833sl
-         HK1/LV+MY4+r4oQ4bJSg86obiJKARvB042CLLwCKWLsOP0ua21HNDHqgYjtAAYx27mE7
-         vUF0gqE6S8wQTUYI4iusecCqAfSu+drEsg9V3LJGGyWM+tBZAbyfYam9jXbPe55Vnzgr
-         ptIgIOK69vJG3KBd3YnSGQOPmxU29KJYhnNqGFqa1TW0Z4bOkPb9N4kwMnq3zGgTubtF
-         tewA==
-X-Forwarded-Encrypted: i=1; AJvYcCVanf3GRNxNAcdF6oEpShoTa5Y5xaibETIzSIQyBoyKfDmIIWwficEstm7GjDjTPFiGiHy2VPp/z6oquoY=@vger.kernel.org, AJvYcCXPwcb6nMDqMwuhxNHGyaDX8F+WoKBBQF5BRdbxq1RUSQ9m8nGeph+Xl/sEQv80l9Gvnqo//c8EmPMZ9OBd@vger.kernel.org, AJvYcCXbf9QNhoarZqdyO4jOc5+SVTP7VvF86bAxjoMOEuhPPWJD6wO+DdZnvirvAzxxJ2SMcJIbNeAlBke0gaVO@vger.kernel.org
-X-Gm-Message-State: AOJu0YywRwbp3ZGwRy4oElEdTbvNDAqefaVga8Aug1kl0w+3KcSS7ovI
-	cGcweovvZchx6ENNBz7QXU+7kJycaYgmC6XyllhjDRIBzRwZFhr0KXMKRQ==
-X-Google-Smtp-Source: AGHT+IEAdfW6BQA61M8dhRfZrI4T8nteE8I7s4nNrFfOocP9QK13oGguSg5R20rcPru5VGaXIc2VRg==
-X-Received: by 2002:a05:6a00:1390:b0:71e:6f4d:1fa4 with SMTP id d2e1a72fcca58-72030a4b659mr7850810b3a.10.1729761984387;
-        Thu, 24 Oct 2024 02:26:24 -0700 (PDT)
-Received: from carrot.. (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d774fsm7608906b3a.106.2024.10.24.02.26.22
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 02:26:23 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 07/12] nilfs2: remove nilfs_palloc_block_get_entry()
-Date: Thu, 24 Oct 2024 18:25:41 +0900
-Message-ID: <20241024092602.13395-8-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241024092602.13395-1-konishi.ryusuke@gmail.com>
-References: <20241024092602.13395-1-konishi.ryusuke@gmail.com>
+	s=arc-20240116; t=1729762007; c=relaxed/simple;
+	bh=RzC3P/bd7ulzkYAm2qj8aTc72v5rbAlUoIp6KusaCl0=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=J1KFqnJFjODIVakPjsClq9ELtBgksyMwC0lsZAKynpdvDLN4dSzqX5zY1r7vkJyZ9KRQSiP4wmxq3eyeGr/APiVbep46hhqCcKtBmwXwYK/fFti6AyKWTDFbftUdEeS6bCTpL0vU9125NFE95QnMoaLu3vrN1BQIbqOIwHb63Fw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=IVynVBW5; arc=none smtp.client-ip=60.244.123.138
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 11c7ae7491ea11efb88477ffae1fc7a5-20241024
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:Message-ID:Date:Subject:CC:To:From; bh=pJpQaYRYOFoOBzvOr5AFD9WL6zha/mkCFXA5uGrTyhw=;
+	b=IVynVBW5NdsfSxn2yTMYtlzn0bADSgpKTrEv7zhKMq244qTYP7e2/aBQttBbyUkzHc6nF2mtp1rq2iRJ7Xl5+1IOpRL3fiSAz3Ve08vNJ/VzrJEmqGJanLOOYXlEuUeec/uROdfLedz/gVWe+pnzWYDzvk3Zu/9bGj577z8DAjw=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:cb27b63d-e76f-46f5-a471-d53440137e09,IP:0,U
+	RL:0,TC:0,Content:100,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
+	N:release,TS:100
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:2f2bcccc-110e-4f79-849e-58237df93e70,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:801|102,TC:nil,Content:3|8,EDM:-3,IP
+	:nil,URL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV
+	:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 11c7ae7491ea11efb88477ffae1fc7a5-20241024
+Received: from mtkmbs09n1.mediatek.inc [(172.21.101.35)] by mailgw01.mediatek.com
+	(envelope-from <karl.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1765193837; Thu, 24 Oct 2024 17:26:37 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs13n2.mediatek.inc (172.21.101.108) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 24 Oct 2024 17:26:36 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 24 Oct 2024 17:26:36 +0800
+From: Karl.Li <karl.li@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Karl Li <Karl.Li@mediatek.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Chungying Lu <chungying.lu@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Karl Li
+	<karl.li@mediatek.com>
+Subject: [PATCH 0/3] Add MediaTek APU Mailbox Support For MT8196
+Date: Thu, 24 Oct 2024 17:25:42 +0800
+Message-ID: <20241024092608.431581-1-karl.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,61 +77,53 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-All calls to nilfs_palloc_block_get_entry() are now gone, so remove
-it.
+From: Karl Li <karl.li@mediatek.com>
 
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-Cc: Matthew Wilcox (Oracle) <willy@infradead.org>
----
- fs/nilfs2/alloc.c | 19 -------------------
- fs/nilfs2/alloc.h |  2 --
- 2 files changed, 21 deletions(-)
+Based on tag: next-20241021, linux-next/master
 
-diff --git a/fs/nilfs2/alloc.c b/fs/nilfs2/alloc.c
-index 5e0a6bd3e015..ba3e1f591f36 100644
---- a/fs/nilfs2/alloc.c
-+++ b/fs/nilfs2/alloc.c
-@@ -390,25 +390,6 @@ size_t nilfs_palloc_entry_offset(const struct inode *inode, __u64 nr,
- 		entry_index_in_block * NILFS_MDT(inode)->mi_entry_size;
- }
- 
--/**
-- * nilfs_palloc_block_get_entry - get kernel address of an entry
-- * @inode: inode of metadata file using this allocator
-- * @nr: serial number of the entry (e.g. inode number)
-- * @bh: buffer head of the buffer storing the entry block
-- * @kaddr: kernel address mapped for the page including the buffer
-- */
--void *nilfs_palloc_block_get_entry(const struct inode *inode, __u64 nr,
--				   const struct buffer_head *bh, void *kaddr)
--{
--	unsigned long entry_offset, group_offset;
--
--	nilfs_palloc_group(inode, nr, &group_offset);
--	entry_offset = group_offset % NILFS_MDT(inode)->mi_entries_per_block;
--
--	return kaddr + bh_offset(bh) +
--		entry_offset * NILFS_MDT(inode)->mi_entry_size;
--}
--
- /**
-  * nilfs_palloc_find_available_slot - find available slot in a group
-  * @bitmap: bitmap of the group
-diff --git a/fs/nilfs2/alloc.h b/fs/nilfs2/alloc.h
-index af8f882619d4..3f115ab7e9a7 100644
---- a/fs/nilfs2/alloc.h
-+++ b/fs/nilfs2/alloc.h
-@@ -31,8 +31,6 @@ nilfs_palloc_entries_per_group(const struct inode *inode)
- int nilfs_palloc_init_blockgroup(struct inode *, unsigned int);
- int nilfs_palloc_get_entry_block(struct inode *, __u64, int,
- 				 struct buffer_head **);
--void *nilfs_palloc_block_get_entry(const struct inode *, __u64,
--				   const struct buffer_head *, void *);
- size_t nilfs_palloc_entry_offset(const struct inode *inode, __u64 nr,
- 				 const struct buffer_head *bh);
- 
+Hello,
+
+This patch series introduces support for the MediaTek APU (AI Processing Unit) mailbox, a crucial component for facilitating communication between the APU and other system processors within MediaTek platforms. The APU subsystem relies on a message-passing mechanism built atop the mailbox infrastructure, necessitating enhancements to the existing mailbox framework to accommodate the APU's communication requirements.
+
+The series begins by adding the necessary device tree bindings for the APU mailbox, followed by an enhancement to the mailbox framework allowing for bottom-half processing of received data. This is particularly important for the APU's operation, as it relies on a combination of mailbox messages and shared memory for data exchange. Finally, we introduce the MediaTek APU mailbox driver itself, which implements the communication protocol and exposes additional hardware features for broader system integration.
+
+Patch Summary:
+1. dt-bindings: mailbox: mediatek: Add apu-mailbox document
+   - Introduces the device tree bindings necessary for describing the APU mailbox in device tree sources, enabling the kernel to correctly configure and utilize this component.
+
+2. mailbox: add support for bottom half received data
+   - Enhances the mailbox framework to support sleepable contexts in the processing of received messages. This is critical for APU communication, where message handling may require operations that cannot be performed in atomic contexts.
+
+3. mailbox: mediatek: Add mtk-apu-mailbox driver
+   - Adds the driver for the MediaTek APU mailbox, facilitating communication with the APU microprocessor and providing interfaces for other system components to interact with the APU through spare registers.
+
+This work is a step towards fully integrating MediaTek's APU capabilities with the Linux kernel, enhancing support for AI features on MediaTek platforms.
+
+Please review and provide feedback.
+
+Best regards
+
+Karl Li (3):
+  dt-bindings: mailbox: mediatek: Add apu-mailbox document
+  mailbox: add support for bottom half received data
+  mailbox: mediatek: Add mtk-apu-mailbox driver
+
+ .../mailbox/mediatek,apu-mailbox.yaml         |  55 +++++
+ drivers/mailbox/Kconfig                       |   9 +
+ drivers/mailbox/Makefile                      |   2 +
+ drivers/mailbox/mailbox.c                     |  16 ++
+ drivers/mailbox/mtk-apu-mailbox.c             | 222 ++++++++++++++++++
+ include/linux/mailbox/mtk-apu-mailbox.h       |  20 ++
+ include/linux/mailbox_client.h                |   2 +
+ include/linux/mailbox_controller.h            |   1 +
+ 8 files changed, 327 insertions(+)
+ create mode 100644 Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.yaml
+ create mode 100644 drivers/mailbox/mtk-apu-mailbox.c
+ create mode 100644 include/linux/mailbox/mtk-apu-mailbox.h
+
 -- 
-2.43.0
+2.18.0
 
 
