@@ -1,253 +1,334 @@
-Return-Path: <linux-kernel+bounces-379499-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379504-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id EFE1C9ADF5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:42:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4A7A69ADF68
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:45:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47134B2345B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:41:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 67E131C21BC9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:45:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803A31B2180;
-	Thu, 24 Oct 2024 08:41:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMGkdPQG"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 31D2E1B0F10;
+	Thu, 24 Oct 2024 08:45:09 +0000 (UTC)
+Received: from smtpbgau2.qq.com (smtpbgau2.qq.com [54.206.34.216])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAB61AF0BB;
-	Thu, 24 Oct 2024 08:41:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759301; cv=fail; b=L/FOH28gyaXcIP2Z/Q1+VEP2m7eH4Wn+UKibTcKZAxbJWtWXJA9SbfBwPc1H3X+vgr4wc4xhQu+Zm8M8xGEl08jGxs2d8oUKvu77hH3zgB8BJK66HshxfrY85ubCgGgN4Xq10lsABDjjpzdCvPDjxwfjvPkkN2NJ1Oj6Kcadjb4=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759301; c=relaxed/simple;
-	bh=rJKXPBooodT326pT/ES8y9qesyFtIHrJ6sIRwinUfwY=;
-	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=jMRdncvxPxSRkATwqpHL76t2SW9BgwL+3B6G6DV2ywyp2gZreake72df2ejC01jPRCDs9sxWhU4Yl3kjLd00QXsnHNsH66DnbaB+1SM/sAzqhjjOnBAR0jym3XHMSXlAt9Y1qGW+OOoJJVIa1tXWqxWx2Wtxx0RpbP82Cqc51T4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMGkdPQG; arc=fail smtp.client-ip=192.198.163.13
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729759297; x=1761295297;
-  h=message-id:date:subject:to:cc:references:from:
-   in-reply-to:content-transfer-encoding:mime-version;
-  bh=rJKXPBooodT326pT/ES8y9qesyFtIHrJ6sIRwinUfwY=;
-  b=QMGkdPQGLxxCl4U/XF5I0Q0Ct102xlfYSzzc5okC1nzQADeFGYrXAkN6
-   TWzacGrIycbswPLYyFlnsDI41EmcoI+NiIYuBTS2CRYTYCheJ9Z6Ou+ol
-   +e0tzEvu1aWT3WPWVOyNCUPegzPIRGeQSdPDZLQncvTQ4GBksYQYZ0uHw
-   8qutMvKphysHM2CfVbePu/6eaWOsgkuUYHT8MMvvStkQBhqkDo50aCTXM
-   2d0RWswikcxxONmUCuEPWRRrdzEHc38U+JCdxVnkTLGMb5ylQGAQjIyk+
-   +DPe1lUTwUwiHjUXrJeh/AfokGcWfTroJhbTVzFkbx6BQPXcjhYug3cLU
-   g==;
-X-CSE-ConnectionGUID: HTTYMtPgQ/CcmepaMSTAiw==
-X-CSE-MsgGUID: ll2+6YjrTFyAIj9cVnl//A==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="32238556"
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="32238556"
-Received: from fmviesa003.fm.intel.com ([10.60.135.143])
-  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:41:35 -0700
-X-CSE-ConnectionGUID: 1GDXl7teSRqoVGO+g/9g4w==
-X-CSE-MsgGUID: U81GgLaxTBCqpalOCjJ+8Q==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="84497774"
-Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
-  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Oct 2024 01:41:35 -0700
-Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
- ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39; Thu, 24 Oct 2024 01:41:34 -0700
-Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
- orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
- 15.1.2507.39 via Frontend Transport; Thu, 24 Oct 2024 01:41:34 -0700
-Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.43) by
- edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Oct 2024 01:41:34 -0700
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=dOyUrnPQ8n+GrQNXkGDzTIXJl2milpX5YHgClzRW0+ipP7VWM+SrkZYjqvT8ONzNck4U9v9JF5/KfFL8NIVMsh+K5y4QQXcM/d0Ga7I3gqyKvUvXXO0h8naAVYmX01vopKKtjWpY3qb4AqfFGcMQeIYRhEusQ9g6fR/7qCityOq5lcL9gF+E8I4d2hrgirloaJeiTOxTjcxd3xjTfnMp0o26XB5uTbcdGo6R6fvP+NB2f2UVjNNEtcHj19THhGCm+BU6YHwI6TiRtpjs+bSOuvBgly5PJwqMNj8w4Grun/xRmdEQRgsBJdaijrgEcQYfFZM10FB3T3+7h1nsxcjbug==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=Gf8EBTsxLqLLm1BLFmaife01rDvINRr+QASuhP108ZU=;
- b=qNGvoHuyiT3EUZ8EJ0R7dzUo5RWIruir+uXp+tkIsuvs2O4dkcbegoRE96cEFZTdKwSx1AKp/v8efTQz3Bui/S8Aj+nMVNnoNrPEWBs5GWnYaSATkkYSzzbtsMSfZtZoSF6jNrDgysg7FsixMnZJ8W+ipY3EbdPSvHYpZ+GrxUs4pZ5s2cGrQUw2+StmfVXG4wTSqjuQwDfRaDh6q+fsOmPHDL/Rojw0tp7rzhKrLiirJfdGxgYbr4ybm+Ev5zPkEcBw+fJ44aGAPuEE1r3FPT6OxRRItwJcHZtvp3vZHa2S31abTFei12xG6TSqMKXTlzz/HFfJXgoXlCchbSXYyA==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
- dkim=pass header.d=intel.com; arc=none
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=intel.com;
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
- by MW3PR11MB4604.namprd11.prod.outlook.com (2603:10b6:303:2f::16) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Thu, 24 Oct
- 2024 08:41:31 +0000
-Received: from MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
- ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
- 08:41:31 +0000
-Message-ID: <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
-Date: Thu, 24 Oct 2024 10:41:25 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
-To: Johnny Park <pjohnny0508@gmail.com>, <horms@kernel.org>
-CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
-	<kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
-	<anthony.l.nguyen@intel.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<pmenzel@molgen.mpg.de>
-References: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
-From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
-Content-Language: en-US
-In-Reply-To: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: ZR0P278CA0170.CHEP278.PROD.OUTLOOK.COM
- (2603:10a6:910:45::12) To MN6PR11MB8102.namprd11.prod.outlook.com
- (2603:10b6:208:46d::9)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8BFA01B0F05
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=54.206.34.216
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729759508; cv=none; b=HtMBmXkxlFpIili+F2yZSN0izHlQjB1yu/eHFAjU1w7OSYYpqdJsTQtN5kvWt0uXmeAucePwxvyBCVIk9FwNwxdu0KXF27blTHpReQ6rQ/70pbA4usW2rhCv+yYWnGO49xH0jDw8mPlCZcDn3XbKS8pCYnOoACMWSeLzSMzkzmU=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729759508; c=relaxed/simple;
+	bh=RpDomQY8AcTLwZOZzDF5l2omeCsT9B67nCDuMaaiLxY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bgAzPVo/FTt9iHJBandAfq+uI4xKMbM0BwksfjEzBBUoal4YyRzLZwAPk4mYrwfrEIOZPPXgPG8aMlcR03cMcxV09wskO7jZ1W5R8n5r1Kv5bM142cTp8GHiKVlmlD+95oKjGqfQQSqSs83QT5DBn9tOy3DuFJiPvGiYPDS3Pxw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn; spf=pass smtp.mailfrom=shingroup.cn; arc=none smtp.client-ip=54.206.34.216
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=shingroup.cn
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=shingroup.cn
+X-QQ-mid: bizesmtpsz9t1729759397tyg969r
+X-QQ-Originating-IP: F4j1YRIOQd8QQeb0FCatxM/m13zHDva7rd0KWi104eI=
+Received: from HX09040029.powercore.com.cn ( [180.171.104.254])
+	by bizesmtp.qq.com (ESMTP) with 
+	id ; Thu, 24 Oct 2024 16:43:14 +0800 (CST)
+X-QQ-SSF: 0000000000000000000000000000000
+X-QQ-GoodBg: 0
+X-BIZMAIL-ID: 12981368116427560855
+Date: Thu, 24 Oct 2024 16:43:04 +0800
+From: Luming Yu <luming.yu@shingroup.cn>
+To: Michael Ellerman <mpe@ellerman.id.au>
+Cc: Christophe Leroy <christophe.leroy@csgroup.eu>,
+	linuxppc-dev <linuxppc-dev@lists.ozlabs.org>,
+	linux-kernel <linux-kernel@vger.kernel.org>,
+	npiggin <npiggin@gmail.com>, "luming.yu" <luming.yu@gmail.com>
+Subject: Re: [PATCH 1/7] powerpc/entry: convert to common and generic entry
+Message-ID: <55B30F12C81A25B9+ZxoGx55aKtK7pSNx@HX09040029.powercore.com.cn>
+References: <88E2581B1D024E9A+20241012035621.1245-3-luming.yu@shingroup.cn>
+ <e9595d8b-d1e2-4c6a-b097-6f4f08d29866@csgroup.eu>
+ <tencent_381ACB160B890CC46678170E@qq.com>
+ <87o73b37pw.fsf@mail.lhotse>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|MW3PR11MB4604:EE_
-X-MS-Office365-Filtering-Correlation-Id: 4f8e6ad4-692f-427f-b61c-08dcf407a8c3
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
-X-Microsoft-Antispam-Message-Info: =?utf-8?B?STRCTU5iVy9vdEZDelpSR0JjTGtjQzVTZ0M2MTc1anJsS2p5dnpsRXFFOElF?=
- =?utf-8?B?SS9TNkUrWGN3cHRyMWlvaENtWFRibDNNTVRXbWMvNDU2SzR6N2ZaSGxFZ21T?=
- =?utf-8?B?NS9LNEhEUi84bUFsbUpWZ2RZM0JNQ2gxUEZaTGpFdVEyMXRqUlk4YXRtNHZt?=
- =?utf-8?B?enpodlRJTGZEd1Y1QWtkc2haUHIrbk9OUjBOcHE5djZYbTJnbWlNR0pEYnRZ?=
- =?utf-8?B?T1RwYXBERWgzUUNnOXJYNUplRTZSdC80cWdrUzJidno2TmlLK21SNGZLYkFB?=
- =?utf-8?B?SFFkNkRYWmpxUmZZbGM0cisxYk9sb0lWYlo2YW1sNmZ5aGNHYUVrSmdOcUpr?=
- =?utf-8?B?alBEUG9vQnZSTlVkWk0veTRnZ3k3eHBSVnZzTm95QlJxZXNDZHFnZ0hoUUor?=
- =?utf-8?B?dWFURXMzSnVXZVFIUFhUT1VXYTRzbkRyRHJnNElhQnM5TUJkWVNvNTZqcnIr?=
- =?utf-8?B?TExlOFordHJ0RHYzVGsxeDFhZXZHNmFMWEFoTDZnUG82dFhMeU5RT3BhdDNy?=
- =?utf-8?B?blJQY0NnTU0xSG4rRzRRbWIwNFFSWEVQbEp0SXRGTS9JOUZFL29ySjJZWXNu?=
- =?utf-8?B?bDFZUW50ZnY1R1RKUHUrRnRJN2VCb2FBZjBOalE4MnFkbmN6Q0FRVExuTTZC?=
- =?utf-8?B?S255RVRsZzhwcUFhZGNOcnpJZ3Q0a0p2TWg1cXRHMFR6ZU50N1kxMjR2M2c2?=
- =?utf-8?B?L1JxOUw0QUpIdTdrM3BNZnBLaUM1ODVWTUZKNGFUNmRYZE1BWS83cGxva1Zx?=
- =?utf-8?B?Y3Rrdzl0Y3dMbnI1dG5tRHcwbVY1SVIreXJua01FTnA5R3o4QURaNFBXMkxU?=
- =?utf-8?B?SWR1Sy9yYWt3c1RtZEQ0QU05azdQYTJER2U1MzdpalAzMjExWlZZMEQ0WW1Z?=
- =?utf-8?B?ZS9iZUpUaUpPc0NPdko2SitUazNjNEJwUCtNcThCY0Iya29wSnMxNDVGblFD?=
- =?utf-8?B?SnA5VG1STXFlYk5NY1Nwblo0VnRob1Y5WFlrNGxXZjhQaDRndTNPUi91bkp6?=
- =?utf-8?B?NkJXanlxZnNpRjYrbnZqMEVJbENtSkJZaHBRWGNERVM5UVprU1crTEEwS25l?=
- =?utf-8?B?RHdrOC9EYmlWS0I0aTBnczdjTW4ycTJBa3RsMTBVaVFJaVZsWmNocllCY00z?=
- =?utf-8?B?cCt1ZnVYNkNVMHAzWXJLY2Q1SkhpRms2MEZSNExGYmxEOWIyYTMvVG1rcXFH?=
- =?utf-8?B?cHdYb0t5cWRSb3F6RmkvYXVHRmp4bU52U1FFT1QzK2hsMFJRVENIQXZWdHBR?=
- =?utf-8?B?akVlTzM1SC9CN25JREJGcjZNQlkvMHBkU093R2xJWHFRSzlmRjJmOUJUdHV5?=
- =?utf-8?B?eU5OMGx4Z1prQytZK01ocnA2Y1A3dUJHa0FicXlHMllzSEk4eHBUdWVWTm9B?=
- =?utf-8?B?aFlEN2tqVkdpUjNCRVN2T3dOemRQOG1tNDJxOUhqV0hwNndBTllwd1Raa0cx?=
- =?utf-8?B?eDZwL1grenN0Wmx0eER5dGJKTndrR0RXanhNeHZiN09yOHhQaEhzOVVDbisr?=
- =?utf-8?B?Y2N1cS9nMTk5SkI0RDk5VUFwclhvL2M5ZjZ3NUp4UXdUckxOaHZPUEJBTklt?=
- =?utf-8?B?cERXb3AwbDdDTGJyOXBOYWRTbVU5NVIvb3RGOHNPdU5EY2RkZ1hqQ0RNRkFp?=
- =?utf-8?B?M2dOSElIYzBsR0FKLy9jMWVpRVEyQ2o4YW1HQnpUOVh6eXMwZDZkSmtlcytn?=
- =?utf-8?B?OThkTkdPank2RWxGNC9kbVFwMkdQMzdhVURQdmozdnY1Wm82MEE0YTkrNkQz?=
- =?utf-8?Q?v3Oq53ayiXMcO3xp5+tlnnNwOTsOS+2acqQ6RqK?=
-X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aEVTSTFRTE9peVozc0F3d3NFMGVDMkFaZnFZV3FJejVtNVBRZXNYcjUzSS82?=
- =?utf-8?B?aGoxVG14cFBIYmd1a1ljSWVtTmlRZWJwaTEzRUl6QklaWWlBWEt3UzFudzAv?=
- =?utf-8?B?U1JtUnpPdmgxRkxubDdydkM3Q2FFTWJwWTU3TGhSTEx1Q0ZoRzVhakVaMDB0?=
- =?utf-8?B?N2NNaFNvVysvQkFhUWVyTnh5UTJiY2ltakNSc05MbGJTcUlHYmJZQXorR0pt?=
- =?utf-8?B?NjlGbzMyaGkrQnpwVnVKT213dGlMdE5MTDdyMFV2L1BCUjFsUHdXZnZ2T3Vp?=
- =?utf-8?B?WUFUSWQ3cUMxZVQ1SjM4S29vYVdtUkk0NFZZeGtxQ3BRSjhkQldacVZxSmRt?=
- =?utf-8?B?NldaU25Ba1JVTGZadG13ZlJRV25oVmE0RjNVK0pqZ2YxLzhOMjV1QVBZRm1s?=
- =?utf-8?B?R1poU2k2OFk2ekFydjhBOWVPdkZYOUlaNGFmTUhQVTZiSHF3YTZUbUtmRDIx?=
- =?utf-8?B?WE1abEY1dXdXTUFNSFQzd250ZFBkR2kyOWVVR09aNEtYeGswOCtSZ0ZVY0hE?=
- =?utf-8?B?QW5ZcHJzRjZFNlRYUVh5N0dzdzBrTkRwS3ByczkydkZCWkRwTkhGS1g5TEtI?=
- =?utf-8?B?OEQzZjF1Q3pkRjN0aGJINm11TTArcWlZM1pYTFZCczRCQmJyMGY2ZVpVZDFv?=
- =?utf-8?B?ampTY2hGdlhBUkZzT0hCTnJUWFp1WmV0a1h6QWJtMStUdW9BbU5MYmpZemFT?=
- =?utf-8?B?UGVYOU1DV243am94NjB3QnhuVHYvSzhRUUZtTUdEYmttY3lTZHNpK1ltSlM3?=
- =?utf-8?B?TllTbmRJUGJOWXBXZlp3NkJwM0N5SmF2QmlvTmdmeDVGYnM5cWs5L2JFMkQw?=
- =?utf-8?B?dE5rQ3l6eEpXZW14dGI2Zml6b3ZVWUVQVkUzY1lDUWtHVkZMTnYxRXZEaTN3?=
- =?utf-8?B?SnhVMk0rbDljWi9BVThnY3l3ZTZVYlZpVFQ0emNvWTFkbGE2eHBRNlBuV05D?=
- =?utf-8?B?Z1VudDVvamg2a1F1VmdPTjI5QXFtcWRjWFl5VTRZU2ZDZDhQa1A3NE1IUk1u?=
- =?utf-8?B?R2I4YTc1NlB0b085Zk1Xb0lQRkwrM3Q1Wnhpa1ZNWnhMdFhPVW5HQWg3bldD?=
- =?utf-8?B?VW1VaU1BaVRKd3krNzBpWDFxMHhSTTB5UGkwa0RzdE53L0xVQ0V3VHAvVFd4?=
- =?utf-8?B?U2F5SlhUOUd2Zk5JNE1KTDNKU2RsNHk2d2Rxd3kwT1Y1Yk5SWGRRZVBvTW8z?=
- =?utf-8?B?M0dIL3R4enBrWThpMUtmU3lSSFB6b25OdVlYQisyMmc0d00vV0ZSRDMwVjU0?=
- =?utf-8?B?MDBKd2JiSFpaQVlKUlhxYU10VzhOT21ZdmhleDdxQzl5dzRKamJiMERwL05R?=
- =?utf-8?B?ZGMxKzRKRk44TE1PbEQ2VzBkRzVBWXFaWTFKZ3V6MU40VCtUc2ExblZZbml1?=
- =?utf-8?B?Z2llRzdiTUs2ZFBCd2RoYStVUmNxZTkzU3hJYUt5SDRjT0QvbDdVdDRyZ1k1?=
- =?utf-8?B?MGkwMjdsdUVnbWo4bnovOWVlOUVvRWY5bDgvMGlYdFNHQVliZ3ovcHNxNGQx?=
- =?utf-8?B?OExkL082cDJUS1hTU0F6OEVPcm42S2VjYnlBcjVvanJlUWJsV2doRjNzNS9Q?=
- =?utf-8?B?aXJhS0lFK3d2Vm5XTXNERnVIUmdmWWh4SkQ1SUJ6QUh4Y0UvY3daT3ZxbURw?=
- =?utf-8?B?dEFZV0xHa3Z5dDNjeE80V2VkVzBSOGx1Z1IreG9GSFpza2o3cDBMZEhaMFgy?=
- =?utf-8?B?cytVZVB2b0pYOEdndUlFa3F2WXpna2RudVpyN1l5ZHBNSVRnU0Q2bzVSZnhR?=
- =?utf-8?B?K0RkTVRkU3dQSmZ3ZEtYaTBVVkd6ZW5nSFZIYnNIYmxzWkIvdWdFeFB5QnBU?=
- =?utf-8?B?OEc2bWM0MTdTcVExT24vTkNMWUFvYkFTQmFjemQ3UzJPV2I3V3lKQndTNGxj?=
- =?utf-8?B?R3BoTGMzcUVXMFdhdjV4a0JnRUhhdU1Ha0RuNlNJT1U5YTlqRFJaVXc2QW9O?=
- =?utf-8?B?WHFVbDJobnNoUk1JdkxocDB5TlRaNzBNSFNsTDNsQ2t0dFhJVGtFUmRKcEZk?=
- =?utf-8?B?bjFhbW1hQUpsRGc2Z21oS1liUmg5eTRVNWptdG8yUFpPS0ltOSt4U081S3ln?=
- =?utf-8?B?eVZGdjZlaDJhUG5MaHRWYk56M1ZUSGc2S0tZNmdqTVJTN2hnbWZsdzRmTVJL?=
- =?utf-8?B?NGpmbkZoZmZkaU8xbFA3TjVmQmtOSDRoR1pYWEJyWm5iQXloOE9RR082OEJ5?=
- =?utf-8?B?WlE9PQ==?=
-X-MS-Exchange-CrossTenant-Network-Message-Id: 4f8e6ad4-692f-427f-b61c-08dcf407a8c3
-X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 08:41:31.4097
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: 5H5mLw/zGbnMGWEfM6ycWMVbJUQpaY8I/qtdsakESmRblLT7IO61aBeddOyYbN23HmQTDENl/UAsXn70Fb1Q0MEwPLEy7lNSe4LtzsJnCgo=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4604
-X-OriginatorOrg: intel.com
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <87o73b37pw.fsf@mail.lhotse>
+X-QQ-SENDSIZE: 520
+Feedback-ID: bizesmtpsz:shingroup.cn:qybglogicsvrgz:qybglogicsvrgz8a-1
+X-QQ-XMAILINFO: OO87pPbfd04fXqrus5GM8rNOk7ewXC8ypwJOrvZ5Jdq9pNdqbaTG3CN1
+	9HswsiDDlLiGuyA7vJP4wKR4AAtOR3on1C1zwbtUgadz/+zrsi8Kf3rxNIyTO2pdShgVeOC
+	Zlx81Q7RisPOX9NbTrhGM7BtzSlg63FaT2/0eeyk01NYTZn9I/Jw+cwjKM+/tj83lJA8r6s
+	fNe01e7YzwSZrRpa21r5oLf9U0YO4lD7hxYG6oMnaUrsyOM7t6xUWp9i5LS66492S6NkoFN
+	22PToeLgr424RiNgZIuNg3YhjxT6WvpsmjJ+U/UxkG4/ffIjK4NPbYo/Ak/7xF/aORjgkaj
+	lxeeXo0wOMARHHkLuuZJ91RUAgVhuxQmJvM19pfOt5gFwQhvtAE1rP5hU1t+DU9upoedpZA
+	FcYIBFOOtfaiHwkX6tZoCbvtcAv/2BFllJ51h0FvIEN9i2PcJbm44ZMSc+ecScxNljsydcs
+	GJo6Gq4EoqSWuZWosvNnzWqENY4/YDJywKVC1yvuekICfMqj0FbIsYRTfzJJPO9BkjjQCsW
+	4jZj2LxE708yyZn0vBcAf8UYCmCl65rP75THvKaby4k58k+cAECV6Jwp5Oyt/0BiF/yHk9L
+	1vvWILf0QDqbS53DKoJsBUdXLWIeY43Fn2ZBPWlh6b2WzFKCgYQA4T6X8+FfJ565cLtXH06
+	xG7jgRlsn/+OZV+kwU1vVDgI6bJJLD1ARm9aeZCrgFGXIdIxo2j+VFpyoxN2OX5zRzOtppQ
+	6kCAQbPIMk+ya/uprZEwA+9q5MImIOpgRUtnSCM0DlLfMxLZLnjEP/lzO4igQAftlf7+uDx
+	vbmlA0KVKFSqRu+LNJt+JGtiqrW92Pk9A3Mw0KLn90dUM8OD9I4LTiRPM9Q8x7ptsum3B0H
+	3qSS4iecW8SuJXk+uh+tR7P/Behb8ed7m+r5LXf0wzm15i8wDeVaFTICQJrwZuupNyaZdKA
+	LKG41yP0AW3KvZA==
+X-QQ-XMRINFO: OD9hHCdaPRBwq3WW+NvGbIU=
+X-QQ-RECHKSPAM: 0
 
-On 10/24/24 07:45, Johnny Park wrote:
-> Fix 2 spelling mistakes in comments in `igb_main.c`.
+On Wed, Oct 23, 2024 at 12:53:47PM +1100, Michael Ellerman wrote:
+> "虞陆铭" <luming.yu@shingroup.cn> writes:
+> >>Le 12/10/2024 à 05:56, Luming Yu a écrit :
+> >>> convert powerpc entry code in syscall and fault to use syscall_work
+> >>> and irqentry_state as well as common calls implemented in generic
+> >>> entry infrastructure.
+> >>> 
+> >>> Signed-off-by: Luming Yu <luming.yu@shingroup.cn>
+> >>> ---
+> >>>   arch/powerpc/Kconfig                   | 1 +
+> >>>   arch/powerpc/include/asm/hw_irq.h      | 5 +++++
+> >>>   arch/powerpc/include/asm/processor.h   | 6 ++++++
+> >>>   arch/powerpc/include/asm/syscall.h     | 5 +++++
+> >>>   arch/powerpc/include/asm/thread_info.h | 1 +
+> >>>   arch/powerpc/kernel/syscall.c          | 5 ++++-
+> >>>   arch/powerpc/mm/fault.c                | 3 +++
+> >>>   7 files changed, 25 insertions(+), 1 deletion(-)
+> >>> 
+> >>
+> >>...
+> >>
+> >>> diff --git a/arch/powerpc/kernel/syscall.c b/arch/powerpc/kernel/syscall.c
+> >>> index 77fedb190c93..e0338bd8d383 100644
+> >>> --- a/arch/powerpc/kernel/syscall.c
+> >>> +++ b/arch/powerpc/kernel/syscall.c
+> >>> @@ -3,6 +3,7 @@
+> >>>   #include <linux/compat.h>
+> >>>   #include <linux/context_tracking.h>
+> >>>   #include <linux/randomize_kstack.h>
+> >>> +#include <linux/entry-common.h>
+> >>>   
+> >>>   #include <asm/interrupt.h>
+> >>>   #include <asm/kup.h>
+> >>> @@ -131,7 +132,7 @@ notrace long system_call_exception(struct pt_regs *regs, unsigned long r0)
+> >>>   		 * and the test against NR_syscalls will fail and the return
+> >>>   		 * value to be used is in regs->gpr[3].
+> >>>   		 */
+> >>> -		r0 = do_syscall_trace_enter(regs);
+> >>> +		r0 = syscall_enter_from_user_mode(regs, r0);
+> >>
+> >>Can you provide details on how this works ?
+> > I assume the common entry would take over th details.
+> > So I just made the switch from the high level call.
+> >
+ > As you said as the subtle ABI requirement about regs->r3 needs to
+> > be restored, I'm wondering which test can capture the lost
+> > ABI feature. As simple Boot test is insufficient, what is the test set
+> > that can capture it?
 > 
-> Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
-
-you should collect Reviewed-by tags, as the one from Simon on v2.
-for future Intel Ethernet drivers series, please target them to IWL
-(net-next in the Subject becomes iwl-next)
-
-> ---
-> Changes in v3:
->    - Adjust commit message
+> The seccomp selftest did exercise it back when I originally wrote that
+> code. I don't know for sure that it still does, but that would be a good
+> start.
 > 
-> Changes in v2:
->    - Fix spelling mor -> more
-> ---
->   drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
->   1 file changed, 2 insertions(+), 2 deletions(-)
+> It's in tools/testing/selftests/seccomp/
+Thanks for the hint.
+It seems to be running into some not ok cases the way hits the bpf test that doesn't return. 
+I will re-run with the same kernel w/o the patch-set to sort out the cases that could be
+caused by the patch Then I will try to debug out the root cause.
+[root@10 seccomp]# make -C tools/testing/selftests TARGETS=seccomp run_tests
+make: Entering directory '/root/linux-ci/tools/testing/selftests/seccomp'
+make: *** tools/testing/selftests: No such file or directory.  Stop.
+make: Leaving directory '/root/linux-ci/tools/testing/selftests/seccomp'
+[root@10 seccomp]# pwd
+/root/linux-ci/tools/testing/selftests/seccomp
+[root@10 seccomp]# cd /root/linux-ci/
+[root@10 linux-ci]# make -C tools/testing/selftests TARGETS=seccomp run_tests
+make: Entering directory '/root/linux-ci/tools/testing/selftests'
+make[1]: Nothing to be done for 'all'.
+TAP version 13
+1..2
+# timeout set to 180
+# selftests: seccomp: seccomp_bpf
+# TAP version 13
+# 1..98
+# # Starting 98 tests from 8 test cases.
+# #  RUN           global.kcmp ...
+# #            OK  global.kcmp
+# ok 1 global.kcmp
+# #  RUN           global.mode_strict_support ...
+# #            OK  global.mode_strict_support
+# ok 2 global.mode_strict_support
+# #  RUN           global.mode_strict_cannot_call_prctl ...
+# # seccomp_bpf.c:359:mode_strict_cannot_call_prctl:Expected 0 (0) == true (1)
+# # seccomp_bpf.c:360:mode_strict_cannot_call_prctl:Unreachable!
+# # mode_strict_cannot_call_prctl: Test exited normally instead of by signal (code: 1)
+# #          FAIL  global.mode_strict_cannot_call_prctl
+# not ok 3 global.mode_strict_cannot_call_prctl
+# #  RUN           global.no_new_privs_support ...
+# #            OK  global.no_new_privs_support
+# ok 4 global.no_new_privs_support
+# #  RUN           global.mode_filter_support ...
+# #            OK  global.mode_filter_support
+# ok 5 global.mode_filter_support
+# #  RUN           global.mode_filter_without_nnp ...
+# #            OK  global.mode_filter_without_nnp
+# ok 6 global.mode_filter_without_nnp
+# #  RUN           global.filter_size_limits ...
+# #            OK  global.filter_size_limits
+# ok 7 global.filter_size_limits
+# #  RUN           global.filter_chain_limits ...
+# #            OK  global.filter_chain_limits
+# ok 8 global.filter_chain_limits
+# #  RUN           global.mode_filter_cannot_move_to_strict ...
+# #            OK  global.mode_filter_cannot_move_to_strict
+# ok 9 global.mode_filter_cannot_move_to_strict
+# #  RUN           global.mode_filter_get_seccomp ...
+# #            OK  global.mode_filter_get_seccomp
+# ok 10 global.mode_filter_get_seccomp
+# #  RUN           global.ALLOW_all ...
+# #            OK  global.ALLOW_all
+# ok 11 global.ALLOW_all
+# #  RUN           global.empty_prog ...
+# #            OK  global.empty_prog
+# ok 12 global.empty_prog
+# #  RUN           global.log_all ...
+# #            OK  global.log_all
+# ok 13 global.log_all
+# #  RUN           global.unknown_ret_is_kill_inside ...
+# # seccomp_bpf.c:621:unknown_ret_is_kill_inside:Expected 0 (0) == syscall(__NR_getpid) (1406)
+# # seccomp_bpf.c:622:unknown_ret_is_kill_inside:getpid() shouldn't ever return
+# # unknown_ret_is_kill_inside: Test exited normally instead of by signal (code: 1)
+# #          FAIL  global.unknown_ret_is_kill_inside
+# not ok 14 global.unknown_ret_is_kill_inside
+# #  RUN           global.unknown_ret_is_kill_above_allow ...
+# # seccomp_bpf.c:643:unknown_ret_is_kill_above_allow:Expected 0 (0) == syscall(__NR_getpid) (1407)
+# # seccomp_bpf.c:644:unknown_ret_is_kill_above_allow:getpid() shouldn't ever return
+# # unknown_ret_is_kill_above_allow: Test exited normally instead of by signal (code: 1)
+# #          FAIL  global.unknown_ret_is_kill_above_allow
+# not ok 15 global.unknown_ret_is_kill_above_allow
+# #  RUN           global.KILL_all ...
+# # KILL_all: Test exited normally instead of by signal (code: 0)
+# #          FAIL  global.KILL_all
+# not ok 16 global.KILL_all
+# #  RUN           global.KILL_one ...
+# # seccomp_bpf.c:690:KILL_one:Expected 0 (0) == syscall(__NR_getpid) (1409)
+# # KILL_one: Test exited normally instead of by signal (code: 1)
+# #          FAIL  global.KILL_one
+# not ok 17 global.KILL_one
+# #  RUN           global.KILL_one_arg_one ...
+# # seccomp_bpf.c:726:KILL_one_arg_one:Expected 0 (0) == syscall(__NR_times, &fatal_address) (4295224651)
+# # KILL_one_arg_one: Test exited normally instead of by signal (code: 1)
+# #          FAIL  global.KILL_one_arg_one
+# not ok 18 global.KILL_one_arg_one
+# #  RUN           global.KILL_one_arg_six ...
+# # KILL_one_arg_six: Test exited normally instead of by signal (code: 0)
+# #          FAIL  global.KILL_one_arg_six
+# not ok 19 global.KILL_one_arg_six
+# #  RUN           global.KILL_thread ...
+# # seccomp_bpf.c:856:KILL_thread:Expected SIBLING_EXIT_FAILURE (195951310) != (unsigned long)status (195951310)
+# # seccomp_bpf.c:881:KILL_thread:Expected 0 (0) != WIFEXITED(status) (0)
+# # KILL_thread: Test terminated by assertion
+# #          FAIL  global.KILL_thread
+# not ok 20 global.KILL_thread
+# #  RUN           global.KILL_process ...
+# # seccomp_bpf.c:856:KILL_process:Expected SIBLING_EXIT_FAILURE (195951310) != (unsigned long)status (195951310)
+# # seccomp_bpf.c:901:KILL_process:Expected SIGSYS (31) == WTERMSIG(status) (6)
+# # KILL_process: Test terminated by assertion
+# #          FAIL  global.KILL_process
+# not ok 21 global.KILL_process
+# #  RUN           global.KILL_unknown ...
+# # seccomp_bpf.c:856:KILL_unknown:Expected SIBLING_EXIT_FAILURE (195951310) != (unsigned long)status (195951310)
+# # seccomp_bpf.c:922:KILL_unknown:Expected SIGSYS (31) == WTERMSIG(status) (6)
+# # KILL_unknown: Test terminated by assertion
+# #          FAIL  global.KILL_unknown
+# not ok 22 global.KILL_unknown
+# #  RUN           global.arg_out_of_range ...
+# #            OK  global.arg_out_of_range
+# ok 23 global.arg_out_of_range
+# #  RUN           global.ERRNO_valid ...
+# # seccomp_bpf.c:974:ERRNO_valid:Expected E2BIG (7) == errno (9)
+# # ERRNO_valid: Test failed
+# #          FAIL  global.ERRNO_valid
+# not ok 24 global.ERRNO_valid
+# #  RUN           global.ERRNO_zero ...
+# # seccomp_bpf.c:992:ERRNO_zero:Expected 0 (0) == read(-1, NULL, 0) (-1)
+# # ERRNO_zero: Test failed
+# #          FAIL  global.ERRNO_zero
+# not ok 25 global.ERRNO_zero
+# #  RUN           global.ERRNO_capped ...
+# # seccomp_bpf.c:1014:ERRNO_capped:Expected 4095 (4095) == errno (9)
+# # ERRNO_capped: Test failed
+# #          FAIL  global.ERRNO_capped
+# not ok 26 global.ERRNO_capped
+# #  RUN           global.ERRNO_order ...
+# # seccomp_bpf.c:1045:ERRNO_order:Expected 12 (12) == errno (9)
+# # ERRNO_order: Test failed
+# #          FAIL  global.ERRNO_order
+# not ok 27 global.ERRNO_order
+# #  RUN           global.negative_ENOSYS ...
+# #            OK  global.negative_ENOSYS
+# ok 28 global.negative_ENOSYS
+# #  RUN           global.seccomp_syscall ...
+# #            OK  global.seccomp_syscall
+# ok 29 global.seccomp_syscall
+# #  RUN           global.seccomp_syscall_mode_lock ...
+# #            OK  global.seccomp_syscall_mode_lock
+# ok 30 global.seccomp_syscall_mode_lock
+# #  RUN           global.detect_seccomp_filter_flags ...
+# #            OK  global.detect_seccomp_filter_flags
+# ok 31 global.detect_seccomp_filter_flags
+# #  RUN           global.TSYNC_first ...
+# #            OK  global.TSYNC_first
+# ok 32 global.TSYNC_first
+# #  RUN           global.syscall_restart ...
+# # syscall_restart: Test terminated by timeout
+# #          FAIL  global.syscall_restart
+# not ok 33 global.syscall_restart
+# #  RUN           global.filter_flag_log ...
+# # seccomp_bpf.c:3239:filter_flag_log:Expected 0 (0) == syscall(__NR_getpid) (1482)
+# # filter_flag_log: Test exited normally instead of by signal (code: 1)
+# #          FAIL  global.filter_flag_log
+# not ok 34 global.filter_flag_log
+# #  RUN           global.get_action_avail ...
+# #            OK  global.get_action_avail
+# ok 35 global.get_action_avail
+# #  RUN           global.get_metadata ...
+# #            OK  global.get_metadata
+# ok 36 global.get_metadata
+# #  RUN           global.user_notification_basic ...
+# # seccomp_bpf.c:3397:user_notification_basic:Expected 0 (0) == WEXITSTATUS(status) (1)
+# # user_notification_basic: Test terminated by timeout
+# #          FAIL  global.user_notification_basic
+# not ok 37 global.user_notification_basic
+# #  RUN           global.user_notification_with_tsync ...
+# #            OK  global.user_notification_with_tsync
+# ok 38 global.user_notification_with_tsync
+# #  RUN           global.user_notification_kill_in_middle ...
+# # user_notification_kill_in_middle: Test terminated by timeout
+# #          FAIL  global.user_notification_kill_in_middle
+# not ok 39 global.user_notification_kill_in_middle
+# #  RUN           global.user_notification_signal ...
+# # user_notification_signal: Test terminated by timeout
+# #          FAIL  global.user_notification_signal
+# not ok 40 global.user_notification_signal
+# #  RUN           global.user_notification_closed_listener ...
+# # seccomp_bpf.c:3647:user_notification_closed_listener:Expected 0 (0) == WEXITSTATUS(status) (1)
+# # user_notification_closed_listener: Test failed
+# #          FAIL  global.user_notification_closed_listener
+# not ok 41 global.user_notification_closed_listener
+# #  RUN           global.user_notification_child_pid_ns ...
+# # user_notification_child_pid_ns: Test terminated by timeout
+# #          FAIL  global.user_notification_child_pid_ns
+# not ok 42 global.user_notification_child_pid_ns
+# #  RUN           global.user_notification_sibling_pid_ns ...
+# # seccomp_bpf.c:3728:user_notification_sibling_pid_ns:Expected 0 (0) == WEXITSTATUS(status) (1)
+# # seccomp_bpf.c:3764:user_notification_sibling_pid_ns:Expected 0 (0) == WEXITSTATUS(status) (1)
+
+
 > 
-> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-> index 1ef4cb871452..fc587304b3c0 100644
-> --- a/drivers/net/ethernet/intel/igb/igb_main.c
-> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
-> @@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
->   	/* initialize pointer to rings */
->   	ring = q_vector->ring;
->   
-> -	/* intialize ITR */
-> +	/* initialize ITR */
->   	if (rxr_count) {
->   		/* rx or rx/tx vector */
+> cheers
+> 
 
-Would be great to have capitalization errors fixed too, Rx, Tx, VF, not
-necessarily in this patch.
-
->   		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
-> @@ -3906,7 +3906,7 @@ static void igb_remove(struct pci_dev *pdev)
->    *
->    *  This function initializes the vf specific data storage and then attempts to
->    *  allocate the VFs.  The reason for ordering it this way is because it is much
-> - *  mor expensive time wise to disable SR-IOV than it is to allocate and free
-> + *  more expensive time wise to disable SR-IOV than it is to allocate and free
->    *  the memory for the VFs.
->    **/
->   static void igb_probe_vfs(struct igb_adapter *adapter)
-
-to reduce traffic, I'm fine with this, to go via any tree:
-Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
