@@ -1,73 +1,70 @@
-Return-Path: <linux-kernel+bounces-380088-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380090-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B3CD9AE8C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:29:50 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 31C389AE901
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:34:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5EAE41C210D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:29:49 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5272AB27844
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:30:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B90B1EBA11;
-	Thu, 24 Oct 2024 14:26:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87AC1EF0A0;
+	Thu, 24 Oct 2024 14:27:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c352FhAB"
-Received: from mail-ej1-f47.google.com (mail-ej1-f47.google.com [209.85.218.47])
+	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZCl7BX4x"
+Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 27E661DFEF;
-	Thu, 24 Oct 2024 14:26:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B4214F12F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:27:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779976; cv=none; b=eIA0i+BK0B3aqvTTpejlvy3BMmxOxeSHst1j1tHUN1/c+W5ewWeACbhdzN8LKvfq/2W/0q+G4ldTaPLGwhIUEUHNpSTqlqtajBjV5J4DYryuA80fVFV5EE6f0Mw8wWqJOT3VipemLXjeANiN98jFRlJQkQIodLlduQgGnz2NwDE=
+	t=1729780023; cv=none; b=Z58pSYUtx/cUSqLrkyvV12LO13Q0PaEP8FmyQl7lnKjyQ4Q3sXNp7QR8a3yPQ3VZS9DdcidtEaMnq9C54FKodsrf5DLGpIY8BIZz1UoRbmTs+slBae9GJD5hVryW6fS9t53GlfyGZm+k3l8QYFujJ9L1R4famVRgkciC/L8aHe4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779976; c=relaxed/simple;
-	bh=9zf8G7xE1167pPOhZsXN9s0WzD14vS3NQ1D6cz0hGYI=;
+	s=arc-20240116; t=1729780023; c=relaxed/simple;
+	bh=Br4rUo7jXSyDoQxwb4vji74KoTCk3I/0TKPiOd4IYHI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GzwCZRY0DlC5cNwO+mExIk8Im82jx3zCRHCga9Oulup9TCgni4xPern1VfnEczm3viJHGsp5uVuogAZgaq/RhrOFGBBmMaW3/gEnDc69RZLEsj1Kg42Ys31pyvjd0tKu9lEoT3kLgOQCcKybeORuzKtk2b2JZU4kJ+ImsGYz7NE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c352FhAB; arc=none smtp.client-ip=209.85.218.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f47.google.com with SMTP id a640c23a62f3a-a9a4031f69fso134843466b.0;
-        Thu, 24 Oct 2024 07:26:13 -0700 (PDT)
+	 In-Reply-To:Content-Type; b=eGnZ6Zs+jt8AvbIL6lDbu4lOaGw8f0XslMLwyEa82L/38c3PBpOvZpoc32KYgVPCK4jhiS/7GGQo1BbQRfIdAKi/1Tws9bsbG88ATl8/ZizDmi8k90zbtFdKYwFRU1J/6wMkHSTl1YiZNzOKTkUzGn3oYt4c6vSMDOguB32jF7Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZCl7BX4x; arc=none smtp.client-ip=209.85.166.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
+Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83a9cd37a11so40022539f.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:27:01 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729779972; x=1730384772; darn=vger.kernel.org;
+        d=linuxfoundation.org; s=google; t=1729780021; x=1730384821; darn=vger.kernel.org;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=JZOo7KmWVazwjQAX6MxDRPx4P6OgsnRlGA/rdXj8KKo=;
-        b=c352FhABj0Z2VenPR9b3exEqwuSCpec+ONq4Ptj8niK4ranrytvqUQmf83Nl98Na1E
-         DvEgEukt3Ue6OK4bnTwZEzxVgAsDDXBGxpvD5oQNe/LGMcv7fxI3mP0jXBtgcMdS0Q9l
-         58/JQyn5Oq3zTOYcdX044ZZfVxYt7zcUKurHK1hU4mx8cslvy7e7EjZbIAQf982Bp2Zc
-         c2kRRHUZWNxTOafOjgHIEl/sOdlI8rHLhEO7C54FV9XkmMdbH/zbC6LINpN8sUigYz33
-         PlDkAOLz8sgrX58O+qd0sCQx7oLuMnMNWI3u0HCwtj6lcaTjMUQwem0/R5j3fHLfmeq5
-         oLZw==
+        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
+        b=ZCl7BX4xkrIFvVvZGHtyM/oy3pt/aKmBnCo6ikFH1ajyb9egT9T5XTsiV0hAaOO9k/
+         ps2A45qQcP8lCS/knovTMouiU4uGQWesQhIVdGo5v3UbWntib8/VTW3mro96iMJEsVyv
+         WmTXi3cvo38TqgLX8YQ7TDpG4gusvH7pOSb8s=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729779972; x=1730384772;
+        d=1e100.net; s=20230601; t=1729780021; x=1730384821;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=JZOo7KmWVazwjQAX6MxDRPx4P6OgsnRlGA/rdXj8KKo=;
-        b=K8/aEq+GLjrwLH2e0NdY0n1ws9P85jSKb31Ux9r594Iaup/f1ci6+ldKZ/mxS/MkN/
-         Ccx/c4igz04PitYe2rh3TatMa/JgWxddLVXVee8RzF6CVOjDxJxLOobscUkCWmO+klXG
-         KvJeHZaT2jmMNRFarlQJyPqqxrkDaSJtO11uYCa/HGj/0fovSUOewi3nbztXOnAaL7zn
-         HRMqwpZ9vAjxpJQULlsO6ytMGNttV5S/13o9pyyTRRBLDkpGl/dbvHg2g9F7byMV5nD3
-         /iq/1c5PIPsJVeHQrqAttheDApvynM+bvh8WcWD4FZhxCenvlZ3bSA6icZ/9abvgLeH3
-         etAg==
-X-Forwarded-Encrypted: i=1; AJvYcCVmWhJwXNkcarkmpCpQlxkcnP/zkPMWSXczoxDbyeDXJ5Tt+xjoJwohRkCtDNtqaKhwR9cj0ibrIpgWlYM=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy9CES7Tf/LGwFVWrw0B1FH+z4UUtVFiNjryq6Mog9w2/yXNHi5
-	2Phe8lHx7jNmTHT4mT4nknE/NRN5vrnpdE+HrzOBqj1AZH9oA/6J
-X-Google-Smtp-Source: AGHT+IHiJkDrI5NFp2nhdYSrIVehhJxvo8jDoyttdVBo+GG/KU6pLUrF5x17FbaLv0PK3n43kFkPQQ==
-X-Received: by 2002:a17:906:da87:b0:a9a:134:9887 with SMTP id a640c23a62f3a-a9ad281593bmr182502566b.41.1729779971964;
-        Thu, 24 Oct 2024 07:26:11 -0700 (PDT)
-Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9157366fsm629202966b.181.2024.10.24.07.26.10
+        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
+        b=ZYVJ2bxAIsJfGKoq9PKf9guj0If7nA2KrYjDjxkvPrCc2aDY9MG01Jk2iWG8n1PkiV
+         mu9f9UdwsasMIfDDwCchqXUKPesHC7KOXGq8S9nRLepPq5MPckvMV8AZH53CbTTq7K6Z
+         Yr9sA5IPB/VuzL/ztO9Q6E5fSMn196pYBLv7TKGEMY1sj/CnSA/11IezwpXdHkb8T45t
+         dRBWewv2F0bLnPv9I32K9SDMIMZQ8HeReeVqcC3Y2XpQ/w5yHlJrLrApjIUsvFzOimcG
+         2MvDCXBnSUBQbi193dyA+wwjXEKzKVyOSfZfIXwC4/m1Nij4n11dhcb2Ve6tTuHLYoOJ
+         WzXA==
+X-Forwarded-Encrypted: i=1; AJvYcCUDgYTPG9yUEcqdh4lDepPHsGoOmJh5zc6RNWKVsrRUbTvuz1RZCNfkrIS9D1aGmcvifwXkWHttZKRMIDU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzvfQ1TIi0LGU+SflRlrivo9VRDR/b0KNOTz9j04pgZfLCM2vOY
+	JMKDZ94KOvgi1IylD/UcnOgkBYw80/lXnJ+FMAzYib4MqnflouP637zfWtaDG/I=
+X-Google-Smtp-Source: AGHT+IEjoNotzF3cjr6+gorjptn9Dul3pcmua2S6p0cxQk5f5nfOd26Q5xIzWEQ2ssLjTpxV/ceAyg==
+X-Received: by 2002:a05:6602:140a:b0:83a:c5dd:3000 with SMTP id ca18e2360f4ac-83b04041acfmr315071039f.6.1729780020797;
+        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
+Received: from [192.168.1.128] ([38.175.170.29])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a630571sm2729448173.147.2024.10.24.07.26.59
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:26:11 -0700 (PDT)
-Message-ID: <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
-Date: Thu, 24 Oct 2024 15:26:46 +0100
+        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
+Message-ID: <1c8674a0-d220-4349-88ea-780f0fed8545@linuxfoundation.org>
+Date: Thu, 24 Oct 2024 08:26:59 -0600
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,140 +72,69 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
-To: Jens Axboe <axboe@kernel.dk>, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
- <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
- <20241024023805.1082769-1-xue01.he@samsung.com>
- <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+Subject: Re: [PATCH] selftests/mount_setattr: fix idmap_mount_tree_invalid
+ failed to run
+To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org,
+ sforshee@kernel.org, shuah@kernel.org
+Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
+ linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>,
+ Shuah Khan <skhan@linuxfoundation.org>
+References: <20241024095013.1213852-1-zhouyuhang1010@163.com>
 Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+From: Shuah Khan <skhan@linuxfoundation.org>
+In-Reply-To: <20241024095013.1213852-1-zhouyuhang1010@163.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
-On 10/24/24 15:18, Jens Axboe wrote:
-> On 10/23/24 8:38 PM, hexue wrote:
->> On 9/25/2024 12:12, Pavel Begunkov wrote:
-...
->> When the number of threads exceeds the number of CPU cores,the
->> database throughput does not increase significantly. However,
->> hybrid polling can releasing some CPU resources during the polling
->> process, so that part of the CPU time can be used for frequent
->> data processing and other operations, which speeds up the reading
->> process, thereby improving throughput and optimizaing database
->> performance.I tried different compression strategies and got
->> results similar to the above table.(~30% throughput improvement)
->>
->> As more database applications adapt to the io_uring engine, I think
->> the application of hybrid poll may have potential in some scenarios.
+On 10/24/24 03:50, zhouyuhang wrote:
+> From: zhouyuhang <zhouyuhang@kylinos.cn>
 > 
-> Thanks for posting some numbers on that part, that's useful. I do
-> think the feature is useful as well, but I still have some issues
-> with the implementation. Below is an incremental patch on top of
-> yours to resolve some of those, potentially. Issues:
+> Test case idmap_mount_tree_invalid failed to run on the newer kernel
+> with the following output:
 > 
-> 1) The patch still reads a bit like a hack, in that it doesn't seem to
->     care about following the current style. This reads a bit lazy/sloppy
->     or unfinished. I've fixed that up.
+>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
+>   # idmap_mount_tree_invalid: Test terminated by assertion
 > 
-> 2) Appropriate member and function naming.
+> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
+> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
+> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
+> returns 0 instead of -EINVAL as expected.
 > 
-> 3) Same as above, it doesn't care about proper placement of additions to
->     structs. Again this is a bit lazy and wasteful, attention should be
->     paid to where additions are placed to not needlessly bloat
->     structures, or place members in cache unfortunate locations. For
->     example, available_time is just placed at the end of io_ring_ctx,
->     why? It's a submission side member, and there's room with other
->     related members. Not only is the placement now where you'd want it to
->     be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
+> Ramfs is mounted at "/mnt/B" and does not support idmap mounts.
+> So we can use "/mnt/B" instead of "/mnt/A" to make the test run
+> successfully with the following output:
 > 
-> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
->     that we can share space with the polling hash_node. This obviously
->     needs careful vetting, haven't done that yet. IOPOLL setups should
->     not be using poll at all. This needs extra checking. The poll_state
->     can go with cancel_seq_set, as there's a hole there any. And just
->     like that, rather than add 24b to io_kiocb, it doesn't take any extra
->     space at all.
+>   # Starting 1 tests from 1 test cases.
+>   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
+>   #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
+>   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
+>   # PASSED: 1 / 1 tests passed.
 > 
-> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
->     please use a name related to that. And require IOPOLL being set with
->     HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
->     HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
->     can't exist without that.
-> 
-> Please take a look at this incremental and test it, and then post a v9
-> that looks a lot more finished. Caveat - I haven't tested this one at
-> all. Thanks!
-> 
-> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
-> index c79ee9fe86d4..6cf6a45835e5 100644
-> --- a/include/linux/io_uring_types.h
-> +++ b/include/linux/io_uring_types.h
-> @@ -238,6 +238,8 @@ struct io_ring_ctx {
->   		struct io_rings		*rings;
->   		struct percpu_ref	refs;
->   
-> +		u64			poll_available_time;
-> +
->   		clockid_t		clockid;
->   		enum tk_offsets		clock_offset;
->   
-> @@ -433,9 +435,6 @@ struct io_ring_ctx {
->   	struct page			**sqe_pages;
->   
->   	struct page			**cq_wait_page;
-> -
-> -	/* for io_uring hybrid poll*/
-> -	u64			available_time;
->   };
->   
->   struct io_tw_state {
-> @@ -647,9 +646,22 @@ struct io_kiocb {
->   
->   	atomic_t			refs;
->   	bool				cancel_seq_set;
-> +	bool				poll_state;
 
-As mentioned briefly before, that can be just a req->flags flag
+Sounds like this code is testing this very condition passing
+in invalid mount to see what happens. If that is the intent
+this patch is incorrect.
 
->   	struct io_task_work		io_task_work;
-> -	/* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
-> -	struct hlist_node		hash_node;
-> +	union {
-> +		/*
-> +		 * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
-> +		 * poll
-> +		 */
-> +		struct hlist_node	hash_node;
-> +		/*
-> +		 * For IOPOLL setup queues, with hybrid polling
-> +		 */
-> +		struct {
-> +			u64		iopoll_start;
-> +			u64		iopoll_end;
-
-And IIRC it doesn't need to store the end as it's used immediately
-after it's set in the same function.
-
-> +		};
-> +	};
->   	/* internal polling, see IORING_FEAT_FAST_POLL */
->   	struct async_poll		*apoll;
->   	/* opcode allocated if it needs to store data for async defer */
-> @@ -665,10 +677,6 @@ struct io_kiocb {
->   		u64			extra1;
->   		u64			extra2;
->   	} big_cqe;
-> -    /* for io_uring hybrid iopoll */
-> -	bool		poll_state;
-> -	u64			iopoll_start;
-> -	u64			iopoll_end;
->   };
+> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
+> ---
+>   tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
+>   1 file changed, 1 insertion(+), 1 deletion(-)
+> 
+> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> index c6a8c732b802..54552c19bc24 100644
+> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
+> @@ -1414,7 +1414,7 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
+>   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
+>   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
 >   
-...
+> -	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
+> +	open_tree_fd = sys_open_tree(-EBADF, "/mnt/B",
+>   				     AT_RECURSIVE |
+>   				     AT_EMPTY_PATH |
+>   				     AT_NO_AUTOMOUNT |
 
--- 
-Pavel Begunkov
+thanks,
+-- Shuah
 
