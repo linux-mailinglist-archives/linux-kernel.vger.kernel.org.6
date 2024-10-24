@@ -1,131 +1,167 @@
-Return-Path: <linux-kernel+bounces-380221-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2E6F19AEA6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:29:01 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 459CA9AEA78
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:29:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D8F72283B3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:28:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E46491F23E6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:29:36 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93FBF1F585C;
-	Thu, 24 Oct 2024 15:28:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="dKOXGfWZ"
-Received: from mail-yw1-f182.google.com (mail-yw1-f182.google.com [209.85.128.182])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 37B161F668F;
+	Thu, 24 Oct 2024 15:28:56 +0000 (UTC)
+Received: from mail-io1-f49.google.com (mail-io1-f49.google.com [209.85.166.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D295D1EF0A0;
-	Thu, 24 Oct 2024 15:28:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A2741F4FBC;
+	Thu, 24 Oct 2024 15:28:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729783710; cv=none; b=aIfJD4NwZoyJ3b0H+/hX2T7fdTd3k4pGSsfTo7B7B9WzUqAGUqtZC30KCdiBh5bKm6VWBNnnDh8IbnbQcDAcZptGeyOJRlzLmG91E3wjx05XVJM8gO70/zu3KqRcAqnHrRYeIdSIUc49TP+i7igAMTz5kQFKsetYyYTxeaWOadk=
+	t=1729783735; cv=none; b=CqR8UJzKuk+FcZIY3z9gjcfAPzeKnNk2zYUsLVbJ5Wtw/P14R4X3J9Y6dWIDseezhruIUgN1zsV6ZXPGiJqlt4Bs0uySg62Sh5itTesyv2DYND1EhbpGcCSaAfhvD0oOO+6lhK0UqfazFBKotBOkri+r3EATS8W4oiDkQAx/BXY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729783710; c=relaxed/simple;
-	bh=Fs2tc1WwAR2PY2tTefPbWYTpSMFv2nPyy55SErMhtP0=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=WZQ29Gojrz9ZMhTlEWq9pPYsVV75D6jo72NrSTV0VZALsOKQfvlPypnQC7NJ57uR/hGB1LHPEGvGOZb3JQz0TNhSLMw0ntlsNGz20C3WArsc+LtQ3d9FpumCFYW5oSpC0Ds+XyP28DqijpBR8ItsQ1cuYZuDH0aWMt1WGkIjRJI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=dKOXGfWZ; arc=none smtp.client-ip=209.85.128.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1729783735; c=relaxed/simple;
+	bh=Wa/lBblz8zjg3K8a5GZVELp9ATHR0GpBk3nPK66gzHI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=iBYMK6I60N1vUjKgLddnIotRaLBnWTAPLP81uD3NGTEOh15eYncNMSfdRIS8KAcCEKda/zjFXFsheivS6YrY/Rad4jI/wrbRuUe2w/TbAaJpHapuY8Swuw7azrPgfjfAgJ6/HalxwU+/ZaJS3D2oejBMxvVGM5pgiPFa9ypgIs8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.166.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=manifault.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f182.google.com with SMTP id 00721157ae682-6e38fc62b9fso10341197b3.2;
-        Thu, 24 Oct 2024 08:28:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729783708; x=1730388508; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=MrA+PE9QFVQSWd15h41v5TtusoT9a0SkYDwQrFOXSR4=;
-        b=dKOXGfWZlb8w2TV6ORCoa2GSdteQMW3Ww8bwNPmkiHrtmUCpMj2L/pU5359U2zxLNK
-         zOh8PAZcPT/HFdIJU2du6oGuf6QuInOZe1NL9Znf2yevnw2RHGmgZQRUuaCA/iTfp3oz
-         nE5zlv1JoTDA3zdzBtSgL7/u9wck8Jlg96jKtl1xxMj7WZ4UMR8l1tSUUPmU1mAu61iQ
-         UUgSqd4TJTicmEanzQGG19Ks0K1ur71rdiG1vSyrB0bFy5+oup8/Z1Y4lLAI/VglFcvu
-         mZHLW0SeJ5EtVf931hR55P0CUurVuO+1WTP1HdTLJ9y3X9U6xDAqRt5iiAwgtwMRE/X6
-         PwHA==
+Received: by mail-io1-f49.google.com with SMTP id ca18e2360f4ac-83aff992087so44914739f.3;
+        Thu, 24 Oct 2024 08:28:53 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729783708; x=1730388508;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729783732; x=1730388532;
+        h=user-agent:in-reply-to:content-disposition:mime-version:references
+         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=MrA+PE9QFVQSWd15h41v5TtusoT9a0SkYDwQrFOXSR4=;
-        b=uPEqKyhgs4pM3YnkNirpfESfYCwmFqS0bXHwjVpdS2yFsCy++jF5tKWacLzU+mm6Vb
-         WgO+5IuH9yUbqNDBAxPO75UU+L4wzVf4yhezE4I6knuB9memBi3XrXmSf59DWOi6JAHM
-         ANho+MB5Qs3OnREGO6mgtpRhoQ5Wi+W7ycSZgyOtWk5WdXM4WJY1VHyDtPRDylbDic5J
-         xabUPz5m2ueSMKnpS1G+k3xKD9JpmA/l/TY3k/Vuo1Q36uKUqgbcEnB4NTRgOjlbcKQ5
-         W9dWegXLftvMcu/NvPdXuFV8h10fJXHz81TqisuY20zrpKTth6zGP9wmd/Cjy6kMcm/p
-         L8qg==
-X-Forwarded-Encrypted: i=1; AJvYcCU7ApozTMW6sDVKkLPANP7hZGKieoA+QvdlvnDu5Mp2wXOqmiclhbq5C/o3j48eAl75TTM1QaXk39WLOMg=@vger.kernel.org, AJvYcCU8//vezLo3OKNiKMY40Inepzpp0WFBEWV0R4HYrkRqyTvnBgPZ4j52LTqJebcF8iu1nF1kAqHYzAmVXLKj@vger.kernel.org, AJvYcCUBqgV6ftGTNcpMZr3sWybADfG8ClsUKXsMFKXOj7KU4FJH1g5pQq5WnqBH3TkLr7Ic7K3dl3/oh3HSenxG@vger.kernel.org, AJvYcCW5lOtyEE20Ujru1vmOhhWfPvz1gQ0NXCMikjLPIw5mI5svtY3qvATSveKtYClmLONHocaE+Z+PF8NpmbTjvj8q@vger.kernel.org, AJvYcCXkZx4hply13gHMAuujRUYSJgGbXoS9XgXcYIjC67IrwEafc4JzTaVofSqYDNNEATCpDyFXZwTe9x+q@vger.kernel.org, AJvYcCXrN5Gwi6XSRxp0Q92etCnZB8MW+GnjW99phCv8HqqKJD1zRE6ol0BrrqKn3VSugemqMTfZN5cD/P47FA==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxIpnC7T9T+lp8QtQJNi7oXDhHk3rfvjwb4vLhjOrNYUg4Zca0j
-	ksAAaHZ/99Wk/is5bYp/TBK/ISjv5qSX82EdgFQEdTGj1Z/H3tGem12Kc+7V72g7iv0OTlW7Imy
-	R3V2bnjfFZzhN76nPXmzgzGw/V/s=
-X-Google-Smtp-Source: AGHT+IFRyXW0hYO2Swz9RLGo1csIv7IsSIQzzTKkoxMY8+2S6NZhcmqrrYbuG7/FRn1ItAKRcQRE+umN/jZ8cxvEJOI=
-X-Received: by 2002:a05:690c:fd5:b0:6dd:ce14:a245 with SMTP id
- 00721157ae682-6e7f0dc1121mr77233267b3.6.1729783707713; Thu, 24 Oct 2024
- 08:28:27 -0700 (PDT)
+        bh=CHw3/FAGgd1iO3/H3N2rtqx/81x0A/R4/DsL+0VLYc0=;
+        b=MEHRILrUanCyVYccVSS3u1kVGKDueTgSf5sZufqhq/7Oo3ARCPPYH2Hyt9RPOblZm3
+         ptvQCUUr3Qgi7tX2k05+UbBmBVv++hDZ9F5lDvLwVuFZZnFwwVwAU5wfv2Ojqk+W2Uj5
+         IvxiusDq6/L0U1aapMil0Nv3ZD1ucTr7uSfGZ8mCW7rvqnlDiQ3jg8EeOZfqVELeeLWi
+         0YTl0O1ONyP6FdS2e9eonbc+Uyer6odYyJrvTzXd1aVPVKED39f9G1J666NGsv2WpHoi
+         LMIXfQDbOIB5JyEZQOgE8l4mFolW1uoDd2HJIhsJdbSrbDpgeLwRSbc6jGGsT+efvAyV
+         KQpA==
+X-Forwarded-Encrypted: i=1; AJvYcCVDqx/DX4W0HJKM6zYTfWR66UUFl87oUgTXjeOkRe5WY1QkBiinTGgWFqEoNkRcyfXiuWjzelpfOf3ym1E=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6V48ab99z4OwMZRSaDxj/W0ou7nLtVh64H0P4+xIUBqC1NJkV
+	zEPFZquCc0uJP0voeZTpMl6AYnGuyU5OmBkJuKnEaMJNUL4Tv1A9
+X-Google-Smtp-Source: AGHT+IGyyklvlcShkZHydXmk6sdPP0CT8P2KZkA9ch5qq8b8L0RNr9KgCxszEmSlNtN8EeBFMVpLig==
+X-Received: by 2002:a05:6602:3c4:b0:835:359b:8a07 with SMTP id ca18e2360f4ac-83b041bacf1mr283365339f.16.1729783732451;
+        Thu, 24 Oct 2024 08:28:52 -0700 (PDT)
+Received: from maniforge (c-76-141-129-107.hsd1.il.comcast.net. [76.141.129.107])
+        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a6301c4sm2688533173.153.2024.10.24.08.28.51
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 08:28:51 -0700 (PDT)
+Date: Thu, 24 Oct 2024 10:28:49 -0500
+From: David Vernet <void@manifault.com>
+To: Tejun Heo <tj@kernel.org>
+Cc: bpf@vger.kernel.org, Martin KaFai Lau <martin.lau@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, kernel-team@meta.com,
+	sched-ext@meta.com, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH sched_ext/for-6.13 1/2] sched_ext: Rename CFI stubs to
+ names that are recognized by BPF
+Message-ID: <20241024152849.GA140253@maniforge>
+References: <Zxma0Vt6kwWFe1hx@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
- <20240916085741.1636554-2-quic_mdalam@quicinc.com> <20240921185519.GA2187@quark.localdomain>
- <ZvJt9ceeL18XKrTc@infradead.org> <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
- <ZxHwgsm2iP2Z_3at@infradead.org> <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
- <ZxH4lnkQNhTP5fe6@infradead.org> <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
- <ZxieZPlH-S9pakYW@infradead.org> <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
- <dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
-In-Reply-To: <dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
-From: Adrian Vovk <adrianvovk@gmail.com>
-Date: Thu, 24 Oct 2024 11:28:16 -0400
-Message-ID: <CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-To: Geoff Back <geoff@demonlair.co.uk>
-Cc: Christoph Hellwig <hch@infradead.org>, Eric Biggers <ebiggers@kernel.org>, 
-	Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, song@kernel.org, 
-	yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org, 
-	Mikulas Patocka <mpatocka@redhat.com>, adrian.hunter@intel.com, quic_asutoshd@quicinc.com, 
-	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org, 
-	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, 
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="uWMMB4gSplatliRm"
+Content-Disposition: inline
+In-Reply-To: <Zxma0Vt6kwWFe1hx@slm.duckdns.org>
+User-Agent: Mutt/2.2.13 (00d56288) (2024-03-09)
+
+
+--uWMMB4gSplatliRm
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
 
-On Thu, Oct 24, 2024 at 4:11=E2=80=AFAM Geoff Back <geoff@demonlair.co.uk> =
-wrote:
->
->
-> On 24/10/2024 03:52, Adrian Vovk wrote:
-> > On Wed, Oct 23, 2024 at 2:57=E2=80=AFAM Christoph Hellwig <hch@infradea=
-d.org> wrote:
-> >> On Fri, Oct 18, 2024 at 11:03:50AM -0400, Adrian Vovk wrote:
-> >>> Sure, but then this way you're encrypting each partition twice. Once =
-by the dm-crypt inside of the partition, and again by the dm-crypt that's u=
-nder the partition table. This double encryption is ruinous for performance=
-, so it's just not a feasible solution and thus people don't do this. Would=
- be nice if we had the flexibility though.
->
-> As an encrypted-systems administrator, I would actively expect and
-> require that stacked encryption layers WOULD each encrypt.  If I have
-> set up full disk encryption, then as an administrator I expect that to
-> be obeyed without exception, regardless of whether some higher level
-> file system has done encryption already.
->
-> Anything that allows a higher level to bypass the full disk encryption
-> layer is, in my opinion, a bug and a serious security hole.
+On Wed, Oct 23, 2024 at 02:54:41PM -1000, Tejun Heo wrote:
+> CFI stubs can be used to tag arguments with __nullable (and possibly other
+> tags in the future) but for that to work the CFI stubs must have names th=
+at
+> are recognized by BPF. Rename them.
+>=20
+> Signed-off-by: Tejun Heo <tj@kernel.org>
 
-Sure I'm sure there's usecases where passthrough doesn't make sense.
-It should absolutely be an opt-in flag on the dm target, so you the
-administrator at setup time can choose whether or not you perform
-double-encryption (and it defaults to doing so). Because there are
-usecases where it doesn't matter, and for those usecases we'd set the
-flag and allow passthrough for performance reasons.
+For both patches:
 
-- Adrian
+Acked-by: David Vernet <void@manifault.com>
+
+Here's the selftest output for posterity / FYI:
+
+[root@virtme-ng sched_ext]# ./runner -t maybe_null
+=3D=3D=3D=3D=3D START =3D=3D=3D=3D=3D
+TEST: maybe_null
+DESCRIPTION: Verify if PTR_MAYBE_NULL work for .dispatch
+OUTPUT:
+libbpf: prog 'maybe_null_fail_dispatch': BPF program load failed: Permissio=
+n denied
+libbpf: prog 'maybe_null_fail_dispatch': -- BEGIN PROG LOAD LOG --
+Global function maybe_null_fail_dispatch() doesn't return scalar. Only thos=
+e are supported.
+0: R1=3Dctx() R10=3Dfp0
+; void BPF_STRUCT_OPS(maybe_null_fail_dispatch, s32 cpu, struct task_struct=
+ *p) @ maybe_null_fail_dsp.bpf.c:15
+0: (79) r1 =3D *(u64 *)(r1 +8)          ; R1_w=3Dtrusted_ptr_or_null_task_s=
+truct(id=3D1)
+; vtime_test =3D p->scx.dsq_vtime; @ maybe_null_fail_dsp.bpf.c:17
+1: (79) r1 =3D *(u64 *)(r1 +848)
+R1 invalid mem access 'trusted_ptr_or_null_'
+processed 2 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak=
+_states 0 mark_read 0
+-- END PROG LOAD LOG --
+libbpf: prog 'maybe_null_fail_dispatch': failed to load: -13
+libbpf: failed to load object 'maybe_null_fail_dsp'
+libbpf: failed to load BPF skeleton 'maybe_null_fail_dsp': -13
+libbpf: prog 'maybe_null_fail_yield': BPF program load failed: Permission d=
+enied
+libbpf: prog 'maybe_null_fail_yield': -- BEGIN PROG LOAD LOG --
+0: R1=3Dctx() R10=3Dfp0
+; bool BPF_STRUCT_OPS(maybe_null_fail_yield, struct task_struct *from, @ ma=
+ybe_null_fail_yld.bpf.c:15
+0: (b7) r2 =3D 2328                     ; R2_w=3D2328
+1: (79) r1 =3D *(u64 *)(r1 +8)          ; R1_w=3Dtrusted_ptr_or_null_task_s=
+truct(id=3D1)
+2: (bf) r3 =3D r1                       ; R1_w=3Dtrusted_ptr_or_null_task_s=
+truct(id=3D1) R3_w=3Dtrusted_ptr_or_null_task_struct(id=3D1)
+3: (0f) r3 +=3D r2
+R3 pointer arithmetic on trusted_ptr_or_null_ prohibited, null-check it fir=
+st
+processed 4 insns (limit 1000000) max_states_per_insn 0 total_states 0 peak=
+_states 0 mark_read 0
+-- END PROG LOAD LOG --
+libbpf: prog 'maybe_null_fail_yield': failed to load: -13
+libbpf: failed to load object 'maybe_null_fail_yld'
+libbpf: failed to load BPF skeleton 'maybe_null_fail_yld': -13
+ok 1 maybe_null #
+=3D=3D=3D=3D=3D  END  =3D=3D=3D=3D=3D
+
+
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D
+
+RESULTS:
+
+PASSED:  1
+SKIPPED: 0
+FAILED:  0
+
+
+--uWMMB4gSplatliRm
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iHUEARYKAB0WIQRBxU1So5MTLwphjdFZ5LhpZcTzZAUCZxpnsQAKCRBZ5LhpZcTz
+ZN9OAP9ixANrOXLXbTeswGXzt0jLBTQz9H/2x707oHohQy76lQD9GbF33Li8J93X
+Ul16haFzaXzgO65ICnqV8Mrlgf9d9QI=
+=Uiak
+-----END PGP SIGNATURE-----
+
+--uWMMB4gSplatliRm--
 
