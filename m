@@ -1,208 +1,148 @@
-Return-Path: <linux-kernel+bounces-379629-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379630-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 594BE9AE142
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:43:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B4979AE144
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 70B2A1C20BEC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:43:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 746051C20A22
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 976A61B3939;
-	Thu, 24 Oct 2024 09:42:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Oh4w0+zL"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 92190170826;
+	Thu, 24 Oct 2024 09:43:48 +0000 (UTC)
+Received: from szxga03-in.huawei.com (szxga03-in.huawei.com [45.249.212.189])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CB95A17D340;
-	Thu, 24 Oct 2024 09:42:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37D7216133C;
+	Thu, 24 Oct 2024 09:43:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.189
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762975; cv=none; b=NO5F2ItLb0oDFMqRDe1pTAedxZNTPBIBIEUddlDus5Vo+yEBqIdeXRk0EcZEdY/01WJgTo9I+cCxo/abLqGZ/nAxnnnoPvIbyZZAYTwzUnginkyI3wczd9cJXoe6l1pHkRwB1HmsoxaGR+g48WBeXnsU4XU0FQHbWYJ7Xh7pylU=
+	t=1729763028; cv=none; b=tDsyhUTh3xu4wAYmhPVJfz1h3ymqFLTsda6a1TFcQAPrFSLbhTgW32eJ0XvkNI4Alv+44TuhUsD+K4qz5/hfTbkKN+yrBuo+XKkD7sDFGglmQ/uQFneEox8//O2G/Wt3GKdd+3FCkk7uMd9W9Yscupr+mpslIHrYXe47zZ619tM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762975; c=relaxed/simple;
-	bh=pVzAa+gkBK0ucsjVKni29QO63BQ7dWJBXHd6dsdvK5w=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=q8ChLY8Cc6IAw/r3B+2reVZ1RgSBG8pxbiHtQZ+6oE8bAWJDteGrd7MUiN8QwrnaU9x0M4vcmKyO3hWJxQ1o0/7uihkOMwGSt7bognVT0Nb988jHDdd3eVpQQ/XDbZ+8uJjTzXh2hAjviSwe3jJuv6CtAG7ROQV8hcQ+AEtZM6k=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Oh4w0+zL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 3BA47C4CECC;
-	Thu, 24 Oct 2024 09:42:50 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729762975;
-	bh=pVzAa+gkBK0ucsjVKni29QO63BQ7dWJBXHd6dsdvK5w=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Oh4w0+zL9BhrSvdmuLuW3v/pPSkjUHcCQefraJ/bbMcn5xsxVA7WvJ11BxXPQ2b0O
-	 2a6DLQ+lOrdIDZZMBKfZkZFTGVgm242oPnl8y1yMlV1HMqmmcH2Yg3BF+X3jh6eqm8
-	 am9jTYcGGvSBDTPSDKlBCAVZJ5KOWQYkgkfeTI+PEqmcTQUH5VD+M0GNrddbI3GEn+
-	 rvU+VVHnO7yYayXGVFKf9SRGK4PVn/HoqubNVyFZSSo9UJs1dwye80KZEmn1pmz1Kw
-	 vJHGI2/IhcXfdBGqdD+ZcmyrWzZ5mrY+c5DpXMj24mfd6ftTjJYaBglr9pfejAth0R
-	 UFFdNVvVPmEJw==
-Message-ID: <c7aca0b4-e539-4b32-bd1d-f46734c46448@kernel.org>
-Date: Thu, 24 Oct 2024 11:42:48 +0200
+	s=arc-20240116; t=1729763028; c=relaxed/simple;
+	bh=9q5r6qEkyBhH7/OipBzUS79WR1u9ItOSmP4yBmZMSbA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=TZ6Ou/Z+9PkbMnEn5gngBD2ilQ5E8EDxEjZbgwphJ83X6GRWgwFsxI1zG5zHwDuApbV5iAD7rkRk+GC/GUu9pDTprOzd4Iy7sMDWT3DuzUJkIAlzMhuDFpm9drF6Tp4mtdWJ/sSGxc7AD+fTj+9O3SF5p9NsfXuIDJCHT0C1PrM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.189
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga03-in.huawei.com (SkyGuard) with ESMTP id 4XZ1DM4w9dzQs5j;
+	Thu, 24 Oct 2024 17:42:43 +0800 (CST)
+Received: from kwepemg200008.china.huawei.com (unknown [7.202.181.35])
+	by mail.maildlp.com (Postfix) with ESMTPS id A79B71800A7;
+	Thu, 24 Oct 2024 17:43:36 +0800 (CST)
+Received: from huawei.com (10.90.53.73) by kwepemg200008.china.huawei.com
+ (7.202.181.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Oct
+ 2024 17:43:36 +0800
+From: Jinjie Ruan <ruanjinjie@huawei.com>
+To: <brendan.higgins@linux.dev>, <davidgow@google.com>, <rmoar@google.com>,
+	<skhan@linuxfoundation.org>, <rf@opensource.cirrus.com>,
+	<linux-kselftest@vger.kernel.org>, <kunit-dev@googlegroups.com>,
+	<linux-kernel@vger.kernel.org>
+CC: <ruanjinjie@huawei.com>
+Subject: [PATCH] kunit: string-stream: Fix a UAF bug in kunit_init_suite()
+Date: Thu, 24 Oct 2024 17:43:03 +0800
+Message-ID: <20241024094303.1531810-1-ruanjinjie@huawei.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/3] dt-bindings: mailbox: mediatek: Add apu-mailbox
- document
-To: "Karl.Li" <karl.li@mediatek.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
- <matthias.bgg@gmail.com>,
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Chungying Lu <chungying.lu@mediatek.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20241024092608.431581-1-karl.li@mediatek.com>
- <20241024092608.431581-2-karl.li@mediatek.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241024092608.431581-2-karl.li@mediatek.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
+ kwepemg200008.china.huawei.com (7.202.181.35)
 
-On 24/10/2024 11:25, Karl.Li wrote:
-> From: Karl Li <karl.li@mediatek.com>
-> 
-> Add apu-mailbox dt-binding document.
+In kunit_debugfs_create_suite(), if alloc_string_stream() fails in the
+kunit_suite_for_each_test_case() loop, the "suite->log = stream"
+has assigned before, and the error path only free the suite->log's stream
+memory but not set it to NULL in string_stream_destroy(), so the later
+string_stream_clear() of suite->log in kunit_init_suite() will cause
+below UAF bug.
 
-We see from the diff. What we see is what is APU and this hardware?
+Set stream pointer to NULL after free in string_stream_destroy()
+to fix it.
 
-A nit, subject: drop second/last, redundant "document". The
-"dt-bindings" prefix is already stating that these are bindings so a
-document.
-See also:
-https://elixir.bootlin.com/linux/v6.7-rc8/source/Documentation/devicetree/bindings/submitting-patches.rst#L18
+	Unable to handle kernel paging request at virtual address 006440150000030d
+	Mem abort info:
+	  ESR = 0x0000000096000004
+	  EC = 0x25: DABT (current EL), IL = 32 bits
+	  SET = 0, FnV = 0
+	  EA = 0, S1PTW = 0
+	  FSC = 0x04: level 0 translation fault
+	Data abort info:
+	  ISV = 0, ISS = 0x00000004, ISS2 = 0x00000000
+	  CM = 0, WnR = 0, TnD = 0, TagAccess = 0
+	  GCS = 0, Overlay = 0, DirtyBit = 0, Xs = 0
+	[006440150000030d] address between user and kernel address ranges
+	Internal error: Oops: 0000000096000004 [#1] PREEMPT SMP
+	Dumping ftrace buffer:
+	   (ftrace buffer empty)
+	Modules linked in: iio_test_gts industrialio_gts_helper cfg80211 rfkill ipv6 [last unloaded: iio_test_gts]
+	CPU: 5 UID: 0 PID: 6253 Comm: modprobe Tainted: G    B   W        N 6.12.0-rc4+ #458
+	Tainted: [B]=BAD_PAGE, [W]=WARN, [N]=TEST
+	Hardware name: linux,dummy-virt (DT)
+	pstate: 40000005 (nZcv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+	pc : string_stream_clear+0x54/0x1ac
+	lr : string_stream_clear+0x1a8/0x1ac
+	sp : ffffffc080b47410
+	x29: ffffffc080b47410 x28: 006440550000030d x27: ffffff80c96b5e98
+	x26: ffffff80c96b5e80 x25: ffffffe461b3f6c0 x24: 0000000000000003
+	x23: ffffff80c96b5e88 x22: 1ffffff019cdf4fc x21: dfffffc000000000
+	x20: ffffff80ce6fa7e0 x19: 032202a80000186d x18: 0000000000001840
+	x17: 0000000000000000 x16: 0000000000000000 x15: ffffffe45c355cb4
+	x14: ffffffe45c35589c x13: ffffffe45c03da78 x12: ffffffb810168e75
+	x11: 1ffffff810168e74 x10: ffffffb810168e74 x9 : dfffffc000000000
+	x8 : 0000000000000004 x7 : 0000000000000003 x6 : 0000000000000001
+	x5 : ffffffc080b473a0 x4 : 0000000000000000 x3 : 0000000000000000
+	x2 : 0000000000000001 x1 : ffffffe462fbf620 x0 : dfffffc000000000
+	Call trace:
+	 string_stream_clear+0x54/0x1ac
+	 __kunit_test_suites_init+0x108/0x1d8
+	 kunit_exec_run_tests+0xb8/0x100
+	 kunit_module_notify+0x400/0x55c
+	 notifier_call_chain+0xfc/0x3b4
+	 blocking_notifier_call_chain+0x68/0x9c
+	 do_init_module+0x24c/0x5c8
+	 load_module+0x4acc/0x4e90
+	 init_module_from_file+0xd4/0x128
+	 idempotent_init_module+0x2d4/0x57c
+	 __arm64_sys_finit_module+0xac/0x100
+	 invoke_syscall+0x6c/0x258
+	 el0_svc_common.constprop.0+0x160/0x22c
+	 do_el0_svc+0x44/0x5c
+	 el0_svc+0x48/0xb8
+	 el0t_64_sync_handler+0x13c/0x158
+	 el0t_64_sync+0x190/0x194
+	Code: f9400753 d2dff800 f2fbffe0 d343fe7c (38e06b80)
+	---[ end trace 0000000000000000 ]---
+	Kernel panic - not syncing: Oops: Fatal exception
 
-> 
-> Signed-off-by: Karl Li <karl.li@mediatek.com>
-> ---
->  .../mailbox/mediatek,apu-mailbox.yaml         | 55 +++++++++++++++++++
->  1 file changed, 55 insertions(+)
->  create mode 100644 Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.yaml
-> 
-> diff --git a/Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.yaml b/Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.yaml
-> new file mode 100644
-> index 000000000000..cb4530799bef
-> --- /dev/null
-> +++ b/Documentation/devicetree/bindings/mailbox/mediatek,apu-mailbox.yaml
-> @@ -0,0 +1,55 @@
-> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
-> +%YAML 1.2
-> +---
-> +$id: http://devicetree.org/schemas/mailbox/mediatek,apu-mailbox.yaml#
-> +$schema: http://devicetree.org/meta-schemas/core.yaml#
-> +
-> +title: MediaTek APU mailbox
+Cc: stable@vger.kernel.org
+Fixes: a3fdf784780c ("kunit: string-stream: Decouple string_stream from kunit")
+Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
+---
+ lib/kunit/string-stream.c | 1 +
+ 1 file changed, 1 insertion(+)
 
-What is APU?
-
-> +
-> +maintainers:
-> +  - Karl Li <Karl.Li@mediatek.com>
-> +
-> +description:
-> +  The MediaTek APU-Mailbox facilitates communication with the
-> +  APU microcontroller. Within the MediaTek APU subsystem, a
-> +  message passing mechanism is built on top of the mailbox system.
-> +  The mailbox only has limited space for each message. The firmware
-> +  expects the message header from the mailbox, while the message body
-> +  is passed through some fixed shared memory.
-> +
-> +properties:
-> +  compatible:
-> +    enum:
-> +      - mediatek,mt8188-apu-mailbox
-> +      - mediatek,mt8196-apu-mailbox
-> +
-> +  "#mbox-cells":
-> +    const: 1
-> +    description:
-> +      The cell describe which channel the device will use.
-> +
-> +  reg:
-> +    maxItems: 1
-> +
-> +  interrupts:
-> +    maxItems: 1
-> +
-> +required:
-> +  - compatible
-> +  - "#mbox-cells"
-> +  - reg
-> +  - interrupts
-> +
-> +additionalProperties: false
-> +
-> +examples:
-> +  - |
-> +    #include <dt-bindings/interrupt-controller/arm-gic.h>
-> +    #include <dt-bindings/interrupt-controller/irq.h>
-> +
-> +    apu_mailbox: mailbox@4c200000 {
-
-Drop unused label.
-
-> +      compatible = "mediatek,mt8196-apu-mailbox";
-> +      reg = <0 0x4c200000 0 0xfffff>;
-> +      interrupts = <GIC_SPI 638 IRQ_TYPE_LEVEL_HIGH 0>;
-
-4 cells? No warnings on this?
-
-> +      #mbox-cells = <1>;
-> +    };
-
-Best regards,
-Krzysztof
+diff --git a/lib/kunit/string-stream.c b/lib/kunit/string-stream.c
+index 54f4fdcbfac8..00ad518b730b 100644
+--- a/lib/kunit/string-stream.c
++++ b/lib/kunit/string-stream.c
+@@ -178,6 +178,7 @@ void string_stream_destroy(struct string_stream *stream)
+ 
+ 	string_stream_clear(stream);
+ 	kfree(stream);
++	stream = NULL;
+ }
+ 
+ static void resource_free_string_stream(void *p)
+-- 
+2.34.1
 
 
