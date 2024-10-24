@@ -1,148 +1,86 @@
-Return-Path: <linux-kernel+bounces-379351-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379348-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AFD2D9ADD78
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:19:07 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id A15919ADD70
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:18:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DFA261C21604
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:19:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4C0681F21CDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:18:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1BB9119CD01;
-	Thu, 24 Oct 2024 07:18:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD96189F56;
+	Thu, 24 Oct 2024 07:18:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b="cWpLo8Eq"
-Received: from esa3.hc1455-7.c3s2.iphmx.com (esa3.hc1455-7.c3s2.iphmx.com [207.54.90.49])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WmgrsvLA"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D87BC19CC25;
-	Thu, 24 Oct 2024 07:18:35 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=207.54.90.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 38B7E17333D;
+	Thu, 24 Oct 2024 07:18:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729754318; cv=none; b=g9EWi55d8A/EIzdf353TgbyQZ+DpKEXtZyaiXTh+r8yWW6fR0kaDQiJtdmff8+CZKlq6tbK2maDwIHRTcDFC1vZ9pdSzXjXqPpfjQMxUZ1GaMTbFI239pIPWIgONyBls0+cQKwj53xqyTUiAkTPoDic/1ZCNwNTi2y/C8LKEOh8=
+	t=1729754288; cv=none; b=umXf+EvfhuvAa4scDrJe7JMzku2R0fPV0x2nHD9NvKkIqXTntGM4aFTlis90zCzJOTvXFzSbpRok5GKycP7rsI1nDd7Z4XHBr8A43WA0b2V2RjDq3fq0dFp8fiSmEvGPU+CYSBbNqGN6/zpDl7Jaimtl14qyGw2u9PZ88Ct2kC4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729754318; c=relaxed/simple;
-	bh=/2vAQ2orbtt6jFt/wJe83iV1UJ5z1C5ZfzMaGqbUAIw=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version; b=mru9Tl5LcRP53sp49elCdZnL/d3uM8MkZAwBHGXjUDdK6fh3pRRFooaIrwXxRZNu5jTMVM9ml3MThRd3/GdFFnT+ZFzFQhjE0kyhJKPe3F/TGqj0czLIN/UQPdw+arkybRNiVrrP4nUIyp51pWu8NPFBPp/1vB3T5F9XTSMzDaU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com; spf=pass smtp.mailfrom=fujitsu.com; dkim=pass (2048-bit key) header.d=fujitsu.com header.i=@fujitsu.com header.b=cWpLo8Eq; arc=none smtp.client-ip=207.54.90.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=fujitsu.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fujitsu.com
-DKIM-Signature: v=1; a=rsa-sha256; c=simple/simple;
-  d=fujitsu.com; i=@fujitsu.com; q=dns/txt; s=fj2;
-  t=1729754317; x=1761290317;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=/2vAQ2orbtt6jFt/wJe83iV1UJ5z1C5ZfzMaGqbUAIw=;
-  b=cWpLo8Eqnwc71DtPXfmYbPaVPQUfdkaLUstTG5ZNLtCqdzGki2uOAFlo
-   oduggSjflchFg0pzxb6/KIq3J+QrT8tg+2hezFl21wlROUhQpis2s/X50
-   I+TdjKMvviUo4OBtzswhCQJs4Twpw2t7+a1XGfRxoHksS7PGwvhInKN0A
-   n8NLMZIsYpX1LEoinZPW80Y5hBLzF48H6jAK7Nbvf41ZIEeFd7HlXGQhL
-   F1qES8xRZzUJMqBVGD2/W/aarzVEcPT2UBR+JKEytc7ju5z8LN4si5nPj
-   6AbkcYygYqyjH6UYYGHtuOcNdG+H9kowU9TTxKPXo5BhrwVWqJQsVqqgC
-   w==;
-X-CSE-ConnectionGUID: ZXqK5EbZRCeiuIrJ52lE7g==
-X-CSE-MsgGUID: v13xD5VSTwy+qyWfqUoHRw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="177828397"
-X-IronPort-AV: E=Sophos;i="6.11,228,1725289200"; 
-   d="scan'208";a="177828397"
-Received: from unknown (HELO oym-r3.gw.nic.fujitsu.com) ([210.162.30.91])
-  by esa3.hc1455-7.c3s2.iphmx.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 16:17:25 +0900
-Received: from oym-m4.gw.nic.fujitsu.com (oym-nat-oym-m4.gw.nic.fujitsu.com [192.168.87.61])
-	by oym-r3.gw.nic.fujitsu.com (Postfix) with ESMTP id EC76AD647E;
-	Thu, 24 Oct 2024 16:17:21 +0900 (JST)
-Received: from yto-om2.fujitsu.com (yto-om2.o.css.fujitsu.com [10.128.89.163])
-	by oym-m4.gw.nic.fujitsu.com (Postfix) with ESMTP id 3A4EFD4C00;
-	Thu, 24 Oct 2024 16:17:21 +0900 (JST)
-Received: from sm-x86-mem01.ssoft.mng.com (sm-x86-stp01.soft.fujitsu.com [10.124.178.20])
-	by yto-om2.fujitsu.com (Postfix) with ESMTP id E44A0400578EC;
-	Thu, 24 Oct 2024 16:17:20 +0900 (JST)
-From: Yoshihiro Furudera <fj5100bi@fujitsu.com>
-To: Jarkko Nikula <jarkko.nikula@linux.intel.com>,
-	Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
-	Mika Westerberg <mika.westerberg@linux.intel.com>,
-	Jan Dabros <jsd@semihalf.com>,
-	Andi Shyti <andi.shyti@kernel.org>,
-	linux-i2c@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>
-Subject: [PATCH v2] i2c: designware: Add ACPI HID for DWAPB I2C controller on FUJITSU-MONAKA
-Date: Thu, 24 Oct 2024 07:15:53 +0000
-Message-Id: <20241024071553.3073864-1-fj5100bi@fujitsu.com>
-X-Mailer: git-send-email 2.34.1
+	s=arc-20240116; t=1729754288; c=relaxed/simple;
+	bh=NL6t+0WOOqEim4x8DSe/Ot6FeYyEc1uFdXg1LzFfjjQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZOeaXlsxadNMRfhswvWhq1g7rVJ76jA3u16T9qAbH7ERZeG/Pz9VZuF6ZU98exD4AfbChf7BuM8FhgiaOP620fphBa99puzM/M9SVTLn29Edhs4KJzP4rzDjpdZ/mwp+dUTYnbPzrniqk6ZteBYicSP7Bmx1ni17qq7+6E8vwsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WmgrsvLA; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id ACC15C4CEC7;
+	Thu, 24 Oct 2024 07:18:06 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729754287;
+	bh=NL6t+0WOOqEim4x8DSe/Ot6FeYyEc1uFdXg1LzFfjjQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=WmgrsvLA5hthlAe2o0k13DsTM/azsKHeWqceOFTGlKXD0fU7gU1MeBBacEF7a0m2e
+	 qrjneh8gFOQJv8WnlM2QwYBfux6PRlTRrf8K4O/syfSwa7UaHYQRXSxGMXMUvMwdR7
+	 7YB4KTCtvG3U6ypm09plosqbhWhViFyW0B2pDwzkfeAUzvcSDzYdHCVzT36iavI0P6
+	 U3Re8wfjvtIgkeWKA0KrR+9Y3DQ8EWysDDgwbe8ocehdWUFkJAENeRK3E8WgEhcVbv
+	 fFjQ2xo3blwXzXe6LjlvUugCdMExSEZjIEGEHUwbZ+N4zK0IiqaK+WlFGbRVCLwLNS
+	 9/XlVMRKYbCUw==
+Date: Thu, 24 Oct 2024 09:18:04 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Inochi Amaoto <inochiama@gmail.com>
+Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
+	Jiri Slaby <jirislaby@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Ilpo =?utf-8?B?SsOkcnZpbmVu?= <ilpo.jarvinen@linux.intel.com>, Andy Shevchenko <andriy.shevchenko@linux.intel.com>, 
+	Chen Wang <unicorn_wang@outlook.com>, Inochi Amaoto <inochiama@outlook.com>, 
+	linux-kernel@vger.kernel.org, linux-serial@vger.kernel.org, devicetree@vger.kernel.org, 
+	Conor Dooley <conor@kernel.org>
+Subject: Re: [PATCH v3 1/3] dt-bindings: serial: snps,dw-apb-uart: merge
+ duplicate compatible entry.
+Message-ID: <o7lhcbdw6ixqlkdies2tx42k6uoo7blbbeysdgs6fszitponqw@wq4cvv2vxjsc>
+References: <20241024062105.782330-1-inochiama@gmail.com>
+ <20241024062105.782330-2-inochiama@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-TM-AS-GCONF: 00
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241024062105.782330-2-inochiama@gmail.com>
 
-Enable DWAPB I2C controller support on FUJITSU-MONAKA.
-This will be used in the FUJITSU-MONAKA server scheduled
-for shipment in 2027.
+On Thu, Oct 24, 2024 at 02:21:01PM +0800, Inochi Amaoto wrote:
+> Each vendor have an items entry of its own compatible, It is needless
+> and can be merged as it share the same base "snps,dw-apb-uart"
+> compatible.
+> 
+> Merge the duplicate compatible entry into one item entry.
+> 
+> Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> Suggested-by: Conor Dooley <conor@kernel.org>
+> ---
+>  .../devicetree/bindings/serial/snps-dw-apb-uart.yaml   | 10 ++--------
+>  1 file changed, 2 insertions(+), 8 deletions(-)
 
-The DSDT information obtained when verified using an
-in-house simulator is presented below.
+Reviewed-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-     Device (SMB0)
-     {
-         Name (_HID, "FUJI200B")  // _HID: Hardware ID
-         Name (_UID, Zero)  // _UID: Unique ID
-         ...
-         Name (_CRS, ResourceTemplate ()
-         {
-             Memory32Fixed (ReadWrite,
-                 0x2A4B0000,         // Address Base
-                 0x00010000,         // Address Length
-                 )
-             Interrupt (ResourceConsumer, Level, ActiveHigh, Exclusive, ,, )
-             {
-                 0x00000159,
-             }
-         })
-         ...
-     }
-
-The expression SMB0 is used to indicate SMBus HC#0,
-a string of up to four characters.
-
-Created the SMB0 object according to the following
-specifications:
-
-ACPI Specification
-13.2. Accessing the SMBus from ASL Code
-https://uefi.org/htmlspecs/ACPI_Spec_6_4_html/13_ACPI_System_Mgmt_Bus_Interface_Spec/accessing-the-smbus-from-asl-code.html
-
-IPMI Specification
-Example 4: SSIF Interface(P574)
-https://www.intel.co.jp/content/www/jp/ja/products/docs/servers/ipmi/ipmi-second-gen-interface-spec-v2-rev1-1.html
-
-Signed-off-by: Yoshihiro Furudera <fj5100bi@fujitsu.com>
----
-Changes in v2:
-- Updated the commit message as per previous discussion. (Andy)
-- Change the string "Fujitsu MONAKA" to "FUJITSU-MONAKA"
-- Link to v1: https://lore.kernel.org/all/20241018015826.2925075-1-fj5100bi@fujitsu.com/
-
- drivers/i2c/busses/i2c-designware-platdrv.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/i2c/busses/i2c-designware-platdrv.c b/drivers/i2c/busses/i2c-designware-platdrv.c
-index 2d0c7348e491..c04af315a4f9 100644
---- a/drivers/i2c/busses/i2c-designware-platdrv.c
-+++ b/drivers/i2c/busses/i2c-designware-platdrv.c
-@@ -351,6 +351,7 @@ static const struct acpi_device_id dw_i2c_acpi_match[] = {
- 	{ "AMDI0019", ACCESS_INTR_MASK | ARBITRATION_SEMAPHORE },
- 	{ "AMDI0510", 0 },
- 	{ "APMC0D0F", 0 },
-+	{ "FUJI200B", 0 },
- 	{ "HISI02A1", 0 },
- 	{ "HISI02A2", 0 },
- 	{ "HISI02A3", 0 },
--- 
-2.34.1
+Best regards,
+Krzysztof
 
 
