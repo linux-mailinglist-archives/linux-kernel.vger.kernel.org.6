@@ -1,178 +1,157 @@
-Return-Path: <linux-kernel+bounces-380437-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380438-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EAD189AEE8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:49:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 914C59AEE96
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:49:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AB6E9282EFB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39D5F1F22F62
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:49:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D2C41FC7F2;
-	Thu, 24 Oct 2024 17:48:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBD5F1FEFC3;
+	Thu, 24 Oct 2024 17:49:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="YAjHAuJS"
-Received: from out-181.mta0.migadu.com (out-181.mta0.migadu.com [91.218.175.181])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owYUupQZ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F351C1FC7EB
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:48:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 33B901F585D;
+	Thu, 24 Oct 2024 17:49:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792130; cv=none; b=BuLIVvNZrBa5Qc4pxJESyUAO3ZpQFCflr1IM48ioacVmsVEcC75PswDKlvm1PMrZz7AgtIV/p0iwukEms4c14MNvrTpifEpdgz7QcCXY4w5r5A7BecXhnK967F3G9rLiWkTJIRvFcQaNw03b7+WpMp336Iqd29oyaoKHfr3oRB8=
+	t=1729792172; cv=none; b=eQRqWC03nHzO0gKmFT+EoLnhradT0Z1zQx7xQFHegL0LaRYy+bhblCcXp/R4SnGm9/oZTqa9pXvYnGyfdrJefWzTkOA0yBhvW2d+Am7UjFwQ8VerrOka0tKkAp7OaqS6/PH1vlR9db4WoFWfETPl36A6KiP1UTpMJuUP7dVNRpc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792130; c=relaxed/simple;
-	bh=pFKw41pXAynIYjwxABtQ8FjYx8I4OP5LGQ3s0G9Xp0I=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=LjhCCFrkRkgK2fhqbbzbxeXcGdtxjo9mecZrme+a2kZkCHXqxYpPtNWTueohOTB9HZHOLXtTUJDF96GtpaUF3tHEMvQhLx2Ft1TDgPhJvxcHBealmF0FZLM6zFO6pfnOiPVgNiyejRuKhygoSvdEFnJjAo2jLPfr0JqqDpJ90Rk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=YAjHAuJS; arc=none smtp.client-ip=91.218.175.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <38b31782-6ab1-43b0-9e6e-6fc06b0060e2@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729792125;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=OyA0L7ceTn1ePZ3yPtQhRvS4Y7ujHQoMvMW+3G25TZw=;
-	b=YAjHAuJSNUrVCTz4E9U67UF1MVVSqh/nIFnHxwzRLwXalTlAlFsppVtolctromv6OjjNKJ
-	VcxEZSr2PG1Z9jGvrwRlTpySiB5iHKvnlR7fsxxbza/fXf4Gx1JytoAKtofz5I4n9R8DcH
-	ZclJRw9Up1pjLkPf+DDu55nH2rFO+AE=
-Date: Thu, 24 Oct 2024 19:48:41 +0200
+	s=arc-20240116; t=1729792172; c=relaxed/simple;
+	bh=zhYWndttK/7xOoVyibLPyouE8AEyrLwPjBxjdEdHZmA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=A2t2O2N9GUxEqUXYfV3Fo6kyAzAjwY0XT30JwYX/25slaXaDMj2sqPPtLjlCG4fK5kRug5xjJ++BCR0cLuVVedW2R+Y/0mZhb2NfKhRHmt+VdHhn4nQTQT8o0JV1DOLOkDo15MAVD4QV51o0pPwKXOPS4Z43GbxDnR9MC1Jyths=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owYUupQZ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D6948C4CEC7;
+	Thu, 24 Oct 2024 17:49:30 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729792171;
+	bh=zhYWndttK/7xOoVyibLPyouE8AEyrLwPjBxjdEdHZmA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=owYUupQZmFFMYFZyq/sNhN9t+gfp4Hil3ymUuZRoZl/SozSsXit9yb1V2m8OUU+Uz
+	 w+4QNvsdXxAtMBR3QLo1BUbeyoqIUIWrEFkZNdow4d44a7Ib9UY/o6Y7uhtcLKTHk/
+	 ENsupzMbapMYvkgBBczrHjE9L9J5ylZDOjgksWN3DBV37Y1ZOE3eLjxbzWArGiYxtE
+	 RVeEzJW6L4LSBLR9I5tEEnzLp68JOdSfHfCD7Pv4dK1AtT6HxPTsZFnzCI9zBKIEug
+	 XLnkYqf3WHwKg6CnXwSj3+QMde3uyPKuT0eLw2z8VcphAtEFMaZLB+Fy68L8r044r+
+	 TIp0/5XnV2LIQ==
+Date: Thu, 24 Oct 2024 12:49:29 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Chris Lew <quic_clew@quicinc.com>, 
+	Konrad Dybcio <konradybcio@kernel.org>, linux-arm-msm@vger.kernel.org, 
+	Bjorn Andersson <quic_bjorande@quicinc.com>, linux-remoteproc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	stable@vger.kernel.org, Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v2 2/2] soc: qcom: pmic_glink: Handle GLINK intent
+ allocation rejections
+Message-ID: <b7jydfdsyhn4xhrydsxmjayzvp3t3rwwrgnb45jzektbhotlmm@4czvpsdsjv4f>
+References: <20241023-pmic-glink-ecancelled-v2-0-ebc268129407@oss.qualcomm.com>
+ <20241023-pmic-glink-ecancelled-v2-2-ebc268129407@oss.qualcomm.com>
+ <ZxnrnY0rMQRWmUtd@hovoldconsulting.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH v2 for-rc 2/5] RDMA/hns: Fix flush cqe error when racing
- with destroy qp
-To: Junxian Huang <huangjunxian6@hisilicon.com>, jgg@ziepe.ca, leon@kernel.org
-Cc: linux-rdma@vger.kernel.org, linuxarm@huawei.com,
- linux-kernel@vger.kernel.org, tangchengchang@huawei.com
-References: <20241024124000.2931869-1-huangjunxian6@hisilicon.com>
- <20241024124000.2931869-3-huangjunxian6@hisilicon.com>
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Zhu Yanjun <yanjun.zhu@linux.dev>
-In-Reply-To: <20241024124000.2931869-3-huangjunxian6@hisilicon.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxnrnY0rMQRWmUtd@hovoldconsulting.com>
 
-在 2024/10/24 14:39, Junxian Huang 写道:
-> From: wenglianfa <wenglianfa@huawei.com>
+On Thu, Oct 24, 2024 at 08:39:25AM GMT, Johan Hovold wrote:
+> On Wed, Oct 23, 2024 at 05:24:33PM +0000, Bjorn Andersson wrote:
+> > Some versions of the pmic_glink firmware does not allow dynamic GLINK
+> > intent allocations, attempting to send a message before the firmware has
+> > allocated its receive buffers and announced these intent allocations
+> > will fail.
 > 
-> QP needs to be modified to IB_QPS_ERROR to trigger HW flush cqe. But
-> when this process races with destroy qp, the destroy-qp process may
-> modify the QP to IB_QPS_RESET first. In this case flush cqe will fail
-> since it is invalid to modify qp from IB_QPS_RESET to IB_QPS_ERROR.
+> > Retry the send until intent buffers becomes available, or an actual
+> > error occur.
 > 
-> Add lock and bit flag to make sure pending flush cqe work is completed
-> first and no more new works will be added.
+> > Reported-by: Johan Hovold <johan@kernel.org>
+> > Closes: https://lore.kernel.org/all/Zqet8iInnDhnxkT9@hovoldconsulting.com/#t
+> > Cc: stable@vger.kernel.org # rpmsg: glink: Handle rejected intent request better
+> > Fixes: 58ef4ece1e41 ("soc: qcom: pmic_glink: Introduce base PMIC GLINK driver")
+> > Tested-by: Johan Hovold <johan+linaro@kernel.org>
+> > Reviewed-by: Johan Hovold <johan+linaro@kernel.org>
+> > Signed-off-by: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
 > 
-> Fixes: ffd541d45726 ("RDMA/hns: Add the workqueue framework for flush cqe handler")
-> Signed-off-by: wenglianfa <wenglianfa@huawei.com>
-> Signed-off-by: Junxian Huang <huangjunxian6@hisilicon.com>
-> ---
->   drivers/infiniband/hw/hns/hns_roce_device.h |  2 ++
->   drivers/infiniband/hw/hns/hns_roce_hw_v2.c  |  7 +++++++
->   drivers/infiniband/hw/hns/hns_roce_qp.c     | 15 +++++++++++++--
->   3 files changed, 22 insertions(+), 2 deletions(-)
+> Thanks for the update. Still works as intended here.
 > 
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_device.h b/drivers/infiniband/hw/hns/hns_roce_device.h
-> index 73c78005901e..9b51d5a1533f 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_device.h
-> +++ b/drivers/infiniband/hw/hns/hns_roce_device.h
-> @@ -593,6 +593,7 @@ struct hns_roce_dev;
->   
->   enum {
->   	HNS_ROCE_FLUSH_FLAG = 0,
-> +	HNS_ROCE_STOP_FLUSH_FLAG = 1,
->   };
->   
->   struct hns_roce_work {
-> @@ -656,6 +657,7 @@ struct hns_roce_qp {
->   	enum hns_roce_cong_type	cong_type;
->   	u8			tc_mode;
->   	u8			priority;
-> +	spinlock_t flush_lock;
->   };
->   
->   struct hns_roce_ib_iboe {
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> index e85c450e1809..aa42c5a9b254 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_hw_v2.c
-> @@ -5598,8 +5598,15 @@ int hns_roce_v2_destroy_qp(struct ib_qp *ibqp, struct ib_udata *udata)
->   {
->   	struct hns_roce_dev *hr_dev = to_hr_dev(ibqp->device);
->   	struct hns_roce_qp *hr_qp = to_hr_qp(ibqp);
-> +	unsigned long flags;
->   	int ret;
->   
-> +	/* Make sure flush_cqe() is completed */
-> +	spin_lock_irqsave(&hr_qp->flush_lock, flags);
-> +	set_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag);
-> +	spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
-> +	flush_work(&hr_qp->flush_work.work);
-> +
->   	ret = hns_roce_v2_destroy_qp_common(hr_dev, hr_qp, udata);
->   	if (ret)
->   		ibdev_err(&hr_dev->ib_dev,
-> diff --git a/drivers/infiniband/hw/hns/hns_roce_qp.c b/drivers/infiniband/hw/hns/hns_roce_qp.c
-> index dcaa370d4a26..2ad03ecdbf8e 100644
-> --- a/drivers/infiniband/hw/hns/hns_roce_qp.c
-> +++ b/drivers/infiniband/hw/hns/hns_roce_qp.c
-> @@ -90,11 +90,18 @@ static void flush_work_handle(struct work_struct *work)
->   void init_flush_work(struct hns_roce_dev *hr_dev, struct hns_roce_qp *hr_qp)
->   {
->   	struct hns_roce_work *flush_work = &hr_qp->flush_work;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&hr_qp->flush_lock, flags);
-> +	/* Exit directly after destroy_qp() */
-> +	if (test_bit(HNS_ROCE_STOP_FLUSH_FLAG, &hr_qp->flush_flag)) {
-> +		spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
-> +		return;
-> +	}
->   
-> -	flush_work->hr_dev = hr_dev;
-> -	INIT_WORK(&flush_work->work, flush_work_handle);
->   	refcount_inc(&hr_qp->refcount);
->   	queue_work(hr_dev->irq_workq, &flush_work->work);
-> +	spin_unlock_irqrestore(&hr_qp->flush_lock, flags);
->   }
->   
->   void flush_cqe(struct hns_roce_dev *dev, struct hns_roce_qp *qp)
-> @@ -1140,6 +1147,7 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
->   				     struct ib_udata *udata,
->   				     struct hns_roce_qp *hr_qp)
->   {
-> +	struct hns_roce_work *flush_work = &hr_qp->flush_work;
->   	struct hns_roce_ib_create_qp_resp resp = {};
->   	struct ib_device *ibdev = &hr_dev->ib_dev;
->   	struct hns_roce_ib_create_qp ucmd = {};
-> @@ -1148,9 +1156,12 @@ static int hns_roce_create_qp_common(struct hns_roce_dev *hr_dev,
->   	mutex_init(&hr_qp->mutex);
->   	spin_lock_init(&hr_qp->sq.lock);
->   	spin_lock_init(&hr_qp->rq.lock);
-> +	spin_lock_init(&hr_qp->flush_lock);
 
-Thanks a lot. I am fine with this spin_lock_init(&hr_qp->flush_lock);
-Reviewed-by: Zhu Yanjun <yanjun.zhu@linux.dev>
+Thanks for the confirmation.
 
-Zhu Yanjun
+> >  int pmic_glink_send(struct pmic_glink_client *client, void *data, size_t len)
+> >  {
+> >  	struct pmic_glink *pg = client->pg;
+> > +	bool timeout_reached = false;
+> > +	unsigned long start;
+> >  	int ret;
+> >  
+> >  	mutex_lock(&pg->state_lock);
+> > -	if (!pg->ept)
+> > +	if (!pg->ept) {
+> >  		ret = -ECONNRESET;
+> > -	else
+> > -		ret = rpmsg_send(pg->ept, data, len);
+> > +	} else {
+> > +		start = jiffies;
+> > +		for (;;) {
+> > +			ret = rpmsg_send(pg->ept, data, len);
+> > +			if (ret != -EAGAIN)
+> > +				break;
+> > +
+> > +			if (timeout_reached) {
+> > +				ret = -ETIMEDOUT;
+> > +				break;
+> > +			}
+> > +
+> > +			usleep_range(1000, 5000);
+> 
+> I ran some quick tests of this patch this morning (reproducing the issue
+> five times), and with the above delay it seems a single resend is
+> enough. Dropping the delay I once hit:
+> 
+> [    8.723479] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> [    8.723877] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> [    8.723921] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> [    8.723951] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> [    8.723981] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> [    8.724010] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> [    8.724046] qcom_pmic_glink pmic-glink: pmic_glink_send - resend
+> 
+> which seems to suggest that a one millisecond sleep is sufficient for
+> the currently observed issue.
+> 
+> It would still mean up to 5k calls if you ever try to send a too large
+> buffer or similar and spin here for five seconds however. Perhaps
+> nothing to worry about at this point, but increasing the delay or
+> lowering the timeout could be considered.
+> 
 
->   
->   	hr_qp->state = IB_QPS_RESET;
->   	hr_qp->flush_flag = 0;
-> +	flush_work->hr_dev = hr_dev;
-> +	INIT_WORK(&flush_work->work, flush_work_handle);
->   
->   	if (init_attr->create_flags)
->   		return -EOPNOTSUPP;
+I did consider this as well, but this code-path is specific to
+pmic-glink, so we shouldn't have any messages of size unexpected to the
+other side...
 
+If we do, then let's fix that. If I'm wrong in my assumptions, I'd be
+happy to see this corrected, without my arbitrarily chosen timeout
+values.
+
+Thanks,
+Bjorn
+
+> > +			timeout_reached = time_after(jiffies, start + PMIC_GLINK_SEND_TIMEOUT);
+> > +		}
+> > +	}
+> >  	mutex_unlock(&pg->state_lock);
+> >  
+> >  	return ret;
+> 
+> Johan
 
