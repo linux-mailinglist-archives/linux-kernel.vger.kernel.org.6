@@ -1,136 +1,156 @@
-Return-Path: <linux-kernel+bounces-380577-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380578-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BE409AF2D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:47:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 57D629AF2E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:47:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E4DD7282A6B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 99C4CB21CEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9599218B468;
-	Thu, 24 Oct 2024 19:46:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 30B731A7ADE;
+	Thu, 24 Oct 2024 19:47:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="Tm6bl7ev"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RQjevexA"
+Received: from mail-pj1-f44.google.com (mail-pj1-f44.google.com [209.85.216.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 078F21CF96
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:46:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 919E81CF96;
+	Thu, 24 Oct 2024 19:47:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799216; cv=none; b=B8SucOH3FT4L1U3OQ3fKMV6ZZCNB9SdpYU8AlmjkR7L/oR/AsTE2pz2CTlpuCPHM4fCmavLk+8/pSVx7s2uCNtcE245emDCAh/hCyn36sNipCCgk6QyZxgjPh220OQCpZHdImMttqMW2dhgfiGhBShNLJeWF0bzd65bWq0ewGjY=
+	t=1729799232; cv=none; b=FHSB3aP/mpmu/eAdxlv300Q5qXZlHLwv/WDy7q+08gKKqmboH58MrUt7xNvltjWAWDsr1Q2H8PHlBbw3hyDfsllXtflqqTLsKAql9HQAdZJK2sshavXZOh/ZjA9Ya4dy4qSCcIA8XVkulxq8CxKPE+4tq21x0PC0G3NrQ9dBvFg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799216; c=relaxed/simple;
-	bh=+xhS0Xv1G/J6e7Ktie/2UvMbOotjS6zFaMns8T9MYS8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GqKvf2/zkDlwg8K76hPvBgTWwuj+mWZ6ZujRJVtuaXtgw+ecTCXYMutkY41fH+Emtrgmhf2OH6RZg8KBzEDv9mGjE5PJMF3WFlgvR9tg7rUehKtM4kPu+nGbBR14FeOco9LfTPf7aFUb67YFzBrMV/UtrVx9joppHSEYNDePvUc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=Tm6bl7ev; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-53a007743e7so1629046e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:46:53 -0700 (PDT)
+	s=arc-20240116; t=1729799232; c=relaxed/simple;
+	bh=lIMOl16Oc+gkmljkhXJFmkCvewir3f7Gjx9L1UYJb1g=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=SJVoo2mzBn3T/OKggFGQXk+tMh0g6cuDoFp1PIlSBPoRJ1JCPvmofhyU+HswAxyyONbzQeIUKvwUA6Z0r6mXe4faAjMwtoe04s3BC8f9I14laupZV5t/58oElSVocOvQ4TTwq5NJuYdAyHHeRvyQLUA0RsiTpb8hlQYIHXlrsp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RQjevexA; arc=none smtp.client-ip=209.85.216.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f44.google.com with SMTP id 98e67ed59e1d1-2e3c0d1ccc6so215582a91.3;
+        Thu, 24 Oct 2024 12:47:10 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729799212; x=1730404012; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=PI3SXZp7iH9LDmA0MnQOo/8B2Evm9XupATLCcVNXC40=;
-        b=Tm6bl7ev4IwJjSCp2ygl4V8Zotp5Bs05ryL7FprVCWutNWWc8rQTCCI9mvf1z9WqCd
-         TsyV9vA5qrNLmrOlOmyKKh56yS2PecmbgMJ3zOCqJXev9UTG3L//88WGJ2VYz2DmVtV2
-         SaVktlU3WgluN68OL8y+G+fkxgT46UlzVrAwzXxSQOPgfifOFGYZ8eO7kQHAYNE1PKA3
-         4/3Q++X2ph2ht92nR0VR0TphvwZLVfoYQZ32C4gt1Q68wtHC9008u4C1blrhj3YzzPnZ
-         ytG/T7JRgbK3BhTvel5KOhvpIZVzsqt4Akv8qPjxoLH+rc8Fm/3lMINdz6T5JpIyGqgo
-         JVgQ==
+        d=gmail.com; s=20230601; t=1729799230; x=1730404030; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=lIMOl16Oc+gkmljkhXJFmkCvewir3f7Gjx9L1UYJb1g=;
+        b=RQjevexAYGo4XdaqFinIYW7Kwo45vQqwDxBklimIeDDp8zrYeYpy72/LTe0DVBWyWd
+         WriqnivJ+RY69cLwJdjy3xklHZ/9B8Va0EEKYlOZZhuzS3ypSFlc22yDZO7IpL2c3EMw
+         Ip7jFavnFw0jA43+MnV6NeD+UWnqA9dghwxbYPA2tXPNVGa3/m/CM1h8cifeidAD1EFN
+         Z/UYj1aOOKkxHemHAJNM0deN4jjml9ru1z/+a8rQoOFwAbYrk2BL8R4B2rzKFeiwpzX6
+         uX6ac85L4lS9zqb9nutLJGAsUBbnAjLBlnR8An+HFNOxLYE3lsRfgZeeGsUFMasyawYc
+         Fc1g==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729799212; x=1730404012;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PI3SXZp7iH9LDmA0MnQOo/8B2Evm9XupATLCcVNXC40=;
-        b=SdN3x4QTH6CjIE23G70RCOj2RToCg7EZiwBwHJIg4b1Hwx+M48NAFOGq7lpk2g8Vdb
-         h40SJkPuOVSpUiWFb0xBK6PZwqQOl5kWHTm59oFaTh7B0ikdjuwG+tdhqDZvBGSWqroz
-         z+fyEWLaKQOV6baN1XtINO/+Yn1bJ1qSUSHwU7bwD3A4GEy8Ws8aQB9oFDLpQzWjjZsV
-         F4MX24LOqHmB0Lw/coSgHbcde6clm9Z7VOkxgxpE+AnDASRhYtzwB7Hey1EskPPWgIn4
-         cakjc3QzQIpNjWAueCm44LUhXFWHFOdhWe8zHA6k/XnJ8KEIuKr88nTFMtqGGtU2SH1m
-         ++gw==
-X-Forwarded-Encrypted: i=1; AJvYcCUoFs3ROuVBPkRmMouatEqIMJkvwtE6XvzKXu7OzAfFHV3B78rZu5uWIhBttYJYjc0OJ2vSdsGoRMVxkv8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwG+q1TbdOVMX5JE2ko2pW378Yu5KA9pzuf+ICQ9WHFKtPFsevM
-	MTeXWun4tz/pMDzDLc62yr1XCiM+8mSZ2JFzeHUCpRtwlxepxMOOGmSOVBCPHvU=
-X-Google-Smtp-Source: AGHT+IETETXmy3bVlftYj31VETRjI/RZSZyaUXBUvtgU+pcTALquMjFnjAZo0xxjEwQVBqO3LLhmzw==
-X-Received: by 2002:a05:6512:b99:b0:539:f37f:bef2 with SMTP id 2adb3069b0e04-53b1a31f29dmr4081545e87.17.1729799212192;
-        Thu, 24 Oct 2024 12:46:52 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a224319b3sm1453550e87.210.2024.10.24.12.46.49
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 12:46:50 -0700 (PDT)
-Date: Thu, 24 Oct 2024 22:46:48 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Sibi Sankar <quic_sibis@quicinc.com>, sudeep.holla@arm.com, 
-	cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, 
-	arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
- SCMI Generic Extension
-Message-ID: <hc66u4jtl3ncjssmfmkzzxel4bkf74s5srml4ovrm3lrds2mvx@zsb4rfd637dp>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-2-quic_sibis@quicinc.com>
- <q2vuiru7sqetwqyitg7azgqg7kge622i2zgq52b55zivwtbev4@4qgzb54xjioq>
- <hxfg6ztpqy7qdsgzhvvapeyh2f55mj7hhuqqkz7si6g5i7nsng@xoyfwztk66aj>
- <3765cf3d-8477-45a7-af0e-b0c78f41eaad@kernel.org>
- <0b297305-0141-208a-e414-fb7dc98317b9@quicinc.com>
- <170597c7-b8aa-4744-a44d-db5585545704@kernel.org>
+        d=1e100.net; s=20230601; t=1729799230; x=1730404030;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=lIMOl16Oc+gkmljkhXJFmkCvewir3f7Gjx9L1UYJb1g=;
+        b=VFWp5OUgsmFYJ7gabna6LVM5YKwLS/vTloPu2WI5yHzrn2RaFjcORQZkYxxFJwjJnq
+         pHobEa21OyoocHewqYa2eZhAIbdr7k0ygNtkBRJ8l1DC90aP75to27m0yz97n/3Q1WuX
+         Cs0rk/QR8tlMj9IUyA+iPFY2aSfM0gXtRITW7xqcLvfp5CSxAsxxpVsloiAqrJyVCEii
+         8WO/en5X8kYiafeZiRStBVL9rLXtPexMt/IWfq8P/HAc0y9weZifVHRWjBm3wTIfz3sm
+         wa6t164QXfdUZYhgrA70ugLEporM26ttHsCVvnMrbCDxZ3VWL3gWybiutopafS2LSED9
+         H6QA==
+X-Forwarded-Encrypted: i=1; AJvYcCU8HyLAeflvOVxyBRRvKSGdjp2Z2egKhj2Eb4ft6qbCejiZnGPV7jcdlu5RqeaKatnfjWJGEw6QnIiz@vger.kernel.org, AJvYcCUxDz8rJKxbNMGquuSyae7WQvRmbbbAEJVyduLUukzsDpMzE+bSOe8oLqW98pyBQUa3AWetfe1TTui1qsIA@vger.kernel.org, AJvYcCVE/RdsvZq4OjSeDcp2OGWilmP+uyVAek/GAaHdab4KR1g7YKxk4K3PJdErxQipSWFLH87aQR42JAhzZ0XMQdwnA9U=@vger.kernel.org, AJvYcCVMXKfrpiurityyeLA/o1IpW0vyt6wCrgbJ6SHhe4081ZfT/9yjzN2wYjbLlTjx/hKVKoE+GrBArfgNyw==@vger.kernel.org, AJvYcCW36kTMsp8bbh6XvKQ2Qiz413lNraxrW5KYu/YXOSRNWTEQgvMMHQdW8G4hg072LEz0crqaliaIVgA=@vger.kernel.org, AJvYcCW85/cEXYARmFXTrr6o70T4wpd8nOw0z+V5MjtONRbYXonX6AlQg4k83r/Jpppd4KdfwyFv+9ae@vger.kernel.org, AJvYcCW9fmwZZXnDyUyOroM71M3NxmbygTpKLvTRQRBHLRNS4H3h8DsjOjbQEc3KrNGb855GoM/E7ZN0ul0c2jL4@vger.kernel.org, AJvYcCWKvJ/KG0jW91h6vUDwUgFC+77Ib2fMiH0FuVF6zPBz+lLN4oJcCTQtK9HVEwOu8RNyt1fl5MLVBzNj@vger.kernel.org, AJvYcCWRg/9ggIzDeKreAvZWeTkesSDK6FEAMxsdG+q6lgB0grccmIiubEu+mRlW8pAnHqYkKGHjfmRKqv8NpT4=@vger.kernel.org, AJvYcCWsIVVozFQ5fB27keACV9QU
+ MqlFdGRD/0+Nc/OOck4Hy8OWF1OpVQXOZoPC52XKv9fQvOrorYDd8yoj3g==@vger.kernel.org, AJvYcCX3T0psBBSkVHpxQCIzzUSCr55w0wfGPXf676HTDcZ04OkZqL+yWpniAeaDrXFdgpyn6mNQSh/D9yTk@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHsm624rjmSOe8Y3b7N3Fg9XMdgvCXb4yh1L8GeV8632CEI1G1
+	65h4a9crDs9iXADmzZ9xe+p2VsLpq3ZUYsxlsSlgMWp+LJq/IQHV9iLwoTYx+UBaRiIQs0kVjCV
+	1bwiYVp0dMku8x39aklTZ5VUoC8o=
+X-Google-Smtp-Source: AGHT+IGNwTEvTbFWLMloYKQZCr/zKAp0DdNKMjGQfdnRQjfPBj0mdcky5TmmQt/Pc5lbMRaat58vPrZb6iSfoQeDocM=
+X-Received: by 2002:a17:90a:474f:b0:2e2:9026:8bee with SMTP id
+ 98e67ed59e1d1-2e76b84f393mr3469899a91.9.1729799229802; Thu, 24 Oct 2024
+ 12:47:09 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <170597c7-b8aa-4744-a44d-db5585545704@kernel.org>
+References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+ <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
+ <6beb4070-1946-4387-bd0e-34608a76b19e@typeblog.net> <CALtW_agj1rurb3DRrPd9o2mkfku5fq_M3CEKY5sW+Zz7shKYHA@mail.gmail.com>
+ <ZxqK75WdFBod0rZ9@smile.fi.intel.com>
+In-Reply-To: <ZxqK75WdFBod0rZ9@smile.fi.intel.com>
+From: =?UTF-8?Q?Dragan_Milivojevi=C4=87?= <d.milivojevic@gmail.com>
+Date: Thu, 24 Oct 2024 21:46:58 +0200
+Message-ID: <CALtW_ajKAYYwYVGnEArPWz_XaCkEiMFwpoCtzeiO1OLbAk77Sw@mail.gmail.com>
+Subject: Re: linux: Goodbye from a Linux community volunteer
+To: Andy Shevchenko <andy@kernel.org>
+Cc: Peter Cai <peter@typeblog.net>, 
+	James Bottomley <James.Bottomley@hansenpartnership.com>, 
+	Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>, 
+	Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, ntb@lists.linux.dev, 
+	Kory Maincent <kory.maincent@bootlin.com>, Cai Huoqing <cai.huoqing@linux.dev>, 
+	dmaengine@vger.kernel.org, Mark Brown <broonie@kernel.org>, linux-spi@vger.kernel.org, 
+	Damien Le Moal <dlemoal@kernel.org>, linux-ide@vger.kernel.org, 
+	Paul Burton <paulburton@kernel.org>, Thomas Bogendoerfer <tsbogend@alpha.franken.de>, 
+	Arnd Bergmann <arnd@arndb.de>, Jiaxun Yang <jiaxun.yang@flygoat.com>, linux-mips@vger.kernel.org, 
+	Bjorn Helgaas <bhelgaas@google.com>, 
+	Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>, 
+	Yoshihiro Shimoda <yoshihiro.shimoda.uh@renesas.com>, linux-pci@vger.kernel.org, 
+	"David S. Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>, 
+	Andrew Lunn <andrew@lunn.ch>, Russell King <linux@armlinux.org.uk>, 
+	Vladimir Oltean <olteanv@gmail.com>, Keguang Zhang <keguang.zhang@gmail.com>, 
+	Yanteng Si <siyanteng@loongson.cn>, netdev@vger.kernel.org, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+	linux-hwmon@vger.kernel.org, Borislav Petkov <bp@alien8.de>, linux-edac@vger.kernel.org, 
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>, linux-serial@vger.kernel.org, 
+	Andrew Halaney <ajhalaney@gmail.com>, Nikita Travkin <nikita@trvn.ru>, 
+	Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Alexander Shiyan <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>, 
+	Sergey Shtylyov <s.shtylyov@omp.ru>, Evgeniy Dushistov <dushistov@mail.ru>, 
+	Geert Uytterhoeven <geert@linux-m68k.org>, Sergio Paracuellos <sergio.paracuellos@gmail.com>, 
+	Nikita Shubin <nikita.shubin@maquefel.me>, linux-renesas-soc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, Kexy Biscuit <kexybiscuit@aosc.io>, jeffbai@aosc.io, 
+	Linus Torvalds <torvalds@linux-foundation.org>
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 24, 2024 at 03:29:05PM +0200, Krzysztof Kozlowski wrote:
-> On 22/10/2024 09:25, Sibi Sankar wrote:
-> > 
-> > 
-> > On 10/8/24 17:41, Krzysztof Kozlowski wrote:
-> >> On 08/10/2024 14:10, Dmitry Baryshkov wrote:
-> >>> On Tue, Oct 08, 2024 at 08:49:27AM GMT, Krzysztof Kozlowski wrote:
-> >>>> On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
-> >>>>> +/*
-> >>>>> + * QCOM_MEM_TYPE_DDR_QOS supports the following states.
-> >>>>> + *
-> >>>>> + * %QCOM_DDR_LEVEL_AUTO:	DDR operates with LPM enabled
-> >>>>> + * %QCOM_DDR_LEVEL_PERF:	DDR operates with LPM disabled
-> >>>>> + */
-> >>>>> +#define QCOM_DDR_LEVEL_AUTO	0x0
-> >>>>> +#define QCOM_DDR_LEVEL_PERF	0x1
-> >>>>
-> >>>> I could not find any driver using these. Can you point me to usage in
-> >>>> the drivers?
-> >>>
-> >>> It's well hidden. These are the raw values used for DDR_QOS memory.
-> >>
-> >> So not a binding? Then these should be dropped.
-> > 
-> > I am not sure why the term "well hidden" was even considered :(
-> > The driver just reads them from dt and passes them along. If you
-> > want the dt to list magic numbers 0/1 instead I can do that as well.
-> > 
-> 
-> If these are used by FW, then it's fine, although please document it
-> clearly in comment.
+> Yeah, with my hat of the person whose home town is under (Russian) attack for
+> the 10+ years (don't be surprised, please, the war lasts more than a decade
+> already) on I am fully understand Linus' arguments about history and being not
+> very friendly about Russians.
 
-If they are used by FW but they are common between all platforms, it
-should go to the driver instead of being stuffed into DT.
+How about your hat off to the people in the Donbas,
+~12K of them that had died from Ukrainian artillery fire,
+that were under imminent threat of being overrun by
+the Ukrainian forces in February 2022? Are you going
+to scream about Russian propaganda when I link
+the OSCE reports about a 10 fold increase in attacks
+at that same time?
 
+BTW can I be racist towards Germans and Croats since
+their ancestors exterminated my kin in their death camps?
 
--- 
-With best wishes
-Dmitry
+>
+> As you showed above seems like you also will benefit from digging to the
+> history a bit. The nice questions to be answered (but not limited to) are:
+> 1) What had happened to Finland in 1939?
+> 2) Has Finland territory been changed (occupied by another country) in time?
+> 2a) (bonus Q) How many times and by which countries / empires?
+> 3) (speaking of WW II) How many Jews were killed by Finland?
+
+Maybe you should look up the Finnish concentration camps
+ (they called them work camps), that had death percentages
+similar to some of Nazi death camps, where Russians, Roma,
+Serbs and plenty of other E.Europeans perished, including children?
+
+The fact that they fought alongside Nazis and that they were allowed
+to remain independent (and neutral) after the war is, I hope, common
+knowledge.
+
+How TF in this day and age is it considered acceptable to be openly
+racist towards some people
+because you hold historical grievances from 70 years ago?
+
+And for those of you doubting my words, here is a test: Replace the
+statements from various
+prominent figures, including USA officials, about Russians and Russia
+with Jews and Israel and post
+them on your social media accounts. See how fast you will be denounced
+as a racist.
+
+To paraphrase Noam Chomsky: Approved racism.
 
