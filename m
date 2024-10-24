@@ -1,221 +1,228 @@
-Return-Path: <linux-kernel+bounces-379538-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379539-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 706929AE023
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:08:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8968E9AE024
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:08:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 962EA1C21C60
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:08:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43287283FBF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:08:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44C101B0F13;
-	Thu, 24 Oct 2024 09:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0176F1B0F2C;
+	Thu, 24 Oct 2024 09:08:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ptuum9xb"
-Received: from mail-pf1-f173.google.com (mail-pf1-f173.google.com [209.85.210.173])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mkuu2YeN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bE/zrgR4";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mkuu2YeN";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bE/zrgR4"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A8EA523CB;
-	Thu, 24 Oct 2024 09:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0A757FC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:08:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729760895; cv=none; b=EqRKPcfZw5tYagAnHPcwMeGtueebwwe9LwtKNvOv6zNQR+i7cOfD5to5xZiF4FJLe08IFXvp3sJXoZRCZJWFq73lpGQXg6sA8f5yQsRfwywoXz5V0XCdJDAYE8zzW5bF/IrXVFZNaW90iKqgb53LpHtCC1EAtb85KY5ZTdyws6w=
+	t=1729760923; cv=none; b=Di6joUlZXQ+j/fTVAoUTRwZFpa9l7zbXYEbKmrm+rx3ocodu5KvKIOprVqzj0aqmQoXoqTUGvOsCg9M/2DlA1r4sdCARNPE0VpMCyfhn/oF5HAWzgRvcN3bAIcgMhVfsOWeRvRQ8F8tn9Uy3Oy1Qy1bY4h5O49+X5AHW/PLjqco=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729760895; c=relaxed/simple;
-	bh=LCDz0BjH5WXUYTeduPUXa/9qPryjKBr6/BXmKTsfKrw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=TkYEDPlbJrUcoOSBrvbIDidoddsAVszb3o8fb/bj27UJoXcKKz8s0rzbCCWJsYsVXqMXhpv7Py6/6sm3KOoZHuOiKwHuig9SE0J0CvYKXAbJNuSjkTOhZzd7dvh8LsyKVcezWw6Jp4TB/IDbswRw1mo+gTNv7xXF+GwjsoPqARk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ptuum9xb; arc=none smtp.client-ip=209.85.210.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f173.google.com with SMTP id d2e1a72fcca58-71e5a1c9071so498403b3a.0;
-        Thu, 24 Oct 2024 02:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729760893; x=1730365693; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FyfELd4QVPrc5+5AM3J7c0Vg01cAju9q8KqH3ru2oto=;
-        b=Ptuum9xbt8VlVZaY87M5zlTzwYreViPRW5n5BpB1yBqAtN6P/yWmhoKksjJGjbomOb
-         2bag7zDolTOvh1c5JBKfRGJghkuwwEYACAhRVPgjZ2LSWhlDX/1sj/kOoNSup3xRM0PY
-         ygBWJVWZsuEQODBzqd/YtG52fDibX41w2+EZY9zEvmU1DMAI2CTtyyV5tjYyBsffXA7Z
-         eZusjui6LgF9mAIulyDmf2bKbNYsMWIPLW8J3TmcTO88m9+X/bscQsul96bF5N1iJKke
-         B+PpMoyS0hq/vwATQ/FbLS5/ojYqNvjDXgmtZSpRLnT690ev+m410jTORXMcEKGBIhAY
-         w15A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729760893; x=1730365693;
-        h=in-reply-to:content-disposition:mime-version:message-id:subject:cc
-         :to:from:date:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=FyfELd4QVPrc5+5AM3J7c0Vg01cAju9q8KqH3ru2oto=;
-        b=i3rVp0rE90GOrmLYIqWIRrxj+k8e9EZGtQqxlZeUB14v9bDW1RGPb80aIlgUKNp+oz
-         s0ztuOSg17YyTCtteiDP9GDC4oMjDWh5ffu1pPW6NS2d0UPq/WGu2w75DJHE4eal8iK2
-         9NfHb7sbFA3BhC02YLM+bRzKIMNgjsUiexiuIS81JlDit1HZCPDJ7cqC0dFsXppsw2se
-         Muit/jTPd5jmIhegJ/uxWY7GvGSrCyFk0qHrhoz8/NWFEOnfTgsqbHZ66KT8CgbxICMY
-         t/YWQENZ1GR1G7FW4TQjRjmcycEpE1Q2xY305WYN/1UHfn0M5x41+jkVEDISNWJO1jes
-         7qyg==
-X-Forwarded-Encrypted: i=1; AJvYcCV902lyDi8FS75o/nSQzBUoj9P3OFW9XsnsJDTlSRJQEXmvQWRRN9ttILYoeHSYQMG4Ul88nP5cNWmQ3X4l@vger.kernel.org, AJvYcCVKSyEpeJnxiATR2B6/p/Jxp1jgTNW+fJWJrp5k8i7Rz2vGqsTP3O7OxaHCe6V6skWit1Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx4RPPjoGeTXmj3b/QPSgBsKFF9x/FsPV726sbRYGhmMk3oA/ho
-	BLmCFCZo4a0nmOnWid9wUrSyM5Em2nBv0qoZUroDhTIDf7OFiNSU46z+n73C
-X-Google-Smtp-Source: AGHT+IHngrlbgbtsmzpQr/de9V/qtWKNgkShpDoBF8s2v+/L9N5JLFpww2TdNErR85Q7axjBA7n7oA==
-X-Received: by 2002:a05:6a21:2d8c:b0:1d9:6c07:6481 with SMTP id adf61e73a8af0-1d978bd4b70mr6056738637.42.1729760892818;
-        Thu, 24 Oct 2024 02:08:12 -0700 (PDT)
-Received: from localhost.localdomain ([210.205.14.5])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d7416sm7551996b3a.101.2024.10.24.02.08.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 02:08:12 -0700 (PDT)
-Date: Thu, 24 Oct 2024 18:08:07 +0900
-From: Byeonguk Jeong <jungbu2855@gmail.com>
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Daniel Borkmann <daniel@iogearbox.net>,
-	Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
-	LKML <linux-kernel@vger.kernel.org>
-Subject: [PATCH] selftests/bpf: Add test for trie_get_next_key()
-Message-ID: <ZxoOdzdMwvLspZiq@localhost.localdomain>
+	s=arc-20240116; t=1729760923; c=relaxed/simple;
+	bh=f5nTgmePYaMfC5/6AQJdBd3oGWxhxM7elLWURvZqMls=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sPlmrSpl9so6mrW78CVlepr+7ISBEvD4Zsck/VL+3LRxc3jHNn2ZD5oxaPJ+h/OvBWe2dIQ6lFP+4XBQbnwSXYMMb1pmEcu8d4awhAWEAtgNO0p6wVptEJ/2tUAny5gld4+LqWma4juemmNIGhpvqnjsOerN86yrux6GCj5bmrI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mkuu2YeN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bE/zrgR4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mkuu2YeN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bE/zrgR4; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 6AF741FEF0;
+	Thu, 24 Oct 2024 09:08:38 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729760918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
+	b=Mkuu2YeN42cv2bqkbfjpF6cBZkn9okipK8oszuQO6tONyyn/3uh63g5hwTB8gLU5mOsEEa
+	RqAz5F8xAyGfMEcPWSeEcj5rBTHVoukzW4tWIRy4B+zYQ8JjVKg236568Ru9YPiY6+8xdV
+	LQ3pFHuDUO3hEcjPgGSizt/zjn7mfME=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729760918;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
+	b=bE/zrgR4viAIw3CqcyKCS7Sxcre+Fl3EfXZa2AVwWTAuga2ragKH7NUykNoeOm4OopGmoP
+	IVESQ11tfYoCuVAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Mkuu2YeN;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="bE/zrgR4"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729760918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
+	b=Mkuu2YeN42cv2bqkbfjpF6cBZkn9okipK8oszuQO6tONyyn/3uh63g5hwTB8gLU5mOsEEa
+	RqAz5F8xAyGfMEcPWSeEcj5rBTHVoukzW4tWIRy4B+zYQ8JjVKg236568Ru9YPiY6+8xdV
+	LQ3pFHuDUO3hEcjPgGSizt/zjn7mfME=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729760918;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
+	b=bE/zrgR4viAIw3CqcyKCS7Sxcre+Fl3EfXZa2AVwWTAuga2ragKH7NUykNoeOm4OopGmoP
+	IVESQ11tfYoCuVAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D9331368E;
+	Thu, 24 Oct 2024 09:08:38 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id HwD/EZYOGme5QwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 09:08:38 +0000
+Message-ID: <1625e2e0-06ad-459c-b941-41fadea2008d@suse.cz>
+Date: Thu, 24 Oct 2024 11:08:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <ZxcDzT/iv/f0Gyz0@localhost.localdomain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
+Content-Language: en-US
+To: Chen Ridong <chenridong@huaweicloud.com>,
+ Roman Gushchin <roman.gushchin@linux.dev>, akpm@linux-foundation.org,
+ david@fromorbit.com
+Cc: Muchun Song <muchun.song@linux.dev>,
+ Anshuman Khandual <anshuman.khandual@arm.com>,
+ "Kirill A. Shutemov" <kirill@shutemov.name>, zhengqi.arch@bytedance.com,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
+References: <fff87be9-fdc8-4c27-8335-17b0c7e16413@suse.cz>
+ <1BD74B20-879A-4159-B957-1223553217C1@linux.dev>
+ <0b883f9e-451f-41c2-805f-7f5bc7eebee2@suse.cz> <Zw_4fOm_4ifT1uft@google.com>
+ <e919c9ba-1d93-4e68-9146-33d1e28103dc@huaweicloud.com>
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <e919c9ba-1d93-4e68-9146-33d1e28103dc@huaweicloud.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-Rspamd-Queue-Id: 6AF741FEF0
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	ARC_NA(0.00)[];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FROM_HAS_DN(0.00)[];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RCPT_COUNT_SEVEN(0.00)[11];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-Add a test for out-of-bounds write in trie_get_next_key() when a full
-path from root to leaf exists and bpf_map_get_next_key() is called
-with the leaf node. It may crashes the kernel on failure, so please
-run in a VM.
+On 10/24/24 03:26, Chen Ridong wrote:
+>>>> For example, if we use his v1 proposal, we should do
+>>>> the cleanups again for info. But for goto-based
+>>>> version, we just add another label to do the
+>>>> cleanups and go to the new label for failure case. goto-based fix is what I insisted on. I copied my previous suggested fix here to clarify my opinion.
+>>>
+>>> Again, info is a loop-iteration-local variable, v1 fix making it truly local
+>>> is the way to go. If there are further cleanups added in the loop itself in
+>>> the future, they could hopefully keep being local to the loop as well.
+>>> Cleanup of info outside the loop iteration is breaking its real scope.
+>> 
+>> +1 to that.
+>> 
+>> I don't think it's such a big deal and both versions are ok, but I strongly
+>> prefer the original version (without introduction of a new label).
+>> 
+>> Please, feel free to use
+>> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
+>> with the original version.
+>> 
+>> Thanks!
+> 
+> I agree with Roman.
+> Hello, Andrew and Dave, Do you have any opinions?
+> 
+> The original version:
+> https://lore.kernel.org/linux-kernel/4184c61f-80f7-4adc-8929-c29f959cb8df@huawei.com/
 
-Signed-off-by: Byeonguk Jeong <jungbu2855@gmail.com>
----
- .../bpf/map_tests/lpm_trie_map_get_next_key.c | 115 ++++++++++++++++++
- 1 file changed, 115 insertions(+)
- create mode 100644 tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
+Hi,
 
-diff --git a/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
-new file mode 100644
-index 000000000000..85b916b69411
---- /dev/null
-+++ b/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c
-@@ -0,0 +1,115 @@
-+// SPDX-License-Identifier: GPL-2.0
-+
-+/*
-+ * WARNING
-+ * -------
-+ *  This test suite may crash the kernel, thus should be run in a VM.
-+ */
-+
-+#define _GNU_SOURCE
-+#include <linux/bpf.h>
-+#include <stdio.h>
-+#include <stdbool.h>
-+#include <unistd.h>
-+#include <errno.h>
-+#include <stdlib.h>
-+#include <string.h>
-+#include <pthread.h>
-+
-+#include <bpf/bpf.h>
-+#include <bpf/libbpf.h>
-+
-+#include <test_maps.h>
-+
-+struct test_lpm_key {
-+	__u32 prefix;
-+	__u32 data;
-+};
-+
-+struct get_next_key_ctx {
-+	struct test_lpm_key key;
-+	bool start;
-+	bool stop;
-+	int map_fd;
-+	int loop;
-+};
-+
-+static void *get_next_key_fn(void *arg)
-+{
-+	struct get_next_key_ctx *ctx = arg;
-+	struct test_lpm_key next_key;
-+	int i;
-+
-+	while (!ctx->start)
-+		usleep(1);
-+
-+	while (!ctx->stop && i++ < ctx->loop)
-+		bpf_map_get_next_key(ctx->map_fd, &ctx->key, &next_key);
-+
-+	return NULL;
-+}
-+
-+static void abort_get_next_key(struct get_next_key_ctx *ctx, pthread_t *tids,
-+			       unsigned int nr)
-+{
-+	unsigned int i;
-+
-+	ctx->stop = true;
-+	ctx->start = true;
-+	for (i = 0; i < nr; i++)
-+		pthread_join(tids[i], NULL);
-+}
-+
-+/* This test aims to prevent regression of future. As long as the kernel does
-+ * not panic, it is considered as success.
-+ */
-+void test_lpm_trie_map_get_next_key(void)
-+{
-+#define MAX_NR_THREADS 256
-+	LIBBPF_OPTS(bpf_map_create_opts, create_opts,
-+		    .map_flags = BPF_F_NO_PREALLOC);
-+	struct test_lpm_key key = {};
-+	__u32 val = 0;
-+	int map_fd;
-+	const __u32 max_prefixlen = 8 * (sizeof(key) - sizeof(key.prefix));
-+	const __u32 max_entries = max_prefixlen + 1;
-+	unsigned int i, nr = MAX_NR_THREADS, loop = 4096;
-+	pthread_t tids[MAX_NR_THREADS];
-+	struct get_next_key_ctx ctx;
-+	int err;
-+
-+	map_fd = bpf_map_create(BPF_MAP_TYPE_LPM_TRIE, "lpm_trie_map",
-+				sizeof(struct test_lpm_key), sizeof(__u32),
-+				max_entries, &create_opts);
-+	CHECK(map_fd == -1, "bpf_map_create(), error:%s\n",
-+	      strerror(errno));
-+
-+	for (i = 0; i <= max_prefixlen; i++) {
-+		key.prefix = i;
-+		err = bpf_map_update_elem(map_fd, &key, &val, BPF_ANY);
-+		CHECK(err, "bpf_map_update_elem()", "error:%s\n",
-+		      strerror(errno));
-+	}
-+
-+	ctx.start = false;
-+	ctx.stop = false;
-+	ctx.map_fd = map_fd;
-+	ctx.loop = loop;
-+	memcpy(&ctx.key, &key, sizeof(key));
-+
-+	for (i = 0; i < nr; i++) {
-+		err = pthread_create(&tids[i], NULL, get_next_key_fn, &ctx);
-+		if (err) {
-+			abort_get_next_key(&ctx, tids, i);
-+			CHECK(err, "pthread_create", "error %d\n", err);
-+		}
-+	}
-+
-+	ctx.start = true;
-+	for (i = 0; i < nr; i++)
-+		pthread_join(tids[i], NULL);
-+
-+	printf("%s:PASS\n", __func__);
-+
-+	close(map_fd);
-+}
--- 
-2.43.5
+Can you resend the v1 as v3, but also move the declaration of "struct
+shrinker_info *info;" inside the for_each_node() block? Also you can add all
+the acks collected for that version and mine too:
+
+Acked-by: Vlastimil Babka <vbabka@suse.cz>
+
+Thanks.
+
+> Best regards,
+> Ridong
+> 
+> 
 
 
