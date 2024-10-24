@@ -1,162 +1,210 @@
-Return-Path: <linux-kernel+bounces-380128-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380129-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A86D9AE93E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:48:07 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9983E9AE945
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:48:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4EF28390A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:48:05 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60222283FCD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:48:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F21E0DB0;
-	Thu, 24 Oct 2024 14:48:01 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383F71DE88A;
+	Thu, 24 Oct 2024 14:48:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3Ko7/c7"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AC21D8E18
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113451DD0E6;
+	Thu, 24 Oct 2024 14:48:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781281; cv=none; b=Ph5Hqm0UyXnOe1B8QLJSvHijBDFn5O/RhAkH58mbQCzhQKuac/FmdVBwL4XVO5V5GovgyOB4tavOQ2VhmU8M10PUmnKA667UmsIgV01gpccNeJOm5uBcqQ36DmOlZHymFLqr2IZFaQmfaI/91vxmR7vVqc6ClfMIEeKW0NyVArI=
+	t=1729781311; cv=none; b=MfCZrO8rxuNlPWHo6Zy1FiilZMJEkjMpv1qoA7aQR9E4i+luZtQIhf1xVLBkFcIRE76rbx3QMSrQ2MU42wFScPyR+teYgT6+wNPrn9vlG0HcY69IO2W7S3L3q7U85NrTEyAA4guUUDAdMTU6DfBVIuQbVLAbtSQ+uWDsyI0zdjM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781281; c=relaxed/simple;
-	bh=YGzdECzNZQWhiO37nlxTvK5vT11OkzupSUgy11AovsA=;
-	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=CQhTvaNkTaC/q4RtLHNcVerBtY8y2Chgi6WTTipYal2sfwarpSiS/EYraaUxj4bC1k3ycbIrVhtTdcWxMoLzABUwpmQ80mWrHWRwgDjSD9dRyQLsndH4S0KeeolmHXBgtipF5UGBRT4vQT7fH3wUExODgWqUDaIUGeBtzZYxwLE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XZ7yr1dRZz2FbTS;
-	Thu, 24 Oct 2024 22:46:28 +0800 (CST)
-Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
-	by mail.maildlp.com (Postfix) with ESMTPS id DA6B914037C;
-	Thu, 24 Oct 2024 22:47:52 +0800 (CST)
-Received: from [10.67.121.177] (10.67.121.177) by
- kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.2.1258.34; Thu, 24 Oct 2024 22:47:51 +0800
-CC: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
-	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
-	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
-	<dave.hansen@linux.intel.com>, <dietmar.eggemann@arm.com>,
-	<yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
-	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
-	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
-	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
-	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>
-Subject: Re: [PATCH v6 2/4] arch_topology: Support SMT control for OF based
- system
-To: Pierre Gondois <pierre.gondois@arm.com>
-References: <20241015021841.35713-1-yangyicong@huawei.com>
- <20241015021841.35713-3-yangyicong@huawei.com>
- <eb7ec4c3-5995-4040-8992-bb95f4b9f923@arm.com>
-From: Yicong Yang <yangyicong@huawei.com>
-Message-ID: <988be709-f2f5-9dbb-3f17-1fc45f665e58@huawei.com>
-Date: Thu, 24 Oct 2024 22:47:51 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
- Thunderbird/78.5.1
+	s=arc-20240116; t=1729781311; c=relaxed/simple;
+	bh=Kf7IH7Ia1MQegT0zCCcPUUT7/Ni5m/YrbrJlFScLiGg=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=QAYOigYB+PrO/b5UJPUVtXUrixcoyYzK2aKWVx3ZwCRg7B28b6QmbeYq+tzcqPUAlkNB7KQzVYtSoVNtY53zooaytFsKRI44LRt+kWB2wrvTmjIX/Eiu1v/sGwRaERXs+gFqFbBokVARtAne1smVAgjaW/+Rejs3NGi1ARk/VFw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3Ko7/c7; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so998538e87.3;
+        Thu, 24 Oct 2024 07:48:28 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729781307; x=1730386107; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=G1ze1FAkv4Dqw0QEQR2ZCGcnAZHEGZrNScY6wG9W5uY=;
+        b=N3Ko7/c7a8InmVTrJz4lp8E126SuY3kZdbj6ErylhuzSpebgK2vFkOXR2qJGUstIXP
+         plYcbKRKXNTjmGPjihLAsIbAk+OHTrY/RmL8zWFRBuO+dtv0dlqQ+jcuUPuzAbOJTYxv
+         oEIE7XvtCYBNnAeR8ZtQhwIN8ISpJmY1Oj2DHz4uYFC78eSVeiUOz0nSzaK0WjDpR0vj
+         LlwrNQHFK4tePLXjteUFdWScOs07rQIlSazVJO8uGbVLLKM/WwtwHDVWK0+ORXgyqK/M
+         BtSnBnjy5ZxQb2l4NSHTLtmm8niDCHwgx9G+CI/F/nv+ZYGhldNpePBgnqVmoYwvavdC
+         UxhQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729781307; x=1730386107;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=G1ze1FAkv4Dqw0QEQR2ZCGcnAZHEGZrNScY6wG9W5uY=;
+        b=RSSx4OrLyPoKJBgU91IeUm4eE0T8/VoMGCiq3ntwE57w/6W4wRUp3R8qRRuYoCZico
+         lXmJNpWoys3pNGOQjgF+SvZMIOJ1w8aXq4J7oIO8YvUSnxMXyJ1J732kOH+x9PmeZ+RW
+         cfBtwWHDwt0Wqo58egOPo7lNVjPY/25JnlyHWdTt/ZrZ5urKQNPRx9ZVSkQXqe6M6WQV
+         RjwVyZ3ahTQC50J4rUm2r8MakBXzNAsMKLostU5YNiOHff40x0nvOabxf3Npb2h90UJZ
+         TNs7W1nVz9YD5VlGZkF0D9lF9W02sd+a0E7fHB5vY768tY4wxyn4m/IOp+99GToZhRs3
+         +N3A==
+X-Forwarded-Encrypted: i=1; AJvYcCVj+mQUNi5fQS541f8i/tK/OXN7O8vOCxAP5Hm28m+5KkUUFa4PrOUb1gVQifthbaq+kalcF0bZr/dgQno=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzKhi2HOoPr+xQP/anqRc8oXBqK8+9srvxiLts7JsjGN/IznVbQ
+	Pc2I5X1b5A2sfCrCVLotl48LcChvV/uy9DBd9m7OevrCa4TgZ+6C
+X-Google-Smtp-Source: AGHT+IE2ctdQKfTUxcYMHQ9xUqbhJ0Pcik/Mb3DaOc2KCi8IUlK89tQqbUAiTmghBI0O47SN8dBzxQ==
+X-Received: by 2002:a05:6512:12cd:b0:539:ebe5:298e with SMTP id 2adb3069b0e04-53b23ea0e81mr1707345e87.59.1729781306811;
+        Thu, 24 Oct 2024 07:48:26 -0700 (PDT)
+Received: from [192.168.42.27] ([85.255.233.224])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912ee077sm629443366b.65.2024.10.24.07.48.25
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 07:48:26 -0700 (PDT)
+Message-ID: <8e0f74c1-aa11-4036-ba20-6f4dc0c40333@gmail.com>
+Date: Thu, 24 Oct 2024 15:49:01 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <eb7ec4c3-5995-4040-8992-bb95f4b9f923@arm.com>
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- kwepemd200014.china.huawei.com (7.221.188.8)
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
+To: Jens Axboe <axboe@kernel.dk>, hexue <xue01.he@samsung.com>
+Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
+ <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
+ <20241024023805.1082769-1-xue01.he@samsung.com>
+ <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
+ <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
+ <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
+Content-Language: en-US
+From: Pavel Begunkov <asml.silence@gmail.com>
+In-Reply-To: <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 2024/10/23 23:43, Pierre Gondois wrote:
-> Hello Yicong,
+On 10/24/24 15:40, Jens Axboe wrote:
+> On 10/24/24 8:26 AM, Pavel Begunkov wrote:
+>> On 10/24/24 15:18, Jens Axboe wrote:
+>>> On 10/23/24 8:38 PM, hexue wrote:
+>>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
+>> ...
+>>>> When the number of threads exceeds the number of CPU cores,the
+>>>> database throughput does not increase significantly. However,
+>>>> hybrid polling can releasing some CPU resources during the polling
+>>>> process, so that part of the CPU time can be used for frequent
+>>>> data processing and other operations, which speeds up the reading
+>>>> process, thereby improving throughput and optimizaing database
+>>>> performance.I tried different compression strategies and got
+>>>> results similar to the above table.(~30% throughput improvement)
+>>>>
+>>>> As more database applications adapt to the io_uring engine, I think
+>>>> the application of hybrid poll may have potential in some scenarios.
+>>>
+>>> Thanks for posting some numbers on that part, that's useful. I do
+>>> think the feature is useful as well, but I still have some issues
+>>> with the implementation. Below is an incremental patch on top of
+>>> yours to resolve some of those, potentially. Issues:
+>>>
+>>> 1) The patch still reads a bit like a hack, in that it doesn't seem to
+>>>      care about following the current style. This reads a bit lazy/sloppy
+>>>      or unfinished. I've fixed that up.
+>>>
+>>> 2) Appropriate member and function naming.
+>>>
+>>> 3) Same as above, it doesn't care about proper placement of additions to
+>>>      structs. Again this is a bit lazy and wasteful, attention should be
+>>>      paid to where additions are placed to not needlessly bloat
+>>>      structures, or place members in cache unfortunate locations. For
+>>>      example, available_time is just placed at the end of io_ring_ctx,
+>>>      why? It's a submission side member, and there's room with other
+>>>      related members. Not only is the placement now where you'd want it to
+>>>      be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
+>>>
+>>> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
+>>>      that we can share space with the polling hash_node. This obviously
+>>>      needs careful vetting, haven't done that yet. IOPOLL setups should
+>>>      not be using poll at all. This needs extra checking. The poll_state
+>>>      can go with cancel_seq_set, as there's a hole there any. And just
+>>>      like that, rather than add 24b to io_kiocb, it doesn't take any extra
+>>>      space at all.
+>>>
+>>> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
+>>>      please use a name related to that. And require IOPOLL being set with
+>>>      HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
+>>>      HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
+>>>      can't exist without that.
+>>>
+>>> Please take a look at this incremental and test it, and then post a v9
+>>> that looks a lot more finished. Caveat - I haven't tested this one at
+>>> all. Thanks!
+>>>
+>>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
+>>> index c79ee9fe86d4..6cf6a45835e5 100644
+>>> --- a/include/linux/io_uring_types.h
+>>> +++ b/include/linux/io_uring_types.h
+>>> @@ -238,6 +238,8 @@ struct io_ring_ctx {
+>>>            struct io_rings        *rings;
+>>>            struct percpu_ref    refs;
+>>>    +        u64            poll_available_time;
+>>> +
+>>>            clockid_t        clockid;
+>>>            enum tk_offsets        clock_offset;
+>>>    @@ -433,9 +435,6 @@ struct io_ring_ctx {
+>>>        struct page            **sqe_pages;
+>>>          struct page            **cq_wait_page;
+>>> -
+>>> -    /* for io_uring hybrid poll*/
+>>> -    u64            available_time;
+>>>    };
+>>>      struct io_tw_state {
+>>> @@ -647,9 +646,22 @@ struct io_kiocb {
+>>>          atomic_t            refs;
+>>>        bool                cancel_seq_set;
+>>> +    bool                poll_state;
+>>
+>> As mentioned briefly before, that can be just a req->flags flag
 > 
-> On 10/15/24 04:18, Yicong Yang wrote:
->> From: Yicong Yang <yangyicong@hisilicon.com>
->>
->> On building the topology from the devicetree, we've already
->> gotten the SMT thread number of each core. Update the largest
->> SMT thread number and enable the SMT control by the end of
->> topology parsing.
->>
->> The core's SMT control provides two interface to the users [1]:
->> 1) enable/disable SMT by writing on/off
->> 2) enable/disable SMT by writing thread number 1/max_thread_number
->>
->> If a system have more than one SMT thread number the 2) may
->> not handle it well, since there're multiple thread numbers in the
->> system and 2) only accept 1/max_thread_number. So issue a warning
->> to notify the users if such system detected.
->>
->> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
->> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
->> ---
->>   drivers/base/arch_topology.c | 21 +++++++++++++++++++++
->>   1 file changed, 21 insertions(+)
->>
->> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
->> index 75fcb75d5515..5eed864df5e6 100644
->> --- a/drivers/base/arch_topology.c
->> +++ b/drivers/base/arch_topology.c
->> @@ -11,6 +11,7 @@
->>   #include <linux/cleanup.h>
->>   #include <linux/cpu.h>
->>   #include <linux/cpufreq.h>
->> +#include <linux/cpu_smt.h>
->>   #include <linux/device.h>
->>   #include <linux/of.h>
->>   #include <linux/slab.h>
->> @@ -28,6 +29,7 @@
->>   static DEFINE_PER_CPU(struct scale_freq_data __rcu *, sft_data);
->>   static struct cpumask scale_freq_counters_mask;
->>   static bool scale_freq_invariant;
->> +static unsigned int max_smt_thread_num;
->>   DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 1;
->>   EXPORT_PER_CPU_SYMBOL_GPL(capacity_freq_ref);
->>   @@ -561,6 +563,17 @@ static int __init parse_core(struct device_node *core, int package_id,
->>           i++;
->>       } while (1);
->>   +    if (max_smt_thread_num < i)
->> +        max_smt_thread_num = i;
+> That'd be even better, I generally despise random bool addition.
 > 
-> Shouldn't the conditions above/below be inverted ?
-> I.e. (max_smt_thread_num != i) should never be true if there is
->   max_smt_thread_num = i;
-> just before
+>>>        struct io_task_work        io_task_work;
+>>> -    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
+>>> -    struct hlist_node        hash_node;
+>>> +    union {
+>>> +        /*
+>>> +         * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
+>>> +         * poll
+>>> +         */
+>>> +        struct hlist_node    hash_node;
+>>> +        /*
+>>> +         * For IOPOLL setup queues, with hybrid polling
+>>> +         */
+>>> +        struct {
+>>> +            u64        iopoll_start;
+>>> +            u64        iopoll_end;
+>>
+>> And IIRC it doesn't need to store the end as it's used immediately
+>> after it's set in the same function.
 > 
+> Nice, that opens up the door for less esoteric sharing as well. And
+> yeah, I'd just use:
+> 
+> runtime = ktime_get_ns() - req->iopoll_start - sleep_time;
+> 
+> in io_uring_hybrid_poll() and kill it entirely, doesn't even need a
+> local variable there. And then shove iopoll_start into the union with
+> comp_list/apoll_events.
 
-you're right. will get this fixed. thanks for catching this.
+That's with what the current request is hooked into the list,
+IOW such aliasing will corrupt the request
 
-Thanks.
-
->> +
->> +    /*
->> +     * If max_smt_thread_num has been initialized and doesn't match
->> +     * the thread number of this entry, then the system has
->> +     * heterogeneous SMT topology.
->> +     */
->> +    if (max_smt_thread_num && max_smt_thread_num != i)
->> +        pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
->> +
->>       cpu = get_cpu_for_node(core);
->>       if (cpu >= 0) {
->>           if (!leaf) {
->> @@ -673,6 +686,14 @@ static int __init parse_socket(struct device_node *socket)
->>       if (!has_socket)
->>           ret = parse_cluster(socket, 0, -1, 0);
->>   +    /*
->> +     * Notify the CPU framework of the SMT support. A thread number of 1
->> +     * can be handled by the framework so we don't need to check
->> +     * max_smt_thread_num to see we support SMT or not.
->> +     */
->> +    if (max_smt_thread_num)
->> +        cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
->> +
->>       return ret;
->>   }
->>   
-> 
-> .
+-- 
+Pavel Begunkov
 
