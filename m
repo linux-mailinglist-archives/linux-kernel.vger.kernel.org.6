@@ -1,146 +1,162 @@
-Return-Path: <linux-kernel+bounces-380127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380128-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B21969AE93C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:47:44 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A86D9AE93E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:48:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360901F22D18
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:47:44 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DD4EF28390A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:48:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A769D8614E;
-	Thu, 24 Oct 2024 14:47:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vm7oT4CQ"
-Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B8F21E0DB0;
+	Thu, 24 Oct 2024 14:48:01 +0000 (UTC)
+Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CEE1D63D8;
-	Thu, 24 Oct 2024 14:47:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 62AC21D8E18
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:47:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781256; cv=none; b=YxCMetHAHzixcDe9nXovAXX+wIFMHqEzv3hWZZ4eQE7LC+lG04kgqTKV71Qj6tCJJsmP4Jf4jVN6rG4thX41VyoRWjjpMX/QIk0ZOEUOe279ODEXf3qGDkgG/qSYGDyZP7+jfNoJ5Y6ilB0fAtd0TqHtvVDa0sEVA9dO32CJDKM=
+	t=1729781281; cv=none; b=Ph5Hqm0UyXnOe1B8QLJSvHijBDFn5O/RhAkH58mbQCzhQKuac/FmdVBwL4XVO5V5GovgyOB4tavOQ2VhmU8M10PUmnKA667UmsIgV01gpccNeJOm5uBcqQ36DmOlZHymFLqr2IZFaQmfaI/91vxmR7vVqc6ClfMIEeKW0NyVArI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781256; c=relaxed/simple;
-	bh=/wUrcsMJVoooubxWmLRAaXefBHzQh8V+SDPSaLoqxdQ=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=CLelId0D+p5/ogaCYSafuwvuBPufIe5PWAZo8RMagspaUn4TRHTJdgXooFhYDqHqRNvLzWmmGsuCPXGceqNUzlVg7ZomvkE3yqJQJU/OdhtnMCKs+I5cKkrlVSoqZDqFR9nLSi2whrBPdHYomR1FSkVjyevPAKULrtClPEyakY4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vm7oT4CQ; arc=none smtp.client-ip=209.85.208.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so9930531fa.3;
-        Thu, 24 Oct 2024 07:47:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729781252; x=1730386052; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ObLFhkfilDgkeJ8S/DOzsvtKeCP3rongHSO0w7aoSKI=;
-        b=Vm7oT4CQrdbpMDVujGySCgPWjjPudOz4nFNtKnqA175UcBWA+Gs3eNaDa73S4U+0TI
-         uj4AxIY1lLCKevkOd37v8mk9ciSJdqVvRxX2dUgVLTPk6gIidGbB8PGUSTB3LU4dj/wf
-         ljQCGKkC0EY+4rVfQH2jr09st39QOrtV48U+CbNij+syfXXI86laeI4oimSwrGPFyvqh
-         lGHiOvXqkiR7QBBvNBPjOCViEeK1RItC5UHU0uGHWt9Usr/2Pdhvryr9PueaZgbNa6X7
-         Qj4rvrnsjzT2EqJdlb/ImYqe7whHdAe93o8zC4NqWxjcctHWESHfScMengstTK3AxWEr
-         7QKw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729781252; x=1730386052;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ObLFhkfilDgkeJ8S/DOzsvtKeCP3rongHSO0w7aoSKI=;
-        b=SE83p3UFJkpt/FCDZ6oc586QDa7pg/peWBjLAFrOU8K60ju2goWAU2rkDxkjZQcpr5
-         bLmegwS1MqrP0g8iabJlUZQqxi2GuR6no7/KanRndg+eAqzt2BGpI6eeVT2DNvEnYK4H
-         LpQNtjflQ4stRnF6EA1+XqFobI0wcDvuPmvvSpTtOByZAb2MD6Uat0Wbe8hOz7Xg57Qk
-         b1aXL5EVfJD+au/vozQ5l4cZ0ounRFW+8UhtcPiwKtzA8wV7sC979r9faqy/5dXjfuko
-         HK8+oMfvVsVmbdqI99K5lSnzk0iP8l3E3dYYVmtK95sVAAZQZ127f1V82QEDY1b9Og1F
-         HC1Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUutcZumFeb49jlm1TENYUiM11IUhNjxRho+sfhNg25UhLAae6/YMSMICTqxhlVtP2G0HLwvX7uegLQ0A+8@vger.kernel.org, AJvYcCWxeNzOZ7/CaZQu8RgpX/yaSfr/5PEOat8pneqQLe0TtwUOOszSrx1JcUlnWLfV67OagB83dchHyDrgP0lmoWc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx+bsCYtPM+8dXZvn8wuAaS03DpwA/dwHzXyZITg+/PxfjHC2gP
-	SLa8wblhsSrEx4VPQTelS1568M9FpO6doeGgccHGFhQ176bHs7sYs2qsYNZV92thZ7ZAuxY4yEh
-	0G8o7PfQ1kDzrS0gqmGDxwE8u8s8=
-X-Google-Smtp-Source: AGHT+IEhbTehtHKBddJu+7LbhCF86DQkzEp93FtdZ2l7+F3VCRGEUWQWdfUNYvEcj3Aq130BBZJzRw2RGRA3wyZ/KUI=
-X-Received: by 2002:a2e:4609:0:b0:2fb:6198:d230 with SMTP id
- 38308e7fff4ca-2fca8201182mr11805571fa.18.1729781251392; Thu, 24 Oct 2024
- 07:47:31 -0700 (PDT)
+	s=arc-20240116; t=1729781281; c=relaxed/simple;
+	bh=YGzdECzNZQWhiO37nlxTvK5vT11OkzupSUgy11AovsA=;
+	h=CC:Subject:To:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=CQhTvaNkTaC/q4RtLHNcVerBtY8y2Chgi6WTTipYal2sfwarpSiS/EYraaUxj4bC1k3ycbIrVhtTdcWxMoLzABUwpmQ80mWrHWRwgDjSD9dRyQLsndH4S0KeeolmHXBgtipF5UGBRT4vQT7fH3wUExODgWqUDaIUGeBtzZYxwLE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.44])
+	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XZ7yr1dRZz2FbTS;
+	Thu, 24 Oct 2024 22:46:28 +0800 (CST)
+Received: from kwepemd200014.china.huawei.com (unknown [7.221.188.8])
+	by mail.maildlp.com (Postfix) with ESMTPS id DA6B914037C;
+	Thu, 24 Oct 2024 22:47:52 +0800 (CST)
+Received: from [10.67.121.177] (10.67.121.177) by
+ kwepemd200014.china.huawei.com (7.221.188.8) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1258.34; Thu, 24 Oct 2024 22:47:51 +0800
+CC: <catalin.marinas@arm.com>, <will@kernel.org>, <sudeep.holla@arm.com>,
+	<tglx@linutronix.de>, <peterz@infradead.org>, <mpe@ellerman.id.au>,
+	<linux-arm-kernel@lists.infradead.org>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <dietmar.eggemann@arm.com>,
+	<yangyicong@hisilicon.com>, <linuxppc-dev@lists.ozlabs.org>,
+	<x86@kernel.org>, <linux-kernel@vger.kernel.org>, <morten.rasmussen@arm.com>,
+	<msuchanek@suse.de>, <gregkh@linuxfoundation.org>, <rafael@kernel.org>,
+	<jonathan.cameron@huawei.com>, <prime.zeng@hisilicon.com>,
+	<linuxarm@huawei.com>, <xuwei5@huawei.com>, <guohanjun@huawei.com>
+Subject: Re: [PATCH v6 2/4] arch_topology: Support SMT control for OF based
+ system
+To: Pierre Gondois <pierre.gondois@arm.com>
+References: <20241015021841.35713-1-yangyicong@huawei.com>
+ <20241015021841.35713-3-yangyicong@huawei.com>
+ <eb7ec4c3-5995-4040-8992-bb95f4b9f923@arm.com>
+From: Yicong Yang <yangyicong@huawei.com>
+Message-ID: <988be709-f2f5-9dbb-3f17-1fc45f665e58@huawei.com>
+Date: Thu, 24 Oct 2024 22:47:51 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:78.0) Gecko/20100101
+ Thunderbird/78.5.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023113626.12236-1-chris.lu@mediatek.com>
-In-Reply-To: <20241023113626.12236-1-chris.lu@mediatek.com>
-From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
-Date: Thu, 24 Oct 2024 10:47:17 -0400
-Message-ID: <CABBYNZLpMCTy8z8ObEU90gqenb58VoB2EZKbZJfWK_J=h45Qew@mail.gmail.com>
-Subject: Re: [PATCH v1] Bluetooth: btmtk: adjust the position to init iso data anchor
-To: Chris Lu <chris.lu@mediatek.com>
-Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
-	Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, 
-	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
-	linux-kernel <linux-kernel@vger.kernel.org>, 
-	linux-mediatek <linux-mediatek@lists.infradead.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+In-Reply-To: <eb7ec4c3-5995-4040-8992-bb95f4b9f923@arm.com>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
+ kwepemd200014.china.huawei.com (7.221.188.8)
 
-Hi Chris,
+On 2024/10/23 23:43, Pierre Gondois wrote:
+> Hello Yicong,
+> 
+> On 10/15/24 04:18, Yicong Yang wrote:
+>> From: Yicong Yang <yangyicong@hisilicon.com>
+>>
+>> On building the topology from the devicetree, we've already
+>> gotten the SMT thread number of each core. Update the largest
+>> SMT thread number and enable the SMT control by the end of
+>> topology parsing.
+>>
+>> The core's SMT control provides two interface to the users [1]:
+>> 1) enable/disable SMT by writing on/off
+>> 2) enable/disable SMT by writing thread number 1/max_thread_number
+>>
+>> If a system have more than one SMT thread number the 2) may
+>> not handle it well, since there're multiple thread numbers in the
+>> system and 2) only accept 1/max_thread_number. So issue a warning
+>> to notify the users if such system detected.
+>>
+>> [1] https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/ABI/testing/sysfs-devices-system-cpu#n542
+>> Signed-off-by: Yicong Yang <yangyicong@hisilicon.com>
+>> ---
+>>   drivers/base/arch_topology.c | 21 +++++++++++++++++++++
+>>   1 file changed, 21 insertions(+)
+>>
+>> diff --git a/drivers/base/arch_topology.c b/drivers/base/arch_topology.c
+>> index 75fcb75d5515..5eed864df5e6 100644
+>> --- a/drivers/base/arch_topology.c
+>> +++ b/drivers/base/arch_topology.c
+>> @@ -11,6 +11,7 @@
+>>   #include <linux/cleanup.h>
+>>   #include <linux/cpu.h>
+>>   #include <linux/cpufreq.h>
+>> +#include <linux/cpu_smt.h>
+>>   #include <linux/device.h>
+>>   #include <linux/of.h>
+>>   #include <linux/slab.h>
+>> @@ -28,6 +29,7 @@
+>>   static DEFINE_PER_CPU(struct scale_freq_data __rcu *, sft_data);
+>>   static struct cpumask scale_freq_counters_mask;
+>>   static bool scale_freq_invariant;
+>> +static unsigned int max_smt_thread_num;
+>>   DEFINE_PER_CPU(unsigned long, capacity_freq_ref) = 1;
+>>   EXPORT_PER_CPU_SYMBOL_GPL(capacity_freq_ref);
+>>   @@ -561,6 +563,17 @@ static int __init parse_core(struct device_node *core, int package_id,
+>>           i++;
+>>       } while (1);
+>>   +    if (max_smt_thread_num < i)
+>> +        max_smt_thread_num = i;
+> 
+> Shouldn't the conditions above/below be inverted ?
+> I.e. (max_smt_thread_num != i) should never be true if there is
+>   max_smt_thread_num = i;
+> just before
+> 
 
-On Wed, Oct 23, 2024 at 7:37=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wr=
-ote:
->
-> MediaTek iso data anchor init should be move to where MediaTek
-> claims iso data interface.
-> If there is an unexpected usb disconnect during setup flow,
-> it will cause a NULL pointer crash issue when releasing iso
-> anchor since the anchor wan't been init yet. Adjust the position
-> to do iso data anchor init.
->
-> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
+you're right. will get this fixed. thanks for catching this.
 
-Please add the backtrace or a Link tag if there is an issue/bug open.
-Also it is important to always include a Fixes tag with tha hash that
-introduced the problem, specially in case of a crash since it might be
-a good idea to backport to fix.
+Thanks.
 
-> ---
->  drivers/bluetooth/btmtk.c | 1 -
->  drivers/bluetooth/btusb.c | 2 ++
->  2 files changed, 2 insertions(+), 1 deletion(-)
->
-> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
-> index b7fc14aafc74..8a3f7c3fcfec 100644
-> --- a/drivers/bluetooth/btmtk.c
-> +++ b/drivers/bluetooth/btmtk.c
-> @@ -1215,7 +1215,6 @@ static int btmtk_usb_isointf_init(struct hci_dev *h=
-dev)
->         struct sk_buff *skb;
->         int err;
->
-> -       init_usb_anchor(&btmtk_data->isopkt_anchor);
->         spin_lock_init(&btmtk_data->isorxlock);
->
->         __set_mtk_intr_interface(hdev);
-> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
-> index 9970470c9d15..15c0885c37cd 100644
-> --- a/drivers/bluetooth/btusb.c
-> +++ b/drivers/bluetooth/btusb.c
-> @@ -2628,6 +2628,8 @@ static void btusb_mtk_claim_iso_intf(struct btusb_d=
-ata *data)
->         struct btmtk_data *btmtk_data =3D hci_get_priv(data->hdev);
->         int err;
->
-> +       init_usb_anchor(&btmtk_data->isopkt_anchor);
-> +
->         err =3D usb_driver_claim_interface(&btusb_driver,
->                                          btmtk_data->isopkt_intf, data);
->         if (err < 0) {
-> --
-> 2.18.0
->
-
-
---=20
-Luiz Augusto von Dentz
+>> +
+>> +    /*
+>> +     * If max_smt_thread_num has been initialized and doesn't match
+>> +     * the thread number of this entry, then the system has
+>> +     * heterogeneous SMT topology.
+>> +     */
+>> +    if (max_smt_thread_num && max_smt_thread_num != i)
+>> +        pr_warn_once("Heterogeneous SMT topology is partly supported by SMT control\n");
+>> +
+>>       cpu = get_cpu_for_node(core);
+>>       if (cpu >= 0) {
+>>           if (!leaf) {
+>> @@ -673,6 +686,14 @@ static int __init parse_socket(struct device_node *socket)
+>>       if (!has_socket)
+>>           ret = parse_cluster(socket, 0, -1, 0);
+>>   +    /*
+>> +     * Notify the CPU framework of the SMT support. A thread number of 1
+>> +     * can be handled by the framework so we don't need to check
+>> +     * max_smt_thread_num to see we support SMT or not.
+>> +     */
+>> +    if (max_smt_thread_num)
+>> +        cpu_smt_set_num_threads(max_smt_thread_num, max_smt_thread_num);
+>> +
+>>       return ret;
+>>   }
+>>   
+> 
+> .
 
