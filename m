@@ -1,117 +1,270 @@
-Return-Path: <linux-kernel+bounces-379456-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379457-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8C4749ADED3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:18:37 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8CCB39ADED5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:18:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4B0D828920F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:18:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE941C21F62
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:18:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFCE519DF7A;
-	Thu, 24 Oct 2024 08:15:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89B61B85CC;
+	Thu, 24 Oct 2024 08:15:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="YWj12nDs"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3BncTnso"
+Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4AB91ADFFC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:15:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E571B6CE8
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:15:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757711; cv=none; b=qQtRpihbJzBXqQw1fBJpgHjcXebhtBjkq7pVbwoiSLRAalQVJWTZ6HbxJJyLiYDYn2nQ3SfJexOO0RReFFywLNk4HD9ZK9LQsWdKukacmyKwpCRYqSeuRVG/1DCvAdmcN9CMfbqPArUSVmVNDzdCcb8OS1cVJHmEr2DTgA5kjck=
+	t=1729757737; cv=none; b=NMIxmhxaejdf17eG645Wy13ueg7HxMm7BMcV78FDBCuFLPsEp2T3ZUhbilINwka5MRc0saFNjahTk4dU4zxzTayNt3qpRwRmXRwrIDiv50yzEGWBWjy2LKbXaw3JqWf4WMVFif2F4bNeCSIAURk2aTCNrobpw94INXx/qFX1nYg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757711; c=relaxed/simple;
-	bh=dXv7lh+BLcIRzudrbKwHjxbh1cdtzCTfOp7Kz2tK8h8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sRddB4iBFiwwc90gYQWi1BI3TxRLu39KRNoGfK6KnJfZ8GNxptb08G1fWm4gkmLK4uHSa8ixha1uKc4jxrxP18xcCMBne+HgzqJb1MHTZW/3BCigWGNSgIiqkEXCa5/VEavPeAOo/nUzjyv6I38svY5/rPmH65J0/xaSaLEZ/qY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=YWj12nDs; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43168d9c6c9so6513045e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:15:08 -0700 (PDT)
+	s=arc-20240116; t=1729757737; c=relaxed/simple;
+	bh=MRwG3odtQu89vSf8lgEZE9QhB3xMwWUXM8lipK6UeZ0=;
+	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=LmIjjmOiF9IBXRsf++c8R/OuwTEvD5XXey3ZmNrG58rdFeDdgTmYsjWAbA4Flz+mEie1r5HY66T7SfU+GMdu7JYh05KnSo8djcbCQtOLu/au1w+uTMyfOXMwelmFPa7zFsN4Wkvw81y3FLXg2tu5811KWGyJdQkPxeXCwOTI39U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3BncTnso; arc=none smtp.client-ip=209.85.167.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so709304e87.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:15:33 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729757707; x=1730362507; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jdHwvluF9d5mpTyj2QvbUGMMKLF4PrNsenGLNKqAMOo=;
-        b=YWj12nDshmaoxJBuBPODCTba/ZR/mBjz3pFMW6XOEf9bHKqSCCN+wFAi0yLdzwWB7X
-         CVlFxFKL02LXovsCuiWmLG68srrjtiPWVYvyJV3ml/v8+7EKESlz0QltORBt7XpNjqep
-         +8z/hzeCsqFfs6rgj8OJKJso7JrdBuRf2THKVCiTVkdwTqAqbOSOwCYmg1I5M01MScie
-         HzymM31BxrD7V4w/LXfKKi3ugzY9J3lUDgk2eE5nQUp37yGggtBEJbxvQiE2Pkq9u8vD
-         0bSVKOs9smGnI1hQfrubkfHhFlUCOpLC8uEOTRo+IGJ0P+4cS95ygATzd0XrhF1h9Y9+
-         YZ/w==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729757732; x=1730362532; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hRlyjjh+J3BYa6u9Ab4okpW35rR0Ls3OYpmQGi3eLLg=;
+        b=3BncTnsox4DE3mqvn9gmX805onHxr7XZnqv//0puVQwuYsyL5t/ids+GACfJ/FX4FG
+         xHOGxqx4TntmBRPO0JdUimngYL3JgigCSv96Oo64VOb1XRpvgPSQqI6e3PaHCi4GEr2F
+         vxOBTxEWeA0/d6Hwv80IaOu3RDJ/JAK02LJ5MDd4uzp/OMJblUydSSDiYs1zQo2h8X2p
+         qqKNU6koAZ5fII/VkDiwn3GESpSa+sZ/p9nxt5b8v+n8EmU7wgGzgrOfEUNyGU6b24IM
+         kEreASpa4Q7nGLJknhTvk2ka0Muy+VkfxmzZHQxw5HhpJuDhA8bZPue8KlWICuA6NYdc
+         3jsw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729757707; x=1730362507;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jdHwvluF9d5mpTyj2QvbUGMMKLF4PrNsenGLNKqAMOo=;
-        b=jRbT8FUodRMr2o7HkutJ+iUbKNmQAEcOo3YA9kyclspGRFDGiNTM3n035hEwC3II/t
-         Oy80yf+F/jwIgBwvzVBsxAhve8i2lnluJ6UZqx0+DroLrakwx0jTi6noytQyNGRAjGOT
-         2QZ5w3QCCi+wPirkThTJXw8XUqaXCKeEVxgA/HYoQM/jAWNVNFFpRV+HUVghjqkaRv88
-         dnPKCOk1VCtWuKHxk2EHOzHSOqx83RQU97bPMqPeVcYb38P6iO3hsavLeNkc/h/v2S0+
-         dDGf92hrJQAdMe9Av+x4X2l2eWgZ93st9/iHZxI7lfruj87Bqcr++MyshB4ywHP1TFXG
-         /aHw==
-X-Forwarded-Encrypted: i=1; AJvYcCVjJlmNZIRa4weYOi0ME6QeFlkAQJFCK0vge7/42EF4fb2F1+SYXss6SgdlIBQ/W6BlDHSTrpor/pVJezM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxEqv7mMLm2/UavzPeAjr2QyU3krs/DBYwmOq0M3BSa6MrxIvaY
-	lFD1LYar0ipIkHhGYpaRUxsrIWmwrYs9bqpj5fc717sYieiSusSrXdqs0PHchx4=
-X-Google-Smtp-Source: AGHT+IEXI5QgJVMoGUbzlfwpuFVn8bN9pJLOzzVjOGLLhtsS2RoOTGIAujFl+DVo4gw8s3lu3Fx8lA==
-X-Received: by 2002:a5d:4444:0:b0:37c:cdb6:6a9e with SMTP id ffacd0b85a97d-3803ac837dcmr905560f8f.9.1729757707223;
-        Thu, 24 Oct 2024 01:15:07 -0700 (PDT)
-Received: from pathway.suse.cz ([176.114.240.50])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5682c3sm9915155e9.29.2024.10.24.01.15.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 01:15:06 -0700 (PDT)
-Date: Thu, 24 Oct 2024 10:15:05 +0200
-From: Petr Mladek <pmladek@suse.com>
-To: Wardenjohn <zhangwarden@gmail.com>
-Cc: jpoimboe@kernel.org, mbenes@suse.cz, jikos@kernel.org,
-	joe.lawrence@redhat.com, live-patching@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH V5 1/1] livepatch: Add stack_order sysfs attribute
-Message-ID: <ZxoCCasDtqeXdSNP@pathway.suse.cz>
-References: <20241024044317.46666-1-zhangwarden@gmail.com>
+        d=1e100.net; s=20230601; t=1729757732; x=1730362532;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:references
+         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=hRlyjjh+J3BYa6u9Ab4okpW35rR0Ls3OYpmQGi3eLLg=;
+        b=OhgNREoyVN63q1YdWrdfgaUU/lfG2K1Y4lbec+AXLk2Hc9uMWtigLgfvZLeoXPWat+
+         s38kmr1Y1l3pqk33NWBg9HmMfvco4qdM94xk6S2J7kIR0o2vI7mkKchFTVVnku7FJhqR
+         R/fpvEQumKZYxP4K9SlV4QukbRf0TEPm7zs3as98A5VTjb29STAVW23KYnir0+tG5rTu
+         R+fqVnjBJ1ajSf4fO87kNBNIOCP2YpdckoB5X0inI1OybnBCdtUVJTB7f6Zuttb/wNe7
+         uJfN2nGSgmgYBpr3JHkkSRg0WXJ0YjCfMz3UhqvvpU7uEsBr8+CN0hXJyuopYwsODYjq
+         NEfw==
+X-Forwarded-Encrypted: i=1; AJvYcCUhfJrF+2Ve7e41EDUquhm9cqGBo6PP0d3p+ANV71RTqNl/DwnqKFmvg/vaRQIT+RL47ZFFj8VJVOuU1BI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwHGCaldftKRhJuk7Y/YCGTWydpNa7j6NTxL5qTf+LJBuIfRhb7
+	Y8Woe5cEEQ5Zd9XQNX4i7naxx0DF/FtW9GxoE8M2uiBZk8xDGOIXpKr5Dq4VJmukMd6Rl6lynKh
+	/8B0RPw5bznNTZ33++tp8bSOAE6S4QwFk/7BXaw==
+X-Google-Smtp-Source: AGHT+IG7ZgOiNDXq2HQrZzFbIiYpB2lvLNIuelZFjdVwgaYR+PrwWBfLAJ0B9JqsrCAbKdpEUnA/pn2aDwqXnJ4R/k0=
+X-Received: by 2002:a05:6512:6cc:b0:539:fd20:c41f with SMTP id
+ 2adb3069b0e04-53b23dcb1efmr700779e87.3.1729757732267; Thu, 24 Oct 2024
+ 01:15:32 -0700 (PDT)
+Received: from 969154062570 named unknown by gmailapi.google.com with
+ HTTPREST; Thu, 24 Oct 2024 08:15:31 +0000
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+In-Reply-To: <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024044317.46666-1-zhangwarden@gmail.com>
+References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
+ <20241018-gpio-notify-in-kernel-events-v5-8-c79135e58a1c@linaro.org>
+ <d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk> <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
+Date: Thu, 24 Oct 2024 08:15:31 +0000
+Message-ID: <CAMRc=MdER_JNcvPMRuzbDFpAUqarC9K8KRP+i5SFTW3H7Mkg=w@mail.gmail.com>
+Subject: Re: [PATCH v5 8/8] gpiolib: notify user-space about in-kernel line
+ state changes
+To: Mark Brown <broonie@kernel.org>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
+	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu 2024-10-24 12:43:16, Wardenjohn wrote:
-> Add "stack_order" sysfs attribute which holds the order in which a live
-> patch module was loaded into the system. A user can then determine an
-> active live patched version of a function.
-> 
-> cat /sys/kernel/livepatch/livepatch_1/stack_order -> 1
-> 
-> means that livepatch_1 is the first live patch applied
-> 
-> cat /sys/kernel/livepatch/livepatch_module/stack_order -> N
-> 
-> means that livepatch_module is the Nth live patch applied
-> 
-> Suggested-by: Petr Mladek <pmladek@suse.com>
-> Suggested-by: Miroslav Benes <mbenes@suse.cz>
-> Suggested-by: Josh Poimboeuf <jpoimboe@kernel.org>
-> Signed-off-by: Wardenjohn <zhangwarden@gmail.com>
+On Thu, 24 Oct 2024 08:49:30 +0200, Bartosz Golaszewski <brgl@bgdev.pl> sai=
+d:
+> On Wed, Oct 23, 2024 at 11:05=E2=80=AFPM Mark Brown <broonie@kernel.org> =
+wrote:
+>>
+>> On Fri, Oct 18, 2024 at 11:10:16AM +0200, Bartosz Golaszewski wrote:
+>> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> >
+>> > We currently only notify user-space about line config changes that are
+>> > made from user-space. Any kernel config changes are not signalled.
+>> >
+>> > Let's improve the situation by emitting the events closer to the sourc=
+e.
+>> > To that end let's call the relevant notifier chain from the functions
+>> > setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
+>> > gpiod_toggle_active_low(). This covers all the options that we can
+>> > inform the user-space about. We ignore events which don't have
+>> > corresponding flags exported to user-space on purpose - otherwise the
+>> > user would see a config-changed event but the associated line-info wou=
+ld
+>> > remain unchanged.
+>>
+>> Today's -next is not booting on several of my platforms, including
+>> beaglebone-black, i.MX8MP-EVK and pine64plus.  Bisects are pointing at
+>> this commit, and i.MX8MP-EVK is actually giving some console output:
+>>
+>> [    2.502208] Unable to handle kernel NULL pointer dereference at virtu=
+al address 0000000000000000
+>> [    2.511036] Mem abort info:
+>>
+>> ...
+>>
+>> [    2.679934] Call trace:
+>> [    2.682379]  gpiod_direction_output+0x34/0x5c
+>> [    2.686745]  i2c_register_adapter+0x59c/0x670
+>> [    2.691111]  __i2c_add_numbered_adapter+0x58/0xa8
+>> [    2.695822]  i2c_add_adapter+0xa0/0xd0
+>> [    2.699578]  i2c_add_numbered_adapter+0x2c/0x38
+>> [    2.704117]  i2c_imx_probe+0x2d0/0x640
+>>
+>> which looks plausible given the change.
+>>
+>> Full boot log for i.MX8MP-EVK:
+>>
+>>    https://lava.sirena.org.uk/scheduler/job/887083
+>>
+>> Bisect log for that, the others look similar (the long run of good/bad
+>> tags at the start for random commits is my automation pulling test
+>> results it already knows about in the affected range to try to speed up
+>> the bisect):
+>>
+>
+> Hi Mark!
+>
+> Any chance you could post the output of
+>
+>     scripts/faddr2line drivers/gpio/gpiolib.o gpiod_direction_output+0x34=
+/0x5c
+>
+> for that build?
+>
+> Bart
+>
 
-This patch is the same as the one at
-https://lore.kernel.org/r/20241008014856.3729-2-zhangwarden@gmail.com
+While I can't really reproduce it, I've looked at what could be wrong and
+figured that the NULL-pointer in question can possibly be the
+line_state_notifier.
 
-So that we could add the already existing approvals:
+I realized that for some historical reasons we add the GPIO device to the
+global list before it's fully set up - including initializing the notifier.
+In some corner cases (devlinks borked?) this could lead to consumers reques=
+ting
+GPIOs before their provider is ready.
 
-Acked-by: Josh Poimboeuf <jpoimboe@kernel.org>
-Reviewed-by: Petr Mladek <pmladek@suse.com>
-Tested-by: Petr Mladek <pmladek@suse.com>
-Reviewed-by: Miroslav Benes <mbenes@suse.cz>
+Mark: could you try the following diff and let me know if it works?
 
-Best Regards,
-Petr
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ae758ba6dc3d..4258acac0162 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -987,45 +987,6 @@ int gpiochip_add_data_with_key(struct gpio_chip
+*gc, void *data,
+
+ 	gdev->ngpio =3D gc->ngpio;
+ 	gdev->can_sleep =3D gc->can_sleep;
+-
+-	scoped_guard(mutex, &gpio_devices_lock) {
+-		/*
+-		 * TODO: this allocates a Linux GPIO number base in the global
+-		 * GPIO numberspace for this chip. In the long run we want to
+-		 * get *rid* of this numberspace and use only descriptors, but
+-		 * it may be a pipe dream. It will not happen before we get rid
+-		 * of the sysfs interface anyways.
+-		 */
+-		base =3D gc->base;
+-		if (base < 0) {
+-			base =3D gpiochip_find_base_unlocked(gc->ngpio);
+-			if (base < 0) {
+-				ret =3D base;
+-				base =3D 0;
+-				goto err_free_label;
+-			}
+-
+-			/*
+-			 * TODO: it should not be necessary to reflect the
+-			 * assigned base outside of the GPIO subsystem. Go over
+-			 * drivers and see if anyone makes use of this, else
+-			 * drop this and assign a poison instead.
+-			 */
+-			gc->base =3D base;
+-		} else {
+-			dev_warn(&gdev->dev,
+-				 "Static allocation of GPIO base is deprecated, use dynamic
+allocation.\n");
+-		}
+-
+-		gdev->base =3D base;
+-
+-		ret =3D gpiodev_add_to_list_unlocked(gdev);
+-		if (ret) {
+-			chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
+-			goto err_free_label;
+-		}
+-	}
+-
+ 	ATOMIC_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
+ 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
+
+@@ -1103,6 +1064,45 @@ int gpiochip_add_data_with_key(struct gpio_chip
+*gc, void *data,
+ 		if (ret)
+ 			goto err_remove_irqchip;
+ 	}
++
++	scoped_guard(mutex, &gpio_devices_lock) {
++		/*
++		 * TODO: this allocates a Linux GPIO number base in the global
++		 * GPIO numberspace for this chip. In the long run we want to
++		 * get *rid* of this numberspace and use only descriptors, but
++		 * it may be a pipe dream. It will not happen before we get rid
++		 * of the sysfs interface anyways.
++		 */
++		base =3D gc->base;
++		if (base < 0) {
++			base =3D gpiochip_find_base_unlocked(gc->ngpio);
++			if (base < 0) {
++				ret =3D base;
++				base =3D 0;
++				goto err_free_label;
++			}
++
++			/*
++			 * TODO: it should not be necessary to reflect the
++			 * assigned base outside of the GPIO subsystem. Go over
++			 * drivers and see if anyone makes use of this, else
++			 * drop this and assign a poison instead.
++			 */
++			gc->base =3D base;
++		} else {
++			dev_warn(&gdev->dev,
++				 "Static allocation of GPIO base is deprecated, use dynamic
+allocation.\n");
++		}
++
++		gdev->base =3D base;
++
++		ret =3D gpiodev_add_to_list_unlocked(gdev);
++		if (ret) {
++			chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
++			goto err_free_label;
++		}
++	}
++
+ 	return 0;
+
+ err_remove_irqchip:
+
+Thanks
+Bartosz
 
