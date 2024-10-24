@@ -1,218 +1,430 @@
-Return-Path: <linux-kernel+bounces-379125-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379126-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D0C99ADA57
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:18:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A74879ADA5F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:19:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BE2DD282F19
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:18:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C7BC61C21427
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:18:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3AB6915B96E;
-	Thu, 24 Oct 2024 03:18:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5EC615E5B5;
+	Thu, 24 Oct 2024 03:18:53 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b="i8/upinb"
-Received: from mail-pf1-f177.google.com (mail-pf1-f177.google.com [209.85.210.177])
+	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="YaD+/h0H"
+Received: from sonic305-21.consmr.mail.ir2.yahoo.com (sonic305-21.consmr.mail.ir2.yahoo.com [77.238.177.83])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E317156F20
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:18:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.177
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C3DB815957D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:18:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=77.238.177.83
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729739911; cv=none; b=useqZ2JULboneZI1JBjxmvr32hjBM97TuGAWM8od3mKXXHAVG9ZLJxUJlY5bA+Iuvth5N7hluZSL0YDoENQVQalXLQ8WnOOwNuj0ZdnZ1uWueo5g03yWGxMDmIgagDjDxzzxl+7zdkPJsYkUeNre6ZR4yuDN2HlAMYEQIM52wz8=
+	t=1729739932; cv=none; b=FIa/5Pg/A4dMbws/H6V68w2z48Kf37CayyNIuc296CQz8KhIKVVm9XWeBX4AGLVuRA9vQ7+Z0TTW/L3RumhSrYJRaGWoFLxpaRv3Zl7CUMMDQDINlR9qewD3MlL2oE+hks6YPpomUfrBTBRNW9EN7zmeAHb5Yq9SGAQ3fTjIPJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729739911; c=relaxed/simple;
-	bh=vkJ91YhpgOXQfcIuKk0TlyvwVdhO8vsyzzqAJ2hpnm8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i6tu2s9dGCJRFfy4+uyYOEiuLVBHBRGSBlp5/RKScG/u38DqfA0OS+h8Xb59TgkSxc+28Ky6K4hPT5mqaX3V9K5VisHByJt1X9BQanZKxNCsW8BsBSazuX3szJaFtUfL39vtWYSxfaYGP10mXO2FfKg4BcaiqWOgDG11xskou6s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com; spf=pass smtp.mailfrom=fromorbit.com; dkim=pass (2048-bit key) header.d=fromorbit-com.20230601.gappssmtp.com header.i=@fromorbit-com.20230601.gappssmtp.com header.b=i8/upinb; arc=none smtp.client-ip=209.85.210.177
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=fromorbit.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=fromorbit.com
-Received: by mail-pf1-f177.google.com with SMTP id d2e1a72fcca58-71e49ef3bb9so306773b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:18:29 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=fromorbit-com.20230601.gappssmtp.com; s=20230601; t=1729739908; x=1730344708; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=D3k4VXE/eXp/g8cIlKj35+R9+J+Fc3C5xZ7QeG6NE+s=;
-        b=i8/upinb8+a0TORMuTG3DnNW3w/iwiqarcjwtPMBtljna4sQwRVRlqlIa5Kh03GxUT
-         hySogaIK7C44twzDG3CYDDeBkObZztZXrUfYL4Pd0qehDcWyJ7dlDMGtOwV0pddZryD9
-         dxoXdbldgo9vdhguj8SHFAsEwjx9XbPHBMxxksUlPJoE7u2V5XwJ/VcOxzDqMPcpyqI8
-         ZEdEdMfEG4OB1U8jTs+Ynp13xdlT11O97Z+pyjC0g7eSNqtn/8xpXbqjPHVun7QRNDT/
-         pmZNTuesaqfkF/Qed6MT5OZEs6EknAEOzrb3+fvJ63S1fMd3PZ6GT8eFiDapCigy3qbk
-         QRBw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729739908; x=1730344708;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=D3k4VXE/eXp/g8cIlKj35+R9+J+Fc3C5xZ7QeG6NE+s=;
-        b=CqVmlEBn446WnnYj0zSv4yBDHAD+mNR86MrsENv8BeVw68CUPMTo+Ea+m3HUdYaSIX
-         HIYjRYLjixqfRwJpEKv+x6SYEAGBxvaBjk28IJclKqOpBJ9vixslbUh6+jl1dV7WjwZ6
-         mVB9um0ONn9+XSkZ5hHAFocFsVAo2quqV2uU2M7d31+ex7dFy6q3EDwdv7KpZjjI2xAH
-         AyukIv8KeJJbqNn1EYIsk20fNrdMZnbJL4NMqLb0vu1Dc8zgBf/qZxSSsuKr2GYolzIV
-         086S/hv6fx24+cIswV0W5rTmiXrGnDcANkm+jMlHKvUyTb9GXB5wDBtPkbrvaEw96e27
-         7izA==
-X-Forwarded-Encrypted: i=1; AJvYcCXnOnOE8F+njRUqGhwbdVNV3da+QZru+aFsM/t1WDdld0HwKFk4WABdCSUccdCKd45WlEXJPgP0P6m+oCg=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxKhDByIP+L0b/mL8C48CyFauZD10P39i/Xug4OgSY6nW3BgaEi
-	ENlZtU5IEjR3QDi9sFJDnKrk/AZ/lKMYL6EtEzreVALrHye+Sk1KL89K8SpsO2Thc8GEpfBzmTI
-	/
-X-Google-Smtp-Source: AGHT+IFdYTFHRqAoiQ2lgk4xHV8wPMsV/3bpZaiqw+oaQJscULRVo3CN2XYJVIdgWxCvgMPUmd+20g==
-X-Received: by 2002:a05:6a00:8603:b0:71e:4798:8753 with SMTP id d2e1a72fcca58-720452afb2amr955940b3a.6.1729739908421;
-        Wed, 23 Oct 2024 20:18:28 -0700 (PDT)
-Received: from dread.disaster.area (pa49-186-86-168.pa.vic.optusnet.com.au. [49.186.86.168])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab48f7bsm7595898a12.39.2024.10.23.20.18.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 20:18:27 -0700 (PDT)
-Received: from dave by dread.disaster.area with local (Exim 4.96)
-	(envelope-from <david@fromorbit.com>)
-	id 1t3oMj-004xvR-1p;
-	Thu, 24 Oct 2024 14:18:25 +1100
-Date: Thu, 24 Oct 2024 14:18:25 +1100
-From: Dave Chinner <david@fromorbit.com>
-To: Jan Kara <jack@suse.cz>
-Cc: John Garry <john.g.garry@oracle.com>, linux-kernel@vger.kernel.org,
-	viro@zeniv.linux.org.uk, brauner@kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: Re: v6.12-rc workqueue lockups
-Message-ID: <Zxm8gf0aUg2+uEks@dread.disaster.area>
-References: <63d6ceeb-a22f-4dee-bc9d-8687ce4c7355@oracle.com>
- <20241023201314.hqfewgr6lej6f7df@quack3>
+	s=arc-20240116; t=1729739932; c=relaxed/simple;
+	bh=EaBU3CekvIbKBdH13/K46A1CE2VxXLv2Iavxx0oiVNU=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=BPy5JirUEeqfFA5v5YDaHjaGuMSAZgUvHaKKKMf3n+Lq4CleVKFajDBkxoToTFedGlRpUXq49RO6evg+y0bUbSRSE0cUbW8NDBcwNl/6wjLlSTj1QWJOXI3xDsrunJRxxAa8qxpCopFvvumABNLU8bHqTkx6Qp/2DESdTNvqh18=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=YaD+/h0H; arc=none smtp.client-ip=77.238.177.83
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1729739921; bh=XLp036BwmbZpgXYR1m9+ojQGCSAhTh/SmX7gBH+7S0Y=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=YaD+/h0HsolWctHi+VqUr3EcJREbG0AWHWeWSuVoDl9FwkPFPnvqIej6FDY3WqIV5aY9Jf63qcVcupPjwSQvRgtaz/3abdub/vO390yBoGJjMJZmGL6oIOfPexsXGWdskT/BBWvwsKkk6vLcjK+YCI2Tpsht3Pq5hsJifWPxEK4+nwoDSHSnL82MWQtewJwC7gwmtErEhQKdE/AhigfOaid1Wa9MfZy1QAU359haKcrOCNvf8F7fvN0CtxchmdSXvtCdMjbgDvo/yVKx1MzVZKllKzT270yoCtRVY0xd4CV8JMMUUk6HhOhjF8YbtD3mIoo4oPV/62uQWiXyuPrs8w==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729739921; bh=1ONgEs1S+AC4xzQiUySNLaqJHXBagjxQQZhzRcMYnzE=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=Frk2wuWrctiQLImmb5hCWhB9IDqRAyxxu8ZBnltCNDOkf9GyIGa7Bar9OYQg4AtxKk/qTvdvyaeHC26MOjIoiokqd3kxTDJXcvWIYNMISgRsAfklpB+XUjun9hXkiAK/+lni/3VdZPRDisayAJm2MSjVbJb/8JGzBLQp0RV5ZGF5TbUAlhjOQ5X0Ygiq8PPfhumEotHa1QZ0os8da1rPHPSOdPvgHK/8AWrlAp3lnxEVvuCzb5VkXnEYv/4tt8r9sGOB/GrCnE3D295IDcrI5QEnp3O2BGaTKWR3vqkfYkrVnmuLQM+TRoPu8hMsBYhe67FwWVXLmbD45kK2c0EbkA==
+X-YMail-OSG: YMIhNQ0VM1muqvyAB3N9ac.FbFEjrdY9yL_rn2RHXW0YIi9nnVll.MmniK_GwUf
+ Dr3oSRVvE14HQp_x.nmvWGriI1eSASMtjQol9hUgbbxShITAQup6M.0jmVPOv.c2ocSUQiBl.vZB
+ vlePjOcKdW0N9djY68dtPoyajSyxbtAPCKMtAEONUsldoTL6wtgZ1VKhs7lF4wY.zYiJMM71kM57
+ Wl5WTCTHQmu4Z8wJBbkJwEMOz7QFogm0fDBgtcbYVaR3F2Ll0.KX9hi_TTZg8hgw5F3UqMU9HgP4
+ Z21Gd2qwIFOUILec6_SeZY4X_PJN4NZ_k0UHuVFhHQ21ylnMcvZF6llq1g0g_IqB0E5YzgYEJ3mZ
+ FgH93yqBOeKONSOMkrIt_3x5Lm47ha1RS4ow97LDn.SDMW6PXxKw172DEPsoe_OOYws0bpoFIi6x
+ skMzyGyk3O34o9ozaDvnubS0JIQie_O0PzRPAyczknli279EArrnBbUKB6QYtHJ02mRUphplXoGg
+ 5b3A6KewoWlF2fsJ73yJ4oN5b7jAckGepiqdgGnkbXqIKDHLnkRmYaIOS6F9W2viOGtzcNKv0iy3
+ maIHph1rUVHDesdU69bOUkLs7zIkzQcub2sguon.16YnkTOFZFRwx.bzvW.5Q9PHn11fFEdrEEb5
+ gPY3ir3ex2Bml4aJw7ct6x.yj7CoUtdEsnXI6fCYB535AkS6GAKw51GX8e.XRK8YNSUD9BmjtFG4
+ q0R8uZItNKsNoG9IDpuyA62HQTcmdYjC_tlpvqfixX3kzOswTsaxOSdEYm9aOgLqDvQnCYlGUFcf
+ iKshI7lOzDmLqB3sNpcXJbgwxF9qbw2xg1csdToSaCwa2sPSonFWD66MffWKMAniFuCSVoaudOdy
+ 44M.Muy0mEpOp5qN6XPSp49rIW8MXjgFVeOm9D0EDZuw2JvECNfvp9eF1AJeVZfjgvPAkbe0KJ8R
+ DVlvdBKUP14KBL2jvUWcj4.VcT8Pzx9ut.N2cJlqS4Yw1SdvarZ7qFD85tLdCmgfG6_bwy51lgQO
+ vBt8ZXWeVH_r.hGuibfNf_Wj59Q3yYkAV_GlvvqzFolZ17Sxn2bffS5Fx8IAhsvSoar.bnjcrWD9
+ 65_HwM98CjF3CZUBeh9sY8NQ4C0rkkJXF1WKhiv9vwTNd_Ha7ZCZznhbS18v0gNg2Erafmqlq1C0
+ 6vcKEZWyFtP5GvVcCFegD_0xTc13MwPmzpNunUa.gDw9I701tGBAnQyseilSDsiwMXu0ikiKtZmA
+ UwHUNmO0DLchbmV9QiDRltLKPlkjRBJaYCqhQs6Jce1jju38T.YpketsHucuJ66L.7iCvpkHi6I0
+ vHnOIsqS8X6.14q.3C6aPpbsEsMMwWcbVqSPjfZrUg.i_kh_0WJI2aIfB43hwcCvwg.qgg04nEDn
+ .Aj.B78bs5okpJ5s8dHQESVo9XFTRMCIJgfbTGQn7z16zSfjvd.qQPs43RPo8iiskwDwiyjVGdDT
+ fh5fswhkNa9YC8eBug4DDel.OD7DBaNtnF3OtYl_9Iil3vsQEb_UeB0y02nIMJyLcbF5W2OxlO0T
+ vGNao4.LeNEygfHR4JizpFs1T8hyuKHbV0Q2WBUeZDnbE2iYRa6OpIGs8AzODdVZN9wGjg9ky96q
+ PVHLaQ1NVsngaWyHGD.r.kkv6eSnsA37NUIPyPVoGX0pJUuYRrad2EguOZY1QN8RsjKLesuMOY_F
+ rJs.9m5A.l4RA3ZOzIb.Tl3SOFrXuETFsKfj6XD6Fr8kazwyIwRIdY_6iCYlevZ5kDiO3O3Hay9S
+ YqFDCiSAsiyigrjKDHTD9nALkClOLhISk3zhR24q6EblSoKl.4b8y1jdZ7lPahQ6X2cXc76eBOFl
+ aG3SLGqQQs3M0JBpFydyVCwnw7kQSX09eXSmfJ05H5uQP4uUXqXMD4sOVA7DwPBOzNvMlbIcB7JP
+ 7V0_eIN6p0skZA88U_aFNvoOcWkZlhgoYIlmTcEKLHU9.FMmtWpOKeLaWjc5KGw1JkKHNhA96e.d
+ Px9ZhdTyopT.NibNPyx0EW.8p3m9rrc4ti6XgdggpVom5FGMa2OUW5c31dXRJ.ZGZrAcArK47vXF
+ QJsOAHcfsVh98SDfoQPs0PpSdzOxgg_6cL17D5jKodpHSNWiE83hfAiAuBJyPWsGAJRsbU2StsA8
+ .jAWLpAsPlCg5jaTxFE0dQDhh8HFKV9sjX5kbb5Ty7Izo26KGvyNt9RMqdfeJDbvwNWcvgpp_enJ
+ LIl6.QRL1MqSKJcsyFBx8IrtzsU0aJIoMW3m0E6sKUZHh2Up_pzDefPQdaqeW8o.gxkwNWrhABV4
+ hjsAxz5ZtN3xyJ2VJqeCfX8j3KELLdqj_XpZ7jEhQEp6vOmZdN9rSkQM-
+X-Sonic-MF: <jahau@rocketmail.com>
+X-Sonic-ID: 66342042-12ab-43bd-bf63-08845b443e26
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic305.consmr.mail.ir2.yahoo.com with HTTP; Thu, 24 Oct 2024 03:18:41 +0000
+Received: by hermes--production-ir2-c694d79d9-2zgj2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 26d1652bc1703d2ade3e89c3cd33808b;
+          Thu, 24 Oct 2024 03:18:40 +0000 (UTC)
+From: Jakob Hauser <jahau@rocketmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Jakob Hauser <jahau@rocketmail.com>
+Subject: [PATCH v3 3/5] drm/panel: samsung-s6e88a0-ams427ap24: Add initial driver
+Date: Thu, 24 Oct 2024 05:18:25 +0200
+Message-Id: <bef462116190c26e6339cd58240773f035efcca9.1729738189.git.jahau@rocketmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <cover.1729738189.git.jahau@rocketmail.com>
+References: <cover.1729738189.git.jahau@rocketmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241023201314.hqfewgr6lej6f7df@quack3>
+Content-Transfer-Encoding: 8bit
 
-On Wed, Oct 23, 2024 at 10:13:14PM +0200, Jan Kara wrote:
-> 
-> Hi!
-> 
-> On Wed 23-10-24 11:19:24, John Garry wrote:
-> > I have been seeing lockups reliably occur on v6.12-rc1, 3, 4 and linus'
-> > master branch:
-> > 
-> > Message from syslogd@jgarry-atomic-write-exp-e4-8-instance-20231214-1221 at
-> > Oct 22 09:07:15 ...
-> >  kernel:watchdog: BUG: soft lockup - CPU#12 stuck for 26s! [khugepaged:154]
-> > 
-> > Message from syslogd@jgarry-atomic-write-exp-e4-8-instance-20231214-1221 at
-> > Oct 22 09:08:07 ...
-> >  kernel:BUG: workqueue lockup - pool cpus=1 node=0 flags=0x0 nice=0 stuck
-> > for 44s!
-> > 
-> > Message from syslogd@jgarry-atomic-write-exp-e4-8-instance-20231214-1221 at
-> > Oct 22 09:08:07 ...
-> >  kernel:BUG: workqueue lockup - pool cpus=4 node=0 flags=0x0 nice=0 stuck
-> > for 35s!
-> > 
-> > Message from syslogd@jgarry-atomic-write-exp-e4-8-instance-20231214-1221 at
-> > Oct 22 09:08:07 ...
-> >  kernel:BUG: workqueue lockup - pool cpus=10 node=0 flags=0x0 nice=0 stuck
-> > for 33s!
-> > 
-> > This is while doing some server MySQL performance testing. v6.11 has no such
-> > issue.
-> > 
-> > I added some debug, and we seem to be spending a lot of time in FS
-> > writeback, specifically wb_workfn() -> wb_do_writeback() - ring any bells?
-> 
-> Thanks for report. This doesn't remind me of anything but checking the
-> writeback changes we have merged 532980cb1bf ("inode: port __I_SYNC to var
-> event") which could have odd consequences if we made mistake somewhere...
-> It probably won't be easy to revert but you could try whether the problem
-> reproduces before / after this commit.
+This initial part of the panel driver was mostly generated by the
+"linux-mdss-dsi-panel-driver-generator" tool [1], reading downstream
+Android kernel file "dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi" [2].
 
-I haven't seen the above hangs, but I just got this scheduler
-warning a few minutes ago waiting for writeback:
+On top of the generic output of the tool, there were a couple of changes
+applied:
+- Added mipi_dsi_dcs_set_display_on() to function s6e88a0_ams427ap24_on(),
+  otherwise the display does not show up.
+- In functions s6e88a0_ams427ap24_on() and s6e88a0_ams427ap24_off()
+  changed DSI commands to multi context and used "accum_err" returns.
+- In functions s6e88a0_ams427ap24_on() and s6e88a0_ams427ap24_off() replaced
+  msleep() by mipi_dsi_msleep().
+- The function s6e88a0_ams427ap24_get_modes() was changed to make use of
+  drm_connector_helper_get_modes_fixed(). This also required to include
+  drm/drm_probe_helper.h.
+- In function s6e88a0_ams427ap24_probe() registring the regulators was changed
+  to devm_regulator_bulk_get_const(). This required to change supplies in struct
+  s6e88a0_ams427ap24 to a pointer.
+- Removed bool "prepared" from struct s6e88a0_ams427ap24 and according parts in
+  functions s6e88a0_ams427ap24_prepare() and s6e88a0_ams427ap24_unprepare().
 
-[12886.406341] WARNING: CPU: 19 PID: 504037 at kernel/sched/fair.c:5629 pick_task_fair+0xb6/0x1b0
-[12886.412600] Modules linked in:
-[12886.414325] CPU: 19 UID: 0 PID: 504037 Comm: fsstress Not tainted 6.12.0-rc4-dgc+ #268
-[12886.418822] Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.16.3-debian-1.16.3-2 04/01/2014
-[12886.424280] RIP: 0010:pick_task_fair+0xb6/0x1b0
-[12886.426885] Code: 40 f3 d3 03 01 74 2a 41 80 7f 50 00 74 96 f6 05 31 f3 d3 03 01 75 8d c6 05 28 f3 d3 03 01 48 c7 c7 f7 22 c4 82 e8 ea d7 fa ff <0f> 0b e9 73 ff ff ff c6 05 0d f3 d3 03 01 48 c7 c7 e5 22 c4 82 e8
-[12886.437460] RSP: 0018:ffffc9001e703c88 EFLAGS: 00010046
-[12886.440448] RAX: 02f256539620ed00 RBX: 0000000000000000 RCX: 0000000000000027
-[12886.444542] RDX: 0000000000000000 RSI: 00000000ffdfffff RDI: ffff88901fadc9c8
-[12886.448601] RBP: ffffc9001e703cb0 R08: 00000000001fffff R09: ffff88a018a00000
-[12886.452655] R10: 00000000005ffffd R11: 0000000000000004 R12: ffff888861406400
-[12886.456585] R13: ffff88901faf0140 R14: ffff88901faf00c0 R15: ffff889079412900
-[12886.460679] FS:  00007f65469d8740(0000) GS:ffff88901fac0000(0000) knlGS:0000000000000000
-[12886.465309] CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-[12886.468469] CR2: 00007f9de8006248 CR3: 00000009b7c16000 CR4: 0000000000350ef0
-[12886.472382] Call Trace:
-[12886.473751]  <TASK>
-[12886.474947]  ? show_regs+0x5e/0x70
-[12886.476829]  ? __warn+0xd0/0x1d0
-[12886.478634]  ? pick_task_fair+0xb6/0x1b0
-[12886.480794]  ? report_bug+0x145/0x1f0
-[12886.482875]  ? handle_bug+0x67/0x90
-[12886.484804]  ? exc_invalid_op+0x1b/0x50
-[12886.486932]  ? asm_exc_invalid_op+0x1b/0x20
-[12886.489230]  ? pick_task_fair+0xb6/0x1b0
-[12886.491389]  ? pick_task_fair+0xb6/0x1b0
-[12886.493538]  pick_next_task_fair+0x27/0x330
-[12886.495836]  __schedule+0x2ad/0xb10
-[12886.497756]  schedule+0x6d/0xf0
-[12886.499511]  wb_wait_for_completion+0x56/0x90
-[12886.501972]  ? __pfx_autoremove_wake_function+0x10/0x10
-[12886.504832]  ? __pfx_sync_inodes_one_sb+0x10/0x10
-[12886.507432]  sync_inodes_sb+0xb0/0x2b0
-[12886.509500]  ? __pfx_sync_inodes_one_sb+0x10/0x10
-[12886.512094]  sync_inodes_one_sb+0x14/0x20
-[12886.514314]  iterate_supers+0x7a/0xd0
-[12886.516338]  ksys_sync+0x40/0xa0
-[12886.518132]  __ia32_sys_sync+0xe/0x20
-[12886.520141]  x64_sys_call+0x2a59/0x2ee0
-[12886.522258]  do_syscall_64+0x68/0x130
-[12886.524275]  ? exc_nmi+0xbd/0x110
-[12886.526116]  entry_SYSCALL_64_after_hwframe+0x76/0x7e
-[12886.528883] RIP: 0033:0x7f6546ae97c7
-[12886.530862] Code: 73 01 c3 48 8b 0d 59 86 0d 00 f7 d8 64 89 01 48 83 c8 ff c3 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 44 00 00 b8 a2 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 8b 0d 29 86 0d 00 f7 d8 64 89 01 48
-[12886.540989] RSP: 002b:00007ffdf43f4178 EFLAGS: 00000206 ORIG_RAX: 00000000000000a2
-[12886.545125] RAX: ffffffffffffffda RBX: 0000000000000247 RCX: 00007f6546ae97c7
-[12886.549029] RDX: 00000000ffffffff RSI: 000000000a8ca705 RDI: 0000000000000247
-[12886.552926] RBP: 00000000000001f4 R08: 000000000000004c R09: 0000000000000006
-[12886.556823] R10: 0000000000000007 R11: 0000000000000206 R12: 000055f5884d45a0
-[12886.560725] R13: 028f5c28f5c28f5c R14: 8f5c28f5c28f5c29 R15: 000055f5884c16c0
-[12886.564659]  </TASK
+[1] https://github.com/msm8916-mainline/linux-mdss-dsi-panel-driver-generator
+[2] https://github.com/msm8916-mainline/linux-downstream/blob/GT-I9195I/drivers/video/msm/mdss/samsung/S6E88A0_AMS427AP24/dsi_panel_S6E88A0_AMS427AP24_qhd_octa_video.dtsi
 
-Which is from a wait_event() call and ends up warning here:
+Signed-off-by: Jakob Hauser <jahau@rocketmail.com>
+---
+Changes in v3:
+ - Made struct s6e88a0_ams427ap24_supplies[] "static".
+ - Removed the "panel->prepared" parts from functions
+   s6e88a0_ams427ap24_prepare() and s6e88a0_ams427ap24_unprepare().
+---
+ drivers/gpu/drm/panel/Kconfig                 |   9 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../panel/panel-samsung-s6e88a0-ams427ap24.c  | 252 ++++++++++++++++++
+ 3 files changed, 262 insertions(+)
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
 
-static struct sched_entity *
-pick_next_entity(struct rq *rq, struct cfs_rq *cfs_rq)
-{
-        /*
-         * Enabling NEXT_BUDDY will affect latency but not fairness.
-         */
-        if (sched_feat(NEXT_BUDDY) &&
-            cfs_rq->next && entity_eligible(cfs_rq, cfs_rq->next)) {
-                /* ->next will never be delayed */
-                SCHED_WARN_ON(cfs_rq->next->sched_delayed);
-                return cfs_rq->next;
-        }
-
-        struct sched_entity *se = pick_eevdf(cfs_rq);
-        if (se->sched_delayed) {
-                dequeue_entities(rq, se, DEQUEUE_SLEEP | DEQUEUE_DELAYED);
-                SCHED_WARN_ON(se->sched_delayed);
->>>>>>>>>       SCHED_WARN_ON(se->on_rq);
-                return NULL;
-        }
-        return se;
-}
-
-Possibly a scheduler bug?
-
--Dave.
+diff --git a/drivers/gpu/drm/panel/Kconfig b/drivers/gpu/drm/panel/Kconfig
+index bce4cb64184a..f8adc38447fb 100644
+--- a/drivers/gpu/drm/panel/Kconfig
++++ b/drivers/gpu/drm/panel/Kconfig
+@@ -632,6 +632,15 @@ config DRM_PANEL_SAMSUNG_AMS639RQ08
+ 	  Say Y or M here if you want to enable support for the
+ 	  Samsung AMS639RQ08 FHD Plus (2340x1080@60Hz) CMD mode panel.
+ 
++config DRM_PANEL_SAMSUNG_S6E88A0_AMS427AP24
++	tristate "Samsung AMS427AP24 panel with S6E88A0 controller"
++	depends on GPIOLIB && OF && REGULATOR
++	depends on DRM_MIPI_DSI
++	help
++	  Say Y here if you want to enable support for Samsung AMS427AP24 panel
++	  with S6E88A0 controller (found in Samsung Galaxy S4 Mini Value Edition
++	  GT-I9195I). To compile this driver as a module, choose M here.
++
+ config DRM_PANEL_SAMSUNG_S6E88A0_AMS452EF01
+ 	tristate "Samsung AMS452EF01 panel with S6E88A0 DSI video mode controller"
+ 	depends on OF
+diff --git a/drivers/gpu/drm/panel/Makefile b/drivers/gpu/drm/panel/Makefile
+index 4db02c2411ae..7dcf72646cac 100644
+--- a/drivers/gpu/drm/panel/Makefile
++++ b/drivers/gpu/drm/panel/Makefile
+@@ -77,6 +77,7 @@ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63J0X03) += panel-samsung-s6e63j0x03.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0) += panel-samsung-s6e63m0.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0_SPI) += panel-samsung-s6e63m0-spi.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E63M0_DSI) += panel-samsung-s6e63m0-dsi.o
++obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E88A0_AMS427AP24) += panel-samsung-s6e88a0-ams427ap24.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E88A0_AMS452EF01) += panel-samsung-s6e88a0-ams452ef01.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_S6E8AA0) += panel-samsung-s6e8aa0.o
+ obj-$(CONFIG_DRM_PANEL_SAMSUNG_SOFEF00) += panel-samsung-sofef00.o
+diff --git a/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c b/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+new file mode 100644
+index 000000000000..7435e0fcb4f5
+--- /dev/null
++++ b/drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+@@ -0,0 +1,252 @@
++// SPDX-License-Identifier: GPL-2.0-only
++/*
++ * Samsung AMS427AP24 panel with S6E88A0 controller
++ * Copyright (c) 2024 Jakob Hauser <jahau@rocketmail.com>
++ */
++
++#include <linux/delay.h>
++#include <linux/gpio/consumer.h>
++#include <linux/module.h>
++#include <linux/of.h>
++#include <linux/regulator/consumer.h>
++
++#include <video/mipi_display.h>
++
++#include <drm/drm_mipi_dsi.h>
++#include <drm/drm_modes.h>
++#include <drm/drm_panel.h>
++#include <drm/drm_probe_helper.h>
++
++struct s6e88a0_ams427ap24 {
++	struct drm_panel panel;
++	struct mipi_dsi_device *dsi;
++	struct regulator_bulk_data *supplies;
++	struct gpio_desc *reset_gpio;
++};
++
++static const struct regulator_bulk_data s6e88a0_ams427ap24_supplies[] = {
++	{ .supply = "vdd3" },
++	{ .supply = "vci" },
++};
++
++static inline
++struct s6e88a0_ams427ap24 *to_s6e88a0_ams427ap24(struct drm_panel *panel)
++{
++	return container_of(panel, struct s6e88a0_ams427ap24, panel);
++}
++
++static void s6e88a0_ams427ap24_reset(struct s6e88a0_ams427ap24 *ctx)
++{
++	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
++	usleep_range(5000, 6000);
++	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++	usleep_range(1000, 2000);
++	gpiod_set_value_cansleep(ctx->reset_gpio, 0);
++	usleep_range(18000, 19000);
++}
++
++static int s6e88a0_ams427ap24_on(struct s6e88a0_ams427ap24 *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
++
++	dsi->mode_flags |= MIPI_DSI_MODE_LPM;
++
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0x5a, 0x5a);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfc, 0x5a, 0x5a);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfd, 0x11);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0, 0x13);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfd, 0x18);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb0, 0x02);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb8, 0x30);
++
++	mipi_dsi_dcs_exit_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 20);
++
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf1, 0x5a, 0x5a);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xcc, 0x4c);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf2, 0x03, 0x0d);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf1, 0xa5, 0xa5);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xca,
++				     0x01, 0x00, 0x01, 0x00, 0x01, 0x00, 0x80,
++				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
++				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
++				     0x80, 0x80, 0x80, 0x80, 0x80, 0x80, 0x80,
++				     0x80, 0x80, 0x00, 0x00, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb2,
++				     0x40, 0x08, 0x20, 0x00, 0x08);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xb6, 0x28, 0x0b);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf7, 0x03);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0x55, 0x00);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xf0, 0xa5, 0xa5);
++	mipi_dsi_dcs_write_seq_multi(&dsi_ctx, 0xfc, 0xa5, 0xa5);
++
++	mipi_dsi_dcs_set_display_on_multi(&dsi_ctx);
++
++	return dsi_ctx.accum_err;
++}
++
++static int s6e88a0_ams427ap24_off(struct s6e88a0_ams427ap24 *ctx)
++{
++	struct mipi_dsi_device *dsi = ctx->dsi;
++	struct mipi_dsi_multi_context dsi_ctx = { .dsi = dsi };
++
++	dsi->mode_flags &= ~MIPI_DSI_MODE_LPM;
++
++	mipi_dsi_dcs_set_display_off_multi(&dsi_ctx);
++	mipi_dsi_dcs_enter_sleep_mode_multi(&dsi_ctx);
++	mipi_dsi_msleep(&dsi_ctx, 120);
++
++	return dsi_ctx.accum_err;
++}
++
++static int s6e88a0_ams427ap24_prepare(struct drm_panel *panel)
++{
++	struct s6e88a0_ams427ap24 *ctx = to_s6e88a0_ams427ap24(panel);
++	struct device *dev = &ctx->dsi->dev;
++	int ret;
++
++	ret = regulator_bulk_enable(ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
++				    ctx->supplies);
++	if (ret < 0) {
++		dev_err(dev, "Failed to enable regulators: %d\n", ret);
++		return ret;
++	}
++
++	s6e88a0_ams427ap24_reset(ctx);
++
++	ret = s6e88a0_ams427ap24_on(ctx);
++	if (ret < 0) {
++		dev_err(dev, "Failed to initialize panel: %d\n", ret);
++		gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++		regulator_bulk_disable(ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
++				       ctx->supplies);
++		return ret;
++	}
++
++	return 0;
++}
++
++static int s6e88a0_ams427ap24_unprepare(struct drm_panel *panel)
++{
++	struct s6e88a0_ams427ap24 *ctx = to_s6e88a0_ams427ap24(panel);
++	struct device *dev = &ctx->dsi->dev;
++	int ret;
++
++	ret = s6e88a0_ams427ap24_off(ctx);
++	if (ret < 0)
++		dev_err(dev, "Failed to un-initialize panel: %d\n", ret);
++
++	gpiod_set_value_cansleep(ctx->reset_gpio, 1);
++	regulator_bulk_disable(ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
++			       ctx->supplies);
++
++	return 0;
++}
++
++static const struct drm_display_mode s6e88a0_ams427ap24_mode = {
++	.clock = (540 + 94 + 4 + 18) * (960 + 12 + 1 + 3) * 60 / 1000,
++	.hdisplay = 540,
++	.hsync_start = 540 + 94,
++	.hsync_end = 540 + 94 + 4,
++	.htotal = 540 + 94 + 4 + 18,
++	.vdisplay = 960,
++	.vsync_start = 960 + 12,
++	.vsync_end = 960 + 12 + 1,
++	.vtotal = 960 + 12 + 1 + 3,
++	.width_mm = 55,
++	.height_mm = 95,
++	.type = DRM_MODE_TYPE_DRIVER | DRM_MODE_TYPE_PREFERRED,
++};
++
++static int s6e88a0_ams427ap24_get_modes(struct drm_panel *panel,
++					struct drm_connector *connector)
++{
++	return drm_connector_helper_get_modes_fixed(connector,
++						    &s6e88a0_ams427ap24_mode);
++}
++
++static const struct drm_panel_funcs s6e88a0_ams427ap24_panel_funcs = {
++	.prepare = s6e88a0_ams427ap24_prepare,
++	.unprepare = s6e88a0_ams427ap24_unprepare,
++	.get_modes = s6e88a0_ams427ap24_get_modes,
++};
++
++static int s6e88a0_ams427ap24_probe(struct mipi_dsi_device *dsi)
++{
++	struct device *dev = &dsi->dev;
++	struct s6e88a0_ams427ap24 *ctx;
++	int ret;
++
++	ctx = devm_kzalloc(dev, sizeof(*ctx), GFP_KERNEL);
++	if (!ctx)
++		return -ENOMEM;
++
++	ret = devm_regulator_bulk_get_const(dev,
++				      ARRAY_SIZE(s6e88a0_ams427ap24_supplies),
++				      s6e88a0_ams427ap24_supplies,
++				      &ctx->supplies);
++	if (ret < 0)
++		return ret;
++
++	ctx->reset_gpio = devm_gpiod_get(dev, "reset", GPIOD_OUT_HIGH);
++	if (IS_ERR(ctx->reset_gpio))
++		return dev_err_probe(dev, PTR_ERR(ctx->reset_gpio),
++				     "Failed to get reset-gpios\n");
++
++	ctx->dsi = dsi;
++	mipi_dsi_set_drvdata(dsi, ctx);
++
++	dsi->lanes = 2;
++	dsi->format = MIPI_DSI_FMT_RGB888;
++	dsi->mode_flags = MIPI_DSI_MODE_VIDEO | MIPI_DSI_MODE_VIDEO_BURST |
++			  MIPI_DSI_MODE_NO_EOT_PACKET;
++
++	drm_panel_init(&ctx->panel, dev, &s6e88a0_ams427ap24_panel_funcs,
++		       DRM_MODE_CONNECTOR_DSI);
++	ctx->panel.prepare_prev_first = true;
++
++	drm_panel_add(&ctx->panel);
++
++	ret = mipi_dsi_attach(dsi);
++	if (ret < 0) {
++		dev_err(dev, "Failed to attach to DSI host: %d\n", ret);
++		drm_panel_remove(&ctx->panel);
++		return ret;
++	}
++
++	return 0;
++}
++
++static void s6e88a0_ams427ap24_remove(struct mipi_dsi_device *dsi)
++{
++	struct s6e88a0_ams427ap24 *ctx = mipi_dsi_get_drvdata(dsi);
++	int ret;
++
++	ret = mipi_dsi_detach(dsi);
++	if (ret < 0)
++		dev_err(&dsi->dev, "Failed to detach from DSI host: %d\n", ret);
++
++	drm_panel_remove(&ctx->panel);
++}
++
++static const struct of_device_id s6e88a0_ams427ap24_of_match[] = {
++	{ .compatible = "samsung,s6e88a0-ams427ap24" },
++	{ /* sentinel */ },
++};
++MODULE_DEVICE_TABLE(of, s6e88a0_ams427ap24_of_match);
++
++static struct mipi_dsi_driver s6e88a0_ams427ap24_driver = {
++	.probe = s6e88a0_ams427ap24_probe,
++	.remove = s6e88a0_ams427ap24_remove,
++	.driver = {
++		.name = "panel-s6e88a0-ams427ap24",
++		.of_match_table = s6e88a0_ams427ap24_of_match,
++	},
++};
++module_mipi_dsi_driver(s6e88a0_ams427ap24_driver);
++
++MODULE_AUTHOR("Jakob Hauser <jahau@rocketmail.com>");
++MODULE_DESCRIPTION("Samsung AMS427AP24 panel with S6E88A0 controller");
++MODULE_LICENSE("GPL v2");
 -- 
-Dave Chinner
-david@fromorbit.com
+2.39.5
+
 
