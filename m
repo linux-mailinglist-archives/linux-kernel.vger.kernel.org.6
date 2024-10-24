@@ -1,121 +1,118 @@
-Return-Path: <linux-kernel+bounces-379743-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379744-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 524209AE30D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:51:05 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18FA79AE310
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:52:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EE7341F2331E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:51:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C84142828A1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:52:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDEC81C761C;
-	Thu, 24 Oct 2024 10:50:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D96B1C75FA;
+	Thu, 24 Oct 2024 10:52:41 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="CLLhXWSK"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="oENLzDxV"
+Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41E901C2DA2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:50:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9EB6B167D80
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:52:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767058; cv=none; b=RLOEikq2SZIHga+JDOhCh2rrTcCmvwo/QERNaEFGM3guPu8MNRDcxmOeLVwds5qAOoZtGlLti2AsDEHP2O3wHJZW4m6WZGVWkqUwzMwduQ6Xhu+I9+/+SGM6b+vm5eQzcQgB9fDwclDr4+vOImrIq50NPcFMyC9hYt5Gx1zIMc8=
+	t=1729767160; cv=none; b=aVfmkfSrtiFnAVz+PJZaxs0O1X5RrgNq2shqNCQzpE6T6HhbgWY2kFsB9cfXQpaGynLy5sxuXg5QLKDgQ2oPLNOUJHfJFhgI/i4lOxL0sz7c5hDZ2Qs53Gz7fF1XgSaWo+I5+ZuQXLaTtcMeiPM1RjHog/NjYF19yGhuu14uWTk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767058; c=relaxed/simple;
-	bh=/h6ScMpXgJdRH24J2FYQ5XhtS9CARF4+YWkkB73m6QA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=e4mxZQel7JDgRaIDzkswPI7x2tuNisLgE7sKlIw6xBE4KiCFJAqPM28Swg1Ne1C/unMoMpL+LhvkAL5SzmWWX2JzQByKz3rHWGLYjJ5t1v1AohJHePbMbABm1mVZsdq2aeK2xOmhporhufB5r47Rl3vbtulB2kuHAgW9aSrde+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=CLLhXWSK; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5cb6b2b7127so915079a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:50:56 -0700 (PDT)
+	s=arc-20240116; t=1729767160; c=relaxed/simple;
+	bh=4ekxkQmmhvir+5TyqyoCfKPaWhWRbylq+LC4f4N042s=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=rKxl9vQ9CmNGCIjIgmJ4Q/tImF7/nZ2xp6A6Slr8mri8yPvUer0RpyZRG+bG1NG/GBbm5kcTs207ipuKDKwp/elj5a5JDZ2UB18Bwp6KabUQP55paMf31rbXmj9UbP3PI4J19Ytnn9UA+7IT1WNQD7VEC4nNq5wbP0NgaXt4Gqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=oENLzDxV; arc=none smtp.client-ip=209.85.208.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb518014b9so5706891fa.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:52:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1729767054; x=1730371854; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=6qWdmaHz7Nux7p/WW92k3YpnxPIwDsMgrq5DymSLCxY=;
-        b=CLLhXWSKg8MX8CqJSpVBsP41Oo8RTtUDSAuQ2CNYNrtjmfkEphrA4un6FL38WTtStd
-         1UFZwsY+NyNeNtuQvSWZfBHDCPb6F3c99km6CIAqnGbujtBKbfnOWlE0Ge2OZ70znRqD
-         Ms5OuvzSfGGsrKv+XfoAFkxZC7e8Nj2KVSjkw=
+        d=linaro.org; s=google; t=1729767157; x=1730371957; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=HOyAXE0GUW7cmndQ8mO+yG/0idrUbxgKGObOYyEO0PY=;
+        b=oENLzDxVnsPkZqjdU6t81Ht/73nwSyVfScyb1kO/nY6gcbXDxW0Fw8fc1HHkP3/6Og
+         VMuSUvKuIm3tQ1D9bffii+h6RCdsXIeB/nq3g3k3h05B+3UWW++8T/Z1M2fQIes6oeY+
+         UsIa2VlfCHpz3Plrxq5quKtaLz2HClwl66g47pafWIW5QVu/FI9Uj6a524DwxS+sVgde
+         S24Obk4qmvwCCpFEIojOvrMQrH6euPOv2Irqhrldo+GSZTY7RXGil46kTSotCeqw63Sw
+         2aAMkLUSgpTh1aVQiWCqvhUVKwo7WtyYtwD+/LVTCJ/vAb1yFBdodZi3S88ZNPwa61n4
+         mD7Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729767054; x=1730371854;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6qWdmaHz7Nux7p/WW92k3YpnxPIwDsMgrq5DymSLCxY=;
-        b=qy7OAb2lygv1pXx4Oc8FOakcxW8OyhqmhgJ91kvO6XmTueSw4JCZWhphvuL5onO1Yi
-         6ajagTBCs4+MmdW0HspQohtcvzqNhx1WGDAwmWpO0lTBkZpqKE7DR9jC6FNvISTVOiiO
-         uZbl6nercXagJbZbg70fMgNlBKTy2GWSP+WgapMACuSWyXf9o9W90b0GvNdp2KS6cQE2
-         ohsgYGWVNrhRAgcnAr8ABQW/J6MDw9l1qY1h/h5pnWzTVdaKv5g3vuckF5rpq7jRsIJc
-         N+FJHGHci47NJMzdrpJnXy3/w1K4tE4w6UqGd8gGSv9f3BqUkblQLCfwxwhYu/yeaBMC
-         +aCg==
-X-Gm-Message-State: AOJu0YyUG38sY/lBk2S2D445CZv0CD5t7/NUODl4z2AxJgQOMUgwYBRr
-	0X71gy6EqDjUp3+m7WKm+E0oTPTnLO6s7CEEl5Zf7MVUlbtmU7Mavd/AGN7IHUNxtePCEal/F51
-	M0hg=
-X-Google-Smtp-Source: AGHT+IHWsyISWq/FYUrYWrdlaP7r5eYT4H8Hp8tVEO31BNXzH1CneTvHOtGnGAb8Qb6yAFj15jLtQw==
-X-Received: by 2002:a17:907:3faa:b0:a9a:f0e:cd4 with SMTP id a640c23a62f3a-a9abf964edemr607896766b.55.1729767054232;
-        Thu, 24 Oct 2024 03:50:54 -0700 (PDT)
-Received: from localhost.localdomain ([2001:b07:6474:ebbf:f79d:49dd:b804:3f48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370723sm601132366b.100.2024.10.24.03.50.52
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 03:50:53 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	David Airlie <airlied@gmail.com>,
-	Jessica Zhang <quic_jesszhan@quicinc.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Simona Vetter <simona@ffwll.ch>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	dri-devel@lists.freedesktop.org
-Subject: [PATCH] drm/panel: synaptics-r63353: Fix regulator unbalance
-Date: Thu, 24 Oct 2024 12:50:46 +0200
-Message-ID: <20241024105050.3483542-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1729767157; x=1730371957;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=HOyAXE0GUW7cmndQ8mO+yG/0idrUbxgKGObOYyEO0PY=;
+        b=lFpgnWJ2Umh5Z7WwgLy9tBlORIqn0JAXluufQQbGQXNcbzLu/kgcjUh6SQeRIK5fQ4
+         DlbmICMC/Nk4IeFCEy5h87hdInlsED0JQTQe8HrnkDURPh5dVHDxIOkLyIJx06EV8+fT
+         rL4Dbk+mhEBHmt0TpceOmVrndmA4kbSe309TvcW7lFaAArxwIwqD5bEFBYfkei76mSPx
+         x0hfx9sWF7A7N6pIB71dDSIOcrmthEk+b9DskTP3082tvibvLRzwmd19SNvyMdE/2ody
+         bwCu0WwgL923h6+IHBll5WKCv2TGaYh1dilCK0DR1iRiqZPObgI/nBFfMUq4IPU9h+/Y
+         Z68A==
+X-Forwarded-Encrypted: i=1; AJvYcCVFCr2gOwx9if/1+f2usqxEBRN1xCpwGnBksjxqxomTLf5bqojpuUbZwQgC11/8XMXrgoFtQ0WZbjBNJ4c=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxF5ZwhS4+2GIQa0fdv1JsskDAJPFifIVv7suY6KQrKpTpNUbVN
+	pYOujc7W87ttfjbrECMbqQnn0wRPQYtPwNYUe6+RnK4G1BlWTX1TYIiF/rYtjO+cvgro9SjM5eW
+	4wFU=
+X-Google-Smtp-Source: AGHT+IENzz8Bqoyagoc4Wih98itZjoGtQwFFRLvNgNZBkineUHMgpQUAnSo8qRW6/WuGNnl0WyLEdg==
+X-Received: by 2002:a2e:4e01:0:b0:2fb:6169:c42d with SMTP id 38308e7fff4ca-2fca8279527mr7472501fa.41.1729767156541;
+        Thu, 24 Oct 2024 03:52:36 -0700 (PDT)
+Received: from [192.168.0.40] ([176.61.106.227])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a654b9sm5603174a12.34.2024.10.24.03.52.35
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 03:52:36 -0700 (PDT)
+Message-ID: <43dbbe57-9045-4f85-84ba-1bd5a9951fdf@linaro.org>
+Date: Thu, 24 Oct 2024 11:52:35 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 2/2] media: venus: sync with threaded IRQ during inst
+ destruction
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+ Vikash Garodia <quic_vgarodia@quicinc.com>, linux-media@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241024061809.400260-1-senozhatsky@chromium.org>
+ <20241024061809.400260-3-senozhatsky@chromium.org>
+ <4b96f1f8-e084-4599-abe9-05039bfac569@linaro.org>
+ <20241024093916.GM1279924@google.com>
+ <b9a42abd-a078-4740-b070-ba5c86855e73@linaro.org>
+ <20241024100857.GN1279924@google.com>
+Content-Language: en-US
+From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
+In-Reply-To: <20241024100857.GN1279924@google.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-From: Michael Trimarchi <michael@amarulasolutions.com>
-
-The shutdown function can be called when the display is already
-unprepared. For example during reboot this trigger a kernel
-backlog. Calling the drm_panel_unprepare, allow us to avoid
-to trigger the kernel warning.
-
-Tested-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+On 24/10/2024 11:08, Sergey Senozhatsky wrote:
+> On (24/10/24 10:43), Bryan O'Donoghue wrote:
+>>>> It also occurs to me that most of the close() operation code is shared
+>>>> between venc_close() and vdec_close() a welcome patch for V3 would be to
+>>>> functionally decompose the common code to a shared location.
+>>>
+>>> Any preferences where that "shared location" should be?
+>>
+>> Probably core.c is the only place we can jam stuff to be shared
+> 
+> Ack.
+> 
+> So, we need to
+> - export a couple of symbols
+> - include vdec header in core
+> 
+> Does something like this look OK to you?
+y lgtm
 
 ---
-
- drivers/gpu/drm/panel/panel-synaptics-r63353.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
-
-diff --git a/drivers/gpu/drm/panel/panel-synaptics-r63353.c b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-index 169c629746c7..17349825543f 100644
---- a/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-+++ b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-@@ -325,7 +325,7 @@ static void r63353_panel_shutdown(struct mipi_dsi_device *dsi)
- {
- 	struct r63353_panel *rpanel = mipi_dsi_get_drvdata(dsi);
- 
--	r63353_panel_unprepare(&rpanel->base);
-+	drm_panel_unprepare(&rpanel->base);
- }
- 
- static const struct r63353_desc sharp_ls068b3sx02_data = {
--- 
-2.43.0
-
+bod
 
