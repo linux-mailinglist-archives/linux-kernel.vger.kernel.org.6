@@ -1,73 +1,81 @@
-Return-Path: <linux-kernel+bounces-380358-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380359-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id AB3AA9AED02
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:00:20 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 40A749AED0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:03:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id CC8DC1C2309E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:00:19 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09E51F22086
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:03:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 561491FAF06;
-	Thu, 24 Oct 2024 16:59:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419311F9EB1;
+	Thu, 24 Oct 2024 17:03:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="cr3i/Xle"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fKESlf/c"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 899BD1F76BF;
-	Thu, 24 Oct 2024 16:59:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD5A1F8181
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789182; cv=none; b=fNkiwc7KWqTnZSSNR2qZPN9QTZF+68RAwYUKuggca1Q0JSDN67sTafIlgkg0Frav3uAlHAkhntGpdzPD5Dd2Kx2snUdQIkHdns9LaLeOtea6wh44C1ZELD4zr20zGn2ncdity/ac4w6h30rl18kIAH/FvYNOUS7pW6o8Pdq+Ir0=
+	t=1729789385; cv=none; b=fxBuTV5yZV0EwRtY3AqhrKLkA9EJlzVFt/JujhCpqwzSPAusOYvHYWqawtSLSlU4gOXQ6ZEK3gsqP2wz8Px05qTb7UrebjP0uFKalLFXlj7OyjAi6Je90W+8PRQeuA0bvW037y2rDuq1PR4+C/VSiIggiolvr44c5i0E+xMkSMo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789182; c=relaxed/simple;
-	bh=hijoaAkA0Q1vuwuxsDMLMH0T3wTBuF66RCAzz/8HohY=;
+	s=arc-20240116; t=1729789385; c=relaxed/simple;
+	bh=PQ4zZ+vpUUBZz98OPfmQ/f9IgAytod+hx01dezT1/kg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Nj9nYXaIhWGCawFt7Ku2HZPl5ReamFlDdg64yMM3cPzCAIgNeJMq183i86vKhXI+rjl5euOJ+eZtCQheOck3533R3ERSQHejC9flLIYTMvAd9X7Sg3si2JHMfQS82tiTNLwqPKGnxCyNRDCfbalQlOhxtqtIjJzNS6VjQp8pSxo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=cr3i/Xle; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d4c482844so762391f8f.0;
-        Thu, 24 Oct 2024 09:59:40 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729789179; x=1730393979; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Gu2G2lobjatrPbeH6vXaNXTLwzS6HsUqu9OMwxk35RI=;
-        b=cr3i/XleggF7hadYk/4UABFruZr4xWeuY61LG04ECjJlf4MAnkmxgqBgnllm1ts9nZ
-         CKu7sa5ZNOqigJSq1Ju/OBDC3kiVG+3gDKF/bp+w2I8/zMvxJyKT5WJAlpLvFjf8ThDO
-         uvo2rnFe8Tzf7HWWdWRAoGCGSLkE46shQ91xzrzursAsswFfkOWSG/fjOe3pdGTtu66/
-         akq7g6jJYRixREmSAAL2/x80Lm6iKmm7XdikNtG3FxzqTIaw/8hF9D4/4QkmLacYhh4T
-         6NhySPFLgEJN0pdTWdEqcIhJW2SVbOnilHjmGUGklkkM2cwDmpPyeaAkUH+M8eFNH+8j
-         J54Q==
+	 In-Reply-To:Content-Type; b=GMVL+n9nR3el8pF3b5UDjQ67sGCURXzN96hGOa4CZdp2hjdexLOi7obFUPcxPOrGnNZfMG0KQ8OsRofaadeR93cOMHfkgvRctfRFs+UY3lz12dmz97re19fA7oTHPJM71CHsKERk83B5WfZlvavQkHl6PrpI890nwVuCOwSpwDA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fKESlf/c; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9MFkf032117
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:03 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	DUlMzHI7+1FWYVHdeE+crFlz144uqgJoZlthEYfdU7U=; b=fKESlf/cCsBm2Ppp
+	RQIteynzNNWaFkaLO1FXpFcChrBOoPX5Vh/s9z7X17kGsuPU/czEpSpU8JfWWZJ5
+	Nu726f8E02rucu4KWubtnuuhkvbIZUhh2fnloFBOc2mf1i9vECZ83fP371gRewIo
+	accEVEYI2bCxapJkvRopZ1ohiVRF8j45LU5woXjWO5aUJBLY5NIpOVcugoVMLWpL
+	XGBaXKbtDvO7FDLExy56wdhPFeYhQXA4+GezctdGht4mYCT0WclulzmudByipIjo
+	5xno0bXZM68hnn8PHS+NPXscqTiTD/TY+PW54s+i1Ajs2KvskDMTObPnvfUPe8mP
+	wyLy3Q==
+Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3vxex0-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:03 +0000 (GMT)
+Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b14459d04bso20490185a.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:03:02 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789179; x=1730393979;
+        d=1e100.net; s=20230601; t=1729789382; x=1730394182;
         h=content-transfer-encoding:in-reply-to:from:content-language
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Gu2G2lobjatrPbeH6vXaNXTLwzS6HsUqu9OMwxk35RI=;
-        b=IQk82q+FxvG6qGC8NRmw1+zxZD2MokQK53m9AT3RGXv3auxITR9yb3G9lDt/XDYs3K
-         9HqCnpDjPBYSJiTk+XvaKnvsZ4+rMSrX7SWYBgx1nkWBJleMRNgVev0hWVMoNIEyvxKD
-         Uo29hYeuS1wyTcs3l8IaewrRPLHD9jRILczGOMTgJEd6+cG1bkQUcmIPdgzpeRUiJMkn
-         HZnkSh04UDWVpzn5yZ2okZKme5dt/6FOjIWW8atoXOP3bnCgoZULWEfMSmYxWsKmD1Ld
-         2li3XShUbGaEcObvhTf2ZDpLq4GAMroZQp//Nbf3zHwa/aDbAaVlqKBnd6BBcoRtkji0
-         Pkmw==
-X-Forwarded-Encrypted: i=1; AJvYcCVTs3qeA9lpcwrzXmkT/52cgKq0FpWQHwD3afoeoCH6FGwj7gGyV7szTUKOxIl0sd/v7SFoqTkLrYXH0Q==@vger.kernel.org, AJvYcCVW1hMDXCQp746iARew0lvNnD7g7sGHxy/iLA5Z0dFfuKlDC8xSZAvPVAcggeURgTXWeD1tum6loHxHTP0=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0Xc7fRge65iTDus0aqaktZtNK9cSXHhgi4Z7hxg4dhNDl131e
-	EYOAW/9yAt7EoOJXDv27CjZ7kXIQ/KEdIhSHcIhngQzBCKw44KcZ
-X-Google-Smtp-Source: AGHT+IFB2OdRP4GkB6KDaGovcRDbtaEcBs0vVOwofPqhFV1VR5HWfkL9vlgZb/5+swBXv7WdGH4XYQ==
-X-Received: by 2002:adf:cd0a:0:b0:37d:5436:4a1 with SMTP id ffacd0b85a97d-3803ac84467mr1940093f8f.3.1729789178251;
-        Thu, 24 Oct 2024 09:59:38 -0700 (PDT)
-Received: from [172.27.21.144] ([193.47.165.251])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b7afsm11753362f8f.59.2024.10.24.09.59.36
+        bh=DUlMzHI7+1FWYVHdeE+crFlz144uqgJoZlthEYfdU7U=;
+        b=NrzvP+w2+3D6GD/tt45W5tI/5rbF4NSP6LpXirHNaAwnPwsWXOrxT4VMXowj1ZOtDI
+         UCVijAd0g7//wIAnQovuy5+CQrEwwg08wmPrGN3WYZX50gykv16L1f3FHs8b7e+b4S1S
+         dxAvyyccd0sbZP0M69Lppr6XtapXDAAG7dKhPP4Q1pzUC8RfD0ExP+eu9wPDL00JsOc7
+         FVrwE+koXlNTHUx7NrwfMMcs9Qcf0OFxYqUmbrLGAzUX2uPky1EAEj9DzDjmP0XxCGSd
+         816zx2SlTCRzKrgn5v0CwRlZ2hbACZyBkD9oz0ZBkuSC4FErU8XD0RkU+H8SWv6BWhmn
+         Y76g==
+X-Forwarded-Encrypted: i=1; AJvYcCWNQkKV4yHwY6KCMYZY+1O+qHQ/250v6LRypYpk6VkNS6PKkOrRj2tubOuhU76raxY5iKXz49q1vCPOOeM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykpJUJy02/Ac40/3bGAc9Zm9n4HvEC93MBGioFYtfQ3HUScMfR
+	EPl9hMv3oVxIx/YSlfE2ruBlzrNt/FIz6w+qJg4uCbPmVqhd6VI79FRh+t/WL1MuwEn/TGcv2Z2
+	1kXJfJ9iVNmlqV0YXdXX4XIbm7P5f77YnV50JBqCjdsS0+wbUhH5mufMGFZkeQpE=
+X-Received: by 2002:ad4:5e8e:0:b0:6cb:4e9f:7370 with SMTP id 6a1803df08f44-6ce3429efe7mr40119736d6.12.1729789380291;
+        Thu, 24 Oct 2024 10:03:00 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IErivPc6fmXIZH89b8InKtojO/piGnSylk4Q1RcUf5kCpJfBLE2UQ3WYyeNfa4RF6q6QGeTdg==
+X-Received: by 2002:ad4:5e8e:0:b0:6cb:4e9f:7370 with SMTP id 6a1803df08f44-6ce3429efe7mr40119036d6.12.1729789378414;
+        Thu, 24 Oct 2024 10:02:58 -0700 (PDT)
+Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571ef4sm639419366b.153.2024.10.24.10.02.56
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:59:37 -0700 (PDT)
-Message-ID: <469dfbf5-4b5f-4457-8f88-f180b2c3a8ae@gmail.com>
-Date: Thu, 24 Oct 2024 19:59:34 +0300
+        Thu, 24 Oct 2024 10:02:58 -0700 (PDT)
+Message-ID: <adee8553-a531-4789-af19-1bbbe2adb59a@oss.qualcomm.com>
+Date: Thu, 24 Oct 2024 19:02:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,109 +83,63 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] mlx5: simplify EQ interrupt polling logic
-To: Caleb Sander Mateos <csander@purestorage.com>,
- Saeed Mahameed <saeedm@nvidia.com>, Leon Romanovsky <leon@kernel.org>,
- Tariq Toukan <tariqt@nvidia.com>, Andrew Lunn <andrew+netdev@lunn.ch>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241023205113.255866-1-csander@purestorage.com>
+Subject: Re: [PATCH 2/2] interconnect: qcom: Add interconnect provider driver
+ for SM8750
+To: Melody Olvera <quic_molvera@quicinc.com>,
+        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+ <conor+dt@kernel.org>,
+        Adam Skladowski <a39.skl@gmail.com>,
+        Konrad Dybcio <konradybcio@kernel.org>,
+        Sibi Sankar
+ <quic_sibis@quicinc.com>,
+        =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?=
+ <barnabas.czeman@mainlining.org>,
+        Vladimir Lypak <vladimir.lypak@gmail.com>,
+        Danila Tikhonov <danila@jiaxyga.com>,
+        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
+        Neil Armstrong <neil.armstrong@linaro.org>,
+        Rajendra Nayak <quic_rjendra@quicinc.com>,
+        Mike Tipton <quic_mdtipton@quicinc.com>,
+        Abel Vesa <abel.vesa@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>,
+        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
+Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
+        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241021231823.2635534-1-quic_molvera@quicinc.com>
+ <20241021231823.2635534-3-quic_molvera@quicinc.com>
 Content-Language: en-US
-From: Tariq Toukan <ttoukan.linux@gmail.com>
-In-Reply-To: <20241023205113.255866-1-csander@purestorage.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+In-Reply-To: <20241021231823.2635534-3-quic_molvera@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-Proofpoint-GUID: mVbud_w_FrHhm9YCnzJzGf95XFpEzqSb
+X-Proofpoint-ORIG-GUID: mVbud_w_FrHhm9YCnzJzGf95XFpEzqSb
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
+ mlxlogscore=886 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240140
 
-
-
-On 23/10/2024 23:51, Caleb Sander Mateos wrote:
-> Use a while loop in mlx5_eq_comp_int() and mlx5_eq_async_int() to
-> clarify the EQE polling logic. This consolidates the next_eqe_sw() calls
-> for the first and subequent iterations. It also avoids a goto. Turn the
-> num_eqes < MLX5_EQ_POLLING_BUDGET check into a break condition.
+On 22.10.2024 1:18 AM, Melody Olvera wrote:
+> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
 > 
-> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
+> Introduce SM8750 interconnect provider driver using the interconnect
+> framework.
+> 
+> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
+> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
 > ---
->   drivers/net/ethernet/mellanox/mlx5/core/eq.c | 22 +++++++-------------
->   1 file changed, 8 insertions(+), 14 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/mellanox/mlx5/core/eq.c b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> index 68cb86b37e56..859dcf09b770 100644
-> --- a/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> +++ b/drivers/net/ethernet/mellanox/mlx5/core/eq.c
-> @@ -114,15 +114,11 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
->   	struct mlx5_eq *eq = &eq_comp->core;
->   	struct mlx5_eqe *eqe;
->   	int num_eqes = 0;
->   	u32 cqn = -1;
->   
-> -	eqe = next_eqe_sw(eq);
-> -	if (!eqe)
-> -		goto out;
-> -
-> -	do {
-> +	while ((eqe = next_eqe_sw(eq))) {
->   		struct mlx5_core_cq *cq;
->   
->   		/* Make sure we read EQ entry contents after we've
->   		 * checked the ownership bit.
->   		 */
-> @@ -140,13 +136,14 @@ static int mlx5_eq_comp_int(struct notifier_block *nb,
->   					    "Completion event for bogus CQ 0x%x\n", cqn);
->   		}
->   
->   		++eq->cons_index;
->   
-> -	} while ((++num_eqes < MLX5_EQ_POLLING_BUDGET) && (eqe = next_eqe_sw(eq)));
-> +		if (++num_eqes >= MLX5_EQ_POLLING_BUDGET)
-> +			break;
-> +	}
->   
-> -out:
->   	eq_update_ci(eq, 1);
->   
->   	if (cqn != -1)
->   		tasklet_schedule(&eq_comp->tasklet_ctx.task);
->   
-> @@ -213,15 +210,11 @@ static int mlx5_eq_async_int(struct notifier_block *nb,
->   	eqt = dev->priv.eq_table;
->   
->   	recovery = action == ASYNC_EQ_RECOVER;
->   	mlx5_eq_async_int_lock(eq_async, recovery, &flags);
->   
-> -	eqe = next_eqe_sw(eq);
-> -	if (!eqe)
-> -		goto out;
-> -
-> -	do {
-> +	while ((eqe = next_eqe_sw(eq))) {
->   		/*
->   		 * Make sure we read EQ entry contents after we've
->   		 * checked the ownership bit.
->   		 */
->   		dma_rmb();
-> @@ -229,13 +222,14 @@ static int mlx5_eq_async_int(struct notifier_block *nb,
->   		atomic_notifier_call_chain(&eqt->nh[eqe->type], eqe->type, eqe);
->   		atomic_notifier_call_chain(&eqt->nh[MLX5_EVENT_TYPE_NOTIFY_ANY], eqe->type, eqe);
->   
->   		++eq->cons_index;
->   
-> -	} while ((++num_eqes < MLX5_EQ_POLLING_BUDGET) && (eqe = next_eqe_sw(eq)));
-> +		if (++num_eqes >= MLX5_EQ_POLLING_BUDGET)
-> +			break;
-> +	}
->   
-> -out:
->   	eq_update_ci(eq, 1);
->   	mlx5_eq_async_int_unlock(eq_async, recovery, &flags);
->   
->   	return unlikely(recovery) ? num_eqes : 0;
->   }
 
-LGTM.
-Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
+[...]
 
-Thanks.
+> +static struct qcom_icc_bcm *lpass_ag_noc_bcms[] = {
+> +};
+
+Drop empty BCM lists, the code handles nulls fine
+
+Konrad
 
