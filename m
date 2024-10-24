@@ -1,168 +1,158 @@
-Return-Path: <linux-kernel+bounces-380066-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380069-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6DC2A9AE869
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:24:27 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB9669AE87C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:25:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DAC01C20C79
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:24:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A03302908B9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:25:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B81521EBA10;
-	Thu, 24 Oct 2024 14:17:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 24A091FDF96;
+	Thu, 24 Oct 2024 14:19:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z+PJztDa"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b="LAVL/a8W"
+Received: from sender4-pp-f112.zoho.com (sender4-pp-f112.zoho.com [136.143.188.112])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 062EB1E3766;
-	Thu, 24 Oct 2024 14:17:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779472; cv=none; b=qPw6U5I3L+L1kf92qTwO+t+xm9lDXqAKifbBmbUlGw4cOEwt7+Rsut8GVEHERG8CVq8CswJNeBJq1t1/U9llSuWQcY4ebpTwCZkuUB7lgxo/xuSt29g+cylb32y+O+mB450qrUcfwpnceEnqdd90kb3eq3ox7+rjfrNkFsb65qA=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779472; c=relaxed/simple;
-	bh=4uD2k8h2vy1UgxcQ+HHmd+XNAwZMm6TvGvEVPby1hNs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=YSnwCd36FHGH7CMW3xrnDW0g2mkUEFktBocht6Jh21g/IXTJNrBeV8qm4P5e6HxIOlWtwtkJEr20fFXqPYbqObmemauwSHRW1IAAPsHqGXyiKkbfAW4DUCloTzNgNg3PoE4/SPRVxmF+MJdhqee3DZCruVznK7/+/TkmCPQ9zg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z+PJztDa; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D18BAC4CEC7;
-	Thu, 24 Oct 2024 14:17:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729779471;
-	bh=4uD2k8h2vy1UgxcQ+HHmd+XNAwZMm6TvGvEVPby1hNs=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=Z+PJztDa3DLJi8zczBtunJjYtTgbSB/pWYuOXBfkLIyw6TJiCAQ0WRq/AQHNYvMIO
-	 ypPUss6EbEuI+coFbJNqOQ7DB+SW8zeDyvxK1TRcGHKz3TKoE8rdW6wGUWGYFTZfzL
-	 pqbUZrnT461zBGjqAr82cZ5oVy50OPec5abANxSAzPIpWWUz5lKPIPkuWR2RcW+Ak/
-	 Lc6LA81PZMJ5+ZtTF2j46hgvE/ZCfmDp2TRENpjxGGbiUvUVIlIorJpIWJWxPb7jXl
-	 4P5XKju/mwmLSgkExTYhQYAm8xCA2feq6F05VCgttXD1PUf43IL0rqbydLFMxZfMKo
-	 QUgNloX/6Rwnw==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 04/43] arm64: RME: Handle Granule Protection Faults
- (GPFs)
-In-Reply-To: <20241004152804.72508-5-steven.price@arm.com>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-5-steven.price@arm.com>
-Date: Thu, 24 Oct 2024 19:47:41 +0530
-Message-ID: <yq5a8qudmvp6.fsf@kernel.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 201721DFEF;
+	Thu, 24 Oct 2024 14:18:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=pass smtp.client-ip=136.143.188.112
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729779542; cv=pass; b=C0iiMB04yppASZ8G5clA2Wit2OOC3eKEeRGcdKGHnfESe2AgI7ii6gk+s+9Y2NlenGOppBsV8ZX4izUOisSkgMhdu5nNrKgX12B4zQxC8RyybJp/8XM+xBPIfdezIes3BBCubhORbWB+CFpfNIKCu2hcGu5UQXEpyIHh5oWVIN0=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729779542; c=relaxed/simple;
+	bh=3NdYKUfySXxtD63reDBOJZ/wn7LGWiZOFW6xaI6sgqk=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=ugKcy4jgcjqeq6aESMzGuhbRDkB8cEW9pFD+W1sUT8azjheaQiAp1wSm1hODVVf2Fx7NBljqlwlfaMbKGo+5FuB9RBtv64M+EZM6rAXWGLnvzVPH+jIA1gG73v9MmIzPObiDwVF6H+0LVRXy+wW8nQwCK07U7MSiShYelhhX8KE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (1024-bit key) header.d=collabora.com header.i=daniel.almeida@collabora.com header.b=LAVL/a8W; arc=pass smtp.client-ip=136.143.188.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+ARC-Seal: i=1; a=rsa-sha256; t=1729779518; cv=none; 
+	d=zohomail.com; s=zohoarc; 
+	b=iH0XLxn2OeKqB/byCkNzIDWWI7vC7vaJkUTLjC6v1FvI/CYAUj/aHuh5T3bjgBfY4q2qAftQ58CBYWusRXc3EjqhJ7pwsfDQaNyGi+uLY6blRvrUo1Z8WLgxwD/tc4GrX/20Ibib0TIZytA0LHKQed8HwI50jlcLKLWoKVGfIjg=
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=zohomail.com; s=zohoarc; 
+	t=1729779518; h=Content-Type:Content-Transfer-Encoding:Cc:Cc:Date:Date:From:From:MIME-Version:Message-ID:Subject:Subject:To:To:Message-Id:Reply-To; 
+	bh=PF7cungfDRPFH9gPEK5GCjpDqQca8LfjysnH2xrJJnQ=; 
+	b=DF/1FxUZ3kJaMkRFBmgcAIFct0jamxQpsNqTSHt7Pa44ZaReqq2Gxx5JCLkV657TGpR+Go9goPoArzT+tPlSNfCTRNk8Np0V3kwGBFwj1gw76N6EWonpfzoLF2W6t223JoocnTlg/naEF2scS/JRJXWDOothRr9qt0575pu7KUo=
+ARC-Authentication-Results: i=1; mx.zohomail.com;
+	dkim=pass  header.i=collabora.com;
+	spf=pass  smtp.mailfrom=daniel.almeida@collabora.com;
+	dmarc=pass header.from=<daniel.almeida@collabora.com>
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; t=1729779518;
+	s=zohomail; d=collabora.com; i=daniel.almeida@collabora.com;
+	h=From:From:Date:Date:Subject:Subject:MIME-Version:Content-Type:Content-Transfer-Encoding:Message-Id:Message-Id:To:To:Cc:Cc:Reply-To;
+	bh=PF7cungfDRPFH9gPEK5GCjpDqQca8LfjysnH2xrJJnQ=;
+	b=LAVL/a8WOKRL5B8P5ZtLQJ756aErnpd6bmAq5/kHZhcFD+js0TW4MCu5lVSuVUXJ
+	nmbyOCy4mNNbr2NW6pQqh6h4F3UzqMZ9kilvr2nKkDgSVah+y13YFNM3XzMzqx02xSp
+	NYvsx6iC1aeP2rccfZesULzCA0qDcGsdpGJZCWvk=
+Received: by mx.zohomail.com with SMTPS id 1729779517170426.45219885642916;
+	Thu, 24 Oct 2024 07:18:37 -0700 (PDT)
+From: Daniel Almeida <daniel.almeida@collabora.com>
+Date: Thu, 24 Oct 2024 11:17:47 -0300
+Subject: [PATCH v2] rust: kernel: add support for bits/genmask macros
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-Id: <20241024-topic-panthor-rs-genmask-v2-1-85237c1f0cea@collabora.com>
+X-B4-Tracking: v=1; b=H4sIAApXGmcC/x3MQQrDIBBA0auEWWcg0ZRCrhKysHbUoURlJoRC8
+ O6VLt/i/xuUhElhHW4Quli55A4zDuCTy5GQ391gJrPMk7F4lsoeq8tnKoKiGCkfTj8Y3Ms/njZ
+ QWCz0vAoF/v7X297aD3shCoRqAAAA
+X-Change-ID: 20241023-topic-panthor-rs-genmask-fabc573fef43
+To: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+ Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+ =?utf-8?q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+ Benno Lossin <benno.lossin@proton.me>, 
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>, 
+ Trevor Gross <tmgross@umich.edu>
+Cc: linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org, 
+ Daniel Almeida <daniel.almeida@collabora.com>
+X-Mailer: b4 0.14.2
+X-ZohoMailClient: External
 
-Steven Price <steven.price@arm.com> writes:
+These macros are converted from their kernel equivalent.
 
-> If the host attempts to access granules that have been delegated for use
-> in a realm these accesses will be caught and will trigger a Granule
-> Protection Fault (GPF).
->
-> A fault during a page walk signals a bug in the kernel and is handled by
-> oopsing the kernel. A non-page walk fault could be caused by user space
-> having access to a page which has been delegated to the kernel and will
-> trigger a SIGBUS to allow debugging why user space is trying to access a
-> delegated page.
->
+---
+- Added ticks around `BIT`, and `h >=l` (Thanks, Benno).
+- Decided to keep the arguments as `expr`, as I see no issues with that
+- Added a proper example, with an assert_eq!() (Thanks, Benno)
+- Fixed the condition h <= l, which should be h >= l.
+- Checked that the assert for the condition above is described in the
+  docs.
 
-A non-page walk fault can also be caused by host kernel trying to access a
-page which it had delegated before. It would be nice to dump details
-like FAR in that case. Right now it shows only the below.
+Signed-off-by: Daniel Almeida <daniel.almeida@collabora.com>
+---
+ rust/kernel/bits.rs | 36 ++++++++++++++++++++++++++++++++++++
+ rust/kernel/lib.rs  |  1 +
+ 2 files changed, 37 insertions(+)
 
-[  285.122310] Internal error: Granule Protection Fault not on table walk: 0000000096000068 [#1] PREEMPT SMP               
-[  285.122427] Modules linked in:                                                                                                                                                
-[  285.122512] CPU: 1 UID: 0 PID: 217 Comm: kvm-vcpu-0 Not tainted 6.12.0-rc1-00082-g8461d8333829 #42
-[  285.122656] Hardware name: FVP Base RevC (DT)
-[  285.122733] pstate: 81400009 (Nzcv daif +PAN -UAO -TCO +DIT -SSBS BTYPE=--)
-[  285.122871] pc : clear_page+0x18/0x50
-[  285.122975] lr : kvm_gmem_get_pfn+0xbc/0x190
-[  285.123110] sp : ffff800082cef900
-[  285.123182] x29: ffff800082cef910 x28: 0000000090000000 x27: 0000000090000006
-.....
+diff --git a/rust/kernel/bits.rs b/rust/kernel/bits.rs
+new file mode 100644
+index 0000000000000000000000000000000000000000..479883984f995f6b44272fa4566a08f1c1e6b143
+--- /dev/null
++++ b/rust/kernel/bits.rs
+@@ -0,0 +1,36 @@
++// SPDX-License-Identifier: GPL-2.0
++
++//! Bit manipulation macros.
++//!
++//! C header: [`include/linux/bits.h`](srctree/include/linux/bits.h)
++
++/// Produces a literal where bit `n` is set.
++///
++/// Equivalent to the kernel's `BIT` macro.
++///
++#[macro_export]
++macro_rules! bit {
++    ($n:expr) => {
++        (1 << $n)
++    };
++}
++
++/// Create a contiguous bitmask starting at bit position `l` and ending at
++/// position `h`, where `h >= l`.
++///
++/// # Examples
++/// ```
++///     use kernel::genmask;
++///     let mask = genmask!(39, 21);
++///     assert_eq!(mask, 0x000000ffffe00000);
++/// ```
++///
++#[macro_export]
++macro_rules! genmask {
++    ($h:expr, $l:expr) => {{
++        const _: () = {
++            assert!($h >= $l);
++        };
++        ((!0u64 - (1u64 << $l) + 1) & (!0u64 >> (64 - 1 - $h)))
++    }};
++}
+diff --git a/rust/kernel/lib.rs b/rust/kernel/lib.rs
+index b5f4b3ce6b48203507f89bcc4b0bf7b076be6247..4f256941ac8fbd1263d5c014a0ce2f5ffb9d1849 100644
+--- a/rust/kernel/lib.rs
++++ b/rust/kernel/lib.rs
+@@ -27,6 +27,7 @@
+ extern crate self as kernel;
+ 
+ pub mod alloc;
++pub mod bits;
+ #[cfg(CONFIG_BLOCK)]
+ pub mod block;
+ mod build_assert;
 
--aneesh
+---
+base-commit: 91e21479c81dd4e9e22a78d7446f92f6b96a7284
+change-id: 20241023-topic-panthor-rs-genmask-fabc573fef43
 
->
-> Signed-off-by: Steven Price <steven.price@arm.com>
-> ---
-> Changes since v2:
->  * Include missing "Granule Protection Fault at level -1"
-> ---
->  arch/arm64/mm/fault.c | 31 +++++++++++++++++++++++++------
->  1 file changed, 25 insertions(+), 6 deletions(-)
->
-> diff --git a/arch/arm64/mm/fault.c b/arch/arm64/mm/fault.c
-> index 8b281cf308b3..f9d72a936d48 100644
-> --- a/arch/arm64/mm/fault.c
-> +++ b/arch/arm64/mm/fault.c
-> @@ -804,6 +804,25 @@ static int do_tag_check_fault(unsigned long far, unsigned long esr,
->  	return 0;
->  }
->  
-> +static int do_gpf_ptw(unsigned long far, unsigned long esr, struct pt_regs *regs)
-> +{
-> +	const struct fault_info *inf = esr_to_fault_info(esr);
-> +
-> +	die_kernel_fault(inf->name, far, esr, regs);
-> +	return 0;
-> +}
-> +
-> +static int do_gpf(unsigned long far, unsigned long esr, struct pt_regs *regs)
-> +{
-> +	const struct fault_info *inf = esr_to_fault_info(esr);
-> +
-> +	if (!is_el1_instruction_abort(esr) && fixup_exception(regs))
-> +		return 0;
-> +
-> +	arm64_notify_die(inf->name, regs, inf->sig, inf->code, far, esr);
-> +	return 0;
-> +}
-> +
->  static const struct fault_info fault_info[] = {
->  	{ do_bad,		SIGKILL, SI_KERNEL,	"ttbr address size fault"	},
->  	{ do_bad,		SIGKILL, SI_KERNEL,	"level 1 address size fault"	},
-> @@ -840,12 +859,12 @@ static const struct fault_info fault_info[] = {
->  	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 32"			},
->  	{ do_alignment_fault,	SIGBUS,  BUS_ADRALN,	"alignment fault"		},
->  	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 34"			},
-> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 35"			},
-> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 36"			},
-> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 37"			},
-> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 38"			},
-> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 39"			},
-> -	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 40"			},
-> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level -1" },
-> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 0" },
-> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 1" },
-> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 2" },
-> +	{ do_gpf_ptw,		SIGKILL, SI_KERNEL,	"Granule Protection Fault at level 3" },
-> +	{ do_gpf,		SIGBUS,  SI_KERNEL,	"Granule Protection Fault not on table walk" },
->  	{ do_bad,		SIGKILL, SI_KERNEL,	"level -1 address size fault"	},
->  	{ do_bad,		SIGKILL, SI_KERNEL,	"unknown 42"			},
->  	{ do_translation_fault,	SIGSEGV, SEGV_MAPERR,	"level -1 translation fault"	},
-> -- 
-> 2.34.1
+Best regards,
+-- 
+Daniel Almeida <daniel.almeida@collabora.com>
+
 
