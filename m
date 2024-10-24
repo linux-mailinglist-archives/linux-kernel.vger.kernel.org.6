@@ -1,94 +1,125 @@
-Return-Path: <linux-kernel+bounces-379144-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379145-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 716B89ADAA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:46:11 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BCA869ADAAA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:48:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9659A1C218CF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:46:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0013A1F223AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:48:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB57A16087B;
-	Thu, 24 Oct 2024 03:46:02 +0000 (UTC)
-Received: from szxga08-in.huawei.com (szxga08-in.huawei.com [45.249.212.255])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D624E14F9FF;
+	Thu, 24 Oct 2024 03:48:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="1Xr5eGCm"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 59D012FC52;
-	Thu, 24 Oct 2024 03:46:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.255
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 36DCC1EB3D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:48:27 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729741562; cv=none; b=VlJj2akSAg9DHrnVf3zwykU0CzNIRNNr+enZuea9VugKxjORXMSe+m1vY7ZZhdTKH5QCIRf+QqTsgQYrTLF8hzdgq9IL2wqH2WgX4ic/35drWANhHNdauOSd6EBfXn90Tjy33bRYw1Ay0vSr5Fnftpo2oyLCCffLujJLW/6yIhc=
+	t=1729741710; cv=none; b=NdQr2RYnpL2eJLK1ZPrHt6YotmZmG+f+b3bZMr3c5ERQ1ixQstmSWG1mGXdXo28NqfGc1X3RTJPojZCRRPN9UUyFhtfBvcMZbE7VAlGH2agdjnWX09oOA3tXOJstSVRRfhllY98CtqOuRyzGfUH5QjATfprOYTrF4ssTuKXcNZc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729741562; c=relaxed/simple;
-	bh=quzQhG4z+ZyJcahn0vyg7NrJ+kjdlMP2EyludXd4Oxs=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=NMGMhd08JT+hjQsbm4PkQA8j2Rx016cH1AuIXMtEvNx9qvRyigtthJZAhuocMQ+JT6Zu61hRq9nfUFmC2rPXbfku3sTLRf1/VgULNN78nwMF8yeK9B20Qt9mUI/70K/mkSTLXR3OMZYLJr4QD3JNxJDvcnUFw6ytb6TuA6T6qhk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.255
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.252])
-	by szxga08-in.huawei.com (SkyGuard) with ESMTP id 4XYsGL5x3yz1T98J;
-	Thu, 24 Oct 2024 11:43:54 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 5EEF11800E2;
-	Thu, 24 Oct 2024 11:45:57 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Oct 2024 11:45:56 +0800
-Message-ID: <891519a9-9635-4a6f-804a-5b4c0d7637d9@huawei.com>
-Date: Thu, 24 Oct 2024 11:45:55 +0800
+	s=arc-20240116; t=1729741710; c=relaxed/simple;
+	bh=1CvqezbjtLAS+6KXjxvmiUpLjGeozuPDiudCSgW6fIk=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=jblx7G6BcCSAXGsDxYPzVE0McedLq9/hkRwDRt0kPqZmlDxAQwSh+Oy2rbnqEkH3uml/fRJND+sngv3kQqPuNG+Jo1enJbouS0XWb4rFCBTR+dEIGEdSR/CRXq2RG1VQCLzkmNlDCjs/0KMEAXnRvSlPl6012fwzVhJxuv/60FI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=1Xr5eGCm; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315a8cff85so73095e9.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:48:27 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729741706; x=1730346506; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=1CvqezbjtLAS+6KXjxvmiUpLjGeozuPDiudCSgW6fIk=;
+        b=1Xr5eGCmOYHRXRxDk+cuNGkCcX3YacKZnS58HCSUqzfHfVlb0NX8hSp3xneUh2TS1P
+         sdnvzrgtDCXGvtMnU/OkLKd+o1E0ZprULlj29zdqwNrvR3Hws3NaFnb97wuO6td6dWoN
+         jO7jnp83tkAe5d/uEm0oQ9jUVjYoFvfXpaTA94SIZ+WydAiyZ8IMxJP1Gyt3C2ivORWq
+         d1JRniOV7aE/p1eBP+9hT1cnvQl7/b9nWX53L7492B76LmUTWapXDASYU+3WBj5AyCFh
+         iWkfR5Zi7rfXRL6eX2OvdooJRlSkOOV8LEjMntTHAccXO6Op3YUzPaCtxKJWd0LZVj9M
+         /rag==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729741706; x=1730346506;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=1CvqezbjtLAS+6KXjxvmiUpLjGeozuPDiudCSgW6fIk=;
+        b=uN0fAQER+0hUgDua5j7LjlPg36HAauqMdci9WDcdazF43B6Qyk+Kwphrtw18rW7dQ6
+         xFDhX7MmHS0M2GXuCGOZLHNsyd42m42QO6JoUPfvvirCqPE0KSrX9DQs1ChEmuWTewRR
+         3Y8jVsmbF055xyjnzfc0VKh01XtglQyQzBoDiiRHAxv4Y3MOyg768dplmTYeqjwQuDEB
+         I1JCwEXWhSz2F+Gg/Y/Pmte7OLG5tSrLcl2nlBPi8ZUp9ZcBa8KDHDVjm9S3moEt+Sjm
+         95bizacf4gTsS+9i8QQ1zTwKey4ASbBQGiTKdPFphDhJZPBajCmXTOpfJd87yTRAE6P7
+         Ay2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXsPzXJgDT6RnJoVHF4de2Ei8WJe0rbetUyAZJ3wK3OTfELui+AxFvx1jJRGk2sz2UIrkTkbFnoHlQmiGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyRrm7kLyplzSKXKKt2aU6SpRoo9cRsB8GiWf/tLQXRHq9xELLL
+	LIRtJioIEBzgpgyC1UiED4ZUMs7dsD8apWi+8RJ5KsTsjHpHkTFXzobR5XzMqEUvPy0hBHlN8KU
+	xas4AGML/kwv4aBmnPweobGXlVGLpkfcLz9RK
+X-Google-Smtp-Source: AGHT+IF9JWZBmC4S8twm4VJqy1d9rMJ/zqWLyl8L26tju15cSckHb6GXisfjunNbteEdpKPUf9rmK1A3QeJ13eKcWsU=
+X-Received: by 2002:a05:600c:1e24:b0:431:3baa:2508 with SMTP id
+ 5b1f17b1804b1-4318afc6f77mr1647455e9.3.1729741706337; Wed, 23 Oct 2024
+ 20:48:26 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 5/7] net: hibmcge: Add pauseparam supported in
- this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20241023134213.3359092-1-shaojijie@huawei.com>
- <20241023134213.3359092-6-shaojijie@huawei.com>
- <ea2caab1-1bf9-47b3-96a8-6c1c92fbc83b@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <ea2caab1-1bf9-47b3-96a8-6c1c92fbc83b@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+References: <20241023170759.999909-1-surenb@google.com> <20241023170759.999909-7-surenb@google.com>
+ <CA+CK2bBzZDdVN66qK4UQ4jpDuAABu89S3mVNbJipaJjL3bcg4w@mail.gmail.com>
+In-Reply-To: <CA+CK2bBzZDdVN66qK4UQ4jpDuAABu89S3mVNbJipaJjL3bcg4w@mail.gmail.com>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Wed, 23 Oct 2024 20:48:11 -0700
+Message-ID: <CAJuCfpHFLeYb2Za42=Yp-SxWK-cO-A3N-cOiEY9VV3XUp9kEYA@mail.gmail.com>
+Subject: Re: [PATCH v4 6/6] alloc_tag: support for page allocation tag compression
+To: Pasha Tatashin <pasha.tatashin@soleen.com>
+Cc: akpm@linux-foundation.org, kent.overstreet@linux.dev, corbet@lwn.net, 
+	arnd@arndb.de, mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, 
+	thuth@redhat.com, tglx@linutronix.de, bp@alien8.de, 
+	xiongwei.song@windriver.com, ardb@kernel.org, david@redhat.com, 
+	vbabka@suse.cz, mhocko@suse.com, hannes@cmpxchg.org, roman.gushchin@linux.dev, 
+	dave@stgolabs.net, willy@infradead.org, liam.howlett@oracle.com, 
+	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
+	jhubbard@nvidia.com, urezki@gmail.com, hch@infradead.org, petr.pavlu@suse.com, 
+	samitolvanen@google.com, da.gomez@samsung.com, yuzhao@google.com, 
+	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
+	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
+	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
+	maple-tree@lists.infradead.org, linux-modules@vger.kernel.org, 
+	kernel-team@android.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 23, 2024 at 11:30=E2=80=AFAM Pasha Tatashin
+<pasha.tatashin@soleen.com> wrote:
+>
+> On Wed, Oct 23, 2024 at 1:08=E2=80=AFPM Suren Baghdasaryan <surenb@google=
+.com> wrote:
+> >
+> > Implement support for storing page allocation tag references directly
+> > in the page flags instead of page extensions. sysctl.vm.mem_profiling
+> > boot parameter it extended to provide a way for a user to request this
+> > mode. Enabling compression eliminates memory overhead caused by page_ex=
+t
+> > and results in better performance for page allocations. However this
+> > mode will not work if the number of available page flag bits is
+> > insufficient to address all kernel allocations. Such condition can
+> > happen during boot or when loading a module. If this condition is
+> > detected, memory allocation profiling gets disabled with an appropriate
+> > warning. By default compression mode is disabled.
+> >
+> > Signed-off-by: Suren Baghdasaryan <surenb@google.com>
+>
+> Thank you very much Suren for doing this work. This is a very
+> significant improvement for the fleet users.
+>
+> Reviewed-by: Pasha Tatashin <pasha.tatashin@soleen.com>
 
-on 2024/10/23 22:15, Andrew Lunn wrote:
->> +static int hbg_ethtool_set_pauseparam(struct net_device *net_dev,
->> +				      struct ethtool_pauseparam *param)
->> +{
->> +	struct hbg_priv *priv = netdev_priv(net_dev);
->> +
->> +	if (param->autoneg) {
->> +		netdev_err(net_dev, "autoneg unsupported\n");
->> +		return -EOPNOTSUPP;
->> +	}
-> Not being able to do it is not an error, so there is no need for the
-> netdev_err().
-
-Ok, Thanks!
-
->
->
->      Andrew
->
-> ---
-> pw-bot: cr
->
+Thank you for the reviews and I'm glad it's useful for others as well!
 
