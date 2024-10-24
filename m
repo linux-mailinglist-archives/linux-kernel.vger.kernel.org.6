@@ -1,138 +1,143 @@
-Return-Path: <linux-kernel+bounces-380585-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380587-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 053109AF302
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:54:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B50329AF306
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:55:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 425C31F203F8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:54:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C50B1F240BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 418931A3A95;
-	Thu, 24 Oct 2024 19:54:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2421919CC09;
+	Thu, 24 Oct 2024 19:55:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CX7HvxN1"
-Received: from mail-lf1-f47.google.com (mail-lf1-f47.google.com [209.85.167.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kc2T1nGB"
+Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AFA8022B656
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:54:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5053017333D;
+	Thu, 24 Oct 2024 19:55:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799685; cv=none; b=c9RzNhgWTHpa1ufwkhm5uiVi2uPCpw/EetjsfR5guJxbfH+hrTQVaFpb60i0Ey+0HbrGiJldQU/KMNCnqkLk7tSNia/ZdS0UHjg9L+5SV0UXY2fS3f7D5ExqMzqmD/4kN8H4WqUeL4TmimvhhUATJimtaBCK+18vsqItNZcT1nU=
+	t=1729799725; cv=none; b=GekGZ8OmnSCEpzHE15iYvRefefiMndtWFhYQAkFZFeZOtUUykdtKVYQgPE5leTUD3ZdEo+CcG9t00Gbx+f9nXHQVKo4jtWS/tHHHjyQSYNfguetNDANVdtpoyPbPhZJOi+17ri4BiG7qlZUy93WGZz/OD0uwBBvhyMAFlVpgsOw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799685; c=relaxed/simple;
-	bh=mBZVdaWmerYGu5zd0okFXPgWZf+reUFWzKXCr66i1i0=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=ouMlFI4Z4W0ntKFAAk9/KDUlUZr9ZdBeuM51p1q67Zr+FWeNDorUNFsx55kDNKNwtASZkvDA5JF2ozEBGwiAn9RZ14hVshoeD3117BBUSZ0zJkLzt7JybFKbSsuQ4g1FElq3ospMqqI1Dxv3+bGV/yvCdA/DNCi4tyaDNq1Jx6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CX7HvxN1; arc=none smtp.client-ip=209.85.167.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f47.google.com with SMTP id 2adb3069b0e04-539f4d8ef84so1730063e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:54:43 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729799682; x=1730404482; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=1zIT1YGRsvT+pkeL01RKiL9RGgd9T2ZXW6c6w2M5TMA=;
-        b=CX7HvxN1Rcnb0nN5sPfcy56iFEIM4VlRSTSkuhZTs57VFQ2Nut+t1Dsg5jKVRPcdzu
-         KsE0jRWpoRMUjhnq0l9wEjwUQf3YyAz4qg7s/CWsoyBBmWCmvFHVs+HqJML1OGj0nGYJ
-         ctNHFbpWsBUSxKYMAEeZdydzREhyUj3LW3T3UaPrP7shvHQVlbjQsJdzztkmjqIl+fmV
-         gOkdDb1ajU51BlWRnMDMvv8pwcUqMAMoJibaVzxRzoTDjrcgmRo/mgqsv9Z4Ko3VcAAC
-         3miXkgnlWCnRRYKaWio3Ge9RD07iKNaPpEY2FMRiYDLIPTxqopsHeNAelStywaB8Grau
-         y4CA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729799682; x=1730404482;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=1zIT1YGRsvT+pkeL01RKiL9RGgd9T2ZXW6c6w2M5TMA=;
-        b=q3Uv/KtAQzRVEIN12WD7IYy5s/ldto4esqOIgP5YUgKq79KPOgONFxR2v+d195Qyd5
-         hHeeUGR4FHWY5faOZklcrCqv2BFU2F6I0x01PxzXCzZ0qrVflbfuNqh7ruBQm7+ao7jD
-         QOAuA+XPaNlD+U+1CC5EvJCH7atYetbpQDV40uj8DxY043MCuuNPqgGVt5uixdFkVJAc
-         H2Lse2Wk/qUgPdbhYtQL7eueV8PzY3+XghcfXqW6uMPf73ANLniEyx68Y8omHj003vFn
-         r69ZD53O6FoAPK35xR5F+/cAJIcGNm2G8LrxCW/oT6iWb3TLroBPjktlNP0waagD7j4Y
-         lTFA==
-X-Forwarded-Encrypted: i=1; AJvYcCU6gOWMEaWmvZ6xulrC5ur+0qw6JFHclXCSAE3pkfQZWlsRshC1AdmZT7SsZBsvcQmqEZqHgNWOU8VqFJQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwdKHAccOe3aMN4xBiInWzhb1KJqRwyg7EG9iZLV/GqnGQqzMW9
-	Foge1SfS/+iRpdBDXGBHLq53uyTtPoKQ2kkMivyoOw8qfZ3nMh01Hg8wUIDXCCo=
-X-Google-Smtp-Source: AGHT+IFalx0QZeZZilEqjiYctekRgtIKVNVU9HQYnnJfAhQXhHZ9ry82TcwqGxCi1zyluqe8Zd8wgw==
-X-Received: by 2002:a05:6512:131e:b0:539:e85c:c888 with SMTP id 2adb3069b0e04-53b1a38d185mr4425601e87.40.1729799681711;
-        Thu, 24 Oct 2024 12:54:41 -0700 (PDT)
-Received: from eriador.lan (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a224403f1sm1450014e87.282.2024.10.24.12.54.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 12:54:40 -0700 (PDT)
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Andrzej Hajda <andrzej.hajda@intel.com>,
-	Neil Armstrong <neil.armstrong@linaro.org>,
-	Robert Foss <rfoss@kernel.org>,
-	Laurent Pinchart <Laurent.pinchart@ideasonboard.com>,
-	Jonas Karlman <jonas@kwiboo.se>,
-	Jernej Skrabec <jernej.skrabec@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	Maxime Ripard <mripard@kernel.org>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Simona Vetter <simona@ffwll.ch>,
-	Rob Clark <robdclark@gmail.com>,
-	Abhinav Kumar <quic_abhinavk@quicinc.com>,
-	Sean Paul <sean@poorly.run>,
-	Marijn Suijten <marijn.suijten@somainline.org>,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-arm-msm@vger.kernel.org,
-	freedreno@lists.freedesktop.org,
-	Alexander Stein <alexander.stein@ew.tq-group.com>
-Subject: Re: [PATCH 0/6] drm/bridge: add ycbcr_420_allowed support
-Date: Thu, 24 Oct 2024 22:54:38 +0300
-Message-ID: <172979967003.2997922.5344167060572719601.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
-References: <20241019-bridge-yuv420-v1-0-d74efac9e4e6@linaro.org>
+	s=arc-20240116; t=1729799725; c=relaxed/simple;
+	bh=+DMNl5qULG9FzRvzLgVcNxfhnGStCnO2VwdaRMuh1fY=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=pK+/mJM52k+0274oxuVDPI9V5MP3+hfRBhcjfftRd93yjmFCRdkHsDaIo5t5bsq34mqS5jFM725YFeuwGt9NsAD61EAoUXHzLeqdwc9J8y5J5ID2AlJ+AQ466tLg7h6e3HmfktL0LYpdW6YtKk+dPFwX7QB2XVabLaoken+OUo4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kc2T1nGB; arc=none smtp.client-ip=178.60.130.6
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
+	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
+	Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
+	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
+	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
+	List-Post:List-Owner:List-Archive;
+	bh=ZHYWgrJ/utlUa68DupieJ4xEvMacDX1gfqRqVZ7XE6M=; b=kc2T1nGB47lYWskaB51rcPaXbe
+	hkUzwzP6MFpiLhqLuJwZ18qiMRuJJvhV7WuYUN94RpK6KzFO0Mq2c4lmLXDbtzD/JwdgpPKCRvHvh
+	aOlvXwRQVVLziz7zN554S69Pif2Y1q7cGqgv+UiInw+71YWrBLfxBvh5dCbjdXOQVlkIBd1JniiKK
+	Om35rxAfnQV9i2cEjuoxHC8qhm4QfXQhlqJV6mwKte2xnpXMS95OEERU5medVK6UiyV4+aHqHdrcc
+	1ENu7F88dUVSsKN1BQGP/EPZyyJVFb1WUzjzZwZ5+WOULFhtQLDUpJAzsU8XOBOKtfXpUQ4jlMUi+
+	FpvHXwqA==;
+Received: from [177.172.124.83] (helo=[192.168.15.100])
+	by fanzine2.igalia.com with esmtpsa 
+	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
+	id 1t43vJ-00EdfN-1Q; Thu, 24 Oct 2024 21:55:09 +0200
+Message-ID: <59509fc9-1a19-4162-ac89-559e08b75c06@igalia.com>
+Date: Thu, 24 Oct 2024 16:55:03 -0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/1] futex: Create set_robust_list2
+From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
+To: Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Darren Hart <dvhart@infradead.org>,
+ Peter Zijlstra <peterz@infradead.org>, sonicadvance1@gmail.com,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ linux-api@vger.kernel.org
+References: <20241024145735.162090-1-andrealmeid@igalia.com>
+ <20241024145735.162090-2-andrealmeid@igalia.com>
+ <bde852ec-8e2f-4957-9368-00d8e5a422c4@app.fastmail.com>
+ <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
+Content-Language: en-US
+In-Reply-To: <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-On Sat, 19 Oct 2024 00:49:11 +0300, Dmitry Baryshkov wrote:
-> One of the features that drm_bridge_connector can't handle currently is
-> setting of the ycbcr_420_allowed flag on the connector. Add the flag to
-> the drm_bridge struct and propagate it to the drm_connector as AND of
-> all flags in the bridge chain.
+Em 24/10/2024 15:03, André Almeida escreveu:
+> Hi Arnd,
 > 
-> As an example of the conversion, enable the flag on the DW HDMI bridge,
-> MSM DP bridge, display connector drivers (for DisplayPort and HDMI
-> outputs) and AUX bridges.
+> Em 24/10/2024 12:57, Arnd Bergmann escreveu:
+>> On Thu, Oct 24, 2024, at 14:57, André Almeida wrote:
+>>> This new syscall allows to set multiple list to the same process. There
+>>> are two list types: 32 and 64 bit lists.
+>>>
+
+[...]
+
+>>> +    if (unlikely(!list_empty(list2))) {
+>>> +        list_for_each_entry_safe(curr, n, list2, list) {
+>>> +            if (curr->head != NULL) {
+>>> +                if (curr->list_type == ROBUST_LIST_64BIT)
+>>> +                    exit_robust_list(tsk, curr->head);
+>>> +                else if (curr->list_type == ROBUST_LIST_32BIT)
+>>> +                    compat_exit_robust_list(tsk, curr->head);
+>>> +                curr->head = NULL;
+>>> +            }
+>>
+>> This looks like the behavior of a 32-bit task using
+>> ROBUST_LIST_64BIT is different on native 32-bit kernels
+>> compared to running on compat mode.
+>>
+>> Assuming we want them to behave the same way, did you intend
+>> ROBUST_LIST_64BIT to refer to 64-bit pointers on 32-bit
+>> tasks, or should they use normal word-size pointers?
 > 
-> [...]
+> Oh right, I haven't covered that indeed. I think I would need to have 
+> something like:
+> 
+> static void exit_robust_list_64()
+> static void exit_robust_list_32()
+> 
+> And then each function would use explicit sizes for pointers. Also, I 
+> would rewrite the conditions to make that every combination of 64/32bit 
+> kernel/app calls the appropriated function.
 
-Applied to drm-misc-next, thanks!
+Something like this:
 
-[1/6] drm/display: bridge_connector: handle ycbcr_420_allowed
-      commit: 3ced1c68751299c0cdf6a1ceeafdbe77db7d4956
-[2/6] drm/atomic: add interlaced and ycbcr_420 flags to connector's state dump
-      commit: 58e6d652d138ef163d0b6b4d19f0fc9d4e8519fa
-[3/6] drm/bridge: display-connector: allow YCbCr 420 for HDMI and DP
-      commit: d5cd8280c52bad44d5943fa7501bf9f20718d432
-[4/6] drm/bridge: aux: allow interlaced and YCbCr 420 output
-      commit: c44a0faf5397134b3100c00cc8a8d72528bc422a
-[5/6] drm/msm/dp: migrate the ycbcr_420_allowed to drm_bridge
-      commit: 785324db2d7a44e866161b6309fbda9a2178d455
-[6/6] drm/bridge: dw-hdmi: set bridge's ycbcr_420_allowed flag
-      commit: 8a8fed657d0427f6765a48c93152a8d86cfe613c
+#ifdef CONFIG_64BIT
+	if (unlikely(tsk->robust_list)) {
+		exit_robust_list_64bit(tsk, tsk->robust_list);
+		tsk->robust_list = NULL;
+	}
+#else
+	if (unlikely(tsk->robust_list)) {
+		exit_robust_list_32bit(tsk, tsk->robust_list);
+		tsk->robust_list = NULL;
+	}
+#endif
 
-Best regards,
--- 
-With best wishes
-Dmitry
+#ifdef CONFIG_COMPAT
+	if (unlikely(tsk->compat_robust_list)) {
+		exit_robust_32bit(tsk, tsk->compat_robust_list);
+		tsk->compat_robust_list = NULL;
+	}
+#endif
+
+	/* Simplified */
+	list_for_each_entry_safe(curr, n, list2, list) {
+		if (curr->list_type == ROBUST_LIST_64BIT)
+			exit_robust_list_64bit(tsk, curr->head);
+		else if (curr->list_type == ROBUST_LIST_32BIT)
+			exit_robust_list_32bit(tsk, curr->head);
+	}
 
 
