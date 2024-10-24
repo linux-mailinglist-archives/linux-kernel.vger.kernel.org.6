@@ -1,133 +1,179 @@
-Return-Path: <linux-kernel+bounces-380434-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380435-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 65B9A9AEE86
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:23 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CB39AEE87
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2119B2380F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:47:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7D41C22F37
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDCA2003A6;
-	Thu, 24 Oct 2024 17:46:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRwu/kVj"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5D1FC7F2;
+	Thu, 24 Oct 2024 17:47:38 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C011E1FC7F2;
-	Thu, 24 Oct 2024 17:46:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4681EF958
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:47:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792010; cv=none; b=Z6jqXldqq6UhS0IBMiKR/ZOFj+mhK0Z2U9VGJUG9pK+jnKE0oBBexuGYrCUNb0vLN42iJQfAfFFva/r/nsUGva3+IE293CxOiPnX5e00VE/s8oRemLP47U9ru6ALN2ftDXh74b8hihpAK9HBxyW6vk5bI9mXyIsKgjCZkfV5uJ8=
+	t=1729792057; cv=none; b=DpUil1ym0UthHe31kY+jcnzzeEk6orOWKDC38WuOFVDmTC9NCU3zxv3Ah8Rf41M3B38XomaRpa2RfuZytucAXpvYo8Hq3tD/9zpwMU8vIgQIaEItjh2Fmr3xwpkd2ByAi/IhGU4q6UlenciKxJI5o3FTmQkRRU+iAgpx7pIpzuk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792010; c=relaxed/simple;
-	bh=UugEXA+hKGT0SIXPq6iPiE2aXDLoum/5sIjmSbSh8Bw=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition:In-Reply-To; b=BLfuCyVRpjh5o5bjMJn0iOw/CEECZJh8Mx839czmj4Ta8XYaJ2CTnP2+RSv0Onc8SbXQuQyFgRjVYEOFLyWPuRdCj4PoukqVvCiyR7/JNF7qptbzvnHb0RmHed0SNmKrMB66sXH7I/BHZMl2KQdomFDGIbjWhPcWrbYkMuRCfOw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRwu/kVj; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA04C4CEE5;
-	Thu, 24 Oct 2024 17:46:49 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729792010;
-	bh=UugEXA+hKGT0SIXPq6iPiE2aXDLoum/5sIjmSbSh8Bw=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:From;
-	b=RRwu/kVjJckgvZRc7yr26KXyzMTozeyIzV6DX/j6pLBrq0F643UBta2Ce4eWftBvk
-	 vFoJAKuDIztTXUjIrBIQt0tZWWzwIcAfY++nBjhtYW+x0YrxgwjRF5JHFR0+dEc1Wd
-	 XFGwzScxPa9ruErNkfycwj+FSaXaQgtQA9ORojAT6XTf1dZKmze1y1l8Q6dD6QTKS+
-	 F6nHlH6zPb1kjfrUt8T5tup1uuZhDO1QAFHjRELs4Rw9JdXdpfrjpcSq4njkhDRxcS
-	 uGxaWjjxOda7VIi/PQnIGf7QQr09UmtcsE1kmQLl9U6sCgvfjrEn5BRSDTaNxbc31P
-	 hENPIaqZZC+Uw==
-Date: Thu, 24 Oct 2024 12:46:47 -0500
-From: Bjorn Helgaas <helgaas@kernel.org>
-To: Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
-	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
-	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
-	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
-	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
-	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
-	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
-Subject: Re: [PATCH 00/16] AMD NB and SMN rework
-Message-ID: <20241024174647.GA964607@bhelgaas>
+	s=arc-20240116; t=1729792057; c=relaxed/simple;
+	bh=DAPJ0yduV5m4meMBXem5mEQjGv+LHoa0QciyPfI1vVw=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nh7+pG5I+pbgmtuzfOKDRp3w/Spcf4iBwqPhm9gAU+lNQ9DRNlkPWyey/zTiT/y6j60JSD/XrMl9VUldM8eidzqUN0vu+RFZ5bzAWhTz2WFpwWZaWENcP2rENJ4/e1X5yH0p7E1q76XuTbri0rNShWLOdSHxq29d8Eg+DYP2HMs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so13207325ab.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:47:34 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729792054; x=1730396854;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Q302cqA2GtT9etQ40qs/8NVemKQh30PtxyBrh1rV1Mw=;
+        b=ndh+L9I8rQbvGZHVZUJ+rE1UPXMKXQS0W+Rme8s29WNPfGoXvl8GiSNLVoiIHC95ys
+         4W3Vlfu1oss6H8kf5c1vQ9CEmBqSNz80lKZo11hL3xoFBmQbKUndyqy23HpMBXANVsC7
+         LOHSTruDAmY0TlV40aUyYJBB37VgazhNmtDJuWE0LjyDc5kAZvebJ7kDb0QEIgqAM+i1
+         25XyPZDoJV1QPhWEk0V9B66aZbRk24JFcq7hy1HZZWmXH2T1WbYk9LohcIzTpARu6pvL
+         7q/M8f8Jk4KX6n+jK30u4ugS4PQ3MQesQGANflLgIcG7kJShMhd8/CFjJvLromSXyU4n
+         EHiw==
+X-Forwarded-Encrypted: i=1; AJvYcCWUlY8IWIPrX9jTtoB2WaI2dvpa00ilDpqhbcAHia4W01Z8odrezidOkydhw032AgEJpwQd72h47Q7Oq80=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxSOMG5ms9W8AHwmj6kvofRESj2KlBQc8nEz3peMeeQCg6X1Qnh
+	MMKcitqNFLSmL2Yg4QYC3BoJikWG/d7cVjwMth13OVCyaC60x3qImtc/DaYiEIE2oi2wjcRNr+N
+	CKICQchZc+HsqAoyg2i9IjFmFpRQoXG/C52kN9xGGNS3DkWHkgSwUs5k=
+X-Google-Smtp-Source: AGHT+IHqqgxrt3rQuAv8IHLa2srQkydZFrX8kQbEkCr60+ySDeT89XWhE1CkBiJnk4ccdHNoPNnOAq9/hvaxUNWnMBKyBNNtfSkz
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024160159.GB965@yaz-khff2.amd.com>
+X-Received: by 2002:a05:6e02:152c:b0:3a0:985b:ddb4 with SMTP id
+ e9e14a558f8ab-3a4de7825fbmr32685445ab.2.1729792052645; Thu, 24 Oct 2024
+ 10:47:32 -0700 (PDT)
+Date: Thu, 24 Oct 2024 10:47:32 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671a8834.050a0220.2eb763.00c5.GAE@google.com>
+Subject: [syzbot] [bcachefs?] kernel BUG in bch2_run_recovery_pass
+From: syzbot <syzbot+a27c3aaa3640dd3e1dfb@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Thu, Oct 24, 2024 at 12:01:59PM -0400, Yazen Ghannam wrote:
-> On Wed, Oct 23, 2024 at 12:59:28PM -0500, Bjorn Helgaas wrote:
-> > On Wed, Oct 23, 2024 at 05:21:34PM +0000, Yazen Ghannam wrote:
-> > > Hi all,
-> > > 
-> > > The theme of this set is decoupling the "AMD node" concept from the
-> > > legacy northbridge support.
-> > > 
-> > > Additionally, AMD System Management Network (SMN) access code is
-> > > decoupled and expanded too.
-> > > 
-> > > Patches 1-3 begin reducing the scope of AMD_NB.
-> > > 
-> > > Patches 4-9 begin moving generic AMD node support out of AMD_NB.
-> > > 
-> > > Patches 10-13 move SMN support out of AMD_NB and do some refactoring.
-> > > 
-> > > Patch 14 has HSMP reuse SMN functionality.
-> > > 
-> > > Patches 15-16 address userspace access to SMN.
-> > > 
-> > > I say "begin" above because there is more to do here. Ultimately, AMD_NB
-> > > should only be needed for code used on legacy systems with northbridges.
-> > > Also, any and all SMN users in the kernel need to be updated to use the
-> > > central SMN code. Local solutions should be avoided.
-> > 
-> > Glad to see many of the PCI device IDs going away; thanks for working
-> > on that!
-> > 
-> > The use of pci_get_slot() and pci_get_domain_bus_and_slot() is not
-> > ideal since all those pci_get_*() interfaces are kind of ugly in my
-> > opinion, and using them means we have to encode topology details in
-> > the kernel.  But this still seems like a big improvement.
-> 
-> Thanks for the feedback. Hopefully, we'll come to some improved
-> solution. :)
-> 
-> Can you please elaborate on your concern? Is it about saying "thing X is
-> always at SBDF A:B:C.D" or something else?
+Hello,
 
-"Thing X is always at SBDF A:B:C.D" is one big reason.  "A:B:C.D" says
-nothing about the actual functionality of the device.  A PCI
-Vendor/Device ID or a PNP ID identifies the device programming model
-independent of its geographical location.  Inferring the functionality
-and programming model from the location is a maintenance issue because
-hardware may change the address.
+syzbot found the following issue on:
 
-PCI bus numbers are under software control, so in general it's not
-safe to rely on them, although in this case these devices are probably
-on root buses where the bus number is either fixed or determined by
-BIOS configuration of the host bridge.
+HEAD commit:    715ca9dd687f Merge tag 'io_uring-6.12-20241019' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=15afa0a7980000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=16e543edc81a3008
+dashboard link: https://syzkaller.appspot.com/bug?extid=a27c3aaa3640dd3e1dfb
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a8ec87980000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b7425f980000
 
-I don't like the pci_get_*() functions because they break the driver
-model.  The usual .probe() model binds a device to a driver, which
-essentially means the driver owns the device and its resources, and
-the driver and doesn't have to worry about other code interfering.
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-715ca9dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ba436e2363b6/vmlinux-715ca9dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3ac78a7a1a30/bzImage-715ca9dd.xz
+mounted in repro: https://storage.googleapis.com/syzbot-assets/44b65c0cea47/mount_0.gz
 
-Unlike pci_get_*(), the .probe()/.remove() model automatically handles
-hotplug without extra things like notifiers in the driver.  Hotplug
-may not be an issue in this particular case, but it requires specific
-platform knowledge to be sure.  Some platforms do support CPU and PCI
-host bridge hotplug.
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+a27c3aaa3640dd3e1dfb@syzkaller.appspotmail.com
 
-Thanks again for doing all this work.  It's a huge improvement
-already!
+bcachefs (loop0): check_lrus... done
+bcachefs (loop0): check_btree_backpointers... done
+bcachefs (loop0): check_backpointers_to_extents...
+------------[ cut here ]------------
+kernel BUG at fs/bcachefs/bkey_types.h:210!
+Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
+CPU: 0 UID: 0 PID: 5098 Comm: syz-executor177 Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+RIP: 0010:bkey_s_c_to_backpointer fs/bcachefs/bkey_types.h:210 [inline]
+RIP: 0010:bch2_check_backpointers_to_extents_pass fs/bcachefs/backpointers.c:1003 [inline]
+RIP: 0010:bch2_check_backpointers_to_extents+0x240a/0x2430 fs/bcachefs/backpointers.c:1049
+Code: 48 8b 4c 24 38 80 e1 07 38 c1 0f 8c b7 dd ff ff be 18 00 00 00 48 8b 7c 24 38 e8 11 7e ee fd e9 a3 dd ff ff e8 27 b8 84 fd 90 <0f> 0b e8 1f b8 84 fd 90 0f 0b e8 f7 56 b6 07 e8 12 b8 84 fd 90 0f
+RSP: 0018:ffffc90002d9ed80 EFLAGS: 00010293
+RAX: ffffffff84102fd9 RBX: ffff888041da01d0 RCX: ffff8880003e2440
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 000000000000001c
+RBP: ffffc90002d9f488 R08: ffffffff84101b4e R09: 0000000000000000
+R10: ffffc90002d9e780 R11: fffff520005b3cfd R12: 0000000000000003
+R13: ffffc90002d9f280 R14: dffffc0000000000 R15: ffff8880401a8000
+FS:  000055556e26c380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffda68deef8 CR3: 000000004091a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
+Call Trace:
+ <TASK>
+ bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
+ bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
+ bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
+ bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+ bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+ vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+ do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+ do_mount fs/namespace.c:3847 [inline]
+ __do_sys_mount fs/namespace.c:4055 [inline]
+ __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+ do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+ do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+ entry_SYSCALL_64_after_hwframe+0x77/0x7f
+RIP: 0033:0x7f1f62c028fa
+Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
+RSP: 002b:00007ffe477ec068 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
+RAX: ffffffffffffffda RBX: 00007ffe477ec080 RCX: 00007f1f62c028fa
+RDX: 00000000200058c0 RSI: 0000000020001040 RDI: 00007ffe477ec080
+RBP: 0000000000000004 R08: 00007ffe477ec0c0 R09: 002c647261637350
+R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
+R13: 00007ffe477ec0c0 R14: 0000000000000003 R15: 0000000001000000
+ </TASK>
+Modules linked in:
+---[ end trace 0000000000000000 ]---
+RIP: 0010:bkey_s_c_to_backpointer fs/bcachefs/bkey_types.h:210 [inline]
+RIP: 0010:bch2_check_backpointers_to_extents_pass fs/bcachefs/backpointers.c:1003 [inline]
+RIP: 0010:bch2_check_backpointers_to_extents+0x240a/0x2430 fs/bcachefs/backpointers.c:1049
+Code: 48 8b 4c 24 38 80 e1 07 38 c1 0f 8c b7 dd ff ff be 18 00 00 00 48 8b 7c 24 38 e8 11 7e ee fd e9 a3 dd ff ff e8 27 b8 84 fd 90 <0f> 0b e8 1f b8 84 fd 90 0f 0b e8 f7 56 b6 07 e8 12 b8 84 fd 90 0f
+RSP: 0018:ffffc90002d9ed80 EFLAGS: 00010293
+RAX: ffffffff84102fd9 RBX: ffff888041da01d0 RCX: ffff8880003e2440
+RDX: 0000000000000000 RSI: 0000000000000003 RDI: 000000000000001c
+RBP: ffffc90002d9f488 R08: ffffffff84101b4e R09: 0000000000000000
+R10: ffffc90002d9e780 R11: fffff520005b3cfd R12: 0000000000000003
+R13: ffffc90002d9f280 R14: dffffc0000000000 R15: ffff8880401a8000
+FS:  000055556e26c380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
+CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
+CR2: 00007ffda68deef8 CR3: 000000004091a000 CR4: 0000000000352ef0
+DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
+DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
 
-Bjorn
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want syzbot to run the reproducer, reply with:
+#syz test: git://repo/address.git branch-or-commit-hash
+If you attach or paste a git patch, syzbot will apply it before testing.
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
