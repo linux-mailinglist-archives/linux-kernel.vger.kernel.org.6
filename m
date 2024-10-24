@@ -1,271 +1,148 @@
-Return-Path: <linux-kernel+bounces-379978-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379979-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 880219AE6A8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:35:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8B91C9AE6AD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:35:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0CFE71F25A35
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:35:24 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 11543B28B33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:35:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21DF91EF096;
-	Thu, 24 Oct 2024 13:29:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1D9141EF927;
+	Thu, 24 Oct 2024 13:31:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hYJ2wGrN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="piNrZ/LE";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="hYJ2wGrN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="piNrZ/LE"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="BnMxmkjw"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 987751EF085
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:29:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 75CCF1DD0E3;
+	Thu, 24 Oct 2024 13:31:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776580; cv=none; b=Uau1kTSXCRaJG8Vf4NoaRTJseXcd7WHh5XoPDMbwbM7542/pjuZ5sJSAJmXZwfxb6o0eJ1Gxh8jdHGHtddCmnDnXLcsfKhU8/Uri0VgqidMMTSY3dWnKQXUnMLzAu4Yugoo2WA25YZBPwVAnDU39oVLc0vWMxkCt/3Mf+e661ws=
+	t=1729776706; cv=none; b=L1LBV0y6KlSh7gAWDg1MRn2jIlt+5zMfgp77bI8PGPNNNUv1n3bXDww2SwxNuamI05FrvDx5BcEWzJ4f5SZgz1HAu9lWEPRka4977Bekd+cbilI/Nc5z9IpKO0ifJXcDSsfVefn3kujTVQO3ZWXudFXAqWg9UTEOM00vDu2566E=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776580; c=relaxed/simple;
-	bh=n41ey9KluEnpW0Bv+vYh+mf9iynj/6m4igRfoKcafk8=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ur/fxTm8mZQo+hS9GpbsyI/YD4EZvYLoc71Ig8zEIYzZF3uBD0GEo/92jGjHjrP3eaS2YuWixCP5PGvimh/U0iZRou5pjks65fN02LAVJJehlsWqug8+p0aVQo22x+N/qYPJkg4J0XqegK1rYWPfNrhfyH+FaxcrOqp/GeBEq+4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hYJ2wGrN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=piNrZ/LE; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=hYJ2wGrN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=piNrZ/LE; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id E13FB21B0C;
-	Thu, 24 Oct 2024 13:29:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729776575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
-	b=hYJ2wGrNca3iV/epxx0FD5VzFHfqPBPqJHfu6+InPuE+9+ay7EgUCIoiLFEiqMaTkbIPCT
-	KXB//T7g/X1hY0liuMJ4pXWzpRhMJKHzVTKEfLJPVn2z5N8s7R1uaGsez17lFJmNnSC7vl
-	G5IV7l5/G41WHPgfIEjWeanbq5mV6XU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729776575;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
-	b=piNrZ/LEiqDqFtKjY6vGWqfdFqDWwntKWlKidaS8zodwXLCZyHSFdMEV16jEAJQqgLnjdD
-	1la8AY5uwz3EUpCg==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729776575; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
-	b=hYJ2wGrNca3iV/epxx0FD5VzFHfqPBPqJHfu6+InPuE+9+ay7EgUCIoiLFEiqMaTkbIPCT
-	KXB//T7g/X1hY0liuMJ4pXWzpRhMJKHzVTKEfLJPVn2z5N8s7R1uaGsez17lFJmNnSC7vl
-	G5IV7l5/G41WHPgfIEjWeanbq5mV6XU=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729776575;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=DNZY010Klt7+SZxZEDHH79zA/OC0BeAqYRKohPe/UMw=;
-	b=piNrZ/LEiqDqFtKjY6vGWqfdFqDWwntKWlKidaS8zodwXLCZyHSFdMEV16jEAJQqgLnjdD
-	1la8AY5uwz3EUpCg==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id C8D3F1368E;
-	Thu, 24 Oct 2024 13:29:35 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id iRqeML9LGmeBGwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 13:29:35 +0000
-Message-ID: <9d7c73f6-1e1a-458b-93c6-3b44959022e0@suse.cz>
-Date: Thu, 24 Oct 2024 15:29:35 +0200
+	s=arc-20240116; t=1729776706; c=relaxed/simple;
+	bh=UGT6Z5g6AX7X1dVxk4wpD9q9u8GexpH1M4bkiXVmJu8=;
+	h=From:Subject:Date:Message-ID:MIME-Version:Content-Type:To:CC; b=QjchomUbGHkpGGUCCfob+HeVN7DiWEYQ51kzWOLeRAlvWg/YLglmAvNqkH1/qx5vJ/wb+IbsBqRyycwpY8YSj3L1tygKjP7g2yqmd7EKBCUR+DmTAI3q6EMruEU4w4MMpTs18S6yLt6nyUEUJPzJ1fK4XE6vugCn7n/LG0rhaUo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=BnMxmkjw; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279863.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9KZMS029454;
+	Thu, 24 Oct 2024 13:31:39 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=9feCkEyNUk0ij74zv0Gakc
+	g56A4ZFUuZ2E3HJhxDFto=; b=BnMxmkjwuw5Cff9z0RjAAOVHQyJliTRDSR4x7V
+	X56M3t9Op0hzSJnBt/5DTcMi4fOWHAbENnz4OQ0ZoAkxXI4wr0wm7WpzHut6TjTk
+	YcnYRwHiR4VMnG9eYNQjt+QYv/3Y43t3laPtLPHEyteqAxhDgpzAnUqlNjXIZpjF
+	aF6nCtdLj1YNEEvw0pjFUeWIbqygSyAZYHXd4STV+rY1TZYFzc3ZjoMoMeJk4zT8
+	E1w2dpompKk+9IIWJXCIAR0MLmNQ2FEg5TlaXohXTCuebQqn4xV4MvchR/fu8jNv
+	tn9AHbE/0+FxKx3WvLkesFlDt5KL9dvvQnq+F13z0J1x6lqQ==
+Received: from nasanppmta03.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3w5tkt-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:31:39 +0000 (GMT)
+Received: from nasanex01a.na.qualcomm.com (nasanex01a.na.qualcomm.com [10.52.223.231])
+	by NASANPPMTA03.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ODVcFG023390
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:31:38 GMT
+Received: from hu-imrashai-hyd.qualcomm.com (10.80.80.8) by
+ nasanex01a.na.qualcomm.com (10.52.223.231) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 24 Oct 2024 06:31:34 -0700
+From: Imran Shaik <quic_imrashai@quicinc.com>
+Subject: [PATCH v2 0/6] Add support for GPUCC, CAMCC and VIDEOCC on
+ Qualcomm QCS8300 platform
+Date: Thu, 24 Oct 2024 19:01:13 +0530
+Message-ID: <20241024-qcs8300-mm-patches-v2-0-76c905060d0a@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: darktable performance regression on AMD systems caused by "mm:
- align larger anonymous mappings on THP boundaries"
-Content-Language: en-US
-To: Petr Tesarik <ptesarik@suse.com>
-Cc: Thorsten Leemhuis <regressions@leemhuis.info>,
- Rik van Riel <riel@surriel.com>, Matthias <matthias@bodenbinder.de>,
- Andrew Morton <akpm@linux-foundation.org>,
- Linux kernel regressions list <regressions@lists.linux.dev>,
- LKML <linux-kernel@vger.kernel.org>, Linux-MM <linux-mm@kvack.org>,
- Yang Shi <yang@os.amperecomputing.com>, Matthew Wilcox <willy@infradead.org>
-References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
- <f81ef5bd-e930-4982-a5a8-cd4aca272912@suse.cz>
- <ce35b58e-f18c-4701-8494-fa8d1f6e5148@suse.cz>
- <20241024124953.5d77c0b3@mordecai.tesarici.cz>
- <a7585f3e-d6c7-4982-8214-63a7ec6258ad@suse.cz>
- <20241024131331.6ee16603@mordecai.tesarici.cz>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <20241024131331.6ee16603@mordecai.tesarici.cz>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	RCVD_TLS_ALL(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[10];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	ARC_NA(0.00)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	TO_DN_ALL(0.00)[];
-	FROM_HAS_DN(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.com:url,imap1.dmz-prg2.suse.org:helo]
-X-Spam-Score: -4.30
-X-Spam-Flag: NO
+X-B4-Tracking: v=1; b=H4sIACFMGmcC/22NSw6CQBAFr0J6bZse5DO48h6GBWka6QW/GSQaw
+ t0dMcaNy3rJq1rBi1PxcI5WcLKo16EPEB8i4Lbqb4JaB4aY4sSQyXBib09E2HU4VjO34rFhMmI
+ 5T6VOIBxHJ40+dum1/LCT6R7c829s1c+De+7hxbzXb8P+aywGCW1aUJEK5XnGlyBk7fnIQwflt
+ m0vTmqHqMsAAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Michael Turquette
+	<mturquette@baylibre.com>,
+        Stephen Boyd <sboyd@kernel.org>, Rob Herring
+	<robh@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        Conor Dooley
+	<conor+dt@kernel.org>
+CC: Ajit Pandey <quic_ajipan@quicinc.com>, Taniya Das <quic_tdas@quicinc.com>,
+        Jagadeesh Kona <quic_jkona@quicinc.com>,
+        Satya Priya Kakitapalli
+	<quic_skakitap@quicinc.com>,
+        <linux-arm-msm@vger.kernel.org>, <linux-clk@vger.kernel.org>,
+        <devicetree@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        Imran Shaik <quic_imrashai@quicinc.com>,
+        Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+X-Mailer: b4 0.14.1
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01a.na.qualcomm.com (10.52.223.231)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 9K3QUJIWt7aF8AM_liUT-HATXONQdGYi
+X-Proofpoint-GUID: 9K3QUJIWt7aF8AM_liUT-HATXONQdGYi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 adultscore=0 mlxlogscore=888
+ priorityscore=1501 impostorscore=0 bulkscore=0 lowpriorityscore=0
+ clxscore=1015 suspectscore=0 spamscore=0 malwarescore=0 mlxscore=0
+ phishscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240110
 
-On 10/24/24 13:13, Petr Tesarik wrote:
-> On Thu, 24 Oct 2024 12:56:27 +0200
-> Vlastimil Babka <vbabka@suse.cz> wrote:
-> 
->> On 10/24/24 12:49, Petr Tesarik wrote:
->> > On Thu, 24 Oct 2024 12:23:48 +0200
->> > Vlastimil Babka <vbabka@suse.cz> wrote:
->> >   
->> >> On 10/24/24 11:58, Vlastimil Babka wrote:  
->> >> > On 10/24/24 09:45, Thorsten Leemhuis wrote:    
->> >> >> Hi, Thorsten here, the Linux kernel's regression tracker.
->> >> >> 
->> >> >> Rik, I noticed a report about a regression in bugzilla.kernel.org that
->> >> >> appears to be caused by the following change of yours:
->> >> >> 
->> >> >> efa7df3e3bb5da ("mm: align larger anonymous mappings on THP boundaries")
->> >> >> [v6.7]
->> >> >> 
->> >> >> It might be one of those "some things got faster, a few things became
->> >> >> slower" situations. Not sure. Felt odd that the reporter was able to
->> >> >> reproduce it on two AMD systems, but not on a Intel system. Maybe there
->> >> >> is a bug somewhere else that was exposed by this.    
->> >> > 
->> >> > It seems very similar to what we've seen with spec benchmarks such as cactus
->> >> > and bisected to the same commit:
->> >> > 
->> >> > https://bugzilla.suse.com/show_bug.cgi?id=1229012
->> >> > 
->> >> > The exact regression varies per system. Intel regresses too but relatively
->> >> > less. The theory is that there are many large-ish allocations that don't
->> >> > have individual sizes aligned to 2MB and would have been merged, commit
->> >> > efa7df3e3bb5da causes them to become separate areas where each aligns its
->> >> > start at 2MB boundary and there are gaps between. This (gaps and vma
->> >> > fragmentation) itself is not great, but most of the problem seemed to be
->> >> > from the start alignment, which togethter with the access pattern causes
->> >> > more TLB or cache missess due to limited associtativity.
->> >> > 
->> >> > So maybe darktable has a similar problem. A simple candidate fix could
->> >> > change commit efa7df3e3bb5da so that the mapping size has to be a multiple
->> >> > of THP size (2MB) in order to become aligned, right now it's enough if it's
->> >> > THP sized or larger.    
->> >> 
->> >> Maybe this could be enough to fix the issue? (on 6.12-rc4)  
->> > 
->> > 
->> > Yes, this should work. I was unsure if thp_get_unmapped_area_vmflags()
->> > differs in other ways from mm_get_unmapped_area_vmflags(), which might
->> > still be relevant. I mean, does mm_get_unmapped_area_vmflags() also
->> > prefer to allocate THPs if the virtual memory block is large enough?  
->> 
->> Well any sufficiently large area spanning a PMD aligned/sized block (either
->> a result of a single allocation or merging of several allocations) can
->> become populated by THPs (at least in those aligned blocks), and the
->> preference depends on system-wide THP settings and madvise(MADV_HUGEPAGE) or
->> prctl.
->> 
->> But mm_get_unmapped_area_vmflags() will AFAIK not try to align the area to
->> PMD size like the thp_ version would, even if the request is large enough.
-> 
-> Then it sounds like exactly what we want. But I prefer to move the
-> check down to __thp_get_unmapped_area() like this:
+This patch series add support for GPUCC, CAMCC and VIDEOCC on Qualcomm
+QCS8300 platform.
 
-I wanted to limit the fix to the place commit efa7df3e3bb5da changes, i.e.
-anonymous mappings, because there are other callers of
-__thp_get_unmapped_area(), namely the filesystems via
-thp_get_unmapped_area() and I wasn't sure if that wouldn't regress them. But
-since you suggested I had a brief look now...
+Please note that this series is dependent on [1] and [2], which adds support
+for QCS8300 GCC and SA8775P multi media clock controllers respectively.
 
-> diff --git a/mm/huge_memory.c b/mm/huge_memory.c
-> index 2fb328880b50..8d80f3af5525 100644
-> --- a/mm/huge_memory.c
-> +++ b/mm/huge_memory.c
-> @@ -1082,6 +1082,9 @@ static unsigned long __thp_get_unmapped_area(struct file *filp,
->  	if (!IS_ENABLED(CONFIG_64BIT) || in_compat_syscall())
->  		return 0;
->  
-> +	if (!IS_ALIGNED(len, size))
-> +		return 0;
+[1] https://lore.kernel.org/all/20240822-qcs8300-gcc-v2-0-b310dfa70ad8@quicinc.com/
+[2] https://lore.kernel.org/all/20241011-sa8775p-mm-v4-resend-patches-v5-0-4a9f17dc683a@quicinc.com/
 
-I think the filesystem might be asked to create a mapping for e.g. a
-[1MB, 4MB] range from a file, thus the offset would be 1MB (with anonymous
-pages an off=0 is passed) and the current implementation would try to do the
-right thing for that (align the [2MB, 4MB] range to THP) but after your
-patch it would see len is 3MB and give up, no?
+Signed-off-by: Imran Shaik <quic_imrashai@quicinc.com>
+---
+Changes in v2:
+- Updated commit text details in bindings patches as per the review comments.
+- Sorted the compatible order and updated comment in VideoCC driver patch as per the review comments.
+- Added the R-By tags received in V1.
+- Link to v1: https://lore.kernel.org/r/20241018-qcs8300-mm-patches-v1-0-859095e0776c@quicinc.com
 
-> +
->  	if (off_end <= off_align || (off_end - off_align) < size)
->  		return 0;
->  
+---
+Imran Shaik (6):
+      dt-bindings: clock: qcom: Add GPU clocks for QCS8300
+      clk: qcom: Add support for GPU Clock Controller on QCS8300
+      dt-bindings: clock: qcom: Add CAMCC clocks for QCS8300
+      clk: qcom: Add support for Camera Clock Controller on QCS8300
+      dt-bindings: clock: qcom: Add QCS8300 video clock controller
+      clk: qcom: Add support for Video Clock Controller on QCS8300
+
+ .../devicetree/bindings/clock/qcom,gpucc.yaml      |  1 +
+ .../bindings/clock/qcom,sa8775p-camcc.yaml         |  1 +
+ .../bindings/clock/qcom,sa8775p-videocc.yaml       |  1 +
+ drivers/clk/qcom/camcc-sa8775p.c                   | 99 +++++++++++++++++++++-
+ drivers/clk/qcom/gpucc-sa8775p.c                   | 47 ++++++++++
+ drivers/clk/qcom/videocc-sa8775p.c                 |  8 ++
+ include/dt-bindings/clock/qcom,sa8775p-camcc.h     |  1 +
+ include/dt-bindings/clock/qcom,sa8775p-gpucc.h     |  4 +-
+ 8 files changed, 157 insertions(+), 5 deletions(-)
+---
+base-commit: 891a4dc5705df4de9a258accef31786b46700394
+change-id: 20241016-qcs8300-mm-patches-fc01e8c75ed4
+
+Best regards,
+-- 
+Imran Shaik <quic_imrashai@quicinc.com>
 
 
