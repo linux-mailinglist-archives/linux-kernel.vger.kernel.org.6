@@ -1,86 +1,98 @@
-Return-Path: <linux-kernel+bounces-379759-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379761-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 01E149AE35E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:05:00 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id C83C59AE363
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:05:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B6D3A283D37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:04:58 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037521C2246D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:05:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 688D61CB9EF;
-	Thu, 24 Oct 2024 11:04:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747291CB312;
+	Thu, 24 Oct 2024 11:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YlQGJ62S"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IXimetdm"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B80C317278D;
-	Thu, 24 Oct 2024 11:04:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BB81C4A31;
+	Thu, 24 Oct 2024 11:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767884; cv=none; b=n30AwKiu0KE9K81La+r83lDGtwaimkqSfYZ8OgarrBp+QkhdrELiLixGhcQLc8xrmagcO7bOxH7MvN20gBl85wHWb/3Ybv9WIEtY/Wn/liTPKGJWU13yfkmVVp/dti6wKUZybPhi6BZ+awodAbdKhOQ0Na3LdLwnAm6c2CyJCR0=
+	t=1729767909; cv=none; b=qrBOFBtPvXxFTJCw75XdaejqhXTZa4c+beHFi+a4FNxF2kDHNAYfbblwwG57o3x/374vhH7IDQEf5t7flBiqWeWrykY1fnxTtTnsnxIpeZzvWewy7c002vQZrvMBnh4Cf9k+3IBx2NvIYjQ5Iw7eXnQVRlfRZbDu6EH7FJhIhyk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767884; c=relaxed/simple;
-	bh=MpVzXZkpsyfqn55c+HIWgp7lQUbVDeCzsYCY9XEMWZo=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=bFc22DB5CDja0aMZ+wCRcgU1CUEjg3UKw6kuZia8CASIcVR/XI0kLpVVgBYKg46YEBm/T5+IIdMLPQY10OsOLme6fOu3eZcgR7S06L7e9ueuxxMbAxENfrS/NvNFAnQ2UtV8l5sVQwGHaYBxuS3fZOk/VR4M6lHoNMP3UOiu9hY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YlQGJ62S; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 36E9AC4CEC7;
-	Thu, 24 Oct 2024 11:04:40 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729767884;
-	bh=MpVzXZkpsyfqn55c+HIWgp7lQUbVDeCzsYCY9XEMWZo=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=YlQGJ62S8bqwDlAfpqZEv1vqouCvow5Xk8A1uOfx7zf/7qZqTpZlsnPsksN0v+Gdf
-	 /+B9yNetBs2dwQB6GPREokq+1uef5WoOBKbZiJVmeolZTzCg9nYMW39NXPQQiiTNhQ
-	 Bg2nVbUbN5CGxUjWlNTgEgAed0R9RwI3qhDhU7nrpX3vbDXRWtsXTv+3IcZJJr0AIf
-	 zVZ3BuaEp6kAhOIH4EXLz/Dri3lrRh0F7m+DTqmv+gFjyt6xGXOE6I+mamUHfRqUqB
-	 ZZ9x7f6LHm7luK0kny9CWRvYJMIdDS6OYSGrjGe2FQRtgIPsX91KAMlUi1NvYemdxR
-	 i1rwejz0T0IDg==
-Date: Thu, 24 Oct 2024 12:04:38 +0100
-From: Simon Horman <horms@kernel.org>
-To: Rosen Penev <rosenp@gmail.com>
-Cc: netdev@vger.kernel.org, "K. Y. Srinivasan" <kys@microsoft.com>,
-	Haiyang Zhang <haiyangz@microsoft.com>,
-	Wei Liu <wei.liu@kernel.org>, Dexuan Cui <decui@microsoft.com>,
-	Andrew Lunn <andrew+netdev@lunn.ch>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Alexei Starovoitov <ast@kernel.org>,
-	Daniel Borkmann <daniel@iogearbox.net>,
-	Jesper Dangaard Brouer <hawk@kernel.org>,
-	John Fastabend <john.fastabend@gmail.com>,
-	Shradha Gupta <shradhagupta@linux.microsoft.com>,
-	Colin Ian King <colin.i.king@gmail.com>,
-	Erni Sri Satya Vennela <ernis@linux.microsoft.com>,
-	Ahmed Zaki <ahmed.zaki@intel.com>,
-	"open list:Hyper-V/Azure CORE AND DRIVERS" <linux-hyperv@vger.kernel.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"open list:XDP (eXpress Data Path):Keyword:(?:b|_)xdp(?:b|_)" <bpf@vger.kernel.org>
-Subject: Re: [PATCH] net: mana: use ethtool string helpers
-Message-ID: <20241024110438.GD1202098@kernel.org>
-References: <20241022204908.511021-1-rosenp@gmail.com>
+	s=arc-20240116; t=1729767909; c=relaxed/simple;
+	bh=EGRtjEC14XyE9weot/wRlXEg+l6X9AYHwtSTqY4Qwps=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=ram0JA4+D7QKog+CVgrZIl6Pkj7I/cZbHLiwFZ3wNL9wQltYV1fd/F3gqs9BgHtAZDVII4gJpAJH9khZEXA/PwjzyWBbZOo/hN5Ozh6Kcbpo1l7/BPyJ68dZGSsHAmZl2mqX0+fa8/u1aI2k4XeOaFFm5WoAbd7Ik0UXOEU2WOo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IXimetdm; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729767905;
+	bh=EGRtjEC14XyE9weot/wRlXEg+l6X9AYHwtSTqY4Qwps=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=IXimetdm3fzWVQ4d8anSVCWgRQ8saj0/NDig3tq4roUOJY33o+H8erj0iWOOkEPgQ
+	 1YX49ynPnbH8jKGNFCyxvwbfwdyv0L2KSmSouc6iY83bVvvr4oFlJ/3AxJ7ahJhZNY
+	 BMPDIu7W9Py1CtAXLEQXYeRUe85BmEQFgK5vl7pZbRV5PrdaHaMMITEdECK5ylOXMW
+	 /FUgShUJCgjrKx8ax5tQOKf4vYbvW/NHdFEliGEGUoR9wy3tbQfYbafhviyyo4p0H8
+	 wNLx5l0rML7FuK9WXZqZ7GycDCmOceKc4Vb1NY+4lPTQBM4chBcokUuBvFQuzwinbZ
+	 aRcwu59AOQA3w==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 848A317E1524;
+	Thu, 24 Oct 2024 13:05:05 +0200 (CEST)
+Message-ID: <f0386089-6a47-4751-8581-b6658c1535b9@collabora.com>
+Date: Thu, 24 Oct 2024 13:05:05 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241022204908.511021-1-rosenp@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 2/3] mailbox: add support for bottom half received data
+To: "Karl.Li" <karl.li@mediatek.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Chungying Lu <chungying.lu@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20241024092608.431581-1-karl.li@mediatek.com>
+ <20241024092608.431581-3-karl.li@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <20241024092608.431581-3-karl.li@mediatek.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Tue, Oct 22, 2024 at 01:49:08PM -0700, Rosen Penev wrote:
-> The latter is the preferred way to copy ethtool strings.
+Il 24/10/24 11:25, Karl.Li ha scritto:
+> From: Karl Li <karl.li@mediatek.com>
 > 
-> Avoids manually incrementing the data pointer.
+> Within the MediaTek APU subsystem, a message passing mechanism
+> is constructed on top of the mailbox system.
 > 
-> Signed-off-by: Rosen Penev <rosenp@gmail.com>
+> The mailbox only has limited space for each message. The MTK APU firmware
+> expects the message header from the mailbox, while the message body
+> is passed through some fixed shared memory.
+> 
+> The mailbox interrupt also serves as a mutex for the shared memory.
+> Thus the interrupt may only be cleared after the message is handled.
+> Add a new sleepable rx callback for mailbox clients for cases
+> where handling the incoming data needs to sleep.
+> 
+> Signed-off-by: Karl Li <karl.li@mediatek.com>
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+As said in the review of the ADSP MBOX driver, I really don't think that you need
+an extra callback.
+
+Regards,
+Angelo
 
 
