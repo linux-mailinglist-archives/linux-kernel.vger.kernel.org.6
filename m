@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-379823-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379824-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACE1D9AE447
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:58:13 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498D39AE44A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F008DB23A9C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:58:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C083D1F23421
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2F01D357A;
-	Thu, 24 Oct 2024 11:58:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CAlEuUI3"
-Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59331D174F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:58:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5AA5E1D174F;
+	Thu, 24 Oct 2024 11:59:32 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1CD501D0498
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:59:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729771083; cv=none; b=qe+TpKgbJJP87P4qmjQImAIt+ii7txM+VMFCtKBp2LI9xwh5fLUd34aCBsXiOHqN1P57jgrAAlinpICihY8EoZJtI5I9GlBqDEy5cy42swYXWUxIHWsDkVODYNAV/wJwMHwd0faNLXoBsMYDvRLmhR3MZnPfG3dmKLTc/M5Nqz0=
+	t=1729771172; cv=none; b=YE5FpKBR1oJoB10lIgwxiXCCFtvWrdA/LZm0j3kSySRokQLDfHIh5bcIQ/ZwavSPFUPDl7Lrmesvwol1Ib/N40ltuZxcwcmCvha/Yg7lHtxe5Vmn/ovOae1s9C7isdJsHwe6X/Ybgn+PpocwtuK1v0ooywpo1rRVQK8Tf56FK/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729771083; c=relaxed/simple;
-	bh=TMwKFmIXmqzS5x4W1yplBkSZ7GLBkQ+WVVyIQYanxFs=;
+	s=arc-20240116; t=1729771172; c=relaxed/simple;
+	bh=EntLZ7vvs1T2Fpr72EUN6/Yo75b7KQb/Q6c7X9WnGq8=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=HF3EIEmugHrXDZQ8L20CAjihhgmMtx3u3DUEvTaM34LKw54IesrEcZ48xcxV1RjcH1gSbukokKZqA0VJ/NRzD9TRdQeYtLalye4x/xV8xN1zBWlR1sS/zvN6zsXOzZa2AE4H1f3PB0GfwR9UMX/36nTLMCAdA9KWP6tOUD3dQSs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CAlEuUI3; arc=none smtp.client-ip=209.85.221.42
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d518f9abcso584279f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:58:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729771080; x=1730375880; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=CMUh089hk0TDYl3i02fhUTGpVWWZ8Xi7jhCcIpeuQK4=;
-        b=CAlEuUI3V7QKOaG9Qzp+wOZsa7Z7cPB9yx/+o4/ID6JRyop2mG29Vv2drIhKy5uRNr
-         D/BCIyhiBpccj3qIViCuMdBRX5dA/JXI2qAUCviRGSAvlzwdUvDJA5i/m1atS+L8Lptm
-         E0YkxtKj7ORgVuWkRodKMc/MyK1/PAwKkmTTi7lXQKL0w4IVPN2yLvyiy1AVKtt92Qj3
-         M/Q90Bd6bjIWKOCrRa9hZgBvl3K0cO1qpzKxicky5wXqYRRBVsVqvt59K+PBwSLZMXJJ
-         Almt1l5t3MZFNhdhvIcCZqknYZgWEn2+69hanW/LQWH6tVduUq3k6aM48MYZ1gqvXWAd
-         qQNQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729771080; x=1730375880;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CMUh089hk0TDYl3i02fhUTGpVWWZ8Xi7jhCcIpeuQK4=;
-        b=AyGNzNxkFfPUmMhEVrvcrfLwUlLmqaIGymRfb148KxwrZtdfxj5at7d7aRnf/P7yHJ
-         g428nc0I8/jmKhkkRK5JRJ/mx8gfcQCEgAK0Xwtw27tRx08+lNaavjhqbSNJi6hDJ8lL
-         w6zsxvxnaOTjMrZZ6bGa11Z4UjCLQzngPr4drIn03gZCMbrFdYZZHFduPCq0Xy+DilWJ
-         k8aWudxDUzfISnIZ53CvcJHTWs+v8sROiqEzQngSaSsvrGm0UKgERE7GUF4Fx3RtOgt5
-         Zukc3JhuQ3xZbqz/0TFDx0P5Pu+QWoyZ4rxHHG9UzCGgvO4hSBhssNIw6z2FbWjYGsq/
-         bj0A==
-X-Forwarded-Encrypted: i=1; AJvYcCWEtIOrulzVYj6A3t/GOlpqN6MFctGR8kIukrqYB1oqPWorGemAMtSZI4g2vRmJAeAGjupGuG0KiES2W6U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyB6HNH+2jihGwfd8hFMOjUrC99mVDnJGsGrOywwDZz21crkg1t
-	99wJ6EnPKZMqZNqWYYRFDU16l98clthY/qDbdk3cT5hxPgYJ2idGhOJeN+aIApk=
-X-Google-Smtp-Source: AGHT+IHwlD/N8thxGFMjsqeo2hByECDuXyX4BJqwX5km4H1c7VJRNHwwg6KxA9EAfXdb3TGB+VJIYQ==
-X-Received: by 2002:adf:e848:0:b0:37d:398f:44f9 with SMTP id ffacd0b85a97d-38045898b4emr1354687f8f.32.1729771079896;
-        Thu, 24 Oct 2024 04:57:59 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37ee0a37b4dsm11109750f8f.18.2024.10.24.04.57.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 04:57:59 -0700 (PDT)
-Message-ID: <d7a2ddee-42c5-415f-8b7f-b7c21aa373a4@linaro.org>
-Date: Thu, 24 Oct 2024 13:57:58 +0200
+	 In-Reply-To:Content-Type; b=pZaCA50kvdGTwGKIwlFjDmZYKJVjbMvRwhThJkcT2ePmWzcxGQji5p1Wfw0x3nPmZY0iMvV//zNQaw1ciPMUDoqIIw1GU6PqqzqEN/FPB0GZLBOk5VwjPESdTFOSEh/l+YEXv5b0qrIarQ2cfehG7GzT4GE/TdRrV/oMSdkn4bM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 37453339;
+	Thu, 24 Oct 2024 04:59:58 -0700 (PDT)
+Received: from [10.1.196.40] (e121345-lin.cambridge.arm.com [10.1.196.40])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 38F2F3F71E;
+	Thu, 24 Oct 2024 04:59:27 -0700 (PDT)
+Message-ID: <aa763283-97fc-4b50-828d-8b64aa749bdd@arm.com>
+Date: Thu, 24 Oct 2024 12:59:25 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,33 +41,121 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] tools/lib/thermal: Rm thermal.h soft link.
-To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, rafael@kernel.org
-Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20240912045031.18426-1-zhangjiao2@cmss.chinamobile.com>
-Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20240912045031.18426-1-zhangjiao2@cmss.chinamobile.com>
+Subject: Re: [PATCH] iommu/arm-smmu: Add judgment on the size and granule
+ parameters passed in
+To: goutongchen <goutongchen@uniontech.com>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ linux-kernel@vger.kernel.org, Will Deacon <will@kernel.org>,
+ Joerg Roedel <joro@8bytes.org>, Jason Gunthorpe <jgg@ziepe.ca>,
+ Rob Clark <robdclark@chromium.org>,
+ Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+Cc: =?UTF-8?B?6Iuf5rWp?= <gouhao@uniontech.com>
+References: <20241024100224.62942-1-goutongchen@uniontech.com>
+From: Robin Murphy <robin.murphy@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241024100224.62942-1-goutongchen@uniontech.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
-On 12/09/2024 06:50, zhangjiao2 wrote:
-> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+On 24/10/2024 11:02 am, goutongchen wrote:
+> In the arm_smmu_tlb_inv_range_s1 and arm_smmu_tlb_inv_range_s2
+> functions, the size and granule passed in must be judged.
+> It must be ensured that the passed in parameter is not 0 and
+> the size is an integer multiple of the granule, otherwise it
+> will cause an infinite while loop.
 > 
-> Run "make -C tools thermal" can create a soft link
-> for thermal.h in tools/include/uapi/linux.
-> Just rm it when make clean.
+> This was encountered during testing, and was initially triggered
+> by passing in a size value of 0, causing the kernel to crash.
 > 
-> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> [    8.214378][  T675] xhci_hcd 0000:0b:00.0: new USB bus registered, assigned bus number 1
+> [   68.246185][    C0] rcu: INFO: rcu_sched self-detected stall on CPU
+> [   68.246866][    C0] rcu:     0-....: (5999 ticks this GP) idle=796c/1/0x4000000000000000 softirq=161/161 fqs=2999
+> [   68.247924][    C0] rcu:     (t=6000 jiffies g=-699 q=1 ncpus=128)
+> [   68.248452][    C0] CPU: 0 PID: 675 Comm: kworker/0:2 Not tainted 6.6.0-25.02.2500.002.uos25.aarch64 #1
+> [   68.249237][    C0] Hardware name: Inspur     CS5260F     /CS5260F          , BIOS 4.0.16 05/31/22 16:53:51
+> [   68.250029][    C0] Workqueue: events work_for_cpu_fn
+> [   68.250497][    C0] pstate: a0000005 (NzCv daif -PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+> [   68.251188][    C0] pc : arm_smmu_tlb_inv_range_s1+0xf0/0x158
+> [   68.251704][    C0] lr : arm_smmu_tlb_inv_walk_s1+0x44/0x68
+> [   68.252189][    C0] sp : ffff80008044b780
+> [   68.252530][    C0] x29: ffff80008044b780 x28: 0000000000000000 x27: 0000000000001000
+> [   68.253212][    C0] x26: 0000000000000600 x25: 0000000000000001 x24: 0000000000000600
+> [   68.253857][    C0] x23: 0000000000000000 x22: 0000000000001000 x21: fffffc64e2e59000
+> [   68.254544][    C0] x20: 0000000039c1d1a6 x19: ffff3fe944c40280 x18: 0000000000000000
+> [   68.255240][    C0] x17: 626d756e20737562 x16: ffffb0e7e08c1008 x15: 0000000000000000
+> [   68.255930][    C0] x14: ffff3ef8c1ea15cd x13: ffff3ef8c1ea15cb x12: fffffcfba30e3880
+> [   68.256538][    C0] x11: 00000000ffff7fff x10: ffff80008044b6b0 x9 : ffffb0e7decd1b5c
+> [   68.257126][    C0] x8 : 0000000000000dc0 x7 : ffff3ee8c4148000 x6 : ffff3ee8c4148000
+> [   68.257822][    C0] x5 : 0000000000000008 x4 : 0000000000000000 x3 : ffff3fe944c40800
+> [   68.258497][    C0] x2 : 0000000000000010 x1 : 0000000000000020 x0 : ffffb0e7dfd6c3d0
+> [   68.259185][    C0] Call trace:
+> [   68.259451][    C0]  arm_smmu_tlb_inv_range_s1+0xf0/0x158
+> [   68.259933][    C0]  arm_smmu_tlb_inv_walk_s1+0x44/0x68
+> [   68.260384][    C0]  __arm_lpae_map+0x1f0/0x2c0
+
+Huh? This invalidation path is for mapping a block entry, and the size 
+is the size of that block per ARM_LPAE_BLOCK_SIZE(lvl, data) - how can 
+it possibly be 0?
+
+Thanks,
+Robin.
+
+> [   68.260796][    C0]  arm_lpae_map_pages+0xec/0x150
+> [   68.261215][    C0]  arm_smmu_map_pages+0x48/0x130
+> [   68.261654][    C0]  __iommu_map+0x134/0x2a8
+> [   68.262098][    C0]  iommu_map_sg+0xb8/0x1c8
+> [   68.262500][    C0]  __iommu_dma_alloc_noncontiguous.constprop.0+0x180/0x270
+> [   68.263145][    C0]  iommu_dma_alloc+0x178/0x238
+> [   68.263557][    C0]  dma_alloc_attrs+0xf8/0x108
+> [   68.263962][    C0]  xhci_mem_init+0x1e8/0x6d0
+> [   68.264372][    C0]  xhci_init+0x88/0x1d0
+> [   68.264736][    C0]  xhci_gen_setup+0x284/0x468
+> [   68.265121][    C0]  xhci_pci_setup+0x60/0x1f8
+> [   68.265506][    C0]  usb_add_hcd+0x278/0x650
+> [   68.265860][    C0]  usb_hcd_pci_probe+0x218/0x458
+> [   68.266256][    C0]  xhci_pci_probe+0x7c/0x270
+> [   68.266660][    C0]  local_pci_probe+0x48/0xb8
+> [   68.267074][    C0]  work_for_cpu_fn+0x24/0x40
+> [   68.267548][    C0]  process_one_work+0x170/0x3c0
+> [   68.267999][    C0]  worker_thread+0x234/0x3b8
+> [   68.268383][    C0]  kthread+0xf0/0x108
+> [   68.268704][    C0]  ret_from_fork+0x10/0x20
+> 
+> Signed-off-by: goutongchen <goutongchen@uniontech.com>
 > ---
-
-Applied, thanks
-
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
-
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
+>   drivers/iommu/arm/arm-smmu/arm-smmu.c | 14 ++++++++++++++
+>   1 file changed, 14 insertions(+)
+> 
+> diff --git a/drivers/iommu/arm/arm-smmu/arm-smmu.c b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> index 8321962b3714..16b2e9ec0e60 100644
+> --- a/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> +++ b/drivers/iommu/arm/arm-smmu/arm-smmu.c
+> @@ -282,6 +282,13 @@ static void arm_smmu_tlb_inv_range_s1(unsigned long iova, size_t size,
+>   	struct arm_smmu_cfg *cfg = &smmu_domain->cfg;
+>   	int idx = cfg->cbndx;
+>   
+> +	if (size == 0 || granule == 0 || (size % granule) != 0) {
+> +		dev_err(smmu->dev,
+> +				 "The size or granule passed in is err. size=%lu, granule=%lu\n",
+> +				 size, granule);
+> +		return;
+> +	}
+> +
+>   	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>   		wmb();
+>   
+> @@ -309,6 +316,13 @@ static void arm_smmu_tlb_inv_range_s2(unsigned long iova, size_t size,
+>   	struct arm_smmu_device *smmu = smmu_domain->smmu;
+>   	int idx = smmu_domain->cfg.cbndx;
+>   
+> +	if (size == 0 || granule == 0 || (size % granule) != 0) {
+> +		dev_err(smmu->dev,
+> +				 "The size or granule passed in is err. size=%lu, granule=%lu\n",
+> +				 size, granule);
+> +		return;
+> +	}
+> +
+>   	if (smmu->features & ARM_SMMU_FEAT_COHERENT_WALK)
+>   		wmb();
+>   
 
