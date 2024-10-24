@@ -1,159 +1,108 @@
-Return-Path: <linux-kernel+bounces-380383-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380384-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBAB69AED7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:15:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15F129AED88
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:17:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293581C2390D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:15:10 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C1E871F24206
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:17:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE381FAF1E;
-	Thu, 24 Oct 2024 17:15:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81BFE1F6697;
+	Thu, 24 Oct 2024 17:17:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLXXrzHU"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="FKGU0YC8"
+Received: from out-180.mta0.migadu.com (out-180.mta0.migadu.com [91.218.175.180])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B2E1FAEE5;
-	Thu, 24 Oct 2024 17:15:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7482E1F76B3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:17:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.180
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729790103; cv=none; b=jiOAENDLtx2oJBRPaS235yWh+ZGvPEfP7MAVrK0SOEq+s44tSEumpcQLRD/eb5Ox3AotCPqZCyJy6cPyp0o7DN/ubc3ay2t1vgzR3u+kVVlMwMjCM+A36Fc6uc1zyCkw6t9hrnz/AW7NFeew9ZAmSa3DQXaWQWfc151B4Rm3Do8=
+	t=1729790229; cv=none; b=YAexjOTRCOlk6iJv6o23IkaBvF3Fuq0ZY08MyPyxfpNIJKvg8SS/q1IoPZVk6HxCKVxanhWJ9FJkC/LnKuC8c9BGh2ZOR9hq1ZKKLN17Ab/PUEDUhGBXOmDbJzoWIU92f1WuHyOucPLZK3t1NIA09/yok+6dx0gtCA7SinXdfO0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729790103; c=relaxed/simple;
-	bh=qKUU2cq8v+5SaeVu6RRbmqKGY6u205flt7+P+PAhKt8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=AhmGVqoBujLfgTP9IyjbHmfUh8G3N39qHXs+I07U4ac4VrO+wizCbHdc3zTf53ydIeoI8WGPQNBqVBKSsNCKRtMWDWQfLXeKQmTZv3Gl96pLRFXXqGgv6boqWJyokj67+WA5aJ3O3Dw2b13BsjYPmkppytDS+I3UCrFwwDEjgp4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLXXrzHU; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 459A7C4CEC7;
-	Thu, 24 Oct 2024 17:15:03 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729790103;
-	bh=qKUU2cq8v+5SaeVu6RRbmqKGY6u205flt7+P+PAhKt8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=XLXXrzHUAaUf/MCzx4vivPosRtuWGRFNg2bv7Lc6HMcc9UvSy3QscmxKbNY5GuJlE
-	 XX/qG+NPu/18qDb8rzdBeQrZr4WySMdwRdjcHplzCvcmA0CnRsVCKCENzgvR2x86sI
-	 yUnPDdsMjKr1iR5LnCTAs4ZrZ2+BH1O5jOX7zbFkoBV56fXCyXEFDcEv/zYOxPc+4x
-	 Hc2kPzHV9iJkUgu90yGuzHCsH43E0Z1pGEiKQRXkRNJ2O/ajK4U8OznO1g5nYCTasW
-	 qw3XBAe+p7izv6WqvgO258kcfLLjp3Kb23hqkqz0UdncqEeJm+i1Xiw3ogpDzSfB2j
-	 8d14lsWaswaBQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t41QL-006X9S-0p;
-	Thu, 24 Oct 2024 18:15:01 +0100
-Date: Thu, 24 Oct 2024 18:15:00 +0100
-Message-ID: <86msit2zjf.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Johan Hovold <johan@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	devicetree@vger.kernel.org,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Route pcie5 MSIs to the GIC ITS
-In-Reply-To: <Zxp09Q1DPYf9BK0z@hovoldconsulting.com>
-References: <20241024161814.1827514-1-maz@kernel.org>
-	<Zxp09Q1DPYf9BK0z@hovoldconsulting.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729790229; c=relaxed/simple;
+	bh=iOljpUiWFrtffYQ62z1//nC5+YML7iCZj+R+HVWyJAc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K8xEtbVqMu0FTXp5frkfc2EdX4t+7QaIKXM6XQvgmnIWRiEavcWZ7sh9yv3dzY5m+pledmKNuoZXdYfblLDD5fR5DAeg7DFZ4htGlqTw4cxJrbqfRVWWdylGsP/txLuU5mzTvcR8xEnFNpGXBfqyhtiyA+IOUGVecLqN/Ml7jaQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=FKGU0YC8; arc=none smtp.client-ip=91.218.175.180
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Oct 2024 10:16:58 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729790224;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=38joqWY7s8hm5BlhGDOYUHiPg6nN7sm6VmhGdHfvDLU=;
+	b=FKGU0YC8ovYh8vg0Y5gIjFH/7Df71GaJry0Zd93QQ48d5L/90kQ/X7iYvj0xMztxGPEnAn
+	769+1TJWAmUO0DkiSoz3m+QcZDV4dczhqOcXRUJ3pKR5f73YK1gV2+9a0QJ/6WAMRjsPh+
+	BG39YdZ4UPfOsJxzEin7y6qj5rKxGLk=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Shakeel Butt <shakeel.butt@linux.dev>
+To: Roman Gushchin <roman.gushchin@linux.dev>
+Cc: Michal Hocko <mhocko@suse.com>, 
+	Andrew Morton <akpm@linux-foundation.org>, Johannes Weiner <hannes@cmpxchg.org>, 
+	Muchun Song <muchun.song@linux.dev>, Hugh Dickins <hughd@google.com>, linux-mm@kvack.org, 
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org, linux-fsdevel@vger.kernel.org, 
+	linux-doc@vger.kernel.org, Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 1/3] memcg-v1: fully deprecate
+ move_charge_at_immigrate
+Message-ID: <hmvt2ydrluiwmautt63gf4w6kypytvb7dztc2c74b5rt5p4er3@v5an7gu462ff>
+References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+ <20241024065712.1274481-2-shakeel.butt@linux.dev>
+ <ZxoP2TLCGnSm9c8p@tiehlicka>
+ <Zxp7ItxIf744tFbD@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: johan@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, quic_sibis@quicinc.com, konradybcio@kernel.org, abel.vesa@linaro.org, johan+linaro@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxp7ItxIf744tFbD@google.com>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, 24 Oct 2024 17:25:25 +0100,
-Johan Hovold <johan@kernel.org> wrote:
-> 
-> On Thu, Oct 24, 2024 at 05:18:14PM +0100, Marc Zyngier wrote:
-> > There is no reason to use the PCIe root port widget for MSIs for
-> > pcie5 while both pcie4 and pcie6a are enjoying the ITS.
+On Thu, Oct 24, 2024 at 04:51:46PM GMT, Roman Gushchin wrote:
+> On Thu, Oct 24, 2024 at 11:14:01AM +0200, Michal Hocko wrote:
+> > On Wed 23-10-24 23:57:10, Shakeel Butt wrote:
+> > > Proceed with the complete deprecation of memcg v1's charge moving
+> > > feature. The deprecation warning has been in the kernel for almost two
+> > > years and has been ported to all stable kernel since. Now is the time to
+> > > fully deprecate this feature.
+> > > 
+> > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 > > 
-> > This is specially useful when booting the kernel at EL2, as KVM
-> > can then configure the ITS to have MSIs directly injected in guests
-> > (since this machine has a GICv4.1 implementation).
+> > I fine with this move, just one detail we might need to consider
+> > [...]
+> > > @@ -606,17 +606,7 @@ static int mem_cgroup_move_charge_write(struct cgroup_subsys_state *css,
+> > >  		     "Please report your usecase to linux-mm@kvack.org if you "
+> > >  		     "depend on this functionality.\n");
+> > >  
+> > > -	if (val & ~MOVE_MASK)
+> > > -		return -EINVAL;
+> > > -
+> > > -	/*
+> > > -	 * No kind of locking is needed in here, because ->can_attach() will
+> > > -	 * check this value once in the beginning of the process, and then carry
+> > > -	 * on with stale data. This means that changes to this value will only
+> > > -	 * affect task migrations starting after the change.
+> > > -	 */
+> > > -	memcg->move_charge_at_immigrate = val;
+> > > -	return 0;
+> > > +	return -EINVAL;
 > > 
-> > Tested on a x1e001de devkit.
-> > 
-> > Signed-off-by: Marc Zyngier <maz@kernel.org>
-> > Cc: Sibi Sankar <quic_sibis@quicinc.com>
-> > Cc: Konrad Dybcio <konradybcio@kernel.org>
-> > Cc: Abel Vesa <abel.vesa@linaro.org>
-> > Cc: Johan Hovold <johan+linaro@kernel.org>
-> > ---
-> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 ++
-> >  1 file changed, 2 insertions(+)
-> > 
-> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > index 3441d167a5cc..48f0ebd66863 100644
-> > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-> > @@ -3281,6 +3281,8 @@ pcie5: pci@1c00000 {
-> >  			linux,pci-domain = <5>;
-> >  			num-lanes = <2>;
-> >  
-> > +			msi-map = <0x0 &gic_its 0xd0000 0x10000>;
+> > Would it make more sense to -EINVAL only if val != 0? The reason being
+> > that some userspace might be just writing 0 here for whatever reason and
+> > see the failure unexpected.
 > 
-> As I just mentioned in another thread, and in the commit message of
-> 9c4cd0aef259 ("arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe")
-> this was done on purpose as
+> I think it's a good idea.
 > 
-> 	PCIe5 (and PCIe3) can currently only be used with the internal
-> 	MSI controller due to a platform (firmware) limitation
-> 
-> Did you try this when booting in EL1? If so we may need to enable this
-> per board.
+> Thanks!
 
-Nah, you are absolutely correct: when booted at EL1, the ITS driver
-reports that the ITS queue is no longer making forward progress as
-soon as we are trying to map something in that range:
-
-[    5.068749] ITS queue timeout (9984 9921)
-[    5.072871] ITS cmd its_build_mapd_cmd failed
-
-I suspect it trips over itself trying to interpret the command, and
-that the other PCIe ports work by pure luck (maybe thanks to having
-a even number?).
-
-Comparing the logs, it is obvious that the hypervisor is not showing
-us the actual HW topology: the ITS supports 64kB pages, which we use
-when booted at EL2, while we only see 4kB support at EL1.
-
-And the boot really is hilarious:
-
-[    0.000000] ITS@0x0000000017040000: Devices Table too large, reduce ids 32->19
-
-19 bits is the maximum the kernel can allocate with a 4kB page size.
-I would like to see the face of a HW person if they had to design a
-system with 32bit worth of DeviceID...
-
-[    0.000000] ITS@0x0000000017040000: Devices too large, reduce ITS pages 1024->256
-
-and 256 pages is the maximum we can describe to the ITS...
-
-Obviously, this emulation was never really tested, since Windows
-replaces it at boot time. Oh well.
-
-I'll stash this patch as part of my "make EL2 great again" branch! ;-)
-
-Thanks,
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+Thanks Michal and Roman for the review and I will make this change in
+the next version.
 
