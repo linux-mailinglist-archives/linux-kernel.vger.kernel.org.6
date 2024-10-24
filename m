@@ -1,47 +1,39 @@
-Return-Path: <linux-kernel+bounces-379675-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379676-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C62CD9AE227
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:10:10 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id EED889AE22A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:11:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 812ED2826E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:10:09 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A52191F2333B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:11:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FE7E1C07D8;
-	Thu, 24 Oct 2024 10:10:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="YEqrXrDB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD7AD1C07CD;
+	Thu, 24 Oct 2024 10:11:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 74C7117B51A;
-	Thu, 24 Oct 2024 10:10:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 54BF617B51A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:11:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764601; cv=none; b=a5B3K+GmuIHdEPXnml/hEThfWWOeThCyfoeQiH9r0Uq+Nj5X5W9ck9manmnv3+p2NBlRm9WnFHM+NbMP4L2BiyX6DzBRRf4LrpBHVGv93mwLtJZdpZNVOt8M3zKrI2Fs2yWTX9yVLF5KgpM5DDFj1+0CWygkb5rG5hU5Cyl2s2E=
+	t=1729764706; cv=none; b=hr+IHpUG6slgqN0LNZms939mup3CwbosOENlB4SpcbngfcpN6OIIY18VcaaAHLH8D0uQmEjbHOkDOztjJ5Kwfiuaeht4CUe9C7hiEVugxo6Xi6NzW99CmcOVP1hBT0wLSujrrHFpXHBQ+1vOeQU1/B+UFVD2p+HBa9dfCpIWzCI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764601; c=relaxed/simple;
-	bh=engmJwWWarFhbbbGk2yuL/t2q2JrqeyZFQ90uq8h+4Q=;
+	s=arc-20240116; t=1729764706; c=relaxed/simple;
+	bh=/GnD+djndyd2q7+yLzPImvqEhz8rpds0vzJGIgv3eUk=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oi4+hPf3rBtwrxJeXzPqWY5k/vuQ0uRkK3uneL8rqhCoI08b90lhVklwdoqVV42O+KMJj/5q4xHx6/GrQ8XHaL+yOUYFLJxWJDDgRXNqq34WblNrb56TiUXRkGOaR0Pb2ey1ANn4KqbLmMZO3+LaaS0U2nlumanMqwAe6QPvFE4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=YEqrXrDB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 66CE0C4CEC7;
-	Thu, 24 Oct 2024 10:09:56 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729764601;
-	bh=engmJwWWarFhbbbGk2yuL/t2q2JrqeyZFQ90uq8h+4Q=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=YEqrXrDBrtGgH0/gCx20QY05rgXJq9N2GRIFF6U7sVVmeONYDJioTR80LWhssYJkb
-	 wDZn8oxxamMFa2ZiYzDLBIP70hfSsxhLUf2OHhiJaMj9Aw8+XQF6Xhd15h9lmGnX8y
-	 XjF/X8COxXVWuBmMc3C/xkw4gSOQ6IL6u8ONWo5RINVfbgm1kVxqYgLK18HBka3sXX
-	 ppVZcHK/18CHYlZ2YcIw5h2byTcWCDFzVrD7l+6tM+KclekSqab6pfbb4KCUJ88i2a
-	 Qm3Q8aT085Q0VaOuyc74F2oB4JTWfFvWyKjGIF/MHcgSZbvTHdXfUdWaSGOfnmKGHE
-	 VDnq7Y8jwdWbA==
-Message-ID: <4c071100-f49c-4dcb-add8-99427fda268a@kernel.org>
-Date: Thu, 24 Oct 2024 12:09:53 +0200
+	 In-Reply-To:Content-Type; b=FQDA82u4QgHKoD2vb9wLCCgfRt2314HQRfJP92s8QYzuRxXPvxoDv9xuNK5DydcotFrU26Kju5fAiSyiFetw3R7masg8YzVKPqlsfc/dCS0o85djnSaCNUDI5Jqa1V33wS1i41SXt+QxPWJHrL99tNsjZm+a49rZTPcLa4eWeEw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
+	by metis.whiteo.stw.pengutronix.de with esmtp (Exim 4.92)
+	(envelope-from <a.fatoum@pengutronix.de>)
+	id 1t3uoS-00027H-Me; Thu, 24 Oct 2024 12:11:28 +0200
+Message-ID: <6af8035f-ae5e-48a2-a3d2-a640ff7fb999@pengutronix.de>
+Date: Thu, 24 Oct 2024 12:11:26 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +41,112 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 01/12] dt-bindings: arm: cpus: Add Samsung Mongoose M3
-To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-samsung-soc@vger.kernel.org,
- linux-gpio@vger.kernel.org, Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>,
- Maksym Holovach <nergzd@nergzd723.xyz>
-References: <20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com>
- <20241024-exynos9810-v1-1-ed14d0d60d08@gmail.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: [PATCH] arm: dts: socfpga: use reset-name "stmmaceth-ocp" instead
+ of "ahb"
+To: Mamta Shukla <mamta.shukla@leica-geosystems.com>, dinguyen@kernel.org,
+ alexandre.torgue@foss.st.com, joabreu@synopsys.com, davem@davemloft.net,
+ edumazet@google.com, kuba@kernel.org, pabeni@redhat.com,
+ mcoquelin.stm32@gmail.com, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org
+Cc: bsp-development.geo@leica-geosystems.com,
+ Pengutronix Kernel Team <kernel@pengutronix.de>
+References: <20241016074159.2723256-1-mamta.shukla@leica-geosystems.com>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <20241024-exynos9810-v1-1-ed14d0d60d08@gmail.com>
+From: Ahmad Fatoum <a.fatoum@pengutronix.de>
+In-Reply-To: <20241016074159.2723256-1-mamta.shukla@leica-geosystems.com>
 Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
+X-SA-Exim-Mail-From: a.fatoum@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On 24/10/2024 00:36, Markuss Broks wrote:
-> Add the compatible for Samsung Mongoose M3 CPU core to the schema.
-> 
-> Co-authored-by: Maksym Holovach <nergzd@nergzd723.xyz>
+Hello Mamta,
 
-There is no such tag. Maybe you wanted Co-developed-by? But then missing
-SoB - see submitting patches.
+Thanks for your fix.
 
-> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
+On 16.10.24 09:41, Mamta Shukla wrote:
+> The "stmmaceth-ocp" reset line in dwmac-socfpga driver is required
+> to get EMAC controller out of reset on Arria10[1].
+> Changed in Upstream to "ahb"(331085a423b  arm64: dts: socfpga: change the
+> reset-name of "stmmaceth-ocp" to "ahb" ).
+
+To ease automatic backporting, please add:
+
+Fixes: 331085a423b ("arm64: dts: socfpga: change the reset-name of "stmmaceth-ocp" to "ahb")
+
+before your S-o-b.
+
+It's probably worth pointing out in the commit message that according
+to the commit message title, the change was predominantly meant for ARM64
+SoCFPGA and that at least for the Arria10, it's not applicable.
+
+> If "ahb" reset-line is used, connection via ssh is found to be slow and significant
+> packet loss observed with ping.
+
+Nitpick: In the end it's the same underlying reset line, they are just toggled for
+different purposes. The ahb reset is deasserted in probe before first register access,
+while crucially the stmmacheth-ocp reset needs to be asserted every time during
+PHY mode reconfiguration.
+
+> This prominently happens with Real Time Kernel
+> (PREEMPT_RT enabled). Further with STMMAC-SELFTEST Driver enabled, ethtool test
+> also FAILS.
+
+FTR: I observed the same regression on v6.6.57.
+
+> Link:[1] https://www.intel.com/content/www/us/en/docs/programmable/683711/21-2/functional-description-of-the-emac.html
+> Signed-off-by: Mamta Shukla <mamta.shukla@leica-geosystems.com>
+
+Tested-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+
+With commit message reworded as described above (and --subject-prefix="PATCH net"):
+
+Reviewed-by: Ahmad Fatoum <a.fatoum@pengutronix.de>
+
+Cheers,
+Ahmad
+
 > ---
+>  arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi | 6 +++---
+>  1 file changed, 3 insertions(+), 3 deletions(-)
+> 
+> diff --git a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
+> index f36063c57c7f..72c55e5187ca 100644
+> --- a/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
+> +++ b/arch/arm/boot/dts/intel/socfpga/socfpga_arria10.dtsi
+> @@ -440,7 +440,7 @@ gmac0: ethernet@ff800000 {
+>  			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
+>  			clock-names = "stmmaceth", "ptp_ref";
+>  			resets = <&rst EMAC0_RESET>, <&rst EMAC0_OCP_RESET>;
+> -			reset-names = "stmmaceth", "ahb";
+> +			reset-names = "stmmaceth", "stmmaceth-ocp";
+>  			snps,axi-config = <&socfpga_axi_setup>;
+>  			status = "disabled";
+>  		};
+> @@ -460,7 +460,7 @@ gmac1: ethernet@ff802000 {
+>  			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
+>  			clock-names = "stmmaceth", "ptp_ref";
+>  			resets = <&rst EMAC1_RESET>, <&rst EMAC1_OCP_RESET>;
+> -			reset-names = "stmmaceth", "ahb";
+> +			reset-names = "stmmaceth", "stmmaceth-ocp";
+>  			snps,axi-config = <&socfpga_axi_setup>;
+>  			status = "disabled";
+>  		};
+> @@ -480,7 +480,7 @@ gmac2: ethernet@ff804000 {
+>  			clocks = <&l4_mp_clk>, <&peri_emac_ptp_clk>;
+>  			clock-names = "stmmaceth", "ptp_ref";
+>  			resets = <&rst EMAC2_RESET>, <&rst EMAC2_OCP_RESET>;
+> -			reset-names = "stmmaceth", "ahb";
+> +			reset-names = "stmmaceth", "stmmaceth-ocp";
+>  			snps,axi-config = <&socfpga_axi_setup>;
+>  			status = "disabled";
+>  		};
 
-Best regards,
-Krzysztof
 
+-- 
+Pengutronix e.K.                           |                             |
+Steuerwalder Str. 21                       | http://www.pengutronix.de/  |
+31137 Hildesheim, Germany                  | Phone: +49-5121-206917-0    |
+Amtsgericht Hildesheim, HRA 2686           | Fax:   +49-5121-206917-5555 |
 
