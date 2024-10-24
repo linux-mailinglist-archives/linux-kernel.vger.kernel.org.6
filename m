@@ -1,260 +1,321 @@
-Return-Path: <linux-kernel+bounces-380606-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380608-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C33409AF35A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:09:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BE39A9AF36A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:14:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 81618284206
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:09:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9B21C22E85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:14:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26FFC1FF02C;
-	Thu, 24 Oct 2024 20:08:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 246082170C0;
+	Thu, 24 Oct 2024 20:14:32 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Xo9g+mRd"
-Received: from NAM10-MW2-obe.outbound.protection.outlook.com (mail-mw2nam10on2040.outbound.protection.outlook.com [40.107.94.40])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="JRLOQfGX"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15B8B22B67B;
-	Thu, 24 Oct 2024 20:08:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.94.40
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729800538; cv=fail; b=laziMziXKZRtwWukcy5w6Q2MpTl1Jvft/DR8WBLyFmfN97l33H4rpmALq22E+Z58xx4h6uCPxANX0/3jkeKIqWoVLKovYdGLa8TVpxpMBGIsAERvT0aaxpq23bcQ3brLdMum75udKzsJEPeVtKU+muitc77vr9cVsyX5rdwzbck=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729800538; c=relaxed/simple;
-	bh=/EUsk15GcHaUMLl8uCRkJEUzm55VP1275HmqFiIDNN4=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=mLH06ju06RmE/M8r/F478uc0GCCIunlRqD6faHYTg3xR9+ORpKoqzXKIJnPY0aWklRWImp/9bRgdRq/Bmdg097fBfFXOgGShbFQNT+Ge3+PK/ULw2c1ezeruiO7rNPNvUUZRT9t4ae1Y5hY+7Dqo/5Fv/lzbe6U3eJkY5N3hcu8=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Xo9g+mRd; arc=fail smtp.client-ip=40.107.94.40
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KS/fU6IPEfA6y6VqFoWOGfvyt/V3LteOc9WvynyhpjyhK7wKGGYCfUAGGKAYRqSQnH6OedIgpRlhox7KYQ357Gc1pfZH1JpuSyu6LAhhaL9VtkawnP0VlZm4A3eNzORxc6tZQA7eUhvO7HuXTXQa21uQ7EzSBDyRTEoDEn7JulGFOD0tezTQm6u30he76Czj2D4ZS8D1LOWJc2xL6a1Dd+Jv0MEUEs9H0Tdj5b9IvK11CLjPpLdKaS5jdf5EQ24TDjot4AYE+0H0mg7yxNx3uq350CBY1ji/69d2EH6R9CUu+rrZvGmUjFf67JRs8NC3qwHIUVYIvBxpSJMDKaa3Ag==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=cKYD/nmRi4Rykrr6F2T6AnFvAC7J1oyOuqVkyFIWPEg=;
- b=vqGxqmYtd6F2MhVosqLv3j2TykujGIg6QacL2Mg9Sokf0+Onom+4+N4y80h2jujb97Z3o4lxV3UMwncTMLLwSw0dyh6k1n+Pk9GUzaOM2g4zOjcmvGNgfIZoqYfBP+b8eOY4nZ59Yiz+wRPCPoPHYu7l0Oaupu2Mth6Ip18CMTzhqtjA+hgTsKsqVtywtOYxbJG5/JkK2jJhmAK57Ex/iyAievBLoOy8Wh32Kd+7HexxxgYipU/kzD5rl0OXwnjhDIa5NAJjEzUhXSkslzCVAllxOLoaVRCFMj1map5niWHsbzrxsRHi9lbvqa0XDmmNhAapZaaRWn5JB1lsMmTAkw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=cKYD/nmRi4Rykrr6F2T6AnFvAC7J1oyOuqVkyFIWPEg=;
- b=Xo9g+mRdja7tm9xBHcQfK7DSQkthL++2BwwylHE7a92D6PoBBw9A+MteQ7fR7p45hX+S6U3Gj3AxFOiADYcMOnTkqqKQB6ywkQ8FrmIRfSqtuLgeQzXGd5ItxrYW6YXYniNKBGZh/2cUhf0kHRNiR5IUuOWaF4MEgPcqFdacgRU=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com (2603:10b6:208:3cb::10)
- by CH0PR12MB8486.namprd12.prod.outlook.com (2603:10b6:610:18a::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Thu, 24 Oct
- 2024 20:08:44 +0000
-Received: from MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca]) by MN0PR12MB6101.namprd12.prod.outlook.com
- ([fe80::37ee:a763:6d04:81ca%6]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
- 20:08:44 +0000
-Message-ID: <79cb3a45-8f42-4ef8-9c21-acaae5fbbe04@amd.com>
-Date: Thu, 24 Oct 2024 15:08:41 -0500
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 00/16] AMD NB and SMN rework
-To: Bjorn Helgaas <helgaas@kernel.org>, Yazen Ghannam <yazen.ghannam@amd.com>
-Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
- tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
- john.allen@amd.com, bhelgaas@google.com, Shyam-sundar.S-k@amd.com,
- richard.gong@amd.com, jdelvare@suse.com, linux@roeck-us.net,
- clemens@ladisch.de, hdegoede@redhat.com, ilpo.jarvinen@linux.intel.com,
- linux-pci@vger.kernel.org, linux-hwmon@vger.kernel.org,
- platform-driver-x86@vger.kernel.org, naveenkrishna.chatradhi@amd.com,
- carlos.bilbao.osdev@gmail.com
-References: <20241024174647.GA964607@bhelgaas>
-Content-Language: en-US
-From: Mario Limonciello <mario.limonciello@amd.com>
-In-Reply-To: <20241024174647.GA964607@bhelgaas>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: SN1PR12CA0078.namprd12.prod.outlook.com
- (2603:10b6:802:20::49) To MN0PR12MB6101.namprd12.prod.outlook.com
- (2603:10b6:208:3cb::10)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92021FF7D9;
+	Thu, 24 Oct 2024 20:14:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729800871; cv=none; b=fDck5sH0vNNCnklIZV7JP5dDHTwm5FNiHHtw4SIyXPPzWkoGuYx/ProM6h4cvMbygqsr0fUX2K58GkaJ571geC04ghZ7gntUQG8T4XYatTQkcdZ6z6OL2+h1pfpYNxzGkhh1dYUICiPiXlBjJ9OwOz/TM+ZNwVv/97tjjX7cER4=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729800871; c=relaxed/simple;
+	bh=VklAR/wGX+k0pmjfj3M+iIy1qkP/ubwQqB0DWvZy6Hw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=g0wcd6wa2Cf/FN3SYHirsYSDKArY0ues7H36ZrYaSke9m8Tggx06sN5NY5Th535UxF54y4usYmaORgJTeEluu7B/v2RrGrvPxyUguFWIAIOnjSquCVVqCt+okKbfvm73FPXuR5CUxcmDcTQFHu5dsSSQQmtyJMC5vyUsCVDLrko=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=JRLOQfGX; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729800869; x=1761336869;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=VklAR/wGX+k0pmjfj3M+iIy1qkP/ubwQqB0DWvZy6Hw=;
+  b=JRLOQfGXSafQj3Ckh0xfZhUEP2oNIcLFd3832M4zaaSvSlZuSkTqaRyy
+   j5pN0yIgG7J6wf8xxpzdgi+1ks6IiXL+aAAhh0qUgHBPEcyiBtkgyLCX5
+   T7xz7QJ3PIVa7jJjOtRNjsiQE77s/rRuX8d8zUBu5aDcs/n9UWz6H3N0q
+   RaHAhwFePwRD9eTKDj4Q3r9EBKjBpOl5CmGk3JvahPchXwiiVdLInrZ+t
+   UwGbz4h8N/3UtVTRmNMVhHPemyhDkW2PEJ5GzOVjafQEVUKKXn6lAIpJO
+   FQh0xNg9qZA7af//IoZ2f6mEk64+KwzxIW5VxqIz7mcuBuo1+I6F88QuA
+   Q==;
+X-CSE-ConnectionGUID: knLYwlvoRXycshsNcw3ieQ==
+X-CSE-MsgGUID: mp6Jpse4R06hx9aH+Ar6MQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29392985"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29392985"
+Received: from orviesa005.jf.intel.com ([10.64.159.145])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 13:14:27 -0700
+X-CSE-ConnectionGUID: EFJSh1mVTsqSo1fDKM2lUA==
+X-CSE-MsgGUID: WoK4p1bHT4+stUiif3S8mA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="85495934"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa005.jf.intel.com with ESMTP; 24 Oct 2024 13:14:21 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t44Do-000X2y-38;
+	Thu, 24 Oct 2024 20:14:16 +0000
+Date: Fri, 25 Oct 2024 04:13:49 +0800
+From: kernel test robot <lkp@intel.com>
+To: Dave Stevenson <dave.stevenson@raspberrypi.com>,
+	Maxime Ripard <mripard@kernel.org>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
+	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
+	Ray Jui <rjui@broadcom.com>, Scott Branden <sbranden@broadcom.com>,
+	Michael Turquette <mturquette@baylibre.com>,
+	Stephen Boyd <sboyd@kernel.org>,
+	Javier Martinez Canillas <javierm@redhat.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-rpi-kernel@lists.infradead.org,
+	linux-arm-kernel@lists.infradead.org, linux-clk@vger.kernel.org,
+	Dave Stevenson <dave.stevenson@raspberrypi.com>
+Subject: Re: [PATCH 02/37] drm/vc4: Use of_device_get_match_data to set
+ generation
+Message-ID: <202410250459.OQAldqVP-lkp@intel.com>
+References: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: MN0PR12MB6101:EE_|CH0PR12MB8486:EE_
-X-MS-Office365-Filtering-Correlation-Id: e9f75cdb-2c28-4273-f405-08dcf467a99b
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|7416014|366016|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?aHg5U2RJVkIvb2hjaUFpNHFHd0tNbXdkUnMyK2VSalkzbUVVVS9aNm5ld1JG?=
- =?utf-8?B?WlpEdEVUb2dpRHVkRk9ISEYyNmh1YTRNZXFBUEtKSG4reHk1d0tCdU9HbzhW?=
- =?utf-8?B?MGdCNkdaaDlJcnl4TlVUTkc4WW4rMFM3Y05RS3Q5em1SRDVHbGJEY256ZWJH?=
- =?utf-8?B?Y1M1dHdybVU1QkRXTkd6MVhCdzRwWFp2eG56a3NMN2svRlRac2dFbUlQWSt6?=
- =?utf-8?B?cXVhOXQzUm9PYlNlMXBzcFdqM0VndzhTMEdKVG1KLzRpQUY4UUhWY1h2aHJy?=
- =?utf-8?B?ejRvM212T0FVVjNkQkg5blQ5M0JRQS9JeXlIZXlQRm12YllTTjdkaU5pWjl5?=
- =?utf-8?B?ejFHKzExLzlvazRCUXBrcHBiS3ZsYm9sOVE4ekRtczNsb21aWkNFSGIrWDlK?=
- =?utf-8?B?ZnhOb0lhdGNyVGxvcktCNVlpU0piNXM1R1Q3amRNb2daTmJMRzQyVGFCZXFp?=
- =?utf-8?B?bzBuVTk4bWc3enhMOHl6U0hncE1MRmpIYXZzdGJSQjJaKzcyU3hYZ3JBSWxV?=
- =?utf-8?B?T2x4ZWhPQzZXSzhsY0dnTWJkR0hsUG91dDlVdEw2cVJzZG5TUVlXYmZEcjJ4?=
- =?utf-8?B?N3lQMlhEcG1pWjBpN1kvVnFtYzVtaFJBYTgyd3NJOW91QmdYVzhZc0kxeWRT?=
- =?utf-8?B?WGZIclBucDc4RkllVFAxdTVlOEJXdzQvUEQ5REZ4RUgrcVBrWEV3WTFIL2xk?=
- =?utf-8?B?NlJEbGsydGRZNyt3Z1NlaDlNb012T2UwODREa0Z4Qlgxbm41UHVsUHg5dG1I?=
- =?utf-8?B?NGFpWDJIU29Gam5PMmozYVhRR0xxK2pFUDFma0FUUzR0QmszYW1CNVVFZGx0?=
- =?utf-8?B?RUphN0RtL1B0SURmSmRoMEUzTzhBOS8vbS90S01pSVIweUJ3RnR3Rlh4ditL?=
- =?utf-8?B?dUtGaFlCdVpIMHFuNEQrNnNwcjMwbEZPcmZFajAybmhMajkwVmV3aE9KVGFs?=
- =?utf-8?B?anpzSlppUk9JbTZIc2xxVDJobWVYWks2RHlpd0F5cGtXV2plR3p0Z2RUaXY0?=
- =?utf-8?B?QU1ZUHJwdCs0bVVWdUp1eDl4Zjcvb1g3OGM2WXZUVDRzb1VBbjltODNacXMy?=
- =?utf-8?B?NWdISDdWZGFqZy9PSWFOTVh0NTI0M1VhWTg4K2xyZi9UT0tsQ2RFWk1hTjB2?=
- =?utf-8?B?SE1ia0Y2UlJJcGJCKzZOMklHOE5Tc2dxeXFsU3dEdzE1bXlyZkNockRpeUN1?=
- =?utf-8?B?RjR3amF2NTgzV2NxMnRGM1g5UndnTlFNY0Mvdi9HUkZWZDBsUEd5YUIyaWFP?=
- =?utf-8?B?VjRkQlIzQkp1Y0NZbWtJU2NoNzJSVjU1ZkFHMmlFcmUxR05ja0FFQUU5NVNB?=
- =?utf-8?B?UmVLaWhvdWxkRmRsVXZSV0NkMmQycFh2YjFiTTM0ZmowTlpqaVJGT1diVjU1?=
- =?utf-8?B?bnUxSFN3aWI5QkhTbUV1UWlOMDM2WW03bXNjK0p3Q2x0UFhrNVQvRGEyaEtH?=
- =?utf-8?B?R3huS0JHb01ETWdpK0ZRU0dRcTRiQS84RThGY1kwbmtLdmg1eDlOTFFjaE9s?=
- =?utf-8?B?cG1DeTdZempQNzcrUGsvOUJ1MFlPK2NBRDE4UG5jU05sOXowS0IzbTdFWk03?=
- =?utf-8?B?cEJISGxJajhQa29GRHVobWlhODZPRkpVLzg5MjErcU5xU0tIaVJ5U202Ym9T?=
- =?utf-8?B?Zi9wYlBjcVkrTnN6Tm9sNS9mYXdBeUxZZnAxeTZDQ3FDN3ZGYjF5UjNiWitv?=
- =?utf-8?B?UUNVVE9xdllzT2tFdEw4bENvTTJaMmZtTHZMdDFuUFBUZ0hreWNtRE1tUVQ3?=
- =?utf-8?Q?BCHsW7xGTDpdIw5gv4vVTpJNrkXg1D47EHc4jQ0?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN0PR12MB6101.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(7416014)(366016)(1800799024);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?M3laRy9Jci9EWGlRbk1MOGV3WkxEemliM2d1a1JCS01lbGpSRWRwdUN5a1ly?=
- =?utf-8?B?aUFEYU1tOHkxeXdOR1NaOEdYU0xhdko1UkZiSDhWNTBUYjQwUXN0MzJrUUpM?=
- =?utf-8?B?SjJ3OVVmNXZVYVVFUjZHeXhlSm50bEtwR2dvdWhFVkFQT3B2aXBySlc2R3lp?=
- =?utf-8?B?Tk15STRrYThmR3hHOHdhUmhDRC9pYWZRSE8zdFhFUk5NQnRGM2ZZaEdOVUp4?=
- =?utf-8?B?ZEV4MkdIdmV4NVFPNkVSTGxvcXpHVXBEZWE4dlBZWGhZSE5BcGlOZ3AzVUZj?=
- =?utf-8?B?bytVQ3hwTTZ3d2VHV2o2eXNWbkluNitoRDRrN2JKWFdVRmU5UVVGN3htMDcx?=
- =?utf-8?B?STlHSm5VSlQ1Q2sydkpFUkNZb2IrSTBYbW91OFlGSXBtdmY2b1NTMkh5ZmZt?=
- =?utf-8?B?cS9rcVZ5dENuZnhtc0ozZzQ0djcwY2FlT1cyTzFpMXNxTDZSNWxiMFBaWU9U?=
- =?utf-8?B?Zlp4andEMnV4QncyMjJ0ZVB6ZFBBemFTQUNEeTJVZFNxRXZzQnEvYUdtTXEx?=
- =?utf-8?B?U1R6clIvbmdaYTRTd3NVWVd0ekJ6elMwU2lYMjNpOXh1V1hvdFJYYWRuMzRq?=
- =?utf-8?B?RkZIZmdsUWhFS1l6S3NmU2VQK1FmYks0YTBrdTJOYSswUngzSHpqMTBBQUVw?=
- =?utf-8?B?SWFaSjE4SHRURlNCYWFyaFB6MmJHaU9td0I5NDdLVUZlTmgrNE5ZM0F3VUZY?=
- =?utf-8?B?NWpaQUN3d0xtdDlSam1zN2Z4Ym11Y0tQMW1veVpUL082c3Nzak5pbGg3MjlN?=
- =?utf-8?B?dm5scHdJQWdreUpjdW9rcklHcGFZcXQxeCtOL0Q3cS9SdXo1R2IrQUNMaGZn?=
- =?utf-8?B?dlZXZXp4aGNvZ2lwRzRveHAwZ21rL1lqVUNCVGlFVTcrVXpiV2JEK0FpMDAw?=
- =?utf-8?B?cE5hZHA0dExVT0ZzMFlNSmpBVXpGZ244VEN0a01oRFdkZ0ErZXQwcFZ3U3pP?=
- =?utf-8?B?WkxWVUprN3FYUjlzUlZxOXhIbVdrbzlMazhDWGo2Z2NNa0NpYVdvck0ydE0z?=
- =?utf-8?B?OXRpU2JKWGdZZGNrUFcyc29aSVZMZW5mdk4xYUwzRGNMeXMrcTk5Vzk1cHVr?=
- =?utf-8?B?RUF6WCtkSnhMQnhXazZZdlBGOHA1MGF1ZkZxRGtnOXVnckdwOXkxWE81Y25i?=
- =?utf-8?B?ditZc0Y2VFRwdHIzV0tzR0VLdWFjM0hzSHdKUVBzUW9udlVndFQzZnhFY0xX?=
- =?utf-8?B?QmRTOStDRzNYZEJrU09PVURJeDN5OUNvNzFjTFcrc3VmREVzRHh2MWV2VkZ4?=
- =?utf-8?B?YVJtbi9mZk9rREFmWitXeVlFc3EvNEw1cEJDQ0I3a1lGdUVIUzM3WnNLNFE4?=
- =?utf-8?B?VjFLUUJ2Q0NHdVhhemU0cVhETDRUM0ZILzRXdU55d1k1OXRGMTFiZEpmZSta?=
- =?utf-8?B?RndGODVOd1lwODA4aWFCUVU1N3JtNy9PL3E0ZXZ1TmU1SlUwT0dyYjh2Z0Zp?=
- =?utf-8?B?SFlLcC9pcEpLQ0ZlMGdaTDQ5WTB3R3hqUW1OTisvVm54RTdNNlpoeWYzWHNE?=
- =?utf-8?B?NHRiL2VEVHVsVG55RDBqdmFFRTBPNVlGaFA3SXJpdERnMDVTRmplU2FaZjFB?=
- =?utf-8?B?Y0VMNEE2dElYaVVzQlFuYWhIWGR1QSt2Ym8zZFJRTWJROUZLQ0xoVmlaQUtx?=
- =?utf-8?B?dXcvUHR0bG5LUXZxcmNpT1NXNnd6ZlQ2eHFyQmIzd0Uvc1Rha3g5T2piVnhM?=
- =?utf-8?B?eDF4NjJ6VzFzRTVvaWsxT2dEbVNyZXNFUklvRGUzeVBqNkZ4dXpFSUViZEFi?=
- =?utf-8?B?Q2FMYkoxVFpKem1OZVJRSWdCZmpqTlJ5T2YvblJMa0VGTTdadTdTVFMzN3lZ?=
- =?utf-8?B?emdNZ1VuTnBkeUZjdldyRDE0M2ZVbnN0T1pxc0VqU1JsQTFjekYxRXdCd0Rx?=
- =?utf-8?B?VkpybHlOS0xTWmJEOFRYbFFYY0ZGdkx0U0VPbCtSblc1QSsxNW55UzJ0SGxn?=
- =?utf-8?B?WHFGejA4S0hoS2pZNVRDVGs5c1ZjbzU3RUZFN1hndkptenFGSURJWTVnZmFy?=
- =?utf-8?B?ZHFQZUpWazQzMFZKZU4xTjlzRGg1dVV6MkFYWDU1K1VtUUNqWjNKUTZQdVB5?=
- =?utf-8?B?TkhuODduY2p5Z3k1V0MvNHcxV25KN3BQNnEyZEtCNmgzYlhQVWpETG8rSUhE?=
- =?utf-8?Q?+xIHmtCa2yAfeyTn1Kv5qKXcW?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: e9f75cdb-2c28-4273-f405-08dcf467a99b
-X-MS-Exchange-CrossTenant-AuthSource: MN0PR12MB6101.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 20:08:44.5903
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: atqHg20Bu8Fa6JcaqMV4xVa0IinkU/0H+iJV0NpfhSjw7+uPoDSLDNh+/Usa1PfJ9xhzlM3scl4sAJ4pjVgixw==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH0PR12MB8486
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-2-1cc2d5594907@raspberrypi.com>
 
-On 10/24/2024 12:46, Bjorn Helgaas wrote:
-> On Thu, Oct 24, 2024 at 12:01:59PM -0400, Yazen Ghannam wrote:
->> On Wed, Oct 23, 2024 at 12:59:28PM -0500, Bjorn Helgaas wrote:
->>> On Wed, Oct 23, 2024 at 05:21:34PM +0000, Yazen Ghannam wrote:
->>>> Hi all,
->>>>
->>>> The theme of this set is decoupling the "AMD node" concept from the
->>>> legacy northbridge support.
->>>>
->>>> Additionally, AMD System Management Network (SMN) access code is
->>>> decoupled and expanded too.
->>>>
->>>> Patches 1-3 begin reducing the scope of AMD_NB.
->>>>
->>>> Patches 4-9 begin moving generic AMD node support out of AMD_NB.
->>>>
->>>> Patches 10-13 move SMN support out of AMD_NB and do some refactoring.
->>>>
->>>> Patch 14 has HSMP reuse SMN functionality.
->>>>
->>>> Patches 15-16 address userspace access to SMN.
->>>>
->>>> I say "begin" above because there is more to do here. Ultimately, AMD_NB
->>>> should only be needed for code used on legacy systems with northbridges.
->>>> Also, any and all SMN users in the kernel need to be updated to use the
->>>> central SMN code. Local solutions should be avoided.
->>>
->>> Glad to see many of the PCI device IDs going away; thanks for working
->>> on that!
->>>
->>> The use of pci_get_slot() and pci_get_domain_bus_and_slot() is not
->>> ideal since all those pci_get_*() interfaces are kind of ugly in my
->>> opinion, and using them means we have to encode topology details in
->>> the kernel.  But this still seems like a big improvement.
->>
->> Thanks for the feedback. Hopefully, we'll come to some improved
->> solution. :)
->>
->> Can you please elaborate on your concern? Is it about saying "thing X is
->> always at SBDF A:B:C.D" or something else?
-> 
-> "Thing X is always at SBDF A:B:C.D" is one big reason.  "A:B:C.D" says
-> nothing about the actual functionality of the device.  A PCI
-> Vendor/Device ID or a PNP ID identifies the device programming model
-> independent of its geographical location.  Inferring the functionality
-> and programming model from the location is a maintenance issue because
-> hardware may change the address.
-> 
-> PCI bus numbers are under software control, so in general it's not
-> safe to rely on them, although in this case these devices are probably
-> on root buses where the bus number is either fixed or determined by
-> BIOS configuration of the host bridge.
-> 
-> I don't like the pci_get_*() functions because they break the driver
-> model.  The usual .probe() model binds a device to a driver, which
-> essentially means the driver owns the device and its resources, and
-> the driver and doesn't have to worry about other code interfering.
+Hi Dave,
 
-Are you suggesting that perhaps we should be introducing amd_smn (patch 
-10) as a PCI driver that binds "to the root device" instead?
+kernel test robot noticed the following build warnings:
 
-If we made this change, I would wonder if it comes up early enough, 
-particularly considering quirk_clear_strap_no_soft_reset_dev2_f0() uses 
-the SMN symbols as PCI fixup final which happens before a driver 
-attaches (pci_bus_add_device()).
+[auto build test WARNING on 91e21479c81dd4e9e22a78d7446f92f6b96a7284]
 
-There are some areas that do discovery (for example amd_node_get_root() 
-in patch 6/16).
+url:    https://github.com/intel-lab-lkp/linux/commits/Dave-Stevenson/drm-vc4-Limit-max_bpc-to-8-on-Pi0-3/20241024-005239
+base:   91e21479c81dd4e9e22a78d7446f92f6b96a7284
+patch link:    https://lore.kernel.org/r/20241023-drm-vc4-2712-support-v1-2-1cc2d5594907%40raspberrypi.com
+patch subject: [PATCH 02/37] drm/vc4: Use of_device_get_match_data to set generation
+config: um-allmodconfig (https://download.01.org/0day-ci/archive/20241025/202410250459.OQAldqVP-lkp@intel.com/config)
+compiler: clang version 20.0.0git (https://github.com/llvm/llvm-project 5886454669c3c9026f7f27eab13509dd0241f2d6)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410250459.OQAldqVP-lkp@intel.com/reproduce)
 
-I think we should aspire to do is much discovery as possible but I don't 
-know we can get TOTALLY away from some hardcoded topology information.
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410250459.OQAldqVP-lkp@intel.com/
 
-> 
-> Unlike pci_get_*(), the .probe()/.remove() model automatically handles
-> hotplug without extra things like notifiers in the driver.  Hotplug
-> may not be an issue in this particular case, but it requires specific
-> platform knowledge to be sure.  Some platforms do support CPU and PCI
-> host bridge hotplug.
-> 
+All warnings (new ones prefixed by >>):
 
-Yeah hotplug won't matter for these.
+   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:548:31: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     548 |         val = __raw_readb(PCI_IOBASE + addr);
+         |                           ~~~~~~~~~~ ^
+   include/asm-generic/io.h:561:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     561 |         val = __le16_to_cpu((__le16 __force)__raw_readw(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:37:51: note: expanded from macro '__le16_to_cpu'
+      37 | #define __le16_to_cpu(x) ((__force __u16)(__le16)(x))
+         |                                                   ^
+   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:574:61: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     574 |         val = __le32_to_cpu((__le32 __force)__raw_readl(PCI_IOBASE + addr));
+         |                                                         ~~~~~~~~~~ ^
+   include/uapi/linux/byteorder/little_endian.h:35:51: note: expanded from macro '__le32_to_cpu'
+      35 | #define __le32_to_cpu(x) ((__force __u32)(__le32)(x))
+         |                                                   ^
+   In file included from drivers/gpu/drm/vc4/vc4_drv.c:27:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:9:
+   In file included from arch/um/include/asm/io.h:24:
+   include/asm-generic/io.h:585:33: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     585 |         __raw_writeb(value, PCI_IOBASE + addr);
+         |                             ~~~~~~~~~~ ^
+   include/asm-generic/io.h:595:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     595 |         __raw_writew((u16 __force)cpu_to_le16(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:605:59: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     605 |         __raw_writel((u32 __force)cpu_to_le32(value), PCI_IOBASE + addr);
+         |                                                       ~~~~~~~~~~ ^
+   include/asm-generic/io.h:693:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     693 |         readsb(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:701:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     701 |         readsw(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:709:20: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     709 |         readsl(PCI_IOBASE + addr, buffer, count);
+         |                ~~~~~~~~~~ ^
+   include/asm-generic/io.h:718:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     718 |         writesb(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:727:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     727 |         writesw(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+   include/asm-generic/io.h:736:21: warning: performing pointer arithmetic on a null pointer has undefined behavior [-Wnull-pointer-arithmetic]
+     736 |         writesl(PCI_IOBASE + addr, buffer, count);
+         |                 ~~~~~~~~~~ ^
+>> drivers/gpu/drm/vc4/vc4_drv.c:303:8: warning: cast to smaller integer type 'enum vc4_gen' from 'const void *' [-Wvoid-pointer-to-enum-cast]
+     303 |         gen = (enum vc4_gen)of_device_get_match_data(dev);
+         |               ^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+   14 warnings generated.
 
-> Thanks again for doing all this work.  It's a huge improvement
-> already!
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [m]:
+   - RESOURCE_KUNIT_TEST [=m] && RUNTIME_TESTING_MENU [=y] && KUNIT [=m]
 
+
+vim +303 drivers/gpu/drm/vc4/vc4_drv.c
+
+   288	
+   289	static int vc4_drm_bind(struct device *dev)
+   290	{
+   291		struct platform_device *pdev = to_platform_device(dev);
+   292		const struct drm_driver *driver;
+   293		struct rpi_firmware *firmware = NULL;
+   294		struct drm_device *drm;
+   295		struct vc4_dev *vc4;
+   296		struct device_node *node;
+   297		struct drm_crtc *crtc;
+   298		enum vc4_gen gen;
+   299		int ret = 0;
+   300	
+   301		dev->coherent_dma_mask = DMA_BIT_MASK(32);
+   302	
+ > 303		gen = (enum vc4_gen)of_device_get_match_data(dev);
+   304	
+   305		if (gen > VC4_GEN_4)
+   306			driver = &vc5_drm_driver;
+   307		else
+   308			driver = &vc4_drm_driver;
+   309	
+   310		node = of_find_matching_node_and_match(NULL, vc4_dma_range_matches,
+   311						       NULL);
+   312		if (node) {
+   313			ret = of_dma_configure(dev, node, true);
+   314			of_node_put(node);
+   315	
+   316			if (ret)
+   317				return ret;
+   318		}
+   319	
+   320		vc4 = devm_drm_dev_alloc(dev, driver, struct vc4_dev, base);
+   321		if (IS_ERR(vc4))
+   322			return PTR_ERR(vc4);
+   323		vc4->gen = gen;
+   324		vc4->dev = dev;
+   325	
+   326		drm = &vc4->base;
+   327		platform_set_drvdata(pdev, drm);
+   328	
+   329		if (gen == VC4_GEN_4) {
+   330			ret = drmm_mutex_init(drm, &vc4->bin_bo_lock);
+   331			if (ret)
+   332				goto err;
+   333	
+   334			ret = vc4_bo_cache_init(drm);
+   335			if (ret)
+   336				goto err;
+   337		}
+   338	
+   339		ret = drmm_mode_config_init(drm);
+   340		if (ret)
+   341			goto err;
+   342	
+   343		if (gen == VC4_GEN_4) {
+   344			ret = vc4_gem_init(drm);
+   345			if (ret)
+   346				goto err;
+   347		}
+   348	
+   349		node = of_find_compatible_node(NULL, NULL, "raspberrypi,bcm2835-firmware");
+   350		if (node) {
+   351			firmware = rpi_firmware_get(node);
+   352			of_node_put(node);
+   353	
+   354			if (!firmware) {
+   355				ret = -EPROBE_DEFER;
+   356				goto err;
+   357			}
+   358		}
+   359	
+   360		ret = aperture_remove_all_conflicting_devices(driver->name);
+   361		if (ret)
+   362			goto err;
+   363	
+   364		if (firmware) {
+   365			ret = rpi_firmware_property(firmware,
+   366						    RPI_FIRMWARE_NOTIFY_DISPLAY_DONE,
+   367						    NULL, 0);
+   368			if (ret)
+   369				drm_warn(drm, "Couldn't stop firmware display driver: %d\n", ret);
+   370	
+   371			rpi_firmware_put(firmware);
+   372		}
+   373	
+   374		ret = component_bind_all(dev, drm);
+   375		if (ret)
+   376			goto err;
+   377	
+   378		ret = devm_add_action_or_reset(dev, vc4_component_unbind_all, vc4);
+   379		if (ret)
+   380			goto err;
+   381	
+   382		ret = vc4_plane_create_additional_planes(drm);
+   383		if (ret)
+   384			goto err;
+   385	
+   386		ret = vc4_kms_load(drm);
+   387		if (ret < 0)
+   388			goto err;
+   389	
+   390		drm_for_each_crtc(crtc, drm)
+   391			vc4_crtc_disable_at_boot(crtc);
+   392	
+   393		ret = drm_dev_register(drm, 0);
+   394		if (ret < 0)
+   395			goto err;
+   396	
+   397		drm_client_setup_with_fourcc(drm, DRM_FORMAT_RGB565);
+   398	
+   399		return 0;
+   400	
+   401	err:
+   402		platform_set_drvdata(pdev, NULL);
+   403		return ret;
+   404	}
+   405	
+
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
