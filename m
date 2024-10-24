@@ -1,252 +1,196 @@
-Return-Path: <linux-kernel+bounces-380293-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380294-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C723B9AEBCF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:23:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 18CA09AEBD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:24:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2B423B2150B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:23:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 82AA9B21F6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:24:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2FF5A1F80A3;
-	Thu, 24 Oct 2024 16:23:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A6B91F8186;
+	Thu, 24 Oct 2024 16:24:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="EbEP6ont"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="RvP2CCK4"
+Received: from mail-yw1-f174.google.com (mail-yw1-f174.google.com [209.85.128.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 57D8C1F4707
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:23:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B690E1F5836;
+	Thu, 24 Oct 2024 16:24:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787004; cv=none; b=nXi6KbJWh3Y6P57UMeyIxj7WEyUOjdl4NhWiV8LBy3z+0JdMvH6oqifIa8jRFK18A/yLr0Tq+1/VFgQOKKgKJTs8r50G3PGq6RrYHpTRXCU5gnpJZ8y43wRWCBtJeTjHSIgEasD2vwzx0Lcrux/GrqZig4XP6HrZoIfejAYCIDQ=
+	t=1729787042; cv=none; b=hhjZFxuS62gxgbtriRowI6Uno42j3x3ybjeWlM22h5F7B0DU7KFCNaQBrN79/QCiM9orrGcxlP7Ad5VGNu/e3lo0pwHNo38O9J6OP4WguYk0xQlAoF2/HbFOn+Gywv6eciDCJ86KVNLvQQRS+ceUGPWVNk03iejjGUBv35EC6XE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787004; c=relaxed/simple;
-	bh=8oc5PdhhlgmJAcecp9jnCe71f+xSSCxou7pzD2J331M=;
-	h=Date:Mime-Version:Message-ID:Subject:From:To:Cc:Content-Type; b=oCT6eWZk1HTGLhzR7DKGqOBO3Z+tLvqHInl3Q74FkcIAk6cYLnu29+8biE5uIZyPFEVra0S6AHetAXwQGM7LKt8AZ0SCp8ehVE+U1tcHOAtsb2ToHPzr3dMGKczIoI7rxU1R/mmz3xiGw6q+IUfqkJp/5FAIlZ3oCa3VE2DZepk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=EbEP6ont; arc=none smtp.client-ip=209.85.128.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--surenb.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e7e0093018so20045657b3.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:23:22 -0700 (PDT)
+	s=arc-20240116; t=1729787042; c=relaxed/simple;
+	bh=f18gmjvDDOpzp1FkWkb7PHbYJOLjERviv7qoUyayLKo=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=oe4d1iZJEE/LAaCVkvJS7oQ/emryfjDHh3YawjWtgSpAhU97EvNyn7Pq6oVaZ8BHul/P/Vxd+R+alL7Cidon9Fme4RnJTnDrZHJ8DKW+mExfVlTHigzvOLVD9dTLcN4NN7R0FqFlcNM6x+7YkuSMcaTj6objzCiSa2py7QmONIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=RvP2CCK4; arc=none smtp.client-ip=209.85.128.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yw1-f174.google.com with SMTP id 00721157ae682-6e5a5a59094so10357717b3.3;
+        Thu, 24 Oct 2024 09:24:00 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729787001; x=1730391801; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:mime-version:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=gTU/Az6oQC87qV0R2JNeB98NQAAeDAB9smYAoMmnxCc=;
-        b=EbEP6ontvRrpJmWoan7khR+fAXGZ0ZLIhrdBLEox3s2QYTRlubVt5FSEgkq/aYITFk
-         QfMPbR2lZMcBNrGppJWwIcCwqS3RJXiSR4JYBtuzubHb3RCkjasq5Qz1fLhZYU2U/4F+
-         zOwCrRXI9PPIVGaEOhJRyZySWHUofs/whlotdcK71xApYr1I22MZJnYo+plxLD0tWggR
-         0tBOOgBRiULdFoO9cBBSwwZ+sNDI7sPpVtntaID607n7Vr3WR9Si+hEG3O/IcGd87HHZ
-         DnV8UooSV0TI7geYqHj87reYzeo42EjXx9RnUt3UzwKe0PhpYmT9apZddwZ1r+KM+jOg
-         TppA==
+        d=gmail.com; s=20230601; t=1729787040; x=1730391840; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=V9NK7Z+Ngm315TPPgtg78S7xRTYOPCuLS/UsgPBTsds=;
+        b=RvP2CCK4vURFRW80o9iN6J2qcci0GFuryT5Shxl3j9NQ0QRgAp8E/7fnGETIMciTiW
+         oTwu4XOxyoNl5GYHFqgTd8gwWl36Le9OJo/GS+4EiGLjzr1yQIV0GteTffY60Z90QSvc
+         8Mzmg2FRCB9l7/F/nSV9jlsOmUgYyhZHVaIZQwb0/O+7Emomax3Oz+9vSKnEoE5tf2Dd
+         mYIBl09cXPvWDUn2nJWHswVzezmIEbZdyUJ7dFPriwNgWDzrsZkC6Rw9tyKmiTL+VkdP
+         v9TLB55kcNlmu2lxDtr4stJpsUrTwzWdeQA5kV4rYE2mmaiojvbt38gVAOFAGKsqvjZa
+         Q9wQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729787001; x=1730391801;
-        h=cc:to:from:subject:message-id:mime-version:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=gTU/Az6oQC87qV0R2JNeB98NQAAeDAB9smYAoMmnxCc=;
-        b=acshLgPluo4Hw25jaDkPPjmIMAgAWLbO/RW8o09OOVmTH38QqJkYmH0XA8i3RRM7Uk
-         TktJ+toB/GDc/wndFKmwJraIs5BqNW7R478eH2sme2YBRQw1uYrBiOxCWZYFElR7o0yz
-         uZiL4iaecd4PY2OXXeDI2iMqpYRH6u765AzCsZ8ZjrKmeom1PlvJ3jzCh+EghfDAkEVX
-         f7C0nc+FK4VzH1TFYZDQCGx8e6EiQyrErMobUvcVv7PIt7tZrBJjslTd4uKhyrI7+Lt5
-         UAPpwhvk4yOqhhtBbe3bm3oIpzLwC9WDaQYc0C2zSdPNZeUWyKFVVG3EpYSrhhZqdHU2
-         Tlvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUtxOHY0m0SPQbFrroM5QcX/MAbc3v+a/r0Ub2x5K+ho/rr9GK4dxNbQSnF+oWgDQrzm/jMRsdaN8UpH+o=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxL6arHfg8HJtu3F8KcIiVMYXVrC0C+PIHa9NH3s/w+82uuir73
-	uUym6OdYMMR9EpYgVz5eY0M1HHof3lThIvgsEbShPN2fSD0tiuqYWX6gP2r5z5yCXHeGdGyJn/c
-	VHw==
-X-Google-Smtp-Source: AGHT+IGzDL8ww+0/uK6UkUgn7P+6nNxCybhx2NYsrl5o+4THb/v3434ldbCSMuGjsNZGJegfhEedS/IaArE=
-X-Received: from surenb-desktop.mtv.corp.google.com ([2a00:79e0:2e3f:8:47e4:54e:bc8e:cb18])
- (user=surenb job=sendgmr) by 2002:a05:690c:3802:b0:6de:19f:34d7 with SMTP id
- 00721157ae682-6e858143817mr695977b3.2.1729787001130; Thu, 24 Oct 2024
- 09:23:21 -0700 (PDT)
-Date: Thu, 24 Oct 2024 09:23:18 -0700
+        d=1e100.net; s=20230601; t=1729787040; x=1730391840;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=V9NK7Z+Ngm315TPPgtg78S7xRTYOPCuLS/UsgPBTsds=;
+        b=L7YofLay4SYKij/0jTOBoVGc/qLhePL94S44x/D3alGXdN5GIVz3yrHI2K6jGVYDrj
+         ZFLBh3UZxCsqiu8nu6BfRsKfqG8nI4+/sIpMhgzvA8BdJ2xkylJ9El9tySopRa2zks5Q
+         Ukow+n4sYSH89Oi6S3SHzUtUmb/oP1r6TTQOPUba/rgc979TmYs5gp8mE6YAO8TsFD2F
+         ZuhdjUPY3p61l3KSdJCIMZfZx+7T+VqCtmDQ21cAwaynqv9GoqQ4/Qk976+P1TCgYBU+
+         C3OfJamfHsHJRSmEFjjmOZHLA4II7UPEdCnEgudTeOMA/LrGx+QqmpC+u+CekyKR288t
+         sTcA==
+X-Forwarded-Encrypted: i=1; AJvYcCUODvrF7nFED1JCxZYfxgwjfLBkRYLDwcPi15DE8syRQ9OhLW8N+cOZQL2DKCeh8zBTPOZ7Oyj6vRup@vger.kernel.org, AJvYcCV000YcOvq6PMfyhJZn214Y8LTONUEyt8ryNvlKpbTypthjnn0U14vKb4FmOolx3T6CXpkMid/EXExmG9E=@vger.kernel.org, AJvYcCV56u4D2KwGiwHYfNMAgTETOeoPCgYxpzMqKfRMxBnQKbLAhjFKWsaTZGTxVcUpIw56v9W76JEHvyshNtCp@vger.kernel.org, AJvYcCW/g48SXy7NDLD6qn0lJ04fA5NZrN8dDqIxMUT5KguYLrnPeWgLYd99qWz2B6PD+0414ePhHbecvpjwlQ==@vger.kernel.org, AJvYcCWhgyO6RwaaVewo7dQZkhmyRBHGPt0IN3/tNzBep6Z4VHlpAZBaKCheY603VkJzNQdR3h/6QVzkdF1mC46X@vger.kernel.org, AJvYcCXnum2BHhw9J1RHLz0BY4Hb08Ngn2by5GcL2VLaB3rQlEDMTsxB5zoV2o3wT8fsdMKjcFHsV3ThH1Xqxb1It4J5@vger.kernel.org
+X-Gm-Message-State: AOJu0Yyb1hbOneNR4z2X4fxWDGbPQF3/rS/WRQ6hlelRNzesx33MW6DT
+	HSU1N5zCcAumVjlU4bpw0R75th2ee6PTSfpYbPahJwLdCA511H6qr1dh83KyowG0VssI3GcHHbi
+	eCSw0MtYQvGXFo+UksXuhFAl6Pk4=
+X-Google-Smtp-Source: AGHT+IEiSnw3xc3o0GD+aCII4uuqttpRYCWli0c8mbnI6vmERD9GFMgMpU//iIU/A2qv4SMpA2Y1PA+3QtY5X2wHU3w=
+X-Received: by 2002:a05:690c:9987:b0:6e3:16da:e74 with SMTP id
+ 00721157ae682-6e7f0e05389mr77322977b3.16.1729787039682; Thu, 24 Oct 2024
+ 09:23:59 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Message-ID: <20241024162318.1640781-1-surenb@google.com>
-Subject: [PATCH 1/1] mm/codetag: uninline and move pgalloc_tag_copy and pgalloc_tag_split
-From: Suren Baghdasaryan <surenb@google.com>
-To: akpm@linux-foundation.org
-Cc: kent.overstreet@linux.dev, yuzhao@google.com, souravpanda@google.com, 
-	pasha.tatashin@soleen.com, linux-mm@kvack.org, linux-kernel@vger.kernel.org, 
-	surenb@google.com
+MIME-Version: 1.0
+References: <ZxHwgsm2iP2Z_3at@infradead.org> <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
+ <ZxH4lnkQNhTP5fe6@infradead.org> <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+ <ZxieZPlH-S9pakYW@infradead.org> <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+ <Zxnl4VnD6K6No4UQ@infradead.org> <14126375-5F6F-484A-B34B-F0C011F3A9C5@gmail.com>
+ <ZxoNgmwFVCXivbd3@infradead.org> <CAAdYy_kKHx-91hWxETu_4TJKr+h=-Q0WdoyQwXjRZiwiXCOOYQ@mail.gmail.com>
+ <Zxpuzbjtq0eNP49Z@infradead.org>
+In-Reply-To: <Zxpuzbjtq0eNP49Z@infradead.org>
+From: Adrian Vovk <adrianvovk@gmail.com>
+Date: Thu, 24 Oct 2024 12:23:48 -0400
+Message-ID: <CAAdYy_n7GC6VHjiVN2DLxx4VGFi16RENC96tgkt-284xdOdNzg@mail.gmail.com>
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+To: Christoph Hellwig <hch@infradead.org>
+Cc: Eric Biggers <ebiggers@kernel.org>, Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, 
+	song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org, 
+	Mikulas Patocka <mpatocka@redhat.com>, adrian.hunter@intel.com, quic_asutoshd@quicinc.com, 
+	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org, 
+	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, 
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com, 
+	quic_varada@quicinc.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-pgalloc_tag_copy() and pgalloc_tag_split() are sizable and outside of
-any performance-critical paths, so it should be fine to uninline them.
-Also move their declarations into pgalloc_tag.h which seems like a more
-appropriate place for them.
-No functional changes other than uninlining.
+On Thu, Oct 24, 2024 at 11:59=E2=80=AFAM Christoph Hellwig <hch@infradead.o=
+rg> wrote:
+>
+> On Thu, Oct 24, 2024 at 11:32:58AM -0400, Adrian Vovk wrote:
+> > >> I'm not assuming. That's the behavior of dm-crypt without passthroug=
+h.
+> > >> It just encrypts everything that moves through it. If I stack two
+> > >> layers of dm-crypt on top of each other my data is encrypted twice.
+> > >
+> > >Sure.  But why would you do that?
+> >
+> > As mentioned earlier in the thread: I don't have a usecase
+> > specifically for this and it was an example of a situation where
+> > passthrough is necessary and no filesystem is involved at all. Though,
+> > as I also pointed out, a usecase where you're putting encrypted
+> > virtual partitions on an encrypted LVM setup isn't all that absurd.
+>
+> It's a little odd but not entirely absurd indeed.  But it can also
+> be easily handled by setting up a dm-crypt table just for the
+> partition table.
 
-Signed-off-by: Suren Baghdasaryan <surenb@google.com>
-Suggested-by: Andrew Morton <akpm@linux-foundation.org>
----
-Applies over mm-unstable
+That doesn't cover it. Not all of the virtual partitions necessarily
+need to have their own dm-crypt, so they should be encrypted by the
+underlying dm-crypt.
 
- include/linux/mm.h          | 58 -------------------------------------
- include/linux/pgalloc_tag.h |  5 ++++
- lib/alloc_tag.c             | 48 ++++++++++++++++++++++++++++++
- 3 files changed, 53 insertions(+), 58 deletions(-)
+So the dm-crypt doesn't just need to cover the partition table, but
+also arbitrary ranges within the whole partition
 
-diff --git a/include/linux/mm.h b/include/linux/mm.h
-index 4ef8cf1043f1..5184624c0f21 100644
---- a/include/linux/mm.h
-+++ b/include/linux/mm.h
-@@ -4165,62 +4165,4 @@ static inline int do_mseal(unsigned long start, size_t len_in, unsigned long fla
- }
- #endif
- 
--#ifdef CONFIG_MEM_ALLOC_PROFILING
--static inline void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
--{
--	int i;
--	struct alloc_tag *tag;
--	unsigned int nr_pages = 1 << new_order;
--
--	if (!mem_alloc_profiling_enabled())
--		return;
--
--	tag = pgalloc_tag_get(&folio->page);
--	if (!tag)
--		return;
--
--	for (i = nr_pages; i < (1 << old_order); i += nr_pages) {
--		union pgtag_ref_handle handle;
--		union codetag_ref ref;
--
--		if (get_page_tag_ref(folio_page(folio, i), &ref, &handle)) {
--			/* Set new reference to point to the original tag */
--			alloc_tag_ref_set(&ref, tag);
--			update_page_tag_ref(handle, &ref);
--			put_page_tag_ref(handle);
--		}
--	}
--}
--
--static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
--{
--	union pgtag_ref_handle handle;
--	union codetag_ref ref;
--	struct alloc_tag *tag;
--
--	tag = pgalloc_tag_get(&old->page);
--	if (!tag)
--		return;
--
--	if (!get_page_tag_ref(&new->page, &ref, &handle))
--		return;
--
--	/* Clear the old ref to the original allocation tag. */
--	clear_page_tag_ref(&old->page);
--	/* Decrement the counters of the tag on get_new_folio. */
--	alloc_tag_sub(&ref, folio_size(new));
--	__alloc_tag_ref_set(&ref, tag);
--	update_page_tag_ref(handle, &ref);
--	put_page_tag_ref(handle);
--}
--#else /* !CONFIG_MEM_ALLOC_PROFILING */
--static inline void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
--{
--}
--
--static inline void pgalloc_tag_copy(struct folio *new, struct folio *old)
--{
--}
--#endif /* CONFIG_MEM_ALLOC_PROFILING */
--
- #endif /* _LINUX_MM_H */
-diff --git a/include/linux/pgalloc_tag.h b/include/linux/pgalloc_tag.h
-index 1fe63b52e5e5..0e43ab653ab6 100644
---- a/include/linux/pgalloc_tag.h
-+++ b/include/linux/pgalloc_tag.h
-@@ -230,6 +230,9 @@ static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr)
- 		this_cpu_sub(tag->counters->bytes, PAGE_SIZE * nr);
- }
- 
-+void pgalloc_tag_split(struct folio *folio, int old_order, int new_order);
-+void pgalloc_tag_copy(struct folio *new, struct folio *old);
-+
- void __init alloc_tag_sec_init(void);
- 
- #else /* CONFIG_MEM_ALLOC_PROFILING */
-@@ -241,6 +244,8 @@ static inline void pgalloc_tag_sub(struct page *page, unsigned int nr) {}
- static inline struct alloc_tag *pgalloc_tag_get(struct page *page) { return NULL; }
- static inline void pgalloc_tag_sub_pages(struct alloc_tag *tag, unsigned int nr) {}
- static inline void alloc_tag_sec_init(void) {}
-+static inline void pgalloc_tag_split(struct folio *folio, int old_order, int new_order) {}
-+static inline void pgalloc_tag_copy(struct folio *new, struct folio *old) {}
- 
- #endif /* CONFIG_MEM_ALLOC_PROFILING */
- 
-diff --git a/lib/alloc_tag.c b/lib/alloc_tag.c
-index a6f6f014461e..c1ddac2d29f0 100644
---- a/lib/alloc_tag.c
-+++ b/lib/alloc_tag.c
-@@ -163,6 +163,54 @@ size_t alloc_tag_top_users(struct codetag_bytes *tags, size_t count, bool can_sl
- 	return nr;
- }
- 
-+void pgalloc_tag_split(struct folio *folio, int old_order, int new_order)
-+{
-+	int i;
-+	struct alloc_tag *tag;
-+	unsigned int nr_pages = 1 << new_order;
-+
-+	if (!mem_alloc_profiling_enabled())
-+		return;
-+
-+	tag = pgalloc_tag_get(&folio->page);
-+	if (!tag)
-+		return;
-+
-+	for (i = nr_pages; i < (1 << old_order); i += nr_pages) {
-+		union pgtag_ref_handle handle;
-+		union codetag_ref ref;
-+
-+		if (get_page_tag_ref(folio_page(folio, i), &ref, &handle)) {
-+			/* Set new reference to point to the original tag */
-+			alloc_tag_ref_set(&ref, tag);
-+			update_page_tag_ref(handle, &ref);
-+			put_page_tag_ref(handle);
-+		}
-+	}
-+}
-+
-+void pgalloc_tag_copy(struct folio *new, struct folio *old)
-+{
-+	union pgtag_ref_handle handle;
-+	union codetag_ref ref;
-+	struct alloc_tag *tag;
-+
-+	tag = pgalloc_tag_get(&old->page);
-+	if (!tag)
-+		return;
-+
-+	if (!get_page_tag_ref(&new->page, &ref, &handle))
-+		return;
-+
-+	/* Clear the old ref to the original allocation tag. */
-+	clear_page_tag_ref(&old->page);
-+	/* Decrement the counters of the tag on get_new_folio. */
-+	alloc_tag_sub(&ref, folio_size(new));
-+	__alloc_tag_ref_set(&ref, tag);
-+	update_page_tag_ref(handle, &ref);
-+	put_page_tag_ref(handle);
-+}
-+
- static void shutdown_mem_profiling(bool remove_file)
- {
- 	if (mem_alloc_profiling_enabled())
+> > In my real-world case, I'm putting encrypted loop devices on top of a
+> > filesystem that holds its own sensitive data. Each loop device has
+> > dm-crypt inside and uses a unique key, but the filesystem needs to be
+> > encrypted too (because, again, it has its own sensitive data outside
+> > of the loop devices). The loop devices cannot be put onto their own
+> > separate partition because there's no good way to know ahead of time
+> > how much space either of the partitions would need: sometimes the loop
+> > devices need to take up loads of space on the partition, and other
+> > times the non-loop-device data needs to take up that space. And to top
+> > it all off, the distribution of allocated space needs to change
+> > dynamically.
+>
+> And that's exactly the case I worry about.  The file system can't
+> trust a layer entirely above it.  If we want to be able to have a
+> space pool between a file systems with one encryption policy and
+> images with another we'll need to replace the loop driver with a
+> block driver taking blocks from the file system space pool.  Which
+> might be a good idea for various other reasons.
 
-base-commit: 9c111059234a949a4d3442a413ade19cc65ab927
--- 
-2.47.0.105.g07ac214952-goog
+I don't quite understand the difference between a loopback file, and a
+block driver that uses space from a filesystem space pool. Isn't that
+what a loopback file is?
 
+>
+> > Ultimately, I'm unsure what the concern is here.
+> >
+> > It's a glaringly loud opt-in marker that encryption was already
+> > performed or is otherwise intentionally unnecessary. The flag existing
+> > isn't what punches through the security model. It's the use of the
+> > flag that does. I can't imagine anything setting the flag by accident.
+> > So what are you actually concerned about? How are you expecting this
+> > flag to actually be misused?
+> >
+> > As for third party modules that might punch holes, so what? 3rd party
+> > modules aren't the kernel's responsibility or problem
+>
+> On the one hand they are not.  On the other if you have a file system
+> encryption scheme that is bypassed by a random other loadable code
+> setting a single flag I would not consider it very trust worth or in
+> fact actively dangerous.
+
+I'd expect that the lower encryption layer has an opt-in flag to turn
+on and off passthrough functionality. I think I neglected to mention
+that before; it was discussed in other threads and I just kinda
+assumed that it would be there.
+
+So, with that in mind: the loadable code could set the flag, but the
+underlying dm-inlinecrypt would need to opt into the weaker security
+too. If the system administrator has opted the lower layer into
+passthrough, then they've considered the risks of what could happen if
+an upper layer sets the flag and decided that it's OK. If the
+administrator didn't opt in, then the flag has no effect. Does that
+sound more acceptable?
+
+>
+> > In my loopback file scenario, what would be the one layer that could
+> > handle the encryption?
+>
+> But getting rid of loopback devices.
+
+I can't get rid of the loopback devices. They're an essential part of
+this. I should be able to take the encrypted loopback file, send it to
+a different machine, and have it keep working the same as it always
+has.
+
+Without the loopback device, I'm stuck with fscrypt. Which isn't
+supported by all filesystems, and encrypts much less data than we
+require.
+
+- Adrian
 
