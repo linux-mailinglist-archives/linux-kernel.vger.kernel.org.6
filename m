@@ -1,46 +1,46 @@
-Return-Path: <linux-kernel+bounces-380311-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380312-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id D455F9AEC33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:33:38 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 829869AEC38
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:33:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D6EE31C23817
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:33:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B2E4F1C23A76
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:33:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9A7471F8F17;
-	Thu, 24 Oct 2024 16:33:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 86EFA1F9EBE;
+	Thu, 24 Oct 2024 16:33:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="JhS+crzC"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="FPP7fg18"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AF5C11F81AC;
-	Thu, 24 Oct 2024 16:33:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6F391F9427;
+	Thu, 24 Oct 2024 16:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787592; cv=none; b=iIv8YxCSffygIuDgAhcBVLvstH3GPYbHkw4gjS603tHXSNzlA4F+JOo/3Jp0eOyJltpl5IZjIQY3rTJk1EkMy10ntybMGdU3vJCo/5P91CtQsMrQj96cGnAt48Fw+dTYxmbWhe00DPV1L6QtSHLv2kjpJFNl9DUCwN3FlFAA74s=
+	t=1729787593; cv=none; b=YUBGx/55PCahXbuYV/L8+oeeG13uxTNAUXbA0yJvUe0sWx4f746CPyeCBsMk0rsWwZdhGVySv+JYrpRFohA8ArK4vQs8LCWQiUrpY0ZkJglTJayXI/GcFpW0PWXwdX1g2kLOrSMXygeR68yLgZPBJo+WREJ6vF4OMdUbkoJ8iDw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787592; c=relaxed/simple;
-	bh=XiSOQI9L3W8bBGL0+ZH+gBgnozd60J9irbYoRJGkyLk=;
+	s=arc-20240116; t=1729787593; c=relaxed/simple;
+	bh=9jzRPF77bz2MLYxxMdwMsDBOLL0BHbwkrvZFG67aHaw=;
 	h=Date:Content-Type:MIME-Version:From:To:Cc:In-Reply-To:References:
-	 Message-Id:Subject; b=jGg093C6I3IWT8fwOI86pCOkTn96D1xUu9PLetNnRL5KSwcFCdmklrqnSvhtiLmZkSyNkmW5glnzp4eRghAf00nJSymdbTIhPZDh/cNo1/TTHapiMs+x6ooI6yWH774W6TXt+cD8Q/PUdWTu8TJDvueV4KL4RwzF8fwpUp3bed4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=JhS+crzC; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 174A4C4CEE5;
-	Thu, 24 Oct 2024 16:33:12 +0000 (UTC)
+	 Message-Id:Subject; b=PgMpuux4Z7RLGWmR6dzu7NsiXIOgbaJ+xTTacudqcTZd67snevEubNmsXp1tAXCPve8c89S7takb4A2GKQMrXQsk3Ef1llNiS3jocffzmzENPR32LhnnkCpb0OGnwANM1iwU23x9dgZW/gyrCwAvQ0aT+D4+2kJzd/rkbLZGHlQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=FPP7fg18; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 116F6C4CEFB;
+	Thu, 24 Oct 2024 16:33:13 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729787592;
-	bh=XiSOQI9L3W8bBGL0+ZH+gBgnozd60J9irbYoRJGkyLk=;
+	s=k20201202; t=1729787593;
+	bh=9jzRPF77bz2MLYxxMdwMsDBOLL0BHbwkrvZFG67aHaw=;
 	h=Date:From:To:Cc:In-Reply-To:References:Subject:From;
-	b=JhS+crzC5WjZ1bk/8YkaW/80btpbgEu6tt+Z8a0GtYnHpqIplmBm8HP5h7aUUK8JH
-	 7iAreT41hkYbg33PFRyTSBIOlX+zN8csId5C6S4ebR3sT6BBX3Gpf2iu7BffzvQfCq
-	 u/YDzmEx0lGQxjTRSTK35qAM+wktKlC5NMY41o5tTaL2QWN5K8RFyiHDHj2A2mKFzV
-	 j+G+jSeXtJS+/OzndZwACoCsXB6d7QjG+MEPpprZQ7/G9vmUOS0ZzUEzDGmCgwZCvq
-	 SOKLGsfsb+VNy1vNc+Cj1Dp9djGXQvXqSPSAIIYpKdV8kQblHU/gKicCIarun3lpkx
-	 CoIRnlsevEGSQ==
-Date: Thu, 24 Oct 2024 11:33:11 -0500
+	b=FPP7fg18I5dszACf8fENaQYIrtsqzkrr/THudUCVJnnHdu5OgH0ZHs1rGFCmrecEp
+	 2Ew8bg+lbC/5pOtqgZIZqpDAWUAgROpvxT8gcoM9huM3wNSIwmek46neqT0ZSbPDBP
+	 qY11nXMO0oh0D8jkoFWzW4VSAPDiCTMoHSKmf+GbKLghnRjhT8GNwaDKqW9oObVjr3
+	 +k51uVXZKOIolrX277ZYuiSrLIhW9g/K1VoNl7rde3XdqgdThGoDkd5tiB66WIzB+1
+	 0zhvEwiF+32V3zQnhrfKw7K2jllNUmNkJz4fnBu2dR2+BkacO5EOcuTQoqYrPG77Cl
+	 ev9nn4sw2i1aw==
+Date: Thu, 24 Oct 2024 11:33:12 -0500
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
 Precedence: bulk
@@ -50,99 +50,28 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Melody Olvera <quic_molvera@quicinc.com>
-Cc: Arnd Bergmann <arnd@arndb.de>, 
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
- =?utf-8?q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>, 
- linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, 
- linux-kernel@vger.kernel.org, 
- Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>, 
- Trilok Soni <quic_tsoni@quicinc.com>, 
- AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
- Neil Armstrong <neil.armstrong@linaro.org>, Lee Jones <lee@kernel.org>, 
- Konrad Dybcio <konradybcio@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
- Stephen Boyd <sboyd@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Bjorn Andersson <andersson@kernel.org>, linux-arm-msm@vger.kernel.org, 
- Catalin Marinas <catalin.marinas@arm.com>, 
- Geert Uytterhoeven <geert+renesas@glider.be>, Will Deacon <will@kernel.org>
-In-Reply-To: <20241021232114.2636083-1-quic_molvera@quicinc.com>
-References: <20241021232114.2636083-1-quic_molvera@quicinc.com>
-Message-Id: <172978739477.623395.5604249801475913676.robh@kernel.org>
-Subject: Re: [PATCH 0/5] dts: qcom: Introduce SM8750 device trees
+To: Jason-Hsu <jasonhell19@gmail.com>
+Cc: patrick@stwcx.xyz, yang.chen@quantatw.com, 
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ jerry.lin@quantatw.com, joel@jms.id.au, conor+dt@kernel.org, 
+ krzk+dt@kernel.org, linux-aspeed@lists.ozlabs.org, 
+ andrew@codeconstruct.com.au, devicetree@vger.kernel.org
+In-Reply-To: <20241022021724.2322506-1-jasonhell19@gmail.com>
+References: <20241022021724.2322506-1-jasonhell19@gmail.com>
+Message-Id: <172978739533.623426.6741150637312458347.robh@kernel.org>
+Subject: Re: [PATCH 2/2] ARM: dts: aspeed: ventura: add Meta Ventura BMC
 
 
-On Mon, 21 Oct 2024 16:21:09 -0700, Melody Olvera wrote:
-> This series adds the initial device tree support for the SM8750 SoCs
-> needed to boot to shell. This specifically adds support for clocks,
-> pinctrl, rpmhpd, regulators, interconnects, and SoC and board
-> compatibles.
+On Tue, 22 Oct 2024 10:17:24 +0800, Jason-Hsu wrote:
+> Add Linux device tree related to Meta(Facebook) Ventura specific devices connected to BMC(AST2600) SoC.
+> Add subject prefix for the patch.
 > 
-> The Qualcomm Technologies, Inc. SM8750 SoC is the latest in the line of
-> consumer mobile device SoCs. See more at:
-> https://www.qualcomm.com/content/dam/qcomm-martech/dm-assets/images/company/news-media/media-center/press-kits/snapdragon-summit-2024/day-1/documents/Snapdragon8EliteProductBrief.pdf
-> 
-> Dependencies:
-> clks: https://lore.kernel.org/all/20241021230359.2632414-1-quic_molvera@quicinc.com/
-> interconnects: https://lore.kernel.org/all/20241021231823.2635534-1-quic_molvera@quicinc.com/
-> pinctrl: https://lore.kernel.org/all/20241021230414.2632428-1-quic_molvera@quicinc.com/
-> regulators: https://lore.kernel.org/all/20241021230348.2632381-1-quic_molvera@quicinc.com/
-> power domains: https://lore.kernel.org/all/20241021230333.2632368-1-quic_molvera@quicinc.com/
-> misc bindings:
-> - https://lore.kernel.org/all/20241021230427.2632466-1-quic_molvera@quicinc.com/
-> - https://lore.kernel.org/all/20241021230500.2632527-1-quic_molvera@quicinc.com/
-> - https://lore.kernel.org/all/20241021230439.2632480-1-quic_molvera@quicinc.com/
-> - https://lore.kernel.org/all/20241021230449.2632493-1-quic_molvera@quicinc.com/
-> 
-> Jishnu Prakash (2):
->   dt-bindings: mfd: qcom,spmi-pmic: Document PMICs added in SM8750
->   arm64: dts: qcom: Add pmd8028 and pmih0108 PMIC dtsi files
-> 
-> Melody Olvera (3):
->   dt-bindings: arm: qcom: Document sm8750 SoC and boards
->   arm64: dts: qcom: Add base sm8750 dtsi and mtp and qrd dts
->   arm64: defconfig: Enable SM8750 SoC base configs
-> 
->  .../devicetree/bindings/arm/qcom.yaml         |    7 +
->  .../bindings/mfd/qcom,spmi-pmic.yaml          |    2 +
->  arch/arm64/boot/dts/qcom/Makefile             |    2 +
->  arch/arm64/boot/dts/qcom/pmd8028.dtsi         |   56 +
->  arch/arm64/boot/dts/qcom/pmih0108.dtsi        |   62 +
->  arch/arm64/boot/dts/qcom/sm8750-mtp.dts       |  968 ++++++
->  arch/arm64/boot/dts/qcom/sm8750-qrd.dts       |  965 ++++++
->  arch/arm64/boot/dts/qcom/sm8750.dtsi          | 2903 +++++++++++++++++
->  arch/arm64/configs/defconfig                  |    4 +
->  9 files changed, 4969 insertions(+)
->  create mode 100644 arch/arm64/boot/dts/qcom/pmd8028.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/pmih0108.dtsi
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8750-mtp.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8750-qrd.dts
->  create mode 100644 arch/arm64/boot/dts/qcom/sm8750.dtsi
-> 
-> 
-> base-commit: 63b3ff03d91ae8f875fe8747c781a521f78cde17
-> prerequisite-patch-id: 5a4ad7a91dffc1c63a6513736cab88404937bbc5
-> prerequisite-patch-id: f98e160b22d065fef3919e807102619ef80a63fd
-> prerequisite-patch-id: 9df63975d51d61db536e843f261f837de613c0bb
-> prerequisite-patch-id: dca6974344b25b6160e6a2680c438bc59da33374
-> prerequisite-patch-id: 36ad7b3a06074897abcbe9521452ed0ec632e2eb
-> prerequisite-patch-id: 255b9f24b2765ad6bb8fd5213b620ba2263d48f7
-> prerequisite-patch-id: f458aa6a3d53924449be96609a0d1e65ec9f4854
-> prerequisite-patch-id: 5bc1ec8226b52170508fd5ac30e31fec72e86f5a
-> prerequisite-patch-id: 2b556803a12148cc12c1edcb5e143a454679a047
-> prerequisite-patch-id: 0924872ce84c0f0011d53e98e58bf61213e9df43
-> prerequisite-patch-id: 3a6538f98c3ce876d8acf3a0c55ac04897cfaf43
-> prerequisite-patch-id: 7e047c63eff592833642eae37492b09e1ea7ed2d
-> prerequisite-patch-id: cf8bef95f79c460b5b1c231a1122aa0173807a4d
-> prerequisite-patch-id: ba4dd339acd73f885fe3d5f018ac620997583599
-> prerequisite-patch-id: 5b930049e39fbd1ace2562d7870c2af764fe4cd4
-> prerequisite-patch-id: 58acef79b9bf6c2e7d69d598d24502787eddc910
-> prerequisite-patch-id: 369d52ee563f34eeca4a9c36e6d2b36b24eac635
-> prerequisite-patch-id: e02a35925d37a2e61abbf240cc8963208f54e1c0
-> prerequisite-patch-id: e4bf91d9a22d34c567eeab5b0f6fb90913ee908b
-> --
-> 2.46.1
-> 
-> 
+> Signed-off-by: Jason-Hsu <jasonhell19@gmail.com>
+> ---
+>  arch/arm/boot/dts/aspeed/Makefile             |   1 +
+>  .../aspeed/aspeed-bmc-facebook-ventura.dts    | 884 ++++++++++++++++++
+>  2 files changed, 885 insertions(+)
+>  create mode 100644 arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dts
 > 
 
 
@@ -160,56 +89,64 @@ make sure dt-schema is up to date:
   pip3 install dtschema --upgrade
 
 
-New warnings running 'make CHECK_DTBS=y qcom/sm8750-mtp.dtb qcom/sm8750-qrd.dtb' for 20241021232114.2636083-1-quic_molvera@quicinc.com:
+New warnings running 'make CHECK_DTBS=y aspeed/aspeed-bmc-facebook-ventura.dtb' for 20241022021724.2322506-1-jasonhell19@gmail.com:
 
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: domain-idle-states: cluster-sleep-0:compatible:0: 'domain-idle-state' was expected
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: domain-idle-states: cluster-sleep-0:compatible:0: 'domain-idle-state' was expected
-	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: pmic@7: 'eusb2-repeater@fd00' does not match any of the regexes: '(.*)?(wled|leds)@[0-9a-f]+$', '^adc-tm@[0-9a-f]+$', '^adc@[0-9a-f]+$', '^audio-codec@[0-9a-f]+$', '^battery@[0-9a-f]+$', '^charger@[0-9a-f]+$', '^led-controller@[0-9a-f]+$', '^mpps@[0-9a-f]+$', '^nvram@[0-9a-f]+$', '^pbs@[0-9a-f]+$', '^rtc@[0-9a-f]+$', '^temp-alarm@[0-9a-f]+$', '^typec@[0-9a-f]+$', '^usb-detect@[0-9a-f]+$', '^usb-vbus-regulator@[0-9a-f]+$', '^vibrator@[0-9a-f]+$', 'gpio@[0-9a-f]+$', 'phy@[0-9a-f]+$', 'pinctrl-[0-9]+', 'pon@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: pmic@7: 'eusb2-repeater@fd00' does not match any of the regexes: '(.*)?(wled|leds)@[0-9a-f]+$', '^adc-tm@[0-9a-f]+$', '^adc@[0-9a-f]+$', '^audio-codec@[0-9a-f]+$', '^battery@[0-9a-f]+$', '^charger@[0-9a-f]+$', '^led-controller@[0-9a-f]+$', '^mpps@[0-9a-f]+$', '^nvram@[0-9a-f]+$', '^pbs@[0-9a-f]+$', '^rtc@[0-9a-f]+$', '^temp-alarm@[0-9a-f]+$', '^typec@[0-9a-f]+$', '^usb-detect@[0-9a-f]+$', '^usb-vbus-regulator@[0-9a-f]+$', '^vibrator@[0-9a-f]+$', 'gpio@[0-9a-f]+$', 'phy@[0-9a-f]+$', 'pinctrl-[0-9]+', 'pon@[0-9a-f]+$'
-	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-0: Unevaluated properties are not allowed ('vdd-l1-supply', 'vdd-l10-supply', 'vdd-l4-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-0: Unevaluated properties are not allowed ('vdd-l1-supply', 'vdd-l10-supply', 'vdd-l4-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: 'power-domains' is a required property
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: 'qcom,drv-count' does not match any of the regexes: '^regulators(-[0-9])?$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: rsc@16500000: regulators-0: Unevaluated properties are not allowed ('vdd-l10-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: rsc@16500000: regulators-0: Unevaluated properties are not allowed ('vdd-l10-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: rsc@16500000: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: rsc@16500000: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: rsc@16500000: 'power-domains' is a required property
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: rsc@16500000: 'qcom,drv-count' does not match any of the regexes: '^regulators(-[0-9])?$', 'pinctrl-[0-9]+'
-	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: regulators-0: Unevaluated properties are not allowed ('vdd-l1-supply', 'vdd-l10-supply', 'vdd-l4-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,rpmh-regulator.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: regulators-0: Unevaluated properties are not allowed ('vdd-l10-supply' was unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,rpmh-regulator.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,rpmh-regulator.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
-	from schema $id: http://devicetree.org/schemas/regulator/qcom,rpmh-regulator.yaml#
-arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: timer@16800000: #size-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer_mmio.yaml#
-arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: timer@16800000: #size-cells: 1 was expected
-	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer_mmio.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /: compatible: 'oneOf' conditional failed, one must be fixed:
+	'facebook,ventura-rmc' is not one of ['delta,ahe50dc-bmc', 'facebook,galaxy100-bmc', 'facebook,wedge100-bmc', 'facebook,wedge40-bmc', 'microsoft,olympus-bmc', 'quanta,q71l-bmc', 'tyan,palmetto-bmc', 'yadro,vesnin-bmc']
+	'facebook,ventura-rmc' is not one of ['amd,daytonax-bmc', 'amd,ethanolx-bmc', 'ampere,mtjade-bmc', 'aspeed,ast2500-evb', 'asrock,e3c246d4i-bmc', 'asrock,e3c256d4i-bmc', 'asrock,romed8hm3-bmc', 'asrock,spc621d8hm3-bmc', 'asrock,x570d4u-bmc', 'bytedance,g220a-bmc', 'facebook,cmm-bmc', 'facebook,minipack-bmc', 'facebook,tiogapass-bmc', 'facebook,yamp-bmc', 'facebook,yosemitev2-bmc', 'facebook,wedge400-bmc', 'hxt,stardragon4800-rep2-bmc', 'ibm,mihawk-bmc', 'ibm,mowgli-bmc', 'ibm,romulus-bmc', 'ibm,swift-bmc', 'ibm,witherspoon-bmc', 'ingrasys,zaius-bmc', 'inspur,fp5280g2-bmc', 'inspur,nf5280m6-bmc', 'inspur,on5263m5-bmc', 'intel,s2600wf-bmc', 'inventec,lanyang-bmc', 'lenovo,hr630-bmc', 'lenovo,hr855xg2-bmc', 'portwell,neptune-bmc', 'qcom,centriq2400-rep-bmc', 'supermicro,x11spi-bmc', 'tyan,s7106-bmc', 'tyan,s8036-bmc', 'yadro,nicole-bmc', 'yadro,vegman-n110-bmc', 'yadro,vegman-rx20-bmc', 'yadro,vegman-sx20-bmc']
+	'facebook,ventura-rmc' is not one of ['ampere,mtmitchell-bmc', 'aspeed,ast2600-evb', 'aspeed,ast2600-evb-a1', 'asus,x4tf-bmc', 'facebook,bletchley-bmc', 'facebook,catalina-bmc', 'facebook,cloudripper-bmc', 'facebook,elbert-bmc', 'facebook,fuji-bmc', 'facebook,greatlakes-bmc', 'facebook,harma-bmc', 'facebook,minerva-cmc', 'facebook,yosemite4-bmc', 'ibm,blueridge-bmc', 'ibm,everest-bmc', 'ibm,fuji-bmc', 'ibm,rainier-bmc', 'ibm,system1-bmc', 'ibm,tacoma-bmc', 'inventec,starscream-bmc', 'inventec,transformer-bmc', 'jabil,rbp-bmc', 'qcom,dc-scm-v1-bmc', 'quanta,s6q-bmc', 'ufispace,ncplite-bmc']
+	'aspeed,ast2400' was expected
+	'aspeed,ast2500' was expected
+	from schema $id: http://devicetree.org/schemas/arm/aspeed/aspeed.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /: failed to match any schema with compatible: ['facebook,ventura-rmc', 'aspeed,ast2600']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: timer: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /sdram@1e6e0000: failed to match any schema with compatible: ['aspeed,ast2600-sdram-edac', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: bus@1e600000: compatible: ['aspeed,ast2600-ahbc', 'syscon'] is too long
+	from schema $id: http://devicetree.org/schemas/bus/aspeed,ast2600-ahbc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: syscon@1e6e2000: 'smp-memram@180' does not match any of the regexes: '^interrupt-controller@[0-9a-f]+$', '^p2a-control@[0-9a-f]+$', '^pinctrl(@[0-9a-f]+)?$', '^silicon-id@[0-9a-f]+$', 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed,ast2x00-scu.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/smp-memram@180: failed to match any schema with compatible: ['aspeed,ast2600-smpmem']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@560: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic0']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e6e0000/syscon@1e6e2000/interrupt-controller@570: failed to match any schema with compatible: ['aspeed,ast2600-scu-ic1']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e6e0000/display@1e6e6000: failed to match any schema with compatible: ['aspeed,ast2600-gfx', 'syscon']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: adc@1e6e9000: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: adc@1e6e9100: 'interrupts' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/iio/adc/aspeed,ast2600-adc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: crypto@1e6fa000: 'aspeed,ahbc' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/crypto/aspeed,ast2600-acry.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/video@1e700000: failed to match any schema with compatible: ['aspeed,ast2600-video-engine']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: sdc@1e740000: sdhci@1e740100:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: sdc@1e740000: sdhci@1e740200:compatible: ['aspeed,ast2600-sdhci', 'sdhci'] is too long
+	from schema $id: http://devicetree.org/schemas/mmc/aspeed,sdhci.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/sdc@1e740000/sdhci@1e740100: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/sdc@1e740000/sdhci@1e740200: failed to match any schema with compatible: ['aspeed,ast2600-sdhci', 'sdhci']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e780000/timer@1e782000: failed to match any schema with compatible: ['aspeed,ast2600-timer']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: lpc@1e789000: lpc-snoop@80: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: lpc@1e789000: reg-io-width: 4 is not of type 'object'
+	from schema $id: http://devicetree.org/schemas/mfd/aspeed-lpc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@24: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@28: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@2c: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: kcs@114: 'clocks' does not match any of the regexes: 'pinctrl-[0-9]+'
+	from schema $id: http://devicetree.org/schemas/ipmi/aspeed,ast2400-kcs-bmc.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e780000/lpc@1e789000/lhc@a0: failed to match any schema with compatible: ['aspeed,ast2600-lhc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e780000/lpc@1e789000/ibt@140: failed to match any schema with compatible: ['aspeed,ast2600-ibt-bmc']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e780000/bus@1e78a000/i2c@200/i2c-mux@77/i2c@5/pwm@20: failed to match any schema with compatible: ['max31790']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e780000/bus@1e78a000/i2c@580/power-monitor@69: failed to match any schema with compatible: ['pmbus']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: fsi@1e79b000: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e790000/fsi@1e79b000: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: fsi@1e79b100: compatible: ['aspeed,ast2600-fsi-master', 'fsi-master'] is too long
+	from schema $id: http://devicetree.org/schemas/fsi/aspeed,ast2600-fsi-master.yaml#
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e790000/fsi@1e79b100: failed to match any schema with compatible: ['aspeed,ast2600-fsi-master', 'fsi-master']
+arch/arm/boot/dts/aspeed/aspeed-bmc-facebook-ventura.dtb: /ahb/apb@1e790000/dma-controller@1e79e000: failed to match any schema with compatible: ['aspeed,ast2600-udma']
 
 
 
