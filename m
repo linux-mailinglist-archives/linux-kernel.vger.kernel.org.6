@@ -1,219 +1,185 @@
-Return-Path: <linux-kernel+bounces-380528-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380529-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4AEF79AF04F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:04:08 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id BD3399AF051
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:04:18 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF6E28291E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:04:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2A539280A95
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:04:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2D6216A3D;
-	Thu, 24 Oct 2024 19:04:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 02923216A28;
+	Thu, 24 Oct 2024 19:04:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpWI0e6+"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=usask.ca header.i=@usask.ca header.b="MNPHQesH"
+Received: from YQZPR01CU011.outbound.protection.outlook.com (mail-canadaeastazon11020116.outbound.protection.outlook.com [52.101.191.116])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9DE170A1C;
-	Thu, 24 Oct 2024 19:04:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729796641; cv=none; b=kwjZ+7g/46nyMcge0V0IJ7H45W+mm6iSAvfCLjDp/YcLj7o97/L4MObQDqnbijsQpR2v2RgywotxSl4kzHC/PwWQsbOdHoMF3EMmx+c1UYDqiSazp3C3buvaSnohLbEr8/vsaCanIccUXaTWvKWSFQN4FYaQBBf5P47P3iPGR68=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729796641; c=relaxed/simple;
-	bh=MinIs9uFH5t1LCMIZIcXVqwjpPzJ383DYFqMIRCJ3CQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P721h5PEVUo6kF2bb/PZ8wcM+mq5eTfqzewfGEo2AhPYOfe9RCuV8lWr4K4TLcrwEFGJ34SR8TGWUWt4KTSz9sOkz4CFMxnNpt9x9xHP8KV4THthRl1arqQmGeUPOMBKhdSAOo3hJ5ZidetLgy2ugZhcvnrcUAKAhTLeX6VWVpk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpWI0e6+; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98860C4CEC7;
-	Thu, 24 Oct 2024 19:03:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729796640;
-	bh=MinIs9uFH5t1LCMIZIcXVqwjpPzJ383DYFqMIRCJ3CQ=;
-	h=From:To:Cc:Subject:Date:From;
-	b=bpWI0e6+FxFL+ekJ21xZwToK40hbtr4cV/+I5vIQxV00KgZtigMooXC2uHLn1mTbG
-	 lvjQHS8oz/i1NX4SXb4YkY5g8O7+bxurtAGeAvNThErI0QfNFDqDGyioEJIBqVyw/B
-	 /qQq2mH+4AiZFxZh+rwzc5Hf/G8TxWKubPvKOSlofLK8wJHYoi3YtxsuUOg8Dv8Pye
-	 49wuquq6AKaX3k99/eEQwksWY6I6uRHE8qinHYeCh8fsyBHktCeMeqgsuYfiA10f5M
-	 9zTV1wUGmyvU181C5KFSnQzNHHqN3EL7JrTTiUANCqpqvnJUk9kx1ShKxluX3Dn3On
-	 bfwAXE5jULWkw==
-From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
-To: Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Namhyung Kim <namhyung@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Ian Rogers <irogers@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	"Liang, Kan" <kan.liang@linux.intel.com>,
-	linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org,
-	linux-riscv@lists.infradead.org
-Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
-	Paul Walmsley <paul.walmsley@sifive.com>,
-	Palmer Dabbelt <palmer@dabbelt.com>,
-	Albert Ou <aou@eecs.berkeley.edu>,
-	Anup Patel <anup@brainfault.org>,
-	Atish Patra <atishp@rivosinc.com>
-Subject: [PATCH] perf, riscv: Wire up perf trace support for RISC-V
-Date: Thu, 24 Oct 2024 12:03:51 -0700
-Message-ID: <20241024190353.46737-1-bjorn@kernel.org>
-X-Mailer: git-send-email 2.45.2
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD7AF216A24
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:04:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.191.116
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729796652; cv=fail; b=JaguuixD8g1h2o4v3JJybSVC2ZYMmQRCXmkXXVLSziwD0q7OE85nM8Pp4rULdjztpj+MpzZsxTGc4IlI8QRyaQYAs7S7wFEt78qVMyiyO+2qvKGc8taU1gxrgmFcc27lNJkWfaWFJE9IyaUjBox0mllz8kyCvEm+diNMG5IugZg=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729796652; c=relaxed/simple;
+	bh=ERU1gV1r2bzE4qsdUIWiRnDL5Q3vlRNZ0oJrZXssPYo=;
+	h=Message-ID:Date:To:From:Subject:Content-Type:MIME-Version; b=B0yoLPXeR92bsQC1OPYsNoGFnGeinMA9T3KfNGuqZrE4VoikKiTKc1F6ESKF4FzFyWIRJ/w63wmcH4Gawp70oZsgoQ2n4JzMZoTI/vpDKIH3FYFZLNR4nANI0eJNW/OBle2R2DsaYMbd65Fgkc5VpEQEfyKFuCyRPUzdGojq7Ps=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usask.ca; spf=pass smtp.mailfrom=mail.usask.ca; dkim=pass (2048-bit key) header.d=usask.ca header.i=@usask.ca header.b=MNPHQesH; arc=fail smtp.client-ip=52.101.191.116
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=usask.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.usask.ca
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Hd6FepeDYv1zO+m3XOvz/hJPINK6kesfAFlIWbTfpG+j1o/7HNtKhe3PmroILwBuK1uqAHW8xJpNuoYomBxqiI8UomKD3DZnIx/wTJQWE8qw1Iqmz5KkjlkotLeKTUI1SAKJoBWWeFrzky6+Z+ziUN1287jCbOwQVkBtbKQCkJ6R58ybfWkwILa1yhHlcspu3G66WZ5pEP9u7qpLKpYmMgnMndjFa6mc54nUqvJ3fhq3lzTSnlppA5CM2tSePbog5nk6SskbazJ35ynJGsGqEzjJswIZo1sSXjtk/flyLVb07BokUEXrizOx80pwL5xHl5GCP5awqUPHkLC92gIw0A==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=3SbULqqbPL7UfaYIjugC24RC1P8ek4QLHFrodjzi+Ak=;
+ b=hIzVqlrL4O8uhmb+UiC5d/UMopdMySdMhhdQiu5XYKuMqvJc90ew0HT6vdXn0EHNKadVTXAwHLuaBRU6yruOritjlwHA+O2VQ41PIdA9GEHXBcA3gKwuVrVpKjlvmlUepV81HP4wjwpRdcBo+u26+QqKUDwhUY8VNcqZqq1uFEb3WdrE4O0BPG9SD6B8z+lXyilzB2P9kivU60RELZPOzRSr++apBG8WvwIlietY7Uvj3heku/HxCtdgiGkaSQYDpjrhYNxnjjckw7BYQ7DU1EMllXWDer5Ico6WvgKJF33H1S7xKvp7kPiBuTFwFB+qG7+WDivAbTbEk8fFdWy77A==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=mail.usask.ca; dmarc=pass action=none header.from=usask.ca;
+ dkim=pass header.d=usask.ca; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=usask.ca; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=3SbULqqbPL7UfaYIjugC24RC1P8ek4QLHFrodjzi+Ak=;
+ b=MNPHQesHRD12yJ+5H/AWpUO90aXHaCMi14rE9K2gxORaAUHvD9I8uE7+bsotI2OnA2opba1WKS1yOrNMr2DBM8BnYmr1kUGh1pGnRB+NvgZdnomqNpp+JT0EMrAnBesxhsc+QxkRlYlonrSI3dBN5nkrO1pHk/APyOiZCWlEBfHrEMsuznpY3UQDaXcQ+qz28o/V3Lpr2lFxrWUsLjQy+2A1mTdHCq74H3PO44RB2a0EZUBQ13R4QwdKKgTdWYgogC9858b6VHWqVHGVb+Xe2XL/oMKJWSCMqOYpCnE0SkUILFLGs1YoPCfrXHYFVZ968FMLk5XTczqk1TZ88PJb2g==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=usask.ca;
+Received: from YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:c01:38::6)
+ by YT2PR01MB11307.CANPRD01.PROD.OUTLOOK.COM (2603:10b6:b01:143::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Thu, 24 Oct
+ 2024 19:04:07 +0000
+Received: from YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::94df:38df:6872:f321]) by YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+ ([fe80::94df:38df:6872:f321%5]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
+ 19:04:07 +0000
+Message-ID: <a6a073ef-e208-44cb-b41f-85c29c42ee9c@usask.ca>
+Date: Thu, 24 Oct 2024 13:04:04 -0600
+User-Agent: Mozilla Thunderbird
+Content-Language: en-US
+To: LKML <linux-kernel@vger.kernel.org>
+From: Chris Friesen <cbf123@usask.ca>
+Subject: is there any dynamic equivalent to the "isolcpus=managed_irq" boot
+ arg?
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: BN8PR03CA0023.namprd03.prod.outlook.com
+ (2603:10b6:408:94::36) To YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+ (2603:10b6:c01:38::6)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: YQBPR0101MB6200:EE_|YT2PR01MB11307:EE_
+X-MS-Office365-Filtering-Correlation-Id: 36810495-babd-4d3b-55d8-08dcf45ea288
+X-UofS-Origin: Internal
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?S1VCaldhMU1VNEZLTVdGclVXYks4ZTZZMkVZMUYrQlJISkV1a3pqd0ZRYnZU?=
+ =?utf-8?B?ZUc1eHhqRG8zdjdQaERYTzJXUEc1Yk1iMmxraWs1c1U2R3RlbzMxbFpGUFFY?=
+ =?utf-8?B?ODNPS2hPVCtqRFh5L2NIUDBTR3F3cndlMUZPOTROUmdkYlZ4UThreFVWZENE?=
+ =?utf-8?B?KytFN0ZmSkdYQTVDaElLQk5uakl6aWl4R0dULzk4VWRleGRtTmtKSmVHRm5Y?=
+ =?utf-8?B?akp5RkZRc2g5Q3Q4eVZ3VDhJVDFJQWN3bE1xeU5iZm9wT1ByZFpxU1VxL1pU?=
+ =?utf-8?B?cjVneEVEOXc1L0ZSUWdGRlVxYUlYTVJHeDZySHI4TFk0RGRScjVxZWo0aWVH?=
+ =?utf-8?B?eG9rckpRNlF3cXJoTnNMU1I5VHM4bHJzUys4bDhLM24xNTVDaVFJT0VRR0tk?=
+ =?utf-8?B?ZVhuQjRWNzdZbjgvNU93aEN2MjA5SUduN1E4M1FobWNXenhSOWNWSHFLRmRk?=
+ =?utf-8?B?S3UveGtMVmk3anZrblJ5bXBTUUJZUXpWZ0FoMk94OWNJb3F3S2tWZFdWNEdX?=
+ =?utf-8?B?YjJUZWgwY3Z1NWFFUUVVNHN1ZmljWHlIWGVBeXhlU0F4bkI4MDZKQTFYUXgx?=
+ =?utf-8?B?YTRRenVUbGVkdE1QUzF3bmoyMkhEREM5K3BKamZpVTVEYzZoN28vQVZaNVR5?=
+ =?utf-8?B?UXVjc1FaUHFJQWx6cm5LRDVZcjRQY052TEVnQXhFVk9KeDM3R2F6MDZETDBZ?=
+ =?utf-8?B?VkZONkJERnhhS1grNFVqTGJ4Y2REVENVZzM2dFpSajN1R1VPalVDMmNCNlNi?=
+ =?utf-8?B?YU9YRHpKenBuRUJoZmoxWGhZVGpLWGt1bUo1b0dubUVkRVEyOUx1cEs5NC94?=
+ =?utf-8?B?ekdYblRuMXpGd0QvNnFZdEgyUWlyNnc4ZGNHVE16djg4dk5USmdzTkwza0lZ?=
+ =?utf-8?B?ZkFvanY4Z0Nqc1pYUmRPaG85dzBHK2VtMU10cUloZHF1VGcxYlc4TndML2Y3?=
+ =?utf-8?B?cVFRSzliWjFSTmlxWXNJRURzOFJ2dFdna1RXckFyOTFLcnBXL2YrSUxDN1lJ?=
+ =?utf-8?B?eE1oQ3ppYitPM0ZYc1I5bDlsb3IvaEMvamdoVnBxR28yT0VQTTZvVUNiVVZW?=
+ =?utf-8?B?eXcwYTlNdEZrRU9vUjF2WGNNL1lGVmpsL3ExWFpNeUlFbjNmZ1NqWW5nOVk5?=
+ =?utf-8?B?UXllSXpFaS9QTHFSUFZSUElzMUYvUUlmYktnZThNUHpOTU14V3I4ZStjQTZ3?=
+ =?utf-8?B?K1dXZ1h0Q2RPbFVBVmVENWE3TW9pUDhSbnVpVjgybkRQaW9weUFJTzVPMkUw?=
+ =?utf-8?B?VnNKRkZkcGtxQkhBTThnNEc4ZFJLTWtTTzk5VW85SFhTNEh6SVIxNHRhYm9L?=
+ =?utf-8?B?YzFXWDZTVzErbEFCaGt2VWptRVhwVER4amNKN0pHRmwzdnkrcFNWdGgrNlR0?=
+ =?utf-8?B?M3g1QWlxUGg4VHZ6QTNQczYyQ0dpWG13NVUrc21IbXJuRnloSVQvMlN6K242?=
+ =?utf-8?B?V3FFNzQ3RXRFWlRIdkNuaHlhYlZYeDNQQjFwUisvdXAzK3F0ZVFZRldGRVZa?=
+ =?utf-8?B?UUdWNk4yMzJpbmNQMDhWT2NWNVlseWMyYlVXaTRaVmJRNlk1aEJudm5wWDl3?=
+ =?utf-8?B?a3Z6azg2NldrKzR2U2d3aDZ3Wml1eXZUbEZ6M0VpTjY4YUYyaVBNWnVSSWZO?=
+ =?utf-8?B?M3luMU4rclNReG5Dc0hPaWZCWFFKMHhuRk1YdDNSZER3aEVwbXY2OVU2TVVH?=
+ =?utf-8?B?Tm9NVElnZFFTTjh0MTVSV3FNRmlwb001N3FDeXF3Q01peHE4Vkx0ekVZQ2Vh?=
+ =?utf-8?Q?mTikQW5+iI3Wn9Z0njCnipMrrhKkfJ4XViXUal2?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?SG0wMDJvcXk0c2h1RU1LQ0swRzlrRW4wOVJ0ekdjdkZoMjFHRDQ1UjR1eE0y?=
+ =?utf-8?B?YjRzd3FYMjJpVkIvUk5adGJEbTBTOXdiMHRUSVJ3QXl5Lzl1THBudTdnUzdL?=
+ =?utf-8?B?S2FkaUpkTnErdGhEQVAyemlPdkovTXVNbFVabjR0dXQ3RFpSRmwrN3pNNDd0?=
+ =?utf-8?B?SGhDb0RzMzkzNHZPTzJpcUpSbG44bDdLd0FlZW5BTm16cC9LK3VMTERxaGpy?=
+ =?utf-8?B?c0ZiRmU3YXNlbDZvUnVGYXZ4U1ZNN1NLZjRwbFYvdm1DSENJUGl6QTZ5UEZM?=
+ =?utf-8?B?NXF6OUZvanRJdGJOcFJ6WGN5Q3lEZGU0Rys4S1Q0SXpXQmFRNnFUZWxaNU00?=
+ =?utf-8?B?My9jKzNTbk5xbG5yUDRLYWM4WU9uSGpHOXo5bXl1dWN0QjBZeVZabkxWWkta?=
+ =?utf-8?B?MkxaTTFXYy9kUTRCSmwyV2duL0lJTWdDYnRpTkoyZmtwVmJCdGtraCtKNGI5?=
+ =?utf-8?B?MHVZSWhZa1RwNU1vZ29mMWlhb21ONGp1QkU4UVZyelZ0aTNncEVtYTM1VWFP?=
+ =?utf-8?B?T1lEZkdhWHlPTW02dWhLM0xtbW5RU1B4WUhMOWxBd0tVYmNGeUdvV0R4Tmtl?=
+ =?utf-8?B?elVsREZiRDB0QmViWklSdUZTU2tQQjlaNGs2L2kxUS9BVTA4YlY0ZkNPZDhi?=
+ =?utf-8?B?ZGQ2dnVSQzZDMU5DQjA5SnVRZ0lJeUdmRVdWT2hFcHpiMk1SSmRJOUJ1elBI?=
+ =?utf-8?B?MDlWR0Vjc0RoMm9VVXowUllxUTFkMUVOc2NVMlBtOVhJT0NrU2IzWkE4elR5?=
+ =?utf-8?B?WnMyeDVBZkRjWW9kbmUzNXRYTFlCLzRCcUZWQXVMZHl3VXNCb254Q0ZqaHpM?=
+ =?utf-8?B?Ti9tQXhWeUhVOGwzRVh6QzlHVWhlN04yTjA3MHFGTHJDUUthVDh0UUhyVDA5?=
+ =?utf-8?B?MEI5cnRIZGxtd3lmTFluNkFNa2c5ckVOeHc0a1NudmFuZ1BlWW10Ry9taksx?=
+ =?utf-8?B?SWNCOHJpa1dPZU1LQlB4MG5VdzVMenN5MmJNdlVEcHc2bWlXbzJGcC83TFhx?=
+ =?utf-8?B?VVRVR21WVUd0Y0xvcUJqNDJ4MzNCRndiOENBdGkrbGV4VHVTMHE3akpCSTJN?=
+ =?utf-8?B?RXVLMHR2cVVtNUlLbWo1bjAzN1FZYUdCZDdVblVoOHVwSzFJTERiVjFWRHAx?=
+ =?utf-8?B?SEdDQzUwdVMzeFA5WVRjNVlOaElaQ3dWU3lWNkRpbG5laUR0RUpGanVvQ3FV?=
+ =?utf-8?B?Q01XbmJ4NmV6Q1dVdFBhRlVwei84UFo3SG5IM3RiOVdiV0pnUmlzUXE2eHBo?=
+ =?utf-8?B?SDFYbi9XNnIxbHZjTFdwL3hQZTltajVqaHp6dUdvT29jbnJJQUFnN3B1QUYz?=
+ =?utf-8?B?SXArQ3I0WlphN3F0d3dMdlBCNVFVWjNpZGM1RFhqeXh5TUNYRFZjNkxxQ24y?=
+ =?utf-8?B?OUIxeGZpZjBJSWM5U0o5MXVmR0RSSlpqQ0xzdGl5Z0htd2xDRllMcFJkdjRp?=
+ =?utf-8?B?ejNFdW9MSm9TVElTYTdNeDJDZkhMRTVDZUVqM2h4K3lSVWFMeFIzLzFHOW5r?=
+ =?utf-8?B?eWEvZ3BaVTliUHlEc2diUm54dDRKM1Ara3FtQXNHRVVoZ3QwRzZDb0xQZkFF?=
+ =?utf-8?B?Qlk1czc3QTk2a2dJK3FyT0JRWjQ3aHJsejUwMyswVU85SzJEUDFkZ3lBSURE?=
+ =?utf-8?B?YVdzQlo4UjFGREs1UG1JQ0ZXTnAvRTRLSXpwWVJsVi9ZamtwZGhtaGU2WU5K?=
+ =?utf-8?B?UE1wamx0M2syZUZZZFJQUXBMOEdxaHZrdTlxd0JzWW9jcHNHY0p0bWxpUCtZ?=
+ =?utf-8?B?QkdvRC9GVnlaZG9JVlBRNnBTd3MvbnowcjYzeXh6ZERjT241N1hUVmVvS2hT?=
+ =?utf-8?B?Rmx5anhvWkxkQlg3N3JkdXZXaVFlaFRVcS9QT3ZCS0V1QmNPSllYeDVPb0Ns?=
+ =?utf-8?B?Nms5Q0hoQ0JNZmZqTFJ4R1piMlFuNjQrZnZXUU1xWWkrbjBTemd5amZTRGNW?=
+ =?utf-8?B?MWVsa2RVY3pvMExUL0pCNlJobzNtNkxlWm1nUkJ6Y1laYjVnQ3hQendlYmU1?=
+ =?utf-8?B?OGdGMTZEMUovMjNON0ttVUlBR09vTEhGQW0wQjYrMnp6VnhZY3VKSVAya01n?=
+ =?utf-8?B?QTN5MEpWV2U4RndJY0ROL1NvK3FJcGFOTXFZVXkvdk9zSWpzSGZ6TTVYa0Jv?=
+ =?utf-8?Q?e7ofaxRufKf5zsZBXqucSOvmY?=
+X-OriginatorOrg: usask.ca
+X-MS-Exchange-CrossTenant-Network-Message-Id: 36810495-babd-4d3b-55d8-08dcf45ea288
+X-MS-Exchange-CrossTenant-AuthSource: YQBPR0101MB6200.CANPRD01.PROD.OUTLOOK.COM
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 19:04:07.2775
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 24ab6cd0-487e-4722-9bc3-da9c4232776c
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: d2BR5ZJFxABvgTdJwwqYuYHif5S++LCWu5S32kB7X5ZZKJhjwp9RNvxtTFQ6G3Ap
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: YT2PR01MB11307
 
-From: Björn Töpel <bjorn@rivosinc.com>
+Hi all,
 
-RISC-V does not currently support perf trace, since the system call
-table is not generated.
+In the kernel boot args we can specify something like 
+"isolcpus=managed_irq,nohz,domain,<cpu-list>" to tell the kernel to 
+isolate a given set of CPUs and *also* prevent them from being targeted 
+by managed interrupts.
 
-Perform the copy/paste exercise, wiring up RISC-V system call table
-generation.
+The boot-time isolcpus mechanism is deprecated, so is there a runtime 
+equivalent to tell the kernel to avoid certain CPUs for managed 
+interrupts?   I just stumbled over https://lkml.org/lkml/2024/9/16/563 
+which makes me think the answer might be that no such mechanism exists 
+currently.
 
-Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
----
- tools/perf/Makefile.config                    |  6 ++-
- tools/perf/arch/riscv/Makefile                | 22 +++++++++
- .../arch/riscv/entry/syscalls/mksyscalltbl    | 47 +++++++++++++++++++
- tools/perf/util/syscalltbl.c                  |  4 ++
- 4 files changed, 78 insertions(+), 1 deletion(-)
- create mode 100755 tools/perf/arch/riscv/entry/syscalls/mksyscalltbl
+I'm not subscribed to the list so please CC me on replies.
 
-diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
-index 4ddb27a48eed..1d388e71e0cc 100644
---- a/tools/perf/Makefile.config
-+++ b/tools/perf/Makefile.config
-@@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
- ifneq ($(NO_SYSCALL_TABLE),1)
-   NO_SYSCALL_TABLE := 1
- 
--  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 powerpc arm64 s390 mips loongarch))
-+  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 powerpc arm64 s390 mips loongarch riscv))
-     NO_SYSCALL_TABLE := 0
-   endif
- 
-@@ -83,6 +83,10 @@ ifeq ($(ARCH),mips)
-   LIBUNWIND_LIBS = -lunwind -lunwind-mips
- endif
- 
-+ifeq ($(ARCH),riscv)
-+  CFLAGS += -I$(OUTPUT)arch/riscv/include/generated
-+endif
-+
- # So far there's only x86 and arm libdw unwind support merged in perf.
- # Disable it on all other architectures in case libdw unwind
- # support is detected in system. Add supported architectures
-diff --git a/tools/perf/arch/riscv/Makefile b/tools/perf/arch/riscv/Makefile
-index 90c3c476a242..481da4518695 100644
---- a/tools/perf/arch/riscv/Makefile
-+++ b/tools/perf/arch/riscv/Makefile
-@@ -4,3 +4,25 @@ endif
- PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
- PERF_HAVE_JITDUMP := 1
- HAVE_KVM_STAT_SUPPORT := 1
-+
-+#
-+# Syscall table generation for perf
-+#
-+
-+out    := $(OUTPUT)arch/riscv/include/generated/asm
-+header := $(out)/syscalls.c
-+incpath := $(srctree)/tools
-+sysdef := $(srctree)/tools/arch/riscv/include/uapi/asm/unistd.h
-+sysprf := $(srctree)/tools/perf/arch/riscv/entry/syscalls/
-+systbl := $(sysprf)/mksyscalltbl
-+
-+# Create output directory if not already present
-+$(shell [ -d '$(out)' ] || mkdir -p '$(out)')
-+
-+$(header): $(sysdef) $(systbl)
-+	$(Q)$(SHELL) '$(systbl)' '$(CC)' '$(HOSTCC)' $(incpath) $(sysdef) > $@
-+
-+clean::
-+	$(call QUIET_CLEAN, riscv) $(RM) $(header)
-+
-+archheaders: $(header)
-diff --git a/tools/perf/arch/riscv/entry/syscalls/mksyscalltbl b/tools/perf/arch/riscv/entry/syscalls/mksyscalltbl
-new file mode 100755
-index 000000000000..c59f5e852b97
---- /dev/null
-+++ b/tools/perf/arch/riscv/entry/syscalls/mksyscalltbl
-@@ -0,0 +1,47 @@
-+#!/bin/sh
-+# SPDX-License-Identifier: GPL-2.0
-+#
-+# Generate system call table for perf. Derived from
-+# powerpc script.
-+#
-+# Copyright IBM Corp. 2017
-+# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
-+# Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
-+# Changed by: Kim Phillips <kim.phillips@arm.com>
-+# Changed by: Björn Töpel <bjorn@rivosinc.com>
-+
-+gcc=$1
-+hostcc=$2
-+incpath=$3
-+input=$4
-+
-+if ! test -r $input; then
-+	echo "Could not read input file" >&2
-+	exit 1
-+fi
-+
-+create_sc_table()
-+{
-+	local sc nr max_nr
-+
-+	while read sc nr; do
-+		printf "%s\n" "	[$nr] = \"$sc\","
-+		max_nr=$nr
-+	done
-+
-+	echo "#define SYSCALLTBL_RISCV_MAX_ID $max_nr"
-+}
-+
-+create_table()
-+{
-+	echo "#include \"$input\""
-+	echo "static const char *const syscalltbl_riscv[] = {"
-+	create_sc_table
-+	echo "};"
-+}
-+
-+$gcc -E -dM -x c -I $incpath/include/uapi $input \
-+	|awk '$2 ~ "__NR" && $3 !~ "__NR3264_" {
-+		sub("^#define __NR(3264)?_", "");
-+		print | "sort -k2 -n"}' \
-+	|create_table
-diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
-index 7c15dec6900d..349986f6e5f5 100644
---- a/tools/perf/util/syscalltbl.c
-+++ b/tools/perf/util/syscalltbl.c
-@@ -46,6 +46,10 @@ static const char *const *syscalltbl_native = syscalltbl_mips_n64;
- #include <asm/syscalls.c>
- const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
- static const char *const *syscalltbl_native = syscalltbl_loongarch;
-+#elif defined(__riscv)
-+#include <asm/syscalls.c>
-+const int syscalltbl_native_max_id = SYSCALLTBL_RISCV_MAX_ID;
-+static const char *const *syscalltbl_native = syscalltbl_riscv;
- #endif
- 
- struct syscall {
+Thanks,
+Chris Friesen
 
-base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
--- 
-2.45.2
 
 
