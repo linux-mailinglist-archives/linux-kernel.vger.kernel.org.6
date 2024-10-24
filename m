@@ -1,380 +1,106 @@
-Return-Path: <linux-kernel+bounces-380145-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380146-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A6E29AE97A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:58:43 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BF4D9AE97C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:58:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CAE3D1F22C97
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:58:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E1D81C22243
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:58:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 18D451E490B;
-	Thu, 24 Oct 2024 14:58:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 263EA1D8E18;
+	Thu, 24 Oct 2024 14:58:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DtrEC9Pp"
-Received: from mail-ej1-f73.google.com (mail-ej1-f73.google.com [209.85.218.73])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="XCwXo69e"
+Received: from out-170.mta1.migadu.com (out-170.mta1.migadu.com [95.215.58.170])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E4D41E379B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:58:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.73
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14E081E25FC
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:58:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781917; cv=none; b=ZagfzfldhkaK3B8Y2A52lo0laDFPf9p5f5K/P4b7RPfVOCYs/CvK0lddBAiCbmaN+lfeoKCwkJE4NCGNzEk9OMBnVd4OUl/GmCwlFmVEtrrPy5ocTJY7tG9hssQ1ONl6ewVwpgO+c8hWROPmuQid0QapnK5a5jzF9u2ob3ndoQ8=
+	t=1729781928; cv=none; b=fisGo0x6wteEHgT6pBffg3cmFxOC3cF6dxTNcuq3Y9bLpClARJa+7NK9qUtT3usiB8d28XPhL2cA6COnNDprI812txbxZpsioP1ZYNaSN/wxqPKLm7kOC5z+8w4I2RrHYFE6NZvRa6GcSo83qHeNeeTLlO6ReJy+xPGAnSTJXxU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781917; c=relaxed/simple;
-	bh=fsWJLXzguoQoCr3yaxOj7+mbnEd4fEJTPdNcV3+Ugeo=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=HgepT599+SQtFbkRo7CY3dXEqPik5jJtsbWAMo2vl+VNm+56iX3OxadzAr0y71za04NAQxMDYM2xnUMIbaN2U0WdfvYAOxUo5StULW8oJaeunc9eA8JIfCx6kWvTH+bgiWi2z66j9TkSJRcnvAW7O3b5pTi4a5Sr/Y6PJl2D2M8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DtrEC9Pp; arc=none smtp.client-ip=209.85.218.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--gnoack.bounces.google.com
-Received: by mail-ej1-f73.google.com with SMTP id a640c23a62f3a-a99fc3e2285so60514866b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:58:34 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729781913; x=1730386713; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=UTNMhqkx79/8cayypEH8/H2I1TzVOUDuVBtmGQ2SYBM=;
-        b=DtrEC9Pp9VwhngejaQ83LbbcBnHT7B0Ha+jWgDSU+ihWsI0bUmsf2U48wVnbLkW4zE
-         TaODRoKaOQ+yNkMq8Sn5hRv3cSBcvKu4UHBN36AOSGx22g8W8y32kGM7zX6j9tZVhOF0
-         Qi9R4BasdsK7tXf4MucRjo0zJ9vcR/Piwa5v74K6gZp95A0ypIRAyceT101+YFb2uf1K
-         azULLdOO0wv+fDzXOi+Qlx2bNbXv78cqAZAyWFxFe+S4vaKxjpI3beoFBNt+1qhsAxp7
-         Lri10PJ/19IGL0E3ROWxroaDW6x2wGy7rNgzIe+fYc/woEB3OBuUWUCPH/f86pfWYbKd
-         UqvA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729781913; x=1730386713;
-        h=content-transfer-encoding:cc:to:from:subject:message-id:references
-         :mime-version:in-reply-to:date:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=UTNMhqkx79/8cayypEH8/H2I1TzVOUDuVBtmGQ2SYBM=;
-        b=aRtEwKVjz/9yXn4pEPpQKGYo+n16bdLglqK2SQhFK/bmjWWUuOPBsg8Q+hZLp6e13g
-         GKSxk6sMHbZP/Q6jbC1/Gaea4RNDN5lz+WnPXawlr/hb8mdOiV6YjudSKdn8xdFZZUwq
-         FE7YApNP4DtJJTvJEb9nzrtAVsqY6geFjl1glDMQPQ4A0/jtpgb3XWMOhnBW7beT3b52
-         +8Gp6u5ZA1ABVdcYuwUaeodCkD2J7yDRED84EVOG0YBKADkKEAo4dOthtyTy+nAT3m74
-         UlYlLPGME8dbcAQy4yNP9pMecyGEJOiY2uO1D2UBBGGIMIZvq/NjjekgSf89/6K1x0fk
-         lIRw==
-X-Forwarded-Encrypted: i=1; AJvYcCVx9keajFGcb/fTRauooGGr1VpffHBBZclN1XD1KyxAPNzpIUdrUCgFObDQc5j4oD536R3c3ReIjS1aGJo=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyrJFY//FaCGz/Il83K79qMmd2x/elEictD3z6M43N/jKJqh55T
-	+AXappPj2rIra+hx1UVvg7Z2lKXn36G/8cr1BzIOJuwzti/tulclq7oJ1/tW6uzTbWo2zsr7BaV
-	CXw==
-X-Google-Smtp-Source: AGHT+IGmu5i1FD/eNUbn5nM80TkcwoIM/8Ad2/KRDXorbucrGPREOhyLWbgFSPRk+xOZedNn6+2om3KiMa4=
-X-Received: from swim.c.googlers.com ([fda3:e722:ac3:cc00:31:98fb:c0a8:1605])
- (user=gnoack job=sendgmr) by 2002:a17:906:f24c:b0:a89:ee2b:e2dd with SMTP id
- a640c23a62f3a-a9ad283dbb5mr58466b.12.1729781912197; Thu, 24 Oct 2024 07:58:32
- -0700 (PDT)
-Date: Thu, 24 Oct 2024 16:58:29 +0200
-In-Reply-To: <20241022151144.872797-2-mic@digikod.net>
+	s=arc-20240116; t=1729781928; c=relaxed/simple;
+	bh=+gUYrl90Bp/HIAFirwtSe5aPKXXW4Xb7fDGVEPtSi+k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=hiOhWubmraUFf1F/hC0c2ct5rktfNVV8O6v9Pm1yU60rzQIS75lQKcM43DWmeejyj4hGUAFFHqF5hy/YiJDiM1Mrm6KFcNb3xJoL3dUrCaVqOG+gG1ulhZOqFbGSbz7xmFFk/thtBrywhJ1BQViiLQAHRL0vKq2VwEg3kjV76Tc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=XCwXo69e; arc=none smtp.client-ip=95.215.58.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Oct 2024 07:58:31 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729781922;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JsbdXGheXE8UKAwXz3WcVrbgQiwH49btzygF0hSZwQM=;
+	b=XCwXo69e1xpI6kba8dr61TzdH1ksoQSOerz2LCHynr7o2Whd5fnBP8OFDIS5GotsM1cJBO
+	Lwc5CiKBG327B9PLkp5eDH9N3on0vK5fJLuL+X1fTzLew0+yqnvBUooJaIplNVasA5z5CK
+	uSopyswAoV2DS+p4L1nQl6x+NNjDdJQ=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Russ Weight <russ.weight@linux.dev>
+To: "Kalra, Ashish" <ashish.kalra@amd.com>
+Cc: Dionna Glaze <dionnaglaze@google.com>, linux-kernel@vger.kernel.org,
+	Luis Chamberlain <mcgrof@kernel.org>,
+	Danilo Krummrich <dakr@redhat.com>,
+	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 1/1] firmware_loader: Move module refcounts to allow
+ unloading
+Message-ID: <20241024145831.6b44fqhhzwny6kc2@4VRSMR2-DT.corp.robot.car>
+References: <20241015201424.2914652-1-dionnaglaze@google.com>
+ <20241023201654.pjz67e5cv7kbki5t@4VRSMR2-DT.corp.robot.car>
+ <e6003804-1f91-45db-8ae7-368fda354acd@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241022151144.872797-1-mic@digikod.net> <20241022151144.872797-2-mic@digikod.net>
-Message-ID: <ZxpglWaGWN-BUVHB@google.com>
-Subject: Re: [PATCH v3 1/3] landlock: Refactor filesystem access mask management
-From: "=?utf-8?Q?G=C3=BCnther?= Noack" <gnoack@google.com>
-To: "=?utf-8?Q?Micka=C3=ABl_Sala=C3=BCn?=" <mic@digikod.net>
-Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>, 
-	Konstantin Meskhidze <konstantin.meskhidze@huawei.com>, Paul Moore <paul@paul-moore.com>, 
-	Tahera Fahimi <fahimitahera@gmail.com>, linux-kernel@vger.kernel.org, 
-	linux-security-module@vger.kernel.org
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: quoted-printable
-
-The approach of only using the union locally to the merging functions is mu=
-ch
-nicer. =F0=9F=91=8D  Still some documentation/wording remarks, but overall =
-looks good.
-
-On Tue, Oct 22, 2024 at 05:11:42PM +0200, Micka=C3=ABl Sala=C3=BCn wrote:
-> Replace get_raw_handled_fs_accesses() with a generic
-> landlock_merge_access_masks(), and replace get_fs_domain() with a
-> generic landlock_match_ruleset().  These helpers will also be useful for
-> other types of access.
->=20
-> Cc: G=C3=BCnther Noack <gnoack@google.com>
-> Cc: Mikhail Ivanov <ivanov.mikhail1@huawei-partners.com>
-> Signed-off-by: Micka=C3=ABl Sala=C3=BCn <mic@digikod.net>
-> Link: https://lore.kernel.org/r/20241022151144.872797-2-mic@digikod.net
-> ---
->=20
-> Changes since v2:
-> * Create a new type union access_masks_all instead of changing struct
->   acces_masks.
-> * Replace get_fs_domain() with an explicit call to
->   landlock_match_ruleset().
->=20
-> Changes since v1:
-> * Rename landlock_filter_access_masks() to landlock_match_ruleset().
-> * Rename local variables from domain to ruleset to mach helpers'
->   semantic.  We'll rename and move these helpers when we'll have a
->   dedicated domain struct type.
-> * Rename the all_fs mask to any_fs.
-> * Add documentation, as suggested by G=C3=BCnther.
-> ---
->  security/landlock/fs.c       | 31 ++++------------
->  security/landlock/ruleset.h  | 70 +++++++++++++++++++++++++++++++-----
->  security/landlock/syscalls.c |  2 +-
->  3 files changed, 70 insertions(+), 33 deletions(-)
->=20
-> diff --git a/security/landlock/fs.c b/security/landlock/fs.c
-> index 7d79fc8abe21..dd9a7297ea4e 100644
-> --- a/security/landlock/fs.c
-> +++ b/security/landlock/fs.c
-> @@ -388,38 +388,21 @@ static bool is_nouser_or_private(const struct dentr=
-y *dentry)
->  		unlikely(IS_PRIVATE(d_backing_inode(dentry))));
->  }
-> =20
-> -static access_mask_t
-> -get_raw_handled_fs_accesses(const struct landlock_ruleset *const domain)
-> -{
-> -	access_mask_t access_dom =3D 0;
-> -	size_t layer_level;
-> -
-> -	for (layer_level =3D 0; layer_level < domain->num_layers; layer_level++=
-)
-> -		access_dom |=3D
-> -			landlock_get_raw_fs_access_mask(domain, layer_level);
-> -	return access_dom;
-> -}
-> -
->  static access_mask_t
->  get_handled_fs_accesses(const struct landlock_ruleset *const domain)
->  {
->  	/* Handles all initially denied by default access rights. */
-> -	return get_raw_handled_fs_accesses(domain) |
-> +	return landlock_merge_access_masks(domain).fs |
->  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
->  }
-> =20
-> -static const struct landlock_ruleset *
-> -get_fs_domain(const struct landlock_ruleset *const domain)
-> -{
-> -	if (!domain || !get_raw_handled_fs_accesses(domain))
-> -		return NULL;
-> -
-> -	return domain;
-> -}
-> +static const struct access_masks any_fs =3D {
-> +	.fs =3D ~0,
-> +};
-> =20
->  static const struct landlock_ruleset *get_current_fs_domain(void)
->  {
-> -	return get_fs_domain(landlock_get_current_domain());
-> +	return landlock_match_ruleset(landlock_get_current_domain(), any_fs);
->  }
-> =20
->  /*
-> @@ -1516,8 +1499,8 @@ static int hook_file_open(struct file *const file)
->  	layer_mask_t layer_masks[LANDLOCK_NUM_ACCESS_FS] =3D {};
->  	access_mask_t open_access_request, full_access_request, allowed_access,
->  		optional_access;
-> -	const struct landlock_ruleset *const dom =3D
-> -		get_fs_domain(landlock_cred(file->f_cred)->domain);
-> +	const struct landlock_ruleset *const dom =3D landlock_match_ruleset(
-> +		landlock_cred(file->f_cred)->domain, any_fs);
-> =20
->  	if (!dom)
->  		return 0;
-> diff --git a/security/landlock/ruleset.h b/security/landlock/ruleset.h
-> index 61bdbc550172..e00edcb38c5b 100644
-> --- a/security/landlock/ruleset.h
-> +++ b/security/landlock/ruleset.h
-> @@ -47,6 +47,15 @@ struct access_masks {
->  	access_mask_t scope : LANDLOCK_NUM_SCOPE;
->  };
-> =20
-> +union access_masks_all {
-> +	struct access_masks masks;
-> +	u32 all;
-> +};
-> +
-> +/* Makes sure all fields are covered. */
-> +static_assert(sizeof(((union access_masks_all *)NULL)->masks) =3D=3D
-> +	      sizeof(((union access_masks_all *)NULL)->all));
-
-Nit: Could maybe be written as
-sizeof(typeof_member(union access_masks_all, masks))
-
-Nit 2: Should this be <=3D instead of =3D=3D?
-
-> +
->  typedef u16 layer_mask_t;
->  /* Makes sure all layers can be checked. */
->  static_assert(BITS_PER_TYPE(layer_mask_t) >=3D LANDLOCK_MAX_NUM_LAYERS);
-> @@ -260,6 +269,58 @@ static inline void landlock_get_ruleset(struct landl=
-ock_ruleset *const ruleset)
->  		refcount_inc(&ruleset->usage);
->  }
-> =20
-> +/**
-> + * landlock_merge_access_masks - Return the merge of a ruleset's access_=
-masks
-
-Documentation uses the same words as in the function name, and it's not
-intuitively clear to me what "merge" means.  Would it be fair to describe i=
-t
-like this:
-
-  landlock_merge_access_masks - Return all access rights handled in the rul=
-eset
-
-?
-
-(To describe mathematical set operations, I'd normally say "a union" instea=
-d of
-"a merge", but that might be confusing given that we also use the C "union"
-feature in the same function.)
-
-> + *
-> + * @ruleset: Landlock ruleset (used as a domain)
-> + *
-> + * Returns: an access_masks result of the OR of all the ruleset's access=
- masks.
-> + */
-> +static inline struct access_masks
-> +landlock_merge_access_masks(const struct landlock_ruleset *const ruleset=
-)
-> +{
-> +	union access_masks_all matches =3D {};
-> +	size_t layer_level;
-> +
-> +	for (layer_level =3D 0; layer_level < ruleset->num_layers;
-> +	     layer_level++) {
-> +		union access_masks_all layer =3D {
-> +			.masks =3D ruleset->access_masks[layer_level],
-> +		};
-> +
-> +		matches.all |=3D layer.all;
-> +	}
-> +
-> +	return matches.masks;
-> +}
-> +
-> +/**
-> + * landlock_match_ruleset - Return @ruleset if any @masks right matches
-
-Same here; I think when I see a call for a function called
-"landlock_match_ruleset" I might be confused about what is being matched ag=
-ainst
-what here.  Documentation uses the same wording as well.  Documentation
-suggestion:
-
-  landlock_match_ruleset - Return @ruleset iff any access right in @masks
-                           is handled in the @ruleset.
-
-This is why in [1], I suggested that this function could return a boolean
-and be called differently, like:
-
-  /* True if any access right in @masks is handled in @ruleset. */
-  bool landlock_is_any_access_right_handled(
-  	const struct landlock_ruleset *const ruleset,
-  	struct access_masks masks);
-
-Returning a boolean removes the (slightly unintuitive) semantics where a
-function argument is returned under certain conditions, which are not clear=
- from
-the function name, and then the function has the more conventional style of
-returning a boolean that indicates whether some condition holds.  The funct=
-ion
-name would spell out more exactly what is matched against what.
-
-Callers would have to check the boolean and return the ruleset themselves, =
-but
-this seems like a reasonable thing to do when the code is clearer to read, =
-IMHO.
-
-  if (landlock_is_any_access_right_handled(ruleset, masks))
-  	return ruleset;
-  return NULL;
-
-Alternatively, how about wording it like this:
-
-  /*
-   * landlock_get_applicable_domain - Returns the @dom ruleset if it
-   *                                  applies to (handles) the access
-   *                                  rights specified in @masks.
-   */
-  const struct landlock_ruleset *landlock_get_applicable_domain(
-  	const struct landlock_ruleset *const dom,
-  	const struct access_masks masks);
-
-[1] https://lore.kernel.org/all/20241005.a69458234f74@gnoack.org/
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <e6003804-1f91-45db-8ae7-368fda354acd@amd.com>
+X-Migadu-Flow: FLOW_OUT
 
 
-> + *
-> + * @ruleset: Landlock ruleset (used as a domain)
-> + * @masks: access masks
-> + *
-> + * Returns: @ruleset if @masks matches, or NULL otherwise.
-> + */
-> +static inline const struct landlock_ruleset *
-> +landlock_match_ruleset(const struct landlock_ruleset *const ruleset,
-> +		       const struct access_masks masks)
-> +{
-> +	const union access_masks_all masks_all =3D {
-> +		.masks =3D masks,
-> +	};
-> +	union access_masks_all merge =3D {};
-> +
-> +	if (!ruleset)
-> +		return NULL;
-> +
-> +	merge.masks =3D landlock_merge_access_masks(ruleset);
-> +	if (merge.all & masks_all.all)
-> +		return ruleset;
-> +
-> +	return NULL;
-> +}
-> +
->  static inline void
->  landlock_add_fs_access_mask(struct landlock_ruleset *const ruleset,
->  			    const access_mask_t fs_access_mask,
-> @@ -295,19 +356,12 @@ landlock_add_scope_mask(struct landlock_ruleset *co=
-nst ruleset,
->  	ruleset->access_masks[layer_level].scope |=3D mask;
->  }
-> =20
-> -static inline access_mask_t
-> -landlock_get_raw_fs_access_mask(const struct landlock_ruleset *const rul=
-eset,
-> -				const u16 layer_level)
-> -{
-> -	return ruleset->access_masks[layer_level].fs;
-> -}
-> -
->  static inline access_mask_t
->  landlock_get_fs_access_mask(const struct landlock_ruleset *const ruleset=
-,
->  			    const u16 layer_level)
->  {
->  	/* Handles all initially denied by default access rights. */
-> -	return landlock_get_raw_fs_access_mask(ruleset, layer_level) |
-> +	return ruleset->access_masks[layer_level].fs |
->  	       LANDLOCK_ACCESS_FS_INITIALLY_DENIED;
->  }
-> =20
-> diff --git a/security/landlock/syscalls.c b/security/landlock/syscalls.c
-> index f5a0e7182ec0..c097d356fa45 100644
-> --- a/security/landlock/syscalls.c
-> +++ b/security/landlock/syscalls.c
-> @@ -329,7 +329,7 @@ static int add_rule_path_beneath(struct landlock_rule=
-set *const ruleset,
->  		return -ENOMSG;
-> =20
->  	/* Checks that allowed_access matches the @ruleset constraints. */
-> -	mask =3D landlock_get_raw_fs_access_mask(ruleset, 0);
-> +	mask =3D ruleset->access_masks[0].fs;
->  	if ((path_beneath_attr.allowed_access | mask) !=3D mask)
->  		return -EINVAL;
-> =20
-> --=20
-> 2.47.0
->=20
+On Thu, Oct 24, 2024 at 04:35:20AM -0500, Kalra, Ashish wrote:
+> 
+> 
+> On 10/23/2024 3:16 PM, Russ Weight wrote:
+> > 
+> > On Tue, Oct 15, 2024 at 08:14:24PM +0000, Dionna Glaze wrote:
+> >> If a kernel module registers a firmware upload API ops set, then it's
+> >> unable to be moved due to effectively a cyclic reference that the module
+> >> depends on the upload which depends on the module.
+> >>
+> >> Instead, only require the try_module_get when an upload is requested to
+> >> disallow unloading a module only while the upload is in progress.
+> > 
+> > Generally, the parent driver that registers for firmware_upload would
+> > want the module to be present until it unregisters.
+> > 
+> > Is there a case where this change is needed?
+> 
+> We are using the firmware_upload_register() API interface for SEV firmware loader/update
+> with the AMD Crypto CCP driver.
+> 
+> Now, when we call firmware_upload_register() it does a module_get() and bumps the module refcnt and 
+> then we do the firmware_upload_unregister() as part of the CCP module's exit() callback, but the
+> CCP module's exit() callback is never invoked as it's refcnt is non-zero, so it is like a catch 22
+> situation, we want the module's exit() callback to be invoked to call firmware_upload_unregister()
+> to do a module_put() and decrement module's refcnt, but the callback is never invoked as it's
+> refcnt is non-zero.
+
+That makes sense. Thanks for the explanation.
+
+> 
+> Isn't the firmware_upload_register() API interface intended to be used by standalone drivers ?
+
+Yes, it is.
+
+Thanks,
+- Russ
 
