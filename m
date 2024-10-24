@@ -1,120 +1,114 @@
-Return-Path: <linux-kernel+bounces-379124-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8351C9ADA55
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:17:47 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 39C9B9ADA61
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:19:03 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4564128340B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:17:46 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FBE1C2105B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:19:02 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9FE0E1662E9;
-	Thu, 24 Oct 2024 03:17:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4932F165F01;
+	Thu, 24 Oct 2024 03:18:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lY1MJC5d"
-Received: from mail-yw1-f170.google.com (mail-yw1-f170.google.com [209.85.128.170])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYijpAUn"
+Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F978156997;
-	Thu, 24 Oct 2024 03:17:30 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.170
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA4D158DC5;
+	Thu, 24 Oct 2024 03:18:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729739853; cv=none; b=KmkMF1/ZKAmd1n9DwvPhgFv44ndubH+QnPRleGJlqvp+LbANrtGbcvWVCbXhQZrIU+jyJWy3AKQzZZ2NzCyIU9SoyDCvPZAYRJbceQIZRZrhI3AvQm9D3tcASwi42lyAew+U2+LvKyVSrQ6UbYlpoCJ4iTQwJ/LMfsSOq0Sc2X0=
+	t=1729739933; cv=none; b=tYh45l+qBKK2PWuka/o2gw8Tq2y+A9f+Evftjt6GwkCo8bYG+qXpVclvroEcj146PRx0Ef1lL19SQH6Bs8y+O5oUVDbehlUafYnd2sApdfYx7DdChBPpqWIcEaB2xHstBdbfkYDi08n2DWxYfrRXJRevHC2aSllvoHrA2MMK2Y4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729739853; c=relaxed/simple;
-	bh=6EkibdRfD0hNLJmrqUMgqeBGkxUubBTZYbGiT9el38Y=;
+	s=arc-20240116; t=1729739933; c=relaxed/simple;
+	bh=xjGFZNstPrpQ4vgCCp6N/P6IszAehLSi+DkY8vHRawc=;
 	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=m2394KYDppmujjfjjVz+U2fVRZJPWC7pZq8qKSlLmmrsvrNGB6p8ZlYp4NI/mOZk8Cp4qubtWRIdeEmSHgvW3MfW+my5pNLTbOG3md7lN6gIwVcD95RYFmiYf/eLVMi2jvTOb1138K5oYNBJ5V1toS4UlYTSYONURVJAyqLDBSc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lY1MJC5d; arc=none smtp.client-ip=209.85.128.170
+	 To:Cc:Content-Type; b=Ny9R6egIlaQNOJwmFBVMgV/gd2UNqwg4U7HOblbw5zBvE3+ptDr+4FZsaWG9KHqFRiHNUFm0EYFzvUeBnZvZMw2UN/13vfG9LeJVncz5b0NsbTdYcm3NX0MkkmWTZ5i45vCrlKDxnSX3OJdSAscKBdPdv7rRFdDSM8woYMbJfTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYijpAUn; arc=none smtp.client-ip=209.85.208.179
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f170.google.com with SMTP id 00721157ae682-6e2e41bd08bso5333657b3.2;
-        Wed, 23 Oct 2024 20:17:30 -0700 (PDT)
+Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb58980711so3265731fa.0;
+        Wed, 23 Oct 2024 20:18:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729739850; x=1730344650; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=6EkibdRfD0hNLJmrqUMgqeBGkxUubBTZYbGiT9el38Y=;
-        b=lY1MJC5dejv7mnRQj/V12lobDar+fBCQc2+pHlzpVSf7GPRxWsqFwAhqcnlNzlAqiU
-         BVgUYBBlX2Iw6FJP6zhvmAVOAETiGcZjVQ6t3UsC64dAyzZY87pPeq6gjuhJRE0qewNo
-         Tn28hDbdWAftw0a2APW8q/qIi7kruvxqFqYhTMxjJn4/XkFMW8mYtbHv1+oNUioS+iOG
-         cxvIcoPDTAf0YR2b4WdnKN536UDbW69pAFEVNOx5hqwdre2yV+VGgc2gjUG2jPkLJNQM
-         0kxkGpbQI/NWMP2pwyP+0p7FUWoH7qB8tCOkUTjjZ93ZdiWHz7PQmwTOsuDt1VqpPGBD
-         3VZQ==
+        d=gmail.com; s=20230601; t=1729739930; x=1730344730; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ofDn4Of286XPlGie6siVpN/v1NCFuionb7yUorFjmQs=;
+        b=YYijpAUnnV0FS7WAVHNNMbce7Fr51YTmcuhOPn3UkflxtdDW3whoEhfCNHF/IgJnhm
+         ttG7L1kTstJ4k8Gdb8GtzONolSs4I9iJg1wjf2M2WRU2KzxZmjUGcqmPZlz0OsFOGBwl
+         3LKd4tpCXA02mhhLrScF/osmDg4Bfx4zTSIZiCTKqblOeQFmjW1qN52+qjo1um2XMthu
+         poQdZSI4ZSbF6yzq+XXYfPKQI3yuzNB2WEUTx0+oJ+ngGLHdLp2DaYtWIIDLD5k96YhC
+         RW/Ul35U9SfbjN3JDCF0eIKmGF3R5YPzopxEFs7/xGib9esmNSQ87MSAvUB78oMhK3XU
+         SNdQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729739850; x=1730344650;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=6EkibdRfD0hNLJmrqUMgqeBGkxUubBTZYbGiT9el38Y=;
-        b=D1bpW4K9mT8ubggK840N+tDZRyHx/anZOFVJWAvnmyonVLNo/kXxeg319ftdxH+rqd
-         7otf66tzerHAw0JFBr/ixwU7+0f2CR9Nmbm4cwOBNy/oMv8Fk+QnEkezn4h4VynZv5zs
-         k2nfxybjJz7UeFJQamEZ5/Q3lfrsfKyYSoG1vN1jJGZq7mzGjAUbPcPTU0RzbJcVKfml
-         sVfhktDXVwKV5o+20sufNVTfJosuZ6o+B/U4IEVPQNQsa4bCObSfTdJ+AYgojAUZ+zHd
-         nsXFOhhhoG4eDtFEgBqMKhgCl2x8Zn8JqpN1Lc3luxwohoyeWxYTbwbcUXPt5sPA6ZyX
-         B6aw==
-X-Forwarded-Encrypted: i=1; AJvYcCWdc5h/o+Cl/W9XcwSaafJcFPWdHomZeM58MpTTd2eNA14B/H3XBwWwncGNY52RY6xZGQJx0s/mjT1PoSs=@vger.kernel.org, AJvYcCWfO1tD/pbyQDJSUBoCbacG+4wK9QO9GMtxA4QNgu3PpHWojthnJTr10E6U/Bxt7p3Lc9cVSWEKKkZ36AzyhDlg@vger.kernel.org, AJvYcCWjOphLYQlsQ1ZlqNog6NKN6+ACFA+OhIMOv69P+8SfYsKyjrjDlfZ5SkS3FFmtKBR3PF+CyCeLPc28kg==@vger.kernel.org, AJvYcCWkd9yEDemWJpsxPKKic1cNcj5Tg9N99WnUaj52ZjClGJs7PjlyWCI0oXOYn1RY6ohVZzNvG3e2Rx67@vger.kernel.org, AJvYcCWpC3Vce9V9GRfAM/qglSa8eCQxI+XyEN7g3kKwtlkOeYCTIG5bQNndXbPl7jo9uLNX9phdDcuU3Coo/QjG@vger.kernel.org, AJvYcCXpcjJw3IawHJcZrt1RqB0jWH60P+80JJnS/jAoWSomtpdp6kchTBtDsAW03j1keNUpYupDQQSTtib80YBM@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzvftde23NGRxH44VS4f6LvQmvU37yX8ciH8R8B5MMCXIkCtg53
-	GK6D1VzNZFpJn18BrQcJ6CBSCwWCJBUPww0jTY/wllmRwZcqsVSCkusrdn49ARX9s/GNbh2kfpJ
-	X+EOmArMNAz+/2BNkMEiPgPWtemk=
-X-Google-Smtp-Source: AGHT+IFbJRa/Zgamr72R9VITjkZe2117OmIiEsBf2XL35era4TpGsQlA3Fea0E1AgytMQ4ljKeiFfFFWD+DTKuda1TM=
-X-Received: by 2002:a05:690c:6609:b0:6d5:90f:d497 with SMTP id
- 00721157ae682-6e7f0e302a3mr52827977b3.19.1729739850149; Wed, 23 Oct 2024
- 20:17:30 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729739930; x=1730344730;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ofDn4Of286XPlGie6siVpN/v1NCFuionb7yUorFjmQs=;
+        b=OTkPfbbl9vydzObgla/OkMB5AAGKfPLCTjzS9iWutUhjgXRp1melblfvJX9HVhwcQS
+         XbjqcCHUZB72ilA353l17oB8Y62d7E6VCYt3TaCRzeJxbNa6EWYviAVThuMyfAO75cPi
+         unIFp3ZJBQPEeoYtA3ZQbRYyHVQ3xNin2G576Z9eVn1SLLH3yuDzhyKhfNlPV2j2JR+q
+         UYKj9iH0qJADQebb3hy5JWrKSvHwI9kMBjLPk5R9a1OHOLKi1uGVoUVspRP4rAtdFIWQ
+         PjaXiEyKLRShiyFLqQk4ZyB2p3ugwSSMXsKu8PzZ6W0ZTUeoL+DNbhlE+LKzg7E8HIq1
+         doZQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKw2OdIEZ3sb3xFIPfb03EYcL8dY3sR2btGXWNqFcJvJNgcdc1vOKpA8k9tp7Ie0dai+Oo0LDucuSlMMQ=@vger.kernel.org, AJvYcCVlTdryVq4UJ0yeynCyrLE8gjAb5aOdd8ZxiwbWGcar8+TDz0KOJJDFcH9qM0QSr4nHZehX6wXaosFjBA==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx/AkS8UYjafIyLVlIam1N8tb3Fv8fVO/E4drWJna8rFMQ5c0Dc
+	+Qy0/FmKXrYKwaMsS5+J1eSB6hD9SvzdhnBcScWtS6LtXUxgy+Q0xz+BXEHbA5yO2UoBUUiAnjA
+	qdlVCVgrQgHEJUWtSHKwbLyJfPvU=
+X-Google-Smtp-Source: AGHT+IEX+1b/1qcjFW/0DUOc4KkMr94zN2+ZQjl7RYPzJrE4XM3xToHzN+tw5xMivLTN45nAU+Qx+MGFglcbDnWAa3s=
+X-Received: by 2002:a2e:d12:0:b0:2f3:f358:8657 with SMTP id
+ 38308e7fff4ca-2fca8283ca3mr1782771fa.44.1729739929535; Wed, 23 Oct 2024
+ 20:18:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
- <20240916085741.1636554-2-quic_mdalam@quicinc.com> <20240921185519.GA2187@quark.localdomain>
- <ZvJt9ceeL18XKrTc@infradead.org> <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
- <ZxHwgsm2iP2Z_3at@infradead.org> <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
- <ZxH4lnkQNhTP5fe6@infradead.org> <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
- <ZxieZPlH-S9pakYW@infradead.org> <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
-In-Reply-To: <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
-From: Adrian Vovk <adrianvovk@gmail.com>
-Date: Wed, 23 Oct 2024 23:17:19 -0400
-Message-ID: <CAAdYy_=OT27UvZ4cNWPLLiEaMo5wkwS+BUv=+=x7-6oE4TsnWQ@mail.gmail.com>
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Eric Biggers <ebiggers@kernel.org>, Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk, 
-	song@kernel.org, yukuai3@huawei.com, agk@redhat.com, snitzer@kernel.org, 
-	Mikulas Patocka <mpatocka@redhat.com>, adrian.hunter@intel.com, quic_asutoshd@quicinc.com, 
-	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org, 
-	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org, 
-	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev, 
-	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
-	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com, 
-	quic_varada@quicinc.com
+References: <20241022173921.6fdbdd38@canb.auug.org.au> <CALe3CaBU=9Ck-euohNna2hYxYJBbvA=LrmG7qDHTEeQ2rt9XCA@mail.gmail.com>
+ <20241024092338.6a8f10c7@canb.auug.org.au>
+In-Reply-To: <20241024092338.6a8f10c7@canb.auug.org.au>
+From: Su Hua <suhua.tanke@gmail.com>
+Date: Thu, 24 Oct 2024 11:18:13 +0800
+Message-ID: <CALe3CaAH2w7fRwz4vnL_1fPWRNS6RDiD6izbZLpREXSuuw_mdg@mail.gmail.com>
+Subject: Re: linux-next: boot failure after merge of the memblock tree
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Cc: Mike Rapoport <rppt@kernel.org>, 
+	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
+	Linux Next Mailing List <linux-next@vger.kernel.org>
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-> Alternatively, if I recall correctly it should be possible to just
-> check if the bio has an attached encryption context. If it has one,
-> then just pass-through. If it doesn't, then attach your own. No flag
-> required this way, and dm-default-key would only add encryption iff
-> the data isn't already encrypted.
+> Stephen Rothwell <sfr@canb.auug.org.au> =E4=BA=8E2024=E5=B9=B410=E6=9C=88=
+24=E6=97=A5=E5=91=A8=E5=9B=9B 06:23=E5=86=99=E9=81=93=EF=BC=9A
+> >
+> > Hi,
+> >
+> > On Wed, 23 Oct 2024 11:20:43 +0800 Su Hua <suhua.tanke@gmail.com> wrote=
+:
+> > >
+> > > Thanks, I'd also like to set up the environment for testing; could yo=
+u
+> > > please share the command line instructions or XML files used for
+> > > testing?
+> >
+> > Sorry for the delay.  I run the following qemu command line:
+> >
+> > qemu-system-ppc64 -M pseries -m 2G -vga none -nographic -kernel $vmlinu=
+x -initrd $initrd
+> >
+> > where $vmlinux is the result of a PowerPC pseries_le_defconfig build
+> > and $initrd is just sufficient to get into user mode and then shutdown
+> > again.  This latter is not really relevant here since we don't get to
+> > user mode.
 
-This piqued my interest, so I went and did some git archeology to see
-why this isn't the case and there's a flag now. Apparently fscrypt
-will sometimes rearrange blocks without the key present. This is fine,
-because if there's no key, blk-crypto doesn't need to do anything and
-we can just shuffle the encrypted data around. We definitely don't
-want to re-encrypt the data in that scenario.
+Received, thank you.
 
-Also, thinking about it a bit more: what should happen if we stack
-dm-crypt on top of dm-default-key. I see no point in double-encrypting
-even in this situation. So, dm-crypt would set the flag to skip
-dm-default-key, even though it's not actually attaching an encryption
-context to the bio.
-
-So it seems like the flag is the better solution. It would just be
-impermissible to set the flag on a request that will write plaintext
-data to disk.
-
-- Adrian
+Sincerely yours,
+Su
 
