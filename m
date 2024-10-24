@@ -1,86 +1,200 @@
-Return-Path: <linux-kernel+bounces-380263-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39FB49AEB27
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:55:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 033BA9AEB21
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:54:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6B6BC1C23261
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:55:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 7C5A01F217B0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:54:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EDE811F583E;
-	Thu, 24 Oct 2024 15:55:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 736CF1F5824;
+	Thu, 24 Oct 2024 15:54:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nEAESeog"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="mj9EvosY";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="t/jEZzHk";
+	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="qj2ZZx4A";
+	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="OYHtWvc/"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 49DF41D1E68;
-	Thu, 24 Oct 2024 15:55:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B70571D514D;
+	Thu, 24 Oct 2024 15:54:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729785334; cv=none; b=GAHSCd3hZnjU1X4hMjWqY3QbHcMsa98maCz6hWkuW2KaaQdXG8R1FZZRexbE5rbjpxzHmiWnvgT65HYePhIE+3eqrI9LFmfg1RZtSxmujZ1QSoq9TrOvCm/HEtar1n7E3Uae00WTt2r2nf5UCXSbzbW+8qSrquZ6x7f40IMiNK4=
+	t=1729785290; cv=none; b=OfzLaGJ3IZFOWwTnKsufJDiIgp2liqrbSYMSp0fuxdY0YVf4pZLQfQDV0zI3OQsYKsJEkV3sn8O7GFfT6DzugMLOnyS+15sI4cMYO2mw+aa9dCJv1pLRIywXwV7BHW+a10tykktDzGn9nzIkroLeBos1TX4l24GC/rou01cC5EU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729785334; c=relaxed/simple;
-	bh=up5tM66yvBHtUg5sIFHZfzrixU4QG+l7uS/kR/VJb48=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=GOIXuqPptULmoyIneAsm00WB/5lYocvHHJ9FMZ6FqMQDgXJGoiZW/LgTDdeNwgWqmmP6M5dP1VERDzNm28hQLOi/ZJsygDckPLM0GwTwlIDWfP1D+NcloLOzE/GPwP6lUCFQyRhxKyv+QWkvS4zFwfI0O7oI81vi3RA46PMOjao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nEAESeog; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C9F1FC4CEE3;
-	Thu, 24 Oct 2024 15:55:32 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729785333;
-	bh=up5tM66yvBHtUg5sIFHZfzrixU4QG+l7uS/kR/VJb48=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=nEAESeogULDRKC8BlZE2OWKCihGeN5uCoGtXhu273FzSYQ2im1Qyuy8IfqhFlLuZc
-	 aTfnuY3k46ltcBKLOeUuxLJ789xKyWEOWPV8eO+O/6Lih81iC9k3NKH+gJaAONS7Cl
-	 jivbsyKE+w/a4O0JokZ6qNGuUMXcQzfzdwbntaZbS4QP39KA4QGIK2EU9yFlAlXW9d
-	 8Xch4XDDGb3p5xzfl8lJIWhlCakONfuTQzGj60SHkewNqWmtlwGZAkj5F+1O4JbaOG
-	 Ys9Czvx6toHuj+sdS96641xra0xu1JUWFTl6JUh708GynhxSSb5T9YNbX+xOMg0Tn9
-	 ksdaeLxWd74mg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Sibi Sankar <quic_sibis@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Marijn Suijten <marijn.suijten@somainline.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
+	s=arc-20240116; t=1729785290; c=relaxed/simple;
+	bh=9c/JlGxthoyaArPlaLxY90CuKMTdSc1THCspkNfZVOs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=T7xLPVu1oigWxPBWpq9b/yzPRN0bsn1AsWo6Bkb95DO4+UcZo6kjo30IS+iitQt/dTHu8MPMRYQREeL+9j949HtWv+OdN3d1O+h4snQEXPpgbffxRYXDDLthhiZMLZGms7X3y9LkvUl/tUVyHTudg5EAyo9lI5YBYMbO3LTFOTU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=mj9EvosY; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=t/jEZzHk; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=qj2ZZx4A; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=OYHtWvc/; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id D958022114;
+	Thu, 24 Oct 2024 15:54:46 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729785287; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=0XZLTdWjkZ6tLKaPQHGc3uGkuwj+Z6vDYULA8eZJGeo=;
+	b=mj9EvosYXrOfAShB+YAiy+wE4l2HdPQHglIeXc0qCmjBor/X+vD8Uaiy9z2UYf7S7dMh2/
+	Gz0oIPdR/g6BiXyec2mK30fUSY0iuMo5SggKWRT9sE55aaCFgtkWh9Fus0BjSwNSYYFibl
+	osq9umzrztedGghTXIfWomuMJPNYLso=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729785287;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=0XZLTdWjkZ6tLKaPQHGc3uGkuwj+Z6vDYULA8eZJGeo=;
+	b=t/jEZzHkIaoCxL4ODJsrM8VluGx29oxL18PeWKaWZX26uJH0z94k1/z59CXXOGsM7vgaZH
+	4TKQ8MzXtDkK25Aw==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.de header.s=susede2_rsa header.b=qj2ZZx4A;
+	dkim=pass header.d=suse.de header.s=susede2_ed25519 header.b="OYHtWvc/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
+	t=1729785286; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=0XZLTdWjkZ6tLKaPQHGc3uGkuwj+Z6vDYULA8eZJGeo=;
+	b=qj2ZZx4AJA4ac4fkwytFr6kTTwhwHHzwIoowKIEHicBRyk6UTnIyYy5gbWxnMLsoPw+tOQ
+	coNdKMZNFipwYGri+tJcBGPMq/3OnBZK5yy4YuH+suCUNhp7R2nvHnDiA5uxwMwvs6PvEo
+	bi3PT6Qd7M2SG6VFzKzOv072ulihMwo=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
+	s=susede2_ed25519; t=1729785286;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:  content-transfer-encoding:content-transfer-encoding;
+	bh=0XZLTdWjkZ6tLKaPQHGc3uGkuwj+Z6vDYULA8eZJGeo=;
+	b=OYHtWvc/eW4Rb5EE89wcu0nIu+qdpvzy+SGXjWqgVP//29wy1sIgeuc63jfkSU3Wd5wXgq
+	UCXUN9nbXEpDAqDQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id AF4921368E;
+	Thu, 24 Oct 2024 15:54:46 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id UhspKcZtGmdGTAAAD6G6ig
+	(envelope-from <tiwai@suse.de>); Thu, 24 Oct 2024 15:54:46 +0000
+From: Takashi Iwai <tiwai@suse.de>
+To: Bjorn Helgaas <bhelgaas@google.com>
+Cc: Philipp Stanner <pstanner@redhat.com>,
+	linux-pci@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Fix up BAR spaces
-Date: Thu, 24 Oct 2024 10:55:30 -0500
-Message-ID: <172978532615.301927.5097701528707896429.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
-References: <20240710-topic-barman-v1-1-5f63fca8d0fc@linaro.org>
+Subject: [PATCH] PCI: Restore the original INTX_DISABLE bit by pcim_intx()
+Date: Thu, 24 Oct 2024 17:55:35 +0200
+Message-ID: <20241024155539.19416-1-tiwai@suse.de>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: D958022114
+X-Spam-Level: 
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	MID_CONTAINS_FROM(1.00)[];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,suse.de:dkim,suse.de:mid];
+	ARC_NA(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	FROM_EQ_ENVFROM(0.00)[];
+	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
+	RCPT_COUNT_THREE(0.00)[4];
+	DKIM_TRACE(0.00)[suse.de:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -3.01
+X-Spam-Flag: NO
 
+pcim_intx() tries to restore the INTX_DISABLE bit at removal via
+devres, but there is a chance that it restores a wrong value.
+Because the value to be restored is blindly assumed to be the negative
+of the enable argument, when a driver calls pcim_intx() unnecessarily
+for the already enabled state, it'll restore to the disabled state in
+turn.  Also, when a driver calls pcim_intx() multiple times with
+different enable argument values, the last one will win no matter what
+value it is.
 
-On Wed, 10 Jul 2024 16:07:23 +0200, Konrad Dybcio wrote:
-> The 32-bit BAR spaces are reaching outside their assigned register
-> regions. Shrink them to match their actual sizes.
-> While at it, unify the style.
-> 
-> 
+This patch addresses those inconsistencies by saving the original
+INTX_DISABLE state at the first devres_alloc(); this assures that the
+original state is restored properly, and the later pcim_intx() calls
+won't overwrite res->orig_intx any longer.
 
-Applied, thanks!
+Fixes: 25216afc9db5 ("PCI: Add managed pcim_intx()")
+Link: https://lore.kernel.org/87v7xk2ps5.wl-tiwai@suse.de
+Signed-off-by: Takashi Iwai <tiwai@suse.de>
+---
+ drivers/pci/devres.c | 18 ++++++++++++++----
+ 1 file changed, 14 insertions(+), 4 deletions(-)
 
-[1/1] arm64: dts: qcom: x1e80100: Fix up BAR spaces
-      commit: 7af1418500124150f9fd24e1a5b9c288771df271
-
-Best regards,
+diff --git a/drivers/pci/devres.c b/drivers/pci/devres.c
+index b133967faef8..aed3c9a355cb 100644
+--- a/drivers/pci/devres.c
++++ b/drivers/pci/devres.c
+@@ -438,8 +438,17 @@ static void pcim_intx_restore(struct device *dev, void *data)
+ 	__pcim_intx(pdev, res->orig_intx);
+ }
+ 
+-static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
++static void save_orig_intx(struct pci_dev *pdev, struct pcim_intx_devres *res)
+ {
++	u16 pci_command;
++
++	pci_read_config_word(pdev, PCI_COMMAND, &pci_command);
++	res->orig_intx = !(pci_command & PCI_COMMAND_INTX_DISABLE);
++}
++
++static struct pcim_intx_devres *get_or_create_intx_devres(struct pci_dev *pdev)
++{
++	struct device *dev = &pdev->dev;
+ 	struct pcim_intx_devres *res;
+ 
+ 	res = devres_find(dev, pcim_intx_restore, NULL, NULL);
+@@ -447,8 +456,10 @@ static struct pcim_intx_devres *get_or_create_intx_devres(struct device *dev)
+ 		return res;
+ 
+ 	res = devres_alloc(pcim_intx_restore, sizeof(*res), GFP_KERNEL);
+-	if (res)
++	if (res) {
++		save_orig_intx(pdev, res);
+ 		devres_add(dev, res);
++	}
+ 
+ 	return res;
+ }
+@@ -467,11 +478,10 @@ int pcim_intx(struct pci_dev *pdev, int enable)
+ {
+ 	struct pcim_intx_devres *res;
+ 
+-	res = get_or_create_intx_devres(&pdev->dev);
++	res = get_or_create_intx_devres(pdev);
+ 	if (!res)
+ 		return -ENOMEM;
+ 
+-	res->orig_intx = !enable;
+ 	__pcim_intx(pdev, enable);
+ 
+ 	return 0;
 -- 
-Bjorn Andersson <andersson@kernel.org>
+2.43.0
+
 
