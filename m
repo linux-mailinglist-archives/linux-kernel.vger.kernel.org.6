@@ -1,73 +1,47 @@
-Return-Path: <linux-kernel+bounces-379631-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379632-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 05AC89AE146
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:44:08 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 439399AE14C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:46:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id BB431282F2C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:44:06 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6487A1C217C0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:46:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F00B11AF0DA;
-	Thu, 24 Oct 2024 09:43:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D09A1B21AD;
+	Thu, 24 Oct 2024 09:46:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="AnvbxUNw"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nMB4oMO5"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1ADC91714B0
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:43:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B7D0E15886D;
+	Thu, 24 Oct 2024 09:46:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763038; cv=none; b=FOygsgMv4Rek0+xyhKQduKOi5tbl+PRxYmJujucTq8RCseuxax/9XvNm2R295mSBmlffc83mLbQgIUnLJ0HKXs9kxcD+iqXjcTOs/ji3P7eEEJeoQjHSaus7zRiAgmDiSvHuFhq5yPebXKJyeSgRGU3cacAoJUa8zrYrNFipSqs=
+	t=1729763161; cv=none; b=KZy6uFHN3E4O0vyklEvUD+sNV8v7TIORwmCcHWFAA2vKYRzDPC57wcD+XXCB686AiesPKZQsJiR0MD8In8zRoC3USu345y6yI1I3CpB5jtktxlr4mzCIIhmq6E60pvQhgRPMTLkUj95ycMNPWCaOIVHXNga5lh6c20guiEsdmcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729763038; c=relaxed/simple;
-	bh=TrcuEorroCqiG8aJF/Su8Y9aX/UU3AU4rJyH7xqQIwY=;
+	s=arc-20240116; t=1729763161; c=relaxed/simple;
+	bh=TP20U8M2gkMXngG5jt8yo0o5myFCfbGLJyktlLYRLxE=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Q/t9G6AgdsEy6wjsxvJk6nHHiHlX8DtoPZ4GMhyF9fQsdTn+gFaELlKOZ545VHNBMyypqi3pgGRP7TmJDlvE0xGcTdDz0fr3fOoX6x5WqzQFdh0HB2eUDh4RGqjSWKJMoNEZXEdMVbYuhwst+gM6TCwFUh11YZAU7CXxlnBlJHQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=AnvbxUNw; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a9a850270e2so109883566b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:43:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729763034; x=1730367834; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=peO/rXf0Tq3jGX06VweS3LG42dv1VhryL64e2w6n8kg=;
-        b=AnvbxUNwbR2fur/hoDZtldqsp/0NKnkolwI4D6d3VLS3aFqGuIWLm9oIKILibEnxO8
-         9oeihlONjQC5vrcr72qXMGibZULA4EYExXpRTNz6xOdVf/DbNzdWrvq6QIsbkseYSGOP
-         ZcNBaRm/BoWXwSdp4VBskiUWu5edIOcY093vS9gQQVZOjXIxt818ax0Ye6+F7Z+DTVqH
-         C9d5bUKYdilJBKLnyfLxkSAv6uGAkwtsgcX6ooYS9LRIj55up6wjn0Vov+pU/UMeIQJl
-         YOcqULb6xJjGB0Y2b3N6XMOW8bdN5/+4G/a15rmLbH6MoCCGuLUKiLOjNal+pKJIXbo5
-         gtEQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729763034; x=1730367834;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=peO/rXf0Tq3jGX06VweS3LG42dv1VhryL64e2w6n8kg=;
-        b=fvsMiFZtIgp5aCu9Rca1SjiZZuH8vt2bipYjvtfs0U50rk0IHoYNsRdwhoweM+x0Rk
-         29aZxRJ9of63Nar+gUZiH7EFe1jsZ2LqN4qaLrHZQsKbLdC84xPoPfWx14/jM52fG073
-         jWbbNXkgx/dWhQELwlJMqxAA7bVCU8IsacTlaZzhGx7DzH0g26ZJg+CFJCp1IkhhhqMw
-         7veGIrZuOwjal0Bul3ZwgFvB6jcMaWfYjIm9Ox46lWb5o/iguMAoppKH/bMEvwYt4znr
-         dmf7aK96QFAp7ar0BvhxAFrSvZqgQDhaK9TAIfXmhDNre+E2lkadEbWNEbn8aFefuPxF
-         pTCA==
-X-Forwarded-Encrypted: i=1; AJvYcCWHkpzr1mGlZbQlEo9j05+3ithNRwZNa1FQFAetWhe40S1/KbZeSTbc06Tp0CNEsAiMYHIwSzICQGRpFUw=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzIvEb6LadzXmbf/BUkkFBk4nvHVgB/aZPy2YTMWeoQD0LyqFq+
-	xayIGtO+4JYboBBJqHp1FDljtQ/zLOBN3LvboUY+Ref7cM7MWgGNewlZxlCWEr4=
-X-Google-Smtp-Source: AGHT+IH+CzKmwXeQiJ+o5wUbiYmsJlk8RRjMoj9tobA/oUYXt9M4L/BkGynLaPDHAcKS3w7gkHIoGA==
-X-Received: by 2002:a17:907:3e20:b0:a9a:161:7863 with SMTP id a640c23a62f3a-a9abf96eb06mr431501466b.58.1729763027681;
-        Thu, 24 Oct 2024 02:43:47 -0700 (PDT)
-Received: from [192.168.0.40] ([176.61.106.227])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a913078cfsm595492666b.96.2024.10.24.02.43.46
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 02:43:47 -0700 (PDT)
-Message-ID: <b9a42abd-a078-4740-b070-ba5c86855e73@linaro.org>
-Date: Thu, 24 Oct 2024 10:43:46 +0100
+	 In-Reply-To:Content-Type; b=lsWsQi7A4f+8XVHKwvrrtRoLiX1aZhFxnoHMrDJ3bTAdtf9v6+QLwnHCHPyjGku22hZfO9rSMDW5UfGysflryaslEhN9kJF9iU6fAGUEtrRC5bli0LICXNuSV/aW47YoM0h4jEeMkmqjcKfjHi3BGlKzS6aPE3KPNCgDKLyKWoM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nMB4oMO5; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 199C8C4CECC;
+	Thu, 24 Oct 2024 09:45:55 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729763161;
+	bh=TP20U8M2gkMXngG5jt8yo0o5myFCfbGLJyktlLYRLxE=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=nMB4oMO5FoeZ4p/LGdZ2lPbtjU5xPPsN3KJwkC0MLrR5sq8z2LkktpgmETu+logty
+	 7GijuQcd0H0U/78gM/myotb56r8FN02IiSc5LW4Nf4mAvry78k9Vr5RQx2aLvjFF5J
+	 51C8eeJFIWig6dQixaMrBWlLQbW7EDpLG48ilXUv+cEVCI3azduXCYv2xTcJdFo4CR
+	 KiMH5A8zOqRwhOxYKh+LH/twQNWPnaGtzmNpeOQnCiyNtId8MR25BrhhtbMKnWWIiz
+	 clzm1vlY4dQ9sjh/mYDeUgeYMMCTfCz9araohAyeFokTgj+09tStr7aq+EfcsGscPR
+	 Y30Tz1IKbvD4Q==
+Message-ID: <d1264f6b-07bd-41e4-848d-1775a1f45884@kernel.org>
+Date: Thu, 24 Oct 2024 11:45:53 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,37 +49,302 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCHv2 2/2] media: venus: sync with threaded IRQ during inst
- destruction
-To: Sergey Senozhatsky <senozhatsky@chromium.org>
-Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
- Vikash Garodia <quic_vgarodia@quicinc.com>, linux-media@vger.kernel.org,
- linux-kernel@vger.kernel.org
-References: <20241024061809.400260-1-senozhatsky@chromium.org>
- <20241024061809.400260-3-senozhatsky@chromium.org>
- <4b96f1f8-e084-4599-abe9-05039bfac569@linaro.org>
- <20241024093916.GM1279924@google.com>
+Subject: Re: [PATCH 3/3] mailbox: mediatek: Add mtk-apu-mailbox driver
+To: "Karl.Li" <karl.li@mediatek.com>, Jassi Brar <jassisinghbrar@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, Matthias Brugger
+ <matthias.bgg@gmail.com>,
+ AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
+ Chungying Lu <chungying.lu@mediatek.com>,
+ Project_Global_Chrome_Upstream_Group@mediatek.com
+References: <20241024092608.431581-1-karl.li@mediatek.com>
+ <20241024092608.431581-4-karl.li@mediatek.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
 Content-Language: en-US
-From: Bryan O'Donoghue <bryan.odonoghue@linaro.org>
-In-Reply-To: <20241024093916.GM1279924@google.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <20241024092608.431581-4-karl.li@mediatek.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 7bit
 
-On 24/10/2024 10:39, Sergey Senozhatsky wrote:
-> On (24/10/24 09:59), Bryan O'Donoghue wrote:
->> This needs a Fixes: tag too.
+On 24/10/2024 11:25, Karl.Li wrote:
+> From: Karl Li <karl.li@mediatek.com>
 > 
-> Ack.
+> Add mtk-apu-mailbox driver to support the communication with
+> APU remote microprocessor.
 > 
->> It also occurs to me that most of the close() operation code is shared
->> between venc_close() and vdec_close() a welcome patch for V3 would be to
->> functionally decompose the common code to a shared location.
+> Also, the mailbox hardware contains extra spare (scratch) registers
+> that other hardware blocks use to communicate through.
+> Expose these with custom mtk_apu_mbox_(read|write)() functions.
 > 
-> Any preferences where that "shared location" should be?
+> Signed-off-by: Karl Li <karl.li@mediatek.com>
+> ---
+>  drivers/mailbox/Kconfig                 |   9 +
+>  drivers/mailbox/Makefile                |   2 +
+>  drivers/mailbox/mtk-apu-mailbox.c       | 222 ++++++++++++++++++++++++
+>  include/linux/mailbox/mtk-apu-mailbox.h |  20 +++
+>  4 files changed, 253 insertions(+)
+>  create mode 100644 drivers/mailbox/mtk-apu-mailbox.c
+>  create mode 100644 include/linux/mailbox/mtk-apu-mailbox.h
+> 
+> diff --git a/drivers/mailbox/Kconfig b/drivers/mailbox/Kconfig
+> index 6fb995778636..2338e08a110a 100644
+> --- a/drivers/mailbox/Kconfig
+> +++ b/drivers/mailbox/Kconfig
+> @@ -240,6 +240,15 @@ config MTK_ADSP_MBOX
+>            between processors with ADSP. It will place the message to share
+>  	  buffer and will access the ipc control.
+>  
+> +config MTK_APU_MBOX
+> +	tristate "MediaTek APU Mailbox Support"
+> +	depends on ARCH_MEDIATEK || COMPILE_TEST
+> +	help
+> +	  Say yes here to add support for the MediaTek APU Mailbox
+> +	  driver. The mailbox implementation provides access from the
+> +	  application processor to the MediaTek AI Processing Unit.
+> +	  If unsure say N.
+> +
+>  config MTK_CMDQ_MBOX
+>  	tristate "MediaTek CMDQ Mailbox Support"
+>  	depends on ARCH_MEDIATEK || COMPILE_TEST
+> diff --git a/drivers/mailbox/Makefile b/drivers/mailbox/Makefile
+> index 3c3c27d54c13..6b6dcc78d644 100644
+> --- a/drivers/mailbox/Makefile
+> +++ b/drivers/mailbox/Makefile
+> @@ -53,6 +53,8 @@ obj-$(CONFIG_STM32_IPCC) 	+= stm32-ipcc.o
+>  
+>  obj-$(CONFIG_MTK_ADSP_MBOX)	+= mtk-adsp-mailbox.o
+>  
+> +obj-$(CONFIG_MTK_APU_MBOX)	+= mtk-apu-mailbox.o
+> +
+>  obj-$(CONFIG_MTK_CMDQ_MBOX)	+= mtk-cmdq-mailbox.o
+>  
+>  obj-$(CONFIG_ZYNQMP_IPI_MBOX)	+= zynqmp-ipi-mailbox.o
+> diff --git a/drivers/mailbox/mtk-apu-mailbox.c b/drivers/mailbox/mtk-apu-mailbox.c
+> new file mode 100644
+> index 000000000000..b347ebd34ef7
+> --- /dev/null
+> +++ b/drivers/mailbox/mtk-apu-mailbox.c
+> @@ -0,0 +1,222 @@
+> +// SPDX-License-Identifier: GPL-2.0
+> +/*
+> + * Copyright (c) 2024 MediaTek Inc.
+> + */
+> +
+> +#include <asm/io.h>
+> +#include <linux/bits.h>
+> +#include <linux/interrupt.h>
+> +#include <linux/mailbox_controller.h>
+> +#include <linux/mailbox/mtk-apu-mailbox.h>
+> +#include <linux/platform_device.h>
+> +
+> +#define INBOX		(0x0)
+> +#define OUTBOX		(0x20)
+> +#define INBOX_IRQ	(0xc0)
+> +#define OUTBOX_IRQ	(0xc4)
+> +#define INBOX_IRQ_MASK	(0xd0)
+> +
+> +#define SPARE_OFF_START	(0x40)
+> +#define SPARE_OFF_END	(0xB0)
+> +
+> +struct mtk_apu_mailbox {
+> +	struct device *dev;
+> +	void __iomem *regs;
+> +	struct mbox_controller controller;
+> +	u32 msgs[MSG_MBOX_SLOTS];
+> +};
+> +
+> +struct mtk_apu_mailbox *g_mbox;
 
-Probably core.c is the only place we can jam stuff to be shared but, if 
-you think of something more appropriate feel free.
+Why this is global? And why do you support only one device?
 
----
-bod
+No, drop.
+
+> +
+> +static irqreturn_t mtk_apu_mailbox_irq_top_half(int irq, void *dev_id)
+> +{
+> +	struct mtk_apu_mailbox *mbox = dev_id;
+> +	struct mbox_chan *link = &mbox->controller.chans[0];
+> +	int i;
+> +
+> +	for (i = 0; i < MSG_MBOX_SLOTS; i++)
+> +		mbox->msgs[i] = readl(mbox->regs + OUTBOX + i * sizeof(u32));
+> +
+> +	mbox_chan_received_data(link, &mbox->msgs);
+> +
+> +	return IRQ_WAKE_THREAD;
+> +}
+> +
+
+...
+
+> +/**
+> + * mtk_apu_mbox_write - Write value to specifice mtk_apu_mbox spare register.
+> + * @val: Value to be written.
+> + * @offset: Offset of the spare register.
+> + *
+> + * Return: 0 if successful
+> + *	   negative value if error happened
+> + */
+> +int mtk_apu_mbox_write(u32 val, u32 offset)
+> +{
+> +	if (!g_mbox) {
+> +		pr_err("mtk apu mbox was not initialized, stop writing register\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (offset < SPARE_OFF_START || offset >= SPARE_OFF_END) {
+> +		dev_err(g_mbox->dev, "Invalid offset %d for mtk apu mbox spare register\n", offset);
+> +		return -EINVAL;
+> +	}
+> +
+> +	writel(val, g_mbox->regs + offset);
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS(mtk_apu_mbox_write, MTK_APU_MAILBOX);
+
+Use mailbox API. This is really poor solution.
+
+> +
+> +/**
+> + * mtk_apu_mbox_read - Read value to specifice mtk_apu_mbox spare register.
+> + * @offset: Offset of the spare register.
+> + * @val: Pointer to store read value.
+> + *
+> + * Return: 0 if successful
+> + *	   negative value if error happened
+> + */
+> +int mtk_apu_mbox_read(u32 offset, u32 *val)
+> +{
+> +	if (!g_mbox) {
+> +		pr_err("mtk apu mbox was not initialized, stop reading register\n");
+> +		return -ENODEV;
+> +	}
+> +
+> +	if (offset < SPARE_OFF_START || offset >= SPARE_OFF_END) {
+> +		dev_err(g_mbox->dev, "Invalid offset %d for mtk apu mbox spare register\n", offset);
+> +		return -EINVAL;
+> +	}
+> +
+> +	*val = readl(g_mbox->regs + offset);
+> +
+> +	return 0;
+> +}
+> +EXPORT_SYMBOL_NS(mtk_apu_mbox_read, MTK_APU_MAILBOX);
+> +
+> +static int mtk_apu_mailbox_probe(struct platform_device *pdev)
+> +{
+> +	struct device *dev = &pdev->dev;
+> +	struct mtk_apu_mailbox *mbox;
+> +	int irq = -1, ret = 0;
+> +
+> +	mbox = devm_kzalloc(dev, sizeof(*mbox), GFP_KERNEL);
+> +	if (!mbox)
+> +		return -ENOMEM;
+> +
+> +	mbox->dev = dev;
+> +	platform_set_drvdata(pdev, mbox);
+> +
+> +	mbox->regs = devm_platform_ioremap_resource(pdev, 0);
+> +	if (IS_ERR(mbox->regs))
+> +		return PTR_ERR(mbox->regs);
+> +
+> +	mbox->controller.txdone_irq = false;
+> +	mbox->controller.txdone_poll = true;
+> +	mbox->controller.txpoll_period = 1;
+> +	mbox->controller.ops = &mtk_apu_mailbox_ops;
+> +	mbox->controller.dev = dev;
+> +	/*
+> +	 * Here we only register 1 mbox channel.
+> +	 * The remaining channels are used by other modules.
+> +	 */
+> +	mbox->controller.num_chans = 1;
+> +	mbox->controller.chans = devm_kcalloc(dev, mbox->controller.num_chans,
+> +					      sizeof(*mbox->controller.chans),
+> +					      GFP_KERNEL);
+> +	if (!mbox->controller.chans)
+> +		return -ENOMEM;
+> +
+> +	ret = devm_mbox_controller_register(dev, &mbox->controller);
+> +	if (ret)
+> +		return ret;
+> +
+> +	irq = platform_get_irq(pdev, 0);
+> +	if (irq < 0)
+> +		return irq;
+> +
+> +	ret = devm_request_threaded_irq(dev, irq, mtk_apu_mailbox_irq_top_half,
+> +					mtk_apu_mailbox_irq_btm_half, IRQF_ONESHOT,
+> +					dev_name(dev), mbox);
+> +	if (ret)
+> +		return dev_err_probe(dev, ret, "Failed to request IRQ\n");
+> +
+> +	g_mbox = mbox;
+> +
+> +	dev_dbg(dev, "registered mtk apu mailbox\n");
+
+No, drop such stuff.
+
+> +
+> +	return 0;
+> +}
+> +
+> +static void mtk_apu_mailbox_remove(struct platform_device *pdev)
+> +{
+> +	g_mbox = NULL;
+> +}
+> +
+> +static const struct of_device_id mtk_apu_mailbox_of_match[] = {
+> +	{ .compatible = "mediatek,mt8188-apu-mailbox" },
+> +	{ .compatible = "mediatek,mt8196-apu-mailbox" },
+
+So devices are compatible? Make them compatible in the binding and drop
+unneeded compatible here.
+
+Best regards,
+Krzysztof
+
 
