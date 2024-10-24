@@ -1,273 +1,145 @@
-Return-Path: <linux-kernel+bounces-379884-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379882-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9CA349AE57D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:01:08 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 498559AE573
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:00:28 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0AC81B23853
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:01:06 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0A91F22935
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:00:27 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 81ECD1D86C0;
-	Thu, 24 Oct 2024 13:00:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407D31D63F3;
+	Thu, 24 Oct 2024 13:00:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="msQal4CE"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XYoXAYRD"
+Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56D0D1D9A5B;
-	Thu, 24 Oct 2024 13:00:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A0014A0AA;
+	Thu, 24 Oct 2024 13:00:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774830; cv=none; b=KJyFzeQrnReBkLhHGdnKbh5XPOP1/Lb1YgbbVjtKwtoIiT/ct7xWJ8QMcizmDxzGmuQoGw1nr1sK2oRCJZTA+gjucxzHErqD00kr1NvC4Ff2GZyU4nfmpEQj+S2A/x6gjCJ2XlGKFN792nPVy9B/ObR6xkw8SzHRtuZO5ZyE9iI=
+	t=1729774819; cv=none; b=syKl4cyUIlPT7O4pdLobOpsxGtdd51AFSIEQzZyV9BY7MBhq2bi3FQjDNW4DRgfeWM4xjJ/aOkr93GId8DZuE5zJ9boilpr/IdGc/q5yff5cIxTtgfGtRdkidu8QRc3a5854hmCwCTZngoI2/9nqowKYTryBcNTbhdeHDv15a0k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774830; c=relaxed/simple;
-	bh=RK8kCBuNkd+3zVoJoSiqFF447ojkzMRH/ErnnMN+Aik=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=FkTjVbH0VM50KhrZKJAkbjQ+KP9BILlfg/kVYTP7BtPapk6PXXN79+hVM1e52jjfQldPO2+sjQbnA6gMnLg2cVMkP+FC2MAEPch9M0Gj+SMdPCD1AZkdsP3S9DlC5JOxMMsbMEd+35qKDfWLDqeamaAJ4p0cFCrZy6z0uwnogPc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=msQal4CE; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0356516.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O25JNV026355;
-	Thu, 24 Oct 2024 12:59:12 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=pp1; bh=DpAXj2
-	MSJyHnTZ2Xb1tOp5CVvCsAyxHh/cUttlApCJQ=; b=msQal4CECRe+vuxK3ywVjp
-	sboq/cBYixuKoNqvWBJbynazh6g4mms4QQ2quIOvl/f9sUXcRTZWOMqJcn52wH/6
-	JBdHr/6124qog47fEbgKniP9jLq+t70BiqU4oeUoLk7RzbvacN0wtXfUr+mzUX1n
-	efoKHu4hGBA0VLYezJI+CijGpwt5Pac5VU53M7z24OgUdDFBxQwgCr1mcVC4fGUD
-	Tu8Ubj2c/3CJmP7eJvfUARcNLUrl0TQQYtWqzNlb/nMZIQ8NhPzqx4U1fIiMAhGR
-	VT6oqN2Kzn2KGaMt0bM4Kzg6SCmL/Ea1hMMFW4FO42LfEhLygdrrepYX2d/K5ZmQ
-	==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaf0het-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 12:59:12 +0000 (GMT)
-Received: from m0356516.ppops.net (m0356516.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49OCxCIa009289;
-	Thu, 24 Oct 2024 12:59:12 GMT
-Received: from ppma12.dal12v.mail.ibm.com (dc.9e.1632.ip4.static.sl-reverse.com [50.22.158.220])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emaf0hep-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 12:59:11 +0000 (GMT)
-Received: from pps.filterd (ppma12.dal12v.mail.ibm.com [127.0.0.1])
-	by ppma12.dal12v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49OAgxCQ001557;
-	Thu, 24 Oct 2024 12:59:11 GMT
-Received: from smtprelay05.wdc07v.mail.ibm.com ([172.16.1.72])
-	by ppma12.dal12v.mail.ibm.com (PPS) with ESMTPS id 42emk9gef8-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 12:59:11 +0000
-Received: from smtpav01.dal12v.mail.ibm.com (smtpav01.dal12v.mail.ibm.com [10.241.53.100])
-	by smtprelay05.wdc07v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49OCxAWh10289676
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Oct 2024 12:59:10 GMT
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 3B29E58057;
-	Thu, 24 Oct 2024 12:59:10 +0000 (GMT)
-Received: from smtpav01.dal12v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 41EB658063;
-	Thu, 24 Oct 2024 12:59:09 +0000 (GMT)
-Received: from [9.47.158.152] (unknown [9.47.158.152])
-	by smtpav01.dal12v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 24 Oct 2024 12:59:09 +0000 (GMT)
-Message-ID: <01edff76-2a66-4543-b1bf-4dc33d46c741@linux.ibm.com>
-Date: Thu, 24 Oct 2024 08:59:08 -0400
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 4/5] tpm: Allocate chip->auth in
- tpm2_start_auth_session()
-To: Jarkko Sakkinen <jarkko@kernel.org>, linux-integrity@vger.kernel.org,
-        Peter Huewe <peterhuewe@gmx.de>, Jason Gunthorpe <jgg@ziepe.ca>,
-        James Bottomley <James.Bottomley@HansenPartnership.com>,
-        Ard Biesheuvel <ardb@kernel.org>
-Cc: David Howells <dhowells@redhat.com>, Mimi Zohar <zohar@linux.ibm.com>,
-        Roberto Sassu <roberto.sassu@huawei.com>, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org
-References: <20241021053921.33274-1-jarkko@kernel.org>
- <20241021053921.33274-5-jarkko@kernel.org>
- <588319e8-5983-4f15-abae-b5021f1e4fce@linux.ibm.com>
- <D5401CDJGBUG.1588B09HN21YS@kernel.org>
-Content-Language: en-US
-From: Stefan Berger <stefanb@linux.ibm.com>
-In-Reply-To: <D5401CDJGBUG.1588B09HN21YS@kernel.org>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-X-TM-AS-GCONF: 00
-X-Proofpoint-GUID: Fi7jeYSJuBQzpNA-AiLfz-omgQg8MNpw
-X-Proofpoint-ORIG-GUID: SlhCKi8OY3LW5MhnZw5YejosLM9BsxQf
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	s=arc-20240116; t=1729774819; c=relaxed/simple;
+	bh=lL3ukI5cUECPzC7oF3YeBE2bBA8PoW0+iC3WgiiN0Qc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PuMG+lD/CqLOOY7cOlvn29ijAWTxawszBRWmylXC47z0gQwOl5XDKRMEek/epiFYQ10+oWe3BdM946IIfSUXN84eIL3s2bGeYq36qNgsW2KJ3bQpPg9SpLyGAFpE4yZ+9MZ50QC6LpqFO/1TENwX7frL9r6m063Y5vnqylzOmJs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XYoXAYRD; arc=none smtp.client-ip=65.109.113.108
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
+Received: from localhost (localhost.localdomain [127.0.0.1])
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5028C40E0284;
+	Thu, 24 Oct 2024 13:00:15 +0000 (UTC)
+X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
+Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
+	header.d=alien8.de
+Received: from mail.alien8.de ([127.0.0.1])
+	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
+	with ESMTP id GG_9DrpBbj5r; Thu, 24 Oct 2024 13:00:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
+	t=1729774811; bh=EzikBre0wS3BnINAUIflaHw8OpNMIUIIU9EhiMvAqno=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=XYoXAYRD0ZSRfy+r4WYmxAbVAK23HL9D/gKyFABqq8S9cCNBhmoBY3WyiPArEiEeW
+	 o2FbTJcdP8KCbyfAqFD+aDH19TMucoDOXprU1BRCWkhTbaFd3Mlcwt4wm+MWiqPJYD
+	 FacGeHoCkqOguhr+HOVOuBDLsIEMHyuWwwXuprEsGYH0VvKkgiBjz/jglr10OHjEqv
+	 YvQroFlu0XrQa5tI/vGjoKoxcvS5uCzGAMfeUKeDBogjDHwnNDq6ng04RBv6WNoVcY
+	 p5edDgr7t5ixsMwXZi5ZXbC2/nJ9oxgdg5Z92+z2aem613NSnf4LQFdy1Ybo9H+Ckt
+	 2lLvIy6RwHJ05nTu226xs8MEYwDwjbKtjd7Wk53A9whOAG2/gBbM50bPP0av5255QT
+	 L2a089Dx55QZZjyfjYww6tycyVFwAvzP7NvoScek6D9FwBCVRZfbTej0Kpuv7UYG3K
+	 YS+0WhejvtnBeP4RMSZsAwAhKfc+spNl9YoRuXcFlUBNaCHDqI9dedoG90UlNCyIpN
+	 1PbdP1HpoF8Xmfu9Fpdmku6zoX7NwvCCuM2prnFWTPf1oPLch+uPkoRZjBDacV/P64
+	 jP2ORCC45epz6kOQ/F2OPxV6EXqb5vDk92M2CxqBVm7q7pc8wLshZZRvs5W73+Cobt
+	 yFVd7mYJDh9hOAnieY1rFub0=
+Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
+	(No client certificate requested)
+	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0695440E0198;
+	Thu, 24 Oct 2024 12:59:52 +0000 (UTC)
+Date: Thu, 24 Oct 2024 14:59:47 +0200
+From: Borislav Petkov <bp@alien8.de>
+To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
+	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
+	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
+	kvm@vger.kernel.org
+Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
+Message-ID: <20241024125947.GDZxpEw9BLJ46B5VKC@fat_crate.local>
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
+ <9b943722-c722-4a38-ab17-f07ef6d5c8c6@intel.com>
+ <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
+ <2436d521-aa4c-45ac-9ccc-be9a4b5cb391@intel.com>
+ <e4568d3d-f115-4931-bbc6-9a32eb04ee1c@amd.com>
+ <20241023163029.GEZxkkpdfkxdHWTHAW@fat_crate.local>
+ <12f51956-7c53-444d-a39b-8dc4aa40aa92@amd.com>
+ <20241024114912.GCZxo0ODKlXYGMnrdk@fat_crate.local>
+ <358df653-e572-4e76-954a-15b230d09263@amd.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 malwarescore=0
- lowpriorityscore=0 phishscore=0 spamscore=0 mlxscore=0 mlxlogscore=999
- priorityscore=1501 suspectscore=0 clxscore=1015 impostorscore=0
- bulkscore=0 adultscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240107
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <358df653-e572-4e76-954a-15b230d09263@amd.com>
 
+On Thu, Oct 24, 2024 at 06:01:16PM +0530, Neeraj Upadhyay wrote:
+> With Secure AVIC enabled, source vCPU directly writes to the Interrupt
+> Request Register (IRR) offset in the target CPU's backing page. So, the IPI
+> is directly requested in target vCPU's backing page by source vCPU context
+> and not by HV.
 
+So the source vCPU will fault in the target vCPU's backing page if it is not
+there anymore. And if it is part of a 2M translation, the likelihood that it
+is there is higher.
 
-On 10/24/24 7:28 AM, Jarkko Sakkinen wrote:
-> On Wed Oct 23, 2024 at 10:15 PM EEST, Stefan Berger wrote:
->>
->>
->> On 10/21/24 1:39 AM, Jarkko Sakkinen wrote:
->>> Move allocation of chip->auth to tpm2_start_auth_session() so that the
->>> field can be used as flag to tell whether auth session is active or not.
->>>
->>> Cc: stable@vger.kernel.org # v6.10+
->>> Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
->>> Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
->>> ---
->>> v5:
->>> - No changes.
->>> v4:
->>> - Change to bug.
->>> v3:
->>> - No changes.
->>> v2:
->>> - A new patch.
->>> ---
->>>    drivers/char/tpm/tpm2-sessions.c | 43 +++++++++++++++++++-------------
->>>    1 file changed, 25 insertions(+), 18 deletions(-)
->>>
->>> diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-sessions.c
->>> index 78c650ce4c9f..6e52785de9fd 100644
->>> --- a/drivers/char/tpm/tpm2-sessions.c
->>> +++ b/drivers/char/tpm/tpm2-sessions.c
->>> @@ -484,7 +484,8 @@ static void tpm2_KDFe(u8 z[EC_PT_SZ], const char *str, u8 *pt_u, u8 *pt_v,
->>>    	sha256_final(&sctx, out);
->>>    }
->>>    
->>> -static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
->>> +static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip,
->>> +				struct tpm2_auth *auth)
->>>    {
->>>    	struct crypto_kpp *kpp;
->>>    	struct kpp_request *req;
->>> @@ -543,7 +544,7 @@ static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
->>>    	sg_set_buf(&s[0], chip->null_ec_key_x, EC_PT_SZ);
->>>    	sg_set_buf(&s[1], chip->null_ec_key_y, EC_PT_SZ);
->>>    	kpp_request_set_input(req, s, EC_PT_SZ*2);
->>> -	sg_init_one(d, chip->auth->salt, EC_PT_SZ);
->>> +	sg_init_one(d, auth->salt, EC_PT_SZ);
->>>    	kpp_request_set_output(req, d, EC_PT_SZ);
->>>    	crypto_kpp_compute_shared_secret(req);
->>>    	kpp_request_free(req);
->>> @@ -554,8 +555,7 @@ static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *chip)
->>>    	 * This works because KDFe fully consumes the secret before it
->>>    	 * writes the salt
->>>    	 */
->>> -	tpm2_KDFe(chip->auth->salt, "SECRET", x, chip->null_ec_key_x,
->>> -		  chip->auth->salt);
->>> +	tpm2_KDFe(auth->salt, "SECRET", x, chip->null_ec_key_x, auth->salt);
->>>    
->>>     out:
->>>    	crypto_free_kpp(kpp);
->>> @@ -854,6 +854,8 @@ int tpm_buf_check_hmac_response(struct tpm_chip *chip, struct tpm_buf *buf,
->>>    			/* manually close the session if it wasn't consumed */
->>>    			tpm2_flush_context(chip, auth->handle);
->>>    		memzero_explicit(auth, sizeof(*auth));
->>> +		kfree(auth);
->>> +		chip->auth = NULL;
->>>    	} else {
->>>    		/* reset for next use  */
->>>    		auth->session = TPM_HEADER_SIZE;
->>> @@ -882,6 +884,8 @@ void tpm2_end_auth_session(struct tpm_chip *chip)
->>>    
->>>    	tpm2_flush_context(chip, auth->handle);
->>>    	memzero_explicit(auth, sizeof(*auth));
->>> +	kfree(auth);
->>> +	chip->auth = NULL;
->>>    }
->>>    EXPORT_SYMBOL(tpm2_end_auth_session);
->>>    
->>> @@ -970,25 +974,29 @@ static int tpm2_load_null(struct tpm_chip *chip, u32 *null_key)
->>>     */
->>>    int tpm2_start_auth_session(struct tpm_chip *chip)
->>>    {
->>> +	struct tpm2_auth *auth;
->>>    	struct tpm_buf buf;
->>> -	struct tpm2_auth *auth = chip->auth;
->>> -	int rc;
->>>    	u32 null_key;
->>> +	int rc;
->>>    
->>> -	if (!auth) {
->>> -		dev_warn_once(&chip->dev, "auth session is not active\n");
->>> +	if (chip->auth) {
->>> +		dev_warn_once(&chip->dev, "auth session is active\n");
->>>    		return 0;
->>>    	}
->>>    
->>> +	auth = kzalloc(sizeof(*auth), GFP_KERNEL);
->>> +	if (!auth)
->>> +		return -ENOMEM;
->>> +
->>>    	rc = tpm2_load_null(chip, &null_key);
->>>    	if (rc)
->>> -		goto out;
->>> +		goto err;
->>>    
->>>    	auth->session = TPM_HEADER_SIZE;
->>>    
->>>    	rc = tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_START_AUTH_SESS);
->>>    	if (rc)
->>> -		goto out;
->>> +		goto err;
->>>    
->>>    	/* salt key handle */
->>>    	tpm_buf_append_u32(&buf, null_key);
->>> @@ -1000,7 +1008,7 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
->>>    	tpm_buf_append(&buf, auth->our_nonce, sizeof(auth->our_nonce));
->>>    
->>>    	/* append encrypted salt and squirrel away unencrypted in auth */
->>> -	tpm_buf_append_salt(&buf, chip);
->>> +	tpm_buf_append_salt(&buf, chip, auth);
->>>    	/* session type (HMAC, audit or policy) */
->>>    	tpm_buf_append_u8(&buf, TPM2_SE_HMAC);
->>>    
->>> @@ -1021,10 +1029,13 @@ int tpm2_start_auth_session(struct tpm_chip *chip)
->>>    
->>>    	tpm_buf_destroy(&buf);
->>>    
->>> -	if (rc)
->>> -		goto out;
->>> +	if (rc == TPM2_RC_SUCCESS) {
->>> +		chip->auth = auth;
->>> +		return 0;
->>> +	}
->>>    
->>> - out:
->>> +err:
->>
->> like in many other cases before kfree(auth):
->> memzero_explicit(auth, sizeof(*auth));
->>
->> With this:
->>
->> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
-> 
-> Thanks, or should we use kfree_sensitive()?
-> 
-> It has some additional functionality, which is missed now:
-> 
-> https://elixir.bootlin.com/linux/v6.11.5/source/mm/slab_common.c#L1339
-> 
-> I.e. kasan_unpoison().
+> As I clarified above, it's the source vCPU which need to load each backing
+> page.
 
-And change the other ones that use memzero_explicit()?
+So if we have 4K backing pages, the source vCPU will fault-in the target's
+respective backing page into its TLB and send the IPI. And if it is an IPI to
+multiple vCPUs, then it will have to fault in each vCPU's backing page in
+succession.
 
-> 
-> BR, Jarkko
-> 
+However, when the target vCPU gets to VMRUN, the backing page will have to be
+faulted in into the target vCPU's TLB too.
+
+And this is the same with a 2M backing page - the target vCPUs will have to
+fault that 2M page translation too.
+
+But then if the target vCPU wants to send IPIs itself, the 2M backing pages
+will be there already. Hmmm.
+
+> I don't have the data at this point. That is the reason I will send this
+> contiguous allocation as a separate patch (if required) when I can get data
+> on some workloads which are impacted by this.
+
+Yes, that would clarify whether something more involved than simply using 4K
+pages is needed.
+
+> For smp_call_function_many(), where a source CPU sends IPI to multiple CPUs,
+> source CPU writes to backing pages of different target CPUs within this function.
+> So, accesses have temporal locality. For other use cases, I need to enable
+> perf with Secure AVIC to collect the TLB misses on a IPI benchmark and get
+> back with the numbers.
+
+Right, I can see some TLB walks getting avoided if you have a single 2M page
+but without actually measuring it, I don't know. If I had to venture a guess,
+it probably won't show any difference but who knows...
+
+Thx.
+
+-- 
+Regards/Gruss,
+    Boris.
+
+https://people.kernel.org/tglx/notes-about-netiquette
 
