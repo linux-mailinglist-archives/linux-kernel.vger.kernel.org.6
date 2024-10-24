@@ -1,133 +1,121 @@
-Return-Path: <linux-kernel+bounces-380596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380597-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B4D159AF320
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:57:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36F189AF325
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:58:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7A9DE2817AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:57:46 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D654F1F223D9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:58:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D360215F44;
-	Thu, 24 Oct 2024 19:57:30 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AA0BB2003AA;
+	Thu, 24 Oct 2024 19:57:58 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="e73TzK2G"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="tPILtAAX"
+Received: from out-182.mta1.migadu.com (out-182.mta1.migadu.com [95.215.58.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B6DF1A3A95;
-	Thu, 24 Oct 2024 19:57:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D60A11F80AD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:57:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799849; cv=none; b=vAWs1uNh8Y9tJS8nGatPxxvbnW55pG7xzZQnMC6JA6ykGCSvtSdtArxMPo1DIkYuNzzpXS999nRDyeacFMWmXkfO/3hVbnek1idjiVbnpepiRNvWxNT9FhIQmC3UG3zbic0P9QFqx0XoHNvT30GmnasrtXGxwUzqrUExpT7F5gk=
+	t=1729799878; cv=none; b=r2ukj3nMXQa5jwpn8h8bHr4hjoD+RBkFtu9pcnZm6TjpjwfQlV86aZ3/vfGTNsy4sH50vaHYg/kbz0kk0gD/ZJsZ5Z2Au/BR2nZTx+rltP7ph/AsvcAgDAKZBPAarh9Sxuh/QK7/tEHhTQdc5n+0L9Hit3kXTk8Y+5w2n+pr2VA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799849; c=relaxed/simple;
-	bh=gOn6T3lWiKaxNxhYs41benmtcEZIjMyZ2IUbcXX00nQ=;
+	s=arc-20240116; t=1729799878; c=relaxed/simple;
+	bh=bTSZ+AIYW4PtKktAhtWQiw/nwwUpqv9LctwwUYhZcYs=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Hvv6hB8mVqsQkO9fwkBuHR34+/AaK7geDjHa9VnOcPRp0RnPDUEoyPUqVWGrYK+uIX1RHZObO8V5QzhBT56Yt1kBS0SufjCNgzeqJsUj6v8m3z2zQAqfoeDnSirX8tEP0b5IifLJB0rDTzw6cISrh0E4YpcJ5aIRk/NSZ7tyIFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=e73TzK2G; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 70463C4CECD;
-	Thu, 24 Oct 2024 19:57:24 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729799849;
-	bh=gOn6T3lWiKaxNxhYs41benmtcEZIjMyZ2IUbcXX00nQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=e73TzK2Ggyd8lQr/wIg+tIKHA6B0skKLKEHIMU8ouylH6mW7IuUzfXXIOWLBo1LtH
-	 aZ7xD3r9GE+1dfWskbtU3wnTf1xOeLYUzB42pZfj0VwVD92Xau6aTiOcF59fbrYrrh
-	 fbf9nOUcuvWTE/PuF7PEK3tiSwPXCVfmF7Lsxa4GYUkuNer/bsR5uscEynYECo65hF
-	 Oxew16yGZ6ewIRda75moxkaGp8okhOJY5AgD2iazYmQoycx8fBg2VUJ315Vj7p9mWX
-	 AiKWgjeXZbIrVs96YDAvjGoWiuSvt4f0tT99053Nljxj+pQ9daw9zgtzrkbWqyKzIN
-	 YczXwSBMBsU7w==
-Date: Thu, 24 Oct 2024 19:57:21 +0000
-From: sergeh@kernel.org
-To: Eric Snowberg <eric.snowberg@oracle.com>
-Cc: "open list:SECURITY SUBSYSTEM" <linux-security-module@vger.kernel.org>,
-	David Howells <dhowells@redhat.com>,
-	David Woodhouse <dwmw2@infradead.org>,
-	"herbert@gondor.apana.org.au" <herbert@gondor.apana.org.au>,
-	"davem@davemloft.net" <davem@davemloft.net>,
-	Ard Biesheuvel <ardb@kernel.org>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Paul Moore <paul@paul-moore.com>, James Morris <jmorris@namei.org>,
-	"Serge E. Hallyn" <serge@hallyn.com>,
-	Mimi Zohar <zohar@linux.ibm.com>,
-	Roberto Sassu <roberto.sassu@huawei.com>,
-	Dmitry Kasatkin <dmitry.kasatkin@gmail.com>,
-	=?iso-8859-1?Q?Micka=EBl_Sala=FCn?= <mic@digikod.net>,
-	"casey@schaufler-ca.com" <casey@schaufler-ca.com>,
-	Stefan Berger <stefanb@linux.ibm.com>,
-	"ebiggers@kernel.org" <ebiggers@kernel.org>,
-	Randy Dunlap <rdunlap@infradead.org>,
-	open list <linux-kernel@vger.kernel.org>,
-	"keyrings@vger.kernel.org" <keyrings@vger.kernel.org>,
-	"linux-crypto@vger.kernel.org" <linux-crypto@vger.kernel.org>,
-	"linux-efi@vger.kernel.org" <linux-efi@vger.kernel.org>,
-	"linux-integrity@vger.kernel.org" <linux-integrity@vger.kernel.org>
-Subject: Re: [RFC PATCH v3 08/13] clavis: Introduce new LSM called clavis
-Message-ID: <ZxqmoV-izscjbovh@lei>
-References: <20241017155516.2582369-1-eric.snowberg@oracle.com>
- <20241017155516.2582369-9-eric.snowberg@oracle.com>
- <ZxhetCy5RE1k4_Jk@lei>
- <F911D28D-F8EC-4773-8143-2B4E207DA202@oracle.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=TY4AJDvaQGy9Y2qNBE6kXPSfC1PVZiDmbNO13UKIWEND8II4t49nqwfHEn2vEX/wLcInIDTrdGGVpD5LSHWv76dD3XJnlVBL4D7LiA9Wml4TBfsFdVKnnWzmMd2kruLWi8hEaaSaljx79ZQcV5bTWjj+Y0WUJvaWUFxwfsjpZnw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=tPILtAAX; arc=none smtp.client-ip=95.215.58.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Oct 2024 12:57:38 -0700
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729799868;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8BK0ZcosXDoOXzSbDL6svDcVkcl94/C1ybPNkAKv7is=;
+	b=tPILtAAXE+IgUeUPC4X+luEap2SlsyS17q2HLFknCMik+U8I3s2RvzCZUnSAzQqNJDKt9e
+	M/MTZyMVUnCKCJYUBNzj0u5ZsYLzm6ShCLECXJkxN//oG4dDtOWhz5P9RCDzSDwfta6E2h
+	1b0NgK8VyuKZarNkmkLJPSv4ZjfS/hI=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Oliver Upton <oliver.upton@linux.dev>
+To: David Woodhouse <dwmw2@infradead.org>
+Cc: Miguel Luis <miguel.luis@oracle.com>,
+	Paolo Bonzini <pbonzini@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>, Marc Zyngier <maz@kernel.org>,
+	James Morse <james.morse@arm.com>,
+	Suzuki K Poulose <suzuki.poulose@arm.com>,
+	Zenghui Yu <yuzenghui@huawei.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Pavel Machek <pavel@ucw.cz>, Len Brown <len.brown@intel.com>,
+	Shuah Khan <shuah@kernel.org>, David Woodhouse <dwmw@amazon.co.uk>,
+	"kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
+	"kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
+	"linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	Francesco Lavra <francescolavra.fl@gmail.com>
+Subject: Re: [PATCH v6 6/6] arm64: Use SYSTEM_OFF2 PSCI call to power off for
+ hibernate
+Message-ID: <ZxqmsiXV6ZYTANKY@linux.dev>
+References: <20241019172459.2241939-1-dwmw2@infradead.org>
+ <20241019172459.2241939-7-dwmw2@infradead.org>
+ <23C91005-7304-4312-A5E0-F5E6C05B3209@oracle.com>
+ <ECD0CA58-2C3B-48F3-AF12-95E37CB0FC48@infradead.org>
+ <ZxprcWDe2AXuLhD_@linux.dev>
+ <691447A1-8F3F-4890-B00F-8068A14CA126@infradead.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <F911D28D-F8EC-4773-8143-2B4E207DA202@oracle.com>
+In-Reply-To: <691447A1-8F3F-4890-B00F-8068A14CA126@infradead.org>
+X-Migadu-Flow: FLOW_OUT
 
-On Wed, Oct 23, 2024 at 07:25:21PM +0000, Eric Snowberg wrote:
-> > On Oct 22, 2024, at 8:25 PM, sergeh@kernel.org wrote:
-> > 
-> > On Thu, Oct 17, 2024 at 09:55:11AM -0600, Eric Snowberg wrote:
-> >> 
-> >> +The Clavis LSM contains a system keyring call .clavis.  It contains a single
-> > 
-> > s/call/called/
+On Thu, Oct 24, 2024 at 05:56:09PM +0200, David Woodhouse wrote:
+> On 24 October 2024 17:44:49 CEST, Oliver Upton <oliver.upton@linux.dev> wrote:
+> >IIUC, you're really wanting to 0x0 because there are hypervisors out
+> >there that violate the final spec and *only* accept this value.
+> >
+> >That's perfectly fine, but it'd help avoid confusion if the supporting
+> >comment was a bit more direct:
+> >
+> >	/*
+> >	 * If no hibernate type is specified SYSTEM_OFF2 defaults to
+> >	 * selecting HIBERNATE_OFF.
+> >	 *
+> >	 * There are hypervisors in the wild that violate the spec and
+> >	 * reject calls that explicitly provide a hibernate type. For
+> >	 * compatibility with these nonstandard implementations, pass 0
+> >	 * as the type.
+> >	 */
+> >	 if (system_entering_hibernation())
+> >		invoke_psci_fn(PSCI_FN_NATIVE(1_3, SYSTEM_OFF2), 0 , 0, 0);
 > 
-> I will change that, thanks.
-> 
-> >> +asymmetric key that is used to validate anything added to it.  This key can
-> >> +be added during boot and must be a preexisting system kernel key.  If the
-> >> +``clavis=`` boot parameter is not used, any asymmetric key the user owns
-> > 
-> > Who is "the user", and precisely what does "owns' mean here?  Is it just
-> > restating that it must be a key already in one of the builtin or secondary
-> > or platform keyrings?
-> 
-> In the case where Clavis was not provided a key id during boot, root can 
-> add a single public key to the .clavis keyring anytime afterwards.  This 
-> key does not need to be in any of the system keyrings.  Once the key is 
-> added, the Clavis LSM is enabled. The root user must also own the private 
-> key, since this is required to do the ACL signing. I will try to clarify this better 
+> By the time this makes it into released versions of the guest Linux kernel, that comment won't be true any more.
 
-Ooh, I see.  Own it as in be able to sign things with it.  Of course.  Thanks.
+Then does it even matter? What is the problem you're trying to solve
+with using a particular value for the hibernate type?
 
-> in the documentation. 
-> 
-> I wouldn't expect this to be the typical way Clavis would be used. I would 
+Either the goal of this is to make the PSCI client code compatible with
+your hypervisor today (and any other implementation based on 'F ALP1') or
+we don't care and go with whatever value we want.
 
-Right, I wasn't asking because I would want to use it that way, but
-because it feels potentially dangerous :)
+Even if the comment eventually becomes stale, there is a ton of value in
+documenting the exact implementation decision being made.
 
-> also be interested in any feedback if enabling the Clavis LSM this way 
-> following boot should be removed.  If this were removed, Clavis could 
-> only be enabled when using the boot parameter.
-
-Yeah I don't know enough to give good guidance here.  I do worry about
-UKIs enforcing only the built-in signed kernel command line and so preventing
-a user from appending their own clavis= entry.  Not knowing how this
-will end up getting deployed, I'm not sure which is the more important
-issue.
-
-> > And this is done by simply loading it into the clavis keyring, right?
-> 
-> Correct.
-> 
+-- 
+Thanks,
+Oliver
 
