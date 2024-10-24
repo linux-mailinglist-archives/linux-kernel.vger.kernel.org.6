@@ -1,92 +1,145 @@
-Return-Path: <linux-kernel+bounces-379657-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379659-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 10D849AE1AF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:57:58 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 263949AE1CA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:58:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id AFEBD1F21416
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:57:57 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id A7D30B24577
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:58:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DFCAB1C07F0;
-	Thu, 24 Oct 2024 09:57:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="QWlWgIhc"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 19ECA1C07EB;
+	Thu, 24 Oct 2024 09:58:10 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5C52F1B6CE2;
-	Thu, 24 Oct 2024 09:57:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D79101C07C4
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:58:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763839; cv=none; b=dB4L27WMLouv6umZpTlMkVXnlGwz4g51ygq8sAGu6SuNBXZmJHdch5CKGf3zUu/h6t1MMQis/cp8kaC3HWTULAMtpibLj8iSlnu19KHZ55sYWOO6RUXBI2EUXQlCd5DDRTl95YtaVB18NsLtbQnKlbWXrnKCgi7MsuOhR+q3HBs=
+	t=1729763889; cv=none; b=drF1ugJwR+xtiz3BdpGQiegX5igFMNmvXQKcAEiKRtuspBLasbepv7lW/xzGfx/6KBYq57BXfAeEBLPddaNlKRr54tRgHM5i4w7fjdB7x08LU1D0+pTFnU0GOYTDIyCNj+D6kqOQc5wGPVXg8JlDmMbfakJNv1LA5RsAwilYbBg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729763839; c=relaxed/simple;
-	bh=CZeq0cZpSpFXcRcaNBDH6xOyf+OZwVKpMGiQjSVFnvg=;
+	s=arc-20240116; t=1729763889; c=relaxed/simple;
+	bh=hmNoUJOm+bj8veyYXhIGwnX5DtxzL9QZIj2btrckT60=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=q3f2PTQqb2HvdUh6IyvOhrH4rHsjHxmr+ufu2OnUlBC/mRkSqzoQqNiauvT/lJxTkwiMMFveMZW1UjeE/zzxsjHMGUyuctW6soptDVW7h55ihfdmcM2FFIoVwQewEAF2YSDqoUPmudjdHH/JJT7uHg7AC6eoh1XkORatKU1Vzr4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=QWlWgIhc; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=rzpvzquYLWtBHVgVkBB32hWAp+AI3BVUB9oT07w6q0k=; b=QWlWgIhchbPRGKHewwzWOna/4/
-	p/ueuwd3CjrM2/ZUlhh+eYL/Dxdn0K61jVg9/tSzMzxb2eVGvKW2BK9oixA+0CpgPP5sMu0kRrSsP
-	mZxbEwUMev3gMfIhcWP8P6x+7Gc3/8MdOyNC20el1poSgIn5MOZof6FDGwNCQKRlIBMdFDQ1kbpOo
-	e2OvUDgkSMJFsciLZgoVHVMoR7nYztJfaE/c6zl9oyDDG/DXUon3rgaMDkzirZd06WUsOzRUiLFq9
-	65NEWncjyDKBMQUa6nE0OXNgGHTIs1mcK/ohhjuuwTC2tjRybStJmWzJk0iUBwljvdxwJpnRqxpyR
-	PKkx2SOQ==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3uaS-00000008dc2-1BLX;
-	Thu, 24 Oct 2024 09:57:00 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 63EEB300599; Thu, 24 Oct 2024 11:56:59 +0200 (CEST)
-Date: Thu, 24 Oct 2024 11:56:59 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Suren Baghdasaryan <surenb@google.com>
-Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org,
-	linux-mm@kvack.org, oleg@redhat.com, rostedt@goodmis.org,
-	mhiramat@kernel.org, bpf@vger.kernel.org,
-	linux-kernel@vger.kernel.org, jolsa@kernel.org, paulmck@kernel.org,
-	willy@infradead.org, akpm@linux-foundation.org, mjguzik@gmail.com,
-	brauner@kernel.org, jannh@google.com, mhocko@kernel.org,
-	vbabka@suse.cz, shakeel.butt@linux.dev, hannes@cmpxchg.org,
-	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com
-Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce
- mmap_lock_speculation_{start|end}
-Message-ID: <20241024095659.GD9767@noisy.programming.kicks-ass.net>
-References: <20241010205644.3831427-1-andrii@kernel.org>
- <20241010205644.3831427-2-andrii@kernel.org>
- <20241023201031.GF11151@noisy.programming.kicks-ass.net>
- <CAJuCfpFMhoCmqGJMU2uc4JHmk9zh88JzhZAeSz3DgvXEh+u+_g@mail.gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=mdRbUVzNZVMnFVX3duBVR+BIwmn2wlgB0Gpk3GuNHmiab8WJgH1ivz3O8vCoYtXBt6rV1vCjFgrWt91QHEZpi60TltAchel+amdMuCdZ2pDPh0eqfVXZUqr91FSW26VhyqhZRbfr6cQzbUpyhxlOuG0nRMT6JkKrKmBKt0iS7TU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t3uax-0007SO-SI; Thu, 24 Oct 2024 11:57:31 +0200
+Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mkl@pengutronix.de>)
+	id 1t3uaw-000B1Z-1s;
+	Thu, 24 Oct 2024 11:57:30 +0200
+Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	(Authenticated sender: mkl-all@blackshift.org)
+	by smtp.blackshift.org (Postfix) with ESMTPSA id 2999E35D971;
+	Thu, 24 Oct 2024 09:57:30 +0000 (UTC)
+Date: Thu, 24 Oct 2024 11:57:29 +0200
+From: Marc Kleine-Budde <mkl@pengutronix.de>
+To: Ming Yu <a0282524688@gmail.com>
+Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
+	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
+	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
+	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
+	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
+	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
+	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
+	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
+	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
+Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
+Message-ID: <20241024-ladybug-of-silent-holiness-498562-mkl@pengutronix.de>
+References: <20241024085922.133071-1-tmyu0@nuvoton.com>
+ <20241024085922.133071-2-tmyu0@nuvoton.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="mngoatx2xdrr45s4"
 Content-Disposition: inline
-In-Reply-To: <CAJuCfpFMhoCmqGJMU2uc4JHmk9zh88JzhZAeSz3DgvXEh+u+_g@mail.gmail.com>
+In-Reply-To: <20241024085922.133071-2-tmyu0@nuvoton.com>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mkl@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-On Wed, Oct 23, 2024 at 03:17:01PM -0700, Suren Baghdasaryan wrote:
 
-> > Or better yet, just use seqcount...
-> 
-> Yeah, with these changes it does look a lot like seqcount now...
-> I can take another stab at rewriting this using seqcount_t but one
-> issue that Jann was concerned about is the counter being int vs long.
-> seqcount_t uses unsigned, so I'm not sure how to address that if I
-> were to use seqcount_t. Any suggestions how to address that before I
-> move forward with a rewrite?
+--mngoatx2xdrr45s4
+Content-Type: text/plain; protected-headers=v1; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 1/9] mfd: Add core driver for Nuvoton NCT6694
+MIME-Version: 1.0
 
-So if that issue is real, it is not specific to this case. Specifically
-preemptible seqcount will be similarly affected. So we should probably
-address that in the seqcount implementation.
+On 24.10.2024 16:59:14, Ming Yu wrote:
+> +static int nct6694_usb_probe(struct usb_interface *iface,
+> +			     const struct usb_device_id *id)
+> +{
+> +	struct usb_device *udev =3D interface_to_usbdev(iface);
+> +	struct device *dev =3D &udev->dev;
+> +	struct usb_host_interface *interface;
+> +	struct usb_endpoint_descriptor *int_endpoint;
+> +	struct nct6694 *nct6694;
+> +	int pipe, maxp, bulk_pipe;
+> +	int ret =3D EINVAL;
+> +
+> +	interface =3D iface->cur_altsetting;
+> +	/* Binding interface class : 0xFF */
+> +	if (interface->desc.bInterfaceClass !=3D USB_CLASS_VENDOR_SPEC ||
+> +	    interface->desc.bInterfaceSubClass !=3D 0x00 ||
+> +	    interface->desc.bInterfaceProtocol !=3D 0x00)
+> +		return -ENODEV;
 
+I think you can use USB_DEVICE_INFO() and remove this manual check
+
+https://elixir.bootlin.com/linux/v6.11.5/source/include/linux/usb.h#L1056
+
+[...]
+
+> +
+> +static const struct usb_device_id nct6694_ids[] =3D {
+> +	{ USB_DEVICE(NCT6694_VENDOR_ID, NCT6694_PRODUCT_ID)},
+> +	{},
+> +};
+> +MODULE_DEVICE_TABLE(usb, nct6694_ids);
+
+regards,
+Marc
+
+--=20
+Pengutronix e.K.                 | Marc Kleine-Budde          |
+Embedded Linux                   | https://www.pengutronix.de |
+Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
+Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
+
+--mngoatx2xdrr45s4
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcaGgcACgkQKDiiPnot
+vG8YiQf/bRkt59QCQTqv2A9MhX1wIK2oTcc9JJY7HruR3mItUAqf1X0TEFMjA+Qw
+M9K/3KtK3rWW4F9fE3yLNYHqiP/fnv20U5Cn027fKzg9YOvSlkgOdScDLashOG2k
+RQ/SG5iSXjlZ/1JYnx8HIOmUgsU29jFm7vdcyeeI1hUO2qrE0QBVqMLp/hG4DsTa
+kjqf/x0Hj57Vfgx08DRC+XNBrjhy6CCdvzr0be8DktMRz/uZVX5FFYrI0b240gWQ
+a3JvsvFdG19vPQGXj5eo4Oc03Y5lNmQuj3e0v0dwu2y5prM51p9lwd7MjiL3o9nn
+MuVo6YfRtzv/4M/EZCeqs+ocjpOSlA==
+=5R+0
+-----END PGP SIGNATURE-----
+
+--mngoatx2xdrr45s4--
 
