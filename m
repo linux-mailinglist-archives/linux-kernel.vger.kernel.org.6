@@ -1,86 +1,110 @@
-Return-Path: <linux-kernel+bounces-380475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380476-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A184C9AEF33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:08:54 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15ECA9AEF34
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:09:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D265A1C20B65
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:08:53 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 479B81C21609
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:09:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AC72003C7;
-	Thu, 24 Oct 2024 18:08:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gJRrp2vm"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C6E751FF7B9;
+	Thu, 24 Oct 2024 18:08:46 +0000 (UTC)
+Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6101FE0EA;
-	Thu, 24 Oct 2024 18:08:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F7712003C3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729793322; cv=none; b=D6FjEjXFbH2ZWIA+SgoIGDCScpOZ6dm2Cm5jRgXMcZZgXEVucPV5XWNjAYRC66rqdU4ljO2ZHFtuNcQq1JMObteABbpm+WgaakZ4Wd8iqak5tyNpLZwMNrmQ722x1vw7ydO4jT2Tj0NptIL9dz9QXkNF7G0MlUb5Kjim15P+4FU=
+	t=1729793326; cv=none; b=uj3kdNZosLvCMNtcLX3nNh/PrSclVOFZ2VRlgbIvm4asAOP7PCV5XZ/cSvjtAWtzkmOOf0USXf3BJhx965g6rDGxqEJ3HIGEmrvdi/UteCUrClS14HkZ7qE/686ha0qKe48JQQphba+ndpTRvStxiDA05h+jzlHl+dKkOM+lclw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729793322; c=relaxed/simple;
-	bh=xfkR4ma5b5dJE/tDvi6lHfWQrg589RQLZprUzaZnmGs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EhY1QVrqwYqxNXWLNR719GampS2QHdmxww6Tuu5Yxq/uyuvZCkUSzDXR2E9jYvgoFQ5rcbCg9ax7vburr8VI2F6d6uNaBw3ycYm1pcpdrAV2jZF5+pElDkmCXm41YjmmFoGFsrJcf7B2Op8gmWg+NG0ouMNMateWcBehRHNoV3g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gJRrp2vm; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=ZfKI9T+QnjDlxWNoLS5WhgjTkXwvW1Fl9+wws3DEJj0=; b=gJRrp2vmt+PRXCJ2tmylKoPnca
-	g7IONkF/B/CTdv6ZbVgMtro9h5NIASrR1hpA8oUNzpX4It7Ytd5FW1tH46Q952EYKBwzcsGAyL8eh
-	EUxnKnOZK2mYuQZxqbxhL/yovnYMrWtp8ElkkgYP1vDJAi2zbPBCwP9RVnamNweKQiKMcyyAEIw+R
-	t5ExI3oA46ztlMi19LVwIRbZVz5cc0rALbyqIkOBpFRoceUl0Q8Jw/uu1+1qa1BJPirobA7V5dfzu
-	/4ui/xDmmHZmZa40tEJsYgDwkoIeHbFyjpKXXMif6lWT7UVaLzr63dycwRusY9ivlF2x39sz4Uo4y
-	s0JiXLHA==;
-Received: from [50.53.2.24] (helo=[192.168.254.17])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t42G7-00000008ipU-41sQ;
-	Thu, 24 Oct 2024 18:08:32 +0000
-Message-ID: <43494f80-c383-41c0-a3ef-0e4879ca7d80@infradead.org>
-Date: Thu, 24 Oct 2024 11:08:25 -0700
+	s=arc-20240116; t=1729793326; c=relaxed/simple;
+	bh=mqmBjHeV0koRDh920eKDKhwiAF2wYHZr+WsSOL/847k=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uEK0WWnCida0LT2oGL+wP/kjLYIB/tXr8MGG26P0eOkQ+r3f+7yhaodX3MSRiQW5xZ7uEBiLX841uyrvrYL4gISJVE17C4KasUfZML5fkt7NiKhKbgXJUzIn2rXzNYCia0j54DHKbzgdgq1jRT08K/JHwQITInN4KNN3BZwIIqc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
+Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
+	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
+	(Exim 4.92)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t42GF-0005mz-Fj; Thu, 24 Oct 2024 20:08:39 +0200
+Received: from pty.whiteo.stw.pengutronix.de ([2a0a:edc0:2:b01:1d::c5])
+	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t42GE-000Eif-38;
+	Thu, 24 Oct 2024 20:08:38 +0200
+Received: from mfe by pty.whiteo.stw.pengutronix.de with local (Exim 4.96)
+	(envelope-from <mfe@pengutronix.de>)
+	id 1t42GE-00BFjP-2m;
+	Thu, 24 Oct 2024 20:08:38 +0200
+Date: Thu, 24 Oct 2024 20:08:38 +0200
+From: Marco Felsch <m.felsch@pengutronix.de>
+To: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+Cc: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
+	linux-kernel@vger.kernel.org, imx@lists.linux.dev,
+	Ulf Hansson <ulf.hansson@linaro.org>,
+	Michael Trimarchi <michael@amarulasolutions.com>,
+	linux-pm@vger.kernel.org, linux-amarula@amarulasolutions.com,
+	Sascha Hauer <s.hauer@pengutronix.de>,
+	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
+	Pengutronix Kernel Team <kernel@pengutronix.de>,
+	Shawn Guo <shawnguo@kernel.org>, Fabio Estevam <festevam@gmail.com>,
+	Shengjiu Wang <shengjiu.wang@nxp.com>,
+	linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH] pmdomain: imx: gpcv2: replace dev_err() with
+ dev_err_probe()
+Message-ID: <20241024180838.xxhrgmmop75pc7ov@pengutronix.de>
+References: <20241024103540.3482216-1-dario.binacchi@amarulasolutions.com>
+ <20241024110123.wix35njjbh3nx7kn@pengutronix.de>
+ <4vws5lnu4efupunha74pdlgtd754w6n2loymgywrxhwm2rqic2@gz4efozdrpqm>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/1] futex: Create set_robust_list2
-To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
- Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Darren Hart <dvhart@infradead.org>,
- Peter Zijlstra <peterz@infradead.org>, sonicadvance1@gmail.com,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- linux-api@vger.kernel.org
-References: <20241024145735.162090-1-andrealmeid@igalia.com>
- <20241024145735.162090-2-andrealmeid@igalia.com>
- <bde852ec-8e2f-4957-9368-00d8e5a422c4@app.fastmail.com>
- <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
-Content-Language: en-US
-From: Randy Dunlap <rdunlap@infradead.org>
-In-Reply-To: <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <4vws5lnu4efupunha74pdlgtd754w6n2loymgywrxhwm2rqic2@gz4efozdrpqm>
+X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
+X-SA-Exim-Mail-From: mfe@pengutronix.de
+X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
+X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
 
-Hi,
+Hi Uwe,
 
-On 10/24/24 11:03 AM, AndrÃ© Almeida wrote:
-> Hi Arnd,
+On 24-10-24, Uwe Kleine-König wrote:
+> Hallo Marco,
 > 
+> On Thu, Oct 24, 2024 at 01:01:23PM +0200, Marco Felsch wrote:
+> > On 24-10-24, Dario Binacchi wrote:
+> > > The patch standardizes the probe() code by replacing the two occurrences
+> > > of dev_err() with dev_err_probe(). Indeed, dev_err_probe() was used in all
+> > > other error paths of the probe() function.
+> > 
+> > I assume that this paths aren't using dev_err_probe because these paths
+> > can't return EPROBE_DEFER and therefore dev_err_probe() would use
+> > dev_err() anyway.
+> 
+> Note that dev_err_probe() has advantages even if the error code isn't
+> EPROBE_DEFER. In this case it's mentioning the error code.
+> 
+> See also commits
+> 	7065f92255bb ("driver core: Clarify that dev_err_probe() is OK even w/out -EPROBE_DEFER")
+> 	532888a59505 ("driver core: Better advertise dev_err_probe()")
 
-Please consider putting more of the cover letter explanation into the commit message.
-Thanks.
+thanks for the pointers. With that in mind it make sense to me to
+convert it. Feel free to add my:
 
--- 
-~Randy
+Reviewed-by: Marco Felsch <m.felsch@pengutronix.de>
 
+Regards,
+  Marco
 
