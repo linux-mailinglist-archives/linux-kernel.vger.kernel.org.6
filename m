@@ -1,78 +1,57 @@
-Return-Path: <linux-kernel+bounces-380379-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380380-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2B3859AED67
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:13:32 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B508C9AED6B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:13:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5D3E11C238EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:13:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E6BCA1C238F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:13:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CC3E31FC7FD;
-	Thu, 24 Oct 2024 17:11:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9A3F1FF020;
+	Thu, 24 Oct 2024 17:11:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="f9pOY8hN"
-Received: from mail-ed1-f41.google.com (mail-ed1-f41.google.com [209.85.208.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="owkHAY8B"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C5B11FC7D9;
-	Thu, 24 Oct 2024 17:11:18 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1B0811FAEEB;
+	Thu, 24 Oct 2024 17:11:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789880; cv=none; b=Jyr8GlZkXjJtMALRK5+vWkD/ksBWui17ddDAznOtv2YfmlgwImkKCnVUYWFd/aE3yOvJv5mwiZ0OyyeAVLJKtQixrknfSo13oJozRfktWpSHZPpqAQ3/XW6fO5Nv0nTrJOYqxi51BrgPdGBhSYaQNzNQF6CDH8DB+zJpCDYHzSo=
+	t=1729789888; cv=none; b=tKrVzH9Px80flAmVF7knZyMuYPa7AmvnvxdOBRqIMwW7Km4EiWspsqrYQddOXvCBt8cGqp9vnm3JUKvmpP/yhITUNKluxxJaYy0Ch2u65L+O1L1C7OVYqY809VV9vnsXEzb/MLnnNKtkuXW/Gc5wSvCmIC/mKCRnp8taPtH2m7Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789880; c=relaxed/simple;
-	bh=V5blXOjJNWllX91RTrP1Opr+qb7soFgBDwd8A0fxx9c=;
+	s=arc-20240116; t=1729789888; c=relaxed/simple;
+	bh=1WdqHo2HGJNMs69cX9FV+ZG0Dwq2tMCHFmlCiNatbhU=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ZGTy9H3pICA3fRXYSrH8+NOCwg1Qk7B0sOrFbcpD/aNgWYCdGvu2J+wHPsIZnBqCe5QdkhHuISIV1QeP0PtmNxQNOscp0MCRs3GhbM1gzjbw5oS1T8DfYEi3j+VnYeGRi4arHQWfhhoJTw9je2bdVMStjQqX/hPjNInNupvek84=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=f9pOY8hN; arc=none smtp.client-ip=209.85.208.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f41.google.com with SMTP id 4fb4d7f45d1cf-5cb6ca2a776so1467198a12.0;
-        Thu, 24 Oct 2024 10:11:18 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729789876; x=1730394676; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=jVRDMh4v3CEd58OP2wBIPjczPRQa4F6T5qX1vzLxZds=;
-        b=f9pOY8hNm0k4KsiAWmUyrZo7qZv0AOJpMXncwZdeVZ1ydb4G3AlGaWiKTcX7N2b2Os
-         m0qVE4XkN9x/I+YtQtY1j+2iU6y/NOMbbiW32f75SeYZsPvQLEi6pAVV39LlMWtOJRan
-         U9Mdg+HPJCdzUxSQ2YxdT7G2aGB8MSiWLTOZai5wGh6v1lIws3yB4CS6tkivBkAjGi40
-         KrARt4DQcONdGml18ogmr9+f0DdkVs9/cTHV7txwEyd8FSH5Q+mfKu0Hl4GzOIDi5vwv
-         7aFpx71oU36lKIKQweXpv0TnXyYqAhzXhILJGhAcCTa7U1HQbPag0/6F6k74FqGY+2Xb
-         bMfQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789876; x=1730394676;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=jVRDMh4v3CEd58OP2wBIPjczPRQa4F6T5qX1vzLxZds=;
-        b=a9/i786fUrfUjLdhmOqA560Fll7T8PxxHZjoILjyTxRDl35XEDv6PiO2VnAYaYp/lR
-         X8o/K+I4gP9CdWdUBgGIrg9G/F9HXNj4xeFuqnnt3Kn/rON7GLRm4lD1CJBt4hZxgVhx
-         FQ2QvNMusHCvLAlOE0ZMavJriRdTCcnAa06X4BRflYOqxITR53EcMfa/bIE6IkaPG8B0
-         TNOQ4fywXMXX0meZiF4JlvbKgqZ+DPWqWz2OtRsjWqYt/PTyfDubAXdzQyR1/F+JCuSx
-         Q0ZYY5qhkvDz/IS2d2L7SmXhPDgPbl860YRLYZ0fh0dnj25p/q8fP29obMfAvFwMmHVT
-         xoZA==
-X-Forwarded-Encrypted: i=1; AJvYcCU2qSySK2+adJDHkNxYi5MzImDB+LHeD5qVdvwuV6Nt9qfco9YRi1kY/MTo+jSmgD4744s1sWzVHd7wWGg=@vger.kernel.org, AJvYcCVHkfMKyRb/pHlsnJqYW3RYkAX8yrr63tznhgFstN7wqMBAWMuA3nZL0nnqUaldS5euZfjwiPRufR9R2zk=@vger.kernel.org, AJvYcCXlGUUvjyZsuJDowhzgaqiecuzCUov67HzZ3+3SmumK0+Sp7QsLCf75L8NI6+A9pZla/9VH3+S+OWPyAYE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwAWSXAgGx5IXPI1FSPkvahRe8xXXBp4mjKv3xIVGoQ+4UQSz+p
-	HpRXx6fU3iJqrXtWGNc9dCO53bGGEwpDVk/xckr01niUiBotQs1L
-X-Google-Smtp-Source: AGHT+IGjmlyXMLE3dKbnjF8DXuZcZ3UAnGJ7Nj4af4Rv+ZlHQd4d7mjQ1Fjz4Dh4fSFTXZ/qCJdZAw==
-X-Received: by 2002:a17:907:2d8c:b0:a99:f8a2:cd8f with SMTP id a640c23a62f3a-a9abf9682bemr674542166b.64.1729789876399;
-        Thu, 24 Oct 2024 10:11:16 -0700 (PDT)
-Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370e86sm639779066b.110.2024.10.24.10.11.15
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 10:11:15 -0700 (PDT)
-Date: Thu, 24 Oct 2024 19:11:14 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Chen Ni <nichen@iscas.ac.cn>
-Cc: digetx@gmail.com, mchehab@kernel.org, jonathanh@nvidia.com, 
-	linux-media@vger.kernel.org, linux-tegra@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] media: vde: Convert comma to semicolon
-Message-ID: <ue3ccfkhnumjikar5iekotbv56h6p5zpfhkkw7rjb6vbu2oge6@kkrwbc3j75ag>
-References: <20240905022532.1642653-1-nichen@iscas.ac.cn>
+	 Content-Type:Content-Disposition:In-Reply-To; b=sNRbYkZO7xsq6yoWH67CuTWC8YmquwcI8DMrNFjNO9O8YExJI6bzc5XMbpsDf0YOY3dWl8HT8xac7A9WA5as0VusWoMVGI3rhhMIzZFbGRax0PLKZ5jKgnx2DrTYtvIfCA+WMhVpTmXm8Ccv5CWmNlXfMZISmtrdqP7z4c9hqEk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=owkHAY8B; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6FE66C4CEC7;
+	Thu, 24 Oct 2024 17:11:24 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729789886;
+	bh=1WdqHo2HGJNMs69cX9FV+ZG0Dwq2tMCHFmlCiNatbhU=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=owkHAY8BWsoaieEkorRl9l8idOW8A7qWWrzJrQYEaIWd3/AiHDETi/2T12XOXPCAG
+	 2OrsyWVwm/2tNVdkY3IKD7AucgATNf06M2nRpRQnjhoi3CHhCBBNhJdsKPn8B39DMp
+	 cVlbGvcZ0medVgSlP9EmuiAvsIjzUhqG8QsJbuP0WXri0Jk9QHv8WlneCPEDeWsUsv
+	 /a1AmGH1nP6OtGRUfiLt3Stk68BZ4iLVUxDahrdIwh2eEB6eIKCcis23ejYTkkSWlz
+	 7FCKNWdglX+tdJLNtUaHQMPLV6eGguo0DWAxwxDvI6TbeL6+0Glb3G3k/qaS9GTj3K
+	 8B6uEiNuS2rYw==
+Date: Thu, 24 Oct 2024 18:11:22 +0100
+From: Conor Dooley <conor@kernel.org>
+To: Fabio Estevam <festevam@gmail.com>
+Cc: tglx@linutronix.de, daniel.lezcano@linaro.org, robh@kernel.org,
+	krzk+dt@kernel.org, conor+dt@kernel.org,
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+	imx@lists.linux.dev, linux-arm-kernel@lists.infradead.org
+Subject: Re: [PATCH 2/2] dt-bindings: timer: fsl,imxgpt: Document
+ fsl,imx35-gpt
+Message-ID: <20241024-plaything-failing-8a91c9b051ce@spud>
+References: <20241023185841.1183706-1-festevam@gmail.com>
+ <20241023185841.1183706-2-festevam@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -80,55 +59,51 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="2lkg7gwyztygq2nw"
+	protocol="application/pgp-signature"; boundary="Ht6i6mn5ygm0dad1"
 Content-Disposition: inline
-In-Reply-To: <20240905022532.1642653-1-nichen@iscas.ac.cn>
+In-Reply-To: <20241023185841.1183706-2-festevam@gmail.com>
 
 
---2lkg7gwyztygq2nw
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+--Ht6i6mn5ygm0dad1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
 Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH] media: vde: Convert comma to semicolon
-MIME-Version: 1.0
 
-On Thu, Sep 05, 2024 at 10:25:32AM +0800, Chen Ni wrote:
-> Replace comma between expressions with semicolons.
+On Wed, Oct 23, 2024 at 03:58:41PM -0300, Fabio Estevam wrote:
+> The i.MX35 General Purpose Timer is compatible with i.MX31.
 >=20
-> Using a ',' in place of a ';' can have unintended side effects.
-> Although that is not the case here, it is seems best to use ';'
-> unless ',' is intended.
+> Document the fsl,imx35-gpt compatible.
 >=20
-> Found by inspection.
-> No functional change intended.
-> Compile tested only.
+> This fixes the following dt-schema warning:
 >=20
-> Signed-off-by: Chen Ni <nichen@iscas.ac.cn>
-> ---
->  drivers/media/platform/nvidia/tegra-vde/v4l2.c | 12 ++++++------
->  1 file changed, 6 insertions(+), 6 deletions(-)
+> timer@53f90000: compatible: 'oneOf' conditional failed, one must be fixed:
+> 	['fsl,imx35-gpt', 'fsl,imx31-gpt'] is too long
+> 	'fsl,imx1-gpt' was expected
+> 	'fsl,imx21-gpt' was expected
+> 	'fsl,imx27-gpt' was expected
+> 	'fsl,imx31-gpt' was expected
+> 	'fsl,imx35-gpt' is not one of ['fsl,imx25-gpt', 'fsl,imx50-gpt', 'fsl,im=
+x51-gpt', 'fsl,imx53-gpt', 'fsl,imx6q-gpt']
+> 	'fsl,imx6dl-gpt' was expected
+> 	'fsl,imx35-gpt' is not one of ['fsl,imx6sl-gpt', 'fsl,imx6sx-gpt', 'fsl,=
+imx8mp-gpt', 'fsl,imxrt1050-gpt', 'fsl,imxrt1170-gpt']
+> 	'fsl,imx35-gpt' is not one of ['fsl,imx6ul-gpt', 'fsl,imx7d-gpt']
+> 	'fsl,imx6sx-gpt' was expected
+>=20
+> Signed-off-by: Fabio Estevam <festevam@gmail.com>
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+Acked-by: Conor Dooley <conor.dooley@microchip.com>
 
---2lkg7gwyztygq2nw
+--Ht6i6mn5ygm0dad1
 Content-Type: application/pgp-signature; name="signature.asc"
 
 -----BEGIN PGP SIGNATURE-----
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcaf7IACgkQ3SOs138+
-s6FGrxAAoQvep6MJjN0ETLhmO0cz608RmeY1mB7sp8aXMINtslR6zbSyVOqPZk6p
-3V0sQaVLaJzY0DKN4n0JSosBOeQJRZuFxXbNWBbfwvqCRdNvxl/Zk9QIAHMFYEs6
-QPJhVUDd5ql3UXYZym3L2NkwH2pprOAeHNNmqS96MQQPqLdmJMrj3/oHckRgot32
-OWu+UjUft73+TftaUMoZxwMmjDfJz2P39moZMEH5LqjhXtUHRvjAcsY+x3+mr4gT
-+rBneylG6hbz4W8PElx2hUPmpIryilc5UzpJHDbSBR+jEtQQtOWhnxM0NAjZT7cn
-2Qr1ozOW74Ekcy0UAr+wwpLM+CIykUCfMa/hG+Mb4P+62nDnyUsWLMJSjm5lIQZS
-93bXc7sCOipwCSkz4CzXWf38BWeX1ZkOrd51YGpoBtPyC05uFHAl5EE72DgWImI/
-zK6tBWeBjwXFhIkH5UeCYgMV5EzkwSTfuqOEW07T16n3Sv7fv96u2z/hOGBuOwFB
-vI4bauMbuDe6eSCo9283XscRwV5N18r76UJusWTTDoI926KNVrmWCjHCq1OMevtm
-baqmFhSEmWK4I6aOMjavkTNzVa0QPdrnmWzZwv8izVqz5fC5Imk2HljM9zR1hpRK
-XfOFWr6OIMfJ/Q4dJgFKMWuakGa67lWITL6KtzXYdTOWXXLoBSk=
-=UVc/
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxp/ugAKCRB4tDGHoIJi
+0jDVAQDnbXO317H8zdaeX6UW4R5EaUI7ZGJMBdt9kKnxIZqtWwD/XO4mTjtsDeiy
+15VLLZlDLydimwb4mDZ+RxWfDQJOcQI=
+=GZyF
 -----END PGP SIGNATURE-----
 
---2lkg7gwyztygq2nw--
+--Ht6i6mn5ygm0dad1--
 
