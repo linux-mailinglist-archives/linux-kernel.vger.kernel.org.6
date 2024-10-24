@@ -1,393 +1,116 @@
-Return-Path: <linux-kernel+bounces-379690-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379694-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B7C1D9AE253
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:17:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5BFCC9AE25B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:19:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D63EC1C21EB7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:17:43 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 878261C2190E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:19:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BABC1C07F1;
-	Thu, 24 Oct 2024 10:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D1D1C07FE;
+	Thu, 24 Oct 2024 10:19:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="Q0H0VStL"
-Received: from mail-lf1-f50.google.com (mail-lf1-f50.google.com [209.85.167.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="Y+rwlMVZ"
+Received: from smtp-fw-52003.amazon.com (smtp-fw-52003.amazon.com [52.119.213.152])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B7AE1BD028
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:17:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E318C1B6D02;
+	Thu, 24 Oct 2024 10:19:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=52.119.213.152
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765058; cv=none; b=kRywQRl3d+TRTba3LhWKZKLoO7lvT5LhXJC99tVSLWP7PVFkPpinRBcFN/03Jjf2Qu2dx32zq/X1UIQwLX+X9EKB8AEMLAWIgSxDXcVjtgrRtm1Ghx6M8kJgGKAiIGxXpPFRdcEtT15L7GWDdOQ9KunWrUrSUnXg04KwQfJzYho=
+	t=1729765171; cv=none; b=hU2jwIpyBzmS6AzXJ0lkUcLPwZH80yDf0je55jbrhJtmP48wHvhHuoxbwzQ7gL5dqKUwgzsDgOfbCNM7egQGhSRHrreMSotpbo7yrp0E9fQH0y6oRnM856lQiePKHZ2B9gRUwyfbDqhV/oLgpXW+w77s+4OIDqN1X854uxe7inI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729765058; c=relaxed/simple;
-	bh=Cb9XBl8R4c3k89EIChVMCSBvfZgtzQ3ZY8Qx0f/I29M=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=AnKntgBIfJ/ELdgTFAQNw1a/yab7ba5l87CkQwavDCpGm3+ObFJbrLP5x0FIYV/XQ5BwPQcZCUupVcIGbAs2X89aRTDvJKF5uJ2WN7m8DvGyzGjyhfD1MKQW7Nrqa5cwAl7nmXppDTvs20WDlQwnl54HsoQINyjaJDaphq/JvNs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=Q0H0VStL; arc=none smtp.client-ip=209.85.167.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
-Received: by mail-lf1-f50.google.com with SMTP id 2adb3069b0e04-539f0f9ee49so697353e87.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:17:34 -0700 (PDT)
+	s=arc-20240116; t=1729765171; c=relaxed/simple;
+	bh=UHPnd/RmwWjsz87iqUWh3lvKcTiUAtDVmPgtNadMkMs=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rkQrIZ7PSuIxYQjzkkpZI3pM4/jE8jeZYg/sGWj1N41mKWbTChQ5aRmIYZWWh7d0piCmzuKZ1IMnKDkNVQw12Iazrrrx0UEZi6oPw28x1O1GPRqL86ruSbCC6FC0I/z9yWT/Je8AtT/eaCylArRCp7VPtKOfPlGpVWeutUHVqgE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.com; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=Y+rwlMVZ; arc=none smtp.client-ip=52.119.213.152
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=chromium.org; s=google; t=1729765052; x=1730369852; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Q1lEh6LwtgCY+WQ92xeSFGIzgmHAhvIMC+n+NL1OaBc=;
-        b=Q0H0VStLsgOdtNiSjMvjaVm1g9NJud3Erm5msZJFqWLcU5ZC9sSbcFjWYUXG+phnjW
-         S/b5RE+1EgTC/9LR2ENnwmwAZZV7Nes/YjhoAe8QcNxfMvn6ZirGf40u8KGpCApPanZ7
-         ZJdSwPqcbNDePSwkQF2axWpl26rLK0OiSM72M=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729765052; x=1730369852;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Q1lEh6LwtgCY+WQ92xeSFGIzgmHAhvIMC+n+NL1OaBc=;
-        b=oivJbIDhSkSU5aar4M2MeqEl9mn/Itn/51s/r/8uzT5z76N1kv/IckXW/KwB+3rwPi
-         M9TL8549NZVXtrCNPkpWjAV4ptXdO6JYFrBI2iLLbcBqTmOpRHbC+70xIhNcpcQLgPqa
-         A1ZNf2m9X86WLuULrnjtk4Cc7BjIJNY8Qa6f7IzRQkxHTz6QVOIc9GLFA478njKEC1uu
-         CNqcA9ts8O1Jj3O/FslHmu1eGS1y3xanU8MyEAljPD4WBuyZ15o8yj0RTVBuRETVQYPe
-         /nKaSwLc+VhybJFriEkLGMelcdGvW8zy5V/tFsoVkqI76o+56vwcL9S1DmV6SaNtRMAr
-         pDbQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUvgxerrpBdQJAMGoFHP39ptCLRvITvwSbMypQZ6bEti12agE+xRzyZ1qfk9pqq2bJSfPtyRBaAnik9TJE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz68bymVNz/OZO26WB6JDibvW1dI+lBbH0cTEBScR+D8YB4hy6c
-	qGzdvQUeATcaqFIsI+UVvBZ9lqdOdwHuNHCXS4Zf9hAfAn1BqnhZmDNxdooo0LsKOQjP+KDl+V3
-	N4NoaLOnOv0yainu0QYVoOwZUYz7gl2kDIG+h
-X-Google-Smtp-Source: AGHT+IGDvkZCUU7v3NGUsJvmBd8gPlHhkWx0QWXgE3OErVQI49TqBYrx8GVaaiEdZaTNNJ0XHt5MItLEq4REXaDwUJs=
-X-Received: by 2002:a05:6512:3c99:b0:539:e776:71f2 with SMTP id
- 2adb3069b0e04-53b23e8b2b6mr731152e87.52.1729765052171; Thu, 24 Oct 2024
- 03:17:32 -0700 (PDT)
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1729765169; x=1761301169;
+  h=from:to:cc:subject:date:message-id:references:
+   in-reply-to:content-id:content-transfer-encoding:
+   mime-version;
+  bh=UHPnd/RmwWjsz87iqUWh3lvKcTiUAtDVmPgtNadMkMs=;
+  b=Y+rwlMVZdjDOswsb5x+RDdbTJu09KpBuoRGfCUcODwf5nopyH0KPsPb+
+   cpaCAj+0ZgAxXDlQaGVZqiQitLBKmWcmQ7YxZvh5Pn2Mrtb1tRnX8OrKm
+   onL2USoOdidJ9Rp5stkgwAQAhau1So0mDf+ydgB3LM0sadZGLy/IToM2L
+   I=;
+X-IronPort-AV: E=Sophos;i="6.11,228,1725321600"; 
+   d="scan'208";a="36013059"
+Received: from iad12-co-svc-p1-lb1-vlan3.amazon.com (HELO smtpout.prod.us-east-1.prod.farcaster.email.amazon.dev) ([10.43.8.6])
+  by smtp-border-fw-52003.iad7.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 10:19:24 +0000
+Received: from EX19MTAEUB001.ant.amazon.com [10.0.43.254:63417]
+ by smtpin.naws.eu-west-1.prod.farcaster.email.amazon.dev [10.0.44.110:2525] with esmtp (Farcaster)
+ id b9aa5347-db27-4b20-bf53-5bf1446bd54e; Thu, 24 Oct 2024 10:19:23 +0000 (UTC)
+X-Farcaster-Flow-ID: b9aa5347-db27-4b20-bf53-5bf1446bd54e
+Received: from EX19D015EUB004.ant.amazon.com (10.252.51.13) by
+ EX19MTAEUB001.ant.amazon.com (10.252.51.26) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 24 Oct 2024 10:19:23 +0000
+Received: from EX19D014EUC004.ant.amazon.com (10.252.51.182) by
+ EX19D015EUB004.ant.amazon.com (10.252.51.13) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 24 Oct 2024 10:19:22 +0000
+Received: from EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41]) by
+ EX19D014EUC004.ant.amazon.com ([fe80::76dd:4020:4ff2:1e41%3]) with mapi id
+ 15.02.1258.034; Thu, 24 Oct 2024 10:19:22 +0000
+From: "Gowans, James" <jgowans@amazon.com>
+To: "kvm@vger.kernel.org" <kvm@vger.kernel.org>, "pbonzini@redhat.com"
+	<pbonzini@redhat.com>, "shuah@kernel.org" <shuah@kernel.org>,
+	"linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Roy, Patrick"
+	<roypat@amazon.co.uk>
+CC: "ackerleytng@google.com" <ackerleytng@google.com>, "Graf (AWS), Alexander"
+	<graf@amazon.de>, "chao.p.peng@linux.intel.com"
+	<chao.p.peng@linux.intel.com>, "seanjc@google.com" <seanjc@google.com>
+Subject: Re: [PATCH] kvm: selftest: fix noop test in guest_memfd_test.c
+Thread-Topic: [PATCH] kvm: selftest: fix noop test in guest_memfd_test.c
+Thread-Index: AQHbJfutSS0K4laRpUevt9XxbaVMKbKVsGYA
+Date: Thu, 24 Oct 2024 10:19:22 +0000
+Message-ID: <97a527916663b2f87c5ed2046637c2a8b27eb629.camel@amazon.com>
+References: <20241024095956.3668818-1-roypat@amazon.co.uk>
+In-Reply-To: <20241024095956.3668818-1-roypat@amazon.co.uk>
+Accept-Language: en-ZA, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="utf-8"
+Content-ID: <137BD64EF82DB74CAC60C77CF5DEDF88@amazon.com>
+Content-Transfer-Encoding: base64
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241016-auxadc_thermal-v12-1-c0433e9f61af@chromium.org> <CAGXv+5GfGg_gh0+7MKXCRHd97yoE-BWfnCU9Q5d1cxp6Ep4Epg@mail.gmail.com>
-In-Reply-To: <CAGXv+5GfGg_gh0+7MKXCRHd97yoE-BWfnCU9Q5d1cxp6Ep4Epg@mail.gmail.com>
-From: Chen-Yu Tsai <wenst@chromium.org>
-Date: Thu, 24 Oct 2024 18:17:21 +0800
-Message-ID: <CAGXv+5FeS0z74yyCL_8WcsBRp0=endU5rG5jSTN7=cOojDsG3Q@mail.gmail.com>
-Subject: Re: [PATCH RESEND v12] thermal/drivers/mediatek: add another get_temp
- ops for thermal sensors
-To: Hsin-Te Yuan <yuanhsinte@chromium.org>
-Cc: "Rafael J. Wysocki" <rafael@kernel.org>, Daniel Lezcano <daniel.lezcano@linaro.org>, 
-	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, linux-pm@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org, James Lo <james.lo@mediatek.com>, 
-	Hsin-Yi Wang <hsinyi@chromium.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-(Dropped folks whose emails are bouncing)
-
-On Thu, Oct 24, 2024 at 5:56=E2=80=AFPM Chen-Yu Tsai <wenst@chromium.org> w=
-rote:
->
-> Hi,
->
-> The subject could be better worded, like "expose all thermal sensors".
-
-Please also add "auxadc_thermal" to the subject, since there are now
-two drivers under the mediatek folder, it is not immediately clear
-which one this applies to.
-
-ChenYu
-
-> On Wed, Oct 16, 2024 at 1:47=E2=80=AFPM Hsin-Te Yuan <yuanhsinte@chromium=
-.org> wrote:
-> >
-> > From: James Lo <james.lo@mediatek.com>
-> >
-> > Previously, the driver only supported reading the temperature from all
-> > sensors and returning the maximum value. This updatea adds another
->
->                                                       ^ typo
->
-> > get_temp ops to support reading the temperature from each sensor
-> > separately.
->
-> You should mention why you want to expose all the thermal sensors.
-> Just making them available to userspace is a good enough reason.
-> You could also mention that some other drivers needs access to
-> some of the individual sensor readings.
->
-> You probably don't need to go into specific details about adding
-> a new get_temp ops.
->
-> > This feature provides the ability to read all thermal sensor values in
-> > the SoC through the node /sys/class/thermal.
->
-> This paragraph is redundant. It is implied by the subject.
->
-> > Signed-off-by: Michael Kao <michael.kao@mediatek.com>
-> > Signed-off-by: Hsin-Yi Wang <hsinyi@chromium.org>
-> > Signed-off-by: Ben Tseng <ben.tseng@mediatek.com>
-> > Signed-off-by: James Lo <james.lo@mediatek.com>
-> > Reviewed-by: AngeloGioacchino Del Regno <angelogioacchino.delregno@coll=
-abora.com>
-> > Signed-off-by: Hsin-Te Yuan <yuanhsinte@chromium.org>
-> > ---
-> > Changes in v12:
-> > - Remove unnecessary check and unused variable assignment in mtk_read_s=
-ensor_temp.
-> > - Add more about what this patch achieves in the commit message.
-> > - Link to v11: https://lore.kernel.org/r/20240809-auxadc_thermal-v11-1-=
-af36cc74f3a3@chromium.org
-> >
-> > Changes in V11:
-> >     - Rebase on kernel v6.11-rc2
-> >     - Use mtk_thermal_temp_is_valid in mtk_read_sensor_temp just like
-> >       mtk_thermal_bank_temperature
-> >     - Change the error handling of devm_thermal_of_zone_register return
-> >       value
-> >     - link to V10: https://lore.kernel.org/lkml/20220519101044.16765-1-=
-james.lo@mediatek.com/
-> >
-> > Changes in V10:
-> >     - Rebase to kernel-v5.18-rc7
-> >     - Resend
-> >
-> > Changes in V9:
-> >     - Rebase to kernel-v5.14-rc1
-> >     - Bind raw_to_mcelsius_v1 or raw_to_mcelsius_v2 to compatible
-> >       data of struct mtk_thermal_data
-> >     - Remove duplicate struct 'mtk_thermal_bank'
-> >     - Remove unnecessary if condition check
-> >     - Return error if any thermal zone fail to register
-> >
-> > Changes in V8:
-> >     - Rebase to kernel-v5.13-rc1
-> >     - Resend
-> >
-> > Changes in v7:
-> >     - Fix build error in v6.
-> >
-> > Changes in v6:
-> >     - Rebase to kernel-5.11-rc1.
-> >     - [1/3]
-> >         - add interrupts property.
-> >     - [2/3]
-> >         - add the Tested-by in the commit message.
-> >     - [3/3]
-> >         - use the mt->conf->msr[id] instead of conf->msr[id] in the
-> >           _get_sensor_temp and mtk_thermal_bank_temperature.
-> >         - remove the redundant space in _get_sensor_temp and
-> >           mtk_read_sensor_temp.
-> >         - change kmalloc to dev_kmalloc in mtk_thermal_probe.
-> >
-> > Changes in v5:
-> >     - Rebase to kernel-5.9-rc1.
-> >     - Revise the title of cover letter.
-> >     - Drop "[v4,7/7] thermal: mediatek: use spinlock to protect PTPCORE=
-SEL"
-> >     - [2/2]
-> >         -  Add the judgement to the version of raw_to_mcelsius.
-> >
-> > Changes in v4:
-> >     - Rebase to kernel-5.6-rc1.
-> >     - [1/7]
-> >         - Squash thermal zone settings in the dtsi from [v3,5/8]
-> >           arm64: dts: mt8183: Increase polling frequency for CPU therma=
-l zone.
-> >         - Remove the property of interrupts and mediatek,hw-reset-temp.
-> >     - [2/7]
-> >         - Correct commit message.
-> >     - [4/7]
-> >         - Change the target temperature to the 80C and change the commi=
-t message.
-> >     - [6/7]
-> >         - Adjust newline alignment.
-> >         - Fix the judgement on the return value of registering thermal =
-zone.
-> >
-> > Changes in v3:
-> >     - Rebase to kernel-5.5-rc1.
-> >     - [1/8]
-> >         - Update sustainable power of cpu, tzts1~5 and tztsABB.
-> >     - [7/8]
-> >         - Bypass the failure that non cpu_thermal sensor is not find in=
- thermal-zones
-> >           in dts, which is normal for mt8173, so prompt a warning here =
-instead of
-> >           failing.
-> >
-> >     Return -EAGAIN instead of -EACCESS on the first read of sensor that
-> >         often are bogus values. This can avoid following warning on boo=
-t:
-> >
-> >           thermal thermal_zone6: failed to read out thermal zone (-13)
-> >
-> > Changes in v2:
-> >     - [1/8]
-> >         - Add the sustainable-power,trips,cooling-maps to the tzts1~tzt=
-sABB.
-> >     - [4/8]
-> >         - Add the min opp of cpu throttle.
-> > ---
-> >
-> > ---
-> >  drivers/thermal/mediatek/auxadc_thermal.c | 70 +++++++++++++++++++++++=
-++++----
-> >  1 file changed, 62 insertions(+), 8 deletions(-)
-> >
-> > diff --git a/drivers/thermal/mediatek/auxadc_thermal.c b/drivers/therma=
-l/mediatek/auxadc_thermal.c
-> > index 9ee2e7283435acfcbb1a956303b6122a08affecc..10938be2e5545fba2fff7d5=
-cc5a0269d42e5d44d 100644
-> > --- a/drivers/thermal/mediatek/auxadc_thermal.c
-> > +++ b/drivers/thermal/mediatek/auxadc_thermal.c
-> > @@ -847,7 +847,8 @@ static int mtk_thermal_bank_temperature(struct mtk_=
-thermal_bank *bank)
-> >
-> >  static int mtk_read_temp(struct thermal_zone_device *tz, int *temperat=
-ure)
-> >  {
-> > -       struct mtk_thermal *mt =3D thermal_zone_device_priv(tz);
-> > +       struct mtk_thermal_bank *bank =3D thermal_zone_device_priv(tz);
-> > +       struct mtk_thermal *mt =3D bank->mt;
-> >         int i;
-> >         int tempmax =3D INT_MIN;
-> >
-> > @@ -866,10 +867,41 @@ static int mtk_read_temp(struct thermal_zone_devi=
-ce *tz, int *temperature)
-> >         return 0;
-> >  }
-> >
-> > +static int mtk_read_sensor_temp(struct thermal_zone_device *tz, int *t=
-emperature)
-> > +{
-> > +       struct mtk_thermal_bank *bank =3D thermal_zone_device_priv(tz);
-> > +       struct mtk_thermal *mt =3D bank->mt;
-> > +       const struct mtk_thermal_data *conf =3D mt->conf;
-> > +       int id =3D bank->id - 1;
-> > +       int temp =3D INT_MIN;
-> > +       u32 raw;
-> > +
-> > +       raw =3D readl(mt->thermal_base + conf->msr[id]);
-> > +
-> > +       temp =3D mt->raw_to_mcelsius(mt, id, raw);
-> > +
-> > +       /*
-> > +        * The first read of a sensor often contains very high bogus
-> > +        * temperature value. Filter these out so that the system does
-> > +        * not immediately shut down.
-> > +        */
-> > +
-> > +       if (unlikely(!mtk_thermal_temp_is_valid(temp)))
-> > +               return -EAGAIN;
-> > +
-> > +       *temperature =3D temp;
-> > +
-> > +       return 0;
-> > +}
-> > +
-> >  static const struct thermal_zone_device_ops mtk_thermal_ops =3D {
-> >         .get_temp =3D mtk_read_temp,
-> >  };
-> >
-> > +static const struct thermal_zone_device_ops mtk_thermal_sensor_ops =3D=
- {
-> > +       .get_temp =3D mtk_read_sensor_temp,
-> > +};
-> > +
-> >  static void mtk_thermal_init_bank(struct mtk_thermal *mt, int num,
-> >                                   u32 apmixed_phys_base, u32 auxadc_phy=
-s_base,
-> >                                   int ctrl_id)
-> > @@ -1199,6 +1231,7 @@ static int mtk_thermal_probe(struct platform_devi=
-ce *pdev)
-> >         u64 auxadc_phys_base, apmixed_phys_base;
-> >         struct thermal_zone_device *tzdev;
-> >         void __iomem *apmixed_base, *auxadc_base;
-> > +       struct mtk_thermal_bank *tz;
-> >
-> >         mt =3D devm_kzalloc(&pdev->dev, sizeof(*mt), GFP_KERNEL);
-> >         if (!mt)
-> > @@ -1285,14 +1318,35 @@ static int mtk_thermal_probe(struct platform_de=
-vice *pdev)
-> >                         mtk_thermal_init_bank(mt, i, apmixed_phys_base,
-> >                                               auxadc_phys_base, ctrl_id=
-);
-> >
-> > -       tzdev =3D devm_thermal_of_zone_register(&pdev->dev, 0, mt,
-> > -                                             &mtk_thermal_ops);
-> > -       if (IS_ERR(tzdev))
-> > -               return PTR_ERR(tzdev);
-> > +       for (i =3D 0; i <=3D mt->conf->num_sensors; i++) {
-> > +               tz =3D devm_kmalloc(&pdev->dev, sizeof(*tz), GFP_KERNEL=
-);
-> > +               if (!tz)
-> > +                       return -ENOMEM;
-> > +
-> > +               tz->mt =3D mt;
-> > +               tz->id =3D i;
-> > +
-> > +               tzdev =3D devm_thermal_of_zone_register(&pdev->dev, i,
-> > +                                                     tz, (i =3D=3D 0) =
-?
-> > +                                                     &mtk_thermal_ops
-> > +                                                     : &mtk_thermal_se=
-nsor_ops);
-> > +
-> > +               if (IS_ERR(tzdev)) {
-> > +                       ret =3D PTR_ERR(tzdev);
-> > +                       if (ret =3D=3D -ENODEV) {
-> > +                               dev_warn(&pdev->dev, "can't find therma=
-l sensor %d\n", i);
->
-> "Can't find thermal zone for sensor %d; sensor skipped.\n".
->
-> Based on the core code, the failure is not being able to find a matching
-> thermal zone node.
->
-> Also, make it known to the user what happened.
->
-> > +                               continue;
-> > +                       }
-> > +                       dev_err(&pdev->dev,
-> > +                               "Error: Failed to register thermal zone=
- %d, ret =3D %d\n",
-> > +                               i, ret);
-> > +                       return ret;
->
-> return dev_err_probe(&pdev->dev, ret, "Failed to register thermal zone
-> %d.\n", i);
->
-> > +               }
-> >
-> > -       ret =3D devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev);
-> > -       if (ret)
-> > -               dev_warn(&pdev->dev, "error in thermal_add_hwmon_sysfs"=
-);
-> > +               ret =3D devm_thermal_add_hwmon_sysfs(&pdev->dev, tzdev)=
-;
-> > +               if (ret)
-> > +                       dev_warn(&pdev->dev, "error in thermal_add_hwmo=
-n_sysfs: %d\n", ret);
->
-> Mention which sensor ID this failed for.
->
-> ChenYu
->
-> > +       }
-> >
-> >         return 0;
-> >  }
-> >
-> > ---
-> > base-commit: b589839414be04b2b37e4bf6f84af576c99faf64
-> > change-id: 20240809-auxadc_thermal-9be338ec8b1c
-> >
-> > Best regards,
-> > --
-> > Hsin-Te Yuan <yuanhsinte@chromium.org>
-> >
-> >
+T24gVGh1LCAyMDI0LTEwLTI0IGF0IDEwOjU5ICswMTAwLCBQYXRyaWNrIFJveSB3cm90ZToNCj4g
+VGhlIGxvb3AgaW4gdGVzdF9jcmVhdGVfZ3Vlc3RfbWVtZmRfaW52YWxpZCB0aGF0IGlzIHN1cHBv
+c2VkIHRvIHRlc3QNCj4gdGhhdCBub3RoaW5nIGlzIGFjY2VwdGVkIGFzIGEgdmFsaWQgZmxhZyB0
+byBLVk1fQ1JFQVRFX0dVRVNUX01FTUZEIHdhcw0KPiBpbml0aWFsaXppbmcgYGZsYWdgIGFzIDAg
+aW5zdGVhZCBvZiBCSVQoMCkuIFRoaXMgY2F1c2VkIHRoZSBsb29wIHRvDQo+IGltbWVkaWF0ZWx5
+IGV4aXQgaW5zdGVhZCBvZiBpdGVyYXRpbmcgb3ZlciBCSVQoMCksIEJJVCgxKSwgLi4uIC4NCj4g
+DQo+IEZpeGVzOiA4YTg5ZWZkNDM0MjMgKCJLVk06IHNlbGZ0ZXN0czogQWRkIGJhc2ljIHNlbGZ0
+ZXN0IGZvciBndWVzdF9tZW1mZCgpIikNCj4gU2lnbmVkLW9mZi1ieTogUGF0cmljayBSb3kgPHJv
+eXBhdEBhbWF6b24uY28udWs+DQo+IC0tLQ0KPiAgdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMva3Zt
+L2d1ZXN0X21lbWZkX3Rlc3QuYyB8IDIgKy0NCj4gIDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlv
+bigrKSwgMSBkZWxldGlvbigtKQ0KPiANCj4gZGlmZiAtLWdpdCBhL3Rvb2xzL3Rlc3Rpbmcvc2Vs
+ZnRlc3RzL2t2bS9ndWVzdF9tZW1mZF90ZXN0LmMgYi90b29scy90ZXN0aW5nL3NlbGZ0ZXN0cy9r
+dm0vZ3Vlc3RfbWVtZmRfdGVzdC5jDQo+IGluZGV4IGJhMGM4ZTk5NjAzNTguLmNlNjg3ZjhkMjQ4
+ZmMgMTAwNjQ0DQo+IC0tLSBhL3Rvb2xzL3Rlc3Rpbmcvc2VsZnRlc3RzL2t2bS9ndWVzdF9tZW1m
+ZF90ZXN0LmMNCj4gKysrIGIvdG9vbHMvdGVzdGluZy9zZWxmdGVzdHMva3ZtL2d1ZXN0X21lbWZk
+X3Rlc3QuYw0KPiBAQCAtMTM0LDcgKzEzNCw3IEBAIHN0YXRpYyB2b2lkIHRlc3RfY3JlYXRlX2d1
+ZXN0X21lbWZkX2ludmFsaWQoc3RydWN0IGt2bV92bSAqdm0pDQo+ICAJCQkgICAgc2l6ZSk7DQo+
+ICAJfQ0KPiAgDQo+IC0JZm9yIChmbGFnID0gMDsgZmxhZzsgZmxhZyA8PD0gMSkgew0KPiArCWZv
+ciAoZmxhZyA9IEJJVCgwKTsgZmxhZzsgZmxhZyA8PD0gMSkgew0KPiAgCQlmZCA9IF9fdm1fY3Jl
+YXRlX2d1ZXN0X21lbWZkKHZtLCBwYWdlX3NpemUsIGZsYWcpOw0KPiAgCQlURVNUX0FTU0VSVChm
+ZCA9PSAtMSAmJiBlcnJubyA9PSBFSU5WQUwsDQo+ICAJCQkgICAgImd1ZXN0X21lbWZkKCkgd2l0
+aCBmbGFnICcweCVseCcgc2hvdWxkIGZhaWwgd2l0aCBFSU5WQUwiLA0KDQpSZXZpZXdlZC1ieTog
+SmFtZXMgR293YW5zIDxqZ293YW5zQGFtYXpvbi5jb20+DQo=
 
