@@ -1,157 +1,143 @@
-Return-Path: <linux-kernel+bounces-380078-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380076-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1EB9E9AE8A6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:27:35 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B14649AE896
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:27:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A1D8C1F21FE0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:27:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 67E821F2143E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:27:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 402AA1F818A;
-	Thu, 24 Oct 2024 14:22:11 +0000 (UTC)
-Received: from mail-yw1-f180.google.com (mail-yw1-f180.google.com [209.85.128.180])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C7CD1F76B8;
+	Thu, 24 Oct 2024 14:22:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="lTOHYgaY"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D2DC61E1A1D;
-	Thu, 24 Oct 2024 14:22:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC0CF1EABC6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:21:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779730; cv=none; b=VptReg2mC7+Z4ym3TNnGIZyDtYcqkFvGny+1erFONuNEHPrE+x/vImele7uyk7l8Zcz0wno9DZheULKVPyfq065a21SpnGJCiDp3T0ipKeDlE/lxa62iSiEG0DHn4AKPZSSAkqC//diCTQC174Q/5WfNkaA0ZMw9gCuaeFuNMjs=
+	t=1729779720; cv=none; b=n1S8tTh64uO2I9EPdGfxEre+mjaNyO+53FxHE/xnrAUXyEk+4sHSYG6uGlc56mSP6eVlCGHN90QUeEMOqgHradLk+bX/xxxLh9+L2gx/oKjBgGrwWB7nNQ9phQfw7HrmdJ5pvQsJiycq/+IpashOW/5y/VbNy76+0/PaONLsMPM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779730; c=relaxed/simple;
-	bh=BAkdpe/RHBcsNuwwWCAupVt2pbLy2LYEIZ0mxM0VaBM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gI98JiKIbTtmtpDnt5nkZ6bBxrYvBz6JpZaBhqF3Xgpd3GPs7p3E3CtmA3pK1aqBjwBX6BXH5wGxPmriuNqq4cyqDcbMWJfsOScvM2U8xueUfs1BoWcBtVqc9zv05PkUxWexx71sXHHRUkukvDB03RZ3KgF5iSJ3powuROG4h2I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-m68k.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yw1-f180.google.com with SMTP id 00721157ae682-6e33c65d104so9086957b3.3;
-        Thu, 24 Oct 2024 07:22:08 -0700 (PDT)
+	s=arc-20240116; t=1729779720; c=relaxed/simple;
+	bh=Ztn3ZTk8dzE/YkwiP2wbeo/AXwxRZTQQkbkKaza/89k=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=lJ7EOan8yQauAw/JvCDIZvykniJ66LsmNwepr6HQWY1JhGd8E0/XIRMQMLtZSvURHEzXRiWKieRgBpu2pwf4wRTi8R/SvMr+BzMW/hDZcOIyumX06GLhUJvdcqZE5IlG4zoQEBg1lCnWBGaUu34wOr5PvtpMSwkOY+anBC5cvog=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=lTOHYgaY; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4314c452180so14345555e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:21:57 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729779716; x=1730384516; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=0FZisNkmAgDb4FsOsOHpAPmNZ3iYpoVhIfqXzX+OuNk=;
+        b=lTOHYgaY7B/9VwHIYyJaxP+WddV5sKAxAt8DmEKrqwXRRHy3WjEB7t7q6y2HjOf1Uu
+         IjwbRr35q4/OuKDM45Fw7g5mGIj+NBISTrSc7qEfReI2KEAOPFXwtjEC17shnOoCnyEs
+         /38zIvjZxn9Uu6txvehRfdV4LpIswno/hTJ5IfEovlKMLuT4k2gYttg29Kz3WR6Ek5dk
+         4uX7bLujSMrg2O9gkRwArcovdE12Gn0zBarYoz3mlMNRkcbJwTkfADg17m1hPLutBCS/
+         JXkRwSWNwTw54a1xmSiLF5+9hzF5cuUiSH8wMgoMNfUIaNp/NpTqAq9HZRegSnt1Jt2h
+         jp1A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729779726; x=1730384526;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=yQHpv7ID4TH1EE8mb/9nePf96Sk+WNhyNVzL1VBmj6s=;
-        b=Fzu261+7p/FKJftq0v2cDXjC1nUjvmRzVDqojpRZswWgCX5LeqW0Fr5D2F13XbUsVQ
-         bHpStf7Grt2Zvp0yxBQgxj94LkIbXu/9w26cO1LBV/BnzH0IFq1ARu92m0auyZBaw24z
-         0nDvQVLFyGIHXH4RuIY8MD6ljjuRgAX+c8W+44WnRIivfFg/1g+nC6GD4IGxchocE6ou
-         dLQi+Iek6aF8fyXjVdCtUHOLiH0I35Bq4ssJJIz8MZTbPe9wiAkPLcc3XR2lvCvTBMuD
-         5IzxC7xGtbYfVwLdJz5gSolKqLL4+13RPqfWYvzfY/J0a0iuwgZ6Jg6nbeC0yhKrHdfc
-         kagQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUCE4Xo4wiVYIm9MVdwT781P7OxJSjVsVv4Xbkd9rBrsk2zoArlE0QH56y4b1SrkfNwNqDSa2WjyTOg@vger.kernel.org, AJvYcCVdvEu3Yoqa9sqCz8Hc+gv7g8IGs94EupbBgLWgQuhNz7jJ31rdywaqsKPvfGjPDmDg6pZAGN9kpp1HPAT7b9bEjuA=@vger.kernel.org, AJvYcCVyvxUDKzHAeLYpvLxh/PPKG3KhRm0vQLN4g1xR7dMmKOSoWpFUxBzMIA6+LgZue/I1vPYEf/+jLX/d@vger.kernel.org, AJvYcCXhzSRYTd3i2r8yLGeZZetO8g+PRnyZAkZWhKZCYP6qDekueiF7tJ9ue3b6vzTFyjPdMrWnN4yDcgGpTyGg@vger.kernel.org, AJvYcCXnnaEfdZpLJnYS2SiFDYzyUrF0pt2TwtTCXUcyv7VMGoeMz9GQU+NKYbe5XznZOJeUObnOPenvEMcW@vger.kernel.org
-X-Gm-Message-State: AOJu0YzTj0q48r4GOFSpbpoKnqgnS6q4o66/xmVNWKjW9YED6+lEbxsE
-	2pRn4pvwxQDzeRaqnspqhfsdin7C8XgtiWvDlzfC0296RuLdN855uzPgBGzC
-X-Google-Smtp-Source: AGHT+IETuctO7Drc/eZuDEhWWQQwtS5HR0D+z1roxgp/6UavmcEM6d7lTAPYKd8qT3pveWQ70Sts2Q==
-X-Received: by 2002:a05:690c:470a:b0:6e3:410e:bb84 with SMTP id 00721157ae682-6e858180f9fmr18391007b3.20.1729779726061;
-        Thu, 24 Oct 2024 07:22:06 -0700 (PDT)
-Received: from mail-yb1-f170.google.com (mail-yb1-f170.google.com. [209.85.219.170])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ccbaf0sm19981997b3.75.2024.10.24.07.22.05
+        d=1e100.net; s=20230601; t=1729779716; x=1730384516;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=0FZisNkmAgDb4FsOsOHpAPmNZ3iYpoVhIfqXzX+OuNk=;
+        b=ChSPkLR+ALV450SG6FsHAe3HrM/M0Crav4dm0aAneLUZYqHSpSuzLPCpP+DpuKTmOV
+         k7uSZi5myY8zWiVrDesAYs/kBTU+C3KrDpPbQyfbQla5Ahk6Z46gmvJLyahkVDXq97Lb
+         USd/QuZxhrBNWtfV887DsPWIXXk1oUQzIrLpgsxnOlUMgw/8A3oG1Yz4c3ZjLPZnl/WT
+         QJN9ErKlogzmspCPk38naru5UVPf/XBK4Jq38PDr98CCy1CgUeXsZK0aCFA4yVZmTfgp
+         0807lXVGENnVjoyUgy0oW6Tm3y+47aw0Jel4hcLP6wxzXBzsEsePqnLjwNdEMmO7r7K7
+         eUCQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWp0YAJmeIAf7/MUgcf0U8APiq31FGQhlDNHiX7LwuGyEPRFf7//KVTMuxQGlFsJamwrxd3VErHGDwjKIg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwjQCw6t95KdhMCijGp4XkOKoJ70R3ub1fGvU0FvNl49yzSZ/7l
+	2zqxBwXBJaq+Bqf6bByX6AQCJkrTKdQ60AqTO89oQwG7qXP0OXa3F+WepYiiV2U=
+X-Google-Smtp-Source: AGHT+IGml03ePm5Nk6M8qPc+AoiNyOJzzaFhBgOmcu1YaqZI0C1FBGekaPgCTh48LKY+C1SoIheKoA==
+X-Received: by 2002:a05:600c:1c22:b0:42c:b991:98bc with SMTP id 5b1f17b1804b1-4318d7f1753mr14763425e9.0.1729779716044;
+        Thu, 24 Oct 2024 07:21:56 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37ee0a64dc1sm11433322f8f.65.2024.10.24.07.21.55
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:22:05 -0700 (PDT)
-Received: by mail-yb1-f170.google.com with SMTP id 3f1490d57ef6-e2915f00c12so1127637276.0;
-        Thu, 24 Oct 2024 07:22:05 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCUYjaeuE6ymiL3WgoAA+nsMbLFcYy7jpHvtIWOrEDtI5zIwgfTadgR7qcPo28tmyyybns2RodS/+Rplfq0L2AzR1Ew=@vger.kernel.org, AJvYcCUqJcgWdboDaMosd93nTLMUFd0iHzAwU60F9i09BJK03Fx2hRpza77MGR9bVp9gJjU4Hvrd+KCzmuYR@vger.kernel.org, AJvYcCVHvsgiCszVDNUZB7Qx9vABf7lag9f+KTNyRM/VaYs+00X5Uyu2VCijONd5zaiQjfUIw81oqGnUgRjN@vger.kernel.org, AJvYcCVWD4r7rYSYGasEeAbPUKS0RluccQgdsFcSTeShFqNsXN1FRVJ2TiLhBVafNJlKISwRi7WGG2RhmTcs/f7f@vger.kernel.org, AJvYcCViHYVPsX/adNgMJI+6jJLzFV/18Garwl1pdCk//GgPABn0H3K8RZTLo5BfbQGV1kOu0BuYa3tEuY+I@vger.kernel.org
-X-Received: by 2002:a05:690c:ecb:b0:6de:c0e:20ef with SMTP id
- 00721157ae682-6e85814c186mr27075017b3.7.1729779725019; Thu, 24 Oct 2024
- 07:22:05 -0700 (PDT)
+        Thu, 24 Oct 2024 07:21:55 -0700 (PDT)
+Message-ID: <03a4edf1-9562-49fd-81fe-d96f46a41d28@linaro.org>
+Date: Thu, 24 Oct 2024 16:21:55 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241019084738.3370489-1-claudiu.beznea.uj@bp.renesas.com> <20241019084738.3370489-6-claudiu.beznea.uj@bp.renesas.com>
-In-Reply-To: <20241019084738.3370489-6-claudiu.beznea.uj@bp.renesas.com>
-From: Geert Uytterhoeven <geert@linux-m68k.org>
-Date: Thu, 24 Oct 2024 16:21:52 +0200
-X-Gmail-Original-Message-ID: <CAMuHMdXQ2DM7Qzcne5KEN2sx1z4PZn=SFkmWwMENkKQfWGGE_A@mail.gmail.com>
-Message-ID: <CAMuHMdXQ2DM7Qzcne5KEN2sx1z4PZn=SFkmWwMENkKQfWGGE_A@mail.gmail.com>
-Subject: Re: [PATCH v4 05/12] clk: renesas: clk-vbattb: Add VBATTB clock driver
-To: Claudiu <claudiu.beznea@tuxon.dev>
-Cc: mturquette@baylibre.com, sboyd@kernel.org, robh@kernel.org, 
-	krzk+dt@kernel.org, conor+dt@kernel.org, alexandre.belloni@bootlin.com, 
-	magnus.damm@gmail.com, p.zabel@pengutronix.de, 
-	linux-renesas-soc@vger.kernel.org, linux-clk@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-rtc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/lib: Fix memory leak on error in
+ thermal_genl_auto()
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: Markus Elfring <Markus.Elfring@web.de>, linux-pm@vger.kernel.org,
+ Lukasz Luba <lukasz.luba@arm.com>, LKML <linux-kernel@vger.kernel.org>,
+ Zhang Rui <rui.zhang@intel.com>
+References: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
+ <45265aca-7371-455f-819f-c4d68cbb089b@web.de>
+ <9ba3fa17-57c3-41e9-9e19-33fa105a179e@linaro.org>
+ <CAJZ5v0jWGdzakj8ob2otAO6auwGBvVsewujG-d9b1Z5nnO7Vkw@mail.gmail.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <CAJZ5v0jWGdzakj8ob2otAO6auwGBvVsewujG-d9b1Z5nnO7Vkw@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
-On Sat, Oct 19, 2024 at 10:47=E2=80=AFAM Claudiu <claudiu.beznea@tuxon.dev>=
- wrote:
-> From: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
->
-> The VBATTB IP of the Renesas RZ/G3S SoC controls the clock that is used
-> by the RTC. The input to the VBATTB could be a 32KHz crystal
-> or an external clock device.
->
-> The HW block diagram for the clock generator is as follows:
->
->            +----------+ XC   `\
-> RTXIN  --->|          |----->| \       +----+  VBATTCLK
->            | 32K clock|      |  |----->|gate|----------->
->            | osc      | XBYP |  |      +----+
-> RTXOUT --->|          |----->| /
->            +----------+      ,
->
-> After discussions w/ Stephen Boyd the clock tree associated with this
-> hardware block was exported in Linux as:
->
-> vbattb-xtal
->    xbyp
->    xc
->       mux
->          vbattbclk
->
-> where:
-> - input-xtal is the input clock (connected to RTXIN, RTXOUT pins)
-> - xc, xbyp are mux inputs
-> - mux is the internal mux
-> - vbattclk is the gate clock that feeds in the end the RTC
->
-> to allow selecting the input of the MUX though assigned-clock DT
-> properties, using the already existing clock drivers and avoid adding
-> other DT properties. If the crystal is connected on RTXIN,
-> RTXOUT pins the XC will be selected as mux input. If an external clock
-> device is connected on RTXIN, RTXOUT pins the XBYP will be selected as
-> mux input.
->
-> The load capacitance of the internal crystal can be configured
-> with renesas,vbattb-load-nanofarads DT property.
->
-> Signed-off-by: Claudiu Beznea <claudiu.beznea.uj@bp.renesas.com>
-> ---
->
-> Changes in v4:
-> - dropped oscillator from patch description
-> - s/on-board/internal in patch description
-> - updated dt-binding included file name in the driver as it has been
->   renamed to include/dt-bindings/clock/renesas,r9a08g045-vbattb.h
-> - dropped the "_BIT" from driver macros
-> - used "quartz-load-femtofarads" dt property instead of adding a new one
-> - register the "vbattclk" as critical clock as this feeds the RTC counter
->   logic and it needs to stay on from the moment the RTC is configured;
->   along with it, added a comment to express this.
+On 24/10/2024 15:18, Rafael J. Wysocki wrote:
+> On Thu, Oct 24, 2024 at 2:57 PM Daniel Lezcano
+> <daniel.lezcano@linaro.org> wrote:
+>>
+>> On 24/10/2024 14:02, Markus Elfring wrote:
+>>>> The function thermal_genl_auto() does not free the allocated message
+>>>> in the error path. Fix that by putting a out label and jump to it
+>>>> which will free the message instead of directly returning an error.
+>>>
+>>> Would you like to add any tags (like “Fixes” and “Cc”) accordingly?
+>>> https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/Documentation/process/submitting-patches.rst?h=v6.12-rc4#n145
+>>>
+>>>
+>>> …
+>>>> +++ b/tools/lib/thermal/commands.c
+>>>> @@ -375,27 +375,30 @@ static thermal_error_t thermal_genl_auto(struct thermal_handler *th, cmd_cb_t cm
+>>>>                                        struct cmd_param *param,
+>>>>                                        int cmd, int flags, void *arg)
+>>>>    {
+>>>> +    thermal_error_t ret = THERMAL_ERROR;
+>>>>       struct nl_msg *msg;
+>>>>       void *hdr;
+>>>>
+>>>>       msg = nlmsg_alloc();
+>>>>       if (!msg)
+>>>> -            return THERMAL_ERROR;
+>>>> +            goto out;
+>>> …
+>>>
+>>> Is it really reasonable to pass a null pointer (from a failed function call)
+>>> to a subsequent nlmsg_free() call?
+>>
+>> You are right, I should return here :S
+> 
+> Do you want to respin it?
+> 
+> Alternatively, I can fix it up when applying the patch.
 
-Reviewed-by: Geert Uytterhoeven <geert+renesas@glider.be>
+If you don't mind I would prefer to apply the lib patches
 
-Gr{oetje,eeting}s,
-
-                        Geert
+For correctness, I'll send a V2 with the return fixed
 
 
---
-Geert Uytterhoeven -- There's lots of Linux beyond ia32 -- geert@linux-m68k=
-.org
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-In personal conversations with technical people, I call myself a hacker. Bu=
-t
-when I'm talking to journalists I just say "programmer" or something like t=
-hat.
-                                -- Linus Torvalds
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
