@@ -1,77 +1,82 @@
-Return-Path: <linux-kernel+bounces-379234-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379235-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 27BC79ADBCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:14:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 756CB9ADBD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:14:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A95281F22450
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:13:59 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 2015A1F22A0E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:14:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B80617623C;
-	Thu, 24 Oct 2024 06:13:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D63B0176228;
+	Thu, 24 Oct 2024 06:13:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="v7TnAZac"
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VpDNcNux"
 Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2CE20175D53
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:13:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E03AF17836B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:13:56 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750434; cv=none; b=spX6fmXIUkRgv1Xs/l+JhDxzuZhvBG3IBtERb4HRogBeYQYl4htB8VX92FP8qSqxK0lE40Pv/87nSfQEYtQgpQ0ZNbHXOap5NpzuSn0qX+Q5CvTjjL3UtVgYIop0yvUVOrn5wNNDqY+uLmEpLAdhFZZcoPRrqtoUznn+YD7UqZ8=
+	t=1729750439; cv=none; b=C2PJGQgDO26Em2tLAm0/HJt12Q+Mq/2GovXWaSjb5v7AQrTSpQkeW3pUbSyLna9jmUhtcMBfTaQuAJAT6soBo8viyg9DH0KD/lpeVlUbukDofclzvkMy3FYfdzBJ01kkdd/FfLYQsxdeCGDV/+1fF68gWScGafKY6RoCk4m+A3w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750434; c=relaxed/simple;
-	bh=bx6oz5UN0v60eFR0Ae6VB5459qU8Yv/1xhOqtqjDU/w=;
-	h=Date:Message-Id:Mime-Version:Subject:From:To:Cc:Content-Type; b=ngTq2zZQowZ2UKP9LatJNbZamU3cLtEiyh7n6azIVsnrwAYX1PlkvoJyBRycC/1+SMy6PFKF8kUMVbozHNWdFFfljif18DifWPmM32cRUXb5pORMyM5MiXOWRHh5UlCVg8qsZ3zgde5txinQtyluK1NTfb/qV3SFZc+lejCn0ao=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=v7TnAZac; arc=none smtp.client-ip=209.85.128.202
+	s=arc-20240116; t=1729750439; c=relaxed/simple;
+	bh=l8D/9i6mXjdrnGYXKluLekzKk5HyhssFtVUnJ+7Jyfw=;
+	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
+	 To:Cc:Content-Type; b=gS8nx4muz7qFwu+o6HvUwJ03nbmGamdbajiO3uQqiyBY8RThroe+dZ//rVr6QoTg6AessXWw8iVLvtVRjDiyZpGuSkfL1LIRfLCmNRgEhO0hcUmperOJkbpsYDlMIY4mW1PbH2OqHxt/HbROq7aRVW+GF1jUEUnNNDFYX1h9RSM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VpDNcNux; arc=none smtp.client-ip=209.85.128.202
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e0082c1dd0so11561387b3.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:13:52 -0700 (PDT)
+Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e7fb84f999so9654767b3.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:13:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729750431; x=1730355231; darn=vger.kernel.org;
-        h=cc:to:from:subject:mime-version:message-id:date:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=55/hvgYNWdvBpZX8vS6a0ZNEj9vu+ZIZIEdADHyK4mM=;
-        b=v7TnAZac8G5rPsf1wpI6ch3JtkuWyEDFEudT09tUlL0icZ2WUign1gwnW3zxZpqqew
-         PR/gqI9WRp/Z2korFEv3zSeV4w1apQHuF1pKyFA81IADHm6i3FFumjYQwn2u9LwXYunz
-         ph6fIVJjkrkLjbp9n2MbZcxgfe9Lr0sUjNq4QnAVPMaglGiLhdz3s95P0TvfaMtIYWHB
-         p7lytQVoESBoc2FBfYWCGPfI5JkvhP7iNsTSOzUWiNRh9O0x8uY5PtJ+MWKoCkMLr8N0
-         /MhbJUHCvQMCJUuXl372wgwJukYufD8NFE17371wjPHkUSihOlfhYHR5yNHWPwViCmM+
-         BCMA==
+        d=google.com; s=20230601; t=1729750436; x=1730355236; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ULy+zyN1BivKyLwzuPRCl/8UJCnpTGDPYrNtb9eDcL4=;
+        b=VpDNcNuxDW34hq19vrx2nfDDXyLZw9bizU2zwZj38NQDPHK0zGHXvmBriTeVxkvWaO
+         fzs2G2jqEm4VPeKGYqTPHToGn5Orrfbt+fjiBfIceWHkKoIi8PCaEHHhYlbq+WyHaUcz
+         ahvuRJ2IQUH/HCNoMve6hne17gbkYkhbQZrq/X6XZL6cWy7NOnieBzKWjOkkm+an13wx
+         0PkV9LDNsi2zWwHYpRu/fd/5lfbUKQPl998X6S4W18P4jVrKp+W6Li6G4tUXwkOBCzEx
+         56+tTE0pPKKOGucPFiAYV7o7LowWGajA3KrfQujnV8Lp1ddFY7dQrappplH9BngQnF4G
+         LISQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729750431; x=1730355231;
-        h=cc:to:from:subject:mime-version:message-id:date:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=55/hvgYNWdvBpZX8vS6a0ZNEj9vu+ZIZIEdADHyK4mM=;
-        b=p3gQ/RxL1zoGmjWgR9+jHmJJ7iH6VppOuk3OJ8709eRCz+euRgk435TosBl2LGBEDh
-         uE/uDH+9qkysZ3FyeloipfX+o5ZMbq66yHu2KVgD6q5n4PRu6gDocgMaMT+SbE8iNTTQ
-         MrO899oGdXqhM+ZlH3n7jsJN97fLN4stK8Q5pShWRwlNNJdj4OGrrPYYBb6ukdS3WVzP
-         a0sYKTz5UuQWGQ9maTDSS5XYXzu+HYAl8Nczbhdx9j97pL7NFrKdCYD8JfaWwCVfnLPq
-         Edvf9C1PsYjRViIwnNxEGgzni2vb9x37DymB3XlZiyCkjqPPAKPSfZhWuI64wugJCidW
-         8P4w==
-X-Forwarded-Encrypted: i=1; AJvYcCVnHvCO5O7P0xls5Zg0mKH1CZTGAee4dSPv72xYcBb2IJW6LySiE6NVNpVjGYATb6/ixgyBZChmvzMAwTs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz4OA1FHSO2tRjclhqF9TwVToxc2bL5eQ8b5jkvAFI2K/gHmGZc
-	Ap3+NoFkKeuDxT8AmApxAtwymWTkKBtD+8R7FFyYUJfyt9vBzt3LyBhvnxlGC8zbT61AN12tQ/n
-	0wPOTBFXXWbOCuA==
-X-Google-Smtp-Source: AGHT+IEjm5xZ8oWEf7u6//TA4Kt5HjH6iFnxvFJipXmVy8asdr1VaVjmTPVebbvVpJLKuPZgRMsL7ilkx4vd+j0=
+        d=1e100.net; s=20230601; t=1729750436; x=1730355236;
+        h=content-transfer-encoding:cc:to:from:subject:references
+         :mime-version:message-id:in-reply-to:date:x-gm-message-state:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=ULy+zyN1BivKyLwzuPRCl/8UJCnpTGDPYrNtb9eDcL4=;
+        b=jkxGonSUCOyGcyuTBuJOJXd11fiKNPVh9U4XEZRioYHhmchNKgrBjZlCAMug49DRPw
+         d0Getx/aavSquipQqLyLmrIfoNPrgMV6GexDf0sVRDa3a97lDRxIVSn4NEuWp6f7JuwD
+         9BvcnrRHQWL4++eCmX03dWxvQzilAegBtKXz7VIiFTTlO1gD0GHnUin2jnjWJxK7n4Yr
+         kSZpgK3Clnl9IACC2alKX9Equw3oLRgY7fg74xdVAZZO+gZI6/sR7olnWHYhR3QO9xdg
+         CRysk8cvO25tAc9dtkozfnTXv4F3IyZ0z3lan13e/qb53/GoMxNmMMYttTTE+KexCOK6
+         ZMFA==
+X-Forwarded-Encrypted: i=1; AJvYcCX6vPoAKfyO/7K28MH9ZE7GMEpA86hDJ8ncF99Rl1NQQwFHZvzTaMZcs896NS5rT57+cNkzO7jAoqHObJk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxxxKGyBQdlhFvrBnIVWp6+flfCChwHVZop84Mq57yTQLViT+8Y
+	8mXqMSXTPQZ+pnFRxacLpN4wgVll48i8S7Vad0JBZs8Vbq2OrJmWRhi+qPiYaQJtEH0iQXkiHgn
+	RhFdDaBXEv+3Qtw==
+X-Google-Smtp-Source: AGHT+IHCEMkQ2RfyYdNtjaLmn7Q1IV6vv3d2IoDuURVXiH0KtdFNDJTv0BNk9TxANKxuJUTxCoodn7NIA1qQz7g=
 X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:965e:f81d:c9fb:b352])
- (user=saravanak job=sendgmr) by 2002:a05:690c:7082:b0:6e7:e493:2db6 with SMTP
- id 00721157ae682-6e86632ee4bmr196737b3.3.1729750431239; Wed, 23 Oct 2024
- 23:13:51 -0700 (PDT)
-Date: Wed, 23 Oct 2024 23:13:41 -0700
-Message-Id: <20241024061347.1771063-1-saravanak@google.com>
+ (user=saravanak job=sendgmr) by 2002:a05:690c:6811:b0:6e3:19d7:382a with SMTP
+ id 00721157ae682-6e85813d7f5mr589267b3.1.1729750435897; Wed, 23 Oct 2024
+ 23:13:55 -0700 (PDT)
+Date: Wed, 23 Oct 2024 23:13:42 -0700
+In-Reply-To: <20241024061347.1771063-1-saravanak@google.com>
+Message-Id: <20241024061347.1771063-2-saravanak@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
+References: <20241024061347.1771063-1-saravanak@google.com>
 X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH 0/3] A few minor fw_devlink fixes
+Subject: [PATCH 1/3] drm: display: Set fwnode for aux bus devices
 From: Saravana Kannan <saravanak@google.com>
 To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
 	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
@@ -86,29 +91,40 @@ Cc: Saravana Kannan <saravanak@google.com>,
 	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
 	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Probably easiest for Greg to pull in these changes?
+fwnode needs to be set for a device for fw_devlink to be able to
+track/enforce its dependencies correctly. Without this, you'll see error
+messages like this when the supplier has probed and tries to make sure
+all its fwnode consumers are linked to it using device links:
 
-PSA: Do not pull any of these patches into stable kernels. fw_devlink
-had a lot of changes that landed in the last year. It's hard to ensure
-cherry-picks have picked up all the dependencies correctly. If any of
-these really need to get cherry-picked into stable kernels, cc me and
-wait for my explicit Ack.
+mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) with =
+backlight-lcd0
 
-Thanks,
-Saravana
-
-Saravana Kannan (3):
-  drm: display: Set fwnode for aux bus devices
-  phy: tegra: xusb: Set fwnode for xusb port devices
-  drivers: core: fw_devlink: Make the error message a bit more useful
-
- drivers/base/core.c                      | 4 ++--
+Reported-by: "N=C3=ADcolas F. R. A. Prado" <nfraprado@collabora.com>
+Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@no=
+tapiano/
+Tested-by: "N=C3=ADcolas F. R. A. Prado" <nfraprado@collabora.com>
+Signed-off-by: Saravana Kannan <saravanak@google.com>
+---
  drivers/gpu/drm/display/drm_dp_aux_bus.c | 2 +-
- drivers/phy/tegra/xusb.c                 | 2 +-
- 3 files changed, 4 insertions(+), 4 deletions(-)
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
--- 
+diff --git a/drivers/gpu/drm/display/drm_dp_aux_bus.c b/drivers/gpu/drm/dis=
+play/drm_dp_aux_bus.c
+index d810529ebfb6..ec7eac6b595f 100644
+--- a/drivers/gpu/drm/display/drm_dp_aux_bus.c
++++ b/drivers/gpu/drm/display/drm_dp_aux_bus.c
+@@ -292,7 +292,7 @@ int of_dp_aux_populate_bus(struct drm_dp_aux *aux,
+ 	aux_ep->dev.parent =3D aux->dev;
+ 	aux_ep->dev.bus =3D &dp_aux_bus_type;
+ 	aux_ep->dev.type =3D &dp_aux_device_type_type;
+-	aux_ep->dev.of_node =3D of_node_get(np);
++	device_set_node(&aux_ep->dev, of_fwnode_handle(of_node_get(np)));
+ 	dev_set_name(&aux_ep->dev, "aux-%s", dev_name(aux->dev));
+=20
+ 	ret =3D device_register(&aux_ep->dev);
+--=20
 2.47.0.105.g07ac214952-goog
 
 
