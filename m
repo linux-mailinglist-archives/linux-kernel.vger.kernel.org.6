@@ -1,81 +1,93 @@
-Return-Path: <linux-kernel+bounces-380152-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380147-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B40359AE992
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:00:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id F3D429AE97E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:59:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6B0381F236D6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:00:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9418AB23F87
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:59:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7CBC71F5832;
-	Thu, 24 Oct 2024 14:59:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0260D1E631A;
+	Thu, 24 Oct 2024 14:59:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A5Wt/0N6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="GBQelTu7"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C76491E765B;
-	Thu, 24 Oct 2024 14:59:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4F33D1171C;
+	Thu, 24 Oct 2024 14:59:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781985; cv=none; b=tqrNmAbuCI1bfPnlG3FGn4q66vOeMaNZD9IxUh5SXEuxmM9ul3HQqyvUeJBQeDMjNLNYZuax5xVhxAhMWkgOzTcdcrJhtDXWaQsU6wBKMazKzxld/JeARGdYNDo/i/VMCtGeVG4UJ5xNAWuRewdKkRIJH8UeUbH/FUIqYHGdEPo=
+	t=1729781974; cv=none; b=g9lnrU88YlHjqvCEVcEvie2i1WlCgr2Vsbb2RkOAvddQF7YAt4+KFg0uNmyxa8VOU7KXxIGj9MtSt73BlVcQGXx8+VQBU9kISFmU4bRLiH2qraccV2gRZ1l93oqAD2ZlCkRsKZ8vVHxrlI0uTemjRBwd9lnLLqJMrD+bYLRarIA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781985; c=relaxed/simple;
-	bh=0yZttSVkbPzcnYISlyffI81ZlULJCTwT3ar+Vp6eaC8=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=Iouu7pncT06Rb/E7sjXwCoIHjyf+2S06+bxmWI5xn6sA8yRavsqzluxmV6gG08MkYup9+wefXRHR3lwZX7OoN2SjU4QRc+k1Foi3Gqn404QHYltqoPGNelZ2iAPGSsRbK3RfoplquhHaSUfIWQWSLAMAfzgztw14P64s5Ziwk+A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A5Wt/0N6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9744C4CEE5;
-	Thu, 24 Oct 2024 14:59:44 +0000 (UTC)
+	s=arc-20240116; t=1729781974; c=relaxed/simple;
+	bh=bFUPoVTwR+LD2fnyv1D32C7lR3TZAYehUcOgaQ/4Z7U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JKjk5RN8YUltR/D3nwANi33V9eCeWFIFNM1oomwL7rvIMxd8VQ4CAU5UaqkBsoGlWAO4P3xiwYbEMBN+kzuAS4g99qlXHFYy5T1JqSjiyWDUlKQxfiPCwWnI9YKYy41FvH3koSPZo7fjENElJCohfzet5s/Sn0UjLVX5qfA01XI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=GBQelTu7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id BBEF7C4CEE3;
+	Thu, 24 Oct 2024 14:59:33 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729781985;
-	bh=0yZttSVkbPzcnYISlyffI81ZlULJCTwT3ar+Vp6eaC8=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=A5Wt/0N6hFOn2JKGvzJffEFvSBDYvv4bxWV/k74vLI6cK7H6oTBfdVH0XHUCIRhCz
-	 mnX8W0pCAIW6h1MBxb+RheoPLdO897Hi/a1KmmS+3tBS3LEUDh5dJRm8LgAWyiU0Jo
-	 Q9GWWkWhus2E5yCSJjSt6MP+zMcXuu0GJKfHzalWwfm4wYIqGidr547/xMV2SEyKes
-	 dp0Zii6h1d+hn6Nz/4AlI9SZSKZPLjVw3OJq95mVnHgfUzggemhdhdawTRF0OCExe0
-	 13N3hoVDbJF/ywEbkTviKr5jIGR6IoX9r49XRSH0Uk7cbLKTFKMzPJwq/oLqezfGDb
-	 OpnWki0JunWVg==
-From: Bjorn Andersson <andersson@kernel.org>
-To: devicetree@vger.kernel.org,
-	Rosen Penev <rosenp@gmail.com>
-Cc: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	linux-arm-msm@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] ARM: dts: qcom: ipq4019: use nvmem-layout
+	s=k20201202; t=1729781973;
+	bh=bFUPoVTwR+LD2fnyv1D32C7lR3TZAYehUcOgaQ/4Z7U=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=GBQelTu7RsacYF7ntupGp5OmBIuDZp8G/oBlyKiJ1Zhy7rT3gVuEkHLpu1jJHr+JX
+	 V2c2+DVmBFnrjZ7CStpsBed+a8x76OExN38GQAWff2Z0MHoBCLH5xy6UIoJ+siu5cN
+	 ERMFEs5jnOowX0A/UBS5Ih4VQF9EEyD5BRfdwNi3mceGm3H2B5xpTmlBfcgqBRwCrn
+	 W7l34iZQy/z2PvE8x6pbWd06KFsQR6IjjV7ObkfafhXL95aNIKh64H1m5c5ZQNdRBY
+	 Sz5ABXsOs5KQtjhZXg89nrmn50ci5aF/wTXF2fMzk9mbhf9bUlXJas+KxvevJUMs77
+	 eMm2PWXRCn3zg==
 Date: Thu, 24 Oct 2024 09:59:33 -0500
-Message-ID: <172978197054.296432.3598676796224371500.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241022002444.843484-1-rosenp@gmail.com>
-References: <20241022002444.843484-1-rosenp@gmail.com>
+From: "Rob Herring (Arm)" <robh@kernel.org>
+To: James Calligeros <jcalligeros99@gmail.com>
+Cc: Liam Girdwood <lgirdwood@gmail.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Mark Brown <broonie@kernel.org>,
+	David Rhodes <david.rhodes@cirrus.com>,
+	Conor Dooley <conor+dt@kernel.org>, Takashi Iwai <tiwai@suse.com>,
+	Jaroslav Kysela <perex@perex.cz>, patches@opensource.cirrus.com,
+	Hector Martin <marcan@marcan.st>, Neal Gompa <neal@gompa.dev>,
+	Richard Fitzgerald <rf@opensource.cirrus.com>,
+	Martin =?utf-8?Q?Povi=C5=A1er?= <povik+lin@cutebit.org>,
+	linux-sound@vger.kernel.org, linux-kernel@vger.kernel.org,
+	devicetree@vger.kernel.org, asahi@lists.linux.dev
+Subject: Re: [PATCH v2 1/3] dt-bindings: sound: Add CS42L84 codec
+Message-ID: <172978197165.427885.15072999949261436967.robh@kernel.org>
+References: <20241020-cs42l84-v2-0-37ba2b6721d9@gmail.com>
+ <20241020-cs42l84-v2-1-37ba2b6721d9@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241020-cs42l84-v2-1-37ba2b6721d9@gmail.com>
 
 
-On Mon, 21 Oct 2024 17:24:44 -0700, Rosen Penev wrote:
-> nvmem-layout is a more flexible replacement for nvmem-cells.
+On Sun, 20 Oct 2024 00:47:31 +1000, James Calligeros wrote:
+> From: Martin Povišer <povik+lin@cutebit.org>
 > 
+> CS42L84 is a headphone jack codec made by Cirrus Logic and seen in Apple
+> computer models starting with 2021 Macbook Pros. It is not a publicly
+> documented part. To a degree the part is similar to the public CS42L42.
+> (The L84 superseded L83 seen in earlier Apple models, and the L83 was
+> pretty much the same as L42.)
+> 
+> Signed-off-by: Martin Povišer <povik+lin@cutebit.org>
+> Signed-off-by: James Calligeros <jcalligeros99@gmail.com>
+> Reviewed-by: Neal Gompa <neal@gompa.dev>
+> ---
+>  .../bindings/sound/cirrus,cs42l84.yaml   | 56 +++++++++++++++++++++++++
+>  MAINTAINERS                              |  1 +
+>  2 files changed, 57 insertions(+)
 > 
 
-Applied, thanks!
+Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
 
-[1/1] ARM: dts: qcom: ipq4019: use nvmem-layout
-      commit: ef4b38462e627f58bc929fc502e601dd396f1ae2
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
 
