@@ -1,157 +1,176 @@
-Return-Path: <linux-kernel+bounces-380330-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380331-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 75B139AEC77
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:45:29 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F37B49AEC79
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:45:39 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 19F13283DD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:45:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 763251F23353
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:45:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A6A381D9A49;
-	Thu, 24 Oct 2024 16:45:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6C73816A94B;
+	Thu, 24 Oct 2024 16:45:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="qEDmulmg"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b="OmNlg5OY"
+Received: from mail-oo1-f51.google.com (mail-oo1-f51.google.com [209.85.161.51])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 08B55BA4B;
-	Thu, 24 Oct 2024 16:45:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5D00166F0C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:45:31 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788323; cv=none; b=RCYNzReOGJ9/j5t9oeFQmkebLpj8Q7udGc43NDokS0yId/uuj13Uwn//y4P091t5N5xWwiGl9Tq/tab30MbEC54wNxy4QRkpyReP4Paepm03zL+0IHqJ7IvM/S6kyaNPOunC/BRJvkW0RYSaW1hqDqi4bhdJUrWaV8VBtpT28xI=
+	t=1729788334; cv=none; b=APhryK52xqN9tgu3BXCWqerZ07GXvS2FeL1BIC/w/U12Emi/u1WX8VwuOaNrtKr5NRRQsTCWJz1wF6zI08qTCRpw3Qn1lBvPLHcCOIkdId8bOkt7BD9w9vlabmFsR81hxwZL5IflC7bvk+ty/eAd5WUgW4A63DGmjPfyYeXO++A=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788323; c=relaxed/simple;
-	bh=F2N1fgTfqSSguvKp5AK/qiCyt3drO7Yl3moVpUeNv/o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=d3S2HEnOA3laMGA+v+HmG+7Fll6vt03blILz5+jSvEgv1ahOGY83EkcmYGw5NkcE7rQCl50nDKkVYbO/dSaj4R+RvQaP+ai/0OWpnt8VbKtikZVdAJTMuV6YU1Fw/2YbykKomJlqmVxDZ8JIUz/6eIACLSbUgDIdOP+EtC3mmqM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=qEDmulmg; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 91D5FC4CEC7;
-	Thu, 24 Oct 2024 16:45:19 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729788322;
-	bh=F2N1fgTfqSSguvKp5AK/qiCyt3drO7Yl3moVpUeNv/o=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=qEDmulmgELcr1FwDFri7SECKfCVKZYfMkU8wBlrJT3heAVuuUJ4NJ2bc7eVYamZji
-	 q0hJmCPpHp+nQ/FLfnWC5IWurVcbUcIb1ACRj8PJAIhiscOkBJgudwS9IEwxi3tTLg
-	 x9PnqAKCPjiEeblnP+nF7h8JqJFoGuJ5CgTWr1pJPeyRKq3HL1mfnEUJu3nEce0xDq
-	 aFt/K4IakYqrkFbTD92w1G5UlWjy776wmIFNadKuI7gtgVwBbhfkQRULt5dhx5Vj61
-	 KQ+Ln8DWyQxGXq0XazXn2jN9lrpR3HrX5fHKrgeEYA5k/M0wcTiE+XgfmrsGZus2Bh
-	 rML0qwWxsr2Ag==
-Date: Thu, 24 Oct 2024 17:45:17 +0100
-From: Conor Dooley <conor@kernel.org>
-To: David Lechner <dlechner@baylibre.com>
-Cc: Nuno =?iso-8859-1?Q?S=E1?= <noname.nuno@gmail.com>,
-	Angelo Dureghello <adureghello@baylibre.com>,
-	Nuno =?iso-8859-1?Q?S=E1?= <nuno.sa@analog.com>,
-	Lars-Peter Clausen <lars@metafoo.de>,
-	Michael Hennerich <Michael.Hennerich@analog.com>,
-	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Olivier Moysan <olivier.moysan@foss.st.com>,
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 2/8] dt-bindings: iio: dac: adi-axi-dac: add ad3552r
- axi variant
-Message-ID: <20241024-broiler-energetic-243fff75aa5b@spud>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
- <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-2-969694f53c5d@baylibre.com>
- <20241022-flagpole-subject-51e68e81e948@spud>
- <zfggfhasl3njyux5n44j2au4dlyjlngbtt4fps2xqzpngbwn42@72icpspkogtz>
- <6c2f188fc04ea957c842fe595951039244c43b7e.camel@gmail.com>
- <6162ea7d-40d6-4a21-96e5-7f851bc587dc@baylibre.com>
+	s=arc-20240116; t=1729788334; c=relaxed/simple;
+	bh=PuBgi92BKcttIA+y4NHkOgU0I7aHaLz0SHNrvVapDzk=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=mA/OWlDG9hl8REvw+JBACY4YIqwFenL0A5ul/heB8wNTw+0doE3UQ9wCp6RMdQ3mKQU+ApucLwJGISBWZK1YzY4JC1BAjOWyQef1C9Fxd6dhxEhrbEe1oGzCOI8kiKmCAlyT5rACCTleDR8RDkLEiYEy9yRt1YNQwvqaWCClPrc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com; spf=fail smtp.mailfrom=broadcom.com; dkim=pass (1024-bit key) header.d=broadcom.com header.i=@broadcom.com header.b=OmNlg5OY; arc=none smtp.client-ip=209.85.161.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=broadcom.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=broadcom.com
+Received: by mail-oo1-f51.google.com with SMTP id 006d021491bc7-5ebc04d4777so546503eaf.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:45:31 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=broadcom.com; s=google; t=1729788330; x=1730393130; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
+        bh=f73y75zaW6AU/3canr9WH6LG7dNpM3WffUu35rDYG1E=;
+        b=OmNlg5OY1aDui77WKlhCTGzrMMn6t0ko7qlROHoQ4Zvxskn4vuFLHbuYwu9RE8JVDD
+         mwODg4KDtRA29mwJcVxd08gl5KWHD734cllzrvGdhKl0vAtlsVJSieTbSDq8KOL83rTQ
+         8S1rnRYgVMECllLej6SvgRTk5n85WEhICCP1Y=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729788330; x=1730393130;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=f73y75zaW6AU/3canr9WH6LG7dNpM3WffUu35rDYG1E=;
+        b=kHPwNqGHk8lntd1HQy8HFebvrNTRlmCSqr+XOWhd7VjZFw1rm4L9/9GX+K1J4imhaa
+         L1BGl2JszGKhVt9Jzfhgm1MjCu9uwxVPLCLT8iXyFI2wsGH6d9PgcnZNaM+dJEXbM6/f
+         1VrW3HTZovXhhP3jtCkFPlAmfYkeWwPqVDFgUqA2w8mfoctEOhcn2J9rUU21NuIscQa7
+         dXF7iLDG9ijZ1N29Q/5BEWKGN6kEsLiNUrkEF74IIY1x9L145cvcaQrBO1tTLH9XbxMw
+         +wOJRCcjNSyY+y/4Qqy6dfahBNiCmEfBnyQeRkR08r+HfLaGF8wQXFqZGWh+OwC6GTaM
+         4fBA==
+X-Forwarded-Encrypted: i=1; AJvYcCVIZI/L+VPJl1QGpsLxBPfkVOFLKzR0kxkg4RP9MOvQLpiiGrdw7oQgZ5tJgR5lJwCjzI0w5ZZkqCZcBhM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxO4S2M9GoT8Q/VD1PkXLk+3EY8cxrXq7Wyl6M9dy2yiKUxqn+2
+	tGjU3aTil+2p5b9YA6sbAifc1FghG2e6qWllnPQ00lvkuMXm95wthY56MQ9pAg==
+X-Google-Smtp-Source: AGHT+IE/HbGwQkUT+tAKJ2L6KULTYHNeWvaEjaGUUUTedIZvZ2/RkL4BkNzuGyuTJVNhZJxWkc9BUg==
+X-Received: by 2002:a05:6358:60c3:b0:1c3:8215:164c with SMTP id e5c5f4694b2df-1c3d80d4610mr516541355d.1.1729788330468;
+        Thu, 24 Oct 2024 09:45:30 -0700 (PDT)
+Received: from [10.67.48.245] ([192.19.223.252])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b165a5c8c0sm502434985a.84.2024.10.24.09.45.26
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 09:45:29 -0700 (PDT)
+Message-ID: <04050b73-eb16-440f-acd7-986b1f39a6c9@broadcom.com>
+Date: Thu, 24 Oct 2024 09:45:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="t9hji7BwtIhalldR"
-Content-Disposition: inline
-In-Reply-To: <6162ea7d-40d6-4a21-96e5-7f851bc587dc@baylibre.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v4 2/2] firmware: arm_scmi: Support 'reg-io-width'
+ property for shared memory
+To: Sudeep Holla <sudeep.holla@arm.com>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Cristian Marussi <cristian.marussi@arm.com>,
+ "open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS"
+ <devicetree@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>,
+ "open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE"
+ <arm-scmi@vger.kernel.org>, justin.chen@broadcom.com, opendmb@gmail.com,
+ Florian Fainelli <f.fainelli@gmail.com>, kapil.hali@broadcom.com,
+ bcm-kernel-feedback-list@broadcom.com, Arnd Bergmann <arnd@arndb.de>
+References: <20240827182450.3608307-1-florian.fainelli@broadcom.com>
+ <20240827182450.3608307-3-florian.fainelli@broadcom.com>
+ <20240903154000.GA2080277@bogus> <ZxJbJa8Q3V02yf_z@bogus>
+ <Zxop6E83YId0et5o@bogus>
+Content-Language: en-US
+From: Florian Fainelli <florian.fainelli@broadcom.com>
+Autocrypt: addr=florian.fainelli@broadcom.com; keydata=
+ xsBNBFPAG8ABCAC3EO02urEwipgbUNJ1r6oI2Vr/+uE389lSEShN2PmL3MVnzhViSAtrYxeT
+ M0Txqn1tOWoIc4QUl6Ggqf5KP6FoRkCrgMMTnUAINsINYXK+3OLe7HjP10h2jDRX4Ajs4Ghs
+ JrZOBru6rH0YrgAhr6O5gG7NE1jhly+EsOa2MpwOiXO4DE/YKZGuVe6Bh87WqmILs9KvnNrQ
+ PcycQnYKTVpqE95d4M824M5cuRB6D1GrYovCsjA9uxo22kPdOoQRAu5gBBn3AdtALFyQj9DQ
+ KQuc39/i/Kt6XLZ/RsBc6qLs+p+JnEuPJngTSfWvzGjpx0nkwCMi4yBb+xk7Hki4kEslABEB
+ AAHNMEZsb3JpYW4gRmFpbmVsbGkgPGZsb3JpYW4uZmFpbmVsbGlAYnJvYWRjb20uY29tPsLB
+ IQQQAQgAywUCZWl41AUJI+Jo+hcKAAG/SMv+fS3xUQWa0NryPuoRGjsA3SAUAAAAAAAWAAFr
+ ZXktdXNhZ2UtbWFza0BwZ3AuY29tjDAUgAAAAAAgAAdwcmVmZXJyZWQtZW1haWwtZW5jb2Rp
+ bmdAcGdwLmNvbXBncG1pbWUICwkIBwMCAQoFF4AAAAAZGGxkYXA6Ly9rZXlzLmJyb2FkY29t
+ Lm5ldAUbAwAAAAMWAgEFHgEAAAAEFQgJChYhBNXZKpfnkVze1+R8aIExtcQpvGagAAoJEIEx
+ tcQpvGagWPEH/2l0DNr9QkTwJUxOoP9wgHfmVhqc0ZlDsBFv91I3BbhGKI5UATbipKNqG13Z
+ TsBrJHcrnCqnTRS+8n9/myOF0ng2A4YT0EJnayzHugXm+hrkO5O9UEPJ8a+0553VqyoFhHqA
+ zjxj8fUu1px5cbb4R9G4UAySqyeLLeqnYLCKb4+GklGSBGsLMYvLmIDNYlkhMdnnzsSUAS61
+ WJYW6jjnzMwuKJ0ZHv7xZvSHyhIsFRiYiEs44kiYjbUUMcXor/uLEuTIazGrE3MahuGdjpT2
+ IOjoMiTsbMc0yfhHp6G/2E769oDXMVxCCbMVpA+LUtVIQEA+8Zr6mX0Yk4nDS7OiBlvOwE0E
+ U8AbwQEIAKxr71oqe+0+MYCc7WafWEcpQHFUwvYLcdBoOnmJPxDwDRpvU5LhqSPvk/yJdh9k
+ 4xUDQu3rm1qIW2I9Puk5n/Jz/lZsqGw8T13DKyu8eMcvaA/irm9lX9El27DPHy/0qsxmxVmU
+ pu9y9S+BmaMb2CM9IuyxMWEl9ruWFS2jAWh/R8CrdnL6+zLk60R7XGzmSJqF09vYNlJ6Bdbs
+ MWDXkYWWP5Ub1ZJGNJQ4qT7g8IN0qXxzLQsmz6tbgLMEHYBGx80bBF8AkdThd6SLhreCN7Uh
+ IR/5NXGqotAZao2xlDpJLuOMQtoH9WVNuuxQQZHVd8if+yp6yRJ5DAmIUt5CCPcAEQEAAcLB
+ gQQYAQIBKwUCU8AbwgUbDAAAAMBdIAQZAQgABgUCU8AbwQAKCRCTYAaomC8PVQ0VCACWk3n+
+ obFABEp5Rg6Qvspi9kWXcwCcfZV41OIYWhXMoc57ssjCand5noZi8bKg0bxw4qsg+9cNgZ3P
+ N/DFWcNKcAT3Z2/4fTnJqdJS//YcEhlr8uGs+ZWFcqAPbteFCM4dGDRruo69IrHfyyQGx16s
+ CcFlrN8vD066RKevFepb/ml7eYEdN5SRALyEdQMKeCSf3mectdoECEqdF/MWpfWIYQ1hEfdm
+ C2Kztm+h3Nkt9ZQLqc3wsPJZmbD9T0c9Rphfypgw/SfTf2/CHoYVkKqwUIzI59itl5Lze+R5
+ wDByhWHx2Ud2R7SudmT9XK1e0x7W7a5z11Q6vrzuED5nQvkhAAoJEIExtcQpvGagugcIAJd5
+ EYe6KM6Y6RvI6TvHp+QgbU5dxvjqSiSvam0Ms3QrLidCtantcGT2Wz/2PlbZqkoJxMQc40rb
+ fXa4xQSvJYj0GWpadrDJUvUu3LEsunDCxdWrmbmwGRKqZraV2oG7YEddmDqOe0Xm/NxeSobc
+ MIlnaE6V0U8f5zNHB7Y46yJjjYT/Ds1TJo3pvwevDWPvv6rdBeV07D9s43frUS6xYd1uFxHC
+ 7dZYWJjZmyUf5evr1W1gCgwLXG0PEi9n3qmz1lelQ8lSocmvxBKtMbX/OKhAfuP/iIwnTsww
+ 95A2SaPiQZA51NywV8OFgsN0ITl2PlZ4Tp9hHERDe6nQCsNI/Us=
+In-Reply-To: <Zxop6E83YId0et5o@bogus>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/24/24 04:05, Sudeep Holla wrote:
+> Gentle ping! Not sure if my earlier email got into spam or didn't land
+> in lore/ML. Just thought of checking again.
 
---t9hji7BwtIhalldR
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+You did not land in spam, just being quite busy.
 
-On Thu, Oct 24, 2024 at 09:43:02AM -0500, David Lechner wrote:
-> >>>
-> >> thanks, could you maybe have a look if it's ok now ?
-> >> (maxItems not needed for a const list)
-> >>
-> >> =A0 clocks:
-> >> =A0=A0=A0 minItems: 1
-> >> =A0=A0=A0 maxItems: 2
-> >>
-> >> =A0 clock-names:
-> >> =A0=A0=A0 items:
-> >> =A0=A0=A0=A0=A0 - const: s_axi_aclk
-> >> =A0=A0=A0=A0=A0 - const: dac_clk
-> >> =A0=A0=A0 minItems: 1
-> >>
-> >> =A0 '#io-backend-cells':
-> >> =A0=A0=A0 const: 0
-> >>
-> >> required:
-> >> =A0 - compatible
-> >> =A0 - dmas
-> >> =A0 - reg
-> >> =A0 - clocks
-> >>
-> >> allOf:
-> >> =A0 - if:
-> >> =A0=A0=A0=A0=A0 properties:
-> >> =A0=A0=A0=A0=A0=A0=A0 compatible:
-> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 contains:
-> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0=A0=A0 const: adi,axi-ad3552r
-> >> =A0=A0=A0 then:
-> >> =A0=A0=A0=A0=A0 $ref: /schemas/spi/spi-controller.yaml#
-> >> =A0=A0=A0=A0=A0 properties:
-> >> =A0=A0=A0=A0=A0=A0=A0 clocks:
-> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 minItems: 2
-> >> =A0=A0=A0=A0=A0=A0=A0 clock-names:
-> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 minItems: 2
->=20
->=20
-> For this one, I think we also need:
->=20
->          required:
->            - clock-names
+> 
+> On Fri, Oct 18, 2024 at 01:57:09PM +0100, Sudeep Holla wrote:
+>> On Tue, Sep 03, 2024 at 04:40:00PM +0100, Sudeep Holla wrote:
+>>> On Tue, Aug 27, 2024 at 11:24:50AM -0700, Florian Fainelli wrote:
+>>>> Some shared memory areas might only support a certain access width,
+>>>> such as 32-bit, which memcpy_{from,to}_io() does not adhere to at least
+>>>> on ARM64 by making both 8-bit and 64-bit accesses to such memory.
+>>>>
+>>>> Update the shmem layer to support reading from and writing to such
+>>>> shared memory area using the specified I/O width in the Device Tree. The
+>>>> various transport layers making use of the shmem.c code are updated
+>>>> accordingly to pass the I/O accessors that they store.
+>>>>
+>>>
+>>> This looks good to me now, much simpler. I will push this to -next soon,
+>>> but it won't be for v6.12. I have already sent PR for that. I want this
+>>> to be in -next for longer just to see if anyone has any comments and
+>>> doesn't break any platform(which it shouldn't anyways).
+>>>
+>>> Just hoping if anyone looks at it and have feedback once it is in -next.
+>>> I will apply formally at v6.12-rc1 and report back if no one complains
+>>> until then.
+>>>
+>>
+>> Hi Florian,
+>>
+>> Just thought I will check with you if the content is -next are fine as I now
+>> recall I did the rebase as this patch was original posted before the rework
+>> of transport as modules were merged. Please confirm if you are happy with the
+>> rebase as you see in -next. I also had to rebase it on recent fixes that
+>> Justin added as there were trivial conflicts.
+>>
+>> Another thing I wanted to check is if [1] series has any impact on this.
+>> IIUC no, but it would be good to give a go in terms of testing just in case
+>> that as well lands in -next.
 
-Ye, Angelo had that in the version posted in response to the driver
-patch.
-This looks ~correct.
-
->=20
-> >> =A0=A0=A0 else:
-> >> =A0=A0=A0=A0=A0 properties:
-> >> =A0=A0=A0=A0=A0=A0=A0 clocks:
-> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 maxItems: 1
-> >> =A0=A0=A0=A0=A0=A0=A0 clock-names:
-> >> =A0=A0=A0=A0=A0=A0=A0=A0=A0 maxItems: 1
-> >=20
-> > I guess in this case it could even be clock-names: false. One does not =
-make much
-> > sense.
-
-And since it is not mandatory, doubly useless.
-
---t9hji7BwtIhalldR
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxp5nQAKCRB4tDGHoIJi
-0tsJAQDjmQdku08Vcilxbr3ECLgwI46Cp1TydiA9bGCvurLhvQD7BWBqCK9SqYs6
-iIpELbf7/6j98iJujKA9yhOgsUzTkQU=
-=Wj36
------END PGP SIGNATURE-----
-
---t9hji7BwtIhalldR--
+linux-next as of today (2024-10-24) still works good on the affected 
+platform, thanks for asking!
+-- 
+Florian
 
