@@ -1,73 +1,73 @@
-Return-Path: <linux-kernel+bounces-379735-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379736-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 28A5C9AE2FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:48:09 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5EF819AE2FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:48:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D5CAD2841B6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:48:07 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D6A7F1F230DD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:48:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5F821C75EB;
-	Thu, 24 Oct 2024 10:48:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 456551C4A23;
+	Thu, 24 Oct 2024 10:48:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fJ6sZHMB"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="nGmtz81Y"
+Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DD15F148838;
-	Thu, 24 Oct 2024 10:47:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84E65148838;
+	Thu, 24 Oct 2024 10:48:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729766881; cv=none; b=DDHtjP0gStRlks7Q8HeaZdz6+Ao/cJl1zsDaHiGr7KCBFcZHj4nwTilvOG/Jkq/nxjiOFcZzeAMk3jjdso5zsTPcVWzuEuO0/eZchaoFGnH6sROy2C0wke7VPeyimQivoD5tZsx8pkKnusPP9DAxuXYwVSOb1Nd9GaKY67rjyBw=
+	t=1729766919; cv=none; b=u9DETTxUJg7c5jy7hGKL/zT85/nZy3Y9tAOxwwMsIFF+EMd0ItVwubfCs6e6C3Jw6GoujEc6acGW1yLwUYsi1oyJUY3XGWYD4UnP/6+m/0oMfCCf1ny9hBCnRG/My/V0upuxcsF2NuFEkrkZ0K70J4kNLNedRGBDDOkmXKI3nJU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729766881; c=relaxed/simple;
-	bh=Fa4ZeugCZulqq3yRjA8uOwaDIqdku/njHsQsYlodq+g=;
+	s=arc-20240116; t=1729766919; c=relaxed/simple;
+	bh=eTM8WR4ymvU335IiWajnHw49skXLQTliF7Gq7kKFeyg=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=jIFCFiqcUY+gejHeH0EZcEgzIGpUF8b8TK5HWYhHrWYaFWUAIIAuGHGFD9+gCDQS/6TVWrRwFmEmCpj8ES6UzLyKKOmeW/A5hcxS/MKHLMa0YLNO/K5KpUjRasJYUJmU2DlZDT1S1VM+mNggeMuuqSXsRaCvJAz/SJxNjfaagqw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fJ6sZHMB; arc=none smtp.client-ip=209.85.167.48
+	 In-Reply-To:Content-Type; b=BMYvekq07xeBeN5E8QyB2cPJCY+wnXHBsSZqoyYHfRULfOKxwEyeP1vBDhZYekyWHTEFWiGj74LVbdZTF2dVkKe73aboaAxqOpqIM9+il87SYMWaQh68ClX5/AJ/nICgqVVV+AklhEB/1cmJX6lHdbNirGBoCJ6S9jNAwe7hMsI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=nGmtz81Y; arc=none smtp.client-ip=209.85.218.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so1259087e87.2;
-        Thu, 24 Oct 2024 03:47:58 -0700 (PDT)
+Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a99f646ff1bso95618566b.2;
+        Thu, 24 Oct 2024 03:48:37 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729766877; x=1730371677; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=gmail.com; s=20230601; t=1729766916; x=1730371716; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=V3DKzoGRNNveCs6SOsESX4/t1nglUdmun8SVRIZGpys=;
-        b=fJ6sZHMB0hd0b1ivbcbhhiELok3748GNQx+bu5c4hc8ru0gms2Z2cLtrZFgrNfIaPz
-         DRpxWa/0iuoAJ15slMkSthHIt0kLBNAB73gAC0WXxFjfEx6hL5eHJ+RmgoAEyJoRa8iD
-         m2X9YctZbn4SoGdRyFMmKbQfHumZ3Oq2GHBcZ3zLG0oFYtSeyd8Ba9ZWbIW4ouKxPMN3
-         cE8tarKNZZneM+zb2yVzCDBcX39eHz+He+lZLdKKR5mw1TzL3QuSnMDCZEJ85vYNyfjX
-         hirbiyb4U9nxXX3Xir7GHXUKK6kuLlxKzF4H80cbzU9tGiULf+EXhVDBuQZpaBnYCFLr
-         z3aQ==
+        bh=2/W3bsSjAEjptFzOg30lRcHCSqSJmRxjkJmuxoViKng=;
+        b=nGmtz81YoW92SWRRXZ2otWgVZDts9eXYCGvq5mtLraawG6Z0Y6DWvQ2MOSHZYnFm5C
+         MPFihkzXkIExQz8Zet4a7q5Cx0V+iCRJO22k4Ls+S3/HkVxaMZNRZ4ogB0QnkXxsuCAU
+         lzjBwxlS15DLGmKqJPp+yJwsq9m/3Qc6NDyW9dyL1ulIADBhWKU2iovlkcUfJe3t4Klw
+         wHEFTLHTmpLAUDr/fevawXITDO9FDG88klDNHYyqd3Tg+6rITjjWkCXZX+6lqwzUHDin
+         8Lt3x4/dXLbQVx0rCtNiRAko4oxir/x4ct9YCHDaZS1GmIE0MtaG3Brl30XgcQFxYoCP
+         PgEQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729766877; x=1730371677;
-        h=content-transfer-encoding:in-reply-to:from:content-language
+        d=1e100.net; s=20230601; t=1729766916; x=1730371716;
+        h=content-transfer-encoding:in-reply-to:content-language:from
          :references:cc:to:subject:user-agent:mime-version:date:message-id
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=V3DKzoGRNNveCs6SOsESX4/t1nglUdmun8SVRIZGpys=;
-        b=lQVe6SmYdzl4IiqjCoz9gl6EgFIYXVCyr5XXwMy9nuS2ZbbB+8gCK/BbgV3OZ7cvJL
-         7Z3xE4K4HZUHj2NWzf6/CTzLqqD6BG6/jQhh5LFpI9EpDuRju1HEg4zsdNFMtuJrvh38
-         TtY7pFmKqB6WvaellZQZrSCIyjsyvba0xHjhSiJihDxjEnSnk73MAybvROVdcWl4/LVI
-         fwF5lV5ZVErp6f7wra856xhTqJ/T1LJSkgoYOtEU9Dvyl4eJ+K0NP5A6tph+UVbfWSd5
-         5uGDdMzjxUjeiV6z6IwL6FJTLqokBOyyxyYrU7Ttzs4kOCrtksrZs/Q/yZRdQWPFg7vs
-         fSlA==
-X-Forwarded-Encrypted: i=1; AJvYcCWYIzOq2/hav5roURogGXsugD1Gj7TnvQvme1zqi3arFCH1iJieMwI2HkIoVQXgf4Me1lBMVHxiroYYTzY=@vger.kernel.org, AJvYcCWhRvj6yn+SXxots1gLQMyHhN2z5MiOjC8i5Mt6ivTv1y6+3JI1UITA8N6rpICzoGTfoZezECa3Wa/KCThA@vger.kernel.org, AJvYcCWwi6DHtKfpxLg7T74J5hxhwqIo2hleOjEj4lBJAp3osKm6cbRtaqsdqH1jJNsq8s6G04g5LZ3oKWCi@vger.kernel.org, AJvYcCX5Z2cARk45Y8EjtM8pAqX1pKpu26RqznfcgnU5XH7RY1S64FZOqYIjF1nqkvNMakP2p3sNeVb9gVSiNkrHBRC/Pg==@vger.kernel.org
-X-Gm-Message-State: AOJu0YwIguarCUq0QvhBcn25SmvVUqYnncaMdw4Dm0nJ5qIXbMDu1Puu
-	8yJ/0haXm9aqBjNEkfzth+Jrdb8WGZdHsoWpowIZhiwpoT8mW1Zc
-X-Google-Smtp-Source: AGHT+IHHCGUunbU1WBMJq+sAZx9YzaIXr41UGHDPNjS2vbTVWpJJQid4DmPQCcWS5iyhHtNJjwXglg==
-X-Received: by 2002:a05:6512:4489:b0:53b:1f59:dc59 with SMTP id 2adb3069b0e04-53b1f59de4cmr4200149e87.6.1729766876589;
-        Thu, 24 Oct 2024 03:47:56 -0700 (PDT)
-Received: from [192.168.4.167] ([92.120.5.12])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91306fc0sm600659666b.91.2024.10.24.03.47.54
+        bh=2/W3bsSjAEjptFzOg30lRcHCSqSJmRxjkJmuxoViKng=;
+        b=inqEGGNiMiNUxYa84tru7xVsQs6Ttq1JSIvd1zWef+Za1EB4vxYySBQX6/EIjjIppd
+         tjz5Uw3KcylItI4TlNe7j/uB19YkDoLXMsR9uqm1VFiu3elmYxqxsCA92/YlJeFGu02m
+         GAlxkXy7os68BDiNxR9q6oZvMiLFsU6LvwrevutTkkW4aQoAMCdEOAxVgvTUXtRkYkoA
+         kASj25JpSFg4GWIJmId6fpAYBrhIW2Sn39SlQESyIIBl9Vk0LvDVeOXaOMg62LzdbzvQ
+         x37siryhiRmZWDeGL/sNOGUR0RNgLI90B1042l58XQkh+03puOrNWi3EYUgse1+puh2x
+         0gfg==
+X-Forwarded-Encrypted: i=1; AJvYcCW7Atb3m0En1axHFxQZpykd1eHuT4oEHJRxAfvXCtggReyvoLsHTlsmW5gVMyt1HtFbyQOzz4TVLIBH0S0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxMp90iop9rCtp76fOvCJs4DhszbhAm2JuPh+HhyBky2AFHtZoz
+	AHOEpFsWtBLAgkotbjZ6s+5A9pM6RloTCZogz1QN+dD1Pbo1rRez
+X-Google-Smtp-Source: AGHT+IECtgYQoP38ohbf40NHWyudUidNo9gpAKYwjUt7WBrwDUfyOi3o2hAlbXverDz8xCGwqAKm2w==
+X-Received: by 2002:a17:907:7288:b0:a9a:2a56:91e with SMTP id a640c23a62f3a-a9abf84aba4mr659823366b.6.1729766915449;
+        Thu, 24 Oct 2024 03:48:35 -0700 (PDT)
+Received: from ?IPV6:2a01:e11:5400:7400:4be9:6ab9:1062:7d2a? ([2a01:e11:5400:7400:4be9:6ab9:1062:7d2a])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f660dsm599344066b.80.2024.10.24.03.48.32
         (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 03:47:56 -0700 (PDT)
-Message-ID: <8a017e66-6d84-4bdf-8188-9ae3428b6d17@gmail.com>
-Date: Thu, 24 Oct 2024 13:47:53 +0300
+        Thu, 24 Oct 2024 03:48:34 -0700 (PDT)
+Message-ID: <be3e7378-7aec-4ebb-b6e6-e7b824452adb@gmail.com>
+Date: Thu, 24 Oct 2024 12:48:30 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,84 +75,91 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] dt-bindings: remoteproc: fsl,imx-rproc: add new
- compatible
-To: Krzysztof Kozlowski <krzk@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Shawn Guo <shawnguo@kernel.org>, Daniel Baluta <daniel.baluta@nxp.com>,
- Peng Fan <peng.fan@nxp.com>, Mark Brown <broonie@kernel.org>,
- Takashi Iwai <tiwai@suse.com>,
- Kuninori Morimoto <kuninori.morimoto.gx@renesas.com>,
- Bard Liao <yung-chuan.liao@linux.intel.com>,
- Peter Ujfalusi <peter.ujfalusi@linux.intel.com>,
- Jaroslav Kysela <perex@perex.cz>,
- Pierre-Louis Bossart <pierre-louis.bossart@linux.dev>,
- Conor Dooley <conor+dt@kernel.org>,
- Mathieu Poirier <mathieu.poirier@linaro.org>,
- Iuliana Prodan <iuliana.prodan@nxp.com>, linux-remoteproc@vger.kernel.org,
- devicetree@vger.kernel.org, imx@lists.linux.dev,
- linux-arm-kernel@lists.infradead.org, linux-sound@vger.kernel.org,
- sound-open-firmware@alsa-project.org, linux-kernel@vger.kernel.org
-References: <20241023162114.3354-1-laurentiumihalcea111@gmail.com>
- <20241023162114.3354-2-laurentiumihalcea111@gmail.com>
- <ub7yylef6qyztjtg3pciamg6jjznxh3ydlqsdcg2xcoxqngpi4@j5jlex4qukyz>
-Content-Language: en-US
-From: Laurentiu Mihalcea <laurentiumihalcea111@gmail.com>
-In-Reply-To: <ub7yylef6qyztjtg3pciamg6jjznxh3ydlqsdcg2xcoxqngpi4@j5jlex4qukyz>
-Content-Type: text/plain; charset=UTF-8
+Subject: Re: [PATCH] bcachefs: Fix invalid shift in validate_sb_layout()
+To: kent.overstreet@linux.dev
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org,
+ syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+References: <20241023213043.47846-2-gianf.trad@gmail.com>
+From: Gianfranco Trad <gianf.trad@gmail.com>
+Content-Language: en-US, it
+In-Reply-To: <20241023213043.47846-2-gianf.trad@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 7bit
 
+On 23/10/24 23:30, Gianfranco Trad wrote:
+> Add check on layout->sb_max_size_bits against BCH_SB_LAYOUT_SIZE_BITS_MAX
+> to prevent UBSAN shift-out-of-bounds in validate_sb_layout().
+> 
+> Reported-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+> Closes: https://syzkaller.appspot.com/bug?extid=089fad5a3a5e77825426
+> Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+> Tested-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+> ---
+>   fs/bcachefs/errcode.h  | 1 +
+>   fs/bcachefs/super-io.c | 5 +++++
+>   2 files changed, 6 insertions(+)
+> 
+> diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
+> index 649263516ab1..b6cbd716000b 100644
+> --- a/fs/bcachefs/errcode.h
+> +++ b/fs/bcachefs/errcode.h
+> @@ -222,6 +222,7 @@
+>   	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_type)			\
+>   	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_nr_superblocks)	\
+>   	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_superblocks_overlap)	\
+> +	x(BCH_ERR_invalid_sb_layout,    invalid_sb_layout_sb_max_size_bits)     \
+>   	x(BCH_ERR_invalid_sb,		invalid_sb_members_missing)		\
+>   	x(BCH_ERR_invalid_sb,		invalid_sb_members)			\
+>   	x(BCH_ERR_invalid_sb,		invalid_sb_disk_groups)			\
+> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+> index ce7410d72089..44d0ac9b00dd 100644
+> --- a/fs/bcachefs/super-io.c
+> +++ b/fs/bcachefs/super-io.c
+> @@ -287,6 +287,11 @@ static int validate_sb_layout(struct bch_sb_layout *layout, struct printbuf *out
+>   		return -BCH_ERR_invalid_sb_layout_nr_superblocks;
+>   	}
+>   
+> +	if (layout->sb_max_size_bits > BCH_SB_LAYOUT_SIZE_BITS_MAX) {
+> +		prt_printf(out, "Invalid superblock layout: max_size_bits too high");
+> +		return -BCH_ERR_invalid_sb_layout_sb_max_size_bits;
+> +	}
+> +
+>   	max_sectors = 1 << layout->sb_max_size_bits;
+>   
+>   	prev_offset = le64_to_cpu(layout->sb_offset[0]);
+
+Wondering if this other patch might be considered more correct to 
+prevent shift oob, given also [0]:
+
+diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+index ce7410d72089..428172897501 100644
+--- a/fs/bcachefs/super-io.c
++++ b/fs/bcachefs/super-io.c
+@@ -287,7 +287,7 @@ static int validate_sb_layout(struct bch_sb_layout 
+*layout, struct printbuf *out
+  		return -BCH_ERR_invalid_sb_layout_nr_superblocks;
+  	}
+
+-	max_sectors = 1 << layout->sb_max_size_bits;
++	max_sectors = 1 << min(BCH_SB_LAYOUT_SIZE_BITS_MAX, 
+layout->sb_max_size_bits);
+
+  	prev_offset = le64_to_cpu(layout->sb_offset[0]);
+
+Also this patch was already tested by syzbot [1]
+
+[0] 71dac2482ad3c8d4a8b8998a96751f009bad895f ("bcachefs: 
+BCH_SB_LAYOUT_SIZE_BITS_MAX")
+[1] https://syzkaller.appspot.com/x/log.txt?x=1640b640580000
+
+Thanks for your time,
+
+-- Gian
 
 
-On 10/24/2024 10:45 AM, Krzysztof Kozlowski wrote:
-> On Wed, Oct 23, 2024 at 12:21:11PM -0400, Laurentiu Mihalcea wrote:
->> From: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->>
->> Add new compatible for imx95's CM7 with SOF.
->>
->> Signed-off-by: Laurentiu Mihalcea <laurentiu.mihalcea@nxp.com>
->> ---
->>  .../bindings/remoteproc/fsl,imx-rproc.yaml    | 58 +++++++++++++++++--
->>  1 file changed, 53 insertions(+), 5 deletions(-)
->>
->> diff --git a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
->> index 57d75acb0b5e..ab0d8e017965 100644
->> --- a/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
->> +++ b/Documentation/devicetree/bindings/remoteproc/fsl,imx-rproc.yaml
->> @@ -28,6 +28,15 @@ properties:
->>        - fsl,imx8qxp-cm4
->>        - fsl,imx8ulp-cm33
->>        - fsl,imx93-cm33
->> +      - fsl,imx95-cm7-sof
->> +
->> +  reg:
->> +    maxItems: 2
->> +
->> +  reg-names:
->> +    items:
->> +      - const: dram
->> +      - const: mailbox
-> That's quite different programming model. Are you sure these are devices
-> from similar class/type?
-Yep, these are all Cortex-M cores. It's just that their usage differs quite a lot.
->
-> Your big if:then: block suggests this could be separate binding.
-Ideally I would have wanted to place the compatible inside dsp/fsl,dsp.yaml as the
-programming model would have been more similar.
 
-Unfortunately, these are different physical devices (HiFi DSP core vs CM core) even
-though they're all used for DSP purposes so I'm not sure this is entirely appropriate.
 
-Alternatively, if you think grouping these devices (i.e: those represented by the -dsp compatibles
-from fsl,dsp and the one represented by the compatible introduced here) under the same binding
-is alright we can just branch off from fsl,dsp and fsl,imx-rproc and create a new binding for
-these devices. I'm expecting this to be relatively clean as they have the same programming
-model.
-
-Let me know your thoughts on this.
->
-> Best regards,
-> Krzysztof
->
 
 
