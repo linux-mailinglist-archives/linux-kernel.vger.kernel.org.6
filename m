@@ -1,135 +1,109 @@
-Return-Path: <linux-kernel+bounces-379913-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379915-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id E83E19AE5C7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:13:00 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6ED099AE5D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:16:35 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3692841FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:12:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2EE86286750
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:16:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7313B1D89ED;
-	Thu, 24 Oct 2024 13:12:53 +0000 (UTC)
-Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 45B411DE2C5;
+	Thu, 24 Oct 2024 13:16:27 +0000 (UTC)
+Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DD914A0AA;
-	Thu, 24 Oct 2024 13:12:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 076F81D9A45;
+	Thu, 24 Oct 2024 13:16:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775573; cv=none; b=utXW0hEfvPG69oFcTyMb7tys4+ISMTrw3a8LiLcoYQjb/LAO5tuc5wG8YWvrmkwDtpDElgx/XYTvl15hD5hpt2dKNZ9DdfjvguM8zxT8n5wtjlgN6t07oeSYWloDbQKXiN5DejFm1stMPduohtarf7abrtjhzupy3mVfdlPYbmM=
+	t=1729775784; cv=none; b=jNLQGOCq5P6doy9SqHG6vxvRdljGaQPKqJQdUSCNKO7zi/A1QMtQ0f0ucEAJFhRq8BiAbqhi9YQRvrJk+TQSkL1FgFMtuTdqjZeNyn6cdK1DBjylR+LY7F7XZ560nVax/hRWISMRgsulKIGadwCmYqMAy9APprKpswe0xUMekSA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775573; c=relaxed/simple;
-	bh=8l3sQCRA1mxKLjgOc2P2jT7SosiRDno8PcJZwww8RT0=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=C6vldgzt3Xe31nAUEuHDMtJ352nq+h/ruJvKBI1XgKRncz4Ffe+efK3SiTExK9klExRVyV15Wi0ApFyhI8F24SNkaGj/nN/NyaIpgIoxXFDYPpMBpXPP3g662x5BNWylEC2nffPiwoOq/FK4BsrfnZigZjUZ5XoQqbwnyhR6DyQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.18.186.31])
-	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZ5sX60Kdz6D8vG;
-	Thu, 24 Oct 2024 21:11:44 +0800 (CST)
-Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
-	by mail.maildlp.com (Postfix) with ESMTPS id B8C7714058E;
-	Thu, 24 Oct 2024 21:12:45 +0800 (CST)
-Received: from frapeml500008.china.huawei.com (7.182.85.71) by
- frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Oct 2024 15:12:45 +0200
-Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
- frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
- Thu, 24 Oct 2024 15:12:45 +0200
-From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
-To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
-	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
- Cameron" <jonathan.cameron@huawei.com>
-CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
-	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
-	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
-Subject: RE: [PATCH v10 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
- migration driver
-Thread-Topic: [PATCH v10 3/4] hisi_acc_vfio_pci: register debugfs for
- hisilicon migration driver
-Thread-Index: AQHbH2o4p0+8feS/EU+UAnkXuipALLKV7BAg
-Date: Thu, 24 Oct 2024 13:12:45 +0000
-Message-ID: <bedd3623de984a6fafd24a2c85f6c05e@huawei.com>
-References: <20241016012308.14108-1-liulongfang@huawei.com>
- <20241016012308.14108-4-liulongfang@huawei.com>
-In-Reply-To: <20241016012308.14108-4-liulongfang@huawei.com>
-Accept-Language: en-GB, en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	s=arc-20240116; t=1729775784; c=relaxed/simple;
+	bh=evmzszi6icGYXHFQFK3hjxRpWK7BsMcnQobZ22/fZiI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=VX3nbDVPQHKWcfwNCTGldJVqMUIxFLqnFCAPBs8/JG7BvKkmsIqzoAvwnFZus87haLhb2/oCMjub/rriDFK7cl3f1X9IiV7En6B3iF6fMMPW5Opx1CB/53Qk5/k5x3J0WGz1O7mhXEI257HZK2QglmrjaM49YRACxLzBP2dsaRQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.93.142])
+	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ5yG6Lqfz4f3jLy;
+	Thu, 24 Oct 2024 21:15:50 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 5B7D71A018D;
+	Thu, 24 Oct 2024 21:16:08 +0800 (CST)
+Received: from huaweicloud.com (unknown [10.175.104.67])
+	by APP4 (Coremail) with SMTP id gCh0CgCXysaWSBpnPGb6Ew--.10198S4;
+	Thu, 24 Oct 2024 21:16:08 +0800 (CST)
+From: Yu Kuai <yukuai1@huaweicloud.com>
+To: song@kernel.org
+Cc: linux-raid@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	yukuai3@huawei.com,
+	yukuai1@huaweicloud.com,
+	yi.zhang@huawei.com,
+	yangerkun@huawei.com
+Subject: [PATCH RFC 0/4] md/md-bitmap: support to build md-bitmap as kernel module
+Date: Thu, 24 Oct 2024 21:13:21 +0800
+Message-Id: <20241024131325.2250880-1-yukuai1@huaweicloud.com>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgCXysaWSBpnPGb6Ew--.10198S4
+X-Coremail-Antispam: 1UD129KBjvdXoWrKryrKw45ur4fCFWftw17GFg_yoWDKFbE9w
+	1vgFyftFyUGFy3AFy3Xr4Ivryjya1Dua4vqa1IgFWfZry3Z347Gr4ku3s2q3WrZFyUAFn8
+	JryUtw4xAr4YgjkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
+	9fnUUIcSsGvfJTRUUUb4xFF20E14v26r4j6ryUM7CY07I20VC2zVCF04k26cxKx2IYs7xG
+	6rWj6s0DM7CIcVAFz4kK6r1j6r18M28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8w
+	A2z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_Gr1j
+	6F4UJwA2z4x0Y4vEx4A2jsIE14v26rxl6s0DM28EF7xvwVC2z280aVCY1x0267AKxVW0oV
+	Cq3wAS0I0E0xvYzxvE52x082IY62kv0487Mc02F40EFcxC0VAKzVAqx4xG6I80ewAv7VC0
+	I7IYx2IY67AKxVWUJVWUGwAv7VC2z280aVAFwI0_Jr0_Gr1lOx8S6xCaFVCjc4AY6r1j6r
+	4UM4x0Y48IcxkI7VAKI48JM4x0x7Aq67IIx4CEVc8vx2IErcIFxwCY1x0262kKe7AKxVWU
+	AVWUtwCF04k20xvY0x0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14
+	v26r1j6r18MI8I3I0E7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_JF0_Jw1lIxkG
+	c2Ij64vIr41lIxAIcVC0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI
+	0_Jr0_Gr1lIxAIcVCF04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4U
+	MIIF0xvEx4A2jsIEc7CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUBVbkUUU
+	UU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
+From: Yu Kuai <yukuai3@huawei.com>
 
+Now that all implementations are internal, it's sensible to build it as
+kernel module now.
 
-> -----Original Message-----
-> From: liulongfang <liulongfang@huawei.com>
-> Sent: Wednesday, October 16, 2024 2:23 AM
-> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
-> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
-> <jonathan.cameron@huawei.com>
-> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
-> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
-> Subject: [PATCH v10 3/4] hisi_acc_vfio_pci: register debugfs for hisilico=
-n
-> migration driver
+Currently, if md-bitmap is build as module and the module is not loaded,
+creating new array will try to load the module, regardless that bitmap
+is used or not. There are still lots of cleanups to prevent
+deferencing "mddev->bitmap_ops" for the array without bitmap.
 
-[..]
-=20
-> @@ -1342,6 +1538,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
-> vfio_device *core_vdev)
->  	hisi_acc_vdev->pf_qm =3D pf_qm;
->  	hisi_acc_vdev->vf_dev =3D pdev;
->  	mutex_init(&hisi_acc_vdev->state_mutex);
-> +	mutex_init(&hisi_acc_vdev->open_mutex);
->=20
->  	core_vdev->migration_flags =3D VFIO_MIGRATION_STOP_COPY |
-> VFIO_MIGRATION_PRE_COPY;
->  	core_vdev->mig_ops =3D &hisi_acc_vfio_pci_migrn_state_ops;
-> @@ -1413,6 +1610,9 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev
-> *pdev, const struct pci_device
->  	ret =3D vfio_pci_core_register_device(&hisi_acc_vdev->core_device);
->  	if (ret)
->  		goto out_put_vdev;
-> +
-> +	if (ops =3D=3D &hisi_acc_vfio_pci_migrn_ops)
-> +		hisi_acc_vfio_debug_init(hisi_acc_vdev);
+Yu Kuai (4):
+  md/md-bitmap: remove the parameter 'init' for bitmap_ops->resize()
+  md/md-bitmap: merge md_bitmap_group into bitmap_operations
+  md: export some helpers
+  md/md-bitmap: support to build md-bitmap as kernel module
 
-As commented earlier, the ops check can be moved to the debug_init() functi=
-on=20
-and you can remove ops check for the debug_exit() below. You may have to
-rearrange the functions to avoid the compiler error you mentioned in previo=
-us
-version to do so.
+ drivers/md/Kconfig      |  15 +++++
+ drivers/md/Makefile     |   4 +-
+ drivers/md/dm-raid.c    |   2 +-
+ drivers/md/md-bitmap.c  |  38 +++++++++++--
+ drivers/md/md-bitmap.h  |  13 +++--
+ drivers/md/md-cluster.c |   2 +-
+ drivers/md/md.c         | 118 +++++++++++++++++++++++++++++++++-------
+ drivers/md/md.h         |  12 +++-
+ drivers/md/raid1.c      |   2 +-
+ drivers/md/raid10.c     |   8 +--
+ drivers/md/raid5.c      |   2 +-
+ 11 files changed, 172 insertions(+), 44 deletions(-)
 
->  	return 0;
->=20
->  out_put_vdev:
-> @@ -1423,8 +1623,11 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev
-> *pdev, const struct pci_device
->  static void hisi_acc_vfio_pci_remove(struct pci_dev *pdev)
->  {
->  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
-> hisi_acc_drvdata(pdev);
-> +	struct vfio_device *vdev =3D &hisi_acc_vdev->core_device.vdev;
->=20
->  	vfio_pci_core_unregister_device(&hisi_acc_vdev->core_device);
-> +	if (vdev->ops =3D=3D &hisi_acc_vfio_pci_migrn_ops)
-> +		hisi_acc_vf_debugfs_exit(hisi_acc_vdev);
+-- 
+2.39.2
 
-As mentioned above remove the ops check here.
-
-With the above ones checked and  fixed,
-Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 
