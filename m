@@ -1,139 +1,102 @@
-Return-Path: <linux-kernel+bounces-379278-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379279-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3EF839ADC6C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:43:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1C5919ADC6F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:44:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C590D1F21BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:43:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CFCBE2858B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:44:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62BF9189BA8;
-	Thu, 24 Oct 2024 06:42:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69ED1189916;
+	Thu, 24 Oct 2024 06:44:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="Cljcn1xo"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="QkmJaKSS"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DCAB86CDBA;
-	Thu, 24 Oct 2024 06:42:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DBE7D6CDBA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:43:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729752174; cv=none; b=WDo1gfSQlI6ZpPkr0/X7Gq5F3WWPzxihP5CrD9jiE2m9mS5IWWotP/5w98ZDSzqR7QfHec2mpnbRiSIhLqsvVpKLn3Hh76bgmvoUPEZz7t2Itte6RcXf4JD7YwNDf7iPudHaCDw3B3KS05Yf50nEwbRrsRkg08WjYffQfIPjaB0=
+	t=1729752241; cv=none; b=AQ8Bpc9LcwA3Pkp0EetNumEwegpOnOp8OL47VKmsn2q7AJc3zI0IuR2VEgvCBSbQhEv5NHVEY5vzVjPWzpiVAlnQMN8VuJ9sllF/leKfqeqLmBhPi4uYz8MYeameXlPaqsSzxxU83rxjkGK4m9YWFK1fnue3j4e0VVPg6ks1gmA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729752174; c=relaxed/simple;
-	bh=AE41odrvovNQUesHpRK1dP38ZopOUuUByGzXS6QtEiw=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=qqTqsDl3g8cwIVNEc1By+jx0JPWqTLuM7TYyyQrsEg2HZyf/Oxj5o4z8ThKrDBw0QukCsK4n3GV+T1rENbvIlBY1XvtChHkIjTBi2+yFuOhckmJr4vOnMpfvKAlPctfMdi164fe4eY5Id15KiETjvdGVyxyzb6+Ctiuw2j5jy7w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=Cljcn1xo; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279862.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NLlpbi020224;
-	Thu, 24 Oct 2024 06:42:44 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	MOui3FkqthLLxDG8jF1710A76nx3b/xntWLvkRqfo2o=; b=Cljcn1xoP8JShVp3
-	AazyhMbIbtcyGGi2TV15QQFaSwqoUitCmzV/gcoXNcch1hiBZqnCgt0x8nMCBpm1
-	XgmvibGoN8b3HS4+WN/fBzL0/7Tr3Vq76G3wX4RvcUPwkxblFu72gY7OTzlHny75
-	f1W1gDAEXsNSVZcPdRU0paiAb3lja2IgTDb3/z7yQWjN4x6ZqdboSqy1GSBnPjkn
-	wZB3VqzfXz0TZlOeQUDWx2hcCRPyAOYX7DKKwypg68CRw3elD1+Bt5iV7z0rtTpi
-	0ZfO/6aOcvuKhMuN1MJTkIIxdCzfkYTprKKXN8TkTnaKdpiagmBg4pr/+IeWQmvs
-	5hu/gA==
-Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3xmr0m-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 06:42:44 +0000 (GMT)
-Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
-	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49O6geY0026399
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 06:42:40 GMT
-Received: from [10.239.29.179] (10.80.80.8) by nasanex01b.na.qualcomm.com
- (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Wed, 23 Oct
- 2024 23:42:35 -0700
-Message-ID: <91395c5e-22a0-4117-a4b5-4985284289ab@quicinc.com>
-Date: Thu, 24 Oct 2024 14:42:32 +0800
+	s=arc-20240116; t=1729752241; c=relaxed/simple;
+	bh=7qwxY+MjcwxNSeEVG+Jw2X+n5rwsZ26Qy/PSYiV69XE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=bYZTxJEKvev+hAId0l8E3pGEymCm0C+/e0ejefmSbFCOQXG+IVbaz5zBXwnsS8ZHcy37rkiqRn95AV9n1GIPKhtYfjcUllSddKyTzFb1uXuaLgvMqqBd/88WsLxkmZ9WRDb8srho2XY74aEWDM8GvzGbIelnZUlEp7vPoizu5qI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=QkmJaKSS; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729752238;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=wZTcf9FaJs3vSECpIGbKVXH4nMxTQvdG2R4odgw5TYI=;
+	b=QkmJaKSSNPzcwjA9uECFZ7jOiiEWc1d+c+XMxCGAJp+fLYM2OpkJeKJp4zOY1BaXXLjEg7
+	nk6Wt7rATl79UCTPe2VEu471W503KiFyWJqOA5F1NHNZ+oG9C4zelh/SknMpzDsb7G6szU
+	SyE5HgHuOILAggcQ1VVWCSle7jryBDY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
+ (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
+ relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-227-67DGZ8xSN-S6Oxh1Q8U5Jw-1; Thu,
+ 24 Oct 2024 02:43:52 -0400
+X-MC-Unique: 67DGZ8xSN-S6Oxh1Q8U5Jw-1
+Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D595E19560B5;
+	Thu, 24 Oct 2024 06:43:50 +0000 (UTC)
+Received: from fedora (unknown [10.72.116.150])
+	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id D05B21956056;
+	Thu, 24 Oct 2024 06:43:43 +0000 (UTC)
+Date: Thu, 24 Oct 2024 14:43:38 +0800
+From: Ming Lei <ming.lei@redhat.com>
+To: Christoph Hellwig <hch@lst.de>
+Cc: Jens Axboe <axboe@kernel.dk>, linux-block@vger.kernel.org,
+	Peter Zijlstra <peterz@infradead.org>,
+	Waiman Long <longman@redhat.com>, Boqun Feng <boqun.feng@gmail.com>,
+	Ingo Molnar <mingo@redhat.com>, Will Deacon <will@kernel.org>,
+	linux-kernel@vger.kernel.org, Bart Van Assche <bvanassche@acm.org>
+Subject: Re: [PATCH 2/3] nvme: core: switch to non_owner variant of
+ start_freeze/unfreeze queue
+Message-ID: <Zxnsmsunc9848hkK@fedora>
+References: <20241023095438.3451156-1-ming.lei@redhat.com>
+ <20241023095438.3451156-3-ming.lei@redhat.com>
+ <20241023122115.GB28777@lst.de>
+ <ZxmmPKFksWc5LLlc@fedora>
+ <20241024050053.GA30659@lst.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v7 6/7] PCI: qcom: Disable ASPM L0s and remove BDF2SID
- mapping config for X1E80100 SoC
-To: Johan Hovold <johan@kernel.org>
-CC: <manivannan.sadhasivam@linaro.org>, <vkoul@kernel.org>,
-        <kishon@kernel.org>, <robh@kernel.org>, <andersson@kernel.org>,
-        <konradybcio@kernel.org>, <krzk+dt@kernel.org>, <conor+dt@kernel.org>,
-        <mturquette@baylibre.com>, <sboyd@kernel.org>, <abel.vesa@linaro.org>,
-        <quic_msarkar@quicinc.com>, <quic_devipriy@quicinc.com>,
-        <dmitry.baryshkov@linaro.org>, <kw@linux.com>, <lpieralisi@kernel.org>,
-        <neil.armstrong@linaro.org>, <linux-arm-msm@vger.kernel.org>,
-        <linux-phy@lists.infradead.org>, <linux-kernel@vger.kernel.org>,
-        <linux-pci@vger.kernel.org>, <devicetree@vger.kernel.org>,
-        <linux-clk@vger.kernel.org>, <johan+linaro@kernel.org>,
-        <stable@vger.kernel.org>
-References: <20241017030412.265000-1-quic_qianyu@quicinc.com>
- <20241017030412.265000-7-quic_qianyu@quicinc.com>
- <ZxJrUQDGMDw3wI3Q@hovoldconsulting.com>
-Content-Language: en-US
-From: Qiang Yu <quic_qianyu@quicinc.com>
-In-Reply-To: <ZxJrUQDGMDw3wI3Q@hovoldconsulting.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nasanex01b.na.qualcomm.com (10.46.141.250)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: gagmCVtlOA3uf-nAqE7_D-lcVsNj_yVZ
-X-Proofpoint-ORIG-GUID: gagmCVtlOA3uf-nAqE7_D-lcVsNj_yVZ
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 phishscore=0
- impostorscore=0 mlxscore=0 bulkscore=0 spamscore=0 lowpriorityscore=0
- mlxlogscore=656 malwarescore=0 priorityscore=1501 adultscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240050
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024050053.GA30659@lst.de>
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+
+On Thu, Oct 24, 2024 at 07:00:53AM +0200, Christoph Hellwig wrote:
+> On Thu, Oct 24, 2024 at 09:43:24AM +0800, Ming Lei wrote:
+> > > so that it's clear why the non_owner version is used here.
+> > 
+> > There are one more such usage: 
+> > 
+> > - freeze in nvme_dev_disable()/apple_nvme_disable() from timeout work, but
+> > unfreeze in nvme_reset_work()
+> 
+> Then add it to the comment :)
+
+OK, also nvme_passthru_start() and nvme_passthru_end() are always
+paired, so they are actually not non_owner use.
 
 
-On 10/18/2024 10:06 PM, Johan Hovold wrote:
-> Please use a more concise subject (e.g. try to stay within 72 chars)
-> than:
->
-> 	PCI: qcom: Disable ASPM L0s and remove BDF2SID mapping config for X1E80100 SoC
->
-> Here you could drop "SoC", maybe "ASPM" and "config" for example.
->
-> On Wed, Oct 16, 2024 at 08:04:11PM -0700, Qiang Yu wrote:
->> Currently, the cfg_1_9_0 which is being used for X1E80100 has config_sid
->> callback in its ops and doesn't disable ASPM L0s. However, as same as
->> SC8280X, PCIe controllers on X1E80100 are connected to SMMUv3, hence don't
->> need config_sid() callback and hardware team has recommended to disable
->> L0s as it is broken in the controller. Hence reuse cfg_sc8280xp for
->> X1E80100.
-> Since the x1e80100 dtsi, like sc8280xp, do not specify an iommu-map,
-> that bit is effectively just a cleanup and all this patch does is to
-> disable L0s.
->
-> Please rephrase to make this clear. This will also allow you to make the
-> Subject even shorter (no need to mention the SID bit in Subject).
->
-> Also say something about how L0s is broken so that it is more clear what
-> the effect of this patch is. On sc8280xp enabling L0s lead to
-> correctable errors for example.
-Need more time to confirm the exact reason about disabling L0s.
-Will update if get any progress
+Thanks, 
+Ming
 
-Thanks,
-Qiang
->
->> Fixes: 6d0c39324c5f ("PCI: qcom: Add X1E80100 PCIe support")
->> Cc: stable@vger.kernel.org
-> Johan
 
