@@ -1,146 +1,227 @@
-Return-Path: <linux-kernel+bounces-379466-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379467-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6A7BA9ADEFD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:20:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BDADF9ADF04
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:21:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26B2128A51D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:20:54 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DE5201C21F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:21:14 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 69B001CB9FD;
-	Thu, 24 Oct 2024 08:17:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 288402B9CD;
+	Thu, 24 Oct 2024 08:19:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="0jMdAfXt";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LSxLfKbB"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="dJLlWfvX"
+Received: from mail-ej1-f49.google.com (mail-ej1-f49.google.com [209.85.218.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A3F111CB33E;
-	Thu, 24 Oct 2024 08:17:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 05E291ADFE6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:19:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757858; cv=none; b=P7Uq3O6kjMovYiJBWTFkND7e7E+sohjO5wcMV9KVvtlEzhgvQ9qhdYe6SfukqLFHFQUqHX5p72iI2ramSLNTV6E+ame1eQ8gi0ZYsFbAbBsEW/x2DK9WftS8jIyiw/YYm80NxHKrmQtgANiZRE+pi0WQasgXldxQZpmgWpq0oCU=
+	t=1729757991; cv=none; b=Pfgm2b3CjiMms3LJTBYFh6Xd4r2Mj1ab6kROGWaTdVscdQj+ojYgzf5ts5Oyzun71ZQYqROzfnb8ui8EdAjgPn6Y5K0GhcFQp5ZobWzWBOU9d0xPbz4Vvr+ScMNj2v0iVh6ZwFR9eKCvY2w+qR9fvZVY3DdEv07kKOGmDGPtLTU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757858; c=relaxed/simple;
-	bh=9E/DsnuVB9UMNxDvRm78ZugZBCzTVrchqbXuWcs7kGQ=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=LY9V6uUPPbRginyPJ2vPhu1L9sbWt+zJJFs6FgoGZlaJUM8a3p9DK2sGI3TUih5BTH1Se6R9rGvCOrL6ayCm+NPfDaPhcUY6cBUDBu4M5+QMwogwYFeGMHfgvfChByouQnB05ZkKhAxxrTJhNOh6SlDM0pDi0asAdFNbiS0BFNc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=0jMdAfXt; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LSxLfKbB; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729757854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IRJgU4eNasgp3CwItJtcihGQh5qaQF4uTiJjQeDr1q8=;
-	b=0jMdAfXt+tlJ4A22h0DkBJ9ldaPq++kXVt0NESUqX4xrHL0MiuepHgoRxwH+/7/NCA1LJN
-	P9mI47McoH1sLG16zrymRiu5LQRHyDUXCg5Qyg5vRTmJWF1d3/3Zoxu1Gceaepje/t0H4v
-	HIUBwCBJmbDyRNVy6iqCdcSZ9jwHUY78BFz6XAHRYoUQcE1c0QgGvycpNVpau2rpUHPpS0
-	3ndeiO2aZSUQ2qgLLzUchM6xPFwKmugq2opp1asaR9mk2pMVuMLE77Nfa06yS5bwbpN3ET
-	yqKvrPPIH2UKwcPb6kdSuqCxC9UpyEfQ8YcY99mW1rS+CgVSrLRfNhgfL2VlAw==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729757854;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=IRJgU4eNasgp3CwItJtcihGQh5qaQF4uTiJjQeDr1q8=;
-	b=LSxLfKbB3uncxadkjDqNb5h9bIl978ikT3jvRYHp/Vwe4fGI44lz2CBZRU2I9XRRjWSckh
-	vf+Y+XCb/EFAZIDQ==
-To: Boqun Feng <boqun.feng@gmail.com>
-Cc: Dirk Behme <dirk.behme@gmail.com>, Lyude Paul <lyude@redhat.com>,
- rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
- airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, will@kernel.org,
- Waiman Long <longman@redhat.com>, Peter Zijlstra <peterz@infradead.org>,
- linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, wedsonaf@gmail.com, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
- aliceryhl@google.com, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-In-Reply-To: <ZxnVmCqk2PzsOj2h@Boquns-Mac-mini.local>
-References: <20241018055125.2784186-2-boqun.feng@gmail.com>
- <87a5eu7gvw.ffs@tglx> <ZxnVmCqk2PzsOj2h@Boquns-Mac-mini.local>
-Date: Thu, 24 Oct 2024 10:17:33 +0200
-Message-ID: <87zfmt6hk2.ffs@tglx>
+	s=arc-20240116; t=1729757991; c=relaxed/simple;
+	bh=jJpoDcZzcf17R/3zdN17SftmPrsJXoXPfK84W/H5pz4=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=bzjGMwGeGnOeoKlkOtepDC3DDPnKWtbhslDHY1r2mwX0dFJCgUsl87mdb0z9NHso/+cZ9TpvtbDxmvJOgQX7s0VIqh4FKnAGnDwKgB8YZD3TyPgpHfZ3xodtjlW06UXYaNCBP7s9ULGMytPQJspmtFrHph5ezEQLRkMSeJ79NC4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=dJLlWfvX; arc=none smtp.client-ip=209.85.218.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ej1-f49.google.com with SMTP id a640c23a62f3a-a9a2cdc6f0cso74083366b.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:19:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729757987; x=1730362787; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=Qs/aKFg3NFl0djqnSQfP+JloM/IzfO1teCS8RmqnkF8=;
+        b=dJLlWfvXuhEKV0cSSRuOIDOdoPHHuGdzxu9B+6jm46B80TYgrX0h+hQXfhixIuYYJJ
+         qgRVvlJe9svZ9oVRdWbRIU+Aa8Vuzbc6pyuaHb1jZMRsU6OJuFzR71W2WLh+ldFLceR4
+         t3MNYG1W2MeyAPsWN+MygfzO35/uqVg35n88qQj0XiFSpkhodFEdEW+wS1aoJ4e9PKT5
+         P1KwDcuv9JY8by1A9yhl81vR41rtf7tIwcGFwruUU0wK4x71dstoOlbflynVKi5wUSyh
+         QGInFRNWIr6UD77kjZCGo491No9yzObgGnx3Skl/+ep2sXxrExWdfGgeEBbO/54KIoZv
+         yuvA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729757987; x=1730362787;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=Qs/aKFg3NFl0djqnSQfP+JloM/IzfO1teCS8RmqnkF8=;
+        b=SUCMCk/aVU+75T3HyAHdWD2zWdtBQI5+Qi0bTMglDaXep82xIBN91SO3GP9Ez7N4pv
+         ADF4vgm+5t27Y5k67mBSU+W7ZW3qKboVZi9d4Kx/ikkRuM6JaynSB0imf0zIMQ+NynmQ
+         NEBc2zUM07cpUR384ahFiu6bxEtfLr4rPBSeCu/Wt3ttCF3nwrpuwUE0F5adYV9i44m1
+         qcq3w28k4/yDSOUPVismDVEc37A1HTj8AmcxU33hw77WTuVbs/dP922WHdZWhtL2SCxz
+         5+bggqdjRnqerR+PDg/LDmKmJ1gwm9kVZ2dIDEIpGOxXkjxAvQzf4zzzwgu8oJwmwslL
+         65Pg==
+X-Forwarded-Encrypted: i=1; AJvYcCWlf5Ehpn0gjnMHVgIbgZDIA2nNDwAxM6uLbPpQAH3EtqwTXnXrfxN5yqFObk+aPIyHi4k4POfUVuoK8ho=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzZYaG4zk35ZghwWdmZ6qt7KNj7JmHThoorWovhm4ulwLByWrBV
+	ySi9oTXU8vz2JsomkbP4kN1XbsOANB8klx4TYbew4HMd9LjLXpMIZQjumbfc6KPEeZxq5p44tAn
+	HMUoBOWWlgX/DoWO8OyFbd+1oeUIEHhCMPw4ykQ==
+X-Google-Smtp-Source: AGHT+IEUz97/zglX4GUT3Pds+XQ9vhw/84CeXDgQkpGMRP1blc6osQow8h9eQWkAj9ZNoShkMCwOCiaT+o5nm4LK8oY=
+X-Received: by 2002:a17:907:3206:b0:a99:fb56:39cc with SMTP id
+ a640c23a62f3a-a9abf8d2614mr562372866b.38.1729757987320; Thu, 24 Oct 2024
+ 01:19:47 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+References: <20241023-ad7380-add-adaq4380-4-support-v2-0-d55faea3bedf@baylibre.com>
+ <20241023-ad7380-add-adaq4380-4-support-v2-1-d55faea3bedf@baylibre.com> <7uih5kvpy6i4ggq5o7eudzczbicopbdnmbtkyprfperkkqgsmt@42q6bncox3ml>
+In-Reply-To: <7uih5kvpy6i4ggq5o7eudzczbicopbdnmbtkyprfperkkqgsmt@42q6bncox3ml>
+From: Julien Stephan <jstephan@baylibre.com>
+Date: Thu, 24 Oct 2024 10:19:32 +0200
+Message-ID: <CAEHHSvY3QWkjDo6LdyFg-X+UnyY-cJ6kAFUYP-ZWBqgHoKxmkQ@mail.gmail.com>
+Subject: Re: [PATCH v2 1/4] dt-bindings: iio: adc: ad7380: add adaq4370-4 and
+ adaq4380-4 compatible parts
+To: Krzysztof Kozlowski <krzk@kernel.org>
+Cc: Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	=?UTF-8?B?TnVubyBTw6E=?= <nuno.sa@analog.com>, 
+	David Lechner <dlechner@baylibre.com>, Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Jonathan Corbet <corbet@lwn.net>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Wed, Oct 23 2024 at 22:05, Boqun Feng wrote:
-> On Wed, Oct 23, 2024 at 09:34:27PM +0200, Thomas Gleixner wrote:
->> local_interrupt_enable()
->> {
->>         if ((preempt_count() & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
->>         	local_irq_restore(this_cpu_read(...flags);
->>                 preempt_count_sub_test_resched(LOCALIRQ_OFFSET);
->>         } else {
->>                 // Does not need a resched test because it's not going
->>                 // to 0
->>                 preempt_count_sub(LOCALIRQ_OFFSET);
->>         }
->> }
->> 
+Le jeu. 24 oct. 2024 =C3=A0 09:29, Krzysztof Kozlowski <krzk@kernel.org> a =
+=C3=A9crit :
 >
-> Yes, this looks nice, one tiny problem is that it requires
-> PREEMPT_COUNT=y ;-) Maybe we can do: if PREEMPT_COUNT=y, we use preempt
-> count, otherwise use a percpu?
+> On Wed, Oct 23, 2024 at 11:19:33AM +0200, Julien Stephan wrote:
+> > +  vs-p-supply:
+> > +    description:
+> > +      Amplifiers positive supply.
+> > +
+> > +  vs-n-supply:
+> > +    description:
+> > +      Amplifiers negative supply.
+> > +
+> > +  ldo-supply:
+> > +    description:
+> > +      LDO supply. Connect to vs-p-supply or a 3.6 to 5.5 V supply.
+> >
+> >    aina-supply:
+> >      description:
+> > @@ -97,12 +115,46 @@ properties:
+> >        specify the ALERT interrupt.
+> >      maxItems: 1
+> >
+> > +  '#address-cells':
 >
-> Hmm... but this will essentially be: we have a irq_disable_count() which
-> is always built-in, and we also uses it as preempt count if
-> PREEMPT_COUNT=y. This doesn't look too bad to me.
-
-The preempt counter is always there even when PREEMPT_COUNT=n. It's
-required for tracking hard/soft interrupt and NMI context.
-
-The only difference is that preempt_disable()/enable() are NOOPs. So in
-that case preempt_count_sub_test_resched() becomes a plain preempt_count_sub().
-
->> and then the lock thing becomes
->> 
->> spin_lock_irq_disable()
->> {
->>         local_interrupt_disable();
->>         lock();
->> }
->> 
->> spin_unlock_irq_enable()
->> {
->>         unlock();
->>         local_interrupt_enable();
->> }
->> 
->> instead having to do:
->> 
->> spin_unlock_irq_enable()
->> {
->>         unlock();
->>         local_interrupt_enable();
->>         preempt_enable();
->> }
->> 
->> Which needs two distinct checks, one for the interrupt and one for the
+> If there is going to be new version/resend, then keep consistent quotes:
+> " or '.
 >
-> No? Because now since we fold the interrupt disable count into preempt
-> count, so we don't need to care about preempt count any more if we we
-> local_interrupt_{disable,enable}(). For example, in the above
-> local_interrupt_enable(), interrupts are checked at local_irq_restore()
-> and preemption is checked at preempt_count_sub_test_resched(). Right?
+> > +    const: 1
+> > +
+> > +  '#size-cells':
+> > +    const: 0
+> > +
+> >  required:
+> >    - compatible
+> >    - reg
+> >    - vcc-supply
+> >    - vlogic-supply
+> >
+> > +patternProperties:
+> > +  "^channel@([0-3])$":
+>
+> () are not necessary
+>
+> > +    $ref: adc.yaml
+> > +    type: object
+> > +
+> > +    properties:
+> > +      reg:
+> > +        description:
+> > +          The channel number. From 0 to 3 corresponding to channels A,=
+B,C,D
+> > +        items:
+> > +          minimum: 0
+> > +          maximum: 3
+>
+> No improvements, no response to comment.
 
-Correct. That's what I pointed out. By folding it into preempt count
-this becomes one operation, while in your POC it's two distinct checks
-and operations.
+Hi Krzysztof,
 
-Thanks,
+I am sorry, it got lost during my rebase. It was planned to be on the
+v2 (even added it to the changelog in the cover letter).
+Thank you for noticing it.  I sent a v3 with all the changes.
 
-        tglx
+Cheers
+Julien
+>
+> > +
+> > +      adi,gain-milli:
+> > +        description:
+> > +          The hardware gain applied to the ADC input (in milli units).
+> > +          If not present, default to 1000 (no actual gain applied).
+> > +          Refer to the typical connection diagrams section of the data=
+sheet for
+> > +          pin wiring.
+> > +        $ref: /schemas/types.yaml#/definitions/uint16
+> > +        enum: [300, 600, 1000, 1600]
+> > +        default: 1000
+> > +
+> > +    required:
+> > +      - reg
+> > +
+> > +    additionalProperties: false
+> > +
+> >  unevaluatedProperties: false
+> >
+> >  allOf:
+> > @@ -140,6 +192,7 @@ allOf:
+> >          aind-supply: false
+> >
+> >    # ad7380-4 uses refin-supply as external reference.
+> > +  # adaq devices use internal reference only, derived from refin-suppl=
+y
+> >    # All other chips from ad738x family use refio as optional external =
+reference.
+> >    # When refio-supply is omitted, internal reference is used.
+> >    - if:
+> > @@ -147,6 +200,8 @@ allOf:
+> >          compatible:
+> >            enum:
+> >              - adi,ad7380-4
+> > +            - adi,adaq4370-4
+> > +            - adi,adaq4380-4
+> >      then:
+> >        properties:
+> >          refio-supply: false
+> > @@ -156,6 +211,27 @@ allOf:
+> >        properties:
+> >          refin-supply: false
+> >
+> > +  # adaq devices need more supplies and using channel to declare gain =
+property
+> > +  # only applies to adaq devices
+> > +  - if:
+> > +      properties:
+> > +        compatible:
+> > +          enum:
+> > +            - adi,adaq4370-4
+> > +            - adi,adaq4380-4
+> > +    then:
+> > +      required:
+> > +        - vs-p-supply
+> > +        - vs-n-supply
+> > +        - ldo-supply
+> > +    else:
+> > +      properties:
+> > +        vs-p-supply: false
+> > +        vs-n-supply: false
+> > +        ldo-supply: false
+> > +      patternProperties:
+> > +        "^channel@([0-3])$": false
+>
+> () are not necessary
+>
+> Best regards,
+> Krzysztof
+>
 
