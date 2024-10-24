@@ -1,274 +1,86 @@
-Return-Path: <linux-kernel+bounces-380474-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380475-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 128379AEF2E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:08:25 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A184C9AEF33
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:08:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 03C8F1C209F1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:08:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D265A1C20B65
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:08:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E85641FF7D9;
-	Thu, 24 Oct 2024 18:08:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D8AC72003C7;
+	Thu, 24 Oct 2024 18:08:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fnGwSAx9"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="gJRrp2vm"
+Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BF2891FBF50;
-	Thu, 24 Oct 2024 18:08:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8C6101FE0EA;
+	Thu, 24 Oct 2024 18:08:39 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729793296; cv=none; b=W/n3pGGxm2ZDTh2xwUXKaU5LM2olsspBL/jIj24e3ZdIYzlzB26w8lquWIHi9flX7LNN4UiprQbeRnIM8gm69Jtq5jpoN/O6G2Lie6d1FnOginvGbSbikZZbeNjCFufkY0G1iWMlQjlbnsotnSgSjnPp9OwpIPg24c9m2Nf0Hd4=
+	t=1729793322; cv=none; b=D6FjEjXFbH2ZWIA+SgoIGDCScpOZ6dm2Cm5jRgXMcZZgXEVucPV5XWNjAYRC66rqdU4ljO2ZHFtuNcQq1JMObteABbpm+WgaakZ4Wd8iqak5tyNpLZwMNrmQ722x1vw7ydO4jT2Tj0NptIL9dz9QXkNF7G0MlUb5Kjim15P+4FU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729793296; c=relaxed/simple;
-	bh=Xh1R4GZ27pmUMbn74JvSoBUKIK0TU3ZXL4vL3T0uC7c=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Q2qGLw+BVCghtcWNHll/fTU1yU+8UVRU3jhSMHtWopmf2G9ht38Dpzkj2IjC1qrX6dBO/jgMadQ8pzydMwfzncWlHpxZPpyJ45xgswTm0l8cWJ1dj7omv43Oyth3Mn79Or+fxYwjWlvduu7jwwpmDduKHyJeElQnr2V/P6+xVxE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fnGwSAx9; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43158625112so12546195e9.3;
-        Thu, 24 Oct 2024 11:08:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729793292; x=1730398092; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=W1JTd7ynOSs7lXi2zMkWgF6wBy5w0MWAsGS+BfHL1dU=;
-        b=fnGwSAx9Bg9sXrDl6VbDpzoA/W1XtqDgDdRdVIi2MNS8yfLYeIytxx6EHuKGnNT/EM
-         B/IGcfVMkWMPfsJvEb0/ENmw7q72lx1/8mvcmFsV82udjIuNwbRK0N/dgONZlG7lc8oB
-         gUD03MTNoyel7Wc7P/iwW5MhZnGh3aBOqpjap5YtomNY5+4K/httKSIgdsM6nLBU5olo
-         UYkHx0hlFqVZwr7qo0gOCx1ZlOrjlDtPWnP9M+5tQYVtlh0fBJnV2i7OCYlYrBEHme5C
-         zsrUiut1WmKHzw1NDxgDNh48zJSEe1I0abJab2Ui2SO7ZwkYl1F/KK7oN2Jt8NpZchXi
-         FJtg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729793292; x=1730398092;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=W1JTd7ynOSs7lXi2zMkWgF6wBy5w0MWAsGS+BfHL1dU=;
-        b=VkWpNxKn6svB0Jbn1kFbmeegMOjsGjR+of4WCzRBgk/Ss5FrFpF5cEmXM/Ox3qD33S
-         Il73zfTLhhjWRikuCxvA8QOGNt5PSXKsvBXQUxNE4GWG4nBGzg9r51kjC+ify1Lz9iB1
-         uVJJLYAmvcnTqn2EMxF8ReegAF46LyAlE/5zWg2zh02qj4iuW8N0kUoRUHFj9Fp7wkAF
-         PXd8WAANHKKDBRvMEDxqnwy4ZWRT6hcPtSxeNAfId0qmBEqpB+ajSi4TUUqvjEFOwCcI
-         zyo/D26n0omgf8k05X81rI+iOlMvTW3urCKePJBlT8MKafB50hk3+shLT30W3pabbaEs
-         E4bQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWP1+oeYFLqtU6JBVX87qdFaRzX02UO84ruo65Pb4Fn7GyxREJiHJ0NZHxW/VpLDv9ciQbaqbvJMJaqrcKJ@vger.kernel.org, AJvYcCWUVRfcKsldDFzOvW9B9p27mjq/e1Fk4I+fqWVWoYP5ieyspm6elXg+Nr1G70h1Ye8MqIM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwGJ84W5yhXXbKj98SFOInAVFUHbVnnKSr2iHkH/ApT19Oj5SxC
-	SG5/Lm79s0IYQCqnVfd1uP+ChXSA8Ez+XZla2pl+KDq6ZqLHhkZrYZ3W0Ng8APon1Z8lmk7y1UX
-	TbtXTw1QCn20l2dE4LCi5FAExjkE=
-X-Google-Smtp-Source: AGHT+IHtADTjFNUiOzcBVHGFK5fqjvzcuZ7N+Bfv/1XzpGRD1qXsWzbAsnucAxaxXvqPWA1Qj0dWpGn3l4Oxl/cKIyw=
-X-Received: by 2002:a05:600c:1c12:b0:42d:a024:d6bb with SMTP id
- 5b1f17b1804b1-4318422075dmr51336225e9.20.1729793291786; Thu, 24 Oct 2024
- 11:08:11 -0700 (PDT)
+	s=arc-20240116; t=1729793322; c=relaxed/simple;
+	bh=xfkR4ma5b5dJE/tDvi6lHfWQrg589RQLZprUzaZnmGs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=EhY1QVrqwYqxNXWLNR719GampS2QHdmxww6Tuu5Yxq/uyuvZCkUSzDXR2E9jYvgoFQ5rcbCg9ax7vburr8VI2F6d6uNaBw3ycYm1pcpdrAV2jZF5+pElDkmCXm41YjmmFoGFsrJcf7B2Op8gmWg+NG0ouMNMateWcBehRHNoV3g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=gJRrp2vm; arc=none smtp.client-ip=90.155.92.199
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
+	:In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:
+	Sender:Reply-To:Content-ID:Content-Description;
+	bh=ZfKI9T+QnjDlxWNoLS5WhgjTkXwvW1Fl9+wws3DEJj0=; b=gJRrp2vmt+PRXCJ2tmylKoPnca
+	g7IONkF/B/CTdv6ZbVgMtro9h5NIASrR1hpA8oUNzpX4It7Ytd5FW1tH46Q952EYKBwzcsGAyL8eh
+	EUxnKnOZK2mYuQZxqbxhL/yovnYMrWtp8ElkkgYP1vDJAi2zbPBCwP9RVnamNweKQiKMcyyAEIw+R
+	t5ExI3oA46ztlMi19LVwIRbZVz5cc0rALbyqIkOBpFRoceUl0Q8Jw/uu1+1qa1BJPirobA7V5dfzu
+	/4ui/xDmmHZmZa40tEJsYgDwkoIeHbFyjpKXXMif6lWT7UVaLzr63dycwRusY9ivlF2x39sz4Uo4y
+	s0JiXLHA==;
+Received: from [50.53.2.24] (helo=[192.168.254.17])
+	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
+	id 1t42G7-00000008ipU-41sQ;
+	Thu, 24 Oct 2024 18:08:32 +0000
+Message-ID: <43494f80-c383-41c0-a3ef-0e4879ca7d80@infradead.org>
+Date: Thu, 24 Oct 2024 11:08:25 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024074815.1255066-1-namhyung@kernel.org> <20241024074815.1255066-2-namhyung@kernel.org>
-In-Reply-To: <20241024074815.1255066-2-namhyung@kernel.org>
-From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Date: Thu, 24 Oct 2024 11:08:00 -0700
-Message-ID: <CAADnVQLA=QE9HwH+9tA+G8uppXK0-yk-hbiBHaOmjkjVENYCsA@mail.gmail.com>
-Subject: Re: [PATCH v2 bpf-next 2/2] selftests/bpf: Add a test for open coded
- kmem_cache iter
-To: Namhyung Kim <namhyung@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>, Daniel Borkmann <daniel@iogearbox.net>, 
-	Andrii Nakryiko <andrii@kernel.org>, Martin KaFai Lau <martin.lau@linux.dev>, 
-	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>, 
-	Yonghong Song <yonghong.song@linux.dev>, John Fastabend <john.fastabend@gmail.com>, 
-	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>, Hao Luo <haoluo@google.com>, 
-	Jiri Olsa <jolsa@kernel.org>, LKML <linux-kernel@vger.kernel.org>, 
-	bpf <bpf@vger.kernel.org>, Andrew Morton <akpm@linux-foundation.org>, 
-	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>, David Rientjes <rientjes@google.com>, 
-	Joonsoo Kim <iamjoonsoo.kim@lge.com>, Vlastimil Babka <vbabka@suse.cz>, 
-	Roman Gushchin <roman.gushchin@linux.dev>, Hyeonggon Yoo <42.hyeyoo@gmail.com>, 
-	linux-mm <linux-mm@kvack.org>, Arnaldo Carvalho de Melo <acme@kernel.org>, Kees Cook <kees@kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH RFC 1/1] futex: Create set_robust_list2
+To: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>,
+ Arnd Bergmann <arnd@arndb.de>
+Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
+ Davidlohr Bueso <dave@stgolabs.net>, Darren Hart <dvhart@infradead.org>,
+ Peter Zijlstra <peterz@infradead.org>, sonicadvance1@gmail.com,
+ linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
+ linux-api@vger.kernel.org
+References: <20241024145735.162090-1-andrealmeid@igalia.com>
+ <20241024145735.162090-2-andrealmeid@igalia.com>
+ <bde852ec-8e2f-4957-9368-00d8e5a422c4@app.fastmail.com>
+ <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
+Content-Language: en-US
+From: Randy Dunlap <rdunlap@infradead.org>
+In-Reply-To: <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 12:48=E2=80=AFAM Namhyung Kim <namhyung@kernel.org>=
- wrote:
->
-> The new subtest is attached to sleepable fentry of syncfs() syscall.
-> It iterates the kmem_cache using bpf_for_each loop and count the number
-> of entries.  Finally it checks it with the number of entries from the
-> regular iterator.
->
->   $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
->   ...
->   #130/1   kmem_cache_iter/check_task_struct:OK
->   #130/2   kmem_cache_iter/check_slabinfo:OK
->   #130/3   kmem_cache_iter/open_coded_iter:OK
->   #130     kmem_cache_iter:OK
->   Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
->
-> Also simplify the code by using attach routine of the skeleton.
->
-> Signed-off-by: Namhyung Kim <namhyung@kernel.org>
-> ---
-> v2)
->  * remove unnecessary detach  (Martin)
->  * check pid in syncfs to prevent surprise  (Martin)
->  * remove unnecessary local variable  (Andrii)
->
->  .../testing/selftests/bpf/bpf_experimental.h  |  6 ++++
->  .../bpf/prog_tests/kmem_cache_iter.c          | 28 +++++++++++--------
->  .../selftests/bpf/progs/kmem_cache_iter.c     | 28 +++++++++++++++++++
->  3 files changed, 50 insertions(+), 12 deletions(-)
->
-> diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testi=
-ng/selftests/bpf/bpf_experimental.h
-> index b0668f29f7b394eb..cd8ecd39c3f3c68d 100644
-> --- a/tools/testing/selftests/bpf/bpf_experimental.h
-> +++ b/tools/testing/selftests/bpf/bpf_experimental.h
-> @@ -582,4 +582,10 @@ extern int bpf_wq_set_callback_impl(struct bpf_wq *w=
-q,
->                 unsigned int flags__k, void *aux__ign) __ksym;
->  #define bpf_wq_set_callback(timer, cb, flags) \
->         bpf_wq_set_callback_impl(timer, cb, flags, NULL)
-> +
-> +struct bpf_iter_kmem_cache;
-> +extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __wea=
-k __ksym;
-> +extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_=
-cache *it) __weak __ksym;
-> +extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) =
-__weak __ksym;
-> +
->  #endif
-> diff --git a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c b/t=
-ools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-> index 848d8fc9171fae45..778b55bc1f912b98 100644
-> --- a/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-> +++ b/tools/testing/selftests/bpf/prog_tests/kmem_cache_iter.c
-> @@ -68,12 +68,20 @@ static void subtest_kmem_cache_iter_check_slabinfo(st=
-ruct kmem_cache_iter *skel)
->         fclose(fp);
->  }
->
-> +static void subtest_kmem_cache_iter_open_coded(struct kmem_cache_iter *s=
-kel)
-> +{
-> +       skel->bss->tgid =3D getpid();
-> +
-> +       /* To trigger the open coded iterator attached to the syscall */
-> +       syncfs(0);
-> +
-> +       /* It should be same as we've seen from the explicit iterator */
-> +       ASSERT_EQ(skel->bss->open_coded_seen, skel->bss->kmem_cache_seen,=
- "open_code_seen_eq");
-> +}
-> +
->  void test_kmem_cache_iter(void)
->  {
-> -       DECLARE_LIBBPF_OPTS(bpf_iter_attach_opts, opts);
->         struct kmem_cache_iter *skel =3D NULL;
-> -       union bpf_iter_link_info linfo =3D {};
-> -       struct bpf_link *link;
->         char buf[256];
->         int iter_fd;
->
-> @@ -81,16 +89,12 @@ void test_kmem_cache_iter(void)
->         if (!ASSERT_OK_PTR(skel, "kmem_cache_iter__open_and_load"))
->                 return;
->
-> -       opts.link_info =3D &linfo;
-> -       opts.link_info_len =3D sizeof(linfo);
-> -
-> -       link =3D bpf_program__attach_iter(skel->progs.slab_info_collector=
-, &opts);
-> -       if (!ASSERT_OK_PTR(link, "attach_iter"))
-> +       if (!ASSERT_OK(kmem_cache_iter__attach(skel), "skel_attach"))
->                 goto destroy;
->
-> -       iter_fd =3D bpf_iter_create(bpf_link__fd(link));
-> +       iter_fd =3D bpf_iter_create(bpf_link__fd(skel->links.slab_info_co=
-llector));
->         if (!ASSERT_GE(iter_fd, 0, "iter_create"))
-> -               goto free_link;
-> +               goto destroy;
->
->         memset(buf, 0, sizeof(buf));
->         while (read(iter_fd, buf, sizeof(buf) > 0)) {
-> @@ -105,11 +109,11 @@ void test_kmem_cache_iter(void)
->                 subtest_kmem_cache_iter_check_task_struct(skel);
->         if (test__start_subtest("check_slabinfo"))
->                 subtest_kmem_cache_iter_check_slabinfo(skel);
-> +       if (test__start_subtest("open_coded_iter"))
-> +               subtest_kmem_cache_iter_open_coded(skel);
->
->         close(iter_fd);
->
-> -free_link:
-> -       bpf_link__destroy(link);
->  destroy:
->         kmem_cache_iter__destroy(skel);
->  }
-> diff --git a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c b/tools/=
-testing/selftests/bpf/progs/kmem_cache_iter.c
-> index 72c9dafecd98406b..e62807caa7593604 100644
-> --- a/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-> +++ b/tools/testing/selftests/bpf/progs/kmem_cache_iter.c
-> @@ -2,6 +2,8 @@
->  /* Copyright (c) 2024 Google */
->
->  #include "bpf_iter.h"
-> +#include "bpf_experimental.h"
-> +#include "bpf_misc.h"
->  #include <bpf/bpf_helpers.h>
->  #include <bpf/bpf_tracing.h>
->
-> @@ -30,9 +32,12 @@ struct {
->
->  extern struct kmem_cache *bpf_get_kmem_cache(u64 addr) __ksym;
->
-> +unsigned int tgid;
-> +
->  /* Result, will be checked by userspace */
->  int task_struct_found;
->  int kmem_cache_seen;
-> +int open_coded_seen;
->
->  SEC("iter/kmem_cache")
->  int slab_info_collector(struct bpf_iter__kmem_cache *ctx)
-> @@ -85,3 +90,26 @@ int BPF_PROG(check_task_struct)
->                 task_struct_found =3D -2;
->         return 0;
->  }
-> +
-> +SEC("fentry.s/" SYS_PREFIX "sys_syncfs")
-> +int open_coded_iter(const void *ctx)
-> +{
-> +       struct kmem_cache *s;
-> +
-> +       if (tgid !=3D bpf_get_current_pid_tgid() >> 32)
-> +               return 0;
+Hi,
 
-Pls use syscall prog type and prog_run() it.
-No need to attach to exotic syscalls and filter by pid.
+On 10/24/24 11:03 AM, André Almeida wrote:
+> Hi Arnd,
+> 
 
-> +
-> +       bpf_for_each(kmem_cache, s) {
-> +               struct kmem_cache_result *r;
-> +
-> +               r =3D bpf_map_lookup_elem(&slab_result, &open_coded_seen)=
-;
-> +               if (!r)
-> +                       break;
-> +
-> +               open_coded_seen++;
-> +
-> +               if (r->obj_size !=3D s->size)
-> +                       break;
+Please consider putting more of the cover letter explanation into the commit message.
+Thanks.
 
-The order of 'if' and ++ should probably be changed ?
-Otherwise the last object isn't sufficiently checked.
+-- 
+~Randy
 
-pw-bot: cr
 
