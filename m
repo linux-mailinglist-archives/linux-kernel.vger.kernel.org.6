@@ -1,183 +1,212 @@
-Return-Path: <linux-kernel+bounces-379270-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379271-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4C6399ADC39
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:31:33 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3BEFB9ADC40
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:33:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6DF131C21983
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:31:32 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5B7761C2146B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:33:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E3718872D;
-	Thu, 24 Oct 2024 06:31:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CE11189B85;
+	Thu, 24 Oct 2024 06:33:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="D8lNv9h2"
-Received: from mail-lf1-f45.google.com (mail-lf1-f45.google.com [209.85.167.45])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="Jq3+AdkO"
+Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E39C815623A;
-	Thu, 24 Oct 2024 06:31:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7A1982FC52;
+	Thu, 24 Oct 2024 06:33:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729751485; cv=none; b=B19h5ranLSvSjHYyJ16Ol8iDzClXjXhF6stQkbdnXj0Ngb0h8j331YbK/qQgFUEmnfwDwiLajdJFq80AG2TcPur6JIscVYTEEws7W3hb9QaCP1JYIOzy6VMuWpCpcFS2uHbnkSUcTOPpKLLwbO7BoLXm1baaive6qvp14e+yXNc=
+	t=1729751592; cv=none; b=D6CJbV/PIl7qHJzx0DO2Xul0pEALZq725SxbkahqtaVgC/g6zEzE7vxUIML8ihfRw0VVCmHdzmHnKL8oyRFPMRaXMNGWB822eYjVsgpfdPfNH447nS34TtqEcmGMXW6L9uLAD3p3EPEFoWPFC/NWJIfTSVvQhXCBZPKLtGsrSVY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729751485; c=relaxed/simple;
-	bh=Ij+enuGGwhnSQf0L8zcd624aPDGa9zWodQg5KZc5MnI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sCQkFs13wQ6cq6eaTEqI86laM/xbxx0Ay5iu3tdJyqe7P57tRYaVJqzuU77vzI2mnpS6gHjoStgyHh0fT2BnIjlFGEoQC7lRgZI8W0fdzzb02QWRiOpCXuZ/4VgE9e+o9FhnjwNfDhEiu+LSdNEAewPzhdWHP/A2cK+rpcseB/s=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=D8lNv9h2; arc=none smtp.client-ip=209.85.167.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f45.google.com with SMTP id 2adb3069b0e04-53b13ea6b78so835173e87.2;
-        Wed, 23 Oct 2024 23:31:22 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729751481; x=1730356281; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=eg0Qoo+9T4bkNwhbFJqsnN7oQTW8RaVNg80QPE49Fyo=;
-        b=D8lNv9h2Uve0kff/zqEb+vhJuAyYufO456FapnGyET0EECtP8pOq2bYggz+5UBqQ/C
-         ZxRKPgWwYMRWpQqhsXXCACom/Mq85fECZ0WVhFFVGcTKVxDjsh8nFyFsLKdyyNeE7F/r
-         B+Q8laD/ZckuMzfC0+0DmyxUbVQFkKApbLYRS38DpR+1P8jlxZRfPFasvChjWzeWr5al
-         jK4F1gRNyOsVkprwaHZ2MSY+N9x5HfjcrWNAT1n4qwWUy3+Uhz0/lg2Yymh7VB+qb7xR
-         hZfh37Kmh1rTPvDSm5/ZglVPa+WLGH9pAI0ZwK+n11vcIJjOJhRNSWn02tqt/6e0rK0H
-         so9w==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729751481; x=1730356281;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eg0Qoo+9T4bkNwhbFJqsnN7oQTW8RaVNg80QPE49Fyo=;
-        b=lR8LNIxRQh0v3wE2kTHGuue3P710gozgRmDyBZZAhH5uhEBX3hu5bGAekB7GQ9jaAG
-         BqHkFujmq/RaVPWIaX8/VRNNLFp7KOqVZOU1lx1w+irlJWnkaRn4KmI791djncHErO2A
-         VY1Oq4lXzV2It3yIyynooPtMeAHdaqeKFQ52Zedr9AMg60yelq3h9mbhV8QrRUEenPX0
-         6xdvuDyU78fSkCIG4P+nyKysdFJpESbFA4UcZvOmqyKeywkRjzlP8zsTaORsN6bvVGoY
-         9YvIvnzWn6CBJWUCqH+sGj9pSbt+U2/ugao9WTNQW86YOTcC/pw1ZP12oHQdK2RKgUe5
-         exGw==
-X-Forwarded-Encrypted: i=1; AJvYcCUK4+AVWlP0ed/4Kaar3bGRf1v+QAEKf/w2lHWM5KjCuaOASA5eJbNz20iN8kKf9qI8l+V7IculbPAU@vger.kernel.org, AJvYcCV30YVRggWOqd5Rkc7QgdT/Wvq9Tw1VFAalu1/ON1kaKapneuBwgflh7OKiIxUKEVVPb4/6vA8u8HZ4sHhlR1fig3A=@vger.kernel.org, AJvYcCWy0ZLrl5D8DZwRCo0DvttD/JtQRotL60CZfLR7lIJKxvsMp0OQeWpapWrhtmHVA+DrIRjQDChAKTtUZ8KQ@vger.kernel.org
-X-Gm-Message-State: AOJu0YzXSKlVL7HGt9OdI7bDzllK3QOJZTxE4EsenzOc4c7rg6cgh7Yy
-	GaSXiaPWzBg1RrhmWP8z1h5PeZB5jwOdn2Vz/njmu/dydl005o+y
-X-Google-Smtp-Source: AGHT+IGTgCMu/aYTxbn5o/iwDHWcRkcznRmu5yktlW+DSiLgJIFiLKd8i11LIYEetT8aCjJiqsVtGg==
-X-Received: by 2002:a05:6512:3b90:b0:539:8a50:6ee8 with SMTP id 2adb3069b0e04-53b1a3b014fmr4477340e87.57.1729751480750;
-        Wed, 23 Oct 2024 23:31:20 -0700 (PDT)
-Received: from [192.168.35.18] ([77.85.230.22])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f62cbsm568507166b.76.2024.10.23.23.31.18
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 23:31:19 -0700 (PDT)
-Message-ID: <beeb2475-dc82-485d-a984-5d6554a4c379@gmail.com>
-Date: Thu, 24 Oct 2024 09:31:17 +0300
+	s=arc-20240116; t=1729751592; c=relaxed/simple;
+	bh=g5BKeBl1fYSpE6hgYA/MuWtq4GXll+inrgRs8ExCMFs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=h4znzd0rhNICc98p1W+NsTa2NnJpjnU1QzFVMXwa4tyZ8bkV7/84zfuxMC23xhq2676oh5qVUP+Z9RoJrfh+JJQXrINthooayJ6dTg4k8epZIn34hKjbrPaNEQEHQ36Zh4tMqnR9pxQbvXtYITGYdXKvhpF6eU1QmFdn5iUfmIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=Jq3+AdkO; arc=none smtp.client-ip=148.163.156.1
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
+Received: from pps.filterd (m0353729.ppops.net [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O6R317002214;
+	Thu, 24 Oct 2024 06:32:52 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
+	:content-type:date:from:in-reply-to:message-id:mime-version
+	:references:subject:to; s=pp1; bh=482XagPPVCklbTt8RqSP9WJZbqS86S
+	SpwoPOKwUlyPQ=; b=Jq3+AdkOyDx+0Wt2VbNzYC3FYBO4eOUCXRVDhf/3qexyN3
+	LxHwjRDepPCTfmkwAXzGhz3Uh1jsAVqW8YsSbNr3BQ1/8NmkVSOWA6zABqPaYFsp
+	CXVV5lI2lr3TVnDl7X8UzUqDRJnnyVDc4UUmlgILzhuaDe3hYCUPyLRxbf67gGKr
+	X1jE7aK38wK7sy2sSGoyqtPY1d3e27zEn54iLm+gTGkDkiHulbGrlRzwB39Z9LF5
+	CWZqqT9Fv2HduU/wk0lt3hiZrJz6CndgDDeM/Dkg5wM3e3Ce9ZEUOAPB/QPtOLum
+	JiRN8ifVdrKz3nXCe/2xDtpEqXL5rYVKXJk7pxsg==
+Received: from pps.reinject (localhost [127.0.0.1])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fgyur0km-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 06:32:51 +0000 (GMT)
+Received: from m0353729.ppops.net (m0353729.ppops.net [127.0.0.1])
+	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49O6Wpsw013344;
+	Thu, 24 Oct 2024 06:32:51 GMT
+Received: from ppma22.wdc07v.mail.ibm.com (5c.69.3da9.ip4.static.sl-reverse.com [169.61.105.92])
+	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fgyur0kg-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 06:32:50 +0000 (GMT)
+Received: from pps.filterd (ppma22.wdc07v.mail.ibm.com [127.0.0.1])
+	by ppma22.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49O2eTV6014576;
+	Thu, 24 Oct 2024 06:32:49 GMT
+Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
+	by ppma22.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emk7xxpb-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 06:32:49 +0000
+Received: from smtpav01.fra02v.mail.ibm.com (smtpav01.fra02v.mail.ibm.com [10.20.54.100])
+	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49O6Wlt746399800
+	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
+	Thu, 24 Oct 2024 06:32:47 GMT
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id 3967220075;
+	Thu, 24 Oct 2024 06:32:47 +0000 (GMT)
+Received: from smtpav01.fra02v.mail.ibm.com (unknown [127.0.0.1])
+	by IMSVA (Postfix) with ESMTP id EB68E2009D;
+	Thu, 24 Oct 2024 06:32:19 +0000 (GMT)
+Received: from li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com (unknown [9.39.28.236])
+	by smtpav01.fra02v.mail.ibm.com (Postfix) with ESMTPS;
+	Thu, 24 Oct 2024 06:32:19 +0000 (GMT)
+Date: Thu, 24 Oct 2024 12:02:17 +0530
+From: Ojaswin Mujoo <ojaswin@linux.ibm.com>
+To: John Garry <john.g.garry@oracle.com>
+Cc: axboe@kernel.dk, brauner@kernel.org, djwong@kernel.org,
+        viro@zeniv.linux.org.uk, jack@suse.cz, dchinner@redhat.com, hch@lst.de,
+        cem@kernel.org, linux-block@vger.kernel.org,
+        linux-kernel@vger.kernel.org, linux-xfs@vger.kernel.org,
+        linux-fsdevel@vger.kernel.org, hare@suse.de,
+        martin.petersen@oracle.com, catherine.hoang@oracle.com,
+        mcgrof@kernel.org, ritesh.list@gmail.com
+Subject: Re: [PATCH v10 0/8] block atomic writes for xfs
+Message-ID: <Zxnp8bma2KrMDg5m@li-bb2b2a4c-3307-11b2-a85c-8fa5c3a69313.ibm.com>
+References: <20241019125113.369994-1-john.g.garry@oracle.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241019125113.369994-1-john.g.garry@oracle.com>
+X-TM-AS-GCONF: 00
+X-Proofpoint-ORIG-GUID: -C_Y495T55YdD6ljY8lFeT07BDz5t8m8
+X-Proofpoint-GUID: nrqya7HiUTaRC1copajZRVkNdhnRb4MA
+X-Proofpoint-UnRewURL: 0 URL was un-rewritten
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/12] arm64: dts: exynos: Add Exynos9810 SoC support
-To: Markuss Broks <markuss.broks@gmail.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Lorenzo Pieralisi <lpieralisi@kernel.org>,
- Alim Akhtar <alim.akhtar@samsung.com>,
- Sylwester Nawrocki <s.nawrocki@samsung.com>,
- Linus Walleij <linus.walleij@linaro.org>, Tomasz Figa
- <tomasz.figa@gmail.com>, Will Deacon <will@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>
-Cc: devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
- Krzysztof Kozlowski <krzk@kernel.org>, linux-arm-kernel@lists.infradead.org,
- linux-samsung-soc@vger.kernel.org, linux-gpio@vger.kernel.org,
- Maksym Holovach <nergzd@nergzd723.xyz>
-References: <20241024-exynos9810-v1-0-ed14d0d60d08@gmail.com>
- <20241024-exynos9810-v1-11-ed14d0d60d08@gmail.com>
-Content-Language: en-US
-From: Ivaylo Ivanov <ivo.ivanov.ivanov1@gmail.com>
-In-Reply-To: <20241024-exynos9810-v1-11-ed14d0d60d08@gmail.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
+ definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 priorityscore=1501
+ bulkscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 clxscore=1011
+ lowpriorityscore=0 phishscore=0 impostorscore=0 adultscore=0
+ suspectscore=0 mlxscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240047
 
+On Sat, Oct 19, 2024 at 12:51:05PM +0000, John Garry wrote:
+> This series expands atomic write support to filesystems, specifically
+> XFS.
+> 
+> Initially we will only support writing exactly 1x FS block atomically.
+> 
+> Since we can now have FS block size > PAGE_SIZE for XFS, we can write
+> atomically 4K+ blocks on x86.
+> 
+> No special per-inode flag is required for enabling writing 1x F block.
+> In future, to support writing more than one FS block atomically, a new FS
+> XFLAG flag may then introduced - like FS_XFLAG_BIG_ATOMICWRITES. This
+> would depend on a feature like forcealign.
+> 
+> So if we format the FS for 16K FS block size:
+> mkfs.xfs -b size=16384 /dev/sda
+> 
+> The statx reports atomic write unit min/max = FS block size:
+> $xfs_io -c statx filename
+> ...
+> stat.stx_atomic_write_unit_min = 16384
+> stat.stx_atomic_write_unit_max = 16384
+> stat.stx_atomic_write_segments_max = 1
+> ...
+> 
+> Baseline is 77bfe1b11ea0 (tag: xfs-6.12-fixes-3, xfs/xfs-6.12-fixesC,
+> xfs/for-next) xfs: fix a typo
+> 
+> Patches for this series can be found at:
+> https://github.com/johnpgarry/linux/tree/atomic-writes-v6.12-fs-v10
+> 
+> Changes since v9:
+> - iomap doc fix (Darrick)
+> - Add RB tags from Christoph and Darrick (Thanks!)
+> 
+> Changes since v8:
+> - Add bdev atomic write unit helpers (Christoph)
+> - Add comment on FS block size limit (Christoph)
+> - Stylistic improvements (Christoph)
+> - Add RB tags from Christoph (thanks!)
+> 
+> Changes since v7:
+> - Drop FS_XFLAG_ATOMICWRITES
+> - Reorder block/fs patches and add fixes tags (Christoph)
+> - Add RB tag from Christoph (Thanks!)
+> - Rebase
+> 
+> John Garry (8):
+>   block/fs: Pass an iocb to generic_atomic_write_valid()
+>   fs/block: Check for IOCB_DIRECT in generic_atomic_write_valid()
+>   block: Add bdev atomic write limits helpers
+>   fs: Export generic_atomic_write_valid()
+>   fs: iomap: Atomic write support
+>   xfs: Support atomic write for statx
+>   xfs: Validate atomic writes
+>   xfs: Support setting FMODE_CAN_ATOMIC_WRITE
+> 
+>  .../filesystems/iomap/operations.rst          | 12 ++++++
+>  block/fops.c                                  | 22 ++++++-----
+>  fs/iomap/direct-io.c                          | 38 +++++++++++++++++--
+>  fs/iomap/trace.h                              |  3 +-
+>  fs/read_write.c                               | 16 +++++---
+>  fs/xfs/xfs_buf.c                              |  7 ++++
+>  fs/xfs/xfs_buf.h                              |  4 ++
+>  fs/xfs/xfs_file.c                             | 16 ++++++++
+>  fs/xfs/xfs_inode.h                            | 15 ++++++++
+>  fs/xfs/xfs_iops.c                             | 22 +++++++++++
+>  include/linux/blkdev.h                        | 16 ++++++++
+>  include/linux/fs.h                            |  2 +-
+>  include/linux/iomap.h                         |  1 +
+>  13 files changed, 152 insertions(+), 22 deletions(-)
+> 
+> -- 
 
-On 10/24/24 01:36, Markuss Broks wrote:
-> Exynos 9810 is an ARMv8 mobile SoC found in various Samsung devices,
-> such as Samsung Galaxy S9 (starlte), S9 Plus (star2lte),
-> Note 9 (crownlte) and perhaps others.
->
-> Add minimal support for this SoC, including basic stuff like:
-> - PSCI for bringing up secondary cores
-> - ARMv8 generic timer
-> - GPIO and pinctrl.
->
-> The firmware coming with the devices based on this SoC is buggy
-> and doesn't configure CNTFRQ_EL0, as required by spec, so it's
-> needed to hardcode the frequency in the timer node.
->
-> Co-authored-by: Maksym Holovach <nergzd@nergzd723.xyz>
-> Signed-off-by: Markuss Broks <markuss.broks@gmail.com>
-> ---
->  arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi | 525 +++++++++++++++++++++
->  arch/arm64/boot/dts/exynos/exynos9810.dtsi         | 256 ++++++++++
->  2 files changed, 781 insertions(+)
->
-> diff --git a/arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi b/arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi
-> new file mode 100644
-> index 0000000000000000000000000000000000000000..4b2ee59dc7241b0ec31c99fd909d1c5e25aa77e0
-> --- /dev/null
-> +++ b/arch/arm64/boot/dts/exynos/exynos9810-pinctrl.dtsi
-> @@ -0,0 +1,525 @@
-> +// SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
-> +/*
-> + * Samsung's Exynos 9810 SoC pin-mux and pin-config device tree source
-> + *
-> + * Copyright (c) 2024 Markuss Broks <markuss.broks@gmail.com>
-> + * Copyright (c) 2024 Maksym Holovach <nergzd@nergzd723.xyz>
-> + */
-> +
-> +#include "exynos-pinctrl.h"
-> +
-> +&pinctrl_alive {
-> +	wakeup-interrupt-controller {
-> +		compatible = "samsung,exynos9810-wakeup-eint",
-> +			     "samsung,exynos850-wakeup-eint",
-> +			     "samsung,exynos7-wakeup-eint";
-> +	};
-> +
-> +	etc1: etc1-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
+Hi John,
 
-[snip]
+I've tested the whole patchset on powerpc (64k pagesize) with 4k, 16k
+and 64k blocksizes and it passes the tests. My tests basically check
+following scenarios:
 
-> +
-> +	gpp3: gpp3-gpio-bank {
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
-> +	gpg0: gpg0-gpio-bank {
+Statx behavior:
+#   1.1 bs > unit_max
+#   1.2 bs < unit_max
+#   1.3 bs == unit_max
+#   1.4 dev deosn't support
 
-gpgX comes before gppX, sort all the nodes :D
+pwrite tests:
+#   3.1 len < fsmin
+#   3.2 len > fsmax
+#   3.3 write not naturally aligned
+#   3.4 Atomic write abiding to all rule
 
-> +		gpio-controller;
-> +		#gpio-cells = <2>;
-> +
-> +		interrupt-controller;
-> +		#interrupt-cells = <2>;
-> +	};
-> +
+For the whole patchset, feel free to add:
 
-[snip]
+Tested-by: Ojaswin Mujoo <ojaswin@linux.ibm.com> 	 #On ppc64
 
-> +	};
-> +};
-> +
-> +#include "exynos9810-pinctrl.dtsi"
-> +#include "arm/samsung/exynos-syscon-restart.dtsi"
->
+Thanks,
+Ojaswin
+
+> 2.31.1
+> 
 
