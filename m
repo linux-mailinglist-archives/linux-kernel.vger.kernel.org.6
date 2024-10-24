@@ -1,145 +1,258 @@
-Return-Path: <linux-kernel+bounces-380359-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380360-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 40A749AED0C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:03:13 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 0045D9AED0D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:03:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E09E51F22086
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:03:12 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 782F11F22007
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:03:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 419311F9EB1;
-	Thu, 24 Oct 2024 17:03:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="fKESlf/c"
-Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 449A31F943C;
+	Thu, 24 Oct 2024 17:03:39 +0000 (UTC)
+Received: from mail-il1-f198.google.com (mail-il1-f198.google.com [209.85.166.198])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EDD5A1F8181
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 460A41F80A3
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.198
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789385; cv=none; b=fxBuTV5yZV0EwRtY3AqhrKLkA9EJlzVFt/JujhCpqwzSPAusOYvHYWqawtSLSlU4gOXQ6ZEK3gsqP2wz8Px05qTb7UrebjP0uFKalLFXlj7OyjAi6Je90W+8PRQeuA0bvW037y2rDuq1PR4+C/VSiIggiolvr44c5i0E+xMkSMo=
+	t=1729789418; cv=none; b=N47ymGXkGd2occ3t8LyJfeb1PZBgxCEnqklOwnD1VjNDw0yGFOtEdOIsHZA6K/6MYR90QkNGCltq1braDRW1jgxGc3nJGrSWSoLQAW5SEZ8PzBd4pXZRO8J9zhhPsrNEfYsEVp1hR/Rr+XTlwmVfy6U5dOCupUgl6n8jPC3hzYA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789385; c=relaxed/simple;
-	bh=PQ4zZ+vpUUBZz98OPfmQ/f9IgAytod+hx01dezT1/kg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=GMVL+n9nR3el8pF3b5UDjQ67sGCURXzN96hGOa4CZdp2hjdexLOi7obFUPcxPOrGnNZfMG0KQ8OsRofaadeR93cOMHfkgvRctfRFs+UY3lz12dmz97re19fA7oTHPJM71CHsKERk83B5WfZlvavQkHl6PrpI890nwVuCOwSpwDA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=fKESlf/c; arc=none smtp.client-ip=205.220.168.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9MFkf032117
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:03 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	DUlMzHI7+1FWYVHdeE+crFlz144uqgJoZlthEYfdU7U=; b=fKESlf/cCsBm2Ppp
-	RQIteynzNNWaFkaLO1FXpFcChrBOoPX5Vh/s9z7X17kGsuPU/czEpSpU8JfWWZJ5
-	Nu726f8E02rucu4KWubtnuuhkvbIZUhh2fnloFBOc2mf1i9vECZ83fP371gRewIo
-	accEVEYI2bCxapJkvRopZ1ohiVRF8j45LU5woXjWO5aUJBLY5NIpOVcugoVMLWpL
-	XGBaXKbtDvO7FDLExy56wdhPFeYhQXA4+GezctdGht4mYCT0WclulzmudByipIjo
-	5xno0bXZM68hnn8PHS+NPXscqTiTD/TY+PW54s+i1Ajs2KvskDMTObPnvfUPe8mP
-	wyLy3Q==
-Received: from mail-qk1-f198.google.com (mail-qk1-f198.google.com [209.85.222.198])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3vxex0-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:03:03 +0000 (GMT)
-Received: by mail-qk1-f198.google.com with SMTP id af79cd13be357-7b14459d04bso20490185a.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:03:02 -0700 (PDT)
+	s=arc-20240116; t=1729789418; c=relaxed/simple;
+	bh=Ie0760tVn1R8rbU2EnSMUzWOpJ19tpPoW/bA6hM11bQ=;
+	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=Qy40nieM0kBhGYS+Tf0dNdvbJjQhVikT2lKyXL+a+139wwGkFlhO6M3EkI0vs2kg4gr0ULEo/yHd7tuJYaVF3rWADjsQjUyxHcEHBJ9EcZy9qTEtAqvVzukqG2z+NWZZ0auwYPBD108+xBLlZSbwYtu8HL9MnV1L1h66J1qNSEY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.198
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f198.google.com with SMTP id e9e14a558f8ab-3a3bcae85a5so8928475ab.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:03:36 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789382; x=1730394182;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=DUlMzHI7+1FWYVHdeE+crFlz144uqgJoZlthEYfdU7U=;
-        b=NrzvP+w2+3D6GD/tt45W5tI/5rbF4NSP6LpXirHNaAwnPwsWXOrxT4VMXowj1ZOtDI
-         UCVijAd0g7//wIAnQovuy5+CQrEwwg08wmPrGN3WYZX50gykv16L1f3FHs8b7e+b4S1S
-         dxAvyyccd0sbZP0M69Lppr6XtapXDAAG7dKhPP4Q1pzUC8RfD0ExP+eu9wPDL00JsOc7
-         FVrwE+koXlNTHUx7NrwfMMcs9Qcf0OFxYqUmbrLGAzUX2uPky1EAEj9DzDjmP0XxCGSd
-         816zx2SlTCRzKrgn5v0CwRlZ2hbACZyBkD9oz0ZBkuSC4FErU8XD0RkU+H8SWv6BWhmn
-         Y76g==
-X-Forwarded-Encrypted: i=1; AJvYcCWNQkKV4yHwY6KCMYZY+1O+qHQ/250v6LRypYpk6VkNS6PKkOrRj2tubOuhU76raxY5iKXz49q1vCPOOeM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YykpJUJy02/Ac40/3bGAc9Zm9n4HvEC93MBGioFYtfQ3HUScMfR
-	EPl9hMv3oVxIx/YSlfE2ruBlzrNt/FIz6w+qJg4uCbPmVqhd6VI79FRh+t/WL1MuwEn/TGcv2Z2
-	1kXJfJ9iVNmlqV0YXdXX4XIbm7P5f77YnV50JBqCjdsS0+wbUhH5mufMGFZkeQpE=
-X-Received: by 2002:ad4:5e8e:0:b0:6cb:4e9f:7370 with SMTP id 6a1803df08f44-6ce3429efe7mr40119736d6.12.1729789380291;
-        Thu, 24 Oct 2024 10:03:00 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IErivPc6fmXIZH89b8InKtojO/piGnSylk4Q1RcUf5kCpJfBLE2UQ3WYyeNfa4RF6q6QGeTdg==
-X-Received: by 2002:ad4:5e8e:0:b0:6cb:4e9f:7370 with SMTP id 6a1803df08f44-6ce3429efe7mr40119036d6.12.1729789378414;
-        Thu, 24 Oct 2024 10:02:58 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571ef4sm639419366b.153.2024.10.24.10.02.56
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 10:02:58 -0700 (PDT)
-Message-ID: <adee8553-a531-4789-af19-1bbbe2adb59a@oss.qualcomm.com>
-Date: Thu, 24 Oct 2024 19:02:55 +0200
+        d=1e100.net; s=20230601; t=1729789415; x=1730394215;
+        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=/O5YVaqmQavUmAw405AtiahzAj6ut+XeBw4kx6UPIqA=;
+        b=OjWOSrODUWvhxnlb56zlk3u1FYo3DMwntdsDOfrhJDbjS8HdapFt1xq5Vd/41FoYNr
+         u1J78K//JAWtf3Qm6rEBeRHS1dP9adIgrC81MCDVde1aLXAd5YvqTNTnVZ8WYizLxhrk
+         hH32sy6YBEyFtcBdMJ0NZ4bOrQdUpWCeWuNRqglg10QLE0+285iK4QdlgCJ4Z4TAjZDo
+         ekYXk4F8iTJkHktf/ZgyH7gTKgZ5CJyGSsDFv/IpYARqe9zY+JkfsBT7NnL0HdVr4u8R
+         nIzAI7+Znp41qHcAyLE9WCUingOfl6wl5LkqlE8bx7UmpKmQJqYvuQzYqunht28elTlu
+         pI6w==
+X-Forwarded-Encrypted: i=1; AJvYcCVWvW032xRQ3atKXHfGydDVlR9zHrPNJKcjEVVEWu8CLz47dLMJryQ6709mwRVsXkrkRRK1sit8/BVx3ss=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwtTSrwM1/uqHrqockBVa184X/Y70pd3W3638jEbdP5k6IRW3so
+	VAV8CsyLXCmdi+C8NeZbBGzR14GK3r+ERpbdaqn9pwg0Fqaa8jpSKa8s41/b+8FXwqV5xUBckf6
+	zSK3fNKfsPkYlFvcbQ4QUz8BnBZIQMLCJntuRG/czq/vZGbeoqXbvRzw=
+X-Google-Smtp-Source: AGHT+IFsL3kKFYMrs0jIaHFBjharDkXmWFYtTRpQUoFAsyDjgVaA14ThjHgERtfUCKN+qh2H+dHfr6aaZcHUdTpSCTzlqG1hzEo8
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/2] interconnect: qcom: Add interconnect provider driver
- for SM8750
-To: Melody Olvera <quic_molvera@quicinc.com>,
-        Georgi Djakov <djakov@kernel.org>, Rob Herring <robh@kernel.org>,
-        Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley
- <conor+dt@kernel.org>,
-        Adam Skladowski <a39.skl@gmail.com>,
-        Konrad Dybcio <konradybcio@kernel.org>,
-        Sibi Sankar
- <quic_sibis@quicinc.com>,
-        =?UTF-8?B?QmFybmFiw6FzIEN6w6ltw6Fu?=
- <barnabas.czeman@mainlining.org>,
-        Vladimir Lypak <vladimir.lypak@gmail.com>,
-        Danila Tikhonov <danila@jiaxyga.com>,
-        Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>,
-        Neil Armstrong <neil.armstrong@linaro.org>,
-        Rajendra Nayak <quic_rjendra@quicinc.com>,
-        Mike Tipton <quic_mdtipton@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>, Trilok Soni <quic_tsoni@quicinc.com>,
-        Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>
-Cc: linux-arm-msm@vger.kernel.org, linux-pm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241021231823.2635534-1-quic_molvera@quicinc.com>
- <20241021231823.2635534-3-quic_molvera@quicinc.com>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241021231823.2635534-3-quic_molvera@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: mVbud_w_FrHhm9YCnzJzGf95XFpEzqSb
-X-Proofpoint-ORIG-GUID: mVbud_w_FrHhm9YCnzJzGf95XFpEzqSb
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
- malwarescore=0 spamscore=0 clxscore=1015 lowpriorityscore=0
- mlxlogscore=886 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
- bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240140
+X-Received: by 2002:a05:6e02:1a67:b0:3a3:a639:a594 with SMTP id
+ e9e14a558f8ab-3a4de711749mr21732885ab.4.1729789415229; Thu, 24 Oct 2024
+ 10:03:35 -0700 (PDT)
+Date: Thu, 24 Oct 2024 10:03:35 -0700
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671a7de7.050a0220.2eb763.00c3.GAE@google.com>
+Subject: [syzbot] [bcachefs?] possible deadlock in bch2_btree_cache_scan
+From: syzbot <syzbot+3d89e46a004eafb88bc6@syzkaller.appspotmail.com>
+To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-On 22.10.2024 1:18 AM, Melody Olvera wrote:
-> From: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> 
-> Introduce SM8750 interconnect provider driver using the interconnect
-> framework.
-> 
-> Signed-off-by: Raviteja Laggyshetty <quic_rlaggysh@quicinc.com>
-> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
-> ---
+Hello,
 
-[...]
+syzbot found the following issue on:
 
-> +static struct qcom_icc_bcm *lpass_ag_noc_bcms[] = {
-> +};
+HEAD commit:    715ca9dd687f Merge tag 'io_uring-6.12-20241019' of git://g..
+git tree:       upstream
+console output: https://syzkaller.appspot.com/x/log.txt?x=1383a430580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=16e543edc81a3008
+dashboard link: https://syzkaller.appspot.com/bug?extid=3d89e46a004eafb88bc6
+compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
 
-Drop empty BCM lists, the code handles nulls fine
+Unfortunately, I don't have any reproducer for this issue yet.
 
-Konrad
+Downloadable assets:
+disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-715ca9dd.raw.xz
+vmlinux: https://storage.googleapis.com/syzbot-assets/ba436e2363b6/vmlinux-715ca9dd.xz
+kernel image: https://storage.googleapis.com/syzbot-assets/3ac78a7a1a30/bzImage-715ca9dd.xz
+
+IMPORTANT: if you fix the issue, please add the following tag to the commit:
+Reported-by: syzbot+3d89e46a004eafb88bc6@syzkaller.appspotmail.com
+
+======================================================
+WARNING: possible circular locking dependency detected
+6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0 Not tainted
+------------------------------------------------------
+kswapd0/78 is trying to acquire lock:
+ffff88804d081c50 (&bc->lock){+.+.}-{3:3}, at: bch2_btree_cache_scan+0x192/0xd00 fs/bcachefs/btree_cache.c:460
+
+but task is already holding lock:
+ffffffff8ea371a0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6844 [inline]
+ffffffff8ea371a0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7226
+
+which lock already depends on the new lock.
+
+
+the existing dependency chain (in reverse order) is:
+
+-> #2 (fs_reclaim){+.+.}-{0:0}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       __fs_reclaim_acquire mm/page_alloc.c:3834 [inline]
+       fs_reclaim_acquire+0x88/0x130 mm/page_alloc.c:3848
+       might_alloc include/linux/sched/mm.h:318 [inline]
+       slab_pre_alloc_hook mm/slub.c:4036 [inline]
+       slab_alloc_node mm/slub.c:4114 [inline]
+       __do_kmalloc_node mm/slub.c:4263 [inline]
+       __kmalloc_noprof+0xa9/0x400 mm/slub.c:4276
+       kmalloc_noprof include/linux/slab.h:882 [inline]
+       kzalloc_noprof include/linux/slab.h:1014 [inline]
+       pcpu_mem_zalloc mm/percpu.c:510 [inline]
+       pcpu_alloc_chunk mm/percpu.c:1443 [inline]
+       pcpu_create_chunk+0x57/0xbc0 mm/percpu-vm.c:338
+       pcpu_balance_populated mm/percpu.c:2075 [inline]
+       pcpu_balance_workfn+0xc4d/0xd40 mm/percpu.c:2212
+       process_one_work kernel/workqueue.c:3229 [inline]
+       process_scheduled_works+0xa63/0x1850 kernel/workqueue.c:3310
+       worker_thread+0x870/0xd30 kernel/workqueue.c:3391
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+-> #1 (pcpu_alloc_mutex){+.+.}-{3:3}:
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       pcpu_alloc_noprof+0x27f/0x16b0 mm/percpu.c:1795
+       __six_lock_init+0x104/0x150 fs/bcachefs/six.c:869
+       bch2_btree_lock_init+0x38/0x100 fs/bcachefs/btree_locking.c:12
+       bch2_btree_node_mem_alloc+0x4f8/0x1340 fs/bcachefs/btree_cache.c:785
+       __bch2_btree_node_alloc fs/bcachefs/btree_update_interior.c:325 [inline]
+       bch2_btree_reserve_get+0x2df/0x1890 fs/bcachefs/btree_update_interior.c:554
+       bch2_btree_update_start+0xe56/0x14e0 fs/bcachefs/btree_update_interior.c:1252
+       bch2_btree_split_leaf+0x123/0x840 fs/bcachefs/btree_update_interior.c:1850
+       bch2_trans_commit_error+0x212/0x1390 fs/bcachefs/btree_trans_commit.c:942
+       __bch2_trans_commit+0x7ead/0x93c0 fs/bcachefs/btree_trans_commit.c:1140
+       wb_flush_one fs/bcachefs/btree_write_buffer.c:183 [inline]
+       bch2_btree_write_buffer_flush_locked+0x2aa8/0x59f0 fs/bcachefs/btree_write_buffer.c:375
+       btree_write_buffer_flush_seq+0x1a43/0x1bc0 fs/bcachefs/btree_write_buffer.c:510
+       bch2_btree_write_buffer_journal_flush+0x4e/0x80 fs/bcachefs/btree_write_buffer.c:525
+       journal_flush_pins+0x5f7/0xb20 fs/bcachefs/journal_reclaim.c:565
+       journal_flush_done+0x8e/0x260 fs/bcachefs/journal_reclaim.c:819
+       bch2_journal_flush_pins+0x225/0x3a0 fs/bcachefs/journal_reclaim.c:852
+       bch2_journal_flush_all_pins fs/bcachefs/journal_reclaim.h:76 [inline]
+       bch2_journal_replay+0x270f/0x2a40 fs/bcachefs/recovery.c:384
+       bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
+       bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
+       bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
+       bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
+       bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
+       vfs_get_tree+0x90/0x2b0 fs/super.c:1800
+       do_new_mount+0x2be/0xb40 fs/namespace.c:3507
+       do_mount fs/namespace.c:3847 [inline]
+       __do_sys_mount fs/namespace.c:4055 [inline]
+       __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
+       do_syscall_x64 arch/x86/entry/common.c:52 [inline]
+       do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
+       entry_SYSCALL_64_after_hwframe+0x77/0x7f
+
+-> #0 (&bc->lock){+.+.}-{3:3}:
+       check_prev_add kernel/locking/lockdep.c:3161 [inline]
+       check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+       validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+       __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+       lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+       __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+       __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+       bch2_btree_cache_scan+0x192/0xd00 fs/bcachefs/btree_cache.c:460
+       do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+       shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+       shrink_one+0x43b/0x850 mm/vmscan.c:4818
+       shrink_many mm/vmscan.c:4879 [inline]
+       lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+       shrink_node+0x3791/0x3e20 mm/vmscan.c:5937
+       kswapd_shrink_node mm/vmscan.c:6765 [inline]
+       balance_pgdat mm/vmscan.c:6957 [inline]
+       kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+       kthread+0x2f0/0x390 kernel/kthread.c:389
+       ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+       ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+
+other info that might help us debug this:
+
+Chain exists of:
+  &bc->lock --> pcpu_alloc_mutex --> fs_reclaim
+
+ Possible unsafe locking scenario:
+
+       CPU0                    CPU1
+       ----                    ----
+  lock(fs_reclaim);
+                               lock(pcpu_alloc_mutex);
+                               lock(fs_reclaim);
+  lock(&bc->lock);
+
+ *** DEADLOCK ***
+
+1 lock held by kswapd0/78:
+ #0: ffffffff8ea371a0 (fs_reclaim){+.+.}-{0:0}, at: balance_pgdat mm/vmscan.c:6844 [inline]
+ #0: ffffffff8ea371a0 (fs_reclaim){+.+.}-{0:0}, at: kswapd+0xbf1/0x3700 mm/vmscan.c:7226
+
+stack backtrace:
+CPU: 0 UID: 0 PID: 78 Comm: kswapd0 Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
+Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
+Call Trace:
+ <TASK>
+ __dump_stack lib/dump_stack.c:94 [inline]
+ dump_stack_lvl+0x241/0x360 lib/dump_stack.c:120
+ print_circular_bug+0x13a/0x1b0 kernel/locking/lockdep.c:2074
+ check_noncircular+0x36a/0x4a0 kernel/locking/lockdep.c:2206
+ check_prev_add kernel/locking/lockdep.c:3161 [inline]
+ check_prevs_add kernel/locking/lockdep.c:3280 [inline]
+ validate_chain+0x18ef/0x5920 kernel/locking/lockdep.c:3904
+ __lock_acquire+0x1384/0x2050 kernel/locking/lockdep.c:5202
+ lock_acquire+0x1ed/0x550 kernel/locking/lockdep.c:5825
+ __mutex_lock_common kernel/locking/mutex.c:608 [inline]
+ __mutex_lock+0x136/0xd70 kernel/locking/mutex.c:752
+ bch2_btree_cache_scan+0x192/0xd00 fs/bcachefs/btree_cache.c:460
+ do_shrink_slab+0x701/0x1160 mm/shrinker.c:435
+ shrink_slab+0x1093/0x14d0 mm/shrinker.c:662
+ shrink_one+0x43b/0x850 mm/vmscan.c:4818
+ shrink_many mm/vmscan.c:4879 [inline]
+ lru_gen_shrink_node mm/vmscan.c:4957 [inline]
+ shrink_node+0x3791/0x3e20 mm/vmscan.c:5937
+ kswapd_shrink_node mm/vmscan.c:6765 [inline]
+ balance_pgdat mm/vmscan.c:6957 [inline]
+ kswapd+0x1ca3/0x3700 mm/vmscan.c:7226
+ kthread+0x2f0/0x390 kernel/kthread.c:389
+ ret_from_fork+0x4b/0x80 arch/x86/kernel/process.c:147
+ ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
+ </TASK>
+
+
+---
+This report is generated by a bot. It may contain errors.
+See https://goo.gl/tpsmEJ for more information about syzbot.
+syzbot engineers can be reached at syzkaller@googlegroups.com.
+
+syzbot will keep track of this issue. See:
+https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+
+If the report is already addressed, let syzbot know by replying with:
+#syz fix: exact-commit-title
+
+If you want to overwrite report's subsystems, reply with:
+#syz set subsystems: new-subsystem
+(See the list of subsystem names on the web dashboard)
+
+If the report is a duplicate of another one, reply with:
+#syz dup: exact-subject-of-another-report
+
+If you want to undo deduplication, reply with:
+#syz undup
 
