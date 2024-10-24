@@ -1,98 +1,113 @@
-Return-Path: <linux-kernel+bounces-379761-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379762-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id C83C59AE363
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:05:28 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 077639AE365
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:05:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 037521C2246D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:05:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8C269B2270D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:05:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 747291CB312;
-	Thu, 24 Oct 2024 11:05:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="IXimetdm"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C9BB81C4A31;
-	Thu, 24 Oct 2024 11:05:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EE1A91CB9FE;
+	Thu, 24 Oct 2024 11:05:19 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2474E1CACD4;
+	Thu, 24 Oct 2024 11:05:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767909; cv=none; b=qrBOFBtPvXxFTJCw75XdaejqhXTZa4c+beHFi+a4FNxF2kDHNAYfbblwwG57o3x/374vhH7IDQEf5t7flBiqWeWrykY1fnxTtTnsnxIpeZzvWewy7c002vQZrvMBnh4Cf9k+3IBx2NvIYjQ5Iw7eXnQVRlfRZbDu6EH7FJhIhyk=
+	t=1729767919; cv=none; b=L7/bo7WKP6UYyfg+BjNs7BcJS/40+QIMEGIJ6chbB8jE5KpL2N6yyimKDLU1jK1rYEL6+UIXaNldjR7EGTwzsK2WG2Db3Fd/gXMjPHvf/oBJ1d1ZkHCqmkDPu9b1jkUy1EIJNjj7efq7TH+o3sLswRwfL6kKT7Gv97dX0erUFiY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767909; c=relaxed/simple;
-	bh=EGRtjEC14XyE9weot/wRlXEg+l6X9AYHwtSTqY4Qwps=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ram0JA4+D7QKog+CVgrZIl6Pkj7I/cZbHLiwFZ3wNL9wQltYV1fd/F3gqs9BgHtAZDVII4gJpAJH9khZEXA/PwjzyWBbZOo/hN5Ozh6Kcbpo1l7/BPyJ68dZGSsHAmZl2mqX0+fa8/u1aI2k4XeOaFFm5WoAbd7Ik0UXOEU2WOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=IXimetdm; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729767905;
-	bh=EGRtjEC14XyE9weot/wRlXEg+l6X9AYHwtSTqY4Qwps=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=IXimetdm3fzWVQ4d8anSVCWgRQ8saj0/NDig3tq4roUOJY33o+H8erj0iWOOkEPgQ
-	 1YX49ynPnbH8jKGNFCyxvwbfwdyv0L2KSmSouc6iY83bVvvr4oFlJ/3AxJ7ahJhZNY
-	 BMPDIu7W9Py1CtAXLEQXYeRUe85BmEQFgK5vl7pZbRV5PrdaHaMMITEdECK5ylOXMW
-	 /FUgShUJCgjrKx8ax5tQOKf4vYbvW/NHdFEliGEGUoR9wy3tbQfYbafhviyyo4p0H8
-	 wNLx5l0rML7FuK9WXZqZ7GycDCmOceKc4Vb1NY+4lPTQBM4chBcokUuBvFQuzwinbZ
-	 aRcwu59AOQA3w==
-Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
-	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits))
-	(No client certificate requested)
-	(Authenticated sender: kholk11)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 848A317E1524;
-	Thu, 24 Oct 2024 13:05:05 +0200 (CEST)
-Message-ID: <f0386089-6a47-4751-8581-b6658c1535b9@collabora.com>
-Date: Thu, 24 Oct 2024 13:05:05 +0200
+	s=arc-20240116; t=1729767919; c=relaxed/simple;
+	bh=ndF0yvLkGaKCCsjJkb+2MY9tsRsjVzNseff8Rwun9Us=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=GDRA4e5j80q/n3gJChQoaorjqPAiXt/EMGMg4+JLCqL+EFF66FPf+ghnNAhTmX5KKNRNKYjLiPCTnv2ZYm3OMuza+9WHXa73nNeZxiEU4114Qk/cWlny2/nopr1ynVgbCu2orZ1hWqQbI2Bz+utSrd0Qb8iNzRcpkB9zjs1Hv14=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 13C46339;
+	Thu, 24 Oct 2024 04:05:46 -0700 (PDT)
+Received: from bogus (e133711.arm.com [10.1.196.55])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 912863F71E;
+	Thu, 24 Oct 2024 04:05:14 -0700 (PDT)
+Date: Thu, 24 Oct 2024 12:05:12 +0100
+From: Sudeep Holla <sudeep.holla@arm.com>
+To: Florian Fainelli <florian.fainelli@broadcom.com>
+Cc: linux-arm-kernel@lists.infradead.org, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Cristian Marussi <cristian.marussi@arm.com>,
+	"open list:OPEN FIRMWARE AND FLATTENED DEVICE TREE BINDINGS" <devicetree@vger.kernel.org>,
+	open list <linux-kernel@vger.kernel.org>,
+	"open list:SYSTEM CONTROL & POWER/MANAGEMENT INTERFACE" <arm-scmi@vger.kernel.org>,
+	justin.chen@broadcom.com, opendmb@gmail.com,
+	Florian Fainelli <f.fainelli@gmail.com>, kapil.hali@broadcom.com,
+	bcm-kernel-feedback-list@broadcom.com,
+	Arnd Bergmann <arnd@arndb.de>
+Subject: Re: [PATCH v4 2/2] firmware: arm_scmi: Support 'reg-io-width'
+ property for shared memory
+Message-ID: <Zxop6E83YId0et5o@bogus>
+References: <20240827182450.3608307-1-florian.fainelli@broadcom.com>
+ <20240827182450.3608307-3-florian.fainelli@broadcom.com>
+ <20240903154000.GA2080277@bogus>
+ <ZxJbJa8Q3V02yf_z@bogus>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 2/3] mailbox: add support for bottom half received data
-To: "Karl.Li" <karl.li@mediatek.com>, Jassi Brar <jassisinghbrar@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, Matthias Brugger <matthias.bgg@gmail.com>
-Cc: linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org,
- Chungying Lu <chungying.lu@mediatek.com>,
- Project_Global_Chrome_Upstream_Group@mediatek.com
-References: <20241024092608.431581-1-karl.li@mediatek.com>
- <20241024092608.431581-3-karl.li@mediatek.com>
-From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Content-Language: en-US
-In-Reply-To: <20241024092608.431581-3-karl.li@mediatek.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <ZxJbJa8Q3V02yf_z@bogus>
 
-Il 24/10/24 11:25, Karl.Li ha scritto:
-> From: Karl Li <karl.li@mediatek.com>
-> 
-> Within the MediaTek APU subsystem, a message passing mechanism
-> is constructed on top of the mailbox system.
-> 
-> The mailbox only has limited space for each message. The MTK APU firmware
-> expects the message header from the mailbox, while the message body
-> is passed through some fixed shared memory.
-> 
-> The mailbox interrupt also serves as a mutex for the shared memory.
-> Thus the interrupt may only be cleared after the message is handled.
-> Add a new sleepable rx callback for mailbox clients for cases
-> where handling the incoming data needs to sleep.
-> 
-> Signed-off-by: Karl Li <karl.li@mediatek.com>
+Gentle ping! Not sure if my earlier email got into spam or didn't land
+in lore/ML. Just thought of checking again.
 
-As said in the review of the ADSP MBOX driver, I really don't think that you need
-an extra callback.
+On Fri, Oct 18, 2024 at 01:57:09PM +0100, Sudeep Holla wrote:
+> On Tue, Sep 03, 2024 at 04:40:00PM +0100, Sudeep Holla wrote:
+> > On Tue, Aug 27, 2024 at 11:24:50AM -0700, Florian Fainelli wrote:
+> > > Some shared memory areas might only support a certain access width,
+> > > such as 32-bit, which memcpy_{from,to}_io() does not adhere to at least
+> > > on ARM64 by making both 8-bit and 64-bit accesses to such memory.
+> > >
+> > > Update the shmem layer to support reading from and writing to such
+> > > shared memory area using the specified I/O width in the Device Tree. The
+> > > various transport layers making use of the shmem.c code are updated
+> > > accordingly to pass the I/O accessors that they store.
+> > >
+> > 
+> > This looks good to me now, much simpler. I will push this to -next soon,
+> > but it won't be for v6.12. I have already sent PR for that. I want this
+> > to be in -next for longer just to see if anyone has any comments and
+> > doesn't break any platform(which it shouldn't anyways).
+> > 
+> > Just hoping if anyone looks at it and have feedback once it is in -next.
+> > I will apply formally at v6.12-rc1 and report back if no one complains
+> > until then.
+> > 
+> 
+> Hi Florian,
+> 
+> Just thought I will check with you if the content is -next are fine as I now
+> recall I did the rebase as this patch was original posted before the rework
+> of transport as modules were merged. Please confirm if you are happy with the
+> rebase as you see in -next. I also had to rebase it on recent fixes that
+> Justin added as there were trivial conflicts.
+> 
+> Another thing I wanted to check is if [1] series has any impact on this.
+> IIUC no, but it would be good to give a go in terms of testing just in case
+> that as well lands in -next.
+> 
+> --
+> Regards,
+> Sudeep
+> 
+> [1] https://lore.kernel.org/all/20241010123627.695191-1-jvetter@kalrayinc.com
 
+-- 
 Regards,
-Angelo
-
+Sudeep
 
