@@ -1,150 +1,114 @@
-Return-Path: <linux-kernel+bounces-380232-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380233-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41C539AEAB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:38:51 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4DA9D9AEABA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:39:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35FB1F21CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:38:50 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7F6941C2208A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:39:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654C71F4708;
-	Thu, 24 Oct 2024 15:38:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 427D11F4707;
+	Thu, 24 Oct 2024 15:39:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCqpNI/x"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="rr13seJ1";
+	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="rr13seJ1"
+Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68C714A4CC;
-	Thu, 24 Oct 2024 15:38:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAEC31EF958
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:39:15 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784322; cv=none; b=n0oQcNlYj7KNzG8HoiQkOZ7TQB92MS0t8PZ7MW9THz834Q+e+wblWlR8Vb5NFB3croc/Hew7J8xjOCFDzQ9no7W76JA/p9rqryb6LQjvfHewImvL6UdYH/S4x/kqcqUcdfo0/kOY7v3Haifd7GL6+lcPkUnyH+izjAbR0a8MS+g=
+	t=1729784357; cv=none; b=jnU9t+HTC3FsUqtQQ+qVSqUkxuDr4dIfJ/GU7bAt+JwcXAc4jGwl+qeripHQNfS4dhTGPHPhxxpjX7VYEdX/cBPU3Gogo4f4UCcJAXYm/bb8k82px5yg+8ugPt4HcYeuzvbajTHr9MkPEe3Wpt3qCyg4rMuNdyCuzOiNsIVkL3Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784322; c=relaxed/simple;
-	bh=h9SjXAxMUaB6ZIwhlTLaUbF5816pwq4H4u3Yn/U4ins=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=kWO8fdbs+lDsWN01hR5UfA9hYeuMKOdG6CVEbKSBtQEUfb79KiTqneJY+P619wX0pL7W3q24egMiqORi4ECjH8eC0donDY7waaA0Ddz3IEAVhKiNlBvfeAqxOgf6nnzjUq8JZa+KwDHiP4NYBAJDscR2txNqBrDHV5Z5q6TMbVM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCqpNI/x; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F78C4CEE3;
-	Thu, 24 Oct 2024 15:38:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729784322;
-	bh=h9SjXAxMUaB6ZIwhlTLaUbF5816pwq4H4u3Yn/U4ins=;
-	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
-	b=CCqpNI/xHcFyDXKjPfvJKGrmstmJkWDnb2QRBCX6OQ5N52KE3icTAQR8d68MXTl42
-	 KAIBs63J5acVQztnX4w4cEUjt8tcrXmFU+noPyDfF7/3kOUx+dXUBlqXOfVp2iJ50t
-	 OghE4JqmUbWKfUaMHWbg40YwtFnv4Me4VaqKpZCFsO7TdP5vBAp/dc5IZr6DQuorMY
-	 zFPnmOCsSKdlpeVvZKLF12P+sBDMTOQ85beS1vp0P2Elq47SXMQ6bwmU5WnI9suPyN
-	 EWs8FLSinfSq9xrxvHU7g1kliZDUhz/rYyUn5udQudJz2HwdQ7Rz19Zvg/WqwtmG7J
-	 /xknwkT70jzcA==
-Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2890f273296so522371fac.2;
-        Thu, 24 Oct 2024 08:38:42 -0700 (PDT)
-X-Forwarded-Encrypted: i=1; AJvYcCU0G5/sM3oXWvk3lZY41vXVtqscz6WWLmTPXuQm/ekHC9kZrebJAIo0xgcFCdZhjKOMEnbsjG53iJ19@vger.kernel.org, AJvYcCV8oECMVQjHtXVR/9Y4vXie0XYFvm3KMtTjuLviDBeqP7cPIoigj53WkJbAgQgcNvaUWizs/fPnUIApjv69@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMRoZkMg/O1qFUuDQtb9adyTCjvdXuW9lFyee7rY9MKTvisZE4
-	UgPVlCy4/3MyoVb6PS/mn81EBv1wjDCQ+7DmWln2lmNKYs+ZbxZlc4mVzueADDWQkSKjhaO3wP+
-	8XSD79VTORO7lkGNzFWB45PPmohE=
-X-Google-Smtp-Source: AGHT+IHTXsoKulanH4wFqL0jOXHtVBcAt2WTSzpPUZPGTLaD8Si5iLxik5Zb7rOSNizpIBepKThQa288nnLjlJFlwCM=
-X-Received: by 2002:a05:6870:6489:b0:288:8aaa:ed0e with SMTP id
- 586e51a60fabf-28ced134cd7mr2428935fac.8.1729784321504; Thu, 24 Oct 2024
- 08:38:41 -0700 (PDT)
+	s=arc-20240116; t=1729784357; c=relaxed/simple;
+	bh=Ko5wG55xDHelASXjan0ot///NzLfDIdQQc92FPfKpno=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:Content-Type:
+	 MIME-Version; b=jwrKzWzSV30l5FV7DEYUd69AL7g2W1f7Anbr5tB8XKTI2ANSOO/pnyPKfPkrlqrhZHf3rtDejXTKs1ZVlVc3lqrbbiIRGstxQo+YcBnOtyonBMQ9waNYpq2udZzN8Hi6A1ozJXNI09y+yu0j+YE2ddz8A55fWtf5RjD1OMMIPtc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=rr13seJ1; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=rr13seJ1; arc=none smtp.client-ip=96.44.175.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729784354;
+	bh=Ko5wG55xDHelASXjan0ot///NzLfDIdQQc92FPfKpno=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:From;
+	b=rr13seJ10RBXwD1zY0BmxemgHOVWWJXsHABLSDjp8dmYRpQvfYhby0pS7MJz/cCWv
+	 W3Q6RaAqy+mJeSumLEjGfEiI/Zl7e593MzzZCO0I6k8YxS9YmGtRiAqNq46AQF0h1t
+	 QXYjrOkNZI4Os4do+EQCjjuCOFnGOSfjI1z8iIUE=
+Received: from localhost (localhost [127.0.0.1])
+	by bedivere.hansenpartnership.com (Postfix) with ESMTP id C87E51280E5D;
+	Thu, 24 Oct 2024 11:39:14 -0400 (EDT)
+Received: from bedivere.hansenpartnership.com ([127.0.0.1])
+ by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
+ with ESMTP id x2KAlgYTN2fP; Thu, 24 Oct 2024 11:39:14 -0400 (EDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+	d=hansenpartnership.com; s=20151216; t=1729784354;
+	bh=Ko5wG55xDHelASXjan0ot///NzLfDIdQQc92FPfKpno=;
+	h=Message-ID:Subject:From:To:Date:In-Reply-To:From;
+	b=rr13seJ10RBXwD1zY0BmxemgHOVWWJXsHABLSDjp8dmYRpQvfYhby0pS7MJz/cCWv
+	 W3Q6RaAqy+mJeSumLEjGfEiI/Zl7e593MzzZCO0I6k8YxS9YmGtRiAqNq46AQF0h1t
+	 QXYjrOkNZI4Os4do+EQCjjuCOFnGOSfjI1z8iIUE=
+Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits))
+	(Client did not present a certificate)
+	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 188A41280E13;
+	Thu, 24 Oct 2024 11:39:14 -0400 (EDT)
+Message-ID: <7ee74c1b5b589619a13c6318c9fbd0d6ac7c334a.camel@HansenPartnership.com>
+Subject: Re: [PATCH] MAINTAINERS: Remove some entries due to various
+ compliance requirements.
+From: James Bottomley <James.Bottomley@HansenPartnership.com>
+To: geert@linux-m68k.org
+Cc: gregkh@linuxfoundation.org, linux-kernel@vger.kernel.org, 
+	patches@lists.linux.dev
+Date: Thu, 24 Oct 2024 11:39:11 -0400
+In-Reply-To: <a520d1f5-8273-d67e-97fe-67f73edce9f1@linux-m68k.org>
+Content-Type: text/plain; charset="UTF-8"
+User-Agent: Evolution 3.42.4 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024022952.2627694-1-liwei728@huawei.com>
-In-Reply-To: <20241024022952.2627694-1-liwei728@huawei.com>
-From: "Rafael J. Wysocki" <rafael@kernel.org>
-Date: Thu, 24 Oct 2024 17:38:29 +0200
-X-Gmail-Original-Message-ID: <CAJZ5v0jcsYnKW=WwXs7tvd-dy9vp_pCT2KDWOEsTELUJonmYYQ@mail.gmail.com>
-Message-ID: <CAJZ5v0jcsYnKW=WwXs7tvd-dy9vp_pCT2KDWOEsTELUJonmYYQ@mail.gmail.com>
-Subject: Re: [PATCH v3] cpufreq/cppc: fix perf_to_khz/khz_to_perf conversion exception
-To: liwei <liwei728@huawei.com>
-Cc: rafael@kernel.org, lenb@kernel.org, viresh.kumar@linaro.org, 
-	Pierre.Gondois@arm.com, vincent.guittot@linaro.org, mingo@kernel.org, 
-	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	bobo.shaobowang@huawei.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 4:16=E2=80=AFAM liwei <liwei728@huawei.com> wrote:
->
-> When the nominal_freq recorded by the kernel is equal to the lowest_freq,
-> and the frequency adjustment operation is triggered externally, there is
-> a logic error in cppc_perf_to_khz()/cppc_khz_to_perf(), resulting in perf
-> and khz conversion errors.
->
-> Fix this by adding the branch processing logic when nominal_freq is equal
-> to lowest_freq.
->
-> Fixes: ec1c7ad47664 ("cpufreq: CPPC: Fix performance/frequency conversion=
-")
-> Signed-off-by: liwei <liwei728@huawei.com>
-> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
-> ---
-> v2:
->     - Fix similar issue in cppc_khz_to_perf()
-> ---
-> v3:
->     - Add acked-by tag
-> ---
->  drivers/acpi/cppc_acpi.c | 22 +++++++++++++++++-----
->  1 file changed, 17 insertions(+), 5 deletions(-)
->
-> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
-> index b73b3aa92f3f..c3fc2c05d868 100644
-> --- a/drivers/acpi/cppc_acpi.c
-> +++ b/drivers/acpi/cppc_acpi.c
-> @@ -1916,9 +1916,15 @@ unsigned int cppc_perf_to_khz(struct cppc_perf_cap=
-s *caps, unsigned int perf)
->         u64 mul, div;
->
->         if (caps->lowest_freq && caps->nominal_freq) {
-> -               mul =3D caps->nominal_freq - caps->lowest_freq;
-> +               /* Avoid special case when nominal_freq is equal to lowes=
-t_freq */
-> +               if (caps->lowest_freq =3D=3D caps->nominal_freq) {
-> +                       mul =3D caps->nominal_freq;
-> +                       div =3D caps->nominal_perf;
-> +               } else {
-> +                       mul =3D caps->nominal_freq - caps->lowest_freq;
-> +                       div =3D caps->nominal_perf - caps->lowest_perf;
-> +               }
->                 mul *=3D KHZ_PER_MHZ;
-> -               div =3D caps->nominal_perf - caps->lowest_perf;
->                 offset =3D caps->nominal_freq * KHZ_PER_MHZ -
->                          div64_u64(caps->nominal_perf * mul, div);
->         } else {
-> @@ -1939,11 +1945,17 @@ unsigned int cppc_khz_to_perf(struct cppc_perf_ca=
-ps *caps, unsigned int freq)
->  {
->         s64 retval, offset =3D 0;
->         static u64 max_khz;
-> -       u64  mul, div;
-> +       u64 mul, div;
->
->         if (caps->lowest_freq && caps->nominal_freq) {
-> -               mul =3D caps->nominal_perf - caps->lowest_perf;
-> -               div =3D caps->nominal_freq - caps->lowest_freq;
-> +               /* Avoid special case when nominal_freq is equal to lowes=
-t_freq */
-> +               if (caps->lowest_freq =3D=3D caps->nominal_freq) {
-> +                       mul =3D caps->nominal_perf;
-> +                       div =3D caps->nominal_freq;
-> +               } else {
-> +                       mul =3D caps->nominal_perf - caps->lowest_perf;
-> +                       div =3D caps->nominal_freq - caps->lowest_freq;
-> +               }
->                 /*
->                  * We don't need to convert to kHz for computing offset a=
-nd can
->                  * directly use nominal_freq and lowest_freq as the div64=
-_u64
-> --
+> On Fri, 18 Oct 2024, Greg Kroah-Hartman wrote:
+> > Remove some entries due to various compliance requirements. They
+> > can come back in the future if sufficient documentation is
+> > provided.
+> 
+> This is very vague...
 
-Applied as 6.12-rc material, thanks!
+We finally got clearance to publish the actual advice:
+
+   If your company is on the U.S. OFAC SDN lists, subject to an OFAC
+   sanctions program, or owned/controlled by a company on the list, our
+   ability to collaborate with you will be subject to restrictions, and
+   you cannot be in the MAINTAINERS file.
+
+> What are "various compliance requirements"?
+> What does "sufficient documentation" mean?
+
+The documentation Greg is looking for (which a group of Lawyers at the
+LF will verify) is that someone in the removed list doesn't actually
+work for an OFAC SDN sanctioned entity.
+
+> I can guess, but I think it's better to spell out the rules, as Linux
+> kernel development is done "in the open". I am also afraid this is
+> opening the door for further (ab)use...
+
+I agree we should have been more transparent about this but I think it
+would be hard for someone other than Greg to get a Maintainer removed
+on the "compliance issue" grounds so it's probably not that open to
+abuse.
+
+Regards,
+
+James
+
+
 
