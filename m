@@ -1,55 +1,60 @@
-Return-Path: <linux-kernel+bounces-380134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3C89AE95B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:50:58 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 403049AE960
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:52:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D7DFA1C22160
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:50:57 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 04A25285273
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:52:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5F90E1E631A;
-	Thu, 24 Oct 2024 14:50:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 704231E3DF2;
+	Thu, 24 Oct 2024 14:52:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="aC4tZT3p"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XQS/ojVN"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC03F1E3DF2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:50:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C729D8614E;
+	Thu, 24 Oct 2024 14:52:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781435; cv=none; b=qljQKzNsbQtW295qOQb9RdJu/p92QCJf1OUpsAkWG/7UN/egrsaifrcnq9S87DRc7t+Mt6UsC7Yu9S2hTYndWZ+h3rBJ2LbEFF+OkMNmKt5kovxfK7u7RYuGwWpIApNCLEENfW7SQHgQUKRXVqn0YGFtB5JQTl6McXVbmZtCoG0=
+	t=1729781547; cv=none; b=V5JiWDy7OgfU1R+d6sMA/1yMMxYz+u9gdopGNtWseemGGCMTYLmKW0i3i/iTV+E+gGGBrtRP6M6lzxHcsaItk0ZAXAkt76wsgUr0HD0him1y+yZX0x0iuG2Cpi0p3aaPZE/MUVLCjDbR7ziibTZNRaMf68sbG+Om9DtGzuuMIaU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781435; c=relaxed/simple;
-	bh=NhIaoSw0gR3pQPGhb7rPIYZ2pg/iO0lhWZm8bnn3FWI=;
+	s=arc-20240116; t=1729781547; c=relaxed/simple;
+	bh=qD7+gao6cTEv2ink4Tsu6QHfw9nuzASJ9nrEHatmtLQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sYSBNWS2extztzAO4Nx3QJbfWQm0oU10wReVHMYCFUfurwit/xUQPGieTMZ74u6ZE3eZMsW8MGUAAxbttRpG/T/+MwkQ45qjvqDNx9rSlzSjMMpxZaaDJSvS3DYxg/9m3mN6hy05U3rP4ceFxtqESKKh6gH0uv8oh4Og/OkfMWA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=aC4tZT3p; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D65B7C4CEE4;
-	Thu, 24 Oct 2024 14:50:33 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=YachJJTrNVXHOVus5IlFGu0kGOP1ZA4YpOrSesnc5q2lOgAQZ54iwe/Qd0+8LcfN3IzeRth64vygURYtcJoWXLraLhYmZm/fYpiHbojIgtOde6Ab68DCnIOlRtV1Cp0GfA+goXZDrlsU00nD7osVjoN8BRNR/pWUjvD7Aoc2GQQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XQS/ojVN; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 41CBCC4CEC7;
+	Thu, 24 Oct 2024 14:52:25 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729781435;
-	bh=NhIaoSw0gR3pQPGhb7rPIYZ2pg/iO0lhWZm8bnn3FWI=;
+	s=k20201202; t=1729781547;
+	bh=qD7+gao6cTEv2ink4Tsu6QHfw9nuzASJ9nrEHatmtLQ=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=aC4tZT3pMuqOqASPonwFqsYVxJpW8KZvs3KQksU+Y9v69Ao87TBHOSy7BiR7WjZiA
-	 SBN+LTx7gEF/lC0voKuHDU4qsOITjRZ5HMkU+/TD2LMcxh4aYlWOpQZ+PWhd2HVfzy
-	 sR3fqkg74wpduIl2RGxVjJQfVxz2VNinqfXgQe9XOZfKi7jTlfO9f6eBMz9b61AZDd
-	 RHb7CJcTjSWIKIRJs0XGHXvaQmOt7neG64A5HdYtSQdGw7DU3t7H6/OhADvDqT4EHq
-	 PfsWHHpnitXHy8EXGw9BWFNokQF+qM4bcflSQGK7jmIg/Q3NSz7E2Lpu/SyxmmppP7
-	 vn/fgmULE/lqQ==
-Date: Thu, 24 Oct 2024 15:50:30 +0100
-From: Will Deacon <will@kernel.org>
-To: Liao Chang <liaochang1@huawei.com>
-Cc: mark.rutland@arm.com, catalin.marinas@arm.com, oliver.upton@linux.dev,
-	kristina.martsenko@arm.com, ptosi@google.com,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: Return early when break handler is found on
- linked-list
-Message-ID: <20241024145028.GA31224@willie-the-truck>
-References: <20241024034120.3814224-1-liaochang1@huawei.com>
+	b=XQS/ojVNjvQysCvhsmbOYimUCpIdTf8g7S1pqeL4V7U2YdTB6a2RyEJ8qJt5+PrHz
+	 +g7VZn3018EYj0UrGIMQDBviAyKi+I3v8k3UjjgQ6sbtuA7tDQMQkBMRPNlZ6+plbC
+	 SJVsd2BLNuLpr4lnvGmqIhIeKlf/DBHPRH7CQwu9+UJgUl4LcJzCltsRA2eKTKPCEj
+	 AruweojLY22iteSBFwkEmindThXL/ruRyhr7gSPRsO+KffD2l8BfT8dzvXEiy2y4Vz
+	 wBRBst/UmGYwxQ3R2V6x2QwubaAgGxbcxh85uZ5Ai04eyDFtgR88BKJYeh4twIEdsk
+	 ZPJFfW15wpwfQ==
+Date: Thu, 24 Oct 2024 15:52:23 +0100
+From: Simon Horman <horms@kernel.org>
+To: Kory Maincent <kory.maincent@bootlin.com>
+Cc: netdev@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Maxime Chevallier <maxime.chevallier@bootlin.com>,
+	thomas.petazzoni@bootlin.com,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Jonathan Corbet <corbet@lwn.net>
+Subject: Re: [PATCH net-next] Documentation: networking: Add missing PHY_GET
+ command in the message list
+Message-ID: <20241024145223.GR1202098@kernel.org>
+References: <20241023141559.100973-1-kory.maincent@bootlin.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -58,55 +63,44 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024034120.3814224-1-liaochang1@huawei.com>
-User-Agent: Mutt/1.10.1 (2018-07-13)
+In-Reply-To: <20241023141559.100973-1-kory.maincent@bootlin.com>
 
-On Thu, Oct 24, 2024 at 03:41:20AM +0000, Liao Chang wrote:
-> The search for breakpoint handlers iterate through the entire
-> linked list. Given that all registered hook has a valid fn field, and no
-> registered hooks share the same mask and imm. This commit optimize the
-> efficiency slightly by returning early as a matching handler is found.
+On Wed, Oct 23, 2024 at 04:15:58PM +0200, Kory Maincent wrote:
+> ETHTOOL_MSG_PHY_GET/GET_REPLY/NTF is missing in the ethtool message list.
+> Add it to the ethool netlink documentation.
 > 
-> v2->v1:
-> Remove all WARN_ON(!hook->fn) in v1 as Will suggested.
-
-nit: Changelogs like ^^^ should go after the '---' line, otherwise they
-end up in the git history.
-
-> Signed-off-by: Liao Chang <liaochang1@huawei.com>
+> Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
 > ---
->  arch/arm64/kernel/debug-monitors.c | 5 ++---
->  1 file changed, 2 insertions(+), 3 deletions(-)
+>  Documentation/networking/ethtool-netlink.rst | 3 +++
+>  1 file changed, 3 insertions(+)
 > 
-> diff --git a/arch/arm64/kernel/debug-monitors.c b/arch/arm64/kernel/debug-monitors.c
-> index c60a4a90c6a5..58f047de3e1c 100644
-> --- a/arch/arm64/kernel/debug-monitors.c
-> +++ b/arch/arm64/kernel/debug-monitors.c
-> @@ -303,7 +303,6 @@ static int call_break_hook(struct pt_regs *regs, unsigned long esr)
->  {
->  	struct break_hook *hook;
->  	struct list_head *list;
-> -	int (*fn)(struct pt_regs *regs, unsigned long esr) = NULL;
+> diff --git a/Documentation/networking/ethtool-netlink.rst b/Documentation/networking/ethtool-netlink.rst
+> index 295563e91082..70ecc3821007 100644
+> --- a/Documentation/networking/ethtool-netlink.rst
+> +++ b/Documentation/networking/ethtool-netlink.rst
+> @@ -236,6 +236,7 @@ Userspace to kernel:
+>    ``ETHTOOL_MSG_MM_GET``                get MAC merge layer state
+>    ``ETHTOOL_MSG_MM_SET``                set MAC merge layer parameters
+>    ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``   flash transceiver module firmware
+> +  ``ETHTOOL_MSG_PHY_GET``               get Ethernet PHY information
+>    ===================================== =================================
 >  
->  	list = user_mode(regs) ? &user_break_hook : &kernel_break_hook;
+>  Kernel to userspace:
+> @@ -283,6 +284,8 @@ Kernel to userspace:
+>    ``ETHTOOL_MSG_PLCA_NTF``                 PLCA RS parameters
+>    ``ETHTOOL_MSG_MM_GET_REPLY``             MAC merge layer status
+>    ``ETHTOOL_MSG_MODULE_FW_FLASH_NTF``      transceiver module flash updates
+> +  ``ETHTOOL_MSG_PHY_GET_REPLY``            Ethernet PHY information
+> +  ``ETHTOOL_MSG_PHY_NTF``                  Ethernet PHY information
+
+I wonder if ETHTOOL_MSG_PHY_NTF should be removed.
+It doesn't seem to be used anywhere.
+
+>    ======================================== =================================
 >  
-> @@ -313,10 +312,10 @@ static int call_break_hook(struct pt_regs *regs, unsigned long esr)
->  	 */
->  	list_for_each_entry_rcu(hook, list, node) {
->  		if ((esr_brk_comment(esr) & ~hook->mask) == hook->imm)
-> -			fn = hook->fn;
-> +			return hook->fn(regs, esr);
->  	}
->  
-> -	return fn ? fn(regs, esr) : DBG_HOOK_ERROR;
-> +	return DBG_HOOK_ERROR;
->  }
->  NOKPROBE_SYMBOL(call_break_hook);
-
-Acked-by: Will Deacon <will@kernel.org>
-
-I assume Catalin will pick this one up (but he'll need to tweak the
-commit message as per my comment above).
-
-Will
+>  ``GET`` requests are sent by userspace applications to retrieve device
+> -- 
+> 2.34.1
+> 
+> 
 
