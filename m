@@ -1,93 +1,106 @@
-Return-Path: <linux-kernel+bounces-380285-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380286-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0B8D19AEBAA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:18:22 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 303B19AEBAB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:18:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3CC561C21D93
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:18:21 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C2411C22754
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:18:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCEB61F76C8;
-	Thu, 24 Oct 2024 16:18:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A905E1F80C8;
+	Thu, 24 Oct 2024 16:18:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="Hyh7jfbE"
-Received: from casper.infradead.org (casper.infradead.org [90.155.50.34])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="MAapXxRR"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EF55B1AE005;
-	Thu, 24 Oct 2024 16:18:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.50.34
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0FE4A1AB6CC;
+	Thu, 24 Oct 2024 16:18:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786693; cv=none; b=tW47vmn2IE4jzvGGkherzJ/rZpQvC95rmmhLA/EUiG57+NA33BvJ+wA2z3/dhZjH11JpTNHYChwmXdnBNpHQUt96oyRUnwJj/6/n7pYkydDlolUFGFBnn5cWrGbLmoZnd6kHcl7ydtLeaPWKjV1LJbQL51mjpTJfSsq+1B041Vc=
+	t=1729786700; cv=none; b=ZL7wsQYtIidUC0NUgZzwtnvtnu1E7dlK2wIKd15uCOVW9QgerTVPAfM02BGqb537+njQ+370TmnZ6mUfF1PmbAWK2zh6StJPje4UJeB5qmIbDcs0o3a1u3b3bLW6Gi+aH+BOg3PpWZg1jNCq2Wl1WAj6Ty7wbYJROmV0TTUriK4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786693; c=relaxed/simple;
-	bh=eACe4BV7izCB9TZCjey9Dz3CscEhpMH8kIe4r6aUA8o=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cWdsFOpXoGCowFkAMOeQtjcC35nSyJjccyeZ3lgto85unTjj1F7D8RiWpsFgz3UN7UDNYpecdnwtFIDPYfGDugcsXTAyDhtqIbUSDIAkhLO0PWrG4uqTYIeS60bKV5T3uhJGMpcISEmNrS+Qg6ucOtFoQB1mRBXP8NmzrSiDXVc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=Hyh7jfbE; arc=none smtp.client-ip=90.155.50.34
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=casper.20170209; h=In-Reply-To:Content-Type:MIME-Version:
-	References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
-	Content-Transfer-Encoding:Content-ID:Content-Description;
-	bh=mEPllzIKJ41a2AXuCEun1BBXDaydWS3LbCjq9Yk6Xss=; b=Hyh7jfbE5a6YERoZ5qv/rTHnF9
-	Dtu/acJsFnb1wrfvRYnsx2piWR724s0fm+nds/jJ0tYQkwr2UcF8G/0pPY71dN/KYeu5Amo3kipPJ
-	0oJyakwSl/aA9CxnO058gVjHxM5S4adgquMtLU0BGZitiJh0l95Y1wHvDEfILzebbIAk2BGGULbCI
-	AwJQfE7UdzTzgsMInmMZHTn13eByz4uKO/jarri2zYPx/l0hleXKaX8kDm90ADgb0Wxw/QjA1AK4q
-	tFSKurq47zOEgIjuxf0Lf1qTKcLhaGpM8q3u0yNwgq8abIkZw/iNSofe1OCSiVzUVfCuX3bbqahkK
-	BWN6v/YA==;
-Received: from j130084.upc-j.chello.nl ([24.132.130.84] helo=noisy.programming.kicks-ass.net)
-	by casper.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t40XA-00000004N0f-1qis;
-	Thu, 24 Oct 2024 16:18:01 +0000
-Received: by noisy.programming.kicks-ass.net (Postfix, from userid 1000)
-	id 2A07F300599; Thu, 24 Oct 2024 18:18:00 +0200 (CEST)
-Date: Thu, 24 Oct 2024 18:18:00 +0200
-From: Peter Zijlstra <peterz@infradead.org>
-To: Lyude Paul <lyude@redhat.com>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Thomas Gleixner <tglx@linutronix.de>,
-	Dirk Behme <dirk.behme@gmail.com>, rust-for-linux@vger.kernel.org,
-	Danilo Krummrich <dakr@redhat.com>, airlied@redhat.com,
-	Ingo Molnar <mingo@redhat.com>, will@kernel.org,
-	Waiman Long <longman@redhat.com>, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, wedsonaf@gmail.com,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>, aliceryhl@google.com,
-	Trevor Gross <tmgross@umich.edu>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-Message-ID: <20241024161759.GF9767@noisy.programming.kicks-ass.net>
-References: <1eaf7f61-4458-4d15-bbe6-7fd2e34723f4@app.fastmail.com>
- <20241018055125.2784186-1-boqun.feng@gmail.com>
- <20241018055125.2784186-2-boqun.feng@gmail.com>
- <09dab2fd1a8fc8caee2758563c0174030f7dd8c2.camel@redhat.com>
+	s=arc-20240116; t=1729786700; c=relaxed/simple;
+	bh=HMi4vh0ZfmM/XHXhdHdVQKPsA6QQ26DG3ecTNW+84QA=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=TtO7JPPQlm4PUfM15KsMo3y4vYvT28f+2PhnKAUlV+tIQArIatucPW4SS4SBxEP5KLMIhAyiVn5/8QgNLGHnZO0wz66FKfCwgXQAyFm2sC+rl3pJdeqQmrUqAB6nnMa9YmW6jbMW1TFFPHtMBM2zjrKNSK8HzXHuVRAVgHYZyxQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=MAapXxRR; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8773EC4CEC7;
+	Thu, 24 Oct 2024 16:18:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729786699;
+	bh=HMi4vh0ZfmM/XHXhdHdVQKPsA6QQ26DG3ecTNW+84QA=;
+	h=From:To:Cc:Subject:Date:From;
+	b=MAapXxRR2TlUdIr0ODf5QSUTkEMrtS9s0rIbJEQV5gkcLjDDxAuLvxCbKYiCeRMo5
+	 yRoiODHCbLt7SAszyz0uhGUAkt2rfrUXSdGIvCrViW3Y79S4lCbRYzkq4kuHx1pzQ0
+	 pvzrs659N0OIS9CkjL42/DcMJujdaWygH6X2aW5Xm4Zid++tSh/kQtnHb4/AnupRBG
+	 Zk4j6eJLMhEZeAJDIWgTnnERb/MW0At243UUFLGnezTqffnJHv5w265kM2LQNvKIkJ
+	 6OBXL4ROcDVDwDRWwFzlS1qE3stmWBaESFlNS2SDBs4ZyJ6YYkyNkK0eWl9YLTXGpn
+	 gE2y3Q/xt9hIQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=valley-girl.lan)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t40XR-006W9S-Go;
+	Thu, 24 Oct 2024 17:18:17 +0100
+From: Marc Zyngier <maz@kernel.org>
+To: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org
+Cc: Sibi Sankar <quic_sibis@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: [PATCH] arm64: dts: qcom: x1e80100: Route pcie5 MSIs to the GIC ITS
+Date: Thu, 24 Oct 2024 17:18:14 +0100
+Message-Id: <20241024161814.1827514-1-maz@kernel.org>
+X-Mailer: git-send-email 2.39.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <09dab2fd1a8fc8caee2758563c0174030f7dd8c2.camel@redhat.com>
+Content-Transfer-Encoding: 8bit
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, quic_sibis@quicinc.com, konradybcio@kernel.org, abel.vesa@linaro.org, johan+linaro@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Mon, Oct 21, 2024 at 04:44:02PM -0400, Lyude Paul wrote:
+There is no reason to use the PCIe root port widget for MSIs for
+pcie5 while both pcie4 and pcie6a are enjoying the ITS.
 
-> I like this so far (at least, assuming we consider making 
-> raw_spin_lock_irq_disable() and enable() temporary names, and then following
-> up with some automated conversions across the kernel using coccinelle).
+This is specially useful when booting the kernel at EL2, as KVM
+can then configure the ITS to have MSIs directly injected in guests
+(since this machine has a GICv4.1 implementation).
 
-Well, I hated adding a 3rd spinlock API enough that I tried replacing
-the whole of irqsave/irqrestore with this thing in one go, and that is
-utterly failing to boot :-(
+Tested on a x1e001de devkit.
 
-Coccinelle isn't going to help I'm afraid.
+Signed-off-by: Marc Zyngier <maz@kernel.org>
+Cc: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: Konrad Dybcio <konradybcio@kernel.org>
+Cc: Abel Vesa <abel.vesa@linaro.org>
+Cc: Johan Hovold <johan+linaro@kernel.org>
+---
+ arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+index 3441d167a5cc..48f0ebd66863 100644
+--- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
++++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+@@ -3281,6 +3281,8 @@ pcie5: pci@1c00000 {
+ 			linux,pci-domain = <5>;
+ 			num-lanes = <2>;
+ 
++			msi-map = <0x0 &gic_its 0xd0000 0x10000>;
++
+ 			interrupts = <GIC_SPI 94 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 95 IRQ_TYPE_LEVEL_HIGH>,
+ 				     <GIC_SPI 96 IRQ_TYPE_LEVEL_HIGH>,
+-- 
+2.39.5
 
 
