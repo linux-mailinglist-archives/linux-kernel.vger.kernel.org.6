@@ -1,179 +1,404 @@
-Return-Path: <linux-kernel+bounces-380435-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380436-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 18CB39AEE87
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:45 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D319AEE8D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:48:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3D7D41C22F37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:47:44 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8ED0C1F23110
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:48:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 01B5D1FC7F2;
-	Thu, 24 Oct 2024 17:47:38 +0000 (UTC)
-Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 89ADF1FE0E8;
+	Thu, 24 Oct 2024 17:48:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="T7s1IAvt"
+Received: from mail-vk1-f182.google.com (mail-vk1-f182.google.com [209.85.221.182])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2F4681EF958
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:47:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 001DB1EF958;
+	Thu, 24 Oct 2024 17:48:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.182
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792057; cv=none; b=DpUil1ym0UthHe31kY+jcnzzeEk6orOWKDC38WuOFVDmTC9NCU3zxv3Ah8Rf41M3B38XomaRpa2RfuZytucAXpvYo8Hq3tD/9zpwMU8vIgQIaEItjh2Fmr3xwpkd2ByAi/IhGU4q6UlenciKxJI5o3FTmQkRRU+iAgpx7pIpzuk=
+	t=1729792127; cv=none; b=lFUxs9GTu7P3gXQTsdaAcCpXZQqM1fJFci7EMNAuBE+OL4qajqcGq0GqpLNDyKl1DBowiq5hOG4n4g4wQsatinznm19160/Y9u7VXnM0HDf0OSy84GI65jzs8jXf3nPK6Qs68LIHGfLOlCdE1Tb5GncZVgCZ3Ysw/oDBu3OLVSo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792057; c=relaxed/simple;
-	bh=DAPJ0yduV5m4meMBXem5mEQjGv+LHoa0QciyPfI1vVw=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=nh7+pG5I+pbgmtuzfOKDRp3w/Spcf4iBwqPhm9gAU+lNQ9DRNlkPWyey/zTiT/y6j60JSD/XrMl9VUldM8eidzqUN0vu+RFZ5bzAWhTz2WFpwWZaWENcP2rENJ4/e1X5yH0p7E1q76XuTbri0rNShWLOdSHxq29d8Eg+DYP2HMs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so13207325ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:47:34 -0700 (PDT)
+	s=arc-20240116; t=1729792127; c=relaxed/simple;
+	bh=DYuX86PP06V43+6J0dDID5S4JWzMob+QAdvqzV8uJCs=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=rG2OWQSzJyfqIKPPwhsErMpQxG7rOLNE/k7vmthKI9El4cra4A8X1QBSzSIE2h8cWwfnZm4WRd2FAmpTVywXU6W1H6DFQL6Xefu8W+4RWq4fh8LAloX3RVA4O4lZXMhiCwil9p/zO0qVtOPj8BMuEtdCyucwGkvMfAkak0o/9ro=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=T7s1IAvt; arc=none smtp.client-ip=209.85.221.182
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-vk1-f182.google.com with SMTP id 71dfb90a1353d-50fc0345155so657938e0c.1;
+        Thu, 24 Oct 2024 10:48:44 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729792124; x=1730396924; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=y26VSrA0gvzcuHws0bkRVD6tE0qvL6sGoOvCQVrQ+2Q=;
+        b=T7s1IAvta1cn9+plaPaOz0hxjtqji6Fgn/vzktKzmOMPUNs9+AjKpkmHzqMw+TVzMy
+         IH7/b7Ko358OeCmhSMDOOiwMSlFeiw3plPbHiu+D//T8s3uxgebN0JPHGByVZ9s6R1Yx
+         EyFtGdNDpCOIG5i0lsebN30N3ISMuVV2Zsl7rQ/Slqd01zkcK6qfmZv4P+oEm+S0BUFk
+         eBi4e9axqunXjChygxOYO9hrzI8mlb4ayRat3j+DaPh0aXQAymGOrC8mTgm55EtuojsY
+         rtKdX1gkTsjB5UrlSIK/9X6miyTnONJhU6fzuUxSr7m904iO9s0IVv10S3IMudny+sSB
+         4XOw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729792054; x=1730396854;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Q302cqA2GtT9etQ40qs/8NVemKQh30PtxyBrh1rV1Mw=;
-        b=ndh+L9I8rQbvGZHVZUJ+rE1UPXMKXQS0W+Rme8s29WNPfGoXvl8GiSNLVoiIHC95ys
-         4W3Vlfu1oss6H8kf5c1vQ9CEmBqSNz80lKZo11hL3xoFBmQbKUndyqy23HpMBXANVsC7
-         LOHSTruDAmY0TlV40aUyYJBB37VgazhNmtDJuWE0LjyDc5kAZvebJ7kDb0QEIgqAM+i1
-         25XyPZDoJV1QPhWEk0V9B66aZbRk24JFcq7hy1HZZWmXH2T1WbYk9LohcIzTpARu6pvL
-         7q/M8f8Jk4KX6n+jK30u4ugS4PQ3MQesQGANflLgIcG7kJShMhd8/CFjJvLromSXyU4n
-         EHiw==
-X-Forwarded-Encrypted: i=1; AJvYcCWUlY8IWIPrX9jTtoB2WaI2dvpa00ilDpqhbcAHia4W01Z8odrezidOkydhw032AgEJpwQd72h47Q7Oq80=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSOMG5ms9W8AHwmj6kvofRESj2KlBQc8nEz3peMeeQCg6X1Qnh
-	MMKcitqNFLSmL2Yg4QYC3BoJikWG/d7cVjwMth13OVCyaC60x3qImtc/DaYiEIE2oi2wjcRNr+N
-	CKICQchZc+HsqAoyg2i9IjFmFpRQoXG/C52kN9xGGNS3DkWHkgSwUs5k=
-X-Google-Smtp-Source: AGHT+IHqqgxrt3rQuAv8IHLa2srQkydZFrX8kQbEkCr60+ySDeT89XWhE1CkBiJnk4ccdHNoPNnOAq9/hvaxUNWnMBKyBNNtfSkz
+        d=1e100.net; s=20230601; t=1729792124; x=1730396924;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=y26VSrA0gvzcuHws0bkRVD6tE0qvL6sGoOvCQVrQ+2Q=;
+        b=qZMbJ1FxOjvOvDjKDoDMP4llqjIR4TqiPup8FjAO8ZIwkDRk2xrNGFnfknzUd4GIYz
+         9ZJ0VevxBOylaEg/jcZT0GclOj3je7ol121wmpPK2++Odmll+W/sooBRYh1/Ot99q1xn
+         NZ8EMLLUwqNnXlX+Fd2EJzeBJ/acUiUzWYyzAiMEA5UvvWh0W6SMV4o87CXjEun/7FRo
+         kTkrYv+SYbuT7ZeIbSAwWvJDOsXusv6TogJmeB2BS7v3oIluBn5DpRuUKBIy3IY5d7ET
+         ZpTYwjglnBPhLbpmxqJ8nyr3WhCd8rbBXyB6sJXQtxvsSOlRlVAKDX3dfi9jrPbWPhak
+         a2MA==
+X-Forwarded-Encrypted: i=1; AJvYcCUV5Q6siRnFQ+0YCcjuNvWCOyIsLk7XwzXAx1uKiTSbCYlZUHbGxc0BZ1OsdXrjkdhGp48/fOl4P3o=@vger.kernel.org, AJvYcCWZNodUk6DZsVv/o0z9dCYvofyrtClbMNAtOvXf9MnPrTKvwS6GqnLogZs6QwaWa7PZA61Dx4E/YyRbq9CM@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx7k6L9OO5C1hs8Kja7SOPEg9PQPUZ4MdQy3r3Tk+CCtPMS9NuB
+	nLJ5uMehK4qKq2Y1gqsGyiZT8vTj4yio2TXQebFcmPpCzc099COqcQ9F9noGe+JCvUlKDyWp0Te
+	F0G2DThoFWEVV2NZSBYA/l9x/5S4=
+X-Google-Smtp-Source: AGHT+IGV9GbAkt4FHb/2gl8kB1oIGDVhCYRqdYecm3LmyYRUDSRbQl6WYaH0GJ1fpFtDy3v+/YIkAE/90WZif31sxMU=
+X-Received: by 2002:a05:6122:922:b0:50a:cbdb:b929 with SMTP id
+ 71dfb90a1353d-50feb3002ffmr2884647e0c.2.1729792123560; Thu, 24 Oct 2024
+ 10:48:43 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:152c:b0:3a0:985b:ddb4 with SMTP id
- e9e14a558f8ab-3a4de7825fbmr32685445ab.2.1729792052645; Thu, 24 Oct 2024
- 10:47:32 -0700 (PDT)
-Date: Thu, 24 Oct 2024 10:47:32 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671a8834.050a0220.2eb763.00c5.GAE@google.com>
-Subject: [syzbot] [bcachefs?] kernel BUG in bch2_run_recovery_pass
-From: syzbot <syzbot+a27c3aaa3640dd3e1dfb@syzkaller.appspotmail.com>
-To: kent.overstreet@linux.dev, linux-bcachefs@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+References: <cb3f67c3-e8d3-4398-98c9-d5aee134fd4c@gmail.com>
+ <20241023233548.23348-1-21cnbao@gmail.com> <20241024142942.GA279597@cmpxchg.org>
+In-Reply-To: <20241024142942.GA279597@cmpxchg.org>
+From: Barry Song <21cnbao@gmail.com>
+Date: Fri, 25 Oct 2024 06:48:31 +1300
+Message-ID: <CAGsJ_4zf=mnEv1LSrvXXtTJjMPKB7SnWB2Jni=6EXEbqxHiL=Q@mail.gmail.com>
+Subject: Re: [RFC 0/4] mm: zswap: add support for zswapin of large folios
+To: Johannes Weiner <hannes@cmpxchg.org>
+Cc: usamaarif642@gmail.com, akpm@linux-foundation.org, 
+	chengming.zhou@linux.dev, david@redhat.com, hanchuanhua@oppo.com, 
+	kanchana.p.sridhar@intel.com, kernel-team@meta.com, linux-doc@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, linux-mm@kvack.org, minchan@kernel.org, 
+	nphamcs@gmail.com, riel@surriel.com, ryan.roberts@arm.com, 
+	senozhatsky@chromium.org, shakeel.butt@linux.dev, v-songbaohua@oppo.com, 
+	willy@infradead.org, ying.huang@intel.com, yosryahmed@google.com
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Fri, Oct 25, 2024 at 3:29=E2=80=AFAM Johannes Weiner <hannes@cmpxchg.org=
+> wrote:
+>
+> On Thu, Oct 24, 2024 at 12:35:48PM +1300, Barry Song wrote:
+> > On Thu, Oct 24, 2024 at 9:36=E2=80=AFAM Barry Song <21cnbao@gmail.com> =
+wrote:
+> > >
+> > > On Thu, Oct 24, 2024 at 8:47=E2=80=AFAM Usama Arif <usamaarif642@gmai=
+l.com> wrote:
+> > > >
+> > > >
+> > > >
+> > > > On 23/10/2024 19:52, Barry Song wrote:
+> > > > > On Thu, Oct 24, 2024 at 7:31=E2=80=AFAM Usama Arif <usamaarif642@=
+gmail.com> wrote:
+> > > > >>
+> > > > >>
+> > > > >>
+> > > > >> On 23/10/2024 19:02, Yosry Ahmed wrote:
+> > > > >>> [..]
+> > > > >>>>>> I suspect the regression occurs because you're running an ed=
+ge case
+> > > > >>>>>> where the memory cgroup stays nearly full most of the time (=
+this isn't
+> > > > >>>>>> an inherent issue with large folio swap-in). As a result, sw=
+apping in
+> > > > >>>>>> mTHP quickly triggers a memcg overflow, causing a swap-out. =
+The
+> > > > >>>>>> next swap-in then recreates the overflow, leading to a repea=
+ting
+> > > > >>>>>> cycle.
+> > > > >>>>>>
+> > > > >>>>>
+> > > > >>>>> Yes, agreed! Looking at the swap counters, I think this is wh=
+at is going
+> > > > >>>>> on as well.
+> > > > >>>>>
+> > > > >>>>>> We need a way to stop the cup from repeatedly filling to the=
+ brim and
+> > > > >>>>>> overflowing. While not a definitive fix, the following chang=
+e might help
+> > > > >>>>>> improve the situation:
+> > > > >>>>>>
+> > > > >>>>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > > >>>>>>
+> > > > >>>>>> index 17af08367c68..f2fa0eeb2d9a 100644
+> > > > >>>>>> --- a/mm/memcontrol.c
+> > > > >>>>>> +++ b/mm/memcontrol.c
+> > > > >>>>>>
+> > > > >>>>>> @@ -4559,7 +4559,10 @@ int mem_cgroup_swapin_charge_folio(st=
+ruct folio
+> > > > >>>>>> *folio, struct mm_struct *mm,
+> > > > >>>>>>                 memcg =3D get_mem_cgroup_from_mm(mm);
+> > > > >>>>>>         rcu_read_unlock();
+> > > > >>>>>>
+> > > > >>>>>> -       ret =3D charge_memcg(folio, memcg, gfp);
+> > > > >>>>>> +       if (folio_test_large(folio) && mem_cgroup_margin(mem=
+cg) <
+> > > > >>>>>> MEMCG_CHARGE_BATCH)
+> > > > >>>>>> +               ret =3D -ENOMEM;
+> > > > >>>>>> +       else
+> > > > >>>>>> +               ret =3D charge_memcg(folio, memcg, gfp);
+> > > > >>>>>>
+> > > > >>>>>>         css_put(&memcg->css);
+> > > > >>>>>>         return ret;
+> > > > >>>>>> }
+> > > > >>>>>>
+> > > > >>>>>
+> > > > >>>>> The diff makes sense to me. Let me test later today and get b=
+ack to you.
+> > > > >>>>>
+> > > > >>>>> Thanks!
+> > > > >>>>>
+> > > > >>>>>> Please confirm if it makes the kernel build with memcg limit=
+ation
+> > > > >>>>>> faster. If so, let's
+> > > > >>>>>> work together to figure out an official patch :-) The above =
+code hasn't consider
+> > > > >>>>>> the parent memcg's overflow, so not an ideal fix.
+> > > > >>>>>>
+> > > > >>>>
+> > > > >>>> Thanks Barry, I think this fixes the regression, and even give=
+s an improvement!
+> > > > >>>> I think the below might be better to do:
+> > > > >>>>
+> > > > >>>> diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > > > >>>> index c098fd7f5c5e..0a1ec55cc079 100644
+> > > > >>>> --- a/mm/memcontrol.c
+> > > > >>>> +++ b/mm/memcontrol.c
+> > > > >>>> @@ -4550,7 +4550,11 @@ int mem_cgroup_swapin_charge_folio(stru=
+ct folio *folio, struct mm_struct *mm,
+> > > > >>>>                 memcg =3D get_mem_cgroup_from_mm(mm);
+> > > > >>>>         rcu_read_unlock();
+> > > > >>>>
+> > > > >>>> -       ret =3D charge_memcg(folio, memcg, gfp);
+> > > > >>>> +       if (folio_test_large(folio) &&
+> > > > >>>> +           mem_cgroup_margin(memcg) < max(MEMCG_CHARGE_BATCH,=
+ folio_nr_pages(folio)))
+> > > > >>>> +               ret =3D -ENOMEM;
+> > > > >>>> +       else
+> > > > >>>> +               ret =3D charge_memcg(folio, memcg, gfp);
+> > > > >>>>
+> > > > >>>>         css_put(&memcg->css);
+> > > > >>>>         return ret;
+> > > > >>>>
+> > > > >>>>
+> > > > >>>> AMD 16K+32K THP=3Dalways
+> > > > >>>> metric         mm-unstable      mm-unstable + large folio zswa=
+pin series    mm-unstable + large folio zswapin + no swap thrashing fix
+> > > > >>>> real           1m23.038s        1m23.050s                     =
+              1m22.704s
+> > > > >>>> user           53m57.210s       53m53.437s                    =
+              53m52.577s
+> > > > >>>> sys            7m24.592s        7m48.843s                     =
+              7m22.519s
+> > > > >>>> zswpin         612070           999244                        =
+              815934
+> > > > >>>> zswpout        2226403          2347979                       =
+              2054980
+> > > > >>>> pgfault        20667366         20481728                      =
+              20478690
+> > > > >>>> pgmajfault     385887           269117                        =
+              309702
+> > > > >>>>
+> > > > >>>> AMD 16K+32K+64K THP=3Dalways
+> > > > >>>> metric         mm-unstable      mm-unstable + large folio zswa=
+pin series   mm-unstable + large folio zswapin + no swap thrashing fix
+> > > > >>>> real           1m22.975s        1m23.266s                     =
+             1m22.549s
+> > > > >>>> user           53m51.302s       53m51.069s                    =
+             53m46.471s
+> > > > >>>> sys            7m40.168s        7m57.104s                     =
+             7m25.012s
+> > > > >>>> zswpin         676492           1258573                       =
+             1225703
+> > > > >>>> zswpout        2449839          2714767                       =
+             2899178
+> > > > >>>> pgfault        17540746         17296555                      =
+             17234663
+> > > > >>>> pgmajfault     429629           307495                        =
+             287859
+> > > > >>>>
+> > > > >>>
+> > > > >>> Thanks Usama and Barry for looking into this. It seems like thi=
+s would
+> > > > >>> fix a regression with large folio swapin regardless of zswap. C=
+an the
+> > > > >>> same result be reproduced on zram without this series?
+> > > > >>
+> > > > >>
+> > > > >> Yes, its a regression in large folio swapin support regardless o=
+f zswap/zram.
+> > > > >>
+> > > > >> Need to do 3 tests, one with probably the below diff to remove l=
+arge folio support,
+> > > > >> one with current upstream and one with upstream + swap thrashing=
+ fix.
+> > > > >>
+> > > > >> We only use zswap and dont have a zram setup (and I am a bit laz=
+y to create one :)).
+> > > > >> Any zram volunteers to try this?
+> > > > >
+> > > > > Hi Usama,
+> > > > >
+> > > > > I tried a quick experiment:
+> > > > >
+> > > > > echo 1 > /sys/module/zswap/parameters/enabled
+> > > > > echo 0 > /sys/module/zswap/parameters/enabled
+> > > > >
+> > > > > This was to test the zRAM scenario. Enabling zswap even
+> > > > > once disables mTHP swap-in. :)
+> > > > >
+> > > > > I noticed a similar regression with zRAM alone, but the change re=
+solved
+> > > > > the issue and even sped up the kernel build compared to the setup=
+ without
+> > > > > mTHP swap-in.
+> > > >
+> > > > Thanks for trying, this is amazing!
+> > > > >
+> > > > > However, I=E2=80=99m still working on a proper patch to address t=
+his. The current
+> > > > > approach:
+> > > > >
+> > > > > mem_cgroup_margin(memcg) < max(MEMCG_CHARGE_BATCH, folio_nr_pages=
+(folio))
+> > > > >
+> > > > > isn=E2=80=99t sufficient, as it doesn=E2=80=99t cover cases where=
+ group A contains group B, and
+> > > > > we=E2=80=99re operating within group B. The problem occurs not at=
+ the boundary of
+> > > > > group B but at the boundary of group A.
+> > > >
+> > > > I am not sure I completely followed this. As MEMCG_CHARGE_BATCH=3D6=
+4, if we are
+> > > > trying to swapin a 16kB page, we basically check if atleast 64/4 =
+=3D 16 folios can be
+> > > > charged to cgroup, which is reasonable. If we try to swapin a 1M fo=
+lio, we just
+> > > > check if we can charge atleast 1 folio. Are you saying that checkin=
+g just 1 folio
+> > > > is not enough in this case and can still cause thrashing, i.e we sh=
+ould check more?
+> > >
+> > > My understanding is that cgroups are hierarchical. Even if we don=E2=
+=80=99t
+> > > hit the memory
+> > >  limit of the folio=E2=80=99s direct memcg, we could still reach the =
+limit of
+> > > one of its parent
+> > > memcgs. Imagine a structure like:
+> > >
+> > > /sys/fs/cgroup/a/b/c/d
+> > >
+> > > If we=E2=80=99re compiling the kernel in d, there=E2=80=99s a chance =
+that while d
+> > > isn=E2=80=99t at its limit, its
+> > > parents (c, b, or a) could be. Currently, the check only applies to d=
+.
+> >
+> > To clarify, I mean something like this:
+> >
+> > diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+> > index 17af08367c68..cc6d21848ee8 100644
+> > --- a/mm/memcontrol.c
+> > +++ b/mm/memcontrol.c
+> > @@ -4530,6 +4530,29 @@ int mem_cgroup_hugetlb_try_charge(struct mem_cgr=
+oup *memcg, gfp_t gfp,
+> >       return 0;
+> >  }
+> >
+> > +/*
+> > + * When the memory cgroup is nearly full, swapping in large folios can
+> > + * easily lead to swap thrashing, as the memcg operates on the edge of
+> > + * being full. We maintain a margin to allow for quick fallback to
+> > + * smaller folios during the swap-in process.
+> > + */
+> > +static inline bool mem_cgroup_swapin_margin_protected(struct mem_cgrou=
+p *memcg,
+> > +             struct folio *folio)
+> > +{
+> > +     unsigned int nr;
+> > +
+> > +     if (!folio_test_large(folio))
+> > +             return false;
+> > +
+> > +     nr =3D max_t(unsigned int, folio_nr_pages(folio), MEMCG_CHARGE_BA=
+TCH);
+> > +     for (; !mem_cgroup_is_root(memcg); memcg =3D parent_mem_cgroup(me=
+mcg)) {
+> > +             if (mem_cgroup_margin(memcg) < nr)
+> > +                     return true;
+> > +     }
+> > +
+> > +     return false;
+> > +}
+> > +
+> >  /**
+> >   * mem_cgroup_swapin_charge_folio - Charge a newly allocated folio for=
+ swapin.
+> >   * @folio: folio to charge.
+> > @@ -4547,7 +4570,8 @@ int mem_cgroup_swapin_charge_folio(struct folio *=
+folio, struct mm_struct *mm,
+> >  {
+> >       struct mem_cgroup *memcg;
+> >       unsigned short id;
+> > -     int ret;
+> > +     int ret =3D -ENOMEM;
+> > +     bool margin_prot;
+> >
+> >       if (mem_cgroup_disabled())
+> >               return 0;
+> > @@ -4557,9 +4581,11 @@ int mem_cgroup_swapin_charge_folio(struct folio =
+*folio, struct mm_struct *mm,
+> >       memcg =3D mem_cgroup_from_id(id);
+> >       if (!memcg || !css_tryget_online(&memcg->css))
+> >               memcg =3D get_mem_cgroup_from_mm(mm);
+> > +     margin_prot =3D mem_cgroup_swapin_margin_protected(memcg, folio);
+> >       rcu_read_unlock();
+> >
+> > -     ret =3D charge_memcg(folio, memcg, gfp);
+> > +     if (!margin_prot)
+> > +             ret =3D charge_memcg(folio, memcg, gfp);
+> >
+> >       css_put(&memcg->css);
+> >       return ret;
+>
+> I'm not quite following.
+>
+> The charging code DOES the margin check. If you just want to avoid
+> reclaim, pass gfp without __GFP_DIRECT_RECLAIM, and it will return
+> -ENOMEM if there is no margin.
+>
+> alloc_swap_folio() passes the THP mask, which should not include the
+> reclaim flag per default (GFP_TRANSHUGE_LIGHT). Unless you run with
+> defrag=3Dalways. Is that what's going on?
 
-syzbot found the following issue on:
+No, quite sure "defrag=3Dnever" can just achieve the same result. Imagine w=
+e only
+have small folios=E2=80=94each time reclamation occurs, we have at least a
+SWAP_CLUSTER_MAX buffer before the next reclamation is triggered.
 
-HEAD commit:    715ca9dd687f Merge tag 'io_uring-6.12-20241019' of git://g..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=15afa0a7980000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=16e543edc81a3008
-dashboard link: https://syzkaller.appspot.com/bug?extid=a27c3aaa3640dd3e1dfb
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=16a8ec87980000
-C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=14b7425f980000
+ .nr_to_reclaim =3D max(nr_pages, SWAP_CLUSTER_MAX),
 
-Downloadable assets:
-disk image (non-bootable): https://storage.googleapis.com/syzbot-assets/7feb34a89c2a/non_bootable_disk-715ca9dd.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/ba436e2363b6/vmlinux-715ca9dd.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/3ac78a7a1a30/bzImage-715ca9dd.xz
-mounted in repro: https://storage.googleapis.com/syzbot-assets/44b65c0cea47/mount_0.gz
+However, with large folios, we can quickly exhaust the SWAP_CLUSTER_MAX
+buffer and reach the next reclamation point.
+Once we consume SWAP_CLUSTER_MAX - 1, the mem_cgroup_swapin_charge_folio()
+call for the final small folio with GFP_KERNEL will trigger reclamation.
+        if (mem_cgroup_swapin_charge_folio(folio, vma->vm_mm,
+                                           GFP_KERNEL, entry)) {
 
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+a27c3aaa3640dd3e1dfb@syzkaller.appspotmail.com
-
-bcachefs (loop0): check_lrus... done
-bcachefs (loop0): check_btree_backpointers... done
-bcachefs (loop0): check_backpointers_to_extents...
-------------[ cut here ]------------
-kernel BUG at fs/bcachefs/bkey_types.h:210!
-Oops: invalid opcode: 0000 [#1] PREEMPT SMP KASAN NOPTI
-CPU: 0 UID: 0 PID: 5098 Comm: syz-executor177 Not tainted 6.12.0-rc3-syzkaller-00420-g715ca9dd687f #0
-Hardware name: QEMU Standard PC (Q35 + ICH9, 2009), BIOS 1.16.3-debian-1.16.3-2~bpo12+1 04/01/2014
-RIP: 0010:bkey_s_c_to_backpointer fs/bcachefs/bkey_types.h:210 [inline]
-RIP: 0010:bch2_check_backpointers_to_extents_pass fs/bcachefs/backpointers.c:1003 [inline]
-RIP: 0010:bch2_check_backpointers_to_extents+0x240a/0x2430 fs/bcachefs/backpointers.c:1049
-Code: 48 8b 4c 24 38 80 e1 07 38 c1 0f 8c b7 dd ff ff be 18 00 00 00 48 8b 7c 24 38 e8 11 7e ee fd e9 a3 dd ff ff e8 27 b8 84 fd 90 <0f> 0b e8 1f b8 84 fd 90 0f 0b e8 f7 56 b6 07 e8 12 b8 84 fd 90 0f
-RSP: 0018:ffffc90002d9ed80 EFLAGS: 00010293
-RAX: ffffffff84102fd9 RBX: ffff888041da01d0 RCX: ffff8880003e2440
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 000000000000001c
-RBP: ffffc90002d9f488 R08: ffffffff84101b4e R09: 0000000000000000
-R10: ffffc90002d9e780 R11: fffff520005b3cfd R12: 0000000000000003
-R13: ffffc90002d9f280 R14: dffffc0000000000 R15: ffff8880401a8000
-FS:  000055556e26c380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffda68deef8 CR3: 000000004091a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-Call Trace:
- <TASK>
- bch2_run_recovery_pass+0xf0/0x1e0 fs/bcachefs/recovery_passes.c:185
- bch2_run_recovery_passes+0x387/0x870 fs/bcachefs/recovery_passes.c:232
- bch2_fs_recovery+0x25cc/0x39c0 fs/bcachefs/recovery.c:862
- bch2_fs_start+0x356/0x5b0 fs/bcachefs/super.c:1036
- bch2_fs_get_tree+0xd68/0x1710 fs/bcachefs/fs.c:2174
- vfs_get_tree+0x90/0x2b0 fs/super.c:1800
- do_new_mount+0x2be/0xb40 fs/namespace.c:3507
- do_mount fs/namespace.c:3847 [inline]
- __do_sys_mount fs/namespace.c:4055 [inline]
- __se_sys_mount+0x2d6/0x3c0 fs/namespace.c:4032
- do_syscall_x64 arch/x86/entry/common.c:52 [inline]
- do_syscall_64+0xf3/0x230 arch/x86/entry/common.c:83
- entry_SYSCALL_64_after_hwframe+0x77/0x7f
-RIP: 0033:0x7f1f62c028fa
-Code: d8 64 89 02 48 c7 c0 ff ff ff ff eb a6 e8 5e 04 00 00 66 2e 0f 1f 84 00 00 00 00 00 0f 1f 40 00 49 89 ca b8 a5 00 00 00 0f 05 <48> 3d 01 f0 ff ff 73 01 c3 48 c7 c1 b8 ff ff ff f7 d8 64 89 01 48
-RSP: 002b:00007ffe477ec068 EFLAGS: 00000282 ORIG_RAX: 00000000000000a5
-RAX: ffffffffffffffda RBX: 00007ffe477ec080 RCX: 00007f1f62c028fa
-RDX: 00000000200058c0 RSI: 0000000020001040 RDI: 00007ffe477ec080
-RBP: 0000000000000004 R08: 00007ffe477ec0c0 R09: 002c647261637350
-R10: 0000000000000000 R11: 0000000000000282 R12: 0000000000000000
-R13: 00007ffe477ec0c0 R14: 0000000000000003 R15: 0000000001000000
- </TASK>
-Modules linked in:
----[ end trace 0000000000000000 ]---
-RIP: 0010:bkey_s_c_to_backpointer fs/bcachefs/bkey_types.h:210 [inline]
-RIP: 0010:bch2_check_backpointers_to_extents_pass fs/bcachefs/backpointers.c:1003 [inline]
-RIP: 0010:bch2_check_backpointers_to_extents+0x240a/0x2430 fs/bcachefs/backpointers.c:1049
-Code: 48 8b 4c 24 38 80 e1 07 38 c1 0f 8c b7 dd ff ff be 18 00 00 00 48 8b 7c 24 38 e8 11 7e ee fd e9 a3 dd ff ff e8 27 b8 84 fd 90 <0f> 0b e8 1f b8 84 fd 90 0f 0b e8 f7 56 b6 07 e8 12 b8 84 fd 90 0f
-RSP: 0018:ffffc90002d9ed80 EFLAGS: 00010293
-RAX: ffffffff84102fd9 RBX: ffff888041da01d0 RCX: ffff8880003e2440
-RDX: 0000000000000000 RSI: 0000000000000003 RDI: 000000000000001c
-RBP: ffffc90002d9f488 R08: ffffffff84101b4e R09: 0000000000000000
-R10: ffffc90002d9e780 R11: fffff520005b3cfd R12: 0000000000000003
-R13: ffffc90002d9f280 R14: dffffc0000000000 R15: ffff8880401a8000
-FS:  000055556e26c380(0000) GS:ffff88801fc00000(0000) knlGS:0000000000000000
-CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
-CR2: 00007ffda68deef8 CR3: 000000004091a000 CR4: 0000000000352ef0
-DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
-DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
-
-
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
-
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
-
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
-
-If you want syzbot to run the reproducer, reply with:
-#syz test: git://repo/address.git branch-or-commit-hash
-If you attach or paste a git patch, syzbot will apply it before testing.
-
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
-
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
-
-If you want to undo deduplication, reply with:
-#syz undup
+Thanks
+Barry
 
