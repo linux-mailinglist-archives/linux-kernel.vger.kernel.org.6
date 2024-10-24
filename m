@@ -1,133 +1,111 @@
-Return-Path: <linux-kernel+bounces-380342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380344-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2F80E9AEC99
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:51:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 015E59AECA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:51:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7DDE282780
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:51:05 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2A68C1C231B1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:51:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CCD341F669F;
-	Thu, 24 Oct 2024 16:50:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EF5941F8912;
+	Thu, 24 Oct 2024 16:51:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="F/vidhEi"
-Received: from mail-ej1-f43.google.com (mail-ej1-f43.google.com [209.85.218.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="jHWw6Tyr"
+Received: from mail-wr1-f54.google.com (mail-wr1-f54.google.com [209.85.221.54])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 15CA61F81B8;
-	Thu, 24 Oct 2024 16:50:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 55AAC167DAC;
+	Thu, 24 Oct 2024 16:51:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.54
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788652; cv=none; b=dQ86CYcUa2PRNsPgXz32RDdEb+9zXQpbItHZWezu/u5QHMh6K5By6l80T5dY1e4ct8Q4BmPUgUghtvYOZmm8siPGGfMsCpG15L9eInWSwDQTtCcn2KhTGxFmh7HoWl//e4E/Bik8ZhjneLAM59RGY6QwoHUhG6AhZylLzddxl88=
+	t=1729788690; cv=none; b=BHHb30onB3GZqK87huJmPq3rDDdJ/QAvmAJGYfjRfoWdy4/nraE76+iOyMKG6B91eD6TPyMcawxjpCH/lmE0929/y+W3VUOzNCkb29k4zdkk36wzRO4KVwIwt6doNhwDgfshw8WYRYidGxHI9tNq7YewG8Xr4pLPtbJCMLGo+UQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788652; c=relaxed/simple;
-	bh=3RgXWL0YGy+4KDPWrL4/59X44OhiVVqjONQptRozfUE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=ESUpwGWBO7jHhERt8lO8VwxG3RzHbjWvmNGTdd1NH7M4+0w2C9qbQfCztVqcIX/pkGRABrQfGEib0MKfoTxGafA01a37jtigQy0bnuNH/YMRu5d662EAwCo5bMv/Aa7rDEvmaMTbnQWF2K6JLtbd0z1IqSax2OxxK6/qe5wAFzw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=F/vidhEi; arc=none smtp.client-ip=209.85.218.43
+	s=arc-20240116; t=1729788690; c=relaxed/simple;
+	bh=4A786CPjDvqACnuzx/J9DqOF5YWtyQ0b8FJojeoO3S0=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=vCbb6cMzV8Fym3S5mFWX0Y9e85RzHrhZueffogE+FgG8XK1MuMvufVrtFCf+/2cNc2TX0mt494eQqQl5yuk71jLoFdNh8YGUJHJHgsXHM0zJgWnrPbwQGNGvn4cAtbEj6EaUMrishH+1yBHbTj5awi6dCVmcTJEkY4kjhbNGNhg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=jHWw6Tyr; arc=none smtp.client-ip=209.85.221.54
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f43.google.com with SMTP id a640c23a62f3a-a9a68480164so145437466b.3;
-        Thu, 24 Oct 2024 09:50:49 -0700 (PDT)
+Received: by mail-wr1-f54.google.com with SMTP id ffacd0b85a97d-37d55f0cf85so896955f8f.3;
+        Thu, 24 Oct 2024 09:51:28 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729788648; x=1730393448; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=qw3O9hodQBRp/DEbf4rfIGCtqNJfuZEI+i/CxdbGArM=;
-        b=F/vidhEiHaBC389QMFzhpMwJWhzz6ShTKUPAUVsDTiMeV2ow5PVTasiVypjpONmVSG
-         QFX/h80fhluPGTGwzflvDMxtsRYM3CPVV/ietRlc1/2iBQRwVCVLqGHoE6igHD3fT8fp
-         7egM07qad/CdUvMsGEiqYCkAJ7dCClRm+2LdLnrxpbIRjRpnbT3Az42zI/sNmHeCdfUU
-         joiu/pDDwMeDC3v/btwPIew036Whkg8TNmd9mP1CCZD7rSP06wCcwPUwe4I1Qv+M5llE
-         90udHv8MoQyc9giKZFJVMjzF6+WNtKJ0oggMxI+PVOS+YFTNBeDndUzFoy70zbZUjuMp
-         ItKQ==
+        d=gmail.com; s=20230601; t=1729788686; x=1730393486; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=g0S65iBcIJZZEOd9D4XzJaH7aFYD4CGJUi+zHz0Iw5Y=;
+        b=jHWw6Tyrm97G4A0W9uqN2XwCle4izECZcIxTPRjVAZsnku8EYzMiD8trRWNEzK2/hy
+         6clWJb3HEfdpaABr7E/YAyBshq4ktEdx9ZeagH7SyUiuzviKj8ktG9yqg8fOBu2qSyJB
+         8uMFhj4CdqglLYJUX9xapyvhJ1zXPd4FXmLIlBo7oUs0gxKvjpZXMWEkXU/dvAeanZeZ
+         phl5P8lw7lmRkxVJ7KUwgik5Vfpx+57tu7eQtb+bxtcYblNczvNLt7smPukRYsznk4jV
+         nuFxSdgAw1cBe1B5dbcrx6y1aLE8pbXxIQfDEF8GcZ/fZvzupGjrqeRKq8zAfXKan/vD
+         NSyw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729788648; x=1730393448;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=qw3O9hodQBRp/DEbf4rfIGCtqNJfuZEI+i/CxdbGArM=;
-        b=p9Ty/O4VRQH8jwtxTI431AhuuFFscTu1q7kqodJOsfg+LY0M4N6mY6I1xtPZb+q5Q2
-         yZ/EEj27ynWCbZT9ZDkkaepiinghAaoDRczco/bQlvuRtMS7uc2igpSB0GinJF+AepDc
-         HljGekn2J8eMaKnkKNX2pO/NloSwYocBDh61cFnlSIriFfbDZRRLTKa+0acRbimKR7U4
-         rhBu3GCxdiOjYEyiqf8gcr7bD5yuG/nDSgPTCrXyVO+o0FqbdVoDX5AoxbIg9xKAq8Cf
-         fuo+vjgYm9VYf2oltBxyC+blj3bXq3HC7+RVquny0ZCsXe6UUpGKz7/j7ql/Ju4bcNsh
-         mcNw==
-X-Forwarded-Encrypted: i=1; AJvYcCWGHaxRRZAzXJt+etGbVnuR9BV5s+QBWxBXKbHYxQsfrqAPjRM1xPQnruC4SBBw/yQ/k+wTIYZjcsusssPu@vger.kernel.org, AJvYcCX/Z7Bp5ir3X+cGuFhCyed6LXMkgd2Etwb+Rzm2m9H4VFONCl2qNBAtu3z157LOd86qejStlq3N4t2HokXX9Bw=@vger.kernel.org, AJvYcCXJEElI+y193V3Ltr+9JgNLw2mIlu9b2DKIM40CqM3gzlbzjbXWVQXsd033+1yxA7qKYw6MN9Ze87ys94Y=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyGKqA8lDS+0v/vbS4JjJxrWq5qgdhj9VgB26kYoSBxKxDu7+8F
-	YE+BBXXbDyfXGVkiFJsvC5GFHeHXtBRo/mdZenuCs/WLhDP07d1LkOxYtVks
-X-Google-Smtp-Source: AGHT+IFdtBJB0hDClK2PASxfoljLwLQyf/nrZv9yVgbCfBzXcKYh5XyFC7uUTYw2p3ozGeP0RZZLIQ==
-X-Received: by 2002:a17:907:3d88:b0:a99:f972:7544 with SMTP id a640c23a62f3a-a9ad27650a2mr256202666b.38.1729788647917;
-        Thu, 24 Oct 2024 09:50:47 -0700 (PDT)
-Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9159a23csm637575566b.205.2024.10.24.09.50.47
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 09:50:47 -0700 (PDT)
-Date: Thu, 24 Oct 2024 18:50:45 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Lu Baolu <baolu.lu@linux.intel.com>, 
-	Mikko Perttunen <mperttunen@nvidia.com>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Jonathan Hunter <jonathanh@nvidia.com>, 
-	Lyude Paul <lyude@redhat.com>, dri-devel@lists.freedesktop.org, linux-tegra@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
-Message-ID: <hwyc33hoo64ir4lljqehczycrl4bu2g2r74sdmbtssddpdywyz@6lyxnedoe6sy>
-References: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+        d=1e100.net; s=20230601; t=1729788686; x=1730393486;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=g0S65iBcIJZZEOd9D4XzJaH7aFYD4CGJUi+zHz0Iw5Y=;
+        b=vShGpMksW+YnYn8HRYI+rOnNbKv4kfzbXwj6xLYSYbZdaP1ONhFFRMzMefTtMgSzrA
+         MdxEbevzbYF61Uw5MbM6kTdBq4A/TdJuaPCbfdOEjxXjS81r8c0dm2LVrukIHu3xD+Dq
+         C0zfb3mS0hlhoul/wpE+AbPbg96Um47FOSFm3aDOderWbbvf/eH13hpO3/P/fjYhliKL
+         DLFETeb4nYO3ZZyWv4n+WA61FPgBViGvBktLY/xQxeAUc59oh17GFxQUBSxi0u9CXc0i
+         txMVw8ICkShWO7Fz/meJlnttKdauKq89uXvhd0Qc/xrtqjmTDwsf/QyUNjEd8PYmfSMI
+         IDNg==
+X-Forwarded-Encrypted: i=1; AJvYcCW4vzVND/Y9NWFkL3ipIccaQbZi4SpAlfaZ1LjmXMlhHff3ZiwFMnM8TsTgjuZeandHwAlfW1bZI11t0NY=@vger.kernel.org, AJvYcCW6JAahmDdpMGClQeghc55/oNxHivahrWg+RJkqG88Lct+q6cX7nz8JhgdNGdprEDT0mb8yua5V73BcjQ==@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx6pQtZJll/ijsAybNgR+kPE6eaGYxqM6WjBeZZCkVvD32E/Zw3
+	0EHw1yEnxRmfqdjBZ2zFrYnQQd0hmKO+PVCWjVnjWIkDCTxiG3cC
+X-Google-Smtp-Source: AGHT+IHwrCxLSJOjJMV5Ts1Ngu/tZbfdEooa8kHhZMTgRc2L6Jfblh8rgsO24jf2Bsh8xTQO7V5z2w==
+X-Received: by 2002:a5d:5609:0:b0:37d:4e74:67c with SMTP id ffacd0b85a97d-37efcf73d4emr4234806f8f.39.1729788686111;
+        Thu, 24 Oct 2024 09:51:26 -0700 (PDT)
+Received: from [172.27.21.144] ([193.47.165.251])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9405asm11751487f8f.87.2024.10.24.09.51.24
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 09:51:25 -0700 (PDT)
+Message-ID: <5db365eb-2da3-4b5b-9ff7-58cd4af6d20e@gmail.com>
+Date: Thu, 24 Oct 2024 19:51:22 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="m4ji5aso7m54wndw"
-Content-Disposition: inline
-In-Reply-To: <ba31cf3a-af3d-4ff1-87a8-f05aaf8c780b@stanley.mountain>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mlx5: fix typo in "mlx5_cqwq_get_cqe_enahnced_comp"
+To: Caleb Sander Mateos <csander@purestorage.com>,
+ Saeed Mahameed <saeedm@nvidia.com>, Tariq Toukan <tariqt@nvidia.com>,
+ Leon Romanovsky <leon@kernel.org>, Andrew Lunn <andrew+netdev@lunn.ch>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
+Cc: netdev@vger.kernel.org, linux-rdma@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20241023164840.140535-1-csander@purestorage.com>
+Content-Language: en-US
+From: Tariq Toukan <ttoukan.linux@gmail.com>
+In-Reply-To: <20241023164840.140535-1-csander@purestorage.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
 
---m4ji5aso7m54wndw
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH next] drm/tegra: Fix NULL vs IS_ERR() check in probe()
-MIME-Version: 1.0
 
-On Fri, Sep 13, 2024 at 05:34:54PM +0300, Dan Carpenter wrote:
-> The iommu_paging_domain_alloc() function doesn't  return NULL pointers,
-> it returns error pointers.  Update the check to match.
->=20
-> Fixes: 45c690aea8ee ("drm/tegra: Use iommu_paging_domain_alloc()")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
+On 23/10/2024 19:48, Caleb Sander Mateos wrote:
+> "enahnced" looks to be a misspelling of "enhanced".
+
+Indeed.
+
+> Rename "mlx5_cqwq_get_cqe_enahnced_comp" to
+> "mlx5_cqwq_get_cqe_enhanced_comp".
+> 
+> Signed-off-by: Caleb Sander Mateos <csander@purestorage.com>
 > ---
->  drivers/gpu/drm/tegra/drm.c | 4 ++--
->  1 file changed, 2 insertions(+), 2 deletions(-)
 
-Applied, thanks.
+Reviewed-by: Tariq Toukan <tariqt@nvidia.com>
 
-Thierry
+Thanks.
 
---m4ji5aso7m54wndw
-Content-Type: application/pgp-signature; name="signature.asc"
 
------BEGIN PGP SIGNATURE-----
-
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcaeuUACgkQ3SOs138+
-s6HN3RAAvWRr0rls//7gnX2OCfl8oyYPo5mgZd5XMOV0spjX3OeyTFF0KLMJRclG
-w5sHhaYFmmWnWs/6UE22ayu0SMjX3Ak28ZJDvY3ssT7uCWvZnAIBfsEjTVqD8eXJ
-wp9UkIv8jNW3SEkdfKxVgN2eQ3CWPUm4VLNGG2KBbNoO3EcDODQmqhk2gTXgR2M5
-dzhmYvg3rGh6RMElvnXUXD0Ekfj26sRAeNXv+uZdaa12Vox3/Rf+Qye/jBOwJSBX
-TiZ9uSph8Fy1kFdFWelJpUA/yOtPBghTwyoYxvRU6nBrDJgnV54XaMoaKLAAAHhM
-E8EjeMS1xJJrwnfV+1Xox9Vf5Gj6CD6rdxyNkidE1tpzLE2P/frdXhbmr+SX5xVP
-+lqLogiN4EnK6DHsNKGP3blTjlqjoTI4sAwiq+K9dqlclGpTUqozrDvjKzkyiduc
-6Yu14WfBsIbiN0jqtdqf085/kOEIqDpPaV0tnVzugeo/ip6QktlgkmJNMhvMAR8o
-joL6U2zKAROIGRi/ulXDWmCx54TGDXs3UBW9Zd/EiWuluAFLdpfmB5Phh3199SEO
-c6RIFtW6gs9/fDSTSow9k0cQ3J7cq+wMtPo4poK4q0kEJLuUS55zm+OoGvOl/tSM
-vvtaUJcVKHdI4nP+tIy8qRng0aCreU0cmgBcJtVFs9wjuVmWcDA=
-=8x7A
------END PGP SIGNATURE-----
-
---m4ji5aso7m54wndw--
 
