@@ -1,121 +1,191 @@
-Return-Path: <linux-kernel+bounces-380563-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380564-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48B479AF285
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:21:54 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id C85F49AF286
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:22:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3CED1F273CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:21:53 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 51AFFB2494C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:22:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 71D7C21730D;
-	Thu, 24 Oct 2024 19:15:41 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85E7E218D77;
+	Thu, 24 Oct 2024 19:16:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="TnMqqb6+"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="dVDQ9p4y"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EE6541EF958
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:15:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E01782141CB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:15:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729797340; cv=none; b=J57TZvrU46gzCq61f4yZCyD3rTHGJxpArobLW3+KI5B8QaSTJFexYTqnpaXGnzlUxm05NNHpCoGnRtISFeQKIYVfWxdUP27AgmXXx5RfYwiCGzE6rbkeRtiIGcRJFxOGJLorV8WH/iBnBqNcJJufrGj5wktG/v+4ot8LfYeqgHY=
+	t=1729797360; cv=none; b=eHiQt+shr2wBAfjw2Q/l4P2iBfXirR7jvLAbBCsaPf6mlmvFV2M9aHmRFJcuVC+RofKUrqxwJhDtWCxdrLTD5I5cXO7OU666iuBT/2qe5ryC4HttUsOswzN1Wi3PmIl7Udi9dVmDC6PY1BSNeS6sdcP727Qemp4Ll3fKB8SCE5c=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729797340; c=relaxed/simple;
-	bh=QjmaQqYm0iMEoRGtnJwIJdjBJ16XTZzTDvnDFsXlOLY=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=oXkBOX4fJz4s/snFMzFjyN3UOQuzpj2+ZO06jdnHuYwMuzHw3Gh5l6GJvSW+RpBXt6Gdr2qIq3a62Qc/Rjzzq5E4P8suLBuKzy0DR7c78sDkE8QWSW+YrvAE30Ru0Djw4KihvDCqNjgdbYGMjhOI675tOfTagi5tcLJmzysOSuY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=TnMqqb6+; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315e62afe0so13239045e9.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:15:38 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729797337; x=1730402137; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=Tn2tQOtA8p3W0heFdAnV2X+VMQYhki4kVXiSMCqcSEw=;
-        b=TnMqqb6+tlNolAKGh0ijVbvkuLPPk3Fyp8dtuOqXWUV3Y3iE9/3nF4P6gCRvzjN+Ry
-         AHI9wFfRDHDnlJ8r6MAFdlNYfBHkYCNm1tiqM/4eK5W2OqoIIKQGcDUINPc5snGYUGyQ
-         La4zChW4nKnr7Du1CxK4VexqZWE49eoe2Hjv0CQK7bemSM89L6y26+co8WP7dl/agwUI
-         e74VagPPEAiFtyFe8/lXZjsCKNR9g7LpcD5VmBujV9fkyvDPcz44F/TPTQYhUuQm37/0
-         Qf79EQr4RyYSCkicZkPSflbyTYEOH38mNLj+dfSEYs1Hq8IE8avWZMeRLtonkCLF2HpO
-         8gow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729797337; x=1730402137;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Tn2tQOtA8p3W0heFdAnV2X+VMQYhki4kVXiSMCqcSEw=;
-        b=uJZbuEDF+7yIVLbbpvDeokScJfE9xVEK6TdMnS/Ia+6x1fTNsbGedwKhU3FARbfDmO
-         zhhAsaF7h4GCkf9i/4S1mIPZBVzNJ21reC6ObFlKi0GFitu/GfepKnsNKOWBAMRTUJIp
-         TjuMfclbqZNBZD3fZ46AhJMObA51BcuK74OBBttXVhco1cmp6uQ6cpumXB9xtWqd+7nR
-         42uo/V7/BR4z+74XmPm7Sqvg+qKHUNmja/uodALWlA4rcKSuTT1vWyOMAnnOa9jPnJVc
-         lqLoMDhbdZYeHHJnf+Uqb7sww2Dt21NdzSG5y95t42Q0J04zuakJ3PEwfX4eV7x4RjSE
-         we9g==
-X-Forwarded-Encrypted: i=1; AJvYcCWT34hk2VaGwB0PyZtVtPuvwFCaVkH16m7LYc9Da6qWlei6eLCdMQLCjiIxllLmZqwF1ENuqeaLdaU+FF0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyBgNTFQjjcMa/VhZuKPkpXWSCoOxL0TaVMJw28RV67lK/JFnFx
-	xEaWro9ssBbk/r6GsC7XgUedJa+vCnaLSBLvfcZNzWu6MQ+wN8jI5ipe/rqTnp8=
-X-Google-Smtp-Source: AGHT+IFWQ7hqpzaveJch29gaXwDmWu2ew54XHbR43V4r8PC1suOitdi/yz2vao5Sla7dxMw5g18yrQ==
-X-Received: by 2002:a05:600c:5249:b0:42c:e0da:f15c with SMTP id 5b1f17b1804b1-4318c70f24fmr21096165e9.20.1729797337106;
-        Thu, 24 Oct 2024 12:15:37 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37935sm11997657f8f.17.2024.10.24.12.15.36
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 12:15:36 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>
-Cc: linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Subject: [PATCH] gpiolib: remove leftover spinlock bits
-Date: Thu, 24 Oct 2024 21:15:32 +0200
-Message-ID: <20241024191532.78304-1-brgl@bgdev.pl>
-X-Mailer: git-send-email 2.45.2
+	s=arc-20240116; t=1729797360; c=relaxed/simple;
+	bh=7weJOZEsWOSAOwDAiOkxBkv6Rd9Sn6yxZTioyNl1eog=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=CriVoJNffMDH5VRibGHrmyczcwiHT7uP0hNNDwoAmR8GShIuUsf5kw8tehB9fw2p6jwPW8xALjgbTCSWFVGd1SnqNpygaNcfSZdY1tMUuEAuvzkkXWpEQDlMPx+VeQvnSSxeBaUEZiG4cyiCV5b1JVCe+9YjohnBEu7pomKaHe0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=dVDQ9p4y; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 78F7EC4CEC7;
+	Thu, 24 Oct 2024 19:15:59 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729797359;
+	bh=7weJOZEsWOSAOwDAiOkxBkv6Rd9Sn6yxZTioyNl1eog=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=dVDQ9p4yMGpB1m8bUqQjg9euiGM7f0F3DFBG7b3p/aS1gEqWBOmDYwMxL2np8fjxp
+	 36vPTvuSgj4VzukQWwC50Wkm7ide32c8He7WmxfI9AqtegM/8OfDohPlx2eXuhLNzt
+	 XcPoAaNUqQm8jGDPg7GdrkYI9pATTVWlcbYgcD1mUNBA0BQJmkCZ2PN2zvbrDYMOUw
+	 GzJBCuM2Mo4b61ODU9YqQK3kDaSlKBrorwvQYx/P9dnTYUI6/MfQKgryEkMjG15TRa
+	 trCyzKmDMlle2B5BYTu7AgDMW4mRogKVjPYqn9GpP7wPFvC+LPrmumM2o5+I9tDFdh
+	 vnuOgKjnRUX1Q==
+Date: Thu, 24 Oct 2024 09:15:58 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Andrea Righi <arighi@nvidia.com>
+Cc: David Vernet <void@manifault.com>, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH] sched_ext: Introduce NUMA awareness to the default idle
+ selection policy
+Message-ID: <Zxqc7jI8USKFX9-p@slm.duckdns.org>
+References: <20241024083615.64948-1-arighi@nvidia.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024083615.64948-1-arighi@nvidia.com>
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Hello, Anrea.
 
-We no longer use any spinlocks in gpiolib.c. Stop including
-linux/spinlock.h and remove an outdated comment.
+On Thu, Oct 24, 2024 at 10:36:15AM +0200, Andrea Righi wrote:
+> Similarly to commit dfa4ed29b18c ("sched_ext: Introduce LLC awareness to
+> the default idle selection policy"), extend the built-in idle CPU
+> selection policy to also prioritize CPUs within the same NUMA node.
+> 
+> With this change applied, the built-in CPU idle selection policy follows
+> this logic:
+>  - always prioritize CPUs from fully idle SMT cores,
+>  - select the same CPU if possible,
+>  - select a CPU within the same LLC domain,
+>  - select a CPU within the same NUMA node.
+> 
+> Note that LLC and NUMA awareness optimizations are only applied when
+> CONFIG_SCHED_MC is enabled.
 
-Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
----
- drivers/gpio/gpiolib.c | 6 ------
- 1 file changed, 6 deletions(-)
+The idea generally looks good to me but I have a couple quibbles about the
+implementation.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index ae758ba6dc3d..fa68ff574d10 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -24,7 +24,6 @@
- #include <linux/pinctrl/consumer.h>
- #include <linux/seq_file.h>
- #include <linux/slab.h>
--#include <linux/spinlock.h>
- #include <linux/srcu.h>
- #include <linux/string.h>
- 
-@@ -1223,11 +1222,6 @@ struct gpio_device *gpio_device_find(const void *data,
- 	struct gpio_device *gdev;
- 	struct gpio_chip *gc;
- 
--	/*
--	 * Not yet but in the future the spinlock below will become a mutex.
--	 * Annotate this function before anyone tries to use it in interrupt
--	 * context like it happened with gpiochip_find().
--	 */
- 	might_sleep();
- 
- 	guard(srcu)(&gpio_devices_srcu);
+...
+> +enum scx_domain_type {
+> +	SCX_DOM_LLC,		/* Use the same last-level cache (LLC) */
+> +	SCX_DOM_NUMA,		/* Use the same NUMA node */
+> +};
+> +
+>  #ifdef CONFIG_SCHED_MC
+>  /*
+> - * Return the cpumask of CPUs usable by task @p in the same LLC domain of @cpu,
+> - * or NULL if the LLC domain cannot be determined.
+> + * Return the cpumask of CPUs usable by task @p in the same domain of @cpu, or
+> + * NULL if the domain cannot be determined.
+>   */
+> -static const struct cpumask *llc_domain(const struct task_struct *p, s32 cpu)
+> +static const struct cpumask *
+> +scx_domain(const struct task_struct *p, s32 cpu, enum scx_domain_type type)
+>  {
+> -	struct sched_domain *sd = rcu_dereference(per_cpu(sd_llc, cpu));
+> -	const struct cpumask *llc_cpus = sd ? sched_domain_span(sd) : NULL;
+> +	struct sched_domain *sd;
+>  
+>  	/*
+> -	 * Return the LLC domain only if the task is allowed to run on all
+> -	 * CPUs.
+> -	 */
+> -	return p->nr_cpus_allowed == nr_cpu_ids ? llc_cpus : NULL;
+> +	 * Determine the scheduling domain only if the task is allowed to run
+> +	 * on all CPUs.
+> +	 *
+> +	 * This is done primarily for efficiency, as it avoids the overhead of
+> +	 * updating a cpumask every time we need to select an idle CPU (which
+> +	 * can be costly in large SMP systems), but it also aligns logically:
+> +	 * if a task's scheduling domain is restricted by user-space (through
+> +	 * CPU affinity), the task will simply use the flat scheduling domain
+> +	 * defined by user-space.
+> +	 */
+> +	if (p->nr_cpus_allowed < nr_cpu_ids)
+> +		return NULL;
+> +
+> +	switch (type) {
+> +	case SCX_DOM_LLC:
+> +		sd = rcu_dereference(per_cpu(sd_llc, cpu));
+> +		break;
+> +	case SCX_DOM_NUMA:
+> +		sd = rcu_dereference(per_cpu(sd_numa, cpu));
+> +		break;
+> +	default:
+> +		WARN_ON_ONCE(1);
+> +		sd = NULL;
+> +	}
+> +	if (!sd)
+> +		return NULL;
+> +
+> +	return sched_domain_span(sd);
+>  }
+>  #else /* CONFIG_SCHED_MC */
+> -static inline const struct cpumask *llc_domain(struct task_struct *p, s32 cpu)
+> +static const struct cpumask *
+> +scx_domain(const struct task_struct *p, s32 cpu, enum scx_domain_type type)
+>  {
+>  	return NULL;
+>  }
+>  #endif /* CONFIG_SCHED_MC */
+...
+> @@ -3156,7 +3210,8 @@ static inline const struct cpumask *llc_domain(struct task_struct *p, s32 cpu)
+>  static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+>  			      u64 wake_flags, bool *found)
+>  {
+> -	const struct cpumask *llc_cpus = llc_domain(p, prev_cpu);
+> +	const struct cpumask *llc_cpus = scx_domain(p, prev_cpu, SCX_DOM_LLC);
+> +	const struct cpumask *numa_cpus = scx_domain(p, prev_cpu, SCX_DOM_NUMA);
+
+This feels like a lot of code which can just be:
+
+	const struct cpumask *llc_cpus = NULL, *numa_cpus = NULL;
+
+#ifdef CONFIG_SCHED_MC
+	llc_cpus = rcu_dereference(per_cpu(sd_llc, cpu));
+	numa_cpus = rcu_dereference(per_cpu(sd_numa, cpu));
+#endif
+
+>  	s32 cpu;
+>  
+>  	*found = false;
+> @@ -3226,6 +3281,15 @@ static s32 scx_select_cpu_dfl(struct task_struct *p, s32 prev_cpu,
+>  				goto cpu_found;
+>  		}
+>  
+> +		/*
+> +		 * Search for any fully idle core in the same NUMA node.
+> +		 */
+> +		if (numa_cpus) {
+> +			cpu = scx_pick_idle_cpu(numa_cpus, SCX_PICK_IDLE_CORE);
+> +			if (cpu >= 0)
+> +				goto cpu_found;
+> +		}
+
+I'm not convinced about the argument that always doing extra pick is
+beneficial. Sure, the overhead is minimal but isn't it also trivial to avoid
+by just testing llc_cpus == numa_cpus (they resolve to the same cpumasks on
+non-NUMA machines, right)? Taking a step further, the topology information
+is really static and can be determined during boot. Wouldn't it make more
+sense to just skip the unnecessary steps depending on topology? I'm not sure
+the difference would be measurable but if you care we can make them
+static_keys too.
+
+Thanks.
+
 -- 
-2.45.2
-
+tejun
 
