@@ -1,195 +1,159 @@
-Return-Path: <linux-kernel+bounces-380382-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380383-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 832399AED6F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:14:24 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBAB69AED7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:15:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 07D691F25A6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:14:24 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 293581C2390D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:15:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD51120013C;
-	Thu, 24 Oct 2024 17:12:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FE381FAF1E;
+	Thu, 24 Oct 2024 17:15:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="lIDOqRZR"
-Received: from mail-pg1-f175.google.com (mail-pg1-f175.google.com [209.85.215.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="XLXXrzHU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E29061FF7B9;
-	Thu, 24 Oct 2024 17:12:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7B2E1FAEE5;
+	Thu, 24 Oct 2024 17:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789962; cv=none; b=HA1AQZdwaEn0TqsGYBt7iAoNEsFr5wOyZoBofBanaWPxumIyWeBOdMagJcFANykY2mp8u8/0qS3m3R6Tr0EwG/Zp4gf+b3CcEgAeNuQK5J/wDzccm1IyRpAS0lr0xa/8jhTDFavYa5RbuaOTrpxvL2zJMoxIC+8noI2BQwwF2po=
+	t=1729790103; cv=none; b=jiOAENDLtx2oJBRPaS235yWh+ZGvPEfP7MAVrK0SOEq+s44tSEumpcQLRD/eb5Ox3AotCPqZCyJy6cPyp0o7DN/ubc3ay2t1vgzR3u+kVVlMwMjCM+A36Fc6uc1zyCkw6t9hrnz/AW7NFeew9ZAmSa3DQXaWQWfc151B4Rm3Do8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789962; c=relaxed/simple;
-	bh=qooFLoDzNVp+u9t3WDthRztPfIQE7At8c07/hzonvCM=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=gvNs4eJU37Wq0/ZXQ7surVNrtEbs7rfgZJpxeAS1fdez01eUTHmUTwBibr9PsqJQ7co6hslvtoQw7jL8E8abW7bl1q6+nL6xdCG4fNOalWSnxFjJhl0pp70PEn9GvT8tT2GaRwUD7yr7rIW0K6InGPf/jL60exSnXcys3ZTkxQ8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=lIDOqRZR; arc=none smtp.client-ip=209.85.215.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pg1-f175.google.com with SMTP id 41be03b00d2f7-7ea7e250c54so824408a12.0;
-        Thu, 24 Oct 2024 10:12:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729789959; x=1730394759; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=M2a7HtinUc8E27y0RukSWxjxiEAN0ZIxICpL86iKsyQ=;
-        b=lIDOqRZREf+ego4W5bvIFzAbpkODklVQmOkLKrwNpBTtCT3fVhG+4FLOrm52C5LSse
-         3rwgWoosxGU5LmYPmTTuuF723p4PUY+ul0Y/EscOHo9MKVEmzCc+1N1hUeG0v/GreoWV
-         GWapo59/KFMOkhupMDIT6GACj+hZTxAiRAMUBSSjOXJC+OtMMIcWRpUrcv71OtJ9su+e
-         m1CDtZzLvGMVJXZfchIvnS9VM744WxHOI5R6BwR8tX1KyST9jrbCPCOCcfPNxiReIYsu
-         zhbkf/D45Xl4DU9iuC/FPr8uE+k9pp/kSwSPZE4Xk8DbMs6roOwNBnOdH5UFkarpbeRi
-         N7sA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789959; x=1730394759;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=M2a7HtinUc8E27y0RukSWxjxiEAN0ZIxICpL86iKsyQ=;
-        b=I7fi1rQRpkbzlFJToC5M7fH6+0LAuqRuhH2NKi/9Df+JDEnGjJJIvDaoT9e+T2QyQB
-         JSyEXZ1HcO0RAJs04o3WRD2i26+VdpF/8HDpbtUs6UjG6sRl+ilUMWIi0uVmdurHO3lB
-         HxitI6JDGwqCVsvKbQs8R99zu2trGWxxXtRhWluDKeSidREJHMM4Sjku9mNy7R5+nKkB
-         jxuhheOkVjkzeJzd/hwQxuyd9cUrDmzePFGFAX8EBoH8+7misELDHkAQhqLZ90qz7O7M
-         bFVFm82Lx9mQzgjw1D4qxqR9UfJ1NKTY+McLcRivKadYOb/FhEa1mKzvO/oJAy60N1LF
-         RWvw==
-X-Forwarded-Encrypted: i=1; AJvYcCUKpKwUEJs/eDTRgutnGhzhjfKrAUm8EqY8FUM3UVUjMOjg44XbVX3PKWzuHClYn+B/8nmaJie08JHaOFK7@vger.kernel.org, AJvYcCWB7TXTlFjrHaN2wPU5yldAXyX/4MbOGi4glmXhR7t413Lry5fDF7rVeSNzcwul3WWci4s=@vger.kernel.org
-X-Gm-Message-State: AOJu0YztWlbQjTS4CreuQUOI6bwR1r72U34THeosCx3nQtn7JDLa+RCr
-	frLmLv3XyX6Qhy60V7hDBwWngOsxKCpDnqOt3m45+y3V6jWDNN2nJqOjbIdM1f+VFJWzzhr4xPJ
-	F82TxkYK4GkPzsbn5+6rE8Q52NdQ=
-X-Google-Smtp-Source: AGHT+IGnQdkRtuaPIWv7vmuzGMztfBta0ZHAR6mQxtlYEZ87sFVRadTD2un/SSDCz4bB7Uwg1sGL8oeRnJgHv4nADkE=
-X-Received: by 2002:a05:6a21:a343:b0:1d9:275b:4ef8 with SMTP id
- adf61e73a8af0-1d978b2dac4mr8674183637.23.1729789959193; Thu, 24 Oct 2024
- 10:12:39 -0700 (PDT)
+	s=arc-20240116; t=1729790103; c=relaxed/simple;
+	bh=qKUU2cq8v+5SaeVu6RRbmqKGY6u205flt7+P+PAhKt8=;
+	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=AhmGVqoBujLfgTP9IyjbHmfUh8G3N39qHXs+I07U4ac4VrO+wizCbHdc3zTf53ydIeoI8WGPQNBqVBKSsNCKRtMWDWQfLXeKQmTZv3Gl96pLRFXXqGgv6boqWJyokj67+WA5aJ3O3Dw2b13BsjYPmkppytDS+I3UCrFwwDEjgp4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=XLXXrzHU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 459A7C4CEC7;
+	Thu, 24 Oct 2024 17:15:03 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729790103;
+	bh=qKUU2cq8v+5SaeVu6RRbmqKGY6u205flt7+P+PAhKt8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=XLXXrzHUAaUf/MCzx4vivPosRtuWGRFNg2bv7Lc6HMcc9UvSy3QscmxKbNY5GuJlE
+	 XX/qG+NPu/18qDb8rzdBeQrZr4WySMdwRdjcHplzCvcmA0CnRsVCKCENzgvR2x86sI
+	 yUnPDdsMjKr1iR5LnCTAs4ZrZ2+BH1O5jOX7zbFkoBV56fXCyXEFDcEv/zYOxPc+4x
+	 Hc2kPzHV9iJkUgu90yGuzHCsH43E0Z1pGEiKQRXkRNJ2O/ajK4U8OznO1g5nYCTasW
+	 qw3XBAe+p7izv6WqvgO258kcfLLjp3Kb23hqkqz0UdncqEeJm+i1Xiw3ogpDzSfB2j
+	 8d14lsWaswaBQ==
+Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
+	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
+	(Exim 4.95)
+	(envelope-from <maz@kernel.org>)
+	id 1t41QL-006X9S-0p;
+	Thu, 24 Oct 2024 18:15:01 +0100
+Date: Thu, 24 Oct 2024 18:15:00 +0100
+Message-ID: <86msit2zjf.wl-maz@kernel.org>
+From: Marc Zyngier <maz@kernel.org>
+To: Johan Hovold <johan@kernel.org>
+Cc: linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org,
+	Sibi Sankar <quic_sibis@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Route pcie5 MSIs to the GIC ITS
+In-Reply-To: <Zxp09Q1DPYf9BK0z@hovoldconsulting.com>
+References: <20241024161814.1827514-1-maz@kernel.org>
+	<Zxp09Q1DPYf9BK0z@hovoldconsulting.com>
+User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
+ FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
+ (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
- <20241023145640.1499722-1-jrife@google.com> <CAADnVQJupBceq2DAeChBvdjSG4zOpYsMP7_o7gREVmVCA0PUYQ@mail.gmail.com>
- <7bcea009-b58c-4a00-b7cd-f2fc06b90a02@efficios.com> <20241023220552.74ca0c3e@rorschach.local.home>
-In-Reply-To: <20241023220552.74ca0c3e@rorschach.local.home>
-From: Andrii Nakryiko <andrii.nakryiko@gmail.com>
-Date: Thu, 24 Oct 2024 10:12:25 -0700
-Message-ID: <CAEf4Bzb4ywpMxchWcMfW9Lzh=re4x1zbMfz2aPRiUa29nUMB=g@mail.gmail.com>
-Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>, 
-	Alexei Starovoitov <alexei.starovoitov@gmail.com>, Jordan Rife <jrife@google.com>, 
-	Arnaldo Carvalho de Melo <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>, 
-	Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>, 
-	Joel Fernandes <joel@joelfernandes.org>, LKML <linux-kernel@vger.kernel.org>, 
-	Mark Rutland <mark.rutland@arm.com>, Masami Hiramatsu <mhiramat@kernel.org>, 
-	Ingo Molnar <mingo@redhat.com>, Michael Jeanson <mjeanson@efficios.com>, 
-	Namhyung Kim <namhyung@kernel.org>, "Paul E. McKenney" <paulmck@kernel.org>, 
-	Peter Zijlstra <peterz@infradead.org>, 
-	syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com, 
-	Yonghong Song <yhs@fb.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
+Content-Type: text/plain; charset=US-ASCII
+X-SA-Exim-Connect-IP: 185.219.108.64
+X-SA-Exim-Rcpt-To: johan@kernel.org, linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, devicetree@vger.kernel.org, quic_sibis@quicinc.com, konradybcio@kernel.org, abel.vesa@linaro.org, johan+linaro@kernel.org
+X-SA-Exim-Mail-From: maz@kernel.org
+X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
 
-On Wed, Oct 23, 2024 at 7:05=E2=80=AFPM Steven Rostedt <rostedt@goodmis.org=
-> wrote:
->
-> On Wed, 23 Oct 2024 11:19:40 -0400
-> Mathieu Desnoyers <mathieu.desnoyers@efficios.com> wrote:
-> >
-> > > Looks like Mathieu patch broke bpf program contract somewhere.
-> >
-> > My patch series introduced this in the probe:
-> >
-> > #define __BPF_DECLARE_TRACE_SYSCALL(call, proto, args)                 =
- \
-> > static notrace void                                                    =
- \
-> > __bpf_trace_##call(void *__data, proto)                                =
- \
-> > {                                                                      =
- \
-> >          might_fault();                                                =
-  \
-> >          preempt_disable_notrace();                                    =
-  \
->
-> Is the problem that we can call this function *after* the prog has been
-> freed? That is, the preempt_disable_notrace() here is meaningless.
->
+On Thu, 24 Oct 2024 17:25:25 +0100,
+Johan Hovold <johan@kernel.org> wrote:
+> 
+> On Thu, Oct 24, 2024 at 05:18:14PM +0100, Marc Zyngier wrote:
+> > There is no reason to use the PCIe root port widget for MSIs for
+> > pcie5 while both pcie4 and pcie6a are enjoying the ITS.
+> > 
+> > This is specially useful when booting the kernel at EL2, as KVM
+> > can then configure the ITS to have MSIs directly injected in guests
+> > (since this machine has a GICv4.1 implementation).
+> > 
+> > Tested on a x1e001de devkit.
+> > 
+> > Signed-off-by: Marc Zyngier <maz@kernel.org>
+> > Cc: Sibi Sankar <quic_sibis@quicinc.com>
+> > Cc: Konrad Dybcio <konradybcio@kernel.org>
+> > Cc: Abel Vesa <abel.vesa@linaro.org>
+> > Cc: Johan Hovold <johan+linaro@kernel.org>
+> > ---
+> >  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 ++
+> >  1 file changed, 2 insertions(+)
+> > 
+> > diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > index 3441d167a5cc..48f0ebd66863 100644
+> > --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> > @@ -3281,6 +3281,8 @@ pcie5: pci@1c00000 {
+> >  			linux,pci-domain = <5>;
+> >  			num-lanes = <2>;
+> >  
+> > +			msi-map = <0x0 &gic_its 0xd0000 0x10000>;
+> 
+> As I just mentioned in another thread, and in the commit message of
+> 9c4cd0aef259 ("arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe")
+> this was done on purpose as
+> 
+> 	PCIe5 (and PCIe3) can currently only be used with the internal
+> 	MSI controller due to a platform (firmware) limitation
+> 
+> Did you try this when booting in EL1? If so we may need to enable this
+> per board.
 
-Yes, I think so.
+Nah, you are absolutely correct: when booted at EL1, the ITS driver
+reports that the ITS queue is no longer making forward progress as
+soon as we are trying to map something in that range:
 
-> Is there a way to add something here to make sure the program is still
-> valid? Like set a flag in the link structure?
+[    5.068749] ITS queue timeout (9984 9921)
+[    5.072871] ITS cmd its_build_mapd_cmd failed
 
-So I think a big assumption right now is that waiting for RCU grace
-period is enough to make sure that BPF link (and thus its underlying
-BPF program) are not referenced from that tracepoint anymore, and so
-we can proceed with freeing the memory.
+I suspect it trips over itself trying to interpret the command, and
+that the other PCIe ports work by pure luck (maybe thanks to having
+a even number?).
 
-Now that some tracepoints are sleepable and are RCU Tasks Trace
-protected, this assumption is wrong.
+Comparing the logs, it is obvious that the hypervisor is not showing
+us the actual HW topology: the ITS supports 64kB pages, which we use
+when booted at EL2, while we only see 4kB support at EL1.
 
-One solution might be to teach BPF raw tracepoint link to recognize
-sleepable tracepoints, and then go through cal_rcu_task_trace ->
-call_rcu chain instead of normal call_rcu. Similarly, for such cases
-we'd need to do the same chain for underlying BPF program, even if BPF
-program itself is not sleepable.
+And the boot really is hilarious:
 
-Alternatively, we'd need to add synchronize_rcu() +
-synchronize_rcu_task_trace() somewhere inside
-tracepoint_probe_unregister() or bpf_probe_unregister(), which is just
-a thin wrapper around the former. Which would make detaching multiple
-tracepoints extremely slow (just like the problem we had with kprobe
-detachment before multi-kprobes were added).
+[    0.000000] ITS@0x0000000017040000: Devices Table too large, reduce ids 32->19
 
-The fundamental reason for this is how we do lifetime tracking between
-tracepoint object and bpf_link/bpf_program. tracepoint doesn't hold a
-refcount on bpf_link. It's rather that when bpf_link's last refcount
-drops to zero, we go and do this:
+19 bits is the maximum the kernel can allocate with a 4kB page size.
+I would like to see the face of a HW person if they had to design a
+system with 32bit worth of DeviceID...
 
-static void bpf_raw_tp_link_release(struct bpf_link *link)
-{
-        struct bpf_raw_tp_link *raw_tp =3D
-                container_of(link, struct bpf_raw_tp_link, link);
+[    0.000000] ITS@0x0000000017040000: Devices too large, reduce ITS pages 1024->256
 
-        bpf_probe_unregister(raw_tp->btp, raw_tp);
-        bpf_put_raw_tracepoint(raw_tp->btp);
-}
+and 256 pages is the maximum we can describe to the ITS...
 
-And the assumption is that after bpf_probe_unregister() it should be
-fine to free BPF link and program after call_rcu(). So we either make
-bpf_probe_unregister() synchronously wait for
-synchronize_rcu[_task_trace](), or we make sure to not free link/prog
-until call_rcu_tasks_trace->call_rcu.
+Obviously, this emulation was never really tested, since Windows
+replaces it at boot time. Oh well.
 
-I'd prefer the former (add call_rcu_tasks_trace for sleepable BPF raw
-tracepoint link).
+I'll stash this patch as part of my "make EL2 great again" branch! ;-)
 
-You guys said you have a reproducer, right? Can you please share
-details (I know it's somewhere on another thread, but let's put all
-this in this thread). And as Alexei asked, where are the applied
-patches adding faultable tracepoints?
+Thanks,
 
->
-> (I don't know how BPF works well enough to know what is involved here,
-> so excuse me if this is totally off)
+	M.
 
-it's not off, but I don't think we want tracepoint to hold a refcount
-on bpf_link (and thus bpf_program), because that invalidates how we do
-detachment.
-
->
-> -- Steve
->
->
-> >          CONCATENATE(bpf_trace_run, COUNT_ARGS(args))(__data, CAST_TO_U=
-64(args));        \
-> >          preempt_enable_notrace();                                     =
-  \
-> > }
-> >
+-- 
+Without deviation from the norm, progress is not possible.
 
