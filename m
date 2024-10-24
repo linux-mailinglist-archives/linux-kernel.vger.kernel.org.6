@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-379738-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379737-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id D9DA59AE2FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:49:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AD65E9AE2FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:49:06 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0F8691C21A29
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:49:12 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6B6EE28415A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:49:05 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4BAA71C878A;
-	Thu, 24 Oct 2024 10:49:03 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C1BC1C4A0E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:49:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E6E631C4A38;
+	Thu, 24 Oct 2024 10:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PaGAkgOp"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E3D6176AAD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:49:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729766942; cv=none; b=Tb7+miEIplKeVXN8JN2QYRxtZ/v2P6nUhOJD5Td1w/zUlTc5107LWMcOKovcFjH2n4puYLrOCs5BB1cSObvbk5TI5RGXkLNnq5RguDCUUduTxDRQa0WJiWlKRpPJUQ9OmEl58k/DVY4dLJrkwoWitxKYxJGHC+FYasMaj/Fd1es=
+	t=1729766941; cv=none; b=dj+AVG6qIw05HBZLi2v7khAfgoiRcHKHjam1w2v2S/h4QFjdanlyePlt5j9Y1jHxCfjAN3ai9USy2X04YptwdkNwF84ETSpqNO+VzjcblPLN+nelmPgvm+w3p/IpcwK7nVZsmzeNWoIhhH66jrHkahb8jw0RDQs738E7rRY+45s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729766942; c=relaxed/simple;
-	bh=0+fZRBWa7u2iPPXcIbS+QUBGTmgFe95YaEwumkuOt4Y=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=gy3TQ3dcRjMp3s7jWR3MyFUad8c3Viz6wHUDJkQblVSpl/CfL57q3Uxtk1YnROME0Uqv6qcebwyECI5oTum5b6x1JB/Vq9Gv920KkMUkth+NjuiAcZtfEJegu+/pPbJuvGPf1829z319niHR0c2NUyDAc0gDaEmp+JU5I7mZQ68=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 5A7CE339;
-	Thu, 24 Oct 2024 03:49:29 -0700 (PDT)
-Received: from [10.57.88.37] (unknown [10.57.88.37])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 489843F71E;
-	Thu, 24 Oct 2024 03:48:57 -0700 (PDT)
-Message-ID: <df753b4a-0cf1-4544-b073-0ebf2bb71ef2@arm.com>
-Date: Thu, 24 Oct 2024 11:48:55 +0100
+	s=arc-20240116; t=1729766941; c=relaxed/simple;
+	bh=QBIUyzNrF0JLjhARXuYRcTcvRkEiWVTMcOrNUSB679s=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=g0S4dOnASkBp0g/MF25hdV1sfGVQkA5PdVRtrBm+/dspQSycvzHEhXA9zCw0M/VSryODWam50nL0fYoNc+1+O04va0kNgCS9LWzEh+4yWNWK8I8a7OzeS8qksODnOaGpWyPziHoMDoqzteFzAt9vwopbd147tJjhWKtZCWg84X4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PaGAkgOp; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id EE8F8C4CEC7;
+	Thu, 24 Oct 2024 10:48:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729766940;
+	bh=QBIUyzNrF0JLjhARXuYRcTcvRkEiWVTMcOrNUSB679s=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=PaGAkgOpPsDYIUNbryZOZKUGtPadB14Z8I965dkhNKDla8AQ1kwiP/r1ylgGkiXlC
+	 ULX1Q4MqeRNwmSPvZ0ozhr1mR6raKluRrSLttRov2YobqXh3fCMdwrDZSy5Y/y/0Dl
+	 UK1PDtb6IUrY6BlD4bk0fGfCJ6BBWg6acwMRs7vU5PcsVFxpI4fd/cZ686XxK/jE9v
+	 xGV6ghfJp96Ie3V9RQB/64rEvNYVGabyGBaIWYXrM7WPAdcFAoaVtBLOcDfo/qQu5F
+	 97/ZUOcQPyczHsEFVIovGkKB6yHG1ThlRrgz8lvW30oHrhr7uHv8vnKqXxZvHlcwRv
+	 CEGnmWGrjmNEw==
+Message-ID: <a224e560-2937-4edd-93d8-8077de6054b1@kernel.org>
+Date: Thu, 24 Oct 2024 18:48:55 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,134 +49,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 00/57] Boot-time page size selection for arm64
-Content-Language: en-GB
-To: Thomas Tai <thomas.tai@oracle.com>, Petr Tesarik <ptesarik@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- Ard Biesheuvel <ardb@kernel.org>, Catalin Marinas <catalin.marinas@arm.com>,
- David Hildenbrand <david@redhat.com>, Greg Marsden
- <greg.marsden@oracle.com>, Ivan Ivanov <ivan.ivanov@suse.com>,
- Kalesh Singh <kaleshsingh@google.com>, Marc Zyngier <maz@kernel.org>,
- Mark Rutland <mark.rutland@arm.com>, Matthias Brugger <mbrugger@suse.com>,
- Miroslav Benes <mbenes@suse.cz>, Will Deacon <will@kernel.org>,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- linux-mm@kvack.org
-References: <20241014105514.3206191-1-ryan.roberts@arm.com>
- <20241017142752.17f2c816@mordecai.tesarici.cz>
- <aa9a7118-3067-448e-aa34-bbc148c921a2@arm.com>
- <fed3b427-a600-4ce5-afef-4ccbfff64931@oracle.com>
-From: Ryan Roberts <ryan.roberts@arm.com>
-In-Reply-To: <fed3b427-a600-4ce5-afef-4ccbfff64931@oracle.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Cc: Chao Yu <chao@kernel.org>, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com, ke.wang@unisoc.com,
+ Hao_hao.Wang@unisoc.com
+Subject: Re: [PATCH] f2fs-tools: correct some confused desc about unit
+To: Zhiguo Niu <zhiguo.niu@unisoc.com>, jaegeuk@kernel.org
+References: <1729762134-380-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Language: en-US
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <1729762134-380-1-git-send-email-zhiguo.niu@unisoc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On 23/10/2024 22:00, Thomas Tai wrote:
+On 2024/10/24 17:28, Zhiguo Niu wrote:
+> F2FS_BLKSIZE may be 4KB, 16KB, so use F2FS_BLKSIZE to replace
+> some hardcode desc about unit in some f2fs_io cmd, also
+> adjust "-c" parameters in mkfs man, to be consistent with
+> commit c35fa8cd75ac ("mkfs.f2fs: change -c option description").
 > 
-> On 10/17/2024 8:32 AM, Ryan Roberts wrote:
->> On 17/10/2024 13:27, Petr Tesarik wrote:
->>> On Mon, 14 Oct 2024 11:55:11 +0100
->>> Ryan Roberts <ryan.roberts@arm.com> wrote:
->>>
->>>> [...]
->>>> The series is arranged as follows:
->>>>
->>>>    - patch 1:       Add macros required for converting non-arch code to support
->>>>               boot-time page size selection
->>>>    - patches 2-36:  Remove PAGE_SIZE compile-time constant assumption from all
->>>>               non-arch code
->>> I have just tried to recompile the openSUSE kernel with these patches
->>> applied, and I'm running into this:
->>>
->>>    CC      arch/arm64/hyperv/hv_core.o
->>> In file included from ../arch/arm64/hyperv/hv_core.c:14:0:
->>> ../include/linux/hyperv.h:158:5: error: variably modified ‘reserved2’ at file
->>> scope
->>>    u8 reserved2[PAGE_SIZE - 68];
->>>       ^~~~~~~~~
->>>
->>> It looks like one more place which needs a patch, right?
->> As mentioned in the cover letter, so far I've only converted enough to get the
->> defconfig *image* building (i.e. no modules). If you are compiling a different
->> config or compiling the modules for defconfig, you will likely run into these
->> types of issues.
+> Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+> ---
+>   man/mkfs.f2fs.8         | 2 +-
+>   tools/f2fs_io/f2fs_io.c | 6 +++---
+>   2 files changed, 4 insertions(+), 4 deletions(-)
 > 
-> It would be nice if you could provide the defconfig you are using; I also ran
-> into build issues when using the arch/arm64/configs/defconfig.
+> diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
+> index de885be..8b3b0cc 100644
+> --- a/man/mkfs.f2fs.8
+> +++ b/man/mkfs.f2fs.8
+> @@ -122,7 +122,7 @@ block size matches the page size.
+>   The default value is 4096.
+>   .TP
+>   .BI \-c " device-list"
+> -Build f2fs with these additional comma separated devices, so that the user can
+> +Build f2fs with these additional devices, so that the user can
+>   see all the devices as one big volume.
+>   Supports up to 7 devices except meta device.
+>   .TP
+> diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
+> index 95f575f..ee4ed0e 100644
+> --- a/tools/f2fs_io/f2fs_io.c
+> +++ b/tools/f2fs_io/f2fs_io.c
+> @@ -1013,7 +1013,7 @@ static void do_randread(int argc, char **argv, const struct cmd_desc *cmd)
+>   
+>   #define fiemap_desc "get block address in file"
+>   #define fiemap_help					\
+> -"f2fs_io fiemap [offset in 4kb] [count in 4kb] [file_path]\n\n"\
+> +"f2fs_io fiemap [offset in F2FS_BLKSIZE] [count in F2FS_BLKSIZE] [file_path]\n\n"\
+>   
+>   #if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_LINUX_FS_H)
+>   static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
+> @@ -1617,8 +1617,8 @@ static void do_move_range(int argc, char **argv, const struct cmd_desc *cmd)
+>   #define gc_range_desc "trigger filesystem gc_range"
+>   #define gc_range_help "f2fs_io gc_range [sync_mode] [start] [length] [file_path]\n\n"\
+>   "  sync_mode : 0: asynchronous, 1: synchronous\n"			\
+> -"  start     : start offset of defragment region, unit: 4kb\n"	\
+> -"  length    : bytes number of defragment region, unit: 4kb\n"	\
+> +"  start     : start offset of defragment region, unit: F2FS_BLKSIZE\n"	\
+> +"  length    : bytes number of defragment region, unit: F2FS_BLKSIZE\n"	\
 
-git clean -xdfq
-make defconfig
+I think we'd better unify default block size to 4096 since in most of
+places in f2fs_io.c, we use 4096 as default IO/buffer size.
 
-# Set CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-./scripts/config --disable CONFIG_ARM64_4K_PAGES
-./scripts/config --disable CONFIG_ARM64_16K_PAGES
-./scripts/config --disable CONFIG_ARM64_64K_PAGES
-./scripts/config --disable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
-./scripts/config --enable CONFIG_ARM64_BOOT_TIME_PAGE_SIZE
+git grep -n "4096" tools/f2fs_io/f2fs_io.c
+tools/f2fs_io/f2fs_io.c:212:    args.block_size = 4096;
+tools/f2fs_io/f2fs_io.c:662:    buf_size = bs * 4096;
+tools/f2fs_io/f2fs_io.c:666:    buf = aligned_xalloc(4096, buf_size);
+tools/f2fs_io/f2fs_io.c:877:    buf_size = bs * 4096;
+tools/f2fs_io/f2fs_io.c:881:    buf = aligned_xalloc(4096, buf_size);
+tools/f2fs_io/f2fs_io.c:901:            if (posix_fadvise(fd, 0, 4096, POSIX_FADV_SEQUENTIAL) != 0)
+tools/f2fs_io/f2fs_io.c:903:            if (posix_fadvise(fd, 0, 4096, POSIX_FADV_WILLNEED) != 0)
+tools/f2fs_io/f2fs_io.c:979:    buf_size = bs * 4096;
+tools/f2fs_io/f2fs_io.c:981:    buf = aligned_xalloc(4096, buf_size);
+tools/f2fs_io/f2fs_io.c:994:    aligned_size = (u64)stbuf.st_size & ~((u64)(4096 - 1));
+tools/f2fs_io/f2fs_io.c:997:    end_idx = (u64)(aligned_size - buf_size) / (u64)4096 + 1;
+tools/f2fs_io/f2fs_io.c:1004:           ret = pread(fd, buf, buf_size, 4096 * idx);
+tools/f2fs_io/f2fs_io.c:1222:           char *buf = aligned_xalloc(4096, 4096);
+tools/f2fs_io/f2fs_io.c:1224:           while ((ret = xread(src_fd, buf, 4096)) > 0)
 
-# Set ARM64_VA_BITS_48
-./scripts/config --disable ARM64_VA_BITS_36
-./scripts/config --disable ARM64_VA_BITS_39
-./scripts/config --disable ARM64_VA_BITS_42
-./scripts/config --disable ARM64_VA_BITS_47
-./scripts/config --disable ARM64_VA_BITS_48
-./scripts/config --disable ARM64_VA_BITS_52
-./scripts/config --enable ARM64_VA_BITS_48
+git grep -n "F2FS_BLKSIZE" tools/f2fs_io/f2fs_io.c
+tools/f2fs_io/f2fs_io.c:1034:   start = (u64)atoi(argv[1]) * F2FS_BLKSIZE;
+tools/f2fs_io/f2fs_io.c:1035:   length = (u64)atoi(argv[2]) * F2FS_BLKSIZE;
+tools/f2fs_io/f2fs_io.c:1042:                           start / F2FS_BLKSIZE, length / F2FS_BLKSIZE);
 
-# Optional: filesystems known to compile with boot-time page size
-./scripts/config --enable CONFIG_SQUASHFS_LZ4
-./scripts/config --enable CONFIG_SQUASHFS_LZO
-./scripts/config --enable CONFIG_SQUASHFS_XZ
-./scripts/config --enable CONFIG_SQUASHFS_ZSTD
-./scripts/config --enable CONFIG_XFS_FS
-
-# Optional: trace stuff known to compile with boot-time page size
-./scripts/config --enable CONFIG_FTRACE
-./scripts/config --enable CONFIG_FUNCTION_TRACER
-./scripts/config --enable CONFIG_KPROBES
-./scripts/config --enable CONFIG_HIST_TRIGGERS
-./scripts/config --enable CONFIG_FTRACE_SYSCALLS
-
-# Optional: misc mm stuff known to compile with boot-time page size
-./scripts/config --enable CONFIG_PTDUMP_DEBUGFS
-./scripts/config --enable CONFIG_READ_ONLY_THP_FOR_FS
-./scripts/config --enable CONFIG_USERFAULTFD
-
-# Optional: mm debug stuff known compile with boot-time page size
-./scripts/config --enable CONFIG_DEBUG_VM
-./scripts/config --enable CONFIG_DEBUG_VM_MAPLE_TREE
-./scripts/config --enable CONFIG_DEBUG_VM_RB
-./scripts/config --enable CONFIG_DEBUG_VM_PGFLAGS
-./scripts/config --enable CONFIG_DEBUG_VM_PGTABLE
-./scripts/config --enable CONFIG_PAGE_TABLE_CHECK
-./scripts/config --enable CONFIG_PAGE_TABLE_CHECK_ENFORCED
-
-make olddefconfig
-make -s -j`nproc` Image
-
-So I'm explicitly only building and booting the kernel image, not the modules.
-The kernel image contains all the drivers needed to get a VM up and running
-under QEMU/KVM.
+We can add a new macro F2FS_DEFAULT_BLKSIZE and use it instead of magic
+number and F2FS_BLKSIZE, what do you think?
 
 Thanks,
-Ryan
 
->  
-> Thank you,
-> Thomas
-> 
->>
->> That said, I do have some patches to fix Hyper-V, which Michael Kelley was kind
->> enough to send me.
->>
->> I understand that Suse might be able to help with wider performance testing - if
->> that's the reason you are trying to compile, you could send me your config and
->> I'll start working on fixing up other drivers?
->>
->> Thanks,
->> Ryan
->>
->>> Petr T
->>
+>   
+>   static void do_gc_range(int argc, char **argv, const struct cmd_desc *cmd)
+>   {
 
 
