@@ -1,135 +1,114 @@
-Return-Path: <linux-kernel+bounces-380363-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380364-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7D0689AED16
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:06:40 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id D95119AED19
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:06:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 15AE6B22BA1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:06:38 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 16E9B1C22969
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:06:55 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8DC821F9EDB;
-	Thu, 24 Oct 2024 17:06:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5B2F41FAF12;
+	Thu, 24 Oct 2024 17:06:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="DqBIpcqo"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="H67NQSuT"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 019A91F81BC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:06:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5EC11DD0D9;
+	Thu, 24 Oct 2024 17:06:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789592; cv=none; b=hQlSvS7YE9qgM5uezemt7o6/sJ43H/0Zn9MZWejv6rqauW4kXqKD2+gC8ahgfcJ1bW2WkLXjPo6sfFb3WSipY/3KHBq/wHy88OuTSY2AaZTDiP3DjK3MVeUzbXV2/0deYHpwwx6beQWHLsR7J9BLFE7WlRFpDpbps1gUKpwrxXM=
+	t=1729789597; cv=none; b=Mz9eWjmYQC1+BTSX0yL8RYfcrHfqgy1GyWIZ8cRt6VTQsjwtrVTVtP3rMiJiSEq/gwEPjkNPnId3OL1PCIuQpyn9lgMitnsRCrqZ5pVOivo1TBzDCjEWP1v2+cACabyU35JSlylQDgiCk72FfB+CGw2YYMzh0yva/QbS7rSGvas=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789592; c=relaxed/simple;
-	bh=klh9W07z9dnYrx+WDBXVU7Y7gwPoTbnFgZFMj8f913U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=rQ8ceXN+ktsjymQO+isM4f8RfsV7XY/ydj+Vl2/8RmRcrNAD0iRJxJ3SikgEs7H5U8AOtUWTJ9kSufj2gcZ8ptLV/NXm6aVicpCKPoM1SW8D/+ujVPcJ9RrwqTBuvVZ8jkhJy+ni9X6CQtbDw4Mab0IM4zCPSNDHIiCybV/4800=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=DqBIpcqo; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729789588;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=DJivlp5+vY5saGH+G4HFhSzZKNWMZaI7pdxEbQ8gMx4=;
-	b=DqBIpcqoBq5FJUlriT1dOxYDgPKAAeS/rzfCyTUhM8E3NskQrMtgm1cM8WKLdVLq00ZEO+
-	iUANiJ20jFrhIpiRD7IwM1lvE8YDhLUprgmHxxa/eOEWaTBN8IT59czUAaRpmFo2JX/I6N
-	iZPMA3SbTgT5+xgF89p2bHSBXXriEVI=
-Received: from mail-io1-f70.google.com (mail-io1-f70.google.com
- [209.85.166.70]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-88-NscuuIdgNPmLWurkTKlVCQ-1; Thu, 24 Oct 2024 13:06:27 -0400
-X-MC-Unique: NscuuIdgNPmLWurkTKlVCQ-1
-Received: by mail-io1-f70.google.com with SMTP id ca18e2360f4ac-83ab023bc99so17862839f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:06:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789587; x=1730394387;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:subject:cc:to:from:date:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=DJivlp5+vY5saGH+G4HFhSzZKNWMZaI7pdxEbQ8gMx4=;
-        b=GY6RXm2PayRzlJpygrnHVHQs/+3Bm6wZfZ7ppVCAA9/umDZZEOwtbq2HhmOEoobxCI
-         CrjEQqKfNZabCYYDU0QQNZ3WZPJdJFycl53p22U2cWCM16IUMayPeBEFcjLFfQK+AkT5
-         HeYsCgIYPjsmLztKkwbbuo3y2KEURXuPowKJg5DGwnpgp4IRuDlUjcQHhnzgAb2/0Oec
-         UcirCoUR3A1BS2FOGZQsTSKTNd9OyAOt5ONpJ5zu67Cwbvggn5INScpcxAxToLqv2Z60
-         SiR3McQeUwTNgoYS6X4WbhunZwrFtXvpmYIUqYmBZmSnp+R32pEVJSvNwnvxmLLImIIq
-         HKGg==
-X-Forwarded-Encrypted: i=1; AJvYcCUFyApD7LY0ulBL9iEhe9Dqi4eidzSGc5UZ52cYVz0c1IQ9CVHutHBeFnH6vWRzgyQfBG512YXkK55pb0A=@vger.kernel.org
-X-Gm-Message-State: AOJu0YznowJ87xivpmT50hyRNS3AkqXUCDhj9GAMeN9JPrYJofTCQhXI
-	f1eirG4xGu+J1GQUV25qoa0UkVX6VR25DO+QmhxqOlmen2OAG/P1loBON8JRfwzOyIyeoTLMA+W
-	G7E8zwfaf8Q55+gTJmPG2WUIP6cnQ0OPOrD7/smBdD9ccqM9JP7HFunHpkeVGow==
-X-Received: by 2002:a05:6602:2564:b0:83a:9c22:23b3 with SMTP id ca18e2360f4ac-83af6460bd2mr172822039f.4.1729789586994;
-        Thu, 24 Oct 2024 10:06:26 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IF0kqiNgE1U9eRrDe1V4C/y24cuS+s9R9LQzqi7g3Sgz9abY/IAJocZ7cw6oH4QmP1S6Y7LyQ==
-X-Received: by 2002:a05:6602:2564:b0:83a:9c22:23b3 with SMTP id ca18e2360f4ac-83af6460bd2mr172819539f.4.1729789586416;
-        Thu, 24 Oct 2024 10:06:26 -0700 (PDT)
-Received: from redhat.com ([38.15.36.11])
-        by smtp.gmail.com with ESMTPSA id ca18e2360f4ac-83ad1c4e380sm286926339f.13.2024.10.24.10.06.25
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 10:06:25 -0700 (PDT)
-Date: Thu, 24 Oct 2024 11:06:24 -0600
-From: Alex Williamson <alex.williamson@redhat.com>
-To: Qinyun Tan <qinyuntan@linux.alibaba.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
- kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1: vfio: avoid unnecessary pin memory when dma map io
- address space 0/2]
-Message-ID: <20241024110624.63871cfa.alex.williamson@redhat.com>
-In-Reply-To: <cover.1729760996.git.qinyuntan@linux.alibaba.com>
-References: <cover.1729760996.git.qinyuntan@linux.alibaba.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729789597; c=relaxed/simple;
+	bh=+U29CBBz+qyrBtOdbE4svz7p2WVJRzBvoR7WRuDzFdY=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=TNiAlCuSB9RM7IX6auecatC5mFHtuh96f08t9NUBAXquQdDRAtAa8oWmmvy5jFjrPlPSUZrahDfGpMewy3XRFDLhVtI/i+sSz+d4kz4l8zvFRfG8p8eDCYiyjLxiC60crbh68tv7CDEx5gb04NeHUsSVLr1YoNfrqR43u38s0b8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=H67NQSuT; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 58187C4CEC7;
+	Thu, 24 Oct 2024 17:06:37 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729789597;
+	bh=+U29CBBz+qyrBtOdbE4svz7p2WVJRzBvoR7WRuDzFdY=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=H67NQSuT2jRkzudyo8hcBaXGPRd16RtbucKKIBDbfx8FkTwAr4zIhYlZeE6WCQ/kL
+	 pOKgojXUIUeRkXcF/JFapYxnKLfLT7nZKbkLAKrxpqPscdWWU/vZjnV9zgg6XNOwgL
+	 wzbEkT0znzv5FxmEY4Ik7sEPxZyKemenvHZVbJw9VzPtVg/PgDCFm0JQgIUZq58Or+
+	 5DfzEOvuXqappQSjGsEuZ0aK5qCv0QOW0YM94EAZUdRdzXgVozd7QdkrIs0W5Sk+Nu
+	 qXaSipjzcAFgRXjcGCCgHoU/+HUqUJSQmpfcF9fFh3O20JLZ5Ja/v/FZVntFobZCnF
+	 OY5WfqO8VubRg==
+Date: Thu, 24 Oct 2024 07:06:36 -1000
+From: Tejun Heo <tj@kernel.org>
+To: Maxime Ripard <mripard@kernel.org>
+Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
+	dri-devel@lists.freedesktop.org, Zefan Li <lizefan.x@bytedance.com>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
+	linux-mm@kvack.org
+Subject: Re: [PATCH 0/7] kernel/cgroups: Add "dev" memory accounting cgroup.
+Message-ID: <Zxp-nLXOJXoSy8BN@slm.duckdns.org>
+References: <20241023075302.27194-1-maarten.lankhorst@linux.intel.com>
+ <ZxlRLMwkabTaOrjc@slm.duckdns.org>
+ <20241024-beautiful-spaniel-of-youth-f75b61@houat>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-beautiful-spaniel-of-youth-f75b61@houat>
 
-On Thu, 24 Oct 2024 17:34:42 +0800
-Qinyun Tan <qinyuntan@linux.alibaba.com> wrote:
+Hello,
 
-> When user application call ioctl(VFIO_IOMMU_MAP_DMA) to map a dma address,
-> the general handler 'vfio_pin_map_dma' attempts to pin the memory and
-> then create the mapping in the iommu.
+On Thu, Oct 24, 2024 at 09:20:43AM +0200, Maxime Ripard wrote:
+...
+> > Yeah, let's not use "dev" name for this. As Waiman pointed out, it conflicts
+> > with the devices controller from cgroup1. While cgroup1 is mostly
+> > deprecated, the same features are provided through BPF in systemd using the
+> > same terminologies, so this is going to be really confusing.
 > 
-> However, some mappings aren't backed by a struct page, for example an
-> mmap'd MMIO range for our own or another device. In this scenario, a vma
-> with flag VM_IO | VM_PFNMAP, the pin operation will fail. Moreover, the
-> pin operation incurs a large overhead which will result in a longer
-> startup time for the VM. We don't actually need a pin in this scenario.
+> Yeah, I agree. We switched to dev because we want to support more than
+> just DRM, but all DMA-able memory. We have patches to support for v4l2
+> and dma-buf heaps, so using the name DRM didn't feel great either.
 > 
-> To address this issue, we introduce a new DMA MAP flag
-> 'VFIO_DMA_MAP_FLAG_MMIO_DONT_PIN' to skip the 'vfio_pin_pages_remote'
-> operation in the DMA map process for mmio memory. Additionally, we add
-> the 'VM_PGOFF_IS_PFN' flag for vfio_pci_mmap address, ensuring that we can
-> directly obtain the pfn through vma->vm_pgoff.
+> Do you have a better name in mind? "device memory"? "dma memory"?
+
+Maybe just dma (I think the term isn't used heavily anymore, so the word is
+kinda open)? But, hopefully, others have better ideas.
+
+> > What happened with Tvrtko's weighted implementation? I've seen many proposed
+> > patchsets in this area but as far as I could see none could establish
+> > consensus among GPU crowd and that's one of the reasons why nothing ever
+> > landed. Is the aim of this patchset establishing such consensus?
 > 
-> This approach allows us to avoid unnecessary memory pinning operations,
-> which would otherwise introduce additional overhead during DMA mapping.
+> Yeah, we have a consensus by now I think. Valve, Intel, Google, and Red
+> Hat have been involved in that series and we all agree on the implementation.
+
+That's great to hear.
+
+> Tvrtko aims at a different feature set though: this one is about memory
+> allocation limits, Tvrtko's about scheduling.
 > 
-> In my tests, using vfio to pass through an 8-card AMD GPU which with a
-> large bar size (128GB*8), the time mapping the 192GB*8 bar was reduced
-> from about 50.79s to 1.57s.
+> Scheduling doesn't make much sense for things outside of DRM (and even
+> for a fraction of all DRM devices), and it's pretty much orthogonal. So
+> i guess you can expect another series from Tvrtko, but I don't think
+> they should be considered equivalent or dependent on each other.
 
-If the vma has a flag to indicate pfnmap, why does the user need to
-provide a mapping flag to indicate not to pin?  We generally cannot
-trust such a user directive anyway, nor do we in this series, so it all
-seems rather redundant.
+Yeah, I get that this is about memory and that is about processing capacity,
+so the plan is going for separate controllers for each? Or would it be
+better to present both under the same controller interface? Even if they're
+going to be separate controllers, we at least want to be aligned on how
+devices and their configurations are presented in the two controllers.
 
-What about simply improving the batching of pfnmap ranges rather than
-imposing any sort of mm or uapi changes?  Or perhaps, since we're now
-using huge_fault to populate the vma, maybe we can iterate at PMD or
-PUD granularity rather than PAGE_SIZE?  Seems like we have plenty of
-optimizations to pursue that could be done transparently to the user.
-Thanks,
+Thanks.
 
-Alex
-
+-- 
+tejun
 
