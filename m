@@ -1,240 +1,178 @@
-Return-Path: <linux-kernel+bounces-379106-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379108-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B05119AD9FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:41:07 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 573489ADA14
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:43:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336FA1F227AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:41:07 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 787711C2182C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:43:53 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B928B14F12F;
-	Thu, 24 Oct 2024 02:40:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4030815957D;
+	Thu, 24 Oct 2024 02:43:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ98TJJe"
-Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="eE228UDk"
+Received: from mail-il1-f179.google.com (mail-il1-f179.google.com [209.85.166.179])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969CD4D8AD;
-	Thu, 24 Oct 2024 02:40:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8886F14D2B9
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:43:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729737659; cv=none; b=nXcsetYQMajSv8wdVqKZhrV94WwQ2EOrfpOn5uNBirwQEnsArNVYtNUZLsuXQ2kmtkD1nNNyl8KZMC/xctm4rYK1oyEyIDFx9g7e3SDUr8JuD970hLrgI8grDRtFsg47fneiPgNEVXgjzxl20rBiVxclb9JyIsBnb+gLDQ2BCN8=
+	t=1729737794; cv=none; b=MlTIe4mr/0PWjkeLxyc7gCadsYpj3fuvGYjTCc3gXtzdnmu196wnHp8kuM9ACzfiZTGCEufNY/LTMs28apJlGwax57oQOCP+238T4vvptptdFTPc+FcjcWXEnpCoXNFN67jjMUyWu4D9yRQ9q/beNhoGtAwoU68241WwEsnjjng=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729737659; c=relaxed/simple;
-	bh=bys3ISKeLd08WWgCorxKWPccYot/hU5DGRV8BYhyRU4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=FfpqcUmrz2CXnlQ4HfGY8idOZbdDVmRUNXf4rjbzGBiesBRjLA/nXEpPpaHOvoiUylISRewfqXj1VbH5W9xowj39uujwyuR0unn4j2/veoSdwW1xtw8BuPftu53NBKt41WOIvpjGLO2cW6TmvPAOdiz6qvmiw6tnbZhImfiak5Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ98TJJe; arc=none smtp.client-ip=209.85.219.181
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e2972abc807so497320276.3;
-        Wed, 23 Oct 2024 19:40:56 -0700 (PDT)
+	s=arc-20240116; t=1729737794; c=relaxed/simple;
+	bh=+qFp3TeeQPQRKhqu0qcRmgNw7B51osoKFFrsbOPjRao=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=hQyqRJws7j4RaifINwmxsfcEzj1wQaWPdORKdxcY1Y++UEE+sv0Fw5xHSjIQBtcWfvUOrEJM1COmS7lItdsnudTugkR7txi2PyS6GJAVrKDnkyWdGosFnRfSPwkGkyIqXmuuR8J9W+GuxgCMWxd3Qupvim8kbOc7N/b1/KIgyj0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=eE228UDk; arc=none smtp.client-ip=209.85.166.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-il1-f179.google.com with SMTP id e9e14a558f8ab-3a3b28ac9a1so41345ab.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 19:43:12 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729737655; x=1730342455; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=sIxP96exfOoa5CX6fTPMX7bSuvLMk6J+pOAMwb8dHKk=;
-        b=UQ98TJJedSaWk/BIcgcy6neGLu8Tvsqj3YjBSMQW7tVOksTnPujcKcKKeeCN/EhtFK
-         RFfnX19YNk+gTIgP2wa72IhOCkYYqHqiBvtOpZchiXverSuA8UmTgv90K61Beh24lgTm
-         ijuHk7/CRCM7zwOsnqVLgazA+nu8yTSzEAJn7S4Tessj7QlUPuICAGZgJsT7EraItz9O
-         RwUaHkxKGUZ+NWCJErZMq4+GiU5SUI1wjrvlrFgOEeGfmVQ5Xojxd5SzAUuQ7+Qf87tD
-         DU11c0Us1Vd8OEEBSEB3Vl8vUdJwRKe+86M1hJpIFbgbgr9rlsKJhkxbURuzPlUvEfU5
-         7icg==
+        d=google.com; s=20230601; t=1729737791; x=1730342591; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=xyHwur5QJelig3QLV0G8DK/xG9ajEnYR1dsUUnnzJjM=;
+        b=eE228UDkH3k8VHS+a2tnQK0JVFYNGUSM3PhbnytkLdUOyA8DBypfiW7jpvmFCKPlDA
+         6s6Gg5b1rYTKdyxt35AL3AtHULB9svXJ64D96Z7q/DYRXZkIgfLIAIM8vBfGtOXE7M1j
+         sG2SFaYKHz9Auq/yRYEkKlWX2RH4CVjwuQwOo0EcawU3e04Ll4YMrJ6wPZ58/+KiXPZE
+         Er+EGIdrY4nERD15C3Fo++pdQi1C14wl2NyGkPyFTSyC65rPM14QntLHWWg0L6KG1/RR
+         tcjX8kpdez6fmEGX31b0D+lvPsq1NId+n8BLgfFV9fbUYYqj2eJ5J64cbgngMy6UCe+h
+         ED9w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729737655; x=1730342455;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=sIxP96exfOoa5CX6fTPMX7bSuvLMk6J+pOAMwb8dHKk=;
-        b=xHp9WikM/u7RzfJHp3I1u5p9CfAfr/a6jUq7y/EWu41DFTbiN4xu3KT+TEr/hEb42D
-         TNRIQOosYdJfGkCIGgE9YITmo6iUz+geK7m/RjKQ3BIA2fprfoM1kUyMb3ydmnCuyBPb
-         XUc4BfAH/Menv1RaLWEOMuEVT6CCOhiZeZ34aWrzrJOaFqGVfdLYTItLjJb6rcTcNpHw
-         /XLGUw9HRBRUBYUDeCFeKK+Zj9uNNSmRK5YrCF1GTKn/B+5EYlPvJiTQiieFa3r7X4dU
-         kno5vezP+TRZk5E4gr6vNqDVyyqkBdSagCYwF/9j+COF6P2pvivY4XMsPPNZF4u7Vxhs
-         3W+Q==
-X-Forwarded-Encrypted: i=1; AJvYcCUkOQQxA6atYh6w6Iqfyz+zc4LoFrb6kj3joRbpQEPuIYKv8OjVslM81sTUaRtnqar/BIAfJwlXgsoWeW/M@vger.kernel.org, AJvYcCWE7epFp01HVJ65FTtz389eaPTCu1wyhYMjgG+xbCcFRyADyKBY+sj+c2GRCgP0KmduJAY7gLB/34kLJbLwvY0=@vger.kernel.org, AJvYcCXkFcJMInH6MdNILu8GEjbJ0vpUlcDi49IO/EagQmd5fJSHg0bxhm8NbXCvAfdBzYgilXyfVXbvzFc=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzuNx1rSE2IFdMyabBYPDtXATWSohjyMVmaMybhTo9Rctjpk/KQ
-	64NchTvRiiR3UoNK11duf6tQe/8FVurhSHeN++5xTxPGw5ApI9iZ
-X-Google-Smtp-Source: AGHT+IGH8NHWvZDdQphM1F4EUF4yjz11pGp4Slih3bjoBRhE+aogWpjkHaoDgzzI9J0pimZIRIZn4Q==
-X-Received: by 2002:a05:690c:dc3:b0:6e2:aceb:fb34 with SMTP id 00721157ae682-6e85814ad59mr5773367b3.1.1729737655457;
-        Wed, 23 Oct 2024 19:40:55 -0700 (PDT)
-Received: from [192.168.2.226] ([107.175.133.150])
-        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ceecbbsm18146457b3.110.2024.10.23.19.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 19:40:54 -0700 (PDT)
-Message-ID: <e0c34a1b-6801-4ae3-b04f-56dbce5c76d8@gmail.com>
-Date: Thu, 24 Oct 2024 10:40:40 +0800
+        d=1e100.net; s=20230601; t=1729737792; x=1730342592;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=xyHwur5QJelig3QLV0G8DK/xG9ajEnYR1dsUUnnzJjM=;
+        b=WCfcjjRrXJ7VAC55uQSUfjUJI+Y+pdL4dfIF3afn8Ftk62CvSsAEAo0/4ViX99uPnF
+         YFMXON3yj4V2LilCSoXyzeRiOiLFg1/Kzl4w1bV8VpooUyVebGBQIAG7d5whlaJF5dz9
+         jAjtMrrWVebQKuRaqw4ONH1KgjqxFXZpV33GkVMLLYSwiZOOj40eJKRJM4WaH1IV7Ja9
+         XpzW+KL6FEvRQ4gndM/BH2tE28uSGMCWJxMNl9KJlwXstL8uANTl+r135/oyWVfnIH53
+         R+4fjVPEK6o01aeCIQrAJhqNH0hxqU0LkPTEMPCCrbusAt1ETjYxSWGbFMhrNkL5XglF
+         e2oA==
+X-Forwarded-Encrypted: i=1; AJvYcCX8iVPAIeuPf8X6Sc42wQKkHoaoCA5zoNv3c++6v1UXJ/eqexRaSGCzCCVqsJ++stjGwo+Qtk6gJCYPhuA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIiMHZVysM4KO0/lnpq43siNjJQFMCPEbO//zpRsLff/iztYHf
+	8mgqKsqhGbSVVcVsVFoZhkC77ysPZnrRx6M5ZYsM6PH5M4o2HAjtAT3w09yV+7KI747J4H2U2U0
+	HPJmMToqUSNdWdiuwPwibLxRsWGq30cJy6YaP
+X-Google-Smtp-Source: AGHT+IFsHnYt3q5cMj1wjYuphkOrbWbA+1QoNbLM9tfPRGHRO7ZW8plCmxpEWlscDtcaURUESWm4irsy6yRCNbcY5to=
+X-Received: by 2002:a05:6e02:1a42:b0:3a3:b07b:6d3 with SMTP id
+ e9e14a558f8ab-3a4ddfdda4dmr1104045ab.9.1729737791542; Wed, 23 Oct 2024
+ 19:43:11 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3] docs/zh_CN: update the translation of
- process/programming-language.rst
-To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev,
- Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
- Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>,
- Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
- Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
- <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
- Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
- Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
- Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
- <morbo@google.com>, Justin Stitt <justinstitt@google.com>
-Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
- linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
- llvm@lists.linux.dev
-References: <20241023062750.849951-1-dzm91@hust.edu.cn>
- <46e54088-ad96-4387-8a39-2e4686c842bd@gmail.com>
- <345e8f10-fe1a-4736-9468-7c92ac55d62e@hust.edu.cn>
-Content-Language: en-US
-From: Alex Shi <seakeel@gmail.com>
-In-Reply-To: <345e8f10-fe1a-4736-9468-7c92ac55d62e@hust.edu.cn>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+References: <20241018055627.1005723-1-irogers@google.com> <Zxc6_jZdDcWgtEom@google.com>
+ <CAP-5=fU04PAN4T=7KuHA4h+po=oTy+6Nbee-Gvx9hCsEf2Lh0w@mail.gmail.com>
+ <ZxiVKvmzjeHd4xBQ@google.com> <Zxl2etmBtc5XsQ3p@google.com> <ZxmFwUPyD34LqAHX@google.com>
+In-Reply-To: <ZxmFwUPyD34LqAHX@google.com>
+From: Ian Rogers <irogers@google.com>
+Date: Wed, 23 Oct 2024 19:42:56 -0700
+Message-ID: <CAP-5=fV_-Z85b_DMCCPFo1FU2dyUY9ELNEJz6fx+JgZg4iPj7g@mail.gmail.com>
+Subject: Re: [PATCH v2] perf check: Add sanitizer feature and use to avoid
+ test failure
+To: Namhyung Kim <namhyung@kernel.org>
+Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
+	Arnaldo Carvalho de Melo <acme@kernel.org>, Mark Rutland <mark.rutland@arm.com>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, Jiri Olsa <jolsa@kernel.org>, 
+	Adrian Hunter <adrian.hunter@intel.com>, Kan Liang <kan.liang@linux.intel.com>, 
+	Thomas Richter <tmricht@linux.ibm.com>, James Clark <james.clark@linaro.org>, 
+	linux-perf-users@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Wed, Oct 23, 2024 at 4:24=E2=80=AFPM Namhyung Kim <namhyung@kernel.org> =
+wrote:
+>
+> On Wed, Oct 23, 2024 at 03:19:38PM -0700, Namhyung Kim wrote:
+> > On Tue, Oct 22, 2024 at 11:18:18PM -0700, Namhyung Kim wrote:
+> > > On Tue, Oct 22, 2024 at 10:39:36AM -0700, Ian Rogers wrote:
+> > > > Sure, the reproduction is trivial, just add -fsanitize=3Daddress, s=
+o I'm
+> > > > surprised you're not already seeing it:
+> > > > ```
+> > > > $ perf test annotate -v
+> > > > --- start ---
+> > > > test child forked, pid 444258
+> > > >  68e8a0-68e96b l noploop
+> > > > perf does have symbol 'noploop'
+> > > > Basic perf annotate test
+> > > >          : 0      0x68e8a0 <noploop>:
+> > > >     0.00 :   68e8a0:       pushq   %rbp
+> > > >     0.00 :   68e8a1:       movq    %rsp, %rbp
+> > > >     0.00 :   68e8a4:       subq    $0x30, %rsp
+> > [...]
+> > > >     0.00 :   92d6:       shrl    %cl, %edx
+> > > >     0.00 :   92d8:       movl    %edx, %ecx
+> > > >     0.00 :   92da:       movq    %rax, %rdx
+> > > > Basic annotate [Failed: missing disasm output when specifying the t=
+arget symbol]
+> > >
+> > > Hmm.. this is strange.  The error message says it failed when it
+> > > specified the target symbol (noploop) for perf annotate.
+> > >
+> > > As it's the dominant symbol, it should have the same output for the
+> > > first function (noploop) whether it has target symbol or not and it
+> > > should match the disasm_regex.  I'm curious how it can fail here.
+> >
+> > Hmm.. ok.  For some reason, it wasn't failed when I add DEBUG=3D1.
+>
+> Oh, now I'm seeing why.  We skip perf_session__delete() on !DEBUG build.
+> :(
+>
+> >
+> > Without DEBUG, I can see it now.
+> >
+> > =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
+=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D
+> > =3D=3D1053492=3D=3DERROR: LeakSanitizer: detected memory leaks
+> >
+> > Direct leak of 33 byte(s) in 1 object(s) allocated from:
+> >     #0 0x7f1ad78edd20 in strdup ../../../../src/libsanitizer/asan/asan_=
+interceptors.cpp:566
+> >     #1 0x55eda19cb76f in perf_data__open (linux/tools/perf/perf+0x65276=
+f) (BuildId: 6fc1b7cdc123c7bd586ce55ea8b727875f42cda2)
+> >     #2 0x55eda18ffafa in __perf_session__new (linux/tools/perf/perf+0x5=
+86afa) (BuildId: 6fc1b7cdc123c7bd586ce55ea8b727875f42cda2)
+> >     #3 0x55eda15485d3 in cmd_annotate (linux/tools/perf/perf+0x1cf5d3) =
+(BuildId: 6fc1b7cdc123c7bd586ce55ea8b727875f42cda2)
+> >     #4 0x55eda1695467 in run_builtin (linux/tools/perf/perf+0x31c467) (=
+BuildId: 6fc1b7cdc123c7bd586ce55ea8b727875f42cda2)
+> >     #5 0x55eda1695c0e in handle_internal_command (linux/tools/perf/perf=
++0x31cc0e) (BuildId: 6fc1b7cdc123c7bd586ce55ea8b727875f42cda2)
+> >     #6 0x55eda153ba72 in main (linux/tools/perf/perf+0x1c2a72) (BuildId=
+: 6fc1b7cdc123c7bd586ce55ea8b727875f42cda2)
+> >     #7 0x7f1acda43b89 in __libc_start_call_main ../sysdeps/nptl/libc_st=
+art_call_main.h:58
+> >
+> > SUMMARY: AddressSanitizer: 33 byte(s) leaked in 1 allocation(s).
+> > Unexpected signal in test_basic
+> >
+> > No idea how it can leak the data->file.path (that's what I can find
+> > where strdup is used in the function).
+>
+> Maybe we need to revisit how much speed up it can give.
 
+I think this is a different issue and not sanitizer related except for
+the sanitizer catching the deliberate leak. My full build command line
+is:
+```
+$ make -C tools/perf O=3D/tmp/perf DEBUG=3D1 EXTRA_CFLAGS=3D"-O0 -g
+-fno-omit-frame-pointer -fsanitize=3Daddress" CC=3Dclang CXX=3Dclang++
+HOSTCC=3Dclang
+```
+Of which the -O0 may be the thing that is making the difference and
+breaking the test with sanitizers for me.
 
-On 10/24/24 10:30, Dongliang Mu wrote:
-> 
-> On 2024/10/24 10:21, Alex Shi wrote:
->>
->> On 10/23/24 14:27, Dongliang Mu wrote:
->>> Update to commit 0b02076f9953 ("docs: programming-language: add Rust
->>> programming language section")
->>>
->>> scripts/checktransupdate.py reports:
->>>
->>> Documentation/translations/zh_CN/process/programming-language.rst
->>> commit 0b02076f9953 ("docs: programming-language: add Rust programming
->>> language section")
->>> commit 38484a1d0c50 ("docs: programming-language: remove mention of the
->>> Intel compiler")
->>> 2 commits needs resolving in total
->>>
->>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
->>> ---
->>> v2->v3: fix warnings in the make htmldocs
->>> v1->v2: revise the script name
->>>   .../zh_CN/process/programming-language.rst    | 78 +++++++------------
->>>   1 file changed, 30 insertions(+), 48 deletions(-)
->>>
->>> diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
->>> index fabdc338dbfb..95aa4829d78f 100644
->>> --- a/Documentation/translations/zh_CN/process/programming-language.rst
->>> +++ b/Documentation/translations/zh_CN/process/programming-language.rst
->>> @@ -3,25 +3,22 @@
->>>   :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
->>>   :Translator: Alex Shi <alex.shi@linux.alibaba.com>
->>>   -.. _cn_programming_language:
->>> -
->>>   程序设计语言
->>>   ============
->>>   -内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
->>> -在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
->>> -
->>> -这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
->>> +内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [zh_cn_gcc]_ 编译，
->>> +并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
->>> +``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
->>> +:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
->>>   -对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
->>> -的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
->>> +这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
->>>     属性
->>>   ----
->>>   -在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
->>> +在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
->>>   属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
->>> -重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
->>> +重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
->>>     在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
->>>   即使其速度较慢或执行的编译时检查/诊断次数不够）
->>> @@ -30,42 +27,27 @@
->>>   ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
->>>   请参阅 ``include/linux/compiler_attributes.h``
->>>   -.. _cn_c-language:
->>> -
->>> -c-language
->>> -   http://www.open-std.org/jtc1/sc22/wg14/www/standards
->>> -
->>> -.. _cn_gcc:
->>> -
->>> -gcc
->>> -   https://gcc.gnu.org
->>> -
->>> -.. _cn_clang:
->>> -
->>> -clang
->>> -   https://clang.llvm.org
->>> -
->>> -.. _cn_icc:
->>> -
->>> -icc
->>> -   https://software.intel.com/en-us/c-compilers
->>> -
->>> -.. _cn_gcc-c-dialect-options:
->>> -
->>> -c-dialect-options
->>> -   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
->>> -
->>> -.. _cn_gnu-extensions:
->>> -
->>> -gnu-extensions
->>> -   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
->>> -
->>> -.. _cn_gcc-attribute-syntax:
->>> -
->>> -gcc-attribute-syntax
->>> -   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
->>> -
->>> -.. _cn_n2049:
->>> +Rust
->>> +----
->>>   -n2049
->>> -   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
->>> +内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
->>> +``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [zh_cn_rustc]_ 编译器在
->>> +``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
->>> +在语言中引入非后向兼容的小型变更的方式。
->>> +
->>> +除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
->>> +的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
->>> +
->>> +具体请参阅 Documentation/rust/index.rst
->>> +
->>> +.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
->>> +.. [zh_cn_gcc] https://gcc.gnu.org
->>> +.. [zh_cn_clang] https://clang.llvm.org
->>> +.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
->>> +.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
->>> +.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
->>> +.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
->>> +.. [zh_cn_rust-language] https://www.rust-lang.org
->>> +.. [zh_cn_rustc] https://doc.rust-lang.org/rustc/
->>> +.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
->>> +.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
->> Hi Dongliang,
->>
->> Good job! Most of translation are good.
->> Just the above doc seems still English version, give them a zh_cn name may cause misunderstand?
-> 
-> Oh, I see. However, you cannot use gcc or rustc since it already exists in the English documents. We need another name to make sphinx happy. Therefore, why do not we directly use the final version of name? :)
-> 
-Uh, is it possible to use English version 'gcc' links in this doc? Otherwise,it make sense too. 
-
-Thanks
-
-> Correct me if I make any misunderstanding.
-> 
-> Dongliang Mu
-> 
->>   Thanks
-> 
+Thanks,
+Ian
 
