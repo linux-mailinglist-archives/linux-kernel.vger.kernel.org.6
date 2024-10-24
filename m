@@ -1,121 +1,105 @@
-Return-Path: <linux-kernel+bounces-379054-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379055-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5E5FC9AD914
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:02:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id F27709AD917
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:05:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 18E4C283B4D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:02:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 99C321F22931
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:05:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C81120311;
-	Thu, 24 Oct 2024 01:02:08 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0034B22EED;
+	Thu, 24 Oct 2024 01:05:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="koOjW7ki"
-Received: from mail-pf1-f181.google.com (mail-pf1-f181.google.com [209.85.210.181])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Zbxwe9h8"
+Received: from mail-wr1-f51.google.com (mail-wr1-f51.google.com [209.85.221.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BC90E4C66;
-	Thu, 24 Oct 2024 01:02:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.181
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 77BF0BE6C;
+	Thu, 24 Oct 2024 01:05:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729731727; cv=none; b=eQOSBD3Ulftth1aZz6GGpLwJm+0KE4sg5+cXofLBsVa+rZPW9X5gGF1OSZDP/UnCHbeeKwncsdXb1vEO+UfwdYFNhwaqQUHmFM5MDLwFm5FsldPDb4TbcvDm5kJCPNyHN9NwsiRD4JFA2uP9g/jsW7nGKICfaT/REmsFRzvrP4o=
+	t=1729731909; cv=none; b=o97m6TjGv4a3cUP4sY0B2UBMBslNPDvhhMZlK2qZ/3MwF10YbrWYQnqcyDOuTrfFTvi5Z/i2PFYHE2rGYFwBsURQF+8/MUxRKWHQhU70HngT6vt0yZDV4BVLm9DCIZ7lC9UAmRGeIMgL9xV+oomhMmWouZ59KpAccJRJze4rvZ0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729731727; c=relaxed/simple;
-	bh=N9E3dQrK2oNBJbnVuj4SmkpyBa1i3K9UH1L9aIExYrU=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:Content-Type; b=pzTlZ2VSF1CWOL1n4lovV+OpRlb97dC9qoUha87C1UFH5odtfTUMJRX5+LOZLeZb6KfeS95jPDmEJd1Hmn9pacDGXizDTIe7rvGh0pXm9YehKRpzJW5f41Qlc8J/+vIsfin2OOOMITcryZuMqNnP3D2/cMeZPaLtPq25a/nSDSY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=koOjW7ki; arc=none smtp.client-ip=209.85.210.181
+	s=arc-20240116; t=1729731909; c=relaxed/simple;
+	bh=VwmoJBYAlvdeAwr3NyiwJYWThIBjXS2RFKMcwFAmyv0=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Pb1afnX5QUUb1H7Jtmt8Zqm5obWI2Em70JgO2CTB056cJEDrhldr6GKiFmn3PgnmIEAv+ceUrjHB7HOI/z15+10qsbCTqKLxmjQXkbUGFVSyaTRJVjfK7CWW7/cw6TRB1s7Hd8JbEOpLljIaGCdRL9N3SIehwo1miUBwIUXaDoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Zbxwe9h8; arc=none smtp.client-ip=209.85.221.51
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f181.google.com with SMTP id d2e1a72fcca58-71e93d551a3so294114b3a.1;
-        Wed, 23 Oct 2024 18:02:05 -0700 (PDT)
+Received: by mail-wr1-f51.google.com with SMTP id ffacd0b85a97d-37d49ffaba6so205998f8f.0;
+        Wed, 23 Oct 2024 18:05:07 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729731725; x=1730336525; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:content-language:to:subject:from
-         :user-agent:mime-version:date:message-id:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729731906; x=1730336706; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=moRdslhIcfQFZ6VJ3Ktj0BaLtFKEuFkVkJRmlDTgxhE=;
-        b=koOjW7ki1WQl6F2S8uR/ik8o/G7vD+mLcn7WtQJS/FFq9gEhOsfWeYHYQcC7oYFqLv
-         vX1mN0a9wDJdX5bdmGGEWUif2/sDjap1qrF7YWl+ceCWI5TudS2Dgu4AjA0rcmxEocFm
-         hT0WPwXl/eq4xwEcqoq0HzYTRHzRw124xOO/hO5sbjakF108v6LrGYIsHeL3ckshAar9
-         gZcVLrc7uXhiu+ob7NYAoKyV3qRS8ZbCSyZkdTzDyunxIYCwxC9R/6jPwnq/yxhu2VNl
-         bst5u+uXAo88oyOlqVSJOqnXH65wixtXiWd17OiI7SEMzRS4K0mlajdtWYASfhzh24a6
-         +LnA==
+        bh=VwmoJBYAlvdeAwr3NyiwJYWThIBjXS2RFKMcwFAmyv0=;
+        b=Zbxwe9h85M/sKWlr4kjEmq27Rt2wVYBzyCi4u34fpRLUxgKNi9TOiVqAJ05xCbChnz
+         dnnKiA87XuqGNybKyjKZZB6g+aINHwDT/Dd86qJBIAQM1bddIqtRa8JxQBdR6zY4emj7
+         Nl7idxtIgsjKUbzwYRJGBi9wEn+3QPAAGWT0gS3HB1/TVHrmAyO3UL9YOA0K3Npl1UeX
+         kMd4afIV68XuqJQAaUH7ovTkY8twYg////cKxJck8hZRbm6qp8nYQIJSVrQzEqdGpedh
+         MNBLjcEDFUUbj+naP2DCaWcjZBcT4Cq372LL1TwxPJXIll2hvVR8wwWuaCRo5+jdmmlv
+         c53Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729731725; x=1730336525;
-        h=content-transfer-encoding:cc:content-language:to:subject:from
-         :user-agent:mime-version:date:message-id:x-gm-message-state:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=moRdslhIcfQFZ6VJ3Ktj0BaLtFKEuFkVkJRmlDTgxhE=;
-        b=dGeUPpKkzwmUOU5fLitBjJHqUK97QDUfeCSss4kowsZBCenaA7Jivx/DdNxZB1VWdk
-         R+jN1ZWU8j0LsiSiJDPa/TwhxBBL+Pg8vlIGdVkc9l7EwN2mFgvSRwHxXQuKKUi80xEU
-         9L2pQqo8lhFu+vZkOd+ogobwmbVKDRCeLyc1Bf6eExAatmkFLegM0bIAXiJMnp7jhsWY
-         bfK/osyKrjp/lRaPxu5H9t02cnoyRLt65qwUQImz0DhoEoLbgChYzqg6juXMznnQVa0k
-         Y5C6syQhHedTpO8m62MQMfPYnKsrdVy/KCu9DxJLuqOcx+CiGPqaMy+uZtldgFs/tE1h
-         yMeQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWjdGmkR5LQN7WM4cpRSwJlKm7wwGazPh2nIGDHieE5sYi0z3qK64Zogo/Tg7Be3rvbaDwjDR8+FWpe0mo=@vger.kernel.org, AJvYcCX37QgDbjiFwvgwA3LbkZsSZnz/QQ6xXTi2lr/Dot+s+v/i5z0CZlfTP2mzLgWGS41Ma6D5SHG55prWSsab@vger.kernel.org
-X-Gm-Message-State: AOJu0YwKxU2askyzN1qRErRLohSONJ7iG7S5PW7eevwPcZ8Ml6OWTpxK
-	17vei+tZgk2Ftrop5Yy0B4o0apUoDKes0J8XW+05sFAqy/8kBDxm
-X-Google-Smtp-Source: AGHT+IGJqfilXWarx/ZGLExIGO0dz7Zhrtmh314lBbFCPtvirF6mBhnuLMrv5oztkVLBKOLtYTDQzQ==
-X-Received: by 2002:a62:e416:0:b0:720:36c5:b548 with SMTP id d2e1a72fcca58-72036c5b8c4mr3837076b3a.16.1729731724798;
-        Wed, 23 Oct 2024 18:02:04 -0700 (PDT)
-Received: from [10.4.153.125] ([129.94.128.29])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1312d53sm6932499b3a.2.2024.10.23.18.02.01
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 18:02:04 -0700 (PDT)
-Message-ID: <57cb0385-209e-4cb0-b34c-281e5f99a3d9@gmail.com>
-Date: Thu, 24 Oct 2024 09:02:00 +0800
+        d=1e100.net; s=20230601; t=1729731906; x=1730336706;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=VwmoJBYAlvdeAwr3NyiwJYWThIBjXS2RFKMcwFAmyv0=;
+        b=mvuPoN8t8iQY8yaph+GPtLsL54y5vUvR0wDOq0TBWoAUVc00zAVMEqLIpECbTtnSAO
+         XZSkBMHDMFN59jygHuEGtJFJIYW928QytJMXVoIfKoNvovuKF8ZwBXmuqYNyk20SXXvU
+         +mXvN12xWk1eKFv5O1A6UybgZZnR52FHL7a2qsf3j45PSpzCb6RAAA9PbciOi+1uz8ex
+         cmYC7e4DTrV8RP+1k32dzCNKmPaInMRJmFg+vI3nLBsh4c37IZWEmyzhZSSEgn5D2ME5
+         hc+7TYKgGOJXBktddbxyg60G9p2qGZFdXPaOeNZGlFan74zP7nPNZ23HClHD9DTMh4w6
+         STnQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWGtr4jLwDMg6yhdMnJ/tDpkSAXu+GE/qsnOVClaJB0thkuFbq8X02xonittefRI3jM4QY=@vger.kernel.org, AJvYcCXFbEuMF+YR9zSw4xKcOHSzGTgJRvnfdfmbiBlglRDzMq6NFfCujN7S+z/ntQS83lmXTLaoDxx3zRxS22aW@vger.kernel.org
+X-Gm-Message-State: AOJu0YyU4gp1sZ+HS6BTIas5TzUZ/pezbyoGcUaRPVPw2Q6xmGxwEO4g
+	o4Z+BJotFivfAXffDkYxgPPYu7USUI+I2w/l7t8c+Rhu0U9C/vsNamJ2Q3qTCkTry34474heyKg
+	VrjlCXyIPewT2GVMuni1sDJvbc3c=
+X-Google-Smtp-Source: AGHT+IEReK+2bo3a2EDoGND9G6OU4ntwKP5Y36zhBXB5tuTWaCOFLZsetWRsYrUG0doujB/TpkelkILpV7zgrP4lsEI=
+X-Received: by 2002:a05:6000:1fab:b0:37d:39f8:a77a with SMTP id
+ ffacd0b85a97d-37efcef0d2dmr3263113f8f.8.1729731905614; Wed, 23 Oct 2024
+ 18:05:05 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Tuo Li <islituo@gmail.com>
-Subject: [BUG] IB/isert: Possible null-pointer dereference related
-To: sagi@grimberg.me, jgg@ziepe.ca, leon@kernel.org
-Content-Language: en-US
-Cc: linux-rdma@vger.kernel.org, target-devel@vger.kernel.org,
- linux-kernel@vger.kernel.org, baijiaju1990@gmail.com
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+References: <Zxma0Vt6kwWFe1hx@slm.duckdns.org> <Zxma-ZFPKYZDqCGu@slm.duckdns.org>
+In-Reply-To: <Zxma-ZFPKYZDqCGu@slm.duckdns.org>
+From: Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Date: Wed, 23 Oct 2024 18:04:54 -0700
+Message-ID: <CAADnVQLsUZ9SoWomC_2tSw=KsK6YkdDTmg7Hmr8wk-GHMv3kNQ@mail.gmail.com>
+Subject: Re: [PATCH sched_ext/for-6.13 2/2] sched_ext: Replace
+ set_arg_maybe_null() with __nullable CFI stub tags
+To: Tejun Heo <tj@kernel.org>
+Cc: David Vernet <void@manifault.com>, bpf <bpf@vger.kernel.org>, 
+	Martin KaFai Lau <martin.lau@kernel.org>, Alexei Starovoitov <ast@kernel.org>, 
+	Kernel Team <kernel-team@meta.com>, sched-ext@meta.com, 
+	LKML <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hello,
+On Wed, Oct 23, 2024 at 5:55=E2=80=AFPM Tejun Heo <tj@kernel.org> wrote:
+>
+> ops.dispatch() and ops.yield() may be fed a NULL task_struct pointer.
+> set_arg_maybe_null() is used to tell the verifier that they should be NUL=
+L
+> checked before being dereferenced. BPF now has an a lot prettier way to
+> express this - tagging arguments in CFI stubs with __nullable. Replace
+> set_arg_maybe_null() with __nullable CFI stub tags.
+>
+> Signed-off-by: Tejun Heo <tj@kernel.org>
+> Cc: Martin KaFai Lau <martin.lau@kernel.org>
+> Cc: Alexei Starovoitov <ast@kernel.org>
 
-Our static analysis tool has identified a potential null-pointer
-dereference related to the wait-completion synchronization mechanism in
-ibsert.c.
+for this and 1st patch:
+Acked-by: Alexei Starovoitov <ast@kernel.org>
 
-Consider the following execution scenario:
-
-  isert_login_recv_done()  //1375
-    if (isert_conn->conn)  //1390
-    complete(&isert_conn->login_req_comp);  //1398
-
-The variable isert_conn->conn is checked by an if statement at Line 1390,
-which indicates that isert_conn->conn can be NULL. Then, complete() is
-called at Line 1398 which will wake up the wait_for_completion_xxx().
-
-Consider the following wait_for_completion_interruptible().
-
-  isert_get_login_rx()  //2336
-    wait_for_completion_interruptible(&isert_conn->login_req_comp); //2342
-    isert_rx_login_req(isert_conn);  //2359
-      conn = isert_conn->conn;       //981
-      login = conn->conn_login;      //982
-
-The value of isert_conn->conn is assigned to conn at Line 981, and then
-dereferenced through conn->conn_login at Line 982. However, the variable
-isert_conn->conn is checked at Line 1390, which means it can be NULL. If
-so, a null-pointer dereference can occur at Line 982.
-
-I am not quite sure whether this possible null-pointer dereference is real
-and how to fix it if it is real.
-Any feedback would be appreciated, thanks!
-
-Best wishes,
-Tuo Li
+Nice cleanup!
 
