@@ -1,115 +1,161 @@
-Return-Path: <linux-kernel+bounces-380531-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380536-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EBDA79AF054
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:04:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 640739AF24B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:16:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AFA802834FB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:04:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0FC031F218F3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:16:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 38F622170B1;
-	Thu, 24 Oct 2024 19:04:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3D3AD218304;
+	Thu, 24 Oct 2024 19:12:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="cbUhuSnP"
-Received: from mail-wm1-f50.google.com (mail-wm1-f50.google.com [209.85.128.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="ZEPD7HiR"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 438F0200B82
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:04:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6FBA22170BA;
+	Thu, 24 Oct 2024 19:12:05 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729796662; cv=none; b=JIMQKl6aluFQ/kHob6BA0qOhdtLlf5m3X5Stjk6pMcTAhhc+4Zw9q2zKkt3h7qVYS9YkUqh/Q9436IAeHcKr1fBaVzAFmm+9AasMQN1e4kRPlgg2DyvSs7UAZJfp7rKSsNWAI0sFMsrTYMIvW2pjno5eDFUhwRtIi9JSAtBctMQ=
+	t=1729797127; cv=none; b=uYnZE6YF4hppCXYUPefGHnpzx6wqFj5u6IKGHF9j4hwXcwD5rDD36lirhc1C2ODKGQ5cfdAObHn3JNmwfw0mOtUPHE3eJDWmf9hXEqey+DptrIByjlIxWhTI1pw2XxzngmHfWOd0HFTxzCJOuR46C6Xko45CwlAbzXLIxvIwr3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729796662; c=relaxed/simple;
-	bh=2J2Yj2NOa6oOjGZM73x/zLQanFb8Ii+YDrcmRuwRtSc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SFv/kRhyePIY+IjW0gJ/sF4p7frKLWJWKddmROm0vAmIJa/frfo98CmbFO/WtY/QSldhNt246CKYxnllusGhlZWO97QNXtPygTlfbdyje1IrWgKih7gh9R6DlgkUCrIUs8oDVG4AVFcxociytz3A36AKVyacwOS6QzKFNSOc3LU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=cbUhuSnP; arc=none smtp.client-ip=209.85.128.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-wm1-f50.google.com with SMTP id 5b1f17b1804b1-431481433bdso12865365e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:04:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729796658; x=1730401458; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=NLJF3aIecRErbpZ2bVrOXhmtA0VmB7KUrZ7YjkGYIig=;
-        b=cbUhuSnPYxmlh325/woMdLZQ6a0vW437+BTWhgJ64YNki3RZzP8MTpR2y5wU0Orzk2
-         uAExq3EnJtpmZN7ltePfScGj+14iS6Ua3odsmPvWJpjuELGhmXWNgQ8WtmVFuq0Gr+b3
-         k5zcDg9Bjasi04pH9P9oXmy7e6+KtItRf/OfGfNFAtPZYvYgL2RTvX5Tg7LWDLGXGkPw
-         Rw0pxHQucrDlolC+a7Hi4ofthJB5XiEc+pMX4kLPr0rmO7zIW8l9cDiXw75ox3L8DQgL
-         eaXHVGmXsZS/lzkDinvSLaTtIjcmNnmSp8MxAw0JDt019HHIgrG5cOzdB5svRYCg2wXI
-         divA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729796658; x=1730401458;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=NLJF3aIecRErbpZ2bVrOXhmtA0VmB7KUrZ7YjkGYIig=;
-        b=w8nLitwjxaBBOlAdY+MTX3ee0T3Xq6ErmKdvUoLoWiCuu9jeOGc0sgoUA5blGsMuYM
-         OVn7S5JaJT21mMcavfB+RTNAmQmwZ+N57MDvR1lBxTgDUwTAgSL6J5cDsBxkWXR2uqX2
-         HCD8pQ+pVdXdrU6sIVReqAqcmvlCqJifYN++hYKwlt7IDJCKBCAz/o1Qoj+7NkRRmNHQ
-         BJDm0XkqixDLqryhUJC22kTb4SXDptfmTpHGUZPlsLW6ESn4WJCUwh5zOqrL8ngQc/bV
-         1xBd1gVeXtoxObDfOMiV27/HH7g2iVuPiBygehxarwRhc3lI+cFx++/A3mCwEE4bLQjV
-         YvXA==
-X-Forwarded-Encrypted: i=1; AJvYcCXqcrzEfT7HgQawXXnr12BOS/S9mhoTcgR5gyJYczGeG/khl+vFqze0JVgK6QQmUITX0DTuaY5UuFmzees=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyO7dMq1hOnaarF6hkNHNLH/iAA/IK86L6dn1m3AhbqdGsWL12h
-	0D0qzlCWIq2BMz+RdtRnOjPuBCbQZ+QTzmqdKiYkIU5PrIF3OlybKvy3piUBCm4=
-X-Google-Smtp-Source: AGHT+IFCnaX/c0lMd0V6SDI/A27X0TVS9VKiXa7YuZhYWoUQgwhnSkjLqX2ryTpdgF1x9ooXB5PuZg==
-X-Received: by 2002:a05:600c:45cb:b0:42f:8515:e490 with SMTP id 5b1f17b1804b1-431841341e2mr60270955e9.5.1729796658245;
-        Thu, 24 Oct 2024 12:04:18 -0700 (PDT)
-Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b567838sm27112365e9.23.2024.10.24.12.04.17
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 12:04:17 -0700 (PDT)
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-To: Linus Walleij <linus.walleij@linaro.org>,
-	Kent Gibson <warthog618@gmail.com>,
-	Mark Brown <broonie@kernel.org>,
-	Klara Modin <klarasmodin@gmail.com>,
-	Bartosz Golaszewski <brgl@bgdev.pl>
-Cc: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
-	linux-gpio@vger.kernel.org,
+	s=arc-20240116; t=1729797127; c=relaxed/simple;
+	bh=hvpYKl2aqhiqojiuSjEDscF3HMw+BXuyFgI4u7EJIFs=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=k1V4IVPX+fJxO+vmL0wiuekD81MiyBHf8Ot3Uyh3NDg9TO/pbRe90VHXAk7rNspNY402J2JQwPi8EAwgW4MWLt818kHa660t8jbgObTCS9uVKq5hLAEiFYSVR6LsjtiCqmTv2pBDaY/faNlTw6jAuZpV5w4Aw8iJoGEwt5hv3v8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=ZEPD7HiR; arc=none smtp.client-ip=192.198.163.8
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729797125; x=1761333125;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=hvpYKl2aqhiqojiuSjEDscF3HMw+BXuyFgI4u7EJIFs=;
+  b=ZEPD7HiRfORIZplHJ96Jy2YzO3vv1XyCWWc/7nTBREFoLCctrn4GCI7x
+   TMfFkyMYx3NAwxc39SEatiyS0vyUwjUiJtGfHAGDx4HrCkqUpedXOSzP7
+   MQtdbjwTYoVm8JEzBcNz7glBjC68gxKCFNBOx51hexgdqRXlnlprYsnMM
+   1AbOcVDwXYKAhe41ecCh7kx0zbTzPB/R7kZdYTCbzhlJ5rq74x2Atpb0u
+   ThO/UUzPn70bUW48Io/hxu3E3ANLjWvRlIYYAaeeXhh5E0mlQR9XwZCAV
+   yFxxKqgIWPkHQFnTdgBPZ11fO7e3B5viur3k4fJrUMOtSx9eos17+TojA
+   g==;
+X-CSE-ConnectionGUID: XS83D3Z1QiqfKFFZE7g3OA==
+X-CSE-MsgGUID: nyFpZ9IQQby1GUulfAR7/A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="46934404"
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="46934404"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 12:12:04 -0700
+X-CSE-ConnectionGUID: A7qBuIkMQ3qYtlAPdmZoEA==
+X-CSE-MsgGUID: qKDA0PULT/Wp1z3jJIk3nA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
+   d="scan'208";a="80266645"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by fmviesa006.fm.intel.com with ESMTP; 24 Oct 2024 12:12:02 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 041F6252; Thu, 24 Oct 2024 22:12:00 +0300 (EEST)
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Marius Cristea <marius.cristea@microchip.com>,
+	Trevor Gamblin <tgamblin@baylibre.com>,
+	Jean-Baptiste Maneyrol <jean-baptiste.maneyrol@tdk.com>,
+	Hans de Goede <hdegoede@redhat.com>,
+	linux-iio@vger.kernel.org,
 	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] gpiolib: fix a NULL-pointer dereference when setting direction
-Date: Thu, 24 Oct 2024 21:04:14 +0200
-Message-ID: <172979664791.66034.4461804157130165429.b4-ty@linaro.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241024133834.47395-1-brgl@bgdev.pl>
-References: <20241024133834.47395-1-brgl@bgdev.pl>
+Cc: Jonathan Cameron <jic23@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>
+Subject: [PATCH v3 00/24] iio: Clean up acpi_match_device() use cases
+Date: Thu, 24 Oct 2024 22:04:49 +0300
+Message-ID: <20241024191200.229894-1-andriy.shevchenko@linux.intel.com>
+X-Mailer: git-send-email 2.43.0.rc1.1336.g36b5255a03ac
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+There are current uses of acpi_match_device():
+- as strange way of checking if the device was enumerated via ACPI
+- as a way to get IIO device name as ACPI device instance name
+- as above with accompanying driver data
 
+Deduplicate its use by providing two new helper functions in IIO ACPI
+library and update the rest accordingly.
 
-On Thu, 24 Oct 2024 15:38:34 +0200, Bartosz Golaszewski wrote:
-> For optional GPIOs we may pass NULL to gpiod_direction_(input|output)().
-> With the call to the notifier chain added by commit 07c61d4da43f
-> ("gpiolib: notify user-space about in-kernel line state changes") we
-> will now dereference a NULL pointer in this case. The reason for that is
-> the fact that the expansion of the VALIDATE_DESC() macro (which returns
-> 0 for NULL descriptors) was moved into the nonotify variants of the
-> direction setters.
-> 
-> [...]
+This also includes a rework of previously sent ltr501 patch.
 
-Applied, thanks!
+Besides that there ie a big clean up for the kxcjk-1013 driver, started
+with the revert of the one patch discussed earlier today. Feel free to
+route that one via fixes branch of your tree.
 
-[1/1] gpiolib: fix a NULL-pointer dereference when setting direction
-      commit: 1f4a640e9ac7f450752365541ad9c064b13ef8bf
+In v3:
+- collected tags (Marius)
+- added note to the documentation about usage of new API (Jonathan)
+- added a handful patches for kxcjk-1013 driver
 
-Best regards,
+In v2:
+- collected tags (Hans, Jean-Baptiste)
+- updated SoB chain in patch 4
+
+Andy Shevchenko (24):
+  iio: magnetometer: bmc150: Drop dead code from the driver
+  iio: adc: pac1934: Replace strange way of checking type of enumeration
+  iio: imu: inv_mpu6050: Replace strange way of checking type of
+    enumeration
+  iio: acpi: Improve iio_read_acpi_mount_matrix()
+  iio: acpi: Add iio_get_acpi_device_name_and_data() helper function
+  iio: accel: kxcjk-1013: Remove redundant I²C ID
+  iio: accel: kxcjk-1013: Revert "Add support for KX022-1020"
+  iio: accel: kxcjk-1013: Switch from CONFIG_PM guards to pm_ptr() etc
+  iio: accel: kxcjk-1013: Use local variable for regs
+  iio: accel: kxcjk-1013: Rename kxcjk1013_info
+  iio: accel: kxcjk-1013: Start using chip_info variables instead of
+    enum
+  iio: accel: kxcjk-1013: Move odr_start_up_times up in the code
+  iio: accel: kxcjk-1013: Convert ODR times array to variable in
+    chip_info
+  iio: accel: kxcjk-1013: Get rid of enum kx_chipset
+  iio: accel: kxcjk-1013: Replace a variant of
+    iio_get_acpi_device_name_and_data()
+  iio: accel: kxcjk-1013: drop ACPI_PTR() and move ID out of CONFIG_ACPI
+    guards
+  iio: accel: mma9551: Replace custom implementation of
+    iio_get_acpi_device_name()
+  iio: accel: mma9553: Replace custom implementation of
+    iio_get_acpi_device_name()
+  iio: gyro: bmg160: Replace custom implementation of
+    iio_get_acpi_device_name()
+  iio: light: isl29018: Replace a variant of
+    iio_get_acpi_device_name_and_data()
+  iio: light: isl29018: drop ACPI_PTR() and CONFIG_ACPI guards
+  iio: light: ltr501: Drop most likely fake ACPI IDs
+  iio: light: ltr501: Add LTER0303 to the supported devices
+  iio: light: ltr501: Replace a variant of
+    iio_get_acpi_device_name_and_data()
+
+ drivers/iio/accel/kxcjk-1013.c             | 449 +++++++++++----------
+ drivers/iio/accel/mma9551.c                |  19 +-
+ drivers/iio/accel/mma9553.c                |  19 +-
+ drivers/iio/adc/pac1934.c                  |   2 +-
+ drivers/iio/gyro/bmg160_core.c             |  15 -
+ drivers/iio/gyro/bmg160_i2c.c              |   4 +-
+ drivers/iio/imu/inv_mpu6050/inv_mpu_acpi.c |   5 +-
+ drivers/iio/industrialio-acpi.c            |  48 ++-
+ drivers/iio/light/isl29018.c               |  38 +-
+ drivers/iio/light/ltr501.c                 |  29 +-
+ drivers/iio/magnetometer/bmc150_magn.c     |  15 -
+ include/linux/iio/iio.h                    |  10 +
+ 12 files changed, 315 insertions(+), 338 deletions(-)
+
 -- 
-Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+2.43.0.rc1.1336.g36b5255a03ac
+
 
