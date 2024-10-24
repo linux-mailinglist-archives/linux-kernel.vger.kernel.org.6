@@ -1,133 +1,211 @@
-Return-Path: <linux-kernel+bounces-379257-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379258-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 463ED9ADC19
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:22:55 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 822619ADC1B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:23:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 925C9B22431
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:22:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C36E280E27
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:23:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 259F417D340;
-	Thu, 24 Oct 2024 06:22:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F2718593A;
+	Thu, 24 Oct 2024 06:22:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="NHzdRQVQ"
-Received: from mail-pf1-f180.google.com (mail-pf1-f180.google.com [209.85.210.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A9IyW3Cu"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B4C2617B51A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:22:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.180
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4450A189917;
+	Thu, 24 Oct 2024 06:22:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750967; cv=none; b=P6HnG7+AAgOgmP9OBaSalLm2/8rCXxTnzdhH78OniLj6fAunlgUyMM42TuLK42npDTbq4lNrD3rXo0JHG76pCOPbN1BbYEMuuo4+dh6cifZ/6ieS5rF/OCp/mWh5A1ua5EJbCj81OU5UqZ31rzQk2W0OrXCxMVyrjD48ND5PLkY=
+	t=1729750974; cv=none; b=ZcNPbIP2fixgWtvtJTp1YXzKiC9seJvY7KCRt2DuepWkazQDpvIjcrXVg/fztr5aubD8JGlERyZw2RNzAvsmzXyy3iCrSqivmrkd+FCs2G0SOdnq2+nMWOi/Fb1fFrbE3eWUnFnAo+vX5qeDyou2Z5Z1lqUbOqpG94Ld5m0pzRk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750967; c=relaxed/simple;
-	bh=Uhdy0crX7jd32UBgalA4Mp+yqTEKMoy5/aHTmMprIHY=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=hK1vu/MLshBGQ3IT2z3G008OzKly75BGaf5qsKuan2C3MO49H8LPuk5BRmSXufUlCVLi/t7z6HsXpgMvbFKCJpzAVs5osEMpmhWsKG8LSJnMCRjqhqBbFeUmC7lTv40IIpasmFiSIx7pFg3dp0EkiVkWxD1BPnimREYE5ecgCEQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=NHzdRQVQ; arc=none smtp.client-ip=209.85.210.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pf1-f180.google.com with SMTP id d2e1a72fcca58-718e9c8bd83so1136550b3a.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:22:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729750965; x=1730355765; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Uhdy0crX7jd32UBgalA4Mp+yqTEKMoy5/aHTmMprIHY=;
-        b=NHzdRQVQYtWCnuTqL79IZvLUsJ0/kIZno9nexSJHfepZq7RhrD81twOZ8yTTHp/x1z
-         L4Gy7b2Phi6sGipx9l7JSfQ6oWQJsbChsC5nfM/TlNaNDhtNTs6x8bczCljVPwkSMcOa
-         iS8OOUuT1fnYotH5pWwoaWiNDcqr+4Gt6/0Xs3jeV3JOvXe5gXpHXGMJzHZVyW4vmwUI
-         wcfoykSV6RrNEiTtLIVi4gOCRHqG8R2zBLwzOgWnHzLi8GRjX+AcMtQJ5MWJzSCaJp1F
-         TSIsFSqKJ7yEf7n5kLYShaAKBbJ1UWsFjHTEXDT/TqHvLBpYVke9nZmRLxnSKuMkL/39
-         FrMw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729750965; x=1730355765;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Uhdy0crX7jd32UBgalA4Mp+yqTEKMoy5/aHTmMprIHY=;
-        b=LOK0152GH7SaPtd4tdQkxvjhMU6fGsFFUP79F+VqeTwR8EK3ab+WAwPZTMY1lMjVju
-         VeoeXdYZNaAwoohsTPmkARrdM/MEJ5PD5fubGy/v+8SoBz+WAl0/A1txwU/3To6cr1sL
-         d/y0O5aAsgUgVS8mQla2IppQ8XpDqfB354mVOsWUqsGBt0NO6oyXzYbKjBdl8FbjNQUd
-         zctnFTzAgh/WyYPhlB3kW0A/FDxuLMKbt4RiDMotUaADl3pO0MbUE4ID4ni0E37dit7Y
-         nRxOx7eYpcAMPz3AN1uBuifSTOgd9lkWDyGo6CPYZdfiB1bcv5DYinzbxRSXfLNEGWbi
-         T5ow==
-X-Forwarded-Encrypted: i=1; AJvYcCWKmfHDKhpLgYU4zLVhlqWYaWsE7kFBjK7Kfx3hqGz5Ovfr6O+g7ruIOVNpOwb7KNL+gL7P2Dj3IpmjQy0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YydH0Q5GoQVLoRYKnZaWQnOPZEPGXJ+E56rvl9QYFb5VNw16gwF
-	Dw1OcOQKj9hn9mFLbT/zokuobJc4NFHsBxmf7oxB6l5fVQXoJ77QHLshA950aXxEQp9rT7pFI4Q
-	REaHxKRn9TfZl8llvpX8CjIoxj29J33jsWODP
-X-Google-Smtp-Source: AGHT+IHER6S+oXayYMJOfU1uT2MMGdiQY9D03ESwl9edjBhrQ1nxNVeRSlMwT7VT0vKe79wJ+iS8Umue/ckpKLjd6Zk=
-X-Received: by 2002:a05:6a00:888:b0:71e:6a99:4732 with SMTP id
- d2e1a72fcca58-720452dc06emr1742555b3a.11.1729750964614; Wed, 23 Oct 2024
- 23:22:44 -0700 (PDT)
+	s=arc-20240116; t=1729750974; c=relaxed/simple;
+	bh=B2rrdyS8WCZyYD/QGyjdUeIH6SkWQUvf14qpLqrNcTA=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=rSdOdmnt7m5KI3R7ishHClp/t8W3EamWQ2kON46EO7Ke0RoEIqKv3debl/Htuf7ncJVq5ao10P34mPA6MGynt/iCbwndjS3GRKqAdhoTwqNEew7DboQBZijNqcqM/XBrW0KABR7O2UTOBGFqyIxD5Bu3Qv/vXKIA0paBG3oQNsE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A9IyW3Cu; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from lelv0266.itg.ti.com ([10.180.67.225])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49O6MKX9123892;
+	Thu, 24 Oct 2024 01:22:20 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729750940;
+	bh=+hD8pazlMNkRIEUj8wspoCE4BW4rrUFRVlh12y70QEM=;
+	h=Date:Subject:To:CC:References:From:In-Reply-To;
+	b=A9IyW3Cu9DpCd82XEUtdsuireR3ZphphhZGbkMG+5Q+DZAq242Eq9xBeKQIqjhVrr
+	 fsQRtm0ioviGkfQzaRX77Wu96XB0S0QWz29gu5A/CWq6uKMrc08dhIVSt8q9WW0aaP
+	 OiaeCuQl+hxqyF3ntYQwt6irsTjG22DrYicnoOxI=
+Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
+	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49O6MK4E058800;
+	Thu, 24 Oct 2024 01:22:20 -0500
+Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
+ (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 24
+ Oct 2024 01:22:20 -0500
+Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
+ (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 24 Oct 2024 01:22:19 -0500
+Received: from [172.24.227.91] (psdkl-workstation0.dhcp.ti.com [172.24.227.91])
+	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49O6MGOb035515;
+	Thu, 24 Oct 2024 01:22:16 -0500
+Message-ID: <7f1d8857-9894-4db9-a0c4-534e1bff4cbb@ti.com>
+Date: Thu, 24 Oct 2024 11:52:15 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023191339.1491282-1-saravanak@google.com> <7a8dede1-ef29-4553-9412-de8e2f45b860@notapiano>
-In-Reply-To: <7a8dede1-ef29-4553-9412-de8e2f45b860@notapiano>
-From: Saravana Kannan <saravanak@google.com>
-Date: Wed, 23 Oct 2024 23:22:04 -0700
-Message-ID: <CAGETcx_nSoVy-C-pt0Q3e-4wsU--9MJKoxr2ZSUfVq1UBxMjow@mail.gmail.com>
-Subject: Re: [PATCH] drm: display: Set fwnode for aux bus devices
-To: =?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>
-Cc: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, Jon Hunter <jonathanh@nvidia.com>, 
-	kernel-team@android.com, dri-devel@lists.freedesktop.org, 
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/4] arm64: dts: ti: k3-j7200: Fix clock ids for MCSPI
+ instances
+To: Anurag Dutta <a-dutta@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
+        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
+        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <j-keerthy@ti.com>
+CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
+References: <20241023104532.3438851-1-a-dutta@ti.com>
+ <20241023104532.3438851-2-a-dutta@ti.com>
+Content-Language: en-US
+From: Aniket Limaye <a-limaye@ti.com>
+In-Reply-To: <20241023104532.3438851-2-a-dutta@ti.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On Wed, Oct 23, 2024 at 12:56=E2=80=AFPM N=C3=ADcolas F. R. A. Prado
-<nfraprado@collabora.com> wrote:
->
-> On Wed, Oct 23, 2024 at 12:13:36PM -0700, Saravana Kannan wrote:
-> > fwnode needs to be set for a device for fw_devlink to be able to
-> > track/enforce its dependencies correctly. Without this, you'll see erro=
-r
-> > messages like this when the supplier has probed and tries to make sure
-> > all its fwnode consumers are linked to it using device links:
-> >
-> > mediatek-drm-dp 1c500000.edp-tx: Failed to create device link (0x180) w=
-ith backlight-lcd0
-> > tegra-xusb-padctl 3520000.padctl: Failed to create device link (0x180) =
-with 1-0008
-> >
-> > Reported-by: "N=C3=ADcolas F. R. A. Prado" <nfraprado@collabora.com>
-> > Closes: https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca459=
-8@notapiano/
-> > Tested-by: "N=C3=ADcolas F. R. A. Prado" <nfraprado@collabora.com>
-> > Reported-by: Jon Hunter <jonathanh@nvidia.com>
-> > Closes: https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nv=
-idia.com/
->
-> Hi Saravana,
->
-> the issue faced by Jon needs the exact same change but in a different pla=
-ce,
-> drivers/phy/tegra/xusb.c, which I posted at:
-> https://lore.kernel.org/all/f979aff2-34f4-4f6d-bb9a-03a02afc4635@notapian=
-o/
 
-Ah sorry, I was in a hurry and missed the fact it was a different file.
 
->
-> So we need two separate patches, one for each issue. Feel free to add tha=
-t to
-> this series. (I could send it myself, but I think it makes more sense to =
-keep
-> them together)
+On 23/10/24 16:15, Anurag Dutta wrote:
+> The clock IDs for multiple MCSPI instances across wakeup as
+> well as main domain in J7200 are incorrect when compared with
+> documentation [1]. This results in kernel crashes when the said
+> instances are enabled. Fix the clock ids to their appropriate
+> values.
+> 
+> [1]https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
+> 
+> Fixes: 8f6c475f4ca7 ("arm64: dts: ti: k3-j7200: Add MCSPI nodes")
+> 
+> Signed-off-by: Anurag Dutta <a-dutta@ti.com>
 
-Sent a new series. Thanks for the heads up and the fix for Jon's issue.
+Reviewed-by: Aniket Limaye <a-limaye@ti.com>
 
--Saravana
+> ---
+>   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi       | 16 ++++++++--------
+>   arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi |  6 +++---
+>   2 files changed, 11 insertions(+), 11 deletions(-)
+> 
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> index 9386bf3ef9f6..ee953c0bf11f 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
+> @@ -1145,7 +1145,7 @@ main_spi0: spi@2100000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 266 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 266 1>;
+> +		clocks = <&k3_clks 266 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1156,7 +1156,7 @@ main_spi1: spi@2110000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 267 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 267 1>;
+> +		clocks = <&k3_clks 267 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1167,7 +1167,7 @@ main_spi2: spi@2120000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 268 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 268 1>;
+> +		clocks = <&k3_clks 268 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1178,7 +1178,7 @@ main_spi3: spi@2130000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 269 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 269 1>;
+> +		clocks = <&k3_clks 269 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1189,7 +1189,7 @@ main_spi4: spi@2140000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 270 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 270 1>;
+> +		clocks = <&k3_clks 270 2>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1200,7 +1200,7 @@ main_spi5: spi@2150000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 271 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 271 1>;
+> +		clocks = <&k3_clks 271 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1211,7 +1211,7 @@ main_spi6: spi@2160000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 272 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 272 1>;
+> +		clocks = <&k3_clks 272 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -1222,7 +1222,7 @@ main_spi7: spi@2170000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 273 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 273 1>;
+> +		clocks = <&k3_clks 273 4>;
+>   		status = "disabled";
+>   	};
+>   
+> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> index 5097d192c2b2..b18b2f2deb96 100644
+> --- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> +++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
+> @@ -494,7 +494,7 @@ mcu_spi0: spi@40300000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 274 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 274 0>;
+> +		clocks = <&k3_clks 274 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -505,7 +505,7 @@ mcu_spi1: spi@40310000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 275 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 275 0>;
+> +		clocks = <&k3_clks 275 4>;
+>   		status = "disabled";
+>   	};
+>   
+> @@ -516,7 +516,7 @@ mcu_spi2: spi@40320000 {
+>   		#address-cells = <1>;
+>   		#size-cells = <0>;
+>   		power-domains = <&k3_pds 276 TI_SCI_PD_EXCLUSIVE>;
+> -		clocks = <&k3_clks 276 0>;
+> +		clocks = <&k3_clks 276 2>;
+>   		status = "disabled";
+>   	};
+>   
 
