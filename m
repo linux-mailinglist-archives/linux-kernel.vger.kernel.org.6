@@ -1,63 +1,91 @@
-Return-Path: <linux-kernel+bounces-380523-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380524-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6BC309AF042
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:56:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 16CFF9AF046
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:57:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9E37B1C222A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:56:55 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 498691C226BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:57:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B2324215F44;
-	Thu, 24 Oct 2024 18:56:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BD560216449;
+	Thu, 24 Oct 2024 18:56:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tOMgJkmj"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534452010E5;
-	Thu, 24 Oct 2024 18:56:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 194B3215020;
+	Thu, 24 Oct 2024 18:56:57 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729796207; cv=none; b=AUk1xYa1zIeh5e5dsXbKbBbvTIF6uZ6dTOEOCKpG+RzToOS7DccW+ack48paIR/ME/8QRkZ1v617rfozOtsnY7NwxnR4Kz06NmFI+w6nj2AETJ7s6ya3i6QAKs82cgRPSNK+XoA5ZJrVZkNioJxcjjbzlfiqmaExxjKwTYig7wY=
+	t=1729796218; cv=none; b=Yx+TcPnw2F1wOzCGpKN+3fl++c7S+omFdLZDgaw1BNUZZQdLgMHVkKmE3irTBPyf41isUG80jHNfiWCLRTpNNNPJNEMSgSPQiCBH58pGPVtnSljpLVd5UB7bj5HHfo76pX9igawzJUQmA6SlbUmV6wA36ijP2vA8MjTUE9fNP14=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729796207; c=relaxed/simple;
-	bh=DcpX9tV1QiDuReAFdTjhQFLaRxkeIt4I4szRkKGrWtE=;
-	h=From:Subject:Date:Message-ID:To; b=dECU5krHZX6PDiIWj5BBkjLkwOr4nO7C3Q/9B/PfEqgMbhh0AfIiOnNci1EgDCZ2vS3mbuwouze+UCLJjquBlUpB/CaAZvQaGPWt9V0wWTvjOh33CjtfK9AykCndNVm9LlVsqJWZdpTpeJMWFDny7u6olNWdgQdPEfaezQMJrYw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B410DC4CEC7;
-	Thu, 24 Oct 2024 18:56:46 +0000 (UTC)
-From: Clark Williams <williams@redhat.com>
-Subject: [ANNOUNCE] 6.6.58-rt45
-Date: Thu, 24 Oct 2024 18:56:17 -0000
-Message-ID: <172979617791.2327480.10815760441971686819@demetrius.lan>
-To: LKML <linux-kernel@vger.kernel.org>,linux-rt-users <linux-rt-users@vger.kernel.org>,Steven Rostedt <rostedt@goodmis.org>,Thomas Gleixner <tglx@linutronix.de>,Carsten Emde <C.Emde@osadl.org>,John Kacur <jkacur@redhat.com>,Sebastian Andrzej Siewior <bigeasy@linutronix.de>,Daniel Wagner <daniel.wagner@suse.com>,Tom Zanussi <tom.zanussi@linux.intel.com>,Clark Williams <williams@redhat.com>,Pavel Machek <pavel@denx.de>,Joseph Salisbury <joseph.salisbury@oracle.com>
+	s=arc-20240116; t=1729796218; c=relaxed/simple;
+	bh=P84Y0qJZG/7dz1Swpa2xtavPk25/zI0gwrJaeHwiuns=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=m5kNrbs1uPNTH4cufx+zflhSbt4SpZr9/2bvmwORx8PVk3OU9e1Qez4iQ3lVpCEjLjIOD0F8hZJp6WYn9WtyIUPMMnJiu9uMZPVqEExG5RtQ4kuhwJ9nvHMSFNnvMVNgiaE3waxSuHUS6LMigiMiJ5ldS6sVjfaOi3pDIdgnrCY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tOMgJkmj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FD34C4CEC7;
+	Thu, 24 Oct 2024 18:56:56 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729796217;
+	bh=P84Y0qJZG/7dz1Swpa2xtavPk25/zI0gwrJaeHwiuns=;
+	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
+	b=tOMgJkmjJEbBjFFzG3lvoF0veFmQTjBec0Vpu/2BGott9T4PDQGxEf+cIG+gCuWRu
+	 3u27QuW2Oc2yjLMdrWGR7xgSC2UAr5v8SgcliDjtOzL9RN0o2EpDZYelwlAl7iBGRL
+	 pclEmiLtT2r7O41w/UPMGHAgqk6NmW9McDyC7DFolQ6ni+9uJMLQt3lSuEbtYFFM/1
+	 EMZcchQ9evLd8n9s+hB52emAzPldI2GKGG2O72wI5fbgLIh7QL6TgxcUpG4eQ94DvK
+	 J6UA7dmL1f5DeQd5wKRkHX2LISIkHlqXLrtQgHYMeQduEXl7H8/QKmermuZ9eY8kQf
+	 q7dLECkBetfvg==
+From: Bjorn Andersson <andersson@kernel.org>
+To: Mathieu Poirier <mathieu.poirier@linaro.org>,
+	Chris Lew <quic_clew@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Johan Hovold <johan@kernel.org>,
+	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
+Cc: linux-arm-msm@vger.kernel.org,
+	Bjorn Andersson <quic_bjorande@quicinc.com>,
+	linux-remoteproc@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	stable@vger.kernel.org,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH v2 0/2] soc: qcom: pmic_glink: Resolve failures to bring up pmic_glink
+Date: Thu, 24 Oct 2024 13:56:53 -0500
+Message-ID: <172979621232.309364.9966362822139382018.b4-ty@kernel.org>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241023-pmic-glink-ecancelled-v2-0-ebc268129407@oss.qualcomm.com>
+References: <20241023-pmic-glink-ecancelled-v2-0-ebc268129407@oss.qualcomm.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-
-Hello RT-list!
-
-I'm pleased to announce the 6.6.58-rt45 stable release.
-
-You can get this release via the git tree at:
-
-  git://git.kernel.org/pub/scm/linux/kernel/git/rt/linux-stable-rt.git
-
-  branch: v6.6-rt
-  Head SHA1: 4df61867f86872b173931d99b3d8aa367fd76029
-
-Or to build 6.6.58-rt45 directly, the following patches should be applied:
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/linux-6.6.tar.xz
-
-  https://www.kernel.org/pub/linux/kernel/v6.x/patch-6.6.58.xz
-
-  https://www.kernel.org/pub/linux/kernel/projects/rt/6.6/patch-6.6.58-rt45.patch.xz
+MIME-Version: 1.0
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 8bit
 
 
-Enjoy!
-Clark
+On Wed, 23 Oct 2024 17:24:31 +0000, Bjorn Andersson wrote:
+> With the transition of pd-mapper into the kernel, the timing was altered
+> such that on some targets the initial rpmsg_send() requests from
+> pmic_glink clients would be attempted before the firmware had announced
+> intents, and the firmware reject intent requests.
+> 
+> Fix this
+> 
+> [...]
+
+Applied, thanks!
+
+[1/2] rpmsg: glink: Handle rejected intent request better
+      commit: a387e73fedd6307c0e194deaa53c42b153ff0bd6
+[2/2] soc: qcom: pmic_glink: Handle GLINK intent allocation rejections
+      commit: f8c879192465d9f328cb0df07208ef077c560bb1
+
+Best regards,
+-- 
+Bjorn Andersson <andersson@kernel.org>
 
