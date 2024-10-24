@@ -1,155 +1,143 @@
-Return-Path: <linux-kernel+bounces-380566-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380567-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2A8929AF295
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:22:46 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 786D69AF299
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:23:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0241C23B91
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:22:45 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3E80F28B8EC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:23:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1875222B664;
-	Thu, 24 Oct 2024 19:21:42 +0000 (UTC)
-Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E3F22B647;
-	Thu, 24 Oct 2024 19:21:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8B4922B664;
+	Thu, 24 Oct 2024 19:22:50 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3636822B64A;
+	Thu, 24 Oct 2024 19:22:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729797701; cv=none; b=sq2X+sywZA+qh347weAjZHc3WzY5V2GWR2jXTgLQgEo6dpXyCFswqoTMh4AIeX1zX8JpFcVZG49ngzdryiFXl86QtYow7l4mrrCnAa/66i4PDiOs6nBk4zk3qKXXIYLzcg8RDgLyMlW6WsGlzPa+3G+YS6CrSEA8Ua+JIX/6qto=
+	t=1729797770; cv=none; b=Hjd9tCMXpcmrTqSF0f1SZyi+Zy//+eRVLpvLjC5FccX8J4+epXFCyUTE2hFsL5vxzl0yPN/tH1hyD0cghbEKXNoYBySP8x7EsK54ysT9AJkcrkLyK3iiS6rgx40aUxba0I8Wnx1LtDMZKWSRtNWmDFGDWvNseSq5fKSp6snnDh0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729797701; c=relaxed/simple;
-	bh=x5W7AHA7QoAl5BXhjCt2PyWAEngxusuwMWAjkEDBeo0=;
-	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
-	 In-Reply-To:References; b=PxOhcxMBGdauYdzIRRSBXk/D49odILolP0HuBQyL988spgtEAOi9Gu2TSrQ0ohI9M4ekyjOiur8qq6eCr9qh7z/DOoGeQtpDQIwB+98KnNyBZMbv0ebiNH/UrAZxKv55qUKpyno9LzuWGK5Jc6Q4YXiw71mOr4A8Qi+L06zwhaA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
-Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mail.stoffel.org (Postfix) with ESMTPSA id B72191E468;
-	Thu, 24 Oct 2024 15:21:37 -0400 (EDT)
-Received: by quad.stoffel.org (Postfix, from userid 1000)
-	id 15731A0A8C; Thu, 24 Oct 2024 15:21:37 -0400 (EDT)
+	s=arc-20240116; t=1729797770; c=relaxed/simple;
+	bh=jKh3x40WQHuOT3OY0nTrMeMhafdVjif4nBSUcncQMQM=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=S2KQCI1IE8f0ZATsiugIkyn+yW3LTKlkv2Ip4T9pynDyVJRSra9YTmTKy7lq77Jm/MT7l27BGBnvh0AF5Su+nf5+3tQ73nnovqQu26GHsSSEFnRb/SBsDK5eMtk54lY49kdNBBAC2G+jLLNz1R+FPH//8Q6k4ErU/tTYWIt9Xns=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 05BC0339;
+	Thu, 24 Oct 2024 12:23:16 -0700 (PDT)
+Received: from minigeek.lan (usa-sjc-mx-foss1.foss.arm.com [172.31.20.19])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id D6E593F528;
+	Thu, 24 Oct 2024 12:22:42 -0700 (PDT)
+Date: Thu, 24 Oct 2024 20:22:33 +0100
+From: Andre Przywara <andre.przywara@arm.com>
+To: Cody Eksal <masterr3c0rd@epochal.quest>
+Cc: linux-pm@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-sunxi@lists.linux.dev,
+ linux-kernel@vger.kernel.org, linux-phy@lists.infradead.org,
+ linux-usb@vger.kernel.org, Vinod Koul <vkoul@kernel.org>, Kishon Vijay
+ Abraham I <kishon@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
+ <jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>, Yangtao
+ Li <frank@allwinnertech.com>, Florian Fainelli
+ <florian.fainelli@broadcom.com>, Krzysztof Kozlowski
+ <krzysztof.kozlowski@linaro.org>, Parthiban <parthiban@linumiz.com>, Linus
+ Walleij <linus.walleij@linaro.org>, Thierry Reding <treding@nvidia.com>,
+ Maxime Ripard <mripard@kernel.org>, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>, Yangtao Li <tiny.windzz@gmail.com>, Viresh
+ Kumar <vireshk@kernel.org>, Nishanth Menon <nm@ti.com>, Stephen Boyd
+ <sboyd@kernel.org>, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, "Rafael J.
+ Wysocki" <rafael@kernel.org>
+Subject: Re: [PATCH 06/13] phy: sun4i-usb: add support for A100 USB PHY
+Message-ID: <20241024202216.6cded8c4@minigeek.lan>
+In-Reply-To: <20241024170540.2721307-7-masterr3c0rd@epochal.quest>
+References: <20241024170540.2721307-1-masterr3c0rd@epochal.quest>
+	<20241024170540.2721307-7-masterr3c0rd@epochal.quest>
+Organization: Arm Ltd.
+X-Mailer: Claws Mail 4.2.0 (GTK 3.24.31; x86_64-slackware-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-Message-ID: <26394.40513.57614.718772@quad.stoffel.home>
-Date: Thu, 24 Oct 2024 15:21:37 -0400
-From: "John Stoffel" <john@stoffel.org>
-To: Adrian Vovk <adrianvovk@gmail.com>
-Cc: Geoff Back <geoff@demonlair.co.uk>,
-    Christoph Hellwig <hch@infradead.org>,
-    Eric Biggers <ebiggers@kernel.org>,
-    Md Sadre Alam <quic_mdalam@quicinc.com>,
-    axboe@kernel.dk,
-    song@kernel.org,
-    yukuai3@huawei.com,
-    agk@redhat.com,
-    snitzer@kernel.org,
-    Mikulas Patocka <mpatocka@redhat.com>,
-    adrian.hunter@intel.com,
-    quic_asutoshd@quicinc.com,
-    ritesh.list@gmail.com,
-    ulf.hansson@linaro.org,
-    andersson@kernel.org,
-    konradybcio@kernel.org,
-    kees@kernel.org,
-    gustavoars@kernel.org,
-    linux-block@vger.kernel.org,
-    linux-kernel@vger.kernel.org,
-    linux-raid@vger.kernel.org,
-    dm-devel@lists.linux.dev,
-    linux-mmc@vger.kernel.org,
-    linux-arm-msm@vger.kernel.org,
-    linux-hardening@vger.kernel.org,
-    quic_srichara@quicinc.com,
-    quic_varada@quicinc.com
-X-Clacks-Overhead: GNU Terry Pratchett
-Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
-In-Reply-To: <CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
-References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
-	<20240916085741.1636554-2-quic_mdalam@quicinc.com>
-	<20240921185519.GA2187@quark.localdomain>
-	<ZvJt9ceeL18XKrTc@infradead.org>
-	<ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
-	<ZxHwgsm2iP2Z_3at@infradead.org>
-	<CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
-	<ZxH4lnkQNhTP5fe6@infradead.org>
-	<D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
-	<ZxieZPlH-S9pakYW@infradead.org>
-	<CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
-	<dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
-	<CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
-X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
->>>>> "Adrian" =3D=3D Adrian Vovk <adrianvovk@gmail.com> writes:
+On Thu, 24 Oct 2024 14:05:24 -0300
+Cody Eksal <masterr3c0rd@epochal.quest> wrote:
 
-> On Thu, Oct 24, 2024 at 4:11=E2=80=AFAM Geoff Back <geoff@demonlair.c=
-o.uk> wrote:
->>=20
->>=20
->> On 24/10/2024 03:52, Adrian Vovk wrote:
->> > On Wed, Oct 23, 2024 at 2:57=E2=80=AFAM Christoph Hellwig <hch@inf=
-radead.org> wrote:
->> >> On Fri, Oct 18, 2024 at 11:03:50AM -0400, Adrian Vovk wrote:
->> >>> Sure, but then this way you're encrypting each partition twice. =
-Once by the dm-crypt inside of the partition, and again by the dm-crypt=
- that's under the partition table. This double encryption is ruinous fo=
-r performance, so it's just not a feasible solution and thus people don=
-'t do this. Would be nice if we had the flexibility though.
->>=20
->> As an encrypted-systems administrator, I would actively expect and
->> require that stacked encryption layers WOULD each encrypt.  If I hav=
-e
->> set up full disk encryption, then as an administrator I expect that =
-to
->> be obeyed without exception, regardless of whether some higher level=
+Hi,
 
->> file system has done encryption already.
->>=20
->> Anything that allows a higher level to bypass the full disk encrypti=
-on
->> layer is, in my opinion, a bug and a serious security hole.
+> From: Yangtao Li <frank@allwinnertech.com>
+> 
+> Add support for a100's usb phy, which with 2 PHYs.
+> 
+> Signed-off-by: Yangtao Li <frank@allwinnertech.com>
+> [masterr3c0rd@epochal.quest: modified to use quirk flags]
+> Signed-off-by: Cody Eksal <masterr3c0rd@epochal.quest>
+> ---
+>  drivers/phy/allwinner/phy-sun4i-usb.c | 11 +++++++++++
+>  1 file changed, 11 insertions(+)
+> 
+> diff --git a/drivers/phy/allwinner/phy-sun4i-usb.c b/drivers/phy/allwinner/phy-sun4i-usb.c
+> index b0f19e950601..a3942b2ee90b 100644
+> --- a/drivers/phy/allwinner/phy-sun4i-usb.c
+> +++ b/drivers/phy/allwinner/phy-sun4i-usb.c
+> @@ -1006,6 +1006,16 @@ static const struct sun4i_usb_phy_cfg sun50i_a64_cfg = {
+>  	.phy0_dual_route = true,
+>  };
+>  
+> +static const struct sun4i_usb_phy_cfg sun50i_a100_cfg = {
+> +	.num_phys = 2,
+> +	.disc_thresh = 3,
 
-> Sure I'm sure there's usecases where passthrough doesn't make sense.
-> It should absolutely be an opt-in flag on the dm target, so you the
-> administrator at setup time can choose whether or not you perform
-> double-encryption (and it defaults to doing so). Because there are
-> usecases where it doesn't matter, and for those usecases we'd set
-> the flag and allow passthrough for performance reasons.
+This member is never used when .siddq_in_base is true (and yes, this is
+wrong for the H616 too), ...
 
-If you're so concerend about security that you're double or triple
-encrypting data at various layers, then obviously skipping encryption
-at a lower layer just because an upper layer says "He, I already
-encrypted this!" just doesn't make any sense. =20
+> +	.phyctl_offset = REG_PHYCTL_A33,
+> +	.dedicated_clocks = true,
+> +	.hci_phy_ctl_clear = PHY_CTL_SIDDQ,
+> +	.phy0_dual_route = true,
+> +	.siddq_in_base = true,
 
-So how does your scheme defend against bad actors?  I'm on a system
-with an encrypted disk.  I make a file and mount it with loop, and the
-encrypt it.  But it's slow!  So I turn off encryption.  Now I shutdown
-the loop device cleanly, unmount, and reboot the system.  So what
-should I be seing in those blocks if I examine the plain file that's
-now not mounted? =20
+... which makes this whole description identical to the D1 version.
+So at the very least we wouldn't this new a100_cfg, but instead just
+point to the existing d1_cfg.
 
-Could this be a way to smuggle data out because now the data written
-to the low level disk is encypted with a much weaker algorithm?  So I
-can just take the system disk and read the raw data and find the data? =
-=20
+> +};
+> +
+>  static const struct sun4i_usb_phy_cfg sun50i_h6_cfg = {
+>  	.num_phys = 4,
+>  	.phyctl_offset = REG_PHYCTL_A33,
+> @@ -1040,6 +1050,7 @@ static const struct of_device_id sun4i_usb_phy_of_match[] = {
+>  	{ .compatible = "allwinner,sun20i-d1-usb-phy", .data = &sun20i_d1_cfg },
+>  	{ .compatible = "allwinner,sun50i-a64-usb-phy",
+>  	  .data = &sun50i_a64_cfg},
+> +	{ .compatible = "allwinner,sun50i-a100-usb-phy", .data = &sun50i_a100_cfg },
 
-I'm not saying it's going to be easy or simple, but is it possible? =20=
+And this also brings up the question whether we need a new compatible
+string. As it stands now, we could also use:
+	compatible = "allwinner,sun50i-a100-usb-phy",
+		     "allwinner,sun20i-d1-usb-phy";
+
+and wouldn't need any driver changes at all. Which would have the neat
+side effect to make USB work already with v5.18 kernels.
+
+The only downside is the somewhat weird ordering of the compatible
+strings, with the much newer chip as the fallback.
+
+What do other people think here?
+
+Cheers,
+Andre
 
 
-John
-
+>  	{ .compatible = "allwinner,sun50i-h6-usb-phy", .data = &sun50i_h6_cfg },
+>  	{ .compatible = "allwinner,sun50i-h616-usb-phy", .data = &sun50i_h616_cfg },
+>  	{ .compatible = "allwinner,suniv-f1c100s-usb-phy",
 
 
