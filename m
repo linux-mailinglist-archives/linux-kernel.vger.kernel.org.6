@@ -1,59 +1,60 @@
-Return-Path: <linux-kernel+bounces-380339-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380340-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id A571C9AEC8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:50:10 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 270309AEC91
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:50:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D603F1C22F1A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:50:09 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA946B22D55
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:50:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7140C1F76BF;
-	Thu, 24 Oct 2024 16:50:05 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E87151F81A1;
+	Thu, 24 Oct 2024 16:50:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b="eKS3QLoR"
-Received: from outgoing.mit.edu (outgoing-auth-1.mit.edu [18.9.28.11])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="G9yUDjJA"
+Received: from out-184.mta0.migadu.com (out-184.mta0.migadu.com [91.218.175.184])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B60949652
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:50:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=18.9.28.11
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0866C1F709C
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:50:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=91.218.175.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788604; cv=none; b=eqHbHWc7DDa1XFvh0oz7CvtlokxKns/y0TbjGfvwc1vxZQzFFnz1KIvUZLmi0stgN+OsANrUojDZ7nj/2ZbG4xDiTTsRtSNYgQTC6O7EYXvGJQdTnn+2IasR4gvhbCbAHgCempVBiGvtiGmMcRVAi956z7Gx9XiHUS31tNohTts=
+	t=1729788628; cv=none; b=icoDDEVUaoDOlH4T0i7LLDUs38FTDlan8DpKOKJGuJOytYo9eZAB8L+nkypqxFJXU6XKVzQ11dRHts79rw9PvckgfjCAtCAp9HXW/vLOmpo6elymWCs3bpn+5b7od06ROH7SVNz67ISM42xDJsSE0ou87XZ0YbqKXdPu7rSyFEk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788604; c=relaxed/simple;
-	bh=npDJVqUl3+iQUhp5igezvUqM9bDLXvZ/sShDG2Wvb9Y=;
+	s=arc-20240116; t=1729788628; c=relaxed/simple;
+	bh=lH2c5MTCgmWU7Jab8kbmWSKpcuAt3EU2GOozVCLvH4E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=GJbQfpPFCmtRNy7wSThA9z/ar+pls3p2dAcMPzAIiBN2Fewkq8CQldbKASoyMhvKVtzC9BRIaHsLKCDqjz6zpEYyLRH/7uY8TZpstHD1ht6OH/6PWjj+Vc5cm5454goPkUYUL+hsNQwuH1giJMGb4fWngan4oAJNF5ky4w+I0ko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu; spf=pass smtp.mailfrom=mit.edu; dkim=pass (2048-bit key) header.d=mit.edu header.i=@mit.edu header.b=eKS3QLoR; arc=none smtp.client-ip=18.9.28.11
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=mit.edu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mit.edu
-Received: from cwcc.thunk.org (pool-173-48-115-113.bstnma.fios.verizon.net [173.48.115.113])
-	(authenticated bits=0)
-        (User authenticated as tytso@ATHENA.MIT.EDU)
-	by outgoing.mit.edu (8.14.7/8.12.4) with ESMTP id 49OGnd7k006531
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 12:49:40 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=mit.edu; s=outgoing;
-	t=1729788581; bh=Q9s/1anCq5AePVGIPh5uPxKl8iOIwJpgLY4GsZUxfcw=;
-	h=Date:From:Subject:Message-ID:MIME-Version:Content-Type;
-	b=eKS3QLoRJsRAfIUNyaXi2ZsE8LQ6qukpOlXVT5xJdddLM422BABMhhorCZRnf70Nh
-	 w0aLtRguNlb5hhTkbaES8v705rHgd5YgWTFzQu0xBSKuSoAhv9pQ6AndWVlD4P8izD
-	 qQLCRXid0zGO8fc+uftNW5aZ3mPLpb5jSJvUfnOe1G3VJAa7XPB6aOLlC77jcZGm48
-	 yC+7uU+U+Q6Zs/eVJ4uB4zZFjYx2JLf0Bv33szTeIvkJAa4xHDlhBtijgKPg1eqBTQ
-	 VvkpkPtEuPss1sgKF3fAdCBDL9cVJalreHKbvw19/mYa031Y7s1HDFhhKCBa2oVATy
-	 /yMCxN4AJ+IlA==
-Received: by cwcc.thunk.org (Postfix, from userid 15806)
-	id 3428515C0329; Thu, 24 Oct 2024 12:49:39 -0400 (EDT)
-Date: Thu, 24 Oct 2024 12:49:39 -0400
-From: "Theodore Ts'o" <tytso@mit.edu>
-To: quake <quake.wang@gmail.com>
-Cc: linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] Remove Huawei
-Message-ID: <20241024164939.GL3204734@mit.edu>
-References: <20241024032637.34286-1-quake.wang@gmail.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=YlFUNEHIH9k5Dt1xajjr4IERRtqxz0S0HMJFssbTqsHN/KJcrB4OsTlb1wBZOWbnbXzZOd442//sa4t3XKDqQ1ZNCqu5XZ65PJvFOiRcPFNhK19dD75djiENpCvLMfQ9f5aVIZ7AVCxGE8AuJuLKWFhfz76IXQbx6ZLZtcHFDlA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=G9yUDjJA; arc=none smtp.client-ip=91.218.175.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Oct 2024 16:50:18 +0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729788624;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OeZM9yMBCK67FT6NRmlAdBpBCb9n0TPy/A/c+hpymoM=;
+	b=G9yUDjJAJ8HdV/aWA9F/WhsvdPGxPrCuR8aWHa2T0p3qyBGYm6ltG1MnfOxaxhumE+y2wW
+	s3Lha+FFSxPVsRn0FAj5COupNrHSq6ba4sFMvYHGEqtJ2cVEE5z/QhQ5f0ayrShcOiXmIk
+	c6105932qGB2kYgeErcgtb0cTclNoAs=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Roman Gushchin <roman.gushchin@linux.dev>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Michal Hocko <mhocko@kernel.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 2/3] memcg-v1: remove charge move code
+Message-ID: <Zxp6yv8ayAk30avF@google.com>
+References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+ <20241024065712.1274481-3-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -62,52 +63,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241024032637.34286-1-quake.wang@gmail.com>
+In-Reply-To: <20241024065712.1274481-3-shakeel.butt@linux.dev>
+X-Migadu-Flow: FLOW_OUT
 
-On Thu, Oct 24, 2024 at 12:26:37PM +0900, quake wrote:
-> From: Quake Wang <quake.wang@gmail.com>
+On Wed, Oct 23, 2024 at 11:57:11PM -0700, Shakeel Butt wrote:
+> The memcg-v1 charge move feature has been deprecated completely and
+> let's remove the relevant code as well.
 > 
-> Remove some entries due to various compliance requirements. They
-> cannot come back in the future as huawei is sanctioned by most
-> freedom countries in the world.
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 
-Note that there are multiple sanction regimes and exactly what the
-rules are vary from country to country.  At least in the US there are
-exemptions that mean that I can accept patches and send code reviews
-for engineers from Huawei so long as they occur in a public forum,
-such as the LKML mailing lists.  As a result, folks may have noticed
-that there are ext4 patches from Huawei, and I personally consider
-them very valuable contributors to the ext4 community.
-
-These exemptions may not apply in different countries, and for
-different sanctioned entities.  I will note that China is not
-currently attacking Taiwan militarily at the moment, while Russian
-misiles and drones, some of which might be using embedded Linux
-controllers, *are* actively attacking another country even as we
-speak.  So it might not be surprising that the rules might be
-different for different sanctioned entities.
-
-Finally, please remember that kernel developers don't make the rules.
-Those laws are made by the US, European, Japanese, and other
-governments.  My personal priorites are to make sure that *I* don't
-run afoul of any local civil or criminal penalties, and to make sure
-that other Linux developers can also stay safe.  That being said, I'm
-not a lawyer, and so please don't take anything I say as legal advice.
-What I'm comfortable doing as the ext4 maintainer living in the US
-might not be applicable for someone else who might have different
-circumstances.
-
-So for example, it could very much be the case that other countries
-have *stricter* laws, and if you are acting as a maintainer, in terms
-of accepting other people's code, or providing design guidance (which
-may be considered "providing technical assistance" in some countries'
-laws) --- if you are uncertain, please reach out to a lawyer.
-
-	       		     	      - Ted
-
-P.S.  This has always been the case, even before one country invaded
-another; maintainers take on real legal responsibilities as part of
-their work.  It's just that the consequences of copyright and patent
-issues were much less than when there are sanctions involving
-countries who are actively at war with others.
+Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
 
