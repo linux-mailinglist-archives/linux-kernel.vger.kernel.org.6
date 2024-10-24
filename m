@@ -1,125 +1,366 @@
-Return-Path: <linux-kernel+bounces-380586-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380584-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA6939AF303
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:55:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 673419AF2FE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:54:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6D6C7284485
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:55:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26E6328357C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:54:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 62FC01FE0F6;
-	Thu, 24 Oct 2024 19:54:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CC291AAE27;
+	Thu, 24 Oct 2024 19:54:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="RbBbn434"
-Received: from mail-pj1-f51.google.com (mail-pj1-f51.google.com [209.85.216.51])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="pcsxP+mt"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F6B719CC09
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:54:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 84B0119B3FF
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799687; cv=none; b=hwlzH/ZGNX8fWqZkWx2LBvXRYWLuKiOtJ7eJyoLw8wGuGRl2FKztDjZkKq93hPsHw9V1vjqMo4OxDfNi8WFkg9Qca5ScBF43KqwbzrB38SlEUwLQtHw9MKzxH4KNlr4mWNv9Klo9DtpHtUJEAhia6CZxVjG7jkzPPMsdalDQhWs=
+	t=1729799660; cv=none; b=LqY+3ZbXc66bHDRnsyZR2Zc1zqTuRCK5eKcR9GzNdT/UmEAZ4L1KD1vFJDxjvG90feTtDLD73g7+MpcjiQfLPH21mFe4xJ4OZFT11+BmqQ+vkFt4BTbrONGVmjxVLonCbqNhBnpUHlCGCHYPFUFrQJaNokoQZOhWR3yRD7G1YqU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799687; c=relaxed/simple;
-	bh=017JTj+baslXlAKfez7r/+5XllDUx+IWvlfPfoSSLlc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=lQwv3O73D0EvFJ9e3Xh1DsYxwbDS27yYAAP3C6BRmCbqYH24tay7PZmeZQK0wupdEOqeylVNKGji1kbitL4ijlrWBjmSlP/ro+1hknYQsftxileOMCNLOJYsmL9X0EwIfDQQJs4/ePl0K4fCeaufa0eqR2n0mKKE0XxdIQSk5t8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=RbBbn434; arc=none smtp.client-ip=209.85.216.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-pj1-f51.google.com with SMTP id 98e67ed59e1d1-2e2bb1efe78so879570a91.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:54:45 -0700 (PDT)
+	s=arc-20240116; t=1729799660; c=relaxed/simple;
+	bh=28Z77EQ2o5/OOD9oFbhvwjJaySwLp6sVPl4XMpwn6i0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=s9BdwgWWQ0HQqD5A+acsXtQkh2JrDytCpZj0JODKFy5UuAA8qeUKntjAVYeDpE0ecBTlbqAx2RfzHDpC8+rh/aMBuGfnEml7oNhDSoCR9lnlaJtEUw/Z85jHv00YVbsqUsJ2p00l+s24djuEH9ptOsSvoicQLJGFVdbtSrGvEHQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=pcsxP+mt; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb49510250so14705391fa.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:54:16 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729799685; x=1730404485; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=H6btlO4rTxTbySffuChxG+Q78iU2PQqXsvGT+i6As9o=;
-        b=RbBbn434V10kje2ilV1EdiUTWgrNIVyIW41xhfsj7fJCljMMmej+SqFbHn5NSqwTT8
-         o7OByyAfFHEgAkejYDp+kV0DAbzVPhMiC5k/BAsV6rHcKWZJn/vi2VTwHDWYcs1kMR5W
-         KqB9QU9rVePC2Q4uhFpezQManz3oEvhgWXUJUSOFOW7rRPVVt9DSQieTAky4jvMxpVhO
-         YVOkYFdF2DR5o8klGVuwNRg4IWs7t8w4VEhZhVnELA/C52EqDHws7lMnpzkdBvcju+ON
-         MNmHUv2G5bIR0+k/9W25qoshgrKnltG9iJdrlmzCm5tE9GTv3TGJ//My8biYzUxS5VLI
-         wrOw==
+        d=linaro.org; s=google; t=1729799655; x=1730404455; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=oz0QfbFcBfrCj5V4z1JU4JGAn69rg5zGFkOEbcFhIzA=;
+        b=pcsxP+mt8+Z/WgjHdCywvyCvSF368dxlzC9KrejN71i+Jtfgj3nf+ZjVIpbojoRZtL
+         Svt8/sfrkjlRvn2r/ofv6g7F7cuyhJtRe9KAJ8SWOIgmTB5b2fHE2SjkiQLyCKR/WGfj
+         w5amaplxouh29CAJYswyKVzwmeDbQfvoUooPaGJjNg3YLVLXs5hnRuHY4nOGjWylhMFY
+         L3Bk+D05HxLeizi8NNwOQsDaX9DhMDWW3syQ/ts10/EcsaYAFDnc3aB6HjQHlhzHSU2E
+         1w3euOnxBISl52TwR09M9+YL2YkNk6jG/QE+NEzl8HBeTvcWv0BMgecTsTXCjSo892eQ
+         KrQQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729799685; x=1730404485;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=H6btlO4rTxTbySffuChxG+Q78iU2PQqXsvGT+i6As9o=;
-        b=cKTTEfUBwLALO7x2rs/rsq9eZ6313muroHvtzSNR8//P42O4+JPvBpqlUYtTvbovhb
-         AcJnr31yeUD849a9Zrpe6Xr9kcR1lcrJ0AqIZWY4XJjCa45uy23Ga5n9+LuwGV6uHkzU
-         3wbmElkTBaATjJ6+Tht5j3KsPqRNL4njH8Nnbypxofvh8l8wOvbSHupip505HVIEgoxb
-         fuC2ImFXweOa4tuoOrJ07e2fkL/3zYVnvDo+yoPCAVXhNdy9/eQ0WsxGdQxxb8IWSHr9
-         2hCo2zSXoac4rwIJ37gFb79OjRsIv+SjxiiFkz9iv0ROtAsOFe50Lcf0Ic0TUYujiXVh
-         ojog==
-X-Forwarded-Encrypted: i=1; AJvYcCVSWvUfZWIzHSgm+N1nXV2bFZtXvH2FKLDnMAGktJ5tv8m3MO7X+vMO1EtohT7iISn8IQJBGBYikRq7abg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0WnlyHgatr1P05Ux51Py3dJqfqMlev4JCpIHKlejROw/Ca7G5
-	Gqrdu/zyi31JqexqYwCTSDlfLGBCe1WhEDNMrmf/lMhvM+pxPSMHZYS2PuALHWIoSsFcfbPvK01
-	tfc4+gUGlvTMY8Uaz4NqnBR6UN3oQaLUj2KEKi0SPk0Z/BoWkKzOA
-X-Google-Smtp-Source: AGHT+IEZe4a7sXjUVZ1g40C5xm0toQVzQcYskBppsd310orSYzO1cUJbRsSaBhbHxySEkF8qihj/AQqnh12YERHaM6Y=
-X-Received: by 2002:a17:90a:4d87:b0:2e0:7e80:2011 with SMTP id
- 98e67ed59e1d1-2e77e828515mr5032932a91.16.1729799684990; Thu, 24 Oct 2024
- 12:54:44 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729799655; x=1730404455;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=oz0QfbFcBfrCj5V4z1JU4JGAn69rg5zGFkOEbcFhIzA=;
+        b=fBwvCLEU4ZU3YBwqzwpwmbuqPWi1AZhKg35TQ0kuuq9pUBHwWcuw4MtDNMda7u54eD
+         8xiFYpOY83awsmERzDqPIX9Dysjf3RVqwBdn0LmwQaLM8sNCwU8bwOgNp+OErNQ1zz6K
+         DCuluTakjz3aQTmIhlkuWI3El8SUBQihH4RwbN9ibpVdXH5vK1BPhqQpMEt0hp06BdrX
+         ztWre6MXinpaMyyJng48gQvPvixm8fiKEdf9DlLJHxZgCI8zoZk9tcAY35upoLmLcxhu
+         B87uFWKY4a6JOkJDj0DJSD6tjwioWpSDD/I8EVbBKrbuRbGyi0Rs7Uxd2jdIoV2PVQM4
+         DJdQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWdcsQnyDdEKe1q9gmf4XkKTdXyPzClwXY+ONAwr2SvBLq7/cxluNBtwq6hPvZxSWLElB7D1/Hi4m1moI8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzTlmnEL6NXeUWxQFBNr6Gd1pTh3ehfi/m4RtTcz/Tu7hNwj/CR
+	GMM0xZFjbu/Zv/Kpm+zuGP5NTZUsOfZcgRivje1ifVR+cbu2smaHephvnSJYN6g=
+X-Google-Smtp-Source: AGHT+IEetrpZ1w47TpL4hhnY+i6tZmfDQ45ZKhPS6dYa8I3PZ+1oN5tmmUCGsnRy/WGozI18HYbBig==
+X-Received: by 2002:a2e:be26:0:b0:2fb:4bee:47ec with SMTP id 38308e7fff4ca-2fc9d59ef88mr43668801fa.33.1729799654447;
+        Thu, 24 Oct 2024 12:54:14 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 38308e7fff4ca-2fb9ad60d8asm14707751fa.38.2024.10.24.12.54.12
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 12:54:13 -0700 (PDT)
+Date: Thu, 24 Oct 2024 22:54:10 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Sibi Sankar <quic_sibis@quicinc.com>
+Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org, 
+	konrad.dybcio@linaro.org, robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, 
+	linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, 
+	conor+dt@kernel.org, arm-scmi@vger.kernel.org
+Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
+ SCMI Generic Extension
+Message-ID: <4kovyp7655kwkznnem5e4mg2yjroc2x76vsyp6w4bm5n7tn5xy@rrz2ih2u4p2x>
+References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
+ <20241007061023.1978380-2-quic_sibis@quicinc.com>
+ <rqa7g5hfsxozw6m4ke3jygijz5rp3lwu2fmqsebrjq6hsgb7nm@mxaiaddvuijk>
+ <911483df-ee09-033d-7fae-4090bf8a3713@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241014122849.118766-1-brgl@bgdev.pl> <CAJZ5v0gAzZTa_TuQiFr1D7hKHw0eYF28s3ZBOv2ZFZTTC-Md8Q@mail.gmail.com>
-In-Reply-To: <CAJZ5v0gAzZTa_TuQiFr1D7hKHw0eYF28s3ZBOv2ZFZTTC-Md8Q@mail.gmail.com>
-From: Saravana Kannan <saravanak@google.com>
-Date: Thu, 24 Oct 2024 12:54:06 -0700
-Message-ID: <CAGETcx9GfFsfWymBvXHs7F0S_mvK=eCy=q8-gBu1UPm9QzNVgQ@mail.gmail.com>
-Subject: Re: [PATCH] driver core: constify devlink class
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: Bartosz Golaszewski <brgl@bgdev.pl>, Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <911483df-ee09-033d-7fae-4090bf8a3713@quicinc.com>
 
-On Thu, Oct 24, 2024 at 12:45=E2=80=AFPM Rafael J. Wysocki <rafael@kernel.o=
-rg> wrote:
->
-> On Mon, Oct 14, 2024 at 2:28=E2=80=AFPM Bartosz Golaszewski <brgl@bgdev.p=
-l> wrote:
-> >
-> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-> >
-> > The devlink class object is never modified and can be made constant.
-> >
-> > Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
->
-> Acked-by: Rafael J. Wysocki <rafael@kernel.org>
+On Tue, Oct 22, 2024 at 12:43:09PM +0530, Sibi Sankar wrote:
+> 
+> 
+> On 10/7/24 23:36, Dmitry Baryshkov wrote:
+> > On Mon, Oct 07, 2024 at 11:40:19AM GMT, Sibi Sankar wrote:
+> > > Document the various memory buses that can be monitored and scaled by
+> > > the memory latency governor hosted by the QCOM SCMI Generic Extension
+> > > Protocol v1.0.
+> > > 
+> > > Signed-off-by: Sibi Sankar <quic_sibis@quicinc.com>
+> 
+> Hey Dmitry,
+> 
+> Thanks for taking time to review the series!
+> 
+> > > ---
+> > > 
+> > > v3:
+> > > * Restructure the bindings to mimic IMX [Christian]
+> > > 
+> > >   .../bindings/firmware/arm,scmi.yaml           |   1 +
+> > >   .../bindings/firmware/qcom,scmi-memlat.yaml   | 246 ++++++++++++++++++
+> > >   .../dt-bindings/firmware/qcom,scmi-memlat.h   |  22 ++
+> > >   3 files changed, 269 insertions(+)
+> > >   create mode 100644 Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
+> > >   create mode 100644 include/dt-bindings/firmware/qcom,scmi-memlat.h
+> > > 
+> > > diff --git a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > index 54d7d11bfed4..1d405f429168 100644
+> > > --- a/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > +++ b/Documentation/devicetree/bindings/firmware/arm,scmi.yaml
+> > > @@ -24,6 +24,7 @@ description: |
+> > >   anyOf:
+> > >     - $ref: /schemas/firmware/nxp,imx95-scmi.yaml
+> > > +  - $ref: /schemas/firmware/qcom,scmi-memlat.yaml
+> > >   properties:
+> > >     $nodename:
+> > > diff --git a/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
+> > > new file mode 100644
+> > > index 000000000000..0e8ea6dacd6a
+> > > --- /dev/null
+> > > +++ b/Documentation/devicetree/bindings/firmware/qcom,scmi-memlat.yaml
+> > > @@ -0,0 +1,246 @@
+> > > +# SPDX-License-Identifier: (GPL-2.0 OR BSD-2-Clause)
+> > > +%YAML 1.2
+> > > +---
+> > > +$id: http://devicetree.org/schemas/firmware/qcom,scmi-memlat.yaml#
+> > > +$schema: http://devicetree.org/meta-schemas/core.yaml#
+> > > +
+> > > +title: Qualcomm SCMI Memory Bus nodes
+> > > +
+> > > +maintainers:
+> > > +  - Sibi Sankar <quic_sibis@quicinc.com>
+> > > +
+> > > +description:
+> > > +  This binding describes the various memory buses that can be monitored and scaled
+> > > +  by memory latency governor running on the CPU Control Processor (SCMI controller).
+> > > +
+> > > +properties:
+> > > +  protocol@80:
+> > > +    $ref: '/schemas/firmware/arm,scmi.yaml#/$defs/protocol-node'
+> > > +    unevaluatedProperties: false
+> > > +
+> > > +    properties:
+> > > +      reg:
+> > > +        const: 0x80
+> > > +
+> > > +    patternProperties:
+> > > +      '^memory-[0-9]$':
+> > > +        type: object
+> > > +        unevaluatedProperties: false
+> > > +        description:
+> > > +          The list of all memory buses that can be monitored and scaled by the
+> > > +          memory latency governor running on the SCMI controller.
+> > > +
+> > > +        properties:
+> > > +          qcom,memory-type:
+> > > +            $ref: /schemas/types.yaml#/definitions/uint32
+> > > +            enum: [0, 1, 2]
+> > > +            description: |
+> > > +              Memory Bus Identifier
+> > > +              0 = QCOM_MEM_TYPE_DDR
+> > > +              1 = QCOM_MEM_TYPE_LLCC
+> > > +              2 = QCOM_MEM_TYPE_DDR_QOS
+> > 
+> > I'm sorry if this has been discussed and frowned upon, but can you
+> > squash memory type into device node?
+> 
+> I don't think anyone had any strong opinions on how the
+> nodes is to be named. We went with a generic node name since
+> it could accomodate multiple instances of llcc or ddr in the
+> future. We didn't want it be named ddr-0/ddr-1 and so on. So
+> I'll continue to stick with the current naming unless you have
+> a strong reason other than readability.
 
-Acked-by: Saravana Kannan <saravanak@google.com>
+As I wrote in the other email, the memory types are not equal. They have
+different properties, etc. Having non-generic names allows describing
+that in schema.
 
--Saravana
+Last, but not least, please consider how reserved memory nodes are
+handled nowadays: they have non-generic names, each one describing the
+purpose / kind.
 
->
-> > ---
-> >  drivers/base/core.c | 2 +-
-> >  1 file changed, 1 insertion(+), 1 deletion(-)
-> >
-> > diff --git a/drivers/base/core.c b/drivers/base/core.c
-> > index a84a7b952cfd..0e618d675792 100644
-> > --- a/drivers/base/core.c
-> > +++ b/drivers/base/core.c
-> > @@ -553,7 +553,7 @@ void device_link_wait_removal(void)
-> >  }
-> >  EXPORT_SYMBOL_GPL(device_link_wait_removal);
-> >
-> > -static struct class devlink_class =3D {
-> > +static const struct class devlink_class =3D {
-> >         .name =3D "devlink",
-> >         .dev_groups =3D devlink_groups,
-> >         .dev_release =3D devlink_dev_release,
-> > --
-> > 2.43.0
-> >
+> > protocol@80 {
+> > 	ddr {
+> > 	};
+> > 
+> > 	llcc {
+> > 	};
+> > 
+> > 	ddr-qos {
+> > 	};
+> > };
+> > 
+> > > +
+> > > +          freq-table-hz:
+> > > +            items:
+> > > +              items:
+> > > +                - description: Minimum frequency of the memory bus in Hz
+> > > +                - description: Maximum frequency of the memory bus in Hz
+> > 
+> > Does it make sense for the DDR-QOS type? Can we hardcode those values
+> > and drop freq-table-hz from the DDR-QOS node?
+> > 
+> > Also, can we drop this completely by adding one extra OPP entry with the
+> > minimum memory bus frequency?
+> 
+> the map table doesn't necessarily list all the supported
+> frequencies. It was made that way so that the table is flexible
+> enough that it doesn't have to be changed a lot across platforms.
+> Hence a need for a separate property to list min/max freq.
+
+Please use opp-supported-hw or other similar techniques to describe
+supported frequencies.
+
+> 
+> > 
+> > > +
+> > > +        patternProperties:
+> > > +          '^monitor-[0-9]$':
+> > > +            type: object
+> > > +            unevaluatedProperties: false
+> > > +            description:
+> > > +              The list of all monitors detecting the memory latency bound workloads using
+> > > +              various counters.
+> > > +
+> > > +            properties:
+> > > +              qcom,compute-type:
+> > > +                description:
+> > > +                  Monitors of type compute perform bus dvfs based on a rudimentary CPU
+> > > +                  frequency to memory frequency map.
+> > > +                type: boolean
+> > 
+> > This seems to be redundant. If there is no qcom,ipm-ceil property, then
+> > it's qcom,compute-type, isn't it?
+> 
+> ack
+> 
+> > 
+> > > +
+> > > +              qcom,ipm-ceil:
+> > > +                $ref: /schemas/types.yaml#/definitions/uint32
+> > > +                description:
+> > > +                  Monitors having this property perform bus dvfs based on the same
+> > > +                  rudimentary table but the scaling is performed only if the calculated
+> > > +                  IPM (Instruction Per Misses) exceeds the given ceiling.
+> > > +
+> > > +              cpus:
+> > > +                $ref: /schemas/types.yaml#/definitions/phandle-array
+> > > +                description:
+> > > +                  Should be a list of phandles to CPU nodes (as described in
+> > > +                  Documentation/devicetree/bindings/arm/cpus.yaml).
+> > 
+> > Which CPU nodes? I see that the examples list all CPUs here. Do we
+> > really need them?
+> 
+> This observation is only valid for X1E where all the cpus have
+> identical freq charecteristics. Even with this case we need to
+> list them to handle cases where cpus gets disabled by the bootloader
+> on lower cored X1E parts i.e. we use this to figure out the actual
+> physical mask.
+
+This should be a part of the description.
+
+BTW, why do you need to remove bootloader-removed cores? Can you simply
+ignore non-existing CPUs instead?
+
+> 
+> > 
+> > > +
+> > > +              operating-points-v2: true
+> > > +              opp-table:
+> > > +                type: object
+> > > +
+> > > +            required:
+> > > +              - cpus
+> > > +              - operating-points-v2
+> > > +
+> > > +            oneOf:
+> > > +              - required: [ 'qcom,compute-type' ]
+> > > +              - required: [ 'qcom,ipm-ceil' ]
+> > > +
+> > > +        required:
+> > > +          - qcom,memory-type
+> > > +          - freq-table-hz
+> > > +
+> > > +additionalProperties: true
+> > > +
+> > > +examples:
+> > > +  - |
+> > > +    #include <dt-bindings/firmware/qcom,scmi-memlat.h>
+> > > +
+> > > +    firmware {
+> > > +        scmi {
+> > > +            compatible = "arm,scmi";
+> > > +            mboxes = <&cpucp_mbox 0>, <&cpucp_mbox 2>;
+> > > +            mbox-names = "tx", "rx";
+> > > +            shmem = <&cpu_scp_lpri0>, <&cpu_scp_lpri1>;
+> > > +
+> > > +            #address-cells = <1>;
+> > > +            #size-cells = <0>;
+> > > +
+> > > +            protocol@80 {
+> > > +                reg = <0x80>;
+> > > +
+> > > +                memory-0 {
+> > > +                    qcom,memory-type = <QCOM_MEM_TYPE_DDR>;
+> > > +                    freq-table-hz = /bits/ 64 <200000000 4224000000>;
+> > > +
+> > > +                    monitor-0 {
+> > 
+> > Hmm. Can we say that each memory type can have at most one IPM and one
+> > compute aka "passive" memlat monitor? Does it make sense to use them as
+> > node names and drop the extra monitor-M names?
+> 
+> Again this observation is valid only for X1E where the cpu freq
+> across cpu's are identical across clusters and is not true for
+> other mobile SoCs. So each memory can have more than 2 monitors
+> i.e. atleast one active/passibe monitor for each cluster.
+
+Description or commit message, please.
+
+> 
+> > 
+> > > +                        qcom,ipm-ceil = <20000000>;
+> > > +                        cpus = <&CPU0 &CPU1 &CPU2 &CPU3 &CPU4 &CPU5 &CPU6 &CPU7
+> > > +                                &CPU8 &CPU9 &CPU10 &CPU11>;
+> > 
+> > Are CPU lists different between monitors? Can they be different? Can
+> > they be different between different memory types?
+> 
+> same explanation.
+> 
+> > 
+> > > +                        operating-points-v2 = <&memory0_monitor0_opp_table>;
+> > > +
+> > > +                        memory0_monitor0_opp_table: opp-table {
+> > 
+> > sensible names are better:
+> 
+> I think I just picked these names up from a cpufreq table upstream.
+
+Doesn't mean that you can't be better than that :-D
+
+> 
+> > 
+> > ddr_ipm_opp_table: opp-table {
+> > };
+> > 
+
+-- 
+With best wishes
+Dmitry
 
