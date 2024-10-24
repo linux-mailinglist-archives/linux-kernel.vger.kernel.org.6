@@ -1,197 +1,240 @@
-Return-Path: <linux-kernel+bounces-379107-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 86DFC9ADA00
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:41:23 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B05119AD9FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:41:07 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3895D2836A5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:41:22 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 336FA1F227AC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:41:07 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3E4911553B7;
-	Thu, 24 Oct 2024 02:41:09 +0000 (UTC)
-Received: from mailgw.kylinos.cn (mailgw.kylinos.cn [124.126.103.232])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B928B14F12F;
+	Thu, 24 Oct 2024 02:40:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="UQ98TJJe"
+Received: from mail-yb1-f181.google.com (mail-yb1-f181.google.com [209.85.219.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51D69155393;
-	Thu, 24 Oct 2024 02:41:02 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=124.126.103.232
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 969CD4D8AD;
+	Thu, 24 Oct 2024 02:40:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729737668; cv=none; b=R6NzAW1m1QAgNFgO3hKX6/ie8eEkpY3ptX/52pvzUWWnYjmSHIMDlPQPRs1gAkqePXSRsSZ+hMp5nbal+7SuoVO7qfYlf2J8oXWBoVsI6hkQ7OOLQ3QXOqGvJKdEvmTWMub91oEHfU/Z85M1esom6NQU0614yVpvyp37x0Qf+8s=
+	t=1729737659; cv=none; b=nXcsetYQMajSv8wdVqKZhrV94WwQ2EOrfpOn5uNBirwQEnsArNVYtNUZLsuXQ2kmtkD1nNNyl8KZMC/xctm4rYK1oyEyIDFx9g7e3SDUr8JuD970hLrgI8grDRtFsg47fneiPgNEVXgjzxl20rBiVxclb9JyIsBnb+gLDQ2BCN8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729737668; c=relaxed/simple;
-	bh=ym8aAXWzWle8rBcGCn/kYZtEJK/5W23MqG0KAYxeHYE=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=B3jmeTJypDu3aqRmTvfIjuw8OL9+37hT53Sy45r4Ck2TTKpvMf2aoK2zUW7LkRsDqI4Y9cwI93smxZ/wb40Cr8M5lm/1Kzs0W2nAhzPLEaDH+oq0ZHjSNAggHivZSNwyf5YjOLckAaM5ngyYX1mKb30k1wHS8lSmshDRYlsij1M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn; spf=pass smtp.mailfrom=kylinos.cn; arc=none smtp.client-ip=124.126.103.232
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kylinos.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kylinos.cn
-X-UUID: 655aaa8e91b111efa216b1d71e6e1362-20241024
-X-CTIC-Tags:
-	HR_CC_COUNT, HR_CC_DOMAIN_COUNT, HR_CC_NAME, HR_CC_NO_NAME, HR_CTE_8B
-	HR_CTT_MISS, HR_DATE_H, HR_DATE_WKD, HR_DATE_ZONE, HR_FROM_NAME
-	HR_SJ_DIGIT_LEN, HR_SJ_LANG, HR_SJ_LEN, HR_SJ_LETTER, HR_SJ_NOR_SYM
-	HR_SJ_PHRASE, HR_SJ_PHRASE_LEN, HR_SJ_WS, HR_TO_COUNT, HR_TO_DOMAIN_COUNT
-	HR_TO_NO_NAME, IP_TRUSTED, SRC_TRUSTED, DN_TRUSTED, SA_EXISTED
-	SN_EXISTED, SPF_NOPASS, DKIM_NOPASS, DMARC_NOPASS, CIE_BAD
-	CIE_GOOD, CIE_GOOD_SPF, GTI_FG_BS, GTI_C_CI, GTI_FG_IT
-	GTI_RG_INFO, GTI_C_BU, AMN_T1, AMN_GOOD, AMN_C_TI
-	AMN_C_BU, ABX_MISS_RDNS
-X-CID-P-RULE: Release_Ham
-X-CID-O-INFO: VERSION:1.1.38,REQID:e1ec8d60-5982-423d-b721-47b44e7ba45d,IP:25,
-	URL:0,TC:0,Content:-25,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACT
-	ION:release,TS:-9
-X-CID-INFO: VERSION:1.1.38,REQID:e1ec8d60-5982-423d-b721-47b44e7ba45d,IP:25,UR
-	L:0,TC:0,Content:-25,EDM:0,RT:0,SF:-9,FILE:0,BULK:0,RULE:Release_Ham,ACTIO
-	N:release,TS:-9
-X-CID-META: VersionHash:82c5f88,CLOUDID:0770ba406bcedb27ac5401b646740f2c,BulkI
-	D:2410241040578O4XH4Y4,BulkQuantity:0,Recheck:0,SF:24|17|19|43|74|66|841|3
-	8|102,TC:nil,Content:0,EDM:-3,IP:-2,URL:1,File:nil,RT:nil,Bulk:nil,QS:nil,
-	BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0
-X-CID-BVR: 0,NGT
-X-CID-BAS: 0,NGT,0,_
-X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_FAS,TF_CID_SPAM_FSD,TF_CID_SPAM_FSI,
-	TF_CID_SPAM_ULS
-X-UUID: 655aaa8e91b111efa216b1d71e6e1362-20241024
-X-User: duanchenghao@kylinos.cn
-Received: from chenghao.. [(39.156.73.13)] by mailgw.kylinos.cn
-	(envelope-from <duanchenghao@kylinos.cn>)
-	(Generic MTA with TLSv1.3 TLS_AES_256_GCM_SHA384 256/256)
-	with ESMTP id 2121517158; Thu, 24 Oct 2024 10:40:56 +0800
-From: Duan Chenghao <duanchenghao@kylinos.cn>
-To: duanchenghao@kylinos.cn,
-	stern@rowland.harvard.edu
-Cc: saranya.gopal@intel.com,
-	gregkh@linuxfoundation.org,
-	linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	niko.mauno@vaisala.com,
-	pavel@ucw.cz,
-	rafael@kernel.org,
-	stanley_chang@realtek.com,
-	tj@kernel.org,
-	xiehongyu1@kylinos.cn,
-	xy521521@gmail.com,
-	kernel test robot <lkp@intel.com>
-Subject: [PATCH v4] USB: Fix the issue of task recovery failure caused by USB status when S4 wakes up
-Date: Thu, 24 Oct 2024 10:40:38 +0800
-Message-Id: <20241024024038.26157-1-duanchenghao@kylinos.cn>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <e795d88afb2b485fab97e2be7759664e823fbfad.camel@kylinos.cn>
-References: <e795d88afb2b485fab97e2be7759664e823fbfad.camel@kylinos.cn>
+	s=arc-20240116; t=1729737659; c=relaxed/simple;
+	bh=bys3ISKeLd08WWgCorxKWPccYot/hU5DGRV8BYhyRU4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=FfpqcUmrz2CXnlQ4HfGY8idOZbdDVmRUNXf4rjbzGBiesBRjLA/nXEpPpaHOvoiUylISRewfqXj1VbH5W9xowj39uujwyuR0unn4j2/veoSdwW1xtw8BuPftu53NBKt41WOIvpjGLO2cW6TmvPAOdiz6qvmiw6tnbZhImfiak5Y=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=UQ98TJJe; arc=none smtp.client-ip=209.85.219.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-yb1-f181.google.com with SMTP id 3f1490d57ef6-e2972abc807so497320276.3;
+        Wed, 23 Oct 2024 19:40:56 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729737655; x=1730342455; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=sIxP96exfOoa5CX6fTPMX7bSuvLMk6J+pOAMwb8dHKk=;
+        b=UQ98TJJedSaWk/BIcgcy6neGLu8Tvsqj3YjBSMQW7tVOksTnPujcKcKKeeCN/EhtFK
+         RFfnX19YNk+gTIgP2wa72IhOCkYYqHqiBvtOpZchiXverSuA8UmTgv90K61Beh24lgTm
+         ijuHk7/CRCM7zwOsnqVLgazA+nu8yTSzEAJn7S4Tessj7QlUPuICAGZgJsT7EraItz9O
+         RwUaHkxKGUZ+NWCJErZMq4+GiU5SUI1wjrvlrFgOEeGfmVQ5Xojxd5SzAUuQ7+Qf87tD
+         DU11c0Us1Vd8OEEBSEB3Vl8vUdJwRKe+86M1hJpIFbgbgr9rlsKJhkxbURuzPlUvEfU5
+         7icg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729737655; x=1730342455;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=sIxP96exfOoa5CX6fTPMX7bSuvLMk6J+pOAMwb8dHKk=;
+        b=xHp9WikM/u7RzfJHp3I1u5p9CfAfr/a6jUq7y/EWu41DFTbiN4xu3KT+TEr/hEb42D
+         TNRIQOosYdJfGkCIGgE9YITmo6iUz+geK7m/RjKQ3BIA2fprfoM1kUyMb3ydmnCuyBPb
+         XUc4BfAH/Menv1RaLWEOMuEVT6CCOhiZeZ34aWrzrJOaFqGVfdLYTItLjJb6rcTcNpHw
+         /XLGUw9HRBRUBYUDeCFeKK+Zj9uNNSmRK5YrCF1GTKn/B+5EYlPvJiTQiieFa3r7X4dU
+         kno5vezP+TRZk5E4gr6vNqDVyyqkBdSagCYwF/9j+COF6P2pvivY4XMsPPNZF4u7Vxhs
+         3W+Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUkOQQxA6atYh6w6Iqfyz+zc4LoFrb6kj3joRbpQEPuIYKv8OjVslM81sTUaRtnqar/BIAfJwlXgsoWeW/M@vger.kernel.org, AJvYcCWE7epFp01HVJ65FTtz389eaPTCu1wyhYMjgG+xbCcFRyADyKBY+sj+c2GRCgP0KmduJAY7gLB/34kLJbLwvY0=@vger.kernel.org, AJvYcCXkFcJMInH6MdNILu8GEjbJ0vpUlcDi49IO/EagQmd5fJSHg0bxhm8NbXCvAfdBzYgilXyfVXbvzFc=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzuNx1rSE2IFdMyabBYPDtXATWSohjyMVmaMybhTo9Rctjpk/KQ
+	64NchTvRiiR3UoNK11duf6tQe/8FVurhSHeN++5xTxPGw5ApI9iZ
+X-Google-Smtp-Source: AGHT+IGH8NHWvZDdQphM1F4EUF4yjz11pGp4Slih3bjoBRhE+aogWpjkHaoDgzzI9J0pimZIRIZn4Q==
+X-Received: by 2002:a05:690c:dc3:b0:6e2:aceb:fb34 with SMTP id 00721157ae682-6e85814ad59mr5773367b3.1.1729737655457;
+        Wed, 23 Oct 2024 19:40:55 -0700 (PDT)
+Received: from [192.168.2.226] ([107.175.133.150])
+        by smtp.gmail.com with ESMTPSA id 00721157ae682-6e5f5ceecbbsm18146457b3.110.2024.10.23.19.40.43
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Wed, 23 Oct 2024 19:40:54 -0700 (PDT)
+Message-ID: <e0c34a1b-6801-4ae3-b04f-56dbce5c76d8@gmail.com>
+Date: Thu, 24 Oct 2024 10:40:40 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] docs/zh_CN: update the translation of
+ process/programming-language.rst
+To: Dongliang Mu <dzm91@hust.edu.cn>, si.yanteng@linux.dev,
+ Alex Shi <alexs@kernel.org>, Yanteng Si <siyanteng@loongson.cn>,
+ Jonathan Corbet <corbet@lwn.net>, Miguel Ojeda <ojeda@kernel.org>,
+ Alex Gaynor <alex.gaynor@gmail.com>, Boqun Feng <boqun.feng@gmail.com>,
+ Gary Guo <gary@garyguo.net>, =?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?=
+ <bjorn3_gh@protonmail.com>, Benno Lossin <benno.lossin@proton.me>,
+ Andreas Hindborg <a.hindborg@kernel.org>, Alice Ryhl <aliceryhl@google.com>,
+ Trevor Gross <tmgross@umich.edu>, Nathan Chancellor <nathan@kernel.org>,
+ Nick Desaulniers <ndesaulniers@google.com>, Bill Wendling
+ <morbo@google.com>, Justin Stitt <justinstitt@google.com>
+Cc: hust-os-kernel-patches@googlegroups.com, linux-doc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, rust-for-linux@vger.kernel.org,
+ llvm@lists.linux.dev
+References: <20241023062750.849951-1-dzm91@hust.edu.cn>
+ <46e54088-ad96-4387-8a39-2e4686c842bd@gmail.com>
+ <345e8f10-fe1a-4736-9468-7c92ac55d62e@hust.edu.cn>
+Content-Language: en-US
+From: Alex Shi <seakeel@gmail.com>
+In-Reply-To: <345e8f10-fe1a-4736-9468-7c92ac55d62e@hust.edu.cn>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
 
-When a device is inserted into the USB port and an S4 wakeup is initiated,
-after the USB-hub initialization is completed, it will automatically enter
-suspend mode. Upon detecting a device on the USB port, it will proceed with
-resume and set the hcd to the HCD_FLAG_WAKEUP_PENDING state. During the S4
-wakeup process, peripherals are put into suspend mode, followed by task
-recovery. However, upon detecting that the hcd is in the
-HCD_FLAG_WAKEUP_PENDING state, it will return an EBUSY status, causing the
-S4 suspend to fail and subsequent task recovery to not proceed.
--
-[   27.594598][ 1]  PM: pci_pm_freeze(): hcd_pci_suspend+0x0/0x28 returns -16
-[   27.594601][ 1]  PM: dpm_run_callback(): pci_pm_freeze+0x0/0x100 returns -16
-[   27.603420][ 1]  ehci-pci 0000:00:04.1: pci_pm_freeze+0x0/0x100 returned 0 after 3 usecs
-[   27.612233][ 1]  ehci-pci 0000:00:05.1: pci_pm_freeze+0x0/0x100 returned -16 after 17223 usecs
-[   27.810067][ 1]  PM: Device 0000:00:05.1 failed to quiesce async: error -16
-[   27.816988][ 1]  PM: quiesce of devices aborted after 1833.282 msecs
-[   27.823302][ 1]  PM: start quiesce of devices aborted after 1839.975 msecs
-......
-[   31.303172][ 1]  PM: recover of devices complete after 3473.039 msecs
-[   31.309818][ 1]  PM: Failed to load hibernation image, recovering.
-[   31.348188][ 1]  PM: Basic memory bitmaps freed
-[   31.352686][ 1]  OOM killer enabled.
-[   31.356232][ 1]  Restarting tasks ... done.
-[   31.360609][ 1]  PM: resume from hibernation failed (0)
-[   31.365800][ 1]  PM: Hibernation image not present or could not be loaded.
 
-The "do_wakeup" is determined based on whether the controller's
-power/wakeup attribute is set. The current issue necessitates considering
-the type of suspend that is occurring. If the suspend type is either
-PM_EVENT_FREEZE or PM_EVENT_QUIESCE, then "do_wakeup" should be set to
-false.
 
-Reported-by: kernel test robot <lkp@intel.com>
-Closes: https://lore.kernel.org/oe-kbuild-all/202410151722.rfjtknRz-lkp@intel.com/
-Signed-off-by: Alan Stern <stern@rowland.harvard.edu>
-Signed-off-by: Duan Chenghao <duanchenghao@kylinos.cn>
----
- drivers/usb/core/hcd-pci.c | 15 +++++++++++++--
- include/linux/pm.h         |  3 ++-
- 2 files changed, 15 insertions(+), 3 deletions(-)
+On 10/24/24 10:30, Dongliang Mu wrote:
+> 
+> On 2024/10/24 10:21, Alex Shi wrote:
+>>
+>> On 10/23/24 14:27, Dongliang Mu wrote:
+>>> Update to commit 0b02076f9953 ("docs: programming-language: add Rust
+>>> programming language section")
+>>>
+>>> scripts/checktransupdate.py reports:
+>>>
+>>> Documentation/translations/zh_CN/process/programming-language.rst
+>>> commit 0b02076f9953 ("docs: programming-language: add Rust programming
+>>> language section")
+>>> commit 38484a1d0c50 ("docs: programming-language: remove mention of the
+>>> Intel compiler")
+>>> 2 commits needs resolving in total
+>>>
+>>> Signed-off-by: Dongliang Mu <dzm91@hust.edu.cn>
+>>> ---
+>>> v2->v3: fix warnings in the make htmldocs
+>>> v1->v2: revise the script name
+>>>   .../zh_CN/process/programming-language.rst    | 78 +++++++------------
+>>>   1 file changed, 30 insertions(+), 48 deletions(-)
+>>>
+>>> diff --git a/Documentation/translations/zh_CN/process/programming-language.rst b/Documentation/translations/zh_CN/process/programming-language.rst
+>>> index fabdc338dbfb..95aa4829d78f 100644
+>>> --- a/Documentation/translations/zh_CN/process/programming-language.rst
+>>> +++ b/Documentation/translations/zh_CN/process/programming-language.rst
+>>> @@ -3,25 +3,22 @@
+>>>   :Original: :ref:`Documentation/process/programming-language.rst <programming_language>`
+>>>   :Translator: Alex Shi <alex.shi@linux.alibaba.com>
+>>>   -.. _cn_programming_language:
+>>> -
+>>>   程序设计语言
+>>>   ============
+>>>   -内核是用C语言 :ref:`c-language <cn_c-language>` 编写的。更准确地说，内核通常是用 :ref:`gcc <cn_gcc>`
+>>> -在 ``-std=gnu11`` :ref:`gcc-c-dialect-options <cn_gcc-c-dialect-options>` 下编译的：ISO C11的 GNU 方言
+>>> -
+>>> -这种方言包含对语言 :ref:`gnu-extensions <cn_gnu-extensions>` 的许多扩展，当然，它们许多都在内核中使用。
+>>> +内核是用 C 编程语言编写的 [zh_cn_c-language]_。更准确地说，内核通常使用 ``gcc`` [zh_cn_gcc]_ 编译，
+>>> +并且使用 ``-std=gnu11`` [zh_cn_gcc-c-dialect-options]_：这是 ISO C11 的 GNU 方言。
+>>> +``clang`` [zh_cn_clang]_ 也得到了支持，详见文档：
+>>> +:ref:`使用 Clang/LLVM 构建 Linux <kbuild_llvm>`。
+>>>   -对于一些体系结构，有一些使用 :ref:`clang <cn_clang>` 和 :ref:`icc <cn_icc>` 编译内核
+>>> -的支持，尽管在编写此文档时还没有完成，仍需要第三方补丁。
+>>> +这种方言包含对 C 语言的许多扩展 [zh_cn_gnu-extensions]_，当然，它们许多都在内核中使用。
+>>>     属性
+>>>   ----
+>>>   -在整个内核中使用的一个常见扩展是属性（attributes） :ref:`gcc-attribute-syntax <cn_gcc-attribute-syntax>`
+>>> +在整个内核中使用的一个常见扩展是属性（attributes） [zh_cn_gcc-attribute-syntax]_。
+>>>   属性允许将实现定义的语义引入语言实体（如变量、函数或类型），而无需对语言进行
+>>> -重大的语法更改（例如添加新关键字） :ref:`n2049 <cn_n2049>`
+>>> +重大的语法更改（例如添加新关键字） [zh_cn_n2049]_。
+>>>     在某些情况下，属性是可选的（即不支持这些属性的编译器仍然应该生成正确的代码，
+>>>   即使其速度较慢或执行的编译时检查/诊断次数不够）
+>>> @@ -30,42 +27,27 @@
+>>>   ``__attribute__((__pure__))`` ），以检测可以使用哪些关键字和/或缩短代码, 具体
+>>>   请参阅 ``include/linux/compiler_attributes.h``
+>>>   -.. _cn_c-language:
+>>> -
+>>> -c-language
+>>> -   http://www.open-std.org/jtc1/sc22/wg14/www/standards
+>>> -
+>>> -.. _cn_gcc:
+>>> -
+>>> -gcc
+>>> -   https://gcc.gnu.org
+>>> -
+>>> -.. _cn_clang:
+>>> -
+>>> -clang
+>>> -   https://clang.llvm.org
+>>> -
+>>> -.. _cn_icc:
+>>> -
+>>> -icc
+>>> -   https://software.intel.com/en-us/c-compilers
+>>> -
+>>> -.. _cn_gcc-c-dialect-options:
+>>> -
+>>> -c-dialect-options
+>>> -   https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
+>>> -
+>>> -.. _cn_gnu-extensions:
+>>> -
+>>> -gnu-extensions
+>>> -   https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
+>>> -
+>>> -.. _cn_gcc-attribute-syntax:
+>>> -
+>>> -gcc-attribute-syntax
+>>> -   https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
+>>> -
+>>> -.. _cn_n2049:
+>>> +Rust
+>>> +----
+>>>   -n2049
+>>> -   http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
+>>> +内核对 Rust 编程语言 [zh_cn_rust-language]_ 的支持是实验性的，并且可以通过配置选项
+>>> +``CONFIG_RUST`` 来启用。Rust 代码使用 ``rustc`` [zh_cn_rustc]_ 编译器在
+>>> +``--edition=2021`` [zh_cn_rust-editions]_ 选项下进行编译。版本（Editions）是一种
+>>> +在语言中引入非后向兼容的小型变更的方式。
+>>> +
+>>> +除此之外，内核中还使用了一些不稳定的特性 [zh_cn_rust-unstable-features]_。这些不稳定
+>>> +的特性将来可能会发生变化，因此，一个重要的目标是达到仅使用稳定特性的程度。
+>>> +
+>>> +具体请参阅 Documentation/rust/index.rst
+>>> +
+>>> +.. [zh_cn_c-language] http://www.open-std.org/jtc1/sc22/wg14/www/standards
+>>> +.. [zh_cn_gcc] https://gcc.gnu.org
+>>> +.. [zh_cn_clang] https://clang.llvm.org
+>>> +.. [zh_cn_gcc-c-dialect-options] https://gcc.gnu.org/onlinedocs/gcc/C-Dialect-Options.html
+>>> +.. [zh_cn_gnu-extensions] https://gcc.gnu.org/onlinedocs/gcc/C-Extensions.html
+>>> +.. [zh_cn_gcc-attribute-syntax] https://gcc.gnu.org/onlinedocs/gcc/Attribute-Syntax.html
+>>> +.. [zh_cn_n2049] http://www.open-std.org/jtc1/sc22/wg14/www/docs/n2049.pdf
+>>> +.. [zh_cn_rust-language] https://www.rust-lang.org
+>>> +.. [zh_cn_rustc] https://doc.rust-lang.org/rustc/
+>>> +.. [zh_cn_rust-editions] https://doc.rust-lang.org/edition-guide/editions/
+>>> +.. [zh_cn_rust-unstable-features] https://github.com/Rust-for-Linux/linux/issues/2
+>> Hi Dongliang,
+>>
+>> Good job! Most of translation are good.
+>> Just the above doc seems still English version, give them a zh_cn name may cause misunderstand?
+> 
+> Oh, I see. However, you cannot use gcc or rustc since it already exists in the English documents. We need another name to make sphinx happy. Therefore, why do not we directly use the final version of name? :)
+> 
+Uh, is it possible to use English version 'gcc' links in this doc? Otherwise,it make sense too. 
 
-diff --git a/drivers/usb/core/hcd-pci.c b/drivers/usb/core/hcd-pci.c
-index a08f3f228e6d..390b1225f3cc 100644
---- a/drivers/usb/core/hcd-pci.c
-+++ b/drivers/usb/core/hcd-pci.c
-@@ -422,7 +422,12 @@ static int suspend_common(struct device *dev, pm_message_t msg)
- 	bool			do_wakeup;
- 	int			retval;
- 
--	do_wakeup = PMSG_IS_AUTO(msg) ? true : device_may_wakeup(dev);
-+	if (PMSG_IS_AUTO(msg))
-+		do_wakeup = true;
-+	else if (PMSG_NO_WAKEUP(msg))
-+		do_wakeup = false;
-+	else
-+		do_wakeup = device_may_wakeup(dev);
- 
- 	/* Root hub suspend should have stopped all downstream traffic,
- 	 * and all bus master traffic.  And done so for both the interface
-@@ -521,6 +526,11 @@ static int hcd_pci_suspend(struct device *dev)
- 	return suspend_common(dev, PMSG_SUSPEND);
- }
- 
-+static int hcd_pci_freeze(struct device *dev)
-+{
-+	return suspend_common(dev, PMSG_FREEZE);
-+}
-+
- static int hcd_pci_suspend_noirq(struct device *dev)
- {
- 	struct pci_dev		*pci_dev = to_pci_dev(dev);
-@@ -590,6 +600,7 @@ static int hcd_pci_restore(struct device *dev)
- #else
- 
- #define hcd_pci_suspend		NULL
-+#define hcd_pci_freeze			NULL
- #define hcd_pci_suspend_noirq	NULL
- #define hcd_pci_poweroff_late	NULL
- #define hcd_pci_resume_noirq	NULL
-@@ -624,7 +635,7 @@ const struct dev_pm_ops usb_hcd_pci_pm_ops = {
- 	.suspend_noirq	= hcd_pci_suspend_noirq,
- 	.resume_noirq	= hcd_pci_resume_noirq,
- 	.resume		= hcd_pci_resume,
--	.freeze		= hcd_pci_suspend,
-+	.freeze		= hcd_pci_freeze,
- 	.freeze_noirq	= check_root_hub_suspended,
- 	.thaw_noirq	= NULL,
- 	.thaw		= hcd_pci_resume,
-diff --git a/include/linux/pm.h b/include/linux/pm.h
-index 97b0e23363c8..2a676b2cb699 100644
---- a/include/linux/pm.h
-+++ b/include/linux/pm.h
-@@ -570,7 +570,8 @@ const struct dev_pm_ops name = { \
- 					{ .event = PM_EVENT_AUTO_RESUME, })
- 
- #define PMSG_IS_AUTO(msg)	(((msg).event & PM_EVENT_AUTO) != 0)
--
-+#define PMSG_NO_WAKEUP(msg)	(((msg).event & \
-+				(PM_EVENT_FREEZE | PM_EVENT_QUIESCE)) != 0)
- /*
-  * Device run-time power management status.
-  *
--- 
-2.34.1
+Thanks
 
+> Correct me if I make any misunderstanding.
+> 
+> Dongliang Mu
+> 
+>>   Thanks
+> 
 
