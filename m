@@ -1,58 +1,57 @@
-Return-Path: <linux-kernel+bounces-380159-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380160-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43C389AE9A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:02:32 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A08299AE9A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:02:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id EF16F1F236C9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:02:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D1EAD1C20FE6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:02:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C03B1EB9F1;
-	Thu, 24 Oct 2024 15:02:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C55BC1EBA11;
+	Thu, 24 Oct 2024 15:02:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="UFUaXhYi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ZYl8TmET"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D47371B6CE2;
-	Thu, 24 Oct 2024 15:02:10 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C95C1E6316;
+	Thu, 24 Oct 2024 15:02:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782130; cv=none; b=mJvqHPiayKiazBLq5k8alWpFwacdMJzZtrjbBpS4Q1Go6iui9rAF/0k7ydAt0tGF6OZKc+cUhO6hRv1w5akBc7M9pFaZNejcIpIx306YEw2uYcZ0R0G+E/9KZxStPAEYG8pFQPg/yPr0bl+eXeVnbOvYZuRl575JA0I5mUJvOhM=
+	t=1729782135; cv=none; b=RovzMeVe66yPXSjLXAYnPXArd/3xtunfh8pnFiYp9z5FdooOuUX034w2ZPgh4LBFsx9ZGLVd1s5VjyZ8Nfl1B3Ltwbnkq5SAJcaqEiafb1iUyzh7eXrwEq7bIeIQAaavG4OYoIP1QgfF08lgtK/uRiKot5kPIR2Gndgs3F5p2eQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782130; c=relaxed/simple;
-	bh=uvcf82lalUuBwLRUPgmQEpxQgX8iDV2arz2E3ydDza4=;
+	s=arc-20240116; t=1729782135; c=relaxed/simple;
+	bh=cBL8Au+6V//ZHoXqTr7nCwZ29yQs0tQtBBrMMzezo2E=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FNyJR5Uueg8s3BS3OOMtKy6MVPkAdb7XusgMpvEKyeCltrqM6dJTMzwbjGSpCwLXPouSV2ZBy5RBSq99zfM1caW0nkXcRjl1uxGFowIXO8++HtgWH6POLOY0s5VLLOuavStTKEZFULPfnUWplLxYjM/dSJacrWgqrRg+3LXiS8Y=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=UFUaXhYi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BECEC4CEC7;
-	Thu, 24 Oct 2024 15:02:10 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=tCxM0TCiPI1KLvY0Ug38CqvnxqqYzaw2EqcfhgjsffUNhBgIp0f+U3gpOzfm3dmcTXeYZC8Lh+GIRRW/eMDpYWT4IJV10QsBYEiA8T6k42ptHn8QiacCjBcNU69Te7WAV5jGmUufP50rud99reBm5DwbsgySYzW5l/ARKdhb0rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ZYl8TmET; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BDFCC4CEC7;
+	Thu, 24 Oct 2024 15:02:12 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729782130;
-	bh=uvcf82lalUuBwLRUPgmQEpxQgX8iDV2arz2E3ydDza4=;
+	s=k20201202; t=1729782134;
+	bh=cBL8Au+6V//ZHoXqTr7nCwZ29yQs0tQtBBrMMzezo2E=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=UFUaXhYiIacRODB0pP/K3fbU2plJQPP4kbvaFjRllEzQSRPbX4kX68Z9Nz4MqdIey
-	 lLOAIFMUkj04igHjdMz6Y89d61dlbb9/5LZlf1FjVpOM8q3EhU+fgPqDhCE727QcUC
-	 aSHECg5xHjxiscPOorSlVhncFw+qV3BVB6biKkC7Screy7E3kzOPtvv3yAyf3uRC1S
-	 2aFvtKwe3bbnm5/gcEp5pbx/IvhF/laWGWSEx1dXzhi+x/9sQCtnBUzxV42oIR6YLB
-	 P8LH52EELra86WcgqCuTH3ZIogQids7F/F452xNF+s/TzqkRRXVdX88OrBAWJaW+Ua
-	 FWSwa6Wb6ju2w==
-Date: Thu, 24 Oct 2024 10:02:09 -0500
-From: "Rob Herring (Arm)" <robh@kernel.org>
-To: Neil Armstrong <neil.armstrong@linaro.org>
-Cc: Conor Dooley <conor+dt@kernel.org>,
-	Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
-	Jonathan Cameron <jic23@kernel.org>, linux-iio@vger.kernel.org,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH v2 2/3] dt-bindings: iio: magnetometer: document the
- Allegro MicroSystems ALS31300 3-D Linear Hall Effect Sensor
-Message-ID: <172978212903.435501.2161038660032886280.robh@kernel.org>
-References: <20241021-topic-input-upstream-als31300-v2-0-36a4278a528e@linaro.org>
- <20241021-topic-input-upstream-als31300-v2-2-36a4278a528e@linaro.org>
+	b=ZYl8TmETmburoT1PJ2NtL2nar9ZKdFnneRH2E5WyOPaAFHY1YOEWVn9txbaDxpek7
+	 KoWus7TqeGSBVRoei3IlAVAq263GbM8n1kMEhENZ4wHGf9nEqhbup5QbLaiDr79Ypj
+	 HZjtl/nPD2yj1Jc2EgRaYS6vHqhiFkpuxVpf5MlcvsWlxIbLmie5hhhnXU4XVqswXv
+	 INzRNpEKe7XXETQCwgG6uY78b5g63kWRJ4GCHlokPb7owDTSr7gmPE3Py4jdMSRoto
+	 iyp/zqBYuL/cOQxoV9IX2GiBMJ6yj+PU+4lbXfN8lq1Ft1Pln9pQLDQ2bxONV+nW4m
+	 E+yqq6U+9VZhA==
+Date: Thu, 24 Oct 2024 16:02:10 +0100
+From: Simon Horman <horms@kernel.org>
+To: Geetha sowjanya <gakula@marvell.com>
+Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org, kuba@kernel.org,
+	davem@davemloft.net, pabeni@redhat.com, jiri@resnulli.us,
+	edumazet@google.com, sgoutham@marvell.com, sbhatta@marvell.com,
+	hkelam@marvell.com
+Subject: Re: [net-next PATCH v4 2/4] octeontx2-pf: Add new APIs for queue
+ memory alloc/free.
+Message-ID: <20241024150210.GU1202098@kernel.org>
+References: <20241023161843.15543-1-gakula@marvell.com>
+ <20241023161843.15543-3-gakula@marvell.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -61,27 +60,14 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021-topic-input-upstream-als31300-v2-2-36a4278a528e@linaro.org>
+In-Reply-To: <20241023161843.15543-3-gakula@marvell.com>
 
+On Wed, Oct 23, 2024 at 09:48:41PM +0530, Geetha sowjanya wrote:
+> Group the queue(RX/TX/CQ) memory allocation and free code to single APIs.
+> 
+> Signed-off-by: Geetha sowjanya <gakula@marvell.com>
+> Reviewed-by: Pavan Chebbi <pavan.chebbi@broadcom.com>
 
-On Mon, 21 Oct 2024 14:38:54 +0200, Neil Armstrong wrote:
-> Document the bindings for the Allegro MicroSystems ALS31300 3-D Linear
-> Hall Effect Sensor controller by an I2C interface, mainly used in 3D
-> head-on motion sensing applications.
-> 
-> The device can be configured with different sensitivities in factory,
-> but the sensitivity value used to calculate value into the Gauss unit
-> is not available from registers, thus the sensitivity is provided by
-> the compatible/device-id string which is based on the part number as
-> described in the datasheet page 2.
-> 
-> Datasheet: https://www.allegromicro.com/-/media/files/datasheets/als31300-datasheet.pdf
-> Signed-off-by: Neil Armstrong <neil.armstrong@linaro.org>
-> ---
->  .../iio/magnetometer/allegromicro,als31300.yaml    | 46 ++++++++++++++++++++++
->  1 file changed, 46 insertions(+)
-> 
-
-Reviewed-by: Rob Herring (Arm) <robh@kernel.org>
+Reviewed-by: Simon Horman <horms@kernel.org>
 
 
