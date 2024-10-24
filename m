@@ -1,51 +1,52 @@
-Return-Path: <linux-kernel+bounces-379987-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379986-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 018749AE6CA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:37:29 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A45E09AE6C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:37:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABEE41F27BD9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:37:28 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 5AFA31F27AAD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:37:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 51D791F7084;
-	Thu, 24 Oct 2024 13:32:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C69D1F668F;
+	Thu, 24 Oct 2024 13:32:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="xdRcTUkU"
+	dkim=fail reason="signature verification failed" (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b="ZoVkvGoe"
 Received: from gloria.sntech.de (gloria.sntech.de [185.11.138.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 846471EF097;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D371F1DACA8;
 	Thu, 24 Oct 2024 13:32:45 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.11.138.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776769; cv=none; b=ecpy1p8Hr3wHGdmp4C0/wg0i9MzDGdt26mt1521lJoY9EEBP/sWg11eDQQT4gKZgQBifRweSfRW5eMdHxN7D6MKZl7UwzqFN0BLEH4fLJ0RhHwWMbwrbdMEZRlgvgb2EjBSTsO8r0caQByTjfj8U4kP8DZ0HLAZJOmevVIMNFc0=
+	t=1729776768; cv=none; b=aMaho+JEQqEMfCJaUCg+GAlJPRxibEjC4vHahkgsQwD23fFVO9ooTJ9LPS+pbnaP7Jm+yb3p7wcqX1V5QUSz01eyQvnqecPpwsaODcH9WTMexkxyv0UnKTD47/+VI96wHVbXlf2mC6T1/TfyVpGfVCNnayCdcX9mWGQvZlXtkM4=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776769; c=relaxed/simple;
-	bh=paS26i/SjF5cRqBIozfje/J0XyE2H4LFuZCbWxcOlWA=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=A1Tfb2pMtQYRzR4eQghkDUXn02nD9BB8HfI6hX8F4avpQnzW3Iv4yqAqSW6c5fCpUi8WBICvex45AYa623GmPuwwEf3+BCspx5bqpgFXcHMmSEe0u4eMAb+DdSHi+I9MvH9VMtiFvyw+QtUf29IUkFYzE++8YRxDvpRt0EqwzF4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=xdRcTUkU; arc=none smtp.client-ip=185.11.138.130
+	s=arc-20240116; t=1729776768; c=relaxed/simple;
+	bh=AAiz/VD1btLjuJNykiG+8szSa3n9z3i8FooWG3QVfHk=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=Bgrpk9pp3A3XTbkooWSIS1MOOZ9A7FAIJxzu1DuLAPuMbYRvHa19VeLr5GH1TIVfUtptGkNdpSkDkTdmGytglSLTo+cPI75DaoMJ9Mgq3Pm9HmyhGs4C/keVBgVo+PqoiBtut3zUCP69p/90EIGpzovEE+SAtcRzO6doR7jEOjc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de; spf=pass smtp.mailfrom=sntech.de; dkim=pass (2048-bit key) header.d=sntech.de header.i=@sntech.de header.b=ZoVkvGoe; arc=none smtp.client-ip=185.11.138.130
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=sntech.de
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=sntech.de
 DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=sntech.de;
-	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:Message-ID:Date:
-	Subject:Cc:To:From:Sender:Reply-To:Content-Type:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:In-Reply-To:References:List-Id:List-Help:List-Unsubscribe:
+	s=gloria202408; h=Content-Transfer-Encoding:MIME-Version:References:
+	In-Reply-To:Message-ID:Date:Subject:Cc:To:From:Sender:Reply-To:Content-Type:
+	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
+	Resent-To:Resent-Cc:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:
 	List-Subscribe:List-Post:List-Owner:List-Archive;
-	bh=OntcF2LDcuLBkXSM2En+JfGB3Jl5eFSXxvJ7ANnr81Q=; b=xdRcTUkUw6WtN9ur1eJvgRfwKW
-	HwV0UPL3m6H94N6HpfdGUpWgpc/MbDOWUszVPhYhs4503kN/0wGNBNFIRwZ5i1RKN6UMsiQJ7qYIf
-	3BJbJiOU/qj1YYkTWN5OVxmHtEPci4859fe6VswhX9ty/B21HuxGBftaeiiATGf2Bo0d/9C8euVvK
-	o8NvESGfQXl0KITPYyHlAaM8lr5D51Yzv/vN7YFBLD6Z8+sP2D+1Jx2l9qOjj5lhvXGFA0DbSKz2E
-	eH+Og/n+fu3FMjMNC3R+Dlt6mVVxYaKbF4Skfzk1uemvxGSFKX780ZeT9w0swcA5dh9gztacLQt1Y
-	esKMx2NQ==;
+	bh=tT0U40vv7udlyyxS/UUhxQXBmlfc4h3QNcCT/CwDSHw=; b=ZoVkvGoeh5dnJY8bocUvlnB0Ji
+	mHsR/RwnpRK+fX/EPaaxu5OdLtDT6MLLR6/XGxCvnfeoNnjfYR4hFWZloe5hXYr/Ddv/CinvCUl+n
+	tjfd6ohqHXQTeAw8CwusR0vpbM1tyYaTbtXY4GBHskivVRQ3krbVs3WgMwtkCgKXV2DZjbsCuUGrB
+	EI0T/elkEdZPxbJebwQFQGx/uYTVvXhDnmi+HryKRLMytWpZCiwLI5D0uB0xqgZ67AuI9OhVbcnpa
+	470zDLDsKjGvG1Q1NDyXhEjGwlCVLBgt+eUFM9F62ycskM/tkhO7cu50YDymgdRI4k4fpbw5ATRYz
+	MziFEWJw==;
 Received: from i53875b34.versanet.de ([83.135.91.52] helo=phil.lan)
 	by gloria.sntech.de with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
 	(Exim 4.94.2)
 	(envelope-from <heiko@sntech.de>)
-	id 1t3xxD-0007hQ-AY; Thu, 24 Oct 2024 15:32:43 +0200
+	id 1t3xxD-0007hQ-M6; Thu, 24 Oct 2024 15:32:43 +0200
 From: Heiko Stuebner <heiko@sntech.de>
 To: heiko@sntech.de
 Cc: quentin.schulz@cherry.de,
@@ -54,10 +55,12 @@ Cc: quentin.schulz@cherry.de,
 	linux-rockchip@lists.infradead.org,
 	linux-kernel@vger.kernel.org,
 	Heiko Stuebner <heiko.stuebner@cherry.de>
-Subject: [PATCH 1/2] arm64: dts: rockchip: add HDMI support to rk3588-tiger-haikou
-Date: Thu, 24 Oct 2024 15:32:39 +0200
-Message-ID: <20241024133240.1737647-1-heiko@sntech.de>
+Subject: [PATCH 2/2] arm64: dts: rockchip: add HDMI support to rk3588-jaguar
+Date: Thu, 24 Oct 2024 15:32:40 +0200
+Message-ID: <20241024133240.1737647-2-heiko@sntech.de>
 X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241024133240.1737647-1-heiko@sntech.de>
+References: <20241024133240.1737647-1-heiko@sntech.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -68,31 +71,31 @@ Content-Transfer-Encoding: 8bit
 
 From: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-The Haikou baseboard has an hdmi output port, which is connected
-via the Q7 connector to the hdmi0 controller of the rk3588.
+The jaguar has an hdmi output port, which is connected
+to the hdmi0 controller of the rk3588.
 
 Add the necessary plumbing to enable it using the recently merged
 hdmi-qp controller.
 
 Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 ---
- .../boot/dts/rockchip/rk3588-tiger-haikou.dts | 50 +++++++++++++++++++
+ .../arm64/boot/dts/rockchip/rk3588-jaguar.dts | 50 +++++++++++++++++++
  1 file changed, 50 insertions(+)
 
-diff --git a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
-index e4b7a0a4444b..e3596341b816 100644
---- a/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
-+++ b/arch/arm64/boot/dts/rockchip/rk3588-tiger-haikou.dts
-@@ -5,6 +5,7 @@
- 
- /dts-v1/;
+diff --git a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+index e24da1a4331d..6a59887979ce 100644
+--- a/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
++++ b/arch/arm64/boot/dts/rockchip/rk3588-jaguar.dts
+@@ -8,6 +8,7 @@
  #include <dt-bindings/input/input.h>
+ #include <dt-bindings/leds/common.h>
+ #include <dt-bindings/pinctrl/rockchip.h>
 +#include <dt-bindings/soc/rockchip,vop2.h>
- #include "rk3588-tiger.dtsi"
+ #include <dt-bindings/usb/pd.h>
+ #include "rk3588.dtsi"
  
- / {
-@@ -61,6 +62,17 @@ switch-lid-btn-n {
- 		};
+@@ -58,6 +59,17 @@ emmc_pwrseq: emmc-pwrseq {
+ 		reset-gpios = <&gpio2 RK_PA3 GPIO_ACTIVE_HIGH>;
  	};
  
 +	hdmi-con {
@@ -106,17 +109,17 @@ index e4b7a0a4444b..e3596341b816 100644
 +		};
 +	};
 +
- 	i2s3-sound {
- 		compatible = "simple-audio-card";
- 		simple-audio-card,format = "i2s";
-@@ -155,6 +167,29 @@ &gmac0 {
+ 	leds {
+ 		compatible = "gpio-leds";
+ 		pinctrl-names = "default";
+@@ -271,6 +283,29 @@ &gpu {
  	status = "okay";
  };
  
 +&hdmi0 {
-+	/* No CEC on Haikou */
++	/* No CEC on Jaguar */
 +	pinctrl-names = "default";
-+	pinctrl-0 = <&hdmim0_tx0_hpd &hdmim1_tx0_scl &hdmim1_tx0_sda>;
++	pinctrl-0 = <&hdmim0_tx0_hpd &hdmim0_tx0_scl &hdmim0_tx0_sda>;
 +	status = "okay";
 +};
 +
@@ -136,11 +139,11 @@ index e4b7a0a4444b..e3596341b816 100644
 +	status = "okay";
 +};
 +
- &i2c1 {
+ &i2c0 {
+ 	pinctrl-0 = <&i2c0m2_xfer>;
  	status = "okay";
- 
-@@ -321,3 +356,18 @@ &usb_host1_xhci {
- &usb_host2_xhci {
+@@ -1052,3 +1087,18 @@ &usb_host1_ehci {
+ &usb_host1_ohci {
  	status = "okay";
  };
 +
