@@ -1,113 +1,102 @@
-Return-Path: <linux-kernel+bounces-379532-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379533-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4BA839AE00B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:05:00 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA3FD9AE00E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:05:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C543DB21EBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:04:57 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 608C81F20100
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:05:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5D4451B4F1E;
-	Thu, 24 Oct 2024 09:03:27 +0000 (UTC)
-Received: from mail.loongson.cn (mail.loongson.cn [114.242.206.163])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9E1A172BAE;
-	Thu, 24 Oct 2024 09:03:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=114.242.206.163
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF4731BDABE;
+	Thu, 24 Oct 2024 09:03:54 +0000 (UTC)
+Received: from out198-26.us.a.mail.aliyun.com (out198-26.us.a.mail.aliyun.com [47.90.198.26])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 73DCF1B4F32;
+	Thu, 24 Oct 2024 09:03:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=47.90.198.26
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729760607; cv=none; b=pt9qrZC3uXfOTdI1WsjoG9XyY6bGO5ql63JbS3nnJpAEIkpS+llk6WJqllYg13kK4l4U5vDVDPh7+80tUnO5FEojLQNwVTnqcsuayPsTuKxmagXJX7GHAks6MMWrqmkOr3ZgzUwiqFbLCZSiRaIrETyM5HK8ObtOdtNcmq2evJM=
+	t=1729760634; cv=none; b=l9HhB9alCd4Ob8DEv07DlldNelQhIEQUtJXkoTjprwMWMMXHotet7p/GIX5kKhY7GPuscBstzzUBTdjIphJ7CNF4JZuQj4L4g6etFDCyHDZp3Gq1wqXI745g9NksRqLNi9zSKy4W4gEEqftlnjid4XOI0ql431zuhZKAIy6py3U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729760607; c=relaxed/simple;
-	bh=88kqoKvZveiC++AA4JP+24ptd59TOga/HcATW1Shhb0=;
-	h=Subject:To:References:Cc:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=cfeF8fRYm9YNsy8S47Cu0X03XoNfiVvTQcrlAQsa4CQSblGjUMAzQULMnUVG8XstIsFm23dtlbUMuiNgwd1uqiulwVUfyGJqJLmXq/pVNXrJHqzVq/kDu4Wa+T1ZM6BNyx9CyhoQWEfX/jvkVN/8shWgmJ1QdNtxm99SEu+4S5M=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn; spf=pass smtp.mailfrom=loongson.cn; arc=none smtp.client-ip=114.242.206.163
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=loongson.cn
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=loongson.cn
-Received: from loongson.cn (unknown [113.200.148.30])
-	by gateway (Coremail) with SMTP id _____8AxquFRDRpncFwKAA--.24348S3;
-	Thu, 24 Oct 2024 17:03:13 +0800 (CST)
-Received: from [10.130.0.149] (unknown [113.200.148.30])
-	by front1 (Coremail) with SMTP id qMiowMCxDuFQDRpnUxIPAA--.18662S3;
-	Thu, 24 Oct 2024 17:03:13 +0800 (CST)
-Subject: Re: [PATCH v1 4/6] bpf, core: Add weak arch_prepare_goto()
-To: Alexei Starovoitov <alexei.starovoitov@gmail.com>
-References: <20241015113915.12623-1-yangtiezhu@loongson.cn>
- <20241015113915.12623-5-yangtiezhu@loongson.cn>
- <CAADnVQK6wgy0e5nW220sSDXzxkKcga8zpCDqKmDd=8xdooP37g@mail.gmail.com>
-Cc: Huacai Chen <chenhuacai@kernel.org>, Josh Poimboeuf
- <jpoimboe@kernel.org>, Peter Zijlstra <peterz@infradead.org>,
- loongarch@lists.linux.dev, bpf <bpf@vger.kernel.org>,
- LKML <linux-kernel@vger.kernel.org>
-From: Tiezhu Yang <yangtiezhu@loongson.cn>
-Message-ID: <2ba0bee2-972a-0374-8ec8-75a91e1217b4@loongson.cn>
-Date: Thu, 24 Oct 2024 17:03:12 +0800
-User-Agent: Mozilla/5.0 (X11; Linux mips64; rv:45.0) Gecko/20100101
- Thunderbird/45.4.0
+	s=arc-20240116; t=1729760634; c=relaxed/simple;
+	bh=Mio5m8DqUhJwOfgpWbjqiiGom/IeRSKtu2AJkhAcOmg=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=r+UceYnjsYipuMuBLHNlOM0QwZBAHwfJXlJhyOkBUbt2L3xM1KY65nchYBJtfQzzrZ2fZ6NfyaOIrDC+GlNj6AcuQOFknw8eu3MJHOzgxY5+t+x67H56zT+//6vqwW+QCd/x4X/eV3jdLTjfgKboJ+YM6oF59TkNJdhkAldwy+I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com; spf=pass smtp.mailfrom=awinic.com; arc=none smtp.client-ip=47.90.198.26
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=awinic.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=awinic.com
+Received: from ubuntu-VirtualBox..(mailfrom:wangweidong.a@awinic.com fp:SMTPD_---.ZrObrhz_1729760609 cluster:ay29)
+          by smtp.aliyun-inc.com;
+          Thu, 24 Oct 2024 17:03:35 +0800
+From: wangweidong.a@awinic.com
+To: lgirdwood@gmail.com,
+	broonie@kernel.org,
+	robh@kernel.org,
+	krzk+dt@kernel.org,
+	conor+dt@kernel.org,
+	perex@perex.cz,
+	tiwai@suse.com,
+	pierre-louis.bossart@linux.dev,
+	neil.armstrong@linaro.org,
+	rf@opensource.cirrus.com,
+	arnd@arndb.de,
+	wangweidong.a@awinic.com,
+	luca.ceresoli@bootlin.com,
+	quic_pkumpatl@quicinc.com,
+	herve.codina@bootlin.com,
+	masahiroy@kernel.org,
+	linux-sound@vger.kernel.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Cc: yijiangtao@awinic.com
+Subject: [PATCH V2 0/2] ASoC: codecs: Add aw88081 amplifier driver
+Date: Thu, 24 Oct 2024 17:03:22 +0800
+Message-ID: <20241024090324.131731-1-wangweidong.a@awinic.com>
+X-Mailer: git-send-email 2.47.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <CAADnVQK6wgy0e5nW220sSDXzxkKcga8zpCDqKmDd=8xdooP37g@mail.gmail.com>
-Content-Type: text/plain; charset=utf-8; format=flowed
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:qMiowMCxDuFQDRpnUxIPAA--.18662S3
-X-CM-SenderInfo: p1dqw3xlh2x3gn0dqz5rrqw2lrqou0/
-X-Coremail-Antispam: 1Uk129KBj9xXoWrKFyrXrW8CrWDJr45KFWxGrX_yoWkKwb_Gw
-	s09r4Skr15GF9rAFsrGrn5ZFW2kay8X3yfua4UXw1UX34rtFWUJrWkGF9ru34rtFZ8uFnI
-	gr4qqw1jyr17uosvyTuYvTs0mTUanT9S1TB71UUUUUDqnTZGkaVYY2UrUUUUj1kv1TuYvT
-	s0mT0YCTnIWjqI5I8CrVACY4xI64kE6c02F40Ex7xfYxn0WfASr-VFAUDa7-sFnT9fnUUI
-	cSsGvfJTRUUUbI8YFVCjjxCrM7AC8VAFwI0_Jr0_Gr1l1xkIjI8I6I8E6xAIw20EY4v20x
-	vaj40_Wr0E3s1l1IIY67AEw4v_Jrv_JF1l8cAvFVAK0II2c7xJM28CjxkF64kEwVA0rcxS
-	w2x7M28EF7xvwVC0I7IYx2IY67AKxVWUJVWUCwA2z4x0Y4vE2Ix0cI8IcVCY1x0267AKxV
-	WUJVW8JwA2z4x0Y4vEx4A2jsIE14v26r4UJVWxJr1l84ACjcxK6I8E87Iv6xkF7I0E14v2
-	6r4UJVWxJr1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqjxCEc2xF0cIa020Ex4CE44I27w
-	Aqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE
-	14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwACjcxG0xvEwIxGrwCYjI0SjxkI62AI1c
-	AE67vIY487MxAIw28IcxkI7VAKI48JMxC20s026xCaFVCjc4AY6r1j6r4UMI8I3I0E5I8C
-	rVAFwI0_Jr0_Jr4lx2IqxVCjr7xvwVAFwI0_JrI_JrWlx4CE17CEb7AF67AKxVWUAVWUtw
-	CIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26r1j6r1xMIIF0xvE2Ix0cI8IcVCY1x02
-	67AKxVWUJVW8JwCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIxAIcVC2z280aVAFwI0_Jr
-	0_Gr1lIxAIcVC2z280aVCY1x0267AKxVWUJVW8JbIYCTnIWIevJa73UjIFyTuYvjxU7_Ma
-	UUUUU
 
-On 10/16/2024 02:36 AM, Alexei Starovoitov wrote:
-> On Tue, Oct 15, 2024 at 4:50 AM Tiezhu Yang <yangtiezhu@loongson.cn> wrote:
->>
->> The objtool program needs to analysis the control flow of each
->> object file generated by compiler toolchain, it needs to know
->> all the locations that a branch instruction may jump into.
+From: Weidong Wang <wangweidong.a@awinic.com>
 
-...
+Add the awinic,aw88081 property to support the aw88081 chip.
 
->> +       arch_prepare_goto();
->>         goto *jumptable[insn->code];
->
-> That looks fragile. There is no guarantee that compiler will keep
-> asm statement next to indirect goto.
-> It has all rights to move/copy such goto around.
-> There are other parts in the kernel which are not annotated either:
-> drm_exec_retry_on_contention(),
-> drivers/misc/lkdtm/cfi.c
->
-> You're arguing that it's hard to properly in the compiler,
-> but that's the only option. It has to be done by the compiler.
+The driver is for amplifiers aw88081 of Awinic Technology
+Corporation. The awinic AW88081 is an I2S/TDM input,
+high efficiency digital Smart K audio amplifier
 
-Thank you very much for your reply. I will drop this patch
-and try to find a proper way to handle this case.
+v1 -> v2: Modify the order of properties under the compatible node
+            in the awinic,aw88395.yaml file
+          Modify the commit message of the awinic,aw88395.yaml file
+          Move "struct aw88081" into .c files
+          Changing the order of header files
+          Using return 0 as a function return value
+          Modifying strscpy usage
+          Delete useless variable assignments
+          Modify dev_err_probe usage
 
-By the way, I spent more time to test and analysis with gcc
-and clang on x86 and loongarch, it needs to fix some corner
-issues for the other patches compiled with clang.
+Weidong Wang (2):
+  ASoC: dt-bindings: Add schema for "awinic,aw88081"
+  ASoC: codecs: Add aw88081 amplifier driver
 
-Anyway, I will submit v2 series without changing bpf file,
-patch #4 and patch #5 will be removed.
+ .../bindings/sound/awinic,aw88395.yaml        |    4 +-
+ sound/soc/codecs/Kconfig                      |   12 +
+ sound/soc/codecs/Makefile                     |    2 +
+ sound/soc/codecs/aw88081.c                    | 1087 +++++++++++++++++
+ sound/soc/codecs/aw88081.h                    |  286 +++++
+ 5 files changed, 1390 insertions(+), 1 deletion(-)
+ create mode 100644 sound/soc/codecs/aw88081.c
+ create mode 100644 sound/soc/codecs/aw88081.h
 
-Thanks,
-Tiezhu
+
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+-- 
+2.47.0
 
 
