@@ -1,126 +1,107 @@
-Return-Path: <linux-kernel+bounces-379822-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379823-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AAB29AE440
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:57:56 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id ACE1D9AE447
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:58:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 03486B238FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:57:54 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F008DB23A9C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:58:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2956F1D14EE;
-	Thu, 24 Oct 2024 11:57:49 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F2F01D357A;
+	Thu, 24 Oct 2024 11:58:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="CAlEuUI3"
+Received: from mail-wr1-f42.google.com (mail-wr1-f42.google.com [209.85.221.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 156FC1D041D
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:57:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A59331D174F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:58:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729771068; cv=none; b=KPcH4dNSeGk7vF+j7VJWLHhI1S48sQasTvInd7yAbJHm97FgKaTz6EMDhn/hIi/ZErKZxrwPBU67UC1E3lmUQ2hdiM8k+dH33OYkfLskUcgFu/ZTVf1me3L086JIFifrlnGPTkAbTndAV+B+CPLWWsMIIzmTOs520kJnmP7slV8=
+	t=1729771083; cv=none; b=qe+TpKgbJJP87P4qmjQImAIt+ii7txM+VMFCtKBp2LI9xwh5fLUd34aCBsXiOHqN1P57jgrAAlinpICihY8EoZJtI5I9GlBqDEy5cy42swYXWUxIHWsDkVODYNAV/wJwMHwd0faNLXoBsMYDvRLmhR3MZnPfG3dmKLTc/M5Nqz0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729771068; c=relaxed/simple;
-	bh=xQYxe7sjyZTc37ZPzLZnD6uz/KCg9q/JpxCVwCz3ijM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fNd51PZh+bLzCOhPnBsEDhRtOhOx1k8U01JZbpLLTbxZBXhe1hgdVs38HTtKhVPl3Z0d4t/y2M9O73oyKks1neeVNVZ49TGTkOzMt5F1auA8lPBh3w6MAJH2Kmhl3f19NLUzPz9oh2RpJnJJ+Vl3MYsKyy0eAXgxgoXU2rVAfls=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from drehscheibe.grey.stw.pengutronix.de ([2a0a:edc0:0:c01:1d::a2])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_256_GCM_SHA384:256)
-	(Exim 4.92)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t3wSl-0003oy-3Z; Thu, 24 Oct 2024 13:57:11 +0200
-Received: from moin.white.stw.pengutronix.de ([2a0a:edc0:0:b01:1d::7b] helo=bjornoya.blackshift.org)
-	by drehscheibe.grey.stw.pengutronix.de with esmtps  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.96)
-	(envelope-from <mkl@pengutronix.de>)
-	id 1t3wSi-000BqW-1C;
-	Thu, 24 Oct 2024 13:57:08 +0200
-Received: from pengutronix.de (pd9e595f8.dip0.t-ipconnect.de [217.229.149.248])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	(Authenticated sender: mkl-all@blackshift.org)
-	by smtp.blackshift.org (Postfix) with ESMTPSA id E7B1635DAA6;
-	Thu, 24 Oct 2024 11:57:07 +0000 (UTC)
-Date: Thu, 24 Oct 2024 13:57:07 +0200
-From: Marc Kleine-Budde <mkl@pengutronix.de>
-To: Ming Yu <a0282524688@gmail.com>
-Cc: tmyu0@nuvoton.com, lee@kernel.org, linus.walleij@linaro.org, 
-	brgl@bgdev.pl, andi.shyti@kernel.org, mailhol.vincent@wanadoo.fr, 
-	andrew+netdev@lunn.ch, davem@davemloft.net, edumazet@google.com, kuba@kernel.org, 
-	pabeni@redhat.com, wim@linux-watchdog.org, linux@roeck-us.net, jdelvare@suse.com, 
-	jic23@kernel.org, lars@metafoo.de, ukleinek@kernel.org, 
-	alexandre.belloni@bootlin.com, linux-kernel@vger.kernel.org, linux-gpio@vger.kernel.org, 
-	linux-i2c@vger.kernel.org, linux-can@vger.kernel.org, netdev@vger.kernel.org, 
-	linux-watchdog@vger.kernel.org, linux-hwmon@vger.kernel.org, linux-iio@vger.kernel.org, 
-	linux-pwm@vger.kernel.org, linux-rtc@vger.kernel.org
-Subject: Re: [PATCH v1 0/9] Add Nuvoton NCT6694 MFD devices
-Message-ID: <20241024-eminent-dancing-narwhal-8f25dd-mkl@pengutronix.de>
-References: <20241024085922.133071-1-tmyu0@nuvoton.com>
+	s=arc-20240116; t=1729771083; c=relaxed/simple;
+	bh=TMwKFmIXmqzS5x4W1yplBkSZ7GLBkQ+WVVyIQYanxFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=HF3EIEmugHrXDZQ8L20CAjihhgmMtx3u3DUEvTaM34LKw54IesrEcZ48xcxV1RjcH1gSbukokKZqA0VJ/NRzD9TRdQeYtLalye4x/xV8xN1zBWlR1sS/zvN6zsXOzZa2AE4H1f3PB0GfwR9UMX/36nTLMCAdA9KWP6tOUD3dQSs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=CAlEuUI3; arc=none smtp.client-ip=209.85.221.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f42.google.com with SMTP id ffacd0b85a97d-37d518f9abcso584279f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:58:01 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729771080; x=1730375880; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=CMUh089hk0TDYl3i02fhUTGpVWWZ8Xi7jhCcIpeuQK4=;
+        b=CAlEuUI3V7QKOaG9Qzp+wOZsa7Z7cPB9yx/+o4/ID6JRyop2mG29Vv2drIhKy5uRNr
+         D/BCIyhiBpccj3qIViCuMdBRX5dA/JXI2qAUCviRGSAvlzwdUvDJA5i/m1atS+L8Lptm
+         E0YkxtKj7ORgVuWkRodKMc/MyK1/PAwKkmTTi7lXQKL0w4IVPN2yLvyiy1AVKtt92Qj3
+         M/Q90Bd6bjIWKOCrRa9hZgBvl3K0cO1qpzKxicky5wXqYRRBVsVqvt59K+PBwSLZMXJJ
+         Almt1l5t3MZFNhdhvIcCZqknYZgWEn2+69hanW/LQWH6tVduUq3k6aM48MYZ1gqvXWAd
+         qQNQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729771080; x=1730375880;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=CMUh089hk0TDYl3i02fhUTGpVWWZ8Xi7jhCcIpeuQK4=;
+        b=AyGNzNxkFfPUmMhEVrvcrfLwUlLmqaIGymRfb148KxwrZtdfxj5at7d7aRnf/P7yHJ
+         g428nc0I8/jmKhkkRK5JRJ/mx8gfcQCEgAK0Xwtw27tRx08+lNaavjhqbSNJi6hDJ8lL
+         w6zsxvxnaOTjMrZZ6bGa11Z4UjCLQzngPr4drIn03gZCMbrFdYZZHFduPCq0Xy+DilWJ
+         k8aWudxDUzfISnIZ53CvcJHTWs+v8sROiqEzQngSaSsvrGm0UKgERE7GUF4Fx3RtOgt5
+         Zukc3JhuQ3xZbqz/0TFDx0P5Pu+QWoyZ4rxHHG9UzCGgvO4hSBhssNIw6z2FbWjYGsq/
+         bj0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWEtIOrulzVYj6A3t/GOlpqN6MFctGR8kIukrqYB1oqPWorGemAMtSZI4g2vRmJAeAGjupGuG0KiES2W6U=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyB6HNH+2jihGwfd8hFMOjUrC99mVDnJGsGrOywwDZz21crkg1t
+	99wJ6EnPKZMqZNqWYYRFDU16l98clthY/qDbdk3cT5hxPgYJ2idGhOJeN+aIApk=
+X-Google-Smtp-Source: AGHT+IHwlD/N8thxGFMjsqeo2hByECDuXyX4BJqwX5km4H1c7VJRNHwwg6KxA9EAfXdb3TGB+VJIYQ==
+X-Received: by 2002:adf:e848:0:b0:37d:398f:44f9 with SMTP id ffacd0b85a97d-38045898b4emr1354687f8f.32.1729771079896;
+        Thu, 24 Oct 2024 04:57:59 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id ffacd0b85a97d-37ee0a37b4dsm11109750f8f.18.2024.10.24.04.57.59
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 04:57:59 -0700 (PDT)
+Message-ID: <d7a2ddee-42c5-415f-8b7f-b7c21aa373a4@linaro.org>
+Date: Thu, 24 Oct 2024 13:57:58 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="blu56gx3jhnaziml"
-Content-Disposition: inline
-In-Reply-To: <20241024085922.133071-1-tmyu0@nuvoton.com>
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:c01:1d::a2
-X-SA-Exim-Mail-From: mkl@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] tools/lib/thermal: Rm thermal.h soft link.
+To: zhangjiao2 <zhangjiao2@cmss.chinamobile.com>, rafael@kernel.org
+Cc: rui.zhang@intel.com, lukasz.luba@arm.com, linux-pm@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <20240912045031.18426-1-zhangjiao2@cmss.chinamobile.com>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20240912045031.18426-1-zhangjiao2@cmss.chinamobile.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 12/09/2024 06:50, zhangjiao2 wrote:
+> From: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> 
+> Run "make -C tools thermal" can create a soft link
+> for thermal.h in tools/include/uapi/linux.
+> Just rm it when make clean.
+> 
+> Signed-off-by: zhang jiao <zhangjiao2@cmss.chinamobile.com>
+> ---
 
---blu56gx3jhnaziml
-Content-Type: text/plain; protected-headers=v1; charset=utf-8
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v1 0/9] Add Nuvoton NCT6694 MFD devices
-MIME-Version: 1.0
+Applied, thanks
 
-On 24.10.2024 16:59:13, Ming Yu wrote:
-> This patch series introduces support for Nuvoton NCT6694, a peripheral
-> expander based on USB interface. It models the chip as an MFD driver
-> (1/9), GPIO driver(2/9), I2C Adapter driver(3/9), CANfd driver(4/9),
-> WDT driver(5/9), HWMON driver(6/9), IIO driver(7/9), PWM driver(8/9),
-> and RTC driver(9/9).
->=20
-> The MFD driver implements USB device functionality to issue
-> custom-define USB bulk pipe packets for NCT6694. Each child device can
-> use the USB functions nct6694_read_msg() and nct6694_write_msg() to issue
-> a command. They can also register a handler function that will be called
-> when the USB device receives its interrupt pipe.
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
-What about implementing a proper IRQ demux handler instead?
-
-Marc
-
---=20
-Pengutronix e.K.                 | Marc Kleine-Budde          |
-Embedded Linux                   | https://www.pengutronix.de |
-Vertretung N=C3=BCrnberg              | Phone: +49-5121-206917-129 |
-Amtsgericht Hildesheim, HRA 2686 | Fax:   +49-5121-206917-9   |
-
---blu56gx3jhnaziml
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEUEC6huC2BN0pvD5fKDiiPnotvG8FAmcaNhAACgkQKDiiPnot
-vG87/wf9FJMF3SXXDzY25O6vuNVJyis/VDnwW4GtX0mAzuSYUFfRD/6oWOr7tJbT
-C7JyM5vxh7TVTcs1oLrKz4ufgFBzB9UtRZxOZ8WezObY5mrL51ZMVGKnACPeVwSL
-S76wiGoGTk82k+K7kH7i1mKJ4vfo9X9W6buVqbALyeVxwmkAKG3tZV6s0e7vh26E
-NFaYMTOQ9APdNH5s8UNA5xLkkJ7YzbEfPvaXPj7fobf7wRtrO1LnP7LoQQ83f1M1
-zCEbqXF8onDNWc2EIheF91B0zIQMdLoYwEY/LOr5hvPedIKHv/9o5LjJ3F1KRG8u
-omjKBgvpX105+g3z8BZzSRTe7PPBVg==
-=Qdfl
------END PGP SIGNATURE-----
-
---blu56gx3jhnaziml--
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
