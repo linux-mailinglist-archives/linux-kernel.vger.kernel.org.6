@@ -1,143 +1,258 @@
-Return-Path: <linux-kernel+bounces-380587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380591-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B50329AF306
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1E04F9AF311
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:56:24 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6C50B1F240BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:55:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id C52AA28341F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:56:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2421919CC09;
-	Thu, 24 Oct 2024 19:55:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 093B92170D4;
+	Thu, 24 Oct 2024 19:55:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=fail reason="signature verification failed" (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b="kc2T1nGB"
-Received: from fanzine2.igalia.com (fanzine.igalia.com [178.60.130.6])
+	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="JNQih5kO";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="BCjwjiou"
+Received: from fout-a4-smtp.messagingengine.com (fout-a4-smtp.messagingengine.com [103.168.172.147])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5053017333D;
-	Thu, 24 Oct 2024 19:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.60.130.6
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D49E189F5F;
+	Thu, 24 Oct 2024 19:55:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.147
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799725; cv=none; b=GekGZ8OmnSCEpzHE15iYvRefefiMndtWFhYQAkFZFeZOtUUykdtKVYQgPE5leTUD3ZdEo+CcG9t00Gbx+f9nXHQVKo4jtWS/tHHHjyQSYNfguetNDANVdtpoyPbPhZJOi+17ri4BiG7qlZUy93WGZz/OD0uwBBvhyMAFlVpgsOw=
+	t=1729799753; cv=none; b=otbLUpQvukj/UxxTsAl6rwrB6ocrPNXfdB7pEH/vX0pdZ09+NUqVk7AzJ8zfuqsTGoZ0QFOqBw0yuustQgEnGpKENjvQmmpwmnXQ00BXLuBv6/0pNSItGHVsgg51izhRDV9MTkY6yCQ5eybaMs8Lk1HQF7DCZiuXIQhn9MH00CI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799725; c=relaxed/simple;
-	bh=+DMNl5qULG9FzRvzLgVcNxfhnGStCnO2VwdaRMuh1fY=;
-	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
-	 In-Reply-To:Content-Type; b=pK+/mJM52k+0274oxuVDPI9V5MP3+hfRBhcjfftRd93yjmFCRdkHsDaIo5t5bsq34mqS5jFM725YFeuwGt9NsAD61EAoUXHzLeqdwc9J8y5J5ID2AlJ+AQ466tLg7h6e3HmfktL0LYpdW6YtKk+dPFwX7QB2XVabLaoken+OUo4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com; spf=pass smtp.mailfrom=igalia.com; dkim=pass (2048-bit key) header.d=igalia.com header.i=@igalia.com header.b=kc2T1nGB; arc=none smtp.client-ip=178.60.130.6
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=igalia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=igalia.com
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=igalia.com;
-	s=20170329; h=Content-Transfer-Encoding:Content-Type:In-Reply-To:References:
-	Cc:To:From:Subject:MIME-Version:Date:Message-ID:Sender:Reply-To:Content-ID:
-	Content-Description:Resent-Date:Resent-From:Resent-Sender:Resent-To:Resent-Cc
-	:Resent-Message-ID:List-Id:List-Help:List-Unsubscribe:List-Subscribe:
-	List-Post:List-Owner:List-Archive;
-	bh=ZHYWgrJ/utlUa68DupieJ4xEvMacDX1gfqRqVZ7XE6M=; b=kc2T1nGB47lYWskaB51rcPaXbe
-	hkUzwzP6MFpiLhqLuJwZ18qiMRuJJvhV7WuYUN94RpK6KzFO0Mq2c4lmLXDbtzD/JwdgpPKCRvHvh
-	aOlvXwRQVVLziz7zN554S69Pif2Y1q7cGqgv+UiInw+71YWrBLfxBvh5dCbjdXOQVlkIBd1JniiKK
-	Om35rxAfnQV9i2cEjuoxHC8qhm4QfXQhlqJV6mwKte2xnpXMS95OEERU5medVK6UiyV4+aHqHdrcc
-	1ENu7F88dUVSsKN1BQGP/EPZyyJVFb1WUzjzZwZ5+WOULFhtQLDUpJAzsU8XOBOKtfXpUQ4jlMUi+
-	FpvHXwqA==;
-Received: from [177.172.124.83] (helo=[192.168.15.100])
-	by fanzine2.igalia.com with esmtpsa 
-	(Cipher TLS1.3:ECDHE_X25519__RSA_PSS_RSAE_SHA256__AES_128_GCM:128) (Exim)
-	id 1t43vJ-00EdfN-1Q; Thu, 24 Oct 2024 21:55:09 +0200
-Message-ID: <59509fc9-1a19-4162-ac89-559e08b75c06@igalia.com>
-Date: Thu, 24 Oct 2024 16:55:03 -0300
+	s=arc-20240116; t=1729799753; c=relaxed/simple;
+	bh=pYQuRYUioIPEDyBgu8+ZshaoB3MG69sDVqHUAKmub9Y=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=DJcthPpEfUY6SUTIm+rDRiWt9XJBSFeuRc3Hf79AAtACJk5RbtimukkcPmQqdB0vC18BmWV4Lp3VU6NLtH/AN+9QDJzIBnKTsLhxYr8DNsvMX5OZuT2sZbWGZKxkqyXu+DFt0ckGaY4VmcJxsO/KzX55+D05i0PW4WWjGoq4Ga0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=JNQih5kO; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=BCjwjiou; arc=none smtp.client-ip=103.168.172.147
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
+Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
+	by mailfout.phl.internal (Postfix) with ESMTP id 29E71138019F;
+	Thu, 24 Oct 2024 15:55:47 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-12.internal (MEProxy); Thu, 24 Oct 2024 15:55:47 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
+	:cc:content-transfer-encoding:content-type:date:date:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to; s=fm1; t=1729799747; x=
+	1729886147; bh=jrmQUEFhofqO6xqHrhgja9vDio8qXCoJ0c0hfuIb4L4=; b=J
+	NQih5kOORFsgbQu8kjzfegCvGOmvcFfdmgDl5qnvYrozFyHQR7WLFHOhcM+XXjSO
+	oZ9wrWCNSBteM2QQCufqR6sYRMQAB4G78IT84X96p9wNTgQuV0FZfSKH24LW8FZp
+	JCpHufMRRqkIPB8Kw1kqe3C+vmPDtnNv/fS/SLrLVvbs47syIWNlh0WFa336zKo6
+	FkHGNCk4GU06VsIp+pcnKKBG+UoqjpaZBgHoqRaxMAUnO3gNvo/z2naDkCbg7DQL
+	JBE11nhf9hdbDlmue+lgcxoZjUoKwfwmy70sF5Qaf+agQfIIkWR4WXSlBhHt9GYw
+	iu5fwJNfcNR/9JxbGA68Q==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:date:date:feedback-id:feedback-id:from:from
+	:in-reply-to:in-reply-to:message-id:mime-version:references
+	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729799747; x=
+	1729886147; bh=jrmQUEFhofqO6xqHrhgja9vDio8qXCoJ0c0hfuIb4L4=; b=B
+	CjwjiouUWnAD54QOyjp847I09XQDVPMPHP3LAQalH9y4D0mTXp5qUmmIr/ISpEC+
+	JcyaX+FhXkG34y8S2yC/jzYO2ZcMGKorM/YUFT0fYLGvCwDv5uPSmGX/trqIQOxa
+	9KfvY3mfy0Vg6LpIwWs99IvhJQPewaeOxwxr86rcdpgPdiynlYfj0370Dgebz3S3
+	e4Dlm5rfkRfpl+XrYlBkfwJsBm4qYYGHYzqQhp2D9QAagyfQGCY+g1nf+aNkkTzV
+	bg7Siv0GGuQ6qlFj5Ev8S20g0f4Kgca/V19614Bzjq1NRfu9okCfWk0I/aVBdvJN
+	Sjrfq6WGRFzxfrDbETgHA==
+X-ME-Sender: <xms:QqYaZ6PesmIGbPK7Yu5UQZYaOvF5zG6r0WKDHGwRlGhj_lhqJb84Eg>
+    <xme:QqYaZ49ZaZr1F8Mzk-MsNsCB2NwzKLod1f1y0vIThRnxldeQtmPvj2cEv_GefCYmO
+    Of3vyYDvWCLgY3qJrM>
+X-ME-Received: <xmr:QqYaZxT0he79ZlH83h0VfflOINLlzlqzuCToD4nqKcazPhg50lxvctzKWgl0FZRlygU3p3fg1MhdAbCFC8U2orAJvHOne6sV6c3AfIZoampr7g>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddguddujecutefuodetggdotefrod
+    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
+    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecuogetfedtuddqtdduuc
+    dludehmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhm
+    peforghrkhcurfgvrghrshhonhcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvg
+    gssgdrtggrqeenucggtffrrghtthgvrhhnpeeftddvjeefleffvefhgfejjeehudetteei
+    geeugfekhffhgeejudeuteehgfdvffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
+    grmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdr
+    tggrpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
+    hmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhrtghpthhtohephhgu
+    vghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvih
+    hnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphhlrghtfhhorhhm
+    qdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
+    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
+X-ME-Proxy: <xmx:QqYaZ6tQpoeVgRMJkH5UmKZbU0SJLQ6UZxY9_vrRjCv8oxuGTkj3NQ>
+    <xmx:QqYaZye_MRKEFcJi_qth3wpiv3DJ_pNRyqVQXGZ-l-9uFJCtdk3ZhA>
+    <xmx:QqYaZ-0Jxvs4FfTAGvkr2npRMBurW-N2qJx1v_q_muCo9Ro8Jhv_IA>
+    <xmx:QqYaZ2-5Vj8V40Gx3yh5deronpX8g5SWsy0oDUNOewztusahT7oGog>
+    <xmx:Q6YaZ_HRXx_xkdK2Inn_0xu5zMDcdP6HOkT0IYZudlW3PqGdyCJmJwxQ>
+Feedback-ID: ibe194615:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 24 Oct 2024 15:55:45 -0400 (EDT)
+From: Mark Pearson <mpearson-lenovo@squebb.ca>
+To: mpearson-lenovo@squebb.ca
+Cc: hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH v2 1/4] platform/x86: think-lmi: improve check if BIOS account security enabled
+Date: Thu, 24 Oct 2024 15:55:21 -0400
+Message-ID: <20241024195536.6992-1-mpearson-lenovo@squebb.ca>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <mpearson-lenovo@squebb.ca>
+References: <mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH RFC 1/1] futex: Create set_robust_list2
-From: =?UTF-8?Q?Andr=C3=A9_Almeida?= <andrealmeid@igalia.com>
-To: Arnd Bergmann <arnd@arndb.de>
-Cc: Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@redhat.com>,
- Davidlohr Bueso <dave@stgolabs.net>, Darren Hart <dvhart@infradead.org>,
- Peter Zijlstra <peterz@infradead.org>, sonicadvance1@gmail.com,
- linux-kernel@vger.kernel.org, kernel-dev@igalia.com,
- linux-api@vger.kernel.org
-References: <20241024145735.162090-1-andrealmeid@igalia.com>
- <20241024145735.162090-2-andrealmeid@igalia.com>
- <bde852ec-8e2f-4957-9368-00d8e5a422c4@app.fastmail.com>
- <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
-Content-Language: en-US
-In-Reply-To: <1e62e083-f97c-4157-8d50-c3655edda97b@igalia.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-Em 24/10/2024 15:03, André Almeida escreveu:
-> Hi Arnd,
-> 
-> Em 24/10/2024 12:57, Arnd Bergmann escreveu:
->> On Thu, Oct 24, 2024, at 14:57, André Almeida wrote:
->>> This new syscall allows to set multiple list to the same process. There
->>> are two list types: 32 and 64 bit lists.
->>>
+Improve determination of whether authentication account is enabled by
+checking if either password or certificate is enabled.
 
-[...]
+Renamed valid to pwd_enabled for better readability.
 
->>> +    if (unlikely(!list_empty(list2))) {
->>> +        list_for_each_entry_safe(curr, n, list2, list) {
->>> +            if (curr->head != NULL) {
->>> +                if (curr->list_type == ROBUST_LIST_64BIT)
->>> +                    exit_robust_list(tsk, curr->head);
->>> +                else if (curr->list_type == ROBUST_LIST_32BIT)
->>> +                    compat_exit_robust_list(tsk, curr->head);
->>> +                curr->head = NULL;
->>> +            }
->>
->> This looks like the behavior of a 32-bit task using
->> ROBUST_LIST_64BIT is different on native 32-bit kernels
->> compared to running on compat mode.
->>
->> Assuming we want them to behave the same way, did you intend
->> ROBUST_LIST_64BIT to refer to 64-bit pointers on 32-bit
->> tasks, or should they use normal word-size pointers?
-> 
-> Oh right, I haven't covered that indeed. I think I would need to have 
-> something like:
-> 
-> static void exit_robust_list_64()
-> static void exit_robust_list_32()
-> 
-> And then each function would use explicit sizes for pointers. Also, I 
-> would rewrite the conditions to make that every combination of 64/32bit 
-> kernel/app calls the appropriated function.
+Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+---
+Changes in v2: No changes, version updated as part of series.
 
-Something like this:
+ drivers/platform/x86/think-lmi.c | 26 +++++++++++++-------------
+ drivers/platform/x86/think-lmi.h |  2 +-
+ 2 files changed, 14 insertions(+), 14 deletions(-)
 
-#ifdef CONFIG_64BIT
-	if (unlikely(tsk->robust_list)) {
-		exit_robust_list_64bit(tsk, tsk->robust_list);
-		tsk->robust_list = NULL;
-	}
-#else
-	if (unlikely(tsk->robust_list)) {
-		exit_robust_list_32bit(tsk, tsk->robust_list);
-		tsk->robust_list = NULL;
-	}
-#endif
-
-#ifdef CONFIG_COMPAT
-	if (unlikely(tsk->compat_robust_list)) {
-		exit_robust_32bit(tsk, tsk->compat_robust_list);
-		tsk->compat_robust_list = NULL;
-	}
-#endif
-
-	/* Simplified */
-	list_for_each_entry_safe(curr, n, list2, list) {
-		if (curr->list_type == ROBUST_LIST_64BIT)
-			exit_robust_list_64bit(tsk, curr->head);
-		else if (curr->list_type == ROBUST_LIST_32BIT)
-			exit_robust_list_32bit(tsk, curr->head);
-	}
+diff --git a/drivers/platform/x86/think-lmi.c b/drivers/platform/x86/think-lmi.c
+index 4cfb53206cb8..727a9400d406 100644
+--- a/drivers/platform/x86/think-lmi.c
++++ b/drivers/platform/x86/think-lmi.c
+@@ -391,7 +391,7 @@ static ssize_t is_enabled_show(struct kobject *kobj, struct kobj_attribute *attr
+ {
+ 	struct tlmi_pwd_setting *setting = to_tlmi_pwd_setting(kobj);
+ 
+-	return sysfs_emit(buf, "%d\n", setting->valid);
++	return sysfs_emit(buf, "%d\n", setting->pwd_enabled || setting->cert_installed);
+ }
+ 
+ static struct kobj_attribute auth_is_pass_set = __ATTR_RO(is_enabled);
+@@ -469,7 +469,7 @@ static ssize_t new_password_store(struct kobject *kobj,
+ 		if (ret)
+ 			goto out;
+ 
+-		if (tlmi_priv.pwd_admin->valid) {
++		if (tlmi_priv.pwd_admin->pwd_enabled) {
+ 			ret = tlmi_opcode_setting("WmiOpcodePasswordAdmin",
+ 					tlmi_priv.pwd_admin->password);
+ 			if (ret)
+@@ -777,7 +777,7 @@ static ssize_t certificate_store(struct kobject *kobj,
+ 				new_cert, setting->signature);
+ 	} else {
+ 		/* This is a fresh install */
+-		if (!setting->valid || !setting->password[0]) {
++		if (!setting->pwd_enabled || !setting->password[0]) {
+ 			kfree(new_cert);
+ 			return -EACCES;
+ 		}
+@@ -1019,7 +1019,7 @@ static ssize_t current_value_store(struct kobject *kobj,
+ 		 * Workstation's require the opcode to be set before changing the
+ 		 * attribute.
+ 		 */
+-		if (tlmi_priv.pwd_admin->valid && tlmi_priv.pwd_admin->password[0]) {
++		if (tlmi_priv.pwd_admin->pwd_enabled && tlmi_priv.pwd_admin->password[0]) {
+ 			ret = tlmi_opcode_setting("WmiOpcodePasswordAdmin",
+ 						  tlmi_priv.pwd_admin->password);
+ 			if (ret)
+@@ -1042,7 +1042,7 @@ static ssize_t current_value_store(struct kobject *kobj,
+ 		else
+ 			ret = tlmi_save_bios_settings("");
+ 	} else { /* old non-opcode based authentication method (deprecated) */
+-		if (tlmi_priv.pwd_admin->valid && tlmi_priv.pwd_admin->password[0]) {
++		if (tlmi_priv.pwd_admin->pwd_enabled && tlmi_priv.pwd_admin->password[0]) {
+ 			auth_str = kasprintf(GFP_KERNEL, "%s,%s,%s;",
+ 					tlmi_priv.pwd_admin->password,
+ 					encoding_options[tlmi_priv.pwd_admin->encoding],
+@@ -1215,7 +1215,7 @@ static ssize_t save_settings_store(struct kobject *kobj, struct kobj_attribute *
+ 			if (ret)
+ 				goto out;
+ 		} else if (tlmi_priv.opcode_support) {
+-			if (tlmi_priv.pwd_admin->valid && tlmi_priv.pwd_admin->password[0]) {
++			if (tlmi_priv.pwd_admin->pwd_enabled && tlmi_priv.pwd_admin->password[0]) {
+ 				ret = tlmi_opcode_setting("WmiOpcodePasswordAdmin",
+ 							  tlmi_priv.pwd_admin->password);
+ 				if (ret)
+@@ -1223,7 +1223,7 @@ static ssize_t save_settings_store(struct kobject *kobj, struct kobj_attribute *
+ 			}
+ 			ret = tlmi_save_bios_settings("");
+ 		} else { /* old non-opcode based authentication method (deprecated) */
+-			if (tlmi_priv.pwd_admin->valid && tlmi_priv.pwd_admin->password[0]) {
++			if (tlmi_priv.pwd_admin->pwd_enabled && tlmi_priv.pwd_admin->password[0]) {
+ 				auth_str = kasprintf(GFP_KERNEL, "%s,%s,%s;",
+ 						     tlmi_priv.pwd_admin->password,
+ 						     encoding_options[tlmi_priv.pwd_admin->encoding],
+@@ -1273,7 +1273,7 @@ static ssize_t debug_cmd_store(struct kobject *kobj, struct kobj_attribute *attr
+ 	if (!new_setting)
+ 		return -ENOMEM;
+ 
+-	if (tlmi_priv.pwd_admin->valid && tlmi_priv.pwd_admin->password[0]) {
++	if (tlmi_priv.pwd_admin->pwd_enabled && tlmi_priv.pwd_admin->password[0]) {
+ 		auth_str = kasprintf(GFP_KERNEL, "%s,%s,%s;",
+ 				tlmi_priv.pwd_admin->password,
+ 				encoding_options[tlmi_priv.pwd_admin->encoding],
+@@ -1637,14 +1637,14 @@ static int tlmi_analyze(void)
+ 		goto fail_clear_attr;
+ 
+ 	if (tlmi_priv.pwdcfg.core.password_state & TLMI_PAP_PWD)
+-		tlmi_priv.pwd_admin->valid = true;
++		tlmi_priv.pwd_admin->pwd_enabled = true;
+ 
+ 	tlmi_priv.pwd_power = tlmi_create_auth("pop", "power-on");
+ 	if (!tlmi_priv.pwd_power)
+ 		goto fail_clear_attr;
+ 
+ 	if (tlmi_priv.pwdcfg.core.password_state & TLMI_POP_PWD)
+-		tlmi_priv.pwd_power->valid = true;
++		tlmi_priv.pwd_power->pwd_enabled = true;
+ 
+ 	if (tlmi_priv.opcode_support) {
+ 		tlmi_priv.pwd_system = tlmi_create_auth("smp", "system");
+@@ -1652,7 +1652,7 @@ static int tlmi_analyze(void)
+ 			goto fail_clear_attr;
+ 
+ 		if (tlmi_priv.pwdcfg.core.password_state & TLMI_SMP_PWD)
+-			tlmi_priv.pwd_system->valid = true;
++			tlmi_priv.pwd_system->pwd_enabled = true;
+ 
+ 		tlmi_priv.pwd_hdd = tlmi_create_auth("hdd", "hdd");
+ 		if (!tlmi_priv.pwd_hdd)
+@@ -1670,7 +1670,7 @@ static int tlmi_analyze(void)
+ 			/* Check if PWD is configured and set index to first drive found */
+ 			if (tlmi_priv.pwdcfg.ext.hdd_user_password ||
+ 					tlmi_priv.pwdcfg.ext.hdd_master_password) {
+-				tlmi_priv.pwd_hdd->valid = true;
++				tlmi_priv.pwd_hdd->pwd_enabled = true;
+ 				if (tlmi_priv.pwdcfg.ext.hdd_master_password)
+ 					tlmi_priv.pwd_hdd->index =
+ 						ffs(tlmi_priv.pwdcfg.ext.hdd_master_password) - 1;
+@@ -1680,7 +1680,7 @@ static int tlmi_analyze(void)
+ 			}
+ 			if (tlmi_priv.pwdcfg.ext.nvme_user_password ||
+ 					tlmi_priv.pwdcfg.ext.nvme_master_password) {
+-				tlmi_priv.pwd_nvme->valid = true;
++				tlmi_priv.pwd_nvme->pwd_enabled = true;
+ 				if (tlmi_priv.pwdcfg.ext.nvme_master_password)
+ 					tlmi_priv.pwd_nvme->index =
+ 						ffs(tlmi_priv.pwdcfg.ext.nvme_master_password) - 1;
+diff --git a/drivers/platform/x86/think-lmi.h b/drivers/platform/x86/think-lmi.h
+index e1975ffebeb4..4728f40143a3 100644
+--- a/drivers/platform/x86/think-lmi.h
++++ b/drivers/platform/x86/think-lmi.h
+@@ -65,7 +65,7 @@ struct tlmi_pwdcfg {
+ /* password setting details */
+ struct tlmi_pwd_setting {
+ 	struct kobject kobj;
+-	bool valid;
++	bool pwd_enabled;
+ 	char password[TLMI_PWD_BUFSIZE];
+ 	const char *pwd_type;
+ 	const char *role;
+-- 
+2.47.0
 
 
