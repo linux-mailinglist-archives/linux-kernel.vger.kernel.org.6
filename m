@@ -1,99 +1,114 @@
-Return-Path: <linux-kernel+bounces-380394-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380395-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5AC599AEDD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:23:09 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EAED89AEDDA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:23:22 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2767F2884FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:23:08 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 28A671C203B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:23:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 666971FE106;
-	Thu, 24 Oct 2024 17:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F73D1FBF64;
+	Thu, 24 Oct 2024 17:23:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="CtNIwoQa";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="LRMrOuJM"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Eg2SDNWt"
+Received: from mail-pf1-f169.google.com (mail-pf1-f169.google.com [209.85.210.169])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F04281FE0ED;
-	Thu, 24 Oct 2024 17:22:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C485C1F80CC;
+	Thu, 24 Oct 2024 17:23:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729790543; cv=none; b=TBlkAqmX2gsLb4DQTiP7QOuF/alicv8K7ajeiztIfpNSXh1A9riax9a9gmpoZ+3nXLk7rnYIEACea2VJVlb+s4IbLUodQIHQ0nlikJ8bMW5fPWZM7E5/9ERIZSWqbFbLo1yggk5DnWQPY34Q7oJ5x6cMAwTFcBOKvFK5CFh3fLk=
+	t=1729790593; cv=none; b=ME90KMCzwnny2UjYbYBjXtsqQYQn3Uw7OrKe8g7gG+QXgU3E+UGBVe7U2gcDOh2ekZoe2PV/KXNvaoq81oWpDze1kv7yqjWLAuVUx+wlfbFVM4/ohW9Ni0VBTdwIN8TxbWerI21UKdc3xI37rdiHeLrNzXaPb3HbCSjcgpyI/cY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729790543; c=relaxed/simple;
-	bh=wIuVCwuQSmU9TT+eX/r6kAmocD1hUdlcNmxwdd/zI90=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=iBnaIcfgCdsBDPau9PZAU5RkDPxdwbDQHOm7GCAsa1kTmQkUIxttotQJBN3RhpDQGi8rfyp0jpVoUrFd9OaR01jTegqOwzh4q/daUgmtgY0mtJSLO1lwB59RgV2H1uo3g5rgul5z1suHjuRRzotimn3KHpKDOie5Nai9N5KQ5gk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=CtNIwoQa; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=LRMrOuJM; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-From: Thomas Gleixner <tglx@linutronix.de>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729790539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TbyQ/C9SYHe3bdpUj5IPx6bVXUYJHaelwqgH9B9vyKo=;
-	b=CtNIwoQatLcjHjHLFgb696snT0vMTnx02tc7ZoJWNowgXceusSOgVDg/SbQFiB6MCrzIei
-	EYYZt9kQFMrfdoYeF0MVVTseKxyXbSuhzw3yHG1H/mQhmcXr8Lq+VCYxXed9W6wCLqKKJE
-	edSQkQjWUn+7HyyHSBSanWRARyqDdbnVNWIR2MBK2EenZH5tcJzdQFvQBIu3Im5k9zn/1C
-	hKvRU8fEPuQ9KG5P5VErThnTb39+VezVrnDEJjSRAUBFerejz0hBUjWfPm6YSYUR5qyNo1
-	vc+8MV/f+Ov9YQ8xk3Rpk9dvWD5a4E63zBmvqDrJWoqmI7V8og6UX1uiW1uAeQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729790539;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=TbyQ/C9SYHe3bdpUj5IPx6bVXUYJHaelwqgH9B9vyKo=;
-	b=LRMrOuJM2taEpAtgcl7W4IdEOJ+ZoheVTXXOGixx/0FJirgFZGiTiaQEtIjqNShNjV41y6
-	qOCAhGGWf89gYmBA==
-To: Peter Zijlstra <peterz@infradead.org>
-Cc: Boqun Feng <boqun.feng@gmail.com>, Dirk Behme <dirk.behme@gmail.com>,
- Lyude Paul <lyude@redhat.com>, rust-for-linux@vger.kernel.org, Danilo
- Krummrich <dakr@redhat.com>, airlied@redhat.com, Ingo Molnar
- <mingo@redhat.com>, will@kernel.org, Waiman Long <longman@redhat.com>,
- linux-kernel@vger.kernel.org, Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor
- <alex.gaynor@gmail.com>, wedsonaf@gmail.com, Gary Guo <gary@garyguo.net>,
- =?utf-8?Q?Bj=C3=B6rn?= Roy Baron <bjorn3_gh@protonmail.com>, Benno Lossin
- <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@samsung.com>,
- aliceryhl@google.com, Trevor Gross <tmgross@umich.edu>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-In-Reply-To: <20241024100538.GE9767@noisy.programming.kicks-ass.net>
-References: <20241018055125.2784186-2-boqun.feng@gmail.com>
- <87a5eu7gvw.ffs@tglx>
- <20241023195152.GE11151@noisy.programming.kicks-ass.net>
- <877c9y7dwx.ffs@tglx>
- <20241024100538.GE9767@noisy.programming.kicks-ass.net>
-Date: Thu, 24 Oct 2024 19:22:19 +0200
-Message-ID: <87bjz95sc4.ffs@tglx>
+	s=arc-20240116; t=1729790593; c=relaxed/simple;
+	bh=vT7bWknks8WP9eKxqVDkKd3XZCZMDxZnVgxD5CpDSwk=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=ak9B3/SrvKgqPhTQOdEqFnSICIv7S4WEbtl8HQGf1IRAXvZW9nCcXnSXItzDkhNYgu0KsyqzsZ4bSEDXGG0cEP2JGV80CTqUrffDlLNueteMN00w0SPFtv89xEWjAz0P1awDEM1XqJfKwY682bZPSDJ+gRiPE/5YJaRuTrf9bk4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Eg2SDNWt; arc=none smtp.client-ip=209.85.210.169
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pf1-f169.google.com with SMTP id d2e1a72fcca58-720519c4e2eso90244b3a.0;
+        Thu, 24 Oct 2024 10:23:11 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729790591; x=1730395391; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=NBM71vD6WDqf0TCJvK6rWX4TDGTSUy4YN3C5hnGxHqo=;
+        b=Eg2SDNWtUUVOi2cQPitopPw8HStkGZL0TLwPJnU7pKHJa+oWAe9hKrRNxB/pcnZLsB
+         +MBhzthQlEU0iOfEvRk8TmfahgqqcBRa26IEOtkcqpe3C66G/A2VUh/qnPdywsQ+ulSn
+         b7ghCiGjM7vabhma5V3gXW0YB1RIgmyJTCX3/kgxSIv4C6ufJcTee7wMcpCpY7PJy3s2
+         1B8KtMKT3rRMxYe2rFJJU+FvkAwr9mGAmDEl/W/H7i1MyLz+CmDUMm8hn2tIH9B05zqY
+         2NwP6zd8igIG2ywMZN+W8ngL64us1IjL83XUweYEdqv/NzdBEUAiXXVrQz6T1+yM7rR1
+         oxJw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729790591; x=1730395391;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=NBM71vD6WDqf0TCJvK6rWX4TDGTSUy4YN3C5hnGxHqo=;
+        b=vOQkjVr0+PSHPwPQI9avv+jB1AoV/coHxETk5meVrhg8hGv6vbTQKW79JpjPu8V2uZ
+         XJAJxjqEHt2MrSefOwiuYfmGDBjonveMr6JrWQO7VDSIrx+H2xL/vZGxBgGrWxkbZmjv
+         6krwbgNAUJqO40pcP3dNFqrqKzYsbDA3v33DjoQkhlM4arspti8XQwC0NUKSq+Nkra6e
+         Y1O8IToSs5pW/LAeQGXmPFKoxmX4cl+NQ1pctGdMske2Tv1kUIqys7h6jJzlD2sv2HwF
+         v8W0chlxb9uP2PQySrLG4kpvrSFUTHfrPOtoxi8S5ox5a6PddM4VD7+Tk1O3pJcO/gPO
+         yubg==
+X-Forwarded-Encrypted: i=1; AJvYcCV07xMrnxEfstTTWqDQJOssn+zGqOSEQD3YFGs/TPjRGHr8Qufau0TgCKl3dds8Emg/xZDRT8B+w7OOM+E=@vger.kernel.org, AJvYcCWFJ3CamyP53mEtYYx/NMXeV4X+m9YeZ07LMrxdpfCr1RO8eIYriUI1GWyJ12n7P9yOgrn9ZAYkGmVwfR0e@vger.kernel.org
+X-Gm-Message-State: AOJu0YwgldfM7onpKlQYttnLPEsxmbEz6gMkgspKSO6EDKOGxulvjlUg
+	eJty6lPGt1pTreDL0V2BRyB00PlI5xxIECGfziM9LDI28Diod9un
+X-Google-Smtp-Source: AGHT+IGVo1RaZUfhxMDG2y4ONxaW9Mm/VearOH8rgYdvQwVVjjmjcPfVHGU0nhenMc+XNZBQnF7BEA==
+X-Received: by 2002:a05:6a00:3d43:b0:71e:8049:474e with SMTP id d2e1a72fcca58-72030bc178bmr9500663b3a.26.1729790590929;
+        Thu, 24 Oct 2024 10:23:10 -0700 (PDT)
+Received: from 2abb50c-lcedt.nvidia.com ([203.200.25.7])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132fef0sm8258816b3a.63.2024.10.24.10.23.08
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 10:23:10 -0700 (PDT)
+From: Shivam Chaudhary <cvam0000@gmail.com>
+To: richard.genoud@bootlin.com
+Cc: gregkh@linuxfoundation.org,
+	jirislaby@kernel.org,
+	nicolas.ferre@microchip.com,
+	alexandre.belloni@bootlin.com,
+	claudiu.beznea@tuxon.dev,
+	linux-kernel@vger.kernel.org,
+	linux-serial@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	Shivam Chaudhary <cvam0000@gmail.com>
+Subject: [PATCH] Typo: Fix typo in atmel_serial.c
+Date: Thu, 24 Oct 2024 22:53:00 +0530
+Message-Id: <20241024172300.968015-1-cvam0000@gmail.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24 2024 at 12:05, Peter Zijlstra wrote:
-> On Wed, Oct 23, 2024 at 10:38:38PM +0200, Thomas Gleixner wrote:
->> But if we want to support insanity then we make preempt count 64 bit and
->> be done with it. But no, I don't think that encouraging insanity is a
->> good thing.
->
-> The problem is that in most release builds the overflow will be silent
-> and cause spurious weirdness that is a pain in the arse to debug :/
->
-> That is my only concern -- making insane code crash hard is good, making
-> it silently mostly work but cause random weirdness is not.
+Corrected minor typo in atmel_serial.c
+- Fixed "retreives" to "retrieves"
 
-I wish we could come up with a lightweight check for that.
+Signed-off-by: Shivam Chaudhary <cvam0000@gmail.com>
+---
+ drivers/tty/serial/atmel_serial.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
 
-Thanks,
+diff --git a/drivers/tty/serial/atmel_serial.c b/drivers/tty/serial/atmel_serial.c
+index 09b246c9e389..bb1978db6939 100644
+--- a/drivers/tty/serial/atmel_serial.c
++++ b/drivers/tty/serial/atmel_serial.c
+@@ -1166,7 +1166,7 @@ static void atmel_rx_from_dma(struct uart_port *port)
+ 		port->icount.rx += count;
+ 	}
+ 
+-	/* USART retreives ownership of RX DMA buffer */
++	/* USART retrieves ownership of RX DMA buffer */
+ 	dma_sync_single_for_device(port->dev, atmel_port->rx_phys,
+ 				   ATMEL_SERIAL_RX_SIZE, DMA_FROM_DEVICE);
+ 
+-- 
+2.34.1
 
-        tglx
 
