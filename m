@@ -1,192 +1,435 @@
-Return-Path: <linux-kernel+bounces-379190-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379157-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2FF819ADB3F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:12:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 95F609ADACE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:13:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B33761F22D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:12:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3F3BB28325C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:13:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 905081714B5;
-	Thu, 24 Oct 2024 05:12:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AF9C7166315;
+	Thu, 24 Oct 2024 04:13:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b="EVLe2lpO"
-Received: from mailout2.samsung.com (mailout2.samsung.com [203.254.224.25])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="sxJsIQZ4"
+Received: from mail-oi1-f172.google.com (mail-oi1-f172.google.com [209.85.167.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EA5AA1C01
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:12:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=203.254.224.25
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 029ED1E51D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:13:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729746766; cv=none; b=trf4fUcUeoG/1yVBy5iDPON/gxTN8R2t73gMRNvjky5iPT/5Du5MexP0KIAzh5FjT/7eDIWy4Z7fwRZEfkXrSPaqJHr2ol9DGLd/lKn9GpRsmhUzEk3Gx3LMDd1eG01V70s5x6VvkINU6JPmUcKhLZ7+pr6AmmAewniGLhzZEr8=
+	t=1729743231; cv=none; b=k8j1RIPiXp7PcY29ZWCAacGTEpKZxJY6RIrZcNESd6jcSwsjvUk4dapN60tX9pZTj0KtwFvQPKTVTaRiIBXpgqQVYFDDkGV0ZT3CDPezcXITTOBChvnf34MCzCMVZms8kQfuOGzURlJ327M32iBp9zSA8EaVxwfA+hw9KfgFllw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729746766; c=relaxed/simple;
-	bh=QMHwjleCWdqJmffl09X8XxcLieRaYgHpBRHiOVAODVY=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:MIME-Version:
-	 Content-Type:References; b=mdiJ+u0XpA2fQvOBTuzqmnIOZ0nn54rWzaXXzp4C0tCKcSDtsFPpj3cZtJCkVWG9q7AujXi3t+NOYTrPoTRe6nWL4zH6C/bW5il+yvcx8tYKrDzrH7s+tojuaz8H44RVabDLBC3d2H04ZsPCUr0HsQ5ELlZsebskRGABpH+S/XM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com; spf=pass smtp.mailfrom=samsung.com; dkim=pass (1024-bit key) header.d=samsung.com header.i=@samsung.com header.b=EVLe2lpO; arc=none smtp.client-ip=203.254.224.25
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=samsung.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=samsung.com
-Received: from epcas5p2.samsung.com (unknown [182.195.41.40])
-	by mailout2.samsung.com (KnoxPortal) with ESMTP id 20241024051236epoutp02f49e7583ccaecd8a1b51b1c66ac96a4b~BS4KUrOXC0623706237epoutp02k
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:12:36 +0000 (GMT)
-DKIM-Filter: OpenDKIM Filter v2.11.0 mailout2.samsung.com 20241024051236epoutp02f49e7583ccaecd8a1b51b1c66ac96a4b~BS4KUrOXC0623706237epoutp02k
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=samsung.com;
-	s=mail20170921; t=1729746756;
-	bh=20NJUmqLwCb2XXrI7br3jpwrndagv7bAxQXw0ZBPwdw=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=EVLe2lpOm5TJ64fr4cGEw2+Jlnl41VQGhecLlxHcIhovvLyQpGU26/5EKWwlY2Zm+
-	 SDuzzu0tMZy89JvUxo00c/cNv1Cvi+Ia04k7Kqyo54lMiRhQcwQEdhnolnFmpPRNmq
-	 TdsazmiVYpYalu/oIf/IWa/LBzKWESvqe2m9rGRk=
-Received: from epsnrtp4.localdomain (unknown [182.195.42.165]) by
-	epcas5p3.samsung.com (KnoxPortal) with ESMTP id
-	20241024051235epcas5p3f10791adf8ae8cff9b5acbfd1d32f3ce~BS4J2YuPp1462214622epcas5p3r;
-	Thu, 24 Oct 2024 05:12:35 +0000 (GMT)
-Received: from epsmgec5p1new.samsung.com (unknown [182.195.38.181]) by
-	epsnrtp4.localdomain (Postfix) with ESMTP id 4XYvDb30Tfz4x9QK; Thu, 24 Oct
-	2024 05:12:31 +0000 (GMT)
-Received: from epcas5p1.samsung.com ( [182.195.41.39]) by
-	epsmgec5p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	69.6A.08574.F37D9176; Thu, 24 Oct 2024 14:12:31 +0900 (KST)
-Received: from epsmtrp1.samsung.com (unknown [182.195.40.13]) by
-	epcas5p1.samsung.com (KnoxPortal) with ESMTPA id
-	20241024023812epcas5p1e5798728def570cb57679eebdd742d7b~BQxW800j43055130551epcas5p1h;
-	Thu, 24 Oct 2024 02:38:12 +0000 (GMT)
-Received: from epsmgmc1p1new.samsung.com (unknown [182.195.42.40]) by
-	epsmtrp1.samsung.com (KnoxPortal) with ESMTP id
-	20241024023812epsmtrp1757909e7a598349e37b14d0a845ae2d2~BQxW8LAUq0664606646epsmtrp1u;
-	Thu, 24 Oct 2024 02:38:12 +0000 (GMT)
-X-AuditID: b6c32a44-6dbff7000000217e-01-6719d73f3f53
-Received: from epsmtip2.samsung.com ( [182.195.34.31]) by
-	epsmgmc1p1new.samsung.com (Symantec Messaging Gateway) with SMTP id
-	69.52.07371.413B9176; Thu, 24 Oct 2024 11:38:12 +0900 (KST)
-Received: from testpc11818.samsungds.net (unknown [109.105.118.18]) by
-	epsmtip2.samsung.com (KnoxPortal) with ESMTPA id
-	20241024023811epsmtip2d3692b7522bbf2b5914ba3084a2a39ce~BQxVzfvEs2454624546epsmtip2a;
-	Thu, 24 Oct 2024 02:38:11 +0000 (GMT)
-From: hexue <xue01.he@samsung.com>
-To: asml.silence@gmail.com, axboe@kernel.dk
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: Re: [PATCH v8] io_uring: releasing CPU resources when polling
-Date: Thu, 24 Oct 2024 10:38:05 +0800
-Message-Id: <20241024023805.1082769-1-xue01.he@samsung.com>
-X-Mailer: git-send-email 2.40.1
-In-Reply-To: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
+	s=arc-20240116; t=1729743231; c=relaxed/simple;
+	bh=/LdEXq8S4/A5JuQ1AuqSgQNBmzh0tundmfhY9kOKw4E=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=i/jt4ALComVUV8G72NRYtZI6xNcR+5zYVcIqBKqdtFAsTLMigtpczPk54yqrmN0FoWLDdkBpJSfks5PUw5FndloQqmHufDgUPZGYzImkkCwsEc6drrT3wlqFUsGo+tD+hNRJQW+mqne2mPGdyHAfTU3lX3TV/WWTG09a03EEcNs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=sxJsIQZ4; arc=none smtp.client-ip=209.85.167.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oi1-f172.google.com with SMTP id 5614622812f47-3e60966297fso350920b6e.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:13:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729743228; x=1730348028; darn=vger.kernel.org;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:from:to:cc:subject:date:message-id:reply-to;
+        bh=An8fd2BC5jpDla/l0aJnXpodQfRunSo+/SitiqMszDc=;
+        b=sxJsIQZ4Xt6SYypLbmh/gbXAsKVBZPceHrUDT/j/5xGEsMoBsTugWijYLqB+aUj/x2
+         r3io9APh+tzyrk8BhdObyuLrcWIYRL3IFuLd0mvj/gDMjSb9C0p+MoCIoVlp99/i/pRG
+         A+EzaiPotfPlf0lAzIMQLdvpVP2D0JbvuoolVttAf9D9j/AdF6rkIy6QcF6OkVxs6jTK
+         khT3LKKj1X23YJbI6DGE2+c2fCj7QH8srpRGQczty90amSujleM7MwZ9LpFaSFyFXTeZ
+         FTbvYD83ZIFrqJSYwU7PDypz7I4UOaBqCWgXfd2NndyZgtFyHQYmRIpWhpeYpFmQaKPa
+         zQCg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729743228; x=1730348028;
+        h=mime-version:references:message-id:in-reply-to:subject:cc:to:from
+         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=An8fd2BC5jpDla/l0aJnXpodQfRunSo+/SitiqMszDc=;
+        b=Jo2d1f8ZO6X0P1cpC/Op5hTlU9/uvOJU+/l9/zLc9qA59X/DWwCFm6VGDJfAittilg
+         5SZUF2OH3x42z+NsXzfgswOdMZ3nQoKluZQUnCj0Oy+uZ2GAU9cfYUVcUelslnHkBquw
+         IgC0jATnc2ebtvZTly1rs+4AI390GYWymQCDLD/2I8r9NsKr9RvINlLi+GxfRPhLIqXU
+         KN5AwggdeBIJq0RDgreAM7gBb5kIofEhnxCcOQCM8p4g6dgG0YbBO1sYg/RmMZILQjt7
+         jQmZPSfoU7tcfyvIAcwuHmkNt9EsMDsjwRjfIoyyXtPBjKjtZVUPG4T9TxZsyJV4nk7r
+         miMw==
+X-Forwarded-Encrypted: i=1; AJvYcCVKhvFVizC/rG7HpipNErl3JBG7A0XVsl0/A/tJeyhvpMAFw8+jgoL9EKnYvVCRlrU4NJdZNDmeH5E35Cw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxrpuy7qPSL/qQXrQJapNSO5dM09XuAZONn/F+G8uA0CWns3yWS
+	Kn6ymlivZ5YtpQyC9P6dQlZRpkojOvp3G9ycCdx7BYKOlXFypPXUqwH7pVBoTw==
+X-Google-Smtp-Source: AGHT+IG9LoVUSBsrjDvRDAGaa6M0hzzBKYZ/c60rMaA0qPUglbUq+TMXrkZwZNuzAM2H71+tNAgKIw==
+X-Received: by 2002:a05:6870:d8c9:b0:277:c113:5b26 with SMTP id 586e51a60fabf-28ccb75f302mr4841265fac.7.1729743227903;
+        Wed, 23 Oct 2024 21:13:47 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 586e51a60fabf-28c7925b9besm2884314fac.16.2024.10.23.21.13.45
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 21:13:46 -0700 (PDT)
+Date: Wed, 23 Oct 2024 21:13:44 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>, 
+    Wei Yang <richard.weiyang@gmail.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
+    Zi Yan <ziy@nvidia.com>, Chris Li <chrisl@kernel.org>, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH hotfix 2/2] mm/thp: fix deferred split unqueue naming and
+ locking
+In-Reply-To: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
+Message-ID: <7dc6b280-cd87-acd1-1124-e512e3d2217d@google.com>
+References: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFmpmk+LIzCtJLcpLzFFi42LZdlhTXdf+umS6we5dYhZzVm1jtFh9t5/N
-	4l3rORaLX913GS0u75rDZnF2wgdWBzaPnbPusntcPlvq0bdlFaPH501yASxR2TYZqYkpqUUK
-	qXnJ+SmZeem2St7B8c7xpmYGhrqGlhbmSgp5ibmptkouPgG6bpk5QLuVFMoSc0qBQgGJxcVK
-	+nY2RfmlJakKGfnFJbZKqQUpOQUmBXrFibnFpXnpenmpJVaGBgZGpkCFCdkZZ//3sBd8Eqk4
-	/l2ngXGXYBcjJ4eEgInEopMHmLsYuTiEBHYzShw4eYYdwvnEKNE2aQ1U5hujxJwLBxlhWhpv
-	7GKFSOxllFjz7ypUyw9GiTePdzGBVLEJKEns3/IBrENEQFti7f3tLCA2s4CVxNk5P8FsYQEv
-	ifcbj7OD2CwCqhI7/n1lBrF5BawlHrb8YoXYJi9xs2s/WJxTwFai/9c/NogaQYmTM59AzZSX
-	aN46mxmi/hG7xJRbWRC2i8SZBa+ZIGxhiVfHt7BD2FISL/vboOx8icnf10N9ViOxbvM7Fgjb
-	WuLflT1ANgfQfE2J9bv0IcKyElNPrWOCWMsn0fv7CdR4Xokd82BsJYklR1ZAjZSQ+D1hESvI
-	GAkBD4lv37ghQTWBUaLn/jb2CYwKs5B8MwvJN7MQNi9gZF7FKJlaUJybnppsWmCYl1oOj+Pk
-	/NxNjODUqOWyg/HG/H96hxiZOBgPMUpwMCuJ8F7MkEwX4k1JrKxKLcqPLyrNSS0+xGgKDO6J
-	zFKiyfnA5JxXEm9oYmlgYmZmZmJpbGaoJM77unVuipBAemJJanZqakFqEUwfEwenVAPThq8H
-	K3ZdmdqR5fX2kW/+/iendJ4GW76YZ9kgWHDUIVmj/oQC1+a0O1fndRReOXyjJvz82RmrI897
-	GK5LetqrE+tWlv/y/tdsx/Ny0z2yX96ve+fp4J8pcN6PW9LhlWB7bHBp1ueun5MqPwYoC0Te
-	WRDF6pAkEa088Xo0d39M+ZljJ6fMWvzxc6iYGtcZvu5YH/2NTBOT/NV0ko1c2oPDTtwybxXY
-	c8lkf/Kky1+/3Lx9e3PxpC/pEXps1zJN0j9Z25qHOB3KaXXn0g786Rc0s3Hqq47NZ+0OLdmo
-	tCvUTvXNBjcv3xuzc/J7tfj856y4rZ+nMqfnyxTTTPFDp0/MK3Q/z8//beG3bQxbCgOVWIoz
-	Eg21mIuKEwF3cKySFgQAAA==
-X-Brightmail-Tracker: H4sIAAAAAAAAA+NgFrrALMWRmVeSWpSXmKPExsWy7bCSvK7IZsl0g/0TpS3mrNrGaLH6bj+b
-	xbvWcywWv7rvMlpc3jWHzeLshA+sDmweO2fdZfe4fLbUo2/LKkaPz5vkAliiuGxSUnMyy1KL
-	9O0SuDLO/u9hL/gkUnH8u04D4y7BLkZODgkBE4nGG7tYuxi5OIQEdjNKvDv4kREiISGx49Ef
-	VghbWGLlv+fsEEXfGCXOTX/EDJJgE1CS2L/lA1iDiICuxNpNjWA2s4CNxM6WLewgtrCAl8T7
-	jcfBbBYBVYkd/76C9fIKWEs8bPkFtUBe4mbXfrA4p4CtRP+vf2xdjBxAy2wkFu6SgigXlDg5
-	8wkLSJhZQF1i/TwhiE3yEs1bZzNPYBSchaRqFkLVLCRVCxiZVzFKphYU56bnJhsWGOallusV
-	J+YWl+al6yXn525iBAe6lsYOxnvz/+kdYmTiYDzEKMHBrCTCezFDMl2INyWxsiq1KD++qDQn
-	tfgQozQHi5I4r+GM2SlCAumJJanZqakFqUUwWSYOTqkGJrWe4tmrLmUdyY9958hfK2dqmLBL
-	fA1TzHrWFz07Lzfpm5s4LDx2s+F+7dPZ+fOKTtZMlq4oDXrl7XmgLmtdN0e1kmv0uecd+rvs
-	2G4eWrWX8bobu//v1f2Lfp4+0bPj4nzNp/u65t2IkFW+c3LHjMKG+JNnFrgrbp0V3SHsFjHr
-	2HFhB8/jSu4L2L5nVsVPPGCo63uvY1JYxmfvJtM1EirWWQ82egUsTZxa0F4bXy/50PzCtg83
-	zWNPuhbOa95zLNvv4/Ji7u0eLX0x0vb1OxZPSHVjF3XN1Y4zddhsmB9xaqnDhL4dQrni/NFv
-	lZfq7TzN2nO7/qLxF4YnclPf5W80vrPuTsyO8HhLkaP3lViKMxINtZiLihMBHjsXkuMCAAA=
-X-CMS-MailID: 20241024023812epcas5p1e5798728def570cb57679eebdd742d7b
-X-Msg-Generator: CA
-Content-Type: text/plain; charset="utf-8"
-X-Sendblock-Type: REQ_APPROVE
-CMS-TYPE: 105P
-DLP-Filter: Pass
-X-CFilter-Loop: Reflected
-X-CMS-RootMailID: 20241024023812epcas5p1e5798728def570cb57679eebdd742d7b
-References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
-	<CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
+Content-Type: text/plain; charset=US-ASCII
 
-On 9/25/2024 12:12, Pavel Begunkov wrote:
->I don't have a strong opinion on the feature, but the open question
->we should get some decision on is whether it's really well applicable to
->a good enough set of apps / workloads, if it'll even be useful in the
->future and/or for other vendors, and if the merit outweighs extra
->8 bytes + 1 flag per io_kiocb and the overhead of 1-2 static key'able
->checks in hot paths.
+Recent changes are putting more pressure on THP deferred split queues:
+under load revealing long-standing races, causing list_del corruptions,
+"Bad page state"s and worse (I keep BUGs in both of those, so usually
+don't get to see how badly they end up without).  The relevant recent
+changes being 6.8's mTHP, 6.10's mTHP swapout, and 6.12's mTHP swapin,
+improved swap allocation, and underused THP splitting.
 
-IMHO, releasing some of the CPU resources during the polling
-process may be appropriate for some performance bottlenecks
-due to CPU resource constraints, such as some database
-applications, in addition to completing IO operations, CPU
-also needs to peocess data, like compression and decompression.
-In a high-concurrency state, not only polling takes up a lot of
-CPU time, but also operations like calculation and processing
-also need to compete for CPU time. In this case, the performance
-of the application may be difficult to improve.
+Before fixing locking: rename misleading folio_undo_large_rmappable(),
+which does not undo large_rmappable, to folio_unqueue_deferred_split(),
+which is what it does.  But that and its out-of-line __callee are mm
+internals of very limited usability: add comment and WARN_ON_ONCEs to
+check usage; and return a bool to say if a deferred split was unqueued,
+which can then be used in WARN_ON_ONCEs around safety checks (sparing
+callers the arcane conditionals in __folio_unqueue_deferred_split()).
 
-The MultiRead interface of Rocksdb has been adapted to io_uring,
-I used db_bench to construct a situation with high CPU pressure
-and compared the performance. The test configuration is as follows,
+Swapout: mem_cgroup_swapout() has been resetting folio->memcg_data 0
+without checking and unqueueing a THP folio from deferred split list;
+which is unfortunate, since the split_queue_lock depends on the memcg
+(when memcg is enabled); so swapout has been unqueueing such THPs later,
+when freeing the folio, using the pgdat's lock instead: potentially
+corrupting the memcg's list.  __remove_mapping() has frozen refcount to
+0 here, so no problem with calling folio_unqueue_deferred_split() before
+resetting memcg_data.
 
--------------------------------------------------------------------
-CPU Model 	Intel(R) Xeon(R) Platinum 8380 CPU @ 2.30GHz
-CPU Cores	8
-Memory		16G
-SSD			Samsung PM9A3
--------------------------------------------------------------------
+That goes back to 5.4 commit 87eaceb3faa5 ("mm: thp: make deferred split
+shrinker memcg aware"): which included a check on swapcache before adding
+to deferred queue (which can now be removed), but no check on deferred
+queue before adding THP to swapcache (maybe other circumstances prevented
+it at that time, but not now).
 
-Test case：
-./db_bench --benchmarks=multireadrandom,stats
---duration=60
---threads=4/8/16
---use_direct_reads=true
---db=/mnt/rocks/test_db
---wal_dir=/mnt/rocks/test_db
---key_size=4
---value_size=4096
--cache_size=0
--use_existing_db=1
--batch_size=256
--multiread_batched=true
--multiread_stride=0
-------------------------------------------------------
-Test result：
-			National	Optimization
-threads		ops/sec		ops/sec		CPU Utilization
-16			139300		189075		100%*8
-8			138639		133191		90%*8
-4			71475		68361		90%*8
-------------------------------------------------------
+Memcg-v1 move (deprecated): mem_cgroup_move_account() has been changing
+folio->memcg_data without checking and unqueueing a THP folio from the
+deferred list, sometimes corrupting "from" memcg's list, like swapout.
+Refcount is non-zero here, so folio_unqueue_deferred_split() can only be
+used in a WARN_ON_ONCE to validate the fix, which must be done earlier:
+mem_cgroup_move_charge_pte_range() first try to split the THP (splitting
+of course unqueues), or skip it if that fails.  Not ideal, but moving
+charge has been requested, and khugepaged should repair the THP later:
+nobody wants new custom unqueueing code just for this deprecated case.
 
-When the number of threads exceeds the number of CPU cores,the
-database throughput does not increase significantly. However,
-hybrid polling can releasing some CPU resources during the polling
-process, so that part of the CPU time can be used for frequent
-data processing and other operations, which speeds up the reading
-process, thereby improving throughput and optimizaing database
-performance.I tried different compression strategies and got
-results similar to the above table.(~30% throughput improvement)
+The 87eaceb3faa5 commit did have the code to move from one deferred list
+to another (but was not conscious of its unsafety while refcount non-0);
+but that was removed by 5.6 commit fac0516b5534 ("mm: thp: don't need
+care deferred split queue in memcg charge move path"), which argued that
+the existence of a PMD mapping guarantees that the THP cannot be on a
+deferred list.  I'm not sure if that was true at the time (swapcache
+remapped?), but it's clearly not true since 6.12 commit dafff3f4c850
+("mm: split underused THPs").
 
-As more database applications adapt to the io_uring engine, I think
-the application of hybrid poll may have potential in some scenarios.
---
-Xue
+[Note in passing: mem_cgroup_move_charge_pte_range() just skips mTHPs,
+large but not PMD-mapped: that's safe, but perhaps not intended: it's
+arguable whether the deprecated feature should be updated to work
+better with the new feature; but certainly not in this patch.]
+
+Backport to 6.11 should be straightforward. Earlier backports must take
+care that other _deferred_list fixes and dependencies are included.  It
+is unclear whether these fixes are realistically needed before 6.12.
+
+Fixes: 87eaceb3faa5 ("mm: thp: make deferred split shrinker memcg aware")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+Cc: <stable@vger.kernel.org>
+---
+ mm/huge_memory.c   | 35 +++++++++++++++++++++--------------
+ mm/internal.h      | 10 +++++-----
+ mm/memcontrol-v1.c | 25 +++++++++++++++++++++++++
+ mm/memcontrol.c    |  8 +++++---
+ mm/migrate.c       |  4 ++--
+ mm/page_alloc.c    |  4 +++-
+ mm/swap.c          |  4 ++--
+ mm/vmscan.c        |  4 ++--
+ 8 files changed, 65 insertions(+), 29 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index a1d345f1680c..dc7d5bb76495 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3588,10 +3588,27 @@ int split_folio_to_list(struct folio *folio, struct list_head *list)
+ 	return split_huge_page_to_list_to_order(&folio->page, list, ret);
+ }
+ 
+-void __folio_undo_large_rmappable(struct folio *folio)
++/*
++ * __folio_unqueue_deferred_split() is not to be called directly:
++ * the folio_unqueue_deferred_split() inline wrapper in mm/internal.h
++ * limits its calls to those folios which may have a _deferred_list for
++ * queueing THP splits, and that list is (racily observed to be) non-empty.
++ *
++ * It is unsafe to call folio_unqueue_deferred_split() until folio refcount is
++ * zero: because even when split_queue_lock is held, a non-empty _deferred_list
++ * might be in use on deferred_split_scan()'s unlocked on-stack list.
++ *
++ * If memory cgroups are enabled, split_queue_lock is in the mem_cgroup: it is
++ * therefore important to unqueue deferred split before changing folio memcg.
++ */
++bool __folio_unqueue_deferred_split(struct folio *folio)
+ {
+ 	struct deferred_split *ds_queue;
+ 	unsigned long flags;
++	bool unqueued = false;
++
++	WARN_ON_ONCE(folio_ref_count(folio));
++	WARN_ON_ONCE(!mem_cgroup_disabled() && !folio_memcg(folio));
+ 
+ 	ds_queue = get_deferred_split_queue(folio);
+ 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+@@ -3603,8 +3620,11 @@ void __folio_undo_large_rmappable(struct folio *folio)
+ 				      MTHP_STAT_NR_ANON_PARTIALLY_MAPPED, -1);
+ 		}
+ 		list_del_init(&folio->_deferred_list);
++		unqueued = true;
+ 	}
+ 	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
++
++	return unqueued;	/* useful for debug warnings */
+ }
+ 
+ /* partially_mapped=false won't clear PG_partially_mapped folio flag */
+@@ -3626,19 +3646,6 @@ void deferred_split_folio(struct folio *folio, bool partially_mapped)
+ 	if (!partially_mapped && !split_underused_thp)
+ 		return;
+ 
+-	/*
+-	 * The try_to_unmap() in page reclaim path might reach here too,
+-	 * this may cause a race condition to corrupt deferred split queue.
+-	 * And, if page reclaim is already handling the same folio, it is
+-	 * unnecessary to handle it again in shrinker.
+-	 *
+-	 * Check the swapcache flag to determine if the folio is being
+-	 * handled by page reclaim since THP swap would add the folio into
+-	 * swap cache before calling try_to_unmap().
+-	 */
+-	if (folio_test_swapcache(folio))
+-		return;
+-
+ 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+ 	if (partially_mapped) {
+ 		if (!folio_test_partially_mapped(folio)) {
+diff --git a/mm/internal.h b/mm/internal.h
+index 93083bbeeefa..16c1f3cd599e 100644
+--- a/mm/internal.h
++++ b/mm/internal.h
+@@ -639,11 +639,11 @@ static inline void folio_set_order(struct folio *folio, unsigned int order)
+ #endif
+ }
+ 
+-void __folio_undo_large_rmappable(struct folio *folio);
+-static inline void folio_undo_large_rmappable(struct folio *folio)
++bool __folio_unqueue_deferred_split(struct folio *folio);
++static inline bool folio_unqueue_deferred_split(struct folio *folio)
+ {
+ 	if (folio_order(folio) <= 1 || !folio_test_large_rmappable(folio))
+-		return;
++		return false;
+ 
+ 	/*
+ 	 * At this point, there is no one trying to add the folio to
+@@ -651,9 +651,9 @@ static inline void folio_undo_large_rmappable(struct folio *folio)
+ 	 * to check without acquiring the split_queue_lock.
+ 	 */
+ 	if (data_race(list_empty(&folio->_deferred_list)))
+-		return;
++		return false;
+ 
+-	__folio_undo_large_rmappable(folio);
++	return __folio_unqueue_deferred_split(folio);
+ }
+ 
+ static inline struct folio *page_rmappable_folio(struct page *page)
+diff --git a/mm/memcontrol-v1.c b/mm/memcontrol-v1.c
+index 81d8819f13cd..f8744f5630bb 100644
+--- a/mm/memcontrol-v1.c
++++ b/mm/memcontrol-v1.c
+@@ -848,6 +848,8 @@ static int mem_cgroup_move_account(struct folio *folio,
+ 	css_get(&to->css);
+ 	css_put(&from->css);
+ 
++	/* Warning should never happen, so don't worry about refcount non-0 */
++	WARN_ON_ONCE(folio_unqueue_deferred_split(folio));
+ 	folio->memcg_data = (unsigned long)to;
+ 
+ 	__folio_memcg_unlock(from);
+@@ -1217,7 +1219,9 @@ static int mem_cgroup_move_charge_pte_range(pmd_t *pmd,
+ 	enum mc_target_type target_type;
+ 	union mc_target target;
+ 	struct folio *folio;
++	bool tried_split_before = false;
+ 
++retry_pmd:
+ 	ptl = pmd_trans_huge_lock(pmd, vma);
+ 	if (ptl) {
+ 		if (mc.precharge < HPAGE_PMD_NR) {
+@@ -1227,6 +1231,27 @@ static int mem_cgroup_move_charge_pte_range(pmd_t *pmd,
+ 		target_type = get_mctgt_type_thp(vma, addr, *pmd, &target);
+ 		if (target_type == MC_TARGET_PAGE) {
+ 			folio = target.folio;
++			/*
++			 * Deferred split queue locking depends on memcg,
++			 * and unqueue is unsafe unless folio refcount is 0:
++			 * split or skip if on the queue? first try to split.
++			 */
++			if (!list_empty(&folio->_deferred_list)) {
++				spin_unlock(ptl);
++				if (!tried_split_before)
++					split_folio(folio);
++				folio_unlock(folio);
++				folio_put(folio);
++				if (tried_split_before)
++					return 0;
++				tried_split_before = true;
++				goto retry_pmd;
++			}
++			/*
++			 * So long as that pmd lock is held, the folio cannot
++			 * be racily added to the _deferred_list, because
++			 * __folio_remove_rmap() will find !partially_mapped.
++			 */
+ 			if (folio_isolate_lru(folio)) {
+ 				if (!mem_cgroup_move_account(folio, true,
+ 							     mc.from, mc.to)) {
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 2703227cce88..06df2af97415 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4629,9 +4629,6 @@ static void uncharge_folio(struct folio *folio, struct uncharge_gather *ug)
+ 	struct obj_cgroup *objcg;
+ 
+ 	VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
+-	VM_BUG_ON_FOLIO(folio_order(folio) > 1 &&
+-			!folio_test_hugetlb(folio) &&
+-			!list_empty(&folio->_deferred_list), folio);
+ 
+ 	/*
+ 	 * Nobody should be changing or seriously looking at
+@@ -4678,6 +4675,7 @@ static void uncharge_folio(struct folio *folio, struct uncharge_gather *ug)
+ 			ug->nr_memory += nr_pages;
+ 		ug->pgpgout++;
+ 
++		WARN_ON_ONCE(folio_unqueue_deferred_split(folio));
+ 		folio->memcg_data = 0;
+ 	}
+ 
+@@ -4789,6 +4787,9 @@ void mem_cgroup_migrate(struct folio *old, struct folio *new)
+ 
+ 	/* Transfer the charge and the css ref */
+ 	commit_charge(new, memcg);
++
++	/* Warning should never happen, so don't worry about refcount non-0 */
++	WARN_ON_ONCE(folio_unqueue_deferred_split(old));
+ 	old->memcg_data = 0;
+ }
+ 
+@@ -4975,6 +4976,7 @@ void mem_cgroup_swapout(struct folio *folio, swp_entry_t entry)
+ 	VM_BUG_ON_FOLIO(oldid, folio);
+ 	mod_memcg_state(swap_memcg, MEMCG_SWAP, nr_entries);
+ 
++	folio_unqueue_deferred_split(folio);
+ 	folio->memcg_data = 0;
+ 
+ 	if (!mem_cgroup_is_root(memcg))
+diff --git a/mm/migrate.c b/mm/migrate.c
+index df91248755e4..691f25ee2489 100644
+--- a/mm/migrate.c
++++ b/mm/migrate.c
+@@ -489,7 +489,7 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+ 		    folio_test_large_rmappable(folio)) {
+ 			if (!folio_ref_freeze(folio, expected_count))
+ 				return -EAGAIN;
+-			folio_undo_large_rmappable(folio);
++			folio_unqueue_deferred_split(folio);
+ 			folio_ref_unfreeze(folio, expected_count);
+ 		}
+ 
+@@ -514,7 +514,7 @@ static int __folio_migrate_mapping(struct address_space *mapping,
+ 	}
+ 
+ 	/* Take off deferred split queue while frozen and memcg set */
+-	folio_undo_large_rmappable(folio);
++	folio_unqueue_deferred_split(folio);
+ 
+ 	/*
+ 	 * Now we know that no one else is looking at the folio:
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 4b21a368b4e2..57f64b5d0004 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -2681,7 +2681,9 @@ void free_unref_folios(struct folio_batch *folios)
+ 		unsigned long pfn = folio_pfn(folio);
+ 		unsigned int order = folio_order(folio);
+ 
+-		folio_undo_large_rmappable(folio);
++		if (mem_cgroup_disabled())
++			folio_unqueue_deferred_split(folio);
++
+ 		if (!free_pages_prepare(&folio->page, order))
+ 			continue;
+ 		/*
+diff --git a/mm/swap.c b/mm/swap.c
+index 835bdf324b76..b8e3259ea2c4 100644
+--- a/mm/swap.c
++++ b/mm/swap.c
+@@ -121,7 +121,7 @@ void __folio_put(struct folio *folio)
+ 	}
+ 
+ 	page_cache_release(folio);
+-	folio_undo_large_rmappable(folio);
++	folio_unqueue_deferred_split(folio);
+ 	mem_cgroup_uncharge(folio);
+ 	free_unref_page(&folio->page, folio_order(folio));
+ }
+@@ -988,7 +988,7 @@ void folios_put_refs(struct folio_batch *folios, unsigned int *refs)
+ 			free_huge_folio(folio);
+ 			continue;
+ 		}
+-		folio_undo_large_rmappable(folio);
++		folio_unqueue_deferred_split(folio);
+ 		__page_cache_release(folio, &lruvec, &flags);
+ 
+ 		if (j != i)
+diff --git a/mm/vmscan.c b/mm/vmscan.c
+index eb4e8440c507..635d45745b73 100644
+--- a/mm/vmscan.c
++++ b/mm/vmscan.c
+@@ -1475,7 +1475,7 @@ static unsigned int shrink_folio_list(struct list_head *folio_list,
+ 		 */
+ 		nr_reclaimed += nr_pages;
+ 
+-		folio_undo_large_rmappable(folio);
++		folio_unqueue_deferred_split(folio);
+ 		if (folio_batch_add(&free_folios, folio) == 0) {
+ 			mem_cgroup_uncharge_folios(&free_folios);
+ 			try_to_unmap_flush();
+@@ -1863,7 +1863,7 @@ static unsigned int move_folios_to_lru(struct lruvec *lruvec,
+ 		if (unlikely(folio_put_testzero(folio))) {
+ 			__folio_clear_lru_flags(folio);
+ 
+-			folio_undo_large_rmappable(folio);
++			folio_unqueue_deferred_split(folio);
+ 			if (folio_batch_add(&free_folios, folio) == 0) {
+ 				spin_unlock_irq(&lruvec->lru_lock);
+ 				mem_cgroup_uncharge_folios(&free_folios);
+-- 
+2.35.3
 
