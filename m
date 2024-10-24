@@ -1,131 +1,106 @@
-Return-Path: <linux-kernel+bounces-379475-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379505-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B5F069ADF1F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:31:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 87C149ADF6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:45:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E44D41C2158B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:31:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2C571B21973
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:45:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A126F1AE01F;
-	Thu, 24 Oct 2024 08:31:02 +0000 (UTC)
-Received: from szxga06-in.huawei.com (szxga06-in.huawei.com [45.249.212.32])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AC95117334E;
+	Thu, 24 Oct 2024 08:45:29 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="JC30kHNi";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="2ytTFVcj"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DEF526F305;
-	Thu, 24 Oct 2024 08:30:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.32
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0E0921ABEC7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:45:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729758662; cv=none; b=kUXkgE6DISU5Tqu3dydJV7+6e+kTfe+kLb1muosJ0ItEOPKnez8lLsrzADx6KbeO3Sf9Wh83Bjg2//hrPJrX17O+vGp/xpYjvFwmQ8j0k6A614zQSjVxM6SfDeojioKpDE6Vb5eejoxGtEqzfQXMNBgGmdQNTBsHuEqNGoRb/2g=
+	t=1729759529; cv=none; b=J/O5JunO5EPcdZ47XfwzoZHQsiyP7W0NxBVMkU25gd2ZGtAqTHNAODqxWFplBDrr6gkN/x3n63/fx1/n/JqukQYmi8y9/JU44Bjn1tw+WyjFyyDQLyC5HUvaAuFH85hamUVSzKA9G/fJINNvgxAKGncJRHsiJa4rL3apLmCF4M0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729758662; c=relaxed/simple;
-	bh=mnuase4KjjRfWvoiy0xsaSM8UmdLqsG14Aah3SnoHwY=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=EeyZKHdb8DMDQAOyhPcIcRh9QM4OacALPgoiVlWdTyIn+xr3ZCFbuXWUVgC3U0/4cpvxMeBt69591OF9b39VUpy503nQE6d3a80vlHWjMpCcNJDa9q4KnWOsK87xF4onfL8CJnoBoKptokKiUZJjOJduxsOW+qq9VJB/cGROW9Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.32
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.234])
-	by szxga06-in.huawei.com (SkyGuard) with ESMTP id 4XYzdc5Y02z1ynPv;
-	Thu, 24 Oct 2024 16:31:00 +0800 (CST)
-Received: from kwepemf100008.china.huawei.com (unknown [7.202.181.222])
-	by mail.maildlp.com (Postfix) with ESMTPS id 4CFCD1400CB;
-	Thu, 24 Oct 2024 16:30:53 +0800 (CST)
-Received: from huawei.com (10.175.103.91) by kwepemf100008.china.huawei.com
- (7.202.181.222) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.11; Thu, 24 Oct
- 2024 16:30:52 +0800
-From: Zeng Heng <zengheng4@huawei.com>
-To: <bp@suse.de>, <javierm@redhat.com>, <ardb@kernel.org>,
-	<tzimmermann@suse.de>, <simona.vetter@ffwll.ch>
-CC: <linux-kernel@vger.kernel.org>, <bobo.shaobowang@huawei.com>,
-	<linux-efi@vger.kernel.org>
-Subject: [PATCH] drivers/firmware: Fix unused const variable 'efifb_fwnode_ops'
-Date: Thu, 24 Oct 2024 16:44:35 +0800
-Message-ID: <20241024084435.165333-1-zengheng4@huawei.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729759529; c=relaxed/simple;
+	bh=/cb8dRandN3tRUsDCeEuNU2eZjNgzVCCR9pi980E9JQ=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=eYvYYLcoKgRGjHJcHmjVMzA1viKz8CCK83OZUrXxg8C44wiMNh4XSA6vlNY7gjhOR9qhYP9dznYz4hfS6ZJagvPkUVb2Eut+/pOP/w+jff18oG2Hp+c9dabKiqbuwyuTePvWOvjM2SssZhDMsZ5ma775w5KRzhEDEPUzzQ+q9OI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=JC30kHNi; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=2ytTFVcj; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729759525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OHLdk91JF4v6KOCW/Nrx+CMImJeR1hvIiopQqYZpsps=;
+	b=JC30kHNiuTcISr4wEsAxXqaCoEd1QLSBI8X/duF1s/qTdub+TLVunKAJNZrPUdCdIv76Un
+	INgGHlX+sjBBeJ9iXO9PRMck0EI1qnjsMqqTVavKkkgTkqtBjdxc8rXKI5RxBXHEkc8qpF
+	/KlBhPdVCfs4boMpzrAHqOTPuJoGne2sEHjLnlaV9dHAXxv90SJ4Y4R3ZFSBC2gGmOFgj2
+	pqR3LZxaahhUfEBdgcMRkNsSAcrzEQK8MjlqOYh25jregcT0MjO3MI08AeyHw34yUNO2Lk
+	ZuWAoHaS6G1dS9jgB2w7D2YDfJ4WAGS4/r69LBU5wJCBIVmXAf/lBLOKxrLNiw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729759525;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=OHLdk91JF4v6KOCW/Nrx+CMImJeR1hvIiopQqYZpsps=;
+	b=2ytTFVcj1rJTzL3ZFVudQ3dbaS2m+PbxVy1olRuVvPletBxm0yI2gY8f3CwaPzsV15Pfjt
+	HYQSn1t/ffVgb+Cg==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
+ Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
+ Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 07/26] posix-timers: Add proper state tracking
+In-Reply-To: <ZxZU5ViCYadY6eOE@localhost.localdomain>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083835.670337048@linutronix.de>
+ <ZxZU5ViCYadY6eOE@localhost.localdomain>
+Date: Thu, 24 Oct 2024 10:45:24 +0200
+Message-ID: <87r0856g9n.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemf100008.china.huawei.com (7.202.181.222)
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Fix the following compilation warning:
+On Mon, Oct 21 2024 at 15:19, Frederic Weisbecker wrote:
 
-drivers/firmware/efi/sysfb_efi.c:345:39: warning:
-‘efifb_fwnode_ops’ defined but not used [-Wunused-const-variable=]
-  345 | static const struct fwnode_operations efifb_fwnode_ops = {
+> Le Tue, Oct 01, 2024 at 10:42:09AM +0200, Thomas Gleixner a =C3=A9crit :
+>> From: Thomas Gleixner <tglx@linutronix.de>
+>>=20
+>> Right now the state tracking is done by two struct members:
+>>=20
+>>  - it_active:
+>>      A boolean which tracks armed/disarmed state
+>>=20
+>>  - it_signal_seq:
+>>      A sequence counter which is used to invalidate settings
+>>      and prevent rearming
+>>=20
+>> Replace it_active with it_status and keep properly track about the states
+>> in one place.
+>>=20
+>> This allows to reuse it_signal_seq to track reprogramming, disarm and
+>
+> Did you mean it_status here?
 
-drivers/firmware/efi/sysfb_efi.c:238:35: warning:
-‘efifb_dmi_swap_width_height’ defined but not used
-[-Wunused-const-variable=]
-  238 | static const struct dmi_system_id
-	efifb_dmi_swap_width_height[] __initconst = {
+No. it_signal_seq is used to validate whether a queued, but not yet
+delivered signal, is valid or not. The sequence is stored in the signal
+when the signal is queued and compared to the sequence on delivery.
 
-drivers/firmware/efi/sysfb_efi.c:188:35: warning:
-‘efifb_dmi_system_table’ defined but not used
-[-Wunused-const-variable=]
-  188 | static const struct dmi_system_id
-	efifb_dmi_system_table[] __initconst = {
+Thanks,
 
-Only define the const variables when the CONFIG_EFI is enabled.
-
-Fixes: 8633ef82f101 ("drivers/firmware: consolidate EFI framebuffer setup for all arches")
-Signed-off-by: Zeng Heng <zengheng4@huawei.com>
----
- drivers/firmware/efi/sysfb_efi.c | 10 ++++++----
- 1 file changed, 6 insertions(+), 4 deletions(-)
-
-diff --git a/drivers/firmware/efi/sysfb_efi.c b/drivers/firmware/efi/sysfb_efi.c
-index cc807ed35aed..f75bfe9b197c 100644
---- a/drivers/firmware/efi/sysfb_efi.c
-+++ b/drivers/firmware/efi/sysfb_efi.c
-@@ -185,6 +185,7 @@ static int __init efifb_set_system(const struct dmi_system_id *id)
- 		&efifb_dmi_list[enumid]				\
- 	}
- 
-+#ifdef CONFIG_EFI
- static const struct dmi_system_id efifb_dmi_system_table[] __initconst = {
- 	EFIFB_DMI_SYSTEM_ID("Apple Computer, Inc.", "iMac4,1", M_I17),
- 	/* At least one of these two will be right; maybe both? */
-@@ -282,6 +283,7 @@ static const struct dmi_system_id efifb_dmi_swap_width_height[] __initconst = {
- 	},
- 	{},
- };
-+#endif
- 
- static bool efifb_overlaps_pci_range(const struct of_pci_range *range)
- {
-@@ -342,10 +344,6 @@ static int efifb_add_links(struct fwnode_handle *fwnode)
- 	return 0;
- }
- 
--static const struct fwnode_operations efifb_fwnode_ops = {
--	.add_links = efifb_add_links,
--};
--
- #ifdef CONFIG_EFI
- static struct fwnode_handle efifb_fwnode;
- 
-@@ -365,6 +363,10 @@ __init void sysfb_apply_efi_quirks(void)
- 	}
- }
- 
-+static const struct fwnode_operations efifb_fwnode_ops = {
-+	.add_links = efifb_add_links,
-+};
-+
- __init void sysfb_set_efifb_fwnode(struct platform_device *pd)
- {
- 	if (screen_info.orig_video_isVGA == VIDEO_TYPE_EFI && IS_ENABLED(CONFIG_PCI)) {
--- 
-2.25.1
-
+        tglx
 
