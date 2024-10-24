@@ -1,123 +1,200 @@
-Return-Path: <linux-kernel+bounces-379155-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379156-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CFD8C9ADAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:05:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 1BF549ADACD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:10:52 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 096581C21A7F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:05:04 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C351A1C219ED
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:10:47 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 29663165F16;
-	Thu, 24 Oct 2024 04:04:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F0CF0166315;
+	Thu, 24 Oct 2024 04:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="SRrpqxPD"
-Received: from mail-wm1-f45.google.com (mail-wm1-f45.google.com [209.85.128.45])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="A9VR1WRa"
+Received: from mail-oa1-f51.google.com (mail-oa1-f51.google.com [209.85.160.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B01A72C9A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:04:55 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 362191EB3D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:10:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729742698; cv=none; b=Li2b6Cun3uCjgv0qzznYdrF4i9tHpM0/GkFs9j3oH56LADEHtsWP92p3lUBKq83a8dhUSeBe7J9I8Qr+xSjKIzF3+NBDt8BoJVdcVvS28PsB8N3Oi6zfUogc8asdsU/RjIxmJO5JmvoxVudHB259Hx1yb9T7F2ToCmB/fiOkpcU=
+	t=1729743042; cv=none; b=UqhjcGUJSgfX/lW+LkqaQ6T/NxqT/Mnq8kxowD0QfoEyN4VCjItBW9KFDJ822ZrGA++Ty4VLhpjQdGPC9k7ofi6NfoCEEUvZaw7HJAJv8vnEhIh9sgGXUOQR0O+KUl22smXGIEWgEPPWZx2lXzJ7ETn3Wh05kpu1MDeirDYQ1ws=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729742698; c=relaxed/simple;
-	bh=ilDAU2ed+/RE/0w8213A9drNw3Mkja7sfuCZq+l3Zqw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=cs8VKJHaWMNGW1wB5uViAUbSrymjtCp3maTDnbE4gDZbv4b1dzK84veJQb07wAfwrhvCl/kLSf4Q/88qcAMpZhzCzdOsWWNF3lGZNZWg9wcBRD9+Gq+62Tkhb81b25U++XsP5vQC5+jplfTWN7fl2JZwzhFMqE5YiZlRJBF7xnc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=SRrpqxPD; arc=none smtp.client-ip=209.85.128.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wm1-f45.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so4552645e9.1
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:04:55 -0700 (PDT)
+	s=arc-20240116; t=1729743042; c=relaxed/simple;
+	bh=fGWa+CQAsSc+p5lStud76Dv7qi6VEHXlBoluDXnt+ZU=;
+	h=Date:From:To:cc:Subject:Message-ID:MIME-Version:Content-Type; b=Fy5Jypt4oYbPGqi1oyRMHiMbwSp5S+5AEnIe9ZSKPdrDFbD8yZrAUCzVGPmywqLgWPll08SdC6VUEvC7s9DQuXy1xSHSF8U1Q/uaDOyGSXbsEWMl0zGwoptRLnRhHo5ovNvfggYNqST0DGjwv38/+WzOPKNXLsP3wM3VIR83h9I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=A9VR1WRa; arc=none smtp.client-ip=209.85.160.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-oa1-f51.google.com with SMTP id 586e51a60fabf-288d74b3a91so356825fac.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:10:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729742694; x=1730347494; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=i2Ee+wYLrjeTPkZJqG2V+F1SrMBEJkzp1fICKTcr5UA=;
-        b=SRrpqxPDEbTvSv0Z1R+HRJItM3J2z0l2lvUX/3WFK75a31xDy/NLATlO1xKFiXEFKX
-         wdBbC9Pyi+QX0b7qi6Lke8x+7I56Muojo4HjsZofbYEs6MNmi7m/HxjFoW9ZtwdPPm35
-         8lHCVVPBe0Kyf5nVsF0UY9Ao587oi+q8eIXP1/E3i59x6EPL5RrYgHwelWW8tfQzGW3F
-         yJiL7/rhvtBwFATOIDM/Oy4h07oYk1ljTiOOxUXhn3I1grufGD8EsluWFpogx9CDr0RC
-         +35ne34kFty0Urv+juqHaOMWxB9RAr81pbkIauXYgHo8i4GQ0/m33sTVlSmu84Oo2M13
-         A5xg==
+        d=google.com; s=20230601; t=1729743039; x=1730347839; darn=vger.kernel.org;
+        h=mime-version:message-id:subject:cc:to:from:date:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=yn77C/xxzSi/PdOkEd//aGH6uiDZj6/qHoCDJkjxx3E=;
+        b=A9VR1WRaLuvISrxahaEXPK2uMrt/9RHZIoslP5wKiOYr1g+Kl+2kAxjD5d383oGEPD
+         3CkXcvzdraMTBRUDiWssPFYxvibPbbXSi4JTapS3nzJ/5Yk3FkS+hBGHQgVW79NjcIlS
+         qN9O4ufp8DCapX5+GfZdhX0TsuLusYOuxNkE3cNs0NhWtpmDdWpvZntf5X+zEIR2xukg
+         FMi8A4R4AipAXZ4I59lvsQcHw5hDwSlbpV7zJWmAQ4qUrgrWRECiuH2ONKRU9wOwp9HX
+         E0oFGAim0uGnGbtJfY3UVzPCbD/6GkVJpsZbJbIGDPvp+B0fgRotEELhVlhMDDDLNeRs
+         NehA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729742694; x=1730347494;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=i2Ee+wYLrjeTPkZJqG2V+F1SrMBEJkzp1fICKTcr5UA=;
-        b=Dsg6C6qhiWWut5M+V3q96siowMn3rmhRpWhF7KtWaM4mKKgbgVGHwBQMAXqBKu5pC+
-         x01+VPDqnv/M/kmlbNaJox3WKmlPZTCYCCoOozvWe+Fsq+NHVLGVmBvslNJ70bFactJt
-         tsm/ObZMTvXBz4sgkTIF+ranSJgFfG+mcktILeM66sSFjxCdbdFLKVRr3ZTNG/dgnj5i
-         u65p5YVPX7zqfOc4XB9BN2k0nSlDpUBRkjTzc074gB7umMdaWgBb+p5NMJ3yWw97OIDu
-         jFtzsUhTA3y2SgSK4aWOUYV5+Y5TVxOuGkfJugKm2G+b9KsPoP0geRpeBJbe8xhF0igY
-         P2cw==
-X-Forwarded-Encrypted: i=1; AJvYcCVJ5WOwMlLUZlWhyTYmH0p2SyjKbUgqLDrRgbkgrIq1DrGEU8mzzCsGdjRIhlx4Y1qRbpI6D9PEDaNTnFs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy298UXm0zrw4zBOuiPu4aCckt23D25sczNnlstbbCGXOSsnaMD
-	jnkV7IHFPOzaTFxVx2yruYJ922JEs2H7xbgNX/FOi9Gr4yFnZIEKlaYuGXUtxhtfGvbmapANXgp
-	W
-X-Google-Smtp-Source: AGHT+IGd/gB6y7xLOG2JG7hMBW5M5PHbk7MPG2s5coFekXkmwgszm0maUkXzdH+g6y3bzrC72Vbv1A==
-X-Received: by 2002:adf:fdcc:0:b0:37d:4a68:61a3 with SMTP id ffacd0b85a97d-37efcf86958mr2772664f8f.49.1729742693977;
-        Wed, 23 Oct 2024 21:04:53 -0700 (PDT)
-Received: from u94a (27-247-32-52.adsl.fetnet.net. [27.247.32.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb675eb1bdsm5158544a12.10.2024.10.23.21.04.51
+        d=1e100.net; s=20230601; t=1729743039; x=1730347839;
+        h=mime-version:message-id:subject:cc:to:from:date:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=yn77C/xxzSi/PdOkEd//aGH6uiDZj6/qHoCDJkjxx3E=;
+        b=Fpz0WFV8b8xEhb5cR8LK5hn4AIT2mjxSx+zISj1iHjBKHaoS3NASCW00WchPU7YZIk
+         MWatCZRP5SMTcXSZ7bRwuf7I6/wjH13OPWAKw7znw/L93FEQZzK4pLo4E+P/VsZUSY/t
+         TDvyF2cKYs3fUGOQo6XtW3kflk/u3DZraXBTUAEKDmeXh9mPipav/UH/k5wAbZvAySrq
+         6Zk5G7vxO0oZucX4GSrt6Pc5DzwFc+eYNlxa6IHmk7lpQnGkdx6sWLOlOn1OanfV/Krm
+         71dNHUkXdG94LfnWPKLg4FRicFgMaAQ9f5MoxMri4/TNLYwkT317LuEnCEu/nGTLGWmu
+         nOtQ==
+X-Forwarded-Encrypted: i=1; AJvYcCWFOx67uwYlS+7xlxuMIqynrFREmmGfbpT7YpokXwN5ZdXAyM1eJiGJcdunGyvDXlJe/NDtUQ9gZ17D7sw=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwBh6bciZyd3EeIHl9MGjWTOmsix+WB3y8XAdo4vUGOR+istRbK
+	OqhvvWTsTxEIunVhdmXqisU2Ernbmo0Fol3DM+e3HNbHtiQj05bv4Xm5MpWLRg==
+X-Google-Smtp-Source: AGHT+IGQwUlPD8ns9Utb2tr/HtMk8Wi4zrqUznuOyTeg9/Yu++uaYuMFy7qcbOdOO8AfMjUddXM2gw==
+X-Received: by 2002:a05:6870:a79b:b0:268:9f88:18ef with SMTP id 586e51a60fabf-28ced27ba4cmr529116fac.13.1729743039120;
+        Wed, 23 Oct 2024 21:10:39 -0700 (PDT)
+Received: from darker.attlocal.net (172-10-233-147.lightspeed.sntcca.sbcglobal.net. [172.10.233.147])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182eb3ec69sm2039774a34.22.2024.10.23.21.10.36
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 21:04:53 -0700 (PDT)
-Date: Thu, 24 Oct 2024 12:04:45 +0800
-From: Shung-Hsi Yu <shung-hsi.yu@suse.com>
-To: cve@kernel.org
-Cc: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, 
-	linux-kernel@vger.kernel.org
-Subject: Re: CVE-2024-50063: bpf: Prevent tail call between progs attached to
- different hooks
-Message-ID: <phyhoab337c2vgpfgtrjru2so6luvmymfrugdazacz3sk4to7n@nutpfnn4ivdx>
-References: <2024102136-CVE-2024-50063-1a59@gregkh>
+        Wed, 23 Oct 2024 21:10:37 -0700 (PDT)
+Date: Wed, 23 Oct 2024 21:10:20 -0700 (PDT)
+From: Hugh Dickins <hughd@google.com>
+To: Andrew Morton <akpm@linux-foundation.org>
+cc: Usama Arif <usamaarif642@gmail.com>, Yang Shi <shy828301@gmail.com>, 
+    Wei Yang <richard.weiyang@gmail.com>, 
+    "Kirill A. Shutemov" <kirill.shutemov@linux.intel.com>, 
+    Matthew Wilcox <willy@infradead.org>, David Hildenbrand <david@redhat.com>, 
+    Johannes Weiner <hannes@cmpxchg.org>, 
+    Baolin Wang <baolin.wang@linux.alibaba.com>, 
+    Barry Song <baohua@kernel.org>, Kefeng Wang <wangkefeng.wang@huawei.com>, 
+    Ryan Roberts <ryan.roberts@arm.com>, Nhat Pham <nphamcs@gmail.com>, 
+    Zi Yan <ziy@nvidia.com>, Chris Li <chrisl@kernel.org>, 
+    linux-kernel@vger.kernel.org, linux-mm@kvack.org
+Subject: [PATCH hotfix 1/2] mm/thp: fix deferred split queue not
+ partially_mapped
+Message-ID: <760237a3-69d6-9197-432d-0306d52c048a@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <2024102136-CVE-2024-50063-1a59@gregkh>
+Content-Type: text/plain; charset=US-ASCII
 
-On Mon, Oct 21, 2024 at 09:40:04PM GMT, Greg Kroah-Hartman wrote:
-> Description
-> ===========
-> 
-> In the Linux kernel, the following vulnerability has been resolved:
-> 
-> bpf: Prevent tail call between progs attached to different hooks
-> 
-> bpf progs can be attached to kernel functions, and the attached functions
-> can take different parameters or return different return values. If
-> prog attached to one kernel function tail calls prog attached to another
-> kernel function, the ctx access or return value verification could be
-> bypassed.
-...
-> This patch adds restriction for tail call to prevent such bypasses.
-> 
-> The Linux kernel CVE team has assigned CVE-2024-50063 to this issue.
-> 
-> 
-> Affected and fixed versions
-> ===========================
+Recent changes are putting more pressure on THP deferred split queues:
+under load revealing long-standing races, causing list_del corruptions,
+"Bad page state"s and worse (I keep BUGs in both of those, so usually
+don't get to see how badly they end up without).  The relevant recent
+changes being 6.8's mTHP, 6.10's mTHP swapout, and 6.12's mTHP swapin,
+improved swap allocation, and underused THP splitting.
 
-I do not know that exact commit that introduced the issue, but given
-that the fix addresses the following BPF program types:
-- BPF_PROG_TYPE_TRACING (v5.5)
-- BPF_PROG_TYPE_EXT (v5.6)
-- BPF_PROG_TYPE_STRUCT_OPS (v5.6)
-- BPF_PROG_TYPE_LSM (v5.7)
+The new unlocked list_del_init() in deferred_split_scan() is buggy.
+I gave bad advice, it looks plausible since that's a local on-stack
+list, but the fact is that it can race with a third party freeing or
+migrating the preceding folio (properly unqueueing it with refcount 0
+while holding split_queue_lock), thereby corrupting the list linkage.
 
-The earliest affected version possible should be v5.5.
+The obvious answer would be to take split_queue_lock there: but it has
+a long history of contention, so I'm reluctant to add to that. Instead,
+make sure that there is always one safe (raised refcount) folio before,
+by delaying its folio_put().  (And of course I was wrong to suggest
+updating split_queue_len without the lock: leave that until the splice.)
 
-> 	Fixed in 6.6.57 with commit 5d5e3b4cbe8e
-> 	Fixed in 6.11.4 with commit 88c2a10e6c17
-> 	Fixed in 6.12-rc1 with commit 28ead3eaabc1
-...
+And remove two over-eager partially_mapped checks, restoring those tests
+to how they were before: if uncharge_folio() or free_tail_page_prepare()
+finds _deferred_list non-empty, it's in trouble whether or not that folio
+is partially_mapped (and the flag was already cleared in the latter case).
+
+Fixes: dafff3f4c850 ("mm: split underused THPs")
+Signed-off-by: Hugh Dickins <hughd@google.com>
+---
+ mm/huge_memory.c | 21 +++++++++++++++++----
+ mm/memcontrol.c  |  3 +--
+ mm/page_alloc.c  |  5 ++---
+ 3 files changed, 20 insertions(+), 9 deletions(-)
+
+diff --git a/mm/huge_memory.c b/mm/huge_memory.c
+index 2fb328880b50..a1d345f1680c 100644
+--- a/mm/huge_memory.c
++++ b/mm/huge_memory.c
+@@ -3718,8 +3718,8 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 	struct deferred_split *ds_queue = &pgdata->deferred_split_queue;
+ 	unsigned long flags;
+ 	LIST_HEAD(list);
+-	struct folio *folio, *next;
+-	int split = 0;
++	struct folio *folio, *next, *prev = NULL;
++	int split = 0, removed = 0;
+ 
+ #ifdef CONFIG_MEMCG
+ 	if (sc->memcg)
+@@ -3775,15 +3775,28 @@ static unsigned long deferred_split_scan(struct shrinker *shrink,
+ 		 */
+ 		if (!did_split && !folio_test_partially_mapped(folio)) {
+ 			list_del_init(&folio->_deferred_list);
+-			ds_queue->split_queue_len--;
++			removed++;
++		} else {
++			/*
++			 * That unlocked list_del_init() above would be unsafe,
++			 * unless its folio is separated from any earlier folios
++			 * left on the list (which may be concurrently unqueued)
++			 * by one safe folio with refcount still raised.
++			 */
++			swap(folio, prev);
+ 		}
+-		folio_put(folio);
++		if (folio)
++			folio_put(folio);
+ 	}
+ 
+ 	spin_lock_irqsave(&ds_queue->split_queue_lock, flags);
+ 	list_splice_tail(&list, &ds_queue->split_queue);
++	ds_queue->split_queue_len -= removed;
+ 	spin_unlock_irqrestore(&ds_queue->split_queue_lock, flags);
+ 
++	if (prev)
++		folio_put(prev);
++
+ 	/*
+ 	 * Stop shrinker if we didn't split any page, but the queue is empty.
+ 	 * This can happen if pages were freed under us.
+diff --git a/mm/memcontrol.c b/mm/memcontrol.c
+index 7845c64a2c57..2703227cce88 100644
+--- a/mm/memcontrol.c
++++ b/mm/memcontrol.c
+@@ -4631,8 +4631,7 @@ static void uncharge_folio(struct folio *folio, struct uncharge_gather *ug)
+ 	VM_BUG_ON_FOLIO(folio_test_lru(folio), folio);
+ 	VM_BUG_ON_FOLIO(folio_order(folio) > 1 &&
+ 			!folio_test_hugetlb(folio) &&
+-			!list_empty(&folio->_deferred_list) &&
+-			folio_test_partially_mapped(folio), folio);
++			!list_empty(&folio->_deferred_list), folio);
+ 
+ 	/*
+ 	 * Nobody should be changing or seriously looking at
+diff --git a/mm/page_alloc.c b/mm/page_alloc.c
+index 8afab64814dc..4b21a368b4e2 100644
+--- a/mm/page_alloc.c
++++ b/mm/page_alloc.c
+@@ -961,9 +961,8 @@ static int free_tail_page_prepare(struct page *head_page, struct page *page)
+ 		break;
+ 	case 2:
+ 		/* the second tail page: deferred_list overlaps ->mapping */
+-		if (unlikely(!list_empty(&folio->_deferred_list) &&
+-		    folio_test_partially_mapped(folio))) {
+-			bad_page(page, "partially mapped folio on deferred list");
++		if (unlikely(!list_empty(&folio->_deferred_list))) {
++			bad_page(page, "on deferred list");
+ 			goto out;
+ 		}
+ 		break;
+-- 
+2.35.3
 
