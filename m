@@ -1,136 +1,130 @@
-Return-Path: <linux-kernel+bounces-379626-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379627-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 2BA109AE139
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:49 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id AA97F9AE13D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:43:02 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 62C001C21A83
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:48 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7034E2825DF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:43:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AAA6C1C07F3;
-	Thu, 24 Oct 2024 09:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563B61B4F0C;
+	Thu, 24 Oct 2024 09:40:39 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="kC8PGQTk"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hr76N39h"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0D13C1B85DF;
-	Thu, 24 Oct 2024 09:39:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A46B757FC;
+	Thu, 24 Oct 2024 09:40:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762788; cv=none; b=LewCy8mHVDsp4Ec50gAtwxJLdK0m0ie3KuIKu3GofvcTRrH7lGZMwkkNI17th1ArFdI4azN+/fAxdlFQqAH4EUji9E0HD+cvUjwPajMELVcSpunT2KVDCcTvHc8hQp9DMEb0T6S0POnv/Ie0B8+rBYZPV70ny9EKa3Db03TkUI8=
+	t=1729762838; cv=none; b=BbmjjVwK5JA4F9G/+f+LMpC3lFuEmj37Il4ZUO+Nnm2eIx/MIfFnTEYOUR4bmElfPvP3wGK2Eu7nKW1d7JVl8mjda72sLtLjRTGAVnc/fYg2Vs232oZsbTCAQWSBPOELPlkfsYyNPoM4m5AbezaK0mHt6wJiCmsi5z1lbWxOEr8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762788; c=relaxed/simple;
-	bh=FW20GfbGsGiLyvJNvG1nJse9qdrvhRn6b52CFWefg4Q=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IT+vav0GhaR2MsEM4aA2wITnRbyBxNynZEFLhp7+IKQEFxcFX4oqlwKN0vpBxtcLGDKEtV0RltvKKa8cYuEO73ETjQg2hrMbwrWPjHtv3keYUAJTowiT2YC6y9dyLu2kA25kJYPNRUYdSHO/jyQ2m22om9sihGi0Fdz9NWnjvg4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=kC8PGQTk; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D9009C4CEC7;
-	Thu, 24 Oct 2024 09:39:47 +0000 (UTC)
+	s=arc-20240116; t=1729762838; c=relaxed/simple;
+	bh=UgaClKqL89aOXGMXlS/Dbd/YI1FCmKhio1aXFNz6EXo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=duUD5YLnjcxE1eUNcmNFfXGHZZigjEbu4Pju8k4vaIHxk2JypgcmptGce21hN92ReTaEsDSiSb/w0ng4BwyIASu+yTuhdOeh6RkXbdvV+5LsAgiYZdpqkuRxpwp1X22X9HlHTlYPIp17WUfW8sVGcS6F+hSD4jvIq8BA1yyAKoc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hr76N39h; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAEC8C4CECC;
+	Thu, 24 Oct 2024 09:40:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729762787;
-	bh=FW20GfbGsGiLyvJNvG1nJse9qdrvhRn6b52CFWefg4Q=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=kC8PGQTkt5IOuz/Pu3XYtPeXa+PM7kkAL/22B5yDSVWVauNm9rXgn7qA50FIErOmc
-	 lqDrGI2vR/0hP+y5gHeP3ikcaLho8fae9pyP/+Ehf02JVNCnJolD9wv8K8ojWPe0Jc
-	 ITtsOS4YQpNygjD4uH8HdRG5b5rESWBJajMARIAAhSk2U20tGZHRWFw/nLUdguxan2
-	 UENGLYBvQRYxF0c6iCf7QDEWHWVXXPjy2mfJ7IrQ36goA+u6G/80OIFpeJ8LQplTcw
-	 XXLdgWEn7Yk6Voj4VvLtNsSX1HMY/o2LBJ6z0jg9TghP/f1PQwSE6JqC4cahMzQRyR
-	 0tdocDku5BadA==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t3uJl-006OWJ-Kg;
-	Thu, 24 Oct 2024 10:39:45 +0100
-Date: Thu, 24 Oct 2024 10:39:45 +0100
-Message-ID: <86v7xh3km6.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	corbet@lwn.net,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] Documentation: Update the behaviour of "kvm-arm.mode"
-In-Reply-To: <20241023171244.4031151-1-smostafa@google.com>
-References: <20241023171244.4031151-1-smostafa@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1729762838;
+	bh=UgaClKqL89aOXGMXlS/Dbd/YI1FCmKhio1aXFNz6EXo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=Hr76N39hIJnuV3Z0taZKpbHfbWAQNv0lBI1UIefW9N9FfjUfMdCU8N0dK54cU5Z3X
+	 RFvlAA22N7+W703w7T6/pZ3HLckc0cqQmklwu5W9CQEXcnXNxalp10zYUOzbbt7ZA0
+	 uWrxc6UyoSi1qkyjS7vG2sfFK3EYduIngs4h186sl4axNCSpEHBx4mJwNy5cw3uood
+	 Ms6l+2ls8aDgxOXdyAhvz7PsMwUZ+v1s7ZMvyrf5+TPl8oovULEl2KmIRw2CdKhDsU
+	 qfsPRlLkmNV+MpNfQyD0H+Lz0kfQoCgwTpxEuXD3IOUH0FtQqH27XLFsh0T4cSp/GW
+	 x7s+tmNRelB2w==
+Message-ID: <7be853cb-6a8a-457b-9e70-0c962ab0df0c@kernel.org>
+Date: Thu, 24 Oct 2024 11:40:32 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: smostafa@google.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, corbet@lwn.net, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v5 1/2] dt-bindings: i2c: pca954x: Add timeout reset
+ property
+To: "Wojciech Siudy (Nokia)" <wojciech.siudy@nokia.com>
+Cc: Rob Herring <robh@kernel.org>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
+ "peda@axentia.se" <peda@axentia.se>
+References: <20241018100338.19420-1-wojciech.siudy@nokia.com>
+ <20241018100338.19420-2-wojciech.siudy@nokia.com>
+ <20241018135314.GA91900-robh@kernel.org>
+ <DB6PR07MB35091425FE5CBCD782B465A69D412@DB6PR07MB3509.eurprd07.prod.outlook.com>
+ <pkse4jc6muqwo4zrvb6auhcdv4zrt6zd5zmp4yea5usagw62o3@lgzwggtz4uv3>
+ <DB6PR07MB350922B1A1458EE3D7EB3F019D4E2@DB6PR07MB3509.eurprd07.prod.outlook.com>
+ <655e9afc-cfe9-4b52-8308-7ffe1011e6d5@kernel.org>
+ <DB6PR07MB3509F0612D61254728D49D279D4E2@DB6PR07MB3509.eurprd07.prod.outlook.com>
+Content-Language: en-US
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <DB6PR07MB3509F0612D61254728D49D279D4E2@DB6PR07MB3509.eurprd07.prod.outlook.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-Hi Mostafa,
+On 24/10/2024 11:18, Wojciech Siudy (Nokia) wrote:
+> No, I reset pac954x chip in pca954x driver.
 
-On Wed, 23 Oct 2024 18:12:43 +0100,
-Mostafa Saleh <smostafa@google.com> wrote:
-> 
-> Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
-> VHE support") modified the behaviour of "kvm-arm.mode=protected" without
-> the updating the kernel parameters doc.
-> 
-> Update it to match the current implementation.
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 6 +++++-
->  1 file changed, 5 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index bb48ae24ae69..59a0dd7e2de6 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2723,8 +2723,12 @@
->  			nvhe: Standard nVHE-based mode, without support for
->  			      protected guests.
->  
-> -			protected: nVHE-based mode with support for guests whose
-> +			protected: hVHE-based mode with support for guests whose
->  				   state is kept private from the host.
-> +				   In case hVHE is not supported in hardware, it will
+How useful is such context? That's the last reply here, I am not going
+to waste more time on such style.
 
-nit: it is VHE that is supported or not, hVHE is only a SW concept.
+All my earlier comments stay valid. You have shared reset and you want
+some hacks to avoid that problem. I gave you the solution.
 
-> +				   boot with protected nVHE.
-> +				   nVHE protected mode can still be forced on VHE systems
-> +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
+Best regards,
+Krzysztof
 
-This opens another question: none of the arm_sw.*, nor any of the
-id_aa64* parameters are described (basically, anything that's in
-arch/arm64/kernel/pi/id_override.c). What should we do about these?
-
-
-
->
->  			nested: VHE-based mode with support for nested
->  				virtualization. Requires at least ARMv8.3
-
-Huh, another nit to fix. We only support nested with ARMv8.4 (with
-FEAT_NV2), as the ARMv8.3 version (the original FEAT_NV) is too ugly
-for words.
-
-Mind addressing this?
-
-Thanks!
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
 
