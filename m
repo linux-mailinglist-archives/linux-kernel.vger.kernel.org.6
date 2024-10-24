@@ -1,88 +1,134 @@
-Return-Path: <linux-kernel+bounces-379645-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379646-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E99E99AE17A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:53:18 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2644B9AE18A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:54:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 253031C2233A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:53:18 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9EFBB1F218E5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:54:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A729F1B6CF7;
-	Thu, 24 Oct 2024 09:53:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 424DC1B6CF7;
+	Thu, 24 Oct 2024 09:54:38 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Nj7XHmSM"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b="sSGMn5AY"
+Received: from smtp-fw-80007.amazon.com (smtp-fw-80007.amazon.com [99.78.197.218])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D07FD1AF0DA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:53:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 742223D97A;
+	Thu, 24 Oct 2024 09:54:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=99.78.197.218
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763584; cv=none; b=EPTNxnbI769gETRji6Nd3ysbWQ1nSJCT76ZF26E+OTNBfkruupxiRwLVXUce2DMtj9M5PDLA6AopmBtmn8awwfEnZ2q2ctiq9MyUmJZeaCk+Y0pGlOrZSwUpTpRRFZM3B7sWFDl7liim48lRVDv7Sl8gGtYUG1Ee0x6eY6bba3k=
+	t=1729763677; cv=none; b=iBcPv0S+5M+ETukuxxeWjrNHn3kKhJ4wjv1K2JFY7XR5KdxK6EK0F+z/WI46IFHL6CNrMDHJxRfM+M79vhbAv/lk8MALyKNJ/6FeXFGtHXGP5t4Da63eCQRpVOOtL3fHl7f1UGGWk9cOa97sBIKjfaTa947AKjirENlcgCP4OuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729763584; c=relaxed/simple;
-	bh=aN8MrCnwlE8K2TmnO3260QbfP25Pc+jBcq2HtLctFss=;
-	h=From:In-Reply-To:References:Cc:Subject:MIME-Version:Content-Type:
-	 Date:Message-ID; b=TLEJhclHCH6hYdaiJDtHKh0uQBMz4AY7PDv8JUqMTxx+cANrruqGdTuQ3JGfDEbZK67mypFKxOUIBn0T/VmxCQjuwi0rwj57JXrpQd0j176rC7zd+HEKsBWoIZmq+dI0gEdwNqyEYWZLyZR4JE41mckgiR05jkGxovRcGS0rzJE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Nj7XHmSM; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729763579;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:to:
-	 cc:cc:mime-version:mime-version:content-type:content-type:
-	 in-reply-to:in-reply-to:references:references;
-	bh=aN8MrCnwlE8K2TmnO3260QbfP25Pc+jBcq2HtLctFss=;
-	b=Nj7XHmSMkUpZQYKWvpzOcmV6BfnCiWIOkpzGQQScZvBohz0ejBWbroN2hhjG+I0lL6rqEr
-	rYh260iNLOutSoig8sereZP3ehWd54VDW1NCthdCL/UrGcrsC6tfYomXNlvMI9+KPhnKiA
-	GfFmNp4b9mySiUAp2a0oHBdMHwn43Fs=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
- (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
- relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-569-5E1Ye8RMN_a1yUPNjHmeBg-1; Thu,
- 24 Oct 2024 05:52:56 -0400
-X-MC-Unique: 5E1Ye8RMN_a1yUPNjHmeBg-1
-Received: from mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.17])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 1498C1956048;
-	Thu, 24 Oct 2024 09:52:55 +0000 (UTC)
-Received: from warthog.procyon.org.uk (unknown [10.42.28.231])
-	by mx-prod-int-05.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 309D81956056;
-	Thu, 24 Oct 2024 09:52:52 +0000 (UTC)
-Organization: Red Hat UK Ltd. Registered Address: Red Hat UK Ltd, Amberley
-	Place, 107-111 Peascod Street, Windsor, Berkshire, SI4 1TE, United
-	Kingdom.
-	Registered in England and Wales under Company Registration No. 3798903
-From: David Howells <dhowells@redhat.com>
-In-Reply-To: <3340431.1729680010@warthog.procyon.org.uk>
-References: <3340431.1729680010@warthog.procyon.org.uk>
-Cc: dhowells@redhat.com, Marc Dionne <marc.dionne@auristor.com>,
-    linux-afs@lists.infradead.org, linux-fsdevel@vger.kernel.org,
-    linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] afs: Fix missing subdir edit when renamed between parent dirs
+	s=arc-20240116; t=1729763677; c=relaxed/simple;
+	bh=x2UavDE92BDv5s+BCjcYORa//OWbbb8+5xxnuc/JyAg=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=SaUKB6NYJ/N7KFbWRVKaBl1ZPH1UjF/16thuJ6WmtDSSRvCtiL0ac8c8TNTPv4Z0Vq/5YmoASLU8NyB8Dbx6aPbmr+Vr096eavzF+75na2kLXe8g50MBYOlTafbqHKKXM8GJUkcluf7od64ZoVXAZF3MTnd1emD3gqY91eT8kyI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com; spf=pass smtp.mailfrom=amazon.co.uk; dkim=pass (1024-bit key) header.d=amazon.com header.i=@amazon.com header.b=sSGMn5AY; arc=none smtp.client-ip=99.78.197.218
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amazon.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amazon.co.uk
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+  d=amazon.com; i=@amazon.com; q=dns/txt; s=amazon201209;
+  t=1729763676; x=1761299676;
+  h=from:to:cc:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=uSRSILRaUqOQk+d0fn6fIQaBj6XiKKtO7Jq3IIN/vcw=;
+  b=sSGMn5AYHdKl++45dw7YZEWbehh5av5OP+2a3KYpuUPl/MsYzaZwQyuQ
+   Jpl5P0GpXCHO93LSm3cwhy0KGcNgnXU/WZqf6ProzYaZVQ0KhIA+BSlya
+   2vNy3QDbJ9abZW5RtfVdFyoaCB/IBXjPqNr0mVPF9Zuh/aTqy8D1t4NBl
+   0=;
+X-IronPort-AV: E=Sophos;i="6.11,228,1725321600"; 
+   d="scan'208";a="346285138"
+Received: from pdx4-co-svc-p1-lb2-vlan2.amazon.com (HELO smtpout.prod.us-west-2.prod.farcaster.email.amazon.dev) ([10.25.36.210])
+  by smtp-border-fw-80007.pdx80.corp.amazon.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 09:54:33 +0000
+Received: from EX19MTAUWC001.ant.amazon.com [10.0.38.20:62460]
+ by smtpin.naws.us-west-2.prod.farcaster.email.amazon.dev [10.0.43.134:2525] with esmtp (Farcaster)
+ id 701ab77b-f7dc-4389-9913-914fa0c58c0b; Thu, 24 Oct 2024 09:54:32 +0000 (UTC)
+X-Farcaster-Flow-ID: 701ab77b-f7dc-4389-9913-914fa0c58c0b
+Received: from EX19D020UWC004.ant.amazon.com (10.13.138.149) by
+ EX19MTAUWC001.ant.amazon.com (10.250.64.174) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 24 Oct 2024 09:54:32 +0000
+Received: from EX19MTAUWB001.ant.amazon.com (10.250.64.248) by
+ EX19D020UWC004.ant.amazon.com (10.13.138.149) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id 15.2.1258.34;
+ Thu, 24 Oct 2024 09:54:32 +0000
+Received: from email-imr-corp-prod-pdx-all-2c-d1311ce8.us-west-2.amazon.com
+ (10.25.36.214) by mail-relay.amazon.com (10.250.64.254) with Microsoft SMTP
+ Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA) id
+ 15.2.1258.34 via Frontend Transport; Thu, 24 Oct 2024 09:54:32 +0000
+Received: from dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com (dev-dsk-kalyazin-1a-a12e27e2.eu-west-1.amazon.com [172.19.103.116])
+	by email-imr-corp-prod-pdx-all-2c-d1311ce8.us-west-2.amazon.com (Postfix) with ESMTPS id 3591C40637;
+	Thu, 24 Oct 2024 09:54:30 +0000 (UTC)
+From: Nikita Kalyazin <kalyazin@amazon.com>
+To: <pbonzini@redhat.com>, <corbet@lwn.net>, <kvm@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <linux-kernel@vger.kernel.org>
+CC: <jthoughton@google.com>, <brijesh.singh@amd.com>, <michael.roth@amd.com>,
+	<graf@amazon.de>, <jgowans@amazon.com>, <roypat@amazon.co.uk>,
+	<derekmn@amazon.com>, <nsaenz@amazon.es>, <xmarcalx@amazon.com>,
+	<kalyazin@amazon.com>
+Subject: [RFC PATCH 0/4] KVM: ioctl for populating guest_memfd
+Date: Thu, 24 Oct 2024 09:54:25 +0000
+Message-ID: <20241024095429.54052-1-kalyazin@amazon.com>
+X-Mailer: git-send-email 2.40.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="us-ascii"
-Content-ID: <3570557.1729763571.1@warthog.procyon.org.uk>
-Date: Thu, 24 Oct 2024 10:52:51 +0100
-Message-ID: <3570558.1729763571@warthog.procyon.org.uk>
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.17
+Content-Transfer-Encoding: 7bit
+Content-Type: text/plain
 
-David Howells <dhowells@redhat.com> wrote:
+Firecracker currently allows to populate guest memory from a separate
+process via UserfaultFD [1].  This helps keep the VMM codebase and
+functionality concise and generic, while offloading the logic of
+obtaining guest memory to another process.  UserfaultFD is currently not
+supported for guest_memfd, because it binds to a VMA, while guest_memfd
+does not need to (or cannot) be necessarily mapped to userspace,
+especially for private memory.  [2] proposes an alternative to
+UserfaultFD for intercepting stage-2 faults, while this series
+conceptually compliments it with the ability to populate guest memory
+backed by guest_memfd for `KVM_X86_SW_PROTECTED_VM` VMs.
 
-> cc: David Howells <dhowells@redhat.com>
+Patches 1-3 add a new ioctl, `KVM_GUEST_MEMFD_POPULATE`, that uses a
+vendor-agnostic implementation of `post_populate` callback.
 
-That should, of course, be:
+Patch 4 allows to call the ioctl from a separate (non-VMM) process.  It
+has been prohibited by [3], but I have not been able to locate the exact
+justification for the requirement.
 
-Signed-off-by: David Howells <dhowells@redhat.com>
+Questions:
+ - Does exposing a generic population interface via ioctl look
+   sensible in this form?
+ - Is there a path where "only VMM can call KVM API" requirement is
+   relaxed? If not, what is the recommended efficient alternative for
+   populating guest memory from outside the VMM?
+
+[1]: https://github.com/firecracker-microvm/firecracker/blob/main/docs/snapshotting/handling-page-faults-on-snapshot-resume.md
+[2]: https://lore.kernel.org/kvm/CADrL8HUHRMwUPhr7jLLBgD9YLFAnVHc=N-C=8er-x6GUtV97pQ@mail.gmail.com/T/
+[3]: https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/commit/?id=6d4e4c4fca5be806b888d606894d914847e82d78
+
+Nikita
+
+Nikita Kalyazin (4):
+  KVM: guest_memfd: add generic post_populate callback
+  KVM: add KVM_GUEST_MEMFD_POPULATE ioctl for guest_memfd
+  KVM: allow KVM_GUEST_MEMFD_POPULATE in another mm
+  KVM: document KVM_GUEST_MEMFD_POPULATE ioctl
+
+ Documentation/virt/kvm/api.rst | 23 +++++++++++++++++++++++
+ include/linux/kvm_host.h       |  3 +++
+ include/uapi/linux/kvm.h       |  9 +++++++++
+ virt/kvm/guest_memfd.c         | 28 ++++++++++++++++++++++++++++
+ virt/kvm/kvm_main.c            | 19 ++++++++++++++++++-
+ 5 files changed, 81 insertions(+), 1 deletion(-)
+
+
+base-commit: c8d430db8eec7d4fd13a6bea27b7086a54eda6da
+-- 
+2.40.1
 
 
