@@ -1,211 +1,270 @@
-Return-Path: <linux-kernel+bounces-379258-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 822619ADC1B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:23:04 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B4D2F9ADC20
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:25:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3C36E280E27
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:23:03 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B300CB22C8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:25:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 74F2718593A;
-	Thu, 24 Oct 2024 06:22:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3010E189BB3;
+	Thu, 24 Oct 2024 06:24:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="A9IyW3Cu"
-Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Yw5ySWQ+"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4450A189917;
-	Thu, 24 Oct 2024 06:22:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750974; cv=none; b=ZcNPbIP2fixgWtvtJTp1YXzKiC9seJvY7KCRt2DuepWkazQDpvIjcrXVg/fztr5aubD8JGlERyZw2RNzAvsmzXyy3iCrSqivmrkd+FCs2G0SOdnq2+nMWOi/Fb1fFrbE3eWUnFnAo+vX5qeDyou2Z5Z1lqUbOqpG94Ld5m0pzRk=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750974; c=relaxed/simple;
-	bh=B2rrdyS8WCZyYD/QGyjdUeIH6SkWQUvf14qpLqrNcTA=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=rSdOdmnt7m5KI3R7ishHClp/t8W3EamWQ2kON46EO7Ke0RoEIqKv3debl/Htuf7ncJVq5ao10P34mPA6MGynt/iCbwndjS3GRKqAdhoTwqNEew7DboQBZijNqcqM/XBrW0KABR7O2UTOBGFqyIxD5Bu3Qv/vXKIA0paBG3oQNsE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=A9IyW3Cu; arc=none smtp.client-ip=198.47.19.142
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0266.itg.ti.com ([10.180.67.225])
-	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49O6MKX9123892;
-	Thu, 24 Oct 2024 01:22:20 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729750940;
-	bh=+hD8pazlMNkRIEUj8wspoCE4BW4rrUFRVlh12y70QEM=;
-	h=Date:Subject:To:CC:References:From:In-Reply-To;
-	b=A9IyW3Cu9DpCd82XEUtdsuireR3ZphphhZGbkMG+5Q+DZAq242Eq9xBeKQIqjhVrr
-	 fsQRtm0ioviGkfQzaRX77Wu96XB0S0QWz29gu5A/CWq6uKMrc08dhIVSt8q9WW0aaP
-	 OiaeCuQl+hxqyF3ntYQwt6irsTjG22DrYicnoOxI=
-Received: from DFLE112.ent.ti.com (dfle112.ent.ti.com [10.64.6.33])
-	by lelv0266.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49O6MK4E058800;
-	Thu, 24 Oct 2024 01:22:20 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE112.ent.ti.com
- (10.64.6.33) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 24
- Oct 2024 01:22:20 -0500
-Received: from lelvsmtp5.itg.ti.com (10.180.75.250) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 24 Oct 2024 01:22:19 -0500
-Received: from [172.24.227.91] (psdkl-workstation0.dhcp.ti.com [172.24.227.91])
-	by lelvsmtp5.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49O6MGOb035515;
-	Thu, 24 Oct 2024 01:22:16 -0500
-Message-ID: <7f1d8857-9894-4db9-a0c4-534e1bff4cbb@ti.com>
-Date: Thu, 24 Oct 2024 11:52:15 +0530
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DAD64189909;
+	Thu, 24 Oct 2024 06:24:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.18
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729751079; cv=fail; b=TVy1UsTvRkvUT4N/sc9wSqNhwllWaOiX7AK24iXoeYf2ERQIKwJKAy3eGXwsr4TtsD/V+gC/MAZodOg7FoYVZg1dxy2Bz2K8xOA2F5nBsrS7s9C5V+wpS/J43oyu+flnuuw7Cg9G4CU1Ph5AmF1DzPtSncQ2vFxZhl2EgrQ4dBo=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729751079; c=relaxed/simple;
+	bh=8CgKpXglpCxIApRGGl9UISDpL4tlfpetRQB6JM3MM7E=;
+	h=Date:From:To:CC:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=ZxeztB8zfNQNN2N9M5INO6rtowrPJgXv0QBsvXVXHFQcVXnteXH9xHs+X1YI/YbZ4XjrXGUPaaloBfRRBqvhidAl5Cch8a5eiM8j1bD7g1UncIVWi8Z5scql60AKaxHb/7bJlwMKFZJ0iybKN5ODNCaBT2ov5LjzFYsqr2HvoM0=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Yw5ySWQ+; arc=fail smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729751077; x=1761287077;
+  h=date:from:to:cc:subject:message-id:references:
+   in-reply-to:mime-version;
+  bh=8CgKpXglpCxIApRGGl9UISDpL4tlfpetRQB6JM3MM7E=;
+  b=Yw5ySWQ+wA0eTA6KVyNkOzF0ICSMtckFYbMViNTP+Ve+98/90OaN/ptH
+   dxwBEaBOiTKf91DSWFxTjACgig062jja2ZdaH9mW6kkmNZdyzpf+z3SZa
+   lpa65RNWdK+4CNZ7r87xcE9mU0o+cStlWPgw8BJMjvpSkOwjtyW2V291B
+   QmXgWeHXtfapJ3uGbflCrT2qg6YqIWj4XppK8MR7ID/llGYp5LMSeDY0a
+   Z6nBz28E71MIOgoRUfLze6XbbCyseBCfntMsePhQgHK8SDjPj1zlLdmZe
+   6nU3WaljYQ9DLc4CktgHioE7tC9nS8OO9+aiuEZVJQPDuSv71ZoJYTw+I
+   Q==;
+X-CSE-ConnectionGUID: B87u6+5lR/KZSQ+F6lplCg==
+X-CSE-MsgGUID: zCwbzJZGTA6tgchkcC1oCQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="28806506"
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="28806506"
+Received: from fmviesa010.fm.intel.com ([10.60.135.150])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 23:24:36 -0700
+X-CSE-ConnectionGUID: wt2olRJmS46/QTc/Q6dekA==
+X-CSE-MsgGUID: 2Hl5/yf4RFu4P2iYi819WQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="80805475"
+Received: from fmsmsx601.amr.corp.intel.com ([10.18.126.81])
+  by fmviesa010.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 23 Oct 2024 23:24:36 -0700
+Received: from fmsmsx603.amr.corp.intel.com (10.18.126.83) by
+ fmsmsx601.amr.corp.intel.com (10.18.126.81) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Wed, 23 Oct 2024 23:24:35 -0700
+Received: from fmsedg602.ED.cps.intel.com (10.1.192.136) by
+ fmsmsx603.amr.corp.intel.com (10.18.126.83) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Wed, 23 Oct 2024 23:24:35 -0700
+Received: from NAM11-CO1-obe.outbound.protection.outlook.com (104.47.56.174)
+ by edgegateway.intel.com (192.55.55.71) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Wed, 23 Oct 2024 23:24:35 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=XvNWjbWuURGmnlq3j3aiy07OPyEuPVnJEIrCD2XAFDAVB2t1Qz7dGF9nuYVr/wtbtdXpVOuDTS5d5pzWQvUwNdWx0FPx58HZSJrtV+xlrI8WGmxx6zPUfwlKINfr0vDse4nINMKvMR0G9/7SkufjHgOw1GSuWpkfBzs0S8r/pQA4CaFm2o7OPcPt2ndHbohz5p1qgcnfjF1up3b5afSa3N5dFS1dJYoDmbO6sfuEJ0eYvQqD1OIPfgP4srAO6ukTxL0NWNbHF2kYPWqYvWUB2XEOT/tSKYYktiKR7vEj9j1YCay7dw/Asn40HsvKUsZRRQdI2/nh1SSkA5pFkInpBQ==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=SKBHlRamnF/pPzsIR9fgzbHA/bc+26TWhgRQSWAdMEA=;
+ b=k0tXIOsV26kx/ZM4GmCzkD8b5KSUYd9RiF62SZai0g4TRALuIotoY7GQymfN3xP+u7w5vzvJB2w/oe8Z3XCLM5eJhG/Be+uE4nRvVCtpIc5T0mdRr4BLBa0D8ZB+o23XSgXVsd08C8OhPHFnUC+oOue2YFvZhbOalNkouopKmh9nEiYyt7/wGDETu0HZFU1r9fHlQCwr2KkF5HOg/79bH966RmuY3v0cZnsuX6FCS4XBYyefIPIOcUiTAPiRRULsPn7vCML+3GD9aoKrB0AZxlOw7fLFsmuIWncpnzwqxnbuPvtsfAWSynZnDDpaPLnIz6J7jxh/9T+gC8NXJ//rSg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com (2603:10b6:610:1ce::13)
+ by MW4PR11MB7030.namprd11.prod.outlook.com (2603:10b6:303:22f::10) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Thu, 24 Oct
+ 2024 06:24:32 +0000
+Received: from CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b]) by CH3PR11MB8660.namprd11.prod.outlook.com
+ ([fe80::cfad:add4:daad:fb9b%5]) with mapi id 15.20.8093.014; Thu, 24 Oct 2024
+ 06:24:32 +0000
+Date: Thu, 24 Oct 2024 14:24:19 +0800
+From: Chao Gao <chao.gao@intel.com>
+To: "Xin Li (Intel)" <xin@zytor.com>
+CC: <kvm@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<linux-doc@vger.kernel.org>, <seanjc@google.com>, <pbonzini@redhat.com>,
+	<corbet@lwn.net>, <tglx@linutronix.de>, <mingo@redhat.com>, <bp@alien8.de>,
+	<dave.hansen@linux.intel.com>, <x86@kernel.org>, <hpa@zytor.com>,
+	<luto@kernel.org>, <peterz@infradead.org>, <andrew.cooper3@citrix.com>
+Subject: Re: [PATCH v3 16/27] KVM: VMX: Virtualize FRED nested exception
+ tracking
+Message-ID: <ZxnoE6ltLawgPHdZ@intel.com>
+References: <20241001050110.3643764-1-xin@zytor.com>
+ <20241001050110.3643764-17-xin@zytor.com>
+Content-Type: text/plain; charset="us-ascii"
+Content-Disposition: inline
+In-Reply-To: <20241001050110.3643764-17-xin@zytor.com>
+X-ClientProxiedBy: SI1PR02CA0043.apcprd02.prod.outlook.com
+ (2603:1096:4:1f6::19) To CH3PR11MB8660.namprd11.prod.outlook.com
+ (2603:10b6:610:1ce::13)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/4] arm64: dts: ti: k3-j7200: Fix clock ids for MCSPI
- instances
-To: Anurag Dutta <a-dutta@ti.com>, <nm@ti.com>, <vigneshr@ti.com>,
-        <kristo@kernel.org>, <robh@kernel.org>, <krzk+dt@kernel.org>,
-        <conor+dt@kernel.org>, <vaishnav.a@ti.com>, <j-keerthy@ti.com>
-CC: <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>, <u-kumar1@ti.com>
-References: <20241023104532.3438851-1-a-dutta@ti.com>
- <20241023104532.3438851-2-a-dutta@ti.com>
-Content-Language: en-US
-From: Aniket Limaye <a-limaye@ti.com>
-In-Reply-To: <20241023104532.3438851-2-a-dutta@ti.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: CH3PR11MB8660:EE_|MW4PR11MB7030:EE_
+X-MS-Office365-Filtering-Correlation-Id: a26ab650-686e-4a7e-0e3c-08dcf3f485d8
+X-LD-Processed: 46c98d88-e344-4ed4-8496-4ed7712e255d,ExtAddr
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|7416014|376014|1800799024;
+X-Microsoft-Antispam-Message-Info: =?us-ascii?Q?Gv3hGMBDyaZ6j4NscFpa5V0SsyYxXD7+EJabpo8WujwYxHshX/j7OTfgUsK5?=
+ =?us-ascii?Q?hKk0QE75bGWFDmM38evH9QFkyt0lOt+I6iNW2yGSkukdomtK3uL4nKt85gme?=
+ =?us-ascii?Q?5beN5SLhq+8gxpC0ci7SAXCMK/4pTmq2Db4t3i9C+ndrLebiEKlKlqb9eiAQ?=
+ =?us-ascii?Q?2i5wywx4istWfcZCIhVF7V6TEeWkfwy2jj35/0MX8gxXQExxxtrkaMdyL+gZ?=
+ =?us-ascii?Q?YtscIUVTBTho7EjewTMP+5nxphlDC3ROP0NJlfoD8mOFSt7bCvCGzwF7atwV?=
+ =?us-ascii?Q?F/Z5V5aMb+O2N2uPnminnsk3Nm7rJpjFkk1qA2BeRSjdvZJo1ZtWHKiR2zUr?=
+ =?us-ascii?Q?teyPEVJO6lS9+tEBzScbofZrqXO6x8wcHgdpIMfCPu5gR2Xd8bt/mPI+n+K1?=
+ =?us-ascii?Q?VpJxYm7lrb+rpUi3skXtNBPBBFyM23jQ6IwB71ul6ODdlwx84pOoY2xdeJ3x?=
+ =?us-ascii?Q?g7HBk11eEg6Emgeljz92dsCZaa0467E1/yS4gJnhaq5CIPExLkqVYavtsQT9?=
+ =?us-ascii?Q?AmT/Aq51YoQ3H15jx+bKIwGDuR838XCYi3fK0D3FahWhllyMz1ZlB030QnX6?=
+ =?us-ascii?Q?uzT8ouvLYYYm7Z9XbFRQNW+4tIQEwOPq3BNsdIbdNRD8O464kyFbnU8hsBOx?=
+ =?us-ascii?Q?yRZ5RXWiNPezWEo5RZc/HJautMdsSqLQzRIoMuiRqOX3XNnh+T67NXm20YC4?=
+ =?us-ascii?Q?OfOB+OrdbhEvH5M4RhvzJHSQ9AyRzlqwDiZHXbpGVJ8sYOGI05pGmOkPPdzy?=
+ =?us-ascii?Q?3oyhFl1R4ExB+Lg5FpS3N3iMB2ZjLARn1v3IgpT0pQrR0NSiKx1KmK/J/09u?=
+ =?us-ascii?Q?epRSoueGgFuSqfWt+4NsRoqTK9G9f8bdhEUW00PhlolQ6lVk+h6Q0Ek/xsyn?=
+ =?us-ascii?Q?WgyVgDI3qjcpp8PLKzkLbEmngx+fgU3UodkWXMUm/z2iB0rUXzuEV5yBie/l?=
+ =?us-ascii?Q?ETE+lQEy0DBarA21VSZmr/k2wYQ46TnQ8Yw3jVIfeE83cBGTgTUy6VCC99DI?=
+ =?us-ascii?Q?xj154eedUmoj4jRmsHnEqsXRNxVLwxzeGeaim6gRrUJJ7joQ4gn+FttUWPiU?=
+ =?us-ascii?Q?Yt+6jq+gfz+cHElgx5d6CytTj/0IiHM3hme3tddfmlq3iRQ09uagM/2f7xfM?=
+ =?us-ascii?Q?SrgQXYt6IkH4xIIp7uTwkMVXue2LTQAynzEVw2Un0UCzN+XRR+FC7wGsQ8GO?=
+ =?us-ascii?Q?6C4Siyu37XOVQM7STVjt5JrcSLYv0ESx8NFpSdRbW18zImGTU+fKh7UQkEO0?=
+ =?us-ascii?Q?Hz5P3dbBDuauPpaRgvREi4p7tsb6jKQeuCrJ34sQJMyD3qqIWEGw8pO4+GAZ?=
+ =?us-ascii?Q?NSwZZWJO+EzYBlN8fY4byyrF?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CH3PR11MB8660.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(7416014)(376014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?us-ascii?Q?e9893icFpW6pK760T/4ZdYzZeYJR63Q4iEuIRakeWZRZHV490XaLSNSU2MFx?=
+ =?us-ascii?Q?oO13s9j1Z7ciq4QKoY9vstLG70St5nlHw9OEH0B8BSdt7mXP6hgeu2jCTm8r?=
+ =?us-ascii?Q?1L7Kd5ujKxB2CSuHDG5azJKp0K1Y7t6ZsJtBn07Ylq1t0A1uVSVlwaosy1du?=
+ =?us-ascii?Q?VFlSly+GZSyMT/VJq6x3jyOwyetHj+x0WsbrSBTjc6Vw3Epq1jMERBbJbfm7?=
+ =?us-ascii?Q?xFjDpyOedtUIuwmf533sfMYS81aMDzhXzjoxdGzgTHiR3QP3ybAzQl+p3lHG?=
+ =?us-ascii?Q?GnB8hnEvdK1OzcfGOnRd/cECrDtkW+mccIlAfTZMJIVf+qp477kSMsTLmBjR?=
+ =?us-ascii?Q?RCa7Zu5nsBMiKmLWk66hhVPlj0I/ICeH6PgaFFmuQHTsEzA2hSBFf3sfQlo4?=
+ =?us-ascii?Q?hvuAjGj9s8CObPnROGpRHqv3HhnPbNzhATYczEpED+xaSHM76YY7IU0XJki/?=
+ =?us-ascii?Q?xn/x12d2/EE2U2VW3ZqFeaw+nReO0hRXt2YHFxddkXdhHQ1P7uaU4prbOEg3?=
+ =?us-ascii?Q?3z0pS0m0e2rQWpzp9l5uy/LwwxKFQp+4feD9GiYXNK+bDSGiXiv0ejczsNh2?=
+ =?us-ascii?Q?5yiCum8xCtPqVaP8+/J7nzNrBuzAX+v9d/2y/MQ1JWDcSVe8aB6oBPT5z6yZ?=
+ =?us-ascii?Q?98ZJ4//q2d63JFJGZwVheMrmJYVVcnujC/a20moyGvaIwjMaVs2qzjAejyEQ?=
+ =?us-ascii?Q?FKPe5nqbiN+DDt7sn2UOFIEib2PB19MimfrRvI+uwC1hXMiUXY95oplj8Qla?=
+ =?us-ascii?Q?ubX0GTazaroZ/cvESJI3AwsYOOanNctBRn0R3WgzyqqTEOTwFAGPr0Qx+0TC?=
+ =?us-ascii?Q?xT2TrU4trj2k1y9WEXcHx+loc8aoP1YTWPOB/ls+WAN+N1Qr4WA6S/SHK5za?=
+ =?us-ascii?Q?JuIZ0fqxxBjBWOIXFq/X+zTAaR1VJxWzNDLHLyMjc0KhQccHvqOcPc8Cq5mH?=
+ =?us-ascii?Q?jkgrsBTBC2pDSzzsbuicmD49eZaGeG4r5yv9P3C37n8jISgp8KwHYSH12Tvl?=
+ =?us-ascii?Q?yUHpXdcMepeEFVnF3bItkgm9NwNAJD6rvzxSmhilSu+PWe+D+3yznm88qplG?=
+ =?us-ascii?Q?n6tzfXxO4IQtjdgCI5O05zD2IgJphXqWgnDpOG1tr+HpLLuRxNQpNTmAAPVU?=
+ =?us-ascii?Q?bCGvpN0uKj8lRP74qe0K0DZQZ+zjNhlPj1iOvWW7VR1HQO1PvK049KAKOKT2?=
+ =?us-ascii?Q?I9BNc0D/hGdpv7iQGNRIaUGyIm+l3Y8dtEWCCyPsbbCp7FwXGJeCpKtc2mfT?=
+ =?us-ascii?Q?9EoH1p86gmJLlZW9A/frTPtRwCYkGyy2IFt5irstraFDTbkIJY3bq3n/UQWp?=
+ =?us-ascii?Q?0GcHxtr7/Wlq7i7Le0waCq43WbdHJhq9Sg371gzh7rhL3/FvDzyw4HpItCin?=
+ =?us-ascii?Q?XR2h+lakCRaYwjGLc5s5G2VkSkVI6pl147e1hRQ0Wv9xxNmN+porDU0g2wtr?=
+ =?us-ascii?Q?42bpSRxY08rKElJ9g6DXBHPlkkwlG74VZLubGl4+OCzsEE3pjxEdOXwXTj/m?=
+ =?us-ascii?Q?s6CTJEbTIda6XsBlc/In7QnB5m5TeCYidpmD6GUbe7P3U8Ntk9Tg970/STlv?=
+ =?us-ascii?Q?1EPTo2ZraPwFh9uGKt+BAWdHJcpJJZUHCj54PeJe?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: a26ab650-686e-4a7e-0e3c-08dcf3f485d8
+X-MS-Exchange-CrossTenant-AuthSource: CH3PR11MB8660.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 06:24:32.6464
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: rxnY97v5EkpPRUxFY9nUXfXkhwR1SMXomBwB/mtIT1i5ww2JHqPtj3X163G87QkUUXINOKDCkog2P9tbzkfPDw==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR11MB7030
+X-OriginatorOrg: intel.com
 
+>diff --git a/arch/x86/include/asm/kvm_host.h b/arch/x86/include/asm/kvm_host.h
+>index b9b82aaea9a3..3830084b569b 100644
+>--- a/arch/x86/include/asm/kvm_host.h
+>+++ b/arch/x86/include/asm/kvm_host.h
+>@@ -736,6 +736,7 @@ struct kvm_queued_exception {
+> 	u32 error_code;
+> 	unsigned long payload;
+> 	bool has_payload;
+>+	bool nested;
+> 	u64 event_data;
 
+how "nested" is migrated in live migration?
 
-On 23/10/24 16:15, Anurag Dutta wrote:
-> The clock IDs for multiple MCSPI instances across wakeup as
-> well as main domain in J7200 are incorrect when compared with
-> documentation [1]. This results in kernel crashes when the said
-> instances are enabled. Fix the clock ids to their appropriate
-> values.
+> };
+
+[..]
+
 > 
-> [1]https://software-dl.ti.com/tisci/esd/latest/5_soc_doc/j7200/clocks.html
-> 
-> Fixes: 8f6c475f4ca7 ("arm64: dts: ti: k3-j7200: Add MCSPI nodes")
-> 
-> Signed-off-by: Anurag Dutta <a-dutta@ti.com>
+>diff --git a/arch/x86/kvm/vmx/vmx.c b/arch/x86/kvm/vmx/vmx.c
+>index d81144bd648f..03f42b218554 100644
+>--- a/arch/x86/kvm/vmx/vmx.c
+>+++ b/arch/x86/kvm/vmx/vmx.c
+>@@ -1910,8 +1910,11 @@ void vmx_inject_exception(struct kvm_vcpu *vcpu)
+> 		vmcs_write32(VM_ENTRY_INSTRUCTION_LEN,
+> 			     vmx->vcpu.arch.event_exit_inst_len);
+> 		intr_info |= INTR_TYPE_SOFT_EXCEPTION;
+>-	} else
+>+	} else {
+> 		intr_info |= INTR_TYPE_HARD_EXCEPTION;
+>+		if (ex->nested)
+>+			intr_info |= INTR_INFO_NESTED_EXCEPTION_MASK;
 
-Reviewed-by: Aniket Limaye <a-limaye@ti.com>
+how about moving the is_fred_enable() check from kvm_multiple_exception() to here? i.e.,
 
-> ---
->   arch/arm64/boot/dts/ti/k3-j7200-main.dtsi       | 16 ++++++++--------
->   arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi |  6 +++---
->   2 files changed, 11 insertions(+), 11 deletions(-)
+		if (ex->nested && is_fred_enabled(vcpu))
+			intr_info |= INTR_INFO_NESTED_EXCEPTION_MASK;
+
+It is slightly clearer because FRED details don't bleed into kvm_multiple_exception().
+
+>+	}
 > 
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> index 9386bf3ef9f6..ee953c0bf11f 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-main.dtsi
-> @@ -1145,7 +1145,7 @@ main_spi0: spi@2100000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 266 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 266 1>;
-> +		clocks = <&k3_clks 266 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -1156,7 +1156,7 @@ main_spi1: spi@2110000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 267 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 267 1>;
-> +		clocks = <&k3_clks 267 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -1167,7 +1167,7 @@ main_spi2: spi@2120000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 268 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 268 1>;
-> +		clocks = <&k3_clks 268 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -1178,7 +1178,7 @@ main_spi3: spi@2130000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 269 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 269 1>;
-> +		clocks = <&k3_clks 269 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -1189,7 +1189,7 @@ main_spi4: spi@2140000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 270 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 270 1>;
-> +		clocks = <&k3_clks 270 2>;
->   		status = "disabled";
->   	};
->   
-> @@ -1200,7 +1200,7 @@ main_spi5: spi@2150000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 271 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 271 1>;
-> +		clocks = <&k3_clks 271 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -1211,7 +1211,7 @@ main_spi6: spi@2160000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 272 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 272 1>;
-> +		clocks = <&k3_clks 272 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -1222,7 +1222,7 @@ main_spi7: spi@2170000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 273 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 273 1>;
-> +		clocks = <&k3_clks 273 4>;
->   		status = "disabled";
->   	};
->   
-> diff --git a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-> index 5097d192c2b2..b18b2f2deb96 100644
-> --- a/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-> +++ b/arch/arm64/boot/dts/ti/k3-j7200-mcu-wakeup.dtsi
-> @@ -494,7 +494,7 @@ mcu_spi0: spi@40300000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 274 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 274 0>;
-> +		clocks = <&k3_clks 274 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -505,7 +505,7 @@ mcu_spi1: spi@40310000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 275 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 275 0>;
-> +		clocks = <&k3_clks 275 4>;
->   		status = "disabled";
->   	};
->   
-> @@ -516,7 +516,7 @@ mcu_spi2: spi@40320000 {
->   		#address-cells = <1>;
->   		#size-cells = <0>;
->   		power-domains = <&k3_pds 276 TI_SCI_PD_EXCLUSIVE>;
-> -		clocks = <&k3_clks 276 0>;
-> +		clocks = <&k3_clks 276 2>;
->   		status = "disabled";
->   	};
->   
+> 	vmcs_write32(VM_ENTRY_INTR_INFO_FIELD, intr_info);
+> 
+>@@ -7290,6 +7293,7 @@ static void __vmx_complete_interrupts(struct kvm_vcpu *vcpu,
+> 		kvm_requeue_exception(vcpu, vector,
+> 				      idt_vectoring_info & VECTORING_INFO_DELIVER_CODE_MASK,
+> 				      error_code,
+>+				      idt_vectoring_info & VECTORING_INFO_NESTED_EXCEPTION_MASK,
+> 				      event_data);
+> 		break;
+> 	}
+>diff --git a/arch/x86/kvm/x86.c b/arch/x86/kvm/x86.c
+>index 7a55c1eb5297..8546629166e9 100644
+>--- a/arch/x86/kvm/x86.c
+>+++ b/arch/x86/kvm/x86.c
+>@@ -874,6 +874,11 @@ static void kvm_multiple_exception(struct kvm_vcpu *vcpu, unsigned int nr,
+> 		vcpu->arch.exception.pending = true;
+> 		vcpu->arch.exception.injected = false;
+> 
+>+		vcpu->arch.exception.nested = vcpu->arch.exception.nested ||
+>+					      (is_fred_enabled(vcpu) &&
+>+					       (vcpu->arch.nmi_injected ||
+>+					        vcpu->arch.interrupt.injected));
+>+
+> 		vcpu->arch.exception.has_error_code = has_error;
+> 		vcpu->arch.exception.vector = nr;
+> 		vcpu->arch.exception.error_code = error_code;
+>@@ -903,8 +908,13 @@ static void kvm_multiple_exception(struct kvm_vcpu *vcpu, unsigned int nr,
+> 		vcpu->arch.exception.injected = false;
+> 		vcpu->arch.exception.pending = false;
+> 
+>+		/* #DF is NOT a nested event, per its definition. */
+>+		vcpu->arch.exception.nested = false;
+>+
+> 		kvm_queue_exception_e(vcpu, DF_VECTOR, 0);
+> 	} else {
+>+		vcpu->arch.exception.nested = is_fred_enabled(vcpu);
+>+
+> 		/* replace previous exception with a new one in a hope
+> 		   that instruction re-execution will regenerate lost
+> 		   exception */
 
