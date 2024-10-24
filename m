@@ -1,136 +1,126 @@
-Return-Path: <linux-kernel+bounces-379619-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379621-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 801969AE122
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:40:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id C824B9AE12B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:41:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F6451C216A2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:40:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 88DE8284392
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:41:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E8AD1CB9FD;
-	Thu, 24 Oct 2024 09:37:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4CF91CF7BE;
+	Thu, 24 Oct 2024 09:38:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="D+owQSu9";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="ybUJKN47"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hoF1ns3a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C89E918A6DE;
-	Thu, 24 Oct 2024 09:37:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 247231CF2A7;
+	Thu, 24 Oct 2024 09:38:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762635; cv=none; b=eF7+M6/ugn2SHodTFNp1Cf2vtHtx9UpDdQD5VT9va880YCWnO2726a2a7ZjO7Y2KAFKq1PW9qnMwzWIvcmvbwAQDwhfgjQN2vHkpLE0sRnBSg+PzlJAWam8P2su/85o7/0WT9fF8jCDZRZcdLK+5rPcyB14YMEk5seJ3LdoJAs4=
+	t=1729762689; cv=none; b=ay7XXcroXvSMjbVe/H1kz64gWcTK0STlsHUSu8RU3qujiN1WQmK53ZFCqaJCahOX/XfMfp9FNMN1x3oNS7rECHvHVQVVaLEwSqdN86IO598sfmZLTzzAfslU9VFbq5wxtD7uYg3uEy/hS3VuCyRiyqXdF6qt/lI1le7IGiFazMA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762635; c=relaxed/simple;
-	bh=ZCUXwRdi+WZBikDxqBAa3NRJ5yHra4Ec+FxdiiYOvIM=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=Adnkq2+KOMbBU6uCFp/MqUIJhO2uiRxSIEZ8vLjwPvuo83CiGiir9MkcVknp0iKfHcAlgMZXcAW2myGsLlzwakWVtSj3iyd8IUT4EaPtmZMBcY+CedFQ/m3UpdfnWvl30+Wq5wopKA7qG9QoVfNfF5w3wk5pPtH7P8ENZB/nHP8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=D+owQSu9; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=ybUJKN47; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 24 Oct 2024 09:37:07 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729762627;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nqrFeYwDDxRA5/dto/UqMTgmFfQzd0/ehuVN8CkLbs4=;
-	b=D+owQSu95xbZHKJ6IHC2dAtOsLgVEoDClyfChJmh2v9QJKfndnwhNijMii6TVgeUh3eF/X
-	ljT8ihbEnTfxtlfQopTUYOEtHUD6g4Enzj2YwlMjzUDPzQ/LdPUXg69n0E7ZqfRqgkTMSX
-	afVcei5w4KbYDgqT8mp8/G9kIlE1mWVyTdgYk+0IGf8ye0l46+hhVm//U18PiDvWyU95Du
-	d7xU33BpFcCVZuShsm3nI/brCbQ19anF36bhtnKsVLyPhIFoDw4PDT8xVRS+N4pHmC94qy
-	R7LXIo+u5zTh+H3zOm7TjXEQ0AJoqk3UVJng59JT6n81mMU+I8sPaoVYkigatA==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729762627;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=nqrFeYwDDxRA5/dto/UqMTgmFfQzd0/ehuVN8CkLbs4=;
-	b=ybUJKN478Lc9T3pT+tXZwQa6bRTUF1Hue7vDZjWQKnO6OeJrkVy8ZosnDC7tE6rNiFjkJ1
-	gZvJTjL72JnB1ZDw==
-From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/rt: Remove one __cond_lock() in RT's
- spin_trylock_irqsave()
-Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
- Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20240812104200.2239232-3-bigeasy@linutronix.de>
-References: <20240812104200.2239232-3-bigeasy@linutronix.de>
+	s=arc-20240116; t=1729762689; c=relaxed/simple;
+	bh=o6MMr9N2UT/BsFYwemm9ougD47xRLpWhszG7XioZcCc=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=RvfNrTqJ89w+6aj/IKZegD6dXmgCjKaDkTR7L5sQpjt4ThX3GIKaIMbGx0RRSYSttXd80ncgldw7SCbG1qodhE/dfVLObrvImRcYcXhDM0mvNlu2+2cNce7xwkPx1ym659Fa5HoflV42MGYavrNyACSmSDzzoCdR+L0aDWadSNQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hoF1ns3a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPS id EE5A9C4CEC7;
+	Thu, 24 Oct 2024 09:38:08 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729762689;
+	bh=o6MMr9N2UT/BsFYwemm9ougD47xRLpWhszG7XioZcCc=;
+	h=From:Date:Subject:To:Cc:Reply-To:From;
+	b=hoF1ns3aFMzXpuWCAA/cOasgDikOFCILMHY3kwsU+LIhMJsvRjj43/3FSWJ0BGPix
+	 Pc+I3i0UQjvgX6X4N6fE9iUv5oj0R5TBCVKgXLKJ0hIV2cLvDw2CxAlcSIvZaZ0p6L
+	 lFgHtllhoUzzUtAcDTbX5lMPpNNKmkgB61mGyRWKIEaV4aSEkUcmB4Qw0uehT+3oLV
+	 FY1GmT6Zl6Yqs7ye5G3jkqiyNhCGYtgGOKFyth3dJLALvvVHawCCqdkkGsMdpSMTEx
+	 FPGMAQfghKAOg80oEr9LEnJN3uRB/LmnlFdAzeFPak/70Oei+d4JdmKC/SkllyM5vf
+	 RlIttqiGZ0sQA==
+Received: from aws-us-west-2-korg-lkml-1.web.codeaurora.org (localhost.localdomain [127.0.0.1])
+	by smtp.lore.kernel.org (Postfix) with ESMTP id D486ECDDE69;
+	Thu, 24 Oct 2024 09:38:08 +0000 (UTC)
+From: "Jason-JH.Lin via B4 Relay" <devnull+jason-jh.lin.mediatek.com@kernel.org>
+Date: Thu, 24 Oct 2024 17:37:13 +0800
+Subject: [PATCH] Revert "drm/mipi-dsi: Set the fwnode for mipi_dsi_device"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172976262709.1442.2801381791688783254.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
 Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241024-fixup-5-15-v1-1-74d360bd3002@mediatek.com>
+X-B4-Tracking: v=1; b=H4sIAEgVGmcC/6tWKk4tykwtVrJSqFYqSi3LLM7MzwNyDHUUlJIzE
+ vPSU3UzU4B8JSMDIxNDINZNy6woLdA11TU01TVNS0kxs0hJTDU3MFcCaigoSgXKgg2Ljq2tBQC
+ +m6XyXAAAAA==
+To: Saravana Kannan <saravanak@google.com>, stable@vger.kernel.org
+Cc: linux-kernel@vger.kernel.org, Seiya Wang <seiya.wang@mediatek.com>, 
+ "Jason-JH.Lin" <jason-jh.lin@mediatek.com>, 
+ Singo Chang <singo.chang@mediatek.com>
+X-Mailer: b4 0.14.0
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729762687; l=1624;
+ i=jason-jh.lin@mediatek.com; s=20240718; h=from:subject:message-id;
+ bh=3qI4cofzJIOGhAuMDl/AeKoCQ8rIiQm9bD4C+nDQrco=;
+ b=tWMrCFbt5wPfKwkMYwLI7hkKkGBc6Sh8AtNZumboECYDQdFTreparCIMo6Q/UQ6yp/498m11C
+ Z33NXD5fIkCC/hI5XfJ0qG6ep7GNw6F2Z9hC3nSz3lZBaVbIfj5SGNq
+X-Developer-Key: i=jason-jh.lin@mediatek.com; a=ed25519;
+ pk=7Hn+BnFBlPrluT5ks5tKVWb3f7O/bMBs6qEemVJwqOo=
+X-Endpoint-Received: by B4 Relay for jason-jh.lin@mediatek.com/20240718
+ with auth_id=187
+X-Original-From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
+Reply-To: jason-jh.lin@mediatek.com
 
-The following commit has been merged into the locking/core branch of tip:
+From: "Jason-JH.Lin" <jason-jh.lin@mediatek.com>
 
-Commit-ID:     b1f01f9e54b1aaadb6740f86017e8fabdee77fe2
-Gitweb:        https://git.kernel.org/tip/b1f01f9e54b1aaadb6740f86017e8fabdee77fe2
-Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-AuthorDate:    Mon, 12 Aug 2024 12:39:03 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 24 Oct 2024 11:27:01 +02:00
+This reverts commit ac88a1f41f93499df6f50fd18ea835e6ff4f3200.
 
-locking/rt: Remove one __cond_lock() in RT's spin_trylock_irqsave()
+Reason for revert:
+1. The commit [1] does not land on linux-5.15, so this patch does not
+fix anything.
 
-spin_trylock_irqsave() has a __cond_lock() wrapper which points to
-__spin_trylock_irqsave(). The function then invokes spin_trylock() which
-has another __cond_lock() finally pointing to rt_spin_trylock().
+2. Since the fw_device improvements series [2] does not land on
+linux-5.15, using device_set_fwnode() causes the panel to flash during
+bootup.
 
-The compiler has no problem to parse this but sparse does not recognise
-that users of spin_trylock_irqsave() acquire a conditional lock and
-complains.
+Incorrect link management may lead to incorrect device initialization,
+affecting firmware node links and consumer relationships.
+The fwnode setting of panel to the DSI device would cause a DSI
+initialization error without series[2], so this patch was reverted to
+avoid using the incomplete fw_devlink functionality.
 
-Remove one layer of __cond_lock() so that sparse recognises conditional
-locking.
+[1] commit 3fb16866b51d ("driver core: fw_devlink: Make cycle detection more robust")
+[2] Link: https://lore.kernel.org/all/20230207014207.1678715-1-saravanak@google.com
 
-Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20240812104200.2239232-3-bigeasy@linutronix.de
+Signed-off-by: Jason-JH.Lin <jason-jh.lin@mediatek.com>
+---
+ drivers/gpu/drm/drm_mipi_dsi.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/gpu/drm/drm_mipi_dsi.c b/drivers/gpu/drm/drm_mipi_dsi.c
+index 24606b632009..468a3a7cb6a5 100644
+--- a/drivers/gpu/drm/drm_mipi_dsi.c
++++ b/drivers/gpu/drm/drm_mipi_dsi.c
+@@ -221,7 +221,7 @@ mipi_dsi_device_register_full(struct mipi_dsi_host *host,
+ 		return dsi;
+ 	}
+ 
+-	device_set_node(&dsi->dev, of_fwnode_handle(info->node));
++	dsi->dev.of_node = info->node;
+ 	dsi->channel = info->channel;
+ 	strlcpy(dsi->name, info->type, sizeof(dsi->name));
+ 
 
 ---
- include/linux/spinlock_rt.h | 5 +----
- 1 file changed, 1 insertion(+), 4 deletions(-)
+base-commit: 74cdd62cb4706515b454ce5bacb73b566c1d1bcf
+change-id: 20241024-fixup-5-15-5fdd68dae707
 
-diff --git a/include/linux/spinlock_rt.h b/include/linux/spinlock_rt.h
-index babc3e0..f9f14e1 100644
---- a/include/linux/spinlock_rt.h
-+++ b/include/linux/spinlock_rt.h
-@@ -132,7 +132,7 @@ static __always_inline void spin_unlock_irqrestore(spinlock_t *lock,
- #define spin_trylock_irq(lock)				\
- 	__cond_lock(lock, rt_spin_trylock(lock))
- 
--#define __spin_trylock_irqsave(lock, flags)		\
-+#define spin_trylock_irqsave(lock, flags)		\
- ({							\
- 	int __locked;					\
- 							\
-@@ -142,9 +142,6 @@ static __always_inline void spin_unlock_irqrestore(spinlock_t *lock,
- 	__locked;					\
- })
- 
--#define spin_trylock_irqsave(lock, flags)		\
--	__cond_lock(lock, __spin_trylock_irqsave(lock, flags))
--
- #define spin_is_contended(lock)		(((void)(lock), 0))
- 
- static inline int spin_is_locked(spinlock_t *lock)
+Best regards,
+-- 
+Jason-JH.Lin <jason-jh.lin@mediatek.com>
+
+
 
