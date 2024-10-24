@@ -1,172 +1,131 @@
-Return-Path: <linux-kernel+bounces-379050-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379051-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id CD9389AD90A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:55:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 71C2C9AD90D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:55:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 74BEB1F21AF9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:55:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 28D0F1F2113F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:55:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F282FD53C;
-	Thu, 24 Oct 2024 00:55:23 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8B4EB3B1A1;
+	Thu, 24 Oct 2024 00:55:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Wjpy0s5d"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="J+KR9HM4"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C7F91BC41;
-	Thu, 24 Oct 2024 00:55:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 430B81BC41;
+	Thu, 24 Oct 2024 00:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729731323; cv=none; b=jeputCvpMnVycokiXUAmF9yoMyECBmbByY2k+PEfD4BUe9gqVNDkmI/qoCmUUTKlXQRWV2tHsTDvB3MS4X5+lPSGZVy+sHWCZZPcnM/moi08yS/7s3aYGxvnXHJzrs/lRMxUx2YutCZZhsLmvatdoeWUibDLpw7RsVUaxEwLZrs=
+	t=1729731330; cv=none; b=XhmL3PCZDgJ3/IJdwBRok1DMj8P+fMM2WCU9Ujpaf6c6FmUqxAGDHaC5FmBDpIq32VKe2Kgzw7Qwu37Baz8/GxpAWip+2uy36eBzr/1cnuQ0pJQvFkrkiecQB2C55DPrqIlluXP6bn8OK7g7jZWrfDhbhVdM0e7fyFl7L6rbY6o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729731323; c=relaxed/simple;
-	bh=dp4KhNIsrbR2yd624ggpLA6yLLFMoNRs2mmFq+4bfns=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=t29TlO2EITYv7ZI8e98fWYPGGyxD8KylK5csSn0Sq8Ql0xLinv3Qw16HtKYD3t8a4s3ZmWzwkAvwlXm+KWvMhORjzCfSunpK3Z4kU6nAByaTWczeUROLbFTt03fwd+qRFZzFii35KlBaDv98vDVb0ipFNd09FSuy/jyfhGcDSZ0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Wjpy0s5d; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B173CC4CEC6;
-	Thu, 24 Oct 2024 00:55:22 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729731322;
-	bh=dp4KhNIsrbR2yd624ggpLA6yLLFMoNRs2mmFq+4bfns=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Wjpy0s5dLhicS8UBMHhtDrzm12rSxZEVMWn//6Pk3/K397pBHLXdrhUeODcs/VGiv
-	 gb9ed/Z4IIzygmiMP05VI7xrtn2R9xUqIxWz/4UwVtYE1BTs3QuDDqdxnCGrpJ6s26
-	 /PCie1Ow3tfSs6I8J2hGrJrjfdIsvtSsWEyB63LO70NRW9qqoVBGHLCwjGlSDetGPt
-	 2JCgWHyQSOzRAi2RIIPDj7Yp18VZUEHh4FzLubNKdb9n1VvRTQxdyeQ5smpq4HazIO
-	 tPUEx+2eUtJSH8ShaNRmDOP5U/H/C7Djt0w4+KvqrFMcZf/xzRvMrHqNKUHBgJ7IiJ
-	 fGeMmXRUCa/nA==
-Date: Wed, 23 Oct 2024 14:55:21 -1000
-From: Tejun Heo <tj@kernel.org>
-To: David Vernet <void@manifault.com>
-Cc: bpf@vger.kernel.org, Martin KaFai Lau <martin.lau@kernel.org>,
-	Alexei Starovoitov <ast@kernel.org>, kernel-team@meta.com,
-	sched-ext@meta.com, linux-kernel@vger.kernel.org
-Subject: [PATCH sched_ext/for-6.13 2/2] sched_ext: Replace
- set_arg_maybe_null() with __nullable CFI stub tags
-Message-ID: <Zxma-ZFPKYZDqCGu@slm.duckdns.org>
-References: <Zxma0Vt6kwWFe1hx@slm.duckdns.org>
+	s=arc-20240116; t=1729731330; c=relaxed/simple;
+	bh=ve7awyesf+L2FQP5aITjBG5N/MbRQhV2+bWQg/HIrv8=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=EjX6UjXuV/Lx8sxPrJpgn36AJRWtdnnW7Ic2ciJUDL/WzXn4K/c/imr/azaN0jWk9QTKOOU/UB2WyA65pbnCykGJTbnq4R02llbZ1QutDHJbSncqSeMxb6uByhWvXUv5/7a7KXrZlEegiv5WnPCXHBfjqQOStsOqZRXQ/qPiZY8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=J+KR9HM4; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729731323;
+	bh=INF+v9OTMCWoYD6UjquXwU45gu5BOm53e7zA3Gi0bMs=;
+	h=Date:From:To:Cc:Subject:From;
+	b=J+KR9HM4l9G9vfJHh16cm82r+SpBc9Y7wer5O8GrQwIoP6qE/12iiB1lP//H9yeS/
+	 xUsQf2fjWQd1htwTquciIwp7xtL1HyC77PxTMIKWooZcfzMSifGjCfDMRcQCw92Qjb
+	 2J94IXVOknnBDBQ/NO1TZyEeW5xoRw+TXJOxSddHMsgfXzgCwcRvaBARZr+TQUAwKl
+	 z2NAm5YhV7RSm6CkDffxtOBVF4jqj5Cs0EYX23qezETt/G1+UcBUNkTgJHZrHBo01u
+	 6Ke2cKV4a18Hd+whwVWAsw//Bu3MJByclkswVof7XVlMrkBcnZx+H311eAcHBIf4Hq
+	 KdBSEvSaS+AsQ==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYnWt5xmYz4w2R;
+	Thu, 24 Oct 2024 11:55:22 +1100 (AEDT)
+Date: Thu, 24 Oct 2024 11:55:23 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Kalle Valo <kvalo@kernel.org>, Johannes Berg <johannes@sipsolutions.net>
+Cc: Ben Greear <greearb@candelatech.com>, Emmanuel Grumbach
+ <emmanuel.grumbach@intel.com>, Johannes Berg <johannes.berg@intel.com>,
+ Wireless <linux-wireless@vger.kernel.org>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>, Miri Korenblit
+ <miriam.rachel.korenblit@intel.com>
+Subject: linux-next: manual merge of the wireless-next tree with the
+ wireless tree
+Message-ID: <20241024115523.4cd35dde@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <Zxma0Vt6kwWFe1hx@slm.duckdns.org>
+Content-Type: multipart/signed; boundary="Sig_/wRwc9EsvMoDoJdweKTHRfR=";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-ops.dispatch() and ops.yield() may be fed a NULL task_struct pointer.
-set_arg_maybe_null() is used to tell the verifier that they should be NULL
-checked before being dereferenced. BPF now has an a lot prettier way to
-express this - tagging arguments in CFI stubs with __nullable. Replace
-set_arg_maybe_null() with __nullable CFI stub tags.
+--Sig_/wRwc9EsvMoDoJdweKTHRfR=
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Signed-off-by: Tejun Heo <tj@kernel.org>
-Cc: Martin KaFai Lau <martin.lau@kernel.org>
-Cc: Alexei Starovoitov <ast@kernel.org>
----
- kernel/sched/ext.c |   66 +----------------------------------------------------
- 1 file changed, 2 insertions(+), 64 deletions(-)
+Hi all,
 
---- a/kernel/sched/ext.c
-+++ b/kernel/sched/ext.c
-@@ -5407,67 +5407,8 @@ err_disable:
- #include <linux/bpf.h>
- #include <linux/btf.h>
- 
--extern struct btf *btf_vmlinux;
- static const struct btf_type *task_struct_type;
- 
--static bool set_arg_maybe_null(const char *op, int arg_n, int off, int size,
--			       enum bpf_access_type type,
--			       const struct bpf_prog *prog,
--			       struct bpf_insn_access_aux *info)
--{
--	struct btf *btf = bpf_get_btf_vmlinux();
--	const struct bpf_struct_ops_desc *st_ops_desc;
--	const struct btf_member *member;
--	const struct btf_type *t;
--	u32 btf_id, member_idx;
--	const char *mname;
--
--	/* struct_ops op args are all sequential, 64-bit numbers */
--	if (off != arg_n * sizeof(__u64))
--		return false;
--
--	/* btf_id should be the type id of struct sched_ext_ops */
--	btf_id = prog->aux->attach_btf_id;
--	st_ops_desc = bpf_struct_ops_find(btf, btf_id);
--	if (!st_ops_desc)
--		return false;
--
--	/* BTF type of struct sched_ext_ops */
--	t = st_ops_desc->type;
--
--	member_idx = prog->expected_attach_type;
--	if (member_idx >= btf_type_vlen(t))
--		return false;
--
--	/*
--	 * Get the member name of this struct_ops program, which corresponds to
--	 * a field in struct sched_ext_ops. For example, the member name of the
--	 * dispatch struct_ops program (callback) is "dispatch".
--	 */
--	member = &btf_type_member(t)[member_idx];
--	mname = btf_name_by_offset(btf_vmlinux, member->name_off);
--
--	if (!strcmp(mname, op)) {
--		/*
--		 * The value is a pointer to a type (struct task_struct) given
--		 * by a BTF ID (PTR_TO_BTF_ID). It is trusted (PTR_TRUSTED),
--		 * however, can be a NULL (PTR_MAYBE_NULL). The BPF program
--		 * should check the pointer to make sure it is not NULL before
--		 * using it, or the verifier will reject the program.
--		 *
--		 * Longer term, this is something that should be addressed by
--		 * BTF, and be fully contained within the verifier.
--		 */
--		info->reg_type = PTR_MAYBE_NULL | PTR_TO_BTF_ID | PTR_TRUSTED;
--		info->btf = btf_vmlinux;
--		info->btf_id = btf_tracing_ids[BTF_TRACING_TYPE_TASK];
--
--		return true;
--	}
--
--	return false;
--}
--
- static bool bpf_scx_is_valid_access(int off, int size,
- 				    enum bpf_access_type type,
- 				    const struct bpf_prog *prog,
-@@ -5475,9 +5416,6 @@ static bool bpf_scx_is_valid_access(int
- {
- 	if (type != BPF_READ)
- 		return false;
--	if (set_arg_maybe_null("dispatch", 1, off, size, type, prog, info) ||
--	    set_arg_maybe_null("yield", 1, off, size, type, prog, info))
--		return true;
- 	if (off < 0 || off >= sizeof(__u64) * MAX_BPF_FUNC_ARGS)
- 		return false;
- 	if (off % size != 0)
-@@ -5637,13 +5575,13 @@ static int bpf_scx_validate(void *kdata)
- static s32 sched_ext_ops__select_cpu(struct task_struct *p, s32 prev_cpu, u64 wake_flags) { return -EINVAL; }
- static void sched_ext_ops__enqueue(struct task_struct *p, u64 enq_flags) {}
- static void sched_ext_ops__dequeue(struct task_struct *p, u64 enq_flags) {}
--static void sched_ext_ops__dispatch(s32 prev_cpu, struct task_struct *p) {}
-+static void sched_ext_ops__dispatch(s32 prev_cpu, struct task_struct *prev__nullable) {}
- static void sched_ext_ops__tick(struct task_struct *p) {}
- static void sched_ext_ops__runnable(struct task_struct *p, u64 enq_flags) {}
- static void sched_ext_ops__running(struct task_struct *p) {}
- static void sched_ext_ops__stopping(struct task_struct *p, bool runnable) {}
- static void sched_ext_ops__quiescent(struct task_struct *p, u64 deq_flags) {}
--static bool sched_ext_ops__yield(struct task_struct *from, struct task_struct *to) { return false; }
-+static bool sched_ext_ops__yield(struct task_struct *from, struct task_struct *to__nullable) { return false; }
- static bool sched_ext_ops__core_sched_before(struct task_struct *a, struct task_struct *b) { return false; }
- static void sched_ext_ops__set_weight(struct task_struct *p, u32 weight) {}
- static void sched_ext_ops__set_cpumask(struct task_struct *p, const struct cpumask *mask) {}
+Today's linux-next merge of the wireless-next tree got a conflict in:
+
+  net/mac80211/cfg.c
+
+between commit:
+
+  8dd0498983ee ("wifi: mac80211: Fix setting txpower with emulate_chanctx")
+
+from the wireless tree and commit:
+
+  c4382d5ca1af ("wifi: mac80211: update the right link for tx power")
+
+from the wireless-next tree.
+
+I fixed it up (see below) and can carry the fix as necessary. This
+is now fixed as far as linux-next is concerned, but any non trivial
+conflicts should be mentioned to your upstream maintainer when your tree
+is submitted for merging.  You may also want to consider cooperating
+with the maintainer of the conflicting tree to minimise any particularly
+complex conflicts.
+
+--=20
+Cheers,
+Stephen Rothwell
+
+diff --cc net/mac80211/cfg.c
+index 6dfc61a9acd4,6c0b228523cb..000000000000
+--- a/net/mac80211/cfg.c
++++ b/net/mac80211/cfg.c
+@@@ -3046,7 -3070,7 +3070,8 @@@ static int ieee80211_set_tx_power(struc
+  	enum nl80211_tx_power_setting txp_type =3D type;
+  	bool update_txp_type =3D false;
+  	bool has_monitor =3D false;
+ +	int old_power =3D local->user_power_level;
++ 	int user_power_level;
+ =20
+  	lockdep_assert_wiphy(local->hw.wiphy);
+ =20
+
+--Sig_/wRwc9EsvMoDoJdweKTHRfR=
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcZmvsACgkQAVBC80lX
+0GyWEAf/WYW2gIK9rSU6Os4+LTBytJGSrY21OVGZNc7sogfQ+Of3UMxc1wxaQ/Jx
+XNnf5Uuhi6fe/BgsGbF3nHstkHgXtioHSwfAhfgg/ecuFdT4e2z79JWZhFnaCpnK
+WTWw32T8Cnqm7lP2/bUYTB2jxiX53FmYYEYEFNh0Oxen+GoC8tMtdexfGn7eE5X1
+bMjwRHvTFYdyHJq7VZ7Qwt9JEasm1KEVv/Oo/Uh/f5DS2QJAuljV+SzkVfxJGU3X
+EixNuaIZuCLEgbzmjp78pOQw+lDiu2q2xaYoDjAvgn+yHd/7zncSoaIgvTAzAkx5
+uvQhVmznkMpSHdj+oTzwt9pdeadq3g==
+=cioX
+-----END PGP SIGNATURE-----
+
+--Sig_/wRwc9EsvMoDoJdweKTHRfR=--
 
