@@ -1,130 +1,92 @@
-Return-Path: <linux-kernel+bounces-379183-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379184-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 618A79ADB2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:54:49 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 7C6919ADB2E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:58:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F0D431F22546
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:54:48 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 282B91F21AF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:58:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 972B9170A0A;
-	Thu, 24 Oct 2024 04:54:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A2F0F1714B0;
+	Thu, 24 Oct 2024 04:58:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ZfT0X/QZ"
-Received: from mail-pf1-f182.google.com (mail-pf1-f182.google.com [209.85.210.182])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="P8xWttk/"
+Received: from mail-ot1-f43.google.com (mail-ot1-f43.google.com [209.85.210.43])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5580515B96E
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:54:41 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.182
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 437C712CD96
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:58:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729745683; cv=none; b=SgwsGTUQnwLXRk1185WOUAVH2ZcGkd2pgZnSzfcoPQCXPgdlBteS+8l8s5H37q1C0k2QdQ59CpDz4VhHkMg4KDnVutV5DUU6gmHUgycU8hsLys0OnFZB7SZO2QrlmwEiS5Ppv/oSpDihRSxVM2cc1jNqFuH3ao5MN7Env8fqGhY=
+	t=1729745923; cv=none; b=m/+y9WVYe/YXqM2Bo5y4l5GvvVAOfKGJEoRqBRj0heu6PtMHnFfBdJHnnveZFWA+CujWtF5vh83IzPP26cQw4j/tsJNzCzE/kEbD3NHsvLsUwGCq7RY95NfGcWZUDbKC5ItrFSJZCUdFdd7P/YSaSRDVJ/kvJyeRlqsGewFXpjI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729745683; c=relaxed/simple;
-	bh=s+aT90Sd8qx0evAuMI+iZJAVrl0tTcfoxDMPhcnVPck=;
+	s=arc-20240116; t=1729745923; c=relaxed/simple;
+	bh=eQoCV5up1tey6WgtRB78V+YpCdsuV159fN2z76ECvcM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Z9LBWx+5Vd+teyxe/rR1dM9x5tjmuTLSIyLeKLv4rmDlPjiqPNlY/YdTPp8D7dZmgHNXbNbS6iaULfN1jtFVsQsDTyb+zieUuCtJcnPYdX1QByeV5fkJWjiLuYex/1bQQgJXjglLy8AfNRZSVYQi+zdWiRrmve0JXhhHw/OsysA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ZfT0X/QZ; arc=none smtp.client-ip=209.85.210.182
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pf1-f182.google.com with SMTP id d2e1a72fcca58-71e79f73aaeso327101b3a.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:54:41 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=ITABRACGqqazclxsud5rsqdmhwGiWWaQZWd7fgtsDIytmDxuLa+JMe+ACCZVg1IzyP283ETJryyvNZlMbYFHPLzkZ4GVdVHpvSNbJLFQuSMYs25RntDBK8Var2ct8pe55iEzfyKcbjNakXDvBPABHBHYJ5BhiTMZHAzsnI2XRwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=P8xWttk/; arc=none smtp.client-ip=209.85.210.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-ot1-f43.google.com with SMTP id 46e09a7af769-7180f2f5fb0so286351a34.1
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 21:58:41 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729745681; x=1730350481; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=YROL508pV/aVzcOA2vaUPlhPnKjiiTn09b259dUerBk=;
-        b=ZfT0X/QZo2duNJgjAsz0BegPgm0oQTE3C/AWInp0PGb+gp7a3Fz6n9nVO/1w4k0iO/
-         5E4sbsN2Ind7mx16GKZsGXjQWpbNonaJbh3Hva9Nav6YmLGty8aI1UB1H0zf7/G1Kzpl
-         0IDa/gLlsd8FPLHYBFPE1N/rbcfu99AWyJDDGuaW1O902Ia8eSM8cQ7yll9g3F8RdHdn
-         MlOjqDuYi/AXtxxMivJr8IX9RgJs4vR5BRo/HT3OVGo5oCqKN4GnDNirHEPKpymSgi0V
-         M/NTv1mnS8ZIiGcpZV/26KjASjVXv4Nb7CmtL4VOSEy3eqgQovWjh+UgO0r7JhoxKdsg
-         FVAA==
+        d=chromium.org; s=google; t=1729745920; x=1730350720; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=pY5S8Qe/tH8W8TFzpfKnpbVyCJ3jraqzxFrdzi0BNfA=;
+        b=P8xWttk/4xq4GFbg7+SX43JTg2Af/ZoR6+piVIGRa0E49nBE6uX4Arhy/pKmSC4Jub
+         t7NhLI5Vj4LSMqicuBjd0fZSzveuNahJ3J6WB/BL49WPxs8hgliP4NtPcPC1z2FPB8O4
+         5G41eAdN2h8pnI+fatEicTVVFSliE2OXo9Bzo=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729745681; x=1730350481;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YROL508pV/aVzcOA2vaUPlhPnKjiiTn09b259dUerBk=;
-        b=QNhXIheeVAx6RbwXpLQsNp4UtUXd0K6voi5+YdnfRy3CVrcuLpSlo0bUk0TOYr3IyM
-         84BuY9Xp6v9hTRJn8CSdKvsPjPU4bBPsewHt+FfjtnNqNHI4x1D/aqElXi+J2UqOfQ4e
-         HmAYXkpPNY7J1L3yqg7jw8V0juFn2DWXilaXhPW8zewiJEIfjpezBvmNuhCn/RNlWSVj
-         tMg1ig5FSTXtU467woaq2Wx6Vm3YEWIVBg4h7Agpp90WnB57FyilI2t/eHVRy9kuZZ7p
-         vp3zTzqL3U2SPsqQUYbHqeDutuRYxXH21okI4HVNQhJlhNyGv5GJMlN/iTTW+y+cE6w6
-         142w==
-X-Forwarded-Encrypted: i=1; AJvYcCXS5ywPLK/vV3B+qNfjb0LU3eEN6BsD0cMD0cqXEWmxOo1JiO9NEIa8W+9GjEAahzu9NRrgOwvsFbF+3W8=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyMx7AzBQgluhm4fJR0v6Em39QcOWt+BmR6iEYPNXZJ9YElYViA
-	UQTDDcHBA0V6aU7GRihYZXHxg62LACs8i2IQGZJ1LovIorbjNcjN/1+VyQ==
-X-Google-Smtp-Source: AGHT+IGGZOP07noPq3cIiBbd+28oI9FWwIKBaLJRIUE2kwp5Hj0XzDy8KQfPxtumYBKqzka9F+K0cw==
-X-Received: by 2002:a05:6a21:3416:b0:1d0:603b:bf76 with SMTP id adf61e73a8af0-1d989caa703mr681629637.34.1729745680569;
-        Wed, 23 Oct 2024 21:54:40 -0700 (PDT)
-Received: from eqbm-smc020.dtc.local ([149.97.161.244])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec1356a24sm7297505b3a.96.2024.10.23.21.54.39
+        d=1e100.net; s=20230601; t=1729745920; x=1730350720;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=pY5S8Qe/tH8W8TFzpfKnpbVyCJ3jraqzxFrdzi0BNfA=;
+        b=o6Kuh08UImxpDhphVh5Adcl11c2y6359DhrSAF7TOmcFm0W6ZzBkhUi1fWU7EgP+tg
+         KrB3htvTDvn8PCjT235TnwHiiiU1FmD2hFlw2RmKGa94MSCr7Y07+PdRQrB7YXT/wT/j
+         JbxQQrDP2JawmOzmI0Jgt1wG30H5op76HNfpIGqBipkTic6L+YCMBu64nLb/lEpl12Ac
+         xcXhhLmicwY5NJXcA4rQcV7Og9ecBVTv2b44JQqsOGoLB4wnOueilDtrCMFkHQnY+bP7
+         bmycRuz4JYWHfNn22h+CINrLVujjGsCpJLPgV6ii8E3ISE2N4sTvk6w3rzCjDqu/pV99
+         Lg0A==
+X-Forwarded-Encrypted: i=1; AJvYcCWxineR4Cz/IEa4jfA/2OcwjetcaxWfgTig8hJO+z3BmBPJ1BlxkQIVBg0L8VXZQzdGxwp/8Ii3VyZjGR0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyIrxvO9DOJMJzWwP5v/2qnC43eOxZSxpoZbLNurV/mFWfjKS3X
+	Sv9w5LtOb4q4mIlV4Wis7GaB6m6QeDWIW1lN04Rvk3rKb+i/Tey4YVJiToSmOQ==
+X-Google-Smtp-Source: AGHT+IGTufG3SwLv8HMF53KejgGChB8t3QXUwJKa0Hl6/xl50zmRsVDRjPkfsdWLF3O9keVQ1hy3FQ==
+X-Received: by 2002:a05:6830:3141:b0:710:f1fe:241b with SMTP id 46e09a7af769-7184b2a9b33mr4911358a34.6.1729745920483;
+        Wed, 23 Oct 2024 21:58:40 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:9422:d958:f749:9a30])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeab33e99sm6659281a12.33.2024.10.23.21.58.38
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 21:54:39 -0700 (PDT)
-Date: Wed, 23 Oct 2024 21:54:37 -0700
-From: Dongjoo Seo <dongjoo.linux.dev@gmail.com>
-To: Michal Hocko <mhocko@suse.com>
-Cc: Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
-	linux-kernel@vger.kernel.org, dave@stgolabs.net,
-	dan.j.williams@intel.com, nifan@outlook.com,
-	a.manzanares@samsung.com
-Subject: Re: [PATCH] mm/page_alloc: fix NUMA stats update for cpu-less nodes
-Message-ID: <ZxnTDYiQWU45eX-Y@eqbm-smc020.dtc.local>
-References: <20241023175037.9125-1-dongjoo.linux.dev@gmail.com>
- <Zxk6bHlrP5S_0LBK@tiehlicka>
- <20241023134121.68d4af59e2d9cc3e78a34cc8@linux-foundation.org>
- <Zxls4HqdkV_yBYxZ@tiehlicka>
- <Zxl1eOooy5lwJwSo@eqbm-smc020.dtc.local>
- <Zxl3fB9FVz5i1huh@tiehlicka>
+        Wed, 23 Oct 2024 21:58:40 -0700 (PDT)
+Date: Thu, 24 Oct 2024 13:58:36 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: venus: sync with threaded IRQ during inst
+ destruction
+Message-ID: <20241024045836.GJ1279924@google.com>
+References: <20241023052444.139356-1-senozhatsky@chromium.org>
+ <20241023052444.139356-3-senozhatsky@chromium.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <Zxl3fB9FVz5i1huh@tiehlicka>
+In-Reply-To: <20241023052444.139356-3-senozhatsky@chromium.org>
 
-On Thu, Oct 24, 2024 at 12:23:56AM +0200, Michal Hocko wrote:
-> On Wed 23-10-24 15:15:20, Dongjoo Seo wrote:
-> > Hi Andrew, Michal,
-> > 
-> > Thanks for the feedback.
-> > 
-> > The issue is that CPU-less nodes can lead to incorrect NUMA stats.
-> > For example, NUMA_HIT may incorrectly increase for CPU-less nodes
-> > because the current logic doesn't account for whether a node has CPUs.
-> 
-> Define incorrect
-> 
-> Current semantic doesn't really care about cpu less NUMA nodes because
-> current means whatever is required AFIU. This is certainly a long term
+On (24/10/23 14:24), Sergey Senozhatsky wrote:
+> Guard inst destruction (both dec and enc) with hard and threaded
+> IRQ synchronization.
 
-I agree that, in the long term, special logging for preferred_zone 
-and a separate counter might be necessary for CPU-less nodes.
-
-> semantic. Why does this need to change and why it makes sense to 
-> pre-existing users?
-
-This patch doesn't change existing logic; the additional logic only 
-applies when a CPU-less node is present, so there shouldn't be 
-concerns for pre-existing users. Currently, the NUMA stats for 
-configurations with CPU-less nodes are incorrect, as allocations
-are not properly accounted for.
-
-I believe this approach improves logging accuracy with minimal impact
-on the memory allocation path, but I'm open to alternative solutions.
-This isn't the only way to address the issue—any suggestions?
-
-> 
-> -- 
-> Michal Hocko
-> SUSE Labs
+Folks, please ignore this patch.   Stand by for v2.
 
