@@ -1,145 +1,137 @@
-Return-Path: <linux-kernel+bounces-379882-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379885-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 498559AE573
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:00:28 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E8E249AE580
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:01:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id CC0A91F22935
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:00:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249801C21988
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:01:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 407D31D63F3;
-	Thu, 24 Oct 2024 13:00:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47161D517E;
+	Thu, 24 Oct 2024 13:00:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="XYoXAYRD"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyIDBLxt"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 85A0014A0AA;
-	Thu, 24 Oct 2024 13:00:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186961D514C;
+	Thu, 24 Oct 2024 13:00:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774819; cv=none; b=syKl4cyUIlPT7O4pdLobOpsxGtdd51AFSIEQzZyV9BY7MBhq2bi3FQjDNW4DRgfeWM4xjJ/aOkr93GId8DZuE5zJ9boilpr/IdGc/q5yff5cIxTtgfGtRdkidu8QRc3a5854hmCwCTZngoI2/9nqowKYTryBcNTbhdeHDv15a0k=
+	t=1729774859; cv=none; b=Y3M1gvep2o5OmrZYuN4xILpJojVbm7OV44lHpSHSLpiN4zZVx9eO6YWXRg7kvFyhUgLLBkiEMLU6GzvqaBjgLjUHhPKUHxFqOAbx3yyVnp114cN4kU6CiQEz2Gyul+WW592mva4lTQRVQgOysG9ef6nd0E2+Mx2KOw0l/MPZG8k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774819; c=relaxed/simple;
-	bh=lL3ukI5cUECPzC7oF3YeBE2bBA8PoW0+iC3WgiiN0Qc=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=PuMG+lD/CqLOOY7cOlvn29ijAWTxawszBRWmylXC47z0gQwOl5XDKRMEek/epiFYQ10+oWe3BdM946IIfSUXN84eIL3s2bGeYq36qNgsW2KJ3bQpPg9SpLyGAFpE4yZ+9MZ50QC6LpqFO/1TENwX7frL9r6m063Y5vnqylzOmJs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=XYoXAYRD; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 5028C40E0284;
-	Thu, 24 Oct 2024 13:00:15 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id GG_9DrpBbj5r; Thu, 24 Oct 2024 13:00:11 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729774811; bh=EzikBre0wS3BnINAUIflaHw8OpNMIUIIU9EhiMvAqno=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=XYoXAYRD0ZSRfy+r4WYmxAbVAK23HL9D/gKyFABqq8S9cCNBhmoBY3WyiPArEiEeW
-	 o2FbTJcdP8KCbyfAqFD+aDH19TMucoDOXprU1BRCWkhTbaFd3Mlcwt4wm+MWiqPJYD
-	 FacGeHoCkqOguhr+HOVOuBDLsIEMHyuWwwXuprEsGYH0VvKkgiBjz/jglr10OHjEqv
-	 YvQroFlu0XrQa5tI/vGjoKoxcvS5uCzGAMfeUKeDBogjDHwnNDq6ng04RBv6WNoVcY
-	 p5edDgr7t5ixsMwXZi5ZXbC2/nJ9oxgdg5Z92+z2aem613NSnf4LQFdy1Ybo9H+Ckt
-	 2lLvIy6RwHJ05nTu226xs8MEYwDwjbKtjd7Wk53A9whOAG2/gBbM50bPP0av5255QT
-	 L2a089Dx55QZZjyfjYww6tycyVFwAvzP7NvoScek6D9FwBCVRZfbTej0Kpuv7UYG3K
-	 YS+0WhejvtnBeP4RMSZsAwAhKfc+spNl9YoRuXcFlUBNaCHDqI9dedoG90UlNCyIpN
-	 1PbdP1HpoF8Xmfu9Fpdmku6zoX7NwvCCuM2prnFWTPf1oPLch+uPkoRZjBDacV/P64
-	 jP2ORCC45epz6kOQ/F2OPxV6EXqb5vDk92M2CxqBVm7q7pc8wLshZZRvs5W73+Cobt
-	 yFVd7mYJDh9hOAnieY1rFub0=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 0695440E0198;
-	Thu, 24 Oct 2024 12:59:52 +0000 (UTC)
-Date: Thu, 24 Oct 2024 14:59:47 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
-	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
-	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
-	kvm@vger.kernel.org
-Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
-Message-ID: <20241024125947.GDZxpEw9BLJ46B5VKC@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
- <9b943722-c722-4a38-ab17-f07ef6d5c8c6@intel.com>
- <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
- <2436d521-aa4c-45ac-9ccc-be9a4b5cb391@intel.com>
- <e4568d3d-f115-4931-bbc6-9a32eb04ee1c@amd.com>
- <20241023163029.GEZxkkpdfkxdHWTHAW@fat_crate.local>
- <12f51956-7c53-444d-a39b-8dc4aa40aa92@amd.com>
- <20241024114912.GCZxo0ODKlXYGMnrdk@fat_crate.local>
- <358df653-e572-4e76-954a-15b230d09263@amd.com>
+	s=arc-20240116; t=1729774859; c=relaxed/simple;
+	bh=KqGf1sgWq73SVzkXhBsxSdnJ5RxsROkgNjzFTPC8Sa0=;
+	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DyQne8GPS1ROb4EejAO0slsTlm1GSyEYNxOVgCkQ6vHE5YVYLK+IUyZ7tiXxC6IbuVAwtolMiCA/p2KxMim7zSf4OugjQ0okhcvnIzwIksvEkYT1MtpOtj5wCetJbSx69ziCKOenCrj7kM+vnrwoom46Lv1rUCRRnIz5liY32vc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kyIDBLxt; arc=none smtp.client-ip=198.175.65.15
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729774857; x=1761310857;
+  h=from:to:subject:date:message-id:mime-version:
+   content-transfer-encoding;
+  bh=KqGf1sgWq73SVzkXhBsxSdnJ5RxsROkgNjzFTPC8Sa0=;
+  b=kyIDBLxtRhCfjoqA2rTawlMCoz72VOp/3HYs+FNeB91tnSxtVCoIOaiF
+   f37YUiR5uGxcZaWhAabO94s4kq3WFIL2A9+dknexHPDidlWlmlfxy5SIF
+   ds7ehi8RBxImofoNHKU1gj5/KQrTikdB86jM/n3dk167cnESXFKLfybbw
+   4aYfJFN/OFwQfR+6+bsqPqeXbeVpH846tARoEMeGz/qEHqpzZrZNbeRED
+   Dlz6J/POLA9m77ZOhQNgwvSu8aXv9aZL1toEB6I2bklHrGnya8ljXyuK5
+   0wwr5dZ2NfKgtMzq8eDzlDdE+83Vt2/iuodTcVKJuH/5w5DNvSZVL2Aue
+   w==;
+X-CSE-ConnectionGUID: fNjF0en/QMKnq+jyzp9hmA==
+X-CSE-MsgGUID: zK0BxfGeTVi3gd9F8i/j0Q==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33094655"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="33094655"
+Received: from fmviesa009.fm.intel.com ([10.60.135.149])
+  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:00:56 -0700
+X-CSE-ConnectionGUID: srOYIqpMQJWMyc3AqU6puQ==
+X-CSE-MsgGUID: IvpvS1FBTFGnJdwpyU+KPg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="80569541"
+Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.193])
+  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:00:52 -0700
+From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
+To: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
+	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
+	Thomas Gleixner <tglx@linutronix.de>,
+	Ingo Molnar <mingo@redhat.com>,
+	Borislav Petkov <bp@alien8.de>,
+	Dave Hansen <dave.hansen@linux.intel.com>,
+	x86@kernel.org,
+	"H. Peter Anvin" <hpa@zytor.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
+	Suma Hegde <suma.hegde@amd.com>,
+	platform-driver-x86@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-doc@vger.kernel.org
+Subject: [PATCH 1/1] Documentation/x86/amd/hsmp: Fix ACPI dump formatting
+Date: Thu, 24 Oct 2024 16:00:46 +0300
+Message-Id: <20241024130046.31753-1-ilpo.jarvinen@linux.intel.com>
+X-Mailer: git-send-email 2.39.5
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <358df653-e572-4e76-954a-15b230d09263@amd.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 06:01:16PM +0530, Neeraj Upadhyay wrote:
-> With Secure AVIC enabled, source vCPU directly writes to the Interrupt
-> Request Register (IRR) offset in the target CPU's backing page. So, the IPI
-> is directly requested in target vCPU's backing page by source vCPU context
-> and not by HV.
+hsmp documentation added into pdx86 for-next branch triggers these
+error:
 
-So the source vCPU will fault in the target vCPU's backing page if it is not
-there anymore. And if it is part of a 2M translation, the likelihood that it
-is there is higher.
+86: ERROR: Unexpected indentation.
+87: WARNING: Block quote ends without a blank line; unexpected unindent.
+90: ERROR: Unexpected indentation.
+91: WARNING: Block quote ends without a blank line; unexpected unindent.
+94: ERROR: Unexpected indentation.
+96: ERROR: Unexpected indentation.
+97: WARNING: Block quote ends without a blank line; unexpected unindent.
+100: ERROR: Unexpected indentation.
+101: WARNING: Block quote ends without a blank line; unexpected unindent.
+102: WARNING: Block quote ends without a blank line; unexpected unindent.
+105: ERROR: Unexpected indentation.
+107: ERROR: Unexpected indentation.
+109: WARNING: Block quote ends without a blank line; unexpected unindent.
+112: ERROR: Unexpected indentation.
+115: WARNING: Block quote ends without a blank line; unexpected unindent.
+116: WARNING: Block quote ends without a blank line; unexpected unindent.
+117: WARNING: Definition list ends without a blank line; unexpected unindent.
 
-> As I clarified above, it's the source vCPU which need to load each backing
-> page.
+Convert the problematic ACPI dump fragment to use preformatted text.
 
-So if we have 4K backing pages, the source vCPU will fault-in the target's
-respective backing page into its TLB and send the IPI. And if it is an IPI to
-multiple vCPUs, then it will have to fault in each vCPU's backing page in
-succession.
+My plan is to fold this commit into the original commit.
 
-However, when the target vCPU gets to VMRUN, the backing page will have to be
-faulted in into the target vCPU's TLB too.
+Fixes: f9ad7a2843a6 ("platform/x86/amd/hsmp: Create separate ACPI, plat and common drivers")
+Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
+---
+ Documentation/arch/x86/amd_hsmp.rst | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
 
-And this is the same with a 2M backing page - the target vCPUs will have to
-fault that 2M page translation too.
-
-But then if the target vCPU wants to send IPIs itself, the 2M backing pages
-will be there already. Hmmm.
-
-> I don't have the data at this point. That is the reason I will send this
-> contiguous allocation as a separate patch (if required) when I can get data
-> on some workloads which are impacted by this.
-
-Yes, that would clarify whether something more involved than simply using 4K
-pages is needed.
-
-> For smp_call_function_many(), where a source CPU sends IPI to multiple CPUs,
-> source CPU writes to backing pages of different target CPUs within this function.
-> So, accesses have temporal locality. For other use cases, I need to enable
-> perf with Secure AVIC to collect the TLB misses on a IPI benchmark and get
-> back with the numbers.
-
-Right, I can see some TLB walks getting avoided if you have a single 2M page
-but without actually measuring it, I don't know. If I had to venture a guess,
-it probably won't show any difference but who knows...
-
-Thx.
-
+diff --git a/Documentation/arch/x86/amd_hsmp.rst b/Documentation/arch/x86/amd_hsmp.rst
+index abf1fa3230d9..2fd917638e42 100644
+--- a/Documentation/arch/x86/amd_hsmp.rst
++++ b/Documentation/arch/x86/amd_hsmp.rst
+@@ -74,9 +74,9 @@ The same is defined in the amd_hsmp.h header.
+ ACPI device object format
+ =========================
+ The ACPI object format expected from the amd_hsmp driver
+-for socket with ID00 is given below.
++for socket with ID00 is given below::
+ 
+-Device(HSMP)
++  Device(HSMP)
+ 		{
+ 			Name(_HID, "AMDI0097")
+ 			Name(_UID, "ID00")
 -- 
-Regards/Gruss,
-    Boris.
+2.39.5
 
-https://people.kernel.org/tglx/notes-about-netiquette
 
