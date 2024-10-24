@@ -1,116 +1,133 @@
-Return-Path: <linux-kernel+bounces-380433-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380434-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7A1F09AEE81
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:05 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 65B9A9AEE86
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B260282D15
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:47:04 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id F2119B2380F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:47:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B609B1FF7A4;
-	Thu, 24 Oct 2024 17:46:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6FDCA2003A6;
+	Thu, 24 Oct 2024 17:46:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pGdBVc4A"
-Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="RRwu/kVj"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB27F1FE0ED;
-	Thu, 24 Oct 2024 17:46:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C011E1FC7F2;
+	Thu, 24 Oct 2024 17:46:50 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792007; cv=none; b=Ii26WpN6+QbwS6SuBxBLkT//cCBWxe/Rkz/QyA4qgnSx2BmVDE9eKbrb6D3fVOyYuL35url6LpnDtvtrRnWHr6JXaFtlPClcbV4nJmdvapOsutlLIgWekVEODLg0RwrsmxSJUGA4ihtxAuWOOFcOUmblLJRCdd41S1+gLUq1IRQ=
+	t=1729792010; cv=none; b=Z6jqXldqq6UhS0IBMiKR/ZOFj+mhK0Z2U9VGJUG9pK+jnKE0oBBexuGYrCUNb0vLN42iJQfAfFFva/r/nsUGva3+IE293CxOiPnX5e00VE/s8oRemLP47U9ru6ALN2ftDXh74b8hihpAK9HBxyW6vk5bI9mXyIsKgjCZkfV5uJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792007; c=relaxed/simple;
-	bh=W3VllNwtqRwVtIeBKaJd3C2VVqpPgbov///WpOSkPlQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q6Wz/E8A2ZXLf0luQHkyXv/dOvcWE7mQn1EAb77X0MoxnkBWFuN7TUy+jQln5yLZ/BvT+sHtrzzBriDUJGIh9FK4Q2EHx5YzZK+RWvhFH1X5t81ELPq3ipiNlEd//JVr4PR34MuGoh+tYPRClUpWhmr6R6vYHvUfSBbnxteqnRg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pGdBVc4A; arc=none smtp.client-ip=148.251.105.195
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
-	s=mail; t=1729792002;
-	bh=W3VllNwtqRwVtIeBKaJd3C2VVqpPgbov///WpOSkPlQ=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=pGdBVc4ASaPLaghvUgQ0DFhiGKTEDqIoVFn1+HyNer1j93XXc5Cz5BjgV87wgH0CQ
-	 B6nsj1eITJ7aMAWhWuAC9FR3zsdafizu1HIG9qFgRpaqxZbx9bzt4byAUFw5Z2MyGQ
-	 BbQxFkD3lxxVK9S1FqDJkKWKfCkVuL2nfVUjbNeCIS/bI5w3FVpYYMmV5+XbERHprI
-	 DeTa7IdFS/rJb7Kz76JJ/ZL0wYH2NE/1/QvvYzshXNOe0vtqNyDyo2X3dFX1p8mH9D
-	 de8N5I/jXKxhNl8NwmS3DALC8CeQif3oOJygSYXrzZs4IJ2uKPB9aRmPcdKHpF/3T8
-	 u2h8mOoubrz6g==
-Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	(Authenticated sender: nfraprado)
-	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00C2F17E36B5;
-	Thu, 24 Oct 2024 19:46:40 +0200 (CEST)
-Date: Thu, 24 Oct 2024 13:46:38 -0400
-From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
-To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Sean Wang <sean.wang@kernel.org>,
-	Linus Walleij <linus.walleij@linaro.org>,
-	Matthias Brugger <matthias.bgg@gmail.com>,
-	Bamvor Jian Zhang <bamv2005@gmail.com>,
-	Shuah Khan <shuah@kernel.org>, kernel@collabora.com,
-	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
-	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	linux-kselftest@vger.kernel.org, kernelci@lists.linux.dev
-Subject: Re: [PATCH RFC 1/3] pinctrl: mediatek: paris: Expose more
- configurations to GPIO set_config
-Message-ID: <a3d6b2b9-1379-4bab-a584-651ca66677ee@notapiano>
-References: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
- <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
- <01020191e0901d10-d427a5dd-af4e-4ecf-99e1-4bb051ad1475-000000@eu-west-1.amazonses.com>
- <8fdeec5c-5de7-44ae-9086-7930d02d610e@collabora.com>
+	s=arc-20240116; t=1729792010; c=relaxed/simple;
+	bh=UugEXA+hKGT0SIXPq6iPiE2aXDLoum/5sIjmSbSh8Bw=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition:In-Reply-To; b=BLfuCyVRpjh5o5bjMJn0iOw/CEECZJh8Mx839czmj4Ta8XYaJ2CTnP2+RSv0Onc8SbXQuQyFgRjVYEOFLyWPuRdCj4PoukqVvCiyR7/JNF7qptbzvnHb0RmHed0SNmKrMB66sXH7I/BHZMl2KQdomFDGIbjWhPcWrbYkMuRCfOw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=RRwu/kVj; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0EA04C4CEE5;
+	Thu, 24 Oct 2024 17:46:49 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729792010;
+	bh=UugEXA+hKGT0SIXPq6iPiE2aXDLoum/5sIjmSbSh8Bw=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:From;
+	b=RRwu/kVjJckgvZRc7yr26KXyzMTozeyIzV6DX/j6pLBrq0F643UBta2Ce4eWftBvk
+	 vFoJAKuDIztTXUjIrBIQt0tZWWzwIcAfY++nBjhtYW+x0YrxgwjRF5JHFR0+dEc1Wd
+	 XFGwzScxPa9ruErNkfycwj+FSaXaQgtQA9ORojAT6XTf1dZKmze1y1l8Q6dD6QTKS+
+	 F6nHlH6zPb1kjfrUt8T5tup1uuZhDO1QAFHjRELs4Rw9JdXdpfrjpcSq4njkhDRxcS
+	 uGxaWjjxOda7VIi/PQnIGf7QQr09UmtcsE1kmQLl9U6sCgvfjrEn5BRSDTaNxbc31P
+	 hENPIaqZZC+Uw==
+Date: Thu, 24 Oct 2024 12:46:47 -0500
+From: Bjorn Helgaas <helgaas@kernel.org>
+To: Yazen Ghannam <yazen.ghannam@amd.com>
+Cc: linux-edac@vger.kernel.org, linux-kernel@vger.kernel.org,
+	tony.luck@intel.com, x86@kernel.org, avadhut.naik@amd.com,
+	john.allen@amd.com, mario.limonciello@amd.com, bhelgaas@google.com,
+	Shyam-sundar.S-k@amd.com, richard.gong@amd.com, jdelvare@suse.com,
+	linux@roeck-us.net, clemens@ladisch.de, hdegoede@redhat.com,
+	ilpo.jarvinen@linux.intel.com, linux-pci@vger.kernel.org,
+	linux-hwmon@vger.kernel.org, platform-driver-x86@vger.kernel.org,
+	naveenkrishna.chatradhi@amd.com, carlos.bilbao.osdev@gmail.com
+Subject: Re: [PATCH 00/16] AMD NB and SMN rework
+Message-ID: <20241024174647.GA964607@bhelgaas>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <8fdeec5c-5de7-44ae-9086-7930d02d610e@collabora.com>
+In-Reply-To: <20241024160159.GB965@yaz-khff2.amd.com>
 
-On Thu, Oct 24, 2024 at 05:17:05PM +0200, AngeloGioacchino Del Regno wrote:
-> Il 11/09/24 12:10, AngeloGioacchino Del Regno ha scritto:
-> > Il 09/09/24 20:37, Nícolas F. R. A. Prado ha scritto:
-> > > Currently the set_config callback in the gpio_chip registered by the
-> > > pinctrl_paris driver only supports PIN_CONFIG_INPUT_DEBOUNCE, despite
-> > 
-> > [...] only supports operations configuring the input debounce parameter
-> > of the EINT controller and denies configuring params on the other AP GPIOs [...]
-> > 
-> > (reword as needed)
-> > 
-> > > many other configurations already being implemented and available
-> > > through the pinctrl API for configuration of pins by the Devicetree and
-> > > other drivers.
+On Thu, Oct 24, 2024 at 12:01:59PM -0400, Yazen Ghannam wrote:
+> On Wed, Oct 23, 2024 at 12:59:28PM -0500, Bjorn Helgaas wrote:
+> > On Wed, Oct 23, 2024 at 05:21:34PM +0000, Yazen Ghannam wrote:
+> > > Hi all,
 > > > 
-> > > Expose all configurations currently implemented through the GPIO API so
-> > > they can also be set from userspace, which is particularly useful to
-> > > allow testing them from userspace.
+> > > The theme of this set is decoupling the "AMD node" concept from the
+> > > legacy northbridge support.
 > > > 
-> > > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
-> > > ---
-> > >   drivers/pinctrl/mediatek/pinctrl-paris.c | 20 ++++++++++----------
+> > > Additionally, AMD System Management Network (SMN) access code is
+> > > decoupled and expanded too.
+> > > 
+> > > Patches 1-3 begin reducing the scope of AMD_NB.
+> > > 
+> > > Patches 4-9 begin moving generic AMD node support out of AMD_NB.
+> > > 
+> > > Patches 10-13 move SMN support out of AMD_NB and do some refactoring.
+> > > 
+> > > Patch 14 has HSMP reuse SMN functionality.
+> > > 
+> > > Patches 15-16 address userspace access to SMN.
+> > > 
+> > > I say "begin" above because there is more to do here. Ultimately, AMD_NB
+> > > should only be needed for code used on legacy systems with northbridges.
+> > > Also, any and all SMN users in the kernel need to be updated to use the
+> > > central SMN code. Local solutions should be avoided.
 > > 
-> > You can do the same for pinctrl-moore too, it's trivial.
+> > Glad to see many of the PCI device IDs going away; thanks for working
+> > on that!
 > > 
-> > Other than that, I agree about performing this change, as this may be useful
-> > for more than just testing.
-> > 
+> > The use of pci_get_slot() and pci_get_domain_bus_and_slot() is not
+> > ideal since all those pci_get_*() interfaces are kind of ugly in my
+> > opinion, and using them means we have to encode topology details in
+> > the kernel.  But this still seems like a big improvement.
 > 
-> Nicolas, please don't forget to respin this patch.
+> Thanks for the feedback. Hopefully, we'll come to some improved
+> solution. :)
+> 
+> Can you please elaborate on your concern? Is it about saying "thing X is
+> always at SBDF A:B:C.D" or something else?
 
-I was hoping to get some feedback on the test itself as well, particularly from
-Linus as the pinctrl maintainer, but it's also been a while so I'll send a v2
-with the feedback here addressed.
+"Thing X is always at SBDF A:B:C.D" is one big reason.  "A:B:C.D" says
+nothing about the actual functionality of the device.  A PCI
+Vendor/Device ID or a PNP ID identifies the device programming model
+independent of its geographical location.  Inferring the functionality
+and programming model from the location is a maintenance issue because
+hardware may change the address.
 
-Thanks,
-Nícolas
+PCI bus numbers are under software control, so in general it's not
+safe to rely on them, although in this case these devices are probably
+on root buses where the bus number is either fixed or determined by
+BIOS configuration of the host bridge.
+
+I don't like the pci_get_*() functions because they break the driver
+model.  The usual .probe() model binds a device to a driver, which
+essentially means the driver owns the device and its resources, and
+the driver and doesn't have to worry about other code interfering.
+
+Unlike pci_get_*(), the .probe()/.remove() model automatically handles
+hotplug without extra things like notifiers in the driver.  Hotplug
+may not be an issue in this particular case, but it requires specific
+platform knowledge to be sure.  Some platforms do support CPU and PCI
+host bridge hotplug.
+
+Thanks again for doing all this work.  It's a huge improvement
+already!
+
+Bjorn
 
