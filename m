@@ -1,110 +1,147 @@
-Return-Path: <linux-kernel+bounces-380496-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380495-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6109D9AEF97
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:20:08 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id CEE009AEF92
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:19:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 937881C240D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:20:07 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8B3B8283799
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:19:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DA13B2003CC;
-	Thu, 24 Oct 2024 18:20:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 634792003CE;
+	Thu, 24 Oct 2024 18:19:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b="oFvVjLuo"
-Received: from smtpout.efficios.com (smtpout.efficios.com [167.114.26.122])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b="AR5miBzy"
+Received: from mail-oo1-f42.google.com (mail-oo1-f42.google.com [209.85.161.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2D2B658;
-	Thu, 24 Oct 2024 18:19:57 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=167.114.26.122
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09CD81D3195
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:19:07 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729794001; cv=none; b=fisoYmhwqXj6xeequ5F6/J4n3synZSgVkDC0sAfBw8TGvN055V9/glaqtxlK+mlg0DhQWDOIzg8Na+riV+oGQOnkYmgq9pojXvPt8Nm/HERrDNJDe3wk7QoJFbOp1VY6J3JHr+IldpxpPtkg/RfHwfOLe1YVxXdCiH0OAvEGQS4=
+	t=1729793950; cv=none; b=uwEl9LQy9e+kVpaUDe9cNqPokyd/3HNd9xZCwX9vvP+JNKvPny9Ij9AmzFbxtRwLQb+kc85EwSaLVbVCtBxPn5Mx/LYXBc5SDlzi+E94EArqCXLW1z5mAuHFiKli/8b6zShNDipzFTMvV22+OrRyeTxGg620h7u+czoQbK637Kg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729794001; c=relaxed/simple;
-	bh=vJOZ077V7U7xL8fp19/FQuF9IoMjhGoJNSwoKDSLSmg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=SjRnQKU5ws2kM/4qacFtAgFjmQSL4IAZ9pVE30XAlg0/67DjJvx6dI59+CyZPOUbNnrBEaKTBAjER58oCQys+UUpDmICRG7vFguEtNq8VbrzMOcCW+HoIIHB7ksf1c4pH5OTRFu/fOsJKD0HcQd3GGEV0EVYAhJgFKRNGN3NmxY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com; spf=pass smtp.mailfrom=efficios.com; dkim=pass (2048-bit key) header.d=efficios.com header.i=@efficios.com header.b=oFvVjLuo; arc=none smtp.client-ip=167.114.26.122
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=efficios.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=efficios.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=efficios.com;
-	s=smtpout1; t=1729793991;
-	bh=vJOZ077V7U7xL8fp19/FQuF9IoMjhGoJNSwoKDSLSmg=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=oFvVjLuo4iwDOrEJPr1OBS7yIqqvCElQrYnuWCkadYvwDiUNV2VpTFG+/RqI3zHwp
-	 ndDF5hOry4uU1KKDjkhzypApsqklNTBA9Ml2wAMhiVxdGtaZcJcfWpQINf/uVIYU0g
-	 O8yeh4ou5XzQiH864Hv/+HZjprnj6zBgjyOVvBnl58Z7vtOXIxNPJJktTcfhIfGKix
-	 xkHZ9tQKk3vm8aG9D310+IYZ3X9chkqDanwkBXmxaGLqFUfe1VfRB+/kph3QizeiFC
-	 UAZKFl6Tm5ek6XnNyl62t1CECVqpVvy2NNhTxAOXOsGbZ/FNxmX9B10prV0thKEQPT
-	 4RwWwAVCY31Qg==
-Received: from [172.16.0.134] (96-127-217-162.qc.cable.ebox.net [96.127.217.162])
-	by smtpout.efficios.com (Postfix) with ESMTPSA id 4XZDj26xJnzvS7;
-	Thu, 24 Oct 2024 14:19:50 -0400 (EDT)
-Message-ID: <d3ce751e-e694-4b1d-9503-7e46e28eecf4@efficios.com>
-Date: Thu, 24 Oct 2024 14:18:08 -0400
+	s=arc-20240116; t=1729793950; c=relaxed/simple;
+	bh=CH8vMW1/zpkG7zSqbe9PVXIyeHGTmLRmHDa4jG4zZzs=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=PSSYI4i98DYPBU95U8+uGM7aqvPjB0dWND+h6VkUUy3pHvuGhoypRVYujmup0fD9XxxciSUJx2NclirXzNqDaxTbRj1Fo83F3En+NTmRfbKLzr0MBVqhS6NuiTCEu/PmW66dsBzXP4IZR1Tu2IVda6iVvaEhp918apLQ2VC0xlk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca; spf=pass smtp.mailfrom=ziepe.ca; dkim=pass (2048-bit key) header.d=ziepe.ca header.i=@ziepe.ca header.b=AR5miBzy; arc=none smtp.client-ip=209.85.161.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=ziepe.ca
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ziepe.ca
+Received: by mail-oo1-f42.google.com with SMTP id 006d021491bc7-5ebbed44918so853049eaf.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:19:07 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=ziepe.ca; s=google; t=1729793947; x=1730398747; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=uZBytGE7ZuTkGms+2TTJHzCJ6rcb64F+IbygfHjIlxo=;
+        b=AR5miBzyBcqPKU7U97g1DSTMpT2tSF9yCp3TmS4l3Lh74647R0tL3vjQnIeDq4xqAg
+         6SAajy6iC1I7H3f/MyWxW4J/1grkcBk0vdc0gmJXCZbc7itJA2vo1AVu0842uubt112R
+         eVf69A3PrXED3faIvhP9ftc98PCqMo69dk04HEC2Fjyd2oVnkUtCfYTK5JNa5Z2n9QHU
+         4SLhDDuprpq2biUvyvEE6bUlZa18EMV/yn3bSyPnCw8VFIYtdVi3J1iPwSWl9wHVP+YJ
+         VEStulca4g5hgP6aHMykmDGyzt/baRPKX14zJBHG0GKWHUx5mFENrVIn4iZZAHsaDBGI
+         dSfA==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729793947; x=1730398747;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=uZBytGE7ZuTkGms+2TTJHzCJ6rcb64F+IbygfHjIlxo=;
+        b=MGlDLQFH2YzvmtlYnTA2Vwt86VvOLIsLqH5T1oUrlhAkSRjAJV5Dmyp6GGP4llnwYq
+         Wt1oHdkt3cc5SAFXLUMYutmva4pn8zkaZAMk/Gy1ANGA20AuZWxi/KczkxeMIbjVjYaX
+         BvabUhC+WBKKolUCvX+Gk5OtaFtChPOXdvturpDZUWwf6gWCZ0xqCPQ1ZgGtXoy2YN91
+         zaRCCkOP7sMefeGvOOzmHmnSX3Y7cHdBRktoiD9aDehQrtMGMTXl82HC6+HnaS065Gs0
+         EH1IOwaIQO5xZbtEE1rzOzKqyjFVhblpaBg6haGKUbIZFnarojumRZYFgB1wQIozlViU
+         Wl2A==
+X-Forwarded-Encrypted: i=1; AJvYcCXie8WyX0C0Q4LQFBBEQg2zJ+eZ5ty+vF4MbK44voL+EZUR2/WwATjtGB9l2mAOFCQXsY9kbWHFDZlGS8E=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyKuiPWAh0HeXNP6K8xgEc70fzJk1c6XVSIWodX9oLO0h5ryErl
+	EFb1H85ZJWYFl8Gow57LkLQc23VC2OCYo/OF/cyROYV03t/ucaSaOL3fitcA8uCWXuQ6fjXkQXd
+	x
+X-Google-Smtp-Source: AGHT+IEjicTJUCagFJHVWThr9j6tOLmSf7uLfErGeRucuprxKLTVc9VjM+4CMkaK7H0akWzhPiSqsQ==
+X-Received: by 2002:a05:6358:60c3:b0:1c3:8215:164c with SMTP id e5c5f4694b2df-1c3d80d4610mr558532255d.1.1729793946767;
+        Thu, 24 Oct 2024 11:19:06 -0700 (PDT)
+Received: from ziepe.ca (hlfxns017vw-142-68-128-5.dhcp-dynamic.fibreop.ns.bellaliant.net. [142.68.128.5])
+        by smtp.gmail.com with ESMTPSA id d75a77b69052e-460d3c3fe1csm53700741cf.10.2024.10.24.11.19.04
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 11:19:04 -0700 (PDT)
+Received: from jgg by wakko with local (Exim 4.97)
+	(envelope-from <jgg@ziepe.ca>)
+	id 1t42QJ-000000005sw-3YfU;
+	Thu, 24 Oct 2024 15:19:03 -0300
+Date: Thu, 24 Oct 2024 15:19:03 -0300
+From: Jason Gunthorpe <jgg@ziepe.ca>
+To: Alex Williamson <alex.williamson@redhat.com>
+Cc: Qinyun Tan <qinyuntan@linux.alibaba.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v1: vfio: avoid unnecessary pin memory when dma map io
+ address space 0/2]
+Message-ID: <20241024181903.GA20281@ziepe.ca>
+References: <cover.1729760996.git.qinyuntan@linux.alibaba.com>
+ <20241024110624.63871cfa.alex.williamson@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH] tracing: Fix syscall tracepoint use-after-free
-To: Andrii Nakryiko <andrii.nakryiko@gmail.com>,
- Steven Rostedt <rostedt@goodmis.org>,
- Alexei Starovoitov <alexei.starovoitov@gmail.com>
-Cc: Jordan Rife <jrife@google.com>, Arnaldo Carvalho de Melo
- <acme@kernel.org>, Alexander Shishkin <alexander.shishkin@linux.intel.com>,
- Alexei Starovoitov <ast@kernel.org>, bpf <bpf@vger.kernel.org>,
- Joel Fernandes <joel@joelfernandes.org>, LKML
- <linux-kernel@vger.kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Masami Hiramatsu <mhiramat@kernel.org>, Ingo Molnar <mingo@redhat.com>,
- Michael Jeanson <mjeanson@efficios.com>, Namhyung Kim <namhyung@kernel.org>,
- "Paul E. McKenney" <paulmck@kernel.org>,
- Peter Zijlstra <peterz@infradead.org>,
- syzbot+b390c8062d8387b6272a@syzkaller.appspotmail.com,
- Yonghong Song <yhs@fb.com>
-References: <CADKFtnTdWX9prHYMe62oNraaNm=Q3WC9wTfdDD35a=CYxaX2Gw@mail.gmail.com>
- <20241023145640.1499722-1-jrife@google.com>
- <CAADnVQJupBceq2DAeChBvdjSG4zOpYsMP7_o7gREVmVCA0PUYQ@mail.gmail.com>
- <7bcea009-b58c-4a00-b7cd-f2fc06b90a02@efficios.com>
- <20241023220552.74ca0c3e@rorschach.local.home>
- <CAEf4Bzb4ywpMxchWcMfW9Lzh=re4x1zbMfz2aPRiUa29nUMB=g@mail.gmail.com>
-From: Mathieu Desnoyers <mathieu.desnoyers@efficios.com>
-Content-Language: en-US
-In-Reply-To: <CAEf4Bzb4ywpMxchWcMfW9Lzh=re4x1zbMfz2aPRiUa29nUMB=g@mail.gmail.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024110624.63871cfa.alex.williamson@redhat.com>
 
-On 2024-10-24 13:12, Andrii Nakryiko wrote:
-[...]
-
-> And as Alexei asked, where are the applied
-> patches adding faultable tracepoints?
+On Thu, Oct 24, 2024 at 11:06:24AM -0600, Alex Williamson wrote:
+> On Thu, 24 Oct 2024 17:34:42 +0800
+> Qinyun Tan <qinyuntan@linux.alibaba.com> wrote:
 > 
+> > When user application call ioctl(VFIO_IOMMU_MAP_DMA) to map a dma address,
+> > the general handler 'vfio_pin_map_dma' attempts to pin the memory and
+> > then create the mapping in the iommu.
+> > 
+> > However, some mappings aren't backed by a struct page, for example an
+> > mmap'd MMIO range for our own or another device. In this scenario, a vma
+> > with flag VM_IO | VM_PFNMAP, the pin operation will fail. Moreover, the
+> > pin operation incurs a large overhead which will result in a longer
+> > startup time for the VM. We don't actually need a pin in this scenario.
+> > 
+> > To address this issue, we introduce a new DMA MAP flag
+> > 'VFIO_DMA_MAP_FLAG_MMIO_DONT_PIN' to skip the 'vfio_pin_pages_remote'
+> > operation in the DMA map process for mmio memory. Additionally, we add
+> > the 'VM_PGOFF_IS_PFN' flag for vfio_pci_mmap address, ensuring that we can
+> > directly obtain the pfn through vma->vm_pgoff.
+> > 
+> > This approach allows us to avoid unnecessary memory pinning operations,
+> > which would otherwise introduce additional overhead during DMA mapping.
+> > 
+> > In my tests, using vfio to pass through an 8-card AMD GPU which with a
+> > large bar size (128GB*8), the time mapping the 192GB*8 bar was reduced
+> > from about 50.79s to 1.57s.
+> 
+> If the vma has a flag to indicate pfnmap, why does the user need to
+> provide a mapping flag to indicate not to pin?  We generally cannot
+> trust such a user directive anyway, nor do we in this series, so it all
+> seems rather redundant.
 
-On linux-next next-20241024 :
+The best answer is to map from DMABUF not from VMA and then you get
+perfect aggregation cheaply.
+ 
+> What about simply improving the batching of pfnmap ranges rather than
+> imposing any sort of mm or uapi changes?  Or perhaps, since we're now
+> using huge_fault to populate the vma, maybe we can iterate at PMD or
+> PUD granularity rather than PAGE_SIZE?  Seems like we have plenty of
+> optimizations to pursue that could be done transparently to the
+> user.
 
-0850e1bc88b1 tracing/bpf: Add might_fault check to syscall probes
-cdb537ac4179 tracing/perf: Add might_fault check to syscall probes
-a3204c740a59 tracing/ftrace: Add might_fault check to syscall probes
-a363d27cdbc2 tracing: Allow system call tracepoints to handle page faults   <---- This is where bisection points as first offending commit.
-4aadde89d81f tracing/bpf: disable preemption in syscall probe
-65e7462a16ce tracing/perf: disable preemption in syscall probe
-13d750c2c03e tracing/ftrace: disable preemption in syscall probe
-0e6caab8db8b tracing: Declare system call tracepoints with TRACE_EVENT_SYSCALL
+I don't want to add more stuff to support the security broken
+follow_pfn path. It needs to be replaced.
 
-Thanks,
+Leon's work to improve the DMA API is soo close so we may be close to
+the end!
 
-Mathieu
+There are two versions of the dmabuf patches on the list, it would be
+good to get that in good shape. We could make a full solution,
+including the vfio/iommufd map side while waiting.
 
-
--- 
-Mathieu Desnoyers
-EfficiOS Inc.
-https://www.efficios.com
-
+Jason
 
