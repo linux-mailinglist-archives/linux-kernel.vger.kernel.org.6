@@ -1,282 +1,159 @@
-Return-Path: <linux-kernel+bounces-379755-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379754-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E4DBA9AE346
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:02:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 183769AE339
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:01:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9EEA62841EC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:02:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7D070B217E9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:01:51 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CA90A1C9B87;
-	Thu, 24 Oct 2024 11:02:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6A1E51C9B87;
+	Thu, 24 Oct 2024 11:01:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="NAfqEWAK";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="O3d7xXuA"
-Received: from flow-a1-smtp.messagingengine.com (flow-a1-smtp.messagingengine.com [103.168.172.136])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="RzjmslN1"
+Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4C0F01CACD9;
-	Thu, 24 Oct 2024 11:02:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.136
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9226A1C1758
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:01:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767745; cv=none; b=JeGJmXbhlGq94sCScckEHr63wd0btpec6m4dHSa/LU0M36Cx9mP8cIHVR/DLBWDy4K92/5BmRgwfbJMtBXhSTWibkNckr1Tj7cR3E9/sD7Bvb2OxucvIEws4MqGNWfC3xoQM0aOiGbtlrpnoMejxPNEe7CMcIyMGF9tsNVGeoqY=
+	t=1729767703; cv=none; b=R7Mkz5XhA33mJBl4OCfKr/2PmkErUKCtftbCKdTF8YpsdcqZ/c58Zthu6bRYtXQl3GNJjoyFJUm+R5W7aKkbnUEWCkgxOWd7/c+VOxLkVB5UefOv1mi30/7ohLZBA1h1WEko9+CL/qXNdU45Y5KEKHjqUgyeaDl5HPwV03oV1Bg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767745; c=relaxed/simple;
-	bh=jojXZXqVAoeJiiE0qE5SBA6J6/tjFaOx8MsDaM22Qhc=;
-	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
-	 Subject:Content-Type; b=XnyAIMdSAf+0KL0jwLP/VWelEsixZ6Y+TDX3mGcnVwYvB6Hf1Kgf/kAvNjdlWXvJR6nn4EiVnBhghn+lUBLRrNHNL4Q+coNLcNO5Oy/JwrOgDV/jEnD9eBHc3VG3DzAO4bm19j8jkt56wC2PmFJUB0Gvdch5g7B8pFF7PyjyL8I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=NAfqEWAK; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=O3d7xXuA; arc=none smtp.client-ip=103.168.172.136
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
-Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
-	by mailflow.phl.internal (Postfix) with ESMTP id 3DA85200607;
-	Thu, 24 Oct 2024 07:02:22 -0400 (EDT)
-Received: from phl-imap-12 ([10.202.2.86])
-  by phl-compute-09.internal (MEProxy); Thu, 24 Oct 2024 07:02:22 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
-	cc:cc:content-transfer-encoding:content-type:content-type:date
-	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to; s=fm1; t=1729767742;
-	 x=1729774942; bh=jojXZXqVAoeJiiE0qE5SBA6J6/tjFaOx8MsDaM22Qhc=; b=
-	NAfqEWAKIIe52yRfX7BmL+rSCi0zqiR+TgnnHwC1N8q93OMieX98UnaMAVraMlR4
-	8ufe1aSSqRfQPzNfzQLUrovEvVS4BcQFyEY0UnmyscqiBgapfQwy5d5eGivdXwI7
-	n8sqzwkjiAvwBiBv9NwvBFH4zbO15+7HuWAyIvAt0ECVRARLVaC5hzw7+1h2Fr63
-	jawANEqLswUuFq4TJdqz+Om9LHA4m5QrQOwNXVZp37e3YDpmbnpNl7cscQ5GIP1p
-	c8RSWyflqZL90OOX9pBAAMq/Blpx3Ai/VuP/pXtr8eo5MewFiihRKKCBFYz/YrGZ
-	kED4xVVbZ9wel+ihRjjgAA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:content-type:date:date:feedback-id:feedback-id
-	:from:from:in-reply-to:in-reply-to:message-id:mime-version
-	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729767742; x=
-	1729774942; bh=jojXZXqVAoeJiiE0qE5SBA6J6/tjFaOx8MsDaM22Qhc=; b=O
-	3d7xXuAcvW0Qq/z6uywgXUts/ZXFt6318f0LHPYz5cBPgPA+82Wx547UOlgt4mt6
-	4DSL+xVIueXLuw7Ey65M4gG8bdWRTR5xowgfKCkp2v0BOIg21IiIwB7GmlhDynmh
-	/ONUMoP7I0aMf5mKFo9ypnv8J1d2K2sOi/zVhnFbUP4mnztZCQE/bHzHY41AZqff
-	cZ926wUOUv21aliWRb967/qQ4cO7CIFXmM3GEBpMbE9D4gxiI6j4JEZ8l7ao1JgL
-	zoTbIh8ioEYl0NE+fHP19UZ79Tq0IHULvoopAdWu9vU+c/yDP6hz0L7bCM5jYfWd
-	7N11mKTS5cPl4DQk+qq5Q==
-X-ME-Sender: <xms:OSkaZwYi6qXucuYIwiY1qmXzfR6nKepL2fFWERUO0a3uqWdlAUZj7A>
-    <xme:OSkaZ7b8v9hm6WHgyzWLQqRUA2Gu0cdf3gtBG8rDBHIbr2vpCnZo-YpT_paU0f-et
-    TnC_Nooxz13smP1Y0w>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddgtdelucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
-    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
-    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
-    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
-    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
-    thdrtghomhdpnhgspghrtghpthhtohephedtpdhmohguvgepshhmthhpohhuthdprhgtph
-    htthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehtshgsohhgvghnugesrghl
-    phhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuh
-    igrdhorhhgrdhukhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthht
-    ohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
-    gurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghjhhgrlhgrnhgv
-    hiesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhlvghnsghhsehgmhgrihhlrdgtoh
-    hmpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtghomh
-X-ME-Proxy: <xmx:OSkaZ6918ok4nCWtaeypNr0jCqJgoYdwdkZ-H8UVF8SBnGah4cPDOA>
-    <xmx:OSkaZ6rBLhZ96gJ0NqiVC3l5MgBdKbGrZfVFlg2s3lrL4XfLDDL19Q>
-    <xmx:OSkaZ7r14qQsA_4HawOnccrLNqSwfIm2GuPkVdJ6rQg4ocIRKzO6Xw>
-    <xmx:OSkaZ4RYxnFS-ltvfOenDmyuK6PudNl-AhqQXTzm73JaU2a-20QK8g>
-    <xmx:PikaZ57_I6E1pak3ObJRl0Rdo0XYuS48ftEpMkv0g2LwNeE6gbr05mCr>
-Feedback-ID: ifd894703:Fastmail
-Received: by mailuser.phl.internal (Postfix, from userid 501)
-	id B60F31C20066; Thu, 24 Oct 2024 07:02:17 -0400 (EDT)
-X-Mailer: MessagingEngine.com Webmail Interface
+	s=arc-20240116; t=1729767703; c=relaxed/simple;
+	bh=VutudFr9zY//7J/PXnT8bxN8MBRmcfwzso5mMadLBYw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=sWNYsPyBVw64bCvYX8K6M22Vh3akCK1EwdhQ++hNSjYuLsgfxdGqBRJEFFWoFgW/cqo86h/9tpbh5eieSChcwA8I0LQT0hvZWgj8EYXYa1qeUN8w2ZCM0SRJyQiNUaKm9A1+wW1b/8wkYCAkUt9Hk3htmqU4I6FMj5afcLmW4P4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=RzjmslN1; arc=none smtp.client-ip=209.85.128.46
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-4315baa51d8so8021685e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:01:41 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729767700; x=1730372500; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=IJ4ebqt+oLX28XDc2rVqdBFwEEpG0bsffz6Hu6+liXE=;
+        b=RzjmslN185RaHAO+DzdSalyck4L0JkUW43JNAxmOOFQeDYx4D4QokFz0VSnHbpspOo
+         Y3RmbWKtKQ5UPGnapsxgtQUTqn4GCJWw8SFvsR/VzXdgQVhGC7wC9+CWGF4veKNj72LB
+         iRSlZizSlsgM3ewgkxbUBlev194gB8D/iAsowsbzzT5VKnYBP8Fho0rFNsVaAE/LhSKJ
+         pm+SL+QlCe3euNdrr2/jdbrs3Jz2HeQFJ4wtrAtn/ufsOAq1R9awIbyMccMPTfSyvPiL
+         KK9O/JaRf9Tv8SeCMWCnJDeudlJoy8j6S7dQWjy+nkkTX27i/O0Tp+sOADLKIteRQrlv
+         Sp0Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729767700; x=1730372500;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=IJ4ebqt+oLX28XDc2rVqdBFwEEpG0bsffz6Hu6+liXE=;
+        b=sAxtA024oRk7Itd+wMis6t5xAXNcF6s3nc4vR5c/QRr9I823328/a2mrLfNZPkvFPp
+         0gOD1Tdli5dc5BPTbWv6H5TFTqsZkTp1z0MNuf1s3veS/NnNw12YkS1PLcHeVJvxtYi2
+         xtYvwC47kfiR9swCsjD9ib+RVXVQ2t23COOJ2iVYwGwaYaBjB8T2V5bxArDRtQWTte7+
+         CjqKdfTpUKO9AvRSgq1NwCKnF7WvdvIPNBpAaUPwG5n0vTToujfq/GQgmBXAjXPjA5ap
+         SmLI3U99yMe6tt6HQz1VdXGbiPYF/eKpDUM2EKgCVFOh+a/7S6uroruReynnYTjRKs2P
+         acDw==
+X-Forwarded-Encrypted: i=1; AJvYcCXlEWr7pQiAa5TjoiK/vthfFKLY0lIlBsvbyhYWrnEJboFcldRqVccIHRuoimwJLp8jQ2T1TIOokUhY4/Y=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzhLoZL1+9P96CGtWlCmdpsGut2gZ87IhiDibaB3dZqcYSPYla3
+	YjXEv7+NFy/KShd2KvPIgKhCGgGtHewjE0a41PpJt49rTufjW3kbAUaZMAwb+MY=
+X-Google-Smtp-Source: AGHT+IGYhqgppfT2SUjiBQTjCtjFfE0FYvEGk7LYqfQMZaXD/zn3smBYrGPAMie229Rz15qEV7jZMQ==
+X-Received: by 2002:a05:600c:4ed4:b0:42c:b9c7:f54b with SMTP id 5b1f17b1804b1-4318415f81emr52886575e9.16.1729767699624;
+        Thu, 24 Oct 2024 04:01:39 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c1eccesm41285115e9.46.2024.10.24.04.01.38
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 04:01:39 -0700 (PDT)
+Message-ID: <5d2e4f29-5745-4f3a-9e4d-43ab5b91947b@linaro.org>
+Date: Thu, 24 Oct 2024 13:01:38 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Date: Thu, 24 Oct 2024 12:01:36 +0100
-From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
-To: "Serge Semin" <fancer.lancer@gmail.com>, "Jon Mason" <jdmason@kudzu.us>,
- "Dave Jiang" <dave.jiang@intel.com>, "Allen Hubbe" <allenbh@gmail.com>,
- ntb@lists.linux.dev, "Andy Shevchenko" <andy@kernel.org>,
- "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
- "Kory Maincent" <kory.maincent@bootlin.com>,
- "Cai Huoqing" <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
- "Mark Brown" <broonie@kernel.org>, linux-spi@vger.kernel.org,
- "Damien Le Moal" <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
- "paulburton@kernel.org" <paulburton@kernel.org>,
- "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
- "Arnd Bergmann" <arnd@arndb.de>,
- "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- "Bjorn Helgaas" <bhelgaas@google.com>,
- "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
- "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>,
- linux-pci <linux-pci@vger.kernel.org>,
- "David S . Miller" <davem@davemloft.net>,
- "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
- "Andrew Lunn" <andrew@lunn.ch>, "Russell King" <linux@armlinux.org.uk>,
- "Vladimir Oltean" <olteanv@gmail.com>,
- "Kelvin Cheung" <keguang.zhang@gmail.com>,
- "Yanteng Si" <siyanteng@loongson.cn>, netdev@vger.kernel.org,
- "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>,
- "Guenter Roeck" <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
- "Borislav Petkov" <bp@alien8.de>, linux-edac@vger.kernel.org,
- "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
- linux-serial@vger.kernel.org
-Cc: "Andrew Halaney" <ajhalaney@gmail.com>, "Nikita Travkin" <nikita@trvn.ru>,
- "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
- "Alexander Shiyan" <shc_work@mail.ru>, "Dmitry Kozlov" <xeb@mail.ru>,
- "Sergey Shtylyov" <s.shtylyov@omp.ru>,
- "Evgeniy Dushistov" <dushistov@mail.ru>,
- "Geert Uytterhoeven" <geert@linux-m68k.org>,
- "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
- "Nikita Shubin" <nikita.shubin@maquefel.me>,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Message-Id: <91609bd7-da45-4fea-9e23-91e5f85b3c05@app.fastmail.com>
-In-Reply-To: 
- <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
-References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
-Subject: Re: linux: Goodbye from a Linux community volunteer
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/lib: Fix memory leak on error in
+ thermal_genl_auto()
+To: rafael@kernel.org
+Cc: Lukasz Luba <lukasz.luba@arm.com>, Zhang Rui <rui.zhang@intel.com>,
+ "open list:THERMAL" <linux-pm@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
+On 24/10/2024 12:59, Daniel Lezcano wrote:
+> The function thermal_genl_auto() does not free the allocated message
+> in the error path. Fix that by putting a out label and jump to it
+> which will free the message instead of directly returning an error.
 
+Please note this patch applies on top of the thresholds series.
 
-=E5=9C=A82024=E5=B9=B410=E6=9C=8824=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8A=
-=E5=8D=885:27=EF=BC=8CSerge Semin=E5=86=99=E9=81=93=EF=BC=9A
-> Hello Linux-kernel community,
->
-> I am sure you have already heard the news caused by the recent Greg' c=
-ommit
-> 6e90b675cf942e ("MAINTAINERS: Remove some entries due to various compl=
-iance
-> requirements."). As you may have noticed the change concerned some of =
-the
-> Ru-related developers removal from the list of the official kernel mai=
-ntainers,
-> including me.
->
-> The community members rightly noted that the _quite_ short commit log =
-contained
-> very vague terms with no explicit change justification. No matter how =
-hard I
-> tried to get more details about the reason, alas the senior maintainer=
- I was
-> discussing the matter with haven't given an explanation to what compli=
-ance
-> requirements that was. I won't cite the exact emails text since it was=
- a private
-> messaging, but the key words are "sanctions", "sorry", "nothing I can =
-do", "talk
-> to your (company) lawyer"... I can't say for all the guys affected by =
-the
-> change, but my work for the community has been purely _volunteer_ for =
-more than
-> a year now (and less than half of it had been payable before that). Fo=
-r that
-> reason I have no any (company) lawyer to talk to, and honestly after t=
-he way the
-> patch has been merged in I don't really want to now. Silently, behind =
-everyone's
-> back, _bypassing_ the standard patch-review process, with no affected
-> developers/subsystem notified - it's indeed the worse way to do what h=
-as been
-> done. No gratitude, no credits to the developers for all these years o=
-f the
-> devoted work for the community. No matter the reason of the situation =
-but
-> haven't we deserved more than that? Adding to the GREDITS file at leas=
-t, no?..
->
-> I can't believe the kernel senior maintainers didn't consider that the=20
-> patch
-> wouldn't go unnoticed, and the situation might get out of control with
-> unpredictable results for the community, if not straight away then in=20
-> the middle
-> or long term perspective. I am sure there have been plenty ways to=20
-> solve the
-> problem less harmfully, but they decided to take the easiest path. Ala=
-s=20
-> what's
-> done is done. A bifurcation point slightly initiated a year ago has=20
-> just been
-> fully implemented. The reason of the situation is obviously in the=20
-> political
-> ground which in this case surely shatters a basement the community has=20
-> been built
-> on in the first place. If so then God knows what might be next (who=20
-> else might
-> be sanctioned...), but the implemented move clearly sends a bad signal=20
-> to the
-> Linux community new comers, to the already working volunteers and=20
-> hobbyists like
-> me.
-
-Hi Serge,
-
-I was shocked by the way senior maintainers handle that patch when peopl=
-e put it
-under my radar. Then I scroll down it and see all those familiar names i=
-ncluding
-Sergey Shtylyov and you...
-
-This is certainly not the way things should be done. Even if legal requi=
-rements
-necessitate the action, there are far better ways to handle it. Instead,=
- the most
-absurd and shameful option has been chosen.
-
-It's deeply disappointing to me that, when doubts were raised about the =
-process,
-Linus resorted to personal attacks rather than addressing our concerns. =
-As a hobbyist
-driven by the ideals of free software, with Linus as a role model, I now=
- find myself
-questioning my own beliefs.
-
-Where are we going? Where should we go?
-
->
-[...]
->
-> Paul, Thomas, Arnd, Jiaxun, we met several times in the mailing list d=
-uring my
-> MIPS P5600 patches and just generic MIPS patches review. It was always=
- a
-> pleasure to discuss the matters with such brilliant experts in the fie=
-ld. Alas
-> I've spent too much time working on the patches for another subsystems=
- and
-> failed to submit all the MIPS-related bits. Sorry I didn't keep my pro=
-mise, but
-> as you can see the circumstances have suddenly drawn its own deadline.
-
-Thank you, Serge. It's always a pleasure working with you. Your professi=
-onalism has
-been truly impressive, and our discussions were consistently constructiv=
-e. I
-especially appreciate how your bug reports and review comments are alway=
-s backed by
-detailed reasoning, it really stood out to me.
-
-You'll be missed. I'll see what I can do here for your work on MIPS.
-
->
-[...]
->
-> Hope we'll meet someday in more pleasant circumstances and drink a
-> couple or more beers together. But now it's time to say good bye.
-> Sorry for a long-read text. I wish good luck on your Linux-way.
-
-I'm happy to have a pint with you if we can meet someday.
-
-For now, take care.
+If nobody complains about the change, I'll take care of applying this 
+patch after the thermal thresholds series appears in the linux-pm branch
 
 Thanks
->
-> Best Regards,
-> -Serge(y)
 
---=20
-- Jiaxun
+   -- D.
+
+> Reported-by: Lukasz Luba <lukasz.luba@arm.com>
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>   tools/lib/thermal/commands.c | 13 ++++++++-----
+>   1 file changed, 8 insertions(+), 5 deletions(-)
+> 
+> diff --git a/tools/lib/thermal/commands.c b/tools/lib/thermal/commands.c
+> index bcf0f14d035a..b0d4c8aca21c 100644
+> --- a/tools/lib/thermal/commands.c
+> +++ b/tools/lib/thermal/commands.c
+> @@ -375,27 +375,30 @@ static thermal_error_t thermal_genl_auto(struct thermal_handler *th, cmd_cb_t cm
+>   					 struct cmd_param *param,
+>   					 int cmd, int flags, void *arg)
+>   {
+> +	thermal_error_t ret = THERMAL_ERROR;
+>   	struct nl_msg *msg;
+>   	void *hdr;
+>   
+>   	msg = nlmsg_alloc();
+>   	if (!msg)
+> -		return THERMAL_ERROR;
+> +		goto out;
+>   
+>   	hdr = genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, thermal_cmd_ops.o_id,
+>   			  0, flags, cmd, THERMAL_GENL_VERSION);
+>   	if (!hdr)
+> -		return THERMAL_ERROR;
+> +		goto out;
+>   
+>   	if (cmd_cb && cmd_cb(msg, param))
+> -		return THERMAL_ERROR;
+> +		goto out;
+>   
+>   	if (nl_send_msg(th->sk_cmd, th->cb_cmd, msg, genl_handle_msg, arg))
+> -		return THERMAL_ERROR;
+> +		goto out;
+>   
+> +	ret = THERMAL_SUCCESS;
+> +out:
+>   	nlmsg_free(msg);
+>   
+> -	return THERMAL_SUCCESS;
+> +	return ret;
+>   }
+>   
+>   thermal_error_t thermal_cmd_get_tz(struct thermal_handler *th, struct thermal_zone **tz)
+
+
+-- 
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
