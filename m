@@ -1,98 +1,223 @@
-Return-Path: <linux-kernel+bounces-380001-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380002-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA9159AE6FE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:49:06 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id CC8AE9AE700
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:49:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 426CCB213E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:49:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4D03D1F24DB8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:49:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0D3271E1A18;
-	Thu, 24 Oct 2024 13:48:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 923131E1311;
+	Thu, 24 Oct 2024 13:49:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="hQMbYTxZ"
-Received: from desiato.infradead.org (desiato.infradead.org [90.155.92.199])
+	dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b="UcuNh8Sd"
+Received: from AS8PR04CU009.outbound.protection.outlook.com (mail-westeuropeazon11011005.outbound.protection.outlook.com [52.101.70.5])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A803E1BFE00;
-	Thu, 24 Oct 2024 13:48:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=90.155.92.199
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729777732; cv=none; b=kpbcCw028xggy6SV0uDMSSIZbcF+pK4o4JkxLSE21Rm868rAdtr3zepkXQDsKRyhutZ+8vzEeuu9BTlbp/A4ve+jn4S+Y5dVxNe65m/zfLvbdYI+xDUPuXTbQC7uUYWG4F/oxP7gfIcEt1U7otBzUn81ayuwzYFiDsV+UCrp+dY=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729777732; c=relaxed/simple;
-	bh=3myP44Gfgp7TWDQVK9qQgIFcWGayxiKS6l53Uoqwyyg=;
-	h=Date:From:To:CC:Subject:In-Reply-To:References:Message-ID:
-	 MIME-Version:Content-Type; b=Wdqm0RK4aA1E0dlG3l1X5g1cPhMeYm0JHxdIQ171nXviWPe529sE/+IikGmTYHVVQRV4Ghqs12Ab1nQ0UEsxoofpicQs5lez+vnOt9mC5EVea43TmBciI/R0H3kVr5RiTXVA2mCE9oTjxI+nEZX4hDX/IpX3oMzr1loQwkK5TVI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=desiato.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=hQMbYTxZ; arc=none smtp.client-ip=90.155.92.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=desiato.srs.infradead.org
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=infradead.org; s=desiato.20200630; h=Content-Transfer-Encoding:Content-Type
-	:MIME-Version:Message-ID:References:In-Reply-To:Subject:CC:To:From:Date:
-	Sender:Reply-To:Content-ID:Content-Description;
-	bh=3myP44Gfgp7TWDQVK9qQgIFcWGayxiKS6l53Uoqwyyg=; b=hQMbYTxZAJvskYeOC5cLMCanyS
-	3P6RaVvSJPhOA1/TNYfJuxxrMXtg9GO7HWHc+cXqLhRcVvz5QiqgWZyCGsVFtNXE3TAnECjUK0jiA
-	sFZIlbqZQ1uzuasOTU3MjY+tDRyRdC97DlvmZJoC7/w9kzYH/w+LK9FBZ734NEJ6dscM9hxwG4wWz
-	QgyK0Gqm8jJsNlwR/QhlhC6Sp1bPLez8AsjhXSo3ZIM/jLHJ//1XlNRBUwJh4adIMAq7Oe/E6rfy/
-	UD/KLHRJVIKSWThlt/4pLbjGmBzSS/oB3DLbwCiPe7gH3kEiwARIpmE2UW8NdAfMOXIVhcSswP082
-	CcrO0D3Q==;
-Received: from [31.94.13.30] (helo=[127.0.0.1])
-	by desiato.infradead.org with esmtpsa (Exim 4.98 #2 (Red Hat Linux))
-	id 1t3yCW-00000008ft3-3b4H;
-	Thu, 24 Oct 2024 13:48:33 +0000
-Date: Thu, 24 Oct 2024 15:48:26 +0200
-From: David Woodhouse <dwmw2@infradead.org>
-To: Miguel Luis <miguel.luis@oracle.com>
-CC: Paolo Bonzini <pbonzini@redhat.com>, Jonathan Corbet <corbet@lwn.net>,
- Marc Zyngier <maz@kernel.org>, Oliver Upton <oliver.upton@linux.dev>,
- James Morse <james.morse@arm.com>, Suzuki K Poulose <suzuki.poulose@arm.com>,
- Zenghui Yu <yuzenghui@huawei.com>, Catalin Marinas <catalin.marinas@arm.com>,
- Will Deacon <will@kernel.org>, Mark Rutland <mark.rutland@arm.com>,
- Lorenzo Pieralisi <lpieralisi@kernel.org>,
- "Rafael J. Wysocki" <rafael@kernel.org>, Pavel Machek <pavel@ucw.cz>,
- Len Brown <len.brown@intel.com>, Shuah Khan <shuah@kernel.org>,
- David Woodhouse <dwmw@amazon.co.uk>,
- "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
- "linux-doc@vger.kernel.org" <linux-doc@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>,
- "kvmarm@lists.linux.dev" <kvmarm@lists.linux.dev>,
- "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
- "linux-kselftest@vger.kernel.org" <linux-kselftest@vger.kernel.org>,
- Francesco Lavra <francescolavra.fl@gmail.com>
-Subject: =?US-ASCII?Q?Re=3A_=5BPATCH_v6_6/6=5D_arm64=3A_Use_SYSTEM=5FOF?=
- =?US-ASCII?Q?F2_PSCI_call_to_power_off_for_hibernate?=
-User-Agent: K-9 Mail for Android
-In-Reply-To: <23C91005-7304-4312-A5E0-F5E6C05B3209@oracle.com>
-References: <20241019172459.2241939-1-dwmw2@infradead.org> <20241019172459.2241939-7-dwmw2@infradead.org> <23C91005-7304-4312-A5E0-F5E6C05B3209@oracle.com>
-Message-ID: <ECD0CA58-2C3B-48F3-AF12-95E37CB0FC48@infradead.org>
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C92CB1BBBEB;
+	Thu, 24 Oct 2024 13:49:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=52.101.70.5
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729777751; cv=fail; b=RqcN9Fe/IKjfn+T4E+SySEDHz/DKG64u9VZNKWLOz8g0cAIg2hPjw0c66ddqwifZI29edtlKq6JPSn/V22QjL2ppGCDeJWLqBOmyQl4kklkY7gn5j7xuNNgnwCvqj/WBF9fj7TYzuahvR4mGn1uLmPxhGcvSQMdPzhTBtlDuSD8=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729777751; c=relaxed/simple;
+	bh=fIM9twb9aB6IZmpAADmlLvr+Ykp2gUj9cdgyKfZvOB4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:Content-Type:
+	 Content-Disposition:In-Reply-To:MIME-Version; b=BHvHpRhbnE+CX9r7Fltfm0rlW1d7X5dWCSqjfC9Vx72wM1IYqrkabf1DjbFnIR2XGpPEMP/p7ENfskUWmvRpfTHJnd3JsukIF67+sITZHhstHm/yYQFtNI6Dloj/yw/WUQ6RWZYU6MBB3dXI0SFqdCMcujcJqVGOo0RSlIjIRds=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com; spf=pass smtp.mailfrom=nxp.com; dkim=pass (2048-bit key) header.d=nxp.com header.i=@nxp.com header.b=UcuNh8Sd; arc=fail smtp.client-ip=52.101.70.5
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=nxp.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=nxp.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=wAI19tQ6YzN/ey9FYI/mc7o9ugB4ksfWLEj9nask+PiL5X85U8j6fyKQSRl/XjIfV45ZKGRha9uxgfvlW/wlnjEN4vr2JJEZ68h15pL8lj9w95VGvfVUQ4r8vDL8RYjaqQc96yTTo6jqmgCAuNRQ7troirENi+QQaL/ITAPwXmm46LAtXxlHyeoOr1FnN1aYVxv07Wf4lGhhSl87G9kERT1qDd1eKnWk0yRsTuvEGe/LG02PSkxsSIDAO+v8JpWkRzCyb/Bv2arW2yqHVbNvK9aP+DG4tjfmcGaV3e2wH9PmsvsPEq0ay6Ws5RD0KHm5cEx4TA3FPutYJNyfIsTwHA==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Atn+54/XkYhE/dSRaFHNaQRan7HybTJ8JycnDE5f13w=;
+ b=P2czBnv0BeCgNA9anM0A0djXelcE7MbFlbRy8HJ/Bxn9XLnOd4G4z8O9nT0KndrotfqygPWJU1LxxqWqQTUPZKc4yAcETtEtdEXej89FPZonAWRwFRRH2DujDcIOnUoHlnzJSf7X34cm1El712AdhotigoYfuBmOfbT3bk1foce6GE2ZSvqEyaCpzVU1Ff0oIqFj7KQHy/Lc9tDPONkyMtihSrAZUgjFL43ki27Jujd/hrtjnOTYcw7ueMFgflB5Ep10a6xYp+0aHBJTmxir4m+2/bONTwI2KrDQbep1lF6fGvwrC76GjoexUBBGMfrgAS6J4PunUKG62GQpzA5Xyg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=nxp.com; dmarc=pass action=none header.from=nxp.com; dkim=pass
+ header.d=nxp.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=nxp.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=Atn+54/XkYhE/dSRaFHNaQRan7HybTJ8JycnDE5f13w=;
+ b=UcuNh8SdDbbnt7NT52e9HWGNSouWxHG7UGzF4bTr++EhzYZxIDUjn2IPm4YfZgj4+fSAG8yVMcV+f5/5awrjH90rxs3YIGiCR3R+YD4MLK1u/tcqO6JcFszvvw1JQM13zPPkYB+F9t3DNTno8/lhWTYCDkCtuDqTAiVxzZUlFpTzIF5zhyzt4JLX/KFnScjKCt1mQ5ReVweTcJ+Pi+2UevF2gqoZtgIGk1e3ErvBDdm9XfWsNwDjsUdem4pZw/gTz0Vny3BSNtGJN1OJo0HYh0e0aS/NCAgHaSEdVgMwc9QaJ4UCaqnfCVGRPE8V9bmjB6LzTgKvdac3yBv37WJjtg==
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=nxp.com;
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com (2603:10a6:20b:24b::14)
+ by PR3PR04MB7402.eurprd04.prod.outlook.com (2603:10a6:102:89::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Thu, 24 Oct
+ 2024 13:49:05 +0000
+Received: from AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2]) by AM8PR04MB7779.eurprd04.prod.outlook.com
+ ([fe80::7417:d17f:8d97:44d2%3]) with mapi id 15.20.8093.014; Thu, 24 Oct 2024
+ 13:49:05 +0000
+Date: Thu, 24 Oct 2024 16:49:02 +0300
+From: Vladimir Oltean <vladimir.oltean@nxp.com>
+To: Jacob Keller <jacob.e.keller@intel.com>
+Cc: Vladimir Oltean <olteanv@gmail.com>,
+	"Kitszel, Przemyslaw" <przemyslaw.kitszel@intel.com>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	"Nguyen, Anthony L" <anthony.l.nguyen@intel.com>,
+	"netdev@vger.kernel.org" <netdev@vger.kernel.org>
+Subject: Re: [PATCH net-next 3/8] lib: packing: add pack_fields() and
+ unpack_fields()
+Message-ID: <20241024134902.xe7kd4t7yoy2i4xj@skbuf>
+References: <20241011-packing-pack-fields-and-ice-implementation-v1-0-d9b1f7500740@intel.com>
+ <20241011-packing-pack-fields-and-ice-implementation-v1-3-d9b1f7500740@intel.com>
+ <601668d5-2ed2-4471-9c4f-c16912dd59a5@intel.com>
+ <20241016134030.mzglrc245gh257mg@skbuf>
+ <CO1PR11MB5089220BBAF882B14F4B70DBD6462@CO1PR11MB5089.namprd11.prod.outlook.com>
+ <e961b5f2-74fe-497b-9472-f1cdda232f3b@intel.com>
+ <20241019122018.rvlqgf2ri6q4znlr@skbuf>
+ <7492148c-6edd-4400-8fa8-e30209cca168@intel.com>
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <7492148c-6edd-4400-8fa8-e30209cca168@intel.com>
+X-ClientProxiedBy: BE1P281CA0281.DEUP281.PROD.OUTLOOK.COM
+ (2603:10a6:b10:84::14) To AM8PR04MB7779.eurprd04.prod.outlook.com
+ (2603:10a6:20b:24b::14)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain;
- charset=utf-8
-Content-Transfer-Encoding: quoted-printable
-X-SRS-Rewrite: SMTP reverse-path rewritten from <dwmw2@infradead.org> by desiato.infradead.org. See http://www.infradead.org/rpr.html
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: AM8PR04MB7779:EE_|PR3PR04MB7402:EE_
+X-MS-Office365-Filtering-Correlation-Id: 844e2de4-e776-44eb-0766-08dcf432a00d
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|366016|7416014|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?pSGSUkZn5pKqQ69pLSAf+2D+otBpQCRy7cYbVy58kyEoeSAKkCI2xyghqV5G?=
+ =?us-ascii?Q?9vV75u4TjeZx7wNC/FpJEGT/8PE82iJr8W7cT2qSl0FbTNVCS8ra4oZEOx3i?=
+ =?us-ascii?Q?0v3xVn1PEjH0Y7W4d3Li2FIqAA1kzGWWU/Z5IM5fyUKgfcB4K+yKcVVBG+Eo?=
+ =?us-ascii?Q?9Ojx3FUmbjzqSbD8HtcJNArUwdvieqYrbAKmDkEXPTq1MMCmaZOkcTG69vq/?=
+ =?us-ascii?Q?hWpWWHo5H8vXI/NSYbILMujxeKhM1JzNdQHyKg55mtAfAEFSSmuj/1ww3cy7?=
+ =?us-ascii?Q?BkNIy2KfQ/dlbh7BFLtmjvqfzZmM2dmuMmqfE7mocRVTjBtVxf2izVdARu4w?=
+ =?us-ascii?Q?fK9mb4d1ymMJTpAHCAafbPMjoYdI52y9UqyHz8cTLhSErcaCBHr8YmeNeHpy?=
+ =?us-ascii?Q?W+tsHQNCeeYC60LEK+vIl5kCXUY7SAnMLJN4yTENRxnoEOYFD7Z4kjQyIRAh?=
+ =?us-ascii?Q?fql6L1qGf7caQDD/GnBA7+9F710biIvjTCV9mPv87NOnLcMX4NtwSS/wi6rs?=
+ =?us-ascii?Q?9YayXaCNDYKYONQ901sWjGy/q4kev8WHT4t1BTW9Vk+AOnzPV0ovBRoRNIb4?=
+ =?us-ascii?Q?Z3En2dVTI5QwQaZ0ei6JEr4YpJAqjh2VmTpQDbwg4owKJ57qUam46A++kNIV?=
+ =?us-ascii?Q?/kbkiAxMtlUDAHKByOqv42ffN/2qI+TUFMd/jQhLdVpFT2r3twab644lBjkO?=
+ =?us-ascii?Q?h+5jhOdQ/tdc1NE/0uep4prnfevc/gyBZfMWGEYmE73pqt2mHyR+IBfDCZ4t?=
+ =?us-ascii?Q?KOjvxukTO3g0q1ymJBIgX86K/ZlVmmcnIdYnn3ynJbaXD67U9r8F3caI0cj/?=
+ =?us-ascii?Q?5OI3K5+T1+ZJZmQtzGZavCkD8wW3/Q2UNSzj6ar3baRveolt9KHGSFDWNkgT?=
+ =?us-ascii?Q?5ViTPscX6ARZdZ7xa4eMd+W2KgtPXA4PrBCygUANQxZO31iQttcwb/tWkQsv?=
+ =?us-ascii?Q?uGwAC3V6UBxuMAW/NeV3gHSCRqw7VcXnz78A6POZLgPsm8oaeVwJgdsx0z4x?=
+ =?us-ascii?Q?cjYlje+MDkWHxs407CuhRc5ra4WrMe0DUPqiUu253JKVdC/PtdtM8VKj3MjM?=
+ =?us-ascii?Q?zBtMbrWogypFcKOlLoiJOqEGzQt7X5ov5rPBXssNeU9EWQSfvTW4pDL3ONdX?=
+ =?us-ascii?Q?3Uq4HPyS47VP3zMQxLLEauq9DCbwKxDsRijCnJ/v0KGSVAxLuh5VvHs/ln4I?=
+ =?us-ascii?Q?L4I0xyjyuyQQP6YOGZG1Em+IKRbWXsGXqBQ2yjwV7164gM18R+gcgsaktZiw?=
+ =?us-ascii?Q?+zEGKlfDzXL92PQ/dWC4VphtGNzhLZ8RXY3mFsRlGx934dNThpNlDvrGfwBk?=
+ =?us-ascii?Q?+cQSe5TzHm/fz+1C6lZGcpwX?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM8PR04MB7779.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(7416014)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?fgkA05HkNddntEF3b6lkGBpfDbUyP+TrLqIJ7/NBUZbwrQsrO86aGNZsq8Nx?=
+ =?us-ascii?Q?Xjt7PpsKGzrElLBxW8xQ992OFRKIGgQBIJeNbzNti7QDn9LtXCLqsl4Ah6Xz?=
+ =?us-ascii?Q?SVhzWPME9eNblvbO4nY9cM83JIepy7RuPMls3O4LXVjs8KpmyiEGsSFwx4rO?=
+ =?us-ascii?Q?Ygqe+nNxl0NvOImfncObiKSJ55tVNwoqdOHa7rAtBJ7dUujQH1ian8/RIn6O?=
+ =?us-ascii?Q?sGPbA9sMIAcYDXhrO9QhJ3Bii5PJc1o2ljNOX71yhlXqFPehbmzmEdlKLzjo?=
+ =?us-ascii?Q?H6KDQpgG0871m57MuNIFi3cjbKXCqKwTOdXwfVwAx40ltBQFmzC4oZ7guy18?=
+ =?us-ascii?Q?U7ESF0TU/UgEY1a2i5muxOk2w+ZXUtmnD25UlHlX9HWREV5va1NimhaCjjAn?=
+ =?us-ascii?Q?hWjKVugWRKTBKiAIIffo/C82WN6SHCk3IJlXtMPbEy4wU/iHTqKGZDpMDq9X?=
+ =?us-ascii?Q?ucYv6dGUcKZHXxvk9OjxPS3bSYVNkXCHmrkq/jaGp53d9XVgzfdJGd+W4l9Z?=
+ =?us-ascii?Q?27HHQmETx6B/YEjbfcNkp1SUaY7ftQSmmmIXIkev/nORUbnJX+91Qv3NP4ah?=
+ =?us-ascii?Q?Wqo9objUF1RAYnzv3FDZZiwXbJJyiLaV/x4SM8M14M4PQdWxJ/YfCimfd1N0?=
+ =?us-ascii?Q?tIkpNDFje9UjMcXabM6SPA81lktC1ZM28n6XlGzby95E798h7LNxK22yfsab?=
+ =?us-ascii?Q?O445spPNpmsNUHdhaVHVBWIAYO918TmSczti0YaPgw5rLmv3UcCMbq/mEqRD?=
+ =?us-ascii?Q?DB2INpeM4lHAFsDPwJiQ9dEf26ebmPuoCxLNCWKFfNzrJ1tpF68za1itNkS4?=
+ =?us-ascii?Q?Fq4nyZClZdiv/oBZW1cxW+sV7s32p1RuwTkglLGFBQdszUWxTp+usqIDiLqa?=
+ =?us-ascii?Q?8DyU5IEaWy7tLGGc1/3yA4B8gRc1Pn9x5zfnyMHtFs7xjtrMqMN40+SeeRpQ?=
+ =?us-ascii?Q?u/jfm6TEudVnejfA9HDTHgW9OgdGpi6FmOv6BwklM2g6nn6EQjJMhfdLrZoO?=
+ =?us-ascii?Q?2Hy41pw5hbvMfu0zQ3oM5tDTOPyYVCUgV5R+3tAWRtpI4MyT1UUcDb6XTL2/?=
+ =?us-ascii?Q?InlLVSo+6hK3sOcFy0NxoNiytMWBIeDCXmo8CA/jlG7bL348mn5bB5fg8ybH?=
+ =?us-ascii?Q?S/amzhg2Nmf4DQ+BZwd5l7aL2VBiFAnHxaaZQ5fCGZnYXtBu9Pohzv9dsrpE?=
+ =?us-ascii?Q?H5Hw8mdSVXfGy7ZH6x53irk5oorguFFNaVbMFmkiGc+1tDiIrpjPnSwThHCK?=
+ =?us-ascii?Q?5W1zkcUxPBkKjalhtiOejmYtf+sXYqo7+7opJNMpye6Uqu2pvij1xCdzRDO+?=
+ =?us-ascii?Q?C8Ufkox5HsxPFgIanqhOa00AJrlohne3RPs+xKLyOzj06NTvalJTwAcUtYd3?=
+ =?us-ascii?Q?Bhy4dteNQD1RgMTjy7EBqvWju3VeywymO5stPaBiVpuq+gUVT53kWLjSMTps?=
+ =?us-ascii?Q?TTsi5DNEesHvgCVrBMlLw+VnvsiHDfgPaJGYR6U0mKqyd3HiiqCYHZcMlhFt?=
+ =?us-ascii?Q?0sVcMZNIdJh6rGVLdFUuofOoUJ8yU2x/uC0qvmLiteQa7hHdExEoC/obojMh?=
+ =?us-ascii?Q?R3VNckkZa39dyVpsf70X2sNshkbwYheqs5AGhcuWEORXh62xGblMmFLqS6v4?=
+ =?us-ascii?Q?Tg=3D=3D?=
+X-OriginatorOrg: nxp.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 844e2de4-e776-44eb-0766-08dcf432a00d
+X-MS-Exchange-CrossTenant-AuthSource: AM8PR04MB7779.eurprd04.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 13:49:05.2159
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 686ea1d3-bc2b-4c6f-a92c-d99c5c301635
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: no3CqFIjpo0ltFJWDw2MdOawXRM1AXVJoWnhtGGBBfrm5CRhcI1RkTDVRJBCDcPr1J5RYWoB9gZSHIj4HzXBig==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: PR3PR04MB7402
 
-On 24 October 2024 14:54:41 CEST, Miguel Luis <miguel=2Eluis@oracle=2Ecom> =
-wrote:
->Perhaps spec=2E F=2Eb=2E could be accommodated by first invoking SYSTEM_O=
-FF2 with
->PSCI_1_3_OFF_TYPE_HIBERNATE_OFF and checking its return value in case of =
-a
->fallback to an invocation with 0x0 ?
+On Tue, Oct 22, 2024 at 12:11:36PM -0700, Jacob Keller wrote:
+> On 10/19/2024 5:20 AM, Vladimir Oltean wrote:
+> > On Fri, Oct 18, 2024 at 02:50:52PM -0700, Jacob Keller wrote:
+> >> Przemek, Vladimir,
+> >>
+> >> What are your thoughts on the next steps here. Do we need to go back to
+> >> the drawing board for how to handle these static checks?
+> >>
+> >> Do we try to reduce the size somewhat, or try to come up with a
+> >> completely different approach to handling this? Do we revert back to
+> >> run-time checks? Investigate some alternative for static checking that
+> >> doesn't have this limitation requiring thousands of lines of macro?
+> >>
+> >> I'd like to figure out what to do next.
+> > 
+> > Please see the attached patch for an idea on how to reduce the size
+> > of <include/generated/packing-checks.h>, in a way that should be
+> > satisfactory for both ice and sja1105, as well as future users.
+> 
+> This trades off generating the macros for an increase in the config
+> complexity. I suppose that is slightly better than generating thousands
+> of lines of macro... The unused macros sit on disk in the include file,
+> but i don't think they would impact the deployed code...
 
-I wasn't aware there was any point=2E Are there any hypervisors which actu=
-ally implemented it that way? Amazon Linux and Ubuntu guests already just u=
-se zero=2E
+Sorry, conflicting requirements. There will be a trade-off somewhere between
+performance (having sanity checks at compile time rather than run time),
+size (offer a library-level mechanism for consumer drivers to perform their
+compile-time sanity checks), complexity (only generate those sanity
+checks which are requested by drivers) and flexibility (support whichever
+order the consumer driver desires for the arrays of packed fields).
+I believe performance should not be the one which has to suffer, because
+packet processing is one of the potential use cases, and I wouldn't want
+to lose that through design choices. The rest.. I'm more flexible on,
+but still, they have to be satisfiable in a way that I can see.
 
-We could add it later if such a hypervisor (now in violation of F=2Eb) tur=
-ns up, I suppose?
+> I'm still wondering if there is a different approach we can take to
+> validate these structures.
+
+I just want to say that I don't have any alternative proposals, nor will I
+explore your sparse suggestion. I don't know enough about sparse to judge
+whether something as 'custom' as the packing API is in scope for its
+check_call_instruction() infrastructure, how well will that solution
+deal with internal kernel API changes down the line, and I don't have
+the time to learn enough to prototype something to find the maintainers'
+answer to these questions, either. I strongly prefer to have the static
+checks inside the kernel, together with the packing() API itself, so it
+can be more easily altered.
+
+Obviously you're still free to wait for more opinions and suggestions,
+or to experiment with the sparse idea yourself.
+
+Honestly, my opinion is that if we can avoid messing too much with the
+top-level Kbuild file, this pretty much enters "no one really cares"
+territory, as long as the code is generated only for the pack_fields()
+users. This is, in fact, one of the reasons why the patch I attached
+earlier compiles and runs the code-gen only when PACKING_CHECK_FIELDS
+is defined.
 
