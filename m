@@ -1,156 +1,149 @@
-Return-Path: <linux-kernel+bounces-379115-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379117-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 43BBB9ADA37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:06:53 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1393D9ADA3C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:08:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06181282C5D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:06:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41E871C20BFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:08:33 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C70D7156677;
-	Thu, 24 Oct 2024 03:06:46 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2oHIB1O"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D6C09157A5A;
+	Thu, 24 Oct 2024 03:08:24 +0000 (UTC)
+Received: from dggsgout11.his.huawei.com (dggsgout11.his.huawei.com [45.249.212.51])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D4D0482EB;
-	Thu, 24 Oct 2024 03:06:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CAC4482EB;
+	Thu, 24 Oct 2024 03:08:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.51
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729739206; cv=none; b=Hm7W1s43v3sdqiyPrIgdByzVqFUHcmFboqc/EPaVXhLZFmtzbPFSqJz5gu/dbiSqXmnewb32yrzmGUksJdWLtxIFg/T0TN+RYYe7CQJnKGjQaPBCRcQXT4iETRv6BlilH6K972V6upZ1JHhmR7GlpASriVMWIYrihZTIdYj+H8U=
+	t=1729739304; cv=none; b=eemm60pDlFAOHtT9dnZLNXnn6Y1/MK42SjnyqkJ8N5rKrLELeUuqpNl12kzHydvEQ1sp84NWc1s/WboP2pPYz/MBarwm7Jys7cdsCpQlTLvg5k7Ah3tPQbJ5oZ18PdUxvYFb/efeZc9oQleEISUxEinvaNhO1lrxk1TkszR6chE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729739206; c=relaxed/simple;
-	bh=idlAGLwFHth059G6pQJOOqh6gCScQHa8vkEmecsBQLY=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sap7hBexI3JuuXSDB0QFo52K7S7BI0s+fUOjvmCXRz5pZ+t26RKiJPxKNFCqfSPFmIOosWY5EPuiAy+3Wmc104x9QjcP7+mG3d/o34zNL8q/be1JOIVrs+Nsxos6PpuV7o01NxDo83q0Esavy+/BdiJxz8M1AgkYJhQ/p8LQyr0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2oHIB1O; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id DF4CBC4CEC6;
-	Thu, 24 Oct 2024 03:06:44 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729739205;
-	bh=idlAGLwFHth059G6pQJOOqh6gCScQHa8vkEmecsBQLY=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Y2oHIB1OVeN0kjMdZCOyV8quz5zRIv2RAF0/LszqlxEMpchNt3bnZcLZXujIYUttU
-	 EwNcZ3VC7c1cL/kapD56Re0wcd7qN0uUKrY6TSxALfmguZJdhqXVIyOMFAiUhs2ICP
-	 a1Kmpe/Sz7y1n+odpKbCYxvkaRM4tLKqpb1aIlpjZ+L73nnhK4rKdFJd4iJjbs2i1t
-	 +xG4gE9sas1wEM9kFh3CTHLuHf00zWfV3hhHwg6ATkZ3cjJTA0wRfD5T1lfQKwQB9a
-	 ASlaWuSOt+O+z5LYYFnjUL2h9AWJ9HhC0dwJyFY4gTfvKRrQgsdEhqlA3Agr6kK/kc
-	 3BmGh2ZR1DBOQ==
-Date: Wed, 23 Oct 2024 20:06:43 -0700
-From: Namhyung Kim <namhyung@kernel.org>
-To: Ian Rogers <irogers@google.com>
-Cc: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
-	Arnaldo Carvalho de Melo <acme@kernel.org>,
-	Mark Rutland <mark.rutland@arm.com>,
-	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
-	Jiri Olsa <jolsa@kernel.org>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Ravi Bangoria <ravi.bangoria@amd.com>,
-	Weilin Wang <weilin.wang@intel.com>,
-	Yoshihiro Furudera <fj5100bi@fujitsu.com>,
-	James Clark <james.clark@linaro.org>,
-	Athira Jajeev <atrajeev@linux.vnet.ibm.com>,
-	Howard Chu <howardchu95@gmail.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Changbin Du <changbin.du@huawei.com>, Ze Gao <zegao2021@gmail.com>,
-	Junhao He <hejunhao3@huawei.com>, linux-kernel@vger.kernel.org,
-	linux-perf-users@vger.kernel.org
-Subject: Re: [PATCH v6 0/5]  Hwmon PMUs
-Message-ID: <Zxm5w6wXLxpbERZx@google.com>
-References: <20241022180623.463131-1-irogers@google.com>
+	s=arc-20240116; t=1729739304; c=relaxed/simple;
+	bh=CaMSAi9vUKO64fetahh6zHgIEDuIiyQkqUQ3Uto8qSc=;
+	h=Subject:To:Cc:References:From:Message-ID:Date:MIME-Version:
+	 In-Reply-To:Content-Type; b=c1EOsZAo+cT6OMfh1Jsek2WqLSaxg36RBCdiH9+6PfoXw4BneHyC9P6lUJQIKeFt/iPQMYHL4H3zkq4JU/9L3bil+7KjZKPwGttiP6Pcepiuxoce5BWDtyTrodkbL3t2/d1TU4a9gTfmLyS8Z3WMrkDy2v8dSLkGqR2MKnIqNdQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.51
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
+Received: from mail.maildlp.com (unknown [172.19.163.235])
+	by dggsgout11.his.huawei.com (SkyGuard) with ESMTP id 4XYrSq2dtrz4f3lfy;
+	Thu, 24 Oct 2024 11:07:55 +0800 (CST)
+Received: from mail02.huawei.com (unknown [10.116.40.128])
+	by mail.maildlp.com (Postfix) with ESMTP id 9BD951A0568;
+	Thu, 24 Oct 2024 11:08:13 +0800 (CST)
+Received: from [10.174.176.73] (unknown [10.174.176.73])
+	by APP4 (Coremail) with SMTP id gCh0CgAXTMgbuhlnG03SEw--.35506S3;
+	Thu, 24 Oct 2024 11:08:13 +0800 (CST)
+Subject: Re: [PATCH RFC 5/6] md/raid1: Handle bio_split() errors
+To: John Garry <john.g.garry@oracle.com>, Yu Kuai <yukuai1@huaweicloud.com>,
+ axboe@kernel.dk, hch@lst.de
+Cc: linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+ linux-raid@vger.kernel.org, martin.petersen@oracle.com,
+ "yangerkun@huawei.com" <yangerkun@huawei.com>,
+ "yukuai (C)" <yukuai3@huawei.com>
+References: <20240919092302.3094725-1-john.g.garry@oracle.com>
+ <20240919092302.3094725-6-john.g.garry@oracle.com>
+ <bc4c414c-a7aa-358b-71c1-598af05f005f@huaweicloud.com>
+ <0161641d-daef-4804-b4d2-4a83f625bc77@oracle.com>
+ <c03de5c7-20b8-3973-a843-fc010f121631@huaweicloud.com>
+ <68d10e83-b196-4935-a350-464b82c30e44@oracle.com>
+From: Yu Kuai <yukuai1@huaweicloud.com>
+Message-ID: <169b94ae-8711-1821-75a7-7e3a600745e4@huaweicloud.com>
+Date: Thu, 24 Oct 2024 11:08:11 +0800
+User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
+ Thunderbird/60.8.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <20241022180623.463131-1-irogers@google.com>
+In-Reply-To: <68d10e83-b196-4935-a350-464b82c30e44@oracle.com>
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-CM-TRANSID:gCh0CgAXTMgbuhlnG03SEw--.35506S3
+X-Coremail-Antispam: 1UD129KBjvJXoW7Ar48KrW5Xw1kWFWkCF1DGFg_yoW8Xw4xp3
+	48JFWxArW5JrW8ZF1UJw17ta4rAr1UXa45AF18W3WUJFsIqr90vF4UXryqgr18XF48Gr1U
+	J3W8GFsxuF47JFDanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
+	9KBjDU0xBIdaVrnRJUUUBF14x267AKxVW8JVW5JwAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
+	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2ocxC64kIII0Yj41l84x0c7CEw4AK67xGY2AK02
+	1l84ACjcxK6xIIjxv20xvE14v26w1j6s0DM28EF7xvwVC0I7IYx2IY6xkF7I0E14v26r4U
+	JVWxJr1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_Gc
+	CE3s1le2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E
+	2Ix0cI8IcVAFwI0_Jr0_Jr4lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJV
+	W8JwACjcxG0xvEwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka
+	0xkIwI1lc7I2V7IY0VAS07AlzVAYIcxG8wCY1x0262kKe7AKxVWUtVW8ZwCF04k20xvY0x
+	0EwIxGrwCFx2IqxVCFs4IE7xkEbVWUJVW8JwC20s026c02F40E14v26r1j6r18MI8I3I0E
+	7480Y4vE14v26r106r1rMI8E67AF67kF1VAFwI0_Jw0_GFylIxkGc2Ij64vIr41lIxAIcV
+	C0I7IYx2IY67AKxVWUJVWUCwCI42IY6xIIjxv20xvEc7CjxVAFwI0_Jr0_Gr1lIxAIcVCF
+	04k26cxKx2IYs7xG6r1j6r1xMIIF0xvEx4A2jsIE14v26r1j6r4UMIIF0xvEx4A2jsIEc7
+	CjxVAFwI0_Gr0_Gr1UYxBIdaVFxhVjvjDU0xZFpf9x0JUd-B_UUUUU=
+X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-Hi Ian,
 
-On Tue, Oct 22, 2024 at 11:06:18AM -0700, Ian Rogers wrote:
-> Following the convention of the tool PMU, create a hwmon PMU that
-> exposes hwmon data for reading. For example, the following shows
-> reading the CPU temperature and 2 fan speeds alongside the uncore
-> frequency:
-> ```
-> $ perf stat -e temp_cpu,fan1,hwmon_thinkpad/fan2/,tool/num_cpus_online/ -M UNCORE_FREQ -I 1000
->      1.001153138              52.00 'C   temp_cpu
->      1.001153138              2,588 rpm  fan1
->      1.001153138              2,482 rpm  hwmon_thinkpad/fan2/
->      1.001153138                  8      tool/num_cpus_online/
->      1.001153138      1,077,101,397      UNC_CLOCK.SOCKET                 #     1.08 UNCORE_FREQ
->      1.001153138      1,012,773,595      duration_time
-> ...
-> ```
+
+在 2024/10/23 19:21, John Garry 写道:
+> On 23/09/2024 07:15, Yu Kuai wrote:
 > 
-> Additional data on the hwmon events is in perf list:
-> ```
-> $ perf list
-> ...
-> hwmon:
-> ...
->   temp_core_0 OR temp2
->        [Temperature in unit coretemp named Core 0. crit=100'C,max=100'C crit_alarm=0'C. Unit:
->         hwmon_coretemp]
-> ...
-> ```
+> Hi Kuai,
 > 
-> v6: Add string.h #include for issue reported by kernel test robot.
-> v5: Fix asan issue in parse_hwmon_filename caught by a TMA metric.
-> v4: Drop merged patches 1 to 10. Separate adding the hwmon_pmu from
->     the update to perf_pmu to use it. Try to make source of literal
->     strings clearer via named #defines. Fix a number of GCC warnings.
-> v3: Rebase, add Namhyung's acked-by to patches 1 to 10.
-> v2: Address Namhyung's review feedback. Rebase dropping 4 patches
->     applied by Arnaldo, fix build breakage reported by Arnaldo.
+>>> iff --git a/drivers/md/raid1.c b/drivers/md/raid1.c
+>>> index 6c9d24203f39..c561e2d185e2 100644
+>>> --- a/drivers/md/raid1.c
+>>> +++ b/drivers/md/raid1.c
+>>> @@ -1383,6 +1383,10 @@ static void raid1_read_request(struct mddev 
+>>> *mddev, struct bio *bio,
+>>>       if (max_sectors < bio_sectors(bio)) {
+>>>           struct bio *split = bio_split(bio, max_sectors,
+>>>                             gfp, &conf->bio_split);
+>>> +        if (IS_ERR(split)) {
+>>> +            raid_end_bio_io(r1_bio);
+>>> +            return;
+>>> +        }
+>>
+>> This way, BLK_STS_IOERR will always be returned, perhaps what you want
+>> is to return the error code from bio_split()?
 > 
-> Ian Rogers (5):
->   tools api io: Ensure line_len_out is always initialized
->   perf hwmon_pmu: Add a tool PMU exposing events from hwmon in sysfs
->   perf pmu: Add calls enabling the hwmon_pmu
->   perf test: Add hwmon "PMU" test
->   perf docs: Document tool and hwmon events
+> I am not sure on the best way to pass the bio_split() error code to 
+> bio->bi_status.
+> 
+> I could just have this pattern:
+> 
+> bio->bi_status = errno_to_blk_status(err);
+> set_bit(R1BIO_Uptodate, &r1_bio->state);
+> raid_end_bio_io(r1_bio);
+> 
+I can live with this. :)
 
-I think the patch 2 can be easily splitted into core and other parts
-like dealing with aliases and units.  I believe it'd be helpful for
-others (like me) to understand how it works.
+> Is there a neater way to do this?
 
-Please take a look at 'perf/hwmon-pmu' branch in:
+Perhaps add a new filed 'status' in r1bio? And initialize it to
+BLK_STS_IOERR;
 
-  https://git.kernel.org/pub/scm/linux/kernel/git/namhyung/linux-perf.git
+Then replace:
+set_bit(R1BIO_Uptodate, &r1_bio->state);
+to:
+r1_bio->status = BLK_STS_OK;
+
+and change call_bio_endio:
+bio->bi_status = r1_bio->status;
+
+finially here:
+r1_bio->status = errno_to_blk_status(err);
+raid_end_bio_io(r1_bio);
 
 Thanks,
-Namhyung
+Kuai
 
 > 
->  tools/lib/api/io.h                     |   1 +
->  tools/perf/Documentation/perf-list.txt |  15 +
->  tools/perf/tests/Build                 |   1 +
->  tools/perf/tests/builtin-test.c        |   1 +
->  tools/perf/tests/hwmon_pmu.c           | 243 ++++++++
->  tools/perf/tests/tests.h               |   1 +
->  tools/perf/util/Build                  |   1 +
->  tools/perf/util/evsel.c                |   9 +
->  tools/perf/util/hwmon_pmu.c            | 821 +++++++++++++++++++++++++
->  tools/perf/util/hwmon_pmu.h            | 154 +++++
->  tools/perf/util/pmu.c                  |  20 +
->  tools/perf/util/pmu.h                  |   2 +
->  tools/perf/util/pmus.c                 |   9 +
->  tools/perf/util/pmus.h                 |   3 +
->  14 files changed, 1281 insertions(+)
->  create mode 100644 tools/perf/tests/hwmon_pmu.c
->  create mode 100644 tools/perf/util/hwmon_pmu.c
->  create mode 100644 tools/perf/util/hwmon_pmu.h
+> Thanks,
+> John
 > 
-> -- 
-> 2.47.0.163.g1226f6d8fa-goog
 > 
+> .
+> 
+
 
