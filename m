@@ -1,456 +1,253 @@
-Return-Path: <linux-kernel+bounces-379498-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379499-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66BE99ADF58
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:41:24 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id EFE1C9ADF5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:42:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 877011C21D88
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:41:23 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 47134B2345B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:41:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 05CB71B0F13;
-	Thu, 24 Oct 2024 08:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 803A31B2180;
+	Thu, 24 Oct 2024 08:41:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="TGPv0aVN"
-Received: from mx0b-001b2d01.pphosted.com (mx0b-001b2d01.pphosted.com [148.163.158.5])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="QMGkdPQG"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.13])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 354B323CB;
-	Thu, 24 Oct 2024 08:41:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.158.5
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759277; cv=none; b=EKynLZ9trmzKNSC2uW9upKO11NDWKZ573u/IDL/S/369JgTXDIRm1731ci1xwlXJsZGquZmaHQmGVuLnQJfV6t+47qmzhsHypJ3+QhMKi0wLsP7vD6NJa6GKDeErjD1JAnLtskwei1vGrnBQVanAgLs8RpjXi0YM1Q9+HuK4Nms=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759277; c=relaxed/simple;
-	bh=IDGPiwzzEoUE5t9grhr4WAXFwohM4ar5VDhJLaTj728=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=SfYT80GXZZ79ClJwdbDSp1YGgKtsIoVsS9o+d4Vyzi0t2T7cfY7AnLW0Z831oLkY1wyK1TFUmwYmlzfARBhD3FwCxW0ypxsEnCIQcguhq7CFLDIJV3sAx68P9nk7X60eZxtB6Np7XXWriWCpP7lZvTvjI8fm62wNKzal0W2vX0Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=TGPv0aVN; arc=none smtp.client-ip=148.163.158.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0353725.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49NNQWXW016727;
-	Thu, 24 Oct 2024 08:41:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-transfer-encoding:date:from:in-reply-to:message-id
-	:mime-version:references:subject:to; s=pp1; bh=sZj2jTyS/7uDNLMIK
-	NF5ieJv72OsdeSA61qV4vS6V5I=; b=TGPv0aVNlxhcXSuhkhtlXGUBo8j6PxJM/
-	Y/Zq785bElzId4xoMNo7e8ep5gFNBt8mSM+CCborr/N2dBBNTwHYYyB+xKW15ht5
-	J+GkMNgUHu3UjmKj1Obrob3PL4EmCc3xt42Omg14cWwPY+n0gBfjVrM6WIRs7DBW
-	OTOcGw3TNDjQZLeD50KODDaA6BQZ7eMXPpE11yPLtE9UboBY6g0CBuoe2M401MPx
-	uL3UlO1FioXmjM1iNEwYj9P7TCFKSLBf2KuDZRirXqZZpx59MOhNCSZYlN5xBrIS
-	EcYQAi+6zfxq98zsZrTXzHsmrBpRQ9UWZf1jJ9GkbSdS02TikQAng==
-Received: from ppma23.wdc07v.mail.ibm.com (5d.69.3da9.ip4.static.sl-reverse.com [169.61.105.93])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42emajqdfc-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 08:41:12 +0000 (GMT)
-Received: from pps.filterd (ppma23.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma23.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49O6n1wP006868;
-	Thu, 24 Oct 2024 08:41:12 GMT
-Received: from smtprelay03.fra02v.mail.ibm.com ([9.218.2.224])
-	by ppma23.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emjcyesm-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 08:41:11 +0000
-Received: from smtpav06.fra02v.mail.ibm.com (smtpav06.fra02v.mail.ibm.com [10.20.54.105])
-	by smtprelay03.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49O8f81D32375242
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Oct 2024 08:41:08 GMT
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id F051520049;
-	Thu, 24 Oct 2024 08:41:07 +0000 (GMT)
-Received: from smtpav06.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id C1F9C20040;
-	Thu, 24 Oct 2024 08:41:07 +0000 (GMT)
-Received: from tuxmaker.boeblingen.de.ibm.com (unknown [9.152.85.9])
-	by smtpav06.fra02v.mail.ibm.com (Postfix) with ESMTP;
-	Thu, 24 Oct 2024 08:41:07 +0000 (GMT)
-From: Steffen Eiden <seiden@linux.ibm.com>
-To: frankja@linux.ibm.com
-Cc: freude@linux.ibm.com, ifranzki@linux.ibm.com, imbrenda@linux.ibm.com,
-        linux-kernel@vger.kernel.org, linux-s390@vger.kernel.org,
-        schlameuss@linux.ibm.com
-Subject: [PATCH v6 2/6] s390/uv: Retrieve UV secrets support
-Date: Thu, 24 Oct 2024 10:41:07 +0200
-Message-ID: <20241024084107.2418186-1-seiden@linux.ibm.com>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241024062638.1465970-3-seiden@linux.ibm.com>
-References: <20241024062638.1465970-3-seiden@linux.ibm.com>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: gAqDlpTt5r_kDzgFKFWih0C7XeTkCvaD
-X-Proofpoint-GUID: gAqDlpTt5r_kDzgFKFWih0C7XeTkCvaD
-Content-Transfer-Encoding: 8bit
-X-Proofpoint-UnRewURL: 0 URL was un-rewritten
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CAB61AF0BB;
+	Thu, 24 Oct 2024 08:41:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=192.198.163.13
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729759301; cv=fail; b=L/FOH28gyaXcIP2Z/Q1+VEP2m7eH4Wn+UKibTcKZAxbJWtWXJA9SbfBwPc1H3X+vgr4wc4xhQu+Zm8M8xGEl08jGxs2d8oUKvu77hH3zgB8BJK66HshxfrY85ubCgGgN4Xq10lsABDjjpzdCvPDjxwfjvPkkN2NJ1Oj6Kcadjb4=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729759301; c=relaxed/simple;
+	bh=rJKXPBooodT326pT/ES8y9qesyFtIHrJ6sIRwinUfwY=;
+	h=Message-ID:Date:Subject:To:CC:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=jMRdncvxPxSRkATwqpHL76t2SW9BgwL+3B6G6DV2ywyp2gZreake72df2ejC01jPRCDs9sxWhU4Yl3kjLd00QXsnHNsH66DnbaB+1SM/sAzqhjjOnBAR0jym3XHMSXlAt9Y1qGW+OOoJJVIa1tXWqxWx2Wtxx0RpbP82Cqc51T4=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=QMGkdPQG; arc=fail smtp.client-ip=192.198.163.13
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729759297; x=1761295297;
+  h=message-id:date:subject:to:cc:references:from:
+   in-reply-to:content-transfer-encoding:mime-version;
+  bh=rJKXPBooodT326pT/ES8y9qesyFtIHrJ6sIRwinUfwY=;
+  b=QMGkdPQGLxxCl4U/XF5I0Q0Ct102xlfYSzzc5okC1nzQADeFGYrXAkN6
+   TWzacGrIycbswPLYyFlnsDI41EmcoI+NiIYuBTS2CRYTYCheJ9Z6Ou+ol
+   +e0tzEvu1aWT3WPWVOyNCUPegzPIRGeQSdPDZLQncvTQ4GBksYQYZ0uHw
+   8qutMvKphysHM2CfVbePu/6eaWOsgkuUYHT8MMvvStkQBhqkDo50aCTXM
+   2d0RWswikcxxONmUCuEPWRRrdzEHc38U+JCdxVnkTLGMb5ylQGAQjIyk+
+   +DPe1lUTwUwiHjUXrJeh/AfokGcWfTroJhbTVzFkbx6BQPXcjhYug3cLU
+   g==;
+X-CSE-ConnectionGUID: HTTYMtPgQ/CcmepaMSTAiw==
+X-CSE-MsgGUID: ll2+6YjrTFyAIj9cVnl//A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="32238556"
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="32238556"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by fmvoesa107.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:41:35 -0700
+X-CSE-ConnectionGUID: 1GDXl7teSRqoVGO+g/9g4w==
+X-CSE-MsgGUID: U81GgLaxTBCqpalOCjJ+8Q==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="84497774"
+Received: from orsmsx602.amr.corp.intel.com ([10.22.229.15])
+  by fmviesa003.fm.intel.com with ESMTP/TLS/AES256-GCM-SHA384; 24 Oct 2024 01:41:35 -0700
+Received: from orsmsx601.amr.corp.intel.com (10.22.229.14) by
+ ORSMSX602.amr.corp.intel.com (10.22.229.15) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39; Thu, 24 Oct 2024 01:41:34 -0700
+Received: from ORSEDG602.ED.cps.intel.com (10.7.248.7) by
+ orsmsx601.amr.corp.intel.com (10.22.229.14) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256) id
+ 15.1.2507.39 via Frontend Transport; Thu, 24 Oct 2024 01:41:34 -0700
+Received: from NAM10-BN7-obe.outbound.protection.outlook.com (104.47.70.43) by
+ edgegateway.intel.com (134.134.137.103) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 24 Oct 2024 01:41:34 -0700
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=dOyUrnPQ8n+GrQNXkGDzTIXJl2milpX5YHgClzRW0+ipP7VWM+SrkZYjqvT8ONzNck4U9v9JF5/KfFL8NIVMsh+K5y4QQXcM/d0Ga7I3gqyKvUvXXO0h8naAVYmX01vopKKtjWpY3qb4AqfFGcMQeIYRhEusQ9g6fR/7qCityOq5lcL9gF+E8I4d2hrgirloaJeiTOxTjcxd3xjTfnMp0o26XB5uTbcdGo6R6fvP+NB2f2UVjNNEtcHj19THhGCm+BU6YHwI6TiRtpjs+bSOuvBgly5PJwqMNj8w4Grun/xRmdEQRgsBJdaijrgEcQYfFZM10FB3T3+7h1nsxcjbug==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=Gf8EBTsxLqLLm1BLFmaife01rDvINRr+QASuhP108ZU=;
+ b=qNGvoHuyiT3EUZ8EJ0R7dzUo5RWIruir+uXp+tkIsuvs2O4dkcbegoRE96cEFZTdKwSx1AKp/v8efTQz3Bui/S8Aj+nMVNnoNrPEWBs5GWnYaSATkkYSzzbtsMSfZtZoSF6jNrDgysg7FsixMnZJ8W+ipY3EbdPSvHYpZ+GrxUs4pZ5s2cGrQUw2+StmfVXG4wTSqjuQwDfRaDh6q+fsOmPHDL/Rojw0tp7rzhKrLiirJfdGxgYbr4ybm+Ev5zPkEcBw+fJ44aGAPuEE1r3FPT6OxRRItwJcHZtvp3vZHa2S31abTFei12xG6TSqMKXTlzz/HFfJXgoXlCchbSXYyA==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=intel.com; dmarc=pass action=none header.from=intel.com;
+ dkim=pass header.d=intel.com; arc=none
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=intel.com;
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com (2603:10b6:208:46d::9)
+ by MW3PR11MB4604.namprd11.prod.outlook.com (2603:10b6:303:2f::16) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Thu, 24 Oct
+ 2024 08:41:31 +0000
+Received: from MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6]) by MN6PR11MB8102.namprd11.prod.outlook.com
+ ([fe80::15b2:ee05:2ae7:cfd6%6]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
+ 08:41:31 +0000
+Message-ID: <91005d18-37c7-483b-bda5-2fa57a884a17@intel.com>
+Date: Thu, 24 Oct 2024 10:41:25 +0200
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
+To: Johnny Park <pjohnny0508@gmail.com>, <horms@kernel.org>
+CC: <intel-wired-lan@lists.osuosl.org>, <netdev@vger.kernel.org>,
+	<kernel-janitors@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+	<anthony.l.nguyen@intel.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<pmenzel@molgen.mpg.de>
+References: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
+From: Przemek Kitszel <przemyslaw.kitszel@intel.com>
+Content-Language: en-US
+In-Reply-To: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: ZR0P278CA0170.CHEP278.PROD.OUTLOOK.COM
+ (2603:10a6:910:45::12) To MN6PR11MB8102.namprd11.prod.outlook.com
+ (2603:10b6:208:46d::9)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 malwarescore=0
- mlxscore=0 phishscore=0 priorityscore=1501 suspectscore=0 impostorscore=0
- lowpriorityscore=0 spamscore=0 mlxlogscore=596 bulkscore=0 adultscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410240062
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MN6PR11MB8102:EE_|MW3PR11MB4604:EE_
+X-MS-Office365-Filtering-Correlation-Id: 4f8e6ad4-692f-427f-b61c-08dcf407a8c3
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|376014|1800799024|7416014|366016;
+X-Microsoft-Antispam-Message-Info: =?utf-8?B?STRCTU5iVy9vdEZDelpSR0JjTGtjQzVTZ0M2MTc1anJsS2p5dnpsRXFFOElF?=
+ =?utf-8?B?SS9TNkUrWGN3cHRyMWlvaENtWFRibDNNTVRXbWMvNDU2SzR6N2ZaSGxFZ21T?=
+ =?utf-8?B?NS9LNEhEUi84bUFsbUpWZ2RZM0JNQ2gxUEZaTGpFdVEyMXRqUlk4YXRtNHZt?=
+ =?utf-8?B?enpodlRJTGZEd1Y1QWtkc2haUHIrbk9OUjBOcHE5djZYbTJnbWlNR0pEYnRZ?=
+ =?utf-8?B?T1RwYXBERWgzUUNnOXJYNUplRTZSdC80cWdrUzJidno2TmlLK21SNGZLYkFB?=
+ =?utf-8?B?SFFkNkRYWmpxUmZZbGM0cisxYk9sb0lWYlo2YW1sNmZ5aGNHYUVrSmdOcUpr?=
+ =?utf-8?B?alBEUG9vQnZSTlVkWk0veTRnZ3k3eHBSVnZzTm95QlJxZXNDZHFnZ0hoUUor?=
+ =?utf-8?B?dWFURXMzSnVXZVFIUFhUT1VXYTRzbkRyRHJnNElhQnM5TUJkWVNvNTZqcnIr?=
+ =?utf-8?B?TExlOFordHJ0RHYzVGsxeDFhZXZHNmFMWEFoTDZnUG82dFhMeU5RT3BhdDNy?=
+ =?utf-8?B?blJQY0NnTU0xSG4rRzRRbWIwNFFSWEVQbEp0SXRGTS9JOUZFL29ySjJZWXNu?=
+ =?utf-8?B?bDFZUW50ZnY1R1RKUHUrRnRJN2VCb2FBZjBOalE4MnFkbmN6Q0FRVExuTTZC?=
+ =?utf-8?B?S255RVRsZzhwcUFhZGNOcnpJZ3Q0a0p2TWg1cXRHMFR6ZU50N1kxMjR2M2c2?=
+ =?utf-8?B?L1JxOUw0QUpIdTdrM3BNZnBLaUM1ODVWTUZKNGFUNmRYZE1BWS83cGxva1Zx?=
+ =?utf-8?B?Y3Rrdzl0Y3dMbnI1dG5tRHcwbVY1SVIreXJua01FTnA5R3o4QURaNFBXMkxU?=
+ =?utf-8?B?SWR1Sy9yYWt3c1RtZEQ0QU05azdQYTJER2U1MzdpalAzMjExWlZZMEQ0WW1Z?=
+ =?utf-8?B?ZS9iZUpUaUpPc0NPdko2SitUazNjNEJwUCtNcThCY0Iya29wSnMxNDVGblFD?=
+ =?utf-8?B?SnA5VG1STXFlYk5NY1Nwblo0VnRob1Y5WFlrNGxXZjhQaDRndTNPUi91bkp6?=
+ =?utf-8?B?NkJXanlxZnNpRjYrbnZqMEVJbENtSkJZaHBRWGNERVM5UVprU1crTEEwS25l?=
+ =?utf-8?B?RHdrOC9EYmlWS0I0aTBnczdjTW4ycTJBa3RsMTBVaVFJaVZsWmNocllCY00z?=
+ =?utf-8?B?cCt1ZnVYNkNVMHAzWXJLY2Q1SkhpRms2MEZSNExGYmxEOWIyYTMvVG1rcXFH?=
+ =?utf-8?B?cHdYb0t5cWRSb3F6RmkvYXVHRmp4bU52U1FFT1QzK2hsMFJRVENIQXZWdHBR?=
+ =?utf-8?B?akVlTzM1SC9CN25JREJGcjZNQlkvMHBkU093R2xJWHFRSzlmRjJmOUJUdHV5?=
+ =?utf-8?B?eU5OMGx4Z1prQytZK01ocnA2Y1A3dUJHa0FicXlHMllzSEk4eHBUdWVWTm9B?=
+ =?utf-8?B?aFlEN2tqVkdpUjNCRVN2T3dOemRQOG1tNDJxOUhqV0hwNndBTllwd1Raa0cx?=
+ =?utf-8?B?eDZwL1grenN0Wmx0eER5dGJKTndrR0RXanhNeHZiN09yOHhQaEhzOVVDbisr?=
+ =?utf-8?B?Y2N1cS9nMTk5SkI0RDk5VUFwclhvL2M5ZjZ3NUp4UXdUckxOaHZPUEJBTklt?=
+ =?utf-8?B?cERXb3AwbDdDTGJyOXBOYWRTbVU5NVIvb3RGOHNPdU5EY2RkZ1hqQ0RNRkFp?=
+ =?utf-8?B?M2dOSElIYzBsR0FKLy9jMWVpRVEyQ2o4YW1HQnpUOVh6eXMwZDZkSmtlcytn?=
+ =?utf-8?B?OThkTkdPank2RWxGNC9kbVFwMkdQMzdhVURQdmozdnY1Wm82MEE0YTkrNkQz?=
+ =?utf-8?Q?v3Oq53ayiXMcO3xp5+tlnnNwOTsOS+2acqQ6RqK?=
+X-Forefront-Antispam-Report: CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MN6PR11MB8102.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(7416014)(366016);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0: =?utf-8?B?aEVTSTFRTE9peVozc0F3d3NFMGVDMkFaZnFZV3FJejVtNVBRZXNYcjUzSS82?=
+ =?utf-8?B?aGoxVG14cFBIYmd1a1ljSWVtTmlRZWJwaTEzRUl6QklaWWlBWEt3UzFudzAv?=
+ =?utf-8?B?U1JtUnpPdmgxRkxubDdydkM3Q2FFTWJwWTU3TGhSTEx1Q0ZoRzVhakVaMDB0?=
+ =?utf-8?B?N2NNaFNvVysvQkFhUWVyTnh5UTJiY2ltakNSc05MbGJTcUlHYmJZQXorR0pt?=
+ =?utf-8?B?NjlGbzMyaGkrQnpwVnVKT213dGlMdE5MTDdyMFV2L1BCUjFsUHdXZnZ2T3Vp?=
+ =?utf-8?B?WUFUSWQ3cUMxZVQ1SjM4S29vYVdtUkk0NFZZeGtxQ3BRSjhkQldacVZxSmRt?=
+ =?utf-8?B?NldaU25Ba1JVTGZadG13ZlJRV25oVmE0RjNVK0pqZ2YxLzhOMjV1QVBZRm1s?=
+ =?utf-8?B?R1poU2k2OFk2ekFydjhBOWVPdkZYOUlaNGFmTUhQVTZiSHF3YTZUbUtmRDIx?=
+ =?utf-8?B?WE1abEY1dXdXTUFNSFQzd250ZFBkR2kyOWVVR09aNEtYeGswOCtSZ0ZVY0hE?=
+ =?utf-8?B?QW5ZcHJzRjZFNlRYUVh5N0dzdzBrTkRwS3ByczkydkZCWkRwTkhGS1g5TEtI?=
+ =?utf-8?B?OEQzZjF1Q3pkRjN0aGJINm11TTArcWlZM1pYTFZCczRCQmJyMGY2ZVpVZDFv?=
+ =?utf-8?B?ampTY2hGdlhBUkZzT0hCTnJUWFp1WmV0a1h6QWJtMStUdW9BbU5MYmpZemFT?=
+ =?utf-8?B?UGVYOU1DV243am94NjB3QnhuVHYvSzhRUUZtTUdEYmttY3lTZHNpK1ltSlM3?=
+ =?utf-8?B?TllTbmRJUGJOWXBXZlp3NkJwM0N5SmF2QmlvTmdmeDVGYnM5cWs5L2JFMkQw?=
+ =?utf-8?B?dE5rQ3l6eEpXZW14dGI2Zml6b3ZVWUVQVkUzY1lDUWtHVkZMTnYxRXZEaTN3?=
+ =?utf-8?B?SnhVMk0rbDljWi9BVThnY3l3ZTZVYlZpVFQ0emNvWTFkbGE2eHBRNlBuV05D?=
+ =?utf-8?B?Z1VudDVvamg2a1F1VmdPTjI5QXFtcWRjWFl5VTRZU2ZDZDhQa1A3NE1IUk1u?=
+ =?utf-8?B?R2I4YTc1NlB0b085Zk1Xb0lQRkwrM3Q1Wnhpa1ZNWnhMdFhPVW5HQWg3bldD?=
+ =?utf-8?B?VW1VaU1BaVRKd3krNzBpWDFxMHhSTTB5UGkwa0RzdE53L0xVQ0V3VHAvVFd4?=
+ =?utf-8?B?U2F5SlhUOUd2Zk5JNE1KTDNKU2RsNHk2d2Rxd3kwT1Y1Yk5SWGRRZVBvTW8z?=
+ =?utf-8?B?M0dIL3R4enBrWThpMUtmU3lSSFB6b25OdVlYQisyMmc0d00vV0ZSRDMwVjU0?=
+ =?utf-8?B?MDBKd2JiSFpaQVlKUlhxYU10VzhOT21ZdmhleDdxQzl5dzRKamJiMERwL05R?=
+ =?utf-8?B?ZGMxKzRKRk44TE1PbEQ2VzBkRzVBWXFaWTFKZ3V6MU40VCtUc2ExblZZbml1?=
+ =?utf-8?B?Z2llRzdiTUs2ZFBCd2RoYStVUmNxZTkzU3hJYUt5SDRjT0QvbDdVdDRyZ1k1?=
+ =?utf-8?B?MGkwMjdsdUVnbWo4bnovOWVlOUVvRWY5bDgvMGlYdFNHQVliZ3ovcHNxNGQx?=
+ =?utf-8?B?OExkL082cDJUS1hTU0F6OEVPcm42S2VjYnlBcjVvanJlUWJsV2doRjNzNS9Q?=
+ =?utf-8?B?aXJhS0lFK3d2Vm5XTXNERnVIUmdmWWh4SkQ1SUJ6QUh4Y0UvY3daT3ZxbURw?=
+ =?utf-8?B?dEFZV0xHa3Z5dDNjeE80V2VkVzBSOGx1Z1IreG9GSFpza2o3cDBMZEhaMFgy?=
+ =?utf-8?B?cytVZVB2b0pYOEdndUlFa3F2WXpna2RudVpyN1l5ZHBNSVRnU0Q2bzVSZnhR?=
+ =?utf-8?B?K0RkTVRkU3dQSmZ3ZEtYaTBVVkd6ZW5nSFZIYnNIYmxzWkIvdWdFeFB5QnBU?=
+ =?utf-8?B?OEc2bWM0MTdTcVExT24vTkNMWUFvYkFTQmFjemQ3UzJPV2I3V3lKQndTNGxj?=
+ =?utf-8?B?R3BoTGMzcUVXMFdhdjV4a0JnRUhhdU1Ha0RuNlNJT1U5YTlqRFJaVXc2QW9O?=
+ =?utf-8?B?WHFVbDJobnNoUk1JdkxocDB5TlRaNzBNSFNsTDNsQ2t0dFhJVGtFUmRKcEZk?=
+ =?utf-8?B?bjFhbW1hQUpsRGc2Z21oS1liUmg5eTRVNWptdG8yUFpPS0ltOSt4U081S3ln?=
+ =?utf-8?B?eVZGdjZlaDJhUG5MaHRWYk56M1ZUSGc2S0tZNmdqTVJTN2hnbWZsdzRmTVJL?=
+ =?utf-8?B?NGpmbkZoZmZkaU8xbFA3TjVmQmtOSDRoR1pYWEJyWm5iQXloOE9RR082OEJ5?=
+ =?utf-8?B?WlE9PQ==?=
+X-MS-Exchange-CrossTenant-Network-Message-Id: 4f8e6ad4-692f-427f-b61c-08dcf407a8c3
+X-MS-Exchange-CrossTenant-AuthSource: MN6PR11MB8102.namprd11.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 08:41:31.4097
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 46c98d88-e344-4ed4-8496-4ed7712e255d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: 5H5mLw/zGbnMGWEfM6ycWMVbJUQpaY8I/qtdsakESmRblLT7IO61aBeddOyYbN23HmQTDENl/UAsXn70Fb1Q0MEwPLEy7lNSe4LtzsJnCgo=
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW3PR11MB4604
+X-OriginatorOrg: intel.com
 
-Provide a kernel API to retrieve secrets from the UV secret store.
-Add two new functions:
-* `uv_get_secret_metadata` - get metadata for a given secret identifier
-* `uv_retrieve_secret` - get the secret value for the secret index
+On 10/24/24 07:45, Johnny Park wrote:
+> Fix 2 spelling mistakes in comments in `igb_main.c`.
+> 
+> Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
 
-With those two functions one can extract the secret for a given secret
-id, if the secret is retrievable.
+you should collect Reviewed-by tags, as the one from Simon on v2.
+for future Intel Ethernet drivers series, please target them to IWL
+(net-next in the Subject becomes iwl-next)
 
-Reviewed-by: Christoph Schlameuss <schlameuss@linux.ibm.com>
-Signed-off-by: Steffen Eiden <seiden@linux.ibm.com>
----
-Resend this patch rebased onto my other series
-'s390/uv: Provide host-key hashes in sysfs'
+> ---
+> Changes in v3:
+>    - Adjust commit message
+> 
+> Changes in v2:
+>    - Fix spelling mor -> more
+> ---
+>   drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
+>   1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
+> index 1ef4cb871452..fc587304b3c0 100644
+> --- a/drivers/net/ethernet/intel/igb/igb_main.c
+> +++ b/drivers/net/ethernet/intel/igb/igb_main.c
+> @@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
+>   	/* initialize pointer to rings */
+>   	ring = q_vector->ring;
+>   
+> -	/* intialize ITR */
+> +	/* initialize ITR */
+>   	if (rxr_count) {
+>   		/* rx or rx/tx vector */
 
-see: https://lore.kernel.org/lkml/20241015113940.3088249-1-seiden@linux.ibm.com/
+Would be great to have capitalization errors fixed too, Rx, Tx, VF, not
+necessarily in this patch.
 
- arch/s390/include/asm/uv.h | 136 ++++++++++++++++++++++++++++++++++++-
- arch/s390/kernel/uv.c      | 129 ++++++++++++++++++++++++++++++++++-
- 2 files changed, 262 insertions(+), 3 deletions(-)
+>   		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
+> @@ -3906,7 +3906,7 @@ static void igb_remove(struct pci_dev *pdev)
+>    *
+>    *  This function initializes the vf specific data storage and then attempts to
+>    *  allocate the VFs.  The reason for ordering it this way is because it is much
+> - *  mor expensive time wise to disable SR-IOV than it is to allocate and free
+> + *  more expensive time wise to disable SR-IOV than it is to allocate and free
+>    *  the memory for the VFs.
+>    **/
+>   static void igb_probe_vfs(struct igb_adapter *adapter)
 
-diff --git a/arch/s390/include/asm/uv.h b/arch/s390/include/asm/uv.h
-index 49ca54827379..729b1e057784 100644
---- a/arch/s390/include/asm/uv.h
-+++ b/arch/s390/include/asm/uv.h
-@@ -2,7 +2,7 @@
- /*
-  * Ultravisor Interfaces
-  *
-- * Copyright IBM Corp. 2019, 2022
-+ * Copyright IBM Corp. 2019, 2024
-  *
-  * Author(s):
-  *	Vasily Gorbik <gor@linux.ibm.com>
-@@ -63,6 +63,7 @@
- #define UVC_CMD_ADD_SECRET		0x1031
- #define UVC_CMD_LIST_SECRETS		0x1033
- #define UVC_CMD_LOCK_SECRETS		0x1034
-+#define UVC_CMD_RETR_SECRET		0x1035
- 
- /* Bits in installed uv calls */
- enum uv_cmds_inst {
-@@ -96,6 +97,7 @@ enum uv_cmds_inst {
- 	BIT_UVC_CMD_ADD_SECRET = 29,
- 	BIT_UVC_CMD_LIST_SECRETS = 30,
- 	BIT_UVC_CMD_LOCK_SECRETS = 31,
-+	BIT_UVC_CMD_RETR_SECRET = 33,
- 	BIT_UVC_CMD_QUERY_KEYS = 34,
- };
- 
-@@ -335,7 +337,6 @@ struct uv_cb_dump_complete {
-  * A common UV call struct for pv guests that contains a single address
-  * Examples:
-  * Add Secret
-- * List Secrets
-  */
- struct uv_cb_guest_addr {
- 	struct uv_cb_header header;
-@@ -344,6 +345,91 @@ struct uv_cb_guest_addr {
- 	u64 reserved28[4];
- } __packed __aligned(8);
- 
-+#define UVC_RC_RETR_SECR_BUF_SMALL	0x0109
-+#define UVC_RC_RETR_SECR_STORE_EMPTY	0x010f
-+#define UVC_RC_RETR_SECR_INV_IDX	0x0110
-+#define UVC_RC_RETR_SECR_INV_SECRET	0x0111
-+
-+struct uv_cb_retr_secr {
-+	struct uv_cb_header header;
-+	u64 reserved08[2];
-+	u16 secret_idx;
-+	u16 reserved1a;
-+	u32 buf_size;
-+	u64 buf_addr;
-+	u64 reserved28[4];
-+}  __packed __aligned(8);
-+
-+struct uv_cb_list_secrets {
-+	struct uv_cb_header header;
-+	u64 reserved08[2];
-+	u8  reserved18[6];
-+	u16 start_idx;
-+	u64 list_addr;
-+	u64 reserved28[4];
-+} __packed __aligned(8);
-+
-+enum uv_secret_types {
-+	UV_SECRET_INVAL = 0x0,
-+	UV_SECRET_NULL = 0x1,
-+	UV_SECRET_ASSOCIATION = 0x2,
-+	UV_SECRET_PLAIN = 0x3,
-+	UV_SECRET_AES_128 = 0x4,
-+	UV_SECRET_AES_192 = 0x5,
-+	UV_SECRET_AES_256 = 0x6,
-+	UV_SECRET_AES_XTS_128 = 0x7,
-+	UV_SECRET_AES_XTS_256 = 0x8,
-+	UV_SECRET_HMAC_SHA_256 = 0x9,
-+	UV_SECRET_HMAC_SHA_512 = 0xa,
-+	/* 0x0b - 0x10 reserved */
-+	UV_SECRET_ECDSA_P256 = 0x11,
-+	UV_SECRET_ECDSA_P384 = 0x12,
-+	UV_SECRET_ECDSA_P521 = 0x13,
-+	UV_SECRET_ECDSA_ED25519 = 0x14,
-+	UV_SECRET_ECDSA_ED448 = 0x15,
-+};
-+
-+/**
-+ * uv_secret_list_item_hdr - UV secret metadata.
-+ * @index: Index of the secret in the secret list.
-+ * @type: Type of the secret. See `enum uv_secret_types`.
-+ * @length: Length of the stored secret.
-+ */
-+struct uv_secret_list_item_hdr {
-+	u16 index;
-+	u16 type;
-+	u32 length;
-+} __packed __aligned(8);
-+
-+#define UV_SECRET_ID_LEN 32
-+/**
-+ * uv_secret_list_item - UV secret entry.
-+ * @hdr: The metadata of this secret.
-+ * @id: The ID of this secret, not the secret itself.
-+ */
-+struct uv_secret_list_item {
-+	struct uv_secret_list_item_hdr hdr;
-+	u64 reserverd08;
-+	u8 id[UV_SECRET_ID_LEN];
-+} __packed __aligned(8);
-+
-+/**
-+ * uv_secret_list - UV secret-metadata list.
-+ * @num_secr_stored: Number of secrets stored in this list.
-+ * @total_num_secrets: Number of secrets stored in the UV for this guest.
-+ * @next_secret_idx: positive number if there are more secrets available or zero.
-+ * @secrets: Up to 85 UV-secret metadata entries.
-+ */
-+struct uv_secret_list {
-+	u16 num_secr_stored;
-+	u16 total_num_secrets;
-+	u16 next_secret_idx;
-+	u16 reserved_06;
-+	u64 reserved_08;
-+	struct uv_secret_list_item secrets[85];
-+} __packed __aligned(8);
-+static_assert(sizeof(struct uv_secret_list) == PAGE_SIZE);
-+
- static inline int __uv_call(unsigned long r1, unsigned long r2)
- {
- 	int cc;
-@@ -400,6 +486,48 @@ static inline int uv_cmd_nodata(u64 handle, u16 cmd, u16 *rc, u16 *rrc)
- 	return cc ? -EINVAL : 0;
- }
- 
-+/**
-+ *  uv_list_secrets() - Do a List Secrets UVC.
-+ *
-+ *  @buf: Buffer to write list into; size of one page.
-+ *  @start_idx: The smallest index that should be included in the list.
-+ *		For the fist invocation use 0.
-+ *  @rc: Pointer to store the return code or NULL.
-+ *  @rrc: Pointer to store the return reason code or NULL.
-+ *
-+ *  This function calls the List Secrets UVC. The result is written into `buf`,
-+ *  that needs to be at least one page of writable memory.
-+ *  `buf` consists of:
-+ *  * %struct uv_secret_list_hdr
-+ *  * %struct uv_secret_list_item (multiple)
-+ *
-+ *  For `start_idx` use _0_ for the first call. If there are more secrets available
-+ *  but could not fit into the page then `rc` is `UVC_RC_MORE_DATA`.
-+ *  In this case use `uv_secret_list_hdr.next_secret_idx` for `start_idx`.
-+ *
-+ *  Context: might sleep.
-+ *
-+ *  Return: The UVC condition code.
-+ */
-+static inline int uv_list_secrets(struct uv_secret_list *buf, u16 start_idx,
-+				  u16 *rc, u16 *rrc)
-+{
-+	struct uv_cb_list_secrets uvcb = {
-+		.header.len = sizeof(uvcb),
-+		.header.cmd = UVC_CMD_LIST_SECRETS,
-+		.start_idx = start_idx,
-+		.list_addr = (u64)buf,
-+	};
-+	int cc = uv_call_sched(0, (u64)&uvcb);
-+
-+	if (rc)
-+		*rc = uvcb.header.rc;
-+	if (rrc)
-+		*rrc = uvcb.header.rrc;
-+
-+	return cc;
-+}
-+
- struct uv_info {
- 	unsigned long inst_calls_list[4];
- 	unsigned long uv_base_stor_len;
-@@ -486,6 +614,10 @@ static inline int uv_remove_shared(unsigned long addr)
- 	return share(addr, UVC_CMD_REMOVE_SHARED_ACCESS);
- }
- 
-+int uv_get_secret_metadata(const u8 secret_id[UV_SECRET_ID_LEN],
-+			   struct uv_secret_list_item_hdr *secret);
-+int uv_retrieve_secret(u16 secret_idx, u8 *buf, size_t buf_size);
-+
- extern int prot_virt_host;
- 
- static inline int is_prot_virt_host(void)
-diff --git a/arch/s390/kernel/uv.c b/arch/s390/kernel/uv.c
-index 3c74e6179cdc..4fbe63f59ebd 100644
---- a/arch/s390/kernel/uv.c
-+++ b/arch/s390/kernel/uv.c
-@@ -2,7 +2,7 @@
- /*
-  * Common Ultravisor functions and initialization
-  *
-- * Copyright IBM Corp. 2019, 2020
-+ * Copyright IBM Corp. 2019, 2024
-  */
- #define KMSG_COMPONENT "prot_virt"
- #define pr_fmt(fmt) KMSG_COMPONENT ": " fmt
-@@ -870,3 +870,130 @@ static int __init uv_sysfs_init(void)
- 	return rc;
- }
- device_initcall(uv_sysfs_init);
-+
-+/*
-+ * Find the secret with the secret_id in the provided list.
-+ *
-+ * Context: might sleep.
-+ */
-+static int find_secret_in_page(const u8 secret_id[UV_SECRET_ID_LEN],
-+			       const struct uv_secret_list *list,
-+			       struct uv_secret_list_item_hdr *secret)
-+{
-+	u16 i;
-+
-+	for (i = 0; i < list->total_num_secrets; i++) {
-+		if (memcmp(secret_id, list->secrets[i].id, UV_SECRET_ID_LEN) == 0) {
-+			*secret = list->secrets[i].hdr;
-+			return 0;
-+		}
-+	}
-+	return -ENOENT;
-+}
-+
-+/*
-+ * Do the actual search for `uv_get_secret_metadata`.
-+ *
-+ * Context: might sleep.
-+ */
-+static int find_secret(const u8 secret_id[UV_SECRET_ID_LEN],
-+		       struct uv_secret_list *list,
-+		       struct uv_secret_list_item_hdr *secret)
-+{
-+	u16 start_idx = 0;
-+	u16 list_rc;
-+	int ret;
-+
-+	do {
-+		uv_list_secrets(list, start_idx, &list_rc, NULL);
-+		if (list_rc != UVC_RC_EXECUTED && list_rc != UVC_RC_MORE_DATA) {
-+			if (list_rc == UVC_RC_INV_CMD)
-+				return -ENODEV;
-+			else
-+				return -EIO;
-+		}
-+		ret = find_secret_in_page(secret_id, list, secret);
-+		if (ret == 0)
-+			return ret;
-+		start_idx = list->next_secret_idx;
-+	} while (list_rc == UVC_RC_MORE_DATA && start_idx < list->next_secret_idx);
-+
-+	return -ENOENT;
-+}
-+
-+/**
-+ * uv_get_secret_metadata() - get secret metadata for a given secret id.
-+ * @secret_id: search pattern.
-+ * @secret: output data, containing the secret's metadata.
-+ *
-+ * Search for a secret with the given secret_id in the Ultravisor secret store.
-+ *
-+ * Context: might sleep.
-+ *
-+ * Return:
-+ * * %0:	- Found entry; secret->idx and secret->type are valid.
-+ * * %ENOENT	- No entry found.
-+ * * %ENODEV:	- Not supported: UV not available or command not available.
-+ * * %EIO:	- Other unexpected UV error.
-+ */
-+int uv_get_secret_metadata(const u8 secret_id[UV_SECRET_ID_LEN],
-+			   struct uv_secret_list_item_hdr *secret)
-+{
-+	struct uv_secret_list *buf;
-+	int rc;
-+
-+	buf = kzalloc(sizeof(*buf), GFP_KERNEL);
-+	if (!buf)
-+		return -ENOMEM;
-+	rc = find_secret(secret_id, buf, secret);
-+	kfree(buf);
-+	return rc;
-+}
-+EXPORT_SYMBOL_GPL(uv_get_secret_metadata);
-+
-+/**
-+ * uv_retrieve_secret() - get the secret value for the secret index.
-+ * @secret_idx: Secret index for which the secret should be retrieved.
-+ * @buf: Buffer to store retrieved secret.
-+ * @buf_size: Size of the buffer. The correct buffer size is reported as part of
-+ * the result from `uv_get_secret_metadata`.
-+ *
-+ * Calls the Retrieve Secret UVC and translates the UV return code into an errno.
-+ *
-+ * Context: might sleep.
-+ *
-+ * Return:
-+ * * %0		- Entry found; buffer contains a valid secret.
-+ * * %ENOENT:	- No entry found or secret at the index is non-retrievable.
-+ * * %ENODEV:	- Not supported: UV not available or command not available.
-+ * * %EINVAL:	- Buffer too small for content.
-+ * * %EIO:	- Other unexpected UV error.
-+ */
-+int uv_retrieve_secret(u16 secret_idx, u8 *buf, size_t buf_size)
-+{
-+	struct uv_cb_retr_secr uvcb = {
-+		.header.len = sizeof(uvcb),
-+		.header.cmd = UVC_CMD_RETR_SECRET,
-+		.secret_idx = secret_idx,
-+		.buf_addr = (u64)buf,
-+		.buf_size = buf_size,
-+	};
-+
-+	uv_call_sched(0, (u64)&uvcb);
-+
-+	switch (uvcb.header.rc) {
-+	case UVC_RC_EXECUTED:
-+		return 0;
-+	case UVC_RC_INV_CMD:
-+		return -ENODEV;
-+	case UVC_RC_RETR_SECR_STORE_EMPTY:
-+	case UVC_RC_RETR_SECR_INV_SECRET:
-+	case UVC_RC_RETR_SECR_INV_IDX:
-+		return -ENOENT;
-+	case UVC_RC_RETR_SECR_BUF_SMALL:
-+		return -EINVAL;
-+	default:
-+		return -EIO;
-+	}
-+}
-+EXPORT_SYMBOL_GPL(uv_retrieve_secret);
--- 
-2.45.2
-
+to reduce traffic, I'm fine with this, to go via any tree:
+Acked-by: Przemek Kitszel <przemyslaw.kitszel@intel.com>
 
