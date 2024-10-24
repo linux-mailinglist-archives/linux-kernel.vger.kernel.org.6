@@ -1,186 +1,167 @@
-Return-Path: <linux-kernel+bounces-379680-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379677-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 765D79AE238
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:14:17 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id D75329AE231
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:13:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 818211C21AD7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:14:16 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 8E02D1F239CC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:13:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E4D6B1C9B7C;
-	Thu, 24 Oct 2024 10:13:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 345881C07F3;
+	Thu, 24 Oct 2024 10:13:27 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="CwOAX7Tv"
-Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="fk7ZmD1Q"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0ED971C4A23;
-	Thu, 24 Oct 2024 10:13:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6233D17B51A;
+	Thu, 24 Oct 2024 10:13:24 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729764811; cv=none; b=G0JadNipL9w8aPAuGTmUZHaTknQASJrzsI7WHHQ6sg35tNvyPmoU0MexsCkqRo/YrrcYDQTWzLLFo1tqjZuiwxH6vLIWnHCzfWODjGf9ZVkZdDiWTektdIAguooJoxgfLdXuXj1fqwEGw1IpOS30ByinEatH2VdgcKZhpmNXB38=
+	t=1729764806; cv=none; b=SIHB3tzsdWCrPkwi5cmchlEyCeAuJZIEOYS/cbYlVVJpcNS7F9ayGTPAtM4LjKdin8kBAGvSBbowGWmFIpaTovXf38tNfA9kLbGh8n6gM6Cs6gsrudFX7/PNDzigKZus5oaU3IauB3HsnrBgOMLm4ZKAdznwaJDHBp5wlTb3MMs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729764811; c=relaxed/simple;
-	bh=WMVFSYtiNs9+eSt5cs35mFEfRBb6kD9EOxNwlA9H3pM=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=YSmx0V2B2F6LIOsuL8ZNGLGHIcz3enp/aIARnd5pZXwZ3CY55Tp8ppSaLGWX4ZEV0D1qpE+94rm79C/a4oCv1/NG2YeHHdp4NO4bRS/4cGQvj4N5+be8tQikoI2ycHktgPNTtHnc217ILVku6JKWYLDLuyLr7s3BRrjqQuF9gmg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=CwOAX7Tv; arc=none smtp.client-ip=209.85.218.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a99fa009adcso44264366b.0;
-        Thu, 24 Oct 2024 03:13:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729764807; x=1730369607; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=E/nu93rXi66eugVXc5QNmzFF8lJpxFp1e23mrrGawYo=;
-        b=CwOAX7TvhYXmRc/VqE3lcSuKYX02QdCcJQ9fVEM6kGw6BXpWUgV1F1/lZMKwIUCXMz
-         jHarCoco3+gChnlfplR6Q2O9iQ8sdi1aZMUk3h+RbLo7xCdQ01Qw7HvHIzSz07to0fnY
-         o75BifvRPZKon5w3mLh2FJvG7A5Iwq1Ay1HZEMldOzu0Fhx+hUVe3nZRf4XQ15L6zKpc
-         nAFhDlroVjIINkhHzNsVlZes5z5GZQVcFap22bw3ZAIq1lxPVXZ9JNyxW/mM/4cFsNEC
-         rYFb2ymo1kajSf7Mp4qMZF79WYKHtnkz751Zkxzm9eGs/sRslCEtQVLj63EdWVIwwXg/
-         C/Eg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729764807; x=1730369607;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=E/nu93rXi66eugVXc5QNmzFF8lJpxFp1e23mrrGawYo=;
-        b=HgorNQrIaxOZKCU02hk0gVLhHJ4NpRWxdJyrXrofbVueUWnTN7KOgdL2G1JKsqy9P+
-         P3xbFdlSvoFcUo+IotlYRShukRy+6mxCDwTnSbsiVEEYiPrLCVm1tz9KTdrKZvqsNEU+
-         N6G5D6EQR7xHTMLzPkven132HKPeAJ9PMDI99yIP73+zeHURUlHtd0f+CuocH2JQmDe7
-         uRJORgjzooPk0sb5Gu5sjmWjlJkrDBX/KW96xDfdxFOKAzVxVQJJEreYbPKZoCnCpWKw
-         CbIrxEfN8HDJIO0lpDgabSfk5C4mmcbt5sbZumMC7WeQqHuRSF0AGkyQpwU68A+jkqhy
-         18eQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWcraDZJGLEctviEPxG2NrlIOo7EyhbYwOXlOvP4EI2MclDsHl0DEXNUGyMV6/jhbgJSQV9VGTLdpI=@vger.kernel.org, AJvYcCXlGwMdhBbcyvDu/7F7wrJI7RVOc3wzpMvbA8nhDpKR378u2wOPlq9rANgVWj5DfYzXtPSfWJGamc0g+rL2@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfwmAIRmCatRl34tjJ7S0zRqTlNptqKpFSnX5ZlyfopgNarkpA
-	SfraMuUoxGBl0reGky2fuY2LCX9Pie215Kd0NOLlvRL0b6Wvynt3wtbsBA==
-X-Google-Smtp-Source: AGHT+IF9E71yWN6SD1MVjWD6Quj1700l4BelhysLBUkFUgCzRuQTwkEk9k2JlZHnw03Nn7lyF07YDg==
-X-Received: by 2002:a05:6402:27d0:b0:5cb:6b7c:3f88 with SMTP id 4fb4d7f45d1cf-5cb8b098013mr5505187a12.8.1729764805238;
-        Thu, 24 Oct 2024 03:13:25 -0700 (PDT)
-Received: from [127.0.1.1] ([46.53.244.166])
-        by smtp.googlemail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6a6efsm5519757a12.53.2024.10.24.03.13.23
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 03:13:25 -0700 (PDT)
-From: Dzmitry Sankouski <dsankouski@gmail.com>
-Date: Thu, 24 Oct 2024 13:13:10 +0300
-Subject: [PATCH v7 2/3] clk: qcom: clk-rcg2: split __clk_rcg2_configure
- function
+	s=arc-20240116; t=1729764806; c=relaxed/simple;
+	bh=L0wG5NAB837vwgfGLXcFMaWmBToiph15GFjRBSGChqU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=sVAMpqga7lDpAcv+abPSON72ftuTM9dZFjuxaIDRyNHyAMiw/3AwVwVa2hP7RCokpYhMo59TlAynhPFiLLmH9Za6zDRUfpcYFCM74nFHazR92J4NJhkmWa4W/Gq/eN3BN1MnuJqMauitcy24ZSxHSH35juacNy7CJ2bBzmQ9TtY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=fk7ZmD1Q; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279865.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O9xCH6031137;
+	Thu, 24 Oct 2024 10:13:17 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	nA66XR+3hg4rn29/8sheuZijZiUknqI2xNQksymz+kY=; b=fk7ZmD1Q9IQivqrP
+	PD2Fg3g2oljO8AJl/HrTC/keDTFWv3qxD+2g5YIhrh+8o/p7+f4n/HUT0EQL8alZ
+	srHNz4tHRYSsbtHhnWa+FlfjtJmfTNlh+mzDH0mTC8p+4T734VoZtGWowPeqDEfl
+	JiPDAVVn4JLNOMyptrUSJLa383UfHeK3x6OGz8Aaj9KZOVsfzQZeHfDyGURjLu1y
+	5cQZr9ooCaPHXyekvLzW6RQHVLVc1jo9iLvsswmk+rhTMw0tSGw7V0SCPyDsUw+c
+	NMI1yu3t1lwOTSDsThrFG5KmASYPZNxsK4upIhxXdsIp1yhTgGOMXZ0jxrJ3Uztk
+	NCkLhQ==
+Received: from nalasppmta04.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em3vwchc-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 10:13:17 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA04.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49OADGVt007852
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 10:13:16 GMT
+Received: from [10.216.22.131] (10.80.80.8) by nalasex01a.na.qualcomm.com
+ (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
+ 2024 03:13:13 -0700
+Message-ID: <258bf011-cca6-6d56-c6f2-a9c619c9a212@quicinc.com>
+Date: Thu, 24 Oct 2024 15:43:10 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
+User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:102.0) Gecko/20100101
+ Thunderbird/102.15.1
+Subject: Re: [PATCH 0/5] PCI/pwrctl: Ensure that the pwrctl drivers are probed
+ before PCI client drivers
+Content-Language: en-US
+To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>,
+        <manivannan.sadhasivam@linaro.org>
+CC: Bjorn Helgaas <bhelgaas@google.com>, <linux-pci@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        Johan Hovold <johan+linaro@kernel.org>,
+        "Abel
+ Vesa" <abel.vesa@linaro.org>,
+        Stephan Gerhold <stephan.gerhold@linaro.org>,
+        Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
+        Bjorn Andersson
+	<bjorn.andersson@oss.qualcomm.com>,
+        <stable+noautosel@kernel.org>
+References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
+ <CACMJSeuhEQVaXhB8hotG_cimQ4rqQVyzF1DyPwtV4m1T5D=o+g@mail.gmail.com>
+From: Krishna Chaitanya Chundru <quic_krichai@quicinc.com>
+In-Reply-To: <CACMJSeuhEQVaXhB8hotG_cimQ4rqQVyzF1DyPwtV4m1T5D=o+g@mail.gmail.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
 Content-Transfer-Encoding: 7bit
-Message-Id: <20241024-starqltechn_integration_upstream-v7-2-78eaf21ecee9@gmail.com>
-References: <20241024-starqltechn_integration_upstream-v7-0-78eaf21ecee9@gmail.com>
-In-Reply-To: <20241024-starqltechn_integration_upstream-v7-0-78eaf21ecee9@gmail.com>
-To: Bjorn Andersson <andersson@kernel.org>, 
- Michael Turquette <mturquette@baylibre.com>, 
- Stephen Boyd <sboyd@kernel.org>
-Cc: linux-arm-msm@vger.kernel.org, linux-clk@vger.kernel.org, 
- linux-kernel@vger.kernel.org, Dzmitry Sankouski <dsankouski@gmail.com>
-X-Mailer: b4 0.14.0
-X-Developer-Signature: v=1; a=ed25519-sha256; t=1729764800; l=2751;
- i=dsankouski@gmail.com; s=20240619; h=from:subject:message-id;
- bh=WMVFSYtiNs9+eSt5cs35mFEfRBb6kD9EOxNwlA9H3pM=;
- b=1EaeS44p5ujtmo/vQmqT54lGa8HFrm2QoUqsIuyIbRdIwqzT33N52IsCl8Ux0JyLzPyWp2fcN
- ZhW5e916U85CzE4PD9PCpYkFOVr59llWXOXii23qwbIehDeK4O8JJFk
-X-Developer-Key: i=dsankouski@gmail.com; a=ed25519;
- pk=YJcXFcN1EWrzBYuiE2yi5Mn6WLn6L1H71J+f7X8fMag=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: _qhtnl4baAQi3BAw7AK3PTJtuDR3B6D2
+X-Proofpoint-ORIG-GUID: _qhtnl4baAQi3BAw7AK3PTJtuDR3B6D2
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 impostorscore=0 adultscore=0
+ malwarescore=0 spamscore=0 clxscore=1011 lowpriorityscore=0
+ mlxlogscore=704 priorityscore=1501 mlxscore=0 suspectscore=0 phishscore=0
+ bulkscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240081
 
-__clk_rcg2_configure function does 2 things -
-configures parent and mnd values. In order to
-be able to add new clock options, we should split.
 
-Move __clk_rcg2_configure logic on 2 functions:
-- __clk_rcg2_configure_parent which configures clock parent
-- __clk_rcg2_configure_mnd which configures mnd values
 
-__clk_rcg2_configure delegates to mentioned functions.
+On 10/23/2024 4:00 PM, Bartosz Golaszewski wrote:
+> On Tue, 22 Oct 2024 at 12:28, Manivannan Sadhasivam via B4 Relay
+> <devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
+>>
+>> Hi,
+>>
+>> This series reworks the PCI/pwrctl integration to ensure that the pwrctl drivers
+>> are always probed before the PCI client drivers. This series addresses a race
+>> condition when both pwrctl and pwrctl/pwrseq drivers probe parallely (even when
+>> the later one probes last). One such issue was reported for the Qcom X13s
+>> platform with WLAN module and fixed with 'commit a9aaf1ff88a8 ("power:
+>> sequencing: request the WLAN enable GPIO as-is")'.
+>>
+>> Though the issue was fixed with a hack in the pwrseq driver, it was clear that
+>> the issue is applicable to all pwrctl drivers. Hence, this series tries to
+>> address the issue in the PCI/pwrctl integration.
+>>
+>> - Mani
+>>
+>> Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>> ---
+>> Manivannan Sadhasivam (5):
+>>        PCI/pwrctl: Use of_platform_device_create() to create pwrctl devices
+>>        PCI/pwrctl: Create pwrctl devices only if at least one power supply is present
+>>        PCI/pwrctl: Ensure that the pwrctl drivers are probed before the PCI client drivers
+>>        PCI/pwrctl: Move pwrctl device creation to its own helper function
+>>        PCI/pwrctl: Remove pwrctl device without iterating over all children of pwrctl parent
+>>
+>>   drivers/pci/bus.c         | 64 +++++++++++++++++++++++++++++++++++++++++------
+>>   drivers/pci/of.c          | 27 ++++++++++++++++++++
+>>   drivers/pci/pci.h         |  5 ++++
+>>   drivers/pci/pwrctl/core.c | 10 --------
+>>   drivers/pci/remove.c      | 17 ++++++-------
+>>   5 files changed, 96 insertions(+), 27 deletions(-)
+>> ---
+>> base-commit: 48dc7986beb60522eb217c0016f999cc7afaf0b7
+>> change-id: 20241022-pci-pwrctl-rework-a1b024158555
+>>
+>> Best regards,
+>> --
+>> Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
+>>
+>>
+> 
+> Excellent work, thanks for doing this.
+> 
+> Tested on: sc8280xp-crd, RB5 and sm8450-hdk.
+> 
+> Tested-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> Just a couple nits from my side under respective patches.
+> 
+> Bart
+Tested on: qcs6490-rb3gen board with work in progress qps615 pcie switch
 
-Signed-off-by: Dzmitry Sankouski <dsankouski@gmail.com>
----
- drivers/clk/qcom/clk-rcg2.c | 37 +++++++++++++++++++++++++++++++------
- 1 file changed, 31 insertions(+), 6 deletions(-)
+Tested-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
-diff --git a/drivers/clk/qcom/clk-rcg2.c b/drivers/clk/qcom/clk-rcg2.c
-index 0fc23a87b432..a56c7caad33a 100644
---- a/drivers/clk/qcom/clk-rcg2.c
-+++ b/drivers/clk/qcom/clk-rcg2.c
-@@ -400,16 +400,26 @@ static int clk_rcg2_fm_determine_rate(struct clk_hw *hw,
- 	return _freq_tbl_fm_determine_rate(hw, rcg->freq_multi_tbl, req);
- }
- 
--static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
--				u32 *_cfg)
-+static int __clk_rcg2_configure_parent(struct clk_rcg2 *rcg, u8 src, u32 *_cfg)
- {
--	u32 cfg, mask, d_val, not2d_val, n_minus_m;
- 	struct clk_hw *hw = &rcg->clkr.hw;
--	int ret, index = qcom_find_src_index(hw, rcg->parent_map, f->src);
-+	int index = qcom_find_src_index(hw, rcg->parent_map, src);
- 
- 	if (index < 0)
- 		return index;
- 
-+	*_cfg &= ~CFG_SRC_SEL_MASK;
-+	*_cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
-+
-+	return 0;
-+}
-+
-+static int __clk_rcg2_configure_mnd(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-+				u32 *_cfg)
-+{
-+	u32 cfg, mask, d_val, not2d_val, n_minus_m;
-+	int ret;
-+
- 	if (rcg->mnd_width && f->n) {
- 		mask = BIT(rcg->mnd_width) - 1;
- 		ret = regmap_update_bits(rcg->clkr.regmap,
-@@ -438,9 +448,8 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
- 	}
- 
- 	mask = BIT(rcg->hid_width) - 1;
--	mask |= CFG_SRC_SEL_MASK | CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
-+	mask |= CFG_MODE_MASK | CFG_HW_CLK_CTRL_MASK;
- 	cfg = f->pre_div << CFG_SRC_DIV_SHIFT;
--	cfg |= rcg->parent_map[index].cfg << CFG_SRC_SEL_SHIFT;
- 	if (rcg->mnd_width && f->n && (f->m != f->n))
- 		cfg |= CFG_MODE_DUAL_EDGE;
- 	if (rcg->hw_clk_ctrl)
-@@ -452,6 +461,22 @@ static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
- 	return 0;
- }
- 
-+static int __clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f,
-+				u32 *_cfg)
-+{
-+	int ret;
-+
-+	ret = __clk_rcg2_configure_parent(rcg, f->src, _cfg);
-+	if (ret)
-+		return ret;
-+
-+	ret = __clk_rcg2_configure_mnd(rcg, f, _cfg);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
-+}
-+
- static int clk_rcg2_configure(struct clk_rcg2 *rcg, const struct freq_tbl *f)
- {
- 	u32 cfg;
-
--- 
-2.39.2
-
+- Krishna Chaitanya.
+> 
 
