@@ -1,210 +1,205 @@
-Return-Path: <linux-kernel+bounces-380129-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380132-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 9983E9AE945
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:48:41 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 8A34D9AE94E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:50:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 60222283FCD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:48:40 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2091C285E78
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:50:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 383F71DE88A;
-	Thu, 24 Oct 2024 14:48:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D17DC1E766C;
+	Thu, 24 Oct 2024 14:50:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N3Ko7/c7"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VMF2C7TY"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 113451DD0E6;
-	Thu, 24 Oct 2024 14:48:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B40681E2009
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:49:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781311; cv=none; b=MfCZrO8rxuNlPWHo6Zy1FiilZMJEkjMpv1qoA7aQR9E4i+luZtQIhf1xVLBkFcIRE76rbx3QMSrQ2MU42wFScPyR+teYgT6+wNPrn9vlG0HcY69IO2W7S3L3q7U85NrTEyAA4guUUDAdMTU6DfBVIuQbVLAbtSQ+uWDsyI0zdjM=
+	t=1729781402; cv=none; b=WB3dikJU/MbCou0pxRhvugY6M5rEGPhKf2P4UjcAKD1kL8M/X9y6WC5MNdvr/sx6Cnmu+ef4v5YCsogvsATDgcSX9pZZyD7KL/KdxcvhkzDGoX8q+f/d9iowFl1Yvc2xMUl/Op565vNxYLC/pglbnUSaXAXIU5JPy3SaxxBMSIE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781311; c=relaxed/simple;
-	bh=Kf7IH7Ia1MQegT0zCCcPUUT7/Ni5m/YrbrJlFScLiGg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=QAYOigYB+PrO/b5UJPUVtXUrixcoyYzK2aKWVx3ZwCRg7B28b6QmbeYq+tzcqPUAlkNB7KQzVYtSoVNtY53zooaytFsKRI44LRt+kWB2wrvTmjIX/Eiu1v/sGwRaERXs+gFqFbBokVARtAne1smVAgjaW/+Rejs3NGi1ARk/VFw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N3Ko7/c7; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so998538e87.3;
-        Thu, 24 Oct 2024 07:48:28 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729781307; x=1730386107; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=G1ze1FAkv4Dqw0QEQR2ZCGcnAZHEGZrNScY6wG9W5uY=;
-        b=N3Ko7/c7a8InmVTrJz4lp8E126SuY3kZdbj6ErylhuzSpebgK2vFkOXR2qJGUstIXP
-         plYcbKRKXNTjmGPjihLAsIbAk+OHTrY/RmL8zWFRBuO+dtv0dlqQ+jcuUPuzAbOJTYxv
-         oEIE7XvtCYBNnAeR8ZtQhwIN8ISpJmY1Oj2DHz4uYFC78eSVeiUOz0nSzaK0WjDpR0vj
-         LlwrNQHFK4tePLXjteUFdWScOs07rQIlSazVJO8uGbVLLKM/WwtwHDVWK0+ORXgyqK/M
-         BtSnBnjy5ZxQb2l4NSHTLtmm8niDCHwgx9G+CI/F/nv+ZYGhldNpePBgnqVmoYwvavdC
-         UxhQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729781307; x=1730386107;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=G1ze1FAkv4Dqw0QEQR2ZCGcnAZHEGZrNScY6wG9W5uY=;
-        b=RSSx4OrLyPoKJBgU91IeUm4eE0T8/VoMGCiq3ntwE57w/6W4wRUp3R8qRRuYoCZico
-         lXmJNpWoys3pNGOQjgF+SvZMIOJ1w8aXq4J7oIO8YvUSnxMXyJ1J732kOH+x9PmeZ+RW
-         cfBtwWHDwt0Wqo58egOPo7lNVjPY/25JnlyHWdTt/ZrZ5urKQNPRx9ZVSkQXqe6M6WQV
-         RjwVyZ3ahTQC50J4rUm2r8MakBXzNAsMKLostU5YNiOHff40x0nvOabxf3Npb2h90UJZ
-         TNs7W1nVz9YD5VlGZkF0D9lF9W02sd+a0E7fHB5vY768tY4wxyn4m/IOp+99GToZhRs3
-         +N3A==
-X-Forwarded-Encrypted: i=1; AJvYcCVj+mQUNi5fQS541f8i/tK/OXN7O8vOCxAP5Hm28m+5KkUUFa4PrOUb1gVQifthbaq+kalcF0bZr/dgQno=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzKhi2HOoPr+xQP/anqRc8oXBqK8+9srvxiLts7JsjGN/IznVbQ
-	Pc2I5X1b5A2sfCrCVLotl48LcChvV/uy9DBd9m7OevrCa4TgZ+6C
-X-Google-Smtp-Source: AGHT+IE2ctdQKfTUxcYMHQ9xUqbhJ0Pcik/Mb3DaOc2KCi8IUlK89tQqbUAiTmghBI0O47SN8dBzxQ==
-X-Received: by 2002:a05:6512:12cd:b0:539:ebe5:298e with SMTP id 2adb3069b0e04-53b23ea0e81mr1707345e87.59.1729781306811;
-        Thu, 24 Oct 2024 07:48:26 -0700 (PDT)
-Received: from [192.168.42.27] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912ee077sm629443366b.65.2024.10.24.07.48.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:48:26 -0700 (PDT)
-Message-ID: <8e0f74c1-aa11-4036-ba20-6f4dc0c40333@gmail.com>
-Date: Thu, 24 Oct 2024 15:49:01 +0100
+	s=arc-20240116; t=1729781402; c=relaxed/simple;
+	bh=fbpmUaG5PQXkXdeTo+Nx+jxIQqnmKKxeG1Do7MPZTqc=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=gEmyzldK9Ia8Fp41+IuOvGCadIKVY+MEDtYqTprBvk5GmWRW6bWaH3QbzctSXLMTXNiR0aBNxrMLYZEosaQKLhsjeYO0XwYtAFVQy9w7yMByy7CezmomqhJgAqDeYM0+t9h2ZRJ9i6ZPLbqx8yT1ZVe5hjDkhwR/KwI6MG76r8I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VMF2C7TY; arc=none smtp.client-ip=198.175.65.16
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729781400; x=1761317400;
+  h=date:from:to:cc:subject:message-id:mime-version;
+  bh=fbpmUaG5PQXkXdeTo+Nx+jxIQqnmKKxeG1Do7MPZTqc=;
+  b=VMF2C7TYrCNArJERqIY6kjvfk3HIG4pNItssayXVqLRi4aQFRb2dwiiJ
+   6dmJ91L7bWoaGFHsocB6sP9fWMpFk5MgvCismS7offMYwoggYSViRboN+
+   vYURW5CBbYQSvpREuNWP0P8p/Cg2bWc0/P3/h7eKc9Yp3u613Bu9tXM3N
+   QpNS+RlEo2qeOn+2KSKq/PkNzh49boqLk0v83JIxepNmIgOuNwUvXCeEV
+   0Nyt5TY3if1Lo/3iKqaDGIBiT4FLZk+H62/EwWiWW8L30JzKnjqwmvzzp
+   /ooQPCjXP1fKfZSKAmjgMiKEk0ZnX13MTfxi8Ww/wfXMaOGDwPwu4N/9d
+   Q==;
+X-CSE-ConnectionGUID: N6Vtx/EVSR6UJrR+g6D7iw==
+X-CSE-MsgGUID: Vknui4oyRqChMxRDwwxO9A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29538728"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29538728"
+Received: from fmviesa003.fm.intel.com ([10.60.135.143])
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 07:49:59 -0700
+X-CSE-ConnectionGUID: DIeOXk5SR1+Y8Qj5xKBOcA==
+X-CSE-MsgGUID: 2KYtrKOdRs6GANknDvP2bw==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="84588817"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa003.fm.intel.com with ESMTP; 24 Oct 2024 07:49:58 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3z9v-000WXU-2l;
+	Thu, 24 Oct 2024 14:49:55 +0000
+Date: Thu, 24 Oct 2024 22:49:12 +0800
+From: kernel test robot <lkp@intel.com>
+To: Chen Wang <unicorn_wang@outlook.com>
+Cc: oe-kbuild-all@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: drivers/clk/sophgo/clk-sg2042-pll.c:217:1-7: WARNING: do_div() does
+ a 64-by-32 division, please consider using div64_ul instead.
+Message-ID: <202410242248.o7XIZVqz-lkp@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v8] io_uring: releasing CPU resources when polling
-To: Jens Axboe <axboe@kernel.dk>, hexue <xue01.he@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <293e5757-4160-4734-931c-9830df7c2f88@gmail.com>
- <CGME20241024023812epcas5p1e5798728def570cb57679eebdd742d7b@epcas5p1.samsung.com>
- <20241024023805.1082769-1-xue01.he@samsung.com>
- <9bc8f8c4-3415-48bb-9bd1-0996f2ef6669@kernel.dk>
- <f60116a5-8c35-4389-bbb6-7bf6deaf71c6@gmail.com>
- <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <b50ce7d2-b2a8-4552-8246-0464602bfd84@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 10/24/24 15:40, Jens Axboe wrote:
-> On 10/24/24 8:26 AM, Pavel Begunkov wrote:
->> On 10/24/24 15:18, Jens Axboe wrote:
->>> On 10/23/24 8:38 PM, hexue wrote:
->>>> On 9/25/2024 12:12, Pavel Begunkov wrote:
->> ...
->>>> When the number of threads exceeds the number of CPU cores,the
->>>> database throughput does not increase significantly. However,
->>>> hybrid polling can releasing some CPU resources during the polling
->>>> process, so that part of the CPU time can be used for frequent
->>>> data processing and other operations, which speeds up the reading
->>>> process, thereby improving throughput and optimizaing database
->>>> performance.I tried different compression strategies and got
->>>> results similar to the above table.(~30% throughput improvement)
->>>>
->>>> As more database applications adapt to the io_uring engine, I think
->>>> the application of hybrid poll may have potential in some scenarios.
->>>
->>> Thanks for posting some numbers on that part, that's useful. I do
->>> think the feature is useful as well, but I still have some issues
->>> with the implementation. Below is an incremental patch on top of
->>> yours to resolve some of those, potentially. Issues:
->>>
->>> 1) The patch still reads a bit like a hack, in that it doesn't seem to
->>>      care about following the current style. This reads a bit lazy/sloppy
->>>      or unfinished. I've fixed that up.
->>>
->>> 2) Appropriate member and function naming.
->>>
->>> 3) Same as above, it doesn't care about proper placement of additions to
->>>      structs. Again this is a bit lazy and wasteful, attention should be
->>>      paid to where additions are placed to not needlessly bloat
->>>      structures, or place members in cache unfortunate locations. For
->>>      example, available_time is just placed at the end of io_ring_ctx,
->>>      why? It's a submission side member, and there's room with other
->>>      related members. Not only is the placement now where you'd want it to
->>>      be, memory wise, it also doesn't add 8 bytes to io_uring_ctx.
->>>
->>> 4) Like the above, the io_kiocb bloat is, by far, the worst. Seems to me
->>>      that we can share space with the polling hash_node. This obviously
->>>      needs careful vetting, haven't done that yet. IOPOLL setups should
->>>      not be using poll at all. This needs extra checking. The poll_state
->>>      can go with cancel_seq_set, as there's a hole there any. And just
->>>      like that, rather than add 24b to io_kiocb, it doesn't take any extra
->>>      space at all.
->>>
->>> 5) HY_POLL is a terrible name. It's associated with IOPOLL, and so let's
->>>      please use a name related to that. And require IOPOLL being set with
->>>      HYBRID_IOPOLL, as it's really a variant of that. Makes it clear that
->>>      HYBRID_IOPOLL is really just a mode of operation for IOPOLL, and it
->>>      can't exist without that.
->>>
->>> Please take a look at this incremental and test it, and then post a v9
->>> that looks a lot more finished. Caveat - I haven't tested this one at
->>> all. Thanks!
->>>
->>> diff --git a/include/linux/io_uring_types.h b/include/linux/io_uring_types.h
->>> index c79ee9fe86d4..6cf6a45835e5 100644
->>> --- a/include/linux/io_uring_types.h
->>> +++ b/include/linux/io_uring_types.h
->>> @@ -238,6 +238,8 @@ struct io_ring_ctx {
->>>            struct io_rings        *rings;
->>>            struct percpu_ref    refs;
->>>    +        u64            poll_available_time;
->>> +
->>>            clockid_t        clockid;
->>>            enum tk_offsets        clock_offset;
->>>    @@ -433,9 +435,6 @@ struct io_ring_ctx {
->>>        struct page            **sqe_pages;
->>>          struct page            **cq_wait_page;
->>> -
->>> -    /* for io_uring hybrid poll*/
->>> -    u64            available_time;
->>>    };
->>>      struct io_tw_state {
->>> @@ -647,9 +646,22 @@ struct io_kiocb {
->>>          atomic_t            refs;
->>>        bool                cancel_seq_set;
->>> +    bool                poll_state;
->>
->> As mentioned briefly before, that can be just a req->flags flag
-> 
-> That'd be even better, I generally despise random bool addition.
-> 
->>>        struct io_task_work        io_task_work;
->>> -    /* for polled requests, i.e. IORING_OP_POLL_ADD and async armed poll */
->>> -    struct hlist_node        hash_node;
->>> +    union {
->>> +        /*
->>> +         * for polled requests, i.e. IORING_OP_POLL_ADD and async armed
->>> +         * poll
->>> +         */
->>> +        struct hlist_node    hash_node;
->>> +        /*
->>> +         * For IOPOLL setup queues, with hybrid polling
->>> +         */
->>> +        struct {
->>> +            u64        iopoll_start;
->>> +            u64        iopoll_end;
->>
->> And IIRC it doesn't need to store the end as it's used immediately
->> after it's set in the same function.
-> 
-> Nice, that opens up the door for less esoteric sharing as well. And
-> yeah, I'd just use:
-> 
-> runtime = ktime_get_ns() - req->iopoll_start - sleep_time;
-> 
-> in io_uring_hybrid_poll() and kill it entirely, doesn't even need a
-> local variable there. And then shove iopoll_start into the union with
-> comp_list/apoll_events.
+tree:   https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git master
+head:   c2ee9f594da826bea183ed14f2cc029c719bf4da
+commit: 48cf7e01386e7e35ea12255bc401bdd484c34e7d clk: sophgo: Add SG2042 clock driver
+date:   4 months ago
+config: loongarch-randconfig-r054-20241024 (https://download.01.org/0day-ci/archive/20241024/202410242248.o7XIZVqz-lkp@intel.com/config)
+compiler: loongarch64-linux-gcc (GCC) 14.1.0
 
-That's with what the current request is hooked into the list,
-IOW such aliasing will corrupt the request
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410242248.o7XIZVqz-lkp@intel.com/
+
+cocci warnings: (new ones prefixed by >>)
+>> drivers/clk/sophgo/clk-sg2042-pll.c:217:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_ul instead.
+>> drivers/clk/sophgo/clk-sg2042-pll.c:160:1-7: WARNING: do_div() does a 64-by-32 division, please consider using div64_u64 instead.
+
+vim +217 drivers/clk/sophgo/clk-sg2042-pll.c
+
+   138	
+   139	/**
+   140	 * sg2042_pll_recalc_rate() - Calculate rate for plls
+   141	 * @reg_value: current register value
+   142	 * @parent_rate: parent frequency
+   143	 *
+   144	 * This function is used to calculate below "rate" in equation
+   145	 * rate = (parent_rate/REFDIV) x FBDIV/POSTDIV1/POSTDIV2
+   146	 *      = (parent_rate x FBDIV) / (REFDIV x POSTDIV1 x POSTDIV2)
+   147	 *
+   148	 * Return: The rate calculated.
+   149	 */
+   150	static unsigned long sg2042_pll_recalc_rate(unsigned int reg_value,
+   151						    unsigned long parent_rate)
+   152	{
+   153		struct sg2042_pll_ctrl ctrl_table;
+   154		u64 numerator, denominator;
+   155	
+   156		sg2042_pll_ctrl_decode(reg_value, &ctrl_table);
+   157	
+   158		numerator = parent_rate * ctrl_table.fbdiv;
+   159		denominator = ctrl_table.refdiv * ctrl_table.postdiv1 * ctrl_table.postdiv2;
+ > 160		do_div(numerator, denominator);
+   161		return numerator;
+   162	}
+   163	
+   164	/**
+   165	 * sg2042_pll_get_postdiv_1_2() - Based on input rate/prate/fbdiv/refdiv,
+   166	 * look up the postdiv1_2 table to get the closest postdiiv combination.
+   167	 * @rate: FOUTPOSTDIV
+   168	 * @prate: parent rate, i.e. FREF
+   169	 * @fbdiv: FBDIV
+   170	 * @refdiv: REFDIV
+   171	 * @postdiv1: POSTDIV1, output
+   172	 * @postdiv2: POSTDIV2, output
+   173	 *
+   174	 * postdiv1_2 contains all the possible combination lists of POSTDIV1 and POSTDIV2
+   175	 * for example:
+   176	 * postdiv1_2[0] = {2, 4, 8}, where div1 = 2, div2 = 4 , div1 * div2 = 8
+   177	 *
+   178	 * See TRM:
+   179	 * FOUTPOSTDIV = FREF * FBDIV / REFDIV / (POSTDIV1 * POSTDIV2)
+   180	 * So we get following formula to get POSTDIV1 and POSTDIV2:
+   181	 * POSTDIV = (prate/REFDIV) x FBDIV/rate
+   182	 * above POSTDIV = POSTDIV1*POSTDIV2
+   183	 *
+   184	 * Return:
+   185	 * %0 - OK
+   186	 * %-EINVAL - invalid argument, which means Failed to get the postdivs.
+   187	 */
+   188	static int sg2042_pll_get_postdiv_1_2(unsigned long rate,
+   189					      unsigned long prate,
+   190					      unsigned int fbdiv,
+   191					      unsigned int refdiv,
+   192					      unsigned int *postdiv1,
+   193					      unsigned int *postdiv2)
+   194	{
+   195		int index;
+   196		u64 tmp0;
+   197	
+   198		/* POSTDIV_RESULT_INDEX point to 3rd element in the array postdiv1_2 */
+   199		#define	POSTDIV_RESULT_INDEX	2
+   200	
+   201		static const int postdiv1_2[][3] = {
+   202			{2, 4,  8}, {3, 3,  9}, {2, 5, 10}, {2, 6, 12},
+   203			{2, 7, 14}, {3, 5, 15}, {4, 4, 16}, {3, 6, 18},
+   204			{4, 5, 20}, {3, 7, 21}, {4, 6, 24}, {5, 5, 25},
+   205			{4, 7, 28}, {5, 6, 30}, {5, 7, 35}, {6, 6, 36},
+   206			{6, 7, 42}, {7, 7, 49}
+   207		};
+   208	
+   209		/* prate/REFDIV and result save to tmp0 */
+   210		tmp0 = prate;
+   211		do_div(tmp0, refdiv);
+   212	
+   213		/* ((prate/REFDIV) x FBDIV) and result save to tmp0 */
+   214		tmp0 *= fbdiv;
+   215	
+   216		/* ((prate/REFDIV) x FBDIV)/rate and result save to tmp0 */
+ > 217		do_div(tmp0, rate);
+   218	
+   219		/* tmp0 is POSTDIV1*POSTDIV2, now we calculate div1 and div2 value */
+   220		if (tmp0 <= 7) {
+   221			/* (div1 * div2) <= 7, no need to use array search */
+   222			*postdiv1 = tmp0;
+   223			*postdiv2 = 1;
+   224			return 0;
+   225		}
+   226	
+   227		/* (div1 * div2) > 7, use array search */
+   228		for (index = 0; index < ARRAY_SIZE(postdiv1_2); index++) {
+   229			if (tmp0 > postdiv1_2[index][POSTDIV_RESULT_INDEX]) {
+   230				continue;
+   231			} else {
+   232				/* found it */
+   233				*postdiv1 = postdiv1_2[index][1];
+   234				*postdiv2 = postdiv1_2[index][0];
+   235				return 0;
+   236			}
+   237		}
+   238		pr_warn("%s can not find in postdiv array!\n", __func__);
+   239		return -EINVAL;
+   240	}
+   241	
 
 -- 
-Pavel Begunkov
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
