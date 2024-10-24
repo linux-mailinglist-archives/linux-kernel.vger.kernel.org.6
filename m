@@ -1,61 +1,59 @@
-Return-Path: <linux-kernel+bounces-379220-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379221-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6E72F9ADB92
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:43:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 529349ADB9B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:45:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 637321C219FD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:43:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 0AF742835BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:45:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D99171675;
-	Thu, 24 Oct 2024 05:43:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id AFC1016A397;
+	Thu, 24 Oct 2024 05:45:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="uD/31oaC"
-Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b="pC66RixE"
+Received: from out30-112.freemail.mail.aliyun.com (out30-112.freemail.mail.aliyun.com [115.124.30.112])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440F1C8F0;
-	Thu, 24 Oct 2024 05:43:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6081BC8F0;
+	Thu, 24 Oct 2024 05:45:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=115.124.30.112
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729748598; cv=none; b=CQZC4gghRksORkGIUGSjiUOe1JYvgSSxFRi1A4lh//NH8bL794Xzyp0C9ugPm1SNbBN0NRfaWKYWMwy7CI/VafglPOu/K2EeH74jiDLi8PjuIVMIII8RPshepZs9lye6N6tcjVwSUaJYP9smJfumaKLiOlJpNq3SntnHeNjSg5s=
+	t=1729748705; cv=none; b=KvZonnM96gW214/Qmy1QzAZOav5+FM0c+1xBEN0OfrMtQbuDENubCon8BW6+H2ZO4E18T8WvPzw2f524J4wSmqBJzUUxslDxUCvmPKrMHtb0T+eNb8qn/XIDKf+k/WvhJOgEGttQXhZ/pDJpfxCQXSp6rg7GsPsu44g91eonev0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729748598; c=relaxed/simple;
-	bh=wjqS/t8+rcOU09Cga1EforbscJmeUuOflPkZevgZ7B8=;
-	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P9swSg48lfQw4yHYbmkQ6zlfVIGB3HFCbAt4iilDHNfDarNhjQt/tj3W+G3yCp9s/lIOI2V/iVtNZf1LX89e5oq3Y9/qAxpiVamEpMFItnzIrPvBVAeFj9wApOFtaO6LYGVcIgxxlnB5yTfEConUn3BJ0wSNkP6o262ptJP11Ks=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=uD/31oaC; arc=none smtp.client-ip=85.214.62.61
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
-Received: from localhost.localdomain (82-131-200-27.pool.digikabel.hu [82.131.200.27])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
-	(No client certificate requested)
-	(Authenticated sender: hs@denx.de)
-	by phobos.denx.de (Postfix) with ESMTPSA id 0838888E0F;
-	Thu, 24 Oct 2024 07:43:13 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
-	s=phobos-20191101; t=1729748594;
-	bh=67XcJrpAeWLTopuAGqI8NMDSv4lhCuMcrzl9ZzSiXug=;
-	h=From:To:Cc:Subject:Date:From;
-	b=uD/31oaCMBI34Ew9AH7yCtoh/G8kSIEnWl8L+NX3j/um1WNeBGCv0jJBObFACk//e
-	 LpPnXPf622DwJHThGb3Yb75oaMN3cMe5C8C1NtagePsWKhNO+0pqPCHUgqOXAtJdxD
-	 hhPcGbUjOJiAjHHErz3g8laEJjoCR5ckLOct0Zqx3ITLkkOjVySJzW9c2IrVTPTO7Z
-	 iJFj3bEAp3hyu3Bpf6+IMyWUj2wNgYRFPmngycNiLTB4RnecnTl8RiJv6sShaUnEQM
-	 irQDXp9DVsBGoulXwbdnsLPUlM6Y+WF0+81jvNC3Xx8e1T2dNWRLVo85OshaKChLLe
-	 RccIIuHwGyJ6w==
-From: Heiko Schocher <hs@denx.de>
-To: linux-kernel@vger.kernel.org
-Cc: Heiko Schocher <hs@denx.de>,
-	Jarkko Sakkinen <jarkko@kernel.org>,
-	Jason Gunthorpe <jgg@ziepe.ca>,
-	Peter Huewe <peterhuewe@gmx.de>,
-	linux-integrity@vger.kernel.org
-Subject: [PATCH v1] tpm: tis_i2c: add ST33KTPM2XI2C compatible entry
-Date: Thu, 24 Oct 2024 07:43:04 +0200
-Message-Id: <20241024054304.26714-1-hs@denx.de>
-X-Mailer: git-send-email 2.20.1
+	s=arc-20240116; t=1729748705; c=relaxed/simple;
+	bh=AO9kzHVqu6CkS7PKlwu6V4JxdUz5AE3Z/e1V0l0sLPI=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=faFnNKbxN9khr7GMn/s472msJ6IDvApi0fJeNp0aN7U9YNc3AB52wUR159KvDXdHggcMTIe7gdeu0tNAlTHCINR8EoJA9u4t4SI5VsfZrtERpMqI+5uJBQo8yV1KKcaxBBPfHcFF8pTKwyDjVa0s05yRE7FDwVAB/7hlqEn0fDE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com; spf=pass smtp.mailfrom=linux.alibaba.com; dkim=pass (1024-bit key) header.d=linux.alibaba.com header.i=@linux.alibaba.com header.b=pC66RixE; arc=none smtp.client-ip=115.124.30.112
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.alibaba.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.alibaba.com
+DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
+	d=linux.alibaba.com; s=default;
+	t=1729748698; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=6e+vage7Syc/ckTeGnwMXWcLKLUNAWjPBIjR0sU7HoM=;
+	b=pC66RixEjkLL6sYJzh6vV3mul5y/BvP5eIrdTvmU3vngJAa9XsIC/R5vo+SRSO3nqlvF0NyiN0DHYsU/8t7WkSEj1+uezoJF+ICuYsG3/DqbrjUs4U//852F6tKzjZHXRHvMoMa2khjyv5m5Gj6gdjrhJrCF3IiaQa5a7/aXq1U=
+Received: from localhost(mailfrom:guwen@linux.alibaba.com fp:SMTPD_---0WHnzPxs_1729748696 cluster:ay36)
+          by smtp.aliyun-inc.com;
+          Thu, 24 Oct 2024 13:44:58 +0800
+From: Wen Gu <guwen@linux.alibaba.com>
+To: wenjia@linux.ibm.com,
+	jaka@linux.ibm.com,
+	davem@davemloft.net,
+	edumazet@google.com,
+	kuba@kernel.org,
+	pabeni@redhat.com
+Cc: alibuda@linux.alibaba.com,
+	tonylu@linux.alibaba.com,
+	guwen@linux.alibaba.com,
+	linux-s390@vger.kernel.org,
+	netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: [PATCH net-next] net/smc: use new helper to get the netdev associated to an ibdev
+Date: Thu, 24 Oct 2024 13:44:56 +0800
+Message-Id: <20241024054456.37124-1-guwen@linux.alibaba.com>
+X-Mailer: git-send-email 2.32.0.3.g01195cf9f
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -63,40 +61,62 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
-X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
-X-Virus-Status: Clean
 
-add compatible entry "st,st33ktpm2xi2c" for ST33KTPM2XI2C
-chip from ST.
+Patch [1] provides common interfaces to store and get net devices
+associated to an IB device port and removes the ops->get_netdev()
+callback of mlx5 driver. So use the new interface in smc.
 
-datasheet:
-https://www.st.com/resource/en/data_brief/st33ktpm2xi2c.pdf
+[1]: 8d159eb2117b ("RDMA/mlx5: Use IB set_netdev and get_netdev functions")
 
-This entry is already documented in
-Documentation/devicetree/bindings/tpm/tcg,tpm-tis-i2c.yaml
-
-and so we should add this compatible entry in the
-related driver.
-
-Signed-off-by: Heiko Schocher <hs@denx.de>
+Reported-by: D. Wythe <alibuda@linux.alibaba.com>
+Signed-off-by: Wen Gu <guwen@linux.alibaba.com>
 ---
+ net/smc/smc_ib.c   | 8 ++------
+ net/smc/smc_pnet.c | 4 +---
+ 2 files changed, 3 insertions(+), 9 deletions(-)
 
- drivers/char/tpm/tpm_tis_i2c.c | 1 +
- 1 file changed, 1 insertion(+)
-
-diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
-index 6cd07dd34507..933e10c7522e 100644
---- a/drivers/char/tpm/tpm_tis_i2c.c
-+++ b/drivers/char/tpm/tpm_tis_i2c.c
-@@ -384,6 +384,7 @@ MODULE_DEVICE_TABLE(i2c, tpm_tis_i2c_id);
- static const struct of_device_id of_tis_i2c_match[] = {
- 	{ .compatible = "infineon,slb9673", },
- 	{ .compatible = "nuvoton,npct75x", },
-+	{ .compatible = "st,st33ktpm2xi2c", },
- 	{ .compatible = "tcg,tpm-tis-i2c", },
- 	{}
- };
+diff --git a/net/smc/smc_ib.c b/net/smc/smc_ib.c
+index 9297dc20bfe2..9c563cdbea90 100644
+--- a/net/smc/smc_ib.c
++++ b/net/smc/smc_ib.c
+@@ -899,9 +899,7 @@ static void smc_copy_netdev_ifindex(struct smc_ib_device *smcibdev, int port)
+ 	struct ib_device *ibdev = smcibdev->ibdev;
+ 	struct net_device *ndev;
+ 
+-	if (!ibdev->ops.get_netdev)
+-		return;
+-	ndev = ibdev->ops.get_netdev(ibdev, port + 1);
++	ndev = ib_device_get_netdev(ibdev, port + 1);
+ 	if (ndev) {
+ 		smcibdev->ndev_ifidx[port] = ndev->ifindex;
+ 		dev_put(ndev);
+@@ -921,9 +919,7 @@ void smc_ib_ndev_change(struct net_device *ndev, unsigned long event)
+ 		port_cnt = smcibdev->ibdev->phys_port_cnt;
+ 		for (i = 0; i < min_t(size_t, port_cnt, SMC_MAX_PORTS); i++) {
+ 			libdev = smcibdev->ibdev;
+-			if (!libdev->ops.get_netdev)
+-				continue;
+-			lndev = libdev->ops.get_netdev(libdev, i + 1);
++			lndev = ib_device_get_netdev(libdev, i + 1);
+ 			dev_put(lndev);
+ 			if (lndev != ndev)
+ 				continue;
+diff --git a/net/smc/smc_pnet.c b/net/smc/smc_pnet.c
+index a04aa0e882f8..716808f374a8 100644
+--- a/net/smc/smc_pnet.c
++++ b/net/smc/smc_pnet.c
+@@ -1054,9 +1054,7 @@ static void smc_pnet_find_rdma_dev(struct net_device *netdev,
+ 		for (i = 1; i <= SMC_MAX_PORTS; i++) {
+ 			if (!rdma_is_port_valid(ibdev->ibdev, i))
+ 				continue;
+-			if (!ibdev->ibdev->ops.get_netdev)
+-				continue;
+-			ndev = ibdev->ibdev->ops.get_netdev(ibdev->ibdev, i);
++			ndev = ib_device_get_netdev(ibdev->ibdev, i);
+ 			if (!ndev)
+ 				continue;
+ 			dev_put(ndev);
 -- 
-2.20.1
+2.32.0.3.g01195cf9f
 
 
