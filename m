@@ -1,166 +1,115 @@
-Return-Path: <linux-kernel+bounces-380302-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380303-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E9DFA9AEC09
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:28:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 36D569AEC0B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:28:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 198911C2257B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:28:15 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id A5E4B1F23E91
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:28:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DB2341F81A7;
-	Thu, 24 Oct 2024 16:28:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3542B1F818A;
+	Thu, 24 Oct 2024 16:28:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aZbVPBF+";
-	dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b="aZbVPBF+"
-Received: from bedivere.hansenpartnership.com (bedivere.hansenpartnership.com [96.44.175.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="VqXhsCtn"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56ADF1F80CC;
-	Thu, 24 Oct 2024 16:28:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=96.44.175.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 934CA1F80BB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:28:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787282; cv=none; b=Gr08zSQa2Blv2Pyya4mLgd0CPu6X1zm3xJs716T1/cxAiuiD85d3l38xxswzQi/gCjnh53AC8inMAtqbivNb9kEhobmo8V0xUQdsU74uPWtE0t2dE3Wk/Z2EpbYg2UhpP+kKJzb+KiIC/GoouZGMHwspl+q8eGS3sz7fQL3l7W4=
+	t=1729787299; cv=none; b=n1LQBK0+ywceniUWqNzreM3o5V7F+cRv5w6ZvfFfxgayicgFhdBXe9ziCy4DNWOeabhSOMQgv2fqGHao6OzVlaP1Q9N+uEUSEQDGzULKQmQMrHlXyszZJMVrFG/xsqQSRTZ0kq1zcprDM8hCXEuXXdExKXlBsLClfS8Ckq8D5NU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787282; c=relaxed/simple;
-	bh=Rrc56uTnfRNdC1bewUry4Xfnxz5KZpPPiUjQQRJFyU4=;
-	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=exSJziHCvDcGAShmvavdK84vxeyXyu/bsi5V4p6DgWk5vbDt9LTr86LoG3+DbPbbzGV5w6i+KhSiOJSUBcFZsRi7WcSnun5Vj93LSHoc62f3weUIHcyEIwpXiW591rEPSqfsBRS9isgvNjGgE3PKn+q5iQnw/BoroG9CCVfzNWM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com; spf=pass smtp.mailfrom=HansenPartnership.com; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aZbVPBF+; dkim=pass (1024-bit key) header.d=hansenpartnership.com header.i=@hansenpartnership.com header.b=aZbVPBF+; arc=none smtp.client-ip=96.44.175.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=HansenPartnership.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=HansenPartnership.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1729787275;
-	bh=Rrc56uTnfRNdC1bewUry4Xfnxz5KZpPPiUjQQRJFyU4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=aZbVPBF+axigjMKsw1msqICxBnjDWBRgdI0ct3T7Kf898m8kTzL9UA31mp7dLLOSJ
-	 XQ+g2sskTIVJyy2D6A2dXk/UjRYJdzh9N93DjRLWJ26LHk3xkGPAy6W90rYsfsqPEr
-	 cQdcwBMYVVqDWYQLGCFWkS6heSDbavxlERDs9lgI=
-Received: from localhost (localhost [127.0.0.1])
-	by bedivere.hansenpartnership.com (Postfix) with ESMTP id C319B128799E;
-	Thu, 24 Oct 2024 12:27:55 -0400 (EDT)
-Received: from bedivere.hansenpartnership.com ([127.0.0.1])
- by localhost (bedivere.hansenpartnership.com [127.0.0.1]) (amavis, port 10024)
- with ESMTP id FlqUVcMmUqoz; Thu, 24 Oct 2024 12:27:55 -0400 (EDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-	d=hansenpartnership.com; s=20151216; t=1729787275;
-	bh=Rrc56uTnfRNdC1bewUry4Xfnxz5KZpPPiUjQQRJFyU4=;
-	h=Message-ID:Subject:From:To:Date:In-Reply-To:References:From;
-	b=aZbVPBF+axigjMKsw1msqICxBnjDWBRgdI0ct3T7Kf898m8kTzL9UA31mp7dLLOSJ
-	 XQ+g2sskTIVJyy2D6A2dXk/UjRYJdzh9N93DjRLWJ26LHk3xkGPAy6W90rYsfsqPEr
-	 cQdcwBMYVVqDWYQLGCFWkS6heSDbavxlERDs9lgI=
-Received: from lingrow.int.hansenpartnership.com (unknown [IPv6:2601:5c4:4302:c21::a774])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by bedivere.hansenpartnership.com (Postfix) with ESMTPSA id 731B41287956;
-	Thu, 24 Oct 2024 12:27:51 -0400 (EDT)
-Message-ID: <f90bba20e86dac698472d686be7ec565736adca0.camel@HansenPartnership.com>
-Subject: Re: linux: Goodbye from a Linux community volunteer
-From: James Bottomley <James.Bottomley@HansenPartnership.com>
-To: Jiaxun Yang <jiaxun.yang@flygoat.com>, Serge Semin
- <fancer.lancer@gmail.com>,  Jon Mason <jdmason@kudzu.us>, Dave Jiang
- <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>, 
- ntb@lists.linux.dev, Andy Shevchenko <andy@kernel.org>, Andy Shevchenko
- <andriy.shevchenko@linux.intel.com>, Kory Maincent
- <kory.maincent@bootlin.com>,  Cai Huoqing <cai.huoqing@linux.dev>,
- dmaengine@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
- linux-spi@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
- linux-ide@vger.kernel.org, "paulburton@kernel.org" <paulburton@kernel.org>,
-  Thomas Bogendoerfer <tsbogend@alpha.franken.de>, Arnd Bergmann
- <arnd@arndb.de>, "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
- Bjorn Helgaas <bhelgaas@google.com>,  Manivannan Sadhasivam
- <manivannan.sadhasivam@linaro.org>, Yoshihiro Shimoda
- <yoshihiro.shimoda.uh@renesas.com>, linux-pci <linux-pci@vger.kernel.org>,
- "David S . Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>,
- Paolo Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, Russell King
- <linux@armlinux.org.uk>, Vladimir Oltean <olteanv@gmail.com>, Kelvin Cheung
- <keguang.zhang@gmail.com>, Yanteng Si <siyanteng@loongson.cn>, 
- netdev@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
- <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
- linux-hwmon@vger.kernel.org, Borislav Petkov <bp@alien8.de>, 
- linux-edac@vger.kernel.org, Greg Kroah-Hartman
- <gregkh@linuxfoundation.org>,  linux-serial@vger.kernel.org
-Cc: Andrew Halaney <ajhalaney@gmail.com>, Nikita Travkin <nikita@trvn.ru>, 
- Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Alexander Shiyan
- <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,  Sergey Shtylyov
- <s.shtylyov@omp.ru>, Evgeniy Dushistov <dushistov@mail.ru>, Geert
- Uytterhoeven <geert@linux-m68k.org>, Sergio Paracuellos
- <sergio.paracuellos@gmail.com>,  Nikita Shubin <nikita.shubin@maquefel.me>,
- linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
-Date: Thu, 24 Oct 2024 12:27:49 -0400
-In-Reply-To: <753d203a-a008-4cd3-b053-38b5ce31281b@app.fastmail.com>
-References: 
-	<2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
-	 <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
-	 <753d203a-a008-4cd3-b053-38b5ce31281b@app.fastmail.com>
-Content-Type: text/plain; charset="UTF-8"
-User-Agent: Evolution 3.42.4 
+	s=arc-20240116; t=1729787299; c=relaxed/simple;
+	bh=BAMyVf69I0HQ8TnNfDk6Bau81x3CTlj07KBYZ5ws5Tc=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=lFOLooCjTtiXe+12hvzzk0GWLy1gpISCejnjOOfKMzc+692LCTHB53Fv8dss0gTEBL5UgWxoLOVQxPIKTT5F2Dk4nN3+KGRgJelugiHY363wi+bHRKbhRn0fXUVH5zpBm/K47KDDoyoQriks6n7+W622U3tRkEeYjV9tOjp5gz4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=VqXhsCtn; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-4315a8cff85so495e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:28:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729787296; x=1730392096; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=BAMyVf69I0HQ8TnNfDk6Bau81x3CTlj07KBYZ5ws5Tc=;
+        b=VqXhsCtns+ufLmDPexYhJarMnrxej8oSEXMijBEdGNWB5jJnDjohC3Jb+4GoTg3Uxf
+         PsFFFznWc/x/B+FkXDKaCPGu7SZqFve/jC5gRe9vjFDDzSUdq+bXwyDp/9IAZKD5YtjW
+         nHR3Gz0/VwKGJK5ZdoeyepW/FPyfli4Epi973EQjURGDu9o7DpD7O99ggmy3LZuSVO8I
+         0bVxpRft3EaFw6T5U4CZPuB5qzM3xzhLgMiWM/O5KGV8u+s8In5kvMV2q9YQvnRKCGoX
+         musX8hLLTv4U7JgpJz0rcqkLzpywXOs9u6mmTnGXXqwfdiF+KGleUpuqyPgiqxtC4cXp
+         oooQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729787296; x=1730392096;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=BAMyVf69I0HQ8TnNfDk6Bau81x3CTlj07KBYZ5ws5Tc=;
+        b=elyVPm3uGYicbTdP7tXi+gJxpUgPyip4icy6LEGU3Vf8vCMbix6vmoZZafiQQ16RL1
+         kViG96+QtJPn90Xi3ilA2LukJQ4m6sZHjw3gBxcOhHvgfaquBoqr+0cy9lOaEFifqvk6
+         XIBTS0IWATAkPJT45tjyMnXnUmg4pjDWgKq7gkWkI6cdo0krk/RWsIeIgKB7kynRPp8/
+         RRNGE4ooXoSK+Z2UXXFjn6IhLIeJ7S6bsnERg0IOcF4YvrZcM37ESuFugk9nLGmPq+o9
+         b7iOBEew0imMx8uKbT+blf0hD30bCvyyFlGUB549iFpZUEmypw07RMdlpC0hLkWsITjN
+         /mXA==
+X-Forwarded-Encrypted: i=1; AJvYcCWKF37q7GDlxmvrd+pC2cyIkiwWQXjQ2q+/5Obv/ZZ7eQBfPn2JuyM5tGAKZqyRylXZSPHg0xs56NgEBQs=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxJC6IMXSgs+OV7MbA2AyZ6cPGtQoI0Iq+bZYdcIXr+MhlnxzmO
+	QagCldgs6ja/Cu1q2mPwn8O7tPW7T8MY1DBa5D9uuVJ+HTzeHiMyksax/TA7K2IeY7lUoBtMDj4
+	HgTeCI2tueZW4l91pD4Q9vDHwjQ2x8pjpUPFe
+X-Google-Smtp-Source: AGHT+IH6GaCTFse8PHhR99yRvdJU42XjOZhxxrVWX7RUwgX5aK9xyEy94yBYp/VrB+JAVrmpWoM6bBGXa7q1ktnK+/A=
+X-Received: by 2002:a05:600c:b8d:b0:42b:a961:e51 with SMTP id
+ 5b1f17b1804b1-4318a4ace7bmr5573175e9.0.1729787295526; Thu, 24 Oct 2024
+ 09:28:15 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+References: <20241010205644.3831427-1-andrii@kernel.org> <20241010205644.3831427-2-andrii@kernel.org>
+ <20241023201031.GF11151@noisy.programming.kicks-ass.net> <CAJuCfpFMhoCmqGJMU2uc4JHmk9zh88JzhZAeSz3DgvXEh+u+_g@mail.gmail.com>
+ <20241024095659.GD9767@noisy.programming.kicks-ass.net>
+In-Reply-To: <20241024095659.GD9767@noisy.programming.kicks-ass.net>
+From: Suren Baghdasaryan <surenb@google.com>
+Date: Thu, 24 Oct 2024 09:28:01 -0700
+Message-ID: <CAJuCfpGxu=z-2Wsf41-m4MQ6t7DjfiiWXD408BW8SjTfx0NGTg@mail.gmail.com>
+Subject: Re: [PATCH v3 tip/perf/core 1/4] mm: introduce mmap_lock_speculation_{start|end}
+To: Peter Zijlstra <peterz@infradead.org>
+Cc: Andrii Nakryiko <andrii@kernel.org>, linux-trace-kernel@vger.kernel.org, 
+	linux-mm@kvack.org, oleg@redhat.com, rostedt@goodmis.org, mhiramat@kernel.org, 
+	bpf@vger.kernel.org, linux-kernel@vger.kernel.org, jolsa@kernel.org, 
+	paulmck@kernel.org, willy@infradead.org, akpm@linux-foundation.org, 
+	mjguzik@gmail.com, brauner@kernel.org, jannh@google.com, mhocko@kernel.org, 
+	vbabka@suse.cz, shakeel.butt@linux.dev, hannes@cmpxchg.org, 
+	Liam.Howlett@oracle.com, lorenzo.stoakes@oracle.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On Thu, 2024-10-24 at 16:59 +0100, Jiaxun Yang wrote:
-> 
-> 
-> 在2024年10月24日十月 下午3:50，James Bottomley写道：
-> > On Thu, 2024-10-24 at 07:27 +0300, Serge Semin wrote:
-> > > Hello Linux-kernel community,
-> [...]
-> 
-> Hi James,
-> 
-> Sorry to chime in here, and thanks for making things clear.
-> 
-> However, I have some questions regarding this statement, please see
-> below:
-> 
-> > Please accept all of our apologies for the way this was handled.  A
-> > summary of the legal advice the kernel is operating under is
-> 
-> In what capacity this statement was made, i.e, who is "our" here and
-> "we" below? Are you representing any formal group in this case?
+On Thu, Oct 24, 2024 at 2:57=E2=80=AFAM Peter Zijlstra <peterz@infradead.or=
+g> wrote:
+>
+> On Wed, Oct 23, 2024 at 03:17:01PM -0700, Suren Baghdasaryan wrote:
+>
+> > > Or better yet, just use seqcount...
+> >
+> > Yeah, with these changes it does look a lot like seqcount now...
+> > I can take another stab at rewriting this using seqcount_t but one
+> > issue that Jann was concerned about is the counter being int vs long.
+> > seqcount_t uses unsigned, so I'm not sure how to address that if I
+> > were to use seqcount_t. Any suggestions how to address that before I
+> > move forward with a rewrite?
+>
+> So if that issue is real, it is not specific to this case. Specifically
+> preemptible seqcount will be similarly affected. So we should probably
+> address that in the seqcount implementation.
 
-It's Linux, so no official capacity at all.  However, I am expressing
-the views of a number of people I talked to but it's not fair of me to
-name them.
+Sounds good. Let me try rewriting this patch using seqcount_t and I'll
+work with Jann on a separate patch to change seqcount_t.
+Thanks for the feedback!
 
-> >    If your company is on the U.S. OFAC SDN lists, subject to an
-> > OFAC
-> >    sanctions program, or owned/controlled by a company on the list,
-> > our
-> >    ability to collaborate with you will be subject to restrictions,
-> > and
-> >    you cannot be in the MAINTAINERS file.
-> > 
-> > Anyone who wishes to can query the list here:
-> > 
-> > https://sanctionssearch.ofac.treas.gov/
-> 
-> I did a quick search and found the following entry:
-> 
-> HUAWEI TECHNOLOGIES CO., LTD. Under CMIC-EO13959 sanction program.
-> 
-> Although it's a Non-SDN sanction, it can still be interpreted as
-> "subject to an OFAC sanctions program".
-> 
-> How should we handle it?
-
-A big chunk of the reason it's taken so long just to get the above is
-that the Lawyers (of which I'm not one) are still discussing the
-specifics and will produce a much longer policy document later, so they
-don't want to be drawn into questions like this.  However, my non-
-legal-advice rule of thumb that I'm applying until I hear otherwise is
-not on the SDN list, not a problem.
-
-James
-
-
-
+>
 
