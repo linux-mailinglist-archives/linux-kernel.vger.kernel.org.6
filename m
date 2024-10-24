@@ -1,78 +1,139 @@
-Return-Path: <linux-kernel+bounces-379751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id E0B739AE32D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:59:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8AF0E9AE331
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:59:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1BCFF1C221F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:59:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4A81B283ECF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:59:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F0A61C8797;
-	Thu, 24 Oct 2024 10:59:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2CFED1C879E;
+	Thu, 24 Oct 2024 10:59:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CY7R9J5Q"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="JFrXN/iQ"
+Received: from mail-wr1-f43.google.com (mail-wr1-f43.google.com [209.85.221.43])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F38271C07F3;
-	Thu, 24 Oct 2024 10:59:10 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8D2721C4A23
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:59:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.43
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729767551; cv=none; b=iKevdoMNq3W5ZtyPTE8jw4iHrE21+wjldFjf0reUqYMgOUv1lrNAiOck/QQe/GJyrmKRkdEaRTbvy2Dbayx9AarSjM/sfWKY6IGV5fcjpiaSvZtVp6+dWQ6+mtU/KSFscyghx/P48vX7AaMA51jCGE1mhqqBQ7G/1TnxcOECtOU=
+	t=1729767590; cv=none; b=li3DQw/4LI+qVEbzuYtx2mQcwrQri+31LNXpxjxN3dFTDTicCK3NVRqkmaYxfE+vIxkZxPXHyzIDlrL3yunRoP7mWCICxCnImjc31ql6VC+rNx1oONuaXAjIHW/sA9yCvg6NN8eOaAOSv/KcJTG/KHB+n5fqm7MufboykgKZZzY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729767551; c=relaxed/simple;
-	bh=2SBR+T4K0WZt4+JORbA7vaUGCrx/PZpiNCVGUWyW6mM=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=LvuiioTU1X3YcAEQpmVFfVrLahtPqZOcXwQE9HPKJcr0zwJfMbD0anL6RMs86rBYycyURlxmd7scV9Ym2HOcDM4nJJun6LwXUXespV1ss9ZAi+0ww1oUzqXwKki4IQmMhNX/LVfoXK9yv3phPKc2RrlPLnfZUqmNRTCpHohjHb0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CY7R9J5Q; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 73468C4CEC7;
-	Thu, 24 Oct 2024 10:59:09 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729767550;
-	bh=2SBR+T4K0WZt4+JORbA7vaUGCrx/PZpiNCVGUWyW6mM=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CY7R9J5QptNxkXkfSuh5WHIfXGDVwlgSgPum1CyjXaNhNRcx/wV/HNwTzLD45QsQE
-	 x2iWEyuWQWhWqP+pHLpbt9QYv6UCzOGCJGYTjDiVA2GYmfUBz9g9HEQi/cNx+zQRmR
-	 IiLmHqKGOXU1xOzpNPn0lBdFY/udabO7kbvzNuiPeyBznSt69/61+x9ZC9BtbxjNMV
-	 +CDo1OfMzXewvbONTQPMH/mgpJp6rJiccd4z7WXYr/9gOL2fSbQAH4kSBCkyi7zN4s
-	 Bf8MIQf4lFwGLgg9YTjjO3VMnizRucynb1hAJNlUpy2CAesy4atCMye+WuJGG/Ak+F
-	 9rwhffnwuUblQ==
-Date: Thu, 24 Oct 2024 12:59:06 +0200
-From: Andi Shyti <andi.shyti@kernel.org>
-To: Wojciech Siudy <wojciech.siudy@nokia.com>
-Cc: linux-kernel@vger.kernel.org, linux-i2c@vger.kernel.org, 
-	devicetree@vger.kernel.org, peda@axentia.se, Krzysztof Kozlowski <krzk@kernel.org>
-Subject: Re: [PATCH v5 2/2] pca954x: Reset if channel select fails
-Message-ID: <rvgcp3h4jedrug3nfodbvu7sk4lxqen3tcpwk3zgkf5alidbly@4j6haxpk3vao>
-References: <20241018100338.19420-1-wojciech.siudy@nokia.com>
- <20241018100338.19420-3-wojciech.siudy@nokia.com>
+	s=arc-20240116; t=1729767590; c=relaxed/simple;
+	bh=trgLPUyj48HjPRHDuMW5LN9aVZFKBkzE2kLtjunueuI=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=o2H02QBBCobmjIsYoksg6j2SPoLZiRM2UpW3mrEFIvsdoIa4avjrBkkEXLMwT5K4uXozjX/+dtSTVMQ2PLUt3FnzbILqCLOT3C1JsYp/rcNT5xzo6utthJhCm4xKRmG0lTURgP/y1xQ0U7a8MvDefH5CdHdvIjlbvB73W+WOB/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=JFrXN/iQ; arc=none smtp.client-ip=209.85.221.43
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wr1-f43.google.com with SMTP id ffacd0b85a97d-37ec4e349f4so567740f8f.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:59:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729767587; x=1730372387; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=z/5g2bXAqewg4xcxfv4LWmI3L8F/eyWEBOYOVe/AyOk=;
+        b=JFrXN/iQgu/71fmQlprTKRG3g3Rd+11gn+ZAOGP5ERPyzigqD50Zd2bml4KB5otfOZ
+         RxxW98LwDb47EWrFqvj8U5oRtU45/SCRa0rkldwexxTGIUM/pZq9TwCBxugDsNCu7ajE
+         NPs7MBh9BZVSyjw/Vcf7EuMQCnjRpDG8ir+Pc86IXAnGiE9Fgu2YhvqqWgBDgGy0J9MO
+         2fT74Q1pq3hIGcIn2Jxr7B+ouTvds/oEwwIK6UljchkosSQDUCak7ELqaPfE6pPe4zG0
+         xqWwuOZ+uIxkLDcmkiT6vIWa+sFRd6vynGdBrkFl79lBNlPL90aBBJpY71KI1rOJJ5qi
+         cqTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729767587; x=1730372387;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=z/5g2bXAqewg4xcxfv4LWmI3L8F/eyWEBOYOVe/AyOk=;
+        b=PVypr2mmglKI3DJdYPp1p99kCHj3/AFstwCRLO2xOrd2b/rVaK+FOBKzIGn+WvCH3F
+         wqeNksx70yg/n4tBB2vPQg1SBPKqm6uHCxD16M0tH6mA9EmLHdZptwM0oxm4eewITCaK
+         Z5No3/Kto404GtlzlEhsZJ3D93aQjLkMY6YgP0O+lNda5vKtRJYWIoIAyfQ6zTglXrEQ
+         F3Y46EVaZWOSAMN1St6KjcJysFTdAiKrAOfxvuOR+6Ir300K+r/P/hsAazj4336e02dt
+         D+Mkn+zdHzZNJyJH7gTncvkovG1psCVxPmZWrAV+BWGnHmiuL+1NQ8WK7PX7NJ7Zb+xF
+         nzrw==
+X-Forwarded-Encrypted: i=1; AJvYcCXLXJLgdzA3LLMLA8gOJDa9+TGsi06Ezn9g2+eOMzUdMnpOKSZNDedDhW/aMxzdqhN490g85mgXQS2EiT4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyT7Ah2BxmYntcIQhbQhMRQMWGpk5o4D+52w9v2ew00R27kORQR
+	UW2aKuP3oFMRZ1m9SOwGAxm027/bsOBtw2lkvl3v3j6u2E1j3FmdYGIwmwb9ELI=
+X-Google-Smtp-Source: AGHT+IHhMpUEAcc2liClS9QNGx/dIO3K3IeEmcd+OIO2wwof3diLI4Oe4uptdXr/v5oOnzsdIhUNGg==
+X-Received: by 2002:a5d:61d2:0:b0:37d:51bc:3229 with SMTP id ffacd0b85a97d-37efcf93111mr4104098f8f.51.1729767586875;
+        Thu, 24 Oct 2024 03:59:46 -0700 (PDT)
+Received: from mai.. (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5c529sm10984874f8f.62.2024.10.24.03.59.46
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 03:59:46 -0700 (PDT)
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+To: daniel.lezcano@linaro.org,
+	rafael@kernel.org
+Cc: Lukasz Luba <lukasz.luba@arm.com>,
+	Zhang Rui <rui.zhang@intel.com>,
+	linux-pm@vger.kernel.org (open list:THERMAL),
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH] thermal/lib: Fix memory leak on error in thermal_genl_auto()
+Date: Thu, 24 Oct 2024 12:59:38 +0200
+Message-ID: <20241024105938.1095358-1-daniel.lezcano@linaro.org>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241018100338.19420-3-wojciech.siudy@nokia.com>
+Content-Transfer-Encoding: 8bit
 
-Hi Wojciech,
+The function thermal_genl_auto() does not free the allocated message
+in the error path. Fix that by putting a out label and jump to it
+which will free the message instead of directly returning an error.
 
-> +	if (device_property_read_bool(dev, "i2c-mux-timeout-reset"))
-> +		data->timeout_reset = 1;
-> +	else
-> +		data->timeout_reset = 0;
-> +
+Reported-by: Lukasz Luba <lukasz.luba@arm.com>
+Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+---
+ tools/lib/thermal/commands.c | 13 ++++++++-----
+ 1 file changed, 8 insertions(+), 5 deletions(-)
 
-For as much as I would like this patch to be in, I can't take it
-if we don't sort it out in the binding.
+diff --git a/tools/lib/thermal/commands.c b/tools/lib/thermal/commands.c
+index bcf0f14d035a..b0d4c8aca21c 100644
+--- a/tools/lib/thermal/commands.c
++++ b/tools/lib/thermal/commands.c
+@@ -375,27 +375,30 @@ static thermal_error_t thermal_genl_auto(struct thermal_handler *th, cmd_cb_t cm
+ 					 struct cmd_param *param,
+ 					 int cmd, int flags, void *arg)
+ {
++	thermal_error_t ret = THERMAL_ERROR;
+ 	struct nl_msg *msg;
+ 	void *hdr;
+ 
+ 	msg = nlmsg_alloc();
+ 	if (!msg)
+-		return THERMAL_ERROR;
++		goto out;
+ 
+ 	hdr = genlmsg_put(msg, NL_AUTO_PORT, NL_AUTO_SEQ, thermal_cmd_ops.o_id,
+ 			  0, flags, cmd, THERMAL_GENL_VERSION);
+ 	if (!hdr)
+-		return THERMAL_ERROR;
++		goto out;
+ 
+ 	if (cmd_cb && cmd_cb(msg, param))
+-		return THERMAL_ERROR;
++		goto out;
+ 
+ 	if (nl_send_msg(th->sk_cmd, th->cb_cmd, msg, genl_handle_msg, arg))
+-		return THERMAL_ERROR;
++		goto out;
+ 
++	ret = THERMAL_SUCCESS;
++out:
+ 	nlmsg_free(msg);
+ 
+-	return THERMAL_SUCCESS;
++	return ret;
+ }
+ 
+ thermal_error_t thermal_cmd_get_tz(struct thermal_handler *th, struct thermal_zone **tz)
+-- 
+2.43.0
 
-I agree with the suggestion that Krzysztof has provided there and
-I'm aligned with his comments.
-
-Thanks,
-Andi
 
