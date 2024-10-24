@@ -1,220 +1,123 @@
-Return-Path: <linux-kernel+bounces-379410-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379411-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3E2EF9ADE4B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:54:34 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A0F0A9ADE52
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:56:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 92365B2157F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:54:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0D044B213E4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:56:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 151A51AF0A0;
-	Thu, 24 Oct 2024 07:53:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2F9D01AD3E1;
+	Thu, 24 Oct 2024 07:56:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DDOjie+Q"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hEfCTUDr"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.9])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 080D0198E9B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:53:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ABC3E176227;
+	Thu, 24 Oct 2024 07:56:41 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.9
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729756416; cv=none; b=N1sB/4WK0FbDKqPBJN4iwV6rtKB93+An2eDQXyX2UUKQw/g9DhoqSuXCDrmdUJL31dfQJvBNcCJTK8uN2djvYW809k8JaY4satx1726MveXGzbMsvuouY5s2FXRnNd68OFACUGdgpxYAuUhfEzn1Pd+J4xD7SiykA3pvFIQKsv4=
+	t=1729756603; cv=none; b=pgkVOgEh4NFpdocEPUXRu37nPH2am7ck4qibNbtJv9qwhKuKn9OzD2nHP8UkRhiOz8DUgHy4JmELayDR7RjKA6CZiptsf8TDklzIgPA4fOTCKNlymLUC4sqFr1tVOkGCLHOltP7/0qO1f7TxGIIEfsUKTu7/rqslZgQ7QQ2iINg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729756416; c=relaxed/simple;
-	bh=vqqKtdA0tuUCI9eeNOtOdcTW4l5A8AJqd/v9gqg7Esw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=IiT+zKkORzRqAWwR2avGnyyHL0gqGX1ZKuTgN+AoXEE8ip7T/w4NhVEvTmUaNLp93SsZQRXI9ByJwjlkGDlm2nrP3hRkpiO+hnEjBXef1XzS0n859mMHhgfVdT75HZvDnq0I7LyKTIV4JLoCXpaJL1PFuhfZ67SRA1d+l7VZRbc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DDOjie+Q; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a2cdc6f0cso70726866b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:53:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729756412; x=1730361212; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=5LT6OSfbAPKopxq8i2CNf2bpdH1xpDQ2LLKwCESXDew=;
-        b=DDOjie+Q9kF0+Wx5E1QuH8sKMFTCXSGpPkWYDjdeTIIdMrHMRmXgYobvUzauo4uYuL
-         RijRRy4Yu9C4uYv1ofjUuHSU5GvxV/2es57gS55ACQ085P/AnYHHELB82RaNFCfe3c2N
-         aBJIw6CsztUFpFpTEwG6Oi7tv9mh3ucXCGUtXVNpzO3lZL9J3OTw6ikwGz6HoliYDhZM
-         brkt10JXvOR8Yh2Lwvye+n20BsR/ezlsyW/zNsALAgKrQ4fJqf4JGaQxTVZvNmPCo5aF
-         Pi2EFVuMaB4m3PiDytx/yTG9KAORxnwXLN3Rv1+ebuiozv0omVI8MLLWJCFLojJEiz08
-         tAXA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729756412; x=1730361212;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=5LT6OSfbAPKopxq8i2CNf2bpdH1xpDQ2LLKwCESXDew=;
-        b=p9vr+luM/2iJqSne1HeGna/ZJFmRkFjurNn0XLE/gn9G0fDVAS2hL89n9IZ90BNxWJ
-         jOZNPOzzIp6TSQnHbx29SjhPeXZCRwsiFX0/13DTeba7jp7JwAKdMez47iWw1ZqHpup2
-         1FFNjxI3UCxekq1IXr2+qhe/hTXcmIInL4VXVD6t5HMFs+IaaFZXVHsoGg9LKgPwAe9n
-         RvlpXk5tIysVFXELItA1FX1oyxWgvUblL1Xo4HouXLXLjF38h8sWoMeGy8CdUWVQts06
-         veG52oL0CGrXkiwhsAZPyLr71w2CxTPfxqFLBnLzFoMwz/HCiwISBPiTS20u2KKV2qd2
-         VCxQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWWAT2EtgIWCsG8P1mQwZEksDVsLkHGml7B7HnDQko3Jux+u3jma0wuz9lVsA5r+bwUK3r9XFgQShhTOEs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz7CM7y4jmF3Zg7hCIFzSoigQTTWINgVQodH6ZnlZGRSHE7MfAr
-	KOvpGOEQNbErETCwN1mMt1kGVD1KpbtQF3XeQuSI7BcEFsCP55vn1blElvdMYw74FW9+UOwthJT
-	3adJQ6A9zE3U960bktntYFmJDXtF2q7Tzco/M
-X-Google-Smtp-Source: AGHT+IEHUd6iZ1v4/G6dQsAD9v6YuaMj1O/nHgtXRdkvnlnYO4dDHHqi7VG060ksZAcAqnWUz+yAbjuMm7YvDpHORoU=
-X-Received: by 2002:a17:906:6a28:b0:a9a:6284:91db with SMTP id
- a640c23a62f3a-a9abf845712mr507193966b.3.1729756412114; Thu, 24 Oct 2024
- 00:53:32 -0700 (PDT)
+	s=arc-20240116; t=1729756603; c=relaxed/simple;
+	bh=96E/wi/tl7VQCri4VG0xUqj+y+//emGpqRv6r1BRDfE=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=SdiWUTPZzRVd4k7tFvtMDaxOuoXX0kyDBxPe2Hg02VbeNoryoUWHsGpRR6CuVoR+vuL7scAAQR7sKhT0nUK93hhMf9tJVMIOueLXvrFUkquWCwDKXWbEp60awvXTgp+V5EFKVmG2aKSb+Ahr+efETmzoaKNPKqIdVTWXA2lqDco=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hEfCTUDr; arc=none smtp.client-ip=198.175.65.9
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729756602; x=1761292602;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=96E/wi/tl7VQCri4VG0xUqj+y+//emGpqRv6r1BRDfE=;
+  b=hEfCTUDr38K15qcFhJIeT0b/aqhl0ozZf3V11+dPmrcyEwwuz6R7XO0X
+   J70wB38s5dODNMQ++fYjFDuWkK20lXWX54MvVXKJOVt0n92yDcWAQ0qw0
+   yvUUH24EJkmGBSOPM0yV1MjrRm9Vs/DsW3EyAixVNsnxg/ST6eCjJgXt0
+   WQPAox+bBe4XQX6SFd0/r8PpVttc5TxFgYTDFxV640ZzhnCQDLXdTsmzn
+   2kDd/e22t9YW3pnWBn8MvpX2tMvNgmvIYkV52iU0ZrOp4+zGrMR3qhe1V
+   abOUbn1fTyg4pcysxLlrYlzrULb1Y9ESNXuLlsvBsDT649EAwcQkOVHzM
+   g==;
+X-CSE-ConnectionGUID: cy0HMR2FScK6XENx8YgBPA==
+X-CSE-MsgGUID: rCL6D172RhKOSBFsCTbYFA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="51915847"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="51915847"
+Received: from orviesa002.jf.intel.com ([10.64.159.142])
+  by orvoesa101.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 00:56:41 -0700
+X-CSE-ConnectionGUID: JUCSMg8pQMehL2XTDKJJfQ==
+X-CSE-MsgGUID: uQgSKJf7SgyCmacXl6kgAg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="111361025"
+Received: from xiaoyaol-hp-g830.ccr.corp.intel.com (HELO [10.124.227.172]) ([10.124.227.172])
+  by orviesa002-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 00:56:39 -0700
+Message-ID: <aff9bf82-e11e-43d9-8661-aefa328242ad@intel.com>
+Date: Thu, 24 Oct 2024 15:56:35 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <CA+nYHL-ikgZ8CTsaDHjNReTwKCsZL5-Jm_V4NavJ=xGrQ9XQ2g@mail.gmail.com>
- <CA+nYHL-zekOQ-HWc0+7+y6nZi-_6=0mN_KLHfyGw-OJt0c3SyA@mail.gmail.com>
-In-Reply-To: <CA+nYHL-zekOQ-HWc0+7+y6nZi-_6=0mN_KLHfyGw-OJt0c3SyA@mail.gmail.com>
-From: Eric Dumazet <edumazet@google.com>
-Date: Thu, 24 Oct 2024 09:53:17 +0200
-Message-ID: <CANn89iLs5Pb0jqq-+vFK4+obYgcWa=7SjXyLLLQr3hV87VsnNg@mail.gmail.com>
-Subject: Re: WARNING: refcount bug in sk_skb_reason_drop
-To: Xia Chu <jiangmo9@gmail.com>
-Cc: davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com, 
-	netdev@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	syzkaller@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v13 05/13] x86/sev: Prevent RDTSC/RDTSCP interception for
+ Secure TSC enabled guests
+To: Nikunj A Dadhania <nikunj@amd.com>, linux-kernel@vger.kernel.org,
+ thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
+Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
+ pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
+References: <20241021055156.2342564-1-nikunj@amd.com>
+ <20241021055156.2342564-6-nikunj@amd.com>
+Content-Language: en-US
+From: Xiaoyao Li <xiaoyao.li@intel.com>
+In-Reply-To: <20241021055156.2342564-6-nikunj@amd.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 5:40=E2=80=AFAM Xia Chu <jiangmo9@gmail.com> wrote:
->
-> We would like to extend our sincere apologies for the oversight. In our p=
-revious email, we neglected to attach the kernel compilation configuration =
-file, which we understand is essential for your review.
->
-> Enclosed in this email, you will find the kernel configuration file that =
-was missing.
->
-> Once again, we apologize for any inconvenience this may have caused. If y=
-ou require any further information or additional files, please do not hesit=
-ate to let us know.
->
+On 10/21/2024 1:51 PM, Nikunj A Dadhania wrote:
+> The hypervisor should not be intercepting RDTSC/RDTSCP when Secure TSC is
+> enabled. A #VC exception will be generated if the RDTSC/RDTSCP instructions
+> are being intercepted. If this should occur and Secure TSC is enabled,
+> terminate guest execution.
 
-It would be nice you do not duplicate existing reports.
+There is another option to ignore the interception and just return back 
+to guest execution. I think it better to add some justification on why 
+make it fatal and terminate the guest is better than ignoring the 
+interception.
 
-https://lore.kernel.org/lkml/66ff39a0.050a0220.49194.03f5.GAE@google.com/T/
+> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
+> Tested-by: Peter Gonda <pgonda@google.com>
+> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
+> ---
+>   arch/x86/coco/sev/shared.c | 10 ++++++++++
+>   1 file changed, 10 insertions(+)
+> 
+> diff --git a/arch/x86/coco/sev/shared.c b/arch/x86/coco/sev/shared.c
+> index 71de53194089..c2a9e2ada659 100644
+> --- a/arch/x86/coco/sev/shared.c
+> +++ b/arch/x86/coco/sev/shared.c
+> @@ -1140,6 +1140,16 @@ static enum es_result vc_handle_rdtsc(struct ghcb *ghcb,
+>   	bool rdtscp = (exit_code == SVM_EXIT_RDTSCP);
+>   	enum es_result ret;
+>   
+> +	/*
+> +	 * RDTSC and RDTSCP should not be intercepted when Secure TSC is
+> +	 * enabled. Terminate the SNP guest when the interception is enabled.
+> +	 * This file is included from kernel/sev.c and boot/compressed/sev.c,
+> +	 * use sev_status here as cc_platform_has() is not available when
+> +	 * compiling boot/compressed/sev.c.
+> +	 */
+> +	if (sev_status & MSR_AMD64_SNP_SECURE_TSC)
+> +		return ES_VMM_ERROR;
+> +
+>   	ret = sev_es_ghcb_hv_call(ghcb, ctxt, exit_code, 0, 0);
+>   	if (ret != ES_OK)
+>   		return ret;
 
-Thank you
-
-> Best regards,
-> Ditto
->
-> Xia Chu <jiangmo9@gmail.com> =E4=BA=8E2024=E5=B9=B410=E6=9C=8824=E6=97=A5=
-=E5=91=A8=E5=9B=9B 11:24=E5=86=99=E9=81=93=EF=BC=9A
->>
->> Hi,
->>
->> We would like to report the following bug which has been found by our mo=
-dified version of syzkaller.
->>
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->> description: WARNING: refcount bug in sk_skb_reason_drop
->> affected file: net/core/skbuff.c
->> kernel version: 6.12.0-rc3
->> kernel commit: 6efbea77b390604a7be7364583e19cd2d6a1291b
->> git tree: upstream
->> kernel config: attached
->> crash reproducer: unattached
->> =3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=3D=
-=3D=3D=3D=3D=3D
->> Crash log:
->> refcount_t: underflow; use-after-free.
->> WARNING: CPU: 1 PID: 8778 at lib/refcount.c:28 refcount_warn_saturate+0x=
-10a/0x1a0
->> Modules linked in:
->> CPU: 1 UID: 0 PID: 8778 Comm: syz-executor.4 Not tainted 6.12.0-rc3-0018=
-3-g6efbea77b390 #1
->> Hardware name: QEMU Standard PC (i440FX + PIIX, 1996), BIOS 1.13.0-1ubun=
-tu1.1 04/01/2014
->> RIP: 0010:refcount_warn_saturate+0x10a/0x1a0
->> Code: 00 e6 1f 88 e8 87 50 e4 fd 90 0f 0b 90 90 eb d6 e8 1b c8 0d fe c6 =
-05 56 47 6f 08 01 90 48 c7 c7 60 e6 1f 88 e8 67 50 e4 fd 90 <0f> 0b 90 90 e=
-b b6 e8 fb c7 0d fe c6 05 33 47 6f 08 01 90 48 c7 c7
->> RSP: 0018:ffffc900004d8850 EFLAGS: 00010246
->> RAX: 1e2ad9b498ce2e00 RBX: 0000000000000003 RCX: ffff88804acaa500
->> RDX: 0000000000000100 RSI: 0000000000000000 RDI: 0000000000000000
->> RBP: ffffc900004d8860 R08: ffff88807ee28cd3 R09: 1ffff1100fdc519a
->> R10: dffffc0000000000 R11: ffffed100fdc519b R12: ffff88805167c0e4
->> R13: 0000000000000000 R14: ffff88805167c0e4 R15: 0000000000000000
->> FS:  000000003c279940(0000) GS:ffff88807ee00000(0000) knlGS:000000000000=
-0000
->> CS:  0010 DS: 0000 ES: 0000 CR0: 0000000080050033
->> CR2: 000000002000f000 CR3: 000000002aff8000 CR4: 0000000000752ef0
->> DR0: 0000000000000000 DR1: 0000000000000000 DR2: 0000000000000000
->> DR3: 0000000000000000 DR6: 00000000fffe0ff0 DR7: 0000000000000400
->> PKRU: 55555554
->> Call Trace:
->>  <IRQ>
->>  sk_skb_reason_drop+0x141/0x150
->>  j1939_xtp_rx_cts+0x3fe/0x790
->>  j1939_tp_recv+0x65a/0xa40
->>  j1939_can_recv+0x527/0x650
->>  can_rcv_filter+0x22b/0x4d0
->>  can_receive+0x239/0x330
->>  can_rcv+0xf6/0x180
->>  __netif_receive_skb+0x119/0x280
->>  process_backlog+0x4b0/0xe90
->>  __napi_poll+0x7b/0x300
->>  net_rx_action+0x4df/0x930
->>  handle_softirqs+0x21f/0x6c0
->>  __do_softirq+0xf/0x16
->>  do_softirq+0xed/0x190
->>  </IRQ>
->>  <TASK>
->>  __local_bh_enable_ip+0x173/0x190
->>  _raw_spin_unlock_bh+0x33/0x40
->>  igmpv3_del_delrec+0x3c8/0x400
->>  ip_mc_up+0x171/0x260
->>  inetdev_event+0xa5d/0xea0
->>  notifier_call_chain+0x158/0x350
->>  raw_notifier_call_chain+0x31/0x40
->>  call_netdevice_notifiers_info+0xb5/0x100
->>  __dev_notify_flags+0x161/0x240
->>  dev_change_flags+0xb5/0xe0
->>  do_setlink+0x9e2/0x2900
->>  rtnl_newlink+0x1316/0x18d0
->>  rtnetlink_rcv_msg+0x637/0x970
->>  netlink_rcv_skb+0x187/0x2c0
->>  rtnetlink_rcv+0x20/0x30
->>  netlink_unicast+0x52a/0x600
->>  netlink_sendmsg+0x6c7/0x800
->>  __sock_sendmsg+0x14a/0x180
->>  __sys_sendto+0x33f/0x430
->>  __x64_sys_sendto+0x7e/0xa0
->>  x64_sys_call+0x2c2c/0x2ee0
->>  do_syscall_64+0xf6/0x230
->>  entry_SYSCALL_64_after_hwframe+0x77/0x7f
->> RIP: 0033:0x41778a
->> Code: 48 c7 c0 ff ff ff ff eb bb 0f 1f 80 00 00 00 00 f3 0f 1e fa 41 89 =
-ca 64 8b 04 25 18 00 00 00 85 c0 75 15 b8 2c 00 00 00 0f 05 <48> 3d 00 f0 f=
-f ff 77 76 c3 0f 1f 44 00 00 55 48 83 ec 30 44 89 4c
->> RSP: 002b:00007ffc3ce57768 EFLAGS: 00000246 ORIG_RAX: 000000000000002c
->> RAX: ffffffffffffffda RBX: 0000000000a82200 RCX: 000000000041778a
->> RDX: 000000000000002c RSI: 0000000000a82250 RDI: 0000000000000003
->> RBP: 0000000000000000 R08: 00007ffc3ce5777c R09: 000000000000000c
->> R10: 0000000000000000 R11: 0000000000000246 R12: 0000000000000000
->> R13: 0000000000000000 R14: 0000000000000003 R15: 0000000000a82250
->>  </TASK>
->>
->> We found similar bugs in the syzkaller-bugs mailing list (https://groups=
-.google.com/g/syzkaller-bugs/c/rrilY4Y0KVQ/m/1Gj749LnAQAJ) and the kernel m=
-ailing list (https://lore.kernel.org/lkml/66fec2e2.050a0220.9ec68.0046.GAE@=
-google.com/), but they were all discovered on previous kernel versions (v6.=
-11.0). We are continuing our efforts to generate a reproducer.
->>
->> Wishing you a nice day!
->>
->> Best regards,
->> Ditto
 
