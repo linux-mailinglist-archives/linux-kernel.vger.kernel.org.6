@@ -1,79 +1,83 @@
-Return-Path: <linux-kernel+bounces-379222-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379223-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id EF54E9ADB9F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:45:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 274359ADBA1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:46:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 9AAA81F22F42
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:45:42 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 1990B1C21CE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:46:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9B80917554A;
-	Thu, 24 Oct 2024 05:45:32 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EC82217335E;
+	Thu, 24 Oct 2024 05:46:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Ux0ok2tA"
-Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="I/3UFPFX"
+Received: from mail-pf1-f178.google.com (mail-pf1-f178.google.com [209.85.210.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3CB32C8F0;
-	Thu, 24 Oct 2024 05:45:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9216D3D76
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729748732; cv=none; b=hcc8GyBaH4sGKipmeaWtBOv4BLF1tRBdc8WQyjr1oKfGbAejO1SmOcZQR0y1dWdR2w/YVoVD6nDuyQMPT7eDbwUz4eIyEvrt+YJ+ve5oFpMvMlF8JK3Zhzq62/Op8glw+GwGwezyTYONKYyl5EDZ/OzwwMfzc59QG4Sviih3mOw=
+	t=1729748806; cv=none; b=RB0ON6AwBdbP/Q78Q89uJAth5EX/plxcgutQx+5McJqFOdyDkRNUnIMR8tftlCtZM7nV99ib+mWZKTxocpk923j5gEfZgIkQs0kek059WXWNOwDPaInFWQLsO+OSPvZkSEZn2Gq3fo7WHLFbBcu6gA5l//Yxu9YSIuGYH3NBBF8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729748732; c=relaxed/simple;
-	bh=5Kh7/4MGgP/bL0WqxKoOsC5yzfBXVVaNAxEjN0DLaVc=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=LAoHA7rieqfs5FH9OQJLjkbamJyqweLEIT/lY79nqz7rTxdOdjvJZMa4OMudqPCaxbil4+9b1+D15MqIvML7+prjab1y9QvDqq5+L1+RIwsKn33iELGOv1f4FG93t0YLfSV/lcOEyvhLCYHKy7YfWisKGVsTpMwswnt8LImNZA4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Ux0ok2tA; arc=none smtp.client-ip=209.85.216.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2bd0e2c4fso445560a91.3;
-        Wed, 23 Oct 2024 22:45:29 -0700 (PDT)
+	s=arc-20240116; t=1729748806; c=relaxed/simple;
+	bh=rusMx3rv69GUTAu24cAUoN7azAAz2Z8NPqw+Q/hb50w=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kSgbdg1ZC/XegkxdSaxcD/gZowdz3WjAJRHNfu/8g3IdFsEcXyku+A6wdcKZXNCaIMOGwUiep1ooUWY1TYQUNDQL6jK4QFp0Pt60SnWozEVrN3j1/XME7ZTXVsknHlz1cA72gckitwKL/tQrVZEPxQzSQBe7jYuEiTa84TJAlgQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=I/3UFPFX; arc=none smtp.client-ip=209.85.210.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pf1-f178.google.com with SMTP id d2e1a72fcca58-71e52582d0bso377602b3a.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 22:46:44 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729748729; x=1730353529; darn=vger.kernel.org;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+yyo1TIYgMMh3a4MAR/ug/Ems+Ey9XMLLo9KFQKqZY=;
-        b=Ux0ok2tAQNSMqOgNiTm9QmVDtQdH/xK7lPMDIg8sCvtV+6dwQn+TJc15HbGCEMO771
-         /Ws/XIKWlQqBTWQpmKbqiyNzWPFnU6EdRpPV4xF8PNwf+YiDG3X5U+3OJdTOW4r3miUA
-         l0fOMYnbA8zPIIF8ME+Wdlv135QfHzrRRmGsh62G7TVgpPOjcuApCDTmdYbB6RIWl4Aw
-         4x0Nm3jM7JCpmtePmsRcTbq2+Tm0RmDpBcRcOtSLJzuT+reVHxMQZ73ijgm0kMJboPQX
-         zoSQL+vPjDXaFTza/dhbUGN0PPV7niYD5IplhFErUMo5kDunOnM2CAFohkHDTytcpa1i
-         G1Bg==
+        d=chromium.org; s=google; t=1729748804; x=1730353604; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=3Z4Bp3VJlfDl6yA0Dp3yN5Lc4CmJlrlorl9PQ2g17bc=;
+        b=I/3UFPFXE6TMA2ZPDKhbII1NezEp/8EbpTUtr+tVzPwfROuLs3FHFslR+BhPzJcWcY
+         sdY36ijvJXOu0MzGHqIZKbTC5p+r4XbEb5pNESXOYWaxF2+2xp/uRVm8BYWIqLZbL3yG
+         8hYdKPxO2ZF3MnUs6phYzWDeHBBfoVnFwGEvE=
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729748729; x=1730353529;
-        h=content-disposition:mime-version:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Z+yyo1TIYgMMh3a4MAR/ug/Ems+Ey9XMLLo9KFQKqZY=;
-        b=rmmVMMiBb54JVwbKjJoXrgMM2P+jrYQr1gKN4TwYtRjLPWNqT8Q/5d7lP+Gr0sIv+Y
-         TN0X/HwwMVQelRGNj6TUxxy4wxbrVPVACyuW+mApiJ/Gmm5G40kKw1I8E1rGAaFphJQE
-         aF1GOJ9bbe3PEVSwhM0A93jualcDhCf16bwZRM8y7nhHe/jmXYmNnKrf34N9TbWjQxB1
-         8QOsmoHjIn8ClHIOsTi+kHito0w1PEBfWmlX8pijm0wJ/izwW5ZQH6neDKJ+NsuzNp4q
-         nAnlm9ZngOOm6FYddl9/uBUv/uydpTY5hp5qsqjIJIVzN9rxA3TkYXedLQk9Xo0+z0d4
-         vjrg==
-X-Forwarded-Encrypted: i=1; AJvYcCW08Ien6uV2ttxHRAqNkFwLCOV2QW7ZnhY8SUaoY51ITEIPOKt3uEsas3SVwjfx2mAVvhwj9VOI4kMuHydc@vger.kernel.org, AJvYcCWczy3zsLnv13QYaxVPeBVlq1nNQRHxmKUwLWSikBAePa+lSf9tnj8Ckp8C7Rk/EaLJNCP2TS5GcupY29FH5NY=@vger.kernel.org, AJvYcCX4TkmN1m0L6G8NFkZ3DtK9bDjGyQUJ4C1y2mh5dSwvv84JvR6UPtmzScw6oIGH/5Mg9UZxTazJ@vger.kernel.org
-X-Gm-Message-State: AOJu0YxffIvdROwHD0nKuB3fQSIrS7hJj/S+QDn4G9vW/Vs+MbdSAmvo
-	JxF+aBzurme6Fy8KeuHdKT5XJd3Gl7/Zel+ShaoVvk9F+cKTBgy+
-X-Google-Smtp-Source: AGHT+IGMu0wQIJyQYyM3MtZTwmXTHeotULXZZLZmunxl49BuoVTVKzIpHI0TTzuue/lTyTnLwc7E2g==
-X-Received: by 2002:a05:6a20:c998:b0:1d5:10c1:4939 with SMTP id adf61e73a8af0-1d978aeadf1mr5532925637.8.1729748729310;
-        Wed, 23 Oct 2024 22:45:29 -0700 (PDT)
-Received: from Fantasy-Ubuntu ([2001:56a:7eb6:f700:c21b:c597:f9a6:3608])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e76df7095dsm2532477a91.29.2024.10.23.22.45.27
+        d=1e100.net; s=20230601; t=1729748804; x=1730353604;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=3Z4Bp3VJlfDl6yA0Dp3yN5Lc4CmJlrlorl9PQ2g17bc=;
+        b=JphLhFL++Gz73tE5NLfRa5fSNdOQi5XFruYNBc8gpnG9IFWpmV4KXo8waN8L2zR8mV
+         Ne0aK4ixv2Fm+MfokHUyUAGq+mDRZLrCR4Wy/PQbmSArIDU6WeEsDwLF2F2K9ASepStv
+         xArdPe1zJoplk9pV6UjqlX3ZbFBqc5lFb/Xh8dI5JLmzKGwsWvu9oVzBWDvH85fW2Hh4
+         QYqH7KJDn5cdKv6Fav8ckZfRJ+phZsq832g6GfXe/YBnCO7lUIjPbkVLbQpIxm7oeC+i
+         jud6o7CJCh8SN3Jc859mDc6LGqo2/gDLaXsCLnf1HakOie7/5F9nih1G/EWtYR5vGZip
+         eamg==
+X-Forwarded-Encrypted: i=1; AJvYcCX004QpboL3nbTDNDsnhbw1ta1mGsRu8nocYOCCqAZHkwx48QlbHgNVXnF5KSTSsN4Ze5d/kD6W9zJxLQ8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxHLnOVzsiqWNbkO78DPKawRS1xTaNMydCqDLlIxe2xXjjtNJFZ
+	KJ3taK/vnvS7KGyfWCul0f5VLrEHqJLsi8gA0RQL/ExT41EOwOcay4amWahLRA==
+X-Google-Smtp-Source: AGHT+IHl1zltUiGlFVs2woZ9mbrBA/HLUFFjqSPhf7UzFWfsEe9ZUQxZoau4aeYsxPiZf3AHqpjl8g==
+X-Received: by 2002:a05:6a21:114d:b0:1d9:2994:ca2b with SMTP id adf61e73a8af0-1d978b0d2c5mr6642211637.19.1729748803863;
+        Wed, 23 Oct 2024 22:46:43 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:9422:d958:f749:9a30])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7f0db2desm65799265ad.203.2024.10.23.22.46.41
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 22:45:28 -0700 (PDT)
-Date: Wed, 23 Oct 2024 23:45:26 -0600
-From: Johnny Park <pjohnny0508@gmail.com>
-To: anthony.l.nguyen@intel.com, przemyslaw.kitszel@intel.com,
-	davem@davemloft.net, edumazet@google.com, kuba@kernel.org,
-	pabeni@redhat.com, andrew+netdev@lunn.ch, horms@kernel.org,
-	pmenzel@molgen.mpg.de
-Cc: intel-wired-lan@lists.osuosl.org, netdev@vger.kernel.org,
-	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: [PATCH v3] [net-next] igb: Fix 2 typos in comments in igb_main.c
-Message-ID: <Zxne9hBl5E5VhKGm@Fantasy-Ubuntu>
+        Wed, 23 Oct 2024 22:46:43 -0700 (PDT)
+Date: Thu, 24 Oct 2024 14:46:39 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Tomasz Figa <tfiga@chromium.org>
+Cc: Sergey Senozhatsky <senozhatsky@chromium.org>,
+	Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: venus: sync with threaded IRQ during inst
+ destruction
+Message-ID: <20241024054639.GL1279924@google.com>
+References: <20241023052444.139356-1-senozhatsky@chromium.org>
+ <20241023052444.139356-3-senozhatsky@chromium.org>
+ <20241024045836.GJ1279924@google.com>
+ <20241024051335.GK1279924@google.com>
+ <CAAFQd5ACxz-3icNH_CwWxWj5OyKdg89mOkNadYKa=YTVDRYRLg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -82,43 +86,41 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
+In-Reply-To: <CAAFQd5ACxz-3icNH_CwWxWj5OyKdg89mOkNadYKa=YTVDRYRLg@mail.gmail.com>
 
-Fix 2 spelling mistakes in comments in `igb_main.c`.
+On (24/10/24 14:18), Tomasz Figa wrote:
+> > @@ -1538,9 +1538,25 @@ static int venc_close(struct file *file)
+> >
+> >         venc_pm_get(inst);
+> >
+> > +       /*
+> > +        * First, remove the inst from the ->instances list, so that
+> > +        * to_instance() will return NULL.
+> > +        */
+> > +       hfi_session_destroy(inst);
+> > +       /*
+> > +        * Second, make sure we don't have IRQ/IRQ-thread currently running or
+> > +        * pending execution (disable_irq() calls synchronize_irq()), which
+> > +        * can race with the inst destruction.
+> > +        */
+> > +       disable_irq(inst->core->irq);
+> > +       /*
+> > +        * Lastly, inst is gone from the core->instances list and we don't
+> > +        * have running/pending IRQ/IRQ-thread, proceed with the destruction
+> > +        */
+> > +       enable_irq(inst->core->irq);
+> > +
+> 
+> Thanks a lot for looking into this. Wouldn't it be enough to just call
+> synchronize_irq() at this point, since the instance was removed from
+> the list already? I guess the question is if that's the only way the
+> interrupt handler can get hold of the instance.
 
-Signed-off-by: Johnny Park <pjohnny0508@gmail.com>
----
-Changes in v3:
-  - Adjust commit message
+Good question.
 
-Changes in v2:
-  - Fix spelling mor -> more
----
- drivers/net/ethernet/intel/igb/igb_main.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/intel/igb/igb_main.c b/drivers/net/ethernet/intel/igb/igb_main.c
-index 1ef4cb871452..fc587304b3c0 100644
---- a/drivers/net/ethernet/intel/igb/igb_main.c
-+++ b/drivers/net/ethernet/intel/igb/igb_main.c
-@@ -1204,7 +1204,7 @@ static int igb_alloc_q_vector(struct igb_adapter *adapter,
- 	/* initialize pointer to rings */
- 	ring = q_vector->ring;
- 
--	/* intialize ITR */
-+	/* initialize ITR */
- 	if (rxr_count) {
- 		/* rx or rx/tx vector */
- 		if (!adapter->rx_itr_setting || adapter->rx_itr_setting > 3)
-@@ -3906,7 +3906,7 @@ static void igb_remove(struct pci_dev *pdev)
-  *
-  *  This function initializes the vf specific data storage and then attempts to
-  *  allocate the VFs.  The reason for ordering it this way is because it is much
-- *  mor expensive time wise to disable SR-IOV than it is to allocate and free
-+ *  more expensive time wise to disable SR-IOV than it is to allocate and free
-  *  the memory for the VFs.
-  **/
- static void igb_probe_vfs(struct igb_adapter *adapter)
--- 
-2.43.0
-
+synchronize_irq() waits for IRQ-threads, so if inst is accessed only from
+IRQ-thread then we are fine.  If, however, inst is also accessed from hard
+IRQ, then synchronize_irq() won't work, I guess, because it doesn't wait
+for "in flight hard IRQs".  disable_irq() OTOH "waits for completion", so
+we cover in-flight hard IRQs too.
 
