@@ -1,138 +1,93 @@
-Return-Path: <linux-kernel+bounces-379134-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379137-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id B99779ADA71
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:28:47 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 325CB9ADA76
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:33:15 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E90A11C21384
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:28:46 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 9CF7BB222D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F70A165F01;
-	Thu, 24 Oct 2024 03:28:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="WFu5RO0L"
-Received: from mail-ed1-f48.google.com (mail-ed1-f48.google.com [209.85.208.48])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0FE27641E;
+	Thu, 24 Oct 2024 03:33:06 +0000 (UTC)
+Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B94CC16087B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:28:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 843361B960
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:33:04 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729740522; cv=none; b=DKW2CZQ1xsg+eOlgWWwAKxQ7g6eHVKTSWcjZwsY+PKfl3xZhH9xx0LO2j7uRDOLejGpqbHezPvw4n46RVtNEIlYmceCNGeD544NT8fd1fHTxNdZpXil5UBi+UV3lxaf85svF23o9Usl6SnJmfi0cfRpoT175HfPFKjpccROew3M=
+	t=1729740786; cv=none; b=Z4gVHVKI0fg/ABH/1sc4TnSLwTbb5n2ZW0zCStwR9XmCOfQ7gPb2VbbNtKw0VZGwTuq0xemch+PBafKjZleW588oe4xluMCbV6/dm0Tu48QQzyUwjbIwBDTzeQny4J6mz6qEbDM+8XdO95ZTE1XNLA/0mQCSXkfbEtssU+hQ/64=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729740522; c=relaxed/simple;
-	bh=s6Wqh6ig3GW9JmmwQsGERMIClZLFHkkIh9MgzaUEWnw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=VhyuMZvhbmhPnbi3App4a4IYgQUznBApiGpZ2c2aF7edDEIKdD+AGSf8dYHSEcc8bcnWBCHgBXl7kPTMnpvTaQDXV9FdkMKcvBI+ZF/1eM+3N9wa27ojulbASKiaI4Fu8URRxDeXkYdosYa5Xbx8EkPDeetMfjhmjoTCcWRbaIw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=WFu5RO0L; arc=none smtp.client-ip=209.85.208.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ed1-f48.google.com with SMTP id 4fb4d7f45d1cf-5c95a962c2bso541831a12.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:28:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729740518; x=1730345318; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Un2VLODaIM3gpoEyTkOWWCAX4WQM40kMawARGDkWOxk=;
-        b=WFu5RO0LMfHwA+cNhzrNkvi7QunhlahsziLypq3uc/Gng+xSQ+q+N8OM1c2GdWbcPL
-         JM3Mib/+0XUaP8jTP7wrIRqGwlY55oNDBtqa4EHajDa3IPsAxgUEScICKiemp6Qw3UWf
-         aygF03bhYh2sl5QP+Y7BAYLvfdP/NdZFHn0V+wWBmFyTLP9T0Zg28tFq4UBNZ5am6FhI
-         9/rjcGAaKqDWhPxzFtCvwMOCvp+hra7Ck2lIpVNLq/Hv57FcbvTrpHNWu5Xi63iNaJDj
-         adFZTUVdgRuD7UnUtH0/ofniX+QIlZRidM+1Kh4jh1kF075QacSq4vvEb8diZhvhx0jV
-         TecQ==
+	s=arc-20240116; t=1729740786; c=relaxed/simple;
+	bh=e3zKNUywK3f+E3PcbbBNsXZ0oD7/qbnvwnvYo/qCJis=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=T2bKkXY4TIZsTLQJcXcfKaIdSWonrQ+jsxvi1xBPp5pF5TzLib0PuDHgbaNCxj+IxRzZGIdeXd1cbWu6IlQb8IJwSqz8bXTSn2m5Bkn4A9zZ2LeTxNKLPH8fFeBr2Y8nTnC5otFRM3Np+YOrTm9GP93XGCBWVh8uoYefiXja82I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3da2d46b9so6468805ab.0
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 20:33:04 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729740518; x=1730345318;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=Un2VLODaIM3gpoEyTkOWWCAX4WQM40kMawARGDkWOxk=;
-        b=XMupX5fSTvGe9/ZcWyQI++SjR/NPgkG6qfPUwF7RT1eqKFu3SF2zwC+jD9oaZGb+mr
-         EhMDO5XLOCDzWo2NCsuE4zxysoZfFZRcxMkhB+xRHKdNhRJ4JmLZwLw9RWhtQOjEOyuB
-         wsRg9dLNcF9dv4hI5idhjHMtN0PTDO2AhEjpBhJs/tyvMQDRyoykDLkH3gonDF36OxUg
-         ZGTEvU5dwnQWCGTYPwcC23vuX19anObdrGF6nTTj+0wPszayPHc65bEU3VhQ/9Ek1BPg
-         iQQ/aouoBY1b9INRDXZ9VYCtM03f3z64nhpbDMKJBEO/hUqNXIwKy4wQ8FBJfk17U7GK
-         VWew==
-X-Forwarded-Encrypted: i=1; AJvYcCWwiCpDHoaolJT/5FeCfHpVfrL/LDuu0IXRFNMlsILGqV6oezI800tkENmT9vcpPwix/IVIMBYYB5XlusU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy0drUaFuel9cnjGpjiCR6VuZUnzI43wevEP/1TAtTVWyx7dpvI
-	CRy1xalgSq5+WVCTEUFr9oo1zQ3QMBLDxgmVr0da4po33AmQZc5Cj3fjFyMG2qnlcpyOKzVYk2U
-	ZnzdlF8TXE9nrh4gV1YcQIuc2zKg=
-X-Google-Smtp-Source: AGHT+IF/fOrTtdpuif/P34flYq1CD1Pj6GgfXZSHY2zOJsitJU3I8Medv9lWBstqnoUR/90eL1OkWGG4bQHAuNt3rjY=
-X-Received: by 2002:a05:6402:2745:b0:5cb:6841:ec8a with SMTP id
- 4fb4d7f45d1cf-5cb8acee2a1mr4549755a12.19.1729740517751; Wed, 23 Oct 2024
- 20:28:37 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729740783; x=1730345583;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=jwaey/nAqMM2vw2sYH3cFG6qAbmQNd5df9zlBMhOpnA=;
+        b=lzkbqu3CayMkHtyqTom2C4PniWkyjrkD294ACuvy7B/y5/sGsZjOVzsM+76CUKyBmr
+         qP9fI3BdF5DBNyD41SrIZogmtjLwYMPVvf3aWzafx3MZdG548l/dImiNmO2vVJoAtMTu
+         HynJ8WKRULrOBSVKT0YjFLQ47NFg29NhI+NptLcOak1VAzOTtcu/3RBdPJuHKfNgajEx
+         1+L5dSvBUNaQ4qNCgqf921K61Uin8CGqAymNCSaoSB7qoUJdVBm1pK7E/+MP/qQ8JQ17
+         u7358icONE2UU/3D6Qx21bz0W1o2ONw1YdzEWMwm/XU6CEVEnw0eVsdXOa81X9kd/8qI
+         CMFA==
+X-Forwarded-Encrypted: i=1; AJvYcCV8O5RJCrKW/nDIZ83sxzobUmAYsL5+V8cF75xg/ibvTOSnnvNPTll9Vug0ghy27velh/oK76P4SVyH0qM=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtNyFJKGFksSyotDUwLgKDoQP6Z9k+vCIc4Z5BQsVHgK4mynlD
+	KN7U55+/hhzvhlVI+lkuhDvpeH4Qv3T0hO925dWYQZXsch+xzLadyqZTpBWDujaDdftOqIlJnYt
+	lmZdCLOw3c8r/rrpEt2sfYWRmpZ78vwRyBmlwrHFUyixWz/q/UxEqfbk=
+X-Google-Smtp-Source: AGHT+IHC414wup6Zi/6FlP1TMTV8iTfkeqhqK87wqHZ5SJ92LcY9RPChxNWb/PL5h6yfu7YHXp9UWjaHfjfIVDxN6jUkt+CsA0HA
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022114736.83285-1-ioworker0@gmail.com> <20241023190515.a80c77fe3fa895910d554888@linux-foundation.org>
-In-Reply-To: <20241023190515.a80c77fe3fa895910d554888@linux-foundation.org>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 24 Oct 2024 11:28:01 +0800
-Message-ID: <CAK1f24mGk4pCqf37zXaZbqbTOzLVBqRNnGmf4wEUA9MGYFGoig@mail.gmail.com>
-Subject: Re: [PATCH 0/2] hung_task: add detect count for hung tasks
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: cunhuang@tencent.com, leonylgao@tencent.com, j.granados@samsung.com, 
-	jsiddle@redhat.com, kent.overstreet@linux.dev, 21cnbao@gmail.com, 
-	ryan.roberts@arm.com, david@redhat.com, ziy@nvidia.com, 
-	libang.li@antgroup.com, baolin.wang@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
+X-Received: by 2002:a05:6e02:b26:b0:3a0:9829:100b with SMTP id
+ e9e14a558f8ab-3a4de82d330mr5928305ab.21.1729740783628; Wed, 23 Oct 2024
+ 20:33:03 -0700 (PDT)
+Date: Wed, 23 Oct 2024 20:33:03 -0700
+In-Reply-To: <00000000000070a44a0620047696@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <6719bfef.050a0220.1e4b4d.009a.GAE@google.com>
+Subject: Re: [syzbot] [ocfs2?] possible deadlock in ocfs2_reserve_suballoc_bits
+From: syzbot <syzbot+5d516fba7bc3c966c9a9@syzkaller.appspotmail.com>
+To: elic@nvidia.com, jasowang@redhat.com, jlbec@evilplan.org, 
+	joseph.qi@linux.alibaba.com, linux-kernel@vger.kernel.org, mark@fasheh.com, 
+	mst@redhat.com, ocfs2-devel@lists.linux.dev, ocfs2-devel@oss.oracle.com, 
+	parav@nvidia.com, syzkaller-bugs@googlegroups.com
 Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
 
-Hi Andrew,
+syzbot has bisected this issue to:
 
-Thanks a lot for paying attention!
+commit a3c06ae158dd6fa8336157c31d9234689d068d02
+Author: Parav Pandit <parav@nvidia.com>
+Date:   Tue Jan 5 10:32:03 2021 +0000
 
-On Thu, Oct 24, 2024 at 10:05=E2=80=AFAM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Tue, 22 Oct 2024 19:47:34 +0800 Lance Yang <ioworker0@gmail.com> wrote=
-:
->
-> > Hi all,
-> >
-> > This patchset adds a counter, hung_task_detect_count, to track the numb=
-er of
-> > times hung tasks are detected. This counter provides a straightforward =
-way
-> > to monitor hung task events without manually checking dmesg logs.
-> >
-> > With this counter in place, system issues can be spotted quickly, allow=
-ing
-> > admins to step in promptly before system load spikes occur, even if the
-> > hung_task_warnings value has been decreased to 0 well before.
-> >
-> > Recently, we encountered a situation where warnings about hung tasks we=
-re
-> > buried in dmesg logs during load spikes. Introducing this counter could
-> > have helped us detect such issues earlier and improve our analysis effi=
-ciency.
-> >
->
-> Isn't the answer to this problem "write a better parser"?  I mean,
+    vdpa_sim_net: Add support for user supported devices
 
-Yeah, I certainly agree that having a good parser is important, and I'm
-working on that as well ;)
+bisection log:  https://syzkaller.appspot.com/x/bisect.txt?x=1047cc30580000
+start commit:   c2ee9f594da8 KVM: selftests: Fix build on on non-x86 archi..
+git tree:       upstream
+final oops:     https://syzkaller.appspot.com/x/report.txt?x=1247cc30580000
+console output: https://syzkaller.appspot.com/x/log.txt?x=1447cc30580000
+kernel config:  https://syzkaller.appspot.com/x/.config?x=fc6f8ce8c5369043
+dashboard link: https://syzkaller.appspot.com/bug?extid=5d516fba7bc3c966c9a9
+syz repro:      https://syzkaller.appspot.com/x/repro.syz?x=15e0b640580000
+C reproducer:   https://syzkaller.appspot.com/x/repro.c?x=107248a7980000
 
-> we're providing userspace with information which is already available.
+Reported-by: syzbot+5d516fba7bc3c966c9a9@syzkaller.appspotmail.com
+Fixes: a3c06ae158dd ("vdpa_sim_net: Add support for user supported devices")
 
-IHMO, there are two reasons why this counter remains valuable:
-
-1) It allows us to easily detect hung tasks in time before load spikes occu=
-r,
-using simple and common monitoring tools like Prometheus.
-
-2) It ensures that we remain aware of hung tasks even when the
-hung_task_warnings value has already been decreased to 0 well before.
-
-Thanks again for your time!
-Lance
-
->
+For information about bisection process see: https://goo.gl/tpsmEJ#bisection
 
