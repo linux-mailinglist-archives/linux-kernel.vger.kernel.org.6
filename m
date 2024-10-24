@@ -1,252 +1,104 @@
-Return-Path: <linux-kernel+bounces-380100-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380101-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B6ECF9AE8E8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:32:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 42EFD9AE8EF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:33:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DA6A11C20885
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:32:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E2CEA1F23631
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:33:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5DCF1EF08C;
-	Thu, 24 Oct 2024 14:30:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="BHYSR9pB"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8EE041EABDF;
+	Thu, 24 Oct 2024 14:31:16 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E78031EBFE4;
-	Thu, 24 Oct 2024 14:30:11 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC5F91E378F;
+	Thu, 24 Oct 2024 14:31:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780212; cv=none; b=Nxr08wO9w9kwjCNSG095RRp4ctHC2zsekR+hoBLsgyF93gsSgDBQLtexmnNpUX0qzAhLp1DZlJlQW2NOMxRIxsE6uGHHuhmShTe7Neq54+mGJAnuo+Wym7mJKxiP1jofEau2sXLhaV8z6NqPDmjARmiSzcOuS2wmZEEOSpvkTKs=
+	t=1729780276; cv=none; b=nequAoGev7vSdg99eE3bIFEqlx8kpd/U2JpNRXntQImMO+QD2dmPs1eadX63AbyX8KE0yEWBfkvLxtw710VYGhtNDxnYGhYXkrErKDSocPmpoB7279TlKsTsyKxFOBCKtBTI8qcEVnIjDJE4mfpgHzmZMXF/droOkBiNsFONQRE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780212; c=relaxed/simple;
-	bh=T05ZMOyThtGE5f2OTn9E4J0GkLKprBESCNSczcrAbsY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=MxLnFOuhGUGmczLN8EzC3p9qVM43VzlvduJT55T4UHXx8FdsWlXglAYrYOOIkWJxzgim2CKYfCPijNHs4+sRXUyBTLuI9b8zihg1hJIL5HRenWKkkG5p58wq+aaGLcfhzW7RLH5rcryhlMBpAHzIHR+fcR8VJq/oUR5JjN0A/og=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=BHYSR9pB; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id AE545C4CEC7;
-	Thu, 24 Oct 2024 14:30:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729780211;
-	bh=T05ZMOyThtGE5f2OTn9E4J0GkLKprBESCNSczcrAbsY=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
-	b=BHYSR9pBBsMpJ48PvzQ5vi3PlbCKBU45gWbS74GOT0vpYG2MTTRaDF6Tia3IqGmp0
-	 +2fPS3k8r83CNicL2JOnWfdVm9RfuA1hzv5ktQ32EHShPoM0xuJ5cM7fEDdy+mxncX
-	 Z1fkRLweZlFH4yr/1vMYxXM4lsL+cLq9/okHPEwg9zvNNNjfZo4Buax3vub5FPyGWP
-	 jNBHc3E3AWzmkhmhs2VPpomE1+8qKIvZfzNIsCCNADBHZ+tDcsyA77u45Ps/ihMrKA
-	 eWNRFa5e2ppY6WNwT+bz7A/Dqdad4bYmHVSWTzzwx3FDjQ85K9jGPo453XYh1cmNoa
-	 Asu+ux01o/3ZQ==
-X-Mailer: emacs 31.0.50 (via feedmail 11-beta-1 I)
-From: Aneesh Kumar K.V <aneesh.kumar@kernel.org>
-To: Steven Price <steven.price@arm.com>, kvm@vger.kernel.org,
-	kvmarm@lists.linux.dev
-Cc: Steven Price <steven.price@arm.com>,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Marc Zyngier <maz@kernel.org>, Will Deacon <will@kernel.org>,
-	James Morse <james.morse@arm.com>,
-	Oliver Upton <oliver.upton@linux.dev>,
-	Suzuki K Poulose <suzuki.poulose@arm.com>,
-	Zenghui Yu <yuzenghui@huawei.com>,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	Joey Gouly <joey.gouly@arm.com>,
-	Alexandru Elisei <alexandru.elisei@arm.com>,
-	Christoffer Dall <christoffer.dall@arm.com>,
-	Fuad Tabba <tabba@google.com>, linux-coco@lists.linux.dev,
-	Ganapatrao Kulkarni <gankulkarni@os.amperecomputing.com>,
-	Gavin Shan <gshan@redhat.com>,
-	Shanker Donthineni <sdonthineni@nvidia.com>,
-	Alper Gun <alpergun@google.com>
-Subject: Re: [PATCH v5 21/43] arm64: RME: Runtime faulting of memory
-In-Reply-To: <20241004152804.72508-22-steven.price@arm.com>
-References: <20241004152804.72508-1-steven.price@arm.com>
- <20241004152804.72508-22-steven.price@arm.com>
-Date: Thu, 24 Oct 2024 20:00:00 +0530
-Message-ID: <yq5a5xphmv4n.fsf@kernel.org>
+	s=arc-20240116; t=1729780276; c=relaxed/simple;
+	bh=590vao4BFAZRAZ3Ka/zEyxP3lCoUxJyz14zCjwt6m80=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=ZZ8xNGA+o67j7LisiEgzJhI5Tv/cVZ2ifIbh+2yZt4xdYIMSKfom7sKBETOzeSXC78PU+nhFUpuU9RGfiiV/qa9xRNuVba1Y+0Is5FC+FqerNqosmn3dZNGxFuXUaxQVTo9hz3UVieXVZ90u9ziZ0n5Qxd1huNRZ0VuTpctLAL8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.88.194])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XZ7Zv4LkvzpX5D;
+	Thu, 24 Oct 2024 22:29:11 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 576071402E1;
+	Thu, 24 Oct 2024 22:31:08 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 24 Oct 2024 22:31:07 +0800
+Message-ID: <d8d8a4d8-b71d-4223-bcb2-933eeb306e42@huawei.com>
+Date: Thu, 24 Oct 2024 22:31:06 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 2/7] net: hibmcge: Add debugfs supported in this
+ module
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20241023134213.3359092-1-shaojijie@huawei.com>
+ <20241023134213.3359092-3-shaojijie@huawei.com>
+ <924e9c5c-f4a8-4db5-bbe8-964505191849@lunn.ch>
+ <5375ce1b-8778-4696-a530-1a002f7ec4c7@huawei.com>
+ <6103ee00-175d-4a35-9081-2c500ad3c123@lunn.ch>
+ <0c0de40c-7bf3-4d98-9d25-9b4f36a91e0b@huawei.com>
+ <6a231891-7780-4cf4-97d9-679c67e18474@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <6a231891-7780-4cf4-97d9-679c67e18474@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
-Steven Price <steven.price@arm.com> writes:
 
-> +static int realm_map_ipa(struct kvm *kvm, phys_addr_t ipa,
-> +			 kvm_pfn_t pfn, unsigned long map_size,
-> +			 enum kvm_pgtable_prot prot,
-> +			 struct kvm_mmu_memory_cache *memcache)
-> +{
-> +	struct realm *realm = &kvm->arch.realm;
-> +	struct page *page = pfn_to_page(pfn);
-> +
-> +	if (WARN_ON(!(prot & KVM_PGTABLE_PROT_W)))
-> +		return -EFAULT;
-> +
-> +	if (!realm_is_addr_protected(realm, ipa))
-> +		return realm_map_non_secure(realm, ipa, page, map_size,
-> +					    memcache);
-> +
-> +	return realm_map_protected(realm, ipa, page, map_size, memcache);
-> +}
-> +
+on 2024/10/24 22:21, Andrew Lunn wrote:
+> On Thu, Oct 24, 2024 at 10:06:14PM +0800, Jijie Shao wrote:
+>> on 2024/10/24 20:05, Andrew Lunn wrote:
+>>>>>> +	seq_printf(s, "mdio frequency: %u\n", specs->mdio_frequency);
+>>>>> Is this interesting? Are you clocking it greater than 2.5MHz?
+>>>> MDIO controller supports 1MHz, 2.5MHz, 12.5MHz, and 25MHz
+>>>> Of course, we chose and tested 2.5M in actual work, but this can be modified.
+>>> How? What API are you using it allow it to be modified? Why cannot you
+>>> get the value using the same API?
+>> This frequency cannot be modified dynamically.
+>> There are some specification registers that store some initialization configuration parameters
+>> written by the BMC, such as the default MAC address and hardware FIFO size and mdio frequency.
+>>
+>> When the device is in prob, the driver reads the related configuration information and
+>> initializes the device based on the configuration.
+> Does the BMC have an API to set these values? And show these values?
+>
+> 	Andrew
+
+Currently, there are no other API except devmem.
+
+But this is not important.
+According to the discussion in patch "[PATCH net-next 4/7] net: hibmcge: Add register dump supported in this module",
+this debugfs file will be deleted. I will put these informations in register dump by ethtool -d.
+
+Thanks
 
 
-Some of these pfn_to_page(pfn) conversions can be avoided because the
-callers are essentially expecting a pfn value (converting page_to_phys())
-It also helps to clarify whether we are operating on a compound page or
-not.
-
-Something like below?
-
-diff --git a/arch/arm64/include/asm/kvm_rme.h b/arch/arm64/include/asm/kvm_rme.h
-index cd42c19ca21d..bf5702c8dbee 100644
---- a/arch/arm64/include/asm/kvm_rme.h
-+++ b/arch/arm64/include/asm/kvm_rme.h
-@@ -110,13 +110,13 @@ void kvm_realm_unmap_range(struct kvm *kvm,
- 			   bool unmap_private);
- int realm_map_protected(struct realm *realm,
- 			unsigned long base_ipa,
--			struct page *dst_page,
--			unsigned long map_size,
-+			kvm_pfn_t pfn,
-+			unsigned long size,
- 			struct kvm_mmu_memory_cache *memcache);
- int realm_map_non_secure(struct realm *realm,
- 			 unsigned long ipa,
--			 struct page *page,
--			 unsigned long map_size,
-+			 kvm_pfn_t pfn,
-+			 unsigned long size,
- 			 struct kvm_mmu_memory_cache *memcache);
- int realm_set_ipa_state(struct kvm_vcpu *vcpu,
- 			unsigned long addr, unsigned long end,
-diff --git a/arch/arm64/kvm/mmu.c b/arch/arm64/kvm/mmu.c
-index 569f63695bef..254e90c014cf 100644
---- a/arch/arm64/kvm/mmu.c
-+++ b/arch/arm64/kvm/mmu.c
-@@ -1452,16 +1452,15 @@ static int realm_map_ipa(struct kvm *kvm, phys_addr_t ipa,
- 			 struct kvm_mmu_memory_cache *memcache)
- {
- 	struct realm *realm = &kvm->arch.realm;
--	struct page *page = pfn_to_page(pfn);
- 
- 	if (WARN_ON(!(prot & KVM_PGTABLE_PROT_W)))
- 		return -EFAULT;
- 
- 	if (!realm_is_addr_protected(realm, ipa))
--		return realm_map_non_secure(realm, ipa, page, map_size,
-+		return realm_map_non_secure(realm, ipa, pfn, map_size,
- 					    memcache);
- 
--	return realm_map_protected(realm, ipa, page, map_size, memcache);
-+	return realm_map_protected(realm, ipa, pfn, map_size, memcache);
- }
- 
- static int private_memslot_fault(struct kvm_vcpu *vcpu,
-diff --git a/arch/arm64/kvm/rme.c b/arch/arm64/kvm/rme.c
-index 4064a2ce5c64..953d5cdf7ead 100644
---- a/arch/arm64/kvm/rme.c
-+++ b/arch/arm64/kvm/rme.c
-@@ -676,15 +676,15 @@ void kvm_realm_unmap_range(struct kvm *kvm, unsigned long ipa, u64 size,
- 
- static int realm_create_protected_data_page(struct realm *realm,
- 					    unsigned long ipa,
--					    struct page *dst_page,
--					    struct page *src_page,
-+					    kvm_pfn_t dst_pfn,
-+					    kvm_pfn_t src_pfn,
- 					    unsigned long flags)
- {
- 	phys_addr_t dst_phys, src_phys;
- 	int ret;
- 
--	dst_phys = page_to_phys(dst_page);
--	src_phys = page_to_phys(src_page);
-+	dst_phys = __pfn_to_phys(dst_pfn);
-+	src_phys = __pfn_to_phys(src_pfn);
- 
- 	if (rmi_granule_delegate(dst_phys))
- 		return -ENXIO;
-@@ -711,7 +711,7 @@ static int realm_create_protected_data_page(struct realm *realm,
- err:
- 	if (WARN_ON(rmi_granule_undelegate(dst_phys))) {
- 		/* Page can't be returned to NS world so is lost */
--		get_page(dst_page);
-+		get_page(pfn_to_page(dst_pfn));
- 	}
- 	return -ENXIO;
- }
-@@ -741,15 +741,14 @@ static phys_addr_t rtt_get_phys(struct realm *realm, struct rtt_entry *rtt)
- }
- 
- int realm_map_protected(struct realm *realm,
--			unsigned long base_ipa,
--			struct page *dst_page,
-+			unsigned long ipa,
-+			kvm_pfn_t pfn,
- 			unsigned long map_size,
- 			struct kvm_mmu_memory_cache *memcache)
- {
--	phys_addr_t dst_phys = page_to_phys(dst_page);
-+	phys_addr_t phys = __pfn_to_phys(pfn);
- 	phys_addr_t rd = virt_to_phys(realm->rd);
--	unsigned long phys = dst_phys;
--	unsigned long ipa = base_ipa;
-+	unsigned long base_ipa = ipa;
- 	unsigned long size;
- 	int map_level;
- 	int ret = 0;
-@@ -860,14 +859,14 @@ int realm_map_protected(struct realm *realm,
- 
- int realm_map_non_secure(struct realm *realm,
- 			 unsigned long ipa,
--			 struct page *page,
-+			 kvm_pfn_t pfn,
- 			 unsigned long map_size,
- 			 struct kvm_mmu_memory_cache *memcache)
- {
- 	phys_addr_t rd = virt_to_phys(realm->rd);
- 	int map_level;
- 	int ret = 0;
--	unsigned long desc = page_to_phys(page) |
-+	unsigned long desc = __pfn_to_phys(pfn) |
- 			     PTE_S2_MEMATTR(MT_S2_FWB_NORMAL) |
- 			     /* FIXME: Read+Write permissions for now */
- 			     (3 << 6);
-@@ -951,7 +950,6 @@ static int populate_par_region(struct kvm *kvm,
- 		unsigned int vma_shift;
- 		unsigned long offset;
- 		unsigned long hva;
--		struct page *page;
- 		kvm_pfn_t pfn;
- 		int level;
- 
-@@ -1000,10 +998,8 @@ static int populate_par_region(struct kvm *kvm,
- 						RME_RTT_MAX_LEVEL, NULL);
- 		}
- 
--		page = pfn_to_page(pfn);
--
- 		for (offset = 0; offset < map_size && !ret;
--		     offset += PAGE_SIZE, page++) {
-+		     offset += PAGE_SIZE, pfn++) {
- 			phys_addr_t page_ipa = ipa + offset;
- 			kvm_pfn_t priv_pfn;
- 			int order;
-@@ -1015,8 +1011,8 @@ static int populate_par_region(struct kvm *kvm,
- 				break;
- 
- 			ret = realm_create_protected_data_page(realm, page_ipa,
--							       pfn_to_page(priv_pfn),
--							       page, data_flags);
-+							       priv_pfn,
-+							       pfn, data_flags);
- 		}
- 
- 		kvm_release_pfn_clean(pfn);
 
