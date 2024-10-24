@@ -1,39 +1,47 @@
-Return-Path: <linux-kernel+bounces-379706-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379707-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 455619AE275
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:24:42 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 942F19AE27A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:26:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BB7C1B210F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:24:39 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4BD5E282BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:26:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 109631C07EB;
-	Thu, 24 Oct 2024 10:24:32 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C32DF3399F;
-	Thu, 24 Oct 2024 10:24:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B8EA1C07EB;
+	Thu, 24 Oct 2024 10:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Fzx8X3Ib"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7DFA11B4F02
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:26:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765471; cv=none; b=flTL/KEOZ3EeeaicNNij8U/mc7b1q+upMmAtVrgIJalegvpar+Dop57ZBcfvgjumh5ehtOvB33paJlUCWfddecnayRjoeELOOlniGSke4fWWD/aSkM0GrPZDbj7y++vXfiCBsFqj3slQmFtjbK0sFHz8/MLY5sM0mfb7A15fDiQ=
+	t=1729765577; cv=none; b=Q8V2ULygZhgCCvfZH9dBIixDx06fpea6HwiokgYSJsOVzDFOH7ziITgr8Af9aCQviHVWsBr87udeWa7Am11WUQxURk8fqTo53wNEOHlvD7aRsrTaLf5zGDtpG70O7rk/lB6ODyMB1NOMcvYENI3m1EbjP+IeQk5eq5EHjR5LwA8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729765471; c=relaxed/simple;
-	bh=E+e/AroX1Wji49UMxMg/TdFTBOxN8AaFTgxfuHxIddY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=ptCQEt0S8EZokHMbWoCn9ks4s3m3ruF48KYrwisUprq/qHXddbRqp3KSciD++PR8FctcCgM3gDC0BNr6r1pQEwVVwaMERdaRi1LAhXsak0VOvw+Xm9MSjmAiXcbd5zn1QP8oazgSHNLzf2ja479OnceAt22H9vlAz7oufEdKv6o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id DF434339;
-	Thu, 24 Oct 2024 03:24:57 -0700 (PDT)
-Received: from [10.57.55.74] (unknown [10.57.55.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 1433E3F71E;
-	Thu, 24 Oct 2024 03:24:26 -0700 (PDT)
-Message-ID: <b01cdc80-b644-40ee-ae24-559a95e2d2c9@arm.com>
-Date: Thu, 24 Oct 2024 11:25:37 +0100
+	s=arc-20240116; t=1729765577; c=relaxed/simple;
+	bh=Bstz3u93P+VqDt6lyzv3yL31Wm8J0/UbhkbZypNF6GU=;
+	h=Message-ID:Date:MIME-Version:Cc:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=W/pSWlFYuUjpuMSoBu/QEP3uDFYrz3CoAzROtRhxG9aB3csOs9EedyYre5dcYO3GL/Bv7rbYDKp10J7Okl6x2v5IuY8xqEfRy7pdtPKZEW/HkJwt6RKar2hXsiA3savadTvj13dN9KFNkkrfJBTWUZiPHprrFiQPJyI998zjtw4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Fzx8X3Ib; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1B5ABC4CECC;
+	Thu, 24 Oct 2024 10:26:14 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729765577;
+	bh=Bstz3u93P+VqDt6lyzv3yL31Wm8J0/UbhkbZypNF6GU=;
+	h=Date:Cc:Subject:To:References:From:In-Reply-To:From;
+	b=Fzx8X3Ibuxcdr7+hYrAE32l/EtYBr/f40Gj9GfmkIY0rAnrtIkBU2EdQ7xppPjsDW
+	 R5ABzo0mGJjiucGVTKzNlgckI5Woadj/1XwEnNN/rq6OlubmwxGigzctOK2n5Jye/G
+	 lPY1v24eE3jqV7RLaTPw/ausDfd751blUkU6M0hq3ft9Kat4hNfIgKug8tCg6VJIaM
+	 eqTkPcgM5ChVKiUREPbNk0ipr3HslQsIgs4j8JRz7UK7UF8X87hmLet207i6E7UNOn
+	 oUYnqssKjHZuWs5tAURsfJhkI7W7BX6aAatgCnyLjbovthKxT2nZW4VtjTvP33dSYo
+	 hzUIkctkmpmtg==
+Message-ID: <9f6a6a5a-45e4-4008-97d5-fb38b220f516@kernel.org>
+Date: Thu, 24 Oct 2024 18:26:12 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,130 +49,274 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 07/10] thermal: core: Relocate functions that update
- trip points
-To: "Rafael J. Wysocki" <rjw@rjwysocki.net>
-Cc: LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
- <3248558.5fSG56mABF@rjwysocki.net>
+Cc: Chao Yu <chao@kernel.org>, Yi Sun <yi.sun@unisoc.com>,
+ jaegeuk@kernel.org, linux-f2fs-devel@lists.sourceforge.net,
+ linux-kernel@vger.kernel.org, niuzhiguo84@gmail.com,
+ hao_hao.wang@unisoc.com, ke.wang@unisoc.com
+Subject: Re: [RFC PATCH 2/2] f2fs: introduce
+ f2fs_invalidate_consecutive_blocks()
+To: yi sun <sunyibuaa@gmail.com>
+References: <20241016052758.3400359-1-yi.sun@unisoc.com>
+ <20241016052758.3400359-3-yi.sun@unisoc.com>
+ <52de7b11-e118-433d-b187-0642e81428ef@kernel.org>
+ <CALpufv3fCZXM4aD9cUkOQVk6Er-GxjVXhu-ceFnPAC4Mvnnbzw@mail.gmail.com>
 Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <3248558.5fSG56mABF@rjwysocki.net>
+From: Chao Yu <chao@kernel.org>
+In-Reply-To: <CALpufv3fCZXM4aD9cUkOQVk6Er-GxjVXhu-ceFnPAC4Mvnnbzw@mail.gmail.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
+On 2024/10/24 17:54, yi sun wrote:
+> On Thu, Oct 17, 2024 at 9:40 AM Chao Yu <chao@kernel.org> wrote:
+>>
+>> On 2024/10/16 13:27, Yi Sun wrote:
+>>> When doing truncate, consecutive blocks in the same segment
+>>> can be processed at the same time. So that the efficiency of
+>>> doing truncate can be improved.
+>>>
+>>> Add f2fs_invalidate_compress_pages_range() only for doing truncate.
+>>> Add check_f2fs_invalidate_consecutive_blocks() only for doing
+>>> truncate and to determine whether the blocks are continuous and
+>>> belong to the same segment.
+>>>
+>>> Signed-off-by: Yi Sun <yi.sun@unisoc.com>
+>>> ---
+>>>    fs/f2fs/compress.c | 14 ++++++++++++++
+>>>    fs/f2fs/f2fs.h     |  5 +++++
+>>>    fs/f2fs/file.c     | 34 +++++++++++++++++++++++++++++++++-
+>>>    fs/f2fs/segment.c  | 25 +++++++++++++++++++++++++
+>>>    4 files changed, 77 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/fs/f2fs/compress.c b/fs/f2fs/compress.c
+>>> index 7f26440e8595..70929a87e9bf 100644
+>>> --- a/fs/f2fs/compress.c
+>>> +++ b/fs/f2fs/compress.c
+>>> @@ -2014,6 +2014,20 @@ void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino)
+>>>        } while (index < end);
+>>>    }
+>>>
+>>> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
+>>> +                                     block_t blkaddr, int cnt)
+>>> +{
+>>> +     if (!sbi->compress_inode)
+>>> +             return;
+>>> +
+>>> +     if (cnt < 1) {
+>>> +             f2fs_bug_on(sbi, 1);
+>>> +             cnt = 1;
+>>> +     }
+>>> +
+>>> +     invalidate_mapping_pages(COMPRESS_MAPPING(sbi), blkaddr, blkaddr + cnt - 1);
+>>> +}
+>>> +
+>>>    int f2fs_init_compress_inode(struct f2fs_sb_info *sbi)
+>>>    {
+>>>        struct inode *inode;
+>>> diff --git a/fs/f2fs/f2fs.h b/fs/f2fs/f2fs.h
+>>> index ce00cb546f4a..99767f35678f 100644
+>>> --- a/fs/f2fs/f2fs.h
+>>> +++ b/fs/f2fs/f2fs.h
+>>> @@ -3716,6 +3716,7 @@ int f2fs_create_flush_cmd_control(struct f2fs_sb_info *sbi);
+>>>    int f2fs_flush_device_cache(struct f2fs_sb_info *sbi);
+>>>    void f2fs_destroy_flush_cmd_control(struct f2fs_sb_info *sbi, bool free);
+>>>    void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr);
+>>> +void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt);
+>>>    bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr);
+>>>    int f2fs_start_discard_thread(struct f2fs_sb_info *sbi);
+>>>    void f2fs_drop_discard_cmd(struct f2fs_sb_info *sbi);
+>>> @@ -4375,6 +4376,8 @@ void f2fs_cache_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+>>>    bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi, struct page *page,
+>>>                                                                block_t blkaddr);
+>>>    void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi, nid_t ino);
+>>> +void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
+>>> +                                     block_t blkaddr, int cnt);
+>>>    #define inc_compr_inode_stat(inode)                                 \
+>>>        do {                                                            \
+>>>                struct f2fs_sb_info *sbi = F2FS_I_SB(inode);            \
+>>> @@ -4432,6 +4435,8 @@ static inline bool f2fs_load_compressed_page(struct f2fs_sb_info *sbi,
+>>>                                struct page *page, block_t blkaddr) { return false; }
+>>>    static inline void f2fs_invalidate_compress_pages(struct f2fs_sb_info *sbi,
+>>>                                                        nid_t ino) { }
+>>> +static inline void f2fs_invalidate_compress_pages_range(struct f2fs_sb_info *sbi,
+>>> +                                             block_t blkaddr, int cnt) { }
+>>>    #define inc_compr_inode_stat(inode)         do { } while (0)
+>>>    static inline int f2fs_is_compressed_cluster(
+>>>                                struct inode *inode,
+>>> diff --git a/fs/f2fs/file.c b/fs/f2fs/file.c
+>>> index 7057efa8ec17..634691e3b5f1 100644
+>>> --- a/fs/f2fs/file.c
+>>> +++ b/fs/f2fs/file.c
+>>> @@ -612,6 +612,18 @@ static int f2fs_file_open(struct inode *inode, struct file *filp)
+>>>        return finish_preallocate_blocks(inode);
+>>>    }
+>>>
+>>> +static bool check_f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi,
+>>> +                                     block_t blkaddr1, block_t blkaddr2)
+>>> +{
+>>> +     if (blkaddr2 - blkaddr1 != 1)
+>>> +             return false;
+>>> +
+>>> +     if (GET_SEGNO(sbi, blkaddr1) != GET_SEGNO(sbi, blkaddr2))
+>>> +             return false;
+>>> +
+>>> +     return true;
+>>> +}
+>>> +
+>>>    void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+>>>    {
+>>>        struct f2fs_sb_info *sbi = F2FS_I_SB(dn->inode);
+>>> @@ -621,6 +633,9 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+>>>        int cluster_index = 0, valid_blocks = 0;
+>>>        int cluster_size = F2FS_I(dn->inode)->i_cluster_size;
+>>>        bool released = !atomic_read(&F2FS_I(dn->inode)->i_compr_blocks);
+>>> +     block_t con_start;
+>>> +     bool run_invalid = true;
+>>> +     int con_cnt = 1;
+>>>
+>>>        addr = get_dnode_addr(dn->inode, dn->node_page) + ofs;
+>>>
+>>> @@ -652,7 +667,24 @@ void f2fs_truncate_data_blocks_range(struct dnode_of_data *dn, int count)
+>>>                                valid_blocks++;
+>>>                }
+>>>
+>>> -             f2fs_invalidate_blocks(sbi, blkaddr);
+>>> +             if (run_invalid)
+>>> +                     con_start = blkaddr;
+>>> +
+>>> +             if (count > 1 &&
+>>> +                     check_f2fs_invalidate_consecutive_blocks(sbi, blkaddr,
+>>> +                             le32_to_cpu(*(addr + 1)))) {
+>>> +                     run_invalid = false;
+>>> +
+>>> +                     if (con_cnt++ == 1)
+>>> +                             con_start = blkaddr;
+>>> +             } else {
+>>> +                     run_invalid = true;
+>>> +             }
+>>> +
+>>> +             if (run_invalid) {
+>>> +                     f2fs_invalidate_consecutive_blocks(sbi, con_start, con_cnt);
+>>> +                     con_cnt = 1;
+>>> +             }
+>>>
+>>>                if (!released || blkaddr != COMPRESS_ADDR)
+>>>                        nr_free++;
+>>> diff --git a/fs/f2fs/segment.c b/fs/f2fs/segment.c
+>>> index f118faf36d35..edb8a78985ba 100644
+>>> --- a/fs/f2fs/segment.c
+>>> +++ b/fs/f2fs/segment.c
+>>> @@ -2570,6 +2570,31 @@ void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t addr)
+>>>        up_write(&sit_i->sentry_lock);
+>>>    }
+>>>
+>>> +void f2fs_invalidate_consecutive_blocks(struct f2fs_sb_info *sbi, block_t addr, int cnt)
+>>> +{
+>>> +     unsigned int segno = GET_SEGNO(sbi, addr);
+>>> +     unsigned int segno2 = GET_SEGNO(sbi, addr + cnt - 1);
+>>> +     struct sit_info *sit_i = SIT_I(sbi);
+>>> +
+>>> +     f2fs_bug_on(sbi, addr == NULL_ADDR || segno != segno2);
+>>> +     if (addr == NEW_ADDR || addr == COMPRESS_ADDR)
+>>> +             return;
+>>> +
+>>> +     f2fs_truncate_meta_inode_pages(sbi, addr, cnt);
+>>> +     f2fs_invalidate_compress_pages_range(sbi, addr, cnt);
+>>> +
+>>> +     /* add it into sit main buffer */
+>>> +     down_write(&sit_i->sentry_lock);
+>>> +
+>>> +     update_segment_mtime(sbi, addr, 0);
+>>> +     update_sit_entry(sbi, addr, -cnt);
+>>> +
+>>> +     /* add it into dirty seglist */
+>>> +     locate_dirty_segment(sbi, segno);
+>>> +
+>>> +     up_write(&sit_i->sentry_lock);
+>>
+>> I think it needs to clean up this patchset, what about expanding
+>> f2fs_invalidate_blocks() to support invalidating block address extent?
+>>
+>> Something like this:
+>>
+>> void f2fs_invalidate_blocks(struct f2fs_sb_info *sbi, block_t blkaddr,
+>>                                                  unsigned int len)
+>> {
+>>          struct sit_info *sit_i = SIT_I(sbi);
+>>          int i;
+>>
+>>          /* TODO: do sanity check on blkaddr extent */
+>>
+>>          down_write(&sit_i->sentry_lock);
+>>
+>>          /* TODO: expand f2fs_invalidate_internal_cache() to invalidate blkaddr extent */
+>>          f2fs_invalidate_internal_cache(sbi, blkaddr, len);
+>>
+>>          for (i = 0; i < len; i++) {
+>>                  update_segment_mtime(sbi, blkaddr, 0);
+>>                  update_sit_entry(sbi, blkaddr, -1);
+>>
+>>                  /* add it into dirty seglist */
+>>                  locate_dirty_segment(sbi, GET_SEGNO(sbi, blkaddr));
+>>          }
+>>
+>>          up_write(&sit_i->sentry_lock);
+>> }
+>>
+>> Thanks,
+>>
+> 
 
+Hi Yi,
 
-On 10/16/24 12:32, Rafael J. Wysocki wrote:
-> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
+> Hi Chao,
+> The code structure you proposed is very good and very clear.
+> I retested using this code structure and found that the speed
+> of doing truncate also improved, but the improvement was smaller.
 > 
-> In preparation for subsequent changes, move two functions used
-> for updating trip points, thermal_zone_set_trip_temp() and
-> thermal_zone_set_trip_hyst(), to thermal_core.c.
-> 
-> No functional impact.
-> 
-> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
-> ---
->   drivers/thermal/thermal_core.c |   35 +++++++++++++++++++++++++++++++++++
->   drivers/thermal/thermal_trip.c |   35 -----------------------------------
->   2 files changed, 35 insertions(+), 35 deletions(-)
-> 
-> Index: linux-pm/drivers/thermal/thermal_core.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_core.c
-> +++ linux-pm/drivers/thermal/thermal_core.c
-> @@ -541,6 +541,41 @@ static void thermal_trip_crossed(struct
->   	thermal_governor_trip_crossed(governor, tz, trip, crossed_up);
->   }
->   
-> +void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
-> +				struct thermal_trip *trip, int hyst)
-> +{
-> +	WRITE_ONCE(trip->hysteresis, hyst);
-> +	thermal_notify_tz_trip_change(tz, trip);
-> +}
-> +
-> +void thermal_zone_set_trip_temp(struct thermal_zone_device *tz,
-> +				struct thermal_trip *trip, int temp)
-> +{
-> +	if (trip->temperature == temp)
-> +		return;
-> +
-> +	WRITE_ONCE(trip->temperature, temp);
-> +	thermal_notify_tz_trip_change(tz, trip);
-> +
-> +	if (temp == THERMAL_TEMP_INVALID) {
-> +		struct thermal_trip_desc *td = trip_to_trip_desc(trip);
-> +
-> +		/*
-> +		 * If the trip has been crossed on the way up, some adjustments
-> +		 * are needed to compensate for the lack of it going forward.
-> +		 */
-> +		if (tz->temperature >= td->threshold)
-> +			thermal_zone_trip_down(tz, td);
-> +
-> +		/*
-> +		 * Invalidate the threshold to avoid triggering a spurious
-> +		 * trip crossing notification when the trip becomes valid.
-> +		 */
-> +		td->threshold = INT_MAX;
-> +	}
-> +}
-> +EXPORT_SYMBOL_GPL(thermal_zone_set_trip_temp);
-> +
->   void __thermal_zone_device_update(struct thermal_zone_device *tz,
->   				  enum thermal_notify_event event)
->   {
-> Index: linux-pm/drivers/thermal/thermal_trip.c
-> ===================================================================
-> --- linux-pm.orig/drivers/thermal/thermal_trip.c
-> +++ linux-pm/drivers/thermal/thermal_trip.c
-> @@ -88,38 +88,3 @@ int thermal_zone_trip_id(const struct th
->   	 */
->   	return trip_to_trip_desc(trip) - tz->trips;
->   }
-> -
-> -void thermal_zone_set_trip_hyst(struct thermal_zone_device *tz,
-> -				struct thermal_trip *trip, int hyst)
-> -{
-> -	WRITE_ONCE(trip->hysteresis, hyst);
-> -	thermal_notify_tz_trip_change(tz, trip);
-> -}
-> -
-> -void thermal_zone_set_trip_temp(struct thermal_zone_device *tz,
-> -				struct thermal_trip *trip, int temp)
-> -{
-> -	if (trip->temperature == temp)
-> -		return;
-> -
-> -	WRITE_ONCE(trip->temperature, temp);
-> -	thermal_notify_tz_trip_change(tz, trip);
-> -
-> -	if (temp == THERMAL_TEMP_INVALID) {
-> -		struct thermal_trip_desc *td = trip_to_trip_desc(trip);
-> -
-> -		/*
-> -		 * If the trip has been crossed on the way up, some adjustments
-> -		 * are needed to compensate for the lack of it going forward.
-> -		 */
-> -		if (tz->temperature >= td->threshold)
-> -			thermal_zone_trip_down(tz, td);
-> -
-> -		/*
-> -		 * Invalidate the threshold to avoid triggering a spurious
-> -		 * trip crossing notification when the trip becomes valid.
-> -		 */
-> -		td->threshold = INT_MAX;
-> -	}
-> -}
-> -EXPORT_SYMBOL_GPL(thermal_zone_set_trip_temp);
-> 
-> 
-> 
+> So it might be better to use the following code structure.
+> void f2fs_invalidate_blocks(... , len)
+> {
+>      down_write();
+>      // Process in segments instead of blocks.
+>      for (i = 0; i < segment_num; i++) {
+>          update_segment_mtime();
+>          update_sit_entry();
 
+Ah, yes, it can merge more operations and do it w/ segment granularity.
 
-Reviewed-by: Lukasz Luba <lukasz.luba@arm.com>
+Can you please try:
+
+		for (j = start; j < end; j++)
+			update_sit_entry();
+
+Maybe it can eliminate change in update_sit_entry().
+
+> 
+>           /* add it into dirty seglist */
+>          locate_dirty_segment();
+>       }
+>      up_write();
+> }
+> 
+> Time Comparison of rm:
+> original    optimization(segment unit)    ratio(segment unit)
+> 7.17s           3.27s                                  54.39%
+>                 optimization(block unit)          ratio(block unit)
+>                      5.12s                                  28.6%
+
+Thanks for the test and feedback.
+
+Thanks,
+
+> 
+> New patches will be sent out by email after they are sorted out.
+> Thank you for your valuable suggestions.
+> 
+>>> +}
+>>> +
+>>>    bool f2fs_is_checkpointed_data(struct f2fs_sb_info *sbi, block_t blkaddr)
+>>>    {
+>>>        struct sit_info *sit_i = SIT_I(sbi);
+>>
+
 
