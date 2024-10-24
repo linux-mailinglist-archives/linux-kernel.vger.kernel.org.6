@@ -1,93 +1,231 @@
-Return-Path: <linux-kernel+bounces-379787-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379788-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 416229AE3CD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:26:06 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 580FC9AE3D2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:28:21 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id C5F77B23842
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:26:03 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 792A81C2295A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:28:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0071CEE8A;
-	Thu, 24 Oct 2024 11:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B8E7B1CF7BE;
+	Thu, 24 Oct 2024 11:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ApHRTKER"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="fLcKIM66"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4CFB1B85DB;
-	Thu, 24 Oct 2024 11:25:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 110DC1CEE8D;
+	Thu, 24 Oct 2024 11:28:12 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729769153; cv=none; b=ru9D7e8Jc0Lf3C0BkVrXAxqoX1u0B1DJr+mVnz8Ca9ix7pstYKi4T9ElyOSrYJVB4lHXHvJcLakxmWSnfapg69RuMSodnMw5DXiZMhU+wFHGma4/uIyWoHWluDN3Q5J8eGG2oOiOT1sA435u+vSZaiwgo5Jp3t/BS3u0BXUGprk=
+	t=1729769292; cv=none; b=SJ/sCtZZZ5yOCld1r2bF1wRH8iSd83/VngjSIYL7eUXOPxbj9HzRcK8f+QEdE2IFdEmpEdE5THvLmceFNeHzRExp8B2nr5bc9ZhwEYsGUEOTcindp5M/7bfKE5wQlcioGrFyj+jdFY32mJQbAyrNik1Trdnq8Qmk4yrJd22x3lI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729769153; c=relaxed/simple;
-	bh=yeqed8Av//TbMP+Pk9YeRFSeHsxAW5ErOnVhQclvqvc=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=J7DTIS+KaWCmqOw6ZgCQaK+qvWPqvEXP57jj7TZ8YhEAj/IEtLqKZjplSGDrk5CuodsYUlTp+jdo3paP1uumn6akfRR8cCFm5CvHdxQ2A/mwgrv3wG+NRlyJ2pgRfoubMk30YJgmy7Ma52a2T1jWscimyR2KrYRawaKd3nAEN9I=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ApHRTKER; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id C2AEBC4CEC7;
-	Thu, 24 Oct 2024 11:25:51 +0000 (UTC)
+	s=arc-20240116; t=1729769292; c=relaxed/simple;
+	bh=0xJstpGxwArsbUOvF7f13qAmC+WKuzL6vGBoiolNIBE=;
+	h=Mime-Version:Content-Type:Date:Message-Id:Cc:Subject:From:To:
+	 References:In-Reply-To; b=RHYxiZrSnz6dNVhloHmqMOUSVpPnq3Vv3yCJsNKG4AJvLSWLMZZ47cfqDW3+qcLlQzwUOJhIcR4erz5l70ZgdJembiDfrmwWVtIefhMQrwWdwIELRvlcqrIYEsPQbD6cpN8fB9En6xKqZdMXlG0i8UEPyuprPHYOyp1D7XX2cm8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=fLcKIM66; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7A218C4CEC7;
+	Thu, 24 Oct 2024 11:28:11 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729769152;
-	bh=yeqed8Av//TbMP+Pk9YeRFSeHsxAW5ErOnVhQclvqvc=;
-	h=From:To:Cc:Subject:Date:From;
-	b=ApHRTKERHTnPhcsmpTFCd5uwEXdtL/Cio7raj6N6yX2QDTGN8Ir9AnC5bY7Sd/SpK
-	 W0cFgurjLrAGu6yas9E8QKkWs77ER3c5KFytC6ANO6XyBuXKadFyGGb1Nw7I2ZhML3
-	 rTFnQFBBHajsJYpYWs3Bty84J0RI4dPHHOa/tv/ZUGlOfvOTkjF969by3F5T3pgLsZ
-	 E2AuHQmIRPP8r0TnerJ9i/VFdLFCD7eOLAKL6RaHPxxNoNUkoVNerpMGZYpGScfeP2
-	 +Apo2C8kpjK7e+oTgMD2yyhnns9zJlglEolZaKauwjRT8c0XWzirnCi2bbA3HaUvas
-	 CHZGfV0vOQmmQ==
-From: Masahiro Yamada <masahiroy@kernel.org>
-To: linux-kbuild@vger.kernel.org
-Cc: Masahiro Yamada <masahiroy@kernel.org>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] kconfig: document the positional argument in the help message
-Date: Thu, 24 Oct 2024 20:25:45 +0900
-Message-ID: <20241024112548.1438155-1-masahiroy@kernel.org>
-X-Mailer: git-send-email 2.43.0
+	s=k20201202; t=1729769291;
+	bh=0xJstpGxwArsbUOvF7f13qAmC+WKuzL6vGBoiolNIBE=;
+	h=Date:Cc:Subject:From:To:References:In-Reply-To:From;
+	b=fLcKIM668RwlSheUONJW+r0jWfzrcw+yT7TgLc0oBy9Yq6ZRRz7Ob9U5MwTfPE6EG
+	 EteoQA8Bd98g6tg0G+NFGnxYlWo1CLmj5VGWQ7ihj2HVWmg2wXb3yDt+Un3ZvXwOYa
+	 5x0ZmTir1FnuHw+G1bEsje4Z61MU8hlbn4TFjQ+4aZMiaVjrwLB0D6UWwMfPIwYV9e
+	 GzfbnaDwgkEjTofA07mV+qUXTN7HewxO/LcHZzqidN0gM4qOltWfhe2xVNswcU7usd
+	 2nX915XJKz4Nsmi9F758uC4YgTkLSbx5OxvKumzUFZ2JwJXLSt+Aq27nwg/nIXDrRn
+	 cFAg+T0oFysmA==
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Mime-Version: 1.0
+Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=UTF-8
+Date: Thu, 24 Oct 2024 14:28:07 +0300
+Message-Id: <D5401CDJGBUG.1588B09HN21YS@kernel.org>
+Cc: "David Howells" <dhowells@redhat.com>, "Mimi Zohar"
+ <zohar@linux.ibm.com>, "Roberto Sassu" <roberto.sassu@huawei.com>,
+ <linux-kernel@vger.kernel.org>, <stable@vger.kernel.org>
+Subject: Re: [PATCH v7 4/5] tpm: Allocate chip->auth in
+ tpm2_start_auth_session()
+From: "Jarkko Sakkinen" <jarkko@kernel.org>
+To: "Stefan Berger" <stefanb@linux.ibm.com>,
+ <linux-integrity@vger.kernel.org>, "Peter Huewe" <peterhuewe@gmx.de>,
+ "Jason Gunthorpe" <jgg@ziepe.ca>, "James Bottomley"
+ <James.Bottomley@HansenPartnership.com>, "Ard Biesheuvel" <ardb@kernel.org>
+X-Mailer: aerc 0.18.2
+References: <20241021053921.33274-1-jarkko@kernel.org>
+ <20241021053921.33274-5-jarkko@kernel.org>
+ <588319e8-5983-4f15-abae-b5021f1e4fce@linux.ibm.com>
+In-Reply-To: <588319e8-5983-4f15-abae-b5021f1e4fce@linux.ibm.com>
 
-The positional argument specifies the top-level Kconfig. Include this
-information in the help message.
+On Wed Oct 23, 2024 at 10:15 PM EEST, Stefan Berger wrote:
+>
+>
+> On 10/21/24 1:39 AM, Jarkko Sakkinen wrote:
+> > Move allocation of chip->auth to tpm2_start_auth_session() so that the
+> > field can be used as flag to tell whether auth session is active or not=
+.
+> >=20
+> > Cc: stable@vger.kernel.org # v6.10+
+> > Fixes: 699e3efd6c64 ("tpm: Add HMAC session start and end functions")
+> > Signed-off-by: Jarkko Sakkinen <jarkko@kernel.org>
+> > ---
+> > v5:
+> > - No changes.
+> > v4:
+> > - Change to bug.
+> > v3:
+> > - No changes.
+> > v2:
+> > - A new patch.
+> > ---
+> >   drivers/char/tpm/tpm2-sessions.c | 43 +++++++++++++++++++------------=
+-
+> >   1 file changed, 25 insertions(+), 18 deletions(-)
+> >=20
+> > diff --git a/drivers/char/tpm/tpm2-sessions.c b/drivers/char/tpm/tpm2-s=
+essions.c
+> > index 78c650ce4c9f..6e52785de9fd 100644
+> > --- a/drivers/char/tpm/tpm2-sessions.c
+> > +++ b/drivers/char/tpm/tpm2-sessions.c
+> > @@ -484,7 +484,8 @@ static void tpm2_KDFe(u8 z[EC_PT_SZ], const char *s=
+tr, u8 *pt_u, u8 *pt_v,
+> >   	sha256_final(&sctx, out);
+> >   }
+> >  =20
+> > -static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *=
+chip)
+> > +static void tpm_buf_append_salt(struct tpm_buf *buf, struct tpm_chip *=
+chip,
+> > +				struct tpm2_auth *auth)
+> >   {
+> >   	struct crypto_kpp *kpp;
+> >   	struct kpp_request *req;
+> > @@ -543,7 +544,7 @@ static void tpm_buf_append_salt(struct tpm_buf *buf=
+, struct tpm_chip *chip)
+> >   	sg_set_buf(&s[0], chip->null_ec_key_x, EC_PT_SZ);
+> >   	sg_set_buf(&s[1], chip->null_ec_key_y, EC_PT_SZ);
+> >   	kpp_request_set_input(req, s, EC_PT_SZ*2);
+> > -	sg_init_one(d, chip->auth->salt, EC_PT_SZ);
+> > +	sg_init_one(d, auth->salt, EC_PT_SZ);
+> >   	kpp_request_set_output(req, d, EC_PT_SZ);
+> >   	crypto_kpp_compute_shared_secret(req);
+> >   	kpp_request_free(req);
+> > @@ -554,8 +555,7 @@ static void tpm_buf_append_salt(struct tpm_buf *buf=
+, struct tpm_chip *chip)
+> >   	 * This works because KDFe fully consumes the secret before it
+> >   	 * writes the salt
+> >   	 */
+> > -	tpm2_KDFe(chip->auth->salt, "SECRET", x, chip->null_ec_key_x,
+> > -		  chip->auth->salt);
+> > +	tpm2_KDFe(auth->salt, "SECRET", x, chip->null_ec_key_x, auth->salt);
+> >  =20
+> >    out:
+> >   	crypto_free_kpp(kpp);
+> > @@ -854,6 +854,8 @@ int tpm_buf_check_hmac_response(struct tpm_chip *ch=
+ip, struct tpm_buf *buf,
+> >   			/* manually close the session if it wasn't consumed */
+> >   			tpm2_flush_context(chip, auth->handle);
+> >   		memzero_explicit(auth, sizeof(*auth));
+> > +		kfree(auth);
+> > +		chip->auth =3D NULL;
+> >   	} else {
+> >   		/* reset for next use  */
+> >   		auth->session =3D TPM_HEADER_SIZE;
+> > @@ -882,6 +884,8 @@ void tpm2_end_auth_session(struct tpm_chip *chip)
+> >  =20
+> >   	tpm2_flush_context(chip, auth->handle);
+> >   	memzero_explicit(auth, sizeof(*auth));
+> > +	kfree(auth);
+> > +	chip->auth =3D NULL;
+> >   }
+> >   EXPORT_SYMBOL(tpm2_end_auth_session);
+> >  =20
+> > @@ -970,25 +974,29 @@ static int tpm2_load_null(struct tpm_chip *chip, =
+u32 *null_key)
+> >    */
+> >   int tpm2_start_auth_session(struct tpm_chip *chip)
+> >   {
+> > +	struct tpm2_auth *auth;
+> >   	struct tpm_buf buf;
+> > -	struct tpm2_auth *auth =3D chip->auth;
+> > -	int rc;
+> >   	u32 null_key;
+> > +	int rc;
+> >  =20
+> > -	if (!auth) {
+> > -		dev_warn_once(&chip->dev, "auth session is not active\n");
+> > +	if (chip->auth) {
+> > +		dev_warn_once(&chip->dev, "auth session is active\n");
+> >   		return 0;
+> >   	}
+> >  =20
+> > +	auth =3D kzalloc(sizeof(*auth), GFP_KERNEL);
+> > +	if (!auth)
+> > +		return -ENOMEM;
+> > +
+> >   	rc =3D tpm2_load_null(chip, &null_key);
+> >   	if (rc)
+> > -		goto out;
+> > +		goto err;
+> >  =20
+> >   	auth->session =3D TPM_HEADER_SIZE;
+> >  =20
+> >   	rc =3D tpm_buf_init(&buf, TPM2_ST_NO_SESSIONS, TPM2_CC_START_AUTH_SE=
+SS);
+> >   	if (rc)
+> > -		goto out;
+> > +		goto err;
+> >  =20
+> >   	/* salt key handle */
+> >   	tpm_buf_append_u32(&buf, null_key);
+> > @@ -1000,7 +1008,7 @@ int tpm2_start_auth_session(struct tpm_chip *chip=
+)
+> >   	tpm_buf_append(&buf, auth->our_nonce, sizeof(auth->our_nonce));
+> >  =20
+> >   	/* append encrypted salt and squirrel away unencrypted in auth */
+> > -	tpm_buf_append_salt(&buf, chip);
+> > +	tpm_buf_append_salt(&buf, chip, auth);
+> >   	/* session type (HMAC, audit or policy) */
+> >   	tpm_buf_append_u8(&buf, TPM2_SE_HMAC);
+> >  =20
+> > @@ -1021,10 +1029,13 @@ int tpm2_start_auth_session(struct tpm_chip *ch=
+ip)
+> >  =20
+> >   	tpm_buf_destroy(&buf);
+> >  =20
+> > -	if (rc)
+> > -		goto out;
+> > +	if (rc =3D=3D TPM2_RC_SUCCESS) {
+> > +		chip->auth =3D auth;
+> > +		return 0;
+> > +	}
+> >  =20
+> > - out:
+> > +err:
+>
+> like in many other cases before kfree(auth):
+> memzero_explicit(auth, sizeof(*auth));
+>
+> With this:
+>
+> Reviewed-by: Stefan Berger <stefanb@linux.ibm.com>
 
-Signed-off-by: Masahiro Yamada <masahiroy@kernel.org>
----
+Thanks, or should we use kfree_sensitive()?
 
- scripts/kconfig/conf.c | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+It has some additional functionality, which is missed now:
 
-diff --git a/scripts/kconfig/conf.c b/scripts/kconfig/conf.c
-index 3d7d454c54da..8abe57041955 100644
---- a/scripts/kconfig/conf.c
-+++ b/scripts/kconfig/conf.c
-@@ -628,7 +628,7 @@ static const struct option long_opts[] = {
- 
- static void conf_usage(const char *progname)
- {
--	printf("Usage: %s [options] <kconfig-file>\n", progname);
-+	printf("Usage: %s [options] kconfig_file\n", progname);
- 	printf("\n");
- 	printf("Generic options:\n");
- 	printf("  -h, --help              Print this message and exit.\n");
-@@ -653,6 +653,9 @@ static void conf_usage(const char *progname)
- 	printf("  --mod2yesconfig         Change answers from mod to yes if possible\n");
- 	printf("  --mod2noconfig          Change answers from mod to no if possible\n");
- 	printf("  (If none of the above is given, --oldaskconfig is the default)\n");
-+	printf("\n");
-+	printf("Arguments:\n");
-+	printf("  kconfig_file            Top-level Kconfig file.\n");
- }
- 
- int main(int ac, char **av)
--- 
-2.43.0
+https://elixir.bootlin.com/linux/v6.11.5/source/mm/slab_common.c#L1339
 
+I.e. kasan_unpoison().
+
+BR, Jarkko
 
