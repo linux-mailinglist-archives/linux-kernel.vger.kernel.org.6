@@ -1,186 +1,199 @@
-Return-Path: <linux-kernel+bounces-379971-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379975-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 94C799AE68F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:33:38 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5045A9AE69F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:34:29 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC631C25633
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:33:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C896B1F26942
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:34:28 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C9DC71E0487;
-	Thu, 24 Oct 2024 13:27:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDEDB1E7C00;
+	Thu, 24 Oct 2024 13:29:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Z0+jU53Z"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="B2udlmzN"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C77B1DD9D1
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:27:42 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 922211E283E;
+	Thu, 24 Oct 2024 13:29:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776463; cv=none; b=LYoqyTIU2y9RRpurY9CiEJVEJEHQtwBj1kPIh85uj0ahyNp5eE7/EMJOMOqDV81EfmtlB2j+vZxPhSFYrBydmAV8yFDq+edaPGU/6152CGPbzgu8X/0HYOEbkMQ9Bz9qdYuYXgXX873wFSPGzNuvhY3ztKstc0qbD0p2w5ne5EI=
+	t=1729776553; cv=none; b=XeA8KVcn+cWamJrzlJQwfhT45G02UXtfa4frcfjJUthoOMVUJG4gRj7xVA6sPIrH6+pmqvkh8xmIldBP+qfhQ0Ao5tdxPLVSKOYdXDesSBbO3zFIKrHw8HJ5MH4ud5CrfB4eM12EgMLenqxss0u8XAW9qLTuVRBkbRvbepgRONM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776463; c=relaxed/simple;
-	bh=IwYiZVV7fVvD1ooD/I4eHLt5Mcmsgl+8V5a9Fm7VQX4=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
-	 Content-Disposition; b=kA/peDn6LUGNojTVTsnMjrE45J2BooeJyHjPIYqC5l+l142tfSjNaBiCPr1xvwtj+DuRgNhGS9niPaRmd4gT/ln9OeHsym3i2dXnsxP2TlykLts7qSomX5eSlDrcUGNeX3AjVpk5w68HFfRaLzUplVbc7qbD13K/ord9MguIbko=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Z0+jU53Z; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8D7D1C4CEC7;
-	Thu, 24 Oct 2024 13:27:41 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729776462;
-	bh=IwYiZVV7fVvD1ooD/I4eHLt5Mcmsgl+8V5a9Fm7VQX4=;
-	h=Date:From:To:Cc:Subject:From;
-	b=Z0+jU53ZfVoxC59uRAT24vT9YUwFTxFiSFwFOrddA4VVPRnfQhPGc+qfWyhLfkmgJ
-	 YFH8vXOyCaski9XfcJn3rlCjCAVZOKXr4Kiya41Cf22SyF5m9/TSIuuS/JTdli1qsm
-	 xm+Yk9wlYIisMvPkvsZ1QRpuGFEf3AuvPr6i0AUOSVKaOv5Aq3n4X7rW/oKzw3jaSz
-	 0XLt/xRhRzSJa7rzmSirEfA7Vj19Iuv1bVLW14n15YdN2DCthb9HjHuhKJQO+YBwbW
-	 bZO1Jta2RB1V+6xCpeiJsw2q2MZWMEZ1I991xXFXTYmgLRVjlRSqhp5+ABYDNgMoIf
-	 rSlwXvtASX85A==
-Date: Thu, 24 Oct 2024 10:27:36 -0300
-From: Arnaldo Carvalho de Melo <acme@kernel.org>
-To: linux-kernel@vger.kernel.org
-Cc: Xin Li <xin3.li@intel.com>, Sean Christopherson <seanjc@google.com>,
-	Adrian Hunter <adrian.hunter@intel.com>,
-	Ian Rogers <irogers@google.com>, Jiri Olsa <jolsa@kernel.org>,
-	Kan Liang <kan.liang@linux.intel.com>,
-	Namhyung Kim <namhyung@kernel.org>
-Subject: [PATCH 1/1 fyi] tools arch x86: Sync the msr-index.h copy with the
- kernel sources
-Message-ID: <ZxpLSBzGin3vjs3b@x1>
+	s=arc-20240116; t=1729776553; c=relaxed/simple;
+	bh=C0PxOWxUABIbn4bVZ3b0fcNoLUZA3VjDKbwBoXarrJU=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-ID:To:CC; b=AZHmPpfwB8B5kMI1Rm365yWmNyxlYKfDrddqEhHsRNckFjJXd858w0x6m7EyuBuoKzNnyCSfsEKjHYHHvdhhm7B07amSqU4vRfhcV6rdp4YH0ojcudLEswIwPH7ea9deit9R/gecodT5dPtj+Z+Ndu4BaQusBTC0Rk9kTg+/tMA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=B2udlmzN; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O8t7gY008302;
+	Thu, 24 Oct 2024 13:29:06 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:message-id
+	:mime-version:subject:to; s=qcppdkim1; bh=uXXd+3C/en7TMKshOhY0fw
+	ftSpV48iCJnEoz8d9zI74=; b=B2udlmzNpOt176I0qeDiGvkdk/mPx9UK5rqfTg
+	k9jIlpkJMm4N2HYIyjfbXmBuyKmdegcNwTQZLUeoZquj6eSVYtU+RJy2h+uaqeZa
+	WUZqvuIhN1xEwLXPRl5khRovk4u6ia8PFN9MwBhpAnr/5/34jBcYeWHG1WylI7E9
+	QqytWh8V23Jt4BwcOaCb0KcQjhbBGrg3TGZdOIpEUGbOYHyM7dCOtYetbrjga5ny
+	OK9fiFSeAZPpiOlFyznWtjPh69pALabfETOZE0NMu0kCN1Y+Sihfogu7/m6EHJX/
+	Ku5k/1/9UGALdYHABYwSl5hk4zpulka2LhlP+mlU8Fuoa9JA==
+Received: from nalasppmta05.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52gp06-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:29:06 +0000 (GMT)
+Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
+	by NALASPPMTA05.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ODT4mp020862
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:29:04 GMT
+Received: from hu-krichai-hyd.qualcomm.com (10.80.80.8) by
+ nalasex01a.na.qualcomm.com (10.47.209.196) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1544.9; Thu, 24 Oct 2024 06:29:01 -0700
+From: Krishna chaitanya chundru <quic_krichai@quicinc.com>
+Date: Thu, 24 Oct 2024 18:58:49 +0530
+Subject: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+Message-ID: <20241024-enable_pcie-v2-1-e5a6f5da74e4@quicinc.com>
+X-B4-Tracking: v=1; b=H4sIAJBLGmcC/x2MQQqAIBQFrxJ/nVAiUV0lIkyf9SFMFCIQ7560m
+ MUsZjIlREaiuckU8XDi21eRbUPm1P6AYFudZCdVXxHwer+wBcMQVhoMDtqOaqJahAjH739b1lI
+ ++LUe3l0AAAA=
+To: Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio
+	<konradybcio@kernel.org>, Rob Herring <robh@kernel.org>,
+        Krzysztof Kozlowski
+	<krzk+dt@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>
+CC: <dmitry.baryshkov@linaro.org>, <manivannan.sadhasivam@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Krishna chaitanya chundru
+	<quic_krichai@quicinc.com>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729776541; l=2802;
+ i=quic_krichai@quicinc.com; s=20230907; h=from:subject:message-id;
+ bh=C0PxOWxUABIbn4bVZ3b0fcNoLUZA3VjDKbwBoXarrJU=;
+ b=kjX7518Dz+LIvuH+cQcXXxxmPl9mP3DDLW2fsdTbh8m+eWV1GlZAW9hd9/1pORcxF4nrAx3/j
+ eb2sPyJ+PLaCmLvZFhuBrXea9DYFRLXMNSxn3h/hVcxTXvXloBHSxl8
+X-Developer-Key: i=quic_krichai@quicinc.com; a=ed25519;
+ pk=10CL2pdAKFyzyOHbfSWHCD0X0my7CXxj8gJScmn1FAg=
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01a.na.qualcomm.com (10.47.209.196)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: wgG0x__IrmCstQcsGp5Iieb0KdTrZAPi
+X-Proofpoint-ORIG-GUID: wgG0x__IrmCstQcsGp5Iieb0KdTrZAPi
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
+ lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
+ adultscore=0 mlxlogscore=999 priorityscore=1501 spamscore=0 bulkscore=0
+ clxscore=1011 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240110
 
-tldr; Just FYI, I'm carrying this on the perf tools tree.
+Enable PCIe1 controller and its corresponding PHY nodes on
+qcs6490-rb3g2 platform.
 
-Full explanation:
+SMMU v2 has limited SID's to assign dynamic SID's with the existing
+logic. For now, use static iommu-map table assigning unique SID's for
+each port as dynamic approach needs boarder community discussions.
 
-There used to be no copies, with tools/ code using kernel headers
-directly. From time to time tools/perf/ broke due to legitimate kernel
-hacking. At some point Linus complained about such direct usage. Then we
-adopted the current model.
+PCIe switch connected to this board has 3 downstream ports and
+to the one of the downstream an embedded ethernet is connected.
+Assign unique SID for each downstream port and to embedded ethernet,
+and also reserve a SID for the endpoints which are going to be
+connected to the other two downstream ports.
 
-See further details at:
+As this PCIe switch is present in this platform only update iommu-map
+in this platform only as other board variants might have different
+PCIe topology and might need different mapping.
 
- https://git.kernel.org/pub/scm/linux/kernel/git/torvalds/linux.git/tree/tools/include/uapi/README
-
-To pick up the changes from these csets:
-
-  dc1e67f70f6d4e33 ("KVM VMX: Move MSR_IA32_VMX_MISC bit defines to asm/vmx.h")
-  d7bfc9ffd58037ff ("KVM: VMX: Move MSR_IA32_VMX_BASIC bit defines to asm/vmx.h")
-  beb2e446046f8dd9 ("x86/cpu: KVM: Move macro to encode PAT value to common header")
-  e7e80b66fb242a63 ("x86/cpu: KVM: Add common defines for architectural memory types (PAT, MTRRs, etc.)")
-
-That cause no changes to tooling:
-
-  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > before
-  $ cp arch/x86/include/asm/msr-index.h tools/arch/x86/include/asm/msr-index.h
-  $ tools/perf/trace/beauty/tracepoints/x86_msr.sh > after
-  $ diff -u before after
-  $
-
-To see how this works take a look at this previous update:
-
-  https://git.kernel.org/torvalds/c/174372668933ede5
-
-  174372668933ede5 ("tools arch x86: Sync the msr-index.h copy with the kernel sources to pick IA32_MKTME_KEYID_PARTITIONING")
-
-Just silences this perf build warning:
-
-  Warning: Kernel ABI header differences:
-    diff -u tools/arch/x86/include/asm/msr-index.h arch/x86/include/asm/msr-index.h
-
-Please see tools/include/uapi/README for further details.
-
-Cc: Adrian Hunter <adrian.hunter@intel.com>
-Cc: Ian Rogers <irogers@google.com>
-Cc: Jiri Olsa <jolsa@kernel.org>
-Cc: Kan Liang <kan.liang@linux.intel.com>
-Cc: Namhyung Kim <namhyung@kernel.org>
-Cc: Sean Christopherson <seanjc@google.com>
-Cc: Xin Li <xin3.li@intel.com>
-Link: https://lore.kernel.org/lkml/
-Signed-off-by: Arnaldo Carvalho de Melo <acme@redhat.com>
+Signed-off-by: Krishna chaitanya chundru <quic_krichai@quicinc.com>
 ---
- tools/arch/x86/include/asm/msr-index.h | 34 +++++++++++++++-----------
- 1 file changed, 20 insertions(+), 14 deletions(-)
+Changes in v1:
+- Rebased on linux-next
+- Update the commit text to summerize the discussions on v1.
+- Link to v1: https://lore.kernel.org/linux-arm-msm/20240207-enable_pcie-v1-1-b684afa6371c@quicinc.com/T/
+---
+ arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts | 42 ++++++++++++++++++++++++++++
+ 1 file changed, 42 insertions(+)
 
-diff --git a/tools/arch/x86/include/asm/msr-index.h b/tools/arch/x86/include/asm/msr-index.h
-index a7c06a46fb767d4a..3ae84c3b8e6dba73 100644
---- a/tools/arch/x86/include/asm/msr-index.h
-+++ b/tools/arch/x86/include/asm/msr-index.h
-@@ -36,6 +36,20 @@
- #define EFER_FFXSR		(1<<_EFER_FFXSR)
- #define EFER_AUTOIBRS		(1<<_EFER_AUTOIBRS)
+diff --git a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+index 0d45662b8028..2d14bdc1ff2d 100644
+--- a/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
++++ b/arch/arm64/boot/dts/qcom/qcs6490-rb3gen2.dts
+@@ -684,6 +684,32 @@ &mdss_edp_phy {
+ 	status = "okay";
+ };
  
-+/*
-+ * Architectural memory types that are common to MTRRs, PAT, VMX MSRs, etc.
-+ * Most MSRs support/allow only a subset of memory types, but the values
-+ * themselves are common across all relevant MSRs.
-+ */
-+#define X86_MEMTYPE_UC		0ull	/* Uncacheable, a.k.a. Strong Uncacheable */
-+#define X86_MEMTYPE_WC		1ull	/* Write Combining */
-+/* RESERVED			2 */
-+/* RESERVED			3 */
-+#define X86_MEMTYPE_WT		4ull	/* Write Through */
-+#define X86_MEMTYPE_WP		5ull	/* Write Protected */
-+#define X86_MEMTYPE_WB		6ull	/* Write Back */
-+#define X86_MEMTYPE_UC_MINUS	7ull	/* Weak Uncacheabled (PAT only) */
++&pcie1 {
++	perst-gpios = <&tlmm 2 GPIO_ACTIVE_LOW>;
 +
- /* FRED MSRs */
- #define MSR_IA32_FRED_RSP0	0x1cc			/* Level 0 stack pointer */
- #define MSR_IA32_FRED_RSP1	0x1cd			/* Level 1 stack pointer */
-@@ -365,6 +379,12 @@
- 
- #define MSR_IA32_CR_PAT			0x00000277
- 
-+#define PAT_VALUE(p0, p1, p2, p3, p4, p5, p6, p7)			\
-+	((X86_MEMTYPE_ ## p0)      | (X86_MEMTYPE_ ## p1 << 8)  |	\
-+	(X86_MEMTYPE_ ## p2 << 16) | (X86_MEMTYPE_ ## p3 << 24) |	\
-+	(X86_MEMTYPE_ ## p4 << 32) | (X86_MEMTYPE_ ## p5 << 40) |	\
-+	(X86_MEMTYPE_ ## p6 << 48) | (X86_MEMTYPE_ ## p7 << 56))
++	pinctrl-0 = <&pcie1_reset_n>, <&pcie1_wake_n>;
++	pinctrl-names = "default";
 +
- #define MSR_IA32_DEBUGCTLMSR		0x000001d9
- #define MSR_IA32_LASTBRANCHFROMIP	0x000001db
- #define MSR_IA32_LASTBRANCHTOIP		0x000001dc
-@@ -1159,15 +1179,6 @@
- #define MSR_IA32_VMX_VMFUNC             0x00000491
- #define MSR_IA32_VMX_PROCBASED_CTLS3	0x00000492
- 
--/* VMX_BASIC bits and bitmasks */
--#define VMX_BASIC_VMCS_SIZE_SHIFT	32
--#define VMX_BASIC_TRUE_CTLS		(1ULL << 55)
--#define VMX_BASIC_64		0x0001000000000000LLU
--#define VMX_BASIC_MEM_TYPE_SHIFT	50
--#define VMX_BASIC_MEM_TYPE_MASK	0x003c000000000000LLU
--#define VMX_BASIC_MEM_TYPE_WB	6LLU
--#define VMX_BASIC_INOUT		0x0040000000000000LLU
--
- /* Resctrl MSRs: */
- /* - Intel: */
- #define MSR_IA32_L3_QOS_CFG		0xc81
-@@ -1185,11 +1196,6 @@
- #define MSR_IA32_SMBA_BW_BASE		0xc0000280
- #define MSR_IA32_EVT_CFG_BASE		0xc0000400
- 
--/* MSR_IA32_VMX_MISC bits */
--#define MSR_IA32_VMX_MISC_INTEL_PT                 (1ULL << 14)
--#define MSR_IA32_VMX_MISC_VMWRITE_SHADOW_RO_FIELDS (1ULL << 29)
--#define MSR_IA32_VMX_MISC_PREEMPTION_TIMER_SCALE   0x1F
--
- /* AMD-V MSRs */
- #define MSR_VM_CR                       0xc0010114
- #define MSR_VM_IGNNE                    0xc0010115
++	iommu-map = <0x0 &apps_smmu 0x1c80 0x1>,
++		    <0x100 &apps_smmu 0x1c81 0x1>,
++		    <0x208 &apps_smmu 0x1c84 0x1>,
++		    <0x210 &apps_smmu 0x1c85 0x1>,
++		    <0x218 &apps_smmu 0x1c86 0x1>,
++		    <0x300 &apps_smmu 0x1c87 0x1>,
++		    <0x400 &apps_smmu 0x1c88 0x1>,
++		    <0x500 &apps_smmu 0x1c89 0x1>,
++		    <0x501 &apps_smmu 0x1c90 0x1>;
++
++	status = "okay";
++};
++
++&pcie1_phy {
++	vdda-phy-supply = <&vreg_l10c_0p88>;
++	vdda-pll-supply = <&vreg_l6b_1p2>;
++
++	status = "okay";
++};
++
+ &pmk8350_rtc {
+ 	status = "okay";
+ };
+@@ -819,4 +845,20 @@ lt9611_irq_pin: lt9611-irq-state {
+ 		drive-strength = <2>;
+ 		bias-disable;
+ 	};
++
++	pcie1_reset_n: pcie1-reset-n-state {
++		pins = "gpio2";
++		function = "gpio";
++		drive-strength = <16>;
++		output-low;
++		bias-disable;
++	};
++
++	pcie1_wake_n: pcie1-wake-n-state {
++		pins = "gpio3";
++		function = "gpio";
++		drive-strength = <2>;
++		bias-pull-up;
++	};
++
+ };
+
+---
+base-commit: 42f7652d3eb527d03665b09edac47f85fb600924
+change-id: 20241024-enable_pcie-d2ce6fead849
+
+Best regards,
 -- 
-2.47.0
+Krishna chaitanya chundru <quic_krichai@quicinc.com>
 
 
