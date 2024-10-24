@@ -1,156 +1,153 @@
-Return-Path: <linux-kernel+bounces-379993-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379995-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C21AB9AE6D7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:39:06 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id B65D29AE6DE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:39:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1C56FB21D2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:39:04 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id B8B2F288083
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:39:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B7DE01DD524;
-	Thu, 24 Oct 2024 13:37:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBCC41E202D;
+	Thu, 24 Oct 2024 13:38:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="o+lRoR6a"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="Ce6xcWvZ"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1850718A957
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:37:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6E3EA1E0DC7
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:38:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729777062; cv=none; b=lUEtLQcZQAGpYRwvZrtHzRIfd6CSBVDrxHN/vMFIZerfapKN47utL81QV35rL/u8crm+HY9gChC1dzof7bZf8jsL5O9kR+I8SL8nXKikjjTBl8MevOTy9eG918qmSvWQqxPPX0aXwl8XnApk0hvKMEgWfXEogR0syuuMEgvDyMs=
+	t=1729777127; cv=none; b=LUiY5Ly0Y/5xIlIoPVcWxt9Ab5BoWmC3ZUOsJq7aZuc22fW+NCFjIm9VKp+pkNMr/EXS0k1JTesWoA66FoAeIIhH5RtG6rL1oEI0lDKfRrrmopuvSD4BcsULDUD+5D/uOPBPLYVX0gSbSny3A26mqHWpImJTxoUrd8qiyCSMlnw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729777062; c=relaxed/simple;
-	bh=2SnOCBhwyZXux7fMxMhAoghWlcal9u7yKI8UxNjFwvU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=fBsDqYjrsY5JeBh2/evNyqORpl35TO4epPLjUeW9Yhk1zoBdtx8XiDM/ac1CoR5vJTZKIt9tk4cxAKrlshQR/Ava3sIQcPseANrwm4hssoQ9HotOFOsWL/fKLTjY2q1HgxKxKsVX3klMCuNurjq/TQhk+Lo5pMY/jOaqST32wrs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=o+lRoR6a; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20c693b68f5so8958585ad.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:37:39 -0700 (PDT)
+	s=arc-20240116; t=1729777127; c=relaxed/simple;
+	bh=SW1fi0zPzsrX7wBn7XqIVLiCaXQT0Ie9gmaWh01Q8KY=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=pLyRe3V79lD9bSQyfEuBFnMhYXpEdyvuj015nvTcJifQvWcM/qj8n4Yfw6UkQVjpxcRZc03XDyIuCsqBq87y9yU5oQzQUfTOVCoZIfTVOZJ2hfcK8JW42JzIdXnD8tPE2f0UgYtgrXifDKKHWr96LLy0BOFBxP88TfS3Q/pRlHs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=Ce6xcWvZ; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-4315c1c7392so9654665e9.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:38:45 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729777059; x=1730381859; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=OEUVjMM5cP3IVCnt0k5pdLcYpW2rv69GG7ZEMarKJtw=;
-        b=o+lRoR6aKD0qeBdWA+K4bPC+5SWgH7n596QcIzRKSHB1kj17A5qI1Wa/7JExqPLYyF
-         SrBdyXrZemDb+UfxeF+m0NTB81047dj5cQp6GAW4IFqcuMb2TwO7L6UKa+5PmYdgvYob
-         0G20R/H4vT23h70rmZvvxvDfmCYNjXv5SyZfepVJNxCYjS0j4ZUUIzNzkf93VkHRLq3i
-         CHhW/GEkFekwrPHZnZ1bYAHQB9TYdmlDS9cRSJrD2JTYhI4IYKDQa0nQpqAZQ+/UETgc
-         qfgFcisXKpMWM8NMzk4+iQ/+t0vLylkDvb8e2su0HdHdxOYEVGKkMZLEYZ2KjXka0eAc
-         Dpag==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729777123; x=1730381923; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=auaN7esoCNV7hPW26ChTvANi+7IUZrlI0bB99Qwk3fQ=;
+        b=Ce6xcWvZi/eEUn6uqWO+Nx24oSQDGzK0deHVuLZ5XyThSd1IPDBwK+wWY5HMu+ARc9
+         HIdbod1TGQfa+Dv+EI1ggPNnA1rB0zcB67ixFyLvg7WlAf2o2ZCG/wSvpOpqm+tsObsx
+         nvzfUFQiCcIcEGh/64LwwR8yUjCP92ip3fAYyky1klNvUXo1BL2PpBMgoPMCjnY7kFUz
+         BPbgg1Bxdxppc9qyl8nUas9aJCtv3M0Uj2Ra5O74ED2l9I65iCyUvCkAddDM9/Q1Mjd1
+         5ur5DrCN86gIDm8U+DZSIUs66vt8JPSTcptRFccCewznTnbHHQwsz/EuvuZ0TWrfNfVZ
+         gvsg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729777059; x=1730381859;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=OEUVjMM5cP3IVCnt0k5pdLcYpW2rv69GG7ZEMarKJtw=;
-        b=aBsbGIRKfCZGnA454NzoKUIHnpvd6WfR12Tz+2+Rxv8c6ia371UlzTEqfdqW49Tz55
-         DpH7WCk1bGJsyf4e54M6TIU8M8oMmK9/EOHgjemDan0v6eBJgOGZ7QINoR3ktR0jLrsX
-         9wqkPi/wVT23YLgWp9nwwgdoDwWciMlnjZ0EWGo8vTLurABmynNHV9SX0EwoIGBQwMGq
-         Ddi4vp2K1KPct9ru8MfFxR0YmZe0ApM0Zkc/OOf3ofGPEsDu1M1TI0m0CCb1iegU5ggc
-         MMofFTO11fy0DB6Zio5jOiBowlCYa2gjJIY10RyxtX3Phk6UUc462xN8C153f6IOHv0k
-         rKkw==
-X-Forwarded-Encrypted: i=1; AJvYcCWh4PWg498NUw5cnCZcTJrfgagjeS/SqgdsximjywUXxWRIBUz+wNPr5NdzlfqeBgJgP2Dhc2LxiApvoTg=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yy/t+o7DTv7kMPejI1ot6c/1ZvpgBQeJjZ02Hl4+CwPRNfnyljb
-	54IzjNvTcJqOcPgMZmxFPKUdnLECw7iXB6epkoBSyD2vNdC312acnLGaLuEykQ==
-X-Google-Smtp-Source: AGHT+IFiiaGstAUCa0yhoLQK9WOfZBFCSnbIm9dfRr0/3J1Y6pVv4EtfDs8oy/FmQdzWGXDBeKjijw==
-X-Received: by 2002:a17:902:e747:b0:20c:bda8:3a10 with SMTP id d9443c01a7336-20fa9eb64bdmr87232365ad.37.1729777059284;
-        Thu, 24 Oct 2024 06:37:39 -0700 (PDT)
-Received: from thinkpad ([220.158.156.77])
-        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0d671sm72669225ad.98.2024.10.24.06.37.36
+        d=1e100.net; s=20230601; t=1729777123; x=1730381923;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=auaN7esoCNV7hPW26ChTvANi+7IUZrlI0bB99Qwk3fQ=;
+        b=jxoesrKkKeqcIZRk87ln/dycbYo81UwrkZNAeCk9CfTi9yJWt5pjSlgTEuf4MxxYPP
+         Htb9j0gLVlJU4Dm/FA4ZLAhs34UAXLF8EJYr/ZykBSfaROPdby0O1NatxFEmVbObjtFz
+         Bka36rQkPfOypgWc0iR/mwwHdLmPE1WNLch7lhiDP7ABqbbWAJBadM7NpN1yZ3dMg5n/
+         6EFKPn0iTrMyX4VtoIAMvmsL68JaqOeztrXT1wksTU4iNdaHJLrLVCEgkReBorBaw1zu
+         vwUlsDx3PK8jx71+DbUg7GQcXxNbKw1Qg4qadc05G6HdyjKJMURvjWKukMXSIvoRRvte
+         emwg==
+X-Forwarded-Encrypted: i=1; AJvYcCU7VajN7q5J8Sp5yDm52i3Rq+5NQ3afD+5EWfPd7rfggTc0T2LIU5kiQaKeSHfTDoN+EOolPCwnxOZj0U0=@vger.kernel.org
+X-Gm-Message-State: AOJu0YykjHLcdpQgQVfq1gtPgwAzf//eSOHoFtV89x7c+Mf8uXktyIGU
+	akwjBD5xb867iuc8Lpdfb/ByEHBwf3qIgay7xZY5lMFfZRKzUjxnR+cqcaRotr4=
+X-Google-Smtp-Source: AGHT+IHA4JS23b4eGAVOFWQtM+YFE3KGH+FrzTUSVDLqZq0gB8XnlQPMK1Tn+LtXgceofq8NkA0fpg==
+X-Received: by 2002:a05:600c:3b13:b0:431:1575:2e83 with SMTP id 5b1f17b1804b1-4318a918061mr23931035e9.10.1729777123382;
+        Thu, 24 Oct 2024 06:38:43 -0700 (PDT)
+Received: from brgl-uxlite.home ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b54308bsm18609645e9.4.2024.10.24.06.38.42
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 06:37:38 -0700 (PDT)
-Date: Thu, 24 Oct 2024 19:07:34 +0530
-From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-To: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Cc: Bjorn Helgaas <bhelgaas@google.com>, linux-pci@vger.kernel.org,
+        Thu, 24 Oct 2024 06:38:43 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+To: Linus Walleij <linus.walleij@linaro.org>,
+	Kent Gibson <warthog618@gmail.com>,
+	Mark Brown <broonie@kernel.org>,
+	Klara Modin <klarasmodin@gmail.com>
+Cc: linux-gpio@vger.kernel.org,
 	linux-kernel@vger.kernel.org,
-	Dmitry Baryshkov <dmitry.baryshkov@linaro.org>,
-	Johan Hovold <johan+linaro@kernel.org>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	Stephan Gerhold <stephan.gerhold@linaro.org>,
-	Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>
-Subject: Re: [PATCH 1/5] PCI/pwrctl: Use of_platform_device_create() to
- create pwrctl devices
-Message-ID: <20241024133734.7iibqvjby3id4hjt@thinkpad>
-References: <20241022-pci-pwrctl-rework-v1-0-94a7e90f58c5@linaro.org>
- <20241022-pci-pwrctl-rework-v1-1-94a7e90f58c5@linaro.org>
- <CACMJSeuBb9VmRrGJnak6D3Ddow+-OMb+79uZzUUaWe3BF1SgTg@mail.gmail.com>
+	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+Subject: [PATCH] gpiolib: fix a NULL-pointer dereference when setting direction
+Date: Thu, 24 Oct 2024 15:38:34 +0200
+Message-ID: <20241024133834.47395-1-brgl@bgdev.pl>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <CACMJSeuBb9VmRrGJnak6D3Ddow+-OMb+79uZzUUaWe3BF1SgTg@mail.gmail.com>
 
-On Wed, Oct 23, 2024 at 11:18:51AM +0200, Bartosz Golaszewski wrote:
-> On Tue, 22 Oct 2024 at 12:28, Manivannan Sadhasivam via B4 Relay
-> <devnull+manivannan.sadhasivam.linaro.org@kernel.org> wrote:
-> >
-> > From: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> >
-> > of_platform_populate() API creates platform devices by descending through
-> > the children of the parent node. But it provides no control over the child
-> > nodes, which makes it difficult to add checks for the child nodes in the
-> > future. So use of_platform_device_create() API together with
-> > for_each_child_of_node_scoped() so that it is possible to add checks for
-> > each node before creating the platform device.
-> >
-> > Signed-off-by: Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>
-> > ---
-> >  drivers/pci/bus.c | 12 +++++++-----
-> >  1 file changed, 7 insertions(+), 5 deletions(-)
-> >
-> > diff --git a/drivers/pci/bus.c b/drivers/pci/bus.c
-> > index 55c853686051..959044b059b5 100644
-> > --- a/drivers/pci/bus.c
-> > +++ b/drivers/pci/bus.c
-> > @@ -13,6 +13,7 @@
-> >  #include <linux/ioport.h>
-> >  #include <linux/of.h>
-> >  #include <linux/of_platform.h>
-> > +#include <linux/platform_device.h>
-> >  #include <linux/proc_fs.h>
-> >  #include <linux/slab.h>
-> >
-> > @@ -329,6 +330,7 @@ void __weak pcibios_bus_add_device(struct pci_dev *pdev) { }
-> >  void pci_bus_add_device(struct pci_dev *dev)
-> >  {
-> >         struct device_node *dn = dev->dev.of_node;
-> > +       struct platform_device *pdev;
-> >         int retval;
-> >
-> >         /*
-> > @@ -351,11 +353,11 @@ void pci_bus_add_device(struct pci_dev *dev)
-> >         pci_dev_assign_added(dev, true);
-> >
-> >         if (dev_of_node(&dev->dev) && pci_is_bridge(dev)) {
-> > -               retval = of_platform_populate(dev_of_node(&dev->dev), NULL, NULL,
-> > -                                             &dev->dev);
-> > -               if (retval)
-> > -                       pci_err(dev, "failed to populate child OF nodes (%d)\n",
-> > -                               retval);
-> > +               for_each_child_of_node_scoped(dn, child) {
-> 
-> Since we won't be populating any disabled nodes, I'd use
-> for_each_available_child_of_node_scoped() here.
-> 
+From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
 
-Ack.
+For optional GPIOs we may pass NULL to gpiod_direction_(input|output)().
+With the call to the notifier chain added by commit 07c61d4da43f
+("gpiolib: notify user-space about in-kernel line state changes") we
+will now dereference a NULL pointer in this case. The reason for that is
+the fact that the expansion of the VALIDATE_DESC() macro (which returns
+0 for NULL descriptors) was moved into the nonotify variants of the
+direction setters.
 
-- Mani
+Move them back to the top-level interfaces as the nonotify ones are only
+ever called from inside the GPIO core and are always passed valid GPIO
+descriptors. This way we'll never call the line_state notifier chain
+with non-valid descs.
 
+Fixes: 07c61d4da43f ("gpiolib: notify user-space about in-kernel line state changes")
+Reported-by: Mark Brown <broonie@kernel.org>
+Closes: https://lore.kernel.org/all/d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk/
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+ drivers/gpio/gpiolib.c | 8 ++++----
+ 1 file changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+index ae758ba6dc3d1..6001ec96693c5 100644
+--- a/drivers/gpio/gpiolib.c
++++ b/drivers/gpio/gpiolib.c
+@@ -2695,6 +2695,8 @@ int gpiod_direction_input(struct gpio_desc *desc)
+ {
+ 	int ret;
+ 
++	VALIDATE_DESC(desc);
++
+ 	ret = gpiod_direction_input_nonotify(desc);
+ 	if (ret == 0)
+ 		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+@@ -2707,8 +2709,6 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
+ {
+ 	int ret = 0;
+ 
+-	VALIDATE_DESC(desc);
+-
+ 	CLASS(gpio_chip_guard, guard)(desc);
+ 	if (!guard.gc)
+ 		return -ENODEV;
+@@ -2841,6 +2841,8 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+ {
+ 	int ret;
+ 
++	VALIDATE_DESC(desc);
++
+ 	ret = gpiod_direction_output_nonotify(desc, value);
+ 	if (ret == 0)
+ 		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+@@ -2854,8 +2856,6 @@ int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
+ 	unsigned long flags;
+ 	int ret;
+ 
+-	VALIDATE_DESC(desc);
+-
+ 	flags = READ_ONCE(desc->flags);
+ 
+ 	if (test_bit(FLAG_ACTIVE_LOW, &flags))
 -- 
-மணிவண்ணன் சதாசிவம்
+2.30.2
+
 
