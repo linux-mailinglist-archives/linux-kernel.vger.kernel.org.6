@@ -1,83 +1,78 @@
-Return-Path: <linux-kernel+bounces-379576-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379582-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB0299AE0AA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:28:24 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A92E9AE0BC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:29:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 07E351C20829
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:28:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 12D772852AE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:29:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 610EA1CB9F4;
-	Thu, 24 Oct 2024 09:26:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9687C1BD012;
+	Thu, 24 Oct 2024 09:26:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KUj+Avcb"
-Received: from mail-pl1-f169.google.com (mail-pl1-f169.google.com [209.85.214.169])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b="S1kKsfzP"
+Received: from mailgw02.mediatek.com (unknown [210.61.82.184])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AEC2A1CACD0;
-	Thu, 24 Oct 2024 09:26:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.169
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E98C1AA7B6;
+	Thu, 24 Oct 2024 09:26:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=210.61.82.184
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729761994; cv=none; b=ElUrD4IuiTr0B6FXP6wselxpSA4EVuqBz0eX5yn5FGDaaiACdHwGCXcXg7/mMDFHpoIEpQott1pXrbTErz4LFL7sV8tbgQC4xcCbJuQqWhxp64xX80hOkwDteCsbsb+IrwUwOWftJI11YTx7hwYXLmAaeCCWP95xAaXRG3SB45Q=
+	t=1729762018; cv=none; b=WF0A1wDavc3ImUgeeeBcoHhUjdnv1HCcYXaZltJdMWpifV2IPmCTFbMsxF2KRlFGVb/nDtpqEOj63lACcTv42erAEA105jbs4XOoczr1Svm8zasSEalyszVqWd5l6ax8gmDy60INOGnh2SuvXREBsqO9SdnMznXSdiTGY4RvXj8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729761994; c=relaxed/simple;
-	bh=83oWICUaM1pez/cllfdiTPn+JZHb5MaKCRkNi0TEwEs=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=TeyfbB4zFOr+ME+LrlyyVSt2t2faIEW613QJ63STZelab/RW/5LqhvVHz26ZeswpOLTFnf+UPRQsqzwM1wjs2Zssa0vNOoUmq9LcF2LfM085BTEZ/tSk6+8hNf6FzJ7AOb5vPejSAI/ZnLsju+v+hDX1qOZQ6N8gAsykSGhYnYk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KUj+Avcb; arc=none smtp.client-ip=209.85.214.169
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pl1-f169.google.com with SMTP id d9443c01a7336-20caea61132so4784405ad.2;
-        Thu, 24 Oct 2024 02:26:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729761992; x=1730366792; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=lE3hzGmrsBlUG0nTaJ74q6XkM5Ijqikn5DY/sHHFnWE=;
-        b=KUj+AvcbRBtKlMDHMTTU10K6rUBxw/Ruk5JSQ+RYUrj1cwaumcUcHPY6ef+AM+9Ehp
-         gQi6ijejS/X8W+N+SPtKdcC6YUgiv/pchk+xcvY5uSsc5JypznURkBCiSaTmlAF9uJ7w
-         gkS+pzOnI6TE1nAKSZ7wsk+HwAXlb/XSdl06Iqa9yGgjIjpGlYrVByibEqQc4zK38NKg
-         dtvZcu+Du8RM2pnILUGW4sm3RS2UDIz7I5pWjHhs36YgulW4Gssd2vfc7oEEygO0Cz+T
-         DC/LLetRen9/cqvAiA/Kk/VXyL+biib9TCja+o9PcCXchDlCRLl2AqQNJmS0n09C3a8K
-         vcSA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729761992; x=1730366792;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=lE3hzGmrsBlUG0nTaJ74q6XkM5Ijqikn5DY/sHHFnWE=;
-        b=YNMmyrxZy9tmEoKzilIvKq47zfUfyERyt4q4r9uJ0v/VxSKAsZZzLDOeFIMkBKkCqn
-         Hesu74fPB7frfTysfxajb1tYOqF8aG9lC4vS6Lpph6DZ5dn7ic61LsviFplg1MjEScfM
-         S/SQjUBPXalYsPjPErx6j2yyVDJ/fIDQLiXCrJV0H0wVjL64AEd44snsvNhFcuqRISpx
-         TJCvkBcfh3Cp5zdGo1PuU6nAiVEd+sku6vtOjcyt/I/Jl95UnSLkRC1s0djtycpxpI7k
-         wmLVp6YiQYRNDSMDbt1XtOdtxLPoNDsmZ2tWWQ9hrkkQzAXmEJ0+JS9vMPvXGsF+qti0
-         C9tA==
-X-Forwarded-Encrypted: i=1; AJvYcCUOa8t8snmHoc46GLmZoEGMlvR7D/KnWK9pvpZ4VZG1VWVaNLa46Q6r50nu6u7LZm7TKV5EvKEFBAfoTgd2@vger.kernel.org, AJvYcCUPZrIZU8ZBbYJ4jpg5duVZxYP9dwuXTbXRdDZo0FPXjOi0B4HMq5wU3IPEL3XUsTEjdkR893ypp2uZLeo=@vger.kernel.org, AJvYcCVWgjJanCUuny7+Ngo7x9bQ3p86W8LgBzSErL43+eJRb3XK/ntEPrm1Qom6fThHz7QuNXOOD/q6Ldurp7Xk@vger.kernel.org
-X-Gm-Message-State: AOJu0YwEkqmqfw77CYXSiO6myI6uRN4xXb8GKgOgLO2eKO4C3TehV3O7
-	e6ADDlvNd+/jl1CHFM+Sc405WMfKQksvKUv53HkIrvrmMj8/jyMX
-X-Google-Smtp-Source: AGHT+IHUtg0SMbnTv0FXcuMGx8pIxWDFjcw3z5vfuJKLY/LncWPph7w+1vBPd735uJW9h3UyjuGdEw==
-X-Received: by 2002:a05:6a20:d98:b0:1d9:1af6:94ba with SMTP id adf61e73a8af0-1d978b0b693mr6788947637.14.1729761991838;
-        Thu, 24 Oct 2024 02:26:31 -0700 (PDT)
-Received: from carrot.. (i118-19-49-33.s41.a014.ap.plala.or.jp. [118.19.49.33])
-        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13d774fsm7608906b3a.106.2024.10.24.02.26.29
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 02:26:31 -0700 (PDT)
-From: Ryusuke Konishi <konishi.ryusuke@gmail.com>
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: Matthew Wilcox <willy@infradead.org>,
-	linux-nilfs@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org
-Subject: [PATCH 10/12] nilfs2: Convert nilfs_page_count_clean_buffers() to take a folio
-Date: Thu, 24 Oct 2024 18:25:44 +0900
-Message-ID: <20241024092602.13395-11-konishi.ryusuke@gmail.com>
-X-Mailer: git-send-email 2.43.0
-In-Reply-To: <20241024092602.13395-1-konishi.ryusuke@gmail.com>
-References: <20241024092602.13395-1-konishi.ryusuke@gmail.com>
+	s=arc-20240116; t=1729762018; c=relaxed/simple;
+	bh=HncH2HOFlO5DQapGUnH4UPjCAjmb2uP6z2r3J+n+nls=;
+	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sBhdhFijuM95Q3a3sgfA3mEIDTSYuIlem979v/k63pNxfngRnZOJ6gcW5SD5m/zNCRd0STUN3C2DegUZaYXOOQAwaTlZyZxQ+joE7yXgE7/u9kGurtXgvxmL1C/tsYRoWMvblqoIiljJ5hzvpM1oS2V7ZkwuED3MILfPOY2vcoE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com; spf=pass smtp.mailfrom=mediatek.com; dkim=pass (1024-bit key) header.d=mediatek.com header.i=@mediatek.com header.b=S1kKsfzP; arc=none smtp.client-ip=210.61.82.184
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=mediatek.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mediatek.com
+X-UUID: 1948a94691ea11efbd192953cf12861f-20241024
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=mediatek.com; s=dk;
+	h=Content-Type:Content-Transfer-Encoding:MIME-Version:References:In-Reply-To:Message-ID:Date:Subject:CC:To:From; bh=jYLMF+xuWoTGHcH9ioamHRWs7pVJoNmieRacljrkDBI=;
+	b=S1kKsfzPV4SMDDCjHtAKPvaGnPatn91PyW101KSkPMqg7/1cYS6zYsXYcFw/6tThIfygzCEW16FpZVwsuL37gCgSirZvU6qGs0oDR5Pkqis30rlxfc2yB5zpbMJZMl5KvG9P8N1rOgom6wg/TwjL7xrY+6ehwsLMNVwRUGqCjPY=;
+X-CID-P-RULE: Release_Ham
+X-CID-O-INFO: VERSION:1.1.42,REQID:c40c0bc9-62c7-4b47-9170-6ace436ac41f,IP:0,U
+	RL:0,TC:0,Content:0,EDM:0,RT:0,SF:0,FILE:0,BULK:0,RULE:Release_Ham,ACTION:
+	release,TS:0
+X-CID-META: VersionHash:b0fcdc3,CLOUDID:1f6a0b2e-a7a0-4b06-8464-80be82133975,B
+	ulkID:nil,BulkQuantity:0,Recheck:0,SF:102,TC:nil,Content:0,EDM:-3,IP:nil,U
+	RL:11|1,File:nil,RT:nil,Bulk:nil,QS:nil,BEC:nil,COL:0,OSI:0,OSA:0,AV:0,LES
+	:1,SPR:NO,DKR:0,DKP:0,BRR:0,BRE:0,ARC:0
+X-CID-BVR: 0
+X-CID-BAS: 0,_,0,_
+X-CID-FACTOR: TF_CID_SPAM_SNR,TF_CID_SPAM_ULN
+X-UUID: 1948a94691ea11efbd192953cf12861f-20241024
+Received: from mtkmbs13n2.mediatek.inc [(172.21.101.108)] by mailgw02.mediatek.com
+	(envelope-from <karl.li@mediatek.com>)
+	(Generic MTA with TLSv1.2 ECDHE-RSA-AES256-GCM-SHA384 256/256)
+	with ESMTP id 1948286850; Thu, 24 Oct 2024 17:26:50 +0800
+Received: from mtkmbs11n2.mediatek.inc (172.21.101.187) by
+ mtkmbs11n1.mediatek.inc (172.21.101.185) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.2.1118.26; Thu, 24 Oct 2024 17:26:49 +0800
+Received: from mtksitap99.mediatek.inc (10.233.130.16) by
+ mtkmbs11n2.mediatek.inc (172.21.101.73) with Microsoft SMTP Server id
+ 15.2.1118.26 via Frontend Transport; Thu, 24 Oct 2024 17:26:49 +0800
+From: Karl.Li <karl.li@mediatek.com>
+To: Jassi Brar <jassisinghbrar@gmail.com>, Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>, AngeloGioacchino Del Regno
+	<angelogioacchino.delregno@collabora.com>, Karl Li <Karl.Li@mediatek.com>
+CC: <linux-kernel@vger.kernel.org>, <devicetree@vger.kernel.org>,
+	<linux-arm-kernel@lists.infradead.org>, <linux-mediatek@lists.infradead.org>,
+	Chungying Lu <chungying.lu@mediatek.com>,
+	<Project_Global_Chrome_Upstream_Group@mediatek.com>, Karl Li
+	<karl.li@mediatek.com>
+Subject: [PATCH 2/3] mailbox: add support for bottom half received data
+Date: Thu, 24 Oct 2024 17:25:44 +0800
+Message-ID: <20241024092608.431581-3-karl.li@mediatek.com>
+X-Mailer: git-send-email 2.45.2
+In-Reply-To: <20241024092608.431581-1-karl.li@mediatek.com>
+References: <20241024092608.431581-1-karl.li@mediatek.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -85,85 +80,89 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
 
-From: "Matthew Wilcox (Oracle)" <willy@infradead.org>
+From: Karl Li <karl.li@mediatek.com>
 
-Both callers have a folio, so pass it in and use it directly.
+Within the MediaTek APU subsystem, a message passing mechanism
+is constructed on top of the mailbox system.
 
-[ konishi.ryusuke: fixed a checkpatch warning about function declaration ]
-Link: https://lkml.kernel.org/r/20241002150036.1339475-3-willy@infradead.org
-Signed-off-by: Matthew Wilcox (Oracle) <willy@infradead.org>
-Signed-off-by: Ryusuke Konishi <konishi.ryusuke@gmail.com>
+The mailbox only has limited space for each message. The MTK APU firmware
+expects the message header from the mailbox, while the message body
+is passed through some fixed shared memory.
+
+The mailbox interrupt also serves as a mutex for the shared memory.
+Thus the interrupt may only be cleared after the message is handled.
+Add a new sleepable rx callback for mailbox clients for cases
+where handling the incoming data needs to sleep.
+
+Signed-off-by: Karl Li <karl.li@mediatek.com>
 ---
- fs/nilfs2/dir.c   | 2 +-
- fs/nilfs2/inode.c | 2 +-
- fs/nilfs2/page.c  | 4 ++--
- fs/nilfs2/page.h  | 4 ++--
- 4 files changed, 6 insertions(+), 6 deletions(-)
+ drivers/mailbox/mailbox.c          | 16 ++++++++++++++++
+ include/linux/mailbox_client.h     |  2 ++
+ include/linux/mailbox_controller.h |  1 +
+ 3 files changed, 19 insertions(+)
 
-diff --git a/fs/nilfs2/dir.c b/fs/nilfs2/dir.c
-index a8602729586a..14e8d82f8629 100644
---- a/fs/nilfs2/dir.c
-+++ b/fs/nilfs2/dir.c
-@@ -95,7 +95,7 @@ static void nilfs_commit_chunk(struct folio *folio,
- 	unsigned int nr_dirty;
- 	int err;
- 
--	nr_dirty = nilfs_page_count_clean_buffers(&folio->page, from, to);
-+	nr_dirty = nilfs_page_count_clean_buffers(folio, from, to);
- 	copied = block_write_end(NULL, mapping, pos, len, len, folio, NULL);
- 	if (pos + copied > dir->i_size)
- 		i_size_write(dir, pos + copied);
-diff --git a/fs/nilfs2/inode.c b/fs/nilfs2/inode.c
-index c24f06268010..cf9ba481ae37 100644
---- a/fs/nilfs2/inode.c
-+++ b/fs/nilfs2/inode.c
-@@ -242,7 +242,7 @@ static int nilfs_write_end(struct file *file, struct address_space *mapping,
- 	unsigned int nr_dirty;
- 	int err;
- 
--	nr_dirty = nilfs_page_count_clean_buffers(&folio->page, start,
-+	nr_dirty = nilfs_page_count_clean_buffers(folio, start,
- 						  start + copied);
- 	copied = generic_write_end(file, mapping, pos, len, copied, folio,
- 				   fsdata);
-diff --git a/fs/nilfs2/page.c b/fs/nilfs2/page.c
-index 10def4b55995..e48079ebe939 100644
---- a/fs/nilfs2/page.c
-+++ b/fs/nilfs2/page.c
-@@ -422,14 +422,14 @@ void nilfs_clear_folio_dirty(struct folio *folio)
- 	__nilfs_clear_folio_dirty(folio);
+diff --git a/drivers/mailbox/mailbox.c b/drivers/mailbox/mailbox.c
+index d3d26a2c9895..d58a77fcf804 100644
+--- a/drivers/mailbox/mailbox.c
++++ b/drivers/mailbox/mailbox.c
+@@ -164,6 +164,22 @@ void mbox_chan_received_data(struct mbox_chan *chan, void *mssg)
  }
+ EXPORT_SYMBOL_GPL(mbox_chan_received_data);
  
--unsigned int nilfs_page_count_clean_buffers(struct page *page,
-+unsigned int nilfs_page_count_clean_buffers(struct folio *folio,
- 					    unsigned int from, unsigned int to)
- {
- 	unsigned int block_start, block_end;
- 	struct buffer_head *bh, *head;
- 	unsigned int nc = 0;
++/**
++ * mbox_chan_received_data_bh - A way for controller driver to push data
++ *				received from remote to the upper layer.
++ * @chan: Pointer to the mailbox channel on which RX happened.
++ * @mssg: Client specific message typecasted as void *
++ *
++ * For the operations which is not atomic can be called from
++ * mbox_chan_received_data_bh().
++ */
++void mbox_chan_received_data_bh(struct mbox_chan *chan, void *mssg)
++{
++	if (chan->cl->rx_callback_bh)
++		chan->cl->rx_callback_bh(chan->cl, mssg);
++}
++EXPORT_SYMBOL_GPL(mbox_chan_received_data_bh);
++
+ /**
+  * mbox_chan_txdone - A way for controller driver to notify the
+  *			framework that the last TX has completed.
+diff --git a/include/linux/mailbox_client.h b/include/linux/mailbox_client.h
+index 734694912ef7..2cc6fa4e1bf9 100644
+--- a/include/linux/mailbox_client.h
++++ b/include/linux/mailbox_client.h
+@@ -22,6 +22,7 @@ struct mbox_chan;
+  *			if the client receives some ACK packet for transmission.
+  *			Unused if the controller already has TX_Done/RTR IRQ.
+  * @rx_callback:	Atomic callback to provide client the data received
++ * @rx_callback_bh:	Non-atomic callback to provide client the data received
+  * @tx_prepare: 	Atomic callback to ask client to prepare the payload
+  *			before initiating the transmission if required.
+  * @tx_done:		Atomic callback to tell client of data transmission
+@@ -33,6 +34,7 @@ struct mbox_client {
+ 	bool knows_txdone;
  
--	for (bh = head = page_buffers(page), block_start = 0;
-+	for (bh = head = folio_buffers(folio), block_start = 0;
- 	     bh != head || !block_start;
- 	     block_start = block_end, bh = bh->b_this_page) {
- 		block_end = block_start + bh->b_size;
-diff --git a/fs/nilfs2/page.h b/fs/nilfs2/page.h
-index 64521a03a19e..136cd1c143c9 100644
---- a/fs/nilfs2/page.h
-+++ b/fs/nilfs2/page.h
-@@ -43,8 +43,8 @@ int nilfs_copy_dirty_pages(struct address_space *, struct address_space *);
- void nilfs_copy_back_pages(struct address_space *, struct address_space *);
- void nilfs_clear_folio_dirty(struct folio *folio);
- void nilfs_clear_dirty_pages(struct address_space *mapping);
--unsigned int nilfs_page_count_clean_buffers(struct page *, unsigned int,
--					    unsigned int);
-+unsigned int nilfs_page_count_clean_buffers(struct folio *folio,
-+		unsigned int from, unsigned int to);
- unsigned long nilfs_find_uncommitted_extent(struct inode *inode,
- 					    sector_t start_blk,
- 					    sector_t *blkoff);
+ 	void (*rx_callback)(struct mbox_client *cl, void *mssg);
++	void (*rx_callback_bh)(struct mbox_client *cl, void *mssg);
+ 	void (*tx_prepare)(struct mbox_client *cl, void *mssg);
+ 	void (*tx_done)(struct mbox_client *cl, void *mssg, int r);
+ };
+diff --git a/include/linux/mailbox_controller.h b/include/linux/mailbox_controller.h
+index 6fee33cb52f5..74c6a31cd313 100644
+--- a/include/linux/mailbox_controller.h
++++ b/include/linux/mailbox_controller.h
+@@ -130,6 +130,7 @@ struct mbox_chan {
+ int mbox_controller_register(struct mbox_controller *mbox); /* can sleep */
+ void mbox_controller_unregister(struct mbox_controller *mbox); /* can sleep */
+ void mbox_chan_received_data(struct mbox_chan *chan, void *data); /* atomic */
++void mbox_chan_received_data_bh(struct mbox_chan *chan, void *data); /* can sleep */
+ void mbox_chan_txdone(struct mbox_chan *chan, int r); /* atomic */
+ 
+ int devm_mbox_controller_register(struct device *dev,
 -- 
-2.43.0
+2.18.0
 
 
