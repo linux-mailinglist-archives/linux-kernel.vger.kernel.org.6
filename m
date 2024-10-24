@@ -1,124 +1,156 @@
-Return-Path: <linux-kernel+bounces-379119-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379121-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 45D099ADA40
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:09:39 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 5AFB19ADA4B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E59C71F22B17
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:09:38 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C6FCB1F2021D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6F9BE156F5E;
-	Thu, 24 Oct 2024 03:09:31 +0000 (UTC)
-Received: from szxga05-in.huawei.com (szxga05-in.huawei.com [45.249.212.191])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7E100158546;
+	Thu, 24 Oct 2024 03:13:35 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="NWE96jH4"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8613774068;
-	Thu, 24 Oct 2024 03:09:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.191
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CF29242A8A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:13:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729739371; cv=none; b=Dzn9RL/FEJ8uybJXhh0KqltrND6qnotMUbvNWncXX6L5vIiZCXRfjJM4Eg76XNsL++3zYkgDRX/brRO6nQWV4nt1rT8udQrE/QNx/FQ3CFK/WYbcMvt8j/pn1dZ++CJnCYklW4eDHYYCXcjWjxxR/KnU6HP/x0E2gxorDncgx3o=
+	t=1729739614; cv=none; b=mo9W9RVGTZbp9p9G+2CEiCVCo+AVoLXhqv5EG9/ENYxezKgvdoQ70BOKIi8w8hHLeSJFHgSGX3thji4VfHHTHQn5qoqfVLDbdCKsnJclgE4OYoJ3GStrEW6te8eHr9GneSPOFvMhFY3HB6AH5/r1ZoS38meTfJcr1v0xgwItPcQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729739371; c=relaxed/simple;
-	bh=bqGMO8gfXtzyHFpj1RRhYhjDD06u4grA5x3HgcM4/0Y=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=PHExxT+WH1AEaEnlqz3offoKDG+AwwKrhZpCiJlyyK+4SwuwM27CRucuYFYNqmN0L1Bo/wq/XOH8fGhRsaPlJsRo0PaHP/6MFwsbH3FG9BkYekcpMRPApNbbDyH57kS000LeWuwopjjcB08lmdz7oEWwCFUAZtgGfytooTSIYi0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.191
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.88.214])
-	by szxga05-in.huawei.com (SkyGuard) with ESMTP id 4XYrSw5t9gz1jvqk;
-	Thu, 24 Oct 2024 11:08:00 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id A848F1A0171;
-	Thu, 24 Oct 2024 11:09:24 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Oct 2024 11:09:23 +0800
-Message-ID: <c4d40afe-b48a-43da-be88-f7ee38dd720c@huawei.com>
-Date: Thu, 24 Oct 2024 11:09:22 +0800
+	s=arc-20240116; t=1729739614; c=relaxed/simple;
+	bh=HlyBFHyv9hsQPPn+8YHCz9N5cAhzFqasCkuhwzeYXvs=;
+	h=Date:From:To:Cc:Subject:Message-ID; b=RC8yle/tpdfqS+X3lT1ANA33pJq5I0gFS6hITGc1LBbrppQRjDNikMjmE4DjDsyS7IRenYfJ38n/RGBC51mdAegA8Aoq8SNFx8xvdTd0QBlKV/TppzdIl7S+gD3wH6cgK/5xyIq3s92sCxypjm0cEgMIdwUYe8XyXZrFXgB4FXs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=NWE96jH4; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729739613; x=1761275613;
+  h=date:from:to:cc:subject:message-id;
+  bh=HlyBFHyv9hsQPPn+8YHCz9N5cAhzFqasCkuhwzeYXvs=;
+  b=NWE96jH49AWs1WSPYgKS1Ca2GTcyKQOW2R9zwDjeMivd/IKMlEMCA52b
+   NS6R7/C395CU1TdMYksqo3BjXGybJ/LE5drk9bWYb0IbkOw6wj6JuYlb8
+   leJQjyIlCKvn4aprP/x98tz8wOQglIDAE0pKkkapUL+84aUSQO2gKfuuk
+   qGcRKTltToX/HAgBhJJZt96NR9Sk85v2BNDtdT5kHBad+lHeGNxa/Br1h
+   NzuIfwMNw+4OrgjBQZijMU+TfGQMzxPqpkLveK+vAuSYJiHDXqEKHotIu
+   VgtA2ym4BWNb07OUaqQzOeAdK238y89wHQrV3zQbniTeTHda8eRaqwmQq
+   A==;
+X-CSE-ConnectionGUID: m6kMEIEmTauUjqA7hFJmBA==
+X-CSE-MsgGUID: r/yWKwqVRHuikQ/oiiknVA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="33158229"
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="33158229"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 20:13:32 -0700
+X-CSE-ConnectionGUID: tCwvYTd5RwypaipU+Jc6Tg==
+X-CSE-MsgGUID: i2z3balZSiavEgXqOaxU6g==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="80873754"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by orviesa007.jf.intel.com with ESMTP; 23 Oct 2024 20:13:32 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t3oHx-000Vs6-0a;
+	Thu, 24 Oct 2024 03:13:29 +0000
+Date: Thu, 24 Oct 2024 11:12:48 +0800
+From: kernel test robot <lkp@intel.com>
+To: "x86-ml" <x86@kernel.org>
+Cc: linux-kernel@vger.kernel.org
+Subject: [tip:x86/urgent] BUILD SUCCESS
+ 88a921aa3c6b006160d6a46a231b8b32227e8196
+Message-ID: <202410241140.4DVdsHvv-lkp@intel.com>
+User-Agent: s-nail v14.9.24
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 3/7] net: hibmcge: Add unicast frame filter
- supported in this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20241023134213.3359092-1-shaojijie@huawei.com>
- <20241023134213.3359092-4-shaojijie@huawei.com>
- <d66c277b-ea1c-4c33-ab2e-8bd1a0400543@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <d66c277b-ea1c-4c33-ab2e-8bd1a0400543@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems703-chm.china.huawei.com (10.3.19.180) To
- kwepemm000007.china.huawei.com (7.193.23.189)
 
+tree/branch: https://git.kernel.org/pub/scm/linux/kernel/git/tip/tip.git x86/urgent
+branch HEAD: 88a921aa3c6b006160d6a46a231b8b32227e8196  x86/sev: Ensure that RMP table fixups are reserved
 
-on 2024/10/23 22:05, Andrew Lunn wrote:
->> +static int hbg_add_mac_to_filter(struct hbg_priv *priv, const u8 *addr)
->> +{
->> +	u32 index;
->> +
->> +	/* already exists */
->> +	if (!hbg_get_index_from_mac_table(priv, addr, &index))
->> +		return 0;
->> +
->> +	for (index = 0; index < priv->filter.table_max_len; index++)
->> +		if (is_zero_ether_addr(priv->filter.mac_table[index].addr)) {
->> +			hbg_set_mac_to_mac_table(priv, index, addr);
->> +			return 0;
->> +		}
->> +
->> +	if (!priv->filter.table_overflow) {
->> +		priv->filter.table_overflow = true;
->> +		hbg_update_promisc_mode(priv->netdev);
->> +		dev_info(&priv->pdev->dev, "mac table is overflow\n");
->> +	}
->> +
->> +	return -ENOSPC;
-> I _think_ this is wrong. If you run out of hardware resources, you
-> should change the interface to promiscuous mode and let the stack do
-> the filtering. Offloading it to hardware is just an acceleration,
-> nothing more.
->
-> 	Andrew
+elapsed time: 933m
 
-In hbg_update_promisc_mode():
-priv->filter.enabled = !(priv->filter.table_overflow || (netdev->flags & IFF_PROMISC));
-hbg_hw_set_mac_filter_enable(priv, priv->filter.enabled);
+configs tested: 64
+configs skipped: 127
 
-if table_overflow， and netdev->flags not set IFF_PROMISC，
-the priv->filter.enabled will set to false， Then， The MAC filter will be closed.
-I think it's probably the same thing you said
+The following configs have been built successfully.
+More configs may be tested in the coming days.
 
-In this:
-+	if (!priv->filter.table_overflow) {
-+		priv->filter.table_overflow = true;
-+		hbg_update_promisc_mode(priv->netdev);
-+		dev_info(&priv->pdev->dev, "mac table is overflow\n");
-+	}
-+
-+	return -ENOSPC;
+tested configs:
+alpha                       allnoconfig    gcc-14.1.0
+arc                        allmodconfig    clang-20
+arc                         allnoconfig    gcc-14.1.0
+arc                        allyesconfig    clang-20
+arc              vdk_hs38_smp_defconfig    gcc-14.1.0
+arm                        allmodconfig    clang-20
+arm                         allnoconfig    gcc-14.1.0
+arm                        allyesconfig    clang-20
+arm                  spear3xx_defconfig    gcc-14.1.0
+arm                     stm32_defconfig    gcc-14.1.0
+arm64                      allmodconfig    clang-20
+arm64                       allnoconfig    gcc-14.1.0
+csky                       alldefconfig    gcc-14.1.0
+csky                        allnoconfig    gcc-14.1.0
+csky                          defconfig    gcc-14.1.0
+hexagon                     allnoconfig    gcc-14.1.0
+i386                       allmodconfig    clang-18
+i386                       allmodconfig    gcc-12
+i386                        allnoconfig    clang-18
+i386                        allnoconfig    gcc-12
+i386                       allyesconfig    clang-18
+i386                       allyesconfig    gcc-12
+i386                          defconfig    clang-18
+loongarch                  allmodconfig    gcc-14.1.0
+loongarch                   allnoconfig    gcc-14.1.0
+m68k                       allmodconfig    gcc-14.1.0
+m68k                        allnoconfig    gcc-14.1.0
+m68k                       allyesconfig    gcc-14.1.0
+m68k                  m5272c3_defconfig    gcc-14.1.0
+m68k                 m5275evb_defconfig    gcc-14.1.0
+m68k                     virt_defconfig    gcc-14.1.0
+microblaze                 allmodconfig    gcc-14.1.0
+microblaze                  allnoconfig    gcc-14.1.0
+microblaze                 allyesconfig    gcc-14.1.0
+mips                        allnoconfig    gcc-14.1.0
+nios2                       allnoconfig    gcc-14.1.0
+openrisc                    allnoconfig    clang-20
+parisc                      allnoconfig    clang-20
+powerpc                     allnoconfig    clang-20
+powerpc                mgcoge_defconfig    gcc-14.1.0
+powerpc         mpc834x_itxgp_defconfig    gcc-14.1.0
+riscv                       allnoconfig    clang-20
+s390                       allmodconfig    gcc-14.1.0
+s390                        allnoconfig    clang-20
+s390                       allyesconfig    gcc-14.1.0
+sh                         allmodconfig    gcc-14.1.0
+sh                          allnoconfig    gcc-14.1.0
+sh                         allyesconfig    gcc-14.1.0
+sh          ecovec24-romimage_defconfig    gcc-14.1.0
+sh                  edosk7760_defconfig    gcc-14.1.0
+sh                     se7712_defconfig    gcc-14.1.0
+sh                     se7751_defconfig    gcc-14.1.0
+sh             sh7724_generic_defconfig    gcc-14.1.0
+sparc                      allmodconfig    gcc-14.1.0
+um                          allnoconfig    clang-20
+x86_64                      allnoconfig    clang-18
+x86_64                     allyesconfig    clang-18
+x86_64                        defconfig    clang-18
+x86_64                        defconfig    gcc-11
+x86_64                            kexec    clang-18
+x86_64                            kexec    gcc-12
+x86_64                         rhel-8.3    gcc-12
+xtensa                      allnoconfig    gcc-14.1.0
+xtensa            cadence_csp_defconfig    gcc-14.1.0
 
-When the first overflow occurs, a log is printed, the MAC filter will be disabled, and -ENOSPC is returned.
-If continue to add MAC addresses, -ENOSPC is returned only.
-
-Thanks，
-Jijie Shao
-
+--
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
