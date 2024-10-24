@@ -1,203 +1,219 @@
-Return-Path: <linux-kernel+bounces-379048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379049-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id BFAF89AD905
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:54:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD7E29AD908
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:54:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F571F227D8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:54:26 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D193E1C21784
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:54:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1BA8F77;
-	Thu, 24 Oct 2024 00:54:20 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 10AE01BDDF;
+	Thu, 24 Oct 2024 00:54:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o4K/xXRx"
-Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DYZ16apQ"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907A83A1B6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:54:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2800B749A;
+	Thu, 24 Oct 2024 00:54:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729731259; cv=none; b=SYD+eWhL39NEJpYY8ihekushbH5rISkkAaNS0tFz8iQcedlsqPBxonNx45YqSo4KJv170k0DTZN/Fje4FxLP78R2M6JMMkWzBoV5kx72S0tDht1KRifHTBrAFaYsYod6JAOTCw4xa1KEigpBgX9Tw6pZrJuS5vJHtBU2wrwycWk=
+	t=1729731283; cv=none; b=Ezr1i6Z/lhA88bYBUL6UMeqXEo8NSbiNgRVc9tsZ5T8yC8g/jn6+4a73Cs55XLZAAXUfHoRRCVny+UP+xk8iNVI3Ctu+sQJQMJTKjVIc+NyvXRw1L0U0MXkaS8uKaYFFBhK1Kq102UQJTKuyhq56/BOHVmheXOXZZGhCOWg32x0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729731259; c=relaxed/simple;
-	bh=w2E3F9KPincj5xXYDy/XBpkry1Zk9hO+S2Or2DOjkGI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=PjBxgyr1qeA/wTszJAQUJFx1scVseMjVhvSkF+KxwB/u/WZUBcn2dBv0jd4li4o9gP3ivouFIY7O782L0q7P+wDN2YR5Q7ia/vGmSz8aBX4z8N6QSQIrlk8pgF+pkLIxsrGtR/d7/hM4CgFE8BcWzPWoFcNIWH3kZOCh/XXf12c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o4K/xXRx; arc=none smtp.client-ip=95.215.58.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
-Message-ID: <24147551-b639-4f9f-be5e-def2570a863d@linux.dev>
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
-	t=1729731254;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=JVgoIaDu3a4uA7dKxjkeP2UOxgCvLj7AFtqJcyyqZug=;
-	b=o4K/xXRxT7AUFPwBCSjwf44lTQOHULpN9EbY4czS5zwWDveZVONFNXcb/9na/RgypdxIph
-	M9TrJanBk1TnRVtHOnyIFZn475xpRdqBWaSEMV1XTB4oZ4DnH77RdDhs8KCfUTVXORbfeA
-	3oEgq4Z96J+6r5TMClGOLTyFSz5LWp8=
-Date: Thu, 24 Oct 2024 01:54:09 +0100
+	s=arc-20240116; t=1729731283; c=relaxed/simple;
+	bh=ng8ajisjLJlmK1ASYXguTfOr7f/Tx1yLYoZdsZn/c1c=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type:
+	 Content-Disposition; b=RUyPyUN+TgZeKTFIswWTlYGC2m1xThxsmUiTulRY7zCi9sQp443QCurHoledqy80XY3YQkadHECKNJ9w14mXiJeD2sXuf7RrXd/LWDGvZcSB+2BJLIS4BnuJZzKVuJK6JLcRomuK5bpEoG3E1Srkg3blOZbsDPHJHB6DFa8UzJ0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DYZ16apQ; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8277BC4CEC6;
+	Thu, 24 Oct 2024 00:54:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729731282;
+	bh=ng8ajisjLJlmK1ASYXguTfOr7f/Tx1yLYoZdsZn/c1c=;
+	h=Date:From:To:Cc:Subject:From;
+	b=DYZ16apQoLPoWIIKdSbDGQHZ4x7IlTMhFYAa+RLrQ9RDavYJzWSNAJhkGR7365oSI
+	 oAGIb3opX3EHTvVDBMAz4SJORuVbkoZ+SDu4VQzrRBrbjYc5/ZIsbyBFniv5WOEniH
+	 pqfWxboC/o9RPNhnxQfoN4gVUoHaJ9GKpMBRsMufyAMTKeMVin0K5MmCo/WhABbl3D
+	 Ls1vx0J181w49qYKkOJO4QQYrsuNc+09iDJbKWDU07o4u5rEAVnlz4hGcEuXVtEqoR
+	 5Rcf8t0IAuekPZodShnGa7OXfxgygFAoNl6FY+2zQeSXIG0v2hSCe+T1YZD7IQrfIr
+	 RmZfGd3hZJY8A==
+Date: Wed, 23 Oct 2024 14:54:41 -1000
+From: Tejun Heo <tj@kernel.org>
+To: David Vernet <void@manifault.com>
+Cc: bpf@vger.kernel.org, Martin KaFai Lau <martin.lau@kernel.org>,
+	Alexei Starovoitov <ast@kernel.org>, kernel-team@meta.com,
+	sched-ext@meta.com, linux-kernel@vger.kernel.org
+Subject: [PATCH sched_ext/for-6.13 1/2] sched_ext: Rename CFI stubs to names
+ that are recognized by BPF
+Message-ID: <Zxma0Vt6kwWFe1hx@slm.duckdns.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Subject: Re: [PATCH net-next v2 10/15] net: lan969x: add PTP handler function
-To: Daniel Machon <daniel.machon@microchip.com>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- Andrew Lunn <andrew+netdev@lunn.ch>,
- Lars Povlsen <lars.povlsen@microchip.com>,
- Steen Hegelund <Steen.Hegelund@microchip.com>, horatiu.vultur@microchip.com,
- jensemil.schulzostergaard@microchip.com,
- Parthiban.Veerasooran@microchip.com, Raju.Lakkaraju@microchip.com,
- UNGLinuxDriver@microchip.com, Richard Cochran <richardcochran@gmail.com>,
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
- Conor Dooley <conor+dt@kernel.org>, jacob.e.keller@intel.com,
- ast@fiberby.net, maxime.chevallier@bootlin.com, horms@kernel.org
-Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
-References: <20241024-sparx5-lan969x-switch-driver-2-v2-0-a0b5fae88a0f@microchip.com>
- <20241024-sparx5-lan969x-switch-driver-2-v2-10-a0b5fae88a0f@microchip.com>
-Content-Language: en-US
-X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
-From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
-In-Reply-To: <20241024-sparx5-lan969x-switch-driver-2-v2-10-a0b5fae88a0f@microchip.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-Migadu-Flow: FLOW_OUT
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
 
-On 23/10/2024 23:01, Daniel Machon wrote:
-> Add PTP IRQ handler for lan969x. This is required, as the PTP registers
-> are placed in two different targets on Sparx5 and lan969x. The
-> implementation is otherwise the same as on Sparx5.
-> 
-> Also, expose sparx5_get_hwtimestamp() for use by lan969x.
-> 
-> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
-> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
-> ---
->   drivers/net/ethernet/microchip/lan969x/lan969x.c   | 90 ++++++++++++++++++++++
->   .../net/ethernet/microchip/sparx5/sparx5_main.h    |  5 ++
->   drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c |  9 +--
->   3 files changed, 99 insertions(+), 5 deletions(-)
-> 
-> diff --git a/drivers/net/ethernet/microchip/lan969x/lan969x.c b/drivers/net/ethernet/microchip/lan969x/lan969x.c
-> index 2c2b86f9144e..a3b40e09b947 100644
-> --- a/drivers/net/ethernet/microchip/lan969x/lan969x.c
-> +++ b/drivers/net/ethernet/microchip/lan969x/lan969x.c
-> @@ -201,6 +201,95 @@ static int lan969x_port_mux_set(struct sparx5 *sparx5, struct sparx5_port *port,
->   	return 0;
->   }
->   
-> +static irqreturn_t lan969x_ptp_irq_handler(int irq, void *args)
-> +{
-> +	int budget = SPARX5_MAX_PTP_ID;
-> +	struct sparx5 *sparx5 = args;
-> +
-> +	while (budget--) {
-> +		struct sk_buff *skb, *skb_tmp, *skb_match = NULL;
-> +		struct skb_shared_hwtstamps shhwtstamps;
-> +		struct sparx5_port *port;
-> +		struct timespec64 ts;
-> +		unsigned long flags;
-> +		u32 val, id, txport;
-> +		u32 delay;
-> +
-> +		val = spx5_rd(sparx5, PTP_TWOSTEP_CTRL);
-> +
-> +		/* Check if a timestamp can be retrieved */
-> +		if (!(val & PTP_TWOSTEP_CTRL_PTP_VLD))
-> +			break;
-> +
-> +		WARN_ON(val & PTP_TWOSTEP_CTRL_PTP_OVFL);
-> +
-> +		if (!(val & PTP_TWOSTEP_CTRL_STAMP_TX))
-> +			continue;
-> +
-> +		/* Retrieve the ts Tx port */
-> +		txport = PTP_TWOSTEP_CTRL_STAMP_PORT_GET(val);
-> +
-> +		/* Retrieve its associated skb */
-> +		port = sparx5->ports[txport];
-> +
-> +		/* Retrieve the delay */
-> +		delay = spx5_rd(sparx5, PTP_TWOSTEP_STAMP_NSEC);
-> +		delay = PTP_TWOSTEP_STAMP_NSEC_NS_GET(delay);
-> +
-> +		/* Get next timestamp from fifo, which needs to be the
-> +		 * rx timestamp which represents the id of the frame
-> +		 */
-> +		spx5_rmw(PTP_TWOSTEP_CTRL_PTP_NXT_SET(1),
-> +			 PTP_TWOSTEP_CTRL_PTP_NXT,
-> +			 sparx5, PTP_TWOSTEP_CTRL);
-> +
-> +		val = spx5_rd(sparx5, PTP_TWOSTEP_CTRL);
-> +
-> +		/* Check if a timestamp can be retrieved */
-> +		if (!(val & PTP_TWOSTEP_CTRL_PTP_VLD))
-> +			break;
-> +
-> +		/* Read RX timestamping to get the ID */
-> +		id = spx5_rd(sparx5, PTP_TWOSTEP_STAMP_NSEC);
-> +		id <<= 8;
-> +		id |= spx5_rd(sparx5, PTP_TWOSTEP_STAMP_SUBNS);
-> +
-> +		spin_lock_irqsave(&port->tx_skbs.lock, flags);
-> +		skb_queue_walk_safe(&port->tx_skbs, skb, skb_tmp) {
-> +			if (SPARX5_SKB_CB(skb)->ts_id != id)
-> +				continue;
-> +
-> +			__skb_unlink(skb, &port->tx_skbs);
-> +			skb_match = skb;
-> +			break;
-> +		}
-> +		spin_unlock_irqrestore(&port->tx_skbs.lock, flags);
-> +
-> +		/* Next ts */
-> +		spx5_rmw(PTP_TWOSTEP_CTRL_PTP_NXT_SET(1),
-> +			 PTP_TWOSTEP_CTRL_PTP_NXT,
-> +			 sparx5, PTP_TWOSTEP_CTRL);
-> +
-> +		if (WARN_ON(!skb_match))
-> +			continue;
-> +
-> +		spin_lock(&sparx5->ptp_ts_id_lock);
-> +		sparx5->ptp_skbs--;
-> +		spin_unlock(&sparx5->ptp_ts_id_lock);
-> +
-> +		/* Get the h/w timestamp */
-> +		sparx5_get_hwtimestamp(sparx5, &ts, delay);
-> +
-> +		/* Set the timestamp in the skb */
-> +		shhwtstamps.hwtstamp = ktime_set(ts.tv_sec, ts.tv_nsec);
-> +		skb_tstamp_tx(skb_match, &shhwtstamps);
-> +
-> +		dev_kfree_skb_any(skb_match);
-> +	}
-> +
-> +	return IRQ_HANDLED;
-> +}
-> +
+CFI stubs can be used to tag arguments with __nullable (and possibly other
+tags in the future) but for that to work the CFI stubs must have names that
+are recognized by BPF. Rename them.
 
-This handler looks like an absolute copy of sparx5_ptp_irq_handler()
-with the difference in registers only. Did you consider keep one
-function but substitute ptp register sets?
+Signed-off-by: Tejun Heo <tj@kernel.org>
+Cc: Martin KaFai Lau <martin.lau@kernel.org>
+Cc: Alexei Starovoitov <ast@kernel.org>
+---
+ kernel/sched/ext.c |  132 ++++++++++++++++++++++++++---------------------------
+ 1 file changed, 66 insertions(+), 66 deletions(-)
 
->   static const struct sparx5_regs lan969x_regs = {
->   	.tsize = lan969x_tsize,
->   	.gaddr = lan969x_gaddr,
-> @@ -242,6 +331,7 @@ static const struct sparx5_ops lan969x_ops = {
->   	.get_hsch_max_group_rate = &lan969x_get_hsch_max_group_rate,
->   	.get_sdlb_group          = &lan969x_get_sdlb_group,
->   	.set_port_mux            = &lan969x_port_mux_set,
-> +	.ptp_irq_handler         = &lan969x_ptp_irq_handler,
->   };
->   
+--- a/kernel/sched/ext.c
++++ b/kernel/sched/ext.c
+@@ -5634,78 +5634,78 @@ static int bpf_scx_validate(void *kdata)
+ 	return 0;
+ }
+ 
+-static s32 select_cpu_stub(struct task_struct *p, s32 prev_cpu, u64 wake_flags) { return -EINVAL; }
+-static void enqueue_stub(struct task_struct *p, u64 enq_flags) {}
+-static void dequeue_stub(struct task_struct *p, u64 enq_flags) {}
+-static void dispatch_stub(s32 prev_cpu, struct task_struct *p) {}
+-static void tick_stub(struct task_struct *p) {}
+-static void runnable_stub(struct task_struct *p, u64 enq_flags) {}
+-static void running_stub(struct task_struct *p) {}
+-static void stopping_stub(struct task_struct *p, bool runnable) {}
+-static void quiescent_stub(struct task_struct *p, u64 deq_flags) {}
+-static bool yield_stub(struct task_struct *from, struct task_struct *to) { return false; }
+-static bool core_sched_before_stub(struct task_struct *a, struct task_struct *b) { return false; }
+-static void set_weight_stub(struct task_struct *p, u32 weight) {}
+-static void set_cpumask_stub(struct task_struct *p, const struct cpumask *mask) {}
+-static void update_idle_stub(s32 cpu, bool idle) {}
+-static void cpu_acquire_stub(s32 cpu, struct scx_cpu_acquire_args *args) {}
+-static void cpu_release_stub(s32 cpu, struct scx_cpu_release_args *args) {}
+-static s32 init_task_stub(struct task_struct *p, struct scx_init_task_args *args) { return -EINVAL; }
+-static void exit_task_stub(struct task_struct *p, struct scx_exit_task_args *args) {}
+-static void enable_stub(struct task_struct *p) {}
+-static void disable_stub(struct task_struct *p) {}
++static s32 sched_ext_ops__select_cpu(struct task_struct *p, s32 prev_cpu, u64 wake_flags) { return -EINVAL; }
++static void sched_ext_ops__enqueue(struct task_struct *p, u64 enq_flags) {}
++static void sched_ext_ops__dequeue(struct task_struct *p, u64 enq_flags) {}
++static void sched_ext_ops__dispatch(s32 prev_cpu, struct task_struct *p) {}
++static void sched_ext_ops__tick(struct task_struct *p) {}
++static void sched_ext_ops__runnable(struct task_struct *p, u64 enq_flags) {}
++static void sched_ext_ops__running(struct task_struct *p) {}
++static void sched_ext_ops__stopping(struct task_struct *p, bool runnable) {}
++static void sched_ext_ops__quiescent(struct task_struct *p, u64 deq_flags) {}
++static bool sched_ext_ops__yield(struct task_struct *from, struct task_struct *to) { return false; }
++static bool sched_ext_ops__core_sched_before(struct task_struct *a, struct task_struct *b) { return false; }
++static void sched_ext_ops__set_weight(struct task_struct *p, u32 weight) {}
++static void sched_ext_ops__set_cpumask(struct task_struct *p, const struct cpumask *mask) {}
++static void sched_ext_ops__update_idle(s32 cpu, bool idle) {}
++static void sched_ext_ops__cpu_acquire(s32 cpu, struct scx_cpu_acquire_args *args) {}
++static void sched_ext_ops__cpu_release(s32 cpu, struct scx_cpu_release_args *args) {}
++static s32 sched_ext_ops__init_task(struct task_struct *p, struct scx_init_task_args *args) { return -EINVAL; }
++static void sched_ext_ops__exit_task(struct task_struct *p, struct scx_exit_task_args *args) {}
++static void sched_ext_ops__enable(struct task_struct *p) {}
++static void sched_ext_ops__disable(struct task_struct *p) {}
+ #ifdef CONFIG_EXT_GROUP_SCHED
+-static s32 cgroup_init_stub(struct cgroup *cgrp, struct scx_cgroup_init_args *args) { return -EINVAL; }
+-static void cgroup_exit_stub(struct cgroup *cgrp) {}
+-static s32 cgroup_prep_move_stub(struct task_struct *p, struct cgroup *from, struct cgroup *to) { return -EINVAL; }
+-static void cgroup_move_stub(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
+-static void cgroup_cancel_move_stub(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
+-static void cgroup_set_weight_stub(struct cgroup *cgrp, u32 weight) {}
++static s32 sched_ext_ops__cgroup_init(struct cgroup *cgrp, struct scx_cgroup_init_args *args) { return -EINVAL; }
++static void sched_ext_ops__cgroup_exit(struct cgroup *cgrp) {}
++static s32 sched_ext_ops__cgroup_prep_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) { return -EINVAL; }
++static void sched_ext_ops__cgroup_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
++static void sched_ext_ops__cgroup_cancel_move(struct task_struct *p, struct cgroup *from, struct cgroup *to) {}
++static void sched_ext_ops__cgroup_set_weight(struct cgroup *cgrp, u32 weight) {}
+ #endif
+-static void cpu_online_stub(s32 cpu) {}
+-static void cpu_offline_stub(s32 cpu) {}
+-static s32 init_stub(void) { return -EINVAL; }
+-static void exit_stub(struct scx_exit_info *info) {}
+-static void dump_stub(struct scx_dump_ctx *ctx) {}
+-static void dump_cpu_stub(struct scx_dump_ctx *ctx, s32 cpu, bool idle) {}
+-static void dump_task_stub(struct scx_dump_ctx *ctx, struct task_struct *p) {}
++static void sched_ext_ops__cpu_online(s32 cpu) {}
++static void sched_ext_ops__cpu_offline(s32 cpu) {}
++static s32 sched_ext_ops__init(void) { return -EINVAL; }
++static void sched_ext_ops__exit(struct scx_exit_info *info) {}
++static void sched_ext_ops__dump(struct scx_dump_ctx *ctx) {}
++static void sched_ext_ops__dump_cpu(struct scx_dump_ctx *ctx, s32 cpu, bool idle) {}
++static void sched_ext_ops__dump_task(struct scx_dump_ctx *ctx, struct task_struct *p) {}
+ 
+ static struct sched_ext_ops __bpf_ops_sched_ext_ops = {
+-	.select_cpu = select_cpu_stub,
+-	.enqueue = enqueue_stub,
+-	.dequeue = dequeue_stub,
+-	.dispatch = dispatch_stub,
+-	.tick = tick_stub,
+-	.runnable = runnable_stub,
+-	.running = running_stub,
+-	.stopping = stopping_stub,
+-	.quiescent = quiescent_stub,
+-	.yield = yield_stub,
+-	.core_sched_before = core_sched_before_stub,
+-	.set_weight = set_weight_stub,
+-	.set_cpumask = set_cpumask_stub,
+-	.update_idle = update_idle_stub,
+-	.cpu_acquire = cpu_acquire_stub,
+-	.cpu_release = cpu_release_stub,
+-	.init_task = init_task_stub,
+-	.exit_task = exit_task_stub,
+-	.enable = enable_stub,
+-	.disable = disable_stub,
++	.select_cpu		= sched_ext_ops__select_cpu,
++	.enqueue		= sched_ext_ops__enqueue,
++	.dequeue		= sched_ext_ops__dequeue,
++	.dispatch		= sched_ext_ops__dispatch,
++	.tick			= sched_ext_ops__tick,
++	.runnable		= sched_ext_ops__runnable,
++	.running		= sched_ext_ops__running,
++	.stopping		= sched_ext_ops__stopping,
++	.quiescent		= sched_ext_ops__quiescent,
++	.yield			= sched_ext_ops__yield,
++	.core_sched_before	= sched_ext_ops__core_sched_before,
++	.set_weight		= sched_ext_ops__set_weight,
++	.set_cpumask		= sched_ext_ops__set_cpumask,
++	.update_idle		= sched_ext_ops__update_idle,
++	.cpu_acquire		= sched_ext_ops__cpu_acquire,
++	.cpu_release		= sched_ext_ops__cpu_release,
++	.init_task		= sched_ext_ops__init_task,
++	.exit_task		= sched_ext_ops__exit_task,
++	.enable			= sched_ext_ops__enable,
++	.disable		= sched_ext_ops__disable,
+ #ifdef CONFIG_EXT_GROUP_SCHED
+-	.cgroup_init = cgroup_init_stub,
+-	.cgroup_exit = cgroup_exit_stub,
+-	.cgroup_prep_move = cgroup_prep_move_stub,
+-	.cgroup_move = cgroup_move_stub,
+-	.cgroup_cancel_move = cgroup_cancel_move_stub,
+-	.cgroup_set_weight = cgroup_set_weight_stub,
++	.cgroup_init		= sched_ext_ops__cgroup_init,
++	.cgroup_exit		= sched_ext_ops__cgroup_exit,
++	.cgroup_prep_move	= sched_ext_ops__cgroup_prep_move,
++	.cgroup_move		= sched_ext_ops__cgroup_move,
++	.cgroup_cancel_move	= sched_ext_ops__cgroup_cancel_move,
++	.cgroup_set_weight	= sched_ext_ops__cgroup_set_weight,
+ #endif
+-	.cpu_online = cpu_online_stub,
+-	.cpu_offline = cpu_offline_stub,
+-	.init = init_stub,
+-	.exit = exit_stub,
+-	.dump = dump_stub,
+-	.dump_cpu = dump_cpu_stub,
+-	.dump_task = dump_task_stub,
++	.cpu_online		= sched_ext_ops__cpu_online,
++	.cpu_offline		= sched_ext_ops__cpu_offline,
++	.init			= sched_ext_ops__init,
++	.exit			= sched_ext_ops__exit,
++	.dump			= sched_ext_ops__dump,
++	.dump_cpu		= sched_ext_ops__dump_cpu,
++	.dump_task		= sched_ext_ops__dump_task,
+ };
+ 
+ static struct bpf_struct_ops bpf_sched_ext_ops = {
 
