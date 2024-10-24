@@ -1,411 +1,237 @@
-Return-Path: <linux-kernel+bounces-379193-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379194-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 98C6F9ADB45
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:14:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2857F9ADB47
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:14:30 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BF277B22568
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:14:14 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 497611C21C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:14:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C6681714C9;
-	Thu, 24 Oct 2024 05:14:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 87CD8173347;
+	Thu, 24 Oct 2024 05:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="VhdOwCaG"
-Received: from mail-qt1-f180.google.com (mail-qt1-f180.google.com [209.85.160.180])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="P5D4IFAh"
+Received: from NAM04-BN8-obe.outbound.protection.outlook.com (mail-bn8nam04on2065.outbound.protection.outlook.com [40.107.100.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7F8ED170822
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:14:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.180
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729746851; cv=none; b=R5IeCAP62jH5UaYjfL90wdpfigjxVXTDTFYF31GLxLDQWy0Jyti1F5ajOINvRv3Xdr5zt1bmw4fwERUO004FMNVpCTYyXdhWMXZU+UduRS5WS8b39vhBYuGMbPnsCVyRgaq5AVnJ8xdjhfcZ+lJbEMgV/YESxWCvCbjQjLbAXG0=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729746851; c=relaxed/simple;
-	bh=GhML9rM5IjsXSXwX3VDtT8xzuqjnunJLMKI6iaayu2g=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Content-Type; b=s7dkK2/bw2GFmqXy1SSm7G33OPrUzkMvPsjduGX7lrq+hluufkbzIC3Svgul3WE6lfHiBuo61X5rkd9cE0qUWE4yC5xfCCfM165ADapdHmiZyLjPQjvqUhEloXffZrwXtLcIPJRlyzvCnG2mecmpeu6rpNNHN88MRY+PUSS5CH0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=VhdOwCaG; arc=none smtp.client-ip=209.85.160.180
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qt1-f180.google.com with SMTP id d75a77b69052e-4609beb631aso3166471cf.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 22:14:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729746847; x=1730351647; darn=vger.kernel.org;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=sPqQBMMwaSEmbFsEPp8BP7GPHr7y6auO2zPri786Gfw=;
-        b=VhdOwCaGezVClN8DK6TNhZhT9r0aTsPZYNazrKkfdRukXnnnfHVc5Bjd1o238AxD/t
-         KpfUc9eM6aENSCYoS/O2bm94Y95qd4fd4nyROgWHSUmC5Suw8jdDVJp0e7oek9z4Scwz
-         Pd1gRbml5Q1rMfSZzwhihVbBRp6fij/l+LRS4rQSl6rcG1T54BMyiP5KwwBpwM/FBC6o
-         1IWWQxUj1Iyh9UfXit1TFtGZkYkZ+wan/iS9JLwE21tQlZkJ4mprdQfBjTahSvdmYagH
-         82xeMm5KXLaNyZ5nNXZZgyoef2jbJ35UfFTdflSo/H1IDSLYPqIzIQOXSVPHQydrdsOD
-         EvHQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729746847; x=1730351647;
-        h=content-transfer-encoding:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=sPqQBMMwaSEmbFsEPp8BP7GPHr7y6auO2zPri786Gfw=;
-        b=tMdOIEcmGQznm35vdzbbEUcLiiflBo+6vxa6sq8aWW/seDY0GDxRiGCgGF2asyKBqI
-         JVeSzJpW44cRI31eWKrOdPELK//PGsDNlB6i1a7LwcqJjE9m37RWHuq3fvwbQa3/fTJ3
-         kRYSccfI8AZzaSR3xyGOwpHR4dPXTjfFZIAikjQOY/BoGBHHzQ6mhyhode9CS5XAis6D
-         2CgisXZybQToxP0ROxzkubec3VbeqZaFHAgCmy2YmXNVrEiJlqcQiieBLdcjARjTe+f6
-         nVDpBtcq0Tpw5L0TYsrgXQZUddMUeJTsA64U9kzD/UmFeOOt13YDih6hTFaYNI1p1rqU
-         ibqQ==
-X-Gm-Message-State: AOJu0YwBB01qljUBCcxfjcP9/DvqwFfNx/Y8r522VKTDlIZVpdUcqx/z
-	wkMwpPaFMGN3L8VLHA1xuLoTTjcUDRmTxKtdLwGBTB00oHDjCTQP4EoSIoy+pLOhm9JNUzWxist
-	YGYCok4gNv/xJN0KlPjeYTv57MzwUd3Am
-X-Google-Smtp-Source: AGHT+IGGdbZ4LiscJrSCLy8Tw3GalEkgKbRpVgHdmxjuCAWuXkMQsAdZPD7CvH1U/00YgwLRsIOIdzGYaKKY8XA8RR4=
-X-Received: by 2002:ac8:5e0e:0:b0:460:946c:9e47 with SMTP id
- d75a77b69052e-461145af602mr63042831cf.10.1729746847091; Wed, 23 Oct 2024
- 22:14:07 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9664B170822;
+	Thu, 24 Oct 2024 05:14:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.100.65
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729746862; cv=fail; b=gj6NxfvlzG6vJIHGiq0C2QCq2MCO2Z42nDAeI7/Rf6RETTM2UCoLEp7M18z9WprjbFSHDQAzKrhzSMzWJYKYxRyQdypUPZkj0OVqpYSiPBlKaMWhS8OTnn4EHuoljBTYrovnqudM9teNydth6wo+fZPheMWnw7u4/4j9R1MSKyI=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729746862; c=relaxed/simple;
+	bh=WatqGUxEbqWNZmFgbhoTYJy1xSyxk3NMeK15bp+vjkg=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=rkz0XaX7+iRoshSG/seg1Llp60GJH4XsI7S2m/GEhvwRxn2ol+2+RqQ/yMdcXalkB+LtWLmg7OcqVx13oW6eVZYo6Y4gGTQgPvuZrpVh0wZnwItkT6AialxzJ2fnK4pTH6UMR4IulceHHhiuuJa8AeH93uND8eXqO9rbRqm4wcE=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=P5D4IFAh; arc=fail smtp.client-ip=40.107.100.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=Bg6EswuExny9JwiSTLOURKW7kUkw/paYv0gcTReoaad4GKHbiqeV2n9uR5GIPEnL/tmlBzSO+dw22J936efUo8YCx1t3srV5UO27dcoPP78Wy1cKRkNPEQpIxr6hJi0RNDJ39PD80P3zTVyi5ZI/MEfSp5doiroeO1j9o2LRfUalPGlEbquE/pQjmMD4f4bkD0IPEaG6TkmnXdZOO74hbxOLUCXYKKU04r1bGsDfBJPXuZmBbY2xVXrIxithrx2bNOcs17NJDgzjkSckUvI957ib4nrptd5K/GHghuwQcgfo2AYTBKzT9M0+Q4OXRL/5jwtYlJUaNCF8ZaTQXA6FLg==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=0MCjTSI60r9zQGkfVwWLEJkvmi8gwlXhwODSHQifrOw=;
+ b=VWLD1XIR4XKrfM/CyCGJwSPfUBJfHtAqakF1LmPv8N6HbtTffNCHkaAGyO1GttgvFRVR1MonFRcREYWCL4PMzO8fd4Ghf1LMgGVE0xF7K8w+hDstMvp15OoC1TWZjpXnGP0+AEJWFgfycug+HLSQZaHKlEz7/Y3MESsQNStk5tqxECYk58Q4BNPOzV8lPVMpMUB1nFkEIMbqoVWBef/4qx8ltGtwZadni6KwiP/5NJYi42FvFtLJ6l5i/cwHu+JgiGVlc6EplCzAazW7BPkd3KHtmEZEh+RxIGB1NK3wxpQN+MvNcTisIUeBHSLhLlYyCJIxEu3ARuEaXIsAYA7zkg==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=0MCjTSI60r9zQGkfVwWLEJkvmi8gwlXhwODSHQifrOw=;
+ b=P5D4IFAh+Xi3FCZxOT69io7+e/1R2GrmSaZP4DoUS0oXjNuWkHE3d2tjS7u0L5JIELnE99dTl9PKoS2Fj2ckcw/SsQFoKKTYeHrOVRAuvtwAFBIk1pBquVnjY87PVM+Gh/5RYkENmqRa7irBUOtU931/HLCZxaiOSjw6jxMsVg0=
+Received: from CYYPR12MB8655.namprd12.prod.outlook.com (2603:10b6:930:c4::19)
+ by MW4PR12MB7432.namprd12.prod.outlook.com (2603:10b6:303:22d::9) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8069.29; Thu, 24 Oct
+ 2024 05:14:17 +0000
+Received: from CYYPR12MB8655.namprd12.prod.outlook.com
+ ([fe80::7fa2:65b3:1c73:cdbf]) by CYYPR12MB8655.namprd12.prod.outlook.com
+ ([fe80::7fa2:65b3:1c73:cdbf%4]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
+ 05:14:17 +0000
+From: "Yuan, Perry" <Perry.Yuan@amd.com>
+To: "Ugwekar, Dhananjay" <Dhananjay.Ugwekar@amd.com>
+CC: "linux-pm@vger.kernel.org" <linux-pm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>, "Shenoy,
+ Gautham Ranjal" <gautham.shenoy@amd.com>, "Limonciello, Mario"
+	<Mario.Limonciello@amd.com>, "rafael@kernel.org" <rafael@kernel.org>,
+	"viresh.kumar@linaro.org" <viresh.kumar@linaro.org>
+Subject: RE: [PATCH 3/4] cpufreq/amd-pstate: Call cppc_set_epp_perf in the
+ reenable function
+Thread-Topic: [PATCH 3/4] cpufreq/amd-pstate: Call cppc_set_epp_perf in the
+ reenable function
+Thread-Index: AQHbJTW4MQoOwdEsEkOikT4n+fy18bKVVZ9Q
+Date: Thu, 24 Oct 2024 05:14:17 +0000
+Message-ID:
+ <CYYPR12MB86551DC2488F5A11ADB643109C4E2@CYYPR12MB8655.namprd12.prod.outlook.com>
+References: <20241023102108.5980-1-Dhananjay.Ugwekar@amd.com>
+ <20241023102108.5980-4-Dhananjay.Ugwekar@amd.com>
+In-Reply-To: <20241023102108.5980-4-Dhananjay.Ugwekar@amd.com>
+Accept-Language: en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+msip_labels:
+ MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ActionId=078f7bb8-db04-4687-891b-adcae18cf419;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_ContentBits=0;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Enabled=true;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Method=Standard;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_Name=AMD
+ Internal Distribution
+ Only;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SetDate=2024-10-24T04:48:51Z;MSIP_Label_dce362fe-1558-4fb5-9f64-8a6240d76441_SiteId=3dd8961f-e488-4e60-8e11-a82d994e183d;
+authentication-results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+x-ms-publictraffictype: Email
+x-ms-traffictypediagnostic: CYYPR12MB8655:EE_|MW4PR12MB7432:EE_
+x-ms-office365-filtering-correlation-id: e7594b5e-7091-4be1-0249-08dcf3eab571
+x-ms-exchange-senderadcheck: 1
+x-ms-exchange-antispam-relay: 0
+x-microsoft-antispam: BCL:0;ARA:13230040|366016|376014|1800799024|38070700018;
+x-microsoft-antispam-message-info:
+ =?us-ascii?Q?X02P6wq6pybgkl7EgIRRg6o7klGLJq8xt/0JVvSLK6G0zrhOfjFfxArLwMVm?=
+ =?us-ascii?Q?IurtqRk+8UlYLr4Gkk3DqyRdYKUVbJPSQPm2s1NnzwoUt5S1I1kYqbrQap8G?=
+ =?us-ascii?Q?kIiDrtoMxdj1ctvR3mZXtL1NfzPhuqi++62zc7bIeoho63bOD9WIzeek68xZ?=
+ =?us-ascii?Q?HN+BpE8GyNQJXZRznhsLu5F6xChMn6l+EqBZrIqKS4QANdO6eOUWUPXM0ti+?=
+ =?us-ascii?Q?PEjxb4yEkFB79LeL7JbgnLbqGh5rfm1riGmJR1QiEu4gemWYThaB0J3LU40m?=
+ =?us-ascii?Q?Lz1KQYIu8QRFajOLH4Jq5KKUH870wPfraRAtJk4kHtWjqIiT9J5aO79Elc64?=
+ =?us-ascii?Q?NHf4AsCsApKSxI60a/dFdZqbtZaJTsVl8p88s843cxS+3YvYgEcOfIwe2wkq?=
+ =?us-ascii?Q?Hb2yI+3k02gZcqRkba39N3Jqt7FQRS/jgkzoJR6XwD6W5vrNWC6YatoAm1Sy?=
+ =?us-ascii?Q?t7c1aAXE5uypm9bG6JynRclS7Kty2/iHaFoWEG5ERelWD7KAeopIMs4FrpGh?=
+ =?us-ascii?Q?1gyZZWtvfllL8NcIzQFcD+QNUVM13AhrteQFbEkTrJeKptikrf0cHBhKCTt+?=
+ =?us-ascii?Q?0PEJnHRD9Pq14aYrAuvw5rTwyKVPOca932D9sogSfpSzA2RerWpDPJ06+Gee?=
+ =?us-ascii?Q?/Uau/iVAYRbz1Yk13hmGYEr8d8EUFHp1L8RwY84m791rTVU7ymj3gb3bWW2r?=
+ =?us-ascii?Q?DLGl3nfDS0fASaK8AGrONQdTHPpj3fFk8a+sqhxXabEd0qSXlg5/rNsrknst?=
+ =?us-ascii?Q?wFQU4ohnV5spCEda39fQcQeHV3wDG3fXVDurvhr9Sq8EUJVKu4T73eHQublE?=
+ =?us-ascii?Q?U4v15Q6t0ZakRxNY1xELtbV4Dl4yvVPy3ftTDl0+tmTBJz6+k2KjeuRoFDWC?=
+ =?us-ascii?Q?dWO56C/PJ9LIPGNTgtutkV3BkWTzLBFoP8bX+H+6btetaPX71TwaTxqQhB4Y?=
+ =?us-ascii?Q?DxqrnoGTBlPev3iYfvkN75XtCvPv/54t7lAateP4PN2hQJ0L92mqRQ32THGA?=
+ =?us-ascii?Q?8kMRafDUVaITz1azNe2LCXQ3K20qL9+iVY8qFgmJyyYNM9qA7kG8wshn7R0o?=
+ =?us-ascii?Q?y5uaxrNLgzR5g6U5jTKiIIEQDE8JOBEpo5/0w5c8x2YJpBA6B1RJAq//FCo3?=
+ =?us-ascii?Q?6ume0e5ZSmhc0LGtxtnMGWI34QRGPGjA7rZhv4Nmog8qlVBcIbjh/hvvgXNl?=
+ =?us-ascii?Q?mAN29Oj+49uyiecDjhMbExUcoMRvnGIqtHE4Mvuy16lD3QAeA1Bs3L8zSthB?=
+ =?us-ascii?Q?sDluxqpMUjuP6GEl/V3LLTmVwziZSUSVAXFTJ7Dr2Y4GDFmLuUS+wQH97TX8?=
+ =?us-ascii?Q?J71KYb+us6PCHI3QKWAMF7aa4vobzeSYo5Ybpgfut2i5aAKy2PPpIQVZ52E3?=
+ =?us-ascii?Q?J6RMxFI=3D?=
+x-forefront-antispam-report:
+ CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:CYYPR12MB8655.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(376014)(1800799024)(38070700018);DIR:OUT;SFP:1101;
+x-ms-exchange-antispam-messagedata-chunkcount: 1
+x-ms-exchange-antispam-messagedata-0:
+ =?us-ascii?Q?cKR4t8a6cjtk5Nui4jUKyHPqdkX2A02yCMZSelaz70iyDnc+DsQdMho9Y5LO?=
+ =?us-ascii?Q?BrGOdcfWwRf0cpaoXyRlDsuTdEYg02xYKcRyoR4VC3OS//V3c/zAdisprcQp?=
+ =?us-ascii?Q?Szjl9Oo8yHJfwrxllGcsvWGbEO37PaT6CLTQh5plkEOQZz/6mEytI8sVP0k8?=
+ =?us-ascii?Q?6YBRHVioVKyOYXRP5iPccIKons04negjSxKF2giJBTAIos3ETKJhtUSJ++v7?=
+ =?us-ascii?Q?T6uJQPANRj43VRcnpmEfDVCD0h0T198SLLv+9uDshj/LGQ+uvi+42I5EbwWN?=
+ =?us-ascii?Q?Copu7cTEWMsbDujqQhCIfVNVCp00DwSFuWE4Tf0mxwgdSEiO2/u4XgY3+Xfz?=
+ =?us-ascii?Q?8vch8CSaboKlk9Semq3lVUD7wwM8f1WD7jrBmqxGUNIPQ3KxcV8/I3CFfHMa?=
+ =?us-ascii?Q?yWc8DNsPI+KTCALGpCzPkbMV1gNrNR9PRta+xC6zoU5x7gi8xWpNVCVQMeV5?=
+ =?us-ascii?Q?bfWT8nnWKJqQ2tVg3KL6omHjkP5prmGd/0V9oEDa5tm2p//wMFSke+LRYdWb?=
+ =?us-ascii?Q?GxSzYn+PThsRH6Iy5EDnmDjQzAVdhRpzbJVxXurm4iMGJBxJeSdLdTWNlAhX?=
+ =?us-ascii?Q?sSFlJlfycTirYof/z8BSKWt5feBnGcz3WDMnB4iopgs0WlcYuTuXjaWyWC6Q?=
+ =?us-ascii?Q?Tgt6i7YRK8RgANa+UUVZDEl6MNV8Ar7030NyehQ/5Kv2gtCiHMjWpk+jexyf?=
+ =?us-ascii?Q?k/l/sEdndqIBRSQi277+P4Vcb7gO/QgozKiv/loz2wvYcKr2P0r4NvZ186Tr?=
+ =?us-ascii?Q?4ZOyVF/CrXJwjMYz1o7Lg3P+mNhVsv3f5rwCdUIV2DwFtga+GEJAphEIJFkf?=
+ =?us-ascii?Q?ByujY49vb0l7JLctqiqZaNtXPl0Z/Z/pUHkNy/n3/lj5BLU5Wq/G2ecjrnr6?=
+ =?us-ascii?Q?K9hQMAURZ5JlCo2lKypAMZLKq01CPboFWD0/Nj190/pnu2x8MNPBJh56zJqt?=
+ =?us-ascii?Q?mZd03Yb8/GcOU92qZNIQAGhJICQ7dKygwA13/BI7/m/Hetsbh+/zKceNyMAl?=
+ =?us-ascii?Q?VCiOMGRBrHOsPwPTyD9Xa/+mcwEgXnf/1Yevg4mtyh/qtd794gRFzx1SQTQc?=
+ =?us-ascii?Q?k4rYxPQBuW1DYOf5B0pIviN7HkYqHte/RcfMC1bxzRuB+JSWdtczrdSxyuhG?=
+ =?us-ascii?Q?g2BqyfduxICD6yz69DUxI5g4ompuvNV3vL13uJ4LvCWq7GHlXmQUHS0FaFkj?=
+ =?us-ascii?Q?m3G+2UEipg/fRskpT48ZD6Re7pkhYH/RdRjGGhETZBEDdcIF0W65FvGFUDLr?=
+ =?us-ascii?Q?YCFwWo1bNlguTQB4E8QjMVP7BUvvETL1zcoOKTu+o8eEY1Jg2TWc9snlFpLH?=
+ =?us-ascii?Q?ee4NlgHAp+COuxJ5NJ1A/P61l/JftyzNaNUoK8m/PB7XBo8TxM2AWD9O5fKW?=
+ =?us-ascii?Q?WxcdQIEX54Bp2O9/ZdaAZ52b1fejUGeflkegWo14qms3ip5DYPRbweKu7uWN?=
+ =?us-ascii?Q?P+xubvU5s7VpIb3ZzU2aflmNMlPH2AZP/ZZlEcfup2+Jjj40szzlV2viTrPP?=
+ =?us-ascii?Q?jmy4SWdqCX7h+Wy+BqR7FjQJAQmJWIAjpWYTG+k3EZcVvnx1l09Zlljj17Kt?=
+ =?us-ascii?Q?VHl7W3VDStS5rrjxDa4=3D?=
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024032637.34286-1-quake.wang@gmail.com> <CALtW_ajR0hGz9aYdPgqW+TsZJw3QVYvPeA93fEGHKXAdk9RKYQ@mail.gmail.com>
-In-Reply-To: <CALtW_ajR0hGz9aYdPgqW+TsZJw3QVYvPeA93fEGHKXAdk9RKYQ@mail.gmail.com>
-From: Quake Wang <quake.wang@gmail.com>
-Date: Thu, 24 Oct 2024 14:13:56 +0900
-Message-ID: <CAJkr5LPL8K24_-_2NPrEyz=k=BBUM-PUE++eubAfZRWwsmZgVg@mail.gmail.com>
-Subject: Re: [PATCH] Remove Huawei
-To: linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-AuthSource: CYYPR12MB8655.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: e7594b5e-7091-4be1-0249-08dcf3eab571
+X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2024 05:14:17.1531
+ (UTC)
+X-MS-Exchange-CrossTenant-fromentityheader: Hosted
+X-MS-Exchange-CrossTenant-id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
+X-MS-Exchange-CrossTenant-userprincipalname: l+dNI0F92JkherG/bXkq9KCHHMpV2xLqMOszq/Y3I9PrNiK90e39Oi/Raur/FZ7ryzxFQP8NfZXl/ZUdkMZ30Q==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: MW4PR12MB7432
 
-If you haven't heard of huawei sanctions yet, you should try to read
-the news some day. And by "news", I don't mean China state-sponsored
-spam.
+[AMD Official Use Only - AMD Internal Distribution Only]
 
-
-
-On Thu, Oct 24, 2024 at 12:38=E2=80=AFPM Dragan Milivojevi=C4=87
-<d.milivojevic@gmail.com> wrote:
+> -----Original Message-----
+> From: Ugwekar, Dhananjay <Dhananjay.Ugwekar@amd.com>
+> Sent: Wednesday, October 23, 2024 6:21 PM
+> To: Shenoy, Gautham Ranjal <gautham.shenoy@amd.com>; Limonciello, Mario
+> <Mario.Limonciello@amd.com>; Yuan, Perry <Perry.Yuan@amd.com>;
+> rafael@kernel.org; viresh.kumar@linaro.org
+> Cc: linux-pm@vger.kernel.org; linux-kernel@vger.kernel.org; Ugwekar, Dhan=
+anjay
+> <Dhananjay.Ugwekar@amd.com>
+> Subject: [PATCH 3/4] cpufreq/amd-pstate: Call cppc_set_epp_perf in the re=
+enable
+> function
 >
-> The "compliance" purge continues.
-> BTW strange how those "freedom countries" do not sanction Israel.
+> The EPP value being set in perf_ctrls.energy_perf is not being propagated=
+ to the
+> shared memory, fix that.
 >
-> PS
-> For those who are going to complain that this mailing list should be
-> free of politics,
-> I agree, please direct your complaints to those making "freedom
-> countries" remarks.
+> Signed-off-by: Dhananjay Ugwekar <Dhananjay.Ugwekar@amd.com>
+> ---
+>  drivers/cpufreq/amd-pstate.c | 6 ++++--
+>  1 file changed, 4 insertions(+), 2 deletions(-)
 >
-> On Thu, 24 Oct 2024 at 05:26, quake <quake.wang@gmail.com> wrote:
-> >
-> > From: Quake Wang <quake.wang@gmail.com>
-> >
-> > Remove some entries due to various compliance requirements. They cannot=
- come back in the future as huawei is sanctioned by most freedom countries =
-in the world.
-> > ---
-> >  MAINTAINERS | 41 -----------------------------------------
-> >  1 file changed, 41 deletions(-)
-> >
-> > diff --git a/MAINTAINERS b/MAINTAINERS
-> > index e9659a5a7fb3..400701a58534 100644
-> > --- a/MAINTAINERS
-> > +++ b/MAINTAINERS
-> > @@ -322,7 +322,6 @@ F:  tools/power/acpi/
-> >
-> >  ACPI FOR ARM64 (ACPI/arm64)
-> >  M:     Lorenzo Pieralisi <lpieralisi@kernel.org>
-> > -M:     Hanjun Guo <guohanjun@huawei.com>
-> >  M:     Sudeep Holla <sudeep.holla@arm.com>
-> >  L:     linux-acpi@vger.kernel.org
-> >  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscri=
-bers)
-> > @@ -3873,7 +3872,6 @@ F:        Documentation/filesystems/befs.rst
-> >  F:     fs/befs/
-> >
-> >  BFQ I/O SCHEDULER
-> > -M:     Yu Kuai <yukuai3@huawei.com>
-> >  L:     linux-block@vger.kernel.org
-> >  S:     Odd Fixes
-> >  F:     Documentation/block/bfq-iosched.rst
-> > @@ -4082,7 +4080,6 @@ X:        arch/riscv/net/bpf_jit_comp64.c
-> >
-> >  BPF JIT for RISC-V (64-bit)
-> >  M:     Bj=C3=B6rn T=C3=B6pel <bjorn@kernel.org>
-> > -R:     Pu Lehui <pulehui@huawei.com>
-> >  R:     Puranjay Mohan <puranjay@kernel.org>
-> >  L:     bpf@vger.kernel.org
-> >  S:     Maintained
-> > @@ -5697,7 +5694,6 @@ F:        include/linux/compiler_attributes.h
-> >
-> >  COMPUTE EXPRESS LINK (CXL)
-> >  M:     Davidlohr Bueso <dave@stgolabs.net>
-> > -M:     Jonathan Cameron <jonathan.cameron@huawei.com>
-> >  M:     Dave Jiang <dave.jiang@intel.com>
-> >  M:     Alison Schofield <alison.schofield@intel.com>
-> >  M:     Vishal Verma <vishal.l.verma@intel.com>
-> > @@ -5712,7 +5708,6 @@ F:        include/uapi/linux/cxl_mem.h
-> >  F:     tools/testing/cxl/
-> >
-> >  COMPUTE EXPRESS LINK PMU (CPMU)
-> > -M:     Jonathan Cameron <jonathan.cameron@huawei.com>
-> >  L:     linux-cxl@vger.kernel.org
-> >  S:     Maintained
-> >  F:     Documentation/admin-guide/perf/cxl.rst
-> > @@ -8525,7 +8520,6 @@ F:        include/uapi/linux/ext4.h
-> >
-> >  Extended Verification Module (EVM)
-> >  M:     Mimi Zohar <zohar@linux.ibm.com>
-> > -M:     Roberto Sassu <roberto.sassu@huawei.com>
-> >  L:     linux-integrity@vger.kernel.org
-> >  S:     Supported
-> >  T:     git git://git.kernel.org/pub/scm/linux/kernel/git/zohar/linux-i=
-ntegrity.git
-> > @@ -10189,21 +10183,17 @@ F:    net/dsa/tag_hellcreek.c
-> >
-> >  HISILICON DMA DRIVER
-> >  M:     Zhou Wang <wangzhou1@hisilicon.com>
-> > -M:     Jie Hai <haijie1@huawei.com>
-> >  L:     dmaengine@vger.kernel.org
-> >  S:     Maintained
-> >  F:     drivers/dma/hisi_dma.c
-> >
-> >  HISILICON GPIO DRIVER
-> > -M:     Jay Fang <f.fangjian@huawei.com>
-> >  L:     linux-gpio@vger.kernel.org
-> >  S:     Maintained
-> >  F:     Documentation/devicetree/bindings/gpio/hisilicon,ascend910-gpio=
-.yaml
-> >  F:     drivers/gpio/gpio-hisi.c
-> >
-> >  HISILICON HIGH PERFORMANCE RSA ENGINE DRIVER (HPRE)
-> > -M:     Zhiqi Song <songzhiqi1@huawei.com>
-> > -M:     Longfang Liu <liulongfang@huawei.com>
-> >  L:     linux-crypto@vger.kernel.org
-> >  S:     Maintained
-> >  F:     Documentation/ABI/testing/debugfs-hisi-hpre
-> > @@ -10212,7 +10202,6 @@ F:      drivers/crypto/hisilicon/hpre/hpre_cryp=
-to.c
-> >  F:     drivers/crypto/hisilicon/hpre/hpre_main.c
-> >
-> >  HISILICON HNS3 PMU DRIVER
-> > -M:     Jijie Shao <shaojijie@huawei.com>
-> >  S:     Supported
-> >  F:     Documentation/admin-guide/perf/hns3-pmu.rst
-> >  F:     drivers/perf/hisilicon/hns3_pmu.c
-> > @@ -10226,31 +10215,24 @@ F:    Documentation/devicetree/bindings/i2c/h=
-isilicon,ascend910-i2c.yaml
-> >  F:     drivers/i2c/busses/i2c-hisi.c
-> >
-> >  HISILICON KUNPENG SOC HCCS DRIVER
-> > -M:     Huisong Li <lihuisong@huawei.com>
-> >  S:     Maintained
-> >  F:     Documentation/ABI/testing/sysfs-devices-platform-kunpeng_hccs
-> >  F:     drivers/soc/hisilicon/kunpeng_hccs.c
-> >  F:     drivers/soc/hisilicon/kunpeng_hccs.h
-> >
-> >  HISILICON LPC BUS DRIVER
-> > -M:     Jay Fang <f.fangjian@huawei.com>
-> >  S:     Maintained
-> >  W:     http://www.hisilicon.com
-> >  F:     Documentation/devicetree/bindings/arm/hisilicon/low-pin-count.y=
-aml
-> >  F:     drivers/bus/hisi_lpc.c
-> >
-> >  HISILICON NETWORK SUBSYSTEM 3 DRIVER (HNS3)
-> > -M:     Jian Shen <shenjian15@huawei.com>
-> > -M:     Salil Mehta <salil.mehta@huawei.com>
-> > -M:     Jijie Shao <shaojijie@huawei.com>
-> >  L:     netdev@vger.kernel.org
-> >  S:     Maintained
-> >  W:     http://www.hisilicon.com
-> >  F:     drivers/net/ethernet/hisilicon/hns3/
-> >
-> >  HISILICON NETWORK SUBSYSTEM DRIVER
-> > -M:     Jian Shen <shenjian15@huawei.com>
-> > -M:     Salil Mehta <salil.mehta@huawei.com>
-> >  L:     netdev@vger.kernel.org
-> >  S:     Maintained
-> >  W:     http://www.hisilicon.com
-> > @@ -10259,7 +10241,6 @@ F:      drivers/net/ethernet/hisilicon/
-> >
-> >  HISILICON PMU DRIVER
-> >  M:     Yicong Yang <yangyicong@hisilicon.com>
-> > -M:     Jonathan Cameron <jonathan.cameron@huawei.com>
-> >  S:     Supported
-> >  W:     http://www.hisilicon.com
-> >  F:     Documentation/admin-guide/perf/hisi-pcie-pmu.rst
-> > @@ -10268,7 +10249,6 @@ F:      drivers/perf/hisilicon
-> >
-> >  HISILICON PTT DRIVER
-> >  M:     Yicong Yang <yangyicong@hisilicon.com>
-> > -M:     Jonathan Cameron <jonathan.cameron@huawei.com>
-> >  L:     linux-kernel@vger.kernel.org
-> >  S:     Maintained
-> >  F:     Documentation/ABI/testing/sysfs-bus-event_source-devices-hisi_p=
-tt
-> > @@ -10279,7 +10259,6 @@ F:      tools/perf/util/hisi-ptt*
-> >  F:     tools/perf/util/hisi-ptt-decoder/*
-> >
-> >  HISILICON QM DRIVER
-> > -M:     Weili Qian <qianweili@huawei.com>
-> >  M:     Zhou Wang <wangzhou1@hisilicon.com>
-> >  L:     linux-crypto@vger.kernel.org
-> >  S:     Maintained
-> > @@ -10290,7 +10269,6 @@ F:      drivers/crypto/hisilicon/sgl.c
-> >  F:     include/linux/hisi_acc_qm.h
-> >
-> >  HISILICON ROCE DRIVER
-> > -M:     Chengchang Tang <tangchengchang@huawei.com>
-> >  M:     Junxian Huang <huangjunxian6@hisilicon.com>
-> >  L:     linux-rdma@vger.kernel.org
-> >  S:     Maintained
-> > @@ -10298,14 +10276,12 @@ F:    Documentation/devicetree/bindings/infin=
-iband/hisilicon-hns-roce.txt
-> >  F:     drivers/infiniband/hw/hns/
-> >
-> >  HISILICON SAS Controller
-> > -M:     Yihang Li <liyihang9@huawei.com>
-> >  S:     Supported
-> >  W:     http://www.hisilicon.com
-> >  F:     Documentation/devicetree/bindings/scsi/hisilicon-sas.txt
-> >  F:     drivers/scsi/hisi_sas/
-> >
-> >  HISILICON SECURITY ENGINE V2 DRIVER (SEC2)
-> > -M:     Longfang Liu <liulongfang@huawei.com>
-> >  L:     linux-crypto@vger.kernel.org
-> >  S:     Maintained
-> >  F:     Documentation/ABI/testing/debugfs-hisi-sec
-> > @@ -10315,7 +10291,6 @@ F:      drivers/crypto/hisilicon/sec2/sec_crypt=
-o.h
-> >  F:     drivers/crypto/hisilicon/sec2/sec_main.c
-> >
-> >  HISILICON SPI Controller DRIVER FOR KUNPENG SOCS
-> > -M:     Jay Fang <f.fangjian@huawei.com>
-> >  L:     linux-spi@vger.kernel.org
-> >  S:     Maintained
-> >  W:     http://www.hisilicon.com
-> > @@ -10336,18 +10311,15 @@ F:    Documentation/devicetree/bindings/mfd/h=
-isilicon,hi6421-spmi-pmic.yaml
-> >  F:     drivers/mfd/hi6421-spmi-pmic.c
-> >
-> >  HISILICON TRUE RANDOM NUMBER GENERATOR V2 SUPPORT
-> > -M:     Weili Qian <qianweili@huawei.com>
-> >  S:     Maintained
-> >  F:     drivers/crypto/hisilicon/trng/trng.c
-> >
-> >  HISILICON V3XX SPI NOR FLASH Controller Driver
-> > -M:     Jay Fang <f.fangjian@huawei.com>
-> >  S:     Maintained
-> >  W:     http://www.hisilicon.com
-> >  F:     drivers/spi/spi-hisi-sfc-v3xx.c
-> >
-> >  HISILICON ZIP Controller DRIVER
-> > -M:     Yang Shen <shenyang39@huawei.com>
-> >  M:     Zhou Wang <wangzhou1@hisilicon.com>
-> >  L:     linux-crypto@vger.kernel.org
-> >  S:     Maintained
-> > @@ -10504,7 +10476,6 @@ T:      git git://linuxtv.org/media_tree.git
-> >  F:     drivers/media/platform/st/sti/hva
-> >
-> >  HWPOISON MEMORY FAILURE HANDLING
-> > -M:     Miaohe Lin <linmiaohe@huawei.com>
-> >  R:     Naoya Horiguchi <nao.horiguchi@gmail.com>
-> >  L:     linux-mm@kvack.org
-> >  S:     Maintained
-> > @@ -11243,7 +11214,6 @@ F:      drivers/crypto/inside-secure/
-> >
-> >  INTEGRITY MEASUREMENT ARCHITECTURE (IMA)
-> >  M:     Mimi Zohar <zohar@linux.ibm.com>
-> > -M:     Roberto Sassu <roberto.sassu@huawei.com>
-> >  M:     Dmitry Kasatkin <dmitry.kasatkin@gmail.com>
-> >  R:     Eric Snowberg <eric.snowberg@oracle.com>
-> >  L:     linux-integrity@vger.kernel.org
-> > @@ -12447,7 +12417,6 @@ M:      Marc Zyngier <maz@kernel.org>
-> >  M:     Oliver Upton <oliver.upton@linux.dev>
-> >  R:     Joey Gouly <joey.gouly@arm.com>
-> >  R:     Suzuki K Poulose <suzuki.poulose@arm.com>
-> > -R:     Zenghui Yu <yuzenghui@huawei.com>
-> >  L:     linux-arm-kernel@lists.infradead.org (moderated for non-subscri=
-bers)
-> >  L:     kvmarm@lists.linux.dev
-> >  S:     Maintained
-> > @@ -20497,7 +20466,6 @@ F:      drivers/iio/chemical/ens160.h
-> >
-> >  SCSI LIBSAS SUBSYSTEM
-> >  R:     John Garry <john.g.garry@oracle.com>
-> > -R:     Jason Yan <yanaijie@huawei.com>
-> >  L:     linux-scsi@vger.kernel.org
-> >  S:     Supported
-> >  F:     Documentation/scsi/libsas.rst
-> > @@ -21303,7 +21271,6 @@ F:      include/linux/property.h
-> >
-> >  SOFTWARE RAID (Multiple Disks) SUPPORT
-> >  M:     Song Liu <song@kernel.org>
-> > -R:     Yu Kuai <yukuai3@huawei.com>
-> >  L:     linux-raid@vger.kernel.org
-> >  S:     Supported
-> >  Q:     https://patchwork.kernel.org/project/linux-raid/list/
-> > @@ -23549,7 +23516,6 @@ F:      include/uapi/misc/uacce/
-> >
-> >  UBI FILE SYSTEM (UBIFS)
-> >  M:     Richard Weinberger <richard@nod.at>
-> > -R:     Zhihao Cheng <chengzhihao1@huawei.com>
-> >  L:     linux-mtd@lists.infradead.org
-> >  S:     Supported
-> >  W:     http://www.linux-mtd.infradead.org/doc/ubifs.html
-> > @@ -23699,7 +23665,6 @@ F:      drivers/ufs/host/ufs-renesas.c
-> >
-> >  UNSORTED BLOCK IMAGES (UBI)
-> >  M:     Richard Weinberger <richard@nod.at>
-> > -R:     Zhihao Cheng <chengzhihao1@huawei.com>
-> >  L:     linux-mtd@lists.infradead.org
-> >  S:     Supported
-> >  W:     http://www.linux-mtd.infradead.org/
-> > @@ -23803,7 +23768,6 @@ S:      Maintained
-> >  F:     drivers/usb/roles/intel-xhci-usb-role-switch.c
-> >
-> >  USB IP DRIVER FOR HISILICON KIRIN 960
-> > -M:     Yu Chen <chenyu56@huawei.com>
-> >  M:     Binghui Wang <wangbinghui@hisilicon.com>
-> >  L:     linux-usb@vger.kernel.org
-> >  S:     Maintained
-> > @@ -24183,8 +24147,6 @@ S:      Orphan
-> >  F:     drivers/vfio/fsl-mc/
-> >
-> >  VFIO HISILICON PCI DRIVER
-> > -M:     Longfang Liu <liulongfang@huawei.com>
-> > -M:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> >  L:     kvm@vger.kernel.org
-> >  S:     Maintained
-> >  F:     drivers/vfio/pci/hisilicon/
-> > @@ -24213,7 +24175,6 @@ F:      drivers/vfio/pci/nvgrace-gpu/
-> >  VFIO PCI DEVICE SPECIFIC DRIVERS
-> >  R:     Jason Gunthorpe <jgg@nvidia.com>
-> >  R:     Yishai Hadas <yishaih@nvidia.com>
-> > -R:     Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
-> >  R:     Kevin Tian <kevin.tian@intel.com>
-> >  L:     kvm@vger.kernel.org
-> >  S:     Maintained
-> > @@ -24395,7 +24356,6 @@ F:      tools/virtio/
-> >  F:     tools/testing/selftests/drivers/net/virtio_net/
-> >
-> >  VIRTIO CRYPTO DRIVER
-> > -M:     Gonglei <arei.gonglei@huawei.com>
-> >  L:     virtualization@lists.linux.dev
-> >  L:     linux-crypto@vger.kernel.org
-> >  S:     Maintained
-> > @@ -25481,7 +25441,6 @@ F:      drivers/input/misc/yealink.*
-> >
-> >  Z3FOLD COMPRESSED PAGE ALLOCATOR
-> >  M:     Vitaly Wool <vitaly.wool@konsulko.com>
-> > -R:     Miaohe Lin <linmiaohe@huawei.com>
-> >  L:     linux-mm@kvack.org
-> >  S:     Maintained
-> >  F:     mm/z3fold.c
-> > --
-> > 2.39.5 (Apple Git-154)
-> >
-> >
+> diff --git a/drivers/cpufreq/amd-pstate.c b/drivers/cpufreq/amd-pstate.c =
+index
+> 576251e61ce0..bbeddce90823 100644
+> --- a/drivers/cpufreq/amd-pstate.c
+> +++ b/drivers/cpufreq/amd-pstate.c
+> @@ -1616,8 +1616,9 @@ static void amd_pstate_epp_reenable(struct
+> amd_cpudata *cpudata)
+>               wrmsrl_on_cpu(cpudata->cpu, MSR_AMD_CPPC_REQ, value);
+>       } else {
+>               perf_ctrls.max_perf =3D max_perf;
+> -             perf_ctrls.energy_perf =3D
+> AMD_CPPC_ENERGY_PERF_PREF(cpudata->epp_cached);
+>               cppc_set_perf(cpudata->cpu, &perf_ctrls);
+> +             perf_ctrls.energy_perf =3D
+> AMD_CPPC_ENERGY_PERF_PREF(cpudata->epp_cached);
+> +             cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
+>       }
+>  }
+>
+> @@ -1658,8 +1659,9 @@ static void amd_pstate_epp_offline(struct cpufreq_p=
+olicy
+> *policy)
+>       } else {
+>               perf_ctrls.desired_perf =3D 0;
+>               perf_ctrls.max_perf =3D min_perf;
+> -             perf_ctrls.energy_perf =3D
+> AMD_CPPC_ENERGY_PERF_PREF(HWP_EPP_BALANCE_POWERSAVE);
+>               cppc_set_perf(cpudata->cpu, &perf_ctrls);
+> +             perf_ctrls.energy_perf =3D
+> AMD_CPPC_ENERGY_PERF_PREF(HWP_EPP_BALANCE_POWERSAVE);
+> +             cppc_set_epp_perf(cpudata->cpu, &perf_ctrls, 1);
+>       }
+>       mutex_unlock(&amd_pstate_limits_lock);
+>  }
+> --
+> 2.34.1
+
+LGTM, thanks.
+
+
+Reviewed-by: Perry Yuan <perry.yuan@amd.com>
+
+
+Best Regards.
+
+Perry.
+
 
