@@ -1,228 +1,155 @@
-Return-Path: <linux-kernel+bounces-379539-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379540-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8968E9AE024
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:08:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9E8D99AE026
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:10:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 43287283FBF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:08:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BFC121C22127
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:10:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0176F1B0F2C;
-	Thu, 24 Oct 2024 09:08:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9DA691AF0C2;
+	Thu, 24 Oct 2024 09:10:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mkuu2YeN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bE/zrgR4";
-	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="Mkuu2YeN";
-	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="bE/zrgR4"
-Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="zbe86Vtu";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="PtXIsATh"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 92A0A757FC
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:08:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0289EA932
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:10:11 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729760923; cv=none; b=Di6joUlZXQ+j/fTVAoUTRwZFpa9l7zbXYEbKmrm+rx3ocodu5KvKIOprVqzj0aqmQoXoqTUGvOsCg9M/2DlA1r4sdCARNPE0VpMCyfhn/oF5HAWzgRvcN3bAIcgMhVfsOWeRvRQ8F8tn9Uy3Oy1Qy1bY4h5O49+X5AHW/PLjqco=
+	t=1729761014; cv=none; b=SCD3yMYdg78lUiYosYr0yalU2JKuIi9BPc4y/Lp2DV1/VBUP8X/knzKzYqo11vJrZHONfyAjWT8KKOq6/fD+N2JPZoyBXbF52r1cxSsBKHjS2+zBH3FvBPOq2tCQGPYZuhyBoRrELUkeddaXAUF8UYUEW90Lxx5ln3qpJW1ayLQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729760923; c=relaxed/simple;
-	bh=f5nTgmePYaMfC5/6AQJdBd3oGWxhxM7elLWURvZqMls=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=sPlmrSpl9so6mrW78CVlepr+7ISBEvD4Zsck/VL+3LRxc3jHNn2ZD5oxaPJ+h/OvBWe2dIQ6lFP+4XBQbnwSXYMMb1pmEcu8d4awhAWEAtgNO0p6wVptEJ/2tUAny5gld4+LqWma4juemmNIGhpvqnjsOerN86yrux6GCj5bmrI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mkuu2YeN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bE/zrgR4; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=Mkuu2YeN; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=bE/zrgR4; arc=none smtp.client-ip=195.135.223.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
-Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out2.suse.de (Postfix) with ESMTPS id 6AF741FEF0;
-	Thu, 24 Oct 2024 09:08:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729760918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1729761014; c=relaxed/simple;
+	bh=0eTQbIZ90mtviXEQfuNNzytevwlaCWhlPhhulerdYfI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=ffbLeJhvdl7TY7oA2dlXfO5I5KSUBfblpU+oVlkBIiOfCsTpyDztzpKyssYWbhr9doHe1AMhxUOl8jqY7Y+dWV6dFGwbL9Lr8FjvHmK2s35T9Fr3QR8z3E6CbrBaJSSz0rZYAqjP0g10XJfJ4lZXqFdBVUNrWwNUMt6TCRdROv4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=zbe86Vtu; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=PtXIsATh; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+From: Thomas Gleixner <tglx@linutronix.de>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729761010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
-	b=Mkuu2YeN42cv2bqkbfjpF6cBZkn9okipK8oszuQO6tONyyn/3uh63g5hwTB8gLU5mOsEEa
-	RqAz5F8xAyGfMEcPWSeEcj5rBTHVoukzW4tWIRy4B+zYQ8JjVKg236568Ru9YPiY6+8xdV
-	LQ3pFHuDUO3hEcjPgGSizt/zjn7mfME=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729760918;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=gXgmKK18IeSTWdw0F/MTBgv1LhHvnA+pLTDE8An4zzw=;
+	b=zbe86VtuiFkPJBHf77FjrQ07VicxYHBlvv00H+s5Gj7s64x7aH8mic1iXvmgvXrafWq1gX
+	G/3JBBNEzpGJ3WTXBMcMRQEq3lz3Z3TpOvU+4F28X5U7NneJBkFyrEf7sD7EqvZQ5SxynK
+	gwKEeexf+0bxijH2YCD5QQOK/fhpI0G6U7KTKBdI3tzygjcoBFZ4JBJt+m51azo9hkFq/U
+	RJjLWdakoA9h4YqMQKzAExdnuBuSNnWqFaKTRqFhp2zevH3S3kc3j+F/3se0i4uSouFGuh
+	ZGqqZyhOvRCnaBnpvUajD2l07e1HBgBpTd/uZPFIGrPK/gdWh7swYUcLLdMzRw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729761010;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
-	b=bE/zrgR4viAIw3CqcyKCS7Sxcre+Fl3EfXZa2AVwWTAuga2ragKH7NUykNoeOm4OopGmoP
-	IVESQ11tfYoCuVAQ==
-Authentication-Results: smtp-out2.suse.de;
-	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=Mkuu2YeN;
-	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="bE/zrgR4"
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
-	t=1729760918; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
-	b=Mkuu2YeN42cv2bqkbfjpF6cBZkn9okipK8oszuQO6tONyyn/3uh63g5hwTB8gLU5mOsEEa
-	RqAz5F8xAyGfMEcPWSeEcj5rBTHVoukzW4tWIRy4B+zYQ8JjVKg236568Ru9YPiY6+8xdV
-	LQ3pFHuDUO3hEcjPgGSizt/zjn7mfME=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
-	s=susede2_ed25519; t=1729760918;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
-	bh=MbgmDp1U0gRrqSHvz8PN05JPJEeL6GyP2lAdORSK+fc=;
-	b=bE/zrgR4viAIw3CqcyKCS7Sxcre+Fl3EfXZa2AVwWTAuga2ragKH7NUykNoeOm4OopGmoP
-	IVESQ11tfYoCuVAQ==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 4D9331368E;
-	Thu, 24 Oct 2024 09:08:38 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id HwD/EZYOGme5QwAAD6G6ig
-	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 09:08:38 +0000
-Message-ID: <1625e2e0-06ad-459c-b941-41fadea2008d@suse.cz>
-Date: Thu, 24 Oct 2024 11:08:38 +0200
+	 in-reply-to:in-reply-to:references:references;
+	bh=gXgmKK18IeSTWdw0F/MTBgv1LhHvnA+pLTDE8An4zzw=;
+	b=PtXIsAThHfNwj+gtnfGHbnfCRGOVBTagx9vwEETsq7bjBsZ49l8shaCDP1seTemUGhZ4J+
+	3Ev8asXCQaUqKpDA==
+To: Frederic Weisbecker <frederic@kernel.org>
+Cc: LKML <linux-kernel@vger.kernel.org>, Anna-Maria Behnsen
+ <anna-maria@linutronix.de>, John Stultz <jstultz@google.com>, Peter
+ Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@kernel.org>, Stephen
+ Boyd <sboyd@kernel.org>, Eric Biederman <ebiederm@xmission.com>, Oleg
+ Nesterov <oleg@redhat.com>
+Subject: Re: [patch V5 09/26] posix-timers: Make signal overrun accounting
+ sensible
+In-Reply-To: <87ldyd6fq8.ffs@tglx>
+References: <20241001083138.922192481@linutronix.de>
+ <20241001083835.790542522@linutronix.de> <ZxbNlw4F5tUI1a5D@pavilion.home>
+ <87ldyd6fq8.ffs@tglx>
+Date: Thu, 24 Oct 2024 11:10:09 +0200
+Message-ID: <87ed456f4e.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2] mm: shrinker: avoid memleak in alloc_shrinker_info
-Content-Language: en-US
-To: Chen Ridong <chenridong@huaweicloud.com>,
- Roman Gushchin <roman.gushchin@linux.dev>, akpm@linux-foundation.org,
- david@fromorbit.com
-Cc: Muchun Song <muchun.song@linux.dev>,
- Anshuman Khandual <anshuman.khandual@arm.com>,
- "Kirill A. Shutemov" <kirill@shutemov.name>, zhengqi.arch@bytedance.com,
- linux-mm@kvack.org, linux-kernel@vger.kernel.org, wangweiyang2@huawei.com
-References: <fff87be9-fdc8-4c27-8335-17b0c7e16413@suse.cz>
- <1BD74B20-879A-4159-B957-1223553217C1@linux.dev>
- <0b883f9e-451f-41c2-805f-7f5bc7eebee2@suse.cz> <Zw_4fOm_4ifT1uft@google.com>
- <e919c9ba-1d93-4e68-9146-33d1e28103dc@huaweicloud.com>
-From: Vlastimil Babka <vbabka@suse.cz>
-Autocrypt: addr=vbabka@suse.cz; keydata=
- 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
- EP+ylKVEKb0Q2A==
-In-Reply-To: <e919c9ba-1d93-4e68-9146-33d1e28103dc@huaweicloud.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Rspamd-Queue-Id: 6AF741FEF0
-X-Spam-Level: 
-X-Spamd-Result: default: False [-4.51 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	MX_GOOD(-0.01)[];
-	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	ARC_NA(0.00)[];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	MIME_TRACE(0.00)[0:+];
-	FROM_HAS_DN(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	DKIM_TRACE(0.00)[suse.cz:+];
-	RCVD_COUNT_TWO(0.00)[2];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	MID_RHS_MATCH_FROM(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	RCPT_COUNT_SEVEN(0.00)[11];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.cz:email,suse.cz:dkim,suse.cz:mid]
-X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
-X-Rspamd-Action: no action
-X-Spam-Score: -4.51
-X-Spam-Flag: NO
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/24 03:26, Chen Ridong wrote:
->>>> For example, if we use his v1 proposal, we should do
->>>> the cleanups again for info. But for goto-based
->>>> version, we just add another label to do the
->>>> cleanups and go to the new label for failure case. goto-based fix is what I insisted on. I copied my previous suggested fix here to clarify my opinion.
->>>
->>> Again, info is a loop-iteration-local variable, v1 fix making it truly local
->>> is the way to go. If there are further cleanups added in the loop itself in
->>> the future, they could hopefully keep being local to the loop as well.
->>> Cleanup of info outside the loop iteration is breaking its real scope.
->> 
->> +1 to that.
->> 
->> I don't think it's such a big deal and both versions are ok, but I strongly
->> prefer the original version (without introduction of a new label).
->> 
->> Please, feel free to use
->> Acked-by: Roman Gushchin <roman.gushchin@linux.dev>
->> with the original version.
->> 
->> Thanks!
-> 
-> I agree with Roman.
-> Hello, Andrew and Dave, Do you have any opinions?
-> 
-> The original version:
-> https://lore.kernel.org/linux-kernel/4184c61f-80f7-4adc-8929-c29f959cb8df@huawei.com/
+On Thu, Oct 24 2024 at 10:57, Thomas Gleixner wrote:
+> On Mon, Oct 21 2024 at 23:54, Frederic Weisbecker wrote:
+>> Le Tue, Oct 01, 2024 at 10:42:12AM +0200, Thomas Gleixner a =C3=A9crit :
+>>> +	/*
+>>> +	 * Set the overrun count to zero unconditionally. The posix timer
+>>> +	 * code does not self rearm periodic timers. They are rearmed from
+>>> +	 * dequeue_signal().
+>>> +	 *
+>>> +	 * But there is a situation where @q is already enqueued:
+>>> +	 *
+>>> +	 * 1) timer_settime()
+>>> +	 *      arm_timer()
+>>> +	 * 2) timer_expires()
+>>> +	 *      send_sigqueue(@q)
+>>> +	 *        enqueue(@q)
+>>> +	 * 3) timer_settime()
+>>> +	 *      arm_timer()
+>>> +	 * 4) timer_expires()
+>>> +	 *      send_sigqueue(@q) <- Observes @q already queued
+>>> +	 *
+>>> +	 * In this case incrementing si_overrun does not make sense because
+>>> +	 * there is no relationship between timer_settime() #1 and #2.
+>>> +	 *
+>>> +	 * The POSIX specification is useful as always: "The effect of
+>>> +	 * disarming or resetting a timer with pending expiration
+>>> +	 * notifications is unspecified."
+>>> +	 *
+>>> +	 * Just do the sensible thing and reset the overrun.
+>>> +	 */
+>>> +	q->info.si_overrun =3D 0;
+>>
+>> So this means that in the above example case, no signal at all is going =
+to be
+>> delivered (because the seq will be impaired on the previously queued
+>> signal) and no overrun count will be incremented either?
+>
+> So #2 queues the signal, but before delivery the timer is rearmed, which
+> invalidates the signal via the sequence count. So #4 has to set the
+> overrun counter which might be set already.
 
-Hi,
+The signal will be delivered. It's either already marked as pending, but
+not yet delivered or it is masked and will be marked pending on unmask.
 
-Can you resend the v1 as v3, but also move the declaration of "struct
-shrinker_info *info;" inside the for_each_node() block? Also you can add all
-the acks collected for that version and mine too:
+>>> +
+>>>  	ret =3D 1; /* the signal is ignored */
+>>>  	result =3D TRACE_SIGNAL_IGNORED;
+>>>  	if (!prepare_signal(sig, t, false))
+>>> @@ -1968,15 +1996,9 @@ int send_sigqueue(struct sigqueue *q, st
+>>>=20=20
+>>>  	ret =3D 0;
+>>>  	if (unlikely(!list_empty(&q->list))) {
+>>> -		/*
+>>> -		 * If an SI_TIMER entry is already queue just increment
+>>> -		 * the overrun count.
+>>> -		 */
+>>> -		q->info.si_overrun++;
+>>
+>> Who is ever incrementing this after that? I'm a bit confused between the
+>> timer overrun and the sigqueue overrun. Those seem to be two different
+>> things without any link...
+>
+> Hmm. You're right. This should now never happen. Let me stare at it some
+> moar.
 
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
+Of course it can happen that the signal is queued. See above scenario :)
 
-Thanks.
+But q->info.si_overrun should never be anything else than 0. The timer code
+increments the overrun counter and updates si_overrun on signal
+delivery, but that's done on the siginfo which is a copy of q->info.
 
-> Best regards,
-> Ridong
-> 
-> 
+This seems to be a leftover from early posix-timer days... So that
+change can be reduced to removing the increment.
 
+Thanks,
+
+        tglx
 
