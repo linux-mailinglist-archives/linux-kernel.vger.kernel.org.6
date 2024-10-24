@@ -1,127 +1,130 @@
-Return-Path: <linux-kernel+bounces-380092-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380094-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id AF3049AE8D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:30:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 047C99AE8DA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:31:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 648241F21412
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:30:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 35CB11C22531
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:31:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A7F51F6662;
-	Thu, 24 Oct 2024 14:28:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ft92kQfV"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6AB7A1F76A5;
+	Thu, 24 Oct 2024 14:28:22 +0000 (UTC)
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.14])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CAA3A1F5837;
-	Thu, 24 Oct 2024 14:28:05 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4B351F669F;
+	Thu, 24 Oct 2024 14:28:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.14
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780085; cv=none; b=ssF0h7WQiF813v/GEqe6UldCJNle+jTQuyzbfjQWIelMNHsRlDpqexT0FvcZ/58lTmIQ78zneZPx65Fr3R4up0v3xYhsZ/+Sg3titGV+eFKe7p77+p1qr6tEdi3NmCZ9FjHEC3sYWKqv30kT0GjmLvritCTtEzEoJEXZfl4uCrw=
+	t=1729780102; cv=none; b=sBayP/2KkMjL1Z6Fz4U3VmBrtfhTo3/DTFZt3MOB3ZPglhTBmRTb3Vowo0UWG9yEGeHDF0ZjjEGvT3LS1EPeensUstqJghFvmIIY27EIdZK01zfqSwop+6zDlkvYH9RIjTbLOvlK899GMlA++oZAllh/bbFBDUSvHNo4NLS4kkg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780085; c=relaxed/simple;
-	bh=0kRGC0VMT8PExSwlsH5fR6XLTGLcI9KDWObMnFj6wz0=;
+	s=arc-20240116; t=1729780102; c=relaxed/simple;
+	bh=9KmBYw1eiZZ45NfTasyieiF5LdLBmbJ72ug2/gAsLL4=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=SRIUM04j4T3kko3z9Ox10KgNY6wI08yozxxYqubanR1FYbyVJsPaeE/W1SzBeahD1SHOWGb24JJ2nd0mrVVAw2VGgcWB7Kr/YWVFUA3xSyZXGxJhYPW09de3Un0Td8RxewHmFt2rspYYctNcl5MH5FMG2TloiNEuCIBM5GluMGc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ft92kQfV; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0F2EDC4CEE3;
-	Thu, 24 Oct 2024 14:28:04 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729780085;
-	bh=0kRGC0VMT8PExSwlsH5fR6XLTGLcI9KDWObMnFj6wz0=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=ft92kQfVqLRg9/dwH3WJ4uqFDupkRlaeyBaTa/WeY+vszDQjwH4NYOLnTTnMj8dbo
-	 0bt5QUKZxrzjEYGys1h+2/H/gZiw36OXKE8phv1ccC04YRBp7m8ByXrtkgkJ4j03jS
-	 2ckJcZgYPKc9ejakqf70KgRWyp1zOMiyF1ZS8NHjWSZV4a4hIIyJi7B7aoN/jwOUP0
-	 MBrYxMSOUajnWJBZGrBTBLhjDSenhLTHDjevlB/J6BkA0Ya3y2ys/aKNJN1/I/B/k5
-	 A5fEzCaBmAAsLSvhrqaJoj77rB0tLCijd/pvgHUZ+Jwi4SYP3opqxFxxdKhJPvTkem
-	 ujfalPiQhYlwQ==
-Date: Thu, 24 Oct 2024 10:28:03 -0400
-From: Sasha Levin <sashal@kernel.org>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org, davem@davemloft.net, netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org, pabeni@redhat.com, kees@kernel.org,
-	mpe@ellerman.id.au, broonie@kernel.org
-Subject: Re: [GIT PULL] Networking for v6.12-rc5
-Message-ID: <ZxpZcz3jZv2wokh8@sashalap>
-References: <20241024140101.24610-1-pabeni@redhat.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=Eepb3oj2sOgPU1bMVfknhzV9wAih8uCZbJRGu865gLd/VRgijLgwO3mf3/1HrTsT/b8Rzfl7njwuARUswFD/OWieq1U1d2Bm5Hy1/JCrZXaQsRR4vZteXHEOF81zS1ZRkC3ukR9kBd4btp9jA7YPxpeY/qGq4zaCFmnDVXKd21k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com; spf=fail smtp.mailfrom=gmail.com; arc=none smtp.client-ip=198.175.65.14
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=gmail.com
+X-CSE-ConnectionGUID: dcA/yEC9RTOptQYJQJFs5Q==
+X-CSE-MsgGUID: q+V8CnhlQyKW+z9MOo4oLA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="33209024"
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="33209024"
+Received: from orviesa006.jf.intel.com ([10.64.159.146])
+  by orvoesa106.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 07:28:19 -0700
+X-CSE-ConnectionGUID: kAxyAEgGRsqzP2CbF2dKlA==
+X-CSE-MsgGUID: ROTIQ0wXTPGJYZDISuk74A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="80776831"
+Received: from black.fi.intel.com ([10.237.72.28])
+  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 07:28:16 -0700
+Received: by black.fi.intel.com (Postfix, from userid 1003)
+	id 30C1B252; Thu, 24 Oct 2024 17:28:14 +0300 (EEST)
+Date: Thu, 24 Oct 2024 17:28:14 +0300
+From: Andy Shevchenko <andy.shevchenko@gmail.com>
+To: Hans de Goede <hdegoede@redhat.com>
+Cc: Rayyan Ansari <rayyan@ansari.sh>, linux-arm-msm@vger.kernel.org,
+	devicetree@vger.kernel.org, linux-iio@vger.kernel.org,
+	Bjorn Andersson <andersson@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Jonathan Cameron <jic23@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Lars-Peter Clausen <lars@metafoo.de>, linux-kernel@vger.kernel.org,
+	"Rafael J. Wysocki" <rafael@kernel.org>,
+	Robert Yang <decatf@gmail.com>, Rob Herring <robh@kernel.org>,
+	Sean Rhodes <sean@starlabs.systems>
+Subject: Re: [PATCH 2/3] iio: accel: kxcjk-1013: Add support for KX022-1020
+Message-ID: <ZxpZfgsf-KldiX4w@black.fi.intel.com>
+References: <20240714173431.54332-1-rayyan@ansari.sh>
+ <20240714173431.54332-3-rayyan@ansari.sh>
+ <823ce598-dffd-4983-bffa-32559558235d@redhat.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <20241024140101.24610-1-pabeni@redhat.com>
+In-Reply-To: <823ce598-dffd-4983-bffa-32559558235d@redhat.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-Sorry for the spam below, this is another attempt to solicit feedback to
-the -next analysis tools that a few of us were working on.
+On Mon, Jul 15, 2024 at 10:30:46AM +0200, Hans de Goede wrote:
+> On 7/14/24 7:33 PM, Rayyan Ansari wrote:
+> > Add compatible for the KX022-1020 accelerometer [1] using the
+> > KX022-1023 [2] register map as both have an identical i2c interface.
+> > 
+> > [1]: https://kionixfs.azureedge.net/en/datasheet/KX022-1020%20Specifications%20Rev%2012.0.pdf
+> > [2]: https://kionixfs.azureedge.net/en/datasheet/KX023-1025%20Specifications%20Rev%2012.0.pdf
+> > 
+> > Signed-off-by: Rayyan Ansari <rayyan@ansari.sh>
+> 
+> Thanks, patch looks good to me:
+> 
+> Reviewed-by: Hans de Goede <hdegoede@redhat.com>
 
-Bigger changes since the last attempt:
+Note, this patch broke kx231025 case...
 
-   - Count calendar days rather than number of tags for the histogram.  
-   - Make histogram more concise when possible (the below is *not* a good
-     example of the new functionality).
-   - Add more statistics to the report.
+> >  	KXCJ91008,
+> >  	KXTJ21009,
+> >  	KXTF9,
+> > +	KX0221020,
+> >  	KX0231025,
+> >  	KX_MAX_CHIPS /* this must be last */
+> >  };
 
-On Thu, Oct 24, 2024 at 04:01:01PM +0200, Paolo Abeni wrote:
->Hi Linus!
->
->Oddily this includes a fix for posix clock regression; in our previous PR
->we included a change there as a pre-requisite for networking one.
->Such fix proved to be buggy and requires the follow-up included here.
->Thomas suggested we should send it, given we sent the buggy patch.
->
->The following changes since commit 07d6bf634bc8f93caf8920c9d61df761645336e2:
->
->  Merge tag 'net-6.12-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-10-17 09:31:18 -0700)
->
->are available in the Git repository at:
->
->  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc5
+...because this enum is used of ODR startup timeout settings which
+are all moved now to be 0 and new ID inherited the timeouts from
+the KX0231025 case.
 
-Days in linux-next:
-----------------------------------------
-  0 | █████████████████████████████████████████████████ (14)
-  1 | ███████ (2)
-  2 | █████████████████████ (6)
-  3 | ██████████████████████████████████████████ (12)
-  4 |
-  5 |
-  6 | ███ (1)
-  7 |
-  8 | ███ (1)
-  9 |
-10 |
-11 |
-12 |
-13 |
-14+| ██████████████ (4)
+Since I have been looking into the driver, and I have a few patches
+coming, I propose to do the following (as it's still ODR data being
+missed) to:
+1) revert this one;
+2) apply my set;
+3) re-apply this with the fixed data.
 
-Commits with 0 days in linux-next (14 of 40: 35.0%):
---------------------------------
-3e65ede526cf4 net: dsa: mv88e6xxx: support 4000ps cycle counter period
-7e3c18097a709 net: dsa: mv88e6xxx: read cycle counter period from hardware
-67af86afff74c net: dsa: mv88e6xxx: group cycle counter coefficients
-64761c980cbf7 net: usb: qmi_wwan: add Fibocom FG132 0x0112 composition
-4c262801ea60c hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event
-ee76eb24343bd net: dsa: microchip: disable EEE for KSZ879x/KSZ877x/KSZ876x
-246b435ad6685 Bluetooth: ISO: Fix UAF on iso_sock_timeout
-1bf4470a3939c Bluetooth: SCO: Fix UAF on sco_sock_timeout
-989fa5171f005 Bluetooth: hci_core: Disable works on hci_unregister_dev
-6e62807c7fbb3 posix-clock: posix-clock: Fix unbalanced locking in pc_clock_settime()
-10ce0db787004 r8169: avoid unsolicited interrupts
-b22db8b8befe9 net: sched: use RCU read-side critical section in taprio_dump()
-f504465970aeb net: sched: fix use-after-free in taprio_change()
-34d35b4edbbe8 net/sched: act_api: deny mismatched skip_sw/skip_hw flags for actions created by classifiers
+Another approach can be done (but probably not by me) is to move the ID
+to the proper location, add ODR startup timeouts or explain why it's not
+needed and then apply my patch.
+
+But, taking into account that we are almost at -rc5 and I want my stuff
+not to be postponed, I tend to follow the first approach.
+
+Opinions, comments?
+
+P.S. FWIW, my set will include switching this driver to use chip_info
+structure so the similar mistakes won't happen again, that's also why
+I prefer the first approach I listed above.
 
 -- 
-Thanks,
-Sasha
+With Best Regards,
+Andy Shevchenko
+
+
 
