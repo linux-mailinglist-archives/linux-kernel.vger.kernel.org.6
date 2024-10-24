@@ -1,143 +1,130 @@
-Return-Path: <linux-kernel+bounces-380428-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380429-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CA9DE9AEE67
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:40:58 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 15D679AEE6A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:41:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 16F3A28288D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:40:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 478FF1C24F43
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:41:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7856A1FDFBB;
-	Thu, 24 Oct 2024 17:40:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F311FDFBF;
+	Thu, 24 Oct 2024 17:41:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="FgBBcvma"
-Received: from mail-oa1-f52.google.com (mail-oa1-f52.google.com [209.85.160.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBEv5Z7j"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 058B51FC7EB;
-	Thu, 24 Oct 2024 17:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.160.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFF01FC7F7;
+	Thu, 24 Oct 2024 17:41:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729791647; cv=none; b=WKaNRehe+KUB3JEX72OqNY58b2/oUZ+FjsJmAf+VHQ/nRSijPPFUHVqyICXsP545KSxWwcOuhRqsM4roG/7JZa0OJLAU82polgm4zyTgMgOG7No369u8j+JNrc9XR/tCxb60LfiMxIEZQ68q2QMh4P92kbSLkPf9ZYM3sdKvpNw=
+	t=1729791676; cv=none; b=NDji7Z3wQb40PIKkqkSR8zGFcMBU4LlbCUi7fvOPZZF2Jwr6kSSPj6ymjEis3aTeTIn4oMG7QusKbBnTEZPg5WmZAzhQ8c8rMiDIyhXM1104KniIWl27pnR3UIY6tj63kIz6BDVx/myAvycaWcqXAiRFDXx3RiC7TJ6YRWpvH1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729791647; c=relaxed/simple;
-	bh=z61wZmORZ8Y8YGjj3BjTQrqxc6rssIHZiu8ehtMQ2fU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=R/M8b2RmgztUWfoDfV6GUGX+izoYGpIH3qHOCEOrg6gy360ZXXfkJoi+ATrAzZrffovz8gKqwvGBwF2+kVlAq9hJjOVKlzlzkpgn+hzqKnko5/2FyD2Cw886q9FLLjp6RrwFqdEc7+HzBgQpIK7S3V4nJd/4m/oy1TvSjYGD3yU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=FgBBcvma; arc=none smtp.client-ip=209.85.160.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-oa1-f52.google.com with SMTP id 586e51a60fabf-288d74b3a91so806597fac.0;
-        Thu, 24 Oct 2024 10:40:45 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729791645; x=1730396445; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zjv17dU8tomirllFdrleqaUh20JvDrMiKVCU2jx1Mw=;
-        b=FgBBcvmaSw3+KUZHtxfAWf4dVn0aDkj3ey3rQQp4NOtVw6cIdPR9wsoGN6g0Jvrog9
-         /gKHWpFlT/ufduYOC2rY6DoZq3QCS/oLKPmb2ki5j1OXMi/eHxfDUsIwqb9sibFM+fSV
-         0+3jhGwvjvyh0vyN0HuSLbQciqdHI9VX+2bPTMkQrLLKhYOIBR4tImvbN6APpnF+ANGf
-         DWsatXkrMr/g9T7Z2r7CcIBzXoItoU57sXWDw2G9PDtt31vlmxtW/Y72u/EDIo1KVHwE
-         qraYBbvwv9/Qeg0iULOjXnMgThielaY99Zj7YNoDoBYm4mE6B5uUucuh5Ta+5HDvC6bL
-         pdJw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729791645; x=1730396445;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=7Zjv17dU8tomirllFdrleqaUh20JvDrMiKVCU2jx1Mw=;
-        b=rgWh1Dw+CK9EyyJAPJookb+eCoMSHsmzjjAS20ZAGtR8TDNx41Xe7BUrIIk3RwQbAT
-         dpZOBfCutTG38+xFKW7VvmZ9QEJgRo+Q0L+iIn6kzHkm7BrdJMzd7HlGb7MWx97IO96p
-         zFpAaaNTSTRwOyXPkhTDGPor5hyJRDiiKJxTtzVlVvl3Jv7s/00Xu/4eUWa8lp3EDrNl
-         CYY8l98r01CPa3DdbSaijLXMW9/qeo8kWSiVWFn/ufX2Rfmlv4nqZOmULKBHewAJmrCz
-         KzjBE9SffLwehnvJv2HNSvciCkLiBRxmwYJfP0ptqvKYqYl1mmyVoy+1Q+VG7/nZs74H
-         G1Iw==
-X-Forwarded-Encrypted: i=1; AJvYcCV+Qug5zO8ooqKPPLyZCLEOxRJ6n+CvGIoCdG0sIFSPodjLDn7X3H4xi7Qyzaqrd526dl8hk5cEr6l1Q0Ec@vger.kernel.org, AJvYcCWHTF9UiBeCTFWWskmwVG6GOIOgNc8/NX0z1gyETffXKpWYT4cbfhdocefc2ZGeaujFoZEv9Z97@vger.kernel.org, AJvYcCWbdQKTeuclyPYVZ4LgPaPSfEb6epfh69X61JMQa9j6Jao/8u7RMq/b4gglbyE7jZSCDevOvPywlmsuxmMd@vger.kernel.org
-X-Gm-Message-State: AOJu0YzqnCNVfXEhS6FkU2RMf64xCAUI68eZfPEfWJhWjgN/HvkjuULd
-	eAC4fjzpmi5IreYhtfuXfgGRrGno0A4P8hNign2QgssTmJ62/Z4xoDQu0A==
-X-Google-Smtp-Source: AGHT+IGSJ6qgqpeMJRK11qx1SIP451P6iwQsNeQsOzCtkpg5iVsmKfyd+oDf+9ZIT5jNRbu2JguyOA==
-X-Received: by 2002:a05:6870:8a0a:b0:277:fdce:675c with SMTP id 586e51a60fabf-28ced27ba32mr3054949fac.15.1729791644741;
-        Thu, 24 Oct 2024 10:40:44 -0700 (PDT)
-Received: from [192.168.1.22] (syn-070-114-247-242.res.spectrum.com. [70.114.247.242])
-        by smtp.googlemail.com with ESMTPSA id 586e51a60fabf-28c79250b6dsm3150030fac.15.2024.10.24.10.40.43
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 10:40:44 -0700 (PDT)
-Message-ID: <2c027bc3-6cab-4892-9544-10a0a23db871@gmail.com>
-Date: Thu, 24 Oct 2024 12:40:43 -0500
+	s=arc-20240116; t=1729791676; c=relaxed/simple;
+	bh=VjnOFKGWB+Vsz4mAbhv8vBkTom++FJLCVR2sgrw5c8U=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=sWgFArahlqqg/G8v0AatN67zK2UodcYCLsPoosnkZejtJWwF0sqMspdus/nHBUh2uYfFgx9UZu8kVcTQxdBGZZ0vVkjDNhQQpjaQ0S5F7+5bfTuF3FtoGT57hxMdLuVmGRfdFNjbAbvbK8QUGG3zZEs+EbLREj/Owy1EfdA/m4c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBEv5Z7j; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC7EC4CEC7;
+	Thu, 24 Oct 2024 17:41:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729791675;
+	bh=VjnOFKGWB+Vsz4mAbhv8vBkTom++FJLCVR2sgrw5c8U=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=iBEv5Z7jpalzMzU8Cv70eDJWsODtcLv8MJpoM975/moa4CRl0mqa2947WAKyw6bou
+	 Dprt7RvYkr0HBN4CirZQqvKfXtL4V9QXaVVdo0q8Izkl6IEtN/O59SOUFm0/1iBcqX
+	 fqvzwFCHezHOzqXUv1ic7BpNj6k3Q/KdcJ+V+zG4zObX8WLuEx3Er9Z/aZYdwnCdU0
+	 cZkUOS9034URL8EeaqBQKhDBJkQF40gOKqXo5tMBrAtQn7jwZcViPjABM6bhTlN9ZW
+	 nm9xu4xKzpJqnBVjI1E3wD6B0XYvIcaJ2ba9d42YR7lueE78RuCwn4jel2qEtLG9jD
+	 +mteokZgcJMvA==
+Date: Thu, 24 Oct 2024 18:41:08 +0100
+From: Jonathan Cameron <jic23@kernel.org>
+To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
+Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd
+ Bergmann <arnd@arndb.de>, Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
+ Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
+ Mailing List <linux-next@vger.kernel.org>, linux-iio@vger.kernel.org
+Subject: Re: linux-next: manual merge of the char-misc tree with the
+ iio-fixes tree
+Message-ID: <20241024184108.6eb3bdf0@jic23-huawei>
+In-Reply-To: <22f9dbb6-ba5e-4c85-8aa2-6090008e7da4@gmail.com>
+References: <20241023141015.0ec5346d@canb.auug.org.au>
+	<22f9dbb6-ba5e-4c85-8aa2-6090008e7da4@gmail.com>
+X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [RFC PATCH v1 06/10] net: qrtr: Allow sendmsg to target an
- endpoint
-To: Chris Lew <quic_clew@quicinc.com>, netdev@vger.kernel.org
-Cc: Marcel Holtmann <marcel@holtmann.org>, Andy Gross <agross@kernel.org>,
- Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
- "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
- Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
- linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
-References: <20241018181842.1368394-1-denkenz@gmail.com>
- <20241018181842.1368394-7-denkenz@gmail.com>
- <e4fe74c7-6c37-4bab-96bf-a62727dcd468@quicinc.com>
-Content-Language: en-US
-From: Denis Kenzior <denkenz@gmail.com>
-In-Reply-To: <e4fe74c7-6c37-4bab-96bf-a62727dcd468@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: 7bit
 
-Hi Chris,
+On Wed, 23 Oct 2024 20:17:30 +0200
+Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
 
->> @@ -106,6 +106,36 @@ static inline struct qrtr_sock *qrtr_sk(struct sock *sk)
->>       return container_of(sk, struct qrtr_sock, sk);
->>   }
->> +int qrtr_msg_get_endpoint(struct msghdr *msg, u32 *out_endpoint_id)
->> +{
->> +    struct cmsghdr *cmsg;
->> +    u32 endpoint_id = 0;
->> +
->> +    for_each_cmsghdr(cmsg, msg) {
->> +        if (!CMSG_OK(msg, cmsg))
->> +            return -EINVAL;
->> +
->> +        if (cmsg->cmsg_level != SOL_QRTR)
->> +            continue;
->> +
->> +        if (cmsg->cmsg_type != QRTR_ENDPOINT)
->> +            return -EINVAL;
->> +
->> +        if (cmsg->cmsg_len < CMSG_LEN(sizeof(u32)))
->> +            return -EINVAL;
->> +
->> +        /* Endpoint ids start at 1 */
->> +        endpoint_id = *(u32 *)CMSG_DATA(cmsg);
->> +        if (!endpoint_id)
->> +            return -EINVAL;
->> +    }
->> +
->> +    if (out_endpoint_id)
->> +        *out_endpoint_id = endpoint_id;
+> On 23/10/2024 05:10, Stephen Rothwell wrote:
+> > Hi all,
+> > 
+> > Today's linux-next merge of the char-misc tree got a conflict in:
+> > 
+> >   drivers/iio/light/veml6030.c
+> > 
+> > between commit:
+> > 
+> >   de9981636774 ("iio: light: veml6030: fix microlux value calculation")
+> > 
+> > from the iio-fixes tree and commit:
+> > 
+> >   ed59fc90f38a ("iio: light: veml6030: drop processed info for white channel")
+> > 
+> > from the char-misc tree.
+> > 
+> > I fixed it up (the latter removed the line updated by the former) and
+> > can carry the fix as necessary. This is now fixed as far as linux-next
+> > is concerned, but any non trivial conflicts should be mentioned to your
+> > upstream maintainer when your tree is submitted for merging.  You may
+> > also want to consider cooperating with the maintainer of the conflicting
+> > tree to minimise any particularly complex conflicts.
+> >   
 > 
-> In the case when there is no cmsg attached to the msg. Would it be safer to 
-> assign out_endpoint_id to 0 before returning?
+> 
+> Hi Stephen,
+> 
+> I doubled checked the status of the driver in linux-next, and everything
+> looks as it should: the first commit applied as a single chunk, as its
+> second chunk affects lines that the second commit removed.
+> 
+> Thank you for fixing it up.
 
-Hmm, isn't that what happens?  endpoint_id is initialized to 0 in the 
-declaration block, so if no cmsg headers are present, out_endpoint_id will get a 
-0 assigned.
+Not quite. This was a lucky merge issue as it highlighted something I'd
+messed up.
+
+A rare case of a fuzzy application of a patch picking the wrong block but still
+giving a very plausible looking diff that fooled me.
+
+I picked up the fix via a different tree from where you expected.
+In char-misc-next / iio/togreg there is only one instance of this code block because
+the larger driver rework removed one of the two that was in the tree that
+iio-fixes is based on (effectively mainline).
+
+The fix got applied to the one that is going away (which is going away because
+the scale makes no sense on the intensity channel) not the illuminance / IIO_LIGHT
+channel that was intended.
+
+I've move it to the right block with the side effect that the merge conflict
+should go away.  Javier, please check iio.git/fixes-togreg to be 100% sure
+I haven't messed it up again.
+
+Thanks Stephen for your hard work on linux-next!
+
+Jonathan
 
 > 
-> I see that in qrtr_sendmsg() there is a risk of using msg_endpoint_id without it 
-> being initialized or assigned a value in this function.
+> Best regards,
+> Javier Carrasco
 
-Calling this function in qrtr_sendmsg() should always assign msg_endpoint_id 
-unless an error occurred.
-
-Regards,
--Denis
 
