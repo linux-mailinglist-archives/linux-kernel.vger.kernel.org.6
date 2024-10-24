@@ -1,180 +1,246 @@
-Return-Path: <linux-kernel+bounces-379507-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379508-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 503C99ADF79
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:49:35 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 30F079ADF7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:52:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BA589B21674
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:49:32 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id DEA3F281F8B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:52:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1B3741B0F19;
-	Thu, 24 Oct 2024 08:49:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7C5171B0F2F;
+	Thu, 24 Oct 2024 08:52:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ELwgo6wx"
-Received: from mail-lf1-f41.google.com (mail-lf1-f41.google.com [209.85.167.41])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="g9gjzmve"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.19])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 351BE16133C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:49:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.41
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A0E31A76AC;
+	Thu, 24 Oct 2024 08:52:01 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.19
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729759766; cv=none; b=m1IBk4BY2mFrZ+SRjW4ooO0UdyFv9XxVefaubwyIg5i/F4N8G80JV2/jTbRwVzK/9iARpLGzUuL8+MjqvTHiTeP7ypjCHnNkBkLQ4kXihFie34FUd7Z28nE6Gq/LD+9zyBGOrw8enjZAIh5oBZQCzO98pwbE6/HTrFIqC8ym7Lk=
+	t=1729759924; cv=none; b=nBSQli6TbHJzut4Waw+wT6w5inlNB/OMSZWQ5y1TZj2GcE8XM06HtMngCFQ22rDrWliVy5vjv52TTsJrfrJGKazWYBoKM3P2ylIomKdVDWo5ZNueJ0KSEHVTdJOP7/1krtxPKLB/wGcnDHsPs7e2CQkB4fBS+S1Zj1MKPRVzbuU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729759766; c=relaxed/simple;
-	bh=zJiBA6Np68Vftgygtex4miWVOO5TJg9Fl8OkHbBiY58=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Dv2z7+LtNM/BRgoP41Gp04JMM1PFBz5W3kWrgpGHPaltsF18lfNWZQ6RxQDvMXObqZyjeHIk+1qx6ANLDe9Klq9ZYUAvgk3N3MqvytbQwItrfM2xep0uiUe1K8ozAKIfdkubFXpKs/BZwGwJxk+XKBzLpCKBW2T+s5pW0SMHbVg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ELwgo6wx; arc=none smtp.client-ip=209.85.167.41
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lf1-f41.google.com with SMTP id 2adb3069b0e04-539f6e1f756so729921e87.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:49:23 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729759762; x=1730364562; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=xuM8bCSeFkAdLSk99j/aKolBQPa9Ke/95wfPnP0XcD8=;
-        b=ELwgo6wxhCPq7YjacHm8gwTgNG8RS7FTeP0572WFcqwwPt6h5tQ78Mi0gqNnGRMd7h
-         XP3tvzGvmK6p5hIHU8pd4dzR1MJS7gS6lR5ajCvVC3+FPi2XeyTw6qwAPN4A1siGrVqA
-         7ea+XFnJtAVI3it8VceCou5fGtQyvfPNerdMHgdMGOM3MRpgW50mGRJEoO3sfjyTV6CN
-         YboT/op2vo51l1ojOv+W1oTK0X+auEys2j5UCF6jWE8jX8Pl1mIp4n1rm8yhXoozy1wB
-         WQKMcLcNCfVmlF+RlhtXbhFbGZdKEJJ1KCtJs9VTx8KHfv2YZ6O1AAKyGfpE1uf/XfJl
-         K15Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729759762; x=1730364562;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=xuM8bCSeFkAdLSk99j/aKolBQPa9Ke/95wfPnP0XcD8=;
-        b=uuxbW2UjsLf6+UwIy31qU6T23ksXkD0nFFv8RUUY0HEKqTLn0PMkUXQvPJjXEgl7j/
-         1Fy8K3tUBq1Vh/K9Gpd/17WwTJynw7hryPdp5c66W/78R9sw8S1HM9nO8Den203pzBCP
-         UAu6kyG9hHnCm6tQHyQrrW66952cpdUcstdnHxdSddY6D1C4mU8RdLnsbIOaY0pQRNGV
-         dpbleaAqiBTBRspD2fZXFfLwIwlK0JQ1R/RgWhX+ivweWlJnr4rvDgRGHfaT0PLW+MIk
-         61TpFXBXtSFk55E2uI2SN/RBHblPsfF/8xP2J2FAH2olyqh5HmBfiuHLSED4dHAEQWwv
-         Lhyw==
-X-Forwarded-Encrypted: i=1; AJvYcCXqAO5uoI77jDOefXhY9lnoAG4XXSth9Wmz9MlAw1YKpPb6MEPU271olejBiMFKFnO1yAWh7JuzYRhpTaQ=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yznu7OxNK8RpxuXNPQFBkHuKqgBqTRkD02z1kSKvowpEZRo9LaV
-	MGsGWNlgLKp9p+6YaVVQ8gjgwUcYQL8Zxh98rUzeHc+qlBM7WQ1rtZZHIO4jHcb0Y395ckPP6PD
-	mH3+KQ++HIKpnWE/ca9vJW7mA7C8=
-X-Google-Smtp-Source: AGHT+IHqefTcaivDmQ9oHDeTqHREwoeXheT6QRnbFD5ge6DuQtPHJS3tx3adLZOkBDFO+ARAJJuMHI3n6wGZYrnU3jI=
-X-Received: by 2002:a05:6512:3e17:b0:539:f26f:d280 with SMTP id
- 2adb3069b0e04-53b23dcc1cdmr774100e87.5.1729759761988; Thu, 24 Oct 2024
- 01:49:21 -0700 (PDT)
+	s=arc-20240116; t=1729759924; c=relaxed/simple;
+	bh=hSB7ki9TCv25gEGRioPxfqiFePl7Oi/9o5aj1Euzkrs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kDcD/PDu1Ch8mtB0GBrGy65fXEuEH3nHfcPUHSRjnhINejfP5PTkckLgQVp14LZElTrjcJ9TFUfkI7DMIRXJsj+C8/1FAD+sdBRaoBZMxZu/VOessx3SPrd2vXy7kgOFySdsAi3Q/tUixgNeYGLU2hUEEQDO4DGjurjhyaJrwys=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=g9gjzmve; arc=none smtp.client-ip=198.175.65.19
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729759922; x=1761295922;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=hSB7ki9TCv25gEGRioPxfqiFePl7Oi/9o5aj1Euzkrs=;
+  b=g9gjzmve/+OszGrozU4dxWcm6XuQl9HiW7REmQuus0AHf39DKmawao9C
+   kXEzVx5495ZFfSs4Qo0dayeXJtd1VUqmcCa/qeGIsZY7RleeHK0AOA5ot
+   r1EcC7IOgEebthng+bFNYYIe7ZM7aQrElokaNGffSBnrJRT6Gh5x/QS/k
+   sjcNPHlGG2Bx7VV8oZWL36REA+3E0iU6ZmoF8vPhW50kWWyNfgPjK+taJ
+   gynAiAkDY4LcYeKAH/RSGQ+mM56aJrCEyOs3+nWfRYo9yfkED7aC+FyaW
+   ClgMBEsEcgA3ugQ16ikQkhaclqxX2lIzPmN/15RkJLQ8BVava09nrRvZi
+   Q==;
+X-CSE-ConnectionGUID: xtjVZoSNSRimd/qiz6ZoyA==
+X-CSE-MsgGUID: UCoe1PHDShGEDMPX60DKDA==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29244044"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29244044"
+Received: from orviesa007.jf.intel.com ([10.64.159.147])
+  by orvoesa111.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:52:01 -0700
+X-CSE-ConnectionGUID: ZAiubq5eRbeJn35ZDyTAxg==
+X-CSE-MsgGUID: lskRkljnSluJE2b6bfaR7A==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
+   d="scan'208";a="80950434"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa007-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:51:57 -0700
+Message-ID: <80c10cb0-20d8-4b36-93ec-1b2e4bd660ff@intel.com>
+Date: Thu, 24 Oct 2024 11:51:53 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022114736.83285-1-ioworker0@gmail.com> <20241023190515.a80c77fe3fa895910d554888@linux-foundation.org>
- <CAK1f24mGk4pCqf37zXaZbqbTOzLVBqRNnGmf4wEUA9MGYFGoig@mail.gmail.com> <20241023212815.240844bdf83e4dc17b66b88c@linux-foundation.org>
-In-Reply-To: <20241023212815.240844bdf83e4dc17b66b88c@linux-foundation.org>
-From: Lance Yang <ioworker0@gmail.com>
-Date: Thu, 24 Oct 2024 16:48:45 +0800
-Message-ID: <CAK1f24njxUdAc8GibSfrut78jQ4mH8Bno_=m8Pm8E49APnrhyw@mail.gmail.com>
-Subject: Re: [PATCH 0/2] hung_task: add detect count for hung tasks
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: cunhuang@tencent.com, leonylgao@tencent.com, j.granados@samsung.com, 
-	jsiddle@redhat.com, kent.overstreet@linux.dev, 21cnbao@gmail.com, 
-	ryan.roberts@arm.com, david@redhat.com, ziy@nvidia.com, 
-	libang.li@antgroup.com, baolin.wang@linux.alibaba.com, 
-	linux-kernel@vger.kernel.org, linux-mm@kvack.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH V23 00/16] Add support UHS-II for GL9755 and GL9767
+To: Victor Shih <victorshihgli@gmail.com>, ulf.hansson@linaro.org
+Cc: linux-mmc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ benchuanggli@gmail.com, Lucas.Lai@genesyslogic.com.tw,
+ HL.Liu@genesyslogic.com.tw, Greg.tu@genesyslogic.com.tw,
+ dlunev@chromium.org, Victor Shih <victor.shih@genesyslogic.com.tw>
+References: <20241018105333.4569-1-victorshihgli@gmail.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241018105333.4569-1-victorshihgli@gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 12:28=E2=80=AFPM Andrew Morton
-<akpm@linux-foundation.org> wrote:
->
-> On Thu, 24 Oct 2024 11:28:01 +0800 Lance Yang <ioworker0@gmail.com> wrote=
-:
->
-> > Hi Andrew,
-> >
-> > Thanks a lot for paying attention!
-> >
-> > On Thu, Oct 24, 2024 at 10:05=E2=80=AFAM Andrew Morton
-> > <akpm@linux-foundation.org> wrote:
-> > >
-> > > On Tue, 22 Oct 2024 19:47:34 +0800 Lance Yang <ioworker0@gmail.com> w=
-rote:
-> > >
-> > > > Hi all,
-> > > >
-> > > > This patchset adds a counter, hung_task_detect_count, to track the =
-number of
-> > > > times hung tasks are detected. This counter provides a straightforw=
-ard way
-> > > > to monitor hung task events without manually checking dmesg logs.
-> > > >
-> > > > With this counter in place, system issues can be spotted quickly, a=
-llowing
-> > > > admins to step in promptly before system load spikes occur, even if=
- the
-> > > > hung_task_warnings value has been decreased to 0 well before.
-> > > >
-> > > > Recently, we encountered a situation where warnings about hung task=
-s were
-> > > > buried in dmesg logs during load spikes. Introducing this counter c=
-ould
-> > > > have helped us detect such issues earlier and improve our analysis =
-efficiency.
-> > > >
-> > >
-> > > Isn't the answer to this problem "write a better parser"?  I mean,
-> >
-> > Yeah, I certainly agree that having a good parser is important, and I'm
-> > working on that as well ;)
-> >
-> > > we're providing userspace with information which is already available=
-.
-> >
-> > IHMO, there are two reasons why this counter remains valuable:
-> >
-> > 1) It allows us to easily detect hung tasks in time before load spikes =
-occur,
-> > using simple and common monitoring tools like Prometheus.
->
-> But the new sysctl_hung_task_detect_count counter gets incremented a
-> microsecond before the printk comes out.  I don't understand the
-> difference.
->
-> > 2) It ensures that we remain aware of hung tasks even when the
-> > hung_task_warnings value has already been decreased to 0 well before.
->
-> That makes sense, I guess.  But fleshing this out with a real
-> operational scenario would help persuade reviewers of the benefit of
-> this change.
->
-> So please describe the utility with full details - sell it to us!
+On 18/10/24 13:53, Victor Shih wrote:
+> From: Victor Shih <victor.shih@genesyslogic.com.tw>
+> 
+> Summary
+> =======
+> These patches[1] support UHS-II and fix GL9755 and GL9767
+> UHS-II compatibility.
+> 
+> About UHS-II, roughly deal with the following three parts:
+> 1) A UHS-II detection and initialization:
+> - Host setup to support UHS-II (Section 3.13.1 Host Controller Setup
+>   Sequence[2]).
+> - Detect a UHS-II I/F (Section 3.13.2 Card Interface Detection Sequence
+>   [2]).
+> - In step(9) of Section 3.13.2 in [2], UHS-II initialization is include
+>   Section 3.13.3 UHS-II Card Initialization and Section 3.13.4 UHS-II
+>   Setting Register Setup Sequence.
+> 
+> 2) Send Legacy SD command through SD-TRAN
+> - Encapsulated SD packets are defined in SD-TRAN in order to ensure Legacy
+>   SD compatibility and preserve Legacy SD infrastructures (Section 7.1.1
+>   Packet Types and Format Overview[3]).
+> - Host issue a UHS-II CCMD packet or a UHS-II DCMD (Section 3.13.5 UHS-II
+>   CCMD Packet issuing and Section 3.13.6 UHS-II DCMD Packet issuing[2]).
+> 
+> 3) UHS-II Interrupt
+> - Except for UHS-II error interrupts, most interrupts share the original
+>   interrupt registers.
+> 
+> Patch structure
+> ===============
+> patch#1:     for core
+> patch#2-#14: for sdhci
+> patch#15:    for GL9755
+> patch#16:    for GL9767
+> 
+> Tests
+> =====
+> Ran 'dd' command to evaluate the performance 3 times:
+> (SanDisk UHS-II card on GL9755 controller)
+>                              Read    Write
+> UHS-II disabled (UHS-I): 81.9MB/s 51.4MB/s
+> UHS-II enabled         :  206MB/s 80.5MB/s
+>                              Read    Write
+> UHS-II disabled (UHS-I): 82.3MB/s 49.7MB/s
+> UHS-II enabled         :  208MB/s 80.8MB/s
+>                              Read    Write
+> UHS-II disabled (UHS-I): 82.9MB/s 50.8MB/s
+> UHS-II enabled         :  205MB/s 90.0MB/s
+> (SanDisk UHS-II card on GL9767 controller)
+>                              Read    Write
+> UHS-II disabled (UHS-I): 83.5MB/s 50.5MB/s
+> UHS-II enabled         :  200MB/s 75.3MB/s
+>                              Read    Write
+> UHS-II disabled (UHS-I): 85.2MB/s 56.3MB/s
+> UHS-II enabled         :  203MB/s 75.8MB/s
+>                              Read    Write
+> UHS-II disabled (UHS-I): 82.9MB/s 51.1MB/s
+> UHS-II enabled         :  196MB/s 77.8MB/s
+> 
+> Test command
+> =====
+> Read: dd if=/dev/mmcxxx of=/dev/null bs=4096k count=2000 iflag=direct
+> Write:dd if=/dev/zero of=/dev/mmcxxx bs=4096k count=2000 oflag=direct
+> 
+> Changes in v23 (October. 18, 2024)
+> * Rebase on latest mmc/next.
+> * Version 22 patch#1-patch#6 have already been applied to the mmc/next
+>   branch, so the patch order for version 23 has been shifted forward.
+> * Patch#1: Remove mmc_uhs2_card_prepare_cmd() function.
+>            Remove mmc_sd_can_poweroff_notify() function.
+>            Modify ios.timing setting in the sd_uhs2_power_off() function.
+>            Restore the position of assign the host->card to original
+>            position in the sd_uhs2_init_card() function.
+>            Remove unnecessary error handle in the sd_uhs2_init_card()
+>            function.
+>            Add oldcard judgment to skip some programs in the
+>            sd_uhs2_legacy_init() function.
+>            Remove unnecessary error handle in the sd_uhs2_legacy_init()
+>            function.
+>            Remove mmc_card_set_present() function in the
+>            sd_uhs2_reinit()function.
+> 
+> Reference
+> =========
+> [1] https://gitlab.com/VictorShih/linux-uhs2.git
+> [2] SD Host Controller Simplified Specification 4.20
+> [3] UHS-II Simplified Addendum 1.02
+> [4] https://patchwork.kernel.org/project/linux-mmc/cover/20240913102836.6144-1-victorshihgli@gmail.com/
 
-Thanks, the suggestion is very helpful!
+Not all SDHCI patches show my Acked-by although I did give it
+in V22 for SDHCI patches.  So again for SDHCI:
 
-IHMO, hung tasks are a critical metric. Currently, we detect them by
-periodically parsing dmesg. However, this method isn't as user-friendly
-as using a counter.
+Acked-by: Adrian Hunter <adrian.hunter@intel.com>
 
-Sometimes, a short-lived issue with the NIC or hard drive can quickly
-decrease the hung_task_warnings to zero. Without warnings, we must
-directly access the node to ensure that there are no more hung tasks
-and that the system has recovered. After all, load alone cannot provide
-a clear picture.
+Ulf mentioned checkpatch warnings.  Here is a summary:
 
-Once this counter is in place, in a high-density deployment pattern, we pla=
-n
-to set hung_task_timeout_secs to a lower number to improve stability, even
-though this might result in false positives. And then we can set a time-bas=
-ed
-threshold: if hung tasks last beyond this duration, we will automatically
-migrate containers to other nodes. Based on past experience, this approach
-could help avoid many production disruptions.
+  ---------------------------------------------------------------------------------------
+  heads/head-2024-10-24-01/0002-mmc-sdhci-add-UHS-II-related-definitions-in-headers.patch
+  ---------------------------------------------------------------------------------------
+  WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+  #20: 
+  new file mode 100644
 
-Moreover, just like other important events such as OOM that already have
-counters, having a dedicated counter for hung tasks makes sense ;)
+Nope - already covered by drivers/mmc/host/sdhci*
 
-Thanks,
-Lance
+  WARNING: It's generally not useful to have the filename in the file
+  #27: FILE: drivers/mmc/host/sdhci-uhs2.h:3:
+  + *  linux/drivers/mmc/host/sdhci-uhs2.h - Secure Digital Host Controller Interface driver
+
+Could drop the file name
+
+  ----------------------------------------------------------------------------------------
+  heads/head-2024-10-24-01/0003-mmc-sdhci-add-UHS-II-module-and-add-a-kernel-configu.patch
+  ----------------------------------------------------------------------------------------
+  WARNING: please write a help paragraph that fully describes the config symbol
+  #33: FILE: drivers/mmc/host/Kconfig:101:
+  +config MMC_SDHCI_UHS2
+  +	tristate "UHS2 support on SDHCI controller"
+  +	depends on MMC_SDHCI
+  +	help
+  +	  This option is selected by SDHCI controller drivers that want to
+  +	  support UHS2-capable devices.
+  +
+  +	  If you have a controller with this feature, say Y or M here.
+  +
+
+A web-search for uhs2 says what it is, so I have no strong feelings
+about adding more.
+
+  WARNING: added, moved or deleted file(s), does MAINTAINERS need updating?
+  #58: 
+  new file mode 100644
+
+Nope - already covered by drivers/mmc/host/sdhci*
+
+  ----------------------------------------------------------------------------------------
+  heads/head-2024-10-24-01/0010-mmc-sdhci-uhs2-add-related-functions-to-initialize-t.patch
+  ----------------------------------------------------------------------------------------
+  WARNING: Prefer a maximum 75 chars per line (possible unwrapped commit description?)
+  #11: 
+  After detected the UHS-II interface, the host's UHS-II capabilities will be set up here and
+
+Commit message could be wrapped as requested
+
+There is also the ones below, but please _leave_ the code as it is
+consistent with the current code in the struct.
+
+------------------------------------------------------------------------------
+heads/head-2024-10-24-01/0014-mmc-sdhci-pci-add-UHS-II-support-framework.patch
+------------------------------------------------------------------------------
+WARNING: Unnecessary space before function pointer arguments
+#81: FILE: drivers/mmc/host/sdhci-pci.h:148:
++	void			(*remove_host) (struct sdhci_pci_slot *, int);
+WARNING: function definition argument 'struct sdhci_pci_slot *' should also have an identifier name
+#81: FILE: drivers/mmc/host/sdhci-pci.h:148:
++	void			(*remove_host) (struct sdhci_pci_slot *, int);
+WARNING: function definition argument 'int' should also have an identifier name
+#81: FILE: drivers/mmc/host/sdhci-pci.h:148:
++	void			(*remove_host) (struct sdhci_pci_slot *, int);
+total: 0 errors, 3 warnings, 0 checks, 56 lines checked
+
 
