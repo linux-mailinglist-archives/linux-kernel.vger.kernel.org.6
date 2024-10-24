@@ -1,101 +1,115 @@
-Return-Path: <linux-kernel+bounces-380080-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380083-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id C7B0D9AE8AB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:27:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1523D9AE8B3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:28:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8C9EE290AFC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:27:53 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CD960290AC1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:28:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE4B4201018;
-	Thu, 24 Oct 2024 14:22:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 310501E8825;
+	Thu, 24 Oct 2024 14:22:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b="MM/hUCPe"
-Received: from mail.andi.de1.cc (mail.andi.de1.cc [178.238.236.174])
+	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="FWAJDsxh"
+Received: from relay3-d.mail.gandi.net (relay3-d.mail.gandi.net [217.70.183.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 44AAE1F819C;
-	Thu, 24 Oct 2024 14:22:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=178.238.236.174
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 225E01F8EFA;
+	Thu, 24 Oct 2024 14:22:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779744; cv=none; b=ienUGa1Ksrc45LJVnzqEKOtE04mXHTUpgwHA0FCLODGlTMWpJr+/vz5JDondpGhAnKtPmrhyAZmY9s+nLZe9s62r3p9+WQKqVXJ8pcIevuxP8M3oNaMXqM6B8rnJbzBcGOUL1S0Bqd8boV9hseOoLkqGPlGPpt8+2gojtN8vvaY=
+	t=1729779762; cv=none; b=pEZ9oinEytak6d3vMuCPkFZgMtJcc93CdDaSV8ZL81WSRlrsMehq7FVUFNO6cTajVbW0rTUECqBcS8NtrOUBdSNX5bscly8EK7dhnoGSwW2XtMQyfz0MladgcS85Ws1ZvlDhbM4ZXbSQvkyP3Ibz07D2jPDhzVOwpFviYmQHw4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779744; c=relaxed/simple;
-	bh=j2WxG1gi9sX9Q9XHaunLYPDXuZFPxo2eTPeWaKuZNcw=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=ohS2uDVoMQ0II3s3bhuLHadIg/PCFWmSj5LZrM6nltTHtfEw4B8z6OE/PMEqH9roPxTILHl4BoVRixHbIb3hzEzFdiuMDzGbTmRNKKA1Ho7mXYlaupXsFngFKzSjQxk7nb04m/AXyIWGUNCuQXqZUJp7k8mCW5CQ/pVWLFq8Y4o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info; spf=pass smtp.mailfrom=kemnade.info; dkim=pass (2048-bit key) header.d=kemnade.info header.i=@kemnade.info header.b=MM/hUCPe; arc=none smtp.client-ip=178.238.236.174
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=kemnade.info
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kemnade.info
-DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
-	d=kemnade.info; s=20220719; h=References:In-Reply-To:Cc:From:Sender:Reply-To:
-	Content-ID:Content-Description:Resent-Date:Resent-From:Resent-Sender:
-	Resent-To:Resent-Cc:Resent-Message-ID;
-	bh=A1dLRRt6Gpz+f3YNGF2cRhz0EDeBb4t+Te4s+RjcUeE=; b=MM/hUCPeAk4kxGtObuqIjI7It9
-	vQ6bnYec76DSP/lVZSvohzuDN+J+olXJADgnX+ZC55NrHM3OtMR0VOw3VNKVK4Q+yQ2BqDTXKhQaM
-	a7kLY9jUXNOhwIPDVJ3T9E6MdVC8Zs+SjMJl4NdjypRuzQ+Ouh3h6vNcWpCbVUvnzlnChf/+H/YDL
-	jBtEun5orMn3srx51NSgh1fof84qTxO0MTc71fTKvE4gvI3CjAwMnz+cpULLV2LTrmxol3MMgFuBL
-	d3alLHAqhzHvXTygyaocNzkvYDX9Acm37eUD+n+NXrh87RFrN3TsZMo48eRaJP0Goh/oh+aS1Dmwb
-	qukz3mHA==;
-From: Andreas Kemnade <andreas@kemnade.info>
-To: Conor Dooley <conor+dt@kernel.org>,
-	Shawn Guo <shawnguo@kernel.org>,
-	linux-kernel@vger.kernel.org,
-	Fabio Estevam <festevam@gmail.com>,
-	devicetree@vger.kernel.org,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	linux-arm-kernel@lists.infradead.org,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Alexander Stein <alexander.stein@ew.tq-group.com>,
-	imx@lists.linux.dev
-Cc: Andreas Kemnade <andreas@kemnade.info>
-Subject: [PATCH v2 3/3] ARM: imx_v6_v7_defconfig: Enable drivers for Kobo Clara 2E
-Date: Thu, 24 Oct 2024 16:22:06 +0200
-Message-Id: <20241024142206.411336-4-andreas@kemnade.info>
-X-Mailer: git-send-email 2.39.5
-In-Reply-To: <20241024142206.411336-1-andreas@kemnade.info>
-References: <20241024142206.411336-1-andreas@kemnade.info>
+	s=arc-20240116; t=1729779762; c=relaxed/simple;
+	bh=lPV1yWvlooeisusKmZKwVckn9G3uzeBODmUCjqE3y/c=;
+	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=NycfzTvfzAIJEc3U+BlmUNVibsxdpAxPYkHNUgDi9bf71zydEqvU/vSl898hFSzKjb9/e7mV3g3pPIHA7yTTvFGH6IyLzXb7Fp8f8SsBvpdNoHZQIFNAsvNtiRwTxSlVHapZN/EzrBGKcDzyqylW6sPNzLFlu4fNcf6ic5ZizlI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=FWAJDsxh; arc=none smtp.client-ip=217.70.183.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
+Received: by mail.gandi.net (Postfix) with ESMTPSA id BBB486000F;
+	Thu, 24 Oct 2024 14:22:33 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
+	t=1729779756;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lPV1yWvlooeisusKmZKwVckn9G3uzeBODmUCjqE3y/c=;
+	b=FWAJDsxh66/UfoSazI4jZ2q2PFuwZtTV6l595EnpO+Bz+h90+T+7iHwFcTVnkMwqBcPtaI
+	sJ0BL0TysiJTOIvkMTe+Oj1dnACdlz/JMCCN++3ZTOhYGcDWZiOLoj48lmJ1wzwNPXfCv0
+	aeB49U7aVx6b76Novs+sDq0jmQEHvXffhyXidluPMf2jrdJ3UhB7hmLsmUezVmGNoGO5qv
+	CixrWRvKV6GbxNrhGU7YL4qtnFk1ohNocH7oQ94CNx2CTLInNbfS/sa2yQY2DqhRZuNiZe
+	nn3Ww57lZiHFD8xhn9zHuJJiuuFTe1uq9z1CofVBpWDKutDLU3YNxrTvHUUKHQ==
+Date: Thu, 24 Oct 2024 16:22:32 +0200
+From: Kory Maincent <kory.maincent@bootlin.com>
+To: Vladimir Oltean <vladimir.oltean@nxp.com>
+Cc: Florian Fainelli <florian.fainelli@broadcom.com>, Broadcom internal
+ kernel review list <bcm-kernel-feedback-list@broadcom.com>, Andrew Lunn
+ <andrew@lunn.ch>, Heiner Kallweit <hkallweit1@gmail.com>, Russell King
+ <linux@armlinux.org.uk>, "David S. Miller" <davem@davemloft.net>, Eric
+ Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Richard Cochran <richardcochran@gmail.com>, Radu
+ Pirea <radu-nicolae.pirea@oss.nxp.com>, Jay Vosburgh
+ <j.vosburgh@gmail.com>, Andy Gospodarek <andy@greyhouse.net>, Nicolas Ferre
+ <nicolas.ferre@microchip.com>, Claudiu Beznea <claudiu.beznea@tuxon.dev>,
+ Willem de Bruijn <willemdebruijn.kernel@gmail.com>, Jonathan Corbet
+ <corbet@lwn.net>, Horatiu Vultur <horatiu.vultur@microchip.com>,
+ UNGLinuxDriver@microchip.com, Simon Horman <horms@kernel.org>,
+ donald.hunter@gmail.com, danieller@nvidia.com, ecree.xilinx@gmail.com,
+ Andrew Lunn <andrew+netdev@lunn.ch>, Thomas Petazzoni
+ <thomas.petazzoni@bootlin.com>, linux-kernel@vger.kernel.org,
+ netdev@vger.kernel.org, linux-doc@vger.kernel.org, Maxime Chevallier
+ <maxime.chevallier@bootlin.com>, Rahul Rameshbabu <rrameshbabu@nvidia.com>,
+ Willem de Bruijn <willemb@google.com>, Shannon Nelson
+ <shannon.nelson@amd.com>, Alexandra Winter <wintera@linux.ibm.com>, Jacob
+ Keller <jacob.e.keller@intel.com>
+Subject: Re: [PATCH net-next v18 00/10] net: Make timestamping selectable
+Message-ID: <20241024162232.038be0ac@kmaincent-XPS-13-7390>
+In-Reply-To: <20241024140422.3okn5lfqu72ncbxa@skbuf>
+References: <20241023-feature_ptp_netnext-v18-0-ed948f3b6887@bootlin.com>
+	<20241024140422.3okn5lfqu72ncbxa@skbuf>
+Organization: bootlin
+X-Mailer: Claws Mail 4.0.0 (GTK+ 3.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: quoted-printable
+X-GND-Sasl: kory.maincent@bootlin.com
 
-Enable drivers used on Kobo Clara 2E
+On Thu, 24 Oct 2024 17:04:22 +0300
+Vladimir Oltean <vladimir.oltean@nxp.com> wrote:
 
-Signed-off-by: Andreas Kemnade <andreas@kemnade.info>
----
- arch/arm/configs/imx_v6_v7_defconfig | 2 ++
- 1 file changed, 2 insertions(+)
+> On Wed, Oct 23, 2024 at 05:49:10PM +0200, Kory Maincent wrote:
+> > The series is based on the following netlink spec and documentation pat=
+ches:
+> > https://lore.kernel.org/netdev/20241022151418.875424-1-kory.maincent@bo=
+otlin.com/
+> > https://lore.kernel.org/netdev/20241023141559.100973-1-kory.maincent@bo=
+otlin.com/
+> > =20
+>=20
+> No point in posting a non-RFC patch revision if it conflicts with unmerged
+> dependencies. Since it doesn't apply cleanly, the NIPA CI won't run on it
+> and it won't be a candidate for merging due to that. But, if you post as
+> RFC PATCH v18 instead, you make it crystal clear for the reviewers involv=
+ed
+> that you only request feedback.
 
-diff --git a/arch/arm/configs/imx_v6_v7_defconfig b/arch/arm/configs/imx_v6_v7_defconfig
-index 333ef55476a30..0beecdde55f58 100644
---- a/arch/arm/configs/imx_v6_v7_defconfig
-+++ b/arch/arm/configs/imx_v6_v7_defconfig
-@@ -68,6 +68,7 @@ CONFIG_BT=y
- CONFIG_BT_BNEP=m
- CONFIG_BT_HCIUART=y
- CONFIG_BT_HCIUART_LL=y
-+CONFIG_BT_NXPUART=m
- CONFIG_CFG80211=y
- CONFIG_CFG80211_WEXT=y
- CONFIG_MAC80211=y
-@@ -253,6 +254,7 @@ CONFIG_MFD_ROHM_BD71828=y
- CONFIG_REGULATOR_FIXED_VOLTAGE=y
- CONFIG_REGULATOR_ANATOP=y
- CONFIG_REGULATOR_BD71815=y
-+CONFIG_REGULATOR_BD71828=y
- CONFIG_REGULATOR_DA9052=y
- CONFIG_REGULATOR_DA9062=y
- CONFIG_REGULATOR_DA9063=y
--- 
-2.39.5
+I naively thought net maintainers could rerun the CI after these patch get
+merged. I will need to repost a v19 later then.
+Sorry for the noise.
 
+Regards,
+--=20
+K=C3=B6ry Maincent, Bootlin
+Embedded Linux and kernel engineering
+https://bootlin.com
 
