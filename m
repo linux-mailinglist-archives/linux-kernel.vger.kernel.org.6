@@ -1,152 +1,106 @@
-Return-Path: <linux-kernel+bounces-379623-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379622-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B19FE9AE133
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:42:09 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 695629AE130
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:41:53 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 202EEB22F3E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:42:07 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E0175B22A99
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:41:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AE2841D5167;
-	Thu, 24 Oct 2024 09:38:19 +0000 (UTC)
-Received: from szxga04-in.huawei.com (szxga04-in.huawei.com [45.249.212.190])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 97DA41D150C;
+	Thu, 24 Oct 2024 09:38:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWboTjyI"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 842251D0159;
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6CAC1D172B;
 	Thu, 24 Oct 2024 09:38:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.190
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762699; cv=none; b=K72/YyG3jEtebTH6AsMymKTHYX8oxO+7Gd8GXdGDi/ZBmnHBFxGeP20P0tkQlcglgcyhrqi+X1yk1USlXDY3uXxAZOvscCJ7lCuHb9X2pTIvKuSsTH+TQUUFC7LGAzCk7ccMfQFUQJnOPQRJhFVYXYLClVBiMoJAv/S9zzXBjSs=
+	t=1729762696; cv=none; b=aam7HCvOFPltSexu9LhOqLO64F48v4ke6vSY3DGCbzGVfDn3N7gIyKOssIV//TmJZQyyuQd63VqlAEXbXepw4NPVL5vqM2A6tgV/2XxCjQhEMSv38ory1C0oWK3yDq2l4mHLrUasGSZ0EAVDnlWy9iLsS6K4zYxSsWN6Uv2SwGU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762699; c=relaxed/simple;
-	bh=kzbk/zuWas4flGeKz32PRmxuVJ+50Dk8mIjxzl5ItdE=;
-	h=Subject:To:CC:References:From:Message-ID:Date:MIME-Version:
-	 In-Reply-To:Content-Type; b=hK5gmdpYkKM97kYfcibI/MS6e+FNnvmihNKijd0isFCuOdV0QypiOTybT7s/Iuq2zSltYJn8Tv7VfW5RFxTI8r6MhzKTPiTOxMSfLIVg9Y5SWse18uCGUJgWefum1EyaNaFUdI+CsgwPAieROvAcapTcbFwBjg6lYKQkc3oAvU8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.190
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.163.44])
-	by szxga04-in.huawei.com (SkyGuard) with ESMTP id 4XZ15T3g60z2FbWw;
-	Thu, 24 Oct 2024 17:36:45 +0800 (CST)
-Received: from dggpeml500022.china.huawei.com (unknown [7.185.36.66])
-	by mail.maildlp.com (Postfix) with ESMTPS id E1D6E14037C;
-	Thu, 24 Oct 2024 17:38:09 +0800 (CST)
-Received: from [10.67.120.135] (10.67.120.135) by
- dggpeml500022.china.huawei.com (7.185.36.66) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Oct 2024 17:38:09 +0800
-Subject: Re: [PATCH V2 net 2/9] net: hns3: add sync command to sync io-pgtable
-To: Paolo Abeni <pabeni@redhat.com>, Jijie Shao <shaojijie@huawei.com>,
-	<davem@davemloft.net>, <edumazet@google.com>, <kuba@kernel.org>,
-	<salil.mehta@huawei.com>
-CC: <liuyonglong@huawei.com>, <wangpeiyang1@huawei.com>, <lanhao@huawei.com>,
-	<chenhao418@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-References: <20241018101059.1718375-1-shaojijie@huawei.com>
- <20241018101059.1718375-3-shaojijie@huawei.com>
- <214d37cc-96c0-4d47-bea0-3985e920d88c@redhat.com>
-From: "shenjian (K)" <shenjian15@huawei.com>
-Message-ID: <e8f83833-940a-3542-5c68-3dc25a230383@huawei.com>
-Date: Thu, 24 Oct 2024 17:38:09 +0800
-User-Agent: Mozilla/5.0 (Windows NT 10.0; WOW64; rv:60.0) Gecko/20100101
- Thunderbird/60.9.1
+	s=arc-20240116; t=1729762696; c=relaxed/simple;
+	bh=TM7UNffSSOmAOZkaONHkwvnJYn+RtQ7/d5lFvohpBnM=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=M5G2/g/Q+yKGrhExYhc9tw8QCae87hUJhU/oJPWYfQ22SFAGg9dcjg/hnC65nkQuwYFBDlPLEK5LMK4QA/A+bjMOTrVePiP+6CTzgxHMPkJIuGwthPnbAI3dyZJMTn8HLnQg++x0kcm053BUJZxDTBSQJS4CXp1OTCyFljxLit8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWboTjyI; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 26EEAC4CEC7;
+	Thu, 24 Oct 2024 09:38:12 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729762695;
+	bh=TM7UNffSSOmAOZkaONHkwvnJYn+RtQ7/d5lFvohpBnM=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=AWboTjyIQkjp08p9YShGmcoM7pqqYthPP6XGtm+Dl811CsjBV+JzMBevlJyusgVvG
+	 ZgccgktLRRy7kuZSwAWnMKaIvfPi5q5hBURUdsnSpToD9FblTPvrdpYTurXr+WDZkT
+	 tyFfGAeOymPWNi0pHE1CTqovskZ4zPQQ2LJNrBWdNHkqb5jgfE1+1nAhGAXp3QC+9X
+	 jMi8qQ0igZIZghT5MSBxfjaP5aJOMap2mtjFLsMfh8cLgJ9d6K9xEc6nL3sjoeRmBY
+	 K+5zsbpi5R0nct7+/NfNmuU2y9KkyzoGS5Lch0t0z7oNG8d8vZXZdeoSYuqhcvBbFU
+	 TrTygL8pzHYTg==
+Date: Thu, 24 Oct 2024 10:38:11 +0100
+From: Conor Dooley <conor@kernel.org>
+To: linux-pci@vger.kernel.org
+Cc: Conor Dooley <conor.dooley@microchip.com>,
+	Daire McNamara <daire.mcnamara@microchip.com>,
+	Lorenzo Pieralisi <lpieralisi@kernel.org>,
+	Krzysztof =?utf-8?Q?Wilczy=C5=84ski?= <kw@linux.com>,
+	Rob Herring <robh@kernel.org>, Bjorn Helgaas <bhelgaas@google.com>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-riscv@lists.infradead.org
+Subject: Re: [PATCH v5 0/2] PCI: microchip: support using either instance 1
+ or 2
+Message-ID: <20241024-gout-kinfolk-0f24b28d41b7@spud>
+References: <20240814-setback-rumbling-c6393c8f1a91@spud>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-In-Reply-To: <214d37cc-96c0-4d47-bea0-3985e920d88c@redhat.com>
-Content-Type: text/plain; charset="utf-8"; format=flowed
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: dggems705-chm.china.huawei.com (10.3.19.182) To
- dggpeml500022.china.huawei.com (7.185.36.66)
+Content-Type: multipart/signed; micalg=pgp-sha256;
+	protocol="application/pgp-signature"; boundary="U6iyZokWShLT5gWe"
+Content-Disposition: inline
+In-Reply-To: <20240814-setback-rumbling-c6393c8f1a91@spud>
 
 
-在 2024/10/24 16:36, Paolo Abeni 写道:
-> On 10/18/24 12:10, Jijie Shao wrote:
->> From: Jian Shen <shenjian15@huawei.com>
->>
->> To avoid errors in pgtable prefectch, add a sync command to sync
->> io-pagtable.
->>
->> In the case of large traffic, the TX bounce buffer may be used up.
-> It's unclear to me what do you mean for large traffic. Is that large
-> packets instead?
->
-> Skimming over the previous patch, it looks like the for the bugger H/W
-> driver will use the bounce buffer for all packets with len < 64K. As
-> this driver does not support big tcp, such condition means all packets.
->
-> So its not clear to me the 'may' part - it looks like the critical path
-> will always happen on the bugged H/W
+--U6iyZokWShLT5gWe
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
 
-Sorry for the unclear commit log.
+On Wed, Aug 14, 2024 at 09:08:40AM +0100, Conor Dooley wrote:
+> From: Conor Dooley <conor.dooley@microchip.com>
+>=20
+> The current driver and binding for PolarFire SoC's PCI controller assume
+> that the root port instance in use is instance 1. The second reg
+> property constitutes the region encompassing both "control" and "bridge"
+> registers for both instances. In the driver, a fixed offset is applied to
+> find the base addresses for instance 1's "control" and "bridge"
+> registers. The BeagleV Fire uses root port instance 2, so something must
+> be done so that software can differentiate. This series splits the
+> second reg property in two, with dedicated "control" and "bridge"
+> entries so that either instance can be used.
 
-Yes, we don't support big tcp, so <64K is worked for all packets. The 
-large traffic
+Just attempting to bump this patchset. It has gone over 2 months without
+response, and I am afraid it has completely fallen between the cracks.
 
-here is just want to describe a case that tx bounce buffer is used up, 
-and there is
+Thanks,
+Conor.
 
-no enough space for new tx packets.
+--U6iyZokWShLT5gWe
+Content-Type: application/pgp-signature; name="signature.asc"
 
+-----BEGIN PGP SIGNATURE-----
 
->> At this point, we go to mapping/unmapping on TX path again.
->> So we added the sync command in driver to avoid hardware issue.
-> I thought the goal of the previous patch was to avoid such sync-up.
->
-> So I don't understand why it's there.
->
-> A more verbose explanation will help.
+iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxoVgwAKCRB4tDGHoIJi
+0rSkAQDDxvSCVpyNBChctdnTAmn52RkLFOl+dBGBX8kpkw1apQD+LA70iId0caDT
+vs957ff3Zq274+khzayKzwkmeaf0Zgk=
+=nk2E
+-----END PGP SIGNATURE-----
 
-This is a supplement for the previous patch. We want all the tx packet can
-
-be handled with tx bounce buffer path. But it depends on the remain space
-
-of the spare buffer, checked by the function hns3_can_use_tx_bounce(). In
-
-most cases, maybe 99.99%, it returns true. But once it return false by no
-
-available space, the packet will be handled with the former path, which
-
-will map/unmap the skb buffer. Then we will face the smmu prefetch risk 
-again.
-
-So I add a sync command in this case to avoid smmu prefectch,
-
-just protects corner scenes.
-
-
->> Signed-off-by: Jian Shen <shenjian15@huawei.com>
->> Signed-off-by: Peiyang Wang <wangpeiyang1@huawei.com>
->> Signed-off-by: Jijie Shao <shaojijie@huawei.com>
-> Also we need a fixes tag.
-
-We considered this issue, and since this is not a software defect, we 
-were not too
-
-sure which commit should be blamed.
-
-It makes sense to choose the commit introducing the support for the 
-buggy H/W, we will add
-
-it.
-
-
-Thanks!
-
-Jian Shen
-
-
-> Thanks,
->
-> Paolo
->
->
-> .
->
+--U6iyZokWShLT5gWe--
 
