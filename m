@@ -1,140 +1,104 @@
-Return-Path: <linux-kernel+bounces-380090-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380091-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 31C389AE901
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:34:26 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9405B9AE8D1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:30:36 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 5272AB27844
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:30:15 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 589502921E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:30:35 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C87AC1EF0A0;
-	Thu, 24 Oct 2024 14:27:04 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 365841F4FBD;
+	Thu, 24 Oct 2024 14:27:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b="ZCl7BX4x"
-Received: from mail-io1-f52.google.com (mail-io1-f52.google.com [209.85.166.52])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b="E4MTcwgh"
+Received: from vps0.lunn.ch (vps0.lunn.ch [156.67.10.101])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C5B4214F12F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:27:01 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C40371B393E;
+	Thu, 24 Oct 2024 14:27:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=156.67.10.101
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780023; cv=none; b=Z58pSYUtx/cUSqLrkyvV12LO13Q0PaEP8FmyQl7lnKjyQ4Q3sXNp7QR8a3yPQ3VZS9DdcidtEaMnq9C54FKodsrf5DLGpIY8BIZz1UoRbmTs+slBae9GJD5hVryW6fS9t53GlfyGZm+k3l8QYFujJ9L1R4famVRgkciC/L8aHe4=
+	t=1729780068; cv=none; b=YlaV8x1qpnzrOWN/g5JgO7moXdlHUoT4eEW2ZQYxd5koVIhYGyk6Nn5LMFhtXzfd9jcSsJ8hQ6JmgwyZLBLRHsjVie5EPG49OjslfvwfQKk2WBPEEPwSSgMAtlSKbbKS1g4zOAm1hUqdeLHL9f2fPbTyMgkoCIGi3lfu1MyFAdM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780023; c=relaxed/simple;
-	bh=Br4rUo7jXSyDoQxwb4vji74KoTCk3I/0TKPiOd4IYHI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=eGnZ6Zs+jt8AvbIL6lDbu4lOaGw8f0XslMLwyEa82L/38c3PBpOvZpoc32KYgVPCK4jhiS/7GGQo1BbQRfIdAKi/1Tws9bsbG88ATl8/ZizDmi8k90zbtFdKYwFRU1J/6wMkHSTl1YiZNzOKTkUzGn3oYt4c6vSMDOguB32jF7Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linuxfoundation.org header.i=@linuxfoundation.org header.b=ZCl7BX4x; arc=none smtp.client-ip=209.85.166.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linuxfoundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-io1-f52.google.com with SMTP id ca18e2360f4ac-83a9cd37a11so40022539f.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:27:01 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linuxfoundation.org; s=google; t=1729780021; x=1730384821; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
-        b=ZCl7BX4xkrIFvVvZGHtyM/oy3pt/aKmBnCo6ikFH1ajyb9egT9T5XTsiV0hAaOO9k/
-         ps2A45qQcP8lCS/knovTMouiU4uGQWesQhIVdGo5v3UbWntib8/VTW3mro96iMJEsVyv
-         WmTXi3cvo38TqgLX8YQ7TDpG4gusvH7pOSb8s=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729780021; x=1730384821;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=apwKRmC6AYWNzrkiex3WwhJW5GIZvlbImA6QoEBbivc=;
-        b=ZYVJ2bxAIsJfGKoq9PKf9guj0If7nA2KrYjDjxkvPrCc2aDY9MG01Jk2iWG8n1PkiV
-         mu9f9UdwsasMIfDDwCchqXUKPesHC7KOXGq8S9nRLepPq5MPckvMV8AZH53CbTTq7K6Z
-         Yr9sA5IPB/VuzL/ztO9Q6E5fSMn196pYBLv7TKGEMY1sj/CnSA/11IezwpXdHkb8T45t
-         dRBWewv2F0bLnPv9I32K9SDMIMZQ8HeReeVqcC3Y2XpQ/w5yHlJrLrApjIUsvFzOimcG
-         2MvDCXBnSUBQbi193dyA+wwjXEKzKVyOSfZfIXwC4/m1Nij4n11dhcb2Ve6tTuHLYoOJ
-         WzXA==
-X-Forwarded-Encrypted: i=1; AJvYcCUDgYTPG9yUEcqdh4lDepPHsGoOmJh5zc6RNWKVsrRUbTvuz1RZCNfkrIS9D1aGmcvifwXkWHttZKRMIDU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzvfQ1TIi0LGU+SflRlrivo9VRDR/b0KNOTz9j04pgZfLCM2vOY
-	JMKDZ94KOvgi1IylD/UcnOgkBYw80/lXnJ+FMAzYib4MqnflouP637zfWtaDG/I=
-X-Google-Smtp-Source: AGHT+IEjoNotzF3cjr6+gorjptn9Dul3pcmua2S6p0cxQk5f5nfOd26Q5xIzWEQ2ssLjTpxV/ceAyg==
-X-Received: by 2002:a05:6602:140a:b0:83a:c5dd:3000 with SMTP id ca18e2360f4ac-83b04041acfmr315071039f.6.1729780020797;
-        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
-Received: from [192.168.1.128] ([38.175.170.29])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a630571sm2729448173.147.2024.10.24.07.26.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:27:00 -0700 (PDT)
-Message-ID: <1c8674a0-d220-4349-88ea-780f0fed8545@linuxfoundation.org>
-Date: Thu, 24 Oct 2024 08:26:59 -0600
+	s=arc-20240116; t=1729780068; c=relaxed/simple;
+	bh=J2+aXeLl5DWdt6WEQwAIXdlYTgr0+J1Z9HBQ4zDYOf4=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tPu9viEeSVEXsY2yFRYr908QUgPfoAExE0YTgiBCm9+Id/+rFmS4d3gWfug6zNxF5y6IMsuhs/gYQcdgMESWFJZtCe/movGgHGmTsvVz59xe9fKu38Ewn18ELVP7JjcAYqY3DtH01wiMmHXC3FmeUou699KyCJ5fLUA9XrzX2nA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch; spf=pass smtp.mailfrom=lunn.ch; dkim=pass (1024-bit key) header.d=lunn.ch header.i=@lunn.ch header.b=E4MTcwgh; arc=none smtp.client-ip=156.67.10.101
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=lunn.ch
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=lunn.ch
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed; d=lunn.ch;
+	s=20171124; h=In-Reply-To:Content-Disposition:Content-Type:MIME-Version:
+	References:Message-ID:Subject:Cc:To:From:Date:From:Sender:Reply-To:Subject:
+	Date:Message-ID:To:Cc:MIME-Version:Content-Type:Content-Transfer-Encoding:
+	Content-ID:Content-Description:Content-Disposition:In-Reply-To:References;
+	bh=UPDtZCWQSXIyqEMMrOFW3RSbg7kYcGlFgSFOZvcOZkQ=; b=E4MTcwgh3meIWxKHk8/zFQAyRy
+	0/AG0XD2Q+OitRy3tLK8anp/ixmgrLDDV08JWDCJJek0VEe7Nx8aov4ejrvKXiJk1Ebg2nIWSanZn
+	DCiYbyqyZs0AU2itOf4K4tzh7u/uwGYw/26falcJ7g0+sPgL+aLOKJLlo0UcxXqOnLTQ=;
+Received: from andrew by vps0.lunn.ch with local (Exim 4.94.2)
+	(envelope-from <andrew@lunn.ch>)
+	id 1t3yoF-00B8MN-RV; Thu, 24 Oct 2024 16:27:31 +0200
+Date: Thu, 24 Oct 2024 16:27:31 +0200
+From: Andrew Lunn <andrew@lunn.ch>
+To: "Kiran Kumar C.S.K" <quic_kkumarcs@quicinc.com>
+Cc: "Russell King (Oracle)" <linux@armlinux.org.uk>, netdev@vger.kernel.org,
+	Andy Gross <agross@kernel.org>,
+	Bjorn Andersson <andersson@kernel.org>,
+	Konrad Dybcio <konrad.dybcio@linaro.org>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Rob Herring <robh+dt@kernel.org>,
+	Krzysztof Kozlowski <krzysztof.kozlowski+dt@linaro.org>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Philipp Zabel <p.zabel@pengutronix.de>,
+	Jacob Keller <jacob.e.keller@intel.com>,
+	Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org, vsmuthu@qti.qualcomm.com,
+	arastogi@qti.qualcomm.com, linchen@qti.qualcomm.com,
+	john@phrozen.org, Luo Jie <quic_luoj@quicinc.com>,
+	Pavithra R <quic_pavir@quicinc.com>,
+	"Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
+	"Lei Wei (QUIC)" <quic_leiwei@quicinc.com>
+Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
+Message-ID: <28409cbc-09c8-4c88-b11e-2c46457c9e8e@lunn.ch>
+References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
+ <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+ <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
+ <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+ <Zv_6mf3uYcqtHC2j@shell.armlinux.org.uk>
+ <ba1bf2a6-76b7-4e82-b192-86de9a8b8012@quicinc.com>
+ <7b5227fc-0114-40be-ba5d-7616cebb4bf9@lunn.ch>
+ <641f830e-8d21-4bc0-abe2-59e2c4d29b92@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] selftests/mount_setattr: fix idmap_mount_tree_invalid
- failed to run
-To: zhouyuhang <zhouyuhang1010@163.com>, brauner@kernel.org,
- sforshee@kernel.org, shuah@kernel.org
-Cc: linux-fsdevel@vger.kernel.org, linux-kselftest@vger.kernel.org,
- linux-kernel@vger.kernel.org, zhouyuhang <zhouyuhang@kylinos.cn>,
- Shuah Khan <skhan@linuxfoundation.org>
-References: <20241024095013.1213852-1-zhouyuhang1010@163.com>
-Content-Language: en-US
-From: Shuah Khan <skhan@linuxfoundation.org>
-In-Reply-To: <20241024095013.1213852-1-zhouyuhang1010@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <641f830e-8d21-4bc0-abe2-59e2c4d29b92@quicinc.com>
 
-On 10/24/24 03:50, zhouyuhang wrote:
-> From: zhouyuhang <zhouyuhang@kylinos.cn>
+> > I'm just wondering if you have circular dependencies at runtime?
+> > 
+> > Where you will need to be careful is probe time vs runtime. Since you
+> > have circular phandles you need to first create all the clock
+> > providers, and only then start the clock consumers. Otherwise you
+> > might get into an endless EPROBE_DEFER loop.
+> > 
 > 
-> Test case idmap_mount_tree_invalid failed to run on the newer kernel
-> with the following output:
-> 
->   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->   # mount_setattr_test.c:1428:idmap_mount_tree_invalid:Expected sys_mount_setattr(open_tree_fd, "", AT_EMPTY_PATH, &attr,  sizeof(attr)) (0) ! = 0 (0)
->   # idmap_mount_tree_invalid: Test terminated by assertion
-> 
-> This is because tmpfs is mounted at "/mnt/A", and tmpfs already
-> contains the flag FS_ALLOW_IDMAP after the commit 7a80e5b8c6fa ("shmem:
-> support idmapped mounts for tmpfs"). So calling sys_mount_setattr here
-> returns 0 instead of -EINVAL as expected.
-> 
-> Ramfs is mounted at "/mnt/B" and does not support idmap mounts.
-> So we can use "/mnt/B" instead of "/mnt/A" to make the test run
-> successfully with the following output:
-> 
->   # Starting 1 tests from 1 test cases.
->   #  RUN           mount_setattr_idmapped.idmap_mount_tree_invalid ...
->   #            OK  mount_setattr_idmapped.idmap_mount_tree_invalid
->   ok 1 mount_setattr_idmapped.idmap_mount_tree_invalid
->   # PASSED: 1 / 1 tests passed.
-> 
+> The Rx/Tx clocks sourced from the SERDES are registered as provider
+> clocks by the UNIPHY/PCS driver during probe time. There is no runtime
+> operation needed for these clocks after this.
 
-Sounds like this code is testing this very condition passing
-in invalid mount to see what happens. If that is the intent
-this patch is incorrect.
+So they are always ticking. You cannot turn them on/off? It is nice to
+model them a fixed-clocks, since it describes the architecture, but i
+have to question if it is worth the effort.
 
-> Signed-off-by: zhouyuhang <zhouyuhang@kylinos.cn>
-> ---
->   tools/testing/selftests/mount_setattr/mount_setattr_test.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/tools/testing/selftests/mount_setattr/mount_setattr_test.c b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> index c6a8c732b802..54552c19bc24 100644
-> --- a/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> +++ b/tools/testing/selftests/mount_setattr/mount_setattr_test.c
-> @@ -1414,7 +1414,7 @@ TEST_F(mount_setattr_idmapped, idmap_mount_tree_invalid)
->   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/b", 0, 0, 0), 0);
->   	ASSERT_EQ(expected_uid_gid(-EBADF, "/tmp/B/BB/b", 0, 0, 0), 0);
->   
-> -	open_tree_fd = sys_open_tree(-EBADF, "/mnt/A",
-> +	open_tree_fd = sys_open_tree(-EBADF, "/mnt/B",
->   				     AT_RECURSIVE |
->   				     AT_EMPTY_PATH |
->   				     AT_NO_AUTOMOUNT |
-
-thanks,
--- Shuah
+	Andrew
 
