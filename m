@@ -1,293 +1,122 @@
-Return-Path: <linux-kernel+bounces-380008-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380006-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 97A749AE716
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:01:54 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 603DD9AE713
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:01:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EBAD1F23519
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:01:54 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25E782828FF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:01:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 25EC12F2A;
-	Thu, 24 Oct 2024 14:01:43 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6020D24B28;
+	Thu, 24 Oct 2024 14:01:18 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Mx5YXsvS"
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="gaYUG+wu"
 Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 04B161E2614
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:01:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8F4D82F2A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:01:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729778502; cv=none; b=np0VHkWLKEBiwcUIGeyh4coz9jHTE55huCztvOHhltkkrcm8wBCb5UCh3jF8FdwPZH+6w/7NqUgD20Zl/1qfetreTHmcu2qLVvYOFAbChh9boLHI6oqzL6FicOhHTRQoGhJIehXaf86Dx7sSwdGjnY0jte1PVB66iW85bm1vrB0=
+	t=1729778477; cv=none; b=Wi9u6yVoc6E8kOsQECVdIfVjo3IqYn+O9Ugnu3GQCMR7473eDX8ZVYZrkaKJ9m06Wn6njZUQ+ZPM4gWUiAuQKr5mLkXisSLc8KOwRMx7BDzCAOgHQC6rcKzN6V+5VhZqlP/4Jba1H+xkz3ciQGgsc7nwuPJqwfzBpKs1D5JZ9hc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729778502; c=relaxed/simple;
-	bh=8ImcHalUgCL8587f2BXE02nMbQZdkuw2xShqJzdTrj4=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=L/GWxJ3v7cBldJPaRZPWpHS51DMnZgFKTIcrwZDkYKaOEHChC4D5aLr3FSBrrlY6lx8vAJMQKMHTvFksD7k5ZmFOeymgCOgw6RGA3byv2NhfqKU5sHNYBTA06S7aqtVUjqEZ8s4GfwyScv00NsREOSbH2glWk+lqHotMxJChJn8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Mx5YXsvS; arc=none smtp.client-ip=170.10.129.124
+	s=arc-20240116; t=1729778477; c=relaxed/simple;
+	bh=unPcoLe5dU05goPTG31XI2fIT3hHVSg6LJ9esTS/Ck4=;
+	h=Date:From:To:cc:Subject:In-Reply-To:Message-ID:References:
+	 MIME-Version:Content-Type; b=XvZIwy1i1Ib17YkUDaRmGp22jIRebAUpRw77nbzXkgBcwp9UDdTgSK98ijy+I/PLh4gF5RoFonVOKLHtaU2GTnOtGq5tqLBau6wQ/kGzZ//5Q9gx9zQJsi0l65mUPXc4NmpI6Dh231C4AjnQGZVT1hu9dVJKjDw35TzCDl9Jiuw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=gaYUG+wu; arc=none smtp.client-ip=170.10.129.124
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729778498;
+	s=mimecast20190719; t=1729778474;
 	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
 	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding;
-	bh=18n2odyNwU1SQdUZ77ikVnsZFIxBmlUdLXegcsCnMVQ=;
-	b=Mx5YXsvSxTZTjcQL4aV6IjbH6Z7Q6Q+WWYAFXDeEtWkYJJMcQzzYFaH7OH0XzC/GJduiss
-	XUlSDEA+8Nluq9xlYVcUb+2ngwVG4FAhsNgJBFmZ+n7BJ5/YKEX//fbnwO7zpkcOoB+mvw
-	AbTE1ZcClcFTps4Hk/jLmjV2EsHLOcA=
-Received: from mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com
+	 in-reply-to:in-reply-to:references:references;
+	bh=QfO60MWuBouDwnHmSGuTVmqSkIOnj17RZgxXvFF2VSQ=;
+	b=gaYUG+wuDG98r6O0qa8Wh9OWC+qhUwDNpRODUvYvJ5tZobCLz4ArzbZWs3RJmi2panbjuK
+	bMvpgqarLMjmc93eapwoI+hjT4CDFjcouLwnFNuR8aOC8cN3IRQckVltui0mBqeYubQUwY
+	PRWvrzMn1ywqfC378D9pLh91W2ozzYY=
+Received: from mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com
  (ec2-54-186-198-63.us-west-2.compute.amazonaws.com [54.186.198.63]) by
  relay.mimecast.com with ESMTP with STARTTLS (version=TLSv1.3,
- cipher=TLS_AES_256_GCM_SHA384) id us-mta-497-CWBWbK72NVeIl9eqsEUAog-1; Thu,
- 24 Oct 2024 10:01:37 -0400
-X-MC-Unique: CWBWbK72NVeIl9eqsEUAog-1
-Received: from mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.15])
+ cipher=TLS_AES_256_GCM_SHA384) id us-mta-607-Ftwe3mQLNFiyB_xaTapMdA-1; Thu,
+ 24 Oct 2024 10:01:11 -0400
+X-MC-Unique: Ftwe3mQLNFiyB_xaTapMdA-1
+Received: from mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com [10.30.177.12])
 	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
 	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
 	(No client certificate requested)
-	by mx-prod-mc-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id BAD111955F41;
-	Thu, 24 Oct 2024 14:01:35 +0000 (UTC)
-Received: from gerbillo.redhat.com (unknown [10.45.224.11])
-	by mx-prod-int-02.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTP id 2191E195607C;
-	Thu, 24 Oct 2024 14:01:32 +0000 (UTC)
-From: Paolo Abeni <pabeni@redhat.com>
-To: torvalds@linux-foundation.org
-Cc: kuba@kernel.org,
-	davem@davemloft.net,
-	netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [GIT PULL] Networking for v6.12-rc5
-Date: Thu, 24 Oct 2024 16:01:01 +0200
-Message-ID: <20241024140101.24610-1-pabeni@redhat.com>
+	by mx-prod-mc-04.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 0609319560AD;
+	Thu, 24 Oct 2024 14:01:10 +0000 (UTC)
+Received: from [10.45.226.64] (unknown [10.45.226.64])
+	by mx-prod-int-03.mail-002.prod.us-west-2.aws.redhat.com (Postfix) with ESMTPS id 48CA319560A2;
+	Thu, 24 Oct 2024 14:01:08 +0000 (UTC)
+Date: Thu, 24 Oct 2024 16:01:05 +0200 (CEST)
+From: Mikulas Patocka <mpatocka@redhat.com>
+To: Colin Ian King <colin.i.king@gmail.com>
+cc: Alasdair Kergon <agk@redhat.com>, Mike Snitzer <snitzer@kernel.org>, 
+    dm-devel@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH][next] dm ioctl: rate limit a couple of ioctl based error
+ messages
+In-Reply-To: <20241024110431.1906858-1-colin.i.king@gmail.com>
+Message-ID: <51915860-4a32-b563-c000-d64e1df6702d@redhat.com>
+References: <20241024110431.1906858-1-colin.i.king@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-Scanned-By: MIMEDefang 3.0 on 10.30.177.15
+Content-Type: text/plain; charset=US-ASCII
+X-Scanned-By: MIMEDefang 3.0 on 10.30.177.12
 
-Hi Linus!
+Hi
 
-Oddily this includes a fix for posix clock regression; in our previous PR
-we included a change there as a pre-requisite for networking one.
-Such fix proved to be buggy and requires the follow-up included here.
-Thomas suggested we should send it, given we sent the buggy patch.
+I'd like to ask - have you experienced these errors? What was the process 
+that triggered them? Was it some robot that tests syscalls with random 
+parameters?
 
-The following changes since commit 07d6bf634bc8f93caf8920c9d61df761645336e2:
+Mikulas
 
-  Merge tag 'net-6.12-rc4' of git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net (2024-10-17 09:31:18 -0700)
 
-are available in the Git repository at:
+On Thu, 24 Oct 2024, Colin Ian King wrote:
 
-  git://git.kernel.org/pub/scm/linux/kernel/git/netdev/net.git net-6.12-rc5
-
-for you to fetch changes up to 9efc44fb2dba6138b0575826319200049078679a:
-
-  Merge branch 'net-dsa-mv88e6xxx-fix-mv88e6393x-phc-frequency-on-internal-clock' (2024-10-24 12:57:48 +0200)
-
-----------------------------------------------------------------
-Including fixes from netfiler, xfrm and bluetooth.
-
-Current release - regressions:
-
-  - posix-clock: Fix unbalanced locking in pc_clock_settime()
-
-  - netfilter: fix typo causing some targets not to load on IPv6
-
-Current release - new code bugs:
-
-  - xfrm: policy: remove last remnants of pernet inexact list
-
-Previous releases - regressions:
-
-  - core: fix races in netdev_tx_sent_queue()/dev_watchdog()
-
-  - bluetooth: fix UAF on sco_sock_timeout
-
-  - eth: hv_netvsc: fix VF namespace also in synthetic NIC NETDEV_REGISTER event
-
-  - eth: usbnet: fix name regression
-
-  - eth: be2net: fix potential memory leak in be_xmit()
-
-  - eth: plip: fix transmit path breakage
-
-Previous releases - always broken:
-
-  - sched: deny mismatched skip_sw/skip_hw flags for actions created by classifiers
-
-  - netfilter: bpf: must hold reference on net namespace
-
-  - eth: virtio_net: fix integer overflow in stats
-
-  - eth: bnxt_en: replace ptp_lock with irqsave variant
-
-  - eth: octeon_ep: add SKB allocation failures handling in __octep_oq_process_rx()
-
-Misc:
-
-  - MAINTAINERS: add Simon as an official reviewer
-
-Signed-off-by: Paolo Abeni <pabeni@redhat.com>
-
-----------------------------------------------------------------
-Aleksandr Mishin (4):
-      octeon_ep: Implement helper for iterating packets in Rx queue
-      octeon_ep: Add SKB allocation failures handling in __octep_oq_process_rx()
-      fsl/fman: Save device references taken in mac_probe()
-      fsl/fman: Fix refcount handling of fman-related devices
-
-Dmitry Antipov (2):
-      net: sched: fix use-after-free in taprio_change()
-      net: sched: use RCU read-side critical section in taprio_dump()
-
-Eric Dumazet (1):
-      net: fix races in netdev_tx_sent_queue()/dev_watchdog()
-
-Eyal Birger (2):
-      xfrm: extract dst lookup parameters into a struct
-      xfrm: respect ip protocols rules criteria when performing dst lookups
-
-Florian Westphal (2):
-      xfrm: policy: remove last remnants of pernet inexact list
-      netfilter: bpf: must hold reference on net namespace
-
-Haiyang Zhang (1):
-      hv_netvsc: Fix VF namespace also in synthetic NIC NETDEV_REGISTER event
-
-Hangbin Liu (1):
-      MAINTAINERS: add samples/pktgen to NETWORKING [GENERAL]
-
-Heiner Kallweit (1):
-      r8169: avoid unsolicited interrupts
-
-Jakub Boehm (1):
-      net: plip: fix break; causing plip to never transmit
-
-Jakub Kicinski (1):
-      MAINTAINERS: add Simon as an official reviewer
-
-Jesper Dangaard Brouer (1):
-      mailmap: update entry for Jesper Dangaard Brouer
-
-Jinjie Ruan (1):
-      posix-clock: posix-clock: Fix unbalanced locking in pc_clock_settime()
-
-Kory Maincent (1):
-      net: pse-pd: Fix out of bound for loop
-
-Lin Ma (1):
-      net: wwan: fix global oob in wwan_rtnl_policy
-
-Luiz Augusto von Dentz (3):
-      Bluetooth: hci_core: Disable works on hci_unregister_dev
-      Bluetooth: SCO: Fix UAF on sco_sock_timeout
-      Bluetooth: ISO: Fix UAF on iso_sock_timeout
-
-Michael S. Tsirkin (1):
-      virtio_net: fix integer overflow in stats
-
-Michel Alex (1):
-      net: phy: dp83822: Fix reset pin definitions
-
-Oliver Neukum (1):
-      net: usb: usbnet: fix name regression
-
-Pablo Neira Ayuso (1):
-      netfilter: xtables: fix typo causing some targets not to load on IPv6
-
-Paolo Abeni (5):
-      Merge branch 'fsl-fman-fix-refcount-handling-of-fman-related-devices'
-      Merge tag 'nf-24-10-21' of git://git.kernel.org/pub/scm/linux/kernel/git/netfilter/nf
-      Merge tag 'ipsec-2024-10-22' of git://git.kernel.org/pub/scm/linux/kernel/git/klassert/ipsec
-      Merge tag 'for-net-2024-10-23' of git://git.kernel.org/pub/scm/linux/kernel/git/bluetooth/bluetooth
-      Merge branch 'net-dsa-mv88e6xxx-fix-mv88e6393x-phc-frequency-on-internal-clock'
-
-Peter Rashleigh (1):
-      net: dsa: mv88e6xxx: Fix error when setting port policy on mv88e6393x
-
-Petr Vaganov (1):
-      xfrm: fix one more kernel-infoleak in algo dumping
-
-Reinhard Speyerer (1):
-      net: usb: qmi_wwan: add Fibocom FG132 0x0112 composition
-
-Sabrina Dubroca (1):
-      xfrm: validate new SA's prefixlen using SA family when sel.family is unset
-
-Shenghao Yang (3):
-      net: dsa: mv88e6xxx: group cycle counter coefficients
-      net: dsa: mv88e6xxx: read cycle counter period from hardware
-      net: dsa: mv88e6xxx: support 4000ps cycle counter period
-
-Tim Harvey (1):
-      net: dsa: microchip: disable EEE for KSZ879x/KSZ877x/KSZ876x
-
-Vadim Fedorenko (1):
-      bnxt_en: replace ptp_lock with irqsave variant
-
-Vladimir Oltean (1):
-      net/sched: act_api: deny mismatched skip_sw/skip_hw flags for actions created by classifiers
-
-Wang Hai (2):
-      net/sun3_82586: fix potential memory leak in sun3_82586_send_packet()
-      be2net: fix potential memory leak in be_xmit()
-
-Yuan Can (1):
-      mlxsw: spectrum_router: fix xa_store() error checking
-
- .mailmap                                           |   5 +
- MAINTAINERS                                        |   2 +
- drivers/net/dsa/microchip/ksz_common.c             |  21 ++--
- drivers/net/dsa/mv88e6xxx/chip.h                   |   6 +-
- drivers/net/dsa/mv88e6xxx/port.c                   |   1 +
- drivers/net/dsa/mv88e6xxx/ptp.c                    | 108 ++++++++++++++-------
- drivers/net/ethernet/broadcom/bnxt/bnxt.c          |  22 +++--
- drivers/net/ethernet/broadcom/bnxt/bnxt_ptp.c      |  70 +++++++------
- drivers/net/ethernet/broadcom/bnxt/bnxt_ptp.h      |  12 ++-
- drivers/net/ethernet/emulex/benet/be_main.c        |  10 +-
- drivers/net/ethernet/freescale/fman/mac.c          |  68 +++++++++----
- drivers/net/ethernet/freescale/fman/mac.h          |   6 +-
- drivers/net/ethernet/i825xx/sun3_82586.c           |   1 +
- drivers/net/ethernet/marvell/octeon_ep/octep_rx.c  |  82 +++++++++++-----
- .../net/ethernet/mellanox/mlxsw/spectrum_router.c  |   9 +-
- drivers/net/ethernet/realtek/r8169_main.c          |   4 +-
- drivers/net/hyperv/netvsc_drv.c                    |  30 ++++++
- drivers/net/phy/dp83822.c                          |   4 +-
- drivers/net/plip/plip.c                            |   2 +-
- drivers/net/pse-pd/pse_core.c                      |   4 +-
- drivers/net/usb/qmi_wwan.c                         |   1 +
- drivers/net/usb/usbnet.c                           |   3 +-
- drivers/net/virtio_net.c                           |   2 +-
- drivers/net/wwan/wwan_core.c                       |   2 +-
- include/linux/netdevice.h                          |  12 +++
- include/net/bluetooth/bluetooth.h                  |   1 +
- include/net/netns/xfrm.h                           |   1 -
- include/net/xfrm.h                                 |  28 +++---
- kernel/time/posix-clock.c                          |   6 +-
- net/bluetooth/af_bluetooth.c                       |  22 +++++
- net/bluetooth/hci_core.c                           |  24 +++--
- net/bluetooth/hci_sync.c                           |  12 ++-
- net/bluetooth/iso.c                                |  18 ++--
- net/bluetooth/sco.c                                |  18 ++--
- net/ipv4/xfrm4_policy.c                            |  40 ++++----
- net/ipv6/xfrm6_policy.c                            |  31 +++---
- net/netfilter/nf_bpf_link.c                        |   4 +
- net/netfilter/xt_NFLOG.c                           |   2 +-
- net/netfilter/xt_TRACE.c                           |   1 +
- net/netfilter/xt_mark.c                            |   2 +-
- net/sched/act_api.c                                |  23 ++++-
- net/sched/sch_generic.c                            |   8 +-
- net/sched/sch_taprio.c                             |  21 ++--
- net/xfrm/xfrm_device.c                             |  11 ++-
- net/xfrm/xfrm_policy.c                             |  53 +++++++---
- net/xfrm/xfrm_user.c                               |  10 +-
- 46 files changed, 565 insertions(+), 258 deletions(-)
+> It is possible to spam the kernel log with a misbehaving user process that
+> is passing incorrect dm ioctls to /dev/mapper/control. Use a rate limit
+> on these error messages to reduce the noise.
+> 
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/md/dm-ioctl.c | 4 ++--
+>  1 file changed, 2 insertions(+), 2 deletions(-)
+> 
+> diff --git a/drivers/md/dm-ioctl.c b/drivers/md/dm-ioctl.c
+> index f299ff393a6a..d42eac944eb5 100644
+> --- a/drivers/md/dm-ioctl.c
+> +++ b/drivers/md/dm-ioctl.c
+> @@ -1912,7 +1912,7 @@ static int check_version(unsigned int cmd, struct dm_ioctl __user *user,
+>  
+>  	if ((kernel_params->version[0] != DM_VERSION_MAJOR) ||
+>  	    (kernel_params->version[1] > DM_VERSION_MINOR)) {
+> -		DMERR("ioctl interface mismatch: kernel(%u.%u.%u), user(%u.%u.%u), cmd(%d)",
+> +		DMERR_LIMIT("ioctl interface mismatch: kernel(%u.%u.%u), user(%u.%u.%u), cmd(%d)",
+>  		      DM_VERSION_MAJOR, DM_VERSION_MINOR,
+>  		      DM_VERSION_PATCHLEVEL,
+>  		      kernel_params->version[0],
+> @@ -1961,7 +1961,7 @@ static int copy_params(struct dm_ioctl __user *user, struct dm_ioctl *param_kern
+>  
+>  	if (unlikely(param_kernel->data_size < minimum_data_size) ||
+>  	    unlikely(param_kernel->data_size > DM_MAX_TARGETS * DM_MAX_TARGET_PARAMS)) {
+> -		DMERR("Invalid data size in the ioctl structure: %u",
+> +		DMERR_LIMIT("Invalid data size in the ioctl structure: %u",
+>  		      param_kernel->data_size);
+>  		return -EINVAL;
+>  	}
+> -- 
+> 2.39.5
+> 
 
 
