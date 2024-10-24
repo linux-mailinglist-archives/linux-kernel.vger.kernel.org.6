@@ -1,125 +1,136 @@
-Return-Path: <linux-kernel+bounces-380710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 72B0F9AF4D5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:48:25 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DB3159AF4D7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:54:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 1EF471F22A0F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:48:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0A8F61C2192F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:54:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E92762178F1;
-	Thu, 24 Oct 2024 21:48:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DE1792178E1;
+	Thu, 24 Oct 2024 21:54:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="AhWpkuQN"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="ULUsBNqr"
+Received: from mail-ej1-f42.google.com (mail-ej1-f42.google.com [209.85.218.42])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3770120CCF9;
-	Thu, 24 Oct 2024 21:48:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4AC5F156C74
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 21:54:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.42
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729806498; cv=none; b=oIZ8b9JiLqs1SvCKzrSlVA0Cns0jWuJSYAxc6i6JwOQTC1sAXb4p8fwRi6m2rQfMBzLkKgIkfPhpDm2+w6O5UYI18SzWfXVXdD9VX/oxW+TkypJi/Gtb/C63ucsf9thxgvx1hdIPsqVtmqiNG+zTD1l14QOcgP+xy75BpUMTUPk=
+	t=1729806845; cv=none; b=dVNwgPBxE2dPPMRPx1AMW17jHMN1qUyQbRD5pGbKLPzDfR5QkXbn3sEU06Ed5Uw7ocDbEyqgT7jjjZ2t1Hydt3zj09hRKu67N4qXUFU2fARLn1Hwl1E/I4xDmGdYFtt9LIu2x3XSVVNYl2vyuAvQWRvxp1PPYV0dtFniOXOxofo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729806498; c=relaxed/simple;
-	bh=fgcx398eUTFNxb+JbkDZmJNK2nxFgnkuZRyIa+AmT2E=;
-	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
-	 In-Reply-To:Content-Type; b=SU5vCRps1axD7o0m+GP1lehDTHFpX9qKxHJOaOxY+VofDOOAEN3LrjUpe2CJ+zrKmtEnL5Fu9UuZ+cRplQ7KjYcrOgWNj5iOTdr+hZ4hagymI2i6QF3ULbK48GKZTWTryO+R3mhJNehPg+CW9MnE2ufQ7jcgcXOwS/Pn5xLFSWY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=AhWpkuQN; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
-Received: from pps.filterd (m0279871.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OAHiWS009114;
-	Thu, 24 Oct 2024 21:48:14 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	dgzr2/M3/YcsAQFJGaNUhnxtlKg8e+5y4ZPF0xrl120=; b=AhWpkuQNmxQkorzq
-	ZAFlIHDe/B9298TeJOA0GZdcpRCzwFuBgEAWmIOEQ4Ui/9SWeHqyow6Z+A42eymK
-	ssg5u1hRSjGDCHcSCcdmGShSGqD9tfSR2NB7wMsQD7h/nfJZLQRBtZSWKpjNuRc0
-	XQ+EBvLU8Qe6VyDbhwHtP9TVLYbSqpTIXyjAKCQuoqrBBsbdJrFgNt0CyICaRpjM
-	MVKWEmvTswQNGQvqhZuIk4XYDxYgZNmRz7pO4buex1T04oh/IHJtgYv+YKh3Nnz7
-	cNuLLPRTNLAIdOgzRL96bnkD9YHWah2/3+jR9HFnUmCFOhJiXuXmaBMaKxb5dZvw
-	qH3gmg==
-Received: from nalasppmta02.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em43f0jk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 21:48:14 +0000 (GMT)
-Received: from nalasex01a.na.qualcomm.com (nalasex01a.na.qualcomm.com [10.47.209.196])
-	by NALASPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49OLmDab004017
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 21:48:13 GMT
-Received: from [10.226.59.182] (10.80.80.8) by nalasex01a.na.qualcomm.com
- (10.47.209.196) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
- 2024 14:48:12 -0700
-Message-ID: <4cb53edc-8030-54c9-0c26-09d188c2b4e2@quicinc.com>
-Date: Thu, 24 Oct 2024 15:48:11 -0600
+	s=arc-20240116; t=1729806845; c=relaxed/simple;
+	bh=w2hrqYL0dfFGyNKEC2x3dHp+AUu3NDRYjQVY6MrdJZU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=BTAN6brucM8qyygaMfPJyldcZwlsoHhlUgy/bzCZ+u3shFj9mIESKkIRaQbAiKkmOsHRl2YDE9/OjyTQdUGmPea2ZQsBY6qBV9MRTFWGS+0KqVRwJlzZrXVuPUIkBtmwncAFJqRckC70TxAD8XoXizuDtcWdWGUbLfsooeZDzCc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=ULUsBNqr; arc=none smtp.client-ip=209.85.218.42
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-ej1-f42.google.com with SMTP id a640c23a62f3a-a99ebb390a5so467673466b.1
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:54:03 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729806841; x=1730411641; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=7Uqj5jZN1Y90JeDsIqONz5XZYAyScvhWiyvgeMsTBY4=;
+        b=ULUsBNqrtODmz5vlAkP8E1r6Y42GnAYiM0R28eEC0llfUXiYAFAysLOs0OfmIPdyXY
+         zsN255GMhIhTU1MGxvCnpRsUkmD32/m2Pf4EAlRGxdANTWPsEFXWLUHwUSVtAtg/Wvo3
+         DC3Z0EQfNkUW9SoK4EIbLlYQBM0nePO92J/LXfjzNEe3ZP78qNQ6xUMdQ0fTXYUKkYDo
+         +rRb6nAS+Ycf3CMGjo1+hnqrFQqwR4OXyazL9VjT3eFtmkxLIixiLHFFRFOnFNjtFRUo
+         BxaHsp2OOUDzaqpeO8oFerTDcADjANjIkf/mmTK6xGfC+ZvBHUVhwQeZNO1TJfm5CuBZ
+         vKaQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729806841; x=1730411641;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=7Uqj5jZN1Y90JeDsIqONz5XZYAyScvhWiyvgeMsTBY4=;
+        b=V8QPE9QSD3fYfbe18zsUe77e1R2jRw8OdNSczLnQTG5ie7QlGNiisCdpcQDj2ZUsnw
+         WBmsBuPZ7UqQiserT+ebM4jCmkbJ/GpWNxCsH1Om6aVsX5A4NF//EJG9bGuZndDWVW41
+         fKBWIYQY9WRmFlHHqg6GWVVOo3zYijpXMO5nAlj/WOHB/Is+300Eq6QPZ6qJJSProS2o
+         gO5b96vWkrSC/Uz8ZJBahdGo699m/PJRkoOFJiMb5/J02LK1Oy9w959mtLw+mwNX3qwV
+         4hrANyz651lXSFDdEQz3vdEvWcVQVfUNpX+boOsb0J2oAr6qq3G1hE5gwuCshUXEu45c
+         EbXw==
+X-Forwarded-Encrypted: i=1; AJvYcCUeblVyHSmGfMpYigzRI22OjpEdueibeL6VXDhYNyCh+LTloAmDILZq8v4dZLTB5KGsSztUjfm5wPenuZA=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyEioHxXl6VmZp4jVVypJNsGqVzqYPZHihs9WcEMNsOtdVeIRjM
+	g1rv0DwI1TYAAQgxqjedChCYXErIIUa/RhDjixtOzNvYmqT4n9xPA/fUe7eWN6JRKK3pDS/BvLJ
+	5qdHvUjU8PePal7GmBFEx3gRkb7apEwYx5R0=
+X-Google-Smtp-Source: AGHT+IGQAKH+6LruNyHsxR3lLmS1Tz/jDv4PoTdTHhvEx85gf+hu0Oj39rcemdrvL8ZqcaMF+Oh9xcInVEspw7T4oS4=
+X-Received: by 2002:a17:907:2cc5:b0:a9a:3c94:23c4 with SMTP id
+ a640c23a62f3a-a9ad1a02e6fmr389581566b.22.1729806841245; Thu, 24 Oct 2024
+ 14:54:01 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.6.0
-Subject: Re: [PATCH] bus: mhi: host: Free mhi_buf vector inside
- mhi_alloc_bhie_table()
-Content-Language: en-US
-To: Youssef Samir <quic_yabdulra@quicinc.com>,
-        <manivannan.sadhasivam@linaro.org>
-CC: <mhi@lists.linux.dev>, <linux-arm-msm@vger.kernel.org>,
-        <linux-kernel@vger.kernel.org>
-References: <20241024214715.1208940-1-quic_yabdulra@quicinc.com>
-From: Jeffrey Hugo <quic_jhugo@quicinc.com>
-In-Reply-To: <20241024214715.1208940-1-quic_yabdulra@quicinc.com>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
- nalasex01a.na.qualcomm.com (10.47.209.196)
-X-QCInternal: smtphost
-X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
-X-Proofpoint-GUID: Ccz3wRa2hCjG5-yk_XDsn9FB5Sf8Lera
-X-Proofpoint-ORIG-GUID: Ccz3wRa2hCjG5-yk_XDsn9FB5Sf8Lera
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 mlxscore=0 lowpriorityscore=0
- adultscore=0 mlxlogscore=999 spamscore=0 malwarescore=0 impostorscore=0
- phishscore=0 bulkscore=0 clxscore=1011 priorityscore=1501 suspectscore=0
- classifier=spam adjust=0 reason=mlx scancount=1 engine=8.19.0-2409260000
- definitions=main-2410240178
+References: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-0-554456a44a15@linutronix.de>
+ <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-13-554456a44a15@linutronix.de>
+In-Reply-To: <20241009-devel-anna-maria-b4-timers-ptp-timekeeping-v2-13-554456a44a15@linutronix.de>
+From: John Stultz <jstultz@google.com>
+Date: Thu, 24 Oct 2024 14:53:50 -0700
+Message-ID: <CANDhNCrTzUODaXyVdX2t+d+0s3cxWi4KV4MxJNjJrGh+0WxEEA@mail.gmail.com>
+Subject: Re: [PATCH v2 13/25] timekeeping: Split out timekeeper update of timekeeping_advanced()
+To: Anna-Maria Behnsen <anna-maria@linutronix.de>
+Cc: Frederic Weisbecker <frederic@kernel.org>, Thomas Gleixner <tglx@linutronix.de>, 
+	linux-kernel@vger.kernel.org, netdev@vger.kernel.org, 
+	Miroslav Lichvar <mlichvar@redhat.com>, Richard Cochran <richardcochran@gmail.com>, 
+	Christopher S Hall <christopher.s.hall@intel.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-On 10/24/2024 3:47 PM, Youssef Samir wrote:
-> mhi_alloc_bhie_table() starts by allocating a vector of struct mhi_buf
-> then it allocates a DMA buffer for each element. If allocation fails,
-> it will free the allocated DMA buffers, but it neglects freeing the
-> mhi_buf vector.
-> 
-> Avoid memory leaks by freeing the mhi_buf vector on error.
-> 
-> Fixes: 3000f85b8f47 ("bus: mhi: core: Add support for basic PM operations")
-> Signed-off-by: Youssef Samir <quic_yabdulra@quicinc.com>
-> Reviewed-by: Jeffrey Hugo <quic_jhugo@quicinc.com>
+On Wed, Oct 9, 2024 at 1:29=E2=80=AFAM Anna-Maria Behnsen
+<anna-maria@linutronix.de> wrote:
+>
+> From: Anna-Maria Behnsen <anna-maria@linutronix.de>
+>
+> timekeeping_advance() is the only optimized function which uses
+> shadow_timekeeper for updating the real timekeeper to keep the sequence
+> counter protected region as small as possible.
+>
+> To be able to transform timekeeper updates in other functions to use the
+> same logic, split out functionality into a separate function
+> timekeeper_update_staged().
+>
+> While at it, document the reason why the sequence counter must be write
+> held over the call to timekeeping_update() and the copying to the real
+> timekeeper and why using a pointer based update is suboptimal.
+>
+> No functional change.
+>
+> Signed-off-by: Anna-Maria Behnsen <anna-maria@linutronix.de>
 > ---
->   drivers/bus/mhi/host/boot.c | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/drivers/bus/mhi/host/boot.c b/drivers/bus/mhi/host/boot.c
-> index 21bf042db9be..2e9ef55a566a 100644
-> --- a/drivers/bus/mhi/host/boot.c
-> +++ b/drivers/bus/mhi/host/boot.c
-> @@ -415,6 +415,7 @@ int mhi_alloc_bhie_table(struct mhi_controller *mhi_cntrl,
->   	for (--i, --mhi_buf; i >= 0; i--, mhi_buf--)
->   		dma_free_coherent(mhi_cntrl->cntrl_dev, mhi_buf->len,
->   				  mhi_buf->buf, mhi_buf->dma_addr);
-> +	kfree(img_info->mhi_buf);
->   
->   error_alloc_mhi_buf:
->   	kfree(img_info);
+>  kernel/time/timekeeping.c | 43 +++++++++++++++++++++++++++--------------=
+--
+>  1 file changed, 27 insertions(+), 16 deletions(-)
+>
+> diff --git a/kernel/time/timekeeping.c b/kernel/time/timekeeping.c
+> index 878f9606946d..fcb2b8b232d2 100644
+> --- a/kernel/time/timekeeping.c
+> +++ b/kernel/time/timekeeping.c
+> @@ -780,7 +780,32 @@ static void timekeeping_update(struct tk_data *tkd, =
+struct timekeeper *tk, unsig
+>          * timekeeper structure on the next update with stale data
+>          */
+>         if (action & TK_MIRROR)
+> -               memcpy(&tk_core.shadow_timekeeper, &tk_core.timekeeper, s=
+izeof(tk_core.timekeeper));
+> +               memcpy(&tkd->shadow_timekeeper, tk, sizeof(*tk));
+> +}
+> +
+> +static void timekeeping_update_staged(struct tk_data *tkd, unsigned int =
+action)
 
+Minor nit I realized as I saw how this was used later on:
+timekeeping_update_staged() isn't super clear right off. Maybe
+timekeeping_update_from_shadow() might make it more clear?
 
-Better  :)
+thanks
+-john
 
