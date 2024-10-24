@@ -1,1104 +1,419 @@
-Return-Path: <linux-kernel+bounces-379364-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379365-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id C5FBF9ADDB3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:33:03 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id AC74B9ADDBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:33:23 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id EF2A2B21A11
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:33:00 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E63B3B21FD8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:33:20 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BF6AB19F13C;
-	Thu, 24 Oct 2024 07:32:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7D1201ABEDC;
+	Thu, 24 Oct 2024 07:33:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A3Ye3b4K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JQfdinip";
-	dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b="A3Ye3b4K";
-	dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b="JQfdinip"
-Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Oi1uo4NJ"
+Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24D30156228;
-	Thu, 24 Oct 2024 07:32:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BDAF71AAE02
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:32:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729755170; cv=none; b=rFwwx+L+kYr2OvDWtokIYyZGTkhDk3puP/CwJtVJ9I+9aqqTVtCP+fhvYPAeJTQeotjli+BixMK5yfhgqoNkp2vQ4CgrzVbHdOzueg6BEA6ZeuZXHI+Jql2oPm60fWqAb1AJTflCLWLcke8pYAKehyxGxCi4vr6cifo1v5UHYuI=
+	t=1729755181; cv=none; b=q9EjtMHMabxfMglg+gsg+Q1g5uk61w5WHI/AkaATDYIADmQNwF1kwYK+CJHDXB1A+T2a2ZO0LRkeYuO3peuNkkoxu8msRcSyFlV+wrScM55uPtrrZDktSBYiHFgyc0Jd2gAhI+ZD7/QpMQf00Luk669flsX6LvAbcz18wy7eeOY=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729755170; c=relaxed/simple;
-	bh=Tsjo4SrGvzrKX/SxaPtKA0U3UB2Qydauh5QDgJmknIk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=VRf7vmDIh1MgTi9kYmgtREIpWvSmwiUu/U+uWspN70/dqo1n7t2YiYY/7J59GmTBNmlUudfKPE0yxN8nvpXSd9Vx9Ny1yqGxNSnoIk4pb1gdfx2SoqGXCwnzR5pMnDe48pK0vLZjHQRfZk2VEfCOS2XyUFvbqBVJkmQCCM7Uj6c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de; spf=pass smtp.mailfrom=suse.de; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A3Ye3b4K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JQfdinip; dkim=pass (1024-bit key) header.d=suse.de header.i=@suse.de header.b=A3Ye3b4K; dkim=permerror (0-bit key) header.d=suse.de header.i=@suse.de header.b=JQfdinip; arc=none smtp.client-ip=195.135.223.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=suse.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.de
-Received: from imap1.dmz-prg2.suse.org (unknown [10.150.64.97])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by smtp-out1.suse.de (Postfix) with ESMTPS id 365D421BD7;
-	Thu, 24 Oct 2024 07:32:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729755162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
+	s=arc-20240116; t=1729755181; c=relaxed/simple;
+	bh=xJk9DEO+3X/GcCNVC4idOyP3Q8DzjJsvWHkQBNNuUiI=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=FxyATZYeyeaEBn5pJ8Axo2MVElU8R108xut13Y6cx1dZkSnv3czi8uCxVfRgF/czd4dRQuk3f4fNVLj3/YuDxWz63GvDYP/RdBtqAMIINpj8Fnmi8q2dyQGulv/eDTgCCAdxBOSsRrSBsxZ0Y0hgQKC9n/ldJw8xmbeuw1agI0M=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Oi1uo4NJ; arc=none smtp.client-ip=170.10.129.124
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
+	s=mimecast20190719; t=1729755176;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
 	 content-transfer-encoding:content-transfer-encoding:
 	 in-reply-to:in-reply-to:references:references;
-	bh=cOOcqKw62RnQiXs3+01/RMKIFYORM/LMk7nnv9Y3n/U=;
-	b=A3Ye3b4KOo3hOVVBbujnNsZW1MvHAV+EqOQfsXcJKgDs7LOklFM06Z8hwLCAevEFpvSSM1
-	msLQwrzQa9/Bb2U3OB6wyzaPR5GTL2K8y+n5pgewmFNtKCTTAw+YsVZhHUgMpIhijZ3Zav
-	TRtELjwbdC08C+VvJ7vP+tTPavPT70E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729755162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOcqKw62RnQiXs3+01/RMKIFYORM/LMk7nnv9Y3n/U=;
-	b=JQfdinip4edz5QnmPD5/KaKSAFM+fxg9uu4YVpR0Zh956D9bY6ML3g/WpRLu4E2EHZu8NB
-	1rQmLyT2GKACWOAA==
-Authentication-Results: smtp-out1.suse.de;
-	none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.de; s=susede2_rsa;
-	t=1729755162; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOcqKw62RnQiXs3+01/RMKIFYORM/LMk7nnv9Y3n/U=;
-	b=A3Ye3b4KOo3hOVVBbujnNsZW1MvHAV+EqOQfsXcJKgDs7LOklFM06Z8hwLCAevEFpvSSM1
-	msLQwrzQa9/Bb2U3OB6wyzaPR5GTL2K8y+n5pgewmFNtKCTTAw+YsVZhHUgMpIhijZ3Zav
-	TRtELjwbdC08C+VvJ7vP+tTPavPT70E=
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.de;
-	s=susede2_ed25519; t=1729755162;
-	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
-	 mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=cOOcqKw62RnQiXs3+01/RMKIFYORM/LMk7nnv9Y3n/U=;
-	b=JQfdinip4edz5QnmPD5/KaKSAFM+fxg9uu4YVpR0Zh956D9bY6ML3g/WpRLu4E2EHZu8NB
-	1rQmLyT2GKACWOAA==
-Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(No client certificate requested)
-	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id B13181368E;
-	Thu, 24 Oct 2024 07:32:41 +0000 (UTC)
-Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
-	by imap1.dmz-prg2.suse.org with ESMTPSA
-	id DhQ+KRn4GWdlJAAAD6G6ig
-	(envelope-from <hare@suse.de>); Thu, 24 Oct 2024 07:32:41 +0000
-Message-ID: <441510d0-1262-46d9-9b28-29d5c4f1d018@suse.de>
-Date: Thu, 24 Oct 2024 09:32:41 +0200
+	bh=6QtnlkYe/1PnWLS5Ii6raZ83O0JHoz7C7QG5MqJpjr0=;
+	b=Oi1uo4NJVgPAke74xYV5ZNcgZS1nM0t8s8O3wVpe/7axFgijsHzM44r1ExfYuGKTmZf3mq
+	TalJIZbhNNczQWJ46aIcTN+VwIEL0KN39hml5FHFCaPIN3xu8wGxsn60g//4ky6LvUYl5B
+	fQlb6CoA4r9pI/dYb2ZPHYx3tMgIhBo=
+Received: from mail-yw1-f200.google.com (mail-yw1-f200.google.com
+ [209.85.128.200]) by relay.mimecast.com with ESMTP with STARTTLS
+ (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
+ us-mta-633--c27WGmsOhCOyHCeybwqJw-1; Thu, 24 Oct 2024 03:32:55 -0400
+X-MC-Unique: -c27WGmsOhCOyHCeybwqJw-1
+Received: by mail-yw1-f200.google.com with SMTP id 00721157ae682-6e3529d80e5so11268537b3.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:32:55 -0700 (PDT)
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729755174; x=1730359974;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=6QtnlkYe/1PnWLS5Ii6raZ83O0JHoz7C7QG5MqJpjr0=;
+        b=ZUFcAD+OxNdQ1/QeF2DUo1ZPXXTwDOtzgdqWR5IwLdM+qwE3JSvjnkN0/3VSHf/ewj
+         vOx/Z1mHNpIRxZDg2vzS72lPA0rkWjLnXKR9zbUs5qCRuCLB783kHpmiQSvj4xm0UyUE
+         ctGnK8vi4ttj9Q/TmG+w9jR0u5gVP/z7K95OcdFAGd3vDp/VPIuz4ykUmXJBzOXtmEGC
+         MkqBni/3s5B4zlkJvYkD2Rr88olxuhDykRBqIm1AMtvYeCjHTu6ViPDyan4niJPtGd7W
+         vf3Y/+n+8AJ93MXz/pc9+D0JZLuE8IXz46sDjYm1EWPmeKUxLfnVVfCqh97QkatuZTKk
+         r3IA==
+X-Forwarded-Encrypted: i=1; AJvYcCWhN56GQgTKtkfGIZQNHSXX91iSR7otz6Zr5z2JUY6lh42X3TFBhralLn0ZJ6TESl+Uf3SprkV9J6ewBH0=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz2L0azu0He9evfA+SLdBvGW/Fvq1sakLGM1fMiWny1O29GISIJ
+	dVqIl/gCeZkMHQcl/aEE0ql3NruKqzBILIDZIK3b8FovtvR97LHKA4dSVvci0eDYMU9gihBP/XQ
+	8HNuPlQdqm41eXf7Bkii7jhfe/houeyMyXLnOb23ZpEwcKtaCbToMXCjaioLN1z3jmM+mmg==
+X-Received: by 2002:a05:690c:6e03:b0:6db:cf6c:a7c4 with SMTP id 00721157ae682-6e866331c20mr10690347b3.45.1729755174518;
+        Thu, 24 Oct 2024 00:32:54 -0700 (PDT)
+X-Google-Smtp-Source: AGHT+IFwjzENxysw+j7YRfDKeQxYY43g6inqzMz9Yd8c7a5bPrsRFqYGaOrxa6Un2MKjvPM7S1dLyw==
+X-Received: by 2002:a05:690c:6e03:b0:6db:cf6c:a7c4 with SMTP id 00721157ae682-6e866331c20mr10690047b3.45.1729755174061;
+        Thu, 24 Oct 2024 00:32:54 -0700 (PDT)
+Received: from dhcp-64-16.muc.redhat.com (nat-pool-muc-t.redhat.com. [149.14.88.26])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce008ac8f1sm47141046d6.26.2024.10.24.00.32.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 00:32:53 -0700 (PDT)
+Message-ID: <7be870fc2b2fa01b89708208c78cc041029252aa.camel@redhat.com>
+Subject: Re: linux: Goodbye from a Linux community volunteer
+From: Philipp Stanner <pstanner@redhat.com>
+To: Serge Semin <fancer.lancer@gmail.com>, Jon Mason <jdmason@kudzu.us>, 
+ Dave Jiang <dave.jiang@intel.com>, Allen Hubbe <allenbh@gmail.com>,
+ ntb@lists.linux.dev, Andy Shevchenko <andy@kernel.org>, Andy Shevchenko
+ <andriy.shevchenko@linux.intel.com>, Kory Maincent
+ <kory.maincent@bootlin.com>, Cai Huoqing <cai.huoqing@linux.dev>, 
+ dmaengine@vger.kernel.org, Mark Brown <broonie@kernel.org>, 
+ linux-spi@vger.kernel.org, Damien Le Moal <dlemoal@kernel.org>, 
+ linux-ide@vger.kernel.org, Paul Burton <paulburton@kernel.org>, Thomas
+ Bogendoerfer <tsbogend@alpha.franken.de>, Arnd Bergmann <arnd@arndb.de>,
+ Jiaxun Yang <jiaxun.yang@flygoat.com>,  linux-mips@vger.kernel.org, Bjorn
+ Helgaas <bhelgaas@google.com>, Manivannan Sadhasivam
+ <manivannan.sadhasivam@linaro.org>, Yoshihiro Shimoda
+ <yoshihiro.shimoda.uh@renesas.com>,  linux-pci@vger.kernel.org, "David S.
+ Miller" <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo
+ Abeni <pabeni@redhat.com>, Andrew Lunn <andrew@lunn.ch>, Russell King
+ <linux@armlinux.org.uk>, Vladimir Oltean <olteanv@gmail.com>, Keguang Zhang
+ <keguang.zhang@gmail.com>, Yanteng Si <siyanteng@loongson.cn>, 
+ netdev@vger.kernel.org, Rob Herring <robh@kernel.org>, Krzysztof Kozlowski
+ <krzk@kernel.org>, Guenter Roeck <linux@roeck-us.net>, 
+ linux-hwmon@vger.kernel.org, Borislav Petkov <bp@alien8.de>, 
+ linux-edac@vger.kernel.org, Greg Kroah-Hartman
+ <gregkh@linuxfoundation.org>,  linux-serial@vger.kernel.org
+Cc: Andrew Halaney <ajhalaney@gmail.com>, Nikita Travkin <nikita@trvn.ru>, 
+ Ivan Kokshaysky <ink@jurassic.park.msu.ru>, Alexander Shiyan
+ <shc_work@mail.ru>, Dmitry Kozlov <xeb@mail.ru>,  Sergey Shtylyov
+ <s.shtylyov@omp.ru>, Evgeniy Dushistov <dushistov@mail.ru>, Geert
+ Uytterhoeven <geert@linux-m68k.org>, Sergio Paracuellos
+ <sergio.paracuellos@gmail.com>,  Nikita Shubin <nikita.shubin@maquefel.me>,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Date: Thu, 24 Oct 2024 09:32:46 +0200
+In-Reply-To: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+References: 
+	<2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 06/14] scsi: fnic: Add and integrate support for FDMI
-To: Karan Tilak Kumar <kartilak@cisco.com>, sebaddel@cisco.com
-Cc: arulponn@cisco.com, djhawar@cisco.com, gcboffa@cisco.com,
- mkai2@cisco.com, satishkh@cisco.com, aeasi@cisco.com, jejb@linux.ibm.com,
- martin.petersen@oracle.com, linux-scsi@vger.kernel.org,
- linux-kernel@vger.kernel.org, kernel test robot <lkp@intel.com>
-References: <20241018161409.4442-1-kartilak@cisco.com>
- <20241018161409.4442-7-kartilak@cisco.com>
-Content-Language: en-US
-From: Hannes Reinecke <hare@suse.de>
-In-Reply-To: <20241018161409.4442-7-kartilak@cisco.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
-X-Spam-Score: -4.30
-X-Spamd-Result: default: False [-4.30 / 50.00];
-	BAYES_HAM(-3.00)[100.00%];
-	NEURAL_HAM_LONG(-1.00)[-1.000];
-	NEURAL_HAM_SHORT(-0.20)[-1.000];
-	MIME_GOOD(-0.10)[text/plain];
-	FROM_HAS_DN(0.00)[];
-	FUZZY_BLOCKED(0.00)[rspamd.com];
-	DKIM_SIGNED(0.00)[suse.de:s=susede2_rsa,suse.de:s=susede2_ed25519];
-	ARC_NA(0.00)[];
-	RCPT_COUNT_TWELVE(0.00)[13];
-	MIME_TRACE(0.00)[0:+];
-	TO_MATCH_ENVRCPT_ALL(0.00)[];
-	RCVD_TLS_ALL(0.00)[];
-	RCVD_VIA_SMTP_AUTH(0.00)[];
-	FROM_EQ_ENVFROM(0.00)[];
-	TO_DN_SOME(0.00)[];
-	RCVD_COUNT_TWO(0.00)[2];
-	MID_RHS_MATCH_FROM(0.00)[];
-	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,suse.de:mid,suse.de:email]
-X-Spam-Flag: NO
-X-Spam-Level: 
 
-On 10/18/24 18:14, Karan Tilak Kumar wrote:
-> Add support for Fabric-Device Management Interface
-> (FDMI) by introducing PCI device IDs for Cisco
-> Hardware.
-> Introduce a module parameter to enable/disable
-> FDMI support.
-> Integrate support for FDMI.
-> 
-> Reported-by: kernel test robot <lkp@intel.com>
-> Closes:
-> https://lore.kernel.org/oe-kbuild-all/202406110734.p2v8dq9v-lkp
-> @intel.com/
-> 
-> Reviewed-by: Sesidhar Baddela <sebaddel@cisco.com>
-> Co-developed-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Signed-off-by: Gian Carlo Boffa <gcboffa@cisco.com>
-> Co-developed-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Signed-off-by: Arulprabhu Ponnusamy <arulponn@cisco.com>
-> Co-developed-by: Arun Easi <aeasi@cisco.com>
-> Signed-off-by: Arun Easi <aeasi@cisco.com>
-> Co-developed-by: Karan Tilak Kumar <kartilak@cisco.com>
-> Signed-off-by: Karan Tilak Kumar <kartilak@cisco.com>
-> ---
-> Changes between v4 and v5:
->      Incorporate review comments from Martin:
-> 	Modify attribution appropriately.
-> 	Remove spurious newline at the end of fdls_disc.c.
-> 	Remove spurious newline at the end of fnic_main.c.
-> 
-> Changes between v2 and v3:
->      Incorporate review comments from Hannes:
-> 	Replace redundant definitions with standard definitions.
-> 
-> Changes between v1 and v2:
->      Incorporate review comments from Hannes from other patches:
-> 	Replace pr_info with dev_info.
-> 	Replace htonll() with get_unaligned_be64().
-> 	Replace definitions with standard definitions from fc_els.h.
-> 	Use standard definitions from scsi_transport_fc.h for
-> 	port speeds.
-> 	Refactor definitions in struct fnic to avoid cache holes.
-> 	Replace memcmp with not equal to operator.
->      Fix warning from kernel test robot:
-> 	Remove version.h
-> ---
->   drivers/scsi/fnic/Makefile                |   3 +-
->   drivers/scsi/fnic/fdls_disc.c             | 468 ++++++++++++++++++++++
->   drivers/scsi/fnic/fnic.h                  |  72 ++++
->   drivers/scsi/fnic/fnic_main.c             |  25 ++
->   drivers/scsi/fnic/fnic_pci_subsys_devid.c | 131 ++++++
->   5 files changed, 698 insertions(+), 1 deletion(-)
->   create mode 100644 drivers/scsi/fnic/fnic_pci_subsys_devid.c
-> 
-> diff --git a/drivers/scsi/fnic/Makefile b/drivers/scsi/fnic/Makefile
-> index 3bd6b1c8b643..af156c69da0c 100644
-> --- a/drivers/scsi/fnic/Makefile
-> +++ b/drivers/scsi/fnic/Makefile
-> @@ -16,4 +16,5 @@ fnic-y	:= \
->   	vnic_intr.o \
->   	vnic_rq.o \
->   	vnic_wq_copy.o \
-> -	vnic_wq.o
-> +	vnic_wq.o \
-> +	fnic_pci_subsys_devid.o
-> diff --git a/drivers/scsi/fnic/fdls_disc.c b/drivers/scsi/fnic/fdls_disc.c
-> index a9a98ddc3a84..0b1d69ff19df 100644
-> --- a/drivers/scsi/fnic/fdls_disc.c
-> +++ b/drivers/scsi/fnic/fdls_disc.c
-> @@ -9,11 +9,23 @@
->   #include "fdls_fc.h"
->   #include "fnic_fdls.h"
->   #include <scsi/fc/fc_fcp.h>
-> +#include <scsi/scsi_transport_fc.h>
->   #include <linux/utsname.h>
->   
->   #define FC_FC4_TYPE_SCSI 0x08
-> +#define PORT_SPEED_BIT_8 8
-> +#define PORT_SPEED_BIT_9 9
-> +#define PORT_SPEED_BIT_14 14
-> +#define PORT_SPEED_BIT_15 15
->   
->   static void fdls_send_rpn_id(struct fnic_iport_s *iport);
-> +static void fdls_fdmi_register_hba(struct fnic_iport_s *iport);
-> +static void fdls_fdmi_register_pa(struct fnic_iport_s *iport);
-> +#define FDLS_FDMI_PLOGI_PENDING 0x1
-> +#define FDLS_FDMI_REG_HBA_PENDING 0x2
-> +#define FDLS_FDMI_RPA_PENDING 0x4
-> +#define FDLS_FDMI_ABORT_PENDING 0x8
-> +#define FDLS_FDMI_MAX_RETRY 3
->   
->   /* Frame initialization */
->   /*
-> @@ -84,6 +96,70 @@ struct fc_std_els_prli fnic_std_prli_req = {
->   	       .spp_params = cpu_to_be32(0xA2)}
->   };
->   
-> +/*
-> + * Variables:
-> + * sid, port_id, port_name
-> + */
-> +struct fc_std_fdmi_rhba fnic_std_fdmi_rhba = {
-> +	.fchdr = {.fh_r_ctl = FC_RCTL_DD_UNSOL_CTL,
-> +			.fh_d_id = {0xFF, 0XFF, 0XFA},
-> +		  .fh_type = FC_TYPE_CT, .fh_f_ctl = {FNIC_ELS_REQ_FCTL, 0, 0},
-> +		  .fh_rx_id = 0xFFFF},
-> +	.fc_std_ct_hdr = {.ct_rev = FC_CT_REV, .ct_fs_type = FC_FST_MGMT,
-> +			  .ct_fs_subtype = FC_FDMI_SUBTYPE,
-> +			  .ct_cmd = cpu_to_be16(FC_FDMI_RHBA)},
-> +	.num_ports = FNIC_FDMI_NUM_PORTS,
-> +	.num_hba_attributes = FNIC_FDMI_NUM_HBA_ATTRS,
-> +	.type_nn = FNIC_FDMI_TYPE_NODE_NAME,
-> +	.length_nn = FNIC_FDMI_NN_LEN,
-> +	.type_manu = FNIC_FDMI_TYPE_MANUFACTURER,
-> +	.length_manu = FNIC_FDMI_MANU_LEN,
-> +	.manufacturer = FNIC_FDMI_MANUFACTURER,
-> +	.type_serial = FNIC_FDMI_TYPE_SERIAL_NUMBER,
-> +	.length_serial = FNIC_FDMI_SERIAL_LEN,
-> +	.type_model = FNIC_FDMI_TYPE_MODEL,
-> +	.length_model = FNIC_FDMI_MODEL_LEN,
-> +	.type_model_des = FNIC_FDMI_TYPE_MODEL_DES,
-> +	.length_model_des = FNIC_FDMI_MODEL_DES_LEN,
-> +	.model_description = FNIC_FDMI_MODEL_DESCRIPTION,
-> +	.type_hw_ver = FNIC_FDMI_TYPE_HARDWARE_VERSION,
-> +	.length_hw_ver = FNIC_FDMI_HW_VER_LEN,
-> +	.type_dr_ver = FNIC_FDMI_TYPE_DRIVER_VERSION,
-> +	.length_dr_ver = FNIC_FDMI_DR_VER_LEN,
-> +	.type_rom_ver = FNIC_FDMI_TYPE_ROM_VERSION,
-> +	.length_rom_ver = FNIC_FDMI_ROM_VER_LEN,
-> +	.type_fw_ver = FNIC_FDMI_TYPE_FIRMWARE_VERSION,
-> +	.length_fw_ver = FNIC_FDMI_FW_VER_LEN,
-> +};
-> +
-> +/*
-> + * Variables
-> + *sid, port_id, port_name
-> + */
-> +struct fc_std_fdmi_rpa fnic_std_fdmi_rpa = {
-> +	.fchdr = {.fh_r_ctl = FC_RCTL_DD_UNSOL_CTL,
-> +			.fh_d_id = {0xFF, 0xFF, 0xFA},
-> +		  .fh_type = FC_TYPE_CT, .fh_f_ctl = {FNIC_ELS_REQ_FCTL, 0, 0},
-> +		  .fh_rx_id = 0xFFFF},
-> +	.fc_std_ct_hdr = {.ct_rev = FC_CT_REV, .ct_fs_type = FC_FST_MGMT,
-> +			  .ct_fs_subtype = FC_FDMI_SUBTYPE,
-> +			  .ct_cmd = cpu_to_be16(FC_FDMI_RPA)},
-> +	.num_port_attributes = FNIC_FDMI_NUM_PORT_ATTRS,
-> +	.type_fc4 = FNIC_FDMI_TYPE_FC4_TYPES,
-> +	.length_fc4 = FNIC_FDMI_FC4_LEN,
-> +	.type_supp_speed = FNIC_FDMI_TYPE_SUPPORTED_SPEEDS,
-> +	.length_supp_speed = FNIC_FDMI_SUPP_SPEED_LEN,
-> +	.type_cur_speed = FNIC_FDMI_TYPE_CURRENT_SPEED,
-> +	.length_cur_speed = FNIC_FDMI_CUR_SPEED_LEN,
-> +	.type_max_frame_size = FNIC_FDMI_TYPE_MAX_FRAME_SIZE,
-> +	.length_max_frame_size = FNIC_FDMI_MFS_LEN,
-> +	.max_frame_size = FNIC_FDMI_MFS,
-> +	.type_os_name = FNIC_FDMI_TYPE_OS_NAME,
-> +	.length_os_name = FNIC_FDMI_OS_NAME_LEN,
-> +	.type_host_name = FNIC_FDMI_TYPE_HOST_NAME,
-> +	.length_host_name = FNIC_FDMI_HN_LEN,
-> +};
-> +
->   /*
->    * Variables:
->    * fh_s_id, port_id, port_name
-> @@ -224,6 +300,7 @@ static void fdls_target_restart_nexus(struct fnic_tport_s *tport);
->   static void fdls_start_tport_timer(struct fnic_iport_s *iport,
->   					struct fnic_tport_s *tport, int timeout);
->   static void fdls_tport_timer_callback(struct timer_list *t);
-> +static void fdls_send_fdmi_plogi(struct fnic_iport_s *iport);
->   static void fdls_start_fabric_timer(struct fnic_iport_s *iport,
->   			int timeout);
->   static void
-> @@ -337,6 +414,15 @@ uint16_t fdls_alloc_fabric_oxid(struct fnic_iport_s *iport,
->   	 * separately.
->   	 */
->   	switch (exp_rsp_type) {
-> +	case FNIC_FDMI_PLOGI_RSP:
-> +		oxid_pool->active_oxid_fdmi_plogi = oxid;
-> +		break;
-> +	case FNIC_FDMI_REG_HBA_RSP:
-> +		oxid_pool->active_oxid_fdmi_rhba = oxid;
-> +		break;
-> +	case FNIC_FDMI_RPA_RSP:
-> +		oxid_pool->active_oxid_fdmi_rpa = oxid;
-> +		break;
->   	default:
->   		oxid_pool->active_oxid_fabric_req = oxid;
->   	break;
-> @@ -372,6 +458,21 @@ static inline void fdls_schedule_fabric_oxid_free(struct fnic_iport_s
->   			    iport->fabric_oxid_pool.active_oxid_fabric_req);
->   }
->   
-> +static inline void fdls_schedule_fdmi_oxid_free(struct fnic_iport_s *iport)
-> +{
-> +	if (iport->fabric.fdmi_pending & FDLS_FDMI_PLOGI_PENDING)
-> +		fdls_schedule_oxid_free(&iport->fdmi_oxid_pool.meta,
-> +					iport->fdmi_oxid_pool.active_oxid_fdmi_plogi);
-> +
-> +	if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING)
-> +		fdls_schedule_oxid_free(&iport->fdmi_oxid_pool.meta,
-> +					iport->fdmi_oxid_pool.active_oxid_fdmi_rhba);
-> +
-> +	if (iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING)
-> +		fdls_schedule_oxid_free(&iport->fdmi_oxid_pool.meta,
-> +					iport->fdmi_oxid_pool.active_oxid_fdmi_rpa);
-> +}
-> +
->   static inline void fdls_schedule_tgt_oxid_free(struct fnic_iport_s *iport,
->   					       struct fnic_tgt_oxid_pool_s
->   					       *oxid_pool, uint16_t oxid)
-> @@ -406,6 +507,14 @@ static int fdls_is_oxid_in_fabric_range(uint16_t oxid)
->   			(oxid_unmasked <= FDLS_FABRIC_OXID_POOL_END));
->   }
->   
-> +static int fdls_is_oxid_in_fdmi_range(uint16_t oxid)
-> +{
-> +	uint16_t oxid_unmasked = FDLS_OXID_RSP_TYPE_UNMASKED(oxid);
-> +
-> +	return ((oxid_unmasked >= FDLS_FDMI_OXID_POOL_BASE) &&
-> +		(oxid_unmasked <= FDLS_FDMI_OXID_POOL_END));
-> +}
-> +
->   void fdls_init_tgt_oxid_pool(struct fnic_iport_s *iport)
->   {
->   	memset(&iport->plogi_oxid_pool, 0, sizeof(iport->plogi_oxid_pool));
-> @@ -671,6 +780,42 @@ static void fdls_send_fabric_abts(struct fnic_iport_s *iport)
->   	iport->fabric.timer_pending = 1;
->   }
->   
-> +static void fdls_send_fdmi_abts(struct fnic_iport_s *iport)
-> +{
-> +	uint8_t fcid[3];
-> +	struct fc_frame_header fabric_abort = fc_std_fabric_abts;
-> +	struct fc_frame_header *fabric_abts = &fabric_abort;
-> +	struct fnic_fabric_oxid_pool_s *oxid_pool = &iport->fdmi_oxid_pool;
-> +	int fdmi_tov;
-> +	uint16_t oxid;
-> +
-> +	hton24(fcid, 0XFFFFFA);
-> +
-> +	if (iport->fabric.fdmi_pending & FDLS_FDMI_PLOGI_PENDING) {
-> +		oxid = htons(oxid_pool->active_oxid_fdmi_plogi);
-> +		FNIC_STD_SET_OX_ID(fabric_abts, oxid);
-> +		fnic_send_fcoe_frame(iport, fabric_abts,
-> +				     sizeof(struct fc_frame_header));
-> +	} else {
-> +		if (iport->fabric.fdmi_pending & FDLS_FDMI_REG_HBA_PENDING) {
-> +			oxid = htons(oxid_pool->active_oxid_fdmi_rhba);
-> +			FNIC_STD_SET_OX_ID(fabric_abts, oxid);
-> +			fnic_send_fcoe_frame(iport, fabric_abts,
-> +					     sizeof(struct fc_frame_header));
-> +		}
-> +		if (iport->fabric.fdmi_pending & FDLS_FDMI_RPA_PENDING) {
-> +			oxid = htons(oxid_pool->active_oxid_fdmi_rpa);
-> +			FNIC_STD_SET_OX_ID(fabric_abts, oxid);
-> +			fnic_send_fcoe_frame(iport, fabric_abts,
-> +					     sizeof(struct fc_frame_header));
-> +		}
-> +	}
-> +
-> +	fdmi_tov = jiffies + msecs_to_jiffies(2 * iport->e_d_tov);
-> +	mod_timer(&iport->fabric.fdmi_timer, round_jiffies(fdmi_tov));
-> +	iport->fabric.fdmi_pending |= FDLS_FDMI_ABORT_PENDING;
-> +}
-> +
->   static void fdls_send_fabric_flogi(struct fnic_iport_s *iport)
->   {
->   	struct fc_std_flogi flogi;
-> @@ -738,6 +883,47 @@ static void fdls_send_fabric_plogi(struct fnic_iport_s *iport)
->   	fdls_start_fabric_timer(iport, 2 * iport->e_d_tov);
->   }
->   
-> +static void fdls_send_fdmi_plogi(struct fnic_iport_s *iport)
-> +{
-> +	struct fc_std_flogi plogi;
-> +	struct fc_frame_header *fchdr = &plogi.fchdr;
-> +	uint8_t fcid[3];
-> +	struct fnic *fnic = iport->fnic;
-> +	u64 fdmi_tov;
-> +	uint16_t oxid;
-> +
-> +	memcpy(&plogi, &fnic_std_plogi_req, sizeof(plogi));
-Memcpy again.
+On Thu, 2024-10-24 at 07:27 +0300, Serge Semin wrote:
+> Hello Linux-kernel community,
+>=20
+> I am sure you have already heard the news caused by the recent Greg'
+> commit
+> 6e90b675cf942e ("MAINTAINERS: Remove some entries due to various
+> compliance
+> requirements."). As you may have noticed the change concerned some of
+> the
+> Ru-related developers removal from the list of the official kernel
+> maintainers,
+> including me.
+>=20
+> The community members rightly noted that the _quite_ short commit log
+> contained
+> very vague terms with no explicit change justification. No matter how
+> hard I
+> tried to get more details about the reason, alas the senior
+> maintainer I was
+> discussing the matter with haven't given an explanation to what
+> compliance
+> requirements that was. I won't cite the exact emails text since it
+> was a private
+> messaging, but the key words are "sanctions", "sorry", "nothing I can
+> do", "talk
+> to your (company) lawyer"... I can't say for all the guys affected by
+> the
+> change, but my work for the community has been purely _volunteer_ for
+> more than
+> a year now (and less than half of it had been payable before that).
+> For that
+> reason I have no any (company) lawyer to talk to, and honestly after
+> the way the
+> patch has been merged in I don't really want to now. Silently, behind
+> everyone's
+> back, _bypassing_ the standard patch-review process, with no affected
+> developers/subsystem notified - it's indeed the worse way to do what
+> has been
+> done. No gratitude, no credits to the developers for all these years
+> of the
+> devoted work for the community. No matter the reason of the situation
+> but
+> haven't we deserved more than that? Adding to the GREDITS file at
+> least, no?..
+>=20
+> I can't believe the kernel senior maintainers didn't consider that
+> the patch
+> wouldn't go unnoticed, and the situation might get out of control
+> with
+> unpredictable results for the community, if not straight away then in
+> the middle
+> or long term perspective. I am sure there have been plenty ways to
+> solve the
+> problem less harmfully, but they decided to take the easiest path.
+> Alas what's
+> done is done. A bifurcation point slightly initiated a year ago has
+> just been
+> fully implemented. The reason of the situation is obviously in the
+> political
+> ground which in this case surely shatters a basement the community
+> has been built
+> on in the first place. If so then God knows what might be next (who
+> else might
+> be sanctioned...), but the implemented move clearly sends a bad
+> signal to the
+> Linux community new comers, to the already working volunteers and
+> hobbyists like
+> me.
 
-> +
-> +	oxid = fdls_alloc_fabric_oxid(iport, &iport->fdmi_oxid_pool,
-> +				      FNIC_FDMI_PLOGI_RSP);
-> +	if (oxid == 0xFFFF) {
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +			     "Failed to allocate OXID to send fdmi plogi %p",
-> +			     iport);
-> +		return;
-> +	}
-> +
-> +	hton24(fcid, iport->fcid);
-> +
-> +	FNIC_STD_SET_S_ID(fchdr, fcid);
-> +	hton24(fcid, 0XFFFFFA);
-> +	FNIC_STD_SET_D_ID(fchdr, fcid);
-> +	FNIC_STD_SET_OX_ID(fchdr, htons(oxid));
-> +	FNIC_LOGI_SET_NPORT_NAME(&plogi.els, iport->wwpn);
-> +	FNIC_LOGI_SET_NODE_NAME(&plogi.els, iport->wwnn);
-> +	FNIC_LOGI_SET_RDF_SIZE(&plogi.els, iport->max_payload_size);
-> +
-> +	FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +		     "fcid: 0x%x: FDLS send FDMI PLOGI with oxid:%x",
-> +		     iport->fcid, oxid);
-> +
-> +	fnic_send_fcoe_frame(iport, &plogi, sizeof(struct fc_std_flogi));
-> +
-> +	fdmi_tov = jiffies + msecs_to_jiffies(2 * iport->e_d_tov);
-> +	mod_timer(&iport->fabric.fdmi_timer, round_jiffies(fdmi_tov));
-> +	iport->fabric.fdmi_pending = FDLS_FDMI_PLOGI_PENDING;
-> +}
-> +
->   static void fdls_send_rpn_id(struct fnic_iport_s *iport)
->   {
->   	struct fc_std_rpn_id rpn_id;
-> @@ -1375,6 +1561,126 @@ struct fnic_tport_s *fnic_find_tport_by_wwpn(struct fnic_iport_s *iport,
->   	return NULL;
->   }
->   
-> +static void fdls_fdmi_register_hba(struct fnic_iport_s *iport)
-> +{
-> +	struct fc_std_fdmi_rhba fdmi_rhba;
-> +	uint8_t fcid[3];
-> +	uint16_t len;
-> +	int err;
-> +	struct fnic *fnic = iport->fnic;
-> +	struct vnic_devcmd_fw_info *fw_info = NULL;
-> +	uint16_t oxid;
-> +
-> +	memcpy(&fdmi_rhba, &fnic_std_fdmi_rhba,
-> +	       sizeof(struct fc_std_fdmi_rhba));
-And here.
+I'm also quite shocked and even baffled about how this has been
+handled. This is not how leaders should communicate difficult or big
+decisions. It's the most disappointing event I have witnessed in the
+project.
 
-> +
-> +	hton24(fcid, iport->fcid);
-> +	FNIC_STD_SET_S_ID((&fdmi_rhba.fchdr), fcid);
-> +
-> +	oxid = fdls_alloc_fabric_oxid(iport, &iport->fdmi_oxid_pool,
-> +				      FNIC_FDMI_REG_HBA_RSP);
-> +	if (oxid == 0xFFFF) {
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +			     "Failed to allocate OXID to send fdmi reg hba %p",
-> +			     iport);
-> +		return;
-> +	}
-> +	FNIC_STD_SET_OX_ID(&fdmi_rhba.fchdr, htons(oxid));
-> +
-> +	fdmi_rhba.hba_identifier = get_unaligned_be64(&iport->wwpn);
-> +	fdmi_rhba.port_name = get_unaligned_be64(&iport->wwpn);
-> +	fdmi_rhba.node_name = get_unaligned_be64(&iport->wwnn);
-> +
-> +	err = vnic_dev_fw_info(fnic->vdev, &fw_info);
-> +	if (!err) {
-> +		snprintf(fdmi_rhba.serial_num, sizeof(fdmi_rhba.serial_num) - 1,
-> +				 "%s", fw_info->hw_serial_number);
-> +		snprintf(fdmi_rhba.hardware_ver,
-> +				 sizeof(fdmi_rhba.hardware_ver) - 1, "%s",
-> +				 fw_info->hw_version);
-> +		strscpy(fdmi_rhba.firmware_ver, fw_info->fw_version,
-> +				sizeof(fdmi_rhba.firmware_ver) - 1);
-> +
-> +		len = ARRAY_SIZE(fdmi_rhba.model);
-> +		if (fnic->subsys_desc_len >= len)
-> +			fnic->subsys_desc_len = len - 1;
-> +		memcpy(&fdmi_rhba.model, fnic->subsys_desc,
-> +		       fnic->subsys_desc_len);
-> +		fdmi_rhba.model[fnic->subsys_desc_len] = 0x00;
-> +	}
-> +
-> +	snprintf(fdmi_rhba.driver_ver, sizeof(fdmi_rhba.driver_ver) - 1, "%s",
-> +			 DRV_VERSION);
-> +	snprintf(fdmi_rhba.rom_ver, sizeof(fdmi_rhba.rom_ver) - 1, "%s", "N/A");
-> +
-> +	fnic_send_fcoe_frame(iport, &fdmi_rhba,
-> +			     sizeof(struct fc_std_fdmi_rhba));
-> +	iport->fabric.fdmi_pending |= FDLS_FDMI_REG_HBA_PENDING;
-> +}
-> +
-> +static void fdls_fdmi_register_pa(struct fnic_iport_s *iport)
-> +{
-> +	struct fc_std_fdmi_rpa fdmi_rpa;
-> +
-> +	uint8_t fcid[3];
-> +	struct fnic *fnic = iport->fnic;
-> +	u32 port_speed_bm;
-> +	u32 port_speed = vnic_dev_port_speed(fnic->vdev);
-> +	uint16_t oxid;
-> +
-> +	memcpy(&fdmi_rpa, &fnic_std_fdmi_rpa, sizeof(struct fc_std_fdmi_rpa));
-And here.
+There is the form and there is the content =E2=80=93 about the content one
+cannot do much, when the state he or his organization resides in gives
+an order.
 
-> +	hton24(fcid, iport->fcid);
-> +	FNIC_STD_SET_S_ID((&fdmi_rpa.fchdr), fcid);
-> +
-> +	oxid = fdls_alloc_fabric_oxid(iport, &iport->fdmi_oxid_pool,
-> +				      FNIC_FDMI_RPA_RSP);
-> +	if (oxid == 0xFFFF) {
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +			     "Failed to allocate OXID to send fdmi rpa %p",
-> +			     iport);
-> +		return;
-> +	}
-> +	FNIC_STD_SET_OX_ID(&fdmi_rpa.fchdr, htons(oxid));
-> +
-> +	fdmi_rpa.port_name = get_unaligned_be64(&iport->wwpn);
-> +
-> +	/* MDS does not support GIGE speed.
-> +	 * Bit shift standard definitions from scsi_transport_fc.h to
-> +	 * match FC spec.
-> +	 */
-> +	switch (port_speed) {
-> +	case DCEM_PORTSPEED_10G:
-> +	case DCEM_PORTSPEED_20G:
-> +		/* There is no bit for 20G */
-> +		port_speed_bm = FC_PORTSPEED_10GBIT << PORT_SPEED_BIT_14;
-> +		break;
-> +	case DCEM_PORTSPEED_25G:
-> +		port_speed_bm = FC_PORTSPEED_25GBIT << PORT_SPEED_BIT_8;
-> +		break;
-> +	case DCEM_PORTSPEED_40G:
-> +	case DCEM_PORTSPEED_4x10G:
-> +		port_speed_bm = FC_PORTSPEED_40GBIT << PORT_SPEED_BIT_9;
-> +		break;
-> +	case DCEM_PORTSPEED_100G:
-> +		port_speed_bm = FC_PORTSPEED_100GBIT << PORT_SPEED_BIT_8;
-> +		break;
-> +	default:
-> +		port_speed_bm = FC_PORTSPEED_1GBIT << PORT_SPEED_BIT_15;
-> +		break;
-> +	}
-> +	fdmi_rpa.supported_speed = htonl(port_speed_bm);
-> +	fdmi_rpa.current_speed = htonl(port_speed_bm);
-> +	fdmi_rpa.fc4_type[2] = 1;
-> +	snprintf(fdmi_rpa.os_name, sizeof(fdmi_rpa.os_name) - 1, "host%d",
-> +		 fnic->lport->host->host_no);
-> +	sprintf(fc_host_system_hostname(fnic->lport->host), "%s", utsname()->nodename);
-> +	snprintf(fdmi_rpa.host_name, sizeof(fdmi_rpa.host_name) - 1, "%s",
-> +		 fc_host_system_hostname(fnic->lport->host));
-> +
-> +	fnic_send_fcoe_frame(iport, &fdmi_rpa, sizeof(struct fc_std_fdmi_rpa));
-> +	iport->fabric.fdmi_pending |= FDLS_FDMI_RPA_PENDING;
-> +}
-> +
->   void fdls_fabric_timer_callback(struct timer_list *t)
->   {
->   	struct fnic_fdls_fabric_s *fabric = from_timer(fabric, t, retry_timer);
-> @@ -1548,6 +1854,43 @@ void fdls_fabric_timer_callback(struct timer_list *t)
->   	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
->   }
->   
-> +void fdls_fdmi_timer_callback(struct timer_list *t)
-> +{
-> +	struct fnic_fdls_fabric_s *fabric = from_timer(fabric, t, fdmi_timer);
-> +	struct fnic_iport_s *iport =
-> +		container_of(fabric, struct fnic_iport_s, fabric);
-> +	struct fnic *fnic = iport->fnic;
-> +	unsigned long flags;
-> +
-> +	spin_lock_irqsave(&fnic->fnic_lock, flags);
-> +
-> +	if (!iport->fabric.fdmi_pending) {
-> +		/* timer expired after fdmi responses received. */
-> +		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-> +		return;
-> +	}
-> +
-> +	/* if not abort pending, send an abort */
-> +	if (!(iport->fabric.fdmi_pending & FDLS_FDMI_ABORT_PENDING)) {
-> +		fdls_send_fdmi_abts(iport);
-> +		spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-> +		return;
-> +	}
-> +
-> +	/* Abort timed out */
-> +	fdls_schedule_fdmi_oxid_free(iport);
-> +
-> +	iport->fabric.fdmi_pending = 0;
-> +	/* If max retries not exhaused, start over from fdmi plogi */
-> +	if (iport->fabric.fdmi_retry < FDLS_FDMI_MAX_RETRY) {
-> +		iport->fabric.fdmi_retry++;
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +					 "retry fdmi timer %d", iport->fabric.fdmi_retry);
-> +		fdls_send_fdmi_plogi(iport);
-> +	}
-> +	spin_unlock_irqrestore(&fnic->fnic_lock, flags);
-> +}
-> +
->   static void fdls_send_delete_tport_msg(struct fnic_tport_s *tport)
->   {
->   	struct fnic_iport_s *iport = (struct fnic_iport_s *) tport->iport;
-> @@ -1697,6 +2040,15 @@ static void fnic_fdls_start_plogi(struct fnic_iport_s *iport)
->   	fdls_send_fabric_plogi(iport);
->   	fdls_set_state((&iport->fabric), FDLS_STATE_FABRIC_PLOGI);
->   	iport->fabric.flags &= ~FNIC_FDLS_FABRIC_ABORT_ISSUED;
-> +
-> +	if ((fnic_fdmi_support == 1) && (!(iport->flags & FNIC_FDMI_ACTIVE))) {
-> +		/* we can do FDMI at the same time */
-> +		iport->fabric.fdmi_retry = 0;
-> +		timer_setup(&iport->fabric.fdmi_timer, fdls_fdmi_timer_callback,
-> +					0);
-> +		fdls_send_fdmi_plogi(iport);
-> +		iport->flags |= FNIC_FDMI_ACTIVE;
-> +	}
->   }
->   
->   static void
-> @@ -2784,6 +3136,109 @@ fdls_process_fabric_plogi_rsp(struct fnic_iport_s *iport,
->   	}
->   }
->   
-> +static void fdls_process_fdmi_plogi_rsp(struct fnic_iport_s *iport,
-> +					struct fc_frame_header *fchdr)
-> +{
-> +	struct fc_std_flogi *plogi_rsp = (struct fc_std_flogi *)fchdr;
-> +	struct fc_std_els_rsp *els_rjt = (struct fc_std_els_rsp *)fchdr;
-> +	struct fnic *fnic = iport->fnic;
-> +	u64 fdmi_tov;
-> +
-> +	iport->fabric.fdmi_pending &= ~FDLS_FDMI_PLOGI_PENDING;
-> +	fdls_free_fabric_oxid(iport, &iport->fabric_oxid_pool,
-> +			      ntohs(FNIC_STD_GET_OX_ID(fchdr)));
-> +
-> +	if (ntoh24(fchdr->fh_s_id) == 0XFFFFFA) {
-> +		del_timer_sync(&iport->fabric.fdmi_timer);
-> +		iport->fabric.fdmi_pending = 0;
-> +		switch (plogi_rsp->els.fl_cmd) {
-> +		case ELS_LS_ACC:
-> +			FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +				 "FDLS process fdmi PLOGI response status: ELS_LS_ACC\n");
-> +			FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +				 "Sending fdmi registration for port 0x%x\n",
-> +				 iport->fcid);
-> +
-> +			fdls_fdmi_register_hba(iport);
-> +			fdls_fdmi_register_pa(iport);
-> +			fdmi_tov = jiffies + msecs_to_jiffies(5000);
-> +			mod_timer(&iport->fabric.fdmi_timer,
-> +				  round_jiffies(fdmi_tov));
-> +			break;
-> +		case ELS_LS_RJT:
-> +			FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +				 "Fabric FDMI PLOGI returned ELS_LS_RJT reason: 0x%x",
-> +				     els_rjt->u.rej.er_reason);
-> +
-> +			if (((els_rjt->u.rej.er_reason == ELS_RJT_BUSY)
-> +			     || (els_rjt->u.rej.er_reason == ELS_RJT_UNAB))
-> +				&& (iport->fabric.fdmi_retry < 7)) {
-> +				iport->fabric.fdmi_retry++;
-> +				fdls_send_fdmi_plogi(iport);
-> +			}
-> +			break;
-> +		default:
-> +			break;
-> +		}
-> +	}
-> +}
-> +
-> +static void fdls_process_fdmi_reg_ack(struct fnic_iport_s *iport,
-> +				      struct fc_frame_header *fchdr,
-> +				      int rsp_type)
-> +{
-> +	struct fnic *fnic = iport->fnic;
-> +
-> +	if (!iport->fabric.fdmi_pending) {
-> +		FNIC_FCS_DBG(KERN_ERR, fnic->lport->host, fnic->fnic_num,
-> +			     "Received FDMI ack while not waiting:%x\n",
-> +			     ntohs(FNIC_STD_GET_OX_ID(fchdr)));
-> +		return;
-> +	}
-> +
-> +	if (rsp_type == FNIC_FDMI_REG_HBA_RSP)
-> +		iport->fabric.fdmi_pending &= ~FDLS_FDMI_REG_HBA_PENDING;
-> +	else
-> +		iport->fabric.fdmi_pending &= ~FDLS_FDMI_RPA_PENDING;
-> +
-> +	fdls_free_fabric_oxid(iport, &iport->fdmi_oxid_pool,
-> +			      ntohs(FNIC_STD_GET_OX_ID(fchdr)));
-> +
-> +	FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +		"iport fcid: 0x%x: Received FDMI registration ack\n",
-> +		 iport->fcid);
-> +
-> +	if (!iport->fabric.fdmi_pending) {
-> +		del_timer_sync(&iport->fabric.fdmi_timer);
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +					 "iport fcid: 0x%x: Canceling FDMI timer\n",
-> +					 iport->fcid);
-> +	}
-> +}
-> +
-> +static void fdls_process_fdmi_abts_rsp(struct fnic_iport_s *iport,
-> +				       struct fc_frame_header *fchdr)
-> +{
-> +	uint32_t s_id;
-> +	struct fnic *fnic = iport->fnic;
-> +
-> +	s_id = ntoh24(FNIC_STD_GET_S_ID(fchdr));
-> +
-> +	if (!(s_id != 0xFFFFFA)) {
-> +		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
-> +			     "Received abts rsp with invalid SID: 0x%x. Dropping frame",
-> +			     s_id);
-> +		return;
-> +	}
-> +
-> +	del_timer_sync(&iport->fabric.fdmi_timer);
-> +	iport->fabric.fdmi_pending &= ~FDLS_FDMI_ABORT_PENDING;
-> +
-> +	fdls_free_fabric_oxid(iport, &iport->fdmi_oxid_pool,
-> +			      ntohs(FNIC_STD_GET_OX_ID(fchdr)));
-> +	fdls_send_fdmi_plogi(iport);
-> +}
-> +
->   static void
->   fdls_process_fabric_abts_rsp(struct fnic_iport_s *iport,
->   			     struct fc_frame_header *fchdr)
-> @@ -3780,6 +4235,9 @@ fnic_fdls_validate_and_get_frame_type(struct fnic_iport_s *iport,
->   	break;
->   
->   	case FNIC_FABRIC_LOGO_RSP:
-> +	case FNIC_FDMI_PLOGI_RSP:
-> +	case FNIC_FDMI_REG_HBA_RSP:
-> +	case FNIC_FDMI_RPA_RSP:
->   	break;
->   	default:
->   		/* Drop the Rx frame and log/stats it */
-> @@ -3822,6 +4280,9 @@ void fnic_fdls_recv_frame(struct fnic_iport_s *iport, void *rx_frame,
->   	case FNIC_FABRIC_PLOGI_RSP:
->   		fdls_process_fabric_plogi_rsp(iport, fchdr);
->   		break;
-> +	case FNIC_FDMI_PLOGI_RSP:
-> +		fdls_process_fdmi_plogi_rsp(iport, fchdr);
-> +		break;
->   	case FNIC_FABRIC_RPN_RSP:
->   		fdls_process_rpn_id_rsp(iport, fchdr);
->   		break;
-> @@ -3861,6 +4322,9 @@ void fnic_fdls_recv_frame(struct fnic_iport_s *iport, void *rx_frame,
->   		if (fdls_is_oxid_in_fabric_range(oxid) &&
->   			(iport->fabric.flags & FNIC_FDLS_FABRIC_ABORT_ISSUED)) {
->   			fdls_process_fabric_abts_rsp(iport, fchdr);
-> +		} else if (fdls_is_oxid_in_fdmi_range(oxid) &&
-> +			   iport->fabric.fdmi_pending) {
-> +			fdls_process_fdmi_abts_rsp(iport, fchdr);
->   		} else {
->   			fdls_process_tgt_abts_rsp(iport, fchdr);
->   		}
-> @@ -3890,6 +4354,10 @@ void fnic_fdls_recv_frame(struct fnic_iport_s *iport, void *rx_frame,
->   	case FNIC_ELS_RLS:
->   		fdls_process_rls_req(iport, fchdr);
->   		break;
-> +	case FNIC_FDMI_REG_HBA_RSP:
-> +	case FNIC_FDMI_RPA_RSP:
-> +		fdls_process_fdmi_reg_ack(iport, fchdr, frame_type);
-> +		break;
->   	default:
->   		FNIC_FCS_DBG(KERN_INFO, fnic->lport->host, fnic->fnic_num,
->   			 "s_id: 0x%x d_did: 0x%x", s_id, d_id);
-> diff --git a/drivers/scsi/fnic/fnic.h b/drivers/scsi/fnic/fnic.h
-> index 92cd17efa40f..5d8315b24085 100644
-> --- a/drivers/scsi/fnic/fnic.h
-> +++ b/drivers/scsi/fnic/fnic.h
-> @@ -82,6 +82,72 @@
->   /* Retry supported by rport (returned by PRLI service parameters) */
->   #define FNIC_FC_RP_FLAGS_RETRY            0x1
->   
-> +/* Cisco vendor id */
-> +#define PCI_VENDOR_ID_CISCO						0x1137
-> +#define PCI_DEVICE_ID_CISCO_VIC_FC				0x0045	/* fc vnic */
-> +
-> +/* sereno pcie switch */
-> +#define PCI_DEVICE_ID_CISCO_SERENO             0x004e
-> +#define PCI_DEVICE_ID_CISCO_CRUZ               0x007a	/* Cruz */
-> +#define PCI_DEVICE_ID_CISCO_BODEGA             0x0131	/* Bodega */
-> +#define PCI_DEVICE_ID_CISCO_BEVERLY            0x025f	/* Beverly */
-> +
-> +/* Sereno */
-> +#define PCI_SUBDEVICE_ID_CISCO_VASONA			0x004f	/* vasona mezz */
-> +#define PCI_SUBDEVICE_ID_CISCO_COTATI			0x0084	/* cotati mlom */
-> +#define PCI_SUBDEVICE_ID_CISCO_LEXINGTON		0x0085	/* lexington pcie */
-> +#define PCI_SUBDEVICE_ID_CISCO_ICEHOUSE			0x00cd	/* Icehouse */
-> +#define PCI_SUBDEVICE_ID_CISCO_KIRKWOODLAKE		0x00ce	/* KirkwoodLake pcie */
-> +#define PCI_SUBDEVICE_ID_CISCO_SUSANVILLE		0x012e	/* Susanville MLOM */
-> +#define PCI_SUBDEVICE_ID_CISCO_TORRANCE			0x0139	/* Torrance MLOM */
-> +
-> +/* Cruz */
-> +#define PCI_SUBDEVICE_ID_CISCO_CALISTOGA		0x012c	/* Calistoga MLOM */
-> +#define PCI_SUBDEVICE_ID_CISCO_MOUNTAINVIEW		0x0137	/* Cruz Mezz */
-> +/* Cruz MountTian SIOC */
-> +#define PCI_SUBDEVICE_ID_CISCO_MOUNTTIAN		0x014b
-> +#define PCI_SUBDEVICE_ID_CISCO_CLEARLAKE		0x014d	/* ClearLake pcie */
-> +/* Cruz MountTian2 SIOC */
-> +#define PCI_SUBDEVICE_ID_CISCO_MOUNTTIAN2		0x0157
-> +#define PCI_SUBDEVICE_ID_CISCO_CLAREMONT		0x015d	/* Claremont MLOM */
-> +
-> +/* Bodega */
-> +/* VIC 1457 PCIe mLOM */
-> +#define PCI_SUBDEVICE_ID_CISCO_BRADBURY         0x0218
-> +#define PCI_SUBDEVICE_ID_CISCO_BRENTWOOD        0x0217	/* VIC 1455 PCIe */
-> +/* VIC 1487 PCIe mLOM */
-> +#define PCI_SUBDEVICE_ID_CISCO_BURLINGAME       0x021a
-> +#define PCI_SUBDEVICE_ID_CISCO_BAYSIDE          0x0219	/* VIC 1485 PCIe */
-> +/* VIC 1440 Mezz mLOM */
-> +#define PCI_SUBDEVICE_ID_CISCO_BAKERSFIELD      0x0215
-> +#define PCI_SUBDEVICE_ID_CISCO_BOONVILLE        0x0216	/* VIC 1480 Mezz */
-> +#define PCI_SUBDEVICE_ID_CISCO_BENICIA          0x024a	/* VIC 1495 */
-> +#define PCI_SUBDEVICE_ID_CISCO_BEAUMONT         0x024b	/* VIC 1497 */
-> +#define PCI_SUBDEVICE_ID_CISCO_BRISBANE         0x02af	/* VIC 1467 */
-> +#define PCI_SUBDEVICE_ID_CISCO_BENTON           0x02b0	/* VIC 1477 */
-> +#define PCI_SUBDEVICE_ID_CISCO_TWIN_RIVER       0x02cf	/* VIC 14425 */
-> +#define PCI_SUBDEVICE_ID_CISCO_TWIN_PEAK        0x02d0	/* VIC 14825 */
-> +
-> +/* Beverly */
-> +#define PCI_SUBDEVICE_ID_CISCO_BERN             0x02de	/* VIC 15420 */
-> +#define PCI_SUBDEVICE_ID_CISCO_STOCKHOLM        0x02dd	/* VIC 15428 */
-> +#define PCI_SUBDEVICE_ID_CISCO_KRAKOW           0x02dc	/* VIC 15411 */
-> +#define PCI_SUBDEVICE_ID_CISCO_LUCERNE          0x02db	/* VIC 15231 */
-> +#define PCI_SUBDEVICE_ID_CISCO_TURKU            0x02e8	/* VIC 15238 */
-> +#define PCI_SUBDEVICE_ID_CISCO_TURKU_PLUS       0x02f3	/* VIC 15237 */
-> +#define PCI_SUBDEVICE_ID_CISCO_ZURICH           0x02df	/* VIC 15230 */
-> +#define PCI_SUBDEVICE_ID_CISCO_RIGA             0x02e0	/* VIC 15427 */
-> +#define PCI_SUBDEVICE_ID_CISCO_GENEVA           0x02e1	/* VIC 15422 */
-> +#define PCI_SUBDEVICE_ID_CISCO_HELSINKI         0x02e4	/* VIC 15235 */
-> +#define PCI_SUBDEVICE_ID_CISCO_GOTHENBURG       0x02f2	/* VIC 15425 */
-> +
-> +struct fnic_pcie_device {
-> +	u32 device;
-> +	u8 *desc;
-> +	u32 subsystem_device;
-> +	u8 *subsys_desc;
-> +};
-> +
+But about the form one can indeed do much. No "Thank you!", no "I hope
+we can work together again once the world has become sane(r)"... srsly,
+what the hell.
 
-Not sure what this has to do with FDMI ... maybe move to a separate patch?
+No idea why they felt the need to do it that way, but it certainly is
+not the open source way, neither is it decent or honorable.
 
->   /*
->    * fnic private data per SCSI command.
->    * These fields are locked by the hashed io_req_lock.
-> @@ -134,6 +200,7 @@ static inline u64 fnic_flags_and_state(struct scsi_cmnd *cmd)
->   #define fnic_clear_state_flags(fnicp, st_flags)  \
->   	__fnic_set_state_flags(fnicp, st_flags, 1)
->   
-> +extern unsigned int fnic_fdmi_support;
->   extern unsigned int fnic_log_level;
->   extern unsigned int io_completions;
->   extern struct workqueue_struct *fnic_event_queue;
-> @@ -336,6 +403,9 @@ struct fnic {
->   	struct work_struct tport_work;
->   	struct list_head tport_event_list;
->   
-> +	char subsys_desc[14];
-> +	int subsys_desc_len;
-> +
->   	/*** FIP related data members  -- start ***/
->   	void (*set_vlan)(struct fnic *, u16 vlan);
->   	struct work_struct      fip_frame_work;
-> @@ -433,5 +503,7 @@ fnic_chk_state_flags_locked(struct fnic *fnic, unsigned long st_flags)
->   void __fnic_set_state_flags(struct fnic *, unsigned long, unsigned long);
->   void fnic_dump_fchost_stats(struct Scsi_Host *, struct fc_host_statistics *);
->   void fnic_free_txq(struct list_head *head);
-> +int fnic_get_desc_by_devid(struct pci_dev *pdev, char **desc,
-> +						   char **subsys_desc);
->   
->   #endif /* _FNIC_H_ */
-> diff --git a/drivers/scsi/fnic/fnic_main.c b/drivers/scsi/fnic/fnic_main.c
-> index 16c9f87c932b..c8d2fcf5d948 100644
-> --- a/drivers/scsi/fnic/fnic_main.c
-> +++ b/drivers/scsi/fnic/fnic_main.c
-> @@ -62,6 +62,9 @@ unsigned int fnic_log_level;
->   module_param(fnic_log_level, int, S_IRUGO|S_IWUSR);
->   MODULE_PARM_DESC(fnic_log_level, "bit mask of fnic logging levels");
->   
-> +unsigned int fnic_fdmi_support = 1;
-> +module_param(fnic_fdmi_support, int, 0644);
-> +MODULE_PARM_DESC(fnic_fdmi_support, "FDMI support");
->   
->   unsigned int io_completions = FNIC_DFLT_IO_COMPLETIONS;
->   module_param(io_completions, int, S_IRUGO|S_IWUSR);
-> @@ -607,6 +610,8 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	int i;
->   	unsigned long flags;
->   	int hwq;
-> +	char *desc, *subsys_desc;
-> +	int len;
->   
->   	/*
->   	 * Allocate SCSI Host and set up association between host,
-> @@ -640,6 +645,23 @@ static int fnic_probe(struct pci_dev *pdev, const struct pci_device_id *ent)
->   	fnic->fnic_num = fnic_id;
->   	fnic_stats_debugfs_init(fnic);
->   
-> +	/* Find model name from PCIe subsys ID */
-> +	if (fnic_get_desc_by_devid(pdev, &desc, &subsys_desc) == 0) {
-> +		dev_info(&fnic->pdev->dev, "Model: %s\n", subsys_desc);
-> +
-> +		/* Update FDMI model */
-> +		fnic->subsys_desc_len = strlen(subsys_desc);
-> +		len = ARRAY_SIZE(fnic->subsys_desc);
-> +		if (fnic->subsys_desc_len > len)
-> +			fnic->subsys_desc_len = len;
-> +		memcpy(fnic->subsys_desc, subsys_desc, fnic->subsys_desc_len);
-> +		dev_info(&fnic->pdev->dev, "FDMI Model: %s\n", fnic->subsys_desc);
-> +	} else {
-> +		fnic->subsys_desc_len = 0;
-> +		dev_info(&fnic->pdev->dev, "Model: %s subsys_id: 0x%04x\n", "Unknown",
-> +				pdev->subsystem_device);
-> +	}
-> +
->   	err = pci_enable_device(pdev);
->   	if (err) {
->   		dev_err(&fnic->pdev->dev, "Cannot enable PCI device, aborting.\n");
-> @@ -1014,6 +1036,9 @@ static void fnic_remove(struct pci_dev *pdev)
->   		fnic_fcoe_evlist_free(fnic);
->   	}
->   
-> +	if ((fnic_fdmi_support == 1) && (fnic->iport.fabric.fdmi_pending > 0))
-> +		del_timer_sync(&fnic->iport.fabric.fdmi_timer);
-> +
->   	/*
->   	 * Log off the fabric. This stops all remote ports, dns port,
->   	 * logs off the fabric. This flushes all rport, disc, lport work
-> diff --git a/drivers/scsi/fnic/fnic_pci_subsys_devid.c b/drivers/scsi/fnic/fnic_pci_subsys_devid.c
-> new file mode 100644
-> index 000000000000..36a2c1268422
-> --- /dev/null
-> +++ b/drivers/scsi/fnic/fnic_pci_subsys_devid.c
-> @@ -0,0 +1,131 @@
-> +// SPDX-License-Identifier: GPL-2.0-only
-> +/*
-> + * Copyright 2008 Cisco Systems, Inc.  All rights reserved.
-> + * Copyright 2007 Nuova Systems, Inc.  All rights reserved.
-> + */
-> +
-> +#include <linux/module.h>
-> +#include <linux/mempool.h>
-> +#include <linux/string.h>
-> +#include <linux/slab.h>
-> +#include <linux/errno.h>
-> +#include <linux/init.h>
-> +#include <linux/pci.h>
-> +#include <linux/interrupt.h>
-> +#include <linux/irq.h>
-> +#include <linux/spinlock.h>
-> +#include <linux/workqueue.h>
-> +#include <linux/kthread.h>
-> +#include <linux/if_ether.h>
-> +#include "fnic.h"
-> +
-> +static struct fnic_pcie_device fnic_pcie_device_table[] = {
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno", PCI_SUBDEVICE_ID_CISCO_VASONA,
-> +	 "VIC 1280"},
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno", PCI_SUBDEVICE_ID_CISCO_COTATI,
-> +	 "VIC 1240"},
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno",
-> +	 PCI_SUBDEVICE_ID_CISCO_LEXINGTON, "VIC 1225"},
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno", PCI_SUBDEVICE_ID_CISCO_ICEHOUSE,
-> +	 "VIC 1285"},
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno",
-> +	 PCI_SUBDEVICE_ID_CISCO_KIRKWOODLAKE, "VIC 1225T"},
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno",
-> +	 PCI_SUBDEVICE_ID_CISCO_SUSANVILLE, "VIC 1227"},
-> +	{PCI_DEVICE_ID_CISCO_SERENO, "Sereno", PCI_SUBDEVICE_ID_CISCO_TORRANCE,
-> +	 "VIC 1227T"},
-> +
-> +	{PCI_DEVICE_ID_CISCO_CRUZ, "Cruz", PCI_SUBDEVICE_ID_CISCO_CALISTOGA,
-> +	 "VIC 1340"},
-> +	{PCI_DEVICE_ID_CISCO_CRUZ, "Cruz", PCI_SUBDEVICE_ID_CISCO_MOUNTAINVIEW,
-> +	 "VIC 1380"},
-> +	{PCI_DEVICE_ID_CISCO_CRUZ, "Cruz", PCI_SUBDEVICE_ID_CISCO_MOUNTTIAN,
-> +	 "C3260-SIOC"},
-> +	{PCI_DEVICE_ID_CISCO_CRUZ, "Cruz", PCI_SUBDEVICE_ID_CISCO_CLEARLAKE,
-> +	 "VIC 1385"},
-> +	{PCI_DEVICE_ID_CISCO_CRUZ, "Cruz", PCI_SUBDEVICE_ID_CISCO_MOUNTTIAN2,
-> +	 "C3260-SIOC"},
-> +	{PCI_DEVICE_ID_CISCO_CRUZ, "Cruz", PCI_SUBDEVICE_ID_CISCO_CLAREMONT,
-> +	 "VIC 1387"},
-> +
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega", PCI_SUBDEVICE_ID_CISCO_BRADBURY,
-> +	 "VIC 1457"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega",
-> +	 PCI_SUBDEVICE_ID_CISCO_BRENTWOOD, "VIC 1455"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega",
-> +	 PCI_SUBDEVICE_ID_CISCO_BURLINGAME, "VIC 1487"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega", PCI_SUBDEVICE_ID_CISCO_BAYSIDE,
-> +	 "VIC 1485"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega",
-> +	 PCI_SUBDEVICE_ID_CISCO_BAKERSFIELD, "VIC 1440"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega",
-> +	 PCI_SUBDEVICE_ID_CISCO_BOONVILLE, "VIC 1480"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega", PCI_SUBDEVICE_ID_CISCO_BENICIA,
-> +	 "VIC 1495"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega", PCI_SUBDEVICE_ID_CISCO_BEAUMONT,
-> +	 "VIC 1497"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega", PCI_SUBDEVICE_ID_CISCO_BRISBANE,
-> +	 "VIC 1467"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega", PCI_SUBDEVICE_ID_CISCO_BENTON,
-> +	 "VIC 1477"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega",
-> +	 PCI_SUBDEVICE_ID_CISCO_TWIN_RIVER, "VIC 14425"},
-> +	{PCI_DEVICE_ID_CISCO_BODEGA, "Bodega",
-> +	 PCI_SUBDEVICE_ID_CISCO_TWIN_PEAK, "VIC 14825"},
-> +
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly", PCI_SUBDEVICE_ID_CISCO_BERN,
-> +	 "VIC 15420"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly",
-> +	 PCI_SUBDEVICE_ID_CISCO_STOCKHOLM, "VIC 15428"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly", PCI_SUBDEVICE_ID_CISCO_KRAKOW,
-> +	 "VIC 15411"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly",
-> +	 PCI_SUBDEVICE_ID_CISCO_LUCERNE, "VIC 15231"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly", PCI_SUBDEVICE_ID_CISCO_TURKU,
-> +	 "VIC 15238"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly", PCI_SUBDEVICE_ID_CISCO_GENEVA,
-> +	 "VIC 15422"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly",
-> +	 PCI_SUBDEVICE_ID_CISCO_HELSINKI, "VIC 15235"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly",
-> +	 PCI_SUBDEVICE_ID_CISCO_GOTHENBURG, "VIC 15425"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly",
-> +	 PCI_SUBDEVICE_ID_CISCO_TURKU_PLUS, "VIC 15237"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly", PCI_SUBDEVICE_ID_CISCO_ZURICH,
-> +	 "VIC 15230"},
-> +	{PCI_DEVICE_ID_CISCO_BEVERLY, "Beverly", PCI_SUBDEVICE_ID_CISCO_RIGA,
-> +	 "VIC 15427"},
-> +
-> +	{0,}
-> +};
-> +
-> +int fnic_get_desc_by_devid(struct pci_dev *pdev, char **desc,
-> +						   char **subsys_desc)
-> +{
-> +	unsigned short device = PCI_DEVICE_ID_CISCO_VIC_FC;
-> +	int max = ARRAY_SIZE(fnic_pcie_device_table);
-> +	struct fnic_pcie_device *t = fnic_pcie_device_table;
-> +	int index = 0;
-> +
-> +	if (pdev->device != device)
-> +		return 1;
-> +
-> +	while (t->device != 0) {
-> +		if (memcmp
-> +			((char *) &pdev->subsystem_device,
-> +			 (char *) &t->subsystem_device, sizeof(short)) == 0)
-> +			break;
-> +		t++;
-> +		index++;
-> +	}
-> +
-> +	if (index >= max - 1) {
-> +		*desc = NULL;
-> +		*subsys_desc = NULL;
-> +		return 1;
-> +	}
-> +
-> +	*desc = fnic_pcie_device_table[index].desc;
-> +	*subsys_desc = fnic_pcie_device_table[index].subsys_desc;
-> +	return 0;
-> +}
-Same here. Maybe move the PCI registration stuff to a different patch.
 
-Cheers,
+That said, thank you for all your work, Serge!
 
-Hannes
--- 
-Dr. Hannes Reinecke                  Kernel Storage Architect
-hare@suse.de                                +49 911 74053 688
-SUSE Software Solutions GmbH, Frankenstr. 146, 90461 Nürnberg
-HRB 36809 (AG Nürnberg), GF: I. Totev, A. McDonald, W. Knoblich
+I believe that nothing that has been accomplished with a candid mindset
+and decent intentions is ever done for nothing, although it often pays
+off way differently than expected.
+So I hope this will be the case for you, too.
+
+Take care,
+Philipp
+
+
+>=20
+> Thus even if it was still possible for me to send patches or perform
+> some
+> reviews, after what has been done my motivation to do that as a
+> volunteer has
+> simply vanished. (I might be doing a commercial upstreaming in future
+> though).
+> But before saying goodbye I'd like to express my gratitude to all the
+> community
+> members I have been lucky to work with during all these years.
+> Specifically:
+>=20
+> NTB-folks, Jon, Dave, Allen. NTB was my starting point in the kernel
+> upstream
+> work. Thanks for the initial advices and despite of very-very-very
+> tough reviews
+> with several complete patchset refactorings, I learned a lot back
+> then. That
+> experience helped me afterwards. Thanks a lot for that. BTW since
+> then I've got
+> several thank-you letters for the IDT NTB and IDT EEPROM drivers. If
+> not for you
+> it wouldn't have been possible.
+>=20
+> Andy, it's hard to remember who else would have given me more on my
+> Linux kernel
+> journey as you have. We first met in the I2C subsystem review of my
+> DW I2C
+> driver patches. Afterwards we've got to be frequently meeting here
+> and there -
+> GPIO, SPI, TTY, DMA, NET, etc, clean/fixes/features patch(set)s.
+> Quite heat
+> discussions in your first reviews drove me crazy really. But all the
+> time we
+> managed to come up with some consensus somehow. And you never quit
+> the
+> discussions calmly explaining your point over and over. You never
+> refused to
+> provide more detailed justification to your requests/comments even
+> though you
+> didn't have to. Thanks to that I learned how to be patient to
+> reviewers
+> and reviewees. And of course thank you for the Linux-kernel
+> knowledges and all
+> the tips and tricks you shared.
+>=20
+> * Andy, please note due to the situation I am not going to work on my
+> DW DMAC
+> fixes patchset anymore. So if you ever wish to have DW UART stably
+> working with the
+> DW DMA-engine driver, then feel free to pick the series up:
+> Link:
+> https://lore.kernel.org/dmaengine/20240911184710.4207-1-fancer.lancer@gma=
+il.com/
+>=20
+> Linus (Walleij), after you merged one of my pretty much heavy
+> patchset in you
+> suggested to me to continue the DW APB GPIO driver maintaining. It
+> was a first
+> time I was asked to maintain a not-my driver. Thank you for the
+> trust. I'll
+> never forget that.
+>=20
+> Mark, thank you very much for entrusting the DW APB SSI driver
+> maintenance to
+> me. I've put a lot of efforts into making it more generic and less
+> errors-prune,
+> especially when it comes working under a DMA-engine control or
+> working in the
+> mem-ops mode. I am sure the results have been beneficial to a lot of
+> DW
+> SPI-controller users since then.
+>=20
+> Damien, our first and last meeting was at my generic AHCI-platform
+> and DW AHCI
+> SATA driver patches review. You didn't make it a quick and easy path.
+> But still
+> all the reviews comments were purely on the technical basis, and the
+> patches
+> were eventually merged in. Thank you for your time and experience
+> I've got from
+> the reviews.
+>=20
+> Paul, Thomas, Arnd, Jiaxun, we met several times in the mailing list
+> during my
+> MIPS P5600 patches and just generic MIPS patches review. It was
+> always a
+> pleasure to discuss the matters with such brilliant experts in the
+> field. Alas
+> I've spent too much time working on the patches for another
+> subsystems and
+> failed to submit all the MIPS-related bits. Sorry I didn't keep my
+> promise, but
+> as you can see the circumstances have suddenly drawn its own
+> deadline.
+>=20
+> Bjorn, Mani, we were working quite a lot with you in the framework of
+> the DW
+> PCIe RC drivers. You reviewed my patches. I helped you to review
+> another patches
+> for some time. Despite of some arguing it was always a pleasure to
+> work with
+> you.=C2=A0 Mani, special thanks for the cooperative DW eDMA driver
+> maintenance. I
+> think we were doing a great work together.
+>=20
+> Paolo, Jakub, David, Andrew, Vladimir, Russell. The network subsystem
+> and
+> particularly the STMMAC driver (no doubt the driver sucks) have
+> turned to be a
+> kind of obstacle on which my current Linux-kernel activity has
+> stopped. I really
+> hope that at least in some way my help with the incoming STMMAC and
+> DW XPCS
+> patches reviews lightened up your maintainance duty. I know Russell
+> might
+> disagree, but I honestly think that all our discussions were useful
+> after all,
+> at least for me. I also think we did a great work working together
+> with Russell
+> on the DW GMAC/QoS ETH PCS patches. Hopefully you'll find a time to
+> finish it up
+> after all.=20
+>=20
+> Rob, Krzysztof, from your reviews I've learned a lot about the most
+> hardwary part
+> of the kernel - DT sources and DT-bindings. All your comments have
+> been laconic
+> and straight to the point. That made reviews quick and easy. Thank
+> you very
+> much for that.
+>=20
+> Guenter, special thanks for reviewing and accepting my patches to the
+> hwmon and
+> watchdog subsystems. It was pleasure to be working with you.
+>=20
+> Borislav, we disagreed and argued a lot. So my DW uMCTL2 DDRC EDAC
+> patches even
+> got stuck in limbo for quite a long time. Anyway thank you for the
+> time
+> you spent reviewing my patches and trying to explain your point.
+>=20
+> * Borislav, it looks like I won't be able to work on my Synopsys EDAC
+> patchsets
+> anymore. If you or somebody else could pick them up and finish up the
+> work it
+> would be great (you can find it in the lore archive). The patches
+> convert the
+> mainly Zynq(MP)-specific Synopsys EDAC driver to supporting the
+> generic DW
+> uMCTL2 DDRC. It would be very beneficial for each platform based on
+> that
+> controller.
+>=20
+> Greg, we met several times in the mailing lists. You reviewed my
+> patches sent
+> for the USB and TTY subsystems, and all the time the process was
+> straight,
+> highly professional, and simpler than in the most of my other case.
+> Thank you very much for that.
+>=20
+> Yoshihiro, Keguang, Yanteng, Kory, Cai and everybody I was lucky to
+> meet in the
+> kernel mailing lists, but forgot to mention here. Thank you for the
+> time spent
+> for our cooperative work on making the Linux kernel better. It was a
+> pleasure to
+> meet you here.
+>=20
+> I also wish to say huge thanks to the community members trying to
+> defend the kicked off maintainers and for support you expressed in
+> these days. It means a lot.
+>=20
+> A little bit statics of my kernel-work at the end:
+>=20
+> Signed-off patches:		518
+> Reviewed and Acked patches:	253
+> Tested patches:			80
+>=20
+> You might say not the greatest achievement for seven years comparing
+> to some
+> other developers. Perhaps. But I meant each of these tags, be sure.
+>=20
+> I guess that's it. If you ever need some info or consultation
+> regarding the
+> drivers I used to maintain or the respective hardware or the Synopsys
+> IP-cores
+> (about which I've got quite comprehensive knowledge by this time),
+> feel free to
+> reach me out via this email. I am always willing to help to the
+> community
+> members.
+>=20
+> Hope we'll meet someday in more pleasant circumstances and drink a
+> couple or more beers together. But now it's time to say good bye.
+> Sorry for a long-read text. I wish good luck on your Linux-way.
+>=20
+> Best Regards,
+> -Serge(y)
+>=20
+
 
