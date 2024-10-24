@@ -1,208 +1,92 @@
-Return-Path: <linux-kernel+bounces-380117-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380120-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BDA9AE924
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:41:51 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1AE339AE929
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:42:34 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B481E1F22CBD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:41:50 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id D429728A109
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:42:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E23941EF955;
-	Thu, 24 Oct 2024 14:40:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="Zi4n8rIu"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BE48A1E379E;
+	Thu, 24 Oct 2024 14:41:32 +0000 (UTC)
+Received: from mail-il1-f197.google.com (mail-il1-f197.google.com [209.85.166.197])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7022E1EC01C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:40:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 694B51E283E
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:41:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.197
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780848; cv=none; b=GboLiCawppdaZq4zYYLKwPZCZZlYjVQ3EA6OzevZgm13KbReDUA0lFw37xaHztGxQMFLZuZdLcJ+Byqy5362SUJqn9gqf3bA/qI+y1VlsVcivsfOmIKsQyPmKxNPROTlgdZVj84uUEJFldJmPjFt/WZqSTKtETqu7gJx/Ii3HYM=
+	t=1729780892; cv=none; b=KSTGVFI2B8XojKNUrjufKbLMi8KpuXCTEKdouoOWTd2OvSlb+HMJBipzPzUQsvYy6BVmKlf296qau63zzlcmna8Lvadr2loOieW/LP3mVco66XeI89jd0rNLVMG7pDO1BmkyWT5ISf2qVf7E2GjbDjjCWshC0AJ7alPMIJyWm6w=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780848; c=relaxed/simple;
-	bh=+CjMdzWLILQKd2T9F7nyB4WETCRS6M6pCeZeEmGLW54=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=XPPjlWMGWA+6aDvmqq07RUZUHssmamuwiGv7KXN2bzozNgzxAX2Zb4ILr9lLQXQXLGwAxg5qdHueUMU7KuQ6hxGFKdyrInYRP6SIpcISnUhWwtbPusTEfwTqU0Fd3DVFLKFe+Vpi0os+E51uskEvDc4iVEE0M4F5NrWvirX4q1A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=Zi4n8rIu; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729780844;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=+CjMdzWLILQKd2T9F7nyB4WETCRS6M6pCeZeEmGLW54=;
-	b=Zi4n8rIul7a4Ekl7q5eEHBGJvrx/Nm7RJ1qdB2Vnnx+upMOkU6oTKzlGbO9wot5NGE0WmG
-	PpRYiGNbwrXCwhs4IgDPtR32OjHx03GIHXp06656e92fvnw020yIN7hyDOjkKKqHoNlAdo
-	8UiOzdmTRep6sN6CJtT1UmB5y34BH8o=
-Received: from mail-wr1-f71.google.com (mail-wr1-f71.google.com
- [209.85.221.71]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-320-aHQYZJ8ANiGwp27lJ3PZPA-1; Thu, 24 Oct 2024 10:40:43 -0400
-X-MC-Unique: aHQYZJ8ANiGwp27lJ3PZPA-1
-Received: by mail-wr1-f71.google.com with SMTP id ffacd0b85a97d-37d4854fa0eso545253f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:40:43 -0700 (PDT)
+	s=arc-20240116; t=1729780892; c=relaxed/simple;
+	bh=b37uSE3Denko+MGREyZXx9iSU2x92nZ+Nz79EOZkaEA=;
+	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:
+	 Content-Type; b=mhVbeAqMRvGjWFRbFFbLL+du7tueEWRjt3S6Lj/QgCXLpMmT56QCXZfznfEmbwzvvLAfPHWJui641ta576ap00ae/tiS3SBM0s50JS2OOcG4GCYMvtPFK/DYdm3OWmQqYSlCWraJABnpLi2G8E2sjT7o8cQzpZ/ntTyWX/NE6yI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.197
+Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
+Received: by mail-il1-f197.google.com with SMTP id e9e14a558f8ab-3a3c72d4ac4so8874125ab.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:41:30 -0700 (PDT)
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729780842; x=1730385642;
-        h=content-transfer-encoding:mime-version:message-id:date:references
-         :in-reply-to:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+CjMdzWLILQKd2T9F7nyB4WETCRS6M6pCeZeEmGLW54=;
-        b=Uqdgfg1eSP5FnW7mCg5baGLe2aYwN6yIMISw0rrnLK4RS74E5G+FA5ysP9oS5ULVnw
-         bur9dgZXUYFqJIR/6DqzuUMmlvGRvLTTCC22VWqEmVMOfzuKLaNFhUs+bq/2GheWlU8N
-         w5QZwr8Kionsf6pROtxMyfWFCfAPTQC4p9oF14WmlM+BVDejKHflX0I6pbFscNet3wd+
-         DGWarESKsYNgg/X5DOXMu8ZeY4m41M2YtsDtqRtiYyMkanNaaDokB/ycWbiXa4Zgvzen
-         oCgq7mPWoU/APM5pcKqPw2wqFakO2z3v1YHKAqhlgStCJFaLURfSESFri5LH6O2TtXal
-         XnIw==
-X-Forwarded-Encrypted: i=1; AJvYcCVE7dW+qY18Up2hRGMNjKGG84TCRJfBNwSSP7FChN2lX5feBgRodHpQwvYIp4XEJvw+/fxI4M44bill0Mk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyUswPggJHpTLR9E0oKTMTHqPy7u+H6ednkDrJqFtM6Het3ILtt
-	S7lqzh8J3lUI8kpGYLgdJcRUvelRP0xnm9D38tmzA0ZfiVb81bBO92yIC3xx6p6eJBIJtZ0wiv8
-	cZSyKcoQWhnPm/PDPQG9LdkswcJMh1SKZZcrYfIQ3nB1pa630yVrfP1uon9csNA==
-X-Received: by 2002:adf:f850:0:b0:37d:50f8:a801 with SMTP id ffacd0b85a97d-380458ec65bmr1564912f8f.47.1729780842083;
-        Thu, 24 Oct 2024 07:40:42 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEHlCZfIV1vlnJ8aUV+taDRYgNoiomN86d8HqIw3XbXDwesM0GycuE5hSHY+Pb/gN5r8/Xadw==
-X-Received: by 2002:adf:f850:0:b0:37d:50f8:a801 with SMTP id ffacd0b85a97d-380458ec65bmr1564881f8f.47.1729780841620;
-        Thu, 24 Oct 2024 07:40:41 -0700 (PDT)
-Received: from alrua-x1.borgediget.toke.dk ([45.145.92.2])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b94356sm11505321f8f.67.2024.10.24.07.40.40
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 07:40:41 -0700 (PDT)
-Received: by alrua-x1.borgediget.toke.dk (Postfix, from userid 1000)
-	id 41B6B160B4E3; Thu, 24 Oct 2024 16:40:40 +0200 (CEST)
-From: Toke =?utf-8?Q?H=C3=B8iland-J=C3=B8rgensen?= <toke@redhat.com>
-To: Yunsheng Lin <linyunsheng@huawei.com>, Jesper Dangaard Brouer
- <hawk@kernel.org>, davem@davemloft.net, kuba@kernel.org, pabeni@redhat.com
-Cc: zhangkun09@huawei.com, fanghaiqing@huawei.com, liuyonglong@huawei.com,
- Robin Murphy <robin.murphy@arm.com>, Alexander Duyck
- <alexander.duyck@gmail.com>, IOMMU <iommu@lists.linux.dev>, Andrew Morton
- <akpm@linux-foundation.org>, Eric Dumazet <edumazet@google.com>, Ilias
- Apalodimas <ilias.apalodimas@linaro.org>, linux-mm@kvack.org,
- linux-kernel@vger.kernel.org, netdev@vger.kernel.org, kernel-team
- <kernel-team@cloudflare.com>
-Subject: Re: [PATCH net-next v3 3/3] page_pool: fix IOMMU crash when driver
- has already unbound
-In-Reply-To: <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com>
-References: <20241022032214.3915232-1-linyunsheng@huawei.com>
- <20241022032214.3915232-4-linyunsheng@huawei.com>
- <dbd7dca7-d144-4a0f-9261-e8373be6f8a1@kernel.org>
- <113c9835-f170-46cf-92ba-df4ca5dfab3d@huawei.com>
-X-Clacks-Overhead: GNU Terry Pratchett
-Date: Thu, 24 Oct 2024 16:40:40 +0200
-Message-ID: <878qudftsn.fsf@toke.dk>
+        d=1e100.net; s=20230601; t=1729780889; x=1730385689;
+        h=to:from:subject:message-id:in-reply-to:date:mime-version
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=XiT6nIdw2XJzUlwCgPuAoXE6wrcRpvlHvMAwMozDubo=;
+        b=S/6cyzjJmb/S2ekiGaaFWudMI6nv1H/c97ZLv5kusvzlpU7RhP9PCkaVHtNfvRtEfY
+         rx1TcjOkayX3HLZqCOVoDHIExxwiEG5q1okqqdYx8mULEB5sLuHpIynUYvh9hRYsx49V
+         Xvf9/P93Pl3ChmfkimKkxmH1/XlaP4zzD8QvXQk2kPLzJ8JdFan2I3WYJZ+8l7YIx8Al
+         +69uXVP0qzHgAmyAJ4QCGTegF2OGtzfTHd2+cSZUp9CyULvnyXv0JqMPADwwWw7ODkq/
+         uN2w8PFKTlVrMYNvENEGjUIAZy30esM9NIrgs5t4tHiduTDdIbn+7g6lPi3V9JStT06N
+         3XDA==
+X-Gm-Message-State: AOJu0YxcQwTEJ1869qN6eMLWdgF20j2d2GGDI0MJpqNDuCNNP/GsSBrL
+	rSZkX4W/KOeb/ttLgvz33flgSr8pmztS980q1N5Aj6e10iO+/h5eA6M36Mq2dsBdLo6kaX27TE+
+	FgESmMHLOHbLd5jnjs4cO2TXkX8xl+aqL7tFqT9/Qfde0rNPRGzLU5co=
+X-Google-Smtp-Source: AGHT+IGTq1H7g5UL/4Rm9/HDtSu4fiwPMuf97qYzwpzyWjPTXggZxHWCMOSOsAs5imzFJnDA8CEFuAKuUD5lWkW1nLf7NpzJZ2HT
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+X-Received: by 2002:a05:6e02:218c:b0:3a3:b07b:6b1 with SMTP id
+ e9e14a558f8ab-3a4d5a292f8mr57144465ab.26.1729780889460; Thu, 24 Oct 2024
+ 07:41:29 -0700 (PDT)
+Date: Thu, 24 Oct 2024 07:41:29 -0700
+In-Reply-To: <0000000000004e41110614187d35@google.com>
+X-Google-Appengine-App-Id: s~syzkaller
+X-Google-Appengine-App-Id-Alias: syzkaller
+Message-ID: <671a5c99.050a0220.1e4b4d.00ed.GAE@google.com>
+Subject: Re: [syzbot] Re: UBSAN: array-index-out-of-bounds in htc_issue_send
+From: syzbot <syzbot+93cbd5fbb85814306ba1@syzkaller.appspotmail.com>
+To: linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com
+Content-Type: text/plain; charset="UTF-8"
 
-Yunsheng Lin <linyunsheng@huawei.com> writes:
+For archival purposes, forwarding an incoming command email to
+linux-kernel@vger.kernel.org, syzkaller-bugs@googlegroups.com.
 
-> On 2024/10/23 2:14, Jesper Dangaard Brouer wrote:
->>=20
->>=20
->> On 22/10/2024 05.22, Yunsheng Lin wrote:
->>> Networking driver with page_pool support may hand over page
->>> still with dma mapping to network stack and try to reuse that
->>> page after network stack is done with it and passes it back
->>> to page_pool to avoid the penalty of dma mapping/unmapping.
->>> With all the caching in the network stack, some pages may be
->>> held in the network stack without returning to the page_pool
->>> soon enough, and with VF disable causing the driver unbound,
->>> the page_pool does not stop the driver from doing it's
->>> unbounding work, instead page_pool uses workqueue to check
->>> if there is some pages coming back from the network stack
->>> periodically, if there is any, it will do the dma unmmapping
->>> related cleanup work.
->>>
->>> As mentioned in [1], attempting DMA unmaps after the driver
->>> has already unbound may leak resources or at worst corrupt
->>> memory. Fundamentally, the page pool code cannot allow DMA
->>> mappings to outlive the driver they belong to.
->>>
->>> Currently it seems there are at least two cases that the page
->>> is not released fast enough causing dma unmmapping done after
->>> driver has already unbound:
->>> 1. ipv4 packet defragmentation timeout: this seems to cause
->>> =C2=A0=C2=A0=C2=A0 delay up to 30 secs.
->>> 2. skb_defer_free_flush(): this may cause infinite delay if
->>> =C2=A0=C2=A0=C2=A0 there is no triggering for net_rx_action().
->>>
->>> In order not to do the dma unmmapping after driver has already
->>> unbound and stall the unloading of the networking driver, add
->>> the pool->items array to record all the pages including the ones
->>> which are handed over to network stack, so the page_pool can
->>=20
->> I really really dislike this approach!
->>=20
->> Nacked-by: Jesper Dangaard Brouer <hawk@kernel.org>
->>=20
->> Having to keep an array to record all the pages including the ones
->> which are handed over to network stack, goes against the very principle
->> behind page_pool. We added members to struct page, such that pages could
->> be "outstanding".
->
-> Before and after this patch both support "outstanding", the difference is
-> how many "outstanding" pages do they support.
->
-> The question seems to be do we really need unlimited inflight page for
-> page_pool to work as mentioned in [1]?
->
-> 1. https://lore.kernel.org/all/5d9ea7bd-67bb-4a9d-a120-c8f290c31a47@huawe=
-i.com/
+***
 
-Well, yes? Imposing an arbitrary limit on the number of in-flight
-packets (especially such a low one as in this series) is a complete
-non-starter. Servers have hundreds of gigs of memory these days, and if
-someone wants to use that for storing in-flight packets, the kernel
-definitely shouldn't impose some (hard-coded!) limit on that.
+Subject: Re: UBSAN: array-index-out-of-bounds in htc_issue_send
+Author: dmantipov@yandex.ru
 
->>=20
->> The page_pool already have a system for waiting for these outstanding /
->> inflight packets to get returned.=C2=A0 As I suggested before, the page_=
-pool
->> should simply take over the responsability (from net_device) to free the
->> struct device (after inflight reach zero), where AFAIK the DMA device is
->> connected via.
->
-> It seems you mentioned some similar suggestion in previous version,
-> it would be good to show some code about the idea in your mind, I am sure
-> that Yonglong Liu Cc'ed will be happy to test it if there some code like
-> POC/RFC is provided.
+#syz test https://git.kernel.org/pub/scm/linux/kernel/git/wireless/wireless-next eaed5fc0c322d75cfcdbc7a16c0c5023d9e4f6fe
 
-I believe Jesper is basically referring to Jakub's RFC that you
-mentioned below.
+diff --git a/drivers/net/wireless/ath/ath9k/htc_hst.c b/drivers/net/wireless/ath/ath9k/htc_hst.c
+index eb631fd3336d..a5bc0a5dfe7c 100644
+--- a/drivers/net/wireless/ath/ath9k/htc_hst.c
++++ b/drivers/net/wireless/ath/ath9k/htc_hst.c
+@@ -294,6 +294,9 @@ int htc_connect_service(struct htc_target *target,
+  		return -ETIMEDOUT;
+  	}
 
-> I should mention that it seems that DMA device is not longer vaild when
-> remove() function of the device driver returns, as mentioned in [2], which
-> means dma API is not allowed to called after remove() function of the dev=
-ice
-> driver returns.
->
-> 2. https://www.spinics.net/lists/netdev/msg1030641.html
->
->>=20
->> The alternative is what Kuba suggested (and proposed an RFC for),=C2=A0 =
-that
->> the net_device teardown waits for the page_pool inflight packets.
->
-> As above, the question is how long does the waiting take here?
-> Yonglong tested Kuba's RFC, see [3], the waiting took forever due to
-> reason as mentioned in commit log:
-> "skb_defer_free_flush(): this may cause infinite delay if there is no
-> triggering for net_rx_action()."
-
-Honestly, this just seems like a bug (the "no triggering of
-net_rx_action()") that should be root caused and fixed; not a reason
-that waiting can't work.
-
--Toke
++	if (unlikely(target->conn_rsp_epid == ENDPOINT_UNUSED))
++		return -ENODEV;
++
+  	*conn_rsp_epid = target->conn_rsp_epid;
+  	return 0;
+  err:
 
 
