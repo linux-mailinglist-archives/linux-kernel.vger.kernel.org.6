@@ -1,132 +1,205 @@
-Return-Path: <linux-kernel+bounces-380354-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380356-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 588359AECCE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:58:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 674879AECF8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:59:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7C8001C229A9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:58:22 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 25B1E285467
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:59:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A31121F9A95;
-	Thu, 24 Oct 2024 16:58:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA4E1FAEF9;
+	Thu, 24 Oct 2024 16:59:13 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b="Tj9gzG3p"
-Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="ep0XILZo";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="OV3ypg6c"
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4713A1F81B9
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:58:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B645B1F9EA5;
+	Thu, 24 Oct 2024 16:59:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789096; cv=none; b=BZWFvprcY2CPZyMjTEkwSok+DmFegnmQWqoASQBxRbfnLYTmAugH781U/788ncnuB00+Y5Knm+IqdQf5UKnxjJvMUEqK27q5f8pHRlV1rFKP4pATbpyI+HgmOW2xuCZhAgGlrqSgB88iipmkiBVd3w2FOSh+L1vZsDaXkKgBZQw=
+	t=1729789153; cv=none; b=J25bFNWYbBNVMUlHKY4OtxP2Jn2jA5M85Yt4V7g3P0mznNv3NToHmBcb7eFVdq0HEsESHEpbrfnBz6TxaAEUUaSZBAOOLk4lPi3Uv8vwJt0OYZ0me9rxdFu/LM5ndxdOMUDQ1jzW5y/Do6RU0ay0gq9wQX66+Z3JFUAzUNlb4A8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789096; c=relaxed/simple;
-	bh=1ukhixbsRM10mg626bcx8W+5wyHs3c5XfsQxfCNmfJU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=W3GpDtV2eDwxVyUdPfGY0VTLg+lAYu/yrDPJ+yKYXNLJVWI0cAfZVobbIjPFKoV9GypdbW4OLciMfSZpplSyLucegk7+Fcxi91iWd8Z5T8VSTRKKNoFOAcIX9XP/01myP37qGTrhPGX/gfJA98VELsTLYBxn7HkBJvhytgtQJII=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com; spf=fail smtp.mailfrom=oss.qualcomm.com; dkim=pass (2048-bit key) header.d=qualcomm.com header.i=@qualcomm.com header.b=Tj9gzG3p; arc=none smtp.client-ip=205.220.180.131
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=oss.qualcomm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=oss.qualcomm.com
-Received: from pps.filterd (m0279868.ppops.net [127.0.0.1])
-	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49O8t2pw007791
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:58:13 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=qualcomm.com; h=
-	cc:content-transfer-encoding:content-type:date:from:in-reply-to
-	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
-	eKqKzvww689YAw2d/2F3W68UpNZy8tpNAmm7bIbGXSo=; b=Tj9gzG3pn4QQzh5F
-	+MxZPXG0ntDXue3VFE5/6gOpec9dtBmXHJkW7CkfdZN1Nz1MOELVYvCyA34Q7bvK
-	UAFhjfgJSBSIZ5xEexlnFiszBFpKtxftqCeN0B7Vqokm/r8QGlEuvI32kR1xWocI
-	LDEIXHnpxF+Kq4zUAMurEy6s3zZinMD1Pk2zaPyXWOYrSy2170p4hvl46b0/eYip
-	b5vTxefJpTGaGyWRoc73CV9Y+UB82dN9Mzt4VVjFLv9mmdMYjRcZNvWKzMlBp5wC
-	j1hqZvLPVJnfxKbaLH/gXElkNXsKqfgzczeCyIz7iWaMRYvvFaPy8HQ1jMoSG29R
-	lFJubQ==
-Received: from mail-qv1-f69.google.com (mail-qv1-f69.google.com [209.85.219.69])
-	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42fk52h93g-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES128-GCM-SHA256 bits=128 verify=NOT)
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:58:12 +0000 (GMT)
-Received: by mail-qv1-f69.google.com with SMTP id 6a1803df08f44-6cbccc4fa08so1414256d6.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:58:11 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789091; x=1730393891;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=eKqKzvww689YAw2d/2F3W68UpNZy8tpNAmm7bIbGXSo=;
-        b=Gca4HYhkhTC8NnSm3AuW/wgmCDr/Tmkwid/nCfWtBgWvKidOBRl2wMGOAqNXTlhccb
-         OjgTLd9IBDnAMLa0iz2KxkVL+ihBDy0FmqK7/cO7srkx+0tRD+/AwWQeRvqd6d7bQwlN
-         hdBCtAvqoaR6taD0jbSqQPm/EEGwjsVTEilxn3/hxLhduGP+zV8YnWdEh1gplyYy3BtA
-         IHTltB/8M7S9Xv6lc+WRjgpLmgLbZmVSoO9gqVoyiyLbKt3qZV59Oa6kReHXA3IbeRcG
-         ncI/raCaKW9ACJgt0dXX67YKdqUWnofEOvn2SGOEpfOsZONOMsyuilkL8cWAwqU6LGt9
-         8PFg==
-X-Forwarded-Encrypted: i=1; AJvYcCWN0SuGBJlPxMU5YbXiLNbvsdoD+d9cQukZ0e6dxLBK3+G0YGvgeZmtr4cb6FpL2IZfPm9viB2GZzoFJ28=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz+8olgMdR40mQm/xTzr3eg8sWVWYIOtfezdQ6toxg/RjxOyY9p
-	okACF9lGgd6ogfhi5k7WLQj5AeKvDtfqgxCYHejvvXlXCMeqrlvJt4lGV6TFv+UB8fv9jAvk07W
-	CJeRUwSNAc06eED8DwN7M0eZisROulgNYFXaLNEo3UQGDnH1rogKktVVhTblyZyA=
-X-Received: by 2002:a05:6214:ccc:b0:6c3:5dbd:449c with SMTP id 6a1803df08f44-6ce3413a69fmr42215176d6.1.1729789091250;
-        Thu, 24 Oct 2024 09:58:11 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IHagPfwGhymYTLC2DieUs52AhME0l1R+evfg3zw/XQ9ZepjC8tChIg/HK6pDSWSb3nqIiI5IQ==
-X-Received: by 2002:a05:6214:ccc:b0:6c3:5dbd:449c with SMTP id 6a1803df08f44-6ce3413a69fmr42215006d6.1.1729789090937;
-        Thu, 24 Oct 2024 09:58:10 -0700 (PDT)
-Received: from [192.168.212.120] (078088045245.garwolin.vectranet.pl. [78.88.45.245])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66a6547esm5941232a12.37.2024.10.24.09.58.08
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:58:09 -0700 (PDT)
-Message-ID: <882d92d3-57fc-4f71-a48d-6e53b6b6fbed@oss.qualcomm.com>
-Date: Thu, 24 Oct 2024 18:58:07 +0200
+	s=arc-20240116; t=1729789153; c=relaxed/simple;
+	bh=1D9MXsAVWcNpk072yB1qs3fINFV1pE9hhttXGeJgq0w=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=QP0vYDLhj6BEGbisd2Nm/C3EdyuCfOUGp5dpO0/ZCMdl/aPZWSBRFzXcpuzhShbYxsTfuQVzGgH1rvN+dx8VX1Us29vXnLQ34Lo+FoU3zBr53aNjZHJ9IetbfeW/vLLjISnPTUEgEZSXVhtirWvwIjFfIHIqZAdykBGAvLcNno4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=ep0XILZo; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=OV3ypg6c; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailflow.phl.internal (Postfix) with ESMTP id A59A6200789;
+	Thu, 24 Oct 2024 12:59:09 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Thu, 24 Oct 2024 12:59:09 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1729789149;
+	 x=1729796349; bh=SG3wwx+g/r6vJORvVjNOrsa8CYeWjsvioBIcUqvZ0Gc=; b=
+	ep0XILZoJhOwPW3tle1lxD1HjrJWpITYzUsHm2zOfmXFqwaUnNZ3h7/jpDzjv8yN
+	VG6WWFbIxZ7arovOdONHpLLJkma36z1NnhWQu977IF9HO9KZ68MLf0nCQ2ydlVr5
+	ji7PRP2eBFvEUNXHyEX8oVg7BtgcFFKX4yTwjr+KpZzFUfpH/bxTWjWD6z7yvMkA
+	UEKRziWV3Q1jLfXSuob7zWc889wUnIICAPeYUzt3ky5APj1OmXIW4G944P/RmEh2
+	AhzvftYpTuebLKX1fP9ppQUdFW++SpHC6ff1VDS4iuL/mc+Wmk0OHilBpK7hYEhV
+	CHs06OO4opBCp1rG43CJbg==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729789149; x=
+	1729796349; bh=SG3wwx+g/r6vJORvVjNOrsa8CYeWjsvioBIcUqvZ0Gc=; b=O
+	V3ypg6cRR80FVCGt3iJbt1d8uUDSVnNfTbcrxh1AvdSoxoKlJqOqwr5zZw5GveJ5
+	uy8wn4YSYmLpvIMwJJ7kORHOdpEgJyPTte15PTQgyo91IglxWguDmN4gP3pLAe9m
+	wk9hTmuaeaYaXVX5DGCxfRWh+N4YR93oAILAmss1lBaUNPUqkBhud4wsLyBZ17P+
+	F0sS/KhUZeod6ydZ5XzTH8C3s1qt2uOLAJEBTq4Fys8P10Wff+h4wl9wwEjEpxNy
+	L6w+cNxOXhipxm5Yw6vap72AO8PSLVScLYT8iFGGYKjduZ84lbkW32PnR9OzXFM4
+	RU5lClV8FhEgD5s1FikSw==
+X-ME-Sender: <xms:2nwaZ5_7YU3V2G5aXQIMJVibPQYjTxulAl0jIA6FWJqHw114OgtLYQ>
+    <xme:2nwaZ9sYUxuDQt3s9pQYPXNd0F94BVrwTp-9yhCst1RmWQPQA0XkyT88CUOAbr-S5
+    5bC46g4k_XA2AFDzbs>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddgkeduucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepjeehfeduvddtgffgvdffkeet
+    hefhlefgvdevvdekuefffeekheehgeevhfevteejnecuvehluhhsthgvrhfuihiivgeptd
+    enucfrrghrrghmpehmrghilhhfrhhomhepjhhirgiguhhnrdihrghnghesfhhlhihgohgr
+    thdrtghomhdpnhgspghrtghpthhtohephedtpdhmohguvgepshhmthhpohhuthdprhgtph
+    htthhopegsphesrghlihgvnhekrdguvgdprhgtphhtthhopehtshgsohhgvghnugesrghl
+    phhhrgdrfhhrrghnkhgvnhdruggvpdhrtghpthhtoheplhhinhhugiesrghrmhhlihhnuh
+    igrdhorhhgrdhukhdprhgtphhtthhopegrrhhnugesrghrnhgusgdruggvpdhrtghpthht
+    ohepkhhorhihrdhmrghinhgtvghnthessghoohhtlhhinhdrtghomhdprhgtphhtthhope
+    gurghvvghmsegurghvvghmlhhofhhtrdhnvghtpdhrtghpthhtoheprghjhhgrlhgrnhgv
+    hiesghhmrghilhdrtghomhdprhgtphhtthhopegrlhhlvghnsghhsehgmhgrihhlrdgtoh
+    hmpdhrtghpthhtohepfhgrnhgtvghrrdhlrghntggvrhesghhmrghilhdrtghomh
+X-ME-Proxy: <xmx:2nwaZ3Cv-hVEkx1Pr8q_BWJjkhrzEk9-mHQ7C2q7gA7CMMZL0qI7NQ>
+    <xmx:2nwaZ9e-frUJhk9ka0CLyX-noOJeTWSuiiRFa1wF7QTiIj17LraGBQ>
+    <xmx:2nwaZ-Mv5MLAM_50zIR4-F1_WcNhjiWHJmtj6uYMSwmAZ1_sbnspbw>
+    <xmx:2nwaZ_nxWH5oAqdmZQ0izKk8A9nliyXxQCCDRPN1Ld86KUJwXs1sRg>
+    <xmx:3XwaZxfkKD_qGLFKaVmN5Q4HWgdetZn2bkIYd8lQizBi7lvGEMzBD8_x>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id 37E8F1C20066; Thu, 24 Oct 2024 12:59:06 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 1/2] arm64: dts: qcom: x1e80100: fix PCIe4 interconnect
-To: Johan Hovold <johan+linaro@kernel.org>,
-        Bjorn Andersson <andersson@kernel.org>,
-        Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
-        Conor Dooley <conor+dt@kernel.org>,
-        Rajendra Nayak
- <quic_rjendra@quicinc.com>,
-        Abel Vesa <abel.vesa@linaro.org>, linux-arm-msm@vger.kernel.org,
-        devicetree@vger.kernel.org, linux-kernel@vger.kernel.org,
-        stable@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>
-References: <20241024131101.13587-1-johan+linaro@kernel.org>
- <20241024131101.13587-2-johan+linaro@kernel.org>
-Content-Language: en-US
-From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
-In-Reply-To: <20241024131101.13587-2-johan+linaro@kernel.org>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-Proofpoint-GUID: xmnCTkm10Tn3cPtFLLnZDkpbOUDfPpbh
-X-Proofpoint-ORIG-GUID: xmnCTkm10Tn3cPtFLLnZDkpbOUDfPpbh
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
- definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 suspectscore=0 mlxscore=0
- lowpriorityscore=0 malwarescore=0 impostorscore=0 phishscore=0
- adultscore=0 mlxlogscore=751 priorityscore=1501 spamscore=0 bulkscore=0
- clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240139
+Date: Thu, 24 Oct 2024 17:58:45 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "James Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Serge Semin" <fancer.lancer@gmail.com>, "Jon Mason" <jdmason@kudzu.us>,
+ "Dave Jiang" <dave.jiang@intel.com>, "Allen Hubbe" <allenbh@gmail.com>,
+ ntb@lists.linux.dev, "Andy Shevchenko" <andy@kernel.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Kory Maincent" <kory.maincent@bootlin.com>,
+ "Cai Huoqing" <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ "Damien Le Moal" <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Arnd Bergmann" <arnd@arndb.de>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>,
+ linux-pci <linux-pci@vger.kernel.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, "Russell King" <linux@armlinux.org.uk>,
+ "Vladimir Oltean" <olteanv@gmail.com>,
+ "Kelvin Cheung" <keguang.zhang@gmail.com>,
+ "Yanteng Si" <siyanteng@loongson.cn>, netdev@vger.kernel.org,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Guenter Roeck" <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+ "Borislav Petkov" <bp@alien8.de>, linux-edac@vger.kernel.org,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ linux-serial@vger.kernel.org
+Cc: "Andrew Halaney" <ajhalaney@gmail.com>, "Nikita Travkin" <nikita@trvn.ru>,
+ "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
+ "Alexander Shiyan" <shc_work@mail.ru>, "Dmitry Kozlov" <xeb@mail.ru>,
+ "Sergey Shtylyov" <s.shtylyov@omp.ru>,
+ "Evgeniy Dushistov" <dushistov@mail.ru>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org
+Message-Id: <2f203b14-be13-4eef-bcb1-743dd9e9e9bd@app.fastmail.com>
+In-Reply-To: 
+ <f90bba20e86dac698472d686be7ec565736adca0.camel@HansenPartnership.com>
+References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+ <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
+ <753d203a-a008-4cd3-b053-38b5ce31281b@app.fastmail.com>
+ <f90bba20e86dac698472d686be7ec565736adca0.camel@HansenPartnership.com>
+Subject: Re: linux: Goodbye from a Linux community volunteer
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-On 24.10.2024 3:10 PM, Johan Hovold wrote:
-> The fourth PCIe controller is connected to the PCIe North ANoC.
-> 
-> Fix the corresponding interconnect property so that the OS manages the
-> right path.
-> 
-> Fixes: 5eb83fc10289 ("arm64: dts: qcom: x1e80100: Add PCIe nodes")
-> Cc: stable@vger.kernel.org	# 6.9
-> Cc: Abel Vesa <abel.vesa@linaro.org>
-> Cc: Sibi Sankar <quic_sibis@quicinc.com>
-> Cc: Rajendra Nayak <quic_rjendra@quicinc.com>
-> Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
-> ---
 
-Reviewed-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-Konrad
+=E5=9C=A82024=E5=B9=B410=E6=9C=8824=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:27=EF=BC=8CJames Bottomley=E5=86=99=E9=81=93=EF=BC=9A
+> On Thu, 2024-10-24 at 16:59 +0100, Jiaxun Yang wrote:
+[...]
+
+Hi James,
+
+>
+> It's Linux, so no official capacity at all.  However, I am expressing
+> the views of a number of people I talked to but it's not fair of me to
+> name them.
+
+Fair enough, I was hoping that it's from Linux Foundation but it's still
+good news to me that it do represent some respectful individuals.
+
+>
+[...]
+>> How should we handle it?
+>
+> A big chunk of the reason it's taken so long just to get the above is
+> that the Lawyers (of which I'm not one) are still discussing the
+> specifics and will produce a much longer policy document later, so they
+> don't want to be drawn into questions like this.  However, my non-
+> legal-advice rule of thumb that I'm applying until I hear otherwise is
+> not on the SDN list, not a problem.
+
+Thank you for sharing your insights. I'm looking forward to the document.
+
+While I remain quite upset about how things were handled, your message h=
+as
+helped restore some of my confidence in the community.
+
+I agree with Peter Cai's earlier comment that steps should be taken to a=
+ddress
+the harm caused by the initial reckless actions, particularly to those w=
+ho were
+humiliated.
+
+It is also important to put measures in place to prevent such drama from=
+ recurring.
+A formal procedure for handling urgent compliance requests may be a sens=
+ible step
+forward.
+
+I hold our community in high regard and would be heartbreaking to see th=
+e reputation
+of the Linux Kernel undermined in such an unfortunate manner. I would ap=
+preciate it
+if you could convey those thoughts to the relevant individuals.
+
+Thanks
+>
+> James
+
+--=20
+- Jiaxun
 
