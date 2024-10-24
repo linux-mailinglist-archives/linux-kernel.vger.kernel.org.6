@@ -1,73 +1,71 @@
-Return-Path: <linux-kernel+bounces-380628-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380629-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 11EFB9AF3D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:41:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6FCCD9AF3D6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:41:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id B19A71F2195B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:41:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 35320282A7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:41:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E50392170C5;
-	Thu, 24 Oct 2024 20:41:18 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 381C32170C4;
+	Thu, 24 Oct 2024 20:41:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CrSEeHgu"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="G8vXDmco"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439CB2170C4;
-	Thu, 24 Oct 2024 20:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8B40B1AF0B4;
+	Thu, 24 Oct 2024 20:41:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729802478; cv=none; b=BGwO/4vqiMu3y5/2W8Q4QdJoad7EiYp2X1Gj9vCLpl6SBn9uTNbnNvTAInlC17U+5OF7E1WF8Sk189aEqKQir2eKKdObeHrgZhU97Y+qfcfsQHv60slp0UXoPOyx5SKVy0LLiEiz1bzZ+QJ5DhqWSaXoG/V6kzdHksNzOSAWiIY=
+	t=1729802496; cv=none; b=M7uCeGS/hkBY9zH7HR2raXyrLBY160Gx6F5tTKmMVLsP1bPs+r1KnA8KMrNlGJTzY9H6xwNDDu7MPZquPyFeStxJGWzyEXWEJKSZ+dRuVl2Met/Bcx9t8sT6Nyt1wRqXPmYbt7udlTtHw3vDLjPmHflv73IQ+LV3e+zFBB0FZdk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729802478; c=relaxed/simple;
-	bh=2wGqo08YvcqvbNlSwVnfD6yQbCsQjcfQ/VQ98bfcrx0=;
+	s=arc-20240116; t=1729802496; c=relaxed/simple;
+	bh=2DFjeejvSg1/g8YEFkWGIl9SUrFAuPI0K/9R2+B0tbk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Sz8Dt58tuLmcNR2a5ZDPQ3e2WBlMm39meK5q0rywyZYQhNsWpK+X5bAZ3hMA49T1jMWMTmMVgXzIsJFvmGNocu+6uWi8yyH3h1SRQqVn1K1LpPo3qYpH9I5UOQfhGKUXlHYy/d4i3WIDug42MSonDPfCwVH9DJxfa8Ukzb6+58w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CrSEeHgu; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 96AB7C4CEC7;
-	Thu, 24 Oct 2024 20:41:16 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=Aj9al66QboCeQym/gxrHXE9+pxzbdDim/14A8ylIHMKn0afB+XnNv1OdayVkMB83mhNFC3CUjC6Bw8oEX1Zm23WzTVsDDsQzwAngFLhClQfMTVEHMOT/xz7cR1InHyM/dtEhauR/C2lkNkjNDT7Ra/1miknzuFio2MKspN3Gz3o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=G8vXDmco; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id E08A8C4CEC7;
+	Thu, 24 Oct 2024 20:41:34 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729802476;
-	bh=2wGqo08YvcqvbNlSwVnfD6yQbCsQjcfQ/VQ98bfcrx0=;
+	s=k20201202; t=1729802495;
+	bh=2DFjeejvSg1/g8YEFkWGIl9SUrFAuPI0K/9R2+B0tbk=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=CrSEeHgumaYEhfER/YsDnXgcdHp3i3LgTZVbJLGmhameDT/m6MZMR6QNtEAlb+JAg
-	 CEqfkOQlPDTgooTpLmPOIHAXNX1WTqWZ/bM4R8rSt1tDdX/4VxufjGd8QOdV+mX6Fi
-	 GpL/jPjJdFzGXZHldvH9uZGJu6Oix5TiqtXpYyzuVMY9IQmKZK02rkXUFAat9jSMKo
-	 c1ECzXBROcIPi1hZEAhX0wDiDaDcR48msq19vu3oaLnX1WJp1aWm8haMxGmi3KSFT1
-	 7iSx6OcCNr6z0wA3/FfTZxTCg//rRmNMNnDIQoSrexBW+lXhuk4uneBC6gy3N6D53I
-	 SRczsOrqWud3w==
-Date: Thu, 24 Oct 2024 15:41:16 -0500
+	b=G8vXDmcopDAg+E6IfwWfxt1SIi2OTrV+p57757L56J6DkFbVeASNzKsKhgbKtVMR+
+	 m4FKkc6IoNmfyY4eoY830QK2WvC/1QV4hHcVfH++XYiy3yIsslT3e3VpANdo8YoyEr
+	 gd5OnOjtpOGjEQy1akqGvger/7vuEbbFGryxT/8uikHxKosd9V1f28Yc/EF3wf4r4K
+	 pTWRIjm8aynFXwoszlvKl81h+ii9bGjFQc509GWr5VCMYT8uMc9P0TfIyeorO0WKkK
+	 LE5FxJ4J+9E3cnmu5qK8vOfsaVYyDtqyUYcgdpGGvzcmWglnHHI0R6i8/PNqGWvFLX
+	 aRdDlFd3jc+jw==
+Date: Thu, 24 Oct 2024 15:41:34 -0500
 From: "Rob Herring (Arm)" <robh@kernel.org>
 To: Dave Stevenson <dave.stevenson@raspberrypi.com>
-Cc: Florian Fainelli <florian.fainelli@broadcom.com>,
-	linux-clk@vger.kernel.org,
-	Catalin Marinas <catalin.marinas@arm.com>,
-	Thomas Zimmermann <tzimmermann@suse.de>,
-	David Airlie <airlied@gmail.com>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
-	Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
-	Will Deacon <will@kernel.org>, dri-devel@lists.freedesktop.org,
-	devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
-	Conor Dooley <conor+dt@kernel.org>,
-	Scott Branden <sbranden@broadcom.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Simona Vetter <simona@ffwll.ch>,
+Cc: Raspberry Pi Kernel Maintenance <kernel-list@raspberrypi.com>,
 	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>,
-	Stephen Boyd <sboyd@kernel.org>,
+	Florian Fainelli <florian.fainelli@broadcom.com>,
 	Michael Turquette <mturquette@baylibre.com>,
-	linux-kernel@vger.kernel.org,
+	linux-clk@vger.kernel.org, Scott Branden <sbranden@broadcom.com>,
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+	Conor Dooley <conor+dt@kernel.org>,
+	Maxime Ripard <mripard@kernel.org>, linux-kernel@vger.kernel.org,
+	Ray Jui <rjui@broadcom.com>,
+	=?iso-8859-1?Q?Ma=EDra?= Canal <mcanal@igalia.com>,
+	Catalin Marinas <catalin.marinas@arm.com>,
+	linux-arm-kernel@lists.infradead.org,
+	dri-devel@lists.freedesktop.org, Will Deacon <will@kernel.org>,
+	linux-rpi-kernel@lists.infradead.org,
 	Javier Martinez Canillas <javierm@redhat.com>,
-	Maxime Ripard <mripard@kernel.org>, Ray Jui <rjui@broadcom.com>,
-	linux-rpi-kernel@lists.infradead.org
-Subject: Re: [PATCH 07/37] dt-bindings: display: Add BCM2712 MOP bindings
-Message-ID: <172980247555.1013633.6457539285768075938.robh@kernel.org>
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Thomas Zimmermann <tzimmermann@suse.de>,
+	Simona Vetter <simona@ffwll.ch>, David Airlie <airlied@gmail.com>,
+	devicetree@vger.kernel.org, Stephen Boyd <sboyd@kernel.org>
+Subject: Re: [PATCH 08/37] dt-bindings: display: Add BCM2712 MOPLET bindings
+Message-ID: <172980249374.1014064.8269086234792348096.robh@kernel.org>
 References: <20241023-drm-vc4-2712-support-v1-0-1cc2d5594907@raspberrypi.com>
- <20241023-drm-vc4-2712-support-v1-7-1cc2d5594907@raspberrypi.com>
+ <20241023-drm-vc4-2712-support-v1-8-1cc2d5594907@raspberrypi.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -76,22 +74,22 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023-drm-vc4-2712-support-v1-7-1cc2d5594907@raspberrypi.com>
+In-Reply-To: <20241023-drm-vc4-2712-support-v1-8-1cc2d5594907@raspberrypi.com>
 
 
-On Wed, 23 Oct 2024 17:50:04 +0100, Dave Stevenson wrote:
+On Wed, 23 Oct 2024 17:50:05 +0100, Dave Stevenson wrote:
 > From: Maxime Ripard <mripard@kernel.org>
 > 
-> The BCM2712 has a MOP controller which is basically a new revision of
-> the TXP.
+> The BCM2712 has a MOPLET controller which is basically a TXP without the
+> transpose feature.
 > 
 > Express that by adding a new compatible for it.
 > 
 > Signed-off-by: Maxime Ripard <mripard@kernel.org>
 > Signed-off-by: Dave Stevenson <dave.stevenson@raspberrypi.com>
 > ---
->  Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml | 4 +++-
->  1 file changed, 3 insertions(+), 1 deletion(-)
+>  Documentation/devicetree/bindings/display/brcm,bcm2835-txp.yaml | 1 +
+>  1 file changed, 1 insertion(+)
 > 
 
 Acked-by: Rob Herring (Arm) <robh@kernel.org>
