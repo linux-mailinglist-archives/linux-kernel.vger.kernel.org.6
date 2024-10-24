@@ -1,219 +1,90 @@
-Return-Path: <linux-kernel+bounces-380005-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380007-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8373E9AE70B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:56:53 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4B9AE9AE715
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:01:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4041D283D47
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:56:52 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0296E1F23E17
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:01:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0E3B51E104E;
-	Thu, 24 Oct 2024 13:56:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b="kh5H7HBS"
-Received: from mail-40130.protonmail.ch (mail-40130.protonmail.ch [185.70.40.130])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0CBF81E104E;
+	Thu, 24 Oct 2024 14:01:37 +0000 (UTC)
+Received: from szxga01-in.huawei.com (szxga01-in.huawei.com [45.249.212.187])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 569851DD874
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:56:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.70.40.130
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 60E982F2A;
+	Thu, 24 Oct 2024 14:01:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.187
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729778207; cv=none; b=rFXCNePehqepifq5UAI4SGqw1uc6cLkzBcfo6w/75owELDLYUHzX4eeLQusLA57pqZ8b96BFehsXuGIKsfzdXld++fGldk6h/d10zkGdovi4+sltGUUPIeY+UC1r9Mai659y8lf1lg+Jq1vNrRb7Xc57vNxoIvO74d6Mr1SMlVs=
+	t=1729778496; cv=none; b=PIbvlYELpiVWg/z1LY/M/RvwMie8Q4PpSN3EyZGOY+AaWJHoAxIxdHkl0qaj+aB6Z4N0r5rLJz8dmtKtAFHOMEeZkRu14QrB8AOPWpTgj0ilnKyAzoUV0rJCultosWHmWJmAI8ACG3FFlMaJpEuqjUWl9a50Yf+D95qmDu2+jhE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729778207; c=relaxed/simple;
-	bh=Bs1FG4XrGDFa6s8KshhYgWiyysPmb6ofq4bjBazVjRs=;
-	h=Date:To:From:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=cBdYORi6P+rgBdwAsalngg0L1HxlNWj7vuLmxf/iEV7AggsJ7bcLgbuj9c6EBCWc9/KiZ/qkbgswgKI4w4CFgv5NHrTE8Nb5kOpTK+cKv+jGzctln7OrtWGsz//Bo9H5t3enKv824OAkw1zw+hPvCA9AkNHjXhqVi99i8NwmzQ4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me; spf=pass smtp.mailfrom=proton.me; dkim=pass (2048-bit key) header.d=proton.me header.i=@proton.me header.b=kh5H7HBS; arc=none smtp.client-ip=185.70.40.130
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=proton.me
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=proton.me
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=proton.me;
-	s=protonmail; t=1729778195; x=1730037395;
-	bh=bcCezxVOZvxotA+T2aF5TjMOpW0NiuzhBzPhhwLDyho=;
-	h=Date:To:From:Cc:Subject:Message-ID:Feedback-ID:From:To:Cc:Date:
-	 Subject:Reply-To:Feedback-ID:Message-ID:BIMI-Selector;
-	b=kh5H7HBS4HKqdRXJZUC9VTgEhF5vz+6FoXvSnYsFySWiRTY/YmW2EGBizydEwsNyf
-	 G14mekT+Iq1SBQHn78AV9jXu2zlR1lxZKWb89JBuTXyaD6t/IfP5/Z9TRQXoi//aPD
-	 S2Z4HTav6dQE/sKkd3jbPGUL0WgiDoXANOApY24DCPEvSWmevQFVUfGY03qjxqlNnX
-	 XLpOpyyeLtDuvz+96l3Od1Lb/T/SpDqTfBes4jALt7PmgfmadmDr4UXB2msNTPV+hd
-	 jYJO9ykx0AJgRMtpldHO15Jjr5jhLrrrtev2U2rQxVBIf6hMl3j1oLaCgE0IPFB2qM
-	 RtrAbE/8sTELQ==
-Date: Thu, 24 Oct 2024 13:56:31 +0000
-To: o-takashi@sakamocchi.jp, edmund.raile@proton.me
-From: Edmund Raile <edmund.raile@proton.me>
-Cc: linux1394-devel@lists.sourceforge.net, linux-kernel@vger.kernel.org, regressions@lists.linux.dev, stable@vger.kernel.org
-Subject: firewire-ohci: device rediscovery hardlock regression
-Message-ID: <8a9902a4ece9329af1e1e42f5fea76861f0bf0e8.camel@proton.me>
-Feedback-ID: 45198251:user:proton
-X-Pm-Message-ID: 26ae4aaa2b97bae0006e07cda1a119322468ea29
+	s=arc-20240116; t=1729778496; c=relaxed/simple;
+	bh=EYyETycH3az/VAkNMGSuo6bnoJz7qk/tLQlADD4QzMA=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=m8WZrmtq7ZmpjkiTqkarYDOFz4o9kYiurFgmyupDq4D2JTIOHW27LCHNxR7ZN49VDVDoPnp+UdpJ+sCmklobQQwaU3jb/FuPP+Ar7JBoXwHW+RrAT/lkEmUEuGNPgtL1zMkSrC6D+1hKJ1MM80PBI6y0nO8BZrIAy8QsFetMyD0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.187
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.162.254])
+	by szxga01-in.huawei.com (SkyGuard) with ESMTP id 4XZ6wZ02kCz10Nc6;
+	Thu, 24 Oct 2024 21:59:26 +0800 (CST)
+Received: from kwepemm600001.china.huawei.com (unknown [7.193.23.3])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6C6DA18010F;
+	Thu, 24 Oct 2024 22:01:29 +0800 (CST)
+Received: from huawei.com (10.175.113.133) by kwepemm600001.china.huawei.com
+ (7.193.23.3) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.1.2507.39; Thu, 24 Oct
+ 2024 22:01:28 +0800
+From: Wang Hai <wanghai38@huawei.com>
+To: <giovanni.cabiddu@intel.com>, <herbert@gondor.apana.org.au>,
+	<davem@davemloft.net>, <ahsan.atta@intel.com>, <mun.chun.yep@intel.com>,
+	<markas.rapoportas@intel.com>, <damian.muszynski@intel.com>,
+	<furong.zhou@intel.com>, <adam.guerin@intel.com>, <zhangxiaoxu5@huawei.com>
+CC: <qat-linux@intel.com>, <linux-crypto@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>, <wanghai38@huawei.com>
+Subject: [PATCH] crypto: qat - Fix missing destroy_workqueue in adf_init_aer()
+Date: Thu, 24 Oct 2024 22:00:57 +0800
+Message-ID: <20241024140057.18548-1-wanghai38@huawei.com>
+X-Mailer: git-send-email 2.17.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain
+X-ClientProxiedBy: dggems706-chm.china.huawei.com (10.3.19.183) To
+ kwepemm600001.china.huawei.com (7.193.23.3)
 
-Hello,
+The adf_init_aer() won't destroy device_reset_wq when alloc_workqueue()
+for device_sriov_wq failed. Add destroy_workqueue for device_reset_wq to
+fix this issue.
 
-I'd like to report a regression in firewire-ohci that results
-in the kernel hardlocking when re-discovering a FireWire device.
+Fixes: 4469f9b23468 ("crypto: qat - re-enable sriov after pf reset")
+Signed-off-by: Wang Hai <wanghai38@huawei.com>
+---
+ drivers/crypto/intel/qat/qat_common/adf_aer.c | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
 
-TI XIO2213B
-RME FireFace 800
-
-It will occur under three conditions:
- * power-cycling the FireWire device
- * un- and re-plugging the FireWire device
- * suspending and then waking the PC
-
-Often it would also occur directly on boot in QEMU but I have not
-yet observed this specific behavior on bare metal.
-
-Here is an excerpt from the stack trace (don't know whether it is
-acceptable to send in full):
-
-kernel: ------------[ cut here ]------------
-kernel: refcount_t: addition on 0; use-after-free.
-kernel: WARNING: CPU: 3 PID: 116 at lib/refcount.c:25
-refcount_warn_saturate (/build/linux/lib/refcount.c:25 (discriminator
-1))=20
-kernel: Workqueue: firewire_ohci bus_reset_work
-kernel: RIP: 0010:refcount_warn_saturate
-(/build/linux/lib/refcount.c:25 (discriminator 1))=20
-kernel: Call Trace:
-kernel:  <TASK>
-kernel: ? refcount_warn_saturate (/build/linux/lib/refcount.c:25
-(discriminator 1))=20
-kernel: ? __warn.cold (/build/linux/kernel/panic.c:693)=20
-kernel: ? refcount_warn_saturate (/build/linux/lib/refcount.c:25
-(discriminator 1))=20
-kernel: ? report_bug (/build/linux/lib/bug.c:180
-/build/linux/lib/bug.c:219)=20
-kernel: ? handle_bug (/build/linux/arch/x86/kernel/traps.c:218)=20
-kernel: ? exc_invalid_op (/build/linux/arch/x86/kernel/traps.c:260
-(discriminator 1))=20
-kernel: ? asm_exc_invalid_op
-(/build/linux/./arch/x86/include/asm/idtentry.h:621)=20
-kernel: ? refcount_warn_saturate (/build/linux/lib/refcount.c:25
-(discriminator 1))=20
-kernel: for_each_fw_node (/build/linux/./include/linux/refcount.h:190
-/build/linux/./include/linux/refcount.h:241
-/build/linux/./include/linux/refcount.h:258
-/build/linux/drivers/firewire/core.h:199
-/build/linux/drivers/firewire/core-topology.c:275)=20
-kernel: ? __pfx_report_found_node (/build/linux/drivers/firewire/core-
-topology.c:312)=20
-kernel: fw_core_handle_bus_reset (/build/linux/drivers/firewire/core-
-topology.c:399 (discriminator 1) /build/linux/drivers/firewire/core-
-topology.c:504 (discriminator 1))=20
-kernel: bus_reset_work (/build/linux/drivers/firewire/ohci.c:2121)=20
-kernel: process_one_work
-(/build/linux/./arch/x86/include/asm/jump_label.h:27
-/build/linux/./include/linux/jump_label.h:207
-/build/linux/./include/trace/events/workqueue.h:110
-/build/linux/kernel/workqueue.c:3236)=20
-kernel: worker_thread (/build/linux/kernel/workqueue.c:3306
-(discriminator 2) /build/linux/kernel/workqueue.c:3393 (discriminator
-2))=20
-kernel: ? __pfx_worker_thread (/build/linux/kernel/workqueue.c:3339)=20
-kernel: kthread (/build/linux/kernel/kthread.c:389)=20
-kernel: ? __pfx_kthread (/build/linux/kernel/kthread.c:342)=20
-kernel: ret_from_fork (/build/linux/arch/x86/kernel/process.c:153)=20
-kernel: ? __pfx_kthread (/build/linux/kernel/kthread.c:342)=20
-kernel: ret_from_fork_asm (/build/linux/arch/x86/entry/entry_64.S:254)=20
-kernel:  </TASK>
-
-I have identified the commit via bisection:
-24b7f8e5cd656196a13077e160aec45ad89b58d9
-firewire: core: use helper functions for self ID sequence
-
-It was part of the following patch series:
-firewire: add tracepoints events for self ID sequence
-https://lore.kernel.org/all/20240605235155.116468-6-o-takashi@sakamocchi.jp=
-/
-
-#regzbot introduced: 24b7f8e5cd65
-
-Since this was before v6.10-rc5 and stable 6.10.14 is EOL,
-stable v6.11.5 and mainline are affected.
-
-Reversion appears to be non-trivial as it is part of a patch
-series, other files have been altered as well and other commits
-build on top of it.
-
-Call chain:
-core-topology.c fw_core_handle_bus_reset()
--> core-topology.c   for_each_fw_node(card, local_node,
-report_found_node)
--> core.h            fw_node_get(root)
--> refcount.h        __refcount_inc(&node)
--> refcount.h        __refcount_add(1, r, oldp);
--> refcount.h        refcount_warn_saturate(r, REFCOUNT_ADD_UAF);
--> refcount.h        REFCOUNT_WARN("addition on 0; use-after-free")
-
-Since local_node of fw_core_handle_bus_reset() is retrieved by
-=09local_node =3D build_tree(card, self_ids, self_id_count);
-build_tree() needs to be looked at, it was indeed altered by
-24b7f8e5cd65.
-
-After a hard 3 hour look traversing all used functions and comparing
-against the original function (as of e404cacfc5ed), this caught my eye:
-       for (port_index =3D 0; port_index < total_port_count;
-++port_index) {
-               switch (port_status) {
-               case PHY_PACKET_SELF_ID_PORT_STATUS_PARENT:
-                       node->color =3D i;
-
-In both for loops, "port_index" was replaced by "i"
-"i" remains in use above:
-       for (i =3D 0, h =3D &stack; i < child_port_count; i++)
-               h =3D h->prev;
-
-While the original also used the less descriptive i in the loop
-       for (i =3D 0; i < port_count; i++) {
-               switch (get_port_type(sid, i)) {
-               case SELFID_PORT_PARENT:
-                        node->color =3D i;
-but reset it to 0 at the beginning of the loop.
-
-So the stray "i" in the for loop should be replaced with the loop
-iterator "port_index" as it is meant to be synchronous with the
-loop iterator (i.e. the port_index), no?
-
-diff --git a/drivers/firewire/core-topology.c b/drivers/firewire/core-
-topology.c
-index 8c10f47cc8fc..7fd91ba9c9c4 100644
---- a/drivers/firewire/core-topology.c
-+++ b/drivers/firewire/core-topology.c
-@@ -207,7 +207,7 @@ static struct fw_node *build_tree(struct fw_card
-*card, const u32 *sid, int self
-                                // the node->ports array where the
-parent node should be.  Later,
-                                // when we handle the parent node, we
-fix up the reference.
-                                ++parent_count;
--                               node->color =3D i;
-+                               node->color =3D port_index;
-                                break;
-
-What threw me off was discaridng node->color as it would be replaced
-later anyways (can't be important!), or so I thought.
-
-Please tell me, is this line of reasoning correct or am I missing
-something?
-
-Compiling 24b7f8e5cd65 and later mainline with the patch above
-resulted in a kernel that didn't crash!
-
-In case my solution should turn out to be correct, I will gladly
-submit the patch.
-
-Kind regards,
-Edmund Raile.
-
+diff --git a/drivers/crypto/intel/qat/qat_common/adf_aer.c b/drivers/crypto/intel/qat/qat_common/adf_aer.c
+index ec7913ab00a2..907144ec7e65 100644
+--- a/drivers/crypto/intel/qat/qat_common/adf_aer.c
++++ b/drivers/crypto/intel/qat/qat_common/adf_aer.c
+@@ -281,8 +281,10 @@ int adf_init_aer(void)
+ 		return -EFAULT;
+ 
+ 	device_sriov_wq = alloc_workqueue("qat_device_sriov_wq", 0, 0);
+-	if (!device_sriov_wq)
++	if (!device_sriov_wq) {
++		destroy_workqueue(device_reset_wq);
+ 		return -EFAULT;
++	}
+ 
+ 	return 0;
+ }
+-- 
+2.17.1
 
 
