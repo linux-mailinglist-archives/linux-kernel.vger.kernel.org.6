@@ -1,151 +1,118 @@
-Return-Path: <linux-kernel+bounces-379976-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379973-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 070939AE6A0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:34:31 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A58919AE698
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:34:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id A74361F268DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:34:30 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0F48EB21622
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:34:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E98721E7C14;
-	Thu, 24 Oct 2024 13:29:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="A15qv7Cp"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1447F1E501B;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7313E1E3DD0;
 	Thu, 24 Oct 2024 13:29:12 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="C2L0ccF8"
+Received: from mail-qk1-f174.google.com (mail-qk1-f174.google.com [209.85.222.174])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8626D1D63DB
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:29:09 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.222.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776553; cv=none; b=YIGL7dbE0lsXhgO/FxIfHtuOW2tUyLiqKCA+UA7lhq0y0du9OXyQr0QujOo6EZE1RAPQe2eY+23P1cD952DafviIVKDvg4DFb4hi0Jkhm5qMlFnTn3tJQSWJZo46M4HSOwh5aNV2FpfsRq87N58ZQuA7StRC59vE0Mfbs17i5g8=
+	t=1729776551; cv=none; b=dODolIdzLEKMaIlZUgBiWXSxdGSg0akGPQuzSk5WbYgqGHHjD7vIdSmnGJkFQhs6yPvy6hnsUho6z5bTgG56aKTYmRfmqI3ZNsl+8jHVNIBOZI6HBalt7ZJ9UnS64eFc/rcWdnVhD+ZrHL+I8FbJDW5zAaD9/7wzWrcnNXFxggI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776553; c=relaxed/simple;
-	bh=hjwnZO/GQ8Kpe+e4WVdWEn7tIWB48Xt11zIZDjxDOCk=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=O4aX7gk3euE9Is4FxODm5vXfr9qNE/ID4Um1HS64e2fi2drxpoMovgrz/GQVs2n81ca8Jixo2Dnyr87vAY+1IBHbJghzUncTMOAxsfDWlFTENsUWYbZcyuKlsUfkMhqzC15kRiEemwSQXaUTtidWlaH3NCxQxhsxwiOfdhiCBk8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=A15qv7Cp; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E5BECC4CECC;
-	Thu, 24 Oct 2024 13:29:07 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729776552;
-	bh=hjwnZO/GQ8Kpe+e4WVdWEn7tIWB48Xt11zIZDjxDOCk=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=A15qv7CpW0XdUy0tHwrOFTyiASDHaeNZCy9bWSeoGwmt2LMrJYjMMZB/mrdWHdUZl
-	 5r6daXX/q6r5R/0jAp5b/ipXIlM4WjWF56byNK64TEn/WprgW5wyj+GBTi6S9erJPS
-	 RMD7QTlR12Bc8kFd2J7/8BiS4EM18lX4MeXR5J53+ySu/10NgbOVIhXTh3qP/Ss7t7
-	 eFbDXmuKsb50GLRH5SyyJkmKMbsh0KMzebP37YeUgmM/hD4q/HoSyHS5i+SqyGltQF
-	 QG8oNEo0YhBitkyLrNMhKrd39yZ00CUQfOrWB6HKsiTjO9CG8FN8vricwVKh7eApQm
-	 rkmU4tCAFv/kA==
-Message-ID: <170597c7-b8aa-4744-a44d-db5585545704@kernel.org>
-Date: Thu, 24 Oct 2024 15:29:05 +0200
+	s=arc-20240116; t=1729776551; c=relaxed/simple;
+	bh=bFwyN+jEa2XvW5Q/VvqMtLqk9XXyDIBC0cTMCtFmW8I=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
+	 In-Reply-To:To:Cc; b=NAnpLfRK5H3BU2F5u2tXnAPeNGnEHqVC0qSWDLjVzRZypTwaV+IcDFDbf04BLdtvaG8sxHBBRnaUStDG5MXPmaBtwcI8+StoMXgIlCD/eQLDwHSNcpuBiGnd59gDs0qg6Ea6tBQ+fYuTAw0mC9PCYYYmQgoDfJYQ4OUrzFtChgU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=C2L0ccF8; arc=none smtp.client-ip=209.85.222.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-qk1-f174.google.com with SMTP id af79cd13be357-7ac83a98e5eso86418085a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:29:09 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=chromium.org; s=google; t=1729776548; x=1730381348; darn=vger.kernel.org;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=zzgB0Dmc7SbGSRkZ42QPW9VmAklZSsdEpabG3evbtX4=;
+        b=C2L0ccF89lMnCzO/lOABh9M2irnWtNlV01UNnDvwggDQWRVMbTuXginOlkd9tXDFYz
+         jLADbOLpGsn4fEvcPOw1zPUFuRE5fwGkevfhGowXHdiCUXopCz9YPhdBDprM9Oj1j9CL
+         NHSySKqLQdu8900ssc+GlEZ8O8iOJjy5PdHwE=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729776548; x=1730381348;
+        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
+         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zzgB0Dmc7SbGSRkZ42QPW9VmAklZSsdEpabG3evbtX4=;
+        b=Jt1ZNGZ4pUX1oUahPu3GKWQ1ks/HCo+f0me9aec05e3uli5e+r2MpxMCM9WnsgbV52
+         k+jDP/qhfq6nCMmnLEJXhIyxk82BLwN5Ul3+gE1Hm1k3TLYWl9nv4yfhyrhbK5T/FgEN
+         Z7T3hDWdy2gMbVZGxQ7y2X4brgOa5cpc1zzl9cB2GlTBoIXUSFnK9RopEmNTHbQGY+az
+         WWGSrRMEDofEbf4MXx1A26sQkp24igyUXC5LGcp4FU0a8DIW5JvP0/vpXvbkcNDzA8LJ
+         JWvAx2xflWQBPJ+wm/AC7fTmynvMmS8a8B31I6q4+OZExd8VVdymTUbIB6XgwJCSR2se
+         HFoQ==
+X-Forwarded-Encrypted: i=1; AJvYcCVNTrhSgVGwE+zHhDW7SWL88LdkCVUjlh+YlklWEDIFxhj0oVIkiBy4C65+6dCUpZfyhK3QpcnPCwGqxvw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywkp2KBLAkTDYggjBDD9EvzmoE7Xp4CfSkbwWwJ61lIxRb8SgKO
+	IcAkF+FvwaNuwWPivBz0pNclfVS/TR6LwPf7YNTRDq6JX4U093OQKR5bGUEmX3bOxfYs83WnJIh
+	Dgw==
+X-Google-Smtp-Source: AGHT+IHOq1CHjjVbrTOuW87w2sexGCJD7U4FXEseprlQ/Sd8ltK1U55/s300FMFOWnd7m15YHmBXEA==
+X-Received: by 2002:a05:620a:4621:b0:7a9:aa9e:3a9a with SMTP id af79cd13be357-7b1865e2a18mr350813885a.18.1729776547888;
+        Thu, 24 Oct 2024 06:29:07 -0700 (PDT)
+Received: from denia.c.googlers.com (189.216.85.34.bc.googleusercontent.com. [34.85.216.189])
+        by smtp.gmail.com with ESMTPSA id af79cd13be357-7b165a5d663sm484204885a.94.2024.10.24.06.29.07
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 06:29:07 -0700 (PDT)
+From: Ricardo Ribalda <ribalda@chromium.org>
+Date: Thu, 24 Oct 2024 13:29:05 +0000
+Subject: [PATCH 1/3] iio: hid-sensors: Add proximity and attention IDs
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
- SCMI Generic Extension
-To: Sibi Sankar <quic_sibis@quicinc.com>,
- Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-Cc: sudeep.holla@arm.com, cristian.marussi@arm.com, andersson@kernel.org,
- konrad.dybcio@linaro.org, robh+dt@kernel.org,
- krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org,
- linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, quic_rgottimu@quicinc.com,
- quic_kshivnan@quicinc.com, conor+dt@kernel.org, arm-scmi@vger.kernel.org
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-2-quic_sibis@quicinc.com>
- <q2vuiru7sqetwqyitg7azgqg7kge622i2zgq52b55zivwtbev4@4qgzb54xjioq>
- <hxfg6ztpqy7qdsgzhvvapeyh2f55mj7hhuqqkz7si6g5i7nsng@xoyfwztk66aj>
- <3765cf3d-8477-45a7-af0e-b0c78f41eaad@kernel.org>
- <0b297305-0141-208a-e414-fb7dc98317b9@quicinc.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <0b297305-0141-208a-e414-fb7dc98317b9@quicinc.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241024-hpd-v1-1-2a125882f1f8@chromium.org>
+References: <20241024-hpd-v1-0-2a125882f1f8@chromium.org>
+In-Reply-To: <20241024-hpd-v1-0-2a125882f1f8@chromium.org>
+To: Jiri Kosina <jikos@kernel.org>, Benjamin Tissoires <bentiss@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, 
+ Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>, 
+ Lars-Peter Clausen <lars@metafoo.de>
+Cc: Harvey Yang <chenghaoyang@google.com>, linux-input@vger.kernel.org, 
+ linux-iio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Ricardo Ribalda <ribalda@chromium.org>
+X-Mailer: b4 0.13.0
 
-On 22/10/2024 09:25, Sibi Sankar wrote:
-> 
-> 
-> On 10/8/24 17:41, Krzysztof Kozlowski wrote:
->> On 08/10/2024 14:10, Dmitry Baryshkov wrote:
->>> On Tue, Oct 08, 2024 at 08:49:27AM GMT, Krzysztof Kozlowski wrote:
->>>> On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
->>>>> +/*
->>>>> + * QCOM_MEM_TYPE_DDR_QOS supports the following states.
->>>>> + *
->>>>> + * %QCOM_DDR_LEVEL_AUTO:	DDR operates with LPM enabled
->>>>> + * %QCOM_DDR_LEVEL_PERF:	DDR operates with LPM disabled
->>>>> + */
->>>>> +#define QCOM_DDR_LEVEL_AUTO	0x0
->>>>> +#define QCOM_DDR_LEVEL_PERF	0x1
->>>>
->>>> I could not find any driver using these. Can you point me to usage in
->>>> the drivers?
->>>
->>> It's well hidden. These are the raw values used for DDR_QOS memory.
->>
->> So not a binding? Then these should be dropped.
-> 
-> I am not sure why the term "well hidden" was even considered :(
-> The driver just reads them from dt and passes them along. If you
-> want the dt to list magic numbers 0/1 instead I can do that as well.
-> 
+The HID Usage Table at https://usb.org/sites/default/files/hut1_5.pdf
+reserves:
 
-If these are used by FW, then it's fine, although please document it
-clearly in comment.
+- 0x4b2 for Human Proximity Range
+- 0x4bd for Human Attention Detected
 
-Best regards,
-Krzysztof
+Signed-off-by: Ricardo Ribalda <ribalda@chromium.org>
+---
+ include/linux/hid-sensor-ids.h | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/include/linux/hid-sensor-ids.h b/include/linux/hid-sensor-ids.h
+index 6730ee900ee1..8a03d9696b1c 100644
+--- a/include/linux/hid-sensor-ids.h
++++ b/include/linux/hid-sensor-ids.h
+@@ -30,6 +30,8 @@
+ #define HID_USAGE_SENSOR_PROX                                   0x200011
+ #define HID_USAGE_SENSOR_DATA_PRESENCE                          0x2004b0
+ #define HID_USAGE_SENSOR_HUMAN_PRESENCE                         0x2004b1
++#define HID_USAGE_SENSOR_HUMAN_PROXIMITY                        0x2004b2
++#define HID_USAGE_SENSOR_HUMAN_ATTENTION                        0x2004bd
+ 
+ /* Pressure (200031) */
+ #define HID_USAGE_SENSOR_PRESSURE                               0x200031
+
+-- 
+2.47.0.163.g1226f6d8fa-goog
 
 
