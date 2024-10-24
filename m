@@ -1,142 +1,150 @@
-Return-Path: <linux-kernel+bounces-380231-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380232-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 094A99AEAB6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:37:21 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 41C539AEAB9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:38:51 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9A91C220E7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:37:20 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id E35FB1F21CBD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:38:50 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DADD31E3DF2;
-	Thu, 24 Oct 2024 15:37:11 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 654C71F4708;
+	Thu, 24 Oct 2024 15:38:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="lrcws5e8"
-Received: from mail-wr1-f50.google.com (mail-wr1-f50.google.com [209.85.221.50])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="CCqpNI/x"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EC69D1D5AB2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:37:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.50
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B68C714A4CC;
+	Thu, 24 Oct 2024 15:38:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784231; cv=none; b=jV6oGa7Pf1vQmGZrVK9H/lhcZAC0T7OjQPjOArOn7NZfLvPktzkPmA9Jmf5MGDdldgTivMZ5CEVNiIufxne8/xJkTtyg97vRK7dR5ffYSRyg0P73XhenFzq+pxRH8jCUNpp6lMV4vVrwuXpL+6oBFW9j3f95VhgPvGAcsMpgIlo=
+	t=1729784322; cv=none; b=n0oQcNlYj7KNzG8HoiQkOZ7TQB92MS0t8PZ7MW9THz834Q+e+wblWlR8Vb5NFB3croc/Hew7J8xjOCFDzQ9no7W76JA/p9rqryb6LQjvfHewImvL6UdYH/S4x/kqcqUcdfo0/kOY7v3Haifd7GL6+lcPkUnyH+izjAbR0a8MS+g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784231; c=relaxed/simple;
-	bh=mQE/fX0FNTMKWxSOoDkVlsX7HJQzVfZjTO5dwYTSjGU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=aKwp20+Z6ZL4QOrKX6tJddqs7shSdAme/lBXG+zyt1cg5Et5qniXWDAMAyOpyzoThnZghurMWiRZV/BvczXKRvqofFxjv+lrfvbFG2jtvoTV9bo9U1HU0wSrpAwHROWMMSvTrwFh072eYjdP2J4Hm62rLI5DB4wUi+GE4bp98Cw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=lrcws5e8; arc=none smtp.client-ip=209.85.221.50
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wr1-f50.google.com with SMTP id ffacd0b85a97d-37d462c91a9so721723f8f.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:37:08 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729784227; x=1730389027; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=SCnstNue4jg85kEIiyesGcA8Rnj9rjVX17h62wnrdHU=;
-        b=lrcws5e8PDRZjwo8VqBRscEhFXssdV+BfGs5GQeRtPAsnpKfzlP8K9PSDuA3dUaq0s
-         V84KKW+j59HEl0agybr1GBjRhktAHbou2plNQ5zhJtTPlHwn5ugYFUWihnkmcCe8+D4Q
-         K5KzRNYEeRBv1uN7W9mcwaElk3ix2oUETBPQK8e8uHAlfQ1NuRvQdnprIYtF9GywqQ1o
-         xO6NLkFTpeKC/xtkFW2XXCJQuluIm4XDPc+2IDvPmyti+5DRAuUd6SsXT1rDMhpwiMQC
-         PlL1rSyNcixgWZois2nhzPv7UboJ1T69U7oGb5ToV0wW9qtMQxBv56hB0luYqo0Kyt24
-         m99A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729784227; x=1730389027;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=SCnstNue4jg85kEIiyesGcA8Rnj9rjVX17h62wnrdHU=;
-        b=TzR/VeieA2tDmMOjEOOkWFxEOGn7YY5ZRELRrnaxOW2y12AWXhq726/RFBwwrvVTpo
-         q4bd6pxShl5kxcrQySIIV+F6tp3hIaUc02OWyy+4Qt2SJQNNJwD8jhZZXXFkZZSs5WCH
-         BdQeOuwySlPpon33J8BEDgsvUDWXUDnmvS0WkE7eVHse4DHUkrogaGCttllPfr5ziOfy
-         aMnyy5WURDS6KvhQnGvV8HucUjgXbP3VGbLje245T8zChP4nUFYKYt2lpaGSNdYX8E17
-         WbSBYAVj8LGYpyJrDM6Ph8wcA6RayblhUpACC39AZgIxZWrvl7sn3AwM+uiO0AMUS6SB
-         YnGg==
-X-Forwarded-Encrypted: i=1; AJvYcCWxBtWzuBPmoRTvCfOkL+n9utP9Lh/F1kT154iP+LLAJJjS0bwZstRTYsGiv2/hs9Vg4KncpGyDLTDp1lA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yxf0c7cLe/TjFpxaH1qRosMlYpdYchMyCc5a8Au1xBJNbqe4gZq
-	eT6Oh/1oHNS9Ps8wLNfvwKvVBWTbBvIg6rtLg7bAs+c2frTvBJyGdTgraomhkng=
-X-Google-Smtp-Source: AGHT+IFgeY+AzYZbHlaVERgkGi+hHj+CdTnAXQEQObCERD5nPgI8ASENpM18NFTIk7TmUwfS+F2JOA==
-X-Received: by 2002:a5d:60cd:0:b0:37d:45ab:422b with SMTP id ffacd0b85a97d-37efcf32d1dmr4378492f8f.31.1729784227087;
-        Thu, 24 Oct 2024 08:37:07 -0700 (PDT)
-Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0b9bd6esm11615236f8f.104.2024.10.24.08.37.06
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 08:37:06 -0700 (PDT)
-Date: Thu, 24 Oct 2024 17:37:03 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Inochi Amaoto <inochiama@gmail.com>
-Cc: Chen Wang <unicorn_wang@outlook.com>, 
-	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
-	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
-	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
-	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
-	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Giuseppe Cavallaro <peppe.cavallaro@st.com>, Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
-	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
-	linux-riscv@lists.infradead.org
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-Message-ID: <7lcmhspo5xq3numdbrfc44uqppbzigwq56vmqne5ldvg2uac6z@ivu4fmwbzajm>
-References: <20241021103617.653386-1-inochiama@gmail.com>
- <20241021103617.653386-5-inochiama@gmail.com>
+	s=arc-20240116; t=1729784322; c=relaxed/simple;
+	bh=h9SjXAxMUaB6ZIwhlTLaUbF5816pwq4H4u3Yn/U4ins=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kWO8fdbs+lDsWN01hR5UfA9hYeuMKOdG6CVEbKSBtQEUfb79KiTqneJY+P619wX0pL7W3q24egMiqORi4ECjH8eC0donDY7waaA0Ddz3IEAVhKiNlBvfeAqxOgf6nnzjUq8JZa+KwDHiP4NYBAJDscR2txNqBrDHV5Z5q6TMbVM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=CCqpNI/x; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 46F78C4CEE3;
+	Thu, 24 Oct 2024 15:38:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729784322;
+	bh=h9SjXAxMUaB6ZIwhlTLaUbF5816pwq4H4u3Yn/U4ins=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=CCqpNI/xHcFyDXKjPfvJKGrmstmJkWDnb2QRBCX6OQ5N52KE3icTAQR8d68MXTl42
+	 KAIBs63J5acVQztnX4w4cEUjt8tcrXmFU+noPyDfF7/3kOUx+dXUBlqXOfVp2iJ50t
+	 OghE4JqmUbWKfUaMHWbg40YwtFnv4Me4VaqKpZCFsO7TdP5vBAp/dc5IZr6DQuorMY
+	 zFPnmOCsSKdlpeVvZKLF12P+sBDMTOQ85beS1vp0P2Elq47SXMQ6bwmU5WnI9suPyN
+	 EWs8FLSinfSq9xrxvHU7g1kliZDUhz/rYyUn5udQudJz2HwdQ7Rz19Zvg/WqwtmG7J
+	 /xknwkT70jzcA==
+Received: by mail-oa1-f49.google.com with SMTP id 586e51a60fabf-2890f273296so522371fac.2;
+        Thu, 24 Oct 2024 08:38:42 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU0G5/sM3oXWvk3lZY41vXVtqscz6WWLmTPXuQm/ekHC9kZrebJAIo0xgcFCdZhjKOMEnbsjG53iJ19@vger.kernel.org, AJvYcCV8oECMVQjHtXVR/9Y4vXie0XYFvm3KMtTjuLviDBeqP7cPIoigj53WkJbAgQgcNvaUWizs/fPnUIApjv69@vger.kernel.org
+X-Gm-Message-State: AOJu0YyMRoZkMg/O1qFUuDQtb9adyTCjvdXuW9lFyee7rY9MKTvisZE4
+	UgPVlCy4/3MyoVb6PS/mn81EBv1wjDCQ+7DmWln2lmNKYs+ZbxZlc4mVzueADDWQkSKjhaO3wP+
+	8XSD79VTORO7lkGNzFWB45PPmohE=
+X-Google-Smtp-Source: AGHT+IHTXsoKulanH4wFqL0jOXHtVBcAt2WTSzpPUZPGTLaD8Si5iLxik5Zb7rOSNizpIBepKThQa288nnLjlJFlwCM=
+X-Received: by 2002:a05:6870:6489:b0:288:8aaa:ed0e with SMTP id
+ 586e51a60fabf-28ced134cd7mr2428935fac.8.1729784321504; Thu, 24 Oct 2024
+ 08:38:41 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="aoyw5qfx5gwdpipb"
-Content-Disposition: inline
-In-Reply-To: <20241021103617.653386-5-inochiama@gmail.com>
+References: <20241024022952.2627694-1-liwei728@huawei.com>
+In-Reply-To: <20241024022952.2627694-1-liwei728@huawei.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 Oct 2024 17:38:29 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jcsYnKW=WwXs7tvd-dy9vp_pCT2KDWOEsTELUJonmYYQ@mail.gmail.com>
+Message-ID: <CAJZ5v0jcsYnKW=WwXs7tvd-dy9vp_pCT2KDWOEsTELUJonmYYQ@mail.gmail.com>
+Subject: Re: [PATCH v3] cpufreq/cppc: fix perf_to_khz/khz_to_perf conversion exception
+To: liwei <liwei728@huawei.com>
+Cc: rafael@kernel.org, lenb@kernel.org, viresh.kumar@linaro.org, 
+	Pierre.Gondois@arm.com, vincent.guittot@linaro.org, mingo@kernel.org, 
+	linux-acpi@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	bobo.shaobowang@huawei.com
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Thu, Oct 24, 2024 at 4:16=E2=80=AFAM liwei <liwei728@huawei.com> wrote:
+>
+> When the nominal_freq recorded by the kernel is equal to the lowest_freq,
+> and the frequency adjustment operation is triggered externally, there is
+> a logic error in cppc_perf_to_khz()/cppc_khz_to_perf(), resulting in perf
+> and khz conversion errors.
+>
+> Fix this by adding the branch processing logic when nominal_freq is equal
+> to lowest_freq.
+>
+> Fixes: ec1c7ad47664 ("cpufreq: CPPC: Fix performance/frequency conversion=
+")
+> Signed-off-by: liwei <liwei728@huawei.com>
+> Acked-by: Viresh Kumar <viresh.kumar@linaro.org>
+> ---
+> v2:
+>     - Fix similar issue in cppc_khz_to_perf()
+> ---
+> v3:
+>     - Add acked-by tag
+> ---
+>  drivers/acpi/cppc_acpi.c | 22 +++++++++++++++++-----
+>  1 file changed, 17 insertions(+), 5 deletions(-)
+>
+> diff --git a/drivers/acpi/cppc_acpi.c b/drivers/acpi/cppc_acpi.c
+> index b73b3aa92f3f..c3fc2c05d868 100644
+> --- a/drivers/acpi/cppc_acpi.c
+> +++ b/drivers/acpi/cppc_acpi.c
+> @@ -1916,9 +1916,15 @@ unsigned int cppc_perf_to_khz(struct cppc_perf_cap=
+s *caps, unsigned int perf)
+>         u64 mul, div;
+>
+>         if (caps->lowest_freq && caps->nominal_freq) {
+> -               mul =3D caps->nominal_freq - caps->lowest_freq;
+> +               /* Avoid special case when nominal_freq is equal to lowes=
+t_freq */
+> +               if (caps->lowest_freq =3D=3D caps->nominal_freq) {
+> +                       mul =3D caps->nominal_freq;
+> +                       div =3D caps->nominal_perf;
+> +               } else {
+> +                       mul =3D caps->nominal_freq - caps->lowest_freq;
+> +                       div =3D caps->nominal_perf - caps->lowest_perf;
+> +               }
+>                 mul *=3D KHZ_PER_MHZ;
+> -               div =3D caps->nominal_perf - caps->lowest_perf;
+>                 offset =3D caps->nominal_freq * KHZ_PER_MHZ -
+>                          div64_u64(caps->nominal_perf * mul, div);
+>         } else {
+> @@ -1939,11 +1945,17 @@ unsigned int cppc_khz_to_perf(struct cppc_perf_ca=
+ps *caps, unsigned int freq)
+>  {
+>         s64 retval, offset =3D 0;
+>         static u64 max_khz;
+> -       u64  mul, div;
+> +       u64 mul, div;
+>
+>         if (caps->lowest_freq && caps->nominal_freq) {
+> -               mul =3D caps->nominal_perf - caps->lowest_perf;
+> -               div =3D caps->nominal_freq - caps->lowest_freq;
+> +               /* Avoid special case when nominal_freq is equal to lowes=
+t_freq */
+> +               if (caps->lowest_freq =3D=3D caps->nominal_freq) {
+> +                       mul =3D caps->nominal_perf;
+> +                       div =3D caps->nominal_freq;
+> +               } else {
+> +                       mul =3D caps->nominal_perf - caps->lowest_perf;
+> +                       div =3D caps->nominal_freq - caps->lowest_freq;
+> +               }
+>                 /*
+>                  * We don't need to convert to kHz for computing offset a=
+nd can
+>                  * directly use nominal_freq and lowest_freq as the div64=
+_u64
+> --
 
---aoyw5qfx5gwdpipb
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Subject: Re: [PATCH 4/4] net: stmmac: Add glue layer for Sophgo SG2044 SoC
-MIME-Version: 1.0
-
-Hello,
-
-On Mon, Oct 21, 2024 at 06:36:17PM +0800, Inochi Amaoto wrote:
-> +static struct platform_driver sophgo_dwmac_driver = {
-> +	.probe  = sophgo_dwmac_probe,
-> +	.remove_new = stmmac_pltfr_remove,
-> +	.driver = {
-> +		.name = "sophgo-dwmac",
-> +		.pm = &stmmac_pltfr_pm_ops,
-> +		.of_match_table = sophgo_dwmac_match,
-> +	},
-> +};
-
-After commit 0edb555a65d1 ("platform: Make platform_driver::remove()
-return void") .remove() is (again) the right callback to implement for
-platform drivers. Please just drop "_new".
-
-Best regards
-Uwe
-
---aoyw5qfx5gwdpipb
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcaaYgACgkQj4D7WH0S
-/k4cDgf+KFa71VVkDyJF4Hl2zPHZr8uawn9uZBqgpPkeGPL2gMIgZeFsbW+Ta6tM
-l9QqKp1U1+CNvJx+TsnkHz0XIwAAu4+jjjLogyLd9qAvydydl7UNfs2qqtiVklt3
-QKX4PUt2WLIsjSSnXZ/xvPpcHmofvemuYZcQDgiEBlHaBn+GZjD9woBQgX79OZ3W
-ly+IQUOVBFIqnkBG7MrskeBodS69Snv9OGEkKCxn4me2uqdlscBZVrjIQ2H4u1Q5
-K+jcXjkffyRka8EVF/QuOu90nBixXNZGAa5d/H+Gt1siRRXt6Sgw/k7KSUZ8Kb7f
-UZNlLZkw0L1To+cxy3Y5F23dBVqbMA==
-=+aJM
------END PGP SIGNATURE-----
-
---aoyw5qfx5gwdpipb--
+Applied as 6.12-rc material, thanks!
 
