@@ -1,161 +1,136 @@
-Return-Path: <linux-kernel+bounces-380048-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380060-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C5139AE824
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:18:50 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E32FD9AE858
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:22:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9F3B51C2188D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:18:49 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A906528E693
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:22:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id B39361F6673;
-	Thu, 24 Oct 2024 14:09:00 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="a/DQVXYo"
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 26A891F9EAB;
+	Thu, 24 Oct 2024 14:13:59 +0000 (UTC)
+Received: from mail.tlmp.cc (unknown [148.135.104.50])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4210E20ADEE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:08:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id CE6631E282B;
+	Thu, 24 Oct 2024 14:13:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.135.104.50
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729778940; cv=none; b=VEQswnVYlrY/c9lliQo95P5s2Fihw45tBRgQg2Cxko9aoJW2ZWZUcUBtFkRlXEt/8Usstt8OVOizbKj9+4+K8A4tAAqxrjcTqRkkcplTB6+4LjpHcoqcboOMMweowNeUh/uO9scLgW89GwWIgZAESxDxiQRzHMr41SKQLpVtC0Q=
+	t=1729779238; cv=none; b=JcUK9CR64Kf6O8wvpTwSKGkJf0j4r8q4CzWGMCTgK8HypsrIqtzPjjieFySoIZIk5J7TEpM1YrwxXNkEXgnb5fXA4Ssul5/40cfmbsDvug2HdmnyfmX06Re2BWYx+jHlYWovc0o9XBmS0S4V4FDq+4Pshci7MkbLWmfxgr8Yzns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729778940; c=relaxed/simple;
-	bh=70JhF5B4RAzSQ5flc9ekaBE1VTkKScGCXnBRexd9F1I=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=MIiOGev62gCaEasllbzuA6C1dvAxpRz1F1OdwuCyD1+Ducz5YdsK709466ywQLoebpuiEKZqK98klvYjSiwIznz7Oef0Bgze714FcC4G9Dt8WdcERA0htbFqYFN00ooX/zuPsnp8r06M8Sv/4cl70pxRsXqdSctwUAdVnr/cPkA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=a/DQVXYo; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-431695fa98bso9730485e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:08:55 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729778934; x=1730383734; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=4pxlHMb5AMgvpVGu1TIrG5oVzbcKbA0wfkWtUQw8bZc=;
-        b=a/DQVXYoJgG82N8KWA1ZO1ODbSM/w4wCBA+Qowxa3kYSHuxBR5eBMTiuzXOkb+oQVx
-         QgJQvxSXe/6+Q833WM2nveKz7RzCcHesUarrrmMOu7vht5kwSypSXFsFkIW3tV4jAYyv
-         xZ7AE8GbhYgi/5yaCsbcYEbQDRWSgT8zoIXnDOmIldOU350qS57wIQDXTPdPgs7nhCWQ
-         6vyjpk+fa5YXMeqi9jiRuvYe8CTXTUtbcX1GVHcqO4iqQmPRU9QlVXr5eAOpDBw+cEOF
-         8zFcDmliAIjQcuLqtDSfWoz6U0JszxbYqIyij3pRetHssyrujtNNwMY5Rgotopp8Epee
-         9P8Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729778934; x=1730383734;
-        h=content-transfer-encoding:in-reply-to:organization:autocrypt
-         :content-language:references:cc:to:subject:reply-to:from:user-agent
-         :mime-version:date:message-id:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=4pxlHMb5AMgvpVGu1TIrG5oVzbcKbA0wfkWtUQw8bZc=;
-        b=Kqv1U58H3q3PqWS2NURiCCApPdghH8+myqaRZpNPdztwpzvit80i83oVO6lXt6eWgP
-         ec51L6G6Ofo23BpF+twRoGzDoprAjcFn9nVS69Mbodnq+DyiHVIog5Xi4Wda+GRL4h69
-         QObQaORqYYBdhuH3i5HR3RIsD4icSYZ5gBR4MBdWmFJW4ngXrCYMCe3Go8PSlgzBwjz4
-         lEZ9d07vEfzOSlIROjGClxgnwh44JQuF1MwOfd4ouujrOhj+qAJficq99+9eI20pmuAR
-         K/dribGcE1kgf9apBxrfrU8hwnjp3ZpuZgOcs7FnwNNhaq/is3Hvmw3d3tDoQkOw69b9
-         1r7w==
-X-Forwarded-Encrypted: i=1; AJvYcCWqwX7P9n+m+s7/qRQB9fjMvjYlufqMs1KleQmRxTYNIf/BiHkf6q29PbIrvQ5jANnpyQyEmOucKidYXHE=@vger.kernel.org
-X-Gm-Message-State: AOJu0Ywx2w1ruCpDyBL+vH6d7O5+f4HwObHvm0bp/r1o+xqlMl5FXusY
-	13J8Ac3AP/0fYmlsK0On8jQf0w5aEYie4zq+2dTvY2VTGBhurOeTbQNjuvVCpiXoA3gbkyjUdY5
-	5VKs=
-X-Google-Smtp-Source: AGHT+IHtwZ0D7Hbl6lV9vXaF6Yh+U6E2VIFK5c7xfn2hS1JAXlfziXP71xH9LYJKYWxoN3UwtKx2ZA==
-X-Received: by 2002:adf:f151:0:b0:37d:5338:8733 with SMTP id ffacd0b85a97d-380458b6106mr1655793f8f.37.1729778574351;
-        Thu, 24 Oct 2024 07:02:54 -0700 (PDT)
-Received: from [192.168.1.70] (147.48.71.86.rev.sfr.net. [86.71.48.147])
-        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a37b5asm11376286f8f.10.2024.10.24.07.02.53
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 07:02:53 -0700 (PDT)
-Message-ID: <5db25cea-10d5-4ed6-a385-141775a2a8bc@linaro.org>
-Date: Thu, 24 Oct 2024 16:02:51 +0200
+	s=arc-20240116; t=1729779238; c=relaxed/simple;
+	bh=FqtmwA94oipzr+62VsJdTfpQcYtuXccvlcXq2Sfzq50=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version:Content-Type; b=au0COAI16dULNcXGdUNXTIlCCCN8p0UrTKKClTGFc0uKlFqvWQtzaanUE9v5OMLUoBz7kxP9rfQUlOrV5wNiBphk1gmpaVXI2I4PKpVEyZi1hhslLuyl39FuupbU87wJii41XnF8gJSTD/5RuOu0p2rwTPgQibTNqCQwvyhJmo8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kremlin.ru; spf=fail smtp.mailfrom=kremlin.ru; arc=none smtp.client-ip=148.135.104.50
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kremlin.ru
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=kremlin.ru
+Received: from [127.0.0.1] (localhost [127.0.0.1]) by localhost (Mailerdaemon) with ESMTPSA id 434E85E5C5;
+	Thu, 24 Oct 2024 10:03:59 -0400 (EDT)
+From: Vladimir Vladimirovich Putin <vladimir_putin_rus@kremlin.ru>
+To: torvalds@linux-foundation.org
+Cc: aospan@netup.ru,
+	conor.dooley@microchip.com,
+	ddrokosov@sberdevices.ru,
+	dmaengine@vger.kernel.org,
+	dushistov@mail.ru,
+	fancer.lancer@gmail.com,
+	geert@linux-m68k.org,
+	gregkh@linuxfoundation.org,
+	hoan@os.amperecomputing.com,
+	ink@jurassic.park.msu.ru,
+	jeffbai@aosc.io,
+	kexybiscuit@aosc.io,
+	linux-alpha@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org,
+	linux-fpga@vger.kernel.org,
+	linux-gpio@vger.kernel.org,
+	linux-hwmon@vger.kernel.org,
+	linux-ide@vger.kernel.org,
+	linux-iio@vger.kernel.org,
+	linux-media@vger.kernel.org,
+	linux-mips@vger.kernel.org,
+	linux-renesas-soc@vger.kernel.org,
+	linux-spi@vger.kernel.org,
+	manivannan.sadhasivam@linaro.org,
+	mattst88@gmail.com,
+	netdev@vger.kernel.org,
+	nikita@trvn.ru,
+	ntb@lists.linux.dev,
+	patches@lists.linux.dev,
+	richard.henderson@linaro.org,
+	s.shtylyov@omp.ru,
+	serjk@netup.ru,
+	shc_work@mail.ru,
+	torvic9@mailbox.org,
+	tsbogend@alpha.franken.de,
+	v.georgiev@metrotek.ru,
+	wangyuli@uniontech.com,
+	wsa+renesas@sang-engineering.com,
+	xeb@mail.ru,
+	LKML <linux-kernel@vger.kernel.org>,
+	Vladimir Vladimirovich Putin <vladimir_putin_rus@kremlin.ru>
+Subject: [PATCH 0/2] MAINTAINERS: Remove few Chinese Entries
+Date: Thu, 24 Oct 2024 22:03:51 +0800
+Message-ID: <20241024140353.384881-1-vladimir_putin_rus@kremlin.ru>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com>
+References: <CAHk-=whNGNVnYHHSXUAsWds_MoZ-iEgRMQMxZZ0z-jY4uHT+Gg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Neil Armstrong <neil.armstrong@linaro.org>
-Reply-To: neil.armstrong@linaro.org
-Subject: Re: [PATCH] drm/panel: synaptics-r63353: Fix regulator unbalance
-To: Dario Binacchi <dario.binacchi@amarulasolutions.com>,
- linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
- Michael Trimarchi <michael@amarulasolutions.com>,
- David Airlie <airlied@gmail.com>, Jessica Zhang <quic_jesszhan@quicinc.com>,
- Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
- Maxime Ripard <mripard@kernel.org>, Simona Vetter <simona@ffwll.ch>,
- Thomas Zimmermann <tzimmermann@suse.de>, dri-devel@lists.freedesktop.org
-References: <20241024105050.3483542-1-dario.binacchi@amarulasolutions.com>
-Content-Language: en-US, fr
-Autocrypt: addr=neil.armstrong@linaro.org; keydata=
- xsBNBE1ZBs8BCAD78xVLsXPwV/2qQx2FaO/7mhWL0Qodw8UcQJnkrWmgTFRobtTWxuRx8WWP
- GTjuhvbleoQ5Cxjr+v+1ARGCH46MxFP5DwauzPekwJUD5QKZlaw/bURTLmS2id5wWi3lqVH4
- BVF2WzvGyyeV1o4RTCYDnZ9VLLylJ9bneEaIs/7cjCEbipGGFlfIML3sfqnIvMAxIMZrvcl9
- qPV2k+KQ7q+aXavU5W+yLNn7QtXUB530Zlk/d2ETgzQ5FLYYnUDAaRl+8JUTjc0CNOTpCeik
- 80TZcE6f8M76Xa6yU8VcNko94Ck7iB4vj70q76P/J7kt98hklrr85/3NU3oti3nrIHmHABEB
- AAHNKk5laWwgQXJtc3Ryb25nIDxuZWlsLmFybXN0cm9uZ0BsaW5hcm8ub3JnPsLAkQQTAQoA
- OwIbIwULCQgHAwUVCgkICwUWAgMBAAIeAQIXgBYhBInsPQWERiF0UPIoSBaat7Gkz/iuBQJk
- Q5wSAhkBAAoJEBaat7Gkz/iuyhMIANiD94qDtUTJRfEW6GwXmtKWwl/mvqQtaTtZID2dos04
- YqBbshiJbejgVJjy+HODcNUIKBB3PSLaln4ltdsV73SBcwUNdzebfKspAQunCM22Mn6FBIxQ
- GizsMLcP/0FX4en9NaKGfK6ZdKK6kN1GR9YffMJd2P08EO8mHowmSRe/ExAODhAs9W7XXExw
- UNCY4pVJyRPpEhv373vvff60bHxc1k/FF9WaPscMt7hlkbFLUs85kHtQAmr8pV5Hy9ezsSRa
- GzJmiVclkPc2BY592IGBXRDQ38urXeM4nfhhvqA50b/nAEXc6FzqgXqDkEIwR66/Gbp0t3+r
- yQzpKRyQif3OwE0ETVkGzwEIALyKDN/OGURaHBVzwjgYq+ZtifvekdrSNl8TIDH8g1xicBYp
- QTbPn6bbSZbdvfeQPNCcD4/EhXZuhQXMcoJsQQQnO4vwVULmPGgtGf8PVc7dxKOeta+qUh6+
- SRh3vIcAUFHDT3f/Zdspz+e2E0hPV2hiSvICLk11qO6cyJE13zeNFoeY3ggrKY+IzbFomIZY
- 4yG6xI99NIPEVE9lNBXBKIlewIyVlkOaYvJWSV+p5gdJXOvScNN1epm5YHmf9aE2ZjnqZGoM
- Mtsyw18YoX9BqMFInxqYQQ3j/HpVgTSvmo5ea5qQDDUaCsaTf8UeDcwYOtgI8iL4oHcsGtUX
- oUk33HEAEQEAAcLAXwQYAQIACQUCTVkGzwIbDAAKCRAWmrexpM/4rrXiB/sGbkQ6itMrAIfn
- M7IbRuiSZS1unlySUVYu3SD6YBYnNi3G5EpbwfBNuT3H8//rVvtOFK4OD8cRYkxXRQmTvqa3
- 3eDIHu/zr1HMKErm+2SD6PO9umRef8V82o2oaCLvf4WeIssFjwB0b6a12opuRP7yo3E3gTCS
- KmbUuLv1CtxKQF+fUV1cVaTPMyT25Od+RC1K+iOR0F54oUJvJeq7fUzbn/KdlhA8XPGzwGRy
- 4zcsPWvwnXgfe5tk680fEKZVwOZKIEuJC3v+/yZpQzDvGYJvbyix0lHnrCzq43WefRHI5XTT
- QbM0WUIBIcGmq38+OgUsMYu4NzLu7uZFAcmp6h8g
-Organization: Linaro
-In-Reply-To: <20241024105050.3483542-1-dario.binacchi@amarulasolutions.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Last-TLS-Session-Version: TLSv1.3
 
-On 24/10/2024 12:50, Dario Binacchi wrote:
-> From: Michael Trimarchi <michael@amarulasolutions.com>
-> 
-> The shutdown function can be called when the display is already
-> unprepared. For example during reboot this trigger a kernel
-> backlog. Calling the drm_panel_unprepare, allow us to avoid
-> to trigger the kernel warning.
-> 
-> Tested-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-> Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-> Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Hi, Linux Community.
 
-Could you add a Fixed tag ?
+If you haven't heard of Chinese sanctions yet, you should try to read
+the news some day.  And by "news", I don't mean Chinese
+state-sponsored spam like Central China Television some kind of BS.
 
+So I hereby submit another two patches to remove the entries owned by
+two US-sanctioned entities Huawei[1] and LoongSon[2]. "They can come
+back in the future if sufficient documentation is provided."
 
-> 
-> ---
-> 
->   drivers/gpu/drm/panel/panel-synaptics-r63353.c | 2 +-
->   1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/gpu/drm/panel/panel-synaptics-r63353.c b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-> index 169c629746c7..17349825543f 100644
-> --- a/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-> +++ b/drivers/gpu/drm/panel/panel-synaptics-r63353.c
-> @@ -325,7 +325,7 @@ static void r63353_panel_shutdown(struct mipi_dsi_device *dsi)
->   {
->   	struct r63353_panel *rpanel = mipi_dsi_get_drvdata(dsi);
->   
-> -	r63353_panel_unprepare(&rpanel->base);
-> +	drm_panel_unprepare(&rpanel->base);
->   }
->   
->   static const struct r63353_desc sharp_ls068b3sx02_data = {
+Best Regards,
 
-With that:
+Vladimir Vladimirovich Putin
 
-Reviewed-by: Neil Armstrong <neil.armstrong@linaro.org>
+---
+Привет, Linux-сообщество.
+
+Если вы еще не слышали о китайских санкциях, попробуйте прочитать
+новости когда-нибудь.  И под «новостями» я не имею в виду китайские
+спам, спонсируемый государством, типа Центрального китайского
+телевидения, какая-то чушь.
+
+Поэтому я отправляю еще два патча для удаления записей, принадлежащих
+две компании, находящиеся под санкциями США, Huawei[1] и LoongSon[2]. 
+«Они могут прийтив будущем, если будет предоставлена
+достаточная документация».
+
+С наилучшими пожеланиями,
+
+Владимир Владимирович Путин
+
+[1]: https://sanctionssearch.ofac.treas.gov/Details.aspx?id=30947
+[2]: https://en.wikipedia.org/wiki/Loongson
+
+Vladimir Vladimirovich Putin (2):
+  MAINTAINERS: Remove Huawei due to compilance requirements.
+  MAINTAINERS: Remove Loongson due to compilance requirements.
+
+ MAINTAINERS | 96 -----------------------------------------------------
+ 1 file changed, 96 deletions(-)
+
+-- 
+2.47.0
+
 
