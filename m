@@ -1,123 +1,118 @@
-Return-Path: <linux-kernel+bounces-379928-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379929-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4E9029AE5EF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:20:24 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4430D9AE5F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:21:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 803CC1C21C0A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:20:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id EC1D61F25D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:21:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7652B1DD0CF;
-	Thu, 24 Oct 2024 13:20:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1DC41D89E3;
+	Thu, 24 Oct 2024 13:21:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="q7VX5Woi"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="vB7YmSqa"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D09D91D5158;
-	Thu, 24 Oct 2024 13:20:15 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 519251B392A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 13:21:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776015; cv=none; b=FSaM47y8as/MUWP6wQ6fv3cDdwlXLmCCPWjPca8GiYQ1SSZAViR6+Ah3edVEKqG+8gEGc9tbdsB3rY0bY8GQBziSJIfGvSJ2sJnlL6YmacqE8I3egQRUXLhHU5L7H0XtJlyXHRZCXTj4ir8H54FhsG6w87Dpd6jwty1MO8Jq2gg=
+	t=1729776069; cv=none; b=o81lOaX2wBFjX4rkzMJUTop52x2zAZD0M/M96+T/CMESj98pkJhilvDHL/Y7MTWePla8dG6dX9JPH2Ej+mFqrmoegGWOtUUl3q2ZTJgz42+K2YLlxuY/bcVgUGO8OrTd8rfKiRLs4bLeB2mDeKVWTCNsAYwjJzouH5yUEOloJ34=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776015; c=relaxed/simple;
-	bh=/m4HPPraDyo/dwN16U6sOcMlkv1ByR/voIQNhTClxPc=;
+	s=arc-20240116; t=1729776069; c=relaxed/simple;
+	bh=e4IrghhwsHkxR0OyKbORiHFfT4EMU5qRE0ljkJ5jEes=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gFmdMzWsaUAYfnt6OEI9iD+DHo8ACDDtdL9EKmdZ0eozDylueAhgXbu3knF0Zv2FFkWVI8P7UPDViYmkVS8YIg2ZZPKSYbPCCnNxNb+1akWExhjck8N8dbn6LyROp35oyvbfo0ZlAmbukjVl8Ujk5NpPDli/OW2Mlyk5q7Fg42E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=q7VX5Woi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65E76C4CEC7;
-	Thu, 24 Oct 2024 13:20:13 +0000 (UTC)
+	 Content-Type:Content-Disposition:In-Reply-To; b=DBx+yagVNP9q6zsSlUQprFXM31QexuDlFHL6j2gqXoaj1WE85pTVzAREg3BriW9UTfvJP8Vq1CQKP0eriH+CJHUGMtUMUX9QKbpjDHCG4YaksfsDHFFej4YGPic9o1ANz5TGQ32aSD+/aj2vMDJTOb4kkkoNB2ElGHjUxKZ5khQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=vB7YmSqa; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0753FC4CEC7;
+	Thu, 24 Oct 2024 13:21:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729776015;
-	bh=/m4HPPraDyo/dwN16U6sOcMlkv1ByR/voIQNhTClxPc=;
+	s=k20201202; t=1729776068;
+	bh=e4IrghhwsHkxR0OyKbORiHFfT4EMU5qRE0ljkJ5jEes=;
 	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=q7VX5WoiN3Kz9cypyFgmwEFDq9/4EsQo82RnEKc3Tu2sk3ZULlovo0vFmX37JaQSw
-	 TGYOCpnAnCh34E0g7IGq6evurzkfXHaFDjxNnZkaGDHsGHKbT//cdM25I5Ww00pR9J
-	 t8nV0rPE17YY0fMYVRpUlTT7plbQ+t58AJ2SmblqNTWtbyT7sJYJPS1ds/u55AUnis
-	 riKXTWM+cGyQ0zxy74Yn9xMqH1AEz4z0I27oLLXLhFIpnnOVi5ofv6i/vOyDb3EEzV
-	 /VOSXYdaW3HBi1uB4CTBF6dhL4UVRjW19QhA9HnjJoOYZ3Cd2rY7oLBiHbD1dLuKjb
-	 HyPEGdLjz4l/g==
-Date: Thu, 24 Oct 2024 14:20:11 +0100
-From: Simon Horman <horms@kernel.org>
-To: Vladimir Oltean <vladimir.oltean@nxp.com>
-Cc: netdev@vger.kernel.org, "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	Jamal Hadi Salim <jhs@mojatatu.com>,
-	Cong Wang <xiyou.wangcong@gmail.com>, Jiri Pirko <jiri@resnulli.us>,
-	Pedro Tammela <pctammela@mojatatu.com>,
-	Victor Nogueira <victor@mojatatu.com>, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH net] net/sched: sch_api: fix xa_insert() error path in
- tcf_block_get_ext()
-Message-ID: <20241024132011.GM1202098@kernel.org>
-References: <20241023100541.974362-1-vladimir.oltean@nxp.com>
+	b=vB7YmSqaDXohGnpgcjhdOkXb3IFfDJR5uzxgtSmMIcdsuyMCeJDK2ZtMmSgRwUZSz
+	 ML+8qCaCTydwfvT8/Lrbm3FCRd+cGzNoe9DDZw+vRKew7kHzuU0I/1EDQkRfL/DZ/M
+	 900SIJ5ZBkZEMXEw8sZj8bbOOOuv47hjWjDbe38Getqzdcx6vqGqEswr3tttey2L4f
+	 W+wa9JKtfMBOFgMhupzVvaa3ZoLvS0JlvrEDGlpZOojTmQ009+iMhEfjqSvCa5rOB2
+	 kY1kaz/WuIS4LbV98R93J4aTDHVFoFlMRTn5HunXmp6+0mwC21jzDSyoxKbRvtVb4+
+	 +iZbwxa2sIoBw==
+Date: Thu, 24 Oct 2024 14:21:02 +0100
+From: Will Deacon <will@kernel.org>
+To: Jann Horn <jannh@google.com>
+Cc: Qi Zheng <zhengqi.arch@bytedance.com>,
+	Catalin Marinas <catalin.marinas@arm.com>, david@redhat.com,
+	hughd@google.com, willy@infradead.org, mgorman@suse.de,
+	muchun.song@linux.dev, vbabka@kernel.org, akpm@linux-foundation.org,
+	zokeefe@google.com, rientjes@google.com, peterx@redhat.com,
+	linux-mm@kvack.org, linux-kernel@vger.kernel.org, x86@kernel.org
+Subject: Re: [PATCH v1 5/7] mm: pgtable: try to reclaim empty PTE page in
+ madvise(MADV_DONTNEED)
+Message-ID: <20241024132101.GJ30704@willie-the-truck>
+References: <cover.1729157502.git.zhengqi.arch@bytedance.com>
+ <6c7fe15b0434a08a287c400869f9ba434e1a8fa3.1729157502.git.zhengqi.arch@bytedance.com>
+ <CAG48ez3MLMXZvkbPGZ4He2+tnOSHYxA68Sa1Hd_70-3a8K++=A@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <20241023100541.974362-1-vladimir.oltean@nxp.com>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAG48ez3MLMXZvkbPGZ4He2+tnOSHYxA68Sa1Hd_70-3a8K++=A@mail.gmail.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-On Wed, Oct 23, 2024 at 01:05:41PM +0300, Vladimir Oltean wrote:
-> This command:
-> 
-> $ tc qdisc replace dev eth0 ingress_block 1 egress_block 1 clsact
-> Error: block dev insert failed: -EBUSY.
-> 
-> fails because user space requests the same block index to be set for
-> both ingress and egress.
-> 
-> [ side note, I don't think it even failed prior to commit 913b47d3424e
->   ("net/sched: Introduce tc block netdev tracking infra"), because this
->   is a command from an old set of notes of mine which used to work, but
->   alas, I did not scientifically bisect this ]
-> 
-> The problem is not that it fails, but rather, that the second time
-> around, it fails differently (and irrecoverably):
-> 
-> $ tc qdisc replace dev eth0 ingress_block 1 egress_block 1 clsact
-> Error: dsa_core: Flow block cb is busy.
-> 
-> [ another note: the extack is added by me for illustration purposes.
->   the context of the problem is that clsact_init() obtains the same
->   &q->ingress_block pointer as &q->egress_block, and since we call
->   tcf_block_get_ext() on both of them, "dev" will be added to the
->   block->ports xarray twice, thus failing the operation: once through
->   the ingress block pointer, and once again through the egress block
->   pointer. the problem itself is that when xa_insert() fails, we have
->   emitted a FLOW_BLOCK_BIND command through ndo_setup_tc(), but the
->   offload never sees a corresponding FLOW_BLOCK_UNBIND. ]
-> 
-> Even correcting the bad user input, we still cannot recover:
-> 
-> $ tc qdisc replace dev swp3 ingress_block 1 egress_block 2 clsact
-> Error: dsa_core: Flow block cb is busy.
-> 
-> Basically the only way to recover is to reboot the system, or unbind and
-> rebind the net device driver.
-> 
-> To fix the bug, we need to fill the correct error teardown path which
-> was missed during code movement, and call tcf_block_offload_unbind()
-> when xa_insert() fails.
-> 
-> [ last note, fundamentally I blame the label naming convention in
->   tcf_block_get_ext() for the bug. The labels should be named after what
->   they do, not after the error path that jumps to them. This way, it is
->   obviously wrong that two labels pointing to the same code mean
->   something is wrong, and checking the code correctness at the goto site
->   is also easier ]
+On Thu, Oct 17, 2024 at 08:43:43PM +0200, Jann Horn wrote:
+> +arm64 maintainers in case they have opinions on the break-before-make aspects
 
-Yes, a text book case of why that practice is discouraged.
+Thanks, Jann.
 
-> Fixes: 94e2557d086a ("net: sched: move block device tracking into tcf_block_get/put_ext()")
-> Signed-off-by: Vladimir Oltean <vladimir.oltean@nxp.com>
+> On Thu, Oct 17, 2024 at 11:48 AM Qi Zheng <zhengqi.arch@bytedance.com> wrote:
+> > +void try_to_free_pte(struct mm_struct *mm, pmd_t *pmd, unsigned long addr,
+> > +                    struct mmu_gather *tlb)
+> > +{
+> > +       pmd_t pmdval;
+> > +       spinlock_t *pml, *ptl;
+> > +       pte_t *start_pte, *pte;
+> > +       int i;
+> > +
+> > +       start_pte = pte_offset_map_rw_nolock(mm, pmd, addr, &pmdval, &ptl);
+> > +       if (!start_pte)
+> > +               return;
+> > +
+> > +       pml = pmd_lock(mm, pmd);
+> > +       if (ptl != pml)
+> > +               spin_lock_nested(ptl, SINGLE_DEPTH_NESTING);
+> > +
+> > +       if (unlikely(!pmd_same(pmdval, pmdp_get_lockless(pmd))))
+> > +               goto out_ptl;
+> > +
+> > +       /* Check if it is empty PTE page */
+> > +       for (i = 0, pte = start_pte; i < PTRS_PER_PTE; i++, pte++) {
+> > +               if (!pte_none(ptep_get(pte)))
+> > +                       goto out_ptl;
+> > +       }
+> > +       pte_unmap(start_pte);
+> > +
+> > +       pmd_clear(pmd);
+> > +
+> > +       if (ptl != pml)
+> > +               spin_unlock(ptl);
+> > +       spin_unlock(pml);
+> 
+> At this point, you have cleared the PMD and dropped the locks
+> protecting against concurrency, but have not yet done a TLB flush. If
+> another thread concurrently repopulates the PMD at this point, can we
+> get incoherent TLB state in a way that violates the arm64
+> break-before-make rule?
 
-Reviewed-by: Simon Horman <horms@kernel.org>
+Sounds like it, yes, unless there's something that constrains the new
+PMD value to be some function of what it was in the first place?
 
+Will
 
