@@ -1,73 +1,74 @@
-Return-Path: <linux-kernel+bounces-379168-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379169-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5C80C9ADAF8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:34:32 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2AF6D9ADAF9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:34:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id F20201F22C36
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:34:31 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E2A7328361F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:34:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8C33B16D4E5;
-	Thu, 24 Oct 2024 04:34:25 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A39816FF4E;
+	Thu, 24 Oct 2024 04:34:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=seriousbit.net header.i=@seriousbit.net header.b="q7MsURv0"
-Received: from pc232-5.mailgun.net (pc232-5.mailgun.net [143.55.232.5])
+	dkim=pass (2048-bit key) header.d=mail.deadmansswitch.net header.i=@mail.deadmansswitch.net header.b="i4xC3Xcv"
+Received: from pc232-10.mailgun.net (pc232-10.mailgun.net [143.55.232.10])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D6523BA4B
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:34:22 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.55.232.5
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC5BBA4B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:34:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=143.55.232.10
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729744464; cv=none; b=QNE3iT8aPWcA8hwDcTHcr00/pc43j7ucpx0PpHAVrMSnRch/duPHSPGYAr6HBPJuf4i3oUk/j8wRd3Neon/dtxOcPoUlAkqyIpp5spyNi1wtTYy/631nTzL12rKR33gDAnsgQZbi4o8SPQdmASnK7/omYObeAFUSFBDm00PMOsc=
+	t=1729744470; cv=none; b=di8AK9lNUxUCziHwDh4sAWbEJKoAoxN7s42r6NMBi2bVm7x4M9rOtf92OChj+xDLOEDXFU4ec7vmmwawN9SFH6fs6gMj8CFLJn8hzXw2XszrSuIyhbusZTFXfsywyA/aVHqQ80GsNdhWp/sgfQjp9c2NUVUSxLMONXxNxjq5fK8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729744464; c=relaxed/simple;
-	bh=eYQilZgoxfpRKYuLtiBPlP0JV8yRHkodejWaDdMMh9Y=;
-	h=Date:Mime-Version:Subject:From:To:Message-Id:Content-Type; b=ZthSh69U1eMOuJ37t6Ewa95D3uYOWqL+1+dHaW4QwBtL22/j4Aj116J9H8XiFcOBrvypR9uJbX6VylE2r7H+drs3Pt+ZlfMqlOwQQZ2mnD4dJQKe8Fq0apM0W49G9/GGC7PgYVDG/r81EPBA7EXn6/FS6rFgVI+G6T0H5Yjs58g=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=seriousbit.net; spf=pass smtp.mailfrom=seriousbit.net; dkim=pass (1024-bit key) header.d=seriousbit.net header.i=@seriousbit.net header.b=q7MsURv0; arc=none smtp.client-ip=143.55.232.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=seriousbit.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=seriousbit.net
-DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=seriousbit.net; q=dns/txt; s=smtp; t=1729744461; x=1729751661;
- h=Content-Type: Content-Transfer-Encoding: Message-Id: Reply-To: To: To: From: From: Subject: Subject: Mime-Version: Date: Sender: Sender;
- bh=eYQilZgoxfpRKYuLtiBPlP0JV8yRHkodejWaDdMMh9Y=;
- b=q7MsURv0K3Vqhvczj0zpRh/qF2OvGHvVpG6cbfGQvRJUqX5a7wZRU8MNCtlxKgEIxFC7qw8sUHec9aqj/8Zwl4yPUYqtaCXL7UhMoq5yJnSXGvWws6ocU54ukmPU3hvHMcmhrL6zjjbxRV1tOvjgneYtXxO7KevzTpO9QoEo17I=
-X-Mailgun-Sending-Ip: 143.55.232.5
+	s=arc-20240116; t=1729744470; c=relaxed/simple;
+	bh=wHqvzuP44osqIdHWOKtEhKT1T4kIqMOXpjW8nAKc1jU=;
+	h=Content-Type:MIME-Version:Subject:From:To:Date:Message-ID; b=kubpvrkCJfFlXOMyR/AzJF7gEZbDXExxGl/EWyakiS28WvYRk15zQN9dgGlHyIcHZQhM8R9pXxhRhRjPQur9dWyD7zwS8ttgUklTvjzdKB20Fn1tyrBCNSTOO1kI4Ft9rOmQEICFqPq271sN47nzY6WPel/a+pGN4SF7BNnd2/w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deadmansswitch.net; spf=pass smtp.mailfrom=mail.deadmansswitch.net; dkim=pass (2048-bit key) header.d=mail.deadmansswitch.net header.i=@mail.deadmansswitch.net header.b=i4xC3Xcv; arc=none smtp.client-ip=143.55.232.10
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=deadmansswitch.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=mail.deadmansswitch.net
+DKIM-Signature: a=rsa-sha256; v=1; c=relaxed/relaxed; d=mail.deadmansswitch.net; q=dns/txt; s=krs; t=1729744465; x=1729751665;
+ h=Message-ID: Date: To: To: From: From: Subject: Subject: Content-Transfer-Encoding: MIME-Version: Content-Type: Sender: Sender;
+ bh=wHqvzuP44osqIdHWOKtEhKT1T4kIqMOXpjW8nAKc1jU=;
+ b=i4xC3Xcv0Ra3sbDrlqtc8KHOVoNE/AFw/YSDRFKprf0dU34AFKa+ygEVOgf7A6X7fU6irGoWemuZ2haPtCY0shHJ5FGlVFgp0d2sIWqkPvctorUn3/XITttwauHbtYNGP8PxKWI0iX4hTFFtB+uhqUI96K5/epFeMRrT1ZmKFGfAqYNJabAoQW63TImhrfFc975/0wWYtP+Bhm5e2qlzYe9kB3Q8QhGoaI6hIa6l9RtOvUXSYf6qujOHkseugKy+TdeayP74b9toxL17Ptj52S28sbHBu54Oh6ZWb3+w0jqezqNvACeOUDIxPfcXyKPQTBdWj7IBP1b6RFBqz6R3Cw==
+X-Mailgun-Sending-Ip: 143.55.232.10
 X-Mailgun-Sending-Ip-Pool-Name: 
 X-Mailgun-Sending-Ip-Pool: 
-X-Mailgun-Sid: WyIxYmU0YyIsImxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmciLCJiYjE0Il0=
-Received: by 42a8dbfdd06d with HTTP id 6719ce4db3bb54ce3bf589c6; Thu, 24 Oct 2024
- 04:34:21 GMT
-Sender: support@seriousbit.net
-Date: Thu, 24 Oct 2024 04:34:21 +0000
+X-Mailgun-Sid: WyJjN2ZjMCIsImxpbnV4LWtlcm5lbEB2Z2VyLmtlcm5lbC5vcmciLCJjYWQyOTgiXQ==
+Received: from d5caf0f646d0 (projects.stochastic.io [195.201.40.251]) by 95d95fad09f7
+ with SMTP id 6719ce519f6f4c8076ddc73f; Thu, 24 Oct 2024 04:34:25 GMT
+Sender: donotreply=deadmansswitch.net@mail.deadmansswitch.net
+Content-Type: text/plain; charset="utf-8"
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-Subject: Please activate your NetBalancer account
-From: NetBalancer Support <support@seriousbit.net>
-To: linux-kernel@vger.kernel.org
-X-Mailgun-Track: false
-Reply-To: support@netbalancer.com
-Message-Id: <20241024043421.fe79ec4a876eee12@seriousbit.net>
+MIME-Version: 1.0
 Content-Transfer-Encoding: 7bit
-Content-Type: text/plain; charset=ascii
+Subject: Your login link
+From: Dead Man's Switch notification service <donotreply@deadmansswitch.net>
+To: linux-kernel@vger.kernel.org
+Date: Thu, 24 Oct 2024 04:34:25 -0000
+Message-ID: <172974446509.16.11489836289145131169@d5caf0f646d0>
 
-Hello xw9WqmM7rc,
+Hello!
 
-Welcome to NetBalancer!
-To activate your account please click the link below to verify your email address:
+This email contains your secret Dead Man's Switch login link. To log in,
+just click the link below, and please don't share it with anyone, or they will
+be able to access your account.
 
-https://netbalancer.com/account/activate?username=xw9WqmM7rc&code=R80450
+Click to log in:
 
-Or paste your validation code R80450 on the validation page:
-https://netbalancer.com/account/activate
+https://www.deadmansswitch.net/auth/login/Q6LH7ucR/
 
-Happy balancing!
+Please note that the link will expire a few minutes after you requested it, and you
+might need to request a new one if this one doesn't work.
 
-Best Regards,
-NetBalancer's Highly Paid Robot
+If you didn't request a login link, you can safely ignore this email.
+
+Thanks!
+The Dead Man's Switch team
 
