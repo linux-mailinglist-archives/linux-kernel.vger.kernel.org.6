@@ -1,98 +1,109 @@
-Return-Path: <linux-kernel+bounces-379101-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379102-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 69C499AD9ED
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:27:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 88E289AD9F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:31:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 26D6C283818
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:27:37 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B8B5F1C2184B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:31:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 03A7814B959;
-	Thu, 24 Oct 2024 02:27:29 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BBF3A14C5B3;
+	Thu, 24 Oct 2024 02:31:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b="eCs6J2P3"
-Received: from m16.mail.163.com (m16.mail.163.com [220.197.31.5])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 966F174040;
-	Thu, 24 Oct 2024 02:27:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=220.197.31.5
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="iaMiVMKy"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.18])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 66E6B339A0;
+	Thu, 24 Oct 2024 02:31:12 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.18
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729736848; cv=none; b=UR1E4dvnl9AqfyU1aWwKVmo61Wc45VuBb1HcQs/+DINK/YFL/MARwTZ5Ub3etBLBOibAG3kK/aqGs6DBBBaVqXry6r2ZpxxK88ROJHb4OzM2Wuqc4y+5FmQEUxSGkyonelanTmB1X28U0psJh4QryvdlO/2imSFtRmJaBMmXqN0=
+	t=1729737075; cv=none; b=f7xzn/vQtWo5RmsFAu2GTrTlsFfa/U6ioaWA9VvS+6VscQE7l4yUuzipugbHKiX2x5JFjRaoG3vXziE62QbhWEIR4oHqTFXsJDierqP4vWA1ESxdanKv3xMmYytHrIfd9ncMgduVVG3N82UtK4vGJzuPhzSMHqgey+voQwo6yPc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729736848; c=relaxed/simple;
-	bh=IvEc+AYeWPJJmtJ60ssOpgGH28HGIQWXYtW2hYd4OvM=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=Mkug1QTqS7ekd2OePiLdXRL7KmQ/TF6vjhNAvTujsFemG1+iP+oiFdWbtBrASzgBFbpiKQl5OIK4rdlET4iW3Frv5vH/ucQGqKrYlgjFA2YXscVVkX1JTeZFCWeFIQSG9DsDSuR7mRhHz0VkhPzp8QhBk5NipAO8cqswdP6T2rY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com; spf=pass smtp.mailfrom=163.com; dkim=pass (1024-bit key) header.d=163.com header.i=@163.com header.b=eCs6J2P3; arc=none smtp.client-ip=220.197.31.5
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=163.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=163.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=163.com;
-	s=s110527; h=From:Subject:Date:Message-Id:MIME-Version; bh=/rPi5
-	Lcki+iBDALqPQLhIL7P+3qfjGOuEBBYE9xUBb4=; b=eCs6J2P3tr3ky7OPmlMYT
-	UOZlnHUyIqbWHlsnIxf8OHrwgPYvfenxZQaVXpR4okazu+bOY/i9YKcHFOg/McAg
-	/y3ty1Pj2qJ/n8gkPnmNEkzkhEjwNXin4mDk4YMMZbCv1rb+BIJhiT9eyHBddvB3
-	siOBw28jMUKJ45XxBXtxdw=
-Received: from thinkpadx13gen2i.. (unknown [111.48.58.12])
-	by gzga-smtp-mtada-g1-4 (Coremail) with SMTP id _____wC339x2sBlnNkzrAA--.9816S2;
-	Thu, 24 Oct 2024 10:27:03 +0800 (CST)
-From: Zongmin Zhou <min_halo@163.com>
-To: skhan@linuxfoundation.org
-Cc: i@zenithal.me,
-	linux-kernel@vger.kernel.org,
-	linux-usb@vger.kernel.org,
-	shuah@kernel.org,
-	valentina.manea.m@gmail.com,
-	Zongmin Zhou <zhouzongmin@kylinos.cn>,
-	stable@vger.kernel.org
-Subject: [PATCH v2] usbip: tools: Fix detach_port() invalid port error path
-Date: Thu, 24 Oct 2024 10:27:00 +0800
-Message-Id: <20241024022700.1236660-1-min_halo@163.com>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <8d1a298c-78e4-4dfd-a5fb-5dd96fb22e81@linuxfoundation.org>
-References: <8d1a298c-78e4-4dfd-a5fb-5dd96fb22e81@linuxfoundation.org>
+	s=arc-20240116; t=1729737075; c=relaxed/simple;
+	bh=3gPDbpxeAad/3hbgmxkPBQLN7nUzwrGrc2f1U4pDXlw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=tQrqd5MPGVLe5Qpj3fJjQKUVz4tzV2zcZ9j31tLrMkl4Vd2QDPqeF1CD2Se2ueZ8wXQAToUHQcCMgLXn2p/d+lfFshmM7iJw57ffYOVXhzP/ExGgWe/Vj6xw1LZsebLsFG6x9DHSYfwsT7CAv44wrTrbgk71opQUy9CaRkx0E24=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=iaMiVMKy; arc=none smtp.client-ip=192.198.163.18
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729737072; x=1761273072;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=3gPDbpxeAad/3hbgmxkPBQLN7nUzwrGrc2f1U4pDXlw=;
+  b=iaMiVMKy9Gqxr1tG9eQu+y1QSHUnMZDnv2Ob0nDq3BxrN6PI31Nrss2f
+   VK8PJxSdqaErTzXwkudj1+6nyU8hrB7zPxpNJkijcR126lFrsPpWJDKZb
+   yH7Sc85pWdZ2qJ+9toApvz+bApWikzi2tMFfUpN6erQshchdi7JOY5dLR
+   EXikw46oU5KYyhC3cpP4F/0l7StHAhT2vd2lG/lJapSDqddeOnuqTmFml
+   Lrsy06QRuv+zr5wc8ShfDXfU82/BIvafWyStt416QC3/0nB7Qq3bkWvC0
+   MAn5B57xLhnEgdI4Al2ZeozcmtxTzTh+wEo5t2j9hKABtEB5f7MvKZkWa
+   g==;
+X-CSE-ConnectionGUID: PLd6+dD8QMCOYiRnWP5RWA==
+X-CSE-MsgGUID: oQ/jqMGvSoaf2hEm0mqzQg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="28793263"
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="28793263"
+Received: from fmviesa007.fm.intel.com ([10.60.135.147])
+  by fmvoesa112.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 19:31:11 -0700
+X-CSE-ConnectionGUID: w4ONfiewTWeW9xcD1BYo5Q==
+X-CSE-MsgGUID: g5s1ciq4Q3CG+JLPCSS5FA==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,227,1725346800"; 
+   d="scan'208";a="80114351"
+Received: from aschofie-mobl2.amr.corp.intel.com (HELO aschofie-mobl2.lan) ([10.125.110.250])
+  by fmviesa007-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 23 Oct 2024 19:30:42 -0700
+Date: Wed, 23 Oct 2024 19:30:40 -0700
+From: Alison Schofield <alison.schofield@intel.com>
+To: Ira Weiny <ira.weiny@intel.com>
+Cc: Dave Jiang <dave.jiang@intel.com>, Fan Ni <fan.ni@samsung.com>,
+	Jonathan Cameron <Jonathan.Cameron@huawei.com>,
+	Navneet Singh <navneet.singh@intel.com>,
+	Jonathan Corbet <corbet@lwn.net>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Dan Williams <dan.j.williams@intel.com>,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Vishal Verma <vishal.l.verma@intel.com>,
+	linux-btrfs@vger.kernel.org, linux-cxl@vger.kernel.org,
+	linux-doc@vger.kernel.org, nvdimm@lists.linux.dev,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v4 20/28] cxl/core: Return endpoint decoder information
+ from region search
+Message-ID: <ZxmxUCGDuqeIp4TW@aschofie-mobl2.lan>
+References: <20241007-dcd-type2-upstream-v4-0-c261ee6eeded@intel.com>
+ <20241007-dcd-type2-upstream-v4-20-c261ee6eeded@intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:_____wC339x2sBlnNkzrAA--.9816S2
-X-Coremail-Antispam: 1Uf129KBjvdXoWrur17Kry7uFWfGr4rJry7Jrb_yoWfCrg_Cr
-	4Uur4DXrWYka4Fkrn5GF18CryrK3Z8Wr4kXa1UKr1fGa4qyrn5JFyDt3929F18ur1qvF1a
-	y3Z5Xw1DZws8ujkaLaAFLSUrUUUUjb8apTn2vfkv8UJUUUU8Yxn0WfASr-VFAUDa7-sFnT
-	9fnUUvcSsGvfC2KfnxnUUI43ZEXa7IU89Xo7UUUUU==
-X-CM-SenderInfo: pplqsxxdorqiywtou0bp/1tbiLAWBq2cZRZMUFQABsr
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241007-dcd-type2-upstream-v4-20-c261ee6eeded@intel.com>
 
-From: Zongmin Zhou <zhouzongmin@kylinos.cn>
+On Mon, Oct 07, 2024 at 06:16:26PM -0500, Ira Weiny wrote:
+> cxl_dpa_to_region() finds the region from a <DPA, device> tuple.
+> The search involves finding the device endpoint decoder as well.
+> 
+> Dynamic capacity extent processing uses the endpoint decoder HPA
+> information to calculate the HPA offset.  In addition, well behaved
+> extents should be contained within an endpoint decoder.
+> 
+> Return the endpoint decoder found to be used in subsequent DCD code.
 
-The detach_port() doesn't return error
-when detach is attempted on an invalid port.
+Reviewed-by: Alison Schofield <alison.schofield@intel.com>
 
-Fixes: 40ecdeb1a187 ("usbip: usbip_detach: fix to check for invalid ports")
-Cc: stable@vger.kernel.org
-Reviewed-by: Hongren Zheng <i@zenithal.me>
-Reviewed-by: Shuah Khan <skhan@linuxfoundation.org>
-Signed-off-by: Zongmin Zhou <zhouzongmin@kylinos.cn>
----
- tools/usb/usbip/src/usbip_detach.c | 1 +
- 1 file changed, 1 insertion(+)
+BTW - I reviewed this patch when it first appeard in the DCD series
+and looked for other ways to layer the delivery of cxled and cxlr.
+Nothing clever appeared and looking at how DCD uses it in the 
+future patch made this feel less yucky - it does want both cxled &
+cxlr so it can have them here all at once ;)
 
-diff --git a/tools/usb/usbip/src/usbip_detach.c b/tools/usb/usbip/src/usbip_detach.c
-index b29101986b5a..6b78d4a81e95 100644
---- a/tools/usb/usbip/src/usbip_detach.c
-+++ b/tools/usb/usbip/src/usbip_detach.c
-@@ -68,6 +68,7 @@ static int detach_port(char *port)
- 	}
- 
- 	if (!found) {
-+		ret = -1;
- 		err("Invalid port %s > maxports %d",
- 			port, vhci_driver->nports);
- 		goto call_driver_close;
--- 
-2.34.1
 
+snip
 
