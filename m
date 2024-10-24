@@ -1,165 +1,97 @@
-Return-Path: <linux-kernel+bounces-379796-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379794-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13C0D9AE3E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:32:56 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BB1B99AE3E0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 41CD81C22077
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:32:55 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 659B11F234DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:32:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8CC7C1D150C;
-	Thu, 24 Oct 2024 11:32:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A1B4714BF87;
+	Thu, 24 Oct 2024 11:32:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="ZJU367tW"
-Received: from fllv0015.ext.ti.com (fllv0015.ext.ti.com [198.47.19.141])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Rfi75Jq7"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1F7A96CDBA;
-	Thu, 24 Oct 2024 11:32:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.141
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DF526CDBA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:32:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729769556; cv=none; b=hgciveZW5dse1XYltyRgVmzr+QoMGIUWg3koSl7Xj/b8Oho9WUQF6BO/KtXMMlhT85/awhHmtjqD8dl6CPo3N2RKhBtIbk8ra6pSTym5BBKDbzjD44Jqv3vztDHeqMjVIRzKSEPsJmr7QkqDpt7OrCx2Q+g3Elpjl1jz0snmgX0=
+	t=1729769527; cv=none; b=myDq61mU/1hGwu5EJy9QIP09MpoXyrhl0AkmDq2gMiAnyyb/pyCO5HeAPUU2vocePuY44E0j612ZGnw5JmqYykBe0VgWAKxmRJGel5qMwBxxva/7zQZQI9apWYb2QRXuk1EpHueL3QO5GuMpKmmicmKQc8Ocup8wTzzHoFHJnlU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729769556; c=relaxed/simple;
-	bh=lDea2FMjqGZ9k9qRL6S/dGNvhzc3tfHV/cof20gJ+mk=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=ZrgQI/r9IU7fwVenu2gOBxAbUJgIiODtsp8iM4k3c1Q8sW2YNlF6BQOmuGmMS76oRBGtnn+ELbJMf9Moe2cJUa5od2zM2i99Z7mZcEScsIEKYoc6wBcA7btinnnplJEtPp17o0Jn+7K+McOHMhkN68w1D0q7WAZNCW4VZY0/QLU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=ZJU367tW; arc=none smtp.client-ip=198.47.19.141
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
-Received: from lelv0265.itg.ti.com ([10.180.67.224])
-	by fllv0015.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49OBW7LM116527;
-	Thu, 24 Oct 2024 06:32:07 -0500
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
-	s=ti-com-17Q1; t=1729769527;
-	bh=aMLsOpWO/pYNkEAk0fPsDrgjjgnzlpp9C0m/g9waCuE=;
-	h=From:To:CC:Subject:Date;
-	b=ZJU367tW0yBQ3ojql4Noam33G+/lcMIbRFioV8ISAsq7Qyhevfv+jXYdJdeuaLAPT
-	 zsKrqv+vu71oIZZ7yY6wQ9334E/oQvfXWUEWNY3S/vYl+RDkjPxsoUiEDGasf/8U0v
-	 titvqwvfkkNXg2uFGZA4bsR972oHBmfKyN//043Y=
-Received: from DFLE105.ent.ti.com (dfle105.ent.ti.com [10.64.6.26])
-	by lelv0265.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49OBW7Bt026893
-	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
-	Thu, 24 Oct 2024 06:32:07 -0500
-Received: from DFLE104.ent.ti.com (10.64.6.25) by DFLE105.ent.ti.com
- (10.64.6.26) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 24
- Oct 2024 06:32:07 -0500
-Received: from fllvsmtp7.itg.ti.com (10.64.40.31) by DFLE104.ent.ti.com
- (10.64.6.25) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
- Frontend Transport; Thu, 24 Oct 2024 06:32:06 -0500
-Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
-	by fllvsmtp7.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49OBW61O044845;
-	Thu, 24 Oct 2024 06:32:06 -0500
-Received: from localhost (meghana-pc.dhcp.ti.com [10.24.69.13] (may be forged))
-	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49OBW5Ug002932;
-	Thu, 24 Oct 2024 06:32:05 -0500
-From: Meghana Malladi <m-malladi@ti.com>
-To: <vigneshr@ti.com>, <horms@kernel.org>, <m-malladi@ti.com>,
-        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <pabeni@redhat.com>,
-        <kuba@kernel.org>, <edumazet@google.com>, <davem@davemloft.net>,
-        <andrew+netdev@lunn.ch>
-CC: <linux-kernel@vger.kernel.org>, <vadim.fedorenko@linux.dev>,
-        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-        <srk@ti.com>, Roger Quadros <rogerq@kernel.org>, <danishanwar@ti.com>
-Subject: [PATCH net v2] net: ti: icssg-prueth: Fix 1 PPS sync
-Date: Thu, 24 Oct 2024 17:01:40 +0530
-Message-ID: <20241024113140.973928-1-m-malladi@ti.com>
-X-Mailer: git-send-email 2.25.1
+	s=arc-20240116; t=1729769527; c=relaxed/simple;
+	bh=ivnxlBIjC5nMC+d51jAvAbt6k0K2kSFd6G5M3K32Jqo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=pMubdrp2ZHs3PC8Yxtxxpk2oovWZx2wWAEf/tRkE80UtWw6jKuefjq6TWAQA+niIFTi17zyDqnBkqJpHhpoR8zZdjwMVaw8RJOQeo+pueC4l6LJXl1RNM/4l4+1BzS7ViKphqmGEBLyyHYDRA1ckbaTpQE/TMJ4iKoha8YRUFAQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Rfi75Jq7; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8BD4FC4CEC7;
+	Thu, 24 Oct 2024 11:32:05 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729769526;
+	bh=ivnxlBIjC5nMC+d51jAvAbt6k0K2kSFd6G5M3K32Jqo=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=Rfi75Jq7W2Zl/mTc50A88zDCnOHygVfLeFyaGoqPHEfU5ZwMHi3pfrrl7LXmauTmP
+	 XXFp66XtyzW83xoyGGXLMiREPgI/FUR20H1Q/tBVa/9uH0EcscJghkp/ik5f/Jwroc
+	 v46ff96cAW0ToJoqfh+sx9DaIT8eGYCECt+3nf3WaF2s9F+e/K5743Vq2qSs03//RO
+	 nqnUWcqOTPyAdZ5Y+OpBU2ggWhnTG55qWtiL1056NsuATh0sgAmUNuRLQPmP0mhjdD
+	 i9wNZR+azLAP9+XOGI9AntcoHBF0YAT8HNcLohcfyjQe59PsyUEcORD1eOpkHAixG+
+	 DIpdtu4hnN6LA==
+Date: Thu, 24 Oct 2024 12:32:02 +0100
+From: Will Deacon <will@kernel.org>
+To: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+Cc: Shuai Xue <xueshuai@linux.alibaba.com>,
+	Jing Zhang <renyu.zj@linux.alibaba.com>,
+	Mark Rutland <mark.rutland@arm.com>,
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/3] perf/dwc_pcie: Load DesignWare PCIe PMU driver
+ automatically on Ampere SoCs
+Message-ID: <20241024113201.GA30270@willie-the-truck>
+References: <20241008231824.5102-1-ilkka@os.amperecomputing.com>
+ <20241008231824.5102-3-ilkka@os.amperecomputing.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241008231824.5102-3-ilkka@os.amperecomputing.com>
+User-Agent: Mutt/1.10.1 (2018-07-13)
 
-The first PPS latch time needs to be calculated by the driver
-(in rounded off seconds) and configured as the start time
-offset for the cycle. After synchronizing two PTP clocks
-running as master/slave, missing this would cause master
-and slave to start immediately with some milliseconds
-drift which causes the PPS signal to never synchronize with
-the PTP master.
+On Tue, Oct 08, 2024 at 11:18:23PM +0000, Ilkka Koskinen wrote:
+> Load DesignWare PCIe PMU driver automatically if the system has a PCI
+> bridge by Ampere.
+> 
+> Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+> ---
+>  drivers/perf/dwc_pcie_pmu.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/perf/dwc_pcie_pmu.c b/drivers/perf/dwc_pcie_pmu.c
+> index 3581d916d851..d752168733cf 100644
+> --- a/drivers/perf/dwc_pcie_pmu.c
+> +++ b/drivers/perf/dwc_pcie_pmu.c
+> @@ -782,6 +782,16 @@ static void __exit dwc_pcie_pmu_exit(void)
+>  module_init(dwc_pcie_pmu_init);
+>  module_exit(dwc_pcie_pmu_exit);
+>  
+> +static const struct pci_device_id dwc_pcie_pmu_table[] = {
+> +	{
+> +		PCI_DEVICE(PCI_VENDOR_ID_AMPERE, PCI_ANY_ID),
+> +		.class		= PCI_CLASS_BRIDGE_PCI_NORMAL,
+> +		.class_mask	= ~0,
+> +	},
+> +	{ }
+> +};
+> +MODULE_DEVICE_TABLE(pci, dwc_pcie_pmu_table);
 
-Fixes: 186734c15886 ("net: ti: icssg-prueth: add packet timestamping and ptp support")
-Signed-off-by: Meghana Malladi <m-malladi@ti.com>
----
+Hmm, won't this only work if the driver is modular? Should we be calling
+pci_register_driver() for the builtin case?
 
-Hello,
-
-This patch is based on net-next tagged next-20241023.
-v1:https://lore.kernel.org/all/20241023091213.593351-1-m-malladi@ti.com/
-Changes since v1 (v2-v1):
-- Use roundup() instead of open coding as suggested by Vadim Fedorenko
-
-Regards,
-Meghana.
-
- drivers/net/ethernet/ti/icssg/icssg_prueth.c | 12 ++++++++++--
- drivers/net/ethernet/ti/icssg/icssg_prueth.h | 11 +++++++++++
- 2 files changed, 21 insertions(+), 2 deletions(-)
-
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.c b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-index 0556910938fa..6876e8181066 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.c
-@@ -411,6 +411,8 @@ static int prueth_perout_enable(void *clockops_data,
- 	struct prueth_emac *emac = clockops_data;
- 	u32 reduction_factor = 0, offset = 0;
- 	struct timespec64 ts;
-+	u64 current_cycle;
-+	u64 start_offset;
- 	u64 ns_period;
- 
- 	if (!on)
-@@ -449,8 +451,14 @@ static int prueth_perout_enable(void *clockops_data,
- 	writel(reduction_factor, emac->prueth->shram.va +
- 		TIMESYNC_FW_WC_SYNCOUT_REDUCTION_FACTOR_OFFSET);
- 
--	writel(0, emac->prueth->shram.va +
--		TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
-+	current_cycle = icssg_readq(emac->prueth->shram.va +
-+				    TIMESYNC_FW_WC_CYCLECOUNT_OFFSET);
-+
-+	/* Rounding of current_cycle count to next second */
-+	start_offset = roundup(current_cycle, MSEC_PER_SEC);
-+
-+	icssg_writeq(start_offset, emac->prueth->shram.va +
-+		     TIMESYNC_FW_WC_SYNCOUT_START_TIME_CYCLECOUNT_OFFSET);
- 
- 	return 0;
- }
-diff --git a/drivers/net/ethernet/ti/icssg/icssg_prueth.h b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-index 8722bb4a268a..a4af2dbcca31 100644
---- a/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-+++ b/drivers/net/ethernet/ti/icssg/icssg_prueth.h
-@@ -330,6 +330,17 @@ static inline int prueth_emac_slice(struct prueth_emac *emac)
- extern const struct ethtool_ops icssg_ethtool_ops;
- extern const struct dev_pm_ops prueth_dev_pm_ops;
- 
-+static inline u64 icssg_readq(const void __iomem *addr)
-+{
-+	return readl(addr) + ((u64)readl(addr + 4) << 32);
-+}
-+
-+static inline void icssg_writeq(u64 val, void __iomem *addr)
-+{
-+	writel(lower_32_bits(val), addr);
-+	writel(upper_32_bits(val), addr + 4);
-+}
-+
- /* Classifier helpers */
- void icssg_class_set_mac_addr(struct regmap *miig_rt, int slice, u8 *mac);
- void icssg_class_set_host_mac_addr(struct regmap *miig_rt, const u8 *mac);
-
-base-commit: 73840ca5ef361f143b89edd5368a1aa8c2979241
--- 
-2.25.1
-
+Will
 
