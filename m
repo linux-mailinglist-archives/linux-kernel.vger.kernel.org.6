@@ -1,160 +1,109 @@
-Return-Path: <linux-kernel+bounces-380299-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380295-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 70E859AEBF7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:26:19 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A60BB9AEBEF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:25:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 949C11C22921
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:26:18 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6674B2852A4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:25:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D83721F9EB4;
-	Thu, 24 Oct 2024 16:25:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44D991F80BF;
+	Thu, 24 Oct 2024 16:25:11 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="CdcXpgXe"
-Received: from mail-wm1-f51.google.com (mail-wm1-f51.google.com [209.85.128.51])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="O3dhrMLl"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09D451F81BE
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:25:39 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E95D1CBA17;
+	Thu, 24 Oct 2024 16:25:10 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729787142; cv=none; b=uaFKlTah6cSZKtUaUK+nDkwFz7FlAmCtEzmn5OXXTEFe4YUR8ljTmqLLev8EfV2UgJI6RNFN2J9TAM/keO8DAaPN8xvIz0t9rUUw7dUcKP8FCJWebzqxlGg/zwzvAZf26iMpn8qXrjzYHy+8euhDt0G6SlgZH3pQlwSaHI+wPGk=
+	t=1729787110; cv=none; b=CFC1ku1msZ9fUe224FYjq9KqCoTWf91kUWiiV9/jc0uVd/hn3m/7zic/uXuToSXJgV7Wr5mKoT5kBd9TEAYa3vtx9oZ4NDnRfauCOuY4u9X1Huvu+HptMaWmzzWaZJb638Tb/C6DF2BHFtgMOCLe32GhVHGZP4bxKH7W8UiTSX0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729787142; c=relaxed/simple;
-	bh=1JvgRGt6u8l7WaG5wCwCD/6HMQh2wO5p+FLLwIZukeo=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=brVAELKVqvmCFB/jgSVfrsVqzJNC8Z30Y9Mh+P6DFAVUkDoKs3Qgi0T0tAPWZFTX8e6OZMUcNR1Lm0dkLXm/tzsSjrKwjEmRWfv4lCUNKFbnuU0iyRYLYrXh6Uq307r/uIxqpdG68Wzx4FgAa0fFqa00rDgJ7K/lbgC0sTWe5+o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=CdcXpgXe; arc=none smtp.client-ip=209.85.128.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f51.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so230575e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:25:39 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729787138; x=1730391938; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=PsKck1YTKCCMRyW5+ku5wUHxij3yPa9weScPb3/oZQY=;
-        b=CdcXpgXeZoRj3O733DKfkDZFj4JvXK7RHeKnEFthVC6ViyIcWq9Qm8e5TmuBarCYSc
-         ItzjWWx+vs2RpeI/LGeaHtlV6ZrKqzSqUP7FYYwKLa+ivglDmVpIOoqDZ/EBfVk8GSoL
-         ohe3UbxboTzZDbS1zXFxU5ox2yZnqE8IBb3Op0eUuGeIKL2qrJMvpfVwraXzOfHjhc0F
-         qsgg/EIdjiLYM7DbYBR1FFYdvxNYVzSqimdDTx4Sav0JWFoIfKemwd001DlhxpA95pDT
-         Tnz1Sda0Wtusr2yMgpzBWPY+waFpmnV+CA/Kf2V9AulCiaH8o3K4c3OPckI5ksyfGGuH
-         sKNg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729787138; x=1730391938;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=PsKck1YTKCCMRyW5+ku5wUHxij3yPa9weScPb3/oZQY=;
-        b=fdv4QN0CC9kwLCwUs+85Ldqxp2hDuUWD+GxuhKPg34ylK7HyBRPst1UzoVfn0CNi0A
-         mg/5fhpmr3yvRYLHLUOjureH5YZGjarQ1+AJOPSxMPzEPhXwaLYTUuzJFfLztaOzcS+5
-         l1Jw6CEkvtENGxFk4fvsqXwxGURHtiFuEN7QEk5VZiMbq/DAyAmwTNInDRF2n7WC69JX
-         01JLHQowrHQJZ9f+oVl1xBhexPqTywK56JhUSBxfsemDWcqUvaejokpII3aCrfSpIG20
-         PaxwpKsETi5Q7Z5TIqxWbnw9KdiPB7hhoxfc6Qv/znBIIoX4oIRP8Cs8sVBeCCvKaV1x
-         fc3A==
-X-Forwarded-Encrypted: i=1; AJvYcCV3qADusb2PsT1yHGZek0JMzrxsSYKRpwxX5K3291ghQsUpa61AQBRG+8642DZi3lbS0SKhp0iSgbp8++0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwkR8dqn7NfcOip7YtmHCfUC/ky47vszKU2LvzdTj3V40E4rkyc
-	dCxwv/HqkVIT73JjWoUSoDUze4XBErrhKcY93MIoLDvt04m6bccCijfGJnFoR+RXRr447dNgSfW
-	Cy99c4qD0QUjoZX+/QhlfP2WjLnC0+UC9vtlI
-X-Google-Smtp-Source: AGHT+IGLBq2yNokN7929g0eN3iBE3/2qdA2DRQWdC4E2LpDfi93QPPEgbNRjYQqJ+XQ+mG7d0keQ7uvVD5LffkbY/lk=
-X-Received: by 2002:a05:600c:5023:b0:42c:b0b0:513a with SMTP id
- 5b1f17b1804b1-4318a50525emr5577505e9.2.1729787137882; Thu, 24 Oct 2024
- 09:25:37 -0700 (PDT)
+	s=arc-20240116; t=1729787110; c=relaxed/simple;
+	bh=GzICAYh6bjGfgV9C6PPyoTkjloSrnHwuu9P94evgThI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=uzfT09XECC8E6W9ldab3CgOKEx4PeytoKrdTiAQQ6x6GQ1jXaaWDu4VEfqbOvtiDfRBaAVdf0lf+vbtvOTIfJKvinj3749lURH9TIZcOjQjvE52G+gMIyoh5zoCelOvb9xqPIhV2AVWVTO0CAz51Z1iiVOwj/+kdXKCQws+F/5w=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=O3dhrMLl; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7F03CC4CEC7;
+	Thu, 24 Oct 2024 16:25:09 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729787110;
+	bh=GzICAYh6bjGfgV9C6PPyoTkjloSrnHwuu9P94evgThI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=O3dhrMLl8apWp+gJODKUv8cMryScIDXECj9ASGjjBH2ZfMETMd/mv6jmuh6vKxS3b
+	 Gc6yKU/UUOR7jibYD6wKhwMZWRVO1P6vQGeLO3vNbtGsKe2kYAgGWY6PJoNQQqhZMQ
+	 VmP0kQ8CkO39A6usjVqBN2y6Ik0NGeTYYq73Q45PbbjH5fSs2lDC6bHxYZqwJtc34+
+	 apG5RE5qqaTGo4I90mhEeFd3BwCnesKOZxuGtb5RKUs+ihomfX8a3BUsz7hZUQlpuB
+	 CwfBAeQMTvkXxMsGuIhYVtxu9pwCtBfgH3KvJZJJ6b13eKG+Oz3TpcnorbUudXf3SA
+	 RhoUvZ4NPRszQ==
+Received: from johan by xi.lan with local (Exim 4.97.1)
+	(envelope-from <johan@kernel.org>)
+	id 1t40eL-000000002ap-1a7L;
+	Thu, 24 Oct 2024 18:25:25 +0200
+Date: Thu, 24 Oct 2024 18:25:25 +0200
+From: Johan Hovold <johan@kernel.org>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	devicetree@vger.kernel.org, Sibi Sankar <quic_sibis@quicinc.com>,
+	Konrad Dybcio <konradybcio@kernel.org>,
+	Abel Vesa <abel.vesa@linaro.org>,
+	Johan Hovold <johan+linaro@kernel.org>
+Subject: Re: [PATCH] arm64: dts: qcom: x1e80100: Route pcie5 MSIs to the GIC
+ ITS
+Message-ID: <Zxp09Q1DPYf9BK0z@hovoldconsulting.com>
+References: <20241024161814.1827514-1-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241023170759.999909-1-surenb@google.com> <20241023170759.999909-6-surenb@google.com>
- <20241023140017.e165544bf20bcb0c79bfee57@linux-foundation.org> <CAJuCfpH9yc2kYGZqYjYPWbApy05yqiONqziBQ+qF+R3nZRL56w@mail.gmail.com>
-In-Reply-To: <CAJuCfpH9yc2kYGZqYjYPWbApy05yqiONqziBQ+qF+R3nZRL56w@mail.gmail.com>
-From: Suren Baghdasaryan <surenb@google.com>
-Date: Thu, 24 Oct 2024 09:25:22 -0700
-Message-ID: <CAJuCfpFEYm-YT7AS6TzOMdLNtuS1E7KJuWJ8YeL9ro2L+3Wb9g@mail.gmail.com>
-Subject: Re: [PATCH v4 5/6] alloc_tag: introduce pgtag_ref_handle to abstract
- page tag references
-To: Andrew Morton <akpm@linux-foundation.org>
-Cc: kent.overstreet@linux.dev, corbet@lwn.net, arnd@arndb.de, 
-	mcgrof@kernel.org, rppt@kernel.org, paulmck@kernel.org, thuth@redhat.com, 
-	tglx@linutronix.de, bp@alien8.de, xiongwei.song@windriver.com, 
-	ardb@kernel.org, david@redhat.com, vbabka@suse.cz, mhocko@suse.com, 
-	hannes@cmpxchg.org, roman.gushchin@linux.dev, dave@stgolabs.net, 
-	willy@infradead.org, liam.howlett@oracle.com, pasha.tatashin@soleen.com, 
-	souravpanda@google.com, keescook@chromium.org, dennis@kernel.org, 
-	jhubbard@nvidia.com, urezki@gmail.com, hch@infradead.org, petr.pavlu@suse.com, 
-	samitolvanen@google.com, da.gomez@samsung.com, yuzhao@google.com, 
-	vvvvvv@google.com, rostedt@goodmis.org, iamjoonsoo.kim@lge.com, 
-	rientjes@google.com, minchan@google.com, kaleshsingh@google.com, 
-	linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	linux-arch@vger.kernel.org, linux-mm@kvack.org, 
-	maple-tree@lists.infradead.org, linux-modules@vger.kernel.org, 
-	kernel-team@android.com
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024161814.1827514-1-maz@kernel.org>
 
-On Wed, Oct 23, 2024 at 2:09=E2=80=AFPM Suren Baghdasaryan <surenb@google.c=
-om> wrote:
->
-> On Wed, Oct 23, 2024 at 2:00=E2=80=AFPM Andrew Morton <akpm@linux-foundat=
-ion.org> wrote:
-> >
-> > On Wed, 23 Oct 2024 10:07:58 -0700 Suren Baghdasaryan <surenb@google.co=
-m> wrote:
-> >
-> > > To simplify later changes to page tag references, introduce new
-> > > pgtag_ref_handle type. This allows easy replacement of page_ext
-> > > as a storage of page allocation tags.
-> > >
-> > > ...
-> > >
-> > >  static inline void pgalloc_tag_copy(struct folio *new, struct folio =
-*old)
-> > >  {
-> > > +     union pgtag_ref_handle handle;
-> > > +     union codetag_ref ref;
-> > >       struct alloc_tag *tag;
-> > > -     union codetag_ref *ref;
-> > >
-> > >       tag =3D pgalloc_tag_get(&old->page);
-> > >       if (!tag)
-> > >               return;
-> > >
-> > > -     ref =3D get_page_tag_ref(&new->page);
-> > > -     if (!ref)
-> > > +     if (!get_page_tag_ref(&new->page, &ref, &handle))
-> > >               return;
-> > >
-> > >       /* Clear the old ref to the original allocation tag. */
-> > >       clear_page_tag_ref(&old->page);
-> > >       /* Decrement the counters of the tag on get_new_folio. */
-> > > -     alloc_tag_sub(ref, folio_nr_pages(new));
-> > > -
-> > > -     __alloc_tag_ref_set(ref, tag);
-> > > -
-> > > -     put_page_tag_ref(ref);
-> > > +     alloc_tag_sub(&ref, folio_nr_pages(new));
-> >
-> > mm-stable has folio_size(new) here, fixed up.
->
-> Oh, right. You merged that patch tonight and I formatted my patchset
-> yesterday :)
-> Thanks for the fixup.
->
-> >
-> > I think we aleady discussed this, but there's a crazy amount of
-> > inlining here.  pgalloc_tag_split() is huge, and has four callsites.
->
-> I must have missed that discussion but I am happy to unline this
-> function. I think splitting is heavy enough operation that this
-> uninlining would not have be noticeable.
+On Thu, Oct 24, 2024 at 05:18:14PM +0100, Marc Zyngier wrote:
+> There is no reason to use the PCIe root port widget for MSIs for
+> pcie5 while both pcie4 and pcie6a are enjoying the ITS.
+> 
+> This is specially useful when booting the kernel at EL2, as KVM
+> can then configure the ITS to have MSIs directly injected in guests
+> (since this machine has a GICv4.1 implementation).
+> 
+> Tested on a x1e001de devkit.
+> 
+> Signed-off-by: Marc Zyngier <maz@kernel.org>
+> Cc: Sibi Sankar <quic_sibis@quicinc.com>
+> Cc: Konrad Dybcio <konradybcio@kernel.org>
+> Cc: Abel Vesa <abel.vesa@linaro.org>
+> Cc: Johan Hovold <johan+linaro@kernel.org>
+> ---
+>  arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 ++
+>  1 file changed, 2 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> index 3441d167a5cc..48f0ebd66863 100644
+> --- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
+> @@ -3281,6 +3281,8 @@ pcie5: pci@1c00000 {
+>  			linux,pci-domain = <5>;
+>  			num-lanes = <2>;
+>  
+> +			msi-map = <0x0 &gic_its 0xd0000 0x10000>;
 
-Posted requested uninlining at
-https://lore.kernel.org/all/20241024162318.1640781-1-surenb@google.com/
+As I just mentioned in another thread, and in the commit message of
+9c4cd0aef259 ("arm64: dts: qcom: x1e80100: enable GICv3 ITS for PCIe")
+this was done on purpose as
 
-> Thanks!
+	PCIe5 (and PCIe3) can currently only be used with the internal
+	MSI controller due to a platform (firmware) limitation
+
+Did you try this when booting in EL1? If so we may need to enable this
+per board.
+
+Johan
 
