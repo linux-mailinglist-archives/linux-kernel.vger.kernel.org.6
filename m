@@ -1,205 +1,201 @@
-Return-Path: <linux-kernel+bounces-379963-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379964-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id EC9E39AE674
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B3C1C9AE678
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:31:45 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC15328AAE1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FD71F26684
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E51601F12EA;
-	Thu, 24 Oct 2024 13:25:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1FA1F582D;
+	Thu, 24 Oct 2024 13:25:50 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b="0TPgJpI5"
-Received: from NAM12-DM6-obe.outbound.protection.outlook.com (mail-dm6nam12on2073.outbound.protection.outlook.com [40.107.243.73])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKCWqs/a"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B39E21FF03A;
-	Thu, 24 Oct 2024 13:25:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.243.73
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776335; cv=fail; b=CLdK1IsSWv/J3zkyG3lMcTNcoE1okPnIEr034OMhatRBSXdHnJHWWK8KhllTsQ6xHpQdan41+GzMnMZF7dI3V+OH9jtEp5j5i8CXezluWd+ZjBUz00QVBVYLU0SaYx/zRMDWgsCJ6IjCXfrpMThEV/iAvOemOEdC/rgtW35eyaY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776335; c=relaxed/simple;
-	bh=ffC6HSR8aKubmBXWfHlB2/AiDorJ0PlD4q6DWeOXN7k=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=a/RBcqGfbcxWXBWm03SHwdnSFRWHqjUQKXP+Dy/Z/t2RrPJd7QqxJiqN5t3IOnUrTZHQ6lZ6DBCR7xiJxyLovP2R4Ay6OKQoTOLEO1GO5A5OyKT+THnW3hi6aIO7XXyLa6OEdSsdvls+BpYjWQyGGgebtsigCb1p1fMybDaWJ9I=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com; spf=pass smtp.mailfrom=microchip.com; dkim=pass (2048-bit key) header.d=microchip.com header.i=@microchip.com header.b=0TPgJpI5; arc=fail smtp.client-ip=40.107.243.73
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=microchip.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=microchip.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=VK7KwPeLsWExtp7MpJ5jm+/rccR9ZOplx+eI2KRa2hMgHr8fzuqqRF+cqy9TMFWlSCAyto6j9TYmDqZNANqZyC5nuyTD8nNLbgYOChkN7i41mMfj5daHUHrZlqJK4JLlLHxdVn5IWSFXoQQgDJLbCcRLP+yVs8aRHeIs+BWHjUMTEbjl8gIpOSkJvNMnoywTM22E4iR39ElMkdIo/W/agSQs+29vm5YAoNKcmNzwo2R0YVf+pzlgu1WX3ljl9ZfdzV2d843ICHEJnxWPn7gcGrC64+ZTYsVyN+j7Sun2JG3TeVwjOuamPvueSDxxs3iDzyjQ8uOCZAo3tKe4phf7rA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=ffC6HSR8aKubmBXWfHlB2/AiDorJ0PlD4q6DWeOXN7k=;
- b=s1PHBgCapGysr98TbXlrev3EHZ32C1nRWtMP9kT4QaryUnfDgz4SLsoKIiRkHl3Pc9YdUYzB7IwL+71K/dVJrzS93eVUlt7ca1AecB6rkALPFN8cHhWEnIGdEqnoL/lJw156oO/zsC+jmeyJvsOsuQ2oZgLiIrrAVhaUGAA2GHxuaaDEsnklTUo5KORKVvRYy9SsEk3MFKdXZWKqUh0ldiZC5q91B7qhMcU5qGH0HGfwuZ7it/sIAvDeYUdVEc94ao9ATejvG9U/53HTGz39cvWX8qmgCCvdIz2TltyQZ0zgVNe7rM+pbeQoknbNG84KrfzW0CK1cSpBTm6bDbjK5A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=microchip.com; dmarc=pass action=none
- header.from=microchip.com; dkim=pass header.d=microchip.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=microchip.com;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=ffC6HSR8aKubmBXWfHlB2/AiDorJ0PlD4q6DWeOXN7k=;
- b=0TPgJpI53J4jHYCfvFqxEKFTumWoQuHmVv+FwkevDz0dLJH+ScHKy946FNV/HWJ/4cbg3SZbnD4EiYXi0tftjiFtgTX/o1X3HqKWKflKa3CXGfGaQ19pFe/KYWRWlWSaO7VBQLEIB8U/O+mPvCpTWszT0qjfi8Du6xnoCUO/4LptzGg+H6M/C3FQrbQr1abUml8l2JlkwpOkbwWwzQJBMKfXJOiUfmyEN38P5tF2WTMPGb29VU29EDxpXomfVVhgt9p3kAzX8tw/XVuBIj7/EBsMUSGl1pyx4i/wAE93omS9I8i0V/Z0AVP90x/RYwapCsM9fDAZUToDu5y0xm4QdQ==
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com (2603:10b6:805:c6::10)
- by IA1PR11MB8804.namprd11.prod.outlook.com (2603:10b6:208:597::7) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Thu, 24 Oct
- 2024 13:25:28 +0000
-Received: from SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4863:3d2c:e708:fccf]) by SN6PR11MB3167.namprd11.prod.outlook.com
- ([fe80::4863:3d2c:e708:fccf%4]) with mapi id 15.20.8069.027; Thu, 24 Oct 2024
- 13:25:28 +0000
-From: <Marius.Cristea@microchip.com>
-To: <hdegoede@redhat.com>, <andriy.shevchenko@linux.intel.com>,
-	<Jonathan.Cameron@huawei.com>, <tgamblin@baylibre.com>,
-	<jean-baptiste.maneyrol@tdk.com>, <linux-iio@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-CC: <jic23@kernel.org>, <lars@metafoo.de>
-Subject: Re: [PATCH v2 02/13] iio: adc: pac1934: Replace strange way of
- checking type of enumeration
-Thread-Topic: [PATCH v2 02/13] iio: adc: pac1934: Replace strange way of
- checking type of enumeration
-Thread-Index: AQHbJhVGs3ye4BwQ8kOceS6i3U03bbKV5DQA
-Date: Thu, 24 Oct 2024 13:25:28 +0000
-Message-ID: <2fa19c12e335ce00414a971d16867322c9bdad7b.camel@microchip.com>
-References: <20241024130424.3818291-1-andriy.shevchenko@linux.intel.com>
-	 <20241024130424.3818291-3-andriy.shevchenko@linux.intel.com>
-In-Reply-To: <20241024130424.3818291-3-andriy.shevchenko@linux.intel.com>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=microchip.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SN6PR11MB3167:EE_|IA1PR11MB8804:EE_
-x-ms-office365-filtering-correlation-id: 94b650a4-2f54-4ac1-065c-08dcf42f538c
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SN6PR11MB3167.namprd11.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(366016)(1800799024)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|366016|1800799024|38070700018;
-x-microsoft-antispam-message-info:
- =?utf-8?B?dkNVd3lqM2hVVzkrdWcxVDhqMWF6MGVKaXlZN0gvbGptaU53QnRBTndyQ1VL?=
- =?utf-8?B?YzVTQ09oWHVOUHg2T1plZ2Z0Qy9lNHBid09MUFZTNXF4aSt2RTkxS1hkTW9C?=
- =?utf-8?B?N2pLdnhIVTZJM3ExUXgvMkFMOEZGcnlPTEMrUklLNHB3SHVrKzBBWlI2cFZL?=
- =?utf-8?B?dUJsQmVyZFBucnNIUWlSTXJ4VE56VFg3QVVkajR6OE5wWVFpNTVtUWFEQXY0?=
- =?utf-8?B?UXFPbmlleVB5c1ptZVRZVXNZd1daWFFEWWkwQzJUNGJyS05TQm5kRWRUaG5h?=
- =?utf-8?B?NW8zRXVYdk5ZUGJDUUE3eXRXdk03ekk3Y1hHWDNxZkp5enZsVk5iNkRpWFpu?=
- =?utf-8?B?YnBpM0Z3VXJ6Rld0Z2Q2R3pXTXFzUXR2SXlBRi9tTzl2K2M5d05uQkxKU3Rt?=
- =?utf-8?B?K3ZVSGNCY2tWUlVGVTVTRjJscjNZS0l3emwyNDRSdlllNHh2NXRHdTQzaDRX?=
- =?utf-8?B?Z0JFVXplZjB3RlN1WHZxcTFUYWtTSElvakVCaU45RmNrMnlnU1Y0UGhDYkMz?=
- =?utf-8?B?aUtqTDN0VjBSUldtZ1hmNWlJbW9FbFJlK25wejNjOWdNQmVJRk9reU1FWG5w?=
- =?utf-8?B?RTlPZGEzLzNyUlhsY0RjZ1Z3a0hvOHZVSWFDK2QrbHZZWDhJemlsTUtWS1pn?=
- =?utf-8?B?bERYUFFOMm5CRERRVVBLVzdMS2FvY2JWTldVWWsrelR6UWxWcUZFRlVLR2hT?=
- =?utf-8?B?c0tjYTBpVVEyWG80YjlaR2FsNEl3SFFNS1RpL1puOWpYTExuSHZncnlVTjdT?=
- =?utf-8?B?YnQrcW41RTN3ek5kS1BKaW9heUpkTVFEMEtUaFNLSkZDZ2s4blNKV0g1aFNo?=
- =?utf-8?B?bzFLRXMwTlFRcGtleklkNHU1a3ZvRTFmZFlYSStlTk1leVZnaTZuWU8wK3M0?=
- =?utf-8?B?ZDJVT2xWT0lOQ2ovOTNva1czMUR3b3JhUjlra0lScExmNkZQczRRaTRSU3lY?=
- =?utf-8?B?K3U1MzdtcmhDZGpodzlQKzRIREpVblZpdlB3VWRWMGhHYVdEbmRoaGtFNlYr?=
- =?utf-8?B?emtkRlZEc0JEYmJlaTN6R21PU25mUXppeUlPank0Y204OEZsREJMUkw2b21D?=
- =?utf-8?B?OUFpK2QvRnk5N2ZaZU1FcE0rVG1WQTFMQ1ljdHdSeVFuc1lvK1RuaGJBVnF6?=
- =?utf-8?B?OE8xbnByUjM2ZUpsdDd1elEzTlZkZUFzS0dPNDQ2WnAwY3NDVTRpaTQ5Wm9j?=
- =?utf-8?B?WEsveGJYbXQ4Q01kVWRFYlVNOFdmM1Q4U1Q0bVgxbzVJVVdncTVEOTZPVFVY?=
- =?utf-8?B?Z3RLM09PcnVpMnRNQkxUNFA0bEczeTBrSUFvYXcrKzJtMnBNcHo3dm1kTFBi?=
- =?utf-8?B?aFAwVm1KZmpWTHJzazhEU2xVSXU0azRXUllMczhBRjNCMXRwUWZpUHZ4N0ZC?=
- =?utf-8?B?MWxRdFllazJXZWJ0dTVOY3h2SmlseStCNFFnM3djc3pXbzkwZkluTDVBZ0pU?=
- =?utf-8?B?UStsR3gvN040a3RQMkFhZWpmcnVHbEQwMjF2aVdKWC9qblpmdGk1YzBDM1BM?=
- =?utf-8?B?SDRDTUZLN2VtWm1nVi9ZUkFWYmlwVDAzYS9Vd1ZJZ3lVQm5Jb1c5WHZuMEJj?=
- =?utf-8?B?WjNaMWN1dEk3UXh6TnljRjJmM0hSck5HYkhPYW9mcG5vZVZ4U3d1d0R6bzVx?=
- =?utf-8?B?cVVnaTVQRkQ1bmdwQXd2MUJyVDNjdTM3dkhOeW1mREFKUGkvOUtnWDEyUDdl?=
- =?utf-8?B?R1BlYWJ0b1hIZTdMOVB0SEw1U00vRjVDbjRMd3ViOTNIU29GYkNVZzVoeUJo?=
- =?utf-8?B?WGpwcEcrMmFYMW5SRHo4emtvcCtpRVZ0dXdnL2o4Q3NVOUoxS2JROXVKZXV6?=
- =?utf-8?Q?i5ZXJZywNosAUP7ub09JbH4n4Jw+33Ne2P7tg=3D?=
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?utf-8?B?eHNLSlhMYkdXWjRMZVN1SGxFU1BGcXpLME0rcWxhSlUyNGx3cUkzc2FXNEF2?=
- =?utf-8?B?dk9ZVHBwV0lQMUI5bklyNERBNFhNY0ZBbTZzdXFPN09FdFBSZS9RNHl3Yno1?=
- =?utf-8?B?KzlCSWphSURpRkN1UTk1ak42c2p1UWRMekVBelNFT1VOMGFYd3pNMlpBZzQz?=
- =?utf-8?B?VkJkcW9JS0M1eXo4ekV2bExYb2ZneW91RDVrN0U0eVRFNmZ1dVkyZ3ZDK0Rq?=
- =?utf-8?B?UC9DZjVEV09SOFVGM1EwaEZlMHNYQWtHVzR0bFEzRmZ0K0x0Yy9rcjZtS0Zw?=
- =?utf-8?B?akdlaEhsbzUwYXdySkpkWmFIWTh0dDFWK3lJNDJhOFh1YTM4YVVzYWVJWVRV?=
- =?utf-8?B?TXpXc3hDSmlGMVVEcEhQb0NCRGo4QkJGN0xwZlVDU1gwQkNxdi9CbFdvMUJu?=
- =?utf-8?B?SjM1QTc4cEFSRlg2Z2hWUjIrdFlxSHA4UHlldnhlRkYyZXdPZlcwWmlBNGFt?=
- =?utf-8?B?QVozZWI3ZllMOW0vQXowRUNaOE9NWGtXSkhHamJvdE9UcDViN21lK2dHRTRv?=
- =?utf-8?B?MXBiaEN1c2VrSE01bUJHVEREc3Q4TDdackE1UUtWV2FGcTd2L2Q4VGNKdC81?=
- =?utf-8?B?UmlBWm1iMTQ5WC9tS1pFRkFBRUdFS0h1YnFtVmRmcnJnWlJmMThuSGRvOTJr?=
- =?utf-8?B?dmovRWsyR3c4Q2dxZDBzQVI2RmJpRWd2QzlJSzRCVXcyNEtzOXRUT1F2Z245?=
- =?utf-8?B?a1VsZDVvaGFMQitBZ1NzVW5kWDZBWHlwNEY2UVFBNUsxSWExdG0ra1lHTHRy?=
- =?utf-8?B?NW11VTIvY3ZpY2Q1V1JrM2UwWkdUcEtZZHRBV1BRN2RsWEhHMEdkWnh2RkRW?=
- =?utf-8?B?RUo2QSsyMkZiZXRGNjRyQjV5OXVwd0M0OVZ4T2pWc1pDQUhNVG51T3RGVUdC?=
- =?utf-8?B?dHIvY29zb0xpdXlTM2NZS1U1L2dLWU5VdmJudlhLR0Z6M05JM2c3MHdGaHYz?=
- =?utf-8?B?dytkbEdTTTdJK1lUdDlLSk5QYUoxajZUUjM4d1ZMMTlyeEwwMVZwbHlyVTJX?=
- =?utf-8?B?YjBETDlDTk5tYXo5VVUzWHVaT0kvZ0VZbUNocGw5RWFZUjVLUmZ5aXc4NVNs?=
- =?utf-8?B?U1Q3N1V1S1pWMThEQThkWXh5RnA1UE9xSUNhTzVyKzFZZ3hTNnI0bDFBcEZk?=
- =?utf-8?B?dkt6d2FwZ3BYWEF5ejhUS28vc05sL3JuQ3huRVR2ZzBVeHBUQkN0UnRVM09u?=
- =?utf-8?B?YVVROEhscks3L2FJbmhuVjhVOUJ6UjhBaXRzVHUwZjdNb0hQK3ZSeFpGVHdn?=
- =?utf-8?B?dFFIN1FIWmlYd0s4YTBuTGxVQVdQdERwbHZxSTA2WUo0Tml1RFRnMm9LNThu?=
- =?utf-8?B?ZWdydmd6RVRSeGIvS2UvUkNCVnRlbEU4RjZSY1IxUThNNzdXbGdBS1E1QVhN?=
- =?utf-8?B?TVgvNjhaRDBCUjBZSjVmbTIrRGp2VEJlRm5nVzVzQjllcHV5VkVGaDR1QXB5?=
- =?utf-8?B?N25IaENNS0tUazVwczBta0ZtWERDTndxc1NCdmZRN1RYeGp4Z2NmMW5kcThi?=
- =?utf-8?B?ZitPaWRDMktERU9nOXFtQ0d2eGk5Y1lFK253cnF3K256ZDlSK2VVQzl2NGJi?=
- =?utf-8?B?V1JwMXU0cmhUUzJSMFNaT0czOEg4OXRTVmJhaC9adTZSWXVtT0dXNzZUZlVo?=
- =?utf-8?B?Zm1pNm9xbk1TNHJONHhkTzNEWDk2bHJGMmJ6TE8vckJMSDZDRVByd2pLbHoy?=
- =?utf-8?B?Q1pqcVd6MjFteFZFUmVieWJtT0U1OUpYK1RkdDRLNi9pUlQ3d2FXVnFSa2hp?=
- =?utf-8?B?SllYZ1FVWU81d0hXTzVYUHdkOTdPZDFZcHZnNkpHOFdHNmFHdnJyMjFPdVVj?=
- =?utf-8?B?SkFGbFNKV2k1Qk5jNG8vMU1xOXJEejJXNzVSclNUbXdsYXVYdDJPN1pieWE3?=
- =?utf-8?B?K05ndmVSNVNRZGZDZVRtcE4zNFY4ZVdMWkdqN0RyNlFqaFNHOGVNc3NSRFRp?=
- =?utf-8?B?N0FpSTdUWi81V1N2K2NDbHBlMGxOSjRueDFxaFZXSnBSNzFnMVRmaDFqV1l5?=
- =?utf-8?B?dzlsbE0xYW1hengrNVl1Q1ZRdi9vdFd3SldOTkFaVDBIeThza1FiN2J6TVpC?=
- =?utf-8?B?SUZoSVVXd0xxeUNRa2NhVjZmK1NsbHpOaHdtb242NWt3T1JYNjVZenpBcEEr?=
- =?utf-8?B?ZDNqb3RMd3RNeFczRHFsUHlIc09HdkxSdTdhTlNIYzhkQTRIN2JhZGVjdy9Z?=
- =?utf-8?B?Y1E9PQ==?=
-Content-Type: text/plain; charset="utf-8"
-Content-ID: <C8F94A6F81CC11459D4B92E79466DB49@namprd11.prod.outlook.com>
-Content-Transfer-Encoding: base64
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D332E1E00BE;
+	Thu, 24 Oct 2024 13:25:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729776349; cv=none; b=EpbPc5xv0EOEFLLtSpyNGY/uGtk1SuR2LMa6basnv2GhJrV/ScsDFNiie/grwy0PbpLeFZXg168SZo+aW/WDPyeOUnkS5ds9NWcEmY8dnpkLFDI1objq6IEEwaAIJL7oiI2PLZYD5fwZZpPoJ9zeRih2pRo4XyJFI4Ei1WeOmKk=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729776349; c=relaxed/simple;
+	bh=/bCUgKsOIY9L86GlFHL9HXtDC1qqaWN9FN+5Tsyd+x4=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=Hz+/YOc0L/9PP5uBUkWvHhLw19OrRwK9jOMOUbxNLVrOvJaXHE2+il9iuwN2PQuqtdJEtv0uCER6f8c1WragP8rpvByCOVgwWf3YJEINazQcPgFZ+3+xF0L0mROiuORidJg2yTQ0pCxYAWbkmGf6yru/TzgXJHoXqIcgUcnwSHU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKCWqs/a; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AF6C4CEC7;
+	Thu, 24 Oct 2024 13:25:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729776349;
+	bh=/bCUgKsOIY9L86GlFHL9HXtDC1qqaWN9FN+5Tsyd+x4=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=PKCWqs/a86q4KST0J+KvzF0T62MLxDhhkDHhA8wtIml5AyBV7Aglnii9Cb2Uw9Z4M
+	 nL8tfDh7APEr5uUvY2vunEBYxwnI7d9mUiQ5RffzJIMDHUAT4/WyFK0oh9VXyVvGAb
+	 d5P9VFwJJKpsjpdhfx7OVlK9jXETA6TFj++Hxh8vnQN3lgrArM38vhwQqARtSv+RtK
+	 ch7pTQENHJAl/Fum+JrPlmbnZvBzCpNyZ48BzoOvFLSe0hNsb1yj0YpoPHJ0FDmKCu
+	 ruNY26ePL2BSZ/dxNlxi97//r2avf7xd69nHlPjzSWru2O7aKKprnFS6fHsMnCsTXo
+	 aCwd9Kboj7QPw==
+Message-ID: <6d8015dd-f656-4c33-b906-09104cc366b5@kernel.org>
+Date: Thu, 24 Oct 2024 15:25:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: microchip.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SN6PR11MB3167.namprd11.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 94b650a4-2f54-4ac1-065c-08dcf42f538c
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2024 13:25:28.1901
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 3f4057f3-b418-4d4e-ba84-d55b4e897d88
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: 6XSFKIJsNEiCdejb0pPiOfzjVUJDJNXFGDBnbgLfQAdhdNfRX/cAKk5ChPIhpcvIwMkRkwy4t2eCxO8O8K7nazHC0OXLQWdPKYKQsVLmS2Q=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: IA1PR11MB8804
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 11/14] dt-bindings: pinctrl: stm32: support for stm32mp215
+ and additional packages
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Stephane Danieau <stephane.danieau@foss.st.com>,
+ Amelie Delaunay <amelie.delaunay@foss.st.com>,
+ Fabien Dessenne <fabien.dessenne@foss.st.com>,
+ Valentin Caron <valentin.caron@foss.st.com>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Cheick Traore <cheick.traore@foss.st.com>,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
+ <20241022155658.1647350-12-antonio.borneo@foss.st.com>
+ <2g65375shtjq4udjfarfspqtpg5q27oeerqskt2uzwj44pvnbb@rderpevnrzxs>
+ <334845caee45ed72ef08867f23f69b5333be57c5.camel@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <334845caee45ed72ef08867f23f69b5333be57c5.camel@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-SGkgQW5keSwNCg0KICBUaGFuayB5b3UgZm9yIHRoZSBwYXRjaC4gSXQgbG9va3MgT0sgZm9yIG1l
-Lg0KDQpSZXZpZXdlZC1ieTogTWFyaXVzIENyaXN0ZWEgPG1hcml1cy5jcmlzdGVhQG1pY3JvY2hp
-cC5jb20+DQoNClJlZ2FyZHMsDQpNYXJpdXMNCg0KDQpPbiBUaHUsIDIwMjQtMTAtMjQgYXQgMTU6
-MzYgKzAzMDAsIEFuZHkgU2hldmNoZW5rbyB3cm90ZToNCj4gRVhURVJOQUwgRU1BSUw6IERvIG5v
-dCBjbGljayBsaW5rcyBvciBvcGVuIGF0dGFjaG1lbnRzIHVubGVzcyB5b3UNCj4ga25vdyB0aGUg
-Y29udGVudCBpcyBzYWZlDQo+IA0KPiBXaGVuIGRldmljZSBpcyBlbnVtZXJhdGVkIHZpYSBBQ1BJ
-IHRoZSByZXNwZWN0aXZlIGRldmljZSBub2RlIGlzIG9mDQo+IEFDUEkgZGV2aWNlIHR5cGUuIFVz
-ZSB0aGF0IHRvIGNoZWNrIGZvciBBQ1BJIGVudW1lcmF0aW9uLCByYXRoZXIgdGhhbg0KPiBjYWxs
-aW5nIGZvciBmdWxsIG1hdGNoIHdoaWNoIGlzIE8obikgdnMuIE8oMSkgZm9yIHRoZSByZWd1bGFy
-IGNoZWNrLg0KPiANCj4gUmV2aWV3ZWQtYnk6IEhhbnMgZGUgR29lZGUgPGhkZWdvZWRlQHJlZGhh
-dC5jb20+DQo+IFNpZ25lZC1vZmYtYnk6IEFuZHkgU2hldmNoZW5rbyA8YW5kcml5LnNoZXZjaGVu
-a29AbGludXguaW50ZWwuY29tPg0KPiAtLS0NCj4gwqBkcml2ZXJzL2lpby9hZGMvcGFjMTkzNC5j
-IHwgMiArLQ0KPiDCoDEgZmlsZSBjaGFuZ2VkLCAxIGluc2VydGlvbigrKSwgMSBkZWxldGlvbigt
-KQ0KPiANCj4gZGlmZiAtLWdpdCBhL2RyaXZlcnMvaWlvL2FkYy9wYWMxOTM0LmMgYi9kcml2ZXJz
-L2lpby9hZGMvcGFjMTkzNC5jDQo+IGluZGV4IDdlZjI0OWQ4MzI4Ni4uMjA4MDJiN2Y0OWVhIDEw
-MDY0NA0KPiAtLS0gYS9kcml2ZXJzL2lpby9hZGMvcGFjMTkzNC5jDQo+ICsrKyBiL2RyaXZlcnMv
-aWlvL2FkYy9wYWMxOTM0LmMNCj4gQEAgLTE1MDcsNyArMTUwNyw3IEBAIHN0YXRpYyBpbnQgcGFj
-MTkzNF9wcm9iZShzdHJ1Y3QgaTJjX2NsaWVudA0KPiAqY2xpZW50KQ0KPiDCoMKgwqDCoMKgwqDC
-oMKgwqDCoMKgwqDCoMKgwqAgaW5kaW9fZGV2LT5uYW1lID0gcGFjMTkzNF9jaGlwX2NvbmZpZ1ty
-ZXRdLm5hbWU7DQo+IMKgwqDCoMKgwqDCoMKgIH0NCj4gDQo+IC3CoMKgwqDCoMKgwqAgaWYgKGFj
-cGlfbWF0Y2hfZGV2aWNlKGRldi0+ZHJpdmVyLT5hY3BpX21hdGNoX3RhYmxlLCBkZXYpKQ0KPiAr
-wqDCoMKgwqDCoMKgIGlmIChpc19hY3BpX2RldmljZV9ub2RlKGRldl9md25vZGUoZGV2KSkpDQo+
-IMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoCByZXQgPSBwYWMxOTM0X2FjcGlfcGFyc2Vf
-Y2hhbm5lbF9jb25maWcoY2xpZW50LA0KPiBpbmZvKTsNCj4gwqDCoMKgwqDCoMKgwqAgZWxzZQ0K
-PiDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqDCoMKgwqAgLyoNCj4gLS0NCj4gMi40My4wLnJjMS4x
-MzM2LmczNmI1MjU1YTAzYWMNCj4gDQoNCg==
+On 23/10/2024 12:08, Antonio Borneo wrote:
+> On Wed, 2024-10-23 at 10:51 +0200, Krzysztof Kozlowski wrote:
+>> On Tue, Oct 22, 2024 at 05:56:55PM +0200, Antonio Borneo wrote:
+>>> From: Amelie Delaunay <amelie.delaunay@foss.st.com>
+>>>
+>>> Add support for st,stm32mp215-pinctrl and st,stm32mp215-z-pinctrl.
+>>
+>> So all previous patches are for this? Then they are supposed to be here.
+> 
+> Hi Krzysztof,
+> 
+> I'm not sure I fully get your point here.
+> The previous patches in this series add the new features to the already upstreamed STM32MP257.
+> The same features are also needed here by STM32MP215 and in next patches 12/14 and 13/14 by STM32MP235.
+
+commit msgs could be improved here, sorry, I have no clue for what
+devices are you bringing this for. Putting here new SoC clearly suggests
+that it is for new Soc, so entire split is incorrect.
+
+> 
+>>
+>>> Add packages AM, AN and AO (values : 0x1000, 0x2000 and 0x8000)
+>>>
+>>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
+>>> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+>>> ---
+>>>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 +++-
+>>>  include/dt-bindings/pinctrl/stm32-pinfunc.h                   | 3 +++
+>>>  2 files changed, 6 insertions(+), 1 deletion(-)
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+>>> index 9a7ecfea6eb5b..0a2d644dbece3 100644
+>>> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+>>> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
+>>> @@ -27,6 +27,8 @@ properties:
+>>>        - st,stm32mp135-pinctrl
+>>>        - st,stm32mp157-pinctrl
+>>>        - st,stm32mp157-z-pinctrl
+>>> +      - st,stm32mp215-pinctrl
+>>> +      - st,stm32mp215-z-pinctrl
+>>>        - st,stm32mp257-pinctrl
+>>>        - st,stm32mp257-z-pinctrl
+>>>  
+>>> @@ -59,7 +61,7 @@ properties:
+>>>        Indicates the SOC package used.
+>>>        More details in include/dt-bindings/pinctrl/stm32-pinfunc.h
+>>>      $ref: /schemas/types.yaml#/definitions/uint32
+>>> -    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800]
+>>> +    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800, 0x1000, 0x2000, 0x4000]
+>>>  
+>>>  patternProperties:
+>>>    '^gpio@[0-9a-f]*$':
+>>> diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+>>> index af3fd388329a0..01bc8be78ef72 100644
+>>> --- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
+>>> +++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
+>>> @@ -41,6 +41,9 @@
+>>>  #define STM32MP_PKG_AI 0x100
+>>>  #define STM32MP_PKG_AK 0x400
+>>>  #define STM32MP_PKG_AL 0x800
+>>> +#define STM32MP_PKG_AM 0x1000
+>>> +#define STM32MP_PKG_AN 0x2000
+>>> +#define STM32MP_PKG_AO 0x4000
+>>
+>> Why these are some random hex values but not for example 0x801, 0x802
+>> and 0x803? That's an enum, so bitmask does not make sense here.
+> 
+> The are bitmask. You can check in patch 14/14 that adds a new package to the existing code of STM32MP257.
+> Do you prefer I rewrite them all as, e.g.
+> #define STM32MP_PKG_AO (1 << 14)
+> ?
+
+OK, so where is this bitmask used in DTS? These are bindings, not some
+random defines for driver.
+
+Best regards,
+Krzysztof
+
 
