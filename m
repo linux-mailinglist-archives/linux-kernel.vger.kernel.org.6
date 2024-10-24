@@ -1,39 +1,73 @@
-Return-Path: <linux-kernel+bounces-379994-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379997-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DD3DE9AE6DD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:39:29 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7E0509AE6EE
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:45:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4749B28628F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:39:28 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 190DEB215C5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:44:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C7681E1A1D;
-	Thu, 24 Oct 2024 13:38:48 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E3C531DF970;
-	Thu, 24 Oct 2024 13:38:44 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5551D1DD874;
+	Thu, 24 Oct 2024 13:44:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="M7Z0nI3P"
+Received: from mail-ed1-f52.google.com (mail-ed1-f52.google.com [209.85.208.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 82F6A1CB9E5;
+	Thu, 24 Oct 2024 13:44:49 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729777127; cv=none; b=AJz+6Cl8yzRXMYfqDM0sTk0OZQIQFLYWSqrWj0BqubnnTmb83+Ie9pMmI/axSHXl3dHPUUZqFgen1xZHTJuec0Hf/JNBXRZBFJuR86CCCd7YT0faJuVf6kPkGRPikT4VC1hBzy6hCdGSYgQVO7Hn7l6Y0Y4Dlv6I/gO9OMercn8=
+	t=1729777491; cv=none; b=R0svMP/0iuJ9/TDMvOHxlZrEsz1yHjnqBYaJjJj171/Wkbpbuhx/GdkfSavMg1qOdgijn7v2WfbeqKvxXaqexSgORPm9Yt9LKm+S/1+YVx6MgPJPBfvwBfAA19al9PjbHHzE4xC3/pi6Pqm8NAj32uP/rE39yE4mvok+Jol0668=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729777127; c=relaxed/simple;
-	bh=PLP3SSlJbV0fpQiLAsOnkvolvtL5D+C1h1JS6kuCogA=;
+	s=arc-20240116; t=1729777491; c=relaxed/simple;
+	bh=XTewxsxxjlV5dDLPKlnRSukTISb74KPpJNXbcBloW88=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=EPCLGHz584OaWpSMyfW4PfYBGw18tAzjZHrNWHCxgx7GrfL4l2szIokXytsElESl2LLoR4q+BoUV6lLvibwkfu4nFKwxiOjv2Q7nmgKxyMdm3rrq9Fr/bsZtt5a2SST+4/qjjwPMf6ezri1Wev+W3tQ2FCtn8SxoFV7vSsgmIBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id C3FA3339;
-	Thu, 24 Oct 2024 06:39:13 -0700 (PDT)
-Received: from [10.57.55.74] (unknown [10.57.55.74])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id F04733F71E;
-	Thu, 24 Oct 2024 06:38:42 -0700 (PDT)
-Message-ID: <5e1aef31-4157-4094-a419-27810c172ce6@arm.com>
-Date: Thu, 24 Oct 2024 14:39:53 +0100
+	 In-Reply-To:Content-Type; b=u9393FlkAI/eknALlonOb36bypdmDutzNFCc1L2PbF1OeWYwA7mHcHsVD0jEJfEXHDdlJDB2w5xjWuQNFGLLQu0qBBqJ0ZWZxb7ErGZXTfTgc5NWJ2HJ6XFmivaZFh8QWzDWnSoulY8HHGBuQvQsZT2KbfbDxbtjJp+U0oz7Q4k=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=M7Z0nI3P; arc=none smtp.client-ip=209.85.208.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ed1-f52.google.com with SMTP id 4fb4d7f45d1cf-5cb74434bc5so1267659a12.0;
+        Thu, 24 Oct 2024 06:44:49 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729777488; x=1730382288; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiLuNyR5XkI8Z1F/5hyoXvT4DkwkFu6+ESHxxLSKL7Q=;
+        b=M7Z0nI3PpUjvafXMKOv3JnziScCKcKcuqrvO0R7hN+cmwL6idVUpIdbteRpbbwIfsc
+         4whRB7E7p3IDIrWAkv3/f5xeMKjrlehD8KQ08flLY1fEmyFBpaaPQQ6NwaA6Py6kSF5j
+         bwbR2PMP4IWfGFI8UAMNVlOFFbejkzu7ERXMbq+OxWEPHmJA80BWfhew5J8gBGGYzprM
+         A1b4O7XjdT9WlIrV5CGk7gtJRB6RmCx1USCnV+bOFezkP3sJMyedK4pzfH/pR/kpAX6N
+         ERjdGF44HB9Kgxip9plKrhMyGtm6vN+tuaki9StT6eMDc1MkG2dpHFe5SKRK57EpUFqA
+         jg3A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729777488; x=1730382288;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=ZiLuNyR5XkI8Z1F/5hyoXvT4DkwkFu6+ESHxxLSKL7Q=;
+        b=RapqgNCrWwWjn12k2ck9QXo86EARZCbSPI7r7kUojr7ZcQK6Y0KsefeAaNTVWi7eCA
+         46rB8VUjd8XCtVeHK0eOpWRrD7i+Z60q3d4KIB0xo9Mi9yulgrlxZJgRaueyQWMf2ugK
+         OyygO7Amr6hGr5yYrxaHlfoxQ9DOPcSEvTIXXq7bmMj4KfhI0VCJQeVxknK0d8yirQdI
+         zXwxmMyVAHS8xzeYmY27YZQ8f4z9Uqvhyb6SjsZ0dIDTpxH4zDoInMpPH0sskK7xqGp5
+         plY0Qftn3TXVoW5pYTwbxQROPhH4OJbyXnyXxelKED/mSHz4F7+KxJ4ii38iTLfnXHAz
+         BJ1w==
+X-Forwarded-Encrypted: i=1; AJvYcCVCitcKiKZxSQEWxMRBCfLXM/wGQpmmqObkHzdV7j1aey/C8bEIous6jY2Iaa1QWPD+QzC/hmaiRtv2UUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx20lKBbpK3H4bxpegdTPLmAFHTwznLT+XZjMFQVqfaRjKkQO3N
+	P0S9Ablf8BV/4mZ+vDS5vk0bBPvOxBTblQaFOXNHNzJfrKwrVKmI
+X-Google-Smtp-Source: AGHT+IEzUqGR2U1alJ6x5JZOW1PnTfiy1JvAVUmme0zRXIN/ch5n3eHycjvVdH1bImmFSqkvgAYAEg==
+X-Received: by 2002:a05:6402:194e:b0:5cb:6ca3:af96 with SMTP id 4fb4d7f45d1cf-5cb8b1c43f6mr5462539a12.19.1729777487355;
+        Thu, 24 Oct 2024 06:44:47 -0700 (PDT)
+Received: from ?IPV6:2001:678:a5c:1202:4fb5:f16a:579c:6dcb? (soda.int.kasm.eu. [2001:678:a5c:1202:4fb5:f16a:579c:6dcb])
+        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c726besm5736945a12.93.2024.10.24.06.44.45
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 06:44:46 -0700 (PDT)
+Message-ID: <bcaa681e-7ea2-40b0-8f9f-0bcba5010b11@gmail.com>
+Date: Thu, 24 Oct 2024 15:44:44 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -41,80 +75,86 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v1 08/10] thermal: core: Eliminate
- thermal_zone_trip_down()
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: "Rafael J. Wysocki" <rjw@rjwysocki.net>,
- LKML <linux-kernel@vger.kernel.org>, Linux PM <linux-pm@vger.kernel.org>,
- Daniel Lezcano <daniel.lezcano@linaro.org>, Zhang Rui <rui.zhang@intel.com>,
- Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-References: <4958885.31r3eYUQgx@rjwysocki.net>
- <1807510.VLH7GnMWUR@rjwysocki.net>
- <d2239ab1-ae95-4b51-9cc5-8aac9eb67970@arm.com>
- <CAJZ5v0j-T_ynbMsMrVndSHwCJP97A1-PX-p-NNskopO=i0xtpw@mail.gmail.com>
-Content-Language: en-US
-From: Lukasz Luba <lukasz.luba@arm.com>
-In-Reply-To: <CAJZ5v0j-T_ynbMsMrVndSHwCJP97A1-PX-p-NNskopO=i0xtpw@mail.gmail.com>
+Subject: Re: [PATCH] gpiolib: fix a NULL-pointer dereference when setting
+ direction
+To: Bartosz Golaszewski <brgl@bgdev.pl>,
+ Linus Walleij <linus.walleij@linaro.org>, Kent Gibson
+ <warthog618@gmail.com>, Mark Brown <broonie@kernel.org>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org,
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+References: <20241024133834.47395-1-brgl@bgdev.pl>
+Content-Language: en-US, sv-SE
+From: Klara Modin <klarasmodin@gmail.com>
+In-Reply-To: <20241024133834.47395-1-brgl@bgdev.pl>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
 
+On 2024-10-24 15:38, Bartosz Golaszewski wrote:
+> From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> 
+> For optional GPIOs we may pass NULL to gpiod_direction_(input|output)().
+> With the call to the notifier chain added by commit 07c61d4da43f
+> ("gpiolib: notify user-space about in-kernel line state changes") we
+> will now dereference a NULL pointer in this case. The reason for that is
+> the fact that the expansion of the VALIDATE_DESC() macro (which returns
+> 0 for NULL descriptors) was moved into the nonotify variants of the
+> direction setters.
+> 
+> Move them back to the top-level interfaces as the nonotify ones are only
+> ever called from inside the GPIO core and are always passed valid GPIO
+> descriptors. This way we'll never call the line_state notifier chain
+> with non-valid descs.
+> 
+> Fixes: 07c61d4da43f ("gpiolib: notify user-space about in-kernel line state changes")
+> Reported-by: Mark Brown <broonie@kernel.org>
+> Closes: https://lore.kernel.org/all/d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk/
+> Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+> ---
+>   drivers/gpio/gpiolib.c | 8 ++++----
+>   1 file changed, 4 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
+> index ae758ba6dc3d1..6001ec96693c5 100644
+> --- a/drivers/gpio/gpiolib.c
+> +++ b/drivers/gpio/gpiolib.c
+> @@ -2695,6 +2695,8 @@ int gpiod_direction_input(struct gpio_desc *desc)
+>   {
+>   	int ret;
+>   
+> +	VALIDATE_DESC(desc);
+> +
+>   	ret = gpiod_direction_input_nonotify(desc);
+>   	if (ret == 0)
+>   		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> @@ -2707,8 +2709,6 @@ int gpiod_direction_input_nonotify(struct gpio_desc *desc)
+>   {
+>   	int ret = 0;
+>   
+> -	VALIDATE_DESC(desc);
+> -
+>   	CLASS(gpio_chip_guard, guard)(desc);
+>   	if (!guard.gc)
+>   		return -ENODEV;
+> @@ -2841,6 +2841,8 @@ int gpiod_direction_output(struct gpio_desc *desc, int value)
+>   {
+>   	int ret;
+>   
+> +	VALIDATE_DESC(desc);
+> +
+>   	ret = gpiod_direction_output_nonotify(desc, value);
+>   	if (ret == 0)
+>   		gpiod_line_state_notify(desc, GPIO_V2_LINE_CHANGED_CONFIG);
+> @@ -2854,8 +2856,6 @@ int gpiod_direction_output_nonotify(struct gpio_desc *desc, int value)
+>   	unsigned long flags;
+>   	int ret;
+>   
+> -	VALIDATE_DESC(desc);
+> -
+>   	flags = READ_ONCE(desc->flags);
+>   
+>   	if (test_bit(FLAG_ACTIVE_LOW, &flags))
 
+This patch fixes the issue for me, thanks!
 
-On 10/24/24 13:33, Rafael J. Wysocki wrote:
-> On Thu, Oct 24, 2024 at 12:32 PM Lukasz Luba <lukasz.luba@arm.com> wrote:
->>
->>
->>
->> On 10/16/24 12:33, Rafael J. Wysocki wrote:
->>> From: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>>
->>> Since thermal_zone_set_trip_temp() is not located in the same file
->>
->> nit: s/not/now
-> 
-> Thanks, will fix when applying the patch.
-> 
->>> as thermal_trip_crossed(), it can invoke the latter directly without
->>> using the thermal_zone_trip_down() wrapper that has no other users.
->>>
->>> Update thermal_zone_set_trip_temp() accordingly and drop
->>> thermal_zone_trip_down().
->>>
->>> No functional impact.
->>>
->>> Signed-off-by: Rafael J. Wysocki <rafael.j.wysocki@intel.com>
->>> ---
->>>    drivers/thermal/thermal_core.c |    8 +-------
->>>    drivers/thermal/thermal_core.h |    2 --
->>>    2 files changed, 1 insertion(+), 9 deletions(-)
->>>
->>> Index: linux-pm/drivers/thermal/thermal_core.c
->>> ===================================================================
->>> --- linux-pm.orig/drivers/thermal/thermal_core.c
->>> +++ linux-pm/drivers/thermal/thermal_core.c
->>> @@ -565,7 +565,7 @@ void thermal_zone_set_trip_temp(struct t
->>>                 * are needed to compensate for the lack of it going forward.
->>>                 */
->>>                if (tz->temperature >= td->threshold)
->>> -                     thermal_zone_trip_down(tz, td);
->>> +                     thermal_trip_crossed(tz, td, thermal_get_tz_governor(tz), false);
->>
->> minor thing:
->> won't that be too long line?
-> 
-> It is longer than 80 characters, but this is not a hard boundary - see
-> "2) Breaking long lines and strings" in
-> Documentation/process/coding-style.rst).
-> 
-> Well, you can argue about the "hide information" part, but IMV this
-> line just looks cleaner the way it is than when it would be broken in
-> any way.
-> 
->> IMHO we can add somewhere earlier:
->> struct thermal_governor *gov = thermal_get_tz_governor(tz);
->> and use it here
-> 
-> That would have been harder to follow than the current code IMO.
-
-fair enough
+Tested-by: Klara Modin <klarasmodin@gmail.com>
 
