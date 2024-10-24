@@ -1,128 +1,254 @@
-Return-Path: <linux-kernel+bounces-380422-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380426-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id AD6E79AEE43
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:36:02 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BEB9E9AEE4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:38:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 723A0281BC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:36:01 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 41EAD1F2515D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:38:32 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B96D1FBF5F;
-	Thu, 24 Oct 2024 17:35:57 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B5D461FE112;
+	Thu, 24 Oct 2024 17:38:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="G0+Fb/rt"
-Received: from mail-ej1-f54.google.com (mail-ej1-f54.google.com [209.85.218.54])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="bAZxxn49"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1425C1F76A4
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:35:53 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8A3B91FBF58;
+	Thu, 24 Oct 2024 17:38:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729791356; cv=none; b=T2miT7O9ZJAgplc6e/wCbFaTxKkeFpC/mjqWLENb7KiAokF+lbqMxsX6TnUTfJQC05i8C50d3PcWUVSoHcALtzPY14Iq5Smfvb9vpJdplWsZUPj2iDGBXb4CHgjRk3FWVKvScnWC6iIOiDyYigXbQfp/989bKwnJafv92CthHUs=
+	t=1729791496; cv=none; b=TnFdTcX8uWw+UfnJQxWOLGo1iTPgcwUIEBnCZ2FF14d3E5hLaCIA9XeGWCrp6N7eQ3RHPGER3/F1HklpaqPtzpljqv4siB6IXP0RV396baGxoxAvmr685pelN0OfVQA6yznB9LX2xvKq6uwh7i1VlEiPRdcqA/Qju2TpQ6BZp5o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729791356; c=relaxed/simple;
-	bh=2BYxqbYfztHvjbaFtpSC+vFEKcu8+g94GzBgYCRNsHw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=NgcW3DFwSCtbC79BIOPRm5+sTuVm1DjF68pNaUmYTLtoHD7kBecXA2NKWqfroO1ciUI5Nj2nYe1Chix22rKZpxFLS+IFYOR93bnZmwYucdiNhFAvM2+6ZvY4fOHidvsN1IXGQbxVLRT/Fpgf4djPc1cEbo8GRZdf8MDUEi/nAtw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org; spf=pass smtp.mailfrom=linuxfoundation.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=G0+Fb/rt; arc=none smtp.client-ip=209.85.218.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=linux-foundation.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linuxfoundation.org
-Received: by mail-ej1-f54.google.com with SMTP id a640c23a62f3a-a99ea294480so78572666b.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:35:53 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linux-foundation.org; s=google; t=1729791352; x=1730396152; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:from:to:cc:subject:date:message-id:reply-to;
-        bh=Dji1r/mkShycMIqQRWpCHbxCI7reC1wukqFmPadAxoQ=;
-        b=G0+Fb/rt2jDFfHueHG5S3e6A21JgJSQ7cohnPWB2DN4XI3/UxY73FwHFl4FT6nbxs8
-         eNgRX6ex0c6ZHRYnBzhCy/j1/78YEOOy/SzV3F9Lt4TaBhT44rdDTeG9hL6Vy1G5lA+8
-         ggAvO/7NeYC5WJVPcCDBRVtIlUo3spbwZGqLo=
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729791352; x=1730396152;
-        h=cc:to:subject:message-id:date:from:in-reply-to:references
-         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=Dji1r/mkShycMIqQRWpCHbxCI7reC1wukqFmPadAxoQ=;
-        b=NVDz7rF6LHmCyow3TX2YAUWq9Wt/jDmsJPQAmNLGazSCveOydOfVr+GCFneEB1BIs4
-         BFHp6mQKINU+Y1RoF+irxc1uQbxmX+DfwyAyEvwfqzjPgDOTUg8r0k6W1n/icSJQQKMy
-         7BOZB7R1K/HKmsgxyiVtFZHycf4g7hkPYHnbkZ5I0dCO5GNoMaK1LA0l8Dh+U68DINsn
-         y5ENoun1/ioeftubUkteKTmSIf5aLJQ+hTN3dWqeeIjnF8GCTomVj6dAvI5bifDi+wm7
-         BesZQPWEPstkBpniCh9jVOqHSoOmmF3JaNaBMn+B9uiRFdt0bSCl3uX8NVLmzPMpsG4z
-         3KPQ==
-X-Gm-Message-State: AOJu0Ywe1NDjry00YVRWoRM+ukxHiLdIOfF6FYv0XpggbJ2inaF/jctI
-	tvJSR/g0yzwk6azC5OW9anK9J1iLMDiz9pasgx9MwTPQa/yz5133QvdNEuUcRX07PRYXM5Uw5eL
-	kNs7I0w==
-X-Google-Smtp-Source: AGHT+IGEYFKZAJ2pxcrV86FtBbWuqZVUP85I1/mU3uxcXwqr/uRLegfrcdzolhpJi80Jhongqz6avw==
-X-Received: by 2002:a05:6402:50cb:b0:5c9:44bc:f9b3 with SMTP id 4fb4d7f45d1cf-5cb8b09abcdmr6627774a12.11.1729791351988;
-        Thu, 24 Oct 2024 10:35:51 -0700 (PDT)
-Received: from mail-wr1-f52.google.com (mail-wr1-f52.google.com. [209.85.221.52])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb895f9a5csm2687139a12.18.2024.10.24.10.35.50
-        for <linux-kernel@vger.kernel.org>
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 10:35:51 -0700 (PDT)
-Received: by mail-wr1-f52.google.com with SMTP id ffacd0b85a97d-37d58377339so896684f8f.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:35:50 -0700 (PDT)
-X-Received: by 2002:adf:e386:0:b0:37d:53d1:84f2 with SMTP id
- ffacd0b85a97d-37efceeddfdmr6141553f8f.11.1729791350453; Thu, 24 Oct 2024
- 10:35:50 -0700 (PDT)
+	s=arc-20240116; t=1729791496; c=relaxed/simple;
+	bh=Oan/SkH3IPRDX8e2NbsGfXCx3pLV3nmTT6WW6XybXlk=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=QgPynMCqdLpd/rtZLfBTFSSokTsBWLDQzLvxwzWPN2yKvBhqXo9tGhLnIVl3MGxe1zZqXAeX+lnRjxvYnpTVWXvNKzT+xKWL/ONdx0+qMsGcgDhl1U8+r2oNClT8715eT8QBRjSEevM1PtnIo2D5jIc2ll4mhGuuc/FMegB4CWU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=bAZxxn49; arc=none smtp.client-ip=192.198.163.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729791494; x=1761327494;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=Oan/SkH3IPRDX8e2NbsGfXCx3pLV3nmTT6WW6XybXlk=;
+  b=bAZxxn49Bz/9cQgzZl5HhseJkniwo4lQURiyJb+bj1e+G9SqdDd6r6Vt
+   F362SYGkJT2JPSG+r5CRWzqJKRwUr/1M8D7+sU48OwsBmqdL6zwt1RoPV
+   SCLTFyS4hqqv1kWZ0lKqmy4jmYvJYp7j4eEBUMyxfy2go1FYRyPeGHSP1
+   N80Ej9+n3H1+jT6V5MXyEKiAND9UlJ/ec0jQXMEz0/ms3u5ihGuZqbx8t
+   YT8aaWBtlROtqBU8JzT7e9by9WTnW6apKM/nVNcQSMVuh0CpTPTaFtmqe
+   puQd5ZLvjTdt3LvW7ADm7PWwOXiEPUFK86xKPwrkfv4/pCwkhBagr9yku
+   A==;
+X-CSE-ConnectionGUID: JCK3FV3+QyynU3IfGqvr+g==
+X-CSE-MsgGUID: 1EYl4B3rRn2YiErtJLcd3A==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="40028700"
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="40028700"
+Received: from fmviesa006.fm.intel.com ([10.60.135.146])
+  by fmvoesa105.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 10:38:11 -0700
+X-CSE-ConnectionGUID: wvQjMbuvQg6WrDaYVu1O3Q==
+X-CSE-MsgGUID: uOsmB8MaTbKjlBNlGNDpSQ==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="80247299"
+Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
+  by fmviesa006.fm.intel.com with ESMTP; 24 Oct 2024 10:38:09 -0700
+Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
+	(envelope-from <lkp@intel.com>)
+	id 1t41mh-000WnK-0a;
+	Thu, 24 Oct 2024 17:38:07 +0000
+Date: Fri, 25 Oct 2024 01:37:07 +0800
+From: kernel test robot <lkp@intel.com>
+To: Tony Chung <tony467913@gmail.com>, johan@kernel.org
+Cc: llvm@lists.linux.dev, oe-kbuild-all@lists.linux.dev,
+	gregkh@linuxfoundation.org, linux-usb@vger.kernel.org,
+	linux-kernel@vger.kernel.org, Tony Chung <tony467913@gmail.com>
+Subject: Re: [PATCH] usb: serial: mos7840: Fix coding style warnings
+Message-ID: <202410250138.OhF04o8W-lkp@intel.com>
+References: <20241023091414.18098-1-tony467913@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024013214.129639-1-torvalds@linux-foundation.org> <20241024061300.l5y4ng5gmkfrfdht@treble.attlocal.net>
-In-Reply-To: <20241024061300.l5y4ng5gmkfrfdht@treble.attlocal.net>
-From: Linus Torvalds <torvalds@linux-foundation.org>
-Date: Thu, 24 Oct 2024 10:35:33 -0700
-X-Gmail-Original-Message-ID: <CAHk-=wihBAdfL+OgaO71H_n4NFVyDdTXWEA_fjrdEFUc-=D1Sg@mail.gmail.com>
-Message-ID: <CAHk-=wihBAdfL+OgaO71H_n4NFVyDdTXWEA_fjrdEFUc-=D1Sg@mail.gmail.com>
-Subject: Re: [PATCH] x86: fix user address masking non-canonical speculation issue
-To: Josh Poimboeuf <jpoimboe@kernel.org>
-Cc: Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, x86@kernel.org, 
-	Andrew Cooper <andrew.cooper3@citrix.com>, Borislav Petkov <bp@alien8.de>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241023091414.18098-1-tony467913@gmail.com>
 
-On Wed, 23 Oct 2024 at 23:13, Josh Poimboeuf <jpoimboe@kernel.org> wrote:
->
-> I'm probably missing something but once LAM is enabled, how wouldn't
-> this allow non-canonical address speculation?
+Hi Tony,
 
-Once LAM is enabled, together with LASS, non-canonical addresses
-basically don't exit.
+kernel test robot noticed the following build errors:
 
->  i.e. when bit 47/56 is
-> set and 63 is cleared, would it not go untouched by mask_user_address()
-> and thus be speculatively interpreted by AMD as a kernel address?
+[auto build test ERROR on johan-usb-serial/usb-next]
+[also build test ERROR on johan-usb-serial/usb-linus usb/usb-testing usb/usb-next usb/usb-linus tty/tty-testing tty/tty-next tty/tty-linus linus/master v6.12-rc4 next-20241024]
+[If your patch is applied to the wrong git tree, kindly drop us a note.
+And when submitting patch, we suggest to use '--base' as documented in
+https://git-scm.com/docs/git-format-patch#_base_tree_information]
 
-AMD doesn't _have_ LAM. When they do, they had better not
-speculatively mis-interpret addresses.
+url:    https://github.com/intel-lab-lkp/linux/commits/Tony-Chung/usb-serial-mos7840-Fix-coding-style-warnings/20241023-171615
+base:   https://git.kernel.org/pub/scm/linux/kernel/git/johan/usb-serial.git usb-next
+patch link:    https://lore.kernel.org/r/20241023091414.18098-1-tony467913%40gmail.com
+patch subject: [PATCH] usb: serial: mos7840: Fix coding style warnings
+config: i386-buildonly-randconfig-005-20241024 (https://download.01.org/0day-ci/archive/20241025/202410250138.OhF04o8W-lkp@intel.com/config)
+compiler: clang version 19.1.2 (https://github.com/llvm/llvm-project 7ba7d8e2f7b6445b60679da826210cdde29eaf8b)
+reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241025/202410250138.OhF04o8W-lkp@intel.com/reproduce)
 
-IOW, notice how the LAM enablement is *dynamic* based on cpu_feature_enabled()?
+If you fix the issue in a separate patch/commit (i.e. not just a new version of
+the same patch/commit), kindly add following tags
+| Reported-by: kernel test robot <lkp@intel.com>
+| Closes: https://lore.kernel.org/oe-kbuild-all/202410250138.OhF04o8W-lkp@intel.com/
 
-(Well, right now it's commented out because Intel needs LASS for it to
-work right, but that's a separate issue).
+All errors (new ones prefixed by >>):
 
-> Also, the comment above __access_ok() now seems obsolete:
->
-> /*
->  * User pointers can have tag bits on x86-64.  This scheme tolerates
->  * arbitrary values in those bits rather then masking them off.
+   In file included from drivers/usb/serial/mos7840.c:15:
+   In file included from include/linux/tty.h:11:
+   In file included from include/linux/tty_port.h:5:
+   In file included from include/linux/kfifo.h:40:
+   In file included from include/linux/dma-mapping.h:11:
+   In file included from include/linux/scatterlist.h:8:
+   In file included from include/linux/mm.h:2213:
+   include/linux/vmstat.h:518:36: warning: arithmetic between different enumeration types ('enum node_stat_item' and 'enum lru_list') [-Wenum-enum-conversion]
+     518 |         return node_stat_name(NR_LRU_BASE + lru) + 3; // skip "nr_"
+         |                               ~~~~~~~~~~~ ^ ~~~
+   drivers/usb/serial/mos7840.c:923:25: warning: missing terminating '"' character [-Winvalid-pp-token]
+     923 |                 dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+         |                                       ^
+   drivers/usb/serial/mos7840.c:924:22: warning: missing terminating '"' character [-Winvalid-pp-token]
+     924 |                         with status = %d\n", __func__, status);
+         |                                           ^
+>> drivers/usb/serial/mos7840.c:923:3: error: unterminated function-like macro invocation
+     923 |                 dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+         |                 ^
+   include/linux/usb/serial.h:399:9: note: macro 'dev_err_console' defined here
+     399 | #define dev_err_console(usport, fmt, ...)                               \
+         |         ^
+>> drivers/usb/serial/mos7840.c:1832:23: error: expected '}'
+    1832 | MODULE_LICENSE("GPL");
+         |                       ^
+   drivers/usb/serial/mos7840.c:921:14: note: to match this '{'
+     921 |         if (status) {
+         |                     ^
+>> drivers/usb/serial/mos7840.c:1832:23: error: expected '}'
+    1832 | MODULE_LICENSE("GPL");
+         |                       ^
+   drivers/usb/serial/mos7840.c:851:1: note: to match this '{'
+     851 | {
+         | ^
+>> drivers/usb/serial/mos7840.c:879:8: error: use of undeclared label 'exit'
+     879 |                 goto exit;
+         |                      ^
+   3 warnings and 4 errors generated.
 
-No. The comment is still correct. The scheme tolerates exactly the LAM
-kind of hardware-based address masking.
+Kconfig warnings: (for reference only)
+   WARNING: unmet direct dependencies detected for GET_FREE_REGION
+   Depends on [n]: SPARSEMEM [=n]
+   Selected by [y]:
+   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
 
-The difference is just that the constant is now boot-time dynamic, so
-if LAM isn't there, the whole tag bit issue goes away, of course.
 
->  * Enforce two rules:
->  * 1. 'ptr' must be in the user half of the address space
->  * 2. 'ptr+size' must not overflow into kernel addresses
+vim +923 drivers/usb/serial/mos7840.c
 
-.. except the "user half" should probably be "user part".
+   840	
+   841	/*****************************************************************************
+   842	 * mos7840_write
+   843	 *	this function is called by the tty driver when data should be written to
+   844	 *	the port.
+   845	 *	If successful, we return the number of bytes written, otherwise we
+   846	 *      return a negative error number.
+   847	 *****************************************************************************/
+   848	
+   849	static int mos7840_write(struct tty_struct *tty, struct usb_serial_port *port,
+   850				 const unsigned char *data, int count)
+   851	{
+   852		struct moschip_port *mos7840_port = usb_get_serial_port_data(port);
+   853		struct usb_serial *serial = port->serial;
+   854		int status;
+   855		int i;
+   856		int bytes_sent = 0;
+   857		int transfer_size;
+   858		unsigned long flags;
+   859		struct urb *urb;
+   860		/* __u16 Data; */
+   861		const unsigned char *current_position = data;
+   862	
+   863		/* try to find a free urb in the list */
+   864		urb = NULL;
+   865	
+   866		spin_lock_irqsave(&mos7840_port->pool_lock, flags);
+   867		for (i = 0; i < NUM_URBS; ++i) {
+   868			if (!mos7840_port->busy[i]) {
+   869				mos7840_port->busy[i] = 1;
+   870				urb = mos7840_port->write_urb_pool[i];
+   871				dev_dbg(&port->dev, "URB:%d\n", i);
+   872				break;
+   873			}
+   874		}
+   875		spin_unlock_irqrestore(&mos7840_port->pool_lock, flags);
+   876	
+   877		if (urb == NULL) {
+   878			dev_dbg(&port->dev, "%s - no more free urbs\n", __func__);
+ > 879			goto exit;
+   880		}
+   881	
+   882		if (urb->transfer_buffer == NULL) {
+   883			urb->transfer_buffer = kmalloc(URB_TRANSFER_BUFFER_SIZE,
+   884						       GFP_ATOMIC);
+   885			if (!urb->transfer_buffer) {
+   886				bytes_sent = -ENOMEM;
+   887				goto exit;
+   888			}
+   889		}
+   890		transfer_size = min(count, URB_TRANSFER_BUFFER_SIZE);
+   891	
+   892		memcpy(urb->transfer_buffer, current_position, transfer_size);
+   893	
+   894		/* fill urb with data and submit  */
+   895		if ((serial->num_ports == 2) && (((__u16)port->port_number % 2) != 0)) {
+   896			usb_fill_bulk_urb(urb,
+   897				serial->dev,
+   898				usb_sndbulkpipe(serial->dev,
+   899					(port->bulk_out_endpointAddress) + 2),
+   900				urb->transfer_buffer,
+   901				transfer_size,
+   902				mos7840_bulk_out_data_callback, mos7840_port);
+   903		} else {
+   904			usb_fill_bulk_urb(urb,
+   905				serial->dev,
+   906				usb_sndbulkpipe(serial->dev,
+   907					port->bulk_out_endpointAddress),
+   908				urb->transfer_buffer,
+   909				transfer_size,
+   910				mos7840_bulk_out_data_callback, mos7840_port);
+   911		}
+   912	
+   913		dev_dbg(&port->dev, "bulkout endpoint is %d\n", port->bulk_out_endpointAddress);
+   914	
+   915		if (mos7840_port->has_led)
+   916			mos7840_led_activity(port);
+   917	
+   918		/* send it down the pipe */
+   919		status = usb_submit_urb(urb, GFP_ATOMIC);
+   920	
+   921		if (status) {
+   922			mos7840_port->busy[i] = 0;
+ > 923			dev_err_console(port, "%s - usb_submit_urb(write bulk) failed
+   924				with status = %d\n", __func__, status);
+   925			bytes_sent = status;
+   926			goto exit;
+   927		}
+   928		bytes_sent = transfer_size;
+   929		port->icount.tx += transfer_size;
+   930		dev_dbg(&port->dev, "icount.tx is %d:\n", port->icount.tx);
+   931	exit:
+   932		return bytes_sent;
+   933	
 
-                    Linus
+-- 
+0-DAY CI Kernel Test Service
+https://github.com/intel/lkp-tests/wiki
 
