@@ -1,234 +1,216 @@
-Return-Path: <linux-kernel+bounces-379259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379261-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 23AAE9ADC1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:24:44 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 158C69ADC22
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:25:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3A9DD1C21103
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:24:43 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 6D781B22E94
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:25:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EBA2F185920;
-	Thu, 24 Oct 2024 06:24:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4B73E189909;
+	Thu, 24 Oct 2024 06:24:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="Af0od5SX"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2043.outbound.protection.outlook.com [40.107.220.43])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="exqWy8rF"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 26E0E2FC52;
-	Thu, 24 Oct 2024 06:24:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.43
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729751075; cv=fail; b=hc950w1+out2V4TuLNggy4uO8Atpn1pxsifJzMDFESEcYKNZ5syL6A0PvAMbPr64RYE62Vbk2wBVF2L9ZL479GbME8tTxpmBQwBdCznLkO1JneqvXGailFjoHb6Xv+8MK1xlyCKq1BIUJzaVV1cVmTyFruwiLqZJhfrxWmb6/dQ=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729751075; c=relaxed/simple;
-	bh=Vo/wcTEOkI+vQtIbP0J9VGaae0788Mru7biGcDzPgu0=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=PjYAanISj5rSUjKVcDjx3RAm4LIS/ts32D5226VBsd/BweRjsTalwqmWdTmPGOxGRdfXatX6HnMmQJLzG2CcbkDUHj/kjZDtDw6A0T97O/0msHflb7c4Iz3KHFr+w6yaGjvF758gCQ/m7BEavGDQXRCwTeVMMNw4/Oj88rkoge4=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=Af0od5SX; arc=fail smtp.client-ip=40.107.220.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=KrpttG6vq4LpQSp2mTmgnmZXZkeYp3l0gHzsJ6su1B/7oTvgBeU1nb3G8Oq2ciN40QumlEGJhSlUelJ5lvzwDp6v4/QTTKVlXRtDEGT5Kv2i7cUal/w0dZrSg5fdoCiSg+sF6hCAueZFCfQkDOVjzBYvdSv0+3b2sVwYpg7GD2bn8hdrJ5RitMqJgS6d7hGU31ULNZ/C/gl6rOHDDHnAKDkHs5WUWvmiuc246kVzap3y/lDdvKuIH73x7/Y9W4VmAMFlmdCHFCQRaNRk1UuIweqtOi2W7FNOzXp+QSoQ92Zhf5rLF673JDbyuXvk2nQKSdwTQBErQuMTvJeLW4vUwQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=1f5vN69gzwNV6DqaJdUf0mR4u2/xX16KbZzM5BsRaus=;
- b=VLIjhMqujpOvOFJ+dixdG7B4YzmjKC7Bsx5ylU/08y1Y4V02YPHkCGFB0DvpFtm+VKGy1yzorzAsH8e4Xn97Od2hqLKN0SRv+qztXXsh5E3vjOs5BxomszFMtRZGPdSxrjw10uoXCfW44iu/q494KiBpItmxGxStEgfnwUkFNykebMHy/uEa/obiZcPCt5UlpMMI/rUyd9zA4eqcDETQhegk4EhwqPuI/Wn+ojrFXKzXq+B+ewIWeLWP7DVIuaH6F19+blcTqVB1Ld6Lb8BWdMke0r3sRv5ReR6+DNM5LEHoAVB1ZOo2lhDhHxB74pt883xbSq+z9U/Pk/O5IKRaqQ==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
- header.d=amd.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=1f5vN69gzwNV6DqaJdUf0mR4u2/xX16KbZzM5BsRaus=;
- b=Af0od5SXeVG2qKDJ8Tf2r5EFwpZ+VRJ6WzNSX5pRNst/KFfQT4TWmXDB7awW/6qjCKg99jTynzOXyuRPsYk9kp/sL+1CZ9FjeHge8WiMf9TPg//7uJSVtT0yoF4h5aR5beFW4fs9OMBU/vfGnZsNfM88LTm/Yv86Fzzr6qmU7mM=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=amd.com;
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com (2603:10b6:8:96::19) by
- DM4PR12MB6543.namprd12.prod.outlook.com (2603:10b6:8:8c::6) with Microsoft
- SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.20.8093.20; Thu, 24 Oct 2024 06:24:29 +0000
-Received: from DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec]) by DS7PR12MB6309.namprd12.prod.outlook.com
- ([fe80::b890:920f:cf3b:5fec%4]) with mapi id 15.20.8093.014; Thu, 24 Oct 2024
- 06:24:29 +0000
-Message-ID: <33300e68-dde5-0456-2a6d-4fb585d188a6@amd.com>
-Date: Thu, 24 Oct 2024 11:54:20 +0530
-User-Agent: Mozilla/5.0 (Windows NT 10.0; Win64; x64; rv:91.0) Gecko/20100101
- Thunderbird/91.13.1
-Subject: Re: [PATCH v13 04/13] x86/sev: Change TSC MSR behavior for Secure TSC
- enabled guests
-To: Xiaoyao Li <xiaoyao.li@intel.com>, linux-kernel@vger.kernel.org,
- thomas.lendacky@amd.com, bp@alien8.de, x86@kernel.org, kvm@vger.kernel.org
-Cc: mingo@redhat.com, tglx@linutronix.de, dave.hansen@linux.intel.com,
- pgonda@google.com, seanjc@google.com, pbonzini@redhat.com
-References: <20241021055156.2342564-1-nikunj@amd.com>
- <20241021055156.2342564-5-nikunj@amd.com>
- <c0596432-a20c-4cb7-8eb4-f8f23a1ec24b@intel.com>
-From: "Nikunj A. Dadhania" <nikunj@amd.com>
-In-Reply-To: <c0596432-a20c-4cb7-8eb4-f8f23a1ec24b@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
-X-ClientProxiedBy: PN3PR01CA0035.INDPRD01.PROD.OUTLOOK.COM
- (2603:1096:c01:97::14) To DS7PR12MB6309.namprd12.prod.outlook.com
- (2603:10b6:8:96::19)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8236D185920;
+	Thu, 24 Oct 2024 06:24:47 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729751087; cv=none; b=oStPltLUDbowx1AykuscAZ4mBvSWXDrg6uby7rRZZqHWD9L9xz4gUMS5IJv/p7RjQySNNQ2fQoZXfeW+OVtv3IZgsoq0rNoPVYNZRpVQFm2BYXkNDEVwF5Q7BQkHnNWmQ40vrftX8VB7Q6L7kS3pusqcwVmhfG9woapGfWWESLg=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729751087; c=relaxed/simple;
+	bh=2XvsYj0Ms6fqASHAm+m8OowANeoy1TenFBRkwyIDeLo=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=n0sy9sNCsgf0sQiYZ9kv6DN4ObZnP53O4RdRFH/foFfxgYwbgLpMjbQlONUjxzsBE8inxGNzTkDv8scD7xmiaR2GNWRuIu+gvVR6snV2B0gU7xePivSb0SqpOmy2KKd/nk1yFrJbi1087DCdk+KK7yzDxBx4ItwpmBrHzcvkwTM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=exqWy8rF; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 34FEBC4CECC;
+	Thu, 24 Oct 2024 06:24:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729751087;
+	bh=2XvsYj0Ms6fqASHAm+m8OowANeoy1TenFBRkwyIDeLo=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=exqWy8rFlj3HtQVJeCOlXbRWHcPHJ08imMNc9l+6ZGpxm0+YdudDblY8xLZ+EamSp
+	 Uv6YWL0rRJTkQCh7r1kb7O0gyjJNAvtiRHq6oEe1k2GwG86RrR2MXSmvx1cpi2FfXJ
+	 zB5cMd7IJxSMTlYcDkuDIvFPz8Z50Zlbi9NXQ8DxrHLpplF7Cy6yrysZiK3hqZ0F1V
+	 wMNj8VNBOwDRDoEwS2ZgzwWzzUBy425iCIfpW3IiuyasG8LXIOlljlGRAXRtaWyWjm
+	 PDzSaK/Esbovs9caoeLantXAmCtW/M6e5hOAcGbLXM2dm7dNJXH7RG46d04dkasKr+
+	 rsiMG9bUe6+3Q==
+Message-ID: <cdc7032b-4d09-40dc-86a7-16d244517d11@kernel.org>
+Date: Thu, 24 Oct 2024 08:24:41 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: DS7PR12MB6309:EE_|DM4PR12MB6543:EE_
-X-MS-Office365-Filtering-Correlation-Id: 3c96e306-533d-4b21-ac55-08dcf3f483d8
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|1800799024|366016|376014|7416014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?ZEIyNHBWUFVWRzRJT2hjYXo2T25DeTMrc1ZpZC8rN09sNFNlQlRVb1FpSk5C?=
- =?utf-8?B?bzBXOTdKN1pqQjN1VFlaZEFxVFU4ckJ6a2J0VHhGZzd5TUN6bUFaNVk1WGRR?=
- =?utf-8?B?VFExWjY1WWZ3ajFFOWhqV2hZVXN3VGk5dElUUnVkZmtOdW1RbEVCUzRCRHh4?=
- =?utf-8?B?OTRLYjk3NFA3d01XVnVHbEtlT0hBeVowcVlxYnZCVTROOUpCMlovcFM4czZL?=
- =?utf-8?B?Wmh6UHNuN3krUCtWVHdTcjdqZ1FUZXZCeHRNOTluYVlCS0pSZU9MeXF5Y3lI?=
- =?utf-8?B?YU93TDY5Ym9CWVRkTTNLNzVTYXAwQnhSU2pCQWNCQ3U4T3JKUy9kVDBKbmVD?=
- =?utf-8?B?eUFSanFrR2RWWUlhZWJlVGhwWVIxWnNURTNNMnVzU0kzZEpqQUgzejJZSEN4?=
- =?utf-8?B?K3B5ZkJwZDdNYUFGeng0WWtFWVJPRy9JWWl3d1d1dmV5UEp6UE8xbXRoTGhH?=
- =?utf-8?B?dnRGTXk1d3VWdmRpUVRoQjZ2RlN6UkpJUmJGMThmWDllcTg5VnJDa1hoOUFU?=
- =?utf-8?B?ektXd0xrdFdDRlN6UkN0bUJMRjAvL2pUajI3bFdzVHNFZ1lLN0orMHZ3aXF5?=
- =?utf-8?B?TGN4YTduUkd0bVdxUlZZMjNNNG5aeUxRcGZ3bFIzNFdCeTJ0MkhmZUtjR0k0?=
- =?utf-8?B?TmNBL1ZzeHE0MllsbUcxb0pCcU1Velk0ZVVqN0lmSE1CMGxlWGU1TC9YNnZG?=
- =?utf-8?B?OTI1U01GYzB2ZFc4azdTOVM1d2dLMUdOWEpRejcxNFdiTWl6QnY3T01PMUUr?=
- =?utf-8?B?ZEZ4QWdkNk14WkF4aWErOUdOVm1yRVplZEpDY1ZUZnZTVWJhdmpEbWlkSFBs?=
- =?utf-8?B?SGNXYUhGdFFWUVU1UHVyM3ppdklVcHhWbFo4dnh2VEZRcXRQV1Rub2U5QUl6?=
- =?utf-8?B?aWl6blVDSUJ0M3U5Rm5JOG52ekxLb3FZV3Y5ci9oVXNJenNmakFOUk5SaW1M?=
- =?utf-8?B?elIzTTRBOGw5bzNkZDdiNWNERTJuZVMwOFdpY1d2QTdQVzRjemVubWlPQlV4?=
- =?utf-8?B?OFJMSnRUSTdYdDN4aGtlQ2dUeUxtYXFWNjJxNk56SitsdWZZQkhsMGlFd01X?=
- =?utf-8?B?RkRrMVZXYXhEeHF2czA4ZDhVeFpkUnF2RmxXZTdqOFBldTk3Rjg5ZFRVUGRs?=
- =?utf-8?B?U1c2MTVKcEtXZHptOG5IV28vZExxODhMRFppaDA5aGt3dHAxcC9yV1FKUG5o?=
- =?utf-8?B?Q1JSNGJQQ01xUExXVUoyVXNSOXJUdjgzYnFqZmZ0MjA5RElVK211OXhmTHZt?=
- =?utf-8?B?Q205d0kwdU16OVRYbEtNWU5vSkFXQWlpbVlVQjJlK3RVRDYzeEZwTHo4aTJK?=
- =?utf-8?B?cC9PQkJONTgyN3pHdDJ4OHhVRnlVTzBWZEpiQXZkQVpQU3JUZXhDWWlBbUZy?=
- =?utf-8?B?VmVJZnkxN2JmOTRQL3ZBRnlwZm1HVDF0NzNUSWtxOFVWTnF3SU9XYU4yM3VG?=
- =?utf-8?B?ZWtpVVZXd2V2U3Z6RVFmSXBDMDFTQmMzZXJSOTJKL3RzN3RRalhTb3RBL1lM?=
- =?utf-8?B?TXMwOWVlNjJlZ04yL2xUekliWWZsOEUxbGdvVXF3N3dsOUQ4WVRjVVpRa0NM?=
- =?utf-8?B?MjhqNko5YVBQL2xHblNDU0RsaVNJeVlEMHNiWksvS0xUbFVzcUZ2V1F3YUVF?=
- =?utf-8?B?MlcvOW1acXppblkxZk1HSVY0N3ZnZ29oMmRWZmwyakp4L3hRUTVZY1dPNzlL?=
- =?utf-8?B?YndyeTZhbDE4UHQwV2R6U0V5M3FXVWUrRjQzcjdlZ0lPbXdWSCtjRUZVSFpi?=
- =?utf-8?Q?KCzDH2jb8SA4Gvgaj9eGlOw4cWm2/P9U7OjUShr?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS7PR12MB6309.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014)(7416014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?SkEzNkJMWnA4Si80bWpCVGNnbDhtZngvcmxXUjNUcUNZcjBQZ0t4YVBwb3VJ?=
- =?utf-8?B?cDhyUzB4RjVxdmRlcjh6VStjWXFoQVZHZjZnTFRFRkhTN3I2L3AxNlhrWWgr?=
- =?utf-8?B?SUFzVE5KMno4ZExWd1p6ZENJTW9VdG9jdnJzaCtQYWQ5MnpnMCsyR0N6aGNE?=
- =?utf-8?B?SStWOUVrZVlTUG41RFRZb0VUTlpyTVoyRU83Si9EbUhmZ29VZXI5ZDUwZEt0?=
- =?utf-8?B?eUdLUWpERFA5RGNFQWx3dUVWWVhHb0xQenZtV0FyQjlpcUlFdVpKSkF5eCs3?=
- =?utf-8?B?V1FOcEQzZXRpWkJYZTlVZDVsVjJKZ1lBN2lic1FPR1JKS3B0QURtaHM2TG5Q?=
- =?utf-8?B?ajFSNHR0SnF4aUJNNk1EYkxyMEFwU1RwWXMxMFkwS3JJWWJrc3FGOHpaUmFN?=
- =?utf-8?B?TUhZVnM4NWRGNEQ1NW5uSkVuNXhNcTNtZ3RjZHpEOXluNURWbTRtZFAwcUlM?=
- =?utf-8?B?SUNZd01lSk9UWEsrQ1pzWGpVRmFOU0tYbmFqRGtxTzBLOEsrclBjOVl6d1A2?=
- =?utf-8?B?ekVtSHZnOVFUNUp1NzRuS0lMdjA1ZUQ4d1RXeHpVQkJ2MDZYb2ZhelFtUnVi?=
- =?utf-8?B?YUQzdEh4QVJHSUhTNk1zaEY1RE92ejV6SXRiMmlpTEx5SXNGZ25WdlNsRGxC?=
- =?utf-8?B?c1R1eGU2U21KNDZ5Mk1NdGxTRDZwbGprdjg1bnJXT1lKamdMZXhHQU1IVTNM?=
- =?utf-8?B?KzhLdDdrdzU5ZFVGa1QvTlU2RUxNKzRzbUI3YmFjYjVUZ0NiYzM3Z2hweWxp?=
- =?utf-8?B?NnRycHpYY0lLYzFmWTNCcUFBT2dGRmEyU0JXK29FUVpaTzduQVF5WnRIR3lV?=
- =?utf-8?B?dUNXWmhRYkJQUm5wRWlwcDlYTVhKQnM2WjB6aXRxK2hWc241YnVud1Q4V01G?=
- =?utf-8?B?dStXeHl2Z0dBZ29BLytuRWJYYnFUMXFjTHJHV25qU0FTdG9DV1c4aWtBRkRT?=
- =?utf-8?B?MmdXR2tiNjh5N1VsNjF5blU3R0x4SVhJTTFQZ2JLb0tWSElnM0xQRHZMemZ6?=
- =?utf-8?B?eFJybU8yckFpTTJRZHFjM3NUS3Ixak1oNlI5TGdKK0tqbGp4TnFVY2RZUXVh?=
- =?utf-8?B?R05UQW1qbm4vaFRCb21rU01jS1VXUkpjQW1BUDZnYkEwa1V1SUhQR2tzcTF1?=
- =?utf-8?B?MmtXUjRjS3g1c1cyek43cGROUjdBSWFvU1Z6YitMeDBjL01LTTF4aU1VOUln?=
- =?utf-8?B?Q1pObzRCQjZoM3pVVjhUUkRlaTl3WUtCZTk4R1BEOTJQRlNYZmxKSExDMjRH?=
- =?utf-8?B?aXJJVDBKZm41WUR0QytmR0czZmNjM1ZkTjUzaXBFdmhOVktFUm0waFErSnJ3?=
- =?utf-8?B?NTRKQUY4RUlpaTlIakRWT1I0SVRudHJXMkdUVnFjVVY5bW1DWlIrbFpmWERD?=
- =?utf-8?B?NlM3VnBqMUhsekVOL0pXb3BvaksvQ1ZSS0JTTTVIV2FFYk9ad3RYOXREa2hu?=
- =?utf-8?B?dzEyd0NNYjJSQ1ZBaTA1cnZvZnAvMXJ3SkNTczY3LytvSlpndlRxTlVBNGhs?=
- =?utf-8?B?dWdLYmJmM2lrVGZkZk1hL2NCRHV5ZzZHT2J0N3U3Y1NvejlnUHpocGpmWGZs?=
- =?utf-8?B?ZW1YVks0V2xwRUtQV1l5VlhyRGEzY1hyZHVSVjl5ZmdnM2UrQUxYcjdXQUxv?=
- =?utf-8?B?SHJ0VytUR2Y5Slg2N3A4Y2hjYS9ieStLcndUNS80dE45Q0tkV214RU5iZlFW?=
- =?utf-8?B?c2xPODUxdkJSWEVOQmt4di9oRy8zdWRrUUVIZlhMTVRtcmx3RmlRdU9xbXVm?=
- =?utf-8?B?MXFNTGpPNnpwWURYYy9lc3dJOGFWWE9ZMkkvN00wWW1mcGVXQkY3aTNEakc5?=
- =?utf-8?B?N0oyaVNhS0NTalcweGtNTm93L0dMVjVoSHdCejJlU1VocHVKNDlWZWl6d2hr?=
- =?utf-8?B?RWRCVmdsNEdpakxLYnJ4U0hJR29wL3REUXFOeWFWUGZvaVZzWlVmNDBVRDZx?=
- =?utf-8?B?Q1pyaElyZTY4V3Mzc2xYU2NVTC8rZEdHaVl2QnZSckp5SUJETlhjSjgzeUFR?=
- =?utf-8?B?RTNYVjhZeG4yN1c1dk1yblhudVBxRDltV0VQcmE5akxmbnRHMlVhdzBCZWdH?=
- =?utf-8?B?dW5VRFpIT0o5SmxGRzhtV0o3UHkzeitVcVgwWWxZTnlqRE9rUDlnaEJFRDV0?=
- =?utf-8?Q?ixaXyecG4NueCEE2ZuHp3tDGE?=
-X-OriginatorOrg: amd.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 3c96e306-533d-4b21-ac55-08dcf3f483d8
-X-MS-Exchange-CrossTenant-AuthSource: DS7PR12MB6309.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 06:24:29.2789
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: b0m/Q+mR/Q0k6raXxuORvvak9U+7p8VqkcJSSET38fHSmHdxPHjsDIiKXkh+GCtt9dKnEqVyqFcrIUeu+1fKUQ==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: DM4PR12MB6543
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCHv2 12/23] ARM: socfpga: dts: add a10 clock binding yaml
+To: Lothar Rubusch <l.rubusch@gmail.com>
+Cc: robh@kernel.org, krzk+dt@kernel.org, conor+dt@kernel.org,
+ dinguyen@kernel.org, marex@denx.de, s.trumtrar@pengutronix.de,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241020194028.2272371-1-l.rubusch@gmail.com>
+ <20241020194028.2272371-13-l.rubusch@gmail.com>
+ <v4gqnsyhqjccdac3kgmo7y2aunigqquqc3f7n7wgt5hiv3rnip@jfmoq3is4rjh>
+ <CAFXKEHZOPioES4guqjco+BE7i=Eqe2DdHiUxAksBCZm7nx1Rog@mail.gmail.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <CAFXKEHZOPioES4guqjco+BE7i=Eqe2DdHiUxAksBCZm7nx1Rog@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-
-
-On 10/23/2024 8:55 AM, Xiaoyao Li wrote:
-> On 10/21/2024 1:51 PM, Nikunj A Dadhania wrote:
->> Secure TSC enabled guests should not write to MSR_IA32_TSC(10H) register as
->> the subsequent TSC value reads are undefined. MSR_IA32_TSC read/write
->> accesses should not exit to the hypervisor for such guests.
+On 24/10/2024 08:10, Lothar Rubusch wrote:
+> On Mon, Oct 21, 2024 at 9:05 AM Krzysztof Kozlowski <krzk@kernel.org> wrote:
 >>
->> Accesses to MSR_IA32_TSC needs special handling in the #VC handler for the
->> guests with Secure TSC enabled. Writes to MSR_IA32_TSC should be ignored,
->> and reads of MSR_IA32_TSC should return the result of the RDTSC
->> instruction.
+>> On Sun, Oct 20, 2024 at 07:40:17PM +0000, Lothar Rubusch wrote:
+>>> Convert content of the altera socfpga.txt to match clock bindings for
+>>> the Arria10 SoC devicetrees. Currently all altr,* bindings appear as
+>>> error at dtbs_check, since these bindings are only written in .txt
+>>> format.
+>>>
 >>
->> Signed-off-by: Nikunj A Dadhania <nikunj@amd.com>
->> Reviewed-by: Tom Lendacky <thomas.lendacky@amd.com>
->> Tested-by: Peter Gonda <pgonda@google.com>
->> ---
->>   arch/x86/coco/sev/core.c | 24 ++++++++++++++++++++++++
->>   1 file changed, 24 insertions(+)
+>> Please use subject prefixes matching the subsystem. You can get them for
+>> example with 'git log --oneline -- DIRECTORY_OR_FILE' on the directory
+>> your patch is touching. For bindings, the preferred subjects are
+>> explained here:
+>> https://www.kernel.org/doc/html/latest/devicetree/bindings/submitting-patches.html#i-for-patch-submitters
 >>
->> diff --git a/arch/x86/coco/sev/core.c b/arch/x86/coco/sev/core.c
->> index 965209067f03..2ad7773458c0 100644
->> --- a/arch/x86/coco/sev/core.c
->> +++ b/arch/x86/coco/sev/core.c
->> @@ -1308,6 +1308,30 @@ static enum es_result vc_handle_msr(struct ghcb *ghcb, struct es_em_ctxt *ctxt)
->>           return ES_OK;
->>       }
->>   +    /*
->> +     * TSC related accesses should not exit to the hypervisor when a
->> +     * guest is executing with SecureTSC enabled, so special handling
->> +     * is required for accesses of MSR_IA32_TSC:
->> +     *
->> +     * Writes: Writing to MSR_IA32_TSC can cause subsequent reads
->> +     *         of the TSC to return undefined values, so ignore all
->> +     *         writes.
->> +     * Reads:  Reads of MSR_IA32_TSC should return the current TSC
->> +     *         value, use the value returned by RDTSC.
->> +     */
+>>> Signed-off-by: Lothar Rubusch <l.rubusch@gmail.com>
+>>> ---
+>>>  .../bindings/clock/altr,socfpga-a10.yaml      | 107 ++++++++++++++++++
+>>>  1 file changed, 107 insertions(+)
+>>>  create mode 100644 Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+>>>
+>>> diff --git a/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+>>> new file mode 100644
+>>> index 000000000..795826f53
+>>> --- /dev/null
+>>> +++ b/Documentation/devicetree/bindings/clock/altr,socfpga-a10.yaml
+>>> @@ -0,0 +1,107 @@
+>>> +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+>>> +%YAML 1.2
+>>> +---
+>>> +$id: http://devicetree.org/schemas/clock/altr,socfpga-a10.yaml#
+>>> +$schema: http://devicetree.org/meta-schemas/core.yaml#
+>>> +
+>>> +title: Device Tree Clock bindings for Altera's SoCFPGA platform
+>>
+>> This wasn't tested or you have some very, very old dtschema.
+>>
+>>
+>>> +
+>>> +maintainers:
+>>> +  - TODO
+>>
+>> We should not be taking unmaintained stuff.
+>>
 > 
-> Why doesn't handle it by returning ES_VMM_ERROR when hypervisor intercepts
-> RD/WR of MSR_IA32_TSC? With SECURE_TSC enabled, it seems not need to be
-> intercepted.
+> This is just a trigger here. Basically, I have no probelm in placing
+> my own name here. AFAIR Mr. Dinh Nguyen has his name on the other
+> intel/altera related files, so I'm not sure who decides that. Please
+> let me know.
+> 
+> Basically this particular patch is related to my initial questions
+> (cover letter):
+> 1.) Documentation/devicetree/bindings:
+> Executing the following find...
+> $ find ./Documentation/devicetree/bindings -name socfpga-\*.txt
+> ...shows 4 text files describing "altr," bindings. I sketch-implemented
+> the clock binding and could reduce some of my dtbs_check warnings. So, my
+> questions is, if this is the right way? Shall I try to write .yaml files
+> for all 4 of them, too? Related to that, who will be maintainer?
 
-ES_VMM_ERROR will terminate the guest, which is not the expected behaviour. As
-documented, writes to the MSR is ignored and reads are done using RDTSC.
+Whoever is interested in that hardware. Platform maintainer, device
+maintainer.
 
-> I think the reason is that SNP guest relies on interception to do the ignore
-> behavior for WRMSR in #VC handler because the writing leads to undefined
-> result.
+> 
+> 2.) Some bindings, e.g. the Silabs clock generator seem to have no
+> driver, thus show up as warning:
+>     compatible = "silabs,si5338";
+> IMHO it is most likely rather to be probed/loaded in the SPL of the
+> bootloader. Is it problematic to keep those declarations (showing up as
+> warning in dtbs_check) or how to deal with them?
 
-For legacy and secure guests MSR_IA32_TSC is always intercepted(for both RD/WR).
-Moreover, this is a legacy MSR, RDTSC and RDTSCP is the what modern OSes should
-use. The idea is the catch any writes to TSC MSR and handle them gracefully.
+Sorry, I don't get the problem.
 
-> Then the question is what if the hypervisor doesn't intercept write to
-> MSR_IA32_TSC in the first place?
+> 
+> 3.) Please, give me some feedback if the DT and binding adjustments are
+> going into total wrong direction, or where I may do better. If it is ok,
+> and acceptable, or what is still missing. I tried to split them, to
+> allow for better single integration / discussion let me know if this is
+> ok, too.
 
-I have tried to disable interception of MSR_IA32_TSC, and writes are ignored by
-the HW as well. I would like to continue the current documented HW as per the APM.
+I still don't understand. Nothing here is different than with every
+other platform.
 
-Regards,
-Nikunj
+> 
+> 
+>>> +
+>>> +description:
+>>> +  This binding uses the common clock binding[1].
+>>> +
+>>> +  [1] Documentation/devicetree/bindings/clock/clock-bindings.txt
+>>
+>> Drop description or describe the hardware.
+> 
+> Ok (the description was taken as content from the corresponding .txt file)
+
+What corresponding txt file? You are adding new binding. Are you saying
+you duplicated bindings instead of doing conversion?
+
+git log -p -- Documentation/devicetree | grep -i convert
+
+
+
+Best regards,
+Krzysztof
+
 
