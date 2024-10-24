@@ -1,199 +1,701 @@
-Return-Path: <linux-kernel+bounces-380158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380162-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id CB8F19AE99D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:02:18 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E3CF9AE9A9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:03:32 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id EEE831C2099A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:02:17 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 2CAA828268B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:03:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0DDAA1E630D;
-	Thu, 24 Oct 2024 15:01:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 04DD91E2614;
+	Thu, 24 Oct 2024 15:03:26 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="expxjzNX"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.129.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="DUSQTcOL"
+Received: from mail-wm1-f65.google.com (mail-wm1-f65.google.com [209.85.128.65])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 56AF74D8DA
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:01:36 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.129.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2C4D71D5165
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:03:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.65
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782099; cv=none; b=Dem7ERD/jq3bv17015Kqo4f6YkwMq4BDr9zlbHIztG7hB73sM56qK/hj8vxfdCYJxZn0LImcww+bUqHIvoQ3B/XQReRzAZH0XLcs0fZITwDSAwLS+12KfE52RHViFr92y/hl0+NMpjVRZnMHn2iMEuqqDc169nJLuQ7ihXJpFsM=
+	t=1729782204; cv=none; b=DJ0LyCnuoiwIZKtvGtZrbSK7X/WN2VbDljcz7qPwAzYe/wgqeF3+o1LJVG1lj8HJL8C0yHpEx02CARl9BEj3z41WbQEO60yGXqcXCMXB0SsSpkkSR32Pma0c+ixM22DtJE5Evovcnn3A1+JBRSeL2pajww9X+5FE2u78ZPTZcik=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782099; c=relaxed/simple;
-	bh=dZC7AEXqzhR1/8EbxQbUc+nDzicwRm623DxnSpwRQvs=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=T7T9AYOiWne7jw20j+5DK5GF0uJmoa6phinLKSoARf2fl60YNPGzU7ZOU0/0MrnUZKj4KMiSSQqOcCupqhMAH6WEPP64ihmrtzXfswH0OXOVq8mvgHNj3xpoaaFS/dJ3HcA4x6M9oQMEwGyQ/kOY10ydgBeEXX+A4aDTCtFgN74=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=expxjzNX; arc=none smtp.client-ip=170.10.129.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729782096;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=CJ6qgkA++KPACh0CsNw2bjOe8nxTBgyxAETN6aKOom4=;
-	b=expxjzNXNddvOFeFrEFfMMEX2W4rl5BZjKPqqc+bo+GB6NywBatkLJ64vppjUn7aEDJFtk
-	+1VQH5sIzJwmg0zAeyLS3WlmZq5deqnKB6PpiEBFplI85mNLg6Lhu/kLRbBo+dm2FqRX8i
-	5O2TE35j3tvuJ7OHy//PeGCKECuFTmo=
-Received: from mail-wm1-f72.google.com (mail-wm1-f72.google.com
- [209.85.128.72]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-127-J1JMxF9nOfuKOd4zrWWeOg-1; Thu, 24 Oct 2024 11:01:34 -0400
-X-MC-Unique: J1JMxF9nOfuKOd4zrWWeOg-1
-Received: by mail-wm1-f72.google.com with SMTP id 5b1f17b1804b1-4315f48bd70so7297545e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:01:34 -0700 (PDT)
+	s=arc-20240116; t=1729782204; c=relaxed/simple;
+	bh=82/MM5hf9ZEr0CJHsz8MSScVur+iod4qjTOh/MZV2UU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=aiwF9+tN11SjjFFfadpSucHGlGv4gWECFKuHP6u/karvkg+rSnK1/YM25MIRyB4iX+erGSB6FbiUpeJwECcJEHGThBp4CZbO/X8jFpQ6McZ6gIXVqVdjAC+XhS6pDrOjrCCBhLpaikk+10ASM6x3D9KglrQVtF4HzQ47VlasDus=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=DUSQTcOL; arc=none smtp.client-ip=209.85.128.65
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f65.google.com with SMTP id 5b1f17b1804b1-4314a26002bso10968715e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:03:20 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729782199; x=1730386999; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=tKqYi92b+Fs0u/npvqVvdzU8rT7c0aEstmKJH9HAER4=;
+        b=DUSQTcOL5f3EhsxGZVGyy5RlSj0BR2DKtAP1R5W/Cmu8q5E83RUYrz2X/6HaWMcT+K
+         Vl6vn67AzUMRtLpA2jREHJlZShGfpudDz84fbdBMkGMU+7tewTk23ISKR6aBzhYAMSKa
+         jHRn24UtsOX7Y9xNyWAKn5FM1ezkyI3LhmEJ6cxNmHTeuTxJbwAzdnKGqxUIa2545Dsu
+         6/3/figWHOKFNpRoE0Z8qA4yJnd5CFajmg1rNSf/ShPgb+7++m0XcwjbkHznYNr9lCCg
+         qXQlRSkD11PNY3iYM7ThD5Qx05OfKhPl6W1tjchozMIJXsFv5CpvEixNtjcfd9M1Se/V
+         +7Yw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729782093; x=1730386893;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
+        d=1e100.net; s=20230601; t=1729782199; x=1730386999;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=CJ6qgkA++KPACh0CsNw2bjOe8nxTBgyxAETN6aKOom4=;
-        b=oUWszgFLeAbyCZWuSaji0qSDIf0UH34Sp7v5l5BXuWB7ZXfTF7g7CJjyXkyfIM955A
-         O27A5bAYfJLJDFdH2oGPQx6yP+JXiRyuxlN3eD5z6Tq19V67p4RrQNfLQtGP5Vtk53+B
-         hZnA7ung+u2g5+uGzlt8uJlv0Nm3+nkUcJyn4yWzE9rR7Fbh7D9CJetmCDknVB0nQ5J/
-         5LV7VSeq93LJPCHoO+PKyChIqMVkMYTE+Xs7g2eGYLfmNf206zjPK2SLXt8Ndq4S8MfW
-         3wGGPCyFw5vN3Hcu0za5RyYE4Z1ez2gJYAwUvPqKlJz6ApiGCo5ZHeGlV/0FiIr47iBp
-         d7Ww==
-X-Forwarded-Encrypted: i=1; AJvYcCWxnKe6a9e39CUjaOJmI48vcz3sWCTRhIyUNJjeA9LCpsOSRZvPMhT75vjrLu9urlfAg45P3D65ruh7/jU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxSwFcD9haBR/ZCtRwYVXBihEB80ngY9U8dT1dPhMNG/0vOAD1+
-	PiGXhzF6yMtD+ngugzC9+BJOrdHXzFrOKAuStIxPfy49puzNe6og2+da4uZviN2VZM5jjFW6Qpl
-	MKyg7QTdFYIUoXts+TzynxmYPOYfHgb4+a11ssNvNnlGF+n8iwHTUs6VzNTmMTxwVSkXvPNSC
-X-Received: by 2002:a05:600c:510a:b0:42c:bb96:340e with SMTP id 5b1f17b1804b1-431841a2ebbmr52875145e9.31.1729782092021;
-        Thu, 24 Oct 2024 08:01:32 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IGDUlPKMBWZ2hd84/FQr1taFvesQFbh437FbAPlfySwXegE7R7aeY+SS64mmzNBDiRaLdXsJQ==
-X-Received: by 2002:a05:600c:510a:b0:42c:bb96:340e with SMTP id 5b1f17b1804b1-431841a2ebbmr52874375e9.31.1729782091197;
-        Thu, 24 Oct 2024 08:01:31 -0700 (PDT)
-Received: from ?IPV6:2a0d:3344:1b73:a910::f71? ([2a0d:3344:1b73:a910::f71])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55d753sm20941965e9.11.2024.10.24.08.01.29
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 08:01:30 -0700 (PDT)
-Message-ID: <b232a642-2f0d-4bac-9bcf-50d653ea875d@redhat.com>
-Date: Thu, 24 Oct 2024 17:01:28 +0200
+        bh=tKqYi92b+Fs0u/npvqVvdzU8rT7c0aEstmKJH9HAER4=;
+        b=BsL5JwKkEVCi8XcUY4t4C3HUMlR67QE6FlybKbjU8xT4h2qOy/7vuGzB3dqK8KF40q
+         VBTc3LMY7GtYpQ81CmNg8OtZOc78sSurYwMeQ/uTA16el6kHHlVhYTMRY49tWUTsSS5B
+         ByiUO8m8nH/jFg4Fvp/mlor0wDBvuyxQ+nilAJS/FAbjeSrKlw8uakf9Yo37pBw7heJ8
+         zRp/SXMJlPQgQOYBosvtSBLNf89A4WAznSUBfPHomlycUwd8kxx7BjXKSu3jTdlh6iiT
+         z/cNEvMrPazoj5chGUqIrR+2/KyLzFHADpkyns9m4GZjbIYF655O8Kwn/EKwX/rGN9CG
+         bD2g==
+X-Forwarded-Encrypted: i=1; AJvYcCWVn7YoBmMgu0a12Qqf0sx0xNw+/V4YkBhY63PphullQVaAArKcLYb1eTouj6Pf2T4AFT5FV+fjd7L/5Ys=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw9DeH5FtPgaD+l+YEhE8+BCVmObFIvg6uWAAWEcNoDQFO1ogtf
+	TEki/rO4kv+eiOD3Oth1Qe6mgvGTPoaXr2opWr8vxVRabjVCGRTEbxkPVlxrbgk=
+X-Google-Smtp-Source: AGHT+IFbJMdDF99zThXTNyFj0ffG6BJQ1FsiXwBEGd4Tcq2EPBWcG4YumGlyxmThzlJv+3S3uMB46A==
+X-Received: by 2002:a05:600c:314b:b0:431:44f6:566f with SMTP id 5b1f17b1804b1-4318c6f14f7mr20171505e9.13.1729782197408;
+        Thu, 24 Oct 2024 08:03:17 -0700 (PDT)
+Received: from dfj (host-79-41-194-153.retail.telecomitalia.it. [79.41.194.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d02dd84sm58669735e9.0.2024.10.24.08.03.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 08:03:16 -0700 (PDT)
+Date: Thu, 24 Oct 2024 17:02:00 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, 
+	Lars-Peter Clausen <lars@metafoo.de>, Michael Hennerich <Michael.Hennerich@analog.com>, 
+	Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Olivier Moysan <olivier.moysan@foss.st.com>, linux-iio@vger.kernel.org, devicetree@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v7 7/8] iio: dac: ad3552r: add high-speed platform driver
+Message-ID: <wvnyqgng5h2trpjlrwuvxryvy2i7sftnribnkjp5uh5ogrxdoc@wbh5do3rmqqe>
+References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
+ <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-7-969694f53c5d@baylibre.com>
+ <9f00e86e8a7d8f821cdb79d5b083235daec481a9.camel@gmail.com>
+ <exprb7zhsr5qbpjdhbxisodmm4pf74hwl7ijql5o6zyuc3assg@sf53j42lzurf>
+ <14d0f5fb4240a7e0c3665d4ffc128117c5515ac6.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 net-next 3/3] ipv4/udp: Add 4-tuple hash for connected
- socket
-To: Philo Lu <lulie@linux.alibaba.com>, netdev@vger.kernel.org
-Cc: willemdebruijn.kernel@gmail.com, davem@davemloft.net,
- edumazet@google.com, kuba@kernel.org, dsahern@kernel.org,
- antony.antony@secunet.com, steffen.klassert@secunet.com,
- linux-kernel@vger.kernel.org, dust.li@linux.alibaba.com,
- jakub@cloudflare.com, fred.cc@alibaba-inc.com,
- yubing.qiuyubing@alibaba-inc.com
-References: <20241018114535.35712-1-lulie@linux.alibaba.com>
- <20241018114535.35712-4-lulie@linux.alibaba.com>
-Content-Language: en-US
-From: Paolo Abeni <pabeni@redhat.com>
-In-Reply-To: <20241018114535.35712-4-lulie@linux.alibaba.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <14d0f5fb4240a7e0c3665d4ffc128117c5515ac6.camel@gmail.com>
 
-On 10/18/24 13:45, Philo Lu wrote:
-[...]
-> +/* In hash4, rehash can also happen in connect(), where hash4_cnt keeps unchanged. */
-> +static void udp4_rehash4(struct udp_table *udptable, struct sock *sk, u16 newhash4)
-> +{
-> +	struct udp_hslot *hslot4, *nhslot4;
-> +
-> +	hslot4 = udp_hashslot4(udptable, udp_sk(sk)->udp_lrpa_hash);
-> +	nhslot4 = udp_hashslot4(udptable, newhash4);
-> +	udp_sk(sk)->udp_lrpa_hash = newhash4;
-> +
-> +	if (hslot4 != nhslot4) {
-> +		spin_lock_bh(&hslot4->lock);
-> +		hlist_del_init_rcu(&udp_sk(sk)->udp_lrpa_node);
-> +		hslot4->count--;
-> +		spin_unlock_bh(&hslot4->lock);
-> +
-> +		synchronize_rcu();
+Hi Nuno,
 
-This deserve a comment explaining why it's needed. I had to dig in past
-revision to understand it.
+On 24.10.2024 15:05, Nuno Sá wrote:
+> On Tue, 2024-10-22 at 18:40 +0200, Angelo Dureghello wrote:
+> > Hi Nuno,
+> > 
+> > On 22.10.2024 14:28, Nuno Sá wrote:
+> > > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
+> > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > 
+> > > > Add High Speed ad3552r platform driver.
+> > > > 
+> > > > The ad3552r DAC is controlled by a custom (fpga-based) DAC IP
+> > > > through the current AXI backend, or similar alternative IIO backend.
+> > > > 
+> > > > Compared to the existing driver (ad3552r.c), that is a simple SPI
+> > > > driver, this driver is coupled with a DAC IIO backend that finally
+> > > > controls the ad3552r by a fpga-based "QSPI+DDR" interface, to reach
+> > > > maximum transfer rate of 33MUPS using dma stream capabilities.
+> > > > 
+> > > > All commands involving QSPI bus read/write are delegated to the backend
+> > > > through the provided APIs for bus read/write.
+> > > > 
+> > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > ---
+> > > >  drivers/iio/dac/Kconfig      |  14 ++
+> > > >  drivers/iio/dac/Makefile     |   1 +
+> > > >  drivers/iio/dac/ad3552r-hs.c | 547
+> > > > +++++++++++++++++++++++++++++++++++++++++++
+> > > >  drivers/iio/dac/ad3552r-hs.h |  18 ++
+> > > >  drivers/iio/dac/ad3552r.h    |   4 +
+> > > >  5 files changed, 584 insertions(+)
+> > > > 
+> > > > diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
+> > > > index fa091995d002..fc11698e88f2 100644
+> > > > --- a/drivers/iio/dac/Kconfig
+> > > > +++ b/drivers/iio/dac/Kconfig
+> > > > @@ -6,6 +6,20 @@
+> > > >  
+> > > >  menu "Digital to analog converters"
+> > > >  
+> > > > +config AD3552R_HS
+> > > > +	tristate "Analog Devices AD3552R DAC High Speed driver"
+> > > > +	select ADI_AXI_DAC
+> > > > +	help
+> > > > +	  Say yes here to build support for Analog Devices AD3552R
+> > > > +	  Digital to Analog Converter High Speed driver.
+> > > > +
+> > > > +          The driver requires the assistance of an IP core to operate,
+> > > > +          since data is streamed into target device via DMA, sent over a
+> > > > +	  QSPI + DDR (Double Data Rate) bus.
+> > > > +
+> > > > +	  To compile this driver as a module, choose M here: the
+> > > > +	  module will be called ad3552r-hs.
+> > > > +
+> > > >  config AD3552R
+> > > >  	tristate "Analog Devices AD3552R DAC driver"
+> > > >  	depends on SPI_MASTER
+> > > > diff --git a/drivers/iio/dac/Makefile b/drivers/iio/dac/Makefile
+> > > > index c92de0366238..d92e08ca93ca 100644
+> > > > --- a/drivers/iio/dac/Makefile
+> > > > +++ b/drivers/iio/dac/Makefile
+> > > > @@ -4,6 +4,7 @@
+> > > >  #
+> > > >  
+> > > >  # When adding new entries keep the list in alphabetical order
+> > > > +obj-$(CONFIG_AD3552R_HS) += ad3552r-hs.o ad3552r-common.o
+> > > >  obj-$(CONFIG_AD3552R) += ad3552r.o ad3552r-common.o
+> > > >  obj-$(CONFIG_AD5360) += ad5360.o
+> > > >  obj-$(CONFIG_AD5380) += ad5380.o
+> > > > diff --git a/drivers/iio/dac/ad3552r-hs.c b/drivers/iio/dac/ad3552r-hs.c
+> > > > new file mode 100644
+> > > > index 000000000000..27bdc35fdc29
+> > > > --- /dev/null
+> > > > +++ b/drivers/iio/dac/ad3552r-hs.c
+> > > > @@ -0,0 +1,547 @@
+> > > > +// SPDX-License-Identifier: GPL-2.0-only
+> > > > +/*
+> > > > + * Analog Devices AD3552R
+> > > > + * Digital to Analog converter driver, High Speed version
+> > > > + *
+> > > > + * Copyright 2024 Analog Devices Inc.
+> > > > + */
+> > > > +
+> > > > +#include <linux/bitfield.h>
+> > > > +#include <linux/delay.h>
+> > > > +#include <linux/gpio/consumer.h>
+> > > > +#include <linux/iio/backend.h>
+> > > > +#include <linux/iio/buffer.h>
+> > > > +#include <linux/mod_devicetable.h>
+> > > > +#include <linux/platform_device.h>
+> > > > +#include <linux/property.h>
+> > > > +#include <linux/units.h>
+> > > > +
+> > > > +#include "ad3552r.h"
+> > > > +#include "ad3552r-hs.h"
+> > > > +
+> > > > +struct ad3552r_hs_state {
+> > > > +	const struct ad3552r_model_data *model_data;
+> > > > +	struct gpio_desc *reset_gpio;
+> > > > +	struct device *dev;
+> > > > +	struct iio_backend *back;
+> > > > +	bool single_channel;
+> > > > +	struct ad3552r_ch_data ch_data[AD3552R_MAX_CH];
+> > > > +	struct ad3552r_hs_platform_data *data;
+> > > > +};
+> > > > +
+> > > > +static int ad3552r_qspi_update_reg_bits(struct ad3552r_hs_state *st,
+> > > > +					u32 reg, u32 mask, u32 val,
+> > > > +					size_t xfer_size)
+> > > > +{
+> > > > +	u32 rval;
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = st->data->bus_reg_read(st->back, reg, &rval, xfer_size);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	rval = (rval & ~mask) | val;
+> > > > +
+> > > > +	return st->data->bus_reg_write(st->back, reg, rval, xfer_size);
+> > > > +}
+> > > > +
+> > > > +static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
+> > > > +			       struct iio_chan_spec const *chan,
+> > > > +			       int *val, int *val2, long mask)
+> > > > +{
+> > > > +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+> > > > +	int ret;
+> > > > +	int ch = chan->channel;
+> > > > +
+> > > > +	switch (mask) {
+> > > > +	case IIO_CHAN_INFO_SAMP_FREQ: {
+> > > > +		int sclk;
+> > > > +
+> > > > +		ret = iio_backend_read_raw(st->back, chan, &sclk, 0,
+> > > > +					   IIO_CHAN_INFO_FREQUENCY);
+> > > > +		if (ret != IIO_VAL_INT)
+> > > > +			return -EINVAL;
+> > > > +
+> > > 
+> > > I just saw you had some questions on v6 that everyone failed to see. See my
+> > > reply to David here:
+> > > 
+> > > https://lore.kernel.org/linux-iio/61cf3072af74a8b2951c948ddc2383ba1e55954d.camel@gmail.com/
+> > > 
+> > > It should be easy and it's something that makes sense (at least to me :))
+> > > 
+> > 
+> > I understood that we would improve things later in case.
+> > 
+> > Could we maybe stay with IIO_CHAN_INFO_FREQUENCY ? It doesn't seems to me
+> > so out of scope. Sorry but i am trying to finalize someway this job,
+> > so i am trying to conatain changes now at v7, if code is not really 
+> > totally wrong.
+> 
+> I think you're trying to rush in the series. I can understand your frustration but
+> believe me that v7 (or v8) is not so bad :).
+> 
+> David already raised concerns about using IIO_CHAN_INFO_FREQUENCY. I'm also not a fan
+> of it and gave you another option that should be trivial and makes sense (given that
+> bus_read and write are already being done through the platform_data interface). So
+> no, I don't think we're going to accept "is not really totally wrong.". IOW, We want
+> it to be totally right - if such a thing exists :).
+> 
+> > 
 
-> +
-> +		spin_lock_bh(&nhslot4->lock);
-> +		hlist_add_head_rcu(&udp_sk(sk)->udp_lrpa_node, &nhslot4->head);
-> +		nhslot4->count++;
-> +		spin_unlock_bh(&nhslot4->lock);
-> +	}
-> +}
-> +
-> +static void udp4_unhash4(struct udp_table *udptable, struct sock *sk)
-> +{
-> +	struct udp_hslot *hslot2, *hslot4;
-> +
-> +	if (udp_hashed4(sk)) {
-> +		hslot2 = udp_hashslot2(udptable, udp_sk(sk)->udp_portaddr_hash);
-> +		hslot4 = udp_hashslot4(udptable, udp_sk(sk)->udp_lrpa_hash);
-> +
-> +		spin_lock(&hslot4->lock);
-> +		hlist_del_init_rcu(&udp_sk(sk)->udp_lrpa_node);
-> +		hslot4->count--;
-> +		spin_unlock(&hslot4->lock);
-> +
-> +		spin_lock(&hslot2->lock);
-> +		udp_hash4_dec(hslot2);
-> +		spin_unlock(&hslot2->lock);
-> +	}
-> +}
-> +
-> +/* call with sock lock */
-> +static void udp4_hash4(struct sock *sk)
-> +{
-> +	struct udp_hslot *hslot, *hslot2, *hslot4;
-> +	struct net *net = sock_net(sk);
-> +	struct udp_table *udptable;
-> +	unsigned int hash;
-> +
-> +	if (sk_unhashed(sk) || inet_sk(sk)->inet_rcv_saddr == htonl(INADDR_ANY))
-> +		return;
-> +
-> +	hash = udp_ehashfn(net, inet_sk(sk)->inet_rcv_saddr, inet_sk(sk)->inet_num,
-> +			   inet_sk(sk)->inet_daddr, inet_sk(sk)->inet_dport);
-> +
-> +	udptable = net->ipv4.udp_table;
-> +	if (udp_hashed4(sk)) {
-> +		udp4_rehash4(udptable, sk, hash);
+i changed this way, using platform_data:
 
-It's unclear to me how we can enter this branch. Also it's unclear why
-here you don't need to call udp_hash4_inc()udp_hash4_dec, too. Why such
-accounting can't be placed in udp4_rehash4()?
+static int axi_dac_bus_clok(struct iio_backend *back)
+{
+	struct axi_dac_state *st = iio_backend_get_priv(back);
 
-[...]
-> @@ -2031,6 +2180,19 @@ void udp_lib_rehash(struct sock *sk, u16 newhash)
->  				spin_unlock(&nhslot2->lock);
->  			}
->  
-> +			if (udp_hashed4(sk)) {
-> +				udp4_rehash4(udptable, sk, newhash4);
-> +
-> +				if (hslot2 != nhslot2) {
-> +					spin_lock(&hslot2->lock);
-> +					udp_hash4_dec(hslot2);
-> +					spin_unlock(&hslot2->lock);
-> +
-> +					spin_lock(&nhslot2->lock);
-> +					udp_hash4_inc(nhslot2);
-> +					spin_unlock(&nhslot2->lock);
-> +				}
-> +			}
->  			spin_unlock_bh(&hslot->lock);
+	/*
+	 * Returning here always the maximum (buffering mode)
+	 * clock rate.
+	 */
+	return st->dac_clk_rate;
+}
 
-The udp4_rehash4() call above is in atomic context and could end-up
-calling synchronize_rcu() which is a blocking function. You must avoid that.
+And, on ad3552r-hs.c
 
-Cheers,
+static int ad3552r_hs_read_raw(struct iio_dev *indio_dev,
+			       struct iio_chan_spec const *chan,
+			       int *val, int *val2, long mask)
+{
+	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+	int ret;
+	int ch = chan->channel;
 
-Paolo
+	switch (mask) {
+	case IIO_CHAN_INFO_SAMP_FREQ:
+		/*
+		 * Using 4 lanes (QSPI), then using 2 as DDR mode is
+		 * considered always on (considering buffering mode always).
+		 */
+		*val = DIV_ROUND_CLOSEST(st->data->bus_clock(st->back) * 4 * 2,
+					 chan->scan_type.realbits);
+
+		return IIO_VAL_INT;
+
+	case IIO_CHAN_INFO_RAW:
+
+
+Let me know if you see any issue.
+
+
+> > > > +		/*
+> > > > +		 * Using 4 lanes (QSPI), then using 2 as DDR mode is
+> > > > +		 * considered always on (considering buffering mode always).
+> > > > +		 */
+> > > > +		*val = DIV_ROUND_CLOSEST(sclk * 4 * 2,
+> > > > +					 chan->scan_type.realbits);
+> > > > +
+> > > > +		return IIO_VAL_INT;
+> > > > +	}
+> > > > +	case IIO_CHAN_INFO_RAW:
+> > > > +		ret = st->data->bus_reg_read(st->back,
+> > > > +				AD3552R_REG_ADDR_CH_DAC_16B(chan->channel),
+> > > > +				val, 2);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +
+> > > > +		return IIO_VAL_INT;
+> > > > +	case IIO_CHAN_INFO_SCALE:
+> > > > +		*val = st->ch_data[ch].scale_int;
+> > > > +		*val2 = st->ch_data[ch].scale_dec;
+> > > > +		return IIO_VAL_INT_PLUS_MICRO;
+> > > > +	case IIO_CHAN_INFO_OFFSET:
+> > > > +		*val = st->ch_data[ch].offset_int;
+> > > > +		*val2 = st->ch_data[ch].offset_dec;
+> > > > +		return IIO_VAL_INT_PLUS_MICRO;
+> > > > +	default:
+> > > > +		return -EINVAL;
+> > > > +	}
+> > > > +}
+> > > > +
+> > > > +static int ad3552r_hs_write_raw(struct iio_dev *indio_dev,
+> > > > +				struct iio_chan_spec const *chan,
+> > > > +				int val, int val2, long mask)
+> > > > +{
+> > > > +	struct ad3552r_hs_state *st = iio_priv(indio_dev);
+> > > > +
+> > > > +	switch (mask) {
+> > > > +	case IIO_CHAN_INFO_RAW:
+> > > > +		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+> > > > +			return st->data->bus_reg_write(st->back,
+> > > > +				    AD3552R_REG_ADDR_CH_DAC_16B(chan-
+> > > > > channel),
+> > > > +				    val, 2);
+> > > > +		}
+> > > 
+> > > Maybe we'll get the new stuff in time for this :)
+> > > 
+This is not clear, sorry.
+
+ > > ...
+> > > 
+> > > > +
+> > > > +static int ad3552r_hs_reset(struct ad3552r_hs_state *st)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	/*
+> > > > +	 * Using inverted "active-high" logic here, since ad3552r classic-spi
+> > > > +	 * fdt node (and driver) is using the same logic.
+> > > > +	 */
+> > > > +
+> > > 
+> > > I don't understand this. This is a new device with a different compatible. Why
+> > > keeping the wrong logic? AFAICT, there's nothing in the bindings about the pin
+> > > polarity.
+> > > 
+> > 
+> > ad3552r.c uses same compatible (adi,ad3552r), and in the code it implements 
+> > this same inverted logic. So i thought to use the same logic.
+> > I can anyway change to the correct active-low logic for this driver, 
+> > but would honestly not enter in fixing old code now at v7. 
+> > Happy to do such fix on ad3552r.c later on.
+> 
+> Ok, bad example from me with the compatible. The point is this is a different device.
+> It's a platform device while the other one is a spi device. So why doing it wrong in
+> here? Not saying to change the other device logic, just not doing it deliberately
+> wrong in a new device.
+
+Ok, i'll use active-low so.
+
+> 
+> For the old device, we can't likely change it as we could break current users who
+> just adapted their DTs to conform to the driver logic.
+> 
+> > 
+> > > > +	st->reset_gpio = devm_gpiod_get_optional(st->dev,
+> > > > +						 "reset", GPIOD_OUT_LOW);
+> > > > +	if (IS_ERR(st->reset_gpio))
+> > > > +		return PTR_ERR(st->reset_gpio);
+> > > > +
+> > > > +	if (st->reset_gpio) {
+> > > > +		fsleep(10);
+> > > > +		gpiod_set_value_cansleep(st->reset_gpio, 1);
+> > > > +	} else {
+> > > > +		ret = ad3552r_qspi_update_reg_bits(st,
+> > > > +					AD3552R_REG_ADDR_INTERFACE_CONFIG_A,
+> > > > +					AD3552R_MASK_SOFTWARE_RESET,
+> > > > +					AD3552R_MASK_SOFTWARE_RESET, 1);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +	}
+> > > > +	msleep(100);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int ad3552r_hs_scratch_pad_test(struct ad3552r_hs_state *st)
+> > > > +{
+> > > > +	int ret, val;
+> > > > +
+> > > > +	ret = st->data->bus_reg_write(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
+> > > > +				      AD3552R_SCRATCH_PAD_TEST_VAL1, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = st->data->bus_reg_read(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
+> > > > +				     &val, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	if (val != AD3552R_SCRATCH_PAD_TEST_VAL1)
+> > > > +		return dev_err_probe(st->dev, -EIO,
+> > > > +			"SCRATCH_PAD_TEST mismatch. Expected 0x%x, Read
+> > > > 0x%x\n",
+> > > > +			AD3552R_SCRATCH_PAD_TEST_VAL1, val);
+> > > > +
+> > > > +	ret = st->data->bus_reg_write(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
+> > > > +				      AD3552R_SCRATCH_PAD_TEST_VAL2, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = st->data->bus_reg_read(st->back, AD3552R_REG_ADDR_SCRATCH_PAD,
+> > > > +				     &val, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	if (val != AD3552R_SCRATCH_PAD_TEST_VAL2)
+> > > > +		return dev_err_probe(st->dev, -EIO,
+> > > > +			"SCRATCH_PAD_TEST mismatch. Expected 0x%x, Read
+> > > > 0x%x\n",
+> > > > +			AD3552R_SCRATCH_PAD_TEST_VAL2, val);
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static int ad3552r_hs_setup_custom_gain(struct ad3552r_hs_state *st,
+> > > > +					int ch, u16 gain, u16 offset)
+> > > > +{
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = st->data->bus_reg_write(st->back,
+> > > > AD3552R_REG_ADDR_CH_OFFSET(ch),
+> > > > +				      offset, 1);
+> > > > +	if (ret)
+> > > > +		return dev_err_probe(st->dev, ret, "Error writing
+> > > > register\n");
+> > > > +
+> > > > +	ret = st->data->bus_reg_write(st->back, AD3552R_REG_ADDR_CH_GAIN(ch),
+> > > > +				      gain, 1);
+> > > > +	if (ret)
+> > > > +		return dev_err_probe(st->dev, ret, "Error writing
+> > > > register\n");
+> > > > +
+> > > > +	return 0;
+> > > 
+> > > nit: Not a big fan of these logs on read/write registers functions... Also seems
+> > > that you're not being consistent (either you have them or not). FWIW, I would
+> > > simplify and drop them. That would allow to do
+> > > 
+> > > return st->data->bus_reg_write(st->back, AD3552R_REG_ADDR_CH_GAIN(ch), gain, 1);
+> > > 
+> > 
+> > Used dev_err_probe on quite all probe functions.
+> > I don't see nothing really wrong on this codem except maybe a more meaningful
+> > message.
+> 
+> No, you're not being consistent. You have another calls (example: st->data-
+> >bus_reg_rea()) where no log is being given. 
+>
+
+
+ 
+> > 
+> > > > +}
+> > > > +
+> > > > +static int ad3552r_hs_setup(struct ad3552r_hs_state *st)
+> > > > +{
+> > > > +	s16 goffs;
+> > > > +	u16 id;
+> > > > +	u16 gain = 0, offset = 0;
+> > > > +	u32 ch, val, range;
+> > > > +	int ret;
+> > > > +
+> > > > +	ret = ad3552r_hs_reset(st);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = iio_backend_ddr_disable(st->back);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = ad3552r_hs_scratch_pad_test(st);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = st->data->bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_L,
+> > > > +				     &val, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	id = val;
+> > > > +
+> > > > +	ret = st->data->bus_reg_read(st->back, AD3552R_REG_ADDR_PRODUCT_ID_H,
+> > > > +				     &val, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	id |= val << 8;
+> > > > +	if (id != st->model_data->chip_id)
+> > > > +		dev_info(st->dev, "Chip ID error. Expected 0x%x, Read
+> > > > 0x%x\n",
+> > > > +			 AD3552R_ID, id);
+> > > > +
+> > > > +	ret = st->data->bus_reg_write(st->back,
+> > > > +				      AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+> > > > +				      0, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = st->data->bus_reg_write(st->back,
+> > > > +				AD3552R_REG_ADDR_TRANSFER_REGISTER,
+> > > > +				FIELD_PREP(AD3552R_MASK_MULTI_IO_MODE,
+> > > > +					   AD3552R_QUAD_SPI) |
+> > > > +				AD3552R_MASK_STREAM_LENGTH_KEEP_VALUE, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = iio_backend_data_source_set(st->back, 0, IIO_BACKEND_EXTERNAL);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = iio_backend_data_source_set(st->back, 1, IIO_BACKEND_EXTERNAL);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = ad3552r_get_ref_voltage(st->dev, &val);
+> > > > +	if (ret < 0)
+> > > > +		return ret;
+> > > > +
+> > > > +	val = ret;
+> > > > +
+> > > > +	ret = ad3552r_qspi_update_reg_bits(st,
+> > > > +				AD3552R_REG_ADDR_SH_REFERENCE_CONFIG,
+> > > > +				AD3552R_MASK_REFERENCE_VOLTAGE_SEL,
+> > > > +				val, 1);
+> > > > +	if (ret)
+> > > > +		return ret;
+> > > > +
+> > > > +	ret = ad3552r_get_drive_strength(st->dev, &val);
+> > > > +	if (!ret) {
+> > > > +		ret = ad3552r_qspi_update_reg_bits(st,
+> > > > +					AD3552R_REG_ADDR_INTERFACE_CONFIG_D,
+> > > > +					AD3552R_MASK_SDO_DRIVE_STRENGTH,
+> > > > +					val, 1);
+> > > > +		if (ret)
+> > > > +			return ret;
+> > > > +	}
+> > > > +
+> > > > +	device_for_each_child_node_scoped(st->dev, child) {
+> > > > +		ret = fwnode_property_read_u32(child, "reg", &ch);
+> > > > +		if (ret)
+> > > > +			return dev_err_probe(st->dev, ret,
+> > > > +					     "reg property missing\n");
+> > > > +
+> > > > +		ret = ad3552r_get_output_range(st->dev, st->model_data,
+> > > > child,
+> > > > +					       &range);
+> > > > +		if (!ret) {
+> > > > +			st->ch_data[ch].range = range;
+> > > > +
+> > > > +			ret = ad3552r_hs_set_output_range(st, ch, range);
+> > > > +			if (ret)
+> > > > +				return ret;
+> > > > +
+> > > > +		} else if (ret == -ENOENT) {
+> > > > +			ret = ad3552r_get_custom_gain(st->dev, child,
+> > > > +						&st->ch_data[ch].p,
+> > > > +						&st->ch_data[ch].n,
+> > > > +						&st->ch_data[ch].rfb,
+> > > > +						&st-
+> > > > > ch_data[ch].gain_offset);
+> > > > +			if (ret)
+> > > > +				return ret;
+> > > > +
+> > > > +			gain = ad3552r_calc_custom_gain(st->ch_data[ch].p,
+> > > > +						st->ch_data[ch].n,
+> > > > +						st->ch_data[ch].gain_offset);
+> > > > +			offset = abs(goffs);
+> > > > +
+> > > > +			st->ch_data[ch].range_override = 1;
+> > > > +
+> > > > +			ret = ad3552r_hs_setup_custom_gain(st, ch, gain,
+> > > > +							   offset);
+> > > > +			if (ret)
+> > > > +				return ret;
+> > > > +		} else {
+> > > > +			return ret;
+> > > > +		}
+> > > 
+> > > Just personal preference... I think this would be neater:
+> > > if (ret && ret != ENOENT)
+> > > 	return ret;
+> > > if (ret == -ENOENT) {
+> > > 	...
+> > > } else {
+> > > 	...
+> > > }
+> > > 
+> > > Advantage is that it also handles errors first (which is the typical pattern)
+> > 
+> > I tested this code, would not change possibly now at this stage,
+> > unless another version should be sent.
+> 
+> Not sure if we'll need another but personally I cannot ack this one as it stands...
+> sorry.
+> 
+> >  
+> > > 
+> > > > +
+> > > > +		ad3552r_calc_gain_and_offset(&st->ch_data[ch], st-
+> > > > > model_data);
+> > > > +	}
+> > > > +
+> > > > +	return 0;
+> > > > +}
+> > > > +
+> > > > +static const struct iio_buffer_setup_ops ad3552r_hs_buffer_setup_ops = {
+> > > > +	.postenable = ad3552r_hs_buffer_postenable,
+> > > > +	.predisable = ad3552r_hs_buffer_predisable,
+> > > > +};
+> > > > +
+> > > > +#define AD3552R_CHANNEL(ch) { \
+> > > > +	.type = IIO_VOLTAGE, \
+> > > > +	.info_mask_separate = BIT(IIO_CHAN_INFO_RAW) | \
+> > > > +			      BIT(IIO_CHAN_INFO_SAMP_FREQ) | \
+> > > > +			      BIT(IIO_CHAN_INFO_SCALE) | \
+> > > > +			      BIT(IIO_CHAN_INFO_OFFSET), \
+> > > > +	.output = 1, \
+> > > > +	.indexed = 1, \
+> > > > +	.channel = (ch), \
+> > > > +	.scan_index = (ch), \
+> > > > +	.scan_type = { \
+> > > > +		.sign = 'u', \
+> > > > +		.realbits = 16, \
+> > > > +		.storagebits = 16, \
+> > > > +		.endianness = IIO_BE, \
+> > > > +	} \
+> > > > +}
+> > > > +
+> > > > +static const struct iio_chan_spec ad3552r_hs_channels[] = {
+> > > > +	AD3552R_CHANNEL(0),
+> > > > +	AD3552R_CHANNEL(1),
+> > > > +};
+> > > > +
+> > > > +static const struct iio_info ad3552r_hs_info = {
+> > > > +	.read_raw = &ad3552r_hs_read_raw,
+> > > > +	.write_raw = &ad3552r_hs_write_raw,
+> > > > +};
+> > > > +
+> > > > +static int ad3552r_hs_probe(struct platform_device *pdev)
+> > > > +{
+> > > > +	struct ad3552r_hs_state *st;
+> > > > +	struct iio_dev *indio_dev;
+> > > > +	int ret;
+> > > > +
+> > > > +	indio_dev = devm_iio_device_alloc(&pdev->dev, sizeof(*st));
+> > > > +	if (!indio_dev)
+> > > > +		return -ENOMEM;
+> > > > +
+> > > > +	st = iio_priv(indio_dev);
+> > > > +	st->dev = &pdev->dev;
+> > > > +
+> > > > +	st->data = pdev->dev.platform_data;
+> > > 
+> > > dev_get_platdata()
+> > > 
+> > 
+> > pdev->dev.platform_data seems correct to me, used in a lot of places
+> > in the driver framework. Can we stay with it ?
+> > 
+> 
+> It is correct but if we an helper, why not using it? It may be used in a lot of
+> places just because the helper was added afterwards...
+> 
+
+> - Nuno Sá
+> > 
 
 
