@@ -1,123 +1,132 @@
-Return-Path: <linux-kernel+bounces-380239-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380236-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DB3579AEAC9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:41:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id BD2449AEAC3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:41:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 754DE28425D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:41:51 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 22AE52828E3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:41:10 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8F2CC1F7075;
-	Thu, 24 Oct 2024 15:41:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 676A51EC00F;
+	Thu, 24 Oct 2024 15:41:03 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b="F3pI33Ag"
-Received: from us-smtp-delivery-124.mimecast.com (us-smtp-delivery-124.mimecast.com [170.10.133.124])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="h/15Vaty"
+Received: from mail-wr1-f49.google.com (mail-wr1-f49.google.com [209.85.221.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AC3D81EF958
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:41:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=170.10.133.124
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BB2121E3DF2
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:41:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784485; cv=none; b=XX7PPPFt2kwNUzMAXeWWx6rUajiAmxezct42xhJZ5/b0Jgyom5g+NjGr4fe+Uc8gLng/PJmR5K4+EkdLoKtYyrvY1FsY5OJAs6ct2KsYLqAx3vMKA8Ve919FUrUOeOaRYtxDCePlwsx1LeGo3MuNWde1TfiICv15MCxC3t2HQvk=
+	t=1729784462; cv=none; b=G2QPafcqZlAe6nzq34gPNDo3bW5xYBNGS8gnd0SxvhbbdAeYNEF77kFTN0+91O6brJWDQIz8yjNZSjuk+XiTqqmgSlPbhecFzHxfKBtXImx9RAz7s9J9+8S2tLgsRH541OcKmLueMXDRno3cKLRQCQEIciKmLK8GEyD+QOF5oic=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784485; c=relaxed/simple;
-	bh=gLW0fh8PPs+BaOn5rkVzGVDEOg0uLVSjRbyJUCDLGBI=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=get5qiUP3IWacm783s2KpJnKB8RGb3rM24aNqNqGrdRNw70FgdmFh0JIrMfHfd+DgxkgX8LDQvTzV1Kur2pYumH8+gG2bddDFHPhCpZIJgLUsBBNo+anKLFNmQZTH+twQh6zJJHiMATpAx5xaP9wlyu71P+Zet6IeP1Lvy18zKM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=redhat.com; dkim=pass (1024-bit key) header.d=redhat.com header.i=@redhat.com header.b=F3pI33Ag; arc=none smtp.client-ip=170.10.133.124
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=redhat.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=redhat.com;
-	s=mimecast20190719; t=1729784482;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=61B9Jq2TL9i1+pERa497eTJdtZBmCcAzgGgAjZWiZfs=;
-	b=F3pI33AgsWV6FSPvVqdCZ1/kKGBfEhBDrX7WVmHkxhBNL3I/WNsQPlTC3b8zV1UsOfktsA
-	m0Rpmmk4J+Pri4t47wjFVVKDVLYmCIrC38Pmh9CHY54S8Bc8ucw545bojHeGJFwKxSRGoD
-	tpjNef5PEsiFaBPRzSaUIEWSWz+TQZ4=
-Received: from mail-vk1-f199.google.com (mail-vk1-f199.google.com
- [209.85.221.199]) by relay.mimecast.com with ESMTP with STARTTLS
- (version=TLSv1.3, cipher=TLS_AES_256_GCM_SHA384) id
- us-mta-218-ci9PAvmEMC-QyqQe7VaSeQ-1; Thu, 24 Oct 2024 11:41:21 -0400
-X-MC-Unique: ci9PAvmEMC-QyqQe7VaSeQ-1
-Received: by mail-vk1-f199.google.com with SMTP id 71dfb90a1353d-50d385a8f9fso326451e0c.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:41:21 -0700 (PDT)
+	s=arc-20240116; t=1729784462; c=relaxed/simple;
+	bh=xpmWqBMMZY+ldlsuyI71jzCpxTAScS3Agp69Pc+fSVc=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=FiswjFZb/VQln8gF2Nnv2LkcKd7hr9eQYNJGcsdnyfkO5n2swZWZIZ6QX1VK9ZfoBWWGsFFVXIDFYPS3pPYAfSDBLICS1K9UqQivlXKj8I6yUjLybOB2A3YGvSF46fwgQagrIBCgmgq4FCKDMdZuplUC7TN5ftytmoWy/J8r6No=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=h/15Vaty; arc=none smtp.client-ip=209.85.221.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wr1-f49.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so631385f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:41:00 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729784459; x=1730389259; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=0bCYWtAOVAoz7K5tYQKyYohM0VdNcKN2It0cd1+edXw=;
+        b=h/15VatyTE3kOoIkNvZiFQJnFvB/d8SgzXcLMJTbo1DgSiL/FcuwA+cztwU+NEaC9s
+         qIxiiQxFbYDCtY47DBVJjIzw2BQDVFX/gZYJ83b+iL/RDsLGcwFDaiKq4oVEIFE50DnE
+         xhmNPw5XOYBCDthAnv9ZNOKylH2o3k1nLOVSLqfkB/Sg1pOn/sRMT62jbNGUNvlW7HZj
+         1m6QegbG71tmcuPeeB7mWfoU7H2GA8idHyA6zKK6OiS4shhmUzMi9T5kj+/sW5OTSaZy
+         b17slhlt37WZ6uOkPvQbgqg/2L/yrtJDB46WeGr+zX+3z8KnEwDpjdpKgOGImpRxVodL
+         grEA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729784481; x=1730389281;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=61B9Jq2TL9i1+pERa497eTJdtZBmCcAzgGgAjZWiZfs=;
-        b=vcgrcvrpiOUHt/HsvgIO54ixl6pu/P/QxapwY3Fgxf+IDeDGLNipfwyM8HlqhPokSm
-         97KLxsZ8TYz6Fyg3eNACJCeQaS4/8/P9z8Lu29PENBkLujMa/HbnqZOwCc8XBKqbU36C
-         NnqSerUB3O+EfBSQyB2BdFI2tLx4jcqHCvW3l1VeMoRkA+l662tvdu7RN6YCJWX9Iqy0
-         noHALPrVqYfsS2ME7pEF0QjrHa1ofHvtnF2583V1VBSGAyeCk5jXRIUVbsvNOLM9w5FZ
-         U8OaqMgpVWBbqjCkeWhGmvV18zUwxLNpeTj92vzCOQkyElO0VKGrPQPpfBLA/UZw1ar0
-         SxJg==
-X-Gm-Message-State: AOJu0Yy2y+WGNac6fEStriLO+qywfg2pPkkyC+UL4FJ7PT9feguhl2lN
-	U7df/7YKIfAmLMbRUgYxQwKhH3h3bR9ZrW/jdXSWyEmIT+dBDamZrcTzGZ682TGHt0CkwVkzBmJ
-	XZ1m0A0gXzxAuW+K0/WumaxPuxYkX22rMl22YPRQ3721g33sObi3D23+JjwlqRw==
-X-Received: by 2002:a05:6122:3c52:b0:50d:4257:5bde with SMTP id 71dfb90a1353d-50feafaf2cfmr3108142e0c.5.1729784481027;
-        Thu, 24 Oct 2024 08:41:21 -0700 (PDT)
-X-Google-Smtp-Source: AGHT+IEOjcqYJKGQfUcpv5jcBoHcpWCXghuty7VZY+BBqG0fKgtkBaCSWPzjKiT1o+ltrBGA2G2CTQ==
-X-Received: by 2002:a05:6122:3c52:b0:50d:4257:5bde with SMTP id 71dfb90a1353d-50feafaf2cfmr3108126e0c.5.1729784480567;
-        Thu, 24 Oct 2024 08:41:20 -0700 (PDT)
-Received: from localhost.localdomain (2603-9001-3d00-5353-0000-0000-0000-14c1.inf6.spectrum.com. [2603:9001:3d00:5353::14c1])
-        by smtp.gmail.com with ESMTPSA id 71dfb90a1353d-50e19f5fad0sm1364301e0c.40.2024.10.24.08.41.19
+        d=1e100.net; s=20230601; t=1729784459; x=1730389259;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=0bCYWtAOVAoz7K5tYQKyYohM0VdNcKN2It0cd1+edXw=;
+        b=ZoDSNZSSvKBBv3XdDjtDkZwhVuvgx+M+v+JkCpJX8lPRocbGfxzgAGGZZujbccYYTJ
+         YglOIY1tam1HNG3nCzttpXhe77VtX8lPMx7EdOe1Yp+JaQUNWen/JBzegbfmuPYmlgRA
+         PCJ614HzlBBYy235nkCAlRoGReQ+bG/58xAaqVfv268lVXQO57y175g3yvbYWe9djFL5
+         vgLy4RQK2oyoCoLEflsFIx3Zo++fYkTuG8iCghIm2u/f4ENPcwAtBKt6Dm49Bz713KQS
+         XOotjuuXQGGe3iTph9MKii5vzH63RfUE8peyJ9SVP6Sy2QD6b2oL6tzPN2MOQvn1Xvd4
+         JCUg==
+X-Forwarded-Encrypted: i=1; AJvYcCVx6d2zTLe/tJngiwDQOqlESnuLbjYINTUl2qn6l19uOEzpVL8upTbm2pozJ5ftZKowRd+AJoUk0lVeONM=@vger.kernel.org
+X-Gm-Message-State: AOJu0Ywts+T5+yQHJ1e17ZPBqO/i3j3kx66fblBtoPMKXCMa+/0BXhzN
+	5WZuD8pCw1yoenSznu4tZFJkoZdkseDzQwG2jFnxhCmtudElvd12F5L1vTEqwwY=
+X-Google-Smtp-Source: AGHT+IERp2/eNZzsX4yv8fUUuhjp6KA5+OA5MDnyg6uPYvR/RwNU6G6ctkdJPcWzcvsaqhcAR5Qg3w==
+X-Received: by 2002:adf:f7cb:0:b0:37d:461d:b1ea with SMTP id ffacd0b85a97d-37efcf898d0mr4107198f8f.48.1729784458868;
+        Thu, 24 Oct 2024 08:40:58 -0700 (PDT)
+Received: from localhost (p50915d2d.dip0.t-ipconnect.de. [80.145.93.45])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a64dc1sm11574470f8f.65.2024.10.24.08.40.58
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 08:41:19 -0700 (PDT)
-From: Jennifer Berringer <jberring@redhat.com>
-To: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>,
-	Sebastian Reichel <sre@kernel.org>,
-	Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Maxime Ripard <mripard@kernel.org>
-Cc: linux-kernel@vger.kernel.org,
-	linux-pm@vger.kernel.org,
-	Jennifer Berringer <jberring@redhat.com>
-Subject: [PATCH v2 3/3] power: reset: nvmem-reboot-mode: fix write for small cells
-Date: Thu, 24 Oct 2024 11:40:50 -0400
-Message-ID: <20241024154050.3245228-4-jberring@redhat.com>
-X-Mailer: git-send-email 2.46.2
-In-Reply-To: <20241024154050.3245228-1-jberring@redhat.com>
-References: <20241024154050.3245228-1-jberring@redhat.com>
+        Thu, 24 Oct 2024 08:40:58 -0700 (PDT)
+Date: Thu, 24 Oct 2024 17:40:55 +0200
+From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
+To: Billy Tsai <billy_tsai@aspeedtech.com>
+Cc: jdelvare@suse.com, linux@roeck-us.net, robh@kernel.org, 
+	krzk+dt@kernel.org, conor+dt@kernel.org, joel@jms.id.au, andrew@codeconstruct.com.au, 
+	linux-hwmon@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-aspeed@lists.ozlabs.org, linux-kernel@vger.kernel.org, linux-pwm@vger.kernel.org, 
+	BMC-SW@aspeedtech.com
+Subject: Re: [PATCH v1 0/2] Enable WDT reload feature
+Message-ID: <nm4ckxv6swajr6hnqlkq5uoo6ncjzlg6yfxroftat6dubiefyi@xbhi4dvqacxm>
+References: <20241024071548.3370363-1-billy_tsai@aspeedtech.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
+Content-Type: multipart/signed; micalg=pgp-sha512;
+	protocol="application/pgp-signature"; boundary="a7vvl5mbgvv3nbps"
+Content-Disposition: inline
+In-Reply-To: <20241024071548.3370363-1-billy_tsai@aspeedtech.com>
 
-Some devices, such as Qualcomm sa8775p, have an nvmem reboot mode cell
-that is smaller than 32 bits, which resulted in
-nvmem_reboot_mode_write() failing. Using nvmem_cell_write_variable_u32()
-fixes this by writing only the least-significant byte of the magic value
-when the size specified in device tree is only one byte.
 
-Signed-off-by: Jennifer Berringer <jberring@redhat.com>
----
- drivers/power/reset/nvmem-reboot-mode.c | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+--a7vvl5mbgvv3nbps
+Content-Type: text/plain; protected-headers=v1; charset=us-ascii
+Content-Disposition: inline
+Content-Transfer-Encoding: quoted-printable
+Subject: Re: [PATCH v1 0/2] Enable WDT reload feature
+MIME-Version: 1.0
 
-diff --git a/drivers/power/reset/nvmem-reboot-mode.c b/drivers/power/reset/nvmem-reboot-mode.c
-index 41530b70cfc4..b52eb879d1c1 100644
---- a/drivers/power/reset/nvmem-reboot-mode.c
-+++ b/drivers/power/reset/nvmem-reboot-mode.c
-@@ -24,7 +24,7 @@ static int nvmem_reboot_mode_write(struct reboot_mode_driver *reboot,
- 
- 	nvmem_rbm = container_of(reboot, struct nvmem_reboot_mode, reboot);
- 
--	ret = nvmem_cell_write(nvmem_rbm->cell, &magic, sizeof(magic));
-+	ret = nvmem_cell_write_variable_u32(nvmem_rbm->cell, magic);
- 	if (ret < 0)
- 		dev_err(reboot->dev, "update reboot mode bits failed\n");
- 
--- 
-2.46.2
+Hello,
 
+On Thu, Oct 24, 2024 at 03:15:46PM +0800, Billy Tsai wrote:
+> Aspeed PWM controller has the WDT reload feature, which changes the duty
+> cycle to a preprogrammed value after a WDT/EXTRST#.
+>=20
+> Billy Tsai (2):
+>   hwmon: (aspeed-g6-pwm-tacho): Extend the #pwm-cells to 4
+>   hwmon: (aspeed-g6-pwm-tacho): Support the WDT reload
+
+Huh, I'm not convinced that extending #pwm-cells for that feature is a
+good idea. Unless I'm missing something none of the other supported PWM
+chips can do that, so I hesitate to change a standard for it. I suggest
+to make this a separate property instead.
+
+Best regards
+Uwe
+
+--a7vvl5mbgvv3nbps
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcaaoUACgkQj4D7WH0S
+/k7IrAgArevIMEswllDmtB0TRJ5jEVNA4EsDQ9gZpjcVMdMbOCk91dxWPNaRWLqz
+ZUO6YMK+BjGJDbYkAI1x0i73kN3YXUSAxcAAAiKeltHm3LgGqmJgNYFSGiGfyWfr
+RZTNj7fkFkLBIJvsuuTV3JpVFuYpd0Sb9kWnsClMTwGoY8macjZEJU9E7syerxE4
+soEUTZpYo8Rnj7qAIoBQJaj8R8wjlpzlT2Mge6xQ+DefHx4fCKuACjtmR+wzQVuq
+4EE/51+wMfTDdzk2ZTjJwjYHQYTSGHoNSUhgBxtSqve5A8Onb4NRidJbXj2Hk51x
+GC8JYGqYPWON7jZmu5rUFjw8yD+kLw==
+=TvtQ
+-----END PGP SIGNATURE-----
+
+--a7vvl5mbgvv3nbps--
 
