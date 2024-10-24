@@ -1,71 +1,71 @@
-Return-Path: <linux-kernel+bounces-379371-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379372-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B84CB9ADDC5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:34:37 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 322EE9ADDC6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:34:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 29D90B21191
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:34:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id B4ED41F22789
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:34:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8A0921AAE19;
-	Thu, 24 Oct 2024 07:33:40 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2B5511ABEB1;
+	Thu, 24 Oct 2024 07:33:44 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="DAhqF73g"
-Received: from mail-yw1-f202.google.com (mail-yw1-f202.google.com [209.85.128.202])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="W63uR3LJ"
+Received: from mail-yb1-f201.google.com (mail-yb1-f201.google.com [209.85.219.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E25451AF0C9
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:33:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.202
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D1CB1B0F17
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:33:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729755219; cv=none; b=QyOs8Vpj2r8RnwqXBsFu6u20ivTyl4Beg1UH+FS8vMycB4kF+XJbhCmmfy550M689SVOm8rHk9sgTPK2shEO9DfwJw3BxDPQCpAb5tVfT7gvk4bppoHdsfXVRsW8AytxHYebVqxO3HXCK1E54sgfRna7kSKkF915mxmKpDq7DMk=
+	t=1729755223; cv=none; b=K8ApjjWovSzixgTGOy09nI7RcOiX0ar2eSivzoc64afJwmxUXvGU29OuJhkSkaHpeiAmCzCTE169qOQB+vaT1uJ7K0w6ktYsN+xrg4oxHxzj9B8DIMn/D2viGWc+hBgZ4PW9peqJOI/2X/U6xIhIPmP3iogU4Q5L2rZ7v+uo1MI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729755219; c=relaxed/simple;
-	bh=0odQGceZNBTkUJ7F9d7VELVpW9gytwTlwU17UG1a/+U=;
+	s=arc-20240116; t=1729755223; c=relaxed/simple;
+	bh=mzs9bpF6JHwXJ8hIAxSNZGhb19FZ05kQ6DmUcVcuGGM=;
 	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Content-Type; b=o6xvTZ01H7y5+M4IC9Hqj3Su9aXKw4EcDYWC2dzrlQsXVBFwwa2vvu9Td/oBSVprsUWh2ljEybaA7Mk60ezL/HbRlwZlIFlB95WwfMUVFgjc1nTv/dIvAyXpLab6M7Ndp4ENNWtiCOFROiJLAVrQjrR+f5v5IoE7NMJRTqmj5nI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=DAhqF73g; arc=none smtp.client-ip=209.85.128.202
+	 To:Content-Type; b=bglLRY60/sNf6wX8tkREIoISCiDDsVIjD6klV85YZTiGdtqy62khk4siylxPojwOxEFadqZk1GwKsAx5cJPOXfhfooIHr/yaDvfNpxXtlleh8rNcIxUFhOa8XkPYtdJtEWbi9kcg7+tQESZ1ZVAGqcqJZo9uIVwFOcQCqw5m+/g=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=W63uR3LJ; arc=none smtp.client-ip=209.85.219.201
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--irogers.bounces.google.com
-Received: by mail-yw1-f202.google.com with SMTP id 00721157ae682-6e35a643200so12554887b3.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:33:37 -0700 (PDT)
+Received: by mail-yb1-f201.google.com with SMTP id 3f1490d57ef6-e28fea2adb6so1004820276.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:33:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729755217; x=1730360017; darn=vger.kernel.org;
+        d=google.com; s=20230601; t=1729755219; x=1730360019; darn=vger.kernel.org;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :from:to:cc:subject:date:message-id:reply-to;
-        bh=6iAkrxns4o/btTyHCpeR4AXaTsboqF9Bu2tTm7l0wyc=;
-        b=DAhqF73gMsdPuRr+r90hmQB7GUvP+OwUu4nVIinIp1c3c5cYUQrBT+8BekrsAR9cJw
-         8qY38NEzOVk4ea4HJEBP/VygbFGZSko/kbLlaymTKZllpsM+jaPp1YX7OfUXMq6Rfnj9
-         AAmkoPdsewrsBXF5I7wcyDEGSpH7z18fLEwNu1vY4+M45f6KV2hguf4IOM0wh6nc3gDd
-         OIEFqJBJBodc2sVkXD/zL0c5Boe/jg1/LLaXvY7Z9IqxlwJmhWgqcdGES5/n1gutlMuk
-         5hkDk7vU7UILqGLf3Df5lAe+4MR6/Q64NEGPulkTEPF49jH5EYEQZ4V/Guwy21o0mX2C
-         ZQvg==
+        bh=yoDrzi0jU1SDEZaATimUzGZrwxZdaWaGm3pLE7ogKGc=;
+        b=W63uR3LJEznTv6uvLVXibK18/sBISfhWdvQgWhFhe1dBqHlH9F0HruuO98Se/1QSnr
+         a8nJTZL+cherxzt/3NKYuiIEEYq+djRwvAJfcs7o6W3EO37HBPqbQ4JVUMmVLhWFiOU7
+         7mg7rwyyHliMqLC+eWp2j2+bHuqMC0WupMVWIFsUw+jflo7wwNJmGC3BYCLkqG0nc6oi
+         014PYWYNuv1r0Zpy9SJFVVPqE/lQ3PsgoGVL0XIBWh+4pyTmA7hKwnrwIVA4FjSSqTZe
+         ucyDG9FhF3oB1e86CpqTDoB9bNkFHuPTq3k5fsbBfh4HVmw7H02XeE0ukJRZ6gcwNq9K
+         Fnpw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729755217; x=1730360017;
+        d=1e100.net; s=20230601; t=1729755219; x=1730360019;
         h=to:from:subject:references:mime-version:message-id:in-reply-to:date
          :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=6iAkrxns4o/btTyHCpeR4AXaTsboqF9Bu2tTm7l0wyc=;
-        b=eDFbHAfPwVJU6n7q995dwie9GLJvlVXALPZOxTSG8l/GzUP+WQ+oZGW7Q/nZkxTSGM
-         WIQmgNzaD6nnxC91r23m/z0dlJKmAgEPjEmnTyshHbgycwY8ypByjHmHtIa5yM/Wdofd
-         tkwlf2FO5aXBzq9z2TEdUXpZlRTCgm2CmtJi0DFJACZuGAiRpGVcvgo7Z07oen+SGeDr
-         eYzA76PIoATH8cQz0w6y4L1OI9iFggSzRKS6xp/cPVTiYdYLjdpPP5gXRSqvcuVZ8Es6
-         D+JJFJH3/ZiRe6NtvPBcI5f2AdZT8dy5H//YyZ702NmmvF0wA8VXWJeZ1p0jeYlx5rSb
-         AOVQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUlu0NbwHDqDnK70iUlcV/hOim8vPzaFjUv55sj+p64aS2rJ9LG4yMaQohm5HY34drxRzrCEQrRKoONhkk=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzmJnEeL+zwZgClUl3z9qg6Q/zKS7vuRCkDnIxvlD6p+T6nooLc
-	r/uIfd6521qt2cbcOSd1PR9X73tKvP425O0j2okJQcIWZAKLDsb4TDW8GqT8CTjLQAaJIL+yRnS
-	08w9ykQ==
-X-Google-Smtp-Source: AGHT+IFFtCAXX1qu6Kjrfshreh94FSiauh3ke22NfApbqYF5WQtwb+Vjg397ye8X47fUQ6CqaBJChB4TkWZg
+        bh=yoDrzi0jU1SDEZaATimUzGZrwxZdaWaGm3pLE7ogKGc=;
+        b=xL+qk6xHJU5qZZeyO0L0/iDBsi5ifiXJ6Y687BMn1uWPqAc5PRGVPt4h/JhzSpczHK
+         AEBkhTYlBmywZHSIG8HWJU9Clt9WnqPek8TUYxpcmpD3LimS/NPSfugosrL11P8ng3yo
+         oRteUvnzAOJ8q1HbDjyENnok0qX+i27JLZRRn0z0shwa+sIZ3XqJoO1g+cxTVixlskT+
+         x41Oo6YlrjHQmJsmvrOxBWyXip758u/3GouEytmYLc7HG9cRQ9dbIPwu8TDWP4GP0Knd
+         F8e5AmI1Brse2vVWTXQ5H6y2hmQ7+YWJj1r8b/JFseW/5O+2/ezqxTNk4nqBgbGZqu89
+         Gwyw==
+X-Forwarded-Encrypted: i=1; AJvYcCV73wUYI8MzaBBsEgSt0sxv/meYiND6TmNTUr7GTKd4lrWjuedsmYDWZYqS6vZD6iSqUYgqHqhB6Mga1po=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwIJgICwbeL4K0lUoWeB9N3/uCZXBke2Niq1cgGrX7P16PwEZBQ
+	IyoXa0c55akuW73ZwfylgkZIxv6X7lQEaiZ8AFVKnHLM+uFnA7Ab8yUBW5vi10uSbhUuN166ieh
+	VX7gxBQ==
+X-Google-Smtp-Source: AGHT+IFfChWNLIB2mUkSnuKKVqSRAHn4XQBzn3+pf1GdHvalOj6torjmW24OVSVViNgdqzFBtdZ3QxP1jdpv
 X-Received: from irogers.svl.corp.google.com ([2620:15c:2c5:11:2391:e0be:5394:f85d])
- (user=irogers job=sendgmr) by 2002:a05:690c:4804:b0:6e2:1842:c2e9 with SMTP
- id 00721157ae682-6e8662f961dmr528997b3.4.1729755217042; Thu, 24 Oct 2024
- 00:33:37 -0700 (PDT)
-Date: Thu, 24 Oct 2024 00:33:18 -0700
+ (user=irogers job=sendgmr) by 2002:a25:d810:0:b0:e29:7479:402a with SMTP id
+ 3f1490d57ef6-e2f2fc4964dmr1671276.10.1729755219393; Thu, 24 Oct 2024 00:33:39
+ -0700 (PDT)
+Date: Thu, 24 Oct 2024 00:33:19 -0700
 In-Reply-To: <20241024073324.1513433-1-irogers@google.com>
-Message-Id: <20241024073324.1513433-5-irogers@google.com>
+Message-Id: <20241024073324.1513433-6-irogers@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -74,7 +74,7 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 Mime-Version: 1.0
 References: <20241024073324.1513433-1-irogers@google.com>
 X-Mailer: git-send-email 2.47.0.163.g1226f6d8fa-goog
-Subject: [PATCH v4 04/10] perf test: Avoid list test blocking on writing to stdout
+Subject: [PATCH v4 05/10] perf test: Tag parallel failing shell tests with "(exclusive)"
 From: Ian Rogers <irogers@google.com>
 To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>, 
 	Arnaldo Carvalho de Melo <acme@kernel.org>, Namhyung Kim <namhyung@kernel.org>, 
@@ -90,32 +90,261 @@ To: Peter Zijlstra <peterz@infradead.org>, Ingo Molnar <mingo@redhat.com>,
 	linux-perf-users@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
 
-Python's json.tool will output the input json to stdout. Redirect to
-/dev/null to avoid blocking on stdout writes.
+Some shell tests compete for resources and so can't run with other
+tests, tag such tests.  The "(exclusive)" stems from shared/exclusive
+to describe how the tests run as if holding a lock.
+
+For ARM/coresight tests:
+Suggested-by: James Clark <james.clark@linaro.org>
+
+Additional failing tests:
+Suggested-by: Namhyung Kim <namhyung@kernel.org>
 
 Tested-by: James Clark <james.clark@linaro.org>
 Signed-off-by: Ian Rogers <irogers@google.com>
 ---
- tools/perf/tests/shell/list.sh | 5 ++++-
- 1 file changed, 4 insertions(+), 1 deletion(-)
+ tools/perf/tests/shell/coresight/asm_pure_loop.sh            | 2 +-
+ tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh     | 2 +-
+ tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh | 2 +-
+ tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh  | 2 +-
+ tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh    | 2 +-
+ tools/perf/tests/shell/perftool-testsuite_report.sh          | 2 +-
+ tools/perf/tests/shell/probe_vfs_getname.sh                  | 2 +-
+ tools/perf/tests/shell/record+script_probe_vfs_getname.sh    | 2 +-
+ tools/perf/tests/shell/record.sh                             | 2 +-
+ tools/perf/tests/shell/record_lbr.sh                         | 2 +-
+ tools/perf/tests/shell/record_offcpu.sh                      | 2 +-
+ tools/perf/tests/shell/stat_all_pmu.sh                       | 2 +-
+ tools/perf/tests/shell/stat_bpf_counters.sh                  | 2 +-
+ tools/perf/tests/shell/test_arm_coresight.sh                 | 2 +-
+ tools/perf/tests/shell/test_arm_coresight_disasm.sh          | 2 +-
+ tools/perf/tests/shell/test_arm_spe.sh                       | 2 +-
+ tools/perf/tests/shell/test_data_symbol.sh                   | 2 +-
+ tools/perf/tests/shell/test_intel_pt.sh                      | 2 +-
+ tools/perf/tests/shell/test_stat_intel_tpebs.sh              | 2 +-
+ tools/perf/tests/shell/trace+probe_vfs_getname.sh            | 2 +-
+ 20 files changed, 20 insertions(+), 20 deletions(-)
 
-diff --git a/tools/perf/tests/shell/list.sh b/tools/perf/tests/shell/list.sh
-index 8a868ae64560..76a9846cff22 100755
---- a/tools/perf/tests/shell/list.sh
-+++ b/tools/perf/tests/shell/list.sh
-@@ -24,8 +24,11 @@ trap trap_cleanup EXIT TERM INT
+diff --git a/tools/perf/tests/shell/coresight/asm_pure_loop.sh b/tools/perf/tests/shell/coresight/asm_pure_loop.sh
+index 2d65defb7e0f..c63bc8c73e26 100755
+--- a/tools/perf/tests/shell/coresight/asm_pure_loop.sh
++++ b/tools/perf/tests/shell/coresight/asm_pure_loop.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh -e
+-# CoreSight / ASM Pure Loop
++# CoreSight / ASM Pure Loop (exclusive)
  
- test_list_json() {
-   echo "Json output test"
-+  # Generate perf list json output into list_output file.
-   perf list -j -o "${list_output}"
--  $PYTHON -m json.tool "${list_output}"
-+  # Validate the json using python, redirect the json copy to /dev/null as
-+  # otherwise the test may block writing to stdout.
-+  $PYTHON -m json.tool "${list_output}" /dev/null
-   echo "Json output test [Success]"
- }
+ # SPDX-License-Identifier: GPL-2.0
+ # Carsten Haitzler <carsten.haitzler@arm.com>, 2021
+diff --git a/tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh b/tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh
+index ddcc9bb850f5..8e29630957c8 100755
+--- a/tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh
++++ b/tools/perf/tests/shell/coresight/memcpy_thread_16k_10.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh -e
+-# CoreSight / Memcpy 16k 10 Threads
++# CoreSight / Memcpy 16k 10 Threads (exclusive)
  
+ # SPDX-License-Identifier: GPL-2.0
+ # Carsten Haitzler <carsten.haitzler@arm.com>, 2021
+diff --git a/tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh b/tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh
+index 2ce5e139b2fd..0c4c82a1c8e1 100755
+--- a/tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh
++++ b/tools/perf/tests/shell/coresight/thread_loop_check_tid_10.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh -e
+-# CoreSight / Thread Loop 10 Threads - Check TID
++# CoreSight / Thread Loop 10 Threads - Check TID (exclusive)
+ 
+ # SPDX-License-Identifier: GPL-2.0
+ # Carsten Haitzler <carsten.haitzler@arm.com>, 2021
+diff --git a/tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh b/tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh
+index 3ad9498753d7..d3aea9fc6ced 100755
+--- a/tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh
++++ b/tools/perf/tests/shell/coresight/thread_loop_check_tid_2.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh -e
+-# CoreSight / Thread Loop 2 Threads - Check TID
++# CoreSight / Thread Loop 2 Threads - Check TID (exclusive)
+ 
+ # SPDX-License-Identifier: GPL-2.0
+ # Carsten Haitzler <carsten.haitzler@arm.com>, 2021
+diff --git a/tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh b/tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh
+index 4fbb4a29aad3..7429d3a2ae43 100755
+--- a/tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh
++++ b/tools/perf/tests/shell/coresight/unroll_loop_thread_10.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh -e
+-# CoreSight / Unroll Loop Thread 10
++# CoreSight / Unroll Loop Thread 10 (exclusive)
+ 
+ # SPDX-License-Identifier: GPL-2.0
+ # Carsten Haitzler <carsten.haitzler@arm.com>, 2021
+diff --git a/tools/perf/tests/shell/perftool-testsuite_report.sh b/tools/perf/tests/shell/perftool-testsuite_report.sh
+index 973012ce92a7..a8cf75b4e77e 100755
+--- a/tools/perf/tests/shell/perftool-testsuite_report.sh
++++ b/tools/perf/tests/shell/perftool-testsuite_report.sh
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# perftool-testsuite_report
++# perftool-testsuite_report (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ test -d "$(dirname "$0")/base_report" || exit 2
+diff --git a/tools/perf/tests/shell/probe_vfs_getname.sh b/tools/perf/tests/shell/probe_vfs_getname.sh
+index 554e12e83c55..0c5aacc446b3 100755
+--- a/tools/perf/tests/shell/probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/probe_vfs_getname.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Add vfs_getname probe to get syscall args filenames
++# Add vfs_getname probe to get syscall args filenames (exclusive)
+ 
+ # SPDX-License-Identifier: GPL-2.0
+ # Arnaldo Carvalho de Melo <acme@kernel.org>, 2017
+diff --git a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
+index 9a61928e3c9a..5940fdc1df37 100755
+--- a/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/record+script_probe_vfs_getname.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Use vfs_getname probe to get syscall args filenames
++# Use vfs_getname probe to get syscall args filenames (exclusive)
+ 
+ # Uses the 'perf test shell' library to add probe:vfs_getname to the system
+ # then use it with 'perf record' using 'touch' to write to a temp file, then
+diff --git a/tools/perf/tests/shell/record.sh b/tools/perf/tests/shell/record.sh
+index f0e79200b981..85d512f5a126 100755
+--- a/tools/perf/tests/shell/record.sh
++++ b/tools/perf/tests/shell/record.sh
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# perf record tests
++# perf record tests (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/record_lbr.sh b/tools/perf/tests/shell/record_lbr.sh
+index 32314641217e..8d750ee631f8 100755
+--- a/tools/perf/tests/shell/record_lbr.sh
++++ b/tools/perf/tests/shell/record_lbr.sh
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# perf record LBR tests
++# perf record LBR tests (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/record_offcpu.sh b/tools/perf/tests/shell/record_offcpu.sh
+index 67c925f3a15a..678947fe69ee 100755
+--- a/tools/perf/tests/shell/record_offcpu.sh
++++ b/tools/perf/tests/shell/record_offcpu.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# perf record offcpu profiling tests
++# perf record offcpu profiling tests (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/stat_all_pmu.sh b/tools/perf/tests/shell/stat_all_pmu.sh
+index 42456d89c5da..8b148b300be1 100755
+--- a/tools/perf/tests/shell/stat_all_pmu.sh
++++ b/tools/perf/tests/shell/stat_all_pmu.sh
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# perf all PMU test
++# perf all PMU test (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/stat_bpf_counters.sh b/tools/perf/tests/shell/stat_bpf_counters.sh
+index f250b7d6f773..a038c1b1a706 100755
+--- a/tools/perf/tests/shell/stat_bpf_counters.sh
++++ b/tools/perf/tests/shell/stat_bpf_counters.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# perf stat --bpf-counters test
++# perf stat --bpf-counters test (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/test_arm_coresight.sh b/tools/perf/tests/shell/test_arm_coresight.sh
+index 6b8c4831eedc..573af9235b72 100755
+--- a/tools/perf/tests/shell/test_arm_coresight.sh
++++ b/tools/perf/tests/shell/test_arm_coresight.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Check Arm CoreSight trace data recording and synthesized samples
++# Check Arm CoreSight trace data recording and synthesized samples (exclusive)
+ 
+ # Uses the 'perf record' to record trace data with Arm CoreSight sinks;
+ # then verify if there have any branch samples and instruction samples
+diff --git a/tools/perf/tests/shell/test_arm_coresight_disasm.sh b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
+index dba086a40d84..be2d26303f94 100755
+--- a/tools/perf/tests/shell/test_arm_coresight_disasm.sh
++++ b/tools/perf/tests/shell/test_arm_coresight_disasm.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Check Arm CoreSight disassembly script completes without errors
++# Check Arm CoreSight disassembly script completes without errors (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ # The disassembly script reconstructs ranges of instructions and gives these to objdump to
+diff --git a/tools/perf/tests/shell/test_arm_spe.sh b/tools/perf/tests/shell/test_arm_spe.sh
+index 6c21fb1f10d8..3258368634f7 100755
+--- a/tools/perf/tests/shell/test_arm_spe.sh
++++ b/tools/perf/tests/shell/test_arm_spe.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Check Arm SPE trace data recording and synthesized samples
++# Check Arm SPE trace data recording and synthesized samples (exclusive)
+ 
+ # Uses the 'perf record' to record trace data of Arm SPE events;
+ # then verify if any SPE event samples are generated by SPE with
+diff --git a/tools/perf/tests/shell/test_data_symbol.sh b/tools/perf/tests/shell/test_data_symbol.sh
+index 3dfa91832aa8..c86da0235059 100755
+--- a/tools/perf/tests/shell/test_data_symbol.sh
++++ b/tools/perf/tests/shell/test_data_symbol.sh
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# Test data symbol
++# Test data symbol (exclusive)
+ 
+ # SPDX-License-Identifier: GPL-2.0
+ # Leo Yan <leo.yan@linaro.org>, 2022
+diff --git a/tools/perf/tests/shell/test_intel_pt.sh b/tools/perf/tests/shell/test_intel_pt.sh
+index bf9017b812aa..e6f0070975f6 100755
+--- a/tools/perf/tests/shell/test_intel_pt.sh
++++ b/tools/perf/tests/shell/test_intel_pt.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Miscellaneous Intel PT testing
++# Miscellaneous Intel PT testing (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/test_stat_intel_tpebs.sh b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
+index 9a11f42d153c..f95fc64bf0a7 100755
+--- a/tools/perf/tests/shell/test_stat_intel_tpebs.sh
++++ b/tools/perf/tests/shell/test_stat_intel_tpebs.sh
+@@ -1,5 +1,5 @@
+ #!/bin/bash
+-# test Intel TPEBS counting mode
++# test Intel TPEBS counting mode (exclusive)
+ # SPDX-License-Identifier: GPL-2.0
+ 
+ set -e
+diff --git a/tools/perf/tests/shell/trace+probe_vfs_getname.sh b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+index 97b4b9cd2378..708a13f00635 100755
+--- a/tools/perf/tests/shell/trace+probe_vfs_getname.sh
++++ b/tools/perf/tests/shell/trace+probe_vfs_getname.sh
+@@ -1,5 +1,5 @@
+ #!/bin/sh
+-# Check open filename arg using perf trace + vfs_getname
++# Check open filename arg using perf trace + vfs_getname (exclusive)
+ 
+ # Uses the 'perf test shell' library to add probe:vfs_getname to the system
+ # then use it with 'perf trace' using 'touch' to write to a temp file, then
 -- 
 2.47.0.163.g1226f6d8fa-goog
 
