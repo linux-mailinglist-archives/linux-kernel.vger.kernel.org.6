@@ -1,200 +1,204 @@
-Return-Path: <linux-kernel+bounces-380416-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380418-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id ACB529AEE22
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:33:35 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 81FB19AEE30
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:34:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 6BA7528201D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:33:34 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0591D1F2194D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:34:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 936AA1F8195;
-	Thu, 24 Oct 2024 17:33:28 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4D51D1AD418;
+	Thu, 24 Oct 2024 17:34:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b="mW3wl50h"
-Received: from EUR02-DB5-obe.outbound.protection.outlook.com (mail-db5eur02on2070.outbound.protection.outlook.com [40.107.249.70])
+	dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b="A653jBtp";
+	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="mfphsDF2"
+Received: from flow-a2-smtp.messagingengine.com (flow-a2-smtp.messagingengine.com [103.168.172.137])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 483451EF958;
-	Thu, 24 Oct 2024 17:33:25 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.249.70
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729791207; cv=fail; b=OSnqa8K429UckGYmkCKd2q1b+wltIioRlYaqqNWbIeDI1dK0UfKLLw7pC+k3Z+Plb5I4CpR9q8yUPFvYnFsNMO1rX20v+3vA98ToZj9AVqITK0cGx8DvV/0tYNG8O+ApN67UFA0X3w+9y2nbVu3mgHopVaymDS75gxxdwVAxDVY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729791207; c=relaxed/simple;
-	bh=LmpCa1qsbiS7+BEnU9QFP6fblVBanFRcszSFENrB+VY=;
-	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
-	 Content-Type:MIME-Version; b=JZpFN57YV9C5J7numcGNKH8cRte9yMpzZ+9m3aE0V3kdEThKLbJeDOX4VlQ+Q3cQfJJb/oSLHmW+EZdIq+mgZh1aihjMtj4YmZ5ge7JKkgRKEw0y+MGq7kuppkuRsCm+G2QExIAU1GK1Wrf8hqgn6By/brBb7WmZZ8bwAMMTE4o=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de; spf=pass smtp.mailfrom=cherry.de; dkim=pass (1024-bit key) header.d=cherry.de header.i=@cherry.de header.b=mW3wl50h; arc=fail smtp.client-ip=40.107.249.70
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=cherry.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=cherry.de
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=I+j5WY4wo0tRalq3u1C6PbeRuUN8sspaAO78CjZ2GIng/5NNbvMnuZ+UyH7BBOVDFTv9ptxNPYQAR+JKMrahT4Ki0zktGwnZjvONFfsDdlNiNrqBVkefxUlENooHpToU8H5/5oLbYMNPTyS3Pn0BXt4O9BDKD2OQm1J90NDSbMhFipYhxXbO1/hqPmaTFx7Y02Lh2e+GcqOamwuLBiNVtON1itqKvSwVxYpb+3OfkNZDGgQv7m6dXQXvWiTej7wVWu8myWF1MzOE65xERnWE2c++XiHMiKvNTcHV9z2nKEDuW/lYCIHsDmUvQkGvNfnc+Nv3a3GerYBkUkhKfcjMZg==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=JSaH/xY7KqGMRZY24EQ00COdWciwEaORAZzoxl4vEco=;
- b=t5x1XCIvxlL+fLpF92LVQ9NhJix+LtftH1xdEsWHHMoSY6M3Nktr8Au/3XfqMbUXhHBFv8YJgxXJQxf+n5WDVOqr5+kO+x8emfWl1/Mk4OkRe4QF0lAR8WYzq+Ev8ksmjp0GaBBjH143bWWMsD2e6QHCxaVRMSqUlSru3bnQ6ACks4lllLlNMkKd5J82KgbfBMYJrjdyF/c/WOt/tij2YGqE6IwMYf1Y2gf9JzUY4z0OCspcQYiVlJCVpoV8P6tYB+cCDJjWvHZyzApaD8dGNucKozrS7Dl1X17b0oUVgP8hENlcCxLigIhWCu6bOJdVJjuHJRmHFosGJewwZ3jOsw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=cherry.de; dmarc=pass action=none header.from=cherry.de;
- dkim=pass header.d=cherry.de; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=cherry.de;
- s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=JSaH/xY7KqGMRZY24EQ00COdWciwEaORAZzoxl4vEco=;
- b=mW3wl50hNIeYyNmr6TJSTibNK7EBsqUSLBX08mh5yKwDqrLdRfwDuRNgZc0f/Lfkx3vqn7KBaBPeoa6yuGTJw+Prm/GmNi0BaJOXO6FBFLC0dYJg4qOJlzAKL8dck3BSzuPLQMPTx8J2uKRJOMdpL146uQiWPRDJq7xjgG7pzC4=
-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=cherry.de;
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com (2603:10a6:20b:42c::20)
- by PA4PR04MB7838.eurprd04.prod.outlook.com (2603:10a6:102:cd::24) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Thu, 24 Oct
- 2024 17:33:21 +0000
-Received: from AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a]) by AS8PR04MB8897.eurprd04.prod.outlook.com
- ([fe80::35f6:bc7d:633:369a%7]) with mapi id 15.20.8093.014; Thu, 24 Oct 2024
- 17:33:21 +0000
-Message-ID: <eb9d14ca-5729-4a63-937d-46ec42ae8ee0@cherry.de>
-Date: Thu, 24 Oct 2024 19:33:20 +0200
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 3/3] arm64: dts: rockchip: add HDMI support to
- rk3588-jaguar
-To: Heiko Stuebner <heiko@sntech.de>
-Cc: devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
- linux-rockchip@lists.infradead.org, linux-kernel@vger.kernel.org,
- Heiko Stuebner <heiko.stuebner@cherry.de>
-References: <20241024151403.1748554-1-heiko@sntech.de>
- <20241024151403.1748554-4-heiko@sntech.de>
-Content-Language: en-US
-From: Quentin Schulz <quentin.schulz@cherry.de>
-In-Reply-To: <20241024151403.1748554-4-heiko@sntech.de>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: FR4P281CA0287.DEUP281.PROD.OUTLOOK.COM
- (2603:10a6:d10:e7::12) To AS8PR04MB8897.eurprd04.prod.outlook.com
- (2603:10a6:20b:42c::20)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AF3B1FE0E4;
+	Thu, 24 Oct 2024 17:33:57 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.137
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729791239; cv=none; b=S/K8q7noEjWYw0Rr9B+GyZOHHGL7+I/dWhmzkZ45yvv+75/f0ehmTWpK4ydFectH1fVzjBp14Dxz6Mcp2gNPBvNLLfBSO2HFyDM9NeBQQoJ/bICFfv7qWInD102P1gZYMQnj1e5JBkjpX/E+4fC9m9HCc1Ep4o44yKs+uQdyRNI=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729791239; c=relaxed/simple;
+	bh=wdsXoO9P+4ECG9k3lEz3ZPdv+OvACR6i5MKXmbG89RU=;
+	h=MIME-Version:Date:From:To:Cc:Message-Id:In-Reply-To:References:
+	 Subject:Content-Type; b=qKiVEoLTprVrZukD5wmJBv3NmCzSKC/Rd1XplPeURqYTqhcLtTZauZuPeux2FtHQAR6xL0i4juKQfFreqDLNd7asZBK9QVmXE/FO5nILd3CBc2zkpE//mbkMOelJbwOCh0qCDyQkaLiseHoRSl/d/LXVfzXBQnahfB3+BZGi8rA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com; spf=pass smtp.mailfrom=flygoat.com; dkim=pass (2048-bit key) header.d=flygoat.com header.i=@flygoat.com header.b=A653jBtp; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=mfphsDF2; arc=none smtp.client-ip=103.168.172.137
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=flygoat.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flygoat.com
+Received: from phl-compute-09.internal (phl-compute-09.phl.internal [10.202.2.49])
+	by mailflow.phl.internal (Postfix) with ESMTP id 68323200757;
+	Thu, 24 Oct 2024 13:33:56 -0400 (EDT)
+Received: from phl-imap-12 ([10.202.2.86])
+  by phl-compute-09.internal (MEProxy); Thu, 24 Oct 2024 13:33:56 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=flygoat.com; h=
+	cc:cc:content-transfer-encoding:content-type:content-type:date
+	:date:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to; s=fm1; t=1729791236;
+	 x=1729798436; bh=wdsXoO9P+4ECG9k3lEz3ZPdv+OvACR6i5MKXmbG89RU=; b=
+	A653jBtpYs4OYjapx+bzgWYnT6uOu/7nZTm0Mt8fK4PwW0YrR2Y99Ce4VIniJjXb
+	nULP39sqpiOa1y9pYbz7Z9giVKFEJulzwNb8z+kpcTZt8hmlM7qtttkis4187DxN
+	l8OAD0OhCWYRZBj3GpkGFBSAwh+LWwb0F1M8mHbNnq7sDpe9ZOPOQ4egagzGyrPH
+	Rs5m+gD9WS9vU/brG6Abr0O6xgDsYqic9zfcsmzyD3/sNHaGQypsZyVpsLNfEVFX
+	J4HQBFzghG+1AnJj6sgVTtcKUGC7sz/fMeGSo4FXkn40AlJYwHXX+u+ae9CstghG
+	gW1stHjFeixKD98DCWTV3A==
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
+	messagingengine.com; h=cc:cc:content-transfer-encoding
+	:content-type:content-type:date:date:feedback-id:feedback-id
+	:from:from:in-reply-to:in-reply-to:message-id:mime-version
+	:references:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
+	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729791236; x=
+	1729798436; bh=wdsXoO9P+4ECG9k3lEz3ZPdv+OvACR6i5MKXmbG89RU=; b=m
+	fphsDF2MwtjWRloIZIP3ohejJ7qBok4lndfX3KcFv58SdsrNfBiIhN3BV5ZD9JTT
+	QE9JHFdyLBsM75oIGx03MnQ4LCFxwDb4yESYsbLK/o2djPIItBqm5wlkL+bCFRuE
+	wBQ4yjXqXvNhZAjJgyCHoeGmMZh/XM0kTkICe3YFnPfENeEe2gKDKa/gcgNC8evW
+	+HLGZV0LGDHKFDAstO/wjBBKB1WJGuomIMvEly8GZc8CW5fEN08mX3kHjXQQymcL
+	yG7/BioaGFBEL9b4MRkN6QcCb3RcXTUtTFQv7utW6BZivHhAN7N8SnGLQGGcRE4R
+	5kS33iYrfhMhiSfdymjUQ==
+X-ME-Sender: <xms:_4QaZ8ZBCd9PBpW4mRLELE74lcpDhMBzx9KY9kLyHMNql4FUdPfBNQ>
+    <xme:_4QaZ3YBh-YhPTO6MIpDNCRO8vg1UsZ3JirXbxlBRjXaEGhIiNTaHzh68ryRGsL5p
+    CcyCEiNU7Ife8r081A>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddgkeekucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepofggfffhvfevkfgjfhfutgfgsehtqhertdertdej
+    necuhfhrohhmpedflfhirgiguhhnucgjrghnghdfuceojhhirgiguhhnrdihrghnghesfh
+    hlhihgohgrthdrtghomheqnecuggftrfgrthhtvghrnhepffekveettdeuveefhfekhfdu
+    gfegteejffejudeuheeujefgleduveekuddtueehnecuffhomhgrihhnpehkvghrnhgvlh
+    drohhrghenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhm
+    pehjihgrgihunhdrhigrnhhgsehflhihghhorghtrdgtohhmpdhnsggprhgtphhtthhope
+    ehtddpmhhouggvpehsmhhtphhouhhtpdhrtghpthhtohepsghpsegrlhhivghnkedruggv
+    pdhrtghpthhtohepthhssghoghgvnhgusegrlhhphhgrrdhfrhgrnhhkvghnrdguvgdprh
+    gtphhtthhopehjvghffhgsrghisegrohhstgdrihhopdhrtghpthhtohepkhgvgiihsghi
+    shgtuhhithesrghoshgtrdhiohdprhgtphhtthhopehlihhnuhigsegrrhhmlhhinhhugi
+    drohhrghdruhhkpdhrtghpthhtoheprghrnhgusegrrhhnuggsrdguvgdprhgtphhtthho
+    pehkohhrhidrmhgrihhntggvnhhtsegsohhothhlihhnrdgtohhmpdhrtghpthhtohepug
+    grvhgvmhesuggrvhgvmhhlohhfthdrnhgvthdprhgtphhtthhopegrjhhhrghlrghnvgih
+    sehgmhgrihhlrdgtohhm
+X-ME-Proxy: <xmx:_4QaZ2_78xaC45wErcVUnp3_D4c87ZxU8-oasJa6s1RMbbYtMz8ygQ>
+    <xmx:_4QaZ2o0_0ptPdsgX0kr_PGecgY39eaUUWX3O3N6d6K5YDPFTcb_tg>
+    <xmx:_4QaZ3pRvLGJJ0nBTP8ha_v38X4iuQF_Y7cR9NbPcTu_gCSEE8gBiw>
+    <xmx:_4QaZ0TpwEeYRCi8ld1dDQqgBbhkTzzFVOy1VRq6Ob82egrkY5GZZw>
+    <xmx:BIUaZ16n4_6Yh1lK-Nzrf1LSszdyaZYjd0RGlT4OktU7Q_my_e2m3Jup>
+Feedback-ID: ifd894703:Fastmail
+Received: by mailuser.phl.internal (Postfix, from userid 501)
+	id C0DD41C20066; Thu, 24 Oct 2024 13:33:51 -0400 (EDT)
+X-Mailer: MessagingEngine.com Webmail Interface
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-PublicTrafficType: Email
-X-MS-TrafficTypeDiagnostic: AS8PR04MB8897:EE_|PA4PR04MB7838:EE_
-X-MS-Office365-Filtering-Correlation-Id: d8f44504-703a-41bb-f489-08dcf451f469
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam: BCL:0;ARA:13230040|366016|1800799024|376014;
-X-Microsoft-Antispam-Message-Info:
-	=?utf-8?B?WlczcTJRTVROZWJiOTFyY3duemtNeTVDOEx4c2NyMGJTaUtuQjFBdHlYdE9Z?=
- =?utf-8?B?SWJqUngxWXRlQVkwV2prZlFqVGpWRElhQnVNRDBlN2hMWEowYktjWVQ3bmRz?=
- =?utf-8?B?OWNIVWJyYVplaHNTV3grRWlJVjR0SGJwTzg5UGZZdWdzWnZ1WkRWWGVUSWRr?=
- =?utf-8?B?aEVKWlJzUUpOS3ZxOXM1QmowN1FCa2c1QVZxRzNrZzAzRFE4RVF2SnlEQWFl?=
- =?utf-8?B?WDhDMEFjM05PL1ZCczZ5QlFTZ3NiWmxQV0NRTkM5RTgyTVlrZ1o5dWhkeFhE?=
- =?utf-8?B?cmxKY0lybCs4QjZLVmlsd0U5VjAvY01JRGt1RGF4RjdFK1FIcWxHT1EvV2Zt?=
- =?utf-8?B?MUZDcHhSbkJlclU4UGljT0hERS9JRjdxVndSQngrMUtrR0FRcHI0WDhuQ3pH?=
- =?utf-8?B?ZG9FVUJETmFldnhtT1AvcGdQdk52cG14VXg4a2lLNDN3Ry9CejY3aCt2cE5r?=
- =?utf-8?B?SU9abG5UN2FCNE5WQU9NNjFQTlFGLzRyNEs1bEF1aUc4ZzgvT1IwSWYveTlW?=
- =?utf-8?B?RTdnVTVFcndOR09pV0gxWURQOE9NaTJZT3UrdDFJTUI1czIvdlJVVGtvdkJF?=
- =?utf-8?B?WnRxaEE5ZVRFSjR1VmlxOWh6QkxmQ1JsbG9wOGgxZ1dsSzFrTFI3eXJsQVpP?=
- =?utf-8?B?SXFwZ3doY3V0ZEc0Q3JINEpjNytrK2l4MjJpeW1ndkRpdXNZMU9BUUVtaUV4?=
- =?utf-8?B?VzFNNEVBakdtSnNJZ3VBTEZjQ0dMZ0lncThaZU9aeDFFTk9mMVJxci90R0Iy?=
- =?utf-8?B?NjU2dysyRWxHaHFoY3NnQWo0aVNKVGRrU1NuUFU3UUxjU1hhdlVtRWRFcTNi?=
- =?utf-8?B?dk44WHZIVVY1RWZCejdxNnh5c2c1VXRudVVjYkFEbVV2bzU0eWVJNnlLY2Zx?=
- =?utf-8?B?eHpxa2l5cTNJRUpONzRwYjlqN3NMZDljSmpmMFRHWmxxKzdNSTl4c3dweERW?=
- =?utf-8?B?SW5nb1BiZFhTdDYvZXczMkpzb21NaFVhdzRVUnk0Mm1BdGlQVmQxR2tsRS9v?=
- =?utf-8?B?eGVBS2d6T3kzSXdMVy9zOXEvSXR0VkNYV09NaVI3TDdZQmI2S3Bxa1puOGU4?=
- =?utf-8?B?dmdBbFEvRzdFYmN6aUZLS3FVWllUbTBtV0xvS1QwRmo1Z3ptVDRyNGpFMThL?=
- =?utf-8?B?Q1VlQmlaQThPRDBqZGhIU214WWYzOWNPZnphQWQvVzZJdDVSQTU0NUhwUGRH?=
- =?utf-8?B?OWxpNmFVMEJUcGYvckM0eFY2d3gxUmFNSXlCbWovTTZvUGRDOXpuR2xRUTN5?=
- =?utf-8?B?VHYrQ2t0VmtlcUdHVTRPU29LSmhCa2tJZWEvN0l3L3dGb01DK05tYmhtdXNo?=
- =?utf-8?B?WDJpeDhiWVBHSHJkZ3FnODhMR2J4RU5JYkx1dFB0UUxLR3g4ZW1CZ0lyNlRG?=
- =?utf-8?B?WHVCQ3lJWkIyZXIvcW5BdktWbW1nbVJPSE16L1NqQUFiVlpuaXAzV1d3YzRD?=
- =?utf-8?B?RlQyR1RiSkVDZkJJRll5NUpjQXBoU3k3S0twN2d6YjNaL2hWMCtOdEVLNGlv?=
- =?utf-8?B?ZHFNRllOQ0kxeWpqT0F3d0pjZGhGMTRUYTRJYXRHOGQxeFRRZm5LMGxQSzJu?=
- =?utf-8?B?dkdwSUd4eUxZOGcyM3AyYTFscVlXODVKUm5HcmJ4QkNpQ2RZcEp5L0txN1lw?=
- =?utf-8?B?WXhkN0hEYm1XSTFMNFBrNVRCbWlTS0ppa05rOUUwRWtsbDVKejBWNG4xQ1ho?=
- =?utf-8?Q?WvdtUo++UwLU50zrV9qg?=
-X-Forefront-Antispam-Report:
-	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AS8PR04MB8897.eurprd04.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(366016)(1800799024)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
-X-MS-Exchange-AntiSpam-MessageData-0:
-	=?utf-8?B?ZERzYXpndkZKMzM1SFNqSFlZa3VRZGRoY1pyWUVYNlhtYUxXQk5iNkp1SC9s?=
- =?utf-8?B?emxFRFgxWVZhYnpacncwSWVQdDZURk1IZGZRSXZLdlhSVnk4aHl2Y2szTDJq?=
- =?utf-8?B?MS9oQjJKeGx3RmRxSGlHQU4zMmNrQ0N6b3R2WEZ4SG54Zng5a1RxMWJpL0lN?=
- =?utf-8?B?Rjc4c1Z2WWROaGUzMmZocml0MkNXUVQ4RHpPdWVaWHFqaFBjU1luRnMwcFdL?=
- =?utf-8?B?QThZU3N5THpmZXNPbi9mL1FoNXdLRGE0cU91SGgwRUovUTBTdUk0Z3doaVVs?=
- =?utf-8?B?QnZ4ODdQdTl4NytCdlczd1hjNnhuOUs3SjZsQ2dJVFQvZUZGOXhxMVcwS2x6?=
- =?utf-8?B?azRNb2tscE8yVWd4YjdvclE2eTJIZjlRNHAxUlhEUHdVTk5Lam85TGxOeis5?=
- =?utf-8?B?dnZOR0Y0Q25hTVZUWW9IWU1zNXJhdFJGMFhsRnVOT2U0WmhodzlOMHZBcGFP?=
- =?utf-8?B?YU51RWVjVVprTUJucklybjJ0blpOOGtoa2xxcXpidzZOZ0hkWUZiTU8wQ3BE?=
- =?utf-8?B?WVphWjdCaDFWNUxDUnY1eWQzT1dKa09FUXh4TFUwZTJXYWVGd0xQSnBlelNQ?=
- =?utf-8?B?cjhKQjRiamNEbXgyYlFHQ3BoNGx1ZlZzQlN6KzFPdHJGZU1hUURuYXp5TzNq?=
- =?utf-8?B?TEphc3ZoOGJUUlpQR082N1Y5VUdpRCtwOFlJbnRyc1ZDVXVNUDczeW9yZ2dJ?=
- =?utf-8?B?aklUMVNTcHgvNkJWTzZVbmlUcVVHdnhteDI3dmZET01xa253N0NSNlg1MUM3?=
- =?utf-8?B?TEFiSjhBMGZGa2xYVEViMXVBRndsMWt5NFNlcnE2aW1rL005SW1ZNzR5SmVm?=
- =?utf-8?B?VzRBSVlqREx3THROT2l1V1BPeWdCVSs3bVhvMVViVnZaSE9nT0FsTHlZdEkw?=
- =?utf-8?B?cjFzN2t0NGZicXdNVUgyV0l2dFhWZnE3VGlQam1pbXJYK0xwS2R3a2pud0hz?=
- =?utf-8?B?R00vOVVES0RDYUdxSit6OVdJTjNhdE5randIejhpOTZLNDhnV0o2ZmZSSHBl?=
- =?utf-8?B?cWYxV3F6ZTQrcWkyZ3BTc28xN0pjei9qa3dKTFVTb2Y0Z0xkQ1FtYXFRNi9Y?=
- =?utf-8?B?R01pa0xRT2xZdDFrY09ZZTR2S0lWaXRMZTJ5K3VyalAzQnJFcENGNmxDeEVZ?=
- =?utf-8?B?cjFBb3gxZEZ1NFFVZkl4VEZjS1MxOUk3dEk5NDNCZVRhLzhDYm5uN094VERi?=
- =?utf-8?B?RTllZnk5TGw5cmdRUklCeGZxSFkyNUpGc3dHMmhnRGVMM01rckJYNWdHTEpQ?=
- =?utf-8?B?RFFHcWpBeTR5UFNpT2Z4dGZ5eFBDNktSVURLSzRwMFo2QzVUL0xEdEdiUVp2?=
- =?utf-8?B?L3FlZ3VlVGVLZ3diR3JyRjNUSXNaZDM0ajhwVEoxSkl3UnRaNkszRVpCaE9w?=
- =?utf-8?B?T3luSkpNdXBZVEorYnpvanh2bFlKNm9HejU0TDFvUFIwb05CWm1uQVk1MEd1?=
- =?utf-8?B?cjhCNlorK3RJaHpReVR4K0JvV1NwUTRTTDdqVnNUNFBneEVGaW41RUNhRXA0?=
- =?utf-8?B?b3dDRGpWc08ybVhRWjNZQnVPVFM2SCtOU09QcEhNeko5OGlCbkY1d0V3VjhD?=
- =?utf-8?B?SWRXR1NFM0dELzVwdXNzU0UvdTl3OXZlQmtBSmxwTTdLSXBGT0hzUjg5YWJ2?=
- =?utf-8?B?cGo3RFhndHhpYmlOWDRRKzI3Zml2M3F1anNicmZpajZXclg5eW1EMlhiRlVv?=
- =?utf-8?B?RTR3aFpKQnIwM1lDdVhselBTQlF5ZE9xMDltTFhxcVozalMxVzlxTldnbjgw?=
- =?utf-8?B?Y3Rzc2NnTTFtYzlLc0Y5UnZVa0FqQ3RBOSt2cUg3L2FjcnNnaVcrQTM5TmxW?=
- =?utf-8?B?cEJudDVSelpYSk4xNmw4YUdtNDBWWnZhenBCNVgyaTdHMlhKMkNPMWpKellW?=
- =?utf-8?B?UUMwTFFiTEJiRDFDdHFvemxpR1JTdXN3a21BUGNWbm1hUjVlaExNdHQvd1FI?=
- =?utf-8?B?UkdjNW5vZnpUMC9PSlhkWDZiUk8zdi8wQ0Y0NEFBbFFMT3JWYlppcTBDaUFT?=
- =?utf-8?B?Ui9wbnVuODBSc2hLR1lEZW9CK2tZakNUL2c3WW5wK2FPbk5pYjRwRThTY01p?=
- =?utf-8?B?VmQwTDNYa0lrcjhKWnBxS3NmcGtvT1U0dlc0N2dENEluQ2dacXI0bDVKZExX?=
- =?utf-8?B?dGZuUW5xQzJLZWZLMng4SU1HUkNIVHR0dzI2eTFBYk1XZzAvSWc4ZzhVVkdl?=
- =?utf-8?B?dFE9PQ==?=
-X-OriginatorOrg: cherry.de
-X-MS-Exchange-CrossTenant-Network-Message-Id: d8f44504-703a-41bb-f489-08dcf451f469
-X-MS-Exchange-CrossTenant-AuthSource: AS8PR04MB8897.eurprd04.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 17:33:21.1922
- (UTC)
-X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
-X-MS-Exchange-CrossTenant-Id: 5e0e1b52-21b5-4e7b-83bb-514ec460677e
-X-MS-Exchange-CrossTenant-MailboxType: HOSTED
-X-MS-Exchange-CrossTenant-UserPrincipalName: brRe2XcAWqrdKnWYa9aAB4AvcVlBmBLLLKORDRujUmUFEUzT127r6JZtH6IWQVGT8TT56QqgSlxq4HXQwp+JaLzY4M6Zkk8UVgbcRYLPoSY=
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PA4PR04MB7838
+Date: Thu, 24 Oct 2024 18:33:31 +0100
+From: "Jiaxun Yang" <jiaxun.yang@flygoat.com>
+To: "Peter Cai" <peter@typeblog.net>,
+ "James Bottomley" <James.Bottomley@hansenpartnership.com>,
+ "Serge Semin" <fancer.lancer@gmail.com>, "Jon Mason" <jdmason@kudzu.us>,
+ "Dave Jiang" <dave.jiang@intel.com>, "Allen Hubbe" <allenbh@gmail.com>,
+ ntb@lists.linux.dev, "Andy Shevchenko" <andy@kernel.org>,
+ "Andy Shevchenko" <andriy.shevchenko@linux.intel.com>,
+ "Kory Maincent" <kory.maincent@bootlin.com>,
+ "Cai Huoqing" <cai.huoqing@linux.dev>, dmaengine@vger.kernel.org,
+ "Mark Brown" <broonie@kernel.org>, linux-spi@vger.kernel.org,
+ "Damien Le Moal" <dlemoal@kernel.org>, linux-ide@vger.kernel.org,
+ "paulburton@kernel.org" <paulburton@kernel.org>,
+ "Thomas Bogendoerfer" <tsbogend@alpha.franken.de>,
+ "Arnd Bergmann" <arnd@arndb.de>,
+ "linux-mips@vger.kernel.org" <linux-mips@vger.kernel.org>,
+ "Bjorn Helgaas" <bhelgaas@google.com>,
+ "Manivannan Sadhasivam" <manivannan.sadhasivam@linaro.org>,
+ "Yoshihiro Shimoda" <yoshihiro.shimoda.uh@renesas.com>,
+ linux-pci <linux-pci@vger.kernel.org>,
+ "David S . Miller" <davem@davemloft.net>,
+ "Jakub Kicinski" <kuba@kernel.org>, "Paolo Abeni" <pabeni@redhat.com>,
+ "Andrew Lunn" <andrew@lunn.ch>, "Russell King" <linux@armlinux.org.uk>,
+ "Vladimir Oltean" <olteanv@gmail.com>,
+ "Kelvin Cheung" <keguang.zhang@gmail.com>,
+ "Yanteng Si" <siyanteng@loongson.cn>, netdev@vger.kernel.org,
+ "Rob Herring" <robh@kernel.org>, "Krzysztof Kozlowski" <krzk@kernel.org>,
+ "Guenter Roeck" <linux@roeck-us.net>, linux-hwmon@vger.kernel.org,
+ "Borislav Petkov" <bp@alien8.de>, linux-edac@vger.kernel.org,
+ "Greg Kroah-Hartman" <gregkh@linuxfoundation.org>,
+ linux-serial@vger.kernel.org
+Cc: "Andrew Halaney" <ajhalaney@gmail.com>, "Nikita Travkin" <nikita@trvn.ru>,
+ "Ivan Kokshaysky" <ink@jurassic.park.msu.ru>,
+ "Alexander Shiyan" <shc_work@mail.ru>, "Dmitry Kozlov" <xeb@mail.ru>,
+ "Sergey Shtylyov" <s.shtylyov@omp.ru>,
+ "Evgeniy Dushistov" <dushistov@mail.ru>,
+ "Geert Uytterhoeven" <geert@linux-m68k.org>,
+ "Sergio Paracuellos" <sergio.paracuellos@gmail.com>,
+ "Nikita Shubin" <nikita.shubin@maquefel.me>,
+ linux-renesas-soc@vger.kernel.org, linux-kernel@vger.kernel.org,
+ "Kexy Biscuit" <kexybiscuit@aosc.io>, jeffbai@aosc.io,
+ "Linus Torvalds" <torvalds@linux-foundation.org>
+Message-Id: <88bd4b6e-d744-4f50-a3ab-34433bbd0ad9@app.fastmail.com>
+In-Reply-To: <6beb4070-1946-4387-bd0e-34608a76b19e@typeblog.net>
+References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj>
+ <e7d548a7fc835f9f3c9cb2e5ed97dfdfa164813f.camel@HansenPartnership.com>
+ <6beb4070-1946-4387-bd0e-34608a76b19e@typeblog.net>
+Subject: Re: linux: Goodbye from a Linux community volunteer
+Content-Type: text/plain; charset=utf-8
+Content-Transfer-Encoding: quoted-printable
 
-Hi Heiko,
 
-On 10/24/24 5:14 PM, Heiko Stuebner wrote:
-> From: Heiko Stuebner <heiko.stuebner@cherry.de>
-> 
-> The jaguar has an hdmi output port, which is connected
-> to the hdmi0 controller of the rk3588.
-> 
-> Add the necessary plumbing to enable it using the recently merged
-> hdmi-qp controller.
-> 
-> Signed-off-by: Heiko Stuebner <heiko.stuebner@cherry.de>
 
-I have this Chinese portable HDMI display[1] which doesn't print 
-anything at boot but works with modetest. Same behavior can be observed 
-on downstream, maybe we can get some people interested in debugging this 
-now that it also impacts upstream :)
+=E5=9C=A82024=E5=B9=B410=E6=9C=8824=E6=97=A5=E5=8D=81=E6=9C=88 =E4=B8=8B=
+=E5=8D=885:30=EF=BC=8CPeter Cai=E5=86=99=E9=81=93=EF=BC=9A
+> Hi James,
+>
+> Thanks for your clarification. This sort of non-provocative=20
+> clarifications of the regulations you need to comply to has always bee=
+n=20
+> what the community wants to see. _This_ should have been the first=20
+> official statement when anyone raised the concern, instead of Greg's=20
+> attempt to "defuse" the situation over private correspondence, or Linu=
+s=20
+> Torvald's outright defamation and accusing anyone who dares to disagre=
+e=20
+> of being a "Russian troll". This is not even to mention the _complete=20
+> ignorance_ and arrogance shown by his statement on what sending a reve=
+rt=20
+> patch means.
+>
+> With sanctions in place, there is no reasonable person who will demand=20
+> the LF or the Linux Kernel maintainers to do otherwise. However, as=20
+> someone who does rely on Linux for daily work, and as someone who has=20
+> contributed to the Linux project and its community, I think seeing the=20
+> following should be the minimum:
+>
+> 1. Linus Torvalds (+Cc) send an apology letter to **everyone** who he=20
+> accused of being a Russian troll;
+> 2. Linus Torvalds need to **unconditionally retract** his personal=20
+> attack on Kexy Biscuit, the person who sent the revert patch in protes=
+t=20
+> (+Cc), and acknowledge that people who work with AOSC.io aren't=20
+> "state-sponsored paid actors";
+> 3. This type of statement should be included somewhere public as soon =
+as=20
+> practically possible should sanction compliance affect kernel=20
+> development again in the future;
+> 4. No personal attacks should be allowed based on tinfoil-hat reasonin=
+g.
 
-With a decent, FHD, monitor everything is fine so:
+I agree those actions and IMHO this should be addressed under Linux's
+Code of Conduct enforcement [1] framework.
 
-Tested-by: Quentin Schulz <quentin.schulz@cherry.de>
-Reviewed-by: Quentin Schulz <quentin.schulz@cherry.de>
+I also look forward to a formal investigation report on the entire event.
+It may eventually result in an overhaul of our governance model.
 
-Thanks!
-Quentin
+[1]: https://docs.kernel.org/process/code-of-conduct.html
 
-[1] https://www.amazon.de/dp/B0CKYR6FN5
+Thanks
+>
+> Thanks,
+> Peter.
+[...]
+--=20
+- Jiaxun
 
