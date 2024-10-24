@@ -1,105 +1,80 @@
-Return-Path: <linux-kernel+bounces-379158-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379159-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id DC5929ADAD1
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:15:43 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 328C29ADAD3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:19:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9CEEF283233
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:15:42 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 0BB96B21FB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 04:19:21 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A3249167DAC;
-	Thu, 24 Oct 2024 04:15:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B9943166302;
+	Thu, 24 Oct 2024 04:19:15 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="uY9yxN+f"
-Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
+	dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b="mRzO8jJg"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A82EC15099D;
-	Thu, 24 Oct 2024 04:15:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 14BE31E51D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:19:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729743335; cv=none; b=qIr9ufmyd8vcKBV6pMDu8Gp0FXCdhwQUsZGNCYx2b4U41KQNFnyMZhfn+MgHFXw5VDBhb8RX+kH8eyMl3iRGkeZfB5PWY7fyNHS+hBUmEcLDp9pQRCmLWhk/fnZJqDSlOQNFstPw+rofDFRM+JT0emFqMwHGwMDByg6+NAGUYTs=
+	t=1729743555; cv=none; b=sE6PRqI5jGcm2HapsRXzK7e71wb+B7K1Ot+gc04U172jJm/7zex3ZytRaWImUF3+PRcx+KYPuepc3wqhFv/IdnuD2NWLivhoVUR7NxpwaN3SlHtZiZWqh8ZNrcfpcNdkaMb8oHTR7rm5NnmilVVgh5pVhBY0yjlVPQPmHzeE1Sc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729743335; c=relaxed/simple;
-	bh=FA9HwSO3ejl4RGluV6Emz8Dq/LYrny4Jzjq6BWffdZg=;
-	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=VTBY7ZE+HM7Gtuy8Bvn4aBB21/243/bLM3DeqbEks9DNYD2KaatdqlYepls041mS7Jsb8oT9xgRJ7AtEkTYEClNOxcwNW5NZ7eogAGkhgyStm3HLkk0YT4NAkCaqHUj5JYjhNOi6m/oX8uP8L7m9caMm8hWs+PsENcJU2V1IrSM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=uY9yxN+f; arc=none smtp.client-ip=150.107.74.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
-	s=201702; t=1729743328;
-	bh=4J3vDMVgrMEliZzupCQHWOty1ue4L46Pht41KMTpiWI=;
-	h=Date:From:To:Cc:Subject:From;
-	b=uY9yxN+fCXGaz3HDxxjUdLMVnhM3k3ikA+G448eb15Su9TVnEx/l7QlW3jF440ypm
-	 mKDVLgAeWwEnflLqDrr0ncdeslwINcZKTSYU1r6yqCzIG0ujrBhK+L+OStZKCLiqrv
-	 fhzV/cQoxdCGdYcyHmmuE13HCHeaZGiDWvkRa4EmIRPegub3odMxjSar1/goIGWyNO
-	 Qt1VMXelrGgws5lmAqHKJ5xOTLV5TMpVWdVV1z/DMWyAS95nUZyeMFKfvcU2lBYoHy
-	 Bf2if+QgqUQx6kraa+oIM9dWaEbUHgx5nScjqojjeV7VleWvfF3UxhpUHt/mlqdoVo
-	 X/ciw49cheaFg==
-Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
-	(Client did not present a certificate)
-	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XYsyl1blcz4w2R;
-	Thu, 24 Oct 2024 15:15:27 +1100 (AEDT)
-Date: Thu, 24 Oct 2024 15:15:26 +1100
-From: Stephen Rothwell <sfr@canb.auug.org.au>
-To: "Michael S. Tsirkin" <mst@redhat.com>, David Miller
- <davem@davemloft.net>, Jakub Kicinski <kuba@kernel.org>, Paolo Abeni
- <pabeni@redhat.com>
-Cc: Networking <netdev@vger.kernel.org>, Linux Kernel Mailing List
- <linux-kernel@vger.kernel.org>, Linux Next Mailing List
- <linux-next@vger.kernel.org>
-Subject: linux-next: duplicate patch in the vhost tree
-Message-ID: <20241024151526.162b4c4f@canb.auug.org.au>
+	s=arc-20240116; t=1729743555; c=relaxed/simple;
+	bh=SlLgymg04WNk2mMQ/VjfjWhzIq5TbzTO6+60yVGdbm8=;
+	h=Date:From:To:Cc:Subject:Message-Id:In-Reply-To:References:
+	 Mime-Version:Content-Type; b=XPxtdVkHilT/0UeOx9CI3b4FkMAPH24IQ/UcIu6UlSwkCChoD5ev8xTaD2wLJzgRQ0z8eurvzACdHsl3n1YRy9X5Mu2uF6QPxKRkN3abX9GiRUTbaCnqFkwsKIejpAqp94HqUzrPZowyzmLLnLIPpDrljhNiFKFV42Yetn4LaKU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (1024-bit key) header.d=linux-foundation.org header.i=@linux-foundation.org header.b=mRzO8jJg; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 620A0C4CEC7;
+	Thu, 24 Oct 2024 04:19:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=linux-foundation.org;
+	s=korg; t=1729743553;
+	bh=SlLgymg04WNk2mMQ/VjfjWhzIq5TbzTO6+60yVGdbm8=;
+	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
+	b=mRzO8jJgpNUrYCQCwFrkSRnDGikopLTLPuHZG1wf6IIzqz6CQ3pDNrtRzDGf/ckQy
+	 /IbFnQUIv01jNzriUgROfoyZ+JJjvaWfQHwXOkRErTkFp+/FcQBf7WJY4X8HQ8ew9m
+	 fyfQwvGnwhTdKIytannI6EGWr67UHs5pFEJSFseQ=
+Date: Wed, 23 Oct 2024 21:19:12 -0700
+From: Andrew Morton <akpm@linux-foundation.org>
+To: Liad Peretz <liad.per@gmail.com>
+Cc: linux-kernel@vger.kernel.org, bhe@redhat.com, hbathini@linux.ibm.com,
+ yang.lee@linux.alibaba.com, david@redhat.com
+Subject: Re: [PATCH] Makefile: Remove unused filechk_cat
+Message-Id: <20241023211912.0c3d3e3b20af1f842ad42eba@linux-foundation.org>
+In-Reply-To: <20241023070611.67449-1-liad.per@gmail.com>
+References: <20241023070611.67449-1-liad.per@gmail.com>
+X-Mailer: Sylpheed 3.8.0beta1 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: multipart/signed; boundary="Sig_/LapE3Twm.6jL/s11E41e+GF";
- protocol="application/pgp-signature"; micalg=pgp-sha256
-
---Sig_/LapE3Twm.6jL/s11E41e+GF
+Mime-Version: 1.0
 Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 7bit
 
-Hi all,
+On Wed, 23 Oct 2024 10:06:11 +0300 Liad Peretz <liad.per@gmail.com> wrote:
 
-The following commit is also in the net tree as a different commit
-(but the same patch):
+> ...
+>
+> --- a/kernel/Makefile
+> +++ b/kernel/Makefile
+> @@ -146,8 +146,6 @@ targets += config_data config_data.gz
+>  $(obj)/config_data.gz: $(obj)/config_data FORCE
+>  	$(call if_changed,gzip)
+>  
+> -filechk_cat = cat $<
+> -
+>  $(obj)/config_data: $(KCONFIG_CONFIG) FORCE
+>  	$(call filechk,cat)
 
-  9d0596c68f32 ("virtio_net: fix integer overflow in stats")
+x86_64 allmodconfig:
 
-This is commit
-
-  d95d9a31aceb ("virtio_net: fix integer overflow in stats")
-
-in the net tree.
-
---=20
-Cheers,
-Stephen Rothwell
-
---Sig_/LapE3Twm.6jL/s11E41e+GF
-Content-Type: application/pgp-signature
-Content-Description: OpenPGP digital signature
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcZyd4ACgkQAVBC80lX
-0GzVZwf+JOE2Y8B5ANwZ4PebsXxr+YseynI7sHOUOLTX2dnWQbBVsmkHDebuGmzl
-EZGf5reNySreAPhFiHBl2aKLxj2pgKYLWzYWSmdvr5eJ5KmGecDnaErRsHQyrthc
-bgM6m36ABeGkRbibJzBuWKxCAsyUvU+VVp6lzzK72D8BmQMN6SUnYDVQjxYnn5B9
-UYUbyo1YstIOt9SaonaRoygcZq5smQxP11CW3hZF+V0YPUEgbe2z7dUfL/mAax62
-01nOL3QX15zpdDkzS/bouPo2sYQEvTxxoqNmdGymSXtxhDFU/gtLqsHOcYpaYSft
-dlAgjXGGyd7n1CXEn2hplxmbopB42g==
-=UTE0
------END PGP SIGNATURE-----
-
---Sig_/LapE3Twm.6jL/s11E41e+GF--
+no-print-directory -C objtool 
+  INSTALL libsubcmd_headers
+  CALL    scripts/checksyscalls.sh
+/bin/sh: 1: Syntax error: ";" unexpected
 
