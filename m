@@ -1,89 +1,80 @@
-Return-Path: <linux-kernel+bounces-380259-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380260-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 48FAF9AEB1C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:53:26 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id B8D1C9AEB1E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:54:11 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id B1DBFB22E4C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:53:23 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3CC9D1F23816
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:54:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7BD161F585C;
-	Thu, 24 Oct 2024 15:53:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 887AA1F4FCA;
+	Thu, 24 Oct 2024 15:54:04 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="VauM04US"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.12])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="GhWrqixf"
+Received: from mail-pg1-f173.google.com (mail-pg1-f173.google.com [209.85.215.173])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B2651DE4F7;
-	Thu, 24 Oct 2024 15:53:08 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.12
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 88A871D63E5
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:53:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.173
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729785191; cv=none; b=aU5DEDKmU9r+U6FZCP9TXYrDgMWPDH9/g7IDyWuZ5xOZZ7D9esS5es9rSBQ9gCX1idjeWYO8/5CYt58oUzlRyjJS7cLKwmsuI+0LKxdEosl8Ln78+AdwpbnNYeC1pB1FX2y+0mYIkqesx8j2c8F8V3d+mTBdnlN2hKfHZaIKJcg=
+	t=1729785243; cv=none; b=EfowQEu0CmlcLFpbclt3SPaTcY3mmcAcBReEBJ8ayeG6tZ6Nl0f5ZEInOA6sqIERwOSScNNKkS2alA4e4JO90YlXOE1UqkFqIojpLRZ4jMuCAUX2QcvqSiMO5fQLccVmbO/VgQQjN8mPWJtNWcXXmolMSyIiEWuNR3VAZaiTFfk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729785191; c=relaxed/simple;
-	bh=2qnd2i2UONcjZVkzIcTSxS7pJORJ7ofkM+P7wpTWR88=;
+	s=arc-20240116; t=1729785243; c=relaxed/simple;
+	bh=JYVTuWVAiy61FuLhGA33EwyaeaybXR+m1jriJEbPNsQ=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EHvi1gP+Wdj1LcgXIGTbg9H0FWxLc9kMHJZuSqn48MJqJ6aZbrf2AwdCVyujILo66pxyHmUa2M+jLQMPQv3JUG9NagKMUuOq7gcp0XXZzjX4BBtZ71n1/I5/jylv5vsKXhNdG9Pdx1sBeRgr7Jkhec2XrakCIDLKvOfPebuux6E=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=VauM04US; arc=none smtp.client-ip=192.198.163.12
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729785188; x=1761321188;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=2qnd2i2UONcjZVkzIcTSxS7pJORJ7ofkM+P7wpTWR88=;
-  b=VauM04USf7Z99vrrqkdTMPEI4kPPLEchHn/QNqjUB9HFnhhzQYX0XXPw
-   StSvx/ao8G1qlVZ0+uN6kEYTJtiBmiEkgbCrfLnReTOoFNPiPCrkHi8E3
-   CClyjsgK/R0udlJKSRH+tWebZXiRDU3jdFzApoGFfhuETp9XGvzT2Voeh
-   nWkqCP9K/eH+FtfY6lwV0+lxYFuYym96wLS3rUs/BujflDfu5JWLuh7+Q
-   ABL7P3HqEvQXtXm6c6Pn1gGlx+NHIpsh+Cw7cN5si6rmQHhZvYo7xpU8B
-   CPArfdEhnp90ceHjpDo+ZziJxf1Ccrp7hr3RTBgEm/zJKNM3AKQxwA0yn
-   w==;
-X-CSE-ConnectionGUID: /Dv/OAaeQ5qwOYERp5IUOw==
-X-CSE-MsgGUID: 4xro7paDRKWfxMARYBwH9g==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="33329777"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="33329777"
-Received: from fmviesa004.fm.intel.com ([10.60.135.144])
-  by fmvoesa106.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 08:53:08 -0700
-X-CSE-ConnectionGUID: tcjiEK13RmWtiqkxiu2aew==
-X-CSE-MsgGUID: VGYhRvXaRAeqcW9zowBLGg==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="85243352"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by fmviesa004.fm.intel.com with ESMTP; 24 Oct 2024 08:53:02 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t408y-000Wck-10;
-	Thu, 24 Oct 2024 15:53:00 +0000
-Date: Thu, 24 Oct 2024 23:52:38 +0800
-From: kernel test robot <lkp@intel.com>
-To: Daniel Machon <daniel.machon@microchip.com>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
-	andrew@lunn.ch, Lars Povlsen <lars.povlsen@microchip.com>,
-	Steen Hegelund <Steen.Hegelund@microchip.com>,
-	horatiu.vultur@microchip.com,
-	jensemil.schulzostergaard@microchip.com,
-	Parthiban.Veerasooran@microchip.com, Raju.Lakkaraju@microchip.com,
-	UNGLinuxDriver@microchip.com,
-	Richard Cochran <richardcochran@gmail.com>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>, jacob.e.keller@intel.com,
-	ast@fiberby.net, maxime.chevallier@bootlin.com
-Cc: oe-kbuild-all@lists.linux.dev, netdev@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
-	devicetree@vger.kernel.org
-Subject: Re: [PATCH net-next 06/15] net: lan969x: add match data for lan969x
-Message-ID: <202410242319.ShJiPqSp-lkp@intel.com>
-References: <20241021-sparx5-lan969x-switch-driver-2-v1-6-c8c49ef21e0f@microchip.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=GLUyphxcyfKJJky8SBKhX/KgWy/gJ6H0YCMGwzWZhJRbfuUY7B+cQyVnQjnjWKjQIoqb5t2/U+Idnl+eMEPVg+p6e/Qr0AlSOQbxi/LVZTxJw5MFpW+LeQ7oscLJSfl2eCLCwiFa3P2I1tK+joAM6I+gv95GS0UsiFaqCFkNyag=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=GhWrqixf; arc=none smtp.client-ip=209.85.215.173
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pg1-f173.google.com with SMTP id 41be03b00d2f7-7ea12e0dc7aso665892a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:53:59 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729785239; x=1730390039; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=woU+p18yHG4zlBLjCg/Fv0a08tbBn/4YkcuaH8csTak=;
+        b=GhWrqixfFR6OlYspqSStviF/h5BPL0fZjjHGFNv5lLWJzFbKvz3lApjht091xEQAAi
+         c5auhYBkV1EkiwjGnl5vD/0NQk2vP4W1NXxx5O5w19wzkXhrWJSQ11aLhx8xfulWuMd4
+         DEB5tn+YhZyNjDzcrqrh0c7kCl48DR56NXlM08T077lX36pCs9bab5/8Lj5WA6SJlhOL
+         kHdAhZ5lnvs2bWUkWoapXglFV7+wCMXi4PKlNJzEbrC5wN3lViHBdg4/vVF4NqMBCNey
+         bqw7pVZQE/Rxti1AhFEqlMjsg/Jm+pdv4lZbnuZB0Cl2QdRLpcDcw3IcHVfWpr0j0X0I
+         134Q==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729785239; x=1730390039;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=woU+p18yHG4zlBLjCg/Fv0a08tbBn/4YkcuaH8csTak=;
+        b=vIftLB05CBSlrAewzGcbBFCeaQVfmxWMFYZAJIChd8RA+ASfSp1LZawaCRcOm36f+2
+         aCDYU+imxksZj8m7VmcEEhnzVNbr13rGkMEONBoq28UF+u24SrnjQQhyQmfJN0gC1J6h
+         hZfnqhJ8R1wnvths704bIM5CBApWioqORizAhiqyOGhHXiuzYIisEpYkxbS97861sW0H
+         lstV09rJ6gECvDp6krsuuiTjbX2IdzQWTGppM/8MZvt/KNwo1Eh88N77Jax0cMYLIW1n
+         9EM790rCSGCGByVTXA9tQb/ck5zrvDj2N7LtI5EwFAlvh6i4xmNSZThu4MveuHc0APiK
+         dC6w==
+X-Forwarded-Encrypted: i=1; AJvYcCXrtyKJkO8jpbkc8TE38kdIolrVdm12GhnJ+mnEQiMLl7bf53Yz/SUvKmsln7fNKKETZptZaNnhjrf9Tps=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxY0fhMOS4WB6ruqu3Y75cmmj11ncoODdXys1UJ+TzRLa6lab0v
+	CsOuw0VP+AadpSP+StB9OxpoAk4LxE0oYEHGsTl+zoHQX2Ag6PXe+S8oXIBq7JA=
+X-Google-Smtp-Source: AGHT+IH8MesR6UcCPyhAz6PKmAPzOuj56RQ5mkxszOPxtRwtK9N+nOGQv1gakC43OJ6NuGnldb0/vg==
+X-Received: by 2002:a05:6a21:70c8:b0:1d8:b81c:4e1a with SMTP id adf61e73a8af0-1d978bd634amr7809730637.44.1729785238540;
+        Thu, 24 Oct 2024 08:53:58 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:7c96:e131:bee8:c8a4])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132feb9sm8143096b3a.67.2024.10.24.08.53.56
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 08:53:57 -0700 (PDT)
+Date: Thu, 24 Oct 2024 09:53:54 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 3/7] Documentation: remoteproc: add more information
+Message-ID: <ZxptkuoohxeWKaeD@p14s>
+References: <20241023053357.5261-1-yesanishhere@gmail.com>
+ <20241023053357.5261-4-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -92,191 +83,643 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241021-sparx5-lan969x-switch-driver-2-v1-6-c8c49ef21e0f@microchip.com>
+In-Reply-To: <20241023053357.5261-4-yesanishhere@gmail.com>
 
-Hi Daniel,
+On Tue, Oct 22, 2024 at 10:33:53PM -0700, anish kumar wrote:
+> Added following changes:
+> 1. Components provided by remoteproc framework.
+> 2. Remoteproc driver responsibilities.
+> 3. Remoteproc framework responsibilities.
+> 4. Better explanation of how to ask for resources
+> from the framework by the remote processor.
+> 
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  .../driver-api/remoteproc/remoteproc.rst      | 596 +++++++-----------
+>  1 file changed, 243 insertions(+), 353 deletions(-)
+> 
+> diff --git a/Documentation/driver-api/remoteproc/remoteproc.rst b/Documentation/driver-api/remoteproc/remoteproc.rst
+> index 9cccd3dd6a4b..7ca545eea153 100644
+> --- a/Documentation/driver-api/remoteproc/remoteproc.rst
+> +++ b/Documentation/driver-api/remoteproc/remoteproc.rst
+> @@ -1,359 +1,249 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+>  ==========================
+>  Remote Processor Framework
+>  ==========================
+>  
+> -Introduction
+> -============
+> -
+> -Modern SoCs typically have heterogeneous remote processor devices in asymmetric
+> -multiprocessing (AMP) configurations, which may be running different instances
+> -of operating system, whether it's Linux or any other flavor of real-time OS.
+> -
+> -OMAP4, for example, has dual Cortex-A9, dual Cortex-M3 and a C64x+ DSP.
+> -In a typical configuration, the dual cortex-A9 is running Linux in a SMP
+> -configuration, and each of the other three cores (two M3 cores and a DSP)
+> -is running its own instance of RTOS in an AMP configuration.
+> -
+> -The remoteproc framework allows different platforms/architectures to
+> -control (power on, load firmware, power off) those remote processors while
+> -abstracting the hardware differences, so the entire driver doesn't need to be
+> -duplicated. In addition, this framework also adds rpmsg virtio devices
+> -for remote processors that supports this kind of communication. This way,
+> -platform-specific remoteproc drivers only need to provide a few low-level
+> -handlers, and then all rpmsg drivers will then just work
+> -(for more information about the virtio-based rpmsg bus and its drivers,
+> -please read Documentation/staging/rpmsg.rst).
+> -Registration of other types of virtio devices is now also possible. Firmwares
+> -just need to publish what kind of virtio devices do they support, and then
+> -remoteproc will add those devices. This makes it possible to reuse the
+> -existing virtio drivers with remote processor backends at a minimal development
+> -cost.
+> -
+> -User API
+> -========
+> -
+> -::
+> -
+> -  int rproc_boot(struct rproc *rproc)
+> -
+> -Boot a remote processor (i.e. load its firmware, power it on, ...).
+> -
+> -If the remote processor is already powered on, this function immediately
+> -returns (successfully).
+> -
+> -Returns 0 on success, and an appropriate error value otherwise.
+> -Note: to use this function you should already have a valid rproc
+> -handle. There are several ways to achieve that cleanly (devres, pdata,
+> -the way remoteproc_rpmsg.c does this, or, if this becomes prevalent, we
+> -might also consider using dev_archdata for this).
+> -
+> -::
+> -
+> -  void rproc_shutdown(struct rproc *rproc)
+> -
+> -Power off a remote processor (previously booted with rproc_boot()).
+> -In case @rproc is still being used by an additional user(s), then
+> -this function will just decrement the power refcount and exit,
+> -without really powering off the device.
+> -
+> -Every call to rproc_boot() must (eventually) be accompanied by a call
+> -to rproc_shutdown(). Calling rproc_shutdown() redundantly is a bug.
+> -
+> -.. note::
+> -
+> -  we're not decrementing the rproc's refcount, only the power refcount.
+> -  which means that the @rproc handle stays valid even after
+> -  rproc_shutdown() returns, and users can still use it with a subsequent
+> -  rproc_boot(), if needed.
+> -
+> -::
+> -
+> -  struct rproc *rproc_get_by_phandle(phandle phandle)
+> -
+> -Find an rproc handle using a device tree phandle. Returns the rproc
+> -handle on success, and NULL on failure. This function increments
+> -the remote processor's refcount, so always use rproc_put() to
+> -decrement it back once rproc isn't needed anymore.
+> -
+> -Typical usage
+> -=============
+> -
+> -::
+> -
+> -  #include <linux/remoteproc.h>
+> -
+> -  /* in case we were given a valid 'rproc' handle */
+> -  int dummy_rproc_example(struct rproc *my_rproc)
+> -  {
+> -	int ret;
+> -
+> -	/* let's power on and boot our remote processor */
+> -	ret = rproc_boot(my_rproc);
+> -	if (ret) {
+> -		/*
+> -		 * something went wrong. handle it and leave.
+> -		 */
+> -	}
+> -
+> -	/*
+> -	 * our remote processor is now powered on... give it some work
+> -	 */
+> -
+> -	/* let's shut it down now */
+> -	rproc_shutdown(my_rproc);
+> -  }
+> -
+> -API for implementors
+> -====================
+> -
+> -::
+> -
+> -  struct rproc *rproc_alloc(struct device *dev, const char *name,
+> -				const struct rproc_ops *ops,
+> -				const char *firmware, int len)
+> -
+> -Allocate a new remote processor handle, but don't register
+> -it yet. Required parameters are the underlying device, the
+> -name of this remote processor, platform-specific ops handlers,
+> -the name of the firmware to boot this rproc with, and the
+> -length of private data needed by the allocating rproc driver (in bytes).
+> -
+> -This function should be used by rproc implementations during
+> -initialization of the remote processor.
+> -
+> -After creating an rproc handle using this function, and when ready,
+> -implementations should then call rproc_add() to complete
+> -the registration of the remote processor.
+> -
+> -On success, the new rproc is returned, and on failure, NULL.
+> -
+> -.. note::
+> -
+> -  **never** directly deallocate @rproc, even if it was not registered
+> -  yet. Instead, when you need to unroll rproc_alloc(), use rproc_free().
+> -
+> -::
+> -
+> -  void rproc_free(struct rproc *rproc)
+> -
+> -Free an rproc handle that was allocated by rproc_alloc.
+> -
+> -This function essentially unrolls rproc_alloc(), by decrementing the
+> -rproc's refcount. It doesn't directly free rproc; that would happen
+> -only if there are no other references to rproc and its refcount now
+> -dropped to zero.
+> -
+> -::
+> -
+> -  int rproc_add(struct rproc *rproc)
+> -
+> -Register @rproc with the remoteproc framework, after it has been
+> -allocated with rproc_alloc().
+> -
+> -This is called by the platform-specific rproc implementation, whenever
+> -a new remote processor device is probed.
+> -
+> -Returns 0 on success and an appropriate error code otherwise.
+> -Note: this function initiates an asynchronous firmware loading
+> -context, which will look for virtio devices supported by the rproc's
+> -firmware.
+> -
+> -If found, those virtio devices will be created and added, so as a result
+> -of registering this remote processor, additional virtio drivers might get
+> -probed.
+> -
+> -::
+> -
+> -  int rproc_del(struct rproc *rproc)
+> -
+> -Unroll rproc_add().
+> -
+> -This function should be called when the platform specific rproc
+> -implementation decides to remove the rproc device. it should
+> -_only_ be called if a previous invocation of rproc_add()
+> -has completed successfully.
+> -
+> -After rproc_del() returns, @rproc is still valid, and its
+> -last refcount should be decremented by calling rproc_free().
+> -
+> -Returns 0 on success and -EINVAL if @rproc isn't valid.
+> -
+> -::
+> -
+> -  void rproc_report_crash(struct rproc *rproc, enum rproc_crash_type type)
+> -
+> -Report a crash in a remoteproc
+> -
+> -This function must be called every time a crash is detected by the
+> -platform specific rproc implementation. This should not be called from a
+> -non-remoteproc driver. This function can be called from atomic/interrupt
+> -context.
+> -
+> -Implementation callbacks
+> +.. Contents:
+> +
+> +   1.  Introduction
+> +   2.  Remoteproc framework responsibilities
+> +   3.  Remoteproc driver responsibilities
+> +   4.  Virtio and rpmsg
+> +
+> +1. Introduction
+> +===============
+> +
+> +Modern System on Chips (SoCs) typically integrate heterogeneous remote
+> +processor devices in asymmetric multiprocessing (AMP) configurations.
+> +These processors may run different operating systems, such as Linux and
+> +various real-time operating systems (RTOS).
 
-kernel test robot noticed the following build errors:
+You are moving things around _and_ making modifications to the text in the same
+patch, something I specifically asked not to do.  Moreover, the above conveys
+exactly the same information as found in [1] but using different words.  I
+am in favour of enhancing documentation but not creating unneeded churn.
 
-[auto build test ERROR on 30d9d8f6a2d7e44a9f91737dd409dbc87ac6f6b7]
+I found several instances of the same rewording pattern in the sections below.
+As such I will not look at the other patches nor move forward with this set. 
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Daniel-Machon/net-sparx5-add-support-for-lan969x-SKU-s-and-core-clock/20241021-220557
-base:   30d9d8f6a2d7e44a9f91737dd409dbc87ac6f6b7
-patch link:    https://lore.kernel.org/r/20241021-sparx5-lan969x-switch-driver-2-v1-6-c8c49ef21e0f%40microchip.com
-patch subject: [PATCH net-next 06/15] net: lan969x: add match data for lan969x
-config: m68k-randconfig-r121-20241024 (https://download.01.org/0day-ci/archive/20241024/202410242319.ShJiPqSp-lkp@intel.com/config)
-compiler: m68k-linux-gcc (GCC) 14.1.0
-reproduce: (https://download.01.org/0day-ci/archive/20241024/202410242319.ShJiPqSp-lkp@intel.com/reproduce)
+Thanks,
+Mathieu
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410242319.ShJiPqSp-lkp@intel.com/
+[1]. https://elixir.bootlin.com/linux/v6.12-rc4/source/Documentation/staging/remoteproc.rst
 
-All errors (new ones prefixed by >>):
-
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_init':
->> sparx5_vcap_impl.c:(.text+0x4632): undefined reference to `vcap_port_debugfs'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_destroy':
->> sparx5_vcap_impl.c:(.text+0x4d24): undefined reference to `vcap_del_rules'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_es2_get_port_ipv4_keysets':
->> sparx5_vcap_impl.c:(.text+0x38): undefined reference to `vcap_keyset_list_add'
->> m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x50): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x68): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x80): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x98): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_ingress_add_default_fields':
->> sparx5_vcap_impl.c:(.text+0x114): undefined reference to `vcap_lookup_keyfield'
->> m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x142): undefined reference to `vcap_rule_add_key_u32'
->> m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x1a6): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x1d2): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x21e): undefined reference to `vcap_rule_add_key_bit'
->> m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x268): undefined reference to `vcap_rule_add_key_u72'
->> m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x288): undefined reference to `vcap_keyset_name'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_add_default_fields':
->> sparx5_vcap_impl.c:(.text+0x31e): undefined reference to `vcap_rule_add_key_u32'
->> m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x358): undefined reference to `vcap_lookup_keyfield'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x368): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x3b6): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0x3d4): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_es0_get_port_keysets.isra.0':
-   sparx5_vcap_impl.c:(.text+0x704): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_es2_get_port_keysets.isra.0':
-   sparx5_vcap_impl.c:(.text+0xadc): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0xb3c): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0xb98): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: sparx5_vcap_impl.c:(.text+0xbc2): undefined reference to `vcap_keyset_list_add'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o:sparx5_vcap_impl.c:(.text+0xc42): more undefined references to `vcap_keyset_list_add' follow
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_validate_keyset':
->> sparx5_vcap_impl.c:(.text+0x214e): undefined reference to `vcap_keyset_name'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_vcap_impl.o: in function `sparx5_vcap_init':
->> sparx5_vcap_impl.c:(.text+0x464a): undefined reference to `vcap_debugfs'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_select_protocol_keyset':
->> sparx5_tc_flower.c:(.text+0x2b8): undefined reference to `vcap_keyfieldset'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_replace':
->> sparx5_tc_flower.c:(.text+0x1c58): undefined reference to `vcap_rule_add_action_u32'
->> m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1ffc): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_handler_basic_usage':
->> sparx5_tc_flower.c:(.text+0x5a): undefined reference to `vcap_rule_add_key_u32'
->> m68k-linux-ld: sparx5_tc_flower.c:(.text+0xd2): undefined reference to `vcap_rule_add_key_u32'
->> m68k-linux-ld: sparx5_tc_flower.c:(.text+0x11e): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x168): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x190): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1b4): undefined reference to `vcap_rule_add_key_bit'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_select_protocol_keyset':
->> sparx5_tc_flower.c:(.text+0x264): undefined reference to `vcap_rule_find_keysets'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x3ca): undefined reference to `vcap_set_rule_set_keyset'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x402): undefined reference to `vcap_rule_mod_key_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_handler_vlan_usage':
-   sparx5_tc_flower.c:(.text+0x476): undefined reference to `vcap_tc_flower_handler_vlan_usage'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x4ec): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x50e): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_handler_control_usage':
-   sparx5_tc_flower.c:(.text+0x5a2): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_handler_cvlan_usage':
-   sparx5_tc_flower.c:(.text+0x842): undefined reference to `vcap_tc_flower_handler_cvlan_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_destroy.isra.0':
-   sparx5_tc_flower.c:(.text+0x8a6): undefined reference to `vcap_lookup_rule_by_cookie'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x8c0): undefined reference to `vcap_get_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x8da): undefined reference to `vcap_find_actionfield'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x94c): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x95a): undefined reference to `vcap_del_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xa4a): undefined reference to `vcap_del_rule'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_simplify_rule.isra.0':
-   sparx5_tc_flower.c:(.text+0xace): undefined reference to `vcap_rule_rem_key'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xb0e): undefined reference to `vcap_rule_rem_key'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xb2a): undefined reference to `vcap_rule_rem_key'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xb68): undefined reference to `vcap_rule_rem_key'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_action_vlan_modify.isra.0':
-   sparx5_tc_flower.c:(.text+0xbb8): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_add_rule_link.isra.0':
-   sparx5_tc_flower.c:(.text+0xce2): undefined reference to `vcap_find_admin'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xcfa): undefined reference to `vcap_chain_offset'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xd5a): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xd74): undefined reference to `vcap_rule_add_action_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xd92): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xdc8): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_set_actionset.isra.0':
-   sparx5_tc_flower.c:(.text+0xe4e): undefined reference to `vcap_set_rule_set_actionset'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_add_rule_counter.isra.0':
-   sparx5_tc_flower.c:(.text+0xeba): undefined reference to `vcap_rule_mod_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xed2): undefined reference to `vcap_rule_set_counter_id'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xef6): undefined reference to `vcap_rule_mod_action_u32'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_add_rule_copy':
-   sparx5_tc_flower.c:(.text+0xf64): undefined reference to `vcap_copy_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xf96): undefined reference to `vcap_filter_rule_keys'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xfa2): undefined reference to `vcap_set_rule_set_keyset'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xfc8): undefined reference to `vcap_rule_mod_key_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xfd4): undefined reference to `vcap_set_rule_set_actionset'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0xfe6): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1016): undefined reference to `vcap_val_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1026): undefined reference to `vcap_add_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1054): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x106a): undefined reference to `vcap_keyset_name'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1090): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x10bc): undefined reference to `vcap_set_tc_exterr'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x10c8): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_action_check.isra.0':
-   sparx5_tc_flower.c:(.text+0x122c): undefined reference to `vcap_is_last_chain'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x12fc): undefined reference to `vcap_is_next_lookup'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_template_create':
-   sparx5_tc_flower.c:(.text+0x14f0): undefined reference to `vcap_admin_rule_count'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1570): undefined reference to `vcap_alloc_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x15cc): undefined reference to `vcap_rule_find_keysets'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x15e4): undefined reference to `vcap_select_min_rule_keyset'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1648): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x169c): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1736): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1766): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower_replace':
-   sparx5_tc_flower.c:(.text+0x183c): undefined reference to `vcap_alloc_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1890): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x18da): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x18ec): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1990): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x19a8): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1ad8): undefined reference to `vcap_rule_add_action_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1af4): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1b56): undefined reference to `vcap_val_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1b68): undefined reference to `vcap_add_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1bb8): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1bf2): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1cbc): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1cf6): undefined reference to `vcap_rule_add_action_u72'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1ee4): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1f32): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1f94): undefined reference to `vcap_rule_add_key_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1fcc): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x1fea): undefined reference to `vcap_rule_add_action_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x203c): undefined reference to `vcap_rule_add_action_bit'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x2054): undefined reference to `vcap_rule_add_action_u32'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x2092): undefined reference to `vcap_set_rule_set_keyset'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x2110): undefined reference to `vcap_set_tc_exterr'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x211a): undefined reference to `vcap_free_rule'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o: in function `sparx5_tc_flower':
-   sparx5_tc_flower.c:(.text+0x224e): undefined reference to `vcap_find_admin'
-   m68k-linux-ld: sparx5_tc_flower.c:(.text+0x2378): undefined reference to `vcap_get_rule_count_by_cookie'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x986): undefined reference to `vcap_tc_flower_handler_ipv4_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x98a): undefined reference to `vcap_tc_flower_handler_ipv6_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x98e): undefined reference to `vcap_tc_flower_handler_portnum_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x99a): undefined reference to `vcap_tc_flower_handler_ethaddr_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x9a2): undefined reference to `vcap_tc_flower_handler_arp_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x9ce): undefined reference to `vcap_tc_flower_handler_tcp_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_flower.o:(.rodata+0x9d2): undefined reference to `vcap_tc_flower_handler_ip_usage'
-   m68k-linux-ld: drivers/net/ethernet/microchip/sparx5/sparx5_tc_matchall.o: in function `sparx5_tc_matchall_replace':
-   sparx5_tc_matchall.c:(.text+0x13e): undefined reference to `vcap_enable_lookups'
-
-Kconfig warnings: (for reference only)
-   WARNING: unmet direct dependencies detected for SPARX5_SWITCH
-   Depends on [n]: NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y] && NET_SWITCHDEV [=y] && HAS_IOMEM [=y] && OF [=n] && (ARCH_SPARX5 || COMPILE_TEST [=y]) && PTP_1588_CLOCK_OPTIONAL [=y] && (BRIDGE [=y] || BRIDGE [=y]=n [=n])
-   Selected by [y]:
-   - LAN969X_SWITCH [=y] && NETDEVICES [=y] && ETHERNET [=y] && NET_VENDOR_MICROCHIP [=y]
-   WARNING: unmet direct dependencies detected for GET_FREE_REGION
-   Depends on [n]: SPARSEMEM [=n]
-   Selected by [y]:
-   - RESOURCE_KUNIT_TEST [=y] && RUNTIME_TESTING_MENU [=y] && KUNIT [=y]
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +
+> +For example, the OMAP4 platform features dual Cortex-A9 cores, dual
+> +Cortex-M3 cores, and a C64x+ DSP. In a standard setup, the Cortex-A9
+> +cores execute Linux in a symmetric multiprocessing (SMP) configuration,
+> +while the M3 cores and DSP run independent instances of an RTOS.
+> +
+> +The remoteproc framework allows various platforms and architectures to
+> +manage remote processors, including operations such as powering on,
+> +loading firmware, and powering off. This framework abstracts hardware
+> +differences, promoting code reuse and minimizing duplication. It also
+> +supports rpmsg virtio devices for remote processors that utilize this
+> +communication method. Consequently, platform-specific remoteproc drivers
+> +need only implement a few low-level handlers, enabling seamless operation
+> +of all rpmsg drivers. (For more details about the virtio-based rpmsg
+> +bus and its drivers, refer to rpmsg documentation.)
+> +
+> +Additionally, the framework allows for the registration of various
+> +virtio devices. Firmware can publish the types of virtio devices it
+> +supports, facilitating their addition to the remoteproc framework. This
+> +flexibility enables the reuse of existing virtio drivers with remote
+> +processor backends at minimal development cost.
+> +
+> +The primary purpose of the remoteproc framework is to download firmware
+> +for remote processors and manage their lifecycle. The framework consists
+> +of several key components:
+> +
+> +- **Character Driver**: Provides userspace access to control the remote
+> +  processor.
+> +- **ELF Utility**: Offers functions for handling ELF files and managing
+> +  resources requested by the remote processor.
+> +- **Remoteproc Core**: Manages firmware downloads and recovery actions
+> +  in case of a remote processor crash.
+> +- **Coredump**: Provides facilities for coredumping and tracing from
+> +  the remote processor in the event of a crash.
+> +- **Userspace Interaction**: Uses sysfs and debugfs to manage the
+> +  lifecycle and status of the remote processor.
+> +- **Virtio Support**: Facilitates interaction with the virtio and
+> +  rpmsg bus.
+> +
+> +From here on, references to "framework" denote the remoteproc
+> +framework, and "driver" refers to the remoteproc driver that utilizes
+> +the framework for managing remote processors.
+> +
+> +2. Remoteproc framework Responsibilities
+> +========================================
+> +
+> +The framework begins by gathering information about the firmware file
+> +to be downloaded through the request_firmware function. It supports
+> +the ELF format and parses the firmware image to identify the physical
+> +addresses that need to be populated from the corresponding ELF sections.
+> +The framework also requires knowledge of the logical or I/O-mapped
+> +addresses in the application processor. Once this information is
+> +obtained from the driver, the framework transfers the data to the
+> +specified addresses and starts the remote, along with
+> +any devices physically or logically connected to it.
+> +
+> +Dependent devices, referred to as `subdevices` within the framework,
+> +are also managed post-registration by their respective drivers.
+> +Subdevices can register themselves using `rproc_(add/remove)_subdev`.
+> +Non-remoteproc drivers can use subdevices as a way to logically connect
+> +to remote and get lifecycle notifications of the remote.
+> +
+> +The framework oversees the lifecycle of the remote and
+> +provides the `rproc_report_crash` function, which the driver invokes
+> +upon receiving a crash notification from the remote. The
+> +notification method can differ based on the design of the remote
+> +processor and its communication with the application processor. For
+> +instance, if the remote is a DSP equipped with a watchdog,
+> +unresponsive behavior triggers the watchdog, generating an interrupt
+> +that routes to the application processor, allowing it to call
+> +`rproc_report_crash` in the driver's interrupt context.
+> +
+> +During crash handling, the framework performs the following actions:
+> +
+> +a. Sends a request to stop the remote and any connected or
+> +   dependent subdevices.
+> +b. Generates a coredump, dumping all `resources` requested by the
+> +   remote alongside relevant debugging information. Resources are
+> +   explained below.
+> +c. Reloads the firmware and restarts the remote.
+> +
+> +If the `RPROC_FEAT_ATTACH_ON_RECOVERY` flag is set, the detach and
+> +attach callbacks of the driver are invoked without reloading the
+> +firmware. This is useful when the remote requires no
+> +assistance for recovery, or when the application processor can restart
+> +independently. After recovery, the application processor can reattach
+> +to the remote.
+> +
+> +The remote can request resources from the framework, which
+> +allocates a ".resource_table" section. During the ELF parsing phase,
+> +the framework identifies this section and calls the appropriate
+> +handler to allocate the requested resources.
+> +
+> +Resource management within the framework can accommodate any type of
+> +`fw_resource_type`.
+> +
+> +.. code-block:: c
+> +
+> +   enum fw_resource_type {
+> +       RSC_CARVEOUT      = 0,
+> +       RSC_DEVMEM        = 1,
+> +       RSC_TRACE         = 2,
+> +       RSC_VDEV          = 3,
+> +       RSC_LAST          = 4,
+> +       RSC_VENDOR_START  = 128,
+> +       RSC_VENDOR_END    = 512,
+> +   };
+> +
+> +   struct resource_table {
+> +       u32 ver;
+> +       u32 num;
+> +       u32 reserved[2];
+> +       u32 offset[];
+> +   } __packed;
+> +
+> +   struct fw_rsc_hdr {
+> +       u32 type;
+> +       u8 data[];
+> +   } __packed;
+> +
+> +For example, if the remote requests both `RSC_TRACE` and
+> +`RSC_CARVEOUT` for memory allocation, the ELF firmware can be structured
+> +as follows:
+> +
+> +.. code-block:: c
+> +
+> +   #define MAX_SHARED_RESOURCE 2
+> +   #define LOG_BUF_SIZE 1000
+> +   #define CARVEOUT_DUMP_PA 0x12345678
+> +   #define CARVEOUT_DUMP_SIZE 2000
+> +
+> +   struct shared_resource_table {
+> +       u32 ver;
+> +       u32 num;
+> +       u32 reserved[2];
+> +       u32 offset[MAX_SHARED_RESOURCE];
+> +       struct fw_rsc_trace log_trace;
+> +       struct fw_rsc_carveout dump_carveout;
+> +   };
+> +
+> +   volatile struct shared_resource_table table = {
+> +       .ver = 1,
+> +       .num = 2,
+> +       .reserved = {0, 0},
+> +       .offset = {
+> +           offsetof(struct resource_table, log_trace),
+> +           offsetof(struct resource_table, dump_carveout),
+> +       },
+> +       .log_trace = {
+> +           RSC_TRACE,
+> +           (u32)log_buf, LOG_BUF_SIZE, 0, "log_trace",
+> +       },
+> +       .dump_carveout = {
+> +           RSC_CARVEOUT,
+> +           (u32)FW_RSC_ADDR_ANY, CARVEOUT_PA, 0, "carveout_dump",
+> +       },
+> +   };
+> +
+> +The framework creates a sysfs file when it encounters the `RSC_TRACE`
+> +type to expose log information to userspace. Other resource types are
+> +handled accordingly. In the example above, `CARVEOUT_DUMP_SIZE` bytes
+> +of DMA memory will be allocated starting from `CARVEOUT_DUMP_PA`.
+> +
+> +
+> +3. Remoteproc driver responsibilities
+> +=====================================
+> +
+> +The driver must provide the following information to the core:
+> +
+> +a. Translate device addresses (physical addresses) found in the ELF
+> +   firmware to virtual addresses in Linux using the `da_to_va`
+> +   callback. This allows the framework to copy ELF firmware from the
+> +   filesystem to the addresses expected by the remote since
+> +   the framework cannot directly access those physical addresses.
+> +b. Prepare/unprepare the remote prior to firmware loading,
+> +   which may involve allocating carveout and reserved memory regions.
+> +c. Implement methods for starting and stopping the remote,
+> +   whether by setting registers or sending explicit interrupts,
+> +   depending on the hardware design.
+> +d. Provide attach and detach callbacks to start the remote
+> +   without loading the firmware. This is beneficial when the remote
+> +   processor is already loaded and running.
+> +e. Implement a load callback for firmware loading, typically using
+> +   the ELF loader provided by the framework; currently, only ELF
+> +   format is supported.
+> +f. Invoke the framework's crash handler API upon detecting a remote
+> +   crash.
+> +
+> +Drivers must fill the `rproc_ops` structure and call `rproc_alloc`
+> +to register themselves with the framework.
+> +
+> +.. code-block:: c
+> +
+> +   struct rproc_ops {
+> +       int (*prepare)(struct rproc *rproc);
+> +       int (*unprepare)(struct rproc *rproc);
+> +       int (*start)(struct rproc *rproc);
+> +       int (*stop)(struct rproc *rproc);
+> +       int (*attach)(struct rproc *rproc);
+> +       int (*detach)(struct rproc *rproc);
+> +       void * (*da_to_va)(struct rproc *rproc, u64 da, size_t len,
+> +                          bool *is_iomem);
+> +       int (*parse_fw)(struct rproc *rproc, const struct firmware *fw);
+> +       int (*handle_rsc)(struct rproc *rproc, u32 rsc_type,
+> +                         void *rsc, int offset, int avail);
+> +       int (*load)(struct rproc *rproc, const struct firmware *fw);
+> +       //snip
+> +   };
+> +
+> +
+> +4. Virtio and Remoteproc
+>  ========================
+>  
+> -These callbacks should be provided by platform-specific remoteproc
+> -drivers::
+> -
+> -  /**
+> -   * struct rproc_ops - platform-specific device handlers
+> -   * @start:	power on the device and boot it
+> -   * @stop:	power off the device
+> -   * @kick:	kick a virtqueue (virtqueue id given as a parameter)
+> -   */
+> -  struct rproc_ops {
+> -	int (*start)(struct rproc *rproc);
+> -	int (*stop)(struct rproc *rproc);
+> -	void (*kick)(struct rproc *rproc, int vqid);
+> -  };
+> -
+> -Every remoteproc implementation should at least provide the ->start and ->stop
+> -handlers. If rpmsg/virtio functionality is also desired, then the ->kick handler
+> -should be provided as well.
+> -
+> -The ->start() handler takes an rproc handle and should then power on the
+> -device and boot it (use rproc->priv to access platform-specific private data).
+> -The boot address, in case needed, can be found in rproc->bootaddr (remoteproc
+> -core puts there the ELF entry point).
+> -On success, 0 should be returned, and on failure, an appropriate error code.
+> -
+> -The ->stop() handler takes an rproc handle and powers the device down.
+> -On success, 0 is returned, and on failure, an appropriate error code.
+> -
+> -The ->kick() handler takes an rproc handle, and an index of a virtqueue
+> -where new message was placed in. Implementations should interrupt the remote
+> -processor and let it know it has pending messages. Notifying remote processors
+> -the exact virtqueue index to look in is optional: it is easy (and not
+> -too expensive) to go through the existing virtqueues and look for new buffers
+> -in the used rings.
+> -
+> -Binary Firmware Structure
+> -=========================
+> -
+> -At this point remoteproc supports ELF32 and ELF64 firmware binaries. However,
+> -it is quite expected that other platforms/devices which we'd want to
+> -support with this framework will be based on different binary formats.
+> -
+> -When those use cases show up, we will have to decouple the binary format
+> -from the framework core, so we can support several binary formats without
+> -duplicating common code.
+> -
+> -When the firmware is parsed, its various segments are loaded to memory
+> -according to the specified device address (might be a physical address
+> -if the remote processor is accessing memory directly).
+> -
+> -In addition to the standard ELF segments, most remote processors would
+> -also include a special section which we call "the resource table".
+> -
+> -The resource table contains system resources that the remote processor
+> -requires before it should be powered on, such as allocation of physically
+> -contiguous memory, or iommu mapping of certain on-chip peripherals.
+> -Remotecore will only power up the device after all the resource table's
+> -requirement are met.
+> -
+> -In addition to system resources, the resource table may also contain
+> -resource entries that publish the existence of supported features
+> -or configurations by the remote processor, such as trace buffers and
+> -supported virtio devices (and their configurations).
+> -
+> -The resource table begins with this header::
+> -
+> -  /**
+> -   * struct resource_table - firmware resource table header
+> -   * @ver: version number
+> -   * @num: number of resource entries
+> -   * @reserved: reserved (must be zero)
+> -   * @offset: array of offsets pointing at the various resource entries
+> -   *
+> -   * The header of the resource table, as expressed by this structure,
+> -   * contains a version number (should we need to change this format in the
+> -   * future), the number of available resource entries, and their offsets
+> -   * in the table.
+> -   */
+> -  struct resource_table {
+> -	u32 ver;
+> -	u32 num;
+> -	u32 reserved[2];
+> -	u32 offset[0];
+> -  } __packed;
+> -
+> -Immediately following this header are the resource entries themselves,
+> -each of which begins with the following resource entry header::
+> -
+> -  /**
+> -   * struct fw_rsc_hdr - firmware resource entry header
+> -   * @type: resource type
+> -   * @data: resource data
+> -   *
+> -   * Every resource entry begins with a 'struct fw_rsc_hdr' header providing
+> -   * its @type. The content of the entry itself will immediately follow
+> -   * this header, and it should be parsed according to the resource type.
+> -   */
+> -  struct fw_rsc_hdr {
+> -	u32 type;
+> -	u8 data[0];
+> -  } __packed;
+> -
+> -Some resources entries are mere announcements, where the host is informed
+> -of specific remoteproc configuration. Other entries require the host to
+> -do something (e.g. allocate a system resource). Sometimes a negotiation
+> -is expected, where the firmware requests a resource, and once allocated,
+> -the host should provide back its details (e.g. address of an allocated
+> -memory region).
+> -
+> -Here are the various resource types that are currently supported::
+> -
+> -  /**
+> -   * enum fw_resource_type - types of resource entries
+> -   *
+> -   * @RSC_CARVEOUT:   request for allocation of a physically contiguous
+> -   *		    memory region.
+> -   * @RSC_DEVMEM:     request to iommu_map a memory-based peripheral.
+> -   * @RSC_TRACE:	    announces the availability of a trace buffer into which
+> -   *		    the remote processor will be writing logs.
+> -   * @RSC_VDEV:       declare support for a virtio device, and serve as its
+> -   *		    virtio header.
+> -   * @RSC_LAST:       just keep this one at the end
+> -   * @RSC_VENDOR_START:	start of the vendor specific resource types range
+> -   * @RSC_VENDOR_END:	end of the vendor specific resource types range
+> -   *
+> -   * Please note that these values are used as indices to the rproc_handle_rsc
+> -   * lookup table, so please keep them sane. Moreover, @RSC_LAST is used to
+> -   * check the validity of an index before the lookup table is accessed, so
+> -   * please update it as needed.
+> -   */
+> -  enum fw_resource_type {
+> -	RSC_CARVEOUT		= 0,
+> -	RSC_DEVMEM		= 1,
+> -	RSC_TRACE		= 2,
+> -	RSC_VDEV		= 3,
+> -	RSC_LAST		= 4,
+> -	RSC_VENDOR_START	= 128,
+> -	RSC_VENDOR_END		= 512,
+> -  };
+> -
+> -For more details regarding a specific resource type, please see its
+> -dedicated structure in include/linux/remoteproc.h.
+> -
+> -We also expect that platform-specific resource entries will show up
+> -at some point. When that happens, we could easily add a new RSC_PLATFORM
+> -type, and hand those resources to the platform-specific rproc driver to handle.
+> -
+> -Virtio and remoteproc
+> -=====================
+> -
+> -The firmware should provide remoteproc information about virtio devices
+> -that it supports, and their configurations: a RSC_VDEV resource entry
+> -should specify the virtio device id (as in virtio_ids.h), virtio features,
+> -virtio config space, vrings information, etc.
+> -
+> -When a new remote processor is registered, the remoteproc framework
+> -will look for its resource table and will register the virtio devices
+> -it supports. A firmware may support any number of virtio devices, and
+> -of any type (a single remote processor can also easily support several
+> -rpmsg virtio devices this way, if desired).
+> -
+> -Of course, RSC_VDEV resource entries are only good enough for static
+> -allocation of virtio devices. Dynamic allocations will also be made possible
+> -using the rpmsg bus (similar to how we already do dynamic allocations of
+> -rpmsg channels; read more about it in rpmsg.txt).
+> +The firmware must provide remoteproc with information regarding the
+> +virtio devices it supports and their configurations: an `RSC_VDEV`
+> +resource entry should detail the virtio device ID (as defined in
+> +`virtio_ids.h`), virtio features, virtio config space, vrings
+> +information, etc.
+> +
+> +Upon registration of a new remote, the remoteproc framework
+> +searches for its resource table and registers the supported virtio
+> +devices. A firmware may support multiple virtio devices, of various
+> +types (a single remote can support multiple rpmsg virtio
+> +devices if required).
+> +
+> +Moreover, `RSC_VDEV` resource entries suffice for static allocation
+> +of virtio devices. Dynamic allocations will also be supported using
+> +the rpmsg bus, akin to the handling of dynamic allocations for rpmsg
+> +channels. For more information, refer to rpmsg documentation.
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
 
