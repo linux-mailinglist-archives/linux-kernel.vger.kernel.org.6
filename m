@@ -1,134 +1,116 @@
-Return-Path: <linux-kernel+bounces-380171-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380173-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 14CC89AE9C3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:05:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 46EAC9AE9C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:06:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id C0FDF1F21AA8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:05:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E7223B237FC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:06:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4B4D1EBFE6;
-	Thu, 24 Oct 2024 15:05:26 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1ABE21EF09E;
+	Thu, 24 Oct 2024 15:05:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="m7zpUr+s"
-Received: from mail-oo1-f45.google.com (mail-oo1-f45.google.com [209.85.161.45])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="baZgbNbL"
+Received: from mail-pg1-f178.google.com (mail-pg1-f178.google.com [209.85.215.178])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2303454738
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:05:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.161.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C21BC1EBA0E;
+	Thu, 24 Oct 2024 15:05:43 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.178
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782326; cv=none; b=BIuF8YOJAgMHi53Jo+TEFOygbjKF/cuhPksxCBgdigPIonpQCGmsNiSFjWMt4p5sKCiMQiQo8WKHc9iGJzz49kARfX890yUPZWkdk5umWwmYwIiEjsnLsoNPNNaU+i9yMHYi6WK4Lb9rtrMu/b7YJFxsZEKophzlwohTOBXpJuI=
+	t=1729782345; cv=none; b=Ue0FVr4MhP2IBtAiMqN7Xn+G+HwhUnzDOjg6hVtHDAoKwosu23vvmALgZuaWZCoPuF4aVUn/tVppz7w2eSZ6K5LyMbKZ+NqSSlesh7Hzr2G+pIE0W18nqgBJWK2njsojdZnvGKTy/qvwikMqz918FBcaV/1S2qfZvSCQW2HAFTI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782326; c=relaxed/simple;
-	bh=aqeeharMk17ixLZGkNgDLOJVAmDR4MwZ3UKW8XU+Tjw=;
-	h=MIME-Version:From:Date:Message-ID:Subject:To:Cc:Content-Type; b=JSHc/5vlxU8UG3w4Rkqi6dPCsl6vYTCkFt8Viw/PphCPYCXlu+IcIYA3AN72A2I6Q+Fe7ZcYA7A2nPMPfndwcXMmKvpCARA7sKGK+9+bZziS666Mpej4rhJt/xOsXf2cRAoRxuhz3hjkxQ1qQPwj56XNZpYBaT5iUzxI0QGVuxc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=m7zpUr+s; arc=none smtp.client-ip=209.85.161.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-oo1-f45.google.com with SMTP id 006d021491bc7-5ebab72da05so460904eaf.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:05:23 -0700 (PDT)
+	s=arc-20240116; t=1729782345; c=relaxed/simple;
+	bh=DRfIphEOgJUshahw1YnLkABqA24RfciQZPbwe8tYfvU=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=njqr2DPIWf2UDcXR6WSEO0g/hI4pi6UPPAY5WooDz2WF1ccv/NwSSCu1J7d9dWzM86U8JRVp/2QBD0NL4yzVWmCI0RhZYPp9vnoaYi8TJX1YOW1WCDSjdRadS/ccMztjtN/C8CaF0a10V1rrdzkEtTbS9ieUIqoTQSj3fYEQbSc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=baZgbNbL; arc=none smtp.client-ip=209.85.215.178
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f178.google.com with SMTP id 41be03b00d2f7-7eaebc773d8so135126a12.3;
+        Thu, 24 Oct 2024 08:05:43 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729782323; x=1730387123; darn=vger.kernel.org;
-        h=cc:to:subject:message-id:date:from:mime-version:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=jyarlQ6i7toXdr4KNns6qkdDvM4HB4Mkf28BveorRBE=;
-        b=m7zpUr+szfBKBluKBdylGN8Dq3Ky4ykLvUxa3TWyr4CECO+1BKF/cbJPVkccZE6I49
-         v4gzE714F+cNEHuFUfQO5F+BGjDO7koeNfC/IIeUKny56K2LCS5eslF5SEcOzmoTIWBy
-         8zceCTOBzRj+AA3ibQp40xhfIzzowwzBJu57f0ur7NHxCXJ75FUKo7xJUqMaLXQiu4VG
-         cOAOQG34BysVzdw4hDHHhkWdBnhdMB9VWugIU1t4wdYVFUnmuRj7opMBbCZnmR2UUHW/
-         nKkrz3ekAXit3EctSxmwOCULqJ0DwD/f8R/LJaxjb8aQG02pOk41jETF88QDNVOSqtrk
-         K3EQ==
+        d=gmail.com; s=20230601; t=1729782343; x=1730387143; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=PWBJiSooBXrWB0PqWLU3AE7jzD52ohebdb5ug3FRi2w=;
+        b=baZgbNbLyQClQGhX8qDvKomUTeUtC0tmDAUEhKnYToyGp2NyhB+VOA058D2YPzNuzO
+         FhnhEjnUeN4lenhpWdzzq1O3iIdQb5LvIRZUsLDOUaZW4vKmQ7irKM0Hw0YKMd/4ZMeK
+         F+aoNYlPEkk7os81eIq5Aq68h46xJFkl5ScM3Zbtlzb8ie7oBYZ6Gfo2blnwQAMg9fIj
+         Zwcq+1DOOXu3LW4IWOzM27gKdxTEA9Uhy9BBWnrxCu5JnDvVjYkRFQ6dSuNDtGfIjgP3
+         qZWd4QuO7GONnMlErWybxedwuRBno9n4fCdBjvN8oP51Fku1aYAg+w/k42BxOSMvKsNE
+         Ky+w==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729782323; x=1730387123;
-        h=cc:to:subject:message-id:date:from:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=jyarlQ6i7toXdr4KNns6qkdDvM4HB4Mkf28BveorRBE=;
-        b=Mmbg/2FbMizh+Ynq7ES05zjUxpQdQ0NTQt3xZOueS2UjZVAvRTFGUlRyj4Gyqww+Du
-         l0Flkf3YpkOaAAi+hba4EvpwF9yHjthOhUg9bXroX2nsEdbHHdPUCSrymRppO4llfmrv
-         eGGFMAWVa51ULqcoiuuJqh3aFriKxUhvfX/Y7K4dMXBrMLWbCkmUrmjAG8D4MYedCDSY
-         NoBCPjhEnYtmWUYlyXt7s8eYmur8sV+qN5qoDxVMZai//XZ43Oz7VHn+txkzCKIm4PU3
-         /5DOF9a7cQHm6CYFKrTZQgDxVFVnrprzHJVzP5l1P/gA8JUO7PlHtvO6JK07L4frADLQ
-         9WVw==
-X-Forwarded-Encrypted: i=1; AJvYcCXRh+J53qxgNOLnOzNnmEHwxvW+lzVTsNAKafGDvdTu2cpnIoJLrLB7mmBy3n2e/WnLCBnM6JIQ68HaQSA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyYlW9ML+vbDj8uKx320xP2MD0VKLyRGIOx7gzj+DobWIBTf3mn
-	u8fhk7HxbfF3XNSgtBMGY7EmWqBdUmPN2KNBbo6Z9dkQFPLeuf55W+IkyZribL1sMjtBEDelGOQ
-	hDClCNCPbPfASgdOU+N/xXFgL55tfEaCCOaUlrIcejUhDTvNYEXU=
-X-Google-Smtp-Source: AGHT+IEnz1GyTZlftdGpHX3jgxo2wK87KPVx/FAo2DYee8GCdaaTRp24nxaWxYg0SRPKd77LClU0CJyCAJ3uZe9macc=
-X-Received: by 2002:a05:6808:180b:b0:3e6:769:b042 with SMTP id
- 5614622812f47-3e62cbe6ef9mr2185584b6e.29.1729782323029; Thu, 24 Oct 2024
- 08:05:23 -0700 (PDT)
+        d=1e100.net; s=20230601; t=1729782343; x=1730387143;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=PWBJiSooBXrWB0PqWLU3AE7jzD52ohebdb5ug3FRi2w=;
+        b=bdI6B0NpcDb/csgcju3YMPgg1VBugd+GP9nrDjDSXBWvTPwumLb59Iq/n19KyFdj4u
+         +Icnv3gLQYj5NbXPAQcAMARmcS7WYNUnAhbNP9U4TiwcD5W+UkNQ/U02VDqcSAIBTA8j
+         WuKVwRa5U+amHY+ssQziyD9lLOzKD8lt/5W+83/SrtbtBVRut9wQVw6oqWDaNohBW2CF
+         bmpv8qHAQBXyGUfRnFFA1e75PIxcvvxNr/tO1Gdq4En1HA75eo92SH+jSGGz7+EzHuhX
+         AElM7eGV8VyQmfRejAeUgn7OJsPEgy5UozvsuhHz+TaXM1HSildmwpGszDZyvtBfYo2m
+         Y4AQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUKry0rKSLkIR63+Xvc/40/1TdrTvkATFS1H4vBaIvr+EyiSXL4/8IurFeNkCtRvq0IVDLGtQSAwOPycL8=@vger.kernel.org, AJvYcCUTkc5Nnov2XNP2WvNM9qfloOfepQW/z7b8fglCZ5sBS0Wyxxp61hUXfk7HDNdRKTWf6gTT4YRIBxY/5V/OOEk=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxstEB++drYHP2FSZ9KW2Jd6W3svMFnTo6J62iF7Nsii7fhW+wa
+	PnS7orfYX3QtlabAL07lBLa5IX76k5CAQR0ukvS3sy48svvQoZR4A51XcQbYKtjhxDIQC9FzckE
+	sIDcMfu8/QmD9sAG+5rLzpfXolR4=
+X-Google-Smtp-Source: AGHT+IGQvroVX7tmmjtc3sz42EA/iaZPua4To/FGsIpICO8G6/XffrkIgPvXZyuCGi5MEyHksOxKHT1tkg6QdnYtYvA=
+X-Received: by 2002:a17:90a:c918:b0:2e2:a667:1a11 with SMTP id
+ 98e67ed59e1d1-2e76b5b7e42mr3300913a91.1.1729782342905; Thu, 24 Oct 2024
+ 08:05:42 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-From: Naresh Kamboju <naresh.kamboju@linaro.org>
-Date: Thu, 24 Oct 2024 20:35:11 +0530
-Message-ID: <CA+G9fYs2G_4jyv-V7f85oE53rw5rX0Tnf2V8RQ=O9CuPcbfb2A@mail.gmail.com>
-Subject: powerpc: clang-nightly: fatal error: error in backend: Trying to
- obtain a reserved register "r2".
-To: clang-built-linux <llvm@lists.linux.dev>, open list <linux-kernel@vger.kernel.org>, 
-	lkft-triage@lists.linaro.org, linuxppc-dev <linuxppc-dev@lists.ozlabs.org>
-Cc: Nathan Chancellor <nathan@kernel.org>, Nick Desaulniers <ndesaulniers@google.com>, 
-	Dan Carpenter <dan.carpenter@linaro.org>, Arnd Bergmann <arnd@arndb.de>, 
-	Anders Roxell <anders.roxell@linaro.org>
+References: <20241024-topic-panthor-rs-request_irq-v1-1-7cbc51c182ca@collabora.com>
+In-Reply-To: <20241024-topic-panthor-rs-request_irq-v1-1-7cbc51c182ca@collabora.com>
+From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
+Date: Thu, 24 Oct 2024 17:05:30 +0200
+Message-ID: <CANiq72=tywaM4n-6isLmpu5fC3uj5H7g4QfiaksXcaPH_Pfxaw@mail.gmail.com>
+Subject: Re: [PATCH] rust: irq: add support for request_irq()
+To: Daniel Almeida <daniel.almeida@collabora.com>
+Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
+	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
+	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
+	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
+	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
+	rust-for-linux@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-The powerpc clang-nightly version 20.0.0 build warnings / errors noticed on
-the Today's Linux next-20241024 tag.
+Hi Daniel,
 
-powerpc:
-  build:
-    * clang-nightly-maple_defconfig
-    * clang-nightly-tinyconfig
-    * clang-nightly-tqm8xx_defconfig
-    * clang-nightly-mpc83xx_defconfig
-    * clang-nightly-defconfig
-    * clang-nightly-cell_defconfig
-    * clang-nightly-ppc64e_defconfig
-    * clang-nightly-allnoconfig
+A couple procedural things on your latest patches (no need to send new
+versions right away).
 
-Reported-by: Linux Kernel Functional Testing <lkft@linaro.org>
+On Thu, Oct 24, 2024 at 4:20=E2=80=AFPM Daniel Almeida
+<daniel.almeida@collabora.com> wrote:
+>
+> Both regular and threaded versions are supported.
 
-Build errors:
-----------
-fatal error: error in backend: Trying to obtain a reserved register "r2".
-clang: error: clang frontend command failed with exit code 70 (use -v
-to see invocation)
-Debian clang version 20.0.0
-(++20241023112211+699ce16b6284-1~exp1~20241023112229.1038)
-Target: powerpc-unknown-linux-gnu
+I am not sure if the commit message was truncated, but it should
+explain why the change is done and what is being changed. For
+instance, it should mention who will need this upstream. Please see
+other similar patches/series we have, e.g. one of the latest ones in Lore:
 
-metadata:
-----------
-kernel: 6.12.0-rc4
-git_repo: https://git.kernel.org/pub/scm/linux/kernel/git/next/linux-next.git
-git_sha: fd21fa4a912ebbf8a6a341c31d8456f61e7d4170
-git_describe: next-20241024
-Test details: https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241024
-config:  https://storage.tuxsuite.com/public/linaro/lkft/builds/2ns7sv9TltSifV46KaGs3BxlB85/config
-download_url: https://storage.tuxsuite.com/public/linaro/lkft/builds/2ns7sv9TltSifV46KaGs3BxlB85/
-arch: powerpc
-toolchain: Clang-nightly (version 20.0.0)
+    https://lore.kernel.org/rust-for-linux/20241022213221.2383-1-dakr@kerne=
+l.org/
 
-build log link:
-------
- - https://qa-reports.linaro.org/lkft/linux-next-master/build/next-20241024/testrun/25530243/suite/build/test/clang-nightly-defconfig/log
-  - https://storage.tuxsuite.com/public/linaro/lkft/builds/2ns7sv9TltSifV46KaGs3BxlB85/
+> base-commit: 33c255312660653cf54f8019896b5dca28e3c580
 
-steps to reproduce:
-------
-# tuxmake --runtime podman --target-arch powerpc --toolchain
-clang-nightly --kconfig defconfig LLVM=1 LLVM_IAS=0
-LD=powerpc64le-linux-gnu-ld
+Please try this one on top of `rust-next` -- you will get new Clippy
+warnings about missing safety sections & comments.
 
+Thanks!
 
---
-Linaro LKFT
-https://lkft.linaro.org
+Cheers,
+Miguel
 
