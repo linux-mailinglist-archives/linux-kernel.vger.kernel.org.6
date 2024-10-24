@@ -1,297 +1,120 @@
-Return-Path: <linux-kernel+bounces-379711-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379714-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3B2479AE288
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:31:04 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6BEB79AE29C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:32:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771FEB2166E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:31:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id E3212B213EB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:32:22 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2CA1B3935;
-	Thu, 24 Oct 2024 10:30:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2C58A1CB51E;
+	Thu, 24 Oct 2024 10:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y3hpTisq"
-Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b="Iegj9JI8"
+Received: from fllv0016.ext.ti.com (fllv0016.ext.ti.com [198.47.19.142])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900B214B946
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:30:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 891DA1C879E;
+	Thu, 24 Oct 2024 10:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.47.19.142
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765854; cv=none; b=Sfeha8D/1aNflTK3IecW9zokmC7PpFGHMs8OzchzuZ1GtHu/tMTSpf/zIYX6khzKSyvcG3hFZC8ZjBScVfR6/QQexWdWNHxYSkfgF7empx1kuQzoowhD5kHxD6ff90vEO9VvyyfT65fUzWT7+WNI222BWaEW16tzM4jbOumBlVw=
+	t=1729765896; cv=none; b=HqnmXSlmzTpFNAhYSlXV7cLiq/y34b6cerM5Nqc5fllBTWjZjMxCq0SqcVsNu+2d4hJuyuZyQF99NKly3ORFL7vqd4Z2UAMWjsLJ+7VvjRMcMyOLG9o8aqJ90AhTHPQPRSyhBjmcverSw7gVNPSPd8cwZ6hyWe0pkKp595+ZeYU=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729765854; c=relaxed/simple;
-	bh=t+79LBkE5K7kOtgkDHP2E0U6pya3PPXPEkcsiTCgG58=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nZN3kOLbviJF8+VDxMzaZUstHIBWLnPCZcOgHyNlh7sLIZKuvXW9nrLH37AlQwygIeJ3xlKMgs8H4TIaa9O+6InsupFWhrsEMQKr60REP8jOTuCTep+V4816xpPdaYuyoUBl9IKPvKcq7h7UV7i+/2QKiIRFBpNX3s5gxFsc96Q=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y3hpTisq; arc=none smtp.client-ip=209.85.128.66
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-431481433bdso7483805e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:30:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729765850; x=1730370650; darn=vger.kernel.org;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=WD5iIHBr6DGCl84k1ANdIW3ga0JsoT+g381ZY9lF0ck=;
-        b=y3hpTisqSWfLYS3pjIlX7vsV77I3gCjAxEhVnsGpMyuqcTC9i+EYKYklebaD5pdUYl
-         cyIGf8fKIQEaOFRnTqoa35M+dHHv7aXmDX+D5nHHMogN3anvtgvUQkDEznORSXOUndiB
-         xBOVjfT1g1bHOzThpTLf5POEb14rst+diTt+h1KcwDswUfjxM7lQx6Lp1+2dMNe15N3Z
-         s6ABlBtW16+vsyjojMw0B1C2Pa7HPZ2uEzdr82Kjs9reCawXOQif3UaOootiuNaUdQGB
-         Vyr+AXTB0GMVxdG/I37oy1Vx3alSmnTUQ/EdnvVp4yUZ8MWhX8MfYJ3X483IjT92z+Ad
-         fG3Q==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729765850; x=1730370650;
-        h=in-reply-to:content-transfer-encoding:content-disposition
-         :mime-version:references:message-id:subject:cc:to:from:date
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=WD5iIHBr6DGCl84k1ANdIW3ga0JsoT+g381ZY9lF0ck=;
-        b=iDI1TG05QFB97pcPoI6CnkF0dNqvB92zN2WpclCp82YISiHjHW7p4lgNw1fJIEqNJi
-         m2uPE0AjNP6S7ro3y1VFOqPGYid+ZG+RviHhWLngRRmzjhfJbqy2DQ1yXPrMXxMLKXlV
-         /cD0NQGG2VFx3dHBrMT9t/0Baa6Do8yjU/0y26XGDFj0IIEOyY1kuRSJtABNfd8NBGtk
-         V/aRZ0ttaG9x3ht3vIAqcOZUzfcmNTEIspDQefH4SVDeCUlQo9/akrxCwHSwsakxfRDg
-         IKUI5E7YIkb0WVzzLb/t0NnwlFYr889A2Q5LaIKGRFsw8gkQZteHW0Jl/190eICzo93S
-         zN5A==
-X-Forwarded-Encrypted: i=1; AJvYcCUP6qOBMUpfRtE8zhmoiOXs2b+v5lZzoXnlX8FcZ9SRb1x9najhf67t8lbIi7bri73xO38gV4JpdHpHh0Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzPsaAKSzcxijbxXr7bEGO9XAwWzoQMDJ2hRTjGnqz+cRHMdmQf
-	QdO3p0eCBeiFCZNLarT8dAj8JInLqEvtSZ1bQ3ZKDO19IqwxJCAN+wfb6+97diI=
-X-Google-Smtp-Source: AGHT+IHXCQD3UffjE/QbdZ4kNLsZ6qSGKLd7KCMv6mNn1DegEudtO5WrZa+diDdk2HbrF0ASlLUyqQ==
-X-Received: by 2002:a05:600c:1d1c:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-431841b2026mr45352785e9.30.1729765849728;
-        Thu, 24 Oct 2024 03:30:49 -0700 (PDT)
-Received: from dfj (host-79-41-194-153.retail.telecomitalia.it. [79.41.194.153])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b58b79esm12948755e9.47.2024.10.24.03.30.45
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 03:30:49 -0700 (PDT)
-Date: Thu, 24 Oct 2024 12:29:29 +0200
-From: Angelo Dureghello <adureghello@baylibre.com>
-To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
-Cc: Conor Dooley <conor@kernel.org>, 
-	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
-	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
-	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
-	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
-Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
-Message-ID: <szncfysidctefmjb5u5l7kabyxa76rvuwao34nrue6menohfn2@4x7gyvmzat62>
-References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
- <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
- <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
- <20241022-napped-labored-6956ce18d986@spud>
- <7a4f8c718029c8c57596d950495fcf28562c6e78.camel@gmail.com>
- <20241023-nifty-electable-64d3b42bce3b@spud>
- <172316a342407e74840894f553d7647a19fd89d4.camel@gmail.com>
+	s=arc-20240116; t=1729765896; c=relaxed/simple;
+	bh=1Pl3seaKsVqvUTf35IOyS4yaL/7Irx/Z/G25+DDIeC8=;
+	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=qst0UWhX+UpkIxe6VHm+uk8WVtcjK7v8VJflys5ahJdWDOQ2Y1UYEFhFPV/jLeO9NfyPIFe9Mukc36zVjt358sb3sHMSl2h48Vz1gAzZpButMDawyzi6JUxNw2QkO7QEzws94D0OilMNVeL5VX4lijdp3HSdyqH0T6YtVx2k5V4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com; spf=pass smtp.mailfrom=ti.com; dkim=pass (1024-bit key) header.d=ti.com header.i=@ti.com header.b=Iegj9JI8; arc=none smtp.client-ip=198.47.19.142
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=ti.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=ti.com
+Received: from fllv0034.itg.ti.com ([10.64.40.246])
+	by fllv0016.ext.ti.com (8.15.2/8.15.2) with ESMTP id 49OAUweq053976;
+	Thu, 24 Oct 2024 05:30:58 -0500
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ti.com;
+	s=ti-com-17Q1; t=1729765858;
+	bh=XpNsdjNUKmyHDq4lKpIhAEJl7hPe0UBSX8YCXzbXgEI=;
+	h=From:To:CC:Subject:Date;
+	b=Iegj9JI8GV7cVUgkk8VK6oEFNEWjg9qLG1uSjo6cKhbOE8QwkX3hLRyd3GCP4Mtb9
+	 emv7tp6kVTVy+dYbOIUtHIOr4tZAFf8lK9XnJhF4kj9N4dKSgZBEPlrAb6OrHojIBA
+	 h6lwEWVO5IVhHfW1Ok18OOO7JEUmKVFn115qcL7s=
+Received: from DLEE113.ent.ti.com (dlee113.ent.ti.com [157.170.170.24])
+	by fllv0034.itg.ti.com (8.15.2/8.15.2) with ESMTPS id 49OAUw47002389
+	(version=TLSv1.2 cipher=AES256-GCM-SHA384 bits=256 verify=FAIL);
+	Thu, 24 Oct 2024 05:30:58 -0500
+Received: from DLEE105.ent.ti.com (157.170.170.35) by DLEE113.ent.ti.com
+ (157.170.170.24) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23; Thu, 24
+ Oct 2024 05:30:57 -0500
+Received: from fllvsmtp8.itg.ti.com (10.64.41.158) by DLEE105.ent.ti.com
+ (157.170.170.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_128_CBC_SHA256_P256) id 15.1.2507.23 via
+ Frontend Transport; Thu, 24 Oct 2024 05:30:57 -0500
+Received: from lelv0854.itg.ti.com (lelv0854.itg.ti.com [10.181.64.140])
+	by fllvsmtp8.itg.ti.com (8.15.2/8.15.2) with ESMTP id 49OAUv5N082154;
+	Thu, 24 Oct 2024 05:30:57 -0500
+Received: from localhost (danish-tpc.dhcp.ti.com [10.24.69.25])
+	by lelv0854.itg.ti.com (8.14.7/8.14.7) with ESMTP id 49OAUuPf024586;
+	Thu, 24 Oct 2024 05:30:57 -0500
+From: MD Danish Anwar <danishanwar@ti.com>
+To: <geliang@kernel.org>, <liuhangbin@gmail.com>, <dan.carpenter@linaro.org>,
+        <jiri@resnulli.us>, <n.zhandarovich@fintech.ru>,
+        <aleksander.lobakin@intel.com>, <lukma@denx.de>, <horms@kernel.org>,
+        <jan.kiszka@siemens.com>, <diogo.ivo@siemens.com>, <shuah@kernel.org>,
+        <pabeni@redhat.com>, <kuba@kernel.org>, <edumazet@google.com>,
+        <davem@davemloft.net>, <andrew+netdev@lunn.ch>
+CC: <linux-kselftest@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
+        <netdev@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
+        <srk@ti.com>, Vignesh Raghavendra <vigneshr@ti.com>,
+        Roger Quadros
+	<rogerq@kernel.org>, <danishanwar@ti.com>,
+        <m-malladi@ti.com>
+Subject: [PATCH net-next v2 0/4] Introduce VLAN support in HSR
+Date: Thu, 24 Oct 2024 16:00:52 +0530
+Message-ID: <20241024103056.3201071-1-danishanwar@ti.com>
+X-Mailer: git-send-email 2.34.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
-In-Reply-To: <172316a342407e74840894f553d7647a19fd89d4.camel@gmail.com>
+Content-Type: text/plain
+X-C2ProcessedOrg: 333ef613-75bf-4e12-a4b1-8e3623f5dcea
 
-On 24.10.2024 09:04, Nuno Sá wrote:
-> On Wed, 2024-10-23 at 16:22 +0100, Conor Dooley wrote:
-> > On Wed, Oct 23, 2024 at 04:56:39PM +0200, Nuno Sá wrote:
-> > > On Tue, 2024-10-22 at 18:21 +0100, Conor Dooley wrote:
-> > > > On Tue, Oct 22, 2024 at 02:36:44PM +0200, Nuno Sá wrote:
-> > > > > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
-> > > > > > From: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > > 
-> > > > > > Extend AXI-DAC backend with new features required to interface
-> > > > > > to the ad3552r DAC. Mainly, a new compatible string is added to
-> > > > > > support the ad3552r-axi DAC IP, very similar to the generic DAC
-> > > > > > IP but with some customizations to work with the ad3552r.
-> > > > > > 
-> > > > > > Then, a series of generic functions has been added to match with
-> > > > > > ad3552r needs. Function names has been kept generic as much as
-> > > > > > possible, to allow re-utilization from other frontend drivers.
-> > > > > > 
-> > > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
-> > > > > > ---
-> > > > > 
-> > > > > Looks mostly good,
-> > > > > 
-> > > > > one minor thing that (I think) could be improved
-> > > > > >  drivers/iio/dac/adi-axi-dac.c | 269
-> > > > > > +++++++++++++++++++++++++++++++++++++++--
-> > > > > > -
-> > > > > >  1 file changed, 255 insertions(+), 14 deletions(-)
-> > > > > > 
-> > > > > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
-> > > > > > index 04193a98616e..9d6809fe7a67 100644
-> > > > > > --- a/drivers/iio/dac/adi-axi-dac.c
-> > > > > > +++ b/drivers/iio/dac/adi-axi-dac.c
-> > > > > > @@ -46,9 +46,28 @@
-> > > > > >  #define AXI_DAC_CNTRL_1_REG			0x0044
-> > > > > >  #define   AXI_DAC_CNTRL_1_SYNC			BIT(0)
-> > > > > >  #define AXI_DAC_CNTRL_2_REG			0x0048
-> > > > > > +#define   AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
-> > > > > > +#define   AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
-> > > > > >  #define   ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
-> > > > > > +#define   AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
-> > > > > > +#define AXI_DAC_STATUS_1_REG			0x0054
-> > > > > > +#define AXI_DAC_STATUS_2_REG			0x0058
-> > > > > >  #define AXI_DAC_DRP_STATUS_REG			0x0074
-> > > > > >  #define   AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
-> > > > > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
-> > > > > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
-> > > > > > +#define   AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
-> > > > > > +#define   AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
-> > > > > > +#define AXI_DAC_UI_STATUS_REG			0x0088
-> > > > > > +#define   AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
-> > > > > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
-> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
-> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
-> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
-> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
-> > > > > 
-> > > > > ...
-> > > > >  
-> > > > > >  static int axi_dac_probe(struct platform_device *pdev)
-> > > > > >  {
-> > > > > > -	const unsigned int *expected_ver;
-> > > > > >  	struct axi_dac_state *st;
-> > > > > >  	void __iomem *base;
-> > > > > >  	unsigned int ver;
-> > > > > > @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_device
-> > > > > > *pdev)
-> > > > > >  	if (!st)
-> > > > > >  		return -ENOMEM;
-> > > > > >  
-> > > > > > -	expected_ver = device_get_match_data(&pdev->dev);
-> > > > > > -	if (!expected_ver)
-> > > > > > +	st->info = device_get_match_data(&pdev->dev);
-> > > > > > +	if (!st->info)
-> > > > > >  		return -ENODEV;
-> > > > > > +	clk = devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
-> > > > > > +	if (IS_ERR(clk)) {
-> > > > > 
-> > > > > If clock-names is not given, then we'll get -EINVAL. Hence we could assume
-> > > > > that:
-> > > > > 
-> > > > > 		if (PTR_ERR(clk) != -EINVAL)
-> > > > > 			return dev_err_probe();
-> > > > 
-> > > > clock-names isn't a required property, but the driver code effectively
-> > > > makes it one. Doesn't this lookup need to be by index, unless
-> > > > clock-names is made required for this variant?
-> > > 
-> > > Likely I'm missing something but the driver is not making clock-names mandatory,
-> > > is it?
-> > 
-> > Did you miss the "for this variant"? Maybe I left the comment in not
-> 
-> I guess so :)
-> 
-> > exactly the right place, but I don't think the code works correctly for
-> > the new variant if clock-names aren't provided:
-> > 
-> > +	if (st->info->has_dac_clk) {
-> > +		struct clk *dac_clk;
-> > +		dac_clk = devm_clk_get_enabled(&pdev->dev, "dac_clk");
-> > +		if (IS_ERR(dac_clk))
-> > +			return dev_err_probe(&pdev->dev, PTR_ERR(dac_clk),
-> > +					     "failed to get dac_clk clock\n");
-> > +
-> > +		/* We only care about the streaming mode rate */
-> > +		st->dac_clk_rate = clk_get_rate(dac_clk) / 2;
-> > 
-> > Isn't this going to cause a probe failure?
-> 
-> Exactly. And that goes in line with what I wrote about the bindings not describing
-> (currently) this. So yes, for the new variant (which has 'has_dac_clk' set to true)
-> clock-names is indeed mandatory and probe will fail if it's not given.
-> 
-> >  
-> > > At least for the s_axi_aclk, we first try to get it using clock-names and if
-> > > that fails we backup to what we're doing which is passing NULL (which
-> > > effectively get's the first clock in the array).
-> > > 
-> > > The reasoning is that on the generic variant we only need the AXI clk and we
-> > > can't now enforce clock-names on it. But to keep things flexible, this was
-> > > purposed.
-> > 
-> > Why not always just get the first clock by index and avoid the
-> > complexity?
-> 
-> And that was also suggested in the previous version but then Jonathan suggested this
-> [1]. I agree things now are a bit confusing because we expect clock-names to be
-> optional for the generic but mandatory for this new variant and the code is not being
-> that explicit about it.
-> 
-> > 
-> > > Another alternative that might have more lines of code (but simpler to
-> > > understand the intent) is to have (for example) a callback get_clocks function
-> > > that we set depending on the variant. And this also makes me realize that we
-> > > could improve the bindings. I mean, for the generic dac variant we do not need
-> > > clock-names but for this new variant, clock-names is mandatory and I'm fairly
-> > > sure we can express that in the bindings.
-> > 
-> > Right. You can "edit" required in the if/then/else branch for the new
-> > variant.
-> 
-> Yeah, and IMO that should be set in the bindings (it would help understanding what
-> the driver is actually doinfg.
->
+This series adds VLAN support to HSR framework.
+This series also adds VLAN support to HSR mode of ICSSG Ethernet driver.
 
-ok, thanks, so 
+Changes from v1 to v2:
+*) Added patch 4/4 to add test script related to VLAN in HSR as asked by
+Lukasz Majewski <lukma@denx.de>
 
-so modified yaml in this way:
+v1 https://lore.kernel.org/all/20241004074715.791191-1-danishanwar@ti.com/
 
-  clocks:
-    minItems: 1
-    maxItems: 2
+MD Danish Anwar (1):
+  selftests: hsr: Add test for VLAN
 
-  clock-names:
-    items:
-      - const: s_axi_aclk
-      - const: dac_clk
-    minItems: 1
+Murali Karicheri (1):
+  net: hsr: Add VLAN CTAG filter support
 
-  '#io-backend-cells':
-    const: 0
+Ravi Gunasekaran (1):
+  net: ti: icssg-prueth: Add VLAN support for HSR mode
 
-required:
-  - compatible
-  - dmas
-  - reg
-  - clocks
+WingMan Kwok (1):
+  net: hsr: Add VLAN support
 
-allOf:
-  - if:
-      properties:
-        compatible:
-          contains:
-            const: adi,axi-ad3552r
-    then:
-      $ref: /schemas/spi/spi-controller.yaml#
-      properties:
-        clocks:
-          minItems: 2
-        clock-names:
-          minItems: 2
-      required:
-        - clock-names
-    else:
-      properties:
-        clocks:
-          maxItems: 1
-        clock-names:
-          maxItems: 1
+ drivers/net/ethernet/ti/icssg/icssg_prueth.c | 45 +++++++++++-
+ net/hsr/hsr_device.c                         | 76 ++++++++++++++++++--
+ net/hsr/hsr_forward.c                        | 19 +++--
+ tools/testing/selftests/net/hsr/config       |  1 +
+ tools/testing/selftests/net/hsr/hsr_ping.sh  | 63 +++++++++++++++-
+ 5 files changed, 191 insertions(+), 13 deletions(-)
 
- 
-> [1]: https://lore.kernel.org/linux-iio/20241019160817.10c3a2bf@jic23-huawei/
-> 
-> - Nuno Sá
-> 
 
-Regards,
-  angelo
+base-commit: 1bf70e6c3a5346966c25e0a1ff492945b25d3f80
+-- 
+2.34.1
+
 
