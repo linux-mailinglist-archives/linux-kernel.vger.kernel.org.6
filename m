@@ -1,270 +1,298 @@
-Return-Path: <linux-kernel+bounces-379457-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379458-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8CCB39ADED5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:18:49 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 1F5299ADED7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:19:01 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ADE941C21F62
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:18:48 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 408951C20294
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:19:00 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D89B61B85CC;
-	Thu, 24 Oct 2024 08:15:37 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DBE1F1B21A5;
+	Thu, 24 Oct 2024 08:16:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="3BncTnso"
-Received: from mail-lf1-f49.google.com (mail-lf1-f49.google.com [209.85.167.49])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OBubRTSL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QfFMJNI/";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="OBubRTSL";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="QfFMJNI/"
+Received: from smtp-out2.suse.de (smtp-out2.suse.de [195.135.223.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 51E571B6CE8
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:15:34 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 729BB1B219D
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:16:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757737; cv=none; b=NMIxmhxaejdf17eG645Wy13ueg7HxMm7BMcV78FDBCuFLPsEp2T3ZUhbilINwka5MRc0saFNjahTk4dU4zxzTayNt3qpRwRmXRwrIDiv50yzEGWBWjy2LKbXaw3JqWf4WMVFif2F4bNeCSIAURk2aTCNrobpw94INXx/qFX1nYg=
+	t=1729757782; cv=none; b=rsyi6sUqzW54N4DiGhVLc2kbXK09hvkv7NV2Vu23rv7CxcYu84WLJ0PQrvjgzKyBakmDptvE4pYfDIfZLOGYVSPJMdp41FaTD8aO1pQ03rbgSdMuuFV5gGp86upbQke9+s0uf/bblDPb9BzUHHqDx9TDhbEuBr82Sss2eFO5z5g=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757737; c=relaxed/simple;
-	bh=MRwG3odtQu89vSf8lgEZE9QhB3xMwWUXM8lipK6UeZ0=;
-	h=From:In-Reply-To:MIME-Version:References:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=LmIjjmOiF9IBXRsf++c8R/OuwTEvD5XXey3ZmNrG58rdFeDdgTmYsjWAbA4Flz+mEie1r5HY66T7SfU+GMdu7JYh05KnSo8djcbCQtOLu/au1w+uTMyfOXMwelmFPa7zFsN4Wkvw81y3FLXg2tu5811KWGyJdQkPxeXCwOTI39U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=3BncTnso; arc=none smtp.client-ip=209.85.167.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
-Received: by mail-lf1-f49.google.com with SMTP id 2adb3069b0e04-539fbe22ac0so709304e87.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:15:33 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729757732; x=1730362532; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=hRlyjjh+J3BYa6u9Ab4okpW35rR0Ls3OYpmQGi3eLLg=;
-        b=3BncTnsox4DE3mqvn9gmX805onHxr7XZnqv//0puVQwuYsyL5t/ids+GACfJ/FX4FG
-         xHOGxqx4TntmBRPO0JdUimngYL3JgigCSv96Oo64VOb1XRpvgPSQqI6e3PaHCi4GEr2F
-         vxOBTxEWeA0/d6Hwv80IaOu3RDJ/JAK02LJ5MDd4uzp/OMJblUydSSDiYs1zQo2h8X2p
-         qqKNU6koAZ5fII/VkDiwn3GESpSa+sZ/p9nxt5b8v+n8EmU7wgGzgrOfEUNyGU6b24IM
-         kEreASpa4Q7nGLJknhTvk2ka0Muy+VkfxmzZHQxw5HhpJuDhA8bZPue8KlWICuA6NYdc
-         3jsw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729757732; x=1730362532;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:references
-         :mime-version:in-reply-to:from:x-gm-message-state:from:to:cc:subject
-         :date:message-id:reply-to;
-        bh=hRlyjjh+J3BYa6u9Ab4okpW35rR0Ls3OYpmQGi3eLLg=;
-        b=OhgNREoyVN63q1YdWrdfgaUU/lfG2K1Y4lbec+AXLk2Hc9uMWtigLgfvZLeoXPWat+
-         s38kmr1Y1l3pqk33NWBg9HmMfvco4qdM94xk6S2J7kIR0o2vI7mkKchFTVVnku7FJhqR
-         R/fpvEQumKZYxP4K9SlV4QukbRf0TEPm7zs3as98A5VTjb29STAVW23KYnir0+tG5rTu
-         R+fqVnjBJ1ajSf4fO87kNBNIOCP2YpdckoB5X0inI1OybnBCdtUVJTB7f6Zuttb/wNe7
-         uJfN2nGSgmgYBpr3JHkkSRg0WXJ0YjCfMz3UhqvvpU7uEsBr8+CN0hXJyuopYwsODYjq
-         NEfw==
-X-Forwarded-Encrypted: i=1; AJvYcCUhfJrF+2Ve7e41EDUquhm9cqGBo6PP0d3p+ANV71RTqNl/DwnqKFmvg/vaRQIT+RL47ZFFj8VJVOuU1BI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwHGCaldftKRhJuk7Y/YCGTWydpNa7j6NTxL5qTf+LJBuIfRhb7
-	Y8Woe5cEEQ5Zd9XQNX4i7naxx0DF/FtW9GxoE8M2uiBZk8xDGOIXpKr5Dq4VJmukMd6Rl6lynKh
-	/8B0RPw5bznNTZ33++tp8bSOAE6S4QwFk/7BXaw==
-X-Google-Smtp-Source: AGHT+IG7ZgOiNDXq2HQrZzFbIiYpB2lvLNIuelZFjdVwgaYR+PrwWBfLAJ0B9JqsrCAbKdpEUnA/pn2aDwqXnJ4R/k0=
-X-Received: by 2002:a05:6512:6cc:b0:539:fd20:c41f with SMTP id
- 2adb3069b0e04-53b23dcb1efmr700779e87.3.1729757732267; Thu, 24 Oct 2024
- 01:15:32 -0700 (PDT)
-Received: from 969154062570 named unknown by gmailapi.google.com with
- HTTPREST; Thu, 24 Oct 2024 08:15:31 +0000
-From: Bartosz Golaszewski <brgl@bgdev.pl>
-In-Reply-To: <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
+	s=arc-20240116; t=1729757782; c=relaxed/simple;
+	bh=eqjuAh8tpKAwsPdkNztKv8T09eMW1BKep8ZIYGlNmFs=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=M2kf7wu/boGlpbCg6HnlC0/7xNV27UMnhrsjWD+5oHZz0JycM92rm063XsctAWapf0J06PAM+Fyo35lWPdTjIlmtAW3RdgE6Kme4gCS0Z04mjKf+VgikzeK9nzU50vPiL0OO1ANTugDAeiy6nUYtlmnw6F6HFYbi5AQq71gkjIU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OBubRTSL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QfFMJNI/; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=OBubRTSL; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=QfFMJNI/; arc=none smtp.client-ip=195.135.223.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out2.suse.de (Postfix) with ESMTPS id 3F5F11FB7F;
+	Thu, 24 Oct 2024 08:16:13 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729757773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
+	b=OBubRTSLGYYlVzpN7006ePYeCVtBGuGdJzoDNFmWMsojvupyN8gKAWRnz1I2b92dvQiGZx
+	ISlgdLuKGl44++buPKpvfahJj88fOk7AnWr6dWWKMArLa+TMkyYIQWRTXhqYpR9bBi2IxU
+	XFZoHIZ4QdwbU20wkmnUo16owNDGIfc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729757773;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
+	b=QfFMJNI/89VQKpVRvQudPPH7n14UWsG4ZzfLGOmqWo5Cw19EmvxdsXPkVBayLNVunYqs6F
+	ix2NauhQWr6wEvAQ==
+Authentication-Results: smtp-out2.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=OBubRTSL;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b="QfFMJNI/"
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729757773; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
+	b=OBubRTSLGYYlVzpN7006ePYeCVtBGuGdJzoDNFmWMsojvupyN8gKAWRnz1I2b92dvQiGZx
+	ISlgdLuKGl44++buPKpvfahJj88fOk7AnWr6dWWKMArLa+TMkyYIQWRTXhqYpR9bBi2IxU
+	XFZoHIZ4QdwbU20wkmnUo16owNDGIfc=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729757773;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references:autocrypt:autocrypt;
+	bh=PUdyD45o51oSv9e/roIlQ1/uAhabhz3IoBa7KyPYKD4=;
+	b=QfFMJNI/89VQKpVRvQudPPH7n14UWsG4ZzfLGOmqWo5Cw19EmvxdsXPkVBayLNVunYqs6F
+	ix2NauhQWr6wEvAQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 28D66136F5;
+	Thu, 24 Oct 2024 08:16:13 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id /f2XCU0CGmfcMgAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 08:16:13 +0000
+Message-ID: <b594795a-7f26-4c0d-80f4-88d242fdc0fb@suse.cz>
+Date: Thu, 24 Oct 2024 10:16:12 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241018-gpio-notify-in-kernel-events-v5-0-c79135e58a1c@linaro.org>
- <20241018-gpio-notify-in-kernel-events-v5-8-c79135e58a1c@linaro.org>
- <d6601a31-7685-4b21-9271-1b76116cc483@sirena.org.uk> <CAMRc=MfW9n+y8Dehe_g9b8_=he1YuFr3CEGG3iQEfjYwFiWA_g@mail.gmail.com>
-Date: Thu, 24 Oct 2024 08:15:31 +0000
-Message-ID: <CAMRc=MdER_JNcvPMRuzbDFpAUqarC9K8KRP+i5SFTW3H7Mkg=w@mail.gmail.com>
-Subject: Re: [PATCH v5 8/8] gpiolib: notify user-space about in-kernel line
- state changes
-To: Mark Brown <broonie@kernel.org>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Kent Gibson <warthog618@gmail.com>, 
-	linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
-	Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH mm-unstable v1] mm/page_alloc: try not to overestimate
+ free highatomic
+To: Yu Zhao <yuzhao@google.com>, Mel Gorman <mgorman@techsingularity.net>
+Cc: Michal Hocko <mhocko@suse.com>, Andrew Morton
+ <akpm@linux-foundation.org>, David Rientjes <rientjes@google.com>,
+ linux-mm@kvack.org, linux-kernel@vger.kernel.org, Link Lin
+ <linkl@google.com>, Matt Fleming <mfleming@cloudflare.com>
+References: <20241020051315.356103-1-yuzhao@google.com>
+ <ZxYNLb0CiZyw31_q@tiehlicka>
+ <CAOUHufZ1fBvj0DgxtuLvwMAu-qx=jFAqM5RaooXzuYqCCTK1QA@mail.gmail.com>
+ <ZxaOo59ZwXoCduhG@tiehlicka> <82e6d623-bbf3-4dd8-af32-fdfc120fc759@suse.cz>
+ <CAOUHufanF3VaLzq6o_V+-+iPvB4Oj-xHwD+Rm-gmKS02h8Dw=g@mail.gmail.com>
+ <97ccf48e-f30c-4abd-b8ff-2b5310a8b60f@suse.cz>
+ <CAOUHufb=Ze1pj2BeasCLYpAvOhBQfKXcz678Zo_==9DeMbgT9Q@mail.gmail.com>
+Content-Language: en-US
+From: Vlastimil Babka <vbabka@suse.cz>
+Autocrypt: addr=vbabka@suse.cz; keydata=
+ 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
+ EP+ylKVEKb0Q2A==
+In-Reply-To: <CAOUHufb=Ze1pj2BeasCLYpAvOhBQfKXcz678Zo_==9DeMbgT9Q@mail.gmail.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 3F5F11FB7F
+X-Spam-Level: 
+X-Spamd-Result: default: False [-4.51 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	RCPT_COUNT_SEVEN(0.00)[9];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	ARC_NA(0.00)[];
+	MID_RHS_MATCH_FROM(0.00)[];
+	MIME_TRACE(0.00)[0:+];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	FROM_EQ_ENVFROM(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	TO_DN_SOME(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[imap1.dmz-prg2.suse.org:helo,imap1.dmz-prg2.suse.org:rdns,suse.cz:email,suse.cz:dkim,suse.cz:mid];
+	DKIM_TRACE(0.00)[suse.cz:+]
+X-Rspamd-Server: rspamd2.dmz-prg2.suse.org
+X-Rspamd-Action: no action
+X-Spam-Score: -4.51
+X-Spam-Flag: NO
 
-On Thu, 24 Oct 2024 08:49:30 +0200, Bartosz Golaszewski <brgl@bgdev.pl> sai=
-d:
-> On Wed, Oct 23, 2024 at 11:05=E2=80=AFPM Mark Brown <broonie@kernel.org> =
-wrote:
+On 10/24/24 06:35, Yu Zhao wrote:
+> On Wed, Oct 23, 2024 at 1:35 AM Vlastimil Babka <vbabka@suse.cz> wrote:
 >>
->> On Fri, Oct 18, 2024 at 11:10:16AM +0200, Bartosz Golaszewski wrote:
->> > From: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+>> On 10/23/24 08:36, Yu Zhao wrote:
+>> > On Tue, Oct 22, 2024 at 4:53 AM Vlastimil Babka <vbabka@suse.cz> wrote:
+>> >>
+>> >> +Cc Mel and Matt
+>> >>
+>> >> On 10/21/24 19:25, Michal Hocko wrote:
+>> >>
+>> >> Hm I don't think it's completely WAI. The intention is that we should be
+>> >> able to unreserve the highatomic pageblocks before going OOM, and there
+>> >> seems to be an unintended corner case that if the pageblocks are fully
+>> >> exhausted, they are not reachable for unreserving.
 >> >
->> > We currently only notify user-space about line config changes that are
->> > made from user-space. Any kernel config changes are not signalled.
->> >
->> > Let's improve the situation by emitting the events closer to the sourc=
-e.
->> > To that end let's call the relevant notifier chain from the functions
->> > setting direction, gpiod_set_config(), gpiod_set_consumer_name() and
->> > gpiod_toggle_active_low(). This covers all the options that we can
->> > inform the user-space about. We ignore events which don't have
->> > corresponding flags exported to user-space on purpose - otherwise the
->> > user would see a config-changed event but the associated line-info wou=
-ld
->> > remain unchanged.
+>> > I still think unreserving should only apply to highatomic PBs that
+>> > contain free pages. Otherwise, it seems to me that it'd be
+>> > self-defecting because:
+>> > 1. Unreserving fully used hightatomic PBs can't fulfill the alloc
+>> > demand immediately.
 >>
->> Today's -next is not booting on several of my platforms, including
->> beaglebone-black, i.MX8MP-EVK and pine64plus.  Bisects are pointing at
->> this commit, and i.MX8MP-EVK is actually giving some console output:
->>
->> [    2.502208] Unable to handle kernel NULL pointer dereference at virtu=
-al address 0000000000000000
->> [    2.511036] Mem abort info:
->>
->> ...
->>
->> [    2.679934] Call trace:
->> [    2.682379]  gpiod_direction_output+0x34/0x5c
->> [    2.686745]  i2c_register_adapter+0x59c/0x670
->> [    2.691111]  __i2c_add_numbered_adapter+0x58/0xa8
->> [    2.695822]  i2c_add_adapter+0xa0/0xd0
->> [    2.699578]  i2c_add_numbered_adapter+0x2c/0x38
->> [    2.704117]  i2c_imx_probe+0x2d0/0x640
->>
->> which looks plausible given the change.
->>
->> Full boot log for i.MX8MP-EVK:
->>
->>    https://lava.sirena.org.uk/scheduler/job/887083
->>
->> Bisect log for that, the others look similar (the long run of good/bad
->> tags at the start for random commits is my automation pulling test
->> results it already knows about in the affected range to try to speed up
->> the bisect):
->>
->
-> Hi Mark!
->
-> Any chance you could post the output of
->
->     scripts/faddr2line drivers/gpio/gpiolib.o gpiod_direction_output+0x34=
-/0x5c
->
-> for that build?
->
-> Bart
->
+>> I thought the alloc demand is only blocked on the pessimistic watermark
+>> calculation. Usable free pages exist, but the allocation is not allowed to
+>> use them.
+> 
+> I think we are talking about two different problems here:
+> 1. The estimation problem.
+> 2. The unreserving policy problem.
+> 
+> What you said here is correct w.r.t. the first problem, and I was
+> talking about the second problem.
 
-While I can't really reproduce it, I've looked at what could be wrong and
-figured that the NULL-pointer in question can possibly be the
-line_state_notifier.
+OK but the problem with unreserving currently makes the problem of
+estimation worse and unfixable.
 
-I realized that for some historical reasons we add the GPIO device to the
-global list before it's fully set up - including initializing the notifier.
-In some corner cases (devlinks borked?) this could lead to consumers reques=
-ting
-GPIOs before their provider is ready.
+>> > 2. More importantly, it only takes one alloc failure in
+>> > __alloc_pages_direct_reclaim() to reset nr_reserved_highatomic to 2MB,
+>> > from as high as 1% of a zone (in this case 1GB). IOW, it makes more
+>> > sense to me that highatomic only unreserves what it doesn't fully use
+>> > each time unreserve_highatomic_pageblock() is called, not everything
+>> > it got (except the last PB).
+>>
+>> But if the highatomic pageblocks are already full, we are not really
+>> removing any actual highatomic reserves just by changing the migratetype and
+>> decreasing nr_reserved_highatomic?
+> 
+> If we change the MT, they can be fragmented a lot faster, i.e., from
+> the next near OOM condition to upon becoming free. Trying to persist
+> over time is what actually makes those PBs more fragmentation
+> resistant.
 
-Mark: could you try the following diff and let me know if it works?
+If we assume the allocations there have similar sizes and lifetimes, then I
+guess yeah.
 
-diff --git a/drivers/gpio/gpiolib.c b/drivers/gpio/gpiolib.c
-index ae758ba6dc3d..4258acac0162 100644
---- a/drivers/gpio/gpiolib.c
-+++ b/drivers/gpio/gpiolib.c
-@@ -987,45 +987,6 @@ int gpiochip_add_data_with_key(struct gpio_chip
-*gc, void *data,
+>> In fact that would allow the reserves
+>> grow with some actual free pages in the future.
+> 
+> Good point. I think I can explain it better along this line.
+> 
+> If highatomic is under the limit, both your proposal and the current
+> implementation would try to grow, making not much difference. However,
+> the current implementation can also reuse previously full PBs when
+> they become available. So there is a clear winner here: the current
+> implementation.
 
- 	gdev->ngpio =3D gc->ngpio;
- 	gdev->can_sleep =3D gc->can_sleep;
--
--	scoped_guard(mutex, &gpio_devices_lock) {
--		/*
--		 * TODO: this allocates a Linux GPIO number base in the global
--		 * GPIO numberspace for this chip. In the long run we want to
--		 * get *rid* of this numberspace and use only descriptors, but
--		 * it may be a pipe dream. It will not happen before we get rid
--		 * of the sysfs interface anyways.
--		 */
--		base =3D gc->base;
--		if (base < 0) {
--			base =3D gpiochip_find_base_unlocked(gc->ngpio);
--			if (base < 0) {
--				ret =3D base;
--				base =3D 0;
--				goto err_free_label;
--			}
--
--			/*
--			 * TODO: it should not be necessary to reflect the
--			 * assigned base outside of the GPIO subsystem. Go over
--			 * drivers and see if anyone makes use of this, else
--			 * drop this and assign a poison instead.
--			 */
--			gc->base =3D base;
--		} else {
--			dev_warn(&gdev->dev,
--				 "Static allocation of GPIO base is deprecated, use dynamic
-allocation.\n");
--		}
--
--		gdev->base =3D base;
--
--		ret =3D gpiodev_add_to_list_unlocked(gdev);
--		if (ret) {
--			chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
--			goto err_free_label;
--		}
--	}
--
- 	ATOMIC_INIT_NOTIFIER_HEAD(&gdev->line_state_notifier);
- 	BLOCKING_INIT_NOTIFIER_HEAD(&gdev->device_notifier);
+I'd say it depends on the user of the highatomic blocks (the workload),
+which way ends up better.
 
-@@ -1103,6 +1064,45 @@ int gpiochip_add_data_with_key(struct gpio_chip
-*gc, void *data,
- 		if (ret)
- 			goto err_remove_irqchip;
- 	}
-+
-+	scoped_guard(mutex, &gpio_devices_lock) {
-+		/*
-+		 * TODO: this allocates a Linux GPIO number base in the global
-+		 * GPIO numberspace for this chip. In the long run we want to
-+		 * get *rid* of this numberspace and use only descriptors, but
-+		 * it may be a pipe dream. It will not happen before we get rid
-+		 * of the sysfs interface anyways.
-+		 */
-+		base =3D gc->base;
-+		if (base < 0) {
-+			base =3D gpiochip_find_base_unlocked(gc->ngpio);
-+			if (base < 0) {
-+				ret =3D base;
-+				base =3D 0;
-+				goto err_free_label;
-+			}
-+
-+			/*
-+			 * TODO: it should not be necessary to reflect the
-+			 * assigned base outside of the GPIO subsystem. Go over
-+			 * drivers and see if anyone makes use of this, else
-+			 * drop this and assign a poison instead.
-+			 */
-+			gc->base =3D base;
-+		} else {
-+			dev_warn(&gdev->dev,
-+				 "Static allocation of GPIO base is deprecated, use dynamic
-allocation.\n");
-+		}
-+
-+		gdev->base =3D base;
-+
-+		ret =3D gpiodev_add_to_list_unlocked(gdev);
-+		if (ret) {
-+			chip_err(gc, "GPIO integer space overlap, cannot add chip\n");
-+			goto err_free_label;
-+		}
-+	}
-+
- 	return 0;
+> If highatomic has reached the limit, with your proposal, the growth
+> can only happen after unreserve, and unreserve only happens under
+> memory pressure. This means it's likely that it tries to grow under
+> memory pressure, which is more difficult than the condition where
+> there is plenty of memory. For the current implementation, it doesn't
+> try to grow, rather, it keeps what it already has, betting those full
+> PBs becoming available for reuse. So I don't see a clear winner
+> between trying to grow under memory pressure and betting on becoming
+> available for reuse.
 
- err_remove_irqchip:
+Understood. But also note there are many conditions where the current
+implementation and my proposal behave the same. If highatomic pageblocks
+become full and then only one or few pages from each is freed, it suddenly
+becomes possible to unreserve them due to memory pressure, and there is no
+reuse for those highatomic allocations anymore. This very different outcome
+only depends on whether a single page is free for the unreserve to work, but
+from the efficiency of pageblock reusal you describe above a single page is
+only a minor difference. My proposal would at least remove the sudden change
+of behavior when going from a single free page to no free page.
 
-Thanks
-Bartosz
+>> Hm that assumes we're adding some checks in free fastpath, and for that to
+>> work also that there will be a freed page in highatomic PC in near enough
+>> future from the decision we need to unreserve something. Which is not so
+>> much different from the current assumption we'll find such a free page
+>> already in the free list immediately.
+>>
+>> > To summarize, I think this is an estimation problem, which I would
+>> > categorize as a lesser problem than accounting problems. But it sounds
+>> > to me that you think it's a policy problem, i.e., the highatomic
+>> > unreserving policy is wrong or not properly implemented?
+>>
+>> Yeah I'd say not properly implemented, but that sounds like a mechanism, not
+>> policy problem to me :)
+> 
+> What about adding a new counter to keep track of the size of free
+> pages reserved for highatomic?
+
+That's doable but not so trivial and means starting to handle the highatomic
+pageblocks much more carefully, like we do with CMA pageblocks and
+NR_FREE_CMA_PAGES counter, otherwise we risk drifting the counter unrecoverably.
+
+> Mel?
+
 
