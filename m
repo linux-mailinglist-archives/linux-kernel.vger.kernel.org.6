@@ -1,123 +1,116 @@
-Return-Path: <linux-kernel+bounces-379237-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379238-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 66B849ADBD8
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:14:34 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id DBFA79ADBDF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:15:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958291C216D2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:14:33 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 7734DB20FFD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:15:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 55FFA18871F;
-	Thu, 24 Oct 2024 06:14:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B399D185B47;
+	Thu, 24 Oct 2024 06:15:05 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="qNEVLB5w"
-Received: from mail-yw1-f201.google.com (mail-yw1-f201.google.com [209.85.128.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b="UepaPorx"
+Received: from bombadil.infradead.org (bombadil.infradead.org [198.137.202.133])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB803188717
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 06:14:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 41717177998;
+	Thu, 24 Oct 2024 06:15:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.137.202.133
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729750448; cv=none; b=Sy60xPerye3BolQsEgDE9qYwtjwSEEr+BFRXnIamTto2fd6bOWAFGkDP4ko7QpWaI0CHv4ozFNZ88vXdgIVi1DXyodw9s1NdX3o10jA5uYyK/PuLQtaGHqNFEKJC+CbjQWMYbeFSVxM1wa8XDaAJjF0mT6QzG4Dm519MYogKBZA=
+	t=1729750505; cv=none; b=By9/XeMo0yRvwTFuaYIGTbYvMB0525R1rY8Bz2Zw5mnGbJEFoB2E42FNngTEomOM/rxGjRZK4MFWkEfQiTIV64Bqd7NLTx3wqrRD9F4uT6TBChMSAxkEdvhT24aE+7Rmnzp9qOVNpsrc6zI35PCxSQBO+DFIYt4ruIlt3w6zB9M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729750448; c=relaxed/simple;
-	bh=zDXiwnNbOAqIIc1NRxGfQ1iF2PdUDrS7EJdjH4bGXdI=;
-	h=Date:In-Reply-To:Message-Id:Mime-Version:References:Subject:From:
-	 To:Cc:Content-Type; b=km63DEXbj9J38/b036lmAKnvx0cy6a5aiHRnptOgn42YdvMKWbiUi5ZouAFopbeGnGxP2S/LpS1EKPkEeyYWQKMrznf7rfGrEQLH/aP1GffpPzeXPBT44I5L8loR+LFAjp66ngb6R7C9UejkOZHJolqHMn/gPLxvwmYe/dpbe1c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=qNEVLB5w; arc=none smtp.client-ip=209.85.128.201
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--saravanak.bounces.google.com
-Received: by mail-yw1-f201.google.com with SMTP id 00721157ae682-6e3d6713619so8355387b3.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 23:14:06 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729750446; x=1730355246; darn=vger.kernel.org;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RirtA7EgN4fQOOKugcSYCvUnz6k6FXA4tnIv667SP2U=;
-        b=qNEVLB5wZAWqkQZOWbj/Bsr8QbqAdt9Bl0pjOuCJDLT2e8y5c9qH2MhHxRb4VNpIlV
-         KUComeNF9rKthKH4gBKx44hhF9jmGI5ELiKu5rGsCYEubKqdJwSvAVR2FodktfEts0GA
-         mnBKO6vhkxWsy6MI1Hs8M8eA4RXWL4KYEjw62phwE9Z2Je1IWtQmjmhO/0kGRpNTn2bt
-         oghgvA7Qv3qeiqIyk7XllXn29z2AeW6K/5ik2PhqPU8Nltk1zGyji9QwbxvMkG7hhFsK
-         q1ARqz3AMtoaouUWaGautpsveoGOXGu67WRBr1klrng+K6XtL/7T1xXx+ieHZfXH1Z3u
-         Vedg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729750446; x=1730355246;
-        h=cc:to:from:subject:references:mime-version:message-id:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=RirtA7EgN4fQOOKugcSYCvUnz6k6FXA4tnIv667SP2U=;
-        b=FJ4yLViu95qGuJscyfYAvRtpC2lHlIqyY/j0yUbCUbQvRHF+KdXWgdVNia+/IrNtQY
-         pHLUNAR5PD/rsvH5L074o63sj6nGMnvJKBiXs/b4av9v/zOLBVsM7daD342FOZBQptmN
-         BF6DmrMihBej6TvLX5Q4s0ELIjyfj6UMG8JdWxgSAoMeJvT1y36TgYWWguCc/mPwHxe6
-         /sJ8HMU/8opzIRkNfTW9tcLXvVT14eDBn5j2eLzVZNyMnehXhxzwZ1CfGJXOne3E48yl
-         D+6WTo7OxM6aF5Nbr61EUgY8hQS3zYveM69GOFm9IJgQ+XCKDClWEbNWKLpzuDvX78+d
-         T69A==
-X-Forwarded-Encrypted: i=1; AJvYcCXfaSgQDHFy6mqphGQAw8EkaGVrn+yE4CG48M8AkHp2Uyuh9ZkFQaD5YqYf5GN8W4hBWlkOf8GZ+YTQNiY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzxDOmZFs++yuPmnYZb1qN34UJWJtLpqRispsSG5OCG2WnvwoQA
-	q0+8ozXua/3NDS/fgn2RjNDpOePUdznggTxUAa94timUnY4Acf02xLkXSPoLt2imacDSzr4EPdL
-	LDNFIJ666YOkSGA==
-X-Google-Smtp-Source: AGHT+IEJXaAAeZpuDAkTsefFXLL2kex4B2AlfwjdclQcvPn636A6m5nX8BurNhgR4ykV7U+QaaWd5sb2nHuey3k=
-X-Received: from saravanak.san.corp.google.com ([2620:15c:2d:3:965e:f81d:c9fb:b352])
- (user=saravanak job=sendgmr) by 2002:a05:690c:3749:b0:6e2:4b3:ee22 with SMTP
- id 00721157ae682-6e866359b6fmr171667b3.6.1729750445961; Wed, 23 Oct 2024
- 23:14:05 -0700 (PDT)
-Date: Wed, 23 Oct 2024 23:13:44 -0700
-In-Reply-To: <20241024061347.1771063-1-saravanak@google.com>
-Message-Id: <20241024061347.1771063-4-saravanak@google.com>
+	s=arc-20240116; t=1729750505; c=relaxed/simple;
+	bh=slboK5q8uJWK2Rq3IME2ccochvGNGQSVeogqk/vnDYw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=VoUtRJXNUfsQv7g9gkZJVcvLsZ9GHHI+1UiHqb3K8o+9Lx2qweubqPXuE6Cc6ZRmMLV7P+DMCuBfF46ogebVzbyCQZyF/yRpR7Ry4mMfbfuqnR0d1abMU+4BKZtBJkih6C1ohVSs6VbM0LOXbEEfzb6oIhxTb8xVTjkUdNVzdCo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org; dkim=pass (2048-bit key) header.d=infradead.org header.i=@infradead.org header.b=UepaPorx; arc=none smtp.client-ip=198.137.202.133
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=infradead.org
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bombadil.srs.infradead.org
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=infradead.org; s=bombadil.20210309; h=In-Reply-To:Content-Type:MIME-Version
+	:References:Message-ID:Subject:Cc:To:From:Date:Sender:Reply-To:
+	Content-Transfer-Encoding:Content-ID:Content-Description;
+	bh=GJu8E1kmcKaxN7Py5JO+aITM1D4B6y3Wcbyx8qaQDWQ=; b=UepaPorxu1MJbYkWEg5SHN+JOy
+	i/HhX7ZFzlnyzKIPg74YMkm22c0nW1SHL8iJLDwOEcGbD537u9Wy49ZOG0hWV35xbqHsrq9jj7x+a
+	HHiWJgl+KUmm3DYmuFyR4MJ54oHpRE2M1aIo7Bse+923LlNuC9EjnWTV+5OOl1qanoqHRjv4a9WH2
+	xo+C6IShEO9oiGds5oiUOz3aqdBiQWWtpEai3VAgxAESu3X28MJSRpavA6gLacOfNuWDYz9JN2h6N
+	lmzPn0uM1Mpeg+szxniBk5/30pInFfrNEPLxfgAMKej1085lTz5PsPE/m6lvlCaAtQXntQ1+d6IWD
+	1NDkVlXQ==;
+Received: from hch by bombadil.infradead.org with local (Exim 4.98 #2 (Red Hat Linux))
+	id 1t3r7Z-0000000GslD-1X4P;
+	Thu, 24 Oct 2024 06:14:57 +0000
+Date: Wed, 23 Oct 2024 23:14:57 -0700
+From: Christoph Hellwig <hch@infradead.org>
+To: Adrian Vovk <adrianvovk@gmail.com>
+Cc: Christoph Hellwig <hch@infradead.org>,
+	Eric Biggers <ebiggers@kernel.org>,
+	Md Sadre Alam <quic_mdalam@quicinc.com>, axboe@kernel.dk,
+	song@kernel.org, yukuai3@huawei.com, agk@redhat.com,
+	snitzer@kernel.org, Mikulas Patocka <mpatocka@redhat.com>,
+	adrian.hunter@intel.com, quic_asutoshd@quicinc.com,
+	ritesh.list@gmail.com, ulf.hansson@linaro.org, andersson@kernel.org,
+	konradybcio@kernel.org, kees@kernel.org, gustavoars@kernel.org,
+	linux-block@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-raid@vger.kernel.org, dm-devel@lists.linux.dev,
+	linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org,
+	linux-hardening@vger.kernel.org, quic_srichara@quicinc.com,
+	quic_varada@quicinc.com
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+Message-ID: <Zxnl4VnD6K6No4UQ@infradead.org>
+References: <20240916085741.1636554-2-quic_mdalam@quicinc.com>
+ <20240921185519.GA2187@quark.localdomain>
+ <ZvJt9ceeL18XKrTc@infradead.org>
+ <ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+ <ZxHwgsm2iP2Z_3at@infradead.org>
+ <CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
+ <ZxH4lnkQNhTP5fe6@infradead.org>
+ <D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+ <ZxieZPlH-S9pakYW@infradead.org>
+ <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241024061347.1771063-1-saravanak@google.com>
-X-Mailer: git-send-email 2.47.0.105.g07ac214952-goog
-Subject: [PATCH 3/3] drivers: core: fw_devlink: Make the error message a bit
- more useful
-From: Saravana Kannan <saravanak@google.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>, "Rafael J. Wysocki" <rafael@kernel.org>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
-	JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
-	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
-	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
-Cc: Saravana Kannan <saravanak@google.com>, 
-	"=?UTF-8?q?N=C3=ADcolas=20F=2E=20R=2E=20A=2E=20Prado?=" <nfraprado@collabora.com>, kernel-team@android.com, 
-	linux-kernel@vger.kernel.org, dri-devel@lists.freedesktop.org, 
-	linux-phy@lists.infradead.org, linux-tegra@vger.kernel.org, 
-	linux-arm-kernel@lists.infradead.org, linux-mediatek@lists.infradead.org
-Content-Type: text/plain; charset="UTF-8"
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+X-SRS-Rewrite: SMTP reverse-path rewritten from <hch@infradead.org> by bombadil.infradead.org. See http://www.infradead.org/rpr.html
 
-It would make it easier to debugs issues similar to the ones
-reported[1][2] recently where some devices didn't have the fwnode set.
+On Wed, Oct 23, 2024 at 10:52:06PM -0400, Adrian Vovk wrote:
+> > Why do you assume the encryption would happen twice?
+> 
+> I'm not assuming. That's the behavior of dm-crypt without passthrough.
+> It just encrypts everything that moves through it. If I stack two
+> layers of dm-crypt on top of each other my data is encrypted twice.
 
-[1] - https://lore.kernel.org/all/7b995947-4540-4b17-872e-e107adca4598@notapiano/
-[2] - https://lore.kernel.org/all/20240910130019.35081-1-jonathanh@nvidia.com/
+Sure.  But why would you do that?
 
-Signed-off-by: Saravana Kannan <saravanak@google.com>
----
- drivers/base/core.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+> > No one knows that it actually is encryped.  The lower layer just knows
+> > the skip encryption flag was set, but it has zero assurance data
+> > actually was encrypted.
+> 
+> I think it makes sense to require that the data is actually encrypted
+> whenever the flag is set. Of course there's no way to enforce that
+> programmatically, but code that sets the flag without making sure the
+> data gets encrypted some other way wouldn't pass review.
 
-diff --git a/drivers/base/core.c b/drivers/base/core.c
-index a4c853411a6b..3b13fed1c3e3 100644
---- a/drivers/base/core.c
-+++ b/drivers/base/core.c
-@@ -2181,8 +2181,8 @@ static int fw_devlink_create_devlink(struct device *con,
- 		}
- 
- 		if (con != sup_dev && !device_link_add(con, sup_dev, flags)) {
--			dev_err(con, "Failed to create device link (0x%x) with %s\n",
--				flags, dev_name(sup_dev));
-+			dev_err(con, "Failed to create device link (0x%x) with supplier %s for %pfwf\n",
-+				flags, dev_name(sup_dev), link->consumer);
- 			ret = -EINVAL;
- 		}
- 
--- 
-2.47.0.105.g07ac214952-goog
+You have a lot of trusted in reviers. But even that doesn't help as
+the kernel can load code that never passed review.
+
+> Alternatively, if I recall correctly it should be possible to just
+> check if the bio has an attached encryption context. If it has one,
+> then just pass-through. If it doesn't, then attach your own. No flag
+> required this way, and dm-default-key would only add encryption iff
+> the data isn't already encrypted.
+
+That at least sounds a little better.  But it still doesn't answer
+why we need this hack instead always encrypting at one layer instead
+of splitting it up.
 
 
