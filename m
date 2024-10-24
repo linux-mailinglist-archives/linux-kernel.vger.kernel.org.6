@@ -1,138 +1,108 @@
-Return-Path: <linux-kernel+bounces-380685-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380686-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 41BCA9AF48D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:14:28 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 803159AF48E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:14:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id DC9741F21F46
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:14:27 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 45B07281696
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:14:43 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 514B4218324;
-	Thu, 24 Oct 2024 21:13:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 036AA2178E0;
+	Thu, 24 Oct 2024 21:14:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="hMkvpFS5"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b="E04oyj/n"
+Received: from mail-pg1-f172.google.com (mail-pg1-f172.google.com [209.85.215.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A6391217338;
-	Thu, 24 Oct 2024 21:13:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 23AD31ACDED
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 21:14:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729804429; cv=none; b=hOIUD81a8vrtAqZRD7BvN1PZW1cB2/QwE/YCk0pqZLewODB3R1PzJ8oCEF73A3cAWRsx08bybroHATufoc16YAcryJTp66XJo6V8lQmBsEGucm09C4hjMuxRpjLGRa4/2iU67mHIqVWrYSVMhOVnHf4jZ2N4woY6LhFUHsTu3xk=
+	t=1729804462; cv=none; b=k7Hb1RVpc3gZudcMG/sRR89DBtmT3/igxP0BAgfywcd0+dMYqeu57r5r54jV+drZsq4w/TQyEiymW1dtX8yKVAFRta9yvsDllVy+nqERjS5CRbHzEID2ipPwga3beZOkFh0erkmgkz5vgp3nPAe2GDKopU4B2cGp2iR36oCfSVA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729804429; c=relaxed/simple;
-	bh=go564DnfBiEx79xSbk4V/4Kf/fjy5zdl97UH8liwTnw=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=u3elEEWrqPUzBRYo9Kvn8mR0HQvzoT1KLBPtKn2K+ESs7lLVUr+V9BIS3N7+lA8luykM+trHODq0RG6MHLIPtzuaeb6MmbI3gkaLHytcTG+VsokL/zTSxEnEnVtq780WUo9p2vkcWieTKwaJACEZE/Ynwn7wyP99S8yiaqQAymc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=hMkvpFS5; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 221F2C4CEC7;
-	Thu, 24 Oct 2024 21:13:48 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729804429;
-	bh=go564DnfBiEx79xSbk4V/4Kf/fjy5zdl97UH8liwTnw=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=hMkvpFS5bU/4cGW/N/i+elpi8q8hEn8bQ6ByXvXB8teAKsSx6SzVXcvVz/6EAqjiz
-	 JX/5rjlg6o1Nvpftw4Kfc7s3RoTAbbzeIYbD2+xBWBFpSsAn9fvSn8TxwbmNGTyAss
-	 nwV2bj4EzLWZJUh+yRpkjJI97rjvcFTkmwdHgFnfHW+8VgYnnGAQuHeXKbKuDJ1L7/
-	 xLIU+CVXpkWSflPqWlo6BwBYmBzh1oaSxU8zkhRWuzZ+8kAkwpyLeFAHHaOkSqGXcD
-	 AEZVZf4X0AR24dSpdlQ/AvsnzH/GW6wJuRuMqz6wE4Jmgs6GtGcJ30ljSDxvtBGOVW
-	 Sev3uG064/NGw==
-Date: Thu, 24 Oct 2024 15:13:45 -0600
-From: "Gustavo A. R. Silva" <gustavoars@kernel.org>
-To: Andrew Lunn <andrew+netdev@lunn.ch>,
-	Johannes Berg <johannes@sipsolutions.net>,
-	David Ahern <dsahern@kernel.org>,
-	"David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>
-Cc: netdev@vger.kernel.org, linux-kernel@vger.kernel.org,
-	"Gustavo A. R. Silva" <gustavoars@kernel.org>,
-	linux-hardening@vger.kernel.org, Simon Horman <horms@kernel.org>,
-	Kees Cook <kees@kernel.org>
-Subject: [PATCH v2 3/4][next] uapi: net: arp: Avoid
- -Wflex-array-member-not-at-end warnings
-Message-ID: <903f37962945fe0aa46e1d05c2a05f39571a53fa.1729802213.git.gustavoars@kernel.org>
-References: <cover.1729802213.git.gustavoars@kernel.org>
+	s=arc-20240116; t=1729804462; c=relaxed/simple;
+	bh=rCWo4AEZm1UWnEuWWDbCGjSYu2CiVU93lvL0UlLuZq0=;
+	h=Date:Subject:In-Reply-To:CC:From:To:Message-ID:Mime-Version:
+	 Content-Type; b=CRNjyFCFoDh54YfRXfi5sCm0qIKQuP3A0plaQ7C9Br9ipI6qhSIvxL2Rf6wMbWa1ijLhqmU/c96BanYCb3xiD85fz7BRUnavLfzLkjEw1Uoz1eq3j945MxSdd5yUj20rK3RVe9Zu4B97qgMvFE4mTv5NgQKOwd7MBSsQ5CdrdMg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com; spf=pass smtp.mailfrom=dabbelt.com; dkim=pass (2048-bit key) header.d=dabbelt-com.20230601.gappssmtp.com header.i=@dabbelt-com.20230601.gappssmtp.com header.b=E04oyj/n; arc=none smtp.client-ip=209.85.215.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=dabbelt.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=dabbelt.com
+Received: by mail-pg1-f172.google.com with SMTP id 41be03b00d2f7-7ea68af2f62so984071a12.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:14:18 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=dabbelt-com.20230601.gappssmtp.com; s=20230601; t=1729804458; x=1730409258; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=tiJbyHkpa/rD5fDWUJqjFih69lFbISgDjEDgatp+bhk=;
+        b=E04oyj/nUwxFDG6JtAOoIrNXAjhc+b9fSl5GCWG1pXXFWBo3AeiVIRM49jfezBlgW5
+         C1FpgbVw64Ym53bxTYDbr+L8n+mvQq0jFeYlzrkxJqDwSfQSgLOq0zLmmCm0E1HbtYmK
+         g00G9fhjbWDlgsgVczAzlv5GfKFRP86bepo+/PIGYgqu4N7gXY/D3p3cW1C22x7JuJLE
+         8vZ3cvPhLz5bOIa71faUg0k0eTcAD1qA2cYWZanA1nNEB6X61/6qEguzYzfkKs6kSlkm
+         vFBvd6UYA9MuCGRberFLy1suYS86G3VKcwvLACi82ZDPQ9vVCq66e5a4hZJSZ14SC5YG
+         arow==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729804458; x=1730409258;
+        h=content-transfer-encoding:mime-version:message-id:to:from:cc
+         :in-reply-to:subject:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=tiJbyHkpa/rD5fDWUJqjFih69lFbISgDjEDgatp+bhk=;
+        b=e9fo45rFfWGFZ8lwYEDaeez5LwfXbB/v294HQXGpchlJfnqRl5sCCZrlufF0bZCfsL
+         J0iEyBISELPn6yQ6B6SxFSPkRYPcnA7jrUa58H7DhwVmf7gnKVrxHb8LKhdtEgDRRGy0
+         unremGYpIVLVj9f+ZOZ+PkuTTJrfPEFn0/f5G+AcIfTkY2NG0Tf6oZrew26DoCTGou6j
+         e+SFR6lXAP6mzsUp1IoC6UffwVe2QCV/VFZruRUW9AME5XvD8XdzfCL+zRFegRhUd80d
+         t4s7iFyIS7boaKgQAulwnDj8zCkaZQXLccbozRNrh1uC5BgecQ2Bg0W6CDF6FQiMKnvz
+         +8vQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUWpMZXbtVurPhGLdTcBhnGSHW1PmM3wlNwILtFeXd0lNFfDbaSHe9IOn+2meN41AGod1rffa8yVXo0KUI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxI1sWmkX2caYPXphpYrk/a662HXL6ZrrM95gXnVVdxUTleujQS
+	neykK5qBUlFXoQXtJ2dTEtUW5Iu9KtcZxAi/fv83C9XDmnmAcigyCAPQMGYV/m+o15v97P3+gHd
+	7
+X-Google-Smtp-Source: AGHT+IExxVdLxb0EnGXeM9uQWuYp1Z31moAXdVKRy0/68mQvvpnpPMGCMSpxRAeKSBwWk9PYSDKZkw==
+X-Received: by 2002:a17:90b:3b50:b0:2e2:a96c:f009 with SMTP id 98e67ed59e1d1-2e76b5dde45mr7947043a91.9.1729804458375;
+        Thu, 24 Oct 2024 14:14:18 -0700 (PDT)
+Received: from localhost ([50.145.13.30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e5a321dsm1972316a91.53.2024.10.24.14.14.17
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 14:14:17 -0700 (PDT)
+Date: Thu, 24 Oct 2024 14:14:17 -0700 (PDT)
+X-Google-Original-Date: Thu, 24 Oct 2024 14:14:15 PDT (-0700)
+Subject:     Re: linux-next: Signed-off-by missing for commit in the risc-v tree
+In-Reply-To: <20241025080355.34c62c4a@canb.auug.org.au>
+CC: Paul Walmsley <paul@pwsan.com>, linux-kernel@vger.kernel.org,
+  linux-next@vger.kernel.org
+From: Palmer Dabbelt <palmer@dabbelt.com>
+To: Stephen Rothwell <sfr@canb.auug.org.au>
+Message-ID: <mhng-3386c07e-d82c-485e-b12e-4a44f1c3b893@palmer-ri-x1c9a>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <cover.1729802213.git.gustavoars@kernel.org>
+Mime-Version: 1.0 (MHng)
+Content-Type: text/plain; charset=utf-8; format=flowed
+Content-Transfer-Encoding: 8bit
 
--Wflex-array-member-not-at-end was introduced in GCC-14, and we are
-getting ready to enable it, globally.
+On Thu, 24 Oct 2024 14:03:55 PDT (-0700), Stephen Rothwell wrote:
+> Hi all,
+>
+> Commits
+>
+>   814779461d84 ("KVM: riscv: selftests: Add Smnpm and Ssnpm to get-reg-list test")
+>   e27f468bcf14 ("RISC-V: KVM: Allow Smnpm and Ssnpm extensions for guests")
+>   d250050aae4f ("riscv: hwprobe: Export the Supm ISA extension")
+>   5e9f1ee1c523 ("riscv: selftests: Add a pointer masking test")
+>   cebce87fb04e ("riscv: Allow ptrace control of the tagged address ABI")
+>   c4d16116bd11 ("riscv: Add support for the tagged address ABI")
+>   871aba681a0d ("riscv: Add support for userspace pointer masking")
+>   1edd6226877b ("riscv: Add CSR definitions for pointer masking")
+>   12749546293e ("riscv: Add ISA extension parsing for pointer masking")
+>   8946ad26c0e2 ("dt-bindings: riscv: Add pointer masking ISA extensions")
+>
+> are missing a Signed-off-by from their committers.
 
-Address the following warnings by changing the type of the middle struct
-members in a couple of composite structs, which are currently causing
-trouble, from `struct sockaddr` to `struct __kernel_sockaddr_legacy`.
-
-include/uapi/linux/if_arp.h:118:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/if_arp.h:119:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/if_arp.h:121:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/if_arp.h:126:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-include/uapi/linux/if_arp.h:127:25: warning: structure containing a flexible array member is not at the end of another structure [-Wflex-array-member-not-at-end]
-
-Also, refactor some related code, accordingly.
-
-Signed-off-by: Gustavo A. R. Silva <gustavoars@kernel.org>
----
- include/uapi/linux/if_arp.h | 18 +++++++++---------
- net/ipv4/arp.c              |  2 +-
- 2 files changed, 10 insertions(+), 10 deletions(-)
-
-diff --git a/include/uapi/linux/if_arp.h b/include/uapi/linux/if_arp.h
-index 4783af9fe520..4a25a05125d3 100644
---- a/include/uapi/linux/if_arp.h
-+++ b/include/uapi/linux/if_arp.h
-@@ -115,18 +115,18 @@
- 
- /* ARP ioctl request. */
- struct arpreq {
--	struct sockaddr	arp_pa;		/* protocol address		 */
--	struct sockaddr	arp_ha;		/* hardware address		 */
--	int		arp_flags;	/* flags			 */
--	struct sockaddr arp_netmask;    /* netmask (only for proxy arps) */
--	char		arp_dev[IFNAMSIZ];
-+	struct __kernel_sockaddr_legacy	arp_pa;		/* protocol address		 */
-+	struct __kernel_sockaddr_legacy	arp_ha;		/* hardware address		 */
-+	int				arp_flags;	/* flags			 */
-+	struct __kernel_sockaddr_legacy	arp_netmask;    /* netmask (only for proxy arps) */
-+	char				arp_dev[IFNAMSIZ];
- };
- 
- struct arpreq_old {
--	struct sockaddr	arp_pa;		/* protocol address		 */
--	struct sockaddr	arp_ha;		/* hardware address		 */
--	int		arp_flags;	/* flags			 */
--	struct sockaddr	arp_netmask;    /* netmask (only for proxy arps) */
-+	struct __kernel_sockaddr_legacy	arp_pa;		/* protocol address		 */
-+	struct __kernel_sockaddr_legacy	arp_ha;		/* hardware address		 */
-+	int				arp_flags;	/* flags			 */
-+	struct sockaddr			arp_netmask;    /* netmask (only for proxy arps) */
- };
- 
- /* ARP Flag values. */
-diff --git a/net/ipv4/arp.c b/net/ipv4/arp.c
-index 11c1519b3699..3a97efe1587b 100644
---- a/net/ipv4/arp.c
-+++ b/net/ipv4/arp.c
-@@ -1185,7 +1185,7 @@ static int arp_req_get(struct net *net, struct arpreq *r)
- 
- 	read_lock_bh(&neigh->lock);
- 	memcpy(r->arp_ha.sa_data, neigh->ha,
--	       min(dev->addr_len, sizeof(r->arp_ha.sa_data_min)));
-+	       min(dev->addr_len, sizeof(r->arp_ha.sa_data)));
- 	r->arp_flags = arp_state_to_flags(neigh);
- 	read_unlock_bh(&neigh->lock);
- 
--- 
-2.34.1
-
+Sorry about that, looks like I missed the `-lts` arguments to b4.  
+Should be fixed.
 
