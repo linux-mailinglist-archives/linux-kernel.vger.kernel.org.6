@@ -1,176 +1,219 @@
-Return-Path: <linux-kernel+bounces-380530-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380528-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id A83379AF052
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:04:29 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4AEF79AF04F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:04:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3A48E1F2254F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:04:29 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AAF6E28291E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:04:06 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD745216A24;
-	Thu, 24 Oct 2024 19:04:21 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9C2D6216A3D;
+	Thu, 24 Oct 2024 19:04:01 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b="e9jBZG34"
-Received: from mx0a-001b2d01.pphosted.com (mx0a-001b2d01.pphosted.com [148.163.156.1])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="bpWI0e6+"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E20F7216A36
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:04:17 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.163.156.1
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB9DE170A1C;
+	Thu, 24 Oct 2024 19:04:00 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729796661; cv=none; b=YslTjl1c2P9FVZqa3S6NP3d/33YvMU8EvNdhYZWTbfDWMtFfVMdbekJ/DjO97WJOkRH6MUtUxPZZWXFxDbTSiKyIS61FG0/cs0WjlJSiZoru1zMk23Vpy8BiFk+YMuVBEiZ4AaAIJav14bFlTJALyc5VWqdn08H3joviQ6SU1V0=
+	t=1729796641; cv=none; b=kwjZ+7g/46nyMcge0V0IJ7H45W+mm6iSAvfCLjDp/YcLj7o97/L4MObQDqnbijsQpR2v2RgywotxSl4kzHC/PwWQsbOdHoMF3EMmx+c1UYDqiSazp3C3buvaSnohLbEr8/vsaCanIccUXaTWvKWSFQN4FYaQBBf5P47P3iPGR68=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729796661; c=relaxed/simple;
-	bh=8rBpL9HO3evkxdqEdF1FGHYN0tKTg9C/ud7tbTcMFWQ=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=gPCvQ2tYZRNyMwu3gyMUluyuUztVTGihkgy4awbY6wvAcKdY1C8Ol9V8iviOqoXgIV1/b9bFJ++NITbMO9G1JkoRESTrAAlHPRJ2aqXQ6ooNTtK6K5c/m8fPCSKLbKROjxeueggY/RgfMZhLMHGc8+bCRtr+POAxn1EJS95Cikw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com; spf=pass smtp.mailfrom=linux.ibm.com; dkim=pass (2048-bit key) header.d=ibm.com header.i=@ibm.com header.b=e9jBZG34; arc=none smtp.client-ip=148.163.156.1
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.ibm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.ibm.com
-Received: from pps.filterd (m0360083.ppops.net [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OHv14Y027239;
-	Thu, 24 Oct 2024 19:03:52 GMT
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=ibm.com; h=cc
-	:content-type:date:from:in-reply-to:message-id:mime-version
-	:references:subject:to; s=pp1; bh=l21sLo5cBKHhKQZbxqHQ0o1y5AwOln
-	0Y8A7pbBbsCRg=; b=e9jBZG34NxMFJrsN1PkDGRJYKqlCC7auEee7FoL35fb0mN
-	pGJMg8ocYfPR5K1XXBOqGjKajvojqVvjdBt93ZZXNj43zB37fkmV8yOa9a1WpdGC
-	eQVXwfx+BUoYg1Tgkhyptz1zFrVlRsFfQt2ULLAaUsXT2ftVTUfs90K3Ob/pENI3
-	sQ3qnbNygMLLAc5odK4pZHpBb5CEw55SHMEPCfHwp/kg7SOAAqnygF2ryrSDa9Py
-	2To7FwTevgy7eLEys3x7z+DeJyzFSlumQmb0ChU3rVbQUp2IY4VWIMH10tYsepLG
-	M3osu+u0RCtkN5C19gbp8vA+D0oaIFIWOsqTjX/Q==
-Received: from pps.reinject (localhost [127.0.0.1])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fhxnubna-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 19:03:52 +0000 (GMT)
-Received: from m0360083.ppops.net (m0360083.ppops.net [127.0.0.1])
-	by pps.reinject (8.18.0.8/8.18.0.8) with ESMTP id 49OJ3pxT013321;
-	Thu, 24 Oct 2024 19:03:51 GMT
-Received: from ppma21.wdc07v.mail.ibm.com (5b.69.3da9.ip4.static.sl-reverse.com [169.61.105.91])
-	by mx0a-001b2d01.pphosted.com (PPS) with ESMTPS id 42fhxnubn4-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 19:03:51 +0000 (GMT)
-Received: from pps.filterd (ppma21.wdc07v.mail.ibm.com [127.0.0.1])
-	by ppma21.wdc07v.mail.ibm.com (8.18.1.2/8.18.1.2) with ESMTP id 49OI4CcI014317;
-	Thu, 24 Oct 2024 19:03:50 GMT
-Received: from smtprelay02.fra02v.mail.ibm.com ([9.218.2.226])
-	by ppma21.wdc07v.mail.ibm.com (PPS) with ESMTPS id 42emhfsytk-1
-	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
-	Thu, 24 Oct 2024 19:03:50 +0000
-Received: from smtpav05.fra02v.mail.ibm.com (smtpav05.fra02v.mail.ibm.com [10.20.54.104])
-	by smtprelay02.fra02v.mail.ibm.com (8.14.9/8.14.9/NCO v10.0) with ESMTP id 49OJ3kN956295764
-	(version=TLSv1/SSLv3 cipher=DHE-RSA-AES256-GCM-SHA384 bits=256 verify=OK);
-	Thu, 24 Oct 2024 19:03:46 GMT
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 7EF702004B;
-	Thu, 24 Oct 2024 19:03:46 +0000 (GMT)
-Received: from smtpav05.fra02v.mail.ibm.com (unknown [127.0.0.1])
-	by IMSVA (Postfix) with ESMTP id 9CA8620040;
-	Thu, 24 Oct 2024 19:03:44 +0000 (GMT)
-Received: from li-e1dea04c-3555-11b2-a85c-f57333552245.ibm.com (unknown [9.43.37.181])
-	by smtpav05.fra02v.mail.ibm.com (Postfix) with ESMTPS;
-	Thu, 24 Oct 2024 19:03:44 +0000 (GMT)
-Date: Fri, 25 Oct 2024 00:33:41 +0530
-From: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
-To: Michael Ellerman <mpe@ellerman.id.au>
-Cc: npiggin@gmail.com, christophe.leroy@csgroup.eu, naveen@kernel.org,
-        maddy@linux.ibm.com, peterx@redhat.com, groug@kaod.org,
-        sshegde@linux.ibm.com, linuxppc-dev@lists.ozlabs.org,
-        linux-kernel@vger.kernel.org
-Subject: Re: [PATCH] powerpc/xmon: symbol lookup length fixed
-Message-ID: <zkm6fcxaef4gnvvsvykv7po7joytakyhqnmt2j72ej3r4wffn2@j5p6h6h2bwnw>
-References: <20241023212225.1306609-2-mchauras@linux.ibm.com>
- <878que2u2i.fsf@mail.lhotse>
- <nxdkjwqtd7s3fcxebwod6lrfu7rngrj7fa4kk433hgypha66w5@6ahbuz7o2qmu>
+	s=arc-20240116; t=1729796641; c=relaxed/simple;
+	bh=MinIs9uFH5t1LCMIZIcXVqwjpPzJ383DYFqMIRCJ3CQ=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=P721h5PEVUo6kF2bb/PZ8wcM+mq5eTfqzewfGEo2AhPYOfe9RCuV8lWr4K4TLcrwEFGJ34SR8TGWUWt4KTSz9sOkz4CFMxnNpt9x9xHP8KV4THthRl1arqQmGeUPOMBKhdSAOo3hJ5ZidetLgy2ugZhcvnrcUAKAhTLeX6VWVpk=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=bpWI0e6+; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 98860C4CEC7;
+	Thu, 24 Oct 2024 19:03:58 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729796640;
+	bh=MinIs9uFH5t1LCMIZIcXVqwjpPzJ383DYFqMIRCJ3CQ=;
+	h=From:To:Cc:Subject:Date:From;
+	b=bpWI0e6+FxFL+ekJ21xZwToK40hbtr4cV/+I5vIQxV00KgZtigMooXC2uHLn1mTbG
+	 lvjQHS8oz/i1NX4SXb4YkY5g8O7+bxurtAGeAvNThErI0QfNFDqDGyioEJIBqVyw/B
+	 /qQq2mH+4AiZFxZh+rwzc5Hf/G8TxWKubPvKOSlofLK8wJHYoi3YtxsuUOg8Dv8Pye
+	 49wuquq6AKaX3k99/eEQwksWY6I6uRHE8qinHYeCh8fsyBHktCeMeqgsuYfiA10f5M
+	 9zTV1wUGmyvU181C5KFSnQzNHHqN3EL7JrTTiUANCqpqvnJUk9kx1ShKxluX3Dn3On
+	 bfwAXE5jULWkw==
+From: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@kernel.org>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	linux-kernel@vger.kernel.org,
+	linux-perf-users@vger.kernel.org,
+	linux-riscv@lists.infradead.org
+Cc: =?UTF-8?q?Bj=C3=B6rn=20T=C3=B6pel?= <bjorn@rivosinc.com>,
+	Paul Walmsley <paul.walmsley@sifive.com>,
+	Palmer Dabbelt <palmer@dabbelt.com>,
+	Albert Ou <aou@eecs.berkeley.edu>,
+	Anup Patel <anup@brainfault.org>,
+	Atish Patra <atishp@rivosinc.com>
+Subject: [PATCH] perf, riscv: Wire up perf trace support for RISC-V
+Date: Thu, 24 Oct 2024 12:03:51 -0700
+Message-ID: <20241024190353.46737-1-bjorn@kernel.org>
+X-Mailer: git-send-email 2.45.2
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <nxdkjwqtd7s3fcxebwod6lrfu7rngrj7fa4kk433hgypha66w5@6ahbuz7o2qmu>
-X-TM-AS-GCONF: 00
-X-Proofpoint-ORIG-GUID: 0VTzArYxw5O5bXZIGNwCNtIsbZoXoOta
-X-Proofpoint-GUID: S-PZJ0GqJwWwPjZRXQp9sTiBqIl8WrnE
-X-Proofpoint-Virus-Version: vendor=baseguard
- engine=ICAP:2.0.293,Aquarius:18.0.1051,Hydra:6.0.680,FMLib:17.12.62.30
- definitions=2024-10-15_01,2024-10-11_01,2024-09-30_01
-X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 spamscore=0 adultscore=0
- mlxlogscore=999 malwarescore=0 impostorscore=0 bulkscore=0
- priorityscore=1501 mlxscore=0 suspectscore=0 lowpriorityscore=0
- phishscore=0 clxscore=1015 classifier=spam adjust=0 reason=mlx scancount=1
- engine=8.19.0-2409260000 definitions=main-2410240155
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-On Thu, Oct 24, 2024 at 10:42:12AM +0530, Mukesh Kumar Chaurasiya wrote:
-> On Thu, Oct 24, 2024 at 12:00:53PM +1100, Michael Ellerman wrote:
-> > Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com> writes:
-> > > Currently xmon cannot lookup symbol beyond 64 characters in some cases.
-> > 
-> > Can you mention which commands? It looks like it's "ls" and "lp".
-> Sure.
-> > 
-> > > Fix this by using KSYM_NAME_LEN instead of fixed 64 characters.
-> > >
-> > > Signed-off-by: Mukesh Kumar Chaurasiya <mchauras@linux.ibm.com>
-> > > ---
-> > >  arch/powerpc/xmon/xmon.c | 6 +++---
-> > >  1 file changed, 3 insertions(+), 3 deletions(-)
-> > >
-> > > diff --git a/arch/powerpc/xmon/xmon.c b/arch/powerpc/xmon/xmon.c
-> > > index e6cddbb2305f..22b8b5cc4df0 100644
-> > > --- a/arch/powerpc/xmon/xmon.c
-> > > +++ b/arch/powerpc/xmon/xmon.c
-> > > @@ -3662,7 +3662,7 @@ symbol_lookup(void)
-> > >  	int type = inchar();
-> > >  	unsigned long addr, cpu;
-> > >  	void __percpu *ptr = NULL;
-> > > -	static char tmp[64];
-> > > +	static char tmp[KSYM_NAME_LEN];
-> >   
-> > I think you could use the existing tmpstr buffer.
-> > 
-> > It is global so it's a little hard to track down all the users, but I
-> > think it's only used briefly in get_function_bounds(),
-> > xmon_print_symbol() and scanhex(). ie. none of the uses persist across
-> > function calls.
-> > 
-> > We don't want to have two 512 byte static arrays lying around if we can
-> > get by with one.
-> > 
-> > cheers
-> Sure.
-For now i don't think so we can get by with only one. There is a lookup being
-done when the scanhex is using the tmpstr for another lookup.
+From: Björn Töpel <bjorn@rivosinc.com>
 
-I'll send a V2 with commit message change.
-> 
-> Will send out V2.
-> > >  	switch (type) {
-> > >  	case 'a':
-> > > @@ -3671,7 +3671,7 @@ symbol_lookup(void)
-> > >  		termch = 0;
-> > >  		break;
-> > >  	case 's':
-> > > -		getstring(tmp, 64);
-> > > +		getstring(tmp, KSYM_NAME_LEN);
-> > >  		if (setjmp(bus_error_jmp) == 0) {
-> > >  			catch_memory_errors = 1;
-> > >  			sync();
-> > > @@ -3686,7 +3686,7 @@ symbol_lookup(void)
-> > >  		termch = 0;
-> > >  		break;
-> > >  	case 'p':
-> > > -		getstring(tmp, 64);
-> > > +		getstring(tmp, KSYM_NAME_LEN);
-> > >  		if (setjmp(bus_error_jmp) == 0) {
-> > >  			catch_memory_errors = 1;
-> > >  			sync();
-> > > -- 
-> > > 2.47.0
-> 
+RISC-V does not currently support perf trace, since the system call
+table is not generated.
+
+Perform the copy/paste exercise, wiring up RISC-V system call table
+generation.
+
+Signed-off-by: Björn Töpel <bjorn@rivosinc.com>
+---
+ tools/perf/Makefile.config                    |  6 ++-
+ tools/perf/arch/riscv/Makefile                | 22 +++++++++
+ .../arch/riscv/entry/syscalls/mksyscalltbl    | 47 +++++++++++++++++++
+ tools/perf/util/syscalltbl.c                  |  4 ++
+ 4 files changed, 78 insertions(+), 1 deletion(-)
+ create mode 100755 tools/perf/arch/riscv/entry/syscalls/mksyscalltbl
+
+diff --git a/tools/perf/Makefile.config b/tools/perf/Makefile.config
+index 4ddb27a48eed..1d388e71e0cc 100644
+--- a/tools/perf/Makefile.config
++++ b/tools/perf/Makefile.config
+@@ -31,7 +31,7 @@ $(call detected_var,SRCARCH)
+ ifneq ($(NO_SYSCALL_TABLE),1)
+   NO_SYSCALL_TABLE := 1
+ 
+-  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 powerpc arm64 s390 mips loongarch))
++  ifeq ($(SRCARCH),$(filter $(SRCARCH),x86 powerpc arm64 s390 mips loongarch riscv))
+     NO_SYSCALL_TABLE := 0
+   endif
+ 
+@@ -83,6 +83,10 @@ ifeq ($(ARCH),mips)
+   LIBUNWIND_LIBS = -lunwind -lunwind-mips
+ endif
+ 
++ifeq ($(ARCH),riscv)
++  CFLAGS += -I$(OUTPUT)arch/riscv/include/generated
++endif
++
+ # So far there's only x86 and arm libdw unwind support merged in perf.
+ # Disable it on all other architectures in case libdw unwind
+ # support is detected in system. Add supported architectures
+diff --git a/tools/perf/arch/riscv/Makefile b/tools/perf/arch/riscv/Makefile
+index 90c3c476a242..481da4518695 100644
+--- a/tools/perf/arch/riscv/Makefile
++++ b/tools/perf/arch/riscv/Makefile
+@@ -4,3 +4,25 @@ endif
+ PERF_HAVE_ARCH_REGS_QUERY_REGISTER_OFFSET := 1
+ PERF_HAVE_JITDUMP := 1
+ HAVE_KVM_STAT_SUPPORT := 1
++
++#
++# Syscall table generation for perf
++#
++
++out    := $(OUTPUT)arch/riscv/include/generated/asm
++header := $(out)/syscalls.c
++incpath := $(srctree)/tools
++sysdef := $(srctree)/tools/arch/riscv/include/uapi/asm/unistd.h
++sysprf := $(srctree)/tools/perf/arch/riscv/entry/syscalls/
++systbl := $(sysprf)/mksyscalltbl
++
++# Create output directory if not already present
++$(shell [ -d '$(out)' ] || mkdir -p '$(out)')
++
++$(header): $(sysdef) $(systbl)
++	$(Q)$(SHELL) '$(systbl)' '$(CC)' '$(HOSTCC)' $(incpath) $(sysdef) > $@
++
++clean::
++	$(call QUIET_CLEAN, riscv) $(RM) $(header)
++
++archheaders: $(header)
+diff --git a/tools/perf/arch/riscv/entry/syscalls/mksyscalltbl b/tools/perf/arch/riscv/entry/syscalls/mksyscalltbl
+new file mode 100755
+index 000000000000..c59f5e852b97
+--- /dev/null
++++ b/tools/perf/arch/riscv/entry/syscalls/mksyscalltbl
+@@ -0,0 +1,47 @@
++#!/bin/sh
++# SPDX-License-Identifier: GPL-2.0
++#
++# Generate system call table for perf. Derived from
++# powerpc script.
++#
++# Copyright IBM Corp. 2017
++# Author(s):  Hendrik Brueckner <brueckner@linux.vnet.ibm.com>
++# Changed by: Ravi Bangoria <ravi.bangoria@linux.vnet.ibm.com>
++# Changed by: Kim Phillips <kim.phillips@arm.com>
++# Changed by: Björn Töpel <bjorn@rivosinc.com>
++
++gcc=$1
++hostcc=$2
++incpath=$3
++input=$4
++
++if ! test -r $input; then
++	echo "Could not read input file" >&2
++	exit 1
++fi
++
++create_sc_table()
++{
++	local sc nr max_nr
++
++	while read sc nr; do
++		printf "%s\n" "	[$nr] = \"$sc\","
++		max_nr=$nr
++	done
++
++	echo "#define SYSCALLTBL_RISCV_MAX_ID $max_nr"
++}
++
++create_table()
++{
++	echo "#include \"$input\""
++	echo "static const char *const syscalltbl_riscv[] = {"
++	create_sc_table
++	echo "};"
++}
++
++$gcc -E -dM -x c -I $incpath/include/uapi $input \
++	|awk '$2 ~ "__NR" && $3 !~ "__NR3264_" {
++		sub("^#define __NR(3264)?_", "");
++		print | "sort -k2 -n"}' \
++	|create_table
+diff --git a/tools/perf/util/syscalltbl.c b/tools/perf/util/syscalltbl.c
+index 7c15dec6900d..349986f6e5f5 100644
+--- a/tools/perf/util/syscalltbl.c
++++ b/tools/perf/util/syscalltbl.c
+@@ -46,6 +46,10 @@ static const char *const *syscalltbl_native = syscalltbl_mips_n64;
+ #include <asm/syscalls.c>
+ const int syscalltbl_native_max_id = SYSCALLTBL_LOONGARCH_MAX_ID;
+ static const char *const *syscalltbl_native = syscalltbl_loongarch;
++#elif defined(__riscv)
++#include <asm/syscalls.c>
++const int syscalltbl_native_max_id = SYSCALLTBL_RISCV_MAX_ID;
++static const char *const *syscalltbl_native = syscalltbl_riscv;
+ #endif
+ 
+ struct syscall {
+
+base-commit: c2ee9f594da826bea183ed14f2cc029c719bf4da
+-- 
+2.45.2
+
 
