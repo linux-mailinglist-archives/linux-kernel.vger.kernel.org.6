@@ -1,107 +1,212 @@
-Return-Path: <linux-kernel+bounces-380191-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380193-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6EDB29AE9FC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:11:51 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id EBDAF9AEA03
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 26B391F22B28
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:11:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 3D2F0B25496
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:12:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDF841EF096;
-	Thu, 24 Oct 2024 15:11:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EFA8A1E7C00;
+	Thu, 24 Oct 2024 15:12:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="LlDHjphZ"
-Received: from mail-pj1-f46.google.com (mail-pj1-f46.google.com [209.85.216.46])
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w4NtCV+1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cHtBXh6T";
+	dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b="w4NtCV+1";
+	dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b="cHtBXh6T"
+Received: from smtp-out1.suse.de (smtp-out1.suse.de [195.135.223.130])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9F3601EB9E9;
-	Thu, 24 Oct 2024 15:11:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2EBF91C8788;
+	Thu, 24 Oct 2024 15:12:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=195.135.223.130
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729782694; cv=none; b=ANm+yPdLeAWjeAncptHMbD4zDN25AbYZwYua1ZUmhdxNl7uWHNWYbjrWOEAs43ZY0DTrKMUaArBwMiPNa6Ruo6/Ezu90X87VVKDVJ/TVwzRE90Cj6X8Wm0RqBIoX+MM4GmgzPq8eZ7rDimiivVjRsbrGBu7E7HDcxHypgMOAVks=
+	t=1729782771; cv=none; b=pR3zFN7PDpMBLpCeTzajLO4I32DvzIwBBrBXEvP5V11F4t3olqOEX2ya0bEVcy88YB2eCnqG77XCL2uApDXwFlwIfxxWOExq72t6WdtKQBBFAeZy7CXnc9gPJinZXx3yFe2hTeD2nRa79rfrsEiev242eQfy7AtlKJu3IxFAk1I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729782694; c=relaxed/simple;
-	bh=ChJjjmUOkenqb3cpEHOeJkT4zO1OgvJJ7sIw5ZfqDDI=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=KAGo9KFz1NIiHMjsyZaKlpZWSWAAqX6UZor/fVOgOdEsMnJ078LdbA8/UGer46+SQQxXcCePMK1LmRsTEiyFvOtvQqesPHXdXCr+7PsK/dWlvI2tACS+GAXdWOlqMAWF7lRsgK2tJXDCRK42Ul2W3LWu/AsyaxVSa/ruu9m0Cn0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=LlDHjphZ; arc=none smtp.client-ip=209.85.216.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f46.google.com with SMTP id 98e67ed59e1d1-2e56750bb13so155420a91.2;
-        Thu, 24 Oct 2024 08:11:32 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729782692; x=1730387492; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ChJjjmUOkenqb3cpEHOeJkT4zO1OgvJJ7sIw5ZfqDDI=;
-        b=LlDHjphZav+VmATjAVdE5B8r4Cgk65SK5rKl/z6Am2mCotAgX/4GPGCARqshDPbZQf
-         fOWb/RIveSCIzZkUV/a2JlkOWniSMxiJtODq7AWF/mLL4slaQEYgMxZUQoAf3ktXv6ei
-         +QNN1bdCaPXgyyplUNZaMYZ0hB4moOtRsdQ2DogWqvq00K0vfTBNrDGIfrgXtLCo1fek
-         AfCyON4bXRuvJ710Q0O49/rNAyd8ZOxP36c8IrfVuSdJDNCWBGKgURm6z+8hbcVugQZ9
-         5XyXM5EGWOQ9x4IHdcYhNvhPeJv3EAYioEQ7LNzRjHqih1pwMwZS47dLjyHiLd1KQOHF
-         GR9A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729782692; x=1730387492;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ChJjjmUOkenqb3cpEHOeJkT4zO1OgvJJ7sIw5ZfqDDI=;
-        b=JqM1jTOvszeP7PGQFh04s6BNal5UP5VuSOrrBYGcIqh3Omvs4oPkDVl4dibK1BujLD
-         6vcy3HUGKcdgdEaP2iGzoPcAdYnhgEHZdSRp5zVBRS66JEnRaOG6il6mEz1C371e4D8R
-         GbCTKa++M3L5x5i17jrYEU7gaxewlWqgGxZxggj9Th7JAyj1372CJJbV4F6feRHlPdFz
-         rU2HxmKYqqJRahha7cBSjfzRxCJt76RZobgQPjskg/ZS3rYKM7EiCNKeqtL1hprDsuJA
-         rgPM8xpDDLX2hxSRP6SN8GZlWkq5QQ3FyawpYbvt90PPSk7wsSjrV/o8IyLn6IY7PlFX
-         0ZdQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWvsvvvuWpkK5K144Y55/E8QjGQ8/Eqr0G/M29U78H0i7uiUOeqM6BkddEgqktg1bKRjTEOvSjzmSzvCn4=@vger.kernel.org, AJvYcCXcifseQEvNNVnF4maKRi2ddt3fFEO678wWVsGgnQa8h2/t38LhdKuf0nBNzFts6uU9ODURfaxv4RW6wJZRH6k=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyFG8LCWZI72G4ka4hBMGnF+K1WWay11Mg1RwbxIVRlRbcop60s
-	k9jOX8ev0IyeLw11waJx0qg79Ri6JRjEbaZQkuoe7PxcuowRhBNY+pI31iR/Uuvo+pe89ZkqXRM
-	DAa6XHvFBHbCnAYtiv9ngTpT8L/w=
-X-Google-Smtp-Source: AGHT+IF58Lb/dCYGWTo4rXd+PQkoaOUoDK0Ly4TNLuDftx0txVM4t5YeKUH7ny/k0PCRtT2LigDRM2J5epTSAEwGc6o=
-X-Received: by 2002:a17:90a:6286:b0:2e2:b20b:59de with SMTP id
- 98e67ed59e1d1-2e76b5e039bmr3321192a91.3.1729782691837; Thu, 24 Oct 2024
- 08:11:31 -0700 (PDT)
+	s=arc-20240116; t=1729782771; c=relaxed/simple;
+	bh=e5yZyDC8w+nQLKP9TChVKzM2wtrTM52rx9LU0Oy7c7w=;
+	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
+	 MIME-Version; b=VmwRW1P+kgho4W7FxUci6HLg57qp7Ht6v1MUDlBrVSCJVPzYauu3CsCUaRePEV/lzu9aG3cZAWuomvphyS/PuIyf4Ogc6lw/AKA9WYCsbHKM1TMsrxsXXf7KXbwF0bQ8B0hHNTNFExKlOp66hX2pbqGXkGCymnkU+C9xz/2VA+E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz; spf=pass smtp.mailfrom=suse.cz; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w4NtCV+1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cHtBXh6T; dkim=pass (1024-bit key) header.d=suse.cz header.i=@suse.cz header.b=w4NtCV+1; dkim=permerror (0-bit key) header.d=suse.cz header.i=@suse.cz header.b=cHtBXh6T; arc=none smtp.client-ip=195.135.223.130
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=suse.cz
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.cz
+Received: from imap1.dmz-prg2.suse.org (imap1.dmz-prg2.suse.org [IPv6:2a07:de40:b281:104:10:150:64:97])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by smtp-out1.suse.de (Postfix) with ESMTPS id 241C722153;
+	Thu, 24 Oct 2024 15:12:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729782765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
+	b=w4NtCV+1PXhRANojgclEsLkM44CgDPAFrn96mLtWcW6qnRmFTQKcozW1Dz7vlMgENemK/1
+	cbV3ECymKdxQxrNLrGkmtsu+/+m0Hy9fn7Kd4TWpDdtmG4UHdJ3TX9/KjUuFfNsak5mhin
+	xjo7jbcztY8JT360seRaAhz/26JC8io=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729782765;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
+	b=cHtBXh6Tz4HByMzeg7ITW0IwfohzkLaV6JNhFogCv4LeQf2cc666QVxm6eU4aBKNHkSp5l
+	A73bdgqmmvZl+/CQ==
+Authentication-Results: smtp-out1.suse.de;
+	dkim=pass header.d=suse.cz header.s=susede2_rsa header.b=w4NtCV+1;
+	dkim=pass header.d=suse.cz header.s=susede2_ed25519 header.b=cHtBXh6T
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=suse.cz; s=susede2_rsa;
+	t=1729782765; h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
+	b=w4NtCV+1PXhRANojgclEsLkM44CgDPAFrn96mLtWcW6qnRmFTQKcozW1Dz7vlMgENemK/1
+	cbV3ECymKdxQxrNLrGkmtsu+/+m0Hy9fn7Kd4TWpDdtmG4UHdJ3TX9/KjUuFfNsak5mhin
+	xjo7jbcztY8JT360seRaAhz/26JC8io=
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=suse.cz;
+	s=susede2_ed25519; t=1729782765;
+	h=from:from:reply-to:date:date:message-id:message-id:to:to:cc:cc:
+	 mime-version:mime-version:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=3E+SnM9nTIdJirG48OGIur8Xm4drVI2DTc9+V4rDTS0=;
+	b=cHtBXh6Tz4HByMzeg7ITW0IwfohzkLaV6JNhFogCv4LeQf2cc666QVxm6eU4aBKNHkSp5l
+	A73bdgqmmvZl+/CQ==
+Received: from imap1.dmz-prg2.suse.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	by imap1.dmz-prg2.suse.org (Postfix) with ESMTPS id 076881368E;
+	Thu, 24 Oct 2024 15:12:45 +0000 (UTC)
+Received: from dovecot-director2.suse.de ([2a07:de40:b281:106:10:150:64:167])
+	by imap1.dmz-prg2.suse.org with ESMTPSA
+	id d4UWAe1jGmcDPwAAD6G6ig
+	(envelope-from <vbabka@suse.cz>); Thu, 24 Oct 2024 15:12:45 +0000
+From: Vlastimil Babka <vbabka@suse.cz>
+To: Andrew Morton <akpm@linux-foundation.org>,
+	"Liam R. Howlett" <Liam.Howlett@oracle.com>,
+	Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+Cc: Jann Horn <jannh@google.com>,
+	Thorsten Leemhuis <regressions@leemhuis.info>,
+	linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org,
+	Petr Tesarik <ptesarik@suse.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Michael Matz <matz@suse.de>,
+	Gabriel Krisman Bertazi <gabriel@krisman.be>,
+	Matthias Bodenbinder <matthias@bodenbinder.de>,
+	stable@vger.kernel.org,
+	Rik van Riel <riel@surriel.com>,
+	Yang Shi <yang@os.amperecomputing.com>
+Subject: [PATCH hotfix 6.12] mm, mmap: limit THP aligment of anonymous mappings to PMD-aligned sizes
+Date: Thu, 24 Oct 2024 17:12:29 +0200
+Message-ID: <20241024151228.101841-2-vbabka@suse.cz>
+X-Mailer: git-send-email 2.47.0
+In-Reply-To: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
+References: <2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241024-topic-panthor-rs-genmask-v2-1-85237c1f0cea@collabora.com>
- <9A3613EA-3901-4C44-A3C3-7A6B7DB49CDB@collabora.com>
-In-Reply-To: <9A3613EA-3901-4C44-A3C3-7A6B7DB49CDB@collabora.com>
-From: Miguel Ojeda <miguel.ojeda.sandonis@gmail.com>
-Date: Thu, 24 Oct 2024 17:11:19 +0200
-Message-ID: <CANiq72=2NgfMhzFhSJAY+e4dkoPdrqjgOv=DPiHMZWbtM08tGQ@mail.gmail.com>
-Subject: Re: [PATCH v2] rust: kernel: add support for bits/genmask macros
-To: Daniel Almeida <daniel.almeida@collabora.com>
-Cc: Miguel Ojeda <ojeda@kernel.org>, Alex Gaynor <alex.gaynor@gmail.com>, 
-	Boqun Feng <boqun.feng@gmail.com>, Gary Guo <gary@garyguo.net>, 
-	=?UTF-8?Q?Bj=C3=B6rn_Roy_Baron?= <bjorn3_gh@protonmail.com>, 
-	Benno Lossin <benno.lossin@proton.me>, Andreas Hindborg <a.hindborg@kernel.org>, 
-	Alice Ryhl <aliceryhl@google.com>, Trevor Gross <tmgross@umich.edu>, linux-kernel@vger.kernel.org, 
-	rust-for-linux@vger.kernel.org
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
+X-Rspamd-Queue-Id: 241C722153
+X-Spam-Score: -3.01
+X-Rspamd-Action: no action
+X-Spamd-Result: default: False [-3.01 / 50.00];
+	BAYES_HAM(-3.00)[100.00%];
+	MID_CONTAINS_FROM(1.00)[];
+	NEURAL_HAM_LONG(-1.00)[-1.000];
+	R_MISSING_CHARSET(0.50)[];
+	R_DKIM_ALLOW(-0.20)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	NEURAL_HAM_SHORT(-0.20)[-1.000];
+	MIME_GOOD(-0.10)[text/plain];
+	MX_GOOD(-0.01)[];
+	SPAMHAUS_XBL(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	FUZZY_BLOCKED(0.00)[rspamd.com];
+	DKIM_SIGNED(0.00)[suse.cz:s=susede2_rsa,suse.cz:s=susede2_ed25519];
+	MIME_TRACE(0.00)[0:+];
+	RBL_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:104:10:150:64:97:from];
+	RCPT_COUNT_TWELVE(0.00)[15];
+	ARC_NA(0.00)[];
+	RCVD_COUNT_TWO(0.00)[2];
+	TO_MATCH_ENVRCPT_ALL(0.00)[];
+	FROM_HAS_DN(0.00)[];
+	RCVD_VIA_SMTP_AUTH(0.00)[];
+	RECEIVED_SPAMHAUS_BLOCKED_OPENRESOLVER(0.00)[2a07:de40:b281:106:10:150:64:167:received];
+	FROM_EQ_ENVFROM(0.00)[];
+	ASN(0.00)[asn:25478, ipnet:::/0, country:RU];
+	RCVD_TLS_ALL(0.00)[];
+	DKIM_TRACE(0.00)[suse.cz:+];
+	TO_DN_SOME(0.00)[];
+	DBL_BLOCKED_OPENRESOLVER(0.00)[suse.de:email,imap1.dmz-prg2.suse.org:rdns,imap1.dmz-prg2.suse.org:helo,suse.com:url,suse.cz:dkim,suse.cz:mid,suse.cz:email]
+X-Rspamd-Server: rspamd1.dmz-prg2.suse.org
+X-Spam-Flag: NO
+X-Spam-Level: 
 
-On Thu, Oct 24, 2024 at 5:07=E2=80=AFPM Daniel Almeida
-<daniel.almeida@collabora.com> wrote:
->
-> Sorry, I switched to b4 yesterday and I am still getting used to the work=
-flow with it.
+Since commit efa7df3e3bb5 ("mm: align larger anonymous mappings on THP
+boundaries") a mmap() of anonymous memory without a specific address
+hint and of at least PMD_SIZE will be aligned to PMD so that it can
+benefit from a THP backing page.
 
-No worries at all!
+However this change has been shown to regress some workloads
+significantly. [1] reports regressions in various spec benchmarks, with
+up to 600% slowdown of the cactusBSSN benchmark on some platforms. The
+benchmark seems to create many mappings of 4632kB, which would have
+merged to a large THP-backed area before commit efa7df3e3bb5 and now
+they are fragmented to multiple areas each aligned to PMD boundary with
+gaps between. The regression then seems to be caused mainly due to the
+benchmark's memory access pattern suffering from TLB or cache aliasing
+due to the aligned boundaries of the individual areas.
 
-> This should read =E2=80=9CChanges from v1=E2=80=9D
+Another known regression bisected to commit efa7df3e3bb5 is darktable
+[2] [3] and early testing suggests this patch fixes the regression there
+as well.
 
-It should also go below the `---` line (i.e. currently the SoB would
-be dropped).
+To fix the regression but still try to benefit from THP-friendly
+anonymous mapping alignment, add a condition that the size of the
+mapping must be a multiple of PMD size instead of at least PMD size. In
+case of many odd-sized mapping like the cactusBSSN creates, those will
+stop being aligned and with gaps between, and instead naturally merge
+again.
 
-Thanks!
+Reported-by: Michael Matz <matz@suse.de>
+Debugged-by: Gabriel Krisman Bertazi <gabriel@krisman.be>
+Closes: https://bugzilla.suse.com/show_bug.cgi?id=1229012 [1]
+Reported-by: Matthias Bodenbinder <matthias@bodenbinder.de>
+Closes: https://bugzilla.kernel.org/show_bug.cgi?id=219366 [2]
+Closes: https://lore.kernel.org/all/2050f0d4-57b0-481d-bab8-05e8d48fed0c@leemhuis.info/ [3]
+Fixes: efa7df3e3bb5 ("mm: align larger anonymous mappings on THP boundaries")
+Cc: <stable@vger.kernel.org>
+Cc: Rik van Riel <riel@surriel.com>
+Cc: Yang Shi <yang@os.amperecomputing.com>
+Signed-off-by: Vlastimil Babka <vbabka@suse.cz>
+---
+ mm/mmap.c | 3 ++-
+ 1 file changed, 2 insertions(+), 1 deletion(-)
 
-Cheers,
-Miguel
+diff --git a/mm/mmap.c b/mm/mmap.c
+index 9c0fb43064b5..a5297cfb1dfc 100644
+--- a/mm/mmap.c
++++ b/mm/mmap.c
+@@ -900,7 +900,8 @@ __get_unmapped_area(struct file *file, unsigned long addr, unsigned long len,
+ 
+ 	if (get_area) {
+ 		addr = get_area(file, addr, len, pgoff, flags);
+-	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)) {
++	} else if (IS_ENABLED(CONFIG_TRANSPARENT_HUGEPAGE)
++		   && IS_ALIGNED(len, PMD_SIZE)) {
+ 		/* Ensures that larger anonymous mappings are THP aligned. */
+ 		addr = thp_get_unmapped_area_vmflags(file, addr, len,
+ 						     pgoff, flags, vm_flags);
+-- 
+2.47.0
+
 
