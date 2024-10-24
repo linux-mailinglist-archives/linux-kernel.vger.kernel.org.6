@@ -1,134 +1,113 @@
-Return-Path: <linux-kernel+bounces-380472-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380473-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B26929AEF2A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:06:39 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A4E69AEF2D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:06:48 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1918CB215EA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:06:37 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 301581F21E4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:06:48 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F1052003A6;
-	Thu, 24 Oct 2024 18:06:27 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 00F89200B98;
+	Thu, 24 Oct 2024 18:06:28 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="IYnTDA9t"
-Received: from mail-ej1-f44.google.com (mail-ej1-f44.google.com [209.85.218.44])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="R5og7cI2"
+Received: from mail-oi1-f169.google.com (mail-oi1-f169.google.com [209.85.167.169])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850BD1FC7F6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:06:24 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9593E1FF05E;
+	Thu, 24 Oct 2024 18:06:25 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.169
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729793186; cv=none; b=lwBdjLAKdC57U1tgMLAVXQ2uYsc1HWuBBA02mqHPvNKwxYPFMSVAZXbHsXHmWzwvntjnnSoJsYmoQ7sun/YB9yUU01z5HJmRu5HlFDbeinSkwZG2JGGCE/VldS14ix0PQnNGn9Gb6RqRKiRKdELRn3MElDPXg1hGtoY0cbVkHSk=
+	t=1729793187; cv=none; b=bizJ/p/gR75mDprGjVqhGDbNdHQ2n8mBBJLMwiiQCk8ivPI67YwX631UQp7cE5S5VVN6ugbdN+h+rdCfoQD3ZatNSCJEIs+MRee9pzekM3k5CN90VpZhDScipWhF+vkJh6SPOmRD36QcyiGTjcly6aEoI7wlc5XRTIdn+OEQGns=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729793186; c=relaxed/simple;
-	bh=XTfYP/1zJrFaZAO8H/3E5awreJVbQT1zR8b0lhpyDRc=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=XuADodbzx+4x6k1gaxMIgUVlCFNiqWd0M2+S2w69bE5Tg3R/HQYfSjfi0Pol9tJzGorgViRkgjJQCM2xrmpzYk4eB8pRROI9f2h4eOvHDfh714K+07CCB7bAbJvZasrpKfl8OjLMrGzsuqs5Z+fsQhM/F+wSodp/emb+FaRFGjY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=IYnTDA9t; arc=none smtp.client-ip=209.85.218.44
+	s=arc-20240116; t=1729793187; c=relaxed/simple;
+	bh=vOtfYpYAZcfPD3kzNtXenwXoxBDyVzXhYwbQuTZbIVI=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=iv2QAoWLdfIfJQrhd6GQuoPOn8cj18AExPOrXUXA0SxDRgCZxDvf6P/oa8aLHNBTOHfUuVDsNCj4n7fvoofBlSoBAtpYwvzjuV1loFbgXeDJ3TgzfqhhI30XVkZZ2eCCFT20nDpEuqh8ZMY2F4Eo4BFXbPH/0PeXz1TTAlI2/JU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=R5og7cI2; arc=none smtp.client-ip=209.85.167.169
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f44.google.com with SMTP id a640c23a62f3a-a9acafdb745so245392066b.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:06:24 -0700 (PDT)
+Received: by mail-oi1-f169.google.com with SMTP id 5614622812f47-3e5fcf464ecso862799b6e.0;
+        Thu, 24 Oct 2024 11:06:25 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729793183; x=1730397983; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=6tZywrGtXElGXGCeWkpe4e06z9iVPQ8bc7Gm5OT3UMk=;
-        b=IYnTDA9t8T62BSfCPGj63Ve243CnEnkKT+mLrptEwfk61pE9ps29XwJ+YXf3Bl+GTd
-         rasuZfSJxnO17Bc5ktan6b15Kj+3HPhQJNEeLvhnarz6lQcVT6qOc33i0S2XBZwNYoyT
-         tAhBAlN3GdootK3Z2F569zWk+6hy+3XeyJqVLyBCwEKNyg/nXyFbWnBaaCg02zx4XFpP
-         BxnGb4oWAH08FDUfy9+RtG9k63tuRbxhMumf1gcrYCgRW0gajrm6wx1r2ZqTe7Bc4RiQ
-         GgPybmdilKkWcGmRMiuUD/t3aLHhMH63urAPMq2optjioLLVt9waGl9FX4wnjxOYA6oT
-         PP7g==
+        d=gmail.com; s=20230601; t=1729793184; x=1730397984; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=9UaViCTVHeE4554625O7z0qmjZeB3yLuwP4tPJC9Occ=;
+        b=R5og7cI26bYgfLuadV0w8l8jC7IFnNnBKGGhaR+WClt7Izm/VSv7Kv9apjwPJYxmFH
+         bPrLJJa8TJC1/hFitV3ILfzvLGxH70Q/G0OxDzT3ia/QBwt0tRQdlT2XXtp1EpHaxyIr
+         T9saigkZKekDoXAch9kzVjNduDP+57PrritC8BNo5oc8pgPZoOqvo9ySTIlAT7gTVcjf
+         H46vTtfsdbGPNqW2F+WdnN/SZLP/KooCPLIoQslAmbBRY7DSg6dZSUjOYyBWJhFdWoOj
+         aBmFlAXV6ncfhcdPCyorkU47yB6GH+3VaPKWNs9r8I8GM8pzGFmfgC9ERScQ5oBPBPUV
+         5efg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729793183; x=1730397983;
-        h=content-transfer-encoding:mime-version:references:in-reply-to
-         :message-id:date:subject:cc:to:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=6tZywrGtXElGXGCeWkpe4e06z9iVPQ8bc7Gm5OT3UMk=;
-        b=nqzJ3pHcVSnEtRt4gzKCp+KXqQBN+Z4S7hn9kpxCYGebvrYHK6AfuOzHRtt4ddD/JH
-         jrHn2OntdAzImgoPSrtKwNBsjrAO5xWFxRCae9PynkFThq1wPpxm0m+7nFHgCfQLHzGo
-         lgKqhDTU3H/Wl8VToKV2h7nqp0LPDdqIB9+aT5ZNjljfiJq9XGawo3v3ItGBZJlOa18V
-         l9FTZVw1i3VtxSZFTuqEu0kErsmrns0rL2gg9xOT8ZSPjWwyN40gjYIXXd29Z7UkLDvZ
-         IVrGfN0biXFdVbV0omf280Wufpx21D6K0W9LJ4JEz1IidwHj9XkaZB0nR/v71sHEu/2B
-         hlQg==
-X-Forwarded-Encrypted: i=1; AJvYcCWdl/eARBFSD/oT0BFigrOIZs2d/GHrFcv/gPolxOX3A0hBSFJZ5at3DJXUz9lUpOAf8iGmLd3OZ6BrkfA=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzlNRYMmk4EfcQhw2v7WQhq+W5phyDp4anAdtR2JPpjhzwNaIXh
-	r7YynU9cwEn70xLUL/XgMGTs35mpPPG2KJhurxhVnPu9g5VfI2vs
-X-Google-Smtp-Source: AGHT+IH/bJovAi1UYFhsfPPprIuvcm9G4w6PPfY0zfqmKh5eXH/haSbjxEpYkMVqPYZzvffNGDC0NQ==
-X-Received: by 2002:a17:907:eab:b0:a99:3db2:eb00 with SMTP id a640c23a62f3a-a9ad1add979mr325340866b.28.1729793182440;
-        Thu, 24 Oct 2024 11:06:22 -0700 (PDT)
-Received: from localhost.localdomain ([46.248.82.114])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91571ea5sm644337466b.160.2024.10.24.11.06.21
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 11:06:21 -0700 (PDT)
-From: Uros Bizjak <ubizjak@gmail.com>
-To: x86@kernel.org,
-	linux-kernel@vger.kernel.org
-Cc: Uros Bizjak <ubizjak@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@kernel.org>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	"H. Peter Anvin" <hpa@zytor.com>
-Subject: [PATCH 2/2] locking/atomic/x86: Use ALT_OUTPUT_SP() for __arch_{,try_}cmpxchg64_emu()
-Date: Thu, 24 Oct 2024 20:05:14 +0200
-Message-ID: <20241024180612.162045-2-ubizjak@gmail.com>
-X-Mailer: git-send-email 2.42.0
-In-Reply-To: <20241024180612.162045-1-ubizjak@gmail.com>
-References: <20241024180612.162045-1-ubizjak@gmail.com>
+        d=1e100.net; s=20230601; t=1729793184; x=1730397984;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=9UaViCTVHeE4554625O7z0qmjZeB3yLuwP4tPJC9Occ=;
+        b=gBWX+gkEE1SmdFUOXfTbHzQnD9EdkwRHMp92UYEt7Ee/NkJUQz1IaH5LMFYECpOdCc
+         4cghK/axlH+A94ZkbpFJqkc/70+guyuNtNmdTOA4/LtH7Y2wkQQw+E2O0U8o5XIkVXQX
+         tQ0n03Yd67knVxomMO67ryDdQKiDaKoAuiFyDLRppqdVp2Sq9xswuYSL5EHXmKSNwME6
+         FHzCt7AQBz1ItuMmWAkEzRBK1AsAfmtpas2A5RvuHuVEHwVwEPdPPwFDe0nadWWfvh5D
+         R+/cbDLtprxDcWEaVtyd/iLHWqZI4mAp66rh9ESR1p9ij3DbjLmtkFfkUYXd0lEzT3ym
+         NH9g==
+X-Forwarded-Encrypted: i=1; AJvYcCVfaurzhHAWjlyQ96EX/pspJLfYP45DcAkosGuPQqpN8mNFEIlS2oHi4T3ok9qghEOKReFTl/DA@vger.kernel.org, AJvYcCWLT7pKkQRYm9GyFvOhCmWIPUHeFA/g6sNsbHUtmkCslD6dUPYP9RL1Jj7hbGU6miH0LgYQjz5LIFVm91tI@vger.kernel.org, AJvYcCXkDrz1/nzp5HOAT+zBRuCMOu9NInMbK/C54J4kCtZhm7t/H9Ie0FVKNOgGrWiOG/4C4UxK2TpTvyvrXI2J@vger.kernel.org
+X-Gm-Message-State: AOJu0Yz1z/H/lkjpilBFDTewSPyN8C5ndl95xZg2ymJKeIS92cSI+xl8
+	uMArussDy7NFvpMvc4RlnrACnRhnb8NCA784bgbx0FGOkJkg9lLs
+X-Google-Smtp-Source: AGHT+IGRgDjaOVRo4RzC8Gl7ibseB03w21ZI0dmvnwrOI7OKAXZTah2SVc2E7tRapN9D+omZhczv6A==
+X-Received: by 2002:a05:6808:1309:b0:3e6:1dcc:e1fa with SMTP id 5614622812f47-3e62cbfd427mr2713134b6e.47.1729793184598;
+        Thu, 24 Oct 2024 11:06:24 -0700 (PDT)
+Received: from [192.168.1.22] (syn-070-114-247-242.res.spectrum.com. [70.114.247.242])
+        by smtp.googlemail.com with ESMTPSA id 5614622812f47-3e61035f185sm2319032b6e.48.2024.10.24.11.06.23
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 11:06:24 -0700 (PDT)
+Message-ID: <e178ef4d-3234-4c11-84f5-0a454d198f15@gmail.com>
+Date: Thu, 24 Oct 2024 13:06:22 -0500
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC PATCH v1 10/10] net: qrtr: mhi: Report endpoint id in sysfs
+To: Chris Lew <quic_clew@quicinc.com>, netdev@vger.kernel.org
+Cc: Marcel Holtmann <marcel@holtmann.org>, Andy Gross <agross@kernel.org>,
+ Manivannan Sadhasivam <manivannan.sadhasivam@linaro.org>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ linux-arm-msm@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241018181842.1368394-1-denkenz@gmail.com>
+ <20241018181842.1368394-11-denkenz@gmail.com>
+ <479ef16f-1711-4b16-8cad-c06fc5b42da0@quicinc.com>
+Content-Language: en-US
+From: Denis Kenzior <denkenz@gmail.com>
+In-Reply-To: <479ef16f-1711-4b16-8cad-c06fc5b42da0@quicinc.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-x86_32 __arch_{,try_}cmpxchg64_emu()() macros use CALL instruction
-inside asm statement. Use ALT_OUTPUT_SP() macro to add required
-dependence on %esp register.
+Hi Chris,
 
-Fixes: 79e1dd05d1a2 ("x86: Provide an alternative() based cmpxchg64()")
-Signed-off-by: Uros Bizjak <ubizjak@gmail.com>
-Cc: Thomas Gleixner <tglx@linutronix.de>
-Cc: Ingo Molnar <mingo@kernel.org>
-Cc: Borislav Petkov <bp@alien8.de>
-Cc: Dave Hansen <dave.hansen@linux.intel.com>
-Cc: "H. Peter Anvin" <hpa@zytor.com>
----
- arch/x86/include/asm/cmpxchg_32.h | 6 +++---
- 1 file changed, 3 insertions(+), 3 deletions(-)
+>> @@ -72,6 +72,16 @@ static int qcom_mhi_qrtr_send(struct qrtr_endpoint *ep, 
+>> struct sk_buff *skb)
+>>       return rc;
+>>   }
+>> +static ssize_t endpoint_show(struct device *dev,
+>> +                 struct device_attribute *attr, char *buf)
+>> +{
+>> +    struct qrtr_mhi_dev *qdev = dev_get_drvdata(dev);
+>> +
+>> +    return sprintf(buf, "%d\n", qdev->ep.id);
+> 
+> %u might be more appropriate because the endpoint id is stored as a u32
 
-diff --git a/arch/x86/include/asm/cmpxchg_32.h b/arch/x86/include/asm/cmpxchg_32.h
-index 62cef2113ca7..fd1282a783dd 100644
---- a/arch/x86/include/asm/cmpxchg_32.h
-+++ b/arch/x86/include/asm/cmpxchg_32.h
-@@ -94,7 +94,7 @@ static __always_inline bool __try_cmpxchg64_local(volatile u64 *ptr, u64 *oldp,
- 	asm volatile(ALTERNATIVE(_lock_loc				\
- 				 "call cmpxchg8b_emu",			\
- 				 _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
--		     : "+a" (o.low), "+d" (o.high)			\
-+		     : ALT_OUTPUT_SP("+a" (o.low), "+d" (o.high))	\
- 		     : "b" (n.low), "c" (n.high), [ptr] "S" (_ptr)	\
- 		     : "memory");					\
- 									\
-@@ -123,8 +123,8 @@ static __always_inline u64 arch_cmpxchg64_local(volatile u64 *ptr, u64 old, u64
- 				 "call cmpxchg8b_emu",			\
- 				 _lock "cmpxchg8b %a[ptr]", X86_FEATURE_CX8) \
- 		     CC_SET(e)						\
--		     : CC_OUT(e) (ret),					\
--		       "+a" (o.low), "+d" (o.high)			\
-+		     : ALT_OUTPUT_SP(CC_OUT(e) (ret),			\
-+				     "+a" (o.low), "+d" (o.high))	\
- 		     : "b" (n.low), "c" (n.high), [ptr] "S" (_ptr)	\
- 		     : "memory");					\
- 									\
--- 
-2.42.0
+Nice catch.  I'll fix it for the next version.
 
+Regards,
+-Denis
 
