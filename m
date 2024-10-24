@@ -1,104 +1,85 @@
-Return-Path: <linux-kernel+bounces-380593-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380588-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C8C1C9AF313
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:56:42 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 320489AF308
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:55:47 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8806C281D62
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:56:41 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id ABF5F1F214A2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:55:46 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 244E12178E4;
-	Thu, 24 Oct 2024 19:55:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B0D0D1AF0D3;
+	Thu, 24 Oct 2024 19:55:40 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b="oxCtvtmi";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="FaxW4xwE"
-Received: from fhigh-a8-smtp.messagingengine.com (fhigh-a8-smtp.messagingengine.com [103.168.172.159])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KO3Un1de"
+Received: from mail-pg1-f177.google.com (mail-pg1-f177.google.com [209.85.215.177])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A89922B656;
-	Thu, 24 Oct 2024 19:55:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.159
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C41B222B656;
+	Thu, 24 Oct 2024 19:55:37 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.177
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799755; cv=none; b=SDl6pG9dLW1UJ7RaDuGf6UGkLqaPx2p+sqDXVJzNAnAjgbhlr+eDVp6axuFX26mygCcxmaBnllEcP+3CjpjTKYHVbcIF2i4xS3GAburTOB3lGKkvRTZMrVa3Y6PnTQF/TRvKr5T6ibVR5Op7FjY9T0YkLZWVl3XnY+T0m7LpXeQ=
+	t=1729799740; cv=none; b=SrFzJLyfB1dzHzQBtv0SuEqMB07Ryp8xIJLKJ6fzQTZQLvCX6nJ5ef0kRbJ+0D9V+WegcGiZOKFTMfup6Wik/0FreX1qGNg0UD2/ShqDaDMf/S2WytG6hAsoP2FLcpxuj31HLup5Y5gtICFC8rr3HrC3xY3NDGMtNkMTQg2eq4Y=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799755; c=relaxed/simple;
-	bh=eLoZFRv/+bGsCylHl4Z+h5CllioftnShRTa2IZ44h6Y=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=BeUawRkJUE5HZVtmOCeC6TX53qrzaayqAr8bj8lXSzuAw73GcSrhmbPt1l8FHCUdLR4JMCwg1FXehECNO3mlanNuxiH1jIb1JiQigmJootBST2gT7ZbGtXlHym4FHtk/GP8iB+s19YuRoaLVvplRI8GeIUTHl+6fbu7SJ5ogjWk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca; spf=pass smtp.mailfrom=squebb.ca; dkim=pass (2048-bit key) header.d=squebb.ca header.i=@squebb.ca header.b=oxCtvtmi; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=FaxW4xwE; arc=none smtp.client-ip=103.168.172.159
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=squebb.ca
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=squebb.ca
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id E25F71140176;
-	Thu, 24 Oct 2024 15:55:50 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Thu, 24 Oct 2024 15:55:50 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=squebb.ca; h=cc
-	:cc:content-transfer-encoding:content-type:date:date:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=fm1; t=1729799750; x=
-	1729886150; bh=vJH16W/lPDWb/9evzEf9E2AdU2tOOTrsigIU+BP0YWc=; b=o
-	xCtvtmiTEN/UV7MJtfhAM0MLGF3IqF8BpCEUgOZwejyowXujDtlZnauzmJMuG2hN
-	6p3uob+ssPHKVwxSLCaWxLKcxlV+mopX/kaDqm7g1wdypr/u9jKclcxJ0TQ6ng+H
-	yxIs4NKwLdVJ1gmutgTBUBjsDtOp2Rruo2sYG0uvgZ5cfbCJGtmBcZIKqp9Xm+gu
-	pvS5lWyQ55z7XjfkI5d+BowlGyrElh+eHdyHA+6LlbLEvWgI/Tc8zphFbvLNzM5f
-	1Qp7ZmEAaOLJPADWqqNSSEJjbktMz0wU1KGQp8AsjKL3l2hBFIpeqh179jaZYOQw
-	WQzeCOsA0ZhS8e849JhKA==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-transfer-encoding
-	:content-type:date:date:feedback-id:feedback-id:from:from
-	:in-reply-to:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to:x-me-proxy:x-me-proxy
-	:x-me-sender:x-me-sender:x-sasl-enc; s=fm3; t=1729799750; x=
-	1729886150; bh=vJH16W/lPDWb/9evzEf9E2AdU2tOOTrsigIU+BP0YWc=; b=F
-	axW4xwElVD8lcXv1B5mHD/523sFNqZCKvRZWJyzUSDyba5mv5z8Qsb8u9jOJoJ4f
-	wsbvQs0WAavF4ciXildlR7e7Pm3pGT+aCs6KhDZE6YuJjD5mnYlrJ/nKrVuHHqS7
-	kmPGx5v5h4vQei4MrM/YC9LsqpySwH8FqMkTWTPzDcHM6aV54h+7vMCSPRMsRQ59
-	SpBrvtqtGHQNsFP7OwgoSWFF6FnN8Dwani8+fwmGLhIoMx1i5Kk/i5InMc5X+Bpf
-	BvoA4qBvf/bn7xMneP3Pji9lvvdPp7nRcQ/ccObAs71jmle+vRPnAeuKgZtRCnIQ
-	SBt/TH3OfzU0C8k5TQ4sw==
-X-ME-Sender: <xms:RqYaZ10lDygo_e1DS91eVS9dDprFOqljxmGHY4yxFrdR-qfM_2yJLg>
-    <xme:RqYaZ8GStgmNYrzNpB9IWRUL9ZBzkTBWLLMcvSvtf2J-bzrA7_M8-70C3lOmuS4OT
-    XCIif-YaMbMjgHOf0Q>
-X-ME-Received: <xmr:RqYaZ1464slGbCOG_SV8lyQyELXmuXSDn_WqicJrmMyuOQD8b2dBDKowGcpQqaTSy48aQvYzmPadeJuEIxCWpMkWJ3A1RnStY_HJQ6yoUEf0tw>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddguddujecutefuodetggdotefrod
-    ftvfcurfhrohhfihhlvgemucfhrghsthforghilhdpggftfghnshhusghstghrihgsvgdp
-    uffrtefokffrpgfnqfghnecuuegrihhlohhuthemuceftddtnecuogetfedtuddqtdduuc
-    dludehmdenucfjughrpefhvfevufffkffojghfggfgsedtkeertdertddtnecuhfhrohhm
-    peforghrkhcurfgvrghrshhonhcuoehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvg
-    gssgdrtggrqeenucggtffrrghtthgvrhhnpeeftddvjeefleffvefhgfejjeehudetteei
-    geeugfekhffhgeejudeuteehgfdvffenucevlhhushhtvghrufhiiigvpedtnecurfgrrh
-    grmhepmhgrihhlfhhrohhmpehmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdr
-    tggrpdhnsggprhgtphhtthhopeehpdhmohguvgepshhmthhpohhuthdprhgtphhtthhope
-    hmphgvrghrshhonhdqlhgvnhhovhhosehsqhhuvggssgdrtggrpdhrtghpthhtohephhgu
-    vghgohgvuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehilhhpohdrjhgrrhhvih
-    hnvghnsehlihhnuhigrdhinhhtvghlrdgtohhmpdhrtghpthhtohepphhlrghtfhhorhhm
-    qdgurhhivhgvrhdqgiekieesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhope
-    hlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdrohhrgh
-X-ME-Proxy: <xmx:RqYaZy26Ts2fSwfLnc0Ejne_MYu0b1-9wnbbg2O75gQD1WD1vYh34Q>
-    <xmx:RqYaZ4F3iQlVqPOSeZkKP-ZK2Pf5IjdQopdeuxzl4Mlx1kExmrll5w>
-    <xmx:RqYaZz9kuBqubUciiwiqipquWL0vraTz7M3LJgAYAqBtgocN-_Kt4g>
-    <xmx:RqYaZ1naRImJWB7cN5LUciVNyRZt4OiUtOzNHI6owkOkifCF_869XQ>
-    <xmx:RqYaZ9Ojxc4hCQsKw1SnMG5JKdp95UYz1NeU7fGOdJg9fMd2JK0scPNj>
-Feedback-ID: ibe194615:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Oct 2024 15:55:49 -0400 (EDT)
-From: Mark Pearson <mpearson-lenovo@squebb.ca>
-To: mpearson-lenovo@squebb.ca
-Cc: hdegoede@redhat.com,
-	ilpo.jarvinen@linux.intel.com,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH v2 4/4] platform/x86: think-lmi: Multi-certificate support
-Date: Thu, 24 Oct 2024 15:55:24 -0400
-Message-ID: <20241024195536.6992-4-mpearson-lenovo@squebb.ca>
+	s=arc-20240116; t=1729799740; c=relaxed/simple;
+	bh=DhC3yV7jteAllfw5xO8wBghk7B8ZPwutubdHHUCsCvU=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=N0AC1qTsX6bhJxAbh4L67DYcF1JRqJIsXnCCzt9uqutjIdksUOc/e2wBu11oyjQBEm+ETOS+rGoDKyAVVLu+swTnBcJ64X5mKjxhydxaps9ytBHX4Zmd9De7AWlpjInR2e2slFBM0r6yZF0Ux5t24mbjjMZGdGbiDW/MGFXd4xI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KO3Un1de; arc=none smtp.client-ip=209.85.215.177
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pg1-f177.google.com with SMTP id 41be03b00d2f7-7ed67cfc1fcso819468a12.1;
+        Thu, 24 Oct 2024 12:55:37 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729799737; x=1730404537; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=c1iF9Thwc+yGUEwDLEcTY5agqXsTr0Wwj9/zAQzfIVM=;
+        b=KO3Un1deWQ+i6z5byII8czG5bKEXTECrQMfDvM4U1PEiOuNZx5s5kFWxjcas8CKdio
+         qJLkZaBzehrdA5wXcLBfcIUnObie/UaPDdS/hQIjANE2SJo0t/Ln1RDbZXZLM3aF/EJ0
+         pnYTdGnExKSAfstmGWMrqihcYm5wBQdmeBweASdohcZ0zkQKdNocqzQu2gzZTyZBnfxs
+         ZMD2/3HA9KxhpzKT7HoVxo4l7moraYUMBrsMnZd/zS2L9+4qaO6pY6Mw+b0y6zWhAWeq
+         Cirns0H4ge3GzWfDxoff7+43xykQ9FUwcXXq3l/0Ih8QCLmLFL/ry+eUdPkAtyj6Dw8C
+         OBWQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729799737; x=1730404537;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=c1iF9Thwc+yGUEwDLEcTY5agqXsTr0Wwj9/zAQzfIVM=;
+        b=UqHFiPFBF5Be9OQJdGVk6nEDNVdJAdwKSHSNlW4GHwB/DQ0XBgsPMgeHHgZu1BEyBC
+         50/sbr5qg4+MNWycipEC4khuUgghH5kHJouZv0nkcnW54khTEay4OTjsKPmU2S6KCKxp
+         2JxgQmLOqPqBloQzFbwRoo6Kz89DaC4t/CDlwOiRtJ4lj1sGigf1Yx73bqJvXBqExio5
+         CLD69ECbnCkglTEzVj9FIKt4rpXnp6i31TDveiUmR677U3elcVssilJB8olmKvfzhphH
+         vuhrHTT2+LmLkGhCjsyxRziL7IuJmY0uAfwIspyJkXTMcO7u3A+TpQ7Lbnk/RKGDW81+
+         TEgQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUHzkn1msGIF9GyvhGAr0+LEjF+35okM9e71UI8aB1mDsjhmiuGzq/Gg+CnWgENDJDxYvaI0WgJwh/9nGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXZaXwgZGoXE4iF90IO+/Sle3sQe2tz6FsfQ/WaT+3tsC0Kioj
+	5TG6JBu0ohIfTf/pHGdfiY7f8Z61KIabduU3zPNpWqfc/5ajK+UTXvKf1hwh
+X-Google-Smtp-Source: AGHT+IF+fM6B86uXWQnlx1dhpzVIUWhViHw1SFL741p5iHKFuFSUPK1oU+ysaYdhNCguJIra1Mt+Bg==
+X-Received: by 2002:a05:6a21:7702:b0:1d9:a94:8d90 with SMTP id adf61e73a8af0-1d978b3ea6dmr9251015637.27.1729799736623;
+        Thu, 24 Oct 2024 12:55:36 -0700 (PDT)
+Received: from ryzen.lan ([2601:644:8200:dab8::a86])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec132ffadsm8297684b3a.52.2024.10.24.12.55.35
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 12:55:36 -0700 (PDT)
+From: Rosen Penev <rosenp@gmail.com>
+To: netdev@vger.kernel.org
+Cc: Manish Chopra <manishc@marvell.com>,
+	Rahul Verma <rahulv@marvell.com>,
+	GR-Linux-NIC-Dev@marvell.com (supporter:NETXEN (1/10) GbE SUPPORT),
+	Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>,
+	Paolo Abeni <pabeni@redhat.com>,
+	Shahed Shaikh <shshaikh@marvell.com>,
+	linux-kernel@vger.kernel.org (open list)
+Subject: [PATCH net-next] net: qlogic: use ethtool string helpers
+Date: Thu, 24 Oct 2024 12:55:34 -0700
+Message-ID: <20241024195534.176410-1-rosenp@gmail.com>
 X-Mailer: git-send-email 2.47.0
-In-Reply-To: <20241024195536.6992-1-mpearson-lenovo@squebb.ca>
-References: <mpearson-lenovo@squebb.ca>
- <20241024195536.6992-1-mpearson-lenovo@squebb.ca>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -107,264 +88,215 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Lenovo are adding support for both Admin and System certificates to
-the certificate based authentication feature
+The latter is the preferred way to copy ethtool strings.
 
-This commit adds the support for this.
+Avoids manually incrementing the pointer. Cleans up the code quite well.
 
-Signed-off-by: Mark Pearson <mpearson-lenovo@squebb.ca>
+Signed-off-by: Rosen Penev <rosenp@gmail.com>
 ---
-Changes in v2:
- - Add cert_command helper function to simplify common code.
- - Correct indentation in auth_attr_is_visible function.
- - Use ARRAY_SIZE for thumbtypes.
- - Cosmetic cleanup from review.
- 
- .../testing/sysfs-class-firmware-attributes   |   1 +
- drivers/platform/x86/think-lmi.c              | 115 ++++++++++++++----
- drivers/platform/x86/think-lmi.h              |   4 +
- 3 files changed, 94 insertions(+), 26 deletions(-)
+ .../qlogic/netxen/netxen_nic_ethtool.c        | 14 ++---
+ .../net/ethernet/qlogic/qede/qede_ethtool.c   | 34 +++++------
+ .../ethernet/qlogic/qlcnic/qlcnic_ethtool.c   | 60 +++++++++----------
+ 3 files changed, 50 insertions(+), 58 deletions(-)
 
-diff --git a/Documentation/ABI/testing/sysfs-class-firmware-attributes b/Documentation/ABI/testing/sysfs-class-firmware-attributes
-index 1a8b59f5d6e3..2713efa509b4 100644
---- a/Documentation/ABI/testing/sysfs-class-firmware-attributes
-+++ b/Documentation/ABI/testing/sysfs-class-firmware-attributes
-@@ -303,6 +303,7 @@ Description:
- 					being configured allowing anyone to make changes.
- 					After any of these operations the system must reboot for the changes to
- 					take effect.
-+					Admin and System certificates are supported from 2025 systems onward.
- 
- 		certificate_thumbprint:
- 					Read only attribute used to display the MD5, SHA1 and SHA256 thumbprints
-diff --git a/drivers/platform/x86/think-lmi.c b/drivers/platform/x86/think-lmi.c
-index c316b1b592d6..6e46329d529d 100644
---- a/drivers/platform/x86/think-lmi.c
-+++ b/drivers/platform/x86/think-lmi.c
-@@ -169,11 +169,12 @@ MODULE_PARM_DESC(debug_support, "Enable debug command support");
-  */
- #define LENOVO_CERT_THUMBPRINT_GUID "C59119ED-1C0D-4806-A8E9-59AA318176C4"
- 
--#define TLMI_POP_PWD BIT(0) /* Supervisor */
--#define TLMI_PAP_PWD BIT(1) /* Power-on */
--#define TLMI_HDD_PWD BIT(2) /* HDD/NVME */
--#define TLMI_SMP_PWD BIT(6) /* System Management */
--#define TLMI_CERT    BIT(7) /* Certificate Based */
-+#define TLMI_POP_PWD  BIT(0) /* Supervisor */
-+#define TLMI_PAP_PWD  BIT(1) /* Power-on */
-+#define TLMI_HDD_PWD  BIT(2) /* HDD/NVME */
-+#define TLMI_SMP_PWD  BIT(6) /* System Management */
-+#define TLMI_CERT_SVC BIT(7) /* Admin Certificate Based */
-+#define TLMI_CERT_SMC BIT(8) /* System Certificate Based */
- 
- static const struct tlmi_err_codes tlmi_errs[] = {
- 	{"Success", 0},
-@@ -653,6 +654,17 @@ static ssize_t level_store(struct kobject *kobj,
- 
- static struct kobj_attribute auth_level = __ATTR_RW(level);
- 
-+static char *cert_command(struct tlmi_pwd_setting *setting, const char *arg1, const char *arg2)
-+{
-+	/* Prepend with SVC or SMC if multicert supported */
-+	if (tlmi_priv.pwdcfg.core.password_mode >= TLMI_PWDCFG_MODE_MULTICERT)
-+		return kasprintf(GFP_KERNEL, "%s,%s,%s",
-+				 setting == tlmi_priv.pwd_admin ? "SVC" : "SMC",
-+				 arg1, arg2);
-+	else
-+		return kasprintf(GFP_KERNEL, "%s,%s", arg1, arg2);
-+}
-+
- static ssize_t cert_thumbprint(char *buf, const char *arg, int count)
+diff --git a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
+index 8c4cb910e09b..e7d8999049e1 100644
+--- a/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
++++ b/drivers/net/ethernet/qlogic/netxen/netxen_nic_ethtool.c
+@@ -648,18 +648,18 @@ netxen_nic_diag_test(struct net_device *dev, struct ethtool_test *eth_test,
+ static void
+ netxen_nic_get_strings(struct net_device *dev, u32 stringset, u8 *data)
  {
- 	const struct acpi_buffer input = { strlen(arg), (char *)arg };
-@@ -678,18 +690,35 @@ static ssize_t cert_thumbprint(char *buf, const char *arg, int count)
- 	return count;
+-	int index;
++	const char *str;
++	int i;
+ 
+ 	switch (stringset) {
+ 	case ETH_SS_TEST:
+-		memcpy(data, *netxen_nic_gstrings_test,
+-		       NETXEN_NIC_TEST_LEN * ETH_GSTRING_LEN);
++		for (i = 0; i < NETXEN_NIC_TEST_LEN; i++)
++			ethtool_puts(&data, netxen_nic_gstrings_test[i]);
+ 		break;
+ 	case ETH_SS_STATS:
+-		for (index = 0; index < NETXEN_NIC_STATS_LEN; index++) {
+-			memcpy(data + index * ETH_GSTRING_LEN,
+-			       netxen_nic_gstrings_stats[index].stat_string,
+-			       ETH_GSTRING_LEN);
++		for (i = 0; i < NETXEN_NIC_STATS_LEN; i++) {
++			str = netxen_nic_gstrings_stats[i].stat_string;
++			ethtool_puts(&data, str);
+ 		}
+ 		break;
+ 	}
+diff --git a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+index 97b059be1041..e50e1df0a433 100644
+--- a/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qede/qede_ethtool.c
+@@ -272,16 +272,14 @@ static void qede_get_strings_stats_txq(struct qede_dev *edev,
+ {
+ 	int i;
+ 
+-	for (i = 0; i < QEDE_NUM_TQSTATS; i++) {
++	for (i = 0; i < QEDE_NUM_TQSTATS; i++)
+ 		if (txq->is_xdp)
+-			sprintf(*buf, "%d [XDP]: %s",
+-				QEDE_TXQ_XDP_TO_IDX(edev, txq),
+-				qede_tqstats_arr[i].string);
++			ethtool_sprintf(buf, "%d [XDP]: %s",
++					QEDE_TXQ_XDP_TO_IDX(edev, txq),
++					qede_tqstats_arr[i].string);
+ 		else
+-			sprintf(*buf, "%d_%d: %s", txq->index, txq->cos,
+-				qede_tqstats_arr[i].string);
+-		*buf += ETH_GSTRING_LEN;
+-	}
++			ethtool_sprintf(buf, "%d_%d: %s", txq->index, txq->cos,
++					qede_tqstats_arr[i].string);
  }
  
-+static char *thumbtypes[] = {"Md5", "Sha1", "Sha256"};
-+
- static ssize_t certificate_thumbprint_show(struct kobject *kobj, struct kobj_attribute *attr,
- 			 char *buf)
+ static void qede_get_strings_stats_rxq(struct qede_dev *edev,
+@@ -289,11 +287,9 @@ static void qede_get_strings_stats_rxq(struct qede_dev *edev,
  {
- 	struct tlmi_pwd_setting *setting = to_tlmi_pwd_setting(kobj);
-+	unsigned int i;
- 	int count = 0;
-+	char *wmistr;
+ 	int i;
  
- 	if (!tlmi_priv.certificate_support || !setting->cert_installed)
- 		return -EOPNOTSUPP;
- 
--	count += cert_thumbprint(buf, "Md5", count);
--	count += cert_thumbprint(buf, "Sha1", count);
--	count += cert_thumbprint(buf, "Sha256", count);
-+	for (i = 0; i < ARRAY_SIZE(thumbtypes); i++) {
-+		if (tlmi_priv.pwdcfg.core.password_mode >= TLMI_PWDCFG_MODE_MULTICERT) {
-+			/* Format: 'SVC | SMC, Thumbtype' */
-+			wmistr = kasprintf(GFP_KERNEL, "%s,%s",
-+					   setting == tlmi_priv.pwd_admin ? "SVC" : "SMC",
-+					   thumbtypes[i]);
-+		} else {
-+			/* Format: 'Thumbtype' */
-+			wmistr = kasprintf(GFP_KERNEL, "%s", thumbtypes[i]);
-+		}
-+		if (!wmistr)
-+			return -ENOMEM;
-+		count += cert_thumbprint(buf, wmistr, count);
-+		kfree(wmistr);
-+	}
-+
- 	return count;
+-	for (i = 0; i < QEDE_NUM_RQSTATS; i++) {
+-		sprintf(*buf, "%d: %s", rxq->rxq_id,
+-			qede_rqstats_arr[i].string);
+-		*buf += ETH_GSTRING_LEN;
+-	}
++	for (i = 0; i < QEDE_NUM_RQSTATS; i++)
++		ethtool_sprintf(buf, "%d: %s", rxq->rxq_id,
++				qede_rqstats_arr[i].string);
  }
  
-@@ -721,7 +750,7 @@ static ssize_t cert_to_password_store(struct kobject *kobj,
- 		return -ENOMEM;
+ static bool qede_is_irrelevant_stat(struct qede_dev *edev, int stat_index)
+@@ -331,26 +327,26 @@ static void qede_get_strings_stats(struct qede_dev *edev, u8 *buf)
+ 	for (i = 0; i < QEDE_NUM_STATS; i++) {
+ 		if (qede_is_irrelevant_stat(edev, i))
+ 			continue;
+-		strcpy(buf, qede_stats_arr[i].string);
+-		buf += ETH_GSTRING_LEN;
++		ethtool_puts(&buf, qede_stats_arr[i].string);
+ 	}
+ }
  
- 	/* Format: 'Password,Signature' */
--	auth_str = kasprintf(GFP_KERNEL, "%s,%s", passwd, setting->signature);
-+	auth_str = cert_command(setting, passwd, setting->signature);
- 	if (!auth_str) {
- 		kfree_sensitive(passwd);
- 		return -ENOMEM;
-@@ -735,12 +764,19 @@ static ssize_t cert_to_password_store(struct kobject *kobj,
- 
- static struct kobj_attribute auth_cert_to_password = __ATTR_WO(cert_to_password);
- 
-+enum cert_install_mode {
-+	TLMI_CERT_INSTALL,
-+	TLMI_CERT_UPDATE,
-+};
-+
- static ssize_t certificate_store(struct kobject *kobj,
- 				  struct kobj_attribute *attr,
- 				  const char *buf, size_t count)
+ static void qede_get_strings(struct net_device *dev, u32 stringset, u8 *buf)
  {
- 	struct tlmi_pwd_setting *setting = to_tlmi_pwd_setting(kobj);
-+	enum cert_install_mode install_mode = TLMI_CERT_INSTALL;
- 	char *auth_str, *new_cert;
-+	char *signature;
- 	char *guid;
- 	int ret;
+ 	struct qede_dev *edev = netdev_priv(dev);
++	int i;
  
-@@ -757,9 +793,9 @@ static ssize_t certificate_store(struct kobject *kobj,
- 			return -EACCES;
+ 	switch (stringset) {
+ 	case ETH_SS_STATS:
+ 		qede_get_strings_stats(edev, buf);
+ 		break;
+ 	case ETH_SS_PRIV_FLAGS:
+-		memcpy(buf, qede_private_arr,
+-		       ETH_GSTRING_LEN * QEDE_PRI_FLAG_LEN);
++		for (i = 0; i < QEDE_PRI_FLAG_LEN; i++)
++			ethtool_puts(&buf, qede_private_arr[i]);
+ 		break;
+ 	case ETH_SS_TEST:
+-		memcpy(buf, qede_tests_str_arr,
+-		       ETH_GSTRING_LEN * QEDE_ETHTOOL_TEST_MAX);
++		for (i = 0; i < QEDE_ETHTOOL_TEST_MAX; i++)
++			ethtool_puts(&buf, qede_tests_str_arr[i]);
+ 		break;
+ 	default:
+ 		DP_VERBOSE(edev, QED_MSG_DEBUG,
+diff --git a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
+index c1436e1554de..17450e05c437 100644
+--- a/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
++++ b/drivers/net/ethernet/qlogic/qlcnic/qlcnic_ethtool.c
+@@ -1196,60 +1196,56 @@ qlcnic_get_strings(struct net_device *dev, u32 stringset, u8 *data)
+ {
+ 	struct qlcnic_adapter *adapter = netdev_priv(dev);
+ 	int index, i, num_stats;
++	const char *str;
  
- 		/* Format: 'serial#, signature' */
--		auth_str = kasprintf(GFP_KERNEL, "%s,%s",
--				dmi_get_system_info(DMI_PRODUCT_SERIAL),
--				setting->signature);
-+		auth_str = cert_command(setting,
-+					dmi_get_system_info(DMI_PRODUCT_SERIAL),
-+					setting->signature);
- 		if (!auth_str)
- 			return -ENOMEM;
+ 	switch (stringset) {
+ 	case ETH_SS_TEST:
+-		memcpy(data, *qlcnic_gstrings_test,
+-		       QLCNIC_TEST_LEN * ETH_GSTRING_LEN);
++		for (i = 0; i < QLCNIC_TEST_LEN; i++)
++			ethtool_puts(&data, qlcnic_gstrings_test[i]);
+ 		break;
+ 	case ETH_SS_STATS:
+ 		num_stats = ARRAY_SIZE(qlcnic_tx_queue_stats_strings);
+-		for (i = 0; i < adapter->drv_tx_rings; i++) {
++		for (i = 0; i < adapter->drv_tx_rings; i++)
+ 			for (index = 0; index < num_stats; index++) {
+-				sprintf(data, "tx_queue_%d %s", i,
+-					qlcnic_tx_queue_stats_strings[index]);
+-				data += ETH_GSTRING_LEN;
++				str = qlcnic_tx_queue_stats_strings[index];
++				ethtool_sprintf(&data, "tx_queue_%d %s", i,
++						str);
+ 			}
+-		}
  
-@@ -776,24 +812,44 @@ static ssize_t certificate_store(struct kobject *kobj,
- 
- 	if (setting->cert_installed) {
- 		/* Certificate is installed so this is an update */
--		if (!setting->signature || !setting->signature[0]) {
-+		install_mode = TLMI_CERT_UPDATE;
-+		/* If admin account enabled - need to use it's signature */
-+		if (tlmi_priv.pwd_admin->pwd_enabled)
-+			signature = tlmi_priv.pwd_admin->signature;
-+		else
-+			signature = setting->signature;
-+	} else { /* Cert install */
-+		/* Check if SMC and SVC already installed */
-+		if ((setting == tlmi_priv.pwd_system) && tlmi_priv.pwd_admin->cert_installed) {
-+			/* This gets treated as a cert update */
-+			install_mode = TLMI_CERT_UPDATE;
-+			signature = tlmi_priv.pwd_admin->signature;
-+		} else { /* Regular cert install */
-+			install_mode = TLMI_CERT_INSTALL;
-+			signature = setting->signature;
-+		}
-+	}
-+
-+	if (install_mode == TLMI_CERT_UPDATE) {
-+		/* This is a certificate update */
-+		if (!signature || !signature[0]) {
- 			kfree(new_cert);
- 			return -EACCES;
+-		for (index = 0; index < QLCNIC_STATS_LEN; index++) {
+-			memcpy(data + index * ETH_GSTRING_LEN,
+-			       qlcnic_gstrings_stats[index].stat_string,
+-			       ETH_GSTRING_LEN);
++		for (i = 0; i < QLCNIC_STATS_LEN; i++) {
++			str = qlcnic_gstrings_stats[i].stat_string;
++			ethtool_puts(&data, str);
  		}
- 		guid = LENOVO_UPDATE_BIOS_CERT_GUID;
- 		/* Format: 'Certificate,Signature' */
--		auth_str = kasprintf(GFP_KERNEL, "%s,%s",
--				new_cert, setting->signature);
-+		auth_str = cert_command(setting, new_cert, signature);
- 	} else {
- 		/* This is a fresh install */
--		if (!setting->pwd_enabled || !setting->password[0]) {
-+		/* To set admin cert, a password must be enabled */
-+		if ((setting == tlmi_priv.pwd_admin) &&
-+		    (!setting->pwd_enabled || !setting->password[0])) {
- 			kfree(new_cert);
- 			return -EACCES;
+ 
+ 		if (qlcnic_83xx_check(adapter)) {
+ 			num_stats = ARRAY_SIZE(qlcnic_83xx_tx_stats_strings);
+-			for (i = 0; i < num_stats; i++, index++)
+-				memcpy(data + index * ETH_GSTRING_LEN,
+-				       qlcnic_83xx_tx_stats_strings[i],
+-				       ETH_GSTRING_LEN);
++			for (i = 0; i < num_stats; i++) {
++				str = qlcnic_83xx_tx_stats_strings[i];
++				ethtool_puts(&data, str);
++			}
+ 			num_stats = ARRAY_SIZE(qlcnic_83xx_mac_stats_strings);
+-			for (i = 0; i < num_stats; i++, index++)
+-				memcpy(data + index * ETH_GSTRING_LEN,
+-				       qlcnic_83xx_mac_stats_strings[i],
+-				       ETH_GSTRING_LEN);
++			for (i = 0; i < num_stats; i++) {
++				str = qlcnic_83xx_mac_stats_strings[i];
++				ethtool_puts(&data, str);
++			}
+ 			num_stats = ARRAY_SIZE(qlcnic_83xx_rx_stats_strings);
+-			for (i = 0; i < num_stats; i++, index++)
+-				memcpy(data + index * ETH_GSTRING_LEN,
+-				       qlcnic_83xx_rx_stats_strings[i],
+-				       ETH_GSTRING_LEN);
++			for (i = 0; i < num_stats; i++) {
++				str = qlcnic_83xx_rx_stats_strings[i];
++				ethtool_puts(&data, str);
++			}
+ 			return;
+ 		} else {
+ 			num_stats = ARRAY_SIZE(qlcnic_83xx_mac_stats_strings);
+-			for (i = 0; i < num_stats; i++, index++)
+-				memcpy(data + index * ETH_GSTRING_LEN,
+-				       qlcnic_83xx_mac_stats_strings[i],
+-				       ETH_GSTRING_LEN);
++			for (i = 0; i < num_stats; i++) {
++				str = qlcnic_83xx_mac_stats_strings[i];
++				ethtool_puts(&data, str);
++			}
  		}
- 		guid = LENOVO_SET_BIOS_CERT_GUID;
--		/* Format: 'Certificate,Admin-password' */
--		auth_str = kasprintf(GFP_KERNEL, "%s,%s",
--				new_cert, setting->password);
-+		/* Format: 'Certificate, password' */
-+		auth_str = cert_command(setting, new_cert, setting->password);
+ 		if (!(adapter->flags & QLCNIC_ESWITCH_ENABLED))
+ 			return;
+ 		num_stats = ARRAY_SIZE(qlcnic_device_gstrings_stats);
+-		for (i = 0; i < num_stats; index++, i++) {
+-			memcpy(data + index * ETH_GSTRING_LEN,
+-			       qlcnic_device_gstrings_stats[i],
+-			       ETH_GSTRING_LEN);
+-		}
++		for (i = 0; i < num_stats; i++)
++			ethtool_puts(&data, qlcnic_device_gstrings_stats[i]);
  	}
- 	kfree(new_cert);
- 	if (!auth_str)
-@@ -873,14 +929,19 @@ static umode_t auth_attr_is_visible(struct kobject *kobj,
- 		return 0;
- 	}
+ }
  
--	/* We only display certificates on Admin account, if supported */
-+	/* We only display certificates, if supported */
- 	if (attr == &auth_certificate.attr ||
- 	    attr == &auth_signature.attr ||
- 	    attr == &auth_save_signature.attr ||
- 	    attr == &auth_cert_thumb.attr ||
- 	    attr == &auth_cert_to_password.attr) {
--		if ((setting == tlmi_priv.pwd_admin) && tlmi_priv.certificate_support)
--			return attr->mode;
-+		if (tlmi_priv.certificate_support) {
-+			if (setting == tlmi_priv.pwd_admin)
-+				return attr->mode;
-+			if ((tlmi_priv.pwdcfg.core.password_mode >= TLMI_PWDCFG_MODE_MULTICERT) &&
-+			    (setting == tlmi_priv.pwd_system))
-+				return attr->mode;
-+		}
- 		return 0;
- 	}
- 
-@@ -1700,10 +1761,12 @@ static int tlmi_analyze(void)
- 		}
- 	}
- 
--	if (tlmi_priv.certificate_support &&
--		(tlmi_priv.pwdcfg.core.password_state & TLMI_CERT))
--		tlmi_priv.pwd_admin->cert_installed = true;
--
-+	if (tlmi_priv.certificate_support) {
-+		tlmi_priv.pwd_admin->cert_installed =
-+			tlmi_priv.pwdcfg.core.password_state & TLMI_CERT_SVC;
-+		tlmi_priv.pwd_system->cert_installed =
-+			tlmi_priv.pwdcfg.core.password_state & TLMI_CERT_SMC;
-+	}
- 	return 0;
- 
- fail_clear_attr:
-diff --git a/drivers/platform/x86/think-lmi.h b/drivers/platform/x86/think-lmi.h
-index 4728f40143a3..f267d8b46957 100644
---- a/drivers/platform/x86/think-lmi.h
-+++ b/drivers/platform/x86/think-lmi.h
-@@ -41,6 +41,10 @@ enum save_mode {
- };
- 
- /* password configuration details */
-+#define TLMI_PWDCFG_MODE_LEGACY    0
-+#define TLMI_PWDCFG_MODE_PASSWORD  1
-+#define TLMI_PWDCFG_MODE_MULTICERT 3
-+
- struct tlmi_pwdcfg_core {
- 	uint32_t password_mode;
- 	uint32_t password_state;
 -- 
 2.47.0
 
