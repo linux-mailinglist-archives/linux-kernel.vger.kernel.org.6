@@ -1,148 +1,146 @@
-Return-Path: <linux-kernel+bounces-380126-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380127-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15ED19AE93B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:45:04 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id B21969AE93C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:47:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 47B651C22187
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:45:03 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 360901F22D18
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:47:44 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 359291E32CF;
-	Thu, 24 Oct 2024 14:44:56 +0000 (UTC)
-Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A769D8614E;
+	Thu, 24 Oct 2024 14:47:36 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="Vm7oT4CQ"
+Received: from mail-lj1-f181.google.com (mail-lj1-f181.google.com [209.85.208.181])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 814FB1AF0D0;
-	Thu, 24 Oct 2024 14:44:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F0CEE1D63D8;
+	Thu, 24 Oct 2024 14:47:33 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.181
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781095; cv=none; b=oUY83/6nexUni7tcPtinY6xRuyX8siONGpJzzGivbZknGmkXcOryzwrHrmHxiehmMuTGW9O5bSexc7xaoNE+NV8KkXp3iPtvgD+V38954JXvT0N9miUs1ChY7H05Q3femNKVmiplEf5fEB40eOdtRLSoc51hZRBEZYloLhl9aKQ=
+	t=1729781256; cv=none; b=YxCMetHAHzixcDe9nXovAXX+wIFMHqEzv3hWZZ4eQE7LC+lG04kgqTKV71Qj6tCJJsmP4Jf4jVN6rG4thX41VyoRWjjpMX/QIk0ZOEUOe279ODEXf3qGDkgG/qSYGDyZP7+jfNoJ5Y6ilB0fAtd0TqHtvVDa0sEVA9dO32CJDKM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781095; c=relaxed/simple;
-	bh=TC+d9a8JXS0axmvv6B2gj9V/07iduagclGASA9znHqU=;
-	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
-	 In-Reply-To:Content-Type; b=Y2XJWXP7wea/kfC74nqk1RdDuznMuqQyH+RcvoLcj76hNZD8ZqU1KxenInNebo+e1lIDHtgV+FcVq23xysVFy4+PA/S7Sn5b6MQteoKdL5oKf1kMpr1AXHExssRIJMAh8MHe7deOZICkRs/ZDGrLnkKgaDLWeCuGXGFW1HLxJgk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
-Received: from mail.maildlp.com (unknown [172.19.162.254])
-	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XZ7tg3fZqzpXC8;
-	Thu, 24 Oct 2024 22:42:51 +0800 (CST)
-Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
-	by mail.maildlp.com (Postfix) with ESMTPS id 3F3CB180103;
-	Thu, 24 Oct 2024 22:44:48 +0800 (CST)
-Received: from [10.67.120.192] (10.67.120.192) by
- kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
- (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
- 15.1.2507.39; Thu, 24 Oct 2024 22:44:47 +0800
-Message-ID: <8254dbdf-79d5-4c90-be7b-bb5cabf499e7@huawei.com>
-Date: Thu, 24 Oct 2024 22:44:46 +0800
+	s=arc-20240116; t=1729781256; c=relaxed/simple;
+	bh=/wUrcsMJVoooubxWmLRAaXefBHzQh8V+SDPSaLoqxdQ=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=CLelId0D+p5/ogaCYSafuwvuBPufIe5PWAZo8RMagspaUn4TRHTJdgXooFhYDqHqRNvLzWmmGsuCPXGceqNUzlVg7ZomvkE3yqJQJU/OdhtnMCKs+I5cKkrlVSoqZDqFR9nLSi2whrBPdHYomR1FSkVjyevPAKULrtClPEyakY4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=Vm7oT4CQ; arc=none smtp.client-ip=209.85.208.181
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f181.google.com with SMTP id 38308e7fff4ca-2fb584a8f81so9930531fa.3;
+        Thu, 24 Oct 2024 07:47:33 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729781252; x=1730386052; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=ObLFhkfilDgkeJ8S/DOzsvtKeCP3rongHSO0w7aoSKI=;
+        b=Vm7oT4CQrdbpMDVujGySCgPWjjPudOz4nFNtKnqA175UcBWA+Gs3eNaDa73S4U+0TI
+         uj4AxIY1lLCKevkOd37v8mk9ciSJdqVvRxX2dUgVLTPk6gIidGbB8PGUSTB3LU4dj/wf
+         ljQCGKkC0EY+4rVfQH2jr09st39QOrtV48U+CbNij+syfXXI86laeI4oimSwrGPFyvqh
+         lGHiOvXqkiR7QBBvNBPjOCViEeK1RItC5UHU0uGHWt9Usr/2Pdhvryr9PueaZgbNa6X7
+         Qj4rvrnsjzT2EqJdlb/ImYqe7whHdAe93o8zC4NqWxjcctHWESHfScMengstTK3AxWEr
+         7QKw==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729781252; x=1730386052;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=ObLFhkfilDgkeJ8S/DOzsvtKeCP3rongHSO0w7aoSKI=;
+        b=SE83p3UFJkpt/FCDZ6oc586QDa7pg/peWBjLAFrOU8K60ju2goWAU2rkDxkjZQcpr5
+         bLmegwS1MqrP0g8iabJlUZQqxi2GuR6no7/KanRndg+eAqzt2BGpI6eeVT2DNvEnYK4H
+         LpQNtjflQ4stRnF6EA1+XqFobI0wcDvuPmvvSpTtOByZAb2MD6Uat0Wbe8hOz7Xg57Qk
+         b1aXL5EVfJD+au/vozQ5l4cZ0ounRFW+8UhtcPiwKtzA8wV7sC979r9faqy/5dXjfuko
+         HK8+oMfvVsVmbdqI99K5lSnzk0iP8l3E3dYYVmtK95sVAAZQZ127f1V82QEDY1b9Og1F
+         HC1Q==
+X-Forwarded-Encrypted: i=1; AJvYcCUutcZumFeb49jlm1TENYUiM11IUhNjxRho+sfhNg25UhLAae6/YMSMICTqxhlVtP2G0HLwvX7uegLQ0A+8@vger.kernel.org, AJvYcCWxeNzOZ7/CaZQu8RgpX/yaSfr/5PEOat8pneqQLe0TtwUOOszSrx1JcUlnWLfV67OagB83dchHyDrgP0lmoWc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yx+bsCYtPM+8dXZvn8wuAaS03DpwA/dwHzXyZITg+/PxfjHC2gP
+	SLa8wblhsSrEx4VPQTelS1568M9FpO6doeGgccHGFhQ176bHs7sYs2qsYNZV92thZ7ZAuxY4yEh
+	0G8o7PfQ1kDzrS0gqmGDxwE8u8s8=
+X-Google-Smtp-Source: AGHT+IEhbTehtHKBddJu+7LbhCF86DQkzEp93FtdZ2l7+F3VCRGEUWQWdfUNYvEcj3Aq130BBZJzRw2RGRA3wyZ/KUI=
+X-Received: by 2002:a2e:4609:0:b0:2fb:6198:d230 with SMTP id
+ 38308e7fff4ca-2fca8201182mr11805571fa.18.1729781251392; Thu, 24 Oct 2024
+ 07:47:31 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
-	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
-	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
-	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
-	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
-	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
-	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
-	<linux-kernel@vger.kernel.org>
-Subject: Re: [PATCH net-next 4/7] net: hibmcge: Add register dump supported in
- this module
-To: Andrew Lunn <andrew@lunn.ch>
-References: <20241023134213.3359092-1-shaojijie@huawei.com>
- <20241023134213.3359092-5-shaojijie@huawei.com>
- <f34ba74e-f691-409f-b2f1-990ba9a6c5a9@lunn.ch>
- <3a9bf4e6-b764-49b3-af8b-b5fd71cc4e49@huawei.com>
- <e1827d48-7aeb-4f40-9332-8ce1efc5c960@lunn.ch>
-From: Jijie Shao <shaojijie@huawei.com>
-In-Reply-To: <e1827d48-7aeb-4f40-9332-8ce1efc5c960@lunn.ch>
-Content-Type: text/plain; charset="UTF-8"; format=flowed
-Content-Transfer-Encoding: 7bit
-X-ClientProxiedBy: dggems701-chm.china.huawei.com (10.3.19.178) To
- kwepemm000007.china.huawei.com (7.193.23.189)
+References: <20241023113626.12236-1-chris.lu@mediatek.com>
+In-Reply-To: <20241023113626.12236-1-chris.lu@mediatek.com>
+From: Luiz Augusto von Dentz <luiz.dentz@gmail.com>
+Date: Thu, 24 Oct 2024 10:47:17 -0400
+Message-ID: <CABBYNZLpMCTy8z8ObEU90gqenb58VoB2EZKbZJfWK_J=h45Qew@mail.gmail.com>
+Subject: Re: [PATCH v1] Bluetooth: btmtk: adjust the position to init iso data anchor
+To: Chris Lu <chris.lu@mediatek.com>
+Cc: Marcel Holtmann <marcel@holtmann.org>, Johan Hedberg <johan.hedberg@gmail.com>, 
+	Sean Wang <sean.wang@mediatek.com>, Aaron Hou <aaron.hou@mediatek.com>, 
+	Steve Lee <steve.lee@mediatek.com>, linux-bluetooth <linux-bluetooth@vger.kernel.org>, 
+	linux-kernel <linux-kernel@vger.kernel.org>, 
+	linux-mediatek <linux-mediatek@lists.infradead.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Chris,
 
-on 2024/10/24 20:22, Andrew Lunn wrote:
->> We have other considerations:
->>
->> If the dump register changes in the future, we hope that
->> only the kernel needs to be modified, and the ethtool does not need to be modified.
->> In this case, We do not need to consider the mapping between the ethtool and driver versions.
->>
->> So in ethtool, we only need to consider basic formatted printing.
->> like this(not send yet):
->>
->> #define HBG_REG_NAEM_MAX_LEN 32
->> struct hbg_reg_info {
->> 	char name[HBG_REG_NAEM_MAX_LEN];
->> 	u32 offset;
->> 	u32 val;
->> };
->> static void hibmcge_dump_reg_info(struct hbg_reg_info *info)
->> {
->> 	fprintf(stdout, "%-*s[0x%04x]: 0x%08x\n",
->> 		HBG_REG_NAEM_MAX_LEN, info->name, info->offset, info->val);
->> }
->> int hibmcge_dump_regs(struct ethtool_drvinfo *info __maybe_unused,
->> 		      struct ethtool_regs *regs)
->> {
->> 	struct hbg_reg_info *reg_info;
->> 	u32 name_max_len;
->> 	u32 offset = 0;
->> 	if (regs->len % sizeof(*reg_info) != 0)
->> 		return -EINVAL;
->> 	while (offset < regs->len) {
->> 		reg_info = (struct hbg_reg_info *)(regs->data + offset);
->> 		hibmcge_dump_reg_info(reg_info);
->> 		offset += sizeof(*reg_info);
->> 	}
->> 	return 0;
->> }
->>
->> So, In this patch, pass back hbg_reg_info(name, offset, value)
-> So this is different to all other drivers doing registers dumps.
+On Wed, Oct 23, 2024 at 7:37=E2=80=AFAM Chris Lu <chris.lu@mediatek.com> wr=
+ote:
 >
-> 1) Please explain this in the commit message, with a justification why
-> your driver is different.
-
-In fact, we don't have anything different with other drivers.
-
-In the customer environment, the ethtool version may not be the latest.
-
-If the driver adds a register to the register dump, the register is unknown
-when the ethtool is used to query the register.
-Therefore, we want to separate the ethtool from the driver.
-No matter how the driver is modified, the ethtool can display all information perfectly.
-
+> MediaTek iso data anchor init should be move to where MediaTek
+> claims iso data interface.
+> If there is an unexpected usb disconnect during setup flow,
+> it will cause a NULL pointer crash issue when releasing iso
+> anchor since the anchor wan't been init yet. Adjust the position
+> to do iso data anchor init.
 >
-> 2) What is actually specific to your driver here? Why not make this
-> available to all drivers? Maybe check if ethtool_regs.version ==
-> MAX_U32 is used by any of the other drivers, and if not, make that a
-> magic value to indicate your special format.
+> Signed-off-by: Chris Lu <chris.lu@mediatek.com>
 
-In fact, it would be best if ethtool could provide a unified framework to
-elegantly display all register information.
-The existing framework prints the information in hexadecimal format,
-which is not intuitive enough.
+Please add the backtrace or a Link tag if there is an issue/bug open.
+Also it is important to always include a Fixes tag with tha hash that
+introduced the problem, specially in case of a crash since it might be
+a good idea to backport to fix.
 
+> ---
+>  drivers/bluetooth/btmtk.c | 1 -
+>  drivers/bluetooth/btusb.c | 2 ++
+>  2 files changed, 2 insertions(+), 1 deletion(-)
 >
-> 3) Maybe consider that there does not appear to be a netlink version
-> of this ethtool ioctl. Could this be nicely integrated into a netlink
-> version, where you have more flexibility with attributes?
+> diff --git a/drivers/bluetooth/btmtk.c b/drivers/bluetooth/btmtk.c
+> index b7fc14aafc74..8a3f7c3fcfec 100644
+> --- a/drivers/bluetooth/btmtk.c
+> +++ b/drivers/bluetooth/btmtk.c
+> @@ -1215,7 +1215,6 @@ static int btmtk_usb_isointf_init(struct hci_dev *h=
+dev)
+>         struct sk_buff *skb;
+>         int err;
+>
+> -       init_usb_anchor(&btmtk_data->isopkt_anchor);
+>         spin_lock_init(&btmtk_data->isorxlock);
+>
+>         __set_mtk_intr_interface(hdev);
+> diff --git a/drivers/bluetooth/btusb.c b/drivers/bluetooth/btusb.c
+> index 9970470c9d15..15c0885c37cd 100644
+> --- a/drivers/bluetooth/btusb.c
+> +++ b/drivers/bluetooth/btusb.c
+> @@ -2628,6 +2628,8 @@ static void btusb_mtk_claim_iso_intf(struct btusb_d=
+ata *data)
+>         struct btmtk_data *btmtk_data =3D hci_get_priv(data->hdev);
+>         int err;
+>
+> +       init_usb_anchor(&btmtk_data->isopkt_anchor);
+> +
+>         err =3D usb_driver_claim_interface(&btusb_driver,
+>                                          btmtk_data->isopkt_intf, data);
+>         if (err < 0) {
+> --
+> 2.18.0
+>
 
-Okay, I'll analyze it.
 
-Thanks a lot.
-Jijie Shao
-
-
+--=20
+Luiz Augusto von Dentz
 
