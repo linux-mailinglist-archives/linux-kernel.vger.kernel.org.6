@@ -1,113 +1,138 @@
-Return-Path: <linux-kernel+bounces-379768-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379770-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 719839AE373
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:08:41 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A43C9AE376
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:08:56 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 06235284135
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:08:40 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 25B441F212E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:08:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C85621CACDE;
-	Thu, 24 Oct 2024 11:08:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A4B61CB9E3;
+	Thu, 24 Oct 2024 11:08:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jCyvV3+7"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="MoPH5A/U"
+Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.21])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2DD281B3944;
-	Thu, 24 Oct 2024 11:08:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C667B1C4A31;
+	Thu, 24 Oct 2024 11:08:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.21
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729768114; cv=none; b=lH5YZ5Khot6pLp6apogEp3rBpSzSk8DNQXym+PuZgZG/5/g/v5B9CLb9DiYO33hDTxWhii5bRfSNMQalabTsz8Laynhf+u6aD1mkOfR3f0k8NKeyKSkazendmJjngWGV78Mk2LytTZnspXYKl9NMR9oqrcj4ixW3qQ8XuDf9+Zk=
+	t=1729768125; cv=none; b=cAxauuR4tXA5p0PR37+ct/56f5ZJ7NUu7+Wqd0QoOQe7fYdAyefRdnYnmbJeTCDyPmHpsDZYjT0LEMbIC+HGszlqIBq0+2ywV5Q3opJGtai+PQ5kvwq9N30TQcWIW24HVubve1V+wlRdD3McjHSDx5tQZ+pnUYsjsrRiLNSdYIo=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729768114; c=relaxed/simple;
-	bh=9peKOBarqdpPkLjjJH9GEgF7N61JBW2Rmu4/0jGcnWk=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Jlho5pZmiML3kjQXda3q8JxW/VYca8CU1/t9fYLUw+O3Uz6hqzzFadGC7fQomm1bZdx6XaY5E+Kv/+C2vo9Ua7J5JxCsensGwHwW3bIIpwZxkKxnfnQIP0i4/87jKnk5ptsFpdd9kl2mniF4R3FZpyNZosNASAey8Wy3jSRdLOo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jCyvV3+7; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 65987C4CECC;
-	Thu, 24 Oct 2024 11:08:31 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729768113;
-	bh=9peKOBarqdpPkLjjJH9GEgF7N61JBW2Rmu4/0jGcnWk=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=jCyvV3+7tJi19rgCFZNXGlpaG2Fvdv0drAf/gQJlTbO/kQLUSKy3dIuhbZkJLTwh3
-	 +A15YkZgZM+T6HTGYBKSrS/lmucRuGPrSJ6hrrYVT/Xd4piwcfNOi8XdxxrSkZVULD
-	 Vj4NQ9xistEbkcSfhIwKDmzPvrhR6sR24MTP9FUTuoFYWJpkxWI4MNAjUDoU39bSxs
-	 Au1zPkeRq/in99JZFyLyf7QrenIWEEp6u39Hji84AyIhDHVEgq3TQZsHJJlRPnyqtx
-	 kqp/fRT4/18p7G0Nq4hqwMER4KqYHuNFzM4YBtV2+cK0EPN75LJLyr45/UP00t73HS
-	 ueuQeAVndxEIw==
-Date: Thu, 24 Oct 2024 12:08:28 +0100
-From: Mark Brown <broonie@kernel.org>
-To: Steven Rostedt <rostedt@goodmis.org>
-Cc: Christoph Hellwig <hch@infradead.org>,
-	Geert Uytterhoeven <geert@linux-m68k.org>,
-	Guenter Roeck <linux@roeck-us.net>,
-	Michael Ellerman <mpe@ellerman.id.au>, Kees Cook <kees@kernel.org>,
-	Sasha Levin <sashal@kernel.org>, torvalds@linux-foundation.org,
-	ksummit@lists.linux.dev, linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <658bb573-69f5-4873-98d3-9e9d6412966d@sirena.org.uk>
-References: <CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
- <20241023051914.7f8cf758@rorschach.local.home>
- <8734km2lt7.fsf@mail.lhotse>
- <20241024010103.238ef40b@rorschach.local.home>
- <07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
- <20241024024928.6fb9d892@rorschach.local.home>
- <CAMuHMdVLsLA97u4AVTA6=YKyfyWNrJOQk7S02s36AFTrFoUM3A@mail.gmail.com>
- <20241024052139.2cf7397f@rorschach.local.home>
- <ZxoSZQSw0z6AdgaU@infradead.org>
- <20241024054909.49ae9faa@rorschach.local.home>
+	s=arc-20240116; t=1729768125; c=relaxed/simple;
+	bh=NlHgJjsgC1z/zRldu09szX5ASYItuI9tGKsARmS4Taw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=LsMp3ozJzv0XUJvVWBBLxX53rB6c49QNkrn+Ik4gWzTKAFmpB+nSNaqAlIzSbUeG4j0fk+79KuOq2xUqnehT7PEWw0PcYtEenZmuKE9YBD3JeNVqKpPod6qxSD5WFD05ouv2MtxcCO81HYNRQq2qxqrZ11YyiHSYt2MMJM9bfBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=MoPH5A/U; arc=none smtp.client-ip=198.175.65.21
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
+  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
+  t=1729768123; x=1761304123;
+  h=message-id:date:mime-version:subject:to:cc:references:
+   from:in-reply-to:content-transfer-encoding;
+  bh=NlHgJjsgC1z/zRldu09szX5ASYItuI9tGKsARmS4Taw=;
+  b=MoPH5A/UOKhsCh0rJL271OK4YNX5bFivq6OQHyMvf2ygzqtysfAl9Q4Z
+   oAc0wgI8PHybMXPlRntzPIV6Nou/qYRpo66xb6YBQ++UsbqzpbNr21Yqw
+   oclzq9VFzYFqdIMxdQmbnh0c1QtBkSqhoFfPrSyPPPa6/Q8uEibhzWAkg
+   Z2TsZzty6glPCKrX5v2TE1zHB1tunLJHLUq9SVceckkHS4TKXiHYFH8hI
+   397k9rCKrQlMwHSSVrZrMN7UAAxkRTOOB+I7luF65bQM94AjyfecxYNAj
+   moxzSOKiP0SN4+Zl6F841NN77ejhLdh/YO6DZIMTJOf3VY+/HLIZ7pQ/r
+   Q==;
+X-CSE-ConnectionGUID: dV7smuK9TwOSL9ndCukPgQ==
+X-CSE-MsgGUID: 9BUrYGyPTcyEjGxhNEjNPQ==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29321734"
+X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
+   d="scan'208";a="29321734"
+Received: from orviesa008.jf.intel.com ([10.64.159.148])
+  by orvoesa113.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:08:43 -0700
+X-CSE-ConnectionGUID: ZVCYKNMnTZ+Eaxt9D+h6yA==
+X-CSE-MsgGUID: ZfyAt+jjRF24KG1sA+eLeg==
+X-ExtLoop1: 1
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="81378669"
+Received: from ahunter6-mobl1.ger.corp.intel.com (HELO [10.0.2.15]) ([10.246.16.81])
+  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 04:08:38 -0700
+Message-ID: <3e2f8132-af87-40c0-9c31-c0103078fe39@intel.com>
+Date: Thu, 24 Oct 2024 14:08:33 +0300
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="k4/QeDWtOnPbDnaJ"
-Content-Disposition: inline
-In-Reply-To: <20241024054909.49ae9faa@rorschach.local.home>
-X-Cookie: Real programs don't eat cache.
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] mmc: sdhci-msm: Slot indexing for distinguishing multiple
+ SDCC instances
+To: Sachin Gupta <quic_sachgupt@quicinc.com>,
+ Ulf Hansson <ulf.hansson@linaro.org>
+Cc: linux-arm-msm@vger.kernel.org, linux-mmc@vger.kernel.org,
+ linux-kernel@vger.kernel.org, quic_cang@quicinc.com,
+ quic_nguyenb@quicinc.com, quic_bhaskarv@quicinc.com, quic_mapa@quicinc.com,
+ quic_narepall@quicinc.com, quic_nitirawa@quicinc.com,
+ quic_rampraka@quicinc.com, quic_sartgarg@quicinc.com
+References: <20241022141828.618-1-quic_sachgupt@quicinc.com>
+Content-Language: en-US
+From: Adrian Hunter <adrian.hunter@intel.com>
+Organization: Intel Finland Oy, Registered Address: PL 281, 00181 Helsinki,
+ Business Identity Code: 0357606 - 4, Domiciled in Helsinki
+In-Reply-To: <20241022141828.618-1-quic_sachgupt@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
+On 22/10/24 17:18, Sachin Gupta wrote:
+> This update addresses the requirement for accurate slot indexing
+> in the sdhci-msm driver to differentiate between multiple SDCC
+> (Secure Digital Card Controller) instances, such as eMMC, SD card,
+> and SDIO.
+> 
+> Additionally, it revises the slot indexing logic to comply with
+> the new device tree (DT) specifications.
 
---k4/QeDWtOnPbDnaJ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
+This patch seems incomplete because all it does is assign a global
+variable which is never used again.
 
-On Thu, Oct 24, 2024 at 05:49:09AM -0400, Steven Rostedt wrote:
+> 
+> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+> Signed-off-by: Sarthak Garg <quic_sartgarg@quicinc.com>
+> Signed-off-by: Maramaina Naresh <quic_mnaresh@quicinc.com>
+> Signed-off-by: Ziqi Chen <quic_ziqichen@quicinc.com>
+> Signed-off-by: Sachin Gupta <quic_sachgupt@quicinc.com>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 10 ++++++++++
+>  1 file changed, 10 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index e113b99a3eab..3cb79117916f 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -292,6 +292,8 @@ struct sdhci_msm_host {
+>  	bool vqmmc_enabled;
+>  };
+>  
+> +static struct sdhci_msm_host *sdhci_slot[3];
+> +
+>  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+>  {
+>  	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> @@ -2426,6 +2428,14 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>  	if (ret)
+>  		goto pltfm_free;
+>  
+> +	if (node) {
+> +		ret = of_alias_get_id(pdev->dev.of_node, "mmc");
+> +		if (ret < 0)
+> +			dev_err(&pdev->dev, "get slot index failed %d\n", ret);
+> +		else
+> +			sdhci_slot[ret] = msm_host;
+> +	}
+> +
+>  	/*
+>  	 * Based on the compatible string, load the required msm host info from
+>  	 * the data associated with the version info.
 
-> So basically, all I need to do to satisfy your request is to add fixes
-> branch that I push to that is pushed after it passes my tests (and not
-> the urgent branch that is still being tested and may have bugs) and
-> then have that be added to linux-next?
-
-> Now I have been batching changes and not send a pull request right
-> after my tests pass. I've been sending a pull request at most now once
-> a week. So I could have this branch hold the code that's already been
-> tested.
-
-Yes, that's what pretty much everyone is doing here.  Generally we find
-very few issues this way but it's certainly a non-zero number.
-
---k4/QeDWtOnPbDnaJ
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEreZoqmdXGLWf4p/qJNaLcl1Uh9AFAmcaKqsACgkQJNaLcl1U
-h9Dw9Qf/eOHIPV0pF/+EE1YW/VNkqtLBqTfT5ASltXbCel7CT84ZLvIwaKUC5s/0
-d/zALFEN2Kwnko0Q29GdjdpQ0z3ZkjJPDhq12Mr3YQ5Mqa3Z1EmTkH8rXeH1U0Jv
-a9sUhwvut8dNDXBg522E3fABjlB+NnW7yi1a6GlYNhW13tYINqBbKdKtRnYqx5wt
-lnHrRH9dbGyEt5n0fZ0QrU0ej+9BNXnjlUHbNRhy9ZHbMDXGBZCVpAp5wvGlGJDk
-2Xo5uFR+j2EjubrDOaVRwVkSJMvAOH4BzCDICz7n1MoUgLseOJpncYPN/EDnwLAs
-BXr/knfq+eusKEuJQsxz+pmCM9qaUg==
-=y6xr
------END PGP SIGNATURE-----
-
---k4/QeDWtOnPbDnaJ--
 
