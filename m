@@ -1,91 +1,113 @@
-Return-Path: <linux-kernel+bounces-379057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE2319AD91A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:09:36 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 268419AD91B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:09:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id ECFA61C21AD2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:09:35 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id C60061F21D85
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 01:09:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 75CED1F931;
-	Thu, 24 Oct 2024 01:09:31 +0000 (UTC)
-Received: from mail-il1-f200.google.com (mail-il1-f200.google.com [209.85.166.200])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DCD00208D7;
+	Thu, 24 Oct 2024 01:09:53 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="c7zrD/KB"
+Received: from mail-lj1-f170.google.com (mail-lj1-f170.google.com [209.85.208.170])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4D805848C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:09:29 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4B0C34D8AD
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 01:09:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.170
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729732171; cv=none; b=RYR1mG6MrTGuB+yNP2JFW0ZP9TOfw4tBR5j5mnul6/dpYLQmZHD2oUX6xnqSqPEAgxq1h+AvAx99pmIpIUxTURYjjsWWHmqaa9FdtN5RqhNowcqBl3hdpoarWeHsCCEM3KIBAN/ARCkMNfsKinlkloUjCsICGP9VyVEA7Qy21So=
+	t=1729732193; cv=none; b=pqErmyJDJFsLValMPd0v62Lak5n9ApnmxeoIBi1+GQ6Uwl8nlGfIzM/YGpOSEQy9HnM5Yq26gfu78MSIugFwxKJAw10xRmthJGVkOGv2x2NpvaFwKB8ZbByMI6XYv1HIMSQ5odZQWjN3wfv+6U+oihRpx45KOu6z0D/EDjvwVQw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729732171; c=relaxed/simple;
-	bh=HXSedyll0zUob/iSQa3vzIJIpeDKSnTBya/awTCb3uo=;
-	h=MIME-Version:Date:In-Reply-To:Message-ID:Subject:From:To:Cc:
-	 Content-Type; b=HeNwGYHP5LdcPLq/cC1c+MuHOLCjbl3ZHajOKQdcL7aXR4qrB0nAmmzbBz8We4TCW9M1wTTKTfNLVqzZpOEP4z6qEMV06WLmBmZQG6hj7PvPTeU5yJ9Kwqh8pHYYftPvX4cXiWeiuVO9s90kCO9W2isEeA1xK0fHavdHMHCtMCs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f200.google.com with SMTP id e9e14a558f8ab-3a3c70e58bfso3742965ab.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:09:29 -0700 (PDT)
+	s=arc-20240116; t=1729732193; c=relaxed/simple;
+	bh=Wg9Wp5kk0vEFCDe4okqM3rWzYPqqTfbIGApRoVaMR14=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=kSakhJMOXTAWwYO5MsOA9nXinhjkpbmMYt92eAbQFjD0CSAhe2aE2/EOq9Uvg3WkIX1NV1WOk00Cfd8yMwwr2/FFjTKq9FcA7zMnEtpQxCYw3sS2ph4PIJ/vZKPFGf2MD2ulLZ3Om6LN4vaKFxhy8hW2RsrG0KXMRZBjAK5QGeA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=c7zrD/KB; arc=none smtp.client-ip=209.85.208.170
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-lj1-f170.google.com with SMTP id 38308e7fff4ca-2fb59652cb9so3205941fa.3
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 18:09:50 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729732189; x=1730336989; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=zbcd5uRapQhQxq5MJJTWR2sL5XsG0N0yna5jn5lare0=;
+        b=c7zrD/KBGBVYRnCwuLP375zoEo79amBQD2rvVForRbpygfQMZ27bu6Zqum1UPsc6iL
+         TbbTuLkF0101pL1sKzsp1V4ENyC7W4WTli2M2g4UoQm/PnyZApcVftY6NGKbF31UTeug
+         xrzX01BxW2dkq6EY+b9sS58el99b6x3yftuOsjBN7ZqsS3c/8WPXbKpBgIxMwz8QpXY4
+         rwBxzxh9fg7gkAGThIPlLl7pH8cxYdmDTHjWt+nb3+79zHENDirXbvAKkYHO3kb31X10
+         NJ//BYZSvt2UjDjBkoxruIeEZsTt8DKt2uHWyG/D265zKux36eMG+JLKcO6iVlZOczrz
+         DwhQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729732168; x=1730336968;
-        h=cc:to:from:subject:message-id:in-reply-to:date:mime-version
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=1KRAh3F/P5bzU1VKjWCGfcpzaYz7AB3FXZckYh8UHaE=;
-        b=mP370WgEapEQOKdrXgG8N7P9QiZg3CgV9WX+1aAHMazNkL94h3fxDICy/3QMIr5T14
-         kxXXAAWMcBMyw+ZzxZPBKda9kBfrPHyqXFZnitiEO7P07sBzMXS1+04mrm4q+TM7xV+s
-         fit0aPb1TCu8Y3HWXok6gYiskNsVaMGSuprNfHvFjo7NWG0NqPbX1N8ZqR6FWmk51aJH
-         oaQVtWIjDPin/bG5NyEtZFDV27JOXKf7uWjUf8WXkWV/jjC26tLjunNRlIiJ2N4TMvp2
-         lRGg4beadOxWqjiEUFW51pWBVvSJFVm+N3MOr+W+MAbET2+iUMddpeZYGDdEKu5+wCb7
-         /7Uw==
-X-Forwarded-Encrypted: i=1; AJvYcCXVOts3xCqDJPbjdQqUp9OyJksHOGtvq/IXzT50gCFthg1R2R2+0+tzq2WsQWxXCsklzyhVmnL9gyukSHs=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8rQBfLzMqNJeCaRechrusaB/1WobK+ZDrVGJtnOlfi21zQ0dd
-	7PvqmBnIdvC6yqZwYqc30IIczQIR6CDHGRhKhu3jmSEcYxu7dViJdyybp/IjuvM7UiplRD6PPSc
-	lqo2zQYJHH0++rdv/0ZuJPLyaw8OolkJXU6J5gNNSNntwEWxDYWQ+OLw=
-X-Google-Smtp-Source: AGHT+IETRKJ0+mN+4UFq6/PeIRWhiACmIhuIHFK+LqJHjWqzKsADChuGH21FMH5ixwPmCz5JZ7aFXSx8iF/Or5TTaOEgWIHLEaKt
+        d=1e100.net; s=20230601; t=1729732189; x=1730336989;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=zbcd5uRapQhQxq5MJJTWR2sL5XsG0N0yna5jn5lare0=;
+        b=pj50RE4Z6oLrjzrRA5SJE3887NrkSBlDmoa+/UENRP4otHk4DW0zozvoB/eoomz8+X
+         /EnW/eDL+6rqxygyWzxCz4gU4jTcMixdJnoMtVeyLbIcKqe/18ZWxd7J4pzlW00wNhS/
+         oCp9C5MuDSNSCX/aJW7peYUTgokQvzoCr+262AR2UjuLTybfAG1+3+qaS5ZkDJbpP4PM
+         6bsb3kM4qFd2SCijUrE5XcBUYYt8uFQdFcIT07ajdsHtCi1y9zFLpBAT4PMdKsX1+0sa
+         5abtwSQtRX5LzOskCq64uUe0DiSzDEfGrmnLcEDOuqTwEmp+OrAq2PE41WC0/H0EW2cZ
+         ctQw==
+X-Forwarded-Encrypted: i=1; AJvYcCUSp818fJK+LrrEyVFEc4aVMtwouwOMPkzhPmJFPO1pFecTZJad0A0GSj9av1E/MDhiYxa5DFDTLEAJy5Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy6cR9wTNq+xHqcXDG3tM70lZVfB1eErmD4HmUg7RTB9vVy0I/b
+	8XzRiCu3jx4R62In2/oNdOZdMmVvddAi33qbIO2n8YooV2QkBq3Q7HFJZ6PHOwF9jtMV7oVJg++
+	qLvk9haY4kHYm2tlaNgTGWQ0dx3M=
+X-Google-Smtp-Source: AGHT+IF2Ax60z242ilbI2EuA61CSMux8GznaUwVN4gBzSDilDhsogRyUKPdE6YgVBW9AvJpAlEtab7CwKd3munRiSXs=
+X-Received: by 2002:a05:6512:23a9:b0:539:e6fc:4170 with SMTP id
+ 2adb3069b0e04-53b1a33ca83mr2476739e87.32.1729732189049; Wed, 23 Oct 2024
+ 18:09:49 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1b08:b0:3a0:8d60:8b7d with SMTP id
- e9e14a558f8ab-3a4d595f23amr50809875ab.11.1729732168482; Wed, 23 Oct 2024
- 18:09:28 -0700 (PDT)
-Date: Wed, 23 Oct 2024 18:09:28 -0700
-In-Reply-To: <20241024010924.908879-1-lizhi.xu@windriver.com>
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <67199e48.050a0220.10f4f4.01d5.GAE@google.com>
-Subject: Re: [syzbot] [bcachefs?] KASAN: slab-use-after-free Read in bch2_reconstruct_alloc
-From: syzbot <syzbot+9fc4dac4775d07bcfe34@syzkaller.appspotmail.com>
-To: lizhi.xu@windriver.com
-Cc: lizhi.xu@windriver.com, syzkaller-bugs@googlegroups.com, 
-	linux-kernel@vger.kernel.org
+References: <20241023-imx-ele-ocotp-fixes-v1-0-4adc00ce288f@pengutronix.de>
+In-Reply-To: <20241023-imx-ele-ocotp-fixes-v1-0-4adc00ce288f@pengutronix.de>
+From: Fabio Estevam <festevam@gmail.com>
+Date: Wed, 23 Oct 2024 22:09:37 -0300
+Message-ID: <CAOMZO5Ar0Pa6RpjmXkX4cd4oao3ggbs4a+OsSp==PGO1CV_-RQ@mail.gmail.com>
+Subject: Re: [PATCH 0/4] nvmem: imx-ocotp-ele: fix reading from ELE OCOTP
+To: Sascha Hauer <s.hauer@pengutronix.de>
+Cc: Srinivas Kandagatla <srinivas.kandagatla@linaro.org>, Shawn Guo <shawnguo@kernel.org>, 
+	Pengutronix Kernel Team <kernel@pengutronix.de>, imx@lists.linux.dev, 
+	linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org
 Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+Hi Sascha,
+
+On Wed, Oct 23, 2024 at 5:12=E2=80=AFAM Sascha Hauer <s.hauer@pengutronix.d=
+e> wrote:
 >
-> #syz test: upstream
-
-want either no args or 2 args (repo, branch), got 5
-
+> Commits b2ab0edaf484 ("arm64: dts: imx93: add nvmem property for fec1")
+> and 0d4fbaffbdca ("arm64: dts: imx93: add nvmem property for eqos")
+> introduced NVMEM cell bindings for reading MAC addresses from the ELE
+> OCOTP. This doesn't work as expected due to bugs in the driver:
 >
-> diff --git a/fs/bcachefs/recovery.c b/fs/bcachefs/recovery.c
-> index 55e1504a8130..717c1a80de20 100644
-> --- a/fs/bcachefs/recovery.c
-> +++ b/fs/bcachefs/recovery.c
-> @@ -95,9 +95,9 @@ static void bch2_reconstruct_alloc(struct bch_fs *c)
->  	c->sb.compat &= ~(1ULL << BCH_COMPAT_alloc_info);
->  
->  	bch2_write_super(c);
-> -	mutex_unlock(&c->sb_lock);
->  
->  	c->opts.recovery_passes |= bch2_recovery_passes_from_stable(le64_to_cpu(ext->recovery_passes_required[0]));
-> +	mutex_unlock(&c->sb_lock);
->  
->  
->  	bch2_shoot_down_journal_keys(c, BTREE_ID_alloc,
+> - imx_ocotp_reg_read() interprets the incoming offset as 32bit word
+>   offset, but it really is in bytes which means the driver reads bogus
+>   values whenever the offset is non zero
+> - imx_ocotp_reg_read() reads wrong results when the offset is not 32bit
+>   word aligned
+> - MAC addresses are stored in reverse byte order in the ELE OCOTP, we
+>   have to swap the order before passing them to the upper layer
+>
+> This likely went through unnoticed because the bootloader normally adds
+> the MAC addresses to the ethernet nodes and in this case they are
+> preferred over the NVMEM addresses.
+>
+> This series fixes these issues.
+
+Patches 2, 3, and 4 should have a Fixes tag and Cc: stable.
+
+Thanks
 
