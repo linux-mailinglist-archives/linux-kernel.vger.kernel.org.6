@@ -1,73 +1,54 @@
-Return-Path: <linux-kernel+bounces-379820-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379821-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E59FD9AE42D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:51:31 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5DD8F9AE433
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:56:14 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC75280F8C
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:51:30 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D0EC51F22E3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:56:13 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961E71CFECF;
-	Thu, 24 Oct 2024 11:51:24 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id EB91C1D0DD5;
+	Thu, 24 Oct 2024 11:56:06 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJm2tSDI"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="T0o6FWSD"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D6C170853;
-	Thu, 24 Oct 2024 11:51:21 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C73B71A0BC4;
+	Thu, 24 Oct 2024 11:56:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729770684; cv=none; b=IrURvhZsv9KWzmVxjCJ/Xuour5z1sRPTy+ZKn9rDwGBqIIuLmWA/OUtyKFgC5BgMl7lHA/g6ZPMntlBI6NxHwYhkM47mddijgPEAORVJIPOWzoUXlgV4rxGQ2cLEz4rj9asRW/eZxXtxsXLAMgL2OCMmPEV9tdaD0VlRrnob3kw=
+	t=1729770966; cv=none; b=QqbMUoSkABIwHIb00X60z84dQhhkBkx4uaP10Qa/GiFKduMvhomhHr4hRIUupzqzKbrK2Whawk+p9Iq9wgOaev2Vs3NR5Xw/iAxDPavSgfNPlrku2ySHlCDtm4D4FCDsRKUWVgu3DsG8Tof/5S2S26K6zxYFJzmnqwpvn/PyDAQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729770684; c=relaxed/simple;
-	bh=ObToXn1uN52Ji+FyF1i7vx015LgZ9B/m9BxmJO7giVw=;
+	s=arc-20240116; t=1729770966; c=relaxed/simple;
+	bh=UTOsiYOsEFpIkcBWAg2RFk3EFbVEjNespoY0SWiII5U=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=hNdYXoOXJevDq4GH+BuOpxM79MTNrjn/qU7Prh0beme/6buIuEFhbIPJQuTMcsJkYniUUphHvG08JPu7c1uDktd749g9zNyGkkcA5k8fFekN3zrTlTevYVbvcNdj7NVw6KKMFBiLpKgTpBkj5XxO77LdIkt9qlduuj6MREfpVIM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJm2tSDI; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43155afca99so12942685e9.1;
-        Thu, 24 Oct 2024 04:51:21 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729770680; x=1730375480; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=4f+ncTElWxuaHlRSc9sIvuc0sLwN6e+jbNOHYwrcO2s=;
-        b=KJm2tSDIh2MlW5E1dNBmWe84EXMSjYQY9I2Rc+VgIIL+KMkrw9vglS3tY+3E4iTd/W
-         dE35rX+4Alr5CWa8loEVdOyKqbYbLPGmfAUVeQniKqMTnCTbrtTgI9czpkBqL0xtrYyg
-         T7YhuvvLnfUpGC9sYdGLD0KdoVsdAvDdHR0jY9zymSvYFtWgnEIKJI2TujEjXnQ7LdOO
-         9bh8/mSflwJpathXJqko4FeYEWvJHhTgNQPAODeQ92qNw1tat4jijiQUezdpwTCmQvRk
-         9LGgvZEjb4ev3Esd08u+24OPzWLf0d2ZClROKPUyAjaKcGACmm2FEZXG/9EYTnSTTIXA
-         mD5A==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729770680; x=1730375480;
-        h=content-transfer-encoding:in-reply-to:content-language:from
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=4f+ncTElWxuaHlRSc9sIvuc0sLwN6e+jbNOHYwrcO2s=;
-        b=a7eESv0t2pOz/EjSl0yC/KcdAYxsAnzUkGLlfpqGNBxJf25CqlLnaKgSsuthjGBh5D
-         U8MYXwV0iiUxiVlHRcWRY+DF4lgPWCWDOsfbPgrUG+ol/EZJP2Cem5jRCicvNyXoyIjp
-         FXQ1tHGmBZA35fjTNPPtJ00ZZ49kZ2Yi0nD6nA+WqWQlgpclSulWKEQxchXJ3VTZdHvL
-         KbFhRglcHqRpEocvC7w4d9RwSAQVnozV6JM2YRNXxCqXyMB8NqRDUOBKi9klQcie9umU
-         hmBJk8WINZtssvf1zoJtx8RLRuN3MbH0gBFCiCmg9GhyeOiNEepUGt/pxLVVCjjhnioZ
-         Bspg==
-X-Forwarded-Encrypted: i=1; AJvYcCVUSDbXa0bOWUEukSaLE39YwUP0kGvLIL0VzI+GRel2ZvacOWsdy3UPp24qXuV10opoO8TTKEqLrq+aAFI=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzaMVci3qeJCRkk0we4HoHSIhYbCni7NbwH1xx1vd/UOlj4+6YY
-	UP7p5KbMM9utLGSFxQhIro7L897IX55YWCake0I55Gecv7zYzbsj
-X-Google-Smtp-Source: AGHT+IGUts/pqiOnQUDlq8+mpIjJ6pvrQA50D7aIMHxlYlsnD/0uHpYCwABMwVeSbjaLKSV7g7Hd8w==
-X-Received: by 2002:a05:600c:4689:b0:42c:b826:a26c with SMTP id 5b1f17b1804b1-4318b5a561cmr11835735e9.8.1729770679744;
-        Thu, 24 Oct 2024 04:51:19 -0700 (PDT)
-Received: from ?IPV6:2a01:e11:5400:7400:4be9:6ab9:1062:7d2a? ([2a01:e11:5400:7400:4be9:6ab9:1062:7d2a])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03ee7asm58999885e9.0.2024.10.24.04.51.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 04:51:19 -0700 (PDT)
-Message-ID: <58e3d8a4-9e8b-41d5-a134-d41b38bd7216@gmail.com>
-Date: Thu, 24 Oct 2024 13:51:14 +0200
+	 In-Reply-To:Content-Type; b=Wk9rr8BQ770HVJkmFsJXp8EAcofw1WQVlzrVeKtY3HEefilvxfuOzfVxUd7sSmbeTv/R55B/pLNkbmxYuw1gMC7KW4b1ppPYiY2IqW5kUS8XAiuIV2M2iSIbLb7+L2Xfw9fwtpAmTZX2u7Y6av/YoPc7YULcuo65BcO4D8I2XHg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=T0o6FWSD; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729770961;
+	bh=UTOsiYOsEFpIkcBWAg2RFk3EFbVEjNespoY0SWiII5U=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=T0o6FWSDRctpxeOSnO61m027Xay7aeUjYT4UlaTdZzw5J6fuf7g0u8rbyYieFWn2h
+	 4eEGivcWpMAtcdBMB09BOwXnIqawHFZ5qGKT1oECDFmsXAAEfJtN9wx5u3e/HG1V9p
+	 9ynl9YxM8ZLWIHY27sgTUWjylFDieaIaqXekh0Kfyww4PzRCoRCoYDCyGX6ovP2cXR
+	 GclklolAQRujPbYRQ7I0uMN51Z6+6mtW66dlQB4kIAJS+JMALmtQh6hnmuMUVw6/8A
+	 uOTMbG48FXheVmYpz9bHzHar+EHC4wO7XDNGcyTa3WRVjMkWqEDmn21DPBaGq9/9F3
+	 a2FUNHcigaaCw==
+Received: from [192.168.1.100] (2-237-20-237.ip236.fastwebnet.it [2.237.20.237])
+	(using TLSv1.3 with cipher TLS_AES_128_GCM_SHA256 (128/128 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: kholk11)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 5B5F717E35DC;
+	Thu, 24 Oct 2024 13:56:01 +0200 (CEST)
+Message-ID: <566e4de8-b8bb-466c-83c4-217dad8ace63@collabora.com>
+Date: Thu, 24 Oct 2024 13:56:00 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,98 +56,180 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] bcachefs: Fix invalid shift in validate_sb_layout()
-To: Kent Overstreet <kent.overstreet@linux.dev>
-Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
- skhan@linuxfoundation.org,
- syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
-References: <20241023213043.47846-2-gianf.trad@gmail.com>
- <be3e7378-7aec-4ebb-b6e6-e7b824452adb@gmail.com>
- <jaxnjw5ergn7zrnjuzzosgclpmv5st77gtfaj75my3hblufrn2@b4si2orrodw5>
-From: Gianfranco Trad <gianf.trad@gmail.com>
-Content-Language: en-US, it
-In-Reply-To: <jaxnjw5ergn7zrnjuzzosgclpmv5st77gtfaj75my3hblufrn2@b4si2orrodw5>
+Subject: Re: [PATCH 3/4] memory: mtk-smi: mt8188: Add SMI clamp function
+To: =?UTF-8?B?RnJpZGF5IFlhbmcgKOadqOmYsyk=?= <Friday.Yang@mediatek.com>,
+ "robh@kernel.org" <robh@kernel.org>,
+ "matthias.bgg@gmail.com" <matthias.bgg@gmail.com>,
+ "conor+dt@kernel.org" <conor+dt@kernel.org>,
+ "krzk@kernel.org" <krzk@kernel.org>
+Cc: "p.zabel@pengutronix.de" <p.zabel@pengutronix.de>,
+ "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+ =?UTF-8?B?WW9uZyBXdSAo5ZC05YuHKQ==?= <Yong.Wu@mediatek.com>,
+ "linux-mediatek@lists.infradead.org" <linux-mediatek@lists.infradead.org>,
+ Project_Global_Chrome_Upstream_Group
+ <Project_Global_Chrome_Upstream_Group@mediatek.com>,
+ "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
+ "linux-arm-kernel@lists.infradead.org" <linux-arm-kernel@lists.infradead.org>
+References: <20240821082845.11792-1-friday.yang@mediatek.com>
+ <20240821082845.11792-4-friday.yang@mediatek.com>
+ <25b487b7-63e0-402d-a0a2-ed9d03e82630@kernel.org>
+ <cdbac20d7a49ff2fbd3e6d4f24ae441ffbe87f05.camel@mediatek.com>
+From: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Content-Language: en-US
+In-Reply-To: <cdbac20d7a49ff2fbd3e6d4f24ae441ffbe87f05.camel@mediatek.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On 24/10/24 13:24, Kent Overstreet wrote:
-> On Thu, Oct 24, 2024 at 12:48:30PM +0200, Gianfranco Trad wrote:
->> On 23/10/24 23:30, Gianfranco Trad wrote:
->>> Add check on layout->sb_max_size_bits against BCH_SB_LAYOUT_SIZE_BITS_MAX
->>> to prevent UBSAN shift-out-of-bounds in validate_sb_layout().
+Il 24/10/24 03:29, Friday Yang (杨阳) ha scritto:
+> On Wed, 2024-08-21 at 11:00 +0200, Krzysztof Kozlowski wrote:
+>>   	
+>> External email : Please do not click links or open attachments until
+>> you have verified the sender or the content.
+>>   On 21/08/2024 10:26, friday.yang wrote:
+>>> In order to avoid handling glitch signal when MTCMOS on/off, SMI
+>> need
+>>> clamp and reset operation. Parse power reset settings for LARBs
+>> which
+>>> need to reset. Register genpd callback for SMI LARBs and apply
+>> reset
+>>> operations in the callback.
 >>>
->>> Reported-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
->>> Closes: https://syzkaller.appspot.com/bug?extid=089fad5a3a5e77825426
->>> Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
->>> Tested-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
->>> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+>>> Signed-off-by: friday.yang <friday.yang@mediatek.com>
 >>> ---
->>>    fs/bcachefs/errcode.h  | 1 +
->>>    fs/bcachefs/super-io.c | 5 +++++
->>>    2 files changed, 6 insertions(+)
+>>>   drivers/memory/mtk-smi.c | 148
+>> ++++++++++++++++++++++++++++++++++++++-
+>>>   1 file changed, 146 insertions(+), 2 deletions(-)
 >>>
->>> diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
->>> index 649263516ab1..b6cbd716000b 100644
->>> --- a/fs/bcachefs/errcode.h
->>> +++ b/fs/bcachefs/errcode.h
->>> @@ -222,6 +222,7 @@
->>>    	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_type)			\
->>>    	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_nr_superblocks)	\
->>>    	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_superblocks_overlap)	\
->>> +	x(BCH_ERR_invalid_sb_layout,    invalid_sb_layout_sb_max_size_bits)     \
->>>    	x(BCH_ERR_invalid_sb,		invalid_sb_members_missing)		\
->>>    	x(BCH_ERR_invalid_sb,		invalid_sb_members)			\
->>>    	x(BCH_ERR_invalid_sb,		invalid_sb_disk_groups)			\
->>> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
->>> index ce7410d72089..44d0ac9b00dd 100644
->>> --- a/fs/bcachefs/super-io.c
->>> +++ b/fs/bcachefs/super-io.c
->>> @@ -287,6 +287,11 @@ static int validate_sb_layout(struct bch_sb_layout *layout, struct printbuf *out
->>>    		return -BCH_ERR_invalid_sb_layout_nr_superblocks;
->>>    	}
->>> +	if (layout->sb_max_size_bits > BCH_SB_LAYOUT_SIZE_BITS_MAX) {
->>> +		prt_printf(out, "Invalid superblock layout: max_size_bits too high");
->>> +		return -BCH_ERR_invalid_sb_layout_sb_max_size_bits;
->>> +	}
+>>
+>> ...
+>>
 >>> +
->>>    	max_sectors = 1 << layout->sb_max_size_bits;
->>>    	prev_offset = le64_to_cpu(layout->sb_offset[0]);
+>>> +static int mtk_smi_larb_parse_reset_info(struct mtk_smi_larb
+>> *larb)
+>>> +{
+>>> +struct device_node *reset_node;
+>>> +struct device *dev = larb->dev;
+>>> +int ret;
+>>> +
+>>> +/* only larb with "resets" need to get reset setting */
+>>> +reset_node = of_parse_phandle(dev->of_node, "resets", 0);
 >>
->> Wondering if this other patch might be considered more correct to prevent
->> shift oob, given also [0]:
+>> Nope, you do not parse rasets.
 > 
-> Your first patch looks better, we want to know if we're feeding it
-> garbage
+> 1.If I need to use the Linux reset control framework, 'resets' is the
+> required property.
+
+Leave that to the reset API, don't manually parse the resets phandle here,
+that's what Krzysztof was meaning.
+
+> 2.'reset-names' give the list of reset signal name strings sorted in
+> the same order as the 'resets' property. SMI driver will use 'reset-
+> names' to match reset signal names with reset specifiers.
+> 3.Not all SMI larbs need to apply reset operations, only SMI larbs
+> which may have bus glitch issues need this. Just to confirm if this
+> larb support reset function.
+> 
+>>
+>>> +if (!reset_node)
+>>> +return 0;
+>>> +of_node_put(reset_node);
+>>> +
+>>> +larb->rst_con = devm_reset_control_get(dev, "larb_rst");
+
+"larb" is just fine as a name: it's clear that this is a reset, as
+it's specified as `reset-names = "name"`.
+
+>>
+>> Where are the bindings? Why do you add undocumented properties? How
+>> possible this passes dtbs_check???
+>>
+> 
+> This is not the new added property in SMI larb DT node.
+> It is the reset signal name which is inclued in 'reset-names'.
+> Just like this:
+> 
+> resets = <&imgsys1_dip_nr_rst MT8188_SIM_RST_LARB15>;
+> reset-name = 'larb_rst';
+> 
+> Maybe I can add this name to the 'reset-name' property binding
+> description, like this, is this clear for you?
+> 
+> reset-name:
+
+It's "reset-names" btw.
+
+>      const: larb_rst
+>      description: the name of reset signal. SMI driver need to obtain 		
+>   the reset controller based on this.
+> 
+>>
+>>> +if (IS_ERR(larb->rst_con))
+>>> +return dev_err_probe(dev, PTR_ERR(larb->rst_con),
+>>> +     "cannot get larb reset controller\n");
+>>> +
+>>> +larb->nb.notifier_call = mtk_smi_genpd_callback;
+>>> +ret = dev_pm_genpd_add_notifier(dev, &larb->nb);
+>>> +if (ret) {
+>>> +dev_err(dev, "Failed to add genpd callback %d\n", ret);
+>>> +return -EINVAL;
+>>> +}
+>>> +
+>>> +return 0;
+>>> +}
+>>> +
+>>>   static int mtk_smi_larb_probe(struct platform_device *pdev)
+>>>   {
+>>>   struct mtk_smi_larb *larb;
+>>> @@ -538,6 +662,7 @@ static int mtk_smi_larb_probe(struct
+>> platform_device *pdev)
+>>>   if (!larb)
+>>>   return -ENOMEM;
+>>>   
+>>> +larb->dev = dev;
+>>>   larb->larb_gen = of_device_get_match_data(dev);
+>>>   larb->base = devm_platform_ioremap_resource(pdev, 0);
+>>>   if (IS_ERR(larb->base))
+>>> @@ -554,15 +679,29 @@ static int mtk_smi_larb_probe(struct
+>> platform_device *pdev)
+>>>   if (ret < 0)
+>>>   return ret;
+>>>   
+>>> -pm_runtime_enable(dev);
+>>> +/* find sub common to clamp larb for ISP software reset */
+>>> +ret = mtk_smi_larb_parse_clamp_info(larb);
+>>> +if (ret) {
+>>> +dev_err(dev, "Failed to get clamp setting for larb\n");
+>>> +goto err_pm_disable;
+>>> +}
+>>> +
+>>> +ret = mtk_smi_larb_parse_reset_info(larb);
+>>> +if (ret) {
+>>> +dev_err(dev, "Failed to get power setting for larb\n");
+>>> +goto err_pm_disable;
+>>> +}
+>>> +
+>>>   platform_set_drvdata(pdev, larb);
+>>>   ret = component_add(dev, &mtk_smi_larb_component_ops);
+>>>   if (ret)
+>>>   goto err_pm_disable;
+>>> +
+>>> +pm_runtime_enable(dev);
+>>> +
+>>>   return 0;
+>>>   
+>>>   err_pm_disable:
+>>> -pm_runtime_disable(dev);
+>>>   device_link_remove(dev, larb->smi_common_dev);
+>>
+>> Label asls pm disable. Where is the pm disable?
+>>
+> 
+> Thanks, I will fix it to 'err_link_remove'.
 > 
 
-Understood. Thanks Kent.
-Have a nice day,
---Gian
->>
->> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
->> index ce7410d72089..428172897501 100644
->> --- a/fs/bcachefs/super-io.c
->> +++ b/fs/bcachefs/super-io.c
->> @@ -287,7 +287,7 @@ static int validate_sb_layout(struct bch_sb_layout
->> *layout, struct printbuf *out
->>   		return -BCH_ERR_invalid_sb_layout_nr_superblocks;
->>   	}
->>
->> -	max_sectors = 1 << layout->sb_max_size_bits;
->> +	max_sectors = 1 << min(BCH_SB_LAYOUT_SIZE_BITS_MAX,
->> layout->sb_max_size_bits);
->>
->>   	prev_offset = le64_to_cpu(layout->sb_offset[0]);
->>
->> Also this patch was already tested by syzbot [1]
->>
->> [0] 71dac2482ad3c8d4a8b8998a96751f009bad895f ("bcachefs:
->> BCH_SB_LAYOUT_SIZE_BITS_MAX")
->> [1] https://syzkaller.appspot.com/x/log.txt?x=1640b640580000
->>
->> Thanks for your time,
->>
->> -- Gian
->>
+...or you can just use devm_pm_runtime_enable() instead, and not worry
+about disabling it on your own.
 
+Regards,
+Angelo
 
