@@ -1,114 +1,135 @@
-Return-Path: <linux-kernel+bounces-379294-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379288-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id EB1B79ADC97
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:52:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id B140F9ADC8A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:50:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 542ACB22DDD
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:52:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 327D2B213E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 06:50:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F92F189BB1;
-	Thu, 24 Oct 2024 06:51:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id D107718A6CC;
+	Thu, 24 Oct 2024 06:49:48 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b="dRBOhPkQ"
-Received: from fw2.prolan.hu (fw2.prolan.hu [193.68.50.107])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="ElIwma44"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7CC4D18BB87;
-	Thu, 24 Oct 2024 06:51:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.68.50.107
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1AEA2189F5F;
+	Thu, 24 Oct 2024 06:49:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729752666; cv=none; b=jMtYZl80Iit9ylG79KE8NsAXeghv1DcT7GPp2t8624ithvl2J9Fr/ru9CcrYHtA79bD8ngHz4kjxdyEnDpaLcX38FpHmSXqr6CrG+sdQdZDU7tcoc3TxqSL+wD1neM5sNyqozJ75irq5xQDFsE/iJdust6yKumLmLZyviaPepR4=
+	t=1729752588; cv=none; b=mC4gU4ihlApHsdQEYLHuPXVVzfhyCMCSv2hfWYnA+w9bBGMMfEqsFE4tsQ5Vz19RC9Ym0zsYkcOdtceVqBCnXlce1+T+VHfiL/zmTf1wsIQlDdTSOH7bsgtNpAxCiPoCvO3k6qHddugc42L9nfK6Wqr71rLD0xSWrL1NbPxXfp0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729752666; c=relaxed/simple;
-	bh=o8uExKqB5qYo54a2nVBhqm5tJs6jO0jYNm2MbZM9eVQ=;
-	h=From:To:CC:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=XqtiXHRnIJfdYOSsIrVe3GPtYYQTnp41EoIdEyEALg/x/Kr4T31IsykdRjSvo5gzo4/w4SyD/0jdx/YZ88yFVL9u9Y9urf6eep6Nxb2zi7TE9klNqJsQRDGCGt1Lvj7SOxaSjPRaSULKu4QMz5IpM1ebG1h+7mH091xRYbbee54=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu; spf=pass smtp.mailfrom=prolan.hu; dkim=pass (4096-bit key) header.d=prolan.hu header.i=@prolan.hu header.b=dRBOhPkQ; arc=none smtp.client-ip=193.68.50.107
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=prolan.hu
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=prolan.hu
-Received: from proxmox-mailgw.intranet.prolan.hu (localhost.localdomain [127.0.0.1])
-	by proxmox-mailgw.intranet.prolan.hu (Proxmox) with ESMTP id 8934BA0788;
-	Thu, 24 Oct 2024 08:50:57 +0200 (CEST)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=prolan.hu; h=cc
-	:cc:content-transfer-encoding:content-type:content-type:date
-	:from:from:in-reply-to:message-id:mime-version:references
-	:reply-to:subject:subject:to:to; s=mail; bh=ZZCQu8PNGzbUydOutitt
-	bytVy0ecwKj8suiZ8x5X5G4=; b=dRBOhPkQTu1djvy/yrhNzLQWBqV/jd5h2LG2
-	dzm0A23jLLM11u1Ra1N0AI06GeV+6Wp5b+E9wlyH+nhlIKyFJdZDw/exhGfWI6+7
-	/F0MJfAuXnjSM/piKkoZH4SJn42SSxAv7p6mRssukclPN7VCUihMgYRPeFieTeVY
-	+7/Ng4bEHffUsulHWIa4ZkMO8SgdMr4Wr/PaHIAMGWeFHFz7W331Z8PMR7TzY9mJ
-	s1H5/QN8m06a5swK4/CsT67VyaSwcFy4YUMH9hDBXcViHWkqo/V3fGZvLSMG055V
-	PNlbnxluHqRdFDrYhd9jQVwUluTIL5CyMSRDQX2xUwyp5eVZUH9OUTIHlwCv/r2q
-	1Lt25ENnZh7qzMmqIfSa79UYcy6DJ84yPHGeBRHfRhKAAsVoBvCTAtcr78y/df0d
-	DiN4a7jJ6b5hAs67g7Ux1eGOjMFOYc3gawiWjzBoeazKMnBL4PprJn8xZwt8KK6S
-	krSAsQb13C9Rv/o9fzWaYx7A3xGsh2LnDWVgEBwuPEo88f6pRhtO2H9cr2WKCfVp
-	oBy45SBmfrJmsGxvXK9Kj3EwXm1K78EII+gwqcBmPYnAXe012UbuYjLiTZsLvG/b
-	anlvkt4hVvvNrfR7zaDvhBk1FtJH8Ukmh4WEPdN+JMQTIx6RY/cG1MSxY0LbGAkY
-	xCu+LfE=
-From: =?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>
-To: <devicetree@vger.kernel.org>, <linux-arm-kernel@lists.infradead.org>,
-	<linux-sunxi@lists.linux.dev>, <linux-kernel@vger.kernel.org>
-CC: Mesih Kilinc <mesihkilinc@gmail.com>,
-	=?UTF-8?q?Cs=C3=B3k=C3=A1s=2C=20Bence?= <csokas.bence@prolan.hu>, Rob Herring
-	<robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
-	<conor+dt@kernel.org>, Chen-Yu Tsai <wens@csie.org>, Jernej Skrabec
-	<jernej.skrabec@gmail.com>, Samuel Holland <samuel@sholland.org>
-Subject: [PATCH 10/10] ARM: dts: suniv: f1c100s: Activate Audio Codec for Lichee Pi Nano
-Date: Thu, 24 Oct 2024 08:49:31 +0200
-Message-ID: <20241024064931.1144605-11-csokas.bence@prolan.hu>
-X-Mailer: git-send-email 2.34.1
-In-Reply-To: <13ab5cec-25e5-4e82-b956-5c154641d7ab@prolan.hu>
-References:
+	s=arc-20240116; t=1729752588; c=relaxed/simple;
+	bh=I9vm/nWVyLw9jfkqZYXcpbRCQh9dTS0YeKR1eI9un6E=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=oV2UuEVo6HlZGBwQdEIlY7X3bts4usgxDhtTRsmPotQOjeTjhBsoIu6idJdSUm9BMIbz05dc3fOOz6J6+YWsZ5ETt8psh83o0GXvFPk51LpkSS6KqQEyFiXAooqte5crggf0xQHSgz6ULvIREtpVNtvp+TcwtuTM3ag5uzMNs6E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=ElIwma44; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 93A64C4CEC7;
+	Thu, 24 Oct 2024 06:49:42 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729752587;
+	bh=I9vm/nWVyLw9jfkqZYXcpbRCQh9dTS0YeKR1eI9un6E=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=ElIwma44EvWn5Rdnh/e+nN/UExlAgkXtnrb7jq6N9hTgm3g5G5YvPe7iJFtob8aZ4
+	 78ByyhpG/pOqWDteFFFr7K2W1H0C98KxkEPWr7s0p6hfMt5WoFsAyXJ5ZYe8CbeNKP
+	 ws7A9qfTtzt2TzBQP4fQJifrAW4GITfdMGe3EN5fsinTABVQHN9q1PZAUGP1K+mowh
+	 K9UuKJEvZCjdBDZl+wcZ8VKgmcuSNm/DxjTJiWPgKg5MrIQEcnETz1qCG1L72om4lo
+	 zLtKTeGcJm4/tqSPdKu6bWRcoUnbeLVCVkxuZmnUy9TsGx4LnTFCHs0fmnFxNd5jsk
+	 QTRislggOMfGw==
+Message-ID: <07aba302-d8a8-4f99-84f3-f339f154d98c@kernel.org>
+Date: Thu, 24 Oct 2024 08:49:40 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: 8bit
-X-ESET-AS: R=OK;S=0;OP=CALC;TIME=1729752656;VERSION=7978;MC=3474792951;ID=153598;TRN=0;CRV=0;IPC=;SP=0;SIPS=0;PI=3;F=0
-X-ESET-Antispam: OK
-X-EsetResult: clean, is OK
-X-EsetId: 37303A2980D94855677065
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] dt-bindings: arm-smmu: Document sm8750 SMMU
+To: Melody Olvera <quic_molvera@quicinc.com>
+Cc: Will Deacon <will@kernel.org>, Robin Murphy <robin.murphy@arm.com>,
+ Joerg Roedel <joro@8bytes.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Trilok Soni <quic_tsoni@quicinc.com>,
+ Satya Durga Srinivasu Prabhala <quic_satyap@quicinc.com>,
+ linux-arm-kernel@lists.infradead.org, iommu@lists.linux.dev,
+ devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+References: <20241021230449.2632493-1-quic_molvera@quicinc.com>
+ <tf7zt3ytxdzgeop2n5ard2kivbjtcqun5jahgqvejynj2ttyon@eg2yd4ulouw4>
+ <3862bfc6-c2f9-4aef-98fd-1f2b5318a2a7@quicinc.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <3862bfc6-c2f9-4aef-98fd-1f2b5318a2a7@quicinc.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
 
-From: Mesih Kilinc <mesihkilinc@gmail.com>
+On 23/10/2024 20:52, Melody Olvera wrote:
+> 
+> 
+> On 10/23/2024 1:25 AM, Krzysztof Kozlowski wrote:
+>> On Mon, Oct 21, 2024 at 04:04:49PM -0700, Melody Olvera wrote:
+>>> Document the sm8750 SMMU block.
+>>>
+>>> Signed-off-by: Melody Olvera <quic_molvera@quicinc.com>
+>>> ---
+>>>   Documentation/devicetree/bindings/iommu/arm,smmu.yaml | 1 +
+>>>   1 file changed, 1 insertion(+)
+>>>
+>> This is incomplete, what about clocks?
+> 
+> I agree, but I don't have the dt changes for the additional smmu node yet.
+> Should I update the bindings regardless?
 
-Allwinner suniv F1C100s now has basic audio codec support. Activate it
-for Lichee Pi Nano board.
+Yes or post-pone this patch.
 
-Signed-off-by: Mesih Kilinc <mesihkilinc@gmail.com>
-[ csokas.bence: Moved and fixed conflict ]
-Signed-off-by: Csókás, Bence <csokas.bence@prolan.hu>
----
- .../boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts    | 8 ++++++++
- 1 file changed, 8 insertions(+)
-
-diff --git a/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts b/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts
-index 43896723a994..472ded0aafcf 100644
---- a/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts
-+++ b/arch/arm/boot/dts/allwinner/suniv-f1c100s-licheepi-nano.dts
-@@ -62,6 +62,14 @@ &uart0 {
- 	status = "okay";
- };
- 
-+&codec {
-+	allwinner,audio-routing =
-+		"Headphone", "HP",
-+		"Headphone", "HPCOM",
-+		"MIC", "Mic";
-+	status = "okay";
-+};
-+
- &usb_otg {
- 	dr_mode = "otg";
- 	status = "okay";
--- 
-2.34.1
-
+Best regards,
+Krzysztof
 
 
