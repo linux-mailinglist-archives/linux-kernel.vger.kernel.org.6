@@ -1,161 +1,169 @@
-Return-Path: <linux-kernel+bounces-380729-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380730-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id F225C9AF535
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:19:23 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A61E59AF53F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:20:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id D0B00B2222B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:19:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 13835B22624
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:20:03 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9EFC8218328;
-	Thu, 24 Oct 2024 22:19:01 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 76C08218328;
+	Thu, 24 Oct 2024 22:19:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="DhhXnaZn"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.8])
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="NTQQuRnp"
+Received: from out-183.mta1.migadu.com (out-183.mta1.migadu.com [95.215.58.183])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C57D81FC7EB;
-	Thu, 24 Oct 2024 22:18:58 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.8
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E0B0A200BB6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:19:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.183
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729808340; cv=none; b=LjHAPNET9qP3kJh5zyNWKym5KqObyNOSvtxNvkKp/gbAMzAbb9qfNMUM8k3yJumE7ND1wBkvfmtBeiRAN/xlHeMMtC+Vwpb4tvQc+r7aiTt9UqLLfhrzzlQlNG6fo55TJIpnYbT3Wcj8OKJdvnIBrCD80sDdzFzcRE1B6f2KKHw=
+	t=1729808360; cv=none; b=RR+Oapqv7KjtLBWUCE5chbk5zMXasGhnFRC1dnkbt06wCFqkSAtx2sFSwtPDV/ZIYtnS6FjNJW2KzbxUFYtx/0+b8pvPER2MbezlOWjl3HLMKT9WhDe/qR96L/wnpox/CIPFPfTzTxiBQI6G3fWirJl/JD2SPTvS2ujaFn19YcA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729808340; c=relaxed/simple;
-	bh=vDsh5gpvk/2IqOsb7+xosgN2aF11yxwV+U87nf0ujFI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=WyuE3prdFB1jZ55aSwUkisbXZDuAxU/W+/1pIZipiUyIKUsZU5ekOU3M9pEGZQz5qZaH/zZH/rp5AF3FFE0OPBodCmr91PZyS4EUqZwFBWcsgn65udLG29wVU0bPFWhR59qFOgWbkLnSsRQn/7R+41NX97SoLaN/ZtoYDFD4054=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=DhhXnaZn; arc=none smtp.client-ip=192.198.163.8
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729808339; x=1761344339;
-  h=message-id:date:mime-version:subject:to:cc:references:
-   from:in-reply-to:content-transfer-encoding;
-  bh=vDsh5gpvk/2IqOsb7+xosgN2aF11yxwV+U87nf0ujFI=;
-  b=DhhXnaZnG5OifDiux/zTPyTSqLj5isrLz5Pg0GgthxDs7usbNaKLnxuL
-   iowCDXkWSfuYMbQf+FDkWpEdK1DMPSthFDHquEFh9JvlPkdqn76KRmZtt
-   G3L1rP2pROnEhAnseRlO230fsf8iOL8gSN2IUcf4IEmbxKxpEmWo6WgD1
-   VfUB5uAbxIdiGfY+rPG4tZiaVRCF8VBPp3SwQ5XS5TnI3xRSVTWWF/RsQ
-   PZLrptOmiIvXJQVYIdcFSRBfwiEMp2v/Qxuvctv4qsSvtPgMcGb3Nuvf7
-   0DSirDqkJ8nAJ+PT722Y61drpE9Mr3FSkk+iUBbKmTuUvTkT+6hx7jR/q
-   A==;
-X-CSE-ConnectionGUID: OL9x8MQTQwSdPrFn7GzQrw==
-X-CSE-MsgGUID: H/76eD4SSoyy6v9D8dVj7w==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="46948267"
-X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
-   d="scan'208";a="46948267"
-Received: from fmviesa008.fm.intel.com ([10.60.135.148])
-  by fmvoesa102.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 15:18:58 -0700
-X-CSE-ConnectionGUID: UIQc4rxxT5GJ7aBLLInsfA==
-X-CSE-MsgGUID: KFrkXFfcSWGGsjSziGi5hQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,230,1725346800"; 
-   d="scan'208";a="80835959"
-Received: from kinlongk-mobl1.amr.corp.intel.com (HELO [10.124.221.135]) ([10.124.221.135])
-  by fmviesa008-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 15:18:57 -0700
-Message-ID: <1a56307f-f280-4ce6-878e-98923ddc2102@intel.com>
-Date: Thu, 24 Oct 2024 15:18:56 -0700
+	s=arc-20240116; t=1729808360; c=relaxed/simple;
+	bh=xiA+f1cnlU406zXgM71RLQpj8FPKXw9TNOVXfqwWjZo=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=jig1RYuNSHhCmGVNG9dxxl2h14628qkmgtVZ4lguVuUJo8Gc7RhWD/EK9YGsVa+rXfQNU0Cs6khtdDsoau6fwXmktXiVoL22OegUbmOCNtConk7PNOwEOEV0dMBONYJPZ5XhDVmEEIqUsLl+OE9T2mcExt3ZDBRkd2Ymaut0jwg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=NTQQuRnp; arc=none smtp.client-ip=95.215.58.183
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Date: Thu, 24 Oct 2024 18:19:11 -0400
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729808354;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 in-reply-to:in-reply-to:references:references;
+	bh=lRN2XvuPczg6eIRqeI5o08GA1KQ3w/NT/PiW4sNw5Eg=;
+	b=NTQQuRnpuKJqvwOOrhBQGIoqcO3lxe03hXBSkRWRk+cnHbRTHEotCqQ5yWlYonnZtd86ii
+	LQtQF/p9gQrXdkoU1XdwMDim+gpSUGB455qtgMFRPd+rD0kWIObGDa6djlOnSKBqfPqKX0
+	BLIjPfiWPbTLXdAnEiDc37YwTJU+iOU=
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Kent Overstreet <kent.overstreet@linux.dev>
+To: Sasha Levin <sashal@kernel.org>
+Cc: Michael Ellerman <mpe@ellerman.id.au>, 
+	"Darrick J. Wong" <djwong@kernel.org>, Linus Torvalds <torvalds@linux-foundation.org>, 
+	linux-bcachefs@vger.kernel.org, linux-fsdevel@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	kees@kernel.org, hch@infradead.org, broonie@kernel.org
+Subject: Re: [GIT PULL] bcachefs fixes for 6.12-rc5
+Message-ID: <n4lt6eghfunnzz4zx4hhy5asyw55mv4q6ew3fusd2lawufgsnl@2c2cai6esxl3>
+References: <rdjwihb4vl62psonhbowazcd6tsv7jp6wbfkku76ze3m3uaxt3@nfe3ywdphf52>
+ <Zxf3vp82MfPTWNLx@sashalap>
+ <20241022204931.GL21836@frogsfrogsfrogs>
+ <ZxgXO_uhxhZYtuRZ@sashalap>
+ <87iktj2j7w.fsf@mail.lhotse>
+ <Zxjg7Cvw0qIzl0v6@sashalap>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 06/10] x86/mce: Convert multiple if () statements into
- a switch() statement
-To: Sohil Mehta <sohil.mehta@intel.com>, "Luck, Tony" <tony.luck@intel.com>,
- "Zhuo, Qiuxu" <qiuxu.zhuo@intel.com>
-Cc: "bp@alien8.de" <bp@alien8.de>, "tglx@linutronix.de" <tglx@linutronix.de>,
- "dave.hansen@linux.intel.com" <dave.hansen@linux.intel.com>,
- "mingo@redhat.com" <mingo@redhat.com>, "hpa@zytor.com" <hpa@zytor.com>,
- "x86@kernel.org" <x86@kernel.org>,
- "linux-edac@vger.kernel.org" <linux-edac@vger.kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>
-References: <20241010153202.30876-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-1-qiuxu.zhuo@intel.com>
- <20241016123036.21366-7-qiuxu.zhuo@intel.com>
- <c928d9aa-1609-4f5f-943c-fec72091e989@intel.com>
- <ZxLBwO4HkkJG4WYn@agluck-desk3.sc.intel.com>
- <2d011a77-a46e-4589-ae91-80d8d29e4124@intel.com>
- <CY8PR11MB71348AA655274E611CFFFE6C89412@CY8PR11MB7134.namprd11.prod.outlook.com>
- <SJ1PR11MB6083262976EDEC69FFF449FAFC432@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <c9ffb6b0-9c75-4990-afb5-33094d049570@intel.com>
- <CY8PR11MB7134E2BD84013EF41F8F5AC8894D2@CY8PR11MB7134.namprd11.prod.outlook.com>
- <CY8PR11MB7134DED56F51E59273F3B063894E2@CY8PR11MB7134.namprd11.prod.outlook.com>
- <SJ1PR11MB608380793D6F55A62332E0D1FC4E2@SJ1PR11MB6083.namprd11.prod.outlook.com>
- <dcfdba92-7004-413d-8011-12771636d11f@intel.com>
-From: Dave Hansen <dave.hansen@intel.com>
-Content-Language: en-US
-Autocrypt: addr=dave.hansen@intel.com; keydata=
- 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
-In-Reply-To: <dcfdba92-7004-413d-8011-12771636d11f@intel.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <Zxjg7Cvw0qIzl0v6@sashalap>
+X-Migadu-Flow: FLOW_OUT
 
-On 10/24/24 14:31, Sohil Mehta wrote:
-> @@ -1924,6 +1924,10 @@ static void apply_quirks_intel(struct cpuinfo_x86 *c)
->         struct mce_bank *mce_banks = this_cpu_ptr(mce_banks_array);
->         struct mca_config *cfg = &mca_cfg;
+On Wed, Oct 23, 2024 at 07:41:32AM -0400, Sasha Levin wrote:
+> On Wed, Oct 23, 2024 at 09:42:59PM +1100, Michael Ellerman wrote:
+> > Hi Sasha,
+> > 
+> > This is awesome.
+> > 
+> > Sasha Levin <sashal@kernel.org> writes:
+> > > On Tue, Oct 22, 2024 at 01:49:31PM -0700, Darrick J. Wong wrote:
+> > > > On Tue, Oct 22, 2024 at 03:06:38PM -0400, Sasha Levin wrote:
+> > > > > other information that would be useful?
+> > > > 
+> > > > As a maintainer I probably would've found this to be annoying, but with
+> > > > all my other outside observer / participant hats on, I think it's very
+> > > > good to have a bot to expose maintainers not following the process.
+> > > 
+> > > This was my thinking too. Maybe it makes sense for the bot to shut up if
+> > > things look good (i.e. >N days in stable, everything on the mailing
+> > > list). Or maybe just a simple "LGTM" or a "Reviewed-by:..."?
+> > 
+> > I think it has to reply with something, otherwise folks will wonder if
+> > the bot has broken or missed their pull request.
+> > 
+> > But if all commits were in in linux-next and posted to a list, then the
+> > only content is the "Days in linux-next" histogram, which is not that long
+> > and is useful information IMHO.
+> > 
+> > It would be nice if you could trim the tail of the histogram below the
+> > last populated row, that would make it more concise.
 > 
-> +       /* Older CPUs (prior to family 6) don't need quirks. */
-> +       if (c->x86_vfm < INTEL_PENTIUM_PRO)
-> +               return;
+> Makes sense, I'll do that.
+> 
+> > For fixes pulls it is sometimes legitimate for commits not to have been
+> > in linux-next. But I think it's still good for the bot to highlight
+> > those, ideally fixes that miss linux-next are either very urgent or
+> > minor.
+> 
+> Right, and Linus said he's okay with those. This is not a "shame" list
+> but rather "look a little closer" list.
 
-In case anyone grumbles, this is one of those expressions that's not
-perfect, but I think it's quite good enough in practice.
+Ok, that makes me feel better about this. I've got stuff that I hold
+back for weeks (or months), and others that I'm fine with sending the
+next day, once it's passed my CI.
 
-It wouldn't work if we ever (for instance) moved 'vendor' to be less
-significant bits than 'model'.  Or on a CPU that claimed to be family=6
-but model=0.  But Intel never (as far as I know) sold a CPU like that,
-so it's probably only possible in a VM where these checks are rather
-worthless anyway.
+I'm going to try to be better about talking about which patches have
+risks (and why that risk is justified, else I wouldn't be sending it),
+or which patches look more involved but I've got reason to be confident
+about - that can get quite subtle. That's good for everyone down the
+line in terms of knowing what to expect.
 
-In short, I think >=INTEL_PENTIUM_PRO is a great check that can mean
-"family 6 or later" almost anywhere.
+I wonder if also some of this is motivated by people concerned about
+things in bcachefs moving too fast, and running the risk of regressions?
+That's a justifiable concern, and priorities might be worth talking
+about a bit.
+
+I'm not currently seeing anything that makes me too concerned about
+regressions: users in general aren't complaining about regressions
+(previous pull request a user chimed in that he had been seeing less
+stability past few kernel releases, and he tried switching back to btrfs
+and the issues were still there) and my test dashboard is steadily
+improving.
+
+I do still have fairly critical (i.e. downtime causing) user reported
+issues coming in that are taking most of my time, although they're
+getting off into the weeds - one I've been working on the past few days
+was reported by a user with a ~20 drive filesystem where we're
+overflowing the maximum number of pointers in an extent, due to keeping
+too many cached copies around, and his filesystem goes emergency
+read-only. And there still seems to be something not-quite-right with
+snapshots and unlinked inodes, possibly a repair issue.
+
+Test dashboard still has a long ways to go before it's anywhere near as
+clean as I want (and it needs to be, so that I can easily spot
+regressions), but number of test failures have been steadily dropping
+and the results are getting more consistent, and none of the test
+failures there are scary ones that need to be jumped on.
+
+https://evilpiepirate.org/~testdashboard/ci?user=kmo&branch=bcachefs-testing
+
+(We were at 150-160 failures per full run a few weeks ago, now 100-110.
+The full runs also run fstests in 8 different configurations, so lots of
+duplicates).
+
+There have been a lot of new syzbot reports recently, and some of those
+do look more concerning. I don't think this indicates regressions - this
+looks to be like syzbot getting better with its code-coverage-guided
+testing at finding interesting codepaths, and for the concerning ones I
+don't think the code changed in the right timeframe for it to be a
+regressions. I think several of the recent syzbot reports are all due to
+the same bug, where it looks like we're not going read-only correctly
+and interior btree updates are still happening - I suspect that's been
+there for ages and an assert I recently added is making it more visible.
+
+I am still heavily in triage mode, and filesystem repair/recovery bugs
+take top priority. In general, my priorities are
+- critical user reported bugs first
+- failures from my automated test suite second (unless they're
+  regressions)
+- syzbot last, because there's been basically zero overlap with syzbot
+  bugs and user-affecting bugs so far, and because that's been an easy
+  place for new people to jump in and help.
 
