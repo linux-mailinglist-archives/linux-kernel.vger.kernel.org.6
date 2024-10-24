@@ -1,280 +1,226 @@
-Return-Path: <linux-kernel+bounces-380056-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380057-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0D5CE9AE846
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:21:52 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 694EB9AE8B2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:28:44 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 30E4C1C22BF4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:21:51 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D5BB2B781
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:22:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C261C1F80CB;
-	Thu, 24 Oct 2024 14:11:02 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A24F1E7642;
+	Thu, 24 Oct 2024 14:11:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b="C/4qq22N"
-Received: from NAM11-CO1-obe.outbound.protection.outlook.com (mail-co1nam11on2076.outbound.protection.outlook.com [40.107.220.76])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tXbjfB/r"
+Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 81E961E6316;
-	Thu, 24 Oct 2024 14:10:59 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.220.76
-ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779061; cv=fail; b=rttmzFfOM5nszXvC11KvpaKXotpb75PIKSmyq/5AcWH2HbfoNhX8LgqTLRfcKBxTlQo57xn2HMgdC18nvf3oYdZLcL/EUKx+mnImIhg6NJGXhFw5HGU0kUL8IsfoCeMjBH4al9cb3bAzP/emY4DaiPUUp6ajRQcoZ0p8iEvXFXY=
-ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779061; c=relaxed/simple;
-	bh=Em3zvddQlzybEYpP/jUgltYnrMzo2WbmW1bK4HU+AFg=;
-	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
-	 Content-Type:MIME-Version; b=UZtqZ07Hjs3f3iK5m21ETSfbxI66HwzgsdXCeVJW67xajMC8QnyfWLi/SzpKKWjd7JbRkh6JnFGMiD3/pp7ja1+tPz9uQegM5AFHd0ZGmfPqJA/z6RfcYL5htjh9DZyz4QnfTlEgmXM9/gIdO4u87Q6gEfB2L5DJ3kHuRS1v+QA=
-ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com; spf=fail smtp.mailfrom=nvidia.com; dkim=pass (2048-bit key) header.d=Nvidia.com header.i=@Nvidia.com header.b=C/4qq22N; arc=fail smtp.client-ip=40.107.220.76
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=nvidia.com
-Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=nvidia.com
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=wGAvPsQK0Evg8dbtcozXxctRMPWF49jl2lCBmS9bMbTu5BERf9sNUCdhTodRteNYyNqQCB95KanpMUX7SmjBS6a641oXNA7cwVWKdfrdCkCoMLr5xQjLlmkbNWgVyHdkmEd/K2ahK1MBZ4yUCAC6WSViVs06C8ZJejJZBuOZ3gWo9zUPKgXq/23ZM+/V/fOqnfrFmdBE9D9j/1R1ZZHj915R9KNQqBj/z1x+o4L1G0v4YXbDzOubTm8QpWbezuxzVEQqKcmGX3RTgIVkfduLpjCEufS3MyNb90vrqaNU4LOsbSy7d8cIDLfmD3kAhVulo5PfLUpqP0TPfBYdGoerYQ==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=l75bOyP3kW4rpzfkjErqlId/43gY2oD+PjEUkUAiotc=;
- b=J/shZi862upXNHMryLhxf1A+EU9UJp5n1kaZqpZK734bEqYUFHtOsqTP0pdNzjjEBW5Hx3q/tWD2YYnlv9kmuxMIVjKAv6lAgwxNKpa5+ko6A7F54Z9lgX6iO04bLXDI1wTLDjtDTKzykaCa1SHqaIZ4mXBivkLkcFCRW2f+72hUfJ5E8k6aKSQvCtdEvscXhXMwb3T4/dlXiXw8jMFbbPSJ1pfIilCjDzX4riJ8clvEccOxmO3/S14U2uur5KKriQfy6FnLVHFOo9HRaSdKhMS+4FRSUMHOE/Qi+Ws2Z5FmMaoSudG/s3GuRTv0zgLUr4DCaE8CXpAfUIda6jM/Mw==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=nvidia.com; dmarc=pass action=none header.from=nvidia.com;
- dkim=pass header.d=nvidia.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=Nvidia.com;
- s=selector2;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=l75bOyP3kW4rpzfkjErqlId/43gY2oD+PjEUkUAiotc=;
- b=C/4qq22N9LUeu6B0Q8vY1Fxtei+VeMk6OBVLjQYtEWCz1yFmKSaGa3bfgyo5yVKQlFTRDQPXgc6ZfCSNPfrzlXK4FDwTlK7s4OxLitYzOyBfp9C+79ry11TCm5AWnQvBkEEBTdr+MFRnMZ4270ipfgWgvxr0iYpLjxa/1CCcxyJ1Hi7hITCqfxui+eU44LI5jOGQ+uOOvqe3zl17Gt8nlCkjkujTj7pgSg1O0E1vWd8WbzuE8/qzz41UB1GDg1yJNO4ECUINlgCFDUf74dmKU/BlISXNEwSEz6Q9jZ8C9nD3C7nB+TCyxgob214bMqd6ZYqAiFpbOwsNtZSZOII+Ew==
-Received: from SJ0PR12MB5676.namprd12.prod.outlook.com (2603:10b6:a03:42e::8)
- by SN7PR12MB7786.namprd12.prod.outlook.com (2603:10b6:806:349::13) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.16; Thu, 24 Oct
- 2024 14:10:55 +0000
-Received: from SJ0PR12MB5676.namprd12.prod.outlook.com
- ([fe80::abdb:7990:cc95:89ce]) by SJ0PR12MB5676.namprd12.prod.outlook.com
- ([fe80::abdb:7990:cc95:89ce%3]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
- 14:10:55 +0000
-From: Besar Wicaksono <bwicaksono@nvidia.com>
-To: Will Deacon <will@kernel.org>
-CC: "suzuki.poulose@arm.com" <suzuki.poulose@arm.com>, "robin.murphy@arm.com"
-	<robin.murphy@arm.com>, "catalin.marinas@arm.com" <catalin.marinas@arm.com>,
-	"mark.rutland@arm.com" <mark.rutland@arm.com>,
-	"linux-arm-kernel@lists.infradead.org"
-	<linux-arm-kernel@lists.infradead.org>, "linux-kernel@vger.kernel.org"
-	<linux-kernel@vger.kernel.org>, "linux-tegra@vger.kernel.org"
-	<linux-tegra@vger.kernel.org>, Thierry Reding <treding@nvidia.com>, Jon
- Hunter <jonathanh@nvidia.com>, Vikram Sethi <vsethi@nvidia.com>, Rich Wiley
-	<rwiley@nvidia.com>, Bob Knight <rknight@nvidia.com>
-Subject: RE: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
-Thread-Topic: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU events
-Thread-Index: AQHbChYmMxRBtseJkUCrb6TrJenHELKGYx0AgAHTh7CADIXZgIABabWw
-Date: Thu, 24 Oct 2024 14:10:55 +0000
-Message-ID:
- <SJ0PR12MB567691F0F89F18EDC84C6092A04E2@SJ0PR12MB5676.namprd12.prod.outlook.com>
-References: <20240918215846.1424282-1-bwicaksono@nvidia.com>
- <20240918215846.1424282-3-bwicaksono@nvidia.com>
- <20241014131903.GB17353@willie-the-truck>
- <SJ0PR12MB5676697B93C267CE87C5A474A0452@SJ0PR12MB5676.namprd12.prod.outlook.com>
- <20241023162636.GA29251@willie-the-truck>
-In-Reply-To: <20241023162636.GA29251@willie-the-truck>
-Accept-Language: en-US
-Content-Language: en-US
-X-MS-Has-Attach:
-X-MS-TNEF-Correlator:
-authentication-results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=nvidia.com;
-x-ms-publictraffictype: Email
-x-ms-traffictypediagnostic: SJ0PR12MB5676:EE_|SN7PR12MB7786:EE_
-x-ms-office365-filtering-correlation-id: 0d10de69-9af7-4267-ec04-08dcf435acf3
-x-ms-exchange-senderadcheck: 1
-x-ms-exchange-antispam-relay: 0
-x-microsoft-antispam: BCL:0;ARA:13230040|376014|1800799024|366016|38070700018;
-x-microsoft-antispam-message-info:
- =?us-ascii?Q?r6UjQWCpksySISCIc4q/zZjBZpV93IiQzrlUAXR0nO/Z46RN9kHg7/P1WTaH?=
- =?us-ascii?Q?EhhF6JBalfc42oBWzxiYoRZTxPJ9OHtDH/CJZ3yls4mk6cqkFyqTCyMC+lIi?=
- =?us-ascii?Q?1NEa6BxkAi6AIqIYIKoqgzfcvCil0+SOvM4WTHoMLCwSAGq5JI34Xq+qKns6?=
- =?us-ascii?Q?ztLzququTiUYaskBqsTeRNeVM1oIhvRAeX9PV1zz/bRw5om8wWFo3ItvSwYn?=
- =?us-ascii?Q?GpKuTel+3IGspQ657jYpdR3K0ulr7PHWy49L1lc1GBBv8QZg+dr88n54LLWM?=
- =?us-ascii?Q?rAD/XZl3pZLFAcpQ0OHrzIGxbKpmFAh8qhmh2jyAezNfTEBT4ENewkjL5EFA?=
- =?us-ascii?Q?hynf07tlTEXqOEoN/BxFic0+7pAwwsFRybdh3kw1FwlLveQHegBcJjvDfyp4?=
- =?us-ascii?Q?6euQ6bpKYtjxQK1lEZHU2TUxRTe32W4YcB63J32Caq4Y5vVpCnH1QO2VgeVy?=
- =?us-ascii?Q?6rbZ7MXrpkg/tVch6+wiZUEaSqSxfFGK//i0OMS+156L/czjBs2Rbro/LOYZ?=
- =?us-ascii?Q?UtlNPiGQpFtAfNv9rERj6zRBbSZDDBjXvBja5md0I9t0JMQZHgFMhvTZqq+d?=
- =?us-ascii?Q?FpyXAAMvW5xX5J7xp4HA35YfAwGvEoROtRp4ZozRUeSpef68RCUXZ7meu+sL?=
- =?us-ascii?Q?aZ0Lie4yrm12So1v7bboATgtcteMO34217aKg+IDpJV5wUotE1AqnGmwy1DD?=
- =?us-ascii?Q?XBURX2AIl7lQiiOrDDmRbBp0oC8a3c9xtLi7xqWrFWnFyYtAZKxoRZ5m5oKQ?=
- =?us-ascii?Q?qYnhNdUic7gDfwuE4RyNTRrVMmBxGNLb8kIeQZDUh86qKG2KSiiAzzPaENyz?=
- =?us-ascii?Q?J4rFtPBSWIwKiNk7EcpjCxMwgXlpPnZueUZ7GiGaH8tdtPf3BoYYThgwGUDm?=
- =?us-ascii?Q?kdehVqpLFwd2PCZRn+nLZt51BCLdQsaQ/QnbORzHTxVLPhRPlmkKiOBZfvIZ?=
- =?us-ascii?Q?SaMQIle9vX1FWXeIk85n0QjHL+WOSIkCTx978oj6PWMJExc98HbylANOGspH?=
- =?us-ascii?Q?g08icuj00izv+qR6WsUB0j72qikR22Z4v+7fyr9AI+FGvXUc9tOR9q3BJIhs?=
- =?us-ascii?Q?6b1UkORmUc9KMjmyblvhCzzUAnYTpbxXc65f6D7DjzkL/SQsvMIUWdo/Ym/J?=
- =?us-ascii?Q?k22m8uyzr5RFNTW8kgtAFXj1ZrMFg0geTmiLR8AuOwqgMYg1sXHYHjbL/X0o?=
- =?us-ascii?Q?+I6XzK1DumwljmSvPHdoCfmTdrYAVxOWtvgVryF7EN44g17a6BVfuJPCYXL+?=
- =?us-ascii?Q?jGhUEQIqvthmK5LV8gwXhQmo/ABhykxGbStRi/6Rv0zp3DenWYlgqMYzX81w?=
- =?us-ascii?Q?3zixjmWcTyM1b9DWaqtMqhKZKgJm4nKg/fnn16GCpXV+GVoYhqAPeENeVuD5?=
- =?us-ascii?Q?CJvgzCQ=3D?=
-x-forefront-antispam-report:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:SJ0PR12MB5676.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(376014)(1800799024)(366016)(38070700018);DIR:OUT;SFP:1101;
-x-ms-exchange-antispam-messagedata-chunkcount: 1
-x-ms-exchange-antispam-messagedata-0:
- =?us-ascii?Q?s+ZHDFPZikP8RRDY8gRgQY9j5vS0hGrKD0bPDHxs1EF8y4InBEqy68X4Y+Wl?=
- =?us-ascii?Q?l2oukU16lUv2P+sf08FyQeLAwmyDs+UZpzVyQx2tUl6X5zFZQ8kfbAS11VVM?=
- =?us-ascii?Q?TJ126xrRP+29GsPaSIffvgvaYGd2ByWHj86SxO4vsRf6C10c5kNngFfdkvB0?=
- =?us-ascii?Q?KtZDoBMRl/ADqHqU5XmwxsCJ94wARr3+IDIg/+/zy2FxcS2bcVeEMpEiTiC0?=
- =?us-ascii?Q?We30jmHyAVGIt6I7/7m6UPpY7JfRdlT/+QQ+DmChOkCkM9mOndpzFjngZ8Xa?=
- =?us-ascii?Q?KRn3pzC13fxz4yQ6/gHom2ArFu1garyf9/PXtqpFNsO75Zb8xJG0T0wLVTBb?=
- =?us-ascii?Q?qGoxB3hybg+hD0N0G8vHTq4n6t7VZbm0U2MWVn3VxauWqWf0ap7OqLcydLzy?=
- =?us-ascii?Q?n19qQ5TpLoh/Ys7pXQ6fUrToJdX3aiCUzcNNV6SU0TjcWYuD/6BUBZgozSSN?=
- =?us-ascii?Q?/BlThXAZbaDaN6NzsZnPLcHptPTvO9IZhmLK8UUl6I9uzx3A0Kqh6uuhDvul?=
- =?us-ascii?Q?wDRoLPCsTLOdLLfIhl1OKFzX5S6U3IVThUdhbwJm91ZXC2SLUXbosG4SqCsA?=
- =?us-ascii?Q?oxl+DSPQSJgw47gaPtx98VQTkTyIMDpWKpFZ5Cz7mlU41TxdX9OS9IXVJJfH?=
- =?us-ascii?Q?2mVvGzK3VYOXTwQi8Dzfbz1aE8RZMfnCoKqRvto2qzfmltlzHeAkp1PYfwES?=
- =?us-ascii?Q?E/yWzi9gb0tc35wClQoK7sORiogNacFEN2qwTOjNYDcjMh3BgtbdAbBajf6G?=
- =?us-ascii?Q?HR7HvAuvEQhf1wwzZjaUodtcUWCrp8taZVAZLhTSvuoUYELh9IpTZV6KYf6F?=
- =?us-ascii?Q?rMXyvpfpszwATZe8F7VeZkiGVohnZorFCwutb3vA8stho7pZxAQVMmtdgnjZ?=
- =?us-ascii?Q?jy+W94J0PwPrbRxsUQ8GPWD5twhfBTjMG8bu98t9BhcQrSYlJnF6QiPiCc+r?=
- =?us-ascii?Q?MJLAiYn3W7lHVxkrxXT0SakeT0tF7VUlvemwN0KacqRvR0dIipBOKsuJf+WZ?=
- =?us-ascii?Q?8ZHySVud4hasenGyaHfM6cKVnIaJKReXhrtcFBhdix6+4nrlmjrXpzg9jbLl?=
- =?us-ascii?Q?lzy4HOwnxM8z/+9Ms4jmvX5MYb8mgZV1zRpUuj9v06yjw4JHXvbYt0cOB3JZ?=
- =?us-ascii?Q?RwQWGnCqobp5oSM2S19tHbBDCz/9k6FOQ/UhpBrHlxUSZ1ntgJYjHBcpVnn8?=
- =?us-ascii?Q?nHkFWMIzXBb7vP2i/6/MXqeFm5IsPEvGb1yU1yBC4B3Yi4slE6mVfNuISB8V?=
- =?us-ascii?Q?vqvswQs+LkQ6BhAPyD1SqGZRTKzgiLrpObxuDQ9fDH2Ub7J+czabBLsU8qik?=
- =?us-ascii?Q?kWk6Z0wFpuhm2YSJxGmUKSmwEUDUnzAzrTH7aliWFIevH8md0T7/EN3dlvVl?=
- =?us-ascii?Q?frD7uSjdOMwRiNuX4cBjcrODAl636f256Ry3yoRJYdfVNyAYQJ8+vLFQ3BbL?=
- =?us-ascii?Q?DBuH5PlTfuTD+l3jsyfw39/rgLlc3q2sOKKxx3xQa7cQU96RbbiH1H+BR9Bd?=
- =?us-ascii?Q?ePIvznF6KRl9oxsSc12tLMUCJL6UI+Asd0HVmO2U5iH3lrikTsNHrLMlCA7t?=
- =?us-ascii?Q?T9sBsT0N4Sh+9vJn7zjm8GyzLt8CGgh+nUzEzmgb?=
-Content-Type: text/plain; charset="us-ascii"
-Content-Transfer-Encoding: quoted-printable
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6561E6310
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:11:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729779114; cv=none; b=fRffXVkgjM35XZJACwA2QbtKJHsTRBbl9TgPLu8GJTZcNo8dLkDFwo+POkkTO8uVkkSyjzRE3OHFp5hmoixJUCVh7zseVqmTGIHPgoNGq2O7UBWi8tmJ734TK7IuOU382koaIginUYrQpt9bWHXWVdzqHDt/+mtGd3UpMAqMlCE=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729779114; c=relaxed/simple;
+	bh=lqmT+r653RdRrzSZOkkjKvp3hFHCnHasX2x/4lhXbvg=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=HUz1ztDWFarAeql+mVGD2MeXC3ALRGwWP/ijJFCazbwfosUX53ExG13czVg+zQxu71JXq8CnEEF+l5SnKYS3iVIAN5xNF2JOFDJUwHvmjXa5Ufn44UL1qFFhqOjqQvqgOJyQOyXmB4wQTkTHIEipoDwLJR+GNj5fh7tnqYWyzq8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tXbjfB/r; arc=none smtp.client-ip=209.85.167.48
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so948777e87.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:11:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729779110; x=1730383910; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=hBTDZGJSJezW1oIqUmwfyQ/68sB4Fcb6GTFi1oxGtnk=;
+        b=tXbjfB/rF4yYfNG/b89wEHGTVVFH9gMLCW5NXRMsf6bTu6ud9yRcHH9WUHmssuZsX+
+         OAT5Xzm+iFGGDtBN4B3yGHC7oNYu3wFs2UuGcBYvSbvYRGVfkX85J1QhWbRbF1nHYrGB
+         oq1idDiAk2YFDrKtYFwmalO6jRK3BkFBxB2RqWExS/yn0Yc1v1EaiDFiuUZw47a5KKTH
+         ffDKWJCxP7h4LysT1SHiBJ70YzuzT2sn9nS5unEyoNV3OOEccy6uMTWJ2KUV5C7jZGHm
+         8rqVE5IRBizAQmk5GuU6FrX8B8XhZPwpDD3y13NfxEZMae02r4+up9st920oFiQF3kq0
+         R28g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729779110; x=1730383910;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=hBTDZGJSJezW1oIqUmwfyQ/68sB4Fcb6GTFi1oxGtnk=;
+        b=msEOfMrkSH+oVinhOXmxinKvVBbDNhVLpuAEMA1IMsSwjE7W0pzRcLWzQarysZjsj+
+         yZTNFAo94zFyxowx4DrxNwIXpoOzT7czCckbnWtuQ/IULR/LxwZ67CZOAD+wmUlRs6C1
+         ITYB1GRKmtZifRPwMRCWiOKEm+tFocW077U8uWoingv8tpLhPXGvAefOYeVWJzko+1a0
+         J3y28K+eNcSIrxSj3Z6urL25NHiFVoGoFeqpfThCmdpONDyrgs1mzYD35idiKj0/+5Ds
+         lvqN5VR4y0Ug8dNs8hy68VgBDUmsoA+CXYd5I7iw/72/oo5LkfnKnnnxAiyOZh1xyZ9Y
+         E1/Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVk1vSAWS09d9CqSMCpVvMWvIjWiEZR45S/Ut6BK6SottqJfNUv1c0zqMQgCq2PO5VVhDpv5A4+tt1VlLU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YyLH5C7moVNl0Lvan4B5lBlA22mxzGirnOCdwZQvU59N78NOkCM
+	EYeVcGjzODFrEeAuRXjHxsRdNNfXwoWh/8gdHLl8qsj3pQ8sPbsHsRpYufrU5Ac=
+X-Google-Smtp-Source: AGHT+IGg7is/kIrzc6VmTxx5IqP0aKqapiA+TM635IqbIW5Gb9gpSoSXMadGLLvGOyI4kBAuaUniOQ==
+X-Received: by 2002:a05:6512:1054:b0:539:efdb:4324 with SMTP id 2adb3069b0e04-53b23debc01mr1603314e87.21.1729779110076;
+        Thu, 24 Oct 2024 07:11:50 -0700 (PDT)
+Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
+        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2243ee9esm1392073e87.275.2024.10.24.07.11.49
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 07:11:49 -0700 (PDT)
+Date: Thu, 24 Oct 2024 17:11:47 +0300
+From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
+To: Tingguo Cheng <quic_tingguoc@quicinc.com>
+Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
+	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
+	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v2] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and
+ peripherals
+Message-ID: <ddonr55gfcmaj74ciowd23y2qtq3l6yj7g6hp63xoojvkgepwr@czigbkgexbpj>
+References: <20241024-adds-spmi-pmic-peripherals-for-qcs615-v2-1-f262ba243b63@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-OriginatorOrg: Nvidia.com
-X-MS-Exchange-CrossTenant-AuthAs: Internal
-X-MS-Exchange-CrossTenant-AuthSource: SJ0PR12MB5676.namprd12.prod.outlook.com
-X-MS-Exchange-CrossTenant-Network-Message-Id: 0d10de69-9af7-4267-ec04-08dcf435acf3
-X-MS-Exchange-CrossTenant-originalarrivaltime: 24 Oct 2024 14:10:55.1432
- (UTC)
-X-MS-Exchange-CrossTenant-fromentityheader: Hosted
-X-MS-Exchange-CrossTenant-id: 43083d15-7273-40c1-b7db-39efd9ccc17a
-X-MS-Exchange-CrossTenant-mailboxtype: HOSTED
-X-MS-Exchange-CrossTenant-userprincipalname: PMoLD+8D4vqob5RnZcelcMkSHQA40L5OyM3KkkAWSK9kiVzD1u+bTFIuX/hoNy8uZ3eR1gZufcY8o1u4Lqv4LA==
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: SN7PR12MB7786
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024-adds-spmi-pmic-peripherals-for-qcs615-v2-1-f262ba243b63@quicinc.com>
 
+On Thu, Oct 24, 2024 at 04:09:48PM +0800, Tingguo Cheng wrote:
+> Add SPMI bus arbiter and include pm8150.dtsi for PMIC peripherals in
+> pmm6155au which is a variant of pm8150. The power key and volume do-
+> wn key are controlled by PMIC PON hardware on pmm6155au.
+> 
+> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
+> ---
+> This patch depends on the patch series:
+> - https://lore.kernel.org/all/20241022-add_initial_support_for_qcs615-v4-0-0a551c6dd342@quicinc.com/
+> ---
+> Changes in v2:
+> - Include "pm8150.dtsi" for QCS615 PMIC instead of creating a new
+>   qcs615-pmic.dtsi in the case that pmm6155au is a variant of pm8150.
+> - Fixed comments from community in V1.
+> - Link to v1: https://lore.kernel.org/r/20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com
+> ---
+>  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 27 +++++++++++++++++++++++++++
+>  arch/arm64/boot/dts/qcom/qcs615.dtsi     | 23 +++++++++++++++++++++++
+>  2 files changed, 50 insertions(+)
+> 
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> index ee6cab3924a6d71f29934a8debba3a832882abdd..71ea0cb32eebed713b2a80ab692b14fdb4bd0ce4 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
+> @@ -6,6 +6,7 @@
+>  
+>  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
+>  #include "qcs615.dtsi"
+> +#include "pm8150.dtsi"
+>  / {
+>  	model = "Qualcomm Technologies, Inc. QCS615 Ride";
+>  	compatible = "qcom,qcs615-ride", "qcom,qcs615";
+> @@ -210,6 +211,32 @@ &rpmhcc {
+>  	clocks = <&xo_board_clk>;
+>  };
+>  
+> +&spmi_bus {
+> +	pmm6155au_0: pmic@0 {
 
+There is a label already, please use it.
 
-> -----Original Message-----
-> From: Will Deacon <will@kernel.org>
-> Sent: Wednesday, October 23, 2024 11:27 AM
-> To: Besar Wicaksono <bwicaksono@nvidia.com>
-> Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
-> catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
-> kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>; Jon Hunter
-> <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Rich Wiley
-> <rwiley@nvidia.com>; Bob Knight <rknight@nvidia.com>
-> Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU
-> events
->=20
-> External email: Use caution opening links or attachments
->=20
->=20
-> On Tue, Oct 15, 2024 at 05:21:06PM +0000, Besar Wicaksono wrote:
-> >
-> >
-> > > -----Original Message-----
-> > > From: Will Deacon <will@kernel.org>
-> > > Sent: Monday, October 14, 2024 8:19 AM
-> > > To: Besar Wicaksono <bwicaksono@nvidia.com>
-> > > Cc: suzuki.poulose@arm.com; robin.murphy@arm.com;
-> > > catalin.marinas@arm.com; mark.rutland@arm.com; linux-arm-
-> > > kernel@lists.infradead.org; linux-kernel@vger.kernel.org; linux-
-> > > tegra@vger.kernel.org; Thierry Reding <treding@nvidia.com>; Jon Hunte=
-r
-> > > <jonathanh@nvidia.com>; Vikram Sethi <vsethi@nvidia.com>; Rich Wiley
-> > > <rwiley@nvidia.com>; Bob Knight <rknight@nvidia.com>
-> > > Subject: Re: [PATCH 2/3] perf: arm_cspmu: nvidia: update CNVLINK PMU
-> > > events
-> > >
-> > > External email: Use caution opening links or attachments
-> > >
-> > >
-> > > On Wed, Sep 18, 2024 at 09:58:45PM +0000, Besar Wicaksono wrote:
-> > > > Rename loc* and rem* events in CNVLINK PMU to cmem* and gmem*
-> > > events.
-> > > >
-> > > > Signed-off-by: Besar Wicaksono <bwicaksono@nvidia.com>
-> > > > ---
-> > > >  drivers/perf/arm_cspmu/nvidia_cspmu.c | 21
-> ++++++++++++++++++++-
-> > > >  1 file changed, 20 insertions(+), 1 deletion(-)
-> > > >
-> > > > diff --git a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> > > b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> > > > index ea2d44adfa7c..d1cd9975e71a 100644
-> > > > --- a/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> > > > +++ b/drivers/perf/arm_cspmu/nvidia_cspmu.c
-> > > > @@ -112,6 +112,25 @@ static struct attribute *mcf_pmu_event_attrs[]
-> =3D {
-> > > >       NULL,
-> > > >  };
-> > > >
-> > > > +static struct attribute *mcf_cnvlink_pmu_event_attrs[] =3D {
-> > > > +     ARM_CSPMU_EVENT_ATTR(rd_bytes_cmem,                     0x0),
-> > > > +     ARM_CSPMU_EVENT_ATTR(rd_bytes_gmem,                     0x1),
-> > > > +     ARM_CSPMU_EVENT_ATTR(wr_bytes_cmem,                     0x2),
-> > > > +     ARM_CSPMU_EVENT_ATTR(wr_bytes_gmem,                     0x3),
-> > > > +     ARM_CSPMU_EVENT_ATTR(total_bytes_cmem,                  0x4),
-> > > > +     ARM_CSPMU_EVENT_ATTR(total_bytes_gmem,                  0x5),
-> > > > +     ARM_CSPMU_EVENT_ATTR(rd_req_cmem,                       0x6),
-> > > > +     ARM_CSPMU_EVENT_ATTR(rd_req_gmem,                       0x7),
-> > > > +     ARM_CSPMU_EVENT_ATTR(wr_req_cmem,                       0x8),
-> > > > +     ARM_CSPMU_EVENT_ATTR(wr_req_gmem,                       0x9),
-> > > > +     ARM_CSPMU_EVENT_ATTR(total_req_cmem,                    0xa),
-> > > > +     ARM_CSPMU_EVENT_ATTR(total_req_gmem,                    0xb),
-> > > > +     ARM_CSPMU_EVENT_ATTR(rd_cum_outs_cmem,                  0xc),
-> > > > +     ARM_CSPMU_EVENT_ATTR(rd_cum_outs_gmem,                  0xd),
-> > > > +     ARM_CSPMU_EVENT_ATTR(cycles,
-> > > ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> > > > +     NULL,
-> > > > +};
-> > > > +
-> > > >  static struct attribute *generic_pmu_event_attrs[] =3D {
-> > > >       ARM_CSPMU_EVENT_ATTR(cycles,
-> > > ARM_CSPMU_EVT_CYCLES_DEFAULT),
-> > > >       NULL,
-> > > > @@ -234,7 +253,7 @@ static const struct nv_cspmu_match
-> > > nv_cspmu_match[] =3D {
-> > > >         .filter_default_val =3D NV_CNVL_FILTER_ID_MASK,
-> > > >         .name_pattern =3D "nvidia_cnvlink_pmu_%u",
-> > > >         .name_fmt =3D NAME_FMT_SOCKET,
-> > > > -       .event_attr =3D mcf_pmu_event_attrs,
-> > > > +       .event_attr =3D mcf_cnvlink_pmu_event_attrs,
-> > > >         .format_attr =3D cnvlink_pmu_format_attrs
-> > > >       },
-> > >
-> > > Hmm. Isn't this a user-visible change? For example, will scripts driv=
-ing
-> > > 'perf' with the old event names continue to work after this patch?
-> > >
-> >
-> > Yes this is user visible. I am expecting user script to be updated acco=
-rdingly.
-> > Would this be reasonable?
->=20
-> I don't think so, no. We don't tend to require userspace changes as a
-> result of upgrading the kernel.
+> +
+> +		pon: pon@800 {
 
-Are you referring to userspace change just on the perf tool side?
-Cause this PMU doesn't have JSON scripts for alias/metric in the perf tool =
-yet.
+No, use the label syntax instead of extending the node in-tree.
 
-Do you have suggestion of the proper approach?
+> +
+> +			/delete-property/ mode-bootloader;
+> +			/delete-property/ mode-recovery;
+> +
+> +			pon_pwrkey: pwrkey {
+> +				status = "okay";
+> +			};
+> +
+> +			pon_resin: resin {
+> +				linux,code = <KEY_VOLUMEDOWN>;
+> +				status = "okay";
+> +			};
+> +		};
+> +
+> +		pmm6155au_0_gpios: gpio@c000 {};
 
-Thanks,
-Besar
+What for?
+
+> +	};
+> +
+> +	pmm6155au_1: pmic@1 {
+> +		status = "disabled";
+
+Why?
+
+> +	};
+> +};
+> +
+>  &uart0 {
+>  	status = "okay";
+>  };
+> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> index ac4c4c751da1fbb28865877555ba317677bc6bd2..3fc928913239cfc61c24d1b16c183b96f38e589d 100644
+> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
+> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
+
+Don't mix SoC and board changes into a single patch, unless they are
+really touching the same function. In this case they are not.
+
+> @@ -517,6 +517,29 @@ sram@c3f0000 {
+>  			reg = <0x0 0x0c3f0000 0x0 0x400>;
+>  		};
+>  
+> +		spmi_bus: spmi@c440000 {
+> +			compatible = "qcom,spmi-pmic-arb";
+> +			reg = <0x0 0x0c440000 0x0 0x1100>,
+> +			      <0x0 0x0c600000 0x0 0x2000000>,
+> +			      <0x0 0x0e600000 0x0 0x100000>,
+> +			      <0x0 0x0e700000 0x0 0xa0000>,
+> +			      <0x0 0x0c40a000 0x0 0x26000>;
+> +			reg-names = "core",
+> +				    "chnls",
+> +				    "obsrvr",
+> +				    "intr",
+> +				    "cnfg";
+> +			interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
+> +			interrupt-names = "periph_irq";
+> +			interrupt-controller;
+> +			#interrupt-cells = <4>;
+> +			#address-cells = <2>;
+> +			#size-cells = <0>;
+> +			cell-index = <0>;
+> +			qcom,channel = <0>;
+> +			qcom,ee = <0>;
+> +		};
+> +
+>  		intc: interrupt-controller@17a00000 {
+>  			compatible = "arm,gic-v3";
+>  			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
+> 
+> ---
+> base-commit: de938618db2bafbe1a70c8fc43f06ccdd60364b2
+> change-id: 20240929-adds-spmi-pmic-peripherals-for-qcs615-16ee53179a7d
+> prerequisite-change-id: 20241022-add_initial_support_for_qcs615-2256f64a9c24:v4
+> prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
+> prerequisite-patch-id: 624720e543d7857e46d3ee49b8cea413772deb4c
+> prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
+> prerequisite-patch-id: ab88a42ec69ad90e8509c9c5b7c6bdd595a7f783
+> prerequisite-patch-id: 918724fafe43acaa4c4b980bfabe36e9c3212cd1
+> prerequisite-patch-id: 3bd8edd83297815fcb1b81fcd891d3c14908442f
+> prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
+> 
+> Best regards,
+> -- 
+> Tingguo Cheng <quic_tingguoc@quicinc.com>
+> 
+
+-- 
+With best wishes
+Dmitry
 
