@@ -1,140 +1,214 @@
-Return-Path: <linux-kernel+bounces-380291-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380292-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7AF499AEBC4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:20:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 893459AEBC7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:20:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9DE1D1C22ADC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:20:20 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A8AB51C2278A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:20:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F22081F666B;
-	Thu, 24 Oct 2024 16:20:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 946D81F80B9;
+	Thu, 24 Oct 2024 16:20:35 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="l7Oh6JDh"
-Received: from mail-lj1-f178.google.com (mail-lj1-f178.google.com [209.85.208.178])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="EyQ9R+Py"
+Received: from mail-qv1-f44.google.com (mail-qv1-f44.google.com [209.85.219.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6846D1E766C
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:20:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.178
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 00C8F1B0F16;
+	Thu, 24 Oct 2024 16:20:32 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786817; cv=none; b=kfH9jVcWKgOY8lf6TJwm7ZUlCE3Z0rBzaJriT4PFyHwtFTcKfQilr1XTj9/P1gU3t7J2yV3F/SkDr5YQTDXCUUDwUGzhmiRV5CjuSvYvg6qbK2gLyXSJDF1sxyAUFe+FsnXK/QkK8wQMTHaM6pYeSFV5tp5ZgeP1m7kogwAHCOQ=
+	t=1729786834; cv=none; b=f1eM+RjSuzy9NwdjZ11Z16vPbyxR5Im/3WEGoj8skXzZR2hjwfPH3wPG846p5dasDrrbkyf1oSkuw30hsNgroKhGePDOUfr7pUklG7zBLGQVX/11MKNajGhAmZeONr8nsc+HjIEo9wlXwhmrQ5eswcEFOR4iv+NnvbeBGwZE5Ps=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786817; c=relaxed/simple;
-	bh=6nlq719E3aKw9NwLYLIPsCHp99u57KGfOdBVs7hWW1A=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=RwEn+RMzcchyjqz1cHlo7LvIDfNI+igoJF/+GjpEMqe6zw7+yCi3Q4orFgAwlILTCbefMttL5EHkS6vbbGpkDXXiFf/pTc9OqMZpp6zxd/sbLGb4zoZrZycgeH5Z20wyxahktWVlO74rtt2nJcnsl1UCF31jD6wvqkXgr1C0xj4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=l7Oh6JDh; arc=none smtp.client-ip=209.85.208.178
+	s=arc-20240116; t=1729786834; c=relaxed/simple;
+	bh=Y8Rgx5jOjflLlPs7Nf9yLu0bT4vcdUWwtwso6LqrjS0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=KsJMBQrDH3PAQTG6KlSVM8ORlxz6Zq8DcScZTE/t00EzVwfCBPwY5jGTQEeeMVGVMk6Oj7HGycedq5IRmtgxBkSuewZ9pU1C628VePTbPxvDy8+xmx3kz4yd/cxCZ9l8+6uReQRHywGFPNS+e+vnZyhGNqGFG3fu1BrHrxR6HK4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=EyQ9R+Py; arc=none smtp.client-ip=209.85.219.44
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f178.google.com with SMTP id 38308e7fff4ca-2fb4ec17f5cso10388331fa.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:20:15 -0700 (PDT)
+Received: by mail-qv1-f44.google.com with SMTP id 6a1803df08f44-6cc250bbc9eso6924536d6.2;
+        Thu, 24 Oct 2024 09:20:32 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729786813; x=1730391613; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
+        d=gmail.com; s=20230601; t=1729786832; x=1730391632; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=yWHsY4Ye9FKkb7KXAAJ7/6vYdn0slI4EMM110d1cAts=;
-        b=l7Oh6JDhwQN56fwI5Zgft/y5gEDfAftKfS/zhOo/7GUHAAEcxcfeg7MZ5X2WwhMc62
-         vVu5bzNetnaKNIggU3ULdXTDX9q4US9ukuzeNBHScROCXZv4NaL2MD4WlhDk3U8qBhcn
-         a+esycN+OTKZ4iX7s9inkRi9VqTYNyp8/3XsCgVs3sK7pQUylivjp/bD+EkXHQ5eQHuX
-         n1wDzc6l6fqpjiqW9xaoFnUHCWyRdmvZglN72zXCP7zwSWIA9HJ4USHqWIR4/ROdanQP
-         qdjNv1SOtBu4FATs5LxYy2VZ4behlDRA1SJ+1CHcbc/vmxBn30WL0AXoOLsD2eS8X6mO
-         u84Q==
+        bh=oIdsOKA3czoGJIx1Zf2z3KM/oyGGy6VzPqA/VM0UsXI=;
+        b=EyQ9R+Py/FPXrElB2imhi/3HJCt7dqwU+R488uxMLeUXHYBRyFszWbKM+2cwr22qMq
+         4nWDRVH5VPpKGSw91mPN8q6SwRPeYeL6nOu/boFq+Zfhm8udbFtjpy8c/On85fHxt+L3
+         omWUUVRWGiI6iD80Lv/4YcdGuh1Lsq8OhylEAiUC7QZ/vYvKGepPg9cRGAaKV0bb7Vfq
+         sGUSGxniocfTYrsl1OrmsHPMgZQcjr4tgowo+ycpO8P4/SOrA5DpcgdHD2OvnPBPFQNQ
+         LE5xLFjEwnzYvmNhCMz9/yEBjGrHit+ZZsdQwHyhXDwpAHcfDqs9wUKOHCayZAaQc7Qh
+         HAMQ==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729786813; x=1730391613;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+        d=1e100.net; s=20230601; t=1729786832; x=1730391632;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
          :subject:date:message-id:reply-to;
-        bh=yWHsY4Ye9FKkb7KXAAJ7/6vYdn0slI4EMM110d1cAts=;
-        b=DpmDRBdR0vLaeTgN/ptAW/RAiur76ZRkQiT5JMCW3h236zSQIeLnvkOSrZ0Sm/tOxm
-         x6JJ2FUlOTw4nQLIMG5sJGT9G7kEu9KiFwzarIJ/ERs3IHOQwx9kcV8acPDYAixAWnUe
-         NANctgvUhM+6Xn8F4cSvBmT4LJaC4JPvvMTSuq4tubnNEMNUW/yFHbDgdphVz0068B2e
-         K5Hj24Wf92l+aD0aEw1lHybuj+1edfb6hizdPsvr5pY8QjssRKJaoMgrqdmFEjUM55Af
-         bkK7JRoEdu9VUkvkt9c6uVB/SW22iFCfXhqHeLg8w+D+hyJDQK0+KzDm0vldV6J4tqvn
-         3fAA==
-X-Forwarded-Encrypted: i=1; AJvYcCW2QHVMRP8kwXFnsEFgDrZkIkUDR0JjKQJMqXzNiptc22JynkXHSxrIiCuPvK9VHa9vyMbCunN2yGdrRZo=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz8b3GovdCaqQMeevcFEJOhldLdwXDMWqoRz2DWA/8w3wYK5DaF
-	Qg8dis6DSxCxW/bKbnX5mBFj52NRN9jmtPML0ax9yKA4YeHc6Mpa8GQ2FM2erZS6p4hGLYccqMo
-	6neEg5d7ijtHelDYT/XalUiNhJrxNyg==
-X-Google-Smtp-Source: AGHT+IEuwtU5wTNW0OavfLDuU+4hzny0QFwcBv6Ct28xoEmTJs5+BFD+dh2Jx1qjrYg4vjcJ/PaZDorElpAtqhbN9Nc=
-X-Received: by 2002:a2e:a9a6:0:b0:2fb:565a:d93c with SMTP id
- 38308e7fff4ca-2fc9d33a85emr40059331fa.1.1729786813099; Thu, 24 Oct 2024
- 09:20:13 -0700 (PDT)
+        bh=oIdsOKA3czoGJIx1Zf2z3KM/oyGGy6VzPqA/VM0UsXI=;
+        b=P8/Ssnek05y7rF8vM8WPM7svADvEWKSlXCZ8l5PbMncl3XlIBtJIqsTTyRJXX2srWX
+         eslIfAnBBWIU5uesopFK2L8vt4g0SFVdIdNVZNsqsf34B7oFfppr2xDLeaj1o42/lofs
+         KvFgGmnstvnWqByyaoIVj1KgXnEeAEn5cWLDw5kUhZiiQAhpZhL6+ao5npUALqa86wi+
+         WxGDSZJgax2Nn4tRylQ4ItJEvvsb1p2J7tVJUyk9Lu2WreV5YzVlONocXU8gTUJA8BzX
+         b8ZtOMQb5Q7atUuRHy6ygj1FYuYvlWaj9f9Y1CYuH75kmwZAkk88MsTWuFhQvytQUKWi
+         i0Dw==
+X-Forwarded-Encrypted: i=1; AJvYcCUmKeoKH6oROXw1FV9BWGACM7U3ZmoLvN5eu4qJEfO+0pWvS8oHksUw77GkVSRYWsiUpU1UNPGoEPNgPEHQSpU=@vger.kernel.org, AJvYcCWAiklxzrxdB68guYjHw6xUZkOmJtWHUSVfQyVaRSvX2kVJozCKbXEbcFJekFh25x/8KmChzWfCOsbgi/U=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yxn/WVYa7r5Q2G5A0wdrEK1bMbpGtXMPiTvE7vBfMZogZjf//JN
+	8Fksh1DvlwkO9YaF2TGr+KUpqto4aZsJOC6V/UEpWcJYoNYxLANn
+X-Google-Smtp-Source: AGHT+IHNXYfo5jJXKqaDZB41a8s3uB+7CeKjUO09n8CEz4H7pqYy/60uGv6AjXTo8ldZiDkKwdZsOw==
+X-Received: by 2002:a05:6214:3d9f:b0:6cc:53a:70b8 with SMTP id 6a1803df08f44-6ce34130e98mr80996746d6.1.1729786831659;
+        Thu, 24 Oct 2024 09:20:31 -0700 (PDT)
+Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
+        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce00a04406sm50871686d6.145.2024.10.24.09.20.30
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 09:20:31 -0700 (PDT)
+Received: from phl-compute-03.internal (phl-compute-03.phl.internal [10.202.2.43])
+	by mailfauth.phl.internal (Postfix) with ESMTP id 8D3BD1200070;
+	Thu, 24 Oct 2024 12:20:30 -0400 (EDT)
+Received: from phl-mailfrontend-01 ([10.202.2.162])
+  by phl-compute-03.internal (MEProxy); Thu, 24 Oct 2024 12:20:30 -0400
+X-ME-Sender: <xms:znMaZzXvBQE28LKK4XqPikQ4wxEu76ZGJT0mqKzQbu2_FW0la3mOcw>
+    <xme:znMaZ7mTQofBnYBWzFx0zkfrDPYGlXHuidCwyQkBmtNw5Dw1rI8rIJHEYbO6IpDcE
+    9q4eF-szqECMCFMgw>
+X-ME-Received: <xmr:znMaZ_Zz_fumYWx_2p4LOmViIub3iU7mbjrkXeDQ6J8JGovurS3xWmZsE24>
+X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddgjeefucetufdoteggodetrfdotf
+    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
+    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
+    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
+    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
+    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
+    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
+    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
+    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
+    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohgu
+    vgepshhmthhpohhuthdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
+    dprhgtphhtthhopeguihhrkhdrsggvhhhmvgesghhmrghilhdrtghomhdprhgtphhtthho
+    pehlhihuuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlh
+    hinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrhesrhgv
+    ughhrghtrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesrhgvughhrghtrdgtohhmpd
+    hrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhl
+    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtg
+    homh
+X-ME-Proxy: <xmx:znMaZ-XPxIBcyH1l7CLnkzt5TZFHo1ZmDqQD5JRf9CsdesaydaPtfw>
+    <xmx:znMaZ9kG9B_A90W9pqhCYObm1jYwZz_uF3RizW_uVk6yffarE9xPTA>
+    <xmx:znMaZ7d8ANh6OvE7Mzsc-DyWrrjwltwvNuiHLo67xraeo6RFtEnqpQ>
+    <xmx:znMaZ3EVk4XoR_tmUwSMPk6qJh29jwSTdZQBua2V3mnTFiipzRMzQw>
+    <xmx:znMaZ_lzwM9Kp8hKhj2wkINaNi4PsAdMyrj2TSPdncobzwcQDGi14X3L>
+Feedback-ID: iad51458e:Fastmail
+Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
+ 24 Oct 2024 12:20:29 -0400 (EDT)
+Date: Thu, 24 Oct 2024 09:20:28 -0700
+From: Boqun Feng <boqun.feng@gmail.com>
+To: Thomas Gleixner <tglx@linutronix.de>
+Cc: Dirk Behme <dirk.behme@gmail.com>, Lyude Paul <lyude@redhat.com>,
+	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
+	airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, will@kernel.org,
+	Waiman Long <longman@redhat.com>,
+	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
+	Miguel Ojeda <ojeda@kernel.org>,
+	Alex Gaynor <alex.gaynor@gmail.com>, wedsonaf@gmail.com,
+	Gary Guo <gary@garyguo.net>,
+	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
+	Benno Lossin <benno.lossin@proton.me>,
+	Andreas Hindborg <a.hindborg@samsung.com>, aliceryhl@google.com,
+	Trevor Gross <tmgross@umich.edu>
+Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
+ disabling/enabling
+Message-ID: <ZxpzzExItrGMISp3@Boquns-Mac-mini.local>
+References: <20241018055125.2784186-2-boqun.feng@gmail.com>
+ <87a5eu7gvw.ffs@tglx>
+ <ZxnVmCqk2PzsOj2h@Boquns-Mac-mini.local>
+ <87zfmt6hk2.ffs@tglx>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241007083345.47215-1-ubizjak@gmail.com> <be62f9c4-eca2-46bb-b566-77c0cbe1f15b@intel.com>
-In-Reply-To: <be62f9c4-eca2-46bb-b566-77c0cbe1f15b@intel.com>
-From: Uros Bizjak <ubizjak@gmail.com>
-Date: Thu, 24 Oct 2024 18:20:01 +0200
-Message-ID: <CAFULd4Yux5FPvvuvzy6C5J_LTcWsLmPaMmttH2rPvjQG-ZPMVg@mail.gmail.com>
-Subject: Re: [PATCH] x86/ioperm: Use atomic64_inc_return() in ksys_ioperm()
-To: Dave Hansen <dave.hansen@intel.com>
-Cc: x86@kernel.org, linux-kernel@vger.kernel.org, 
-	Thomas Gleixner <tglx@linutronix.de>, Ingo Molnar <mingo@kernel.org>, Borislav Petkov <bp@alien8.de>, 
-	Dave Hansen <dave.hansen@linux.intel.com>, "H. Peter Anvin" <hpa@zytor.com>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87zfmt6hk2.ffs@tglx>
 
-On Thu, Oct 24, 2024 at 5:21=E2=80=AFPM Dave Hansen <dave.hansen@intel.com>=
- wrote:
->
-> On 10/7/24 01:33, Uros Bizjak wrote:
-> > Use atomic64_inc_return(&ref) instead of atomic64_add_return(1, &ref)
-> > to use optimized implementation and ease register pressure around
-> > the primitive for targets that implement optimized variant.
->
-> Ease register pressure at the end of a syscall?
->
-> I'll accept that we're doing this just as a matter of hygiene.  But it's
-> a stretch to say there are any performance concerns whatsoever at the
-> end of the ioperm() syscall.
->
-> So what is the real reason for this patch?
+On Thu, Oct 24, 2024 at 10:17:33AM +0200, Thomas Gleixner wrote:
+> On Wed, Oct 23 2024 at 22:05, Boqun Feng wrote:
+> > On Wed, Oct 23, 2024 at 09:34:27PM +0200, Thomas Gleixner wrote:
+> >> local_interrupt_enable()
+> >> {
+> >>         if ((preempt_count() & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
+> >>         	local_irq_restore(this_cpu_read(...flags);
+> >>                 preempt_count_sub_test_resched(LOCALIRQ_OFFSET);
+> >>         } else {
+> >>                 // Does not need a resched test because it's not going
+> >>                 // to 0
+> >>                 preempt_count_sub(LOCALIRQ_OFFSET);
+> >>         }
+> >> }
+> >> 
+> >
+> > Yes, this looks nice, one tiny problem is that it requires
+> > PREEMPT_COUNT=y ;-) Maybe we can do: if PREEMPT_COUNT=y, we use preempt
+> > count, otherwise use a percpu?
+> >
+> > Hmm... but this will essentially be: we have a irq_disable_count() which
+> > is always built-in, and we also uses it as preempt count if
+> > PREEMPT_COUNT=y. This doesn't look too bad to me.
+> 
+> The preempt counter is always there even when PREEMPT_COUNT=n. It's
+> required for tracking hard/soft interrupt and NMI context.
+> 
+> The only difference is that preempt_disable()/enable() are NOOPs. So in
+> that case preempt_count_sub_test_resched() becomes a plain preempt_count_sub().
+> 
 
-Please see code dumps for i386, a target that implements atomic64_inc_retur=
-n():
+Ah, good point!
 
- 1a9:    8d 04 95 04 00 00 00     lea    0x4(,%edx,4),%eax
- 1b0:    b9 00 00 00 00           mov    $0x0,%ecx
-            1b1: R_386_32    .bss
- 1b5:    89 43 0c                 mov    %eax,0xc(%ebx)
- 1b8:    31 d2                    xor    %edx,%edx
- 1ba:    b8 01 00 00 00           mov    $0x1,%eax
- 1bf:    e8 fc ff ff ff           call   1c0 <ksys_ioperm+0xa8>
-            1c0: R_386_PC32    atomic64_add_return_cx8
- 1c4:    89 03                    mov    %eax,(%ebx)
- 1c6:    89 53 04                 mov    %edx,0x4(%ebx)
+> >> and then the lock thing becomes
+> >> 
+> >> spin_lock_irq_disable()
+> >> {
+> >>         local_interrupt_disable();
+> >>         lock();
+> >> }
+> >> 
+> >> spin_unlock_irq_enable()
+> >> {
+> >>         unlock();
+> >>         local_interrupt_enable();
+> >> }
+> >> 
+> >> instead having to do:
+> >> 
+> >> spin_unlock_irq_enable()
+> >> {
+> >>         unlock();
+> >>         local_interrupt_enable();
+> >>         preempt_enable();
+> >> }
+> >> 
+> >> Which needs two distinct checks, one for the interrupt and one for the
+> >
+> > No? Because now since we fold the interrupt disable count into preempt
+> > count, so we don't need to care about preempt count any more if we we
+> > local_interrupt_{disable,enable}(). For example, in the above
+> > local_interrupt_enable(), interrupts are checked at local_irq_restore()
+> > and preemption is checked at preempt_count_sub_test_resched(). Right?
+> 
+> Correct. That's what I pointed out. By folding it into preempt count
+> this becomes one operation, while in your POC it's two distinct checks
+> and operations.
+> 
 
-vs. improved:
+Yes, I seemed to mis-read what you meant previously, much clear now, let
+me put this into implementation for a POC v2.
 
- 1a9:    8d 04 95 04 00 00 00     lea    0x4(,%edx,4),%eax
- 1b0:    be 00 00 00 00           mov    $0x0,%esi
-            1b1: R_386_32    .bss
- 1b5:    89 43 0c                 mov    %eax,0xc(%ebx)
- 1b8:    e8 fc ff ff ff           call   1b9 <ksys_ioperm+0xa1>
-            1b9: R_386_PC32    atomic64_inc_return_cx8
- 1bd:    89 03                    mov    %eax,(%ebx)
- 1bf:    89 53 04                 mov    %edx,0x4(%ebx)
+Regards,
+Boqun
 
-There is no need to initialize %eax/%edx register pair before the
-"call" to atomic64_inc_return() function. The "call" is not an ABI
-function call, but an asm volatile (which BTW lacks
-ASM_CALL_CONSTRAINT), so there is no ABI guarantees which register is
-call-preserved and which call-clobbered.
-
-Oh, this is the "return" variant -  the function indeed returns the
-new value in %eax/%edx pair, so the difference is only in the
-redundant register initialization. I can reword the commit message for
-this case to mention that an initialization of register pair is spared
-before the call.
-
-Uros.
+> Thanks,
+> 
+>         tglx
 
