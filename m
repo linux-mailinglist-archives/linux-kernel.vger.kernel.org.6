@@ -1,135 +1,235 @@
-Return-Path: <linux-kernel+bounces-380282-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380283-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3CD729AEB8E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:12:23 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 9C0F29AEB90
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:12:37 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 61D1FB23C8F
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:12:20 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ECE17B24017
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:12:34 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8734C1F76C3;
-	Thu, 24 Oct 2024 16:12:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E14F01F76A5;
+	Thu, 24 Oct 2024 16:12:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b="glQO7erl"
-Received: from relay7-d.mail.gandi.net (relay7-d.mail.gandi.net [217.70.183.200])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="avfvlAd+"
+Received: from mail-ot1-f41.google.com (mail-ot1-f41.google.com [209.85.210.41])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 8E983139578;
-	Thu, 24 Oct 2024 16:12:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.70.183.200
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5DAF21F76A6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:12:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729786331; cv=none; b=mPBgkq9Bim+M+UgA34LLs4bV3qRadpqs9QSwXkLvBZEvtVY1nbtx0VuSVIg5tzSlWRIgwNaXpzXWBGtFubGvDu9dFbaloHOZe803NgezqIZQexl/CARteAHOW1fwXu/ebL3DHTlnaxfVnMvUEymQ1Jr6ECp3N51hd0hcsef2MDw=
+	t=1729786340; cv=none; b=TgcTVQ2ZUQfObX0oV1t5tskDJyf5GIva06jTFLgtii0P9NGQHIvWszjTDAdmEqeRIUKuexez7RxtiqWRORQ9tZ7NUT0JzSKos5IbjC9Tvlom3epBHb1hgK+/+f1vSwnHcV73RasYQVaOH21aOqoWFSaG5lJSsjnPrPMNSQ+MLbQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729786331; c=relaxed/simple;
-	bh=gdlisyXK2+659MhL+7tq7TctbDgTxLnZv+WJgTIBhyE=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=lLMIUCXYFhCnKd2SXvqi/TMTBgWWy2yIcoBAqRwuhGlavxga6sZdLLZEJJWY2rLAexae16en9DUD83wmeTRq2Do7t9IS4cFzcVNsrJhAxM3Jb0Zm77JBsarN+5EwmP47UFxmO8JNTOCqXAFGdSXM4DbsKkvyQF/Mp6u+z4vL490=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com; spf=pass smtp.mailfrom=bootlin.com; dkim=pass (2048-bit key) header.d=bootlin.com header.i=@bootlin.com header.b=glQO7erl; arc=none smtp.client-ip=217.70.183.200
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=bootlin.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=bootlin.com
-Received: by mail.gandi.net (Postfix) with ESMTPSA id C888620004;
-	Thu, 24 Oct 2024 16:11:58 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=bootlin.com; s=gm1;
-	t=1729786320;
-	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
-	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=XB3VRwVYgwtYy/jngMFSX+SYdmqp53Fh8T0vpxq9TpA=;
-	b=glQO7erlFzg/9GexBOmJtAzZDGVHViXGzDNZwLSCOMixc5uIP2ML1vdj7uuHno7ZVZEQwA
-	bXe+/mGxzBJOtod0ExZkhLemJ3xAlaWuKFGIQDgzdT4hUL7yn65x2yU04hxHQCN5abMs9o
-	P57J5FRwo6KzVXVGbc0LHzuaoz7n8dYiyiQmolsmd7XokC6/h6PFj9VEP/k3ED+tDbH2g1
-	Xu4nzx8u4i2q/1Zpa9Nh+QPhkM4miCM0eXb8B3TMMQZNVucqn7jRFIJ1pIzHsIBPyx6F2l
-	RqlHQRgaLHwdqZWGYP1bytHMi/RwG3T54yw3rFNz+JsXbQyLjMPZVzCtUYhb2w==
-Date: Thu, 24 Oct 2024 18:11:57 +0200
-From: Maxime Chevallier <maxime.chevallier@bootlin.com>
-To: Simon Horman <horms@kernel.org>
-Cc: Kory Maincent <kory.maincent@bootlin.com>, netdev@vger.kernel.org,
- linux-doc@vger.kernel.org, linux-kernel@vger.kernel.org,
- thomas.petazzoni@bootlin.com, "David S. Miller" <davem@davemloft.net>, Eric
- Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, Paolo
- Abeni <pabeni@redhat.com>, Jonathan Corbet <corbet@lwn.net>
-Subject: Re: [PATCH net-next] Documentation: networking: Add missing PHY_GET
- command in the message list
-Message-ID: <20241024181157.261e3194@device-21.home>
-In-Reply-To: <20241024152816.GA1202098@kernel.org>
-References: <20241023141559.100973-1-kory.maincent@bootlin.com>
-	<20241024145223.GR1202098@kernel.org>
-	<20241024171802.4e0f0110@kmaincent-XPS-13-7390>
-	<20241024152816.GA1202098@kernel.org>
-Organization: Bootlin
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-redhat-linux-gnu)
+	s=arc-20240116; t=1729786340; c=relaxed/simple;
+	bh=YOl+jdRdLxBkVt8b/cajw2Uh9M6+GntmVhC8RkIqJwo=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=Zv4/SE/v7HsH/nclmViX56M55LSwH2A12aHdW0dvOSGqRARuvZCw4JqPK/mVWZixeVt1SwxR2AyZkRkdQ03MWMaMB7lrIUUswV5OsXkc6GkUgIOMMM34iSLgq6JTVfdVQpr1s1tuwroKjM7KmN91XP7vobnmbX+cuBOvhXansq0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=avfvlAd+; arc=none smtp.client-ip=209.85.210.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-ot1-f41.google.com with SMTP id 46e09a7af769-7093997dffdso472296a34.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:12:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729786336; x=1730391136; darn=vger.kernel.org;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=yqHRHn8vLXvapMZ39Cgc0iJX3AUAdIkxL0Txgf+Yb1M=;
+        b=avfvlAd+9lCVpRyLauMnMF4xlycMe9EeRqZMmvuJaMCQ4AtSYSvO+OYQrJXjDDDLm7
+         4UCtzdfgYdt6ySFbtc15bBYQCd2ZbBXvrOsN/8sTnDuM20+JUgFFU5OTJnZGm69k1sts
+         D+vV61sOdIXKk5YVUGbkg/pV9OZmJn0pyLVX5z55ymzMiV1Alyi+2XwFYoaeES4nYvZ6
+         2lqVkUxK3/eQqUhr50PCGFfC3Q9iU0pSsKd/MYR90aDkNkAeN4wF2RUhFgpZ1YHS19NW
+         fX937TrCTzNh2KHtYpFSA+ZDYPLEPRv2J0tZVtUBhmpSIe3eZ0k2ni+PLIyJuDBH/Wxb
+         Zb+g==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729786336; x=1730391136;
+        h=cc:to:message-id:content-transfer-encoding:mime-version:subject
+         :date:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=yqHRHn8vLXvapMZ39Cgc0iJX3AUAdIkxL0Txgf+Yb1M=;
+        b=Tz+ito3uG8eMgS3FW+m3S0h7hq4pSUg0o8QnOvB9LdSL5owvBMT0dKrn4U9iaCVYEm
+         Gr3V9ye/cVJnEipUZacFJTEW3vgfadI9nkZSYD/0srR+d42D14ZJLqyIhGsE1OBuwc1M
+         yfc9lV+Q+xVDTScRIx43P4cPTr4Ro6iUaqPEB7aqJt0Kyu5P3mHv1/Rk1874zwvt6C2G
+         XNtCAx/7+gnc2LKxRFVzT/VkONRvS5jVUgslVptjyjpZSgdpTJTtFoy2u69taXwnV/Ic
+         y+NZhi5eZKRx3j+UqUd49wPZELzPPvzeCRs1sphvWztkH9brDHhEpKtuPhtHaU14AvMy
+         eNuA==
+X-Forwarded-Encrypted: i=1; AJvYcCUnBtil+MW5fdDRD2CaWa/+oRDEk/q4upyv/sWs4c6pfQcVKQuO3r5XSgq5/6cTE66zhla94S24QBTZKV4=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzJV1/nNMXCyzH2eRShSHF9VK6UyCtqkPWHJJrLZt5nqHNBiR7S
+	DRt06lbdj8jTxV9HS1MXyvzeK8rsatj8p4wOzO3xATCtm5yWYoKGd+JpVoT762PywOhYtQNV0Q1
+	t
+X-Google-Smtp-Source: AGHT+IHFS2g+HAiwrBGtBUE2E1tTT5mJ8knQJc868BjEF+Hh0NWfqW+DfIUaRbNNK8gnX0OdGFIpyw==
+X-Received: by 2002:a05:6830:6f01:b0:718:10ce:c6a7 with SMTP id 46e09a7af769-7184b348e49mr5715982a34.30.1729786336306;
+        Thu, 24 Oct 2024 09:12:16 -0700 (PDT)
+Received: from [127.0.1.1] (ip98-183-112-25.ok.ok.cox.net. [98.183.112.25])
+        by smtp.gmail.com with ESMTPSA id 46e09a7af769-7182eb21b6asm2166675a34.8.2024.10.24.09.12.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 09:12:15 -0700 (PDT)
+From: David Lechner <dlechner@baylibre.com>
+Date: Thu, 24 Oct 2024 11:12:10 -0500
+Subject: [PATCH v2] iio: adc: ad7380: use if_not_cond_guard for claim
+ direct
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
-X-GND-Sasl: maxime.chevallier@bootlin.com
+Message-Id: <20241024-cleanup-if_not_cond_guard-v2-1-1bef98c9fd2e@baylibre.com>
+X-B4-Tracking: v=1; b=H4sIANlxGmcC/42NWw6DIBBFt2LmuzRgH1C/uo/GGIRBJ7FgQE2Nc
+ e+lrqCf5yT33A0SRsIEVbFBxIUSBZ+hPBVgeu07ZGQzQ8nLq+BcMDOg9vPIyDU+TI0J3jbdrKN
+ l/KGEVXdprVOQ92NER5+j/aoz95SmENfjahE/+091EYwzKW8XJXjLndTPVq8DtRHPJryh3vf9C
+ 378CkTFAAAA
+To: Peter Zijlstra <peterz@infradead.org>, 
+ Jonathan Cameron <jic23@kernel.org>
+Cc: =?utf-8?q?Nuno_S=C3=A1?= <nuno.sa@analog.com>, 
+ Michael Hennerich <michael.hennerich@analog.com>, 
+ linux-kernel@vger.kernel.org, linux-iio@vger.kernel.org, 
+ David Lechner <dlechner@baylibre.com>
+X-Mailer: b4 0.14.1
 
-Hi Simon,
+Replace usage of iio_device_claim_direct_scoped() with
+if_not_cond_guard().
 
-On Thu, 24 Oct 2024 16:28:16 +0100
-Simon Horman <horms@kernel.org> wrote:
+This makes fewer lines of code, less indentation, avoids having the
+error return statement in the macro args, and avoids needing to use
+unreachable().
 
-> On Thu, Oct 24, 2024 at 05:18:02PM +0200, Kory Maincent wrote:
-> > On Thu, 24 Oct 2024 15:52:23 +0100
-> > Simon Horman <horms@kernel.org> wrote:
-> >   
-> > > On Wed, Oct 23, 2024 at 04:15:58PM +0200, Kory Maincent wrote:  
-> > > > ETHTOOL_MSG_PHY_GET/GET_REPLY/NTF is missing in the ethtool message list.
-> > > > Add it to the ethool netlink documentation.
-> > > > 
-> > > > Signed-off-by: Kory Maincent <kory.maincent@bootlin.com>
-> > > > ---
-> > > >  Documentation/networking/ethtool-netlink.rst | 3 +++
-> > > >  1 file changed, 3 insertions(+)
-> > > > 
-> > > > diff --git a/Documentation/networking/ethtool-netlink.rst
-> > > > b/Documentation/networking/ethtool-netlink.rst index
-> > > > 295563e91082..70ecc3821007 100644 ---
-> > > > a/Documentation/networking/ethtool-netlink.rst +++
-> > > > b/Documentation/networking/ethtool-netlink.rst @@ -236,6 +236,7 @@
-> > > > Userspace to kernel: ``ETHTOOL_MSG_MM_GET``                get MAC merge
-> > > > layer state ``ETHTOOL_MSG_MM_SET``                set MAC merge layer
-> > > > parameters ``ETHTOOL_MSG_MODULE_FW_FLASH_ACT``   flash transceiver module
-> > > > firmware
-> > > > +  ``ETHTOOL_MSG_PHY_GET``               get Ethernet PHY information
-> > > >    ===================================== =================================
-> > > >  
-> > > >  Kernel to userspace:
-> > > > @@ -283,6 +284,8 @@ Kernel to userspace:
-> > > >    ``ETHTOOL_MSG_PLCA_NTF``                 PLCA RS parameters
-> > > >    ``ETHTOOL_MSG_MM_GET_REPLY``             MAC merge layer status
-> > > >    ``ETHTOOL_MSG_MODULE_FW_FLASH_NTF``      transceiver module flash updates
-> > > > +  ``ETHTOOL_MSG_PHY_GET_REPLY``            Ethernet PHY information
-> > > > +  ``ETHTOOL_MSG_PHY_NTF``                  Ethernet PHY information    
-> > > 
-> > > I wonder if ETHTOOL_MSG_PHY_NTF should be removed.
-> > > It doesn't seem to be used anywhere.  
-> > 
-> > We can't, as it is in the ethtool UAPI. Also I believe Maxime will use it on
-> > later patch series. Maxime, you confirm?  
-> 
-> Ok, if it's in the UAPI then I suppose it needs to stay.
-> 
-> But could we differentiate in the documentation between
-> ETHTOOL_MSG_PHY_GET_REPLY and ETHTOOL_MSG_PHY_NTF?
+Signed-off-by: David Lechner <dlechner@baylibre.com>
+---
+This is addressing the build failure reported on Peter's locking/test
+branch [1]. I've done a test compile locally with LLVM=1 and it compiles
+successfully.
 
-Yeah it was a leftover from when I implemented that, however I do plan
-on adding this notification though, so if it's OK for it to stay that's
-perfect as it'll get used.
+[1]: https://lore.kernel.org/oe-kbuild-all/202410240802.VMztsHsW-lkp@intel.com/
+---
+Changes in v2:
+- Add {} around case statements to avoid clang compiler error
+- Link to v1: https://lore.kernel.org/r/20241001-cleanup-if_not_cond_guard-v1-0-7753810b0f7a@baylibre.com
+---
+ drivers/iio/adc/ad7380.c | 76 ++++++++++++++++++++++++------------------------
+ 1 file changed, 38 insertions(+), 38 deletions(-)
 
-Then for the documentation, we can specify "Ethernet PHY information
-change notification". This would trigger when the PHYs are appearing on
-the topology.
+diff --git a/drivers/iio/adc/ad7380.c b/drivers/iio/adc/ad7380.c
+index e8bddfb0d07d..34adc5aeb6f3 100644
+--- a/drivers/iio/adc/ad7380.c
++++ b/drivers/iio/adc/ad7380.c
+@@ -569,15 +569,15 @@ static const struct regmap_config ad7380_regmap_config = {
+ static int ad7380_debugfs_reg_access(struct iio_dev *indio_dev, u32 reg,
+ 				     u32 writeval, u32 *readval)
+ {
+-	iio_device_claim_direct_scoped(return  -EBUSY, indio_dev) {
+-		struct ad7380_state *st = iio_priv(indio_dev);
++	struct ad7380_state *st = iio_priv(indio_dev);
+ 
+-		if (readval)
+-			return regmap_read(st->regmap, reg, readval);
+-		else
+-			return regmap_write(st->regmap, reg, writeval);
+-	}
+-	unreachable();
++	if_not_cond_guard(iio_claim_direct_try, indio_dev)
++		return -EBUSY;
++
++	if (readval)
++		return regmap_read(st->regmap, reg, readval);
++
++	return regmap_write(st->regmap, reg, writeval);
+ }
+ 
+ /*
+@@ -819,12 +819,12 @@ static int ad7380_read_raw(struct iio_dev *indio_dev,
+ 		return PTR_ERR(scan_type);
+ 
+ 	switch (info) {
+-	case IIO_CHAN_INFO_RAW:
+-		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+-			return ad7380_read_direct(st, chan->scan_index,
+-						  scan_type, val);
+-		}
+-		unreachable();
++	case IIO_CHAN_INFO_RAW: {
++		if_not_cond_guard(iio_claim_direct_try, indio_dev)
++			return -EBUSY;
++
++		return ad7380_read_direct(st, chan->scan_index, scan_type, val);
++	}
+ 	case IIO_CHAN_INFO_SCALE:
+ 		/*
+ 		 * According to the datasheet, the LSB size is:
+@@ -901,7 +901,7 @@ static int ad7380_write_raw(struct iio_dev *indio_dev,
+ 	int ret, osr, boost;
+ 
+ 	switch (mask) {
+-	case IIO_CHAN_INFO_OVERSAMPLING_RATIO:
++	case IIO_CHAN_INFO_OVERSAMPLING_RATIO: {
+ 		osr = ad7380_osr_to_regval(val);
+ 		if (osr < 0)
+ 			return osr;
+@@ -909,31 +909,31 @@ static int ad7380_write_raw(struct iio_dev *indio_dev,
+ 		/* always enable resolution boost when oversampling is enabled */
+ 		boost = osr > 0 ? 1 : 0;
+ 
+-		iio_device_claim_direct_scoped(return -EBUSY, indio_dev) {
+-			ret = regmap_update_bits(st->regmap,
+-					AD7380_REG_ADDR_CONFIG1,
+-					AD7380_CONFIG1_OSR | AD7380_CONFIG1_RES,
+-					FIELD_PREP(AD7380_CONFIG1_OSR, osr) |
+-					FIELD_PREP(AD7380_CONFIG1_RES, boost));
++		if_not_cond_guard(iio_claim_direct_try, indio_dev)
++			return -EBUSY;
+ 
+-			if (ret)
+-				return ret;
++		ret = regmap_update_bits(st->regmap,
++					 AD7380_REG_ADDR_CONFIG1,
++					 AD7380_CONFIG1_OSR | AD7380_CONFIG1_RES,
++					 FIELD_PREP(AD7380_CONFIG1_OSR, osr) |
++					 FIELD_PREP(AD7380_CONFIG1_RES, boost));
+ 
+-			st->oversampling_ratio = val;
+-			st->resolution_boost_enabled = boost;
+-
+-			/*
+-			 * Perform a soft reset. This will flush the oversampling
+-			 * block and FIFO but will maintain the content of the
+-			 * configurable registers.
+-			 */
+-			return regmap_update_bits(st->regmap,
+-					AD7380_REG_ADDR_CONFIG2,
+-					AD7380_CONFIG2_RESET,
+-					FIELD_PREP(AD7380_CONFIG2_RESET,
+-						   AD7380_CONFIG2_RESET_SOFT));
+-		}
+-		unreachable();
++		if (ret)
++			return ret;
++
++		st->oversampling_ratio = val;
++		st->resolution_boost_enabled = boost;
++
++		/*
++		 * Perform a soft reset. This will flush the oversampling block
++		 * and FIFO but will maintain the content of the configurable
++		 * registers.
++		 */
++		return regmap_update_bits(st->regmap, AD7380_REG_ADDR_CONFIG2,
++					  AD7380_CONFIG2_RESET,
++					  FIELD_PREP(AD7380_CONFIG2_RESET,
++						     AD7380_CONFIG2_RESET_SOFT));
++	}
+ 	default:
+ 		return -EINVAL;
+ 	}
 
-Thanks,
+---
+base-commit: 431c39f6d3edbab14f48dbf37a58ccdc0ac3be1e
+change-id: 20241001-cleanup-if_not_cond_guard-0981d867ddf8
 
-Maxime
+Best regards,
+-- 
+David Lechner <dlechner@baylibre.com>
+
 
