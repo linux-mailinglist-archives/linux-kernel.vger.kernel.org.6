@@ -1,47 +1,62 @@
-Return-Path: <linux-kernel+bounces-379964-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379966-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id B3C1C9AE678
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:31:45 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 630F29AE67E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:32:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 38FD71F26684
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:31:45 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DA9281F26964
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:32:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9E1FA1F582D;
-	Thu, 24 Oct 2024 13:25:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 452371F668A;
+	Thu, 24 Oct 2024 13:26:22 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PKCWqs/a"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="mqNEzRNA"
+Received: from mx0b-0031df01.pphosted.com (mx0b-0031df01.pphosted.com [205.220.180.131])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D332E1E00BE;
-	Thu, 24 Oct 2024 13:25:49 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBAF71EC012;
+	Thu, 24 Oct 2024 13:26:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.180.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776349; cv=none; b=EpbPc5xv0EOEFLLtSpyNGY/uGtk1SuR2LMa6basnv2GhJrV/ScsDFNiie/grwy0PbpLeFZXg168SZo+aW/WDPyeOUnkS5ds9NWcEmY8dnpkLFDI1objq6IEEwaAIJL7oiI2PLZYD5fwZZpPoJ9zeRih2pRo4XyJFI4Ei1WeOmKk=
+	t=1729776381; cv=none; b=sHP9IzEofRaJNkrUTwAjXBZbegYt/RgOU4iw9X44Ptn6HqJu3AQCS7bxwEq47w+9CZr9BVutw0UmX8vo7iz74QaLcs9nsvYwxUzTSjB1CwxPWvQtA5DstTHmMMo/nBHVS3z9z4tD3E4ppTcTorFQ0Dn6azsfZ+7egaOhlp85j4I=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776349; c=relaxed/simple;
-	bh=/bCUgKsOIY9L86GlFHL9HXtDC1qqaWN9FN+5Tsyd+x4=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=Hz+/YOc0L/9PP5uBUkWvHhLw19OrRwK9jOMOUbxNLVrOvJaXHE2+il9iuwN2PQuqtdJEtv0uCER6f8c1WragP8rpvByCOVgwWf3YJEINazQcPgFZ+3+xF0L0mROiuORidJg2yTQ0pCxYAWbkmGf6yru/TzgXJHoXqIcgUcnwSHU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PKCWqs/a; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id B5AF6C4CEC7;
-	Thu, 24 Oct 2024 13:25:42 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729776349;
-	bh=/bCUgKsOIY9L86GlFHL9HXtDC1qqaWN9FN+5Tsyd+x4=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=PKCWqs/a86q4KST0J+KvzF0T62MLxDhhkDHhA8wtIml5AyBV7Aglnii9Cb2Uw9Z4M
-	 nL8tfDh7APEr5uUvY2vunEBYxwnI7d9mUiQ5RffzJIMDHUAT4/WyFK0oh9VXyVvGAb
-	 d5P9VFwJJKpsjpdhfx7OVlK9jXETA6TFj++Hxh8vnQN3lgrArM38vhwQqARtSv+RtK
-	 ch7pTQENHJAl/Fum+JrPlmbnZvBzCpNyZ48BzoOvFLSe0hNsb1yj0YpoPHJ0FDmKCu
-	 ruNY26ePL2BSZ/dxNlxi97//r2avf7xd69nHlPjzSWru2O7aKKprnFS6fHsMnCsTXo
-	 aCwd9Kboj7QPw==
-Message-ID: <6d8015dd-f656-4c33-b906-09104cc366b5@kernel.org>
-Date: Thu, 24 Oct 2024 15:25:40 +0200
+	s=arc-20240116; t=1729776381; c=relaxed/simple;
+	bh=0tls3eGOr1d6ACH2zu/yvzcAsZUIwQyO8rlVmljl+5U=;
+	h=Message-ID:Date:MIME-Version:Subject:References:From:To:CC:
+	 In-Reply-To:Content-Type; b=Zp+BOubpFAkJOFD2SxmoA26/zOYq4j6WSizDSM9+jIi3z1wHhifVnUyHksgQhMIqfN1KccXxglcRXi2CZGMrQ/w0FlV/vJXcwod1j7NVmIFLEmfF3hyu1uwRVc6JTP8YDeHs0p3EsuV/l6VhdbRinj4YZBhsRltmr4w76RXr6sA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=mqNEzRNA; arc=none smtp.client-ip=205.220.180.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279869.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OAFMvf027445;
+	Thu, 24 Oct 2024 13:25:53 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	I7RK5WYlfvj4gbXTMQ+TD923FalvRwp02PWzUc+gprs=; b=mqNEzRNAbT4TvVYy
+	d/roNlhOLQFBcON9Z0JKJy9qb0or9Yc7aWOWS+f9ftsC+7v6htletI15/cIRr2uj
+	s8EpEy6b7uZ6bvI7oYVU42059OngWWQiO6KnbMaJ6yqIp6Oh01iHDJxb0Bo3vrW7
+	W+vAEuz4UqF3ynaNSmr78d5zN/tpQe/mXMZonVc5+zIXvh2gn0vPRwbEC46gubcx
+	ZnNu9MWrY4bdosHAtxRHSDYSVGpGq5p8giBHzXRsB17kC3C4KmapvU7ZrRgO4fh9
+	Ot+zqvfaxCW7H4VKzUYdtWWiiXiorsR/bo7M6HWIcKUBWfPsCGcAuvQF8Iv+dXaM
+	95p9QA==
+Received: from nalasppmta01.qualcomm.com (Global_NAT1.qualcomm.com [129.46.96.20])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em41wqhw-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:25:53 +0000 (GMT)
+Received: from nalasex01c.na.qualcomm.com (nalasex01c.na.qualcomm.com [10.47.97.35])
+	by NALASPPMTA01.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49ODPqXD010676
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 13:25:52 GMT
+Received: from [10.50.41.186] (10.80.80.8) by nalasex01c.na.qualcomm.com
+ (10.47.97.35) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
+ 2024 06:25:45 -0700
+Message-ID: <641f830e-8d21-4bc0-abe2-59e2c4d29b92@quicinc.com>
+Date: Thu, 24 Oct 2024 18:55:42 +0530
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,153 +64,168 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 11/14] dt-bindings: pinctrl: stm32: support for stm32mp215
- and additional packages
-To: Antonio Borneo <antonio.borneo@foss.st.com>
-Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
- Alexandre Torgue <alexandre.torgue@foss.st.com>,
- Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
- linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
- =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
- Stephane Danieau <stephane.danieau@foss.st.com>,
- Amelie Delaunay <amelie.delaunay@foss.st.com>,
- Fabien Dessenne <fabien.dessenne@foss.st.com>,
- Valentin Caron <valentin.caron@foss.st.com>,
- Gatien Chevallier <gatien.chevallier@foss.st.com>,
- Cheick Traore <cheick.traore@foss.st.com>,
- linux-stm32@st-md-mailman.stormreply.com
-References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
- <20241022155658.1647350-12-antonio.borneo@foss.st.com>
- <2g65375shtjq4udjfarfspqtpg5q27oeerqskt2uzwj44pvnbb@rderpevnrzxs>
- <334845caee45ed72ef08867f23f69b5333be57c5.camel@foss.st.com>
-From: Krzysztof Kozlowski <krzk@kernel.org>
+Subject: Re: RFC: Advice on adding support for Qualcomm IPQ9574 SoC Ethernet
+References: <f0f0c065-bf7c-4106-b5e2-bfafc6b52101@quicinc.com>
+ <d2929bd2-bc9e-4733-a89f-2a187e8bf917@quicinc.com>
+ <817a0d2d-e3a6-422c-86d2-4e4216468fe6@lunn.ch>
+ <c7d8109d-8f88-4f4c-abb7-6ebfa1f1daa3@quicinc.com>
+ <Zv_6mf3uYcqtHC2j@shell.armlinux.org.uk>
+ <ba1bf2a6-76b7-4e82-b192-86de9a8b8012@quicinc.com>
+ <7b5227fc-0114-40be-ba5d-7616cebb4bf9@lunn.ch>
 Content-Language: en-US
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <334845caee45ed72ef08867f23f69b5333be57c5.camel@foss.st.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+From: Kiran Kumar C.S.K <quic_kkumarcs@quicinc.com>
+To: Andrew Lunn <andrew@lunn.ch>
+CC: "Russell King (Oracle)" <linux@armlinux.org.uk>, <netdev@vger.kernel.org>,
+        Andy Gross <agross@kernel.org>, Bjorn Andersson <andersson@kernel.org>,
+        Konrad Dybcio <konrad.dybcio@linaro.org>,
+        "David S. Miller"
+	<davem@davemloft.net>,
+        Eric Dumazet <edumazet@google.com>, Jakub Kicinski
+	<kuba@kernel.org>,
+        Paolo Abeni <pabeni@redhat.com>, Rob Herring
+	<robh+dt@kernel.org>,
+        Krzysztof Kozlowski
+	<krzysztof.kozlowski+dt@linaro.org>,
+        Conor Dooley <conor+dt@kernel.org>,
+        Philipp Zabel <p.zabel@pengutronix.de>,
+        Jacob Keller
+	<jacob.e.keller@intel.com>,
+        Bhupesh Sharma <bhupesh.sharma@linaro.org>,
+        <linux-arm-msm@vger.kernel.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>, <vsmuthu@qti.qualcomm.com>,
+        <arastogi@qti.qualcomm.com>, <linchen@qti.qualcomm.com>,
+        <john@phrozen.org>, Luo Jie <quic_luoj@quicinc.com>,
+        Pavithra R <quic_pavir@quicinc.com>,
+        "Suruchi Agarwal (QUIC)" <quic_suruchia@quicinc.com>,
+        "Lei Wei (QUIC)"
+	<quic_leiwei@quicinc.com>
+In-Reply-To: <7b5227fc-0114-40be-ba5d-7616cebb4bf9@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: nasanex01b.na.qualcomm.com (10.46.141.250) To
+ nalasex01c.na.qualcomm.com (10.47.97.35)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-GUID: MPx0gafbH9Rl4DwypXNRnvMgvRnCsQDT
+X-Proofpoint-ORIG-GUID: MPx0gafbH9Rl4DwypXNRnvMgvRnCsQDT
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 clxscore=1015 impostorscore=0
+ adultscore=0 bulkscore=0 malwarescore=0 mlxlogscore=999 mlxscore=0
+ spamscore=0 lowpriorityscore=0 priorityscore=1501 phishscore=0
+ suspectscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240110
 
-On 23/10/2024 12:08, Antonio Borneo wrote:
-> On Wed, 2024-10-23 at 10:51 +0200, Krzysztof Kozlowski wrote:
->> On Tue, Oct 22, 2024 at 05:56:55PM +0200, Antonio Borneo wrote:
->>> From: Amelie Delaunay <amelie.delaunay@foss.st.com>
->>>
->>> Add support for st,stm32mp215-pinctrl and st,stm32mp215-z-pinctrl.
+On 10/22/2024 7:07 PM, Andrew Lunn wrote:
+>> Apologies for the delay in response. I understand that the PCS<->PHY
+>> clocks may be out of the scope of PCS DT due to the reasons you mention.
+>> However would like to clarify that the MII clocks referred to here, are
+>> part of the connection between the MAC and PCS and not between PCS and PHY.
 >>
->> So all previous patches are for this? Then they are supposed to be here.
-> 
-> Hi Krzysztof,
-> 
-> I'm not sure I fully get your point here.
-> The previous patches in this series add the new features to the already upstreamed STM32MP257.
-> The same features are also needed here by STM32MP215 and in next patches 12/14 and 13/14 by STM32MP235.
-
-commit msgs could be improved here, sorry, I have no clue for what
-devices are you bringing this for. Putting here new SoC clearly suggests
-that it is for new Soc, so entire split is incorrect.
-
-> 
+>> Below is a diagram that shows the sub-blocks inside the 'UNIPHY' block
+>> of IPQ9574 which houses the PCS and the serdes, along with the clock
+>> connectivity. The MII Rx/Tx clocks are supplied from the NSS CC, to the
+>> GMII channels between PCS and MAC. So, it seemed appropriate to have
+>> these clocks described as part of the PCS DT node.
 >>
->>> Add packages AM, AN and AO (values : 0x1000, 0x2000 and 0x8000)
->>>
->>> Signed-off-by: Amelie Delaunay <amelie.delaunay@foss.st.com>
->>> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
->>> ---
->>>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml         | 4 +++-
->>>  include/dt-bindings/pinctrl/stm32-pinfunc.h                   | 3 +++
->>>  2 files changed, 6 insertions(+), 1 deletion(-)
->>>
->>> diff --git a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
->>> index 9a7ecfea6eb5b..0a2d644dbece3 100644
->>> --- a/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
->>> +++ b/Documentation/devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml
->>> @@ -27,6 +27,8 @@ properties:
->>>        - st,stm32mp135-pinctrl
->>>        - st,stm32mp157-pinctrl
->>>        - st,stm32mp157-z-pinctrl
->>> +      - st,stm32mp215-pinctrl
->>> +      - st,stm32mp215-z-pinctrl
->>>        - st,stm32mp257-pinctrl
->>>        - st,stm32mp257-z-pinctrl
->>>  
->>> @@ -59,7 +61,7 @@ properties:
->>>        Indicates the SOC package used.
->>>        More details in include/dt-bindings/pinctrl/stm32-pinfunc.h
->>>      $ref: /schemas/types.yaml#/definitions/uint32
->>> -    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800]
->>> +    enum: [0x1, 0x2, 0x4, 0x8, 0x100, 0x400, 0x800, 0x1000, 0x2000, 0x4000]
->>>  
->>>  patternProperties:
->>>    '^gpio@[0-9a-f]*$':
->>> diff --git a/include/dt-bindings/pinctrl/stm32-pinfunc.h b/include/dt-bindings/pinctrl/stm32-pinfunc.h
->>> index af3fd388329a0..01bc8be78ef72 100644
->>> --- a/include/dt-bindings/pinctrl/stm32-pinfunc.h
->>> +++ b/include/dt-bindings/pinctrl/stm32-pinfunc.h
->>> @@ -41,6 +41,9 @@
->>>  #define STM32MP_PKG_AI 0x100
->>>  #define STM32MP_PKG_AK 0x400
->>>  #define STM32MP_PKG_AL 0x800
->>> +#define STM32MP_PKG_AM 0x1000
->>> +#define STM32MP_PKG_AN 0x2000
->>> +#define STM32MP_PKG_AO 0x4000
->>
->> Why these are some random hex values but not for example 0x801, 0x802
->> and 0x803? That's an enum, so bitmask does not make sense here.
+>>               +-------+ +---------+  +-------------------------+
+>>    -----------|CMN PLL| |  GCC    |  |   NSSCC (Divider)       |
+>>    |25/50mhz  +----+--+ +----+----+  +--+-------+--------------+
+>>    |clk            |         |          ^       |
+>>    |       31.25M  |  SYS/AHB|clk  RX/TX|clk    +------------+
+>>    |       ref clk |         |          |       |            |
+>>    |               |         v          | MII RX|TX clk   MAC| RX/TX clk
+>>    |            +--+---------+----------+-------+---+      +-+---------+
+>>    |            |  |   +----------------+       |   |      | |     PPE |
+>>    v            |  |   |     UNIPHY0            V   |      | V         |
+>>   +-------+     |  v   |       +-----------+ (X)GMII|      |           |
+>>   |       |     |  +---+---+   |           |--------|------|-- MAC0    |
+>>   |       |     |  |       |   |           | (X)GMII|      |           |
+>>   |  Quad |     |  |SerDes |   |  (X)PCS   |--------|------|-- MAC1    |
+>>   |       +<----+  |       |   |           | (X)GMII|      |           |
+>>   |(X)GPHY|     |  |       |   |           |--------|------|-- MAC2    |
+>>   |       |     |  |       |   |           | (X)GMII|      |           |
+>>   |       |     |  +-------+   |           |--------|------|-- MAC3    |
+>>   +-------+     |              |           |        |      |           |
+>>                 |              +-----------+        |      |           |
+>>                 +-----------------------------------+      |           |
 > 
-> The are bitmask. You can check in patch 14/14 that adds a new package to the existing code of STM32MP257.
-> Do you prefer I rewrite them all as, e.g.
-> #define STM32MP_PKG_AO (1 << 14)
-> ?
+> Thanks for the detailed diagram. That always helps get things
+> straight.
+> 
+> Im i correct in says that MII RX|TX is identical to MAC RX|TX? These
+> two clocks are used by the MAC and XPCS to clock data from one to the
+> other? If they are the exact same clocks, i would suggest you use the
+> same name, just to avoid confusion.
+> 
 
-OK, so where is this bitmask used in DTS? These are bindings, not some
-random defines for driver.
+Yes, these two clocks are used by MAC and PCS to clock data to one
+another. The MAC Rx/Tx clocks and MII Rx/Tx clocks are different clocks
+and can be enabled/disabled independently. However their parent clock is
+the same and hence their rate is same at all times. For example, the
+phylink ops will set the rate of MAC Rx/Tx during a link speed change,
+and this same rate is effected for the MII Rx/Tx clock.
 
-Best regards,
-Krzysztof
+Sure for the purpose of rest of this discussion, we can refer to them as
+MII Rx/Tx clocks.
 
+I would also like to clarify that each of the '(X)PCS' blocks shown in
+the diagram, includes two PCS types, a 'PCS' type that supports 1Gbps
+PCS modes, and another 'XPCS' block (Synopsys) that supports 10Gbps PCS
+modes. The MII Rx/Tx clocks from the NSS CC, are supplied to the xGMII
+channels of both these PCS.
+
+> Both XPCS and PPE are clock consumers, so both will have a phandle
+> pointing to the NSSCC clock provider?
+> 
+
+Yes, this is correct.
+
+>> We had one other question on the approach used in the driver for PCS
+>> clocks, could you please provide your comments.
+>>
+>> As we can see from the above diagram, each serdes in the UNIPHY block
+>> provides the clocks to the NSSCC, and the PCS block consumes the MII
+>> Rx/Tx clocks. In our current design, the PCS/UNIPHY driver registers a
+>> provider driver for the clocks that the serdes supplies to the NSS CC.
+> 
+> That sounds reasonable>
+>> It also enables the MII Rx/Tx clocks which are supplied to the PCS from
+>> the NSS CC. Would this be an acceptable design to have the PCS driver
+>> register the clock provider driver and also consume the MII Rx/Tx
+>> clocks? It may be worth noting that the serdes and PCS are part of the
+>> same UNIPHY block and also share same register region.
+> 
+> Does the SERDES consume the MII Rx/Tx? Your diagram indicates it does
+> not. 
+
+The SERDES in the UNIPHY does not consume the MII Rx/Tx clocks. The
+consumer of these clocks is the PCS block within the UNIPHY.
+
+The SERDES only provides the source Rx/tx clocks to the NSS CC, and the
+NSS CC divides this clock and supplies the per-channel MII Rx/Tx clocks
+to the PCS.
+
+> I'm just wondering if you have circular dependencies at runtime?
+> 
+> Where you will need to be careful is probe time vs runtime. Since you
+> have circular phandles you need to first create all the clock
+> providers, and only then start the clock consumers. Otherwise you
+> might get into an endless EPROBE_DEFER loop.
+> 
+
+The Rx/Tx clocks sourced from the SERDES are registered as provider
+clocks by the UNIPHY/PCS driver during probe time. There is no runtime
+operation needed for these clocks after this.
+
+The MII Rx/Tx clocks are enabled later when the MAC is initialized by
+the network driver. The network driver calls an API exported by the PCS
+driver, which creates the PCS instance and enables the MII Rx/Tx clocks.
+Ideally, the PCS driver probe should have completed and provider clocks
+registered, by the time the MAC is initialized (we handle the error case
+in case the probe is still not complete).
+
+> 	Andrew
+> 
 
