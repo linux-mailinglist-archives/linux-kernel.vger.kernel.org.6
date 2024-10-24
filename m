@@ -1,127 +1,81 @@
-Return-Path: <linux-kernel+bounces-379587-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379589-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id C3DD89AE0C6
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:30:47 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 283149AE0C9
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:31:09 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 6EBF01F22E0E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:30:47 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id D3EBB1F2103A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:31:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C044F1C57B2;
-	Thu, 24 Oct 2024 09:27:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0B3211B6CE2;
+	Thu, 24 Oct 2024 09:28:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="vocs0RTR";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="1l5Ra5jI"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="spum1RnW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 30F801C4A25;
-	Thu, 24 Oct 2024 09:27:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5B05F1B6CE4;
+	Thu, 24 Oct 2024 09:28:23 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762074; cv=none; b=NLsXVD+thk7mrzNU5QtabHEDICST8AGW6FtWnPXLyPIIfvmMIMbACxcoNeKjyx+ZBXQTcGh7W8OzjlJYIYhSijMzfpps3EvZxwBxE358zHBMZRUW6pOAIks9xKPTuX1Z8hOpW78gPghMd+6mI4+msTJAYu9i02fxjF//2/5//eI=
+	t=1729762103; cv=none; b=dOzKv5MCs40raIAClw6jkkFP7PJlIJdhvl27J0I3rI4WxzTcalonKAEdbSXu1uxks0DWVNWxN7Zn4ASG2zqmyta25OIRu2fvbNTBkOAznRuk3RHNXChGoplBYaYSFvnLROwW+QNigGXO2t6Q9KLeI57KCcdwYzv/1iS3Lw0o5jg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762074; c=relaxed/simple;
-	bh=miyR+SzU+I8808ma3SpXhlGoPA3lkkwnyXAMNVmYwQs=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=cLRD+Su0FDbS0wLxEk4XlnLeXq0EYgKPYr65zPKxfFlIdWiFBmiGkyFcSSW3ZMIkNc2iB8F2fhiX0/zJyU78fcd9zZuY3QuCEGam14X5BD0UQmt6MyqxZxgwIvf5tT/EuSB6RpewxtceO8g2OeS5Xx1lwwxOUMFgliLEgyTLhFE=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=vocs0RTR; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=1l5Ra5jI; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 24 Oct 2024 09:27:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729762070;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bttuY1UzmMWkqLcWWIvpLvijkPjjapxvk7ONObJ4n3w=;
-	b=vocs0RTRqKZ8ZvnPuXMxIeRzg1Fc2gI59LNq/iye/prrAMpLTUAvYwe+W5DSmf0j6qjGAU
-	ScHld+8xUCo2SLJ8B/fz170lpI8XLnT6aKhjwXY725KUiHnNwgWXPALpxzv2GeA/cg0402
-	UD3eSKcmreA3ecytositYyS/NH7Dorh8XBnUA6aa+di+lS5lt7RcvsuKsbzGdozKkkQpTe
-	l115Ucz/9108lw/t4fjQjvLrip10EeuA+vWBRpKaqxuLlItR00SN+DAQ1CJYOx0LDZRv6/
-	D4li2JrFzpJcs1qOz11Y2HNltvxqW16I9NMmco6AJn/xqXYVpm+UXFh7ddqS3Q==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729762070;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=bttuY1UzmMWkqLcWWIvpLvijkPjjapxvk7ONObJ4n3w=;
-	b=1l5Ra5jI406MpfcUZ5smMc47/JTcpnb/qZod5cN3kcT6dA15jrRVukG06rro6/D1Nz4But
-	1xsXlMA/szB0nRCQ==
-From: "tip-bot2 for Zijun Hu" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: irq/core] genirq/devres: Don't free interrupt which is not
- managed by devres
-Cc: Zijun Hu <quic_zijuhu@quicinc.com>, Thomas Gleixner <tglx@linutronix.de>,
- x86@kernel.org, linux-kernel@vger.kernel.org, maz@kernel.org
-In-Reply-To: <20241018-devres_kernel_fix-v2-1-08918ae84982@quicinc.com>
-References: <20241018-devres_kernel_fix-v2-1-08918ae84982@quicinc.com>
+	s=arc-20240116; t=1729762103; c=relaxed/simple;
+	bh=fpZS2foOhIzknpZzRCdMwXYMyunLK4oDNzT92es9hpE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=qvIrwQ2uRRLhIY2Pz4YHBEQ2oJlICOGGE/lMB/lRoJ1eKVQzqpRT2FjHT+3E/DDleg83WNUvVRsuQebwLXg7b5lwJ7J1GfP6IhlpbQ2d6ch8Q91E6xC/3+rm8Hl1XSvLt/sZbM4UMgIQ3+77We0V2B1GTokEZR4tkho1/eslXpw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=spum1RnW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 6BAD4C4CEE7;
+	Thu, 24 Oct 2024 09:28:21 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729762102;
+	bh=fpZS2foOhIzknpZzRCdMwXYMyunLK4oDNzT92es9hpE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=spum1RnW6kPn60EfTEu9IM4h+2F4Z7UJECedzefe49Z9psqdU5WQRu5PSa5xHxvB0
+	 ctap6yaNpLrPTEGPliSbg/2b8U3iKGr1BzlAbWSL9PQkXt8k64vVzUrNGIXaKPxfWa
+	 UZHOengOghgPQchAgCRJXgypakIbIVHmkZBMeDnDd7CfC3KXJXWCpbDRNVDQCe05NT
+	 RzatV5taDaZ9WVPM81j5qjyHMPHM4iJk2nJIVLOn/mxxskGqKjFRwu6i8BBnYW7PVS
+	 EiSwQGcfefHX5FltuvrextsD6jjRf3PE6Iqs+lr3tEFP9jpq2QkBHC4HklaqJwBYa6
+	 68TZu8Lquwrnw==
+Date: Thu, 24 Oct 2024 11:28:09 +0200
+From: Andi Shyti <andi.shyti@kernel.org>
+To: Tyrone Ting <warp5tw@gmail.com>
+Cc: Paul Menzel <pmenzel@molgen.mpg.de>, avifishman70@gmail.com, 
+	tmaimon77@gmail.com, tali.perry1@gmail.com, venture@google.com, yuenn@google.com, 
+	benjaminfair@google.com, andriy.shevchenko@linux.intel.com, wsa@kernel.org, 
+	rand.sec96@gmail.com, wsa+renesas@sang-engineering.com, tali.perry@nuvoton.com, 
+	Avi.Fishman@nuvoton.com, tomer.maimon@nuvoton.com, KWLIU@nuvoton.com, JJLIU0@nuvoton.com, 
+	kfting@nuvoton.com, openbmc@lists.ozlabs.org, linux-i2c@vger.kernel.org, 
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH v7 2/4] i2c: npcm: Modify the client address assignment
+Message-ID: <n4buyofrjkgvbgimcziqpm7hfba6du64lbe4aa42d4dhyx6zdn@m4ofnrx66ww6>
+References: <20241021062732.5592-1-kfting@nuvoton.com>
+ <20241021062732.5592-3-kfting@nuvoton.com>
+ <67d34216-e98b-43d9-afd1-2e73ffb71968@molgen.mpg.de>
+ <CACD3sJb_xF_wYuLEMV3yF0HdtrOX3vnPUdZ6_x5yof7yj4yUNg@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172976206906.1442.8513689121984168909.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <CACD3sJb_xF_wYuLEMV3yF0HdtrOX3vnPUdZ6_x5yof7yj4yUNg@mail.gmail.com>
 
-The following commit has been merged into the irq/core branch of tip:
+Hi Tyrone,
 
-Commit-ID:     2396eefa075a31884d3336e1e94db47a0bd2a456
-Gitweb:        https://git.kernel.org/tip/2396eefa075a31884d3336e1e94db47a0bd2a456
-Author:        Zijun Hu <quic_zijuhu@quicinc.com>
-AuthorDate:    Fri, 18 Oct 2024 20:08:25 +08:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 24 Oct 2024 11:20:06 +02:00
+On Tue, Oct 22, 2024 at 04:08:46PM +0800, Tyrone Ting wrote:
+> Hi Paul:
+> 
+> Thank you for your comment.
+> 
+> It'll be addressed in the next patch set.
 
-genirq/devres: Don't free interrupt which is not managed by devres
+No need to resend, I can take care of it.
 
-If devres_destroy() does not find a matching devres entry, then
-devm_free_irq() emits a warning and tries to free the interrupt.
-
-That's wrong as devm_free_irq() should only undo what devm_request_irq()
-set up.
-
-Replace devres_destroy() with a call to devres_release() which only invokes
-the release function (free_irq()) in case that a matching devres entry was
-found.
-
-[ tglx: Massaged change log ]
-
-Signed-off-by: Zijun Hu <quic_zijuhu@quicinc.com>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Link: https://lore.kernel.org/all/20241018-devres_kernel_fix-v2-1-08918ae84982@quicinc.com
----
- kernel/irq/devres.c | 3 +--
- 1 file changed, 1 insertion(+), 2 deletions(-)
-
-diff --git a/kernel/irq/devres.c b/kernel/irq/devres.c
-index b3e9866..eb16a58 100644
---- a/kernel/irq/devres.c
-+++ b/kernel/irq/devres.c
-@@ -141,9 +141,8 @@ void devm_free_irq(struct device *dev, unsigned int irq, void *dev_id)
- {
- 	struct irq_devres match_data = { irq, dev_id };
- 
--	WARN_ON(devres_destroy(dev, devm_irq_release, devm_irq_match,
-+	WARN_ON(devres_release(dev, devm_irq_release, devm_irq_match,
- 			       &match_data));
--	free_irq(irq, dev_id);
- }
- EXPORT_SYMBOL(devm_free_irq);
- 
+Andi
 
