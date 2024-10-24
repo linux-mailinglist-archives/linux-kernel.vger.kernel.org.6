@@ -1,226 +1,155 @@
-Return-Path: <linux-kernel+bounces-380057-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380058-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id 694EB9AE8B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:28:44 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 246459AE8C8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:29:54 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 09D5BB2B781
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:22:08 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 1B4FBB2A27C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:22:23 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4A24F1E7642;
-	Thu, 24 Oct 2024 14:11:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id F02E01F81A1;
+	Thu, 24 Oct 2024 14:12:16 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="tXbjfB/r"
-Received: from mail-lf1-f48.google.com (mail-lf1-f48.google.com [209.85.167.48])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="OO8ojSh9"
+Received: from mail-ej1-f53.google.com (mail-ej1-f53.google.com [209.85.218.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2D6561E6310
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:11:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.48
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 37AB81E1C33;
+	Thu, 24 Oct 2024 14:12:13 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729779114; cv=none; b=fRffXVkgjM35XZJACwA2QbtKJHsTRBbl9TgPLu8GJTZcNo8dLkDFwo+POkkTO8uVkkSyjzRE3OHFp5hmoixJUCVh7zseVqmTGIHPgoNGq2O7UBWi8tmJ734TK7IuOU382koaIginUYrQpt9bWHXWVdzqHDt/+mtGd3UpMAqMlCE=
+	t=1729779136; cv=none; b=SV31HwW/x3YVdzaZQQaM/Mlbam+k/TyTR68/FqLMbH9ntaNJMkUAbDtG+nnXI3hUC3Vf4Sash7zrBIaBzW2+6CF6KCiEoQ5rlAEygl5pYkvkaB27MRC8HVsjpSkdRh8t6h+4pH0d1XrlmS6BUTU76NaNcDmC9Qgh/pZbVfTgztA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729779114; c=relaxed/simple;
-	bh=lqmT+r653RdRrzSZOkkjKvp3hFHCnHasX2x/4lhXbvg=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=HUz1ztDWFarAeql+mVGD2MeXC3ALRGwWP/ijJFCazbwfosUX53ExG13czVg+zQxu71JXq8CnEEF+l5SnKYS3iVIAN5xNF2JOFDJUwHvmjXa5Ufn44UL1qFFhqOjqQvqgOJyQOyXmB4wQTkTHIEipoDwLJR+GNj5fh7tnqYWyzq8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=tXbjfB/r; arc=none smtp.client-ip=209.85.167.48
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f48.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so948777e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:11:51 -0700 (PDT)
+	s=arc-20240116; t=1729779136; c=relaxed/simple;
+	bh=Nj1ebmcv/mm+UDNIZ/dfe2bFowbODDJCifUQEhsRIc0=;
+	h=Message-ID:Subject:From:To:Cc:Date:In-Reply-To:References:
+	 Content-Type:MIME-Version; b=bWUMIsTZ0T0CZn267tXThIYOK5hVEQ0XYpak3aF7w4Lfx/xu6Sp2CFSQV3WRW8tDeSOfumJiRg7w50bEG7Ae//gLtVRQWppSORd31nX8+983bZ9JDhSvmbFObDYy5OCRoBOjcAzU6tTfZ80HcK/dqekl1UvOWE+vzzrP3fWM3hs=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=OO8ojSh9; arc=none smtp.client-ip=209.85.218.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-ej1-f53.google.com with SMTP id a640c23a62f3a-a93c1cc74fdso124221566b.3;
+        Thu, 24 Oct 2024 07:12:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729779110; x=1730383910; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=hBTDZGJSJezW1oIqUmwfyQ/68sB4Fcb6GTFi1oxGtnk=;
-        b=tXbjfB/rF4yYfNG/b89wEHGTVVFH9gMLCW5NXRMsf6bTu6ud9yRcHH9WUHmssuZsX+
-         OAT5Xzm+iFGGDtBN4B3yGHC7oNYu3wFs2UuGcBYvSbvYRGVfkX85J1QhWbRbF1nHYrGB
-         oq1idDiAk2YFDrKtYFwmalO6jRK3BkFBxB2RqWExS/yn0Yc1v1EaiDFiuUZw47a5KKTH
-         ffDKWJCxP7h4LysT1SHiBJ70YzuzT2sn9nS5unEyoNV3OOEccy6uMTWJ2KUV5C7jZGHm
-         8rqVE5IRBizAQmk5GuU6FrX8B8XhZPwpDD3y13NfxEZMae02r4+up9st920oFiQF3kq0
-         R28g==
+        d=gmail.com; s=20230601; t=1729779132; x=1730383932; darn=vger.kernel.org;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:from:to:cc:subject
+         :date:message-id:reply-to;
+        bh=Nj1ebmcv/mm+UDNIZ/dfe2bFowbODDJCifUQEhsRIc0=;
+        b=OO8ojSh9WDsj0rSgpByfnZd8pchVCJixVmCqBD7Nuq/IafPo//zv4YvTA/jlmifCb6
+         F+sVpCVvOAz5iHnEPZw4xhzQO0+Ck8MlVUTwhNKnDr3ADCw/8KDNtac1+qngjzLVZWMf
+         M/QOHhBiWqgmRyaKwpM8rvTQcEP3f6urnJlFIHVDx2yRXoouMxZAr1C5PbpQD9SxHQih
+         4ryQY/MAY/y9HTia1nzCqLKRG7p+7MgQZ08sl/zG7mbPMaBGd7UH7XLAX0BCPV/yiCIs
+         8t8VwXenp1F3vVOqXjFZMOmLvs4wuvgcLZfG6aZhCIX357yj8vSFdoFofVxQz2y5Rh23
+         cYdg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729779110; x=1730383910;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=hBTDZGJSJezW1oIqUmwfyQ/68sB4Fcb6GTFi1oxGtnk=;
-        b=msEOfMrkSH+oVinhOXmxinKvVBbDNhVLpuAEMA1IMsSwjE7W0pzRcLWzQarysZjsj+
-         yZTNFAo94zFyxowx4DrxNwIXpoOzT7czCckbnWtuQ/IULR/LxwZ67CZOAD+wmUlRs6C1
-         ITYB1GRKmtZifRPwMRCWiOKEm+tFocW077U8uWoingv8tpLhPXGvAefOYeVWJzko+1a0
-         J3y28K+eNcSIrxSj3Z6urL25NHiFVoGoFeqpfThCmdpONDyrgs1mzYD35idiKj0/+5Ds
-         lvqN5VR4y0Ug8dNs8hy68VgBDUmsoA+CXYd5I7iw/72/oo5LkfnKnnnxAiyOZh1xyZ9Y
-         E1/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCVk1vSAWS09d9CqSMCpVvMWvIjWiEZR45S/Ut6BK6SottqJfNUv1c0zqMQgCq2PO5VVhDpv5A4+tt1VlLU=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyLH5C7moVNl0Lvan4B5lBlA22mxzGirnOCdwZQvU59N78NOkCM
-	EYeVcGjzODFrEeAuRXjHxsRdNNfXwoWh/8gdHLl8qsj3pQ8sPbsHsRpYufrU5Ac=
-X-Google-Smtp-Source: AGHT+IGg7is/kIrzc6VmTxx5IqP0aKqapiA+TM635IqbIW5Gb9gpSoSXMadGLLvGOyI4kBAuaUniOQ==
-X-Received: by 2002:a05:6512:1054:b0:539:efdb:4324 with SMTP id 2adb3069b0e04-53b23debc01mr1603314e87.21.1729779110076;
-        Thu, 24 Oct 2024 07:11:50 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2243ee9esm1392073e87.275.2024.10.24.07.11.49
+        d=1e100.net; s=20230601; t=1729779132; x=1730383932;
+        h=mime-version:user-agent:content-transfer-encoding:references
+         :in-reply-to:date:cc:to:from:subject:message-id:x-gm-message-state
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=Nj1ebmcv/mm+UDNIZ/dfe2bFowbODDJCifUQEhsRIc0=;
+        b=M1hfSyAFg+CcONEC7HzZUIxreW4aC2yiL67qybvvtItkeOHr76k4S2JEtIyvkI7m91
+         E5p0ZMq4LvTg1sStrCI3+/918mnE/BrMebXilZV6/eQKfk5bJpmpYl61PPfXPJRFTarE
+         xEYfGr9RjpDodZ2SWzx/V2Y7eudQPVsNHy2Wy4AiA67VaWrYDAGzpG3FF+jWLicc1ZTp
+         nUDRi1u6DPHxun+Pn2p9t1Jx7V7xB8S7cJSHH6FZJpKZkWyIZRz1TrDM5bnXiW8MHsim
+         hhwjJp812s3KKsz0JSsBBbwB7ZOQ7M9cDrb8zOD6N02o3tVcZl3lqDdExohs9Oewbekj
+         Zy8Q==
+X-Forwarded-Encrypted: i=1; AJvYcCVdtsi0NSvF5w9GLMocYLbK9+SBiCHsUPBQa2Y8TbnSUb90ApqjIi5sEhK6cjzctLlkeG/sNWK4QOds@vger.kernel.org, AJvYcCVjEPYBHTLeivO1s0jYtIDnkNmT3fG0gxXaDDuGGHE5q4WPtX6N0aIocPmCIjbeX1bgFza0oyD6vA+8@vger.kernel.org, AJvYcCWPqg0b22MDkQkSNYwcKwn80m0crJYIhGNtIzfye7mZbCGEUI9baRnme6t0GJCr5kvjdExp1knRpn3A@vger.kernel.org, AJvYcCXNyyHoN8M7BUuCFcpkpUZo5tSBRPjM+4NxswhUMDlWdCmu9oFp6g0EA70Dm1UHXvFX67Njt8Nesh5O@vger.kernel.org, AJvYcCXjF2z3wqXa5U6vPgAZ1suTuXjX0hU5E9UURxKB8krZWFiuFLQRqJeaaloI2saz+OYddMyoLiKcX1ndL53W@vger.kernel.org
+X-Gm-Message-State: AOJu0YxhVBYtTEkX8wmGP/rcQ0JTqI+mDefSnoOtZcsb7UAkn8y0GvNV
+	ElvPGegIS9TwzFipYJ6+5+UMk0z3Jf478IXE29S/P2FyGoQKl5Sy
+X-Google-Smtp-Source: AGHT+IHpDlN3uiwFaGU+NjrmHJnbgiUpiTHuzfNHuRoy7uR9tWOnbsFsdxmjuDvqcRRC+hYZGgSCDw==
+X-Received: by 2002:a17:906:7309:b0:a9a:55de:11f4 with SMTP id a640c23a62f3a-a9abf96d176mr580734466b.54.1729779132047;
+        Thu, 24 Oct 2024 07:12:12 -0700 (PDT)
+Received: from ?IPv6:2001:a61:34c9:ea01:14b4:7ed9:5135:9381? ([2001:a61:34c9:ea01:14b4:7ed9:5135:9381])
+        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a9159a214sm627093766b.213.2024.10.24.07.12.11
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 07:11:49 -0700 (PDT)
-Date: Thu, 24 Oct 2024 17:11:47 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Tingguo Cheng <quic_tingguoc@quicinc.com>
-Cc: quic_fenglinw@quicinc.com, quic_tingweiz@quicinc.com, 
-	kernel@quicinc.com, Bjorn Andersson <andersson@kernel.org>, 
-	Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs615: Adds SPMI bus, PMIC and
- peripherals
-Message-ID: <ddonr55gfcmaj74ciowd23y2qtq3l6yj7g6hp63xoojvkgepwr@czigbkgexbpj>
-References: <20241024-adds-spmi-pmic-peripherals-for-qcs615-v2-1-f262ba243b63@quicinc.com>
+        Thu, 24 Oct 2024 07:12:11 -0700 (PDT)
+Message-ID: <72afe00622075f77b410e9537cca0a7ac5a4cba3.camel@gmail.com>
+Subject: Re: [PATCH RFC v4 00/15] spi: axi-spi-engine: add offload support
+From: Nuno =?ISO-8859-1?Q?S=E1?= <noname.nuno@gmail.com>
+To: David Lechner <dlechner@baylibre.com>, Mark Brown <broonie@kernel.org>, 
+ Jonathan Cameron <jic23@kernel.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Nuno =?ISO-8859-1?Q?S=E1?= <nuno.sa@analog.com>, Uwe
+ =?ISO-8859-1?Q?Kleine-K=F6nig?= <ukleinek@kernel.org>
+Cc: Michael Hennerich <Michael.Hennerich@analog.com>, Lars-Peter Clausen
+	 <lars@metafoo.de>, David Jander <david@protonic.nl>, Martin Sperl
+	 <kernel@martin.sperl.org>, linux-spi@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-iio@vger.kernel.org, linux-pwm@vger.kernel.org
+Date: Thu, 24 Oct 2024 16:12:11 +0200
+In-Reply-To: <20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+References: 
+	<20241023-dlech-mainline-spi-engine-offload-2-v4-0-f8125b99f5a1@baylibre.com>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
+User-Agent: Evolution 3.52.4 (3.52.4-1.fc40) 
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241024-adds-spmi-pmic-peripherals-for-qcs615-v2-1-f262ba243b63@quicinc.com>
 
-On Thu, Oct 24, 2024 at 04:09:48PM +0800, Tingguo Cheng wrote:
-> Add SPMI bus arbiter and include pm8150.dtsi for PMIC peripherals in
-> pmm6155au which is a variant of pm8150. The power key and volume do-
-> wn key are controlled by PMIC PON hardware on pmm6155au.
-> 
-> Signed-off-by: Tingguo Cheng <quic_tingguoc@quicinc.com>
-> ---
-> This patch depends on the patch series:
-> - https://lore.kernel.org/all/20241022-add_initial_support_for_qcs615-v4-0-0a551c6dd342@quicinc.com/
-> ---
-> Changes in v2:
-> - Include "pm8150.dtsi" for QCS615 PMIC instead of creating a new
->   qcs615-pmic.dtsi in the case that pmm6155au is a variant of pm8150.
-> - Fixed comments from community in V1.
-> - Link to v1: https://lore.kernel.org/r/20241014-adds-spmi-pmic-peripherals-for-qcs615-v1-1-8a3c67d894d8@quicinc.com
-> ---
->  arch/arm64/boot/dts/qcom/qcs615-ride.dts | 27 +++++++++++++++++++++++++++
->  arch/arm64/boot/dts/qcom/qcs615.dtsi     | 23 +++++++++++++++++++++++
->  2 files changed, 50 insertions(+)
-> 
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615-ride.dts b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> index ee6cab3924a6d71f29934a8debba3a832882abdd..71ea0cb32eebed713b2a80ab692b14fdb4bd0ce4 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> +++ b/arch/arm64/boot/dts/qcom/qcs615-ride.dts
-> @@ -6,6 +6,7 @@
->  
->  #include <dt-bindings/regulator/qcom,rpmh-regulator.h>
->  #include "qcs615.dtsi"
-> +#include "pm8150.dtsi"
->  / {
->  	model = "Qualcomm Technologies, Inc. QCS615 Ride";
->  	compatible = "qcom,qcs615-ride", "qcom,qcs615";
-> @@ -210,6 +211,32 @@ &rpmhcc {
->  	clocks = <&xo_board_clk>;
->  };
->  
-> +&spmi_bus {
-> +	pmm6155au_0: pmic@0 {
+Hi David,
 
-There is a label already, please use it.
+On Wed, 2024-10-23 at 15:59 -0500, David Lechner wrote:
+> In this revision, I ended up changing quite a bit more that I was
+> expecting.
+>=20
+> In the DT bindings, I ended up dropping the #spi-offload-cells and
+> spi-offload properties. A couple of reasons for this:
+>=20
+> 1. Several people commented that it is odd to have a separate provider/
+> =C2=A0=C2=A0 consumer binding for something that already has a parent/chi=
+ld
+> =C2=A0=C2=A0 relationship (both on this series and in another unrelated s=
+eries
+> =C2=A0=C2=A0 with io-backends). For now, the only SPI offload provider is=
+ the AXI
+> =C2=A0=C2=A0 SPI Engine, which is a SPI controller.
+> 2. In a discussion unrelated to this series, but related to the idea
+> =C2=A0=C2=A0 of SPI offloads [1], it became apparent that the proposed us=
+e for
+> =C2=A0=C2=A0 the cells to select triggers and tx/rx streams doesn't actua=
+lly
+> =C2=A0=C2=A0 work for that case.
+> 3. In offline review, it was suggested that assigning specific offloads
+> =C2=A0=C2=A0 to specific peripherals may be too restrictive, e.g. if ther=
+e are
+> =C2=A0=C2=A0 controllers that have pools of identical offloads. This idea=
+ of
+> =C2=A0=C2=A0 pools of generic offloads has also come up in previous discu=
+ssions
+> =C2=A0=C2=A0 on the mailing list.
+>=20
+> [1]:
+> https://lore.kernel.org/linux-iio/e5310b63-9dc4-43af-9fbe-0cc3b604ab8b@ba=
+ylibre.com/
+>=20
+> So the idea is that if we do end up needing to use DT to assign certain
+> resources (triggers, DMA channels, etc.) to specific peripherals, we
+> would make a mapping attribute in the controller node rather than using
+> phandle cells. But we don't need this yet, so it isn't present in The
+> current patches.
+>=20
+> And if we ever end up with a SPI offload provider that is not a SPI
+> controller, we can bring back the #spi-offload-cells and
+> spi-offload properties.
 
-> +
-> +		pon: pon@800 {
+Well I do like we kind of gave a step back and are more focused in supporti=
+ng what we
+have and know at the moment. And I think (for what I saw so far) things are=
+ being
+implemented in fairly flexible manner. So yeah, as far as I'm concerned, I =
+liked what
+I saw so far. Hopefully everyone can agree on this so we drop the RFC :)
 
-No, use the label syntax instead of extending the node in-tree.
+I'll try to look at the remaining patches tomorrow...
 
-> +
-> +			/delete-property/ mode-bootloader;
-> +			/delete-property/ mode-recovery;
-> +
-> +			pon_pwrkey: pwrkey {
-> +				status = "okay";
-> +			};
-> +
-> +			pon_resin: resin {
-> +				linux,code = <KEY_VOLUMEDOWN>;
-> +				status = "okay";
-> +			};
-> +		};
-> +
-> +		pmm6155au_0_gpios: gpio@c000 {};
+- Nuno S=C3=A1
 
-What for?
 
-> +	};
-> +
-> +	pmm6155au_1: pmic@1 {
-> +		status = "disabled";
-
-Why?
-
-> +	};
-> +};
-> +
->  &uart0 {
->  	status = "okay";
->  };
-> diff --git a/arch/arm64/boot/dts/qcom/qcs615.dtsi b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> index ac4c4c751da1fbb28865877555ba317677bc6bd2..3fc928913239cfc61c24d1b16c183b96f38e589d 100644
-> --- a/arch/arm64/boot/dts/qcom/qcs615.dtsi
-> +++ b/arch/arm64/boot/dts/qcom/qcs615.dtsi
-
-Don't mix SoC and board changes into a single patch, unless they are
-really touching the same function. In this case they are not.
-
-> @@ -517,6 +517,29 @@ sram@c3f0000 {
->  			reg = <0x0 0x0c3f0000 0x0 0x400>;
->  		};
->  
-> +		spmi_bus: spmi@c440000 {
-> +			compatible = "qcom,spmi-pmic-arb";
-> +			reg = <0x0 0x0c440000 0x0 0x1100>,
-> +			      <0x0 0x0c600000 0x0 0x2000000>,
-> +			      <0x0 0x0e600000 0x0 0x100000>,
-> +			      <0x0 0x0e700000 0x0 0xa0000>,
-> +			      <0x0 0x0c40a000 0x0 0x26000>;
-> +			reg-names = "core",
-> +				    "chnls",
-> +				    "obsrvr",
-> +				    "intr",
-> +				    "cnfg";
-> +			interrupts-extended = <&pdc 1 IRQ_TYPE_LEVEL_HIGH>;
-> +			interrupt-names = "periph_irq";
-> +			interrupt-controller;
-> +			#interrupt-cells = <4>;
-> +			#address-cells = <2>;
-> +			#size-cells = <0>;
-> +			cell-index = <0>;
-> +			qcom,channel = <0>;
-> +			qcom,ee = <0>;
-> +		};
-> +
->  		intc: interrupt-controller@17a00000 {
->  			compatible = "arm,gic-v3";
->  			reg = <0x0 0x17a00000 0x0 0x10000>,     /* GICD */
-> 
-> ---
-> base-commit: de938618db2bafbe1a70c8fc43f06ccdd60364b2
-> change-id: 20240929-adds-spmi-pmic-peripherals-for-qcs615-16ee53179a7d
-> prerequisite-change-id: 20241022-add_initial_support_for_qcs615-2256f64a9c24:v4
-> prerequisite-patch-id: 09782474af7eecf1013425fd34f9d2f082fb3616
-> prerequisite-patch-id: 624720e543d7857e46d3ee49b8cea413772deb4c
-> prerequisite-patch-id: 04ca722967256efddc402b7bab94136a5174b0b9
-> prerequisite-patch-id: ab88a42ec69ad90e8509c9c5b7c6bdd595a7f783
-> prerequisite-patch-id: 918724fafe43acaa4c4b980bfabe36e9c3212cd1
-> prerequisite-patch-id: 3bd8edd83297815fcb1b81fcd891d3c14908442f
-> prerequisite-patch-id: fc1cfec4ecd56e669c161c4d2c3797fc0abff0ae
-> 
-> Best regards,
-> -- 
-> Tingguo Cheng <quic_tingguoc@quicinc.com>
-> 
-
--- 
-With best wishes
-Dmitry
 
