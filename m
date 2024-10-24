@@ -1,111 +1,133 @@
-Return-Path: <linux-kernel+bounces-379596-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379590-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id CE1279AE0D4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:32:27 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 49A469AE0CB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:31:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 8DB762813C5
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:32:26 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 07BBE285119
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:31:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 44E001C07D9;
-	Thu, 24 Oct 2024 09:30:24 +0000 (UTC)
-Received: from SHSQR01.spreadtrum.com (mx1.unisoc.com [222.66.158.135])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 32E421C07F5;
+	Thu, 24 Oct 2024 09:29:06 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="3xhg7WMU";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="lqrE1DXK"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E46371B3922
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:30:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=222.66.158.135
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D03041B6D03;
+	Thu, 24 Oct 2024 09:29:02 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762223; cv=none; b=HtoIEFeCqU04NLUptFo5rifKCEjxAFKH3UthDiYC8gD4v/qQ9OmjJNZRLFWN6PtTooXfz/O043l5kkYwdqOCAPSt5jvc/TxUrzcgDtg3Bhps7JRfKCydryUugCgl3wY+/6X9fxjZHJIFyFUUy0fbCpBqTYKuH6s++c/UpnBQpTE=
+	t=1729762145; cv=none; b=Kl1beueVWNE6rSMvjKAW5dhkaBZbwvbm2yQ9ni4dsZeK955qNB+GoUqa09XlwV/Px8WJeqRogJN+zM34neHqSJeEC87Oa8in+/Tt43ec4+metwgSwAJZqWuPKBrrG83p3sXGCFf7MLCkwGsnPfPMImobxncgTqG9VFnpuPUjB0Q=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762223; c=relaxed/simple;
-	bh=XrlQbrMrrU7eqJ4H7oAN38ZAaKV7863YZkDzNXs739U=;
-	h=From:To:CC:Subject:Date:Message-ID:MIME-Version:Content-Type; b=PA4OuAwec7KSphXkx0eUxD1wcwQyAWh/nOj6ARNnCRrcK3CerKAiV97FHEBidvC2a+Av/X71xnhuSKzz54dHVxEt7KwyTHWAtLWqNx+uY1GRpBNxybe4BgQKaM84QBRwgGhnZ/7AvMSDnX9tnZRkUYHF5I1RyQdM45n4JTh/70A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com; spf=pass smtp.mailfrom=unisoc.com; arc=none smtp.client-ip=222.66.158.135
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=unisoc.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=unisoc.com
-Received: from dlp.unisoc.com ([10.29.3.86])
-	by SHSQR01.spreadtrum.com with ESMTP id 49O9T9bL001342;
-	Thu, 24 Oct 2024 17:29:09 +0800 (+08)
-	(envelope-from Zhiguo.Niu@unisoc.com)
-Received: from SHDLP.spreadtrum.com (bjmbx02.spreadtrum.com [10.0.64.8])
-	by dlp.unisoc.com (SkyGuard) with ESMTPS id 4XZ0wD1k5Mz2K25Nw;
-	Thu, 24 Oct 2024 17:28:44 +0800 (CST)
-Received: from bj08434pcu.spreadtrum.com (10.0.73.87) by
- BJMBX02.spreadtrum.com (10.0.64.8) with Microsoft SMTP Server (TLS) id
- 15.0.1497.23; Thu, 24 Oct 2024 17:29:07 +0800
-From: Zhiguo Niu <zhiguo.niu@unisoc.com>
-To: <jaegeuk@kernel.org>, <chao@kernel.org>
-CC: <linux-f2fs-devel@lists.sourceforge.net>, <linux-kernel@vger.kernel.org>,
-        <niuzhiguo84@gmail.com>, <zhiguo.niu@unisoc.com>, <ke.wang@unisoc.com>,
-        <Hao_hao.Wang@unisoc.com>
-Subject: [PATCH] f2fs-tools: correct some confused desc about unit
-Date: Thu, 24 Oct 2024 17:28:54 +0800
-Message-ID: <1729762134-380-1-git-send-email-zhiguo.niu@unisoc.com>
-X-Mailer: git-send-email 1.9.1
+	s=arc-20240116; t=1729762145; c=relaxed/simple;
+	bh=6LLwMKEQXUk9GBzeogcSMrXtG6dBY+EeooUzkbS59lQ=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=PXZMhLJKfiKumKHA4d23X3KMeZ8sGZCOXg/6ZW2O4iwrbRMfKznvPVtApvTxlI1wpWTL8z4f1m41FtSMJInha9jnkZu4b25HrW6HPYXFEthwbf7Q1Q3c7cm5tI2z+/O1YcDjEGfCVWFpgxjzQ+KOD+7KZSOXelT+gwU3qsnFzY0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=3xhg7WMU; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=lqrE1DXK; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 24 Oct 2024 09:29:00 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729762141;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NhrCmJObgMxysv3N6jTdVp+yl3UFq7Cg/1kaDD3exw=;
+	b=3xhg7WMUfDj3lC1oYQfABpP1Fi9ay1uIfQmqMJ4gsxc4jONfRWGPzaRKSwVQPQNA/bzvTG
+	MJkEutj83ja/KROEmHuV5u2x7N9iKZXy7+M4uA7cyrLMY+UlXlyicqommU/LDrajuN4xJE
+	8HYVNpo85itHXQPVfB3k2t69Xe8/osirgLPA7AnEk+aFUSd8HIlTzSdD0wXKjZk7XIV7Zg
+	uT4MZNKNyOlrNcq4zdOugvfeax6vqFwEat2WMaW/457/hnfQkWaFIrdAHT9EpPBJ9gTFez
+	hbZJI9qCHaX/XMvp7eYdYtvM0CajfGEAmgyhEPttPblzqob3OUlORqPI62LedQ==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729762141;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=8NhrCmJObgMxysv3N6jTdVp+yl3UFq7Cg/1kaDD3exw=;
+	b=lqrE1DXKA9j0OkVdn4Own6mfy3TOM0PZK50xoKQ+U7ROIrAgLaHKjBp9qGygZB/1m+/7D5
+	3588DRxgYQjjpGBw==
+From: "tip-bot2 for Julia Lawall" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject: [tip: timers/core] posix-timers: Replace call_rcu() by kfree_rcu()
+ for simple kmem_cache_free() callback
+Cc: Julia Lawall <Julia.Lawall@inria.fr>, Thomas Gleixner <tglx@linutronix.de>,
+ "Uladzislau Rezki (Sony)" <urezki@gmail.com>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20241013201704.49576-12-Julia.Lawall@inria.fr>
+References: <20241013201704.49576-12-Julia.Lawall@inria.fr>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain
-X-ClientProxiedBy: SHCAS01.spreadtrum.com (10.0.1.201) To
- BJMBX02.spreadtrum.com (10.0.64.8)
-X-MAIL:SHSQR01.spreadtrum.com 49O9T9bL001342
+Message-ID: <172976214021.1442.3589271792962891221.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
-F2FS_BLKSIZE may be 4KB, 16KB, so use F2FS_BLKSIZE to replace
-some hardcode desc about unit in some f2fs_io cmd, also
-adjust "-c" parameters in mkfs man, to be consistent with
-commit c35fa8cd75ac ("mkfs.f2fs: change -c option description").
+The following commit has been merged into the timers/core branch of tip:
 
-Signed-off-by: Zhiguo Niu <zhiguo.niu@unisoc.com>
+Commit-ID:     2e529e637cef39057d9cf199a1ecb915d97ffcd9
+Gitweb:        https://git.kernel.org/tip/2e529e637cef39057d9cf199a1ecb915d97ffcd9
+Author:        Julia Lawall <Julia.Lawall@inria.fr>
+AuthorDate:    Sun, 13 Oct 2024 22:16:58 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 24 Oct 2024 11:22:54 +02:00
+
+posix-timers: Replace call_rcu() by kfree_rcu() for simple kmem_cache_free() callback
+
+Since SLOB was removed and since commit 6c6c47b063b5 ("mm, slab: call
+kvfree_rcu_barrier() from kmem_cache_destroy()"), it is not longer
+necessary to use call_rcu() when the callback only performs
+kmem_cache_free(). Use kfree_rcu() directly.
+
+The changes were made using Coccinelle.
+
+Signed-off-by: Julia Lawall <Julia.Lawall@inria.fr>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Reviewed-by: Uladzislau Rezki (Sony) <urezki@gmail.com>
+Link: https://lore.kernel.org/all/20241013201704.49576-12-Julia.Lawall@inria.fr
 ---
- man/mkfs.f2fs.8         | 2 +-
- tools/f2fs_io/f2fs_io.c | 6 +++---
- 2 files changed, 4 insertions(+), 4 deletions(-)
+ kernel/time/posix-timers.c |  9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
 
-diff --git a/man/mkfs.f2fs.8 b/man/mkfs.f2fs.8
-index de885be..8b3b0cc 100644
---- a/man/mkfs.f2fs.8
-+++ b/man/mkfs.f2fs.8
-@@ -122,7 +122,7 @@ block size matches the page size.
- The default value is 4096.
- .TP
- .BI \-c " device-list"
--Build f2fs with these additional comma separated devices, so that the user can
-+Build f2fs with these additional devices, so that the user can
- see all the devices as one big volume.
- Supports up to 7 devices except meta device.
- .TP
-diff --git a/tools/f2fs_io/f2fs_io.c b/tools/f2fs_io/f2fs_io.c
-index 95f575f..ee4ed0e 100644
---- a/tools/f2fs_io/f2fs_io.c
-+++ b/tools/f2fs_io/f2fs_io.c
-@@ -1013,7 +1013,7 @@ static void do_randread(int argc, char **argv, const struct cmd_desc *cmd)
+diff --git a/kernel/time/posix-timers.c b/kernel/time/posix-timers.c
+index 4576aae..fc40dac 100644
+--- a/kernel/time/posix-timers.c
++++ b/kernel/time/posix-timers.c
+@@ -413,18 +413,11 @@ static struct k_itimer * alloc_posix_timer(void)
+ 	return tmr;
+ }
  
- #define fiemap_desc "get block address in file"
- #define fiemap_help					\
--"f2fs_io fiemap [offset in 4kb] [count in 4kb] [file_path]\n\n"\
-+"f2fs_io fiemap [offset in F2FS_BLKSIZE] [count in F2FS_BLKSIZE] [file_path]\n\n"\
- 
- #if defined(HAVE_LINUX_FIEMAP_H) && defined(HAVE_LINUX_FS_H)
- static void do_fiemap(int argc, char **argv, const struct cmd_desc *cmd)
-@@ -1617,8 +1617,8 @@ static void do_move_range(int argc, char **argv, const struct cmd_desc *cmd)
- #define gc_range_desc "trigger filesystem gc_range"
- #define gc_range_help "f2fs_io gc_range [sync_mode] [start] [length] [file_path]\n\n"\
- "  sync_mode : 0: asynchronous, 1: synchronous\n"			\
--"  start     : start offset of defragment region, unit: 4kb\n"	\
--"  length    : bytes number of defragment region, unit: 4kb\n"	\
-+"  start     : start offset of defragment region, unit: F2FS_BLKSIZE\n"	\
-+"  length    : bytes number of defragment region, unit: F2FS_BLKSIZE\n"	\
- 
- static void do_gc_range(int argc, char **argv, const struct cmd_desc *cmd)
+-static void k_itimer_rcu_free(struct rcu_head *head)
+-{
+-	struct k_itimer *tmr = container_of(head, struct k_itimer, rcu);
+-
+-	kmem_cache_free(posix_timers_cache, tmr);
+-}
+-
+ static void posix_timer_free(struct k_itimer *tmr)
  {
--- 
-1.9.1
-
+ 	put_pid(tmr->it_pid);
+ 	sigqueue_free(tmr->sigq);
+-	call_rcu(&tmr->rcu, k_itimer_rcu_free);
++	kfree_rcu(tmr, rcu);
+ }
+ 
+ static void posix_timer_unhash_and_free(struct k_itimer *tmr)
 
