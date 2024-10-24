@@ -1,99 +1,107 @@
-Return-Path: <linux-kernel+bounces-379637-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379636-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id 5D4C09AE167
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:49:27 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 242F49AE166
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:49:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 0F7A41F237F4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:49:27 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5345C1C22338
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:49:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BFEE11B6CFB;
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A9BB61B6CE7;
 	Thu, 24 Oct 2024 09:49:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="nG5uvlzk"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 594471B3935;
-	Thu, 24 Oct 2024 09:49:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 09A8D166F06;
+	Thu, 24 Oct 2024 09:49:14 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729763354; cv=none; b=E4++/Rkk9DUUTrgSGmiHx52mLrJtoEJbk0cpt939iEF5IcqanB/WyArjjvMPVEmkGxQ61HA4gEKotAziNfHxxwviJKZaNBX/cHHiIfKauCBPohuaWdKiGzNWrf/41Xs5aMVIIOEAdo8t9B3RcK6ZFfTxD0qpkA2ASZuP2+uc/jU=
+	t=1729763354; cv=none; b=qVmyy9p8CozTtl8M1cFw4yTc7VM56RBgr4gbFWSYwkBgTmWCDrnkYCZIPTu0rWJrty3bpCDGZPYd9kowA6Rlptf2hL2w/OTTnFJ4SvYse5D0g7Twmt5CESkVzSWDhp+HZneZlfP4OEkdgQAeM9CC6o28diXftuktraQAJIIRgDg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
 	s=arc-20240116; t=1729763354; c=relaxed/simple;
-	bh=aB2lRevzR8yR1hBpjnamd65HmUOLhBUzSa5mbuK6VI8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=B98qNfJDjZInc43C7pOwozsvCWM7Mw8Xx+DT8vLSAYe1GVmA4KvvLFtdABaFxyJuZciOxvdMH29IE/uAa97Ut7W5ZWmXxLGnWDun+MojsaRba9TN55AqcKo4ZXkXrQjHqX/tsPl+fAXbwwE8E54RdKfFTJmK5aZbKUB20DpJID0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 999C9C4CECC;
-	Thu, 24 Oct 2024 09:49:12 +0000 (UTC)
-Date: Thu, 24 Oct 2024 05:49:09 -0400
-From: Steven Rostedt <rostedt@goodmis.org>
-To: Christoph Hellwig <hch@infradead.org>
-Cc: Geert Uytterhoeven <geert@linux-m68k.org>, Guenter Roeck
- <linux@roeck-us.net>, Michael Ellerman <mpe@ellerman.id.au>, Kees Cook
- <kees@kernel.org>, Sasha Levin <sashal@kernel.org>,
- torvalds@linux-foundation.org, ksummit@lists.linux.dev,
- linux-kernel@vger.kernel.org
-Subject: Re: linus-next: improving functional testing for to-be-merged pull
- requests
-Message-ID: <20241024054909.49ae9faa@rorschach.local.home>
-In-Reply-To: <ZxoSZQSw0z6AdgaU@infradead.org>
-References: <ZxiN3aINYI4u8pRx@infradead.org>
-	<20241023042004.405056f5@rorschach.local.home>
-	<CAMuHMdUxrULbo=A77DFDE4ySbii3jSMuh8xVvUXaqyCnwEAU-w@mail.gmail.com>
-	<20241023051914.7f8cf758@rorschach.local.home>
-	<8734km2lt7.fsf@mail.lhotse>
-	<20241024010103.238ef40b@rorschach.local.home>
-	<07422710-19b2-412b-b8d5-7ec51b708693@roeck-us.net>
-	<20241024024928.6fb9d892@rorschach.local.home>
-	<CAMuHMdVLsLA97u4AVTA6=YKyfyWNrJOQk7S02s36AFTrFoUM3A@mail.gmail.com>
-	<20241024052139.2cf7397f@rorschach.local.home>
-	<ZxoSZQSw0z6AdgaU@infradead.org>
-X-Mailer: Claws Mail 3.17.8 (GTK+ 2.24.33; x86_64-pc-linux-gnu)
+	bh=9BLhkgL4XURDbwaZGl4ZxVwtctRHd2YeCfbIW4oFy60=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JZws3qL1BixP8OrKac3w+wCk+HAX8bUQxDwmIQwYURE6Rz/wpFo5/VLS1nN+ZDMNktx5cPYn9wui+P9jkndirMubCQccgEqa5UAi25hMSrRqaDlZNa3m9ZN21aamTb/oThi9o6tMuqN5Hry+Wfr6J1IfnQgUrs6Nv/U+wLW9X4U=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=nG5uvlzk; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D4FDAC4CEC7;
+	Thu, 24 Oct 2024 09:49:11 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729763353;
+	bh=9BLhkgL4XURDbwaZGl4ZxVwtctRHd2YeCfbIW4oFy60=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=nG5uvlzkQv6ocwBO4tA+Hk9n6WT7a95p/Uu5oSA1QkeS22jjr2n4qpw/iSioI8Gkr
+	 grFjuOWy9WggkQSYz/IFMWTutrvaBP0/voS3/oOiHdXS1pqybFRETGpDT4glpIOC8Z
+	 VIRUYe3bDNuhcC7aWjwrshmvcnA9KWyaH+D+VFVDa9dPVFe3vjdUXiVXFKxyknB+Xj
+	 v4djoCgBVrf/63smVhyUNmpPssGkh6PlfnmNjr3OMvxP1Dxx/+1DTlWzWuR8oPfHWn
+	 g1hMttwxQDvJVQvbjfiADk5+bXSQgPq9cM4qoKjXpYzZR1BriVrW4Ll5rJLXgDBzS4
+	 yho+XMgHeGOqA==
+Date: Thu, 24 Oct 2024 10:49:09 +0100
+From: Simon Horman <horms@kernel.org>
+To: Stefan Wahren <wahrenst@gmx.net>
+Cc: Andrew Lunn <andrew+netdev@lunn.ch>,
+	"David S. Miller" <davem@davemloft.net>,
+	Eric Dumazet <edumazet@google.com>,
+	Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+	Dan Carpenter <dan.carpenter@linaro.org>, netdev@vger.kernel.org,
+	linux-kernel@vger.kernel.org, stable@vger.kernel.org
+Subject: Re: [PATCH net] net: vertexcom: mse102x: Fix possible double free of
+ TX skb
+Message-ID: <20241024094909.GL402847@kernel.org>
+References: <20241022155242.33729-1-wahrenst@gmx.net>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022155242.33729-1-wahrenst@gmx.net>
 
-On Thu, 24 Oct 2024 02:24:53 -0700
-Christoph Hellwig <hch@infradead.org> wrote:
-
-> On Thu, Oct 24, 2024 at 05:21:39AM -0400, Steven Rostedt wrote:
-> > them as small as possible. That's not always the case, so maybe I could
-> > push it. But it will change my workflow quite a bit or burden Stephen
-> > with broken branches.
-> > 
-> > I'm still not convinced it's worth it.
-> > 
-> > We are not talking about new development code. We are talking about bug
-> > fixes for code that is in Linus's tree. The zero day bot and my tests
-> > appear to find most issues. Bugs that happened on my fixes patches are
-> > usually other use cases. For instance, cpu hotplug while tracing from
-> > rtla. That's not coverage I get from linux-next.  
+On Tue, Oct 22, 2024 at 05:52:42PM +0200, Stefan Wahren wrote:
+> The scope of the TX skb is wider than just mse102x_tx_frame_spi(),
+> so in case the TX skb room needs to be expanded, also its pointer
+> needs to be adjusted. Otherwise the already freed skb pointer would
+> be freed again in mse102x_tx_work(), which leads to crashes:
 > 
-> Seriously, just add your damn fixes tree to linux-next.  If your fixes
-> are as perfect as you claim that one time setup is all you need to do,
-> and you have less work than you spent arguing on this thread already.
+>   Internal error: Oops: 0000000096000004 [#2] PREEMPT SMP
+>   CPU: 0 PID: 712 Comm: kworker/0:1 Tainted: G      D            6.6.23
+>   Hardware name: chargebyte Charge SOM DC-ONE (DT)
+>   Workqueue: events mse102x_tx_work [mse102x]
+>   pstate: 20400009 (nzCv daif +PAN -UAO -TCO -DIT -SSBS BTYPE=--)
+>   pc : skb_release_data+0xb8/0x1d8
+>   lr : skb_release_data+0x1ac/0x1d8
+>   sp : ffff8000819a3cc0
+>   x29: ffff8000819a3cc0 x28: ffff0000046daa60 x27: ffff0000057f2dc0
+>   x26: ffff000005386c00 x25: 0000000000000002 x24: 00000000ffffffff
+>   x23: 0000000000000000 x22: 0000000000000001 x21: ffff0000057f2e50
+>   x20: 0000000000000006 x19: 0000000000000000 x18: ffff00003fdacfcc
+>   x17: e69ad452d0c49def x16: 84a005feff870102 x15: 0000000000000000
+>   x14: 000000000000024a x13: 0000000000000002 x12: 0000000000000000
+>   x11: 0000000000000400 x10: 0000000000000930 x9 : ffff00003fd913e8
+>   x8 : fffffc00001bc008
+>   x7 : 0000000000000000 x6 : 0000000000000008
+>   x5 : ffff00003fd91340 x4 : 0000000000000000 x3 : 0000000000000009
+>   x2 : 00000000fffffffe x1 : 0000000000000000 x0 : 0000000000000000
+>   Call trace:
+>    skb_release_data+0xb8/0x1d8
+>    kfree_skb_reason+0x48/0xb0
+>    mse102x_tx_work+0x164/0x35c [mse102x]
+>    process_one_work+0x138/0x260
+>    worker_thread+0x32c/0x438
+>    kthread+0x118/0x11c
+>    ret_from_fork+0x10/0x20
+>   Code: aa1303e0 97fffab6 72001c1f 54000141 (f9400660)
 > 
-> If it catches bugs eventually you will need to do more work, but save
-> others from deadling with your regression.  There is no downside for
-> you.
+> Cc: stable@vger.kernel.org
+> Fixes: 2f207cbf0dd4 ("net: vertexcom: Add MSE102x SPI support")
+> Signed-off-by: Stefan Wahren <wahrenst@gmx.net>
 
-So basically, all I need to do to satisfy your request is to add fixes
-branch that I push to that is pushed after it passes my tests (and not
-the urgent branch that is still being tested and may have bugs) and
-then have that be added to linux-next?
+Reviewed-by: Simon Horman <horms@kernel.org>
 
-Now I have been batching changes and not send a pull request right
-after my tests pass. I've been sending a pull request at most now once
-a week. So I could have this branch hold the code that's already been
-tested.
-
--- Steve
 
