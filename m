@@ -1,67 +1,61 @@
-Return-Path: <linux-kernel+bounces-379218-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379220-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 3158D9ADB88
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:32:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E72F9ADB92
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:43:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E7AD0283363
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:32:44 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 637321C219FD
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:43:24 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 717FC165F16;
-	Thu, 24 Oct 2024 05:32:40 +0000 (UTC)
-Received: from mail-wm1-f43.google.com (mail-wm1-f43.google.com [209.85.128.43])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C5D99171675;
+	Thu, 24 Oct 2024 05:43:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b="uD/31oaC"
+Received: from phobos.denx.de (phobos.denx.de [85.214.62.61])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 199B8C8F0
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:32:37 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 440F1C8F0;
+	Thu, 24 Oct 2024 05:43:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=85.214.62.61
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729747960; cv=none; b=idrGGzAbhMvDEBjJbN1szG6uo2FdClTGvgKmLZqRdBOopwBn2CFVznmdov7TNU32iuoipnp1wRt3lv3lLPcahnRzSc3X1UtoIBe4wWjGD0KXoJYKDmXzWQ75dpej2GwOAQwv9PQ+7rZYtdvKMWDOnlo/MbscNjh5G5yuHEwyXgg=
+	t=1729748598; cv=none; b=CQZC4gghRksORkGIUGSjiUOe1JYvgSSxFRi1A4lh//NH8bL794Xzyp0C9ugPm1SNbBN0NRfaWKYWMwy7CI/VafglPOu/K2EeH74jiDLi8PjuIVMIII8RPshepZs9lye6N6tcjVwSUaJYP9smJfumaKLiOlJpNq3SntnHeNjSg5s=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729747960; c=relaxed/simple;
-	bh=W84A4SU1sumiEa4fDWQR+FiBA3Q2+tkAMGPFD3K0Z5s=;
-	h=From:To:Subject:Date:Message-ID:MIME-Version; b=X56cP4JQDisGpcanSi1EmfMDZgZSMz1mCxjEeR6TWiMstjr4j9yTBac75d8XmmhAyes78Du+xwlygxYYP2K/SSbVQZ+jPYu5pSWDoAmwVkO7g+Oz4z3D+K2jsy9ew2vHRR6ScJHNMOVpCd+p7aiA9quyTFpzaCkLbYz4NHcWjCI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com; spf=pass smtp.mailfrom=gmail.com; arc=none smtp.client-ip=209.85.128.43
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=redhat.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-wm1-f43.google.com with SMTP id 5b1f17b1804b1-43159c9f617so4838895e9.2
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 22:32:37 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729747956; x=1730352756;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:to
-         :from:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=YH5WAbfffHLe148MN1TUgFq2819BDiCppIOTtAvWGLU=;
-        b=DiagOT9N4S7ps+1jaVOEKbuUHg572vQQQ/BD+POklLu0nXqTn3ttTTpV86VJvWLBY/
-         sfwoifvdrQeswgdOWGdB7miz05LiwTUATvXzkt9B7exC4QyuaQ7qp7Z3EEusSAzyxx3f
-         D31BrL2I9eNNikJQRHMIDSs8lrRNK7dlCjvm0+Unxqt3fmM07y+FsZwg/lMTQhMpGDxo
-         coT8nnsc0M+gVkl6en8AfdHE7Jiyj0aqy+qSlu9gbU2KY/+k7d7fItkDjll9Q1eoWkIR
-         hjhlukUG1Dbyl7Qj7aXeF9+qM/cg/eMQIoRx7uWQE1puPNr26fer6l8eSD6vaCjMsZ5w
-         D8cg==
-X-Forwarded-Encrypted: i=1; AJvYcCVe6hxfDjHm+N12x03PwbzKh4CQhWZvjhc0iAD/jI1+8yGnCxhas/wVRqR3BlBfg/Gu5Kb3Oi4cgD3tgOA=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yyz2AbhRrr7qpcEOlX6uEvKo2/27R6scbBXDLahBPxjAcXw8Irr
-	eDttHdeyhqdDNWmqiohhaPDD0hI7i0aUgRbm/wQ9lnXXJtwekwVG
-X-Google-Smtp-Source: AGHT+IH0AXB+6Mctvfib66WpI4pXmu5DrtC3WIQfCdAWRVWbg24KBQi+j3ldO7BUXJVeIWUwKJlX4w==
-X-Received: by 2002:a05:600c:4e8e:b0:42f:310f:de9 with SMTP id 5b1f17b1804b1-4318c6f4de2mr5275695e9.15.1729747956060;
-        Wed, 23 Oct 2024 22:32:36 -0700 (PDT)
-Received: from costa-tp.redhat.com ([2a00:a041:e281:f300:ddd7:8878:b93d:7c0b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd689fsm34612445e9.4.2024.10.23.22.32.32
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 22:32:34 -0700 (PDT)
-From: Costa Shulyupin <costa.shul@redhat.com>
-To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>,
-	Wei Yang <richard.weiyang@gmail.com>,
-	"Peter Zijlstra (Intel)" <peterz@infradead.org>,
-	Costa Shulyupin <costa.shul@redhat.com>,
-	Steven Rostedt <rostedt@goodmis.org>,
-	=?UTF-8?q?Ren=C3=A9=20Nyffenegger?= <mail@renenyffenegger.ch>,
-	linux-kernel@vger.kernel.org
-Subject: [PATCH] scripts/tags.sh: add regex to map IDT entries
-Date: Thu, 24 Oct 2024 08:32:06 +0300
-Message-ID: <20241024053212.2810988-1-costa.shul@redhat.com>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729748598; c=relaxed/simple;
+	bh=wjqS/t8+rcOU09Cga1EforbscJmeUuOflPkZevgZ7B8=;
+	h=From:To:Cc:Subject:Date:Message-Id:MIME-Version; b=P9swSg48lfQw4yHYbmkQ6zlfVIGB3HFCbAt4iilDHNfDarNhjQt/tj3W+G3yCp9s/lIOI2V/iVtNZf1LX89e5oq3Y9/qAxpiVamEpMFItnzIrPvBVAeFj9wApOFtaO6LYGVcIgxxlnB5yTfEConUn3BJ0wSNkP6o262ptJP11Ks=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de; spf=pass smtp.mailfrom=denx.de; dkim=pass (2048-bit key) header.d=denx.de header.i=@denx.de header.b=uD/31oaC; arc=none smtp.client-ip=85.214.62.61
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=denx.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=denx.de
+Received: from localhost.localdomain (82-131-200-27.pool.digikabel.hu [82.131.200.27])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits))
+	(No client certificate requested)
+	(Authenticated sender: hs@denx.de)
+	by phobos.denx.de (Postfix) with ESMTPSA id 0838888E0F;
+	Thu, 24 Oct 2024 07:43:13 +0200 (CEST)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=denx.de;
+	s=phobos-20191101; t=1729748594;
+	bh=67XcJrpAeWLTopuAGqI8NMDSv4lhCuMcrzl9ZzSiXug=;
+	h=From:To:Cc:Subject:Date:From;
+	b=uD/31oaCMBI34Ew9AH7yCtoh/G8kSIEnWl8L+NX3j/um1WNeBGCv0jJBObFACk//e
+	 LpPnXPf622DwJHThGb3Yb75oaMN3cMe5C8C1NtagePsWKhNO+0pqPCHUgqOXAtJdxD
+	 hhPcGbUjOJiAjHHErz3g8laEJjoCR5ckLOct0Zqx3ITLkkOjVySJzW9c2IrVTPTO7Z
+	 iJFj3bEAp3hyu3Bpf6+IMyWUj2wNgYRFPmngycNiLTB4RnecnTl8RiJv6sShaUnEQM
+	 irQDXp9DVsBGoulXwbdnsLPUlM6Y+WF0+81jvNC3Xx8e1T2dNWRLVo85OshaKChLLe
+	 RccIIuHwGyJ6w==
+From: Heiko Schocher <hs@denx.de>
+To: linux-kernel@vger.kernel.org
+Cc: Heiko Schocher <hs@denx.de>,
+	Jarkko Sakkinen <jarkko@kernel.org>,
+	Jason Gunthorpe <jgg@ziepe.ca>,
+	Peter Huewe <peterhuewe@gmx.de>,
+	linux-integrity@vger.kernel.org
+Subject: [PATCH v1] tpm: tis_i2c: add ST33KTPM2XI2C compatible entry
+Date: Thu, 24 Oct 2024 07:43:04 +0200
+Message-Id: <20241024054304.26714-1-hs@denx.de>
+X-Mailer: git-send-email 2.20.1
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -69,32 +63,40 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
+X-Virus-Scanned: clamav-milter 0.103.8 at phobos.denx.de
+X-Virus-Status: Clean
 
-Source code samples:
+add compatible entry "st,st33ktpm2xi2c" for ST33KTPM2XI2C
+chip from ST.
 
-DECLARE_IDTENTRY_IRQ(X86_TRAP_OTHER,       common_interrupt);
+datasheet:
+https://www.st.com/resource/en/data_brief/st33ktpm2xi2c.pdf
 
-DEFINE_IDTENTRY_IRQ(common_interrupt)
+This entry is already documented in
+Documentation/devicetree/bindings/tpm/tcg,tpm-tis-i2c.yaml
 
-Signed-off-by: Costa Shulyupin <costa.shul@redhat.com>
+and so we should add this compatible entry in the
+related driver.
+
+Signed-off-by: Heiko Schocher <hs@denx.de>
 ---
- scripts/tags.sh | 2 ++
- 1 file changed, 2 insertions(+)
 
-diff --git a/scripts/tags.sh b/scripts/tags.sh
-index 0d01c1cafb70..1f6f4f92f5e6 100755
---- a/scripts/tags.sh
-+++ b/scripts/tags.sh
-@@ -210,6 +210,8 @@ regex_c=(
- 	'/\<\(DEFINE\|DECLARE\)_STATIC_KEY_\(TRUE\|FALSE\)\(\|_RO\)([[:space:]]*\([[:alnum:]_]\+\)/\4/'
- 	'/^SEQCOUNT_LOCKTYPE(\([^,]*\),[[:space:]]*\([^,]*\),[^)]*)/seqcount_\2_t/'
- 	'/^SEQCOUNT_LOCKTYPE(\([^,]*\),[[:space:]]*\([^,]*\),[^)]*)/seqcount_\2_init/'
-+	'/^\<DECLARE_IDTENTRY[[:alnum:]_]*([^,)]*,[[:space:]]*\([[:alnum:]_]\+\)/\1/'
-+	'/^\<DEFINE_IDTENTRY[[:alnum:]_]*([[:space:]]*\([[:alnum:]_]\+\)/\1/'
- )
- regex_kconfig=(
- 	'/^[[:blank:]]*\(menu\|\)config[[:blank:]]\+\([[:alnum:]_]\+\)/\2/'
+ drivers/char/tpm/tpm_tis_i2c.c | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/drivers/char/tpm/tpm_tis_i2c.c b/drivers/char/tpm/tpm_tis_i2c.c
+index 6cd07dd34507..933e10c7522e 100644
+--- a/drivers/char/tpm/tpm_tis_i2c.c
++++ b/drivers/char/tpm/tpm_tis_i2c.c
+@@ -384,6 +384,7 @@ MODULE_DEVICE_TABLE(i2c, tpm_tis_i2c_id);
+ static const struct of_device_id of_tis_i2c_match[] = {
+ 	{ .compatible = "infineon,slb9673", },
+ 	{ .compatible = "nuvoton,npct75x", },
++	{ .compatible = "st,st33ktpm2xi2c", },
+ 	{ .compatible = "tcg,tpm-tis-i2c", },
+ 	{}
+ };
 -- 
-2.47.0
+2.20.1
 
 
