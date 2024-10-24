@@ -1,47 +1,59 @@
-Return-Path: <linux-kernel+bounces-379627-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379628-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id AA97F9AE13D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:43:02 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 92C149AE13F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 7034E2825DF
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:43:01 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 089AFB22265
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:43:17 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 563B61B4F0C;
-	Thu, 24 Oct 2024 09:40:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17F471B6D17;
+	Thu, 24 Oct 2024 09:41:34 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Hr76N39h"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b="pQjVpp93"
+Received: from www62.your-server.de (www62.your-server.de [213.133.104.62])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9A46B757FC;
-	Thu, 24 Oct 2024 09:40:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 22D5818A6DE;
+	Thu, 24 Oct 2024 09:41:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=213.133.104.62
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762838; cv=none; b=BbmjjVwK5JA4F9G/+f+LMpC3lFuEmj37Il4ZUO+Nnm2eIx/MIfFnTEYOUR4bmElfPvP3wGK2Eu7nKW1d7JVl8mjda72sLtLjRTGAVnc/fYg2Vs232oZsbTCAQWSBPOELPlkfsYyNPoM4m5AbezaK0mHt6wJiCmsi5z1lbWxOEr8=
+	t=1729762893; cv=none; b=rsRSgOXGXo2Sz9MD7ToQCZS4kjJENeXWsd+6L2nBWKBlUpPq0GqknmhEpSl7/7wbUp5PXBeAQlC9TE8l48lY9caZfhKftcTM0VhOuC7mNJiGSljp9SazcmP3NFdGXbY0GuxvZ0pcpPu36iqnLgV4QU+QjkmnmwzL38YIj4DLobc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762838; c=relaxed/simple;
-	bh=UgaClKqL89aOXGMXlS/Dbd/YI1FCmKhio1aXFNz6EXo=;
+	s=arc-20240116; t=1729762893; c=relaxed/simple;
+	bh=ma0g7GLcEQrQVNhgwck0mm7KyLelohOqXLM+hb3/50k=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=duUD5YLnjcxE1eUNcmNFfXGHZZigjEbu4Pju8k4vaIHxk2JypgcmptGce21hN92ReTaEsDSiSb/w0ng4BwyIASu+yTuhdOeh6RkXbdvV+5LsAgiYZdpqkuRxpwp1X22X9HlHTlYPIp17WUfW8sVGcS6F+hSD4jvIq8BA1yyAKoc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Hr76N39h; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id CAEC8C4CECC;
-	Thu, 24 Oct 2024 09:40:34 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729762838;
-	bh=UgaClKqL89aOXGMXlS/Dbd/YI1FCmKhio1aXFNz6EXo=;
-	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
-	b=Hr76N39hIJnuV3Z0taZKpbHfbWAQNv0lBI1UIefW9N9FfjUfMdCU8N0dK54cU5Z3X
-	 RFvlAA22N7+W703w7T6/pZ3HLckc0cqQmklwu5W9CQEXcnXNxalp10zYUOzbbt7ZA0
-	 uWrxc6UyoSi1qkyjS7vG2sfFK3EYduIngs4h186sl4axNCSpEHBx4mJwNy5cw3uood
-	 Ms6l+2ls8aDgxOXdyAhvz7PsMwUZ+v1s7ZMvyrf5+TPl8oovULEl2KmIRw2CdKhDsU
-	 qfsPRlLkmNV+MpNfQyD0H+Lz0kfQoCgwTpxEuXD3IOUH0FtQqH27XLFsh0T4cSp/GW
-	 x7s+tmNRelB2w==
-Message-ID: <7be853cb-6a8a-457b-9e70-0c962ab0df0c@kernel.org>
-Date: Thu, 24 Oct 2024 11:40:32 +0200
+	 In-Reply-To:Content-Type; b=K6Tf95rUsMLJRxeKUX59PLnLPGI9Wfllt4vZ0877/hfg+peseIxsIMnzyurWJxvQdfht+NpOVH1oRSN869MF1OPOJ8H45Zrk7HIKh5iW9/edmWmRoyfPqND02AbjxmxoUOpu4N+fLoou8CqwNxJvYMUafnutbCrPqm/OgtXdoBE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net; spf=pass smtp.mailfrom=iogearbox.net; dkim=pass (2048-bit key) header.d=iogearbox.net header.i=@iogearbox.net header.b=pQjVpp93; arc=none smtp.client-ip=213.133.104.62
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=iogearbox.net
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=iogearbox.net
+DKIM-Signature: v=1; a=rsa-sha256; q=dns/txt; c=relaxed/relaxed;
+	d=iogearbox.net; s=default2302; h=Content-Transfer-Encoding:Content-Type:
+	In-Reply-To:From:References:Cc:To:Subject:MIME-Version:Date:Message-ID:Sender
+	:Reply-To:Content-ID:Content-Description:Resent-Date:Resent-From:
+	Resent-Sender:Resent-To:Resent-Cc:Resent-Message-ID;
+	bh=S6iESo5yDpnwe/hVh55kcZtvpPHafaX5hOiXCOSvrW4=; b=pQjVpp934/QFAQnRY+HztQaC4w
+	ffCzA74WxstShifL5tyDcIwh/HF22hXMyDylPo9JKdA1mCAznJkxh5bXVqaihFJPkJYJ7AcOvQU5U
+	jr4h8hgotqr5j9jmo6+5cF+9PfzifB3JCOz2PFt/dEQw4d7fZyhb83BfGqBx+BmWlJITXRCKRgLo6
+	HJQEFxO+sj4l2WwLGeZNGlYAtax75wgRF/erxYcJwsYuPJBEQv6dPUAlprMtXc+BluOwchp6943T3
+	vzNzu3TexR5AG6WpV3zUaFQj6aCAyjzPTyuNeExW3NYqLsbPn5QmfmFjMuhh1Phn748GJWnb0e6kX
+	2tglp6Tg==;
+Received: from sslproxy06.your-server.de ([78.46.172.3])
+	by www62.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.94.2)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1t3uLI-00020g-K5; Thu, 24 Oct 2024 11:41:20 +0200
+Received: from [85.1.206.226] (helo=[192.168.1.114])
+	by sslproxy06.your-server.de with esmtpsa  (TLS1.3) tls TLS_AES_256_GCM_SHA384
+	(Exim 4.96)
+	(envelope-from <daniel@iogearbox.net>)
+	id 1t3uLI-000635-0a;
+	Thu, 24 Oct 2024 11:41:20 +0200
+Message-ID: <d94bf8c7-b026-4608-83d7-6230f136ee3b@iogearbox.net>
+Date: Thu, 24 Oct 2024 11:41:19 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -49,82 +61,96 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v5 1/2] dt-bindings: i2c: pca954x: Add timeout reset
- property
-To: "Wojciech Siudy (Nokia)" <wojciech.siudy@nokia.com>
-Cc: Rob Herring <robh@kernel.org>,
- "linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
- "linux-i2c@vger.kernel.org" <linux-i2c@vger.kernel.org>,
- "devicetree@vger.kernel.org" <devicetree@vger.kernel.org>,
- "andi.shyti@kernel.org" <andi.shyti@kernel.org>,
- "peda@axentia.se" <peda@axentia.se>
-References: <20241018100338.19420-1-wojciech.siudy@nokia.com>
- <20241018100338.19420-2-wojciech.siudy@nokia.com>
- <20241018135314.GA91900-robh@kernel.org>
- <DB6PR07MB35091425FE5CBCD782B465A69D412@DB6PR07MB3509.eurprd07.prod.outlook.com>
- <pkse4jc6muqwo4zrvb6auhcdv4zrt6zd5zmp4yea5usagw62o3@lgzwggtz4uv3>
- <DB6PR07MB350922B1A1458EE3D7EB3F019D4E2@DB6PR07MB3509.eurprd07.prod.outlook.com>
- <655e9afc-cfe9-4b52-8308-7ffe1011e6d5@kernel.org>
- <DB6PR07MB3509F0612D61254728D49D279D4E2@DB6PR07MB3509.eurprd07.prod.outlook.com>
+Subject: Re: [PATCH] selftests/bpf: Add test for trie_get_next_key()
+To: Byeonguk Jeong <jungbu2855@gmail.com>,
+ Alexei Starovoitov <alexei.starovoitov@gmail.com>
+Cc: Yonghong Song <yonghong.song@linux.dev>, bpf <bpf@vger.kernel.org>,
+ LKML <linux-kernel@vger.kernel.org>
+References: <ZxoOdzdMwvLspZiq@localhost.localdomain>
 Content-Language: en-US
-From: Krzysztof Kozlowski <krzk@kernel.org>
-Autocrypt: addr=krzk@kernel.org; keydata=
- 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 fv0=
-In-Reply-To: <DB6PR07MB3509F0612D61254728D49D279D4E2@DB6PR07MB3509.eurprd07.prod.outlook.com>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
+From: Daniel Borkmann <daniel@iogearbox.net>
+Autocrypt: addr=daniel@iogearbox.net; keydata=
+ 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
+In-Reply-To: <ZxoOdzdMwvLspZiq@localhost.localdomain>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 8bit
+X-Authenticated-Sender: daniel@iogearbox.net
+X-Virus-Scanned: Clear (ClamAV 0.103.10/27437/Thu Oct 24 10:33:37 2024)
 
-On 24/10/2024 11:18, Wojciech Siudy (Nokia) wrote:
-> No, I reset pac954x chip in pca954x driver.
+Hi Byeonguk,
 
-How useful is such context? That's the last reply here, I am not going
-to waste more time on such style.
+On 10/24/24 11:08 AM, Byeonguk Jeong wrote:
+> Add a test for out-of-bounds write in trie_get_next_key() when a full
+> path from root to leaf exists and bpf_map_get_next_key() is called
+> with the leaf node. It may crashes the kernel on failure, so please
+> run in a VM.
+> 
+> Signed-off-by: Byeonguk Jeong <jungbu2855@gmail.com>
 
-All my earlier comments stay valid. You have shared reset and you want
-some hacks to avoid that problem. I gave you the solution.
+Could you submit the fix + this selftest as a 2-patch series, otherwise BPF CI
+cannot test both in combination (pls make sure subject has [PATCH bpf] so that
+our CI adds this on top of the bpf tree).
 
-Best regards,
-Krzysztof
+Right now the CI selftest build threw an error:
 
+   /tmp/work/bpf/bpf/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c: In function ‘test_lpm_trie_map_get_next_key’:
+   /tmp/work/bpf/bpf/tools/testing/selftests/bpf/map_tests/lpm_trie_map_get_next_key.c:84:9: error: format not a string literal and no format arguments [-Werror=format-security]
+      84 |         CHECK(map_fd == -1, "bpf_map_create(), error:%s\n",
+         |         ^~~~~
+     TEST-OBJ [test_maps] task_storage_map.test.o
+     TEST-OBJ [test_progs] access_variable_array.test.o
+   cc1: all warnings being treated as errors
+     TEST-OBJ [test_progs] align.test.o
+     TEST-OBJ [test_progs] arena_atomics.test.o
+   make: *** [Makefile:765: /tmp/work/bpf/bpf/tools/testing/selftests/bpf/lpm_trie_map_get_next_key.test.o] Error 1
+   make: *** Waiting for unfinished jobs....
+     GEN-SKEL [test_progs-no_alu32] test_usdt.skel.h
+   make: Leaving directory '/tmp/work/bpf/bpf/tools/testing/selftests/bpf'
+
+Also on quick glance, please use ASSERT_*() macros instead of CHECK() as the
+latter is deprecated.
+
+Thanks,
+Daniel
 
