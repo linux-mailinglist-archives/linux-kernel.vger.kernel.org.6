@@ -1,767 +1,180 @@
-Return-Path: <linux-kernel+bounces-380488-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380489-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 661479AEF6D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:13:20 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 0C94E9AEF72
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:13:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 569971C2060E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:13:19 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 74B6C281CB5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:13:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8434F2076B8;
-	Thu, 24 Oct 2024 18:11:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C3E82200BA6;
+	Thu, 24 Oct 2024 18:12:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="q3IrSMpK"
-Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="tV3jxGOW"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9E0AE200BB2
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:11:13 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 231DE2003B3;
+	Thu, 24 Oct 2024 18:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729793478; cv=none; b=U5py4we98RUFo+TRawho0OIVUZI/N5nwJir+O9rFPszQeD0G07tYNfuyD5hi9atjTmvTKp5NLCjwZ00UHHvV3dhKUZ9EtYkr9v/eBgW+SkIEMNDIqUN4bh+O7HKkSa3QVr/Cnps2ph3QlZ1tgF36D7nJ8RTLY9KYRG1QhpOXX44=
+	t=1729793569; cv=none; b=ddcCsqJvXBUFhUq/pArGjmycJaxT5tqzsNFkCPllphWnodGoTigM3e+cjVIIsRLgqcWqUlczdsMrZJyEklNwG1Oe4UwJt93U6Fq/iNa17XT+frNpUm2RN7xWZDaaKt9ArTeN5U/VGir9I8FsNH0LjR5kjXQ1tyDvhmhwoH73q1U=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729793478; c=relaxed/simple;
-	bh=dnVmdKGfMttMrhnLQqDF6zBl6BlDDz2flspxyvtR8h0=;
-	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:References:
-	 In-Reply-To:To:Cc; b=uo6E2+0Acq+/wtWb1bk5wuxDimCnjLb7IUM1GvKfjhUkjRnf1d7MUzF71NxndnFexm4jNtXIrjKCc/iagaX5zC4RQY1MrV3LniyOZGEwzbPW1QKUYXpLcbVnlrKHbTsP1dK+0AFaqrN229XWTWAzUbrlQfckRhaPdM9rI68+2JM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=q3IrSMpK; arc=none smtp.client-ip=209.85.128.47
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-43161e7bb25so12155615e9.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:11:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729793471; x=1730398271; darn=vger.kernel.org;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=9fBlSDoY+5BLQB4T9iJPW3gISJHh53NPyolTJhArp4s=;
-        b=q3IrSMpKBq2LwCMBviEYnWXYJkec9eumRGQThZwqVkj9JCB8/KrRa9DrmPYLm0aFgS
-         Rsqfxpkgq4sspjZq5CNgHddlBTuf74pu0ofXF9PQiiQbWrjkqZR2p54BfMVl/Y/COyL0
-         fE+nCiSZEvUiP/kbfpon6NSbcEFgit3N1pCcm6Xownelvjv1c7Y8qQeVcgwq8Y6oZzi8
-         ozPShtqxi9dfqcUPx27RCmVuQvvTAqmLAoBWCYq39cEvrls6KHOPL4YbUtyaZHQaxu8L
-         MpAmknCM0+KpplIyuLXh1HrG6MDoRRkOzzNUAkuIFL6O93KpiOZ/ccWSrR/rp+e7pmxL
-         iGow==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729793471; x=1730398271;
-        h=cc:to:in-reply-to:references:message-id:content-transfer-encoding
-         :mime-version:subject:date:from:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=9fBlSDoY+5BLQB4T9iJPW3gISJHh53NPyolTJhArp4s=;
-        b=TWbHqhYVwZWmgKPqM3IxihEUn5MfGHN3r3tyzgSp8gVgr3G5SjinY0eOTQv0qp6uzh
-         bdjM/e9atE9oTROvUyjISebf/T43h/l72xfcEBUjvLepvOf5lBnGEV3DGHAbYXF/zikT
-         9zrK0kXEr3q0blaJokEWzgwJ8LEQY3lZmgsFoJxv7H5l4UMQMbE7CCB7mAb0p2EwsrjI
-         DB8vak+63JT56UWyUhPaQ2Ffg4T1lnvPvx+NMJmPJSbqofDBCxnj9RFV3CN/tWbI6ZGu
-         Hy3IrAGPpfTVVUbv6CYxAJIYQ+eLKMQUw2Mg07W/xcFtQFqx1ColU0T3xoU707ad0dh9
-         +VbA==
-X-Forwarded-Encrypted: i=1; AJvYcCU8Q3Wpi+njfe/k2nlMopr8MTYMCNMDciK2SzoxQ3/j4A51fz6oR8mnly3xlFJrVaDbydZ68XHVnJVcl3U=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxQIC+B1LAv+WgazLpO+nPgQ7hvoOt9Y4zULKSr1cS4gW3nj03w
-	gGAI+IgL3HiKx+dm/xtX6k1Nb/VksSLF8rYp9VcMn77XmySI2R4584M/Q0cxrcg=
-X-Google-Smtp-Source: AGHT+IGnJ7UXHQSQv9VwCwcuhJCbOBSacO9Xjqh6fDmXVVextwa7v9crkMuTvZCttaMnsxO+9KKUNw==
-X-Received: by 2002:a05:600c:4750:b0:431:60ec:7a91 with SMTP id 5b1f17b1804b1-43184130160mr58600405e9.2.1729793471465;
-        Thu, 24 Oct 2024 11:11:11 -0700 (PDT)
-Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:c04c:f30a:b45c:dbb])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c0f248sm52551275e9.37.2024.10.24.11.11.10
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 11:11:11 -0700 (PDT)
-From: Jerome Brunet <jbrunet@baylibre.com>
-Date: Thu, 24 Oct 2024 20:10:40 +0200
-Subject: [PATCH v3 6/6] hwmon: (pmbus/tps25990): add initial support
+	s=arc-20240116; t=1729793569; c=relaxed/simple;
+	bh=0TgSPICy9GnD2ZCno7GjLIa3ps9j1BQqoM3AdyZm85g=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=WOFF1TfoTj9X6mndcLr7upJ6icilEE/H9sRyAHZa3ami9SEtcuOC0h4yHWStwoisXXprsMDHXqSS/ARMfr/yHaeKIgPb4Fckq2WBsS92hEaCQVKcZosBJ6VQ3YVK0PYjLqAqo/mf1CbmAF3mGsUrN1YGwXHRcN8hjz8XgAeSmGc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=tV3jxGOW; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id AFA7BC4CEC7;
+	Thu, 24 Oct 2024 18:12:47 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729793568;
+	bh=0TgSPICy9GnD2ZCno7GjLIa3ps9j1BQqoM3AdyZm85g=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=tV3jxGOW3PgajFD4afYo/ICTxja3KcvJhAtNj70eG7lBlVm1FaCCiAU7m/gVWfUw6
+	 wpBF8iC4n/1fTbdpI7XYnZPXIg0Y9nDuKN6kCx3Qb5B5yjcteh22KAVDzMErnF0SUS
+	 eJ1X6hQhwbk/7ZrU3t4mBsUx6hGfsPEmS1X7D5l2hDRqpWkr4leGQTrc7ourDbvf2e
+	 gMVaK3u2pQz2GFqTTPRXL4gZDtQ9CTFtGfZlq+jWAW9DFtDKOh35EhDCCnC+1+0rxe
+	 dDeLQ85wbuAFaE7xBWMRYcW/1RmdZHlUWUec5ZaQErcTberv6NdP5S2Qh96HkBNoaA
+	 olLRDRR8krnlQ==
+Date: Thu, 24 Oct 2024 13:12:45 -0500
+From: Bjorn Andersson <andersson@kernel.org>
+To: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+Cc: Adrian Hunter <adrian.hunter@intel.com>, 
+	Ulf Hansson <ulf.hansson@linaro.org>, linux-mmc@vger.kernel.org, linux-arm-msm@vger.kernel.org, 
+	linux-kernel@vger.kernel.org, quic_cang@quicinc.com, quic_nguyenb@quicinc.com, 
+	quic_pragalla@quicinc.com, quic_sayalil@quicinc.com, quic_nitirawa@quicinc.com, 
+	quic_sachgupt@quicinc.com, quic_bhaskarv@quicinc.com, quic_narepall@quicinc.com, 
+	kernel@quicinc.com
+Subject: Re: [PATCH 1/1] mmc: sdhci-msm: Toggle the FIFO write clock after
+ ungate
+Message-ID: <n5dd7fblsfppyfci3fsxyqqchc7pdaml2q5737hprbi2q6wvso@rig42wwnyad2>
+References: <20241022111025.25157-1-quic_rampraka@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
-Message-Id: <20241024-tps25990-v3-6-b6a6e9d4b506@baylibre.com>
-References: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
-In-Reply-To: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
-To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
- Jonathan Corbet <corbet@lwn.net>, 
- Patrick Rudolph <patrick.rudolph@9elements.com>, 
- Naresh Solanki <naresh.solanki@9elements.com>, 
- Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
- Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
- Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
-Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
- linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
- linux-i2c@vger.kernel.org, Vaishnav Achath <vaishnav.a@ti.com>
-X-Mailer: b4 0.14.2
-X-Developer-Signature: v=1; a=openpgp-sha256; l=17614; i=jbrunet@baylibre.com;
- h=from:subject:message-id; bh=dnVmdKGfMttMrhnLQqDF6zBl6BlDDz2flspxyvtR8h0=;
- b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnGo20PyvNTjqqcXPBmS6F7j9CpNnxqycecokU4
- msjgcyRM3WJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZxqNtAAKCRDm/A8cN/La
- ha0JD/wLII2AZhDufKeOzwaPF+VGMYlHQvkAADxMq7RsNe+s3bgozJL56t/DuBI8160blOA9YJB
- Ei4HRBQdXnlEHiPku7kv9X87yUubNOhG+SixqkFGiT4KtUO+4cl9bf1otlK5REt66NyetumDSnP
- bCwWbLzwe86MIXBbMBX/ydf2leuNHn7/Ojo63Hbyh4OIKmbHY+v1trSXrA+ckHJg1Zn75bGkrBi
- GaeogrTXXtFglBOk4FXDkDYPo9XHdaVjWpib8mQRuViELyPAJvJaghBvzFpToMeE6mGfPCShH6t
- PEyWdcRWXogPXzEXRhAPPPHeUeELK0viITmDQhp3Kqr2Qgb34wFxEKu6zURaZxZLEdnGiPXjadf
- zT8J6ItVCBfPDHymoHuNT9Fc6UWh8ibxAEhq31u7NfPd2s8bujzDsYN/cgj8mLI5Aioho6RtnjB
- F07Dwsye5yf9g/UhCRiDbpY6KJWc49Lr8nOZQ6RHnkWji+NAOzUXhi/iE7gP2lVyjcsxEaS9gmU
- O+0KLxS0eyYl5d6exvJMbRBS33yD9WKNKEasDJV/PNn2T58ct87m4+Y6bx2giI9UFOcm5hPLWMc
- kioUkdBbI/XhFW7RpZV9jJQeBxNQgLD41GXun5MCfyeL2rnrxU1oocarbeWIdA8Bcdp9rtU/0eB
- vwYMoxPlNwAGpXA==
-X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
- fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241022111025.25157-1-quic_rampraka@quicinc.com>
 
-Add initial support for the Texas Instruments TPS25990 eFuse.
-This adds the basic PMBUS telemetry support for the device.
+On Tue, Oct 22, 2024 at 04:40:25PM GMT, Ram Prakash Gupta wrote:
+> For Qualcomm SoCs with sdcc minor version 6B and more, command path
+> state machine is getting corrupted post clock ungate which is leading
+> to software timeout.
+> 
+> Toggle the write fifo clock to reset the async fifo to fix this issue.
+> 
+> Signed-off-by: Ram Prakash Gupta <quic_rampraka@quicinc.com>
+> ---
+>  drivers/mmc/host/sdhci-msm.c | 41 ++++++++++++++++++++++++++++++++++++
+>  1 file changed, 41 insertions(+)
+> 
+> diff --git a/drivers/mmc/host/sdhci-msm.c b/drivers/mmc/host/sdhci-msm.c
+> index e113b99a3eab..c2ccdac21232 100644
+> --- a/drivers/mmc/host/sdhci-msm.c
+> +++ b/drivers/mmc/host/sdhci-msm.c
+> @@ -146,6 +146,7 @@
+>  /* CQHCI vendor specific registers */
+>  #define CQHCI_VENDOR_CFG1	0xA00
+>  #define CQHCI_VENDOR_DIS_RST_ON_CQ_EN	(0x3 << 13)
+> +#define RCLK_TOGGLE BIT(1)
+>  
+>  struct sdhci_msm_offset {
+>  	u32 core_hc_mode;
+> @@ -290,6 +291,7 @@ struct sdhci_msm_host {
+>  	u32 dll_config;
+>  	u32 ddr_config;
+>  	bool vqmmc_enabled;
+> +	bool toggle_fifo_clk;
+>  };
+>  
+>  static const struct sdhci_msm_offset *sdhci_priv_msm_offset(struct sdhci_host *host)
+> @@ -1162,6 +1164,39 @@ static int sdhci_msm_restore_sdr_dll_config(struct sdhci_host *host)
+>  	return ret;
+>  }
+>  
+> +/*
+> + * After MCLK ugating, toggle the FIFO write clock to get
+> + * the FIFO pointers and flags to valid state.
+> + */
+> +static void sdhci_msm_toggle_fifo_write_clk(struct sdhci_host *host)
+> +{
+> +	u32 config;
+> +	struct mmc_ios ios = host->mmc->ios;
+> +	struct sdhci_pltfm_host *pltfm_host = sdhci_priv(host);
+> +	struct sdhci_msm_host *msm_host = sdhci_pltfm_priv(pltfm_host);
+> +	const struct sdhci_msm_offset *msm_offset = msm_host->offset;
+> +
+> +	if ((msm_host->tuning_done || ios.enhanced_strobe) &&
+> +		host->mmc->ios.timing == MMC_TIMING_MMC_HS400) {
+> +		/*
+> +		 * Select MCLK as DLL input clock.
+> +		 */
 
-Tested-by: Vaishnav Achath <vaishnav.a@ti.com>
-Signed-off-by: Jerome Brunet <jbrunet@baylibre.com>
----
- Documentation/hwmon/index.rst    |   1 +
- Documentation/hwmon/tps25990.rst | 148 ++++++++++++++
- drivers/hwmon/pmbus/Kconfig      |  17 ++
- drivers/hwmon/pmbus/Makefile     |   1 +
- drivers/hwmon/pmbus/tps25990.c   | 427 +++++++++++++++++++++++++++++++++++++++
- 5 files changed, 594 insertions(+)
+Seems you could fit this in a single-line comment, perhaps with an empty
+line above if you want to create some separation(?)
 
-diff --git a/Documentation/hwmon/index.rst b/Documentation/hwmon/index.rst
-index 4d15664bc41e3a675154d60759a73d827c5a0b67..7a59f3374439fe39949b46f73fb0f9a68fb168ef 100644
---- a/Documentation/hwmon/index.rst
-+++ b/Documentation/hwmon/index.rst
-@@ -235,6 +235,7 @@ Hardware Monitoring Kernel Drivers
-    tmp464
-    tmp513
-    tps23861
-+   tps25990
-    tps40422
-    tps53679
-    tps546d24
-diff --git a/Documentation/hwmon/tps25990.rst b/Documentation/hwmon/tps25990.rst
-new file mode 100644
-index 0000000000000000000000000000000000000000..ed9e74d43e2c2f070d3abe987d93bcdfcf2162ec
---- /dev/null
-+++ b/Documentation/hwmon/tps25990.rst
-@@ -0,0 +1,148 @@
-+.. SPDX-License-Identifier: GPL-2.0
-+
-+Kernel driver tps25990
-+======================
-+
-+Supported chips:
-+
-+  * TI TPS25990
-+
-+    Prefix: 'tps25990'
-+
-+  * Datasheet
-+
-+    Publicly available at Texas Instruments website: https://www.ti.com/lit/gpn/tps25990
-+
-+Author:
-+
-+	Jerome Brunet <jbrunet@baylibre.com>
-+
-+Description
-+-----------
-+
-+This driver implements support for TI TPS25990 eFuse.
-+This is an integrated, high-current circuit protection and power
-+management device with PMBUS interface
-+
-+Device compliant with:
-+
-+- PMBus rev 1.3 interface.
-+
-+Device supports direct format for reading input voltages,
-+output voltage, input current, input power and temperature.
-+
-+Due to the specificities of the chip, all history reset attributes
-+are tied together. Resetting the history of a sensor, resets the
-+history of all the sensors.
-+
-+The driver exports the following attributes via the 'sysfs' files
-+for input current:
-+
-+**curr1_average**
-+
-+**curr1_crit**
-+
-+**curr1_crit_alarm**
-+
-+**curr1_highest**
-+
-+**curr1_input**
-+
-+**curr1_label**
-+
-+**curr1_max**
-+
-+**curr1_max_alarm**
-+
-+**curr1_reset_history**
-+
-+The driver provides the following attributes for main input voltage:
-+
-+**in1_average**
-+
-+**in1_crit**
-+
-+**in1_crit_alarm**
-+
-+**in1_highest**
-+
-+**in1_input**
-+
-+**in1_label**
-+
-+**in1_lcrit**
-+
-+**in1_lcrit_alarm**
-+
-+**in1_lowest**
-+
-+**in1_max**
-+
-+**in1_max_alarm**
-+
-+**in1_min**
-+
-+**in1_min_alarm**
-+
-+**in1_reset_history**
-+
-+The driver provides the following attributes for auxiliary input voltage:
-+
-+**in2_input**
-+
-+**in2_label**
-+
-+The driver provides the following attributes for output voltage:
-+
-+**in3_average**
-+
-+**in3_input**
-+
-+**in3_label**
-+
-+**in3_lowest**
-+
-+**in3_min**
-+
-+**in3_min_alarm**
-+
-+**in3_reset_history**
-+
-+The driver provides the following attributes for input power:
-+
-+**power1_alarm**
-+
-+**power1_average**
-+
-+**power1_input**
-+
-+**power1_input_highest**
-+
-+**power1_label**
-+
-+**power1_max**
-+
-+**power1_reset_history**
-+
-+The driver provides the following attributes for temperature:
-+
-+**temp1_average**
-+
-+**temp1_crit**
-+
-+**temp1_crit_alarm**
-+
-+**temp1_highest**
-+
-+**temp1_input**
-+
-+**temp1_max**
-+
-+**temp1_max_alarm**
-+
-+**temp1_reset_history**
-+
-+The driver provides the following attributes for sampling:
-+
-+**samples**
-+
-diff --git a/drivers/hwmon/pmbus/Kconfig b/drivers/hwmon/pmbus/Kconfig
-index a4f02cad92fdadaafb15bb8459bf56f8e1722568..a3fd442e02774bf3909bf348e471e04c4ab0043a 100644
---- a/drivers/hwmon/pmbus/Kconfig
-+++ b/drivers/hwmon/pmbus/Kconfig
-@@ -510,6 +510,23 @@ config SENSORS_TDA38640_REGULATOR
- 	  If you say yes here you get regulator support for Infineon
- 	  TDA38640 as regulator.
- 
-+config SENSORS_TPS25990
-+	tristate "TI TPS25990"
-+	help
-+	  If you say yes here you get hardware monitoring support for TI
-+	  TPS25990.
-+
-+	  This driver can also be built as a module. If so, the module will
-+	  be called tps25990.
-+
-+config SENSORS_TPS25990_REGULATOR
-+	bool "Regulator support for TPS25990 and compatibles"
-+	depends on SENSORS_TPS25990 && REGULATOR
-+	default SENSORS_TPS25990
-+	help
-+	  If you say yes here you get regulator support for Texas Instruments
-+	  TPS25990.
-+
- config SENSORS_TPS40422
- 	tristate "TI TPS40422"
- 	help
-diff --git a/drivers/hwmon/pmbus/Makefile b/drivers/hwmon/pmbus/Makefile
-index d00bcc758b97200b80158e33b0ac41e6e5ac3231..3d3183f8d2a7060eb513f54f4f0a78ba37c09393 100644
---- a/drivers/hwmon/pmbus/Makefile
-+++ b/drivers/hwmon/pmbus/Makefile
-@@ -51,6 +51,7 @@ obj-$(CONFIG_SENSORS_PXE1610)	+= pxe1610.o
- obj-$(CONFIG_SENSORS_Q54SJ108A2)	+= q54sj108a2.o
- obj-$(CONFIG_SENSORS_STPDDC60)	+= stpddc60.o
- obj-$(CONFIG_SENSORS_TDA38640)	+= tda38640.o
-+obj-$(CONFIG_SENSORS_TPS25990)	+= tps25990.o
- obj-$(CONFIG_SENSORS_TPS40422)	+= tps40422.o
- obj-$(CONFIG_SENSORS_TPS53679)	+= tps53679.o
- obj-$(CONFIG_SENSORS_TPS546D24)	+= tps546d24.o
-diff --git a/drivers/hwmon/pmbus/tps25990.c b/drivers/hwmon/pmbus/tps25990.c
-new file mode 100644
-index 0000000000000000000000000000000000000000..03848d671c1014bdccabea62c2bce1b94e568df1
---- /dev/null
-+++ b/drivers/hwmon/pmbus/tps25990.c
-@@ -0,0 +1,427 @@
-+// SPDX-License-Identifier: GPL-2.0
-+//
-+// Copyright (c) 2024 BayLibre, SAS.
-+// Author: Jerome Brunet <jbrunet@baylibre.com>
-+
-+#include <linux/debugfs.h>
-+#include <linux/err.h>
-+#include <linux/hwmon-sysfs.h>
-+#include <linux/i2c.h>
-+#include <linux/init.h>
-+#include <linux/kernel.h>
-+#include <linux/module.h>
-+
-+#include "pmbus.h"
-+
-+#define TPS25990_READ_VAUX		0xd0
-+#define TPS25990_READ_VIN_MIN		0xd1
-+#define TPS25990_READ_VIN_PEAK		0xd2
-+#define TPS25990_READ_IIN_PEAK		0xd4
-+#define TPS25990_READ_PIN_PEAK		0xd5
-+#define TPS25990_READ_TEMP_AVG		0xd6
-+#define TPS25990_READ_TEMP_PEAK		0xd7
-+#define TPS25990_READ_VOUT_MIN		0xda
-+#define TPS25990_READ_VIN_AVG		0xdc
-+#define TPS25990_READ_VOUT_AVG		0xdd
-+#define TPS25990_READ_IIN_AVG		0xde
-+#define TPS25990_READ_PIN_AVG		0xdf
-+#define TPS25990_VIREF			0xe0
-+#define TPS25990_PK_MIN_AVG		0xea
-+#define  PK_MIN_AVG_RST_PEAK		BIT(7)
-+#define  PK_MIN_AVG_RST_AVG		BIT(6)
-+#define  PK_MIN_AVG_RST_MIN		BIT(5)
-+#define  PK_MIN_AVG_AVG_CNT		GENMASK(2, 0)
-+#define TPS25990_MFR_WRITE_PROTECT	0xf8
-+#define  TPS25990_UNLOCKED		BIT(7)
-+
-+#define TPS25990_8B_SHIFT		2
-+#define TPS25990_VIN_OVF_NUM		525100
-+#define TPS25990_VIN_OVF_DIV		10163
-+#define TPS25990_VIN_OVF_OFF		155
-+#define TPS25990_IIN_OCF_NUM		953800
-+#define TPS25990_IIN_OCF_DIV		129278
-+#define TPS25990_IIN_OCF_OFF		157
-+
-+#define PK_MIN_AVG_RST_MASK		(PK_MIN_AVG_RST_PEAK | \
-+					 PK_MIN_AVG_RST_AVG  | \
-+					 PK_MIN_AVG_RST_MIN)
-+
-+/*
-+ * Arbitrary default Rimon value: 1kOhm
-+ * This correspond to an overcurrent limit of 55A, close to the specified limit
-+ * of un-stacked TPS25990 and makes further calculation easier to setup in
-+ * sensor.conf, if necessary
-+ */
-+#define TPS25990_DEFAULT_RIMON		1000000000
-+
-+static void tps25990_set_m(int *m, u32 rimon)
-+{
-+	u64 val = ((u64)*m) * rimon;
-+
-+	/* Make sure m fits the s32 type */
-+	*m = DIV_ROUND_CLOSEST_ULL(val, 1000000);
-+}
-+
-+static int tps25990_mfr_write_protect_set(struct i2c_client *client,
-+					  u8 protect)
-+{
-+	/*
-+	 * The chip has a single protection mode, set it regardless of
-+	 * the specific protection requested
-+	 */
-+	return pmbus_write_byte_data(client, -1, TPS25990_MFR_WRITE_PROTECT,
-+				     protect ? 0x0 : 0xa2);
-+}
-+
-+static int tps25990_mfr_write_protect_get(struct i2c_client *client)
-+{
-+	int ret = pmbus_read_byte_data(client, -1, TPS25990_MFR_WRITE_PROTECT);
-+
-+	if (ret < 0)
-+		return ret;
-+
-+	return (ret & TPS25990_UNLOCKED) ? 0 : PB_WP_ALL;
-+}
-+
-+static int tps25990_read_word_data(struct i2c_client *client,
-+				   int page, int phase, int reg)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_VIRT_READ_VIN_MAX:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_VIN_PEAK);
-+		break;
-+
-+	case PMBUS_VIRT_READ_VIN_MIN:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_VIN_MIN);
-+		break;
-+
-+	case PMBUS_VIRT_READ_VIN_AVG:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_VIN_AVG);
-+		break;
-+
-+	case PMBUS_VIRT_READ_VOUT_MIN:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_VOUT_MIN);
-+		break;
-+
-+	case PMBUS_VIRT_READ_VOUT_AVG:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_VOUT_AVG);
-+		break;
-+
-+	case PMBUS_VIRT_READ_IIN_AVG:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_IIN_AVG);
-+		break;
-+
-+	case PMBUS_VIRT_READ_IIN_MAX:
-+		return TPS25990_READ_IIN_PEAK;
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_IIN_PEAK);
-+		break;
-+
-+	case PMBUS_VIRT_READ_TEMP_AVG:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_TEMP_AVG);
-+		break;
-+
-+	case PMBUS_VIRT_READ_TEMP_MAX:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_TEMP_PEAK);
-+		break;
-+
-+	case PMBUS_VIRT_READ_PIN_AVG:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_PIN_AVG);
-+		break;
-+
-+	case PMBUS_VIRT_READ_PIN_MAX:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_PIN_PEAK);
-+		break;
-+
-+	case PMBUS_VIRT_READ_VMON:
-+		ret = pmbus_read_word_data(client, page, phase,
-+					   TPS25990_READ_VAUX);
-+		break;
-+
-+	case PMBUS_VIN_UV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_FAULT_LIMIT:
-+	case PMBUS_VIN_OV_WARN_LIMIT:
-+	case PMBUS_VOUT_UV_WARN_LIMIT:
-+	case PMBUS_IIN_OC_WARN_LIMIT:
-+	case PMBUS_OT_WARN_LIMIT:
-+	case PMBUS_OT_FAULT_LIMIT:
-+	case PMBUS_PIN_OP_WARN_LIMIT:
-+		/*
-+		 * These registers provide an 8 bits value instead of a
-+		 * 10bits one. Just shifting twice the register value is
-+		 * enough to make the sensor type conversion work, even
-+		 * if the datasheet provides different m, b and R for
-+		 * those.
-+		 */
-+		ret = pmbus_read_word_data(client, page, phase, reg);
-+		if (ret < 0)
-+			break;
-+		ret <<= TPS25990_8B_SHIFT;
-+		break;
-+
-+	case PMBUS_VIN_OV_FAULT_LIMIT:
-+		ret = pmbus_read_word_data(client, page, phase, reg);
-+		if (ret < 0)
-+			break;
-+		ret = DIV_ROUND_CLOSEST(ret * TPS25990_VIN_OVF_NUM,
-+					TPS25990_VIN_OVF_DIV);
-+		ret += TPS25990_VIN_OVF_OFF;
-+		break;
-+
-+	case PMBUS_IIN_OC_FAULT_LIMIT:
-+		/*
-+		 * VIREF directly sets the over-current limit at which the eFuse
-+		 * will turn the FET off and trigger a fault. Expose it through
-+		 * this generic property instead of a manufacturer specific one.
-+		 */
-+		ret = pmbus_read_byte_data(client, page, TPS25990_VIREF);
-+		if (ret < 0)
-+			break;
-+		ret = DIV_ROUND_CLOSEST(ret * TPS25990_IIN_OCF_NUM,
-+					TPS25990_IIN_OCF_DIV);
-+		ret += TPS25990_IIN_OCF_OFF;
-+		break;
-+
-+	case PMBUS_VIRT_SAMPLES:
-+		ret = pmbus_read_byte_data(client, page, TPS25990_PK_MIN_AVG);
-+		if (ret < 0)
-+			break;
-+		ret = 1 << FIELD_GET(PK_MIN_AVG_AVG_CNT, ret);
-+		break;
-+
-+	case PMBUS_VIRT_RESET_TEMP_HISTORY:
-+	case PMBUS_VIRT_RESET_VIN_HISTORY:
-+	case PMBUS_VIRT_RESET_IIN_HISTORY:
-+	case PMBUS_VIRT_RESET_PIN_HISTORY:
-+	case PMBUS_VIRT_RESET_VOUT_HISTORY:
-+		ret = 0;
-+		break;
-+
-+	default:
-+		ret = -ENODATA;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int tps25990_write_word_data(struct i2c_client *client,
-+				    int page, int reg, u16 value)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_VIN_UV_WARN_LIMIT:
-+	case PMBUS_VIN_UV_FAULT_LIMIT:
-+	case PMBUS_VIN_OV_WARN_LIMIT:
-+	case PMBUS_VOUT_UV_WARN_LIMIT:
-+	case PMBUS_IIN_OC_WARN_LIMIT:
-+	case PMBUS_OT_WARN_LIMIT:
-+	case PMBUS_OT_FAULT_LIMIT:
-+	case PMBUS_PIN_OP_WARN_LIMIT:
-+		value >>= TPS25990_8B_SHIFT;
-+		value = clamp_val(value, 0, 0xff);
-+		ret = pmbus_write_word_data(client, page, reg, value);
-+		break;
-+
-+	case PMBUS_VIN_OV_FAULT_LIMIT:
-+		value -= TPS25990_VIN_OVF_OFF;
-+		value = DIV_ROUND_CLOSEST(((unsigned int)value) * TPS25990_VIN_OVF_DIV,
-+					  TPS25990_VIN_OVF_NUM);
-+		value = clamp_val(value, 0, 0xf);
-+		ret = pmbus_write_word_data(client, page, reg, value);
-+		break;
-+
-+	case PMBUS_IIN_OC_FAULT_LIMIT:
-+		value -= TPS25990_IIN_OCF_OFF;
-+		value = DIV_ROUND_CLOSEST(((unsigned int)value) * TPS25990_IIN_OCF_DIV,
-+					TPS25990_IIN_OCF_NUM);
-+		value = clamp_val(value, 0, 0x3f);
-+		ret = pmbus_write_byte_data(client, page, TPS25990_VIREF, value);
-+		break;
-+
-+	case PMBUS_VIRT_SAMPLES:
-+		value = clamp_val(value, 1, 1 << PK_MIN_AVG_AVG_CNT);
-+		value = ilog2(value);
-+		ret = pmbus_update_byte_data(client, page, TPS25990_PK_MIN_AVG,
-+					     PK_MIN_AVG_AVG_CNT,
-+					     FIELD_PREP(PK_MIN_AVG_AVG_CNT, value));
-+		break;
-+
-+	case PMBUS_VIRT_RESET_TEMP_HISTORY:
-+	case PMBUS_VIRT_RESET_VIN_HISTORY:
-+	case PMBUS_VIRT_RESET_IIN_HISTORY:
-+	case PMBUS_VIRT_RESET_PIN_HISTORY:
-+	case PMBUS_VIRT_RESET_VOUT_HISTORY:
-+		/*
-+		 * TPS25990 has history resets based on MIN/AVG/PEAK instead of per
-+		 * sensor type. Exposing this quirk in hwmon is not desirable so
-+		 * reset MIN, AVG and PEAK together. Even is there effectively only
-+		 * one reset, which resets everything, expose the 5 entries so
-+		 * userspace is not required map a sensor type to another to trigger
-+		 * a reset
-+		 */
-+		ret = pmbus_update_byte_data(client, 0, TPS25990_PK_MIN_AVG,
-+					     PK_MIN_AVG_RST_MASK,
-+					     PK_MIN_AVG_RST_MASK);
-+		break;
-+
-+	default:
-+		ret = -ENODATA;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int tps25990_read_byte_data(struct i2c_client *client,
-+				   int page, int reg)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_WRITE_PROTECT:
-+		ret = tps25990_mfr_write_protect_get(client);
-+		break;
-+
-+	default:
-+		ret = -ENODATA;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+static int tps25990_write_byte_data(struct i2c_client *client,
-+				    int page, int reg, u8 byte)
-+{
-+	int ret;
-+
-+	switch (reg) {
-+	case PMBUS_WRITE_PROTECT:
-+		ret = tps25990_mfr_write_protect_set(client, byte);
-+		break;
-+
-+	default:
-+		ret = -ENODATA;
-+		break;
-+	}
-+
-+	return ret;
-+}
-+
-+#if IS_ENABLED(CONFIG_SENSORS_TPS25990_REGULATOR)
-+static const struct regulator_desc tps25990_reg_desc[] = {
-+	PMBUS_REGULATOR_ONE("vout"),
-+};
-+#endif
-+
-+static const struct pmbus_driver_info tps25990_base_info = {
-+	.pages = 1,
-+	.format[PSC_VOLTAGE_IN] = direct,
-+	.m[PSC_VOLTAGE_IN] = 5251,
-+	.b[PSC_VOLTAGE_IN] = 0,
-+	.R[PSC_VOLTAGE_IN] = -2,
-+	.format[PSC_VOLTAGE_OUT] = direct,
-+	.m[PSC_VOLTAGE_OUT] = 5251,
-+	.b[PSC_VOLTAGE_OUT] = 0,
-+	.R[PSC_VOLTAGE_OUT] = -2,
-+	.format[PSC_TEMPERATURE] = direct,
-+	.m[PSC_TEMPERATURE] = 140,
-+	.b[PSC_TEMPERATURE] = 32100,
-+	.R[PSC_TEMPERATURE] = -2,
-+	/*
-+	 * Current and Power measurement depends on the ohm value
-+	 * of Rimon. m is multiplied by 1000 below to have an integer
-+	 * and -3 is added to R to compensate.
-+	 */
-+	.format[PSC_CURRENT_IN] = direct,
-+	.m[PSC_CURRENT_IN] = 9538,
-+	.b[PSC_CURRENT_IN] = 0,
-+	.R[PSC_CURRENT_IN] = -6,
-+	.format[PSC_POWER] = direct,
-+	.m[PSC_POWER] = 4901,
-+	.b[PSC_POWER] = 0,
-+	.R[PSC_POWER] = -7,
-+	.func[0] = (PMBUS_HAVE_VIN |
-+		    PMBUS_HAVE_VOUT |
-+		    PMBUS_HAVE_VMON |
-+		    PMBUS_HAVE_IIN |
-+		    PMBUS_HAVE_PIN |
-+		    PMBUS_HAVE_TEMP |
-+		    PMBUS_HAVE_STATUS_VOUT |
-+		    PMBUS_HAVE_STATUS_IOUT |
-+		    PMBUS_HAVE_STATUS_INPUT |
-+		    PMBUS_HAVE_STATUS_TEMP |
-+		    PMBUS_HAVE_SAMPLES),
-+	.read_word_data = tps25990_read_word_data,
-+	.write_word_data = tps25990_write_word_data,
-+	.read_byte_data = tps25990_read_byte_data,
-+	.write_byte_data = tps25990_write_byte_data,
-+
-+#if IS_ENABLED(CONFIG_SENSORS_TPS25990_REGULATOR)
-+	.reg_desc = tps25990_reg_desc,
-+	.num_regulators = ARRAY_SIZE(tps25990_reg_desc),
-+#endif
-+};
-+
-+static const struct i2c_device_id tps25990_i2c_id[] = {
-+	{ "tps25990" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(i2c, tps25990_i2c_id);
-+
-+static const struct of_device_id tps25990_of_match[] = {
-+	{ .compatible = "ti,tps25990" },
-+	{}
-+};
-+MODULE_DEVICE_TABLE(of, tps25990_of_match);
-+
-+static int tps25990_probe(struct i2c_client *client)
-+{
-+	struct device *dev = &client->dev;
-+	struct pmbus_driver_info *info;
-+	u32 rimon = TPS25990_DEFAULT_RIMON;
-+	int ret;
-+
-+	ret = device_property_read_u32(dev, "ti,rimon-micro-ohms", &rimon);
-+	if (ret < 0 && ret != -EINVAL)
-+		return dev_err_probe(dev, ret, "failed to get rimon\n");
-+
-+	info = devm_kmemdup(dev, &tps25990_base_info, sizeof(*info), GFP_KERNEL);
-+	if (!info)
-+		return -ENOMEM;
-+
-+	/* Adapt the current and power scale for each instance */
-+	tps25990_set_m(&info->m[PSC_CURRENT_IN], rimon);
-+	tps25990_set_m(&info->m[PSC_POWER], rimon);
-+
-+	return pmbus_do_probe(client, info);
-+}
-+
-+static struct i2c_driver tps25990_driver = {
-+	.driver = {
-+		.name = "tps25990",
-+		.of_match_table = tps25990_of_match,
-+	},
-+	.probe = tps25990_probe,
-+	.id_table = tps25990_i2c_id,
-+};
-+module_i2c_driver(tps25990_driver);
-+
-+MODULE_AUTHOR("Jerome Brunet <jbrunet@baylibre.com>");
-+MODULE_DESCRIPTION("PMBUS driver for TPS25990 eFuse");
-+MODULE_LICENSE("GPL");
-+MODULE_IMPORT_NS(PMBUS);
+> +		config = readl_relaxed(host->ioaddr + msm_offset->core_dll_config_3);
+> +		config |= RCLK_TOGGLE;
+> +		writel_relaxed(config, host->ioaddr + msm_offset->core_dll_config_3);
+> +
+> +		/* ensure above write as toggling same bit quickly */
 
--- 
-2.45.2
+"same bit quickly" is completely arbitrary. Please state exactly what
+you need to wait for? E.g. is it some number of some clock ticks? If so,
+which clock and is it 1, 5, or 42 ticks?
 
+> +		wmb();
+
+This does not guarantee that the write completes before the delay.
+
+If you want to know that the write hit the hardware, before the sleep,
+issue a readl.
+
+Regards,
+Bjorn
+
+> +		udelay(2);
+> +
+> +		/*
+> +		 * Select RCLK as DLL input clock
+> +		 */
+> +		config &= ~RCLK_TOGGLE;
+> +		writel_relaxed(config, host->ioaddr + msm_offset->core_dll_config_3);
+> +	}
+> +}
+> +
+>  static void sdhci_msm_set_cdr(struct sdhci_host *host, bool enable)
+>  {
+>  	const struct sdhci_msm_offset *msm_offset = sdhci_priv_msm_offset(host);
+> @@ -2587,6 +2622,9 @@ static int sdhci_msm_probe(struct platform_device *pdev)
+>  	if (core_major == 1 && core_minor >= 0x71)
+>  		msm_host->uses_tassadar_dll = true;
+>  
+> +	if (core_major == 1 && core_minor >= 0x6B)
+> +		msm_host->toggle_fifo_clk = true;
+> +
+>  	ret = sdhci_msm_register_vreg(msm_host);
+>  	if (ret)
+>  		goto clk_disable;
+> @@ -2720,6 +2758,9 @@ static __maybe_unused int sdhci_msm_runtime_resume(struct device *dev)
+>  				       msm_host->bulk_clks);
+>  	if (ret)
+>  		return ret;
+> +
+> +	if (msm_host->toggle_fifo_clk)
+> +		sdhci_msm_toggle_fifo_write_clk(host);
+>  	/*
+>  	 * Whenever core-clock is gated dynamically, it's needed to
+>  	 * restore the SDR DLL settings when the clock is ungated.
+> -- 
+> 2.17.1
+> 
+> 
 
