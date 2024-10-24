@@ -1,177 +1,122 @@
-Return-Path: <linux-kernel+bounces-380329-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380332-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1235A9AEC74
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:43:59 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3A479AEC7C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:45:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CAECB2836BA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:43:57 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id D5F061C2239C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:45:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id AD6CA1F81A8;
-	Thu, 24 Oct 2024 16:43:52 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F3481E048D;
+	Thu, 24 Oct 2024 16:45:54 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="DJBjYl30"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="L0lHL3ux"
+Received: from mail-pf1-f176.google.com (mail-pf1-f176.google.com [209.85.210.176])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0F7461C728E;
-	Thu, 24 Oct 2024 16:43:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BE77E146D6B
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:45:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.176
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788232; cv=none; b=awfl2eK1pxIlTe0rYPoLH2qYeTQNAWT8FJU7i0dasdgSNV3onCQklFg7EmEkNZsF5MsFtvUp+coZS1k8xBFAPZoovwcPaT7QWsmYA7UV6V80pusrWV2+nGDZ6Hkm9RwnTRqLCnJFTsrsVBdOlR7USUNVA+5PU2P3w7l5Wv3n7LM=
+	t=1729788353; cv=none; b=itLw5zbnCjBhdE5UOxZSW/H2y4AJxxOlzq7Oj8LjwLFRQG0vkt9osFi/lf2G7LyeYhNY8tCyvbRJFD6QonzEy+jmv1KSb0ciyo2eF5TYglnmSM+OL0/5Fp7hPaHdw7A1QhuXOSVzUORAGORtp6lOGYrYi7URtJxgLJOJlX+QIJM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788232; c=relaxed/simple;
-	bh=377I+7D8IjfExa36QBMKaFHOg3N+KTIoHiUVOFHMH5g=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=LYzh/XGTZCCQVPNqsYh4048kB+MP5+Nh3EbeCo0hRYtEzydQ2p2925NxxIgBvxVdbcW8yrsRKcE6Z2lOE/8I9so1OCN81bLLcV4B819/7ImBywmwyphHMKtcX4mDYU0DFaLJCKG0hRGLRw/L+CHV0CLXx2sAp/1qxpFltxtcUwc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=DJBjYl30; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id D0652C4CEC7;
-	Thu, 24 Oct 2024 16:43:51 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729788231;
-	bh=377I+7D8IjfExa36QBMKaFHOg3N+KTIoHiUVOFHMH5g=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=DJBjYl30R3t7fBTQSOitfIFiLJJvl6ueAJbL00FIACZ/xTf8eSlRm9qimkg8dBEVE
-	 ZAPuVZZCNmuEsiPYfH0UzDbpb6Tc/csouPYD1aApS7kNvHjYIfn+JtesaK7LBgsbGH
-	 qKgdQGk/LKlXYfsxMOfYSCX9AlB6GPQAu9u2KEbqjEbJbkEmnfbgpxBjxxmcxsNPSi
-	 nEMQfvm/zkbjWDLNfc/6YY1jKhNZVsa1yEaF9EmsHmzj5B0Ifbg80q6zqL5bXhNTSl
-	 19OLQeeWpBiu4SILm0/pFmdUgcO+1ri4ypkB9HY2Wt9Lu+8RcwAwYPiYGwezg1gbZZ
-	 N9tC4vpsD8Z1A==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t40w9-006WaQ-QL;
-	Thu, 24 Oct 2024 17:43:49 +0100
-Date: Thu, 24 Oct 2024 17:43:49 +0100
-Message-ID: <86o73930ze.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Mostafa Saleh <smostafa@google.com>
-Cc: linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org,
-	corbet@lwn.net,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2] Documentation: Update the behaviour of "kvm-arm.mode"
-In-Reply-To: <20241024160614.1894599-1-smostafa@google.com>
-References: <20241024160614.1894599-1-smostafa@google.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=arc-20240116; t=1729788353; c=relaxed/simple;
+	bh=IVjqsPa8/r/WWwqF0pevUJIDLCx/2vQIgGj6cc6incw=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=Emzwd74iBhLzvG7zhQpSYE5iKDzKtma+O6ZxrtK572xuHrFZeLLoDbGRkaMJshKmgR67PcHoH53CC443F2JJrrAMqYSEj1kPrPsRR7PIkGYRnqeOkbnKGGovdwZznYfgQEuzUkfpwOorGYL2bJ+g2R8+3M08diu7YXyttAta4KQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=L0lHL3ux; arc=none smtp.client-ip=209.85.210.176
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-pf1-f176.google.com with SMTP id d2e1a72fcca58-71e5130832aso821962b3a.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:45:51 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=google.com; s=20230601; t=1729788351; x=1730393151; darn=vger.kernel.org;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=sbcx/f+avMo0nfnfoFrvHy0s7zMVYb5RcXeOKVfhBB0=;
+        b=L0lHL3uxV23s66hCG3n381zf25SGWVB6hmvbh5esh1vGVfE1jCcCfuH87o23W7zMUp
+         MCsbwIVh+pv8QIdV9Gzx41fswV3kA3iKPoxzZPNkAzRlPXcgtviYRDbonN9M84YN7zkF
+         JCUi0mwn4/vU0JPg4jsF5U4/+xccxXMWiVquRfIvhwiHK4ZQColiLqGiaC4ax8YMeJD6
+         Z47M34j0jm+4ZsCkrhpGWC8FiB45rITpvByNUl202PuPwy8DROZEZyIEHyvlOq/p05HM
+         XNLJKTIuDVB9FJF+d0hyUasS/nXlR/bPVIjSiFWgKwZ3NShONrMhJr9/xYkZEBh43nz2
+         bp8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729788351; x=1730393151;
+        h=content-transfer-encoding:cc:to:subject:message-id:date:from
+         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
+         :subject:date:message-id:reply-to;
+        bh=sbcx/f+avMo0nfnfoFrvHy0s7zMVYb5RcXeOKVfhBB0=;
+        b=psy8m508NRaF/tTMV61La8vA1SaiLEzc+99Uw8bS8osmW99IP1fEbgMbm5h1PR6KbG
+         RkoN1m1EMPNs/vS87x4Bo/V8U79EDCoDf11v+BBTBp7Vut1wpjZo26xLcUNspAfveV1i
+         UWpRADCyqlZMq10Devd/tWEu15C6C/cYO3Mwes/+KI0DYjDZSNO5zcurmD6enZunwlQf
+         8u8DrlTI/nThBJ+7T5uOGAo/qrz0JC//F88Divwod2vNemymd704TCPEcQQM/1QKn+iv
+         KK0fhzY2Xn7wcMKq1zk7NXAb9pmbIgBg4bDXyU2/OUsoC3xkoPGdCAEbnfzYK5ssU1Fo
+         eTvQ==
+X-Forwarded-Encrypted: i=1; AJvYcCUCLpS0FDvRWB9kIM1wdk4KduyZlpxftssk4qiGJRMnCN1WYYr0ItlD508tF3Qve2UdNj1djzX6q29JzqU=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzYVoguT/wzj3AnhpDGt1ichIImYKRhZQi9jm9U666z1fvoyyDD
+	n+JzdFydka4EnOU0rNzXYNOMW+2IHqcThHHUeNqEgf6x1Yj0vbPNin9wP6msLpQC/8eRpggiCDP
+	7vS8g1XU6qmwMg8t348cx6b05X69QnJWFnVVn
+X-Google-Smtp-Source: AGHT+IGyVGhrIax31DbYyaNPPps689qKUUGZ/dBmIonlf0Ms5Q31B+FIXf7PnrvX0k/Y2NDzzkEVUzrdywoXgv6bmrc=
+X-Received: by 2002:a05:6a21:9d91:b0:1d7:1277:8d0f with SMTP id
+ adf61e73a8af0-1d978bd6450mr8093124637.48.1729788350739; Thu, 24 Oct 2024
+ 09:45:50 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: smostafa@google.com, linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org, linux-arm-kernel@lists.infradead.org, corbet@lwn.net, will@kernel.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+References: <20241024061347.1771063-1-saravanak@google.com> <2024102457-manager-counting-ff68@gregkh>
+In-Reply-To: <2024102457-manager-counting-ff68@gregkh>
+From: Saravana Kannan <saravanak@google.com>
+Date: Thu, 24 Oct 2024 09:45:10 -0700
+Message-ID: <CAGETcx_BD_G3oOHvT7aRr98Ag7-XvrMX=NW_wm9Cx9M5+qr-aw@mail.gmail.com>
+Subject: Re: [PATCH 0/3] A few minor fw_devlink fixes
+To: Greg Kroah-Hartman <gregkh@linuxfoundation.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
+	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>, 
+	JC Kuo <jckuo@nvidia.com>, Vinod Koul <vkoul@kernel.org>, 
+	Kishon Vijay Abraham I <kishon@kernel.org>, Thierry Reding <thierry.reding@gmail.com>, 
+	Jonathan Hunter <jonathanh@nvidia.com>, Matthias Brugger <matthias.bgg@gmail.com>, 
+	AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>, 
+	=?UTF-8?B?TsOtY29sYXMgRi4gUi4gQS4gUHJhZG8=?= <nfraprado@collabora.com>, 
+	kernel-team@android.com, linux-kernel@vger.kernel.org, 
+	dri-devel@lists.freedesktop.org, linux-phy@lists.infradead.org, 
+	linux-tegra@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
+	linux-mediatek@lists.infradead.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Mostafa,
-
-On Thu, 24 Oct 2024 17:06:14 +0100,
-Mostafa Saleh <smostafa@google.com> wrote:
-> 
-> Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
-> VHE support") modified the behaviour of "kvm-arm.mode=protected" without
-> the updating the kernel parameters doc.
-> 
-> Update it to match the current implementation.
-> 
-> Also, update required architecture version for nested virtualization as
-> suggested by Marc.
-> 
-> Cc: Will Deacon <will@kernel.org>
-> Cc: Marc Zyngier <maz@kernel.org>
-> 
-> Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> 
-> ---
-> v2: Update nested value also
-
-Thanks for that. However...
-
-> ---
->  Documentation/admin-guide/kernel-parameters.txt | 10 +++++++---
->  1 file changed, 7 insertions(+), 3 deletions(-)
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1518343bbe22..d5b771e5cb5b 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2740,12 +2740,16 @@
->  			nvhe: Standard nVHE-based mode, without support for
->  			      protected guests.
->  
-> -			protected: nVHE-based mode with support for guests whose
-> +			protected: hVHE-based mode with support for guests whose
->  				   state is kept private from the host.
-> +				   In case hVHE is not supported in hardware, it will
-> +				   boot with protected nVHE.
-> +				   nVHE protected mode can still be forced on VHE systems
-> +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
-
-
-I probably didn't explain myself very well. I would like to avoid
-mentioning hVHE at all, because this is pretty confusing (and really
-an implementation detail). Instead, we can talk about VHE/nVHE, which
-are real architectural features.
-
-Also, I just realised that we can use your command-line magic for
-downgrading from VHE to nVHE in all cases, so I'd be suggesting
-something like this:
-
-diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-index 1518343bbe223..2bb19f1331fed 100644
---- a/Documentation/admin-guide/kernel-parameters.txt
-+++ b/Documentation/admin-guide/kernel-parameters.txt
-@@ -2740,8 +2740,9 @@
- 			nvhe: Standard nVHE-based mode, without support for
- 			      protected guests.
- 
--			protected: nVHE-based mode with support for guests whose
--				   state is kept private from the host.
-+			protected: Mode with support for guests whose state is
-+				   kept private from the host, using VHE or
-+				   nVHE depending on HW support.
- 
- 			nested: VHE-based mode with support for nested
- 				virtualization. Requires at least ARMv8.3
-@@ -2749,8 +2750,11 @@
- 
- 			Defaults to VHE/nVHE based on hardware support. Setting
- 			mode to "protected" will disable kexec and hibernation
--			for the host. "nested" is experimental and should be
--			used with extreme caution.
-+			for the host. To force nVHE on VHE hardware, add
-+			"arm64_sw.hvhe=0 id_aa64mmfr1.vh=0" to the
-+			command-line.
-+			"nested" is experimental and should be used with
-+			extreme caution.
- 
- 	kvm-arm.vgic_v3_group0_trap=
- 			[KVM,ARM,EARLY] Trap guest accesses to GICv3 group-0
-
-
+On Thu, Oct 24, 2024 at 12:08=E2=80=AFAM Greg Kroah-Hartman
+<gregkh@linuxfoundation.org> wrote:
 >
->  			nested: VHE-based mode with support for nested
-> -				virtualization. Requires at least ARMv8.3
-> -				hardware.
-> +				virtualization. Requires at least ARMv8.4
-> +				hardware (with FEAT_NV2).
+> On Wed, Oct 23, 2024 at 11:13:41PM -0700, Saravana Kannan wrote:
+> > Probably easiest for Greg to pull in these changes?
+> >
+> > PSA: Do not pull any of these patches into stable kernels. fw_devlink
+> > had a lot of changes that landed in the last year. It's hard to ensure
+> > cherry-picks have picked up all the dependencies correctly. If any of
+> > these really need to get cherry-picked into stable kernels, cc me and
+> > wait for my explicit Ack.
+>
+> You can do that with the correct tag in the commit as per the stable
+> documentation if you really want to :)
+>
+> But why would these not be able to go backwards?  What changed to
+> require them now and not be ok for older kernels?
 
-That part looks good!
+Depending on how far back we go in terms of kernel version, it'd be a
+bunch of cycle detection logic, deferred probe behavior change, etc.
+And those patches might have other dependencies themselves, etc.
 
-Thanks,
+He's one example of such a breakage:
+https://lore.kernel.org/all/20241024-fixup-5-15-v1-1-74d360bd3002@mediatek.=
+com/
 
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+-Saravana
 
