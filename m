@@ -1,155 +1,126 @@
-Return-Path: <linux-kernel+bounces-380415-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380420-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A2C559AEE1E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:32:12 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8E6BA9AEE35
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:35:12 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5CA51C2197E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:32:11 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4F3DD28473B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:35:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 93B0A1F76B4;
-	Thu, 24 Oct 2024 17:31:56 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id A820D1FE0E7;
+	Thu, 24 Oct 2024 17:34:52 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b="Y1YS+N2M"
-Received: from mail-il1-f173.google.com (mail-il1-f173.google.com [209.85.166.173])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="j/uM+gsK"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E65691AD418
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:31:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.173
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 11BFB1CBA17
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 17:34:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729791116; cv=none; b=QwrgQJJgL499DQmHm2ZLd8smrN5uqqCEbO5ZLl+lDZPUsNr/kDRLZk6WnFHrqaXo1uTaeRsSq0GbMZRqvZ0UlmV2eBJ/egS1PDRUKjl/0WZLw5wZpAgE7G/iecR3VxM1LPJND2EPf0pnIzcfmc7izlhMEblgmor0rYiNOdQUxt0=
+	t=1729791292; cv=none; b=CtHFJ8GWA2J+VGZyF71IfXsPQq2RLi/tDfvV6sVvRIjA/5T/NsUhkUh46BwNZJbUx8CIaLaMsd5MQQSt24hjiZnaMV+i6uIj82iovPCoJL03ZgWmiIKhpZgaXQH4r/SOG3OK/blWjgyms2cRX2VwcBRZrtIwslZf36QWWQOvjPw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729791116; c=relaxed/simple;
-	bh=/vyLHY055+1cvn/Kx+/k810xY2Ool6vLXTmvYV5Mvc0=;
-	h=Message-ID:Date:MIME-Version:From:Subject:To:Cc:References:
-	 In-Reply-To:Content-Type; b=l6u+yYuh8rjGyiV7GGWdPo/YXrrS03FH6ywjolZcQoia0OlOO9sBX7GGL7FiJUQx/wnI6Dg3jdC5zxWKEpS9IYT5KMCHq4La7m+gJUZKMtX6vY7mJ5yc6pXSvJvtOlnu379I8XcigvxVOwhc0DfJ1FwZU68WK6azO+FL/pLHqW8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk; spf=pass smtp.mailfrom=kernel.dk; dkim=pass (2048-bit key) header.d=kernel-dk.20230601.gappssmtp.com header.i=@kernel-dk.20230601.gappssmtp.com header.b=Y1YS+N2M; arc=none smtp.client-ip=209.85.166.173
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=kernel.dk
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=kernel.dk
-Received: by mail-il1-f173.google.com with SMTP id e9e14a558f8ab-3a3f8543f5eso7668785ab.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:31:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=kernel-dk.20230601.gappssmtp.com; s=20230601; t=1729791111; x=1730395911; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id:from:to
-         :cc:subject:date:message-id:reply-to;
-        bh=Pa6gpmWAle+NDMRABpgJWn4vH/Z/s4i72LM5tOhcicU=;
-        b=Y1YS+N2Mtw6PdnqkWhjqoLEUjf7jhzdnxgeXmZRD3FPZwV4ug9jCebCP7U6v1PjrIu
-         BTkbXHQ4PtA1qU7IHtZEzEANSBEwkYFmT8eZubBBw2XgPlp7Lmbm0OkY/FaagNOA+QwT
-         OA1EXCozeMXC2OXpQX6tObYzgmlESsVySwIrzYxk5P5XQM+MAUSenaP2aMFcddjbHwPt
-         huTtMcIupktayLMbzA/c/MZ81ocpT9KGV7Y0vKq0eAuNsmkA9r/S5uDpCPHOa3dW6uKi
-         LoPA8oiT1RbPYnqFYTzfoITeTVN+exby751ENNt2Khbj42D1cf8LTy9Db3C6FJ/clbBK
-         N2ww==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729791111; x=1730395911;
-        h=content-transfer-encoding:in-reply-to:content-language:references
-         :cc:to:subject:from:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=Pa6gpmWAle+NDMRABpgJWn4vH/Z/s4i72LM5tOhcicU=;
-        b=Gmsd7g8gzbWLn/GjYL1gZDnZf+nLQXDhrYRZ2NHm1uH6RUM6qM9qURfY/h66Iehyuz
-         6ty7l15dimgWTtwKsh0O4N6n6/j9S5UYTGPfd77OtHvqHvOwf+xTqksDIzx57eRqqNYv
-         4UdW+HX2LyYfNq1sH1rPCpp9yPmIAoSYBezgiPMntzcRIcS6fX77mdrpirpMCo81pmCA
-         FzBcRJ/rfbeWBR/2nqA4Ju/GzV+CYIIUL4zhIoq0kTgrzj7M3TL1kcgO/fQBKwjLMbw7
-         nbdXLLbJz70pbgxZv+jIFuw5AwbmaFiXlAJO56yiR+CFLSnr3SaXVNanjWQ4hyYMPysw
-         tnbA==
-X-Forwarded-Encrypted: i=1; AJvYcCV7YQycrnz6hIKl8UdVvoAUWjTXBJ23JlMpchJOAugO/RLGmmiGugnyTKmn7NgnKlYZ02+a6LzoMYlSRdU=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yz1rg4q2F5AiwNPOMUtKCTXJKAf5Tj/AwFUB5saFHfqKE8oqbrf
-	wevBIx1/T1ToM+5+8fUSug2ha89S642zyvg7iUG5vPaDe9x4FsSzkaiF834fYjE=
-X-Google-Smtp-Source: AGHT+IFoJPyc93FfOcCuKyRHDolqmsF5n909q/bZwVA/cgkDKJKx9rhaQM1CN/Ct5+qtW26+8mdXew==
-X-Received: by 2002:a05:6e02:20c8:b0:39d:3c87:1435 with SMTP id e9e14a558f8ab-3a4de6f6b3dmr22700555ab.1.1729791110859;
-        Thu, 24 Oct 2024 10:31:50 -0700 (PDT)
-Received: from [192.168.1.116] ([96.43.243.2])
-        by smtp.gmail.com with ESMTPSA id 8926c6da1cb9f-4dc2a557294sm2793140173.45.2024.10.24.10.31.49
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 10:31:49 -0700 (PDT)
-Message-ID: <5d288a05-c3c8-450a-9e25-abac89eb0951@kernel.dk>
-Date: Thu, 24 Oct 2024 11:31:49 -0600
+	s=arc-20240116; t=1729791292; c=relaxed/simple;
+	bh=H+iEc2RxYP+7aT5fPGyflx/19MbUQptYWZMoH5FKxlY=;
+	h=From:Date:Subject:MIME-Version:Content-Type:Message-Id:To:Cc; b=LE8txisnCe6yhAgZe1g7vfDRj8j3nd/6CYDaiFOifRleSCZFtS3MvF/p+m864VVqlal/SJC+gOeokvzUI3EhQP5BpRYZImI75rqj5SovPggqVHUXXz9FXLHCqXOiiXY706AS+X9FaxVPfIvrwU0b0Z+fhz/gSE+bB+u3iqYIilI=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=j/uM+gsK; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 7DAD6C4CEC7;
+	Thu, 24 Oct 2024 17:34:48 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729791291;
+	bh=H+iEc2RxYP+7aT5fPGyflx/19MbUQptYWZMoH5FKxlY=;
+	h=From:Date:Subject:To:Cc:From;
+	b=j/uM+gsKkpVE4YpcJt9ze+h8cYWqUt4881GxAfQ04paMi9PCMLfj7J90dPvISK1EH
+	 v4AYU64jKzW7zMNGm98jhsZ7Fs01kB2iQ4cMcKtv94oXjZBTueNar0W1ZpM/Plxd1w
+	 3R6HuCeGoRtikyQxOEmpmSXd3Lp/yZEyPLs78sfSL68nDVFU01xe06MvVb5FxKonsP
+	 nX8dVplDkJDIVpjwdRwekrlz6qyOVpXZf5kVprkJbH37iX8QAycVLgtaX91ZJpyMaJ
+	 GjEEmQV3xdz8YuPrFTMlVmMhmTU5rpy86GEDCyP6LoszO9jpUSlgYB+JrJYJAwSulp
+	 qkEMIARqqDhtg==
+From: Konrad Dybcio <konradybcio@kernel.org>
+Date: Thu, 24 Oct 2024 19:33:07 +0200
+Subject: [PATCH] nvme-pci: Force NVME_QUIRK_SIMPLE_SUSPEND on Qualcomm
+ hosts
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-From: Jens Axboe <axboe@kernel.dk>
-Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
-To: Ruyi Zhang <ruyi.zhang@samsung.com>
-Cc: asml.silence@gmail.com, io-uring@vger.kernel.org,
- linux-kernel@vger.kernel.org, peiwei.li@samsung.com, ruyi.zhang@samsung.com
-References: <CGME20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad@epcas5p2.samsung.com>
- <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
- <20241012091026.1824-1-ruyi.zhang@samsung.com>
-Content-Language: en-US
-In-Reply-To: <20241012091026.1824-1-ruyi.zhang@samsung.com>
-Content-Type: text/plain; charset=UTF-8
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+Message-Id: <20241024-topic-nvmequirk-v1-1-51249999d409@oss.qualcomm.com>
+X-B4-Tracking: v=1; b=H4sIANKEGmcC/x2MQQ5AMBAAvyJ7tkmLkPiKOCiLjWirpZGIv9s4z
+ GEOMw9ECkwR2uyBQIkjOyui8wzGdbALIU/iUKii0gKezvOINu10XBw21IoaRbXRpRlAKh9o5vs
+ /dv37fsNT6EthAAAA
+X-Change-ID: 20241024-topic-nvmequirk-10e70e6b13ba
+To: Keith Busch <kbusch@kernel.org>, Jens Axboe <axboe@kernel.dk>, 
+ Christoph Hellwig <hch@lst.de>, Sagi Grimberg <sagi@grimberg.me>
+Cc: Bjorn Andersson <bjorn.andersson@oss.qualcomm.com>, 
+ Marijn Suijten <marijn.suijten@somainline.org>, 
+ linux-nvme@lists.infradead.org, linux-kernel@vger.kernel.org, 
+ Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=ed25519-sha256; t=1729791288; l=1918;
+ i=konrad.dybcio@oss.qualcomm.com; s=20230215; h=from:subject:message-id;
+ bh=Vo/r6/bSWAK8A6+AEU3IEBIjDMn/12uUNGfpjEqGMJ4=;
+ b=+0Uss2EOp/Krb4dQS/+UAdVZAMvPtqoWqNnnVWBMS5++C7Ojxagn1+61IEQOF/k01j8CFl4cd
+ AwigjGbzmfiAI8Sm7cYhvTjRaSs9U8Y9urkoi2Gr3gvELZqtYuPlatZ
+X-Developer-Key: i=konrad.dybcio@oss.qualcomm.com; a=ed25519;
+ pk=iclgkYvtl2w05SSXO5EjjSYlhFKsJ+5OSZBjOkQuEms=
 
-On Sat, Oct 12, 2024 at 3:30?AM Ruyi Zhang <ruyi.zhang@samsung.com> wrote:
->
-> ---
-> On 2024-10-10 15:35 Pavel Begunkov wrote:
-> >> Two questions:
-> >>
-> >> 1. I agree with you, we shouldn't walk a potentially very
-> >> long list under spinlock. but i can't find any other way
-> >> to get all the timeout
->
-> > If only it's just under the spin, but with disabled irqs...
->
-> >> information than to walk the timeout_list. Do you have any
-> >> good ideas?
->
-> > In the long run it'd be great to replace the spinlock
-> > with a mutex, i.e. just ->uring_lock, but that would might be
-> > a bit involving as need to move handling to the task context.
->
->  Yes, it makes more sense to replace spin_lock, but that would
->  require other related logic to be modified, and I don't think
->  it's wise to do that for the sake of a piece of debugging
->  information.
->
-> >> 2. I also agree seq_printf heavier, if we use
-> >> seq_put_decimal_ull and seq_puts to concatenate strings,
-> >> I haven't tested whether it's more efficient or not, but
-> >> the code is certainly not as readable as the former. It's
-> >> also possible that I don't fully understand what you mean
-> >> and want to hear your opinion.
->
-> > I don't think there is any difference, it'd be a matter of
-> > doubling the number of in flight timeouts to achieve same
-> > timings. Tell me, do you really have a good case where you
-> > need that (pretty verbose)? Why not drgn / bpftrace it out
-> > of the kernel instead?
->
->  Of course, this information is available through existing tools.
->  But I think that most of the io_uring metadata has been exported
->  from the fdinfo file, and the purpose of adding the timeout
->  information is the same as before, easier to use. This way,
->  I don't have to write additional scripts to get all kinds of data.
->
->  And as far as I know, the io_uring_show_fdinfo function is
->  only called once when the user is viewing the
->  /proc/xxx/fdinfo/x file once. I don't think we normally need to
->  look at this file as often, and only look at it when the program
->  is abnormal, and the timeout_list is very long in the extreme case,
->  so I think the performance impact of adding this code is limited.
+From: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
-I do think it's useful, sometimes the only thing you have to poke at
-after-the-fact is the fdinfo information. At the same time, would it be
-more useful to dump _some_ of the info, even if we can't get all of it?
-Would not be too hard to just stop dumping if need_resched() is set, and
-even note that - you can always retry, as this info is generally grabbed
-from the console anyway, not programmatically. That avoids the worst
-possible scenario, which is a malicious setup with a shit ton of pending
-timers, while still allowing it to be useful for a normal setup. And
-this patch could just do that, rather than attempt to re-architect how
-the timers are tracked and which locking it uses.
+The Qualcomm SC8280XP SoC requires that all PCIe hosts are powered down
+before the platform can reach S3-like sleep states. This is very much
+similar in nature to the issue described in [1].
 
+Other Qualcomm platforms we support upstream require more complex code
+additions across both the PCIe RC driver and other platform-specific
+ones, before the link can be sustained in suspend. Hence, they
+effectively need the same treatment for now.
+
+Force NVME_QUIRK_SIMPLE_SUSPEND on all Qualcomm platforms (as
+identified by the upstream bridge having a Qualcomm VID) to address
+that. Once the aforementioned issues on non-SC8280XP platforms are
+addressed, the condition will be made more specific, with a PID check
+limiting it to only the platform(s) that require it due to HW design.
+
+[1] Commit df4f9bc4fb9c ("nvme-pci: add support for ACPI StorageD3Enable property")
+
+Signed-off-by: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
+---
+ drivers/nvme/host/pci.c | 8 ++++++++
+ 1 file changed, 8 insertions(+)
+
+diff --git a/drivers/nvme/host/pci.c b/drivers/nvme/host/pci.c
+index 4b9fda0b1d9a33af4d7030b72532835b205e9cbb..007b28a03cf2c7b3a90f7b7faa1c4c1950e25b6e 100644
+--- a/drivers/nvme/host/pci.c
++++ b/drivers/nvme/host/pci.c
+@@ -2999,6 +2999,14 @@ static unsigned long check_vendor_combination_bug(struct pci_dev *pdev)
+ 	if (dmi_match(DMI_BOARD_NAME, "LXKT-ZXEG-N6"))
+ 		return NVME_QUIRK_NO_APST;
+ 
++	/*
++	 * Qualcomm SC8280XP must shut down the PCIe host to enter S3.
++	 * Other Qualcomm platforms require more driver changes to restore the
++	 * link state after wakeup.
++	 */
++	if (pci_upstream_bridge(pdev)->vendor == PCI_VENDOR_ID_QCOM)
++		return NVME_QUIRK_SIMPLE_SUSPEND;
++
+ 	return 0;
+ }
+ 
+
+---
+base-commit: fd21fa4a912ebbf8a6a341c31d8456f61e7d4170
+change-id: 20241024-topic-nvmequirk-10e70e6b13ba
+
+Best regards,
 -- 
-Jens Axboe
+Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>
 
 
