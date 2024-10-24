@@ -1,100 +1,135 @@
-Return-Path: <linux-kernel+bounces-379912-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379913-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 127B29AE5C4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:11:36 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id E83E19AE5C7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:13:00 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id CACAC284193
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:11:34 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id AC3692841FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:12:59 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5C99D1D9A6B;
-	Thu, 24 Oct 2024 13:11:15 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="VBP6F0Aw"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7313B1D89ED;
+	Thu, 24 Oct 2024 13:12:53 +0000 (UTC)
+Received: from frasgout.his.huawei.com (frasgout.his.huawei.com [185.176.79.56])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A84C41D89F8;
-	Thu, 24 Oct 2024 13:11:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 78DD914A0AA;
+	Thu, 24 Oct 2024 13:12:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.176.79.56
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775474; cv=none; b=JbbzdGt/Cd0NuKBKZCyMVTQrfuVB8RyV+Tmok3FJCVYSaEeS9MogesyQn7QLyas3acNnvbAXqgqjqCheRz14IfcLCAmidNlmEp+dkUBScuOdXgKhTTrDfYhuk8Q1jQ74waC1BrU/IqE+zvkcgrWfZf9GcodxR4En2uMUAbRojac=
+	t=1729775573; cv=none; b=utXW0hEfvPG69oFcTyMb7tys4+ISMTrw3a8LiLcoYQjb/LAO5tuc5wG8YWvrmkwDtpDElgx/XYTvl15hD5hpt2dKNZ9DdfjvguM8zxT8n5wtjlgN6t07oeSYWloDbQKXiN5DejFm1stMPduohtarf7abrtjhzupy3mVfdlPYbmM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775474; c=relaxed/simple;
-	bh=5teONMyNaSD+W/M9XJf0XVho+JTe5FUhWHmzW6kn334=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version; b=L8Ykaba5jlEcd1ig9l1FUTnVqcUJWsmkpCwc//XdaYZiL4MqnkzHM0Zeg6UygYaEf2QuDyTvVWfiUaf01ZCx/OzRFixqFVRG4tTnwTYxqE1IAauIYKLE7/ZmJDuSME3vsR/pTaDfxh9DK/F6/ItfYOgglIFJkUfC9QNl4T0DfZM=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=VBP6F0Aw; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1BA60C4CEE8;
-	Thu, 24 Oct 2024 13:11:14 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729775474;
-	bh=5teONMyNaSD+W/M9XJf0XVho+JTe5FUhWHmzW6kn334=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=VBP6F0AwViQ1uLFZAq7Td6qEtdOtrvMPEzjN0Dq4CkrEe5XTf6dLXosYp46fyJqcE
-	 2Jq2An4g5SaPXtoYlBdEY7lj9K/rKOmYqnrGx+CAUtVo4rruBf0acNJlgmRLTzwblK
-	 ygdFXFp+YQ8F/b7V6isKbQHAq0ijfCdeGq2FHu1Ho2Vopzw5loW0n4n3p3yTVAyRU0
-	 ItdOU2w39Cfvderl0ip3VGGdVrQvClla9VNKoc3em1UGe+UkX4lIZUleEXurA7s+2C
-	 sWv1TzGATUsmMG3Tt1zmWcT5WOhdLQPjeBJ2VJMoqpEDWA4ybBvmx+10JRwDKDH1zF
-	 kT1ExK97dArGg==
-Received: from johan by xi.lan with local (Exim 4.97.1)
-	(envelope-from <johan+linaro@kernel.org>)
-	id 1t3xcf-000000003Xs-2xjw;
-	Thu, 24 Oct 2024 15:11:29 +0200
-From: Johan Hovold <johan+linaro@kernel.org>
-To: Bjorn Andersson <andersson@kernel.org>,
-	Konrad Dybcio <konradybcio@kernel.org>
-Cc: Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Rajendra Nayak <quic_rjendra@quicinc.com>,
-	Abel Vesa <abel.vesa@linaro.org>,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	Johan Hovold <johan+linaro@kernel.org>
-Subject: [PATCH 2/2] arm64: dts: qcom: x1e80100: fix PCIe5 interconnect
-Date: Thu, 24 Oct 2024 15:11:00 +0200
-Message-ID: <20241024131101.13587-3-johan+linaro@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241024131101.13587-1-johan+linaro@kernel.org>
-References: <20241024131101.13587-1-johan+linaro@kernel.org>
+	s=arc-20240116; t=1729775573; c=relaxed/simple;
+	bh=8l3sQCRA1mxKLjgOc2P2jT7SosiRDno8PcJZwww8RT0=;
+	h=From:To:CC:Subject:Date:Message-ID:References:In-Reply-To:
+	 Content-Type:MIME-Version; b=C6vldgzt3Xe31nAUEuHDMtJ352nq+h/ruJvKBI1XgKRncz4Ffe+efK3SiTExK9klExRVyV15Wi0ApFyhI8F24SNkaGj/nN/NyaIpgIoxXFDYPpMBpXPP3g662x5BNWylEC2nffPiwoOq/FK4BsrfnZigZjUZ5XoQqbwnyhR6DyQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=185.176.79.56
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.18.186.31])
+	by frasgout.his.huawei.com (SkyGuard) with ESMTP id 4XZ5sX60Kdz6D8vG;
+	Thu, 24 Oct 2024 21:11:44 +0800 (CST)
+Received: from frapeml100006.china.huawei.com (unknown [7.182.85.201])
+	by mail.maildlp.com (Postfix) with ESMTPS id B8C7714058E;
+	Thu, 24 Oct 2024 21:12:45 +0800 (CST)
+Received: from frapeml500008.china.huawei.com (7.182.85.71) by
+ frapeml100006.china.huawei.com (7.182.85.201) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 24 Oct 2024 15:12:45 +0200
+Received: from frapeml500008.china.huawei.com ([7.182.85.71]) by
+ frapeml500008.china.huawei.com ([7.182.85.71]) with mapi id 15.01.2507.039;
+ Thu, 24 Oct 2024 15:12:45 +0200
+From: Shameerali Kolothum Thodi <shameerali.kolothum.thodi@huawei.com>
+To: liulongfang <liulongfang@huawei.com>, "alex.williamson@redhat.com"
+	<alex.williamson@redhat.com>, "jgg@nvidia.com" <jgg@nvidia.com>, "Jonathan
+ Cameron" <jonathan.cameron@huawei.com>
+CC: "kvm@vger.kernel.org" <kvm@vger.kernel.org>,
+	"linux-kernel@vger.kernel.org" <linux-kernel@vger.kernel.org>,
+	"linuxarm@openeuler.org" <linuxarm@openeuler.org>
+Subject: RE: [PATCH v10 3/4] hisi_acc_vfio_pci: register debugfs for hisilicon
+ migration driver
+Thread-Topic: [PATCH v10 3/4] hisi_acc_vfio_pci: register debugfs for
+ hisilicon migration driver
+Thread-Index: AQHbH2o4p0+8feS/EU+UAnkXuipALLKV7BAg
+Date: Thu, 24 Oct 2024 13:12:45 +0000
+Message-ID: <bedd3623de984a6fafd24a2c85f6c05e@huawei.com>
+References: <20241016012308.14108-1-liulongfang@huawei.com>
+ <20241016012308.14108-4-liulongfang@huawei.com>
+In-Reply-To: <20241016012308.14108-4-liulongfang@huawei.com>
+Accept-Language: en-GB, en-US
+Content-Language: en-US
+X-MS-Has-Attach:
+X-MS-TNEF-Correlator:
+Content-Type: text/plain; charset="us-ascii"
+Content-Transfer-Encoding: quoted-printable
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Transfer-Encoding: 8bit
 
-The fifth PCIe controller is connected to the PCIe North ANoC.
 
-Fix the corresponding interconnect property so that the OS manages the
-right path.
 
-Fixes: 62ab23e15508 ("arm64: dts: qcom: x1e80100: add PCIe5 nodes")
-Signed-off-by: Johan Hovold <johan+linaro@kernel.org>
----
- arch/arm64/boot/dts/qcom/x1e80100.dtsi | 2 +-
- 1 file changed, 1 insertion(+), 1 deletion(-)
+> -----Original Message-----
+> From: liulongfang <liulongfang@huawei.com>
+> Sent: Wednesday, October 16, 2024 2:23 AM
+> To: alex.williamson@redhat.com; jgg@nvidia.com; Shameerali Kolothum
+> Thodi <shameerali.kolothum.thodi@huawei.com>; Jonathan Cameron
+> <jonathan.cameron@huawei.com>
+> Cc: kvm@vger.kernel.org; linux-kernel@vger.kernel.org;
+> linuxarm@openeuler.org; liulongfang <liulongfang@huawei.com>
+> Subject: [PATCH v10 3/4] hisi_acc_vfio_pci: register debugfs for hisilico=
+n
+> migration driver
 
-diff --git a/arch/arm64/boot/dts/qcom/x1e80100.dtsi b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-index ee53cd0aeb95..d7b6116578fd 100644
---- a/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-+++ b/arch/arm64/boot/dts/qcom/x1e80100.dtsi
-@@ -3105,7 +3105,7 @@ pcie5: pci@1c00000 {
- 			assigned-clocks = <&gcc GCC_PCIE_5_AUX_CLK>;
- 			assigned-clock-rates = <19200000>;
- 
--			interconnects = <&pcie_south_anoc MASTER_PCIE_5 QCOM_ICC_TAG_ALWAYS
-+			interconnects = <&pcie_north_anoc MASTER_PCIE_5 QCOM_ICC_TAG_ALWAYS
- 					 &mc_virt SLAVE_EBI1 QCOM_ICC_TAG_ALWAYS>,
- 					<&gem_noc MASTER_APPSS_PROC QCOM_ICC_TAG_ALWAYS
- 					 &cnoc_main SLAVE_PCIE_5 QCOM_ICC_TAG_ALWAYS>;
--- 
-2.45.2
+[..]
+=20
+> @@ -1342,6 +1538,7 @@ static int hisi_acc_vfio_pci_migrn_init_dev(struct
+> vfio_device *core_vdev)
+>  	hisi_acc_vdev->pf_qm =3D pf_qm;
+>  	hisi_acc_vdev->vf_dev =3D pdev;
+>  	mutex_init(&hisi_acc_vdev->state_mutex);
+> +	mutex_init(&hisi_acc_vdev->open_mutex);
+>=20
+>  	core_vdev->migration_flags =3D VFIO_MIGRATION_STOP_COPY |
+> VFIO_MIGRATION_PRE_COPY;
+>  	core_vdev->mig_ops =3D &hisi_acc_vfio_pci_migrn_state_ops;
+> @@ -1413,6 +1610,9 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev
+> *pdev, const struct pci_device
+>  	ret =3D vfio_pci_core_register_device(&hisi_acc_vdev->core_device);
+>  	if (ret)
+>  		goto out_put_vdev;
+> +
+> +	if (ops =3D=3D &hisi_acc_vfio_pci_migrn_ops)
+> +		hisi_acc_vfio_debug_init(hisi_acc_vdev);
 
+As commented earlier, the ops check can be moved to the debug_init() functi=
+on=20
+and you can remove ops check for the debug_exit() below. You may have to
+rearrange the functions to avoid the compiler error you mentioned in previo=
+us
+version to do so.
+
+>  	return 0;
+>=20
+>  out_put_vdev:
+> @@ -1423,8 +1623,11 @@ static int hisi_acc_vfio_pci_probe(struct pci_dev
+> *pdev, const struct pci_device
+>  static void hisi_acc_vfio_pci_remove(struct pci_dev *pdev)
+>  {
+>  	struct hisi_acc_vf_core_device *hisi_acc_vdev =3D
+> hisi_acc_drvdata(pdev);
+> +	struct vfio_device *vdev =3D &hisi_acc_vdev->core_device.vdev;
+>=20
+>  	vfio_pci_core_unregister_device(&hisi_acc_vdev->core_device);
+> +	if (vdev->ops =3D=3D &hisi_acc_vfio_pci_migrn_ops)
+> +		hisi_acc_vf_debugfs_exit(hisi_acc_vdev);
+
+As mentioned above remove the ops check here.
+
+With the above ones checked and  fixed,
+Reviewed-by: Shameer Kolothum <shameerali.kolothum.thodi@huawei.com>
 
