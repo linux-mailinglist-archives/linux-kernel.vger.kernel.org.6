@@ -1,105 +1,124 @@
-Return-Path: <linux-kernel+bounces-379836-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379837-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id DE0019AE46D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:10:52 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 950DF9AE472
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:11:38 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88EBA1F22976
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:10:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C5AB21C22180
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:11:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 119A61D1739;
-	Thu, 24 Oct 2024 12:10:50 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 199821D5148;
+	Thu, 24 Oct 2024 12:11:31 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="WgINYSC6"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="pWBBT9fx"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6AE3D17B51A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:10:49 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 6D2E517B51A;
+	Thu, 24 Oct 2024 12:11:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729771849; cv=none; b=n+l9D52jhohfgg8mdowH1k6ZSBSElAIT7WPV8bfENyGasQxwzYCh8EVcq/uWhe/c+6FMAI3boGu8BpeUFLjURYAGD1tZomBPRsjAle6ofLkfssKOTDLi8u5zYvyjvKVnel0KsqasFUEolvZIRoEignMrS3gs31/VrOHFaYhhEaE=
+	t=1729771890; cv=none; b=NS+3hDjIfYVrgqm8o6d/puuUrhaiPt9GzW9bJvyIa657xZciICeagyd3VoD31sp8ZTOClzYpnFhQZVVupwWD4ub6CKHGuC73ys2yYc9m2MQ4bZMSd0nLZP9nbbnE3gHdTHZ/2qR02c8SMVNB4fWJ/vzG2o4HG+VYek2aVH6DRgI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729771849; c=relaxed/simple;
-	bh=nj4eg9XYRhifvPXBCauMUJiF12TmQu17Tr6oSm2RCGE=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=FkDztzF4W71B+S3x+NUVqCD6qBWSzw4WRUjvAofsoZXvBSTUOIT61j3DKNpQVIQESukEaU0xdnCOioPJyjqT0d2fGlDT606MbPyFOYjn3BL+YkWbii5B92HQag3CJh/bE7UZlCK9hPJDn+F5xGCsfZFh47dm5eOlA9sI8I/IJbw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=WgINYSC6; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 92348C4CEC7;
-	Thu, 24 Oct 2024 12:10:48 +0000 (UTC)
+	s=arc-20240116; t=1729771890; c=relaxed/simple;
+	bh=j2aK+dZfMCFBYBRp0DvfF/+BrKP9xuPDDRi0Mwd5PnI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
+	 MIME-Version:Content-Type; b=O3C/q1Pn4wrkpmwQhT0JYA36pQWQ4CQa7FhzOB2VBNybajKuyzyJPnM1726YvqBiW0kuN5Grn3mY1i7gR4FI/Nvboe6mtO4QkAoZXPmGsUL39AJcT0rgJ4NgNCB31KEPOZyFvXz7y+tH/QIuTxx0pP0RFONQd9LUucJeAWx1Ins=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=pWBBT9fx; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id D3051C4CEC7;
+	Thu, 24 Oct 2024 12:11:29 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729771848;
-	bh=nj4eg9XYRhifvPXBCauMUJiF12TmQu17Tr6oSm2RCGE=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=WgINYSC6Xzg0aL2JVPDDTGLHmULVsZ1hmogjU/IuHnwubz5H2/jqqdEU+aLlMtErR
-	 lUDFhN1sGlznBPfdNUpzjFTiW81aeK0Jd7L/lo5+qBSQZ8xZqr2/mIOJpcY/K6DpiS
-	 Z48WqVKyJeHKM2aWOkEJzNbfi+ALARbzkwiSrzV3hnX5HkyEPg5oaVSPPeyQpcV3JP
-	 hfdE6VfraxhZAJ/UE7Dm02zjK8ljVYBeYLGgWnEs5h+MBzqq+fotmxHXaqZyRvEZ4G
-	 iaQHlEzFIJgRfnoE46ORVt32KmMdqL3qDUact26MbBwoSqqy+ihPudym1Hq1h8fgZV
-	 k6t0WWud2UL2Q==
-Date: Thu, 24 Oct 2024 14:10:46 +0200
-From: Frederic Weisbecker <frederic@kernel.org>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: LKML <linux-kernel@vger.kernel.org>,
-	Anna-Maria Behnsen <anna-maria@linutronix.de>,
-	John Stultz <jstultz@google.com>,
-	Peter Zijlstra <peterz@infradead.org>,
-	Ingo Molnar <mingo@kernel.org>, Stephen Boyd <sboyd@kernel.org>,
-	Eric Biederman <ebiederm@xmission.com>,
-	Oleg Nesterov <oleg@redhat.com>
-Subject: Re: [patch V5 07/26] posix-timers: Add proper state tracking
-Message-ID: <Zxo5RnxokWPre99y@localhost.localdomain>
-References: <20241001083138.922192481@linutronix.de>
- <20241001083835.670337048@linutronix.de>
- <ZxZU5ViCYadY6eOE@localhost.localdomain>
- <87r0856g9n.ffs@tglx>
+	s=k20201202; t=1729771890;
+	bh=j2aK+dZfMCFBYBRp0DvfF/+BrKP9xuPDDRi0Mwd5PnI=;
+	h=From:To:Cc:Subject:In-Reply-To:References:Date:From;
+	b=pWBBT9fx07KGZ3OHTmp1zmn3dnEMW/o6gErH3btQM5uvp8FLa0eQd/gmaiNN7uIJK
+	 Lf5fiZ1Jo/NZ48cmqmkZIgSRKPHm6QD47Emcb1AAs60Tq1WLYEoR0hI91Hch6JkubI
+	 1oxUAxjDrO5KvnvfMTcyJWndpAgDcUAoJpO0HRv36F+OEHNheXZASQSJvl6JzIG9IL
+	 3Aji4cyM7Vp9FlDmkLD93cTXe6TcyBpBjlbd1xVQlV1dyt6HQxY7Hcb+c/VldUquUA
+	 uiiMUfWqIEwnOb5c+XsSuYsIWT0+Bj7Y5Gss37rZ2hQqdzFDNewPw4nOdXDDKVt+lk
+	 o/YtNJcx9j1Iw==
+From: Puranjay Mohan <puranjay@kernel.org>
+To: Jonas Oberhauser <jonas.oberhauser@huaweicloud.com>, Andrea Parri
+ <parri.andrea@gmail.com>, paulmck@kernel.org
+Cc: bpf@vger.kernel.org, lkmm@lists.linux.dev, linux-kernel@vger.kernel.org
+Subject: Re: Some observations (results) on BPF acquire and release
+In-Reply-To: <35bed95a-3203-43a7-972d-f3fd3c7da6f9@huaweicloud.com>
+References: <Zxk2wNs4sxEIg-4d@andrea>
+ <35bed95a-3203-43a7-972d-f3fd3c7da6f9@huaweicloud.com>
+Date: Thu, 24 Oct 2024 12:11:11 +0000
+Message-ID: <mb61pr085bt0g.fsf@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=iso-8859-1
-Content-Disposition: inline
-Content-Transfer-Encoding: 8bit
-In-Reply-To: <87r0856g9n.ffs@tglx>
+Content-Type: multipart/signed; boundary="=-=-=";
+	micalg=pgp-sha512; protocol="application/pgp-signature"
 
-Le Thu, Oct 24, 2024 at 10:45:24AM +0200, Thomas Gleixner a écrit :
-> On Mon, Oct 21 2024 at 15:19, Frederic Weisbecker wrote:
-> 
-> > Le Tue, Oct 01, 2024 at 10:42:09AM +0200, Thomas Gleixner a écrit :
-> >> From: Thomas Gleixner <tglx@linutronix.de>
-> >> 
-> >> Right now the state tracking is done by two struct members:
-> >> 
-> >>  - it_active:
-> >>      A boolean which tracks armed/disarmed state
-> >> 
-> >>  - it_signal_seq:
-> >>      A sequence counter which is used to invalidate settings
-> >>      and prevent rearming
-> >> 
-> >> Replace it_active with it_status and keep properly track about the states
-> >> in one place.
-> >> 
-> >> This allows to reuse it_signal_seq to track reprogramming, disarm and
-> >
-> > Did you mean it_status here?
-> 
-> No. it_signal_seq is used to validate whether a queued, but not yet
-> delivered signal, is valid or not. The sequence is stored in the signal
-> when the signal is queued and compared to the sequence on delivery.
+--=-=-=
+Content-Type: text/plain
+Content-Transfer-Encoding: quoted-printable
 
-Yeah I missed the following patches that increment it_signal_seq on delete
-and reset. Makes more sense now.
+Jonas Oberhauser <jonas.oberhauser@huaweicloud.com> writes:
 
-Thanks!
+> Am 10/23/2024 um 7:47 PM schrieb Andrea Parri:
+>> Hi Puranjay and Paul,
+>>=20
+>> These remarks show that the proposed BPF formalization of acquire and
+>> release somehow, but substantially, diverged from the corresponding
+>> LKMM formalization.  My guess is that the divergences mentioned above
+>> were not (fully) intentional, or I'm wondering -- why not follow the
+>> latter (the LKMM's) more closely? -  This is probably the first question
+>> I would need to clarify before trying/suggesting modifications to the
+>> present formalizations.  ;-)  Thoughts?
+>>=20
+>
+> I'm also curious why the formalization (not just in the semantics but=20
+> also how it is structured) is so completely different from LKMM's.
 
-> 
-> Thanks,
-> 
->         tglx
+While initially writing the cat formalization for BPF, I started with
+LKMM but because BPF memory model is an instruction level memory model
+and much simpler than LKMM, I wrote it from scratch. But I converted all
+LKMM litmus tests to BPF and made sure that the cat model is complaint.
+
+> At first glance there are also many semantic differences, e.g., it seems=
+=20
+> coe is much weaker in eBPF and the last axiom also seems a bit like a=20
+> tack-on that doesn't "play well" with the previous axioms.
+
+Yes, the last axion is a tack-on that I added to make acquire/release
+work with other atomics just before the presentation at LPC. The
+acquire/release part is still under development and not perfect.
+
+If what you are saying about coe is true then it is a bug and I will try
+to fix it.=20
+
+> It would make sense to me to start with the framework of LKMM and maybe=20
+> weaken it from there if it is really necessary. But maybe I don't know=20
+> enough about how eBPF atomics are intended to work...
+
+The cat formalization for BPF is currently experimental and it would be
+great if people can find bugs and contribute to it. It would be great if
+people who worked on the LKMM's cat file could help building BPF's cat
+file too.=20
+
+
+Thanks,
+Puranjay
+
+--=-=-=
+Content-Type: application/pgp-signature; name="signature.asc"
+
+-----BEGIN PGP SIGNATURE-----
+
+iIoEARYKADIWIQQ3wHGvVs/5bdl78BKwwPkjG3B2nQUCZxo5YBQccHVyYW5qYXlA
+a2VybmVsLm9yZwAKCRCwwPkjG3B2nYfrAQDOGqum/r5aJ91GPDVTy/BLPPdxuOfx
+Ut272swNQKHhBgD/bBj+wTEqr58TvGy9wYWVlmndLErh38dGjecBTefpHwI=
+=US4p
+-----END PGP SIGNATURE-----
+--=-=-=--
 
