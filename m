@@ -1,196 +1,103 @@
-Return-Path: <linux-kernel+bounces-380350-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380351-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
-	by mail.lfdr.de (Postfix) with ESMTPS id BA2DE9AECBC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:55:33 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6AFE29AECC0
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:55:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E525B23186
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:55:31 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 9D7161C233F5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:55:54 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0391F81BC;
-	Thu, 24 Oct 2024 16:55:17 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E8E251F8F0E;
+	Thu, 24 Oct 2024 16:55:46 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mcihC874"
-Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b="oh6mGL9d"
+Received: from 008.lax.mailroute.net (008.lax.mailroute.net [199.89.1.11])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E81D63E5
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5CE481F4FC2;
+	Thu, 24 Oct 2024 16:55:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=199.89.1.11
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788916; cv=none; b=Xohdtzj440qUtjIwy9ZCTlKwwkM0DzNU/fQjPEZunr0E5DttrfRI6rlZS9GkoUoONDo/Jjp9kqR8nONaOdfz0XQr5bLEIBkur+S624urwkKKF5W3QmPpkPhDsVJomXtX5GakzsbZggSSAwY9STPsrnOU8TUASy6oxpZLXbzt3nI=
+	t=1729788946; cv=none; b=tPQueoitVICtUzWgjWwTqnXshj3p59vVvyt4Ol9DxzTDZIir3d5cn5489A+n8grQyrakV3MbeEqz0ThNaTKJdIxoMxFFcWETi27+ae55cd63FceXmIH9OyLgrgWig4ysYVuJNNM9+E/UpqIUr7be6WAHZBg339moRmvM15zNrbA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788916; c=relaxed/simple;
-	bh=GO+CYso/bTOf2xGs1upCw8Mp19VtJPjOhr62lrxsNG0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=sHJo5HendH+bz3W1hftJyMQNZWyRxOZWFM+PJDlS74Z/nJMI9fVOXEh+YBgxgx1Wb035gHQqm5VlPjw2QjAghCUpSnkn3V4f2CeAZ6Q7l4qmHU5BdlRR2BW+7Rz/3n/WpD/xn3EiDvn/JqmTkXLS+kx8wz5Xd/dFoy+2paQ1BOc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mcihC874; arc=none smtp.client-ip=209.85.128.49
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so7725e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:55:13 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729788912; x=1730393712; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=RCdtKyQctIBSL1se9ZBXozl/8Gw/YsUba47AyHThe0Y=;
-        b=mcihC874xHNrlWyFkXlnppm9CT7ZXhu1whGEKYELuJNVTJB612P9NAIaNu5f03knYF
-         So//NBHpqy7I1yQCik5Y+2aCzMJbFJs5xQVruU9XA1LwKg9IS6tF3bjy6sPvwSsjBdR4
-         2C86PJoIek8chu60kDGXejU3C+Z99OGXC/s11XF+eURjxho6pZVSaXa4czDWFvG5wCri
-         PMNV1NfJKaFKDoExwOP9ec2KpxOGALXE+L3A0T8JC51xVw0+mHjq/3qtxZm7q1TLW58o
-         ku2tQWCP5D63GhUtKetPYeegS9WIWLVGeE30q/VOpExglSKzMPs0dJdfEhzBHvtzoKws
-         rbGw==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729788912; x=1730393712;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=RCdtKyQctIBSL1se9ZBXozl/8Gw/YsUba47AyHThe0Y=;
-        b=rtsILH2TwvMZ54UlNAkzaHadLbfJ4Nzo0eQWH6+9G1bvF2PPPjJ3v4ZMTEO5WBUYrS
-         imn65EC+uZOqBnDTXnYua8+e7dOM1mnAOGFy1S8WcQYrj9Ru3sJBAvrk8ksWW0mUErQS
-         z0X02NSM1vbncD7r453ZxQrxEFVZWaFOsmcW3PfZRC+Keah4qtpd6Avvj59glhTQ09nW
-         ZZ88GcU5Gu/38eGmbXDmf87D5XqtlIl68c/PNY5h2x3BGvu4r+VcZzjuLJVZ3jwbbwk+
-         NnvPoPT1ZOQSHwBtdXGytXsc145C24oIlB4MmJC1FAqSntfzSxl4H6VZ4BPBzG2BRbiU
-         ErvQ==
-X-Gm-Message-State: AOJu0Yy7bEjLf6oPA2nwOo0UKsnmf98HN/Ph7ncKuaTwNDlqqaEeoMHx
-	zN5IIlPv6TguImT5bbB0RV92NuRQgQiknZB54Bt/B4aJwHQxVP7mAo6A1sBlY0A3yxA+zzHBFn9
-	59Q==
-X-Google-Smtp-Source: AGHT+IHcN7HDbw2An/mqTEn7MtXy6cHrcCtVnXaHLCdh4ENrobYlDmJPj++dv/iSVSPdnUCb+iLsTg==
-X-Received: by 2002:a05:600c:1d82:b0:42b:a8fc:3937 with SMTP id 5b1f17b1804b1-4318a56d62dmr5544205e9.4.1729788912295;
-        Thu, 24 Oct 2024 09:55:12 -0700 (PDT)
-Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd69e0sm52243065e9.3.2024.10.24.09.55.11
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 09:55:11 -0700 (PDT)
-Date: Thu, 24 Oct 2024 16:55:08 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, corbet@lwn.net,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH v2] Documentation: Update the behaviour of "kvm-arm.mode"
-Message-ID: <Zxp77Es8BCnHcAHk@google.com>
-References: <20241024160614.1894599-1-smostafa@google.com>
- <86o73930ze.wl-maz@kernel.org>
+	s=arc-20240116; t=1729788946; c=relaxed/simple;
+	bh=drM0DMK3pHMCglOQSZDyX0yoq8NZa67xJxu+fcnJ7Ns=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=DhquZiqrIdUH7mvzl871IOzSfMNjcm7ueCO70Xv0DAjbzg4t5WE/Ii6NS6KukjLW8yckCWkwN43ZIh5ZmJhqCE8aFa3t/FXJK6ic/wJSGf1XmCNtH2bPd+XrAZvxl/8gN70fU+qbad9DRsREQtK4XI4P42I24XhNRnfem5rHcb0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org; spf=pass smtp.mailfrom=acm.org; dkim=pass (2048-bit key) header.d=acm.org header.i=@acm.org header.b=oh6mGL9d; arc=none smtp.client-ip=199.89.1.11
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=acm.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=acm.org
+Received: from localhost (localhost [127.0.0.1])
+	by 008.lax.mailroute.net (Postfix) with ESMTP id 4XZBqz50glz6ClY90;
+	Thu, 24 Oct 2024 16:55:43 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=acm.org; h=
+	content-transfer-encoding:content-type:content-type:in-reply-to
+	:from:from:content-language:references:subject:subject
+	:user-agent:mime-version:date:date:message-id:received:received;
+	 s=mr01; t=1729788940; x=1732380941; bh=9lnwlH1gvmn7sLw/ysbauuEU
+	LqLiL524nQL5bu1Jjyc=; b=oh6mGL9dfm2zqTOpmUiID6BDR5XCSScPeHsy4r7F
+	MUFoVy6BKthGaUqZo0qREgBh8ifoVryGWnE0p5UMGkli2phHG6bqzchkmyOnEmRs
+	3UWqaSCg1MsWzQEYs06c8A5103BTSM8srov/eNY1O8mHlouV8qmDJgDUcTIOmyHC
+	pGwV5bjTvk6RPLqItGxBshTC1ya9Tmltqp60WgnuD3AcIEcTb9qwKyl/mJb1KbBB
+	mXnDxGzpGKoIBmfZn2b2THjd0b6lyEKKYpo1Z/Hcw8JqHfkh/Y/BQmD2ZdKYMOej
+	J4m9aM6CphcAFqZAlnwdgxopMLo/B3sECnzdDMOFFYX8tg==
+X-Virus-Scanned: by MailRoute
+Received: from 008.lax.mailroute.net ([127.0.0.1])
+ by localhost (008.lax [127.0.0.1]) (mroute_mailscanner, port 10029) with LMTP
+ id CoMIQO6QCvsW; Thu, 24 Oct 2024 16:55:40 +0000 (UTC)
+Received: from [IPV6:2a00:79e0:2e14:8:59a1:69e9:d92b:89d5] (unknown [104.135.204.81])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: bvanassche@acm.org)
+	by 008.lax.mailroute.net (Postfix) with ESMTPSA id 4XZBqv0QfLz6ClY8y;
+	Thu, 24 Oct 2024 16:55:38 +0000 (UTC)
+Message-ID: <dfd36022-2397-486c-8499-454d31072a30@acm.org>
+Date: Thu, 24 Oct 2024 09:55:36 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86o73930ze.wl-maz@kernel.org>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v1 1/1] scsi: gla2xxx: use flexible array member at the
+ end of structures
+To: Mirsad Todorovac <mtodorovac69@gmail.com>, linux-scsi@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+Cc: Nilesh Javali <njavali@marvell.com>,
+ GR-QLogic-Storage-Upstream@marvell.com,
+ "James E.J. Bottomley" <James.Bottomley@HansenPartnership.com>,
+ "Martin K. Petersen" <martin.petersen@oracle.com>
+References: <20241023221700.220063-2-mtodorovac69@gmail.com>
+ <9ca3fb4b-85d9-493c-8b90-5210f5530e7f@acm.org>
+ <414ef7aa-a1a3-4c13-887b-25a51236f83e@gmail.com>
+Content-Language: en-US
+From: Bart Van Assche <bvanassche@acm.org>
+In-Reply-To: <414ef7aa-a1a3-4c13-887b-25a51236f83e@gmail.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 05:43:49PM +0100, Marc Zyngier wrote:
-> Hi Mostafa,
+On 10/23/24 9:22 PM, Mirsad Todorovac wrote:
+>  From next-20241023, it seems to have passed compilation:
 > 
-> On Thu, 24 Oct 2024 17:06:14 +0100,
-> Mostafa Saleh <smostafa@google.com> wrote:
-> > 
-> > Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
-> > VHE support") modified the behaviour of "kvm-arm.mode=protected" without
-> > the updating the kernel parameters doc.
-> > 
-> > Update it to match the current implementation.
-> > 
-> > Also, update required architecture version for nested virtualization as
-> > suggested by Marc.
-> > 
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > 
-> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> > 
-> > ---
-> > v2: Update nested value also
-> 
-> Thanks for that. However...
-> 
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt | 10 +++++++---
-> >  1 file changed, 7 insertions(+), 3 deletions(-)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index 1518343bbe22..d5b771e5cb5b 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -2740,12 +2740,16 @@
-> >  			nvhe: Standard nVHE-based mode, without support for
-> >  			      protected guests.
-> >  
-> > -			protected: nVHE-based mode with support for guests whose
-> > +			protected: hVHE-based mode with support for guests whose
-> >  				   state is kept private from the host.
-> > +				   In case hVHE is not supported in hardware, it will
-> > +				   boot with protected nVHE.
-> > +				   nVHE protected mode can still be forced on VHE systems
-> > +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
-> 
-> 
-> I probably didn't explain myself very well. I would like to avoid
-> mentioning hVHE at all, because this is pretty confusing (and really
-> an implementation detail). Instead, we can talk about VHE/nVHE, which
-> are real architectural features.
+>    INSTALL debian/linux-libc-dev/usr/include
+> dpkg-deb: building package 'linux-image-6.12.0-rc4-next-20241023-00001-gdcf82889780d' in '../linux-image-6.12.0-rc4-next-20241023-00001-gdcf82889780d_6.12.0-rc4-00001-gdcf82889780d-4_amd64.deb'.
+> dpkg-deb: building package 'linux-libc-dev' in '../linux-libc-dev_6.12.0-rc4-00001-gdcf82889780d-4_amd64.deb'.
+>   dpkg-genbuildinfo --build=binary -O../linux-upstream_6.12.0-rc4-00001-gdcf82889780d-4_amd64.buildinfo
+>   dpkg-genchanges --build=binary -O../linux-upstream_6.12.0-rc4-00001-gdcf82889780d-4_amd64.changes
+> dpkg-genchanges: info: binary-only upload (no source code included)
+>   dpkg-source --after-build .
+> dpkg-buildpackage: info: binary-only upload (no source included)
 
-Agh, my bad, it makes more sense to talk in terms or architecture.
+What kernel config is used during that kernel build? Is the qla2xxx
+driver enabled in that kernel config?
 
-> 
-> Also, I just realised that we can use your command-line magic for
-> downgrading from VHE to nVHE in all cases, so I'd be suggesting
-> something like this:
-> 
-> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> index 1518343bbe223..2bb19f1331fed 100644
-> --- a/Documentation/admin-guide/kernel-parameters.txt
-> +++ b/Documentation/admin-guide/kernel-parameters.txt
-> @@ -2740,8 +2740,9 @@
->  			nvhe: Standard nVHE-based mode, without support for
->  			      protected guests.
->  
-> -			protected: nVHE-based mode with support for guests whose
-> -				   state is kept private from the host.
-> +			protected: Mode with support for guests whose state is
-> +				   kept private from the host, using VHE or
-> +				   nVHE depending on HW support.
->  
->  			nested: VHE-based mode with support for nested
->  				virtualization. Requires at least ARMv8.3
-> @@ -2749,8 +2750,11 @@
->  
->  			Defaults to VHE/nVHE based on hardware support. Setting
->  			mode to "protected" will disable kexec and hibernation
-> -			for the host. "nested" is experimental and should be
-> -			used with extreme caution.
-> +			for the host. To force nVHE on VHE hardware, add
-> +			"arm64_sw.hvhe=0 id_aa64mmfr1.vh=0" to the
-> +			command-line.
-> +			"nested" is experimental and should be used with
-> +			extreme caution.
->  
->  	kvm-arm.vgic_v3_group0_trap=
->  			[KVM,ARM,EARLY] Trap guest accesses to GICv3 group-0
-> 
-> 
-> >
-> >  			nested: VHE-based mode with support for nested
-> > -				virtualization. Requires at least ARMv8.3
-> > -				hardware.
-> > +				virtualization. Requires at least ARMv8.4
-> > +				hardware (with FEAT_NV2).
-> 
-> That part looks good!
-> 
-> Thanks,
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
+BTW, there is a typo in the subject of your email: gla2xxx should be
+qla2xxx.
 
-Thanks,
-Mostafa
+Bart.
 
