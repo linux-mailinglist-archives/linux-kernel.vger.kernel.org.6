@@ -1,115 +1,129 @@
-Return-Path: <linux-kernel+bounces-379392-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379391-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0CBCD9ADE12
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:45:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7B7569ADE0C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:44:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3C0601C256F9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:45:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 39523282C7A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:44:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 48EAC1AF0D2;
-	Thu, 24 Oct 2024 07:44:36 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 2EF891AE863;
+	Thu, 24 Oct 2024 07:44:30 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="mQP9V+V7"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.19])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="F4XOFNrU"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B20AD1ABEA8;
-	Thu, 24 Oct 2024 07:44:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.19
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7503A1AD403;
+	Thu, 24 Oct 2024 07:44:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729755875; cv=none; b=hcwH6z55i11AvBjdp0WXhRzYyEeB7fr0JamuGn9wL1WHPI8PRv9zEURANRVPdGFiH9CN6oSx/HfoPMwqeeq5zeTiEewnky/pE2iR5q5xSar6JcBYFXRttgl3wlFYkVZF+jF4ptmUgJsmNE3tIdXpk9lhDiP0/fct6tbVVZJOJeo=
+	t=1729755869; cv=none; b=WZ1DZLjJEyhbVkgSd5r7wo35GgV5padSSGjEte8sokm1wu76arpVv9xb7BOYvb+QtXeLkFzVBV4BuZklNTFiGiXy53RT9kY+jk/Dexnkm8ncHLIZZq1bt7g0H1PWxr2UH+8dXALeF4AGnX7neRbBtWiBq4u3Xi5X23JdCzRHryc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729755875; c=relaxed/simple;
-	bh=Gdai8nHRN5zx4u+tGzkD01x+sxyu92Q/k5sZiqGt7LM=;
-	h=From:Date:To:cc:Subject:In-Reply-To:Message-ID:References:
-	 MIME-Version:Content-Type; b=aL4eHw1OQTaTIWFvhgoKa4EVdEeMNU3jhmK6NQdqGr52R3+DE4ZQevTQrBD+xxDEFOunyL4/uIzH62QpvUKV1lz6dOuOquiYY2x393aXTP8zmxmQ4yePGj65l1RnVNSd5LcNOV9TXH10Pz7ujUMdJg6jWnqnI3Wzrwme95ov6lg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=mQP9V+V7; arc=none smtp.client-ip=192.198.163.19
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729755874; x=1761291874;
-  h=from:date:to:cc:subject:in-reply-to:message-id:
-   references:mime-version;
-  bh=Gdai8nHRN5zx4u+tGzkD01x+sxyu92Q/k5sZiqGt7LM=;
-  b=mQP9V+V7cmIgX/4NP/G7o0TWfG40X1Ckn9/S4eYOOPkYeQ4WIS6k/ZZw
-   TdJNLZ4M9A/hSgLOPBcEc8PCwfvnBGHa+5pImdHSH4P1EAV0mzgwuZ4FI
-   0vOPwRZy0VjjFHb5bmUrXZ1Q6ghHc3cCIxzOd75uL6fdPz/0vx9KYBXiS
-   9D2oaG+q+r8B/2um4AaKD/ZHg2CwT7GtADaGaTij6xlqYSdUThN6TzP1q
-   grj81+7T9LFcw0z/WybiVyGEbUYaOg0h2L7myUxFKeVJzqTHV0691ress
-   c7No4RYqzAjX/A4ig2WnwpEnYozwv9BmB0xtLlRNcIF+IfH3axZHyrSCw
-   Q==;
-X-CSE-ConnectionGUID: kFJCsGhlRuyrQ2pq+LpSZA==
-X-CSE-MsgGUID: BuqqaoQGTK6Ykhc6PFkfsw==
-X-IronPort-AV: E=McAfee;i="6700,10204,11234"; a="28832598"
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="28832598"
-Received: from orviesa001.jf.intel.com ([10.64.159.141])
-  by fmvoesa113.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 00:44:33 -0700
-X-CSE-ConnectionGUID: dCd9/2W7TjGUWRhD8mzvcA==
-X-CSE-MsgGUID: oV4LCQYYTV2X4Ii0PjBowQ==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="117985665"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.193])
-  by smtpauth.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 00:44:24 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-Date: Thu, 24 Oct 2024 10:44:20 +0300 (EEST)
-To: Maximilian Luz <luzmaximilian@gmail.com>
-cc: Hans de Goede <hdegoede@redhat.com>, 
-    =?ISO-8859-15?Q?J=E9r=F4me_de_Bretagne?= <jerome.debretagne@gmail.com>, 
-    Bjorn Andersson <andersson@kernel.org>, 
-    Konrad Dybcio <konradybcio@kernel.org>, Rob Herring <robh@kernel.org>, 
-    Krzysztof Kozlowski <krzk+dt@kernel.org>, 
-    Conor Dooley <conor+dt@kernel.org>, Johan Hovold <johan+linaro@kernel.org>, 
-    linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, 
-    LKML <linux-kernel@vger.kernel.org>, platform-driver-x86@vger.kernel.org
-Subject: Re: [PATCH v2 3/5] platform/surface: aggregator_registry: Add Surface
- Pro 9 5G
-In-Reply-To: <ad9fa9f2-7f97-401a-8e8f-ae633ab1932b@gmail.com>
-Message-ID: <c85afd9c-8ce8-44d3-5baf-a557ec43e769@linux.intel.com>
-References: <20240908223505.21011-1-jerome.debretagne@gmail.com> <20240908223505.21011-4-jerome.debretagne@gmail.com> <f9cbd1c3-eb05-4262-bdc6-6d37e83179e5@gmail.com> <CA+kEDGEdd_s+DGKsVNY6Jy870B72eHuaj2EgEnwP8J46ZGbxpQ@mail.gmail.com>
- <8370d062-b3d2-46f5-9e7b-8e16edde8480@redhat.com> <555f8a3a-ae5e-57e7-f176-96c52e1a5d45@linux.intel.com> <ad9fa9f2-7f97-401a-8e8f-ae633ab1932b@gmail.com>
+	s=arc-20240116; t=1729755869; c=relaxed/simple;
+	bh=zylwN3ythosBgJwCjjnHYB5VcHWDkTD5jqrqiuJzVLw=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=emvyHLwpN+k7BajckJa0ro8t6XuFJNzk281T9jOyiCeQrGMG0VGi1ABhzParxMw3SWLC6sXxiO6gp11rOBgyHv7YshaFrp3RKjSm6b0ZIXzSYHQPEDrAZouW2WVu63TNBI/1XW0Tuw1bYjlMBWsTkH5PO0Alc6vlm5nyrL2DbmQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=F4XOFNrU; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 1E8BAC4CEE5;
+	Thu, 24 Oct 2024 07:44:27 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729755868;
+	bh=zylwN3ythosBgJwCjjnHYB5VcHWDkTD5jqrqiuJzVLw=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=F4XOFNrU1T3xszMOzuwJGlqqbGnrssI8S8Uh061izZujPIYSl65IzbFbZ9bEGiWS6
+	 ju2otyQ0OStQHyCJyJp1hBvmaa04H4soC6kEzf5IkbdHIE/YFpWBetSrdBBD48PS6M
+	 LUQU4UQdSKI2WN6Hweo7V/75zOTs6ceClClF036MWf/mNF9cvonEQVNAxGD5pZq6cm
+	 b4tennYpK8Ks5Z2W55o97e/JGoYcn0rXX1UAK2S0rCofmj+6dA+k+iptc5VJjweNcn
+	 kgZo2evHKpkKdVhWO+G/hoXgpf2KAn8lvk1wuYwf2M1g65e/fa7ph0COTR2R6G+ddI
+	 Wqy2szMQ4JhjA==
+Date: Thu, 24 Oct 2024 00:44:25 -0700
+From: Namhyung Kim <namhyung@kernel.org>
+To: Andrii Nakryiko <andrii.nakryiko@gmail.com>
+Cc: Alexei Starovoitov <ast@kernel.org>,
+	Daniel Borkmann <daniel@iogearbox.net>,
+	Andrii Nakryiko <andrii@kernel.org>,
+	Martin KaFai Lau <martin.lau@linux.dev>,
+	Eduard Zingerman <eddyz87@gmail.com>, Song Liu <song@kernel.org>,
+	Yonghong Song <yonghong.song@linux.dev>,
+	John Fastabend <john.fastabend@gmail.com>,
+	KP Singh <kpsingh@kernel.org>, Stanislav Fomichev <sdf@fomichev.me>,
+	Hao Luo <haoluo@google.com>, Jiri Olsa <jolsa@kernel.org>,
+	LKML <linux-kernel@vger.kernel.org>, bpf@vger.kernel.org,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Christoph Lameter <cl@linux.com>, Pekka Enberg <penberg@kernel.org>,
+	David Rientjes <rientjes@google.com>,
+	Joonsoo Kim <iamjoonsoo.kim@lge.com>,
+	Vlastimil Babka <vbabka@suse.cz>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Hyeonggon Yoo <42.hyeyoo@gmail.com>, linux-mm@kvack.org,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Kees Cook <kees@kernel.org>
+Subject: Re: [PATCH bpf-next 2/2] selftests/bpf: Add a test for open coded
+ kmem_cache iter
+Message-ID: <Zxn62WotvxH0UZ_h@google.com>
+References: <20241017080604.541872-1-namhyung@kernel.org>
+ <20241017080604.541872-2-namhyung@kernel.org>
+ <CAEf4BzaipQcGFWQu+o5d+aXVMN17LDnHOv9MwrZis1wpiCWwCw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/mixed; boundary="8323328-882061270-1729755860=:1315"
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAEf4BzaipQcGFWQu+o5d+aXVMN17LDnHOv9MwrZis1wpiCWwCw@mail.gmail.com>
 
-  This message is in MIME format.  The first part should be readable text,
-  while the remaining parts are likely unreadable without MIME-aware tools.
+On Mon, Oct 21, 2024 at 04:36:49PM -0700, Andrii Nakryiko wrote:
+> On Thu, Oct 17, 2024 at 1:06 AM Namhyung Kim <namhyung@kernel.org> wrote:
+> >
+> > The new subtest is attached to sleepable fentry of syncfs() syscall.
+> > It iterates the kmem_cache using bpf_for_each loop and count the number
+> > of entries.  Finally it checks it with the number of entries from the
+> > regular iterator.
+> >
+> >   $ ./vmtest.sh -- ./test_progs -t kmem_cache_iter
+> >   ...
+> >   #130/1   kmem_cache_iter/check_task_struct:OK
+> >   #130/2   kmem_cache_iter/check_slabinfo:OK
+> >   #130/3   kmem_cache_iter/open_coded_iter:OK
+> >   #130     kmem_cache_iter:OK
+> >   Summary: 1/3 PASSED, 0 SKIPPED, 0 FAILED
+> >
+> > Also simplify the code by using attach routine of the skeleton.
+> >
+> > Signed-off-by: Namhyung Kim <namhyung@kernel.org>
+> > ---
+> >  .../testing/selftests/bpf/bpf_experimental.h  |  6 ++++
+> >  .../bpf/prog_tests/kmem_cache_iter.c          | 28 +++++++++++--------
+> >  .../selftests/bpf/progs/kmem_cache_iter.c     | 24 ++++++++++++++++
+> >  3 files changed, 46 insertions(+), 12 deletions(-)
+> >
+> > diff --git a/tools/testing/selftests/bpf/bpf_experimental.h b/tools/testing/selftests/bpf/bpf_experimental.h
+> > index b0668f29f7b394eb..cd8ecd39c3f3c68d 100644
+> > --- a/tools/testing/selftests/bpf/bpf_experimental.h
+> > +++ b/tools/testing/selftests/bpf/bpf_experimental.h
+> > @@ -582,4 +582,10 @@ extern int bpf_wq_set_callback_impl(struct bpf_wq *wq,
+> >                 unsigned int flags__k, void *aux__ign) __ksym;
+> >  #define bpf_wq_set_callback(timer, cb, flags) \
+> >         bpf_wq_set_callback_impl(timer, cb, flags, NULL)
+> > +
+> > +struct bpf_iter_kmem_cache;
+> > +extern int bpf_iter_kmem_cache_new(struct bpf_iter_kmem_cache *it) __weak __ksym;
+> > +extern struct kmem_cache *bpf_iter_kmem_cache_next(struct bpf_iter_kmem_cache *it) __weak __ksym;
+> > +extern void bpf_iter_kmem_cache_destroy(struct bpf_iter_kmem_cache *it) __weak __ksym;
+> > +
+> 
+> we should be getting this from vmlinux.h nowadays, so this is probably
+> unnecessary
 
---8323328-882061270-1729755860=:1315
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: QUOTED-PRINTABLE
+I got some build errors without this.  I'll leave it for v2.
 
-On Wed, 23 Oct 2024, Maximilian Luz wrote:
-
-> On 10/22/24 10:56 AM, Ilpo J=C3=A4rvinen wrote:
->=20
-> [...]
->=20
-> > Hi all,
-> >=20
-> > I've now applied patch 3 to review-ilpo branch in pdx86 repo.
-> >=20
-> > I'd appreciate if somebody confirms I got those comment edits right.
-> >=20
->=20
-> Hi Ilpo,
->=20
-> looks good to me. Thanks for fixing this up!
-
-Great! Thanks for confirmation.
-
---=20
- i.
-
---8323328-882061270-1729755860=:1315--
+Thanks,
+Namhyung
 
