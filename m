@@ -1,73 +1,39 @@
-Return-Path: <linux-kernel+bounces-379724-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379725-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id A80A09AE2B7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:36:31 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 5A0449AE2BA
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:36:57 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61661C215DB
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:36:30 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 87A8C1C21A04
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:36:56 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7301B392A;
-	Thu, 24 Oct 2024 10:36:23 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1J/JSyy"
-Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439CE1C174A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:36:20 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B985E1C4A23;
+	Thu, 24 Oct 2024 10:36:48 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 134861C0DE2;
+	Thu, 24 Oct 2024 10:36:45 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729766182; cv=none; b=B9jZxXLGwB+Y531h2yMTZ3wtDqMdMaXh+d2wszu/Bo7AXFFmW++7WEkK0KcUPPty1MSygYhdrg8Twz3LzWliGTMULSHWcZqIeBXx3aum3zL14VHbZuoL4OVSYjIJP7a1iw4QJGzK6DrOmBrwC87sWOiE7p5E3syJc/qc8hdPsyA=
+	t=1729766208; cv=none; b=SVw90aAHhCYagHlrRBu1u+2CdP+Dz+9kd7fq3ZgQqI8OlLucFx7yT0/TiSqV85GPFIoTPJKmpfaLBouXtlQKUaH+ISGNun3ar2vauF0QL0abrhz57NHGE2lzsjeYYN4zlCeFlrCEBvASiF1WT9GSEmUQyFcTXiH7HV0N4C2yke8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729766182; c=relaxed/simple;
-	bh=SeURXPNRtR8saK/e9SDz/zEg0KiVbRWzolUxUhzgr2U=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=kNjnJH75pnRBSG2p+hoY8FtGF75UMxTm8muGCmzDHwZRN6spdCqv1lDHXWaU4/zghl3xnU2hCWCC37LbILY+EUCb6qkLpfyJJwsz72Vx33njNQFJUb+iJ1oxAZvCJWPUq8RxHWNUrVz8gqCsc3kXIGt7A5rR5ydTcSGUQSZujOU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d1J/JSyy; arc=none smtp.client-ip=209.85.128.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so7535695e9.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:36:19 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729766178; x=1730370978; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=J2m6zXjeU4UBvItNkzUXHkJaeUZJVQOEVcMDTCkz29M=;
-        b=d1J/JSyy05Qq1gy1qkPHgJedJMEylS6k+xbBB45QyYbpNy021hGi3THbz5IufsXGAz
-         DtBF1l23lje4qvrL8OKcwPWIr2Akuh6l5bDcGR5DGqs8sCyaHoukjyUnsfKH3ghp61mG
-         q5SqAXryei27z7bNuQ4PKo02uHXVXDH+txNAlrF85AWj2kC/m4KwzJXZyeK8my0NLC0F
-         q9MsgaF7dLy/kjtuX0enrKClVc2SDyeUQ8ZVD+Nk79GyLbda9kxHYizEWhg/6BqlVXVb
-         x0S36Nja+M25CXFKdPK4QXAX76WRaiNcQygdvWRovyZW/x7R4mgcoExvVhkt0Zv70hB4
-         BZJA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729766178; x=1730370978;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=J2m6zXjeU4UBvItNkzUXHkJaeUZJVQOEVcMDTCkz29M=;
-        b=dwMSY/PozF+jyWds5VTOeWfR+Yflgtq/udnvdT5pDqqGZtRm2Pc71MifxpIGMNfMHC
-         vgNzUhF8U+mKBl/BiduRyEo2+W5UXKCjSoMH/Z7spcqLJRXmUePBu0FJhVt9vaEqNt0x
-         p/8U58Zg3Vw1KNfUTWi11KVIkGz+PWuu36ii5/WhaS3wdtMCiDNqZcuBbu1/6WS3WRNw
-         HGWluYRqccL/eTXzMQajsrXUUjbdmLgE7el1SThIUk4z11jUUWb1Jne+0/YZyb3QwT0w
-         ZucNfXCRYuZasKP70tDv4yEVzfIDppRdwkNmCh6mSrnuJxYYPjIoHI7E7CM1iOfCgJ9V
-         X/pA==
-X-Forwarded-Encrypted: i=1; AJvYcCVA7Eoo8xJURIZF5OuTcQuxi+K1A7egFmwBVbtpcmUzO4teRzybs27rpVM8D0JaDDPqdKk2bwn8TwjaNGY=@vger.kernel.org
-X-Gm-Message-State: AOJu0YxXoEaAwNe4IyR7Rn65vr3CAiANt2miIAGdca8rLC0bP38pnMdu
-	6Mxi9Tr7/vYPDhSx7TmxqeEMj7KgMIeRKrBdlgO5YZQd4rKbYOm9eYTJHD6SHJM=
-X-Google-Smtp-Source: AGHT+IGS80KlgEPjWf5Mc+qBef5jgU/z0mA2I6rWelhiddK3iBRLjN4Mx0Eo2Dw2peFPZ3jVdeIPSA==
-X-Received: by 2002:adf:fc4c:0:b0:37d:4ebe:164a with SMTP id ffacd0b85a97d-37efcf92731mr3710224f8f.50.1729766178421;
-        Thu, 24 Oct 2024 03:36:18 -0700 (PDT)
-Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
-        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186bd6894sm41366705e9.10.2024.10.24.03.36.17
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 03:36:18 -0700 (PDT)
-Message-ID: <8b4659f0-5da7-4847-b5de-fad8ea57e967@linaro.org>
-Date: Thu, 24 Oct 2024 12:36:16 +0200
+	s=arc-20240116; t=1729766208; c=relaxed/simple;
+	bh=fz9WS1oSTVFviyz8oLmApeo/s4GncgulQLwErmfKEg8=;
+	h=Message-ID:Date:MIME-Version:Subject:From:To:Cc:References:
+	 In-Reply-To:Content-Type; b=PJ9/L8yc3JLbXEU/5DC/3w1Qb+rcrLHsr/L5v3f9Ie1ASsCGdMj2ke9WqIUtPjBZtQdv5Tssh7OUx6we07cHvJQwJRRioxGds8kHavD2+EV8+a/l0+3wsCMoaCtAHN/gT0F/4Xs7V3g0N3/G86M4EN6GP4QsX+15CHzEEDJfRBQ=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 4142B339;
+	Thu, 24 Oct 2024 03:37:15 -0700 (PDT)
+Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id DCABD3F71E;
+	Thu, 24 Oct 2024 03:36:43 -0700 (PDT)
+Message-ID: <30301f0b-5b04-4150-8159-5b8721486d6c@arm.com>
+Date: Thu, 24 Oct 2024 11:36:42 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -75,102 +41,102 @@ List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH] thermal/thresholds: Fix thermal lock annotation issue
-To: "Rafael J. Wysocki" <rafael@kernel.org>
-Cc: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com,
- Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
- "open list:THERMAL" <linux-pm@vger.kernel.org>,
- open list <linux-kernel@vger.kernel.org>
-References: <20241024102303.1086147-1-daniel.lezcano@linaro.org>
+Subject: Re: [PATCH v4 1/4] dt-bindings: arm:
+ qcom,coresight-static-replicator: Add property for source filtering
+From: Suzuki K Poulose <suzuki.poulose@arm.com>
+To: Tao Zhang <quic_taozha@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
+ James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
+ Leo Yan <leo.yan@linux.dev>,
+ Alexander Shishkin <alexander.shishkin@linux.intel.com>
+Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-msm@vger.kernel.org
+References: <20241024065306.14647-1-quic_taozha@quicinc.com>
+ <20241024065306.14647-2-quic_taozha@quicinc.com>
+ <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
 Content-Language: en-US
-From: Daniel Lezcano <daniel.lezcano@linaro.org>
-In-Reply-To: <20241024102303.1086147-1-daniel.lezcano@linaro.org>
+In-Reply-To: <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-
-Hi,
-
-please note this fix has been written on top of the thermal thresholds 
-series, so I don't know how it conflicts if it is applied before
-
-Thanks
-
-   -- D.
-
-On 24/10/2024 12:23, Daniel Lezcano wrote:
-> When the thermal zone is unregistered (thermal sensor module being
-> unloaded), no lock is held when flushing the thresholds. That results
-> in a WARN when the lockdep validation is set in the kernel config.
+On 24/10/2024 10:14, Suzuki K Poulose wrote:
+> On 24/10/2024 07:53, Tao Zhang wrote:
+>> The is some "magic" hard coded filtering in the replicators,
+>> which only passes through trace from a particular "source". Add
+>> a new property "filter-src" to label a phandle to the coresight
+>> trace source device matching the hard coded filtering for the port.
 > 
-> This has been reported by syzbot.
+> As mentioned in here in v3 review :
 > 
-> As the thermal zone is in the process of being destroyed, there is no
-> need to send a notification about purging the thresholds to the
-> userspace as this one will receive a thermal zone deletion
-> notification which imply the deletion of all the associated resources
-> like the trip points or the user thresholds.
+> https://lkml.org/lkml/2024/8/21/597
 > 
-> Split the function thermal_thresholds_flush() into a lockless one
-> without notification and its call with the lock annotation followed
-> with the thresholds flushing notification.
-> 
-> Please note this scenario is unlikely to happen, as the sensor drivers
-> are usually compiled-in in order to have the thermal framework to be
-> able to kick in at boot time if needed.
-> 
-> Link: https://lore.kernel.org/all/67124175.050a0220.10f4f4.0012.GAE@google.com
-> Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
-> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
-> ---
->   drivers/thermal/thermal_thresholds.c | 13 +++++++++----
->   1 file changed, 9 insertions(+), 4 deletions(-)
-> 
-> diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/thermal_thresholds.c
-> index ea4aa5a2e86c..2888eabd3efe 100644
-> --- a/drivers/thermal/thermal_thresholds.c
-> +++ b/drivers/thermal/thermal_thresholds.c
-> @@ -20,17 +20,22 @@ int thermal_thresholds_init(struct thermal_zone_device *tz)
->   	return 0;
->   }
->   
-> -void thermal_thresholds_flush(struct thermal_zone_device *tz)
-> +static void __thermal_thresholds_flush(struct thermal_zone_device *tz)
->   {
->   	struct list_head *thresholds = &tz->user_thresholds;
->   	struct user_threshold *entry, *tmp;
->   
-> -	lockdep_assert_held(&tz->lock);
-> -
->   	list_for_each_entry_safe(entry, tmp, thresholds, list_node) {
->   		list_del(&entry->list_node);
->   		kfree(entry);
->   	}
-> +}
-> +
-> +void thermal_thresholds_flush(struct thermal_zone_device *tz)
-> +{
-> +	lockdep_assert_held(&tz->lock);
-> +
-> +	__thermal_thresholds_flush(tz);
->   
->   	thermal_notify_threshold_flush(tz);
->   
-> @@ -39,7 +44,7 @@ void thermal_thresholds_flush(struct thermal_zone_device *tz)
->   
->   void thermal_thresholds_exit(struct thermal_zone_device *tz)
->   {
-> -	thermal_thresholds_flush(tz);
-> +	__thermal_thresholds_flush(tz);
->   }
->   
->   static int __thermal_thresholds_cmp(void *data,
+> Please do not use "src", expand it to "source"
+
+Just to confirm, this is only for the "bindings" string, not for the 
+variables used in the patches.
+
+Suzuki
 
 
--- 
-<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
+> 
+> Rest looks fine.
+> 
+> Suzuki
+> 
+>>
+>> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+>> ---
+>>   .../arm/arm,coresight-static-replicator.yaml  | 19 ++++++++++++++++++-
+>>   1 file changed, 18 insertions(+), 1 deletion(-)
+>>
+>> diff --git 
+>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> index 1892a091ac35..0d258c79eb94 100644
+>> --- 
+>> a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> +++ 
+>> b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
+>> @@ -45,7 +45,22 @@ properties:
+>>       patternProperties:
+>>         '^port@[01]$':
+>>           description: Output connections to CoreSight Trace bus
+>> -        $ref: /schemas/graph.yaml#/properties/port
+>> +        $ref: /schemas/graph.yaml#/$defs/port-base
+>> +        unevaluatedProperties: false
+>> +
+>> +        properties:
+>> +          endpoint:
+>> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
+>> +            unevaluatedProperties: false
+>> +
+>> +            properties:
+>> +              filter-src:
+>> +                $ref: /schemas/types.yaml#/definitions/phandle
+>> +                description:
+>> +                  phandle to the coresight trace source device 
+>> matching the
+>> +                  hard coded filtering for this port
+>> +
+>> +              remote-endpoint: true
+>>   required:
+>>     - compatible
+>> @@ -72,6 +87,7 @@ examples:
+>>                   reg = <0>;
+>>                   replicator_out_port0: endpoint {
+>>                       remote-endpoint = <&etb_in_port>;
+>> +                    filter-src = <&tpdm_video>;
+>>                   };
+>>               };
+>> @@ -79,6 +95,7 @@ examples:
+>>                   reg = <1>;
+>>                   replicator_out_port1: endpoint {
+>>                       remote-endpoint = <&tpiu_in_port>;
+>> +                    filter-src = <&tpdm_mdss>;
+>>                   };
+>>               };
+>>           };
+> 
 
-Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
-<http://twitter.com/#!/linaroorg> Twitter |
-<http://www.linaro.org/linaro-blog/> Blog
 
