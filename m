@@ -1,114 +1,136 @@
-Return-Path: <linux-kernel+bounces-379127-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379135-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 39C9B9ADA61
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:19:03 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id BBE159ADA73
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:28:58 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 68FBE1C2105B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:19:02 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 4B2F81F2239E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 03:28:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4932F165F01;
-	Thu, 24 Oct 2024 03:18:54 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E0A1D158D92;
+	Thu, 24 Oct 2024 03:28:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="YYijpAUn"
-Received: from mail-lj1-f179.google.com (mail-lj1-f179.google.com [209.85.208.179])
+	dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b="Cyd2p313"
+Received: from sonic302-19.consmr.mail.ir2.yahoo.com (sonic302-19.consmr.mail.ir2.yahoo.com [87.248.110.82])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id BBA4D158DC5;
-	Thu, 24 Oct 2024 03:18:51 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.179
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC6E167D80
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:28:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=87.248.110.82
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729739933; cv=none; b=tYh45l+qBKK2PWuka/o2gw8Tq2y+A9f+Evftjt6GwkCo8bYG+qXpVclvroEcj146PRx0Ef1lL19SQH6Bs8y+O5oUVDbehlUafYnd2sApdfYx7DdChBPpqWIcEaB2xHstBdbfkYDi08n2DWxYfrRXJRevHC2aSllvoHrA2MMK2Y4=
+	t=1729740531; cv=none; b=VFAWKoD05dXlPFMyHaFpL+CiIIS4DfSjLfQ0CmpO19aMUVOjkBSQdgSXF4yOMQsodeWnxutdUbjhKMN+vbc2J/C/sABKPiJXJa3yh3XmSLTfv9Lq7cslzhH2DPnSNw/oDDCdaIZZpuqgxGgbVS8GIeduQsajtqz47L8+QynMe9o=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729739933; c=relaxed/simple;
-	bh=xjGFZNstPrpQ4vgCCp6N/P6IszAehLSi+DkY8vHRawc=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=Ny9R6egIlaQNOJwmFBVMgV/gd2UNqwg4U7HOblbw5zBvE3+ptDr+4FZsaWG9KHqFRiHNUFm0EYFzvUeBnZvZMw2UN/13vfG9LeJVncz5b0NsbTdYcm3NX0MkkmWTZ5i45vCrlKDxnSX3OJdSAscKBdPdv7rRFdDSM8woYMbJfTY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=YYijpAUn; arc=none smtp.client-ip=209.85.208.179
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f179.google.com with SMTP id 38308e7fff4ca-2fb58980711so3265731fa.0;
-        Wed, 23 Oct 2024 20:18:51 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729739930; x=1730344730; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=ofDn4Of286XPlGie6siVpN/v1NCFuionb7yUorFjmQs=;
-        b=YYijpAUnnV0FS7WAVHNNMbce7Fr51YTmcuhOPn3UkflxtdDW3whoEhfCNHF/IgJnhm
-         ttG7L1kTstJ4k8Gdb8GtzONolSs4I9iJg1wjf2M2WRU2KzxZmjUGcqmPZlz0OsFOGBwl
-         3LKd4tpCXA02mhhLrScF/osmDg4Bfx4zTSIZiCTKqblOeQFmjW1qN52+qjo1um2XMthu
-         poQdZSI4ZSbF6yzq+XXYfPKQI3yuzNB2WEUTx0+oJ+ngGLHdLp2DaYtWIIDLD5k96YhC
-         RW/Ul35U9SfbjN3JDCF0eIKmGF3R5YPzopxEFs7/xGib9esmNSQ87MSAvUB78oMhK3XU
-         SNdQ==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729739930; x=1730344730;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=ofDn4Of286XPlGie6siVpN/v1NCFuionb7yUorFjmQs=;
-        b=OTkPfbbl9vydzObgla/OkMB5AAGKfPLCTjzS9iWutUhjgXRp1melblfvJX9HVhwcQS
-         XbjqcCHUZB72ilA353l17oB8Y62d7E6VCYt3TaCRzeJxbNa6EWYviAVThuMyfAO75cPi
-         unIFp3ZJBQPEeoYtA3ZQbRYyHVQ3xNin2G576Z9eVn1SLLH3yuDzhyKhfNlPV2j2JR+q
-         UYKj9iH0qJADQebb3hy5JWrKSvHwI9kMBjLPk5R9a1OHOLKi1uGVoUVspRP4rAtdFIWQ
-         PjaXiEyKLRShiyFLqQk4ZyB2p3ugwSSMXsKu8PzZ6W0ZTUeoL+DNbhlE+LKzg7E8HIq1
-         doZQ==
-X-Forwarded-Encrypted: i=1; AJvYcCUKw2OdIEZ3sb3xFIPfb03EYcL8dY3sR2btGXWNqFcJvJNgcdc1vOKpA8k9tp7Ie0dai+Oo0LDucuSlMMQ=@vger.kernel.org, AJvYcCVlTdryVq4UJ0yeynCyrLE8gjAb5aOdd8ZxiwbWGcar8+TDz0KOJJDFcH9qM0QSr4nHZehX6wXaosFjBA==@vger.kernel.org
-X-Gm-Message-State: AOJu0Yx/AkS8UYjafIyLVlIam1N8tb3Fv8fVO/E4drWJna8rFMQ5c0Dc
-	+Qy0/FmKXrYKwaMsS5+J1eSB6hD9SvzdhnBcScWtS6LtXUxgy+Q0xz+BXEHbA5yO2UoBUUiAnjA
-	qdlVCVgrQgHEJUWtSHKwbLyJfPvU=
-X-Google-Smtp-Source: AGHT+IEX+1b/1qcjFW/0DUOc4KkMr94zN2+ZQjl7RYPzJrE4XM3xToHzN+tw5xMivLTN45nAU+Qx+MGFglcbDnWAa3s=
-X-Received: by 2002:a2e:d12:0:b0:2f3:f358:8657 with SMTP id
- 38308e7fff4ca-2fca8283ca3mr1782771fa.44.1729739929535; Wed, 23 Oct 2024
- 20:18:49 -0700 (PDT)
+	s=arc-20240116; t=1729740531; c=relaxed/simple;
+	bh=ZwGI8ZFpylkb6XFEt9INmnAgDHvBMqBqmnZAe8+7+Ws=;
+	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
+	 MIME-Version; b=ofW70aIj9pkdGymHVWuEKQWRuJobUN//n7RwzlOwUU2AYAm17rRIWuLZm0DBi19CLB3nS+emt/ewbTiqPevYwfMdaOdhn0foxEcW4QVU3tBT8c8s7uYvHQHB9TqnkysuiYMLg488D2ktmLxoGN+4jGwtgQkV4MZyiWko722e9qA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com; spf=pass smtp.mailfrom=rocketmail.com; dkim=pass (2048-bit key) header.d=rocketmail.com header.i=@rocketmail.com header.b=Cyd2p313; arc=none smtp.client-ip=87.248.110.82
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=rocketmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=rocketmail.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=rocketmail.com; s=s2048; t=1729740527; bh=V/yLWpCvTEqY5RyESeLn3te4FPujd83OdnV26kczf9A=; h=From:To:Cc:Subject:Date:In-Reply-To:References:From:Subject:Reply-To; b=Cyd2p313EoSSBzw4TeC2X2msAOSc9wJRQ+GNbn0+0aRwbV36SCffVriLew6rNkzzL2YKKJwocHwS5UgazPfawbfVCCgXcJoRlDndqXdvb4qHIoa0aqW8Bh9KBf+6cCEZUqKHJmoKj0y5X9t84s1m6dduG4L7gGbNnqns8RbNBLzdY7hOknkuQ52hj5w9Fxo26//70g9ToPSpErOOcCtW8INkGrF8gRLQobD3Ql3OwGmOuYq62aaJgoLxP0tJOHvZI4cYuQfE9unXiXHTdZ4ohszmO8HB2wvwZPFDNnEWqZXKdSzHl40TG7kpIyl551wp4ZlD9xIvTJ8XSwCUSkxpSg==
+X-SONIC-DKIM-SIGN: v=1; a=rsa-sha256; c=relaxed/relaxed; d=yahoo.com; s=s2048; t=1729740527; bh=qYG1B+XEFw+nhcyK6VkIfyHk6tpvSPRCt8yeVgCTehM=; h=X-Sonic-MF:From:To:Subject:Date:From:Subject; b=O6/jQjKk2pbrXaXhSaXBQf1J5JW0EZyPBS9B+tqRjpa/Ekd9857W/j9wFyPM2VEY7TeW+MHSGc0nEzlDDP7VRzTmoCjIeb95nm9gzjGZR61fLkNdSJ6TAHNG9TBLpSffJtQKt9wCoUyD1fLfU/qStHTcmeyssrnu9Do6p3dS5HE2Bm/JIW+vdeLEC3kCLqFRCOZcH/M2fqeNO9POuqm6TWOKVOv8/RWsk02EFL4GmpuqvVcSzkiO0TDXVkTUBtyFrE2ZsbNPfCgHM56f5EPkaSwYsRJi2gYJJMnzKfdzI1qvK85dzitXxQ1F2EcMt4q5Ugf6p9ZT9baYfP62+YpNqg==
+X-YMail-OSG: eRMveYkVM1nvlEsA.JoCYclhfRtMGJejPSdiwDO7iu1ExAZrOUoPtKA32fW4yne
+ C4d5E5Aj6jJsPYANZTCux1m6P0DqhQpjbz6f9JjkUJ0QQGSGyFHWRlMR67Bz_aNMtzhMHEOyQ97i
+ xEoGoJNSoCs5YMxy9TI4Q6_tAUeyDV61ToNprXQbFcrC8iuKyfK2wC34k_8k3wZClwDeIGMc2ElS
+ 3mrSW8rmX8sdxEjhbrz9QCqPI7ozKASgAuwF56bJX1Uyro2hAfYMiCet16HMRNFSA86JsmrX18_o
+ 2XBAICGS22a1SGpnrwJTnySYu2Oa8ZiYfWtfOt4HHmjakuFkdKQKex2rhxa92lKuuE5wJPB7txYw
+ gEPVqBfzZCULfCwfNzsDHoSNf2qWF4S1Ws8sBs4rXAFf4N5V7dnpU4ftyg.ppfj3Yzd_XQmHAtq8
+ e71RPzUKCT0bjrSgGOvtsmLyVZvUaAtxHL3jYlvFaWkVccwo21TPmDY3GimB_3ltdvK81XYHVgIQ
+ UnrdrCk5E3oEx96AjWck59DmGHgezvNq2APQHpVpFddLHNp12JgePIuzTRxRI088icxqG65xDjPe
+ pZDzcqWQizUUnh7gdrwALuapkuJhk8pIQMqNTneFJqJNxH5w.TRITsZpdrqMB7cbFmllPJHShTrY
+ tja0LcTJvlmx1MSieycHg8G5FX5kEc1MYQ7j6yL1lcMCd4jLopZkmCFXchAUb.amt8tqxh1KM.sg
+ x8sNEXnckxqpR6L9AspFzugciCb_aKFbnQX2336bBAq6G5mUipIEsbz_8cMEP1C1UHClKBHUiEgQ
+ 2mz0zDaGvXDNxbjtk9h26pXPR1gSnRqKcU1cKoADfGuDtZTL5_OUuW0C5nNPV5StxsUUAxWeTUNI
+ zyYEEeq4vV5.m2qzn9kKN94znBDoFi_tBjDpTYhIMiQ4z8gKlI2s1wIorxqyHyw3Im_rXTHsnfVk
+ yvlzyQcGrfbeINlqoOGjtXSnwhMqWgh7zXMlpqQn2Z2_uLcEHedTdfUjjSQ2Y_w.0jIrKQ_cYFMl
+ DFt4eRoLRIIOfqRsQxeJUeWMmws6Ct3ggpprED_O6AyE0zRjIONmPMCwXt9F82V6TOtRfbMcVVz9
+ ZGNOvuLLkIMwny1J7Eow13e48Y5oSoql9CHTnuOxHAgAZop.iLm.Fj_c9I5SHkCXlP4GE.r54oIk
+ UyPsH5m0zJs9q3Yu7u5_q5yVRNyo_.qMl67nchLS2X2jTvn7qcOULU9Ns.RRaze4DMpBZNrYP.n2
+ 2F5DWpVR_tGyP3siQd7Wd6U5mH5Ot2GY8hu49CBNkGgtwt1TpN2wjLq52UWRekHo5b7zgrQIlT.e
+ GFG.kRNIdupMQ0Ov3d8l.tF6mGEThqD5ZkmN5bRijKVk899oHcFa.cHzyneMl278mZ_eT4kkfHJu
+ EPqU_HolWegI9ynfEFQpp7msjvtFc_9sMbugDRy0cb4XbagDluGmileWe8RAfRZ38hMBfgYdxQip
+ Uoqc74Qpo1nWGm_GArWv8L8qmODhcJQDg.lJfFuUdHBxD3aiOUsWgydu8pFBob5YqifMR7ESR4Ue
+ MIhifrAW9Vm6YWi1oc3eFUf1nvHXW9rzfVMamwx9paK67d82TFqFRUBSVy2dZabm2yBXU1DenE_W
+ vFJSiYKYOE0iAGbn4ZQGwHhAXP9KwfQ2xTZn0YPp6ZMTPfy.HK23vJJ20dtY7zt321xRXseac5x2
+ zipXL5lkZoSAilqBQbOG5QzwAZSoLLRJdhTYQZsiv_YwkGZF2qg3nFR2ZOS0HbT2mS5MKMtC7LJf
+ vf97WtCGxwiy2jlexuYU.GFp3lJaVMlNCOHa4_5c_vKra3vsihAqUanlnK1vdcYC9gwGDtD9pxgS
+ W0cB_1X.7yxX7fKxeRwsxbemEyUT1IebMS2LxFNG224v.2Foz_zSqMx0TiLZU3iWcYuiw3bWXn7O
+ HguhF1B6W8p5Y5WNHhpcCPRJPuoPDHlYn.QfAkwfmzz3QEDmlm2asnP5DlhKXT1QMNiHKf1k3Nuv
+ opTRdkzA2PeLFNoGf12C_9IR8LkmOK4tBU04gbpd1va8Zqx87_MDsERuabjQkKNZfwBpgZGkOD9M
+ 8RWl.OBYUiSFESX5rePqtCV__fVq0Hjjrm2Lt5PZpU5_qt8nNbfES9u7BhpmU6tGKVuQhgpMbe_1
+ sit6oyo_6MIB9hA_kmNQLkcTB3.YeAVbzkYOL9TLnBvfsouE_9QYYs9N2BnUyOY3D9FDi36cSXzw
+ q6yJFTbULAdxDU2T_TtcWke7WcoSyduk6gluRW75.ml7mjRRNgCRh2SEiDHj.1GVd8WBg4wC3JwW
+ wlYvL08.4T3Kyr5He4jBz32PZMLD3gSE9XJxRC3_cJvgD7ZxXmgzl
+X-Sonic-MF: <jahau@rocketmail.com>
+X-Sonic-ID: 61af113c-0b3c-40b5-acfb-4c058bf6fb03
+Received: from sonic.gate.mail.ne1.yahoo.com by sonic302.consmr.mail.ir2.yahoo.com with HTTP; Thu, 24 Oct 2024 03:28:47 +0000
+Received: by hermes--production-ir2-c694d79d9-2zgj2 (Yahoo Inc. Hermes SMTP Server) with ESMTPA ID 26d1652bc1703d2ade3e89c3cd33808b;
+          Thu, 24 Oct 2024 03:18:36 +0000 (UTC)
+From: Jakob Hauser <jahau@rocketmail.com>
+To: Neil Armstrong <neil.armstrong@linaro.org>,
+	Jessica Zhang <quic_jesszhan@quicinc.com>,
+	Rob Herring <robh@kernel.org>,
+	Krzysztof Kozlowski <krzk+dt@kernel.org>,
+	Conor Dooley <conor+dt@kernel.org>
+Cc: Thierry Reding <thierry.reding@gmail.com>,
+	Laurent Pinchart <laurent.pinchart+renesas@ideasonboard.com>,
+	Andrzej Hajda <andrzej.hajda@intel.com>,
+	dri-devel@lists.freedesktop.org,
+	devicetree@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	~postmarketos/upstreaming@lists.sr.ht,
+	Jakob Hauser <jahau@rocketmail.com>
+Subject: [PATCH v3 0/5] Add new panel driver Samsung S6E88A0-AMS427AP24
+Date: Thu, 24 Oct 2024 05:18:22 +0200
+Message-Id: <cover.1729738189.git.jahau@rocketmail.com>
+X-Mailer: git-send-email 2.39.5
+In-Reply-To: <cover.1729738189.git.jahau@rocketmail.com>
+References: <cover.1729738189.git.jahau@rocketmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20241022173921.6fdbdd38@canb.auug.org.au> <CALe3CaBU=9Ck-euohNna2hYxYJBbvA=LrmG7qDHTEeQ2rt9XCA@mail.gmail.com>
- <20241024092338.6a8f10c7@canb.auug.org.au>
-In-Reply-To: <20241024092338.6a8f10c7@canb.auug.org.au>
-From: Su Hua <suhua.tanke@gmail.com>
-Date: Thu, 24 Oct 2024 11:18:13 +0800
-Message-ID: <CALe3CaAH2w7fRwz4vnL_1fPWRNS6RDiD6izbZLpREXSuuw_mdg@mail.gmail.com>
-Subject: Re: linux-next: boot failure after merge of the memblock tree
-To: Stephen Rothwell <sfr@canb.auug.org.au>
-Cc: Mike Rapoport <rppt@kernel.org>, 
-	Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, 
-	Linux Next Mailing List <linux-next@vger.kernel.org>
-Content-Type: text/plain; charset="UTF-8"
-Content-Transfer-Encoding: quoted-printable
+Content-Transfer-Encoding: 8bit
 
-> Stephen Rothwell <sfr@canb.auug.org.au> =E4=BA=8E2024=E5=B9=B410=E6=9C=88=
-24=E6=97=A5=E5=91=A8=E5=9B=9B 06:23=E5=86=99=E9=81=93=EF=BC=9A
-> >
-> > Hi,
-> >
-> > On Wed, 23 Oct 2024 11:20:43 +0800 Su Hua <suhua.tanke@gmail.com> wrote=
-:
-> > >
-> > > Thanks, I'd also like to set up the environment for testing; could yo=
-u
-> > > please share the command line instructions or XML files used for
-> > > testing?
-> >
-> > Sorry for the delay.  I run the following qemu command line:
-> >
-> > qemu-system-ppc64 -M pseries -m 2G -vga none -nographic -kernel $vmlinu=
-x -initrd $initrd
-> >
-> > where $vmlinux is the result of a PowerPC pseries_le_defconfig build
-> > and $initrd is just sufficient to get into user mode and then shutdown
-> > again.  This latter is not really relevant here since we don't get to
-> > user mode.
+The patchset adds a new driver for Samsung AMS427AP24 panel with S6E88A0
+controller. Patches are based on current branch drm-misc-next.
 
-Received, thank you.
+Changes in v3:
+ - Patch 2: Dropped the second "bindings" in the commit subject.
+ - Patch 2: Applied 4 spaces indentation in the example.
+ - Patch 3: Made struct s6e88a0_ams427ap24_supplies[] "static".
+ - Patch 3: Removed the "panel->prepared" parts from functions
+   s6e88a0_ams427ap24_prepare() and s6e88a0_ams427ap24_unprepare().
+ - Patch 5: Dissolved function s6e88a0_ams427ap24_parse_dt() and placed
+   the parsing in the probe function. Changed the parsing from
+   of_property_read_bool() to device_property_read_bool().
 
-Sincerely yours,
-Su
+v1: https://lore.kernel.org/dri-devel/cover.1728582727.git.jahau@rocketmail.com/T/#t
+v2: https://lore.kernel.org/dri-devel/cover.1729630039.git.jahau@rocketmail.com/T/#t
+
+Jakob Hauser (5):
+  dt-bindings: display: panel: Move flip properties to panel-common
+  dt-bindings: display: panel: Add Samsung S6E88A0-AMS427AP24
+  drm/panel: samsung-s6e88a0-ams427ap24: Add initial driver
+  drm/panel: samsung-s6e88a0-ams427ap24: Add brightness control
+  drm/panel: samsung-s6e88a0-ams427ap24: Add flip option
+
+ .../bindings/display/panel/panel-common.yaml  |   8 +
+ .../panel/samsung,s6e88a0-ams427ap24.yaml     |  65 ++
+ .../display/panel/samsung,s6e8aa0.yaml        |  10 +-
+ drivers/gpu/drm/panel/Kconfig                 |  10 +
+ drivers/gpu/drm/panel/Makefile                |   1 +
+ .../panel/panel-samsung-s6e88a0-ams427ap24.c  | 754 ++++++++++++++++++
+ 6 files changed, 840 insertions(+), 8 deletions(-)
+ create mode 100644 Documentation/devicetree/bindings/display/panel/samsung,s6e88a0-ams427ap24.yaml
+ create mode 100644 drivers/gpu/drm/panel/panel-samsung-s6e88a0-ams427ap24.c
+
+-- 
+2.39.5
+
 
