@@ -1,145 +1,178 @@
-Return-Path: <linux-kernel+bounces-380477-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380482-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id BD1A79AEF37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:09:54 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 6D9E09AEF4F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 20:11:41 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 39A021F2180E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:09:54 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F10EE1F221E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:11:40 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 35A5E1FF7CA;
-	Thu, 24 Oct 2024 18:09:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B2DB1FF7D1;
+	Thu, 24 Oct 2024 18:11:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="N6aSfLQH"
-Received: from mail-ej1-f51.google.com (mail-ej1-f51.google.com [209.85.218.51])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="wacLMw9N"
+Received: from mail-wm1-f41.google.com (mail-wm1-f41.google.com [209.85.128.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5E9E11D3195;
-	Thu, 24 Oct 2024 18:09:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.51
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0A34C200BBA
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 18:11:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729793370; cv=none; b=qhKk7ZHL2tZmWnwNuTfqZIRLSdXsuQTS2EJfNtOTafwkFgW01fF79imqGXWH6q4nlHdRjmu+mOWkiCnissj6+5BghlPrulRpCmh8BM0acwliTiL4511HOH4xs9rfkhqy/JxMk7YRMi9sDV73ylsosw5nEm5s5x7SLpl9kyHzqn4=
+	t=1729793467; cv=none; b=DVjzOCb0kIDq/3Scuh1yMu1gBZr/ooKC5MmGYJOnkms1AAB2JSJ2YEend3elm6TIPJROHz40wrzXHngAFkuOk0+p5pBS3pnAjwxU2LzvVFqrGCK7IQ6LYSK6PgwHzx0o9Cdi7H+WbbkzYM0qgu7W2g51btE0GCGlnKti4QnwAH0=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729793370; c=relaxed/simple;
-	bh=mZrqIPbWD2XR4gVDDsIspNXqD8W28PsXAi0Vx3T2DOY=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=oOkVhJWhtGlDMyQq6gZzkA5McxDhtDj5flUbF3c7dsn/UOTBczgbE0l0N+IGX4X99OuagGkEJ17nsiA9uAgE8POrR/ww5I3dZw8YSIm4zmClUgf/X1vFPHVRd1r7/VUZ2//7PVyQScBm/dn4K00O+pjMp+8CEM9PqEl9A/jvRhU=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=N6aSfLQH; arc=none smtp.client-ip=209.85.218.51
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-ej1-f51.google.com with SMTP id a640c23a62f3a-a9a26a5d6bfso161344466b.1;
-        Thu, 24 Oct 2024 11:09:28 -0700 (PDT)
+	s=arc-20240116; t=1729793467; c=relaxed/simple;
+	bh=wuUDrWGldoGzLKmEDKRB+N+oojKVOt07T8M5dyrnk6A=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=ayG3CaPly6s6KkMrj9gPS50AKQ2fff/o5IBl+aNbvG6e4PQPrW7WpkusvmBJ34hjNZ4cyEW6KdITn++CkZK5D25EBHi3kEz2UmvBxpE0f084eHqnVn4BlcbKQYIl/L1bYTVUJ/mePkjdCCBUxs9eCKE9KxYft6YRaC8475AS+vE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=wacLMw9N; arc=none smtp.client-ip=209.85.128.41
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f41.google.com with SMTP id 5b1f17b1804b1-4315abed18aso12395085e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:11:03 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729793366; x=1730398166; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=X00KeFCO+XW/rhhuyEmi7r+QpexBxGBKXmR+pez2QnY=;
-        b=N6aSfLQHVqpptaY8Nci4UQwB4OIccIrHZWF9/IXr3HBKexsYm5up3X3UqSAlLb9es5
-         viCRZr42rD1M+elg9vGp1qYCdJjz6PzjXrv0NU+kYrKngy1Zr44k4ik+4INR9+/GdGfg
-         wsr/kQpxfXocdWGPboOM2nQWKoIAsO5Xc58ee2+cwdirGhrYT1phkf+1kHeiy8+iNpaY
-         fOihzoK291SMch1EAKR27N+y6Jfv4ZJ08DVWER2skI/4YnHlLX2os5ALtEcQNtWu/rJV
-         h+mBKGCIsi8qfR5boGjw/tBpMzEcGZdxgYDWE6lJL2LRpeM9JZXuTTEmhkAzI6reNm6h
-         wnww==
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729793462; x=1730398262; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=IqU0yvR44kyPrUFOs9XxlTbM2CjS1kPGGNa549pruJ0=;
+        b=wacLMw9NLwTcPf6/cMlDcibqMP48rL2Yw0wzUZDO12oQuFM3AFIZrJTRl9DUT4n5Xw
+         ZIIgpkB70prKYJMA7U69FQ8irLUo5Gvy9MocCI0utufLYs5OSCYdByt5VapHouVF8PQ/
+         zaVWWmyMLql7Dua8uM2sT5fDzLpa8Bnt3Y3HZySOS+IsFOw4GEyd1QlVe3M2Q00bTsko
+         TvRh5kBOD6nFipU5n2evTNT9AA/IkMUDe53yO3jV65YtWSTrZsSanIAs7aZ54xndGI+I
+         Gzw1l26Y/b7BK5I2hsHuhFuTvi8FmzcF2HmNOHPZqW+jztoemTmtG6cAyWKR+JaRY1Yr
+         ZVOg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729793366; x=1730398166;
-        h=content-transfer-encoding:in-reply-to:from:content-language
-         :references:cc:to:subject:user-agent:mime-version:date:message-id
-         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=X00KeFCO+XW/rhhuyEmi7r+QpexBxGBKXmR+pez2QnY=;
-        b=jCpObxvxQOJ6WvFa0234XRL7URUsfd4xSWIZyOkGsEVFmD7R/BLDr5VpALIXHCxcNx
-         Q0EhgdlJ/y77PF0Uj+NhCbxJzajwTeD2l/k0FmtI3QgriP90QRt1IF2E+JytzsLy72Th
-         oEWY782KcnE+JYBILP1od8X8MaNAojb1D7tQezA1WZfSCNaUYDpKrxp/tKJKdslAtb6C
-         IGlfjfFYKl1RLg0csxmb79Roa49iQYpWE89yowwftEfi86zRQrNBXPOFXEAE30yM1lhp
-         dglPlzKzlLJqcBPvRMDyMWWP0VikUNMLvT5IOtRyCXja1sou76EulLnu3Zp1Bbp2nBH1
-         YdvQ==
-X-Forwarded-Encrypted: i=1; AJvYcCWPAbDoSjOjvVgWxXwMS/wyu7K8ofJIUFWg38KQO7SQr6dZ92rYk6qf3vG5vIMATmpX91lELer1nIu0T5c=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwfzDCVaxVzNb+7NLfK1tL3z2GDcpfuDyfHN1Br+5tW0xDcawjW
-	kdO7SF21z33iW3E4qKksoXDoGp9KoGzBFq27BvE/DeKXnb8TBKKllhp5qQ==
-X-Google-Smtp-Source: AGHT+IGRmayPSSXVg1tBv7VtvJwkvc/tj+oj23SU679geAITRlSjdm6dHFzTP1K0jM44M2TKf2GxcA==
-X-Received: by 2002:a17:907:9693:b0:a9a:5b78:d7d8 with SMTP id a640c23a62f3a-a9abf88829fmr514235466b.17.1729793366232;
-        Thu, 24 Oct 2024 11:09:26 -0700 (PDT)
-Received: from [192.168.8.113] ([85.255.233.224])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a912f681bsm647545366b.84.2024.10.24.11.09.25
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 11:09:25 -0700 (PDT)
-Message-ID: <cdc6a0c4-5ad8-4ad6-9dca-49fa5e44f8dd@gmail.com>
-Date: Thu, 24 Oct 2024 19:10:00 +0100
+        d=1e100.net; s=20230601; t=1729793462; x=1730398262;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=IqU0yvR44kyPrUFOs9XxlTbM2CjS1kPGGNa549pruJ0=;
+        b=FhCzs8iPyH/vW50mm8rtg41XB7orBMHcdTQMwpBKWKphvNAYI1fdrOhpU2IN/j2g9Z
+         tf3ijFEBBodDyXVMXptr3Hp9dJVNQ4l9fd9z1yDgiDAh4+HkcGCtbEzAwNHlJPWF/Spd
+         qlaj3hJuNqL2oh7o7HaVjArHuoXtCrG66Uznxd0H4yJuCHaKvBmTwOP9ivdYbeLLos08
+         V3z02oD5NOPmcXCE0qYiVYIRxl8h08V7rjS5jQzyYMIyJWxp1I5Spp8j0AtTtqBK0gAy
+         dHMKEebmtncpeZToZXW3CmuSHRTbbvVR9+D5pL/58L4nCAyk+CEBXRLKqz/bB+SvFPty
+         yxsg==
+X-Forwarded-Encrypted: i=1; AJvYcCV4cKwV8vt4SVd53ythc1R6oNvX7A/9uB/Gf4I3iqZ65mmYiR/S0ACFIsceABuu7KrsH61dGHK5fLivATE=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw8FEgAJV5NFI4BT/D+synDaE1dxBUUVRJwuJekz/6dfWh3udV3
+	WRz17wIDcu+cK97mf58ww2XjgmdtYkNRPTzrU0ItQ541gnwxadtzgKwwxB661jQ=
+X-Google-Smtp-Source: AGHT+IFHTyuVsCBfNROuxNLrz1m+g63n0f5uKNpwbhVb79Q5e4mIsRTsMpKrKaJPjPSMD95PJpY3+A==
+X-Received: by 2002:a5d:4f83:0:b0:37d:5046:571 with SMTP id ffacd0b85a97d-37efcf10dd8mr4687694f8f.22.1729793462147;
+        Thu, 24 Oct 2024 11:11:02 -0700 (PDT)
+Received: from toaster.baylibre.com ([2a01:e0a:3c5:5fb1:c04c:f30a:b45c:dbb])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186c0f248sm52551275e9.37.2024.10.24.11.11.01
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 11:11:01 -0700 (PDT)
+From: Jerome Brunet <jbrunet@baylibre.com>
+Subject: [PATCH v3 0/6] hwmon: pmbus: add tps25990 efuse support
+Date: Thu, 24 Oct 2024 20:10:34 +0200
+Message-Id: <20241024-tps25990-v3-0-b6a6e9d4b506@baylibre.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v2 RESEND] io_uring/fdinfo: add timeout_list to fdinfo
-To: Jens Axboe <axboe@kernel.dk>, Ruyi Zhang <ruyi.zhang@samsung.com>
-Cc: io-uring@vger.kernel.org, linux-kernel@vger.kernel.org,
- peiwei.li@samsung.com
-References: <CGME20241012091032epcas5p2dec0e3db5a72854f4566b251791b84ad@epcas5p2.samsung.com>
- <e8d1f8e8-abd9-4e4b-aa55-d8444794f55a@gmail.com>
- <20241012091026.1824-1-ruyi.zhang@samsung.com>
- <5d288a05-c3c8-450a-9e25-abac89eb0951@kernel.dk>
-Content-Language: en-US
-From: Pavel Begunkov <asml.silence@gmail.com>
-In-Reply-To: <5d288a05-c3c8-450a-9e25-abac89eb0951@kernel.dk>
-Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Type: text/plain; charset="utf-8"
 Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAJqNGmcC/22Py2rDMBBFf8VoXRVZb3nV/yhd6DFyBImdSoppC
+ Pn3ThJoQ+nyCp3DmQtpUAs0Mg0XUmErrawLDvEykLjzywy0JNyEMy6ZY472Y+PKOUaFjCzmzAM
+ wTfD7sUIuX3fV+wfuXWl9ree7eRtvr/9ItpGiyQVhQAowTr0Ff96XUOE1rgdy82z8ieXsieXIZ
+ gGIR1CjEX/Y6yOqwucJz+qPst+rpuFHWWE+7T3W0jIva4VEk++eGgvGW6U0pk2Ygb7gG1C0H0q
+ fBjXqlEKGbISOVgqrtWeBp6CUi2BdkCyCMBZTrt/xnE06aQEAAA==
+X-Change-ID: 20240909-tps25990-34c0cff2be06
+To: Jean Delvare <jdelvare@suse.com>, Guenter Roeck <linux@roeck-us.net>, 
+ Jonathan Corbet <corbet@lwn.net>, 
+ Patrick Rudolph <patrick.rudolph@9elements.com>, 
+ Naresh Solanki <naresh.solanki@9elements.com>, 
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+ Conor Dooley <conor+dt@kernel.org>, Jerome Brunet <jbrunet@baylibre.com>, 
+ Delphine CC Chiu <Delphine_CC_Chiu@Wiwynn.com>
+Cc: linux-hwmon@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ linux-doc@vger.kernel.org, devicetree@vger.kernel.org, 
+ linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>, 
+ Vaishnav Achath <vaishnav.a@ti.com>
+X-Mailer: b4 0.14.2
+X-Developer-Signature: v=1; a=openpgp-sha256; l=3011; i=jbrunet@baylibre.com;
+ h=from:subject:message-id; bh=wuUDrWGldoGzLKmEDKRB+N+oojKVOt07T8M5dyrnk6A=;
+ b=owEBbQKS/ZANAwAKAeb8Dxw38tqFAcsmYgBnGo2uqLyLH6b8a+08Lm5MTRQl2OMVrjsX1pGku
+ PCvopCiPZeJAjMEAAEKAB0WIQT04VmuGPP1bV8btxvm/A8cN/LahQUCZxqNrgAKCRDm/A8cN/La
+ hYJ1D/4hcgp6yuUvwxrHxbwvSEe4PKEWna4DpzjRu9DXprZcMDnPviwD2pKOrmS2H9tOOIqcwNP
+ 1PxdGl9FUuK6XYFzRzJcF5rg7YZjdK6Z/FHz3i9bs1DB5AdwHFk70oOK+WVtm6X1MBuYZno+Msg
+ pKuOFg0qHXyeV9IOo5i84+qLXqDhWLFCNHUd/NfE1n1thnQwWAIsJ5wjn3EwoHA47T+su3HsXhe
+ +0CioVEFXMYgoSgr3sU0Cr4QAk5n+ZuHAa9eETvbIUn74KCblHSRzVPd1GR0HboKXxrpDR9zrTA
+ MyYpcAxYmB9DSw4NAfYbfX/vjN6kfZNoDRCNFOQF0yciPILVPLRIn1n6YdayWoVRTzARJ47uCX2
+ 2KWMwVZvu8LuKCfdW5ALIC1VuGVEqNKJKWXiwvQIla5o2u3cbt3YFxN8RDPV2liksxuOJM80OuB
+ Nz5hBI+ApC+eK4gJw6vhaAWuYjnovGo3CpmkR9Zt7kEqW07U+3lZF3oWAzImMNoEAf0B44KPo6z
+ ZdfJwgaO0abAXzY4nMzLM68AXlauujpvAoUR6EEWEy82xhbisoR9Byb9/+9w1+/q09SUK6ticuk
+ ID59EcGjNxIU5v7sun+7YmZ2apL255cJjWohULxpUBQckVbaZoFXy1shivpYTbOGLareUrDfbIG
+ qoA0ERK/u9/3ISQ==
+X-Developer-Key: i=jbrunet@baylibre.com; a=openpgp;
+ fpr=F29F26CF27BAE1A9719AE6BDC3C92AAF3E60AED9
 
-On 10/24/24 18:31, Jens Axboe wrote:
-> On Sat, Oct 12, 2024 at 3:30?AM Ruyi Zhang <ruyi.zhang@samsung.com> wrote:
-...
->>> I don't think there is any difference, it'd be a matter of
->>> doubling the number of in flight timeouts to achieve same
->>> timings. Tell me, do you really have a good case where you
->>> need that (pretty verbose)? Why not drgn / bpftrace it out
->>> of the kernel instead?
->>
->>   Of course, this information is available through existing tools.
->>   But I think that most of the io_uring metadata has been exported
->>   from the fdinfo file, and the purpose of adding the timeout
->>   information is the same as before, easier to use. This way,
->>   I don't have to write additional scripts to get all kinds of data.
->>
->>   And as far as I know, the io_uring_show_fdinfo function is
->>   only called once when the user is viewing the
->>   /proc/xxx/fdinfo/x file once. I don't think we normally need to
->>   look at this file as often, and only look at it when the program
->>   is abnormal, and the timeout_list is very long in the extreme case,
->>   so I think the performance impact of adding this code is limited.
-> 
-> I do think it's useful, sometimes the only thing you have to poke at
-> after-the-fact is the fdinfo information. At the same time, would it be
+This patchset adds initial support for the Texas Instruments TPS25990
+eFuse. The TPS25990 is an integrated, high-current circuit protection and
+power management device. TPS25895 may be stacked on the TPS25990 for
+higher currents.
 
-If you have an fd to print fdinfo, you can just well run drgn
-or any other debugging tool. We keep pushing more debugging code
-that can be extracted with bpf and other tools, and not only
-it bloats the code, but potentially cripples the entire kernel.
+This patchset provides basic telemetry support for the device.
+On boot, the device is write protected. Limits can be changed in sysfs
+if the write protection is removed using the introduced pmbus parameter.
 
-> more useful to dump _some_ of the info, even if we can't get all of it?
-> Would not be too hard to just stop dumping if need_resched() is set, and
+Limits will be restored to the default value device on startup, unless
+saved to NVM. Writing the NVM is not supported by the driver at the moment.
 
-need_resched() takes eternity in the eyes of hard irqs, that is
-surely one way to make the system unusable. Will we even get the
-request for rescheduling considering that irqs are off => timers
-can't run?
+As part of this series, PMBus regulator support is improved to better
+support write-protected devices.
 
-> even note that - you can always retry, as this info is generally grabbed
-> from the console anyway, not programmatically. That avoids the worst
-> possible scenario, which is a malicious setup with a shit ton of pending
-> timers, while still allowing it to be useful for a normal setup. And
-> this patch could just do that, rather than attempt to re-architect how
-> the timers are tracked and which locking it uses.
+This patchset depends on the regulator patchset available here [1]
 
-Or it can be done with one of the existing tools that already
-exist specifically for that purpose, which don't need any additional
-kernel and custom handling in the kernel, and users won't need to
-wait until the patch lands into your kernel and can be run right
-away.
+[1]: https://lore.kernel.org/r/20241008-regulator-ignored-data-v2-0-d1251e0ee507@baylibre.com
 
+Changes in v3:
+- Grouped hwmon write protect patches from:
+  https://lore.kernel.org/r/20240920-pmbus-wp-v1-0-d679ef31c483@baylibre.com
+- Link to v2: https://lore.kernel.org/r/20240920-tps25990-v2-0-f3e39bce5173@baylibre.com
+
+Changes in v2:
+- Drop PGOOD command support
+- Use micro-ohms for rimon property and better handle range.
+- Adjust read/write callbacks to let PMBus core do the job by default
+- Drop history reset specific properties and remap to the generic ones
+- Drop debugfs write_protect property and remap to the generic register
+- Link to v1: https://lore.kernel.org/r/20240909-tps25990-v1-0-39b37e43e795@baylibre.com
+
+---
+Jerome Brunet (6):
+      hwmon: (pmbus/core) allow drivers to override WRITE_PROTECT
+      hwmon: (pmbus/core) improve handling of write protected regulators
+      hwmon: (pmbus/core) add wp module param
+      hwmon: (pmbus/core) clear faults after setting smbalert mask
+      dt-bindings: hwmon: pmbus: add ti tps25990 support
+      hwmon: (pmbus/tps25990): add initial support
+
+ Documentation/admin-guide/kernel-parameters.txt    |   4 +
+ .../bindings/hwmon/pmbus/ti,tps25990.yaml          |  83 ++++
+ Documentation/hwmon/index.rst                      |   1 +
+ Documentation/hwmon/tps25990.rst                   | 148 +++++++
+ drivers/hwmon/pmbus/Kconfig                        |  17 +
+ drivers/hwmon/pmbus/Makefile                       |   1 +
+ drivers/hwmon/pmbus/pmbus.h                        |   4 +
+ drivers/hwmon/pmbus/pmbus_core.c                   |  90 ++++-
+ drivers/hwmon/pmbus/tps25990.c                     | 427 +++++++++++++++++++++
+ include/linux/pmbus.h                              |  14 +
+ 10 files changed, 780 insertions(+), 9 deletions(-)
+---
+base-commit: 516ddbfef736c843866a0b2db559ce89b40ce378
+change-id: 20240909-tps25990-34c0cff2be06
+prerequisite-change-id: 20240920-regulator-ignored-data-78e7a855643e:v2
+prerequisite-patch-id: 468882ab023813ffe8a7eeb210d05b5177a1954a
+prerequisite-patch-id: 2d88eb941437003c6ba1cebb09a352a65b94f358
+prerequisite-patch-id: e64c06b721cda2e3c41a670251335d8a2a66a236
+
+Best regards,
 -- 
-Pavel Begunkov
+Jerome
+
 
