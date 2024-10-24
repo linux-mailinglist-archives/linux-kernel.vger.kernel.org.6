@@ -1,168 +1,203 @@
-Return-Path: <linux-kernel+bounces-379047-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379048-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 13B2D9AD903
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:53:14 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id BFAF89AD905
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 02:54:26 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 3139E1C21484
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:53:13 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 40F571F227D8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 00:54:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5EBA1BA4B;
-	Thu, 24 Oct 2024 00:53:07 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3C1BA8F77;
+	Thu, 24 Oct 2024 00:54:20 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="GGw7VJnP"
-Received: from mail-wr1-f44.google.com (mail-wr1-f44.google.com [209.85.221.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b="o4K/xXRx"
+Received: from out-172.mta1.migadu.com (out-172.mta1.migadu.com [95.215.58.172])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3F2A02C9A
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:53:04 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 907A83A1B6
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 00:54:16 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=95.215.58.172
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729731186; cv=none; b=bQydEfTV7ZzH+5kUWNirLN86eLaf9L364GZGFwdByAG6yECatopXrgdaQ/t3h8pM3knW5VAxMErQxMfMzyafC7BCZvMxZEazMDA7G7/WxAEygSgLWFpqdze57zGTxZw9GDuTznonvdU4lIJK0DlvqQTHnv6ujbzydUKbkqFHuYs=
+	t=1729731259; cv=none; b=SYD+eWhL39NEJpYY8ihekushbH5rISkkAaNS0tFz8iQcedlsqPBxonNx45YqSo4KJv170k0DTZN/Fje4FxLP78R2M6JMMkWzBoV5kx72S0tDht1KRifHTBrAFaYsYod6JAOTCw4xa1KEigpBgX9Tw6pZrJuS5vJHtBU2wrwycWk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729731186; c=relaxed/simple;
-	bh=g6MY8tx7hAUiyrxqD7Kvef4097w0WwcKT1GklYmOwM0=;
+	s=arc-20240116; t=1729731259; c=relaxed/simple;
+	bh=w2E3F9KPincj5xXYDy/XBpkry1Zk9hO+S2Or2DOjkGI=;
 	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=K2xkNxpfN7eoL8RRHlvHYLLEcbr6zBbb63Bu4KZzsIFkWC5xkqN3i2Ifurzf3P8NlC/DHj5zZ7GqaC5RbZxBMy+m6kkB+UkhI/K7erYA9ui5Wbqy2S4HD2MX9R2EgSsnve69ILmIgYILEzqouUg3OQKjVRPDu9hJI0Aqmr99AAg=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=GGw7VJnP; arc=none smtp.client-ip=209.85.221.44
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
-Received: by mail-wr1-f44.google.com with SMTP id ffacd0b85a97d-37d51055097so213170f8f.3
-        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 17:53:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=suse.com; s=google; t=1729731182; x=1730335982; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:from:to:cc:subject:date:message-id:reply-to;
-        bh=nIJWyB8BsS3cplKl7XBD0w2FsVtewGZEqkBOiok0vMQ=;
-        b=GGw7VJnPNqSC9EyJXcNe73koNm0IFg09FuYi2M0ZLdiV6K0PFIyYpYjSr9+qPV4+T7
-         eHYyj5P+T2FFN4wmdaGllFu7rwedKS1YeS7CLpHgNGTIaXMm294cBfnBIz/ihScAnIPH
-         GIBsVB4Wje1m2DlKVSTPyhBN1NIK6bek/dZlQydbNNlTPnNL83uJIxgI2ySheqUappKU
-         7jhe6VV6asSMiSxd9MrVDJzBirVFPr/q2j+7SPNaW9CHrMAdJ3hvuPIwd+WdLphLDDH0
-         d/t8emI7YBRKLAJTS0N8Mfj0HJybJxHmMa+AJ3W518RyCAln8qskmIkegcRCc+WpBVva
-         d7KA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729731182; x=1730335982;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=nIJWyB8BsS3cplKl7XBD0w2FsVtewGZEqkBOiok0vMQ=;
-        b=eB3FtHgJ895cjcfpobiaPu90wQGHLuk3ezp+ehjsDdzfTpEIWjH35PIsLwP5RZOgod
-         BAzA3rK8OOm9/EgbkP1kaXtnXBpJN0Yg3ILNU5EB8SSvJva2P3S1Jd0W8R5iZphmSXDB
-         zAIvjF/XNSyTLQtau/tGPXxhHip0qcxaJKgzohXO4xbYEnP/8fGCi9wJ/rgBkX4gW5T8
-         UOgeeKswkBl18q8xHGe2TUDbmAy4BrHOOEKb76jvzHaHjbDz0LE4zqDVpwFd+bx2G4Fq
-         WWxOmMXDq2hnwtJxsQvqVHJ+zQ/+5nd3Aqf7p4mJxHL7sHufxFC2H0VioMDunot8aJO8
-         Puvw==
-X-Forwarded-Encrypted: i=1; AJvYcCWgc10kDkZ/4hLkMRrZlyBO+GCX9AogKAkiizUqvupDpKIcdx3FjSJz3unYRpstYM7ulcCcKIh5ne3fNvE=@vger.kernel.org
-X-Gm-Message-State: AOJu0YzD8sqgHl2wBN7kW20RKzTaZtxC2fnSZVPeMtiVBIu6tFqXnV9U
-	oAOi8nSAnCsyVGL2F5KTtphUn9pTkW52R5/wXNomzgLZLDvBmy7q8NKmR+1mijk=
-X-Google-Smtp-Source: AGHT+IHh8b50957ZJb3xmgqP8ldMn4gVL80KwpZGyKO8b84mjt+bpYegvWC2zSamdfxuzgozePEJBw==
-X-Received: by 2002:a5d:410d:0:b0:37d:50ed:daa8 with SMTP id ffacd0b85a97d-37efcf0b517mr2619319f8f.18.1729731182274;
-        Wed, 23 Oct 2024 17:53:02 -0700 (PDT)
-Received: from ?IPV6:2403:580d:fda1::299? (2403-580d-fda1--299.ip6.aussiebb.net. [2403:580d:fda1::299])
-        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabd9bebsm6411965a12.80.2024.10.23.17.52.59
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Wed, 23 Oct 2024 17:53:01 -0700 (PDT)
-Message-ID: <1ecd327d-108d-427a-b964-da46b0496088@suse.com>
-Date: Thu, 24 Oct 2024 11:22:57 +1030
+	 In-Reply-To:Content-Type; b=PjBxgyr1qeA/wTszJAQUJFx1scVseMjVhvSkF+KxwB/u/WZUBcn2dBv0jd4li4o9gP3ivouFIY7O782L0q7P+wDN2YR5Q7ia/vGmSz8aBX4z8N6QSQIrlk8pgF+pkLIxsrGtR/d7/hM4CgFE8BcWzPWoFcNIWH3kZOCh/XXf12c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev; spf=pass smtp.mailfrom=linux.dev; dkim=pass (1024-bit key) header.d=linux.dev header.i=@linux.dev header.b=o4K/xXRx; arc=none smtp.client-ip=95.215.58.172
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.dev
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linux.dev
+Message-ID: <24147551-b639-4f9f-be5e-def2570a863d@linux.dev>
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linux.dev; s=key1;
+	t=1729731254;
+	h=from:from:reply-to:subject:subject:date:date:message-id:message-id:
+	 to:to:cc:cc:mime-version:mime-version:content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=JVgoIaDu3a4uA7dKxjkeP2UOxgCvLj7AFtqJcyyqZug=;
+	b=o4K/xXRxT7AUFPwBCSjwf44lTQOHULpN9EbY4czS5zwWDveZVONFNXcb/9na/RgypdxIph
+	M9TrJanBk1TnRVtHOnyIFZn475xpRdqBWaSEMV1XTB4oZ4DnH77RdDhs8KCfUTVXORbfeA
+	3oEgq4Z96J+6r5TMClGOLTyFSz5LWp8=
+Date: Thu, 24 Oct 2024 01:54:09 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: linux-next: build failure after merge of the btrfs tree
-To: dsterba@suse.cz
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, David Sterba <dsterba@suse.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>,
- Linux Next Mailing List <linux-next@vger.kernel.org>
-References: <20241024085701.64263a3b@canb.auug.org.au>
- <95af7735-cb97-491c-be22-8e9759f4720f@suse.com>
- <20241024004729.GF31418@suse.cz>
+Subject: Re: [PATCH net-next v2 10/15] net: lan969x: add PTP handler function
+To: Daniel Machon <daniel.machon@microchip.com>,
+ "David S. Miller" <davem@davemloft.net>, Eric Dumazet <edumazet@google.com>,
+ Jakub Kicinski <kuba@kernel.org>, Paolo Abeni <pabeni@redhat.com>,
+ Andrew Lunn <andrew+netdev@lunn.ch>,
+ Lars Povlsen <lars.povlsen@microchip.com>,
+ Steen Hegelund <Steen.Hegelund@microchip.com>, horatiu.vultur@microchip.com,
+ jensemil.schulzostergaard@microchip.com,
+ Parthiban.Veerasooran@microchip.com, Raju.Lakkaraju@microchip.com,
+ UNGLinuxDriver@microchip.com, Richard Cochran <richardcochran@gmail.com>,
+ Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>,
+ Conor Dooley <conor+dt@kernel.org>, jacob.e.keller@intel.com,
+ ast@fiberby.net, maxime.chevallier@bootlin.com, horms@kernel.org
+Cc: netdev@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+ linux-kernel@vger.kernel.org, devicetree@vger.kernel.org
+References: <20241024-sparx5-lan969x-switch-driver-2-v2-0-a0b5fae88a0f@microchip.com>
+ <20241024-sparx5-lan969x-switch-driver-2-v2-10-a0b5fae88a0f@microchip.com>
 Content-Language: en-US
-From: Qu Wenruo <wqu@suse.com>
-Autocrypt: addr=wqu@suse.com; keydata=
- xsBNBFnVga8BCACyhFP3ExcTIuB73jDIBA/vSoYcTyysFQzPvez64TUSCv1SgXEByR7fju3o
- 8RfaWuHCnkkea5luuTZMqfgTXrun2dqNVYDNOV6RIVrc4YuG20yhC1epnV55fJCThqij0MRL
- 1NxPKXIlEdHvN0Kov3CtWA+R1iNN0RCeVun7rmOrrjBK573aWC5sgP7YsBOLK79H3tmUtz6b
- 9Imuj0ZyEsa76Xg9PX9Hn2myKj1hfWGS+5og9Va4hrwQC8ipjXik6NKR5GDV+hOZkktU81G5
- gkQtGB9jOAYRs86QG/b7PtIlbd3+pppT0gaS+wvwMs8cuNG+Pu6KO1oC4jgdseFLu7NpABEB
- AAHNGFF1IFdlbnJ1byA8d3F1QHN1c2UuY29tPsLAlAQTAQgAPgIbAwULCQgHAgYVCAkKCwIE
- FgIDAQIeAQIXgBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXVgBQkQ/lqxAAoJEMI9kfOh
- Jf6o+jIH/2KhFmyOw4XWAYbnnijuYqb/obGae8HhcJO2KIGcxbsinK+KQFTSZnkFxnbsQ+VY
- fvtWBHGt8WfHcNmfjdejmy9si2jyy8smQV2jiB60a8iqQXGmsrkuR+AM2V360oEbMF3gVvim
- 2VSX2IiW9KERuhifjseNV1HLk0SHw5NnXiWh1THTqtvFFY+CwnLN2GqiMaSLF6gATW05/sEd
- V17MdI1z4+WSk7D57FlLjp50F3ow2WJtXwG8yG8d6S40dytZpH9iFuk12Sbg7lrtQxPPOIEU
- rpmZLfCNJJoZj603613w/M8EiZw6MohzikTWcFc55RLYJPBWQ+9puZtx1DopW2jOwE0EWdWB
- rwEIAKpT62HgSzL9zwGe+WIUCMB+nOEjXAfvoUPUwk+YCEDcOdfkkM5FyBoJs8TCEuPXGXBO
- Cl5P5B8OYYnkHkGWutAVlUTV8KESOIm/KJIA7jJA+Ss9VhMjtePfgWexw+P8itFRSRrrwyUf
- E+0WcAevblUi45LjWWZgpg3A80tHP0iToOZ5MbdYk7YFBE29cDSleskfV80ZKxFv6koQocq0
- vXzTfHvXNDELAuH7Ms/WJcdUzmPyBf3Oq6mKBBH8J6XZc9LjjNZwNbyvsHSrV5bgmu/THX2n
- g/3be+iqf6OggCiy3I1NSMJ5KtR0q2H2Nx2Vqb1fYPOID8McMV9Ll6rh8S8AEQEAAcLAfAQY
- AQgAJgIbDBYhBC3fcuWlpVuonapC4cI9kfOhJf6oBQJnEXWBBQkQ/lrSAAoJEMI9kfOhJf6o
- cakH+QHwDszsoYvmrNq36MFGgvAHRjdlrHRBa4A1V1kzd4kOUokongcrOOgHY9yfglcvZqlJ
- qfa4l+1oxs1BvCi29psteQTtw+memmcGruKi+YHD7793zNCMtAtYidDmQ2pWaLfqSaryjlzR
- /3tBWMyvIeWZKURnZbBzWRREB7iWxEbZ014B3gICqZPDRwwitHpH8Om3eZr7ygZck6bBa4MU
- o1XgbZcspyCGqu1xF/bMAY2iCDcq6ULKQceuKkbeQ8qxvt9hVxJC2W3lHq8dlK1pkHPDg9wO
- JoAXek8MF37R8gpLoGWl41FIUb3hFiu3zhDDvslYM4BmzI18QgQTQnotJH8=
-In-Reply-To: <20241024004729.GF31418@suse.cz>
+X-Report-Abuse: Please report any abuse attempt to abuse@migadu.com and include these headers.
+From: Vadim Fedorenko <vadim.fedorenko@linux.dev>
+In-Reply-To: <20241024-sparx5-lan969x-switch-driver-2-v2-10-a0b5fae88a0f@microchip.com>
 Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 8bit
+Content-Transfer-Encoding: 7bit
+X-Migadu-Flow: FLOW_OUT
 
-
-
-在 2024/10/24 11:17, David Sterba 写道:
-> On Thu, Oct 24, 2024 at 08:58:58AM +1030, Qu Wenruo wrote:
->>
->>
->> 在 2024/10/24 08:27, Stephen Rothwell 写道:
->>> Hi all,
->>>
->>> After merging the btrfs tree, today's linux-next build (x86_64
->>> allmodconfig) failed like this:
->>>
->>> fs/btrfs/super.c: In function 'btrfs_reconfigure_for_mount':
->>> fs/btrfs/super.c:2011:56: error: suggest parentheses around '&&' within '||' [-Werror=parentheses]
->>>    2011 |         if (!fc->oldapi || !(fc->sb_flags & SB_RDONLY) && (mnt->mnt_sb->s_flags & SB_RDONLY))
->>>         |                            ~~~~~~~~~~~~~~~~~~~~~~~~~~~~^~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
->>> cc1: all warnings being treated as errors
->>>
->>> Caused by commit
->>>
->>>     4642e430c55b ("btrfs: fix mount failure due to remount races")
->>
->> My bad, in fact a new patch is going to remove the oldapi check
->> completely as newer mount using new API will break the per-subvolume
->> RO/RW again.
->>
->> Thus a new patch is needed to remove the oldapi check first
->> (https://lore.kernel.org/linux-btrfs/e1a70aa6dd0fc9ba6c7050a5befb3bd5b75a1377.1729664802.git.wqu@suse.com/),
->> then the newer v2 patch
->> (https://lore.kernel.org/linux-btrfs/08e45ca0-5ed9-4684-940f-1e956a936628@gmx.com/T/#t)
->> will be completely fine.
+On 23/10/2024 23:01, Daniel Machon wrote:
+> Add PTP IRQ handler for lan969x. This is required, as the PTP registers
+> are placed in two different targets on Sparx5 and lan969x. The
+> implementation is otherwise the same as on Sparx5.
 > 
-> I probably missed the v2 and picked the patch with warning that I did
-> not consider too serious but it seems linux-next builds with -Werrror.
-> Meanwhile I've updated the for-next snapshot branch and dropped the
-> patch.
+> Also, expose sparx5_get_hwtimestamp() for use by lan969x.
+> 
+> Reviewed-by: Steen Hegelund <Steen.Hegelund@microchip.com>
+> Signed-off-by: Daniel Machon <daniel.machon@microchip.com>
+> ---
+>   drivers/net/ethernet/microchip/lan969x/lan969x.c   | 90 ++++++++++++++++++++++
+>   .../net/ethernet/microchip/sparx5/sparx5_main.h    |  5 ++
+>   drivers/net/ethernet/microchip/sparx5/sparx5_ptp.c |  9 +--
+>   3 files changed, 99 insertions(+), 5 deletions(-)
+> 
+> diff --git a/drivers/net/ethernet/microchip/lan969x/lan969x.c b/drivers/net/ethernet/microchip/lan969x/lan969x.c
+> index 2c2b86f9144e..a3b40e09b947 100644
+> --- a/drivers/net/ethernet/microchip/lan969x/lan969x.c
+> +++ b/drivers/net/ethernet/microchip/lan969x/lan969x.c
+> @@ -201,6 +201,95 @@ static int lan969x_port_mux_set(struct sparx5 *sparx5, struct sparx5_port *port,
+>   	return 0;
+>   }
+>   
+> +static irqreturn_t lan969x_ptp_irq_handler(int irq, void *args)
+> +{
+> +	int budget = SPARX5_MAX_PTP_ID;
+> +	struct sparx5 *sparx5 = args;
+> +
+> +	while (budget--) {
+> +		struct sk_buff *skb, *skb_tmp, *skb_match = NULL;
+> +		struct skb_shared_hwtstamps shhwtstamps;
+> +		struct sparx5_port *port;
+> +		struct timespec64 ts;
+> +		unsigned long flags;
+> +		u32 val, id, txport;
+> +		u32 delay;
+> +
+> +		val = spx5_rd(sparx5, PTP_TWOSTEP_CTRL);
+> +
+> +		/* Check if a timestamp can be retrieved */
+> +		if (!(val & PTP_TWOSTEP_CTRL_PTP_VLD))
+> +			break;
+> +
+> +		WARN_ON(val & PTP_TWOSTEP_CTRL_PTP_OVFL);
+> +
+> +		if (!(val & PTP_TWOSTEP_CTRL_STAMP_TX))
+> +			continue;
+> +
+> +		/* Retrieve the ts Tx port */
+> +		txport = PTP_TWOSTEP_CTRL_STAMP_PORT_GET(val);
+> +
+> +		/* Retrieve its associated skb */
+> +		port = sparx5->ports[txport];
+> +
+> +		/* Retrieve the delay */
+> +		delay = spx5_rd(sparx5, PTP_TWOSTEP_STAMP_NSEC);
+> +		delay = PTP_TWOSTEP_STAMP_NSEC_NS_GET(delay);
+> +
+> +		/* Get next timestamp from fifo, which needs to be the
+> +		 * rx timestamp which represents the id of the frame
+> +		 */
+> +		spx5_rmw(PTP_TWOSTEP_CTRL_PTP_NXT_SET(1),
+> +			 PTP_TWOSTEP_CTRL_PTP_NXT,
+> +			 sparx5, PTP_TWOSTEP_CTRL);
+> +
+> +		val = spx5_rd(sparx5, PTP_TWOSTEP_CTRL);
+> +
+> +		/* Check if a timestamp can be retrieved */
+> +		if (!(val & PTP_TWOSTEP_CTRL_PTP_VLD))
+> +			break;
+> +
+> +		/* Read RX timestamping to get the ID */
+> +		id = spx5_rd(sparx5, PTP_TWOSTEP_STAMP_NSEC);
+> +		id <<= 8;
+> +		id |= spx5_rd(sparx5, PTP_TWOSTEP_STAMP_SUBNS);
+> +
+> +		spin_lock_irqsave(&port->tx_skbs.lock, flags);
+> +		skb_queue_walk_safe(&port->tx_skbs, skb, skb_tmp) {
+> +			if (SPARX5_SKB_CB(skb)->ts_id != id)
+> +				continue;
+> +
+> +			__skb_unlink(skb, &port->tx_skbs);
+> +			skb_match = skb;
+> +			break;
+> +		}
+> +		spin_unlock_irqrestore(&port->tx_skbs.lock, flags);
+> +
+> +		/* Next ts */
+> +		spx5_rmw(PTP_TWOSTEP_CTRL_PTP_NXT_SET(1),
+> +			 PTP_TWOSTEP_CTRL_PTP_NXT,
+> +			 sparx5, PTP_TWOSTEP_CTRL);
+> +
+> +		if (WARN_ON(!skb_match))
+> +			continue;
+> +
+> +		spin_lock(&sparx5->ptp_ts_id_lock);
+> +		sparx5->ptp_skbs--;
+> +		spin_unlock(&sparx5->ptp_ts_id_lock);
+> +
+> +		/* Get the h/w timestamp */
+> +		sparx5_get_hwtimestamp(sparx5, &ts, delay);
+> +
+> +		/* Set the timestamp in the skb */
+> +		shhwtstamps.hwtstamp = ktime_set(ts.tv_sec, ts.tv_nsec);
+> +		skb_tstamp_tx(skb_match, &shhwtstamps);
+> +
+> +		dev_kfree_skb_any(skb_match);
+> +	}
+> +
+> +	return IRQ_HANDLED;
+> +}
+> +
 
-I'd prefer to pick the v2 and its dependency ("btrfs: fix per-subvolume 
-RO/RW flags with new mount API") for early testing.
+This handler looks like an absolute copy of sparx5_ptp_irq_handler()
+with the difference in registers only. Did you consider keep one
+function but substitute ptp register sets?
 
-As I'm pretty sure the rolling distros are already rolling out new mount 
-using the fsconfig API, and breaking our per-subvolume RO/RW mount.
-
-The promise that new mount API will solve the per-subvolume RO/RW 
-without reconfiguration is mostly a lie.
-The reality is, RO mount is still passed with both 
-fsconfig(FSCONFIG_SET_FLAG, "ro") and  mount_setattr(MOUNT_ATTR_RDONLY), 
-doing exactly the same thing as the old mount.
-
-Thanks,
-Qu
+>   static const struct sparx5_regs lan969x_regs = {
+>   	.tsize = lan969x_tsize,
+>   	.gaddr = lan969x_gaddr,
+> @@ -242,6 +331,7 @@ static const struct sparx5_ops lan969x_ops = {
+>   	.get_hsch_max_group_rate = &lan969x_get_hsch_max_group_rate,
+>   	.get_sdlb_group          = &lan969x_get_sdlb_group,
+>   	.set_port_mux            = &lan969x_port_mux_set,
+> +	.ptp_irq_handler         = &lan969x_ptp_irq_handler,
+>   };
+>   
 
