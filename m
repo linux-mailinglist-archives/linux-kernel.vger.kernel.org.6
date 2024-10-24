@@ -1,130 +1,176 @@
-Return-Path: <linux-kernel+bounces-379722-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379724-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 373519AE2B2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:35:55 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id A80A09AE2B7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:36:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id ADC46B22709
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:35:52 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id C61661C215DB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:36:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1C7561C4A0E;
-	Thu, 24 Oct 2024 10:35:48 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 5A7301B392A;
+	Thu, 24 Oct 2024 10:36:23 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="M8PJTnYU"
-Received: from mail-ej1-f45.google.com (mail-ej1-f45.google.com [209.85.218.45])
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="d1J/JSyy"
+Received: from mail-wm1-f44.google.com (mail-wm1-f44.google.com [209.85.128.44])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EB111C2334
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:35:45 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.218.45
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 439CE1C174A
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:36:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.44
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729766147; cv=none; b=FgNlqyjz6D5IhfEt/bHGhv0g/Xv4DpipxWQZ2wF0Q+lzL1AKC7ewq3HYu6gl7ImSxGcqvkUY0uAedr0rZC4bOiY8mls5WRX8PAnxvl4bdF865eCP1Pepf/sK7RIknH4oBC2HuElzrGybHAzCYrF35xAK4X2JMs3BaEIvMj947gQ=
+	t=1729766182; cv=none; b=B9jZxXLGwB+Y531h2yMTZ3wtDqMdMaXh+d2wszu/Bo7AXFFmW++7WEkK0KcUPPty1MSygYhdrg8Twz3LzWliGTMULSHWcZqIeBXx3aum3zL14VHbZuoL4OVSYjIJP7a1iw4QJGzK6DrOmBrwC87sWOiE7p5E3syJc/qc8hdPsyA=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729766147; c=relaxed/simple;
-	bh=XkI+Pc7w60k8OQH0O7omuaUb38zv0zNaiQvi7wOn+CQ=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=RcViZAimQI2yM9WGaymjPUm7Sl0f5paCngeZrvc+6JZPDxTdyRPjLJDNmMGFbHYUBrDnXtcYYJG7QXlanw5DXPjjVNTD44uO6PTyZg2ybnmHehh6qA+EP6ZAWzIOpDlU72fEI9kK+bb7+gXoMsGmJ1RzBJCY3YY0n852FO94zyo=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=M8PJTnYU; arc=none smtp.client-ip=209.85.218.45
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ej1-f45.google.com with SMTP id a640c23a62f3a-a9a0ef5179dso91510966b.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:35:45 -0700 (PDT)
+	s=arc-20240116; t=1729766182; c=relaxed/simple;
+	bh=SeURXPNRtR8saK/e9SDz/zEg0KiVbRWzolUxUhzgr2U=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=kNjnJH75pnRBSG2p+hoY8FtGF75UMxTm8muGCmzDHwZRN6spdCqv1lDHXWaU4/zghl3xnU2hCWCC37LbILY+EUCb6qkLpfyJJwsz72Vx33njNQFJUb+iJ1oxAZvCJWPUq8RxHWNUrVz8gqCsc3kXIGt7A5rR5ydTcSGUQSZujOU=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=d1J/JSyy; arc=none smtp.client-ip=209.85.128.44
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-wm1-f44.google.com with SMTP id 5b1f17b1804b1-431548bd1b4so7535695e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:36:19 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1729766143; x=1730370943; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=u9pUdYv82xqt7Xgtl7+4X7WHgZzcjvtNIADtHzAjrXQ=;
-        b=M8PJTnYUhX2pFccTICY2lOP7YmGeIlJjBVu9FU0jkdbZWf0fHyg5TgRKzkYyLsB97l
-         10hHAc2Y5oYARP1GvGIn6x7fOoFbZk2xQBKNf501cGynJqBkHTI4xOpDh+ch6TP4vZXy
-         hTJR/l4Wr1cSb+EPsbuEG5MgiuObZxLDe5U2Q=
+        d=linaro.org; s=google; t=1729766178; x=1730370978; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=J2m6zXjeU4UBvItNkzUXHkJaeUZJVQOEVcMDTCkz29M=;
+        b=d1J/JSyy05Qq1gy1qkPHgJedJMEylS6k+xbBB45QyYbpNy021hGi3THbz5IufsXGAz
+         DtBF1l23lje4qvrL8OKcwPWIr2Akuh6l5bDcGR5DGqs8sCyaHoukjyUnsfKH3ghp61mG
+         q5SqAXryei27z7bNuQ4PKo02uHXVXDH+txNAlrF85AWj2kC/m4KwzJXZyeK8my0NLC0F
+         q9MsgaF7dLy/kjtuX0enrKClVc2SDyeUQ8ZVD+Nk79GyLbda9kxHYizEWhg/6BqlVXVb
+         x0S36Nja+M25CXFKdPK4QXAX76WRaiNcQygdvWRovyZW/x7R4mgcoExvVhkt0Zv70hB4
+         BZJA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729766143; x=1730370943;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=u9pUdYv82xqt7Xgtl7+4X7WHgZzcjvtNIADtHzAjrXQ=;
-        b=BYo6e9ixJSbkpE/l1C2kag3WrUcHmhWUoJwpQMDL/bFFGh3gfSF370L8VpV+ZwQ3ww
-         w4/VNul9dwlmcMQswMjejHkNDLYaLNVP+9GBNSgfM8FGSfa5OvGSrTUsn5f6uIUtUoVh
-         oYNpWkN0dLxu4bsLTT1cQRJGSoghkQISakMjB6BjqZCcXnVwbwe9oqSNREEOohP855Oz
-         XOsjAt2UtwV6KlHdqBGham5S6wDVrc+5cEoCJlyiWI/ereA8jOoCosOkWvGehGSTuxwz
-         AM64Q0KaplMo1o+p6W6WptwSCkv/xZ6rdLiOd/VhmSJl+dYiwch0IPRwfXn/FauiLBzh
-         xI+w==
-X-Gm-Message-State: AOJu0YzmjgSeSBjxjxu9iYe6T7gsCUhOzFqnKTqCp4xtN17phY5z4Kf/
-	qMuRfytmZaAmaI+a0RLeXaILwGPxtvlwdkk8LhD854Mi4HPDfg+HmcUVCuI+l4aRnD027X8rtft
-	Zwww=
-X-Google-Smtp-Source: AGHT+IHfb3oc/tXlxpxsflSckSQeMBrns/+C2m2gpMY+5B92QOH21Ab4FKnncfZAer2tZKtes4/KtA==
-X-Received: by 2002:a17:907:3e1c:b0:a9a:835b:fc8e with SMTP id a640c23a62f3a-a9ad286b976mr132409566b.54.1729766143356;
-        Thu, 24 Oct 2024 03:35:43 -0700 (PDT)
-Received: from localhost.localdomain ([2001:b07:6474:ebbf:f79d:49dd:b804:3f48])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91559f15sm598592866b.133.2024.10.24.03.35.42
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 03:35:43 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	Shengjiu Wang <shengjiu.wang@nxp.com>,
-	Ulf Hansson <ulf.hansson@linaro.org>,
-	=?UTF-8?q?Uwe=20Kleine-K=C3=B6nig?= <u.kleine-koenig@pengutronix.de>,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org,
-	linux-pm@vger.kernel.org
-Subject: [PATCH] pmdomain: imx: gpcv2: replace dev_err() with dev_err_probe()
-Date: Thu, 24 Oct 2024 12:35:36 +0200
-Message-ID: <20241024103540.3482216-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+        d=1e100.net; s=20230601; t=1729766178; x=1730370978;
+        h=content-transfer-encoding:in-reply-to:from:content-language
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=J2m6zXjeU4UBvItNkzUXHkJaeUZJVQOEVcMDTCkz29M=;
+        b=dwMSY/PozF+jyWds5VTOeWfR+Yflgtq/udnvdT5pDqqGZtRm2Pc71MifxpIGMNfMHC
+         vgNzUhF8U+mKBl/BiduRyEo2+W5UXKCjSoMH/Z7spcqLJRXmUePBu0FJhVt9vaEqNt0x
+         p/8U58Zg3Vw1KNfUTWi11KVIkGz+PWuu36ii5/WhaS3wdtMCiDNqZcuBbu1/6WS3WRNw
+         HGWluYRqccL/eTXzMQajsrXUUjbdmLgE7el1SThIUk4z11jUUWb1Jne+0/YZyb3QwT0w
+         ZucNfXCRYuZasKP70tDv4yEVzfIDppRdwkNmCh6mSrnuJxYYPjIoHI7E7CM1iOfCgJ9V
+         X/pA==
+X-Forwarded-Encrypted: i=1; AJvYcCVA7Eoo8xJURIZF5OuTcQuxi+K1A7egFmwBVbtpcmUzO4teRzybs27rpVM8D0JaDDPqdKk2bwn8TwjaNGY=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxXoEaAwNe4IyR7Rn65vr3CAiANt2miIAGdca8rLC0bP38pnMdu
+	6Mxi9Tr7/vYPDhSx7TmxqeEMj7KgMIeRKrBdlgO5YZQd4rKbYOm9eYTJHD6SHJM=
+X-Google-Smtp-Source: AGHT+IGS80KlgEPjWf5Mc+qBef5jgU/z0mA2I6rWelhiddK3iBRLjN4Mx0Eo2Dw2peFPZ3jVdeIPSA==
+X-Received: by 2002:adf:fc4c:0:b0:37d:4ebe:164a with SMTP id ffacd0b85a97d-37efcf92731mr3710224f8f.50.1729766178421;
+        Thu, 24 Oct 2024 03:36:18 -0700 (PDT)
+Received: from [192.168.10.46] (146725694.box.freepro.com. [130.180.211.218])
+        by smtp.googlemail.com with ESMTPSA id 5b1f17b1804b1-43186bd6894sm41366705e9.10.2024.10.24.03.36.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 03:36:18 -0700 (PDT)
+Message-ID: <8b4659f0-5da7-4847-b5de-fad8ea57e967@linaro.org>
+Date: Thu, 24 Oct 2024 12:36:16 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] thermal/thresholds: Fix thermal lock annotation issue
+To: "Rafael J. Wysocki" <rafael@kernel.org>
+Cc: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com,
+ Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>,
+ "open list:THERMAL" <linux-pm@vger.kernel.org>,
+ open list <linux-kernel@vger.kernel.org>
+References: <20241024102303.1086147-1-daniel.lezcano@linaro.org>
+Content-Language: en-US
+From: Daniel Lezcano <daniel.lezcano@linaro.org>
+In-Reply-To: <20241024102303.1086147-1-daniel.lezcano@linaro.org>
+Content-Type: text/plain; charset=UTF-8; format=flowed
 Content-Transfer-Encoding: 8bit
 
-The patch standardizes the probe() code by replacing the two occurrences
-of dev_err() with dev_err_probe(). Indeed, dev_err_probe() was used in all
-other error paths of the probe() function.
 
-Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+Hi,
 
----
+please note this fix has been written on top of the thermal thresholds 
+series, so I don't know how it conflicts if it is applied before
 
- drivers/pmdomain/imx/gpcv2.c | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+Thanks
 
-diff --git a/drivers/pmdomain/imx/gpcv2.c b/drivers/pmdomain/imx/gpcv2.c
-index 963d61c5af6d..6e6ecbf2e152 100644
---- a/drivers/pmdomain/imx/gpcv2.c
-+++ b/drivers/pmdomain/imx/gpcv2.c
-@@ -1356,7 +1356,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
- 
- 	ret = pm_genpd_init(&domain->genpd, NULL, true);
- 	if (ret) {
--		dev_err(domain->dev, "Failed to init power domain\n");
-+		dev_err_probe(domain->dev, ret, "Failed to init power domain\n");
- 		goto out_domain_unmap;
- 	}
- 
-@@ -1367,7 +1367,7 @@ static int imx_pgc_domain_probe(struct platform_device *pdev)
- 	ret = of_genpd_add_provider_simple(domain->dev->of_node,
- 					   &domain->genpd);
- 	if (ret) {
--		dev_err(domain->dev, "Failed to add genpd provider\n");
-+		dev_err_probe(domain->dev, ret, "Failed to add genpd provider\n");
- 		goto out_genpd_remove;
- 	}
- 
+   -- D.
+
+On 24/10/2024 12:23, Daniel Lezcano wrote:
+> When the thermal zone is unregistered (thermal sensor module being
+> unloaded), no lock is held when flushing the thresholds. That results
+> in a WARN when the lockdep validation is set in the kernel config.
+> 
+> This has been reported by syzbot.
+> 
+> As the thermal zone is in the process of being destroyed, there is no
+> need to send a notification about purging the thresholds to the
+> userspace as this one will receive a thermal zone deletion
+> notification which imply the deletion of all the associated resources
+> like the trip points or the user thresholds.
+> 
+> Split the function thermal_thresholds_flush() into a lockless one
+> without notification and its call with the lock annotation followed
+> with the thresholds flushing notification.
+> 
+> Please note this scenario is unlikely to happen, as the sensor drivers
+> are usually compiled-in in order to have the thermal framework to be
+> able to kick in at boot time if needed.
+> 
+> Link: https://lore.kernel.org/all/67124175.050a0220.10f4f4.0012.GAE@google.com
+> Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
+> Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> ---
+>   drivers/thermal/thermal_thresholds.c | 13 +++++++++----
+>   1 file changed, 9 insertions(+), 4 deletions(-)
+> 
+> diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/thermal_thresholds.c
+> index ea4aa5a2e86c..2888eabd3efe 100644
+> --- a/drivers/thermal/thermal_thresholds.c
+> +++ b/drivers/thermal/thermal_thresholds.c
+> @@ -20,17 +20,22 @@ int thermal_thresholds_init(struct thermal_zone_device *tz)
+>   	return 0;
+>   }
+>   
+> -void thermal_thresholds_flush(struct thermal_zone_device *tz)
+> +static void __thermal_thresholds_flush(struct thermal_zone_device *tz)
+>   {
+>   	struct list_head *thresholds = &tz->user_thresholds;
+>   	struct user_threshold *entry, *tmp;
+>   
+> -	lockdep_assert_held(&tz->lock);
+> -
+>   	list_for_each_entry_safe(entry, tmp, thresholds, list_node) {
+>   		list_del(&entry->list_node);
+>   		kfree(entry);
+>   	}
+> +}
+> +
+> +void thermal_thresholds_flush(struct thermal_zone_device *tz)
+> +{
+> +	lockdep_assert_held(&tz->lock);
+> +
+> +	__thermal_thresholds_flush(tz);
+>   
+>   	thermal_notify_threshold_flush(tz);
+>   
+> @@ -39,7 +44,7 @@ void thermal_thresholds_flush(struct thermal_zone_device *tz)
+>   
+>   void thermal_thresholds_exit(struct thermal_zone_device *tz)
+>   {
+> -	thermal_thresholds_flush(tz);
+> +	__thermal_thresholds_flush(tz);
+>   }
+>   
+>   static int __thermal_thresholds_cmp(void *data,
+
+
 -- 
-2.43.0
+<http://www.linaro.org/> Linaro.org │ Open source software for ARM SoCs
 
+Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+<http://twitter.com/#!/linaroorg> Twitter |
+<http://www.linaro.org/linaro-blog/> Blog
 
