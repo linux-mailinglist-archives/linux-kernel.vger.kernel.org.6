@@ -1,137 +1,184 @@
-Return-Path: <linux-kernel+bounces-379885-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379886-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id E8E249AE580
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:01:23 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id A3BC09AE582
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:02:10 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 249801C21988
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:01:23 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 33E2F2840B4
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:02:09 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C47161D517E;
-	Thu, 24 Oct 2024 13:00:59 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BF661D5AA7;
+	Thu, 24 Oct 2024 13:02:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="kyIDBLxt"
-Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.15])
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="CY16NWev"
+Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.17])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 186961D514C;
-	Thu, 24 Oct 2024 13:00:56 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.15
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 857FF13AA2F;
+	Thu, 24 Oct 2024 13:01:59 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.17
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729774859; cv=none; b=Y3M1gvep2o5OmrZYuN4xILpJojVbm7OV44lHpSHSLpiN4zZVx9eO6YWXRg7kvFyhUgLLBkiEMLU6GzvqaBjgLjUHhPKUHxFqOAbx3yyVnp114cN4kU6CiQEz2Gyul+WW592mva4lTQRVQgOysG9ef6nd0E2+Mx2KOw0l/MPZG8k=
+	t=1729774922; cv=none; b=Fa0C/dXQAcwW1ivepoKVk0y2/bV6QwMK8j4FW0bmPSRJ6fzXzpnQEhy3FtuA5jE1M+kV/OFf13Ran/ptBvrMLC02ounR0RYUxuh7hEtfjidwhWyITsz6RcuAZK6VNEPH2f3xAW7DZLCSsVIgDN6zKGGdBO68URluZD3R3hxlX9k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729774859; c=relaxed/simple;
-	bh=KqGf1sgWq73SVzkXhBsxSdnJ5RxsROkgNjzFTPC8Sa0=;
-	h=From:To:Subject:Date:Message-Id:MIME-Version:Content-Type; b=DyQne8GPS1ROb4EejAO0slsTlm1GSyEYNxOVgCkQ6vHE5YVYLK+IUyZ7tiXxC6IbuVAwtolMiCA/p2KxMim7zSf4OugjQ0okhcvnIzwIksvEkYT1MtpOtj5wCetJbSx69ziCKOenCrj7kM+vnrwoom46Lv1rUCRRnIz5liY32vc=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=kyIDBLxt; arc=none smtp.client-ip=198.175.65.15
+	s=arc-20240116; t=1729774922; c=relaxed/simple;
+	bh=2a+9bKMv7hVzknlW8OazkLUPwrbxo5rblBY4AWBW2pI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=K85ZJaSxdDR/IKkWELAHAUfv243vE4M/GGc5M/ErSX6XqrZW0lEUkre0CM0Rm1AudFrw4MxtLHZueG56fG6Q02gWvDsnjeTe3wVdadpIj0ESilf86b5szTfdAJcnTWcXdiNm3+WD8ylT8fK3fxs14n3+Qv6HWv68TWAMZi0RmD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com; spf=none smtp.mailfrom=linux.intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=CY16NWev; arc=none smtp.client-ip=192.198.163.17
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linux.intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=linux.intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729774857; x=1761310857;
-  h=from:to:subject:date:message-id:mime-version:
-   content-transfer-encoding;
-  bh=KqGf1sgWq73SVzkXhBsxSdnJ5RxsROkgNjzFTPC8Sa0=;
-  b=kyIDBLxtRhCfjoqA2rTawlMCoz72VOp/3HYs+FNeB91tnSxtVCoIOaiF
-   f37YUiR5uGxcZaWhAabO94s4kq3WFIL2A9+dknexHPDidlWlmlfxy5SIF
-   ds7ehi8RBxImofoNHKU1gj5/KQrTikdB86jM/n3dk167cnESXFKLfybbw
-   4aYfJFN/OFwQfR+6+bsqPqeXbeVpH846tARoEMeGz/qEHqpzZrZNbeRED
-   Dlz6J/POLA9m77ZOhQNgwvSu8aXv9aZL1toEB6I2bklHrGnya8ljXyuK5
-   0wwr5dZ2NfKgtMzq8eDzlDdE+83Vt2/iuodTcVKJuH/5w5DNvSZVL2Aue
-   w==;
-X-CSE-ConnectionGUID: fNjF0en/QMKnq+jyzp9hmA==
-X-CSE-MsgGUID: zK0BxfGeTVi3gd9F8i/j0Q==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="33094655"
-X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="33094655"
-Received: from fmviesa009.fm.intel.com ([10.60.135.149])
-  by orvoesa107.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:00:56 -0700
-X-CSE-ConnectionGUID: srOYIqpMQJWMyc3AqU6puQ==
-X-CSE-MsgGUID: IvpvS1FBTFGnJdwpyU+KPg==
+  t=1729774920; x=1761310920;
+  h=date:from:to:cc:subject:message-id:references:
+   mime-version:in-reply-to;
+  bh=2a+9bKMv7hVzknlW8OazkLUPwrbxo5rblBY4AWBW2pI=;
+  b=CY16NWevZLqXhEQXvK2bSE8cctLfnDvkuCnioOYL1v5/fD3YDiqwtqav
+   aau4N+yyKYP3cin+80GOghhIUEsC5f2jp5wAwWkg7jfzQkqPLb6d58gXV
+   ZJLA+FKaeTBWWE/m/XcPV2zmW1GN+xVsh9+FQuwgMcaUV6Fkk6G1RIwY5
+   9g9uqsl/WzWJsoMSo+2urQpUwRSksW3XNcfPFFXrbOYoGhoJ2LU5yFLhc
+   Ec/StMBCCyhDidJJNTfvSzsduWDf1URsGgpJ44D5AQV11RN4toTRBh0z/
+   MC+mcoSZZ7fyQM0uHiTiuoRXRhvHp50K2LcILnj+aoMrQMx8xZ8G6kosC
+   Q==;
+X-CSE-ConnectionGUID: o0GGTXs5S4qLRfRStS2F0g==
+X-CSE-MsgGUID: GSNgBoBPSRSjhG+Oz0Udcw==
+X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="29303306"
+X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
+   d="scan'208";a="29303306"
+Received: from fmviesa004.fm.intel.com ([10.60.135.144])
+  by fmvoesa111.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:01:59 -0700
+X-CSE-ConnectionGUID: Cd4N0AKgRuanQXpDlER8KQ==
+X-CSE-MsgGUID: BgcMOECEQKqvDTOvgmvjfQ==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="80569541"
-Received: from ijarvine-mobl1.ger.corp.intel.com (HELO localhost) ([10.245.245.193])
-  by fmviesa009-auth.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:00:52 -0700
-From: =?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>
-To: Naveen Krishna Chatradhi <naveenkrishna.chatradhi@amd.com>,
-	Carlos Bilbao <carlos.bilbao.osdev@gmail.com>,
-	Thomas Gleixner <tglx@linutronix.de>,
-	Ingo Molnar <mingo@redhat.com>,
-	Borislav Petkov <bp@alien8.de>,
-	Dave Hansen <dave.hansen@linux.intel.com>,
-	x86@kernel.org,
-	"H. Peter Anvin" <hpa@zytor.com>,
-	Jonathan Corbet <corbet@lwn.net>,
-	=?UTF-8?q?Ilpo=20J=C3=A4rvinen?= <ilpo.jarvinen@linux.intel.com>,
-	Suma Hegde <suma.hegde@amd.com>,
-	platform-driver-x86@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	linux-doc@vger.kernel.org
-Subject: [PATCH 1/1] Documentation/x86/amd/hsmp: Fix ACPI dump formatting
-Date: Thu, 24 Oct 2024 16:00:46 +0300
-Message-Id: <20241024130046.31753-1-ilpo.jarvinen@linux.intel.com>
-X-Mailer: git-send-email 2.39.5
+   d="scan'208";a="85191643"
+Received: from smile.fi.intel.com ([10.237.72.154])
+  by fmviesa004.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 06:01:56 -0700
+Received: from andy by smile.fi.intel.com with local (Exim 4.98)
+	(envelope-from <andriy.shevchenko@linux.intel.com>)
+	id 1t3xTM-00000006Zui-3IcU;
+	Thu, 24 Oct 2024 16:01:52 +0300
+Date: Thu, 24 Oct 2024 16:01:52 +0300
+From: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
+To: "Huang, Ying" <ying.huang@intel.com>
+Cc: Dan Williams <dan.j.williams@intel.com>,
+	David Hildenbrand <david@redhat.com>,
+	Andrew Morton <akpm@linux-foundation.org>, linux-mm@kvack.org,
+	linux-kernel@vger.kernel.org, linux-cxl@vger.kernel.org,
+	Davidlohr Bueso <dave@stgolabs.net>,
+	Jonathan Cameron <jonathan.cameron@huawei.com>,
+	Alistair Popple <apopple@nvidia.com>,
+	Bjorn Helgaas <bhelgaas@google.com>, Baoquan He <bhe@redhat.com>,
+	Dave Jiang <dave.jiang@intel.com>,
+	Alison Schofield <alison.schofield@intel.com>
+Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
+ __region_intersects()
+Message-ID: <ZxpFQBRqWMDjhtSY@smile.fi.intel.com>
+References: <20241010065558.1347018-1-ying.huang@intel.com>
+ <d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
+ <87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
+ <ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
+ <671965a8b37a2_1bbc629489@dwillia2-xfh.jf.intel.com.notmuch>
+ <ZxnvyIme98Q8ey1c@smile.fi.intel.com>
+ <87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 8bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
+Organization: Intel Finland Oy - BIC 0357606-4 - Westendinkatu 7, 02160 Espoo
 
-hsmp documentation added into pdx86 for-next branch triggers these
-error:
+On Thu, Oct 24, 2024 at 08:30:39PM +0800, Huang, Ying wrote:
+> Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
+> > On Wed, Oct 23, 2024 at 02:07:52PM -0700, Dan Williams wrote:
+> >> Andy Shevchenko wrote:
+> >> > On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
+> >> > > David Hildenbrand <david@redhat.com> writes:
+> >> > > > On 10.10.24 08:55, Huang Ying wrote:
 
-86: ERROR: Unexpected indentation.
-87: WARNING: Block quote ends without a blank line; unexpected unindent.
-90: ERROR: Unexpected indentation.
-91: WARNING: Block quote ends without a blank line; unexpected unindent.
-94: ERROR: Unexpected indentation.
-96: ERROR: Unexpected indentation.
-97: WARNING: Block quote ends without a blank line; unexpected unindent.
-100: ERROR: Unexpected indentation.
-101: WARNING: Block quote ends without a blank line; unexpected unindent.
-102: WARNING: Block quote ends without a blank line; unexpected unindent.
-105: ERROR: Unexpected indentation.
-107: ERROR: Unexpected indentation.
-109: WARNING: Block quote ends without a blank line; unexpected unindent.
-112: ERROR: Unexpected indentation.
-115: WARNING: Block quote ends without a blank line; unexpected unindent.
-116: WARNING: Block quote ends without a blank line; unexpected unindent.
-117: WARNING: Definition list ends without a blank line; unexpected unindent.
+...
 
-Convert the problematic ACPI dump fragment to use preformatted text.
+> >> > > > 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
+> >> > > 
+> >> > > Yes.  This can improve code readability.
+> >> > > 
+> >> > > A possible issue is that "_root" will be evaluated twice in above macro
+> >> > > definition.  IMO, this should be avoided.
+> >> > 
+> >> > Ideally, yes. But how many for_each type of macros you see that really try hard
+> >> > to achieve that? I believe we shouldn't worry right now about this and rely on
+> >> > the fact that root is the given variable. Or do you have an example of what you
+> >> > suggested in the other reply, i.e. where it's an evaluation of the heavy call?
+> >> > 
+> >> > > Do you have some idea about
+> >> > > how to do that?  Something like below?
+> >> > > 
+> >> > > #define for_each_resource_XXX(_root, _p)                                \
+> >> > > 	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
+> >> > > 	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
+> >> > 
+> >> > This is a bit ugly :-( I would avoid ugliness as long as we have no problem to
+> >> > solve (see above).
+> >> 
+> >> Using a local defined variable to avoid double evaluation is standard
+> >> practice. I do not understand "avoid ugliness as long as we have no problem to
+> >> solve", the problem to solve will be if someone accidentally does
+> >> something like "for_each_resource_descendant(root++, res)". *That* will
+> >> be a problem when someone finally realizes that the macro is hiding a
+> >> double evaluation.
+> >
+> > Can you explain, why do we need __p and how can we get rid of that?
+> > I understand the part of the local variable for root.
+> 
+> If don't use '__p', the macro becomes
+> 
+> #define for_each_resource_XXX(_root, _p)                                \
+> 	for (typeof(_root) __root = (_root), (_p) = (__root)->child; \
+> 	     (_p); (_p) = next_resource_XXX(__root, _p))
+> 
+> Where, '_p' must be a variable name, and it will be a new variable
+> inside for loop and mask the variable with same name outside of macro.
+> IIUC, this breaks the macro convention in kernel and has subtle variable
+> masking semantics.
 
-My plan is to fold this commit into the original commit.
+Yep.
 
-Fixes: f9ad7a2843a6 ("platform/x86/amd/hsmp: Create separate ACPI, plat and common drivers")
-Signed-off-by: Ilpo Järvinen <ilpo.jarvinen@linux.intel.com>
----
- Documentation/arch/x86/amd_hsmp.rst | 4 ++--
- 1 file changed, 2 insertions(+), 2 deletions(-)
+In property.h nobody cares about evaluation which makes the macro as simple as
 
-diff --git a/Documentation/arch/x86/amd_hsmp.rst b/Documentation/arch/x86/amd_hsmp.rst
-index abf1fa3230d9..2fd917638e42 100644
---- a/Documentation/arch/x86/amd_hsmp.rst
-+++ b/Documentation/arch/x86/amd_hsmp.rst
-@@ -74,9 +74,9 @@ The same is defined in the amd_hsmp.h header.
- ACPI device object format
- =========================
- The ACPI object format expected from the amd_hsmp driver
--for socket with ID00 is given below.
-+for socket with ID00 is given below::
- 
--Device(HSMP)
-+  Device(HSMP)
- 		{
- 			Name(_HID, "AMDI0097")
- 			Name(_UID, "ID00")
+#define for_each_resource_XXX(_root, _p)		\
+	for (_p = next_resource_XXX(__root, NULL); _p;	\
+	     _p = next_resource_XXX(__root, _p))
+
+(Dan,
+ that's what I called to avoid solving issues we don't have and most likely
+ will never have.)
+
+but if you want to stick with your variant some improvements can be done:
+
+#define for_each_resource_XXX(_root, _p)				\
+	for (typeof(_root) __root = (_root), __p = _p = __root->child;	\
+	     __p && _p; _p = next_resource_XXX(__root, _p))
+
+
+1) no need to have local variable in parentheses;
+2) no need to have iterator in parentheses, otherwise it would be crazy code
+that has put something really wrong there and still expect the thing to work.
+
+> >> So no, this proposal is not "ugly", it is a best practice. See the
+> >> definition of min_not_zero() for example.
+> >
+> > I know that there are a lot of macros that look uglier that this one.
+
 -- 
-2.39.5
+With Best Regards,
+Andy Shevchenko
+
 
 
