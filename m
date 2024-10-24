@@ -1,353 +1,154 @@
-Return-Path: <linux-kernel+bounces-379962-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379930-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 34EBE9AE672
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:31:21 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id B441F9AE5FB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:22:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E919528A86E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:31:19 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 08EECB23A2C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:22:57 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 225171FF024;
-	Thu, 24 Oct 2024 13:25:31 +0000 (UTC)
-Received: from dggsgout12.his.huawei.com (dggsgout12.his.huawei.com [45.249.212.56])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 59A691D9A6C;
+	Thu, 24 Oct 2024 13:22:52 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="cVJ1uujs"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7D7811FC7CC;
-	Thu, 24 Oct 2024 13:25:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.56
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9CDFE1AF0D0;
+	Thu, 24 Oct 2024 13:22:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729776330; cv=none; b=HqgYmqrFBzDDmGZBsyRojptbBAGsWbdmSzdr5FF6PfPXLJd1hiDJp8haCBWYM5xjSwb8m3eJ9Vi7n68GJ3PTKPnTtvAiO/ql9a87OBtwvpd+PO5UTvJWBETSLMfpCgSs5RneRdmlLZm+c2BKA6LRAXXyYHG1IVIQD2xVI6ZXsqA=
+	t=1729776171; cv=none; b=AxaBzbfLAjxiWLy6R8gcUjdFbC5wI3hwN0lKGhQkmbLB5BckxUiICLAblmca3f3c72sAB5aykajO1paoX+g4T9qRqOJyUVSsZoUt2Q2mXXx2ZyZQVxF0rQlbpHPctBLt97IqU/YZmZp2LSY39Y0cmq9UAk036Ovd4RL2vxlZYJ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729776330; c=relaxed/simple;
-	bh=TcVoi/3kXLFyCOWu5OTevK77hXAL+N5wzFnLDQ+BdZk=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=lwzhbMZMzx1qwrCEWx8ehRW+Nr77/C8oQGEwmVkusry090wMUS2n6c61zItrXqVjOLcwt88yZKTGbUln5bmjCJxAPUGcekYTq6Htw/w6On6EUPCxEGzcxDRecoz9TO7QpPyvyudTw/pHTnpxu/THQHLggL/VliynWfJcN8NzKmI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com; spf=pass smtp.mailfrom=huaweicloud.com; arc=none smtp.client-ip=45.249.212.56
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=huaweicloud.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huaweicloud.com
-Received: from mail.maildlp.com (unknown [172.19.163.235])
-	by dggsgout12.his.huawei.com (SkyGuard) with ESMTP id 4XZ68y1gjpz4f3jdk;
-	Thu, 24 Oct 2024 21:25:06 +0800 (CST)
-Received: from mail02.huawei.com (unknown [10.116.40.128])
-	by mail.maildlp.com (Postfix) with ESMTP id AA6E41A0568;
-	Thu, 24 Oct 2024 21:25:23 +0800 (CST)
-Received: from huaweicloud.com (unknown [10.175.104.67])
-	by APP4 (Coremail) with SMTP id gCh0CgD3LMmxShpnmfz6Ew--.42902S16;
-	Thu, 24 Oct 2024 21:25:23 +0800 (CST)
-From: Yu Kuai <yukuai1@huaweicloud.com>
-To: stable@vger.kernel.org,
-	gregkh@linuxfoundation.org,
-	harry.wentland@amd.com,
-	sunpeng.li@amd.com,
-	Rodrigo.Siqueira@amd.com,
-	alexander.deucher@amd.com,
-	christian.koenig@amd.com,
-	Xinhui.Pan@amd.com,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	viro@zeniv.linux.org.uk,
-	brauner@kernel.org,
-	Liam.Howlett@oracle.com,
-	akpm@linux-foundation.org,
-	hughd@google.com,
-	willy@infradead.org,
-	sashal@kernel.org,
-	srinivasan.shanmugam@amd.com,
-	chiahsuan.chung@amd.com,
-	mingo@kernel.org,
-	mgorman@techsingularity.net,
-	yukuai3@huawei.com,
-	chengming.zhou@linux.dev,
-	zhangpeng.00@bytedance.com,
-	chuck.lever@oracle.com
-Cc: amd-gfx@lists.freedesktop.org,
-	dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	linux-fsdevel@vger.kernel.org,
-	maple-tree@lists.infradead.org,
-	linux-mm@kvack.org,
-	yukuai1@huaweicloud.com,
-	yi.zhang@huawei.com,
-	yangerkun@huawei.com
-Subject: [PATCH 6.6 28/28] maple_tree: correct tree corruption on spanning store
-Date: Thu, 24 Oct 2024 21:22:25 +0800
-Message-Id: <20241024132225.2271667-13-yukuai1@huaweicloud.com>
-X-Mailer: git-send-email 2.39.2
-In-Reply-To: <20241024132225.2271667-1-yukuai1@huaweicloud.com>
-References: <20241024132009.2267260-1-yukuai1@huaweicloud.com>
- <20241024132225.2271667-1-yukuai1@huaweicloud.com>
+	s=arc-20240116; t=1729776171; c=relaxed/simple;
+	bh=kc1ZQ4MosC46ZBz5uzN1Bxee3AY7JHIMK7ZbiVyBQw8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=UuvqlM6FTfvfK6Cb+xJkwpIIMPVZ/RtDz9u+M2+jL3tf/g6UmFRatIaCf2EythdwiL+Wqv8iUwRNPMDO7jePaX+UtyTy0PWaO399O+QHGoNAN9tWhB7ytHf/6MmTrqNnueotwBnxNULLLKWyBdGxn1OyjbLpgVIsVx7S0c4moA0=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=cVJ1uujs; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8FF83C4CEE3;
+	Thu, 24 Oct 2024 13:22:45 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729776171;
+	bh=kc1ZQ4MosC46ZBz5uzN1Bxee3AY7JHIMK7ZbiVyBQw8=;
+	h=Date:Subject:To:Cc:References:From:In-Reply-To:From;
+	b=cVJ1uujs3gqDg34e0qGqig8v+exShDKLedXA4/XRuFTRPqTraBc8zB3cKN6wyZtVU
+	 7qvSckk7X16ERyKJ25ail3z6Or7DNI0Q5BEwzBCtqEACjZ9qqzTkI63/xBYVvL/OzV
+	 eznrFwBW2v/AQ0R/7JNS7FxzJQP8wsmLP7rXfst2FfLo50q7+RXrrjllF8yfB5i0Y6
+	 KYHT6BNId9USHmBQd1lK0nw5vrO+BO9CzRHgn1xjqvUwAhunyXs0fGi87H8KqCX4U5
+	 iKALZjAlFzuM1UC0iIQjiWlVm9Lw+HwfS1C9YAmXGbOyRNEovyF5WLpqs54PyA5FD0
+	 3AOk6jVnrwsjA==
+Message-ID: <53f2e315-1a80-4d03-96a6-30604a96d3ad@kernel.org>
+Date: Thu, 24 Oct 2024 15:22:42 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 04/14] dt-bindings: pinctrl: stm32: add RSVD mux function
+To: Antonio Borneo <antonio.borneo@foss.st.com>
+Cc: Linus Walleij <linus.walleij@linaro.org>, Rob Herring <robh@kernel.org>,
+ Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
+ <conor+dt@kernel.org>, Maxime Coquelin <mcoquelin.stm32@gmail.com>,
+ Alexandre Torgue <alexandre.torgue@foss.st.com>,
+ Catalin Marinas <catalin.marinas@arm.com>, Will Deacon <will@kernel.org>,
+ linux-gpio@vger.kernel.org, devicetree@vger.kernel.org,
+ linux-arm-kernel@lists.infradead.org, linux-kernel@vger.kernel.org,
+ =?UTF-8?Q?Cl=C3=A9ment_Le_Goffic?= <clement.legoffic@foss.st.com>,
+ Stephane Danieau <stephane.danieau@foss.st.com>,
+ Amelie Delaunay <amelie.delaunay@foss.st.com>,
+ Fabien Dessenne <fabien.dessenne@foss.st.com>,
+ Valentin Caron <valentin.caron@foss.st.com>,
+ Gatien Chevallier <gatien.chevallier@foss.st.com>,
+ Cheick Traore <cheick.traore@foss.st.com>,
+ linux-stm32@st-md-mailman.stormreply.com
+References: <20241022155658.1647350-1-antonio.borneo@foss.st.com>
+ <20241022155658.1647350-5-antonio.borneo@foss.st.com>
+ <swbppwzpavktjpyb6piayzzht6ta75w3g36oyndmim54oztar5@svb4452yob7g>
+ <680f3e0b7458015d5b909200342a623eb55f907d.camel@foss.st.com>
+From: Krzysztof Kozlowski <krzk@kernel.org>
+Content-Language: en-US
+Autocrypt: addr=krzk@kernel.org; keydata=
+ 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 fv0=
+In-Reply-To: <680f3e0b7458015d5b909200342a623eb55f907d.camel@foss.st.com>
+Content-Type: text/plain; charset=UTF-8
 Content-Transfer-Encoding: 8bit
-X-CM-TRANSID:gCh0CgD3LMmxShpnmfz6Ew--.42902S16
-X-Coremail-Antispam: 1UD129KBjvJXoWxKrWrXFWfXFWrKw1xuw4kZwb_yoWDGFW7pF
-	W3Kry3Kr4Dta48CF4vka10vr90vrs3JrW7tas8Kw1FyrZ0gFyIqrnav3WFvFyDu3ykGr12
-	vF4jvw1UCa98AFJanT9S1TB71UUUUU7qnTZGkaVYY2UrUUUUjbIjqfuFe4nvWSU5nxnvy2
-	9KBjDU0xBIdaVrnRJUUUmY14x267AKxVWrJVCq3wAFc2x0x2IEx4CE42xK8VAvwI8IcIk0
-	rVWrJVCq3wAFIxvE14AKwVWUJVWUGwA2048vs2IY020E87I2jVAFwI0_JF0E3s1l82xGYI
-	kIc2x26xkF7I0E14v26ryj6s0DM28lY4IEw2IIxxk0rwA2F7IY1VAKz4vEj48ve4kI8wA2
-	z4x0Y4vE2Ix0cI8IcVAFwI0_Ar0_tr1l84ACjcxK6xIIjxv20xvEc7CjxVAFwI0_GcCE3s
-	1l84ACjcxK6I8E87Iv67AKxVW0oVCq3wA2z4x0Y4vEx4A2jsIEc7CjxVAFwI0_GcCE3s1l
-	e2I262IYc4CY6c8Ij28IcVAaY2xG8wAqx4xG64xvF2IEw4CE5I8CrVC2j2WlYx0E2Ix0cI
-	8IcVAFwI0_Jrv_JF1lYx0Ex4A2jsIE14v26r1j6r4UMcvjeVCFs4IE7xkEbVWUJVW8JwAC
-	jcxG0xvY0x0EwIxGrwACjI8F5VA0II8E6IAqYI8I648v4I1lFIxGxcIEc7CjxVA2Y2ka0x
-	kIwI1lc7CjxVAaw2AFwI0_Wrv_ZF1l42xK82IYc2Ij64vIr41l4I8I3I0E4IkC6x0Yz7v_
-	Jr0_Gr1lx2IqxVAqx4xG67AKxVWUJVWUGwC20s026x8GjcxK67AKxVWUGVWUWwC2zVAF1V
-	AY17CE14v26rWY6r4UJwCIc40Y0x0EwIxGrwCI42IY6xIIjxv20xvE14v26ryj6F1UMIIF
-	0xvE2Ix0cI8IcVCY1x0267AKxVW0oVCq3wCI42IY6xAIw20EY4v20xvaj40_Jr0_JF4lIx
-	AIcVC2z280aVAFwI0_Gr0_Cr1lIxAIcVC2z280aVCY1x0267AKxVW0oVCq3bIYCTnIWIev
-	Ja73UjIFyTuYvjTRGg4SUUUUU
-X-CM-SenderInfo: 51xn3trlr6x35dzhxuhorxvhhfrp/
 
-From: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
+On 23/10/2024 10:56, Antonio Borneo wrote:
+> On Wed, 2024-10-23 at 10:47 +0200, Krzysztof Kozlowski wrote:
+>> On Tue, Oct 22, 2024 at 05:56:48PM +0200, Antonio Borneo wrote:
+>>> From: Fabien Dessenne <fabien.dessenne@foss.st.com>
+>>>
+>>> Document the RSVD (Reserved) mux function, used to reserve pins
+>>> for a coprocessor not running Linux.
+>>>
+>>> Signed-off-by: Fabien Dessenne <fabien.dessenne@foss.st.com>
+>>> Signed-off-by: Antonio Borneo <antonio.borneo@foss.st.com>
+>>> ---
+>>>  .../devicetree/bindings/pinctrl/st,stm32-pinctrl.yaml     | 8 ++++++++
+>>>  include/dt-bindings/pinctrl/stm32-pinfunc.h               | 1 +
+>>>  2 files changed, 9 insertions(+)
+>>>
+>>
+>> BTW, which *existing* SoCs use it? Aren't you adding it for the new
+>> platform?
+>>
+> 
+> This is already used in ST downstream kernel for STM32MP15x
+> In this example
+> https://github.com/STMicroelectronics/linux/blob/v6.1-stm32mp/arch/arm/boot/dts/stm32mp157f-dk2-m4-examples.dts#L112
+> 
+> the GPIOs for LED and for PWM are assigned to the Cortex-M4 and Linux (on Cortex-A7) is not supposed to touch them.
 
-commit bea07fd63192b61209d48cbb81ef474cc3ee4c62 upstream.
+I wasn't clear. Which upstream uses it? We really could not care less
+about downstream vendor code.
 
-Patch series "maple_tree: correct tree corruption on spanning store", v3.
-
-There has been a nasty yet subtle maple tree corruption bug that appears
-to have been in existence since the inception of the algorithm.
-
-This bug seems far more likely to happen since commit f8d112a4e657
-("mm/mmap: avoid zeroing vma tree in mmap_region()"), which is the point
-at which reports started to be submitted concerning this bug.
-
-We were made definitely aware of the bug thanks to the kind efforts of
-Bert Karwatzki who helped enormously in my being able to track this down
-and identify the cause of it.
-
-The bug arises when an attempt is made to perform a spanning store across
-two leaf nodes, where the right leaf node is the rightmost child of the
-shared parent, AND the store completely consumes the right-mode node.
-
-This results in mas_wr_spanning_store() mitakenly duplicating the new and
-existing entries at the maximum pivot within the range, and thus maple
-tree corruption.
-
-The fix patch corrects this by detecting this scenario and disallowing the
-mistaken duplicate copy.
-
-The fix patch commit message goes into great detail as to how this occurs.
-
-This series also includes a test which reliably reproduces the issue, and
-asserts that the fix works correctly.
-
-Bert has kindly tested the fix and confirmed it resolved his issues.  Also
-Mikhail Gavrilov kindly reported what appears to be precisely the same
-bug, which this fix should also resolve.
-
-This patch (of 2):
-
-There has been a subtle bug present in the maple tree implementation from
-its inception.
-
-This arises from how stores are performed - when a store occurs, it will
-overwrite overlapping ranges and adjust the tree as necessary to
-accommodate this.
-
-A range may always ultimately span two leaf nodes.  In this instance we
-walk the two leaf nodes, determine which elements are not overwritten to
-the left and to the right of the start and end of the ranges respectively
-and then rebalance the tree to contain these entries and the newly
-inserted one.
-
-This kind of store is dubbed a 'spanning store' and is implemented by
-mas_wr_spanning_store().
-
-In order to reach this stage, mas_store_gfp() invokes
-mas_wr_preallocate(), mas_wr_store_type() and mas_wr_walk() in turn to
-walk the tree and update the object (mas) to traverse to the location
-where the write should be performed, determining its store type.
-
-When a spanning store is required, this function returns false stopping at
-the parent node which contains the target range, and mas_wr_store_type()
-marks the mas->store_type as wr_spanning_store to denote this fact.
-
-When we go to perform the store in mas_wr_spanning_store(), we first
-determine the elements AFTER the END of the range we wish to store (that
-is, to the right of the entry to be inserted) - we do this by walking to
-the NEXT pivot in the tree (i.e.  r_mas.last + 1), starting at the node we
-have just determined contains the range over which we intend to write.
-
-We then turn our attention to the entries to the left of the entry we are
-inserting, whose state is represented by l_mas, and copy these into a 'big
-node', which is a special node which contains enough slots to contain two
-leaf node's worth of data.
-
-We then copy the entry we wish to store immediately after this - the copy
-and the insertion of the new entry is performed by mas_store_b_node().
-
-After this we copy the elements to the right of the end of the range which
-we are inserting, if we have not exceeded the length of the node (i.e.
-r_mas.offset <= r_mas.end).
-
-Herein lies the bug - under very specific circumstances, this logic can
-break and corrupt the maple tree.
-
-Consider the following tree:
-
-Height
-  0                             Root Node
-                                 /      \
-                 pivot = 0xffff /        \ pivot = ULONG_MAX
-                               /          \
-  1                       A [-----]       ...
-                             /   \
-             pivot = 0x4fff /     \ pivot = 0xffff
-                           /       \
-  2 (LEAVES)          B [-----]  [-----] C
-                                      ^--- Last pivot 0xffff.
-
-Now imagine we wish to store an entry in the range [0x4000, 0xffff] (note
-that all ranges expressed in maple tree code are inclusive):
-
-1. mas_store_gfp() descends the tree, finds node A at <=0xffff, then
-   determines that this is a spanning store across nodes B and C. The mas
-   state is set such that the current node from which we traverse further
-   is node A.
-
-2. In mas_wr_spanning_store() we try to find elements to the right of pivot
-   0xffff by searching for an index of 0x10000:
-
-    - mas_wr_walk_index() invokes mas_wr_walk_descend() and
-      mas_wr_node_walk() in turn.
-
-        - mas_wr_node_walk() loops over entries in node A until EITHER it
-          finds an entry whose pivot equals or exceeds 0x10000 OR it
-          reaches the final entry.
-
-        - Since no entry has a pivot equal to or exceeding 0x10000, pivot
-          0xffff is selected, leading to node C.
-
-    - mas_wr_walk_traverse() resets the mas state to traverse node C. We
-      loop around and invoke mas_wr_walk_descend() and mas_wr_node_walk()
-      in turn once again.
-
-         - Again, we reach the last entry in node C, which has a pivot of
-           0xffff.
-
-3. We then copy the elements to the left of 0x4000 in node B to the big
-   node via mas_store_b_node(), and insert the new [0x4000, 0xffff] entry
-   too.
-
-4. We determine whether we have any entries to copy from the right of the
-   end of the range via - and with r_mas set up at the entry at pivot
-   0xffff, r_mas.offset <= r_mas.end, and then we DUPLICATE the entry at
-   pivot 0xffff.
-
-5. BUG! The maple tree is corrupted with a duplicate entry.
-
-This requires a very specific set of circumstances - we must be spanning
-the last element in a leaf node, which is the last element in the parent
-node.
-
-spanning store across two leaf nodes with a range that ends at that shared
-pivot.
-
-A potential solution to this problem would simply be to reset the walk
-each time we traverse r_mas, however given the rarity of this situation it
-seems that would be rather inefficient.
-
-Instead, this patch detects if the right hand node is populated, i.e.  has
-anything we need to copy.
-
-We do so by only copying elements from the right of the entry being
-inserted when the maximum value present exceeds the last, rather than
-basing this on offset position.
-
-The patch also updates some comments and eliminates the unused bool return
-value in mas_wr_walk_index().
-
-The work performed in commit f8d112a4e657 ("mm/mmap: avoid zeroing vma
-tree in mmap_region()") seems to have made the probability of this event
-much more likely, which is the point at which reports started to be
-submitted concerning this bug.
-
-The motivation for this change arose from Bert Karwatzki's report of
-encountering mm instability after the release of kernel v6.12-rc1 which,
-after the use of CONFIG_DEBUG_VM_MAPLE_TREE and similar configuration
-options, was identified as maple tree corruption.
-
-After Bert very generously provided his time and ability to reproduce this
-event consistently, I was able to finally identify that the issue
-discussed in this commit message was occurring for him.
-
-Link: https://lkml.kernel.org/r/cover.1728314402.git.lorenzo.stoakes@oracle.com
-Link: https://lkml.kernel.org/r/48b349a2a0f7c76e18772712d0997a5e12ab0a3b.1728314403.git.lorenzo.stoakes@oracle.com
-Fixes: 54a611b60590 ("Maple Tree: add new data structure")
-Signed-off-by: Lorenzo Stoakes <lorenzo.stoakes@oracle.com>
-Reported-by: Bert Karwatzki <spasswolf@web.de>
-Closes: https://lore.kernel.org/all/20241001023402.3374-1-spasswolf@web.de/
-Tested-by: Bert Karwatzki <spasswolf@web.de>
-Reported-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Closes: https://lore.kernel.org/all/CABXGCsOPwuoNOqSMmAvWO2Fz4TEmPnjFj-b7iF+XFRu1h7-+Dg@mail.gmail.com/
-Acked-by: Vlastimil Babka <vbabka@suse.cz>
-Reviewed-by: Liam R. Howlett <Liam.Howlett@Oracle.com>
-Tested-by: Mikhail Gavrilov <mikhail.v.gavrilov@gmail.com>
-Reviewed-by: Wei Yang <richard.weiyang@gmail.com>
-Cc: Matthew Wilcox <willy@infradead.org>
-Cc: Sidhartha Kumar <sidhartha.kumar@oracle.com>
-Cc: <stable@vger.kernel.org>
-Signed-off-by: Andrew Morton <akpm@linux-foundation.org>
-Signed-off-by: Yu Kuai <yukuai3@huawei.com>
----
- lib/maple_tree.c | 12 ++++++------
- 1 file changed, 6 insertions(+), 6 deletions(-)
-
-diff --git a/lib/maple_tree.c b/lib/maple_tree.c
-index 5328e08723d7..c57b6fc4db2e 100644
---- a/lib/maple_tree.c
-+++ b/lib/maple_tree.c
-@@ -2239,6 +2239,8 @@ static inline void mas_node_or_none(struct ma_state *mas,
- 
- /*
-  * mas_wr_node_walk() - Find the correct offset for the index in the @mas.
-+ *                      If @mas->index cannot be found within the containing
-+ *                      node, we traverse to the last entry in the node.
-  * @wr_mas: The maple write state
-  *
-  * Uses mas_slot_locked() and does not need to worry about dead nodes.
-@@ -3655,7 +3657,7 @@ static bool mas_wr_walk(struct ma_wr_state *wr_mas)
- 	return true;
- }
- 
--static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
-+static void mas_wr_walk_index(struct ma_wr_state *wr_mas)
- {
- 	struct ma_state *mas = wr_mas->mas;
- 
-@@ -3664,11 +3666,9 @@ static bool mas_wr_walk_index(struct ma_wr_state *wr_mas)
- 		wr_mas->content = mas_slot_locked(mas, wr_mas->slots,
- 						  mas->offset);
- 		if (ma_is_leaf(wr_mas->type))
--			return true;
-+			return;
- 		mas_wr_walk_traverse(wr_mas);
--
- 	}
--	return true;
- }
- /*
-  * mas_extend_spanning_null() - Extend a store of a %NULL to include surrounding %NULLs.
-@@ -3899,8 +3899,8 @@ static inline int mas_wr_spanning_store(struct ma_wr_state *wr_mas)
- 	memset(&b_node, 0, sizeof(struct maple_big_node));
- 	/* Copy l_mas and store the value in b_node. */
- 	mas_store_b_node(&l_wr_mas, &b_node, l_mas.end);
--	/* Copy r_mas into b_node. */
--	if (r_mas.offset <= r_mas.end)
-+	/* Copy r_mas into b_node if there is anything to copy. */
-+	if (r_mas.max > r_mas.last)
- 		mas_mab_cp(&r_mas, r_mas.offset, r_mas.end,
- 			   &b_node, b_node.b_end + 1);
- 	else
--- 
-2.39.2
+Best regards,
+Krzysztof
 
 
