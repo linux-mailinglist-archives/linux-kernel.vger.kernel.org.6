@@ -1,130 +1,140 @@
-Return-Path: <linux-kernel+bounces-380429-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380430-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 15D679AEE6A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:41:25 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 53A8D9AEE6C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:42:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 478FF1C24F43
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:41:24 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 09957281703
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:42:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id F1F311FDFBF;
-	Thu, 24 Oct 2024 17:41:16 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 653671FDFB0;
+	Thu, 24 Oct 2024 17:42:51 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="iBEv5Z7j"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iJWba+HV"
+Received: from mail-pl1-f179.google.com (mail-pl1-f179.google.com [209.85.214.179])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4EFF01FC7F7;
-	Thu, 24 Oct 2024 17:41:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E6C69156C74;
+	Thu, 24 Oct 2024 17:42:48 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.214.179
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729791676; cv=none; b=NDji7Z3wQb40PIKkqkSR8zGFcMBU4LlbCUi7fvOPZZF2Jwr6kSSPj6ymjEis3aTeTIn4oMG7QusKbBnTEZPg5WmZAzhQ8c8rMiDIyhXM1104KniIWl27pnR3UIY6tj63kIz6BDVx/myAvycaWcqXAiRFDXx3RiC7TJ6YRWpvH1I=
+	t=1729791770; cv=none; b=lZSBiZ5LNAZgA0pTwg4AYYzNQ/5xhoZ2WQyuDLl7kB4mgaMS1nQSFl0CA5aHcTuSrSGW/AmQX0T2zpUHM28VzwvLYo9HKZm6jZF0e/gIPtk5FrItaPVA22y2JyWw/xZdUuilH7sDaLfsC4zJgWJZxr8U5O7B4F+YkCmT4HyovrQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729791676; c=relaxed/simple;
-	bh=VjnOFKGWB+Vsz4mAbhv8vBkTom++FJLCVR2sgrw5c8U=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=sWgFArahlqqg/G8v0AatN67zK2UodcYCLsPoosnkZejtJWwF0sqMspdus/nHBUh2uYfFgx9UZu8kVcTQxdBGZZ0vVkjDNhQQpjaQ0S5F7+5bfTuF3FtoGT57hxMdLuVmGRfdFNjbAbvbK8QUGG3zZEs+EbLREj/Owy1EfdA/m4c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=iBEv5Z7j; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 0BC7EC4CEC7;
-	Thu, 24 Oct 2024 17:41:12 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729791675;
-	bh=VjnOFKGWB+Vsz4mAbhv8vBkTom++FJLCVR2sgrw5c8U=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=iBEv5Z7jpalzMzU8Cv70eDJWsODtcLv8MJpoM975/moa4CRl0mqa2947WAKyw6bou
-	 Dprt7RvYkr0HBN4CirZQqvKfXtL4V9QXaVVdo0q8Izkl6IEtN/O59SOUFm0/1iBcqX
-	 fqvzwFCHezHOzqXUv1ic7BpNj6k3Q/KdcJ+V+zG4zObX8WLuEx3Er9Z/aZYdwnCdU0
-	 cZkUOS9034URL8EeaqBQKhDBJkQF40gOKqXo5tMBrAtQn7jwZcViPjABM6bhTlN9ZW
-	 nm9xu4xKzpJqnBVjI1E3wD6B0XYvIcaJ2ba9d42YR7lueE78RuCwn4jel2qEtLG9jD
-	 +mteokZgcJMvA==
-Date: Thu, 24 Oct 2024 18:41:08 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Javier Carrasco <javier.carrasco.cruz@gmail.com>
-Cc: Stephen Rothwell <sfr@canb.auug.org.au>, Greg KH <greg@kroah.com>, Arnd
- Bergmann <arnd@arndb.de>, Jonathan Cameron <Jonathan.Cameron@Huawei.com>,
- Linux Kernel Mailing List <linux-kernel@vger.kernel.org>, Linux Next
- Mailing List <linux-next@vger.kernel.org>, linux-iio@vger.kernel.org
-Subject: Re: linux-next: manual merge of the char-misc tree with the
- iio-fixes tree
-Message-ID: <20241024184108.6eb3bdf0@jic23-huawei>
-In-Reply-To: <22f9dbb6-ba5e-4c85-8aa2-6090008e7da4@gmail.com>
-References: <20241023141015.0ec5346d@canb.auug.org.au>
-	<22f9dbb6-ba5e-4c85-8aa2-6090008e7da4@gmail.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729791770; c=relaxed/simple;
+	bh=TaKapZwak4BVam/KofY6ElrQvdzM/R0vylL5BtkxssE=;
+	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=p8Cj5+WkefzVG88lk0Qgkeh/mkoXztQZ48VqdLOaJVRIUlrqCWfKogG+8L6Ut2UegY/VPBR8bU2oxLXF598aYh0/2IOx17yxWIA8cSCx0stIBpSOowBuGlVsLTnNb1TVksxn5t4SDIde1R4v7zXa53Bl/Oi1SbJO2DXej56iM3E=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iJWba+HV; arc=none smtp.client-ip=209.85.214.179
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pl1-f179.google.com with SMTP id d9443c01a7336-207115e3056so9944365ad.2;
+        Thu, 24 Oct 2024 10:42:48 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729791768; x=1730396568; darn=vger.kernel.org;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=cD2/32uLGilrXvalwAEGOVb/wAuf03tRfDdXDbDcjyc=;
+        b=iJWba+HVPJOZZj2lHcAgCtxYC3l2t1tdjHq0Gh2vyMU7sy90Il5eGhJeIIJ7s7GbTi
+         iTsWg6sNGXHwkkoxbvgbN+fntzu84GR1W26Zs60LSGY6gY8UT81CEP/MFeLg8uLNYhea
+         FgI9tTWxjgdGNBry+JnPcuGbHNG+ElTSaCzwhqa0rTJOwFq+F4KOx1rrlEEC94O1gP6s
+         ARDSre2jrCgRAgCT96cZWdKq0cSP7LNXNTYzLLt7rt2PrDXzqY5HaF9oGmyXJJRho+Wv
+         dy6aedideRFWV3T5wsJ1WjGcW7AAYAz/A8gglyxY2DsP9Ivgl28FH8PLcyZH1gMc0Ndb
+         WHrg==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729791768; x=1730396568;
+        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
+         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=cD2/32uLGilrXvalwAEGOVb/wAuf03tRfDdXDbDcjyc=;
+        b=gJkQaNhSHUplAVALfB5a1//C718Vb3NKTRjemO6igrl7PnamPSLoqS2xb1n0vWxF31
+         r2LCnwpZqf1o8v0IVwHXTXUp9HBxuaL3Hl89K4X4DMBkAC1/KLdXUkSZ//HjD7u7bkQo
+         nHDvFKi1QqiRnpi/c70Mu7Ozovp5/FdbzvXka/CR3c1kPOTIN7Xfo7QSnDbn+3VlKL3j
+         yPgmy8xGrt9GjH0839R/ZYUEzctcIoFN2TySLXn82hdH7X1GICUBzhl7yhNgeWq8KLyV
+         aldVdMC+rkFwU5HQCtfJHXLGyB16gj/Q8lkORHakWl/BNxM38zU3dSwHYabNBzSQhx+W
+         6eJA==
+X-Forwarded-Encrypted: i=1; AJvYcCX++vqyjA4EETWHl8oyL6myHm2SvZiKzm0++P9jYq6Eitz8D+qD++7XAGQF/EyDj5Ul6kjAmeTpzwxZOf363UBEXQ==@vger.kernel.org, AJvYcCXJ6rVEzstlPH4s0VEVKg1YQVPJUHPmf13IIdICG315CwKcRmUMHrM7aduqJ2Lc+cNZJV8Xiyy5Kzpr+TQ=@vger.kernel.org
+X-Gm-Message-State: AOJu0YytEF1COeMT8ImkEcMGOo/hVRivFBMG5KnJ/FOL7yE9z6Z11SUq
+	VGrweYpf2Q5IRiUjHyRbUl3a6MLi/7BklDEEEZ/RuSL4WfcxlgNeVdGYEdTM
+X-Google-Smtp-Source: AGHT+IHC/HPQWUGXaSFyPLYxUCFDQIXh4UHoUVXQC2dJxCztCzjhtqPcIOZx4+/4BLpR/BM5L/KObw==
+X-Received: by 2002:a17:902:dac8:b0:20c:f39e:4c15 with SMTP id d9443c01a7336-20fb99ac248mr34286275ad.22.1729791768132;
+        Thu, 24 Oct 2024 10:42:48 -0700 (PDT)
+Received: from mbp.lan (c-67-174-206-244.hsd1.ca.comcast.net. [67.174.206.244])
+        by smtp.gmail.com with ESMTPSA id d9443c01a7336-20e7ef0c439sm75268095ad.94.2024.10.24.10.42.47
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 10:42:47 -0700 (PDT)
+From: Howard Chu <howardchu95@gmail.com>
+To: acme@kernel.org
+Cc: namhyung@kernel.org,
+	irogers@google.com,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	Howard Chu <howardchu95@gmail.com>
+Subject: [PATCH] perf trace: Fix perf trace tracing itself, creating feedback loops
+Date: Thu, 24 Oct 2024 10:42:42 -0700
+Message-ID: <20241024174242.2816126-1-howardchu95@gmail.com>
+X-Mailer: git-send-email 2.43.0
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Transfer-Encoding: 8bit
 
-On Wed, 23 Oct 2024 20:17:30 +0200
-Javier Carrasco <javier.carrasco.cruz@gmail.com> wrote:
+Currently when tracing system-wide, perf trace will trace itself,
+creating feedback loops. This patch fixes this problem by setting the
+correct BPF map for filtering pids.
 
-> On 23/10/2024 05:10, Stephen Rothwell wrote:
-> > Hi all,
-> > 
-> > Today's linux-next merge of the char-misc tree got a conflict in:
-> > 
-> >   drivers/iio/light/veml6030.c
-> > 
-> > between commit:
-> > 
-> >   de9981636774 ("iio: light: veml6030: fix microlux value calculation")
-> > 
-> > from the iio-fixes tree and commit:
-> > 
-> >   ed59fc90f38a ("iio: light: veml6030: drop processed info for white channel")
-> > 
-> > from the char-misc tree.
-> > 
-> > I fixed it up (the latter removed the line updated by the former) and
-> > can carry the fix as necessary. This is now fixed as far as linux-next
-> > is concerned, but any non trivial conflicts should be mentioned to your
-> > upstream maintainer when your tree is submitted for merging.  You may
-> > also want to consider cooperating with the maintainer of the conflicting
-> > tree to minimise any particularly complex conflicts.
-> >   
-> 
-> 
-> Hi Stephen,
-> 
-> I doubled checked the status of the driver in linux-next, and everything
-> looks as it should: the first commit applied as a single chunk, as its
-> second chunk affects lines that the second commit removed.
-> 
-> Thank you for fixing it up.
+Before (here perf/2807067 is the tracing process itself):
 
-Not quite. This was a lucky merge issue as it highlighted something I'd
-messed up.
+perf $ ./perf trace -e write --max-events=10
+     0.000 ( 0.007 ms): tmux: server/2299109 write(fd: 4, buf: \17, count: 1)                                      = 1 (systemd)
+     0.060 (         ): perf/2807067 write(fd: 2, buf:      0.000 , count: 11)                          ...
+     0.072 (         ): perf/2807067 write(fd: 2, buf: (, count: 1)                                     ...
+     0.085 (         ): perf/2807067 write(fd: 2, buf:  0.007 ms, count: 9)                             ...
+     0.089 (         ): perf/2807067 write(fd: 2, buf: ): , count: 3)                                   ...
+     0.094 (         ): perf/2807067 write(fd: 2, buf: tmux: server/, count: 13)                        ...
+     0.099 (         ): perf/2807067 write(fd: 2, buf: 2299109 , count: 8)                              ...
+     0.103 (         ): perf/2807067 write(fd: 2, buf: write(fd: 4, buf: \17, count: 1, count: 31)      ...
+     0.108 (         ): perf/2807067 write(fd: 2, buf: )                               , count: 41)     ...
+     0.113 (         ): perf/2807067 write(fd: 2, buf: 1, count: 1)                                     ...
 
-A rare case of a fuzzy application of a patch picking the wrong block but still
-giving a very plausible looking diff that fooled me.
+After:
 
-I picked up the fix via a different tree from where you expected.
-In char-misc-next / iio/togreg there is only one instance of this code block because
-the larger driver rework removed one of the two that was in the tree that
-iio-fixes is based on (effectively mainline).
+perf $ ./perf trace -e write --max-events=10
+     0.000 ( 0.030 ms): sshd/2725386 write(fd: 4, buf: r\148\133\163\17\167\194\172bF\231\192\227\194\215\251kBLE\167(\10WY\22\138^\233\28\248\249, count: 36) = 36 (idle_inject/3)
+     0.622 ( 0.019 ms): sshd/2725386 write(fd: 4, buf: \177"\251\159\244)F5\224\250\135Y\1865/\30\191\171\140Q\213\182\133\145\224\148\190L\210{\143D, count: 228) =
+     9.510 ( 0.014 ms): dirname/2805386 write(fd: 1, buf: /root/.tmux/plugins/tmux-continu, count: 43)        = 43 (kauditd)
+     9.788 ( 0.007 ms): bash/2805385 write(fd: 1, buf: /root/.tmux/plugins/tmux-continu, count: 43)        = 43 (kauditd)
+    13.865 ( 0.020 ms): :2805390/2805390 write(fd: 1, buf: 1.9\10, count: 4)                                   = 4 (kworker/R-rcu_g)
+    15.183 ( 0.015 ms): tr/2805391 write(fd: 1, buf: 19, count: 2)                                       = 2 (kthreadd)
+    15.715 ( 0.009 ms): bash/2805388 write(fd: 1, buf: 19\10, count: 3)                                    = 3 (pool_workqueue_)
+    18.755 ( 0.014 ms): tmux/2805393 write(fd: 1, buf: tmux 3.4\10, count: 9)                              = 9 (kworker/0:0H-ev)
+    19.737 ( 0.044 ms): sshd/2725386 write(fd: 4, buf: \188\197;\82d.1k\197\30\165[L@\153\139\192\173\247k\179kT.m\150\223\216\31\251\255, count: 316) =
+    20.173 ( 0.008 ms): bash/2805396 write(fd: 1, buf: tmux 3.4\10, count: 9)                              = 9 (kworker/0:0H-ev)
 
-The fix got applied to the one that is going away (which is going away because
-the scale makes no sense on the intensity channel) not the illuminance / IIO_LIGHT
-channel that was intended.
+Signed-off-by: Howard Chu <howardchu95@gmail.com>
+---
+ tools/perf/builtin-trace.c | 3 +++
+ 1 file changed, 3 insertions(+)
 
-I've move it to the right block with the side effect that the merge conflict
-should go away.  Javier, please check iio.git/fixes-togreg to be 100% sure
-I haven't messed it up again.
-
-Thanks Stephen for your hard work on linux-next!
-
-Jonathan
-
-> 
-> Best regards,
-> Javier Carrasco
+diff --git a/tools/perf/builtin-trace.c b/tools/perf/builtin-trace.c
+index 748b061f8678..74a5a3b9183a 100644
+--- a/tools/perf/builtin-trace.c
++++ b/tools/perf/builtin-trace.c
+@@ -4326,6 +4326,9 @@ static int trace__run(struct trace *trace, int argc, const char **argv)
+ 					sizeof(__u32), BPF_ANY);
+ 		}
+ 	}
++
++	/* For setting pids filter */
++	trace->filter_pids.map = trace->skel->maps.pids_filtered;
+ #endif
+ 	err = trace__set_filter_pids(trace);
+ 	if (err < 0)
+-- 
+2.43.0
 
 
