@@ -1,108 +1,116 @@
-Return-Path: <linux-kernel+bounces-380432-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380433-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B3879AEE7D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:46:52 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 7A1F09AEE81
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:47:05 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 375A11F22D74
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:46:52 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 3B260282D15
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:47:04 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C4F7A1FE0E7;
-	Thu, 24 Oct 2024 17:46:44 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B609B1FF7A4;
+	Thu, 24 Oct 2024 17:46:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="Y2gnKRPi"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b="pGdBVc4A"
+Received: from bali.collaboradmins.com (bali.collaboradmins.com [148.251.105.195])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 290E01F76A3;
-	Thu, 24 Oct 2024 17:46:43 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EB27F1FE0ED;
+	Thu, 24 Oct 2024 17:46:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=148.251.105.195
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729792004; cv=none; b=svyFLpgG1RpGycBPJxOy+HAAs1j7VpqYOSLB045rF0duQkIq70hPLM/udxegjv4gfgkAYcBbSdQE2jWtKqKPg0mn+qWT0jArI2gJWMmKRALeQND/zDrjivqvP9zsLC6nfnm5XzFjfzDfUoLnUIXcXHNCoI/ccCBeT2zEN6f7Pqg=
+	t=1729792007; cv=none; b=Ii26WpN6+QbwS6SuBxBLkT//cCBWxe/Rkz/QyA4qgnSx2BmVDE9eKbrb6D3fVOyYuL35url6LpnDtvtrRnWHr6JXaFtlPClcbV4nJmdvapOsutlLIgWekVEODLg0RwrsmxSJUGA4ihtxAuWOOFcOUmblLJRCdd41S1+gLUq1IRQ=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729792004; c=relaxed/simple;
-	bh=0oe8ZaFyqJHIzvDer+HKlnboZayD2eODXd02TS0w2+8=;
-	h=Date:From:To:Cc:Subject:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=faatVBiMRpf+4Eyd5bLJFbKxpYo5ieUIP26jFglUlwRIOmAcOGehAm40AgxW3stYCK5ZljFkH0Q+EI7LbjVwsMCViys77dX1Ue9rRgVxdBr6Ey4PvmHb5QNTH5ZOPXHuYgy/KipPfIzTW8obaoZjbtOpL6jb4hCT+t5bs0JWJ40=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=Y2gnKRPi; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 60947C4CEC7;
-	Thu, 24 Oct 2024 17:46:38 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729792003;
-	bh=0oe8ZaFyqJHIzvDer+HKlnboZayD2eODXd02TS0w2+8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=Y2gnKRPioD/Z5egwlJ/6dS+E/lum1fNQLt/sPBMPdcjNKpydwW0bZDFh0ZPU8rlX/
-	 AGoSyQ5eDpRFfVzR2BkED0rtDVJLGsu8iGhAv4jBZhIgLGtyOlke3Fk4uR8LgL6IYb
-	 ZXU8MzikUVwqgR0iewFfhkYpTWxhkXal5hU+RYDwGePDNJ39y+WdXrQkCJZv+N9vKQ
-	 QyYk/qguUbsGAJRvMBZ+hMEdrnke6vsa/RUbd/KGLjmRhJd5tfz8GvpzAIxwlEN9NT
-	 GIbrPgmohatXfVQzMrcltgwrKl4nvNDhXDs8YPKOF42TwpBkAjYboqthttTv4mib9e
-	 bCRB56R17vzaA==
-Date: Thu, 24 Oct 2024 18:46:34 +0100
-From: Jonathan Cameron <jic23@kernel.org>
-To: Jinjie Ruan <ruanjinjie@huawei.com>
-Cc: <lars@metafoo.de>, <paul.walmsley@sifive.com>, <palmer@dabbelt.com>,
- <aou@eecs.berkeley.edu>, <nuno.sa@analog.com>,
- <javier.carrasco.cruz@gmail.com>, <sunke@kylinos.cn>,
- <conor.dooley@microchip.com>, <anshulusr@gmail.com>,
- <kimseer.paller@analog.com>, <michael.hennerich@analog.com>,
- <linux-iio@vger.kernel.org>, <linux-kernel@vger.kernel.org>,
- <linux-riscv@lists.infradead.org>, <noname.nuno@gmail.com>
-Subject: Re: [PATCH v2] iio: dac: Kconfig: Fix build error for ltc2664
-Message-ID: <20241024184634.3bfcde82@jic23-huawei>
-In-Reply-To: <20241024015553.1111253-1-ruanjinjie@huawei.com>
-References: <20241024015553.1111253-1-ruanjinjie@huawei.com>
-X-Mailer: Claws Mail 4.3.0 (GTK 3.24.43; x86_64-pc-linux-gnu)
+	s=arc-20240116; t=1729792007; c=relaxed/simple;
+	bh=W3VllNwtqRwVtIeBKaJd3C2VVqpPgbov///WpOSkPlQ=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Q6Wz/E8A2ZXLf0luQHkyXv/dOvcWE7mQn1EAb77X0MoxnkBWFuN7TUy+jQln5yLZ/BvT+sHtrzzBriDUJGIh9FK4Q2EHx5YzZK+RWvhFH1X5t81ELPq3ipiNlEd//JVr4PR34MuGoh+tYPRClUpWhmr6R6vYHvUfSBbnxteqnRg=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com; spf=pass smtp.mailfrom=collabora.com; dkim=pass (2048-bit key) header.d=collabora.com header.i=@collabora.com header.b=pGdBVc4A; arc=none smtp.client-ip=148.251.105.195
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=collabora.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=collabora.com
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=collabora.com;
+	s=mail; t=1729792002;
+	bh=W3VllNwtqRwVtIeBKaJd3C2VVqpPgbov///WpOSkPlQ=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=pGdBVc4ASaPLaghvUgQ0DFhiGKTEDqIoVFn1+HyNer1j93XXc5Cz5BjgV87wgH0CQ
+	 B6nsj1eITJ7aMAWhWuAC9FR3zsdafizu1HIG9qFgRpaqxZbx9bzt4byAUFw5Z2MyGQ
+	 BbQxFkD3lxxVK9S1FqDJkKWKfCkVuL2nfVUjbNeCIS/bI5w3FVpYYMmV5+XbERHprI
+	 DeTa7IdFS/rJb7Kz76JJ/ZL0wYH2NE/1/QvvYzshXNOe0vtqNyDyo2X3dFX1p8mH9D
+	 de8N5I/jXKxhNl8NwmS3DALC8CeQif3oOJygSYXrzZs4IJ2uKPB9aRmPcdKHpF/3T8
+	 u2h8mOoubrz6g==
+Received: from notapiano (pool-100-2-116-133.nycmny.fios.verizon.net [100.2.116.133])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange ECDHE (prime256v1) server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(No client certificate requested)
+	(Authenticated sender: nfraprado)
+	by bali.collaboradmins.com (Postfix) with ESMTPSA id 00C2F17E36B5;
+	Thu, 24 Oct 2024 19:46:40 +0200 (CEST)
+Date: Thu, 24 Oct 2024 13:46:38 -0400
+From: =?utf-8?B?TsOtY29sYXMgRi4gUi4gQS4=?= Prado <nfraprado@collabora.com>
+To: AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>
+Cc: Sean Wang <sean.wang@kernel.org>,
+	Linus Walleij <linus.walleij@linaro.org>,
+	Matthias Brugger <matthias.bgg@gmail.com>,
+	Bamvor Jian Zhang <bamv2005@gmail.com>,
+	Shuah Khan <shuah@kernel.org>, kernel@collabora.com,
+	linux-mediatek@lists.infradead.org, linux-gpio@vger.kernel.org,
+	linux-kernel@vger.kernel.org, linux-arm-kernel@lists.infradead.org,
+	linux-kselftest@vger.kernel.org, kernelci@lists.linux.dev
+Subject: Re: [PATCH RFC 1/3] pinctrl: mediatek: paris: Expose more
+ configurations to GPIO set_config
+Message-ID: <a3d6b2b9-1379-4bab-a584-651ca66677ee@notapiano>
+References: <20240909-kselftest-gpio-set-get-config-v1-0-16a065afc3c1@collabora.com>
+ <20240909-kselftest-gpio-set-get-config-v1-1-16a065afc3c1@collabora.com>
+ <01020191e0901d10-d427a5dd-af4e-4ecf-99e1-4bb051ad1475-000000@eu-west-1.amazonses.com>
+ <8fdeec5c-5de7-44ae-9086-7930d02d610e@collabora.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=US-ASCII
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <8fdeec5c-5de7-44ae-9086-7930d02d610e@collabora.com>
 
-On Thu, 24 Oct 2024 09:55:53 +0800
-Jinjie Ruan <ruanjinjie@huawei.com> wrote:
+On Thu, Oct 24, 2024 at 05:17:05PM +0200, AngeloGioacchino Del Regno wrote:
+> Il 11/09/24 12:10, AngeloGioacchino Del Regno ha scritto:
+> > Il 09/09/24 20:37, Nícolas F. R. A. Prado ha scritto:
+> > > Currently the set_config callback in the gpio_chip registered by the
+> > > pinctrl_paris driver only supports PIN_CONFIG_INPUT_DEBOUNCE, despite
+> > 
+> > [...] only supports operations configuring the input debounce parameter
+> > of the EINT controller and denies configuring params on the other AP GPIOs [...]
+> > 
+> > (reword as needed)
+> > 
+> > > many other configurations already being implemented and available
+> > > through the pinctrl API for configuration of pins by the Devicetree and
+> > > other drivers.
+> > > 
+> > > Expose all configurations currently implemented through the GPIO API so
+> > > they can also be set from userspace, which is particularly useful to
+> > > allow testing them from userspace.
+> > > 
+> > > Signed-off-by: Nícolas F. R. A. Prado <nfraprado@collabora.com>
+> > > ---
+> > >   drivers/pinctrl/mediatek/pinctrl-paris.c | 20 ++++++++++----------
+> > 
+> > You can do the same for pinctrl-moore too, it's trivial.
+> > 
+> > Other than that, I agree about performing this change, as this may be useful
+> > for more than just testing.
+> > 
+> 
+> Nicolas, please don't forget to respin this patch.
 
-> If REGMAP_SPI is n and LTC2664 is y, the following build error occurs:
-> 
-> 	riscv64-unknown-linux-gnu-ld: drivers/iio/dac/ltc2664.o: in function `ltc2664_probe':
-> 	ltc2664.c:(.text+0x714): undefined reference to `__devm_regmap_init_spi'
-> 
-> Select REGMAP_SPI instead of REGMAP for LTC2664 to fix it.
-> 
-> Fixes: 4cc2fc445d2e ("iio: dac: ltc2664: Add driver for LTC2664 and LTC2672")
-> Reviewed-by: Nuno Sa <nuno.sa@analog.com>
-> Signed-off-by: Jinjie Ruan <ruanjinjie@huawei.com>
-Applied to the fixes-togreg branch of iio.git 
+I was hoping to get some feedback on the test itself as well, particularly from
+Linus as the pinctrl maintainer, but it's also been a while so I'll send a v2
+with the feedback here addressed.
+
 Thanks,
-
-Jonathan
-
-> ---
-> v2:
-> - Select REGMAP_SPI instead of REGMAP.
-> - Update the commit subject.
-> - Add Reviewed-by.
-> ---
->  drivers/iio/dac/Kconfig | 2 +-
->  1 file changed, 1 insertion(+), 1 deletion(-)
-> 
-> diff --git a/drivers/iio/dac/Kconfig b/drivers/iio/dac/Kconfig
-> index 45e337c6d256..9f5d5ebb8653 100644
-> --- a/drivers/iio/dac/Kconfig
-> +++ b/drivers/iio/dac/Kconfig
-> @@ -380,7 +380,7 @@ config LTC2632
->  config LTC2664
->  	tristate "Analog Devices LTC2664 and LTC2672 DAC SPI driver"
->  	depends on SPI
-> -	select REGMAP
-> +	select REGMAP_SPI
->  	help
->  	  Say yes here to build support for Analog Devices
->  	  LTC2664 and LTC2672 converters (DAC).
-
+Nícolas
 
