@@ -1,160 +1,139 @@
-Return-Path: <linux-kernel+bounces-379795-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379797-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 724FA9AE3E2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:32:42 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D80909AE3E7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:33:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 31BE3284057
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:32:41 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E1ED61C22245
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:33:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 17E811C878A;
-	Thu, 24 Oct 2024 11:32:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DDDB61D0B82;
+	Thu, 24 Oct 2024 11:32:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="otbNvaSH"
-Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b="leYyrihi"
+Received: from mail-wr1-f53.google.com (mail-wr1-f53.google.com [209.85.221.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4CEE01A0BD6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:32:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 7B01F1C4A35
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 11:32:56 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.221.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729769554; cv=none; b=KQR9XgwYirDP4FgT5cai9B4laUBKGhUKo3P3JDnkeztkioTs1gWLSV5ScPLdj5nncCnmB2I942xI+2O1TmyV2pZDNQXtR44xPbIEOuyo+Lao2ojxB8OUGu+aXNk0tUww0v/+xkwORSlEe7U/4sP2n6qU+wLZpwX0/EOelmeCr9w=
+	t=1729769579; cv=none; b=VVWjDBqGOZkAtYTb2PKej9JSp8I6xeH5B5QswhIFPO0/JPl8DWJD0QdNdWmxBaFIXhgkjxZJfWND6gAvt4UcEwj7k6/yahLJQSQ3DAtN1HZ15YnMBG42u3p4BiCI46A/J+6dzlREkJq9PT7IY9/YKcrrVFGTRDdxB9pk8jSBWUg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729769554; c=relaxed/simple;
-	bh=lC5eZfs2FBQN84Dap4OTkbcR06oVMccq9VOoICb1mA8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Q2mH4YzZDPliJuhKvBQBKdOpHDxa2cNm37res3tnixqzY0tKVsYQcE66ZSDMi3VO5V8lRpa2airRAYCHgAYipmDqltgt7WaRZ4zKLqqkni9U6pDqAggaDPkAWRUUSZH46dpegMN7kfwm0TggrqiHN452ZKQndG7Lp/GT4Ne8CiI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=otbNvaSH; arc=none smtp.client-ip=209.85.128.53
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
-Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so148505e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:32:31 -0700 (PDT)
+	s=arc-20240116; t=1729769579; c=relaxed/simple;
+	bh=2ukGcetbJ073X0kVtfmH5NRy1q5c9OPJynatresKxrw=;
+	h=From:Subject:Date:Message-Id:MIME-Version:Content-Type:To:Cc; b=MKZvXhNBvwh6Xv8gD5MKdPearAYXHHIEZHn5H4Q9t8CnhwEF7LEFua2osKOWLmBQwOqqR/0Lv1YO0C7gxDLR4DFATH00cDFem9dXGcvelEk8MojBYDIlVw/vyYZ+bik45If4SIACDd7qMZqxo2S0F+AhImRtcqG8lyJ2EjNnGlw=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl; spf=none smtp.mailfrom=bgdev.pl; dkim=pass (2048-bit key) header.d=bgdev-pl.20230601.gappssmtp.com header.i=@bgdev-pl.20230601.gappssmtp.com header.b=leYyrihi; arc=none smtp.client-ip=209.85.221.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=bgdev.pl
+Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=bgdev.pl
+Received: by mail-wr1-f53.google.com with SMTP id ffacd0b85a97d-37ed3bd6114so456243f8f.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 04:32:56 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729769550; x=1730374350; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=Erp1+OVg6Zvh2QGB7pP0w1YYkfDo5lKRK3PPeKeDOv4=;
-        b=otbNvaSHy0CmMLOsNm70cSw2b3TvrRC2vse5Lo1OIywuPvIRmHb6iixTStGso8fvih
-         HIWFiY217iRLLN0JoiRz2Rjsuood+dHp8DpA/8i0IWzdnzoQwGmwzgvesO8Bs5rA5eVj
-         oa1hIZMIltlFzhXEVivlrMCK/ReOzJH/+o5Ppt84a1x2/YxDdXmpIxyq56eCaoaO3p6T
-         gnfR+SlZmSaKkssQpeNW67mB9sYOAAn7fNwLNWE84i/jVuxVD+zDRiI1vyI9vA9WUnVS
-         KrVtjKTqawmDdEylgaqG2YeBB68GX4ovwnaTryYrAsqOcYIvQ2jAzxdh8H+ulNbjR1RS
-         t3BA==
+        d=bgdev-pl.20230601.gappssmtp.com; s=20230601; t=1729769574; x=1730374374; darn=vger.kernel.org;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:from:to:cc:subject:date:message-id:reply-to;
+        bh=2MgD7S88uo9sxVvvM9wYy+rEyYTBG9VG2cJ5wlIWLfY=;
+        b=leYyrihiCIPnCmPkzSgUZZ50mxO6FG0lbjFqMXMi8FxMqj1qUAeHOSk+bqJb/AhZGg
+         jb1/8YW05xG8j+ZX2fmY7WRyib8DkS0ySIFL8XO80h69FFcYh7O21BJcQVNmsgaHrY/N
+         5klBEx2S8FcDZey7tScnhPhNnS+k/8A/3Dsi4Cqp9PwEDOGIp+UGX59w1MVHeBZa9Yfo
+         wX6OV7qgPTjf2NS7evtABB9KEJhyBboOdOjeHp3bnDFOV7G1FT20Alcf8O9KFwJ6ojM5
+         P9GWilIDAO9+N7ikhIRgU/9TOXQ23t9wPmIIGkiXF+MdXoW7gQeH9KPhjygzuFvS6e8m
+         YQVg==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729769550; x=1730374350;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=Erp1+OVg6Zvh2QGB7pP0w1YYkfDo5lKRK3PPeKeDOv4=;
-        b=G4DhDZIazeKX4Qk25NBjfJl/Cj/yExuSxWt3aOM5GG+AAeorVX6qHTiuLNudnqVjSn
-         J5rEK/GkWxucGdlpaQ6WYjtCeqIzPXuwDPrwI3Skssg8N0GEiAKhUxLS6WmDapkpou6M
-         LCisOaTETK3Va4XDswJEmA0zmQHTaOJHw8iLgyG6nfvWMNoBj2btcXQtBhSvJ/8P8ONH
-         GYFbBcxNPVymRV3t1KSlcMBs1YwGDHu5ks+gQ+/CPpiP3NGfhn/u296QbV4Ve9+ghttP
-         aJWSFADBIdgZFyIuee0Sty9RTtnVvOutvAJlmuYtxs1haOpxsk4vUwrzXjav8ekr7jzY
-         a3EA==
-X-Gm-Message-State: AOJu0Yw1ympEj12o2GpXCoh4MB41BkUNBt1iCmgANZ/6RlEFcQpLPvrw
-	mnoLWiN2BkGV79ABB9HPxkIfwUhNsvati0ikNcvehumL0aOjr2NnMIZ6mPrcCA==
-X-Google-Smtp-Source: AGHT+IE07p1wY1vvq/4/9vbPY3LEzz4J2xejwqtPU6uKF3gb39IMRgXzep0l9PGpoNZbYvF5Fehu7g==
-X-Received: by 2002:a05:600c:1f14:b0:426:6edd:61a7 with SMTP id 5b1f17b1804b1-4318aff2d08mr3020455e9.7.1729769550185;
-        Thu, 24 Oct 2024 04:32:30 -0700 (PDT)
-Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b5706c3sm14524155e9.34.2024.10.24.04.32.28
+        d=1e100.net; s=20230601; t=1729769574; x=1730374374;
+        h=cc:to:content-transfer-encoding:mime-version:message-id:date
+         :subject:from:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=2MgD7S88uo9sxVvvM9wYy+rEyYTBG9VG2cJ5wlIWLfY=;
+        b=JF+x4t1T4MavNR0M7eet7bu1JrfbBADN8qgwu6mjmjDcs2QNh3YpOPIzaG0iXgzwFT
+         fqQ/P39RetYjLieSMMIXnT+OjlyBk7SXPwr2sc5lP8dZhVwzbTONNTGw6ZdyMMci/r66
+         BgFSvovWE3Thjl3rc2+nkQvEpiYUMyoyINFnMGtZJOmuYuI1mYmxYwY+CtD1hnN7TUHR
+         ZOtNxok0EAYhA4ZD+cUADHMB46YL9lug9+255fREd+24DOg7tRu2g45wA+T54An760UT
+         VJr6jQDhyCT1rQ9FAPMdDfVJ1jA/j1wOtQUpjozjEtJZxYsM7D1P0TnzQe3pjRe13PBk
+         w3RA==
+X-Forwarded-Encrypted: i=1; AJvYcCVRGvR27lZx9MV30eWoCReVitVVlgo6vNJlK9PdkUZQ4Tg/kzHk3WH/tEUB7S8XNLNJfrQ7aLslIXJA7lo=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzapWuntwsNX4pW4rcVamPvlh3O5EK760fxZpMR2xPmkJMwZmBU
+	rj9vfMFf6fwX5mFeCEtFyalze4U3tLjP3aY4aLft7zungDba2n1RBzoPP+I/gws=
+X-Google-Smtp-Source: AGHT+IGGbwM/wC/uvUgJAQYmtUs21huVciYy7jFw7cYJ95pfBma3Y0EzjxjA95ATZvJ/Szy1slJRog==
+X-Received: by 2002:a05:6000:1210:b0:374:b6f4:d8d1 with SMTP id ffacd0b85a97d-37efcf0b548mr3779635f8f.13.1729769574441;
+        Thu, 24 Oct 2024 04:32:54 -0700 (PDT)
+Received: from [127.0.1.1] ([2a01:cb1d:dc:7e00:17a2:e679:56a4:a25a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f484sm14592705e9.13.2024.10.24.04.32.53
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 04:32:29 -0700 (PDT)
-Date: Thu, 24 Oct 2024 11:32:25 +0000
-From: Mostafa Saleh <smostafa@google.com>
-To: Marc Zyngier <maz@kernel.org>
-Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
-	linux-arm-kernel@lists.infradead.org, corbet@lwn.net,
-	Will Deacon <will@kernel.org>
-Subject: Re: [PATCH] Documentation: Update the behaviour of "kvm-arm.mode"
-Message-ID: <ZxowSYHQeOq7W_JT@google.com>
-References: <20241023171244.4031151-1-smostafa@google.com>
- <86v7xh3km6.wl-maz@kernel.org>
+        Thu, 24 Oct 2024 04:32:54 -0700 (PDT)
+From: Bartosz Golaszewski <brgl@bgdev.pl>
+Subject: [PATCH 0/5] gpio: sysfs: send character device notifications for
+ sysfs class events
+Date: Thu, 24 Oct 2024 13:32:43 +0200
+Message-Id: <20241024-gpio-notify-sysfs-v1-0-981f2773e785@linaro.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <86v7xh3km6.wl-maz@kernel.org>
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
+X-B4-Tracking: v=1; b=H4sIAFswGmcC/x3MMQqAMAxA0atIZgO1utSriIO2iWZppRFRpHe3O
+ L7h/xeUspDC2LyQ6RKVFCu6tgG/L3EjlFAN1tihM9bidkjCmE7hB/VRVuzXENiR94tjqN2RieX
+ +n9Ncygf0liMyYwAAAA==
+To: Linus Walleij <linus.walleij@linaro.org>, 
+ Bartosz Golaszewski <brgl@bgdev.pl>, Kent Gibson <warthog618@gmail.com>
+Cc: linux-gpio@vger.kernel.org, linux-kernel@vger.kernel.org, 
+ Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+X-Mailer: b4 0.14.1
+X-Developer-Signature: v=1; a=openpgp-sha256; l=1440;
+ i=bartosz.golaszewski@linaro.org; h=from:subject:message-id;
+ bh=2ukGcetbJ073X0kVtfmH5NRy1q5c9OPJynatresKxrw=;
+ b=owEBbQKS/ZANAwAKARGnLqAUcddyAcsmYgBnGjBkSTkm2puOnNpzhe6QEjw1a37sxckcPMdRA
+ TJj4dmLOTaJAjMEAAEKAB0WIQQWnetsC8PEYBPSx58Rpy6gFHHXcgUCZxowZAAKCRARpy6gFHHX
+ csmFD/4mt3GUCKb0pbe/hBugOPx7qAbeAVjQt3ke4froV5sa5pmiv7XNHKMaBrGlAtS/wehzMYs
+ bNdQNXC27nK5OSbFml7LTl9VmnPSYyIklgux8XtXIsT7Nmqu1A5IfLD91uU56yuFOEqaTn/BCyL
+ Kh0e8SMaJdmAp41Bg1/XpCJ/SbG+hSASFrq6OiezeghjF4GMgMQDj4XWulufqiG+lfkEudgaQTu
+ xRLvg8UgP7ez1FZhovxmd2fzfYZOORlyiIuLd4KkSlAgZQnz5wl3pT12z0VmHU5iBIOrghx84q1
+ VGbNBg0As14O88OOqeSo4p8kzlcQOt0UR6Ip0wztnJHmyE/WY9+JR1Q8eHjwm1QyQUDBRf4Yn1g
+ ZrwOqPi4Mj/Z8nF0SIWAxB16oqkPfso2X70vUPe2/EHQmMTqItUj1xve+n2gcYrZ+s1XqHPEm5+
+ 9nPb8s4k0d3dshrb6k59GXAFxDYDeGNBfQn10bbR0P+/Zv/jKqrRjpSfS7jug2LzAsgZNpItzgq
+ sMOVoW97I6OawIZx2rX9UnByUejv9pWzRv1eGm80Jh35Y82+xaYqU31GqoOfr2SO6bpgtfKVd8b
+ OvvnGQ4mbM6Bj94yH0uHy8ryhpTYWwsyLcIH/krmZdgY5T14dBEyniuUwbwzV+ffrw7WtUTfixW
+ Dvu30HRZfFbsdwA==
+X-Developer-Key: i=bartosz.golaszewski@linaro.org; a=openpgp;
+ fpr=169DEB6C0BC3C46013D2C79F11A72EA01471D772
 
-Hi Marc,
+This may be a total corner-case but for consistency and completeness I
+think it makes sense to also send out line state change events on actions
+triggered from the GPIO sysfs class.
 
-On Thu, Oct 24, 2024 at 10:39:45AM +0100, Marc Zyngier wrote:
-> Hi Mostafa,
-> 
-> On Wed, 23 Oct 2024 18:12:43 +0100,
-> Mostafa Saleh <smostafa@google.com> wrote:
-> > 
-> > Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
-> > VHE support") modified the behaviour of "kvm-arm.mode=protected" without
-> > the updating the kernel parameters doc.
-> > 
-> > Update it to match the current implementation.
-> > 
-> > Cc: Will Deacon <will@kernel.org>
-> > Cc: Marc Zyngier <maz@kernel.org>
-> > 
-> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
-> > ---
-> >  Documentation/admin-guide/kernel-parameters.txt | 6 +++++-
-> >  1 file changed, 5 insertions(+), 1 deletion(-)
-> > 
-> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
-> > index bb48ae24ae69..59a0dd7e2de6 100644
-> > --- a/Documentation/admin-guide/kernel-parameters.txt
-> > +++ b/Documentation/admin-guide/kernel-parameters.txt
-> > @@ -2723,8 +2723,12 @@
-> >  			nvhe: Standard nVHE-based mode, without support for
-> >  			      protected guests.
-> >  
-> > -			protected: nVHE-based mode with support for guests whose
-> > +			protected: hVHE-based mode with support for guests whose
-> >  				   state is kept private from the host.
-> > +				   In case hVHE is not supported in hardware, it will
-> 
-> nit: it is VHE that is supported or not, hVHE is only a SW concept.
-> 
-> > +				   boot with protected nVHE.
-> > +				   nVHE protected mode can still be forced on VHE systems
-> > +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
-> 
-> This opens another question: none of the arm_sw.*, nor any of the
-> id_aa64* parameters are described (basically, anything that's in
-> arch/arm64/kernel/pi/id_override.c). What should we do about these?
+The first two patches use cleanup helpers in sysfs code. The next three
+change the code to emit notifications on line export (unexport is
+already handled) and active_low & edge changes.
 
-Yes, I mainly added this, to make it easier if someone wants to boot to
-protected nVHE so they don't have to go through the code, but I can
-remove it if it's confusing.
+One last thing I considered was also notifying user-space whenever
+gpiochip_un/lock_as_irq() is called but that doesn't make much sense as
+it's largely independent from the GPIO core and can be called for both
+requested and available lines whenever someone requests an interrupt
+from a GPIO controller.
 
-> 
-> 
-> 
-> >
-> >  			nested: VHE-based mode with support for nested
-> >  				virtualization. Requires at least ARMv8.3
-> 
-> Huh, another nit to fix. We only support nested with ARMv8.4 (with
-> FEAT_NV2), as the ARMv8.3 version (the original FEAT_NV) is too ugly
-> for words.
-> 
-> Mind addressing this?
+Signed-off-by: Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+---
+Bartosz Golaszewski (5):
+      gpio: sysfs: use cleanup guards for gpiod_data::mutex
+      gpio: sysfs: use cleanup guards for the sysfs_lock mutex
+      gpio: sysfs: emit chardev line-state events on GPIO export
+      gpio: sysfs: emit chardev line-state events on active-low changes
+      gpio: sysfs: emit chardev line-state events on edge store
 
-Sure, I will update it in v2.
+ drivers/gpio/gpiolib-sysfs.c | 143 +++++++++++++++++++------------------------
+ 1 file changed, 62 insertions(+), 81 deletions(-)
+---
+base-commit: fd21fa4a912ebbf8a6a341c31d8456f61e7d4170
+change-id: 20241022-gpio-notify-sysfs-3bddf9ecca9f
 
-Thanks,
-Mostafa
-> 
-> Thanks!
-> 
-> 	M.
-> 
-> -- 
-> Without deviation from the norm, progress is not possible.
+Best regards,
+-- 
+Bartosz Golaszewski <bartosz.golaszewski@linaro.org>
+
 
