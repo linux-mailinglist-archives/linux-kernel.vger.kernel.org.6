@@ -1,182 +1,196 @@
-Return-Path: <linux-kernel+bounces-380349-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380350-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id C38BA9AECB9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:55:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id BA2DE9AECBC
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:55:33 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E77691C21E33
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:55:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2E525B23186
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:55:31 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D4A3B1F81B9;
-	Thu, 24 Oct 2024 16:55:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 4F0391F81BC;
+	Thu, 24 Oct 2024 16:55:17 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="iiWk+83h"
-Received: from mail-pj1-f52.google.com (mail-pj1-f52.google.com [209.85.216.52])
+	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="mcihC874"
+Received: from mail-wm1-f49.google.com (mail-wm1-f49.google.com [209.85.128.49])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2A4531D63E5;
-	Thu, 24 Oct 2024 16:55:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.52
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 534E81D63E5
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:55:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729788909; cv=none; b=Qdt9vWa8piqoFBkyeZk6OFRnmSBfx4xNaFphCreAqzoZ0Ez15u2tYZ9962Jsq0OTp4iKXNFFoRQ9Uopn0nNnpw/VAuc8zBUSLzX0t/BXXnK/upQCqLx3BpmIndF5G3nnjgZpj83yRRiy8WF3zLxOfC2eoek2P95UOaFQW3Ho+bg=
+	t=1729788916; cv=none; b=Xohdtzj440qUtjIwy9ZCTlKwwkM0DzNU/fQjPEZunr0E5DttrfRI6rlZS9GkoUoONDo/Jjp9kqR8nONaOdfz0XQr5bLEIBkur+S624urwkKKF5W3QmPpkPhDsVJomXtX5GakzsbZggSSAwY9STPsrnOU8TUASy6oxpZLXbzt3nI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729788909; c=relaxed/simple;
-	bh=a8ahRRcrY594S4Mt9NvQKGbibrLN5Ofloy8eC4cJUCU=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=s0EFiG8aL1ruyQQ6CvB4Xau5dvHlQGUJEhJjq24OrLC89MSu3rvjJh4ALAMECGcDWsxFVGvZaqYA5mMuMoPVaDHohzxoIdbvBx+hnYbM9PHvAInz5NZrAygUX1FLuDsl/QJz/mib7XnJzhPm6kMPLQfy0/T2kpkvF148BmmcY4A=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=iiWk+83h; arc=none smtp.client-ip=209.85.216.52
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-pj1-f52.google.com with SMTP id 98e67ed59e1d1-2e2c6bc4840so896151a91.2;
-        Thu, 24 Oct 2024 09:55:06 -0700 (PDT)
+	s=arc-20240116; t=1729788916; c=relaxed/simple;
+	bh=GO+CYso/bTOf2xGs1upCw8Mp19VtJPjOhr62lrxsNG0=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=sHJo5HendH+bz3W1hftJyMQNZWyRxOZWFM+PJDlS74Z/nJMI9fVOXEh+YBgxgx1Wb035gHQqm5VlPjw2QjAghCUpSnkn3V4f2CeAZ6Q7l4qmHU5BdlRR2BW+7Rz/3n/WpD/xn3EiDvn/JqmTkXLS+kx8wz5Xd/dFoy+2paQ1BOc=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=mcihC874; arc=none smtp.client-ip=209.85.128.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=google.com
+Received: by mail-wm1-f49.google.com with SMTP id 5b1f17b1804b1-43150ea2db6so7725e9.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:55:13 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729788906; x=1730393706; darn=vger.kernel.org;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
-        bh=d7PBxxlBiwJrhbNFRgnIYKYzTkgRlcrjAX2t06Ip96w=;
-        b=iiWk+83hgsbjVKcIcnrf8Sasb59VNnpcbvLT78mwcq+aN+kbZu1qos07lT+wBY4omE
-         LbsfH7TF71siQpiqQyauLvDBbfgP70WqRh3B8nr7PTa1kAdlXouBunJzQHMfBI8f9uDB
-         Kj2OIIjFMW+6ynrtEATpAjGXaZgEyVeQQ/OTvOSWyYdwcjYrL/6jstfrVpoatnclfPud
-         jPyYuWCh5fdBbnWxBbm+vDhDEl4LYy/J3rBIUNUrCFkLkGbIvtLqXf+nhq2PSxFPE4Wz
-         2VbWehaOpcaJm9IvTJK5GA1Q+dzO6zzVN0zYXCN7aUw1e+sNk17CK+C+8NIV9ziaABKA
-         jzlg==
+        d=google.com; s=20230601; t=1729788912; x=1730393712; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=RCdtKyQctIBSL1se9ZBXozl/8Gw/YsUba47AyHThe0Y=;
+        b=mcihC874xHNrlWyFkXlnppm9CT7ZXhu1whGEKYELuJNVTJB612P9NAIaNu5f03knYF
+         So//NBHpqy7I1yQCik5Y+2aCzMJbFJs5xQVruU9XA1LwKg9IS6tF3bjy6sPvwSsjBdR4
+         2C86PJoIek8chu60kDGXejU3C+Z99OGXC/s11XF+eURjxho6pZVSaXa4czDWFvG5wCri
+         PMNV1NfJKaFKDoExwOP9ec2KpxOGALXE+L3A0T8JC51xVw0+mHjq/3qtxZm7q1TLW58o
+         ku2tQWCP5D63GhUtKetPYeegS9WIWLVGeE30q/VOpExglSKzMPs0dJdfEhzBHvtzoKws
+         rbGw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729788906; x=1730393706;
-        h=content-transfer-encoding:in-reply-to:autocrypt:from
-         :content-language:references:cc:to:subject:user-agent:mime-version
-         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1729788912; x=1730393712;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=d7PBxxlBiwJrhbNFRgnIYKYzTkgRlcrjAX2t06Ip96w=;
-        b=qZDLnMkmGNjhKEujHx/E6KtKsGUI3eBazlHvB1qKKW+w5hYBI0IUUZpsI9map3gCOS
-         sHoHGpUyi13+krO4h+2XzupgQqPRNRCBLBrjynH/xh2snv5ztFv25WFdZuQxP5lHPpph
-         ZqGo9iIMKnlvhWsGct5ryp75rbhTFb3VPyihsEs+XaKuR8+yYFcCRV2KJ4ZUBQhDjwXd
-         F6gjOUazzrqS1cAtptJvUozw9gUa4G8W6vSYoNn5Wk/BTnbwn1vUPk+1Yomn4Jw0qvH9
-         +yujKgE1mTXdeI6sYCMRmfMzLFdRr4CUCcnjj6V0kbItA7Dypwhq27OPEm60Qva+mv5c
-         XM/Q==
-X-Forwarded-Encrypted: i=1; AJvYcCU1PCv4C/jNZbZX5UIEiVWP/s3aYQsaxvw/FEQguTM/QQacieoY472jO2f/YsBruLRleVA11uDCDeLjMA==@vger.kernel.org, AJvYcCUMsCbJQXbCLzdU70cqACPM3QzWMdtoNESB54Lkk6fl2nIFssXjuw0O9ImosAZXEyu1OtOBysV2C+wpkyNI@vger.kernel.org
-X-Gm-Message-State: AOJu0YwVhroPKBPDFWJIixJEXF/RnssT4QBQdG3/miPl/oy0b7ajO8E1
-	gIshI0sAA2ap/6M2fCEj3fUhyW/6j/9Oz4n9aFGTpJzyjWpXiM76
-X-Google-Smtp-Source: AGHT+IF7mz4K47c5JjT4sJY07QawDK9gtl9POxdES20/c+qKG0W0YJ1aSNy6XEBJZYGdtMcIX/XH/Q==
-X-Received: by 2002:a17:90a:c7d5:b0:2e2:9e64:c481 with SMTP id 98e67ed59e1d1-2e76b60c552mr7153085a91.22.1729788906484;
-        Thu, 24 Oct 2024 09:55:06 -0700 (PDT)
-Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
-        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48d008sm1748531a91.0.2024.10.24.09.55.04
-        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
-        Thu, 24 Oct 2024 09:55:05 -0700 (PDT)
-Sender: Guenter Roeck <groeck7@gmail.com>
-Message-ID: <e028943e-2acb-4b19-b2eb-dd603855b3a8@roeck-us.net>
-Date: Thu, 24 Oct 2024 09:55:04 -0700
+        bh=RCdtKyQctIBSL1se9ZBXozl/8Gw/YsUba47AyHThe0Y=;
+        b=rtsILH2TwvMZ54UlNAkzaHadLbfJ4Nzo0eQWH6+9G1bvF2PPPjJ3v4ZMTEO5WBUYrS
+         imn65EC+uZOqBnDTXnYua8+e7dOM1mnAOGFy1S8WcQYrj9Ru3sJBAvrk8ksWW0mUErQS
+         z0X02NSM1vbncD7r453ZxQrxEFVZWaFOsmcW3PfZRC+Keah4qtpd6Avvj59glhTQ09nW
+         ZZ88GcU5Gu/38eGmbXDmf87D5XqtlIl68c/PNY5h2x3BGvu4r+VcZzjuLJVZ3jwbbwk+
+         NnvPoPT1ZOQSHwBtdXGytXsc145C24oIlB4MmJC1FAqSntfzSxl4H6VZ4BPBzG2BRbiU
+         ErvQ==
+X-Gm-Message-State: AOJu0Yy7bEjLf6oPA2nwOo0UKsnmf98HN/Ph7ncKuaTwNDlqqaEeoMHx
+	zN5IIlPv6TguImT5bbB0RV92NuRQgQiknZB54Bt/B4aJwHQxVP7mAo6A1sBlY0A3yxA+zzHBFn9
+	59Q==
+X-Google-Smtp-Source: AGHT+IHcN7HDbw2An/mqTEn7MtXy6cHrcCtVnXaHLCdh4ENrobYlDmJPj++dv/iSVSPdnUCb+iLsTg==
+X-Received: by 2002:a05:600c:1d82:b0:42b:a8fc:3937 with SMTP id 5b1f17b1804b1-4318a56d62dmr5544205e9.4.1729788912295;
+        Thu, 24 Oct 2024 09:55:12 -0700 (PDT)
+Received: from google.com (88.140.78.34.bc.googleusercontent.com. [34.78.140.88])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-43186bd69e0sm52243065e9.3.2024.10.24.09.55.11
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 09:55:11 -0700 (PDT)
+Date: Thu, 24 Oct 2024 16:55:08 +0000
+From: Mostafa Saleh <smostafa@google.com>
+To: Marc Zyngier <maz@kernel.org>
+Cc: linux-kernel@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org, corbet@lwn.net,
+	Will Deacon <will@kernel.org>
+Subject: Re: [PATCH v2] Documentation: Update the behaviour of "kvm-arm.mode"
+Message-ID: <Zxp77Es8BCnHcAHk@google.com>
+References: <20241024160614.1894599-1-smostafa@google.com>
+ <86o73930ze.wl-maz@kernel.org>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v3 2/2] dt-bindings: modified ina2xx to match SY24655
-To: Wenliang <wenliang202407@163.com>
-Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
- linux-kernel@vger.kernel.org, robh@kernel.org, conor+dt@kernel.org,
- krzk+dt@kernel.org
-References: <80bfd968-8f12-46b1-9b72-837502ccdb2a@roeck-us.ne>
- <20241024083055.82047-1-wenliang202407@163.com>
- <20241024083055.82047-2-wenliang202407@163.com>
-Content-Language: en-US
-From: Guenter Roeck <linux@roeck-us.net>
-Autocrypt: addr=linux@roeck-us.net; keydata=
- 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
- mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
-In-Reply-To: <20241024083055.82047-2-wenliang202407@163.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <86o73930ze.wl-maz@kernel.org>
 
-On 10/24/24 01:30, Wenliang wrote:
-> Adding Silergy's sy24655 as an adapter chip for Ina2xx drivers.
+On Thu, Oct 24, 2024 at 05:43:49PM +0100, Marc Zyngier wrote:
+> Hi Mostafa,
 > 
-> Because it is similar to INA226, the supply voltage and pin definitions
-> are the same. It also supports IIC communication, with only two
-> additional registers added for configuring and calculating average power.
+> On Thu, 24 Oct 2024 17:06:14 +0100,
+> Mostafa Saleh <smostafa@google.com> wrote:
+> > 
+> > Commit 5053c3f0519c ("KVM: arm64: Use hVHE in pKVM by default on CPUs with
+> > VHE support") modified the behaviour of "kvm-arm.mode=protected" without
+> > the updating the kernel parameters doc.
+> > 
+> > Update it to match the current implementation.
+> > 
+> > Also, update required architecture version for nested virtualization as
+> > suggested by Marc.
+> > 
+> > Cc: Will Deacon <will@kernel.org>
+> > Cc: Marc Zyngier <maz@kernel.org>
+> > 
+> > Signed-off-by: Mostafa Saleh <smostafa@google.com>
+> > 
+> > ---
+> > v2: Update nested value also
 > 
+> Thanks for that. However...
+> 
+> > ---
+> >  Documentation/admin-guide/kernel-parameters.txt | 10 +++++++---
+> >  1 file changed, 7 insertions(+), 3 deletions(-)
+> > 
+> > diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> > index 1518343bbe22..d5b771e5cb5b 100644
+> > --- a/Documentation/admin-guide/kernel-parameters.txt
+> > +++ b/Documentation/admin-guide/kernel-parameters.txt
+> > @@ -2740,12 +2740,16 @@
+> >  			nvhe: Standard nVHE-based mode, without support for
+> >  			      protected guests.
+> >  
+> > -			protected: nVHE-based mode with support for guests whose
+> > +			protected: hVHE-based mode with support for guests whose
+> >  				   state is kept private from the host.
+> > +				   In case hVHE is not supported in hardware, it will
+> > +				   boot with protected nVHE.
+> > +				   nVHE protected mode can still be forced on VHE systems
+> > +				   using "kvm_arm.mode=protected arm64_sw.hvhe=0 id_aa64mmfr1.vh=0"
+> 
+> 
+> I probably didn't explain myself very well. I would like to avoid
+> mentioning hVHE at all, because this is pretty confusing (and really
+> an implementation detail). Instead, we can talk about VHE/nVHE, which
+> are real architectural features.
 
-Again, please consult
-	Documentation/process/submitting-patches.rst
-for both description and subject.
+Agh, my bad, it makes more sense to talk in terms or architecture.
 
-"dt-bindings: Add SY24655 to ina2xx devicetree bindings" or similar
-would be a much better subject, and something like
-
-"SY24655 is similar to INA226. Its supply voltage and pin definitions
-are therefore the same. Compared to INA226, SY24655 has two additional
-registers for configuring and calculating average power."
-
-would be a much better patch description.
-
-Also, as already requested by Conor, please copy the devicetree mailing list
-on devicetree patches to enable automated testing.
+> 
+> Also, I just realised that we can use your command-line magic for
+> downgrading from VHE to nVHE in all cases, so I'd be suggesting
+> something like this:
+> 
+> diff --git a/Documentation/admin-guide/kernel-parameters.txt b/Documentation/admin-guide/kernel-parameters.txt
+> index 1518343bbe223..2bb19f1331fed 100644
+> --- a/Documentation/admin-guide/kernel-parameters.txt
+> +++ b/Documentation/admin-guide/kernel-parameters.txt
+> @@ -2740,8 +2740,9 @@
+>  			nvhe: Standard nVHE-based mode, without support for
+>  			      protected guests.
+>  
+> -			protected: nVHE-based mode with support for guests whose
+> -				   state is kept private from the host.
+> +			protected: Mode with support for guests whose state is
+> +				   kept private from the host, using VHE or
+> +				   nVHE depending on HW support.
+>  
+>  			nested: VHE-based mode with support for nested
+>  				virtualization. Requires at least ARMv8.3
+> @@ -2749,8 +2750,11 @@
+>  
+>  			Defaults to VHE/nVHE based on hardware support. Setting
+>  			mode to "protected" will disable kexec and hibernation
+> -			for the host. "nested" is experimental and should be
+> -			used with extreme caution.
+> +			for the host. To force nVHE on VHE hardware, add
+> +			"arm64_sw.hvhe=0 id_aa64mmfr1.vh=0" to the
+> +			command-line.
+> +			"nested" is experimental and should be used with
+> +			extreme caution.
+>  
+>  	kvm-arm.vgic_v3_group0_trap=
+>  			[KVM,ARM,EARLY] Trap guest accesses to GICv3 group-0
+> 
+> 
+> >
+> >  			nested: VHE-based mode with support for nested
+> > -				virtualization. Requires at least ARMv8.3
+> > -				hardware.
+> > +				virtualization. Requires at least ARMv8.4
+> > +				hardware (with FEAT_NV2).
+> 
+> That part looks good!
+> 
+> Thanks,
+> 
+> 	M.
+> 
+> -- 
+> Without deviation from the norm, progress is not possible.
 
 Thanks,
-Guenter
-
-> Signed-off-by: Wenliang <wenliang202407@163.com>
-> ---
->   Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml | 1 +
->   1 file changed, 1 insertion(+)
-> 
-> diff --git a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-> index 6ae961732e6b..05a9cb36cd82 100644
-> --- a/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-> +++ b/Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml
-> @@ -20,6 +20,7 @@ description: |
->   properties:
->     compatible:
->       enum:
-> +      - silergy,sy24655
->         - ti,ina209
->         - ti,ina219
->         - ti,ina220
-
+Mostafa
 
