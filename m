@@ -1,137 +1,155 @@
-Return-Path: <linux-kernel+bounces-380565-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380566-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id D94F99AF289
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:22:17 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 2A8929AF295
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:22:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 98F1628AF13
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:22:16 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 5C0241C23B91
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:22:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id CB6F42170AB;
-	Thu, 24 Oct 2024 19:17:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b="lA5AKoUJ"
-Received: from mail-il1-f176.google.com (mail-il1-f176.google.com [209.85.166.176])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 1875222B664;
+	Thu, 24 Oct 2024 19:21:42 +0000 (UTC)
+Received: from mail.stoffel.org (mail.stoffel.org [172.104.24.175])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3C1F41FE0F6
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:17:03 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A4E3F22B647;
+	Thu, 24 Oct 2024 19:21:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=172.104.24.175
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729797426; cv=none; b=EuzP5L7KgVeXYxFfXa9J52jzT2K+n4SD6Z+ly0GUdp/8njCy0gRu22w1vmQ/VjWyFuUSS6dLxGstW845d/P9YuzjxBkkJWXhUTQp+mEkuvaF1Mdv+xhmqJZ/IsWS6XuEMuN1Al8J+XbUz37sBHQk/e9vzhucgCkv8O4wZXEnZDI=
+	t=1729797701; cv=none; b=sq2X+sywZA+qh347weAjZHc3WzY5V2GWR2jXTgLQgEo6dpXyCFswqoTMh4AIeX1zX8JpFcVZG49ngzdryiFXl86QtYow7l4mrrCnAa/66i4PDiOs6nBk4zk3qKXXIYLzcg8RDgLyMlW6WsGlzPa+3G+YS6CrSEA8Ua+JIX/6qto=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729797426; c=relaxed/simple;
-	bh=r2894LsRaL5cMjTp9c/aiq8WNR9qa3a0tHFbx9n/VDw=;
-	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
-	 To:Cc:Content-Type; b=fIeIxmKidHlepiM9bB0A1RNNTyRvK6zh4sxd+rNWDhoRYtyO/PXU/Ud3PfYRnQbCoRoyGRrF9TbCNfSK3E8r1u/pwBnXR6S2b52at40Z1zi4TYOMlB7MdbWe0d9Cr1Vnqx+fSz7216rrMyCgPtsFprSOq2V0rKGoMFhZG6HoRFQ=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org; spf=none smtp.mailfrom=brainfault.org; dkim=pass (2048-bit key) header.d=brainfault-org.20230601.gappssmtp.com header.i=@brainfault-org.20230601.gappssmtp.com header.b=lA5AKoUJ; arc=none smtp.client-ip=209.85.166.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=brainfault.org
-Authentication-Results: smtp.subspace.kernel.org; spf=none smtp.mailfrom=brainfault.org
-Received: by mail-il1-f176.google.com with SMTP id e9e14a558f8ab-3a4e551efdbso34805ab.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:17:03 -0700 (PDT)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=brainfault-org.20230601.gappssmtp.com; s=20230601; t=1729797423; x=1730402223; darn=vger.kernel.org;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=aMVuNP7DptisRZKMAE62XcZxOQ0ITSLxzIbBe9rphWg=;
-        b=lA5AKoUJX5NIwwmgwcPO0LlAnXNw+nDr5zN62GyzVprCGtCgDWXcbL3wbZKSmd/cKV
-         q2tkl2+WVcFz036R8T2JRNiF0UTJJy+n5Mvbe9+HwpJCpIogtQuHGpNUcl17ct5wRC+b
-         q78WEjVrXTskIjfLoqRXO6mn+aGGaQRckOft+v7EXhfs4hO7youWj1ySdz7r0bMyQ1x6
-         3aHrdfL7wgFFuc6ng37zi9seTtXpUdckqOCFGHjDe5kbErGaXluSWILmwojRuMN2z18E
-         N9GcNvBFxFa7W6lczd6JavYcSyxkBkKEK8GzFWAgXzfb4O28HsugSwfaH0XnL74SxTEU
-         LNSg==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729797423; x=1730402223;
-        h=content-transfer-encoding:cc:to:subject:message-id:date:from
-         :in-reply-to:references:mime-version:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=aMVuNP7DptisRZKMAE62XcZxOQ0ITSLxzIbBe9rphWg=;
-        b=pEy3pveFQprscD5bITkwRZ6BpNuRJw2IgViyZrOL16EVmHNK+Kt+gn2Xd3stqz9lfH
-         pfmy2nL3pzTS8x0ZUAwyT/B+IMfHq+ZfDUFbwybKqf28KY/6AZicb0TnkF1E2b5rBH9v
-         9O1vXBgUjz36Vrt+9lsvKUwT34t7cgnJZY6Y1xWCzfedkZSilDymSC7A/1tLoo4ZFzMb
-         k0puBxLpnRwBvgpA5emezAO/F+Bq9HB6peKQG7P246fKBBSjUCkllFY6cACjx6GPXYAr
-         YkAX42sfxS5Yx3/QygTctreyP9ZQR2+wsqW1UTaMdc+ons8yzp2QgC9NKO8blEDlrCD/
-         D8TA==
-X-Forwarded-Encrypted: i=1; AJvYcCXgBU+cl+Jm572VjtSCppKabiJWu5Qnsq3gKZO9gYTfEOCBeGHSirMKaA3zCnC23pVDdO8iY9m8AiyZGj0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YytWJDTa780pNTakhftOO+0TnsMfSMgt6WXHk/Bot96GwPwReKY
-	y9/e+8RIfNge2x8z/N7R8CdSd9pvEqP2qv/mqqxWgdEB45KPwBd/qzwVcqYVZ4fuOj3OzwLJSir
-	MiKaOwZRwSrXodRG/1Vf6N3VLg4LD9u64hTWsdQ==
-X-Google-Smtp-Source: AGHT+IFZzEb2zN7h96lApR8DYauv53XlH5oPpoX1QtB4zj0x/HOggQdCeZlKWS+cP9VVlhcXp5Qae/4W4hrCmVnyZps=
-X-Received: by 2002:a05:6e02:1564:b0:3a0:c15f:7577 with SMTP id
- e9e14a558f8ab-3a4d5945f99mr81465345ab.9.1729797423093; Thu, 24 Oct 2024
- 12:17:03 -0700 (PDT)
+	s=arc-20240116; t=1729797701; c=relaxed/simple;
+	bh=x5W7AHA7QoAl5BXhjCt2PyWAEngxusuwMWAjkEDBeo0=;
+	h=MIME-Version:Content-Type:Message-ID:Date:From:To:Cc:Subject:
+	 In-Reply-To:References; b=PxOhcxMBGdauYdzIRRSBXk/D49odILolP0HuBQyL988spgtEAOi9Gu2TSrQ0ohI9M4ekyjOiur8qq6eCr9qh7z/DOoGeQtpDQIwB+98KnNyBZMbv0ebiNH/UrAZxKv55qUKpyno9LzuWGK5Jc6Q4YXiw71mOr4A8Qi+L06zwhaA=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org; spf=pass smtp.mailfrom=stoffel.org; arc=none smtp.client-ip=172.104.24.175
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=stoffel.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=stoffel.org
+Received: from quad.stoffel.org (syn-097-095-183-072.res.spectrum.com [97.95.183.72])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (2048 bits) server-digest SHA256)
+	(No client certificate requested)
+	by mail.stoffel.org (Postfix) with ESMTPSA id B72191E468;
+	Thu, 24 Oct 2024 15:21:37 -0400 (EDT)
+Received: by quad.stoffel.org (Postfix, from userid 1000)
+	id 15731A0A8C; Thu, 24 Oct 2024 15:21:37 -0400 (EDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-References: <20240927-dev-maxh-svukte-rebase-2-v2-0-9afe57c33aee@sifive.com> <20240927-dev-maxh-svukte-rebase-2-v2-3-9afe57c33aee@sifive.com>
-In-Reply-To: <20240927-dev-maxh-svukte-rebase-2-v2-3-9afe57c33aee@sifive.com>
-From: Anup Patel <anup@brainfault.org>
-Date: Fri, 25 Oct 2024 00:46:51 +0530
-Message-ID: <CAAhSdy0ncLTAjEE1s-GWL95sscxwQFsKn1rXyA1_VVfk1bQBiw@mail.gmail.com>
-Subject: Re: [PATCH RFC v2 3/3] riscv: KVM: Add Svukte extension support for Guest/VM
-To: Max Hsu <max.hsu@sifive.com>
-Cc: Conor Dooley <conor@kernel.org>, Rob Herring <robh@kernel.org>, 
-	Krzysztof Kozlowski <krzk+dt@kernel.org>, Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
-	Atish Patra <atishp@atishpatra.org>, Palmer Dabbelt <palmer@sifive.com>, 
-	linux-riscv@lists.infradead.org, devicetree@vger.kernel.org, 
-	linux-kernel@vger.kernel.org, kvm@vger.kernel.org, 
-	kvm-riscv@lists.infradead.org, Samuel Holland <samuel.holland@sifive.com>
-Content-Type: text/plain; charset="UTF-8"
+Content-Type: text/plain; charset=utf-8
 Content-Transfer-Encoding: quoted-printable
+Message-ID: <26394.40513.57614.718772@quad.stoffel.home>
+Date: Thu, 24 Oct 2024 15:21:37 -0400
+From: "John Stoffel" <john@stoffel.org>
+To: Adrian Vovk <adrianvovk@gmail.com>
+Cc: Geoff Back <geoff@demonlair.co.uk>,
+    Christoph Hellwig <hch@infradead.org>,
+    Eric Biggers <ebiggers@kernel.org>,
+    Md Sadre Alam <quic_mdalam@quicinc.com>,
+    axboe@kernel.dk,
+    song@kernel.org,
+    yukuai3@huawei.com,
+    agk@redhat.com,
+    snitzer@kernel.org,
+    Mikulas Patocka <mpatocka@redhat.com>,
+    adrian.hunter@intel.com,
+    quic_asutoshd@quicinc.com,
+    ritesh.list@gmail.com,
+    ulf.hansson@linaro.org,
+    andersson@kernel.org,
+    konradybcio@kernel.org,
+    kees@kernel.org,
+    gustavoars@kernel.org,
+    linux-block@vger.kernel.org,
+    linux-kernel@vger.kernel.org,
+    linux-raid@vger.kernel.org,
+    dm-devel@lists.linux.dev,
+    linux-mmc@vger.kernel.org,
+    linux-arm-msm@vger.kernel.org,
+    linux-hardening@vger.kernel.org,
+    quic_srichara@quicinc.com,
+    quic_varada@quicinc.com
+X-Clacks-Overhead: GNU Terry Pratchett
+Subject: Re: [PATCH v2 1/3] dm-inlinecrypt: Add inline encryption support
+In-Reply-To: <CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
+References: <20240916085741.1636554-1-quic_mdalam@quicinc.com>
+	<20240916085741.1636554-2-quic_mdalam@quicinc.com>
+	<20240921185519.GA2187@quark.localdomain>
+	<ZvJt9ceeL18XKrTc@infradead.org>
+	<ef3c9a17-79f3-4937-965e-52e2b9e66ac2@gmail.com>
+	<ZxHwgsm2iP2Z_3at@infradead.org>
+	<CAAdYy_mVy3uXPqWbjPzK_i8w7Okq73wKBQyc95TbnonE36rPgQ@mail.gmail.com>
+	<ZxH4lnkQNhTP5fe6@infradead.org>
+	<D96294E2-F17A-4E58-90FB-1D17747048E5@gmail.com>
+	<ZxieZPlH-S9pakYW@infradead.org>
+	<CAAdYy_ms=VmvxZy9QiMkwcNk21a2kVy73c8-NxUh4dNJuLefCg@mail.gmail.com>
+	<dfe48df3-5527-4aed-889a-224221cbd190@demonlair.co.uk>
+	<CAAdYy_=n19fT2U1KUcF+etvbLGiOgdVZ7DceBQiHqEtXcOa-Ow@mail.gmail.com>
+X-Mailer: VM 8.3.x under 28.2 (x86_64-pc-linux-gnu)
 
-On Fri, Sep 27, 2024 at 7:12=E2=80=AFPM Max Hsu <max.hsu@sifive.com> wrote:
->
-> Add KVM ISA extension ONE_REG interface to allow VMM tools to
-> detect and enable Svukte extension for Guest/VM.
->
-> Reviewed-by: Samuel Holland <samuel.holland@sifive.com>
-> Signed-off-by: Max Hsu <max.hsu@sifive.com>
-> ---
->  arch/riscv/include/uapi/asm/kvm.h | 1 +
->  arch/riscv/kvm/vcpu_onereg.c      | 1 +
->  2 files changed, 2 insertions(+)
->
-> diff --git a/arch/riscv/include/uapi/asm/kvm.h b/arch/riscv/include/uapi/=
-asm/kvm.h
-> index e97db3296456e19f79ca02e4c4f70ae1b4abb48b..41b466b7ffaec421e8389d3f5=
-b178580091a2c98 100644
-> --- a/arch/riscv/include/uapi/asm/kvm.h
-> +++ b/arch/riscv/include/uapi/asm/kvm.h
-> @@ -175,6 +175,7 @@ enum KVM_RISCV_ISA_EXT_ID {
->         KVM_RISCV_ISA_EXT_ZCF,
->         KVM_RISCV_ISA_EXT_ZCMOP,
->         KVM_RISCV_ISA_EXT_ZAWRS,
-> +       KVM_RISCV_ISA_EXT_SVUKTE,
->         KVM_RISCV_ISA_EXT_MAX,
->  };
->
-> diff --git a/arch/riscv/kvm/vcpu_onereg.c b/arch/riscv/kvm/vcpu_onereg.c
-> index b319c4c13c54ce22d2a7552f4c9f256a0c50780e..67237d6e53882a9fcd2cf265a=
-a1704f25cc4a701 100644
-> --- a/arch/riscv/kvm/vcpu_onereg.c
-> +++ b/arch/riscv/kvm/vcpu_onereg.c
-> @@ -41,6 +41,7 @@ static const unsigned long kvm_isa_ext_arr[] =3D {
->         KVM_ISA_EXT_ARR(SVINVAL),
->         KVM_ISA_EXT_ARR(SVNAPOT),
->         KVM_ISA_EXT_ARR(SVPBMT),
-> +       KVM_ISA_EXT_ARR(SVUKTE),
->         KVM_ISA_EXT_ARR(ZACAS),
->         KVM_ISA_EXT_ARR(ZAWRS),
->         KVM_ISA_EXT_ARR(ZBA),
+>>>>> "Adrian" =3D=3D Adrian Vovk <adrianvovk@gmail.com> writes:
 
-The KVM_RISCV_ISA_EXT_SVUKTE should be added to the
-switch-case in kvm_riscv_vcpu_isa_disable_allowed() because
-hypervisor seems to have no way to disable Svukte for the Guest
-when it's available on the Host.
+> On Thu, Oct 24, 2024 at 4:11=E2=80=AFAM Geoff Back <geoff@demonlair.c=
+o.uk> wrote:
+>>=20
+>>=20
+>> On 24/10/2024 03:52, Adrian Vovk wrote:
+>> > On Wed, Oct 23, 2024 at 2:57=E2=80=AFAM Christoph Hellwig <hch@inf=
+radead.org> wrote:
+>> >> On Fri, Oct 18, 2024 at 11:03:50AM -0400, Adrian Vovk wrote:
+>> >>> Sure, but then this way you're encrypting each partition twice. =
+Once by the dm-crypt inside of the partition, and again by the dm-crypt=
+ that's under the partition table. This double encryption is ruinous fo=
+r performance, so it's just not a feasible solution and thus people don=
+'t do this. Would be nice if we had the flexibility though.
+>>=20
+>> As an encrypted-systems administrator, I would actively expect and
+>> require that stacked encryption layers WOULD each encrypt.  If I hav=
+e
+>> set up full disk encryption, then as an administrator I expect that =
+to
+>> be obeyed without exception, regardless of whether some higher level=
 
-Regards,
-Anup
+>> file system has done encryption already.
+>>=20
+>> Anything that allows a higher level to bypass the full disk encrypti=
+on
+>> layer is, in my opinion, a bug and a serious security hole.
+
+> Sure I'm sure there's usecases where passthrough doesn't make sense.
+> It should absolutely be an opt-in flag on the dm target, so you the
+> administrator at setup time can choose whether or not you perform
+> double-encryption (and it defaults to doing so). Because there are
+> usecases where it doesn't matter, and for those usecases we'd set
+> the flag and allow passthrough for performance reasons.
+
+If you're so concerend about security that you're double or triple
+encrypting data at various layers, then obviously skipping encryption
+at a lower layer just because an upper layer says "He, I already
+encrypted this!" just doesn't make any sense. =20
+
+So how does your scheme defend against bad actors?  I'm on a system
+with an encrypted disk.  I make a file and mount it with loop, and the
+encrypt it.  But it's slow!  So I turn off encryption.  Now I shutdown
+the loop device cleanly, unmount, and reboot the system.  So what
+should I be seing in those blocks if I examine the plain file that's
+now not mounted? =20
+
+Could this be a way to smuggle data out because now the data written
+to the low level disk is encypted with a much weaker algorithm?  So I
+can just take the system disk and read the raw data and find the data? =
+=20
+
+I'm not saying it's going to be easy or simple, but is it possible? =20=
+
+
+John
+
+
 
