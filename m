@@ -1,92 +1,83 @@
-Return-Path: <linux-kernel+bounces-379342-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379343-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4885E9ADD56
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:14:57 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58F789ADD59
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:15:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id E32851F23564
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:14:56 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 6E71E1C20DDB
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:15:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id EAE4018BBA4;
-	Thu, 24 Oct 2024 07:12:30 +0000 (UTC)
-Received: from metis.whiteo.stw.pengutronix.de (metis.whiteo.stw.pengutronix.de [185.203.201.7])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 120271AC420;
+	Thu, 24 Oct 2024 07:12:44 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="PpZQNcLS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1BC3018A6B7
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 07:12:26 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=185.203.201.7
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5FB28189BAD;
+	Thu, 24 Oct 2024 07:12:42 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729753950; cv=none; b=l3eM2rSYqq+xTmLvcfNMEwxDYcIehwQGGpFli2gKm6oy6QkwCcAtJ+F00DLfZUIIFzlD2nIpjKj1blK4aPRSgVcKKGly0+Leb7szZpX8LnBrLSQDjt26Cq8/+ps7Y0PkJTQzkjOhXMUSYICqbaaTIWEgNu5v94pLY1cfz7aihR8=
+	t=1729753963; cv=none; b=LRCC6EAiSyBLA+6rDbODT+Cuxc/8PTn7uJJn5NejyoWhNMQul5VjSy9YlzCzbjdjXGzxf6L9ExjIAKEdMDGjUFVRCCLY2wpH7atU5XTgDEyETG/yIDHsyVtva8bX6Pkod1ACzxsZKoKyh4BDpWDNGU5xPt8HQ4se33qq/pncDZM=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729753950; c=relaxed/simple;
-	bh=GCWpgMbuuAyDpUPrFid6j3N3x6rERzcJP7AAz0OnnPM=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=G2JvdeR37DPFOk61M3fHLBhzjH6lOSJlnAewoaySM2jXXJxzc31Dk5lxvtgc7zYcaNEHhWjmdXLHR7RI7JmIre67F/ohjyHzUEzzl6vTuflejtIrmsopbodoq2eShqPnbn7Q8Ffb/xS1EVO3+G2QAmt96RY3lj9SulF1DKPoTDs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de; spf=pass smtp.mailfrom=pengutronix.de; arc=none smtp.client-ip=185.203.201.7
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=pengutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=pengutronix.de
-Received: from ptz.office.stw.pengutronix.de ([2a0a:edc0:0:900:1d::77] helo=[IPV6:::1])
-	by metis.whiteo.stw.pengutronix.de with esmtps (TLS1.3:ECDHE_RSA_AES_128_GCM_SHA256:128)
-	(Exim 4.92)
-	(envelope-from <s.kerkmann@pengutronix.de>)
-	id 1t3s0z-0000cR-P8; Thu, 24 Oct 2024 09:12:13 +0200
-Message-ID: <ed331ddc-9b61-459f-b7a9-90b7442d0166@pengutronix.de>
-Date: Thu, 24 Oct 2024 09:12:11 +0200
+	s=arc-20240116; t=1729753963; c=relaxed/simple;
+	bh=ivHa9mrhegtxO3Q7geXr2Oyyb9aQ9mAh7cMUAd0X9aI=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=OxYDlzcf7RQOhUzJNYi7VDShXJMuzTLdP8nL2TBU9+dN8zsHNwpr/O/n8a/f/ghgYQTMbuAUe4txaKmcrgi8NZ0V0FCUz3mrHoe3W6TmZEsUeTAJfqvzhkhYy9qokwdy0us+wcjn4WmxjnGnB88uh2oamU7yQXWE33s3sVNul1o=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=PpZQNcLS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id A9AFCC4CEC7;
+	Thu, 24 Oct 2024 07:12:41 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729753962;
+	bh=ivHa9mrhegtxO3Q7geXr2Oyyb9aQ9mAh7cMUAd0X9aI=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=PpZQNcLSEE5cjifNukT7Vu7Fb6Ll7qVRDqojODlObL6Akfm2A3+KYVEcGbcKcot/C
+	 f0xFrQi9+q1IIDNkgZDFYYqsUwvhnLXeMW2YbSxxUMRNfh+8RANVT/xbdQgb9UX8t5
+	 4SLMU4fOLNiYH1XmjC/7Ufpz2eFt3JXNKmGAcU5oQ0PMcnEOMES9iWMfEjvKQa0CVW
+	 2kQZy1sPwQEGDIQjLEXc9ZTqt8NltOqb39KFFUwsKCD6R4lVQvb9hy8qAgSGlOFq6J
+	 c4IMCap3ohH2TLcF4fPl1g3ScS8Do+m7BE4yaqhICZQClo0qzLiwYhvWtX1RmOgXZ7
+	 XSW0B1s608Y3Q==
+Date: Thu, 24 Oct 2024 09:12:38 +0200
+From: Krzysztof Kozlowski <krzk@kernel.org>
+To: Tao Zhang <quic_taozha@quicinc.com>
+Cc: Suzuki K Poulose <suzuki.poulose@arm.com>, 
+	Mike Leach <mike.leach@linaro.org>, James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Mathieu Poirier <mathieu.poirier@linaro.org>, Leo Yan <leo.yan@linux.dev>, 
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>, coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org, 
+	linux-kernel@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-msm@vger.kernel.org
+Subject: Re: [PATCH v4 1/4] dt-bindings: arm:
+ qcom,coresight-static-replicator: Add property for source filtering
+Message-ID: <raa3otr6kmiq72qjb5rnqt5cluqw627jkfbvkxqi2vbjpbwpsb@v64xvghgxx75>
+References: <20241024065306.14647-1-quic_taozha@quicinc.com>
+ <20241024065306.14647-2-quic_taozha@quicinc.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [REGRESSION] spi: cadence-quadspi: STIG mode results in timeouts
- for Micron MT25QL01 flash
-To: Mark Brown <broonie@kernel.org>,
- Linux regressions mailing list <regressions@lists.linux.dev>
-Cc: Dhruva Gole <d-gole@ti.com>, Yoshitaka Ikeda <ikeda@nskint.co.jp>,
- linux-spi@vger.kernel.org, linux-kernel@vger.kernel.org,
- kernel-team@pengutronix.de
-References: <c2cdfba1-afcc-4a77-8890-7da49c4b73c2@pengutronix.de>
- <43b6b750-3f7d-437f-a62e-ab2dba06827a@leemhuis.info>
- <1127989f-3175-49c0-9611-e30194b04018@sirena.org.uk>
-From: Stefan Kerkmann <s.kerkmann@pengutronix.de>
-Content-Language: en-US, de-DE
-In-Reply-To: <1127989f-3175-49c0-9611-e30194b04018@sirena.org.uk>
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: 7bit
-X-SA-Exim-Connect-IP: 2a0a:edc0:0:900:1d::77
-X-SA-Exim-Mail-From: s.kerkmann@pengutronix.de
-X-SA-Exim-Scanned: No (on metis.whiteo.stw.pengutronix.de); SAEximRunCond expanded to false
-X-PTX-Original-Recipient: linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset=utf-8
+Content-Disposition: inline
+In-Reply-To: <20241024065306.14647-2-quic_taozha@quicinc.com>
 
-Hello,
-
-On 22.10.24 18:39, Mark Brown wrote:
-> On Mon, Oct 21, 2024 at 11:58:07AM +0200, Linux regression tracking (Thorsten Leemhuis) wrote:
+On Thu, Oct 24, 2024 at 02:53:03PM +0800, Tao Zhang wrote:
+> The is some "magic" hard coded filtering in the replicators,
+> which only passes through trace from a particular "source". Add
+> a new property "filter-src" to label a phandle to the coresight
+> trace source device matching the hard coded filtering for the port.
 > 
->> The culprit afaics was merged for v6.3-rc1. Makes me wonder: would
->> reverting this now even an option to fix this in mainline, or would this
->> just lead to a regression for someone else?
-> 
-> Given the description of the original commit I'd expect so.  My guess
-> would be that this is either tuning of the lengths involved or a quirk
-> that's needed to disable STIG on some devices.
+> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+> ---
+>  .../arm/arm,coresight-static-replicator.yaml  | 19 ++++++++++++++++++-
+>  1 file changed, 18 insertions(+), 1 deletion(-)
 
-Adding a quirk came to my mind as well. I unfortunately do not have a different
-QSPI chip to test against to see if it is a specific combination of peripheral
-and chip  or if using STIG is generally broken on the socfpga. With trying
-different lenghts do you refeer to `CQSPI_STIG_DATA_LEN_MAX`?
+Acked-by: Krzysztof Kozlowski <krzysztof.kozlowski@linaro.org>
 
-Regards,
-Stefan
-
--- 
-Pengutronix e.K.                       | Stefan Kerkmann             |
-Steuerwalder Str. 21                   | https://www.pengutronix.de/ |
-31137 Hildesheim, Germany              | Phone: +49-5121-206917-128  |
-Amtsgericht Hildesheim, HRA 2686       | Fax:   +49-5121-206917-9    |
+Best regards,
+Krzysztof
 
 
