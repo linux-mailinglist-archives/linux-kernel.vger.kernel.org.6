@@ -1,131 +1,172 @@
-Return-Path: <linux-kernel+bounces-379819-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379820-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 80F669AE42B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:49:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id E59FD9AE42D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:51:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AF5EC1C22B50
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:49:58 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 9FC75280F8C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:51:30 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A5E5A1D0159;
-	Thu, 24 Oct 2024 11:49:51 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 961E71CFECF;
+	Thu, 24 Oct 2024 11:51:24 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b="Qx5ZVtgo"
-Received: from mail.alien8.de (mail.alien8.de [65.109.113.108])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="KJm2tSDI"
+Received: from mail-wm1-f53.google.com (mail-wm1-f53.google.com [209.85.128.53])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 719C3170853;
-	Thu, 24 Oct 2024 11:49:48 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=65.109.113.108
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C7D6C170853;
+	Thu, 24 Oct 2024 11:51:21 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729770591; cv=none; b=oksSJvAxW+nzOKuuVjMX5W0+L/XRWOKJn2EJpGh0U1522S+feymSi1TFMCDGuZ0y5togefpDgXtz1Efv6YHbbLJNIDqeQ1aTd2Gnb59TJ6uGrU7atVXtDsU05nVhCm6GI4DgtgQmTnzwhpJekdOy39FOev7LkIXDK6hCKbKvfik=
+	t=1729770684; cv=none; b=IrURvhZsv9KWzmVxjCJ/Xuour5z1sRPTy+ZKn9rDwGBqIIuLmWA/OUtyKFgC5BgMl7lHA/g6ZPMntlBI6NxHwYhkM47mddijgPEAORVJIPOWzoUXlgV4rxGQ2cLEz4rj9asRW/eZxXtxsXLAMgL2OCMmPEV9tdaD0VlRrnob3kw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729770591; c=relaxed/simple;
-	bh=VbZ78Ol9IT+t2IlEXHuCD+qVCzE5Fs3KW5BPehToQj0=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=S12lvaxhd5Ww0iydWiPae/NB6h3dnvRzVoi+IPUjNi9x4EgEJhD4HaTpXmVgAA2JHCqthIu2N7XO2bWJjwgdfkfG+8teon+t541xVXkWFFf+19WTMMHTKN+OFlKAENJTegDKMfYBj8YSQFRZMNKVeZ8gJxlxHEOuxXPRZ6vS3KY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de; spf=pass smtp.mailfrom=alien8.de; dkim=pass (4096-bit key) header.d=alien8.de header.i=@alien8.de header.b=Qx5ZVtgo; arc=none smtp.client-ip=65.109.113.108
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=alien8.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=alien8.de
-Received: from localhost (localhost.localdomain [127.0.0.1])
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTP id 9F99140E0198;
-	Thu, 24 Oct 2024 11:49:40 +0000 (UTC)
-X-Virus-Scanned: Debian amavisd-new at mail.alien8.de
-Authentication-Results: mail.alien8.de (amavisd-new); dkim=pass (4096-bit key)
-	header.d=alien8.de
-Received: from mail.alien8.de ([127.0.0.1])
-	by localhost (mail.alien8.de [127.0.0.1]) (amavisd-new, port 10026)
-	with ESMTP id 1_QoP_aj4980; Thu, 24 Oct 2024 11:49:36 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=alien8.de; s=alien8;
-	t=1729770576; bh=wEQtHOaZ7+6zm6ZVhufBrrygdh+rqbRyaAN0gvYGngs=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=Qx5ZVtgo+Q10F8lUuT3gI86+AMnuOvyOV2RcSiG4ucdNCD7vdrq7f/C/k+EO2+Fif
-	 WYEwTRsZgRWDr7nrvlxl8Fagl/4BqnRX1ZEYbimKS8ZJfefqwwiRzdGQsomZIfJyJI
-	 lvNYauMRQn4gZnGLcK7iub7rFGqoRdbz9gPHnHCceFXJEdUfl2WF9rsuyAFnhxPrBa
-	 61ye/gOqYPIDvB4B50/J/mYl/8NNrncsODqEoo5GY1LY2SbFQu10Gd/+E2XA1jsKPK
-	 rf9lRsmOcSpTU/On1gzcdDwWtmQoVzwQnRVxrt2DAZh2jNaaJEQGly6lOyRq+x/Exi
-	 +9vkuV+Ktvu0r479C8+dUqVLXzSsNa6B0awmEQtp+7JUcxgdvZF+iUgELhlqRmlZIg
-	 lEgRGqYMzoDvxO4fji77yi3s0/KehjDHmTqH6SAEaj4xPQtAP8zvaU4VbjeL1Obu9t
-	 M9TfdO84Lh8j6h/r34/oShhAljwYGorVwglnlACWWo/EqoXj4e95P3PQ2WlRZoUs+O
-	 mSdsvueRkhHN7s0NQrNBXk4lbytXaNhNM4MQ9Q9rGQ4g/JbHB0/mD2m5Bx2Xp6LC34
-	 LItT4zzkmrsaWevqoaEcoShGsXSQZJY2mj93BM57NgpqJT5LK09QWNW9Wl329Fl8lT
-	 I+1hkjmzz/6mEQoE28tEMU3I=
-Received: from zn.tnic (p5de8e8eb.dip0.t-ipconnect.de [93.232.232.235])
-	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
-	 key-exchange ECDHE (P-256) server-signature ECDSA (P-256) server-digest SHA256)
-	(No client certificate requested)
-	by mail.alien8.de (SuperMail on ZX Spectrum 128k) with ESMTPSA id 00EA940E0191;
-	Thu, 24 Oct 2024 11:49:17 +0000 (UTC)
-Date: Thu, 24 Oct 2024 13:49:12 +0200
-From: Borislav Petkov <bp@alien8.de>
-To: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
-Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
-	tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
-	Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
-	Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com,
-	David.Kaplan@amd.com, x86@kernel.org, hpa@zytor.com,
-	peterz@infradead.org, seanjc@google.com, pbonzini@redhat.com,
-	kvm@vger.kernel.org
-Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
-Message-ID: <20241024114912.GCZxo0ODKlXYGMnrdk@fat_crate.local>
-References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
- <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
- <9b943722-c722-4a38-ab17-f07ef6d5c8c6@intel.com>
- <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
- <2436d521-aa4c-45ac-9ccc-be9a4b5cb391@intel.com>
- <e4568d3d-f115-4931-bbc6-9a32eb04ee1c@amd.com>
- <20241023163029.GEZxkkpdfkxdHWTHAW@fat_crate.local>
- <12f51956-7c53-444d-a39b-8dc4aa40aa92@amd.com>
+	s=arc-20240116; t=1729770684; c=relaxed/simple;
+	bh=ObToXn1uN52Ji+FyF1i7vx015LgZ9B/m9BxmJO7giVw=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=hNdYXoOXJevDq4GH+BuOpxM79MTNrjn/qU7Prh0beme/6buIuEFhbIPJQuTMcsJkYniUUphHvG08JPu7c1uDktd749g9zNyGkkcA5k8fFekN3zrTlTevYVbvcNdj7NVw6KKMFBiLpKgTpBkj5XxO77LdIkt9qlduuj6MREfpVIM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=KJm2tSDI; arc=none smtp.client-ip=209.85.128.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-wm1-f53.google.com with SMTP id 5b1f17b1804b1-43155afca99so12942685e9.1;
+        Thu, 24 Oct 2024 04:51:21 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=gmail.com; s=20230601; t=1729770680; x=1730375480; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :from:to:cc:subject:date:message-id:reply-to;
+        bh=4f+ncTElWxuaHlRSc9sIvuc0sLwN6e+jbNOHYwrcO2s=;
+        b=KJm2tSDIh2MlW5E1dNBmWe84EXMSjYQY9I2Rc+VgIIL+KMkrw9vglS3tY+3E4iTd/W
+         dE35rX+4Alr5CWa8loEVdOyKqbYbLPGmfAUVeQniKqMTnCTbrtTgI9czpkBqL0xtrYyg
+         T7YhuvvLnfUpGC9sYdGLD0KdoVsdAvDdHR0jY9zymSvYFtWgnEIKJI2TujEjXnQ7LdOO
+         9bh8/mSflwJpathXJqko4FeYEWvJHhTgNQPAODeQ92qNw1tat4jijiQUezdpwTCmQvRk
+         9LGgvZEjb4ev3Esd08u+24OPzWLf0d2ZClROKPUyAjaKcGACmm2FEZXG/9EYTnSTTIXA
+         mD5A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729770680; x=1730375480;
+        h=content-transfer-encoding:in-reply-to:content-language:from
+         :references:cc:to:subject:user-agent:mime-version:date:message-id
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=4f+ncTElWxuaHlRSc9sIvuc0sLwN6e+jbNOHYwrcO2s=;
+        b=a7eESv0t2pOz/EjSl0yC/KcdAYxsAnzUkGLlfpqGNBxJf25CqlLnaKgSsuthjGBh5D
+         U8MYXwV0iiUxiVlHRcWRY+DF4lgPWCWDOsfbPgrUG+ol/EZJP2Cem5jRCicvNyXoyIjp
+         FXQ1tHGmBZA35fjTNPPtJ00ZZ49kZ2Yi0nD6nA+WqWQlgpclSulWKEQxchXJ3VTZdHvL
+         KbFhRglcHqRpEocvC7w4d9RwSAQVnozV6JM2YRNXxCqXyMB8NqRDUOBKi9klQcie9umU
+         hmBJk8WINZtssvf1zoJtx8RLRuN3MbH0gBFCiCmg9GhyeOiNEepUGt/pxLVVCjjhnioZ
+         Bspg==
+X-Forwarded-Encrypted: i=1; AJvYcCVUSDbXa0bOWUEukSaLE39YwUP0kGvLIL0VzI+GRel2ZvacOWsdy3UPp24qXuV10opoO8TTKEqLrq+aAFI=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzaMVci3qeJCRkk0we4HoHSIhYbCni7NbwH1xx1vd/UOlj4+6YY
+	UP7p5KbMM9utLGSFxQhIro7L897IX55YWCake0I55Gecv7zYzbsj
+X-Google-Smtp-Source: AGHT+IGUts/pqiOnQUDlq8+mpIjJ6pvrQA50D7aIMHxlYlsnD/0uHpYCwABMwVeSbjaLKSV7g7Hd8w==
+X-Received: by 2002:a05:600c:4689:b0:42c:b826:a26c with SMTP id 5b1f17b1804b1-4318b5a561cmr11835735e9.8.1729770679744;
+        Thu, 24 Oct 2024 04:51:19 -0700 (PDT)
+Received: from ?IPV6:2a01:e11:5400:7400:4be9:6ab9:1062:7d2a? ([2a01:e11:5400:7400:4be9:6ab9:1062:7d2a])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4317d03ee7asm58999885e9.0.2024.10.24.04.51.17
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 04:51:19 -0700 (PDT)
+Message-ID: <58e3d8a4-9e8b-41d5-a134-d41b38bd7216@gmail.com>
+Date: Thu, 24 Oct 2024 13:51:14 +0200
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=utf-8
-Content-Disposition: inline
-In-Reply-To: <12f51956-7c53-444d-a39b-8dc4aa40aa92@amd.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH] bcachefs: Fix invalid shift in validate_sb_layout()
+To: Kent Overstreet <kent.overstreet@linux.dev>
+Cc: linux-bcachefs@vger.kernel.org, linux-kernel@vger.kernel.org,
+ skhan@linuxfoundation.org,
+ syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+References: <20241023213043.47846-2-gianf.trad@gmail.com>
+ <be3e7378-7aec-4ebb-b6e6-e7b824452adb@gmail.com>
+ <jaxnjw5ergn7zrnjuzzosgclpmv5st77gtfaj75my3hblufrn2@b4si2orrodw5>
+From: Gianfranco Trad <gianf.trad@gmail.com>
+Content-Language: en-US, it
+In-Reply-To: <jaxnjw5ergn7zrnjuzzosgclpmv5st77gtfaj75my3hblufrn2@b4si2orrodw5>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
-On Thu, Oct 24, 2024 at 09:31:01AM +0530, Neeraj Upadhyay wrote:
-> Please let me know if I didn't understand your questions correctly. The performance
-> concerns here are w.r.t. these backing page allocations being part of a single
-> hugepage.
+On 24/10/24 13:24, Kent Overstreet wrote:
+> On Thu, Oct 24, 2024 at 12:48:30PM +0200, Gianfranco Trad wrote:
+>> On 23/10/24 23:30, Gianfranco Trad wrote:
+>>> Add check on layout->sb_max_size_bits against BCH_SB_LAYOUT_SIZE_BITS_MAX
+>>> to prevent UBSAN shift-out-of-bounds in validate_sb_layout().
+>>>
+>>> Reported-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+>>> Closes: https://syzkaller.appspot.com/bug?extid=089fad5a3a5e77825426
+>>> Fixes: 03ef80b469d5 ("bcachefs: Ignore unknown mount options")
+>>> Tested-by: syzbot+089fad5a3a5e77825426@syzkaller.appspotmail.com
+>>> Signed-off-by: Gianfranco Trad <gianf.trad@gmail.com>
+>>> ---
+>>>    fs/bcachefs/errcode.h  | 1 +
+>>>    fs/bcachefs/super-io.c | 5 +++++
+>>>    2 files changed, 6 insertions(+)
+>>>
+>>> diff --git a/fs/bcachefs/errcode.h b/fs/bcachefs/errcode.h
+>>> index 649263516ab1..b6cbd716000b 100644
+>>> --- a/fs/bcachefs/errcode.h
+>>> +++ b/fs/bcachefs/errcode.h
+>>> @@ -222,6 +222,7 @@
+>>>    	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_type)			\
+>>>    	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_nr_superblocks)	\
+>>>    	x(BCH_ERR_invalid_sb_layout,	invalid_sb_layout_superblocks_overlap)	\
+>>> +	x(BCH_ERR_invalid_sb_layout,    invalid_sb_layout_sb_max_size_bits)     \
+>>>    	x(BCH_ERR_invalid_sb,		invalid_sb_members_missing)		\
+>>>    	x(BCH_ERR_invalid_sb,		invalid_sb_members)			\
+>>>    	x(BCH_ERR_invalid_sb,		invalid_sb_disk_groups)			\
+>>> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+>>> index ce7410d72089..44d0ac9b00dd 100644
+>>> --- a/fs/bcachefs/super-io.c
+>>> +++ b/fs/bcachefs/super-io.c
+>>> @@ -287,6 +287,11 @@ static int validate_sb_layout(struct bch_sb_layout *layout, struct printbuf *out
+>>>    		return -BCH_ERR_invalid_sb_layout_nr_superblocks;
+>>>    	}
+>>> +	if (layout->sb_max_size_bits > BCH_SB_LAYOUT_SIZE_BITS_MAX) {
+>>> +		prt_printf(out, "Invalid superblock layout: max_size_bits too high");
+>>> +		return -BCH_ERR_invalid_sb_layout_sb_max_size_bits;
+>>> +	}
+>>> +
+>>>    	max_sectors = 1 << layout->sb_max_size_bits;
+>>>    	prev_offset = le64_to_cpu(layout->sb_offset[0]);
+>>
+>> Wondering if this other patch might be considered more correct to prevent
+>> shift oob, given also [0]:
 > 
-> Grouping of allocation together allows these pages to be part of the same 2M NPT
-> and RMP table entry, which can provide better performance compared to having
-> separate 4K entries for each backing page. For example, to send IPI to target CPUs,
-> ->send_IPI callback (executing on source CPU) in Secure AVIC driver writes to the
-> backing page of target CPU. Having these backing pages as part of the single
-> 2M entry could provide better caching of the translation and require single entry
-> in TLB at the source CPU.
+> Your first patch looks better, we want to know if we're feeding it
+> garbage
+> 
 
-Lemme see if I understand you correctly: you want a single 2M page to contain
-*all* backing pages so that when the HV wants to send IPIs etc, the first vCPU
-will load the page translation into the TLB and the following ones will have
-it already?
+Understood. Thanks Kent.
+Have a nice day,
+--Gian
+>>
+>> diff --git a/fs/bcachefs/super-io.c b/fs/bcachefs/super-io.c
+>> index ce7410d72089..428172897501 100644
+>> --- a/fs/bcachefs/super-io.c
+>> +++ b/fs/bcachefs/super-io.c
+>> @@ -287,7 +287,7 @@ static int validate_sb_layout(struct bch_sb_layout
+>> *layout, struct printbuf *out
+>>   		return -BCH_ERR_invalid_sb_layout_nr_superblocks;
+>>   	}
+>>
+>> -	max_sectors = 1 << layout->sb_max_size_bits;
+>> +	max_sectors = 1 << min(BCH_SB_LAYOUT_SIZE_BITS_MAX,
+>> layout->sb_max_size_bits);
+>>
+>>   	prev_offset = le64_to_cpu(layout->sb_offset[0]);
+>>
+>> Also this patch was already tested by syzbot [1]
+>>
+>> [0] 71dac2482ad3c8d4a8b8998a96751f009bad895f ("bcachefs:
+>> BCH_SB_LAYOUT_SIZE_BITS_MAX")
+>> [1] https://syzkaller.appspot.com/x/log.txt?x=1640b640580000
+>>
+>> Thanks for your time,
+>>
+>> -- Gian
+>>
 
-Versus having separate 4K pages which would mean that everytime a vCPU's backing
-page is needed, every vCPU would have to do a TLB walk and pull it in so that
-the mapping's there?
-
-Am I close?
-
-If so, what's the problem with loading that backing page each time you VMRUN
-the vCPU?
-
-IOW, how noticeable would that be?
-
-And what guarantees that the 2M page containing the backing pages would always
-remain in the TLB?
-
-Hmmm.
-
--- 
-Regards/Gruss,
-    Boris.
-
-https://people.kernel.org/tglx/notes-about-netiquette
 
