@@ -1,128 +1,105 @@
-Return-Path: <linux-kernel+bounces-380271-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380272-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 84BA19AEB56
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:02:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 855269AEB5D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 18:04:20 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AD9F91C223F2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:02:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2FB3FB215E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:04:18 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F5CF1F708E;
-	Thu, 24 Oct 2024 16:02:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96F7E1F76A7;
+	Thu, 24 Oct 2024 16:04:09 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="EK9pKIXc"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEu7Igyh"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C6EB71F5825;
-	Thu, 24 Oct 2024 16:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id F22BF1F7084;
+	Thu, 24 Oct 2024 16:04:08 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729785753; cv=none; b=Dk2uCZEFrxbUzIwXFJ9SlVBc3fsDBFhcX1IGDHyazcKnGmC+FYcV2oX2Zm3tNmM8kkP5z/fPfMHk9GtCTc8NgivXPWmhGF57/IHqZJ89PHK3iVLC6YPiSKrGvh0N/dvdhMizpcd/d8qbFSWQds22ZdNAhH2Wx64p7Z8pS5UQj3U=
+	t=1729785849; cv=none; b=YOL3UJ3Ow/++4ZlzPcsfyF0HeYZh/CdvSCIhPXjX4vhMAwtsM4Hp3g+RY5npcsyIuhzH7ZtkeLzr759Ley1cuc9Tx4UTYNImbEUg1GjhHa/M4fO2Vi2/KyagJcq7ojKjG5B9KlSGmi+ZDJvSLPKAOnlK5maJR2ZK532s5J0v1Fs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729785753; c=relaxed/simple;
-	bh=h0hSRniz6MntdSENub19c9kSV/crZIkSPwyBi1krOG8=;
-	h=Date:Message-ID:From:To:Cc:Subject:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=SHkhqUk8brJQE76UpTs11B29UKIQutu/R59f68OfZS+SISPsWulL4oddBSfkKYUT3WUft2RhiObj3LFdsZbaEq03VfZpSVJX5wqUQafBpLwkEOpiZrg770N72o7FMDfyrebmdLB1NHcbNAK01hQE61U6eC2a9Dl9m+0/+aTVCrY=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=EK9pKIXc; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 4D9ECC4CEE3;
-	Thu, 24 Oct 2024 16:02:33 +0000 (UTC)
+	s=arc-20240116; t=1729785849; c=relaxed/simple;
+	bh=Myjz9JYsX77B7JYfT/JXdIOgce90SWSzlxORYDjC8oA=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=JaylMTbmXbH0AuBk9vixVcbEZTq70umKGoSZjr9yYvDTuMsf1rXJEvFLID4EEYJBnDWjWelAox6WZhD+TpPafBnE93vsmC0o6MjYZx6K0t6Pl7Z5Up9B8pzD1/gbh76V1HjxYQ7Fyrgz9ivWa65NR5r/hkXH1pYnbhiHCaU+QU8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEu7Igyh; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 16525C4CEC7;
+	Thu, 24 Oct 2024 16:04:05 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729785753;
-	bh=h0hSRniz6MntdSENub19c9kSV/crZIkSPwyBi1krOG8=;
-	h=Date:From:To:Cc:Subject:In-Reply-To:References:From;
-	b=EK9pKIXcJOvunjlFF+uDgT1nL4BuIu0y73R1xZAJXMqypPCWwkH0Msa1mvh9HvOG9
-	 d8T+CRFgs5Z5OtX9IblhXfxnlShdTvDulV0nDSw81eVYVapHRVBQKz5zZnezQJWOOr
-	 VIq+RD5zgmrpo1MMX+FXZU4EyIHUxON5EYu/8RxV+t+v3yQNGsXPy2VCw6SnWD2+vA
-	 tXa0yzUVwjMrNBWaZCHey5Z3xqap+2+S7D04bAIKX2FMb0iC940Mv2AtpoZzJJT1Sa
-	 udbBz8hj0xsuRy8Q4BKDAo6VSpkvtg8C+XwFjC2j2SpeLnC9zRpqG28Xca7QpaoaAH
-	 kbGE6UJO0aeiQ==
-Received: from sofa.misterjones.org ([185.219.108.64] helo=goblin-girl.misterjones.org)
-	by disco-boy.misterjones.org with esmtpsa  (TLS1.3) tls TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384
-	(Exim 4.95)
-	(envelope-from <maz@kernel.org>)
-	id 1t40IA-006Vst-OP;
-	Thu, 24 Oct 2024 17:02:30 +0100
-Date: Thu, 24 Oct 2024 17:02:29 +0100
-Message-ID: <86r08532wa.wl-maz@kernel.org>
-From: Marc Zyngier <maz@kernel.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: <andersson@kernel.org>,
-	<konradybcio@kernel.org>,
-	<krzk+dt@kernel.org>,
-	<robh+dt@kernel.org>,
-	<linux-kernel@vger.kernel.org>,
-	<linux-arm-msm@vger.kernel.org>,
-	<devicetree@vger.kernel.org>,
-	<conor+dt@kernel.org>,
-	<abel.vesa@linaro.org>,
-	<srinivas.kandagatla@linaro.org>
-Subject: Re: [PATCH 0/2] X1E001DE Snapdragon Devkit for Windows
-In-Reply-To: <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
-References: <20240911073337.90577-1-quic_sibis@quicinc.com>
-	<f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
-User-Agent: Wanderlust/2.15.9 (Almost Unreal) SEMI-EPG/1.14.7 (Harue)
- FLIM-LB/1.14.9 (=?UTF-8?B?R29qxY0=?=) APEL-LB/10.8 EasyPG/1.0.0 Emacs/29.4
- (aarch64-unknown-linux-gnu) MULE/6.0 (HANACHIRUSATO)
+	s=k20201202; t=1729785848;
+	bh=Myjz9JYsX77B7JYfT/JXdIOgce90SWSzlxORYDjC8oA=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=HEu7Igyh7nj3naMU5ewRp2bwWjflOn8o/POIpUa6Oe75xASEzF8dGSuvc9eWQZGUV
+	 TOk4L6DZZzpz2gDhvEGhev8TEsz7Nw3kQIglKNgLuMkVFHstd+K5JcTvK8qjthcQ0R
+	 FC80nS1GtXxZi5KcmRo2iVv8loA/2lSy8PMhxh0NDWfzuo3cz0D3xT7sAiqN30knWo
+	 UjcCScpsimQjYig5mMr4oEtp4aTnNK+ANCn0f6A7iiOLnxcP/GcOFvqSVPMXSONXL5
+	 1l8Vli5eqfO7nloEi7YtxL2eBC8mF+oVBe/JInQVkAAf08KmLrD2BoH+mCAiBrKlfC
+	 B4zl8KA9Wmv0g==
+Date: Thu, 24 Oct 2024 17:04:04 +0100
+From: Simon Horman <horms@kernel.org>
+To: Jijie Shao <shaojijie@huawei.com>
+Cc: Paolo Abeni <pabeni@redhat.com>, davem@davemloft.net,
+	edumazet@google.com, kuba@kernel.org, shenjian15@huawei.com,
+	salil.mehta@huawei.com, liuyonglong@huawei.com,
+	wangpeiyang1@huawei.com, lanhao@huawei.com, chenhao418@huawei.com,
+	netdev@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V2 net 1/9] net: hns3: default enable tx bounce buffer
+ when smmu enabled
+Message-ID: <20241024160404.GC1202098@kernel.org>
+References: <20241018101059.1718375-1-shaojijie@huawei.com>
+ <20241018101059.1718375-2-shaojijie@huawei.com>
+ <50874428-b4ef-4e65-b60b-1bd917f1933c@redhat.com>
+ <d68ad0c3-3d53-406b-ad98-5686512fa48e@huawei.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-MIME-Version: 1.0 (generated by SEMI-EPG 1.14.7 - "Harue")
-Content-Type: text/plain; charset=US-ASCII
-X-SA-Exim-Connect-IP: 185.219.108.64
-X-SA-Exim-Rcpt-To: quic_sibis@quicinc.com, andersson@kernel.org, konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org, linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, conor+dt@kernel.org, abel.vesa@linaro.org, srinivas.kandagatla@linaro.org
-X-SA-Exim-Mail-From: maz@kernel.org
-X-SA-Exim-Scanned: No (on disco-boy.misterjones.org); SAEximRunCond expanded to false
+MIME-Version: 1.0
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <d68ad0c3-3d53-406b-ad98-5686512fa48e@huawei.com>
 
-Hi Sibi,
-
-On Wed, 23 Oct 2024 12:05:35 +0100,
-Sibi Sankar <quic_sibis@quicinc.com> wrote:
+On Thu, Oct 24, 2024 at 04:31:46PM +0800, Jijie Shao wrote:
 > 
-> 
-> 
-> On 9/11/24 13:03, Sibi Sankar wrote:
-> > Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001DE
-> > is the speed binned variant of X1E80100 that supports turbo boost up to
-> > 4.3 Ghz. The initial support includes the following:
+> on 2024/10/24 16:26, Paolo Abeni wrote:
+> > On 10/18/24 12:10, Jijie Shao wrote:
+> > > From: Peiyang Wang <wangpeiyang1@huawei.com>
+> > > 
+> > > The SMMU engine on HIP09 chip has a hardware issue.
+> > > SMMU pagetable prefetch features may prefetch and use a invalid PTE
+> > > even the PTE is valid at that time. This will cause the device trigger
+> > > fake pagefaults. The solution is to avoid prefetching by adding a
+> > > SYNC command when smmu mapping a iova. But the performance of nic has a
+> > > sharp drop. Then we do this workaround, always enable tx bounce buffer,
+> > > avoid mapping/unmapping on TX path.
+> > > 
+> > > This issue only affects HNS3, so we always enable
+> > > tx bounce buffer when smmu enabled to improve performance.
+> > > 
+> > > Signed-off-by: Peiyang Wang <wangpeiyang1@huawei.com>
+> > > Signed-off-by: Jian Shen <shenjian15@huawei.com>
+> > > Signed-off-by: Jijie Shao <shaojijie@huawei.com>
+> > I'm sorry to nick pick on somewhat small details, but we really need a
+> > fixes tag here to make 110% clear is a bugfix. I guess it could be the
+> > commit introducing the support for the buggy H/W.
 > > 
-> > -DSPs
-> > -Ethernet (RTL8125BG) over the pcie 5 instance.
-> > -NVme
-> > -Wifi
-> > -USB-C ports
+> > Thanks,
 > > 
+> > Paolo
 > 
-> Hi All,
-> 
-> With the X1E Devkit cancelled and with no firmware updates promised for
-> it perpetually, please chime in and let me know if you still want to get
-> this series and rest (external-dp, usb-A ports, sd card slot and 3.5 mm
-> Jack) merged and have it supported upstream for the folks who already
-> received it!
+> I have a little doubt that this patch is about H/W problem,
+> so how can we write the the fixes tag?
 
-I have one of these machines in my zoo, and would definitely want to
-see it fully supported upstream, even if QC never updates it again.
-The feature set of this box is rare enough that it makes it a very
-interesting platform.
+Hi Jijie,
 
-So far, everything seems to be working just fine (except for the
-missing features you have mentioned).
-
-The only change I made was to enable the ITS for pcie5, which was
-routed via the PCIe MSI widget instead. But that's a SoC dtsi issue
-for which I'll post a patch separately.
-
-Thanks again for your effort, and I'm looking forward to seeing this
-box fully supported upstream despite its very short shelf life! ;-)
-
-	M.
-
--- 
-Without deviation from the norm, progress is not possible.
+That is a good point. But the much point of the Fixes tag is to indicate how
+far back the fix should be backported. So I would say the ID of the patch
+where the user would have first seen this problem - possibly the patch that
+added the driver.
 
