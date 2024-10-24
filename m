@@ -1,162 +1,134 @@
-Return-Path: <linux-kernel+bounces-380670-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380678-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FBC39AF460
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:10:14 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 50DFC9AF470
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:12:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 88E671F218CE
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:10:13 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1468B28120C
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:12:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D5EBF21A71B;
-	Thu, 24 Oct 2024 21:08:13 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C724921D187;
+	Thu, 24 Oct 2024 21:08:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="r1zlpjKK"
-Received: from mail-wm1-f46.google.com (mail-wm1-f46.google.com [209.85.128.46])
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="asyKr1Qd"
+Received: from mail-wm1-f47.google.com (mail-wm1-f47.google.com [209.85.128.47])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0DB84217330
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 21:08:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.46
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id ADC17218302
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 21:08:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729804093; cv=none; b=FiLLjP3i6VNUPGgK3/JCG07L7jvrgBJAR1YwX0ijP4+TWSu4+0JatHPdqmmkumjl5fpq6faJiSUQnGmOg600fx0ac667VPton/U+MFMDvvNcQA7+OoUXjaCsaTSDu2dwmZ24suhMD9Z30c6AjqS+CsNZWJYYNxEFarfOmHWgc/A=
+	t=1729804109; cv=none; b=dhrnieJAYtAfisgKFd2qYiKfe0yCFHR/n1iItvP3/hfrNnEshmwLGr02XAI+ety/q5Bf2dZZ6aLGf8Z2Zv5jKMFGRFlwoWLvw3nWuoWHWbw8hTvUdNqmIIglL+d5/r6ni4ojyulirJZTpnFZ1cukQ73IZrlJuQwqV1v3RZCctGE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729804093; c=relaxed/simple;
-	bh=qTvX4GUdkV9jrp2X28kXVCjyTn+6p9HoYruQkR5LkXA=;
+	s=arc-20240116; t=1729804109; c=relaxed/simple;
+	bh=vVmZCw1sII2JvAbtHtly8a9N6Qwt9QMxp8VcML928yM=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=AbjOouvBLWWrG473ZOrU8PA6SUtpZHGVnGIFCdcj8zpGNrpFLUTQ/mbXPXEv1pAdLVvD1dINjzTRVCs1e2HbumqTMBH54zJAGol6gzBeP/kwXf4ukro7JIUobC0QnjG3e4bo+kLfNvxkvZugpaPeKyXA7PSszpqemlYL+dzX4tI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=r1zlpjKK; arc=none smtp.client-ip=209.85.128.46
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
-Received: by mail-wm1-f46.google.com with SMTP id 5b1f17b1804b1-43163667f0eso14081025e9.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:08:09 -0700 (PDT)
+	 Content-Type:Content-Disposition:In-Reply-To; b=o8irOutnbsOdEdpugpgs7M0uxoEs6XIzKaUzhlVzvSzcjP9Hg3BhZtGdBaRvjf4Ks6TeCUxtvxbIRI3Sj6eVPTV8WeDCguUhmCtOFOvVNd6ATWEErknn3NzLIrJCdHxod/8W+D54mv5Q7QrbcDQ4PNlDTFQiIEuC3uTGCRc3X68=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=asyKr1Qd; arc=none smtp.client-ip=209.85.128.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-wm1-f47.google.com with SMTP id 5b1f17b1804b1-4315baec69eso14085745e9.2
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:08:26 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729804088; x=1730408888; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=JXzfJ7cqlnASO1zqkCXSkoonsDfJDkVTL0G0jDOPo4U=;
-        b=r1zlpjKKhtUbDGJ6HVoq+W+Dlpk9Deu4QRG2Md9++kTrvpu7ycVchA8hha+1vbXxyT
-         LsZV0vdMZiL0wA0Mtw92pkWiNkCcerS+TfdgKHWlyllxdNTZrWNW3fGd1ERH+YZK6AeE
-         0i24Ey5Cn3YK0sIE8tA10NnXOlD4/PirCaacEw1SLRJcPw31S7UoPSjINepNgsQidujv
-         HqPIbDUAHZvu3prGEfMfwHtjlxbl4eBZu24/jx+djWAu5jBB2jI7ckCJfkGY/lEavrMN
-         BBLXLU8wWLjSw/W1es6jAVa2/cye4joZD8aEMEcsj3rwt1eV+6TS/A1SD90VosusIUqx
-         +BWg==
+        d=suse.com; s=google; t=1729804105; x=1730408905; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=S4n63Mb1tGM1IatUclRz9ifPt5Kd2Kg/qSEOCtMtI4c=;
+        b=asyKr1QdIIAf6F83no2illp6O+3fG0sr+8gw7m+EmLBFKumBku+i9rHC5FcQ23p8Qy
+         nm+uHkC1SoXgrhLfN9rpOBmT1YVuQkq3QXkLTErvofvi01qUVR8BS13HDxJxXShpVTtX
+         pPfttg0BqinV89kdyHzUQUYdOQ0hiW6lTF6lBCizfrw4iWvWTVlQXxfpx/96i8jbXZC/
+         2+RqMe8CPXdfAIx/BUqmSEbwiMOKj+fuzC32IzUGk9DQEpwz7HSEJkgGkwXjfappyb6I
+         VULkEyLw7Kdo0n6kDA9rYyXuxbc1I+TUVX4aKCM8ywNFpCcOkEtUIZ6imvSCEwXg8pRH
+         hljA==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729804088; x=1730408888;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=JXzfJ7cqlnASO1zqkCXSkoonsDfJDkVTL0G0jDOPo4U=;
-        b=ZNHmzWHQjUHC/HWx8sPbGRawQCcW1OayCvQ89E+FlmFhj7dsQl8p5CcU+nrOQ3wXQm
-         5yq2ms8XHdpvKS91vfaF/Nn0kgRgsTiMFt/UPAaHMBEUGKcGYvBkuJdUBKSsfX7EDc78
-         kc4dwhAUjU69yYxCkewlOLw2PSkdN+1ucT+76WkX0V6UydIebv4cBeYJihb6RiXvdcgd
-         4cOYFxJfR4WX2/454AaSJJLzse1Oe+X2DSTRQuAtmYP+FW2hXcSHwqOSI7rxyNt1rD7R
-         gnWcmnHIRSphchr2zvNPunMphNEbfUhUWEbueRX3M90h3MiU4mw1ZPN6iEjPiZAev6Nk
-         Z6EA==
-X-Forwarded-Encrypted: i=1; AJvYcCV3TbmyTNJ3yYqh+GLWQ5JGV4QPu6xeKNG4mt3q1v9JYU29PpzYeK+geAxlfd11YBC03DTFwZ9NOLuT+2Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YymbBA78OMwrYZQoARXgZu2pOP61O7bR8xUPh84LfcwVd61Dk3q
-	D9Csqevnx+F2/NHNaEIZ/kWyTP1+nyjbn21sjU43yjzZSOviXHtX9k9soQa6DVM=
-X-Google-Smtp-Source: AGHT+IFPD1/8m7Hsha9KdxajU1P1rbyaitEfowedegYL3ikz3BOnud7i8xwSlMTzFILBgSYBentRcg==
-X-Received: by 2002:a05:600c:4e8e:b0:426:64a2:5362 with SMTP id 5b1f17b1804b1-431841fd6b6mr59065025e9.8.1729804088119;
-        Thu, 24 Oct 2024 14:08:08 -0700 (PDT)
-Received: from localhost ([2a02:8071:b783:6940:b203:5494:7e5a:8c7b])
-        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b56facasm28351265e9.33.2024.10.24.14.08.07
+        d=1e100.net; s=20230601; t=1729804105; x=1730408905;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=S4n63Mb1tGM1IatUclRz9ifPt5Kd2Kg/qSEOCtMtI4c=;
+        b=IeE0cK2f/UkSRJTo7JHkijJJ2s4KNgjeGdygO5WcjqXS43bQ4DCX/4cATjY/I9F7Bl
+         9WW9qO6yah2kVQUH6LzP/i3o4E/GURE7wDkwkfs8aETZ7H2m6FMDVQGSde4JW42roxWb
+         AAaMAlyOL/Q2AHXo0NGFlcRLw+dm8wnUp8UdIkTx3keINjrrbcG4jn0hX1I+i4G3Dqal
+         DXjlppkWai8cf7LBV4sVp8VxM3hT4HSU1IHuDbnOFN07ccAdnZMszRiWWChH9W8djkHn
+         2pOkgBdKP3h8Yf9/NKawFN5+EYS08RnSkSgSvp4nFIun8uzPCnO7Chax2ckWqHpWKJpq
+         Rmfw==
+X-Forwarded-Encrypted: i=1; AJvYcCViacu9ONKf8wEzZ3n7eKM/LUCsQOciQGSnVt8NeQ8MRSEVE2WNpWXw/IMx05oASyjIqv3yNE32mmlVHBw=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzngvu9Dpv7GWrhIR7gEw/lKBJg6NHqzJN5hF56XQ0rUV02AxhM
+	qh7zIQR/nS4Z8Cq8qpi2MBp+E66XKU4nmlzlW8EetQCeiTFFBRAq5ndVGEMXmPo=
+X-Google-Smtp-Source: AGHT+IGkLoUtU7fDoIxQFhiZArRp3INvQyAVYG/gF7NuR8gQG3bPft4cqk+7+GiGG1Y8PqFuf8HOsA==
+X-Received: by 2002:a05:600c:46c4:b0:42a:a6d2:3270 with SMTP id 5b1f17b1804b1-43184224094mr66088935e9.21.1729804104987;
+        Thu, 24 Oct 2024 14:08:24 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id ffacd0b85a97d-37ee0a5b384sm12112309f8f.57.2024.10.24.14.08.24
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 14:08:07 -0700 (PDT)
-Date: Thu, 24 Oct 2024 23:08:05 +0200
-From: Uwe =?utf-8?Q?Kleine-K=C3=B6nig?= <u.kleine-koenig@baylibre.com>
-To: Dan Carpenter <dan.carpenter@linaro.org>
-Cc: Alex Lanzano <lanzano.alex@gmail.com>, 
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, Maxime Ripard <mripard@kernel.org>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Simona Vetter <simona@ffwll.ch>, Dmitry Baryshkov <dmitry.baryshkov@linaro.org>, 
-	Mehdi Djait <mehdi.djait@bootlin.com>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	kernel-janitors@vger.kernel.org
-Subject: Re: [PATCH next] drm/sharp-memory: Fix some checks in
- sharp_memory_probe()
-Message-ID: <hojly7qagyszxbgonzqmuuxucdfqwovrjyiktdxpibku6yodum@n7algnce2tts>
-References: <0d307349-c141-49ee-8b34-67caf5f8b638@stanley.mountain>
+        Thu, 24 Oct 2024 14:08:24 -0700 (PDT)
+Date: Thu, 24 Oct 2024 23:08:23 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Yosry Ahmed <yosryahmed@google.com>
+Cc: Shakeel Butt <shakeel.butt@linux.dev>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 3/3] memcg-v1: remove memcg move locking code
+Message-ID: <Zxq3R25YoRO9m7yT@tiehlicka>
+References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+ <20241024065712.1274481-4-shakeel.butt@linux.dev>
+ <Zxp63b9WlI4sTwWk@google.com>
+ <7w4xusjyyobyvacm6ogc3q2l26r2vema5rxlb5oqlhs4hpqiu3@dfbde5arh3rg>
+ <Zxqj7hw6Q6ak8aJf@tiehlicka>
+ <CAJD7tkYsCev299G=h2r_e6i34+ccdXJYphv-bQbROqOd7Lr1Uw@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha512;
-	protocol="application/pgp-signature"; boundary="3hjnzdxx2pfoo4ij"
+Content-Type: text/plain; charset=utf-8
 Content-Disposition: inline
-In-Reply-To: <0d307349-c141-49ee-8b34-67caf5f8b638@stanley.mountain>
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <CAJD7tkYsCev299G=h2r_e6i34+ccdXJYphv-bQbROqOd7Lr1Uw@mail.gmail.com>
 
+On Thu 24-10-24 13:32:53, Yosry Ahmed wrote:
+> On Thu, Oct 24, 2024 at 12:45 PM Michal Hocko <mhocko@suse.com> wrote:
+> >
+> > On Thu 24-10-24 10:26:15, Shakeel Butt wrote:
+> > > On Thu, Oct 24, 2024 at 04:50:37PM GMT, Roman Gushchin wrote:
+> > > > On Wed, Oct 23, 2024 at 11:57:12PM -0700, Shakeel Butt wrote:
+> > > > > The memcg v1's charge move feature has been deprecated. There is no need
+> > > > > to have any locking or protection against the moving charge. Let's
+> > > > > proceed to remove all the locking code related to charge moving.
+> > > > >
+> > > > > Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
+> > > >
+> > > > Reviewed-by: Roman Gushchin <roman.gushchin@linux.dev>
+> > >
+> > > Thanks Roman for the review. Based on Michal's question, I am planning
+> > > to keep the RCU locking in the next version of this patch and folowup
+> > > with clear understanding where we really need RCU and where we don't.
+> >
+> > I think it would be safer and easier to review if we drop each RCU
+> > separately or in smaller batches.
+> 
+> FWIW if we go with this route, I agree with Roman's idea about
+> replacing folio_memcg_lock()/unlock()
+> with an explicit rcu_read_lock()/rcu_read_unlock(), and then having
+> separate patches/series that remove the RCU annotations. If done in a
+> separate series, we should comment the explicit RCU calls
+> appropriately to reflect the fact that they should mostly be removed
+> (or at least re-evaluated).
 
---3hjnzdxx2pfoo4ij
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH next] drm/sharp-memory: Fix some checks in
- sharp_memory_probe()
-MIME-Version: 1.0
+Agreed!
 
-On Wed, Oct 23, 2024 at 11:30:31AM +0300, Dan Carpenter wrote:
-> The devm_drm_dev_alloc() function returns error pointers, it never
-> returns NULL.  Change that check to IS_ERR().
->=20
-> The devm_gpiod_get_optional() function returns a mix of error pointers
-> if there is an error, or NULL if there is no GPIO assigned.  Add a check
-> for error pointers.
->=20
-> Fixes: b8f9f21716fe ("drm/tiny: Add driver for Sharp Memory LCD")
-> Signed-off-by: Dan Carpenter <dan.carpenter@linaro.org>
-> ---
->  drivers/gpu/drm/tiny/sharp-memory.c | 6 ++++--
->  1 file changed, 4 insertions(+), 2 deletions(-)
->=20
-> diff --git a/drivers/gpu/drm/tiny/sharp-memory.c b/drivers/gpu/drm/tiny/s=
-harp-memory.c
-> index 2d2315bd6aef..1bcdd79166a4 100644
-> --- a/drivers/gpu/drm/tiny/sharp-memory.c
-> +++ b/drivers/gpu/drm/tiny/sharp-memory.c
-> @@ -543,8 +543,8 @@ static int sharp_memory_probe(struct spi_device *spi)
-> =20
->  	smd =3D devm_drm_dev_alloc(dev, &sharp_memory_drm_driver,
->  				 struct sharp_memory_device, drm);
-> -	if (!smd)
-> -		return -ENOMEM;
-> +	if (IS_ERR(smd))
-> +		return PTR_ERR(smd);
-> =20
->  	spi_set_drvdata(spi, smd);
-> =20
-> @@ -555,6 +555,8 @@ static int sharp_memory_probe(struct spi_device *spi)
->  		return dev_err_probe(dev, ret, "Failed to initialize drm config\n");
-> =20
->  	smd->enable_gpio =3D devm_gpiod_get_optional(dev, "enable", GPIOD_OUT_H=
-IGH);
-> +	if (IS_ERR(smd->enable_gpio))
-> +		return PTR_ERR(smd->enable_gpio);
->  	if (!smd->enable_gpio)
->  		dev_warn(dev, "Enable gpio not defined\n");
-
-Use dev_err_probe() instead of plain returns?
-
-Best regards
-Uwe
-
---3hjnzdxx2pfoo4ij
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iQEzBAABCgAdFiEEP4GsaTp6HlmJrf7Tj4D7WH0S/k4FAmcatzIACgkQj4D7WH0S
-/k7sjQf9HxKcouACQt7j/TiWaHv1n9Dw59KVCBvbJ3GvxCTuBeRG+1KI9cKTeumE
-Rm91JB1wya0l0o1QaaYbTq80gBNLIQ+tyVtdhtDh4jJ4gIvtjx6UavyWogj7UQvf
-prverPw2PSS6EMPpeqbJhRFPSsi9Hq6ihXSrm13E5OADjQL3hAof/rDGhCLvf+PH
-9tyFiOFdoQW7WuZHgQ2I+XWj6U/kSPquAA/D6Uf6PlYDEAyUvPcRvC4dMD7GpZ2K
-Y3OxXMcnTSopDGovPgTpiFR9RySYF1+3A5kqz2EFqnytZVZ7+GmsWctY4ZB8F67i
-bL1/7QVqC49NKvRGbl/jE5DHw0/cDA==
-=dMac
------END PGP SIGNATURE-----
-
---3hjnzdxx2pfoo4ij--
+-- 
+Michal Hocko
+SUSE Labs
 
