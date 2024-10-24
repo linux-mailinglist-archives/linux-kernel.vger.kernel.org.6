@@ -1,179 +1,478 @@
-Return-Path: <linux-kernel+bounces-380376-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380377-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id BAD779AED61
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:12:57 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id A00C99AED63
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:13:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id DDF4F1C238CC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:12:56 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 24728B2523F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:13:11 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C52501FAF10;
-	Thu, 24 Oct 2024 17:10:31 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 874F51FBF75;
+	Thu, 24 Oct 2024 17:10:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ifUgwEqS"
-Received: from mail-lj1-f176.google.com (mail-lj1-f176.google.com [209.85.208.176])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="kIqzW1Xz"
+Received: from mail-pf1-f174.google.com (mail-pf1-f174.google.com [209.85.210.174])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 3DD451F76DC;
-	Thu, 24 Oct 2024 17:10:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.176
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2E491F76DC;
+	Thu, 24 Oct 2024 17:10:38 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.210.174
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729789831; cv=none; b=rVMHu47r8kKA6/ku9J0VZ+KHO96l6r3x0CYYM7KnyM3hcH84BT1wU+F3oCPvnvVh/m3vgc/ae7Z0rJ1kca/twcY8M9d5N3ACLS4iblBMoWcJLqtuuiD5YwYnSd931asgJ+7c08CsfGW//+5JDUqAxL0JCxlipcr8WXvYx9/+QTY=
+	t=1729789841; cv=none; b=fjo00evmJ1epOkKpYFXeXhE6nTSWUmvDCyMSQMqLSvTD/Q8dHZqc0HUuikqvJ02j5MddSQXRfu6KMyLnbRZ0Z0TXP9Pr9YxBIPWNZKv6iYqODKh1kyP9uQK7LHfPAqoZFFn9am4wmjWZHPUpMBoEIBd3oZDW7JaSlj1vCIBhoPE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729789831; c=relaxed/simple;
-	bh=qzyA85RlVv5b1+7j63HwIxCokuuE9Z6WzA34gaCnMFU=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=EpvvuFPwwLnlY+ybENuIViYzjcjbwIXCICiiMlocVaVUx/5PZkKoMy0Q+5efWSh16R1YPMZeFIimh8gHdB4k7UQqvPe4PHNodMqjuXW5ONBXmBSyy7v65fnX3akJ9FbXXt9fxBM8UAdLU0xTAm01pczuULnLUFOAHWacFD9Gq1U=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ifUgwEqS; arc=none smtp.client-ip=209.85.208.176
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+	s=arc-20240116; t=1729789841; c=relaxed/simple;
+	bh=8b5KV1Q4r4l0EfB29uJ/xYQzxDvHZiUM7IXUxaoONYU=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=p9vyiveYTnGJGt7g6VDfW9/6o1xhZml3Xibd0FVbNh46FTsSBFGSNzHVEKXNJPejQuhfjKC5K5SZa3l+R8jIKJFNJwXiRUamEkhvFgUUTB4WDRnMLSKCzsBOkkXZoa9uKNAi2LPM6S7njCLVevI9gKMNZLAk0r4BbTcg9r9vWD4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=kIqzW1Xz; arc=none smtp.client-ip=209.85.210.174
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=roeck-us.net
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-lj1-f176.google.com with SMTP id 38308e7fff4ca-2fabb837ddbso18709771fa.1;
-        Thu, 24 Oct 2024 10:10:27 -0700 (PDT)
+Received: by mail-pf1-f174.google.com with SMTP id d2e1a72fcca58-71e681bc315so835927b3a.0;
+        Thu, 24 Oct 2024 10:10:38 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729789826; x=1730394626; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=FTKrnBluD4JxPICdqME0ajZ+Fx27J0/+WYJKBnAywrU=;
-        b=ifUgwEqSiytVMwYHhTkhKn2v0Xx37v4N7KCZ4KZ3VgDyFpS6MPuZXTJrBu1Yjxi7rL
-         6MYO0VXKvBQ6kroLZcwvMwwgVGksWmOQm0pZTs0puhsCJ+MQG61W0MMbJU6rNLT1Ty3B
-         s+trImFKOWzEZASw7EGpOsvpk8OIgarMqkKyKLFR4wfqe3lvoLbEaoNhnT/v8aT/5Ba5
-         QiVmhcm8c6udZqQVq04YoLWFitZybMzt394FLOEj9qd/n81yV1epo/uUhpDPlncLqkXD
-         kEbuRsVgDLu/g/uSZke0GHmDaP+q/zQfEsaKphOQLNe/0om6ZNnOL/u3wqEhZnhXe7HF
-         xBug==
+        d=gmail.com; s=20230601; t=1729789838; x=1730394638; darn=vger.kernel.org;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:from:to:cc:subject:date:message-id:reply-to;
+        bh=DcurmGZITqxZucOzfGQmA3p0Qf0OyPrPoxhKxDn0pTk=;
+        b=kIqzW1XzK5mHhprLesL9FOINNxXZRn1MAcxLOU5Fsrr3qVS1XfivJyqM9K+GlMnCX6
+         HMVGeREwG/cIoIZ+qDZ+3nwEZqt7i0wwN/ZDjRDhnNVj+X+jgs1DmALol+jHXlDIFeBU
+         5oS884DhegpcsNEs105YV+0tU8qIJZQ4r/yG4sQ2RcoVtzni9Tv/BHZBstXn0t6i+MKt
+         7W13ALFWycQDAEUsrsl80BHFi0RB+pqdgQdp/F9B+vF7CB30xxpspD7pQX+tb4ArBqwI
+         +lH7xFfkRCWYvjfoxw+ANXwAs6/pCXUHFG6zhhEN+yKrWOBx3PGwvVTZBydU+8coQS8S
+         25vw==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729789826; x=1730394626;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+        d=1e100.net; s=20230601; t=1729789838; x=1730394638;
+        h=content-transfer-encoding:in-reply-to:autocrypt:from
+         :content-language:references:cc:to:subject:user-agent:mime-version
+         :date:message-id:sender:x-gm-message-state:from:to:cc:subject:date
          :message-id:reply-to;
-        bh=FTKrnBluD4JxPICdqME0ajZ+Fx27J0/+WYJKBnAywrU=;
-        b=jp84mokp/9ZlFZ2PWHSkmF6VoArnHVjou9etiKNklyiyqZhs1hQsk+VOPZJucBICpa
-         nwgH2x1P3y6r0Zxs+wskl6FRbVD51kXVje2o9+N0y8PNv0+9bpqfh4V50S/fv7QUmiYM
-         FdyIzjZkCIod1IitEJVDV593geq+lPk0vTTEAzJQZ92SC+yWWgzLocVVHOpSUrFl5FU5
-         Ww6lWdPLSdxKWMCtrjq0fh38rMZlA21LtcKUNog6fEQa7CkXc0gEpOAtb2+I/h5zrDGD
-         +Di0EoOZQ8k8lcDRVt4sqy4IiEr2/kG6BiRsqqCrODcmse5ckmco9OhsgqJu0FOTFaQY
-         NRBw==
-X-Forwarded-Encrypted: i=1; AJvYcCVKzoHnISE18jGzdRKNH9prh/fXwBPzZzP6STQd3JIZnvsOBpBNur8q3/h9wLOUsp43izcleu8ZAqQ=@vger.kernel.org, AJvYcCVbH1I6gAQCZ3lYW/ohlkk6BDKF1JavrHLDavg+mWYL2aDa0z5scI9jpuIkW4Z1thJCj6tgjC+VGVOz83A=@vger.kernel.org, AJvYcCWRRzwbOyG0NG9IZ4fnFevraVeG+YQ7RfjbGmFpmFY37bJOCjL8Az0wXzfHntMewfkZKRnbSBbVdGi88fs=@vger.kernel.org, AJvYcCXQ9eQ4wYmC4Jsp84uatUvV17C4YXoqADp6iwRcExDa+/sR9u1TCs20Gshp6R43Q/+YIs66zMBieHG8Ew==@vger.kernel.org
-X-Gm-Message-State: AOJu0YxESBFzB9KgZok5SicunOV+sRJ4nEP0JitMnUgJEJXygxfAUDzB
-	neNOtjJkvHt02xXNjTn4Y9AvjdTOf7yWUmdgKzoJqPA4USXTRfGq
-X-Google-Smtp-Source: AGHT+IE6fiv+vs26SxlA2LCU8dr7H03wlCXlCxw07cHtczrt07/pTtUnxZ56Zdpp4aB7P5gDnnkT3Q==
-X-Received: by 2002:a05:651c:1545:b0:2fb:3960:9667 with SMTP id 38308e7fff4ca-2fc9d31b55bmr61721431fa.14.1729789825771;
-        Thu, 24 Oct 2024 10:10:25 -0700 (PDT)
-Received: from orome (p200300e41f26ec00f22f74fffe1f3a53.dip0.t-ipconnect.de. [2003:e4:1f26:ec00:f22f:74ff:fe1f:3a53])
-        by smtp.gmail.com with ESMTPSA id a640c23a62f3a-a9a91370e75sm641392466b.130.2024.10.24.10.10.24
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 10:10:25 -0700 (PDT)
-Date: Thu, 24 Oct 2024 19:10:23 +0200
-From: Thierry Reding <thierry.reding@gmail.com>
-To: Celeste Liu <coelacanthushex@gmail.com>
-Cc: Paul Walmsley <paul.walmsley@sifive.com>, 
-	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, Guo Ren <guoren@kernel.org>, 
-	Anup Patel <anup@brainfault.org>, Heinrich Schuchardt <heinrich.schuchardt@canonical.com>, 
-	Huacai Chen <chenhuacai@kernel.org>, WANG Xuerui <kernel@xen0n.name>, 
-	Yoshinori Sato <ysato@users.sourceforge.jp>, Rich Felker <dalias@libc.org>, 
-	John Paul Adrian Glaubitz <glaubitz@physik.fu-berlin.de>, Russell King <linux@armlinux.org.uk>, 
-	Florian Fainelli <florian.fainelli@broadcom.com>, 
-	Broadcom internal kernel review list <bcm-kernel-feedback-list@broadcom.com>, Ray Jui <rjui@broadcom.com>, 
-	Scott Branden <sbranden@broadcom.com>, Tony Lindgren <tony@atomide.com>, 
-	Jonathan Hunter <jonathanh@nvidia.com>, Palmer Dabbelt <palmer@rivosinc.com>, 
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org, loongarch@lists.linux.dev, 
-	linux-sh@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	linux-rpi-kernel@lists.infradead.org, linux-omap@vger.kernel.org, linux-tegra@vger.kernel.org, 
-	Stefan Wahren <wahrenst@gmx.net>, Kevin Hilman <khilman@baylibre.com>
-Subject: Re: [PATCH v3 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2835/tegra/omap2plus
-Message-ID: <6m77wg6b76abyk2ebfniayxvrabvzur7onwar4isajb6tvfxbv@7a24p2xkmevj>
-References: <20240910-fix-riscv-rt_group_sched-v3-0-486e75e5ae6d@gmail.com>
- <20240910-fix-riscv-rt_group_sched-v3-4-486e75e5ae6d@gmail.com>
+        bh=DcurmGZITqxZucOzfGQmA3p0Qf0OyPrPoxhKxDn0pTk=;
+        b=j8MJGlcmVhfKqFiCRqM10e8+VE/KPbJgfqYMS0xPXDowocFWxYnpxeKcFwKVmz42+x
+         zOnv8u6UPmKqDSDcYwDKiWSXpBNLmgjFe79dh6YdD+mqyOd3OaavU8M8wRbdh5JhF2u0
+         +SQ09EYROvyaRV+vgzpW5TaY4R75ICJDLgTUe+1DbE/6Ho3aD0zCE+09mjURDE5rwqjc
+         csTgCMATbJ/Qi4GxMrUzZl454xRMH4ssNM/4OUt8H2hrz4ayFfcrzlgiTziU6/aj7ySP
+         z89el/30LoNHgbZIjCcqTkZly6HWX7nxfJrfLCyEA5JDhTSfz71nVlYE+kz821Uz/gwO
+         JWKA==
+X-Forwarded-Encrypted: i=1; AJvYcCV7WTxAYvhxEz6fWfLVpykHf2z2B6bFmjQ4ZLklO5iqBw9KGO/QIqII98wQsChDJlpPhpBjlp6UsJjlYi+O@vger.kernel.org, AJvYcCXaKICCFgdN9Q7/p2gSpkNWoUn7XvJU4Ct1iQd1ujye7gXDAofr3z/fOwlSEE6VYN9I98Z3E9upuvyBfw==@vger.kernel.org
+X-Gm-Message-State: AOJu0YwG7FNXYjzgcwfaDagTgf+JLzwDnmJlfd1QzDiTO3QhDHzyeAa0
+	Dh/XUML/D+UbH7Lw/hIElILM7qFcXJCIvns0nHeGSG2B+QO8pLFgIr4w+Q==
+X-Google-Smtp-Source: AGHT+IF+zyX/p9D3XDpIDx8XGwVWBEYvVJnpwBonKYxyzfTncenicQb+gAceqKP39O8vofFJu46YmQ==
+X-Received: by 2002:a05:6a00:2316:b0:71e:76dc:10f7 with SMTP id d2e1a72fcca58-7204524951amr4643690b3a.4.1729789837607;
+        Thu, 24 Oct 2024 10:10:37 -0700 (PDT)
+Received: from ?IPV6:2600:1700:e321:62f0:329c:23ff:fee3:9d7c? ([2600:1700:e321:62f0:329c:23ff:fee3:9d7c])
+        by smtp.gmail.com with ESMTPSA id d2e1a72fcca58-71ec13eaaafsm8475137b3a.170.2024.10.24.10.10.36
+        (version=TLS1_3 cipher=TLS_AES_128_GCM_SHA256 bits=128/128);
+        Thu, 24 Oct 2024 10:10:36 -0700 (PDT)
+Sender: Guenter Roeck <groeck7@gmail.com>
+Message-ID: <706d4821-2637-4aac-869b-822f69aebbfa@roeck-us.net>
+Date: Thu, 24 Oct 2024 10:10:35 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="mgvujidfj33lw4eo"
-Content-Disposition: inline
-In-Reply-To: <20240910-fix-riscv-rt_group_sched-v3-4-486e75e5ae6d@gmail.com>
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH v3 1/2] hwmon: modified ina2xx to match SY24655
+To: Wenliang <wenliang202407@163.com>
+Cc: jdelvare@suse.com, linux-hwmon@vger.kernel.org,
+ linux-kernel@vger.kernel.org
+References: <80bfd968-8f12-46b1-9b72-837502ccdb2a@roeck-us.ne>
+ <20241024083055.82047-1-wenliang202407@163.com>
+Content-Language: en-US
+From: Guenter Roeck <linux@roeck-us.net>
+Autocrypt: addr=linux@roeck-us.net; keydata=
+ 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
+ mDW4+i+XlNFUPUYMrIKi9joBhu18ssf5i5Q=
+In-Reply-To: <20241024083055.82047-1-wenliang202407@163.com>
+Content-Type: text/plain; charset=UTF-8; format=flowed
+Content-Transfer-Encoding: 7bit
 
+On 10/24/24 01:30, Wenliang wrote:
+> v3:Support the SY24655 for current and voltage detection as well as
+> power calculation.
+> 
+> SY24655 provides a power accumulator, thus adding the power1_average
+> parameter to output the average power, which can be used to calculate
+> energy; In order to achieve average power, adding extra EIN register
+> and ACCUM_CONFIG register addresses for SY24655. Due to the 48 bit
+> read-only nature of the EIN register, a function has been added
+> specifically for average power reading.
+> 
+Again, please consult
+	Documentation/process/submitting-patches.rst
+for both description and subject.
 
---mgvujidfj33lw4eo
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v3 4/4] arm: defconfig: drop RT_GROUP_SCHED=y from
- bcm2835/tegra/omap2plus
-MIME-Version: 1.0
+The subject should be something like
 
-On Tue, Sep 10, 2024 at 08:51:10PM +0800, Celeste Liu wrote:
-> Commit 673ce00c5d6c ("ARM: omap2plus_defconfig: Add support for distros
-> with systemd") said it's because of recommendation from systemd. But
-> systemd changed their recommendation later.[1]
->=20
-> For cgroup v1, if turned on, and there's any cgroup in the "cpu" hierarch=
-y it
-> needs an RT budget assigned, otherwise the processes in it will not be ab=
-le to
-> get RT at all. The problem with RT group scheduling is that it requires t=
-he
-> budget assigned but there's no way we could assign a default budget, sinc=
-e the
-> values to assign are both upper and lower time limits, are absolute, and =
-need to
-> be sum up to < 1 for each individal cgroup. That means we cannot really c=
-ome up
-> with values that would work by default in the general case.[2]
->=20
-> For cgroup v2, it's almost unusable as well. If it turned on, the cpu con=
-troller
-> can only be enabled when all RT processes are in the root cgroup. But it =
-will
-> lose the benefits of cgroup v2 if all RT process were placed in the same =
-cgroup.
->=20
-> Red Hat, Gentoo, Arch Linux and Debian all disable it. systemd also doesn=
-'t
-> support it.
->=20
-> [1]: https://github.com/systemd/systemd/commit/f4e74be1856b3ac058acbf1be3=
-21c31d5299f69f
-> [2]: https://bugzilla.redhat.com/show_bug.cgi?id=3D1229700
->=20
-> Tested-by: Stefan Wahren <wahrenst@gmx.net>
-> Acked-by: Kevin Hilman <khilman@baylibre.com>
-> Signed-off-by: Celeste Liu <CoelacanthusHex@gmail.com>
+"hwmon: (ina226) Add support for SY24655".
+
+The change log should be after "---".
+
+The description needs to be in imperative mood. Something like
+
+"""
+SY24655 provides a power accumulator. Add support for the power1_average
+attribute to report the average power.
+"""
+
+Implementation details are really irrelevant for the patch description.
+I won't object if you add it, but please use imperative mood when doing so.
+"adding" is not imperative mood.
+
+> 
+> Signed-off-by: Wenliang <wenliang202407@163.com>
 > ---
->  arch/arm/configs/bcm2835_defconfig   | 1 -
->  arch/arm/configs/omap2plus_defconfig | 1 -
->  arch/arm/configs/tegra_defconfig     | 1 -
->  3 files changed, 3 deletions(-)
+> 
+> 
+> 
+>   Documentation/hwmon/ina2xx.rst | 25 ++++++++-
+>   drivers/hwmon/Kconfig          |  2 +-
+>   drivers/hwmon/ina2xx.c         | 97 ++++++++++++++++++++++++++++++++--
+>   3 files changed, 118 insertions(+), 6 deletions(-)
+> 
+> diff --git a/Documentation/hwmon/ina2xx.rst b/Documentation/hwmon/ina2xx.rst
+> index 1ce161e6c0bf..eac8bb1deda0 100644
+> --- a/Documentation/hwmon/ina2xx.rst
+> +++ b/Documentation/hwmon/ina2xx.rst
+> @@ -63,6 +63,16 @@ Supported chips:
+>   
+>   	       https://www.ti.com/
+>   
+> +  * Silergy SY24655
+> +
+> +
+> +    Prefix: 'sy24655'
+> +    Addresses: I2C 0x40 - 0x4f
+> +
+> +    Datasheet: Publicly available at the Silergy website
+> +
+> +	       https://us1.silergy.com/
+> +
+>   Author: Lothar Felten <lothar.felten@gmail.com>
+>   
+>   Description
+> @@ -85,6 +95,11 @@ bus supply voltage.
+>   INA260 is a high or low side current and power monitor with integrated shunt
+>   resistor.
+>   
+> +The SY24655 is a high- and low-side current shunt and power monitor with an I2C
+> +interface. The SY24655 both shunt drop and supply voltage, with programmable
 
-Any idea who will want to pick this up? Probably something the ARM SoC
-maintainers can do directly, in which case:
+SY24655 supports both ...
 
-Acked-by: Thierry Reding <treding@nvidia.com>
+> +calibration value and conversion times. The SY24655 can also calculate average
+> +power for use in energy conversion.
+> +
+>   The shunt value in micro-ohms can be set via platform data or device tree at
+>   compile-time or via the shunt_resistor attribute in sysfs at run-time. Please
+>   refer to the Documentation/devicetree/bindings/hwmon/ti,ina2xx.yaml for bindings
+> @@ -108,7 +123,7 @@ power1_input		Power(uW) measurement channel
+>   shunt_resistor		Shunt resistance(uOhm) channel (not for ina260)
+>   ======================= ===============================================
+>   
+> -Additional sysfs entries for ina226, ina230, ina231, and ina260
+> +Additional sysfs entries for ina226, ina230, ina231, ina260, and sy24655
+>   ---------------------------------------------------------------
+>   
+>   ======================= ====================================================
+> @@ -130,6 +145,14 @@ update_interval		data conversion time; affects number of samples used
+>   			to average results for shunt and bus voltages.
+>   ======================= ====================================================
+>   
+> +Sysfs entries for sy24655 only
+> +------------------------------------------------
 
---mgvujidfj33lw4eo
-Content-Type: application/pgp-signature; name="signature.asc"
+Does that pass generating the documentation ? Normally it wants
+the "---" line to have the same length as the line above.
 
------BEGIN PGP SIGNATURE-----
+> +
+> +======================= ====================================================
+> +power1_average		calculate average power from last reading to the
+> +			present.
 
-iQIzBAABCAAdFiEEiOrDCAFJzPfAjcif3SOs138+s6EFAmcaf38ACgkQ3SOs138+
-s6Eb2RAAph/IveI76N2c7lk/cbmWs1cQoFHZmyzXgY26ZBU9nc81ILsjchLmkF85
-h1M3kPkxMquC56MplXj0gSQGCIQIuLlbJf/cR4bL+PPOw7ecV5Dwg3cvg17do6+w
-7+zAVkx+pXA8HbBAqVpHuQcP+YyPN4GEFDy8L8bdOa3GrAdpFKehSTCvr0cmvZCD
-LtNd8P4xocqpMrxdGbH3YcOT/eJtbwlmRCYbeWavOtFfdiiIuNH73drj1L67sOjv
-A0rgJOdsEtMCQG/sCtMkGd7KY62fZCE4nTu9RUM4/ett8nlROC674VgvJrpCW6Ym
-hSZmJaRPXSInSFk9olAC3wWChah4WncpBj7qEfZ8g8dwMchFeGwgYTxxmCUIV7o8
-A1Q1pbb1BMAS64SRaLv2bRkuWJ0FdI0bll+pihc7MSYtiWAuP5muOxK6QWdbr/ig
-tTpYEh0PSsBkBAJ4zswAfXggM0HOUzqUOVsGDW0ky95K9pVDuDF9LVIY1FuEMgDw
-72WHhE1zsbgVlfzTIOC0s8cD9ghl6e49g/TIl+BHxLh3xEWz2DOY8yLyj5M2OCgk
-2Y+9jS20AREVOhtvxmeW5MDJavSj+4LXvqQE/7G63JDamadu/N1GYPfCqmQxQSiW
-WaSdrnjknZjngwZWPQ+1p4LgKnlEr78OUc/jCnsSMyYXnBb3EzA=
-=YCp7
------END PGP SIGNATURE-----
+Drop "calculate".
 
---mgvujidfj33lw4eo--
+> +======================= ====================================================
+> +
+>   .. note::
+>   
+>      - Configure `shunt_resistor` before configure `power1_crit`, because power
+> diff --git a/drivers/hwmon/Kconfig b/drivers/hwmon/Kconfig
+> index 64fefb22ecee..48b446c366f2 100644
+> --- a/drivers/hwmon/Kconfig
+> +++ b/drivers/hwmon/Kconfig
+> @@ -2178,7 +2178,7 @@ config SENSORS_INA2XX
+>   	select REGMAP_I2C
+>   	help
+>   	  If you say yes here you get support for INA219, INA220, INA226,
+> -	  INA230, INA231, and INA260 power monitor chips.
+> +	  INA230, INA231, INA260, and SY24655 power monitor chips.
+>   
+>   	  The INA2xx driver is configured for the default configuration of
+>   	  the part as described in the datasheet.
+> diff --git a/drivers/hwmon/ina2xx.c b/drivers/hwmon/ina2xx.c
+> index cecc80a41a97..9270af69ef6f 100644
+> --- a/drivers/hwmon/ina2xx.c
+> +++ b/drivers/hwmon/ina2xx.c
+> @@ -51,12 +51,20 @@
+>   #define INA226_ALERT_LIMIT		0x07
+>   #define INA226_DIE_ID			0xFF
+>   
+> -#define INA2XX_MAX_REGISTERS		8
+> +/* SY24655 register definitions */
+> +#define SY24655_EIN				0x0A
+> +#define SY24655_ACCUM_CONFIG	0x0D
+> +
+> +#define INA2XX_MAX_REGISTERS		0x0D
+>   
+>   /* settings - depend on use case */
+>   #define INA219_CONFIG_DEFAULT		0x399F	/* PGA=8 */
+>   #define INA226_CONFIG_DEFAULT		0x4527	/* averages=16 */
+>   #define INA260_CONFIG_DEFAULT		0x6527	/* averages=16 */
+> +#define SY24655_CONFIG_DEFAULT		0x4527	/* averages=16 */
+> +
+> +/* (only for sy24655) */
+> +#define SY24655_ACCUM_CONFIG_DEFAULT	0x044C	/* continuous mode, clear after read*/
+>   
+>   /* worst case is 68.10 ms (~14.6Hz, ina219) */
+>   #define INA2XX_CONVERSION_RATE		15
+> @@ -84,6 +92,8 @@
+>   #define INA226_ALERT_CONFIG_MASK	GENMASK(15, 10)
+>   #define INA226_ALERT_FUNCTION_FLAG	BIT(4)
+>   
+> +#define SY24655_EIN_OVERFLOW_FLAG	BIT(6)
+> +
+>   /*
+>    * Both bus voltage and shunt voltage conversion times for ina226 are set
+>    * to 0b0100 on POR, which translates to 2200 microseconds in total.
+> @@ -97,6 +107,7 @@ static bool ina2xx_writeable_reg(struct device *dev, unsigned int reg)
+>   	case INA2XX_CALIBRATION:
+>   	case INA226_MASK_ENABLE:
+>   	case INA226_ALERT_LIMIT:
+> +	case SY24655_ACCUM_CONFIG:
+>   		return true;
+>   	default:
+>   		return false;
+> @@ -127,7 +138,7 @@ static const struct regmap_config ina2xx_regmap_config = {
+>   	.writeable_reg = ina2xx_writeable_reg,
+>   };
+>   
+> -enum ina2xx_ids { ina219, ina226, ina260 };
+> +enum ina2xx_ids { ina219, ina226, ina260, sy24655 };
+>   
+>   struct ina2xx_config {
+>   	u16 config_default;
+> @@ -149,6 +160,8 @@ struct ina2xx_data {
+>   	long power_lsb_uW;
+>   	struct mutex config_lock;
+>   	struct regmap *regmap;
+> +	struct i2c_client *client;
+> +
+
+Unnecessary empty line.
+
+>   };
+>   
+>   static const struct ina2xx_config ina2xx_config[] = {
+> @@ -181,6 +194,16 @@ static const struct ina2xx_config ina2xx_config[] = {
+>   		.has_alerts = true,
+>   		.has_ishunt = true,
+>   	},
+> +	[sy24655] = {
+> +		.config_default = SY24655_CONFIG_DEFAULT,
+> +		.calibration_value = 2048,
+> +		.shunt_div = 400,
+> +		.bus_voltage_shift = 0,
+> +		.bus_voltage_lsb = 1250,
+> +		.power_lsb_factor = 25,
+> +		.has_alerts = false,
+> +		.has_ishunt = false,
+> +	},
+>   };
+>   
+>   /*
+> @@ -485,6 +508,49 @@ static int ina2xx_in_read(struct device *dev, u32 attr, int channel, long *val)
+>   	return 0;
+>   }
+>   
+> +/*
+> + * Configuring the READ_EIN (bit 10) of the ACCUM_CONFIG register to 1
+> + * can clear accumulator and sample_count after reading the EIN register.
+> + * This way, the average power between the last read and the current
+> + * read can be obtained. By combining with accurate time data from
+> + * outside, the energy consumption during that period can be calculated.
+> + */
+> +static int sy24655_average_power_read(struct ina2xx_data *data, u8 reg, long *val)
+> +{
+> +	u8 template[6];
+> +	int ret;
+> +	long accumulator_24, sample_count;
+> +	unsigned int regval;
+> +
+> +	ret = regmap_read_bypassed(data->regmap, INA226_MASK_ENABLE, &regval);
+> +	if (ret)
+> +		return ret;
+> +
+> +	if (regval & SY24655_EIN_OVERFLOW_FLAG)
+> +		return -ENOMEM;
+
+I don't know what error code to return here, or if it makes sense to return an error
+in the first place, but it is not "out of memory". If an error is returned,
+the documentation needs to explain what the user is expected to do about it.
+Just returning an error is not useful.
+
+> +
+> +	/* 48-bit register read */
+> +	ret = i2c_smbus_read_i2c_block_data(data->client, reg, 6, template);
+> +	if (ret < 0)
+> +		return ret;
+> +	if (ret != 6)
+> +		return -EIO;
+> +	accumulator_24 = ((template[3] << 16) |
+> +				(template[4] << 8) |
+> +				template[5]);
+> +	sample_count = ((template[0] << 16) |
+> +				(template[1] << 8) |
+> +				template[2]);
+> +	if (sample_count <= 0) {
+> +		*val = 0;
+> +		return 0;
+> +	}
+> +
+> +	*val = DIV_ROUND_CLOSEST(accumulator_24, sample_count) * data->power_lsb_uW;
+> +
+> +	return 0;
+> +}
+> +
+>   static int ina2xx_power_read(struct device *dev, u32 attr, long *val)
+>   {
+>   	struct ina2xx_data *data = dev_get_drvdata(dev);
+> @@ -492,6 +558,8 @@ static int ina2xx_power_read(struct device *dev, u32 attr, long *val)
+>   	switch (attr) {
+>   	case hwmon_power_input:
+>   		return ina2xx_read_init(dev, INA2XX_POWER, val);
+> +	case hwmon_power_average:
+> +		return sy24655_average_power_read(data, SY24655_EIN, val);
+>   	case hwmon_power_crit:
+>   		return ina226_alert_limit_read(data, INA226_POWER_OVER_LIMIT_MASK,
+>   					       INA2XX_POWER, val);
+> @@ -702,6 +770,8 @@ static umode_t ina2xx_is_visible(const void *_data, enum hwmon_sensor_types type
+>   			if (has_alerts)
+>   				return 0444;
+>   			break;
+> +		case hwmon_power_average:
+> +			return 0444;
+
+This is wrong. It must only return 0444 if the chip is sy24655
+(or, to support other chips of the series at some later point,
+if a flag such as has_power_average is added and set in struct
+ina2xx_config).
+
+>   		default:
+>   			break;
+>   		}
+> @@ -734,7 +804,8 @@ static const struct hwmon_channel_info * const ina2xx_info[] = {
+>   	HWMON_CHANNEL_INFO(curr, HWMON_C_INPUT | HWMON_C_CRIT | HWMON_C_CRIT_ALARM |
+>   			   HWMON_C_LCRIT | HWMON_C_LCRIT_ALARM),
+>   	HWMON_CHANNEL_INFO(power,
+> -			   HWMON_P_INPUT | HWMON_P_CRIT | HWMON_P_CRIT_ALARM),
+> +			   HWMON_P_INPUT | HWMON_P_CRIT | HWMON_P_CRIT_ALARM |
+> +			   HWMON_P_AVERAGE),
+>   	NULL
+>   };
+>   
+> @@ -840,6 +911,18 @@ static int ina2xx_init(struct device *dev, struct ina2xx_data *data)
+>   						FIELD_PREP(INA226_ALERT_POLARITY, active_high));
+>   	}
+>   
+> +	if (data->chip == sy24655) {
+> +		/*
+> +		 * Initialize the power accumulation method to continuous
+> +		 * mode and clear the EIN register after each read of the
+> +		 * EIN register
+> +		 */
+> +		ret = regmap_write(regmap, SY24655_ACCUM_CONFIG,
+> +				   SY24655_ACCUM_CONFIG_DEFAULT);
+> +		if (ret < 0)
+> +			return ret;
+> +	}
+> +
+>   	if (data->config->has_ishunt)
+>   		return 0;
+>   
+> @@ -868,6 +951,7 @@ static int ina2xx_probe(struct i2c_client *client)
+>   		return -ENOMEM;
+>   
+>   	/* set the device type */
+> +	data->client = client;
+>   	data->config = &ina2xx_config[chip];
+>   	data->chip = chip;
+>   	mutex_init(&data->config_lock);
+> @@ -906,6 +990,7 @@ static const struct i2c_device_id ina2xx_id[] = {
+>   	{ "ina230", ina226 },
+>   	{ "ina231", ina226 },
+>   	{ "ina260", ina260 },
+> +	{ "sy24655", sy24655 },
+>   	{ }
+>   };
+>   MODULE_DEVICE_TABLE(i2c, ina2xx_id);
+> @@ -935,7 +1020,11 @@ static const struct of_device_id __maybe_unused ina2xx_of_match[] = {
+>   		.compatible = "ti,ina260",
+>   		.data = (void *)ina260
+>   	},
+> -	{ },
+> +	{
+> +		.compatible = "silergy,sy24655",
+> +		.data = (void *)sy24655
+> +	},
+> +	{ }
+>   };
+>   MODULE_DEVICE_TABLE(of, ina2xx_of_match);
+>   
+
 
