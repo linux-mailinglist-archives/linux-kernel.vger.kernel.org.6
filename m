@@ -1,126 +1,92 @@
-Return-Path: <linux-kernel+bounces-379188-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379189-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
-	by mail.lfdr.de (Postfix) with ESMTPS id B9DA49ADB37
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:05:43 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 4C8F99ADB3A
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:08:59 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 48FAE1F22780
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:05:43 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F3E011F22717
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:08:58 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0F47617107F;
-	Thu, 24 Oct 2024 05:05:35 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 88D891714B8;
+	Thu, 24 Oct 2024 05:08:49 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="fy+BqPJE"
-Received: from mail-qv1-f43.google.com (mail-qv1-f43.google.com [209.85.219.43])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="JoQqr0E0"
+Received: from mail-io1-f41.google.com (mail-io1-f41.google.com [209.85.166.41])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 5F9D81C01;
-	Thu, 24 Oct 2024 05:05:32 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.219.43
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 19F551C01;
+	Thu, 24 Oct 2024 05:08:46 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.41
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729746334; cv=none; b=s9W5SEMDc133wWIAzYD9BRrpLrS64VnbU0ulPz1OUP0/IEoCMfxLNfnPbYUqcd8K9x3F3v9k8KqRlAWRrJyk+l+E5qhO0jND+9amdlgTZiIQ7e8OvkcQPc2rVmWqdTQb2Jga+NKULrJBXrBXuwZ0f7HepmjtH6QBFyfJBJQ2fCY=
+	t=1729746528; cv=none; b=qA0WzIH8YpLSkJHFjYu02sAxThKLUKDpg4puad+b6vCCYybld1VAsILt18ctWMaoW7cpvDUCrzBsKMnCEHhra4nPrAHaxeaLzEFmxWOPn32grkTDmA/+VqEwUm39XA6tLr2epVyWP+MmYF8ntVDJWWD6U6nnCJ+SdAmF9HfDhxs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729746334; c=relaxed/simple;
-	bh=3GdWZI4rN9PzAf70JPGws41Cu2zBOhxDyX0i8m0pRXE=;
+	s=arc-20240116; t=1729746528; c=relaxed/simple;
+	bh=dlzcr23m4Ud20cAHk1CWN5ik4PcIgtl9XwAB94eo7KE=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=i0akIDcimDtYwmIDxhwZB5lmzgOfQ3ddzXX09/VirJxPr68yq3PilIT9mSZZStO/ayIsjMEbfxWNnBRWmzEq66CupE4brMcogFtIvlo9+h0E1du2gwm0Q73+4K41cbeUwX3ZBFtcoNmNk3igskSGRNNUdb3t8w/QkOis9yIUyE8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=fy+BqPJE; arc=none smtp.client-ip=209.85.219.43
+	 Content-Type:Content-Disposition:In-Reply-To; b=oYtpvI1wGlupdeE1ZDjmDz4JH7kiRO1JGJHLgfk5YRF9vEoiICm+QxJlAblFQNU5/LViefpqObFmmDDNCGVPL7OJkrK8Ovm/iDg7ckOwQfi0gmXRQeINTBL6kZwIPukyhSpvvdvvkiQugkGBNJNy+oI13L4mdBj97HconJdZygY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=JoQqr0E0; arc=none smtp.client-ip=209.85.166.41
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
-Received: by mail-qv1-f43.google.com with SMTP id 6a1803df08f44-6cbd1ae26a6so2705816d6.1;
-        Wed, 23 Oct 2024 22:05:32 -0700 (PDT)
+Received: by mail-io1-f41.google.com with SMTP id ca18e2360f4ac-83aae6aba1aso20364739f.2;
+        Wed, 23 Oct 2024 22:08:46 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=gmail.com; s=20230601; t=1729746331; x=1730351131; darn=vger.kernel.org;
+        d=gmail.com; s=20230601; t=1729746526; x=1730351326; darn=vger.kernel.org;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=+LU6zWTxMemrmV1/tq1c5hy6KSI2S/PziqX1LsIFOl0=;
-        b=fy+BqPJEGYxLKx7BoBE/3UVFNBdFjBQPObrjjhehRAQoGXUeyL6qexapffBvypYVqu
-         GK0EzleE5Gt7XnWny8R7hnrciFInzcU2J2179mW7Z4YTGJcusiwm+6ohv45mwdpnoQ9R
-         hLH2GPa9ytzzjFop/saKRMx5U1LB82OGKO8tkn8iDvp2zT+fUWrKSI+HQ5Av4iZHXu8F
-         L8871AVrozZxGcICgxZrdMqBXfbbuIy4ADHDH1tt6oOITg70pnHhSpXX/tDRofOE8K6r
-         VYjHnGie/CymPTSgsQfu2vo1+RzutWmeWPfeWRLc1bTwEFF2Nii0IB98sQ4tJ3lGf2ch
-         6fmQ==
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=h+fsHdO3eEGRLBsyxvQ4eLN0TAO1AeUct9QR19BrA5o=;
+        b=JoQqr0E0fZOJiohBystn46GdJmXOixWuEqNyS72tI2VGPXwuTQtrui44yQrlVXTsQ/
+         rJOBPNuqdQWHK57kjQJZdnBL26eROBccgw1WQolFl098Djqr4VWe/l7IxxMoiR4StaCJ
+         ZGMbn3vkcRS48vYdG+AAJ6pod+KzW6TcWeNfhGV/7nf1rLuDyJHZgkJ/+MbV0O6hQQFz
+         eRAwr2ySGjq3aDokbx1XOBeWPuOapDjGkaG8irBDl4oFiuNoL4SRVTr5gGz+gNUr0+AV
+         kYCxpcPigxc5CTKNEhYi3xutAKd9p1xdSbIJENPx5YwajWD4ltzJussq7ofYOZPzjXJO
+         va0A==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729746331; x=1730351131;
+        d=1e100.net; s=20230601; t=1729746526; x=1730351326;
         h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:feedback-id:x-gm-message-state:from:to:cc
-         :subject:date:message-id:reply-to;
-        bh=+LU6zWTxMemrmV1/tq1c5hy6KSI2S/PziqX1LsIFOl0=;
-        b=BETkSKm1R0DdMKPYpwT7GIytsJedOG6Mpz9qWLciOYtsIzJEUm8dvbER6JnYFvIQ8V
-         vWGHWxsmPlu/2+pzAG9O9zhZxGrWKSenUjqe4rzxX95dx8Mhjj1LlAa2lDk/AAmzM7q1
-         Y+Dfnp/rlOZDw9r//r2ZQjG2aal0sFmUslge+WAxlRUAWo9MGlLvE6+BUxpnReNyAjJM
-         PnKvgvEX37UB+Qs/oF5bU/0zZi6NFKaU7ZxAPvB0hX+73g0BLUwSD8C+PV8Tuga9kHta
-         rtl1k8EuJ+0ZBdS5ubRwtEpYKWvh2tXu238hjJD2XG5B9WRmwEJONe6H+UwNEF9/2n7l
-         4y3g==
-X-Forwarded-Encrypted: i=1; AJvYcCUZgjYfWgsnJO+eDL0YQEK1/HjZlp6wRL30xopSD2P2CEb0ZGC6DvpUBCmFFCPtozBCvFDqaYx0Orve9Eh4/1Q=@vger.kernel.org, AJvYcCXPxl6Z0MQJMWsH2CEvWGNScNkVcW3Dd3s364Mlbf5k+ShU/2YXP4Dipf3i7o2VZhobAASjdEjNH0LgJAc=@vger.kernel.org
-X-Gm-Message-State: AOJu0Yzs9ghHhuHVeUXJEM+KFhvmX3g2Z1gUKHV8r8F1BDFcFFCVJWOq
-	e/uyrYYk0d0t4hp74t7z4C2Dj8o5yeozkxnA6PbqlY9HCUfXAcHw
-X-Google-Smtp-Source: AGHT+IE+cAGG+wI4nDNeQfD4AnRER263XL4pr2BFYANfq4PdTQSnCA9r/Dxn/voqdTq7fVRi8lCKKg==
-X-Received: by 2002:a0c:fe09:0:b0:6cc:74e0:4fef with SMTP id 6a1803df08f44-6d08d3ff46bmr7430486d6.1.1729746330989;
-        Wed, 23 Oct 2024 22:05:30 -0700 (PDT)
-Received: from fauth-a2-smtp.messagingengine.com (fauth-a2-smtp.messagingengine.com. [103.168.172.201])
-        by smtp.gmail.com with ESMTPSA id 6a1803df08f44-6ce00999ab0sm46761086d6.93.2024.10.23.22.05.30
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=h+fsHdO3eEGRLBsyxvQ4eLN0TAO1AeUct9QR19BrA5o=;
+        b=MLzFVcDBgle9u3p/rPonx1pOx6R6RjROsi7iG+TZSc6MDU6GEWARYr7Xe+pmzfDKXJ
+         srUq6rBRN3CKU1bXFJOXblTv8KLzsmFu/8xUxMi2z5kRIudXE6To0jvRWS3pN97RPNfC
+         aX7JD6ZUJ0PoHPZK2BUZzaiBQ7PINCcuXzJdAAT7JRaIr7qKAaDg+Xx0WYmlcxS2eO5o
+         qbj7oKYCbmKSVvMXKYqMPc0V1wrzdqJC1iae/nARc7kxZWkX26EevDNrsm0mdu+AwKoC
+         SNTUfMG+vui/2wgcQl2zKCL715icmOYE9k6l5yhzAh/N3P/9/pemBsbP0SauTcbX3B4c
+         UJ+A==
+X-Forwarded-Encrypted: i=1; AJvYcCUl5wqhA7o7TX+fXOhswEkToschXmtypESIxidh83RjEOyPgAZxZE/rxIgk9deRi7aHUSIfMrTv@vger.kernel.org, AJvYcCVKVHasHTRKWgIk7fkep0aN2G9k8LYBPK+vujYQq+iCE42ZHGubuBQtNs4dkedS1QZ6smtxf9bIo3bRlLJi@vger.kernel.org, AJvYcCWiXSaWBH4ShD8hMcDiaGWzbTDe+XtuFJJCMpR4di9cjmMnVHjHydAOVW2/4BJi20WkjAMxtCVqKcA8@vger.kernel.org
+X-Gm-Message-State: AOJu0YwdukOX+TKaLt3DeilBMt0ntODq4ZIlaPnYcwr67kAj/ySrIhy9
+	7HBk4cL9W7NyfKMFAfEEn2cAkcGHNkjplO8jfUkQUOMbU1eDzyLq
+X-Google-Smtp-Source: AGHT+IG5X1vksF/tv0wq/h048to95RzgD7AYZAZKnCMoZdlNaKEv7NrmBxQKxyy/6w+cY2qtmyTkfA==
+X-Received: by 2002:a05:6602:15c6:b0:83a:a305:d9f3 with SMTP id ca18e2360f4ac-83af61f1857mr646877539f.12.1729746526016;
+        Wed, 23 Oct 2024 22:08:46 -0700 (PDT)
+Received: from localhost ([121.250.214.124])
+        by smtp.gmail.com with ESMTPSA id 41be03b00d2f7-7eaeabc118fsm7788874a12.70.2024.10.23.22.08.44
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Wed, 23 Oct 2024 22:05:30 -0700 (PDT)
-Received: from phl-compute-12.internal (phl-compute-12.phl.internal [10.202.2.52])
-	by mailfauth.phl.internal (Postfix) with ESMTP id DDE92120006A;
-	Thu, 24 Oct 2024 01:05:29 -0400 (EDT)
-Received: from phl-mailfrontend-01 ([10.202.2.162])
-  by phl-compute-12.internal (MEProxy); Thu, 24 Oct 2024 01:05:29 -0400
-X-ME-Sender: <xms:mdUZZ-VVNah9XS8u1ByX7EuyyTzznOHXOdLSTCJc58TPSUFcTUxW0w>
-    <xme:mdUZZ6ls85buPwX6FjunU8YvcPwPFX5EQirtJoPG1n17Hs-cs69v3f3gvjjCStdSi
-    iaykWcCT_lAVohxgQ>
-X-ME-Received: <xmr:mdUZZyZycapfj_T-XRuT2efW3ogEdr4Jp2vDE2RpedrTb_zp9yr0TjGZON8>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdeikedgleduucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnecujfgurhepfffhvfevuffkfhggtggujgesthdtredttddtvden
-    ucfhrhhomhepuehoqhhunhcuhfgvnhhguceosghoqhhunhdrfhgvnhhgsehgmhgrihhlrd
-    gtohhmqeenucggtffrrghtthgvrhhnpeehudfgudffffetuedtvdehueevledvhfelleei
-    vedtgeeuhfegueevieduffeivdenucevlhhushhtvghrufhiiigvpedtnecurfgrrhgrmh
-    epmhgrihhlfhhrohhmpegsohhquhhnodhmvghsmhhtphgruhhthhhpvghrshhonhgrlhhi
-    thihqdeiledvgeehtdeigedqudejjeekheehhedvqdgsohhquhhnrdhfvghngheppehgmh
-    grihhlrdgtohhmsehfihigmhgvrdhnrghmvgdpnhgspghrtghpthhtohepvddupdhmohgu
-    vgepshhmthhpohhuthdprhgtphhtthhopehtghhlgieslhhinhhuthhrohhnihigrdguvg
-    dprhgtphhtthhopeguihhrkhdrsggvhhhmvgesghhmrghilhdrtghomhdprhgtphhtthho
-    pehlhihuuggvsehrvgguhhgrthdrtghomhdprhgtphhtthhopehruhhsthdqfhhorhdqlh
-    hinhhugiesvhhgvghrrdhkvghrnhgvlhdrohhrghdprhgtphhtthhopegurghkrhesrhgv
-    ughhrghtrdgtohhmpdhrtghpthhtoheprghirhhlihgvugesrhgvughhrghtrdgtohhmpd
-    hrtghpthhtohepmhhinhhgohesrhgvughhrghtrdgtohhmpdhrtghpthhtohepfihilhhl
-    sehkvghrnhgvlhdrohhrghdprhgtphhtthhopehlohhnghhmrghnsehrvgguhhgrthdrtg
-    homh
-X-ME-Proxy: <xmx:mdUZZ1Uqx_KuRv81jDtyo9TUV8Ftie9sseb0mz8F7VViPAJXCRlSFQ>
-    <xmx:mdUZZ4kodUcLeLqwQYZifea50YU4ZlYqFyKt7ig6MOgeRFINCADzZg>
-    <xmx:mdUZZ6f0f1zwT7TKx-IVYPw8MbAzfnQhs4gIgwF8ZPgZ3U0pRtGiTw>
-    <xmx:mdUZZ6HG2iacU563Lu3Xh0Lvyb2FA9N81BlXB0ZeNloBGGbTpCWOdg>
-    <xmx:mdUZZ2kFuNwRVOdPyAeJreTi-ko0v4dtsw3q2TyXfI8LKQNBCaOLFOFK>
-Feedback-ID: iad51458e:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Oct 2024 01:05:29 -0400 (EDT)
-Date: Wed, 23 Oct 2024 22:05:28 -0700
-From: Boqun Feng <boqun.feng@gmail.com>
-To: Thomas Gleixner <tglx@linutronix.de>
-Cc: Dirk Behme <dirk.behme@gmail.com>, Lyude Paul <lyude@redhat.com>,
-	rust-for-linux@vger.kernel.org, Danilo Krummrich <dakr@redhat.com>,
-	airlied@redhat.com, Ingo Molnar <mingo@redhat.com>, will@kernel.org,
-	Waiman Long <longman@redhat.com>,
-	Peter Zijlstra <peterz@infradead.org>, linux-kernel@vger.kernel.org,
-	Miguel Ojeda <ojeda@kernel.org>,
-	Alex Gaynor <alex.gaynor@gmail.com>, wedsonaf@gmail.com,
-	Gary Guo <gary@garyguo.net>,
-	=?iso-8859-1?Q?Bj=F6rn?= Roy Baron <bjorn3_gh@protonmail.com>,
-	Benno Lossin <benno.lossin@proton.me>,
-	Andreas Hindborg <a.hindborg@samsung.com>, aliceryhl@google.com,
-	Trevor Gross <tmgross@umich.edu>
-Subject: Re: [POC 1/6] irq & spin_lock: Add counted interrupt
- disabling/enabling
-Message-ID: <ZxnVmCqk2PzsOj2h@Boquns-Mac-mini.local>
-References: <20241018055125.2784186-2-boqun.feng@gmail.com>
- <87a5eu7gvw.ffs@tglx>
+        Wed, 23 Oct 2024 22:08:45 -0700 (PDT)
+Date: Thu, 24 Oct 2024 13:08:24 +0800
+From: Inochi Amaoto <inochiama@gmail.com>
+To: Emil Renner Berthing <emil.renner.berthing@canonical.com>, 
+	Inochi Amaoto <inochiama@gmail.com>, Chen Wang <unicorn_wang@outlook.com>, 
+	Andrew Lunn <andrew+netdev@lunn.ch>, "David S. Miller" <davem@davemloft.net>, 
+	Eric Dumazet <edumazet@google.com>, Jakub Kicinski <kuba@kernel.org>, 
+	Paolo Abeni <pabeni@redhat.com>, Rob Herring <robh@kernel.org>, 
+	Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley <conor+dt@kernel.org>, 
+	Inochi Amaoto <inochiama@outlook.com>, Alexandre Torgue <alexandre.torgue@foss.st.com>, 
+	Jose Abreu <joabreu@synopsys.com>, Maxime Coquelin <mcoquelin.stm32@gmail.com>, 
+	Richard Cochran <richardcochran@gmail.com>, Paul Walmsley <paul.walmsley@sifive.com>, 
+	Palmer Dabbelt <palmer@dabbelt.com>, Albert Ou <aou@eecs.berkeley.edu>, 
+	Giuseppe Cavallaro <peppe.cavallaro@st.com>
+Cc: Yixun Lan <dlan@gentoo.org>, netdev@vger.kernel.org, 
+	devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-stm32@st-md-mailman.stormreply.com, linux-arm-kernel@lists.infradead.org, 
+	linux-riscv@lists.infradead.org
+Subject: Re: [PATCH 2/4] dt-bindings: net: Add support for Sophgo SG2044 dwmac
+Message-ID: <o46c732wznqvz2p4gkqtjjratxwrgntw4mqballph7fjitvmhw@lylkpsqdp2ar>
+References: <20241021103617.653386-1-inochiama@gmail.com>
+ <20241021103617.653386-3-inochiama@gmail.com>
+ <CAJM55Z8SnjQFui0J2hOD34HmBsGqZfxn8e_KAWhXxiqswqv6Ww@mail.gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -129,117 +95,55 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <87a5eu7gvw.ffs@tglx>
+In-Reply-To: <CAJM55Z8SnjQFui0J2hOD34HmBsGqZfxn8e_KAWhXxiqswqv6Ww@mail.gmail.com>
 
-On Wed, Oct 23, 2024 at 09:34:27PM +0200, Thomas Gleixner wrote:
-> On Thu, Oct 17 2024 at 22:51, Boqun Feng wrote:
-> > Currently the nested interrupt disabling and enabling is present by
-> > Also add the corresponding spin_lock primitives: spin_lock_irq_disable()
-> > and spin_unlock_irq_enable(), as a result, code as follow:
+On Wed, Oct 23, 2024 at 07:41:28PM -0400, Emil Renner Berthing wrote:
+> Inochi Amaoto wrote:
+> > The GMAC IP on SG2044 is almost a standard Synopsys DesignWare MAC
+> > with some extra clock.
 > >
-> > 	spin_lock_irq_disable(l1);
-> > 	spin_lock_irq_disable(l2);
-> > 	spin_unlock_irq_enable(l1);
-> > 	// Interrupts are still disabled.
-> > 	spin_unlock_irq_enable(l2);
+> > Add necessary compatible string for this device.
 > >
-> > doesn't have the issue that interrupts are accidentally enabled.
+> > Signed-off-by: Inochi Amaoto <inochiama@gmail.com>
+> > ---
+> >  .../devicetree/bindings/net/snps,dwmac.yaml   |   1 +
+> >  .../bindings/net/sophgo,sg2044-dwmac.yaml     | 145 ++++++++++++++++++
+> >  2 files changed, 146 insertions(+)
+> >  create mode 100644 Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
 > >
-> > This also makes the wrapper of interrupt-disabling locks on Rust easier
-> > to design.
-> 
-> Clever!
-> 
-
-Thanks! ;-)
-
-> > +DECLARE_PER_CPU(struct interrupt_disable_state, local_interrupt_disable_state);
+> > diff --git a/Documentation/devicetree/bindings/net/snps,dwmac.yaml b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > index 3c4007cb65f8..69f6bb36970b 100644
+> > --- a/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > +++ b/Documentation/devicetree/bindings/net/snps,dwmac.yaml
+> > @@ -99,6 +99,7 @@ properties:
+> >          - snps,dwmac-5.30a
+> >          - snps,dwxgmac
+> >          - snps,dwxgmac-2.10
+> > +        - sophgo,sg2044-dwmac
+> >          - starfive,jh7100-dwmac
+> >          - starfive,jh7110-dwmac
+> >
+> > diff --git a/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > new file mode 100644
+> > index 000000000000..93c41550b0b6
+> > --- /dev/null
+> > +++ b/Documentation/devicetree/bindings/net/sophgo,sg2044-dwmac.yaml
+> > @@ -0,0 +1,145 @@
+> > +# SPDX-License-Identifier: (GPL-2.0-only OR BSD-2-Clause)
+> > +%YAML 1.2
+> > +---
+> > +$id: http://devicetree.org/schemas/net/sophgo,sg2044-dwmac.yaml#
+> > +$schema: http://devicetree.org/meta-schemas/core.yaml#
 > > +
-> > +static inline void local_interrupt_disable(void)
-> > +{
-> > +	unsigned long flags;
-> > +	long new_count;
-> > +
-> > +	local_irq_save(flags);
-> > +
-> > +	new_count = raw_cpu_inc_return(local_interrupt_disable_state.count);
+> > +title: StarFive JH7110 DWMAC glue layer
 > 
-> Ideally you make that part of the preemption count. Bit 24-30 are free
-> (or we can move them around as needed). That's deep enough and you get
-> the debug sanity checking of the preemption counter for free (might need
-> some extra debug for this...)
+> I think you forgot to change this when you copied the binding.
 > 
-> So then this becomes:
-> 
-> local_interrupt_disable()
-> {
->         cnt = preempt_count_add_return(LOCALIRQ_OFFSET);
->         if ((cnt & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
->         	local_irq_save(flags);
->                 this_cpu_write(..., flags);
->         }
-> }
-> 
-> and
-> 
-> local_interrupt_enable()
-> {
->         if ((preempt_count() & LOCALIRQ_MASK) == LOCALIRQ_OFFSET) {
->         	local_irq_restore(this_cpu_read(...flags);
->                 preempt_count_sub_test_resched(LOCALIRQ_OFFSET);
->         } else {
->                 // Does not need a resched test because it's not going
->                 // to 0
->                 preempt_count_sub(LOCALIRQ_OFFSET);
->         }
-> }
+> /Emil
 > 
 
-Yes, this looks nice, one tiny problem is that it requires
-PREEMPT_COUNT=y ;-) Maybe we can do: if PREEMPT_COUNT=y, we use preempt
-count, otherwise use a percpu?
-
-Hmm... but this will essentially be: we have a irq_disable_count() which
-is always built-in, and we also uses it as preempt count if
-PREEMPT_COUNT=y. This doesn't look too bad to me.
-
-> and then the lock thing becomes
-> 
-> spin_lock_irq_disable()
-> {
->         local_interrupt_disable();
->         lock();
-> }
-> 
-> spin_unlock_irq_enable()
-> {
->         unlock();
->         local_interrupt_enable();
-> }
-> 
-> instead having to do:
-> 
-> spin_unlock_irq_enable()
-> {
->         unlock();
->         local_interrupt_enable();
->         preempt_enable();
-> }
-> 
-> Which needs two distinct checks, one for the interrupt and one for the
-
-No? Because now since we fold the interrupt disable count into preempt
-count, so we don't need to care about preempt count any more if we we
-local_interrupt_{disable,enable}(). For example, in the above
-local_interrupt_enable(), interrupts are checked at local_irq_restore()
-and preemption is checked at preempt_count_sub_test_resched(). Right?
+Thanks, I will fix it.
 
 Regards,
-Boqun
-
-> preemption counter. Hmm?
-> 
-> Thanks,
-> 
->         tglx
+Inochi
 
