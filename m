@@ -1,285 +1,1101 @@
-Return-Path: <linux-kernel+bounces-380139-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380143-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8049E9AE96E
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:55:31 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id F0B869AE973
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:56:16 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id A40831C21E98
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:55:30 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id A5114281BF5
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:56:15 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 46E151E7C0E;
-	Thu, 24 Oct 2024 14:55:19 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="M6MnQW+0";
-	dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b="M6MnQW+0"
-Received: from EUR05-AM6-obe.outbound.protection.outlook.com (mail-am6eur05on2044.outbound.protection.outlook.com [40.107.22.44])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
-	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 496B11E378F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:55:14 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.22.44
-ARC-Seal:i=3; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729781718; cv=fail; b=rOHCqE+I55znqVqnoosd2BYgS1CsvO1C5tx0LCDemD4PFkKtFBVzGpDmPc164OXUBSlyPIlbD8XehkuFCjPTmLYdOsl68I48jm3lIS1Ma+u1sfSk0wGyWdoy4BDNKU9UJe8jaUK+PL/SnG7HkHqUsMWnW6F3vYbwVP/sfTCvSWM=
-ARC-Message-Signature:i=3; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729781718; c=relaxed/simple;
-	bh=FllPSsmj+UpsYp2e7Zy2Mk1nTmMvW9IjR3Bafvj62lo=;
-	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 Content-Type:MIME-Version; b=I2FqmL1KcVTKzIYv2zHJNdcVgLE82eZFSD5FupTmZbrgH0MJwyNIwu8flbUI5v2ppIEjjoNC6jiT2LosQYXd+yRmTFnuSo0qLgHUv15FSdfYp0tK7jTB37DUD8Gq/60QHfe0vzs6w9xyUfbgM5V4GKFCAqQ1r29R9hE2V4BdQBA=
-ARC-Authentication-Results:i=3; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=M6MnQW+0; dkim=pass (1024-bit key) header.d=arm.com header.i=@arm.com header.b=M6MnQW+0; arc=fail smtp.client-ip=40.107.22.44
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0AD881E7663;
+	Thu, 24 Oct 2024 14:55:33 +0000 (UTC)
+Received: from foss.arm.com (foss.arm.com [217.140.110.172])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7A1C51EBFE4
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:55:26 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729781731; cv=none; b=ViKwaEuSjvB8Z1Mm88mDF2RS29PRcwLEuXGAhFJIJsgZz4Fbv7HKCor4BO/kISFaU3eund/LQf5GY0EbEl40A298iSHUucZ7qCKrHROf//PDWzQpcxEMPve9SWYklmxbdjTY9jh7MaTCweFsBu7fQFUioVA1lsAjfOm5eWT68sM=
+ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729781731; c=relaxed/simple;
+	bh=82sgcnJ/XJcBbDhwvR9iQJCU/PSlLenB/NFZWt4wlIM=;
+	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
+	 In-Reply-To:Content-Type; b=J2Dz8dv7keYdw7p6r4r1snfT6xEd2LXGCUuj6Qhfo/mzQEqvIhtsOjSasq3FxkEf66N34ic65EFhOFNxOCkyvchMy0KuzjFq8HnZCMD+TD+rj4gDTXXCpTCjgV5UafberAQ/bw3x6Z97d+XBcp7NrTCNZxJlqxLWw/Th1RDV7oE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-ARC-Seal: i=2; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=pass;
- b=eUs41xd8N6QpwBIxQMlZ3qA+BxMTY6TUJltjq1GyO9bDY2bELEkNMFwvfiXtitxksH4BGXRZSB9Qt4zrlq4XfS5vf3jpTZJiZCJaYDQlHnJdeiVBWdvbCFphJ2y/HkUmljV/5JB29HOnobW6psqM3RCAv2d0jT5kKETL+9kipAf4NV4o+znf7B2oSqvnmmlbCUmHcpj8gH1RXz79X8ruFLTXc5cvqB4k4LfaAVyAjCc9qwLG4sbFxS3gD1AYjMP0MatabgAo5pXrX0ampTPB31PPlsMU9x08/5o2sW4hSDCBoUIfJ8kha6zP871BWI2mbg6Dp0RAu2ExE8HOiBV8IA==
-ARC-Message-Signature: i=2; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W1k6AHKcebCqZS9bf/ulWbnrH3kW6rKUZhzlMa753s0=;
- b=O+g1xR6OS88EOVBuw6blm5m3GfWpUSWYh4H4C8Iym3n2u3zAX6YcaTJehFB1yYjK/RCOfhKg7R54rqu7XMj7Qpb2yUHshIqUGgFOggxenepXfS10jg5ueVKMsi1xNno418MpxWat0PuRlbRlgwlfQVccfGdQ2KRqiG1PVhcQSCQ0WwqAXGbvN8i4mTB6OffO8fl5HTGLgUU5n7ZlN6ngy8pDoTRJSygdHELvzkx5bjw/90YWHkk8+DLrvk/fon3dRauiC/7SGC8j9FZDfPWnsDca3HLU51LhjuhMwSENNgAr/5ugoWoel9/ebJnJ9k89lRMRNWpekzAP6iY9yBcoIQ==
-ARC-Authentication-Results: i=2; mx.microsoft.com 1; spf=pass (sender ip is
- 63.35.35.123) smtp.rcpttodomain=vger.kernel.org smtp.mailfrom=arm.com;
- dmarc=pass (p=none sp=none pct=100) action=none header.from=arm.com;
- dkim=pass (signature was verified) header.d=arm.com; arc=pass (0 oda=1 ltdi=1
- spf=[1,1,smtp.mailfrom=arm.com] dkim=[1,1,header.d=arm.com]
- dmarc=[1,1,header.from=arm.com])
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1k6AHKcebCqZS9bf/ulWbnrH3kW6rKUZhzlMa753s0=;
- b=M6MnQW+0PXO0/6idWH9wqnWl4F2w6w7oh0n8qm+WpggiADi2aNCe6vDTgwX31uLhqbl1xlpZ8lOKvLsCBKyxtvp11nf/c0zyAdTxpzmYbE4UNXYhPNmM0WpISuYMiv9qygz96TVDaUlgtMmyl3Vd/R5z5AXjmm4UT+1q07jPgxM=
-Received: from PA7P264CA0240.FRAP264.PROD.OUTLOOK.COM (2603:10a6:102:372::17)
- by AS8PR08MB8659.eurprd08.prod.outlook.com (2603:10a6:20b:563::10) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.17; Thu, 24 Oct
- 2024 14:55:10 +0000
-Received: from AM4PEPF00025F9C.EURPRD83.prod.outlook.com
- (2603:10a6:102:372:cafe::57) by PA7P264CA0240.outlook.office365.com
- (2603:10a6:102:372::17) with Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.20 via Frontend
- Transport; Thu, 24 Oct 2024 14:55:10 +0000
-X-MS-Exchange-Authentication-Results: spf=pass (sender IP is 63.35.35.123)
- smtp.mailfrom=arm.com; dkim=pass (signature was verified)
- header.d=arm.com;dmarc=pass action=none header.from=arm.com;
-Received-SPF: Pass (protection.outlook.com: domain of arm.com designates
- 63.35.35.123 as permitted sender) receiver=protection.outlook.com;
- client-ip=63.35.35.123; helo=64aa7808-outbound-1.mta.getcheckrecipient.com;
- pr=C
-Received: from 64aa7808-outbound-1.mta.getcheckrecipient.com (63.35.35.123) by
- AM4PEPF00025F9C.mail.protection.outlook.com (10.167.16.11) with Microsoft
- SMTP Server (version=TLS1_3, cipher=TLS_AES_256_GCM_SHA384) id 15.20.8114.2
- via Frontend Transport; Thu, 24 Oct 2024 14:55:10 +0000
-Received: ("Tessian outbound 99870d44e01c:v490"); Thu, 24 Oct 2024 14:55:10 +0000
-X-CheckRecipientChecked: true
-X-CR-MTA-CID: 717ff9876fee20f5
-X-TessianGatewayMetadata: /arqyLPVBFlv2vFa+ySf3E7Qt4WbzNoYTKAxL09H8rUbD7+GsW/VBcAM0569anH9Jn+18wziLLWIBbdsW6OTR+Re7UWgLl4/9F0YzHlDUsU714nSdp2sQQ7p3DthtplMidhcAYUWwT2VkhP3Yh28HMvuGf8N8msHMO/PhDJoRqI=
-X-CR-MTA-TID: 64aa7808
-Received: from L054ac04ffbd5.1
-	by 64aa7808-outbound-1.mta.getcheckrecipient.com id 205136E1-5B90-49D7-8BC9-5B130364E637.1;
-	Thu, 24 Oct 2024 14:55:03 +0000
-Received: from EUR03-AM7-obe.outbound.protection.outlook.com
-    by 64aa7808-outbound-1.mta.getcheckrecipient.com with ESMTPS id L054ac04ffbd5.1
-    (version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384);
-    Thu, 24 Oct 2024 14:55:03 +0000
-ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
- b=CqN0uibQmBxx7VFfOefsRJkb5sdbxmMrAJ15BGsEw91BDp3yvoTAeDffrrQHYk8DQXeNWL87inA2jCLmA56MIU4Gho200Csi+/KNa+2irGcc819QUkmhsx/7f1yhHdNkZ4+XsXJtYLXTCanXzgXj4Qag7ix+vpUz91qzBobypYps8eqtOXP4xNec+N4KtbYIZg7SK8YPAXRw39jQZLYe1R9QaJCgnP3VgEVMfsbJT17yLosoO/kaUC2G+KWynXjo1dESZhpRYrIjmNoeA5GSG1iyO51f4wwohEB0s73RJ6kiDk8dTOot/mxbHP+sb8ICqLYxBEC/KG0pFh9kZd6lLA==
-ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
- s=arcselector10001;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
- bh=W1k6AHKcebCqZS9bf/ulWbnrH3kW6rKUZhzlMa753s0=;
- b=gRgQzs+wfkuYlBM7MNb6I0Bzr6+I4pBH4NM4nxEkRgbu+QWRWwW6Os3HYhPBAT36LxTydXnsx1pS7tKOsE9fmsdEPHEBMhPHKoYVXTVrA8kzP60KWb1MwgRLhuoGT16lddRdweVsi0uGP+fWNOsZjk9/KwfelANrKQYP8kGCnfzPjWa2A6VzI1fqKgLTmQC66ygHaPPq4jGVkomePwxZ3pQnfXHQA83avhcjLwb1jCQs3ozQkMuNv1LM+mY0b/ZI1kO8m/9g3ni0g8q2bJntTAigRxfQs7BtS7xom06I7beIurKN7gcnmsIjzZcDF7s5yopvbMObTQz8P5vC++Nj/A==
-ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
- smtp.mailfrom=arm.com; dmarc=pass action=none header.from=arm.com; dkim=pass
- header.d=arm.com; arc=none
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=arm.com; s=selector1;
- h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
- bh=W1k6AHKcebCqZS9bf/ulWbnrH3kW6rKUZhzlMa753s0=;
- b=M6MnQW+0PXO0/6idWH9wqnWl4F2w6w7oh0n8qm+WpggiADi2aNCe6vDTgwX31uLhqbl1xlpZ8lOKvLsCBKyxtvp11nf/c0zyAdTxpzmYbE4UNXYhPNmM0WpISuYMiv9qygz96TVDaUlgtMmyl3Vd/R5z5AXjmm4UT+1q07jPgxM=
-Authentication-Results-Original: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-Received: from AM9PR08MB6982.eurprd08.prod.outlook.com (2603:10a6:20b:415::16)
- by PAVPR08MB9650.eurprd08.prod.outlook.com (2603:10a6:102:31a::21) with
- Microsoft SMTP Server (version=TLS1_2,
- cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.18; Thu, 24 Oct
- 2024 14:55:01 +0000
-Received: from AM9PR08MB6982.eurprd08.prod.outlook.com
- ([fe80::5d5d:a4a7:198c:fbdd]) by AM9PR08MB6982.eurprd08.prod.outlook.com
- ([fe80::5d5d:a4a7:198c:fbdd%3]) with mapi id 15.20.8069.016; Thu, 24 Oct 2024
- 14:55:01 +0000
-From: Akash Goel <akash.goel@arm.com>
-To: boris.brezillon@collabora.com,
-	liviu.dudau@arm.com,
-	steven.price@arm.com
-Cc: dri-devel@lists.freedesktop.org,
-	linux-kernel@vger.kernel.org,
-	mihail.atanassov@arm.com,
-	ketil.johnsen@arm.com,
-	florent.tomasin@arm.com,
-	maarten.lankhorst@linux.intel.com,
-	mripard@kernel.org,
-	tzimmermann@suse.de,
-	airlied@gmail.com,
-	daniel@ffwll.ch,
-	nd@arm.com,
-	Akash Goel <akash.goel@arm.com>
-Subject: [PATCH 3/3] drm/panthor: Prevent potential overwrite of buffer objects
-Date: Thu, 24 Oct 2024 15:54:32 +0100
-Message-Id: <20241024145432.934086-4-akash.goel@arm.com>
-X-Mailer: git-send-email 2.25.1
-In-Reply-To: <20241024145432.934086-1-akash.goel@arm.com>
-References: <20241024145432.934086-1-akash.goel@arm.com>
-Content-Transfer-Encoding: 8bit
-Content-Type: text/plain
-X-ClientProxiedBy: LO4P265CA0177.GBRP265.PROD.OUTLOOK.COM
- (2603:10a6:600:312::20) To AM9PR08MB6982.eurprd08.prod.outlook.com
- (2603:10a6:20b:415::16)
+Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
+	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 6F372339;
+	Thu, 24 Oct 2024 07:55:55 -0700 (PDT)
+Received: from [10.1.30.45] (e122027.cambridge.arm.com [10.1.30.45])
+	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id 305EA3F528;
+	Thu, 24 Oct 2024 07:55:23 -0700 (PDT)
+Message-ID: <de14c352-8474-46cb-858b-27d5c22e67b2@arm.com>
+Date: Thu, 24 Oct 2024 15:55:21 +0100
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-MS-TrafficTypeDiagnostic:
-	AM9PR08MB6982:EE_|PAVPR08MB9650:EE_|AM4PEPF00025F9C:EE_|AS8PR08MB8659:EE_
-X-MS-Office365-Filtering-Correlation-Id: bf42d7da-8fd2-402f-1dc2-08dcf43bdbc1
-X-LD-Processed: f34e5979-57d9-4aaa-ad4d-b122a662184d,ExtAddr
-x-checkrecipientrouted: true
-NoDisclaimer: true
-X-MS-Exchange-SenderADCheck: 1
-X-MS-Exchange-AntiSpam-Relay: 0
-X-Microsoft-Antispam-Untrusted: BCL:0;ARA:13230040|1800799024|366016|376014;
-X-Microsoft-Antispam-Message-Info-Original:
- =?us-ascii?Q?VDlZ/mJOEoNsY94F+qCXfgQ47C+PM54oxcgDpRvq09OY8i8rUGteUAOqt2sd?=
- =?us-ascii?Q?7XjJbs0zbwOvSIzGk7ojyJgzaVSkhcGGcquKheSWfYfoN4KTYpp3QqsByOHQ?=
- =?us-ascii?Q?LiR84sjMSVScLww2sy4D6dHFrnpO5j8EdIAePw3Z2kpRDURG0ZyJddJLUl6H?=
- =?us-ascii?Q?kG4+JdC8Tvi9WrVgEVSvnfHnghX6LQfjJhIj1w6eWTfYDWbzr8pF/a/BdOvK?=
- =?us-ascii?Q?PWIE7g48+NoF68QyyfXh74ydSn2UV3Ln1EE65jfipKTKlUQ0WAPjGUSyimy+?=
- =?us-ascii?Q?5EbrOUxuGQKtBB+eTZxPU0pf/oh9Nn4bEAjciLDQ0XZ0PxNOaoLVH1AZTnNg?=
- =?us-ascii?Q?G1iLO3exrbZNNEZmWE57cvCELvmjc/ygN3Dqo/bQIRJ5NC4ksA1RyqtR2/+z?=
- =?us-ascii?Q?JDl8ugerFLEr4Ecs1j1ArnLHloy4jbuU0RQfq/s6+PWPbuqILcf/Ec5qVhOl?=
- =?us-ascii?Q?sdjd7U/EMjZNqXbk1qXYS8Ma4gdj8fdyvRTKisCE5hgSXvmNImi7/OpbIwpP?=
- =?us-ascii?Q?chuh0Hun3tuDbv3qenTSRhgELgQWZmE7170UwRutgCi/uJ1DQUBRhsnOi3B8?=
- =?us-ascii?Q?9+g1/XTEo0lRL5tDpHpf8StxOwbn6wA0StcyWCzQ5KimjQNagWYlvlFrJgaT?=
- =?us-ascii?Q?7drmyiWVQqpw8r/NgzmBMYw4KI7wELg/v0/oXNW8+5WR1pN51K3o1Sqhcioc?=
- =?us-ascii?Q?YjpQW/+xzzWzLfMZNXsZH0q+Ncm2uwFm0Z9AzNWqWN569Qlj6j+Xfq+SRAls?=
- =?us-ascii?Q?vpf8Te+bYii3vREW37JpisY/iafUElX6zZGrgv4i9rGaACx1VOrrTg2x2fTb?=
- =?us-ascii?Q?IvApdkIQ0jtrxWl3Np+M91Z12NH2kBIFuDJzO9EpU7zwO/MinrYn4emTuCQo?=
- =?us-ascii?Q?yybfqUnoROozmbj5ykkcsh762uan7wlFL2YhGzT6aevWytr1bpOKJUpuI2lH?=
- =?us-ascii?Q?ShDhmcpeWOAnPgbgATrdDUWehb4EIpfpbfK1wJWtKZ1tj35cXpX/06dEQN00?=
- =?us-ascii?Q?uwMpnmnOsOq/AEbSGrteErR5cnIQepRjaGN3OTM4J18bUOzolM2DqP1v/nFI?=
- =?us-ascii?Q?YY7QqaLh1GAd+3uG9iJgT7itltK6BKSqJeYwPlhXppLYShe/KW/FCwk1Nici?=
- =?us-ascii?Q?OdqtwAMNtMTod+RWuM2Vke3NqodqNyzFAYL1Y0iBIFn1pN+q3xO3tP7Nn7cg?=
- =?us-ascii?Q?bMTR7wENdn9AdFvJbCHsEtGMfl2uW4hYrbSRIkq34ouB00p3XpzOA41WMm0X?=
- =?us-ascii?Q?xJy8DYS8F8x/uhKZRhgGK6jMjfxOzLfOc0ZH2LHaegMA6o2rUursLC4RfoyV?=
- =?us-ascii?Q?TzeGJMemi9iCdCFdkzcfr2pX?=
-X-Forefront-Antispam-Report-Untrusted:
- CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:AM9PR08MB6982.eurprd08.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(1800799024)(366016)(376014);DIR:OUT;SFP:1101;
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: PAVPR08MB9650
-Original-Authentication-Results: dkim=none (message not signed)
- header.d=none;dmarc=none action=none header.from=arm.com;
-X-EOPAttributedMessage: 0
-X-MS-Exchange-SkipListedInternetSender:
- ip=[2603:10a6:20b:415::16];domain=AM9PR08MB6982.eurprd08.prod.outlook.com
-X-MS-Exchange-Transport-CrossTenantHeadersStripped:
- AM4PEPF00025F9C.EURPRD83.prod.outlook.com
-X-MS-PublicTrafficType: Email
-X-MS-Office365-Filtering-Correlation-Id-Prvs:
-	212e5514-41a0-4060-31cb-08dcf43bd673
-X-Microsoft-Antispam:
-	BCL:0;ARA:13230040|36860700013|376014|35042699022|82310400026|1800799024;
-X-Microsoft-Antispam-Message-Info:
-	=?us-ascii?Q?PjPT/yXkAEYIWnSAalM+yYgehQUmu9eQvRWf+jSDuuPqZuunTvdEdAzt1UTl?=
- =?us-ascii?Q?o4PcYhWOD7Jac+B5PQr6allg2XbTAc3mudomVS9LMPwRqH2PgnSuBAK3wdLP?=
- =?us-ascii?Q?u/tTfWvTCsViWjcbySffN3N0A9sI8/bxnzDRrnuAZuiu3qEetsQz4JFBZP66?=
- =?us-ascii?Q?b8g7lcbj5xVDrhGRq6yJzKEYTMp6HMhhKeazi7WAhPVFzlwyydjYV5eyXvph?=
- =?us-ascii?Q?pwccH9IcFl60uRYEt/nEaP/gg73SZZcLnrRfixsaBFQpcopGYl2F9SJbnTBR?=
- =?us-ascii?Q?mhBFe71B64trtX03qXYore+wJVjqAGQ56FTS+931plZHUM5Yq+EO7S4ac/TH?=
- =?us-ascii?Q?4bVoNu3inZ9+w6qgRWE4KKfu+y+k8OnsH52Y1z4CASr1iQFXUNhrJ0WCOy5x?=
- =?us-ascii?Q?V1TdUUgNtxRs0CxYhdg43NLJ90iJX1er8vywN/xA7OZvzJ+DNx/Q2G+DxjOT?=
- =?us-ascii?Q?9VH+zeolJmCkEGbjgqlYRAYcu3HgrW2K2G0NefoogvR5Uqi6nhM2w11TgbuC?=
- =?us-ascii?Q?J1J3wYrguFBpn7sF86/x6SxpKJKj0StBvjvzi8aNUc64tFBSsMifvE+UhvXN?=
- =?us-ascii?Q?pWOqUm3GjfbyPwPiqbJirWr0ejW4Hk/wqo9m3MB4KQroSHkqOdYkHPhJEohB?=
- =?us-ascii?Q?ZTPlxptdkh4q6vZPH4h4hCF9/wRlKexKxt7l92bpId3REtFql3/IFHZk3FPp?=
- =?us-ascii?Q?8NE2gfBKpSS18/jPEJEE1gcZTnhPGOaES14zIXuPbcWJH8Ecr4rf0klTZyoc?=
- =?us-ascii?Q?459M1TO5/S+E1qTU1RjNGrYWVGhOkK6o42HX0ACfpotfuTZvAlS2zxEP77XE?=
- =?us-ascii?Q?Shq9hod/JK/HPp/fdQ7TifT4rA6AcDEfygHjDSRGuZuY+jhBXpBVDD0imTnj?=
- =?us-ascii?Q?45D+m5d7k93TOvw/wda6JHVALQz7rwJHk+9Tx5s1gsBnuO9zfam1ewnC0aPa?=
- =?us-ascii?Q?IPO2sJdlhjVLkuO9Eat8STTHJ1z/xUSutG7MP52yVi83QArDv/c9Pr6H4yrw?=
- =?us-ascii?Q?wYyrId2nYqjpKvvPq56Cl94EHEvaOzzopAqzDowCKx3EyBYevv4aYPUFnmdT?=
- =?us-ascii?Q?uBY1dzCP9xFWs9kh4FV1uLdxb2E1twAfProzqIJhYLnLgsxGA3F/+uhaQBd9?=
- =?us-ascii?Q?y5cdaEFE7fznvP69rr85ERrrntMVbvBvj2TOc5xkeuUFyIKVvYOUKF+hyD9A?=
- =?us-ascii?Q?EHp/ElQSU1bM91NB5hajukqAH70h4mOHwIZemqF/wRwUNc8lha9cO+4jzjpj?=
- =?us-ascii?Q?pXobTHP3rRC08vvRpUX4FOe+9fTNcvXnM6KmOQ2Rq1lRlDmKOoPP7T2CdyJk?=
- =?us-ascii?Q?dfEhksbpHjm6vzqYulGhzj0xTOvN9GXK3TKs00MyFKkkUe8uRzlFsvDhYd4k?=
- =?us-ascii?Q?jtLxzsFVie/z6QayvNg7zkb3BneLHW6GIkz7pcNLbcjCack4hQ=3D=3D?=
-X-Forefront-Antispam-Report:
-	CIP:63.35.35.123;CTRY:IE;LANG:en;SCL:1;SRV:;IPV:CAL;SFV:NSPM;H:64aa7808-outbound-1.mta.getcheckrecipient.com;PTR:ec2-63-35-35-123.eu-west-1.compute.amazonaws.com;CAT:NONE;SFS:(13230040)(36860700013)(376014)(35042699022)(82310400026)(1800799024);DIR:OUT;SFP:1101;
-X-OriginatorOrg: arm.com
-X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 14:55:10.5788
- (UTC)
-X-MS-Exchange-CrossTenant-Network-Message-Id: bf42d7da-8fd2-402f-1dc2-08dcf43bdbc1
-X-MS-Exchange-CrossTenant-Id: f34e5979-57d9-4aaa-ad4d-b122a662184d
-X-MS-Exchange-CrossTenant-OriginalAttributedTenantConnectingIp: TenantId=f34e5979-57d9-4aaa-ad4d-b122a662184d;Ip=[63.35.35.123];Helo=[64aa7808-outbound-1.mta.getcheckrecipient.com]
-X-MS-Exchange-CrossTenant-AuthSource:
-	AM4PEPF00025F9C.EURPRD83.prod.outlook.com
-X-MS-Exchange-CrossTenant-AuthAs: Anonymous
-X-MS-Exchange-CrossTenant-FromEntityHeader: HybridOnPrem
-X-MS-Exchange-Transport-CrossTenantHeadersStamped: AS8PR08MB8659
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 1/9] drm/panfrost: Replace DRM driver allocation method
+ with newer one
+To: =?UTF-8?Q?Adri=C3=A1n_Larumbe?= <adrian.larumbe@collabora.com>,
+ Boris Brezillon <boris.brezillon@collabora.com>,
+ Rob Herring <robh@kernel.org>,
+ Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
+ Maxime Ripard <mripard@kernel.org>, Thomas Zimmermann <tzimmermann@suse.de>,
+ David Airlie <airlied@gmail.com>, Simona Vetter <simona@ffwll.ch>,
+ Philipp Zabel <p.zabel@pengutronix.de>
+Cc: kernel@collabora.com, dri-devel@lists.freedesktop.org,
+ linux-kernel@vger.kernel.org
+References: <20241014233758.994861-1-adrian.larumbe@collabora.com>
+From: Steven Price <steven.price@arm.com>
+Content-Language: en-GB
+In-Reply-To: <20241014233758.994861-1-adrian.larumbe@collabora.com>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 8bit
 
-All CPU mappings are forced as uncached for Panthor buffer objects when
-system(IO) coherency is disabled. Physical backing for Panthor BOs is
-allocated by shmem, which clears the pages also after allocation. But
-there is no explicit cache flush done after the clearing of pages.
-So it could happen that there are dirty cachelines in the CPU cache
-for the BOs, when they are accessed from the CPU side through uncached
-CPU mapping, and the eviction of cachelines overwrites the data of BOs.
+On 15/10/2024 00:31, Adrián Larumbe wrote:
+> Drop the deprecated DRM driver allocation method in favour of
+> devm_drm_dev_alloc(). Overall just make it the same as in Panthor.
+> Also discard now superfluous generic and platform device pointers inside
+> the main panfrost device structure.
+> 
+> Some ancient checkpatch issues unearthed as a result of these changes
+> were also fixed, like lines too long or double assignment in one line.
+> 
+> Signed-off-by: Adrián Larumbe <adrian.larumbe@collabora.com>
 
-This commit tries to avoid the potential overwrite scenario.
+Reviewed-by: Steven Price <steven.price@arm.com>
 
-Signed-off-by: Akash Goel <akash.goel@arm.com>
----
- drivers/gpu/drm/panthor/panthor_gem.h | 10 ++++++++++
- drivers/gpu/drm/panthor/panthor_mmu.c |  5 +++++
- 2 files changed, 15 insertions(+)
-
-diff --git a/drivers/gpu/drm/panthor/panthor_gem.h b/drivers/gpu/drm/panthor/panthor_gem.h
-index e43021cf6d45..4b0f43f1edf1 100644
---- a/drivers/gpu/drm/panthor/panthor_gem.h
-+++ b/drivers/gpu/drm/panthor/panthor_gem.h
-@@ -46,6 +46,16 @@ struct panthor_gem_object {
- 
- 	/** @flags: Combination of drm_panthor_bo_flags flags. */
- 	u32 flags;
-+
-+	/**
-+	 * @cleaned: The buffer object pages have been cleaned.
-+	 *
-+	 * There could be dirty CPU cachelines for the pages of buffer object
-+	 * after allocation, as shmem will zero out the pages. The cachelines
-+	 * need to be cleaned if the pages are going to be accessed with an
-+	 * uncached CPU mapping.
-+	 */
-+	bool cleaned;
- };
- 
- /**
-diff --git a/drivers/gpu/drm/panthor/panthor_mmu.c b/drivers/gpu/drm/panthor/panthor_mmu.c
-index f522a116c1b1..d8cc9e7d064e 100644
---- a/drivers/gpu/drm/panthor/panthor_mmu.c
-+++ b/drivers/gpu/drm/panthor/panthor_mmu.c
-@@ -1249,6 +1249,11 @@ static int panthor_vm_prepare_map_op_ctx(struct panthor_vm_op_ctx *op_ctx,
- 
- 	op_ctx->map.sgt = sgt;
- 
-+	if (bo->base.map_wc && !bo->cleaned) {
-+		dma_sync_sgtable_for_device(vm->ptdev->base.dev, sgt, DMA_TO_DEVICE);
-+		bo->cleaned = true;
-+	}
-+
- 	preallocated_vm_bo = drm_gpuvm_bo_create(&vm->base, &bo->base.base);
- 	if (!preallocated_vm_bo) {
- 		if (!bo->base.base.import_attach)
--- 
-2.25.1
+> ---
+>  drivers/gpu/drm/panfrost/panfrost_devfreq.c   |  4 +-
+>  drivers/gpu/drm/panfrost/panfrost_device.c    | 49 ++++++-------
+>  drivers/gpu/drm/panfrost/panfrost_device.h    |  6 +-
+>  drivers/gpu/drm/panfrost/panfrost_drv.c       | 68 +++++++------------
+>  drivers/gpu/drm/panfrost/panfrost_dump.c      |  8 +--
+>  drivers/gpu/drm/panfrost/panfrost_gem.c       |  6 +-
+>  .../gpu/drm/panfrost/panfrost_gem_shrinker.c  |  4 +-
+>  drivers/gpu/drm/panfrost/panfrost_gpu.c       | 49 ++++++-------
+>  drivers/gpu/drm/panfrost/panfrost_job.c       | 37 +++++-----
+>  drivers/gpu/drm/panfrost/panfrost_mmu.c       | 40 ++++++-----
+>  drivers/gpu/drm/panfrost/panfrost_perfcnt.c   | 22 +++---
+>  11 files changed, 141 insertions(+), 152 deletions(-)
+> 
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_devfreq.c b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+> index 2d30da38c2c3..093910cdf6a1 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_devfreq.c
+> @@ -74,7 +74,7 @@ static int panfrost_devfreq_get_dev_status(struct device *dev,
+>  
+>  	spin_unlock_irqrestore(&pfdevfreq->lock, irqflags);
+>  
+> -	dev_dbg(pfdev->dev, "busy %lu total %lu %lu %% freq %lu MHz\n",
+> +	dev_dbg(pfdev->base.dev, "busy %lu total %lu %lu %% freq %lu MHz\n",
+>  		status->busy_time, status->total_time,
+>  		status->busy_time / (status->total_time / 100),
+>  		status->current_frequency / 1000 / 1000);
+> @@ -119,7 +119,7 @@ int panfrost_devfreq_init(struct panfrost_device *pfdev)
+>  	int ret;
+>  	struct dev_pm_opp *opp;
+>  	unsigned long cur_freq;
+> -	struct device *dev = &pfdev->pdev->dev;
+> +	struct device *dev = pfdev->base.dev;
+>  	struct devfreq *devfreq;
+>  	struct thermal_cooling_device *cooling;
+>  	struct panfrost_devfreq *pfdevfreq = &pfdev->pfdevfreq;
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.c b/drivers/gpu/drm/panfrost/panfrost_device.c
+> index a45e4addcc19..4fe29286bbe3 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.c
+> @@ -20,9 +20,9 @@
+>  
+>  static int panfrost_reset_init(struct panfrost_device *pfdev)
+>  {
+> -	pfdev->rstc = devm_reset_control_array_get_optional_exclusive(pfdev->dev);
+> +	pfdev->rstc = devm_reset_control_array_get_optional_exclusive(pfdev->base.dev);
+>  	if (IS_ERR(pfdev->rstc)) {
+> -		dev_err(pfdev->dev, "get reset failed %ld\n", PTR_ERR(pfdev->rstc));
+> +		dev_err(pfdev->base.dev, "get reset failed %ld\n", PTR_ERR(pfdev->rstc));
+>  		return PTR_ERR(pfdev->rstc);
+>  	}
+>  
+> @@ -39,22 +39,22 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
+>  	int err;
+>  	unsigned long rate;
+>  
+> -	pfdev->clock = devm_clk_get(pfdev->dev, NULL);
+> +	pfdev->clock = devm_clk_get(pfdev->base.dev, NULL);
+>  	if (IS_ERR(pfdev->clock)) {
+> -		dev_err(pfdev->dev, "get clock failed %ld\n", PTR_ERR(pfdev->clock));
+> +		dev_err(pfdev->base.dev, "get clock failed %ld\n", PTR_ERR(pfdev->clock));
+>  		return PTR_ERR(pfdev->clock);
+>  	}
+>  
+>  	rate = clk_get_rate(pfdev->clock);
+> -	dev_info(pfdev->dev, "clock rate = %lu\n", rate);
+> +	dev_info(pfdev->base.dev, "clock rate = %lu\n", rate);
+>  
+>  	err = clk_prepare_enable(pfdev->clock);
+>  	if (err)
+>  		return err;
+>  
+> -	pfdev->bus_clock = devm_clk_get_optional(pfdev->dev, "bus");
+> +	pfdev->bus_clock = devm_clk_get_optional(pfdev->base.dev, "bus");
+>  	if (IS_ERR(pfdev->bus_clock)) {
+> -		dev_err(pfdev->dev, "get bus_clock failed %ld\n",
+> +		dev_err(pfdev->base.dev, "get bus_clock failed %ld\n",
+>  			PTR_ERR(pfdev->bus_clock));
+>  		err = PTR_ERR(pfdev->bus_clock);
+>  		goto disable_clock;
+> @@ -62,7 +62,7 @@ static int panfrost_clk_init(struct panfrost_device *pfdev)
+>  
+>  	if (pfdev->bus_clock) {
+>  		rate = clk_get_rate(pfdev->bus_clock);
+> -		dev_info(pfdev->dev, "bus_clock rate = %lu\n", rate);
+> +		dev_info(pfdev->base.dev, "bus_clock rate = %lu\n", rate);
+>  
+>  		err = clk_prepare_enable(pfdev->bus_clock);
+>  		if (err)
+> @@ -87,7 +87,7 @@ static int panfrost_regulator_init(struct panfrost_device *pfdev)
+>  {
+>  	int ret, i;
+>  
+> -	pfdev->regulators = devm_kcalloc(pfdev->dev, pfdev->comp->num_supplies,
+> +	pfdev->regulators = devm_kcalloc(pfdev->base.dev, pfdev->comp->num_supplies,
+>  					 sizeof(*pfdev->regulators),
+>  					 GFP_KERNEL);
+>  	if (!pfdev->regulators)
+> @@ -96,12 +96,12 @@ static int panfrost_regulator_init(struct panfrost_device *pfdev)
+>  	for (i = 0; i < pfdev->comp->num_supplies; i++)
+>  		pfdev->regulators[i].supply = pfdev->comp->supply_names[i];
+>  
+> -	ret = devm_regulator_bulk_get(pfdev->dev,
+> +	ret = devm_regulator_bulk_get(pfdev->base.dev,
+>  				      pfdev->comp->num_supplies,
+>  				      pfdev->regulators);
+>  	if (ret < 0) {
+>  		if (ret != -EPROBE_DEFER)
+> -			dev_err(pfdev->dev, "failed to get regulators: %d\n",
+> +			dev_err(pfdev->base.dev, "failed to get regulators: %d\n",
+>  				ret);
+>  		return ret;
+>  	}
+> @@ -109,7 +109,7 @@ static int panfrost_regulator_init(struct panfrost_device *pfdev)
+>  	ret = regulator_bulk_enable(pfdev->comp->num_supplies,
+>  				    pfdev->regulators);
+>  	if (ret < 0) {
+> -		dev_err(pfdev->dev, "failed to enable regulators: %d\n", ret);
+> +		dev_err(pfdev->base.dev, "failed to enable regulators: %d\n", ret);
+>  		return ret;
+>  	}
+>  
+> @@ -144,7 +144,7 @@ static int panfrost_pm_domain_init(struct panfrost_device *pfdev)
+>  	int err;
+>  	int i, num_domains;
+>  
+> -	num_domains = of_count_phandle_with_args(pfdev->dev->of_node,
+> +	num_domains = of_count_phandle_with_args(pfdev->base.dev->of_node,
+>  						 "power-domains",
+>  						 "#power-domain-cells");
+>  
+> @@ -156,7 +156,7 @@ static int panfrost_pm_domain_init(struct panfrost_device *pfdev)
+>  		return 0;
+>  
+>  	if (num_domains != pfdev->comp->num_pm_domains) {
+> -		dev_err(pfdev->dev,
+> +		dev_err(pfdev->base.dev,
+>  			"Incorrect number of power domains: %d provided, %d needed\n",
+>  			num_domains, pfdev->comp->num_pm_domains);
+>  		return -EINVAL;
+> @@ -168,20 +168,21 @@ static int panfrost_pm_domain_init(struct panfrost_device *pfdev)
+>  
+>  	for (i = 0; i < num_domains; i++) {
+>  		pfdev->pm_domain_devs[i] =
+> -			dev_pm_domain_attach_by_name(pfdev->dev,
+> -					pfdev->comp->pm_domain_names[i]);
+> +			dev_pm_domain_attach_by_name(pfdev->base.dev,
+> +						     pfdev->comp->pm_domain_names[i]);
+>  		if (IS_ERR_OR_NULL(pfdev->pm_domain_devs[i])) {
+>  			err = PTR_ERR(pfdev->pm_domain_devs[i]) ? : -ENODATA;
+>  			pfdev->pm_domain_devs[i] = NULL;
+> -			dev_err(pfdev->dev,
+> +			dev_err(pfdev->base.dev,
+>  				"failed to get pm-domain %s(%d): %d\n",
+>  				pfdev->comp->pm_domain_names[i], i, err);
+>  			goto err;
+>  		}
+>  
+> -		pfdev->pm_domain_links[i] = device_link_add(pfdev->dev,
+> -				pfdev->pm_domain_devs[i], DL_FLAG_PM_RUNTIME |
+> -				DL_FLAG_STATELESS | DL_FLAG_RPM_ACTIVE);
+> +		pfdev->pm_domain_links[i] =
+> +			device_link_add(pfdev->base.dev,
+> +					pfdev->pm_domain_devs[i], DL_FLAG_PM_RUNTIME |
+> +					DL_FLAG_STATELESS | DL_FLAG_RPM_ACTIVE);
+>  		if (!pfdev->pm_domain_links[i]) {
+>  			dev_err(pfdev->pm_domain_devs[i],
+>  				"adding device link failed!\n");
+> @@ -211,14 +212,14 @@ int panfrost_device_init(struct panfrost_device *pfdev)
+>  
+>  	err = panfrost_clk_init(pfdev);
+>  	if (err) {
+> -		dev_err(pfdev->dev, "clk init failed %d\n", err);
+> +		dev_err(pfdev->base.dev, "clk init failed %d\n", err);
+>  		return err;
+>  	}
+>  
+>  	err = panfrost_devfreq_init(pfdev);
+>  	if (err) {
+>  		if (err != -EPROBE_DEFER)
+> -			dev_err(pfdev->dev, "devfreq init failed %d\n", err);
+> +			dev_err(pfdev->base.dev, "devfreq init failed %d\n", err);
+>  		goto out_clk;
+>  	}
+>  
+> @@ -231,7 +232,7 @@ int panfrost_device_init(struct panfrost_device *pfdev)
+>  
+>  	err = panfrost_reset_init(pfdev);
+>  	if (err) {
+> -		dev_err(pfdev->dev, "reset init failed %d\n", err);
+> +		dev_err(pfdev->base.dev, "reset init failed %d\n", err);
+>  		goto out_regulator;
+>  	}
+>  
+> @@ -239,7 +240,7 @@ int panfrost_device_init(struct panfrost_device *pfdev)
+>  	if (err)
+>  		goto out_reset;
+>  
+> -	pfdev->iomem = devm_platform_ioremap_resource(pfdev->pdev, 0);
+> +	pfdev->iomem = devm_platform_ioremap_resource(to_platform_device(pfdev->base.dev), 0);
+>  	if (IS_ERR(pfdev->iomem)) {
+>  		err = PTR_ERR(pfdev->iomem);
+>  		goto out_pm_domain;
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_device.h b/drivers/gpu/drm/panfrost/panfrost_device.h
+> index cffcb0ac7c11..d9aea2c2cbe5 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_device.h
+> +++ b/drivers/gpu/drm/panfrost/panfrost_device.h
+> @@ -98,9 +98,7 @@ struct panfrost_compatible {
+>  };
+>  
+>  struct panfrost_device {
+> -	struct device *dev;
+> -	struct drm_device *ddev;
+> -	struct platform_device *pdev;
+> +	struct drm_device base;
+>  	int gpu_irq;
+>  	int mmu_irq;
+>  
+> @@ -181,7 +179,7 @@ struct panfrost_file_priv {
+>  
+>  static inline struct panfrost_device *to_panfrost_device(struct drm_device *ddev)
+>  {
+> -	return ddev->dev_private;
+> +	return container_of(ddev, struct panfrost_device, base);
+>  }
+>  
+>  static inline int panfrost_model_cmp(struct panfrost_device *pfdev, s32 id)
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_drv.c b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> index 04d615df5259..6284397a7030 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_drv.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_drv.c
+> @@ -35,7 +35,7 @@ static int panfrost_ioctl_query_timestamp(struct panfrost_device *pfdev,
+>  {
+>  	int ret;
+>  
+> -	ret = pm_runtime_resume_and_get(pfdev->dev);
+> +	ret = pm_runtime_resume_and_get(pfdev->base.dev);
+>  	if (ret)
+>  		return ret;
+>  
+> @@ -43,14 +43,14 @@ static int panfrost_ioctl_query_timestamp(struct panfrost_device *pfdev,
+>  	*arg = panfrost_timestamp_read(pfdev);
+>  	panfrost_cycle_counter_put(pfdev);
+>  
+> -	pm_runtime_put(pfdev->dev);
+> +	pm_runtime_put(pfdev->base.dev);
+>  	return 0;
+>  }
+>  
+>  static int panfrost_ioctl_get_param(struct drm_device *ddev, void *data, struct drm_file *file)
+>  {
+>  	struct drm_panfrost_get_param *param = data;
+> -	struct panfrost_device *pfdev = ddev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(ddev);
+>  	int ret;
+>  
+>  	if (param->pad != 0)
+> @@ -274,7 +274,7 @@ panfrost_copy_in_sync(struct drm_device *dev,
+>  static int panfrost_ioctl_submit(struct drm_device *dev, void *data,
+>  		struct drm_file *file)
+>  {
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  	struct panfrost_file_priv *file_priv = file->driver_priv;
+>  	struct drm_panfrost_submit *args = data;
+>  	struct drm_syncobj *sync_out = NULL;
+> @@ -435,7 +435,7 @@ static int panfrost_ioctl_madvise(struct drm_device *dev, void *data,
+>  {
+>  	struct panfrost_file_priv *priv = file_priv->driver_priv;
+>  	struct drm_panfrost_madvise *args = data;
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  	struct drm_gem_object *gem_obj;
+>  	struct panfrost_gem_object *bo;
+>  	int ret = 0;
+> @@ -507,7 +507,7 @@ static int
+>  panfrost_open(struct drm_device *dev, struct drm_file *file)
+>  {
+>  	int ret;
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  	struct panfrost_file_priv *panfrost_priv;
+>  
+>  	panfrost_priv = kzalloc(sizeof(*panfrost_priv), GFP_KERNEL);
+> @@ -604,8 +604,7 @@ static void panfrost_gpu_show_fdinfo(struct panfrost_device *pfdev,
+>  
+>  static void panfrost_show_fdinfo(struct drm_printer *p, struct drm_file *file)
+>  {
+> -	struct drm_device *dev = file->minor->dev;
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(file->minor->dev);
+>  
+>  	panfrost_gpu_show_fdinfo(pfdev, file->driver_priv, p);
+>  
+> @@ -647,15 +646,12 @@ static const struct drm_driver panfrost_drm_driver = {
+>  static int panfrost_probe(struct platform_device *pdev)
+>  {
+>  	struct panfrost_device *pfdev;
+> -	struct drm_device *ddev;
+>  	int err;
+>  
+> -	pfdev = devm_kzalloc(&pdev->dev, sizeof(*pfdev), GFP_KERNEL);
+> -	if (!pfdev)
+> -		return -ENOMEM;
+> -
+> -	pfdev->pdev = pdev;
+> -	pfdev->dev = &pdev->dev;
+> +	pfdev = devm_drm_dev_alloc(&pdev->dev, &panfrost_drm_driver,
+> +				   struct panfrost_device, base);
+> +	if (IS_ERR(pfdev))
+> +		return PTR_ERR(pfdev);
+>  
+>  	platform_set_drvdata(pdev, pfdev);
+>  
+> @@ -665,14 +661,6 @@ static int panfrost_probe(struct platform_device *pdev)
+>  
+>  	pfdev->coherent = device_get_dma_attr(&pdev->dev) == DEV_DMA_COHERENT;
+>  
+> -	/* Allocate and initialize the DRM device. */
+> -	ddev = drm_dev_alloc(&panfrost_drm_driver, &pdev->dev);
+> -	if (IS_ERR(ddev))
+> -		return PTR_ERR(ddev);
+> -
+> -	ddev->dev_private = pfdev;
+> -	pfdev->ddev = ddev;
+> -
+>  	mutex_init(&pfdev->shrinker_lock);
+>  	INIT_LIST_HEAD(&pfdev->shrinker_list);
+>  
+> @@ -683,51 +671,47 @@ static int panfrost_probe(struct platform_device *pdev)
+>  		goto err_out0;
+>  	}
+>  
+> -	pm_runtime_set_active(pfdev->dev);
+> -	pm_runtime_mark_last_busy(pfdev->dev);
+> -	pm_runtime_enable(pfdev->dev);
+> -	pm_runtime_set_autosuspend_delay(pfdev->dev, 50); /* ~3 frames */
+> -	pm_runtime_use_autosuspend(pfdev->dev);
+> +	pm_runtime_set_active(pfdev->base.dev);
+> +	pm_runtime_mark_last_busy(pfdev->base.dev);
+> +	pm_runtime_enable(pfdev->base.dev);
+> +	pm_runtime_set_autosuspend_delay(pfdev->base.dev, 50); /* ~3 frames */
+> +	pm_runtime_use_autosuspend(pfdev->base.dev);
+>  
+>  	/*
+>  	 * Register the DRM device with the core and the connectors with
+>  	 * sysfs
+>  	 */
+> -	err = drm_dev_register(ddev, 0);
+> +	err = drm_dev_register(&pfdev->base, 0);
+>  	if (err < 0)
+>  		goto err_out1;
+>  
+> -	err = panfrost_gem_shrinker_init(ddev);
+> +	err = panfrost_gem_shrinker_init(&pfdev->base);
+>  	if (err)
+>  		goto err_out2;
+>  
+>  	return 0;
+>  
+>  err_out2:
+> -	drm_dev_unregister(ddev);
+> +	drm_dev_unregister(&pfdev->base);
+>  err_out1:
+> -	pm_runtime_disable(pfdev->dev);
+> +	pm_runtime_disable(pfdev->base.dev);
+>  	panfrost_device_fini(pfdev);
+> -	pm_runtime_set_suspended(pfdev->dev);
+> +	pm_runtime_set_suspended(pfdev->base.dev);
+>  err_out0:
+> -	drm_dev_put(ddev);
+>  	return err;
+>  }
+>  
+>  static void panfrost_remove(struct platform_device *pdev)
+>  {
+>  	struct panfrost_device *pfdev = platform_get_drvdata(pdev);
+> -	struct drm_device *ddev = pfdev->ddev;
+>  
+> -	drm_dev_unregister(ddev);
+> -	panfrost_gem_shrinker_cleanup(ddev);
+> +	drm_dev_unregister(&pfdev->base);
+> +	panfrost_gem_shrinker_cleanup(&pfdev->base);
+>  
+> -	pm_runtime_get_sync(pfdev->dev);
+> -	pm_runtime_disable(pfdev->dev);
+> +	pm_runtime_get_sync(pfdev->base.dev);
+> +	pm_runtime_disable(pfdev->base.dev);
+>  	panfrost_device_fini(pfdev);
+> -	pm_runtime_set_suspended(pfdev->dev);
+> -
+> -	drm_dev_put(ddev);
+> +	pm_runtime_set_suspended(pfdev->base.dev);
+>  }
+>  
+>  static ssize_t profiling_show(struct device *dev,
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_dump.c b/drivers/gpu/drm/panfrost/panfrost_dump.c
+> index 47751302f1bc..ce704d077fa7 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_dump.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_dump.c
+> @@ -163,7 +163,7 @@ void panfrost_core_dump(struct panfrost_job *job)
+>  	iter.start = __vmalloc(file_size, GFP_KERNEL | __GFP_NOWARN |
+>  			__GFP_NORETRY);
+>  	if (!iter.start) {
+> -		dev_warn(pfdev->dev, "failed to allocate devcoredump file\n");
+> +		dev_warn(pfdev->base.dev, "failed to allocate devcoredump file\n");
+>  		return;
+>  	}
+>  
+> @@ -204,14 +204,14 @@ void panfrost_core_dump(struct panfrost_job *job)
+>  		mapping = job->mappings[i];
+>  
+>  		if (!bo->base.sgt) {
+> -			dev_err(pfdev->dev, "Panfrost Dump: BO has no sgt, cannot dump\n");
+> +			dev_err(pfdev->base.dev, "Panfrost Dump: BO has no sgt, cannot dump\n");
+>  			iter.hdr->bomap.valid = 0;
+>  			goto dump_header;
+>  		}
+>  
+>  		ret = drm_gem_vmap_unlocked(&bo->base.base, &map);
+>  		if (ret) {
+> -			dev_err(pfdev->dev, "Panfrost Dump: couldn't map Buffer Object\n");
+> +			dev_err(pfdev->base.dev, "Panfrost Dump: couldn't map Buffer Object\n");
+>  			iter.hdr->bomap.valid = 0;
+>  			goto dump_header;
+>  		}
+> @@ -237,5 +237,5 @@ dump_header:	panfrost_core_dump_header(&iter, PANFROSTDUMP_BUF_BO, iter.data +
+>  	}
+>  	panfrost_core_dump_header(&iter, PANFROSTDUMP_BUF_TRAILER, iter.data);
+>  
+> -	dev_coredumpv(pfdev->dev, iter.start, iter.data - iter.start, GFP_KERNEL);
+> +	dev_coredumpv(pfdev->base.dev, iter.start, iter.data - iter.start, GFP_KERNEL);
+>  }
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem.c b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> index 8e0ff3efede7..768fed21c985 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem.c
+> @@ -17,7 +17,7 @@
+>  static void panfrost_gem_free_object(struct drm_gem_object *obj)
+>  {
+>  	struct panfrost_gem_object *bo = to_panfrost_bo(obj);
+> -	struct panfrost_device *pfdev = obj->dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(obj->dev);
+>  
+>  	/*
+>  	 * Make sure the BO is no longer inserted in the shrinker list before
+> @@ -41,7 +41,7 @@ static void panfrost_gem_free_object(struct drm_gem_object *obj)
+>  
+>  		for (i = 0; i < n_sgt; i++) {
+>  			if (bo->sgts[i].sgl) {
+> -				dma_unmap_sgtable(pfdev->dev, &bo->sgts[i],
+> +				dma_unmap_sgtable(pfdev->base.dev, &bo->sgts[i],
+>  						  DMA_BIDIRECTIONAL, 0);
+>  				sg_free_table(&bo->sgts[i]);
+>  			}
+> @@ -249,7 +249,7 @@ static const struct drm_gem_object_funcs panfrost_gem_funcs = {
+>   */
+>  struct drm_gem_object *panfrost_gem_create_object(struct drm_device *dev, size_t size)
+>  {
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  	struct panfrost_gem_object *obj;
+>  
+>  	obj = kzalloc(sizeof(*obj), GFP_KERNEL);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> index 3d9f51bd48b6..ee22777d06c8 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gem_shrinker.c
+> @@ -97,7 +97,7 @@ panfrost_gem_shrinker_scan(struct shrinker *shrinker, struct shrink_control *sc)
+>   */
+>  int panfrost_gem_shrinker_init(struct drm_device *dev)
+>  {
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  
+>  	pfdev->shrinker = shrinker_alloc(0, "drm-panfrost");
+>  	if (!pfdev->shrinker)
+> @@ -120,7 +120,7 @@ int panfrost_gem_shrinker_init(struct drm_device *dev)
+>   */
+>  void panfrost_gem_shrinker_cleanup(struct drm_device *dev)
+>  {
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  
+>  	if (pfdev->shrinker)
+>  		shrinker_free(pfdev->shrinker);
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_gpu.c b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> index f19f918e2330..5a33919fa213 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_gpu.c
+> @@ -36,12 +36,12 @@ static irqreturn_t panfrost_gpu_irq_handler(int irq, void *data)
+>  		u64 address = (u64) gpu_read(pfdev, GPU_FAULT_ADDRESS_HI) << 32;
+>  		address |= gpu_read(pfdev, GPU_FAULT_ADDRESS_LO);
+>  
+> -		dev_warn(pfdev->dev, "GPU Fault 0x%08x (%s) at 0x%016llx\n",
+> +		dev_warn(pfdev->base.dev, "GPU Fault 0x%08x (%s) at 0x%016llx\n",
+>  			 fault_status, panfrost_exception_name(fault_status & 0xFF),
+>  			 address);
+>  
+>  		if (state & GPU_IRQ_MULTIPLE_FAULT)
+> -			dev_warn(pfdev->dev, "There were multiple GPU faults - some have not been reported\n");
+> +			dev_warn(pfdev->base.dev, "There were multiple GPU faults - some have not been reported\n");
+>  
+>  		gpu_write(pfdev, GPU_INT_MASK, 0);
+>  	}
+> @@ -72,13 +72,13 @@ int panfrost_gpu_soft_reset(struct panfrost_device *pfdev)
+>  		val, val & GPU_IRQ_RESET_COMPLETED, 10, 10000);
+>  
+>  	if (ret) {
+> -		dev_err(pfdev->dev, "gpu soft reset timed out, attempting hard reset\n");
+> +		dev_err(pfdev->base.dev, "gpu soft reset timed out, attempting hard reset\n");
+>  
+>  		gpu_write(pfdev, GPU_CMD, GPU_CMD_HARD_RESET);
+>  		ret = readl_relaxed_poll_timeout(pfdev->iomem + GPU_INT_RAWSTAT, val,
+>  						 val & GPU_IRQ_RESET_COMPLETED, 100, 10000);
+>  		if (ret) {
+> -			dev_err(pfdev->dev, "gpu hard reset timed out\n");
+> +			dev_err(pfdev->base.dev, "gpu hard reset timed out\n");
+>  			return ret;
+>  		}
+>  	}
+> @@ -95,7 +95,7 @@ int panfrost_gpu_soft_reset(struct panfrost_device *pfdev)
+>  	 * All in-flight jobs should have released their cycle
+>  	 * counter references upon reset, but let us make sure
+>  	 */
+> -	if (drm_WARN_ON(pfdev->ddev, atomic_read(&pfdev->cycle_counter.use_count) != 0))
+> +	if (drm_WARN_ON(&pfdev->base, atomic_read(&pfdev->cycle_counter.use_count) != 0))
+>  		atomic_set(&pfdev->cycle_counter.use_count, 0);
+>  
+>  	return 0;
+> @@ -327,13 +327,13 @@ static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
+>  	bitmap_from_u64(pfdev->features.hw_features, hw_feat);
+>  	bitmap_from_u64(pfdev->features.hw_issues, hw_issues);
+>  
+> -	dev_info(pfdev->dev, "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
+> +	dev_info(pfdev->base.dev, "mali-%s id 0x%x major 0x%x minor 0x%x status 0x%x",
+>  		 name, gpu_id, major, minor, status);
+> -	dev_info(pfdev->dev, "features: %64pb, issues: %64pb",
+> +	dev_info(pfdev->base.dev, "features: %64pb, issues: %64pb",
+>  		 pfdev->features.hw_features,
+>  		 pfdev->features.hw_issues);
+>  
+> -	dev_info(pfdev->dev, "Features: L2:0x%08x Shader:0x%08x Tiler:0x%08x Mem:0x%0x MMU:0x%08x AS:0x%x JS:0x%x",
+> +	dev_info(pfdev->base.dev, "Features: L2:0x%08x Shader:0x%08x Tiler:0x%08x Mem:0x%0x MMU:0x%08x AS:0x%x JS:0x%x",
+>  		 pfdev->features.l2_features,
+>  		 pfdev->features.core_features,
+>  		 pfdev->features.tiler_features,
+> @@ -342,7 +342,7 @@ static void panfrost_gpu_init_features(struct panfrost_device *pfdev)
+>  		 pfdev->features.as_present,
+>  		 pfdev->features.js_present);
+>  
+> -	dev_info(pfdev->dev, "shader_present=0x%0llx l2_present=0x%0llx",
+> +	dev_info(pfdev->base.dev, "shader_present=0x%0llx l2_present=0x%0llx",
+>  		 pfdev->features.shader_present, pfdev->features.l2_present);
+>  }
+>  
+> @@ -408,7 +408,7 @@ static u64 panfrost_get_core_mask(struct panfrost_device *pfdev)
+>  	 */
+>  	core_mask = ~(pfdev->features.l2_present - 1) &
+>  		     (pfdev->features.l2_present - 2);
+> -	dev_info_once(pfdev->dev, "using only 1st core group (%lu cores from %lu)\n",
+> +	dev_info_once(pfdev->base.dev, "using only 1st core group (%lu cores from %lu)\n",
+>  		      hweight64(core_mask),
+>  		      hweight64(pfdev->features.shader_present));
+>  
+> @@ -429,7 +429,7 @@ void panfrost_gpu_power_on(struct panfrost_device *pfdev)
+>  		val, val == (pfdev->features.l2_present & core_mask),
+>  		10, 20000);
+>  	if (ret)
+> -		dev_err(pfdev->dev, "error powering up gpu L2");
+> +		dev_err(pfdev->base.dev, "error powering up gpu L2");
+>  
+>  	gpu_write(pfdev, SHADER_PWRON_LO,
+>  		  pfdev->features.shader_present & core_mask);
+> @@ -437,13 +437,13 @@ void panfrost_gpu_power_on(struct panfrost_device *pfdev)
+>  		val, val == (pfdev->features.shader_present & core_mask),
+>  		10, 20000);
+>  	if (ret)
+> -		dev_err(pfdev->dev, "error powering up gpu shader");
+> +		dev_err(pfdev->base.dev, "error powering up gpu shader");
+>  
+>  	gpu_write(pfdev, TILER_PWRON_LO, pfdev->features.tiler_present);
+>  	ret = readl_relaxed_poll_timeout(pfdev->iomem + TILER_READY_LO,
+>  		val, val == pfdev->features.tiler_present, 10, 1000);
+>  	if (ret)
+> -		dev_err(pfdev->dev, "error powering up gpu tiler");
+> +		dev_err(pfdev->base.dev, "error powering up gpu tiler");
+>  }
+>  
+>  void panfrost_gpu_power_off(struct panfrost_device *pfdev)
+> @@ -455,19 +455,19 @@ void panfrost_gpu_power_off(struct panfrost_device *pfdev)
+>  	ret = readl_relaxed_poll_timeout(pfdev->iomem + SHADER_PWRTRANS_LO,
+>  					 val, !val, 1, 2000);
+>  	if (ret)
+> -		dev_err(pfdev->dev, "shader power transition timeout");
+> +		dev_err(pfdev->base.dev, "shader power transition timeout");
+>  
+>  	gpu_write(pfdev, TILER_PWROFF_LO, pfdev->features.tiler_present);
+>  	ret = readl_relaxed_poll_timeout(pfdev->iomem + TILER_PWRTRANS_LO,
+>  					 val, !val, 1, 2000);
+>  	if (ret)
+> -		dev_err(pfdev->dev, "tiler power transition timeout");
+> +		dev_err(pfdev->base.dev, "tiler power transition timeout");
+>  
+>  	gpu_write(pfdev, L2_PWROFF_LO, pfdev->features.l2_present);
+>  	ret = readl_poll_timeout(pfdev->iomem + L2_PWRTRANS_LO,
+>  				 val, !val, 0, 2000);
+>  	if (ret)
+> -		dev_err(pfdev->dev, "l2 power transition timeout");
+> +		dev_err(pfdev->base.dev, "l2 power transition timeout");
+>  }
+>  
+>  void panfrost_gpu_suspend_irq(struct panfrost_device *pfdev)
+> @@ -488,21 +488,22 @@ int panfrost_gpu_init(struct panfrost_device *pfdev)
+>  
+>  	panfrost_gpu_init_features(pfdev);
+>  
+> -	err = dma_set_mask_and_coherent(pfdev->dev,
+> -		DMA_BIT_MASK(FIELD_GET(0xff00, pfdev->features.mmu_features)));
+> +	err = dma_set_mask_and_coherent(pfdev->base.dev,
+> +					DMA_BIT_MASK(FIELD_GET(0xff00,
+> +							       pfdev->features.mmu_features)));
+>  	if (err)
+>  		return err;
+>  
+> -	dma_set_max_seg_size(pfdev->dev, UINT_MAX);
+> +	dma_set_max_seg_size(pfdev->base.dev, UINT_MAX);
+>  
+> -	pfdev->gpu_irq = platform_get_irq_byname(to_platform_device(pfdev->dev), "gpu");
+> +	pfdev->gpu_irq = platform_get_irq_byname(to_platform_device(pfdev->base.dev), "gpu");
+>  	if (pfdev->gpu_irq < 0)
+>  		return pfdev->gpu_irq;
+>  
+> -	err = devm_request_irq(pfdev->dev, pfdev->gpu_irq, panfrost_gpu_irq_handler,
+> +	err = devm_request_irq(pfdev->base.dev, pfdev->gpu_irq, panfrost_gpu_irq_handler,
+>  			       IRQF_SHARED, KBUILD_MODNAME "-gpu", pfdev);
+>  	if (err) {
+> -		dev_err(pfdev->dev, "failed to request gpu irq");
+> +		dev_err(pfdev->base.dev, "failed to request gpu irq");
+>  		return err;
+>  	}
+>  
+> @@ -522,9 +523,9 @@ u32 panfrost_gpu_get_latest_flush_id(struct panfrost_device *pfdev)
+>  
+>  	if (panfrost_has_hw_feature(pfdev, HW_FEATURE_FLUSH_REDUCTION)) {
+>  		/* Flush reduction only makes sense when the GPU is kept powered on between jobs */
+> -		if (pm_runtime_get_if_in_use(pfdev->dev)) {
+> +		if (pm_runtime_get_if_in_use(pfdev->base.dev)) {
+>  			flush_id = gpu_read(pfdev, GPU_LATEST_FLUSH_ID);
+> -			pm_runtime_put(pfdev->dev);
+> +			pm_runtime_put(pfdev->base.dev);
+>  			return flush_id;
+>  		}
+>  	}
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_job.c b/drivers/gpu/drm/panfrost/panfrost_job.c
+> index 9b8e82fb8bc4..f640d211cc3a 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_job.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_job.c
+> @@ -94,7 +94,7 @@ static struct dma_fence *panfrost_fence_create(struct panfrost_device *pfdev, in
+>  	if (!fence)
+>  		return ERR_PTR(-ENOMEM);
+>  
+> -	fence->dev = pfdev->ddev;
+> +	fence->dev = &pfdev->base;
+>  	fence->queue = js_num;
+>  	fence->seqno = ++js->queue[js_num].emit_seqno;
+>  	dma_fence_init(&fence->base, &panfrost_fence_ops, &js->job_lock,
+> @@ -205,7 +205,7 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  
+>  	panfrost_devfreq_record_busy(&pfdev->pfdevfreq);
+>  
+> -	ret = pm_runtime_get_sync(pfdev->dev);
+> +	ret = pm_runtime_get_sync(pfdev->base.dev);
+>  	if (ret < 0)
+>  		return;
+>  
+> @@ -256,7 +256,7 @@ static void panfrost_job_hw_submit(struct panfrost_job *job, int js)
+>  		}
+>  
+>  		job_write(pfdev, JS_COMMAND_NEXT(js), JS_COMMAND_START);
+> -		dev_dbg(pfdev->dev,
+> +		dev_dbg(pfdev->base.dev,
+>  			"JS: Submitting atom %p to js[%d][%d] with head=0x%llx AS %d",
+>  			job, js, subslot, jc_head, cfg & 0xf);
+>  	}
+> @@ -437,12 +437,12 @@ static void panfrost_job_handle_err(struct panfrost_device *pfdev,
+>  	bool signal_fence = true;
+>  
+>  	if (!panfrost_exception_is_fault(js_status)) {
+> -		dev_dbg(pfdev->dev, "js event, js=%d, status=%s, head=0x%x, tail=0x%x",
+> +		dev_dbg(pfdev->base.dev, "js event, js=%d, status=%s, head=0x%x, tail=0x%x",
+>  			js, exception_name,
+>  			job_read(pfdev, JS_HEAD_LO(js)),
+>  			job_read(pfdev, JS_TAIL_LO(js)));
+>  	} else {
+> -		dev_err(pfdev->dev, "js fault, js=%d, status=%s, head=0x%x, tail=0x%x",
+> +		dev_err(pfdev->base.dev, "js fault, js=%d, status=%s, head=0x%x, tail=0x%x",
+>  			js, exception_name,
+>  			job_read(pfdev, JS_HEAD_LO(js)),
+>  			job_read(pfdev, JS_TAIL_LO(js)));
+> @@ -474,7 +474,7 @@ static void panfrost_job_handle_err(struct panfrost_device *pfdev,
+>  	if (signal_fence)
+>  		dma_fence_signal_locked(job->done_fence);
+>  
+> -	pm_runtime_put_autosuspend(pfdev->dev);
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
+>  
+>  	if (panfrost_exception_needs_reset(pfdev, js_status)) {
+>  		atomic_set(&pfdev->reset.pending, 1);
+> @@ -493,7 +493,7 @@ static void panfrost_job_handle_done(struct panfrost_device *pfdev,
+>  	panfrost_devfreq_record_idle(&pfdev->pfdevfreq);
+>  
+>  	dma_fence_signal_locked(job->done_fence);
+> -	pm_runtime_put_autosuspend(pfdev->dev);
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
+>  }
+>  
+>  static void panfrost_job_handle_irq(struct panfrost_device *pfdev, u32 status)
+> @@ -602,7 +602,7 @@ static void panfrost_job_handle_irqs(struct panfrost_device *pfdev)
+>  	u32 status = job_read(pfdev, JOB_INT_RAWSTAT);
+>  
+>  	while (status) {
+> -		pm_runtime_mark_last_busy(pfdev->dev);
+> +		pm_runtime_mark_last_busy(pfdev->base.dev);
+>  
+>  		spin_lock(&pfdev->js->job_lock);
+>  		panfrost_job_handle_irq(pfdev, status);
+> @@ -683,7 +683,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+>  				 10, 10000);
+>  
+>  	if (ret)
+> -		dev_err(pfdev->dev, "Soft-stop failed\n");
+> +		dev_err(pfdev->base.dev, "Soft-stop failed\n");
+>  
+>  	/* Handle the remaining interrupts before we reset. */
+>  	panfrost_job_handle_irqs(pfdev);
+> @@ -701,7 +701,7 @@ panfrost_reset(struct panfrost_device *pfdev,
+>  			if (pfdev->jobs[i][j]->requirements & PANFROST_JD_REQ_CYCLE_COUNT ||
+>  			    pfdev->jobs[i][j]->is_profiled)
+>  				panfrost_cycle_counter_put(pfdev->jobs[i][j]->pfdev);
+> -			pm_runtime_put_noidle(pfdev->dev);
+> +			pm_runtime_put_noidle(pfdev->base.dev);
+>  			panfrost_devfreq_record_idle(&pfdev->pfdevfreq);
+>  		}
+>  	}
+> @@ -769,11 +769,11 @@ static enum drm_gpu_sched_stat panfrost_job_timedout(struct drm_sched_job
+>  	synchronize_irq(pfdev->js->irq);
+>  
+>  	if (dma_fence_is_signaled(job->done_fence)) {
+> -		dev_warn(pfdev->dev, "unexpectedly high interrupt latency\n");
+> +		dev_warn(pfdev->base.dev, "unexpectedly high interrupt latency\n");
+>  		return DRM_GPU_SCHED_STAT_NOMINAL;
+>  	}
+>  
+> -	dev_err(pfdev->dev, "gpu sched timeout, js=%d, config=0x%x, status=0x%x, head=0x%x, tail=0x%x, sched_job=%p",
+> +	dev_err(pfdev->base.dev, "gpu sched timeout, js=%d, config=0x%x, status=0x%x, head=0x%x, tail=0x%x, sched_job=%p",
+>  		js,
+>  		job_read(pfdev, JS_CONFIG(js)),
+>  		job_read(pfdev, JS_STATUS(js)),
+> @@ -847,24 +847,25 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+>  	if (!panfrost_has_hw_feature(pfdev, HW_FEATURE_JOBCHAIN_DISAMBIGUATION))
+>  		nentries = 1;
+>  
+> -	pfdev->js = js = devm_kzalloc(pfdev->dev, sizeof(*js), GFP_KERNEL);
+> +	js = devm_kzalloc(pfdev->base.dev, sizeof(*js), GFP_KERNEL);
+>  	if (!js)
+>  		return -ENOMEM;
+> +	pfdev->js = js;
+>  
+>  	INIT_WORK(&pfdev->reset.work, panfrost_reset_work);
+>  	spin_lock_init(&js->job_lock);
+>  
+> -	js->irq = platform_get_irq_byname(to_platform_device(pfdev->dev), "job");
+> +	js->irq = platform_get_irq_byname(to_platform_device(pfdev->base.dev), "job");
+>  	if (js->irq < 0)
+>  		return js->irq;
+>  
+> -	ret = devm_request_threaded_irq(pfdev->dev, js->irq,
+> +	ret = devm_request_threaded_irq(pfdev->base.dev, js->irq,
+>  					panfrost_job_irq_handler,
+>  					panfrost_job_irq_handler_thread,
+>  					IRQF_SHARED, KBUILD_MODNAME "-job",
+>  					pfdev);
+>  	if (ret) {
+> -		dev_err(pfdev->dev, "failed to request job irq");
+> +		dev_err(pfdev->base.dev, "failed to request job irq");
+>  		return ret;
+>  	}
+>  
+> @@ -881,9 +882,9 @@ int panfrost_job_init(struct panfrost_device *pfdev)
+>  				     nentries, 0,
+>  				     msecs_to_jiffies(JOB_TIMEOUT_MS),
+>  				     pfdev->reset.wq,
+> -				     NULL, "pan_js", pfdev->dev);
+> +				     NULL, "pan_js", pfdev->base.dev);
+>  		if (ret) {
+> -			dev_err(pfdev->dev, "Failed to create scheduler: %d.", ret);
+> +			dev_err(pfdev->base.dev, "Failed to create scheduler: %d.", ret);
+>  			goto err_sched;
+>  		}
+>  	}
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_mmu.c b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> index b91019cd5acb..2189e42d2bfa 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_mmu.c
+> @@ -39,7 +39,7 @@ static int wait_ready(struct panfrost_device *pfdev, u32 as_nr)
+>  	if (ret) {
+>  		/* The GPU hung, let's trigger a reset */
+>  		panfrost_device_schedule_reset(pfdev);
+> -		dev_err(pfdev->dev, "AS_ACTIVE bit stuck\n");
+> +		dev_err(pfdev->base.dev, "AS_ACTIVE bit stuck\n");
+>  	}
+>  
+>  	return ret;
+> @@ -212,7 +212,9 @@ u32 panfrost_mmu_as_get(struct panfrost_device *pfdev, struct panfrost_mmu *mmu)
+>  	atomic_set(&mmu->as_count, 1);
+>  	list_add(&mmu->list, &pfdev->as_lru_list);
+>  
+> -	dev_dbg(pfdev->dev, "Assigned AS%d to mmu %p, alloc_mask=%lx", as, mmu, pfdev->as_alloc_mask);
+> +	dev_dbg(pfdev->base.dev,
+> +		"Assigned AS%d to mmu %p, alloc_mask=%lx",
+> +		as, mmu, pfdev->as_alloc_mask);
+>  
+>  	panfrost_mmu_enable(pfdev, mmu);
+>  
+> @@ -278,13 +280,13 @@ static void panfrost_mmu_flush_range(struct panfrost_device *pfdev,
+>  	if (mmu->as < 0)
+>  		return;
+>  
+> -	pm_runtime_get_noresume(pfdev->dev);
+> +	pm_runtime_get_noresume(pfdev->base.dev);
+>  
+>  	/* Flush the PTs only if we're already awake */
+> -	if (pm_runtime_active(pfdev->dev))
+> +	if (pm_runtime_active(pfdev->base.dev))
+>  		mmu_hw_do_operation(pfdev, mmu, iova, size, AS_COMMAND_FLUSH_PT);
+>  
+> -	pm_runtime_put_autosuspend(pfdev->dev);
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
+>  }
+>  
+>  static int mmu_map_sg(struct panfrost_device *pfdev, struct panfrost_mmu *mmu,
+> @@ -299,7 +301,9 @@ static int mmu_map_sg(struct panfrost_device *pfdev, struct panfrost_mmu *mmu,
+>  		unsigned long paddr = sg_dma_address(sgl);
+>  		size_t len = sg_dma_len(sgl);
+>  
+> -		dev_dbg(pfdev->dev, "map: as=%d, iova=%llx, paddr=%lx, len=%zx", mmu->as, iova, paddr, len);
+> +		dev_dbg(pfdev->base.dev,
+> +			"map: as=%d, iova=%llx, paddr=%lx, len=%zx",
+> +			mmu->as, iova, paddr, len);
+>  
+>  		while (len) {
+>  			size_t pgcount, mapped = 0;
+> @@ -359,7 +363,7 @@ void panfrost_mmu_unmap(struct panfrost_gem_mapping *mapping)
+>  	if (WARN_ON(!mapping->active))
+>  		return;
+>  
+> -	dev_dbg(pfdev->dev, "unmap: as=%d, iova=%llx, len=%zx",
+> +	dev_dbg(pfdev->base.dev, "unmap: as=%d, iova=%llx, len=%zx",
+>  		mapping->mmu->as, iova, len);
+>  
+>  	while (unmapped_len < len) {
+> @@ -456,7 +460,7 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
+>  
+>  	bo = bomapping->obj;
+>  	if (!bo->is_heap) {
+> -		dev_WARN(pfdev->dev, "matching BO is not heap type (GPU VA = %llx)",
+> +		dev_WARN(pfdev->base.dev, "matching BO is not heap type (GPU VA = %llx)",
+>  			 bomapping->mmnode.start << PAGE_SHIFT);
+>  		ret = -EINVAL;
+>  		goto err_bo;
+> @@ -523,7 +527,7 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
+>  	if (ret)
+>  		goto err_unlock;
+>  
+> -	ret = dma_map_sgtable(pfdev->dev, sgt, DMA_BIDIRECTIONAL, 0);
+> +	ret = dma_map_sgtable(pfdev->base.dev, sgt, DMA_BIDIRECTIONAL, 0);
+>  	if (ret)
+>  		goto err_map;
+>  
+> @@ -533,7 +537,7 @@ static int panfrost_mmu_map_fault_addr(struct panfrost_device *pfdev, int as,
+>  	bomapping->active = true;
+>  	bo->heap_rss_size += SZ_2M;
+>  
+> -	dev_dbg(pfdev->dev, "mapped page fault @ AS%d %llx", as, addr);
+> +	dev_dbg(pfdev->base.dev, "mapped page fault @ AS%d %llx", as, addr);
+>  
+>  out:
+>  	dma_resv_unlock(obj->resv);
+> @@ -559,10 +563,10 @@ static void panfrost_mmu_release_ctx(struct kref *kref)
+>  
+>  	spin_lock(&pfdev->as_lock);
+>  	if (mmu->as >= 0) {
+> -		pm_runtime_get_noresume(pfdev->dev);
+> -		if (pm_runtime_active(pfdev->dev))
+> +		pm_runtime_get_noresume(pfdev->base.dev);
+> +		if (pm_runtime_active(pfdev->base.dev))
+>  			panfrost_mmu_disable(pfdev, mmu->as);
+> -		pm_runtime_put_autosuspend(pfdev->dev);
+> +		pm_runtime_put_autosuspend(pfdev->base.dev);
+>  
+>  		clear_bit(mmu->as, &pfdev->as_alloc_mask);
+>  		clear_bit(mmu->as, &pfdev->as_in_use_mask);
+> @@ -637,7 +641,7 @@ struct panfrost_mmu *panfrost_mmu_ctx_create(struct panfrost_device *pfdev)
+>  		.oas		= FIELD_GET(0xff00, pfdev->features.mmu_features),
+>  		.coherent_walk	= pfdev->coherent,
+>  		.tlb		= &mmu_tlb_ops,
+> -		.iommu_dev	= pfdev->dev,
+> +		.iommu_dev	= pfdev->base.dev,
+>  	};
+>  
+>  	mmu->pgtbl_ops = alloc_io_pgtable_ops(ARM_MALI_LPAE, &mmu->pgtbl_cfg,
+> @@ -720,7 +724,7 @@ static irqreturn_t panfrost_mmu_irq_handler_thread(int irq, void *data)
+>  
+>  		if (ret) {
+>  			/* terminal fault, print info about the fault */
+> -			dev_err(pfdev->dev,
+> +			dev_err(pfdev->base.dev,
+>  				"Unhandled Page fault in AS%d at VA 0x%016llX\n"
+>  				"Reason: %s\n"
+>  				"raw fault status: 0x%X\n"
+> @@ -768,18 +772,18 @@ int panfrost_mmu_init(struct panfrost_device *pfdev)
+>  {
+>  	int err;
+>  
+> -	pfdev->mmu_irq = platform_get_irq_byname(to_platform_device(pfdev->dev), "mmu");
+> +	pfdev->mmu_irq = platform_get_irq_byname(to_platform_device(pfdev->base.dev), "mmu");
+>  	if (pfdev->mmu_irq < 0)
+>  		return pfdev->mmu_irq;
+>  
+> -	err = devm_request_threaded_irq(pfdev->dev, pfdev->mmu_irq,
+> +	err = devm_request_threaded_irq(pfdev->base.dev, pfdev->mmu_irq,
+>  					panfrost_mmu_irq_handler,
+>  					panfrost_mmu_irq_handler_thread,
+>  					IRQF_SHARED, KBUILD_MODNAME "-mmu",
+>  					pfdev);
+>  
+>  	if (err) {
+> -		dev_err(pfdev->dev, "failed to request mmu irq");
+> +		dev_err(pfdev->base.dev, "failed to request mmu irq");
+>  		return err;
+>  	}
+>  
+> diff --git a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> index ba9b6e2b2636..f30817bcf8ba 100644
+> --- a/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> +++ b/drivers/gpu/drm/panfrost/panfrost_perfcnt.c
+> @@ -84,11 +84,11 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
+>  	else if (perfcnt->user)
+>  		return -EBUSY;
+>  
+> -	ret = pm_runtime_get_sync(pfdev->dev);
+> +	ret = pm_runtime_get_sync(pfdev->base.dev);
+>  	if (ret < 0)
+>  		goto err_put_pm;
+>  
+> -	bo = drm_gem_shmem_create(pfdev->ddev, perfcnt->bosize);
+> +	bo = drm_gem_shmem_create(&pfdev->base, perfcnt->bosize);
+>  	if (IS_ERR(bo)) {
+>  		ret = PTR_ERR(bo);
+>  		goto err_put_pm;
+> @@ -173,7 +173,7 @@ static int panfrost_perfcnt_enable_locked(struct panfrost_device *pfdev,
+>  err_put_bo:
+>  	drm_gem_object_put(&bo->base);
+>  err_put_pm:
+> -	pm_runtime_put(pfdev->dev);
+> +	pm_runtime_put(pfdev->base.dev);
+>  	return ret;
+>  }
+>  
+> @@ -201,8 +201,8 @@ static int panfrost_perfcnt_disable_locked(struct panfrost_device *pfdev,
+>  	panfrost_mmu_as_put(pfdev, perfcnt->mapping->mmu);
+>  	panfrost_gem_mapping_put(perfcnt->mapping);
+>  	perfcnt->mapping = NULL;
+> -	pm_runtime_mark_last_busy(pfdev->dev);
+> -	pm_runtime_put_autosuspend(pfdev->dev);
+> +	pm_runtime_mark_last_busy(pfdev->base.dev);
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
+>  
+>  	return 0;
+>  }
+> @@ -210,7 +210,7 @@ static int panfrost_perfcnt_disable_locked(struct panfrost_device *pfdev,
+>  int panfrost_ioctl_perfcnt_enable(struct drm_device *dev, void *data,
+>  				  struct drm_file *file_priv)
+>  {
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  	struct panfrost_perfcnt *perfcnt = pfdev->perfcnt;
+>  	struct drm_panfrost_perfcnt_enable *req = data;
+>  	int ret;
+> @@ -237,7 +237,7 @@ int panfrost_ioctl_perfcnt_enable(struct drm_device *dev, void *data,
+>  int panfrost_ioctl_perfcnt_dump(struct drm_device *dev, void *data,
+>  				struct drm_file *file_priv)
+>  {
+> -	struct panfrost_device *pfdev = dev->dev_private;
+> +	struct panfrost_device *pfdev = to_panfrost_device(dev);
+>  	struct panfrost_perfcnt *perfcnt = pfdev->perfcnt;
+>  	struct drm_panfrost_perfcnt_dump *req = data;
+>  	void __user *user_ptr = (void __user *)(uintptr_t)req->buf_ptr;
+> @@ -272,13 +272,13 @@ void panfrost_perfcnt_close(struct drm_file *file_priv)
+>  	struct panfrost_device *pfdev = pfile->pfdev;
+>  	struct panfrost_perfcnt *perfcnt = pfdev->perfcnt;
+>  
+> -	pm_runtime_get_sync(pfdev->dev);
+> +	pm_runtime_get_sync(pfdev->base.dev);
+>  	mutex_lock(&perfcnt->lock);
+>  	if (perfcnt->user == pfile)
+>  		panfrost_perfcnt_disable_locked(pfdev, file_priv);
+>  	mutex_unlock(&perfcnt->lock);
+> -	pm_runtime_mark_last_busy(pfdev->dev);
+> -	pm_runtime_put_autosuspend(pfdev->dev);
+> +	pm_runtime_mark_last_busy(pfdev->base.dev);
+> +	pm_runtime_put_autosuspend(pfdev->base.dev);
+>  }
+>  
+>  int panfrost_perfcnt_init(struct panfrost_device *pfdev)
+> @@ -316,7 +316,7 @@ int panfrost_perfcnt_init(struct panfrost_device *pfdev)
+>  		       COUNTERS_PER_BLOCK * BYTES_PER_COUNTER;
+>  	}
+>  
+> -	perfcnt = devm_kzalloc(pfdev->dev, sizeof(*perfcnt), GFP_KERNEL);
+> +	perfcnt = devm_kzalloc(pfdev->base.dev, sizeof(*perfcnt), GFP_KERNEL);
+>  	if (!perfcnt)
+>  		return -ENOMEM;
+>  
 
 
