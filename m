@@ -1,155 +1,118 @@
-Return-Path: <linux-kernel+bounces-380010-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380009-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 26C2A9AE71A
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:02:39 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id 58D549AE718
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:02:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 581631C2098B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:02:38 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1C3AD286630
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:02:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id A87871E0DC7;
-	Thu, 24 Oct 2024 14:02:33 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 96D6B1DD88B;
+	Thu, 24 Oct 2024 14:02:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b="XJ0jDcV7"
-Received: from mout.gmx.net (mout.gmx.net [212.227.17.22])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="N8vQTwBz"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 850F138DD1;
-	Thu, 24 Oct 2024 14:02:28 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.22
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EEF4819E99B;
+	Thu, 24 Oct 2024 14:02:20 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729778553; cv=none; b=iAAdEDSYuhq36+r5mvmSLLq58f9zgLNInNAa+BWbOOSdjmL/xtKl2NJWx1jbLqHv5wF0Vr1ZeEyZ8CjwqRc+JHViDgzvzYEBy2rsTp1xfJTWb2WALW417h3K8z98sWYuJdeFpehgjCo2TqwjpTPi6b6GnUvNBhhyjE8qlLIH8LI=
+	t=1729778541; cv=none; b=KIQmx9wdY5dIu1jW255jrzIN6+MIZvZQJH4hWnnbnNxJ5ewHqx3/cpWRTvby6vBdJEso2pmty+zDlW5p4MoP8aNaIWjxOBjLfXs5WfXjOIdrmYQ4yFHXOkd34tfLIgBtG+ezCE+IuxAVLQlh4nxC5TUFhev8bNaG6vakXIFgnWI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729778553; c=relaxed/simple;
-	bh=Ipm8P50Y+llp0O+WOlfXkI4PWF637EaTo+hlh2/TUZw=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version:Content-Type; b=b7w9ax+6qifIlzhsMvUxv+1lkH6KBn0t7bvrXPFZdA26sGl6MbvhAosm4OM1MN2x1AYFKvTgY9mtJu3EZo51XgAXLUgsxbdycPaTQ5UhI2OmJmn7VLCnV3ybetuDl37bv6+bHlxOufRv5Yp5of55Pv0Cb5csZLjshXAztbW8gnk=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr; spf=pass smtp.mailfrom=gmx.fr; dkim=pass (2048-bit key) header.d=gmx.fr header.i=benoit.monin@gmx.fr header.b=XJ0jDcV7; arc=none smtp.client-ip=212.227.17.22
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=gmx.fr
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmx.fr
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=gmx.fr;
-	s=s31663417; t=1729778516; x=1730383316; i=benoit.monin@gmx.fr;
-	bh=+Tg6T7Zx5JMzwVi2DSF1T6BeCmhZbKmA/yMe10eZSKY=;
-	h=X-UI-Sender-Class:From:To:Cc:Subject:Date:Message-ID:
-	 MIME-Version:Content-Type:Content-Transfer-Encoding:cc:
-	 content-transfer-encoding:content-type:date:from:message-id:
-	 mime-version:reply-to:subject:to;
-	b=XJ0jDcV7sHuS/XOStok0nsiUp7Syv3XmFgyBc819YvwaO1k8EBZoitlU3WifsNev
-	 MMv1xl4+/Zik6vl8Jo4HXRdkPA/absrj9VXRp34GmPic6fQ0MC9L3hdt1yyexZ1R6
-	 5mAmUCoBNDagED9AKK0YG4mWBpnXXzA1ZQGcGKWHg4RGi6DwZyXXTrRXuvNjs/yVa
-	 O8tmdV1dc4WBP7Q+xI6WEUV2LluoFc6igWjlSZTmvauSN6ltlHzy719xvmNoznvVx
-	 UwR313X2Y+v/aDSNK5r/trrhP67utLoZhLNCHlS43hjEUm37IVYRa6FUo2iYHJVJc
-	 jZJqj7U8AXA2RR+P2A==
-X-UI-Sender-Class: 724b4f7f-cbec-4199-ad4e-598c01a50d3a
-Received: from pianobar.pianonet ([176.145.30.241]) by mail.gmx.net (mrgmx104
- [212.227.17.174]) with ESMTPSA (Nemesis) id 1Mi2O1-1tZAMH02hV-00n7VR; Thu, 24
- Oct 2024 16:01:56 +0200
-From: =?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>
-To: "David S. Miller" <davem@davemloft.net>,
-	Eric Dumazet <edumazet@google.com>,
-	Jakub Kicinski <kuba@kernel.org>,
-	Paolo Abeni <pabeni@redhat.com>,
-	Jiri Pirko <jiri@resnulli.us>,
-	Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
-	Lorenzo Bianconi <lorenzo@kernel.org>
-Cc: netdev@vger.kernel.org,
-	linux-kernel@vger.kernel.org,
-	=?UTF-8?q?Beno=C3=AEt=20Monin?= <benoit.monin@gmx.fr>
-Subject: [PATCH v2 net] net: skip offload for NETIF_F_IPV6_CSUM if ipv6 header contains extension
-Date: Thu, 24 Oct 2024 16:01:54 +0200
-Message-ID: <5fbeecfc311ea182aa1d1c771725ab8b4cac515e.1729778144.git.benoit.monin@gmx.fr>
-X-Mailer: git-send-email 2.47.0
+	s=arc-20240116; t=1729778541; c=relaxed/simple;
+	bh=gCEb9QgeShNZCTbHKLpSf1GoiuQOCh5wnymlgnlcEYE=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=ZEdMTgNoV7gB2N8nyNh4+mDSAgEF9LG+iLNo+28MVjVHeqJGKo4stsYJnk9hza1J1T/Dx+4ViRS3KCoaOJ8MwqPEs5kmbQ92GHDqx0Fx5vSUof0SLAzs292uO62tpV5XOw+mLj369f/JrlybjZ99N33Hl4o5i4mNOcHNuIrsN3I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=N8vQTwBz; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 108E2C4CEC7;
+	Thu, 24 Oct 2024 14:02:19 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729778540;
+	bh=gCEb9QgeShNZCTbHKLpSf1GoiuQOCh5wnymlgnlcEYE=;
+	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
+	b=N8vQTwBzZJJV+gx0VZ0YBXtwxQMugHj5Hkeaosh6u+OGmidObmyGFOvW1Rz3WJOU+
+	 6YBwTjOZEg1wToQIUkE7hOmgI71HIO0u5ERGiYEDrSw8v+V+H0LDoLfhz0FgKSjYik
+	 pqheGvq5voJpLwhSHGQqWCC4loYyQjxcEZ/fDp10zJ+1pIm+1tLhXYojiSxeqRBwgN
+	 RoWYlg0sUScmTYidSULraxmauddTb9B4G918BY7UUXiWujAQYJC+htGF/u+3vEGsCE
+	 PKTrNKbENVNM+4qSYkRCbOslGvIH+p6Rws42E3PUT5bFeCEizT9g9F9ZxaiSNkNwRp
+	 +l+kQKBNyNJ8w==
+Date: Thu, 24 Oct 2024 16:02:17 +0200
+From: Frederic Weisbecker <frederic@kernel.org>
+To: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Cc: linux-kernel@vger.kernel.org, rcu@vger.kernel.org,
+	"Paul E. McKenney" <paulmck@kernel.org>,
+	Anna-Maria Behnsen <anna-maria@linutronix.de>,
+	Davidlohr Bueso <dave@stgolabs.net>, Ingo Molnar <mingo@kernel.org>,
+	Josh Triplett <josh@joshtriplett.org>,
+	Thomas Gleixner <tglx@linutronix.de>
+Subject: Re: [PATCH 1/1] softirq: Use a dedicated thread for timer wakeups on
+ PREEMPT_RT.
+Message-ID: <ZxpTaXwmas8a0QuK@localhost.localdomain>
+References: <20241004103842.131014-1-bigeasy@linutronix.de>
+ <20241004103842.131014-2-bigeasy@linutronix.de>
+ <ZxeomPnsi6oGHKPT@localhost.localdomain>
+ <20241022153421.zLWiABPU@linutronix.de>
+ <Zxgm1lOsddTRSToB@pavilion.home>
+ <20241023063014.iPbVTkiw@linutronix.de>
+ <20241023105257.3Ibh0V5d@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=UTF-8
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:giEvIU1I27U22AFCsK8eH0m33K+9irDl+kPrnl7RtlbzKSnY4fC
- jtP7AsYP7JtEmSlAjEenE57bcTd5ZcSaMNXWLKZwujYEs16psf7HOuR77omPFLLBE03Vm1V
- 9gHdzEqZ89yN43YIkAxTD/Qj6buecp+m4A9iruiG5GOsSnmaDXcqHbu0rCdcEaMetsPp3k9
- 0Hm+NT1Vpifbft4W9kRcQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:zSkK1Tq1cBA=;xXxWl/24tyS998LC42LFKpHgDiy
- aLIXH3O+HiRvqGU/DrMPfWT7zzYGqgXOncyFrihaJVVaRxj0qhbkFlVUt/rWTFPeC09WMV1un
- oGn/IqSAsIXK27imPelqf0GKRP3hXFBz8S77YSKzKLW1m+77E0JPwynYjW0ZkGAZjIiRiOS/6
- 6kLuzKxOrGayUHxcR39ul/CmKTegzGfrfo4DfunvBQCwkCDNfSHG1Fr3qvzXh1HOOrAoL1iye
- C+ZO4Cjm8xJ0qhAMLUIgqa3a6EGf/ygFFAx/anxrwt/ZiDWNRQvURGWvljYTIkgDjeeDz9T4i
- 28gA9GR5yeleBMQXJKp0exDPsy/yVfumYWUmkGz+U7OVpcPPaEPc4F3lWX5uzZkIId/oEt/cA
- Y9GVe5ijoFmJQkUqgwFR5MiVzcS7NU+9sVwXe/Tm4Y2vWX1DQkZzNdbag/CI02Z0Dcdqnp7C5
- xJq70xB491RXlKEEa3dAcDZfk8yVyC+tzXGfwdWVJfHWL46fhnF2iuFNMhi4wdIsJFr4v+Ptq
- 9yM333nxc+C/RQSsu/IGWXHhdLd/opX+Cl0ip2xKnjiWZP2er7VCXPnrG8FqjPPmidv+IYZLg
- rrm9KssLXK0gxyzaZsfSIZMg5RWEs+hN0rAc7Rg1hRpsqE2BejIuMBR9Dk1Suh5KYrGccXCyw
- tGgikNS6CpDRhuUlCTuJoRSusV49H0Lk2iO5tl0e1wza4KYUMl7837XR0IHCQU9urvL21wNxZ
- +MZNSP2bqUgEO2yBfQl1zb5MNzI8QbPCDyHv1ff07VXGtQr+waGgjI/HpD62wmoujOfz0Si/I
- 0uvB1/wiyYt6bwMK/qSs+9FmjuUpsQn87FpCClNw61cHY=
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
+Content-Transfer-Encoding: 8bit
+In-Reply-To: <20241023105257.3Ibh0V5d@linutronix.de>
 
-As documented in skbuff.h, devices with NETIF_F_IPV6_CSUM capability
-can only checksum TCP and UDP over IPv6 if the IP header does not
-contains extension.
+Le Wed, Oct 23, 2024 at 12:52:57PM +0200, Sebastian Andrzej Siewior a écrit :
+> On 2024-10-23 08:30:18 [+0200], To Frederic Weisbecker wrote:
+> > > > > > +void raise_timer_softirq(void)
+> > > > > > +{
+> > > > > > +	unsigned long flags;
+> > > > > > +
+> > > > > > +	local_irq_save(flags);
+> > > > > > +	raise_ktimers_thread(TIMER_SOFTIRQ);
+> > > > > > +	wake_timersd();
+> > > > > 
+> > > > > This is supposed to be called from hardirq only, right?
+> > > > > Can't irq_exit_rcu() take care of it? Why is it different
+> > > > > from HRTIMER_SOFTIRQ ?
+> > > > 
+> > > > Good question. This shouldn't be any different compared to the hrtimer
+> > > > case. This is only raised in hardirq, so yes, the irq_save can go away
+> > > > and the wake call, too.
+> > > 
+> > > Cool. You can add lockdep_assert_in_irq() within raise_ktimers_thread() for
+> > > some well deserved relief :-)
+> > 
+> > If you want to, sure. I would add them to both raise functions.
+> 
+> That function (run_local_timers()) was in past also called from other
+> places like the APIC IRQ but all this is gone now. The reason why I
+> added the wake and the local_irq_save() is because it uses
+> raise_softirq() instead raise_softirq_irqoff(). And raise_softirq() was
+> used since it was separated away from tasklets.
+> 
+> Now, raise_timer_softirq() is a function within softirq.c because it
+> needs to access task_struct timersd which was only accessible there. It
+> has been made public later due to the rcutorture bits so it could be
+> very much be made inline and reduced to just raise_ktimers_thread().
+> I tend to make TIMER_SOFTIRQ use also raise_softirq_irqoff() to make it
+> look the same.
 
-This is enforced for UDP packets emitted from user-space to an IPv6
-address as they go through ip6_make_skb(), which calls
-__ip6_append_data() where a check is done on the header size before
-setting CHECKSUM_PARTIAL.
+Sounds good!
 
-But the introduction of UDP encapsulation with fou6 added a code-path
-where it is possible to get an skb with a partial UDP checksum and an
-IPv6 header with extension:
-* fou6 adds a UDP header with a partial checksum if the inner packet
-does not contains a valid checksum.
-* ip6_tunnel adds an IPv6 header with a destination option extension
-header if encap_limit is non-zero (the default value is 4).
+> That lockdep_assert_in_irq() is probably cheap but it
+> might look odd why RT needs or just TIMER and not HRTIMER.
 
-The thread linked below describes in more details how to reproduce the
-problem with GRE-in-UDP tunnel.
+I guess adding the same test on inline !RT functions in bottom_half.h
+will be challening... Perhaps forget about that idea...
 
-Add a check on the network header size in skb_csum_hwoffload_help() to
-make sure no IPv6 packet with extension header is handed to a network
-device with NETIF_F_IPV6_CSUM capability.
-
-Link: https://lore.kernel.org/netdev/26548921.1r3eYUQgxm@benoit.monin/T/#u
-Fixes: aa3463d65e7b ("fou: Add encap ops for IPv6 tunnels")
-Signed-off-by: Beno=C3=AEt Monin <benoit.monin@gmx.fr>
-=2D--
-changelog
-* v2:
-    - patch against net instead of net-next
-    - clarify documentation of NETIF_F_IPV6_CSUM
-    - add link to thread describing the problem
-    - add fixes tag
-    - use vlan_get_protocol to check for IPv6
-* v1:
-    - https://lore.kernel.org/netdev/0dc0c2af98e96b1df20bd36aeaed4eb4e27d5=
-07e.1728056028.git.benoit.monin@gmx.fr/T/#u
-=2D--
- net/core/dev.c | 4 ++++
- 1 file changed, 4 insertions(+)
-
-diff --git a/net/core/dev.c b/net/core/dev.c
-index ea5fbcd133ae..8453e14d301b 100644
-=2D-- a/net/core/dev.c
-+++ b/net/core/dev.c
-@@ -3639,6 +3639,9 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
- 		return 0;
-
- 	if (features & (NETIF_F_IP_CSUM | NETIF_F_IPV6_CSUM)) {
-+		if (vlan_get_protocol(skb) =3D=3D htons(ETH_P_IPV6) &&
-+		    skb_network_header_len(skb) !=3D sizeof(struct ipv6hdr))
-+			goto sw_checksum;
- 		switch (skb->csum_offset) {
- 		case offsetof(struct tcphdr, check):
- 		case offsetof(struct udphdr, check):
-@@ -3646,6 +3649,7 @@ int skb_csum_hwoffload_help(struct sk_buff *skb,
- 		}
- 	}
-
-+sw_checksum:
- 	return skb_checksum_help(skb);
- }
- EXPORT_SYMBOL(skb_csum_hwoffload_help);
+Thanks.
 
