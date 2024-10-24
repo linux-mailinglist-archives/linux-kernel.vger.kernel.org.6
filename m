@@ -1,88 +1,105 @@
-Return-Path: <linux-kernel+bounces-380245-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380247-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 912159AEAED
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:44:07 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id A692A9AEAF2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:44:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 53E5F28410B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:44:06 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 69BFB284BA3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:44:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id C14741F5855;
-	Thu, 24 Oct 2024 15:43:47 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 21AF31F76A2;
+	Thu, 24 Oct 2024 15:44:00 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="QtSxxJVL"
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="jpVqvIQb"
 Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 1A2011F5825;
-	Thu, 24 Oct 2024 15:43:46 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 766E81F6676;
+	Thu, 24 Oct 2024 15:43:59 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784627; cv=none; b=MlV8FhEgLX/BlbgCrYT1n8P5QoCa7AMwrGhcR9wdFtuurdQXMy2sa9bHU7n/lkYIS7VXS00nWCXl2KU99gaCWcL2cbf+1vsf71W9GOsHCJvDqo/uu7urKxepzJm9DezC57nMsPfZO0Eubqcq6IEmtRVi4R9adyZ88Fu8gxd3n24=
+	t=1729784639; cv=none; b=Any8vIWqBXYSC3myaRJR6z6kiAbloa5ay4DdRdLEJLLfSOiYCb24ipbNhmw/iGbEcZydbc388zedSCnD7xc+33km/2uHedt9S7a5mbRwbQmUaMdj9lKNi60mwvilcUx9ab2Q28k7paIfjl7yt52BjZxXgUbUhpRjDrluE6jlkCc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784627; c=relaxed/simple;
-	bh=hRw3miUChWaU6dh+Q8eA+3PaVQ9BfixeDUhj7d+b/HY=;
-	h=From:To:Cc:Subject:Date:Message-ID:In-Reply-To:References:
-	 MIME-Version:Content-Type; b=IfvR9Rg+m/5rw8XnvsBRoT4mag+qD12DzX06laZ0+RoTBsK+j82GJwERzSTEXoI7AQalXb4VHb3EBGJUePgJ3sFCfx1YhwE0I3DaxPZUEA0U+WxeGNRMM0725XiQxCRu9v7cD5RBxqVWBaPFrNKfrUm1MV7repuSR79wtBeaBBw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=QtSxxJVL; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id 8E9FBC4CEC7;
-	Thu, 24 Oct 2024 15:43:45 +0000 (UTC)
+	s=arc-20240116; t=1729784639; c=relaxed/simple;
+	bh=49DttfIKQCHPgfjrhaS37EnWfxSeirs1B2D5isDzWug=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=HiVnBtw6WmDiMpP4YoqwliWYeFjb3mojzTmaDa5ERbaVuGzkyayyBzsRJ12jHCJb+WI3ABDs5I94a4ONEl7MIUQygkdmgxB49VvrA/t+DWt5ylQtuDeA5tHq05IhWxgg71xy6pRYLD996VzRTAuVcSf/C0GyugW/2MvvoZnamlo=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=jpVqvIQb; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id F252BC4CEC7;
+	Thu, 24 Oct 2024 15:43:58 +0000 (UTC)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729784626;
-	bh=hRw3miUChWaU6dh+Q8eA+3PaVQ9BfixeDUhj7d+b/HY=;
-	h=From:To:Cc:Subject:Date:In-Reply-To:References:From;
-	b=QtSxxJVL8mpBVnLtlk3eerxbbvrUhYgGPeIyoQYEDKEXCw56kGf9rJrVJ1BDCt/Sk
-	 Ut/kJGVt+4zXBMinUQiQmZcL6c2zpKSSYcPvMKqCeUiPSpcBd6c6oJW3itEbRvK4cm
-	 FCH7OSkU5aLEeE+ILN36+A1VLxy+Bz21CyDMCD8z6G/zvSktmGTBk+K6WS2MEbLaAA
-	 YsYfCJ5yyx2tc2j/pxQabtW7b2QORfSwiggH2DLfwmrlX9nhQK5NZ0lezb7kCHphqO
-	 +7c3OZ5tGIb3qK3Cz3UYjBNKsBcazP8ZeX/e9ml+TINuYGA7mm5DVRd8I9raJNZ9HX
-	 8NkMs0taKFptQ==
-From: Bjorn Andersson <andersson@kernel.org>
-To: Konrad Dybcio <konradybcio@kernel.org>,
-	Rob Herring <robh@kernel.org>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Krishna chaitanya chundru <quic_krichai@quicinc.com>
-Cc: dmitry.baryshkov@linaro.org,
-	manivannan.sadhasivam@linaro.org,
-	linux-arm-msm@vger.kernel.org,
-	devicetree@vger.kernel.org,
-	linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v2] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
-Date: Thu, 24 Oct 2024 10:43:43 -0500
-Message-ID: <172978462070.300538.13331718382889000397.b4-ty@kernel.org>
-X-Mailer: git-send-email 2.45.2
-In-Reply-To: <20241024-enable_pcie-v2-1-e5a6f5da74e4@quicinc.com>
-References: <20241024-enable_pcie-v2-1-e5a6f5da74e4@quicinc.com>
+	s=k20201202; t=1729784639;
+	bh=49DttfIKQCHPgfjrhaS37EnWfxSeirs1B2D5isDzWug=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=jpVqvIQbD8yWcV9AZsFsZMtrrT21yYfDlolmhk0Efx3Y8rzUBOvsF19r5KgMca7ar
+	 fuFLdiAjXmmy5EOprecJk5iDji1YJy6TgDqY3Wp4dNIwzro0tTfAB9RGo+GtCPq2VO
+	 8IFqjNu1By8TbtVNPH3VEhaDUdLrfuspNX47LAwsP40lvTmlANBsslE9rGOO9H0M2i
+	 m9bexudl9mNl1yztTnYllR/lAghBpUsezJPZt/8n27/FVjC1V6v25RzzVxy/TG9UX4
+	 dBSlcv+1H+wSSg1Hs9sHyYOWaC8nEKzLYtu5ATS1y2zene+L3aAH93ryXaMs/q4AJB
+	 aO+oXdL+3zXWA==
+Received: by mail-oa1-f45.google.com with SMTP id 586e51a60fabf-288d70788d6so599626fac.1;
+        Thu, 24 Oct 2024 08:43:58 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCU24VXEdvCDHAgaOgkmwlwqHXshaVDFAEXONHGEU7PJLHWjwD5F6Sbtnb6uDK7/Tpa9vfZz235tk8IboQ==@vger.kernel.org, AJvYcCUgJwZ52KBjyqthrkP26Lanr0+UZlM/fWqHomipZ1OA+pThlkrB3TPQijrfz6CyD/mwiItYhPAT4X18x5qR@vger.kernel.org, AJvYcCWWNHyQ9ugrs66XKupzwefEGVRzZRdYx8HFMwZY+WI2dKjT8W3kPkZEDZVQHUSrEiNWppi/baLy7CYT6OVmwyc=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yw11rlT3T2q/cYDutTcHGnBLD9m9AkQsyTxg5y8uTn/C+U68mJw
+	rCM5IlDANrxvldJISZhPkJZOMAfusOwECj7zVeb60TD3PHNRdm9HqaHaPSjNqaFBkdraOtSX7cC
+	BqKySKb0u4vtz46yoQuuFAd06slM=
+X-Google-Smtp-Source: AGHT+IHSUvErHQTpKpxRw8CFVNnKnDPL6Vq8IuMcUDPDqx3cJiQTbqjWEn2eiFYHfS+9cW+QrlQ/1Z9O3gRB/lvY4hI=
+X-Received: by 2002:a05:6870:658b:b0:288:aee9:e739 with SMTP id
+ 586e51a60fabf-28ced13b467mr2478073fac.1.1729784638209; Thu, 24 Oct 2024
+ 08:43:58 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 8bit
+References: <20241014130522.1986428-1-colin.i.king@gmail.com>
+In-Reply-To: <20241014130522.1986428-1-colin.i.king@gmail.com>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 Oct 2024 17:43:46 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0jjrm0C7+6o3+ZfsrFKedo_o42wErKTHMjfU5ZGBJ=Mbg@mail.gmail.com>
+Message-ID: <CAJZ5v0jjrm0C7+6o3+ZfsrFKedo_o42wErKTHMjfU5ZGBJ=Mbg@mail.gmail.com>
+Subject: Re: [PATCH][next] ACPI: pfr_telemetry: remove redundant error check
+ on ret
+To: Colin Ian King <colin.i.king@gmail.com>
+Cc: "Rafael J . Wysocki" <rafael@kernel.org>, Len Brown <lenb@kernel.org>, linux-acpi@vger.kernel.org, 
+	kernel-janitors@vger.kernel.org, linux-kernel@vger.kernel.org
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
+On Mon, Oct 14, 2024 at 3:05=E2=80=AFPM Colin Ian King <colin.i.king@gmail.=
+com> wrote:
+>
+> The variable ret is initialized to zero and a littler later in
+> the PFRT_LOG_IOC_GET_INFO case of a switch statement is being checked
+> for negative error value. Since ret has not been re-assigned since
+> the initialization ret can never be less than zero so the check is
+> redundant and can be removed. Remove it.
+>
+> Signed-off-by: Colin Ian King <colin.i.king@gmail.com>
+> ---
+>  drivers/acpi/pfr_telemetry.c | 3 ---
+>  1 file changed, 3 deletions(-)
+>
+> diff --git a/drivers/acpi/pfr_telemetry.c b/drivers/acpi/pfr_telemetry.c
+> index 998264a7333d..a32798787ed9 100644
+> --- a/drivers/acpi/pfr_telemetry.c
+> +++ b/drivers/acpi/pfr_telemetry.c
+> @@ -272,9 +272,6 @@ static long pfrt_log_ioctl(struct file *file, unsigne=
+d int cmd, unsigned long ar
+>
+>         case PFRT_LOG_IOC_GET_INFO:
+>                 info.log_level =3D get_pfrt_log_level(pfrt_log_dev);
+> -               if (ret < 0)
+> -                       return ret;
+> -
+>                 info.log_type =3D pfrt_log_dev->info.log_type;
+>                 info.log_revid =3D pfrt_log_dev->info.log_revid;
+>                 if (copy_to_user(p, &info, sizeof(info)))
+> --
 
-On Thu, 24 Oct 2024 18:58:49 +0530, Krishna chaitanya chundru wrote:
-> Enable PCIe1 controller and its corresponding PHY nodes on
-> qcs6490-rb3g2 platform.
-> 
-> SMMU v2 has limited SID's to assign dynamic SID's with the existing
-> logic. For now, use static iommu-map table assigning unique SID's for
-> each port as dynamic approach needs boarder community discussions.
-> 
-> [...]
-
-Applied, thanks!
-
-[1/1] arm64: dts: qcom: qcs6490-rb3gen2: Add PCIe nodes
-      commit: 267643b3e3a4e6cb7996da77f6d7f89ed8f5d554
-
-Best regards,
--- 
-Bjorn Andersson <andersson@kernel.org>
+Applied as 6.13 material, thanks!
 
