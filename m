@@ -1,204 +1,155 @@
-Return-Path: <linux-kernel+bounces-380021-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380023-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 90CC39AE779
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:07:15 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 4D4039AE78D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:08:13 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B47F71C21103
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:07:14 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id F1E9F1F22E09
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:08:12 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 687D81E7C08;
-	Thu, 24 Oct 2024 14:06:07 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="AWSVnsYK"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 152F71EF927;
+	Thu, 24 Oct 2024 14:06:24 +0000 (UTC)
+Received: from szxga02-in.huawei.com (szxga02-in.huawei.com [45.249.212.188])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id AB6781E2009;
-	Thu, 24 Oct 2024 14:06:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 2811B1E285D;
+	Thu, 24 Oct 2024 14:06:19 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=45.249.212.188
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729778766; cv=none; b=SXqr4fZ6R+MJlEAxqKijZxgd84yX+sV5JboDewYmIsKRXydGf05VkCh79obtHPYeY3C+78hsEpPHif6evTg4qfNHGdpWE62LYHN+3HpQJUVGCHpPsRqHDPFJR3KAvfxR2P/6d6O/SHiGX1i1j3nPbJpOBrTyyS8I5BbyLI5EF8Q=
+	t=1729778783; cv=none; b=SCh9EKYF1DNvaHpdbok60vFWaJlQx2ISGkD/u2j2l9KvG99Oz/V9F3T9rM3+NnvLsOp3Qd+OD2ixgRC2kXS7xTXUABoZsOmjwTZ2OinELV9w0Ir1vOa4iSvvsfIr/4bHjG0xX86U7vydyEimc1uBRMti+jVObaJOClBPAy6cq6M=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729778766; c=relaxed/simple;
-	bh=UqM6Z34E+/K+S+SxZRTtlXPQ0ZdBLSakhVgd6bJmUqM=;
-	h=Date:From:To:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=Ck6TVfYBu5sGPZ6ZaGhtpoAR1ZxFtb0hZvYNkieHN/NbgAlmXUsOLZ+zsVxneqMckh0APA+HJZrYO3JouavpMdyKPfWOl9AFJUwu0mIqJNfMLvxeSA7Qa+A1OBj83iopqUyTuARZ+jmxSvKfh97/TGy0yavHHAnzGS4qydkZ//w=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=AWSVnsYK; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E4A58C4CECC;
-	Thu, 24 Oct 2024 14:06:05 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729778766;
-	bh=UqM6Z34E+/K+S+SxZRTtlXPQ0ZdBLSakhVgd6bJmUqM=;
-	h=Date:From:To:Subject:References:In-Reply-To:From;
-	b=AWSVnsYKK9O/yPvErdiTcdH3hjVq5fpl40AxNXggq3RH8elow7SkzmyvIoF7t1bLN
-	 MKJIfJGa0o4pPjs4/mosmK5QSMyI+jcWowubSHxrBGrcD3Nat2tm6tSGEBLCT06mCT
-	 fmcmk1L+becoisluJQWDYSHNseFS1PZWGO6Y8BD3YnH2cQW2QXqiTmZh5RJPd5vtyP
-	 K55c4s7ezXWGC4b+l0jLOUFyi9LF9euF89lPYxjlxjtkEbJhZN/ySHNT1jJOq54qYP
-	 vJdBTFHjqAiJPLcwcLCf8J7qEGI2nno0lrH6v6ewqnB5MCvi/C2SgQMTqoyYvccLZ2
-	 mBvVhrDdGcaKA==
-Date: Thu, 24 Oct 2024 16:06:03 +0200
-From: Maxime Ripard <mripard@kernel.org>
-To: Rodrigo Siqueira <rodrigosiqueiramelo@gmail.com>, 
-	Melissa Wen <melissa.srw@gmail.com>, Maaara Canal <mairacanal@riseup.net>, 
-	Haneen Mohammed <hamohammed.sa@gmail.com>, Maarten Lankhorst <maarten.lankhorst@linux.intel.com>, 
-	Thomas Zimmermann <tzimmermann@suse.de>, David Airlie <airlied@gmail.com>, 
-	Jonathan Corbet <corbet@lwn.net>, Simona Vetter <simona@ffwll.ch>, rdunlap@infradead.org, 
-	arthurgrillo@riseup.net, pekka.paalanen@haloniitty.fi, 
-	Simona Vetter <simona.vetter@ffwll.ch>, dri-devel@lists.freedesktop.org, linux-kernel@vger.kernel.org, 
-	linux-doc@vger.kernel.org, thomas.petazzoni@bootlin.com, jeremie.dautheribes@bootlin.com, 
-	miquel.raynal@bootlin.com, seanpaul@google.com, marcheu@google.com, 
-	nicolejadeyee@google.com, Pekka Paalanen <pekka.paalanen@collabora.com>
-Subject: Re: [PATCH v12 13/15] drm/vkms: Create KUnit tests for YUV
- conversions
-Message-ID: <20241024-illustrious-puma-of-superiority-d24a4d@houat>
-References: <20241007-yuv-v12-0-01c1ada6fec8@bootlin.com>
- <20241007-yuv-v12-13-01c1ada6fec8@bootlin.com>
- <20241008-ingenious-calm-silkworm-3e99ba@houat>
- <ZwT6CnyYRKS9QxIS@louis-chauvet-laptop>
- <20241011-shiny-skua-of-authority-998ad3@houat>
- <Zwk2RSgfV75LVLpR@louis-chauvet-laptop>
+	s=arc-20240116; t=1729778783; c=relaxed/simple;
+	bh=HtTUQ2nfCVxqvs52SvfCUte+akCJyiK2RSivJbAGDn4=;
+	h=Message-ID:Date:MIME-Version:CC:Subject:To:References:From:
+	 In-Reply-To:Content-Type; b=eBwUFPPoIPelZX4s7wVyBQt4zJ0+km2XVqAAr8it8QfhPe8sBksn4TozeL7IlWALfjZHv1KUnCm0pFbla4qdLIXB3xeNH+v+nWnPZRWIbsovz5aKfUJxCRrB7zRun0YBqUuegcL/xAY9wkWRa3Z1BdjppSJwfLaWKxlEggAQFP4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com; spf=pass smtp.mailfrom=huawei.com; arc=none smtp.client-ip=45.249.212.188
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=huawei.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=huawei.com
+Received: from mail.maildlp.com (unknown [172.19.163.252])
+	by szxga02-in.huawei.com (SkyGuard) with ESMTP id 4XZ72C51ZXzpXM8;
+	Thu, 24 Oct 2024 22:04:19 +0800 (CST)
+Received: from kwepemm000007.china.huawei.com (unknown [7.193.23.189])
+	by mail.maildlp.com (Postfix) with ESMTPS id 6D7E41800E4;
+	Thu, 24 Oct 2024 22:06:16 +0800 (CST)
+Received: from [10.67.120.192] (10.67.120.192) by
+ kwepemm000007.china.huawei.com (7.193.23.189) with Microsoft SMTP Server
+ (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.1.2507.39; Thu, 24 Oct 2024 22:06:15 +0800
+Message-ID: <0c0de40c-7bf3-4d98-9d25-9b4f36a91e0b@huawei.com>
+Date: Thu, 24 Oct 2024 22:06:14 +0800
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha384;
-	protocol="application/pgp-signature"; boundary="q6c53od3b6prp5tw"
-Content-Disposition: inline
-In-Reply-To: <Zwk2RSgfV75LVLpR@louis-chauvet-laptop>
+User-Agent: Mozilla Thunderbird
+CC: <shaojijie@huawei.com>, <davem@davemloft.net>, <edumazet@google.com>,
+	<kuba@kernel.org>, <pabeni@redhat.com>, <andrew+netdev@lunn.ch>,
+	<horms@kernel.org>, <shenjian15@huawei.com>, <wangpeiyang1@huawei.com>,
+	<liuyonglong@huawei.com>, <chenhao418@huawei.com>, <sudongming1@huawei.com>,
+	<xujunsheng@huawei.com>, <shiyongbang@huawei.com>, <libaihan@huawei.com>,
+	<jonathan.cameron@huawei.com>, <shameerali.kolothum.thodi@huawei.com>,
+	<salil.mehta@huawei.com>, <netdev@vger.kernel.org>,
+	<linux-kernel@vger.kernel.org>
+Subject: Re: [PATCH net-next 2/7] net: hibmcge: Add debugfs supported in this
+ module
+To: Andrew Lunn <andrew@lunn.ch>
+References: <20241023134213.3359092-1-shaojijie@huawei.com>
+ <20241023134213.3359092-3-shaojijie@huawei.com>
+ <924e9c5c-f4a8-4db5-bbe8-964505191849@lunn.ch>
+ <5375ce1b-8778-4696-a530-1a002f7ec4c7@huawei.com>
+ <6103ee00-175d-4a35-9081-2c500ad3c123@lunn.ch>
+From: Jijie Shao <shaojijie@huawei.com>
+In-Reply-To: <6103ee00-175d-4a35-9081-2c500ad3c123@lunn.ch>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: dggems704-chm.china.huawei.com (10.3.19.181) To
+ kwepemm000007.china.huawei.com (7.193.23.189)
 
 
---q6c53od3b6prp5tw
-Content-Type: text/plain; protected-headers=v1; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
-Subject: Re: [PATCH v12 13/15] drm/vkms: Create KUnit tests for YUV
- conversions
-MIME-Version: 1.0
+on 2024/10/24 20:05, Andrew Lunn wrote:
+>>>> +	seq_printf(s, "mdio frequency: %u\n", specs->mdio_frequency);
+>>> Is this interesting? Are you clocking it greater than 2.5MHz?
+>> MDIO controller supports 1MHz, 2.5MHz, 12.5MHz, and 25MHz
+>> Of course, we chose and tested 2.5M in actual work, but this can be modified.
+> How? What API are you using it allow it to be modified? Why cannot you
+> get the value using the same API?
 
-On Fri, Oct 11, 2024 at 04:29:25PM +0200, Louis Chauvet wrote:
-> On 11/10/24 - 12:49, Maxime Ripard wrote:
-> > On Tue, Oct 08, 2024 at 11:23:22AM GMT, Louis Chauvet wrote:
-> > >=20
-> > > Hi,=20
-> > >=20
-> > > > > + * The YUV color representation were acquired via the colour pyt=
-hon framework.
-> > > > > + * Below are the function calls used for generating each case.
-> > > > > + *
-> > > > > + * For more information got to the docs:
-> > > > > + * https://colour.readthedocs.io/en/master/generated/colour.RGB_=
-to_YCbCr.html
-> > > > > + */
-> > > > > +static struct yuv_u8_to_argb_u16_case yuv_u8_to_argb_u16_cases[]=
- =3D {
-> > > > > +	/*
-> > > > > +	 * colour.RGB_to_YCbCr(<rgb color in 16 bit form>,
-> > > > > +	 *                     K=3Dcolour.WEIGHTS_YCBCR["ITU-R BT.601"],
-> > > > > +	 *                     in_bits =3D 16,
-> > > > > +	 *                     in_legal =3D False,
-> > > > > +	 *                     in_int =3D True,
-> > > > > +	 *                     out_bits =3D 8,
-> > > > > +	 *                     out_legal =3D False,
-> > > > > +	 *                     out_int =3D True)
-> > > > > +	 */
-> > > >=20
-> > > > We should really detail what the intent and expected outcome is sup=
-posed
-> > > > to be here. Relying on a third-party python library call for
-> > > > documentation isn't great.
-> > >
-> > > This was requested by Pekka in the [v2] of this series.
-> >=20
-> > Ok.
-> >=20
-> > > I can add something like this before each tests, but I think having t=
-he=20
-> > > exact python code used may help people to understand what should be t=
-he=20
-> > > behavior, and refering to the python code to understand the conversio=
-n.
-> >=20
-> > Help, sure. Be the *only* documentation, absolutely not.
-> >=20
-> > Let's turn this around. You run kunit, one of these tests fail:
-> >=20
-> >  - It adds cognitive load to try to identify and make sense of an
-> >    unknown lib.
-> >=20
-> >  - How can we check that the arguments you provided there are the one
-> >    you actually wanted to provide, and you didn't make a typo?
-> >=20
-> > > I can add something like this before each tests to clarify the tested=
-=20
-> > > case:
-> > >=20
-> > > 	Test cases for conversion between YUV BT601 limited range and=20
-> > > 	RGB using the ITU-R BT.601 weights.
-> > >=20
-> > > Or maybe just documenting the structure yuv_u8_to_argb_u16_case:
-> > >=20
-> > > 	@encoding: Encoding used to convert RGB to YUV
-> > > 	@range: Range used to convert RGB to YUV
-> > > 	@n_colors: Count of test colors in this case
-> > > 	@format_pair.name: Name used for this color conversion, used to=20
-> > > 			   clarify the test results
-> > > 	@format_pair.rgb: RGB color tested
-> > > 	@format_pair.yuv: Same color as @format_pair.rgb, but converted to=
-=20
-> > > 			  YUV using @encoding and @range.
-> > >=20
-> > > What do you think?
-> >=20
-> > That it's welcome, but it still doesn't allow to figure out what your
-> > intent was with this test 2 years from now.
->=20
-> I don't really understand what you want to add. Can you explain what you=
-=20
-> expect here? Did you mean you want a description like this above the test=
-=20
-> function?
+This frequency cannot be modified dynamically.
+There are some specification registers that store some initialization configuration parameters
+written by the BMC, such as the default MAC address and hardware FIFO size and mdio frequency.
 
-I want, for each test case, to have a documentation of what case it's
-testing and what the test should expect.
+When the device is in prob, the driver reads the related configuration information and
+initializes the device based on the configuration.
 
-So, for the first one, something like:
+>
+>> We requested three interrupts: "tx", "rx", "err"
+>> The err interrupt is a summary interrupt. We distinguish different errors
+>> based on the status register and mask.
+>>
+>> With "cat /proc/interrupts | grep hibmcge",
+>> we can't distinguish the detailed cause of the error,
+>> so we added this file to debugfs.
+>>
+>> the following effects are achieved:
+>> [root@localhost sjj]# cat /sys/kernel/debug/hibmcge/0000\:83\:00.1/irq_info
+>> RX                  : is enabled: true, print: false, count: 2
+>> TX                  : is enabled: true, print: false, count: 0
+>> MAC_MII_FIFO_ERR    : is enabled: false, print: true, count: 0
+>> MAC_PCS_RX_FIFO_ERR : is enabled: false, print: true, count: 0
+>> MAC_PCS_TX_FIFO_ERR : is enabled: false, print: true, count: 0
+>> MAC_APP_RX_FIFO_ERR : is enabled: false, print: true, count: 0
+>> MAC_APP_TX_FIFO_ERR : is enabled: false, print: true, count: 0
+>> SRAM_PARITY_ERR     : is enabled: true, print: true, count: 0
+>> TX_AHB_ERR          : is enabled: true, print: true, count: 0
+>> RX_BUF_AVL          : is enabled: true, print: false, count: 0
+>> REL_BUF_ERR         : is enabled: true, print: true, count: 0
+>> TXCFG_AVL           : is enabled: true, print: false, count: 0
+>> TX_DROP             : is enabled: true, print: false, count: 0
+>> RX_DROP             : is enabled: true, print: false, count: 0
+>> RX_AHB_ERR          : is enabled: true, print: true, count: 0
+>> MAC_FIFO_ERR        : is enabled: true, print: false, count: 0
+>> RBREQ_ERR           : is enabled: true, print: false, count: 0
+>> WE_ERR              : is enabled: true, print: false, count: 0
+>>
+>>
+>> The irq framework of hibmcge driver also includes tx/rx interrupts.
+>> Therefore, these interrupts are not distinguished separately in debugfs.
+> Please make this a patch of its own, and include this in the commit
+> message.
+>
+> Ideally you need to show there is no standard API for what you want to
+> put into debugfs, because if there is a standard API, you don't need
+> debugfs...
 
-/*
- * Test the conversion of full range, BT601-encoded, YUVXXX pixel to
- * ARGBXXXX, for various colors. This has been generated using:
- *
- * colour.RGB_to_YCbCR(...)
- */
+Because standard API don't meet my needs, I added detailed interrupt information to debugfs.
+I'll add a detailed description to the commit message of v2.
 
-And there's other things you need to document. Like, it seems that you
-sometimes pass different values for in_legal and out_legal, and that's
-not clear to me.
+>
+>>>> +static int hbg_dbg_nic_state(struct seq_file *s, void *unused)
+>>>> +{
+>>>> +	struct net_device *netdev = dev_get_drvdata(s->private);
+>>>> +	struct hbg_priv *priv = netdev_priv(netdev);
+>>>> +
+>>>> +	seq_printf(s, "event handling state: %s\n",
+>>>> +		   hbg_get_bool_str(test_bit(HBG_NIC_STATE_EVENT_HANDLING,
+>>>> +					     &priv->state)));
+>>>> +
+>>>> +	seq_printf(s, "tx timeout cnt: %llu\n", priv->stats.tx_timeout_cnt);
+>>> Don't you have this via ethtool -S ?
+>> Although tx_timeout_cnt is a statistical item, it is not displayed in the ethtool -S.
+> Why?
+>
+> 	Andrew
 
-It also that you uses a matrix for NV12 but are converting a different
-format. This needs to be documented.
+This was decided by our internal discussion before,
+and we'll revisit it, and move it to ethtool -S in the next version if it's okay with us.
 
-Finally, You should be documented why you are checking that the colors
-difference is less than 257, and not exactly equal.
+Thanks,
+Jijie Shao
 
-Maxime
-
---q6c53od3b6prp5tw
-Content-Type: application/pgp-signature; name="signature.asc"
-
------BEGIN PGP SIGNATURE-----
-
-iJUEABMJAB0WIQTkHFbLp4ejekA/qfgnX84Zoj2+dgUCZxpURwAKCRAnX84Zoj2+
-dpnIAYCtzV3UTGshXlT1ay9Ij6pdu3hWrR1lndrGKgCB1XEnKmy4881AJuppJ99z
-FdyPjl8Bf1/NExIEJ9JOwZpOUbCdkop0YSn90LSIqkHC97ab1CPRsC0EIJOtrseB
-NAvTbA189Q==
-=mQrx
------END PGP SIGNATURE-----
-
---q6c53od3b6prp5tw--
 
