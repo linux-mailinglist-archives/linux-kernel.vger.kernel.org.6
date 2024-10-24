@@ -1,144 +1,297 @@
-Return-Path: <linux-kernel+bounces-379710-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379711-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
 Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 553729AE280
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:28:21 +0200 (CEST)
+	by mail.lfdr.de (Postfix) with ESMTPS id 3B2479AE288
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:31:04 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BD9E5B21609
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:28:18 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 771FEB2166E
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:31:01 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 195381C0DE2;
-	Thu, 24 Oct 2024 10:28:12 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 0C2CA1B3935;
+	Thu, 24 Oct 2024 10:30:55 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b="LMbUlRiz"
-Received: from mail-ed1-f54.google.com (mail-ed1-f54.google.com [209.85.208.54])
+	dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b="y3hpTisq"
+Received: from mail-wm1-f66.google.com (mail-wm1-f66.google.com [209.85.128.66])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 538531B4F02
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:28:09 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.208.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 900B214B946
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 10:30:51 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.128.66
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729765691; cv=none; b=bNgYaiSwZHuZYj3VFSl28c5vhQUDlKXcB3EaYzJ9WA0BKFbKB2N6K4n+v6G14CE07ilwYdndHo/iN6W8W5GLdlSRlkFiIDUnXQgKz/0fPEcpjTnvoy0O5/gsmMTwgFg8x1OP4fieZc/N+J8t4A9o3H0yjjUFtXE+FhMmDb0JmKE=
+	t=1729765854; cv=none; b=Sfeha8D/1aNflTK3IecW9zokmC7PpFGHMs8OzchzuZ1GtHu/tMTSpf/zIYX6khzKSyvcG3hFZC8ZjBScVfR6/QQexWdWNHxYSkfgF7empx1kuQzoowhD5kHxD6ff90vEO9VvyyfT65fUzWT7+WNI222BWaEW16tzM4jbOumBlVw=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729765691; c=relaxed/simple;
-	bh=wnIvT3IpVrnkazOAfuknkSg50yEaXIoQFrYlNgWuD0o=;
-	h=From:To:Cc:Subject:Date:Message-ID:MIME-Version; b=NTTUvb4XVGSa+gp7nNi8d3E3Vnp415azG4uIamQu6seUjmPAJ1XjDVrGdXAt4BdfU6mKiH3lPpe1nCNFoRZfK8TuuP0WE/siRlQjsR9bdc9cmvJVGjuMi4sEqONmQ6nQkWPgt8KVVXoSn53NNwdtiUQRUXzkhTcE/UJnBOJpHLw=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com; spf=pass smtp.mailfrom=amarulasolutions.com; dkim=pass (1024-bit key) header.d=amarulasolutions.com header.i=@amarulasolutions.com header.b=LMbUlRiz; arc=none smtp.client-ip=209.85.208.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=amarulasolutions.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=amarulasolutions.com
-Received: by mail-ed1-f54.google.com with SMTP id 4fb4d7f45d1cf-5c962c3e97dso919144a12.0
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:28:09 -0700 (PDT)
+	s=arc-20240116; t=1729765854; c=relaxed/simple;
+	bh=t+79LBkE5K7kOtgkDHP2E0U6pya3PPXPEkcsiTCgG58=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=nZN3kOLbviJF8+VDxMzaZUstHIBWLnPCZcOgHyNlh7sLIZKuvXW9nrLH37AlQwygIeJ3xlKMgs8H4TIaa9O+6InsupFWhrsEMQKr60REP8jOTuCTep+V4816xpPdaYuyoUBl9IKPvKcq7h7UV7i+/2QKiIRFBpNX3s5gxFsc96Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com; spf=pass smtp.mailfrom=baylibre.com; dkim=pass (2048-bit key) header.d=baylibre-com.20230601.gappssmtp.com header.i=@baylibre-com.20230601.gappssmtp.com header.b=y3hpTisq; arc=none smtp.client-ip=209.85.128.66
+Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=baylibre.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=baylibre.com
+Received: by mail-wm1-f66.google.com with SMTP id 5b1f17b1804b1-431481433bdso7483805e9.3
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 03:30:51 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=amarulasolutions.com; s=google; t=1729765687; x=1730370487; darn=vger.kernel.org;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:from:to:cc:subject:date:message-id:reply-to;
-        bh=MVJNmqv90FijvAIp/3GkvDIQz+9MpbG95NCFvDT1TVU=;
-        b=LMbUlRizXworeZFE7nbaaWM+cWfwbdc+U15sOg1MNgB5W3z/3NVxPrzhUJH6Kldd3j
-         dcNh4BVb5uYsy5ID795Mrx0UpI/UXgI3MAEGe0Se/cqf3mlwMCkDptjgyuSCAjAwp9Kp
-         eVOhX3flE/kQOkTzAGIpLz0dqrDvaEI9o0/8g=
+        d=baylibre-com.20230601.gappssmtp.com; s=20230601; t=1729765850; x=1730370650; darn=vger.kernel.org;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date:from:to
+         :cc:subject:date:message-id:reply-to;
+        bh=WD5iIHBr6DGCl84k1ANdIW3ga0JsoT+g381ZY9lF0ck=;
+        b=y3hpTisqSWfLYS3pjIlX7vsV77I3gCjAxEhVnsGpMyuqcTC9i+EYKYklebaD5pdUYl
+         cyIGf8fKIQEaOFRnTqoa35M+dHHv7aXmDX+D5nHHMogN3anvtgvUQkDEznORSXOUndiB
+         xBOVjfT1g1bHOzThpTLf5POEb14rst+diTt+h1KcwDswUfjxM7lQx6Lp1+2dMNe15N3Z
+         s6ABlBtW16+vsyjojMw0B1C2Pa7HPZ2uEzdr82Kjs9reCawXOQif3UaOootiuNaUdQGB
+         Vyr+AXTB0GMVxdG/I37oy1Vx3alSmnTUQ/EdnvVp4yUZ8MWhX8MfYJ3X483IjT92z+Ad
+         fG3Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729765687; x=1730370487;
-        h=content-transfer-encoding:mime-version:message-id:date:subject:cc
-         :to:from:x-gm-message-state:from:to:cc:subject:date:message-id
-         :reply-to;
-        bh=MVJNmqv90FijvAIp/3GkvDIQz+9MpbG95NCFvDT1TVU=;
-        b=nFqdyHtYpPlYzyPJkOne4dWrPcX2JjGLmGXKVMKTQ9AYoeXSVJzxVDeMHVJTDo6u5Y
-         Dx9CUUmpahevz9RQahDKXKKVIrnA4ia24tVrXCTMLMstwjklpt3SO2ytuWlEYkaLjerp
-         mW3VebOh6E0MOtcLTF13dNzwkD3hiC5DD8n5dXulDz4fIjEB/sGyrjk8K7HPt86kj3Oq
-         WLdYVxseO7SYKUVXLc9x8SPmcJhJCWILq1dFkJVnsZelY6LsTHfcKIPmESbvhobEn5p0
-         TRbyT6KhfMUNS/u7hK3dq4dCaXHTMPGL/LQNdPsQde3g3EDyVa94XXqenEXM7w7ir82K
-         prgA==
-X-Gm-Message-State: AOJu0YxSQsspFfsRloYk8HvXdKuEY8KBIUPbCRXoynhuCmZ/NZKwN4di
-	2vDIoYqfG45ZOCHPGXS+nc9sGfomYMILwBlxoRndSWXP+DTKI18dgzDXRpEsB0aMaC70gzsNIPE
-	PUcw=
-X-Google-Smtp-Source: AGHT+IFIqyj+bFhDT0bT0Yue3u7gj7a0OTnPThmVI8x1ivIOOR0hXbcRig1qWOZuLaJ3Cyrf5Wbirg==
-X-Received: by 2002:a05:6402:3591:b0:5cb:6ca4:f552 with SMTP id 4fb4d7f45d1cf-5cb8b1a982emr4924713a12.35.1729765687354;
-        Thu, 24 Oct 2024 03:28:07 -0700 (PDT)
-Received: from localhost.localdomain ([2001:b07:6474:ebbf:f79d:49dd:b804:3f48])
-        by smtp.gmail.com with ESMTPSA id 4fb4d7f45d1cf-5cb66c726besm5538534a12.93.2024.10.24.03.28.06
+        d=1e100.net; s=20230601; t=1729765850; x=1730370650;
+        h=in-reply-to:content-transfer-encoding:content-disposition
+         :mime-version:references:message-id:subject:cc:to:from:date
+         :x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
+        bh=WD5iIHBr6DGCl84k1ANdIW3ga0JsoT+g381ZY9lF0ck=;
+        b=iDI1TG05QFB97pcPoI6CnkF0dNqvB92zN2WpclCp82YISiHjHW7p4lgNw1fJIEqNJi
+         m2uPE0AjNP6S7ro3y1VFOqPGYid+ZG+RviHhWLngRRmzjhfJbqy2DQ1yXPrMXxMLKXlV
+         /cD0NQGG2VFx3dHBrMT9t/0Baa6Do8yjU/0y26XGDFj0IIEOyY1kuRSJtABNfd8NBGtk
+         V/aRZ0ttaG9x3ht3vIAqcOZUzfcmNTEIspDQefH4SVDeCUlQo9/akrxCwHSwsakxfRDg
+         IKUI5E7YIkb0WVzzLb/t0NnwlFYr889A2Q5LaIKGRFsw8gkQZteHW0Jl/190eICzo93S
+         zN5A==
+X-Forwarded-Encrypted: i=1; AJvYcCUP6qOBMUpfRtE8zhmoiOXs2b+v5lZzoXnlX8FcZ9SRb1x9najhf67t8lbIi7bri73xO38gV4JpdHpHh0Q=@vger.kernel.org
+X-Gm-Message-State: AOJu0YzPsaAKSzcxijbxXr7bEGO9XAwWzoQMDJ2hRTjGnqz+cRHMdmQf
+	QdO3p0eCBeiFCZNLarT8dAj8JInLqEvtSZ1bQ3ZKDO19IqwxJCAN+wfb6+97diI=
+X-Google-Smtp-Source: AGHT+IHXCQD3UffjE/QbdZ4kNLsZ6qSGKLd7KCMv6mNn1DegEudtO5WrZa+diDdk2HbrF0ASlLUyqQ==
+X-Received: by 2002:a05:600c:1d1c:b0:42c:b187:bde9 with SMTP id 5b1f17b1804b1-431841b2026mr45352785e9.30.1729765849728;
+        Thu, 24 Oct 2024 03:30:49 -0700 (PDT)
+Received: from dfj (host-79-41-194-153.retail.telecomitalia.it. [79.41.194.153])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b58b79esm12948755e9.47.2024.10.24.03.30.45
         (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 03:28:07 -0700 (PDT)
-From: Dario Binacchi <dario.binacchi@amarulasolutions.com>
-To: linux-kernel@vger.kernel.org
-Cc: linux-amarula@amarulasolutions.com,
-	Dario Binacchi <dario.binacchi@amarulasolutions.com>,
-	Michael Trimarchi <michael@amarulasolutions.com>,
-	Conor Dooley <conor+dt@kernel.org>,
-	Fabio Estevam <festevam@gmail.com>,
-	Krzysztof Kozlowski <krzk+dt@kernel.org>,
-	Pengutronix Kernel Team <kernel@pengutronix.de>,
-	Rob Herring <robh@kernel.org>,
-	Sascha Hauer <s.hauer@pengutronix.de>,
-	Shawn Guo <shawnguo@kernel.org>,
-	devicetree@vger.kernel.org,
-	imx@lists.linux.dev,
-	linux-arm-kernel@lists.infradead.org
-Subject: [PATCH] arm64: dts: imx8mn-bsh-smm-s2/pro: add simple-framebuffer
-Date: Thu, 24 Oct 2024 12:27:56 +0200
-Message-ID: <20241024102800.3481574-1-dario.binacchi@amarulasolutions.com>
-X-Mailer: git-send-email 2.43.0
+        Thu, 24 Oct 2024 03:30:49 -0700 (PDT)
+Date: Thu, 24 Oct 2024 12:29:29 +0200
+From: Angelo Dureghello <adureghello@baylibre.com>
+To: Nuno =?utf-8?B?U8Oh?= <noname.nuno@gmail.com>
+Cc: Conor Dooley <conor@kernel.org>, 
+	Nuno =?utf-8?B?U8Oh?= <nuno.sa@analog.com>, Lars-Peter Clausen <lars@metafoo.de>, 
+	Michael Hennerich <Michael.Hennerich@analog.com>, Jonathan Cameron <jic23@kernel.org>, 
+	Rob Herring <robh@kernel.org>, Krzysztof Kozlowski <krzk+dt@kernel.org>, 
+	Conor Dooley <conor+dt@kernel.org>, Olivier Moysan <olivier.moysan@foss.st.com>, 
+	linux-iio@vger.kernel.org, devicetree@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	dlechner@baylibre.com, Mark Brown <broonie@kernel.org>
+Subject: Re: [PATCH v7 4/8] iio: dac: adi-axi-dac: extend features
+Message-ID: <szncfysidctefmjb5u5l7kabyxa76rvuwao34nrue6menohfn2@4x7gyvmzat62>
+References: <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-0-969694f53c5d@baylibre.com>
+ <20241021-wip-bl-ad3552r-axi-v0-iio-testing-v7-4-969694f53c5d@baylibre.com>
+ <b1ac7d51280caf729d192ca871c26260fdf3697c.camel@gmail.com>
+ <20241022-napped-labored-6956ce18d986@spud>
+ <7a4f8c718029c8c57596d950495fcf28562c6e78.camel@gmail.com>
+ <20241023-nifty-electable-64d3b42bce3b@spud>
+ <172316a342407e74840894f553d7647a19fd89d4.camel@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
+Content-Type: text/plain; charset=iso-8859-1
+Content-Disposition: inline
 Content-Transfer-Encoding: 8bit
+In-Reply-To: <172316a342407e74840894f553d7647a19fd89d4.camel@gmail.com>
 
-Add a simple-framebuffer node for U-Boot to further fill and activate.
+On 24.10.2024 09:04, Nuno Sá wrote:
+> On Wed, 2024-10-23 at 16:22 +0100, Conor Dooley wrote:
+> > On Wed, Oct 23, 2024 at 04:56:39PM +0200, Nuno Sá wrote:
+> > > On Tue, 2024-10-22 at 18:21 +0100, Conor Dooley wrote:
+> > > > On Tue, Oct 22, 2024 at 02:36:44PM +0200, Nuno Sá wrote:
+> > > > > On Mon, 2024-10-21 at 14:40 +0200, Angelo Dureghello wrote:
+> > > > > > From: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > > 
+> > > > > > Extend AXI-DAC backend with new features required to interface
+> > > > > > to the ad3552r DAC. Mainly, a new compatible string is added to
+> > > > > > support the ad3552r-axi DAC IP, very similar to the generic DAC
+> > > > > > IP but with some customizations to work with the ad3552r.
+> > > > > > 
+> > > > > > Then, a series of generic functions has been added to match with
+> > > > > > ad3552r needs. Function names has been kept generic as much as
+> > > > > > possible, to allow re-utilization from other frontend drivers.
+> > > > > > 
+> > > > > > Signed-off-by: Angelo Dureghello <adureghello@baylibre.com>
+> > > > > > ---
+> > > > > 
+> > > > > Looks mostly good,
+> > > > > 
+> > > > > one minor thing that (I think) could be improved
+> > > > > >  drivers/iio/dac/adi-axi-dac.c | 269
+> > > > > > +++++++++++++++++++++++++++++++++++++++--
+> > > > > > -
+> > > > > >  1 file changed, 255 insertions(+), 14 deletions(-)
+> > > > > > 
+> > > > > > diff --git a/drivers/iio/dac/adi-axi-dac.c b/drivers/iio/dac/adi-axi-dac.c
+> > > > > > index 04193a98616e..9d6809fe7a67 100644
+> > > > > > --- a/drivers/iio/dac/adi-axi-dac.c
+> > > > > > +++ b/drivers/iio/dac/adi-axi-dac.c
+> > > > > > @@ -46,9 +46,28 @@
+> > > > > >  #define AXI_DAC_CNTRL_1_REG			0x0044
+> > > > > >  #define   AXI_DAC_CNTRL_1_SYNC			BIT(0)
+> > > > > >  #define AXI_DAC_CNTRL_2_REG			0x0048
+> > > > > > +#define   AXI_DAC_CNTRL_2_SDR_DDR_N		BIT(16)
+> > > > > > +#define   AXI_DAC_CNTRL_2_SYMB_8B		BIT(14)
+> > > > > >  #define   ADI_DAC_CNTRL_2_R1_MODE		BIT(5)
+> > > > > > +#define   AXI_DAC_CNTRL_2_UNSIGNED_DATA		BIT(4)
+> > > > > > +#define AXI_DAC_STATUS_1_REG			0x0054
+> > > > > > +#define AXI_DAC_STATUS_2_REG			0x0058
+> > > > > >  #define AXI_DAC_DRP_STATUS_REG			0x0074
+> > > > > >  #define   AXI_DAC_DRP_STATUS_DRP_LOCKED		BIT(17)
+> > > > > > +#define AXI_DAC_CUSTOM_RD_REG			0x0080
+> > > > > > +#define AXI_DAC_CUSTOM_WR_REG			0x0084
+> > > > > > +#define   AXI_DAC_CUSTOM_WR_DATA_8		GENMASK(23, 16)
+> > > > > > +#define   AXI_DAC_CUSTOM_WR_DATA_16		GENMASK(23, 8)
+> > > > > > +#define AXI_DAC_UI_STATUS_REG			0x0088
+> > > > > > +#define   AXI_DAC_UI_STATUS_IF_BUSY		BIT(4)
+> > > > > > +#define AXI_DAC_CUSTOM_CTRL_REG			0x008C
+> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_ADDRESS		GENMASK(31, 24)
+> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_SYNCED_TRANSFER	BIT(2)
+> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_STREAM		BIT(1)
+> > > > > > +#define   AXI_DAC_CUSTOM_CTRL_TRANSFER_DATA	BIT(0)
+> > > > > 
+> > > > > ...
+> > > > >  
+> > > > > >  static int axi_dac_probe(struct platform_device *pdev)
+> > > > > >  {
+> > > > > > -	const unsigned int *expected_ver;
+> > > > > >  	struct axi_dac_state *st;
+> > > > > >  	void __iomem *base;
+> > > > > >  	unsigned int ver;
+> > > > > > @@ -566,14 +780,29 @@ static int axi_dac_probe(struct platform_device
+> > > > > > *pdev)
+> > > > > >  	if (!st)
+> > > > > >  		return -ENOMEM;
+> > > > > >  
+> > > > > > -	expected_ver = device_get_match_data(&pdev->dev);
+> > > > > > -	if (!expected_ver)
+> > > > > > +	st->info = device_get_match_data(&pdev->dev);
+> > > > > > +	if (!st->info)
+> > > > > >  		return -ENODEV;
+> > > > > > +	clk = devm_clk_get_enabled(&pdev->dev, "s_axi_aclk");
+> > > > > > +	if (IS_ERR(clk)) {
+> > > > > 
+> > > > > If clock-names is not given, then we'll get -EINVAL. Hence we could assume
+> > > > > that:
+> > > > > 
+> > > > > 		if (PTR_ERR(clk) != -EINVAL)
+> > > > > 			return dev_err_probe();
+> > > > 
+> > > > clock-names isn't a required property, but the driver code effectively
+> > > > makes it one. Doesn't this lookup need to be by index, unless
+> > > > clock-names is made required for this variant?
+> > > 
+> > > Likely I'm missing something but the driver is not making clock-names mandatory,
+> > > is it?
+> > 
+> > Did you miss the "for this variant"? Maybe I left the comment in not
+> 
+> I guess so :)
+> 
+> > exactly the right place, but I don't think the code works correctly for
+> > the new variant if clock-names aren't provided:
+> > 
+> > +	if (st->info->has_dac_clk) {
+> > +		struct clk *dac_clk;
+> > +		dac_clk = devm_clk_get_enabled(&pdev->dev, "dac_clk");
+> > +		if (IS_ERR(dac_clk))
+> > +			return dev_err_probe(&pdev->dev, PTR_ERR(dac_clk),
+> > +					     "failed to get dac_clk clock\n");
+> > +
+> > +		/* We only care about the streaming mode rate */
+> > +		st->dac_clk_rate = clk_get_rate(dac_clk) / 2;
+> > 
+> > Isn't this going to cause a probe failure?
+> 
+> Exactly. And that goes in line with what I wrote about the bindings not describing
+> (currently) this. So yes, for the new variant (which has 'has_dac_clk' set to true)
+> clock-names is indeed mandatory and probe will fail if it's not given.
+> 
+> >  
+> > > At least for the s_axi_aclk, we first try to get it using clock-names and if
+> > > that fails we backup to what we're doing which is passing NULL (which
+> > > effectively get's the first clock in the array).
+> > > 
+> > > The reasoning is that on the generic variant we only need the AXI clk and we
+> > > can't now enforce clock-names on it. But to keep things flexible, this was
+> > > purposed.
+> > 
+> > Why not always just get the first clock by index and avoid the
+> > complexity?
+> 
+> And that was also suggested in the previous version but then Jonathan suggested this
+> [1]. I agree things now are a bit confusing because we expect clock-names to be
+> optional for the generic but mandatory for this new variant and the code is not being
+> that explicit about it.
+> 
+> > 
+> > > Another alternative that might have more lines of code (but simpler to
+> > > understand the intent) is to have (for example) a callback get_clocks function
+> > > that we set depending on the variant. And this also makes me realize that we
+> > > could improve the bindings. I mean, for the generic dac variant we do not need
+> > > clock-names but for this new variant, clock-names is mandatory and I'm fairly
+> > > sure we can express that in the bindings.
+> > 
+> > Right. You can "edit" required in the if/then/else branch for the new
+> > variant.
+> 
+> Yeah, and IMO that should be set in the bindings (it would help understanding what
+> the driver is actually doinfg.
+>
 
-Co-developed-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Michael Trimarchi <michael@amarulasolutions.com>
-Signed-off-by: Dario Binacchi <dario.binacchi@amarulasolutions.com>
+ok, thanks, so 
 
----
+so modified yaml in this way:
 
- .../freescale/imx8mn-bsh-smm-s2-display.dtsi  | 28 +++++++++++++++++++
- 1 file changed, 28 insertions(+)
+  clocks:
+    minItems: 1
+    maxItems: 2
 
-diff --git a/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi b/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
-index 7675583a6b67..3d670534a714 100644
---- a/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
-+++ b/arch/arm64/boot/dts/freescale/imx8mn-bsh-smm-s2-display.dtsi
-@@ -4,6 +4,34 @@
-  */
+  clock-names:
+    items:
+      - const: s_axi_aclk
+      - const: dac_clk
+    minItems: 1
+
+  '#io-backend-cells':
+    const: 0
+
+required:
+  - compatible
+  - dmas
+  - reg
+  - clocks
+
+allOf:
+  - if:
+      properties:
+        compatible:
+          contains:
+            const: adi,axi-ad3552r
+    then:
+      $ref: /schemas/spi/spi-controller.yaml#
+      properties:
+        clocks:
+          minItems: 2
+        clock-names:
+          minItems: 2
+      required:
+        - clock-names
+    else:
+      properties:
+        clocks:
+          maxItems: 1
+        clock-names:
+          maxItems: 1
+
  
- / {
-+	chosen {
-+		#address-cells = <1>;
-+		#size-cells = <1>;
-+		ranges;
-+
-+		framebuffer-panel0 {
-+			compatible = "simple-framebuffer";
-+			clocks = <&clk IMX8MN_CLK_DISP_PIXEL_ROOT>, /* lcdif */
-+				 <&clk IMX8MN_CLK_DISP_APB_ROOT>,
-+				 <&clk IMX8MN_CLK_DISP_AXI_ROOT>,
-+				 <&clk IMX8MN_VIDEO_PLL1>,
-+				 <&clk IMX8MN_CLK_DISP_AXI_ROOT>, /* pgc_dispmix */
-+				 <&clk IMX8MN_CLK_DISP_APB_ROOT>,
-+				 <&clk IMX8MN_CLK_DISP_AXI>,
-+				 <&clk IMX8MN_CLK_DISP_APB>,
-+				 <&clk IMX8MN_SYS_PLL2_1000M>,
-+				 <&clk IMX8MN_SYS_PLL1_800M>,
-+				 <&clk IMX8MN_CLK_DSI_CORE>, /* mipi_disi */
-+				 <&clk IMX8MN_CLK_DSI_PHY_REF>;
-+
-+			power-domains = <&disp_blk_ctrl IMX8MN_DISPBLK_PD_LCDIF>,
-+					<&disp_blk_ctrl IMX8MN_DISPBLK_PD_MIPI_DSI>;
-+			dvdd-supply = <&reg_3v3_dvdd>;
-+			avdd-supply = <&reg_v3v3_avdd>;
-+			status = "disabled";
-+		};
-+	};
-+
- 	backlight: backlight {
- 		compatible = "pwm-backlight";
- 		pwms = <&pwm1 0 700000 0>;	/* 700000 ns = 1337Hz */
--- 
-2.43.0
+> [1]: https://lore.kernel.org/linux-iio/20241019160817.10c3a2bf@jic23-huawei/
+> 
+> - Nuno Sá
+> 
 
+Regards,
+  angelo
 
