@@ -1,41 +1,41 @@
-Return-Path: <linux-kernel+bounces-380095-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380106-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id B24F29AE8DC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:31:32 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [147.75.80.249])
+	by mail.lfdr.de (Postfix) with ESMTPS id 3426C9AE902
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 16:34:27 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id E2CBF1C22976
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:31:31 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id DF6171F22EE3
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:34:26 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id E62071F76CE;
-	Thu, 24 Oct 2024 14:28:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8BBF41E7C35;
+	Thu, 24 Oct 2024 14:34:02 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="o4Vnko3A"
-Received: from out0-193.mail.aliyun.com (out0-193.mail.aliyun.com [140.205.0.193])
+	dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b="kyNKJM7o"
+Received: from out0-196.mail.aliyun.com (out0-196.mail.aliyun.com [140.205.0.196])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B2D11C1758
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:28:40 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.193
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DFD601D1745
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 14:33:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=140.205.0.196
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729780125; cv=none; b=nBVl7UJrKFdHY1nrL9l1tY9DU05ClUm6BP23Bgn41tLXq+Dc10GbpM+b7dIzbOccf56iwnjBekbKz8GrUtGwzW28JMPSGs+L0tqWqkoQgnp4dWViRGBat/a8lje47Pz3DCadBy1M4LvzWILQbY3co0UWUZUpplTonFw4rLzqSyQ=
+	t=1729780442; cv=none; b=XvYgP09T3xrFrNK7zJF6tr6VCYm0W/fV8StcJ7scy0VzRL9VQercvOGKaXPyGRuOYNvhKta12JY9Bw8A7RjucCd1wgVf/IgHw/bZiPxEsK1J89oel/CPXygSh/Ef1ylCVN44jzxBn0BiZT6HMm0J/kAhp0e+WdoQPzU3hN2N3qI=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729780125; c=relaxed/simple;
-	bh=oXy6rXpqqHRMqsCBsUClVbHN+aOv3TSBjb7kr7SgFEM=;
+	s=arc-20240116; t=1729780442; c=relaxed/simple;
+	bh=2KuxAKEg5UlIEaFA7fkjnIg4NOYGWc+teDk36qv6NiQ=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=NifbVn7alL34R+x/wgmjGuOP118RLZBZKBx6Fk0XlBuZziHjVLpTefMFNTqZwQ/d7kDzMYWRiCf1RVTponEaMoZUpfxtLHHSMDTYdZsBac1Ja+DaaUq5vyo28L0DEivO4aBtFN+WQOx6AwmCRAshvZ0Ib+0uZqALZXIoVuATp5o=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=o4Vnko3A; arc=none smtp.client-ip=140.205.0.193
+	 MIME-Version; b=K2vjtcpj6i8ngiBSZih5tzdmR5H/UWMWRqmXf9DFDSdb7idBLZ8B0vHc76U3nS77QsBuPV7lVh2uhV3/2oeC1uwV/Bl4/MgGQWI9VGejPUvcvLud+uPA2mx0sgK8lstJ+eB/4yKMPOkM/oXjHmTBWpTQwtHw/Mr4bu17xm1jC0Q=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com; spf=pass smtp.mailfrom=antgroup.com; dkim=pass (1024-bit key) header.d=antgroup.com header.i=@antgroup.com header.b=kyNKJM7o; arc=none smtp.client-ip=140.205.0.196
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=antgroup.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=antgroup.com
 DKIM-Signature:v=1; a=rsa-sha256; c=relaxed/relaxed;
 	d=antgroup.com; s=default;
-	t=1729780118; h=From:To:Subject:Date:Message-Id:MIME-Version;
-	bh=o7nomrNF4UUPmRyX4jzl23OQWMT1pV1gEWGtKNbTeqs=;
-	b=o4Vnko3AJULnvRhVZjHaiYWcOaoEAROuMn51S1xO5XJIiAjpkff8GeXXKnkhctQHO09yAyCK0ORw0Ho8zvAeI6UOVg1O/m9lJhE8DXg3b7fD3GNB6HSPEcpqFp6BHOUOEFfyt5Cyu0UNfIGRNr/6TMN5tfSlZZqv/CGbH9nBLpI=
-Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.ZreBt-G_1729780117 cluster:ay29)
+	t=1729780435; h=From:To:Subject:Date:Message-Id:MIME-Version;
+	bh=9F+/gG2/NpWN+fSAPQ0vZiXCLF44MabL2VbrE4Rm4ys=;
+	b=kyNKJM7oGJevt94n5kxYDH22ZlY1cZHU4ug/4OWCUSeGRJ1CmU7LVUqGNTOCkBsuikJ1POKZdwEPFdWrzlQDSvyYhkW/IMWEU/wSZ/WTvxNjWDTxlfWlVGfYefiX63tJ4M0P6CEYQK7qkuAAWLQjqIsxQDk5qTMR2RHyAcY3mWc=
+Received: from ubuntu..(mailfrom:tiwei.btw@antgroup.com fp:SMTPD_---.ZreBt-P_1729780117 cluster:ay29)
           by smtp.aliyun-inc.com;
           Thu, 24 Oct 2024 22:28:37 +0800
 From: "Tiwei Bie" <tiwei.btw@antgroup.com>
@@ -45,9 +45,9 @@ To: richard@nod.at,
 Cc:  <linux-um@lists.infradead.org>,
    <linux-kernel@vger.kernel.org>,
   "Tiwei Bie" <tiwei.btw@antgroup.com>
-Subject: [PATCH 3/4] um: Set parent-death signal for write_sigio thread/process
-Date: Thu, 24 Oct 2024 22:28:27 +0800
-Message-Id: <20241024142828.2612828-4-tiwei.btw@antgroup.com>
+Subject: [PATCH 4/4] um: Use os_set_pdeathsig helper in winch thread/process
+Date: Thu, 24 Oct 2024 22:28:28 +0800
+Message-Id: <20241024142828.2612828-5-tiwei.btw@antgroup.com>
 X-Mailer: git-send-email 2.34.1
 In-Reply-To: <20241024142828.2612828-1-tiwei.btw@antgroup.com>
 References: <20241024142828.2612828-1-tiwei.btw@antgroup.com>
@@ -59,27 +59,35 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-The write_sigio thread is not really a traditional thread. Set
-the parent-death signal for it to ensure that it will be killed
-if the UML kernel dies unexpectedly without proper cleanup.
+Since we have a helper now, let's switch to using it. It will make
+the code slightly more consistent.
 
 Signed-off-by: Tiwei Bie <tiwei.btw@antgroup.com>
 ---
- arch/um/os-Linux/sigio.c | 1 +
- 1 file changed, 1 insertion(+)
+ arch/um/drivers/chan_user.c | 3 +--
+ 1 file changed, 1 insertion(+), 2 deletions(-)
 
-diff --git a/arch/um/os-Linux/sigio.c b/arch/um/os-Linux/sigio.c
-index 9e71794839e8..9aac8def4d63 100644
---- a/arch/um/os-Linux/sigio.c
-+++ b/arch/um/os-Linux/sigio.c
-@@ -55,6 +55,7 @@ static int write_sigio_thread(void *unused)
- 	int i, n, respond_fd;
- 	char c;
+diff --git a/arch/um/drivers/chan_user.c b/arch/um/drivers/chan_user.c
+index 1434114b2f34..35f9beeb19b3 100644
+--- a/arch/um/drivers/chan_user.c
++++ b/arch/um/drivers/chan_user.c
+@@ -10,7 +10,6 @@
+ #include <signal.h>
+ #include <termios.h>
+ #include <sys/ioctl.h>
+-#include <sys/prctl.h>
+ #include "chan_user.h"
+ #include <os.h>
+ #include <um_malloc.h>
+@@ -162,7 +161,7 @@ static __noreturn int winch_thread(void *arg)
+ 	int count;
+ 	char c = 1;
  
+-	prctl(PR_SET_PDEATHSIG, SIGKILL);
 +	os_set_pdeathsig();
- 	os_fix_helper_signals();
- 	fds = &current_poll;
- 	while (1) {
+ 
+ 	pty_fd = data->pty_fd;
+ 	pipe_fd = data->pipe_fd;
 -- 
 2.34.1
 
