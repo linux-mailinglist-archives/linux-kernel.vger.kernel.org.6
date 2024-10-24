@@ -1,279 +1,167 @@
-Return-Path: <linux-kernel+bounces-379922-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379923-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 856C49AE5E0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:18:15 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [147.75.48.161])
+	by mail.lfdr.de (Postfix) with ESMTPS id 772179AE5E2
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:18:31 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id B1E471C20B80
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:18:14 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 2279AB2685F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 13:18:29 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 405671E0DC7;
-	Thu, 24 Oct 2024 13:16:58 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 85EA51E202D;
+	Thu, 24 Oct 2024 13:17:29 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b="btxR6pRd";
-	dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b="alXNkauI"
-Received: from fhigh-a4-smtp.messagingengine.com (fhigh-a4-smtp.messagingengine.com [103.168.172.155])
+	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="uVY4UZVS"
+Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 9B3111E104E;
-	Thu, 24 Oct 2024 13:16:54 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=103.168.172.155
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id D461D1C4A2F;
+	Thu, 24 Oct 2024 13:17:28 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729775817; cv=none; b=gAJfmM/ubeZoRhokGxdvEljfw/YvTXnjyIyTnlR8cuGC+b3RhsHG0UKsHNNhTvQbWGzeBb94ZVRgmnKe1vZNE3ciyBXrnnilmwcQol3ktfDeiFYlL03C5l9IOzcURYj/NFABFkrwLSZfS2i1pAhw6PX/JzJoHxBURHruiHMPkZk=
+	t=1729775848; cv=none; b=umQf6B6O9kzNnIAdjaP6YP7il6BkAVN2NbyzEHwnhjPGV6JSbgynx4MHssGXmY6jJBgGq43g0/xRclwX5ktFrsYQKR25Wn1gFr/NkS3P6CjlS2tu07wZJ8qipbWa02PtsC7hFwlD991roZkIbMYq7ZQmxTYdnS6cQaQBwmQ91IE=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729775817; c=relaxed/simple;
-	bh=oku5NNRsExLUlwbdff53zTinMYUInsOzU9jIg/cWHO4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=OKAtV1hyBU8y5Q0XC7B/zRTcvaYrEipj0wtU4N9boyvOsetkFfCe7YfBQOYElLg8R8Pqz6wQjw12hf1gKIdszmqpdQz6ljQvibKQdPKdg5GyRz70UIMO/WIAMnr8ImqZglYxl4o1jV0OcKsC1dY7Lb7Ts6/IRlKQGXR2vbIP9ro=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc; spf=pass smtp.mailfrom=jfarr.cc; dkim=pass (2048-bit key) header.d=jfarr.cc header.i=@jfarr.cc header.b=btxR6pRd; dkim=pass (2048-bit key) header.d=messagingengine.com header.i=@messagingengine.com header.b=alXNkauI; arc=none smtp.client-ip=103.168.172.155
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=jfarr.cc
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=jfarr.cc
-Received: from phl-compute-01.internal (phl-compute-01.phl.internal [10.202.2.41])
-	by mailfhigh.phl.internal (Postfix) with ESMTP id A860911400EC;
-	Thu, 24 Oct 2024 09:16:53 -0400 (EDT)
-Received: from phl-mailfrontend-02 ([10.202.2.163])
-  by phl-compute-01.internal (MEProxy); Thu, 24 Oct 2024 09:16:53 -0400
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=jfarr.cc; h=cc
-	:cc:content-type:content-type:date:date:from:from:in-reply-to
-	:in-reply-to:message-id:mime-version:references:reply-to:subject
-	:subject:to:to; s=fm2; t=1729775813; x=1729862213; bh=06FwsQ0dYC
-	4jSFygPf1ghqE3s2gNvHhwTL8NDrtl2Sw=; b=btxR6pRdMVUoXoOszDx4kcZBeI
-	sSHXMkN4eecOoqfZrRnFR0jXHmrP61wFs9VC65b1NDRKofl8vQsKyDn2qoeroh8a
-	lmgu7RUA4wPlOFfo2gbhDp6lSjLnIbP/OIVMD4UBTd1RS9EHWNi/AnQch2RH367A
-	kGYCjx3cUaQrBrM6h2+HwP6bGXSZrMI/p2NLndN+2402HTtnTOPtos8NkRzbI3I6
-	wvpMa0hkB4Lxjc3qWZuHjND2LP0doHypbFg+UsL130arfwRXXaUzw3+WYZ9aRiyX
-	LDUoIJEe4v1Lb2hE2nOjYrCdio6HnUq1T0VK0H2D0AFOWAjnsv+3OcAE6F0Q==
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=
-	messagingengine.com; h=cc:cc:content-type:content-type:date:date
-	:feedback-id:feedback-id:from:from:in-reply-to:in-reply-to
-	:message-id:mime-version:references:reply-to:subject:subject:to
-	:to:x-me-proxy:x-me-proxy:x-me-sender:x-me-sender:x-sasl-enc; s=
-	fm3; t=1729775813; x=1729862213; bh=06FwsQ0dYC4jSFygPf1ghqE3s2gN
-	vHhwTL8NDrtl2Sw=; b=alXNkauI5/q4nxx5yHUoNM2fPn1aVBbj9aWX0C3n1gR8
-	yg4pgMYyC+FVEeTRLLbMaoCtvDnIrl0FH7G0fRZ3pMLd4GwNE8OiC24yCbASLk4J
-	H3Gi3n/4fUTGTQWgfqceGt38rlyEZgeGlfzd4oaqTfrDbz9VeKAzKFnNg+S+IJWh
-	Qldwz7NBLyJW0hcrGNu8jgCSLlHwmBKyDFayqY3vdmXuIWH/ucMOLiqNTxQR/YIT
-	GGl4yWp2/1TMqYCLjiotHvC4uuH3+WzyUk4qjy6lDd7c67pkYt4Vk+g2dJBdty1I
-	SJFQXWlgJnNC9Pn6n1soqen+pwvLc4m0pOi7IHJkxw==
-X-ME-Sender: <xms:xUgaZ0cvIjLs8Q0kgCClr3vlQqKqWyoTwfVf9mqR1t9q6psQUN26jA>
-    <xme:xUgaZ2MHcn4YuwBwHSqJymwznoPSPqC-WPMSp26CAb6D6OZ7-XC9gxjFB6rkLJSDk
-    Ch5-OG8zZcSG_Z84Bs>
-X-ME-Received: <xmr:xUgaZ1hv1Omo70J-lbNpl5wqmxaijKirv4PcxGdxKTykcx-JZza0fU3gWsuc_ZwmkD46JkpS2m1RIdCur5DKYNaAs6hH>
-X-ME-Proxy-Cause: gggruggvucftvghtrhhoucdtuddrgeeftddrvdejtddgfeejucetufdoteggodetrfdotf
-    fvucfrrhhofhhilhgvmecuhfgrshhtofgrihhlpdggtfgfnhhsuhgsshgtrhhisggvpdfu
-    rfetoffkrfgpnffqhgenuceurghilhhouhhtmecufedttdenucesvcftvggtihhpihgvnh
-    htshculddquddttddmnegfrhhlucfvnfffucdluddtmdenucfjughrpeffhffvvefukfhf
-    gggtuggjsehttdertddttddvnecuhfhrohhmpeflrghnucfjvghnughrihhkucfhrghrrh
-    cuoehkvghrnhgvlhesjhhfrghrrhdrtggtqeenucggtffrrghtthgvrhhnpeeffffgleev
-    keduffevffffueelueevheduiedukeetuedvfeegfeelheekteejieenucffohhmrghinh
-    epghhithhhuhgsrdgtohhmpdhkvghrnhgvlhdrohhrghdpghhnuhdrohhrghenucevlhhu
-    shhtvghrufhiiigvpedtnecurfgrrhgrmhepmhgrihhlfhhrohhmpehkvghrnhgvlhesjh
-    hfrghrrhdrtggtpdhnsggprhgtphhtthhopeduuddpmhhouggvpehsmhhtphhouhhtpdhr
-    tghpthhtohepnhgrthhhrghnsehkvghrnhgvlhdrohhrghdprhgtphhtthhopehmohhrsg
-    hosehgohhoghhlvgdrtghomhdprhgtphhtthhopehkvggvsheskhgvrhhnvghlrdhorhhg
-    pdhrtghpthhtohepthhhohhrshhtvghnrdgslhhumhesthhosghluhigrdgtohhmpdhrtg
-    hpthhtohepkhgvnhhtrdhovhgvrhhsthhrvggvtheslhhinhhugidruggvvhdprhgtphht
-    thhopehrvghgrhgvshhsihhonhhssehlihhsthhsrdhlihhnuhigrdguvghvpdhrtghpth
-    htoheplhhinhhugidqsggtrggthhgvfhhssehvghgvrhdrkhgvrhhnvghlrdhorhhgpdhr
-    tghpthhtoheplhhinhhugidqhhgrrhguvghnihhnghesvhhgvghrrdhkvghrnhgvlhdroh
-    hrghdprhgtphhtthhopehlihhnuhigqdhkvghrnhgvlhesvhhgvghrrdhkvghrnhgvlhdr
-    ohhrgh
-X-ME-Proxy: <xmx:xUgaZ5_kf6WBzbsJ6N6hNjYIpwx9YPcRiUO-6smCJ-Cluc5y3n6ORQ>
-    <xmx:xUgaZwv2sj841txQoivKillwDjHlzO34fMuR4gOsIzV6UcKAPGh_3g>
-    <xmx:xUgaZwFBS8Vv2dVoz0ogtzpfInrVgkvAHlkcCddS5UuWouvtGxY5nQ>
-    <xmx:xUgaZ_Mk-9oJkkc2rCP7px519UnbCTh6G3dvmCuuwUBeVauKyU1U1w>
-    <xmx:xUgaZwGWp8E_sZPRu_Ceg5VlrdD0sv9c__ipW8dBT0uNI2MssZDp7waT>
-Feedback-ID: i01d149f8:Fastmail
-Received: by mail.messagingengine.com (Postfix) with ESMTPA; Thu,
- 24 Oct 2024 09:16:51 -0400 (EDT)
-Date: Thu, 24 Oct 2024 15:16:50 +0200
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-To: Nathan Chancellor <nathan@kernel.org>
-Cc: Bill Wendling <morbo@google.com>, Kees Cook <kees@kernel.org>,
-	Thorsten Blum <thorsten.blum@toblux.com>, kent.overstreet@linux.dev,
-	regressions@lists.linux.dev, linux-bcachefs@vger.kernel.org,
-	linux-hardening@vger.kernel.org, linux-kernel@vger.kernel.org,
-	ardb@kernel.org, ojeda@kernel.org
-Subject: Re: [REGRESSION][BISECTED] erroneous buffer overflow detected in
- bch2_xattr_validate
-Message-ID: <ZxpIwkfg9_mHO3lq@archlinux>
-References: <202410031424.45E5D19@keescook>
- <Zv8RIs-htdc-PtXB@archlinux>
- <202410040958.C19D3B9E48@keescook>
- <ZwNb-_UPL9BPSg9N@archlinux>
- <CAGG=3QUatjhoDHdkDtZ+ftz7JvMhvaQ9XkFyyZSt_95V_nSN8A@mail.gmail.com>
- <CAGG=3QVcsuN0Sk79oZWjY_nNTo_XfGYsDT3gc7vEmLyS8OK3rA@mail.gmail.com>
- <ZxB-uh1KzfD4ww2a@archlinux>
- <20241017165522.GA370674@thelio-3990X>
- <ZxWvcAPHPaRxp9UE@archlinux>
- <20241021192557.GA2041610@thelio-3990X>
+	s=arc-20240116; t=1729775848; c=relaxed/simple;
+	bh=NdBE6hbozYmVbY0urVOV+8FTTG4tBXfLh/dW3CeVNlM=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=J82NMPzMWTM2fiF/DGZ81wFDeVWT98nQonxWh6ZkUv6cDHRf3j8WAqP+dIAVSQi9R73it7oM47OCsBkk+g/KrYFiHF6tRj63OKHk9IaNnWUXddl/T3bSmdWU42YhlcDU+91Yfr5rAQQWyt2igfkZt04avEF8M/QwgqYBwqGXg/c=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=uVY4UZVS; arc=none smtp.client-ip=10.30.226.201
+Received: by smtp.kernel.org (Postfix) with ESMTPSA id 57DE2C4CEE7;
+	Thu, 24 Oct 2024 13:17:28 +0000 (UTC)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
+	s=k20201202; t=1729775848;
+	bh=NdBE6hbozYmVbY0urVOV+8FTTG4tBXfLh/dW3CeVNlM=;
+	h=References:In-Reply-To:From:Date:Subject:To:Cc:From;
+	b=uVY4UZVS/XGjEwVZh0+rWAqiyM0evlWXIvQGxl4+yWkXfh4m5UY97hwbpSvYlago/
+	 naEBoMKd+VukWcMq19HItIkTmyeEZh5hJj+7m54r41zAQLAGtQbt6rZrGdiADbR1Oh
+	 jgfudmd0w10oqm5MVX/PFynKr9GnGsBTFODNhcr/lDNCKi3tgweBv/PTQtx5/A9Qmc
+	 UsY8+9/YTXoESNuUiasX0A8XJo8SGDgmOsLeiiaF9KlnY5aUczpXJ1UFohz/9O8kmw
+	 V9pELv4xG0Y4GHO6CTpQJBai6ebg3tSZa1L69MTAlWObBAgYZxNVS6Y+4X+bZEp+E9
+	 vcfS9XL3yTeVQ==
+Received: by mail-oa1-f50.google.com with SMTP id 586e51a60fabf-288916b7fceso526495fac.3;
+        Thu, 24 Oct 2024 06:17:28 -0700 (PDT)
+X-Forwarded-Encrypted: i=1; AJvYcCWuE948aDqBmRleI0pcV33n+eQeDG8e0QYreg/zsq371hZ882KT7/jzfFI1egfimYhAzOMn0G1XPok=@vger.kernel.org, AJvYcCXjTux9/qpSuhM5cAZ77aPBbM+oGk4YqHwelHi4/MvOLCd50QVlvxY88slPM1g672z/13tGJ3FP9ONPsWg=@vger.kernel.org
+X-Gm-Message-State: AOJu0YwMhNcvs82QZfXEelv8PERRdRhQjkAPyBrTHA03LDshOiY/FYMR
+	vQKxu39hY6+DfKKk5rfPeZiw0mV0WOEyThXJQRmB6WWlQgZqAV7fnuXVu4kl6LwX6qMSEzekYs4
+	O8scdcOWwhQY3ZLPK+h1Z+1SmI50=
+X-Google-Smtp-Source: AGHT+IHhJzeF2bLORj57fVBTkWmlhQufqtQFQVhAi8eTYv4XypBPGFTLKD5/j4RFxF9MTUvo2oVASn28hPwQJLeCJZc=
+X-Received: by 2002:a05:6871:68c:b0:27b:5890:bd38 with SMTP id
+ 586e51a60fabf-28ccb41ea91mr5759461fac.7.1729775847482; Thu, 24 Oct 2024
+ 06:17:27 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <20241021192557.GA2041610@thelio-3990X>
+References: <20241024102303.1086147-1-daniel.lezcano@linaro.org> <8b4659f0-5da7-4847-b5de-fad8ea57e967@linaro.org>
+In-Reply-To: <8b4659f0-5da7-4847-b5de-fad8ea57e967@linaro.org>
+From: "Rafael J. Wysocki" <rafael@kernel.org>
+Date: Thu, 24 Oct 2024 15:17:16 +0200
+X-Gmail-Original-Message-ID: <CAJZ5v0gF=B7NG0ZVCHr4DfSqYaunDLw1Bcpjqcf1NwLBW_jNEw@mail.gmail.com>
+Message-ID: <CAJZ5v0gF=B7NG0ZVCHr4DfSqYaunDLw1Bcpjqcf1NwLBW_jNEw@mail.gmail.com>
+Subject: Re: [PATCH] thermal/thresholds: Fix thermal lock annotation issue
+To: Daniel Lezcano <daniel.lezcano@linaro.org>
+Cc: "Rafael J. Wysocki" <rafael@kernel.org>, 
+	syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com, 
+	Zhang Rui <rui.zhang@intel.com>, Lukasz Luba <lukasz.luba@arm.com>, 
+	"open list:THERMAL" <linux-pm@vger.kernel.org>, open list <linux-kernel@vger.kernel.org>
+Content-Type: text/plain; charset="UTF-8"
+Content-Transfer-Encoding: quoted-printable
 
-Hi Nathan,
+On Thu, Oct 24, 2024 at 12:36=E2=80=AFPM Daniel Lezcano
+<daniel.lezcano@linaro.org> wrote:
+>
+>
+> Hi,
+>
+> please note this fix has been written on top of the thermal thresholds
+> series, so I don't know how it conflicts if it is applied before
 
-Do you want me to add a Co-Developed-by tag for you? I feel bad just
-taking it.
+No worries.
 
-For reference here is the current state of the patch, still waiting on
-the merge into clang 19.1.x:
+Applied (on top of the thresholds series).
 
-It needs three prerequisite commits on top of 6.6.x, but unfortunately
-still requires a small amount of manual conflict resolution, but it's
-easy enough
-
-1. include/linux/compiler_types.h:
-	use the incoming change until before (but not including) the
-	"Apply __counted_by() when the Endianness matches to increase test coverage."
-	comment)
-
-2. lib/overflow_kunit.c: 
-	HEAD is correct
-
-
-From 6c667a43af0c57cd3f260fd75d5c4a198ba94220 Mon Sep 17 00:00:00 2001
-From: Jan Hendrik Farr <kernel@jfarr.cc>
-Date: Thu, 17 Oct 2024 04:39:40 +0200
-Subject: [PATCH] Compiler Attributes: disable __counted_by for clang < 19.1.3
-
-This patch disables __counted_by for clang versions < 19.1.3 because
-of the two issues listed below. It does this by introducing
-CONFIG_CC_HAS_COUNTED_BY.
-
-1. clang < 19.1.2 has a bug that can lead to __bdos returning 0:
-https://github.com/llvm/llvm-project/pull/110497
-
-2. clang < 19.1.3 has a bug that can lead to __bdos being off by 4:
-https://github.com/llvm/llvm-project/pull/112636
-
-Fixes: c8248faf3ca2 ("Compiler Attributes: counted_by: Adjust name and identifier expansion")
-Cc: stable@vger.kernel.org # 6.6.x: 16c31dd7fdf6: Compiler Attributes: counted_by: bump min gcc version
-Cc: stable@vger.kernel.org # 6.6.x: 2993eb7a8d34: Compiler Attributes: counted_by: fixup clang URL
-Cc: stable@vger.kernel.org # 6.6.x: 231dc3f0c936: lkdtm/bugs: Improve warning message for compilers without counted_by support
-Cc: stable@vger.kernel.org # 6.6.x
-Reported-by: Nathan Chancellor <nathan@kernel.org>
-Closes: https://lore.kernel.org/all/20240913164630.GA4091534@thelio-3990X/
-Reported-by: kernel test robot <oliver.sang@intel.com>
-Closes: https://lore.kernel.org/oe-lkp/202409260949.a1254989-oliver.sang@intel.com
-Link: https://lore.kernel.org/all/Zw8iawAF5W2uzGuh@archlinux/T/#m204c09f63c076586a02d194b87dffc7e81b8de7b
-Signed-off-by: Jan Hendrik Farr <kernel@jfarr.cc>
----
- drivers/misc/lkdtm/bugs.c           |  2 +-
- include/linux/compiler_attributes.h | 13 -------------
- include/linux/compiler_types.h      | 19 +++++++++++++++++++
- init/Kconfig                        |  8 ++++++++
- lib/overflow_kunit.c                |  2 +-
- 5 files changed, 29 insertions(+), 15 deletions(-)
-
-diff --git a/drivers/misc/lkdtm/bugs.c b/drivers/misc/lkdtm/bugs.c
-index 62ba01525479..376047beea3d 100644
---- a/drivers/misc/lkdtm/bugs.c
-+++ b/drivers/misc/lkdtm/bugs.c
-@@ -445,7 +445,7 @@ static void lkdtm_FAM_BOUNDS(void)
- 
- 	pr_err("FAIL: survived access of invalid flexible array member index!\n");
- 
--	if (!__has_attribute(__counted_by__))
-+	if (!IS_ENABLED(CONFIG_CC_HAS_COUNTED_BY))
- 		pr_warn("This is expected since this %s was built with a compiler that does not support __counted_by\n",
- 			lkdtm_kernel_info);
- 	else if (IS_ENABLED(CONFIG_UBSAN_BOUNDS))
-diff --git a/include/linux/compiler_attributes.h b/include/linux/compiler_attributes.h
-index 32284cd26d52..c16d4199bf92 100644
---- a/include/linux/compiler_attributes.h
-+++ b/include/linux/compiler_attributes.h
-@@ -94,19 +94,6 @@
- # define __copy(symbol)
- #endif
- 
--/*
-- * Optional: only supported since gcc >= 15
-- * Optional: only supported since clang >= 18
-- *
-- *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
-- * clang: https://github.com/llvm/llvm-project/pull/76348
-- */
--#if __has_attribute(__counted_by__)
--# define __counted_by(member)		__attribute__((__counted_by__(member)))
--#else
--# define __counted_by(member)
--#endif
--
- /*
-  * Optional: not supported by gcc
-  * Optional: only supported since clang >= 14.0
-diff --git a/include/linux/compiler_types.h b/include/linux/compiler_types.h
-index 1a957ea2f4fe..639be0f30b45 100644
---- a/include/linux/compiler_types.h
-+++ b/include/linux/compiler_types.h
-@@ -323,6 +323,25 @@ struct ftrace_likely_data {
- #define __no_sanitize_or_inline __always_inline
- #endif
- 
-+/*
-+ * Optional: only supported since gcc >= 15
-+ * Optional: only supported since clang >= 18
-+ *
-+ *   gcc: https://gcc.gnu.org/bugzilla/show_bug.cgi?id=108896
-+ * clang: https://github.com/llvm/llvm-project/pull/76348
-+ *
-+ * __bdos on clang < 19.1.2 can erroneously return 0:
-+ * https://github.com/llvm/llvm-project/pull/110497
-+ *
-+ * __bdos on clang < 19.1.3 can be off by 4:
-+ * https://github.com/llvm/llvm-project/pull/112636
-+ */
-+#ifdef CONFIG_CC_HAS_COUNTED_BY
-+# define __counted_by(member)		__attribute__((__counted_by__(member)))
-+#else
-+# define __counted_by(member)
-+#endif
-+
- /*
-  * Apply __counted_by() when the Endianness matches to increase test coverage.
-  */
-diff --git a/init/Kconfig b/init/Kconfig
-index 530a382ee0fe..5f1fe3583f20 100644
---- a/init/Kconfig
-+++ b/init/Kconfig
-@@ -116,6 +116,14 @@ config CC_HAS_ASM_INLINE
- config CC_HAS_NO_PROFILE_FN_ATTR
- 	def_bool $(success,echo '__attribute__((no_profile_instrument_function)) int x();' | $(CC) -x c - -c -o /dev/null -Werror)
- 
-+# clang needs to be at least 19.1.3 to avoid __bdos miscalculations
-+# https://github.com/llvm/llvm-project/pull/110497
-+# https://github.com/llvm/llvm-project/pull/112636
-+# TODO: when gcc 15 is released remove the build test and add gcc version check
-+config CC_HAS_COUNTED_BY
-+	def_bool $(success,echo 'struct flex { int count; int array[] __attribute__((__counted_by__(count))); };' | $(CC) $(CLANG_FLAGS) -x c - -c -o /dev/null -Werror)
-+	depends on !(CC_IS_CLANG && CLANG_VERSION < 190103)
-+
- config PAHOLE_VERSION
- 	int
- 	default $(shell,$(srctree)/scripts/pahole-version.sh $(PAHOLE))
-diff --git a/lib/overflow_kunit.c b/lib/overflow_kunit.c
-index 2abc78367dd1..5222c6393f11 100644
---- a/lib/overflow_kunit.c
-+++ b/lib/overflow_kunit.c
-@@ -1187,7 +1187,7 @@ static void DEFINE_FLEX_test(struct kunit *test)
- {
- 	/* Using _RAW_ on a __counted_by struct will initialize "counter" to zero */
- 	DEFINE_RAW_FLEX(struct foo, two_but_zero, array, 2);
--#if __has_attribute(__counted_by__)
-+#ifdef CONFIG_CC_HAS_COUNTED_BY
- 	int expected_raw_size = sizeof(struct foo);
- #else
- 	int expected_raw_size = sizeof(struct foo) + 2 * sizeof(s16);
--- 
-2.47.0
+> On 24/10/2024 12:23, Daniel Lezcano wrote:
+> > When the thermal zone is unregistered (thermal sensor module being
+> > unloaded), no lock is held when flushing the thresholds. That results
+> > in a WARN when the lockdep validation is set in the kernel config.
+> >
+> > This has been reported by syzbot.
+> >
+> > As the thermal zone is in the process of being destroyed, there is no
+> > need to send a notification about purging the thresholds to the
+> > userspace as this one will receive a thermal zone deletion
+> > notification which imply the deletion of all the associated resources
+> > like the trip points or the user thresholds.
+> >
+> > Split the function thermal_thresholds_flush() into a lockless one
+> > without notification and its call with the lock annotation followed
+> > with the thresholds flushing notification.
+> >
+> > Please note this scenario is unlikely to happen, as the sensor drivers
+> > are usually compiled-in in order to have the thermal framework to be
+> > able to kick in at boot time if needed.
+> >
+> > Link: https://lore.kernel.org/all/67124175.050a0220.10f4f4.0012.GAE@goo=
+gle.com
+> > Reported-by: syzbot+f24dd060c1911fe54c85@syzkaller.appspotmail.com
+> > Signed-off-by: Daniel Lezcano <daniel.lezcano@linaro.org>
+> > ---
+> >   drivers/thermal/thermal_thresholds.c | 13 +++++++++----
+> >   1 file changed, 9 insertions(+), 4 deletions(-)
+> >
+> > diff --git a/drivers/thermal/thermal_thresholds.c b/drivers/thermal/the=
+rmal_thresholds.c
+> > index ea4aa5a2e86c..2888eabd3efe 100644
+> > --- a/drivers/thermal/thermal_thresholds.c
+> > +++ b/drivers/thermal/thermal_thresholds.c
+> > @@ -20,17 +20,22 @@ int thermal_thresholds_init(struct thermal_zone_dev=
+ice *tz)
+> >       return 0;
+> >   }
+> >
+> > -void thermal_thresholds_flush(struct thermal_zone_device *tz)
+> > +static void __thermal_thresholds_flush(struct thermal_zone_device *tz)
+> >   {
+> >       struct list_head *thresholds =3D &tz->user_thresholds;
+> >       struct user_threshold *entry, *tmp;
+> >
+> > -     lockdep_assert_held(&tz->lock);
+> > -
+> >       list_for_each_entry_safe(entry, tmp, thresholds, list_node) {
+> >               list_del(&entry->list_node);
+> >               kfree(entry);
+> >       }
+> > +}
+> > +
+> > +void thermal_thresholds_flush(struct thermal_zone_device *tz)
+> > +{
+> > +     lockdep_assert_held(&tz->lock);
+> > +
+> > +     __thermal_thresholds_flush(tz);
+> >
+> >       thermal_notify_threshold_flush(tz);
+> >
+> > @@ -39,7 +44,7 @@ void thermal_thresholds_flush(struct thermal_zone_dev=
+ice *tz)
+> >
+> >   void thermal_thresholds_exit(struct thermal_zone_device *tz)
+> >   {
+> > -     thermal_thresholds_flush(tz);
+> > +     __thermal_thresholds_flush(tz);
+> >   }
+> >
+> >   static int __thermal_thresholds_cmp(void *data,
+>
+>
+> --
+> <http://www.linaro.org/> Linaro.org =E2=94=82 Open source software for AR=
+M SoCs
+>
+> Follow Linaro:  <http://www.facebook.com/pages/Linaro> Facebook |
+> <http://twitter.com/#!/linaroorg> Twitter |
+> <http://www.linaro.org/linaro-blog/> Blog
 
