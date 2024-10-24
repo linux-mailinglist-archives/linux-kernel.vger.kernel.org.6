@@ -1,157 +1,283 @@
-Return-Path: <linux-kernel+bounces-380770-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380771-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 892369AF5CE
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:26:01 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
+	by mail.lfdr.de (Postfix) with ESMTPS id DEA9E9AF5D2
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 01:30:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id BB5FB1C21D13
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:26:00 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 269A32833F8
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:30:39 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 98E3C2185BC;
-	Thu, 24 Oct 2024 23:25:53 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id B10442185B2;
+	Thu, 24 Oct 2024 23:30:33 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b="fwIl6ahA"
-Received: from mail-pg1-f202.google.com (mail-pg1-f202.google.com [209.85.215.202])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b="k3gapNdy"
+Received: from CH4PR04CU002.outbound.protection.outlook.com (mail-northcentralusazon11023122.outbound.protection.outlook.com [40.107.201.122])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A1A961D5AB5
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 23:25:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.215.202
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729812353; cv=none; b=NIi21lEarOJsZbTniE8iCD54uKQ3eLXoVORCpY2IPOlfTam5vTIr0tuPRN11aYUJpI95gUB0/6OjfC5ztDZkgaMO/8FwVMJ0bWKdTDM5h3tTn8VoiSndCUdmZoq6F4MLykMQyerL3pRNa+SIQ0jfhiPHTEeY+ZrT24ZMzArVJ2M=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729812353; c=relaxed/simple;
-	bh=A2M9dwzI2dleJm/Tj0b8eflNdiAFk3S68gRrsZPrq24=;
-	h=Date:In-Reply-To:Mime-Version:References:Message-ID:Subject:From:
-	 To:Cc:Content-Type; b=qmM1vtf0ckF3OcYEsLvRQmhvprjbpruy/yF81so0hys45U4HT2kovvjULVtEiY6nxo9YzTAHrQoRgGSFPzMiu2XcBbk+SHS8GXbAZn+0Ane8YJXkWtd6SBwRP8iD4eR3/6old7hSes2wOF+s/k4Gs3hRl0oQIsNwuw1AtFqRWXs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com; dkim=pass (2048-bit key) header.d=google.com header.i=@google.com header.b=fwIl6ahA; arc=none smtp.client-ip=209.85.215.202
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=reject dis=none) header.from=google.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=flex--seanjc.bounces.google.com
-Received: by mail-pg1-f202.google.com with SMTP id 41be03b00d2f7-7ec0d56d624so1314427a12.1
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 16:25:50 -0700 (PDT)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id A2DF5167D80;
+	Thu, 24 Oct 2024 23:30:30 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.201.122
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729812632; cv=fail; b=awmUF45zXbUxS5qURkqU3OJOdfEaRnetS9cYrvLoC8QXOoaiZcMJ6+Ccx7rwyfXQZSlSecWZltcN/dF3bR3iKB/4s0cxbq2YweRZGcjbFhNx8mRFHXKvVJickcvmWFeWy+7M5YTB1eVSZSfwDb9rCL3apZWTRi39fdlHuF2ElCk=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729812632; c=relaxed/simple;
+	bh=MoSxv7KAT3Gldn5Hk84/jas1RiRkQ0MdmE8e4Thv6IU=;
+	h=From:To:Cc:Subject:Date:Message-ID:Content-Type:MIME-Version; b=eH0NByubEsiCsQPt2aMhqR66j8cp3p2Lg3hEgwchj47lMvREFgNt87SgqmV4yNQwF9mWVKW1rRyjcdAwt7RGpN7Br+s8Lj5iZGnxQJ/Lh7totzuI+2MQ+njNU0W9opPHShwb+KP5nJIDjUypsycAcf6TrF4Xc6w+fsoXW/gHK7w=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com; spf=pass smtp.mailfrom=os.amperecomputing.com; dkim=pass (1024-bit key) header.d=os.amperecomputing.com header.i=@os.amperecomputing.com header.b=k3gapNdy; arc=fail smtp.client-ip=40.107.201.122
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=os.amperecomputing.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=os.amperecomputing.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=EjDIkGdm+gzYPR2CnTI9xIqvx+VbY6k8ZscapcmvxWGilwr8xfin8StxjTgGgJ37dtMahL+H0dfIyZa833xzRCg1FhaZ4/8izL83RWqv4TniATkTdWG0bttwVKwgmpBqQZZjhvCEsjR19OEcAXZveQhgAKtVyox0lT5hqwmz3dQSoRTPySpgkGCadMkKg8fHIafsXbyqOUavoPw58wiu8EcbRrm3218zjbHzqIjvx0ovK9UlMan4zuZK9wef2oCHx6uS29aFbwtIH7UoWsp0HYwC//kdVjgjiEy66ChJ4CVzY8jweyvXZ1Pt7f2TW1lXfXgDl8+nLvZ+JexTmnV9Ww==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=+hN8QfXyhuY0m0xRWFEfnuXb9HpzW22lnsxd10IUIcw=;
+ b=WCPMM/eGtiWGJn9sjdRInnMhmceLMIZXSH+04wa5jilCz7DyOoZ/Y3+2/Rj0xFxZWHwr8fMMTTKnrBpIWL6PXr0M6yynDgW2AmUn/DWi/Kaw0/rO3kOG0GQMX/kvpd7xmmGyIBHsahKJW5oeCAQWmSmYzHnuveoXzJzFhKLReo3m/O2GJUafC5eDSz+8rZnqw3n828yoDhtcfFhNhfYueDtHyMyvhqtINesTPKYlvnOXMGc88UlWxYPWWzVRviuotv/niC28fDs6LT2qxA/JasdLBfeG0rFV7sljLjuNM8idMSZ0iCkeILPw3X9+1tqUg+oznTql3kndrVOrx8Iy2g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=os.amperecomputing.com; dmarc=pass action=none
+ header.from=os.amperecomputing.com; dkim=pass
+ header.d=os.amperecomputing.com; arc=none
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=google.com; s=20230601; t=1729812350; x=1730417150; darn=vger.kernel.org;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6ofNIG/FWjor+LkJgXQrXvGHYsbVWGzGeus18IdWzY=;
-        b=fwIl6ahAn+6gqxwD49zQ933kQNyrEqM49XxckeiYF4MZNAToApeuzbb84ZgajRlrjh
-         eiUJTqAs52hRTxfSvFmRFObU/hQlBs8uGG4C5kHriKrIuR1LQWWRF7CgigBhVfbzBsN4
-         Y4ovrFn4n2F3Zb0NsGQOU1RMROqLYMhoALmzvgwgZF7b2qeRyxwY0SgB1n0MWVT1qphf
-         vGC1n65RNZ/9xFGAesO7S9NigLpMSi3QFGdjAj8Zjtk7tuaXzS6L6ukhfCA3xepRlqCo
-         xvMeeJAinuISXHRTfPQfribka+2/JAcOmxvD9JP8BRyoFRfeJCHCyU7RN5axjVmz2sDL
-         6RKA==
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729812350; x=1730417150;
-        h=cc:to:from:subject:message-id:references:mime-version:in-reply-to
-         :date:x-gm-message-state:from:to:cc:subject:date:message-id:reply-to;
-        bh=p6ofNIG/FWjor+LkJgXQrXvGHYsbVWGzGeus18IdWzY=;
-        b=UJkksteBUiTVVwHX3HWizm3j14fC8vOGwZ8xJNhz0EyOkRvtpQaAljI0Gm9zbq8A2M
-         Xn/xoh2p8k8nxVfi6vbO7m1DqooInpXK3IWgV6TQdQ1cEvrVifKr4H5/k11/XEICVzzb
-         pObQfKnO/TWQxznX8nM8FDWVxoLQz4IiCvc+6ky0ghmdFpxpJ5o58gZrBnJD97SNw7Xl
-         oWnZp1KLajvNN5H1N2IFHxJsEk5FJ50a7LsjF2/FHSj7bTZuvFw7DdxNS89hBMgqzTKP
-         CQ7P5e+xKfGnOZZq+z/d/hHXEiWl28UyKxRFE0boc53MAmHbKmcgZ6Yu4aYYZfLNmE8S
-         z8aw==
-X-Forwarded-Encrypted: i=1; AJvYcCVfilB8Terrb2hG677ptIyArh+qY7oJAxvtzO3XhFK1ee98Sj/oO6NXdKCkEhDvJH4N3ZR4LglL+CtKHH0=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwOZXy+8rIK7BnKrERvFJnadcsIFwhKdGssW5i0+eCDe3X5hhJF
-	YNwcqrwLTbJbPenWHJ3j1b4IwEgVPp8CLn0S5sMEgfFW7RaFsfCCvkQoEVf6G+RwkC2bX4F/Va7
-	VVA==
-X-Google-Smtp-Source: AGHT+IGGcXhAT9alIKzDegKCU2ah5sKo6L3bo5eJnRMUIWu6peoIxtruCpUAP64IUjTNHDb4xvwyalk2y+A=
-X-Received: from zagreus.c.googlers.com ([fda3:e722:ac3:cc00:9d:3983:ac13:c240])
- (user=seanjc job=sendgmr) by 2002:a63:7319:0:b0:7c1:271a:c780 with SMTP id
- 41be03b00d2f7-7edb305c093mr5669a12.0.1729812349604; Thu, 24 Oct 2024 16:25:49
- -0700 (PDT)
-Date: Thu, 24 Oct 2024 16:25:47 -0700
-In-Reply-To: <20241004195540.210396-3-vipinsh@google.com>
+ d=os.amperecomputing.com; s=selector2;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=+hN8QfXyhuY0m0xRWFEfnuXb9HpzW22lnsxd10IUIcw=;
+ b=k3gapNdyNNkQL585by3dIS6Q4Ir+Sp8qvm+yYFnEmsW5BFyH0FRXGkyScVBKdEgDV99sHbop3diM1hJXgXukqbWa4LSjVibt1axyOdm/8YIgxXHXFMDaGLcECs6YX0/xjSZ9zDSlZgZDALfsH4aeDtQy2EZOROwRzJHwzceC0HM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=os.amperecomputing.com;
+Received: from MW4PR01MB6228.prod.exchangelabs.com (2603:10b6:303:76::7) by
+ CH3PR01MB8315.prod.exchangelabs.com (2603:10b6:610:173::10) with Microsoft
+ SMTP Server (version=TLS1_2, cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id
+ 15.20.8114.7; Thu, 24 Oct 2024 23:30:21 +0000
+Received: from MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba]) by MW4PR01MB6228.prod.exchangelabs.com
+ ([fe80::13ba:df5b:8558:8bba%7]) with mapi id 15.20.8093.018; Thu, 24 Oct 2024
+ 23:30:19 +0000
+From: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+To: Peter Zijlstra <peterz@infradead.org>,
+	Ingo Molnar <mingo@redhat.com>,
+	Arnaldo Carvalho de Melo <acme@kernel.org>,
+	Namhyung Kim <namhyung@kernel.org>,
+	Mark Rutland <mark.rutland@arm.com>,
+	Alexander Shishkin <alexander.shishkin@linux.intel.com>,
+	Jiri Olsa <jolsa@kernel.org>,
+	Ian Rogers <irogers@google.com>,
+	Adrian Hunter <adrian.hunter@intel.com>,
+	"Liang, Kan" <kan.liang@linux.intel.com>,
+	John Garry <john.g.garry@oracle.com>,
+	Will Deacon <will@kernel.org>,
+	James Clark <james.clark@linaro.org>,
+	Mike Leach <mike.leach@linaro.org>,
+	Leo Yan <leo.yan@linux.dev>
+Cc: Ilkka Koskinen <ilkka@os.amperecomputing.com>,
+	linux-perf-users@vger.kernel.org,
+	linux-kernel@vger.kernel.org,
+	linux-arm-kernel@lists.infradead.org
+Subject: [PATCH] perf arm-spe: Add support for SPE Data Source packet on AmpereOne
+Date: Thu, 24 Oct 2024 23:30:35 +0000
+Message-ID: <20241024233035.7979-1-ilkka@os.amperecomputing.com>
+X-Mailer: git-send-email 2.47.0
+Content-Transfer-Encoding: 8bit
+Content-Type: text/plain
+X-ClientProxiedBy: CH0PR03CA0341.namprd03.prod.outlook.com
+ (2603:10b6:610:11a::18) To MW4PR01MB6228.prod.exchangelabs.com
+ (2603:10b6:303:76::7)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
-Mime-Version: 1.0
-References: <20241004195540.210396-1-vipinsh@google.com> <20241004195540.210396-3-vipinsh@google.com>
-Message-ID: <ZxrXe_GWTKqQ-ch8@google.com>
-Subject: Re: [PATCH v2 2/3] KVM: x86/mmu: Use MMU shrinker to shrink KVM MMU
- memory caches
-From: Sean Christopherson <seanjc@google.com>
-To: Vipin Sharma <vipinsh@google.com>
-Cc: pbonzini@redhat.com, dmatlack@google.com, zhi.wang.linux@gmail.com, 
-	weijiang.yang@intel.com, mizhang@google.com, liangchen.linux@gmail.com, 
-	kvm@vger.kernel.org, linux-kernel@vger.kernel.org
-Content-Type: text/plain; charset="us-ascii"
+MIME-Version: 1.0
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: MW4PR01MB6228:EE_|CH3PR01MB8315:EE_
+X-MS-Office365-Filtering-Correlation-Id: a94bb584-9c03-4051-6e60-08dcf483d29f
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam:
+	BCL:0;ARA:13230040|52116014|376014|1800799024|7416014|366016|38350700014|921020;
+X-Microsoft-Antispam-Message-Info:
+	=?us-ascii?Q?JKQ7vwsRbM+wh/Alf0jhzM+qQTOpn11vz4Fo+HAK5z9zuO+V4bTGvILv9VQ3?=
+ =?us-ascii?Q?29100tFvKs37WIVUplyY4Uu5g3VVTbU8TyEWmn9QjZfGnQ3cGOuTdyUC58zW?=
+ =?us-ascii?Q?FGSTJ2HbX2XHefBAQJjDDXWxzLM5FZUS4mp1P6ouMKvrL3N/XFVCnmr75gbj?=
+ =?us-ascii?Q?lGyRgF9NnnalX5G6Z3WN/GkLPi4EDEnUUJaWyKFNXMpNHyeSKO3G1XT82Dh2?=
+ =?us-ascii?Q?vnbGh0PA7KgnYPMNWMxl0gkcy2RMKZ/HkKQ4cQXhU9XL1eETmrBGSccywyT+?=
+ =?us-ascii?Q?MwTeVq202yzZc/EAfas5z14E2+NrysIF7x+PixawtRIKrK/QBZOD2iSKKJJ+?=
+ =?us-ascii?Q?0RkL3P3JtlZ37AevuQeVobgw9Piqo9PkuIGz2Nl/Mb1tBxbRrQjKlx8odZAr?=
+ =?us-ascii?Q?BupAoGRnWu1xE6IzR21ewVbbNPaxjsRN/cXkK1XV1otykoqFWPBNmjfGE5Cf?=
+ =?us-ascii?Q?urcb7HxUnb3pKUtKPuAunwQuBCS1bUOEUgGXZcfRg31wlajR7GPdIdzYn0uR?=
+ =?us-ascii?Q?x1/IB9xTtWjXTPsXIfw14ix5b2Qj7gF1ignxZL4FjxPjCNlKFDjNst8VxUJF?=
+ =?us-ascii?Q?+A1jteRVrsyVTmYfGL9rVWLx3MNzC8E2V1pip1vWtsVluREzmqIjEA6U9k7R?=
+ =?us-ascii?Q?li2D+2dE0ZX8p0RtbslrU7cm5ovV24YildsXXSEESnl+md8n2tm+95FuqmCc?=
+ =?us-ascii?Q?CKgdx8seYkASvl6GfZqKDumiyb2BCtTSLuvvOjB+LxnyCPBmVNZsVZp7IvdK?=
+ =?us-ascii?Q?IpSwIDW+3i+/C2VmMXKPq/aYiAmpaACKT212os6+DI8U+aiumf8XE2aiSLiF?=
+ =?us-ascii?Q?L6qVX71jaglBfcjZjMLnjPD0PD1KZzQSUOaLMx2e2VgRKsvrGFyh8zlttnlX?=
+ =?us-ascii?Q?eu96yQ0zwFbD1di6JKu3TCopFDoCeRYLWd5wLYSjAE3dKj89RpaWVuFnbapY?=
+ =?us-ascii?Q?UDsFmQlRpCS+PV7hjJ+a+PMAGLwFmaV3U+ryzD39k4uxOAxBi7AtDO6h7hmn?=
+ =?us-ascii?Q?6F5gBC6vF4YgBUpDZjOTN2byYZQfYvJWKyKHZ31tOkEVOD95k/1uAf5Q4c58?=
+ =?us-ascii?Q?Ts0D8jQIks+0v0rf2YseGPKbwLo5OrBGz4h3pkrhf7bMRsRQi/FVAJBXzCJK?=
+ =?us-ascii?Q?kISTCk57U4E9QL9qpSk80xacTAhZvCLuwPGETO/Xw2RHNWIwkNoEpQ70KLr4?=
+ =?us-ascii?Q?fZkI5racbjcHNAsqXRP3JQ+AAJtLctUAgtc9cUlpJH5Q7tyxWOMODszp6dqa?=
+ =?us-ascii?Q?4homSIxnlhrv9XljV1mIp3X7LnrODLzx1YZjzPkc8TpPppZudV3UuW/rFeCf?=
+ =?us-ascii?Q?VzW+owvfpV3ycFm9zfAnUTXJvb5zaVw/sUi7stV0lXhXN1NzNyiMh8a7G3gr?=
+ =?us-ascii?Q?cFg165d+WCcnilGFXwtkzN0onN7q?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:MW4PR01MB6228.prod.exchangelabs.com;PTR:;CAT:NONE;SFS:(13230040)(52116014)(376014)(1800799024)(7416014)(366016)(38350700014)(921020);DIR:OUT;SFP:1102;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?us-ascii?Q?QQVEKOEnhk5QdX+b1X6dq2h20Hvcwhp2h9+Z+C73+V0NpHdkM2ZY+n3byoIw?=
+ =?us-ascii?Q?KltfPVM/uTlPmhy3QizsaEchX1tXhUxiI9ZCERlAfDhW/idEIrv7aPyWHn3W?=
+ =?us-ascii?Q?5KsEd19bou1ZLYMwsL5LqZt2ec/LFk1olW+Yg9NBDWlz29gqyDpm1E7RGAV9?=
+ =?us-ascii?Q?kCPuKlxJyZ26XGfREuHzg7LSk8gh8SR+eEyHUPXsYN5SvnknY6iQ7Iv4vP7z?=
+ =?us-ascii?Q?qYsyVHh7HcK9pQYpaIqRo1sBwC9IX694b9DR1AgtHoDySPQPERzuXZVGlicj?=
+ =?us-ascii?Q?k6wsyuPS/r1j8YGPn4EHrday2a+EFF1A48JjUQvAyxjJtwt2wcxAuIRIg8yU?=
+ =?us-ascii?Q?fHhmBy0kf3J65CtkxPxfCpAAo1LTBg5nK0QAE6Yz3CsA6rMm5Z/t8wQov7eU?=
+ =?us-ascii?Q?YI1hFE+Wd3K0O1np5ljkWv4tgJ6dmyv7sqM1NaJLeFuhF0i2e9/US97j5w0i?=
+ =?us-ascii?Q?GJNKYIKugYUlCIfzjqZdXLUT5hV14LQFk/YhSafk8SyVpJHMIueSsg43nXcH?=
+ =?us-ascii?Q?pexrXsYu4DmQfSwL8tJgAwVW9mD6839oeyALywkekFDSTI6jFGMmvCvDe0O3?=
+ =?us-ascii?Q?U5akf+m3b54WapwLHtZSjLzI//8qkIyzFc3nshDG+QrVmBCKDpJZ/yfpnZs1?=
+ =?us-ascii?Q?1iCUqlVHNNRSOQ/eNW1dz31vbhdch0MoeFAdWd+bskX+8Nrea4xXpf4+kKQK?=
+ =?us-ascii?Q?FKHQzm/qAW7FsviCkPf2k+b7CjXomOs9p7Gi6WyhT0C5R/1+LeUArMuWxDBU?=
+ =?us-ascii?Q?/1zFKrJ5KEpcK7xc5Yjw8xHP/rOP/5//fw6QX9HI7o69uPFP5AgP8UA9hVHJ?=
+ =?us-ascii?Q?SBU1EpzOBUM4hstM5R+p07ZhYpXaTS9SCY1uoTEQ2T1CS6MRpkbQ9sLKEgrZ?=
+ =?us-ascii?Q?0MF6L4VSJ7+yh2WDImJn+3ME+uBo6ck8qQuxGgfcKIjAsubz9YX281pDVcPp?=
+ =?us-ascii?Q?fE9FEizvexXZdcZTT/Vx2Jxc/nLsCHohFqUzCwGWBmk0kDmcdOIpwo4qHTC7?=
+ =?us-ascii?Q?E04cKHKmI28alHGvTk7eM5hNtVhuOxwsyJK0NcWM4m3bIvWJBFBZdzQ8vcdr?=
+ =?us-ascii?Q?+w8t0XcM/2yG8ERKgwaTz1hoGhuIGQumaD5z8AA1LbTCEPlSNsMo5ASxyFb3?=
+ =?us-ascii?Q?m9XylZuWzHKAa5McMOr+Lvlu2r552Ou+u+rLQtvZaESSzPAlH9Ernm7o6LNF?=
+ =?us-ascii?Q?LK/sybaoBapNRxoLBYT31CHgA/wDFQdIuWFqyxOnhOCcA2FRBApRbf9tsEOe?=
+ =?us-ascii?Q?55VUi3/sHpEoDEi4Qo+c8E+fRK736HmAOVWjAxl0PcPMcOwhbNSS4jzto1+s?=
+ =?us-ascii?Q?hSAgoFfrG4UYIzGA0fxHAkxdjc1GeL5+XUPOjJM+jkWvA+nF2p6cKFYI46Ds?=
+ =?us-ascii?Q?f48KINRpeyz8j5gnzikYVCTSFhx3S9j+i8DzbW1gnwSWw2GxHQBaGZkwgl3D?=
+ =?us-ascii?Q?vnnSdVep3k4Ajhi1bZ1Ln5/UPniRKnclYQ1rn4yy3irngiF9MEp+sJd+IOZy?=
+ =?us-ascii?Q?3VuNR8JPsCslhue8HSyIZww7TiT7oFUhW/qKhpiDKTiPSVgF+0rB3WrF6DLj?=
+ =?us-ascii?Q?O8d6Mq/FCxcFnYQ5nsPN2No7n3GQpWReVQUs2iau1lEmRHFQX0Vvw+BiKp80?=
+ =?us-ascii?Q?n7OE336On+7g/fXBe0/5JWM=3D?=
+X-OriginatorOrg: os.amperecomputing.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: a94bb584-9c03-4051-6e60-08dcf483d29f
+X-MS-Exchange-CrossTenant-AuthSource: MW4PR01MB6228.prod.exchangelabs.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 23:30:19.3439
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3bc2b170-fd94-476d-b0ce-4229bdc904a7
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: tSN1dRD4JlIxSBthso5tALsNrcsfOtr4iGBmoRMiS7P0ATpB9r6NahSklOcj2w1FC5CvfC0t6igHAD3Y9Fccd19tYdJS63jI3Y68jfS0rdqxGH88kbgnU2O+emHLo0Fy
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: CH3PR01MB8315
 
-On Fri, Oct 04, 2024, Vipin Sharma wrote:
-> Use MMU shrinker to iterate through all the vCPUs of all the VMs and
-> free pages allocated in MMU memory caches. Protect cache allocation in
-> page fault and MMU load path from MMU shrinker by using a per vCPU
-> mutex. In MMU shrinker, move the iterated VM to the end of the VMs list
-> so that the pain of emptying cache spread among other VMs too.
-> 
-> The specific caches to empty are mmu_shadow_page_cache and
-> mmu_shadowed_info_cache as these caches store whole pages. Emptying them
-> will give more impact to shrinker compared to other caches like
-> mmu_pte_list_desc_cache{} and mmu_page_header_cache{}
-> 
-> Holding per vCPU mutex lock ensures that a vCPU doesn't get surprised
-> by finding its cache emptied after filling them up for page table
-> allocations during page fault handling and MMU load operation. Per vCPU
-> mutex also makes sure there is only race between MMU shrinker and all
-> other vCPUs. This should result in very less contention.
-> 
-> Signed-off-by: Vipin Sharma <vipinsh@google.com>
-> ---
+Decode SPE Data Source packets on AmpereOne. The field is IMPDEF.
 
-...
+Signed-off-by: Ilkka Koskinen <ilkka@os.amperecomputing.com>
+---
+ .../util/arm-spe-decoder/arm-spe-decoder.h    |  9 +++
+ tools/perf/util/arm-spe.c                     | 61 +++++++++++++++++++
+ 2 files changed, 70 insertions(+)
 
-> diff --git a/arch/x86/kvm/mmu/mmu.c b/arch/x86/kvm/mmu/mmu.c
-> index 213e46b55dda2..8e2935347615d 100644
-> --- a/arch/x86/kvm/mmu/mmu.c
-> +++ b/arch/x86/kvm/mmu/mmu.c
-> @@ -4524,29 +4524,33 @@ static int direct_page_fault(struct kvm_vcpu *vcpu, struct kvm_page_fault *fault
->  	if (r != RET_PF_INVALID)
->  		return r;
->  
-> +	mutex_lock(&vcpu->arch.mmu_memory_cache_lock);
->  	r = mmu_topup_memory_caches(vcpu, false);
->  	if (r)
-> -		return r;
-> +		goto out_mmu_memory_cache_unlock;
->  
->  	r = kvm_faultin_pfn(vcpu, fault, ACC_ALL);
->  	if (r != RET_PF_CONTINUE)
-> -		return r;
-> +		goto out_mmu_memory_cache_unlock;
->  
->  	r = RET_PF_RETRY;
->  	write_lock(&vcpu->kvm->mmu_lock);
->  
->  	if (is_page_fault_stale(vcpu, fault))
-> -		goto out_unlock;
-> +		goto out_mmu_unlock;
->  
->  	r = make_mmu_pages_available(vcpu);
->  	if (r)
-> -		goto out_unlock;
-> +		goto out_mmu_unlock;
->  
->  	r = direct_map(vcpu, fault);
->  
-> -out_unlock:
-> +out_mmu_unlock:
->  	write_unlock(&vcpu->kvm->mmu_lock);
->  	kvm_release_pfn_clean(fault->pfn);
-> +out_mmu_memory_cache_unlock:
-> +	mutex_unlock(&vcpu->arch.mmu_memory_cache_lock);
+diff --git a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+index 1443c28545a9..e4115b1e92b2 100644
+--- a/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
++++ b/tools/perf/util/arm-spe-decoder/arm-spe-decoder.h
+@@ -67,6 +67,15 @@ enum arm_spe_neoverse_data_source {
+ 	ARM_SPE_NV_DRAM		 = 0xe,
+ };
+ 
++enum arm_spe_ampereone_data_source {
++	ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE	= 0x0,
++	ARM_SPE_AMPEREONE_SLC				= 0x3,
++	ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE		= 0x5,
++	ARM_SPE_AMPEREONE_DDR				= 0x7,
++	ARM_SPE_AMPEREONE_L1D				= 0x8,
++	ARM_SPE_AMPEREONE_L2D				= 0x9,
++};
++
+ struct arm_spe_record {
+ 	enum arm_spe_sample_type type;
+ 	int err;
+diff --git a/tools/perf/util/arm-spe.c b/tools/perf/util/arm-spe.c
+index 138ffc71b32d..04bd21ad7ea8 100644
+--- a/tools/perf/util/arm-spe.c
++++ b/tools/perf/util/arm-spe.c
+@@ -515,10 +515,69 @@ static void arm_spe__synth_data_source_generic(const struct arm_spe_record *reco
+ 		data_src->mem_lvl |= PERF_MEM_LVL_REM_CCE1;
+ }
+ 
++static const struct midr_range ampereone_source_spe[] = {
++	MIDR_ALL_VERSIONS(MIDR_AMPERE1A),
++	{},
++};
++
++static void arm_spe__synth_data_source_ampereone(const struct arm_spe_record *record,
++						 union perf_mem_data_src *data_src,
++						 u64 midr)
++{
++	if (!is_midr_in_range_list(midr, ampereone_source_spe)) {
++		arm_spe__synth_data_source_generic(record, data_src);
++		return;
++	}
++
++	if (record->op & ARM_SPE_OP_ST) {
++		data_src->mem_lvl = PERF_MEM_LVL_NA;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_NA;
++		data_src->mem_snoop = PERF_MEM_SNOOP_NA;
++		return;
++	}
++
++	switch (record->source) {
++	case ARM_SPE_AMPEREONE_LOCAL_CHIP_CACHE_OR_DEVICE:
++		data_src->mem_lvl = PERF_MEM_LVL_L2 | PERF_MEM_LVL_HIT;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_L2;
++		data_src->mem_snoopx = PERF_MEM_SNOOPX_PEER;
++		break;
++	case ARM_SPE_AMPEREONE_SLC:
++		data_src->mem_lvl = PERF_MEM_LVL_L3 | PERF_MEM_LVL_HIT;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_L3;
++		data_src->mem_snoop = PERF_MEM_SNOOP_HIT;
++		break;
++	case ARM_SPE_AMPEREONE_REMOTE_CHIP_CACHE:
++		data_src->mem_lvl = PERF_MEM_LVL_REM_CCE1;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_ANY_CACHE;
++		data_src->mem_remote = PERF_MEM_REMOTE_REMOTE;
++		data_src->mem_snoopx = PERF_MEM_SNOOPX_PEER;
++		break;
++	case ARM_SPE_AMPEREONE_DDR:
++		data_src->mem_lvl = PERF_MEM_LVL_LOC_RAM | PERF_MEM_LVL_HIT;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_RAM;
++		data_src->mem_snoop = PERF_MEM_SNOOP_NONE;
++		break;
++	case ARM_SPE_AMPEREONE_L1D:
++		data_src->mem_lvl = PERF_MEM_LVL_L1 | PERF_MEM_LVL_HIT;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_L1;
++		data_src->mem_snoop = PERF_MEM_SNOOP_NONE;
++		break;
++	case ARM_SPE_AMPEREONE_L2D:
++		data_src->mem_lvl = PERF_MEM_LVL_L2 | PERF_MEM_LVL_HIT;
++		data_src->mem_lvl_num = PERF_MEM_LVLNUM_L2;
++		data_src->mem_snoop = PERF_MEM_SNOOP_NONE;
++		break;
++	default:
++		break;
++	}
++}
++
+ static u64 arm_spe__synth_data_source(const struct arm_spe_record *record, u64 midr)
+ {
+ 	union perf_mem_data_src	data_src = { .mem_op = PERF_MEM_OP_NA };
+ 	bool is_neoverse = is_midr_in_range_list(midr, neoverse_spe);
++	bool is_ampereone = (read_cpuid_implementor() == ARM_CPU_IMP_AMPERE);
+ 
+ 	if (record->op & ARM_SPE_OP_LD)
+ 		data_src.mem_op = PERF_MEM_OP_LOAD;
+@@ -529,6 +588,8 @@ static u64 arm_spe__synth_data_source(const struct arm_spe_record *record, u64 m
+ 
+ 	if (is_neoverse)
+ 		arm_spe__synth_data_source_neoverse(record, &data_src);
++	else if (is_ampereone)
++		arm_spe__synth_data_source_ampereone(record, &data_src, midr);
+ 	else
+ 		arm_spe__synth_data_source_generic(record, &data_src);
+ 
+-- 
+2.47.0
 
-I've been thinking about this patch on and off for the past few weeks, and every
-time I come back to it I can't shake the feeling that we came up with a clever
-solution for a problem that doesn't exist.  I can't recall a single complaint
-about KVM consuming an unreasonable amount of memory for page tables.  In fact,
-the only time I can think of where the code in question caused problems was when
-I unintentionally inverted the iterator and zapped the newest SPs instead of the
-oldest SPs.
-
-So, I'm leaning more and more toward simply removing the shrinker integration.
 
