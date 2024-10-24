@@ -1,146 +1,138 @@
-Return-Path: <linux-kernel+bounces-379216-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379192-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 7C1589ADB85
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:27:46 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id DFBDE9ADB43
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 07:13:49 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id AB8751C21921
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:27:45 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 0D2441C21C6D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 05:13:49 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7EACF1741E8;
-	Thu, 24 Oct 2024 05:27:38 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id BC3F31714CA;
+	Thu, 24 Oct 2024 05:13:42 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b="O/496grX"
-Received: from mout.kundenserver.de (mout.kundenserver.de [212.227.17.10])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b="OjJSTuuT"
+Received: from mail-pj1-f47.google.com (mail-pj1-f47.google.com [209.85.216.47])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 0414F1741C3;
-	Thu, 24 Oct 2024 05:27:33 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=212.227.17.10
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 631B41C01
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 05:13:40 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.47
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729747657; cv=none; b=lf3/IZh5fKqf45yGKcQW3pkfPMMOIlF5byAnsbHoFBzbnIVoU4bHhPdDkRMC32rn5vhBqIKaOG7UDF99ZgkLsveemZIFWBy7pz3wVvFFHbStkvmtL43k6AIKoP5nQgsmXFUFFC9Eg6I9WXIn+otrXIvJwnXcFFI1A0vkmZpUAPU=
+	t=1729746822; cv=none; b=rtLfAp9sIK0sTGfUUv667IafgtF0G7/mXhDtStEFIRykcl64ZqZEopjp31uOEXTIui6d7TlLzBZS0hpk9zUp/OJ1bSj8dl8QPaI8iacMhUoLVVhvWiOTe2ottwmYewmWHPHn/J1efYA8LrMBUfIp+2fy2lunzOylrF9Qsrgezrg=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729747657; c=relaxed/simple;
-	bh=d735oG1X3IXEcrcspEMc+GOMPQfO+sH6teUICELrMqI=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=mPxQ0sGZMXvCC7h0KHF+M4oWeGKIA3vwi+vRlUgvofrPXZ/uZ8aTuVktX7+vCcOISbWkvA3DcJO8R+WyAf4vLAHmRWMeMmRJpfR40EXOxB/zryrQh3TpYColN6P/z1qgvECTZfuSzpkAPKa3Pi0zxrtSI1OcFudwXMt4LVskKI8=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz; spf=pass smtp.mailfrom=oldschoolsolutions.biz; dkim=pass (2048-bit key) header.d=oldschoolsolutions.biz header.i=jens.glathe@oldschoolsolutions.biz header.b=O/496grX; arc=none smtp.client-ip=212.227.17.10
-Authentication-Results: smtp.subspace.kernel.org; dmarc=none (p=none dis=none) header.from=oldschoolsolutions.biz
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=oldschoolsolutions.biz
+	s=arc-20240116; t=1729746822; c=relaxed/simple;
+	bh=KvIOBcsqTKCfgbFf8aguNHQ4cSK2bYqgnpbbG/lpy4U=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=Bww9fON7uY3JOM0OnXcNdgev6boiRDKEjdkePnm0wFk+1jHOE0cetATkk8lxyfVxknG3dxl91CPkADidz8Yi4buXFiO0rM6yOQ0010s5j6HH3EXIib7UVHVXyDLUjfqKzBgoyyTQPQEW+mJ1zFbPHrm29met/RPi5jMyAlHiHK8=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org; spf=pass smtp.mailfrom=chromium.org; dkim=pass (1024-bit key) header.d=chromium.org header.i=@chromium.org header.b=OjJSTuuT; arc=none smtp.client-ip=209.85.216.47
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=chromium.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=chromium.org
+Received: by mail-pj1-f47.google.com with SMTP id 98e67ed59e1d1-2e2cc469c62so390311a91.2
+        for <linux-kernel@vger.kernel.org>; Wed, 23 Oct 2024 22:13:40 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-	d=oldschoolsolutions.biz; s=s1-ionos; t=1729747647; x=1730352447;
-	i=jens.glathe@oldschoolsolutions.biz;
-	bh=d735oG1X3IXEcrcspEMc+GOMPQfO+sH6teUICELrMqI=;
-	h=X-UI-Sender-Class:Message-ID:Date:MIME-Version:Subject:To:Cc:
-	 References:From:In-Reply-To:Content-Type:
-	 Content-Transfer-Encoding:cc:content-transfer-encoding:
-	 content-type:date:from:message-id:mime-version:reply-to:subject:
-	 to;
-	b=O/496grXak77NplxqA33W4XJ8F+USqwdOseS32iKYAuFO9qeH6y3BqwD8se6GDjI
-	 W6ZDkWJ+/oi1MIA1nxsAX1CFR4lV1q16jJ8vvJyc8bPX55/OriTYEH1WE3PC7raZr
-	 ubjCzUGW/QgTQh/zSV6KAUkaJxLpRDGqkSkiaFfTL8bEgMgS2OnHnsGwAff431/z0
-	 NDVecgZpa1Dm5A54OcQLtjk8CtAv/AyoWFhUaBLLJGFesGU1jZcziNtfHxV9s87S3
-	 gwjdGtEfr7Z5u2/JHvAuaO6D6nVMAhnvPp2aC8hUi/GvelTxlC2izQCVk2PFWp66l
-	 mQZX+0AGn4eEfaz+hw==
-X-UI-Sender-Class: 55c96926-9e95-11ee-ae09-1f7a4046a0f6
-Received: from [192.168.0.174] ([91.64.229.215]) by mrelayeu.kundenserver.de
- (mreue106 [212.227.15.183]) with ESMTPSA (Nemesis) id
- 1MrPVJ-1tigXp2Dhf-00jy8d; Thu, 24 Oct 2024 07:13:34 +0200
-Message-ID: <2fe704cb-52e4-4f41-a575-2570484dc18d@oldschoolsolutions.biz>
-Date: Thu, 24 Oct 2024 07:13:32 +0200
+        d=chromium.org; s=google; t=1729746820; x=1730351620; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=/4WbTxnzMcJJAIXdQb9GfxvzXKK8n8wAdqQlmugKoQI=;
+        b=OjJSTuuTAlaQyaGEjto8QoogXfAW7N0EygNy9CIpZAGLcIodEqRRdObvWfZKYv6h4t
+         zJBhdXlcZNB4Psd8jPlXrw1gK/kthZDM8jib8J3DQcoO6ySrDDukzBlm4MQ8udisfcQ8
+         le6WGj5PNMxQC9UmgqabQO7O4lL7vNyCFL0iU=
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729746820; x=1730351620;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=/4WbTxnzMcJJAIXdQb9GfxvzXKK8n8wAdqQlmugKoQI=;
+        b=PJ88vwCi0lzXPnI3eBqOkoh2KyweKGSGEq4fY+Ux2xySrnPFtzQ9dhLPLiChuibzYg
+         0ChLm7OcHLfoCpLjv62HKgYpXfkOanRlPv7DfK/MFRhEFXSRYZoQqreElb7Jdh/hU/GG
+         sPSc/JVka5zrlmWZNRUnnQxDB78JySmeloTFh5itfwwpxwOK0G5PihFuen3sYSy0HFcZ
+         IEB9jbDI2rh0yaYW/imkd2CV7HUMJrmy0iUJlmIeKD70O+kOBEHQaV8ujaw8h1slYfz7
+         YNNwdfB2cbo0aotcdGYWRnHVae9t0YYNWm8H/1w9/WbSRHN3a/aN7tiaZ9zOvfQBd5YX
+         wgpQ==
+X-Forwarded-Encrypted: i=1; AJvYcCU8jjVFGdfXcvjeNmeA7vAIlG5Kzrim8Da0nTXimXG/sLn2daRgtuHmJ0bUwj8iBhtgQTDv5JWvGQ9uOU8=@vger.kernel.org
+X-Gm-Message-State: AOJu0YxtostB45zMVUk78DlpAsUmj72SJO8Q+6kQbmQ5sw7y40FxInTG
+	hyIgiH/K9TWg3k4HkaglrCaOK5rTdrEA1sVVx0mfM2MSKNrK1u506G1m6Gw1/g==
+X-Google-Smtp-Source: AGHT+IGumwmCw1rV5PRu0lp/TGTbXVP7gkcRIhHfwPSr1Ig969clG6+LhD+f5d3PcaGae7/eS3Dmng==
+X-Received: by 2002:a17:90a:6284:b0:2e2:b45f:53b4 with SMTP id 98e67ed59e1d1-2e76b6e4998mr4923514a91.25.1729746819780;
+        Wed, 23 Oct 2024 22:13:39 -0700 (PDT)
+Received: from google.com ([2401:fa00:8f:203:9422:d958:f749:9a30])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e48e4a2sm464162a91.2.2024.10.23.22.13.38
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Wed, 23 Oct 2024 22:13:39 -0700 (PDT)
+Date: Thu, 24 Oct 2024 14:13:35 +0900
+From: Sergey Senozhatsky <senozhatsky@chromium.org>
+To: Sergey Senozhatsky <senozhatsky@chromium.org>
+Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>,
+	Vikash Garodia <quic_vgarodia@quicinc.com>,
+	Bryan O'Donoghue <bryan.odonoghue@linaro.org>,
+	linux-media@vger.kernel.org, linux-kernel@vger.kernel.org
+Subject: Re: [PATCH 2/2] media: venus: sync with threaded IRQ during inst
+ destruction
+Message-ID: <20241024051335.GK1279924@google.com>
+References: <20241023052444.139356-1-senozhatsky@chromium.org>
+ <20241023052444.139356-3-senozhatsky@chromium.org>
+ <20241024045836.GJ1279924@google.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH 0/2] X1E001DE Snapdragon Devkit for Windows
-To: Sibi Sankar <quic_sibis@quicinc.com>, andersson@kernel.org,
- konradybcio@kernel.org, krzk+dt@kernel.org, robh+dt@kernel.org
-Cc: linux-kernel@vger.kernel.org, linux-arm-msm@vger.kernel.org,
- devicetree@vger.kernel.org, conor+dt@kernel.org, abel.vesa@linaro.org,
- srinivas.kandagatla@linaro.org
-References: <20240911073337.90577-1-quic_sibis@quicinc.com>
- <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
-Content-Language: en-US
-From: Jens Glathe <jens.glathe@oldschoolsolutions.biz>
-In-Reply-To: <f67d0fcd-4940-a57a-0e11-b98ed29cd09d@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: quoted-printable
-X-Provags-ID: V03:K1:pH2FjDbwXLQkQXlTmmN+YbeEJGKTHq/1SBsD7K0n7lQtWOKCxHF
- Z42CcGRnR8tJACI+gh4KY1Lmt22txJDjasUSw0IPzJJUj2BoXU+AFgnk2nxArAbmw8Ig7nS
- n9ifxx0IEjdM7BD4RuShIVnWddwkY7+yrzqEaCWDUhXG+ov75eGVbbPFUzsra9TM0sl+Lek
- ZKRPy1uXgBETDDLAbQPtQ==
-X-Spam-Flag: NO
-UI-OutboundReport: notjunk:1;M01:P0:PcpljmiV5cQ=;JWZ2AvMWFa4Eio/iR3HYAY3jz6G
- XSLAGwoFqFKaGNNRp3RArMl9tNzMDn0zMNNC8+oN03s9IzaBRZiHzNzn0v17AuMBivRq0p1Vy
- bELSdCgUddLr1/Kt4jUyJ322e5avKSK/PF0evWSLC5t1v50m8uPW3LIgDj4d/RficB8HTEOv5
- 30o6CZEw3CMWI2b3+5UovOCoZ0hrkRGB1YvF2L05s4ihYNZbfIX8GEFAo94fLfacuavHa0wTf
- r5GNbMt0JteR0VfIA4fpgN76AmgK4k2EyWskqEWWWDyLrA2hEix+CZnGyb3FlH2nfl+80ZNla
- iampn9ZjEbfkpt2dNkVQR+qP/TSILl4Y/ZDtnkccnGKQw/6onEcTlTjuNJG3hu4TIsZsGQUbb
- q9Z4uqHMmu83lmTQEONOyP0GbD7gud/R2i+PBUBVK+dAzqbE+tbqaPJeDoB+gZ3n3Nv/tmmcg
- jD8M6uIlmROf21kQYApB61TqcFcAXEJJUqlX8ldfQdEVRrXRLmN5MQ+HQyDgydhQ5T1iF8kpt
- sDknEz3JVZMXHFzSgDSPpnkMgyl2uP42lPNSYtN4jpuV2OQOdocEfeMBxSrXyE//pA52Pf6bW
- ufTGJq5lbhPBSKubMYMeB8eGpoxrmQOS0WJHNDOi0h0619Y9e+UdB9HG9jGMC4ZpUmIbgdffs
- vF5I7Smi+ppMNQx4po7OPo3Rl2pbu2UDMg8JHX8tlvDR6G0dYBb9SoeJ1ZZQ3nJ95NGl/tnpA
- 3BcmIYl/ZS73psXLNlFyeUVCf/4y78jCg==
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024045836.GJ1279924@google.com>
 
-Hi there,
+On (24/10/24 13:58), Sergey Senozhatsky wrote:
+> Date: Thu, 24 Oct 2024 13:58:36 +0900
+> From: Sergey Senozhatsky <senozhatsky@chromium.org>
+> To: Sergey Senozhatsky <senozhatsky@chromium.org>
+> Cc: Stanimir Varbanov <stanimir.k.varbanov@gmail.com>, Vikash Garodia
+>  <quic_vgarodia@quicinc.com>, Bryan O'Donoghue
+>  <bryan.odonoghue@linaro.org>, linux-media@vger.kernel.org,
+>  linux-kernel@vger.kernel.org
+> Subject: Re: [PATCH 2/2] media: venus: sync with threaded IRQ during inst
+>  destruction
+> Message-ID: <20241024045836.GJ1279924@google.com>
+> 
+> On (24/10/23 14:24), Sergey Senozhatsky wrote:
+> > Guard inst destruction (both dec and enc) with hard and threaded
+> > IRQ synchronization.
+> 
+> Folks, please ignore this patch.   Stand by for v2.
 
-as one of the few owners of this box I am very interested in getting an
-as complete dt as possible. It may be unsupported (who cares), but it is
-quite useful hardware. So, yes please! I already have it up with the
-published patch and its doing useful stuff.
+I think it probably should be something like this (both for dec and
+enc).
 
-- Jens
+---
 
-On 23.10.24 13:05, Sibi Sankar wrote:
->
->
-> On 9/11/24 13:03, Sibi Sankar wrote:
->> Add initial support for X1E001DE Snapdragon Devkit for Windows. X1E001D=
-E
->> is the speed binned variant of X1E80100 that supports turbo boost up to
->> 4.3 Ghz. The initial support includes the following:
->>
->> -DSPs
->> -Ethernet (RTL8125BG) over the pcie 5 instance.
->> -NVme
->> -Wifi
->> -USB-C ports
->>
->
-> Hi All,
->
-> With the X1E Devkit cancelled and with no firmware updates promised for
-> it perpetually, please chime in and let me know if you still want to get
-> this series and rest (external-dp, usb-A ports, sd card slot and 3.5 mm
-> Jack) merged and have it supported upstream for the folks who already
-> received it!
->
-> -Sibi
->
->> Link:
->> https://www.qualcomm.com/news/releases/2024/05/qualcomm-accelerates-dev=
-elopment-for-copilot--pcs-with-snapdrago
->>
->> Sibi Sankar (2):
->> =C2=A0=C2=A0 dt-bindings: arm: qcom: Add Snapdragon Devkit for Windows
->> =C2=A0=C2=A0 arm64: dts: qcom: Add X1E001DE Snapdragon Devkit for Windo=
-ws
->>
->> =C2=A0 .../devicetree/bindings/arm/qcom.yaml=C2=A0=C2=A0=C2=A0=C2=A0=C2=
-=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 6 +
->> =C2=A0 arch/arm64/boot/dts/qcom/Makefile=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=
-=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0=C2=A0 |=C2=A0=C2=A0 1 +
->> =C2=A0 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts=C2=A0 | 813 +++++++=
-+++++++++++
->> =C2=A0 3 files changed, 820 insertions(+)
->> =C2=A0 create mode 100644 arch/arm64/boot/dts/qcom/x1e001de-devkit.dts
->>
->
+@@ -1538,9 +1538,25 @@ static int venc_close(struct file *file)
+ 
+        venc_pm_get(inst);
+ 
++       /*
++        * First, remove the inst from the ->instances list, so that
++        * to_instance() will return NULL.
++        */
++       hfi_session_destroy(inst);
++       /*
++        * Second, make sure we don't have IRQ/IRQ-thread currently running or
++        * pending execution (disable_irq() calls synchronize_irq()), which
++        * can race with the inst destruction.
++        */
++       disable_irq(inst->core->irq);
++       /*
++        * Lastly, inst is gone from the core->instances list and we don't
++        * have running/pending IRQ/IRQ-thread, proceed with the destruction
++        */
++       enable_irq(inst->core->irq);
++
+        v4l2_m2m_ctx_release(inst->m2m_ctx);
+        v4l2_m2m_release(inst->m2m_dev);
+-       hfi_session_destroy(inst);
+        v4l2_fh_del(&inst->fh);
+        v4l2_fh_exit(&inst->fh);
+        venc_ctrl_deinit(inst);
 
