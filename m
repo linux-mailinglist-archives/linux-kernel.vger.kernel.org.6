@@ -1,62 +1,62 @@
-Return-Path: <linux-kernel+bounces-379442-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379444-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 6D4B49ADEB2
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:15:32 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 6E8D79ADEB6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 10:15:55 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 1ADF9285B96
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:15:31 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id BC53BB22734
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 08:15:52 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA0E51CB53A;
-	Thu, 24 Oct 2024 08:11:45 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id CD5C61CBA17;
+	Thu, 24 Oct 2024 08:11:47 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="Dwcah5wN"
+	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="hOJXMS+7"
 Received: from mgamail.intel.com (mgamail.intel.com [198.175.65.16])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 16C041C8FC6;
-	Thu, 24 Oct 2024 08:11:42 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 24AA01AF0CC;
+	Thu, 24 Oct 2024 08:11:43 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=198.175.65.16
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729757504; cv=none; b=IqfRPDcvG0Sf+teglBPLZOockchBXnNQoicYMEkhpC2U3Jlt/5P1OnYg96Tj+RgPyj/XSh4BnTieuxHK6sWyE3A/jToN/0wCaPvNbiFGEpZUbbOe6Jjh/FC3KsyzvPm/SfWL1n/rx8f29u5EP8iSZK7KGJzbn337OM/+jQyfIh4=
+	t=1729757506; cv=none; b=GheAd/bxlo5+RpgzM/cO6NhVMbcR+9J1q/Tlz4+7DqvNVPZPyAJKSMB31OJpDxtT3hP97LEMo3ITyaqDYnUyzRJadclUpIiNCz4DMpZ1mWc+PbklG9zPHzBRDJUWHN/FzpoMJJA0uCfNfeNaCtZjXPsXj4Tls8g+qG/KUGvZE/k=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729757504; c=relaxed/simple;
-	bh=dzJ4vVJ7UwJg8xh45+nLAaEVKIwrSDfo4sT4b83/7eo=;
+	s=arc-20240116; t=1729757506; c=relaxed/simple;
+	bh=4JywDxId3HX3vAXei1D5IDhxR6fPqSqyA/D35eb3Zg0=;
 	h=From:To:Cc:Subject:Date:Message-Id:In-Reply-To:References:
-	 MIME-Version; b=XNRRs/HAGC5zFWMeXI7aMdSmrhRA2BdLRlCBVBrACz3lmjX07cT1opoI3L6SceHRLfGS0UbhcbjGSTkS5b3eFELpddnu8MZ4MpudHATHZeaxVmTAWHHjjtUWA07fS69G1jecTjx1FXk5aJ48nn3rVVWODs2HKKKgin50WkzkuTA=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=Dwcah5wN; arc=none smtp.client-ip=198.175.65.16
+	 MIME-Version; b=qcP7OTuPGdbq5Tt/ufhqLxb4ZYNaXiGQwre7w74SihfWONJmaHU4midFbG3P99cjiq8Yw5V2BEaRjFzqOnAd7c+KmwQjB3envzXR42IyVqTF3bVb+X1Ucy3VCWi71Bj8hu65IX6sBxzO9v6EMmvvH/7Kv8Q311ks4PvodhfcChE=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=hOJXMS+7; arc=none smtp.client-ip=198.175.65.16
 Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
 Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
   d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729757503; x=1761293503;
+  t=1729757505; x=1761293505;
   h=from:to:cc:subject:date:message-id:in-reply-to:
    references:mime-version:content-transfer-encoding;
-  bh=dzJ4vVJ7UwJg8xh45+nLAaEVKIwrSDfo4sT4b83/7eo=;
-  b=Dwcah5wN84+exTP3jo4wDrDqJHyjz4uedvNNK06XgMTLIlKQc0au4ZMt
-   yPcRkq6OYHn/rjPs/OKSxcJm5rL+qo4qNC6nEouXxveWZn0q0pasm7JB3
-   HjOWCIxROYiraDV4vp110bZBS0gW/2tTqJcuH74DlG/M/XqfL4yL10jI9
-   NlAXeS1IaLQwHSL/nCsINbE/8K8ECj4dh67DsDl+/GtJde76QAvKX8vdu
-   6XJWZoiORWTl1ROTvk6o9vPGeLTx7JthvihmCyVdH7+NbgmvAUMoJpZe0
-   JT2Jy7yl6MUGLSVIWEaXvaEgJnZWy1VW/OUFaoPg9m9zBZQaDFKDXKWYh
-   Q==;
-X-CSE-ConnectionGUID: xXKTRHWURlWPnLdfINZI2w==
-X-CSE-MsgGUID: K0cKMWbrSaKHVspvMgCOHA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29501096"
+  bh=4JywDxId3HX3vAXei1D5IDhxR6fPqSqyA/D35eb3Zg0=;
+  b=hOJXMS+7nmFqYwUVC+Ono24Ceohu1fW2t92r56rPikH4aDWrYSFS0h4C
+   t2gKKFLCYzx+WsXLGhAlRRH0N6jcimlxeuYCvmBRV2wJKb9XJMSCdjlLC
+   zTxNtg1q88P7ioRNlYG/V8imkDuylvSKF9kFVSxtWi73V6fDPpNzn+nrl
+   VZhdT1rBcUKcv+TY+uu/G/D/m8KqpNIhwzKEzpMfLRttFPBmcWfJrzCGq
+   ZEI9e+kcyyHnqQZHTEiowiT/u+dtJQxlsHXMFvMxk/4Y8QDoCHZ2mwA0H
+   0qrFL+8i6I1IsujESj+DcCW6AT2YW3CCOfxmTAQiAwCJ/guX/0ApLigTz
+   g==;
+X-CSE-ConnectionGUID: Sr6bbuySTTWm2WhH6jxSJg==
+X-CSE-MsgGUID: qqd1kcSpSkW8II360kHNcg==
+X-IronPort-AV: E=McAfee;i="6700,10204,11222"; a="29501118"
 X-IronPort-AV: E=Sophos;i="6.11,199,1725346800"; 
-   d="scan'208";a="29501096"
+   d="scan'208";a="29501118"
 Received: from orviesa006.jf.intel.com ([10.64.159.146])
-  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:11:42 -0700
-X-CSE-ConnectionGUID: rM03qj+nT0SqH/7G8uuMxw==
-X-CSE-MsgGUID: DUuLeHowQnmIP1RyNrp0oA==
+  by orvoesa108.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 01:11:44 -0700
+X-CSE-ConnectionGUID: cX2NypDYSAWbEmnd2dYGQw==
+X-CSE-MsgGUID: a+CqFW9ZRie55+Bai6L/Rw==
 X-ExtLoop1: 1
 X-IronPort-AV: E=Sophos;i="6.11,228,1725346800"; 
-   d="scan'208";a="80690882"
+   d="scan'208";a="80690928"
 Received: from shsensorbuild.sh.intel.com ([10.239.133.18])
-  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 01:11:37 -0700
+  by orviesa006.jf.intel.com with ESMTP; 24 Oct 2024 01:11:40 -0700
 From: Even Xu <even.xu@intel.com>
 To: jikos@kernel.org,
 	bentiss@kernel.org,
@@ -68,9 +68,9 @@ Cc: linux-input@vger.kernel.or,
 	Xinpeng Sun <xinpeng.sun@intel.com>,
 	Rui Zhang <rui1.zhang@intel.com>,
 	Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
-Subject: [PATCH v1 16/22] HID: intel-thc-hid: intel-quickspi: Add PM implementation
-Date: Thu, 24 Oct 2024 16:10:17 +0800
-Message-Id: <20241024081023.1468951-17-even.xu@intel.com>
+Subject: [PATCH v1 17/22] HID: intel-thc-hid: intel-quicki2c: Add THC QuickI2C driver skeleton
+Date: Thu, 24 Oct 2024 16:10:18 +0800
+Message-Id: <20241024081023.1468951-18-even.xu@intel.com>
 X-Mailer: git-send-email 2.40.1
 In-Reply-To: <20241024081023.1468951-1-even.xu@intel.com>
 References: <20241024081023.1468951-1-even.xu@intel.com>
@@ -82,7 +82,9 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Transfer-Encoding: 8bit
 
-Implement THC QuickSPI driver power management callbacks.
+Create intel-quicki2c folder and add Kconfig and Makefile for THC
+QuickI2C driver. Add basic device structure, definitions and probe/remove
+functions for QuickI2C driver.
 
 Co-developed-by: Xinpeng Sun <xinpeng.sun@intel.com>
 Signed-off-by: Xinpeng Sun <xinpeng.sun@intel.com>
@@ -90,362 +92,370 @@ Signed-off-by: Even Xu <even.xu@intel.com>
 Tested-by: Rui Zhang <rui1.zhang@intel.com>
 Reviewed-by: Srinivas Pandruvada <srinivas.pandruvada@linux.intel.com>
 ---
- .../intel-quickspi/pci-quickspi.c             | 246 ++++++++++++++++++
- .../intel-quickspi/quickspi-dev.h             |   8 +
- .../intel-quickspi/quickspi-hid.c             |   8 +
- 3 files changed, 262 insertions(+)
+ drivers/hid/intel-thc-hid/Kconfig             |  11 +
+ drivers/hid/intel-thc-hid/Makefile            |   3 +
+ .../intel-quicki2c/pci-quicki2c.c             | 268 ++++++++++++++++++
+ .../intel-quicki2c/quicki2c-dev.h             |  44 +++
+ 4 files changed, 326 insertions(+)
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+ create mode 100644 drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
 
-diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-index 0dae1a07b728..fe3c4748c8e9 100644
---- a/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-+++ b/drivers/hid/intel-thc-hid/intel-quickspi/pci-quickspi.c
-@@ -9,6 +9,7 @@
- #include <linux/interrupt.h>
- #include <linux/irqreturn.h>
- #include <linux/pci.h>
-+#include <linux/pm_runtime.h>
+diff --git a/drivers/hid/intel-thc-hid/Kconfig b/drivers/hid/intel-thc-hid/Kconfig
+index 0d0a3877eeb0..275e42a4f7a1 100644
+--- a/drivers/hid/intel-thc-hid/Kconfig
++++ b/drivers/hid/intel-thc-hid/Kconfig
+@@ -28,4 +28,15 @@ config INTEL_QUICKSPI
  
- #include "intel-thc-dev.h"
- #include "intel-thc-hw.h"
-@@ -277,6 +278,10 @@ static irqreturn_t quickspi_irq_thread_handler(int irq, void *dev_id)
- 	if (qsdev->state == QUICKSPI_DISABLED)
- 		return IRQ_HANDLED;
+ 	  Say Y/M here if you want to support Intel QuickSPI. If unsure, say N.
  
-+	ret = pm_runtime_resume_and_get(qsdev->dev);
-+	if (ret)
++config INTEL_QUICKI2C
++	tristate "Intel QuickI2C driver based on Intel Touch Host Controller"
++	depends on INTEL_THC_HID
++	help
++	  Intel QuickI2C, uses Touch Host Controller (THC) hardware, implements
++	  HIDI2C (HID over I2C) protocol. It configures THC to work at I2C
++	  mode, and controls THC HW sequencer to accelerate HIDI2C transcation
++	  flow.
++
++	  Say Y/M here if you want to support Intel QuickI2C. If unsure, say N.
++
+ endmenu
+diff --git a/drivers/hid/intel-thc-hid/Makefile b/drivers/hid/intel-thc-hid/Makefile
+index 2dba4db70c33..4d4f02e1c415 100644
+--- a/drivers/hid/intel-thc-hid/Makefile
++++ b/drivers/hid/intel-thc-hid/Makefile
+@@ -14,4 +14,7 @@ intel-quickspi-objs += intel-quickspi/pci-quickspi.o
+ intel-quickspi-objs += intel-quickspi/quickspi-hid.o
+ intel-quickspi-objs += intel-quickspi/quickspi-protocol.o
+ 
++obj-$(CONFIG_INTEL_QUICKI2C) += intel-quicki2c.o
++intel-quicki2c-objs += intel-quicki2c/pci-quicki2c.o
++
+ ccflags-y += -I $(src)/intel-thc
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+new file mode 100644
+index 000000000000..9daa0ae2055e
+--- /dev/null
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/pci-quicki2c.c
+@@ -0,0 +1,268 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2024 Intel Corporation */
++
++#include <linux/device.h>
++#include <linux/dma-mapping.h>
++#include <linux/err.h>
++#include <linux/interrupt.h>
++#include <linux/irqreturn.h>
++#include <linux/pci.h>
++
++#include "intel-thc-dev.h"
++
++#include "quicki2c-dev.h"
++
++/**
++ * quicki2c_irq_quick_handler - The ISR of the quicki2c driver
++ *
++ * @irq: The irq number
++ * @dev_id: pointer to the device structure
++ *
++ * Return: IRQ_WAKE_THREAD if further process needed.
++ */
++static irqreturn_t quicki2c_irq_quick_handler(int irq, void *dev_id)
++{
++	struct quicki2c_device *qcdev = dev_id;
++
++	if (qcdev->state == QUICKI2C_DISABLED)
 +		return IRQ_HANDLED;
 +
- 	int_mask = thc_interrupt_handler(qsdev->thc_hw);
- 
- 	if (int_mask & BIT(THC_FATAL_ERR_INT) || int_mask & BIT(THC_TXN_ERR_INT)) {
-@@ -314,6 +319,9 @@ static irqreturn_t quickspi_irq_thread_handler(int irq, void *dev_id)
- 		if (try_recover(qsdev))
- 			qsdev->state = QUICKSPI_DISABLED;
- 
-+	pm_runtime_mark_last_busy(qsdev->dev);
-+	pm_runtime_put_autosuspend(qsdev->dev);
++	/* Disable THC interrupt before current interrupt be handled */
++	thc_interrupt_enable(qcdev->thc_hw, false);
 +
- 	return IRQ_HANDLED;
- }
- 
-@@ -630,6 +638,13 @@ static int quickspi_probe(struct pci_dev *pdev,
- 		goto dma_deinit;
- 	}
- 
-+	/* Enable runtime power management */
-+	pm_runtime_use_autosuspend(qsdev->dev);
-+	pm_runtime_set_autosuspend_delay(qsdev->dev, DEFAULT_AUTO_SUSPEND_DELAY_MS);
-+	pm_runtime_mark_last_busy(qsdev->dev);
-+	pm_runtime_put_noidle(qsdev->dev);
-+	pm_runtime_put_autosuspend(qsdev->dev);
++	return IRQ_WAKE_THREAD;
++}
 +
- 	dev_dbg(&pdev->dev, "QuickSPI probe success\n");
- 
- 	return 0;
-@@ -666,6 +681,8 @@ static void quickspi_remove(struct pci_dev *pdev)
- 	quickspi_hid_remove(qsdev);
- 	quickspi_dma_deinit(qsdev);
- 
-+	pm_runtime_get_noresume(qsdev->dev);
-+
- 	quickspi_dev_deinit(qsdev);
- 
- 	pcim_iounmap_regions(pdev, BIT(0));
-@@ -696,6 +713,234 @@ static void quickspi_shutdown(struct pci_dev *pdev)
- 	quickspi_dev_deinit(qsdev);
- }
- 
-+static int quickspi_suspend(struct device *device)
++/**
++ * quicki2c_irq_thread_handler - IRQ thread handler of quicki2c driver
++ *
++ * @irq: The IRQ number
++ * @dev_id: pointer to the quicki2c device structure
++ *
++ * Return: IRQ_HANDLED to finish this handler.
++ */
++static irqreturn_t quicki2c_irq_thread_handler(int irq, void *dev_id)
 +{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
++	struct quicki2c_device *qcdev = dev_id;
++	int int_mask;
++
++	if (qcdev->state == QUICKI2C_DISABLED)
++		return IRQ_HANDLED;
++
++	int_mask = thc_interrupt_handler(qcdev->thc_hw);
++
++	thc_interrupt_enable(qcdev->thc_hw, true);
++
++	return IRQ_HANDLED;
++}
++
++/**
++ * quicki2c_dev_init - Initialize quicki2c device
++ *
++ * @pdev: pointer to the thc pci device
++ * @mem_addr: The pointer of MMIO memory address
++ *
++ * Alloc quicki2c device structure and initialized THC device,
++ * then configure THC to HIDI2C mode.
++ *
++ * If success, enable THC hardware interrupt.
++ *
++ * Return: pointer to the quicki2c device structure if success
++ * or NULL on failed.
++ */
++static struct quicki2c_device *quicki2c_dev_init(struct pci_dev *pdev, void __iomem *mem_addr)
++{
++	struct device *dev = &pdev->dev;
++	struct quicki2c_device *qcdev;
 +	int ret;
 +
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
++	qcdev = devm_kzalloc(dev, sizeof(struct quicki2c_device), GFP_KERNEL);
++	if (!qcdev)
++		return ERR_PTR(-ENOMEM);
 +
-+	ret = quickspi_set_power(qsdev, HIDSPI_SLEEP);
-+	if (ret)
-+		return ret;
++	qcdev->pdev = pdev;
++	qcdev->dev = dev;
++	qcdev->mem_addr = mem_addr;
 +
-+	ret = thc_interrupt_quiesce(qsdev->thc_hw, true);
-+	if (ret)
-+		return ret;
++	/* thc hw init */
++	qcdev->thc_hw = thc_dev_init(qcdev->dev, qcdev->mem_addr);
++	if (IS_ERR(qcdev->thc_hw)) {
++		ret = PTR_ERR(qcdev->thc_hw);
++		dev_err_once(dev, "Failed to initialize THC device context, ret = %d.\n", ret);
++		return ERR_PTR(ret);
++	}
 +
-+	thc_interrupt_enable(qsdev->thc_hw, false);
++	ret = thc_port_select(qcdev->thc_hw, THC_PORT_TYPE_I2C);
++	if (ret) {
++		dev_err_once(dev, "Failed to select THC port, ret = %d.\n", ret);
++		return ERR_PTR(ret);
++	}
 +
-+	thc_dma_unconfigure(qsdev->thc_hw);
++	thc_interrupt_config(qcdev->thc_hw);
 +
-+	return 0;
++	thc_interrupt_enable(qcdev->thc_hw, true);
++
++	return qcdev;
 +}
 +
-+static int quickspi_resume(struct device *device)
++/**
++ * quicki2c_dev_deinit - De-initialize quicki2c device
++ *
++ * @qcdev: pointer to the quicki2c device structure
++ *
++ * Disable THC interrupt and deinitilize THC.
++ */
++static void quicki2c_dev_deinit(struct quicki2c_device *qcdev)
 +{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
++	thc_interrupt_enable(qcdev->thc_hw, false);
++}
++
++/*
++ * quicki2c_probe: Quicki2c driver probe function
++ *
++ * @pdev: point to pci device
++ * @id: point to pci_device_id structure
++ *
++ * Return 0 if success or error code on failed.
++ */
++static int quicki2c_probe(struct pci_dev *pdev,
++			  const struct pci_device_id *id)
++{
++	struct quicki2c_device *qcdev;
++	void __iomem *mem_addr;
 +	int ret;
 +
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
-+
-+	ret = thc_port_select(qsdev->thc_hw, THC_PORT_TYPE_SPI);
-+	if (ret)
++	ret = pcim_enable_device(pdev);
++	if (ret) {
++		dev_err_once(&pdev->dev, "Failed to enable PCI device, ret = %d.\n", ret);
 +		return ret;
++	}
 +
-+	thc_interrupt_config(qsdev->thc_hw);
++	pci_set_master(pdev);
 +
-+	thc_interrupt_enable(qsdev->thc_hw, true);
++	ret = pcim_iomap_regions(pdev, BIT(0), KBUILD_MODNAME);
++	if (ret) {
++		dev_err_once(&pdev->dev, "Failed to get PCI regions, ret = %d.\n", ret);
++		goto disable_pci_device;
++	}
 +
-+	ret = thc_dma_configure(qsdev->thc_hw);
-+	if (ret)
-+		return ret;
++	mem_addr = pcim_iomap_table(pdev)[0];
 +
-+	ret = thc_interrupt_quiesce(qsdev->thc_hw, false);
-+	if (ret)
-+		return ret;
++	ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(64));
++	if (ret) {
++		ret = dma_set_mask_and_coherent(&pdev->dev, DMA_BIT_MASK(32));
++		if (ret) {
++			dev_err_once(&pdev->dev, "No usable DMA configuration %d\n", ret);
++			goto unmap_io_region;
++		}
++	}
 +
-+	ret = quickspi_set_power(qsdev, HIDSPI_ON);
-+	if (ret)
-+		return ret;
++	ret = pci_alloc_irq_vectors(pdev, 1, 1, PCI_IRQ_ALL_TYPES);
++	if (ret < 0) {
++		dev_err_once(&pdev->dev,
++			     "Failed to allocate IRQ vectors. ret = %d\n", ret);
++		goto unmap_io_region;
++	}
++
++	pdev->irq = pci_irq_vector(pdev, 0);
++
++	qcdev = quicki2c_dev_init(pdev, mem_addr);
++	if (IS_ERR(qcdev)) {
++		dev_err_once(&pdev->dev, "QuickI2C device init failed\n");
++		ret = PTR_ERR(qcdev);
++		goto unmap_io_region;
++	}
++
++	pci_set_drvdata(pdev, qcdev);
++
++	ret = devm_request_threaded_irq(&pdev->dev, pdev->irq,
++					quicki2c_irq_quick_handler,
++					quicki2c_irq_thread_handler,
++					IRQF_ONESHOT, KBUILD_MODNAME,
++					qcdev);
++	if (ret) {
++		dev_err_once(&pdev->dev,
++			     "Failed to request threaded IRQ, irq = %d.\n", pdev->irq);
++		goto dev_deinit;
++	}
 +
 +	return 0;
++
++dev_deinit:
++	quicki2c_dev_deinit(qcdev);
++unmap_io_region:
++	pcim_iounmap_regions(pdev, BIT(0));
++disable_pci_device:
++	pci_clear_master(pdev);
++	pci_disable_device(pdev);
++
++	return ret;
 +}
 +
-+static int quickspi_freeze(struct device *device)
++/**
++ * quicki2c_remove - Device Removal Routine
++ *
++ * @pdev: PCI device structure
++ *
++ * This is called by the PCI subsystem to alert the driver
++ * that it should release a PCI device.
++ */
++static void quicki2c_remove(struct pci_dev *pdev)
 +{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
-+	int ret;
++	struct quicki2c_device *qcdev;
 +
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
++	qcdev = pci_get_drvdata(pdev);
++	if (!qcdev)
++		return;
 +
-+	ret = thc_interrupt_quiesce(qsdev->thc_hw, true);
-+	if (ret)
-+		return ret;
++	quicki2c_dev_deinit(qcdev);
 +
-+	thc_interrupt_enable(qsdev->thc_hw, false);
-+
-+	thc_dma_unconfigure(qsdev->thc_hw);
-+
-+	return 0;
++	pcim_iounmap_regions(pdev, BIT(0));
++	pci_clear_master(pdev);
++	pci_disable_device(pdev);
 +}
 +
-+static int quickspi_thaw(struct device *device)
++/**
++ * quicki2c_shutdown - Device Shutdown Routine
++ *
++ * @pdev: PCI device structure
++ *
++ * This is called from the reboot notifier
++ * it's a simplified version of remove so we go down
++ * faster.
++ */
++static void quicki2c_shutdown(struct pci_dev *pdev)
 +{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
-+	int ret;
++	struct quicki2c_device *qcdev;
 +
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
++	qcdev = pci_get_drvdata(pdev);
++	if (!qcdev)
++		return;
 +
-+	ret = thc_dma_configure(qsdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_enable(qsdev->thc_hw, true);
-+
-+	ret = thc_interrupt_quiesce(qsdev->thc_hw, false);
-+	if (ret)
-+		return ret;
-+
-+	return 0;
++	quicki2c_dev_deinit(qcdev);
 +}
 +
-+static int quickspi_poweroff(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
-+	int ret;
++static const struct pci_device_id quicki2c_pci_tbl[] = {
++	{PCI_VDEVICE(INTEL, THC_LNL_DEVICE_ID_I2C_PORT1), },
++	{PCI_VDEVICE(INTEL, THC_LNL_DEVICE_ID_I2C_PORT2), },
++	{}
++};
++MODULE_DEVICE_TABLE(pci, quicki2c_pci_tbl);
 +
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
-+
-+	ret = thc_interrupt_quiesce(qsdev->thc_hw, true);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_enable(qsdev->thc_hw, false);
-+
-+	thc_ltr_unconfig(qsdev->thc_hw);
-+
-+	quickspi_dma_deinit(qsdev);
-+
-+	return 0;
-+}
-+
-+static int quickspi_restore(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
-+	int ret;
-+
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
-+
-+	/* Reconfig THC HW when back from hibernate */
-+	ret = thc_port_select(qsdev->thc_hw, THC_PORT_TYPE_SPI);
-+	if (ret)
-+		return ret;
-+
-+	thc_spi_input_output_address_config(qsdev->thc_hw,
-+					    qsdev->input_report_hdr_addr,
-+					    qsdev->input_report_bdy_addr,
-+					    qsdev->output_report_addr);
-+
-+	ret = thc_spi_read_config(qsdev->thc_hw, qsdev->spi_freq_val,
-+				  qsdev->spi_read_io_mode,
-+				  qsdev->spi_read_opcode,
-+				  qsdev->spi_packet_size);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_spi_write_config(qsdev->thc_hw, qsdev->spi_freq_val,
-+				   qsdev->spi_write_io_mode,
-+				   qsdev->spi_write_opcode,
-+				   qsdev->spi_packet_size,
-+				   qsdev->performance_limit);
-+	if (ret)
-+		return ret;
-+
-+	thc_interrupt_config(qsdev->thc_hw);
-+
-+	thc_interrupt_enable(qsdev->thc_hw, true);
-+
-+	ret = thc_interrupt_quiesce(qsdev->thc_hw, false);
-+	if (ret)
-+		return ret;
-+
-+	/* TIC may lose power, needs go through reset flow */
-+	ret = reset_tic(qsdev);
-+	if (ret)
-+		return ret;
-+
-+	ret = thc_dma_configure(qsdev->thc_hw);
-+	if (ret)
-+		return ret;
-+
-+	thc_ltr_config(qsdev->thc_hw,
-+		       qsdev->active_ltr_val,
-+		       qsdev->low_power_ltr_val);
-+
-+	thc_change_ltr_mode(qsdev->thc_hw, THC_LTR_MODE_ACTIVE);
-+
-+	return 0;
-+}
-+
-+static int quickspi_runtime_suspend(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
-+
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
-+
-+	thc_change_ltr_mode(qsdev->thc_hw, THC_LTR_MODE_LP);
-+
-+	pci_save_state(pdev);
-+
-+	return 0;
-+}
-+
-+static int quickspi_runtime_resume(struct device *device)
-+{
-+	struct pci_dev *pdev = to_pci_dev(device);
-+	struct quickspi_device *qsdev;
-+
-+	qsdev = pci_get_drvdata(pdev);
-+	if (!qsdev)
-+		return -ENODEV;
-+
-+	thc_change_ltr_mode(qsdev->thc_hw, THC_LTR_MODE_ACTIVE);
-+
-+	return 0;
-+}
-+
-+static const struct dev_pm_ops quickspi_pm_ops = {
-+	.suspend = quickspi_suspend,
-+	.resume = quickspi_resume,
-+	.freeze = quickspi_freeze,
-+	.thaw = quickspi_thaw,
-+	.poweroff = quickspi_poweroff,
-+	.restore = quickspi_restore,
-+	.runtime_suspend = quickspi_runtime_suspend,
-+	.runtime_resume = quickspi_runtime_resume,
-+	.runtime_idle = NULL,
++static struct pci_driver quicki2c_driver = {
++	.name = KBUILD_MODNAME,
++	.id_table = quicki2c_pci_tbl,
++	.probe = quicki2c_probe,
++	.remove = quicki2c_remove,
++	.shutdown = quicki2c_shutdown,
++	.driver.probe_type = PROBE_PREFER_ASYNCHRONOUS,
 +};
 +
- static const struct pci_device_id quickspi_pci_tbl[] = {
- 	{PCI_DEVICE_DATA(INTEL, THC_MTL_DEVICE_ID_SPI_PORT1, &mtl), },
- 	{PCI_DEVICE_DATA(INTEL, THC_MTL_DEVICE_ID_SPI_PORT2, &mtl), },
-@@ -711,6 +956,7 @@ static struct pci_driver quickspi_driver = {
- 	.probe = quickspi_probe,
- 	.remove = quickspi_remove,
- 	.shutdown = quickspi_shutdown,
-+	.driver.pm = &quickspi_pm_ops,
- 	.driver.probe_type = PROBE_PREFER_ASYNCHRONOUS,
- };
- 
-diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
-index 15219875f604..1535baa2ee80 100644
---- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
-+++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-dev.h
-@@ -43,6 +43,14 @@
- #define MAX_PACKET_SIZE_VALUE_MTL			128
- #define MAX_PACKET_SIZE_VALUE_LNL			256
- 
-+/*
-+ * THC uses runtime auto suspend to dynamically switch between THC active LTR
-+ * and low power LTR to save CPU power.
-+ * Default value is 5000ms, that means if no touch event in this time, THC will
-+ * change to low power LTR mode.
++module_pci_driver(quicki2c_driver);
++
++MODULE_AUTHOR("Xinpeng Sun <xinpeng.sun@intel.com>");
++MODULE_AUTHOR("Even Xu <even.xu@intel.com>");
++
++MODULE_DESCRIPTION("Intel(R) QuickI2C Driver");
++MODULE_LICENSE("GPL");
++MODULE_IMPORT_NS(INTEL_THC);
+diff --git a/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+new file mode 100644
+index 000000000000..370faad744f5
+--- /dev/null
++++ b/drivers/hid/intel-thc-hid/intel-quicki2c/quicki2c-dev.h
+@@ -0,0 +1,44 @@
++/* SPDX-License-Identifier: GPL-2.0 */
++/* Copyright (c) 2024 Intel Corporation */
++
++#ifndef _QUICKI2C_DEV_H_
++#define _QUICKI2C_DEV_H_
++
++#define THC_LNL_DEVICE_ID_I2C_PORT1	0xA848
++#define THC_LNL_DEVICE_ID_I2C_PORT2	0xA84A
++
++/* Packet size value, the unit is 16 bytes */
++#define MAX_PACKET_SIZE_VALUE_LNL			256
++
++enum quicki2c_dev_state {
++	QUICKI2C_NONE,
++	QUICKI2C_RESETING,
++	QUICKI2C_RESETED,
++	QUICKI2C_INITED,
++	QUICKI2C_ENABLED,
++	QUICKI2C_DISABLED,
++};
++
++struct device;
++struct pci_dev;
++struct thc_device;
++
++/**
++ * struct quicki2c_device -  THC QuickI2C device struct
++ * @dev: point to kernel device
++ * @pdev: point to PCI device
++ * @thc_hw: point to THC device
++ * @driver_data: point to quicki2c specific driver data
++ * @state: THC I2C device state
++ * @mem_addr: MMIO memory address
 + */
-+#define DEFAULT_AUTO_SUSPEND_DELAY_MS			5000
++struct quicki2c_device {
++	struct device *dev;
++	struct pci_dev *pdev;
++	struct thc_device *thc_hw;
++	enum quicki2c_dev_state state;
 +
- enum quickspi_dev_state {
- 	QUICKSPI_NONE,
- 	QUICKSPI_RESETING,
-diff --git a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.c b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.c
-index 2553d4b42b51..ad52e402c28a 100644
---- a/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.c
-+++ b/drivers/hid/intel-thc-hid/intel-quickspi/quickspi-hid.c
-@@ -3,6 +3,7 @@
- 
- #include <linux/hid.h>
- #include <linux/input.h>
-+#include <linux/pm_runtime.h>
- 
- #include "quickspi-dev.h"
- #include "quickspi-hid.h"
-@@ -54,6 +55,10 @@ static int quickspi_hid_raw_request(struct hid_device *hid,
- 	struct quickspi_device *qsdev = hid->driver_data;
- 	int ret = 0;
- 
-+	ret = pm_runtime_resume_and_get(qsdev->dev);
-+	if (ret)
-+		return ret;
++	void __iomem *mem_addr;
++};
 +
- 	switch (reqtype) {
- 	case HID_REQ_GET_REPORT:
- 		ret = quickspi_get_report(qsdev, rtype, reportnum, buf);
-@@ -66,6 +71,9 @@ static int quickspi_hid_raw_request(struct hid_device *hid,
- 		break;
- 	}
- 
-+	pm_runtime_mark_last_busy(qsdev->dev);
-+	pm_runtime_put_autosuspend(qsdev->dev);
-+
- 	return ret;
- }
- 
++#endif /* _QUICKI2C_DEV_H_ */
 -- 
 2.40.1
 
