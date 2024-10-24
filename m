@@ -1,127 +1,112 @@
-Return-Path: <linux-kernel+bounces-380659-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380665-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
-	by mail.lfdr.de (Postfix) with ESMTPS id 92E179AF447
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:07:59 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 27F0F9AF454
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 23:08:43 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by am.mirrors.kernel.org (Postfix) with ESMTPS id 3DF9E1F21EA7
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:07:59 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id E0802282A7F
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:08:41 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id D97C921731D;
-	Thu, 24 Oct 2024 21:07:55 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 7F6FE218598;
+	Thu, 24 Oct 2024 21:08:07 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="E+FpeVZc";
-	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="x2qJu0qf"
-Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
+	dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b="e63Cyv2J"
+Received: from mail.ozlabs.org (gandalf.ozlabs.org [150.107.74.76])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E4BD019E975;
-	Thu, 24 Oct 2024 21:07:52 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C25141AF0B3;
+	Thu, 24 Oct 2024 21:08:03 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=150.107.74.76
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729804075; cv=none; b=MTNUtT6XMU9jVX/weZ7CHqbCjt+CEFtKv/+An1xFZ64pvbzEAsC55geDcEy3UES7bpbWqLgUOpFR7v2Ztc7ELkFjYNgNBlO2fjZlstePFQt7Fsd7jlH09xSF38Um2bidiSvoLDyPcMiTB8GjrxrgNYEy92Z3fHUUZsIqGOO3SmI=
+	t=1729804086; cv=none; b=c1mqibt691zYx6Kq9pk8d3xz5IBgzIP2QJRFwL9/07oean9Jw+H8SYyEcJaNGmXsG29lJYedDKW8sNg7GI0jIFs5UmofmfY7jONJJUg9sNA+G85hfpHcLByM+NypAliYZGl1ULOlTOhoOerPHQDD7LhBVM1UmhGvwnJCv7aRfVk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729804075; c=relaxed/simple;
-	bh=smej1KRyESzyLO551AVldkRuwH/40XlvSPD3hKGYdE0=;
-	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
-	 Message-ID:Content-Type; b=AusCKz+k9OpfHpFYFj+j6ULjL1PyYz0z22oIxvIT1TSxpewSG4sW4g5z06h+7mxh5tpUjIOzTFsdMpA4Z5ddoDMvHPibAwcrui6m4JkmqumFkplB1LRKo0gi7zeAKtQVPruw6gFXnYXBIjKBVkbiE4Idc467CYHx2SLuW4hlVB4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=E+FpeVZc; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=x2qJu0qf; arc=none smtp.client-ip=193.142.43.55
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
-Date: Thu, 24 Oct 2024 21:07:49 -0000
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020; t=1729804070;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6O3txLMp6xeBdCjeYgrvuk/bjWXisBT3qhFv2W4tDpM=;
-	b=E+FpeVZcYrNiCOqOZVRnqmFqy05UKUB4ZgFOme7lGIlD2rNjwa3jqX+3S6wnZxmtJWGXrJ
-	zNYv56w5H9/eUc+vVCZ8iei5Xfctm7z2r7aY54iNAZyYWtuV/lAaZ3Ls0fndEkTNUIVJ9+
-	C7YkbNyq6QzWp9yJbH3v3gMPOmBhiTgCDEqMOZUzhqzwSYvkz0PyPMopTnXfAVzB4jxZPG
-	4KJzVU6azWNu7QPasWczBfhIvyAzmgNv4QjqkAJQzmLW343TCzPxrXiyEPVrpo/7xCeQfa
-	qWJcv0D2CWdc5vaeWQ3NpYk9Bi0CKwI0AD6qjFvFQMBvEcM00g3ds6FOeR8IhQ==
-DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
-	s=2020e; t=1729804070;
-	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
-	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
-	 content-type:content-type:
-	 content-transfer-encoding:content-transfer-encoding:
-	 in-reply-to:in-reply-to:references:references;
-	bh=6O3txLMp6xeBdCjeYgrvuk/bjWXisBT3qhFv2W4tDpM=;
-	b=x2qJu0qfznLXPrYJnmFGvDVsqok7+2JHuPhMouboMQdwE+o5m5Vw4vJXKHmyEIwvPKKAr3
-	g8bNIoIY0DOMAGCQ==
-From: "tip-bot2 for Peter Zijlstra" <tip-bot2@linutronix.de>
-Sender: tip-bot2@linutronix.de
-Reply-to: linux-kernel@vger.kernel.org
-To: linux-tip-commits@vger.kernel.org
-Subject: [tip: locking/core] locking/rtmutex: Fix misleading comment
-Cc: "Peter Zijlstra (Intel)" <peterz@infradead.org>,
- Thomas Gleixner <tglx@linutronix.de>,
- Sebastian Andrzej Siewior <bigeasy@linutronix.de>, x86@kernel.org,
- linux-kernel@vger.kernel.org
-In-Reply-To: <20241008092606.GJ33184@noisy.programming.kicks-ass.net>
-References: <20241008092606.GJ33184@noisy.programming.kicks-ass.net>
+	s=arc-20240116; t=1729804086; c=relaxed/simple;
+	bh=1JH0OhTd81Th6YnsFvbQXz8gOXX7imyNbzqu5wNErtU=;
+	h=Date:From:To:Cc:Subject:Message-ID:MIME-Version:Content-Type; b=LcTrqH5bSw/n10voLb7hAa+Ur4sMWDcdFCExDfrODtqQoVrQp2xu1xzeRHVP8MrJYumt56szN8QPlDenKLd/AlapSp7RiNRfdSJDgV0GQehYTU9qCJpjobQ/yCi3kHknyCpeXLWoYKsAyN/Eycuz1k+zoYZ6I7YCIF+fL3rW1K4=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au; spf=pass smtp.mailfrom=canb.auug.org.au; dkim=pass (2048-bit key) header.d=canb.auug.org.au header.i=@canb.auug.org.au header.b=e63Cyv2J; arc=none smtp.client-ip=150.107.74.76
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=canb.auug.org.au
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=canb.auug.org.au
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=canb.auug.org.au;
+	s=201702; t=1729804080;
+	bh=A4rUjKLdoROuQ7OX/9GUqIfPdzelxxLmWjKMyLUB0uU=;
+	h=Date:From:To:Cc:Subject:From;
+	b=e63Cyv2JsVo05tMWVfbf5r86PXBDtuc192KTnVxNzhzOEdF8WNmJLUml+/IxVgcpo
+	 EsWkJ1i9L158ZyaFxwsopjqrNCmPLgAsdEukLLbjUSKgKPtN3ZJX3hDI8y71EjDcUz
+	 WRhRt0Wpo9dKXNz/quvChI0g1RifnQCGjlM5KgqzstStiPzqLaVfXX6+CD4FoA85MC
+	 JnDQabR58gUWnzMcT5fxWOuavp3RZ9oxSz6bQ8t8xdsn7xE/KNqzHSVvVvauAe9Kgt
+	 /KMuua1RMk1aQ/fiMgf/g99FgBBmzbmNMSSO676Us7/DbN9VQQR4HWGUHORTw54JYb
+	 ikEEEGq4PH0ew==
+Received: from authenticated.ozlabs.org (localhost [127.0.0.1])
+	(using TLSv1.3 with cipher TLS_AES_256_GCM_SHA384 (256/256 bits)
+	 key-exchange X25519 server-signature RSA-PSS (4096 bits) server-digest SHA256)
+	(Client did not present a certificate)
+	by mail.ozlabs.org (Postfix) with ESMTPSA id 4XZJR36kKGz4w2N;
+	Fri, 25 Oct 2024 08:07:59 +1100 (AEDT)
+Date: Fri, 25 Oct 2024 08:08:00 +1100
+From: Stephen Rothwell <sfr@canb.auug.org.au>
+To: Bjorn Helgaas <bhelgaas@google.com>, Lorenzo Pieralisi
+ <lpieralisi@kernel.org>, Krzysztof =?UTF-8?B?V2lsY3p5xYRza2k=?=
+ <kw@linux.com>
+Cc: Mario Limonciello <mario.limonciello@amd.com>, Linux Kernel Mailing List
+ <linux-kernel@vger.kernel.org>, Linux Next Mailing List
+ <linux-next@vger.kernel.org>
+Subject: linux-next: Fixes tag needs some work in the pci tree
+Message-ID: <20241025080800.354b7575@canb.auug.org.au>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Message-ID: <172980406969.1442.8080555865587712726.tip-bot2@tip-bot2>
-Robot-ID: <tip-bot2@linutronix.de>
-Robot-Unsubscribe:
- Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
-Precedence: bulk
-Content-Type: text/plain; charset="utf-8"
-Content-Transfer-Encoding: 7bit
+Content-Type: multipart/signed; boundary="Sig_/yAXr3v0z6nmTlUHTaHhRIsN";
+ protocol="application/pgp-signature"; micalg=pgp-sha256
 
-The following commit has been merged into the locking/core branch of tip:
+--Sig_/yAXr3v0z6nmTlUHTaHhRIsN
+Content-Type: text/plain; charset=US-ASCII
+Content-Transfer-Encoding: quoted-printable
 
-Commit-ID:     d12b802f183667d4c28589314c99c380a458d57e
-Gitweb:        https://git.kernel.org/tip/d12b802f183667d4c28589314c99c380a458d57e
-Author:        Peter Zijlstra <peterz@infradead.org>
-AuthorDate:    Tue, 08 Oct 2024 11:26:06 +02:00
-Committer:     Thomas Gleixner <tglx@linutronix.de>
-CommitterDate: Thu, 24 Oct 2024 23:03:30 +02:00
+Hi all,
 
-locking/rtmutex: Fix misleading comment
+In commit
 
-Going through the RCU-boost and rtmutex code, I ran into this utterly
-confusing comment. Fix it to avoid confusing future readers.
+  7027b415ff1a ("cpufreq/amd-pstate-ut: Add fix for min freq unit test")
 
-[ tglx: Wordsmithed the comment ]
+Fixes tag
 
-Signed-off-by: Peter Zijlstra (Intel) <peterz@infradead.org>
-Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
-Reviewed-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
-Link: https://lore.kernel.org/all/20241008092606.GJ33184@noisy.programming.kicks-ass.net
+  Fixes: 642aff3964b0f ("cpufreq/amd-pstate: Set the initial min_freq to lo=
+west_nonlinear_freq")
 
----
- kernel/locking/rtmutex_api.c | 8 ++++----
- 1 file changed, 4 insertions(+), 4 deletions(-)
+has these problem(s):
 
-diff --git a/kernel/locking/rtmutex_api.c b/kernel/locking/rtmutex_api.c
-index a6974d0..7e79258 100644
---- a/kernel/locking/rtmutex_api.c
-+++ b/kernel/locking/rtmutex_api.c
-@@ -175,10 +175,10 @@ bool __sched __rt_mutex_futex_unlock(struct rt_mutex_base *lock,
- 	}
- 
- 	/*
--	 * We've already deboosted, mark_wakeup_next_waiter() will
--	 * retain preempt_disabled when we drop the wait_lock, to
--	 * avoid inversion prior to the wakeup.  preempt_disable()
--	 * therein pairs with rt_mutex_postunlock().
-+	 * mark_wakeup_next_waiter() deboosts and retains preemption
-+	 * disabled when dropping the wait_lock, to avoid inversion prior
-+	 * to the wakeup.  preempt_disable() therein pairs with the
-+	 * preempt_enable() in rt_mutex_postunlock().
- 	 */
- 	mark_wakeup_next_waiter(wqh, lock);
- 
+  - Target SHA1 does not exist
+
+Maybe you meant
+
+Fixes: f2542c904294 ("cpufreq/amd-pstate: Set the initial min_freq to lowes=
+t_nonlinear_freq")
+
+--=20
+Cheers,
+Stephen Rothwell
+
+--Sig_/yAXr3v0z6nmTlUHTaHhRIsN
+Content-Type: application/pgp-signature
+Content-Description: OpenPGP digital signature
+
+-----BEGIN PGP SIGNATURE-----
+
+iQEzBAEBCAAdFiEENIC96giZ81tWdLgKAVBC80lX0GwFAmcatzAACgkQAVBC80lX
+0GwkLwf8CsZPMXnCoNLqPzfNkxCvLRxH5uZe4NVns7n6aFFQq7QgkKmy9oNzvQt9
+CZE8kUtepIqpHiHZmaMMVXqBNfAlGkpTk46jww25p02zDzjWjpA/avOPLtJotYE5
+dE7LzqAKXMDM6jyktDqlJ4zzxr8BQLxR0CLstGoS9nxv8O6ObvtiF7kpYCktr97E
+wq1Ln1I4aSaK8MHWExU6u3b2IfKWH3LHI+CUSSAmvHeeVJTrFbhXwkQfVVnImai8
+qiA2IkMw0W+C2FMVSZLO7hBn3rw4uCTpjyWE/vOeKc/QcK4gyA2C9l1XbpxOBtAZ
+8xkEhAjJkGVjx3hMnJX4mmTGmDWRWg==
+=V0jh
+-----END PGP SIGNATURE-----
+
+--Sig_/yAXr3v0z6nmTlUHTaHhRIsN--
 
