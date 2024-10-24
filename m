@@ -1,199 +1,128 @@
-Return-Path: <linux-kernel+bounces-379615-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379616-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 1F39C9AE11B
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:40:04 +0200 (CEST)
+Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id A19D79AE11D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:40:17 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 2ED9B1C220AC
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:40:03 +0000 (UTC)
+	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 602132851AF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:40:16 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 3284F1C4A0D;
-	Thu, 24 Oct 2024 09:36:39 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id DD30D1C4A1A;
+	Thu, 24 Oct 2024 09:37:10 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b="HEAu94Qh"
-Received: from smtp.kernel.org (aws-us-west-2-korg-mail-1.web.codeaurora.org [10.30.226.201])
+	dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="BjcN41UP";
+	dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b="5URo/4II"
+Received: from galois.linutronix.de (Galois.linutronix.de [193.142.43.55])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 621401C174A;
-	Thu, 24 Oct 2024 09:36:38 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=10.30.226.201
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4E03C1B6CE8;
+	Thu, 24 Oct 2024 09:37:08 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=193.142.43.55
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729762598; cv=none; b=YF+CYmpFXtSo7l2EyNXRnY/qgVIaQ5OuTKmUbdEAT6l1lGqTcke343DBUci/lK0RjsdtpfY9oupQBoCixR5EUDkoaFgZruzabJgW+d43NWPLj9VL2wcDV4nm+JyjNlqmm4KiK6DYXY3QjjLEacZ9k12DrIT/uJuInKfbL1kDC6E=
+	t=1729762630; cv=none; b=jEERBND66p0PAhpPqN0tJulJx+yT/xXE4RkUdSwrnjoxw0w/F3ArgFYpvS9ljki2roT5dSuOfYqfn535SeNPJCLjKRQl6EjU78KTHg4d4iRXhY6WTnshoWgn0MiXSKRctVU1zdKJ47Lb0cUn7lWjaTgpK401M+/IUUDr2lMoPNk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729762598; c=relaxed/simple;
-	bh=zcC4+p14p6ZR5MkdPN8Cp6S/KVzMoixwgOEc8MBNQF8=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=guwcTg6Reu+fjGhLy/jTJ63F2x5+xi9JSasxvKUvvB4YjxEbjcFrmNw0ieNo/gINJ1TN6vgoeOz2yC506WIA8V5FNDulyC/cgUALxTqwwhJ+5sayChAe8fEN953v+jE1JSigFYJ9coX3NatJ90WWQli1ioQxYctXJv20t/MzY8c=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dkim=pass (2048-bit key) header.d=kernel.org header.i=@kernel.org header.b=HEAu94Qh; arc=none smtp.client-ip=10.30.226.201
-Received: by smtp.kernel.org (Postfix) with ESMTPSA id E91ABC4CEE6;
-	Thu, 24 Oct 2024 09:36:35 +0000 (UTC)
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple; d=kernel.org;
-	s=k20201202; t=1729762597;
-	bh=zcC4+p14p6ZR5MkdPN8Cp6S/KVzMoixwgOEc8MBNQF8=;
-	h=Date:From:To:Cc:Subject:References:In-Reply-To:From;
-	b=HEAu94QhimLFI+Xcdhg0+H3j6LGofpklHLJ+WWGpR2i5OkWMMKya53CeEfvv141VE
-	 qoU0VVsumM5mwq/RHtwNKPQ2dQc5D1RR/UfJibLjhZQx1+bvIlKs3f9XPHj0Yi6UeP
-	 G+CU7pBATyAbQJH60YISoAYxEV7ISnV5wiJjr6F35vlBSNICmfZ9baAGU2QjAJYcBI
-	 2RLMRYWASYUjBkr+qoQAxbT1Uvhebvp8FHuIbpm+2B4+7jAmt8Z4s5AAz9Ggg7CV7V
-	 gYd5CDTsx6aU3NszaMvgL1omwMwKQlW02AxEP/Jwh0jQdf5y0vhuRQbl1VJWGbeWrm
-	 misttjtDALY4g==
-Date: Thu, 24 Oct 2024 10:36:33 +0100
-From: Conor Dooley <conor@kernel.org>
-To: Wolfram Sang <wsa+renesas@sang-engineering.com>
-Cc: linux-i2c@vger.kernel.org, Conor Dooley <conor.dooley@microchip.com>,
-	Daire McNamara <daire.mcnamara@microchip.com>,
-	Andi Shyti <andi.shyti@kernel.org>, Wolfram Sang <wsa@kernel.org>,
-	linux-riscv@lists.infradead.org, linux-kernel@vger.kernel.org
-Subject: Re: [PATCH v1] i2c: microchip-core: actually use repeated sends
-Message-ID: <20241024-snagged-elated-d168d0d6bf35@spud>
-References: <20240930-uneasy-dorsal-1acda9227b0d@spud>
- <Zvu38H2Y-pRryFFQ@shikoro>
- <20241001-haphazard-fineness-ac536ff4ae96@spud>
+	s=arc-20240116; t=1729762630; c=relaxed/simple;
+	bh=RzARLvf7q8U4WtfMRe7VQACB2FhlIcsNW9cgrEn9Wmo=;
+	h=Date:From:To:Subject:Cc:In-Reply-To:References:MIME-Version:
+	 Message-ID:Content-Type; b=Z09Pn/4mtsr0700QhMr7NRnbFGuGmp6dYOFq54jkG87Wz0UyzYZl1rIpjNtD/iVsFZDX7D606PppQ4QsFQf2Cv1tPWIPtJq/DH3WhnwHBnmqlceyQ+IcVIPMc3LbWbPuws3ZlTlHcaNNSGvo/mZIzn3ogmjUyDTQd9HAu9mYmMM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de; spf=pass smtp.mailfrom=linutronix.de; dkim=pass (2048-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=BjcN41UP; dkim=permerror (0-bit key) header.d=linutronix.de header.i=@linutronix.de header.b=5URo/4II; arc=none smtp.client-ip=193.142.43.55
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linutronix.de
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linutronix.de
+Date: Thu, 24 Oct 2024 09:37:05 -0000
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020; t=1729762626;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FdwnWpcBQLiybLizh7cEd5aliquxyVujA3mBHi9foAE=;
+	b=BjcN41UPwRPF9bq+4XnFYEoLcNtqBXkLI+cAjL2H91JOk/2kc19WZWSG8eVzdBiBnu90FP
+	Tdqcr+HqxmiB6AXempn4vbx1AXSui6PGfi60G1PCRAV57XS9J47EhD5uDVO6cJDB65aHsF
+	wK6TsjtbsmMLpS30Sqz5j3kRRGSmeSS6l3Qafuhu4w0o958lNQGr4JtxVRcKP5SE+71Lzw
+	X8Tx9bPKQchsNBeu1i54cfFENc9+Oe6A8ne31WtTinQFScXs7ZWVsEyalV/hIzGVHU1G+Z
+	l3yq8f0auVvpz667q6bz793U4jO5YqG+TuAqrfpAbtHSiaW+w+xhR0Wkbttjiw==
+DKIM-Signature: v=1; a=ed25519-sha256; c=relaxed/relaxed; d=linutronix.de;
+	s=2020e; t=1729762626;
+	h=from:from:sender:sender:reply-to:reply-to:subject:subject:date:date:
+	 message-id:message-id:to:to:cc:cc:mime-version:mime-version:
+	 content-type:content-type:
+	 content-transfer-encoding:content-transfer-encoding:
+	 in-reply-to:in-reply-to:references:references;
+	bh=FdwnWpcBQLiybLizh7cEd5aliquxyVujA3mBHi9foAE=;
+	b=5URo/4IIL5wLVoYRBlh0g/Hafrqq32G+SWuU+TTV4aMtDaKhceyQjiET8zeD9E/xneWmXK
+	vO4/Mo9mxb6SxcDQ==
+From: "tip-bot2 for Sebastian Andrzej Siewior" <tip-bot2@linutronix.de>
+Sender: tip-bot2@linutronix.de
+Reply-to: linux-kernel@vger.kernel.org
+To: linux-tip-commits@vger.kernel.org
+Subject:
+ [tip: locking/core] locking/rt: Annotate unlock followed by lock for sparse.
+Cc: Sebastian Andrzej Siewior <bigeasy@linutronix.de>,
+ Thomas Gleixner <tglx@linutronix.de>, x86@kernel.org,
+ linux-kernel@vger.kernel.org
+In-Reply-To: <20240812104200.2239232-5-bigeasy@linutronix.de>
+References: <20240812104200.2239232-5-bigeasy@linutronix.de>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: multipart/signed; micalg=pgp-sha256;
-	protocol="application/pgp-signature"; boundary="hfVLrGzLBGvcsMsZ"
-Content-Disposition: inline
-In-Reply-To: <20241001-haphazard-fineness-ac536ff4ae96@spud>
+Message-ID: <172976262580.1442.4617419905991721713.tip-bot2@tip-bot2>
+Robot-ID: <tip-bot2@linutronix.de>
+Robot-Unsubscribe:
+ Contact <mailto:tglx@linutronix.de> to get blacklisted from these emails
+Precedence: bulk
+Content-Type: text/plain; charset="utf-8"
+Content-Transfer-Encoding: 7bit
 
+The following commit has been merged into the locking/core branch of tip:
 
---hfVLrGzLBGvcsMsZ
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-Content-Transfer-Encoding: quoted-printable
+Commit-ID:     77abd3b7d9bf384306872b6201b1dfeb1e899892
+Gitweb:        https://git.kernel.org/tip/77abd3b7d9bf384306872b6201b1dfeb1e899892
+Author:        Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+AuthorDate:    Mon, 12 Aug 2024 12:39:05 +02:00
+Committer:     Thomas Gleixner <tglx@linutronix.de>
+CommitterDate: Thu, 24 Oct 2024 11:27:02 +02:00
 
-Yo,
+locking/rt: Annotate unlock followed by lock for sparse.
 
-On Tue, Oct 01, 2024 at 11:16:24AM +0100, Conor Dooley wrote:
-> On Tue, Oct 01, 2024 at 10:50:56AM +0200, Wolfram Sang wrote:
-> > > At present, where repeated sends are intended to be used, the
-> > > i2c-microchip-core driver sends a stop followed by a start. Lots of i=
-2c
-> >=20
-> > Oh, this is wrong. Was this just overlooked or was maybe older hardware
-> > not able to generated correct repeated-starts?
->=20
-> Overlooked, because the devices that had been used until recently didn't
-> care about whether they got a repeated start or stop + start. The bare
-> metal driver upon which the Linux one was originally based had a trivial
-> time of supporting repeated starts because it only allows specific sorts
-> of transfers. I kinda doubt you care, but the bare metal implementation
-> is here:
-> https://github.com/polarfire-soc/polarfire-soc-bare-metal-library/blob/61=
-4a67abb3023ba47ea6d1b8d7b9a9997353e007/src/platform/drivers/mss/mss_i2c/mss=
-_i2c.c#L737
->=20
-> It just must have been missed that the bare metal method was not replaced.
->=20
-> > > devices must not malfunction in the face of this behaviour, because t=
-he
-> > > driver has operated like this for years! Try to keep track of whether=
- or
-> > > not a repeated send is required, and suppress sending a stop in these
-> > > cases.
-> >=20
-> > ? I don't get that argument. If the driver is expected to do a repeated
-> > start, it should do a repeated start. If it didn't, it was a bug and you
-> > were lucky that the targets could handle this. Because most controllers
-> > can do repeated starts correctly, we can also argue that this works for
-> > most targets for years. In the unlikely event that a target fails after
-> > converting this driver to proper repeated starts, the target is buggy
-> > and needs fixing. It would not work with the majority of other
-> > controllers this way.
-> >=20
-> > I didn't look at the code but reading "keeping track whether rep start
-> > is required" looks wrong from a high level perspective.
->=20
-> I think if you had looked at the code, you'd (hopefully) understand what
-> I meant w.r.t. tracking that.
-> The design of this IP is pretty old, and intended for use with other
-> logic implemented in FPGA fabric where each interrupt generated by
-> the core would be the stimulus for the state machine controlling it to
-> transition state. Cos of that, when controlling it from software, the
-> interrupt handler assumes the role of that state machine. When I talk
-> about tracking whether or not a repeated send is required, that's
-> whether or not a particular message in a transfer requires it, not
-> whether or not the target device requires them or not.
->=20
-> Currently the driver operates by iterating over a list of messages in a
-> transfer, and calling send() for each one, and then effectively "looping"
-> in the interrupt handler until the message has been sent. By looking at
-> the current code, you can see that the completion's "lifecycle" matches
-> that. Currently, at the end of each message being sent
-> 	static irqreturn_t mchp_corei2c_handle_isr(struct mchp_corei2c_dev *idev)
-> 	{
-> =09
-> 		<snip>
-> =09
-> 		/* On the last byte to be transmitted, send STOP */
-> 		if (last_byte)
-> 			mchp_corei2c_stop(idev);
-> =09
-> 		if (last_byte || finished)
-> 			complete(&idev->msg_complete);
-> =09
-> 		return IRQ_HANDLED;
-> 	}
-> a stop is put on the bus, unless !last_byte, which is only true in error
-> cases. Clearly I don't need to explain why that is a problem to you...
-> You'd think that we could do something like moving the stop out of the
-> interrupt handler, and to the loop in mchp_corei2c_xfer(), where we have
-> access to the transfer's message list and can check if a stop should be
-> sent or not - that's not really possible with the hardware we have.
->=20
-> When the interrupt handler completes, it clears the interrupt bit in the
-> IP, as you might expect. The controller IP uses that as the trigger to
-> transition state in its state machine, which is detailed in
-> https://ww1.microchip.com/downloads/aemDocuments/documents/FPGA/ProductDo=
-cuments/UserGuides/ip_cores/directcores/CoreI2C_HB.pdf
-> On page 23, row 0x28, you can see the case that (IIRC) is the
-> problematic one. It is impossible to leave this state without triggering
-> some sort of action.
-> The only way that I could see to make this work correctly was to get the
-> driver track whether or not the next message required a repeated start or
-> not, so as to transition out of state 0x28 correctly.
->=20
-> Unfortunately, then the clearing of the interrupt bit causing state
-> transitions kicked in again - after sending a repeated start, it will
-> immediately attempt to act (see state 0x10 on page 23). Without
-> reworking the driver to send entire transfers "in one go" (where the
-> completion is that of the transfer rather than the message as it
-> currently is) the controller will re-send the last target address +
-> read/write command it sent, instead of the next one. That's why there's
-> so many changes outside of the interrupt handler and so many additional
-> members in the controller's private data structure.
->=20
-> I hope that that at least makes some sense..
->=20
-> > The driver
-> > should do repeated start when it should do repeated start.
->=20
-> Yup, that's what I'm trying to do here :)
+rt_mutex_slowlock_block() and rtlock_slowlock_locked() both unlock
+lock::wait_lock and then lock it later. This is unusual and sparse
+complains about it.
 
-I'd like to get this fix in, and Andi only had some minor comments that
-didn't require a respin. I don't want to respin or resend while this
-conversation remains unresolved.
+Add __releases() + __acquires() annotation to mark that it is expected.
 
-Thanks,
-Conor.
+Signed-off-by: Sebastian Andrzej Siewior <bigeasy@linutronix.de>
+Signed-off-by: Thomas Gleixner <tglx@linutronix.de>
+Link: https://lore.kernel.org/all/20240812104200.2239232-5-bigeasy@linutronix.de
 
---hfVLrGzLBGvcsMsZ
-Content-Type: application/pgp-signature; name="signature.asc"
+---
+ kernel/locking/rtmutex.c | 2 ++
+ 1 file changed, 2 insertions(+)
 
------BEGIN PGP SIGNATURE-----
-
-iHUEABYIAB0WIQRh246EGq/8RLhDjO14tDGHoIJi0gUCZxoVIQAKCRB4tDGHoIJi
-0sT4AP4gyW2JC+ZvXZHXcGYN2FJ6YO7+hYJzdRLR+I/1VXj58QEAh9nOFblwYbJB
-+cl/h8Md3RPx7N08+bDVx8LOeRrZJwY=
-=F2Ka
------END PGP SIGNATURE-----
-
---hfVLrGzLBGvcsMsZ--
+diff --git a/kernel/locking/rtmutex.c b/kernel/locking/rtmutex.c
+index ebebd0e..d3b72c2 100644
+--- a/kernel/locking/rtmutex.c
++++ b/kernel/locking/rtmutex.c
+@@ -1601,6 +1601,7 @@ static int __sched rt_mutex_slowlock_block(struct rt_mutex_base *lock,
+ 					   unsigned int state,
+ 					   struct hrtimer_sleeper *timeout,
+ 					   struct rt_mutex_waiter *waiter)
++	__releases(&lock->wait_lock) __acquires(&lock->wait_lock)
+ {
+ 	struct rt_mutex *rtm = container_of(lock, struct rt_mutex, rtmutex);
+ 	struct task_struct *owner;
+@@ -1805,6 +1806,7 @@ static __always_inline int __rt_mutex_lock(struct rt_mutex_base *lock,
+  * @lock:	The underlying RT mutex
+  */
+ static void __sched rtlock_slowlock_locked(struct rt_mutex_base *lock)
++	__releases(&lock->wait_lock) __acquires(&lock->wait_lock)
+ {
+ 	struct rt_mutex_waiter waiter;
+ 	struct task_struct *owner;
 
