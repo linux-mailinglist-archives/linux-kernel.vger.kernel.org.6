@@ -1,155 +1,212 @@
-Return-Path: <linux-kernel+bounces-380751-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380752-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [139.178.88.99])
-	by mail.lfdr.de (Postfix) with ESMTPS id 0FA719AF589
-	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:43:38 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id D29A69AF58F
+	for <lists+linux-kernel@lfdr.de>; Fri, 25 Oct 2024 00:47:25 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 77586282E51
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:43:36 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 027AA1C217BF
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 22:47:25 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id BA8312185BA;
-	Thu, 24 Oct 2024 22:43:30 +0000 (UTC)
-Received: from mail-il1-f199.google.com (mail-il1-f199.google.com [209.85.166.199])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 219D02185BC;
+	Thu, 24 Oct 2024 22:47:18 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b="By1e5e+5"
+Received: from mx0a-0031df01.pphosted.com (mx0a-0031df01.pphosted.com [205.220.168.131])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 4673D22B641
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 22:43:27 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.166.199
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id EAAB222B66B;
+	Thu, 24 Oct 2024 22:47:14 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=205.220.168.131
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729809810; cv=none; b=BLb/vXBAWt9IvapcEu0kf2/ybXbVOH8awyDdAZ0oHAJtpodPMf9yiCzjqY0L6ufi7OssInh14cUCYvd2JOAvLWLaIaNUOUklFCqKpSM3CjfentCnER3inJV9EYisIAdvPM4uk9hLg1MJjb9Qf/5v+CaqeDcR+G3fL/CHQ59Q4FQ=
+	t=1729810037; cv=none; b=o2JfaFowe42P8HqgT4TL/NriVirpTIlMVzX0C7MYfJo8W89beZ0oc4mkK8Kln7DFdUqOom+5xWPUnm0U5o/kG3E44mOMzV9MF6Hw6+t9GhOxvQxbY/Va0+U2mjS0sK+P/hpyd94HRBuqXeyjSAjxjHhiTVgeEY+CvpZduWz6nVc=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729809810; c=relaxed/simple;
-	bh=/5ZYiZzp0GCwEHzhlO4n5c7xBYQikJ94R0K09EPhww4=;
-	h=MIME-Version:Date:Message-ID:Subject:From:To:Content-Type; b=EldxyRri1woeigZSyQX0bd2S+gFploZjBOzQzc0xy1/zztmcRX1R0N6Kd6eJDd1pz0RC7oszBqW00u/Tio1vHeWBdBu7J3Ih6qmLAaiJwc9cI4xC/humy6JXDeCzNn7wv1Ur/V3XMDCPQzQxp8WLHKdb9DhI4C/negBotEldXv4=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com; arc=none smtp.client-ip=209.85.166.199
-Authentication-Results: smtp.subspace.kernel.org; dmarc=fail (p=none dis=none) header.from=syzkaller.appspotmail.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=M3KW2WVRGUFZ5GODRSRYTGD7.apphosting.bounces.google.com
-Received: by mail-il1-f199.google.com with SMTP id e9e14a558f8ab-3a3c8853d76so13199055ab.2
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:43:27 -0700 (PDT)
-X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729809806; x=1730414606;
-        h=to:from:subject:message-id:date:mime-version:x-gm-message-state
-         :from:to:cc:subject:date:message-id:reply-to;
-        bh=oYhwuTsK8ErK8pqCznBjVR9j914DxkP9wNsyhF8XfNE=;
-        b=LEQBFJihZY/Th8QITvGqH6u6HYYUjDbludxhWQrpJjAmoS4LMjT8M6I3CMzPakPbJY
-         2U+anXsTq8dcYpFdoBJ29NNwaVVldraddxAHXBSzKypF4xMoiRGxQvSKKZrKY9Qm6ywr
-         cFSg1e8DeG188T34NAQCowITxtrjHGw7WStPLSUSfqpSsYQtz1lq+6xSrdAaGppFPGYJ
-         suDZ1bWYN53QGE0b6EdTCIgNoS3KzCkn5yVji+b9PoFsplUabzw+SfrF9V5l1hWV9wj6
-         OtY8Na7mjpmqrtN/FrVHJi1oADSF2MBSgb7lWk32v79HU48f9EEsexM6oEYk5xZnNpe1
-         49Cg==
-X-Forwarded-Encrypted: i=1; AJvYcCWTrX+ii077jlde5zVaBbJM+LoIoUbD16gsuxT5eaMYVp91usZ3zdzoen/yVvxbXLcOerpsgrnHRDXpe7Q=@vger.kernel.org
-X-Gm-Message-State: AOJu0YwtJiZnv2nlaPk7akZRTTam+PshPu2saDpn100wOCLgo5DGM+1i
-	dvo88CKf/03w/I9ssrdT68TlqOq05bLnrSW1hvG9xk/2pcPKyLl9VEGJ+eargxHdTWhkbrtVLyD
-	/sW/T7wYN06eCuU9pAf6lIqB2+T2pOf8OqKafO9odCZafdSrkLZnylFo=
-X-Google-Smtp-Source: AGHT+IHYrJDXK6aFf17ulAjn+yC+63HeE3NGSQGIClDwD8lYhcUEcg0knjLbI0x9uvE/qx2paCHgOGrAMeLJEIGuG1oRFJWpNaW8
+	s=arc-20240116; t=1729810037; c=relaxed/simple;
+	bh=QmdCeVWPPcovBQHiPOAWAeyLgjrwCNegokViJ8dhSt8=;
+	h=Message-ID:Date:MIME-Version:Subject:To:CC:References:From:
+	 In-Reply-To:Content-Type; b=MGHwzj60CZnaOFQ1f5aVqqMYhcJsEZcSuC+Ri07gyXUAfUWhzyBhfikGspNUGtzMKJFPU4iIUxSDwmkEKN7vBaagFHDVB0oU0eALfw83/SSbaS4QTcc0PwLjcJbSTOyvbUSLN24IUDsELS5WxE1l4Jf+wsojOodhf92z7ZU0eTY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com; spf=pass smtp.mailfrom=quicinc.com; dkim=pass (2048-bit key) header.d=quicinc.com header.i=@quicinc.com header.b=By1e5e+5; arc=none smtp.client-ip=205.220.168.131
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=quicinc.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=quicinc.com
+Received: from pps.filterd (m0279867.ppops.net [127.0.0.1])
+	by mx0a-0031df01.pphosted.com (8.18.1.2/8.18.1.2) with ESMTP id 49OLWwx1018676;
+	Thu, 24 Oct 2024 22:46:51 GMT
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=quicinc.com; h=
+	cc:content-transfer-encoding:content-type:date:from:in-reply-to
+	:message-id:mime-version:references:subject:to; s=qcppdkim1; bh=
+	gBr4ic81vTmvN7XRQwq9YY3unq51MMimZGFmIhdyS1w=; b=By1e5e+5oNNn5nAO
+	o43Ohiy+KFls7LGMpqKGgEyZIVm218pwmVrv3LSDPE4vS0J5XPESWklrJN63Ndex
+	oEagm9Od3Muiy1wAQ0IinjyPHRh+uSSx8EcJKeuPxVuBxt+QxVwKKpBTcKDmFfwZ
+	HTbgSwdWolvz3CvV7h+bxYl6FLOnnL19uW76q1Cyrm48N7CPGlZoNYPdcMVNdCbs
+	l4CXWgU+TGHtswMPtsYVJfgKpexugDol9imBs39EDeMODVOht36fVj6ImDjk9eeM
+	Smu6T3/dyqljrCrNyrO1QnjJurgYUFacr37IkIkv7eiKLdlhH5B9C0r2284ysToM
+	ILu9Qw==
+Received: from nasanppmta02.qualcomm.com (i-global254.qualcomm.com [199.106.103.254])
+	by mx0a-0031df01.pphosted.com (PPS) with ESMTPS id 42em66f5r7-1
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 22:46:51 +0000 (GMT)
+Received: from nasanex01b.na.qualcomm.com (nasanex01b.na.qualcomm.com [10.46.141.250])
+	by NASANPPMTA02.qualcomm.com (8.18.1.2/8.18.1.2) with ESMTPS id 49OMkc1v005480
+	(version=TLSv1.2 cipher=ECDHE-RSA-AES256-GCM-SHA384 bits=256 verify=NOT);
+	Thu, 24 Oct 2024 22:46:38 GMT
+Received: from [10.71.108.63] (10.80.80.8) by nasanex01b.na.qualcomm.com
+ (10.46.141.250) with Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.2.1544.9; Thu, 24 Oct
+ 2024 15:46:37 -0700
+Message-ID: <d6452efa-5d97-4c29-a2ea-8c97569dbdb5@quicinc.com>
+Date: Thu, 24 Oct 2024 15:46:37 -0700
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-X-Received: by 2002:a05:6e02:1564:b0:3a3:aff3:a02b with SMTP id
- e9e14a558f8ab-3a4d596356amr89928775ab.6.1729809806558; Thu, 24 Oct 2024
- 15:43:26 -0700 (PDT)
-Date: Thu, 24 Oct 2024 15:43:26 -0700
-X-Google-Appengine-App-Id: s~syzkaller
-X-Google-Appengine-App-Id-Alias: syzkaller
-Message-ID: <671acd8e.050a0220.381c35.0004.GAE@google.com>
-Subject: [syzbot] [afs?] [net?] KMSAN: uninit-value in rxrpc_lookup_peer_rcu
-From: syzbot <syzbot+14c04e62ca58315571d1@syzkaller.appspotmail.com>
-To: davem@davemloft.net, dhowells@redhat.com, edumazet@google.com, 
-	kuba@kernel.org, linux-afs@lists.infradead.org, linux-kernel@vger.kernel.org, 
-	marc.dionne@auristor.com, netdev@vger.kernel.org, pabeni@redhat.com, 
-	syzkaller-bugs@googlegroups.com
-Content-Type: text/plain; charset="UTF-8"
-
-Hello,
-
-syzbot found the following issue on:
-
-HEAD commit:    db87114dcf13 Merge tag 'x86_urgent_for_v6.12_rc4' of git:/..
-git tree:       upstream
-console output: https://syzkaller.appspot.com/x/log.txt?x=12cf2a40580000
-kernel config:  https://syzkaller.appspot.com/x/.config?x=7a0aee472a2b5f0a
-dashboard link: https://syzkaller.appspot.com/bug?extid=14c04e62ca58315571d1
-compiler:       Debian clang version 15.0.6, GNU ld (GNU Binutils for Debian) 2.40
-
-Unfortunately, I don't have any reproducer for this issue yet.
-
-Downloadable assets:
-disk image: https://storage.googleapis.com/syzbot-assets/140719cfa0c4/disk-db87114d.raw.xz
-vmlinux: https://storage.googleapis.com/syzbot-assets/fb8a264c89a8/vmlinux-db87114d.xz
-kernel image: https://storage.googleapis.com/syzbot-assets/4de63179d231/bzImage-db87114d.xz
-
-IMPORTANT: if you fix the issue, please add the following tag to the commit:
-Reported-by: syzbot+14c04e62ca58315571d1@syzkaller.appspotmail.com
-
-=====================================================
-BUG: KMSAN: uninit-value in rxrpc_lookup_peer_rcu+0x2f8/0x300 net/rxrpc/peer_object.c:142
- rxrpc_lookup_peer_rcu+0x2f8/0x300 net/rxrpc/peer_object.c:142
- rxrpc_lookup_peer_local_rcu net/rxrpc/peer_event.c:97 [inline]
- rxrpc_input_error+0x756/0x16e0 net/rxrpc/peer_event.c:148
- rxrpc_io_thread+0x13aa/0x5190 net/rxrpc/io_thread.c:498
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was stored to memory at:
- rxrpc_input_error+0x499/0x16e0 net/rxrpc/peer_event.c:148
- rxrpc_io_thread+0x13aa/0x5190 net/rxrpc/io_thread.c:498
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-Uninit was created at:
- slab_post_alloc_hook mm/slub.c:4091 [inline]
- slab_alloc_node mm/slub.c:4134 [inline]
- kmem_cache_alloc_node_noprof+0x6bf/0xb80 mm/slub.c:4186
- kmalloc_reserve+0x13d/0x4a0 net/core/skbuff.c:587
- __alloc_skb+0x363/0x7b0 net/core/skbuff.c:678
- alloc_skb include/linux/skbuff.h:1322 [inline]
- ipv6_local_error+0xd0/0xa10 net/ipv6/datagram.c:354
- __ip6_append_data+0x6f3/0x68e0 net/ipv6/ip6_output.c:1491
- ip6_make_skb+0x5bd/0xd60 net/ipv6/ip6_output.c:2048
- udpv6_sendmsg+0x3b5e/0x40c0 net/ipv6/udp.c:1584
- do_udp_sendmsg net/rxrpc/output.c:32 [inline]
- rxrpc_send_data_packet net/rxrpc/output.c:488 [inline]
- rxrpc_transmit_one+0xf68/0x2f20 net/rxrpc/output.c:713
- rxrpc_decant_prepared_tx net/rxrpc/call_event.c:271 [inline]
- rxrpc_transmit_some_data net/rxrpc/call_event.c:295 [inline]
- rxrpc_input_call_event+0x18ba/0x2c10 net/rxrpc/call_event.c:401
- rxrpc_io_thread+0xa5c/0x5190 net/rxrpc/io_thread.c:478
- kthread+0x3e2/0x540 kernel/kthread.c:389
- ret_from_fork+0x6d/0x90 arch/x86/kernel/process.c:147
- ret_from_fork_asm+0x1a/0x30 arch/x86/entry/entry_64.S:244
-
-CPU: 0 UID: 0 PID: 12896 Comm: krxrpcio/0 Tainted: G        W          6.12.0-rc3-syzkaller-00454-gdb87114dcf13 #0
-Tainted: [W]=WARN
-Hardware name: Google Google Compute Engine/Google Compute Engine, BIOS Google 09/13/2024
-=====================================================
+User-Agent: Mozilla Thunderbird
+Subject: Re: [PATCH 0/5] dts: qcom: Introduce SM8750 device trees
+To: Konrad Dybcio <konrad.dybcio@oss.qualcomm.com>,
+        "Rob Herring (Arm)"
+	<robh@kernel.org>
+CC: Arnd Bergmann <arnd@arndb.de>,
+        Dmitry Baryshkov
+	<dmitry.baryshkov@linaro.org>,
+        =?UTF-8?Q?N=C3=ADcolas_F_=2E_R_=2E_A_=2E_Prado?= <nfraprado@collabora.com>,
+        <linux-arm-kernel@lists.infradead.org>, <devicetree@vger.kernel.org>,
+        <linux-kernel@vger.kernel.org>,
+        Satya Durga Srinivasu Prabhala
+	<quic_satyap@quicinc.com>,
+        Trilok Soni <quic_tsoni@quicinc.com>,
+        AngeloGioacchino Del Regno <angelogioacchino.delregno@collabora.com>,
+        "Neil
+ Armstrong" <neil.armstrong@linaro.org>,
+        Lee Jones <lee@kernel.org>, "Konrad
+ Dybcio" <konradybcio@kernel.org>,
+        Conor Dooley <conor+dt@kernel.org>, "Stephen Boyd" <sboyd@kernel.org>,
+        Krzysztof Kozlowski <krzk+dt@kernel.org>,
+        "Bjorn Andersson" <andersson@kernel.org>,
+        <linux-arm-msm@vger.kernel.org>,
+        "Catalin Marinas" <catalin.marinas@arm.com>,
+        Geert Uytterhoeven
+	<geert+renesas@glider.be>,
+        Will Deacon <will@kernel.org>
+References: <20241021232114.2636083-1-quic_molvera@quicinc.com>
+ <172978739477.623395.5604249801475913676.robh@kernel.org>
+ <3ca1f7e8-1204-4898-9e7e-cb6423c122cc@oss.qualcomm.com>
+Content-Language: en-US
+From: Melody Olvera <quic_molvera@quicinc.com>
+In-Reply-To: <3ca1f7e8-1204-4898-9e7e-cb6423c122cc@oss.qualcomm.com>
+Content-Type: text/plain; charset="UTF-8"; format=flowed
+Content-Transfer-Encoding: 8bit
+X-ClientProxiedBy: nasanex01a.na.qualcomm.com (10.52.223.231) To
+ nasanex01b.na.qualcomm.com (10.46.141.250)
+X-QCInternal: smtphost
+X-Proofpoint-Virus-Version: vendor=nai engine=6200 definitions=5800 signatures=585085
+X-Proofpoint-ORIG-GUID: 867ay8EuuWrW-d_ts8xBu19lu33tUxZV
+X-Proofpoint-GUID: 867ay8EuuWrW-d_ts8xBu19lu33tUxZV
+X-Proofpoint-Virus-Version: vendor=baseguard
+ engine=ICAP:2.0.293,Aquarius:18.0.1039,Hydra:6.0.680,FMLib:17.12.60.29
+ definitions=2024-09-06_09,2024-09-06_01,2024-09-02_01
+X-Proofpoint-Spam-Details: rule=outbound_notspam policy=outbound score=0 lowpriorityscore=0
+ adultscore=0 phishscore=0 impostorscore=0 malwarescore=0 mlxlogscore=856
+ suspectscore=0 clxscore=1015 mlxscore=0 bulkscore=0 priorityscore=1501
+ spamscore=0 classifier=spam adjust=0 reason=mlx scancount=1
+ engine=8.19.0-2409260000 definitions=main-2410240186
 
 
----
-This report is generated by a bot. It may contain errors.
-See https://goo.gl/tpsmEJ for more information about syzbot.
-syzbot engineers can be reached at syzkaller@googlegroups.com.
 
-syzbot will keep track of this issue. See:
-https://goo.gl/tpsmEJ#status for how to communicate with syzbot.
+On 10/24/2024 10:22 AM, Konrad Dybcio wrote:
+> On 24.10.2024 6:33 PM, Rob Herring (Arm) wrote:
+>> On Mon, 21 Oct 2024 16:21:09 -0700, Melody Olvera wrote:
+>>> This series adds the initial device tree support for the SM8750 SoCs
+>>> needed to boot to shell. This specifically adds support for clocks,
+>>> pinctrl, rpmhpd, regulators, interconnects, and SoC and board
+>>> compatibles.
+>>>
+> [...]
+>
+>> New warnings running 'make CHECK_DTBS=y qcom/sm8750-mtp.dtb qcom/sm8750-qrd.dtb' for 20241021232114.2636083-1-quic_molvera@quicinc.com:
+>>
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: domain-idle-states: cluster-sleep-0:compatible:0: 'domain-idle-state' was expected
+>> 	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: domain-idle-states: cluster-sleep-0: 'idle-state-name' does not match any of the regexes: 'pinctrl-[0-9]+'
+>> 	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: domain-idle-states: cluster-sleep-0:compatible:0: 'domain-idle-state' was expected
+>> 	from schema $id: http://devicetree.org/schemas/power/domain-idle-state.yaml#
+> These were recently dropped across the board, please drop them
+> here as well.
 
-If the report is already addressed, let syzbot know by replying with:
-#syz fix: exact-commit-title
+Ack.
 
-If you want to overwrite report's subsystems, reply with:
-#syz set subsystems: new-subsystem
-(See the list of subsystem names on the web dashboard)
+>
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: pmic@7: 'eusb2-repeater@fd00' does not match any of the regexes: '(.*)?(wled|leds)@[0-9a-f]+$', '^adc-tm@[0-9a-f]+$', '^adc@[0-9a-f]+$', '^audio-codec@[0-9a-f]+$', '^battery@[0-9a-f]+$', '^charger@[0-9a-f]+$', '^led-controller@[0-9a-f]+$', '^mpps@[0-9a-f]+$', '^nvram@[0-9a-f]+$', '^pbs@[0-9a-f]+$', '^rtc@[0-9a-f]+$', '^temp-alarm@[0-9a-f]+$', '^typec@[0-9a-f]+$', '^usb-detect@[0-9a-f]+$', '^usb-vbus-regulator@[0-9a-f]+$', '^vibrator@[0-9a-f]+$', 'gpio@[0-9a-f]+$', 'phy@[0-9a-f]+$', 'pinctrl-[0-9]+', 'pon@[0-9a-f]+$'
+>> 	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: pmic@7: 'eusb2-repeater@fd00' does not match any of the regexes: '(.*)?(wled|leds)@[0-9a-f]+$', '^adc-tm@[0-9a-f]+$', '^adc@[0-9a-f]+$', '^audio-codec@[0-9a-f]+$', '^battery@[0-9a-f]+$', '^charger@[0-9a-f]+$', '^led-controller@[0-9a-f]+$', '^mpps@[0-9a-f]+$', '^nvram@[0-9a-f]+$', '^pbs@[0-9a-f]+$', '^rtc@[0-9a-f]+$', '^temp-alarm@[0-9a-f]+$', '^typec@[0-9a-f]+$', '^usb-detect@[0-9a-f]+$', '^usb-vbus-regulator@[0-9a-f]+$', '^vibrator@[0-9a-f]+$', 'gpio@[0-9a-f]+$', 'phy@[0-9a-f]+$', 'pinctrl-[0-9]+', 'pon@[0-9a-f]+$'
+> phy@ (as seen in x1e80100-pmics.dtsi)
 
-If the report is a duplicate of another one, reply with:
-#syz dup: exact-subject-of-another-report
+Ack.
 
-If you want to undo deduplication, reply with:
-#syz undup
+>
+>> 	from schema $id: http://devicetree.org/schemas/mfd/qcom,spmi-pmic.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-0: Unevaluated properties are not allowed ('vdd-l1-supply', 'vdd-l10-supply', 'vdd-l4-supply' were unexpected)
+>> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-0: Unevaluated properties are not allowed ('vdd-l1-supply', 'vdd-l10-supply', 'vdd-l4-supply' were unexpected)
+
+These actually needed to be combined; they should be 
+vdd-l1-l4-l10-supply. Will fix.
+
+>> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
+>> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: regulators-4: Unevaluated properties are not allowed ('vdd-s7-supply', 'vdd-s8-supply' were unexpected)
+>> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+> These need bindings updates
+
+Agreed; this regulator is not documented correctly. Will address in a v2 ps.
+
+>
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: rsc@16500000: 'power-domains' is a required property
+>> 	from schema $id: http://devicetree.org/schemas/soc/qcom/qcom,rpmh-rsc.yaml#
+> This I'll address when reviewing the dt
+
+So for this, let me know if the following seems about right.
+The rsc node needs a system-wide power domain defined. To accomplish 
+this, I would define
+a system_pd node and point both cluster pd nodes to it via 
+power-domains, similar to what you did here:
+https://lore.kernel.org/all/20240102-topic-x1e_fixes-v1-3-70723e08d5f6@linaro.org/
+
+Then, extrapolating from that, I can define a system-wide idle-state 
+under the domain-idle-state node as follows:
+domain_ss3: domain-sleep-0 {
+     compatible = "domain-idle-state";
+     [...] (omitting a bunch of details, but you get the point)
+};
+
+And then point to that from the new system_pd node under the psci node:
+system_pd: power-domain-system {
+     #power-domain-cells = <0>;
+     domain-idle-states = <&domain_ss3>;
+};
+
+And then of course in the rsc node, have power-domains = <&system_pd>;
+
+Is that correct?
+
+
+>
+> [...] (skipping a bunch of duplicates)
+>
+>> arch/arm64/boot/dts/qcom/sm8750-mtp.dtb: timer@16800000: #size-cells: 1 was expected
+>> 	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer_mmio.yaml#
+>> arch/arm64/boot/dts/qcom/sm8750-qrd.dtb: timer@16800000: #size-cells: 1 was expected
+>> 	from schema $id: http://devicetree.org/schemas/timer/arm,arch_timer_mmio.yaml#
+> #address-cells <2> is fine, #size-cells must be 1, apparently
+
+Ack.
+
+Thanks,
+Melody
 
