@@ -1,83 +1,80 @@
-Return-Path: <linux-kernel+bounces-380244-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380242-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
-	by mail.lfdr.de (Postfix) with ESMTPS id 71C6A9AEAEA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:43:52 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id DC04F9AEAE7
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 17:43:19 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 958D11C20D46
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:43:51 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 86E711F21899
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 15:43:19 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 8D71C1F669C;
-	Thu, 24 Oct 2024 15:43:09 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id C50D11F76AC;
+	Thu, 24 Oct 2024 15:42:21 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="GK78CX3Y"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
-	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
+	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="QX3aUza7"
+Received: from mail-pj1-f49.google.com (mail-pj1-f49.google.com [209.85.216.49])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id DB6C51F582F;
-	Thu, 24 Oct 2024 15:43:06 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C63D31F582F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 15:42:17 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.49
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729784588; cv=none; b=FkzzRGxp8LyZ4P8LKpmE+XUkF/n6gRW5i+OubrHb3m1RGR1fMMV53sYusL2yEFbaqtFbX8LySJL0fGpHtk/DK5VPWYLL3NLhDdsZrGNndjzpj/8zfO4itntFprmt6rm394zFM+uyXggvQ34R5ki9hPuP/QItwcACGq9hfPXcJUk=
+	t=1729784541; cv=none; b=PGI5XCltIOEC7dcUzH1dhiB+/bIflTRZNxsVhsNLYb5XfuPLazRGS0uA3q59xnHWhF7RGiNTmzG+muLZOfjlznpQkPto7Uj34CjpcGuZ3jMLSuPU++fDz1B+i+r5okz8msIRe0LidCXR93YsDDa46C3nK0H4FypFwptihuNwhOk=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729784588; c=relaxed/simple;
-	bh=5/nbDyWp7n6RsazCVVoeiVcKXifp+4+4MGYC6ov6BU8=;
+	s=arc-20240116; t=1729784541; c=relaxed/simple;
+	bh=JA2+P8tJNRooSWGy8dttNYXnIOGobkf1Mu8CVP6xBNk=;
 	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=I7XGDjiUTUeCeRmTlQ6dDEMPxA6C26UbLb5YCf4arMA0MgEkRQoWHJCicN5yMb8CwGVzW4J3n8fDEFI9RJfTcalvdUrOcBGX9/tQToaVxCauYY16BHphhCie1NYrkFlkYvYdRyqz0ThEVqzJYiVRKlJKOznZZHAPTHtlqvx67gs=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=GK78CX3Y; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729784587; x=1761320587;
-  h=date:from:to:cc:subject:message-id:references:
-   mime-version:in-reply-to;
-  bh=5/nbDyWp7n6RsazCVVoeiVcKXifp+4+4MGYC6ov6BU8=;
-  b=GK78CX3YJoDFeA3n3tDLlB0UDKbPl6PINM6VxRYh6Z6ZyGSbauqTJIqC
-   wUL0P0m7Ul/Cvtgh89Qdx0KN1yueCJMZ5F3kPy0+jWpOm/4GhxLGW6q0I
-   ILg31ZcVJzLwudcd+aOyuvUH9UEW2OGIQHTnhp7FSuwI2036cvxPZWww7
-   Jv7iR62D4GctJu/MARgOR3l49gvwjovcnpYb7RH0VFEJeACYmcQLMDPN4
-   czuKvd/tq1bhGFHbPAytmoNrKV5eN+MMblrGC9AXvKOW/YLabDydk3KQ4
-   KidbZS+0hQARYMC8ankEuXK9k6ZiqUr59bw66ErHFxgqzKSnvD2C4EE0y
-   A==;
-X-CSE-ConnectionGUID: Qe5Jwpk1SESmN/AArXMAIQ==
-X-CSE-MsgGUID: 3chAKQNFTXCNfGPUBgeDpQ==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="29641273"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="29641273"
-Received: from orviesa004.jf.intel.com ([10.64.159.144])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 08:43:06 -0700
-X-CSE-ConnectionGUID: TSI0KdEVRK2iC0jv2wV/5w==
-X-CSE-MsgGUID: FMV5XWndQSSRW/r8/H+5iA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="85735965"
-Received: from lkp-server01.sh.intel.com (HELO a48cf1aa22e8) ([10.239.97.150])
-  by orviesa004.jf.intel.com with ESMTP; 24 Oct 2024 08:43:02 -0700
-Received: from kbuild by a48cf1aa22e8 with local (Exim 4.96)
-	(envelope-from <lkp@intel.com>)
-	id 1t3zzI-000Wc0-02;
-	Thu, 24 Oct 2024 15:43:00 +0000
-Date: Thu, 24 Oct 2024 23:42:06 +0800
-From: kernel test robot <lkp@intel.com>
-To: Maarten Lankhorst <maarten.lankhorst@linux.intel.com>,
-	intel-xe@lists.freedesktop.org, linux-kernel@vger.kernel.org,
-	dri-devel@lists.freedesktop.org, Tejun Heo <tj@kernel.org>,
-	Zefan Li <lizefan.x@bytedance.com>,
-	Johannes Weiner <hannes@cmpxchg.org>,
-	Andrew Morton <akpm@linux-foundation.org>
-Cc: oe-kbuild-all@lists.linux.dev,
-	Linux Memory Management List <linux-mm@kvack.org>,
-	Friedrich Vock <friedrich.vock@gmx.de>, cgroups@vger.kernel.org,
-	Maxime Ripard <mripard@kernel.org>,
-	Maarten Lankhorst <maarten.lankhorst@linux.intel.com>
-Subject: Re: [PATCH 2/7] drm/drv: Add drmm cgroup registration for dev
- cgroups.
-Message-ID: <202410242324.adtg6g0w-lkp@intel.com>
-References: <20241023075302.27194-3-maarten.lankhorst@linux.intel.com>
+	 Content-Type:Content-Disposition:In-Reply-To; b=FJocI64fA3UNqweI9K5vp97Jr3QUUFNnzz9JRzUdZFXnST6jTxlCJyWWqi6V8u8Tio5tZHJ9cgyTmsNvMBwPEXeUglPUQrXPlqgpuvG10lv8vSOgwv01UkEItG/ecVckx8MmYfc6M8O5vdrf55SkiHLe6DzsHjcs8uvs5D75K0I=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=QX3aUza7; arc=none smtp.client-ip=209.85.216.49
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
+Received: by mail-pj1-f49.google.com with SMTP id 98e67ed59e1d1-2e2e23f2931so816674a91.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 08:42:17 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=linaro.org; s=google; t=1729784537; x=1730389337; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=B8DyuvHzb5XjyqaoJeydh5dQ8YB6zbnvlTgF+dM7WRk=;
+        b=QX3aUza778sGgaBvXlYHMNU2/eCriMFlaKP8H9NT356wKk4AgpVK7E9msrXuvWzYqX
+         L852GevA6j7ExqD4faj/ELspE4LY2RriwZIacUq7Qx+6+uTbg08kfJBcZcNXM32q0Gc8
+         5BRgiyTecTWo3ueVYmURQkxKs7C33mVPZglctvVzUdMtxND88Daggylt4mwCaRYX2+NP
+         MlKA8VnNFvG8ogccTSSKrYjKl7KSgNhBlpMC2TGfQdKbpczr0mMWoItjHeqcqG20mE1W
+         7GpjhUuKwxoOE/JQAvWKj1uTP5mol0tvEofRQKo4/wz2kPLAupp/PN2nb5JLMjDMGAyy
+         rYTQ==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729784537; x=1730389337;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=B8DyuvHzb5XjyqaoJeydh5dQ8YB6zbnvlTgF+dM7WRk=;
+        b=rqjJ4q2dGTOG9oWxVZG+2lDB6MdyePmPljTM7nV8kOh+GOPAiAlLFdBTxZ0pTUTQlg
+         CJfAXYypWZsxZ7cIUdGIl6aly0++qqVtMgnLMf5dqPRXa+PIS4WcABX5hL4jiUUgnlPr
+         o1Xw2/qPe3voeTNWvkD5moi+sw2NYo7r8xvvNmPuGdmSMazYRoMvrz+0VmF+064oGTp0
+         1WaEBKOIiKqR0wabRU/JuVrHABGh9QP72NuoG5C+52o4crzLpRJcdd4U6oMYkCf0XRRa
+         8DEGEkTBJAoeCb44VNCGVUkPvvp1B0f+wZ6sy2ydtEksOVgxCCYV0uqmeBYNgYu+YeLu
+         29Jg==
+X-Forwarded-Encrypted: i=1; AJvYcCWNhG936cKABKQlUmrSiLZ8mxUjy81ObgoW58DnUgnKIWkfpF4XIRVIP5032vMrsP7RcDeLOdnwCkDboVI=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yzv6dWBYG11r/+23drnX4rHPQnSh0tVOQpsUj4jBXcITuaEoOSd
+	vfzwFj3DcnP/1TaYCGv17vF9o7igHju+NzObXpCh9CNLj5lHIUQxict5adSYaJg=
+X-Google-Smtp-Source: AGHT+IHJA6h9/dphvA6EaRPdgKXiQXjJSKFpmG3omjCNL1LDYLu7ZLPUnH48dmdvoBjDXaoFRYpMOQ==
+X-Received: by 2002:a17:90a:604c:b0:2e2:e6bf:cd64 with SMTP id 98e67ed59e1d1-2e76b5b6be5mr6956529a91.5.1729784536954;
+        Thu, 24 Oct 2024 08:42:16 -0700 (PDT)
+Received: from p14s ([2604:3d09:148c:c800:7c96:e131:bee8:c8a4])
+        by smtp.gmail.com with ESMTPSA id 98e67ed59e1d1-2e77e5bc59bsm1638536a91.56.2024.10.24.08.42.15
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 08:42:16 -0700 (PDT)
+Date: Thu, 24 Oct 2024 09:42:13 -0600
+From: Mathieu Poirier <mathieu.poirier@linaro.org>
+To: anish kumar <yesanishhere@gmail.com>
+Cc: ohad@wizery.com, bjorn.andersson@linaro.org, corbet@lwn.net,
+	linux-remoteproc@vger.kernel.org, linux-doc@vger.kernel.org,
+	linux-kernel@vger.kernel.org
+Subject: Re: [PATCH V4 1/7] Remoteproc: Documentation: add the main index
+Message-ID: <Zxpq1RGltdWiE5sA@p14s>
+References: <20241023053357.5261-1-yesanishhere@gmail.com>
+ <20241023053357.5261-2-yesanishhere@gmail.com>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
@@ -86,65 +83,66 @@ List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
 Content-Type: text/plain; charset=us-ascii
 Content-Disposition: inline
-In-Reply-To: <20241023075302.27194-3-maarten.lankhorst@linux.intel.com>
+In-Reply-To: <20241023053357.5261-2-yesanishhere@gmail.com>
 
-Hi Maarten,
+On Tue, Oct 22, 2024 at 10:33:51PM -0700, anish kumar wrote:
+> In prepration of moving the remoteproc documentation
+> from staging to mainline and also for enhancing
+> the documentation.
+> 
+> Signed-off-by: anish kumar <yesanishhere@gmail.com>
+> ---
+>  Documentation/driver-api/index.rst            |  1 +
+>  Documentation/driver-api/remoteproc/index.rst | 20 +++++++++++++++++++
+>  2 files changed, 21 insertions(+)
+>  create mode 100644 Documentation/driver-api/remoteproc/index.rst
+> 
+> diff --git a/Documentation/driver-api/index.rst b/Documentation/driver-api/index.rst
+> index c57c609ad2eb..ec9d669b92e5 100644
+> --- a/Documentation/driver-api/index.rst
+> +++ b/Documentation/driver-api/index.rst
+> @@ -30,6 +30,7 @@ available subsections can be seen below.
+>     frame-buffer
+>     regulator
+>     reset
+> +   remoteproc/index
 
-kernel test robot noticed the following build errors:
+This patch doesn't apply to rproc-next and I'm pretty sure it is the same for
+Jonathan's tree. 
 
-[auto build test ERROR on drm/drm-next]
-[also build test ERROR on drm-exynos/exynos-drm-next next-20241024]
-[cannot apply to tj-cgroup/for-next drm-xe/drm-xe-next akpm-mm/mm-everything drm-intel/for-linux-next drm-intel/for-linux-next-fixes drm-misc/drm-misc-next drm-tip/drm-tip linus/master v6.12-rc4]
-[If your patch is applied to the wrong git tree, kindly drop us a note.
-And when submitting patch, we suggest to use '--base' as documented in
-https://git-scm.com/docs/git-format-patch#_base_tree_information]
+>     iio/index
+>     input
+>     usb/index
+> diff --git a/Documentation/driver-api/remoteproc/index.rst b/Documentation/driver-api/remoteproc/index.rst
+> new file mode 100644
+> index 000000000000..8b8c8f512e2b
+> --- /dev/null
+> +++ b/Documentation/driver-api/remoteproc/index.rst
+> @@ -0,0 +1,20 @@
+> +.. SPDX-License-Identifier: GPL-2.0
+> +
+> +========================================================================
+> +remoteproc - remote processor subsystem in Linux(TM) kernel
+> +========================================================================
+> +
+> +Authors:
+> +	- anish kumar  <yesanishhere@gmail.com>
+> +
+> +   remote processor subsystem is a way to manage the lifecycle of
+> +   a subsytem that is external to the Linux. The remoteproc framework
 
-url:    https://github.com/intel-lab-lkp/linux/commits/Maarten-Lankhorst/kernel-cgroup-Add-dev-memory-accounting-cgroup/20241023-155504
-base:   git://anongit.freedesktop.org/drm/drm drm-next
-patch link:    https://lore.kernel.org/r/20241023075302.27194-3-maarten.lankhorst%40linux.intel.com
-patch subject: [PATCH 2/7] drm/drv: Add drmm cgroup registration for dev cgroups.
-config: arm64-randconfig-002-20241024 (https://download.01.org/0day-ci/archive/20241024/202410242324.adtg6g0w-lkp@intel.com/config)
-compiler: aarch64-linux-gcc (GCC) 14.1.0
-reproduce (this is a W=1 build): (https://download.01.org/0day-ci/archive/20241024/202410242324.adtg6g0w-lkp@intel.com/reproduce)
+... external to the Linux kernel.
 
-If you fix the issue in a separate patch/commit (i.e. not just a new version of
-the same patch/commit), kindly add following tags
-| Reported-by: kernel test robot <lkp@intel.com>
-| Closes: https://lore.kernel.org/oe-kbuild-all/202410242324.adtg6g0w-lkp@intel.com/
-
-All errors (new ones prefixed by >>):
-
-   In file included from drivers/gpu/drm/drm_drv.c:29:
-   include/linux/cgroup_dev.h:61:12: error: two or more data types in declaration specifiers
-      61 | static int int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
-         |            ^~~
-   include/linux/cgroup_dev.h:65:1: error: expected identifier or '(' before '{' token
-      65 | {
-         | ^
->> include/linux/cgroup_dev.h:61:16: error: 'dev_cgroup_try_charge' declared 'static' but never defined [-Werror=unused-function]
-      61 | static int int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
-         |                ^~~~~~~~~~~~~~~~~~~~~
-   cc1: all warnings being treated as errors
-
-
-vim +61 include/linux/cgroup_dev.h
-
-487073b1855ef4 Maarten Lankhorst 2024-10-23  60  
-487073b1855ef4 Maarten Lankhorst 2024-10-23 @61  static int int dev_cgroup_try_charge(struct dev_cgroup_device *cgdev,
-487073b1855ef4 Maarten Lankhorst 2024-10-23  62  				     u32 index, u64 size,
-487073b1855ef4 Maarten Lankhorst 2024-10-23  63  				     struct dev_cgroup_pool_state **ret_pool,
-487073b1855ef4 Maarten Lankhorst 2024-10-23  64  				     struct dev_cgroup_pool_state **ret_limit_pool);
-487073b1855ef4 Maarten Lankhorst 2024-10-23  65  {
-487073b1855ef4 Maarten Lankhorst 2024-10-23  66  	*ret_pool = NULL;
-487073b1855ef4 Maarten Lankhorst 2024-10-23  67  
-487073b1855ef4 Maarten Lankhorst 2024-10-23  68  	if (ret_limit_pool)
-487073b1855ef4 Maarten Lankhorst 2024-10-23  69  		*ret_limit_pool = NULL;
-487073b1855ef4 Maarten Lankhorst 2024-10-23  70  
-487073b1855ef4 Maarten Lankhorst 2024-10-23  71  	return 0;
-487073b1855ef4 Maarten Lankhorst 2024-10-23  72  }
-487073b1855ef4 Maarten Lankhorst 2024-10-23  73  
-
--- 
-0-DAY CI Kernel Test Service
-https://github.com/intel/lkp-tests/wiki
+> +   allows different platforms/architectures to control (power on,
+> +   load firmware, power off) those remote processors while abstracting
+> +   the hardware differences, so the entire driver doesn't need to be
+> +   duplicated.
+> +
+> +Mailing List
+> +------------
+> +To post a message, send an email to
+> +linux-remoteproc@vger.kernel.org
+> -- 
+> 2.39.3 (Apple Git-146)
+> 
 
