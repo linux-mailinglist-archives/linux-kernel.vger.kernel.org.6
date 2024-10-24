@@ -1,152 +1,252 @@
-Return-Path: <linux-kernel+bounces-379855-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379851-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 592C89AE4D0
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:34:26 +0200 (CEST)
+Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [147.75.199.223])
+	by mail.lfdr.de (Postfix) with ESMTPS id 9AB749AE4C1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 14:31:46 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8AECC1C22EBA
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:34:25 +0000 (UTC)
+	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 8CD9D1C20D7B
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 12:31:45 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 9F7551D5174;
-	Thu, 24 Oct 2024 12:34:19 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E9E431D5176;
+	Thu, 24 Oct 2024 12:31:37 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b="cDiyjbF3"
-Received: from mgamail.intel.com (mgamail.intel.com [192.198.163.14])
+	dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b="t4eveNpI"
+Received: from NAM11-DM6-obe.outbound.protection.outlook.com (mail-dm6nam11on2040.outbound.protection.outlook.com [40.107.223.40])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id 03DFB1CACE9;
-	Thu, 24 Oct 2024 12:34:16 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=192.198.163.14
-ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729773259; cv=none; b=rZlZeu4mAS7DUBs/BAjp+iR1oiahaPVmRSW9qQekh/pk6M/TGYEMjQMakq+WHLvksw2HHAUKbFAH5hD5WKkh5uduQWlulL2dFPXtlK8gtA0LPQq6DXmr1fqi52ZJTvnDE7T8eKW2Endl5VKSCW+gZmGOUKFpMm1xPj3COZxG2+g=
-ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729773259; c=relaxed/simple;
-	bh=CmAdV9afLS0JTDf0VeXFhYzLWX7ZMh8xBb4mg2UTXtU=;
-	h=From:To:Cc:Subject:In-Reply-To:References:Date:Message-ID:
-	 MIME-Version:Content-Type; b=UseypYka+GnBghteiEnSJKMUbJ1si7SDYCFzrflg7OhNdfrHT5qJI+gtPescXfhZL1H7/1mWARI/21Zw7jClDWx89wpKrCkj6j5w5640tvCiyeWsX8N9H5GJ4UMzGUXEXylRY3L/BGN5tTSuaVVjUuzAVWhby4PZGpNaS298rTI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com; spf=pass smtp.mailfrom=intel.com; dkim=pass (2048-bit key) header.d=intel.com header.i=@intel.com header.b=cDiyjbF3; arc=none smtp.client-ip=192.198.163.14
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=intel.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=intel.com
-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/simple;
-  d=intel.com; i=@intel.com; q=dns/txt; s=Intel;
-  t=1729773257; x=1761309257;
-  h=from:to:cc:subject:in-reply-to:references:date:
-   message-id:mime-version;
-  bh=CmAdV9afLS0JTDf0VeXFhYzLWX7ZMh8xBb4mg2UTXtU=;
-  b=cDiyjbF3FdRgo+08z/Lz0zwclNV1Ojk/RGFoMkeGoDMbbUmiPWLOtZXf
-   +w6JgwwL1INFFON3iyg/WCpgsSJr7wTI79QwGCRsocga0s7Xrqu0lAEeC
-   U9CxCeN+F/iTflSyztUJLDmZYLBgFk5YOhtwFk1wpF5VWN9rIHM8i0tM4
-   VUcqoWWnhjqriBbfWFjZ9018137kSUkYYSHChHkYU+lDTVle3sjeLzTw6
-   91+jOaMN/CZcjWclek4rmyC7zZ+ufw83rsxD3rtc1bR4uBijYUT6ocDMB
-   6EPUoXgCTkueq6/lsT5fAk+mEurLXgcRhrovQ9Q1PbrBjyWIJIl/rEpBl
-   w==;
-X-CSE-ConnectionGUID: HaxTR9wGTsOpUI0yQAmo7A==
-X-CSE-MsgGUID: DMvN2uXJTMG2UnQedMT2dA==
-X-IronPort-AV: E=McAfee;i="6700,10204,11235"; a="29619406"
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="29619406"
-Received: from orviesa008.jf.intel.com ([10.64.159.148])
-  by fmvoesa108.fm.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 05:34:16 -0700
-X-CSE-ConnectionGUID: dCkiNN/zRvihLsXoCaBq7Q==
-X-CSE-MsgGUID: FCI6bu98S2uJetZqSIW1oA==
-X-ExtLoop1: 1
-X-IronPort-AV: E=Sophos;i="6.11,229,1725346800"; 
-   d="scan'208";a="81395591"
-Received: from yhuang6-desk2.sh.intel.com (HELO yhuang6-desk2.ccr.corp.intel.com) ([10.238.208.55])
-  by orviesa008-auth.jf.intel.com with ESMTP/TLS/ECDHE-RSA-AES256-GCM-SHA384; 24 Oct 2024 05:34:13 -0700
-From: "Huang, Ying" <ying.huang@intel.com>
-To: Andy Shevchenko <andriy.shevchenko@linux.intel.com>
-Cc: Dan Williams <dan.j.williams@intel.com>,  David Hildenbrand
- <david@redhat.com>,  Andrew Morton <akpm@linux-foundation.org>,
-  <linux-mm@kvack.org>,  <linux-kernel@vger.kernel.org>,
-  <linux-cxl@vger.kernel.org>,  Davidlohr Bueso <dave@stgolabs.net>,
-  "Jonathan Cameron" <jonathan.cameron@huawei.com>,  Alistair Popple
- <apopple@nvidia.com>,  Bjorn Helgaas <bhelgaas@google.com>,  Baoquan He
- <bhe@redhat.com>,  Dave Jiang <dave.jiang@intel.com>,  Alison Schofield
- <alison.schofield@intel.com>
-Subject: Re: [RFC] resource: Avoid unnecessary resource tree walking in
- __region_intersects()
-In-Reply-To: <ZxnvyIme98Q8ey1c@smile.fi.intel.com> (Andy Shevchenko's message
-	of "Thu, 24 Oct 2024 09:57:12 +0300")
-References: <20241010065558.1347018-1-ying.huang@intel.com>
-	<d129bbe4-8ae8-4915-bd9c-b38b684e8103@redhat.com>
-	<87set3a1nm.fsf@yhuang6-desk2.ccr.corp.intel.com>
-	<ZwkCt_ip5VOGWp4u@smile.fi.intel.com>
-	<671965a8b37a2_1bbc629489@dwillia2-xfh.jf.intel.com.notmuch>
-	<ZxnvyIme98Q8ey1c@smile.fi.intel.com>
-Date: Thu, 24 Oct 2024 20:30:39 +0800
-Message-ID: <87wmhx3cpc.fsf@yhuang6-desk2.ccr.corp.intel.com>
-User-Agent: Gnus/5.13 (Gnus v5.13)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E8A6A2744B;
+	Thu, 24 Oct 2024 12:31:34 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=fail smtp.client-ip=40.107.223.40
+ARC-Seal:i=2; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
+	t=1729773097; cv=fail; b=jC9I9drtu87cRPwixTRnKr0YQu8kvejsB0bLmZwOdDS2vZHzjpz62RNuLqhIuMO+UEn28U4dp0GmxWhaNzTDyxzYig1bGn5OChPIE6VhIlcnsGEw3X6HvT2eQYXDwhfVrajBlBLi2ajf/fj7zoZP7Kwxb9Au+3Y7WjepFkD2olA=
+ARC-Message-Signature:i=2; a=rsa-sha256; d=subspace.kernel.org;
+	s=arc-20240116; t=1729773097; c=relaxed/simple;
+	bh=NtG/fy7+SNNSiQdB8/u3bHDxUyV5s/IflJ+sMYO98nM=;
+	h=Message-ID:Date:Subject:To:Cc:References:From:In-Reply-To:
+	 Content-Type:MIME-Version; b=evKfihhBhoT/ztkekkMi3O/IuLeylYWoRh219EPXWVSiMR1RZ7WxqB9TtUuvnkgIt2hW6N7ZweTdvzzu1u5aNZ/RRsCyWRyxt+x905DFPkOTzkWVwptaTBmXroKT4OLmWShCWTSFeWV5XNmNMenf7/+VYywo7ceDkaysxtCJrrY=
+ARC-Authentication-Results:i=2; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com; spf=fail smtp.mailfrom=amd.com; dkim=pass (1024-bit key) header.d=amd.com header.i=@amd.com header.b=t4eveNpI; arc=fail smtp.client-ip=40.107.223.40
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=amd.com
+Authentication-Results: smtp.subspace.kernel.org; spf=fail smtp.mailfrom=amd.com
+ARC-Seal: i=1; a=rsa-sha256; s=arcselector10001; d=microsoft.com; cv=none;
+ b=pK5G4H5TMfM1toDK7pdqTx5uurVsTHBwN043Pf1wh+bWzuxB+maYc5ccVbZPyNw1rPq9IrFpuHLMs4yIXPqujdgxOku5YHNAwHEFXPnGM2IPk84X0GcmPDYn7oVtowjKCnoJaIZYD4/HyvvwaqtveH27J7V2MRdMekxgP4NqTQcVqL64gu2a3Y4PBRsbQUCE5apIAy4G3G8lrv2Gh7Ej6Q/oc6Vj39prH/i3+I8K4VyXfP6PxOxQQk3E6Ralcl3tc4rAeV9eoN0S4BJ2DeutqrlAlKzAkA3ZiJ5Bor8q8u/M5UtYY8sxSh8JKMQHhAGuPRzBHqYwDicc+a3Dzmsq9Q==
+ARC-Message-Signature: i=1; a=rsa-sha256; c=relaxed/relaxed; d=microsoft.com;
+ s=arcselector10001;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-AntiSpam-MessageData-ChunkCount:X-MS-Exchange-AntiSpam-MessageData-0:X-MS-Exchange-AntiSpam-MessageData-1;
+ bh=7MnrwRhgrbt/d0+zaPMoS5j/YmW88FlD5t1C5nWg7uM=;
+ b=fZOuXVHnQ7yA3MeYc0j/458VKD0K7Suzh7vjlMkdL6vyvJYm7Z8iDOz8/2EF594TFPBSf/yi9y0dSEE/RoYf7EISCE5CaDmceyWR05gSbR2ofOyZxqL36/vUDlQDfgA9X91ppGP1Eb7tnzTCyGMNWx2EzFIKbSHzZpZtfY7reWLF3XZ9vfubq0v7qIXBHmD0TvzbJ7cpqjn/rib9IltKrR/HJ/C9Q573cRGIXtWWp0PYrbKTQDQ53HorYfN+5JiaC1ADBntH4LB/xDrFE1DvFFynBrg2ykrTVspANB258Hwf1Lw4dKE7K779B9oN0KqJoNZOrtv9w6ujXyFPgoJX6g==
+ARC-Authentication-Results: i=1; mx.microsoft.com 1; spf=pass
+ smtp.mailfrom=amd.com; dmarc=pass action=none header.from=amd.com; dkim=pass
+ header.d=amd.com; arc=none
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed; d=amd.com; s=selector1;
+ h=From:Date:Subject:Message-ID:Content-Type:MIME-Version:X-MS-Exchange-SenderADCheck;
+ bh=7MnrwRhgrbt/d0+zaPMoS5j/YmW88FlD5t1C5nWg7uM=;
+ b=t4eveNpIEUY90/3ssUUoIH1gdmMmt2JcLi01N4xJcTfmU/T7ktqiQZbRnLZnEEO3d62kAItenLsj0Tq1Pxh/JVgykvtzVmt36xvXQpsjEeF3FpBVRu97V4lS2lNKdmdbVbDakryZHwJ6PyvUNaA4+6I0sHIaUtKZujbYbAzLOgM=
+Authentication-Results: dkim=none (message not signed)
+ header.d=none;dmarc=none action=none header.from=amd.com;
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com (2603:10b6:8:d0::10) by
+ BY5PR12MB4211.namprd12.prod.outlook.com (2603:10b6:a03:20f::19) with
+ Microsoft SMTP Server (version=TLS1_2,
+ cipher=TLS_ECDHE_RSA_WITH_AES_256_GCM_SHA384) id 15.20.8093.21; Thu, 24 Oct
+ 2024 12:31:30 +0000
+Received: from DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627]) by DS0PR12MB6608.namprd12.prod.outlook.com
+ ([fe80::b71d:8902:9ab3:f627%3]) with mapi id 15.20.8069.027; Thu, 24 Oct 2024
+ 12:31:29 +0000
+Message-ID: <358df653-e572-4e76-954a-15b230d09263@amd.com>
+Date: Thu, 24 Oct 2024 18:01:16 +0530
+User-Agent: Mozilla Thunderbird
+Subject: Re: [RFC 02/14] x86/apic: Initialize Secure AVIC APIC backing page
+To: Borislav Petkov <bp@alien8.de>
+Cc: Dave Hansen <dave.hansen@intel.com>, linux-kernel@vger.kernel.org,
+ tglx@linutronix.de, mingo@redhat.com, dave.hansen@linux.intel.com,
+ Thomas.Lendacky@amd.com, nikunj@amd.com, Santosh.Shukla@amd.com,
+ Vasant.Hegde@amd.com, Suravee.Suthikulpanit@amd.com, David.Kaplan@amd.com,
+ x86@kernel.org, hpa@zytor.com, peterz@infradead.org, seanjc@google.com,
+ pbonzini@redhat.com, kvm@vger.kernel.org
+References: <20240913113705.419146-1-Neeraj.Upadhyay@amd.com>
+ <20240913113705.419146-3-Neeraj.Upadhyay@amd.com>
+ <9b943722-c722-4a38-ab17-f07ef6d5c8c6@intel.com>
+ <4298b9e1-b60f-4b1c-876d-7ac71ca14f70@amd.com>
+ <2436d521-aa4c-45ac-9ccc-be9a4b5cb391@intel.com>
+ <e4568d3d-f115-4931-bbc6-9a32eb04ee1c@amd.com>
+ <20241023163029.GEZxkkpdfkxdHWTHAW@fat_crate.local>
+ <12f51956-7c53-444d-a39b-8dc4aa40aa92@amd.com>
+ <20241024114912.GCZxo0ODKlXYGMnrdk@fat_crate.local>
+Content-Language: en-US
+From: Neeraj Upadhyay <Neeraj.Upadhyay@amd.com>
+In-Reply-To: <20241024114912.GCZxo0ODKlXYGMnrdk@fat_crate.local>
+Content-Type: text/plain; charset=UTF-8
+Content-Transfer-Encoding: 7bit
+X-ClientProxiedBy: PN3PR01CA0017.INDPRD01.PROD.OUTLOOK.COM
+ (2603:1096:c01:95::16) To DS0PR12MB6608.namprd12.prod.outlook.com
+ (2603:10b6:8:d0::10)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=ascii
+X-MS-PublicTrafficType: Email
+X-MS-TrafficTypeDiagnostic: DS0PR12MB6608:EE_|BY5PR12MB4211:EE_
+X-MS-Office365-Filtering-Correlation-Id: 8e0ad10b-f3ab-4cd6-58c4-08dcf427c8ba
+X-MS-Exchange-SenderADCheck: 1
+X-MS-Exchange-AntiSpam-Relay: 0
+X-Microsoft-Antispam: BCL:0;ARA:13230040|7416014|376014|366016|1800799024;
+X-Microsoft-Antispam-Message-Info:
+	=?utf-8?B?N1o0WjlJejJBWUFkbGQ0eWF5bCswRUV3QWMwQWZJVlpXK1BaM3BOVjV2WkVv?=
+ =?utf-8?B?c2dHTmUrUVVhWHJQVTk1eEhBSlQ5OFlsTHdoS1ZhL2VTcDNMTHdDRW9sdTVO?=
+ =?utf-8?B?NDY3M0xHTTlsVlcza2xrVFFCYzFWcUJwWHVxdnkwWnVWaFRma1FxbGhDSlBu?=
+ =?utf-8?B?VVZoYVpzUlVaY3hxdU94d0RkbTVVY3dmYTRVS3gweTRxdXJxblF1Q0Z6RUZH?=
+ =?utf-8?B?UzBMUk1qRTY3UEJJb05Bb09OZW9jeVpmcmRrWDdSSWo1SkhlbzAyUFliVldW?=
+ =?utf-8?B?cE9PUmxKZzFTNWxTQXRMekRNdkFpUFdUMktPb0lmZE8yVktNdWpSMTRGMVJS?=
+ =?utf-8?B?OXBGVm5WWkhCNVZndEVtbkU4V1Q0NkRRRXc1dEl0MFpjbzVVdkZSNmhPTnV0?=
+ =?utf-8?B?ZHB4Y2p0TTQ2RFIzSEZ1UmZPTU0xNzM3S3FpZjhPVU5IRGRlZnR4WVZ4cFBj?=
+ =?utf-8?B?WW1xbDNmQmdJVTN3ZEJBUjQyZFN3cW5BT0VZU0V4OEN4MW1DamkvTFp2c3F1?=
+ =?utf-8?B?aDVEdVo2RjZyWlBMTVNPR3lScG1RQjZaWTd1UmJGbnRVQ3RJWENLa3FlSGVR?=
+ =?utf-8?B?YkpHcjBXWWU5ZVFFTDRVZno0eVZGTzZrdm1jTlNNTXFNcHVEL3VTaTNGTWI5?=
+ =?utf-8?B?RUhTNHIxZ1NCaE9saC9taWtoaFkwYlUyTWhmRmZoSXp2ZlhNTHFtaU5aU2lm?=
+ =?utf-8?B?S0VUUFk5bmRZWTkzNHcrWDRwZXZZMUhqQzRtT0c0c2wzdUpQUnBkeFhrcVVS?=
+ =?utf-8?B?cWgyVHJiNUVZTmx3bHlzMDJOSEs2QUxNc3kyS2JUK0N2ZnpRVFBQbnZ6alFM?=
+ =?utf-8?B?dDZERk9Tc2NINGxUemNvTnlRVE1MK2k1TFdOZmVtbThyVGZ1VStadHZ6eng4?=
+ =?utf-8?B?aHRsRGtyRGQzSVVEN3N5aTV4ZzhXcFhNTkh3SU9ONFFMelFobHhFdUc5T3RN?=
+ =?utf-8?B?OUtidHlScnFmQjhrSWxNdHExUUlRbURDYzdLcTJ3K1dnMGkvUVpJWTdDUHlp?=
+ =?utf-8?B?QmhJSWc1NU12cG9jL1g2Y2dEb29GR2ZRMDRuNGxHMHo4SEV2d1NScmRuYjJQ?=
+ =?utf-8?B?NW55dUsyS2ljV3h2L3Fnak5ydHRmVXV3UlA4eXpjR296cHk1WDMxVjVacnJk?=
+ =?utf-8?B?NFNjS2QzdDJ2RGdQYk5OTWFHZWZsYk0xbnYvczZLSjgwL3l1VWg2SFJFdGNJ?=
+ =?utf-8?B?QUNzbi85c3NxdERsV0M3SUg1R0l3TWlRQlBTVjkxVFFYeXcxSXl6NzBhU3A5?=
+ =?utf-8?B?SDV2OXpNQkJRaTY1UGJrbGlWTU5ZNC9PNTMya2l6NWt4VCtFeE1sOE1Ya251?=
+ =?utf-8?B?VFVKbUdYUkt0MUlEVU4yWlc4R2tzUGtVZGlkQTVLOHFVN0NyWTJQeThxaytn?=
+ =?utf-8?B?N0xITTRMM0FDQXpxYW1XQSt4UG9mZHBzUXdadTRiNUVOcE5JVHBoZkxsanFR?=
+ =?utf-8?B?Vkc3SlJPMm9rWTdqMHYyVWhMOVdsMUtyY1NMRjl0WEtUV3IzSnNMY2o3cVJC?=
+ =?utf-8?B?UVJVeDBROXFKdjMrRjlKYjNhSUFWazBTUlRYbHJkNzlqb2g2a1QxTlk5ZVg1?=
+ =?utf-8?B?YXYzdFhjVHBGaEdmRUkzWmVsUGI3WjZKYU5Sc05BUk5oZlk5MHFid2w1eEt6?=
+ =?utf-8?B?bTFTZU81WmVTTWlIS0FCbzFhdVZJMXMxdk04eXVFYkd5dVV3WnZGVVFHSXo4?=
+ =?utf-8?B?alBkWXFTNk15aFVkbDhlTjh1NHVDQnN4ZzMrajVKN0p3TjVFOFFGdUpZVW5B?=
+ =?utf-8?Q?/qKbRHugRzImE4X2xG6dCW4gpaEXmHIwdCsBLAm?=
+X-Forefront-Antispam-Report:
+	CIP:255.255.255.255;CTRY:;LANG:en;SCL:1;SRV:;IPV:NLI;SFV:NSPM;H:DS0PR12MB6608.namprd12.prod.outlook.com;PTR:;CAT:NONE;SFS:(13230040)(7416014)(376014)(366016)(1800799024);DIR:OUT;SFP:1101;
+X-MS-Exchange-AntiSpam-MessageData-ChunkCount: 1
+X-MS-Exchange-AntiSpam-MessageData-0:
+	=?utf-8?B?angycVZxNUF0UlczRG1XTUFYYUtiUHpvY2dkWHN5cWI5cHpJeWJUcDMxNGlZ?=
+ =?utf-8?B?cmxveHp2L2o4ZzZXQVpZZzhWVEJyWXdGeHhrOFN0dEcwYnNXTzZEWFJpd0NG?=
+ =?utf-8?B?cXdtQWtGbi8rU3dHb2xyRXA4aXlmcWhObVhkSGxyNWZka3VLNmp5RTNzWVRj?=
+ =?utf-8?B?WGZJVnU1L096Zjg2ZlYyUVY1Q0JjRG8rRDBCUTdURFZzR3MxT09FZ0Mwd3lr?=
+ =?utf-8?B?T0dWUUZWQUtWL0pkdklmdkdrVERqWlIxbE5VbFJuZlNHYitJVk5xY01qQ3B5?=
+ =?utf-8?B?M3R2NVV1V085K2d5U2hKUFc0a1pFU29SZUZVOXQ1NHdhcDZhai9SSWNiNGNV?=
+ =?utf-8?B?WTFVaGRMaW5wZmlQdWt0Z3Ixek9FL0ltNUpxRDQ0dDNBOCtGdkZINGtlSlVi?=
+ =?utf-8?B?bFJKaS9BeE9rMlNjcUZxTUllN0dUc3RwRmluTHlwemVvOHErUzRpb2R4ekg2?=
+ =?utf-8?B?d01ISHBKYk94WmNsZi8ycEVacGFSeXZZMzloVEpPNEZ4VkpMNWFIaUNwcmFW?=
+ =?utf-8?B?T3MxUE9IdHI1MGFBSndsMTVOejM1VVhRV0dQZmZqcmV0OHg4OFFGY2pON2xQ?=
+ =?utf-8?B?QWg4dFU1SVduNy94NDZ6Q2RPejdqL3FOQlBvSllhSHVTU1NjL1FwMHJXOUxS?=
+ =?utf-8?B?c2ZXYTN6YnR2YUhCemJCZE9XQTJmSnc1Y3lzbVpUMGZMc2xid0l5bC9lS2pC?=
+ =?utf-8?B?RWNKdytxMTBZNU9EWXUzbllQblJWdEg3aTY1Tk9BOHhrdjF6NGtodXlXTnlN?=
+ =?utf-8?B?aUdmcU5ibm5JMDZHdHNNNW1pbmhuT3NSRHBpSDRCc01kcmFTZWkwV3phNmdM?=
+ =?utf-8?B?djBUS2dDSHJJRC9kS0g2QUR1ZjZ2SXFYanNvYjJ4WmFuS3RFNXN5Q09TeDd0?=
+ =?utf-8?B?aDRaTWpxNjB4dmNWSmNWTVVNdStBTlZQODNWQzBrbXp4STE0S292eWhEUlZ3?=
+ =?utf-8?B?MDljbEsxVXk4YnFnQ0Y1NnkvZzJlQVZ2a2VJYTNnNFdCSGJxbjNuMUlmTHB4?=
+ =?utf-8?B?SU9teGR0SFV2UkJ4bWs4UG5pZTRXZUcxV2RnTi85RzkxMW5kanFBNGV0TUFP?=
+ =?utf-8?B?RmdBNlJ6Tm1QSE9rU0kvMHNMT21UVFJ3LzBERG44bFBiSGx1VVQ2RERXakxa?=
+ =?utf-8?B?M1BxOTM0SUw3cTIvVDVMdlBvbXF4aDJnZXZEY25EN2xPRmw1ZE04c2VFREF4?=
+ =?utf-8?B?ZExuZnBndGdEVTAxVkNla3cvV04yZTcyNk5XWENiS0ovbXpIMFJKUEhpMVBW?=
+ =?utf-8?B?VXh5ZmdyeFk4OHVWS3d1L2Nac3VhSitsa3oxUm8xSmdKdGJJN0N6SDA4N2Nv?=
+ =?utf-8?B?Nm1hdlJleDA0b21PenJFK2FmeitIQ3dVN28zdTQwem9JTTZHc2NMV0R6RlBn?=
+ =?utf-8?B?M2l3RTFGOFBvYy9za0U0RzNnMERsaUd6anRya3h6VGtzQnVqaVAybzIrRVo3?=
+ =?utf-8?B?UWQ5N2FvU1RWd0ZzdDJRbTRBZ3hDZlJ2bE5pcWNyOW42OGc3UVF3a2cyQnFi?=
+ =?utf-8?B?dmNqaVlJVS9PcHl1NWh3RkQ0SldNVVNrRFRSV2RnUUdOZWdFVXdUUnRjU1Qr?=
+ =?utf-8?B?aG84YU1wZGUvRERPTnZNbXQzU3dnZXVpbC9wUnppZVlTMUpkUXNjMjFKY3pT?=
+ =?utf-8?B?bFdkUkZrZHRDZ2tWd2VzUnJKeU10Q2picm1wWDlQYWxsNHFHRU93NjRJS0NK?=
+ =?utf-8?B?MTdITmNqNW1OMUE1dk4xNnVaYTZQV2dZK1BidlNSTzhaY3BsRXpqVXhtdmxz?=
+ =?utf-8?B?Q2FjYk4wbklTRi9kNE1yUkRBVzRyWEhYZXB6UjluSXZoOURzQ1VtUmQ3MVZp?=
+ =?utf-8?B?WU90aEg1MHRDT0h1ZEY1NHpheDlsb0RYa01CUGxuS3hwUXd4RmU1dXVQOCtK?=
+ =?utf-8?B?VFB3cHg5c3RTRDRTV0d3NlVhZEFXVlpuelNPMkxDTkRIb3hVWlZBZEswQ08y?=
+ =?utf-8?B?OUR3MHBIZnpnSGVWZkZ1UUo3RDhzaUpva2wvcjA0Vkl6bDRudlY5bEhCS2pz?=
+ =?utf-8?B?Q1VYcEpwb3A3N3M1QjRvS3M2SmZuNWZoQ29EWHl0RUpwa3NvOXdCeFpkdkMv?=
+ =?utf-8?B?ZFRVKzBERkNQeUxHUFZNQ0FFRk9xMVVMSFFqNWh5RjlYL3h6d1h3Rjczd0tM?=
+ =?utf-8?Q?mJUaZI4D/Jk//ptu9iVxK+5Q+?=
+X-OriginatorOrg: amd.com
+X-MS-Exchange-CrossTenant-Network-Message-Id: 8e0ad10b-f3ab-4cd6-58c4-08dcf427c8ba
+X-MS-Exchange-CrossTenant-AuthSource: DS0PR12MB6608.namprd12.prod.outlook.com
+X-MS-Exchange-CrossTenant-AuthAs: Internal
+X-MS-Exchange-CrossTenant-OriginalArrivalTime: 24 Oct 2024 12:31:29.0648
+ (UTC)
+X-MS-Exchange-CrossTenant-FromEntityHeader: Hosted
+X-MS-Exchange-CrossTenant-Id: 3dd8961f-e488-4e60-8e11-a82d994e183d
+X-MS-Exchange-CrossTenant-MailboxType: HOSTED
+X-MS-Exchange-CrossTenant-UserPrincipalName: lhNn44tjOcGimslanZzT338tXCF8uIUSIUsCG5rAO0rbkAiKeNy6aqK/3cEwdZcypt0TTrCxi/vksh5ZNdYeEA==
+X-MS-Exchange-Transport-CrossTenantHeadersStamped: BY5PR12MB4211
 
-Andy Shevchenko <andriy.shevchenko@linux.intel.com> writes:
 
-> On Wed, Oct 23, 2024 at 02:07:52PM -0700, Dan Williams wrote:
->> Andy Shevchenko wrote:
->> > On Fri, Oct 11, 2024 at 09:06:37AM +0800, Huang, Ying wrote:
->> > > David Hildenbrand <david@redhat.com> writes:
->> > > > On 10.10.24 08:55, Huang Ying wrote:
+
+On 10/24/2024 5:19 PM, Borislav Petkov wrote:
+> On Thu, Oct 24, 2024 at 09:31:01AM +0530, Neeraj Upadhyay wrote:
+>> Please let me know if I didn't understand your questions correctly. The performance
+>> concerns here are w.r.t. these backing page allocations being part of a single
+>> hugepage.
+>>
+>> Grouping of allocation together allows these pages to be part of the same 2M NPT
+>> and RMP table entry, which can provide better performance compared to having
+>> separate 4K entries for each backing page. For example, to send IPI to target CPUs,
+>> ->send_IPI callback (executing on source CPU) in Secure AVIC driver writes to the
+>> backing page of target CPU. Having these backing pages as part of the single
+>> 2M entry could provide better caching of the translation and require single entry
+>> in TLB at the source CPU.
+> 
+> Lemme see if I understand you correctly: you want a single 2M page to contain
+> *all* backing pages so that when the HV wants to send IPIs etc, the first vCPU
+
+With Secure AVIC enabled, source vCPU directly writes to the Interrupt Request Register
+(IRR) offset in the target CPU's backing page. So, the IPI is directly requested in
+target vCPU's backing page by source vCPU context and not by HV.
+
+> will load the page translation into the TLB and the following ones will have
+> it already?
+> 
+
+Yes, but the following ones will be already present in source vCPU's CPU TLB.
+
+> Versus having separate 4K pages which would mean that everytime a vCPU's backing
+> page is needed, every vCPU would have to do a TLB walk and pull it in so that
+> the mapping's there?
+> 
+
+The walk is done by source CPU here, as it is the one which is writing to the
+backing page of target vCPUs.
+
+> Am I close?
 >
-> ...
->
->> > > > 	for ((_p) = (_root)->child; (_p); (_p) = next_resource_XXX(_root, _p))
->> > > 
->> > > Yes.  This can improve code readability.
->> > > 
->> > > A possible issue is that "_root" will be evaluated twice in above macro
->> > > definition.  IMO, this should be avoided.
->> > 
->> > Ideally, yes. But how many for_each type of macros you see that really try hard
->> > to achieve that? I believe we shouldn't worry right now about this and rely on
->> > the fact that root is the given variable. Or do you have an example of what you
->> > suggested in the other reply, i.e. where it's an evaluation of the heavy call?
->> > 
->> > > Do you have some idea about
->> > > how to do that?  Something like below?
->> > > 
->> > > #define for_each_resource_XXX(_root, _p)                                \
->> > > 	for (typeof(_root) __root = (_root), __p = (_p) = (__root)->child; \
->> > > 	     __p && (_p); (_p) = next_resource_XXX(__root, _p))
->> > 
->> > This is a bit ugly :-( I would avoid ugliness as long as we have no problem to
->> > solve (see above).
->> 
->> Using a local defined variable to avoid double evaluation is standard
->> practice. I do not understand "avoid ugliness as long as we have no problem to
->> solve", the problem to solve will be if someone accidentally does
->> something like "for_each_resource_descendant(root++, res)". *That* will
->> be a problem when someone finally realizes that the macro is hiding a
->> double evaluation.
->
-> Can you explain, why do we need __p and how can we get rid of that?
-> I understand the part of the local variable for root.
 
-If don't use '__p', the macro becomes
+I have clarified some parts above. Basically, source vCPU is directly writing to
+remote backing pages.
+ 
+> If so, what's the problem with loading that backing page each time you VMRUN
+> the vCPU?
+> 
 
-#define for_each_resource_XXX(_root, _p)                                \
-	for (typeof(_root) __root = (_root), (_p) = (__root)->child; \
-	     (_p); (_p) = next_resource_XXX(__root, _p))
+As I clarified above, it's the source vCPU which need to load each backing page.
 
-Where, '_p' must be a variable name, and it will be a new variable
-inside for loop and mask the variable with same name outside of macro.
-IIUC, this breaks the macro convention in kernel and has subtle variable
-masking semantics.
+> IOW, how noticeable would that be?
+> 
 
->> So no, this proposal is not "ugly", it is a best practice. See the
->> definition of min_not_zero() for example.
->
-> I know that there are a lot of macros that look uglier that this one.
+I don't have the data at this point. That is the reason I will send this contiguous
+allocation as a separate patch (if required) when I can get data on some workloads
+which are impacted by this.
 
---
-Best Regards,
-Huang, Ying
+> And what guarantees that the 2M page containing the backing pages would always
+> remain in the TLB?
+> 
+
+For smp_call_function_many(), where a source CPU sends IPI to multiple CPUs,
+source CPU writes to backing pages of different target CPUs within this function.
+So, accesses have temporal locality. For other use cases, I need to enable
+perf with Secure AVIC to collect the TLB misses on a IPI benchmark and get
+back with the numbers.
+
+
+- Neeraj
+
+> Hmmm.
+> 
 
