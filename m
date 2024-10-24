@@ -1,134 +1,106 @@
-Return-Path: <linux-kernel+bounces-380579-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-380580-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from sv.mirrors.kernel.org (sv.mirrors.kernel.org [IPv6:2604:1380:45e3:2400::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 8B2B79AF2E3
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:48:41 +0200 (CEST)
+Received: from sy.mirrors.kernel.org (sy.mirrors.kernel.org [IPv6:2604:1380:40f1:3f00::1])
+	by mail.lfdr.de (Postfix) with ESMTPS id 103CC9AF2F1
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 21:51:40 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by sv.mirrors.kernel.org (Postfix) with ESMTPS id 4AEA42816D9
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:48:40 +0000 (UTC)
+	by sy.mirrors.kernel.org (Postfix) with ESMTPS id 8BA6EB218E6
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 19:51:37 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 6B365198A30;
-	Thu, 24 Oct 2024 19:48:34 +0000 (UTC)
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id 150D01F8184;
+	Thu, 24 Oct 2024 19:51:25 +0000 (UTC)
 Authentication-Results: smtp.subspace.kernel.org;
-	dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b="OOcsbaJm"
-Received: from mail-lf1-f54.google.com (mail-lf1-f54.google.com [209.85.167.54])
+	dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b="ep1wi1et"
+Received: from mail-pj1-f53.google.com (mail-pj1-f53.google.com [209.85.216.53])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
 	(No client certificate requested)
-	by smtp.subspace.kernel.org (Postfix) with ESMTPS id C4D6122B67F
-	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 19:48:31 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.54
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id B5BD322B67F;
+	Thu, 24 Oct 2024 19:51:22 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.216.53
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729799313; cv=none; b=dpZ8cTxzyYMyaduYJwuhGs7+2r+huKpe6sccjJHmfkeD27m4Ewa5wRv4oU7uSIUpz0GPtchycApmuvJgT360zS8c6N1HZ3yb5YiJb5Ek7goZv8DDckCBH6iIWNvQ9b2h+uBNk1Eiq51eIElgrKisZP8K+vy4HLg6nZ5BjGcvoD4=
+	t=1729799484; cv=none; b=uQnK48KURck/ztB1AKVfo87dO+WBw12bnV//dE3v0XnsuLQ8TrF7CKGbiOmkOXhxj64ju4BT4PeFAqr8HGoKtylqLGiG1jLvXp7JNtPaphVDsVChxHIvIuHUo9sUkzhn2qC6Q8klMbp1u/Rsb1hrKnes97E/82O4I3YFtzbXnGs=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729799313; c=relaxed/simple;
-	bh=rP3nE3YfLu0nrtohxJZRriv9faFfru/uo3MCztPmSj4=;
-	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
-	 Content-Type:Content-Disposition:In-Reply-To; b=nwejwjCJ6ZESSpy9NPN3KTN+Iy2TiMhZVqLldkCVUPX2laGRkPXBH1WlyA9H2H6DcuD0IYWgxQVFxR9EXXvzkvGec5My9Hkj8QkviRo8Uzt/6mtASlf40jFxaf3O02Y7gOJMiyzKRxze5IS6ALGY0EG0gklkkLJ9QIpM1neJUEI=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org; spf=pass smtp.mailfrom=linaro.org; dkim=pass (2048-bit key) header.d=linaro.org header.i=@linaro.org header.b=OOcsbaJm; arc=none smtp.client-ip=209.85.167.54
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=linaro.org
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=linaro.org
-Received: by mail-lf1-f54.google.com with SMTP id 2adb3069b0e04-539e5c15fd3so1323979e87.3
-        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 12:48:31 -0700 (PDT)
+	s=arc-20240116; t=1729799484; c=relaxed/simple;
+	bh=hDZLP8PRZ/QWIIhqrw8i0QlBmFDEwE7SofCdl0cHI94=;
+	h=MIME-Version:References:In-Reply-To:From:Date:Message-ID:Subject:
+	 To:Cc:Content-Type; b=l6hw1Q7M0yjwfme4JBk/M1qbdYt8mLWyRzG5fYW65180go8eXtje05g2xA+xigFHTWLckvxNsX04YYvNl04QE/Je5a1GFmqN+TAlP9X3t8ccqkS8g+j3JhTIl5kmNJYbnoCW048UFsQYZFofWStEokP5h8ALS6XXTk6F9L1sKoY=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com; spf=pass smtp.mailfrom=gmail.com; dkim=pass (2048-bit key) header.d=gmail.com header.i=@gmail.com header.b=ep1wi1et; arc=none smtp.client-ip=209.85.216.53
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=gmail.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=gmail.com
+Received: by mail-pj1-f53.google.com with SMTP id 98e67ed59e1d1-2e2b720a0bbso240640a91.1;
+        Thu, 24 Oct 2024 12:51:22 -0700 (PDT)
 DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=linaro.org; s=google; t=1729799310; x=1730404110; darn=vger.kernel.org;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
-        bh=VGBoqND71236knReCQexeHrHy1YPglXydeKm7AcaSgw=;
-        b=OOcsbaJmwaiwiIvY3idfBf/Po5i076YwWgH3ESX+BQ3eX7/66WWiRZc/FxYSQ1jRhY
-         OHAy7cYhyAmU0XLQNWs9AG4G6u6FszQViJNMUBE1X3jBqw67w2SKLjYMF8kG6NFvsEne
-         b+R3U73z6QRtS8B6RDNXsEID+xuX7hCn97QH6vE+LCYaIHo4XPQxPrJHsJBsKOhFivxx
-         rydlENCDnAfsrKih7111EzC+WOq/PdGtts0lYgMbE+5nW30TdqCNc0yGpoebMbxPVFP5
-         yCos3bxZr0sv4bgtflR7kxtR6emngwtMXABJwIC1bFrS2HLIER53JvFDI2Rr1pz87T+W
-         4dug==
+        d=gmail.com; s=20230601; t=1729799482; x=1730404282; darn=vger.kernel.org;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:from:to:cc:subject:date:message-id:reply-to;
+        bh=hDZLP8PRZ/QWIIhqrw8i0QlBmFDEwE7SofCdl0cHI94=;
+        b=ep1wi1eta+l+PYvFNy/JYBui3GRMGZuXJguftfCpdBtgh/1GJTCsPQABlVCW7iao67
+         +bjvTlAUVrYJNfoLBmuNqPJI7TDvMAt79VtX86DuiSi4TG0d353v5YnZpO/YuIbNWfZ9
+         NZzXYJu7A9Z1YqqP+A9UUZAXEKQwNq6Q0Kf+UpvfFZmSfoYsDXWiTtiLlNU6gGBeuU46
+         tea2fUKSe6DrH36BiDgRjz1qXNRlpkwYC+eqpZsXBmLRTxud0bYmVzB8HRllef7IkYFk
+         Ozez585n1U3TEKPI7S3Bv8DDqDd8WB4VFbdt61p5AJQPXmHmZnUrSFyzOVIyeyTNfH6m
+         q82Q==
 X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
-        d=1e100.net; s=20230601; t=1729799310; x=1730404110;
-        h=in-reply-to:content-disposition:mime-version:references:message-id
-         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
-         :message-id:reply-to;
-        bh=VGBoqND71236knReCQexeHrHy1YPglXydeKm7AcaSgw=;
-        b=gBmtc2Ih0TsxmGlObxct9/7Mbmdi1r/8JunHe7hLWntDtojtTFtzukzCH0Ano/sM0+
-         4YSsaPjOvGj7ycCWZHEx4Z7pcDvYa0YL/YVZlyWsyHSigB6+YqJM1RkNFUEYin3qnl8l
-         gNWuRrBcd2hfWta/IRzRHl0fWAorfbtLcLvoswv8ePHeL8R9C016bL4vYiX2Wtypylmv
-         9fVhWdPO9XxNCXPZluZriHcKTBYE9DoAPUjeHiSyCueJWIoCtWaDRS7ocfQEmvPa5/uD
-         scyjBUaOkHnO8A8006Lsp7lf5I0Gdfqht6BV2BIuec5m7f1YrlLspMRDm5drTHp2SpcA
-         13Fg==
-X-Forwarded-Encrypted: i=1; AJvYcCUrop0qSvHomjK8GH+ngFx5W+C+1PWg0gjkLije4TeQ1QgTBTHDxRXIyTbIidRbY7lfV8fGTkscGnpzDLM=@vger.kernel.org
-X-Gm-Message-State: AOJu0YyXfRYatrB1ZOm158sY+NvqFPd8e1HJuk6mTakzywM3s1OrCdmY
-	4YN1Hg1UIRM3jDrxQ3ClzxoBPqiBv725rjnzuvxSlYlQHAIBWAildqABN2awCxg=
-X-Google-Smtp-Source: AGHT+IFxNfXsb6FF2TOOX13EEGKrWhQ/IAyagU629O/aokFyrD4j96vGZ/8XXEmR0CIVaotIUpg1zg==
-X-Received: by 2002:a05:6512:230b:b0:52e:7542:f469 with SMTP id 2adb3069b0e04-53b23bc0b0fmr2106888e87.0.1729799309863;
-        Thu, 24 Oct 2024 12:48:29 -0700 (PDT)
-Received: from eriador.lumag.spb.ru (2001-14ba-a0c3-3a00--7a1.rev.dnainternet.fi. [2001:14ba:a0c3:3a00::7a1])
-        by smtp.gmail.com with ESMTPSA id 2adb3069b0e04-53a2241ffc6sm1451111e87.179.2024.10.24.12.48.27
-        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
-        Thu, 24 Oct 2024 12:48:28 -0700 (PDT)
-Date: Thu, 24 Oct 2024 22:48:26 +0300
-From: Dmitry Baryshkov <dmitry.baryshkov@linaro.org>
-To: Sibi Sankar <quic_sibis@quicinc.com>
-Cc: Krzysztof Kozlowski <krzk@kernel.org>, sudeep.holla@arm.com, 
-	cristian.marussi@arm.com, andersson@kernel.org, konrad.dybcio@linaro.org, 
-	robh+dt@kernel.org, krzysztof.kozlowski+dt@linaro.org, linux-kernel@vger.kernel.org, 
-	linux-arm-msm@vger.kernel.org, devicetree@vger.kernel.org, linux-arm-kernel@lists.infradead.org, 
-	quic_rgottimu@quicinc.com, quic_kshivnan@quicinc.com, conor+dt@kernel.org, 
-	arm-scmi@vger.kernel.org
-Subject: Re: [PATCH V4 1/5] dt-bindings: firmware: Document bindings for QCOM
- SCMI Generic Extension
-Message-ID: <lewbl6nglqzvhe4ho7ayzqwj7xrgszqfrapqo46cwbfhsftptd@ap7l6zqpo275>
-References: <20241007061023.1978380-1-quic_sibis@quicinc.com>
- <20241007061023.1978380-2-quic_sibis@quicinc.com>
- <q2vuiru7sqetwqyitg7azgqg7kge622i2zgq52b55zivwtbev4@4qgzb54xjioq>
- <hxfg6ztpqy7qdsgzhvvapeyh2f55mj7hhuqqkz7si6g5i7nsng@xoyfwztk66aj>
- <3765cf3d-8477-45a7-af0e-b0c78f41eaad@kernel.org>
- <0b297305-0141-208a-e414-fb7dc98317b9@quicinc.com>
+        d=1e100.net; s=20230601; t=1729799482; x=1730404282;
+        h=cc:to:subject:message-id:date:from:in-reply-to:references
+         :mime-version:x-gm-message-state:from:to:cc:subject:date:message-id
+         :reply-to;
+        bh=hDZLP8PRZ/QWIIhqrw8i0QlBmFDEwE7SofCdl0cHI94=;
+        b=Hbyp81VfVDreNAAjGK9/niURO/d8Rz4XNlLJWQArYxti2heR8jUT2171I5QexCxCyg
+         X97NPf3jmC2uxvhwVzD/B3gBzaEtYZLaA+91CpWSpFjexLqtxvmN97duS8eNyiv6H2ga
+         Z4T7ydkpW4BlTAS4MBsRarF5j0rfrQOfn+g7llgkTOFlcpw/PgePoZEHPfL99oMsE0Dt
+         cHb01MuTCsA4oGo3b1b4ge3ixkhQs41E2IIN7cJAJYxqq/9GzZHAlKRfoHZUnyB0Qg1R
+         CjNi96sn6bREamgQ6cPwEJ58zGe7rn/Wdok/A2pPG3u8xOuLllllNrn3CA2P+GP6hhN/
+         Yhcw==
+X-Forwarded-Encrypted: i=1; AJvYcCUBWbiL/8jZs5Ovu4DLmqj/gJwfSdyB4lPpD7ne1bppRkVzwgZkzUQj6fbc7HlzNxBA3qshxLYHMHY=@vger.kernel.org, AJvYcCUPDxHNQ9ubQU8CYry1xcRPWYSqFdohbWpmf5mXj99sjLxBJzs66lYyqwdAXRYIuTMFQCgvilM0AipJvQ==@vger.kernel.org, AJvYcCUZqEZam9zLHfLFng7dAl2YgzsXF24dboGobLhYxYsLV5HIQ26jE0WgQDoF4q9fOtDNuLLZyvwuBQh2Mkg=@vger.kernel.org, AJvYcCVBRDoscOkpbAc1WQq3uG0XetnkEUY1BxWHsA3UgfX1JeAXxRoOH1PRGM8SP3qSQgRWIHiXfabo@vger.kernel.org, AJvYcCVKskCkYrSLzI6Tagu6TWjdeLN+7AMfDXn9AKiagXVZuidzRIvDQ4BzTPtD6XOXAD/Joha2C86H5aHm@vger.kernel.org, AJvYcCVM5214y1bsTeE06g4SdunCf7DR+uq9ZoCnFdV2bSRm9a4QoLyebx5D2GBHoOwMGMFvUknCLpdWyvFNhcSA8IBNw1o=@vger.kernel.org, AJvYcCVY+uffYgR0/r0o6Ai6i04387SWOKv/wZdsRSVx3VB4IY0sCpVhfZxiIx5Lgkfwot7jm5O5Q6YzrEoN@vger.kernel.org, AJvYcCVZ5YVhGhxdaRFEIZC3HpPR1KHVNdNyQYMst+x4msPEdM3kjjbg9NunMEWSqc4GGaukhG3Yrvuvxbzcv946@vger.kernel.org, AJvYcCWvh1dzfEKfqhen2zHpIlwafrNIkBfwWkNeY/cYJekLlGH7xiIBFjnz3mxIgc4QEUFiyIVFslKv08JR@vger.kernel.org, AJvYcCXN0ziCfta1Wss7n6p5cLWq41eJ
+ dEpELSW7H+6WbZ/LeK9u537tRnDXrSrpibtQhJOOWFZrWlLMTUBOTg==@vger.kernel.org, AJvYcCXlbuzLXP32lw9P06EqGsIWzyRonanmYYFyE9D5RhBcglEzeBwEUunGWvhbQiCwOYFEzkLPB9oBGXWggQr7@vger.kernel.org
+X-Gm-Message-State: AOJu0YwAB3sDOH706QuuKPx+UJsNjoXlUj5RDl1F17yMwGA8CV+elIl4
+	TJKzxnuPJ9jqeeNMs+VSiy1GW8HwwWcjzxqVZQkz3ktu1dGc7QhHw0l2AtjK8cNBS83YiKzJpci
+	K0H+o0ctUcv48jVDir6vonYKJ2do=
+X-Google-Smtp-Source: AGHT+IFLn362eXA2alAIz2ois1hme8vmMzAr/A4Q67tgGIjhwo4c/Uwrf7x2Y1gjJusyhIkVGgJ2HbVgUBZrDoJcR7M=
+X-Received: by 2002:a17:90b:4a83:b0:2e2:e929:e8d2 with SMTP id
+ 98e67ed59e1d1-2e76b6c3194mr3396949a91.4.1729799482088; Thu, 24 Oct 2024
+ 12:51:22 -0700 (PDT)
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-Content-Type: text/plain; charset=us-ascii
-Content-Disposition: inline
-In-Reply-To: <0b297305-0141-208a-e414-fb7dc98317b9@quicinc.com>
+References: <2m53bmuzemamzc4jzk2bj7tli22ruaaqqe34a2shtdtqrd52hp@alifh66en3rj> <20241024185246.315631-1-elfy.ua@gmail.com>
+In-Reply-To: <20241024185246.315631-1-elfy.ua@gmail.com>
+From: =?UTF-8?Q?Dragan_Milivojevi=C4=87?= <d.milivojevic@gmail.com>
+Date: Thu, 24 Oct 2024 21:51:10 +0200
+Message-ID: <CALtW_ahkg9W0wm09cxkJxiSQCH=42smeK=fqh5cQ9sRSNsjeXA@mail.gmail.com>
+Subject: Re: linux: Goodbye from a Linux community volunteer
+To: Oleksiy Protas <elfy.ua@gmail.com>
+Cc: fancer.lancer@gmail.com, ajhalaney@gmail.com, allenbh@gmail.com, 
+	andrew@lunn.ch, andriy.shevchenko@linux.intel.com, andy@kernel.org, 
+	arnd@arndb.de, bhelgaas@google.com, bp@alien8.de, broonie@kernel.org, 
+	cai.huoqing@linux.dev, dave.jiang@intel.com, davem@davemloft.net, 
+	dlemoal@kernel.org, dmaengine@vger.kernel.org, dushistov@mail.ru, 
+	geert@linux-m68k.org, gregkh@linuxfoundation.org, ink@jurassic.park.msu.ru, 
+	jdmason@kudzu.us, jiaxun.yang@flygoat.com, keguang.zhang@gmail.com, 
+	kory.maincent@bootlin.com, krzk@kernel.org, kuba@kernel.org, 
+	linux-edac@vger.kernel.org, linux-hwmon@vger.kernel.org, 
+	linux-ide@vger.kernel.org, linux-kernel@vger.kernel.org, 
+	linux-mips@vger.kernel.org, linux-pci@vger.kernel.org, 
+	linux-renesas-soc@vger.kernel.org, linux-serial@vger.kernel.org, 
+	linux-spi@vger.kernel.org, linux@armlinux.org.uk, linux@roeck-us.net, 
+	manivannan.sadhasivam@linaro.org, netdev@vger.kernel.org, 
+	nikita.shubin@maquefel.me, nikita@trvn.ru, ntb@lists.linux.dev, 
+	olteanv@gmail.com, pabeni@redhat.com, paulburton@kernel.org, robh@kernel.org, 
+	s.shtylyov@omp.ru, sergio.paracuellos@gmail.com, shc_work@mail.ru, 
+	siyanteng@loongson.cn, tsbogend@alpha.franken.de, xeb@mail.ru, 
+	yoshihiro.shimoda.uh@renesas.com
+Content-Type: text/plain; charset="UTF-8"
 
-On Tue, Oct 22, 2024 at 12:55:19PM +0530, Sibi Sankar wrote:
-> 
-> 
-> On 10/8/24 17:41, Krzysztof Kozlowski wrote:
-> > On 08/10/2024 14:10, Dmitry Baryshkov wrote:
-> > > On Tue, Oct 08, 2024 at 08:49:27AM GMT, Krzysztof Kozlowski wrote:
-> > > > On Mon, Oct 07, 2024 at 11:40:19AM +0530, Sibi Sankar wrote:
-> > > > > +/*
-> > > > > + * QCOM_MEM_TYPE_DDR_QOS supports the following states.
-> > > > > + *
-> > > > > + * %QCOM_DDR_LEVEL_AUTO:	DDR operates with LPM enabled
-> > > > > + * %QCOM_DDR_LEVEL_PERF:	DDR operates with LPM disabled
-> > > > > + */
-> > > > > +#define QCOM_DDR_LEVEL_AUTO	0x0
-> > > > > +#define QCOM_DDR_LEVEL_PERF	0x1
-> > > > 
-> > > > I could not find any driver using these. Can you point me to usage in
-> > > > the drivers?
-> > > 
-> > > It's well hidden. These are the raw values used for DDR_QOS memory.
-> > 
-> > So not a binding? Then these should be dropped.
-> 
-> I am not sure why the term "well hidden" was even considered :(
-> The driver just reads them from dt and passes them along. If you
-> want the dt to list magic numbers 0/1 instead I can do that as well.
+> It's quite apalling that this needs to be broken down to adult people.
+>
+> Take care and consider rethinking your life choices.
 
-Well, it is well hidden, because e.g. Krzysztof could not find them
-being used.
-
-No, nobody asks for the magic numbers. Please drop them from DT and move
-to the driver instead. And this is one additional bonus point for the
-non-generic node names. ddr-qos is _different_ from all other "memory"
-types. It doesn't have min/max values.
-
--- 
-With best wishes
-Dmitry
+Does the same apply for Raytheon, Boeing etc employees?
 
