@@ -1,130 +1,127 @@
-Return-Path: <linux-kernel+bounces-379557-lists+linux-kernel=lfdr.de@vger.kernel.org>
+Return-Path: <linux-kernel+bounces-379558-lists+linux-kernel=lfdr.de@vger.kernel.org>
 X-Original-To: lists+linux-kernel@lfdr.de
 Delivered-To: lists+linux-kernel@lfdr.de
-Received: from ny.mirrors.kernel.org (ny.mirrors.kernel.org [IPv6:2604:1380:45d1:ec00::1])
-	by mail.lfdr.de (Postfix) with ESMTPS id 4A5F09AE05D
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:16:05 +0200 (CEST)
+Received: from am.mirrors.kernel.org (am.mirrors.kernel.org [IPv6:2604:1380:4601:e00::3])
+	by mail.lfdr.de (Postfix) with ESMTPS id 8EC459AE062
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 11:17:08 +0200 (CEST)
 Received: from smtp.subspace.kernel.org (wormhole.subspace.kernel.org [52.25.139.140])
 	(using TLSv1.2 with cipher ECDHE-RSA-AES256-GCM-SHA384 (256/256 bits))
 	(No client certificate requested)
-	by ny.mirrors.kernel.org (Postfix) with ESMTPS id 7A0E61C225E4
-	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:16:04 +0000 (UTC)
+	by am.mirrors.kernel.org (Postfix) with ESMTPS id 133781F2257D
+	for <lists+linux-kernel@lfdr.de>; Thu, 24 Oct 2024 09:17:08 +0000 (UTC)
 Received: from localhost.localdomain (localhost.localdomain [127.0.0.1])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 90DC01C07DC;
-	Thu, 24 Oct 2024 09:14:53 +0000 (UTC)
-Received: from foss.arm.com (foss.arm.com [217.140.110.172])
-	by smtp.subspace.kernel.org (Postfix) with ESMTP id 509E21B3937;
-	Thu, 24 Oct 2024 09:14:50 +0000 (UTC)
-Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=217.140.110.172
+	by smtp.subspace.kernel.org (Postfix) with ESMTP id E64591B21A6;
+	Thu, 24 Oct 2024 09:16:58 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org;
+	dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b="UMK/yKWT"
+Received: from mail-lf1-f52.google.com (mail-lf1-f52.google.com [209.85.167.52])
+	(using TLSv1.2 with cipher ECDHE-RSA-AES128-GCM-SHA256 (128/128 bits))
+	(No client certificate requested)
+	by smtp.subspace.kernel.org (Postfix) with ESMTPS id E9D921CD3F
+	for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 09:16:55 +0000 (UTC)
+Authentication-Results: smtp.subspace.kernel.org; arc=none smtp.client-ip=209.85.167.52
 ARC-Seal:i=1; a=rsa-sha256; d=subspace.kernel.org; s=arc-20240116;
-	t=1729761293; cv=none; b=oNqUqpIAWE0JPRFnAf122Sj+PyleeB0UXhISV/gzA7Tx/TG3onRzzNVtGg1bGvxH+WctEwnwPTziYHrD0Tzr/PjwDLXJ44sWapSbSRbYRKw6J/41BMbhHzI3hmniHoHQJIS7aUlZOhddKNoMBSvxytHNm0rkVk3iwLLbuQNuHGQ=
+	t=1729761418; cv=none; b=sMO/ZR90CQCjGE3XOGgfVipNOFYUeGQLr4BJv9hcFlTNvoeBHcBG7FEM6S3qgfMXYLzPr8FcQtLSHazKLdY6CeUeCcLDfld91obbcbrrsYbWKB3CMP335G4KOVk2EVfE/1dZ8wG7ZQAgW9kvBqZZ80Se6hcbRcYWkGYX8pkVIQ8=
 ARC-Message-Signature:i=1; a=rsa-sha256; d=subspace.kernel.org;
-	s=arc-20240116; t=1729761293; c=relaxed/simple;
-	bh=0Dpewwiyr7pfFfSz5fJw/I04WqJpl7G8f4fiLa06qFg=;
-	h=Message-ID:Date:MIME-Version:Subject:To:Cc:References:From:
-	 In-Reply-To:Content-Type; b=V5oJLS209+mI/K+eTPuJ9dDbPZ0BXWFad8ORdKeRHxfD2/UsKB2ew3Yv7Ug2K4aweqQK1uko8xU9yY4T9vnfQxnAto0c4EQDq4YI5iUx2D5Zsh2UiAs4AUtf/FCnuuX0Z9IPsMAg2VAsO1QhDQSUvL/7OI9wCiTCnFIctXgkfY0=
-ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com; spf=pass smtp.mailfrom=arm.com; arc=none smtp.client-ip=217.140.110.172
-Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=none dis=none) header.from=arm.com
-Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=arm.com
-Received: from usa-sjc-imap-foss1.foss.arm.com (unknown [10.121.207.14])
-	by usa-sjc-mx-foss1.foss.arm.com (Postfix) with ESMTP id 22095339;
-	Thu, 24 Oct 2024 02:15:19 -0700 (PDT)
-Received: from [10.1.197.1] (ewhatever.cambridge.arm.com [10.1.197.1])
-	by usa-sjc-imap-foss1.foss.arm.com (Postfix) with ESMTPSA id B78FA3F73B;
-	Thu, 24 Oct 2024 02:14:47 -0700 (PDT)
-Message-ID: <b848ae69-aca4-43d1-aa38-2f424045ee6f@arm.com>
-Date: Thu, 24 Oct 2024 10:14:46 +0100
+	s=arc-20240116; t=1729761418; c=relaxed/simple;
+	bh=Urr4Bup3gtJFSu/HDlD6IZqiGmKuABzJUZ4Qipx6pkU=;
+	h=Date:From:To:Cc:Subject:Message-ID:References:MIME-Version:
+	 Content-Type:Content-Disposition:In-Reply-To; b=kFL8Qu/3ZzuEAaxO3q6v2MpvXlDCGeIwPmsI7Ndb5dsXm36YOLlQqFSIlY0aTvmzJWyyfbNuaaZvXVMLc+ul3m949NR/ONCwq1ciyPvMgNkc0NfcOjr5/rViG68GJOtNScB8cMzXDNOTXJqtMrNr4CJ1XV7o2IAch7oz+/U5OwM=
+ARC-Authentication-Results:i=1; smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com; spf=pass smtp.mailfrom=suse.com; dkim=pass (2048-bit key) header.d=suse.com header.i=@suse.com header.b=UMK/yKWT; arc=none smtp.client-ip=209.85.167.52
+Authentication-Results: smtp.subspace.kernel.org; dmarc=pass (p=quarantine dis=none) header.from=suse.com
+Authentication-Results: smtp.subspace.kernel.org; spf=pass smtp.mailfrom=suse.com
+Received: by mail-lf1-f52.google.com with SMTP id 2adb3069b0e04-5366fd6fdf1so881961e87.0
+        for <linux-kernel@vger.kernel.org>; Thu, 24 Oct 2024 02:16:55 -0700 (PDT)
+DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=suse.com; s=google; t=1729761414; x=1730366214; darn=vger.kernel.org;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:from:to:cc:subject:date:message-id:reply-to;
+        bh=AeE8KFauVONfdqIJuroUx8aqRES8F0A4JpZa9szE0Qo=;
+        b=UMK/yKWTnjFqykT28hCiVCSil6eY9XEkl2JoUirhooJtcT246fe3n+vmHo73QD6l40
+         hI2TnFzIfi9lCOeInxZeMEslOZOhFf38aRKAfoSPgYyC3o+WwRdnv+62/Gb8IdlalyWr
+         6AoMFmKAv+oPJS0/Sn/gAPFJkW0T2ShJpjOdx3xqkqA7QidMAWR0eFr441pUFcxmr0KJ
+         GiNhM/znsB3h/GB79/x0FE0r8JngoBHX7ALJctnE0VpsIq0vDKJ5kX7y8Y9vqb+JYNZ4
+         drTHPQ02ONjzJcaItn6cVhhw5aTJc7qCwFawQdQbYQPBdQ0uFq5QOTZqwyBpIxb8ViOE
+         Ae8A==
+X-Google-DKIM-Signature: v=1; a=rsa-sha256; c=relaxed/relaxed;
+        d=1e100.net; s=20230601; t=1729761414; x=1730366214;
+        h=in-reply-to:content-disposition:mime-version:references:message-id
+         :subject:cc:to:from:date:x-gm-message-state:from:to:cc:subject:date
+         :message-id:reply-to;
+        bh=AeE8KFauVONfdqIJuroUx8aqRES8F0A4JpZa9szE0Qo=;
+        b=IgYr0gSNWqeZmRvtEXMr12hLRMX0fNiG988H6DrtmrlH91gSRH+PvcGJf/FwuJePXU
+         ZlIdYr2hTMZfX1yTkewNM+dvy8lYIYYqTbLpMGmoZKYviMgNfKr5G7rrFT2xWFySFABB
+         yHfZArs2/iWYBsuP5a70f0Zu18ZyB98QN8XIbXcafdTNrJAS5YsvGDIsZ8Fz+kJJZpO8
+         qTKLBMS5s+rol+E3/RCcOEcqrFPZTCAKrxi5kb/F6TlPKKVNepWUOqOt/+eNB82sf+t6
+         UT27/+x9Bz4b/sebXClKgboIncDenWZFgx2u9oiPEdtB1fLsHgkxFMIslOKe+B1GBkzN
+         lj9g==
+X-Forwarded-Encrypted: i=1; AJvYcCUHrSsx4QQ/k/+KMYs0SEsMuJHx1q7vf4wQuOpvIUuFsw5q4yU/0ylLI9vnEelZ1V3Iak5eiVZbPCcDqEg=@vger.kernel.org
+X-Gm-Message-State: AOJu0Yy8/+m9g/yRAKQYYBSGnh+snpp2osLv2AtKY/fQqJ4qkN0Y+HjO
+	doqwe27MY1Pr6zi7K6eQy4Z6TVGzHCI0w1inj/+ZTFNdWSFDUbjZfuFtQ/uHljY=
+X-Google-Smtp-Source: AGHT+IGiRIKpzx6HiVv9FVaGAJq4id/5NbMKWWIl1xUL7eRNooF4qx/CFIyStwDItG8GRMhvMNBfsg==
+X-Received: by 2002:a05:6512:3b9c:b0:539:f1ad:b7a6 with SMTP id 2adb3069b0e04-53b23e67ceemr637951e87.37.1729761414027;
+        Thu, 24 Oct 2024 02:16:54 -0700 (PDT)
+Received: from localhost (109-81-81-105.rct.o2.cz. [109.81.81.105])
+        by smtp.gmail.com with ESMTPSA id 5b1f17b1804b1-4318b55f50csm11444305e9.17.2024.10.24.02.16.53
+        (version=TLS1_3 cipher=TLS_AES_256_GCM_SHA384 bits=256/256);
+        Thu, 24 Oct 2024 02:16:53 -0700 (PDT)
+Date: Thu, 24 Oct 2024 11:16:52 +0200
+From: Michal Hocko <mhocko@suse.com>
+To: Shakeel Butt <shakeel.butt@linux.dev>
+Cc: Andrew Morton <akpm@linux-foundation.org>,
+	Johannes Weiner <hannes@cmpxchg.org>,
+	Roman Gushchin <roman.gushchin@linux.dev>,
+	Muchun Song <muchun.song@linux.dev>,
+	Hugh Dickins <hughd@google.com>, linux-mm@kvack.org,
+	cgroups@vger.kernel.org, linux-kernel@vger.kernel.org,
+	linux-fsdevel@vger.kernel.org, linux-doc@vger.kernel.org,
+	Meta kernel team <kernel-team@meta.com>
+Subject: Re: [RFC PATCH 3/3] memcg-v1: remove memcg move locking code
+Message-ID: <ZxoQhEPXmSkM7sH_@tiehlicka>
+References: <20241024065712.1274481-1-shakeel.butt@linux.dev>
+ <20241024065712.1274481-4-shakeel.butt@linux.dev>
 Precedence: bulk
 X-Mailing-List: linux-kernel@vger.kernel.org
 List-Id: <linux-kernel.vger.kernel.org>
 List-Subscribe: <mailto:linux-kernel+subscribe@vger.kernel.org>
 List-Unsubscribe: <mailto:linux-kernel+unsubscribe@vger.kernel.org>
 MIME-Version: 1.0
-User-Agent: Mozilla Thunderbird
-Subject: Re: [PATCH v4 1/4] dt-bindings: arm:
- qcom,coresight-static-replicator: Add property for source filtering
-To: Tao Zhang <quic_taozha@quicinc.com>, Mike Leach <mike.leach@linaro.org>,
- James Clark <james.clark@arm.com>, Rob Herring <robh@kernel.org>,
- Krzysztof Kozlowski <krzk+dt@kernel.org>, Conor Dooley
- <conor+dt@kernel.org>, Mathieu Poirier <mathieu.poirier@linaro.org>,
- Leo Yan <leo.yan@linux.dev>,
- Alexander Shishkin <alexander.shishkin@linux.intel.com>
-Cc: coresight@lists.linaro.org, linux-arm-kernel@lists.infradead.org,
- linux-kernel@vger.kernel.org, devicetree@vger.kernel.org,
- linux-arm-msm@vger.kernel.org
-References: <20241024065306.14647-1-quic_taozha@quicinc.com>
- <20241024065306.14647-2-quic_taozha@quicinc.com>
-Content-Language: en-US
-From: Suzuki K Poulose <suzuki.poulose@arm.com>
-In-Reply-To: <20241024065306.14647-2-quic_taozha@quicinc.com>
-Content-Type: text/plain; charset=UTF-8; format=flowed
-Content-Transfer-Encoding: 7bit
+Content-Type: text/plain; charset=us-ascii
+Content-Disposition: inline
+In-Reply-To: <20241024065712.1274481-4-shakeel.butt@linux.dev>
 
-On 24/10/2024 07:53, Tao Zhang wrote:
-> The is some "magic" hard coded filtering in the replicators,
-> which only passes through trace from a particular "source". Add
-> a new property "filter-src" to label a phandle to the coresight
-> trace source device matching the hard coded filtering for the port.
-
-As mentioned in here in v3 review :
-
-https://lkml.org/lkml/2024/8/21/597
-
-Please do not use "src", expand it to "source"
-
-Rest looks fine.
-
-Suzuki
-
+On Wed 23-10-24 23:57:12, Shakeel Butt wrote:
+> The memcg v1's charge move feature has been deprecated. There is no need
+> to have any locking or protection against the moving charge. Let's
+> proceed to remove all the locking code related to charge moving.
 > 
-> Signed-off-by: Tao Zhang <quic_taozha@quicinc.com>
+> Signed-off-by: Shakeel Butt <shakeel.butt@linux.dev>
 > ---
->   .../arm/arm,coresight-static-replicator.yaml  | 19 ++++++++++++++++++-
->   1 file changed, 18 insertions(+), 1 deletion(-)
-> 
-> diff --git a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
-> index 1892a091ac35..0d258c79eb94 100644
-> --- a/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
-> +++ b/Documentation/devicetree/bindings/arm/arm,coresight-static-replicator.yaml
-> @@ -45,7 +45,22 @@ properties:
->       patternProperties:
->         '^port@[01]$':
->           description: Output connections to CoreSight Trace bus
-> -        $ref: /schemas/graph.yaml#/properties/port
-> +        $ref: /schemas/graph.yaml#/$defs/port-base
-> +        unevaluatedProperties: false
-> +
-> +        properties:
-> +          endpoint:
-> +            $ref: /schemas/graph.yaml#/$defs/endpoint-base
-> +            unevaluatedProperties: false
-> +
-> +            properties:
-> +              filter-src:
-> +                $ref: /schemas/types.yaml#/definitions/phandle
-> +                description:
-> +                  phandle to the coresight trace source device matching the
-> +                  hard coded filtering for this port
-> +
-> +              remote-endpoint: true
->   
->   required:
->     - compatible
-> @@ -72,6 +87,7 @@ examples:
->                   reg = <0>;
->                   replicator_out_port0: endpoint {
->                       remote-endpoint = <&etb_in_port>;
-> +                    filter-src = <&tpdm_video>;
->                   };
->               };
->   
-> @@ -79,6 +95,7 @@ examples:
->                   reg = <1>;
->                   replicator_out_port1: endpoint {
->                       remote-endpoint = <&tpiu_in_port>;
-> +                    filter-src = <&tpdm_mdss>;
->                   };
->               };
->           };
+> -/**
+> - * folio_memcg_lock - Bind a folio to its memcg.
+> - * @folio: The folio.
+> - *
+> - * This function prevents unlocked LRU folios from being moved to
+> - * another cgroup.
+> - *
+> - * It ensures lifetime of the bound memcg.  The caller is responsible
+> - * for the lifetime of the folio.
+> - */
+> -void folio_memcg_lock(struct folio *folio)
+> -{
+> -	struct mem_cgroup *memcg;
+> -	unsigned long flags;
+> -
+> -	/*
+> -	 * The RCU lock is held throughout the transaction.  The fast
+> -	 * path can get away without acquiring the memcg->move_lock
+> -	 * because page moving starts with an RCU grace period.
+> -         */
+> -	rcu_read_lock();
 
+Is it safe to remove the implicit RCU?
+
+-- 
+Michal Hocko
+SUSE Labs
 
